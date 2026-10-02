@@ -1,12 +1,14 @@
 <script>
     /*
-     * La Rencontre du tournoi ouvert (ADR-0056) : la rattacher à une salle, l'en détacher,
-     * supprimer la salle, et y déclarer une table hors service — une fois, pour toutes les
-     * épreuves. Rattacher montre d'abord ce qui va changer : les tables de l'épreuve deviennent
-     * celles de la salle.
+     * L'Événement du tournoi ouvert (ADR-0056, ADR-0058) : le rattacher, l'en détacher, le
+     * supprimer, y déclarer une table hors service et les propriétés de ses tables — une fois,
+     * pour toutes les épreuves — et choisir les salles où joue cette épreuve. Rattacher montre
+     * d'abord ce qui va changer : les tables de l'épreuve deviennent celles de l'Événement.
      */
     import { t } from '../../i18n';
     import { renderConfigChange } from './labels.js';
+    import TableSettingsEditor from './TableSettingsEditor.svelte';
+    import { rencontreParticipantsStore } from '../../stores/directionStore.js';
     import {
         listRencontres,
         createRencontre,
@@ -17,7 +19,9 @@
         setTableOutOfService,
         chooseRencontreOutputDir,
         forgetRencontreOutputDir,
-        writeRencontrePage
+        writeRencontrePage,
+        setRencontreTables,
+        setEventRooms
     } from '../../stores/rencontreStore.js';
     import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
 
@@ -151,6 +155,28 @@
         }
     }
 
+    /** @param {import('../../../wailsjs/go/models').domain.TableSetting[]} settings */
+    async function saveTables(settings) {
+        if (current) await setRencontreTables(current.id, settings);
+        await reload();
+    }
+
+    const roomNames = $derived([...new Set((current?.tableSettings || []).map((s) => s.room).filter(Boolean))]);
+    const myRooms = $derived(current?.eventRooms?.[tournamentId] || []);
+
+    /** @param {string} room @param {boolean} on */
+    async function toggleRoom(room, on) {
+        if (!current) return;
+        const next = on ? [...myRooms, room] : myRooms.filter((r) => r !== room);
+        try {
+            error = '';
+            await setEventRooms(current.id, tournamentId, next);
+            await reload();
+        } catch (e) {
+            fail(String(e instanceof Error ? e.message : e).replace(/^direction:\s*/, ''));
+        }
+    }
+
     const tableNumbers = $derived(current ? Array.from({ length: current.room?.tables || current.tables }, (_, i) => i + 1) : []);
 </script>
 
@@ -171,6 +197,19 @@
                 </label>
             {/each}
         </fieldset>
+        {#if roomNames.length}
+            <fieldset class="rooms" data-testid="rencontre-rooms">
+                <legend title={$t('direction.rooms.hint')}>{$t('direction.rooms.title')}</legend>
+                {#each roomNames as room (room)}
+                    <label>
+                        <input type="checkbox" data-testid="rencontre-room-{room}" checked={myRooms.includes(room)} onchange={(e) => toggleRoom(room, e.currentTarget.checked)} />
+                        {room}
+                    </label>
+                {/each}
+                <p class="facts">{$t('direction.rooms.hint')}</p>
+            </fieldset>
+        {/if}
+        <TableSettingsEditor testid="rencontre-tables-editor" tables={tableNumbers.length} settings={current.tableSettings || []} participants={$rencontreParticipantsStore} onSave={saveTables} />
         <fieldset class="display">
             <legend>{$t('direction.display.title')}</legend>
             <p class="facts">{$t('direction.display.hint')}</p>
@@ -246,7 +285,8 @@
     .rencontre input[type='number'] {
         width: 4em;
     }
-    .out-of-service {
+    .out-of-service,
+    .rooms {
         display: flex;
         flex-wrap: wrap;
         gap: 0.2em 0.8em;

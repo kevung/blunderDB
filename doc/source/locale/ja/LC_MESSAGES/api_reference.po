@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 06:23+0200\n"
+"POT-Creation-Date: 2026-10-02 07:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -41,17 +41,17 @@ msgstr ""
 "参照)、レスポンスの形式(JSON、またはストリーミングリストの場合は NDJSON)と、存在する場合は任意の ``Idempotency-"
 "Key`` ヘッダーへの言及を含みます。"
 
-#: ../../source/api_reference.rst:272
+#: ../../source/api_reference.rst:277
 msgid "Idempotence"
 msgstr "冪等性"
 
-#: ../../source/api_reference.rst:274
+#: ../../source/api_reference.rst:279
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et ``positions.save`` (comme le reste "
 "de ``positions.*``) est naturellement idempotente grâce au hachage "
 "Zobrist du contenu — enregistrer deux fois la même position renvoie la "
-"même ligne, jamais un doublon. 39 méthodes n'ont pas cette propriété "
+"même ligne, jamais un doublon. 42 méthodes n'ont pas cette propriété "
 "(deux appels sont deux effets distincts) et acceptent un en-tête "
 "``Idempotency-Key`` optionnel : un appel rejoué avec la même clé renvoie "
 "le résultat de la première tentative au lieu de répéter son effet — voir "
@@ -60,16 +60,16 @@ msgid ""
 msgstr ""
 "ほとんどのメソッドには特別な仕組みは不要です。読み取りに副作用はなく、``positions.save``\\ (``positions.*`` "
 "の他のメソッドと同様)は内容の Zobrist "
-"ハッシュにより本来的に冪等です。同じ局面を二度保存しても同じ行が返り、重複は生じません。39個のメソッドにはこの性質がなく(二回の呼び出しは二つの別個の効果になります)、任意の"
+"ハッシュにより本来的に冪等です。同じ局面を二度保存しても同じ行が返り、重複は生じません。42個のメソッドにはこの性質がなく(二回の呼び出しは二つの別個の効果になります)、任意の"
 " ``Idempotency-Key`` "
 "ヘッダを受け付けます。同じキーで再試行された呼び出しは、効果を繰り返す代わりに最初の試行の結果を返します。上の表の「(Idempotency-"
 "Key)」の印を参照してください。他のメソッドはこのヘッダを必要とせず、受け付けません。"
 
-#: ../../source/api_reference.rst:285
+#: ../../source/api_reference.rst:290
 msgid "Lectures conditionnelles"
 msgstr "条件付き読み取り"
 
-#: ../../source/api_reference.rst:287
+#: ../../source/api_reference.rst:292
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "

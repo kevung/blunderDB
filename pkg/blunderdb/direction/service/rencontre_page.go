@@ -184,12 +184,16 @@ func (d *Service) RencontrePageHTML(ctx context.Context, id int64) (string, erro
 		occupied[c.Table] = direction.WallTable{Number: c.Table, Event: c.Event, A: orID(c.AName, c.A), B: orID(c.BName, c.B)}
 	}
 	tables := make([]direction.WallTable, 0, room.Tables)
+	plan := planIn(r, 0, tournoi.Config{})
 	for t := 1; t <= room.Tables; t++ {
-		if w, ok := occupied[t]; ok {
-			tables = append(tables, w)
-			continue
+		w, ok := occupied[t]
+		if !ok {
+			w = direction.WallTable{Number: t, Unavailable: slices.Contains(room.Unavailable, t)}
 		}
-		tables = append(tables, direction.WallTable{Number: t, Unavailable: slices.Contains(room.Unavailable, t)})
+		if s, ok := plan.Setting(t); ok {
+			w.Name, w.Room = s.Name, s.Room
+		}
+		tables = append(tables, w)
 	}
 	cat, lang := d.directionStrings(ctx)
 	return direction.WallPage(direction.WallPageInput{Name: r.Name, Tables: tables, Events: events, Brackets: brackets, Now: time.Now()}, cat, lang), nil

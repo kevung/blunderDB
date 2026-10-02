@@ -1359,8 +1359,8 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
 **Sous-commandes:**
 
 * ``list [--format text|json]`` — Les tournois dirigés de la base, avec leur
-  état, la version du moteur, la Rencontre à laquelle chacun appartient (si
-  aucune, la colonne est vide) et la date de la dernière décision.
+  état, la version du moteur, l'événement auquel chacun appartient (si
+  aucun, la colonne est vide) et la date de la dernière décision.
 * ``verify --id N [--format text|json]`` — Rejoue la direction et signale tout
   avertissement résiduel. **Sort en erreur** s'il en reste un : c'est la
   vérification d'après-tournoi, et un script qui la passe sur les bases d'une
@@ -1368,11 +1368,11 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
 * ``standings --id N`` — Le classement en CSV, prix compris, dans la langue de
   l'interface.
 * ``page --id N|--rencontre N [--out <dossier>]`` — La page HTML d'affichage
-  d'une épreuve (``--id``), ou la page murale d'une Rencontre (``--rencontre`` :
+  d'une épreuve (``--id``), ou la page murale d'un événement (``--rencontre`` :
   une ligne par table, quelle que soit l'épreuve qui l'occupe). Exactement l'un
   des deux est requis. Sans ``--out`` elle part sur la sortie standard ; avec,
-  elle est écrite dans le dossier, qui devient celui de la direction ou de la
-  Rencontre.
+  elle est écrite dans le dossier, qui devient celui de la direction ou de
+  l'événement.
 * ``export --id N`` — Le journal d'événements brut, rejouable par les outils du
   moteur. Le journal est toute la vérité d'une direction : le classement, les
   arbres et les avertissements en sont rejoués. Un outil qui lit cette sortie
@@ -1380,17 +1380,24 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
 * ``move --id N --match M --table T [--format text|json]`` — Change la table
   d'un match en cours, comme le glisser-déposer d'une case sur une autre dans
   la grille. Si la table visée est occupée, les deux matchs **échangent** leurs
-  tables ; une table hors service est refusée. Dans une Rencontre, si la table
+  tables ; une table hors service est refusée. Dans un événement, si la table
   est occupée par une autre épreuve, l'échange se fait entre les deux épreuves :
   un changement de table est écrit dans chaque journal. Affiche la table de
   chaque match en cours.
-* ``hall --rencontre N [--format text|json]`` — La Salle d'une Rencontre : une
+* ``hall --rencontre N [--format text|json]`` — Toutes les tables d'un événement : une
   ligne par table, quelle que soit l'épreuve qui l'occupe (épreuve, match,
   joueurs), puis les propositions de chaque épreuve. C'est la grille que la vue
-  *Salle* de la Direction affiche.
+  *Toutes les tables* de la Direction affiche ; les tables sont groupées par
+  salle quand l'événement en a, et nommées quand elles ont un nom.
+* ``tables --rencontre N|--tournament N [--format text|json]`` — Les propriétés
+  des tables (nom, salle, réservée, attitrée à) et les salles où joue chaque
+  épreuve d'un événement (``--rencontre``), ou les propriétés d'une épreuve qui
+  joue seule (``--tournament``). Lecture seule : l'écriture passe par ``call``
+  (``rencontres.setTables``, ``rencontres.setEventRooms``,
+  ``directions.setTables``).
 
 **Options communes:** ``--db`` (obligatoire), ``--id`` (obligatoire sauf pour
-``list``, ``page --rencontre`` et ``hall``), ``--format``.
+``list``, ``page --rencontre``, ``hall`` et ``tables``), ``--format``.
 
 **Exemples:**
 
@@ -1400,10 +1407,11 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
    ./blunderdb tournament verify --db base.db --id 3
    ./blunderdb tournament standings --db base.db --id 3 > classement.csv
    ./blunderdb tournament page --db base.db --id 3 --out /tmp/affichage
-   ./blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle
+   ./blunderdb tournament page --db base.db --rencontre 1 --out /tmp/evenement
    ./blunderdb tournament export --db base.db --id 3 > journal.json
    ./blunderdb tournament move --db base.db --id 3 --match m4 --table 7
    ./blunderdb tournament hall --db base.db --rencontre 1
+   ./blunderdb tournament tables --db base.db --rencontre 1
 
 trash — La corbeille
 ---------------------

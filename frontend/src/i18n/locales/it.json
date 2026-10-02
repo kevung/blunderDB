@@ -1897,7 +1897,7 @@
             "waiting_batch": "Abbinamento al prossimo lotto.",
             "waiting_table": "nessun tavolo libero",
             "player_unavailable": "giocatore non disponibile",
-            "player_busy": "gioca in un altro torneo"
+            "player_busy": "gioca in un'altra prova"
         },
         "proposals": {
             "title": "Proposte ({n})",
@@ -1946,7 +1946,9 @@
             "shared": "Due partite su questo tavolo: spostarne una",
             "swapConfirm": "Tavolo {from} ↔ Tavolo {to}?",
             "swap": "Scambia",
-            "moveRefused": "Spostamento rifiutato: {reason}"
+            "moveRefused": "Spostamento rifiutato: {reason}",
+            "room": "Sala {name}",
+            "assignedTo": "Assegnato a {names}"
         },
         "result": {
             "title": "Risultato",
@@ -1962,7 +1964,7 @@
             "apply": "Applica",
             "forfeitWins": "Forfait di {loser} → vince {winner}",
             "forfeitConfirm": "Forfait di {loser}: {winner} vince questa partita. Confermare?",
-            "cancelConfirm": "Annullare la partita {a} – {b}? Esce dalla sala; il registro la conserva."
+            "cancelConfirm": "Annullare la partita {a} – {b}? Esce dai tavoli; il registro la conserva."
         },
         "last": {
             "result": "{winner} batte {loser}",
@@ -2017,7 +2019,7 @@
             "noEntry": "{player} è iscritto ma non entra in nessuna fase.",
             "phaseN": "fase {n}",
             "pair": "Coppia",
-            "pairHint": "Un torneo di doppio: due persone, un solo iscritto «A / B».",
+            "pairHint": "Una prova di doppio: due persone, un solo iscritto «A / B».",
             "name2": "Nome del compagno",
             "pairRating": "Valutazione della coppia",
             "pairRatingHint": "Per impostazione predefinita la media delle due valutazioni; un valore inserito la sostituisce.",
@@ -2165,7 +2167,7 @@
             "lastChance": "Fase {phase} — ultima chance: {from} → {to}",
             "reconciliation": "Fase {phase} — riconciliazione: {from} → {to}",
             "recharge": "Fase {phase} — ricarica: {from} → {to}",
-            "alsoFor": "Vale anche per: {names} (stessa sala)."
+            "alsoFor": "Vale anche per: {names} (stesso evento)."
         },
         "lock": {
             "drawn": "sorteggio effettuato",
@@ -2215,7 +2217,7 @@
             "announced": "Annunciato: {at}"
         },
         "display": {
-            "title": "Display della sala",
+            "title": "Display",
             "hint": "Una cartella scelta una volta: la pagina viene riscritta a ogni evento, senza altri gesti. Si apre offline, su un secondo schermo o proiettata.",
             "chooseFolder": "Scegli una cartella",
             "changeFolder": "Cambia cartella",
@@ -2269,34 +2271,34 @@
             "fileWord": "rubrica"
         },
         "rencontre": {
-            "title": "Rencontre",
-            "hint": "Più tornei nella stessa sala: tavoli, tavoli fuori servizio e pause sono comuni, e nessuno propone un tavolo dove gioca un altro.",
+            "title": "Evento",
+            "hint": "Più prove nello stesso evento: tavoli, tavoli fuori servizio e pause sono comuni, e nessuna propone un tavolo dove gioca un'altra.",
             "tableCount": "{n} tavoli",
-            "members": "tornei: {names}",
+            "members": "prove: {names}",
             "outOfService": "Tavoli fuori servizio",
-            "outOfServiceHint": "Dichiarato una volta, per tutti i tornei della sala.",
-            "detach": "Stacca dalla rencontre",
-            "trash": "Elimina la rencontre",
+            "outOfServiceHint": "Dichiarato una volta, per tutte le prove dell'evento.",
+            "detach": "Stacca dall'evento",
+            "trash": "Elimina l'evento",
             "attach": "Collega…",
-            "name": "Nome della rencontre",
+            "name": "Nome dell'evento",
             "tables": "Tavoli",
             "startsOn": "Inizio",
             "endsOn": "Fine",
             "create": "Crea e collega…",
-            "confirmTitle": "Cosa cambierà in questo torneo:",
-            "noChange": "Niente: i suoi tavoli sono già quelli della sala.",
+            "confirmTitle": "Cosa cambierà in questa prova:",
+            "noChange": "Niente: i suoi tavoli sono già quelli dell'evento.",
             "confirm": "Collega",
             "wall": {
                 "rounds": "{n} turni annunciati"
             },
-            "trashConfirm": "Eliminare l’incontro «{name}»? Le sue prove restano, staccate."
+            "trashConfirm": "Eliminare l’evento «{name}»? Le sue prove restano, staccate."
         },
         "hall": {
-            "tab": "Sala",
-            "legend": "Tornei della sala",
-            "proposals": "Proposte della sala ({n})",
-            "loading": "Caricamento della sala…",
-            "error": "Impossibile leggere la sala: {reason}",
+            "tab": "Tutti i tavoli",
+            "legend": "Prove dell'evento",
+            "proposals": "Proposte dell'evento ({n})",
+            "loading": "Caricamento dei tavoli…",
+            "error": "Impossibile leggere i tavoli: {reason}",
             "eventError": "{event} non si ricostruisce; mancano i suoi tavoli: {reason}",
             "swapConfirm": "Tavolo {from} ({a}) ↔ Tavolo {to} ({b})?"
         },
@@ -2336,6 +2338,30 @@
             "launchAtTable": "Avvia a un tavolo…",
             "changeLength": "Cambia la lunghezza…",
             "printSheet": "Stampa il foglio del turno"
+        },
+        "tableProps": {
+            "title": "Proprietà dei tavoli",
+            "hint": "Un nome («Stream»), una sala, una riserva, giocatori assegnati. Un tavolo senza proprietà è un tavolo ordinario.",
+            "number": "Tavolo",
+            "name": "Nome",
+            "room": "Sala",
+            "reserved": "Riservato",
+            "assignedTo": "Assegnato a",
+            "assign": "Aggiungi un giocatore…",
+            "unassign": "Rimuovi {name}",
+            "nameOf": "Nome del tavolo {n}",
+            "roomOf": "Sala del tavolo {n}",
+            "reservedOf": "Tavolo {n} riservato",
+            "assignOf": "Giocatore assegnato al tavolo {n}",
+            "bulkFrom": "Tavoli da",
+            "bulkTo": "a",
+            "bulkApply": "Applica",
+            "save": "Salva",
+            "reset": "Annulla le modifiche"
+        },
+        "rooms": {
+            "title": "Sale in cui gioca questa prova",
+            "hint": "Nessuna spunta: tutti i tavoli."
         }
     },
     "palette": {
@@ -2349,9 +2375,9 @@
         "kindMatch": "Match",
         "kindPlayer": "Giocatore",
         "kindTable": "Tavolo",
-        "kindEpreuve": "Gara",
+        "kindEpreuve": "Prova",
         "kindRunning": "Partita in corso",
-        "placeholderDirection": "Cerca un giocatore, un tavolo, una gara, una partita…",
+        "placeholderDirection": "Cerca un giocatore, un tavolo, una prova, una partita…",
         "directionTable": "Tavolo {n}",
         "directionVs": "contro {name}",
         "matchLength": "{n} pt",

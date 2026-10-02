@@ -1946,7 +1946,9 @@
             "shared": "Deux matchs sur cette table : déplacez-en un",
             "swapConfirm": "Table {from} ↔ Table {to} ?",
             "swap": "Échanger",
-            "moveRefused": "Déplacement refusé : {reason}"
+            "moveRefused": "Déplacement refusé : {reason}",
+            "room": "Salle {name}",
+            "assignedTo": "Attitrée à {names}"
         },
         "result": {
             "title": "Résultat",
@@ -1962,7 +1964,7 @@
             "apply": "Appliquer",
             "forfeitWins": "Forfait de {loser} → {winner} gagne",
             "forfeitConfirm": "Forfait de {loser} : {winner} gagne ce match. Confirmer ?",
-            "cancelConfirm": "Annuler le match {a} – {b} ? Il disparaît de la salle ; le journal le garde."
+            "cancelConfirm": "Annuler le match {a} – {b} ? Il disparaît des tables ; le journal le garde."
         },
         "last": {
             "result": "{winner} bat {loser}",
@@ -2165,7 +2167,7 @@
             "lastChance": "Phase {phase} — dernière chance : {from} → {to}",
             "reconciliation": "Phase {phase} — réconciliation : {from} → {to}",
             "recharge": "Phase {phase} — recharge : {from} → {to}",
-            "alsoFor": "Vaut aussi pour : {names} (même salle)."
+            "alsoFor": "Vaut aussi pour : {names} (même événement)."
         },
         "lock": {
             "drawn": "tirage fait",
@@ -2215,7 +2217,7 @@
             "announced": "Annoncée : {at}"
         },
         "display": {
-            "title": "Affichage de la salle",
+            "title": "Affichage",
             "hint": "Un dossier choisi une fois : la page est réécrite à chaque événement, sans aucun geste. Elle s'ouvre hors ligne, sur un second écran ou projetée.",
             "chooseFolder": "Choisir un dossier",
             "changeFolder": "Changer de dossier",
@@ -2269,34 +2271,34 @@
             "fileWord": "annuaire"
         },
         "rencontre": {
-            "title": "Rencontre",
-            "hint": "Plusieurs épreuves dans la même salle : leurs tables, leurs tables hors service et leurs pauses sont communes, et aucune ne propose une table où joue une autre.",
+            "title": "Événement",
+            "hint": "Plusieurs épreuves dans le même événement : leurs tables, leurs tables hors service et leurs pauses sont communes, et aucune ne propose une table où joue une autre.",
             "tableCount": "{n} tables",
             "members": "épreuves : {names}",
             "outOfService": "Tables hors service",
-            "outOfServiceHint": "Déclarée une fois, pour toutes les épreuves de la salle.",
-            "detach": "Détacher de la rencontre",
-            "trash": "Supprimer la rencontre",
+            "outOfServiceHint": "Déclarée une fois, pour toutes les épreuves de l'événement.",
+            "detach": "Détacher de l'événement",
+            "trash": "Supprimer l'événement",
             "attach": "Rattacher…",
-            "name": "Nom de la rencontre",
+            "name": "Nom de l'événement",
             "tables": "Tables",
             "startsOn": "Début",
             "endsOn": "Fin",
             "create": "Créer et rattacher…",
             "confirmTitle": "Ce qui va changer dans cette épreuve :",
-            "noChange": "Rien : ses tables sont déjà celles de la salle.",
+            "noChange": "Rien : ses tables sont déjà celles de l'événement.",
             "confirm": "Rattacher",
             "wall": {
                 "rounds": "{n} rondes annoncées"
             },
-            "trashConfirm": "Supprimer la rencontre « {name} » ? Ses épreuves restent, détachées."
+            "trashConfirm": "Supprimer l'événement « {name} » ? Ses épreuves restent, détachées."
         },
         "hall": {
-            "tab": "Salle",
-            "legend": "Épreuves de la salle",
-            "proposals": "Propositions de la salle ({n})",
-            "loading": "Chargement de la salle…",
-            "error": "La salle n'a pas pu être lue : {reason}",
+            "tab": "Toutes les tables",
+            "legend": "Épreuves de l'événement",
+            "proposals": "Propositions de l'événement ({n})",
+            "loading": "Chargement des tables…",
+            "error": "Les tables n'ont pas pu être lues : {reason}",
             "eventError": "{event} ne se rejoue pas ; ses tables manquent : {reason}",
             "swapConfirm": "Table {from} ({a}) ↔ Table {to} ({b}) ?"
         },
@@ -2336,6 +2338,30 @@
             "launchAtTable": "Lancer à la table…",
             "changeLength": "Changer la longueur…",
             "printSheet": "Imprimer la feuille de la ronde"
+        },
+        "tableProps": {
+            "title": "Propriétés des tables",
+            "hint": "Un nom (« Stream »), une salle, une réservation, des joueurs attitrés. Une table sans propriété est une table ordinaire.",
+            "number": "Table",
+            "name": "Nom",
+            "room": "Salle",
+            "reserved": "Réservée",
+            "assignedTo": "Attitrée à",
+            "assign": "Ajouter un joueur…",
+            "unassign": "Retirer {name}",
+            "nameOf": "Nom de la table {n}",
+            "roomOf": "Salle de la table {n}",
+            "reservedOf": "Table {n} réservée",
+            "assignOf": "Joueur attitré à la table {n}",
+            "bulkFrom": "Tables de",
+            "bulkTo": "à",
+            "bulkApply": "Appliquer",
+            "save": "Enregistrer",
+            "reset": "Annuler les modifications"
+        },
+        "rooms": {
+            "title": "Salles où joue cette épreuve",
+            "hint": "Aucune coche : toutes les tables."
         }
     },
     "palette": {

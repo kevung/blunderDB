@@ -1,7 +1,7 @@
 <script>
     /*
-     * La vue tournoi, à la place du plateau quand une Direction est ouverte (ADR-0047,
-     * tasks/nicomaque/ux.md §2) ; tout autre onglet ramène le plateau sans rien fermer.
+     * La vue tournoi, à la place du plateau quand une Direction est ouverte (ADR-0047) ;
+     * tout autre onglet ramène le plateau sans rien fermer.
      */
     import { tick } from 'svelte';
     import { t } from '../../i18n';
@@ -12,6 +12,7 @@
     import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
     import DirectionSettings from './DirectionSettings.svelte';
     import RencontrePanel from './RencontrePanel.svelte';
+    import TableSettingsEditor from './TableSettingsEditor.svelte';
     import DirectoryPanel from './DirectoryPanel.svelte';
     import ProposalList from './ProposalList.svelte';
     import TableGrid from './TableGrid.svelte';
@@ -27,7 +28,7 @@
     import ContextMenu from '../ContextMenu.svelte';
     import { playerMenu } from '../../services/directionMenus.js';
     import { menuRequest } from '../../services/contextMenuTrigger.js';
-    import { setTableOutOfService } from '../../stores/rencontreStore.js';
+    import { setTableOutOfService, setDirectionTables } from '../../stores/rencontreStore.js';
     import { renderWarning, csvFilename, seatLabel } from './labels.js';
     import {
         directionStore,
@@ -111,6 +112,8 @@
     /** @typedef {import('../../../wailsjs/go/models').service.TableCell} TableCell */
 
     const view = $derived($directionStore);
+    /** Le nom des tables qui en portent un, repris dans les propositions. */
+    const tableNames = $derived(Object.fromEntries((view?.tableSettings || []).filter((s) => s.name).map((s) => [s.number, s.name])));
     // Pas `state` : chaque rune `$state` se lirait comme un abonnement au store `state`.
     const directionState = $derived(view?.state || 'draft');
     // Un retour "à la ronde N" n'a de sens que dans un suisse par rondes (absence.go) : sinon
@@ -758,6 +761,15 @@
                 />
                 {#if view}
                     <RencontrePanel tournamentId={view.tournamentId} rencontreId={view.rencontreId || 0} />
+                    {#if !view.rencontreId}
+                        <TableSettingsEditor
+                            testid="direction-tables-editor"
+                            tables={config?.tables?.count || 0}
+                            settings={view.tableSettings || []}
+                            participants={(view.players || []).map((p) => p.name).filter(Boolean)}
+                            onSave={(s) => setDirectionTables(view.tournamentId, s)}
+                        />
+                    {/if}
                 {/if}
             </div>
         {/if}
@@ -821,6 +833,7 @@
                         proposals={view?.proposals || []}
                         players={free}
                         elsewhere={view?.elsewhere || {}}
+                        {tableNames}
                         {busy}
                         onConfirm={confirm}
                         onConfirmAll={confirmAll}

@@ -150,6 +150,14 @@ func (d *Service) DirectionVersion(ctx context.Context, tournamentID int64) (str
 	if err := d.writeDirectionToken(ctx, h, tournamentID, false); err != nil {
 		return "", err
 	}
+	// A Tournament playing alone owns its table properties: the proposals read them.
+	own, err := d.st.Rencontres().TournamentTableSettings(ctx, d.scope, tournamentID)
+	if err != nil {
+		return "", err
+	}
+	if err := json.NewEncoder(h).Encode(own); err != nil {
+		return "", err
+	}
 	return hex.EncodeToString(h.Sum(nil)), nil
 }
 

@@ -1,6 +1,6 @@
 <script>
     /*
-     * La grille des tables (tasks/nicomaque/ux.md §2.2), lisible à deux mètres ; le temps
+     * La grille des tables, lisible à deux mètres ; le temps
      * écoulé passe en alerte quand un match traîne. La fiche de résultat s'ouvre sur la case.
      * Un match sans table a sa case après la salle : plusieurs cases portent la table 0, d'où
      * une clé par match.
@@ -257,6 +257,27 @@
         return c.noTable || c.shared ? `m:${ev}${c.matchId}` : `t:${c.table}`;
     }
 
+    /*
+     * Plusieurs salles : les tables se groupent par salle, dans l'ordre de leur première table ;
+     * celles sans salle, et les matchs sans table, ferment la grille. Une seule salle, ou aucune,
+     * laisse la grille telle quelle.
+     */
+    const roomOrder = $derived([...new Set(cells.map((c) => c.room).filter((r) => !!r))]);
+    const shown = $derived(roomOrder.length > 1 ? [...cells].sort((a, b) => rank(a) - rank(b)) : cells);
+
+    /** @param {TableCell} c */
+    function rank(c) {
+        const i = c.room ? roomOrder.indexOf(c.room) : -1;
+        return i < 0 ? roomOrder.length : i;
+    }
+
+    /** Le titre de salle à poser avant cette case, s'il y en a un. @param {number} i */
+    function roomTitleAt(i) {
+        const c = shown[i];
+        if (roomOrder.length < 2 || !c.room) return '';
+        return i === 0 || shown[i - 1].room !== c.room ? c.room : '';
+    }
+
     /** Le titre compte les tables de la salle, une seule fois chacune. */
     let tableCount = $derived(new Set(cells.filter((c) => !c.noTable).map((c) => c.table)).size);
 
@@ -298,13 +319,16 @@
         {#if actions}{@render actions()}{/if}
     </header>
     <div class="grid" role="grid" aria-label={$t('direction.table.title', { n: tableCount })} bind:this={gridEl}>
-        {#each cells as c (key(c))}
+        {#each shown as c, i (key(c))}
+            {#if roomTitleAt(i)}
+                <h4 class="room-title" role="presentation" data-testid="direction-room-{roomTitleAt(i)}">{$t('direction.table.room', { name: roomTitleAt(i) })}</h4>
+            {/if}
             <div class="cell-wrap" role="row">
                 <button
                     type="button"
                     role="gridcell"
                     class="cell"
-                    tabindex={(rovingKey && cells.some((x) => key(x) === rovingKey) ? rovingKey === key(c) : c === cells[0]) ? 0 : -1}
+                    tabindex={(rovingKey && cells.some((x) => key(x) === rovingKey) ? rovingKey === key(c) : c === shown[0]) ? 0 : -1}
                     onfocus={() => (rovingKey = key(c))}
                     data-testid={c.noTable
                         ? `direction-table-none-${c.tournamentId ? c.tournamentId + '-' : ''}${c.matchId}`
@@ -332,6 +356,11 @@
                     onkeydown={(e) => onCellKey(e, c)}
                 >
                     <span class="num">{c.noTable ? $t('direction.table.noTable') : c.table}</span>
+                    {#if c.name}<span class="table-name" data-testid="direction-table-name">{c.name}</span>{/if}
+                    {#if c.reserved && !c.unavailable}<span class="mark" title={$t('direction.table.reserved')} data-testid="direction-table-reserved">&#9873;</span>{/if}
+                    {#if c.assignedTo?.length}<span class="mark" title={$t('direction.table.assignedTo', { names: c.assignedTo.join(', ') })} data-testid="direction-table-assigned"
+                            >&#9733; {c.assignedTo.join(', ')}</span
+                        >{/if}
                     {#if c.event}
                         <span class="event-chip" data-testid="hall-event-chip">{c.event}</span>
                     {/if}
@@ -525,6 +554,20 @@
         font-weight: 600;
     }
 
+    .room-title {
+        margin: var(--space-2) 0 0;
+        font-size: var(--font-size-base);
+        font-weight: 600;
+    }
+    .table-name {
+        margin-left: var(--space-1);
+        font-weight: 600;
+    }
+    .mark {
+        margin-left: var(--space-1);
+        color: var(--color-text-muted);
+        font-size: var(--font-size-small);
+    }
     .num {
         font-size: var(--font-size-small);
         color: var(--color-text-muted);

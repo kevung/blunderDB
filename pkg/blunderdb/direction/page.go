@@ -2,6 +2,7 @@ package direction
 
 import (
 	"fmt"
+	"html"
 	"os"
 	"path/filepath"
 	"strings"
@@ -9,9 +10,11 @@ import (
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 	"github.com/PileOfCells/backgammon-tournoi/render"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// The standalone display page (tasks/nicomaque/fonctionnel.md §9): ONE HTML FILE, no route, no
+// The standalone display page: ONE HTML FILE, no route, no
 // player screen — ADR-0039 keeps tournaments out of the web front, and a file opens offline.
 //
 // PageName is the file's name inside the chosen folder. It never changes, so an open browser
@@ -28,6 +31,39 @@ func (d *Direction) Page(cat *Catalog, lang string, now time.Time) (string, erro
 	}
 	r := d.renderer(cat, lang)
 	return r.Page(d.st, d.ProposeAt(now), now), nil
+}
+
+// PageIn is Page under the table properties: the proposals it lists are those the panel shows
+// (ProposeIn, with ext what the sister events hold), and a named table carries its name beside
+// its number (ADR-0058 §1).
+func (d *Direction) PageIn(cat *Catalog, lang string, now time.Time, ext tournoi.External, p TablePlan, members map[string][]string) (string, error) {
+	if d.st == nil {
+		return "", ErrNoDirection
+	}
+	r := d.renderer(cat, lang)
+	page := r.Page(d.st, d.ProposeIn(now, ext, p, members), now)
+	return NameTables(page, r.L.Term(render.TermTable, 0), p.Settings), nil
+}
+
+// NameTables adds each named table's name beside its number wherever a page heads a table cell
+// with it, as the engine's renderer and the wall page both do, and in the proposals the
+// renderer lists, each of which opens with its table.
+func NameTables(page, tableTerm string, settings []domain.TableSetting) string {
+	term := html.EscapeString(tableTerm)
+	for _, s := range settings {
+		if s.Name == "" {
+			continue
+		}
+		name := html.EscapeString(s.Name)
+		num := fmt.Sprintf(`<span class="num">%s %d</span>`, term, s.Number)
+		named := fmt.Sprintf(`<span class="num">%s %d — %s</span>`, term, s.Number, name)
+		page = strings.ReplaceAll(page, num, named)
+		for _, li := range []string{`<li>`, `<li class="alerte">`} {
+			proposal := fmt.Sprintf(`%s%s %d — `, li, term, s.Number)
+			page = strings.ReplaceAll(page, proposal, fmt.Sprintf(`%s%s %d — %s — `, li, term, s.Number, name))
+		}
+	}
+	return page
 }
 
 // renderer builds the engine's renderer for this Direction, in the host's language.

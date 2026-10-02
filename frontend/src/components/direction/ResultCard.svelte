@@ -1,6 +1,6 @@
 <script>
     /*
-     * La fiche de résultat (tasks/nicomaque/ux.md §2.2) : deux clics, la case puis le nom du
+     * La fiche de résultat : deux clics, la case puis le nom du
      * vainqueur, qui valide. Score facultatif (les deux ou aucun) ; forfait, remarque, table
      * et annulation dans un menu discret. Ouverte sur la case.
      */

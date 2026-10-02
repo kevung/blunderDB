@@ -975,6 +975,42 @@ export namespace direction {
 	        this.table = source["table"];
 	    }
 	}
+	export class TablePlan {
+	    count: number;
+	    unavailable?: number[];
+	    settings: domain.TableSetting[];
+	    rooms: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TablePlan(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.count = source["count"];
+	        this.unavailable = source["unavailable"];
+	        this.settings = this.convertValues(source["settings"], domain.TableSetting);
+	        this.rooms = source["rooms"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 
 }
 
@@ -2158,6 +2194,26 @@ export namespace domain {
 	        this.label = source["label"];
 	        this.errorMp = source["errorMp"];
 	        this.isCube = source["isCube"];
+	    }
+	}
+	export class TableSetting {
+	    number: number;
+	    name: string;
+	    room: string;
+	    reserved: boolean;
+	    assignedTo: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TableSetting(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.number = source["number"];
+	        this.name = source["name"];
+	        this.room = source["room"];
+	        this.reserved = source["reserved"];
+	        this.assignedTo = source["assignedTo"];
 	    }
 	}
 	export class TagCount {
@@ -3524,6 +3580,8 @@ export namespace service {
 	    busyTables: number[];
 	    elsewhere?: Record<string, direction.Seat>;
 	    pairs?: Record<string, Array<storage.PairMember>>;
+	    tableSettings: domain.TableSetting[];
+	    rooms: string[];
 	
 	    static createFrom(source: any = {}) {
 	        return new DirectionView(source);
@@ -3549,6 +3607,8 @@ export namespace service {
 	        this.busyTables = source["busyTables"];
 	        this.elsewhere = this.convertValues(source["elsewhere"], direction.Seat, true);
 	        this.pairs = this.convertValues(source["pairs"], Array<storage.PairMember>, true);
+	        this.tableSettings = this.convertValues(source["tableSettings"], domain.TableSetting);
+	        this.rooms = source["rooms"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3754,6 +3814,10 @@ export namespace service {
 	}
 	export class HallCell {
 	    table: number;
+	    name?: string;
+	    room?: string;
+	    assignedTo?: string[];
+	    outsideRooms?: boolean;
 	    free: boolean;
 	    unavailable: boolean;
 	    reserved: boolean;
@@ -3781,6 +3845,10 @@ export namespace service {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.table = source["table"];
+	        this.name = source["name"];
+	        this.room = source["room"];
+	        this.assignedTo = source["assignedTo"];
+	        this.outsideRooms = source["outsideRooms"];
 	        this.free = source["free"];
 	        this.unavailable = source["unavailable"];
 	        this.reserved = source["reserved"];
@@ -3865,6 +3933,7 @@ export namespace service {
 	    name: string;
 	    events: HallEvent[];
 	    cells: HallCell[];
+	    rooms: string[];
 	
 	    static createFrom(source: any = {}) {
 	        return new HallView(source);
@@ -3876,6 +3945,7 @@ export namespace service {
 	        this.name = source["name"];
 	        this.events = this.convertValues(source["events"], HallEvent);
 	        this.cells = this.convertValues(source["cells"], HallCell);
+	        this.rooms = source["rooms"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -4116,6 +4186,8 @@ export namespace service {
 	    createdAt: string;
 	    updatedAt: string;
 	    tournamentIds: number[];
+	    tableSettings: domain.TableSetting[];
+	    eventRooms: Record<number, Array<string>>;
 	    room: direction.Room;
 	    members: RencontreMember[];
 	
@@ -4134,6 +4206,8 @@ export namespace service {
 	        this.createdAt = source["createdAt"];
 	        this.updatedAt = source["updatedAt"];
 	        this.tournamentIds = source["tournamentIds"];
+	        this.tableSettings = this.convertValues(source["tableSettings"], domain.TableSetting);
+	        this.eventRooms = source["eventRooms"];
 	        this.room = this.convertValues(source["room"], direction.Room);
 	        this.members = this.convertValues(source["members"], RencontreMember);
 	    }
@@ -4394,6 +4468,10 @@ export namespace service {
 	}
 	export class TableCell {
 	    table: number;
+	    name?: string;
+	    room?: string;
+	    assignedTo?: string[];
+	    outsideRooms?: boolean;
 	    free: boolean;
 	    unavailable: boolean;
 	    reserved: boolean;
@@ -4418,6 +4496,10 @@ export namespace service {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.table = source["table"];
+	        this.name = source["name"];
+	        this.room = source["room"];
+	        this.assignedTo = source["assignedTo"];
+	        this.outsideRooms = source["outsideRooms"];
 	        this.free = source["free"];
 	        this.unavailable = source["unavailable"];
 	        this.reserved = source["reserved"];

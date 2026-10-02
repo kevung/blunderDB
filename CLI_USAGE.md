@@ -2857,6 +2857,28 @@ Examples:
   blunderdb tournament standings --db base.db --id 3 > classement.csv
 ```
 
+### `blunderdb tournament tables`
+
+```
+Usage: blunderdb tournament tables [options]
+
+Print the table properties — name, room, reserved, kept for — and the rooms of each event.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -rencontre int
+    	Rencontre ID
+  -tournament int
+    	Tournament ID
+
+Examples:
+  blunderdb tournament tables --db base.db --rencontre 1
+  blunderdb tournament tables --db base.db --tournament 3 --format json
+```
+
 ### `blunderdb tournament verify`
 
 ```

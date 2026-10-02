@@ -204,7 +204,11 @@ func (d *Service) DirectionPageHTML(ctx context.Context, tournamentID int64) (st
 // directionPage renders the display page, with the event's bracket in rotation when it has one.
 func (d *Service) directionPage(ctx context.Context, dir *direction.Direction, tournamentID int64, cat *direction.Catalog, lang string) (string, error) {
 	now := time.Now()
-	page, err := dir.Page(cat, lang, now)
+	room, err := d.roomAround(ctx, tournamentID, dir)
+	if err != nil {
+		return "", err
+	}
+	page, err := dir.PageIn(cat, lang, now, room.external(), room.plan, room.members)
 	if err != nil {
 		return "", err
 	}
@@ -256,8 +260,12 @@ func (d *Service) DirectionUpcomingSheetHTML(ctx context.Context, tournamentID i
 	if err != nil {
 		return "", err
 	}
+	room, err := d.roomAround(ctx, tournamentID, dir)
+	if err != nil {
+		return "", err
+	}
 	cat, lang := d.directionStrings(ctx)
-	return dir.UpcomingSheet(cat, lang, announced, time.Now())
+	return dir.UpcomingSheet(cat, lang, announced, time.Now(), room.external(), room.plan, room.members)
 }
 
 // WriteDirectionUpcomingSheet writes the announced sheet where the pairing sheet goes, under a

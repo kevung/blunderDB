@@ -1,6 +1,6 @@
 <script>
     /*
-     * Les emplacements (tasks/nicomaque/fonctionnel.md §7) : chaque match lancé est un
+     * Les emplacements : chaque match lancé est un
      * emplacement qu'une transcription ou un import remplit. Rien ne se rattache par
      * déduction : une coïncidence de noms est une suggestion, un bouton par ligne.
      */

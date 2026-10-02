@@ -9,7 +9,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// Undoing a mistyped result (tasks/nicomaque/fonctionnel.md §5.4): in place, and never erasing — the log is
+// Undoing a mistyped result: in place, and never erasing — the log is
 // append-only, so a correction is one more event and the first result stays in the history.
 
 // LastDecision is what the panel shows under the queue: the last thing the director did, with

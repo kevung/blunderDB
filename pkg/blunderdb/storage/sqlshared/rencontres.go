@@ -56,7 +56,7 @@ func (s *RencontreStore) Get(ctx context.Context, scope string, id int64) (*doma
 	if err != nil {
 		return nil, errf(s.DB, "get rencontre", err)
 	}
-	if r.TournamentIDs, err = s.members(ctx, scope, id); err != nil {
+	if err := s.fill(ctx, scope, r); err != nil {
 		return nil, err
 	}
 	return r, nil
@@ -87,31 +87,51 @@ func (s *RencontreStore) List(ctx context.Context, scope string) ([]*domain.Renc
 	// Members read after the cursor is closed: SQLite's in-memory test
 	// database runs on a single connection.
 	for _, r := range out {
-		if r.TournamentIDs, err = s.members(ctx, scope, r.ID); err != nil {
+		if err := s.fill(ctx, scope, r); err != nil {
 			return nil, err
 		}
 	}
 	return out, nil
 }
 
-func (s *RencontreStore) members(ctx context.Context, scope string, id int64) ([]int64, error) {
+// fill reads what a Rencontre holds beyond its own row: members, the rooms
+// of each, and its table settings.
+func (s *RencontreStore) fill(ctx context.Context, scope string, r *domain.Rencontre) error {
+	if err := s.members(ctx, scope, r); err != nil {
+		return err
+	}
+	var err error
+	r.TableSettings, err = s.tableSettings(ctx, scope, ownerRencontre, r.ID)
+	return err
+}
+
+func (s *RencontreStore) members(ctx context.Context, scope string, r *domain.Rencontre) error {
 	tenant, targs := s.DB.TenantFilter("", scope)
 	rows, err := s.DB.Query(ctx,
-		`SELECT id FROM tournament WHERE rencontre_id = ? AND `+tenant+` ORDER BY id`,
-		append([]any{id}, targs...)...)
+		`SELECT id, COALESCE(rencontre_rooms, '') FROM tournament WHERE rencontre_id = ? AND `+tenant+` ORDER BY id`,
+		append([]any{r.ID}, targs...)...)
 	if err != nil {
-		return nil, errf(s.DB, "list rencontre members", err)
+		return errf(s.DB, "list rencontre members", err)
 	}
 	defer rows.Close()
-	ids := []int64{}
+	r.TournamentIDs = []int64{}
+	r.EventRooms = map[int64][]string{}
 	for rows.Next() {
 		var t int64
-		if err := rows.Scan(&t); err != nil {
-			return nil, errf(s.DB, "list rencontre members", err)
+		var raw string
+		if err := rows.Scan(&t, &raw); err != nil {
+			return errf(s.DB, "list rencontre members", err)
 		}
-		ids = append(ids, t)
+		r.TournamentIDs = append(r.TournamentIDs, t)
+		rooms, err := decodeRooms(raw)
+		if err != nil {
+			return errf(s.DB, fmt.Sprintf("rooms of tournament %d", t), err)
+		}
+		if rooms != nil {
+			r.EventRooms[t] = rooms
+		}
 	}
-	return ids, rows.Err()
+	return rows.Err()
 }
 
 // Update rewrites the room's own facts.
@@ -130,15 +150,20 @@ func (s *RencontreStore) Update(ctx context.Context, scope string, r domain.Renc
 	return nil
 }
 
-// Delete removes the Rencontre. The foreign key's ON DELETE SET NULL detaches
-// its Tournaments; the explicit UPDATE says so for a connection that runs
-// without foreign keys enforced.
+// Delete removes the Rencontre and its table settings. The foreign keys
+// detach its Tournaments (ON DELETE SET NULL) and drop its settings (CASCADE);
+// the explicit statements say so for a connection that runs without foreign
+// keys enforced.
 func (s *RencontreStore) Delete(ctx context.Context, scope string, id int64) error {
 	return s.DB.Transact(ctx, func(tx Execer) error {
 		tenant, targs := tx.TenantFilter("", scope)
-		if _, err := tx.Exec(ctx, `UPDATE tournament SET rencontre_id = NULL WHERE rencontre_id = ? AND `+tenant,
+		if _, err := tx.Exec(ctx, `UPDATE tournament SET rencontre_id = NULL, rencontre_rooms = NULL WHERE rencontre_id = ? AND `+tenant,
 			append([]any{id}, targs...)...); err != nil {
 			return errf(tx, "detach rencontre members", err)
+		}
+		if _, err := tx.Exec(ctx, `DELETE FROM table_setting WHERE rencontre_id = ? AND `+tenant,
+			append([]any{id}, targs...)...); err != nil {
+			return errf(tx, "delete rencontre table settings", err)
 		}
 		if _, err := tx.Exec(ctx, `DELETE FROM rencontre WHERE id = ? AND `+tenant,
 			append([]any{id}, targs...)...); err != nil {
@@ -149,7 +174,9 @@ func (s *RencontreStore) Delete(ctx context.Context, scope string, id int64) err
 }
 
 // Attach puts a Tournament in a Rencontre, or takes it out when rencontreID
-// is 0. Both must exist in the scope.
+// is 0. Both must exist in the scope. Its rooms are named in the Rencontre it
+// leaves, so they are cleared whenever the membership changes; attaching to
+// the Rencontre it already plays in keeps them.
 func (s *RencontreStore) Attach(ctx context.Context, scope string, tournamentID, rencontreID int64) error {
 	tenant, targs := s.DB.TenantFilter("", scope)
 	var target any
@@ -159,8 +186,10 @@ func (s *RencontreStore) Attach(ctx context.Context, scope string, tournamentID,
 		}
 		target = rencontreID
 	}
-	n, err := s.DB.Exec(ctx, `UPDATE tournament SET rencontre_id = ? WHERE id = ? AND `+tenant,
-		append([]any{target, tournamentID}, targs...)...)
+	n, err := s.DB.Exec(ctx,
+		`UPDATE tournament SET rencontre_rooms = CASE WHEN rencontre_id = ? THEN rencontre_rooms END,
+		 rencontre_id = ? WHERE id = ? AND `+tenant,
+		append([]any{rencontreID, target, tournamentID}, targs...)...)
 	if err != nil {
 		return errf(s.DB, "attach tournament", err)
 	}

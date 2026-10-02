@@ -13,6 +13,7 @@ import (
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // runTournament handles the tournament command: the non-interactive side of directing a
@@ -54,6 +55,7 @@ func (cli *CLI) tournamentHandlers() map[string]func([]string) error {
 		"export":    cli.runTournamentExport,
 		"move":      cli.runTournamentMove,
 		"hall":      cli.runTournamentHall,
+		"tables":    cli.runTournamentTables,
 	}
 }
 
@@ -84,6 +86,7 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  export     Print the raw event journal, replayable by the engine's tools")
 	fmt.Println("  move       Move a running match to another table, swapping with its occupant")
 	fmt.Println("  hall       Print a Rencontre's tables, every event together, and its proposals")
+	fmt.Println("  tables     Print the table properties (name, room, reserved, kept for) and rooms")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb tournament list --db base.db")
@@ -94,6 +97,7 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  blunderdb tournament export --db base.db --id 3 > journal.json")
 	fmt.Println("  blunderdb tournament move --db base.db --id 3 --match m4 --table 7")
 	fmt.Println("  blunderdb tournament hall --db base.db --rencontre 1")
+	fmt.Println("  blunderdb tournament tables --db base.db --rencontre 1")
 }
 
 func tournamentFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {
@@ -376,10 +380,18 @@ func (cli *CLI) runTournamentHall(args []string) error {
 	if strings.ToLower(*format) == "json" {
 		return printJSON(h)
 	}
-	for _, c := range h.Cells {
+	room := ""
+	for _, c := range hallByRoom(h) {
+		if c.Room != "" && c.Room != room {
+			room = c.Room
+			fmt.Printf("room\t%s\n", room)
+		}
 		table := strconv.Itoa(c.Table)
 		if c.NoTable {
 			table = "-"
+		}
+		if c.Name != "" {
+			table += " (" + c.Name + ")"
 		}
 		switch {
 		case c.MatchID != "":
@@ -415,4 +427,115 @@ func (cli *CLI) runTournamentHall(args []string) error {
 		}
 	}
 	return nil
+}
+
+// hallByRoom orders the Hall's cells by room when the Rencontre has rooms — each room's tables
+// in the order of the rooms, then the tables in none, the shared tables and the matches with no
+// table — and leaves them as they are otherwise (ADR-0058 §12).
+func hallByRoom(h *database.HallView) []database.HallCell {
+	if len(h.Rooms) == 0 {
+		return h.Cells
+	}
+	out := make([]database.HallCell, 0, len(h.Cells))
+	for _, room := range h.Rooms {
+		for _, c := range h.Cells {
+			if c.Room == room && !c.NoTable && !c.Shared {
+				out = append(out, c)
+			}
+		}
+	}
+	for _, c := range h.Cells {
+		if c.Room == "" || c.NoTable || c.Shared {
+			out = append(out, c)
+		}
+	}
+	return out
+}
+
+// ── tables ───────────────────────────────────────────────────────────────────
+
+// eventRooms is one event of a Rencontre with the rooms it may play in; none means every table.
+type eventRooms struct {
+	TournamentID int64    `json:"tournamentId"`
+	Name         string   `json:"name"`
+	Rooms        []string `json:"rooms"`
+}
+
+// rencontreTables is what `tournament tables --rencontre` prints as JSON.
+type rencontreTables struct {
+	RencontreID   int64                 `json:"rencontreId"`
+	Tables        int                   `json:"tables"`
+	TableSettings []domain.TableSetting `json:"tableSettings"`
+	Events        []eventRooms          `json:"events"`
+}
+
+// runTournamentTables prints the table properties (ADR-0058): a Rencontre's, with the rooms of
+// each of its events, or the ones a Tournament plays under — its Rencontre's when it plays in
+// one. It reads only: the properties are written through `call` (ADR-0057).
+func (cli *CLI) runTournamentTables(args []string) error {
+	fs, dbPath := tournamentFlagSet("tables", "Print the table properties — name, room, reserved, kept for — and the rooms of each event.",
+		"blunderdb tournament tables --db base.db --rencontre 1",
+		"blunderdb tournament tables --db base.db --tournament 3 --format json")
+	rencontre := fs.Int64("rencontre", 0, "Rencontre ID")
+	tournament := fs.Int64("tournament", 0, "Tournament ID")
+	format := fs.String("format", "text", "Output format: text or json")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if (*rencontre == 0) == (*tournament == 0) {
+		fs.Usage()
+		return fmt.Errorf("give exactly one of --rencontre and --tournament")
+	}
+	asJSON := strings.ToLower(*format) == "json"
+	if *tournament != 0 {
+		plan, err := cli.db.TablePlan(*tournament)
+		if err != nil {
+			return err
+		}
+		if asJSON {
+			return printJSON(plan)
+		}
+		printTableSettings(plan.Settings)
+		if len(plan.Rooms) > 0 {
+			fmt.Printf("rooms\t%s\n", strings.Join(plan.Rooms, ", "))
+		}
+		return nil
+	}
+	r, err := cli.db.GetRencontre(*rencontre)
+	if err != nil {
+		return err
+	}
+	out := rencontreTables{RencontreID: r.ID, Tables: r.Tables, TableSettings: r.TableSettings, Events: []eventRooms{}}
+	for _, m := range r.Members {
+		rooms := r.EventRooms[m.TournamentID]
+		if rooms == nil {
+			rooms = []string{}
+		}
+		out.Events = append(out.Events, eventRooms{TournamentID: m.TournamentID, Name: m.Name, Rooms: rooms})
+	}
+	if asJSON {
+		return printJSON(out)
+	}
+	printTableSettings(out.TableSettings)
+	for _, ev := range out.Events {
+		rooms := "every table"
+		if len(ev.Rooms) > 0 {
+			rooms = strings.Join(ev.Rooms, ", ")
+		}
+		fmt.Printf("event\t%d\t%s\t%s\n", ev.TournamentID, ev.Name, rooms)
+	}
+	return nil
+}
+
+// printTableSettings prints one line per table that has properties: number, name, room,
+// reserved, the persons it is kept for.
+func printTableSettings(settings []domain.TableSetting) {
+	fmt.Println("table\tname\troom\treserved\tkept for")
+	for _, s := range settings {
+		reserved := "no"
+		if s.Reserved {
+			reserved = "yes"
+		}
+		fmt.Printf("%d\t%s\t%s\t%s\t%s\n", s.Number, s.Name, s.Room, reserved, strings.Join(s.AssignedTo, ", "))
+	}
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The history of a Direction (tasks/nicomaque/fonctionnel.md §5.8). No translated sentence: an entry is a kind and
+// The history of a Direction. No translated sentence: an entry is a kind and
 // its facts, rendered by the frontend.
 
 // HistoryEntry is one decision, with enough to situate it.

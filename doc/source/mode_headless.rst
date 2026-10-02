@@ -108,7 +108,7 @@ depuis plusieurs clients.
        défaut**, voir plus bas
    * - ``--direction``
      - ``false``
-     - sert les gestes de direction de tournoi et de Rencontre ; **éteints
+     - sert les gestes de direction de tournoi et d'événement ; **éteints
        par défaut**, voir :ref:`headless_direction_gestures`
    * - ``--transcription``
      - ``false``
@@ -414,13 +414,13 @@ son tenant et répond de ses appels.
 
 .. _headless_direction:
 
-Direction de tournoi et Rencontres
+Direction de tournoi et événements
 ----------------------------------
 
-Les tournois dirigés au poste de travail et les Rencontres qui les regroupent
-se lisent par l'API, sous le tenant de l'appelant, avec le même code que le
+Les tournois dirigés au poste de travail et les événements qui les regroupent
+(``rencontre`` dans l'API et ses routes ``/v1/rencontres.*``) se lisent par l'API, sous le tenant de l'appelant, avec le même code que le
 poste de travail. La lecture est toujours servie ; les gestes (saisir un
-résultat, appairer, ouvrir une salle) ne le sont que sous ``serve --direction``
+résultat, appairer, créer un événement) ne le sont que sous ``serve --direction``
 (:ref:`headless_direction_gestures`).
 
 * ``directions.list`` et ``directions.directory`` lisent tout le tenant : la
@@ -434,7 +434,7 @@ résultat, appairer, ouvrir une salle) ne le sont que sous ``serve --direction``
   ``directions.lastDecision``, ``directions.pageHtml`` et
   ``directions.pairingSheetHtml`` (avec ``round``).
 * ``rencontres.list``, puis ``rencontres.get`` et ``rencontres.pageHtml``
-  avec ``{"id": N}``. ``rencontres.pageHtml`` rend la page murale de la salle,
+  avec ``{"id": N}``. ``rencontres.pageHtml`` rend la page murale de l'événement,
   un document HTML autonome dans le champ ``html`` : un écran mural l'affiche
   et la relit périodiquement.
 
@@ -445,9 +445,9 @@ tournoi qui n'est pas dirigé, ou qui appartient à un autre tenant, répond
 **Lectures conditionnelles.** Chacune de ces routes rend un en-tête ``ETag``.
 Renvoyé dans ``If-None-Match``, il obtient ``304`` sans corps tant que rien de
 ce que la route lit n'a changé. Toute écriture change l'``ETag`` aussitôt : un
-geste dans le tournoi ou dans un tournoi de la même Rencontre, le rattachement
+geste dans le tournoi ou dans un tournoi du même événement, le rattachement
 d'un match, un brouillon démarré depuis un emplacement, le renommage d'un
-tournoi, la modification de la salle. Répondre ``304`` ne rejoue aucun tournoi,
+tournoi, la modification de l'événement. Répondre ``304`` ne rejoue aucun tournoi,
 ce qui rend peu coûteuse une page murale qui interroge toutes les quelques
 secondes. Seul ce qui dépend de l'heure fait exception : les propositions,
 l'horloge et les pages sont calculées au moment de la lecture, et un ``ETag``
@@ -482,7 +482,7 @@ Les gestes de direction
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 ``blunderdb serve --direction`` ouvre les gestes que le poste de travail fait
-sur un tournoi dirigé et sur une Rencontre. Sans ce drapeau, ces routes
+sur un tournoi dirigé et sur un événement. Sans ce drapeau, ces routes
 répondent ``404``, comme absentes. ``call`` les sert toujours.
 
 * ``directions.create`` (``tournamentId``, ``config``, ``seed``),
@@ -502,12 +502,17 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
   ``directions.cancelMatch``, ``directions.correctResult``,
   ``directions.close``, ``directions.reopen``, ``directions.addNote``,
   ``directions.attachMatch``, ``directions.detachMatch`` ;
-* la salle : ``rencontres.create``, ``rencontres.update``,
+* l'événement : ``rencontres.create``, ``rencontres.update``,
   ``rencontres.attach``, ``rencontres.detach``, ``rencontres.trash``,
-  ``rencontres.setTableOutOfService``, ``rencontres.setBreaks``.
+  ``rencontres.setTableOutOfService``, ``rencontres.setBreaks`` ;
+* les propriétés des tables : ``rencontres.setTables`` (``id``, ``tableSettings``,
+  une entrée par table qui en porte : numéro, nom, salle, réservée, attitrée à),
+  ``rencontres.setEventRooms`` (``id``, ``tournamentId``, ``rooms``, les salles
+  où l'épreuve joue ; aucune, c'est toutes les tables) et ``directions.setTables``
+  (``tournamentId``, ``tableSettings``) pour une épreuve qui joue seule.
 
 Un geste de tournoi rend la vue complète du tournoi, comme ``directions.get`` ;
-un geste de salle rend la Rencontre. Le service réécrit ensuite les pages
+un geste d'événement rend l'événement. Le service réécrit ensuite les pages
 d'affichage dans le dossier que la base désigne, comme au poste de travail.
 Une page qui ne peut pas s'écrire (dossier disparu, disque plein) n'annule pas
 le geste : la réponse porte un en-tête ``Direction-Page-Warning`` par page non
@@ -519,7 +524,7 @@ commencé, configuration rejetée par le moteur) rend ``400`` avec le motif. Une
 panne du démon ou de sa base rend ``500``, sans détail : le motif reste dans le
 journal du démon.
 
-**Version obligatoire.** Toute lecture d'un tournoi ou d'une Rencontre rend un
+**Version obligatoire.** Toute lecture d'un tournoi ou d'un événement rend un
 en-tête ``Direction-Version``, et tout geste le renvoie dans ``If-Match`` :
 
 * sans ``If-Match`` (ou avec ``*``), le geste est refusé : ``428`` ;
@@ -530,12 +535,12 @@ en-tête ``Direction-Version``, et tout geste le renvoie dans ``If-Match`` :
   ``Direction-Version``.
 
 La comparaison se fait dans la transaction du geste, sous un verrou de la base
-(verrou consultatif PostgreSQL par tournoi ou par Rencontre, verrou d'écriture
+(verrou consultatif PostgreSQL par tournoi ou par événement, verrou d'écriture
 SQLite) : de deux gestes envoyés sur la même lecture, un seul s'applique, qu'ils
 passent par un même démon, par deux démons sur une même base PostgreSQL, ou par
 le poste de travail et ``call`` sur un même fichier. Le geste écrit tout ou
-rien. Un tournoi joué dans une Rencontre a la
-version de sa salle, si bien qu'un geste dans une épreuve sœur la change
+rien. Un tournoi joué dans un événement a la
+version de son événement, si bien qu'un geste dans une épreuve sœur la change
 aussi. ``directions.create`` et ``rencontres.create`` ne visent rien
 d'existant et ne prennent pas de version.
 
@@ -583,9 +588,9 @@ version, pas l'état : le client relit ce qu'il affiche, avec
 ``If-None-Match``.
 
 * ``event: rencontre`` — ``rencontreId``, ``tournamentIds`` (les épreuves de
-  la salle, avant et après le geste) et ``version`` ;
+  l'événement, avant et après le geste) et ``version`` ;
 * ``event: direction`` — ``tournamentId`` et ``version``, pour un tournoi
-  joué hors de toute Rencontre ;
+  joué hors de tout événement ;
 * ``event: transcription`` — ``transcriptionId`` et ``revision`` ; un
   brouillon abandonné ou terminé porte ``removed`` (et ``matchId`` pour
   Terminer).
@@ -600,8 +605,8 @@ sont pas annoncés.
 
 Les paramètres ``tournament``, ``rencontre`` et ``transcription`` (identifiants
 séparés par des virgules, ou répétés) restreignent l'abonnement : un message
-passe s'il nomme l'un d'eux. Un tournoi d'une Rencontre reçoit les messages de
-sa salle. Un paramètre inconnu ou un identifiant invalide rend ``400``.
+passe s'il nomme l'un d'eux. Un tournoi d'un événement reçoit les messages de
+son événement. Un paramètre inconnu ou un identifiant invalide rend ``400``.
 
 .. code-block:: bash
 

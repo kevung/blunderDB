@@ -557,16 +557,40 @@ Tournament into the entries of the next. It is not an identity: two spellings ar
 A doubles pair appears as its two members, never as a row "A / B".
 _Avoid_: player list, address book, roster (a roster is one Tournament's Participants)
 
-**Rencontre**:
-Several directed Tournaments played in the same hall, on the same dates, by the same director
-— a weekend festival with its main event, its speed and its doubles. It owns the hall: the
-number of tables, the output folder and the wall page that shows every table whatever the
-event. Each event stays a Tournament with its own Direction, Matches and standings; a hall
+**Rencontre** (interface: *événement*):
+Several directed Tournaments played on the same tables, on the same dates, by the same
+director — a weekend festival with its main event, its speed and its doubles. It owns the
+tables: their number, their properties (Table, Salle), the output folder and the one wall page
+that shows every table whatever the event and whatever its Salle. Each event stays a Tournament with its own Direction, Matches and standings; a hall
 gesture (a table out of service, a break) is written into every member Direction, so each
 one still replays alone. Two Participants spelled the same in two events of a Rencontre are
 one person for availability: the Rencontre knows they cannot sit at two tables. A Tournament
 belongs to at most one Rencontre and may be attached or detached at any time (ADR-0056).
-_Avoid_: festival (an event's name, not an object), meeting, réunion, event group
+The interface says *événement* (en: *Event*): an *événement* gathers *épreuves*, the two words
+never stand for one another. The technical name stays `rencontre` in code, schema, CLI and
+API, because `event` is already taken there (the SSE stream, a Direction's events).
+_Avoid_: festival (an event's name, not an object), meeting, réunion, event group, épreuve
+(one Tournament of it)
+
+**Table**:
+A numbered place where one match is played. The number is its identity — "table 23" in the
+CLI, the API and the players' mouths — unique within a Rencontre (numbering runs on from one
+Salle to the next). A table may carry properties: a name shown beside the number ("Stream"),
+a Salle, and a reservation — *reserved* (never proposed, the director places a match there by
+hand) or *assigned* to persons by name (their matches go there when it is free; otherwise it
+behaves as reserved). The properties belong to the Rencontre, or to the directed Tournament
+when it plays alone; they change only what is proposed, never what a Direction replays
+(ADR-0058).
+_Avoid_: board (the backgammon board), seat
+
+**Salle** (interface: *salle*):
+A named group of the Tables of a Rencontre — "salle A = tables 1–20". It is a label on each
+Table, not an object of its own: a Rencontre whose tables carry no Salle has one implicit Salle
+covering them all. An event of the Rencontre may be restricted to some Salles; it is then
+proposed, moved and swapped only onto their tables. The grid of every table of the Rencontre,
+grouped by Salle, is the view *Toutes les tables* — never "Salle", which names a part of it,
+nor "Événement", which names the panel that manages the Rencontre (ADR-0058).
+_Avoid_: hall (for the whole Rencontre), room, venue, area
 
 ### Players
 

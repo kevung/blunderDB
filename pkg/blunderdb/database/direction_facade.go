@@ -9,6 +9,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -104,11 +105,6 @@ func (d *Database) StartTranscriptionFromSlot(tournamentID int64, slotID string)
 // clockAt is Clock at a given instant.
 func (d *Database) clockAt(tournamentID int64, now time.Time) (*ClockView, error) {
 	return d.directionService().ClockAt(context.Background(), tournamentID, now)
-}
-
-// realignRencontre puts every member of a restored Rencontre back on the room's tables.
-func (d *Database) realignRencontre(id int64) error {
-	return d.directionService().Realign(context.Background(), id)
 }
 
 func bracketSkeleton(sim *tournoi.State, ph *tournoi.PhaseState) ([]*tournoi.Section, bool) {
@@ -487,6 +483,27 @@ func (d *Database) SetRencontreTableOutOfService(id int64, table int, out bool) 
 // SetRencontreBreaks is service.Service.SetRencontreBreaks on the open database.
 func (d *Database) SetRencontreBreaks(id int64, breaksJSON string) (*RencontreView, error) {
 	return d.directionService().SetRencontreBreaks(context.Background(), id, breaksJSON)
+}
+
+// SetRencontreTables is service.Service.SetRencontreTables on the open database.
+func (d *Database) SetRencontreTables(id int64, settings []domain.TableSetting) (*RencontreView, error) {
+	return d.directionService().SetRencontreTables(context.Background(), id, settings)
+}
+
+// SetEventRooms is service.Service.SetEventRooms on the open database.
+func (d *Database) SetEventRooms(rencontreID, tournamentID int64, rooms []string) (*RencontreView, error) {
+	return d.directionService().SetEventRooms(context.Background(), rencontreID, tournamentID, rooms)
+}
+
+// SetDirectionTables is service.Service.SetDirectionTables on the open database.
+func (d *Database) SetDirectionTables(tournamentID int64, settings []domain.TableSetting) (*DirectionView, error) {
+	return d.directionService().SetDirectionTables(context.Background(), tournamentID, settings)
+}
+
+// TablePlan is service.Service.TablePlan on the open database: a Tournament's effective
+// table properties and the rooms it may play in.
+func (d *Database) TablePlan(tournamentID int64) (direction.TablePlan, error) {
+	return d.directionService().TablePlan(context.Background(), tournamentID)
 }
 
 // SetRencontreOutputDir is service.Service.SetRencontreOutputDir on the open database.

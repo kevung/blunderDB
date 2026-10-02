@@ -78,6 +78,10 @@ func TestMatchHashReference(t *testing.T) {
 		return
 	}
 	for _, name := range strings.Split(strings.TrimSpace(string(out)), "\n") {
+		// Run from a git hook, ls-files ignores -C and lists the whole tree.
+		if !strings.HasPrefix(name, "testdata/") {
+			continue
+		}
 		f := filepath.Join(root, strings.TrimPrefix(name, "testdata/"))
 		switch filepath.Ext(f) {
 		case ".xg", ".sgf", ".mat", ".bgf":

@@ -7,7 +7,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The clock of a Direction (tasks/nicomaque/fonctionnel.md §6). A match is "slow" past 1.5× its expected duration,
+// The clock of a Direction. A match is "slow" past 1.5× its expected duration,
 // the UX document's default.
 const slowFactor = 1.5
 

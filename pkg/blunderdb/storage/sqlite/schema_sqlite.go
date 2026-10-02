@@ -358,9 +358,30 @@ var schemaStatements = []string{
 		comment TEXT DEFAULT '',
 		-- The Rencontre this Tournament plays in, if any. Deleting the
 		-- Rencontre detaches its Tournaments; it never deletes one.
-		rencontre_id INTEGER REFERENCES rencontre(id) ON DELETE SET NULL
+		rencontre_id INTEGER REFERENCES rencontre(id) ON DELETE SET NULL,
+		-- The rooms this Tournament may play in within its Rencontre, as a
+		-- JSON array of room labels; NULL plays on every table. A fact of
+		-- the membership, cleared with it on detachment (ADR-0058 §5).
+		rencontre_rooms TEXT
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_tournament_rencontre ON tournament(rencontre_id)`,
+	// The properties of a table (ADR-0058): one row per table that has any,
+	// owned by the Rencontre whose events share it or by a Tournament run on
+	// its own, never both. The number is the table's identity; a room is only
+	// the label several rows share. assigned_to is a JSON array of names.
+	`CREATE TABLE IF NOT EXISTS table_setting (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		rencontre_id INTEGER REFERENCES rencontre(id) ON DELETE CASCADE,
+		tournament_id INTEGER REFERENCES tournament(id) ON DELETE CASCADE,
+		number INTEGER NOT NULL CHECK (number > 0),
+		name TEXT NOT NULL DEFAULT '',
+		room TEXT NOT NULL DEFAULT '',
+		reserved INTEGER NOT NULL DEFAULT 0,
+		assigned_to TEXT NOT NULL DEFAULT '[]',
+		CHECK ((rencontre_id IS NULL) <> (tournament_id IS NULL))
+	)`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_table_setting_rencontre ON table_setting(rencontre_id, number) WHERE rencontre_id IS NOT NULL`,
+	`CREATE UNIQUE INDEX IF NOT EXISTS idx_table_setting_tournament ON table_setting(tournament_id, number) WHERE tournament_id IS NOT NULL`,
 	// The Direction of a Tournament (ADR-0047): everything the tournament
 	// director decided while running it. One row per directed Tournament, plus
 	// one row per event in direction_event.

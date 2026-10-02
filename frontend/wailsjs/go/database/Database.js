@@ -970,6 +970,14 @@ export function SetDirectionStrings(arg1, arg2) {
   return window['go']['database']['Database']['SetDirectionStrings'](arg1, arg2);
 }
 
+export function SetDirectionTables(arg1, arg2) {
+  return window['go']['database']['Database']['SetDirectionTables'](arg1, arg2);
+}
+
+export function SetEventRooms(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SetEventRooms'](arg1, arg2, arg3);
+}
+
 export function SetFilterPinned(arg1, arg2) {
   return window['go']['database']['Database']['SetFilterPinned'](arg1, arg2);
 }
@@ -992,6 +1000,10 @@ export function SetRencontreOutputDir(arg1, arg2) {
 
 export function SetRencontreTableOutOfService(arg1, arg2, arg3) {
   return window['go']['database']['Database']['SetRencontreTableOutOfService'](arg1, arg2, arg3);
+}
+
+export function SetRencontreTables(arg1, arg2) {
+  return window['go']['database']['Database']['SetRencontreTables'](arg1, arg2);
 }
 
 export function SetupDatabase(arg1) {
@@ -1056,6 +1068,10 @@ export function SyncAnkiDeckWithPositions(arg1, arg2) {
 
 export function TableGrid(arg1) {
   return window['go']['database']['Database']['TableGrid'](arg1);
+}
+
+export function TablePlan(arg1) {
+  return window['go']['database']['Database']['TablePlan'](arg1);
 }
 
 export function Tags() {

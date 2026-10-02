@@ -10,6 +10,7 @@ import (
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // The Direction surface the frontend and the CLI both call (ADR-0047): thin calls into package
@@ -59,6 +60,11 @@ type DirectionView struct {
 	// Pairs gives the two persons behind each doubles Participant, by Participant id; empty for
 	// a singles event (ADR-0056 §4).
 	Pairs map[string][]PairMember `json:"pairs,omitempty"`
+	// TableSettings are the effective table properties — the Rencontre's when the Tournament
+	// plays in one, its own otherwise (ADR-0058 §3) — by number.
+	TableSettings []domain.TableSetting `json:"tableSettings"`
+	// Rooms are the rooms the Tournament may play in; empty means every table.
+	Rooms []string `json:"rooms"`
 }
 
 // ListDirections names the directed tournaments of this database.
@@ -125,10 +131,18 @@ func (d *Service) GetDirection(ctx context.Context, tournamentID int64) (*Direct
 	if v.Pairs, err = d.Pairs(ctx, tournamentID); err != nil {
 		return nil, err
 	}
+	plan, err := d.planFor(ctx, tournamentID, cfg)
+	if err != nil {
+		return nil, err
+	}
+	v.TableSettings, v.Rooms = plan.Settings, plan.Rooms
 	if st := dir.State(); st != nil {
 		// Proposed at the WALL CLOCK, not the journal's last timestamp: a micro-round's
 		// deadline and a break's warning depend on the current time, not on the last result.
-		room := d.roomAround(ctx, tournamentID, dir)
+		room, err := d.roomAround(ctx, tournamentID, dir)
+		if err != nil {
+			return nil, err
+		}
 		ext := room.external()
 		v.BusyTables = ext.BusyTables
 		if len(room.players) > 0 {
@@ -137,7 +151,7 @@ func (d *Service) GetDirection(ctx context.Context, tournamentID int64) (*Direct
 				v.Elsewhere[string(id)] = seat
 			}
 		}
-		v.Proposals = dir.ProposeWith(time.Now(), ext)
+		v.Proposals = room.propose(dir, time.Now())
 		v.Warnings = dir.Warnings()
 		v.Ranking = dir.Ranking()
 		v.Running = st.Running()

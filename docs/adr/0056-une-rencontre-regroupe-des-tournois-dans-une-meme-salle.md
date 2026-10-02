@@ -2,8 +2,8 @@
 
 Statut : acceptée.
 Amende : ADR-0047 §1 (« une seule entité »).
-Amendée par : ADR-0057 (exposition au démon).
-Voir aussi : ADR-0044, ADR-0036, ADR-0005, ADR-0057.
+Amendée par : ADR-0057 (exposition au démon), ADR-0058 (propriétés des tables, salles).
+Voir aussi : ADR-0044, ADR-0036, ADR-0005, ADR-0057, ADR-0058.
 
 ## Contexte
 
@@ -43,7 +43,7 @@ Plusieurs Directions par Tournament restent écartées.
 5. **Ouvrir la Rencontre ouvre toutes ses épreuves.** Un onglet par épreuve dans l'en-tête de la
    Direction, avec son résumé (propositions, matchs en cours, alerte) ; changer d'épreuve est un
    clic, sans confirmation, sans rien fermer ni rejouer. Pas d'écran partagé : 370 px utiles
-   n'en portent pas deux. Une vue **Salle** est admise, parce qu'elle n'est pas deux épreuves
+   n'en portent pas deux. Une vue **Toutes les tables** est admise (groupée par salle, ADR-0058), parce qu'elle n'est pas deux épreuves
    côte à côte mais **une** grille : une case par table de la Rencontre, quelle que soit
    l'épreuve, marquée de son épreuve, en pleine largeur ; la fiche de résultat, les menus, le
    clavier et le glisser-déposer y agissent sur toutes, chaque geste adressé à l'épreuve de sa
@@ -71,7 +71,7 @@ Plusieurs Directions par Tournament restent écartées.
 - La logique vit sur `Database` et le contrat `Storage` ; `pkg/blunderdb/direction` reste le
   seul paquet qui connaît Nicomaque et calcule tables occupées et disponibilités.
 - CLI : `tournament list` nomme la Rencontre, `tournament page --rencontre` écrit la page
-  murale, `tournament hall --rencontre` imprime la grille de la Salle ; le seul geste est
+  murale, `tournament hall --rencontre` imprime la grille de toutes les tables ; le seul geste est
   `tournament move`, qui échange aussi avec une épreuve sœur. Le démon et `call` exposent la Rencontre
   à un client externe, lecture toujours, gestes de salle sous `serve --direction` (ADR-0057).
 - Vocabulaire : **Rencontre** dans `CONTEXT.md` ; Participant et Directory complétés pour les

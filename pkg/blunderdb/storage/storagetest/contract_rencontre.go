@@ -3,6 +3,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"reflect"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -73,7 +74,8 @@ func testRencontreLifecycle(t *testing.T, s storage.Storage) {
 }
 
 // testRencontreTrashRestores: deleting a Rencontre goes through the trash
-// (ADR-0036), and restoring it attaches again the Tournaments still free.
+// (ADR-0036), and restoring it gives back its table settings and attaches
+// again the Tournaments still free, each with its rooms (ADR-0058).
 func testRencontreTrashRestores(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	rs := s.Rencontres()
@@ -85,6 +87,11 @@ func testRencontreTrashRestores(t *testing.T, s storage.Storage) {
 	b, _ := s.Tournaments().Create(ctx, "", "B", "", "")
 	_ = rs.Attach(ctx, "", a, id)
 	_ = rs.Attach(ctx, "", b, id)
+	if err := rs.SetTableSettings(ctx, "", id, twoRooms()); err != nil {
+		t.Fatal(err)
+	}
+	_ = rs.SetEventRooms(ctx, "", a, []string{"A"})
+	_ = rs.SetEventRooms(ctx, "", b, []string{"B"})
 
 	entry, err := trash.Rencontre(ctx, s, "", id)
 	if err != nil {
@@ -97,9 +104,16 @@ func testRencontreTrashRestores(t *testing.T, s storage.Storage) {
 	other, _ := rs.Create(ctx, "", domain.Rencontre{Name: "Autre", Tables: 4})
 	_ = rs.Attach(ctx, "", b, other)
 
-	back, err := trash.Restore(ctx, s, "", entry)
+	if _, err := trash.Restore(ctx, s, "", entry); !errors.Is(err, trash.ErrRencontreByService) {
+		t.Fatalf("trash.Restore of a Rencontre: %v, want ErrRencontreByService", err)
+	}
+	loaded, err := s.Trash().Load(ctx, "", entry)
 	if err != nil {
-		t.Fatalf("Restore: %v", err)
+		t.Fatal(err)
+	}
+	back, err := trash.RestoreRencontre(ctx, s, "", loaded)
+	if err != nil {
+		t.Fatalf("RestoreRencontre: %v", err)
 	}
 	r, err := rs.Get(ctx, "", back)
 	if err != nil {
@@ -107,5 +121,14 @@ func testRencontreTrashRestores(t *testing.T, s storage.Storage) {
 	}
 	if r.Name != "Festival" || r.Tables != 8 || len(r.TournamentIDs) != 1 || r.TournamentIDs[0] != a {
 		t.Fatalf("restored = %+v, want Festival with A only", r)
+	}
+	if !reflect.DeepEqual(r.TableSettings, wantSorted()) {
+		t.Errorf("restored table settings = %#v, want %#v", r.TableSettings, wantSorted())
+	}
+	if !reflect.DeepEqual(r.EventRooms, map[int64][]string{a: {"A"}}) {
+		t.Errorf("restored rooms = %v, want A's only", r.EventRooms)
+	}
+	if other, _ := rs.Get(ctx, "", other); len(other.EventRooms) != 0 {
+		t.Errorf("B joined another Rencontre without its old rooms, got %v", other.EventRooms)
 	}
 }

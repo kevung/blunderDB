@@ -197,3 +197,8 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   compared in the write's own statement, a column so that it is read without
   decoding the document. Existing rows start at 1. Schema-visible: bumped
   `domain.DatabaseVersion` to 2.27.0.
+- `030_table_setting.sql` — the properties of a table and the rooms of an
+  event (ADR-0058): `table_setting` (owned by a Rencontre or by a Tournament,
+  never both; composite tenant keys, cascade with its owner) and
+  `tournament.rencontre_rooms`, cleared on detachment. Schema-visible: bumped
+  `domain.DatabaseVersion` to 2.28.0.

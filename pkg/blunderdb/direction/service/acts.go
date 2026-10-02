@@ -12,7 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Confirming what the engine proposes, and doing what it did not (tasks/nicomaque/fonctionnel.md §5): the engine
+// Confirming what the engine proposes, and doing what it did not: the engine
 // proposes, the director decides, the Direction records, and only the impossible is refused.
 // Every call writes an event and returns the replayed view.
 
@@ -40,7 +40,11 @@ func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tou
 	}
 	defer release(&err)
 	if shared && a.Kind == tournoi.ActStartMatch && a.Table > 0 {
-		if _, taken := d.roomAround(ctx, tournamentID, nil).tables[a.Table]; taken {
+		room, err := d.roomAround(ctx, tournamentID, nil)
+		if err != nil {
+			return err
+		}
+		if _, taken := room.tables[a.Table]; taken {
 			return direction.Refusef("direction: table %d is taken", a.Table)
 		}
 	}
@@ -50,6 +54,12 @@ func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tou
 	}
 	if a.Kind == tournoi.ActStartMatch && a.Table > 0 {
 		if err := d.tableBeyond(ctx, dir, tournamentID, a.Table); err != nil {
+			return err
+		}
+		if err := d.refuseOutside(ctx, dir, tournamentID, a.Table); err != nil {
+			return err
+		}
+		if err := d.refuseClosed(ctx, dir, tournamentID, a); err != nil {
 			return err
 		}
 	}
@@ -84,7 +94,11 @@ func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) (
 	// Proposed at the SAME instant the events will carry, or the queue and its confirmation
 	// disagree about a micro-round's deadline.
 	// The sister events of the Rencontre, if any, hold tables the engine must not give out.
-	for _, a := range dir.ProposeWith(now, d.outside(ctx, tournamentID, dir)) {
+	room, err := d.roomAround(ctx, tournamentID, dir)
+	if err != nil {
+		return err
+	}
+	for _, a := range room.propose(dir, now) {
 		if a.Kind == tournoi.ActWait {
 			continue
 		}
@@ -99,7 +113,7 @@ func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) (
 			// A proposal with no table stays in the queue: launching it here would put two
 			// matches on one table, or none, without the director ever choosing. In rounds
 			// mode the round stays open until all its players are engaged, so the rest of it
-			// is proposed again as tables free up (tasks/nicomaque/fonctionnel.md §3.2).
+			// is proposed again as tables free up.
 			continue
 		}
 		if err := confirmAt(ctx, dir, a, now); err != nil {
@@ -149,7 +163,11 @@ func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a,
 	// database's guard: no sister seats a match on one of them before this match is written.
 	sisters := map[int]string{}
 	if shared {
-		sisters = d.roomAround(ctx, tournamentID, nil).tables
+		room, err := d.roomAround(ctx, tournamentID, nil)
+		if err != nil {
+			return err
+		}
+		sisters = room.tables
 	}
 	// The occupancy check and the write share one transaction: checked outside it, two
 	// directors could both see the table free and both start a match on it.
@@ -168,11 +186,22 @@ func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a,
 		if err := d.tableBeyond(ctx, dir, tournamentID, table); err != nil {
 			return err
 		}
+		if err := d.refuseOutside(ctx, dir, tournamentID, table); err != nil {
+			return err
+		}
 		if table <= 0 {
 			// No number typed: the first free table, as a proposal would get — one no sister
-			// event of the room plays on either. With none left the match still starts, under
-			// the grid's "no table" cell.
-			table = firstFreeTable(st, "", st.Current, sisters)
+			// event of the room plays on, inside the event's rooms, neither reserved nor kept
+			// for someone. With none left the match still starts, under the grid's "no table"
+			// cell.
+			skip, err := d.closedTables(ctx, dir, tournamentID)
+			if err != nil {
+				return err
+			}
+			for n, ev := range sisters {
+				skip[n] = ev
+			}
+			table = firstFreeTable(st, "", st.Current, skip)
 		} else if _, next := sisters[table]; next || occupant(st, table, "") != nil {
 			return direction.Refusef("direction: table %d is taken", table)
 		}

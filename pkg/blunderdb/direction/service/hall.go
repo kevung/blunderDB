@@ -6,6 +6,7 @@ import (
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
@@ -44,6 +45,9 @@ type HallView struct {
 	Name        string      `json:"name"`
 	Events      []HallEvent `json:"events"`
 	Cells       []HallCell  `json:"cells"`
+	// Rooms are the Rencontre's rooms in the order of their first table, what the grid groups
+	// its cells by; empty when no table carries a room (ADR-0058 §12).
+	Rooms []string `json:"rooms"`
 }
 
 // RencontreTableGrid merges the table grids of the Rencontre's events into the Hall's: one cell
@@ -61,7 +65,11 @@ func (d *Service) RencontreTableGrid(ctx context.Context, rencontreID int64) (*H
 // hallOf builds the Hall from members replayed once; without proposals when only the tables are
 // wanted (the wall page), which spares asking the engine for them.
 func (d *Service) hallOf(ctx context.Context, r *domain.Rencontre, members []member, proposals bool) *HallView {
-	v := &HallView{RencontreID: r.ID, Name: r.Name, Events: []HallEvent{}, Cells: []HallCell{}}
+	v := &HallView{RencontreID: r.ID, Name: r.Name, Events: []HallEvent{}, Cells: []HallCell{}, Rooms: direction.RoomNames(r.TableSettings)}
+	if v.Rooms == nil {
+		v.Rooms = []string{}
+	}
+	plan := planIn(r, 0, tournoi.Config{})
 	type eventGrid struct {
 		ev    HallEvent
 		cells []TableCell
@@ -76,10 +84,10 @@ func (d *Service) hallOf(ctx context.Context, r *domain.Rencontre, members []mem
 			v.Events = append(v.Events, ev)
 			continue
 		}
-		room := d.roomFrom(ctx, m.tid, m.dir, members)
+		room := d.roomFrom(ctx, r, m.tid, m.dir, members)
 		cells := gridOf(m.dir, room, now)
 		if st := m.dir.State(); proposals && st != nil {
-			if p := m.dir.ProposeWith(now, room.external()); p != nil {
+			if p := room.propose(m.dir, now); p != nil {
 				ev.Proposals = p
 			}
 			for id, p := range st.Players {
@@ -96,8 +104,10 @@ func (d *Service) hallOf(ctx context.Context, r *domain.Rencontre, members []mem
 	}
 
 	hall := func(c TableCell, ev HallEvent) HallCell {
-		// Seen from the Hall no table is "elsewhere": the sister event is on the same grid.
+		// Seen from the Hall no table is "elsewhere": the sister event is on the same grid, and
+		// none is outside the rooms, which the Hall shows all.
 		c.Elsewhere = ""
+		c.OutsideRooms = false
 		return HallCell{TableCell: c, TournamentID: ev.TournamentID, Event: ev.Name, EventIndex: ev.Index}
 	}
 	var extra, tableless []HallCell
@@ -112,12 +122,22 @@ func (d *Service) hallOf(ctx context.Context, r *domain.Rencontre, members []mem
 					on = append(on, hall(c, g.ev))
 				case c.Unavailable:
 					unavailable = true
-				case c.Free:
+				case c.Free && !c.OutsideRooms:
 					free = true
 				case c.Reserved:
 					reserved = true
 				}
 			}
+		}
+		setting, hasSetting := plan.Setting(n)
+		if hasSetting && (setting.Reserved || len(setting.AssignedTo) > 0) {
+			reserved, free = true, false
+		}
+		named := func(c TableCell) TableCell {
+			if hasSetting {
+				c.Name, c.Room, c.AssignedTo = setting.Name, setting.Room, setting.AssignedTo
+			}
+			return c
 		}
 		switch {
 		case len(on) > 0:
@@ -129,13 +149,14 @@ func (d *Service) hallOf(ctx context.Context, r *domain.Rencontre, members []mem
 			}
 			v.Cells = append(v.Cells, on[0])
 		case unavailable:
-			v.Cells = append(v.Cells, HallCell{TableCell: TableCell{Table: n, Unavailable: true}, EventIndex: -1})
+			v.Cells = append(v.Cells, HallCell{TableCell: named(TableCell{Table: n, Unavailable: true}), EventIndex: -1})
 		case reserved && !free:
-			// Reserved by every event that knows it: no one is placed there without a word.
-			v.Cells = append(v.Cells, HallCell{TableCell: TableCell{Table: n, Reserved: true}, EventIndex: -1})
+			// Reserved by every event that knows it, or by the Rencontre's own properties: no
+			// one is placed there without a word.
+			v.Cells = append(v.Cells, HallCell{TableCell: named(TableCell{Table: n, Reserved: true}), EventIndex: -1})
 		default:
 			// Free for one event is free in the Hall: the director places whom he wants.
-			v.Cells = append(v.Cells, HallCell{TableCell: TableCell{Table: n, Free: true}, EventIndex: -1})
+			v.Cells = append(v.Cells, HallCell{TableCell: named(TableCell{Table: n, Free: true}), EventIndex: -1})
 		}
 	}
 	for _, g := range grids {

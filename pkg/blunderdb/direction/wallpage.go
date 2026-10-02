@@ -19,7 +19,10 @@ const WallPageName = "index.html"
 
 // WallTable is one line of the wall page: one table, whichever event plays on it.
 type WallTable struct {
-	Number      int
+	Number int
+	// Name is shown beside the number; Room groups the lines when the Rencontre has rooms.
+	Name        string
+	Room        string
 	Unavailable bool
 	Event       string // empty when the table is free
 	A, B        string // the two players, when Event is set
@@ -62,21 +65,25 @@ func WallPage(in WallPageInput, cat *Catalog, lang string) string {
 
 	var b strings.Builder
 	fmt.Fprintf(&b, `<h1>%s</h1>`, wallEsc(in.Name))
-	b.WriteString(`<ul class="tables">`)
+	// One list per room, in the order of their first table, when tables carry rooms; tables in
+	// no room close the page under no heading (ADR-0058 §12).
+	var rooms []string
+	byRoom := map[string][]WallTable{}
 	for _, tb := range in.Tables {
-		classe, contenu := "libre", wallEsc(l.Term(render.TermFree, 0))
-		switch {
-		case tb.Unavailable:
-			classe, contenu = "hs", wallEsc(l.Term(render.TermUnavailable, 0))
-		case tb.Event != "":
-			classe = "occupee"
-			contenu = fmt.Sprintf(`<span class="evt">%s</span><br>%s %s %s`,
-				wallEsc(tb.Event), wallEsc(tb.A), wallEsc(l.Term(render.TermVersus, 0)), wallEsc(tb.B))
+		if _, seen := byRoom[tb.Room]; !seen && tb.Room != "" {
+			rooms = append(rooms, tb.Room)
 		}
-		fmt.Fprintf(&b, `<li class="%s"><span class="num">%s %d</span>%s</li>`,
-			classe, wallEsc(l.Term(render.TermTable, 0)), tb.Number, contenu)
+		byRoom[tb.Room] = append(byRoom[tb.Room], tb)
 	}
-	b.WriteString(`</ul>`)
+	if _, ok := byRoom[""]; ok || len(rooms) == 0 {
+		rooms = append(rooms, "")
+	}
+	for _, room := range rooms {
+		if room != "" {
+			fmt.Fprintf(&b, `<h2>%s</h2>`, wallEsc(room))
+		}
+		wallTables(&b, byRoom[room], l)
+	}
 	if len(in.Events) > 0 {
 		b.WriteString(`<ul class="events">`)
 		for _, ev := range in.Events {
@@ -103,6 +110,29 @@ func WallPage(in WallPageInput, cat *Catalog, lang string) string {
 	page.WriteString(content)
 	fmt.Fprintf(&page, `<p class="credit">%s</p></body></html>`, wallEsc(credit))
 	return page.String()
+}
+
+// wallTables writes one list of table lines, each number followed by the table's name when it
+// has one.
+func wallTables(b *strings.Builder, tables []WallTable, l render.Labeler) {
+	b.WriteString(`<ul class="tables">`)
+	for _, tb := range tables {
+		classe, contenu := "libre", wallEsc(l.Term(render.TermFree, 0))
+		switch {
+		case tb.Unavailable:
+			classe, contenu = "hs", wallEsc(l.Term(render.TermUnavailable, 0))
+		case tb.Event != "":
+			classe = "occupee"
+			contenu = fmt.Sprintf(`<span class="evt">%s</span><br>%s %s %s`,
+				wallEsc(tb.Event), wallEsc(tb.A), wallEsc(l.Term(render.TermVersus, 0)), wallEsc(tb.B))
+		}
+		num := fmt.Sprintf("%s %d", l.Term(render.TermTable, 0), tb.Number)
+		if tb.Name != "" {
+			num += " — " + tb.Name
+		}
+		fmt.Fprintf(b, `<li class="%s"><span class="num">%s</span>%s</li>`, classe, wallEsc(num), contenu)
+	}
+	b.WriteString(`</ul>`)
 }
 
 // wallBracketViews renders one view per event that has a bracket to show.

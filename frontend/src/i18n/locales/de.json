@@ -1897,7 +1897,7 @@
             "waiting_batch": "Paarung beim nächsten Durchgang.",
             "waiting_table": "kein freier Tisch",
             "player_unavailable": "Spieler nicht verfügbar",
-            "player_busy": "spielt in einem anderen Turnier"
+            "player_busy": "spielt in einem anderen Wettbewerb"
         },
         "proposals": {
             "title": "Vorschläge ({n})",
@@ -1946,7 +1946,9 @@
             "shared": "Zwei Matches an diesem Tisch: einen verlegen",
             "swapConfirm": "Tisch {from} ↔ Tisch {to}?",
             "swap": "Tauschen",
-            "moveRefused": "Verschieben abgelehnt: {reason}"
+            "moveRefused": "Verschieben abgelehnt: {reason}",
+            "room": "Saal {name}",
+            "assignedTo": "Zugewiesen an {names}"
         },
         "result": {
             "title": "Ergebnis",
@@ -1962,7 +1964,7 @@
             "apply": "Anwenden",
             "forfeitWins": "Nichtantritt von {loser} → {winner} gewinnt",
             "forfeitConfirm": "{loser} tritt nicht an: {winner} gewinnt dieses Match. Bestätigen?",
-            "cancelConfirm": "Match {a} – {b} annullieren? Es verschwindet aus dem Saal; das Protokoll behält es."
+            "cancelConfirm": "Match {a} – {b} annullieren? Es verschwindet von den Tischen; das Protokoll behält es."
         },
         "last": {
             "result": "{winner} schlägt {loser}",
@@ -2017,7 +2019,7 @@
             "noEntry": "{player} ist gemeldet, steigt aber in keine Phase ein.",
             "phaseN": "Phase {n}",
             "pair": "Paar",
-            "pairHint": "Ein Doppelturnier: zwei Personen, ein Teilnehmer „A / B\".",
+            "pairHint": "Ein Doppelwettbewerb: zwei Personen, ein Teilnehmer „A / B\".",
             "name2": "Name des Partners",
             "pairRating": "Wertung des Paars",
             "pairRatingHint": "Standardmäßig der Mittelwert beider Wertungen; ein eingegebener Wert ersetzt ihn.",
@@ -2165,7 +2167,7 @@
             "lastChance": "Phase {phase} — Letzte Chance: {from} → {to}",
             "reconciliation": "Phase {phase} — Versöhnungsspiel: {from} → {to}",
             "recharge": "Phase {phase} — Aufladung: {from} → {to}",
-            "alsoFor": "Gilt auch für: {names} (gleicher Saal)."
+            "alsoFor": "Gilt auch für: {names} (gleiche Veranstaltung)."
         },
         "lock": {
             "drawn": "Auslosung erfolgt",
@@ -2215,7 +2217,7 @@
             "announced": "Angekündigt: {at}"
         },
         "display": {
-            "title": "Saalanzeige",
+            "title": "Anzeige",
             "hint": "Ein einmal gewählter Ordner: Die Seite wird bei jedem Ereignis neu geschrieben, ohne weiteres Zutun. Sie öffnet sich offline, auf einem zweiten Bildschirm oder per Beamer.",
             "chooseFolder": "Ordner wählen",
             "changeFolder": "Ordner wechseln",
@@ -2269,34 +2271,34 @@
             "fileWord": "verzeichnis"
         },
         "rencontre": {
-            "title": "Rencontre",
-            "hint": "Mehrere Turniere im selben Saal: Tische, gesperrte Tische und Pausen sind gemeinsam, und keines schlägt einen Tisch vor, an dem ein anderes spielt.",
+            "title": "Veranstaltung",
+            "hint": "Mehrere Wettbewerbe in derselben Veranstaltung: Tische, gesperrte Tische und Pausen sind gemeinsam, und keiner schlägt einen Tisch vor, an dem ein anderer spielt.",
             "tableCount": "{n} Tische",
-            "members": "Turniere: {names}",
+            "members": "Wettbewerbe: {names}",
             "outOfService": "Gesperrte Tische",
-            "outOfServiceHint": "Einmal gemeldet, für alle Turniere im Saal.",
-            "detach": "Von der Rencontre lösen",
-            "trash": "Rencontre löschen",
+            "outOfServiceHint": "Einmal gemeldet, für alle Wettbewerbe der Veranstaltung.",
+            "detach": "Von der Veranstaltung lösen",
+            "trash": "Veranstaltung löschen",
             "attach": "Zuordnen…",
-            "name": "Name der Rencontre",
+            "name": "Name der Veranstaltung",
             "tables": "Tische",
             "startsOn": "Beginn",
             "endsOn": "Ende",
             "create": "Anlegen und zuordnen…",
-            "confirmTitle": "Was sich in diesem Turnier ändert:",
-            "noChange": "Nichts: seine Tische sind bereits die des Saals.",
+            "confirmTitle": "Was sich in diesem Wettbewerb ändert:",
+            "noChange": "Nichts: seine Tische sind bereits die der Veranstaltung.",
             "confirm": "Zuordnen",
             "wall": {
                 "rounds": "{n} Runden angekündigt"
             },
-            "trashConfirm": "Veranstaltung „{name}“ löschen? Ihre Turniere bleiben, abgelöst."
+            "trashConfirm": "Veranstaltung „{name}“ löschen? Ihre Wettbewerbe bleiben, abgelöst."
         },
         "hall": {
-            "tab": "Saal",
-            "legend": "Turniere im Saal",
-            "proposals": "Vorschläge im Saal ({n})",
-            "loading": "Saal wird geladen…",
-            "error": "Der Saal konnte nicht gelesen werden: {reason}",
+            "tab": "Alle Tische",
+            "legend": "Wettbewerbe der Veranstaltung",
+            "proposals": "Vorschläge der Veranstaltung ({n})",
+            "loading": "Tische werden geladen…",
+            "error": "Die Tische konnten nicht gelesen werden: {reason}",
             "eventError": "{event} lässt sich nicht nachspielen; seine Tische fehlen: {reason}",
             "swapConfirm": "Tisch {from} ({a}) ↔ Tisch {to} ({b})?"
         },
@@ -2336,6 +2338,30 @@
             "launchAtTable": "An einem Tisch starten…",
             "changeLength": "Länge ändern…",
             "printSheet": "Rundenblatt drucken"
+        },
+        "tableProps": {
+            "title": "Tischeigenschaften",
+            "hint": "Ein Name („Stream“), ein Saal, eine Reservierung, zugewiesene Spieler. Ein Tisch ohne Eigenschaft ist ein gewöhnlicher Tisch.",
+            "number": "Tisch",
+            "name": "Name",
+            "room": "Saal",
+            "reserved": "Reserviert",
+            "assignedTo": "Zugewiesen an",
+            "assign": "Spieler hinzufügen…",
+            "unassign": "{name} entfernen",
+            "nameOf": "Name von Tisch {n}",
+            "roomOf": "Saal von Tisch {n}",
+            "reservedOf": "Tisch {n} reserviert",
+            "assignOf": "Tisch {n} einem Spieler zuweisen",
+            "bulkFrom": "Tische von",
+            "bulkTo": "bis",
+            "bulkApply": "Anwenden",
+            "save": "Speichern",
+            "reset": "Änderungen verwerfen"
+        },
+        "rooms": {
+            "title": "Säle, in denen dieser Wettbewerb gespielt wird",
+            "hint": "Keine Auswahl: alle Tische."
         }
     },
     "palette": {

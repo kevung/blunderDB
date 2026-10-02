@@ -194,16 +194,8 @@ func alignTables(ctx context.Context, store direction.Store, tournamentID int64,
 	return nil
 }
 
-// Realign puts every member of a Rencontre back on the room's tables, as attaching
-// them does. A restored Rencontre needs it: its events kept their own tables while detached.
-func (d *Service) Realign(ctx context.Context, id int64) error {
-	if err := d.realign(ctx, id); err != nil {
-		return err
-	}
-	d.writeRencontrePages(context.WithoutCancel(ctx), id)
-	return nil
-}
-
+// realign puts every member of a Rencontre back on the room's tables, as attaching them does.
+// A restored Rencontre needs it: its events kept their own tables while detached.
 func (d *Service) realign(ctx context.Context, id int64) (err error) {
 	d, release, err := d.lockRoom(ctx, 0, id)
 	if err != nil {
@@ -404,6 +396,10 @@ type sisterRoom struct {
 	tables map[int]string
 	// players maps each Participant of this Tournament who plays next door to that seat.
 	players map[tournoi.PlayerID]direction.Seat
+	// plan is the Tournament's table properties and rooms; members the persons behind its
+	// doubles Participants, whom a table may be kept for.
+	plan    direction.TablePlan
+	members map[string][]string
 }
 
 // external is the room as the engine takes it.
@@ -416,23 +412,36 @@ func (r sisterRoom) external() tournoi.External {
 	return tournoi.External{BusyTables: busy, BusyPlayers: direction.BusyPlayers(r.players)}
 }
 
-// outside is the room as the engine takes it, for one Tournament.
-func (d *Service) outside(ctx context.Context, tournamentID int64, me *direction.Direction) tournoi.External {
-	return d.roomAround(ctx, tournamentID, me).external()
+// propose is what the engine proposes to dir in this room, under its table properties: the
+// sisters' tables and the closed ones skipped, a kept table given to its holder's match.
+func (r sisterRoom) propose(dir *direction.Direction, now time.Time) []tournoi.Action {
+	return dir.ProposeIn(now, r.external(), r.plan, r.members)
 }
 
 // roomAround replays the sister events of a Tournament. me is its own replayed Direction, to
-// find which of its Participants play next door; nil when only the tables are wanted.
-func (d *Service) roomAround(ctx context.Context, tournamentID int64, me *direction.Direction) sisterRoom {
+// find which of its Participants play next door and to read its table properties; nil when
+// only the sisters' tables are wanted.
+func (d *Service) roomAround(ctx context.Context, tournamentID int64, me *direction.Direction) (sisterRoom, error) {
+	alone := sisterRoom{tables: map[int]string{}, players: map[tournoi.PlayerID]direction.Seat{}}
+	if me != nil {
+		cfg, err := me.Config()
+		if err != nil {
+			return alone, err
+		}
+		if alone.plan, err = d.planFor(ctx, tournamentID, cfg); err != nil {
+			return alone, err
+		}
+		alone.members = d.memberNames(ctx, tournamentID)
+	}
 	rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID)
 	if err != nil || rid == 0 {
-		return sisterRoom{tables: map[int]string{}, players: map[tournoi.PlayerID]direction.Seat{}}
+		return alone, err
 	}
 	r, err := d.st.Rencontres().Get(ctx, d.scope, rid)
 	if err != nil {
-		return sisterRoom{tables: map[int]string{}, players: map[tournoi.PlayerID]direction.Seat{}}
+		return alone, err
 	}
-	return d.roomFrom(ctx, tournamentID, me, d.openMembers(ctx, r, tournamentID))
+	return d.roomFrom(ctx, r, tournamentID, me, d.openMembers(ctx, r, tournamentID)), nil
 }
 
 // member is one event of a Rencontre, replayed once for every reader of the room. dir is nil
@@ -463,7 +472,7 @@ func (d *Service) openMembers(ctx context.Context, r *domain.Rencontre, skip int
 
 // roomFrom is the room around one Tournament, read from members already replayed: the tables
 // and players of every other member that replays.
-func (d *Service) roomFrom(ctx context.Context, tournamentID int64, me *direction.Direction, members []member) sisterRoom {
+func (d *Service) roomFrom(ctx context.Context, r *domain.Rencontre, tournamentID int64, me *direction.Direction, members []member) sisterRoom {
 	out := sisterRoom{tables: map[int]string{}, players: map[tournoi.PlayerID]direction.Seat{}}
 	var sisters []direction.Sister
 	for _, m := range members {
@@ -478,7 +487,10 @@ func (d *Service) roomFrom(ctx context.Context, tournamentID int64, me *directio
 		}
 	}
 	if me != nil {
-		out.players = me.BusyIn(direction.PlayingElsewhere(sisters...), d.memberNames(ctx, tournamentID))
+		out.members = d.memberNames(ctx, tournamentID)
+		out.players = me.BusyIn(direction.PlayingElsewhere(sisters...), out.members)
+		cfg, _ := me.Config()
+		out.plan = planIn(r, tournamentID, cfg)
 	}
 	return out
 }

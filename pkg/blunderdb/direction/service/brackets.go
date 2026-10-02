@@ -11,7 +11,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The brackets of a Direction (tasks/nicomaque/fonctionnel.md §5.6).
+// The brackets of a Direction.
 //
 // The engine renders an SVG for the display page, but the in-app view is the frontend's
 // (translated, clickable); Go hands over the structure with untranslated codes.
