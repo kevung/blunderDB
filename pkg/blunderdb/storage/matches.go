@@ -14,11 +14,15 @@ type MatchListOpts struct {
 	// PlayerName keeps only matches where this exact name is player 1 or
 	// player 2. It is the match-level "my matches" filter — distinct from
 	// StatsFilter.PlayerName, which selects a player's decisions by joining moves.
-	PlayerName    string
-	TournamentIDs []int64
-	DateFrom      string // ISO "YYYY-MM-DD", inclusive
-	DateTo        string // ISO "YYYY-MM-DD", inclusive
-	MatchLength   []int
+	PlayerName string
+	// PlayerNameContains keeps matches where either player's name contains
+	// this text, case-insensitively (ASCII only on SQLite, whose LIKE folds
+	// nothing else), with % and _ taken literally. It serves a search box.
+	PlayerNameContains string
+	TournamentIDs      []int64
+	DateFrom           string // ISO "YYYY-MM-DD", inclusive
+	DateTo             string // ISO "YYYY-MM-DD", inclusive
+	MatchLength        []int
 	// Sort is a key understood by domain.MatchOrderByClause ("" = most recent
 	// first). PR/MWC are not match columns (they are computed badges), so they
 	// are not sortable here.
