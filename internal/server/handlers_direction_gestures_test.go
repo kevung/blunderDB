@@ -471,3 +471,29 @@ func TestDirectionGestures_SetTables(t *testing.T) {
 		t.Errorf("answered version %q, next read %q", r.version, f.versionOf(t, ts))
 	}
 }
+
+// TestTrashRestoreRealignsTheRoom: /v1/trash.restore restores a Rencontre through the direction
+// service, so its events come back on the room's tables, as the desktop does.
+func TestTrashRestoreRealignsTheRoom(t *testing.T) {
+	ts, srv := gestureServer(t)
+	f := seedDirection(t, srv.opts.Storage, "1", "Open de Lyon")
+	trashID, err := f.svc.TrashRencontre(f.ctx, f.rencontreID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := `{"name":"Open de Lyon","tables":{"count":2},"phases":[{"kind":"swiss_lives","length":7,"lives":2,"mode":"continuous"}]}`
+	if err := f.svc.SetDirectionConfig(f.ctx, f.tournamentID, cfg); err != nil {
+		t.Fatal(err)
+	}
+	r := send(t, ts, "1", "/v1/trash.restore", `{"id":`+strconv.FormatInt(trashID, 10)+`}`, "", "")
+	if r.status != http.StatusOK {
+		t.Fatalf("trash.restore: %d %.200s", r.status, r.body)
+	}
+	v, err := f.svc.GetDirection(f.ctx, f.tournamentID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if v.RencontreID == 0 || v.Config.Tables.Count != 4 {
+		t.Errorf("restored: rencontre %d, %d tables; want the room's 4", v.RencontreID, v.Config.Tables.Count)
+	}
+}

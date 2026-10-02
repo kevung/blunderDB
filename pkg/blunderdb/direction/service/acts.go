@@ -40,7 +40,11 @@ func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tou
 	}
 	defer release(&err)
 	if shared && a.Kind == tournoi.ActStartMatch && a.Table > 0 {
-		if _, taken := d.roomAround(ctx, tournamentID, nil).tables[a.Table]; taken {
+		room, err := d.roomAround(ctx, tournamentID, nil)
+		if err != nil {
+			return err
+		}
+		if _, taken := room.tables[a.Table]; taken {
 			return direction.Refusef("direction: table %d is taken", a.Table)
 		}
 	}
@@ -53,6 +57,9 @@ func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tou
 			return err
 		}
 		if err := d.refuseOutside(ctx, dir, tournamentID, a.Table); err != nil {
+			return err
+		}
+		if err := d.refuseClosed(ctx, dir, tournamentID, a); err != nil {
 			return err
 		}
 	}
@@ -87,7 +94,11 @@ func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) (
 	// Proposed at the SAME instant the events will carry, or the queue and its confirmation
 	// disagree about a micro-round's deadline.
 	// The sister events of the Rencontre, if any, hold tables the engine must not give out.
-	for _, a := range d.roomAround(ctx, tournamentID, dir).propose(dir, now) {
+	room, err := d.roomAround(ctx, tournamentID, dir)
+	if err != nil {
+		return err
+	}
+	for _, a := range room.propose(dir, now) {
 		if a.Kind == tournoi.ActWait {
 			continue
 		}
@@ -152,7 +163,11 @@ func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a,
 	// database's guard: no sister seats a match on one of them before this match is written.
 	sisters := map[int]string{}
 	if shared {
-		sisters = d.roomAround(ctx, tournamentID, nil).tables
+		room, err := d.roomAround(ctx, tournamentID, nil)
+		if err != nil {
+			return err
+		}
+		sisters = room.tables
 	}
 	// The occupancy check and the write share one transaction: checked outside it, two
 	// directors could both see the table free and both start a match on it.
@@ -179,7 +194,10 @@ func (d *Service) startMatchManually(ctx context.Context, tournamentID int64, a,
 			// event of the room plays on, inside the event's rooms, neither reserved nor kept
 			// for someone. With none left the match still starts, under the grid's "no table"
 			// cell.
-			skip := d.closedTables(ctx, dir, tournamentID)
+			skip, err := d.closedTables(ctx, dir, tournamentID)
+			if err != nil {
+				return err
+			}
 			for n, ev := range sisters {
 				skip[n] = ev
 			}

@@ -34,26 +34,34 @@ func (d *Direction) Page(cat *Catalog, lang string, now time.Time) (string, erro
 }
 
 // PageIn is Page under the table properties: the proposals it lists are those the panel shows
-// (ProposeIn), and a named table carries its name beside its number (ADR-0058 §1).
-func (d *Direction) PageIn(cat *Catalog, lang string, now time.Time, p TablePlan, members map[string][]string) (string, error) {
+// (ProposeIn, with ext what the sister events hold), and a named table carries its name beside
+// its number (ADR-0058 §1).
+func (d *Direction) PageIn(cat *Catalog, lang string, now time.Time, ext tournoi.External, p TablePlan, members map[string][]string) (string, error) {
 	if d.st == nil {
 		return "", ErrNoDirection
 	}
 	r := d.renderer(cat, lang)
-	page := r.Page(d.st, d.ProposeIn(now, tournoi.External{}, p, members), now)
+	page := r.Page(d.st, d.ProposeIn(now, ext, p, members), now)
 	return NameTables(page, r.L.Term(render.TermTable, 0), p.Settings), nil
 }
 
 // NameTables adds each named table's name beside its number wherever a page heads a table cell
-// with it, as the engine's renderer and the wall page both do.
+// with it, as the engine's renderer and the wall page both do, and in the proposals the
+// renderer lists, each of which opens with its table.
 func NameTables(page, tableTerm string, settings []domain.TableSetting) string {
+	term := html.EscapeString(tableTerm)
 	for _, s := range settings {
 		if s.Name == "" {
 			continue
 		}
-		num := fmt.Sprintf(`<span class="num">%s %d</span>`, html.EscapeString(tableTerm), s.Number)
-		named := fmt.Sprintf(`<span class="num">%s %d — %s</span>`, html.EscapeString(tableTerm), s.Number, html.EscapeString(s.Name))
+		name := html.EscapeString(s.Name)
+		num := fmt.Sprintf(`<span class="num">%s %d</span>`, term, s.Number)
+		named := fmt.Sprintf(`<span class="num">%s %d — %s</span>`, term, s.Number, name)
 		page = strings.ReplaceAll(page, num, named)
+		for _, li := range []string{`<li>`, `<li class="alerte">`} {
+			proposal := fmt.Sprintf(`%s%s %d — `, li, term, s.Number)
+			page = strings.ReplaceAll(page, proposal, fmt.Sprintf(`%s%s %d — %s — `, li, term, s.Number, name))
+		}
 	}
 	return page
 }
