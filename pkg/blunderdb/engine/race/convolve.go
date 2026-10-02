@@ -7,7 +7,7 @@ import (
 )
 
 // Win-probability estimation for pure-bearoff positions outside the exact
-// two-sided domain. Method (ADR-0009, tasks/ts-bearoff/hypotheses.md):
+// two-sided domain. Method (ADR-0009):
 //
 //  1. Convolve the two one-sided roll distributions (OS table): the
 //     player on roll wins iff their roll count ≤ the opponent's. Exact under

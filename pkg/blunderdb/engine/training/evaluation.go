@@ -92,8 +92,7 @@ const (
 // drops the walk and falls back to a pool seed at k = 0 (rule 5). A walk ply
 // costs about 0.2 ms, so ten plies never come near it on a working machine.
 // The truth that follows is not preempted — gammonNet has no checkpoint
-// inside a search — and its cost is what TestTheCostOfAQuestionStaysUnder
-// ItsBudget holds.
+// inside a search — and its cost is held by the budget test in engine/race.
 const questionDeadline = 50 * time.Millisecond
 
 // EvaluationRequest asks for one question. Seed is required for the board and

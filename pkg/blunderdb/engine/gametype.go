@@ -27,7 +27,7 @@ const GameTypeRulesVersion = "heuristique_v1"
 const (
 	// CrunchActiveCheckersMax is gnubg's CLASS_CRASHED threshold, SOURCED:
 	// "you have at most 6 checkers not on points 1 or 2" (Joseph Heled,
-	// bug-gnubg, 2012-02-08, quoted in P5 §Key Findings 3).
+	// on the bug-gnubg list).
 	CrunchActiveCheckersMax = 6
 
 	// BlitzHomePointsMin is how many home-board points the mover must have

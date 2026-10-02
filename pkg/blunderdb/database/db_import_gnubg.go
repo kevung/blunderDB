@@ -1,8 +1,6 @@
 package database
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"fmt"
 	"log/slog"
 	"sort"
@@ -10,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
-	"github.com/kevung/gnubgparser"
 )
 
 // ============================================================================
@@ -138,36 +135,4 @@ func formatGnuBGMoveItems(move [8]int, player int, formatPoint func(int, int) st
 	}
 
 	return strings.Join(moves, " ")
-}
-
-// ComputeGnuBGMatchHash generates a unique hash for a gnubgparser match
-// Used to detect duplicate imports
-func ComputeGnuBGMatchHash(match *gnubgparser.Match) string {
-	var hashBuilder strings.Builder
-
-	// Include metadata (normalized)
-	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1))
-	p2 := strings.TrimSpace(strings.ToLower(match.Metadata.Player2))
-	hashBuilder.WriteString(fmt.Sprintf("meta:%s|%s|%d|", p1, p2, match.Metadata.MatchLength))
-
-	// Include full game transcription
-	for gameIdx, game := range match.Games {
-		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d,%d,%d|",
-			gameIdx, game.Score[0], game.Score[1], game.Winner, game.Points))
-
-		// Include all moves in the game
-		for moveIdx, moveRec := range game.Moves {
-			hashBuilder.WriteString(fmt.Sprintf("m%d:%s,", moveIdx, string(moveRec.Type)))
-
-			if moveRec.Type == "move" {
-				hashBuilder.WriteString(fmt.Sprintf("d%d%d,p%s|",
-					moveRec.Dice[0], moveRec.Dice[1], moveRec.MoveString))
-			} else if moveRec.Type == "double" || moveRec.Type == "take" || moveRec.Type == "drop" {
-				hashBuilder.WriteString(fmt.Sprintf("c%s|", string(moveRec.Type)))
-			}
-		}
-	}
-
-	hash := sha256.Sum256([]byte(hashBuilder.String()))
-	return hex.EncodeToString(hash[:])
 }

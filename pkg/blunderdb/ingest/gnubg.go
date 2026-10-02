@@ -283,8 +283,8 @@ func gnuBGDoubleResponse(game *gnubgparser.Game, idx int) string {
 	return cubeAction
 }
 
-// computeGnuBGMatchHash is the format-specific content hash. Copied from
-// database.ComputeGnuBGMatchHash; TestGnuBGHashParity keeps them in lock-step.
+// computeGnuBGMatchHash is the format-specific content hash. Stored databases
+// deduplicate on it: TestMatchHashReference freezes its value.
 func computeGnuBGMatchHash(match *gnubgparser.Match) string {
 	var b strings.Builder
 	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1))
@@ -311,7 +311,6 @@ func computeGnuBGMatchHash(match *gnubgparser.Match) string {
 
 // computeCanonicalMatchHashFromGnuBG is the format-independent hash, identical
 // to computeCanonicalMatchHashFromXG for the same match (cross-format dedup).
-// Copied from database.ComputeCanonicalMatchHashFromGnuBG.
 func computeCanonicalMatchHashFromGnuBG(match *gnubgparser.Match) string {
 	var b strings.Builder
 	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1))

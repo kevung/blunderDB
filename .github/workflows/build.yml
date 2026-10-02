@@ -24,7 +24,7 @@ env:
   # and inherits it. NODE_VERSION is an LTS line — 23 was an odd-numbered
   # release, out of support since 2025.
   GO_VERSION: "1.26.8"
-  NODE_VERSION: "22.21.1"
+  NODE_VERSION: "22.22.2"
 
 # One in-flight run per branch/tag: a burst of 3 commits collapses to the
 # latest instead of running 3 full matrices. Only pull_request runs cancel a
@@ -771,6 +771,10 @@ jobs:
 
       - name: Create frontend dist stub
         run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: Comment guard
+        run: scripts/check-comments.sh
         shell: bash
 
       - name: golangci-lint

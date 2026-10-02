@@ -1,15 +1,58 @@
 #!/usr/bin/env bash
-# Versioned pre-commit hook (E.5, #221): the previous hook lived only in
-# .git/hooks, which git never tracks — a fresh clone had no hook at all, and
-# it only ever ran the frontend's lint/format check, never gofmt or `go vet`
-# on the Go side. Wire it in once per clone with:
-#
-#   git config core.hooksPath .githooks
-#
-# (see CONTRIBUTING.md). Runs `make check-fast`: gofmt, `go vet`, eslint,
-# prettier --check — seconds, no network, no Docker. The full suite
-# (`make check` / `make check-all`) is for before a push, not every commit.
-set -e
+# Versioned pre-commit hook, incremental: it looks at the staged files only.
+# Wire it in once per clone with `make setup` (git config core.hooksPath .githooks).
+#   Go:       gofmt, go vet and go test -short on the touched packages
+#   Frontend: eslint and prettier --check on the staged files, plus the
+#             Svelte warnings budget when a .svelte file is staged
+# Nothing relevant staged, nothing run. The full loop is `make check`.
+set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
-echo "Running make check-fast (gofmt, go vet, eslint, prettier)..."
-make check-fast
+
+mapfile -t staged < <(git diff --cached --name-only --diff-filter=ACMR)
+[ ${#staged[@]} -eq 0 ] && exit 0
+
+go_files=(); front_files=(); svelte=0
+for f in "${staged[@]}"; do
+  case "$f" in
+    frontend/wailsjs/*|frontend/dist/*) ;;
+    *.go) go_files+=("$f") ;;
+    frontend/*.js|frontend/*.mjs|frontend/*.svelte|frontend/*.json|frontend/*.css)
+      case "$f" in frontend/node_modules/*) continue ;; esac
+      front_files+=("${f#frontend/}")
+      [[ "$f" == *.svelte ]] && svelte=1 ;;
+  esac
+done
+
+if [ ${#go_files[@]} -gt 0 ]; then
+  # main.go embeds frontend/dist, absent from a fresh checkout or worktree.
+  if [ ! -e frontend/dist ]; then mkdir -p frontend/dist && touch frontend/dist/.gitkeep; fi
+  bad="$(gofmt -l "${go_files[@]}")"
+  if [ -n "$bad" ]; then
+    echo "gofmt: not clean (run: gofmt -w):" >&2; echo "$bad" >&2; exit 1
+  fi
+  pkgs=()
+  while IFS= read -r d; do pkgs+=("./$d"); done < <(
+    for f in "${go_files[@]}"; do dirname "$f"; done | sort -u |
+      while read -r d; do [ -d "$d" ] && ls "$d"/*.go >/dev/null 2>&1 && echo "$d"; done)
+  pkgs=("${pkgs[@]/#.\/./.}")
+  if [ ${#pkgs[@]} -gt 0 ]; then
+    echo "pre-commit: go vet + go test -short on ${pkgs[*]}"
+    go vet "${pkgs[@]}"
+    out="$(mktemp)"; trap 'rm -f "$out"' EXIT
+    if ! go test -short -count=1 "${pkgs[@]}" >"$out" 2>&1; then
+      grep -Ev '^(ok|\?) ' "$out" | head -60 >&2; exit 1
+    fi
+  fi
+fi
+
+if [ ${#front_files[@]} -gt 0 ]; then
+  if [ ! -d frontend/node_modules ]; then
+    echo "pre-commit: frontend/node_modules absent, frontend checks skipped (npm ci, or link it into this worktree)" >&2
+  else
+    echo "pre-commit: eslint + prettier on ${#front_files[@]} frontend file(s)"
+    (cd frontend && npx eslint "${front_files[@]}" && npx prettier --check "${front_files[@]}")
+    if [ "$svelte" -eq 1 ]; then
+      (cd frontend && npm run --silent check:svelte-warnings)
+    fi
+  fi
+fi

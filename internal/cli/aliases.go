@@ -112,11 +112,5 @@ var (
 	ErrDuplicateMatch = database.ErrDuplicateMatch
 	RawConn           = database.RawConn
 
-	ComputeMatchHash                   = database.ComputeMatchHash
-	ComputeGnuBGMatchHash              = database.ComputeGnuBGMatchHash
-	ComputeBGFMatchHash                = database.ComputeBGFMatchHash
-	ComputeCanonicalMatchHashFromXG    = database.ComputeCanonicalMatchHashFromXG
-	ComputeCanonicalMatchHashFromBGF   = database.ComputeCanonicalMatchHashFromBGF
-	ComputeCanonicalMatchHashFromGnuBG = database.ComputeCanonicalMatchHashFromGnuBG
-	ConvertEMGLossToMWCLoss            = database.ConvertEMGLossToMWCLoss
+	ConvertEMGLossToMWCLoss = database.ConvertEMGLossToMWCLoss
 )

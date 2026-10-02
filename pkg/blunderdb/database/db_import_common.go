@@ -13,8 +13,6 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
-	"github.com/kevung/gnubgparser"
-	"github.com/kevung/xgparser/xgparser"
 )
 
 // openExistingSQLite opens a database file that is only being read from —
@@ -207,44 +205,6 @@ var normalizeMove = engine.NormalizeMove
 // ErrDuplicateMatch is returned when attempting to import a match that already exists
 var ErrDuplicateMatch = fmt.Errorf("duplicate match: this match has already been imported")
 
-// ComputeMatchHash generates a unique hash for a match based on full match transcription
-// This is used to detect duplicate imports - includes all moves and decisions
-func ComputeMatchHash(match *xgparser.Match) string {
-	var hashBuilder strings.Builder
-
-	// Include metadata (normalized)
-	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1Name))
-	p2 := strings.TrimSpace(strings.ToLower(match.Metadata.Player2Name))
-	hashBuilder.WriteString(fmt.Sprintf("meta:%s|%s|%d|", p1, p2, match.Metadata.MatchLength))
-
-	// Include full game transcription
-	for gameIdx, game := range match.Games {
-		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d,%d,%d|",
-			gameIdx, game.InitialScore[0], game.InitialScore[1], game.Winner, game.PointsWon))
-
-		// Include all moves in the game
-		for moveIdx, move := range game.Moves {
-			hashBuilder.WriteString(fmt.Sprintf("m%d:%s,", moveIdx, move.MoveType))
-
-			if move.CheckerMove != nil {
-				// Include dice and played move
-				hashBuilder.WriteString(fmt.Sprintf("d%d%d,p%v|",
-					move.CheckerMove.Dice[0], move.CheckerMove.Dice[1],
-					move.CheckerMove.PlayedMove))
-			}
-
-			if move.CubeMove != nil {
-				// Include cube action details
-				hashBuilder.WriteString(fmt.Sprintf("c%d|", move.CubeMove.CubeAction))
-			}
-		}
-	}
-
-	// Compute SHA256 hash of the full transcription
-	hash := sha256.Sum256([]byte(hashBuilder.String()))
-	return hex.EncodeToString(hash[:])
-}
-
 // computeMatchHashFromStoredData computes a hash for existing matches in the database
 // This is used during migration when we don't have access to the original XG file
 func computeMatchHashFromStoredData(db *sql.DB, matchID int64, p1Name, p2Name string, matchLength int32) string {
@@ -325,86 +285,4 @@ func (d *Database) CheckMatchExists(matchHash string) (int64, error) {
 		return 0, fmt.Errorf("error checking for duplicate match: %w", err)
 	}
 	return existingID, nil
-}
-
-// maxCanonicalDicePerGame limits how many dice per game are included in the canonical hash.
-// Different file formats (XG, SGF, MAT) handle end-of-game dice differently:
-// XG records game-ending rolls that SGF/MAT may omit, and MAT can diverge
-// in later moves due to parser edge cases. Using only the first N dice avoids
-// these differences while providing strong match identification.
-// 10 dice per game * 21 possible outcomes * 7+ games = astronomically low collision probability.
-const maxCanonicalDicePerGame = 10
-
-// ComputeCanonicalMatchHashFromXG computes a format-independent match hash from XG data.
-// This hash uses only the first N dice per game (physical events identical across all export
-// formats) plus normalized player names, match length, and game count, making it identical
-// whether the match was imported from XG, GnuBG (SGF/MAT), or BGBlitz (BGF) format.
-func ComputeCanonicalMatchHashFromXG(match *xgparser.Match) string {
-	var hashBuilder strings.Builder
-
-	// Normalized player names (sorted alphabetically for consistency)
-	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1Name))
-	p2 := strings.TrimSpace(strings.ToLower(match.Metadata.Player2Name))
-	if p1 > p2 {
-		p1, p2 = p2, p1
-	}
-	hashBuilder.WriteString(fmt.Sprintf("canonical2:%s|%s|%d|%d|", p1, p2, match.Metadata.MatchLength, len(match.Games)))
-
-	for gameIdx, game := range match.Games {
-		hashBuilder.WriteString(fmt.Sprintf("g%d|", gameIdx))
-		diceCount := 0
-		for _, move := range game.Moves {
-			if diceCount >= maxCanonicalDicePerGame {
-				break
-			}
-			if move.MoveType == "checker" && move.CheckerMove != nil {
-				d1 := move.CheckerMove.Dice[0]
-				d2 := move.CheckerMove.Dice[1]
-				if d1 > d2 {
-					d1, d2 = d2, d1
-				}
-				hashBuilder.WriteString(fmt.Sprintf("d%d%d|", d1, d2))
-				diceCount++
-			}
-		}
-	}
-
-	hash := sha256.Sum256([]byte(hashBuilder.String()))
-	return hex.EncodeToString(hash[:])
-}
-
-// ComputeCanonicalMatchHashFromGnuBG computes a format-independent match hash from GnuBG data.
-// Must produce the same hash as ComputeCanonicalMatchHashFromXG for the same match.
-// Uses only the first N dice per game for cross-format compatibility.
-func ComputeCanonicalMatchHashFromGnuBG(match *gnubgparser.Match) string {
-	var hashBuilder strings.Builder
-
-	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1))
-	p2 := strings.TrimSpace(strings.ToLower(match.Metadata.Player2))
-	if p1 > p2 {
-		p1, p2 = p2, p1
-	}
-	hashBuilder.WriteString(fmt.Sprintf("canonical2:%s|%s|%d|%d|", p1, p2, match.Metadata.MatchLength, len(match.Games)))
-
-	for gameIdx, game := range match.Games {
-		hashBuilder.WriteString(fmt.Sprintf("g%d|", gameIdx))
-		diceCount := 0
-		for _, moveRec := range game.Moves {
-			if diceCount >= maxCanonicalDicePerGame {
-				break
-			}
-			if moveRec.Type == "move" {
-				d1 := moveRec.Dice[0]
-				d2 := moveRec.Dice[1]
-				if d1 > d2 {
-					d1, d2 = d2, d1
-				}
-				hashBuilder.WriteString(fmt.Sprintf("d%d%d|", d1, d2))
-				diceCount++
-			}
-		}
-	}
-
-	hash := sha256.Sum256([]byte(hashBuilder.String()))
-	return hex.EncodeToString(hash[:])
 }

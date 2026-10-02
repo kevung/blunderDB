@@ -3,22 +3,12 @@ package database
 // Schema migrations for the SQLite .db file.
 //
 // The chain is a registry, migrationSteps: one entry per schema version,
-// each naming the version it starts from, the version it produces and the
-// function that does the work. runMigrationChain walks it from the version
-// the file records up to DatabaseVersion, stamping and logging each step it
-// completes. The steps themselves live beside their versions:
-//
-//   - db_migration_v1.go    — 1.0.0 → 2.0.0 (the pre-2.0 DDL and the 2.0.0
-//     scalar-column backfill)
-//   - db_migration_v2.go    — 2.0.0 → 2.5.0 (storage-format rewrites)
-//   - db_migration_v2_5.go  — 2.5.0 → DatabaseVersion (flag columns, small DDL)
-//
-// Adding a schema version means: a migrate_X_to_Y function in the file that
-// holds its predecessor, one line in migrationSteps, the matching DDL in
-// db_schema.go (ensureAllTablesExist), the storage/sqlite fresh schema and a
-// storage/postgres migration — and a test in migration_test.go.
-// TestMigrationSteps_ContinuousChain fails the build when the registry has a
-// gap, a duplicate or does not end at DatabaseVersion.
+// naming the version it starts from, the one it produces and the function
+// that does the work (in db_migration_v*.go). runMigrationChain walks it from
+// the version the file records up to DatabaseVersion, stamping and logging
+// each step. The procedure for adding a version is the schema-change
+// invariant in CLAUDE.md; TestMigrationSteps_ContinuousChain fails the build
+// on a gap, a duplicate or a chain not ending at DatabaseVersion.
 //
 // A step does the schema or data work only. It must not write
 // database_version: the loop stamps `to` after the step returns nil and logs

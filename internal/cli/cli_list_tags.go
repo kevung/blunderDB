@@ -12,8 +12,7 @@ import (
 )
 
 // listTags prints the tag vocabulary of the database: every `#word` written
-// in a comment, with the number of positions carrying it (issue #265, fiche
-// I.9).
+// in a comment, with the number of positions carrying it.
 //
 // The list a user has actually built, and — when it is empty or short — the
 // list blunderDB suggests. A fresh library has no tags of its own, and a

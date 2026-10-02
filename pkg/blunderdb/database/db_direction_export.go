@@ -10,7 +10,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
-// A Direction travels with its tournament (tasks/nicomaque/fonctionnel.md §9), written by the PRODUCER into the file
+// A Direction travels with its tournament, written by the PRODUCER into the file
 // they make; nothing is written on the recipient's side (ADR-0007).
 //
 // Here, not in `ingest`: the direction tables are the desktop wrapper's alone (the daemon

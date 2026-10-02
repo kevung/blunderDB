@@ -19,7 +19,7 @@ export default defineConfig({
             output: {
                 manualChunks(id) {
                     // Split the heaviest, rarely-changing third-party deps out of the
-                    // main chunk (#207) so it caches independently of app code. Locale
+                    // main chunk so it caches independently of app code. Locale
                     // JSON/help HTML and driver.js already get their own chunks for
                     // free, one per dynamic import() — this only needs to cover the
                     // remaining statically-imported vendor weight (two.js, the board

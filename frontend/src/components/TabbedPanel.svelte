@@ -321,7 +321,7 @@
                 {#if tab.id === 'anki' && $ankiDueStore > 0}
                     <span class="tab-badge" aria-label={$t('tabbedPanel.ankiDue', { n: $ankiDueStore })}>{$ankiDueStore}</span>
                 {/if}
-                <!-- Propositions en attente (tasks/nicomaque/fonctionnel.md §8), la raison d'y revenir. -->
+                <!-- Propositions en attente : la raison d'y revenir. -->
                 {#if tab.id === 'tournaments' && $pendingProposalsStore > 0}
                     <span class="tab-badge" aria-label={$t('direction.pending', { n: $pendingProposalsStore })}>{$pendingProposalsStore}</span>
                 {/if}
