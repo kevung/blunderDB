@@ -98,17 +98,28 @@ const markFlaggedSQL = `UPDATE position SET flagged = 1
 // That is safe: every statement saveOnce runs is idempotent, and *p is only
 // mutated once saveOnce has fully succeeded.
 func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Position) (int64, error) {
-	var id int64
-	err := retryOnBusy(func() error {
-		var innerErr error
-		id, innerErr = s.saveOnce(ctx, scope, p)
-		return innerErr
-	})
+	id, _, err := s.SaveCreated(ctx, scope, p)
 	return id, err
 }
 
-// saveOnce is Save's single attempt, with no retry of its own.
-func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Position) (int64, error) {
+// SaveCreated is Save, reporting whether the INSERT added the row. A retry
+// after SQLITE_BUSY cannot misreport: the INSERT is a single autocommit
+// statement, so an attempt that inserted has nothing left that can be busy.
+func (s *positionStore) SaveCreated(ctx context.Context, scope string, p *domain.Position) (int64, bool, error) {
+	var (
+		id      int64
+		created bool
+	)
+	err := retryOnBusy(func() error {
+		var innerErr error
+		id, created, innerErr = s.saveOnce(ctx, scope, p)
+		return innerErr
+	})
+	return id, created, err
+}
+
+// saveOnce is SaveCreated's single attempt, with no retry of its own.
+func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Position) (int64, bool, error) {
 	norm := p.NormalizeForStorage()
 	cols := engine.PopulatePositionColumns(p)
 	res, err := s.db.ExecContext(ctx, positionInsertSQL,
@@ -121,12 +132,14 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 		engine.EncodeBoardCompact(norm.Board), boolToInt(norm.IndividuallyImported), boolToInt(norm.Flagged),
 		cols.MaxCube)
 	if err != nil {
-		return 0, fmt.Errorf("sqlite: save position: %w", err)
+		return 0, false, fmt.Errorf("sqlite: save position: %w", err)
 	}
 	var id int64
-	if affected, _ := res.RowsAffected(); affected > 0 {
+	affected, _ := res.RowsAffected()
+	created := affected > 0
+	if created {
 		if id, err = res.LastInsertId(); err != nil {
-			return 0, fmt.Errorf("sqlite: save position id: %w", err)
+			return 0, false, fmt.Errorf("sqlite: save position id: %w", err)
 		}
 	} else {
 		// Hash already present: keep the existing row, but let an individual
@@ -134,7 +147,7 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 		// they stay a pure no-op on a duplicate position.
 		if norm.IndividuallyImported {
 			if _, err := s.db.ExecContext(ctx, markIndividualSQL, int64(cols.ZobristHash)); err != nil {
-				return 0, fmt.Errorf("sqlite: mark position individually imported: %w", err)
+				return 0, false, fmt.Errorf("sqlite: mark position individually imported: %w", err)
 			}
 		}
 		// Same for the source-tool study mark: a match import that carries a
@@ -142,18 +155,18 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 		// of an already-known match deliver newly added marks.
 		if norm.Flagged {
 			if _, err := s.db.ExecContext(ctx, markFlaggedSQL, int64(cols.ZobristHash)); err != nil {
-				return 0, fmt.Errorf("sqlite: mark position flagged: %w", err)
+				return 0, false, fmt.Errorf("sqlite: mark position flagged: %w", err)
 			}
 		}
 		if err = s.db.QueryRowContext(ctx,
 			`SELECT id FROM position WHERE zobrist_hash = ?`,
 			int64(cols.ZobristHash)).Scan(&id); err != nil {
-			return 0, fmt.Errorf("sqlite: save position dedup lookup: %w", err)
+			return 0, false, fmt.Errorf("sqlite: save position dedup lookup: %w", err)
 		}
 	}
 	norm.ID = id
 	*p = norm
-	return id, nil
+	return id, created, nil
 }
 
 const positionUpdateSQL = `UPDATE position SET state = ?,

@@ -114,6 +114,51 @@ func TestLoadMissingReturnsNotFound(t *testing.T) {
 	}
 }
 
+// TestUnknownRouteHasItsOwnCode: a method the daemon does not serve answers
+// unknown_route, so a client never reads a version mismatch as missing data.
+func TestUnknownRouteHasItsOwnCode(t *testing.T) {
+	ts := newTestServer(t)
+	resp := post(t, ts, "/v1/positions.noSuchMethod", struct{}{})
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusNotFound {
+		t.Fatalf("status = %d, want 404", resp.StatusCode)
+	}
+	var env errorEnvelope
+	if err := json.NewDecoder(resp.Body).Decode(&env); err != nil {
+		t.Fatal(err)
+	}
+	if env.Error.Code != CodeUnknownRoute {
+		t.Fatalf("code = %q, want %q", env.Error.Code, CodeUnknownRoute)
+	}
+}
+
+// TestPositionsSaveReportsCreated: the first save of a position says created,
+// the second does not, and both name the same row.
+func TestPositionsSaveReportsCreated(t *testing.T) {
+	ts := newTestServer(t)
+	save := func() positionSaveResp {
+		t.Helper()
+		p := domain.InitializePosition()
+		resp := post(t, ts, "/v1/positions.save", positionReq{Position: &p})
+		defer resp.Body.Close()
+		if resp.StatusCode != http.StatusOK {
+			t.Fatalf("save status = %d, want 200", resp.StatusCode)
+		}
+		var got positionSaveResp
+		if err := json.NewDecoder(resp.Body).Decode(&got); err != nil {
+			t.Fatal(err)
+		}
+		return got
+	}
+	first, second := save(), save()
+	if !first.Created || second.Created {
+		t.Fatalf("created = %v then %v, want true then false", first.Created, second.Created)
+	}
+	if first.ID != second.ID {
+		t.Fatalf("ids %d then %d, want the same row", first.ID, second.ID)
+	}
+}
+
 func TestVoidHandlerReturnsOK(t *testing.T) {
 	ts := newTestServer(t)
 	// Deleting a non-existent position is a no-op that succeeds.

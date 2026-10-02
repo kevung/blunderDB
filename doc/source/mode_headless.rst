@@ -262,6 +262,19 @@ métadonnées, réglages de bibliothèque, statistiques, import et export. Les e
 renvoient un flux NDJSON (un objet JSON par ligne). Le serveur s'arrête
 proprement sur ``SIGINT`` / ``SIGTERM``.
 
+Une erreur rend l'enveloppe ``{"error":{"code":…,"message":…}}``. Le code
+``not_found`` dit qu'une ressource nommée n'existe pas ; ``unknown_route``,
+lui aussi en 404, dit que le démon ne sert pas la méthode appelée : un client
+et un démon de versions différentes, ou une famille que le démon ne sert
+qu'avec un drapeau. Un client ne conclut à l'absence d'une donnée que sur
+``not_found``.
+
+``positions.save`` rend ``{"id":…,"created":…}``. ``created`` vaut ``true``
+pour le seul appel qui a inséré la position, et c'est l'écriture elle-même qui
+le dit : un client qui copie une position puis son analyse, et doit défaire la
+copie après un échec, ne supprime la position que s'il l'a créée, sans la
+course d'un ``positions.exists`` préalable.
+
 .. _headless_versionnage:
 
 Ce que ``/v1`` promet

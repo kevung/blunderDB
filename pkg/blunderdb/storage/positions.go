@@ -14,6 +14,12 @@ type PositionStore interface {
 	// Save stores p (or returns the id of an identical existing position).
 	Save(ctx context.Context, scope string, p *domain.Position) (int64, error)
 
+	// SaveCreated is Save, and also reports whether this call inserted the
+	// row. The answer comes from the write itself, not from a lookup before
+	// it, so of two concurrent saves of the same position exactly one is told
+	// created: the caller that may undo its save is the one that made it.
+	SaveCreated(ctx context.Context, scope string, p *domain.Position) (id int64, created bool, err error)
+
 	// Update overwrites the stored position with the same id as p.
 	Update(ctx context.Context, scope string, p *domain.Position) error
 

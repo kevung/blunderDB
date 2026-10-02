@@ -32,19 +32,14 @@ func (d *Database) SaveIndividualPosition(position *Position) (IndividualSaveRes
 	defer d.mu.Unlock()
 
 	ctx := context.Background()
-	_, existed, err := d.store.Positions().Exists(ctx, "", engine.ZobristHash(position))
-	if err != nil {
-		return IndividualSaveResult{}, err
-	}
-
 	// Sticky: Save ORs this into the stored value, so a match import that later
 	// brings in the same position cannot clear it.
 	position.IndividuallyImported = true
-	id, err := d.store.Positions().Save(ctx, "", position)
+	id, created, err := d.store.Positions().SaveCreated(ctx, "", position)
 	if err != nil {
 		return IndividualSaveResult{}, err
 	}
-	return IndividualSaveResult{ID: id, Existed: existed}, nil
+	return IndividualSaveResult{ID: id, Existed: !created}, nil
 }
 
 // The position scalar-column codec lives in package engine, shared with

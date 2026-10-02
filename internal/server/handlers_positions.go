@@ -75,6 +75,14 @@ type listReq struct {
 // maxPageSize on it before positions.list/listIds ever run.
 func (r listReq) pageLimit() int { return r.Limit }
 
+// positionSaveResp says, besides the id, whether this call inserted the row:
+// a client that must undo a half-done copy removes the position only when it
+// created it, without an exists-then-save race against another writer.
+type positionSaveResp struct {
+	ID      int64 `json:"id"`
+	Created bool  `json:"created"`
+}
+
 // idsReq carries the ids of the positions to load, in the order wanted back.
 type idsReq struct {
 	IDs []int64 `json:"ids"`
@@ -84,12 +92,12 @@ func (s *Server) positionRoutes() []route {
 	ps := func() storage.PositionStore { return s.opts.Storage.Positions() }
 	ss := func() storage.SearchStore { return s.opts.Storage.Search() }
 	return []route{
-		{http.MethodPost, "/v1/positions.save", rpc(func(ctx context.Context, scope string, req positionReq) (idResp, error) {
+		{http.MethodPost, "/v1/positions.save", rpc(func(ctx context.Context, scope string, req positionReq) (positionSaveResp, error) {
 			if req.Position == nil {
-				return idResp{}, errMissing("position")
+				return positionSaveResp{}, errMissing("position")
 			}
-			id, err := ps().Save(ctx, scope, req.Position)
-			return idResp{ID: id}, err
+			id, created, err := ps().SaveCreated(ctx, scope, req.Position)
+			return positionSaveResp{ID: id, Created: created}, err
 		})},
 		{http.MethodPost, "/v1/positions.update", rpcVoid(func(ctx context.Context, scope string, req positionReq) error {
 			if req.Position == nil {

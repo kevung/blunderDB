@@ -9,6 +9,7 @@ import (
 	"errors"
 	"slices"
 	"strconv"
+	"sync"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -69,6 +70,74 @@ func testPositionDedup(t *testing.T, s storage.Storage) {
 	}
 	if n != 1 {
 		t.Errorf("after dedup expected 1 stored position, got %d", n)
+	}
+}
+
+// testPositionSaveCreated pins what a client compensating a failed copy relies
+// on: created is true for the call that inserted the row and false after.
+func testPositionSaveCreated(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p1 := checkerPos()
+	id1, created, err := s.Positions().SaveCreated(ctx, "", &p1)
+	if err != nil {
+		t.Fatalf("first SaveCreated: %v", err)
+	}
+	if !created {
+		t.Errorf("first SaveCreated: created = false, want true")
+	}
+	p2 := checkerPos()
+	id2, created, err := s.Positions().SaveCreated(ctx, "", &p2)
+	if err != nil {
+		t.Fatalf("second SaveCreated: %v", err)
+	}
+	if created {
+		t.Errorf("second SaveCreated: created = true, want false")
+	}
+	if id1 != id2 {
+		t.Errorf("second SaveCreated id %d, want the first one's %d", id2, id1)
+	}
+}
+
+// testPositionSaveCreatedConcurrent: of concurrent saves of one position,
+// exactly one is told it created the row — the property an exists-then-save
+// sequence cannot give.
+func testPositionSaveCreatedConcurrent(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	const writers = 8
+	var (
+		wg      sync.WaitGroup
+		mu      sync.Mutex
+		winners int
+		ids     = map[int64]bool{}
+		errs    []error
+	)
+	for range writers {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			p := checkerPos()
+			id, created, err := s.Positions().SaveCreated(ctx, "", &p)
+			mu.Lock()
+			defer mu.Unlock()
+			if err != nil {
+				errs = append(errs, err)
+				return
+			}
+			ids[id] = true
+			if created {
+				winners++
+			}
+		}()
+	}
+	wg.Wait()
+	if len(errs) > 0 {
+		t.Fatalf("SaveCreated: %v", errs[0])
+	}
+	if winners != 1 {
+		t.Errorf("%d concurrent SaveCreated reported created, want exactly 1", winners)
+	}
+	if len(ids) != 1 {
+		t.Errorf("concurrent SaveCreated returned %d distinct ids, want 1", len(ids))
 	}
 }
 
