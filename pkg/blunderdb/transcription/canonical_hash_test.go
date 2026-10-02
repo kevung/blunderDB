@@ -18,13 +18,6 @@ import (
 // file. Otherwise a later import of the same match would add a second copy of a
 // transcribed one instead of enriching it.
 func TestTranscriptCanonicalHashMatchesImport(t *testing.T) {
-	// The replay ends a game when its last checker is borne off; this BGF
-	// records a double and a take after that, which the transcription turns
-	// into a second game of cube actions only. The import counts one game, so
-	// the canonical hashes differ by their game count, not by their formula.
-	diverging := map[string]string{
-		"TachiAI_V_player_Nov_2__2025__16_55.bgf": "a cube action after the final bear-off opens a phantom game in the transcription",
-	}
 	root := filepath.Join("..", "..", "..", "testdata")
 	var files []string
 	err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
@@ -50,9 +43,6 @@ func TestTranscriptCanonicalHashMatchesImport(t *testing.T) {
 	for _, path := range files {
 		rel, _ := filepath.Rel(root, path)
 		t.Run(filepath.ToSlash(rel), func(t *testing.T) {
-			if why, ok := diverging[filepath.ToSlash(rel)]; ok {
-				t.Skip(why)
-			}
 			var g *ingest.MatchGraph
 			var err error
 			switch strings.ToLower(filepath.Ext(path)) {

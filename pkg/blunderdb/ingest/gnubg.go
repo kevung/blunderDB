@@ -312,35 +312,16 @@ func computeGnuBGMatchHash(match *gnubgparser.Match) string {
 // computeCanonicalMatchHashFromGnuBG is the format-independent hash, identical
 // to computeCanonicalMatchHashFromXG for the same match (cross-format dedup).
 func computeCanonicalMatchHashFromGnuBG(match *gnubgparser.Match) string {
-	var b strings.Builder
-	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1))
-	p2 := strings.TrimSpace(strings.ToLower(match.Metadata.Player2))
-	if p1 > p2 {
-		p1, p2 = p2, p1
-	}
-	b.WriteString(fmt.Sprintf("canonical2:%s|%s|%d|%d|", p1, p2, match.Metadata.MatchLength, len(match.Games)))
-
-	for gameIdx, game := range match.Games {
-		b.WriteString(fmt.Sprintf("g%d|", gameIdx))
-		diceCount := 0
+	games := make([][][2]int, len(match.Games))
+	for gi, game := range match.Games {
 		for _, moveRec := range game.Moves {
-			if diceCount >= maxCanonicalDicePerGame {
-				break
-			}
 			if moveRec.Type == "move" {
-				d1 := moveRec.Dice[0]
-				d2 := moveRec.Dice[1]
-				if d1 > d2 {
-					d1, d2 = d2, d1
-				}
-				b.WriteString(fmt.Sprintf("d%d%d|", d1, d2))
-				diceCount++
+				games[gi] = append(games[gi], [2]int{int(moveRec.Dice[0]), int(moveRec.Dice[1])})
 			}
 		}
 	}
-
-	hash := sha256.Sum256([]byte(b.String()))
-	return hex.EncodeToString(hash[:])
+	return CanonicalMatchHash(match.Metadata.Player1, match.Metadata.Player2,
+		int(match.Metadata.MatchLength), games)
 }
 
 // GnuBGImporter implements Importer for GnuBG .sgf/.mat/.txt files.
