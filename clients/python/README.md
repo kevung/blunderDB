@@ -40,8 +40,10 @@ exists to prevent.
 ## Errors
 
 A failure raises `APIError`, carrying the daemon's own envelope: `code` (what a
-program branches on — `not_found`, `conflict`, `invalid`, `rate_limited`),
-`message` (what a person reads), `status` and `details`.
+program branches on — `not_found`, `unknown_route`, `conflict`, `invalid`,
+`rate_limited`), `message` (what a person reads), `status` and `details`.
+`unknown_route` means the daemon does not serve the method called (a client and
+daemon of different versions); only `not_found` means the data is missing.
 
 ## Idempotency
 

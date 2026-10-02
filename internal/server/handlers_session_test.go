@@ -98,8 +98,8 @@ func TestMetadataWriteRoutesGone(t *testing.T) {
 		if err != nil {
 			t.Fatalf("%s: %v", path, err)
 		}
-		if resp.StatusCode != http.StatusNotFound || env.Error.Code != CodeNotFound {
-			t.Errorf("%s: status %d code %q, want 404 %q", path, resp.StatusCode, env.Error.Code, CodeNotFound)
+		if resp.StatusCode != http.StatusNotFound || env.Error.Code != CodeUnknownRoute {
+			t.Errorf("%s: status %d code %q, want 404 %q", path, resp.StatusCode, env.Error.Code, CodeUnknownRoute)
 		}
 	}
 	for _, path := range []string{"/v1/metadata.version", "/v1/metadata.counts"} {

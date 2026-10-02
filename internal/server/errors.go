@@ -14,11 +14,14 @@ import (
 // Error codes. This is a near-closed set — external clients depend on it.
 // Adding a code is an additive API change (bump the API minor version).
 const (
-	CodeNotFound    = "not_found"
-	CodeConflict    = "conflict"
-	CodeInvalid     = "invalid"
-	CodeInternal    = "internal"
-	CodeRateLimited = "rate_limited"
+	CodeNotFound = "not_found"
+	// CodeUnknownRoute: no route answers this method and path — a client and
+	// daemon of different versions, not a missing resource (404).
+	CodeUnknownRoute = "unknown_route"
+	CodeConflict     = "conflict"
+	CodeInvalid      = "invalid"
+	CodeInternal     = "internal"
+	CodeRateLimited  = "rate_limited"
 	// CodeGone: the transcription session the request names expired or was
 	// never this instance's; reopen the draft (410).
 	CodeGone = "gone"
@@ -49,7 +52,7 @@ type errorBody struct {
 // statusForCode maps an error code to its HTTP status.
 func statusForCode(code string) int {
 	switch code {
-	case CodeNotFound:
+	case CodeNotFound, CodeUnknownRoute:
 		return http.StatusNotFound
 	case CodeConflict:
 		return http.StatusConflict

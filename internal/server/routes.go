@@ -208,7 +208,7 @@ func (s *Server) Paths() []string {
 // catch-all so clients always receive the documented {"error":{...}} shape
 // rather than net/http's plain-text 404.
 func (s *Server) notFound(w http.ResponseWriter, r *http.Request) {
-	writeErrorCode(w, CodeNotFound, "unknown route: "+r.Method+" "+r.URL.Path)
+	writeErrorCode(w, CodeUnknownRoute, "unknown route: "+r.Method+" "+r.URL.Path)
 }
 
 // methodNotAllowed wraps mux so a request to a KNOWN path called with the
