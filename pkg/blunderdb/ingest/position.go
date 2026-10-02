@@ -114,6 +114,9 @@ func MapBGFTextPosition(path string) ([]PositionGraph, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse bgf text position: %w", err)
 	}
+	if err := checkBGFTextPosition(bgfPos); err != nil {
+		return nil, err
+	}
 	return mapBGFTextPosition(bgfPos), nil
 }
 
@@ -126,7 +129,28 @@ func MapBGFTextPositionText(content string) ([]PositionGraph, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse bgf text position: %w", err)
 	}
+	if err := checkBGFTextPosition(bgfPos); err != nil {
+		return nil, err
+	}
 	return mapBGFTextPosition(bgfPos), nil
+}
+
+// checkBGFTextPosition refuses what the parser accepts for any input: a
+// position with an empty board, no identifier and no evaluation means the text
+// held nothing recognisable, and importing it would store an empty position.
+func checkBGFTextPosition(p *bgfparser.Position) error {
+	if p == nil {
+		return fmt.Errorf("ingest: parse bgf text position: no position found")
+	}
+	for _, n := range p.Board {
+		if n != 0 {
+			return nil
+		}
+	}
+	if p.XGID != "" || p.PositionID != "" || len(p.Evaluations) > 0 || len(p.CubeDecisions) > 0 {
+		return nil
+	}
+	return fmt.Errorf("ingest: parse bgf text position: no board, identifier or evaluation recognised")
 }
 
 func mapBGFTextPosition(bgfPos *bgfparser.Position) []PositionGraph {
