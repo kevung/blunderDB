@@ -1387,10 +1387,17 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
 * ``hall --rencontre N [--format text|json]`` — Toutes les tables d'un événement : une
   ligne par table, quelle que soit l'épreuve qui l'occupe (épreuve, match,
   joueurs), puis les propositions de chaque épreuve. C'est la grille que la vue
-  *Toutes les tables* de la Direction affiche.
+  *Toutes les tables* de la Direction affiche ; les tables sont groupées par
+  salle quand l'événement en a, et nommées quand elles ont un nom.
+* ``tables --rencontre N|--tournament N [--format text|json]`` — Les propriétés
+  des tables (nom, salle, réservée, attitrée à) et les salles où joue chaque
+  épreuve d'un événement (``--rencontre``), ou les propriétés d'une épreuve qui
+  joue seule (``--tournament``). Lecture seule : l'écriture passe par ``call``
+  (``rencontres.setTables``, ``rencontres.setEventRooms``,
+  ``directions.setTables``).
 
 **Options communes:** ``--db`` (obligatoire), ``--id`` (obligatoire sauf pour
-``list``, ``page --rencontre`` et ``hall``), ``--format``.
+``list``, ``page --rencontre``, ``hall`` et ``tables``), ``--format``.
 
 **Exemples:**
 
@@ -1404,6 +1411,7 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
    ./blunderdb tournament export --db base.db --id 3 > journal.json
    ./blunderdb tournament move --db base.db --id 3 --match m4 --table 7
    ./blunderdb tournament hall --db base.db --rencontre 1
+   ./blunderdb tournament tables --db base.db --rencontre 1
 
 trash — La corbeille
 ---------------------

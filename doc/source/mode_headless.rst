@@ -491,7 +491,12 @@ répondent ``404``, comme absentes. ``call`` les sert toujours.
   ``directions.attachMatch``, ``directions.detachMatch`` ;
 * l'événement : ``rencontres.create``, ``rencontres.update``,
   ``rencontres.attach``, ``rencontres.detach``, ``rencontres.trash``,
-  ``rencontres.setTableOutOfService``, ``rencontres.setBreaks``.
+  ``rencontres.setTableOutOfService``, ``rencontres.setBreaks`` ;
+* les propriétés des tables : ``rencontres.setTables`` (``id``, ``tableSettings``,
+  une entrée par table qui en porte : numéro, nom, salle, réservée, attitrée à),
+  ``rencontres.setEventRooms`` (``id``, ``tournamentId``, ``rooms``, les salles
+  où l'épreuve joue ; aucune, c'est toutes les tables) et ``directions.setTables``
+  (``tournamentId``, ``tableSettings``) pour une épreuve qui joue seule.
 
 Un geste de tournoi rend la vue complète du tournoi, comme ``directions.get`` ;
 un geste d'événement rend l'événement. Le service réécrit ensuite les pages

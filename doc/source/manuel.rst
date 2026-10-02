@@ -1830,6 +1830,29 @@ l'événement, et vaut pour toutes ses épreuves ; le nombre de tables, les tabl
 hors service et les pauses modifiés dans les Réglages d'une épreuve valent aussi
 pour l'événement, et la liste de ce qui va changer nomme les autres épreuves.
 
+Les **propriétés des tables** se règlent dans le panneau Événement : un tableau
+d'une ligne par table, avec son **nom** (« Stream », par exemple), sa **salle**
+(un libellé libre), une case **Réservée** et les joueurs auxquels elle est
+**Attitrée**, choisis parmi les inscrits des épreuves de l'événement. Pour
+quarante tables, *Tables de N à M, salle* pose une salle sur toute une plage d'un
+geste ; **Enregistrer** n'écrit que les tables qui portent une propriété, les
+autres restent des tables ordinaires. Une table réservée n'est jamais proposée,
+mais on peut y placer un match à la main, par un lancement, un déplacement ou un
+glisser-déposer. Une table attitrée reçoit en premier le match de son titulaire,
+quand elle est libre ; sinon le match reçoit une table ordinaire, et hors des
+matchs de ses titulaires elle se comporte comme une table réservée. Deux
+titulaires de tables différentes qui se rencontrent jouent sur la plus petite
+des deux.
+
+Une **salle** est l'ensemble des tables qui portent le même libellé : « salle A »
+pour les tables 1 à 20, « salle B » pour les suivantes. Dans les Réglages de
+chaque épreuve rattachée, *Salles où joue cette épreuve* coche les salles où elle
+joue : le DMP en B, le speed en A. Aucune case cochée, c'est toutes les tables ;
+une épreuve ne reçoit aucune proposition hors de ses salles et ne peut pas y
+déplacer un match. Retirer une salle qui porte un match en cours de l'épreuve est
+refusé, en nommant la table. Une épreuve qui joue seule règle les mêmes propriétés
+de table dans ses propres Réglages, sans salles d'épreuve.
+
 Ouvrir la Direction d'une épreuve d'un événement ouvre aussi les autres : un
 onglet par épreuve apparaît en haut de la Direction, chacun avec son résumé —
 propositions en attente, matchs en cours, une alerte s'il y en a. Changer
@@ -1846,6 +1869,10 @@ Glisser un match sur une table occupée par une autre épreuve échange les deux
 matchs après une confirmation qui nomme les deux épreuves. Sous la grille, les
 propositions de toutes les épreuves sont groupées par épreuve, chacune avec son
 bouton *Lancer*. Cliquer sur une épreuve ou sur un onglet de vue quitte *Toutes les tables*.
+
+Quand l'événement a plusieurs salles, la grille se groupe par salle, sous le nom de chacune. Le nom
+d'une table s'affiche à côté de son numéro, avec un drapeau pour une table réservée et une étoile suivie des
+titulaires pour une table attitrée ; les propositions nomment aussi la table.
 
 Une même personne peut jouer plusieurs épreuves de l'événement : deux
 Participants du même nom sont la même personne, et pour une paire de doubles

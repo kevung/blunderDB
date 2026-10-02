@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 06:23+0200\n"
+"POT-Creation-Date: 2026-10-02 07:32+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -43,17 +43,17 @@ msgstr ""
 " с их формой ответа (JSON или NDJSON для потокового списка) и, если "
 "применимо, упоминанием необязательного заголовка ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:272
+#: ../../source/api_reference.rst:277
 msgid "Idempotence"
 msgstr "Идемпотентность"
 
-#: ../../source/api_reference.rst:274
+#: ../../source/api_reference.rst:279
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et ``positions.save`` (comme le reste "
 "de ``positions.*``) est naturellement idempotente grâce au hachage "
 "Zobrist du contenu — enregistrer deux fois la même position renvoie la "
-"même ligne, jamais un doublon. 39 méthodes n'ont pas cette propriété "
+"même ligne, jamais un doublon. 42 méthodes n'ont pas cette propriété "
 "(deux appels sont deux effets distincts) et acceptent un en-tête "
 "``Idempotency-Key`` optionnel : un appel rejoué avec la même clé renvoie "
 "le résultat de la première tentative au lieu de répéter son effet — voir "
@@ -64,18 +64,18 @@ msgstr ""
 "побочных эффектов, а ``positions.save`` (как и остальные ``positions.*``)"
 " идемпотентен по своей природе благодаря хешу Зобриста содержимого — "
 "двукратное сохранение одной и той же позиции возвращает ту же строку, а "
-"не дубликат. 39 методов не обладают этим свойством (два вызова — два "
+"не дубликат. 42 методов не обладают этим свойством (два вызова — два "
 "различных эффекта) и принимают необязательный заголовок ``Idempotency-"
 "Key``: вызов, повторённый с тем же ключом, возвращает результат первой "
 "попытки вместо повторения её эффекта — см. пометку «(Idempotency-Key)» в "
 "таблице выше. Никакому другому методу этот заголовок не нужен, и он его "
 "не принимает."
 
-#: ../../source/api_reference.rst:285
+#: ../../source/api_reference.rst:290
 msgid "Lectures conditionnelles"
 msgstr "Условные чтения"
 
-#: ../../source/api_reference.rst:287
+#: ../../source/api_reference.rst:292
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
