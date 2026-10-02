@@ -40,7 +40,8 @@ exists to prevent.
 ## Errors
 
 A failure raises `APIError`, carrying the daemon's own envelope: `code` (what a
-program branches on — `not_found`, `conflict`, `invalid`, `rate_limited`),
+program branches on — `not_found`, `unknown_route`, `conflict`, `invalid`,
+`rate_limited`),
 `message` (what a person reads), `status` and `details`.
 
 ## Idempotency

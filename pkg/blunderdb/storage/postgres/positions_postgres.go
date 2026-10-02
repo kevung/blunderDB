@@ -144,6 +144,12 @@ const markFlaggedSQL = `UPDATE position SET flagged = TRUE
 // p.IndividuallyImported and p.Flagged are ORed into the stored value rather
 // than assigned (ADR-0001), so they do not depend on import order.
 func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Position) (int64, error) {
+	id, _, err := s.SaveCreated(ctx, scope, p)
+	return id, err
+}
+
+// SaveCreated is Save, reporting whether the INSERT itself wrote the row.
+func (s *positionStore) SaveCreated(ctx context.Context, scope string, p *domain.Position) (int64, bool, error) {
 	tenant := tenantID(scope)
 	norm := p.NormalizeForStorage()
 	cols := engine.PopulatePositionColumns(p)
@@ -158,6 +164,7 @@ func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Positi
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
 		engine.EncodeBoardCompact(norm.Board), norm.IndividuallyImported, norm.Flagged,
 		cols.MaxCube).Scan(&id)
+	created := err == nil
 	switch {
 	case errors.Is(err, pgx.ErrNoRows):
 		// Hash already present for this tenant: keep the existing row, but let
@@ -165,7 +172,7 @@ func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Positi
 		// imports, so they stay a pure no-op on a duplicate position.
 		if norm.IndividuallyImported {
 			if _, err := s.db.Exec(ctx, markIndividualSQL, tenant, int64(cols.ZobristHash)); err != nil {
-				return 0, fmt.Errorf("postgres: mark position individually imported: %w", err)
+				return 0, false, fmt.Errorf("postgres: mark position individually imported: %w", err)
 			}
 		}
 		// Same for the source-tool mark: a match import that carries a flag
@@ -173,20 +180,20 @@ func (s *positionStore) Save(ctx context.Context, scope string, p *domain.Positi
 		// already-known match deliver newly added flags.
 		if norm.Flagged {
 			if _, err := s.db.Exec(ctx, markFlaggedSQL, tenant, int64(cols.ZobristHash)); err != nil {
-				return 0, fmt.Errorf("postgres: mark position flagged: %w", err)
+				return 0, false, fmt.Errorf("postgres: mark position flagged: %w", err)
 			}
 		}
 		if err = s.db.QueryRow(ctx,
 			`SELECT id FROM position WHERE tenant_id = $1 AND zobrist_hash = $2`,
 			tenant, int64(cols.ZobristHash)).Scan(&id); err != nil {
-			return 0, fmt.Errorf("postgres: save position dedup lookup: %w", err)
+			return 0, false, fmt.Errorf("postgres: save position dedup lookup: %w", err)
 		}
 	case err != nil:
-		return 0, fmt.Errorf("postgres: save position: %w", err)
+		return 0, false, fmt.Errorf("postgres: save position: %w", err)
 	}
 	norm.ID = id
 	*p = norm
-	return id, nil
+	return id, created, nil
 }
 
 const positionUpdateSQL = `UPDATE position SET state = $1,

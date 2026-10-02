@@ -14,6 +14,12 @@ type PositionStore interface {
 	// Save stores p (or returns the id of an identical existing position).
 	Save(ctx context.Context, scope string, p *domain.Position) (int64, error)
 
+	// SaveCreated is Save that also reports whether THIS call inserted the
+	// row (false on a Zobrist dedup hit). The answer comes from the insert
+	// itself, so a caller that must undo its own write can decide without a
+	// prior Exists, which another writer could invalidate in between.
+	SaveCreated(ctx context.Context, scope string, p *domain.Position) (id int64, created bool, err error)
+
 	// Update overwrites the stored position with the same id as p.
 	Update(ctx context.Context, scope string, p *domain.Position) error
 

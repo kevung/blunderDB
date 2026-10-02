@@ -84,12 +84,12 @@ func (s *Server) positionRoutes() []route {
 	ps := func() storage.PositionStore { return s.opts.Storage.Positions() }
 	ss := func() storage.SearchStore { return s.opts.Storage.Search() }
 	return []route{
-		{http.MethodPost, "/v1/positions.save", rpc(func(ctx context.Context, scope string, req positionReq) (idResp, error) {
+		{http.MethodPost, "/v1/positions.save", rpc(func(ctx context.Context, scope string, req positionReq) (saveResp, error) {
 			if req.Position == nil {
-				return idResp{}, errMissing("position")
+				return saveResp{}, errMissing("position")
 			}
-			id, err := ps().Save(ctx, scope, req.Position)
-			return idResp{ID: id}, err
+			id, created, err := ps().SaveCreated(ctx, scope, req.Position)
+			return saveResp{ID: id, Created: created}, err
 		})},
 		{http.MethodPost, "/v1/positions.update", rpcVoid(func(ctx context.Context, scope string, req positionReq) error {
 			if req.Position == nil {

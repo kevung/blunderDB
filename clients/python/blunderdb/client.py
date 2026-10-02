@@ -19,8 +19,8 @@ class APIError(RuntimeError):
 
     The daemon answers a failure with ``{"error": {"code", "message", "details"}}``
     and an HTTP status derived from the code. Both are kept: the code is what a
-    program branches on (``not_found``, ``conflict``, ``invalid``,
-    ``rate_limited``), the message is what a person reads.
+    program branches on (``not_found``, ``unknown_route``, ``conflict``,
+    ``invalid``, ``rate_limited``), the message is what a person reads.
     """
 
     def __init__(self, code: str, message: str, status: int, details: Optional[dict] = None):

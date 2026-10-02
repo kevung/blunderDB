@@ -34,6 +34,13 @@ type idResp struct {
 	ID int64 `json:"id"`
 }
 
+// saveResp answers positions.save. Created is false on a Zobrist dedup hit:
+// the id then names a row this call did not write.
+type saveResp struct {
+	ID      int64 `json:"id"`
+	Created bool  `json:"created"`
+}
+
 // idReq is the common "operate on this id" request.
 type idReq struct {
 	ID int64 `json:"id"`
