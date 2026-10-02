@@ -91,7 +91,7 @@ func ParsePosition(text string) (Result, error) {
 		return Result{}, errNoXGID
 	}
 
-	pos := decodePosition(xgid, lines, isFrench, isJapanese, isGerman, isInternalChecker)
+	pos := decodePosition(xgid, lines, isFrench, isJapanese, isGerman, isInternalChecker, isInternalDoubling)
 
 	analysis := &domain.PositionAnalysis{XGID: xgid}
 	engineVersion, engineName := parseEngineVersion(content)
@@ -169,7 +169,7 @@ func checkerChancesRead(moves []domain.CheckerMove) bool {
 // Reuse domain.DecodeXGID for the board/cube/dice/score/jacoby/beaver decode,
 // Crawford sentinel included, then apply the one patch DecodeXGID does not:
 // decision_type from the analysis TEXT.
-func decodePosition(xgid string, lines []string, isFrench, isJapanese, isGerman, isInternalChecker bool) domain.Position {
+func decodePosition(xgid string, lines []string, isFrench, isJapanese, isGerman, isInternalChecker, isInternalDoubling bool) domain.Position {
 	pos, err := domain.DecodeXGID(xgid)
 	if err != nil {
 		// DecodeXGID is strict (board must be 26 chars); the JS parser is lax. On
@@ -181,7 +181,8 @@ func decodePosition(xgid string, lines []string, isFrench, isJapanese, isGerman,
 		}
 	}
 
-	// decision_type from text (JS:893-894), overriding DecodeXGID's dice-based value.
+	// decision_type from text (JS:893-894), overriding DecodeXGID's dice-based value
+	// only when the text carries an analysis.
 	keyword := "to play"
 	if isFrench {
 		keyword = "jouer"
@@ -195,11 +196,13 @@ func decodePosition(xgid string, lines []string, isFrench, isJapanese, isGerman,
 			break
 		}
 	}
-	if hasDecisionLine || isInternalChecker {
+	switch {
+	case hasDecisionLine || isInternalChecker:
 		pos.DecisionType = domain.CheckerAction
-	} else {
+	case isInternalDoubling || hasCubefulBlock(strings.Join(lines, "\n"), isFrench, isJapanese, isGerman):
 		pos.DecisionType = domain.CubeAction
 	}
+	// Otherwise the text carries no analysis: the dice-based value stays.
 	return pos
 }
 

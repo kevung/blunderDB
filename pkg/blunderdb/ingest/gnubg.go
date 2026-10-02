@@ -34,6 +34,11 @@ func MapGnuBG(path string) (*MatchGraph, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse gnubg file: %w", err)
 	}
+	if !isSGF {
+		if err := checkMATComplete(match); err != nil {
+			return nil, err
+		}
+	}
 
 	return mapGnuBGMatch(match, isSGF, path)
 }
@@ -47,7 +52,24 @@ func MapGnuBGText(content string) (*MatchGraph, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse gnubg text: %w", err)
 	}
+	if err := checkMATComplete(match); err != nil {
+		return nil, err
+	}
 	return mapGnuBGMatch(match, false, "clipboard")
+}
+
+// checkMATComplete refuses a .mat whose last game has no result line: the
+// parser stops silently at the end of a truncated file and would otherwise
+// import the games that came before as if the file were whole.
+func checkMATComplete(match *gnubgparser.Match) error {
+	n := len(match.Games)
+	if n == 0 {
+		return fmt.Errorf("ingest: parse gnubg file: no game found")
+	}
+	if g := match.Games[n-1]; g.Winner < 0 {
+		return fmt.Errorf("ingest: parse gnubg file: game %d is incomplete (the file looks truncated)", g.GameNumber)
+	}
+	return nil
 }
 
 // mapGnuBGMatch builds the MatchGraph from an already-parsed gnubgparser.Match.
