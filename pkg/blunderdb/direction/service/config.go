@@ -15,7 +15,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// Changing the configuration of a tournament ALREADY UNDER WAY (tasks/nicomaque/fonctionnel.md §3). The engine refuses
+// Changing the configuration of a tournament ALREADY UNDER WAY. The engine refuses
 // removing an open phase, changing the format of a begun one, and changing what a drawn
 // bracket was built from. A mid-tournament change is a decision, so PreviewDirectionConfig
 // shows it first — as codes and facts, for every language to phrase.

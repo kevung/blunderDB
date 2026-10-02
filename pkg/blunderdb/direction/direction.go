@@ -15,7 +15,7 @@ import (
 // Keep it in step with the require line in go.mod.
 const EngineVersion = "v0.4.1"
 
-// State is where a Direction stands in its life (tasks/nicomaque/fonctionnel.md § "Le cycle de vie").
+// State is where a Direction stands in its life.
 type State string
 
 const (
@@ -170,7 +170,7 @@ func (d *Direction) Config() (tournoi.Config, error) {
 }
 
 // SetConfig changes the configuration. It is an EVENT, in preparation as afterwards, so that
-// what the director decided stays readable in order (tasks/nicomaque/fonctionnel.md §3.5). The engine validates it
+// what the director decided stays readable in order. The engine validates it
 // and refuses what would change the kind of a phase already begun.
 func (d *Direction) SetConfig(ctx context.Context, cfg tournoi.Config) error {
 	return d.SetConfigAt(ctx, cfg, time.Now())
@@ -195,7 +195,7 @@ func (d *Direction) SetOutputDir(ctx context.Context, dir string) error {
 }
 
 // Enter records one entry. It works in preparation and afterwards: a late arrival is an entry
-// like any other, and the engine decides where they come in (tasks/nicomaque/fonctionnel.md §4.4).
+// like any other, and the engine decides where they come in.
 func (d *Direction) Enter(ctx context.Context, p tournoi.Player, now time.Time) error {
 	return d.Apply(ctx, tournoi.PlayerAddedEvent(p, now))
 }

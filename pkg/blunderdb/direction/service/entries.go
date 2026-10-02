@@ -13,7 +13,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// The entries of a Direction (tasks/nicomaque/fonctionnel.md §4). A Participant is an entry in ONE Direction, not a
+// The entries of a Direction. A Participant is an entry in ONE Direction, not a
 // Player nor a person (CONTEXT.md). The only link to a Player is a name spelled the same;
 // choosing an existing Player at entry fixes the spelling and pre-fills the rating from their
 // PR, and nothing is inferred afterwards.

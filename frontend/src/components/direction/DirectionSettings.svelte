@@ -1,6 +1,6 @@
 <script>
     /*
-     * Les réglages d'une Direction (tasks/nicomaque/fonctionnel.md §3, tasks/nicomaque/ux.md §2.1).
+     * Les réglages d'une Direction.
      *
      * Coût d'entrée bas, souris d'abord : cartes de format, un défaut de club par champ, une
      * infobulle par réglage. Sert aussi en cours de tournoi, où seuls le format d'une phase

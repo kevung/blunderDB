@@ -12,7 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Confirming what the engine proposes, and doing what it did not (tasks/nicomaque/fonctionnel.md §5): the engine
+// Confirming what the engine proposes, and doing what it did not: the engine
 // proposes, the director decides, the Direction records, and only the impossible is refused.
 // Every call writes an event and returns the replayed view.
 
@@ -102,7 +102,7 @@ func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) (
 			// A proposal with no table stays in the queue: launching it here would put two
 			// matches on one table, or none, without the director ever choosing. In rounds
 			// mode the round stays open until all its players are engaged, so the rest of it
-			// is proposed again as tables free up (tasks/nicomaque/fonctionnel.md §3.2).
+			// is proposed again as tables free up.
 			continue
 		}
 		if err := confirmAt(ctx, dir, a, now); err != nil {

@@ -1,6 +1,6 @@
 <script>
     /*
-     * La file des propositions (tasks/nicomaque/ux.md §2.3, §4.1) : confirmer = un clic,
+     * La file des propositions : confirmer = un clic,
      * tout lancer = deux ; `j`/`k`/Entrée en accélérateurs. Le moteur propose, le directeur
      * décide (ADR-0047) : « apparier à la main » toujours offert, « ignorer pour l'instant »
      * n'écrit rien.

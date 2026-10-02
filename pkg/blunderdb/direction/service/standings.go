@@ -13,7 +13,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
 )
 
-// The standings, the prizes and the close (tasks/nicomaque/fonctionnel.md §5.6 and §3.6). NO tie-break: ties share
+// The standings, the prizes and the close. NO tie-break: ties share
 // their prizes. A ranking note is a CODE, rendered by the frontend.
 
 // StandingRow is one line of the standings.

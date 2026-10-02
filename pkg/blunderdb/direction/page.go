@@ -14,7 +14,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
-// The standalone display page (tasks/nicomaque/fonctionnel.md §9): ONE HTML FILE, no route, no
+// The standalone display page: ONE HTML FILE, no route, no
 // player screen — ADR-0039 keeps tournaments out of the web front, and a file opens offline.
 //
 // PageName is the file's name inside the chosen folder. It never changes, so an open browser

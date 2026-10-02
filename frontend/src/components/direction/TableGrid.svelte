@@ -1,6 +1,6 @@
 <script>
     /*
-     * La grille des tables (tasks/nicomaque/ux.md §2.2), lisible à deux mètres ; le temps
+     * La grille des tables, lisible à deux mètres ; le temps
      * écoulé passe en alerte quand un match traîne. La fiche de résultat s'ouvre sur la case.
      * Un match sans table a sa case après la salle : plusieurs cases portent la table 0, d'où
      * une clé par match.

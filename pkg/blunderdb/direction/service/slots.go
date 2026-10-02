@@ -31,7 +31,7 @@ type SlotRow struct {
 	Length int           `json:"length"`
 	Table  int           `json:"table,omitempty"`
 	// Winner and the scores are what the DIRECTOR said, which during a tournament is what
-	// stands (tasks/nicomaque/fonctionnel.md §5.3).
+	// stands.
 	Winner     string `json:"winner,omitempty"`
 	WinnerName string `json:"winnerName,omitempty"`
 	ScoreA     int    `json:"scoreA,omitempty"`
@@ -176,7 +176,7 @@ func disagreement(m *tournoi.Match, aName string, f filledMatch) string {
 	}
 	if !f.hasScore || (m.ScoreA == 0 && m.ScoreB == 0) {
 		// The director entered no score, or the file has none: there is nothing to disagree
-		// about. A result with no score is an ordinary result (tasks/nicomaque/fonctionnel.md §5.3).
+		// about. A result with no score is an ordinary result.
 		return ""
 	}
 	// The Match's player1 is not necessarily the Slot's A.
@@ -191,7 +191,7 @@ func disagreement(m *tournoi.Match, aName string, f filledMatch) string {
 }
 
 // AttachMatchToSlot fills a Slot with a Match of the library. It is always an explicit gesture:
-// a coincidence of names is a suggestion, never a decision (tasks/nicomaque/fonctionnel.md §7.1).
+// a coincidence of names is a suggestion, never a decision.
 //
 // Attaching also puts the Match in the Tournament if it was not there, since a Match filling a
 // Slot of that tournament is a match OF that tournament.
@@ -310,7 +310,7 @@ func namesMatch(p1, p2, a, b string) bool {
 // SlotHeader is the header a draft started from a Slot opens with: both names, the length, the
 // tournament, the round or the bracket label, and the date.
 //
-// The Slot is reserved FROM THE DRAFT, not only from the save (tasks/nicomaque/fonctionnel.md §7.1): a director who
+// The Slot is reserved FROM THE DRAFT, not only from the save: a director who
 // starts typing a match must see the Slot taken, or two people will type the same match.
 func (d *Service) SlotHeader(ctx context.Context, tournamentID int64, slotID string) (transcript.Header, error) {
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)

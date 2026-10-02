@@ -12,7 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// Entering a result, and the room the matches are played in (tasks/nicomaque/fonctionnel.md §5.3 and §5.5).
+// Entering a result, and the room the matches are played in.
 //
 // THE WINNER IS THE ONLY THING REQUIRED: a result without a score is ordinary. A score
 // contradicting the announced length is ACCEPTED with a warning; the director's word stands.

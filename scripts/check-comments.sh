@@ -5,15 +5,10 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
-# Temporary: another workstream owns these directories. Drop this list when
-# it merges.
-EXCLUDED='^(pkg/blunderdb/direction/|frontend/src/components/direction/)'
-
 files=$(git ls-files '*.go' '*.js' '*.svelte' |
   grep -Ev -e '_test\.go$' -e '\.(test|spec)\.js$' -e '(^|/)node_modules/' \
     -e '(^|/)testdata/' -e '(^|/)(e2e|tests?)/' -e '^frontend/(wailsjs|dist)/' \
-    -e '\.pb\.go$' -e '_gen\.go$' -e '(^|/)(bindata|embed)_' |
-  grep -Ev "$EXCLUDED" || true)
+    -e '\.pb\.go$' -e '_gen\.go$' -e '(^|/)(bindata|embed)_' || true)
 
 # Prints "file:line:comment" for each comment, minus URLs, //go: and nolint.
 extract() {

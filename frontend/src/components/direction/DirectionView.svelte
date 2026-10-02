@@ -1,7 +1,7 @@
 <script>
     /*
-     * La vue tournoi, à la place du plateau quand une Direction est ouverte (ADR-0047,
-     * tasks/nicomaque/ux.md §2) ; tout autre onglet ramène le plateau sans rien fermer.
+     * La vue tournoi, à la place du plateau quand une Direction est ouverte (ADR-0047) ;
+     * tout autre onglet ramène le plateau sans rien fermer.
      */
     import { tick } from 'svelte';
     import { t } from '../../i18n';
