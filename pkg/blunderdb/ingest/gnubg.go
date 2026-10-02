@@ -14,6 +14,11 @@ import (
 	"github.com/kevung/gnubgparser"
 )
 
+// ErrIncompleteMatch is returned for a .mat whose last game has no result
+// line: the file was cut, and importing the games
+// before the cut would silently store a partial match.
+var ErrIncompleteMatch = fmt.Errorf("%w: incomplete match file", storage.ErrInvalid)
+
 // MapGnuBG parses a GnuBG file (.sgf with analysis, or .mat/.txt moves-only)
 // into a backend-independent MatchGraph. Like MapXG it always produces the
 // full graph; duplicates and enrichment are WriteMatch's.
@@ -34,6 +39,11 @@ func MapGnuBG(path string) (*MatchGraph, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse gnubg file: %w", err)
 	}
+	if !isSGF {
+		if err := checkMATComplete(match); err != nil {
+			return nil, fmt.Errorf("ingest: %s: %w", filepath.Base(path), err)
+		}
+	}
 
 	return mapGnuBGMatch(match, isSGF, path)
 }
@@ -47,7 +57,24 @@ func MapGnuBGText(content string) (*MatchGraph, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse gnubg text: %w", err)
 	}
+	if err := checkMATComplete(match); err != nil {
+		return nil, fmt.Errorf("ingest: clipboard: %w", err)
+	}
 	return mapGnuBGMatch(match, false, "clipboard")
+}
+
+// checkMATComplete refuses a MAT match whose last game never reached its
+// "Wins N points" line. The MAT parser stops quietly at end of input, so this
+// is the only trace a truncated file leaves. A cut falling exactly between two
+// games is indistinguishable from an unfinished match and is accepted.
+func checkMATComplete(match *gnubgparser.Match) error {
+	if len(match.Games) == 0 {
+		return ErrIncompleteMatch
+	}
+	if last := match.Games[len(match.Games)-1]; last.Winner < 0 {
+		return fmt.Errorf("%w: last game (%d) has no result — file truncated or exported mid-game", ErrIncompleteMatch, len(match.Games))
+	}
+	return nil
 }
 
 // mapGnuBGMatch builds the MatchGraph from an already-parsed gnubgparser.Match.

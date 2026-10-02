@@ -106,6 +106,10 @@ func MapXGPPosition(path string) ([]PositionGraph, error) {
 	return out, nil
 }
 
+// ErrNoPosition is returned for a BGBlitz text file in which no checker was
+// found: the parser accepts any text and yields an empty board.
+var ErrNoPosition = fmt.Errorf("%w: no position found in text", storage.ErrInvalid)
+
 // MapBGFTextPosition parses a BGBlitz text single-position export (.txt) into a
 // PositionGraph. A BGBlitz text position carries either move evaluations (checker) or cube
 // decisions, never both, so it yields a single analysis fragment.
@@ -113,6 +117,9 @@ func MapBGFTextPosition(path string) ([]PositionGraph, error) {
 	bgfPos, err := guardParse(func() (*bgfparser.Position, error) { return bgfparser.ParseTXT(path) })
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse bgf text position: %w", err)
+	}
+	if !hasBGFTextChecker(bgfPos) {
+		return nil, ErrNoPosition
 	}
 	return mapBGFTextPosition(bgfPos), nil
 }
@@ -126,7 +133,21 @@ func MapBGFTextPositionText(content string) ([]PositionGraph, error) {
 	if err != nil {
 		return nil, fmt.Errorf("ingest: parse bgf text position: %w", err)
 	}
+	if !hasBGFTextChecker(bgfPos) {
+		return nil, ErrNoPosition
+	}
 	return mapBGFTextPosition(bgfPos), nil
+}
+
+// hasBGFTextChecker reports whether the parser found at least one checker,
+// on a point or on the bar: the only sign that the text was a position.
+func hasBGFTextChecker(p *bgfparser.Position) bool {
+	for i := 1; i <= 24; i++ {
+		if p.Board[i] != 0 {
+			return true
+		}
+	}
+	return p.OnBar["X"] > 0 || p.OnBar["O"] > 0
 }
 
 func mapBGFTextPosition(bgfPos *bgfparser.Position) []PositionGraph {
