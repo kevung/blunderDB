@@ -21,7 +21,7 @@ const (
 	DoubleTurn InconsistencyKind = "double_turn"
 	// ImpossibleCube: a double by a side that does not hold the cube, a double before
 	// the game's first play, in the Crawford game or above the ceiling, an answer with
-	// no offer.
+	// no offer, a cube action after the game's end.
 	ImpossibleCube InconsistencyKind = "impossible_cube"
 	// PastEnd: an Action recorded after the match was won — what shortening the match
 	// length produces.
@@ -557,6 +557,11 @@ func (s *state) step(i int, a Action) ActionInfo {
 	if s.matchOver() {
 		info.add(PastEnd, "the match is already won")
 	}
+	// No game opens on a cube action: one recorded after its game ended is kept in
+	// that game and marked, and the next play opens the next game.
+	if a.Score == nil && !s.gameActive && len(s.games) > 0 && isCubeKind(a.Kind) {
+		return s.lateCube(i, a, info)
+	}
 	// An Action opens a game when none is running, or when it declares the score of
 	// one: the running game then stops there, unfinished.
 	opens := !s.gameActive || a.Score != nil
@@ -711,6 +716,26 @@ func (s *state) step(i int, a Action) ActionInfo {
 		g.Last = i
 	}
 
+	s.prevKind, s.prevSide, s.hasPrev = a.Kind, a.Side, true
+	return info
+}
+
+func isCubeKind(k Kind) bool {
+	return k == KindDouble || k == KindTake || k == KindPass
+}
+
+// lateCube steps a cube action recorded after its game ended. It changes neither
+// the cube nor the score: the game is over, and it stays a Move of that game so the
+// user finds it where the record put it.
+func (s *state) lateCube(i int, a Action, info ActionInfo) ActionInfo {
+	info.Before, info.HasPosition = s.position(a.Side, [2]int{}, domain.CubeAction, s.cube), true
+	info.After = s.board
+	info.add(ImpossibleCube, "the game is already over")
+	info.MoveNumber, s.moveNumber = s.moveNumber, s.moveNumber+1
+	gi := len(s.games) - 1
+	g := &s.games[gi]
+	info.GameIndex, info.GameNumber, info.Score = gi, g.Number, g.InitialScore
+	g.Last = i
 	s.prevKind, s.prevSide, s.hasPrev = a.Kind, a.Side, true
 	return info
 }
