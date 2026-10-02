@@ -75,7 +75,7 @@ func checkMATComplete(match *gnubgparser.Match) error {
 		return ErrIncompleteMatch
 	}
 	if last := match.Games[len(match.Games)-1]; last.Winner < 0 {
-		return fmt.Errorf("%w: game %d has no result", ErrIncompleteMatch, len(match.Games))
+		return fmt.Errorf("%w: last game (%d) has no result — file truncated or exported mid-game", ErrIncompleteMatch, len(match.Games))
 	}
 	return nil
 }

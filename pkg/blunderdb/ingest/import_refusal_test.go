@@ -71,6 +71,9 @@ func assertIncompleteMatch(t *testing.T, g *MatchGraph, err error) {
 	if !errors.Is(err, ErrIncompleteMatch) && !strings.Contains(err.Error(), "parse gnubg") {
 		t.Fatalf("want ErrIncompleteMatch or a parse error, got %v", err)
 	}
+	if errors.Is(err, ErrIncompleteMatch) && !strings.Contains(err.Error(), "last game") {
+		t.Fatalf("message must name the last game as the culprit: %v", err)
+	}
 }
 
 // bgfparser's text parser never fails: unrelated text yields an empty
