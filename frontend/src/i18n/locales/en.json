@@ -1897,7 +1897,7 @@
             "waiting_batch": "Pairing at the next batch.",
             "waiting_table": "no free table",
             "player_unavailable": "player unavailable",
-            "player_busy": "playing in another event"
+            "player_busy": "playing in another competition"
         },
         "proposals": {
             "title": "Proposals ({n})",
@@ -1946,7 +1946,9 @@
             "shared": "Two matches on this table: move one",
             "swapConfirm": "Table {from} ↔ Table {to}?",
             "swap": "Swap",
-            "moveRefused": "Move refused: {reason}"
+            "moveRefused": "Move refused: {reason}",
+            "room": "Room {name}",
+            "assignedTo": "Assigned to {names}"
         },
         "result": {
             "title": "Result",
@@ -1962,7 +1964,7 @@
             "apply": "Apply",
             "forfeitWins": "Forfeit by {loser} → {winner} wins",
             "forfeitConfirm": "{loser} forfeits: {winner} wins this match. Confirm?",
-            "cancelConfirm": "Cancel the match {a} – {b}? It leaves the room; the log keeps it."
+            "cancelConfirm": "Cancel the match {a} – {b}? It leaves the tables; the log keeps it."
         },
         "last": {
             "result": "{winner} beat {loser}",
@@ -2017,7 +2019,7 @@
             "noEntry": "{player} is entered but enters no phase.",
             "phaseN": "phase {n}",
             "pair": "Pair",
-            "pairHint": "A doubles event: two persons, one entrant \"A / B\".",
+            "pairHint": "A doubles competition: two persons, one entrant \"A / B\".",
             "name2": "Partner's name",
             "pairRating": "Pair rating",
             "pairRatingHint": "The mean of the two ratings by default; a value typed here replaces it.",
@@ -2165,7 +2167,7 @@
             "lastChance": "Phase {phase} — last chance: {from} → {to}",
             "reconciliation": "Phase {phase} — reconciliation: {from} → {to}",
             "recharge": "Phase {phase} — recharge: {from} → {to}",
-            "alsoFor": "Also applies to: {names} (same room)."
+            "alsoFor": "Also applies to: {names} (same event)."
         },
         "lock": {
             "drawn": "draw made",
@@ -2215,7 +2217,7 @@
             "announced": "Announced: {at}"
         },
         "display": {
-            "title": "Hall display",
+            "title": "Display",
             "hint": "A folder chosen once: the page is rewritten at every event, with no further gesture. It opens offline, on a second screen or projected.",
             "chooseFolder": "Choose a folder",
             "changeFolder": "Change folder",
@@ -2269,34 +2271,34 @@
             "fileWord": "directory"
         },
         "rencontre": {
-            "title": "Rencontre",
-            "hint": "Several events in the same room: their tables, tables out of service and breaks are shared, and none proposes a table where another is playing.",
+            "title": "Event",
+            "hint": "Several competitions in the same event: their tables, tables out of service and breaks are shared, and none proposes a table where another is playing.",
             "tableCount": "{n} tables",
-            "members": "events: {names}",
+            "members": "competitions: {names}",
             "outOfService": "Tables out of service",
-            "outOfServiceHint": "Declared once, for every event in the room.",
-            "detach": "Detach from the rencontre",
-            "trash": "Delete the rencontre",
+            "outOfServiceHint": "Declared once, for every competition in the event.",
+            "detach": "Detach from the event",
+            "trash": "Delete the event",
             "attach": "Attach…",
-            "name": "Rencontre name",
+            "name": "Event name",
             "tables": "Tables",
             "startsOn": "Start",
             "endsOn": "End",
             "create": "Create and attach…",
-            "confirmTitle": "What will change in this event:",
-            "noChange": "Nothing: its tables are already the room's.",
+            "confirmTitle": "What will change in this competition:",
+            "noChange": "Nothing: its tables are already the event's.",
             "confirm": "Attach",
             "wall": {
                 "rounds": "{n} rounds announced"
             },
-            "trashConfirm": "Delete the event “{name}”? Its tournaments remain, detached."
+            "trashConfirm": "Delete the event “{name}”? Its competitions remain, detached."
         },
         "hall": {
-            "tab": "Hall",
-            "legend": "Events in the hall",
-            "proposals": "Hall proposals ({n})",
-            "loading": "Loading the hall…",
-            "error": "The hall could not be read: {reason}",
+            "tab": "All tables",
+            "legend": "Competitions in the event",
+            "proposals": "Event proposals ({n})",
+            "loading": "Loading the tables…",
+            "error": "The tables could not be read: {reason}",
             "eventError": "{event} does not replay; its tables are missing: {reason}",
             "swapConfirm": "Table {from} ({a}) ↔ Table {to} ({b})?"
         },
@@ -2336,6 +2338,30 @@
             "launchAtTable": "Start at a table…",
             "changeLength": "Change the length…",
             "printSheet": "Print the round sheet"
+        },
+        "tableProps": {
+            "title": "Table properties",
+            "hint": "A name (“Stream”), a room, a reservation, assigned players. A table with no property is an ordinary table.",
+            "number": "Table",
+            "name": "Name",
+            "room": "Room",
+            "reserved": "Reserved",
+            "assignedTo": "Assigned to",
+            "assign": "Add a player…",
+            "unassign": "Remove {name}",
+            "nameOf": "Name of table {n}",
+            "roomOf": "Room of table {n}",
+            "reservedOf": "Table {n} reserved",
+            "assignOf": "Player assigned to table {n}",
+            "bulkFrom": "Tables from",
+            "bulkTo": "to",
+            "bulkApply": "Apply",
+            "save": "Save",
+            "reset": "Discard changes"
+        },
+        "rooms": {
+            "title": "Rooms this competition plays in",
+            "hint": "None ticked: every table."
         }
     },
     "palette": {
@@ -2349,9 +2375,9 @@
         "kindMatch": "Match",
         "kindPlayer": "Player",
         "kindTable": "Table",
-        "kindEpreuve": "Event",
+        "kindEpreuve": "Competition",
         "kindRunning": "Running match",
-        "placeholderDirection": "Find a player, a table, an event, a match…",
+        "placeholderDirection": "Find a player, a table, a competition, a match…",
         "directionTable": "Table {n}",
         "directionVs": "vs {name}",
         "matchLength": "{n} pts",

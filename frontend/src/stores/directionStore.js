@@ -181,6 +181,13 @@ export const epreuveTabsStore = derived([rencontreEpreuveOrderStore, rencontreEp
     })
 );
 
+/** Les noms de tous les joueurs des épreuves de la Rencontre, ceux à qui l'on attitre une table. */
+export const rencontreParticipantsStore = derived(rencontreEpreuveViewsStore, ($views) => {
+    const names = new Set();
+    for (const v of Object.values($views)) for (const p of v?.players || []) if (p.name) names.add(p.name);
+    return [...names].sort((a, b) => a.localeCompare(b));
+});
+
 /**
  * Recharge les épreuves sœurs de la Rencontre du tournoi ouvert (aucune si `rencontreId` est 0),
  * en gardant la vue déjà connue de l'épreuve active plutôt que de la redemander.

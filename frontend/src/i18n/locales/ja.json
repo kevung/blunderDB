@@ -1897,7 +1897,7 @@
             "waiting_batch": "次の組み合わせ時に決めます。",
             "waiting_table": "空き卓なし",
             "player_unavailable": "プレイヤー不在",
-            "player_busy": "別の大会で対局中"
+            "player_busy": "別の種目で対局中"
         },
         "proposals": {
             "title": "提案（{n}件）",
@@ -1946,7 +1946,9 @@
             "shared": "この台に2つの試合があります。1つを移動してください",
             "swapConfirm": "テーブル {from} ↔ テーブル {to} を入れ替えますか?",
             "swap": "入れ替える",
-            "moveRefused": "移動は拒否されました: {reason}"
+            "moveRefused": "移動は拒否されました: {reason}",
+            "room": "会場 {name}",
+            "assignedTo": "割り当て先：{names}"
         },
         "result": {
             "title": "結果",
@@ -1962,7 +1964,7 @@
             "apply": "適用",
             "forfeitWins": "{loser} の不戦敗 → {winner} の勝ち",
             "forfeitConfirm": "{loser} の不戦敗：{winner} がこの試合に勝ちます。確定しますか？",
-            "cancelConfirm": "試合 {a} – {b} を取り消しますか？会場からは消えますが、記録には残ります。"
+            "cancelConfirm": "試合 {a} – {b} を取り消しますか？テーブルからは消えますが、記録には残ります。"
         },
         "last": {
             "result": "{winner} が {loser} に勝利",
@@ -2017,7 +2019,7 @@
             "noEntry": "{player} は登録済みですが、どのフェーズにも入りません。",
             "phaseN": "フェーズ{n}",
             "pair": "ペア",
-            "pairHint": "ダブルス大会：2人で1組の参加者「A / B」。",
+            "pairHint": "ダブルス種目：2人で1組の参加者「A / B」。",
             "name2": "パートナーの名前",
             "pairRating": "ペアのレーティング",
             "pairRatingHint": "既定では2人のレーティングの平均。入力した値で置き換わります。",
@@ -2165,7 +2167,7 @@
             "lastChance": "フェーズ{phase} — ラストチャンス：{from} → {to}",
             "reconciliation": "フェーズ{phase} — 再挑戦戦：{from} → {to}",
             "recharge": "フェーズ{phase} — リチャージ：{from} → {to}",
-            "alsoFor": "{names} にも適用されます（同じ会場）。"
+            "alsoFor": "{names} にも適用されます（同じイベント）。"
         },
         "lock": {
             "drawn": "抽選済み",
@@ -2215,7 +2217,7 @@
             "announced": "予定：{at}"
         },
         "display": {
-            "title": "会場ディスプレイ",
+            "title": "ディスプレイ",
             "hint": "フォルダーを一度選ぶだけです。ページはイベントごとに書き直され、以降の操作は不要です。オフラインで開き、サブ画面や投影に使えます。",
             "chooseFolder": "フォルダーを選ぶ",
             "changeFolder": "フォルダーを変更",
@@ -2269,34 +2271,34 @@
             "fileWord": "名簿"
         },
         "rencontre": {
-            "title": "Rencontre",
-            "hint": "同じ会場の複数の大会：テーブル、使用不可のテーブル、休憩は共通で、他の大会が使っているテーブルは提案されません。",
+            "title": "イベント",
+            "hint": "同じイベントの複数の種目：テーブル、使用不可のテーブル、休憩は共通で、他の種目が使っているテーブルは提案されません。",
             "tableCount": "{n} テーブル",
-            "members": "大会：{names}",
+            "members": "種目：{names}",
             "outOfService": "使用不可のテーブル",
-            "outOfServiceHint": "一度の宣言で会場のすべての大会に適用されます。",
-            "detach": "Rencontre から外す",
-            "trash": "Rencontre を削除",
+            "outOfServiceHint": "一度の宣言でイベントのすべての種目に適用されます。",
+            "detach": "イベントから外す",
+            "trash": "イベントを削除",
             "attach": "追加…",
-            "name": "Rencontre の名前",
+            "name": "イベントの名前",
             "tables": "テーブル",
             "startsOn": "開始",
             "endsOn": "終了",
             "create": "作成して追加…",
-            "confirmTitle": "この大会で変わること：",
-            "noChange": "なし：テーブルはすでに会場のものです。",
+            "confirmTitle": "この種目で変わること：",
+            "noChange": "なし：テーブルはすでにイベントのものです。",
             "confirm": "追加",
             "wall": {
                 "rounds": "{n} ラウンド発表済み"
             },
-            "trashConfirm": "イベント「{name}」を削除しますか？各大会は切り離されて残ります。"
+            "trashConfirm": "イベント「{name}」を削除しますか？各種目は切り離されて残ります。"
         },
         "hall": {
-            "tab": "会場",
-            "legend": "会場の大会",
-            "proposals": "会場の提案（{n}）",
-            "loading": "会場を読み込み中…",
-            "error": "会場を読み込めませんでした：{reason}",
+            "tab": "すべてのテーブル",
+            "legend": "イベントの種目",
+            "proposals": "イベントの提案（{n}）",
+            "loading": "テーブルを読み込み中…",
+            "error": "テーブルを読み込めませんでした：{reason}",
             "eventError": "{event} を再生できません。そのテーブルは表示されません：{reason}",
             "swapConfirm": "テーブル {from}（{a}）↔ テーブル {to}（{b}）？"
         },
@@ -2336,6 +2338,30 @@
             "launchAtTable": "テーブルを指定して開始…",
             "changeLength": "ポイント数を変更…",
             "printSheet": "ラウンド表を印刷"
+        },
+        "tableProps": {
+            "title": "テーブルのプロパティ",
+            "hint": "名前（「Stream」）、会場、予約、割り当てた選手。プロパティのないテーブルは通常のテーブルです。",
+            "number": "テーブル",
+            "name": "名前",
+            "room": "会場",
+            "reserved": "予約済み",
+            "assignedTo": "割り当て先",
+            "assign": "選手を追加…",
+            "unassign": "{name} を外す",
+            "nameOf": "テーブル{n}の名前",
+            "roomOf": "テーブル{n}の会場",
+            "reservedOf": "テーブル{n}を予約",
+            "assignOf": "テーブル{n}の割り当て選手",
+            "bulkFrom": "テーブル",
+            "bulkTo": "～",
+            "bulkApply": "適用",
+            "save": "保存",
+            "reset": "変更を破棄"
+        },
+        "rooms": {
+            "title": "この種目を行う会場",
+            "hint": "未選択：すべてのテーブル。"
         }
     },
     "palette": {

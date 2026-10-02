@@ -1897,7 +1897,7 @@
             "waiting_batch": "Parit seuraavassa erässä.",
             "waiting_table": "ei vapaata pöytää",
             "player_unavailable": "pelaaja ei käytettävissä",
-            "player_busy": "pelaa toisessa turnauksessa"
+            "player_busy": "pelaa toisessa kilpailussa"
         },
         "proposals": {
             "title": "Ehdotukset ({n})",
@@ -1946,7 +1946,9 @@
             "shared": "Kaksi ottelua tässä pöydässä: siirrä toinen",
             "swapConfirm": "Pöytä {from} ↔ Pöytä {to}?",
             "swap": "Vaihda",
-            "moveRefused": "Siirto hylätty: {reason}"
+            "moveRefused": "Siirto hylätty: {reason}",
+            "room": "Sali {name}",
+            "assignedTo": "Osoitettu: {names}"
         },
         "result": {
             "title": "Tulos",
@@ -1962,7 +1964,7 @@
             "apply": "Käytä",
             "forfeitWins": "Luovutus: {loser} → voittaja: {winner}",
             "forfeitConfirm": "{loser} luovuttaa: {winner} voittaa tämän ottelun. Vahvistetaanko?",
-            "cancelConfirm": "Perutaanko ottelu {a} – {b}? Se poistuu salista; loki säilyttää sen."
+            "cancelConfirm": "Perutaanko ottelu {a} – {b}? Se poistuu pöydiltä; loki säilyttää sen."
         },
         "last": {
             "result": "{winner} voitti pelaajan {loser}",
@@ -2017,7 +2019,7 @@
             "noEntry": "{player} on ilmoitettu mutta ei tule mihinkään vaiheeseen.",
             "phaseN": "vaihe {n}",
             "pair": "Pari",
-            "pairHint": "Nelinpeliturnaus: kaksi henkilöä, yksi osallistuja ”A / B”.",
+            "pairHint": "Nelinpelikilpailu: kaksi henkilöä, yksi osallistuja ”A / B”.",
             "name2": "Parin toisen nimi",
             "pairRating": "Parin luokitus",
             "pairRatingHint": "Oletuksena kahden luokituksen keskiarvo; syötetty arvo korvaa sen.",
@@ -2165,7 +2167,7 @@
             "lastChance": "Vaihe {phase} — viimeinen mahdollisuus: {from} → {to}",
             "reconciliation": "Vaihe {phase} — sovitteluottelu: {from} → {to}",
             "recharge": "Vaihe {phase} — lataus: {from} → {to}",
-            "alsoFor": "Koskee myös: {names} (sama sali)."
+            "alsoFor": "Koskee myös: {names} (sama tapahtuma)."
         },
         "lock": {
             "drawn": "arvonta tehty",
@@ -2215,7 +2217,7 @@
             "announced": "Ilmoitettu: {at}"
         },
         "display": {
-            "title": "Salin näyttö",
+            "title": "Näyttö",
             "hint": "Kansio valitaan kerran: sivu kirjoitetaan uudelleen jokaisen tapahtuman yhteydessä ilman muuta toimenpidettä. Se aukeaa offline-tilassa, toisella näytöllä tai heijastettuna.",
             "chooseFolder": "Valitse kansio",
             "changeFolder": "Vaihda kansiota",
@@ -2269,34 +2271,34 @@
             "fileWord": "hakemisto"
         },
         "rencontre": {
-            "title": "Rencontre",
-            "hint": "Useita turnauksia samassa salissa: pöydät, käytöstä poistetut pöydät ja tauot ovat yhteisiä, eikä mikään ehdota pöytää, jossa toinen pelaa.",
+            "title": "Tapahtuma",
+            "hint": "Useita kilpailuja samassa tapahtumassa: pöydät, käytöstä poistetut pöydät ja tauot ovat yhteisiä, eikä mikään ehdota pöytää, jossa toinen pelaa.",
             "tableCount": "{n} pöytää",
-            "members": "turnaukset: {names}",
+            "members": "kilpailut: {names}",
             "outOfService": "Käytöstä poistetut pöydät",
-            "outOfServiceHint": "Ilmoitetaan kerran, kaikille salin turnauksille.",
-            "detach": "Irrota rencontresta",
-            "trash": "Poista rencontre",
+            "outOfServiceHint": "Ilmoitetaan kerran, kaikille tapahtuman kilpailuille.",
+            "detach": "Irrota tapahtumasta",
+            "trash": "Poista tapahtuma",
             "attach": "Liitä…",
-            "name": "Rencontren nimi",
+            "name": "Tapahtuman nimi",
             "tables": "Pöydät",
             "startsOn": "Alku",
             "endsOn": "Loppu",
             "create": "Luo ja liitä…",
-            "confirmTitle": "Mitä tässä turnauksessa muuttuu:",
-            "noChange": "Ei mitään: sen pöydät ovat jo salin pöydät.",
+            "confirmTitle": "Mitä tässä kilpailussa muuttuu:",
+            "noChange": "Ei mitään: sen pöydät ovat jo tapahtuman pöydät.",
             "confirm": "Liitä",
             "wall": {
                 "rounds": "{n} kierrosta ilmoitettu"
             },
-            "trashConfirm": "Poistetaanko tapahtuma ”{name}”? Sen turnaukset jäävät, irrotettuina."
+            "trashConfirm": "Poistetaanko tapahtuma ”{name}”? Sen kilpailut jäävät, irrotettuina."
         },
         "hall": {
-            "tab": "Sali",
-            "legend": "Salin kilpailut",
-            "proposals": "Salin ehdotukset ({n})",
-            "loading": "Ladataan salia…",
-            "error": "Salia ei voitu lukea: {reason}",
+            "tab": "Kaikki pöydät",
+            "legend": "Tapahtuman kilpailut",
+            "proposals": "Tapahtuman ehdotukset ({n})",
+            "loading": "Ladataan pöytiä…",
+            "error": "Pöytiä ei voitu lukea: {reason}",
             "eventError": "Kilpailua {event} ei voi toistaa; sen pöydät puuttuvat: {reason}",
             "swapConfirm": "Pöytä {from} ({a}) ↔ Pöytä {to} ({b})?"
         },
@@ -2336,6 +2338,30 @@
             "launchAtTable": "Aloita pöydässä…",
             "changeLength": "Vaihda pituutta…",
             "printSheet": "Tulosta kierroksen lehti"
+        },
+        "tableProps": {
+            "title": "Pöytien ominaisuudet",
+            "hint": "Nimi (”Stream”), sali, varaus, osoitetut pelaajat. Pöytä ilman ominaisuuksia on tavallinen pöytä.",
+            "number": "Pöytä",
+            "name": "Nimi",
+            "room": "Sali",
+            "reserved": "Varattu",
+            "assignedTo": "Osoitettu",
+            "assign": "Lisää pelaaja…",
+            "unassign": "Poista {name}",
+            "nameOf": "Pöydän {n} nimi",
+            "roomOf": "Pöydän {n} sali",
+            "reservedOf": "Pöytä {n} varattu",
+            "assignOf": "Pöydän {n} pelaaja",
+            "bulkFrom": "Pöydät",
+            "bulkTo": "–",
+            "bulkApply": "Käytä",
+            "save": "Tallenna",
+            "reset": "Hylkää muutokset"
+        },
+        "rooms": {
+            "title": "Salit, joissa tämä kilpailu pelataan",
+            "hint": "Ei valintaa: kaikki pöydät."
         }
     },
     "palette": {

@@ -13,6 +13,9 @@ import {
     TrashRencontre,
     SetRencontreTableOutOfService,
     SetRencontreOutputDir,
+    SetRencontreTables,
+    SetEventRooms,
+    SetDirectionTables,
     WriteRencontrePage
 } from '../../wailsjs/go/database/Database.js';
 import { OpenDirectionOutputDialog } from '../../wailsjs/go/gui/App.js';
@@ -104,4 +107,34 @@ export async function forgetRencontreOutputDir(rencontreId) {
  */
 export async function writeRencontrePage(rencontreId) {
     return (await WriteRencontrePage(rencontreId)) || '';
+}
+
+/**
+ * Les propriétés des tables de la Rencontre : nom, salle, réservation, joueurs attitrés.
+ * @param {number} rencontreId @param {import('../../wailsjs/go/models').domain.TableSetting[]} settings
+ */
+export async function setRencontreTables(rencontreId, settings) {
+    const r = await SetRencontreTables(rencontreId, settings);
+    await refreshDirection();
+    return r;
+}
+
+/**
+ * Les salles où une épreuve rattachée joue ; aucune, c'est toutes les tables.
+ * @param {number} rencontreId @param {number} tournamentId @param {string[]} rooms
+ */
+export async function setEventRooms(rencontreId, tournamentId, rooms) {
+    const r = await SetEventRooms(rencontreId, tournamentId, rooms);
+    await refreshDirection();
+    return r;
+}
+
+/**
+ * Les propriétés des tables d'une épreuve qui joue seule.
+ * @param {number} tournamentId @param {import('../../wailsjs/go/models').domain.TableSetting[]} settings
+ */
+export async function setDirectionTables(tournamentId, settings) {
+    const r = await SetDirectionTables(tournamentId, settings);
+    await refreshDirection();
+    return r;
 }

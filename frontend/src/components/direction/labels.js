@@ -248,3 +248,11 @@ export function csvFilename(tournament, word, date = new Date()) {
             .replace(/^-|-$/g, '');
     return [slug(tournament), slug(word), day].filter(Boolean).join('-') + '.csv';
 }
+
+/**
+ * Une table telle qu'on la nomme à voix haute : son numéro, suivi de son nom quand elle en a un.
+ * @param {number} n @param {string} [name]
+ */
+export function tableTitle(n, name) {
+    return name ? `${n} · ${name}` : String(n);
+}

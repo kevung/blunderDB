@@ -1,6 +1,6 @@
 <script>
     /*
-     * La Salle (ADR-0056 §5) : une seule grille, une case par table de la Rencontre quelle que
+     * Toutes les tables (ADR-0056 §5, ADR-0058) : une seule grille, une case par table de l'Événement quelle que
      * soit l'épreuve, marquée de son épreuve, puis les propositions de chaque épreuve. Rien n'y
      * est calculé : la fusion est RencontreTableGrid, côté Go, et chaque geste part vers
      * l'épreuve de sa case. La grille est celle d'une épreuve (TableGrid) : mêmes menus, même
@@ -8,7 +8,7 @@
      */
     import { t, tMsg } from '../../i18n';
     import TableGrid from './TableGrid.svelte';
-    import { proposalLabel, actionKey, isRepair } from './labels.js';
+    import { proposalLabel, actionKey, isRepair, tableTitle } from './labels.js';
     import { hallEnterResult, hallEnterForfeit, hallMoveMatch, hallCancelMatch, hallConfirmProposal } from '../../stores/directionStore';
 
     /** @typedef {import('../../../wailsjs/go/models').service.HallView} Hall */
@@ -58,6 +58,8 @@
 
     /** @param {HallEvent} ev @returns {(id: string | undefined) => string} */
     const namesOf = (ev) => (id) => (id && ev.names?.[id]) || id || '';
+    /** Le nom des tables de l'Événement qui en portent un. */
+    const tableNames = $derived(Object.fromEntries((hall?.cells || []).filter((c) => c.name).map((c) => [c.table, c.name])));
     /** @param {number} index */
     const evColor = (index) => `--ev: var(--td-event-${index % 6})`;
 </script>
@@ -87,7 +89,7 @@
                                 <li>
                                     <span class="what">{proposalLabel($t, a, namesOf(g.ev))}</span>
                                     {#if a.length}<span class="meta">{$t('direction.proposals.points', { n: a.length })}</span>{/if}
-                                    {#if a.table}<span class="meta">{$t('direction.proposals.table', { n: a.table })}</span>{/if}
+                                    {#if a.table}<span class="meta">{$t('direction.proposals.table', { n: tableTitle(a.table, tableNames[a.table]) })}</span>{/if}
                                     <span class="grow"></span>
                                     <button type="button" class="go" disabled={busy} onclick={() => launch(g.ev.tournamentId, a)}>
                                         {isRepair(a) ? $t('direction.proposals.cancelMatch') : $t('direction.proposals.launch')}

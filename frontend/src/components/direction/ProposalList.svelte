@@ -8,7 +8,7 @@
     import { tick as nextTick, untrack } from 'svelte';
     import { t } from '../../i18n';
     import { SvelteSet } from 'svelte/reactivity';
-    import { proposalLabel, actionKey, renderWarning, isRepair, seatLabel } from './labels.js';
+    import { proposalLabel, actionKey, renderWarning, isRepair, seatLabel, tableTitle } from './labels.js';
     import { directionOwnsKey, somethingOpenAbove, gridHasFocus } from '../../services/directionKeys.js';
     import { isBareLetter } from '../../utils/keys.js';
     import ContextMenu from '../ContextMenu.svelte';
@@ -22,6 +22,7 @@
      *     proposals?: ProposalAction[],
      *     players?: { id: string, name: string }[],
      *     elsewhere?: Record<string, { event: string, table: number }>,
+     *     tableNames?: Record<number, string>,
      *     busy?: boolean,
      *     onConfirm?: (action: ProposalAction) => void,
      *     onConfirmAll?: () => void | Promise<void>,
@@ -30,7 +31,18 @@
      *     onPrintSheet?: () => void
      * }}
      */
-    let { proposals = [], players = [], elsewhere = {}, busy = false, onConfirm = () => {}, onConfirmAll = () => {}, onManual = () => {}, request = null, onPrintSheet = undefined } = $props();
+    let {
+        proposals = [],
+        players = [],
+        elsewhere = {},
+        tableNames = {},
+        busy = false,
+        onConfirm = () => {},
+        onConfirmAll = () => {},
+        onManual = () => {},
+        request = null,
+        onPrintSheet = undefined
+    } = $props();
 
     /* Compte à rebours d'une micro-ronde : un battement de seconde, sans événement. */
     let tick = $state(Date.now());
@@ -251,7 +263,7 @@
                     <span class="meta">{$t('direction.proposals.points', { n: a.length })}</span>
                 {/if}
                 {#if a.table}
-                    <span class="meta">{$t('direction.proposals.table', { n: a.table })}</span>
+                    <span class="meta">{$t('direction.proposals.table', { n: tableTitle(a.table, tableNames[a.table]) })}</span>
                 {:else if a.reason === 'player_busy' && (elsewhere[a.a ?? ''] || elsewhere[a.b ?? ''])}
                     <span class="meta warn">{seatLabel($t, elsewhere[a.a ?? ''] || elsewhere[a.b ?? ''])}</span>
                 {:else if a.reason}

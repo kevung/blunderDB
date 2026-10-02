@@ -1897,7 +1897,7 @@
             "waiting_batch": "Emparejamiento en la próxima tanda.",
             "waiting_table": "ninguna mesa libre",
             "player_unavailable": "jugador no disponible",
-            "player_busy": "juega en otro torneo"
+            "player_busy": "juega en otra prueba"
         },
         "proposals": {
             "title": "Propuestas ({n})",
@@ -1946,7 +1946,9 @@
             "shared": "Dos partidas en esta mesa: mueva una",
             "swapConfirm": "¿Mesa {from} ↔ Mesa {to}?",
             "swap": "Intercambiar",
-            "moveRefused": "Movimiento rechazado: {reason}"
+            "moveRefused": "Movimiento rechazado: {reason}",
+            "room": "Sala {name}",
+            "assignedTo": "Asignada a {names}"
         },
         "result": {
             "title": "Resultado",
@@ -1962,7 +1964,7 @@
             "apply": "Aplicar",
             "forfeitWins": "Incomparecencia de {loser} → gana {winner}",
             "forfeitConfirm": "{loser} no se presenta: {winner} gana esta partida. ¿Confirmar?",
-            "cancelConfirm": "¿Anular la partida {a} – {b}? Sale de la sala; el registro la conserva."
+            "cancelConfirm": "¿Anular la partida {a} – {b}? Sale de las mesas; el registro la conserva."
         },
         "last": {
             "result": "{winner} gana a {loser}",
@@ -2017,7 +2019,7 @@
             "noEntry": "{player} está inscrito pero no entra en ninguna fase.",
             "phaseN": "fase {n}",
             "pair": "Pareja",
-            "pairHint": "Un torneo de dobles: dos personas, un solo inscrito «A / B».",
+            "pairHint": "Una prueba de dobles: dos personas, un solo inscrito «A / B».",
             "name2": "Nombre del compañero",
             "pairRating": "Valoración de la pareja",
             "pairRatingHint": "Por defecto la media de ambas valoraciones; un valor escrito la sustituye.",
@@ -2165,7 +2167,7 @@
             "lastChance": "Fase {phase} — última oportunidad: {from} → {to}",
             "reconciliation": "Fase {phase} — reconciliación: {from} → {to}",
             "recharge": "Fase {phase} — recarga: {from} → {to}",
-            "alsoFor": "También se aplica a: {names} (misma sala)."
+            "alsoFor": "También se aplica a: {names} (mismo evento)."
         },
         "lock": {
             "drawn": "sorteo hecho",
@@ -2215,7 +2217,7 @@
             "announced": "Anunciada: {at}"
         },
         "display": {
-            "title": "Pantalla de la sala",
+            "title": "Pantalla",
             "hint": "Una carpeta elegida una vez: la página se reescribe en cada evento, sin ningún gesto más. Se abre sin conexión, en una segunda pantalla o proyectada.",
             "chooseFolder": "Elegir una carpeta",
             "changeFolder": "Cambiar de carpeta",
@@ -2269,34 +2271,34 @@
             "fileWord": "directorio"
         },
         "rencontre": {
-            "title": "Rencontre",
-            "hint": "Varios torneos en la misma sala: sus mesas, mesas fuera de servicio y pausas son comunes, y ninguno propone una mesa donde juega otro.",
+            "title": "Evento",
+            "hint": "Varias pruebas en el mismo evento: sus mesas, mesas fuera de servicio y pausas son comunes, y ninguna propone una mesa donde juega otra.",
             "tableCount": "{n} mesas",
-            "members": "torneos: {names}",
+            "members": "pruebas: {names}",
             "outOfService": "Mesas fuera de servicio",
-            "outOfServiceHint": "Se declara una vez, para todos los torneos de la sala.",
-            "detach": "Separar de la rencontre",
-            "trash": "Eliminar la rencontre",
+            "outOfServiceHint": "Se declara una vez, para todas las pruebas del evento.",
+            "detach": "Separar del evento",
+            "trash": "Eliminar el evento",
             "attach": "Vincular…",
-            "name": "Nombre de la rencontre",
+            "name": "Nombre del evento",
             "tables": "Mesas",
             "startsOn": "Inicio",
             "endsOn": "Fin",
             "create": "Crear y vincular…",
-            "confirmTitle": "Lo que cambiará en este torneo:",
-            "noChange": "Nada: sus mesas ya son las de la sala.",
+            "confirmTitle": "Lo que cambiará en esta prueba:",
+            "noChange": "Nada: sus mesas ya son las del evento.",
             "confirm": "Vincular",
             "wall": {
                 "rounds": "{n} rondas anunciadas"
             },
-            "trashConfirm": "¿Eliminar el encuentro «{name}»? Sus pruebas se mantienen, desvinculadas."
+            "trashConfirm": "¿Eliminar el evento «{name}»? Sus pruebas se mantienen, desvinculadas."
         },
         "hall": {
-            "tab": "Sala",
-            "legend": "Torneos de la sala",
-            "proposals": "Propuestas de la sala ({n})",
-            "loading": "Cargando la sala…",
-            "error": "No se pudo leer la sala: {reason}",
+            "tab": "Todas las mesas",
+            "legend": "Pruebas del evento",
+            "proposals": "Propuestas del evento ({n})",
+            "loading": "Cargando las mesas…",
+            "error": "No se pudieron leer las mesas: {reason}",
             "eventError": "{event} no se puede reproducir; faltan sus mesas: {reason}",
             "swapConfirm": "¿Mesa {from} ({a}) ↔ Mesa {to} ({b})?"
         },
@@ -2336,6 +2338,30 @@
             "launchAtTable": "Iniciar en una mesa…",
             "changeLength": "Cambiar la longitud…",
             "printSheet": "Imprimir la hoja de la ronda"
+        },
+        "tableProps": {
+            "title": "Propiedades de las mesas",
+            "hint": "Un nombre («Stream»), una sala, una reserva, jugadores asignados. Una mesa sin propiedades es una mesa ordinaria.",
+            "number": "Mesa",
+            "name": "Nombre",
+            "room": "Sala",
+            "reserved": "Reservada",
+            "assignedTo": "Asignada a",
+            "assign": "Añadir un jugador…",
+            "unassign": "Quitar a {name}",
+            "nameOf": "Nombre de la mesa {n}",
+            "roomOf": "Sala de la mesa {n}",
+            "reservedOf": "Mesa {n} reservada",
+            "assignOf": "Jugador asignado a la mesa {n}",
+            "bulkFrom": "Mesas de",
+            "bulkTo": "a",
+            "bulkApply": "Aplicar",
+            "save": "Guardar",
+            "reset": "Descartar los cambios"
+        },
+        "rooms": {
+            "title": "Salas donde juega esta prueba",
+            "hint": "Ninguna marcada: todas las mesas."
         }
     },
     "palette": {
