@@ -132,7 +132,8 @@ func TestTenantHeaderRequiredOnV1(t *testing.T) {
 func TestTenantHeaderReachesCatchAll(t *testing.T) {
 	ts := newTestServer(t)
 	// With a tenant header, the request passes the tenant gate and reaches the
-	// catch-all for an unknown /v1 method → 404 unknown_route envelope.
+	// catch-all for an unknown /v1 method → 404 unknown_route envelope, a
+	// code a client can tell apart from an absent resource.
 	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/positions.doesNotExist", strings.NewReader("{}"))
 	req.Header.Set(middleware.TenantHeader, "1")
 	resp, err := http.DefaultClient.Do(req)

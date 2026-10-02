@@ -48,14 +48,20 @@ func testPositionSaveLoad(t *testing.T, s storage.Storage) {
 func testPositionDedup(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	p1 := checkerPos()
-	id1, err := s.Positions().Save(ctx, "", &p1)
+	id1, created1, err := s.Positions().SaveCreated(ctx, "", &p1)
 	if err != nil {
 		t.Fatalf("first Save: %v", err)
 	}
+	if !created1 {
+		t.Error("first Save of a new position must report created=true")
+	}
 	p2 := checkerPos()
-	id2, err := s.Positions().Save(ctx, "", &p2)
+	id2, created2, err := s.Positions().SaveCreated(ctx, "", &p2)
 	if err != nil {
 		t.Fatalf("second Save: %v", err)
+	}
+	if created2 {
+		t.Error("a dedup hit must report created=false: a caller compensating on created would delete a row it does not own")
 	}
 	if id1 != id2 {
 		t.Errorf("dedup failed: first Save id %d, second Save id %d", id1, id2)

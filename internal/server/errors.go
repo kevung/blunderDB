@@ -15,8 +15,10 @@ import (
 // Adding a code is an additive API change (bump the API minor version).
 const (
 	CodeNotFound = "not_found"
-	// CodeUnknownRoute: no route answers this method and path — a client and
-	// daemon of different versions, not a missing resource (404).
+	// CodeUnknownRoute answers a path no route serves. Same 404 status as
+	// not_found (no resource lives at that URI, and status-only clients keep
+	// their behaviour), but a distinct code: a client whose method was renamed
+	// or removed by a version skew must see a fault, not an absent row.
 	CodeUnknownRoute = "unknown_route"
 	CodeConflict     = "conflict"
 	CodeInvalid      = "invalid"

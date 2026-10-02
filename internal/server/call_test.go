@@ -56,11 +56,19 @@ func captureStdout(t *testing.T, fn func() error) (string, error) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// Drain concurrently: a Windows pipe buffer is smaller than --list output,
+	// so reading only after fn returns deadlocks the writer.
+	done := make(chan []byte)
+	go func() {
+		out, _ := io.ReadAll(r)
+		done <- out
+	}()
 	os.Stdout = w
 	runErr := fn()
 	w.Close()
 	os.Stdout = old
-	out, _ := io.ReadAll(r)
+	out := <-done
+	r.Close()
 	return string(out), runErr
 }
 

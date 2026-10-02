@@ -809,6 +809,14 @@ type Move struct {
 	// them out of its denominator. It belongs to the Move because Positions
 	// are deduplicated across matches. See ADR-0010.
 	LuckMP *int32 `json:"luck_mp,omitempty"`
+
+	// ErrorMP is the equity this play gave up against the best one, in
+	// non-negative millipoints, scored from its Position's analysis the way
+	// the search's E filter scores a play. It is read per Move, not from the
+	// Position: a Position reached twice and played two ways has two costs.
+	// nil means unscored (no analysis, or a play absent from the candidates).
+	// Filled by the match stores' move reads; never written.
+	ErrorMP *int32 `json:"error_mp,omitempty"`
 }
 
 type MoveAnalysis struct {

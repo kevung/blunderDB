@@ -87,7 +87,8 @@ func assertSessionIsolated(t *testing.T, ts *httptest.Server) {
 }
 
 // TestMetadataWriteRoutesGone: metadata.load/save/setVersion fall through to
-// the catch-all 404, while metadata.version and metadata.counts still answer.
+// the catch-all (404 unknown_route), while metadata.version and
+// metadata.counts still answer.
 func TestMetadataWriteRoutesGone(t *testing.T) {
 	ts := newTestServer(t)
 	for _, path := range []string{"/v1/metadata.load", "/v1/metadata.save", "/v1/metadata.setVersion"} {

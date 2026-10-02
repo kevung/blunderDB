@@ -6161,6 +6161,8 @@ components:
       properties:
         playerName:
           type: string
+        playerNameContains:
+          type: string
         tournamentIds:
           type: array
           items:

@@ -117,6 +117,14 @@ func testMatchListFilterSortPaginate(t *testing.T, s storage.Storage) {
 	eq("length_asc", ids(storage.MatchListOpts{Sort: "length_asc"}), []int64{midID, oldID, recentID})
 	// Player filter: Alice is player 1 of `old` and player 2 of `recent`.
 	eq("player Alice", ids(storage.MatchListOpts{PlayerName: "Alice"}), []int64{recentID, oldID})
+	// Substring filter, for a search box: case-insensitive, either seat, and
+	// LIKE's wildcards taken literally. The exact filter stays exact.
+	eq("contains lic", ids(storage.MatchListOpts{PlayerNameContains: "lic"}), []int64{recentID, oldID})
+	eq("contains aLI", ids(storage.MatchListOpts{PlayerNameContains: "aLI"}), []int64{recentID, oldID})
+	eq("contains ave", ids(storage.MatchListOpts{PlayerNameContains: "ave"}), []int64{midID})
+	eq("contains %", ids(storage.MatchListOpts{PlayerNameContains: "%"}), nil)
+	eq("contains _", ids(storage.MatchListOpts{PlayerNameContains: "_"}), nil)
+	eq("exact Ali", ids(storage.MatchListOpts{PlayerName: "Ali"}), nil)
 	// Date filters, inclusive on the day (recent is at 23:00 on the DateTo day).
 	eq("from 2024-01-01", ids(storage.MatchListOpts{DateFrom: "2024-01-01"}), []int64{recentID, midID})
 	eq("to 2024-12-31", ids(storage.MatchListOpts{DateTo: "2024-12-31"}), []int64{midID, oldID})

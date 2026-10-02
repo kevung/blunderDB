@@ -12,6 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 type matchStore struct{ db execer }
@@ -158,6 +159,11 @@ func buildMatchListWhere(opts storage.MatchListOpts) (whereSQL string, args []an
 	if opts.PlayerName != "" {
 		clauses = append(clauses, "(m.player1_name = ? OR m.player2_name = ?)")
 		args = append(args, opts.PlayerName, opts.PlayerName)
+	}
+	if opts.PlayerNameContains != "" {
+		clauses = append(clauses, `(m.player1_name LIKE ? ESCAPE '\' OR m.player2_name LIKE ? ESCAPE '\')`)
+		pat := sqlshared.ContainsPattern(opts.PlayerNameContains)
+		args = append(args, pat, pat)
 	}
 	if len(opts.TournamentIDs) > 0 {
 		ph := strings.TrimSuffix(strings.Repeat("?,", len(opts.TournamentIDs)), ",")
@@ -652,6 +658,30 @@ func scanMove(sc interface{ Scan(...any) error }) (domain.Move, error) {
 	return mv, nil
 }
 
+// scanScoredMove reads moveSelectCols followed by the Position's analysis
+// blob, and scores the play from it.
+func scanScoredMove(rows *sql.Rows, scorer sqlshared.PlayScorer) (domain.Move, error) {
+	var mv domain.Move
+	var d1, d2 int32
+	var positionID sql.NullInt64
+	var luckMP sql.NullInt32
+	var data []byte
+	if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
+		&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP, &data); err != nil {
+		return domain.Move{}, err
+	}
+	mv.Dice = [2]int32{d1, d2}
+	if positionID.Valid {
+		mv.PositionID = positionID.Int64
+	}
+	if luckMP.Valid {
+		v := luckMP.Int32
+		mv.LuckMP = &v
+	}
+	scorer.Score(&mv, data)
+	return mv, nil
+}
+
 const moveInsertSQL = `INSERT INTO move (
 	game_id, move_number, move_type, position_id, player,
 	dice_1, dice_2, checker_move, cube_action, luck_mp
@@ -686,14 +716,17 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error] {
 	return func(yield func(*domain.Move, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT `+moveSelectCols+` FROM move WHERE game_id = ? ORDER BY move_number`, gameID)
+			`SELECT `+qualify(moveSelectCols, "mv")+`, a.data
+			 FROM move mv LEFT JOIN analysis a ON a.position_id = mv.position_id
+			 WHERE mv.game_id = ? ORDER BY mv.move_number`, gameID)
 		if err != nil {
 			yield(nil, fmt.Errorf("sqlite: list moves: %w", err))
 			return
 		}
 		defer rows.Close()
+		scorer := sqlshared.PlayScorer{}
 		for rows.Next() {
-			mv, err := scanMove(rows)
+			mv, err := scanScoredMove(rows, scorer)
 			if err != nil {
 				yield(nil, fmt.Errorf("sqlite: list moves: %w", err))
 				return
@@ -714,8 +747,9 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Move, error] {
 	return func(yield func(*domain.Move, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT `+qualify(moveSelectCols, "mv")+`
+			`SELECT `+qualify(moveSelectCols, "mv")+`, a.data
 			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
+			 LEFT JOIN analysis a ON a.position_id = mv.position_id
 			 WHERE g.match_id = ?
 			 ORDER BY g.game_number, mv.move_number`, matchID)
 		if err != nil {
@@ -723,8 +757,9 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 			return
 		}
 		defer rows.Close()
+		scorer := sqlshared.PlayScorer{}
 		for rows.Next() {
-			mv, err := scanMove(rows)
+			mv, err := scanScoredMove(rows, scorer)
 			if err != nil {
 				yield(nil, fmt.Errorf("sqlite: list moves by match: %w", err))
 				return
