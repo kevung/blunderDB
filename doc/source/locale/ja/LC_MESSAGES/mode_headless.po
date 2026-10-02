@@ -1032,8 +1032,8 @@ msgid ""
 "``tableSettings``) pour une épreuve qui joue seule."
 msgstr ""
 "テーブルのプロパティ: "
-"``rencontres.setTables``（``id``、``tableSettings``。プロパティを持つテーブルごとに1項目で、番号、名前、会場、予約済み、割り当て先）、``rencontres.setEventRooms``（``id``、``tournamentId``、``rooms``。種目が行われる会場で、未指定はすべてのテーブル）、および単独で行われる種目のための"
-" ``directions.setTables``（``tournamentId``、``tableSettings``）。"
+"``rencontres.setTables``\\ （``id``、``tableSettings``。プロパティを持つテーブルごとに1項目で、番号、名前、会場、予約済み、割り当て先）\\ 、``rencontres.setEventRooms``\\ （``id``、``tournamentId``、``rooms``。種目が行われる会場で、未指定はすべてのテーブル）、および単独で行われる種目のための"
+" ``directions.setTables``\\ （``tournamentId``、``tableSettings``）。"
 
 #: ../../source/mode_headless.rst:501
 msgid ""

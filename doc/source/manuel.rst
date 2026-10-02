@@ -1218,7 +1218,9 @@ camp, qui joue les deux dés. Le coup se choisit ensuite parmi les candidats,
 comme tout autre. Les égalités, rejouées à la table, ne se transcrivent pas ; un
 premier coup tapé en double est enregistré tel quel et marqué « dés
 incohérents », aucun jet d'ouverture n'étant un double, et un double de videau
-avant le premier coup est marqué « action de videau impossible ».
+avant le premier coup est marqué « action de videau impossible ». Une action de
+videau inscrite après la fin d'une partie porte la même marque : elle reste dans
+la partie terminée, n'en ouvre pas de nouvelle, et se supprime à la main.
 
 Dès que le second dé tombe, tous les **coups légaux** du jet sont listés,
 classés par le moteur embarqué, le premier présélectionné et ses flèches posées

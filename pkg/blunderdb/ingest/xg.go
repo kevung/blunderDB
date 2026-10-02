@@ -591,42 +591,20 @@ func computeMatchHash(match *xgparser.Match) string {
 	return hex.EncodeToString(hash[:])
 }
 
-// maxCanonicalDicePerGame bounds the dice included in the canonical hash so it
-// is identical across export formats.
-const maxCanonicalDicePerGame = 10
-
 // computeCanonicalMatchHashFromXG is the format-independent hash for
 // cross-format duplicate detection.
 func computeCanonicalMatchHashFromXG(match *xgparser.Match) string {
-	var b strings.Builder
-	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1Name))
-	p2 := strings.TrimSpace(strings.ToLower(match.Metadata.Player2Name))
-	if p1 > p2 {
-		p1, p2 = p2, p1
-	}
-	b.WriteString(fmt.Sprintf("canonical2:%s|%s|%d|%d|", p1, p2, match.Metadata.MatchLength, len(match.Games)))
-
-	for gameIdx, game := range match.Games {
-		b.WriteString(fmt.Sprintf("g%d|", gameIdx))
-		diceCount := 0
+	games := make([][][2]int, len(match.Games))
+	for gi, game := range match.Games {
 		for _, move := range game.Moves {
-			if diceCount >= maxCanonicalDicePerGame {
-				break
-			}
 			if move.MoveType == "checker" && move.CheckerMove != nil {
-				d1 := move.CheckerMove.Dice[0]
-				d2 := move.CheckerMove.Dice[1]
-				if d1 > d2 {
-					d1, d2 = d2, d1
-				}
-				b.WriteString(fmt.Sprintf("d%d%d|", d1, d2))
-				diceCount++
+				d := move.CheckerMove.Dice
+				games[gi] = append(games[gi], [2]int{int(d[0]), int(d[1])})
 			}
 		}
 	}
-
-	hash := sha256.Sum256([]byte(b.String()))
-	return hex.EncodeToString(hash[:])
+	return CanonicalMatchHash(match.Metadata.Player1Name, match.Metadata.Player2Name,
+		int(match.Metadata.MatchLength), games)
 }
 
 // XGImporter implements Importer for eXtreme Gammon .xg files. It needs a

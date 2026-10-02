@@ -381,50 +381,28 @@ func computeBGFMatchHash(match *bgfparser.Match) string {
 // computeCanonicalMatchHashFromBGF is the format-independent hash, identical to
 // computeCanonicalMatchHashFromXG for the same match.
 func computeCanonicalMatchHashFromBGF(match *bgfparser.Match) string {
-	var b strings.Builder
 	data := match.Data
-	p1 := strings.TrimSpace(strings.ToLower(bgfGetString(data, "nameGreen")))
-	p2 := strings.TrimSpace(strings.ToLower(bgfGetString(data, "nameRed")))
-	if p1 > p2 {
-		p1, p2 = p2, p1
-	}
 	gamesData, _ := data["games"].([]interface{})
-	b.WriteString(fmt.Sprintf("canonical2:%s|%s|%d|%d|", p1, p2, bgfGetInt(data, "matchlen"), len(gamesData)))
-
-	for gameIdx, gameRaw := range gamesData {
+	games := make([][][2]int, len(gamesData))
+	for gi, gameRaw := range gamesData {
 		g, ok := gameRaw.(map[string]interface{})
 		if !ok {
 			continue
 		}
-		b.WriteString(fmt.Sprintf("g%d|", gameIdx))
-		diceCount := 0
 		movesData, _ := g["moves"].([]interface{})
 		for _, moveRaw := range movesData {
-			if diceCount >= maxCanonicalDicePerGame {
-				break
-			}
 			m, ok := moveRaw.(map[string]interface{})
-			if !ok {
+			if !ok || bgfGetString(m, "type") != "amove" {
 				continue
 			}
-			if bgfGetString(m, "type") == "amove" {
-				fromArr := bgfGetIntArray(m, "from")
-				if fromArr[0] == -1 {
-					continue
-				}
-				d1 := bgfGetInt(m, "green")
-				d2 := bgfGetInt(m, "red")
-				if d1 > d2 {
-					d1, d2 = d2, d1
-				}
-				b.WriteString(fmt.Sprintf("d%d%d|", d1, d2))
-				diceCount++
+			if bgfGetIntArray(m, "from")[0] == -1 {
+				continue
 			}
+			games[gi] = append(games[gi], [2]int{int(bgfGetInt(m, "green")), int(bgfGetInt(m, "red"))})
 		}
 	}
-
-	hash := sha256.Sum256([]byte(b.String()))
-	return hex.EncodeToString(hash[:])
+	return CanonicalMatchHash(bgfGetString(data, "nameGreen"), bgfGetString(data, "nameRed"),
+		int(bgfGetInt(data, "matchlen")), games)
 }
 
 // BGFImporter implements Importer for BGBlitz .bgf files.

@@ -298,9 +298,8 @@ func transcriptGraph(parts transcript.Parts) *ingest.MatchGraph {
 
 // transcriptMatchHashes are the two content hashes of a transcribed match.
 //
-// The canonical one is the SAME scheme as the importers
-// (computeCanonicalMatchHashFromXG and twins), so a later XG/GnuBG import of
-// the same match enriches instead of duplicating. The format-specific one
+// The canonical one is the importers' own ([ingest.CanonicalMatchHash]), so a
+// later XG/GnuBG import of the same match enriches instead of duplicating. The format-specific one
 // hashes the plays as typed and changes whenever the document does.
 func transcriptMatchHashes(parts transcript.Parts) (matchHash, canonicalHash string) {
 	m := parts.Match
@@ -321,37 +320,17 @@ func transcriptMatchHashes(parts transcript.Parts) (matchHash, canonicalHash str
 	}
 	matchHash = sha256Hex(b.String())
 
-	var c strings.Builder
-	if p1 > p2 {
-		p1, p2 = p2, p1
-	}
-	fmt.Fprintf(&c, "canonical2:%s|%s|%d|%d|", p1, p2, m.MatchLength, len(parts.Games))
+	games := make([][][2]int, len(parts.Games))
 	for gi, game := range parts.Games {
-		fmt.Fprintf(&c, "g%d|", gi)
-		dice := 0
 		for _, mv := range parts.Moves[game.ID] {
-			if dice >= canonicalDicePerGame {
-				break
+			if mv.MoveType == "checker" {
+				games[gi] = append(games[gi], [2]int{int(mv.Dice[0]), int(mv.Dice[1])})
 			}
-			if mv.MoveType != "checker" {
-				continue
-			}
-			d1, d2 := mv.Dice[0], mv.Dice[1]
-			if d1 > d2 {
-				d1, d2 = d2, d1
-			}
-			fmt.Fprintf(&c, "d%d%d|", d1, d2)
-			dice++
 		}
 	}
-	return matchHash, sha256Hex(c.String())
+	canonicalHash = ingest.CanonicalMatchHash(m.Player1Name, m.Player2Name, int(m.MatchLength), games)
+	return matchHash, canonicalHash
 }
-
-// canonicalDicePerGame mirrors ingest's maxCanonicalDicePerGame, which is
-// unexported there. The two must state the same number or a transcribed match
-// stops hashing like its imported twin — which is the whole point of the
-// canonical hash.
-const canonicalDicePerGame = 10
 
 func sha256Hex(s string) string {
 	sum := sha256.Sum256([]byte(s))
