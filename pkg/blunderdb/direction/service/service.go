@@ -24,6 +24,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
@@ -102,9 +103,10 @@ func (m *Memory) gestureMutex(k gestureLock) *sync.Mutex {
 
 // gestureTarget is what a gesture names, and so what its locks and its version are.
 type gestureTarget struct {
-	tournamentID int64 // the Direction, or 0 for a gesture on a room
-	rencontreID  int64 // the room a gesture on a room names; or the room an attach joins
-	own          bool  // the Direction's own lock as well as its room's: membership changes
+	tournamentID int64   // the Direction, or 0 for a gesture on a room
+	rencontreID  int64   // the room a gesture on a room names; or the room an attach joins
+	own          bool    // the Direction's own lock as well as its room's: membership changes
+	members      []int64 // Directions locked as well, each by its own lock: a room being restored
 }
 
 // lockDirection opens a gesture on one Direction. A Direction that plays in a Rencontre is
@@ -133,6 +135,15 @@ func (d *Service) lockRoom(ctx context.Context, tournamentID, rencontreID int64)
 // version checked is the room's when rencontreID is set, the Direction's otherwise.
 func (d *Service) lockMembership(ctx context.Context, tournamentID, rencontreID int64) (*Service, func(*error), error) {
 	g, end, _, err := d.lockGesture(ctx, gestureTarget{tournamentID: tournamentID, rencontreID: rencontreID, own: true}, false)
+	return g, end, err
+}
+
+// lockMembers opens a gesture that moves the Directions tournamentIDs into a room not created
+// yet: each Direction's own lock, in the order of their ids, as lockMembership takes one. A
+// Direction attached to another room meanwhile is under that room's lock, and the gesture
+// leaves it where it is.
+func (d *Service) lockMembers(ctx context.Context, tournamentIDs []int64) (*Service, func(*error), error) {
+	g, end, _, err := d.lockGesture(ctx, gestureTarget{members: tournamentIDs}, false)
 	return g, end, err
 }
 
@@ -230,6 +241,11 @@ func (d *Service) lockKeys(t gestureTarget, room int64) []gestureLock {
 	var keys []gestureLock
 	if t.tournamentID != 0 && (t.own || room == 0) {
 		keys = append(keys, gestureLock{scope: d.scope, id: t.tournamentID})
+	}
+	members := slices.Clone(t.members)
+	slices.Sort(members)
+	for _, id := range slices.Compact(members) {
+		keys = append(keys, gestureLock{scope: d.scope, id: id})
 	}
 	if room != 0 {
 		keys = append(keys, gestureLock{scope: d.scope, room: true, id: room})

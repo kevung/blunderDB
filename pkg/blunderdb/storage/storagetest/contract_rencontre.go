@@ -104,9 +104,16 @@ func testRencontreTrashRestores(t *testing.T, s storage.Storage) {
 	other, _ := rs.Create(ctx, "", domain.Rencontre{Name: "Autre", Tables: 4})
 	_ = rs.Attach(ctx, "", b, other)
 
-	back, err := trash.Restore(ctx, s, "", entry)
+	if _, err := trash.Restore(ctx, s, "", entry); !errors.Is(err, trash.ErrRencontreByService) {
+		t.Fatalf("trash.Restore of a Rencontre: %v, want ErrRencontreByService", err)
+	}
+	loaded, err := s.Trash().Load(ctx, "", entry)
 	if err != nil {
-		t.Fatalf("Restore: %v", err)
+		t.Fatal(err)
+	}
+	back, err := trash.RestoreRencontre(ctx, s, "", loaded)
+	if err != nil {
+		t.Fatalf("RestoreRencontre: %v", err)
 	}
 	r, err := rs.Get(ctx, "", back)
 	if err != nil {

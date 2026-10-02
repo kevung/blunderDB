@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"slices"
+	"strings"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
 
@@ -110,6 +111,29 @@ func checkRunningStays(ctx context.Context, store direction.Store, members []mem
 	return nil
 }
 
+// checkEveryEventHasATable refuses table properties under which an event restricted to rooms
+// would find no table in them — its rooms renamed or emptied — naming the event: its matches
+// would wait for a table forever.
+func checkEveryEventHasATable(r *domain.Rencontre, members []member) error {
+	for _, m := range members {
+		p := planIn(r, m.tid, tournoi.Config{})
+		if len(p.Rooms) == 0 || len(direction.RoomNames(p.Settings)) == 0 {
+			continue
+		}
+		found := false
+		for _, s := range p.Settings {
+			if (p.Count == 0 || s.Number <= p.Count) && p.Allowed(s.Number) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return direction.Refusef("tables: %s plays only in %s, where no table would be left", m.name, strings.Join(p.Rooms, ", "))
+		}
+	}
+	return nil
+}
+
 // SetRencontreTables replaces the table properties of a Rencontre. Renaming, reserving or
 // keeping a table for someone is permitted at any time; moving a table to another room is
 // refused while it holds a running match of an event that may no longer play there.
@@ -121,9 +145,13 @@ func (d *Service) SetRencontreTables(ctx context.Context, id int64, settings []d
 		}
 		next := *r
 		next.TableSettings = settings
-		if err := checkRunningStays(ctx, store, d.membersOf(ctx, tx, r),
+		members := d.membersOf(ctx, tx, r)
+		if err := checkRunningStays(ctx, store, members,
 			func(tid int64) direction.TablePlan { return planIn(r, tid, tournoi.Config{}) },
 			func(tid int64) direction.TablePlan { return planIn(&next, tid, tournoi.Config{}) }); err != nil {
+			return err
+		}
+		if err := checkEveryEventHasATable(&next, members); err != nil {
 			return err
 		}
 		return tx.Rencontres().SetTableSettings(ctx, d.scope, id, settings)
@@ -211,7 +239,7 @@ func (d *Service) setDirectionTables(ctx context.Context, tournamentID int64, se
 }
 
 // membersOf names the members of r, read through the transaction's stores.
-func (d *Service) membersOf(ctx context.Context, tx storage.Tx, r *domain.Rencontre) []member {
+func (d *Service) membersOf(ctx context.Context, tx storage.Stores, r *domain.Rencontre) []member {
 	out := make([]member, 0, len(r.TournamentIDs))
 	for _, tid := range r.TournamentIDs {
 		m := member{tid: tid, name: fmt.Sprintf("#%d", tid)}
@@ -253,18 +281,42 @@ func (d *Service) refuseOutside(ctx context.Context, dir *direction.Direction, t
 	return tableRefused(p, table, name)
 }
 
-// closedTables are the tables a match seated without a number must not land on: those the
-// engine is never given for this Direction (ADR-0058 §6).
-func (d *Service) closedTables(ctx context.Context, dir *direction.Direction, tournamentID int64) map[int]string {
-	out := map[int]string{}
+// refuseClosed refuses confirming a proposal on a table the engine is no longer given — one
+// reserved, or kept for someone, since the proposal was shown — unless the table is kept for a
+// player of that match. A confirmation is not a gesture of the director's: it seats what was
+// proposed, and a proposal never lands on a closed table (ADR-0058 §6, §7).
+func (d *Service) refuseClosed(ctx context.Context, dir *direction.Direction, tournamentID int64, a tournoi.Action) error {
 	cfg, err := dir.Config()
 	if err != nil {
-		return out
+		return err
 	}
-	if p, err := d.planFor(ctx, tournamentID, cfg); err == nil {
-		for _, n := range p.Closed() {
-			out[n] = ""
-		}
+	p, err := d.planFor(ctx, tournamentID, cfg)
+	if err != nil {
+		return err
 	}
-	return out
+	if !slices.Contains(p.Closed(), a.Table) || dir.KeptFor(p, a.Table, a.A, a.B, d.memberNames(ctx, tournamentID)) {
+		return nil
+	}
+	if s, _ := p.Setting(a.Table); len(s.AssignedTo) > 0 && !s.Reserved {
+		return direction.Refusef("direction: table %d is kept for %s", a.Table, strings.Join(s.AssignedTo, ", "))
+	}
+	return direction.Refusef("direction: table %d is reserved", a.Table)
+}
+
+// closedTables are the tables a match seated without a number must not land on: those the
+// engine is never given for this Direction (ADR-0058 §6).
+func (d *Service) closedTables(ctx context.Context, dir *direction.Direction, tournamentID int64) (map[int]string, error) {
+	cfg, err := dir.Config()
+	if err != nil {
+		return nil, err
+	}
+	p, err := d.planFor(ctx, tournamentID, cfg)
+	if err != nil {
+		return nil, err
+	}
+	out := map[int]string{}
+	for _, n := range p.Closed() {
+		out[n] = ""
+	}
+	return out, nil
 }

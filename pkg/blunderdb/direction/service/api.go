@@ -139,7 +139,10 @@ func (d *Service) GetDirection(ctx context.Context, tournamentID int64) (*Direct
 	if st := dir.State(); st != nil {
 		// Proposed at the WALL CLOCK, not the journal's last timestamp: a micro-round's
 		// deadline and a break's warning depend on the current time, not on the last result.
-		room := d.roomAround(ctx, tournamentID, dir)
+		room, err := d.roomAround(ctx, tournamentID, dir)
+		if err != nil {
+			return nil, err
+		}
 		ext := room.external()
 		v.BusyTables = ext.BusyTables
 		if len(room.players) > 0 {

@@ -87,7 +87,8 @@ func (p TablePlan) Closed() []int {
 // the event's rooms, open to the match's section and phase in cfg, and given to no other
 // proposal of the batch. Two such persons meeting play on the smaller of their free tables. A
 // proposal waiting for a table that finds one this way stops waiting; one that finds none keeps
-// what the engine gave it (ADR-0058 §8, §9). persons names the people behind a Participant.
+// what the engine gave it (ADR-0058 §8, §9), and the table a holder's match leaves goes to a
+// proposal of the batch still waiting for one. persons names the people behind a Participant.
 func AssignKept(acts []tournoi.Action, p TablePlan, tables tournoi.Tables, taken map[int]bool, persons func(tournoi.PlayerID) []string) []tournoi.Action {
 	kept := map[string][]int{}
 	for _, s := range p.Settings {
@@ -105,6 +106,7 @@ func AssignKept(acts []tournoi.Action, p TablePlan, tables tournoi.Tables, taken
 		}
 	}
 	out := slices.Clone(acts)
+	var freed []int
 	for i, a := range out {
 		if a.Kind != tournoi.ActStartMatch || (a.Reason != tournoi.ReasonNone && a.Reason != tournoi.ReasonWaitingTable) {
 			continue
@@ -126,12 +128,31 @@ func AssignKept(acts []tournoi.Action, p TablePlan, tables tournoi.Tables, taken
 			}
 			if a.Table > 0 {
 				delete(used, a.Table)
+				freed = append(freed, a.Table)
 			}
 			used[n] = true
 			out[i].Table = n
 			if a.Reason == tournoi.ReasonWaitingTable {
 				out[i].Reason = tournoi.ReasonNone
 			}
+			break
+		}
+	}
+	// A table a holder's match left is free for the batch: the first proposal still waiting
+	// that may play there takes it, rather than wait for a table nobody uses.
+	closed := p.Closed()
+	slices.Sort(freed)
+	for _, n := range freed {
+		if used[n] || slices.Contains(closed, n) || !p.Allowed(n) {
+			continue
+		}
+		for i, a := range out {
+			if a.Kind != tournoi.ActStartMatch || a.Reason != tournoi.ReasonWaitingTable || a.Table != 0 ||
+				!tables.AvailableFor(n, a.Section, a.Phase) {
+				continue
+			}
+			used[n] = true
+			out[i].Table, out[i].Reason = n, tournoi.ReasonNone
 			break
 		}
 	}
@@ -159,4 +180,21 @@ func (d *Direction) ProposeIn(now time.Time, ext tournoi.External, p TablePlan, 
 	return AssignKept(acts, p, d.st.Config.Tables, taken, func(id tournoi.PlayerID) []string {
 		return persons(d.st, id, members)
 	})
+}
+
+// KeptFor says whether table n is kept, in p, for a person playing as a or b — whose match the
+// table is then given to (ADR-0058 §8).
+func (d *Direction) KeptFor(p TablePlan, n int, a, b tournoi.PlayerID, members map[string][]string) bool {
+	s, ok := p.Setting(n)
+	if !ok || d.st == nil {
+		return false
+	}
+	for _, id := range []tournoi.PlayerID{a, b} {
+		for _, name := range persons(d.st, id, members) {
+			if slices.Contains(s.AssignedTo, name) {
+				return true
+			}
+		}
+	}
+	return false
 }

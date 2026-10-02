@@ -194,16 +194,8 @@ func alignTables(ctx context.Context, store direction.Store, tournamentID int64,
 	return nil
 }
 
-// Realign puts every member of a Rencontre back on the room's tables, as attaching
-// them does. A restored Rencontre needs it: its events kept their own tables while detached.
-func (d *Service) Realign(ctx context.Context, id int64) error {
-	if err := d.realign(ctx, id); err != nil {
-		return err
-	}
-	d.writeRencontrePages(context.WithoutCancel(ctx), id)
-	return nil
-}
-
+// realign puts every member of a Rencontre back on the room's tables, as attaching them does.
+// A restored Rencontre needs it: its events kept their own tables while detached.
 func (d *Service) realign(ctx context.Context, id int64) (err error) {
 	d, release, err := d.lockRoom(ctx, 0, id)
 	if err != nil {
@@ -429,22 +421,27 @@ func (r sisterRoom) propose(dir *direction.Direction, now time.Time) []tournoi.A
 // roomAround replays the sister events of a Tournament. me is its own replayed Direction, to
 // find which of its Participants play next door and to read its table properties; nil when
 // only the sisters' tables are wanted.
-func (d *Service) roomAround(ctx context.Context, tournamentID int64, me *direction.Direction) sisterRoom {
+func (d *Service) roomAround(ctx context.Context, tournamentID int64, me *direction.Direction) (sisterRoom, error) {
 	alone := sisterRoom{tables: map[int]string{}, players: map[tournoi.PlayerID]direction.Seat{}}
 	if me != nil {
-		cfg, _ := me.Config()
-		alone.plan, _ = d.planFor(ctx, tournamentID, cfg)
+		cfg, err := me.Config()
+		if err != nil {
+			return alone, err
+		}
+		if alone.plan, err = d.planFor(ctx, tournamentID, cfg); err != nil {
+			return alone, err
+		}
 		alone.members = d.memberNames(ctx, tournamentID)
 	}
 	rid, err := d.st.Rencontres().Of(ctx, d.scope, tournamentID)
 	if err != nil || rid == 0 {
-		return alone
+		return alone, err
 	}
 	r, err := d.st.Rencontres().Get(ctx, d.scope, rid)
 	if err != nil {
-		return alone
+		return alone, err
 	}
-	return d.roomFrom(ctx, r, tournamentID, me, d.openMembers(ctx, r, tournamentID))
+	return d.roomFrom(ctx, r, tournamentID, me, d.openMembers(ctx, r, tournamentID)), nil
 }
 
 // member is one event of a Rencontre, replayed once for every reader of the room. dir is nil

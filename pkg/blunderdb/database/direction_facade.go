@@ -107,11 +107,6 @@ func (d *Database) clockAt(tournamentID int64, now time.Time) (*ClockView, error
 	return d.directionService().ClockAt(context.Background(), tournamentID, now)
 }
 
-// realignRencontre puts every member of a restored Rencontre back on the room's tables.
-func (d *Database) realignRencontre(id int64) error {
-	return d.directionService().Realign(context.Background(), id)
-}
-
 func bracketSkeleton(sim *tournoi.State, ph *tournoi.PhaseState) ([]*tournoi.Section, bool) {
 	return service.BracketSkeleton(sim, ph)
 }

@@ -25,8 +25,10 @@ const UpcomingSheetName = "appariements-annonce.html"
 var ErrNothingProposed = Refusef("direction: no match is proposed")
 
 // UpcomingSheet renders the sheet of the matches the queue proposes at now, as if they were
-// launched together, headed by announced — the date and time the director typed.
-func (d *Direction) UpcomingSheet(cat *Catalog, lang, announced string, now time.Time) (string, error) {
+// launched together, headed by announced — the date and time the director typed. They are
+// proposed as the panel proposes them (ProposeIn): ext is what the sister events hold, p the
+// table properties, members the persons behind each doubles Participant.
+func (d *Direction) UpcomingSheet(cat *Catalog, lang, announced string, now time.Time, ext tournoi.External, p TablePlan, members map[string][]string) (string, error) {
 	if d.st == nil {
 		return "", ErrNoDirection
 	}
@@ -43,7 +45,7 @@ func (d *Direction) UpcomingSheet(cat *Catalog, lang, announced string, now time
 		}
 	}
 	started := 0
-	for _, a := range d.st.ProposeAt(now) {
+	for _, a := range d.ProposeIn(now, ext, p, members) {
 		if a.Kind != tournoi.ActStartMatch {
 			continue
 		}

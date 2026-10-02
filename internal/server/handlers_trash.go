@@ -10,7 +10,8 @@ import (
 )
 
 // The trash over HTTP (ADR-0036): thin calls into package trash, shared with
-// the desktop; the daemon adds only the tenant scope. Deleting through the
+// the desktop; the daemon adds only the tenant scope. A restore goes through
+// the direction service, which restores a Rencontre as a gesture on its events. Deleting through the
 // trash has its own routes so positions.delete does not start leaving rows
 // behind for existing clients.
 
@@ -26,7 +27,7 @@ func (s *Server) trashRoutes() []route {
 			return countResp{Count: n}, err
 		})},
 		{http.MethodPost, "/v1/trash.restore", rpc(func(ctx context.Context, scope string, req idReq) (idResp, error) {
-			id, err := trash.Restore(ctx, st(), scope, req.ID)
+			id, err := s.directionService(scope).RestoreFromTrash(ctx, req.ID)
 			return idResp{ID: id}, err
 		})},
 		{http.MethodPost, "/v1/trash.discard", rpcVoid(func(ctx context.Context, scope string, req idReq) error {

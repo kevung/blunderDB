@@ -53,27 +53,36 @@ func (d *Database) TrashCommentEntry(commentID int64) (int64, error) {
 // A restored Rencontre attaches its events again, and they come back on the room's tables as
 // attaching aligns them: detached, each kept its own.
 func (d *Database) RestoreFromTrash(trashID int64) (int64, error) {
-	id, kind, err := d.restoreFromTrash(trashID)
-	if err != nil || kind != domain.TrashRencontre {
-		return id, err
+	kind, err := d.trashKind(trashID)
+	if err != nil {
+		return 0, err
 	}
-	return id, d.realignRencontre(id)
-}
-
-func (d *Database) restoreFromTrash(trashID int64) (int64, domain.TrashKind, error) {
+	if kind == domain.TrashRencontre {
+		// A gesture on the room's events, under their locks: the service's, as for the CLI
+		// and the daemon.
+		return d.directionService().RestoreFromTrash(context.Background(), trashID)
+	}
 	d.mu.Lock()
 	defer d.mu.Unlock()
+	if d.db == nil {
+		return 0, fmt.Errorf("no database is currently open")
+	}
+	return trash.Restore(context.Background(), d.store, "", trashID)
+}
+
+// trashKind is the kind of one trash entry.
+func (d *Database) trashKind(trashID int64) (domain.TrashKind, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
-		return 0, "", fmt.Errorf("no database is currently open")
+		return "", fmt.Errorf("no database is currently open")
 	}
-	ctx := context.Background()
-	entry, err := d.store.Trash().Load(ctx, "", trashID)
+	entry, err := d.store.Trash().Load(context.Background(), "", trashID)
 	if err != nil {
-		return 0, "", err
+		return "", err
 	}
-	id, err := trash.Restore(ctx, d.store, "", trashID)
-	return id, entry.Kind, err
+	return entry.Kind, nil
 }
 
 // ListTrash returns the trash, most recently deleted first. kind narrows to

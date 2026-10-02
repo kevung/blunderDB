@@ -65,7 +65,11 @@ func (d *Service) TableGrid(ctx context.Context, tournamentID int64) ([]TableCel
 	if err != nil {
 		return nil, err
 	}
-	return gridOf(dir, d.roomAround(ctx, tournamentID, dir), time.Now()), nil
+	room, err := d.roomAround(ctx, tournamentID, dir)
+	if err != nil {
+		return nil, err
+	}
+	return gridOf(dir, room, time.Now()), nil
 }
 
 // gridOf draws the table grid of a replayed Direction in the room given.

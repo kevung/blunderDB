@@ -2,6 +2,7 @@ package direction
 
 import (
 	"slices"
+	"strings"
 	"testing"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
@@ -90,10 +91,39 @@ func TestAssignKept(t *testing.T) {
 			t.Errorf("Alice's match on table %d, want 1", got[0].Table)
 		}
 	})
+	t.Run("a table a holder leaves goes to a match waiting in the batch", func(t *testing.T) {
+		got := AssignKept([]tournoi.Action{start("a", "c", 1, ""), start("d", "x", 0, tournoi.ReasonWaitingTable)}, p, tables, nil, names)
+		if got[0].Table != 3 || got[1].Table != 1 || got[1].Reason != tournoi.ReasonNone {
+			t.Errorf("tables %d and %d (reason %q), want 3 then the freed 1 with no wait", got[0].Table, got[1].Table, got[1].Reason)
+		}
+	})
+	t.Run("a freed table keeps its section's reservation", func(t *testing.T) {
+		only := tournoi.Tables{Count: 6, Reserved: []tournoi.TableRule{{Table: 1, Section: "Dames"}}}
+		got := AssignKept([]tournoi.Action{start("a", "c", 1, ""), start("d", "x", 0, tournoi.ReasonWaitingTable)}, p, only, nil, names)
+		if got[1].Table != 0 || got[1].Reason != tournoi.ReasonWaitingTable {
+			t.Errorf("waiting match of another section got table %d", got[1].Table)
+		}
+	})
 	t.Run("a player held elsewhere is left alone", func(t *testing.T) {
 		got := AssignKept([]tournoi.Action{start("a", "c", 0, tournoi.ReasonPlayerBusy)}, p, tables, nil, names)
 		if got[0].Table != 0 {
 			t.Errorf("busy proposal got table %d", got[0].Table)
 		}
 	})
+}
+
+func TestNameTablesNamesProposals(t *testing.T) {
+	page := `<li class="t"><span class="num">Table 5</span>x</li>` +
+		`<ol class="actions"><li>Table 5 — Ronde 1 : A v B</li><li class="alerte">Table 5 — C v D</li><li>Table 50 — E v F</li></ol>`
+	got := NameTables(page, "Table", []domain.TableSetting{{Number: 5, Name: "<Stream>"}})
+	for _, want := range []string{
+		`<span class="num">Table 5 — &lt;Stream&gt;</span>`,
+		`<li>Table 5 — &lt;Stream&gt; — Ronde 1`,
+		`<li class="alerte">Table 5 — &lt;Stream&gt; — C v D`,
+		`<li>Table 50 — E v F`,
+	} {
+		if !strings.Contains(got, want) {
+			t.Errorf("missing %q in\n%s", want, got)
+		}
+	}
 }

@@ -136,7 +136,8 @@ func findComment(ctx context.Context, s storage.Stores, scope string, commentID 
 // It returns the id of what was restored, whose meaning depends on the kind: a
 // position id, a collection id, a comment id. A restore that cannot happen —
 // the position a comment belonged to is itself gone — fails and leaves the
-// trash entry alone, so nothing is lost by trying.
+// trash entry alone, so nothing is lost by trying. A Rencontre is not restored
+// here (ErrRencontreByService).
 func Restore(ctx context.Context, s storage.Stores, scope string, trashID int64) (int64, error) {
 	entry, err := s.Trash().Load(ctx, scope, trashID)
 	if err != nil {
@@ -151,7 +152,7 @@ func Restore(ctx context.Context, s storage.Stores, scope string, trashID int64)
 	case domain.TrashComment:
 		restored, err = restoreComment(ctx, s, scope, entry)
 	case domain.TrashRencontre:
-		restored, err = restoreRencontre(ctx, s, scope, entry)
+		err = fmt.Errorf("trash entry %d: %w", trashID, ErrRencontreByService)
 	default:
 		err = fmt.Errorf("trash entry %d: nothing knows how to restore a %q", trashID, entry.Kind)
 	}
@@ -265,10 +266,16 @@ func Rencontre(ctx context.Context, s storage.Stores, scope string, rencontreID 
 	return id, nil
 }
 
-// restoreRencontre recreates the Rencontre with its table settings and
-// attaches again the Tournaments that still exist and have not joined another
-// Rencontre meanwhile, each with the rooms it had.
-func restoreRencontre(ctx context.Context, s storage.Stores, scope string, entry *domain.TrashEntry) (int64, error) {
+// ErrRencontreByService refuses restoring a Rencontre here: it moves its
+// events into a room, a gesture the direction service makes under the events'
+// locks, with the room's checks (service.RestoreFromTrash).
+var ErrRencontreByService = errors.New("trash: a Rencontre is restored by the direction service")
+
+// RestoreRencontre recreates the Rencontre of entry with its table settings
+// and attaches again the Tournaments that still exist and have not joined
+// another Rencontre meanwhile, each with the rooms it had. It leaves the entry
+// in the trash: the caller discards it in the same transaction.
+func RestoreRencontre(ctx context.Context, s storage.Stores, scope string, entry *domain.TrashEntry) (int64, error) {
 	var payload domain.TrashRencontrePayload
 	if err := json.Unmarshal(entry.Payload, &payload); err != nil {
 		return 0, fmt.Errorf("trash entry %d: %w", entry.ID, err)
