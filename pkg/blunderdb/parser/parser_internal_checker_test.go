@@ -1,6 +1,10 @@
 package parser
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+)
 
 // The clipboard text blunderDB writes for a stored checker analysis omits the
 // "Equity Error:" line of the best move: its EquityError is nil by design (the
@@ -99,5 +103,53 @@ Opponent Backgammon Chance: 0.3%
 	}
 	if m.EquityError == nil || *m.EquityError != 5.551115123125783e-17 {
 		t.Errorf("EquityError = %v, want 5.551115123125783e-17", m.EquityError)
+	}
+}
+
+const bareXGID = "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:4:2:0:5:0"
+
+func TestParsePositionBareXGIDKeepsDecodedDecision(t *testing.T) {
+	res, err := ParsePosition(bareXGID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	want, err := domain.DecodeXGID(bareXGID[len("XGID="):])
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.Position.DecisionType != want.DecisionType || want.DecisionType != domain.CheckerAction {
+		t.Fatalf("decision = %v, want %v (checker)", res.Position.DecisionType, want.DecisionType)
+	}
+}
+
+func TestParsePositionCubeAnalysisStaysCube(t *testing.T) {
+	text := bareXGID + "\n\nCubeless Equities: No Double=+0.100, Double=+0.200\nCubeful Equities:\n       No Double:     +0.100\n"
+	res, err := ParsePosition(text)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.Position.DecisionType != domain.CubeAction {
+		t.Fatalf("decision = %v, want cube", res.Position.DecisionType)
+	}
+}
+
+func TestParsePositionCheckerAnalysisStaysChecker(t *testing.T) {
+	text := bareXGID + `
+
+X:Player   O:Opponent
+Score is X:0 O:0 7 point match
+X to play 52
+
+    1. 4-ply       24/22 13/8                   eq:+0.170
+      Player:   56.00% (G:16.00% B:0.80%)
+      Opponent: 44.00% (G:11.00% B:0.40%)
+
+eXtreme Gammon Version: 2.19`
+	res, err := ParsePosition(text)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if res.Position.DecisionType != domain.CheckerAction {
+		t.Fatalf("decision = %v, want checker", res.Position.DecisionType)
 	}
 }
