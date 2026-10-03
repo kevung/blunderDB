@@ -4,7 +4,7 @@ go 1.26.0
 
 // frontend/node_modules ships a stray Go package (flatted/golang) that
 // `go test ./...` picks up as part of this module. Go 1.25's `ignore`
-// directive would exclude it, but the Wails CLI (v2.10.x) parses go.mod with
+// directive would exclude it, but the Wails CLI parses go.mod with
 // an older x/mod and aborts on "unknown directive: ignore" — it broke every
 // platform build of the 0.34.0 tag. Filter with `go list ./... | grep -v
 // node_modules` where it matters (Makefile) instead.
@@ -28,7 +28,7 @@ require (
 	github.com/open-spaced-repetition/go-fsrs/v3 v3.3.1
 	github.com/testcontainers/testcontainers-go v0.44.0
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.44.0
-	github.com/wailsapp/wails/v2 v2.10.2
+	github.com/wailsapp/wails/v2 v2.15.0
 	golang.org/x/crypto v0.57.0
 	golang.org/x/net v0.59.0
 	golang.org/x/sys v0.48.0
@@ -38,7 +38,10 @@ require (
 
 require github.com/shirou/gopsutil/v4 v4.26.8
 
-require github.com/gorilla/websocket v1.5.3 // indirect
+require (
+	git.sr.ht/~jackmordaunt/go-toast/v2 v2.0.3 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
+)
 
 require (
 	dario.cat/mergo v1.0.2 // indirect
@@ -119,17 +122,3 @@ require (
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.12.1 // indirect
 )
-
-// Pins go-webview2 (Windows only) below the v1.0.23 the module graph would
-// otherwise resolve. The pin predates the current Wails version and its reason
-// was never recorded; lift it only after a Windows build and a smoke test of
-// the packaged .exe, since it cannot be exercised on Linux.
-//
-// Reviewed for B.19 (#187) on 2026-09-04 and KEPT. Lifting it is not a
-// judgement call that can be made from here: the package is `//go:build
-// windows`, so nothing on this machine or in the Linux CI compiles it, and the
-// only evidence that would settle it is a packaged .exe that opens a window.
-// That evidence is cheap to gather at the next Windows release and expensive
-// to fake; until someone has it, an unexplained pin that works beats an
-// unexplained bump that might not.
-replace github.com/wailsapp/go-webview2 => github.com/wailsapp/go-webview2 v1.0.16
