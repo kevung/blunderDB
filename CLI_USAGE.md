@@ -2237,7 +2237,7 @@ Options:
 Examples:
   blunderdb cubematrix 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
   blunderdb cubematrix --match-length 5 --format json '<XGID>'
-  blunderdb cubematrix '11ccccchhhjjjjj:66666888dddddoo:N0N::B::0:0:7:'  # an OGID
+  blunderdb cubematrix '11ccccchhhjjjjj:66666888dddddoo:N0N::W::0:0:7:'  # an OGID
 ```
 
 ### `blunderdb delete`
@@ -2327,7 +2327,7 @@ Examples:
   blunderdb epc 'XGID=-BBBB----------------bbbb-:0:0:1:00:0:0:0:0:10'
 
   # The same position given by its OGID (OpenGammon)
-  blunderdb epc 'llmmnnoo:11223344:N0N::B::0:0::'
+  blunderdb epc 'llmmnnoo:11223344:N0N::W::0:0::'
 
   # With the downloaded/wider database
   blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd '<XGID>'

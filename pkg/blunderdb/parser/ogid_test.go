@@ -74,3 +74,23 @@ func TestParsePositionStillRefusesNonIdentifiers(t *testing.T) {
 		}
 	}
 }
+
+// A pasted OGID puts on roll the player HedgeHog means: the opponent of the
+// colour field, or the doubler at a pending double. Both strings are from a
+// match HedgeHog exported.
+func TestParsePositionOGIDPlayerOnRoll(t *testing.T) {
+	for text, want := range map[string]int{
+		"11ccccchhhjjjjj:66666888dddddoo:N0N:46:B:IB:0:0:3:0":    domain.White,
+		"17ccccghhhjjjjj:66666888dddddoo:N0N:46:W:R:0:0:3:1":     domain.Black,
+		"OGID=cccccgghhhjjjjj:112233666777dll:N0O::B:D:0:0:3:11": domain.Black,
+		"ccccchhhjjjllmm:24455566699ddkk:N0O::W:D:1:1:3:10":      domain.White,
+	} {
+		res, err := ParsePosition(text)
+		if err != nil {
+			t.Fatalf("ParsePosition(%q): %v", text, err)
+		}
+		if res.Position.PlayerOnRoll != want {
+			t.Errorf("%s: on roll %d, want %d", text, res.Position.PlayerOnRoll, want)
+		}
+	}
+}

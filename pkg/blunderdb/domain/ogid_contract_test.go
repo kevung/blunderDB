@@ -9,8 +9,8 @@ import (
 // The OGID contract. Every case pairs an OGID with the XGID of the SAME
 // physical position and asserts the two decoders agree, which makes the corpus
 // a contract rather than one person's reading of a specification. The strings
-// come from the reference implementation (AnkiGammon 1.8.1), over positions
-// dumped from testdata/test.xg and testdata/test.mat.
+// come from the reference implementation (AnkiGammon, re-encoded at 14b07b1),
+// over positions dumped from testdata/test.xg and testdata/test.mat.
 
 type ogidCorpus struct {
 	Cases []struct {
@@ -150,7 +150,7 @@ func TestDecodeOGIDMatchesReference(t *testing.T) {
 			t.Errorf("%s: dice %v (type %d), reference none: a cube decision", r.OGID, got.Dice, got.DecisionType)
 		}
 
-		// No turn: the reference's own input dialog falls back to White.
+		// No colour field: White is on roll, as HedgeHog's parser reads it.
 		wantRoll := White
 		if r.OnRoll != nil && *r.OnRoll == "B" {
 			wantRoll = Black
@@ -174,7 +174,8 @@ func TestDecodeOGIDMatchesReference(t *testing.T) {
 
 // The canonical example — the one AnkiGammon's README gives — spelled out, so
 // that the reading of every field is visible in one place and not only as a
-// comparison against another decoder.
+// comparison against another decoder. Its colour field W says White REACHED
+// the position: Black is to play the 63.
 func TestDecodeOGIDCanonicalExample(t *testing.T) {
 	pos, err := DecodeOGID("cccccggggg:ddddiiiiii:N0N:63:W:IW:4:3:7:1:15")
 	if err != nil {
@@ -190,8 +191,8 @@ func TestDecodeOGIDCanonicalExample(t *testing.T) {
 	if pos.Cube != (Cube{Value: 0, Owner: None}) {
 		t.Errorf("cube %+v, want centred at 1", pos.Cube)
 	}
-	if pos.Dice != [2]int{6, 3} || pos.DecisionType != CheckerAction || pos.PlayerOnRoll != White {
-		t.Errorf("dice %v type %d on roll %d, want White to play 63", pos.Dice, pos.DecisionType, pos.PlayerOnRoll)
+	if pos.Dice != [2]int{6, 3} || pos.DecisionType != CheckerAction || pos.PlayerOnRoll != Black {
+		t.Errorf("dice %v type %d on roll %d, want Black to play 63", pos.Dice, pos.DecisionType, pos.PlayerOnRoll)
 	}
 	// White 4, Black 3 in a 7-point match: Black is 4 away, White 3.
 	if pos.Score != [2]int{4, 3} {
@@ -264,9 +265,12 @@ func TestEncodeOGIDSpelling(t *testing.T) {
 	for in, want := range map[string]string{
 		// AnkiGammon's test_encode_position_only_ogid expects exactly these
 		// first three fields for the starting position.
-		"11jjjjjhhhccccc:ooddddd88866666:N0N":                   "11ccccchhhjjjjj:66666888dddddoo:N0N::W::0:0::",
-		"cccccggggg:ddddiiiiii:N0N:63:W:IW:4:3:7:1:15":          "cccccggggg:ddddiiiiii:N0N:63:W::1:0:4:",
-		"jjjjkk:od88866:W2O:43:B:IW:2:1:7:15":                   "jjjjkk:66888do:W2N:43:B::1:0:6:",
+		// No colour field is White on roll, which goes out as "Black reached".
+		"11jjjjjhhhccccc:ooddddd88866666:N0N":          "11ccccchhhjjjjj:66666888dddddoo:N0N::B::0:0::",
+		"cccccggggg:ddddiiiiii:N0N:63:W:IW:4:3:7:1:15": "cccccggggg:ddddiiiiii:N0N:63:W::1:0:4:",
+		// A pending double names the doubler (Black, on roll); written with
+		// the action N, the colour turns to the opponent.
+		"jjjjkk:od88866:W2O:43:B:IW:2:1:7:15":                   "jjjjkk:66888do:W2N:43:W::1:0:6:",
 		"11jjjjjhhhccccc:ooddddd88866666:N0N:65:W:IW:6:5:7C:42": "11ccccchhhjjjjj:66666888dddddoo:N0N:65:W::1:0:2C:",
 		// Post-Crawford 1-away both sides: a 1-point match would say Crawford.
 		"11jjjjjhhhccccc:ooddddd88866666:N0N::B::6:6:7:": "11ccccchhhjjjjj:66666888dddddoo:N0N::B::1:1:2:",
@@ -345,11 +349,86 @@ func TestDecodePositionIDRoutesBothFormats(t *testing.T) {
 	}
 	// The two spellings `blunderdb epc --help` shows side by side.
 	x, errX := DecodePositionID("XGID=-BBBB----------------bbbb-:0:0:1:00:0:0:0:0:10")
-	o, errO := DecodePositionID("llmmnnoo:11223344:N0N::B::0:0::")
+	o, errO := DecodePositionID("llmmnnoo:11223344:N0N::W::0:0::")
 	if errX != nil || errO != nil || x.Board != o.Board || x.PlayerOnRoll != o.PlayerOnRoll || x.Score != o.Score {
 		t.Errorf("epc's help examples differ: %+v / %+v (%v, %v)", x, o, errX, errO)
 	}
 	if _, err := DecodePositionID("not an identifier"); err == nil {
 		t.Error("DecodePositionID accepted prose")
+	}
+}
+
+// The colour field names who reached the position; the player on roll is the
+// other one, except at a pending double, signalled by the cube action O or the
+// game state D, where it names the doubler.
+func TestDecodeOGIDColourField(t *testing.T) {
+	const board = "11jjjjjhhhccccc:ooddddd88866666:"
+	for in, want := range map[string]int{
+		board + "N0N:46:B:IB:0:0:3:0": White,
+		board + "N0N:46:W:R:0:0:3:1":  Black,
+		board + "N0N::w::0:0:3:":      Black,
+		board + "N0N::::0:0:3:":       White,
+		board + "N0O::B:D:0:0:3:11":   Black,
+		board + "N0O::W:D:0:0:3:11":   White,
+		board + "N0N::W:D:0:0:3:11":   White,
+		board + "B1T::B:A:0:0:3:12":   White,
+	} {
+		pos, err := DecodeOGID(in)
+		if err != nil {
+			t.Fatalf("DecodeOGID(%s): %v", in, err)
+		}
+		if pos.PlayerOnRoll != want {
+			t.Errorf("%s: on roll %d, want %d", in, pos.PlayerOnRoll, want)
+		}
+		back, err := DecodeOGID(EncodeOGID(&pos))
+		if err != nil || back.PlayerOnRoll != want {
+			t.Errorf("%s: round trip on roll %d (%v), want %d", in, back.PlayerOnRoll, err, want)
+		}
+	}
+}
+
+// Every OGID of a real HedgeHog match. Who acts after each one comes from the
+// match file's own ply record, not from the OGID, so the colour field is held
+// to what actually happened at the board.
+func TestDecodeOGIDHedgeHogMatch(t *testing.T) {
+	raw, err := os.ReadFile("../../../testdata/ogid_hedgehog.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var fixture struct {
+		Plies []struct {
+			OGID          string `json:"ogid"`
+			Acts          string `json:"acts"`
+			PendingDouble bool   `json:"pending_double"`
+		} `json:"plies"`
+	}
+	if err := json.Unmarshal(raw, &fixture); err != nil {
+		t.Fatal(err)
+	}
+	pending := 0
+	for _, p := range fixture.Plies {
+		pos, err := DecodeOGID(p.OGID)
+		if err != nil {
+			t.Fatalf("DecodeOGID(%s): %v", p.OGID, err)
+		}
+		acts := map[string]int{"W": White, "B": Black}[p.Acts]
+		want := acts
+		if p.PendingDouble {
+			want = 1 - acts // the doubler, on roll of the take decision
+			pending++
+			if pos.DecisionType != CubeAction {
+				t.Errorf("%s: a pending double decodes as decision %d", p.OGID, pos.DecisionType)
+			}
+		}
+		if pos.PlayerOnRoll != want {
+			t.Errorf("%s: on roll %d, but %s acts", p.OGID, pos.PlayerOnRoll, p.Acts)
+		}
+		back, err := DecodeOGID(EncodeOGID(&pos))
+		if err != nil || back != pos {
+			t.Errorf("%s: round trip through %s changed the position (%v)", p.OGID, EncodeOGID(&pos), err)
+		}
+	}
+	if len(fixture.Plies) < 100 || pending == 0 {
+		t.Fatalf("fixture too thin: %d plies, %d pending doubles", len(fixture.Plies), pending)
 	}
 }

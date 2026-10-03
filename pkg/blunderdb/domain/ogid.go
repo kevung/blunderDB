@@ -11,13 +11,16 @@ import (
 //
 // # Source, and attribution
 //
-// OpenGammon publishes no specification. The reference is AnkiGammon's codec,
-// ankigammon/utils/ogid.py (github.com/Deinonychus999/AnkiGammon, MIT
-// License, Copyright (c) 2025 AnkiGammon; read at c5e71c3). Every field below
-// is read as parse_ogid reads it and written as encode_ogid writes it. Its
-// encoder produced the corpus's "cases" (testdata/ogid_corpus.json) and its
-// decoder the "reference" section, which ogid_contract_test.go holds this
-// codec to.
+// The specification is docs/OGID.md of HedgeHog's public repository
+// (gitlab.com/eranlambooij/hedgehog-public, CC BY 4.0), whose reference
+// parser is src/ogid.cpp (MIT). The codec blunderDB is checked against is
+// AnkiGammon's, ankigammon/utils/ogid.py (github.com/Deinonychus999/AnkiGammon,
+// MIT License, Copyright (c) 2025 AnkiGammon; read at 14b07b1). Every field
+// below is read as parse_ogid reads it and written as encode_ogid writes it.
+// Its encoder produced the corpus's "cases" (testdata/ogid_corpus.json) and
+// its decoder the "reference" section, which ogid_contract_test.go holds this
+// codec to; testdata/ogid_hedgehog.json holds it to the OGIDs of a match
+// HedgeHog itself exported.
 //
 // # The format
 //
@@ -30,9 +33,13 @@ import (
 //   - CUBE     three characters: owner (W/B/N), log2 of the value, action
 //     (N normal, O offered, T taken, P passed).
 //   - DICE     two digits, absent or empty for a cube decision.
-//   - TURN     W or B; absent, the reference reads White.
-//   - STATE    two characters (game state), carried by the format and read by
-//     nothing here — see the note on what is dropped, below.
+//   - COLOR    W or B: the player who REACHED the position, not the one to
+//     act. The other player is on roll, except at a pending double
+//     (cube action O, or game state D), where COLOR names the doubler
+//     — the player on roll of a cube decision. Absent, White is on
+//     roll, as the reference parser reads it.
+//   - STATE    game state (IW, R, D…): read only to recognise a pending
+//     double — see the note on what is dropped, below.
 //   - S1, S2   points SCORED (not away), White then Black.
 //   - ML       match length, optionally followed by a modifier letter (L, C
 //     or G) and a number: "7", "7C", "9G15". "C" marks the Crawford
@@ -60,7 +67,8 @@ import (
 // # What is dropped, deliberately
 //
 // The game state, move id, checker count and cube ACTION describe a game or a
-// move, not a position (CONTEXT.md). Jacoby and beaver are not carried and not
+// move, not a position (CONTEXT.md): past telling who is on roll at a pending
+// double, they are not kept. Jacoby and beaver are not carried and not
 // defaulted (ADR-0028); MaxCube stays 0.
 
 // ErrInvalidOGID is returned for malformed OGID strings. Callers map it to a
@@ -138,10 +146,22 @@ func DecodeOGID(ogid string) (Position, error) {
 		pos.DecisionType = CubeAction
 	}
 
-	// --- Turn (field 4). Black is our Black; anything else is White. ---
+	// --- Colour (field 4): who reached the position, so the other player
+	// is on roll — unless a double is pending, when it names the doubler,
+	// who is on roll of the cube decision. ---
 	pos.PlayerOnRoll = White
-	if len(fields) > 4 && (fields[4] == "B" || fields[4] == "b") {
-		pos.PlayerOnRoll = Black
+	if len(fields) > 4 && fields[4] != "" {
+		reached := White
+		if fields[4] == "B" || fields[4] == "b" {
+			reached = Black
+		}
+		pendingDouble := cube[2] == 'O' || cube[2] == 'o' ||
+			(len(fields) > 5 && strings.EqualFold(fields[5], "D"))
+		if pendingDouble {
+			pos.PlayerOnRoll = reached
+		} else {
+			pos.PlayerOnRoll = 1 - reached
+		}
 	}
 
 	// --- Score (fields 6, 7), match length and Crawford (field 8) ---
@@ -313,9 +333,11 @@ func EncodeOGID(pos *Position) string {
 		dice = fmt.Sprintf("%d%d", pos.Dice[0], pos.Dice[1])
 	}
 
-	turn := "W"
+	// The colour field names who reached the position: the opponent of the
+	// player on roll, since the cube action written is never a pending double.
+	reached := "B"
 	if pos.PlayerOnRoll == Black {
-		turn = "B"
+		reached = "W"
 	}
 
 	whitePts, blackPts, length := 0, 0, ""
@@ -334,7 +356,7 @@ func EncodeOGID(pos *Position) string {
 	}
 
 	return fmt.Sprintf("%s:%s:%s:%s:%s::%d:%d:%s:",
-		white, black, cube, dice, turn, whitePts, blackPts, length)
+		white, black, cube, dice, reached, whitePts, blackPts, length)
 }
 
 // ogidPointChar is ogidPointIndex's inverse.
