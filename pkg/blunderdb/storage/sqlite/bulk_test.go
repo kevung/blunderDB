@@ -90,3 +90,34 @@ func TestBulkSession_CutRepairedByEnsureSchema(t *testing.T) {
 		}
 	}
 }
+
+// A daemon reopening a file cut in the middle of a bulk import repairs the
+// indexes at Open, without EnsureSchema.
+func TestOpen_RestoresIndexesDroppedByCutBulk(t *testing.T) {
+	ctx := context.Background()
+	path := filepath.Join(t.TempDir(), "cut.db")
+	st, err := Open(ctx, path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s, err := BeginBulk(ctx, st.sqlDB, BulkOptions{DropIndexes: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	_ = s.conn.Close()
+	if hasIndex(t, st.sqlDB, "idx_position_pip_diff") {
+		t.Fatal("index present after the drop")
+	}
+	st.Close()
+
+	st, err = Open(ctx, path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer st.Close()
+	for name := range bulkDroppableIndexes() {
+		if !hasIndex(t, st.sqlDB, name) {
+			t.Errorf("index %s not rebuilt by Open", name)
+		}
+	}
+}

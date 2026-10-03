@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"text/tabwriter"
 	"time"
 
@@ -468,7 +470,24 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			printProgress(os.Stderr, p)
 		}
 	}
-	if _, err := cli.db.ImportFiles(matchFiles, database.ImportFilesOptions{OnFile: onFile, OnBulk: onBulk, OnProgress: onProgress}); err != nil {
+	// Ctrl-C cancels the import instead of killing the process: the groups
+	// already committed stay and a bulk session rebuilds its indexes. A second
+	// signal, with the handler gone, takes the default action.
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, os.Interrupt, syscall.SIGTERM)
+	stopped := make(chan struct{})
+	go func() {
+		select {
+		case <-sigs:
+			signal.Stop(sigs)
+			cli.db.CancelImport()
+		case <-stopped:
+		}
+	}()
+	_, importErr := cli.db.ImportFiles(matchFiles, database.ImportFilesOptions{OnFile: onFile, OnBulk: onBulk, OnProgress: onProgress})
+	signal.Stop(sigs)
+	close(stopped)
+	if err := importErr; err != nil {
 		cli.finishImportBatch(batchID, failures)
 		return fmt.Errorf("batch import interrupted: %w", err)
 	}

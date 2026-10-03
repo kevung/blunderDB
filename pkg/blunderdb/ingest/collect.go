@@ -39,6 +39,14 @@ func CollectFiles(root string, recursive bool) ([]string, error) {
 // ErrArchiveTooLarge reports an archive that unpacks past its byte budget.
 var ErrArchiveTooLarge = errors.New("archive unpacks to more than the allowed size")
 
+// MaxArchiveEntries bounds the entries an archive may hold, importable or not:
+// the byte budget does not stop a million empty entries from exhausting the
+// inodes of the spool.
+const MaxArchiveEntries = 500_000
+
+// ErrArchiveTooManyEntries reports an archive holding more than MaxArchiveEntries.
+var ErrArchiveTooManyEntries = errors.New("archive holds too many entries")
+
 // ExtractArchive unpacks the importable files of a .zip or .tar archive into
 // dir and returns how many it wrote. Everything else in the archive — other
 // extensions, links, devices — is skipped, and an entry whose name leaves dir
@@ -62,6 +70,16 @@ type unpacker struct {
 	left   int64
 	count  int
 	nextID int
+	seen   int
+}
+
+// entry counts one archive entry against MaxArchiveEntries.
+func (u *unpacker) entry() error {
+	u.seen++
+	if u.seen > MaxArchiveEntries {
+		return ErrArchiveTooManyEntries
+	}
+	return nil
 }
 
 func (u *unpacker) put(name string, r io.Reader) error {
@@ -104,6 +122,9 @@ func extractZip(archive, dir string, maxBytes int64) (int, error) {
 	defer zr.Close()
 	u := &unpacker{dir: dir, left: maxBytes}
 	for _, f := range zr.File {
+		if err := u.entry(); err != nil {
+			return u.count, err
+		}
 		if !f.Mode().IsRegular() {
 			continue
 		}
@@ -134,6 +155,9 @@ func extractTar(archive, dir string, maxBytes int64) (int, error) {
 			return u.count, nil
 		}
 		if err != nil {
+			return u.count, err
+		}
+		if err := u.entry(); err != nil {
 			return u.count, err
 		}
 		if h.Typeflag != tar.TypeReg {

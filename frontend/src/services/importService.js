@@ -723,8 +723,12 @@ async function importTxtFileBatch(filePath, { quiet = false } = {}) {
     const isBGBlitzTXT = content && content.includes('Position-ID:');
 
     if (isJellyfishTXT) {
-        const matchID = await ImportGnuBGMatch(filePath);
-        return { type: 'match', id: matchID };
+        // Through the pipeline, whose summary says "skipped" for a duplicate:
+        // no error text is read to find out.
+        const summary = await ImportFiles([filePath]);
+        if (summary.skipped > 0) throw Object.assign(new Error('duplicate match'), { duplicate: true });
+        if (summary.failed > 0) throw new Error(summary.errors?.[0]?.message ?? 'import failed');
+        return { type: 'match', id: 0 };
     } else if (isBGBlitzTXT) {
         const posID = await ImportBGFPosition(filePath);
         return { type: 'position', id: posID };
@@ -879,7 +883,7 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
             if (result && result.type === 'position' && result.id) lastPositionID = result.id;
         } catch (error) {
             const errorStr = String(error);
-            if (errorStr.includes('duplicate match') || errorStr.includes('already been imported') || errorStr.includes('duplicate') || errorStr.includes('already exists')) {
+            if (error?.duplicate === true) {
                 fileImportResultsStore.update((r) => ({ ...r, skipped: r.skipped + 1 }));
             } else {
                 fileImportResultsStore.update((r) => {

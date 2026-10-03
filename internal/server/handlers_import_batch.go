@@ -305,7 +305,7 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 		n, err := ingest.ExtractArchive(archive, root, s.opts.ImportMaxBodyBytes*batchExtractFactor)
 		os.Remove(archive) //nolint:gosec // the spool file this handler wrote under its own temp dir
 		if err != nil {
-			if errors.Is(err, ingest.ErrArchiveTooLarge) {
+			if errors.Is(err, ingest.ErrArchiveTooLarge) || errors.Is(err, ingest.ErrArchiveTooManyEntries) {
 				writeErrorCode(w, CodeInvalid, err.Error())
 				return
 			}

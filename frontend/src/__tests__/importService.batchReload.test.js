@@ -205,3 +205,41 @@ describe('importFolder — the reload is not repeated on leaving match mode', ()
         expect(get(statusBarModeStore)).toBe('NORMAL');
     });
 });
+
+describe('importMultipleFiles — a Jellyfish .txt duplicate', () => {
+    test('is counted skipped from the pipeline summary, whatever its message says', async () => {
+        ReadFileContent.mockImplementation(async () => ({ content: '7 point match\n' }));
+        ImportFiles.mockImplementationOnce(async () => ({
+            succeeded: 0,
+            skipped: 1,
+            failed: 0,
+            errors: [],
+            hadMatches: false,
+            lastPositionID: 0,
+            cancelled: false
+        }));
+
+        await importMultipleFiles(['/import/dup.txt']);
+
+        expect(get(fileImportResultsStore)).toEqual({ succeeded: 0, failed: 0, skipped: 1, errors: [] });
+    });
+
+    test('a failure whose message mentions "duplicate" stays a failure', async () => {
+        ReadFileContent.mockImplementation(async () => ({ content: '7 point match\n' }));
+        ImportFiles.mockImplementationOnce(async () => ({
+            succeeded: 0,
+            skipped: 0,
+            failed: 1,
+            errors: [{ file: '/import/x.txt', message: 'duplicate column in header' }],
+            hadMatches: false,
+            lastPositionID: 0,
+            cancelled: false
+        }));
+
+        await importMultipleFiles(['/import/x.txt']);
+
+        const r = get(fileImportResultsStore);
+        expect(r.skipped).toBe(0);
+        expect(r.failed).toBe(1);
+    });
+});

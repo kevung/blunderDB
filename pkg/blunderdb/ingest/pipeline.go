@@ -76,8 +76,9 @@ type PipelineOptions struct {
 	// ImportBatchID stamps every written match.
 	ImportBatchID int64
 	// Lock, when set, is taken around each transaction and returns its
-	// unlock: the caller's write lock is held by the writer only, never
-	// while files are being read.
+	// unlock. The writer takes it for a group only once every file of the
+	// group has been read, so it is held for writing, never for waiting on a
+	// reader.
 	Lock func() (unlock func())
 	// OnCommit is called with the outcomes of each committed group, in file
 	// order, while Lock is held.
@@ -96,7 +97,8 @@ type readFile struct {
 	path     string
 	size     int64
 	digest   [sha256.Size]byte
-	dupOf    int // earlier index with the same bytes, -1 otherwise
+	dupOf    int  // earlier index with the same bytes, -1 otherwise
+	hashed   bool // the digest is valid: the file could be read
 	graph    *MatchGraph
 	position []PositionGraph
 	err      error
@@ -141,8 +143,10 @@ func digestFile(path string) ([sha256.Size]byte, int64, error) {
 }
 
 // ImportFiles imports paths through store and returns one outcome per file
-// actually decided, in file order. On cancellation the group being written is
-// rolled back, earlier groups stay committed, and the error is ctx.Err().
+// actually decided, in file order. A group's transaction (and Options.Lock)
+// opens only when all the group's files are read. On cancellation the group
+// being written is rolled back, earlier groups stay committed, and the error
+// is ctx.Err().
 func ImportFiles(ctx context.Context, store TxBeginner, paths []string, opts PipelineOptions) ([]FileOutcome, error) {
 	workers := opts.Workers
 	if workers <= 0 {
@@ -190,6 +194,7 @@ func ImportFiles(ctx context.Context, store TxBeginner, paths []string, opts Pip
 			for i := range jobs {
 				rf := &readFile{index: i, path: paths[i], dupOf: -1}
 				rf.digest, rf.size, rf.err = digestFile(rf.path)
+				rf.hashed = rf.err == nil
 				if rf.err == nil {
 					if first := claims.claim(rf.digest, i); first < i {
 						rf.dupOf = first
@@ -218,6 +223,21 @@ func ImportFiles(ctx context.Context, store TxBeginner, paths []string, opts Pip
 	wr := &pipelineWriter{ctx: ctx, store: store, opts: opts, perTx: perTx, seen: map[[sha256.Size]byte]FileOutcome{}}
 	pending := map[int]*readFile{}
 	next := 0
+	// ready holds the files, in file order, that are read and not yet written.
+	// A group is handed to the writer only once all its files are read, so the
+	// lock and the transaction are never held while the writer waits for a
+	// reader.
+	var ready []*readFile
+	writeReady := func() error {
+		for _, item := range ready {
+			if err := wr.add(item); err != nil {
+				return err
+			}
+			<-slots
+		}
+		ready = ready[:0]
+		return nil
+	}
 	for rf := range results {
 		pending[rf.index] = rf
 		for {
@@ -227,11 +247,19 @@ func ImportFiles(ctx context.Context, store TxBeginner, paths []string, opts Pip
 			}
 			delete(pending, next)
 			next++
-			if err := wr.add(item); err != nil {
-				cancel()
-				return wr.out, err
+			ready = append(ready, item)
+			if len(ready) >= perTx {
+				if err := writeReady(); err != nil {
+					cancel()
+					return wr.out, err
+				}
 			}
-			<-slots
+		}
+	}
+	if ctx.Err() == nil {
+		if err := writeReady(); err != nil {
+			cancel()
+			return wr.out, err
 		}
 	}
 	if err := ctx.Err(); err != nil {
@@ -337,7 +365,9 @@ func (w *pipelineWriter) add(rf *readFile) error {
 	}
 	w.group = append(w.group, rf)
 	w.staged = append(w.staged, o)
-	if rf.err == nil && rf.dupOf < 0 {
+	// A file refused after it was hashed is remembered too: its copies get its
+	// error, not a generic one.
+	if rf.hashed && rf.dupOf < 0 {
 		w.groupSeen[rf.digest] = o
 	}
 	if len(w.group) >= w.perTx {
