@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:12+0200\n"
+"POT-Creation-Date: 2026-10-03 09:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -2222,7 +2222,7 @@ msgstr ""
 "неудачу."
 
 #: ../../source/mode_headless.rst:988
-#, no-python-format, python-format
+#, no-python-format
 msgid ""
 "``rollout.position`` joue une position de la bibliothèque "
 "(``positionId``) par un :ref:`rollout <cli_rollout>` et rend, pour chaque"
@@ -3676,21 +3676,23 @@ msgstr ""
 
 #: ../../source/mode_headless.rst:1722
 msgid ""
-"Les outils ne font que lire. Cinq outils écrivent — ``save_position``, "
-"``comment_position``, ``create_collection``, ``add_to_collection`` et "
-"``anki_review``, qui note une carte tirée par ``anki_next`` — et ne sont "
-"offerts que sur demande : ``--write`` en local, ``--mcp-write`` sur le "
-"démon ; ``rollout`` y gagne alors l'argument ``store``, qui enregistre le"
-" rollout à côté de l'analyse de la position. Aucun n'efface."
+"Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
+"``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
+" une carte tirée par ``anki_next`` — et ils ne sont offerts que sur "
+"demande : ``--write`` en local, ``--mcp-write`` sur le démon. Tous les "
+"autres ne font que lire ; ``rollout`` gagne cependant, quand l'écriture "
+"est offerte, l'argument ``store``, qui enregistre le rollout à côté de "
+"l'analyse de la position. Aucun outil n'efface."
 msgstr ""
-"Инструменты только читают. Пять инструментов пишут — ``save_position``, "
-"``comment_position``, ``create_collection``, ``add_to_collection`` и "
-"``anki_review``, который оценивает карточку, выбранную ``anki_next``, — и"
-" предлагаются только по запросу: ``--write`` локально, ``--mcp-write`` на"
-" демоне; ``rollout`` тогда получает аргумент ``store``, который "
-"записывает rollout рядом с анализом позиции. Ни один ничего не удаляет."
+"Пишут только пять инструментов — ``save_position``, ``comment_position``,"
+" ``create_collection``, ``add_to_collection`` и ``anki_review``, который "
+"оценивает карточку, выбранную ``anki_next``, — и предлагаются только по "
+"запросу: ``--write`` локально, ``--mcp-write`` на демоне. Все остальные "
+"только читают; ``rollout`` же получает, когда запись предложена, аргумент"
+" ``store``, который записывает rollout рядом с анализом позиции. Ни один "
+"инструмент ничего не удаляет."
 
-#: ../../source/mode_headless.rst:1729
+#: ../../source/mode_headless.rst:1730
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -3698,7 +3700,7 @@ msgstr ""
 "**Локально** ассистент запускает ``blunderdb mcp`` на файле (см. "
 ":ref:`cli`). Для Claude Code:"
 
-#: ../../source/mode_headless.rst:1736
+#: ../../source/mode_headless.rst:1737
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -3723,7 +3725,7 @@ msgstr ""
 "его несёт. Поэтому вызов инструмента стоит нескольких запросов; ни один "
 "не освобождается."
 
-#: ../../source/mode_headless.rst:1747
+#: ../../source/mode_headless.rst:1748
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

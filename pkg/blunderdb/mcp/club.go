@@ -3,6 +3,7 @@ package mcp
 import (
 	"context"
 	"errors"
+	"net/http"
 	"strings"
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
@@ -22,7 +23,7 @@ func registerClub(tb *Toolbox) {
 func registerEvaluate(tb *Toolbox) {
 	type evalIn struct {
 		Text       string `json:"text" jsonschema:"the position as text: XGID, OGID or GNU ID"`
-		Ply        int    `json:"ply,omitempty" jsonschema:"search depth, 0 to 2 (default 2)"`
+		Ply        *int   `json:"ply,omitempty" jsonschema:"search depth, 0 to 2 (default 2)"`
 		Candidates int    `json:"candidates,omitempty" jsonschema:"checker plays kept, 1 to 20 (default 5)"`
 	}
 	Add(tb, Reads, &sdk.Tool{Name: "evaluate", Title: "Evaluate a position",
@@ -36,8 +37,13 @@ func registerEvaluate(tb *Toolbox) {
 			if err != nil {
 				return nil, err
 			}
+			// An absent ply is the route's default (2), not a zero-ply search.
+			in := obj{"position": p, "candidates": a.Candidates}
+			if a.Ply != nil {
+				in["ply"] = *a.Ply
+			}
 			var out obj
-			err = tb.Engine.Call(ctx, req, "gammonnet.evaluate", obj{"position": p, "ply": a.Ply, "candidates": a.Candidates}, &out)
+			err = tb.Engine.Call(ctx, req, "gammonnet.evaluate", in, &out)
 			return out, err
 		})
 }
@@ -47,10 +53,15 @@ func registerAnkiReview(tb *Toolbox) {
 		DeckID int64 `json:"deckId" jsonschema:"a deck id from study_decks"`
 	}
 	Add(tb, Reads, &sdk.Tool{Name: "anki_next", Title: "Next card to review",
-		Description: "The next due card of a spaced-repetition deck: its card id and position. Show the position, let the user answer, then grade it with anki_review (on a server that writes). Null when nothing is due."},
+		Description: "The next due card of a spaced-repetition deck: its card id and position. Show the position, let the user answer, then grade it with anki_review (on a server that writes). The card is null when nothing is due."},
 		func(ctx context.Context, req *sdk.CallToolRequest, a nextIn) (any, error) {
 			var card obj
 			if err := tb.Engine.Call(ctx, req, "anki.nextCard", obj{"deckId": a.DeckID}, &card); err != nil {
+				// The route answers 404 when no card is due: a null card, not a failure.
+				var api *APIError
+				if errors.As(err, &api) && api.Status == http.StatusNotFound {
+					return obj{"card": nil}, nil
+				}
 				return nil, err
 			}
 			return obj{"card": card}, nil

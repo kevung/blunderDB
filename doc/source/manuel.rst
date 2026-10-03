@@ -1938,7 +1938,8 @@ Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``
 et ``export`` ; ``ranking --season`` cumule les tournois clos d'un événement ou
 d'une période en un classement de saison, par un barème de points par place et,
-au choix, un Elo de club ; ``page --rencontre`` écrit la page murale d'un événement au lieu
+au choix, un Elo de club (deux inscrits de même nom dans une même épreuve
+close font refuser le classement, qui connaît une personne par son nom) ; ``page --rencontre`` écrit la page murale d'un événement au lieu
 de la page d'une seule épreuve. Voir :ref:`cli`.
 
 .. _stats:

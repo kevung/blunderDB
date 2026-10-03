@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:12+0200\n"
+"POT-Creation-Date: 2026-10-03 09:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1976,7 +1976,7 @@ msgstr ""
 "としては数えられません——本当に失敗したポジションとは異なり、次のパスで無駄に再試行されることは決してありません。"
 
 #: ../../source/mode_headless.rst:988
-#, no-python-format, python-format
+#, no-python-format
 msgid ""
 "``rollout.position`` joue une position de la bibliothèque "
 "(``positionId``) par un :ref:`rollout <cli_rollout>` et rend, pour chaque"
@@ -3289,19 +3289,20 @@ msgstr "ライブラリの局面のロールアウト：候補ごとのエクイ
 
 #: ../../source/mode_headless.rst:1722
 msgid ""
-"Les outils ne font que lire. Cinq outils écrivent — ``save_position``, "
-"``comment_position``, ``create_collection``, ``add_to_collection`` et "
-"``anki_review``, qui note une carte tirée par ``anki_next`` — et ne sont "
-"offerts que sur demande : ``--write`` en local, ``--mcp-write`` sur le "
-"démon ; ``rollout`` y gagne alors l'argument ``store``, qui enregistre le"
-" rollout à côté de l'analyse de la position. Aucun n'efface."
+"Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
+"``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
+" une carte tirée par ``anki_next`` — et ils ne sont offerts que sur "
+"demande : ``--write`` en local, ``--mcp-write`` sur le démon. Tous les "
+"autres ne font que lire ; ``rollout`` gagne cependant, quand l'écriture "
+"est offerte, l'argument ``store``, qui enregistre le rollout à côté de "
+"l'analyse de la position. Aucun outil n'efface."
 msgstr ""
-"ツールは読み取りしか行いません。書き込むツールは五つ——``save_position``、``comment_position``、``create_collection``、``add_to_collection``、そして"
+"書き込むツールは五つだけです——``save_position``、``comment_position``、``create_collection``、``add_to_collection``、そして"
 " ``anki_next`` が出したカードを採点する ``anki_review``——で、要求があったときだけ提供されます。ローカルでは "
-"``--write``、デーモンでは ``--mcp-write`` です。このとき ``rollout`` には引数 ``store`` "
-"が加わり、ポジションの分析の隣にロールアウトを記録します。何も削除しません。"
+"``--write``、デーモンでは ``--mcp-write`` です。ほかのツールはすべて読み取りのみですが、書き込みが提供されているときは"
+" ``rollout`` に引数 ``store`` が加わり、ポジションの分析の隣にロールアウトを記録します。どのツールも削除はしません。"
 
-#: ../../source/mode_headless.rst:1729
+#: ../../source/mode_headless.rst:1730
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -3309,7 +3310,7 @@ msgstr ""
 "**ローカル**\\ では、アシスタントがファイルに対して ``blunderdb mcp`` を起動します（:ref:`cli` "
 "を参照）。Claude Code の場合："
 
-#: ../../source/mode_headless.rst:1736
+#: ../../source/mode_headless.rst:1737
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -3331,7 +3332,7 @@ msgstr ""
 "呼び出しはデーモンのチェーン全体をもう一度通ります。ログに記録され、メトリクスに数えられ、テナントのレート制限に計上されます。それを運ぶ "
 "``/mcp`` リクエストとは別にです。したがってツール呼び出し 1 回は複数のリクエスト分のコストになり、免除されるものはありません。"
 
-#: ../../source/mode_headless.rst:1747
+#: ../../source/mode_headless.rst:1748
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

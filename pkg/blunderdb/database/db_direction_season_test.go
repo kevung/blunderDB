@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"math"
 	"strings"
 	"testing"
@@ -69,5 +70,34 @@ func TestSeasonRanking(t *testing.T) {
 	all, err := d.SeasonRanking(SeasonQuery{})
 	if err != nil || len(all.Events) != 3 || all.Elo || all.Rows[0].Elo != 0 {
 		t.Errorf("no bound is every directed tournament, without Elo: %+v, %v", all, err)
+	}
+}
+
+// TestSeasonRankingRefusesHomonyms: two entrants of one finished event under one name would be
+// one row, played twice and rated against themselves; the season refuses and says where.
+func TestSeasonRankingRefusesHomonyms(t *testing.T) {
+	d := newTestDB(t)
+	id := startedDirection(t, d, 8)
+	if err := d.UpdateTournament(id, "Open double", "2026-03-01", "Lyon"); err != nil {
+		t.Fatal(err)
+	}
+	var players []string
+	for i := 0; i < 8; i++ {
+		name := fmt.Sprintf("Joueur %d", i)
+		if i < 2 {
+			name = "Dupont"
+		}
+		players = append(players, fmt.Sprintf(`{"id":"p%d","name":%q}`, i, name))
+	}
+	if err := d.EnterParticipants(id, "["+strings.Join(players, ",")+"]"); err != nil {
+		t.Skipf("the direction itself refuses homonyms: %v", err)
+	}
+	playToTheEnd(t, d, id)
+	if _, err := d.CloseDirection(id); err != nil {
+		t.Fatal(err)
+	}
+	_, err := d.SeasonRanking(SeasonQuery{})
+	if err == nil || !strings.Contains(err.Error(), "Dupont") || !strings.Contains(err.Error(), "Open double") {
+		t.Errorf("homonyms in one event are refused by name and event: %v", err)
 	}
 }

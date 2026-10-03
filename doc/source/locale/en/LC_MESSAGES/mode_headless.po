@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:12+0200\n"
+"POT-Creation-Date: 2026-10-03 09:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -2203,7 +2203,7 @@ msgstr ""
 " failed."
 
 #: ../../source/mode_headless.rst:988
-#, no-python-format, python-format
+#, no-python-format
 msgid ""
 "``rollout.position`` joue une position de la bibliothèque "
 "(``positionId``) par un :ref:`rollout <cli_rollout>` et rend, pour chaque"
@@ -3653,21 +3653,23 @@ msgstr "rollout of a library position: equity, 95% interval and JSD per candidat
 
 #: ../../source/mode_headless.rst:1722
 msgid ""
-"Les outils ne font que lire. Cinq outils écrivent — ``save_position``, "
-"``comment_position``, ``create_collection``, ``add_to_collection`` et "
-"``anki_review``, qui note une carte tirée par ``anki_next`` — et ne sont "
-"offerts que sur demande : ``--write`` en local, ``--mcp-write`` sur le "
-"démon ; ``rollout`` y gagne alors l'argument ``store``, qui enregistre le"
-" rollout à côté de l'analyse de la position. Aucun n'efface."
+"Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
+"``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
+" une carte tirée par ``anki_next`` — et ils ne sont offerts que sur "
+"demande : ``--write`` en local, ``--mcp-write`` sur le démon. Tous les "
+"autres ne font que lire ; ``rollout`` gagne cependant, quand l'écriture "
+"est offerte, l'argument ``store``, qui enregistre le rollout à côté de "
+"l'analyse de la position. Aucun outil n'efface."
 msgstr ""
-"The tools only read. Five tools write — ``save_position``, "
-"``comment_position``, ``create_collection``, ``add_to_collection`` and "
-"``anki_review``, which grades a card drawn by ``anki_next`` — and are "
-"offered only on request: ``--write`` locally, ``--mcp-write`` on the "
-"daemon; ``rollout`` then gains the ``store`` argument, which records the "
-"rollout beside the position's analysis. None deletes anything."
+"Only five tools write — ``save_position``, ``comment_position``, "
+"``create_collection``, ``add_to_collection`` and ``anki_review``, which "
+"grades a card drawn by ``anki_next`` — and they are offered only on "
+"request: ``--write`` locally, ``--mcp-write`` on the daemon. All the "
+"others only read; ``rollout`` nevertheless gains, when writing is "
+"offered, the ``store`` argument, which records the rollout beside the "
+"position's analysis. No tool deletes anything."
 
-#: ../../source/mode_headless.rst:1729
+#: ../../source/mode_headless.rst:1730
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -3675,7 +3677,7 @@ msgstr ""
 "**Locally**, the assistant launches ``blunderdb mcp`` on a file (see "
 ":ref:`cli`). For Claude Code:"
 
-#: ../../source/mode_headless.rst:1736
+#: ../../source/mode_headless.rst:1737
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -3699,7 +3701,7 @@ msgstr ""
 "limit, on top of the ``/mcp`` request that carries it. A tool call "
 "therefore costs several requests; none is exempted."
 
-#: ../../source/mode_headless.rst:1747
+#: ../../source/mode_headless.rst:1748
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

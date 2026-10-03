@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:12+0200\n"
+"POT-Creation-Date: 2026-10-03 09:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -2247,7 +2247,7 @@ msgstr ""
 "epäonnistunutta positiota."
 
 #: ../../source/mode_headless.rst:988
-#, no-python-format, python-format
+#, no-python-format
 msgid ""
 "``rollout.position`` joue une position de la bibliothèque "
 "(``positionId``) par un :ref:`rollout <cli_rollout>` et rend, pour chaque"
@@ -3712,21 +3712,23 @@ msgstr "kirjaston aseman rollout: ekvity, 95 %:n väli ja JSD ehdokasta kohti"
 
 #: ../../source/mode_headless.rst:1722
 msgid ""
-"Les outils ne font que lire. Cinq outils écrivent — ``save_position``, "
-"``comment_position``, ``create_collection``, ``add_to_collection`` et "
-"``anki_review``, qui note une carte tirée par ``anki_next`` — et ne sont "
-"offerts que sur demande : ``--write`` en local, ``--mcp-write`` sur le "
-"démon ; ``rollout`` y gagne alors l'argument ``store``, qui enregistre le"
-" rollout à côté de l'analyse de la position. Aucun n'efface."
+"Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
+"``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
+" une carte tirée par ``anki_next`` — et ils ne sont offerts que sur "
+"demande : ``--write`` en local, ``--mcp-write`` sur le démon. Tous les "
+"autres ne font que lire ; ``rollout`` gagne cependant, quand l'écriture "
+"est offerte, l'argument ``store``, qui enregistre le rollout à côté de "
+"l'analyse de la position. Aucun outil n'efface."
 msgstr ""
-"Työkalut vain lukevat. Viisi työkalua kirjoittaa — ``save_position``, "
-"``comment_position``, ``create_collection``, ``add_to_collection`` ja "
-"``anki_review``, joka arvioi ``anki_next``-työkalun arpoman kortin — ja "
-"ne tarjotaan vain pyynnöstä: ``--write`` paikallisesti, ``--mcp-write`` "
-"demonissa; ``rollout`` saa silloin argumentin ``store``, joka tallentaa "
-"rolloutin aseman analyysin viereen. Mikään ei poista mitään."
+"Vain viisi työkalua kirjoittaa — ``save_position``, ``comment_position``,"
+" ``create_collection``, ``add_to_collection`` ja ``anki_review``, joka "
+"arvioi ``anki_next``-työkalun arpoman kortin — ja ne tarjotaan vain "
+"pyynnöstä: ``--write`` paikallisesti, ``--mcp-write`` demonissa. Kaikki "
+"muut vain lukevat; ``rollout`` saa kuitenkin, kun kirjoitus on tarjolla, "
+"argumentin ``store``, joka tallentaa rolloutin aseman analyysin viereen. "
+"Mikään työkalu ei poista mitään."
 
-#: ../../source/mode_headless.rst:1729
+#: ../../source/mode_headless.rst:1730
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -3734,7 +3736,7 @@ msgstr ""
 "**Paikallisesti** avustaja käynnistää komennon ``blunderdb mcp`` "
 "tiedostolle (ks. :ref:`cli`). Claude Codelle:"
 
-#: ../../source/mode_headless.rst:1736
+#: ../../source/mode_headless.rst:1737
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -3759,7 +3761,7 @@ msgstr ""
 "``/mcp``-pyynnön lisäksi, joka sen kuljettaa. Työkalukutsu maksaa siis "
 "useita pyyntöjä; mitään ei vapauteta."
 
-#: ../../source/mode_headless.rst:1747
+#: ../../source/mode_headless.rst:1748
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

@@ -180,6 +180,16 @@ func (d *Service) SeasonRanking(ctx context.Context, q SeasonQuery) (*SeasonView
 		}
 		st := e.st
 		ranking := st.Ranking()
+		// The season knows a person by name: two entrants of one event under one name would
+		// be merged into a single row, played twice, against themselves.
+		seen := map[string]bool{}
+		for _, rk := range ranking {
+			k := personKey(playerNameIn(st, rk.Player))
+			if seen[k] {
+				return nil, direction.Refusef("season: %q is entered twice in %q; rename one of them to rank the season", playerNameIn(st, rk.Player), e.ev.Name)
+			}
+			seen[k] = true
+		}
 		tied := map[int]int{}
 		for _, rk := range ranking {
 			tied[rk.Rank]++
@@ -233,10 +243,24 @@ func (d *Service) SeasonRanking(ctx context.Context, q SeasonQuery) (*SeasonView
 		}
 		v.Rows = append(v.Rows, *r)
 	}
-	// Points first, then the better best place, then the name: a total order, so two calls
-	// rank alike. People level on points and best place share their rank.
-	sort.Slice(v.Rows, func(i, j int) bool {
-		a, b := v.Rows[i], v.Rows[j]
+	rankRows(v.Rows)
+	return v, nil
+}
+
+// totalScale is the factor (six decimals) a season total is rounded by before being compared:
+// place points are means of scale entries, so two people with the same places taken in another
+// order differ by float noise, not by a point.
+const totalScale = 1e6
+
+// rankRows orders rows and numbers their ranks. Points first, then the better best place, then
+// the name: a total order, so two calls rank alike. People level on points and best place share
+// their rank. Totals are rounded first, so noise in a float sum never separates them.
+func rankRows(rows []SeasonRow) {
+	for i := range rows {
+		rows[i].Total = math.Round(rows[i].Total*totalScale) / totalScale
+	}
+	sort.Slice(rows, func(i, j int) bool {
+		a, b := rows[i], rows[j]
 		if a.Total != b.Total {
 			return a.Total > b.Total
 		}
@@ -245,14 +269,13 @@ func (d *Service) SeasonRanking(ctx context.Context, q SeasonQuery) (*SeasonView
 		}
 		return personKey(a.Name) < personKey(b.Name)
 	})
-	for i := range v.Rows {
-		if i > 0 && v.Rows[i].Total == v.Rows[i-1].Total && v.Rows[i].Best == v.Rows[i-1].Best {
-			v.Rows[i].Rank = v.Rows[i-1].Rank
+	for i := range rows {
+		if i > 0 && rows[i].Total == rows[i-1].Total && rows[i].Best == rows[i-1].Best {
+			rows[i].Rank = rows[i-1].Rank
 		} else {
-			v.Rows[i].Rank = i + 1
+			rows[i].Rank = i + 1
 		}
 	}
-	return v, nil
 }
 
 // seasonTournaments lists the candidate tournaments: a Rencontre's members, or every directed

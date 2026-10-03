@@ -449,6 +449,11 @@ func TestClubTools(t *testing.T) {
 	if ev["decision"] != "checker" || len(list(t, ev, "moves")) == 0 || len(list(t, ev, "moves")) > 3 {
 		t.Errorf("evaluate: %v", ev)
 	}
+	// An absent ply is the documented default, 2, not a 0-ply search.
+	def := call(t, cs, "evaluate", obj{"text": "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10", "candidates": 1})
+	if def["depth"] != "2-ply" {
+		t.Errorf("evaluate without ply searches at %v; want 2-ply", def["depth"])
+	}
 	if msg := callErr(t, cs, "evaluate", obj{"text": ""}); !strings.Contains(msg, "XGID") {
 		t.Errorf("evaluate without text: %s", msg)
 	}
@@ -460,5 +465,10 @@ func TestClubTools(t *testing.T) {
 	decks := list(t, call(t, cs, "study_decks", nil), "decks")
 	if len(decks) > 0 {
 		call(t, cs, "anki_next", obj{"deckId": id(t, decks[0], "id")})
+	}
+	// Nothing is due in a deck that does not exist: the tool says so with a null card, as its
+	// description promises, rather than failing.
+	if c, ok := call(t, cs, "anki_next", obj{"deckId": 987654})["card"]; !ok || c != nil {
+		t.Errorf("anki_next with nothing due: card = %v", c)
 	}
 }

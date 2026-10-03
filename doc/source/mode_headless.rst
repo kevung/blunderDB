@@ -1719,12 +1719,13 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
      - rollout d'une position de la base : équité, intervalle à 95 % et JSD
        par candidat
 
-Les outils ne font que lire. Cinq outils écrivent — ``save_position``,
-``comment_position``, ``create_collection``, ``add_to_collection`` et
-``anki_review``, qui note une carte tirée par ``anki_next`` — et ne
-sont offerts que sur demande : ``--write`` en local, ``--mcp-write`` sur le
-démon ; ``rollout`` y gagne alors l'argument ``store``, qui enregistre le
-rollout à côté de l'analyse de la position. Aucun n'efface.
+Seuls cinq outils écrivent — ``save_position``, ``comment_position``,
+``create_collection``, ``add_to_collection`` et ``anki_review``, qui note une
+carte tirée par ``anki_next`` — et ils ne sont offerts que sur demande :
+``--write`` en local, ``--mcp-write`` sur le démon. Tous les autres ne font que
+lire ; ``rollout`` gagne cependant, quand l'écriture est offerte, l'argument
+``store``, qui enregistre le rollout à côté de l'analyse de la position. Aucun
+outil n'efface.
 
 **En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir
 :ref:`cli`). Pour Claude Code :

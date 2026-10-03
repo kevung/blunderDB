@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:12+0200\n"
+"POT-Creation-Date: 2026-10-03 09:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -2290,7 +2290,7 @@ msgstr ""
 "αντίθεση με μια θέση που πράγματι απέτυχε."
 
 #: ../../source/mode_headless.rst:988
-#, no-python-format, python-format
+#, no-python-format
 msgid ""
 "``rollout.position`` joue une position de la bibliothèque "
 "(``positionId``) par un :ref:`rollout <cli_rollout>` et rend, pour chaque"
@@ -3781,22 +3781,24 @@ msgstr "rollout μιας θέσης της βάσης: ισοτιμία, διά�
 
 #: ../../source/mode_headless.rst:1722
 msgid ""
-"Les outils ne font que lire. Cinq outils écrivent — ``save_position``, "
-"``comment_position``, ``create_collection``, ``add_to_collection`` et "
-"``anki_review``, qui note une carte tirée par ``anki_next`` — et ne sont "
-"offerts que sur demande : ``--write`` en local, ``--mcp-write`` sur le "
-"démon ; ``rollout`` y gagne alors l'argument ``store``, qui enregistre le"
-" rollout à côté de l'analyse de la position. Aucun n'efface."
+"Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
+"``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
+" une carte tirée par ``anki_next`` — et ils ne sont offerts que sur "
+"demande : ``--write`` en local, ``--mcp-write`` sur le démon. Tous les "
+"autres ne font que lire ; ``rollout`` gagne cependant, quand l'écriture "
+"est offerte, l'argument ``store``, qui enregistre le rollout à côté de "
+"l'analyse de la position. Aucun outil n'efface."
 msgstr ""
-"Τα εργαλεία μόνο διαβάζουν. Πέντε εργαλεία γράφουν — ``save_position``, "
-"``comment_position``, ``create_collection``, ``add_to_collection`` και "
-"``anki_review``, που βαθμολογεί μια κάρτα που επιλέχθηκε από το "
-"``anki_next`` — και προσφέρονται μόνο κατόπιν αιτήματος: ``--write`` "
-"τοπικά, ``--mcp-write`` στον δαίμονα· το ``rollout`` αποκτά τότε το "
-"όρισμα ``store``, που καταγράφει το rollout δίπλα στην ανάλυση της θέσης."
-" Κανένα δεν διαγράφει τίποτα."
+"Μόνο πέντε εργαλεία γράφουν — ``save_position``, ``comment_position``, "
+"``create_collection``, ``add_to_collection`` και ``anki_review``, που "
+"βαθμολογεί μια κάρτα που επιλέχθηκε από το ``anki_next`` — και "
+"προσφέρονται μόνο κατόπιν αιτήματος: ``--write`` τοπικά, ``--mcp-write`` "
+"στον δαίμονα. Όλα τα υπόλοιπα μόνο διαβάζουν· το ``rollout`` αποκτά όμως,"
+" όταν προσφέρεται η εγγραφή, το όρισμα ``store``, που καταγράφει το "
+"rollout δίπλα στην ανάλυση της θέσης. Κανένα εργαλείο δεν διαγράφει "
+"τίποτα."
 
-#: ../../source/mode_headless.rst:1729
+#: ../../source/mode_headless.rst:1730
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -3804,7 +3806,7 @@ msgstr ""
 "**Τοπικά**, ο βοηθός εκκινεί το ``blunderdb mcp`` πάνω σε ένα αρχείο (βλ."
 " :ref:`cli`). Για το Claude Code:"
 
-#: ../../source/mode_headless.rst:1736
+#: ../../source/mode_headless.rst:1737
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -3829,7 +3831,7 @@ msgstr ""
 "επιπλέον του αιτήματος ``/mcp`` που τη μεταφέρει. Μια κλήση εργαλείου "
 "κοστίζει λοιπόν πολλά αιτήματα· κανένα δεν εξαιρείται."
 
-#: ../../source/mode_headless.rst:1747
+#: ../../source/mode_headless.rst:1748
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

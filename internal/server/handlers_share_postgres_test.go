@@ -79,6 +79,48 @@ func TestShareCollectionBetweenTenants_Postgres(t *testing.T) {
 	}
 }
 
+// TestShareCollectionOfAnotherTenant_Postgres: a tenant that asks exports.sqlite
+// for a collection id it does not own gets neither the collection nor its
+// positions, whatever the answer is.
+func TestShareCollectionOfAnotherTenant_Postgres(t *testing.T) {
+	ts, srv := newPostgresTestServerAndHandler(t)
+	ctx := context.Background()
+	st := srv.opts.Storage
+
+	pos := domain.InitializePosition()
+	posID, err := st.Positions().Save(ctx, "1", &pos)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cid, err := st.Collections().Create(ctx, "1", "Privee du tenant 1", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := st.Collections().AddPosition(ctx, "1", cid, posID); err != nil {
+		t.Fatal(err)
+	}
+
+	resp := postAs(t, ts, "2", "/v1/exports.sqlite", exportSQLiteReq{CollectionIDs: []int64{cid}})
+	file, _ := io.ReadAll(resp.Body)
+	resp.Body.Close()
+	if resp.StatusCode == http.StatusOK && bytes.HasPrefix(file, []byte("SQLite format 3")) {
+		// An empty file is acceptable; importing it must bring nothing.
+		uploadAsTenant(t, ts, "3", "/v1/imports.db", "probe.db", file)
+		if n := countPositions(t, st, "3"); n != 0 {
+			t.Errorf("tenant 2 exported tenant 1's collection: %d position(s) reach tenant 3", n)
+		}
+		for c, err := range st.Collections().List(ctx, "3") {
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Errorf("tenant 2 exported tenant 1's collection %q", c.Name)
+		}
+	}
+	if n := countPositions(t, st, "2"); n != 0 {
+		t.Errorf("tenant 2 holds %d position(s); want none", n)
+	}
+}
+
 func countPositions(t *testing.T, st storage.Storage, scope string) int {
 	t.Helper()
 	n := 0

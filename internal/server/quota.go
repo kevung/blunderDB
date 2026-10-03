@@ -16,8 +16,9 @@ import (
 type TenantQuotas struct {
 	// MaxPositions: an import is refused (413) once the tenant stores this
 	// many positions. Only an import's start checks it; positions.save and the
-	// other unit writes do not. One already running is not cut short, so a tenant may
-	// end above the bound by one import's worth.
+	// other unit writes do not. An import already running is not cut short, so a
+	// tenant may end above the bound by as much as its running imports add (at
+	// most MaxConcurrentImports of them).
 	MaxPositions int64 `json:"maxPositions"`
 
 	// AnalysisSecondsPerDay is the engine CPU time (see cpuTime) a tenant may
