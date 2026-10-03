@@ -49,6 +49,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `vacuum` - Compact the database file, reclaiming freed space
 - `delete` - Delete data from the database
 - `healthcheck` - Probe a running `serve` daemon's `/readyz`; exit 0 when it is ready
+- `mcp` - Serve the database's tools to an AI assistant (Model Context Protocol, stdio)
 - `completion` - Print a shell completion script (bash, zsh, fish)
 - `help` - Show help message
 - `version` - Show version information
@@ -1387,6 +1388,32 @@ is unhealthy:
 Error: healthcheck: http://127.0.0.1:8080/readyz answered 503 Service Unavailable (version_mismatch)
 ```
 
+## Mcp Command
+
+Serve the database's tools to an AI assistant (Claude Code, Claude Desktop, a
+local client) over the Model Context Protocol, on stdin/stdout. blunderDB ships
+no language model: the assistant you already use starts this command and calls
+its tools — search positions in the command bar's grammar, read a position and
+its analysis, explain an error, a player's statistics and recurring errors,
+matches, tournaments, collections, a quiz. They only read unless `--write` is
+given. The daemon serves the same tools on `POST /mcp` (see the headless
+chapter of the docs, and ADR-0059 for the list).
+
+```bash
+./blunderDB mcp --db <file> [--write]
+```
+
+**Options:**
+- `--db` - Path to the database file (required)
+- `--write` - Also offer the tools that change the database: save a position, comment one, create and fill a collection. None deletes.
+
+Like `call`, the command migrates an older database's schema when it opens it, even without `--write`.
+
+**Example:** register the database with Claude Code.
+```bash
+claude mcp add blunderdb -- blunderdb mcp --db /path/to/my.db
+```
+
 ## Completion Command
 
 Print a shell completion script for the subcommand names to stdout. The
@@ -2558,6 +2585,33 @@ Examples:
 
   # Save match positions to file
   blunderdb match --db database.db --id 1 --output match.json
+```
+
+### `blunderdb mcp`
+
+```
+Usage: blunderdb mcp --db <file> [options]
+
+Serve a database's tools to an AI assistant over the Model Context Protocol,
+on stdin/stdout. The assistant starts this command itself; for Claude Code:
+
+  claude mcp add blunderdb -- blunderdb mcp --db /path/to/my.db
+
+The tools search positions with the application's query grammar, read a
+position and its analysis, explain an error, compute a player's statistics,
+list matches, tournaments and collections, and run a quiz. They only read,
+unless --write is given: then they may also save a position, comment one,
+create and fill a collection.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -write
+    	Also offer the tools that change the database
+
+Examples:
+  blunderdb mcp --db my.db
+  blunderdb mcp --db my.db --write
 ```
 
 ### `blunderdb open`

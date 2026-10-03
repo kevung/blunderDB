@@ -95,6 +95,7 @@ func (s *Server) routes() []route {
 	}
 	rs = append(rs, s.domainRoutes()...)
 	rs = append(rs, s.eventRoutes()...)
+	rs = append(rs, s.mcpRoutes()...)
 	if s.opts.OpsAddr == "" {
 		rs = append(rs, s.opsRoutes()...)
 	}

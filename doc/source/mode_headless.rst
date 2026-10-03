@@ -110,6 +110,10 @@ depuis plusieurs clients.
      - ``false``
      - sert les gestes de direction de tournoi et d'événement ; **éteints
        par défaut**, voir :ref:`headless_direction_gestures`
+   * - ``--mcp-write``
+     - ``false``
+     - offre les outils d'écriture de ``/mcp`` ; **éteints par défaut**,
+       voir :ref:`headless_mcp`
    * - ``--transcription``
      - ``false``
      - sert les gestes de transcription (``transcriptions.create``,
@@ -1551,3 +1555,71 @@ pour rester analysable (par exemple avec ``jq``). Une réponse qui porte un
 en-tête ``Direction-Version`` l'imprime sur la sortie d'erreur : c'est la
 valeur que le geste suivant passe à ``--if-match``. ``call`` sert les gestes de
 direction sans drapeau, comme la CLI, puisqu'il s'exécute en local.
+
+.. _headless_mcp:
+
+Outils pour un assistant IA (MCP)
+=================================
+
+blunderDB n'embarque aucun modèle de langage : il offre ses outils à
+l'assistant que vous utilisez déjà (Claude Code, Claude Desktop, un client
+local), par le *Model Context Protocol*. L'assistant cherche, lit et explique ;
+blunderDB répond avec ses propres chiffres.
+
+Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Outil
+     - Ce qu'il rend
+   * - ``database_overview``
+     - comptes, période des matchs, version du schéma, joueurs fréquents
+   * - ``search_positions``
+     - positions d'une recherche dans la grammaire de la barre de commande
+       (décrite dans l'outil), avec sa forme canonique
+   * - ``search_comments``, ``saved_searches``
+     - commentaires contenant des mots ; recherches enregistrées
+   * - ``get_position``
+     - une position, son analyse (meilleurs coups ou videau), le coup joué et
+       le commentaire
+   * - ``explain_error``
+     - le thème de l'erreur, son coût en millipoints et la meilleure décision
+   * - ``similar_positions``, ``decode_position``, ``legal_moves``,
+       ``race_epc``
+     - positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course
+   * - ``list_players``, ``player_stats``, ``recurring_errors``
+     - joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent
+   * - ``list_matches``, ``get_match``, ``list_tournaments``
+     - matchs, détail d'un match, tournois
+   * - ``list_collections``, ``collection_positions``, ``study_decks``
+     - collections et leurs positions ; paquets de révision
+   * - ``quiz_draw``, ``quiz_grade``
+     - tire une position sans sa réponse, puis note la réponse donnée
+
+Les outils ne font que lire. Quatre outils écrivent — ``save_position``,
+``comment_position``, ``create_collection``, ``add_to_collection`` — et ne
+sont offerts que sur demande : ``--write`` en local, ``--mcp-write`` sur le
+démon. Aucun n'efface.
+
+**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir
+:ref:`cli`). Pour Claude Code :
+
+.. code-block:: bash
+
+   claude mcp add blunderdb -- blunderdb mcp --db /chemin/vers/base.db
+
+**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp``
+(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` exige
+``X-Tenant-ID`` et chaque outil travaille dans ce tenant ; un programme qui
+embarque ``pkg/blunderdb/server`` le sert aussi. Le démon n'authentifie
+personne (ADR-0005) : ``/mcp`` se protège au proxy comme ``/v1``, et
+``--mcp-write`` s'y décide comme ``--direction``. Chaque appel ``/v1`` que
+fait un outil repasse par toute la chaîne du démon : il est journalisé, compté
+dans les métriques et imputé à la limite de débit du tenant, en plus de la
+requête ``/mcp`` qui le porte. Un appel d'outil coûte donc plusieurs requêtes ;
+aucune n'en est exemptée.
+
+Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à
+l'ouverture, même sans ``--write``.

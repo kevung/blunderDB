@@ -93,6 +93,7 @@ Commandes disponibles
    "repair", "Recalcule ce que la base dérive de ce qu'elle stocke."
    "delete", "Supprime des données."
    "healthcheck", "Interroge un démon ``serve`` en marche : code 0 s'il est disponible."
+   "mcp", "Offre les outils de la base à un assistant IA (Model Context Protocol)."
    "completion", "Affiche un script de complétion shell (bash, zsh, fish)."
    "help", "Affiche l'aide."
    "version", "Affiche la version."
@@ -1875,6 +1876,36 @@ pour un conteneur ``unhealthy`` :
 .. code-block:: text
 
    Error: healthcheck: http://127.0.0.1:8080/readyz answered 503 Service Unavailable (version_mismatch)
+
+mcp — Offrir la base à un assistant IA
+--------------------------------------
+
+Sert les outils de la base à un assistant IA par le *Model Context Protocol*,
+sur l'entrée et la sortie standard : c'est l'assistant qui lance la commande.
+Les outils recherchent des positions dans la grammaire de la barre de
+commande, lisent une position et son analyse, expliquent une erreur,
+calculent les statistiques d'un joueur, listent matchs, tournois et
+collections, et posent un quiz. Ils ne font que lire, sauf avec ``--write``.
+La liste complète et l'équivalent HTTP du démon : :ref:`headless_mcp`.
+
+.. code-block:: bash
+
+   ./blunderdb mcp --db base.db [--write]
+
+**Options:**
+
+* ``--db`` — Fichier de base de données (obligatoire).
+* ``--write`` — Offre aussi les outils qui écrivent : enregistrer une
+  position, la commenter, créer et remplir une collection. Rien n'efface.
+
+Comme ``call``, la commande migre le schéma d'une base ancienne à
+l'ouverture, même sans ``--write``.
+
+**Exemple:** déclarer la base à Claude Code.
+
+.. code-block:: bash
+
+   claude mcp add blunderdb -- blunderdb mcp --db /chemin/vers/base.db
 
 completion — Complétion shell
 ------------------------------
