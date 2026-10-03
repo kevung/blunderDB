@@ -79,3 +79,4 @@ that come out of them.
 | [0062](0062-un-classement-de-saison-cumule-des-places-et-l-elo-de-club-suit-fibs.md) | Un classement de saison cumule des places, et l'Elo de club suit la formule FIBS | `SeasonRanking`, barème, Elo de club, `tournament ranking --season` |
 | [0063](0063-une-lecture-peut-porter-sur-les-tenants-que-le-proxy-liste.md) | Une lecture peut porter sur les tenants que le proxy liste | `X-Read-Tenants`, `/v1/across.*`, `storage.ReadAcross`, club / coach |
 | [0064](0064-l-assistant-interne-est-un-client-des-outils-mcp.md) | L'assistant interne est un client des outils MCP de la fenêtre | `mcp.DisplayTools`, `pkg/blunderdb/assistant`, trousseau, banc `assistantbench` |
+| [0065](0065-club-et-coach-lisent-a-travers-les-tenants-et-n-ecrivent-que-chez-soi.md) | Club et coach lisent à travers les tenants et n'écrivent que chez soi | `across.commentsByZobrist`, `across.collection*`, `across.clubRanking`, outils MCP `club_*` |

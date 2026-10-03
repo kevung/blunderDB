@@ -492,3 +492,85 @@ func TestClubTools(t *testing.T) {
 		t.Errorf("anki_next with nothing due: card = %v", c)
 	}
 }
+
+// readTenantsSpy records, per /v1 path, the X-Read-Tenants the tools sent.
+type readTenantsSpy struct {
+	mu   sync.Mutex
+	next http.Handler
+	sent map[string][]string
+}
+
+func (s *readTenantsSpy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	s.mu.Lock()
+	s.sent[r.URL.Path] = append(s.sent[r.URL.Path], r.Header.Values(mcp.ReadTenantsHeader)...)
+	s.mu.Unlock()
+	s.next.ServeHTTP(w, r)
+}
+
+type readTenantsTransport struct{ tenant, read string }
+
+func (h readTenantsTransport) RoundTrip(r *http.Request) (*http.Response, error) {
+	r = r.Clone(r.Context())
+	r.Header.Set(mcp.TenantHeader, h.tenant)
+	r.Header.Set(mcp.ReadTenantsHeader, h.read)
+	return http.DefaultTransport.RoundTrip(r)
+}
+
+// TestAcrossTools: the club tools answer on the demo database, and the read
+// set the proxy put on /mcp reaches their across.* calls and no other route.
+func TestAcrossTools(t *testing.T) {
+	srv := demoServer(t, internalserver.Options{TrustReadTenants: true})
+	spy := &readTenantsSpy{next: srv.Handler(), sent: map[string][]string{}}
+	ts := httptest.NewServer(mcp.NewHTTPHandler(spy, mcp.Options{AllowRemoteHost: true}))
+	defer ts.Close()
+	tr := &sdk.StreamableClientTransport{Endpoint: ts.URL, HTTPClient: &http.Client{Transport: readTenantsTransport{"1", "2"}}}
+	cs, err := sdk.NewClient(&sdk.Implementation{Name: "test", Version: "0"}, nil).Connect(context.Background(), tr, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer cs.Close()
+
+	matches := list(t, call(t, cs, "club_matches", obj{"limit": 2}), "matches")
+	tenants := map[any]bool{}
+	for _, m := range matches {
+		tenants[m.(obj)["tenant"]] = true
+	}
+	if !tenants["1"] || !tenants["2"] {
+		t.Errorf("club_matches read tenants %v, want 1 and 2", tenants)
+	}
+	first := matches[0].(obj)
+	mid := first["match"].(obj)["id"]
+	pos := list(t, call(t, cs, "club_match_positions", obj{"tenant": "2", "matchId": mid, "limit": 3}), "positions")
+	if len(pos) > 3 {
+		t.Errorf("club_match_positions limit 3 gave %d positions", len(pos))
+	}
+	z, ok := pos[0].(obj)["zobrist"].(string)
+	if !ok || z == "" {
+		t.Fatalf("club_match_positions gives no zobrist string: %v", pos[0])
+	}
+	if cm := call(t, cs, "club_comments", obj{"zobrists": []string{z}}); cm["comments"] == nil || cm["truncated"] != false {
+		t.Errorf("club_comments = %v, want comments and truncated false", cm)
+	}
+	if msg := callErr(t, cs, "club_comments", obj{"zobrists": []string{"nope"}}); !strings.Contains(msg, "zobrist") {
+		t.Errorf("club_comments with a bad hash: %s", msg)
+	}
+	if _, ok := call(t, cs, "club_library", nil)["collections"]; !ok {
+		t.Error("club_library answers no collections")
+	}
+	if rk := call(t, cs, "club_ranking", obj{"minDecisions": 1}); rk["rows"] == nil || rk["total"] == nil || rk["truncated"] == nil {
+		t.Errorf("club_ranking = %v, want rows, total and truncated", rk)
+	}
+	call(t, cs, "database_overview", nil)
+
+	spy.mu.Lock()
+	defer spy.mu.Unlock()
+	for path, sent := range spy.sent {
+		across := strings.HasPrefix(path, "/v1/across.")
+		if across && !slices.Equal(sent, []string{"2"}) {
+			t.Errorf("%s received X-Read-Tenants %v, want [2]", path, sent)
+		}
+		if !across && len(sent) != 0 {
+			t.Errorf("%s received X-Read-Tenants %v; only across.* calls carry it", path, sent)
+		}
+	}
+}

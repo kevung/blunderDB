@@ -281,4 +281,6 @@ func RunReadAcrossTests(t *testing.T, factory func() storage.Storage, read []str
 			}
 		}
 	})
+
+	runClubReads(t, ctx, s, set, read, owners, outsider, in)
 }

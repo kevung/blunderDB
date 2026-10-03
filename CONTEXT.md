@@ -640,6 +640,27 @@ nothing (ADR-0005, ADR-0063). On SQLite, and on the desktop, the Read tenants ar
 the single Tenant.
 _Avoid_: shared tenant, linked tenants, permissions
 
+**Coach comment**:
+A Comment a coach writes on a student's board, stored in the coach's own Tenant on
+the coach's copy of that board (same Zobrist hash, the coach's id) and read back
+next to the student's Position by the hash, never by the id. Nothing is written in
+the student's Tenant. It is an ordinary Comment of origin `user`, not a second kind
+(ADR-0065).
+_Avoid_: annotation, shared comment
+
+**Shared library**:
+The Collections of a Tenant read in place by the Tenants whose Read tenants list
+it. Nothing is copied, unlike sharing a Collection by file (export, then import),
+which hands the receiver a copy it then owns.
+_Avoid_: shared collection, public collection
+
+**Club ranking**:
+One ranking over the player tables of the Read tenants, best PR first, each row
+naming its Tenant; a player name is never merged across Tenants. It measures play
+(PR, errors), unlike the season ranking of directed tournaments, which sums places
+(ADR-0062, ADR-0065).
+_Avoid_: leaderboard, club Elo
+
 ### Handing a database to someone else
 
 **Watermark**:

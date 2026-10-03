@@ -85,7 +85,9 @@ second système d'identité à tenir synchrone, ce qu'ADR-0005 refuse.
 
 ## Ce que le socle fournit aux fonctions club / coach
 
-Ces fonctions sont une étape suivante ; le socle leur donne :
+Les fonctions elles-mêmes sont décidées par ADR-0065 (`across.commentsByZobrist`,
+`across.collectionsList`, `across.collectionPositions`, `across.clubRanking`, outils MCP
+`club_*`) ; le socle leur donne :
 
 - *le coach lit ses élèves* : `across.matchesList`, `across.matchesGet`, `across.statsCompute`
   sous `X-Tenant-ID` = coach, `X-Read-Tenants` = élèves ;
