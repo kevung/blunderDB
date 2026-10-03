@@ -419,7 +419,7 @@ jobs:
       # skipped); the full sweep, NEON forced, runs weekly (fuzz.yml).
       - name: Kernel identity (arm64, NEON against the pure-Go fallback)
         if: runner.os == 'macOS'
-        run: go test -short -count=1 -run 'TestKernelIdentity|TestNEON' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
+        run: go test -short -count=1 -run 'TestKernel|TestDenseKernelsAgree|TestNEON' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
         shell: bash
 
   # ADR-0004 backstop: run the Go suite in a host stripped of every OPTIONAL
@@ -799,6 +799,12 @@ jobs:
       # specifically call out.
       - name: go vet (GOOS=windows)
         run: GOOS=windows go vet ./...
+        shell: bash
+
+      # The arm64 build carries hand-written NEON assembly; vet's asmdecl
+      # checks its frame and argument offsets against the Go declarations.
+      - name: go vet (GOARCH=arm64)
+        run: GOARCH=arm64 go vet ./...
         shell: bash
 
       # The app version lives in three files (doc/source/conf.py,

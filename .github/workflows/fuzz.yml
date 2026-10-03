@@ -18,7 +18,14 @@ name: Fuzz
 # see the comment on BLUNDERDB_GOLD in gold_test.go) and
 # `gammonnet-kernel-identity-arm64` (the full, non -short kernel-identity
 # sweep on a real arm64 runner — build.yml's `test-os` macOS job only runs
-# the -short quarter of it on every push). Nothing here needed a dedicated
+# the -short quarter of it on every push). That job forces the NEON kernel
+# (BLUNDERDB_GAMMONNET_KERNEL=neon): its green runs are the evidence for
+# making NEON the default on arm64, where it is opt-in until then. It also
+# runs an informative go-against-neon benchstat, with no threshold: the
+# number the switch is decided on, not a gate. The benchstat lives here and
+# not in nightly.yml's `benchstat` job because it needs a real arm64 runner
+# and only makes sense next to the identity sweep it qualifies; the cost is
+# one macOS runner up to 25 minutes a week. Nothing here needed a dedicated
 # `nightly.yml` (E.12, #228, still open, will decide where the OTHER
 # nightly-only checks land): this file already carries the weekly schedule
 # these two need, and workflow_dispatch reruns them on demand like the fuzz
@@ -199,7 +206,7 @@ jobs:
       - name: Kernel identity, full sweep, NEON forced
         env:
           BLUNDERDB_GAMMONNET_KERNEL: neon
-        run: go test -count=1 -run 'TestKernelIdentity|TestDenseKernelsAgree|TestNEON|TestKernelName' -v -timeout 600s ./pkg/blunderdb/engine/gammonnet/
+        run: go test -count=1 -run 'TestKernel|TestDenseKernelsAgree|TestNEON' -v -timeout 600s ./pkg/blunderdb/engine/gammonnet/
         shell: bash
 
       - name: Install benchstat

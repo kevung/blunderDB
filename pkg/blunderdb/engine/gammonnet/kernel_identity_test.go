@@ -338,6 +338,62 @@ func TestKernelNegativeZeroIsNeutralisedByReLU(t *testing.T) {
 	}
 }
 
+// TestKernelReLUMapsNaNToPositiveZero: denseGo writes ReLU as !(v > 0) -> +0,
+// so a NaN sum comes out as +0 like the scalar `if sum > 0`. A SIMD max does
+// not agree on NaN everywhere (NEON's FMAX propagates it), so every kernel is
+// held to it, on enough rows to cross both the tile and the tail.
+func TestKernelReLUMapsNaNToPositiveZero(t *testing.T) {
+	const in, outDim = 3, 11
+	nan := float32(math.NaN())
+	negNaN := math.Float32frombits(0xffc0_0000)
+
+	w := make([]float32, outDim*in)
+	bias := make([]float32, outDim)
+	act := make([]float32, in*EvalBatchWidth)
+	for i := range w {
+		w[i] = 0.5
+	}
+	for i := range bias {
+		switch i % 3 {
+		case 0:
+			bias[i] = nan
+		case 1:
+			bias[i] = negNaN
+		default:
+			bias[i] = 1
+		}
+	}
+	// Lanes 0-3 carry a NaN activation, lanes 4-7 a finite one; the sum is
+	// NaN wherever the bias or the activation is.
+	for j := 0; j < in; j++ {
+		for n := 0; n < EvalBatchWidth; n++ {
+			if n < 4 && j == 1 {
+				act[j*EvalBatchWidth+n] = nan
+			} else {
+				act[j*EvalBatchWidth+n] = 2
+			}
+		}
+	}
+
+	for _, k := range batchKernels(t) {
+		out := make([]float32, outDim*EvalBatchWidth)
+		k.dense(w, bias, act, out, in, outDim, true)
+		for i := 0; i < outDim; i++ {
+			for n := 0; n < EvalBatchWidth; n++ {
+				got := out[i*EvalBatchWidth+n]
+				want := float32(0)
+				if i%3 == 2 && n >= 4 {
+					want = 1 + 3*float32(0.5*2)
+				}
+				if math.Float32bits(got) != math.Float32bits(want) {
+					t.Fatalf("kernel %s row %d lane %d: got %s, want %s",
+						k.name, i, n, bits(got), bits(want))
+				}
+			}
+		}
+	}
+}
+
 // TestDenseKernelsAgreeOnRandomLayers checks the kernels against each other one
 // LAYER at a time, intermediate activations included, over shapes that
 // exercise the tiling (output counts on and off the tile, input widths 1 and

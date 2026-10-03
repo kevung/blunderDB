@@ -27,9 +27,9 @@ import (
 const EvalBatchWidth = 8
 
 // KernelEnv names the environment variable that pins the arithmetic path:
-// "go", "avx2" on amd64, "neon" on arm64. A diagnosis knob, undocumented for users. A path
-// this build or CPU cannot provide is an error at load, never a silent
-// fallback (ADR-0024).
+// "go", "avx2" on amd64, "neon" on arm64. A diagnosis knob, undocumented for
+// users. A path this build or CPU cannot provide is an error at load, never a
+// silent fallback (ADR-0024).
 const KernelEnv = "BLUNDERDB_GAMMONNET_KERNEL"
 
 // goKernelName is the pure-Go fallback, always available, and the reference
@@ -69,11 +69,13 @@ func resolveKernel(requested string, accelerated []denseKernel) (denseKernel, er
 
 	requested = strings.TrimSpace(strings.ToLower(requested))
 	if requested == "" {
-		for _, k := range available {
+		for _, k := range accelerated {
 			if !k.optIn {
 				return k, nil
 			}
 		}
+		// Every accelerated path is opt-in or there is none: the reference.
+		return goKernel, nil
 	}
 	for _, k := range available {
 		if k.name == requested {
