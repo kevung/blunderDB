@@ -324,6 +324,19 @@ généré** depuis la table de routes du démon (``openapi.yaml``,
 :ref:`api_reference`) : il ne peut pas décrire autre chose que ce que le
 serveur sert.
 
+.. _headless_lecons:
+
+Les leçons
+~~~~~~~~~~
+
+Les leçons (:ref:`lecons`) se lisent et s'écrivent sous le tenant de l'appelant
+par neuf routes : ``/v1/lessons.list``, ``lessons.get`` (la leçon et ses
+étapes, dans l'ordre), ``lessons.create``, ``lessons.update``,
+``lessons.delete``, ``lessons.addStep``, ``lessons.updateStep``,
+``lessons.removeStep`` et ``lessons.reorderSteps``. La suppression d'une leçon
+est définitive et laisse les collections et les positions que ses étapes
+montraient. Les outils MCP ``list_lessons`` et ``lesson`` les lisent.
+
 .. _headless_transcription:
 
 Transcrire par l'API
@@ -1804,6 +1817,8 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
      - matchs, détail d'un match, tournois
    * - ``list_collections``, ``collection_positions``, ``study_decks``
      - collections et leurs positions ; paquets de révision
+   * - ``list_lessons``, ``lesson``
+     - leçons ; les étapes d'une leçon, dans l'ordre
    * - ``quiz_draw``, ``quiz_grade``
      - tire une position sans sa réponse, puis note la réponse donnée
    * - ``evaluate``

@@ -917,6 +917,66 @@ tout de même avec le code 0.
    ./blunderdb collection export --db base.db --id 3,4 --out ouvertures.db \
        --watermark "Cours de Jean Dupont - 12 mars 2026"
 
+lesson — Gérer les leçons
+-------------------------
+
+Gère les leçons : des suites ordonnées d'étapes qu'un coach écrit une fois pour
+un élève. Chaque étape a un titre, un texte et peut montrer une collection, une
+position, les deux ou aucune. Une leçon se remet dans un fichier ``.dbx``
+(sous-commande ``export``) et se lit dans l'interface graphique avec la
+commande ``:le``. Chaque sous-commande prend ``--db`` ; ``list`` et ``show``
+acceptent ``--format text`` (défaut) ou ``json``.
+
+.. code-block:: bash
+
+   ./blunderdb lesson <subcommand> [options]
+
+**Sous-commandes:**
+
+* ``list`` — Liste des leçons : id, nom, nombre d'étapes.
+* ``show --id <id>`` — Les étapes d'une leçon, dans l'ordre : id d'étape,
+  titre, texte, collection et position montrées.
+* ``create --name <nom> [--description <texte>]`` — Crée une leçon vide.
+* ``edit --id <id> [--name <nom>] [--description <texte>]`` — Renomme une leçon
+  ou change sa description ; ce qui n'est pas donné est conservé.
+* ``delete --id <id> --confirm`` — Supprime la leçon et ses étapes,
+  définitivement (il n'y a pas de corbeille pour les leçons). Les collections
+  et les positions que ses étapes montraient restent dans la base.
+* ``add-step --lesson <id> [--title <titre>] [--text <texte> | --text-file
+  <fichier>] [--collection <id>] [--position <id>]`` — Ajoute une étape à la
+  fin de la leçon.
+* ``edit-step --lesson <id> --step <id> [--title …] [--text … | --text-file …]
+  [--collection <id>] [--position <id>]`` — Modifie une étape ; seuls les
+  champs donnés changent, ``--collection 0`` ou ``--position 0`` retirent ce
+  que l'étape montrait.
+* ``remove-step --lesson <id> --step <id>`` — Retire une étape.
+* ``reorder --lesson <id> --steps <id,id,…>`` — Fixe l'ordre des étapes ; la
+  liste donne toutes les étapes de la leçon.
+* ``export --id <id[,id…]> --out <fichier> [--analysis=false]
+  [--comments=false] [--watermark <texte>] [--watermark-note <texte>]
+  [--password <mot de passe>]`` — Exporte une ou plusieurs leçons, avec les
+  collections et les positions que leurs étapes montrent, vers un nouveau
+  fichier de base ; avec ``--password``, le fichier est un ``.dbx`` protégé
+  (voir la commande ``export`` pour le filigrane).
+
+Importer un fichier qui contient une leçon crée celle-ci avec ses étapes ; une
+leçon dont le nom existe déjà dans la base n'est pas touchée, si bien que
+réimporter le même fichier ne change rien. Lire une leçon n'enregistre rien chez
+celui qui la lit.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb lesson create --db base.db --name "Jouer contre un prime"
+   ./blunderdb lesson add-step --db base.db --lesson 1 \
+       --title "Le temps" --text "Comptez les pips." --collection 3
+   ./blunderdb lesson show --db base.db --id 1
+
+   # Remettre la leçon à un élève, protégée et marquée de son origine
+   ./blunderdb lesson export --db base.db --id 1 --out lecon.dbx \
+       --password secret --watermark "Cours du 12 mars"
+
 anki — Paquets de répétition espacée
 -------------------------------------
 

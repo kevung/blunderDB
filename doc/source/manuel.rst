@@ -1102,6 +1102,30 @@ positions au sein des collections peut être modifié par glisser-déposer.
 Appuyer sur *CTRL-B* ou exécuter la commande ``collection`` pour afficher ou
 masquer le panneau.
 
+.. _lecons:
+
+Leçons
+~~~~~~
+
+Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un élève
+et lui remet dans un fichier de base (voir la commande ``lesson export`` de
+:doc:`cli`). Chaque étape a un titre, un texte et peut montrer une collection,
+une position, les deux ou aucune. La commande ``le`` liste les leçons de la
+base dans la barre d'état ; ``le 2`` ouvre la leçon 2.
+
+Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la
+leçon, numéro de l'étape, titre, puis le texte. *Précédente* et *Suivante*
+changent d'étape ; l'étape amène sur le plateau la collection ou la position
+qu'elle montre, que l'on parcourt ensuite par les gestes habituels. *Fermer*
+quitte la leçon. Une étape dont la collection ou la position a été supprimée
+garde son texte.
+
+Lire une leçon ne laisse aucune trace : la base de l'élève n'enregistre ni
+l'étape atteinte ni l'ouverture. Importer un fichier qui contient une leçon la
+crée ; une leçon de même nom déjà présente n'est pas touchée. Les leçons se
+créent et se modifient par la ligne de commande ou par l'API
+(:ref:`headless_lecons`).
+
 .. _import_regles:
 
 Import : ce qui est écrit, ce qui ne l'est jamais
