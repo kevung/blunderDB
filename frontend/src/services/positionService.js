@@ -24,7 +24,6 @@ import { epcDataStore, resetEpcReveal } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { listOriginStore, searchOrigin, LIBRARY_ORIGIN } from '../stores/listOriginStore.js';
 import { viewStore } from '../stores/viewStore.js';
-import { isSettled } from '../stores/positionList.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, activeTabStore } from '../stores/uiStore.js';
 import { rankedDistancesStore, rankedTargetStore } from '../stores/rankedStore.js';
 import { GetLikeLimit, GetLikeMaxDistance } from '../../wailsjs/go/main/Config.js';
@@ -342,7 +341,7 @@ export async function reloadAllPositions() {
 // one, or Escape, makes it stale: whatever it still awaits is dropped, and the backend is told to
 // stop scanning for it (CancelSearch, which the Go scan checks chunk by chunk).
 let searchGeneration = 0;
-/** @type {{ generation: number, shown: number, timer: ReturnType<typeof setInterval> | null, unregister: () => void } | null} */
+/** @type {{ generation: number, shown: number, timer: ReturnType<typeof setInterval> | null, settling?: boolean, unregister: () => void } | null} */
 let activeSearch = null;
 let statusBeforeSearch = null;
 
@@ -368,51 +367,67 @@ export function cancelSearch() {
     if (!search) return;
     searchGeneration++;
     endSearchUI();
+    cancelSettlings();
     CancelSearch()?.catch?.(() => {});
     setStatusBarMessage(tMsg(search.shown > 0 ? 'status.searchPartial' : 'status.searchCancelled', { n: search.shown }));
 }
 
+/** @type {Set<{ cancelled: boolean }>} Settlings in flight: Escape or a new search ends them all. */
+const settlings = new Set();
+
+function cancelSettlings() {
+    for (const settling of settlings) settling.cancelled = true;
+    settlings.clear();
+}
+
 /**
- * Count the paged list on screen when it was put back on its first page alone (a view restored
- * from the session, or switched to before its count came back), and find `positionId` in it when
- * the first page did not hold it. It runs as a search does: in the background, given up for
- * Escape or a new search, and a rank that comes back after the user moved is not applied.
- * @param {{ positionId?: number | null }} [options]
+ * Count a paged list put back on its first page alone (a view restored from the session, or
+ * shown before its count came back), and rank `positionId` in it, for viewStore to apply. It
+ * runs as a search does, in the background and given up for Escape or a new search; several
+ * run side by side, one per view shown, the last one owning the status line. Resolves to
+ * `{ index }` (-1 when no rank was asked for, or the position is gone), null when it did not
+ * run to the end: a search owned the backend, or it was given up.
+ * @param {{ source: import('../stores/positionList.js').IdSource, count: boolean, positionId: number | null }} options
+ * @returns {Promise<{ index: number } | null>}
  */
-export async function settleDisplayedList({ positionId = null } = {}) {
-    const list = positionsStore.snapshotList();
-    // A running search owns the list being counted: its own count settles it.
-    if (activeSearch || !('source' in list) || (isSettled(list) && positionId == null)) return;
-    const source = list.source;
-    statusBeforeSearch = get(statusBarTextStore);
-    const generation = ++searchGeneration;
-    const stale = () => generation !== searchGeneration;
-    const search = { generation, shown: list.length, timer: null, unregister: closeOnEscape(() => cancelSearch()) };
+export async function settleList({ source, count, positionId }) {
+    if (activeSearch && !activeSearch.settling) return null;
+    const settling = { cancelled: false };
+    settlings.add(settling);
+    if (activeSearch) endSearchUI();
+    else statusBeforeSearch = get(statusBarTextStore);
+    const search = {
+        generation: searchGeneration,
+        shown: positionsStore.isSource(source) ? get(positionsStore).length : 0,
+        timer: null,
+        settling: true,
+        unregister: closeOnEscape(() => cancelSearch())
+    };
     activeSearch = search;
-    const indexAtStart = get(currentPositionIndexStore);
     try {
-        if (!isSettled(list)) {
+        if (count) {
             const found = await source.count();
-            if (stale()) return;
+            if (settling.cancelled) return null;
+            // Settles every snapshot of the source, shown or not.
             positionsStore.resolveLength(source, found);
             search.shown = 0;
         }
+        let index = -1;
         if (positionId != null) {
-            const index = await source.indexOf(positionId);
-            if (stale()) return;
-            if (index >= 0 && positionsStore.isSource(source) && get(currentPositionIndexStore) === indexAtStart) {
-                currentPositionIndexStore.set(index);
-            }
+            index = await source.indexOf(positionId);
+            if (settling.cancelled) return null;
         }
+        return { index: Number.isInteger(index) ? index : -1 };
     } catch (error) {
-        if (stale()) return;
-        logger.error('could not count the restored list:', error);
+        if (!settling.cancelled) logger.error('could not settle the restored list:', error);
+        return null;
     } finally {
-        if (!stale()) endSearchUI();
+        settlings.delete(settling);
+        if (activeSearch === search) endSearchUI();
     }
 }
 
-viewStore.setListSettler(settleDisplayedList);
+viewStore.setListSettler(settleList);
 
 // One options object, not positional arguments: a wrong index would silently
 // shift every later filter and answer a different question.
@@ -486,9 +501,11 @@ export async function loadPositionsByFilters({
     // while CancelSearch is pending must already find itself stale.
     const generation = ++searchGeneration;
     const stale = () => generation !== searchGeneration;
-    const replacing = activeSearch !== null;
+    // A settling left without the status line still holds a scan: it goes too.
+    const replacing = activeSearch !== null || settlings.size > 0;
     if (replacing) {
         endSearchUI();
+        cancelSettlings();
         // Awaited: the stale scan must be stopped before the new one is asked for.
         await CancelSearch()?.catch?.(() => {});
         if (stale()) return;
@@ -760,6 +777,8 @@ export async function loadPositionsByFilters({
         // A stale search leaves the status line and the cursor to the one that replaced it.
         if (!stale()) {
             endSearchUI();
+            // A view shown while this search held the backend was left unsettled.
+            viewStore.settleActive();
             // Restore the pre-search message unless a no-match or error branch
             // already replaced the "searching" placeholder.
             const current = get(statusBarTextStore);

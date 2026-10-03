@@ -23,7 +23,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => bindings);
 vi.mock('../services/sessionService.js', () => ({ saveSessionState: vi.fn() }));
 vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn(() => Promise.resolve(true)) }));
 
-import { loadPositionsByFilters, cancelSearch, isSearching, settleDisplayedList } from '../services/positionService.js';
+import { loadPositionsByFilters, cancelSearch, isSearching, settleList } from '../services/positionService.js';
 import { positionsStore, searchSource } from '../stores/positionStore.js';
 import { statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -195,36 +195,48 @@ describe('une liste restaurée sur sa première page se compte comme une recherc
     const restoreFirstPage = () => {
         const source = searchSource({ searchText: 'w>50' });
         positionsStore.restoreList({ source, length: page().length, provisional: true, firstPage: page() });
-        currentPositionIndexStore.set(3);
+        return source;
     };
 
     test('le compte et le rang arrivent en arrière-plan', async () => {
-        restoreFirstPage();
+        const source = restoreFirstPage();
         bindings.CountPositionsByFilters.mockResolvedValue(5000);
         bindings.IndexOfPositionByFilters.mockResolvedValue(4321);
 
-        await settleDisplayedList({ positionId: 99999 });
-
+        expect(await settleList({ source, count: true, positionId: 99999 })).toEqual({ index: 4321 });
         expect(get(positionsStore).length).toBe(5000);
-        expect(get(currentPositionIndexStore)).toBe(4321);
         expect(isSearching()).toBe(false);
     });
 
     test('Échap l’interrompt : le backend est prévenu, la première page reste', async () => {
-        restoreFirstPage();
+        const source = restoreFirstPage();
         const count = deferred();
         bindings.CountPositionsByFilters.mockReturnValue(count.promise);
 
-        const settling = settleDisplayedList({ positionId: 99999 });
+        const settling = settleList({ source, count: true, positionId: 99999 });
         await flush();
         expect(isSearching()).toBe(true);
         handleEscapeCapture(new KeyboardEvent('keydown', { key: 'Escape' }));
         expect(bindings.CancelSearch).toHaveBeenCalledTimes(1);
 
         count.resolve(5000);
-        await settling;
+        expect(await settling).toBeNull();
         expect(get(positionsStore).length).toBe(page().length);
         expect(bindings.IndexOfPositionByFilters).not.toHaveBeenCalled();
-        expect(get(currentPositionIndexStore)).toBe(3);
+    });
+
+    test('une recherche en cours garde le backend : rien n’est lancé', async () => {
+        const window = deferred();
+        bindings.SearchPositionIDs.mockReturnValue(window.promise);
+        const search = loadPositionsByFilters({});
+        await flush();
+
+        const source = searchSource({ searchText: 'w>50' });
+        expect(await settleList({ source, count: true, positionId: 1 })).toBeNull();
+        expect(bindings.CountPositionsByFilters).not.toHaveBeenCalled();
+
+        cancelSearch();
+        window.resolve([]);
+        await search;
     });
 });

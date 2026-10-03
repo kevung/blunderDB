@@ -52,23 +52,60 @@ let nextViewId = 2;
 function createViewStore() {
     const views = writable([createDefaultView(1)]);
     const activeViewId = writable(1);
-    // Counts a paged list put back before its length was known (positionService, which imports
-    // this store: handed in rather than imported).
-    /** @type {(options: { positionId?: number | null }) => unknown} */
-    let settleList = () => undefined;
+    // Counts a paged list put back before its length was known and ranks a position in it
+    // (positionService, which imports this store: handed in rather than imported). Resolves to
+    // `{ index }` once done (index -1 when not asked for or absent), null when it did not run.
+    /** @typedef {(options: { source: import('./positionList.js').IdSource, count: boolean, positionId: number | null }) => Promise<{ index: number } | null>} ListSettler */
+    /** @type {ListSettler} */
+    let settleList = async () => null;
 
-    /** @param {(options: { positionId?: number | null }) => unknown} fn */
+    /** @param {ListSettler} fn */
     function setListSettler(fn) {
         settleList = fn;
     }
 
     // A view whose list or position is still to be found asks for it once it is on screen; only
-    // the list on screen is counted, so restoring several views scans for one.
-    function settle(view) {
+    // the list on screen is counted, so restoring several views scans for one. The count lands
+    // on the view's source whichever view is shown by then (positionList's settled lengths); the
+    // rank lands on the view itself, shown or left, unless the user moved in it meanwhile. A
+    // settling that did not run (a search owned the backend) leaves the rank pending, asked for
+    // again the next time the view is shown or that search ends.
+    /** @param {number} viewId */
+    async function settle(viewId) {
+        const view = get(views).find((v) => v.id === viewId);
+        const list = view?.list;
+        if (!view || !list || !('source' in list)) return;
         const positionId = view.pendingPositionId ?? null;
-        if (positionId == null && isSettled(view.list)) return;
-        views.update((vs) => vs.map((v) => (v.id === view.id ? { ...v, pendingPositionId: null } : v)));
-        Promise.resolve(settleList({ positionId })).catch(() => {});
+        const count = !isSettled(list);
+        if (positionId == null && !count) return;
+        const indexAtStart = view.positionIndex || 0;
+        const shownIndex = get(activeViewId) === viewId ? get(currentPositionIndexStore) : null;
+        const result = await settleList({ source: list.source, count, positionId }).catch(() => null);
+        if (!result) return;
+        const index = result.index;
+        const shown = get(activeViewId) === viewId;
+        if (shown) {
+            const unmoved = get(currentPositionIndexStore) === (shownIndex ?? indexAtStart);
+            if (index >= 0 && unmoved && positionsStore.isSource(list.source)) currentPositionIndexStore.set(index);
+            views.update((vs) => vs.map((v) => (v.id === viewId ? { ...v, pendingPositionId: null } : v)));
+            return;
+        }
+        views.update((vs) =>
+            vs.map((v) => {
+                if (v.id !== viewId) return v;
+                const moved = v.positionIndex !== (shownIndex ?? indexAtStart);
+                if (index < 0 || moved) return { ...v, pendingPositionId: null };
+                // Left before its rank came back: the board saved with it was the fallback's.
+                return { ...v, pendingPositionId: null, positionIndex: index, positionId, position: null };
+            })
+        );
+    }
+
+    /** Settle the view on screen: a search that held the backend has ended. */
+    function settleActive() {
+        const view = get(views).find((v) => v.id === get(activeViewId));
+        // Only while the view still shows its own list: the search may have replaced it.
+        if (view?.list && 'source' in view.list && positionsStore.isSource(view.list.source)) settle(view.id);
     }
 
     function saveCurrentViewState() {
@@ -125,7 +162,7 @@ function createViewStore() {
         if (target) {
             activeViewId.set(viewId);
             restoreViewState(target);
-            settle(target);
+            settle(target.id);
         }
     }
 
@@ -156,6 +193,7 @@ function createViewStore() {
             const next = remaining[remaining.length - 1];
             activeViewId.set(next.id);
             restoreViewState(next);
+            settle(next.id);
         }
     }
 
@@ -254,7 +292,7 @@ function createViewStore() {
             positionsStore.restoreList(target.list);
             await positionsStore.ensureIds(target.positionIndex, target.positionIndex);
             restoreViewState(target);
-            settle(target);
+            settle(target.id);
             return true;
         } catch (e) {
             logger.error('Error deserializing views:', e);
@@ -292,7 +330,8 @@ function createViewStore() {
         saveCurrentViewState,
         serialize,
         deserialize,
-        setListSettler
+        setListSettler,
+        settleActive
     };
 }
 
