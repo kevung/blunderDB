@@ -368,7 +368,9 @@
         "tabShortcuts": "Atajos",
         "tabCommands": "Línea de comandos",
         "tabAbout": "Acerca de",
-        "loadFailed": "No se pudo cargar la ayuda."
+        "loadFailed": "No se pudo cargar la ayuda.",
+        "searchPlaceholder": "Buscar en la ayuda (/)",
+        "searchNone": "sin resultados"
     },
     "commands": {
         "collectionEmpty": "La colección está vacía",

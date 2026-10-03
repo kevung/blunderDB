@@ -368,7 +368,9 @@
         "tabShortcuts": "Pikanäppäimet",
         "tabCommands": "Komentorivi",
         "tabAbout": "Tietoja",
-        "loadFailed": "Ohjetta ei voitu ladata."
+        "loadFailed": "Ohjetta ei voitu ladata.",
+        "searchPlaceholder": "Hae ohjeesta (/)",
+        "searchNone": "ei tuloksia"
     },
     "commands": {
         "collectionEmpty": "Kokoelma on tyhjä",

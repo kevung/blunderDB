@@ -368,7 +368,9 @@
         "tabShortcuts": "Shortcuts",
         "tabCommands": "Command Line",
         "tabAbout": "About",
-        "loadFailed": "The help could not be loaded."
+        "loadFailed": "The help could not be loaded.",
+        "searchPlaceholder": "Search the help (/)",
+        "searchNone": "no result"
     },
     "commands": {
         "collectionEmpty": "Collection is empty",

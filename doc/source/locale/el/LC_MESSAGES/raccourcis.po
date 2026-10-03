@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 12:27+0200\n"
+"POT-Creation-Date: 2026-10-03 12:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -1695,6 +1695,14 @@ msgid "Bas du contenu."
 msgstr "Τέλος του περιεχομένου."
 
 #: ../../source/raccourcis.rst:1
+msgid ""
+"Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à"
+" la précédente."
+msgstr ""
+"Αναζήτηση στη βοήθεια: το Enter μεταβαίνει στην επόμενη εμφάνιση, το "
+"SHIFT-Enter στην προηγούμενη."
+
+#: ../../source/raccourcis.rst:1
 msgid "?, CTRL-F, Esc"
 msgstr "?, CTRL-F, Esc"
 
@@ -1951,4 +1959,3 @@ msgstr "Κλείσιμο της βοήθειας."
 
 #~ msgid "Clic, Double-clic"
 #~ msgstr "Κλικ, Διπλό κλικ"
-

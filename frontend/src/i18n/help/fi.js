@@ -1800,6 +1800,10 @@ export default {
 <td>Sisällön loppuun.</td>
 </tr>
 <tr>
+<td>/</td>
+<td>Hae ohjeesta: Enter siirtyy seuraavaan osumaan, SHIFT-Enter edelliseen.</td>
+</tr>
+<tr>
 <td>?, CTRL-F, Esc</td>
 <td>Sulje ohje.</td>
 </tr>

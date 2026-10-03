@@ -1800,6 +1800,10 @@ export default {
 <td>Bottom of the content.</td>
 </tr>
 <tr>
+<td>/</td>
+<td>Search the help: Enter goes to the next occurrence, SHIFT-Enter to the previous one.</td>
+</tr>
+<tr>
 <td>?, CTRL-F, Esc</td>
 <td>Close the help.</td>
 </tr>

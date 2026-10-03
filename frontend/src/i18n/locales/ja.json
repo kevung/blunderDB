@@ -368,7 +368,9 @@
         "tabShortcuts": "ショートカット",
         "tabCommands": "コマンドライン",
         "tabAbout": "情報",
-        "loadFailed": "ヘルプを読み込めませんでした。"
+        "loadFailed": "ヘルプを読み込めませんでした。",
+        "searchPlaceholder": "ヘルプ内を検索 (/)",
+        "searchNone": "該当なし"
     },
     "commands": {
         "collectionEmpty": "コレクションは空です",

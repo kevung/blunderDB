@@ -1800,6 +1800,10 @@ export default {
 <td>Bas du contenu.</td>
 </tr>
 <tr>
+<td>/</td>
+<td>Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à la précédente.</td>
+</tr>
+<tr>
 <td>?, CTRL-F, Esc</td>
 <td>Fermer l'aide.</td>
 </tr>

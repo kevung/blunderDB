@@ -1800,6 +1800,10 @@ export default {
 <td>Final del contenido.</td>
 </tr>
 <tr>
+<td>/</td>
+<td>Buscar en la ayuda: Intro pasa a la ocurrencia siguiente, MAYÚS-Intro a la anterior.</td>
+</tr>
+<tr>
 <td>?, CTRL-F, Esc</td>
 <td>Cerrar la ayuda.</td>
 </tr>

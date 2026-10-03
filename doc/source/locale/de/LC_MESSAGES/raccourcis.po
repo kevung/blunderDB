@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 12:27+0200\n"
+"POT-Creation-Date: 2026-10-03 12:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1690,6 +1690,14 @@ msgid "Bas du contenu."
 msgstr "Ende des Inhalts."
 
 #: ../../source/raccourcis.rst:1
+msgid ""
+"Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à"
+" la précédente."
+msgstr ""
+"In der Hilfe suchen: Eingabe springt zum nächsten Treffer, UMSCHALT-"
+"Eingabe zum vorherigen."
+
+#: ../../source/raccourcis.rst:1
 msgid "?, CTRL-F, Esc"
 msgstr "?, STRG-F, Esc"
 
@@ -1945,4 +1953,3 @@ msgstr "Hilfe schließen."
 
 #~ msgid "Clic, Double-clic"
 #~ msgstr "Klick, Doppelklick"
-

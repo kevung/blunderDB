@@ -368,7 +368,9 @@
         "tabShortcuts": "Tastenkürzel",
         "tabCommands": "Befehlszeile",
         "tabAbout": "Über",
-        "loadFailed": "Die Hilfe konnte nicht geladen werden."
+        "loadFailed": "Die Hilfe konnte nicht geladen werden.",
+        "searchPlaceholder": "In der Hilfe suchen (/)",
+        "searchNone": "kein Treffer"
     },
     "commands": {
         "collectionEmpty": "Sammlung ist leer",

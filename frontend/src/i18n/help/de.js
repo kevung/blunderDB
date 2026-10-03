@@ -1800,6 +1800,10 @@ export default {
 <td>Ende des Inhalts.</td>
 </tr>
 <tr>
+<td>/</td>
+<td>In der Hilfe suchen: Eingabe springt zum nächsten Treffer, UMSCHALT-Eingabe zum vorherigen.</td>
+</tr>
+<tr>
 <td>?, STRG-F, Esc</td>
 <td>Hilfe schließen.</td>
 </tr>

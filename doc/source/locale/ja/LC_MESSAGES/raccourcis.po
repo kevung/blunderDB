@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 12:27+0200\n"
+"POT-Creation-Date: 2026-10-03 12:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1517,6 +1517,12 @@ msgid "Bas du contenu."
 msgstr "内容の末尾へ。"
 
 #: ../../source/raccourcis.rst:1
+msgid ""
+"Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à"
+" la précédente."
+msgstr "ヘルプ内を検索します。Enter で次の一致へ、SHIFT-Enter で前の一致へ移動します。"
+
+#: ../../source/raccourcis.rst:1
 msgid "?, CTRL-F, Esc"
 msgstr "?, CTRL-F, Esc"
 
@@ -1699,4 +1705,3 @@ msgstr "ヘルプを閉じる。"
 
 #~ msgid "Clic, Double-clic"
 #~ msgstr "クリック、ダブルクリック"
-

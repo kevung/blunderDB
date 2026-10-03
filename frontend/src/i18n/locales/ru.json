@@ -368,7 +368,9 @@
         "tabShortcuts": "Горячие клавиши",
         "tabCommands": "Командная строка",
         "tabAbout": "О программе",
-        "loadFailed": "Не удалось загрузить справку."
+        "loadFailed": "Не удалось загрузить справку.",
+        "searchPlaceholder": "Поиск в справке (/)",
+        "searchNone": "ничего не найдено"
     },
     "commands": {
         "collectionEmpty": "Коллекция пуста",

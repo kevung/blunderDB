@@ -1800,6 +1800,10 @@ export default {
 <td>内容の末尾へ。</td>
 </tr>
 <tr>
+<td>/</td>
+<td>ヘルプ内を検索します。Enter で次の一致へ、SHIFT-Enter で前の一致へ移動します。</td>
+</tr>
+<tr>
 <td>?, CTRL-F, Esc</td>
 <td>ヘルプを閉じる。</td>
 </tr>

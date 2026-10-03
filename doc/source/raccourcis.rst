@@ -458,4 +458,5 @@ Panneau d'aide
    "ESPACE", "Page suivante."
    "PageUp", "Haut du contenu."
    "PageDown", "Bas du contenu."
+   "/", "Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à la précédente."
    "?, CTRL-F, Esc", "Fermer l'aide."

@@ -368,7 +368,9 @@
         "tabShortcuts": "Συντομεύσεις",
         "tabCommands": "Γραμμή εντολών",
         "tabAbout": "Σχετικά",
-        "loadFailed": "Δεν ήταν δυνατή η φόρτωση της βοήθειας."
+        "loadFailed": "Δεν ήταν δυνατή η φόρτωση της βοήθειας.",
+        "searchPlaceholder": "Αναζήτηση στη βοήθεια (/)",
+        "searchNone": "κανένα αποτέλεσμα"
     },
     "commands": {
         "collectionEmpty": "Η συλλογή είναι κενή",

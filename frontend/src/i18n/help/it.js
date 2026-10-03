@@ -1800,6 +1800,10 @@ export default {
 <td>Fine del contenuto.</td>
 </tr>
 <tr>
+<td>/</td>
+<td>Cerca nella guida: Invio passa all'occorrenza successiva, MAIUSC-Invio alla precedente.</td>
+</tr>
+<tr>
 <td>?, CTRL-F, Esc</td>
 <td>Chiudi la guida.</td>
 </tr>

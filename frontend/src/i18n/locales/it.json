@@ -368,7 +368,9 @@
         "tabShortcuts": "Scorciatoie",
         "tabCommands": "Riga di comando",
         "tabAbout": "Informazioni",
-        "loadFailed": "Impossibile caricare la guida."
+        "loadFailed": "Impossibile caricare la guida.",
+        "searchPlaceholder": "Cerca nella guida (/)",
+        "searchNone": "nessun risultato"
     },
     "commands": {
         "collectionEmpty": "La collezione è vuota",
