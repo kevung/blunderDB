@@ -1,100 +1,100 @@
 {
- "_comment": "OGID contract corpus (issue #260, fiche I.4). Every case pairs an OGID with the XGID of the SAME physical position, and pkg/blunderdb/domain/ogid_contract_test.go asserts that DecodeOGID and DecodeXGID agree on the board, the cube, the dice, the player on roll and the score. Pinning the new decoder against the old one rather than against a hand-written expectation is what makes the corpus a contract instead of a transcription of somebody's reading. PROVENANCE: the positions are real — dumped from testdata/test.xg and testdata/test.mat through `blunderdb list --type positions --format csv` — and the OGID strings were produced by the REFERENCE IMPLEMENTATION (AnkiGammon 1.8.1, ankigammon/utils/ogid.py, MIT), not by this repository. The rapport P9 required real samples before a reader was written; this is them.",
+ "_comment": "OGID contract corpus (issue #260, fiche I.4). Every case pairs an OGID with the XGID of the SAME physical position, and pkg/blunderdb/domain/ogid_contract_test.go asserts that DecodeOGID and DecodeXGID agree on the board, the cube, the dice, the player on roll and the score. Pinning the new decoder against the old one rather than against a hand-written expectation is what makes the corpus a contract instead of a transcription of somebody's reading. PROVENANCE: the positions are real — dumped from testdata/test.xg and testdata/test.mat through `blunderdb list --type positions --format csv` — and the OGID strings were produced by the REFERENCE IMPLEMENTATION (AnkiGammon, ankigammon/utils/ogid.py, MIT; first 1.8.1, then re-encoded at commit 14b07b1, which reads field 5 as the player who REACHED the position), not by this repository. The rapport P9 required real samples before a reader was written; this is them.",
  "cases": [
   {
    "xgid": "-b----E-C---eE---c-e----B-:0:0:1:51:0:0:0:7:0",
-   "ogid": "11ccccchhhjjjjj:66666888dddddoo:N0N:51:B::0:0:7:"
+   "ogid": "11ccccchhhjjjjj:66666888dddddoo:N0N:51:W::0:0:7:"
   },
   {
    "xgid": "-aa---E-C---dE---d-e----B-:0:0:1:00:0:0:0:7:0",
-   "ogid": "12cccchhhhjjjjj:66666888dddddoo:N0N::B::0:0:7:"
+   "ogid": "12cccchhhhjjjjj:66666888dddddoo:N0N::W::0:0:7:"
   },
   {
    "xgid": "-----bEBC---dC---b-cAbb-A-:0:0:1:00:0:0:0:7:0",
-   "ogid": "55cccchhjjjllmm:6666677888dddko:N0N::B::0:0:7:"
+   "ogid": "55cccchhjjjllmm:6666677888dddko:N0N::W::0:0:7:"
   },
   {
    "xgid": "-----bEBC---dC---b-cAbb-A-:0:0:1:62:0:0:0:7:0",
-   "ogid": "55cccchhjjjllmm:6666677888dddko:N0N:62:B::0:0:7:"
+   "ogid": "55cccchhjjjllmm:6666677888dddko:N0N:62:W::0:0:7:"
   },
   {
    "xgid": "--ABBaBBC--B--a----bbbeb-A:0:0:1:00:0:0:0:7:0",
-   "ogid": "5ejjkkllmmmmmnn:233446677888bbp:N0N::B::0:0:7:"
+   "ogid": "5ejjkkllmmmmmnn:233446677888bbp:N0N::W::0:0:7:"
   },
   {
    "xgid": "--ABBaBBC--B--a----bbbeb-A:0:0:1:64:0:0:0:7:0",
-   "ogid": "5ejjkkllmmmmmnn:233446677888bbp:N0N:64:B::0:0:7:"
+   "ogid": "5ejjkkllmmmmmnn:233446677888bbp:N0N:64:W::0:0:7:"
   },
   {
    "xgid": "--BBBBC-B--A-------bbbccA-:1:0:1:00:0:0:0:7:0",
-   "ogid": "jjkkllmmmnnn:2233445566688bo:N1N::B::0:0:7:"
+   "ogid": "jjkkllmmmnnn:2233445566688bo:N1N::W::0:0:7:"
   },
   {
    "xgid": "-b---CE-B--acB---bacbAaA-A:1:0:1:00:0:1:0:7:0",
-   "ogid": "11bccchhijjjkkm:5556666688ddlnp:N1N::B::1:0:7:"
+   "ogid": "11bccchhijjjkkm:5556666688ddlnp:N1N::W::1:0:7:"
   },
   {
    "xgid": "a-aAaBCAB---bCA--b-ec---B-:1:-1:1:63:1:0:0:7:0",
-   "ogid": "024cchhjjjjjkkk:355666788dddeoo:W1N:63:B::0:1:7:"
+   "ogid": "024cchhjjjjjkkk:355666788dddeoo:W1N:63:W::0:1:7:"
   },
   {
    "xgid": "--bB-BBBBa--bBA--b-ec---B-:1:-1:1:53:1:0:0:7:0",
-   "ogid": "229cchhjjjjjkkk:3355667788ddeoo:W1N:53:B::0:1:7:"
+   "ogid": "229cchhjjjjjkkk:3355667788ddeoo:W1N:53:W::0:1:7:"
   },
   {
    "xgid": "-DBBBC-------------b-cccbB:1:1:1:00:0:1:0:7:0",
-   "ogid": "jjlllmmmnnnoo:1111223344555pp:B1N::B::1:0:7:"
+   "ogid": "jjlllmmmnnnoo:1111223344555pp:B1N::W::1:0:7:"
   },
   {
    "xgid": "-DBBBC-------------b-cccbB:1:1:1:65:0:1:0:7:0",
-   "ogid": "jjlllmmmnnnoo:1111223344555pp:B1N:65:B::1:0:7:"
+   "ogid": "jjlllmmmnnnoo:1111223344555pp:B1N:65:W::1:0:7:"
   },
   {
    "xgid": "-DCCB------a---a----cbbbd-:1:-1:1:53:1:0:0:7:0",
-   "ogid": "bfkkkllmmnnoooo:111122233344:W1N:53:B::0:1:7:"
+   "ogid": "bfkkkllmmnnoooo:111122233344:W1N:53:W::0:1:7:"
   },
   {
    "xgid": "-DBBBC----A---A------abcd-:1:1:1:00:0:1:0:7:0",
-   "ogid": "lmmnnnoooo:1111223344555ae:B1N::B::1:0:7:"
+   "ogid": "lmmnnnoooo:1111223344555ae:B1N::W::1:0:7:"
   },
   {
    "xgid": "-DED----------A----bbd-bA-:1:1:1:00:1:0:0:5:0",
-   "ogid": "jjkkllllnn:1111222223333eo:B1N::B::0:1:5:"
+   "ogid": "jjkkllllnn:1111222223333eo:B1N::W::0:1:5:"
   },
   {
    "xgid": "-aBbBCB--B--a---A-A-b-fabB:1:-1:1:43:0:1:0:5:0",
-   "ogid": "133ckkmmmmmmnoo:22445556699gipp:W1N:43:B::1:0:5:"
+   "ogid": "133ckkmmmmmmnoo:22445556699gipp:W1N:43:W::1:0:5:"
   },
   {
    "xgid": "-A---A---------------ba---:1:-1:1:54:0:1:0:4:0",
-   "ogid": "llm:15:W1N:54:B::1:0:4:"
+   "ogid": "llm:15:W1N:54:W::1:0:4:"
   },
   {
    "xgid": "--aDBBB---B-ba--abbbb-bC--:1:1:1:00:0:1:0:7:0",
-   "ogid": "2ccdghhiijjkkmm:3333445566aannn:B1N::B::1:0:7:"
+   "ogid": "2ccdghhiijjkkmm:3333445566aannn:B1N::W::1:0:7:"
   },
   {
    "xgid": "--BEBBB----a--b--cbbBbba--:0:0:1:54:0:0:0:7:0",
-   "ogid": "beehhhiijjllmmn:2233333445566kk:N0N:54:B::0:0:7:"
+   "ogid": "beehhhiijjllmmn:2233333445566kk:N0N:54:W::0:0:7:"
   },
   {
    "xgid": "--D-DbB-a-B-bB-----bbb-bbA:1:-1:1:21:0:1:0:3:0",
-   "ogid": "558ccjjkkllnnoo:2222444466aaddp:W1N:21:B::1:0:3:"
+   "ogid": "558ccjjkkllnnoo:2222444466aaddp:W1N:21:W::1:0:3:"
   },
   {
    "xgid": "-b----E-C---eE---c-e----B-:0:0:1:00:5:2:0:7:10",
-   "ogid": "11ccccchhhjjjjj:66666888dddddoo:N0N::B::2:5:7:"
+   "ogid": "11ccccchhhjjjjj:66666888dddddoo:N0N::W::2:5:7:"
   },
   {
    "xgid": "-b----E-C---eE---c-e----B-:0:0:-1:43:1:6:0:9:10",
-   "ogid": "11ccccchhhjjjjj:66666888dddddoo:N0N:43:W::6:1:9:"
+   "ogid": "11ccccchhhjjjjj:66666888dddddoo:N0N:43:B::6:1:9:"
   },
   {
    "xgid": "-b----E-C---eE---c-e----B-:1:1:1:00:3:0:0:5:10",
-   "ogid": "11ccccchhhjjjjj:66666888dddddoo:B1N::B::0:3:5:"
+   "ogid": "11ccccchhhjjjjj:66666888dddddoo:B1N::W::0:3:5:"
   }
  ],
- "_reference_comment": "REFERENCE section (#260, second pass). Each entry is what the reference decoder itself returns for that OGID: AnkiGammon's parse_ogid (ankigammon/utils/ogid.py, MIT, read at commit c5e71c3), run in Python on 2026-09-24 by a scratch script that dumped its Position.points (positive = White = P1, negative = Black = P2), its cube, dice, player on roll, points scored, match length and modifier. The strings are the examples of AnkiGammon's own README and tests/test_basic.py, plus positions chosen to cover what those do not: White on roll on an asymmetric board, checkers on both bars, the Crawford modifier and its absence at the same score, money play with an owned cube, a G modifier with a game count. The xgid of each entry is written from the reference's board by the same script (absolute board, field 5 Black's points, field 7 = 1 exactly when the modifier is C) — NOT by the reference's encode_xgid, which mirrors the board when White is on roll and so reads a different position than DecodeXGID does. pkg/blunderdb/domain/ogid_contract_test.go holds DecodeOGID to the decoded fields, to DecodeXGID, and EncodeOGID to a round trip.",
+ "_reference_comment": "REFERENCE section (#260, second pass). Each entry is what the reference decoder itself returns for that OGID: AnkiGammon's parse_ogid (ankigammon/utils/ogid.py, MIT; first read at c5e71c3, re-run at 14b07b1, whose on_roll is the opponent of field 5 except at a pending double, and whose board is turned back to absolute for the dump) by a scratch script that dumped its Position.points (positive = White = P1, negative = Black = P2), its cube, dice, player on roll, points scored, match length and modifier. The strings are the examples of AnkiGammon's own README and tests/test_basic.py, plus positions chosen to cover what those do not: White on roll on an asymmetric board, checkers on both bars, the Crawford modifier and its absence at the same score, money play with an owned cube, a G modifier with a game count. The xgid of each entry is written from the reference's board by the same script (absolute board, field 5 Black's points, field 7 = 1 exactly when the modifier is C) — NOT by the reference's encode_xgid, which mirrors the board when White is on roll and so reads a different position than DecodeXGID does. pkg/blunderdb/domain/ogid_contract_test.go holds DecodeOGID to the decoded fields, to DecodeXGID, and EncodeOGID to a round trip.",
  "reference": [
   {
    "ogid": "cccccggggg:ddddiiiiii:N0N:63:W:IW:4:3:7:1:15",
@@ -104,12 +104,12 @@
    "cube_value": 1,
    "cube_action": "N",
    "dice": [6, 3],
-   "on_roll": "W",
+   "on_roll": "B",
    "score_white": 4,
    "score_black": 3,
    "match_length": 7,
    "match_modifier": null,
-   "xgid": "XGID=------------eD--e-F-------:0:0:-1:63:3:4:0:7:0"
+   "xgid": "XGID=------------eD--e-F-------:0:0:1:63:3:4:0:7:0"
   },
   {
    "ogid": "11jjjjjhhhccccc:ooddddd88866666:N0N",
@@ -134,12 +134,12 @@
    "cube_value": 1,
    "cube_action": "N",
    "dice": null,
-   "on_roll": "W",
+   "on_roll": "B",
    "score_white": 0,
    "score_black": 0,
    "match_length": 1,
    "match_modifier": null,
-   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:-1:00:0:0:0:1:0"
+   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:1:0"
   },
   {
    "ogid": "11jjjjjhhhccccc:ooddddd88866666:N0N:65:W:IW:0:0:7:0",
@@ -149,12 +149,12 @@
    "cube_value": 1,
    "cube_action": "N",
    "dice": [6, 5],
-   "on_roll": "W",
+   "on_roll": "B",
    "score_white": 0,
    "score_black": 0,
    "match_length": 7,
    "match_modifier": null,
-   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:-1:65:0:0:0:7:0"
+   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:1:65:0:0:0:7:0"
   },
   {
    "ogid": "11jjjjjhhhccccc:ooddddd88866666:N0N:52:W:IW:0:0:7:0",
@@ -164,12 +164,12 @@
    "cube_value": 1,
    "cube_action": "N",
    "dice": [5, 2],
-   "on_roll": "W",
+   "on_roll": "B",
    "score_white": 0,
    "score_black": 0,
    "match_length": 7,
    "match_modifier": null,
-   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:-1:52:0:0:0:7:0"
+   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:7:0"
   },
   {
    "ogid": "jjjjkk:od88866:W2O:43:B:IW:2:1:7:15",
@@ -194,12 +194,12 @@
    "cube_value": 1,
    "cube_action": "N",
    "dice": [6, 5],
-   "on_roll": "W",
+   "on_roll": "B",
    "score_white": 6,
    "score_black": 5,
    "match_length": 7,
    "match_modifier": "C",
-   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:-1:65:5:6:1:7:0"
+   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:1:65:5:6:1:7:0"
   },
   {
    "ogid": "11jjjjjhhhccccc:ooddddd88866666:N0N:65:W::6:5:7:",
@@ -209,12 +209,12 @@
    "cube_value": 1,
    "cube_action": "N",
    "dice": [6, 5],
-   "on_roll": "W",
+   "on_roll": "B",
    "score_white": 6,
    "score_black": 5,
    "match_length": 7,
    "match_modifier": null,
-   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:-1:65:5:6:0:7:0"
+   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:1:65:5:6:0:7:0"
   },
   {
    "ogid": "5ejjkkllmmmmmnn:233446677888bbp:N0N:64:W::0:0:7:",
@@ -224,12 +224,12 @@
    "cube_value": 1,
    "cube_action": "N",
    "dice": [6, 4],
-   "on_roll": "W",
+   "on_roll": "B",
    "score_white": 0,
    "score_black": 0,
    "match_length": 7,
    "match_modifier": null,
-   "xgid": "XGID=--ABBaBBC--B--a----bbbeb-A:0:0:-1:64:0:0:0:7:0"
+   "xgid": "XGID=--ABBaBBC--B--a----bbbeb-A:0:0:1:64:0:0:0:7:0"
   },
   {
    "ogid": "0jjkkllmmmnnn:2233445566688bp:B1N::W::0:0:5:",
@@ -239,12 +239,12 @@
    "cube_value": 2,
    "cube_action": "N",
    "dice": null,
-   "on_roll": "W",
+   "on_roll": "B",
    "score_white": 0,
    "score_black": 0,
    "match_length": 5,
    "match_modifier": null,
-   "xgid": "XGID=a-BBBBC-B--A-------bbbcc-A:1:1:-1:00:0:0:0:5:0"
+   "xgid": "XGID=a-BBBBC-B--A-------bbbcc-A:1:1:1:00:0:0:0:5:0"
   },
   {
    "ogid": "jjkkll:112233:W3N:21:B::0:0::",
@@ -254,12 +254,12 @@
    "cube_value": 8,
    "cube_action": "N",
    "dice": [2, 1],
-   "on_roll": "B",
+   "on_roll": "W",
    "score_white": 0,
    "score_black": 0,
    "match_length": null,
    "match_modifier": null,
-   "xgid": "XGID=-BBB---------------bbb----:3:-1:1:21:0:0:0:0:0"
+   "xgid": "XGID=-BBB---------------bbb----:3:-1:-1:21:0:0:0:0:0"
   },
   {
    "ogid": "11jjjjjhhhccccc:ooddddd88866666:N0N:31:B::2:4:9G15:",
@@ -269,12 +269,12 @@
    "cube_value": 1,
    "cube_action": "N",
    "dice": [3, 1],
-   "on_roll": "B",
+   "on_roll": "W",
    "score_white": 2,
    "score_black": 4,
    "match_length": 9,
    "match_modifier": "G",
-   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:1:31:4:2:0:9:0"
+   "xgid": "XGID=-b----E-C---eE---c-e----B-:0:0:-1:31:4:2:0:9:0"
   },
   {
    "ogid": "OGID=llm:15:W1N:54:B::1:0:4:",
@@ -284,12 +284,12 @@
    "cube_value": 2,
    "cube_action": "N",
    "dice": [5, 4],
-   "on_roll": "B",
+   "on_roll": "W",
    "score_white": 1,
    "score_black": 0,
    "match_length": 4,
    "match_modifier": null,
-   "xgid": "XGID=-A---A---------------ba---:1:-1:1:54:0:1:0:4:0"
+   "xgid": "XGID=-A---A---------------ba---:1:-1:-1:54:0:1:0:4:0"
   }
  ]
 }
