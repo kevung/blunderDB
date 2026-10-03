@@ -45,13 +45,14 @@
  */
 
 import { get } from 'svelte/store';
-import { ListPositionIDs, SaveLastVisitedPosition, GetLastVisitedMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
+import { SaveLastVisitedPosition, GetLastVisitedMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
-import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
+import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore, openLibrary, browsingLibrary, librarySource } from '../stores/positionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { epcDataStore } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
+import { listOriginStore, LIBRARY_ORIGIN } from '../stores/listOriginStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, PANEL, closePanel, activeTabStore } from '../stores/uiStore.js';
 import { activeCollectionStore, collectionPositionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
@@ -98,7 +99,7 @@ const NO_MATCH_CONTEXT = Object.freeze({
  *               survives a library reload: a scratch board belongs to the
  *               session. id forced to 0, no analysis (it would be stale).
  *   beforeSubSearch the collection or match an `ss` was run from:
- *               { mode: COLLECTION, collection, ids, positionIndex, position, resultIds }
+ *               { mode: COLLECTION, collection, list, positionIndex, position, resultIds }
  *               or { mode: MATCH, matchContext, resultIds }. The way back is
  *               offered only while `resultIds` is still the list shown. A
  *               sub-search inside those results keeps it; a library search,
@@ -178,16 +179,41 @@ function returnToStudiedMode(saved) {
  *               matchContextStore), otherwise positionsStore
  *   otherwise   positionsStore: library, search results, collection
  *
- * The backend receives a set: a position met twice is searched once.
+ * The backend receives a set: a position met twice is searched once. The
+ * whole library is null, not its ids: searching within it is searching, and
+ * its id list is never held (positionList.js).
  *
- * @returns {number[]}
+ * @returns {number[] | null}
  */
 export function displayedPositionIDs() {
-    const mode = currentMode();
-    const behindQueryBoard = mode === MODE.EDIT ? savedContext.beforeEdit : null;
-    const matchContext = mode === MODE.MATCH ? get(matchContextStore) : behindQueryBoard?.mode === MODE.MATCH ? behindQueryBoard.matchContext : null;
+    const matchContext = displayedMatchContext();
+    if (!matchContext?.isMatchMode && browsingLibrary()) return null;
     const ids = matchContext?.isMatchMode ? (matchContext.movePositions ?? []).map((/** @type {any} */ mp) => mp?.position?.id) : (get(positionsStore)?.ids ?? []);
     return [...new Set(ids.filter((/** @type {any} */ id) => id != null))];
+}
+
+/** The match on screen, directly or behind the query board; null outside a match. */
+function displayedMatchContext() {
+    const mode = currentMode();
+    const behindQueryBoard = mode === MODE.EDIT ? savedContext.beforeEdit : null;
+    return mode === MODE.MATCH ? get(matchContextStore) : behindQueryBoard?.mode === MODE.MATCH ? behindQueryBoard.matchContext : null;
+}
+
+/**
+ * Hands `run` what displayedPositionIDs answers. A paged search result holds none of its ids, so
+ * it is read whole first — the one place it is, since searching within it sends its ids — and
+ * `run` is then called asynchronously; any other list answers at once.
+ *
+ * @template T
+ * @param {(ids: number[] | null) => T} run
+ * @returns {T | Promise<T>}
+ */
+export function withDisplayedPositionIDs(run) {
+    if (displayedMatchContext()?.isMatchMode || browsingLibrary() || !positionsStore.isPaged()) return run(displayedPositionIDs());
+    const list = positionsStore.snapshotList();
+    if (!('source' in list)) return run(displayedPositionIDs());
+    // To the end, not to the list's length, which is the first page's while the count runs.
+    return list.source.window(0, 0).then((ids) => run([...new Set(ids.filter((id) => id != null))]));
 }
 
 /**
@@ -210,7 +236,7 @@ function subSearchOriginNow() {
         return {
             mode: MODE.COLLECTION,
             collection: get(activeCollectionStore),
-            ids: [...(get(positionsStore)?.ids ?? [])],
+            list: positionsStore.snapshotList(),
             positionIndex,
             position: onScreen ? JSON.parse(JSON.stringify(onScreen)) : null
         };
@@ -225,7 +251,8 @@ function subSearchResultsOnScreen() {
     const mode = currentMode();
     const listMode = mode === MODE.EDIT ? savedContext.beforeEdit?.mode : mode;
     if (listMode !== MODE.NORMAL) return false;
-    const ids = get(positionsStore)?.ids ?? [];
+    const ids = get(positionsStore)?.ids;
+    if (!ids) return false;
     return ids.length === saved.resultIds.length && ids.every((id, i) => id === saved.resultIds[i]);
 }
 
@@ -295,7 +322,7 @@ export async function leaveSubSearchResults() {
 
     activeCollectionStore.set(saved.collection);
     statusBarModeStore.set(MODE.COLLECTION);
-    positionsStore.setIds(saved.ids);
+    positionsStore.restoreList(saved.list);
     currentPositionIndexStore.set(saved.positionIndex);
     if (saved.position) await showPosition(saved.position);
     return true;
@@ -330,48 +357,36 @@ function blankEditBoard(pos) {
  * back — only when that list is the whole library; any other studied list is
  * left untouched.
  *
- * In EDIT that list is positionsStore; in EVAL, beforeEval's ids. Only a board
+ * In EDIT that list is positionsStore; in EVAL, beforeEval's. Only a board
  * entered from NORMAL can have the library behind it, and "whole library" is
- * checked on ids (list + id === ListPositionIDs), not inferred from flags: a
- * deck or statistics selection is also NORMAL with no search. The id goes
- * last; the index is untouched.
+ * the paged list read through librarySource, not inferred from flags: a deck
+ * or statistics selection is also NORMAL with no search. The library is
+ * ordered by id, so the new position comes last: the length is re-read and
+ * the index is untouched.
  *
  * @param {number} id the position just written (a new one)
  * @returns {Promise<boolean>} whether the id was added
  */
 export async function joinLibraryBehindScratchBoard(id) {
-    /** @type {(number | null)[]} */
-    let ids;
-    /** @type {(next: number[]) => void} */
-    let replace;
-    if (currentMode() === MODE.EDIT) {
-        const saved = savedContext.beforeEdit;
-        if (saved && saved.mode !== MODE.NORMAL) return false;
-        ids = get(positionsStore)?.ids ?? [];
-        replace = (next) => positionsStore.setIds(next);
-    } else if (currentMode() === MODE.EVAL) {
-        const saved = savedContext.beforeEval;
-        if (!saved || saved.mode !== MODE.NORMAL || !saved.ids) return false;
-        ids = saved.ids;
-        replace = (next) => {
-            saved.ids = next;
-        };
-    } else {
-        return false;
-    }
-    if (getSearchState().hasActiveSearch || ids.includes(id)) return false;
-
-    let library;
+    if (getSearchState().hasActiveSearch || id == null) return false;
     try {
-        library = (await ListPositionIDs()) || [];
+        if (currentMode() === MODE.EDIT) {
+            const saved = savedContext.beforeEdit;
+            if ((saved && saved.mode !== MODE.NORMAL) || !browsingLibrary()) return false;
+            await positionsStore.recount();
+            return true;
+        }
+        if (currentMode() === MODE.EVAL) {
+            const saved = savedContext.beforeEval;
+            const list = saved?.list;
+            if (!saved || saved.mode !== MODE.NORMAL || !list || !('source' in list) || list.source !== librarySource) return false;
+            saved.list = { source: librarySource, length: await librarySource.count() };
+            return true;
+        }
     } catch (error) {
-        logger.error('Error listing the library after a scratch-board save:', error);
-        return false;
+        logger.error('Error counting the library after a scratch-board save:', error);
     }
-    const next = [...ids, id];
-    if (library.length !== next.length || library.some((libraryId, i) => libraryId !== next[i])) return false;
-    replace(next);
-    return true;
+    return false;
 }
 
 // ── EDIT ─────────────────────────────────────────────────────────────────────
@@ -543,7 +558,7 @@ export async function enterEvalMode() {
         ...photographStudiedMode(),
         position: get(positionStore) ? { ...get(positionStore) } : null,
         positionIndex: get(currentPositionIndexStore),
-        ids: get(positionsStore)?.ids ?? null
+        list: positionsStore.snapshotList()
     };
 
     // A position sent from the library wins; otherwise pick up the board the
@@ -582,11 +597,11 @@ export async function exitEvalMode() {
         statusBarTextStore.set(`${saved.matchContext.player1Name} vs ${saved.matchContext.player2Name}`);
     }
 
-    if (!saved?.ids) {
+    if (!saved?.list) {
         loadAllPositions({ focusId: saved?.position?.id ?? null });
         return;
     }
-    positionsStore.setIds(saved.ids);
+    positionsStore.restoreList(saved.list);
     if (saved.position) {
         currentPositionIndexStore.set(saved.positionIndex);
         // showPosition, not positionStore.set: refetches the analysis (MATCH
@@ -623,7 +638,7 @@ export async function enterTranscribeMode() {
         ...photographStudiedMode(),
         position: get(positionStore) ? { ...get(positionStore) } : null,
         positionIndex: get(currentPositionIndexStore),
-        ids: get(positionsStore)?.ids ?? null
+        list: positionsStore.snapshotList()
     };
 
     statusBarModeStore.set(MODE.TRANSCRIBE);
@@ -642,11 +657,11 @@ export async function exitTranscribeMode() {
         statusBarTextStore.set(`${saved.matchContext.player1Name} vs ${saved.matchContext.player2Name}`);
     }
 
-    if (!saved?.ids) {
+    if (!saved?.list) {
         loadAllPositions({ focusId: saved?.position?.id ?? null });
         return;
     }
-    positionsStore.setIds(saved.ids);
+    positionsStore.restoreList(saved.list);
     if (saved.position) {
         currentPositionIndexStore.set(saved.positionIndex);
         // Through showPosition, not a bare set: the analysis panel is
@@ -782,17 +797,18 @@ export async function exitCollectionMode() {
     collectionPositionsStore.set([]);
     closePanel(PANEL.COLLECTION);
     try {
-        const ids = (await ListPositionIDs()) || [];
-        positionsStore.setIds(ids, { reset: true });
-        if (ids.length > 0) {
-            let targetIdx = ids.length - 1;
+        const total = await openLibrary({ reset: true });
+        listOriginStore.set(LIBRARY_ORIGIN);
+        if (total > 0) {
+            let targetIdx = total - 1;
             if (lastViewedPosition && lastViewedPosition.id) {
-                const foundIdx = ids.indexOf(lastViewedPosition.id);
+                const foundIdx = await positionsStore.findIndex(lastViewedPosition.id);
                 if (foundIdx >= 0) targetIdx = foundIdx;
             }
             currentPositionIndexStore.set(-1);
             currentPositionIndexStore.set(targetIdx);
-            loadAnalysisForPosition({ id: ids[targetIdx] });
+            const targetId = await positionsStore.resolveIdAt(targetIdx);
+            if (targetId != null) loadAnalysisForPosition({ id: targetId });
             setSearchState('', null, false);
             lastSearchStore.set(null);
         }

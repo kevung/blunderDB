@@ -235,7 +235,27 @@ func TestReadTools(t *testing.T) {
 	if st["Totals"].(obj)["NumDecisions"].(float64) == 0 {
 		t.Errorf("player_stats: %v", st["Totals"])
 	}
-	list(t, call(t, cs, "recurring_errors", obj{"player": name, "limit": 3}), "TopBlunders")
+	recurring := call(t, cs, "recurring_errors", obj{"player": name, "limit": 3})
+	list(t, recurring, "TopBlunders")
+	if groups, _ := recurring["Groups"].([]any); len(groups) > 3 {
+		t.Errorf("recurring_errors: %d groups, limit is 3", len(groups))
+	} else if len(groups) > 0 {
+		g0 := groups[0].(obj)
+		if n, _ := g0["Positions"].(float64); int(n) < len(g0["PositionIDs"].([]any)) {
+			t.Errorf("recurring_errors: Positions = %v, fewer than the ids returned", g0["Positions"])
+		}
+		if _, ok := g0["Truncated"].(bool); !ok {
+			t.Errorf("recurring_errors: Truncated missing: %v", g0)
+		}
+		if ids, _ := groups[0].(obj)["PositionIDs"].([]any); len(ids) == 0 || len(ids) > 50 {
+			t.Errorf("recurring_errors: group ids = %d, want 1..%d", len(ids), 50)
+		}
+	}
+
+	training := call(t, cs, "training_stats", obj{"player": name, "window": "month"})
+	if training["Window"] != "month" {
+		t.Errorf("training_stats: window = %v, want month", training["Window"])
+	}
 
 	matches := list(t, call(t, cs, "list_matches", obj{"player": name}), "matches")
 	mid := id(t, matches[0], "id")

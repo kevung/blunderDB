@@ -63,6 +63,9 @@ type App struct {
 	roCancel context.CancelFunc
 	roDone   chan struct{}
 	roStatus RolloutStatus
+	// roSeq numbers the jobs, so the GUI can tell a late event of a cancelled
+	// job from the one now running.
+	roSeq int64
 
 	// trainingGen is built once, lazily (it costs megabytes); trainingErr
 	// keeps why it failed so later questions refuse by name.

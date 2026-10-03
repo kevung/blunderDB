@@ -130,6 +130,17 @@ type errSetter interface {
 // server-side log, never to the wire — see errorBodyFor.
 const internalErrorMessage = "internal error"
 
+// notFoundMessage replaces a not_found message that carries a driver error.
+const notFoundMessage = "not found"
+
+// carriesDriverError reports whether err wraps a database driver error (one
+// that states an SQLSTATE, as pgconn.PgError does), matched structurally so
+// this package imports no driver.
+func carriesDriverError(err error) bool {
+	var d interface{ SQLState() string }
+	return errors.As(err, &d)
+}
+
 // errorBodyFor maps err onto the error body every error response carries:
 // the code from codeForErr, and the error's own message — unless the code
 // is internal, in which case the raw message is hidden behind a generic
@@ -147,6 +158,16 @@ const internalErrorMessage = "internal error"
 func errorBodyFor(w http.ResponseWriter, err error) errorBody {
 	code := codeForErr(err)
 	msg := err.Error()
+	if code == CodeNotFound && carriesDriverError(err) {
+		// A refused foreign key reaches here as not_found with the driver's
+		// text inside: constraint and column names, which would let a caller
+		// tell one refusal from another. Same message as any absent row; the
+		// cause goes to the log.
+		if es, ok := w.(errSetter); ok {
+			es.SetErr(err)
+		}
+		msg = notFoundMessage
+	}
 	if code == CodeInternal {
 		if es, ok := w.(errSetter); ok {
 			es.SetErr(err)

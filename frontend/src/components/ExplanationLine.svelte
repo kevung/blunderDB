@@ -6,14 +6,17 @@
     import { rankedDistancesStore, rankedTargetStore } from '../stores/rankedStore.js';
     import { t } from '../i18n';
 
-    let { analysis = null } = $props();
+    // `positionId` et `played` désignent une décision hors panneau Analyse (dos de
+    // carte, verdict du quiz) ; sans eux, la position et le coup viennent du
+    // panneau. `neighbours` coupe la distance `like`, qui n'a de sens que là.
+    let { analysis = null, positionId = null, played: playedOverride = '', neighbours = true } = $props();
 
     /** @typedef {import('../../wailsjs/go/models').engine.Explanation} Explanation */
     let explanation = $state(/** @type {Explanation | null} */ (null));
 
     $effect(() => {
-        const id = $positionStore?.id;
-        const played = playedFromAnalysis(analysis);
+        const id = positionId ?? $positionStore?.id;
+        const played = playedOverride || playedFromAnalysis(analysis);
         let cancelled = false;
         explanation = null;
         if (!id || !played) return;
@@ -46,7 +49,7 @@
     let neighbourLine = $derived(distance == null ? '' : $rankedTargetStore > 0 ? $t('similar.fromPosition', { distance, id: $rankedTargetStore }) : $t('similar.fromBoard', { distance }));
 </script>
 
-{#if neighbourLine}
+{#if neighbours && neighbourLine}
     <p class="explanation">{neighbourLine}</p>
 {/if}
 {#if sentence}

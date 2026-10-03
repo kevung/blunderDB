@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:31+0200\n"
+"POT-Creation-Date: 2026-10-03 09:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -2290,7 +2290,7 @@ msgstr ""
 "αντίθεση με μια θέση που πράγματι απέτυχε."
 
 #: ../../source/mode_headless.rst:988
-#, no-python-format
+#, no-python-format, python-format
 msgid ""
 "``rollout.position`` joue une position de la bibliothèque "
 "(``positionId``) par un :ref:`rollout <cli_rollout>` et rend, pour chaque"
@@ -3699,44 +3699,52 @@ msgid "positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course"
 msgstr "γειτονικές θέσεις· ανάγνωση ενός XGID· νόμιμες κινήσεις· EPC αγώνα δρόμου"
 
 #: ../../source/mode_headless.rst:1700
-msgid "``list_players``, ``player_stats``, ``recurring_errors``"
-msgstr "``list_players``, ``player_stats``, ``recurring_errors``"
-
-#: ../../source/mode_headless.rst:1701
-msgid "joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent"
-msgstr "παίκτες· συνολικό PR, πούλια, κύβος, ανά φάση· επαναλαμβανόμενα λάθη"
+msgid ""
+"``list_players``, ``player_stats``, ``recurring_errors``, "
+"``training_stats``"
+msgstr ""
+"``list_players``, ``player_stats``, ``recurring_errors``, "
+"``training_stats``"
 
 #: ../../source/mode_headless.rst:1702
+msgid ""
+"joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent ; "
+"PR du quiz et rétention Anki contre le PR réel"
+msgstr ""
+"παίκτες· συνολικό PR, πούλια, κύβος, ανά φάση· επαναλαμβανόμενα λάθη· PR "
+"του κουίζ και διατήρηση του Anki έναντι του πραγματικού PR"
+
+#: ../../source/mode_headless.rst:1704
 msgid "``list_matches``, ``get_match``, ``list_tournaments``"
 msgstr "``list_matches``, ``get_match``, ``list_tournaments``"
 
-#: ../../source/mode_headless.rst:1703
+#: ../../source/mode_headless.rst:1705
 msgid "matchs, détail d'un match, tournois"
 msgstr "αγώνες, λεπτομέρειες ενός αγώνα, τουρνουά"
 
-#: ../../source/mode_headless.rst:1704
+#: ../../source/mode_headless.rst:1706
 msgid "``list_collections``, ``collection_positions``, ``study_decks``"
 msgstr "``list_collections``, ``collection_positions``, ``study_decks``"
 
-#: ../../source/mode_headless.rst:1705
+#: ../../source/mode_headless.rst:1707
 msgid "collections et leurs positions ; paquets de révision"
 msgstr "συλλογές και οι θέσεις τους· πακέτα μελέτης"
 
-#: ../../source/mode_headless.rst:1706
+#: ../../source/mode_headless.rst:1708
 msgid "``quiz_draw``, ``quiz_grade``"
 msgstr "``quiz_draw``, ``quiz_grade``"
 
-#: ../../source/mode_headless.rst:1707
+#: ../../source/mode_headless.rst:1709
 msgid "tire une position sans sa réponse, puis note la réponse donnée"
 msgstr ""
 "τραβά μια θέση χωρίς την απάντησή της και στη συνέχεια βαθμολογεί τη "
 "δοσμένη απάντηση"
 
-#: ../../source/mode_headless.rst:1708
+#: ../../source/mode_headless.rst:1710
 msgid "``evaluate``"
 msgstr "``evaluate``"
 
-#: ../../source/mode_headless.rst:1709
+#: ../../source/mode_headless.rst:1711
 msgid ""
 "évaluation gammonNet d'une position donnée en texte, sans l'enregistrer :"
 " meilleurs coups ou décision de videau"
@@ -3744,42 +3752,42 @@ msgstr ""
 "αξιολόγηση gammonNet μιας θέσης που δίνεται ως κείμενο, χωρίς να την "
 "αποθηκεύει: καλύτερες κινήσεις ή απόφαση κύβου"
 
-#: ../../source/mode_headless.rst:1711
+#: ../../source/mode_headless.rst:1713
 msgid "``anki_next``"
 msgstr "``anki_next``"
 
-#: ../../source/mode_headless.rst:1712
+#: ../../source/mode_headless.rst:1714
 msgid "la prochaine carte due d'un paquet de révision"
 msgstr "η επόμενη κάρτα προς επανάληψη ενός πακέτου επανάληψης"
 
-#: ../../source/mode_headless.rst:1713
+#: ../../source/mode_headless.rst:1715
 msgid "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 msgstr "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 
-#: ../../source/mode_headless.rst:1714
+#: ../../source/mode_headless.rst:1716
 msgid "transcriptions de matchs ; détail d'une transcription ; son texte ``.mat``"
 msgstr "μεταγραφές αγώνων· λεπτομέρειες μιας μεταγραφής· το κείμενό της ``.mat``"
 
-#: ../../source/mode_headless.rst:1716
+#: ../../source/mode_headless.rst:1718
 msgid "``direction_list``, ``direction_standings``, ``direction_season``"
 msgstr "``direction_list``, ``direction_standings``, ``direction_season``"
 
-#: ../../source/mode_headless.rst:1717
+#: ../../source/mode_headless.rst:1719
 msgid "tournois dirigés ; classement d'un tournoi ; classement de saison"
 msgstr "διευθυνόμενα τουρνουά· κατάταξη ενός τουρνουά· κατάταξη σεζόν"
 
-#: ../../source/mode_headless.rst:1718
+#: ../../source/mode_headless.rst:1720
 msgid "``rollout``"
 msgstr "``rollout``"
 
-#: ../../source/mode_headless.rst:1719
+#: ../../source/mode_headless.rst:1721
 #, no-python-format
 msgid ""
 "rollout d'une position de la base : équité, intervalle à 95 % et JSD par "
 "candidat"
 msgstr "rollout μιας θέσης της βάσης: ισοτιμία, διάστημα 95 % και JSD ανά υποψήφιο"
 
-#: ../../source/mode_headless.rst:1722
+#: ../../source/mode_headless.rst:1724
 msgid ""
 "Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
 "``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
@@ -3798,7 +3806,7 @@ msgstr ""
 "rollout δίπλα στην ανάλυση της θέσης. Κανένα εργαλείο δεν διαγράφει "
 "τίποτα."
 
-#: ../../source/mode_headless.rst:1730
+#: ../../source/mode_headless.rst:1732
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -3806,7 +3814,7 @@ msgstr ""
 "**Τοπικά**, ο βοηθός εκκινεί το ``blunderdb mcp`` πάνω σε ένα αρχείο (βλ."
 " :ref:`cli`). Για το Claude Code:"
 
-#: ../../source/mode_headless.rst:1737
+#: ../../source/mode_headless.rst:1739
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -3831,7 +3839,7 @@ msgstr ""
 "επιπλέον του αιτήματος ``/mcp`` που τη μεταφέρει. Μια κλήση εργαλείου "
 "κοστίζει λοιπόν πολλά αιτήματα· κανένα δεν εξαιρείται."
 
-#: ../../source/mode_headless.rst:1748
+#: ../../source/mode_headless.rst:1750
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

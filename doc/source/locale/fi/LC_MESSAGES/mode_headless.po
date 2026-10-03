@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:31+0200\n"
+"POT-Creation-Date: 2026-10-03 09:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -2247,7 +2247,7 @@ msgstr ""
 "epäonnistunutta positiota."
 
 #: ../../source/mode_headless.rst:988
-#, no-python-format
+#, no-python-format, python-format
 msgid ""
 "``rollout.position`` joue une position de la bibliothèque "
 "(``positionId``) par un :ref:`rollout <cli_rollout>` et rend, pour chaque"
@@ -3632,42 +3632,50 @@ msgid "positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course"
 msgstr "lähellä olevat asemat; XGID:n lukeminen; sallitut siirrot; kisan EPC"
 
 #: ../../source/mode_headless.rst:1700
-msgid "``list_players``, ``player_stats``, ``recurring_errors``"
-msgstr "``list_players``, ``player_stats``, ``recurring_errors``"
-
-#: ../../source/mode_headless.rst:1701
-msgid "joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent"
-msgstr "pelaajat; kokonais-PR, nappulat, tuplaus, vaiheittain; toistuvat virheet"
+msgid ""
+"``list_players``, ``player_stats``, ``recurring_errors``, "
+"``training_stats``"
+msgstr ""
+"``list_players``, ``player_stats``, ``recurring_errors``, "
+"``training_stats``"
 
 #: ../../source/mode_headless.rst:1702
+msgid ""
+"joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent ; "
+"PR du quiz et rétention Anki contre le PR réel"
+msgstr ""
+"pelaajat; kokonais-PR, nappulat, tuplauskuutio, vaiheittain; toistuvat "
+"virheet; visan PR ja Ankin pysyvyys todellista PR:ää vasten"
+
+#: ../../source/mode_headless.rst:1704
 msgid "``list_matches``, ``get_match``, ``list_tournaments``"
 msgstr "``list_matches``, ``get_match``, ``list_tournaments``"
 
-#: ../../source/mode_headless.rst:1703
+#: ../../source/mode_headless.rst:1705
 msgid "matchs, détail d'un match, tournois"
 msgstr "ottelut, yksittäisen ottelun tiedot, turnaukset"
 
-#: ../../source/mode_headless.rst:1704
+#: ../../source/mode_headless.rst:1706
 msgid "``list_collections``, ``collection_positions``, ``study_decks``"
 msgstr "``list_collections``, ``collection_positions``, ``study_decks``"
 
-#: ../../source/mode_headless.rst:1705
+#: ../../source/mode_headless.rst:1707
 msgid "collections et leurs positions ; paquets de révision"
 msgstr "kokoelmat ja niiden asemat; opiskelupakat"
 
-#: ../../source/mode_headless.rst:1706
+#: ../../source/mode_headless.rst:1708
 msgid "``quiz_draw``, ``quiz_grade``"
 msgstr "``quiz_draw``, ``quiz_grade``"
 
-#: ../../source/mode_headless.rst:1707
+#: ../../source/mode_headless.rst:1709
 msgid "tire une position sans sa réponse, puis note la réponse donnée"
 msgstr "arpoo aseman ilman vastausta ja arvioi sitten annetun vastauksen"
 
-#: ../../source/mode_headless.rst:1708
+#: ../../source/mode_headless.rst:1710
 msgid "``evaluate``"
 msgstr "``evaluate``"
 
-#: ../../source/mode_headless.rst:1709
+#: ../../source/mode_headless.rst:1711
 msgid ""
 "évaluation gammonNet d'une position donnée en texte, sans l'enregistrer :"
 " meilleurs coups ou décision de videau"
@@ -3675,42 +3683,42 @@ msgstr ""
 "tekstinä annetun aseman gammonNet-arvio tallentamatta sitä: parhaat "
 "siirrot tai tuplauspäätös"
 
-#: ../../source/mode_headless.rst:1711
+#: ../../source/mode_headless.rst:1713
 msgid "``anki_next``"
 msgstr "``anki_next``"
 
-#: ../../source/mode_headless.rst:1712
+#: ../../source/mode_headless.rst:1714
 msgid "la prochaine carte due d'un paquet de révision"
 msgstr "tarkistuspakan seuraava erääntynyt kortti"
 
-#: ../../source/mode_headless.rst:1713
+#: ../../source/mode_headless.rst:1715
 msgid "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 msgstr "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 
-#: ../../source/mode_headless.rst:1714
+#: ../../source/mode_headless.rst:1716
 msgid "transcriptions de matchs ; détail d'une transcription ; son texte ``.mat``"
 msgstr "ottelujen litteroinnit; yhden litteroinnin tiedot; sen ``.mat``-teksti"
 
-#: ../../source/mode_headless.rst:1716
+#: ../../source/mode_headless.rst:1718
 msgid "``direction_list``, ``direction_standings``, ``direction_season``"
 msgstr "``direction_list``, ``direction_standings``, ``direction_season``"
 
-#: ../../source/mode_headless.rst:1717
+#: ../../source/mode_headless.rst:1719
 msgid "tournois dirigés ; classement d'un tournoi ; classement de saison"
 msgstr "johdetut turnaukset; turnauksen sijoitukset; kauden sijoitus"
 
-#: ../../source/mode_headless.rst:1718
+#: ../../source/mode_headless.rst:1720
 msgid "``rollout``"
 msgstr "``rollout``"
 
-#: ../../source/mode_headless.rst:1719
+#: ../../source/mode_headless.rst:1721
 #, no-python-format
 msgid ""
 "rollout d'une position de la base : équité, intervalle à 95 % et JSD par "
 "candidat"
 msgstr "kirjaston aseman rollout: ekvity, 95 %:n väli ja JSD ehdokasta kohti"
 
-#: ../../source/mode_headless.rst:1722
+#: ../../source/mode_headless.rst:1724
 msgid ""
 "Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
 "``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
@@ -3728,7 +3736,7 @@ msgstr ""
 "argumentin ``store``, joka tallentaa rolloutin aseman analyysin viereen. "
 "Mikään työkalu ei poista mitään."
 
-#: ../../source/mode_headless.rst:1730
+#: ../../source/mode_headless.rst:1732
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -3736,7 +3744,7 @@ msgstr ""
 "**Paikallisesti** avustaja käynnistää komennon ``blunderdb mcp`` "
 "tiedostolle (ks. :ref:`cli`). Claude Codelle:"
 
-#: ../../source/mode_headless.rst:1737
+#: ../../source/mode_headless.rst:1739
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -3761,7 +3769,7 @@ msgstr ""
 "``/mcp``-pyynnön lisäksi, joka sen kuljettaa. Työkalukutsu maksaa siis "
 "useita pyyntöjä; mitään ei vapauteta."
 
-#: ../../source/mode_headless.rst:1748
+#: ../../source/mode_headless.rst:1750
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

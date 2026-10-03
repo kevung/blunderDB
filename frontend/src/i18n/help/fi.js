@@ -182,14 +182,19 @@ export default {
 <p>Nuolinäppäimet valitsevat, <em>ENTER</em> suorittaa, <em>ESC</em> sulkee. Komento suoritetaan kuin se olisi kirjoitettu; <code>s</code> ja <code>ss</code> avaavat komentorivin suodattimien kirjoittamista varten; suodatin suoritetaan kuin kaksoisnapsautuksella kirjastossa; ottelu avautuu kuin kaksoisnapsautuksella Otteluiden paneelissa.</p>
 <p>Kun Direction on auki, paletti lisää siihen turnauksen: pelaajat, pöydät, käynnissä olevat ottelut ja kilpailut (ks. pikahaku).</p>
 <h3>Analyysipaneeli</h3>
-<p><strong>Analyysipaneeli</strong> (<em>CTRL-L</em>) näyttää nykyisen aseman analyysitiedot, jotka on tuotu lähteistä eXtreme Gammon (XG), GNUbg tai BGBlitz. Se esittää parhaat vaihtoehdot (pelinappulasiirrot tai kuutiopäätökset) niiden ekviteettiarvoineen ja vastaavine virheineen. <em>d</em>-näppäin vaihtaa pelinappulasiirtojen analyysin ja kuutioanalyysin välillä. Ottelussa navigoitaessa todella pelattu siirto korostetaan vaihtoehtojen luettelossa. Näytä tai piilota paneeli painamalla <em>CTRL-L</em> tai suorittamalla komento <code>list</code>.</p>
+<p><strong>Analyysipaneeli</strong> (<em>CTRL-L</em>) näyttää nykyisen aseman analyysitiedot, jotka on tuotu lähteistä eXtreme Gammon (XG), GNUbg, BGBlitz tai gammonNet. Se esittää parhaat vaihtoehdot (pelinappulasiirrot tai kuutiopäätökset) niiden ekviteettiarvoineen ja vastaavine virheineen. <em>d</em>-näppäin vaihtaa pelinappulasiirtojen analyysin ja kuutioanalyysin välillä. Ottelussa navigoitaessa todella pelattu siirto korostetaan vaihtoehtojen luettelossa. Näytä tai piilota paneeli painamalla <em>CTRL-L</em> tai suorittamalla komento <code>list</code>.</p>
 <p>Taulukoiden alla <strong>lause</strong> kertoo joskus, mitä pelattu päätös maksoi ja miksi: ”Menetät 120 mMWC: pelattu siirto jättää kolme yksinäistä nappulaa, kun 13/7 8/7 jättää vain yhden.” Se syntyy kuudesta mitattavasta säännöstä — alttiudesta, tehdystä tai menetetystä kotipisteestä, luovutetuista gammon-mahdollisuuksista, turvallisuudesta joka maksaa enemmän kuin tuottaa, ja kuutiovirheen kahdesta suunnasta (tuplaus liian myöhään tai liian aikaisin, liian löysä hyväksyntä tai liian tiukka luovutus).</p>
 <p>Tärkein sääntö on <strong>vaikeneminen</strong>: lause ilmestyy vain, kun sääntö pätee varmasti, ja virheestä joka ylittää kynnyksen, josta lähtien moottorit ovat yhtä mieltä siitä että kyseessä on virhe. Muulloin lausetta ei ole — ei tyhjää kehystä eikä ”emme tiedä”. Väärä selitys maksaa enemmän kuin ei selitystä: se opettaa jotain epätarkkaa.</p>
+<p>Sama lause seuraa virhettä siellä, missä juuri teit sen: <strong>Anki-kortin</strong> takapuolella paljastetun analyysin alla ja Päätös-harjoituksen <strong>tietovisan arviossa</strong> mMWC-kustannuksen alla. Samat vaikenemisen säännöt pätevät: oikea siirto tai virhe, jota mikään sääntö ei selitä, ei lisää mitään.</p>
 <p>Kun asemaa on arvioinut <strong>useampi moottori</strong>, paneelin yläreunan palkki asettaa ne rinnakkain: yksi rivi moottoria kohden, sen syvyys ja sen vastaus — kuutiotuomio tai sen oma paras siirto. Se kertoo ensin ovatko ne samaa mieltä, ja juuri erimielisyys sen oikeuttaa: ”XG sanoo tuplaus, otto; gammonNet sanoo ei tuplausta” luetaan yhdellä silmäyksellä, siinä missä ennen piti verrata kahta taulukkoa vinottain.</p>
 <p>Moottorin paras siirto on <strong>sen moottorin</strong> paras: ehdokaslista on lajiteltu ekviteetin mukaan kaikki moottorit sekaisin, joten sen ensimmäinen alkio ei ole kenenkään paras siirto erityisesti.</p>
 <p>Palkki ilmestyy vain kun moottoreita todella on useampi, ja se on olemassa vain tässä paneelissa: Eval-paneeli esittää <strong>yhden</strong> päätöksen, sisäänrakennetun moottorin (<code>ADR-0017 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md&gt;</code>__), eikä vertailulla olisi siellä sijaa.</p>
 <p>Siirrot kirjoitetaan niin kuin ne luetaan laudalta, täällä kuten Eval-paneelissakin: vähiten edennyt nappula liikkuu ensin, ja <strong>nappula, joka käyttää useamman nopan peräkkäin, kirjoitetaan vain kerran</strong> — samalla nappulalla pelattu 64 luetaan <code>24/14</code>, ja <code>24/14*</code>, jos se lyö perille tullessaan. Ketjun yksityiskohdat näkyvät vain silloin, kun ne kertovat jotakin lisää: <em>matkan varrella</em> tehty lyönti säilyttää välipisteensä, <code>24/18* 18/14</code>, muuten lyönti pisteessä 18 katoaisi merkinnästä.</p>
 <p>Tuodun analyysin ekviteetti noudattaa samaa sääntöä kuin Eval-paneeli: sarake ilmoittaa oman viitekehyksensä, ”Equity (money)” tai ”Equity (match)” analysoidun aseman pistetilanteen mukaan, ei koskaan pelkkää ”Equity”-sanaa kertomatta asteikkoa. Money game -asemassa voimassa olevat <strong>Jacoby</strong>- ja <strong>Beaver</strong>-säännöt näytetään myös pieninä merkkeinä kuutiopäätöstaulukon alla.</p>
+<h4>Rolloutit</h4>
+<p>Analyysin alla <strong>Analyysi</strong>-paneeli tarjoaa aseman <strong>rollaamista</strong>: sadat pelit pelataan jokaisesta ehdokassiirrosta tai tuplauskuution toiminnosta, jotta voidaan erottaa kaksi vaihtoehtoa, joita suora arviointi tuskin erottaa. Kolme asetusta: <strong>Nopea</strong> (216 peliä, katkaistu 7 puolisiirtoon), <strong>Vakio</strong> (1296 peliä, katkaistu 11 puolisiirtoon) ja <strong>Vapaa</strong>, jossa jokainen parametri on muokattavissa — katkaisu, vähimmäis- ja enimmäispelit (36:n monikertoja), JSD-raja, syvyys (ply), ehdokkaiden määrä, siemen ja työprosessien määrä. Painike <strong>Käynnistä rollout</strong>, paneelin näppäin <em>r</em> tai komento <code>rollout</code> (alias <code>ro</code>) käynnistävät sen; edistymispalkki seuraa pelattuja pelejä, ja <strong>Peruuta</strong> (tai <em>r</em> uudelleen) pysäyttää sen kirjoittamatta mitään.</p>
+<p>Tulos <strong>tallennetaan analyysin viereen, ei koskaan sen tilalle</strong>: tuotua analyysia ei muuteta. Jokainen rollout muodostaa lohkon, jossa on kullekin ehdokkaalle equity, 95 %:n luottamusväli, <strong>JSD</strong> (ero parhaaseen siirtoon eron keskihajontoina: rajasta alkaen siirto on ratkaistu eikä sitä enää pelata) ja pelien määrä. Rollout päättyy heti, kun siirrot on erotettu. <strong>Konfiguraatio</strong> — moottori ja parametrien täydellinen allekirjoitus — aukeaa taulukon alle: kaksi samalla allekirjoituksella tehtyä rolloutia antaa samat luvut. Rollout pelaa tuplauskuution peleissään: järjestys on luotettava, absoluuttinen equity hieman vähemmän, minkä lohko muistuttaa. Asema, joka ei ole tietokannassa, voidaan rollata mutta sitä ei tallenneta.</p>
+<p>Painike <strong>Näytettyyn luetteloon…</strong> (tai <code>ro search</code>) rollaa peräkkäin näytetyn luettelon — hakutulokset, ottelu tai kokoelma — asemat, joilla ei vielä ole tätä rolloutia; vahvistus kertoo kokonaismäärän ennen aloitusta. Jokainen asema kirjoitetaan heti valmistuttuaan: peruutus säilyttää tehdyn, ja uusi käynnistys jatkaa siitä, mihin jäätiin. Eteneminen säilyy paneelin sulkemisen yli.</p>
 <h3>Kommenttipaneeli</h3>
 <p><strong>Kommentit</strong>-paneeli (<em>CTRL-P</em>) näyttää, lisää ja muokkaa nykyiseen asemaan liitettyjä kommentteja. Asemalla voi olla useita: kaikki näytetään, uusimmasta vanhimpaan. XG-tiedostoista tuodut kommentit liitetään automaattisesti vastaaviin asemiin. Paina <em>CTRL-P</em> tai suorita komento <code>comment</code> näyttääksesi tai piilottaaksesi paneelin.</p>
 <p>Jokainen tiedostosta tullut kommentti kantaa <strong>alkuperämerkintää</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, tai <em>tuotu</em>, kun alkuperää ei koskaan tallennettu). Itse kirjoittamasi kommentit eivät kanna sellaista: se on tavallinen tapaus, ja jokaisen rivin merkitseminen olisi vain kohinaa. Tuodun kommentin muokkaaminen tekee siitä sinun: muokkauksen jälkeen lause on sinun.</p>
@@ -211,6 +216,7 @@ export default {
 <p><strong>Hakupaneeli</strong> (<em>CTRL-F</em> tai <em>TAB</em>) suodattaa asemia vapaasti yhdisteltävien kriteerien mukaan: pelinappularakenne, kuutiopäätöksen tyyppi, virheen suuruus, päivämäärät, tunnisteet jne. <em>TAB</em>-näppäin avaa samanaikaisesti hakupaneelin ja asemaeditorin, jolloin haettava pelinappularakenne voidaan määrittää suoraan laudalla.</p>
 <p>Hae näytetyistä asemista komennolla <code>ss</code>, jota seuraavat suodattimet (esim. <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> hakee näytöllä olevasta luettelosta: edellisen haun tuloksista, avoimesta kokoelmasta tai läpikäytävän ottelun asemista, kirjoitettiinpa komento suoraan tai hakupaneelista (<em>TAB</em>). Paneelin valintaruutu <em>Hae nykyisistä tuloksista</em> noudattaa samaa sääntöä. Kokoelmassa ja ottelussa <code>s</code> hylätään: se hakisi koko kirjastosta ja korvaisi näytetyn luettelon.</p>
 <p>Kokoelmasta tai ottelusta käynnistetyn <code>ss</code>-haun tuloksista poistutaan <em>Esc</em>-näppäimellä yhdellä painalluksella heti, kun kentällä tai kohdistetulla paneelilla ei ole mitään suljettavaa (esimerkiksi analyysissä valittu siirto): blunderDB palaa koko kokoelmaan tai ottelun tarkasteltuun siirtoon ja jätettyyn asemaan. Tämä paluu seuraa vain <code>ss</code>-komentoa: kokoelman tai ottelun päälle avatusta hakupaneelista käynnistetty <code>s</code> hakee koko kirjastosta, eikä <em>Esc</em> enää palaa jätettyyn luetteloon.</p>
+<p>Suuren tietokannan haku näytetään ennen kuin se on laskettu: ensimmäinen tulossivu tulee heti näkyviin, ja tilarivi näyttää « Haetaan… » ja kuluneen ajan, kunnes kokonaismäärä tiedetään; se korvaa silloin luettelon alustavan pituuden. Kerrallaan on käynnissä vain yksi haku: uuden haun aloittaminen hylkää edellisen. <em>Esc</em> keskeyttää käynnissä olevan haun ja pysäyttää sen tietokannan läpikäynnin; jos ensimmäinen sivu oli jo näkyvissä, se jää yksin näkyviin, ja tilarivi kertoo siitä.</p>
 <p>Paneeli tarjoaa nimenomaisen hallinnan haettavalle <strong>päätöstyypille</strong>: <em>Indifférent</em> (ei suodatinta), <em>Siirto</em> (siirtopäätökset) tai <em>Tuplaus</em> (kuutiopäätökset). Kun <em>Tuplaus</em> on valittuna, toinen luettelo tarkentaa alityypin: <em>Kaikki</em>, <em>Tuplaus / Ei tuplausta</em> (vuorossa olevan pelaajan on päätettävä, tuplaako) tai <em>Hyväksy / Luovuta</em> (vastaus vastustajan tuplaukseen). Hallinta on synkronoitu laudan kanssa: noppien tai kuution muuttaminen laudalla päivittää päätöstyypin ja päinvastoin. <em>Hyväksy / Luovuta</em> -tilassa kuutio näytetään laudan keskellä tarjotulla arvolla; tämä arvo on edelleen muokattavissa.</p>
 <p><strong>Pelin vaihe</strong> — avaus, keskipeli, kilpajuoksu, nappuloiden poisto — on merkintä, jonka blunderDB laskee pelkästä laudasta. Sitä ei voi koskaan muokata, ja se on haettavissa komentorivin <code>ph:</code>-merkinnällä (<code>ph:race</code>, toistettavissa: <code>ph:race ph:bearoff</code>). Kolme sen neljästä rajasta ovat ne, joilla GNU Backgammon ohjaa verkkojaan; neljäs, jossa avaus päättyy, on blunderDB:n käytäntö: asema on yhä avauksessa niin kauan kuin kumpikaan puoli ei ole siirtänyt yli neljää nappulaa lähtöpisteiltään, mitään ei ole poistettu eikä mikään ole palkissa.</p>
 <div class="admonition note">
@@ -554,6 +560,15 @@ export default {
 <li><strong>Kustannus</strong> on osuus suodattimen PR:stä, jonka ryhmä edustaa: ryhmän virheisiin sovellettu PR-kaava suhteutettuna kaikkiin laskettuihin päätöksiin. Ryhmien kustannukset eivät siis koskaan ylitä PR:ää.</li>
 </ul>
 <p>Ryhmää napsauttamalla ladataan sen asemat, kalleimmasta halvimpaan. Teema lasketaan uudelleen jokaisella näytöllä eikä sitä tallenneta koskaan: pelisuunnitelman tavoin se on johdettu tunniste, jota ei voi muokata. Komentoriviltä: <code>blunderdb stats recurring</code> (ks. stats — Toistuvat virheet).</p>
+<p>Jokainen rivi tarjoaa kolme tapaa siirtyä virheestä opiskeluun: <strong>Tietovisa tästä ryhmästä</strong> käynnistää Harjoittelu-paneelin Päätös-harjoituksen ryhmän asemilla, <strong>Anki-pakka</strong> tekee niistä korttipakan, <strong>Kokoelma</strong> tallentaa ne uuteen kokoelmaan. Taulukon yläpuolella <strong>Tietovisa kolmesta pahimmasta ryhmästäni</strong> arpoo kaksikymmentä asemaa kolmen kalleimman ryhmän asemista. Komentorivillä <code>stats recurring --quiz</code> arpoo nämä asemat ja <code>--deck</code> luo pakan.</p>
+<h5>Harjoittelu ajan myötä</h5>
+<p><strong>Harjoittelu</strong>-välilehti asettaa rinnakkain samoissa kalenteri-ikkunoissa — valintasi mukaan <strong>viikko</strong> tai <strong>kuukausi</strong> — kolme sarjaa, jotka mittaavat edistymistä kolmella tavalla:</p>
+<ul>
+<li><strong>visan PR</strong>: Harjoittelu-paneelin Päätös-harjoituksen istuntojen PR, painotettuna arvioitujen päätösten määrällä. Se lasketaan todellisen PR:n asteikolla, joten se on vertailukelpoinen sen kanssa;</li>
+<li>nykyisen suodattimen <strong>otteluiden PR</strong>, painotettuna päätösten määrällä;</li>
+<li><strong>Ankin pysyvyys</strong>: jo opittujen korttien kertausten osuus, jotka on arvioitu <em>Vaikea</em> tai paremmaksi, luettuna oikealta akselilta (%).</li>
+</ul>
+<p>Sulkeissa kunkin arvon takana oleva päätösten tai kertausten määrä: ikkunalla ilman otosta ei ole arvoa — viiva, ei nolla. Suodatin rajaa vain ottelut; visan ja Ankin lokit ovat omiasi eivätkä sisällä pelaajaa. Mitään ei tallenneta lisää: kolme sarjaa luetaan olemassa olevista lokeista. Komentorivillä: <code>blunderdb stats training</code> (katso stats — Toistuvat virheet).</p>
 <h5>Jakauma kuutiotoimen mukaan</h5>
 <p>Pylväskaavio näyttää PR:n (tai MWC:n) jokaiselle kuutiopäätöksen tyypille: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jokainen pylväs näyttää myös päätösten määrän ja blunder-osuuden työkaluvihjeessä.</p>
 <p>Pylvään napsauttaminen lataa kyseistä kuutiotoimea vastaavat asemat, <strong>vain ne, joissa on virhe</strong> (drill-down).</p>
@@ -650,7 +665,7 @@ export default {
 <p>Tällä välilehdellä <strong>Pelaaja</strong>-luettelo ja <strong>päätöstyypin</strong> valinta ovat poissa käytöstä: taulukko näyttää kaikki pelaajat ja erittelee nappula- ja kuutiopäätökset jo omiin sarakkeisiinsa.</p>
 </div>
 <div class="admonition important">
-<p>Viiva (”—”) merkitsee arvoa, jota <strong>ei ole koskaan mitattu</strong>; sitä ei pidä sekoittaa nollaan. Näin on erityisesti Tuuri-sarakkeen kohdalla kaikissa otteluissa, jotka tuotiin ennen skeemaversiota 2.15.0: tuuria ei silloin tallennettu, eikä mikään salli sen palauttamista jälkikäteen — lähdetiedostot on tuotava uudelleen. Muodot, jotka eivät sitä kuljeta (BGF, Jellyfish <code>.mat</code>), eivät sitä koskaan tarjoa.</p>
+<p>Viiva (”—”) merkitsee arvoa, jota <strong>ei ole koskaan mitattu</strong>; sitä ei pidä sekoittaa nollaan. Näin on erityisesti Tuuri-sarakkeen kohdalla kaikissa otteluissa, jotka tuotiin ennen skeemaversiota 2.15.0: tuuria ei silloin tallennettu, eikä mikään salli sen palauttamista jälkikäteen. Lähdetiedoston tuominen uudelleen ei riitä: tuonti tunnistaa kaksoiskappaleen ja ottaa siitä vain merkinnät. Ottelu on poistettava ja tuotava sitten uudelleen. Muodot, jotka eivät sitä kuljeta (BGF, Jellyfish <code>.mat</code>), eivät sitä koskaan tarjoa.</p>
 </div>
 <h4>Yhdistämissääntö</h4>
 <div class="admonition important">
@@ -765,6 +780,7 @@ export default {
 <p><strong>Vastauksen näyttäminen:</strong> Kortti esittää kysymyksen — mikä siirto pelataan tai mikä kuutiotoimi tehdään. Mieti, ja paina sitten <em>VÄLILYÖNTI</em> (tai napsauta peitettyä aluetta) paljastaaksesi vastauksen: aseman tallennetun analyysin sellaisena kuin Analyysi-välilehti sen esittää. Se ilmestyy arviointipainikkeiden alle, jotka pysyvät paikoillaan ja ulottuvilla. Listan siirron napsauttaminen näyttää sen laudalla.</p>
 <p>Mikään ei pakota paljastamaan vastausta arviointia varten: jos olet varma, näppäimet <em>1</em>–<em>4</em> pysyvät käytössä. Vastaus peittyy uudelleen seuraavan kortin kohdalla, mutta ei silloin, kun vain vaihdat välilehteä — käy katsomassa Eval-paneelia tai aseman kommenttia, vastaus odottaa palatessasi.</p>
 <p>Asema, jolla ei ole tallennettua analyysiä, ilmoittaa sen suoraan ilman peitettyä aluetta.</p>
+<p><strong>Vastaaminen laudalla.</strong> Oletuksena arvioit itse itsesi. Valitse pakan asetuksissa <em>Vastaa laudalla</em>: nappulakortilla pelaat siirron laudalla kuten Päätös-harjoituksessa ja painat <em>Tarkista</em>. Moottori arvioi siirron tallennettua analyysia vasten, näyttää vastauksen ja <strong>ehdottaa arvosanaa</strong>: <em>Helppo</em> nopeasta oikeasta vastauksesta, <em>Hyvä</em> hitaammasta oikeasta, <em>Vaikea</em> blunder-rajan alittavasta virheestä, <em>Uudelleen</em> blunderista tai laittomasta siirrosta. Ehdotettu arvosana korostetaan; hallinta pysyy sinulla ja arvioit haluamasi näppäimillä <em>1</em>–<em>4</em>. Laillinen siirto, jota analyysi ei luokittele, ei ehdota mitään. Kuutiokortit, tuloskortit ja tulostaulukkopakat pysyvät itsearvioituina. Vastauksen paljastaminen pelaamatta luovuttaa siirron.</p>
 <p><strong>Istunnon rajaaminen.</strong> Oletuksena kertausistunto käy läpi kaikki erääntyneet kortit. Voit rajata sen korttimäärään pakkakohtaisesti Asetuksissa: rastita <em>Rajaa istunto</em> ja ilmoita, montako korttia istunnon tulee tarjota. Kun raja täyttyy, istunto päättyy ja kertoo siitä — viesti erottaa tilanteen ”raja täynnä, näin monta korttia yhä erääntyneenä” aidosti tyhjästä jonosta. Jos haluat silti jatkaa, vapaa harjoittelu on olemassa: se tarjoaa muita asemia muuttamatta aikataulusta mitään.</p>
 <p>Raja <strong>0</strong> ei tarjoa yhtään korttia: se on oma tilansa, hyödyllinen pakan jäädyttämiseen turnaukseen valmistautumisen ajaksi, eikä se ole sama asia kuin ”ei rajaa”. <em>Study</em>-painike on tällöin pois käytöstä.</p>
 <p>Raja koskee <strong>istuntoa</strong>, ei päivää. blunderDB-pakka rakentuu kokoelman tai haun varaan: se on äärellinen aineisto, joka esitellään muutamassa istunnossa ja jonka päivittäistä määrää sen koko jo rajaa. Päiväkatto ei puraisi koskaan, tai sitten se loisi ruuhkan pakalle, joka mahtui yhteen istuntoon.</p>
@@ -793,6 +809,7 @@ export default {
 <li><strong>aikaraja kysymystä kohti</strong> — ei rajaa, 15, 30 tai 60 sekuntia.</li>
 </ul>
 <p>Valittu lähde muistetaan kullekin harjoitukselle istunnosta toiseen.</p>
+<p>Selattava luettelo voi tulla Tilastot-paneelin <em>toistuvista virheistä</em>: napsautus kohtaan "Tietovisa tästä ryhmästä" korvaa sen ryhmän asemilla ja käynnistää Päätös-harjoituksen.</p>
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> ja <code>train decision</code> avaavat paneelin ja aloittavat suoraan; <code>train tp</code> ja <code>train takepoint</code> ovat <code>train scores</code>:n synonyymejä, <code>train epc</code> on <code>train bearoff</code>:n ja <code>train quiz</code> <code>train decision</code>:n synonyymi.</p>
 <h4>Viisi harjoitusta</h4>
 <p><strong>Scores</strong> arpoo yhden 36 järjestämättömästä tilanteesta väliltä 2–9 away ja näyttää <strong>tilannekortin</strong>: kaksi saraketta — <em>Vous</em> (sinä) ja <em>L'adversaire</em> (vastustaja) — ja seitsemän riviä — hyväksymispiste kuutiolla 2 ja sitten kuutiolla 4, kumpikin pitkälle kilpajuoksulle ja viimeiselle heitolle, sitten gammonin arvo kuutioilla 1, 2 ja 4.</p>
@@ -1220,6 +1237,10 @@ export default {
 <td>ALAS</td>
 <td>Selaa komentohistoriaa alaspäin.</td>
 </tr>
+<tr>
+<td>ESC</td>
+<td>Haun aikana: keskeyttää haun.</td>
+</tr>
 </tbody>
 </table>
 <h3>Hakuhistoria</h3>
@@ -1292,6 +1313,10 @@ export default {
 <tr>
 <td>d</td>
 <td>Vaihda nappuloiden ja tuplauskuution analyysin välillä (vain ottelunavigoinnissa).</td>
+</tr>
+<tr>
+<td>r</td>
+<td>Käynnistä aseman rollout valitulla asetuksella; toinen painallus pysäyttää sen.</td>
 </tr>
 <tr>
 <td>Esc</td>
@@ -1922,6 +1947,10 @@ export default {
 <tr>
 <td>comment, co</td>
 <td>Näytä/kirjoita kommentteja.</td>
+</tr>
+<tr>
+<td>rollout, ro [fast|standard]</td>
+<td>Rollaa nykyisen aseman (Analyysi-paneelissa valitulla asetuksella tai nimetyllä esiasetuksella) ja avaa Analyysi-paneelin. <code>ro search [fast|standard]</code> käynnistää sen näytettyyn luetteloon vahvistuksen jälkeen, jossa kerrotaan kokonaismäärä; <code>ro stop</code> pysäyttää käynnissä olevan rolloutin.</td>
 </tr>
 <tr>
 <td>history, hi</td>

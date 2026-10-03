@@ -182,14 +182,19 @@ export default {
 <p>The arrows choose, <em>ENTER</em> runs, <em>ESC</em> closes. A command runs as if it had been typed; <code>s</code> and <code>ss</code> open the command line to write the filters in it; a filter runs as from a double-click in the library; a match opens as from a double-click in the Matches panel.</p>
 <p>When a Direction is open, the palette adds the tournament: players, tables, running matches and competitions (see quick search).</p>
 <h3>Analysis Panel</h3>
-<p>The <strong>Analysis</strong> panel (<em>CTRL-L</em>) displays the analysis data for the current position, imported from eXtreme Gammon (XG), GNUbg, or BGBlitz. It shows the best alternatives (checker moves or cube decisions) with their equity values and corresponding errors. The <em>d</em> key toggles between checker and cube analysis. During match navigation, the actually played move is highlighted in the list of alternatives. Press <em>CTRL-L</em> or run the <code>list</code> command to show or hide the panel.</p>
+<p>The <strong>Analysis</strong> panel (<em>CTRL-L</em>) displays the analysis data for the current position, imported from eXtreme Gammon (XG), GNUbg, BGBlitz, or gammonNet. It shows the best alternatives (checker moves or cube decisions) with their equity values and corresponding errors. The <em>d</em> key toggles between checker and cube analysis. During match navigation, the actually played move is highlighted in the list of alternatives. Press <em>CTRL-L</em> or run the <code>list</code> command to show or hide the panel.</p>
 <p>Under the tables, a <strong>sentence</strong> sometimes says what the played decision cost and why: “You lose 120 mMWC: the move played leaves three blots where 13/7 8/7 leaves only one.” It comes from six measurable rules — exposure, a home point made or missed, gammon chances given up, a safety that costs more than it earns, and the two directions of a cube error (doubling too late or too early, taking too loose or passing too tight).</p>
 <p>The rule that matters is <strong>silence</strong>: the sentence appears only when a rule applies confidently, and on an error past the threshold from which the engines agree it is one. The rest of the time there is no sentence — no empty frame, no “we do not know”. A wrong explanation costs more than none: it teaches something inaccurate.</p>
+<p>The same sentence goes with the error where you have just made it: on the back of an <strong>Anki card</strong>, under the revealed analysis, and in the <strong>quiz verdict</strong> of the Decision exercise, under the cost in mMWC. The same rules of silence apply there: a right move, or an error that no rule explains, adds nothing.</p>
 <p>When a position has been judged by <strong>several engines</strong>, a strip at the top of the panel puts them side by side: one line per engine, with its depth and its answer — the cube verdict, or its own best move. It says first whether they agree, and it is the disagreement that justifies it: “XG says double, take; gammonNet says no double” reads at a glance, where two tables had to be compared diagonally.</p>
 <p>An engine's best move is the best <strong>of that engine</strong>: the candidate list is sorted by equity across all engines, so its first entry is nobody's best move in particular.</p>
 <p>The strip appears only when there really are several engines, and it exists in this panel alone: the Eval panel presents <strong>one</strong> decision, the embedded engine's (<code>ADR-0017 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md&gt;</code>__), and a comparison would have no place there.</p>
 <p>Moves are written as they read on the board, here as in the Eval panel: the least advanced checker moves first, and <strong>a checker that chains several dice is written only once</strong> — a 64 played with the same checker reads <code>24/14</code>, and <code>24/14*</code> if it hits on arrival. The detail of the chain only reappears when it says something more: a hit <em>on the way</em> keeps its intermediate point, <code>24/18* 18/14</code>, without which the hit on the 18 would vanish from the notation.</p>
 <p>An imported analysis' equity follows the same rule as the Eval panel: the column states its own referential, “Equity (money)” or “Equity (match)” depending on the score of the analysed position, never a plain “Equity” silent on the scale. The <strong>Jacoby</strong> and <strong>Beaver</strong> rules active on a money-game position are also shown, in badges under the cube decision table.</p>
+<h4>Rollouts</h4>
+<p>Below the analysis, the <strong>Analysis</strong> panel offers to <strong>roll out</strong> the position: to play hundreds of games from each candidate play, or each cube action, in order to separate two choices that direct evaluation barely tells apart. Three settings: <strong>Fast</strong> (216 games, truncated at 7 half-moves), <strong>Standard</strong> (1296 games, truncated at 11 half-moves) and <strong>Custom</strong>, where every parameter is editable — truncation, minimum and maximum games (multiples of 36), JSD limit, depth (ply), number of candidates, seed and number of workers. The <strong>Roll out</strong> button, the panel's <em>r</em> key or the <code>rollout</code> command (alias <code>ro</code>) start it; a progress bar follows the games played and <strong>Cancel</strong> (or <em>r</em> again) stops it without writing anything.</p>
+<p>The result is <strong>stored beside the analysis, never in its place</strong>: an imported analysis is not modified. Each rollout forms a block with, for every candidate, the equity, the 95 % confidence interval, the <strong>JSD</strong> (the gap to the best play in standard deviations of the difference: from the limit on, the play is decided and is no longer played) and the number of games. The rollout stops as soon as the plays are told apart. The <strong>Configuration</strong> — the engine and the full signature of the parameters — unfolds under the table: two rollouts with the same signature are the same numbers. A rollout plays the cube inside its games: the ranking is reliable, the absolute equity a little less so, which the block recalls. A position that is not in the database can be rolled out but is not stored.</p>
+<p>The <strong>On the displayed list…</strong> button (or <code>ro search</code>) rolls out, one after the other, the positions of the displayed list — search results, match or collection — that do not carry this rollout yet; a confirmation gives the total before starting. Each position is written as soon as it is finished: cancelling keeps what is done, and running again resumes where it stopped. Progress survives closing the panel.</p>
 <h3>Comments Panel</h3>
 <p>The <strong>Comments</strong> panel (<em>CTRL-P</em>) shows, adds and edits the comments attached to the current position. A position may carry several: all of them are shown, most recent first. Comments imported from XG files are automatically attached to the matching positions. Press <em>CTRL-P</em> or run the <code>comment</code> command to show or hide the panel.</p>
 <p>Every comment that came out of a file carries a <strong>provenance badge</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, or <em>imported</em> when the provenance was never recorded). Comments you wrote carry none: that is the ordinary case, and marking every line would be noise. Editing an imported comment makes it yours: after the edit, the sentence is yours.</p>
@@ -211,6 +216,7 @@ export default {
 <p>The <strong>Search</strong> panel (<em>CTRL-F</em> or <em>TAB</em>) filters positions using freely combinable criteria: checker structure, cube decision type, error magnitude, dates, tags, etc. The <em>TAB</em> key simultaneously opens the search panel and the position editor, allowing a checker structure to be defined directly on the board.</p>
 <p>To search among the positions on screen, use the <code>ss</code> command followed by filters (e.g.: <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> searches the list on screen: the results of the previous search, the open collection or the positions of the match under review, whether the command is typed directly or from the search panel (<em>TAB</em>). The panel's <em>Search in current results</em> checkbox follows the same rule. In a collection and in a match, <code>s</code> is refused: it would search the whole library and replace the list on screen.</p>
 <p>The results of an <code>ss</code> search run from a collection or a match are left with <em>Esc</em>, in a single press as soon as neither a field nor the focused panel has something to close (a move selected in the analysis, for example): blunderDB returns to the whole collection, or to the match on the move studied, and to the position left. This way back follows <code>ss</code> only: <code>s</code>, run from the search panel opened on a collection or a match, searches the whole library, and <em>Esc</em> no longer returns to the list left.</p>
+<p>A search on a large database is shown before it is counted: the first page of results appears at once, and the status bar shows « Searching… » with the elapsed time until the total is known; it then replaces the provisional length of the list. Only one search runs at a time: starting another abandons the previous one. <em>Esc</em> interrupts the running search and stops its scan of the database; if the first page was already displayed, it stays, alone, and the status bar says so.</p>
 <p>The panel offers an explicit control over the <strong>decision type</strong> searched for: <em>Indifferent</em> (no filter), <em>Checker</em> (checker decisions) or <em>Cube</em> (cube decisions). When <em>Cube</em> is selected, a second list specifies the sub-type: <em>All</em>, <em>Double / No double</em> (the player on roll has to decide whether to double) or <em>Take / Pass</em> (response to an opponent's double). The control is synchronised with the board: editing the dice or the cube on the board updates the decision type, and vice versa. In <em>Take / Pass</em> mode, the cube is shown in the centre of the board at the offered value; that value remains editable.</p>
 <p>The <strong>game phase</strong> — opening, middlegame, race, bearoff — is a label blunderDB computes from the board alone. It is never editable, and is searchable through the command line's <code>ph:</code> token (<code>ph:race</code>, repeatable: <code>ph:race ph:bearoff</code>). Three of its four boundaries are the ones GNU Backgammon uses to route its networks; the fourth, where the opening stops, is a blunderDB convention: a position is still in the opening as long as neither side has moved more than four checkers off its starting points, nothing has been borne off and nothing is on the bar.</p>
 <div class="admonition note">
@@ -554,6 +560,15 @@ export default {
 <li>The <strong>cost</strong> is the share of the filter's PR that the group represents: the PR formula applied to the group's errors, divided by all counted decisions. The costs of the groups therefore never exceed the PR.</li>
 </ul>
 <p>Clicking a group loads its positions, from the most costly to the least costly. The theme is recomputed at every display, never stored: like the game plan, it is a derived label that cannot be edited. On the command line: <code>blunderdb stats recurring</code> (see stats — Recurring errors).</p>
+<p>Each row offers three ways to go from the error to study: <strong>Quiz this group</strong> starts the Decision exercise of the Training panel on the group's positions, <strong>Anki deck</strong> makes a deck of cards from them, <strong>Collection</strong> files them in a new collection. Above the table, <strong>Quiz my three worst groups</strong> draws twenty positions at random from those of the three costliest groups. On the command line, <code>stats recurring --quiz</code> draws these positions and <code>--deck</code> creates the deck.</p>
+<h5>Training over time</h5>
+<p>The <strong>Training</strong> tab sets side by side, over the same calendar windows — the <strong>week</strong> or the <strong>month</strong>, as you choose — three series that measure progress in three ways:</p>
+<ul>
+<li>the <strong>quiz PR</strong>: that of the Decision exercise sessions in the Training panel, weighted by the number of decisions judged. It is computed on the real PR scale, so it is comparable to it;</li>
+<li>the <strong>match PR</strong> of the current filter, weighted by the number of decisions;</li>
+<li>the <strong>Anki retention</strong>: the share of reviews of already learned cards graded <em>Hard</em> or better, read on the right axis (in %).</li>
+</ul>
+<p>In parentheses, the number of decisions or reviews behind each value: a window without samples has no value — a dash, not a zero. The filter restricts the matches only; the quiz and Anki journals are yours and carry no player. Nothing more is recorded: the three series are read back from the existing journals. On the command line: <code>blunderdb stats training</code> (see stats — Recurring errors).</p>
 <h5>Breakdown by cube action</h5>
 <p>A bar chart displays the PR (or MWC) for each type of cube decision: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Each bar also shows the number of decisions and the blunder rate in a tooltip.</p>
 <p>Clicking a bar loads the positions matching that cube action, <strong>only those with an error</strong> (drill-down).</p>
@@ -650,7 +665,7 @@ export default {
 <p>In this tab, the <strong>Player</strong> list and the <strong>decision type</strong> choice are disabled: the table shows every player, and already splits checker and cube decisions into separate columns.</p>
 </div>
 <div class="admonition important">
-<p>A dash ("—") marks a value that was <strong>never measured</strong>, not to be confused with zero. That is notably the case of the Luck column for any match imported before schema version 2.15.0: luck was not stored back then, and nothing allows it to be reconstructed afterwards — the source files must be re-imported. Formats that do not carry it (BGF, Jellyfish <code>.mat</code>) never will.</p>
+<p>A dash ("—") marks a value that was <strong>never measured</strong>, not to be confused with zero. That is notably the case of the Luck column for any match imported before schema version 2.15.0: luck was not stored then, and nothing allows it to be reconstructed afterwards. Re-importing the source file is not enough: the import recognises a duplicate and takes only its marks. The match must be deleted, then imported again. Formats that do not carry it (BGF, Jellyfish <code>.mat</code>) never will.</p>
 </div>
 <h4>Aggregation rule</h4>
 <div class="admonition important">
@@ -765,6 +780,7 @@ export default {
 <p><strong>Showing the answer:</strong> The card asks a question — which move to play, or which cube action. Think, then press <em>SPACE</em> (or click the masked area) to reveal the answer: the recorded analysis of the position, as the Analysis tab presents it. It appears below the rating buttons, which stay in place and within reach. Clicking a move in the list shows it on the board.</p>
 <p>Nothing forces you to reveal the answer in order to rate: if you are sure of yourself, the <em>1</em> to <em>4</em> keys stay active. The answer is masked again on the next card, but not if you simply switch tabs — go and consult the Eval panel or the position's comment, it will be waiting for you when you return.</p>
 <p>A position without a recorded analysis says so directly, with no masked area.</p>
+<p><strong>Answering on the board.</strong> By default you grade yourself. In a deck's Settings, tick <em>Answer on the board</em>: for a checker card you then play the move on the board, as in the Decision exercise, and press <em>Check</em>. The engine judges the move against the stored analysis, reveals the answer and <strong>proposes a grade</strong>: <em>Easy</em> for a quick correct answer, <em>Good</em> for a slower correct one, <em>Hard</em> for an error under the blunder threshold, <em>Again</em> for a blunder or an illegal move. The proposed grade is highlighted; you stay in control and grade what you want with <em>1</em> to <em>4</em>. A legal move the analysis does not rank proposes nothing. Cube cards, score cards and decks of score sheets stay self-graded. Revealing the answer without playing gives up the move.</p>
 <p><strong>Limiting the session.</strong> By default a review session runs through every card that is due. You can cap it at a number of cards, per deck, in the Settings: tick <em>Limit session</em> and give how many cards a session should serve. When the limit is reached the session stops and says so — the message tells “limit reached, so many cards still due” apart from a queue that is genuinely empty. To carry on anyway, free drill is there: it serves other positions without changing anything in the schedule.</p>
 <p>A limit of <strong>0</strong> serves no card at all: it is a state in its own right, useful to freeze a deck while preparing for a tournament, and it is not the same thing as “no limit”. The <em>Study</em> button is then disabled.</p>
 <p>The limit applies to the <strong>session</strong>, not to the day. A blunderDB deck is built on a collection or on a search: it is a finite corpus, introduced over a few sessions, whose daily volume is already bounded by its size. A daily cap would never bite, or else would build a backlog on a deck that fitted in a single session.</p>
@@ -793,6 +809,7 @@ export default {
 <li>the <strong>limit per question</strong> — none, 15, 30 or 60 seconds.</li>
 </ul>
 <p>The chosen source is remembered for each exercise, from one session to the next.</p>
+<p>The browsed list can come from the <em>recurring errors</em> of the Stats panel: a click on "Quiz this group" replaces it with the group's positions and starts the Decision exercise.</p>
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> and <code>train decision</code> open the panel and start straight away; <code>train tp</code> and <code>train takepoint</code> are synonyms of <code>train scores</code>, <code>train epc</code> of <code>train bearoff</code>, <code>train quiz</code> of <code>train decision</code>.</p>
 <h4>The five exercises</h4>
 <p><strong>Scores</strong> draws one of the 36 unordered scores from 2 to 9 away and shows a <strong>score card</strong>: two columns — <em>Vous</em> (you) and <em>L'adversaire</em> (the opponent) — and seven rows — the take point at cube 2 then at cube 4, each for a long race and for the last roll, then the gammon value at cubes 1, 2 and 4.</p>
@@ -1220,6 +1237,10 @@ export default {
 <td>DOWN</td>
 <td>Browse command history down.</td>
 </tr>
+<tr>
+<td>ESC</td>
+<td>During a search: interrupt it.</td>
+</tr>
 </tbody>
 </table>
 <h3>Search History</h3>
@@ -1292,6 +1313,10 @@ export default {
 <tr>
 <td>d</td>
 <td>Toggle between checker and cube analysis (match navigation only).</td>
+</tr>
+<tr>
+<td>r</td>
+<td>Roll out the position with the chosen setting; a second press stops it.</td>
 </tr>
 <tr>
 <td>Esc</td>
@@ -1922,6 +1947,10 @@ export default {
 <tr>
 <td>comment, co</td>
 <td>Show/write comments.</td>
+</tr>
+<tr>
+<td>rollout, ro [fast|standard]</td>
+<td>Rolls out the current position (with the setting chosen in the Analysis panel, or the named preset) and opens the Analysis panel. <code>ro search [fast|standard]</code> runs it on the displayed list, after a confirmation with the total; <code>ro stop</code> stops the rollout in progress.</td>
 </tr>
 <tr>
 <td>history, hi</td>

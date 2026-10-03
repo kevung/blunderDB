@@ -13,7 +13,12 @@
         recurringErrorsStore,
         recurringErrorsLoadingStore,
         recurringErrorsErrorStore,
-        refreshRecurringErrors
+        refreshRecurringErrors,
+        trainingStatsStore,
+        trainingStatsLoadingStore,
+        trainingStatsErrorStore,
+        trainingWindowStore,
+        refreshTrainingStats
     } from '../../stores/statsStore.js';
     import { activeTabStore } from '../../stores/uiStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
@@ -25,6 +30,7 @@
     import StatsErrorsTab from './StatsErrorsTab.svelte';
     import StatsBreakdownsTab from './StatsBreakdownsTab.svelte';
     import StatsPlayersTab from './StatsPlayersTab.svelte';
+    import StatsTrainingTab from './StatsTrainingTab.svelte';
 
     /** Currently active inner tab. */
     let activeTab = $state('dashboard');
@@ -53,6 +59,15 @@
         const key = $statsInvalidationKeyStore;
         if (!$databaseLoadedStore || activeTab !== 'errors') return;
         logger.perf('StatsPanel:refreshRecurringErrors', () => refreshRecurringErrors(filter, key));
+    });
+
+    // The training series read three journals: fetched only while their tab is open.
+    $effect(() => {
+        const filter = $statsFilterStore;
+        const key = $statsInvalidationKeyStore;
+        const windowKind = $trainingWindowStore;
+        if (!$databaseLoadedStore || activeTab !== 'training') return;
+        logger.perf('StatsPanel:refreshTrainingStats', () => refreshTrainingStats(filter, key, windowKind));
     });
 
     /** Follow a player from the table into their own dashboard. */
@@ -89,6 +104,7 @@
             >{$t('stats.tabProgression')}</button
         >
         <button class="tab-btn" class:active={activeTab === 'errors'} role="tab" aria-selected={activeTab === 'errors'} onclick={() => (activeTab = 'errors')}>{$t('stats.tabErrors')}</button>
+        <button class="tab-btn" class:active={activeTab === 'training'} role="tab" aria-selected={activeTab === 'training'} onclick={() => (activeTab = 'training')}>{$t('stats.tabTraining')}</button>
         <button class="tab-btn" class:active={activeTab === 'breakdowns'} role="tab" aria-selected={activeTab === 'breakdowns'} onclick={() => (activeTab = 'breakdowns')}
             >{$t('stats.tabBreakdowns')}</button
         >
@@ -110,6 +126,8 @@
                 recurringLoading={$recurringErrorsLoadingStore}
                 recurringError={$recurringErrorsErrorStore}
             />
+        {:else if activeTab === 'training'}
+            <StatsTrainingTab data={$trainingStatsStore} loading={$trainingStatsLoadingStore} error={$trainingStatsErrorStore} bind:period={$trainingWindowStore} />
         {:else if activeTab === 'breakdowns'}
             <StatsBreakdownsTab result={$statsResultStore} />
         {:else if activeTab === 'players'}

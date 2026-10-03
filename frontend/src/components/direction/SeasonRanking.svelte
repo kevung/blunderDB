@@ -98,10 +98,10 @@
         align-items: center;
     }
     .facts {
-        color: var(--text-muted, #666);
+        color: var(--color-text-muted);
     }
     .error {
-        color: var(--error-color, #b00020);
+        color: var(--color-danger);
     }
     table {
         border-collapse: collapse;

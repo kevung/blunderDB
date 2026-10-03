@@ -86,6 +86,10 @@ export function CancelMatch(arg1, arg2) {
   return window['go']['database']['Database']['CancelMatch'](arg1, arg2);
 }
 
+export function CancelSearch() {
+  return window['go']['database']['Database']['CancelSearch']();
+}
+
 export function CheckConstraints() {
   return window['go']['database']['Database']['CheckConstraints']();
 }
@@ -170,6 +174,14 @@ export function ComputeStatsCtx(arg1, arg2) {
   return window['go']['database']['Database']['ComputeStatsCtx'](arg1, arg2);
 }
 
+export function ComputeTrainingStats(arg1, arg2) {
+  return window['go']['database']['Database']['ComputeTrainingStats'](arg1, arg2);
+}
+
+export function ComputeTrainingStatsCtx(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ComputeTrainingStatsCtx'](arg1, arg2, arg3);
+}
+
 export function ConfirmAllProposals(arg1) {
   return window['go']['database']['Database']['ConfirmAllProposals'](arg1);
 }
@@ -192,6 +204,14 @@ export function CountMatchPositionsToAnalyze(arg1) {
 
 export function CountOrphans() {
   return window['go']['database']['Database']['CountOrphans']();
+}
+
+export function CountPositions() {
+  return window['go']['database']['Database']['CountPositions']();
+}
+
+export function CountPositionsByFilters(arg1) {
+  return window['go']['database']['Database']['CountPositionsByFilters'](arg1);
 }
 
 export function CountPositionsWithForeignAnalysis() {
@@ -224,6 +244,10 @@ export function CreateDirection(arg1, arg2, arg3) {
 
 export function CreateRencontre(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['CreateRencontre'](arg1, arg2, arg3, arg4);
+}
+
+export function CreateStudyDeck(arg1, arg2) {
+  return window['go']['database']['Database']['CreateStudyDeck'](arg1, arg2);
 }
 
 export function CreateTournament(arg1, arg2, arg3) {
@@ -634,6 +658,14 @@ export function ImportXGPPosition(arg1) {
   return window['go']['database']['Database']['ImportXGPPosition'](arg1);
 }
 
+export function IndexOfPosition(arg1) {
+  return window['go']['database']['Database']['IndexOfPosition'](arg1);
+}
+
+export function IndexOfPositionByFilters(arg1, arg2) {
+  return window['go']['database']['Database']['IndexOfPositionByFilters'](arg1, arg2);
+}
+
 export function IsProtectedCopyPath(arg1) {
   return window['go']['database']['Database']['IsProtectedCopyPath'](arg1);
 }
@@ -654,8 +686,8 @@ export function ListImportBatches(arg1, arg2) {
   return window['go']['database']['Database']['ListImportBatches'](arg1, arg2);
 }
 
-export function ListPositionIDs() {
-  return window['go']['database']['Database']['ListPositionIDs']();
+export function ListPositionIDs(arg1, arg2) {
+  return window['go']['database']['Database']['ListPositionIDs'](arg1, arg2);
 }
 
 export function ListRencontres() {
@@ -806,8 +838,20 @@ export function PendingTranscriptionAnalysis() {
   return window['go']['database']['Database']['PendingTranscriptionAnalysis']();
 }
 
+export function PlanRollout(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PlanRollout'](arg1, arg2, arg3);
+}
+
+export function PlanRolloutIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PlanRolloutIDs'](arg1, arg2, arg3);
+}
+
 export function PositionsToRollout(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PositionsToRollout'](arg1, arg2, arg3);
+}
+
+export function PositionsToRolloutIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PositionsToRolloutIDs'](arg1, arg2, arg3);
 }
 
 export function PreviewAttachToRencontre(arg1, arg2) {
@@ -922,6 +966,10 @@ export function RolloutPositions(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['RolloutPositions'](arg1, arg2, arg3, arg4);
 }
 
+export function RunRolloutPlan(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['RunRolloutPlan'](arg1, arg2, arg3, arg4);
+}
+
 export function SaveAnalysis(arg1, arg2) {
   return window['go']['database']['Database']['SaveAnalysis'](arg1, arg2);
 }
@@ -980,6 +1028,10 @@ export function SaveTrainingSession(arg1) {
 
 export function SearchComments(arg1) {
   return window['go']['database']['Database']['SearchComments'](arg1);
+}
+
+export function SearchPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SearchPositionIDs'](arg1, arg2, arg3);
 }
 
 export function SeasonCSV(arg1) {
@@ -1088,6 +1140,10 @@ export function StartTranscriptionFromSlot(arg1, arg2) {
 
 export function StudyImpact(arg1) {
   return window['go']['database']['Database']['StudyImpact'](arg1);
+}
+
+export function StudyPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['StudyPositionIDs'](arg1, arg2, arg3);
 }
 
 export function SuggestMatFilename(arg1) {

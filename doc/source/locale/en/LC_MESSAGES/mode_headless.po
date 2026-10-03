@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:31+0200\n"
+"POT-Creation-Date: 2026-10-03 09:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -2203,7 +2203,7 @@ msgstr ""
 " failed."
 
 #: ../../source/mode_headless.rst:988
-#, no-python-format
+#, no-python-format, python-format
 msgid ""
 "``rollout.position`` joue une position de la bibliothèque "
 "(``positionId``) par un :ref:`rollout <cli_rollout>` et rend, pour chaque"
@@ -3573,42 +3573,50 @@ msgid "positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course"
 msgstr "neighbouring positions; reading of an XGID; legal moves; race EPC"
 
 #: ../../source/mode_headless.rst:1700
-msgid "``list_players``, ``player_stats``, ``recurring_errors``"
-msgstr "``list_players``, ``player_stats``, ``recurring_errors``"
-
-#: ../../source/mode_headless.rst:1701
-msgid "joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent"
-msgstr "players; overall PR, checker play, cube, by phase; recurring errors"
+msgid ""
+"``list_players``, ``player_stats``, ``recurring_errors``, "
+"``training_stats``"
+msgstr ""
+"``list_players``, ``player_stats``, ``recurring_errors``, "
+"``training_stats``"
 
 #: ../../source/mode_headless.rst:1702
+msgid ""
+"joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent ; "
+"PR du quiz et rétention Anki contre le PR réel"
+msgstr ""
+"players; global PR, checkers, cube, by phase; recurring errors; quiz PR "
+"and Anki retention against the real PR"
+
+#: ../../source/mode_headless.rst:1704
 msgid "``list_matches``, ``get_match``, ``list_tournaments``"
 msgstr "``list_matches``, ``get_match``, ``list_tournaments``"
 
-#: ../../source/mode_headless.rst:1703
+#: ../../source/mode_headless.rst:1705
 msgid "matchs, détail d'un match, tournois"
 msgstr "matches, detail of a match, tournaments"
 
-#: ../../source/mode_headless.rst:1704
+#: ../../source/mode_headless.rst:1706
 msgid "``list_collections``, ``collection_positions``, ``study_decks``"
 msgstr "``list_collections``, ``collection_positions``, ``study_decks``"
 
-#: ../../source/mode_headless.rst:1705
+#: ../../source/mode_headless.rst:1707
 msgid "collections et leurs positions ; paquets de révision"
 msgstr "collections and their positions; study decks"
 
-#: ../../source/mode_headless.rst:1706
+#: ../../source/mode_headless.rst:1708
 msgid "``quiz_draw``, ``quiz_grade``"
 msgstr "``quiz_draw``, ``quiz_grade``"
 
-#: ../../source/mode_headless.rst:1707
+#: ../../source/mode_headless.rst:1709
 msgid "tire une position sans sa réponse, puis note la réponse donnée"
 msgstr "draws a position without its answer, then grades the answer given"
 
-#: ../../source/mode_headless.rst:1708
+#: ../../source/mode_headless.rst:1710
 msgid "``evaluate``"
 msgstr "``evaluate``"
 
-#: ../../source/mode_headless.rst:1709
+#: ../../source/mode_headless.rst:1711
 msgid ""
 "évaluation gammonNet d'une position donnée en texte, sans l'enregistrer :"
 " meilleurs coups ou décision de videau"
@@ -3616,42 +3624,42 @@ msgstr ""
 "gammonNet evaluation of a position given as text, without saving it: best"
 " moves or cube decision"
 
-#: ../../source/mode_headless.rst:1711
+#: ../../source/mode_headless.rst:1713
 msgid "``anki_next``"
 msgstr "``anki_next``"
 
-#: ../../source/mode_headless.rst:1712
+#: ../../source/mode_headless.rst:1714
 msgid "la prochaine carte due d'un paquet de révision"
 msgstr "the next due card of a review deck"
 
-#: ../../source/mode_headless.rst:1713
+#: ../../source/mode_headless.rst:1715
 msgid "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 msgstr "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 
-#: ../../source/mode_headless.rst:1714
+#: ../../source/mode_headless.rst:1716
 msgid "transcriptions de matchs ; détail d'une transcription ; son texte ``.mat``"
 msgstr "match transcriptions; detail of a transcription; its ``.mat`` text"
 
-#: ../../source/mode_headless.rst:1716
+#: ../../source/mode_headless.rst:1718
 msgid "``direction_list``, ``direction_standings``, ``direction_season``"
 msgstr "``direction_list``, ``direction_standings``, ``direction_season``"
 
-#: ../../source/mode_headless.rst:1717
+#: ../../source/mode_headless.rst:1719
 msgid "tournois dirigés ; classement d'un tournoi ; classement de saison"
 msgstr "directed tournaments; standings of a tournament; season ranking"
 
-#: ../../source/mode_headless.rst:1718
+#: ../../source/mode_headless.rst:1720
 msgid "``rollout``"
 msgstr "``rollout``"
 
-#: ../../source/mode_headless.rst:1719
+#: ../../source/mode_headless.rst:1721
 #, no-python-format
 msgid ""
 "rollout d'une position de la base : équité, intervalle à 95 % et JSD par "
 "candidat"
 msgstr "rollout of a library position: equity, 95% interval and JSD per candidate"
 
-#: ../../source/mode_headless.rst:1722
+#: ../../source/mode_headless.rst:1724
 msgid ""
 "Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
 "``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
@@ -3669,7 +3677,7 @@ msgstr ""
 "offered, the ``store`` argument, which records the rollout beside the "
 "position's analysis. No tool deletes anything."
 
-#: ../../source/mode_headless.rst:1730
+#: ../../source/mode_headless.rst:1732
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -3677,7 +3685,7 @@ msgstr ""
 "**Locally**, the assistant launches ``blunderdb mcp`` on a file (see "
 ":ref:`cli`). For Claude Code:"
 
-#: ../../source/mode_headless.rst:1737
+#: ../../source/mode_headless.rst:1739
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -3701,7 +3709,7 @@ msgstr ""
 "limit, on top of the ``/mcp`` request that carries it. A tool call "
 "therefore costs several requests; none is exempted."
 
-#: ../../source/mode_headless.rst:1748
+#: ../../source/mode_headless.rst:1750
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

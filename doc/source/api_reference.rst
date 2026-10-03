@@ -22,6 +22,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    anki
      POST /v1/anki.buryCard                        JSON
      POST /v1/anki.createDeck                      JSON
+     POST /v1/anki.createStudyDeck                 JSON
      POST /v1/anki.deckPositions                   NDJSON
      POST /v1/anki.deckStats                       JSON
      POST /v1/anki.deleteDeck                      JSON
@@ -174,6 +175,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/metadata.counts                      JSON
      POST /v1/metadata.version                     JSON
    positions
+     POST /v1/positions.count                      JSON
      POST /v1/positions.delete                     JSON
      POST /v1/positions.epc                        JSON
      POST /v1/positions.exists                     JSON
@@ -181,6 +183,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.fromOGID                   JSON
      POST /v1/positions.fromXGID                   JSON
      POST /v1/positions.fromXGP                    JSON
+     POST /v1/positions.indexOf                    JSON
      POST /v1/positions.legalMoves                 JSON
      POST /v1/positions.list                       NDJSON
      POST /v1/positions.listIds                    JSON
@@ -216,7 +219,10 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/rollout.list                         JSON
      POST /v1/rollout.position                     custom
    search
+     POST /v1/search.count                         JSON
      POST /v1/search.find                          NDJSON
+     POST /v1/search.ids                           JSON
+     POST /v1/search.indexOf                       JSON
      POST /v1/search.parse                         JSON
      POST /v1/search.query                         custom
    searchHistory
@@ -239,7 +245,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.positionIdsBySelection         JSON
      POST /v1/stats.positionIdsByTournament        JSON
      POST /v1/stats.recurringErrors                JSON
+     POST /v1/stats.studyIds                       JSON
      POST /v1/stats.tournamentBadges               JSON
+     POST /v1/stats.training                       JSON
    tenant
      POST /ops/tenant.purge                        custom
    tenants

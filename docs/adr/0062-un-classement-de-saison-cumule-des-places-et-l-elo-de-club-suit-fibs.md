@@ -1,4 +1,4 @@
-# ADR-0061 — Un classement de saison cumule des places, et l'Elo de club suit la formule FIBS
+# ADR-0062 — Un classement de saison cumule des places, et l'Elo de club suit la formule FIBS
 
 Statut : acceptée.
 Voir aussi : ADR-0047, ADR-0056.

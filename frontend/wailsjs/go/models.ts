@@ -472,6 +472,36 @@ export namespace database {
 	        this.distance = source["distance"];
 	    }
 	}
+	export class RolloutPlan {
+	    Positions: domain.Position[];
+	
+	    static createFrom(source: any = {}) {
+	        return new RolloutPlan(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Positions = this.convertValues(source["Positions"], domain.Position);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class ScoreCellStats {
 	    MoverAway: number;
 	    OpponentAway: number;
@@ -2923,6 +2953,7 @@ export namespace gui {
 		}
 	}
 	export class RolloutStatus {
+	    job: number;
 	    running: boolean;
 	    kind?: string;
 	    positionId?: number;
@@ -2937,6 +2968,7 @@ export namespace gui {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.job = source["job"];
 	        this.running = source["running"];
 	        this.kind = source["kind"];
 	        this.positionId = source["positionId"];
@@ -5273,6 +5305,52 @@ export namespace storage {
 	        this.meanDeviation = source["meanDeviation"];
 	    }
 	}
+	export class TrainingPeriod {
+	    Start: string;
+	    QuizSessions: number;
+	    QuizDecisions: number;
+	    QuizPR: number;
+	    MatchDecisions: number;
+	    MatchPR: number;
+	    AnkiReviews: number;
+	    AnkiPassed: number;
+	    AnkiRetention: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TrainingPeriod(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Start = source["Start"];
+	        this.QuizSessions = source["QuizSessions"];
+	        this.QuizDecisions = source["QuizDecisions"];
+	        this.QuizPR = source["QuizPR"];
+	        this.MatchDecisions = source["MatchDecisions"];
+	        this.MatchPR = source["MatchPR"];
+	        this.AnkiReviews = source["AnkiReviews"];
+	        this.AnkiPassed = source["AnkiPassed"];
+	        this.AnkiRetention = source["AnkiRetention"];
+	    }
+	}
+	export class TrainingQuizSession {
+	    ID: number;
+	    CreatedAt: string;
+	    Decisions: number;
+	    PR: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TrainingQuizSession(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ID = source["ID"];
+	        this.CreatedAt = source["CreatedAt"];
+	        this.Decisions = source["Decisions"];
+	        this.PR = source["PR"];
+	    }
+	}
 	export class TrainingSession {
 	    id: number;
 	    exercise: string;
@@ -5303,6 +5381,40 @@ export namespace storage {
 	        this.medianMs = source["medianMs"];
 	        this.pr = source["pr"];
 	        this.items = this.convertValues(source["items"], TrainingItem);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class TrainingStats {
+	    Window: string;
+	    Sessions: TrainingQuizSession[];
+	    Periods: TrainingPeriod[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TrainingStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Window = source["Window"];
+	        this.Sessions = this.convertValues(source["Sessions"], TrainingQuizSession);
+	        this.Periods = this.convertValues(source["Periods"], TrainingPeriod);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

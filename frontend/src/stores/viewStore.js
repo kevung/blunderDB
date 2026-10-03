@@ -1,7 +1,9 @@
 import { writable, get } from 'svelte/store';
 import { positionStore, positionsStore, matchContextStore, emptyPosition } from './positionStore';
+import { indexInList, listLength, isSettled } from './positionList.js';
 import { analysisStore, selectedMoveStore } from './analysisStore';
 import { currentPositionIndexStore, activeTabStore, commentTextStore, statusBarModeStore } from './uiStore';
+import { listOriginStore, LIBRARY_ORIGIN } from './listOriginStore';
 import { logger } from '../utils/logger.js';
 import { normalizeTabId } from '../services/tabOrder.js';
 
@@ -31,7 +33,9 @@ function createDefaultView(id) {
     return {
         id,
         name: `#${id}`,
-        ids: [],
+        list: /** @type {import('./positionList.js').ListSnapshot | null} */ (null),
+        positionId: /** @type {number | null} */ (null),
+        origin: LIBRARY_ORIGIN,
         positionIndex: 0,
         position: emptyPosition(),
         analysis: createDefaultAnalysis(),
@@ -48,6 +52,61 @@ let nextViewId = 2;
 function createViewStore() {
     const views = writable([createDefaultView(1)]);
     const activeViewId = writable(1);
+    // Counts a paged list put back before its length was known and ranks a position in it
+    // (positionService, which imports this store: handed in rather than imported). Resolves to
+    // `{ index }` once done (index -1 when not asked for or absent), null when it did not run.
+    /** @typedef {(options: { source: import('./positionList.js').IdSource, count: boolean, positionId: number | null }) => Promise<{ index: number } | null>} ListSettler */
+    /** @type {ListSettler} */
+    let settleList = async () => null;
+
+    /** @param {ListSettler} fn */
+    function setListSettler(fn) {
+        settleList = fn;
+    }
+
+    // A view whose list or position is still to be found asks for it once it is on screen; only
+    // the list on screen is counted, so restoring several views scans for one. The count lands
+    // on the view's source whichever view is shown by then (positionList's settled lengths); the
+    // rank lands on the view itself, shown or left, unless the user moved in it meanwhile. A
+    // settling that did not run (a search owned the backend) leaves the rank pending, asked for
+    // again the next time the view is shown or that search ends.
+    /** @param {number} viewId */
+    async function settle(viewId) {
+        const view = get(views).find((v) => v.id === viewId);
+        const list = view?.list;
+        if (!view || !list || !('source' in list)) return;
+        const positionId = view.pendingPositionId ?? null;
+        const count = !isSettled(list);
+        if (positionId == null && !count) return;
+        const indexAtStart = view.positionIndex || 0;
+        const shownIndex = get(activeViewId) === viewId ? get(currentPositionIndexStore) : null;
+        const result = await settleList({ source: list.source, count, positionId }).catch(() => null);
+        if (!result) return;
+        const index = result.index;
+        const shown = get(activeViewId) === viewId;
+        if (shown) {
+            const unmoved = get(currentPositionIndexStore) === (shownIndex ?? indexAtStart);
+            if (index >= 0 && unmoved && positionsStore.isSource(list.source)) currentPositionIndexStore.set(index);
+            views.update((vs) => vs.map((v) => (v.id === viewId ? { ...v, pendingPositionId: null } : v)));
+            return;
+        }
+        views.update((vs) =>
+            vs.map((v) => {
+                if (v.id !== viewId) return v;
+                const moved = v.positionIndex !== (shownIndex ?? indexAtStart);
+                if (index < 0 || moved) return { ...v, pendingPositionId: null };
+                // Left before its rank came back: the board saved with it was the fallback's.
+                return { ...v, pendingPositionId: null, positionIndex: index, positionId, position: null };
+            })
+        );
+    }
+
+    /** Settle the view on screen: a search that held the backend has ended. */
+    function settleActive() {
+        const view = get(views).find((v) => v.id === get(activeViewId));
+        // Only while the view still shows its own list: the search may have replaced it.
+        if (view?.list && 'source' in view.list && positionsStore.isSource(view.list.source)) settle(view.id);
+    }
 
     function saveCurrentViewState() {
         const currentId = get(activeViewId);
@@ -56,7 +115,9 @@ function createViewStore() {
                 if (v.id === currentId) {
                     return {
                         ...v,
-                        ids: get(positionsStore).ids,
+                        list: positionsStore.snapshotList(),
+                        positionId: positionsStore.idAt(get(currentPositionIndexStore)) ?? null,
+                        origin: get(listOriginStore),
                         positionIndex: get(currentPositionIndexStore),
                         position: JSON.parse(JSON.stringify(get(positionStore))),
                         analysis: JSON.parse(JSON.stringify(get(analysisStore))),
@@ -73,8 +134,9 @@ function createViewStore() {
     }
 
     function restoreViewState(view) {
-        // The position cache is shared by every view (keyed by id): only the id list moves.
-        positionsStore.setIds(view.ids || []);
+        // The position cache is shared by every view (keyed by id): only the list moves.
+        positionsStore.restoreList(view.list);
+        listOriginStore.set(view.origin || LIBRARY_ORIGIN);
         // A view restored from disk has no board: cache, else the index effect fetches it.
         const cached = view.position ? null : positionsStore.peek(view.positionIndex || 0);
         positionStore.set(view.position ?? (cached ? JSON.parse(JSON.stringify(cached)) : emptyPosition()));
@@ -100,6 +162,7 @@ function createViewStore() {
         if (target) {
             activeViewId.set(viewId);
             restoreViewState(target);
+            settle(target.id);
         }
     }
 
@@ -110,7 +173,9 @@ function createViewStore() {
         const vs = get(views);
         const current = vs.find((v) => v.id === currentId);
         const newView = {
-            ...JSON.parse(JSON.stringify(current)),
+            ...JSON.parse(JSON.stringify({ ...current, list: null })),
+            // A paged list's source is functions, which JSON drops: the list is shared, not copied.
+            list: current.list,
             id,
             name: `#${id}`
         };
@@ -128,6 +193,7 @@ function createViewStore() {
             const next = remaining[remaining.length - 1];
             activeViewId.set(next.id);
             restoreViewState(next);
+            settle(next.id);
         }
     }
 
@@ -135,45 +201,75 @@ function createViewStore() {
         views.update((vs) => vs.map((v) => (v.id === viewId ? { ...v, name: newName } : v)));
     }
 
-    // Serialize all views for persistence (only stores position IDs, not full objects)
+    // Serialize all views for persistence: each view's definition (name, where its list comes
+    // from, the id of the position it shows), never the list itself, so the payload does not
+    // grow with the library.
     function serialize() {
         saveCurrentViewState();
         const vs = get(views);
         return JSON.stringify({
             nextViewId,
             activeViewId: get(activeViewId),
-            views: vs.map((v) => ({
-                id: v.id,
-                name: v.name,
-                positionIds: (v.ids || []).filter((id) => id != null),
-                positionIndex: v.positionIndex || 0,
-                selectedMove: v.selectedMove,
-                activeTab: v.activeTab || 'analysis',
-                commentText: v.commentText || '',
-                mode: v.mode || 'NORMAL',
-                previousMode: v.previousMode || 'NORMAL'
-            }))
+            views: vs.map((v) => {
+                const mode = v.mode || 'NORMAL';
+                // A match or a collection is not replayable from the library: reopen on the library.
+                const replayable = mode !== 'MATCH' && mode !== 'COLLECTION';
+                return {
+                    id: v.id,
+                    name: v.name,
+                    origin: replayable && v.origin ? v.origin : LIBRARY_ORIGIN,
+                    positionId: v.positionId ?? null,
+                    positionIndex: v.positionIndex || 0,
+                    selectedMove: v.selectedMove,
+                    activeTab: v.activeTab || 'analysis',
+                    commentText: v.commentText || '',
+                    mode: replayable ? mode : 'NORMAL',
+                    previousMode: replayable ? v.previousMode || 'NORMAL' : 'NORMAL'
+                };
+            })
         });
     }
 
-    // Restore views, dropping saved ids no longer in the database (ListPositionIDs); the rest
-    // keep their order and load on demand.
-    async function deserialize(json, listPositionIdsFn) {
+    // Restore views: each list is rebuilt by replaying its origin (resolveListFn(origin) → a
+    // positionList snapshot), and the current position is found again by id, the saved index
+    // being the fallback.
+    async function deserialize(json, resolveListFn) {
         try {
             const data = JSON.parse(json);
             if (!data || !data.views || data.views.length === 0) return false;
 
-            const stored = new Set((await listPositionIdsFn()) || []);
-
             nextViewId = data.nextViewId || data.views.length + 1;
 
-            const restoredViews = data.views.map((sv) => {
-                const ids = (sv.positionIds || []).filter((id) => stored.has(id));
-                return {
+            // Side by side: each replay reads at most a first window, as a search does.
+            const lists = await Promise.all(data.views.map(async (sv) => (await resolveListFn(sv.origin || LIBRARY_ORIGIN)) || { ids: [] }));
+            const restoredViews = [];
+            for (const [i, sv] of data.views.entries()) {
+                const origin = sv.origin || LIBRARY_ORIGIN;
+                const list = lists[i];
+                // A list known only by its first page is not ranked here: the rank of a position
+                // past it is a scan, run once the view is on screen (settle).
+                let positionIndex = -1;
+                let pendingPositionId = null;
+                if (sv.positionId != null) {
+                    if (isSettled(list)) positionIndex = await indexInList(list, sv.positionId);
+                    else {
+                        positionIndex = Array.isArray(list.firstPage) ? list.firstPage.indexOf(sv.positionId) : -1;
+                        if (positionIndex < 0) pendingPositionId = sv.positionId;
+                    }
+                }
+                if (positionIndex < 0) positionIndex = Math.min(sv.positionIndex || 0, Math.max(listLength(list) - 1, 0));
+                // A match or a collection reopens on the library (serialize): as the library.
+                const savedMode = (sv.mode === 'EPC' ? 'EVAL' : sv.mode) || 'NORMAL';
+                const mode = savedMode === 'MATCH' || savedMode === 'COLLECTION' ? 'NORMAL' : savedMode;
+                const previousMode = sv.previousMode === 'MATCH' || sv.previousMode === 'COLLECTION' ? 'NORMAL' : sv.previousMode || 'NORMAL';
+                restoredViews.push({
                     id: sv.id,
                     name: sv.name,
-                    ids,
-                    positionIndex: Math.min(sv.positionIndex || 0, Math.max(ids.length - 1, 0)),
+                    list,
+                    positionId: sv.positionId ?? null,
+                    pendingPositionId,
+                    origin,
+                    positionIndex,
                     // No board yet: from the cache, or the index effect (getPosition).
                     position: null,
                     analysis: createDefaultAnalysis(),
@@ -181,17 +277,22 @@ function createViewStore() {
                     // Old names (`epc` tab, `EPC` mode) reopen as Eval.
                     activeTab: normalizeTabId(sv.activeTab) || 'analysis',
                     commentText: sv.commentText || '',
-                    mode: (sv.mode === 'EPC' ? 'EVAL' : sv.mode) || 'NORMAL',
-                    previousMode: sv.previousMode || 'NORMAL',
+                    mode,
+                    previousMode,
                     matchContext: createDefaultMatchContext()
-                };
-            });
+                });
+            }
 
             views.set(restoredViews);
             const targetId = data.activeViewId || restoredViews[0].id;
             activeViewId.set(targetId);
             const target = restoredViews.find((v) => v.id === targetId) || restoredViews[0];
+            // A paged list reads the page of its current position first, so the board can come
+            // from the cache as it does for a list held whole.
+            positionsStore.restoreList(target.list);
+            await positionsStore.ensureIds(target.positionIndex, target.positionIndex);
             restoreViewState(target);
+            settle(target.id);
             return true;
         } catch (e) {
             logger.error('Error deserializing views:', e);
@@ -228,7 +329,9 @@ function createViewStore() {
         selectNextView,
         saveCurrentViewState,
         serialize,
-        deserialize
+        deserialize,
+        setListSettler,
+        settleActive
     };
 }
 

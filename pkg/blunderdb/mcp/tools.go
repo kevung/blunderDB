@@ -109,6 +109,10 @@ func firstN(v any, n int) any {
 	return v
 }
 
+// groupIDsShown caps the positions listed per recurring-error group: they come
+// worst first, and a quiz needs a handful, not the whole group.
+const groupIDsShown = 50
+
 type noInput struct{}
 
 type positionRef struct {
@@ -433,7 +437,7 @@ func registerPlayers(tb *Toolbox) {
 		Limit int `json:"limit,omitempty" jsonschema:"blunders to return (default 20, at most 200)"`
 	}
 	Add(tb, Reads, &sdk.Tool{Name: "recurring_errors", Title: "Recurring errors",
-		Description: "Where a player loses equity again and again: the biggest blunders (position id, error in mp, description), the cube actions and comment tags ranked by PR, and the histogram of error sizes. Open a blunder with get_position and explain_error."},
+		Description: "Where a player loses equity again and again: the biggest blunders (position id, error in mp, description), the cube actions and comment tags ranked by PR, the histogram of error sizes, and the errors grouped by plan of play and theme (Groups, costliest first, each with at most 50 of its worst PositionIDs: Positions is how many it holds, Truncated says the list is cut). Open a blunder with get_position and explain_error; quiz a group by passing its PositionIDs to quiz_grade."},
 		func(ctx context.Context, req *sdk.CallToolRequest, a errorsIn) (any, error) {
 			var res obj
 			if err := tb.Engine.Call(ctx, req, "stats.compute", a.wire(), &res); err != nil {
@@ -441,7 +445,39 @@ func registerPlayers(tb *Toolbox) {
 			}
 			out := pick(res, "Totals", "CubeActionBreakdown", "PerTag", "ErrorHistogram", "PerScore")
 			out["TopBlunders"] = firstN(res["TopBlunders"], clampLimit(a.Limit))
+			var recurring obj
+			if err := tb.Engine.Call(ctx, req, "stats.recurringErrors", a.wire(), &recurring); err != nil {
+				return nil, err
+			}
+			groups, _ := recurring["Groups"].([]any)
+			for _, g := range groups {
+				if group, ok := g.(obj); ok {
+					all, _ := group["PositionIDs"].([]any)
+					group["Positions"] = len(all)
+					group["Truncated"] = len(all) > groupIDsShown
+					group["PositionIDs"] = firstN(group["PositionIDs"], groupIDsShown)
+				}
+			}
+			out["Groups"] = firstN(groups, clampLimit(a.Limit))
 			return out, nil
+		})
+
+	type trainingIn struct {
+		statsFilter
+		Window string `json:"window,omitempty" jsonschema:"calendar window: week (default) or month"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "training_stats", Title: "Training progress",
+		Description: "Quiz PR per session and per calendar window, set against the real PR of the same windows, with the Anki retention observed on the same time scale. Use it to tell whether what is drilled shows up in play."},
+		func(ctx context.Context, req *sdk.CallToolRequest, a trainingIn) (any, error) {
+			wire := a.wire()
+			if a.Window != "" {
+				wire["window"] = a.Window
+			}
+			var res obj
+			if err := tb.Engine.Call(ctx, req, "stats.training", wire, &res); err != nil {
+				return nil, err
+			}
+			return res, nil
 		})
 }
 

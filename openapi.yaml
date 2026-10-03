@@ -176,6 +176,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idResp"
+  /v1/anki.createStudyDeck:
+    post:
+      operationId: anki.createStudyDeck
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studyDeckReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
   /v1/anki.deckPositions:
     post:
       operationId: anki.deckPositions
@@ -3473,6 +3490,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/versionResp"
+  /v1/positions.count:
+    post:
+      operationId: positions.count
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/positions.delete:
     post:
       operationId: positions.delete
@@ -3594,6 +3629,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/xgpResp"
+  /v1/positions.indexOf:
+    post:
+      operationId: positions.indexOf
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/positions.legalMoves:
     post:
       operationId: positions.legalMoves
@@ -4416,6 +4469,24 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/search.count:
+    post:
+      operationId: search.count
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchFindReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/search.find:
     post:
       operationId: search.find
@@ -4436,6 +4507,44 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/domain_Position"
                 nullable: true
+  /v1/search.ids:
+    post:
+      operationId: search.ids
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchFindReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+  /v1/search.indexOf:
+    post:
+      operationId: search.indexOf
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchIndexOfReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/search.parse:
     post:
       operationId: search.parse
@@ -4768,6 +4877,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_RecurringErrors"
                 nullable: true
+  /v1/stats.studyIds:
+    post:
+      operationId: stats.studyIds
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studyIDsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idsResp"
   /v1/stats.tournamentBadges:
     post:
       operationId: stats.tournamentBadges
@@ -4785,6 +4911,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/tournamentBadgesResp"
+  /v1/stats.training:
+    post:
+      operationId: stats.training
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsTrainingReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_TrainingStats"
+                nullable: true
   /v1/tenants.quota:
     post:
       operationId: tenants.quota
@@ -6698,6 +6842,14 @@ components:
           type: string
         excludePosition:
           type: string
+    searchIndexOfReq:
+      type: object
+      properties:
+        filters:
+          $ref: "#/components/schemas/domain_SearchFilters"
+        id:
+          type: integer
+          format: int64
     searchParseResp:
       type: object
       properties:
@@ -6813,6 +6965,13 @@ components:
           $ref: "#/components/schemas/storage_StatsFilter"
         selection:
           $ref: "#/components/schemas/storage_SelectionSpec"
+    statsTrainingReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        window:
+          type: string
     storage_Collection:
       type: object
       description: "Opaque: see the Go type storage.Collection (defined outside internal/server, not expanded here)."
@@ -6873,6 +7032,9 @@ components:
     storage_TrainingSession:
       type: object
       description: "Opaque: see the Go type storage.TrainingSession (defined outside internal/server, not expanded here)."
+    storage_TrainingStats:
+      type: object
+      description: "Opaque: see the Go type storage.TrainingStats (defined outside internal/server, not expanded here)."
     stringsResp:
       type: object
       properties:
@@ -6880,6 +7042,27 @@ components:
           type: array
           items:
             type: string
+    studyDeckReq:
+      type: object
+      properties:
+        name:
+          type: string
+        positionIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+    studyIDsReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        rank:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
     suspendCardReq:
       type: object
       properties:

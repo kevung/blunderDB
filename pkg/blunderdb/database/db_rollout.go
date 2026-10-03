@@ -70,12 +70,53 @@ func (d *Database) PositionsToRollout(ctx context.Context, f SearchFilters, s ro
 	return positions, err
 }
 
+// PositionsToRolloutIDs snapshots the positions of ids that carry no rollout of
+// s's Signature yet, in the order of ids: what RolloutPositions rolls out for
+// a list on screen.
+func (d *Database) PositionsToRolloutIDs(ctx context.Context, ids []int64, s rollout.Settings) ([]Position, error) {
+	positions, _, err := d.positionsToRolloutIDs(ctx, ids, s)
+	return positions, err
+}
+
+func (d *Database) positionsToRolloutIDs(ctx context.Context, ids []int64, s rollout.Settings) ([]Position, uint64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	positions, err := rollouts.GatherIDs(ctx, d.store, "", ids, s)
+	return positions, d.generation, err
+}
+
 // positionsToRollout is PositionsToRollout with the generation it read.
 func (d *Database) positionsToRollout(ctx context.Context, f SearchFilters, s rollout.Settings) ([]Position, uint64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 	positions, err := rollouts.Gather(ctx, d.store, "", f, s)
 	return positions, d.generation, err
+}
+
+// RolloutPlan is a PositionsToRollout snapshot with the generation of the open
+// file it was read from: running it is refused once another file is open.
+type RolloutPlan struct {
+	Positions []Position
+	gen       uint64
+}
+
+// PlanRollout is PositionsToRollout, kept for RunRolloutPlan.
+func (d *Database) PlanRollout(ctx context.Context, f SearchFilters, s rollout.Settings) (*RolloutPlan, error) {
+	positions, gen, err := d.positionsToRollout(ctx, f, s)
+	return &RolloutPlan{Positions: positions, gen: gen}, err
+}
+
+// PlanRolloutIDs is PositionsToRolloutIDs, kept for RunRolloutPlan.
+func (d *Database) PlanRolloutIDs(ctx context.Context, ids []int64, s rollout.Settings) (*RolloutPlan, error) {
+	positions, gen, err := d.positionsToRolloutIDs(ctx, ids, s)
+	return &RolloutPlan{Positions: positions, gen: gen}, err
+}
+
+// RunRolloutPlan rolls out plan one position after the other, writing each as
+// it finishes; a write is refused with ErrDatabaseChanged if the open file is
+// no longer the one the plan was read from.
+func (d *Database) RunRolloutPlan(ctx context.Context, plan *RolloutPlan, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
+	return d.rolloutPositionsAt(ctx, plan.gen, plan.Positions, s, progress)
 }
 
 // RolloutFiltered rolls out, one after the other, every position f selects

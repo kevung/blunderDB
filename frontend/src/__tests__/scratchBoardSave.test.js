@@ -24,6 +24,8 @@ const db = vi.hoisted(() => ({
     LoadComment: vi.fn(() => Promise.resolve('')),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
     ListPositionIDs: vi.fn(() => Promise.resolve([])),
+    CountPositions: vi.fn(() => Promise.resolve(0)),
+    IndexOfPosition: vi.fn(() => Promise.resolve(-1)),
     CountPositionsWithoutAnalysis: vi.fn(() => Promise.resolve(0)),
     SaveLastVisitedPosition: vi.fn(() => Promise.resolve()),
     GetLastVisitedMatch: vi.fn(() => Promise.resolve(null)),
@@ -49,7 +51,19 @@ vi.mock('../services/databaseService.js', () => ({
 vi.mock('../services/sessionService.js', () => ({ saveSessionState: vi.fn() }));
 
 import { statusBarModeStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore.js';
-import { positionStore, positionsStore, matchContextStore } from '../stores/positionStore.js';
+import { positionStore, positionsStore, matchContextStore, openLibrary } from '../stores/positionStore.js';
+import { useLibrary } from '../__mocks__/wails.js';
+
+/** @type {number[]} the library the bindings serve; a new position is appended by its save */
+let library = [];
+/** @param {number[]} ids */
+async function openLibraryOf(ids) {
+    library = [...ids];
+    useLibrary(db, library);
+    await openLibrary({ reset: true });
+}
+/** The ids of the list on screen, read the way a paged list gives them. */
+const listIds = () => positionsStore.idsBetween(0, get(positionsStore).length);
 import { analysisStore, emptyAnalysis } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
@@ -117,7 +131,7 @@ async function openSearchFromLibrary() {
     const ids = [11, 12, 13, 14];
     const byId = new Map(ids.map((id) => [id, libraryPosition(id)]));
     positionsStore.setLoader(async (wanted) => wanted.map((id) => byId.get(id)).filter(Boolean));
-    positionsStore.setIds(ids, { reset: true });
+    await openLibraryOf(ids);
     await positionsStore.getPosition(2);
     currentPositionIndexStore.set(2);
     positionStore.set(libraryPosition(13));
@@ -136,8 +150,10 @@ beforeEach(() => {
     lastSearchStore.set(null);
     setSearchState('', null, false);
     analysisStore.set(emptyAnalysis());
-    db.SaveIndividualPosition.mockResolvedValue({ id: 99, existed: false });
-    db.ListPositionIDs.mockResolvedValue([11, 12, 13, 14, 99]);
+    db.SaveIndividualPosition.mockImplementation(async () => {
+        if (!library.includes(99)) library.push(99);
+        return { id: 99, existed: false };
+    });
 });
 
 describe('saving the Search scratch board', () => {
@@ -188,7 +204,7 @@ describe('saving the Search scratch board', () => {
         expect(get(activeTabStore)).toBe('search');
         expect(get(positionStore)).toEqual(board);
         expect(get(currentPositionIndexStore)).toBe(2);
-        expect(get(positionsStore).ids).toEqual([11, 12, 13, 14]);
+        expect(await listIds()).toEqual([11, 12, 13, 14]);
         expect(lastStatus()).toEqual({ i18nKey: 'status.scratchBoardAlreadyStored', i18nParams: { id: 1234 } });
     });
 
@@ -196,7 +212,7 @@ describe('saving the Search scratch board', () => {
         await openSearchFromLibrary();
 
         await saveCurrentPosition();
-        expect(get(positionsStore).ids).toEqual([11, 12, 13, 14, 99]);
+        expect(await listIds()).toEqual([11, 12, 13, 14, 99]);
 
         await exitEditMode();
         expect(get(statusBarModeStore)).toBe('NORMAL');
@@ -211,10 +227,10 @@ describe('saving the Search scratch board', () => {
         lastSearchStore.set({ command: 's cube', position: '{}' });
 
         await saveCurrentPosition();
-        expect(get(positionsStore).ids).toEqual([11, 12, 13, 14]);
+        expect(await listIds()).toEqual([11, 12, 13, 14]);
 
         await exitEditMode();
-        expect(get(positionsStore).ids).toEqual([11, 12, 13, 14]);
+        expect(await listIds()).toEqual([11, 12, 13, 14]);
         expect(get(currentPositionIndexStore)).toBe(2);
         expect(get(positionStore).id).toBe(13);
     });
@@ -233,13 +249,13 @@ describe('saving the Search scratch board', () => {
 
         await saveCurrentPosition();
         expect(get(statusBarModeStore)).toBe('EDIT');
-        expect(get(positionsStore).ids).toEqual([21, 22]);
+        expect(await listIds()).toEqual([21, 22]);
 
         await exitEditMode();
         expect(get(statusBarModeStore)).toBe('MATCH');
         expect(get(matchContextStore).matchID).toBe(5);
         expect(get(matchContextStore).currentIndex).toBe(1);
-        expect(get(positionsStore).ids).toEqual([21, 22]);
+        expect(await listIds()).toEqual([21, 22]);
     });
 
     test('entered over another list shown in NORMAL mode (a deck, a statistics selection), it is left alone', async () => {
@@ -250,7 +266,7 @@ describe('saving the Search scratch board', () => {
 
         await saveCurrentPosition();
 
-        expect(get(positionsStore).ids).toEqual([12, 13]);
+        expect(await listIds()).toEqual([12, 13]);
         expect(get(currentPositionIndexStore)).toBe(1);
     });
 
@@ -271,12 +287,12 @@ describe('saving the Search scratch board', () => {
 
         await saveCurrentPosition();
         expect(db.SaveIndividualPosition).toHaveBeenCalledTimes(1);
-        expect(get(positionsStore).ids).toEqual(ids);
+        expect(await listIds()).toEqual(ids);
 
         await exitEditMode();
         expect(get(statusBarModeStore)).toBe('COLLECTION');
         expect(get(activeCollectionStore)).toEqual(collection);
-        expect(get(positionsStore).ids).toEqual(ids);
+        expect(await listIds()).toEqual(ids);
         expect(get(collectionPositionsStore).map((p) => p.id)).toEqual(ids);
         expect(get(currentPositionIndexStore)).toBe(2);
         expect(get(positionStore).id).toBe(13);
@@ -338,16 +354,17 @@ describe('the list behind the Eval board', () => {
         const ids = [11, 12, 13, 14];
         const byId = new Map(ids.map((id) => [id, libraryPosition(id)]));
         positionsStore.setLoader(async (wanted) => wanted.map((id) => byId.get(id)).filter(Boolean));
-        positionsStore.setIds(ids, { reset: true });
+        await openLibraryOf(ids);
         await positionsStore.getPosition(2);
         currentPositionIndexStore.set(2);
         positionStore.set(libraryPosition(13));
         await enterEvalMode();
+        library.push(99); // what the save wrote
 
         expect(await joinLibraryBehindScratchBoard(99)).toBe(true);
         await exitEvalMode();
 
-        expect(get(positionsStore).ids).toEqual([11, 12, 13, 14, 99]);
+        expect(await listIds()).toEqual([11, 12, 13, 14, 99]);
         expect(get(currentPositionIndexStore)).toBe(2);
     });
 
@@ -384,7 +401,7 @@ describe('the list behind the Eval board', () => {
         await exitEvalMode();
 
         expect(get(statusBarModeStore)).toBe('COLLECTION');
-        expect(get(positionsStore).ids).toEqual(ids);
+        expect(await listIds()).toEqual(ids);
         expect(get(currentPositionIndexStore)).toBe(2);
     });
 });
@@ -394,7 +411,7 @@ async function openEvalFromLibrary() {
     const ids = [11, 12, 13, 14];
     const byId = new Map(ids.map((id) => [id, libraryPosition(id)]));
     positionsStore.setLoader(async (wanted) => wanted.map((id) => byId.get(id)).filter(Boolean));
-    positionsStore.setIds(ids, { reset: true });
+    await openLibraryOf(ids);
     await positionsStore.getPosition(2);
     currentPositionIndexStore.set(2);
     positionStore.set(libraryPosition(13));
@@ -463,7 +480,7 @@ describe('saving the Eval scratch board (#399)', () => {
         await exitEvalMode();
 
         expect(get(statusBarModeStore)).toBe('NORMAL');
-        expect(get(positionsStore).ids).toEqual([11, 12, 13, 14, 99]);
+        expect(await listIds()).toEqual([11, 12, 13, 14, 99]);
         expect(get(currentPositionIndexStore)).toBe(2);
         expect(get(positionStore).id).toBe(13);
     });
@@ -495,7 +512,7 @@ describe('saving the Eval scratch board (#399)', () => {
         expect(get(statusBarModeStore)).toBe('MATCH');
         expect(get(matchContextStore).matchID).toBe(5);
         expect(get(matchContextStore).currentIndex).toBe(1);
-        expect(get(positionsStore).ids).toEqual([21, 22]);
+        expect(await listIds()).toEqual([21, 22]);
         expect(get(currentPositionIndexStore)).toBe(1);
     });
 

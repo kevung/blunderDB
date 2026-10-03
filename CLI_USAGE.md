@@ -487,6 +487,7 @@ Shows position details:
 
 **Options:**
 - `--limit` - Maximum number of items to display (default: 10)
+- `--offset` - Number of positions to skip before listing; only that window is read
 
 ### Show Database Statistics
 
@@ -578,7 +579,7 @@ A row is keyed by a player **name exactly as it appears in the matches**, so som
 ./blunderDB list --db database.db --type players --format csv
 ```
 
-**Reading the output:** a `—` (an empty field in CSV) marks a figure that was never measured, which is not the same as zero. Luck in particular is only available for matches imported since database schema 2.15.0, and only from formats that carry it (XG, gnuBG — not BGF or Jellyfish `.mat`); re-import the source files to obtain it. The `luck_rolls` column says how many rolls the average covers.
+**Reading the output:** a `—` (an empty field in CSV) marks a figure that was never measured, which is not the same as zero. Luck in particular is only available for matches imported since database schema 2.15.0, and only from formats that carry it (XG, gnuBG — not BGF or Jellyfish `.mat`). Re-importing the source file is not enough — the import recognises a duplicate and takes only its study marks: delete the match, then import it again. The `luck_rolls` column says how many rolls the average covers.
 
 **CSV columns:** `player`, `matches`, `wins`, `losses`, `decisions`, `pr`, `pr_checker`, `pr_cube`, `snowie_er`, `errors`, `blunders`, `luck_rate_mp`, `luck_rolls`.
 
@@ -2593,6 +2594,8 @@ Options:
     	Maximum number of items to list (default 10)
   -metric string
     	Metric to display: pr or mwc (stats only) (default "pr")
+  -offset int
+    	Number of positions to skip before listing (positions only)
   -player string
     	Filter by player name (stats only)
   -queue
@@ -2953,19 +2956,31 @@ no rule names is listed apart, per plan of play, outside the ranking (JSON:
 Cost is the share of the filter's PR the group accounts for; an error is a
 counted decision costing at least the library's Error threshold.
 
+--quiz and --deck turn the ranking into study: --quiz draws positions at
+random from the three costliest groups (or the one --group names), --deck
+makes an Anki deck of all their positions.
+
 Options:
   -db string
     	Path to the database file (required)
   -decision-type string
     	Decision type: all, checker, or cube (default "all")
+  -deck string
+    	Create an Anki deck of this name from the positions of the worst groups
   -format string
     	Output format: text or json (default "text")
   -from string
     	Start date filter YYYY-MM-DD
+  -group int
+    	With --quiz or --deck: the rank of one group (1 = costliest) instead of the three costliest
   -limit int
     	Maximum number of groups shown (text only; 0 = all) (default 20)
   -player string
     	Only this player's decisions
+  -quiz
+    	Draw a quiz: position ids picked at random from the worst groups, for the Decision exercise or quiz_grade
+  -quiz-size int
+    	Number of positions --quiz draws (default 20)
   -to string
     	End date filter YYYY-MM-DD
   -tournament string
@@ -2973,6 +2988,8 @@ Options:
 
 Examples:
   blunderdb stats recurring --db database.db --player "Alice"
+  blunderdb stats recurring --db database.db --quiz --format json
+  blunderdb stats recurring --db database.db --group 1 --deck "My worst group"
   blunderdb stats recurring --db database.db --decision-type checker --format json
 ```
 

@@ -63,6 +63,9 @@ type Summary struct {
 	// LivingCollectionsSkipped names the imported collections whose
 	// namesake in the target is living, and so received no members.
 	LivingCollectionsSkipped []string `json:"livingCollectionsSkipped,omitempty"`
+	// FlagsApplied counts the source-tool study marks a skipped duplicate
+	// still delivered to its stored positions (ADR-0006).
+	FlagsApplied int `json:"flagsApplied,omitempty"`
 	// BatchID is the import batch these figures belong to, 0 when the caller
 	// opened none. /v1/imports.* fills it so a client can ask for the full
 	// end-of-import report afterwards.

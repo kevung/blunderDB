@@ -15,7 +15,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// The season ranking (ADR-0061): the places of several finished tournaments turned into points
+// The season ranking (ADR-0062): the places of several finished tournaments turned into points
 // by a configurable scale and summed per person, with an optional club Elo replayed over every
 // match they played. It is derived at every call and never stored, like the standings.
 
@@ -37,7 +37,7 @@ type SeasonQuery struct {
 	Points []float64 `json:"points,omitempty"`
 	// Participation is added for every finished tournament a person is ranked in.
 	Participation float64 `json:"participation,omitempty"`
-	// Elo replays a club rating over the season's matches (ADR-0061 §3).
+	// Elo replays a club rating over the season's matches (ADR-0062 §3).
 	Elo bool `json:"elo,omitempty"`
 }
 
@@ -93,7 +93,7 @@ func placePoints(scale []float64, rank, tied int) float64 {
 	return sum / float64(tied)
 }
 
-// eloUpdate is the FIBS formula (ADR-0061 §3): the expected score of the higher-rated player
+// eloUpdate is the FIBS formula (ADR-0062 §3): the expected score of the higher-rated player
 // in an n-point match, and K = 4·√n.
 func eloUpdate(winner, loser float64, n int) (float64, float64) {
 	if n < 1 {

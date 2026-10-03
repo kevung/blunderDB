@@ -221,7 +221,7 @@ func (cli *CLI) runTournamentStandings(args []string) error {
 // ── ranking ──────────────────────────────────────────────────────────────────
 
 // runTournamentRanking prints the season ranking: the places of several finished tournaments
-// turned into points and summed per person (ADR-0061).
+// turned into points and summed per person (ADR-0062).
 func (cli *CLI) runTournamentRanking(args []string) error {
 	fs, dbPath := tournamentFlagSet("ranking", "Print a season ranking: the finished tournaments of a Rencontre or a period, scored by place.",
 		"blunderdb tournament ranking --db base.db --season --from 2026-01-01 --to 2026-12-31",
