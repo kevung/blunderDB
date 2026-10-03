@@ -145,7 +145,7 @@
         { key: 'source', label: $t('anki.colSource') },
         { key: 'cards', label: $t('anki.colCards'), narrow: true, align: 'center' },
         { key: 'new', label: $t('anki.colNew'), narrow: true, align: 'center' },
-        { key: 'due', label: $t('anki.colDue'), narrow: true, align: 'center' },
+        { key: 'due', label: $t('anki.colDue'), title: $t('anki.colDueTooltip'), narrow: true, align: 'center' },
         { key: 'actions', label: $t('anki.colActions'), actions: true }
     ]);
 

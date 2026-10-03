@@ -3156,6 +3156,11 @@ laisse le plateau tel qu'il est. Évaluez votre rappel avec les touches
 *1* (À revoir), *2* (Difficile), *3* (Bien), ou *4* (Facile). Appuyez sur *Esc*
 pour arrêter et revenir à la liste des paquets.
 
+Deux comptes portent des noms distincts : la colonne **Échues** de la liste
+compte toutes les cartes dont l'échéance est passée, y compris les cartes
+suspendues ou enterrées ; le chiffre du bouton *Study* ne compte que celles qui
+sont disponibles maintenant, et peut donc être plus petit.
+
 **Les décisions de videau font deux cartes, enchaînées.** Une décision de
 videau est deux questions — « double ? », puis « prend ? » — et blunderDB les
 enregistre depuis toujours comme deux positions. Un paquet qui n'en
