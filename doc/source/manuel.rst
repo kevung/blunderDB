@@ -633,7 +633,7 @@ Panneau Analyse
 ---------------
 
 Le panneau **Analyse** (*CTRL-L*) affiche les données d'analyse de la position
-courante importées depuis eXtreme Gammon (XG), GNUbg ou BGBlitz. Il présente
+courante importées depuis eXtreme Gammon (XG), GNUbg, BGBlitz ou gammonNet. Il présente
 les meilleures alternatives (coups de pions ou décisions de videau) avec leurs
 valeurs d'équité et les erreurs correspondantes. La touche *d* bascule entre
 l'analyse des coups de pions et l'analyse du cube. Lors de la navigation dans
@@ -655,6 +655,12 @@ partir duquel les moteurs s'accordent à dire qu'elle en est une. Le reste du
 temps, il n'y a pas de phrase — ni cadre vide, ni « nous ne savons pas ». Une
 explication fausse coûte plus cher que pas d'explication : elle apprend
 quelque chose d'inexact.
+
+La même phrase accompagne l'erreur là où vous venez de la commettre : au dos
+d'une **carte Anki**, sous l'analyse dévoilée, et dans le **verdict du quiz**
+de l'exercice Décision, sous le coût en mMWC. Les mêmes règles de silence y
+valent : un coup juste, ou une erreur qu'aucune règle n'explique, n'ajoute
+rien.
 
 Lorsqu'une position a été jugée par **plusieurs moteurs**, une bande en tête
 du panneau les met côte à côte : une ligne par moteur, avec sa profondeur et

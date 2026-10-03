@@ -28,9 +28,11 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllCollections: vi.fn(() => Promise.resolve([])),
     LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
     LoadCommandHistory: vi.fn(() => Promise.resolve([])),
-    SaveCommand: vi.fn(() => Promise.resolve())
+    SaveCommand: vi.fn(() => Promise.resolve()),
+    ExplainDecision: vi.fn(() => Promise.resolve({ theme: 'passive', costMp: 111, best: '13/7 8/7' }))
 }));
 
+import { ExplainDecision } from '../../wailsjs/go/database/Database.js';
 import AnkiPanel from '../components/AnkiPanel.svelte';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiViewModeStore, ankiReviewActionStore, ankiPausedSessionStore, ankiAnswerShownStore } from '../stores/ankiStore.js';
 import { analysisStore, selectedMoveStore, emptyAnalysis } from '../stores/analysisStore.js';
@@ -123,6 +125,31 @@ describe('the answer of a review card', () => {
         expect(container.querySelector('.answer-masked')).toBeNull();
         expect(container.textContent).toContain('13/7');
         expect(container.textContent).toContain('24/18');
+    });
+
+    test('the revealed back carries the explanation, and masked it does not', async () => {
+        reviewing(CHECKER_ANALYSIS);
+        const { container } = render(AnkiPanel);
+        await settle();
+        expect(container.querySelector('.explanation')).toBeNull();
+        expect(ExplainDecision).not.toHaveBeenCalledWith(10, '24/18 13/12');
+
+        await fireEvent.click(container.querySelector('.answer-masked'));
+        await settle();
+
+        expect(ExplainDecision).toHaveBeenCalledWith(10, '24/18 13/12');
+        expect(container.querySelector('.explanation')?.textContent).toContain('13/7 8/7');
+    });
+
+    test('no rule applies: the back says nothing more', async () => {
+        vi.mocked(ExplainDecision).mockResolvedValueOnce({ theme: '' });
+        reviewing(CHECKER_ANALYSIS);
+        const { container } = render(AnkiPanel);
+        await settle();
+        await fireEvent.click(container.querySelector('.answer-masked'));
+        await settle();
+
+        expect(container.querySelector('.explanation')).toBeNull();
     });
 
     test('a cube card reveals the facts and the verdict', async () => {

@@ -31,6 +31,7 @@
     import ContextMenu from './ContextMenu.svelte';
     import AnalysisView from './AnalysisView.svelte';
     import ScoreCard from './ScoreCard.svelte';
+    import ExplanationLine from './ExplanationLine.svelte';
     import { buildScoreCard, UNORDERED_SCORES } from '../services/scoreCard.js';
 
     // Read-only store mirrors.
@@ -531,6 +532,8 @@
                         {beaver}
                         {maxCube}
                     />
+                    <!-- Silencieuse quand aucune règle ne s'applique. -->
+                    <ExplanationLine {analysis} neighbours={false} />
                 {:else}
                     <button class="answer-masked" onclick={showAnkiAnswer} title={$t('anki.clickToReveal')}>···</button>
                 {/if}
