@@ -16,7 +16,17 @@ import (
 // docs/adr/0005 (and its amendment for the header's format).
 const TenantHeader = "X-Tenant-ID"
 
+// ReadTenantsHeader is the request header listing the tenants a read spans
+// besides X-Tenant-ID (ADR-0061): comma-separated tenants, in the order the
+// answers come back. Like X-Tenant-ID, the daemon trusts it: the proxy that
+// authenticates the caller decides whom it may read and writes this header;
+// the daemon authorises nothing (ADR-0005). Only the /v1/across.* reads look
+// at it — every other route, and every write, stays on X-Tenant-ID alone.
+const ReadTenantsHeader = "X-Read-Tenants"
+
 type tenantKey struct{}
+
+type readTenantsKey struct{}
 
 // Tenant extracts the X-Tenant-ID header and stores it in the request context.
 // Requests to paths outside public without a tenant are rejected; the
@@ -63,13 +73,56 @@ func Tenant(public map[string]bool, singleTenant bool, errFn func(http.ResponseW
 					"; a deployment with real tenants needs the PostgreSQL backend")
 				return
 			}
+			readSet, msg := readTenants(r, tenant, singleTenant)
+			if msg != "" {
+				errFn(w, r, msg)
+				return
+			}
 			ctx := context.WithValue(r.Context(), tenantKey{}, tenant)
+			ctx = context.WithValue(ctx, readTenantsKey{}, readSet)
 			// Also carry the numeric tenant so the PostgreSQL backend can set the
 			// app.tenant_id GUC when RLS is enabled (no-op otherwise).
 			ctx = storage.WithTenant(ctx, numeric)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
+}
+
+// readTenants builds the request's read set from X-Read-Tenants: the writing
+// tenant first, then each listed one. An absent or blank header is the writing
+// tenant alone — today's behaviour. A malformed header refuses the whole
+// request, whatever its route, rather than be read as a narrower set than the
+// proxy meant: a proxy that sends a broken list has a bug worth surfacing. On
+// a single-tenant backend every listed tenant must be SingleTenantID: SQLite
+// has no other tenant, and the header widens nothing there.
+func readTenants(r *http.Request, writer string, singleTenant bool) (storage.ReadTenants, string) {
+	raw := strings.TrimSpace(strings.Join(r.Header.Values(ReadTenantsHeader), ","))
+	if raw == "" {
+		return storage.ReadTenants{writer}, ""
+	}
+	parts := strings.Split(raw, ",")
+	if len(parts) > storage.MaxReadTenants {
+		return nil, ReadTenantsHeader + " lists " + strconv.Itoa(len(parts)) +
+			" tenants, at most " + strconv.Itoa(storage.MaxReadTenants)
+	}
+	listed := make([]string, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if _, err := storage.ParseTenant(p); err != nil || p == "" {
+			return nil, ReadTenantsHeader + " must be a comma-separated list of " + storage.TenantFormat +
+				", got " + quoteHeader(raw)
+		}
+		if singleTenant && p != SingleTenantID {
+			return nil, "this daemon runs on a single-tenant backend (SQLite): " + ReadTenantsHeader +
+				" may list only " + SingleTenantID + ", got " + quoteHeader(raw)
+		}
+		listed = append(listed, p)
+	}
+	set, err := storage.NewReadTenants(writer, listed)
+	if err != nil {
+		return nil, ReadTenantsHeader + ": " + err.Error()
+	}
+	return set, ""
 }
 
 // quoteHeader quotes a header value for an error message, truncating it so a
@@ -87,4 +140,12 @@ func quoteHeader(v string) string {
 func TenantFromContext(ctx context.Context) (string, bool) {
 	v, ok := ctx.Value(tenantKey{}).(string)
 	return v, ok
+}
+
+// ReadTenantsFromContext returns the read set stored by the Tenant middleware:
+// X-Tenant-ID first, then the tenants X-Read-Tenants lists. It is nil when no
+// tenant is present (public endpoints).
+func ReadTenantsFromContext(ctx context.Context) storage.ReadTenants {
+	v, _ := ctx.Value(readTenantsKey{}).(storage.ReadTenants)
+	return v
 }

@@ -57,7 +57,18 @@ var unboundedPaths = map[string]bool{eventsPath: true}
 var serverOnlyPaths = map[string]string{
 	eventsPath: "a stream that tells a connected client of other clients' gestures; " +
 		"`call` answers one request and has no client to tell, and the desktop shows its own gestures",
+	"/v1/across.searchFind":   whyAcross,
+	"/v1/across.matchesList":  whyAcross,
+	"/v1/across.matchesGet":   whyAcross,
+	"/v1/across.statsCompute": whyAcross,
+	"/v1/across.playerTable":  whyAcross,
 }
+
+// whyAcross is why the across.* reads live outside Paths(): their read set comes from the
+// X-Read-Tenants header an authenticating proxy writes (ADR-0061), and the desktop and `call`
+// hold one tenant, with no proxy and nothing beyond it to read.
+const whyAcross = "a read across the tenants an authenticating proxy lists in X-Read-Tenants; " +
+	"the desktop and `call` hold a single tenant and have no other to read"
 
 // newEventsEpoch draws the prefix of the stream ids: random, so an id tells nothing of when the
 // daemon started, and ids from two runs never compare.

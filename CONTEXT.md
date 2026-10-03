@@ -609,7 +609,8 @@ _Avoid_: user, account, identity
 The owner of a set of Positions, Matches, Collections and decks. On the desktop
 there is exactly one, implicit Tenant: the person whose database file it is. In
 server mode each caller is a distinct Tenant, and nothing one Tenant stores is
-ever visible to another. Deduplication, the Orphan purge, and every other rule
+ever visible to another — except to a read whose Read tenants include it.
+Deduplication, the Orphan purge, and every other rule
 in this glossary apply *within* one Tenant — the same board position stored by
 two Tenants is two rows, not one.
 _Avoid_: user, account, customer
@@ -621,6 +622,16 @@ mode a scope is the Tenant's positive decimal integer (`1`, `42`), never a
 name — the proxy maps names to integers, the daemon refuses anything else
 (ADR-0005, amendment 2026-09-03). "Scope" and "Tenant" name the same concept;
 prefer Tenant in prose and design discussion.
+
+**Read tenants**:
+The Tenants one server read spans: the writing Tenant (`X-Tenant-ID`) first, then
+those the authenticating proxy lists in `X-Read-Tenants`, at most 64 in all. Only
+the `across.*` reads use them, every answer names the Tenant it came from, and a
+write still lands in the writing Tenant alone. The relation behind the list (a
+coach and their students, a club) lives with the caller; blunderDB authorises
+nothing (ADR-0005, ADR-0061). On SQLite, and on the desktop, the Read tenants are
+the single Tenant.
+_Avoid_: shared tenant, linked tenants, permissions
 
 ### Handing a database to someone else
 

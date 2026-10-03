@@ -75,3 +75,4 @@ that come out of them.
 | [0058](0058-une-table-porte-ses-proprietes-et-une-rencontre-se-partage-en-salles.md) | Une table porte ses propriétés, et une Rencontre se partage en salles | `table_setting`, salles d'une épreuve, table réservée/attitrée, vue Toutes les tables |
 | [0059](0059-blunderdb-s-offre-a-un-assistant-par-mcp.md) | blunderDB s'offre à un assistant par MCP | `pkg/blunderdb/mcp`, `/mcp`, `blunderdb mcp`, `--mcp-write` |
 | [0060](0060-un-rollout-est-sa-propre-configuration-et-se-stocke-a-cote.md) | Un rollout est sa propre Configuration, et se stockera à côté de l'Analysis | `pkg/blunderdb/engine/rollout`, recette P8, presets Rapide/Standard, `blunderdb rollout` |
+| [0061](0061-une-lecture-peut-porter-sur-les-tenants-que-le-proxy-liste.md) | Une lecture peut porter sur les tenants que le proxy liste | `X-Read-Tenants`, `/v1/across.*`, `storage.ReadAcross`, club / coach |

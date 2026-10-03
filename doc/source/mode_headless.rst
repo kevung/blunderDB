@@ -1009,6 +1009,41 @@ dans les mêmes tables, sans cloison. Le démon refuse donc, sur ce backend, tou
 chacun les lignes de tous derrière un en-tête qui prétend le contraire. Un
 déploiement qui a réellement plusieurs tenants a besoin du backend PostgreSQL.
 
+.. _headless_tenants_lus:
+
+Lire plusieurs tenants
+----------------------
+
+Un coach qui lit les matchs de ses élèves, un club qui partage une bibliothèque :
+la relation entre ces comptes vit chez l'hôte qui les authentifie, jamais dans le
+démon. Le proxy l'exprime par l'en-tête ``X-Read-Tenants``, une liste de tenants
+séparés par des virgules (``X-Read-Tenants: 2, 3``), qu'il pose à côté de
+``X-Tenant-ID``. Le démon lui fait confiance comme à ``X-Tenant-ID`` et
+n'autorise rien lui-même
+(`ADR-0061 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0061-une-lecture-peut-porter-sur-les-tenants-que-le-proxy-liste.md>`__).
+
+Seules les lectures ``/v1/across.*`` regardent cet en-tête :
+``across.searchFind``, ``across.matchesList``, ``across.matchesGet``,
+``across.statsCompute`` et ``across.playerTable``. Elles lisent ``X-Tenant-ID``
+d'abord, puis chaque tenant listé dans l'ordre de l'en-tête, 64 tenants au plus
+en tout, et chaque résultat porte son tenant d'origine (``"tenant": "2"``). Un id
+n'étant unique que dans son tenant, ``across.matchesGet`` prend le tenant et
+l'id ; un tenant absent de la liste y est refusé. Les bornes ``limit`` et
+``offset`` s'appliquent à chaque tenant.
+
+.. code-block:: bash
+
+   curl -s http://127.0.0.1:8080/v1/across.matchesList \
+     -H 'X-Tenant-ID: 1' -H 'X-Read-Tenants: 2, 3' -d '{"limit":20}'
+
+Toute écriture reste dans ``X-Tenant-ID`` : aucune autre route ne lit
+``X-Read-Tenants``. Sans l'en-tête, une lecture ``across.*`` ne porte que sur
+``X-Tenant-ID``. Un en-tête mal formé (un nom, un élément vide, plus de 64
+tenants) refuse la requête entière, quelle que soit la route. Sur SQLite, qui
+n'a qu'un tenant, la liste ne peut contenir que ``1`` : l'en-tête n'y élargit
+rien. Ces routes sont propres au serveur : le bureau et ``call`` n'ont qu'un
+tenant.
+
 .. _headless_sauvegarde:
 
 Sauvegarde et restauration
@@ -1240,6 +1275,11 @@ Le ``Caddyfile`` authentifie, associe le compte authentifié à l'entier du tena
 effacé toute valeur reçue du client : la garde ``header_up X-Tenant-ID ""``
 précède l'injection, de sorte qu'un en-tête envoyé par le client ne peut
 atteindre le démon quelles que soient les modifications ultérieures du fichier.
+
+Il en va de même pour ``X-Read-Tenants`` (:ref:`headless_tenants_lus`) : le
+proxy retire celui du client, et ne le pose que s'il connaît la relation entre
+les comptes ; les exemples du dépôt n'en connaissent aucune et le retirent
+toujours.
 
 .. literalinclude:: ../../deploy/Caddyfile
    :language: text

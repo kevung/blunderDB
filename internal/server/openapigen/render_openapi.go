@@ -23,7 +23,10 @@ info:
     trusts the X-Tenant-ID request header verbatim and MUST run behind an
     authenticating reverse-proxy (see ADR-0005 and doc/source/mode_headless.rst).
     X-Tenant-ID is the tenant's positive decimal integer; a name is refused
-    with 400 invalid, never mapped to a tenant by this daemon. Idempotency:
+    with 400 invalid, never mapped to a tenant by this daemon. The across.*
+    reads also span the tenants listed in the X-Read-Tenants header, which the
+    same proxy writes and this daemon trusts the same way (ADR-0061): every
+    answer names its tenant, and writes stay in X-Tenant-ID. Idempotency:
     positions.* writes are naturally idempotent through the Zobrist content
     hash — saving the same position twice returns the same row, never a
     duplicate — but positions.save reports created, which a retry would
@@ -165,8 +168,17 @@ func writePathItem(b *strings.Builder, r Route, types map[string]typeInfo, comps
 	if r.Kind == kindStream {
 		b.WriteString("      x-streaming: true\n")
 	}
-	if r.Conditional || r.IfMatchRequired || r.IdempotencyKeySupported {
+	readsAcross := r.Family == "across"
+	if r.Conditional || r.IfMatchRequired || r.IdempotencyKeySupported || readsAcross {
 		b.WriteString("      parameters:\n")
+	}
+	if readsAcross {
+		b.WriteString("        - name: X-Read-Tenants\n")
+		b.WriteString("          in: header\n")
+		b.WriteString("          required: false\n")
+		b.WriteString("          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID); absent, the read is X-Tenant-ID's alone.\n")
+		b.WriteString("          schema:\n")
+		b.WriteString("            type: string\n")
 	}
 	if r.IfMatchRequired {
 		b.WriteString("        - name: If-Match\n")
