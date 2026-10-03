@@ -90,3 +90,42 @@ func deref(v any) any {
 	}
 	return v
 }
+
+// The match list's player filter reads a person, not a spelling: every
+// alias of the named player, and its canonical, select their matches.
+func testMatchListPlayerAliases(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ms := s.Matches()
+	for _, m := range []domain.Match{
+		{Player1Name: "Alice Martin", Player2Name: "Bob"},
+		{Player1Name: "Carol", Player2Name: "Martin A."},
+		{Player1Name: "Dave", Player2Name: "Erin"},
+	} {
+		if _, err := ms.Save(ctx, "", &m); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := s.Aliases().Set(ctx, "", storage.AliasPlayer, "Martin A.", "Alice Martin"); err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"Alice Martin", "Martin A."} {
+		opts := storage.MatchListOpts{PlayerName: name}
+		n, err := ms.Count(ctx, "", opts)
+		if err != nil {
+			t.Fatal(err)
+		}
+		listed := 0
+		for _, err := range ms.List(ctx, "", opts) {
+			if err != nil {
+				t.Fatal(err)
+			}
+			listed++
+		}
+		if n != 2 || listed != 2 {
+			t.Errorf("player %q: count %d, listed %d, want both spellings' 2 matches", name, n, listed)
+		}
+	}
+	if n, err := ms.Count(ctx, "", storage.MatchListOpts{PlayerName: "Dave"}); err != nil || n != 1 {
+		t.Errorf("unaliased player: count %d, %v, want 1", n, err)
+	}
+}

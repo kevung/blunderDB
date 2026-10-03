@@ -39,6 +39,9 @@ func FindDuplicateSuspects(ctx context.Context, ms storage.MatchStore, scope str
 		if md.DiceHash != h {
 			backfill[md.ID] = h
 		}
+		if h == "" {
+			continue // no real roll: nothing to recognise it by
+		}
 		dm := diceMatch{id: md.ID, p1: md.Player1, p2: md.Player2, length: md.Length, hash: h,
 			players: md.Player1 + " – " + md.Player2}
 		if len(md.Initial) > 0 {

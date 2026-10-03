@@ -118,3 +118,17 @@ func TestFindDuplicateSuspectsBackfillsTheDiceHash(t *testing.T) {
 		t.Errorf("dice hash recomputed from the stored moves = %q, want the import's %q", m.DiceHash, want)
 	}
 }
+
+// A match without one real roll has no dice hash, so two such matches are
+// never suspected of being one.
+func TestDiceMatchHashNeedsARealRoll(t *testing.T) {
+	if h := DiceMatchHash(5, nil, nil); h != "" {
+		t.Errorf("no game: %q, want empty", h)
+	}
+	if h := DiceMatchHash(5, nil, [][][2]int{{}, {{0, 0}}}); h != "" {
+		t.Errorf("only degenerate rolls: %q, want empty", h)
+	}
+	if DiceMatchHash(5, nil, [][][2]int{{{3, 1}}}) == "" {
+		t.Error("a real roll must hash")
+	}
+}

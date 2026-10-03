@@ -172,12 +172,35 @@ const matchOrderClause = ` ORDER BY COALESCE(m.match_date, m.import_date) DESC`
 // buildMatchListWhere appends opts filters to the tenant scope. next is the next
 // free placeholder number ($1 is the tenant), so the returned SQL starts with
 // " AND …". Mirrors the SQLite builder; the two must stay in sync.
+// playerFilterNames are the names opts.PlayerName stands for: its spellings
+// when the store resolved them, the name alone otherwise.
+func playerFilterNames(opts storage.MatchListOpts) []string {
+	if opts.PlayerName == "" {
+		return nil
+	}
+	if len(opts.PlayerSpellings) > 0 {
+		return opts.PlayerSpellings
+	}
+	return []string{opts.PlayerName}
+}
+
+// withPlayerSpellings resolves opts.PlayerName to every spelling of the
+// person through the tenant's alias table.
+func (s *matchStore) withPlayerSpellings(ctx context.Context, scope string, opts storage.MatchListOpts) (storage.MatchListOpts, error) {
+	names, err := sqlshared.PlayerSpellings(ctx, binder{s.db}.shared(), scope, opts.PlayerName)
+	if err != nil {
+		return opts, fmt.Errorf("postgres: match list aliases: %w", err)
+	}
+	opts.PlayerSpellings = names
+	return opts, nil
+}
+
 func buildMatchListWhere(opts storage.MatchListOpts, next int) (whereSQL string, args []any) {
 	var clauses []string
-	if opts.PlayerName != "" {
-		clauses = append(clauses, fmt.Sprintf("(m.player1_name = $%d OR m.player2_name = $%d)", next, next+1))
-		args = append(args, opts.PlayerName, opts.PlayerName)
-		next += 2
+	if names := playerFilterNames(opts); len(names) > 0 {
+		clauses = append(clauses, fmt.Sprintf("(m.player1_name = ANY($%d) OR m.player2_name = ANY($%d))", next, next))
+		args = append(args, names)
+		next++
 	}
 	if opts.PlayerNameContains != "" {
 		clauses = append(clauses, fmt.Sprintf(`(m.player1_name ILIKE $%d ESCAPE '\' OR m.player2_name ILIKE $%d ESCAPE '\')`, next, next+1))
@@ -251,11 +274,15 @@ func (s *matchStore) Get(ctx context.Context, scope string, id int64) (*domain.M
 
 // Count returns how many matches satisfy the filters of opts.
 func (s *matchStore) Count(ctx context.Context, scope string, opts storage.MatchListOpts) (int, error) {
+	opts, err := s.withPlayerSpellings(ctx, scope, opts)
+	if err != nil {
+		return 0, err
+	}
 	args := []any{tenantID(scope)}
 	whereSQL, filterArgs := buildMatchListWhere(opts, len(args)+1)
 	args = append(args, filterArgs...)
 	var n int
-	err := s.db.QueryRow(ctx, `SELECT COUNT(*) FROM match m
+	err = s.db.QueryRow(ctx, `SELECT COUNT(*) FROM match m
 		 LEFT JOIN tournament t ON m.tournament_id = t.id
 		 WHERE m.tenant_id = $1`+whereSQL, args...).Scan(&n)
 	if err != nil {
@@ -268,6 +295,11 @@ func (s *matchStore) Count(ctx context.Context, scope string, opts storage.Match
 // MatchListOpts streams every match, most recent first.
 func (s *matchStore) List(ctx context.Context, scope string, opts storage.MatchListOpts) iter.Seq2[*domain.Match, error] {
 	return func(yield func(*domain.Match, error) bool) {
+		opts, err := s.withPlayerSpellings(ctx, scope, opts)
+		if err != nil {
+			yield(nil, err)
+			return
+		}
 		args := []any{tenantID(scope)}
 		whereSQL, filterArgs := buildMatchListWhere(opts, len(args)+1)
 		args = append(args, filterArgs...)

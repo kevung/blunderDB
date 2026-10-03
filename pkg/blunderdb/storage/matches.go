@@ -24,10 +24,15 @@ type MatchDice struct {
 }
 
 type MatchListOpts struct {
-	// PlayerName keeps only matches where this exact name is player 1 or
-	// player 2. It is the match-level "my matches" filter — distinct from
-	// StatsFilter.PlayerName, which selects a player's decisions by joining moves.
+	// PlayerName keeps only matches where this name, or any spelling the
+	// player aliases give the same person, is player 1 or player 2 — as the
+	// statistics and the position search read a player. It is the
+	// match-level "my matches" filter — distinct from StatsFilter.PlayerName,
+	// which selects a player's decisions by joining moves.
 	PlayerName string
+	// PlayerSpellings is PlayerName's group of spellings, filled by the store
+	// from the alias table; a caller leaves it empty.
+	PlayerSpellings []string
 	// PlayerNameContains keeps matches where either player's name contains
 	// this text, case-insensitively (ASCII only on SQLite, whose LIKE folds
 	// nothing else), with % and _ taken literally. It serves a search box.
@@ -133,8 +138,9 @@ type MatchStore interface {
 	// stored positions accordingly).
 	SwapPlayers(ctx context.Context, scope string, id int64) error
 
-	// MergePlayers rewrites every occurrence of the given player names to a
-	// single canonical name.
+	// MergePlayers makes every other given player name an alias of the
+	// canonical name; the stored matches keep the names their files wrote,
+	// and every reader that groups players resolves them through the aliases.
 	MergePlayers(ctx context.Context, scope string, names []string, canonical string) error
 
 	// SetLastVisitedPosition records the last position index viewed in a match.

@@ -50,8 +50,21 @@ func CanonicalMatchHash(player1, player2 string, matchLength int, games [][][2]i
 // with the seats swapped) shares it, which MatchHash and CanonicalHash —
 // both over the names — cannot see. The order of the two dice and of the two
 // scores does not matter. initial holds each game's starting score; only the
-// first is read.
+// first is read. It is empty when no game holds a real roll.
 func DiceMatchHash(matchLength int, initial [][2]int, games [][][2]int) string {
+	// A match without one real roll has no dice to recognise it by: every
+	// such match would share a hash and be suspected of being the others.
+	rolls := 0
+	for _, g := range games {
+		for _, d := range g {
+			if d[0] >= 1 && d[0] <= 6 && d[1] >= 1 && d[1] <= 6 {
+				rolls++
+			}
+		}
+	}
+	if rolls == 0 {
+		return ""
+	}
 	var b strings.Builder
 	s1, s2 := 0, 0
 	if len(initial) > 0 {

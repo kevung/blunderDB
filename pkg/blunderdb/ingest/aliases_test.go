@@ -33,8 +33,8 @@ func TestImportAppliesAliasesAfterTheFingerprints(t *testing.T) {
 
 	// The same match under the aliases: not a second match, not a suspect.
 	again := writeGraph(t, s, diceGraph("Martin A.", "Durand B.", g1, g2))
-	if !again.Enriched || again.MatchID != first.MatchID || again.ProbableDuplicate != nil {
-		t.Fatalf("a known spelling of a stored match must enrich it: %+v", again)
+	if !again.Skipped || again.MatchID != first.MatchID || again.ProbableDuplicate != nil {
+		t.Fatalf("a known spelling of a stored match must be found as that match: %+v", again)
 	}
 
 	// Another match under the aliases: stored under the canonical names and

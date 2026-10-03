@@ -155,6 +155,21 @@ func (s *ImportBatchStore) measurePositions(ctx context.Context, scope string, b
 	return row.Scan(&b.Report.PositionsFlagged, &b.Report.PositionsWithoutAnalysis)
 }
 
+// playerClause is batchPlayerClause over every spelling the player aliases
+// give each named player, as the statistics read a player.
+func (s *ImportBatchStore) playerClause(ctx context.Context, scope string, players []string) (string, []any, error) {
+	var names []string
+	for _, p := range players {
+		group, err := PlayerSpellings(ctx, s.DB, scope, p)
+		if err != nil {
+			return "", nil, fmt.Errorf("import batch player aliases: %w", err)
+		}
+		names = append(names, group...)
+	}
+	clause, args := batchPlayerClause(names)
+	return clause, args, nil
+}
+
 // batchPlayerClause narrows a stats query to the decisions of the named
 // players, seat-aware: a row counts only when one of them IS the player who
 // took the decision. Empty names score both seats, and the caller says so in
@@ -186,7 +201,10 @@ func batchPlayerClause(players []string) (string, []any) {
 // the panel must render as "no analysis" rather than as a perfect game.
 func (s *ImportBatchStore) measurePerformance(ctx context.Context, scope string, b *domain.ImportBatch, players []string) error {
 	tenant, targs := s.DB.TenantFilter("p", scope)
-	playerClause, playerArgs := batchPlayerClause(players)
+	playerClause, playerArgs, perr := s.playerClause(ctx, scope, players)
+	if perr != nil {
+		return perr
+	}
 	args := append(append([]any{}, targs...), b.ID)
 	args = append(args, playerArgs...)
 
@@ -212,7 +230,10 @@ func (s *ImportBatchStore) measurePerformance(ctx context.Context, scope string,
 // statistics.
 func (s *ImportBatchStore) measureWorst(ctx context.Context, scope string, b *domain.ImportBatch, players []string) error {
 	tenant, targs := s.DB.TenantFilter("p", scope)
-	playerClause, playerArgs := batchPlayerClause(players)
+	playerClause, playerArgs, perr := s.playerClause(ctx, scope, players)
+	if perr != nil {
+		return perr
+	}
 	args := append(append([]any{}, targs...), b.ID)
 	args = append(args, playerArgs...)
 	limit, largs := s.DB.LimitOffset(domain.MaxImportBlunders, 0)
@@ -342,7 +363,10 @@ func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID
 func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID int64, players []string, limit int,
 	reason domain.StudyQueueReason, extraWhere string, extraArgs []any, orderBy string) ([]domain.StudyQueueEntry, error) {
 	tenant, targs := s.DB.TenantFilter("p", scope)
-	playerClause, playerArgs := batchPlayerClause(players)
+	playerClause, playerArgs, perr := s.playerClause(ctx, scope, players)
+	if perr != nil {
+		return nil, perr
+	}
 	args := append(append([]any{}, targs...), batchID)
 	args = append(args, playerArgs...)
 	args = append(args, extraArgs...)

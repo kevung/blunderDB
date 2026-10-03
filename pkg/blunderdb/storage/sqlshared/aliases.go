@@ -121,6 +121,20 @@ func aliasMap(ctx context.Context, db Execer, scope string, kind storage.AliasKi
 	return storage.NewAliasMap(list), nil
 }
 
+// PlayerSpellings returns every spelling the player aliases give the person
+// name designates, name's canonical first; just name when no alias touches
+// it, nil for an empty name.
+func PlayerSpellings(ctx context.Context, db Execer, scope string, name string) ([]string, error) {
+	if strings.TrimSpace(name) == "" {
+		return nil, nil
+	}
+	aliases, err := aliasMap(ctx, db, scope, storage.AliasPlayer)
+	if err != nil {
+		return nil, err
+	}
+	return aliases.Group(name), nil
+}
+
 // MergeAliases makes every name of names other than canonical one of its
 // aliases, atomically. An empty canonical or an empty list is ErrInvalid.
 func MergeAliases(ctx context.Context, db Execer, scope string, kind storage.AliasKind, names []string, canonical string) error {

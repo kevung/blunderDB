@@ -134,16 +134,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			if err != nil {
 				return res, err
 			}
-			res = WriteResult{MatchID: id, Skipped: true, FlagsApplied: n}
-			if err := fillStoredMetadata(ctx, tx, scope, id, &g.Match); err != nil {
-				return res, err
-			}
-			if !g.SkipDuplicates {
-				if res.Deepened, err = deepenAnalyses(ctx, tx, scope, g); err != nil {
-					return res, err
-				}
-			}
-			return res, nil
+			return writeDuplicate(ctx, tx, scope, g, id, n)
 		}
 	}
 
@@ -187,10 +178,16 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 		res.ProbableDuplicate = suspect
 		// The same dice under names the aliases say are the same people: a
-		// known spelling of a stored match, enriched like a cross-format copy.
+		// known spelling of a stored match, so the same format's same match.
+		// It follows the re-import rule — a deeper analysis replaces, a
+		// shallower one never does — not the cross-format merge, under which
+		// a 3-ply copy would overwrite a stored rollout of the same engine.
 		if sameID != 0 {
-			enrich = true
-			matchID = sameID
+			n, err := applyFlags(ctx, tx, scope, g)
+			if err != nil {
+				return res, err
+			}
+			return writeDuplicate(ctx, tx, scope, g, sameID, n)
 		}
 	}
 
@@ -439,6 +436,9 @@ func deepenAnalyses(ctx context.Context, tx storage.Tx, scope string, g *MatchGr
 //
 // fileNames are the names the file wrote, before the aliases renamed m's.
 func probableDuplicate(ctx context.Context, tx storage.Tx, scope string, m *domain.Match, fileNames [2]string, players storage.AliasMap) (suspect *domain.DuplicateSuspect, sameID int64, err error) {
+	if m.DiceHash == "" {
+		return nil, 0, nil
+	}
 	others, err := tx.Matches().ListByDiceHash(ctx, scope, m.DiceHash)
 	if err != nil {
 		return nil, 0, err
@@ -538,4 +538,21 @@ func copySessionRules(g *MatchGraph) {
 			}
 		}
 	}
+}
+
+// writeDuplicate finishes the import of a match already stored as id: its
+// missing source metadata is filled and, unless the caller skips duplicates,
+// its analyses deepened. flags is what applyFlags already delivered.
+func writeDuplicate(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph, id int64, flags int) (WriteResult, error) {
+	res := WriteResult{MatchID: id, Skipped: true, FlagsApplied: flags}
+	if err := fillStoredMetadata(ctx, tx, scope, id, &g.Match); err != nil {
+		return res, err
+	}
+	if !g.SkipDuplicates {
+		var err error
+		if res.Deepened, err = deepenAnalyses(ctx, tx, scope, g); err != nil {
+			return res, err
+		}
+	}
+	return res, nil
 }

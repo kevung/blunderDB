@@ -3,7 +3,7 @@
 Statut : acceptée.
 Voir aussi : ADR-0007 (le receveur n'écrit rien, liste blanche `issuance.Carried`), ADR-0028
 (Jacoby et Beaver hors du hachage), ADR-0045 (la transcription réécrit un match) ;
-`tasks/plan-grosses-bases-2026-10/`, GB-C7, étape GB5.5.
+`tasks/plan-grosses-bases-2026-10/`.
 
 ## Contexte
 

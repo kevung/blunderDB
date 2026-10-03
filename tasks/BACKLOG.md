@@ -255,3 +255,4 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 - Rollout GUI : un job instantané peut perdre son bandeau de fin (`startRolloutOfCurrent` remet `outcome: null` après le démarrage).
 - PostgreSQL, suites de l'audit d'écriture par tenant : `positions_postgres.go:227` `ErrConflict` enveloppe la `pgconn.PgError` (texte du pilote vers le client, sans oracle) ; `Tournaments().AddMatch` avec un match étranger ou absent réussit en silence (UPDATE 0 ligne) ; `Analyses.Save` en course avec une suppression rend un autre message (même tenant).
+- Import XG, métadonnées sans colonne (ADR-0067) : commentaires d'en-tête et de pied de match, horloge, table d'équité (MET) ne sont pas importés ; exigent une colonne (ou `match.metadata`) et, pour les commentaires, que xgparser expose `parseCommentSegment`.

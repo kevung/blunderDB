@@ -1,6 +1,7 @@
 package ingest
 
 import (
+	"reflect"
 	"sort"
 	"strings"
 	"time"
@@ -328,7 +329,10 @@ func deepenAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionA
 	}
 
 	if len(incoming.Rollouts) > 0 {
-		if merged := domain.MergeRollouts(existing.Rollouts, incoming.Rollouts); len(merged) != len(existing.Rollouts) {
+		// Existing is passed as MergeRollouts' incoming side so that it wins
+		// a tie in games, as every stored analysis does under this rule; a
+		// new signature or a longer series of a known one still comes in.
+		if merged := domain.MergeRollouts(incoming.Rollouts, existing.Rollouts); !reflect.DeepEqual(merged, existing.Rollouts) {
 			a.Rollouts = merged
 			changed = true
 		}
