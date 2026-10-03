@@ -1,3 +1,4 @@
+import { confirmModalStore } from '../services/confirmService.js';
 import { writable, derived } from 'svelte/store';
 
 import { trainingPipOverrideStore } from './trainingTabStore.js';
@@ -130,7 +131,8 @@ export function togglePanel(name) {
 }
 
 // ── Derived stores (automatic — no manual enumeration) ──
-export const isAnyModalOpen = derived(activeModal, ($m) => $m !== null);
+// The themed confirm dialog layers over the exclusive modals, so it counts too.
+export const isAnyModalOpen = derived([activeModal, confirmModalStore], ([$m, $c]) => $m !== null || $c !== null);
 
 export const matchPanelRefreshTriggerStore = writable(0);
 

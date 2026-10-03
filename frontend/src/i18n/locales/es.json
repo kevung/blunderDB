@@ -363,7 +363,8 @@
         "tabManual": "Manual",
         "tabShortcuts": "Atajo",
         "tabCommands": "Línea de comandos",
-        "tabAbout": "Acerca de"
+        "tabAbout": "Acerca de",
+        "loadFailed": "No se pudo cargar la ayuda."
     },
     "commands": {
         "collectionEmpty": "La colección está vacía",
@@ -1259,11 +1260,11 @@
         "errorDeletingPosition": "Error al eliminar la posición y el análisis asociado",
         "errorEnteringMatchMode": "Error al entrar en el modo de partida",
         "errorHandlingDroppedDb": "Error al gestionar la base de datos arrastrada",
-        "droppedDbTitle": "Base de datos ya abierta",
         "droppedDbMessage": "Ya hay una base de datos abierta.\n\n¿Qué desea hacer con «{filename}»?",
         "droppedDbOpen": "Abrir",
         "droppedDbMerge": "Fusionar",
         "droppedDbCancel": "Cancelar",
+        "directionLoadFailed": "No se pudo cargar la vista Dirección.",
         "errorLoadingAllPositions": "Error al cargar todas las posiciones",
         "errorLoadingByFilters": "Error al cargar posiciones por filtros",
         "errorSavingPosition": "Error al guardar la posición, el análisis y el comentario",

@@ -120,7 +120,9 @@
 
     <!-- Tab Content -->
     <div class="tab-content" bind:this={contentArea}>
-        {#if !$help.ready}
+        {#if $help.failed}
+            <p class="help-loading" data-testid="help-failed">{$t('help.loadFailed')}</p>
+        {:else if !$help.ready}
             <p class="help-loading" data-testid="help-loading"><span class="spinner"></span></p>
         {:else if activeTab === 'manual'}
             <!-- eslint-disable-next-line svelte/no-at-html-tags -- generated help corpus (cmd/help-gen escapes every string it renders; guarded by help.safety.test.js), no runtime interpolation -->

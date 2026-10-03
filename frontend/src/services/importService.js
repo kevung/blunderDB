@@ -1,4 +1,5 @@
 import { tMsg, translate } from '../i18n';
+import { chooseAction } from './confirmService.js';
 import { get } from 'svelte/store';
 import {
     OpenImportDatabaseDialog,
@@ -7,7 +8,6 @@ import {
     CollectImportableFiles,
     ReadFileContent,
     ShowAlert,
-    ShowQuestionDialog,
     IsDirectory,
     LooksLikeOGID
 } from '../../wailsjs/go/gui/App.js';
@@ -1034,17 +1034,17 @@ export async function handleDbFileDrop(dbPath) {
     } else {
         const filename = dbPath.split('/').pop().split('\\').pop();
         try {
-            const openLabel = translate('status.droppedDbOpen');
-            const mergeLabel = translate('status.droppedDbMerge');
-            const answer = await ShowQuestionDialog(
-                translate('status.droppedDbTitle'),
+            const answer = await chooseAction(
                 translate('status.droppedDbMessage', { filename }),
-                [openLabel, mergeLabel, translate('status.droppedDbCancel')],
-                mergeLabel
+                [
+                    { value: 'open', label: translate('status.droppedDbOpen') },
+                    { value: 'merge', label: translate('status.droppedDbMerge'), primary: true }
+                ],
+                { cancelLabel: translate('status.droppedDbCancel') }
             );
-            if (answer === openLabel) {
+            if (answer === 'open') {
                 await openDatabaseByPath(dbPath);
-            } else if (answer === mergeLabel) {
+            } else if (answer === 'merge') {
                 await importDatabaseByPath(dbPath);
             }
         } catch (error) {

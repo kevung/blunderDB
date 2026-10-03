@@ -55,6 +55,8 @@ vi.mock('../services/positionService.js', () => ({ loadAllPositions }));
 const { handleDbFileDrop } = await import('../services/importService.js');
 const { databasePathStore } = await import('../stores/databaseStore.js');
 const { setLanguage } = await import('../i18n');
+const { confirmModalStore, resolveConfirm } = await import('../services/confirmService.js');
+const { get } = await import('svelte/store');
 
 beforeEach(() => {
     vi.clearAllMocks();
@@ -62,23 +64,28 @@ beforeEach(() => {
 });
 
 describe('handleDbFileDrop', () => {
-    test('the dialog is in the active language and "Open" opens the dropped file', async () => {
+    test('the themed dialog is in the active language and Open opens the dropped file', async () => {
         await setLanguage('fr');
-        ShowQuestionDialog.mockImplementation(async (_title, _msg, buttons) => buttons[0]);
-
-        await handleDbFileDrop('/x/autre.db');
-
-        const [title, message, buttons] = ShowQuestionDialog.mock.calls[0];
-        expect(title).toBe('Base de données déjà ouverte');
-        expect(message).toContain('autre.db');
-        expect(buttons).toEqual(['Ouvrir', 'Fusionner', 'Annuler']);
+        const done = handleDbFileDrop('/x/autre.db');
+        const message = await vi.waitFor(() => {
+            const m = get(confirmModalStore);
+            expect(m).not.toBeNull();
+            return m;
+        });
+        expect(message.message).toContain('autre.db');
+        expect(message.choices.map((c) => c.label)).toEqual(['Ouvrir', 'Fusionner']);
+        expect(message.cancelLabel).toBe('Annuler');
+        resolveConfirm('open');
+        await done;
         expect(openDatabaseByPath).toHaveBeenCalledWith('/x/autre.db');
         await setLanguage('en');
     });
 
-    test('Cancel does nothing', async () => {
-        ShowQuestionDialog.mockImplementation(async (_title, _msg, buttons) => buttons[2]);
-        await handleDbFileDrop('/x/autre.db');
+    test('dismissing does nothing', async () => {
+        const done = handleDbFileDrop('/x/autre.db');
+        await vi.waitFor(() => expect(get(confirmModalStore)).not.toBeNull());
+        resolveConfirm(false);
+        await done;
         expect(openDatabaseByPath).not.toHaveBeenCalled();
     });
 });

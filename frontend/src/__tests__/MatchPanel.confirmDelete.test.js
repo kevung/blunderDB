@@ -7,7 +7,9 @@
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
+import { get } from 'svelte/store';
 import { answerConfirm } from './confirmHelper.js';
+import { confirmModalStore, resolveConfirm } from '../services/confirmService.js';
 
 const MATCH = { id: 7, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, match_date: '2026-01-15', game_count: 2 };
 const MOVES = [];
@@ -38,7 +40,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 
 import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { GetAllMatches, DeleteMatch } from '../../wailsjs/go/database/Database.js';
+import { GetAllMatches, DeleteMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
 
 describe('MatchPanel — deleting a match', () => {
@@ -69,5 +71,24 @@ describe('MatchPanel — deleting a match', () => {
         await fireEvent.click(del);
         await answerConfirm(true);
         await vi.waitFor(() => expect(DeleteMatch).toHaveBeenCalledWith(7));
+    });
+
+    test('Enter on the confirmation does not also open the match', async () => {
+        const { container } = render(MatchPanel);
+        await vi.waitFor(() => expect(GetAllMatches).toHaveBeenCalled());
+        const row = await vi.waitFor(() => {
+            const r = container.querySelector('tbody tr');
+            expect(r).not.toBeNull();
+            return r;
+        });
+        await fireEvent.click(row);
+        const del = container.querySelector('button.icon-btn.delete');
+        await fireEvent.click(del);
+        await vi.waitFor(() => expect(get(confirmModalStore)).not.toBeNull());
+        const loadsBefore = GetMatchMovePositions.mock.calls.length;
+        await fireEvent.keyDown(document.body, { key: 'Enter' });
+        await new Promise((r) => setTimeout(r, 50));
+        expect(GetMatchMovePositions.mock.calls.length).toBe(loadsBefore);
+        resolveConfirm(false);
     });
 });

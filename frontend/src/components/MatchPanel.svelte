@@ -1,5 +1,5 @@
 <script>
-    import { confirmAction } from '../services/confirmService.js';
+    import { confirmAction, confirmModalStore } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
@@ -593,6 +593,8 @@
 
     function handleKeyDown(event) {
         if (!visible) return;
+        // A confirmation is up: Enter / Escape / Delete belong to it.
+        if (get(confirmModalStore)) return;
         // Don't intercept keys while the merge players modal is open
         if (showMergePlayersModal) return;
 

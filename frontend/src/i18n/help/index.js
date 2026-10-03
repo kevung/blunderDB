@@ -1,3 +1,4 @@
+import { logger } from '../../utils/logger.js';
 import { language, LOCALES, FALLBACK_LOCALE } from '../index.js';
 import { writable, derived } from 'svelte/store';
 
@@ -15,29 +16,38 @@ const maps = {};
 // store below re-evaluates even though `language` itself did not change.
 const helpVersion = writable(0);
 
+const failed = new Set();
+
 async function loadBundle(lang) {
     if (maps[lang] || !LOCALES.includes(lang)) return;
     const loader = helpLoaders[`./${lang}.js`];
     if (!loader) return;
-    const mod = await loader();
-    maps[lang] = mod.default ?? mod;
+    try {
+        const mod = await loader();
+        maps[lang] = mod.default ?? mod;
+        failed.delete(lang);
+    } catch (error) {
+        failed.add(lang);
+        logger.error(`could not load the ${lang} help bundle:`, error);
+    }
 }
 
-/** Fetch and cache the help bundle for `lang` and the English fallback; a no-op once cached. */
+/** Fetch and cache the help bundle for `lang` and the English fallback; a no-op once cached. Never rejects. */
 export async function loadHelpFor(lang) {
-    await Promise.all([loadBundle(FALLBACK_LOCALE), loadBundle(lang)]);
+    await Promise.all([...new Set([FALLBACK_LOCALE, lang])].map(loadBundle));
     helpVersion.update((n) => n + 1);
 }
 
 // Reactive help content for the active language. Falls back to English per-tab,
-// so a partially-translated locale still renders English for any missing tab.
-// `ready` is false until the bundles requested by loadHelpFor have landed
-// (HelpModal shows a spinner meanwhile); helpVersion ticks the store again.
+// so a partially-translated locale, or one whose bundle failed to load, still
+// renders English. `ready` is false until loadHelpFor has settled; `failed` is
+// true when not even English could be loaded.
 export const help = derived([language, helpVersion], ([$lang]) => {
     const fallback = maps[FALLBACK_LOCALE] || {};
     const m = maps[$lang] || {};
     return {
-        ready: !!(maps[FALLBACK_LOCALE] && maps[$lang]),
+        ready: !!maps[FALLBACK_LOCALE] && (!!maps[$lang] || failed.has($lang)),
+        failed: failed.has(FALLBACK_LOCALE),
         manual: m.manual ?? fallback.manual ?? '',
         shortcuts: m.shortcuts ?? fallback.shortcuts ?? '',
         commands: m.commands ?? fallback.commands ?? '',

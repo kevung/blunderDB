@@ -363,7 +363,8 @@
         "tabManual": "Manual",
         "tabShortcuts": "Shortcut",
         "tabCommands": "Command Line",
-        "tabAbout": "About"
+        "tabAbout": "About",
+        "loadFailed": "The help could not be loaded."
     },
     "commands": {
         "collectionEmpty": "Collection is empty",
@@ -1259,11 +1260,11 @@
         "errorDeletingPosition": "Error deleting position and associated analysis",
         "errorEnteringMatchMode": "Error entering match mode",
         "errorHandlingDroppedDb": "Error handling dropped database",
-        "droppedDbTitle": "Database already open",
         "droppedDbMessage": "A database is already open.\n\nWhat would you like to do with \"{filename}\"?",
         "droppedDbOpen": "Open",
         "droppedDbMerge": "Merge",
         "droppedDbCancel": "Cancel",
+        "directionLoadFailed": "Could not load the Direction view.",
         "errorLoadingAllPositions": "Error loading all positions",
         "errorLoadingByFilters": "Error loading positions by filters",
         "errorSavingPosition": "Error saving position, analysis, and comment",

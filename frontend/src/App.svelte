@@ -78,7 +78,7 @@
     import Board from './components/Board.svelte';
     import DirectionFullscreenToggle from './components/direction/DirectionFullscreenToggle.svelte';
     import { directionFullscreenStore } from './services/directionFullscreen.js';
-    import { directionPageShownStore } from './stores/directionStore';
+    import { directionPageShownStore, directionViewLoadedStore } from './stores/directionStore';
     import MatchInfoBar from './components/MatchInfoBar.svelte';
     import ViewTabs from './components/ViewTabs.svelte';
     import TabbedPanel from './components/TabbedPanel.svelte';
@@ -101,7 +101,17 @@
     let DirectionViewComponent = $state(null);
     $effect(() => {
         if ($directionPageShownStore && !DirectionViewComponent) {
-            import('./components/direction/DirectionView.svelte').then((m) => (DirectionViewComponent = m.default));
+            import('./components/direction/DirectionView.svelte')
+                .then((m) => {
+                    DirectionViewComponent = m.default;
+                    directionViewLoadedStore.set(true);
+                })
+                .catch((error) => {
+                    // Back to the board: the page must not keep claiming keys it does not show.
+                    logger.error('could not load the Direction view:', error);
+                    setStatusBarMessage(tMsg('status.directionLoadFailed'));
+                    activeTabStore.set('matches');
+                });
         }
     });
     let panelHeight = $state(DEFAULT_PANEL_HEIGHT);

@@ -363,7 +363,8 @@
         "tabManual": "Handbuch",
         "tabShortcuts": "Tastenkürzel",
         "tabCommands": "Befehlszeile",
-        "tabAbout": "Über"
+        "tabAbout": "Über",
+        "loadFailed": "Die Hilfe konnte nicht geladen werden."
     },
     "commands": {
         "collectionEmpty": "Sammlung ist leer",
@@ -1259,11 +1260,11 @@
         "errorDeletingPosition": "Fehler beim Löschen der Position und der zugehörigen Analyse",
         "errorEnteringMatchMode": "Fehler beim Wechsel in den Match-Modus",
         "errorHandlingDroppedDb": "Fehler beim Verarbeiten der abgelegten Datenbank",
-        "droppedDbTitle": "Datenbank bereits geöffnet",
         "droppedDbMessage": "Es ist bereits eine Datenbank geöffnet.\n\nWas möchten Sie mit „{filename}“ tun?",
         "droppedDbOpen": "Öffnen",
         "droppedDbMerge": "Zusammenführen",
         "droppedDbCancel": "Abbrechen",
+        "directionLoadFailed": "Die Ansicht „Direction“ konnte nicht geladen werden.",
         "errorLoadingAllPositions": "Fehler beim Laden aller Positionen",
         "errorLoadingByFilters": "Fehler beim Laden der Positionen nach Filtern",
         "errorSavingPosition": "Fehler beim Speichern von Position, Analyse und Kommentar",

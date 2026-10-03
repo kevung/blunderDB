@@ -29,7 +29,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     LoadAnalysis: vi.fn().mockResolvedValue(null)
 }));
 
-vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn().mockResolvedValue(true) }));
+vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn().mockResolvedValue(true), confirmModalStore: { subscribe: (run) => (run(null), () => {}) } }));
 
 import {
     CreateCollection,

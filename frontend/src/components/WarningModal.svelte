@@ -7,21 +7,28 @@
      * confirmation where Enter confirms and Escape cancels whatever has focus;
      * onConfirm/onClose are required.
      */
-    let { message = '', visible = false, onClose = () => {}, mode = 'info', onConfirm = () => {}, confirmLabel = '', cancelLabel = '' } = $props();
+    let { message = '', visible = false, onClose = () => {}, mode = 'info', onConfirm = () => {}, confirmLabel = '', cancelLabel = '', choices = [], onChoose = () => {} } = $props();
 
     function handleKeyDown(event) {
         if (mode === 'confirm' && event.key === 'Enter') {
             // preventDefault so a focused button's own native Enter-activates-click doesn't
             // also fire — this handler is the single source of truth for what Enter does here.
             event.preventDefault();
-            onConfirm();
+            if (choices.length) onChoose((choices.find((c) => c.primary) ?? choices[0]).value);
+            else onConfirm();
         }
     }
 </script>
 
 {#snippet confirmActions()}
     <button onclick={onClose}>{cancelLabel || $t('common.cancel')}</button>
-    <button class="danger" onclick={onConfirm}>{confirmLabel || $t('common.delete')}</button>
+    {#if choices.length}
+        {#each choices as c (c.value)}
+            <button class={c.primary ? 'primary' : ''} data-testid="choice-{c.value}" onclick={() => onChoose(c.value)}>{c.label}</button>
+        {/each}
+    {:else}
+        <button class="danger" onclick={onConfirm}>{confirmLabel || $t('common.delete')}</button>
+    {/if}
 {/snippet}
 
 <!-- Confirm mode must be able to layer above any other modal or always-mounted panel it was

@@ -248,6 +248,9 @@ export const directionOpenStore = derived(openDirectionIdStore, ($id) => $id !==
  * La page Direction remplace le plateau : onglet Tournois actif ET Direction ouverte (ADR-0047).
  * App.svelte et le clavier (services/directionKeys.js) lisent ce seul signal.
  */
+// True once the lazily-loaded Direction view is mounted: until then the board is what is on screen.
+export const directionViewLoadedStore = writable(false);
+
 export const directionPageShownStore = derived([activeTabStore, directionOpenStore], ([$tab, $open]) => $tab === 'tournaments' && $open);
 
 /**
