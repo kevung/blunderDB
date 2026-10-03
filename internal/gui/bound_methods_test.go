@@ -10,6 +10,13 @@ import (
 // frontend, so a newly exported method cannot become reachable from the
 // webview without a deliberate update here.
 var boundAppMethods = []string{
+	"AssistantAsk",
+	"AssistantCancel",
+	"AssistantConfirm",
+	"AssistantHasKey",
+	"AssistantPresets",
+	"AssistantReset",
+	"AssistantSetKey",
 	"BearoffStatus",
 	"CancelCubeMatrix",
 	"CancelEvaluationAtRest",

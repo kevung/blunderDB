@@ -1,3 +1,100 @@
+export namespace assistant {
+	
+	export class Entry {
+	    kind: string;
+	    text?: string;
+	    tool?: string;
+	    args?: string;
+	    result?: string;
+	    free?: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Entry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.text = source["text"];
+	        this.tool = source["tool"];
+	        this.args = source["args"];
+	        this.result = source["result"];
+	        this.free = source["free"];
+	    }
+	}
+	export class Pending {
+	    tool: string;
+	    title: string;
+	    args: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Pending(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tool = source["tool"];
+	        this.title = source["title"];
+	        this.args = source["args"];
+	    }
+	}
+	export class Preset {
+	    id: string;
+	    name: string;
+	    baseURL: string;
+	    model: string;
+	    remote: boolean;
+	    needsKey: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Preset(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.baseURL = source["baseURL"];
+	        this.model = source["model"];
+	        this.remote = source["remote"];
+	        this.needsKey = source["needsKey"];
+	    }
+	}
+	export class Turn {
+	    entries: Entry[];
+	    pending?: Pending;
+	
+	    static createFrom(source: any = {}) {
+	        return new Turn(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.entries = this.convertValues(source["entries"], Entry);
+	        this.pending = this.convertValues(source["pending"], Pending);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
 export namespace database {
 	
 	export class BlunderEntry {
@@ -2677,6 +2774,26 @@ export namespace gammonnet {
 
 export namespace gui {
 	
+	export class AssistantRequest {
+	    preset: string;
+	    baseURL: string;
+	    model: string;
+	    write: boolean;
+	    text: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new AssistantRequest(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.preset = source["preset"];
+	        this.baseURL = source["baseURL"];
+	        this.model = source["model"];
+	        this.write = source["write"];
+	        this.text = source["text"];
+	    }
+	}
 	export class BearoffCandidate {
 	    domain: string;
 	    kind: string;

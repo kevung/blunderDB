@@ -10,6 +10,8 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({ EventsOn: () => () => {}, E
 const calls = vi.hoisted(() => ({ saved: /** @type {any[]} */ ([]), configured: /** @type {any[]} */ ([]) }));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetMCPHost: () => Promise.resolve({ on: false, port: 0, write: false }),
+    GetAssistant: () => Promise.resolve({ on: false, preset: 'groq', baseURL: '', model: '', remoteAck: '' }),
+    SaveAssistant: () => Promise.resolve(),
     SaveMCPHost: (s) => {
         calls.saved.push(s);
         return Promise.resolve();
@@ -17,6 +19,13 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     GetMCPHostStatus: () => Promise.resolve({ running: false, url: '', write: false, error: '' }),
+    AssistantPresets: () =>
+        Promise.resolve([
+            { id: 'ollama', name: 'Ollama', baseURL: 'http://localhost:11434/v1', model: 'qwen2.5:7b', remote: false, needsKey: false },
+            { id: 'groq', name: 'Groq', baseURL: 'https://api.groq.com/openai/v1', model: 'llama', remote: true, needsKey: true }
+        ]),
+    AssistantHasKey: () => Promise.resolve(true),
+    AssistantSetKey: () => Promise.resolve(),
     ConfigureMCPHost: (c) => {
         calls.configured.push(c);
         return Promise.resolve({ running: c.enabled, url: c.enabled ? `http://127.0.0.1:${c.port}/mcp` : '', write: c.write, error: '' });
@@ -42,5 +51,12 @@ describe('AssistantSettings', () => {
         expect(calls.saved.at(-1)).toEqual({ on: true, port: 8765, write: false });
         expect(calls.configured.at(-1)).toEqual({ enabled: true, port: 8765, write: false });
         expect((await findByTestId('mcp-url')).textContent).toContain('http://127.0.0.1:8765/mcp');
+    });
+
+    test('a remote provider shows its privacy warning; the key is said to be in the keyring', async () => {
+        const { findByTestId, container } = render(AssistantSettings);
+        expect((await findByTestId('assistant-privacy')).textContent).toContain('Groq');
+        expect((await findByTestId('assistant-key-state')).textContent).toBeTruthy();
+        expect(/** @type {HTMLInputElement} */ (container.querySelector('#config-assistant-on')).checked).toBe(false);
     });
 });

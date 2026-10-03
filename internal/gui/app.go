@@ -80,8 +80,10 @@ type App struct {
 	// folderWatch is the watched folder's loop (watch.go).
 	folderWatch folderWatch
 
-	// mcp is the MCP server served on localhost (mcphost.go).
-	mcp mcpHost
+	// mcp is the MCP server served on localhost (mcphost.go); assistant the
+	// in-app assistant, a client of the same tools (assistant.go).
+	mcp       mcpHost
+	assistant assistantState
 }
 
 // NewApp creates a new App application struct.
