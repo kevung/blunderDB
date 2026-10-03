@@ -54,6 +54,13 @@ type App struct {
 	// shutdown must wait on it before closing the database.
 	gnBatchDone chan struct{}
 
+	// roMu/roCancel/roDone: the rollout of one position (rollout.go), the
+	// same single-in-flight bookkeeping as the batch; a stored rollout
+	// writes the database, so shutdown waits on roDone too.
+	roMu     sync.Mutex
+	roCancel context.CancelFunc
+	roDone   chan struct{}
+
 	// trainingGen is built once, lazily (it costs megabytes); trainingErr
 	// keeps why it failed so later questions refuse by name.
 	trainingOnce sync.Once

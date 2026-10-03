@@ -26,6 +26,10 @@ export function CancelGammonNetBatch() {
   return window['go']['gui']['App']['CancelGammonNetBatch']();
 }
 
+export function CancelRollout() {
+  return window['go']['gui']['App']['CancelRollout']();
+}
+
 export function CheckForUpdate() {
   return window['go']['gui']['App']['CheckForUpdate']();
 }
@@ -166,6 +170,10 @@ export function RegenerateIssuerIdentity(arg1) {
   return window['go']['gui']['App']['RegenerateIssuerIdentity'](arg1);
 }
 
+export function RolloutPresets() {
+  return window['go']['gui']['App']['RolloutPresets']();
+}
+
 export function SaveBoardImageDialog(arg1, arg2) {
   return window['go']['gui']['App']['SaveBoardImageDialog'](arg1, arg2);
 }
@@ -216,6 +224,10 @@ export function StartGammonNetMatchBatch(arg1, arg2, arg3, arg4) {
 
 export function StartGammonNetStaleBatch(arg1, arg2, arg3) {
   return window['go']['gui']['App']['StartGammonNetStaleBatch'](arg1, arg2, arg3);
+}
+
+export function StartRollout(arg1) {
+  return window['go']['gui']['App']['StartRollout'](arg1);
 }
 
 export function StartupFilePath() {

@@ -167,18 +167,24 @@ func (a *App) waitForInteractiveEvaluation() {
 }
 
 // stopBackgroundJobs, shutdown's first step, cancels every job and waits (up
-// to grace) only for the gammonNet batch, the one that writes the database.
+// to grace, shared) only for the gammonNet batch and the rollout, the ones
+// that write the database.
 // The bearoff generation never touches it, and waiting for it could hang.
 func (a *App) stopBackgroundJobs(grace time.Duration) {
 	a.CancelBearoffGeneration()
 
-	stopped := a.cancelGammonNetBatch()
-	if stopped == nil {
-		return
-	}
-	select {
-	case <-stopped:
-	case <-time.After(grace):
-		slog.Warn("shutdown: the gammonNet batch did not stop within the grace period; closing the database anyway", "grace", grace)
+	deadline := time.After(grace)
+	for name, stopped := range map[string]<-chan struct{}{
+		"the gammonNet batch": a.cancelGammonNetBatch(),
+		"the rollout":         a.cancelRollout(),
+	} {
+		if stopped == nil {
+			continue
+		}
+		select {
+		case <-stopped:
+		case <-deadline:
+			slog.Warn("shutdown: a job writing the database did not stop within the grace period; closing it anyway", "job", name, "grace", grace)
+		}
 	}
 }

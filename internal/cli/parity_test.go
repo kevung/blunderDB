@@ -102,6 +102,7 @@ var serverOnly = map[string]string{
 	"/v1/exports.json":                    whyTransport,
 	"/v1/imports.json":                    whyTransport,
 	"/v1/gammonnet.analyzeMissing.cancel": whyTransport,
+	"/v1/rollout.filter.cancel":           whyTransport,
 	"/v1/search.query":                    whyTransport,
 	// get: a remote client reads a draft back after a 409, the desktop holds
 	// it in its session; undo/redo: the desktop sends them through
@@ -125,6 +126,12 @@ var databaseParity = map[string]parityEntry{
 	"AnalyzeMatchWithGammonNet":         {CLI: "analyze --match", Why: whyMatchScoped},
 	"AnalyzeMissingWithGammonNet":       {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing"},
 	"AnalyzeStaleGammonNet":             {CLI: "analyze --stale", Server: "/v1/gammonnet.sweepStale"},
+	"RolloutPosition":                   {CLI: "rollout", Server: "/v1/rollout.position"},
+	"StoreRollout":                      {CLI: "rollout --store", Server: "/v1/rollout.position"},
+	"LoadRollouts":                      {CLI: "rollout --list", Server: "/v1/rollout.list"},
+	"PositionsToRollout":                {CLI: "analyze --rollout", Server: "/v1/rollout.filter"},
+	"RolloutPositions":                  {CLI: "analyze --rollout", Server: "/v1/rollout.filter"},
+	"RolloutFiltered":                   {CLI: "analyze --rollout", Server: "/v1/rollout.filter"},
 	"CancelImport":                      {Server: "/v1/imports.cancel", Why: "the CLI import is a foreground process: Ctrl-C is its cancel"},
 	"CheckDatabaseVersion":              {CLI: "info", Server: "/v1/metadata.version"},
 	"CheckSchema":                       {CLI: "verify", Why: "schema drift is what the desktop open's EnsureSchema could not add to a user's SQLite file (issue #177); the daemon's SQLite backend runs the same EnsureSchema on open, and PostgreSQL's schema comes from its versioned migrations alone — its audit is the operator's database tooling"},

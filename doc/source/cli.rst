@@ -1066,12 +1066,13 @@ qu'une recherche ne tranche pas : deux coups à quelques millièmes, ou une
 décision de videau où le modèle hésite. Avec des dés, ce sont ses coups qui
 sont joués (les meilleurs à la profondeur du rollout, au moins 2 ply, ou ceux nommés par
 ``--move``) ; sans dés, sa décision de videau (Pas de double et Double/Prend ;
-Double/Passe vaut +1 exactement). Calcul pur : rien n'est enregistré, aucune
-base n'est ouverte.
+Double/Passe vaut +1 exactement). La position vient d'un XGID ou d'un OGID,
+ou d'une base (``--db`` et ``--id``) ; sans ``--store``, rien n'est enregistré.
 
 .. code-block:: bash
 
    ./blunderdb rollout [options] '<XGID|OGID>'
+   ./blunderdb rollout --db <path> --id <position> [--store] [options]
 
 **Options:**
 
@@ -1090,6 +1091,15 @@ base n'est ouverte.
 * ``--jobs`` — Parties jouées en parallèle (défaut : une par cœur) ; seul le
   temps change.
 * ``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : ``text``).
+* ``--db``, ``--id`` — La base et l'identifiant de la position à jouer, à la
+  place d'un XGID.
+* ``--store`` — Enregistre le rollout terminé sur la position, comme une
+  seconde analyse portant ses propres réglages, à côté de l'analyse importée
+  ou évaluée, qu'il ne remplace jamais. Un rollout interrompu n'est pas
+  enregistré ; un nouveau rollout aux mêmes réglages remplace le précédent,
+  un rollout à d'autres réglages s'ajoute à côté.
+* ``--list`` — Affiche les rollouts enregistrés sur la position, du plus récent
+  au plus ancien, au lieu d'en jouer un.
 
 Tous les candidats jouent les mêmes dés, la chance de chaque lancer est
 retirée du résultat de chaque partie (réduction de variance), les deux premiers
@@ -1106,6 +1116,8 @@ sûr que l'équité absolue. Ctrl-C affiche ce que les parties terminées ont
 
    ./blunderdb rollout 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'
    ./blunderdb rollout --move '8/5 6/5' --move '24/23 13/10' '<XGID>'
+   ./blunderdb rollout --db base.db --id 42 --preset standard --store
+   ./blunderdb rollout --db base.db --id 42 --list
 
 epc — Calculatrice EPC
 ------------------------
@@ -1250,6 +1262,10 @@ trois logiques distinctes (voir :ref:`headless`).
   (0 = toutes).
 * ``--format`` — Format de sortie: ``text`` (défaut, avec la progression) ou
   ``json`` (un seul document récapitulatif, imprimé à la fin).
+* ``--rollout`` — Fait un rollout des positions que choisit ``--query`` au lieu
+  de combler des trous (voir plus bas).
+* ``--query`` — Avec ``--rollout``, les positions à jouer, dans le langage de
+  requête de la recherche (``search --query-help``) ; vide, toutes.
 
 **Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un
 match joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a fait
@@ -1308,6 +1324,24 @@ positions sans analyse » est recalculé à chaque lancement.
 
    # Un seul match, celui qui vient d'être importé
    ./blunderdb analyze --db base.db --match 12
+
+**Rollouts en lot** (``--rollout``). Chaque position que choisit ``--query``
+est jouée par un :ref:`rollout <cli_rollout>`, l'une après l'autre sur tous
+les cœurs, et le rollout est enregistré à côté de son analyse, jamais à sa
+place. La valeur est un préréglage — ``fast`` (216 parties tronquées à 7) ou
+``standard`` (1296 parties tronquées à 11) — ou des réglages libres : un
+préréglage facultatif, puis ``games=``, ``min-games=``, ``truncation=``,
+``jsd=``, ``ply=``, ``candidates=``, ``seed=``, séparés par des virgules. Une
+position qui porte déjà un rollout aux mêmes réglages est sautée : une
+exécution interrompue par Ctrl-C reprend là où elle s'est arrêtée, la position
+en cours étant abandonnée entière. Une position que seul un rollout analyse
+est trouvée par la recherche à travers lui ; une position déjà analysée garde
+les colonnes de son analyse.
+
+.. code-block:: bash
+
+   ./blunderdb analyze --db base.db --rollout fast --query 'E>80'
+   ./blunderdb analyze --db base.db --rollout 'standard,ply=1' --query 'c'
 
 .. _analyze_compare:
 

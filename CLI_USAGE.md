@@ -1741,6 +1741,16 @@ imported analysis's own scale? The answer is broken down by game
 phase, which is what says where the disagreements sit. Use --limit
 to ask the question of a sample rather than of a whole library.
 
+--rollout switches to rollouts: every position --query selects is
+rolled out, one after the other on every core, and the rollout is
+written beside its analysis — never in its place. The value is a
+preset (fast: 216 games truncated at 7; standard: 1296 games
+truncated at 11) or custom settings: an optional preset first, then
+games=, min-games=, truncation=, jsd=, ply=, candidates=, seed=,
+comma-separated. A position already carrying a rollout with the
+same settings is skipped, so an interrupted run resumes; the
+position in hand when Ctrl-C arrives is dropped whole.
+
 A position gammonNet declines to evaluate (a match score beyond
 its MET, a cube state it refuses) is reported separately at the
 end, as "refused": not a failure, and not retried to no effect.
@@ -1764,6 +1774,10 @@ Options:
     	Search depth (canonical: 2, k=12) (default 2)
   -prune-k int
     	Pruning width (canonical: 12) (default 12)
+  -query string
+    	With --rollout: the positions to roll out, in the search query language (see search --query-help); empty means every position
+  -rollout string
+    	Roll out the positions --query selects instead: a preset (fast, standard) or custom settings, e.g. 'standard' or 'games=648,truncation=0,ply=1'
   -stale
     	Re-analyse positions whose gammonNet analysis is outdated, instead of filling gaps
 
@@ -1774,6 +1788,8 @@ Examples:
   blunderdb analyze --db database.db --stale --ply 3
   blunderdb analyze --db database.db --format json
   blunderdb analyze --db database.db --compare --limit 500
+  blunderdb analyze --db database.db --rollout fast --query 'E>80'
+  blunderdb analyze --db database.db --rollout 'standard,ply=1' --query 'c'
 ```
 
 ### `blunderdb anki card`
@@ -2742,6 +2758,7 @@ Examples:
 
 ```
 Usage: blunderdb rollout [options] <XGID|OGID>
+       blunderdb rollout --db <file> --id <position> [--store] [options]
 
 Roll a position out with gammonNet: its plays when the position has dice,
 its cube decision otherwise. Each candidate plays the same dice; the luck
@@ -2751,20 +2768,29 @@ covers it. The cube is played inside the games (cubeful): trust the
 ranking more than the absolute equity.
 
 Equities are money points per unit of the position's cube, or normalised
-equity at a match score. Nothing is stored. Ctrl-C prints what the games
-finished so far concluded.
+equity at a match score. Ctrl-C prints what the games finished so far
+concluded. With --store, a finished rollout is written on the position as a
+second analysis with its own settings, beside the imported or evaluated one;
+an interrupted rollout is never stored. A rerun with the same settings
+replaces the earlier one.
 
 Options:
   -candidates int
     	Plays rolled out when no --move is given, best first at max(--ply, 2) (0 = the preset's)
+  -db string
+    	Database to read the position from (with --id)
   -format string
     	Output format: text, json (default "text")
   -games int
     	Most games per candidate (0 = the preset's)
+  -id int
+    	Position of --db to roll out, in place of an XGID or OGID
   -jobs int
     	Games played at once (0 = one per core); never changes the numbers
   -jsd float
     	Stop a candidate when its gap to the best reaches this many standard deviations; 0 never stops early (-1 = the preset's) (default -1)
+  -list
+    	Print the rollouts stored on the position of --db instead of rolling it out
   -min-games int
     	Games before the JSD rule may stop a candidate (-1 = the preset's) (default -1)
   -move value
@@ -2775,6 +2801,8 @@ Options:
     	Starting settings, both at 0 ply: fast (216 games, truncated at 7) or standard (1296 games, truncated at 11); the flags below override it, --ply plays deeper (default "fast")
   -seed uint
     	Dice seed: the same seed gives the same numbers (default 104374970738651)
+  -store
+    	Write the finished rollout on the position of --db, beside its analysis (never replacing it)
   -truncation int
     	Half-moves per game before the engine values it; 0 plays to the end (-1 = the preset's) (default -1)
 
@@ -2783,6 +2811,8 @@ Examples:
   blunderdb rollout --move '8/5 6/5' --move '24/23 13/10' '<XGID>'
   blunderdb rollout --preset standard --format json '<XGID>'
   blunderdb rollout --games 648 --truncation 0 --ply 1 '<XGID>'
+  blunderdb rollout --db library.db --id 42 --preset standard --store
+  blunderdb rollout --db library.db --id 42 --list
 ```
 
 ### `blunderdb search`

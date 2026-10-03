@@ -40,9 +40,14 @@ func (cli *CLI) runRollout(args []string) error {
 	jobs := cmd.Int("jobs", 0, "Games played at once (0 = one per core); never changes the numbers")
 	var moves moveList
 	cmd.Var(&moves, "move", "A play to roll out, in blunderDB notation (repeatable)")
+	dbPath := cmd.String("db", "", "Database to read the position from (with --id)")
+	positionID := cmd.Int64("id", 0, "Position of --db to roll out, in place of an XGID or OGID")
+	store := cmd.Bool("store", false, "Write the finished rollout on the position of --db, beside its analysis (never replacing it)")
+	listStored := cmd.Bool("list", false, "Print the rollouts stored on the position of --db instead of rolling it out")
 
 	cmd.Usage = func() {
 		fmt.Println("Usage: blunderdb rollout [options] <XGID|OGID>")
+		fmt.Println("       blunderdb rollout --db <file> --id <position> [--store] [options]")
 		fmt.Println()
 		fmt.Println("Roll a position out with gammonNet: its plays when the position has dice,")
 		fmt.Println("its cube decision otherwise. Each candidate plays the same dice; the luck")
@@ -52,8 +57,11 @@ func (cli *CLI) runRollout(args []string) error {
 		fmt.Println("ranking more than the absolute equity.")
 		fmt.Println()
 		fmt.Println("Equities are money points per unit of the position's cube, or normalised")
-		fmt.Println("equity at a match score. Nothing is stored. Ctrl-C prints what the games")
-		fmt.Println("finished so far concluded.")
+		fmt.Println("equity at a match score. Ctrl-C prints what the games finished so far")
+		fmt.Println("concluded. With --store, a finished rollout is written on the position as a")
+		fmt.Println("second analysis with its own settings, beside the imported or evaluated one;")
+		fmt.Println("an interrupted rollout is never stored. A rerun with the same settings")
+		fmt.Println("replaces the earlier one.")
 		fmt.Println()
 		fmt.Println("Options:")
 		cmd.PrintDefaults()
@@ -63,12 +71,24 @@ func (cli *CLI) runRollout(args []string) error {
 		fmt.Println("  blunderdb rollout --move '8/5 6/5' --move '24/23 13/10' '<XGID>'")
 		fmt.Println("  blunderdb rollout --preset standard --format json '<XGID>'")
 		fmt.Println("  blunderdb rollout --games 648 --truncation 0 --ply 1 '<XGID>'")
+		fmt.Println("  blunderdb rollout --db library.db --id 42 --preset standard --store")
+		fmt.Println("  blunderdb rollout --db library.db --id 42 --list")
 	}
 
 	if err := cmd.Parse(args); err != nil {
 		return err
 	}
-	if cmd.NArg() != 1 {
+	fromDB := *positionID != 0
+	switch {
+	case fromDB && *dbPath == "":
+		return fmt.Errorf("--id names a position of --db: give the database")
+	case fromDB && cmd.NArg() != 0:
+		return fmt.Errorf("--id and an XGID/OGID argument both name the position: give one")
+	case (*store || *listStored) && !fromDB:
+		return fmt.Errorf("--store and --list need a position of the database: give --db and --id")
+	case *store && *listStored:
+		return fmt.Errorf("--list reads what is stored and rolls nothing out: drop --store")
+	case !fromDB && cmd.NArg() != 1:
 		cmd.Usage()
 		return fmt.Errorf("expected exactly one XGID or OGID argument")
 	}
@@ -102,9 +122,23 @@ func (cli *CLI) runRollout(args []string) error {
 	s.Seed = *seed
 	s.Workers = *jobs
 
-	pos, err := domain.DecodePositionID(cmd.Arg(0))
-	if err != nil {
-		return fmt.Errorf("invalid XGID or OGID: %w", err)
+	if err := s.Validate(); err != nil {
+		return err
+	}
+	var pos domain.Position
+	if fromDB {
+		if err := cli.initDatabase(*dbPath); err != nil {
+			return err
+		}
+		if *listStored {
+			return cli.printStoredRollouts(*positionID, *format == "json")
+		}
+	} else {
+		var err error
+		pos, err = domain.DecodePositionID(cmd.Arg(0))
+		if err != nil {
+			return fmt.Errorf("invalid XGID or OGID: %w", err)
+		}
 	}
 
 	opt := rollout.Options{Moves: moves}
@@ -117,7 +151,11 @@ func (cli *CLI) runRollout(args []string) error {
 	var res *rollout.Result
 	runErr := withInterruptibleContext(nil, func(ctx context.Context) error {
 		var err error
-		res, err = rollout.Run(ctx, pos, s, opt)
+		if fromDB {
+			res, err = cli.db.RolloutPosition(ctx, *positionID, s, moves, *store, opt.Progress)
+		} else {
+			res, err = rollout.Run(ctx, pos, s, opt)
+		}
 		return err
 	})
 	if opt.Progress != nil {
@@ -129,6 +167,7 @@ func (cli *CLI) runRollout(args []string) error {
 	if res == nil {
 		return runErr
 	}
+	stored := *store && runErr == nil
 
 	if *format == "json" {
 		enc := json.NewEncoder(os.Stdout)
@@ -136,6 +175,12 @@ func (cli *CLI) runRollout(args []string) error {
 		return enc.Encode(res)
 	}
 	printRollout(res)
+	switch {
+	case stored:
+		fmt.Printf("\nStored on position %d.\n", *positionID)
+	case *store:
+		fmt.Println("\nInterrupted: not stored.")
+	}
 	return nil
 }
 
@@ -165,4 +210,36 @@ func printRollout(r *rollout.Result) {
 		fmt.Println("Cubeful: the cube model plays inside the games — the ranking is more")
 		fmt.Println("reliable than the absolute equity.")
 	}
+}
+
+// printStoredRollouts lists the rollouts written on a position, newest first.
+func (cli *CLI) printStoredRollouts(positionID int64, asJSON bool) error {
+	list, err := cli.db.LoadRollouts(positionID)
+	if err != nil {
+		return err
+	}
+	if asJSON {
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		return enc.Encode(list)
+	}
+	if len(list) == 0 {
+		fmt.Printf("No rollout stored on position %d.\n", positionID)
+		return nil
+	}
+	for i, r := range list {
+		if i > 0 {
+			fmt.Println()
+		}
+		fmt.Printf("%s — %d games, stopped on %s, %s\n", r.AnalysisDepth, r.Games, r.Stop, r.Date.Format("2006-01-02 15:04"))
+		fmt.Println(r.Signature)
+		fmt.Printf("  %-24s %9s %9s %7s %7s\n", "Candidate", "Equity", "±95%", "Games", "JSD")
+		for _, c := range r.Candidates {
+			fmt.Printf("  %-24s %+9.4f %9.4f %7d %7.2f\n", c.Move, c.Equity, c.CI95, c.Games, c.JSD)
+		}
+		if r.BestCubeAction != "" {
+			fmt.Printf("Best cube action: %s\n", r.BestCubeAction)
+		}
+	}
+	return nil
 }

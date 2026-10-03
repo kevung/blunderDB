@@ -730,6 +730,22 @@ class GeneratedAPI(BaseClient):
         "POST /v1/rencontres.update — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/rencontres.update", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def rollout_filter(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.filter — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rollout.filter", payload)
+
+    def rollout_filter_cancel(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.filter.cancel — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rollout.filter.cancel", payload)
+
+    def rollout_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.list — JSON."
+        return self._call("/v1/rollout.list", payload)
+
+    def rollout_position(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.position — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rollout.position", payload)
+
     def search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/search.find — NDJSON stream."
         return self._stream("/v1/search.find", payload)

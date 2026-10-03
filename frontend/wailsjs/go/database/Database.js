@@ -722,6 +722,10 @@ export function LoadPositionsByIDs(arg1) {
   return window['go']['database']['Database']['LoadPositionsByIDs'](arg1);
 }
 
+export function LoadRollouts(arg1) {
+  return window['go']['database']['Database']['LoadRollouts'](arg1);
+}
+
 export function LoadSearchHistory() {
   return window['go']['database']['Database']['LoadSearchHistory']();
 }
@@ -796,6 +800,10 @@ export function Participants(arg1) {
 
 export function PendingTranscriptionAnalysis() {
   return window['go']['database']['Database']['PendingTranscriptionAnalysis']();
+}
+
+export function PositionsToRollout(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PositionsToRollout'](arg1, arg2, arg3);
 }
 
 export function PreviewAttachToRencontre(arg1, arg2) {
@@ -896,6 +904,18 @@ export function RestoreFromTrash(arg1) {
 
 export function ReviewAnkiCard(arg1, arg2) {
   return window['go']['database']['Database']['ReviewAnkiCard'](arg1, arg2);
+}
+
+export function RolloutFiltered(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['RolloutFiltered'](arg1, arg2, arg3, arg4);
+}
+
+export function RolloutPosition(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['database']['Database']['RolloutPosition'](arg1, arg2, arg3, arg4, arg5, arg6);
+}
+
+export function RolloutPositions(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['RolloutPositions'](arg1, arg2, arg3, arg4);
 }
 
 export function SaveAnalysis(arg1, arg2) {
@@ -1048,6 +1068,10 @@ export function StartMatchManually(arg1, arg2, arg3, arg4, arg5) {
 
 export function StartTranscriptionFromSlot(arg1, arg2) {
   return window['go']['database']['Database']['StartTranscriptionFromSlot'](arg1, arg2);
+}
+
+export function StoreRollout(arg1, arg2) {
+  return window['go']['database']['Database']['StoreRollout'](arg1, arg2);
 }
 
 export function StudyImpact(arg1) {

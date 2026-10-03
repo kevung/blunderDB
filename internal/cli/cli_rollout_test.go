@@ -2,9 +2,11 @@ package cli
 
 import (
 	"encoding/json"
+	"strconv"
 	"strings"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 )
 
@@ -36,5 +38,51 @@ func TestRolloutCommandRefusesAnIllegalPlay(t *testing.T) {
 		"XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10"})
 	if err == nil || !strings.Contains(err.Error(), "not a legal play") {
 		t.Fatalf("err %v, want a refusal naming the play", err)
+	}
+}
+
+// --store writes the rollout on the position of --db; analyze --rollout then
+// finds nothing left to do with the same settings.
+func TestRolloutCommandStoresAndAnalyzeResumes(t *testing.T) {
+	seed, dbPath := setupCLIWithDB(t)
+	p := domain.InitializePosition()
+	id, err := seed.db.SavePosition(&p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	seed.db.Close() // one writer at a time: the commands below open it
+	tiny := []string{"--games", "36", "--min-games", "36", "--truncation", "2", "--candidates", "2"}
+
+	if err := (&CLI{}).runRollout([]string{"--store"}); err == nil {
+		t.Error("--store without --db/--id accepted")
+	}
+	c := &CLI{db: NewDatabase()}
+	var runErr error
+	out := captureStdout(t, func() {
+		runErr = c.runRollout(append(tiny, "--db", dbPath, "--id", strconv.FormatInt(id, 10), "--store"))
+	})
+	if runErr != nil || !strings.Contains(out, "Stored on position") {
+		t.Fatalf("rollout --store: %v\n%s", runErr, out)
+	}
+	c.db.Close()
+	l := &CLI{db: NewDatabase()}
+	out = captureStdout(t, func() {
+		runErr = l.runRollout([]string{"--db", dbPath, "--id", strconv.FormatInt(id, 10), "--list"})
+	})
+	l.db.Close()
+	if runErr != nil || !strings.Contains(out, "Rollout 36 games") {
+		t.Fatalf("rollout --list: %v\n%s", runErr, out)
+	}
+
+	a := &CLI{db: NewDatabase()}
+	defer a.db.Close()
+	out = captureStdout(t, func() {
+		runErr = a.runAnalyze([]string{"--db", dbPath, "--rollout", "fast,games=36,min-games=36,truncation=2,candidates=2", "--query", "s"})
+	})
+	if runErr != nil || !strings.Contains(out, "Nothing to do") {
+		t.Fatalf("analyze --rollout over a rolled-out position: %v\n%s", runErr, out)
+	}
+	if err := (&CLI{db: NewDatabase()}).runAnalyze([]string{"--db", dbPath, "--rollout", "fast", "--stale"}); err == nil {
+		t.Error("--rollout with --stale accepted")
 	}
 }

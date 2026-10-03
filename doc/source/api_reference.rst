@@ -207,6 +207,11 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/rencontres.setTables                 JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.trash                     JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.update                    JSON  (Idempotency-Key)  (If-Match)
+   rollout
+     POST /v1/rollout.filter                       custom
+     POST /v1/rollout.filter.cancel                custom
+     POST /v1/rollout.list                         JSON
+     POST /v1/rollout.position                     custom
    search
      POST /v1/search.find                          NDJSON
      POST /v1/search.parse                         JSON

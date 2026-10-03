@@ -65,6 +65,11 @@ var customContentTypes = map[string][]string{
 	// the request, so there is nothing to gather, nothing to store and
 	// nothing to stream.
 	"/v1/gammonnet.cubeMatrix": {"application/json"},
+	// rollout.position answers once the rollout is done: one position, no
+	// partial state to stream. rollout.filter is a sweep and streams.
+	"/v1/rollout.position":      {"application/json"},
+	"/v1/rollout.filter":        {ndjsonContentType},
+	"/v1/rollout.filter.cancel": {"application/json"},
 	// search.query streams positions like search.find; it is hand-written only
 	// so an unreadable query is refused before the 200 is committed.
 	"/v1/search.query": {ndjsonContentType},

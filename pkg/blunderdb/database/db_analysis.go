@@ -8,6 +8,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -95,6 +96,10 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			incomingCubeActions = []string{analysis.PlayedCubeAction}
 		}
 		analysis.PlayedCubeActions = mergePlayedMoves(existingCubeActions, incomingCubeActions)
+
+		// Rollouts are their own analyses: a caller that does not know them
+		// (an import, the frontend saving what it edited) must not drop them.
+		analysis.Rollouts = domain.MergeRollouts(existingAnalysis.Rollouts, analysis.Rollouts)
 
 		// Clear deprecated single fields after merging
 		analysis.PlayedMove = ""

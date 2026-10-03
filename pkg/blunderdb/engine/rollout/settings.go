@@ -2,6 +2,7 @@ package rollout
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -126,4 +127,73 @@ func (s Settings) Signature() string {
 	return fmt.Sprintf("%s; cubeful; %s plays, cube and leaves; variance reduction 1-ply; "+
 		"common quasi-random dice (2 plies); seed %d; games <= %d; stop %s; truncation %s; exact bearoff when covered",
 		EngineVersion, gammonnet.DepthLabel(s.Ply), s.Seed, s.MaxGames, stop, trunc)
+}
+
+// ParseSpec reads settings from one line of text, the form `analyze --rollout`,
+// the /v1 routes and the MCP tool share: an optional preset name first
+// ("fast"/"rapide", "standard", or "custom"/"libre", which starts from fast),
+// then key=value overrides — games, min-games, truncation, jsd, ply,
+// candidates, seed — separated by commas or spaces. "games" lowers min-games
+// with it, as the rollout command's --games does. The result is validated.
+func ParseSpec(spec string) (Settings, error) {
+	fields := strings.FieldsFunc(spec, func(r rune) bool { return r == ',' || r == ' ' || r == ';' })
+	s := Fast()
+	for i, f := range fields {
+		key, value, isPair := strings.Cut(f, "=")
+		if !isPair {
+			if i != 0 {
+				return Settings{}, fmt.Errorf("rollout: %q: a preset name comes first", f)
+			}
+			switch strings.ToLower(f) {
+			case "custom", "libre":
+				continue
+			}
+			p, ok := Preset(f)
+			if !ok {
+				return Settings{}, fmt.Errorf("rollout: unknown preset %q (fast, standard, custom)", f)
+			}
+			s = p
+			continue
+		}
+		key = strings.ToLower(strings.TrimSpace(key))
+		if key == "jsd" {
+			v, err := strconv.ParseFloat(value, 64)
+			if err != nil {
+				return Settings{}, fmt.Errorf("rollout: jsd=%q: %w", value, err)
+			}
+			s.JSDLimit = v
+			continue
+		}
+		if key == "seed" {
+			v, err := strconv.ParseUint(value, 10, 64)
+			if err != nil {
+				return Settings{}, fmt.Errorf("rollout: seed=%q: %w", value, err)
+			}
+			s.Seed = v
+			continue
+		}
+		v, err := strconv.Atoi(value)
+		if err != nil {
+			return Settings{}, fmt.Errorf("rollout: %s=%q: %w", key, value, err)
+		}
+		switch key {
+		case "games":
+			s.MaxGames = v
+			s.MinGames = min(s.MinGames, v)
+		case "min-games", "min_games":
+			s.MinGames = v
+		case "truncation":
+			s.Truncation = v
+		case "ply":
+			s.Ply = v
+		case "candidates":
+			s.Candidates = v
+		default:
+			return Settings{}, fmt.Errorf("rollout: unknown setting %q (games, min-games, truncation, jsd, ply, candidates, seed)", key)
+		}
+	}
+	if err := s.Validate(); err != nil {
+		return Settings{}, err
+	}
+	return s, nil
 }

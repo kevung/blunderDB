@@ -930,6 +930,21 @@ videau que le modèle refuse) compte comme ``refused``, pas ``failed`` — elle
 n'est jamais retentée en vain sur la passe suivante, contrairement à une
 position réellement en échec.
 
+``rollout.position`` joue une position de la bibliothèque (``positionId``) par
+un :ref:`rollout <cli_rollout>` et rend, pour chaque candidat, l'équité, son
+intervalle à 95 % et la JSD ; ``rollout`` porte les réglages (``fast``,
+``standard`` ou ``standard,ply=1``…), ``store`` enregistre le rollout terminé
+comme une seconde analyse, à côté de celle que porte la position, qu'il ne
+remplace jamais. Une position nue (un XGID) est refusée : le démon opère sur une
+bibliothèque. ``rollout.filter`` est la forme en lot de
+``blunderdb analyze --rollout`` : les positions que choisit ``query`` (le
+langage de la recherche) et qui ne portent pas encore de rollout aux mêmes
+réglages sont jouées l'une après l'autre et enregistrées au fil de l'eau, en
+flux NDJSON (``started``, ``progress`` après chaque série de parties, puis
+``done`` ou ``cancelled``) ; ``rollout.filter.cancel`` l'annule avec son
+``job_id``. Un tenant ne mène qu'un lot à la fois, rollout ou gammonNet.
+``rollout.list`` lit les rollouts enregistrés d'une position.
+
 Corrélation et métriques métier
 --------------------------------
 
@@ -1597,11 +1612,15 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
      - collections et leurs positions ; paquets de révision
    * - ``quiz_draw``, ``quiz_grade``
      - tire une position sans sa réponse, puis note la réponse donnée
+   * - ``rollout``
+     - rollout d'une position de la base : équité, intervalle à 95 % et JSD
+       par candidat
 
 Les outils ne font que lire. Quatre outils écrivent — ``save_position``,
 ``comment_position``, ``create_collection``, ``add_to_collection`` — et ne
 sont offerts que sur demande : ``--write`` en local, ``--mcp-write`` sur le
-démon. Aucun n'efface.
+démon ; ``rollout`` y gagne alors l'argument ``store``, qui enregistre le
+rollout à côté de l'analyse de la position. Aucun n'efface.
 
 **En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir
 :ref:`cli`). Pour Claude Code :
