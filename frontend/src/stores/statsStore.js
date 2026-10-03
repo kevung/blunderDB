@@ -1,5 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
-import { ComputeStats, GetPlayerTable } from '../../wailsjs/go/database/Database.js';
+import { ComputeStats, ComputeRecurringErrors, GetPlayerTable } from '../../wailsjs/go/database/Database.js';
 import { databasePathStore } from './databaseStore.js';
 import { dbMutationCounterStore } from './uiStore.js';
 
@@ -93,5 +93,39 @@ export async function refreshPlayerTable(filter, invalidationKey) {
         playerTableStore.set(null);
     } finally {
         playerTableLoadingStore.set(false);
+    }
+}
+
+export const recurringErrorsStore = writable(null);
+export const recurringErrorsLoadingStore = writable(false);
+export const recurringErrorsErrorStore = writable(null);
+
+/** Cache key of the last successful recurring-errors fetch. */
+let _cachedRecurringKey = null;
+
+/**
+ * Fetch the recurring errors of the filter: its errors grouped by plan of play and theme. Fetched
+ * apart from ComputeStats because classifying each error replays its analysis — a cost the other
+ * tabs must not pay.
+ *
+ * @param {object} filter          - StatsFilter object
+ * @param {string} invalidationKey - value of statsInvalidationKeyStore
+ */
+export async function refreshRecurringErrors(filter, invalidationKey) {
+    const key = JSON.stringify(filter) + '||' + invalidationKey;
+    if (key === _cachedRecurringKey && get(recurringErrorsStore) !== null) {
+        return;
+    }
+    _cachedRecurringKey = key;
+    recurringErrorsLoadingStore.set(true);
+    recurringErrorsErrorStore.set(null);
+    try {
+        recurringErrorsStore.set(await ComputeRecurringErrors(filter));
+    } catch (err) {
+        _cachedRecurringKey = null; // allow retry on error
+        recurringErrorsErrorStore.set(err?.message ?? String(err));
+        recurringErrorsStore.set(null);
+    } finally {
+        recurringErrorsLoadingStore.set(false);
     }
 }

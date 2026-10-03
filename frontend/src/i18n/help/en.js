@@ -542,6 +542,15 @@ export default {
 </ul>
 <h4>Errors tab</h4>
 <p>The <strong>Errors</strong> tab breaks down error sources.</p>
+<h5>Recurring errors</h5>
+<p>At the top of the tab, a table groups the errors of the current filter — so those of a single player when a player is filtered — by <strong>game plan</strong> and by <strong>theme</strong>, the most costly first. It answers the question "where am I losing the most?": for example, "holding · too many blots".</p>
+<ul>
+<li>An <strong>error</strong> is a counted decision whose cost reaches the library's <em>Error</em> threshold.</li>
+<li>The <strong>game plan</strong> is that of the player on roll, as the Breakdowns tab presents it.</li>
+<li>The <strong>theme</strong> of a checker play is the one named by the rules of the explanation sentence in the Analysis panel: gammon underestimated, too many blots, point not made, too passive. That of a cube decision is the direction of the error, as in the cube error direction below: missed double, premature double, wrong pass, wrong take. An error that no rule names with confidence is filed under <strong>no theme</strong> rather than guessed.</li>
+<li>The <strong>cost</strong> is the share of the filter's PR that the group represents: the PR formula applied to the group's errors, divided by all counted decisions. The costs of the groups therefore never exceed the PR.</li>
+</ul>
+<p>Clicking a group loads its positions, from the most costly to the least costly. The theme is recomputed at every display, never stored: like the game plan, it is a derived label that cannot be edited. On the command line: <code>blunderdb stats recurring</code> (see stats — Recurring errors).</p>
 <h5>Breakdown by cube action</h5>
 <p>A bar chart displays the PR (or MWC) for each type of cube decision: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Each bar also shows the number of decisions and the blunder rate in a tooltip.</p>
 <p>Clicking a bar loads the positions matching that cube action, <strong>only those with an error</strong> (drill-down).</p>

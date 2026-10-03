@@ -409,6 +409,8 @@ var databaseParity = map[string]parityEntry{
 	"CountTrash":                        {CLI: "trash", Server: "/v1/trash.count"},
 	"ImportStudyQueue":                  {CLI: "list", Server: "/v1/imports.studyQueue"},
 	"Tags":                              {CLI: "list", Server: "/v1/comments.tags"},
+	"ComputeRecurringErrors":            {CLI: "stats recurring", Server: "/v1/stats.recurringErrors"},
+	"ComputeRecurringErrorsCtx":         {CLI: "stats recurring", Server: "/v1/stats.recurringErrors"},
 	"RecommendedTags":                   {CLI: "list", Server: "/v1/comments.tags", Why: whySuggestion},
 }
 
@@ -448,6 +450,7 @@ func TestDatabaseParity(t *testing.T) {
 	subcommands := map[string]map[string]func([]string) error{
 		"collection": c.collectionHandlers(),
 		"anki":       c.ankiHandlers(),
+		"stats":      c.statsHandlers(),
 	}
 	paths := serverPaths(t)
 

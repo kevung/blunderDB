@@ -4641,6 +4641,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idsResp"
+  /v1/stats.recurringErrors:
+    post:
+      operationId: stats.recurringErrors
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_RecurringErrors"
+                nullable: true
   /v1/stats.tournamentBadges:
     post:
       operationId: stats.tournamentBadges
@@ -6614,6 +6632,9 @@ components:
     storage_PlayerRow:
       type: object
       description: "Opaque: see the Go type storage.PlayerRow (defined outside internal/server, not expanded here)."
+    storage_RecurringErrors:
+      type: object
+      description: "Opaque: see the Go type storage.RecurringErrors (defined outside internal/server, not expanded here)."
     storage_SearchHistory:
       type: object
       description: "Opaque: see the Go type storage.SearchHistory (defined outside internal/server, not expanded here)."

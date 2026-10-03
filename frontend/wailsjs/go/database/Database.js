@@ -154,6 +154,14 @@ export function ComputeEPCFromPosition(arg1) {
   return window['go']['database']['Database']['ComputeEPCFromPosition'](arg1);
 }
 
+export function ComputeRecurringErrors(arg1) {
+  return window['go']['database']['Database']['ComputeRecurringErrors'](arg1);
+}
+
+export function ComputeRecurringErrorsCtx(arg1, arg2) {
+  return window['go']['database']['Database']['ComputeRecurringErrorsCtx'](arg1, arg2);
+}
+
 export function ComputeStats(arg1) {
   return window['go']['database']['Database']['ComputeStats'](arg1);
 }

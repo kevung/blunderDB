@@ -45,6 +45,8 @@ const DYNAMIC_PREFIXES = [
     'config.thresholdPreset_',
     'explain.',
     'stats.gameType_',
+    'stats.recurringTheme_',
+    'stats.recurringKind_',
     'training.exercise.',
     'training.sources.',
     // La palette de commandes décrit chaque commande du vocabulaire par

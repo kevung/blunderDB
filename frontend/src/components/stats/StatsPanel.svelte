@@ -9,7 +9,11 @@
         refreshStats,
         playerTableStore,
         playerTableLoadingStore,
-        refreshPlayerTable
+        refreshPlayerTable,
+        recurringErrorsStore,
+        recurringErrorsLoadingStore,
+        recurringErrorsErrorStore,
+        refreshRecurringErrors
     } from '../../stores/statsStore.js';
     import { activeTabStore } from '../../stores/uiStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
@@ -40,6 +44,15 @@
         const key = $statsInvalidationKeyStore;
         if (!$databaseLoadedStore || activeTab !== 'players') return;
         logger.perf('StatsPanel:refreshPlayerTable', () => refreshPlayerTable(filter, key));
+    });
+
+    // The recurring errors replay each error's analysis: fetched only while
+    // the Errors tab, the one that shows them, is open.
+    $effect(() => {
+        const filter = $statsFilterStore;
+        const key = $statsInvalidationKeyStore;
+        if (!$databaseLoadedStore || activeTab !== 'errors') return;
+        logger.perf('StatsPanel:refreshRecurringErrors', () => refreshRecurringErrors(filter, key));
     });
 
     /** Follow a player from the table into their own dashboard. */
@@ -90,7 +103,13 @@
         {:else if activeTab === 'progression'}
             <StatsProgressionTab result={$statsResultStore} metric={$statsMetricStore} />
         {:else if activeTab === 'errors'}
-            <StatsErrorsTab result={$statsResultStore} metric={$statsMetricStore} />
+            <StatsErrorsTab
+                result={$statsResultStore}
+                metric={$statsMetricStore}
+                recurring={$recurringErrorsStore}
+                recurringLoading={$recurringErrorsLoadingStore}
+                recurringError={$recurringErrorsErrorStore}
+            />
         {:else if activeTab === 'breakdowns'}
             <StatsBreakdownsTab result={$statsResultStore} />
         {:else if activeTab === 'players'}

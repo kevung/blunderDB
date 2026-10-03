@@ -47,6 +47,11 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.compute", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StatsResult, error) {
 			return ss().Compute(ctx, scope, req.Filter)
 		})},
+		// Les erreurs du filtre groupées par plan de jeu et par thème, la
+		// plus coûteuse d'abord ; chaque groupe porte ses positions.
+		{http.MethodPost, "/v1/stats.recurringErrors", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.RecurringErrors, error) {
+			return ss().RecurringErrors(ctx, scope, req.Filter)
+		})},
 		{http.MethodPost, "/v1/stats.positionIdsBySelection", rpc(func(ctx context.Context, scope string, req statsSelectionReq) (idsResp, error) {
 			ids, err := ss().PositionIDsBySelection(ctx, scope, req.Filter, req.Selection)
 			return idsResp{PositionIDs: ids}, err

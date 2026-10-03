@@ -542,6 +542,15 @@ export default {
 </ul>
 <h4>Scheda Errori</h4>
 <p>La scheda <strong>Errori</strong> scompone le fonti di errore.</p>
+<h5>Errori ricorrenti</h5>
+<p>In cima alla scheda, una tabella raggruppa gli errori del filtro corrente — quindi quelli di un solo giocatore quando un giocatore è filtrato — per <strong>piano di gioco</strong> e per <strong>tema</strong>, il più costoso per primo. Risponde alla domanda «dove perdo di più?»: per esempio, «tenuta · troppi blot».</p>
+<ul>
+<li>Un <strong>errore</strong> è una decisione conteggiata il cui costo raggiunge la soglia <em>Errore</em> della libreria.</li>
+<li>Il <strong>piano di gioco</strong> è quello del giocatore di turno, così come lo presenta la scheda Ripartizioni.</li>
+<li>Il <strong>tema</strong> di una mossa di pedine è quello nominato dalle regole della frase di spiegazione del pannello Analisi: gammon sottostimato, troppi blot, punto non fatto, troppo passivo. Quello di una decisione di cubo è il senso dell'errore, come nella direzione degli errori di cubo più sotto: raddoppio mancato, raddoppio prematuro, passo sbagliato, presa sbagliata. Un errore che nessuna regola nomina con sicurezza viene classificato <strong>senza tema</strong> invece di essere indovinato.</li>
+<li>Il <strong>costo</strong> è la quota del PR del filtro che il gruppo rappresenta: la formula del PR applicata agli errori del gruppo, rapportata a tutte le decisioni conteggiate. I costi dei gruppi non superano quindi mai il PR.</li>
+</ul>
+<p>Facendo clic su un gruppo se ne caricano le posizioni, dalla più costosa alla meno costosa. Il tema viene ricalcolato a ogni visualizzazione e non è mai salvato: come il piano di gioco, è un'etichetta derivata, non modificabile. Da riga di comando: <code>blunderdb stats recurring</code> (vedi stats — Errori ricorrenti).</p>
 <h5>Ripartizione per azione di cubo</h5>
 <p>Un diagramma a barre visualizza il PR (o MWC) per ciascun tipo di decisione di cubo: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Ogni barra indica inoltre il numero di decisioni e il tasso di blunder in un suggerimento.</p>
 <p>Cliccando su una barra si caricano le posizioni corrispondenti a quell'azione di cubo, <strong>solo quelle con un errore</strong> (drill-down).</p>

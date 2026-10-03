@@ -542,6 +542,15 @@ export default {
 </ul>
 <h4>Pestaña Errores</h4>
 <p>La pestaña <strong>Errores</strong> desglosa las fuentes de error.</p>
+<h5>Errores recurrentes</h5>
+<p>Al principio de la pestaña, una tabla agrupa los errores del filtro actual — es decir, los de un solo jugador cuando hay un jugador filtrado — por <strong>plan de juego</strong> y por <strong>tema</strong>, el más costoso primero. Responde a la pregunta «¿dónde pierdo más?»: por ejemplo, «tenencia · demasiados blots».</p>
+<ul>
+<li>Un <strong>error</strong> es una decisión contada cuyo coste alcanza el umbral <em>Error</em> de la biblioteca.</li>
+<li>El <strong>plan de juego</strong> es el del jugador con el turno, tal como lo presenta la pestaña Desgloses.</li>
+<li>El <strong>tema</strong> de una jugada de fichas es el que nombran las reglas de la frase de explicación del panel de Análisis: gammon subestimado, demasiados blots, punto no hecho, demasiado pasivo. El de una decisión de cubo es el sentido del error, como en la dirección de los errores de cubo más abajo: doble omitido, doble prematuro, pase indebido, toma indebida. Un error que ninguna regla nombra con seguridad se clasifica <strong>sin tema</strong> en lugar de adivinarse.</li>
+<li>El <strong>coste</strong> es la parte del PR del filtro que representa el grupo: la fórmula del PR aplicada a los errores del grupo, referida a todas las decisiones contadas. Los costes de los grupos nunca superan, pues, el PR.</li>
+</ul>
+<p>Al hacer clic en un grupo se cargan sus posiciones, de la más costosa a la menos costosa. El tema se recalcula en cada visualización y nunca se guarda: como el plan de juego, es una etiqueta derivada, no editable. En línea de comandos: <code>blunderdb stats recurring</code> (véase stats — Errores recurrentes).</p>
 <h5>Reparto por acción de cubo</h5>
 <p>Un diagrama de barras muestra el PR (o MWC) para cada tipo de decisión de cubo: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Cada barra indica también el número de decisiones y la tasa de blunders en una información emergente.</p>
 <p>Hacer clic en una barra carga las posiciones correspondientes a esa acción de cubo, <strong>solo las que tienen un error</strong> (drill-down).</p>

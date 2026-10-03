@@ -542,6 +542,15 @@ export default {
 </ul>
 <h4>Tab Fehler</h4>
 <p>Der Tab <strong>Fehler</strong> schlüsselt die Fehlerquellen auf.</p>
+<h5>Wiederkehrende Fehler</h5>
+<p>Am Anfang des Reiters gruppiert eine Tabelle die Fehler des aktuellen Filters — bei gefiltertem Spieler also die eines einzelnen Spielers — nach <strong>Spielplan</strong> und nach <strong>Thema</strong>, die teuerste Gruppe zuerst. Sie beantwortet die Frage „Wo verliere ich am meisten?“: zum Beispiel „Halten · zu viele Blots“.</p>
+<ul>
+<li>Ein <strong>Fehler</strong> ist eine gezählte Entscheidung, deren Kosten die Schwelle <em>Fehler</em> der Bibliothek erreichen.</li>
+<li>Der <strong>Spielplan</strong> ist der des Spielers am Zug, so wie der Reiter Aufschlüsselungen ihn darstellt.</li>
+<li>Das <strong>Thema</strong> eines Steinzugs ist dasjenige, das die Regeln des Erklärungssatzes im Analyse-Panel benennen: Gammon unterschätzt, zu viele Blots, Punkt nicht gemacht, zu passiv. Das einer Würfelentscheidung ist die Richtung des Fehlers, wie bei der Richtung der Würfelfehler weiter unten: verpasstes Doppeln, verfrühtes Doppeln, falsches Passen, falsches Nehmen. Ein Fehler, den keine Regel sicher benennt, wird unter <strong>ohne Thema</strong> eingeordnet, statt ihn zu erraten.</li>
+<li>Die <strong>Kosten</strong> sind der Anteil am PR des Filters, den die Gruppe ausmacht: die PR-Formel, angewendet auf die Fehler der Gruppe und bezogen auf alle gezählten Entscheidungen. Die Kosten der Gruppen übersteigen den PR daher nie.</li>
+</ul>
+<p>Ein Klick auf eine Gruppe lädt ihre Stellungen, von der teuersten zur günstigsten. Das Thema wird bei jeder Anzeige neu berechnet und nie gespeichert: Wie der Spielplan ist es ein abgeleitetes, nicht bearbeitbares Etikett. In der Kommandozeile: <code>blunderdb stats recurring</code> (siehe stats — Wiederkehrende Fehler).</p>
 <h5>Aufteilung nach Doppler-Aktion</h5>
 <p>Ein Balkendiagramm zeigt den PR (oder MWC) für jeden Typ von Doppler-Entscheidung an: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jeder Balken gibt außerdem die Anzahl der Entscheidungen und die Blunder-Rate in einem Tooltip an.</p>
 <p>Ein Klick auf einen Balken lädt die zu dieser Doppler-Aktion gehörenden Stellungen, <strong>nur die mit einem Fehler</strong> (Drill-down).</p>
