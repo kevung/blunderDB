@@ -3447,6 +3447,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/versionResp"
+  /v1/positions.count:
+    post:
+      operationId: positions.count
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/positions.delete:
     post:
       operationId: positions.delete
@@ -3568,6 +3586,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/xgpResp"
+  /v1/positions.indexOf:
+    post:
+      operationId: positions.indexOf
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/positions.legalMoves:
     post:
       operationId: positions.legalMoves

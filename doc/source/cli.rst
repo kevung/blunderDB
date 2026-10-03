@@ -641,13 +641,15 @@ Affiche le contenu de la base de données.
 
 .. code-block:: bash
 
-   ./blunderdb list --db <path> --type <type> [--limit <n>]
+   ./blunderdb list --db <path> --type <type> [--limit <n>] [--offset <n>]
 
 **Types:**
 
 * ``matches`` — Liste des matchs importés.
 * ``tournaments`` — Liste des tournois.
-* ``positions`` — Liste des positions (limité à 10 par défaut). Avec
+* ``positions`` — Liste des positions (limité à 10 par défaut ;
+  ``--offset <n>`` saute les *n* premières). Seule la fenêtre affichée est
+  lue, quelle que soit la taille de la base. Avec
   ``--format csv``, devient un **export tabulaire** : une ligne par position,
   avec son XGID, sa phase, son score, son videau, ses pips et les colonnes
   d'analyse dérivées.
@@ -769,8 +771,8 @@ distinctes.
    porte la moyenne.
 
 Chaque type imprime un bloc par élément, précédé du total trouvé. La ligne
-finale rappelle que la liste est tronquée par ``--limit``, dont la valeur par
-défaut vaut 10 pour les positions :
+finale rappelle quelle fenêtre est affichée, tronquée par ``--limit`` (dont la
+valeur par défaut vaut 10 pour les positions) et décalée par ``--offset`` :
 
 .. code-block:: text
 
@@ -788,7 +790,7 @@ défaut vaut 10 pour les positions :
 
    …
 
-   (Showing 10 of 3859 positions, use --limit to see more)
+   (Showing 1-10 of 3859 positions, use --offset and --limit to see more)
 
 **Exemples:**
 

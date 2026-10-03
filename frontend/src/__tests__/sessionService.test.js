@@ -16,7 +16,15 @@ const { bindings, searchState, positionService, setStatusBarMessage } = vi.hoist
     const searchState = { lastSearchCommand: '', lastSearchPosition: null, hasActiveSearch: false };
     return {
         searchState,
-        bindings: { SaveSessionState: vi.fn(), LoadSessionState: vi.fn(), ListPositionIDs: vi.fn(), LoadPositionIDsByFilters: vi.fn(), RankPositionIDsByFilters: vi.fn() },
+        bindings: {
+            SaveSessionState: vi.fn(),
+            LoadSessionState: vi.fn(),
+            ListPositionIDs: vi.fn(),
+            CountPositions: vi.fn(),
+            IndexOfPosition: vi.fn(),
+            LoadPositionIDsByFilters: vi.fn(),
+            RankPositionIDsByFilters: vi.fn()
+        },
         positionService: {
             getSearchState: () => ({ ...searchState }),
             setSearchState: vi.fn((next) => Object.assign(searchState, next)),
@@ -32,6 +40,7 @@ vi.mock('../services/positionService.js', () => positionService);
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage }));
 
 import { saveSessionState, restoreSessionState } from '../services/sessionService.js';
+import { useLibrary } from '../__mocks__/wails.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
@@ -48,7 +57,10 @@ beforeEach(() => {
     positionsStore.set([]);
     currentPositionIndexStore.set(-1);
     lastSearchStore.set({ command: 'stale', position: '{}' });
-    bindings.ListPositionIDs.mockResolvedValue(library.map((p) => p.id));
+    useLibrary(
+        bindings,
+        library.map((p) => p.id)
+    );
     bindings.SaveSessionState.mockResolvedValue(undefined);
 });
 
@@ -92,7 +104,7 @@ describe('restoreSessionState', () => {
 
         await restoreSessionState();
 
-        expect(get(positionsStore).ids).toEqual([1, 2, 3]);
+        expect(get(positionsStore)).toMatchObject({ ids: null, length: 3, paged: true });
         expect(get(currentPositionIndexStore)).toBe(1);
     });
 
@@ -101,7 +113,7 @@ describe('restoreSessionState', () => {
 
         await restoreSessionState();
 
-        expect(get(positionsStore).ids).toEqual([1, 2, 3]);
+        expect(get(positionsStore)).toMatchObject({ ids: null, length: 3, paged: true });
         expect(get(currentPositionIndexStore)).toBe(2);
         expect(bindings.LoadPositionIDsByFilters).not.toHaveBeenCalled();
     });

@@ -77,6 +77,12 @@ func checkPositionIsolation(t *testing.T, ctx context.Context, s storage.Storage
 	if _, err := s.Positions().Load(ctx, b, id); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("Load(%s, id from %s): got %v, want ErrNotFound", b, a, err)
 	}
+	if c, err := s.Positions().Count(ctx, b); err != nil || c != 0 {
+		t.Errorf("Count(%s): got %d, %v; want 0", b, c, err)
+	}
+	if _, found, err := s.Positions().IndexOf(ctx, b, id); err != nil || found {
+		t.Errorf("IndexOf(%s, id from %s): found=%v, %v; want not found", b, a, found, err)
+	}
 }
 
 func checkAnalysisIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {

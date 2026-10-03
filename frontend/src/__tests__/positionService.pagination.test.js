@@ -1,9 +1,10 @@
 /**
  * positionService.pagination.test.js
  *
- * The library is loaded as ids only (ListPositionIDs), never as the full
- * position array; the positions the board shows are fetched by window
- * through LoadPositionsByIDs, one call per half-window while browsing.
+ * The library is opened as its length only (CountPositions), never as the
+ * full id list or position array; ids come by page (ListPositionIDs windows)
+ * and the positions the board shows by window through LoadPositionsByIDs,
+ * one call per half-window while browsing.
  */
 
 import { describe, test, expect, vi, beforeEach } from 'vitest';
@@ -13,6 +14,8 @@ const bindings = vi.hoisted(() => {
     const pos = (id) => ({ id, board: { points: [], bearoff: [0, 0] }, cube: { owner: -1, value: 0 }, dice: [1, 2], score: [3, 3], player_on_roll: 0, decision_type: 0 });
     return {
         ListPositionIDs: vi.fn(() => Promise.resolve([])),
+        CountPositions: vi.fn(() => Promise.resolve(0)),
+        IndexOfPosition: vi.fn(() => Promise.resolve(-1)),
         LoadPositionsByIDs: vi.fn((ids) => Promise.resolve(ids.map(pos))),
         TrashPosition: vi.fn(() => Promise.resolve()),
         DeleteAnalysis: vi.fn(),
@@ -42,6 +45,7 @@ vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn(() => Pro
 import { statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
+import { useLibrary } from '../__mocks__/wails.js';
 import { loadAllPositions, nextPosition, previousPosition, firstPosition, lastPosition, deletePosition } from '../services/positionService.js';
 
 const range = (n) => Array.from({ length: n }, (_, i) => i + 1);
@@ -58,27 +62,28 @@ beforeEach(() => {
 });
 
 describe('loadAllPositions', () => {
-    test('loads the ids only and lands on the last one; no position travels', async () => {
-        bindings.ListPositionIDs.mockResolvedValue(range(300));
+    test('loads the count only and lands on the last one; no id or position travels', async () => {
+        useLibrary(bindings, range(300));
 
         await loadAllPositions();
 
-        expect(bindings.ListPositionIDs).toHaveBeenCalledTimes(1);
+        expect(bindings.CountPositions).toHaveBeenCalledTimes(1);
+        expect(bindings.ListPositionIDs).not.toHaveBeenCalled();
         expect(bindings.LoadPositionsByIDs).not.toHaveBeenCalled();
-        expect(get(positionsStore)).toEqual({ ids: range(300), length: 300 });
+        expect(get(positionsStore)).toEqual({ ids: null, length: 300, paged: true });
         expect(get(currentPositionIndexStore)).toBe(299);
         expect(get(statusBarModeStore)).toBe('NORMAL');
     });
 
     test('an empty library leaves the index at -1', async () => {
-        bindings.ListPositionIDs.mockResolvedValue([]);
+        useLibrary(bindings, []);
         await loadAllPositions();
         expect(get(positionsStore).length).toBe(0);
         expect(get(currentPositionIndexStore)).toBe(-1);
     });
 
     test('a reload drops the window cache (positions may have been edited)', async () => {
-        bindings.ListPositionIDs.mockResolvedValue(range(10));
+        useLibrary(bindings, range(10));
         await loadAllPositions();
         await positionsStore.getPosition(9);
         expect(positionsStore.peek(9)).toBeTruthy();
@@ -90,7 +95,7 @@ describe('loadAllPositions', () => {
 
 describe('browsing fetches windows, one call per half-window', () => {
     test('showing the last position fetches its window; walking back stays inside it', async () => {
-        bindings.ListPositionIDs.mockResolvedValue(range(300));
+        useLibrary(bindings, range(300));
         await loadAllPositions();
 
         // What the index effect does for the shown index.
@@ -117,7 +122,7 @@ describe('browsing fetches windows, one call per half-window', () => {
     });
 
     test('first / next / last move the index within the id list', async () => {
-        bindings.ListPositionIDs.mockResolvedValue(range(5));
+        useLibrary(bindings, range(5));
         await loadAllPositions();
         expect(get(currentPositionIndexStore)).toBe(4);
         await nextPosition();
@@ -135,13 +140,17 @@ describe('browsing fetches windows, one call per half-window', () => {
 
 describe('deletePosition', () => {
     test('deletes the id at the current index and reloads the ids', async () => {
-        bindings.ListPositionIDs.mockResolvedValueOnce([10, 20, 30]).mockResolvedValueOnce([10, 30]);
+        useLibrary(bindings, [10, 20, 30]);
+        bindings.TrashPosition.mockImplementationOnce(async () => useLibrary(bindings, [10, 30]));
         await loadAllPositions();
         currentPositionIndexStore.set(1);
+        // What the index effect does for the shown index: its id page is then held.
+        await positionsStore.getPosition(1);
 
         await deletePosition();
 
         expect(bindings.TrashPosition).toHaveBeenCalledWith(20);
-        expect(get(positionsStore).ids).toEqual([10, 30]);
+        expect(get(positionsStore).length).toBe(2);
+        await expect(positionsStore.idsBetween(0, 2)).resolves.toEqual([10, 30]);
     });
 });

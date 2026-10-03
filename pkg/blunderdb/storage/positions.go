@@ -43,6 +43,15 @@ type PositionStore interface {
 	// shows with LoadByIDs, instead of materialising every row up front.
 	ListIDs(ctx context.Context, scope string, opts ListOpts) ([]int64, error)
 
+	// Count returns how many positions ListIDs would return unbounded. With
+	// ListIDs windows and IndexOf it lets a client browse a library of any
+	// size while holding only the window it shows.
+	Count(ctx context.Context, scope string) (int, error)
+
+	// IndexOf returns the rank of id in ListIDs's order (0 for the first
+	// position), or found=false when no such position is stored.
+	IndexOf(ctx context.Context, scope string, id int64) (index int, found bool, err error)
+
 	// LoadByIDs returns the positions whose ids are listed, in the order the
 	// caller gave them, in one round trip per batch rather than one per id.
 	// Unknown ids are skipped rather than failing the call: callers hand

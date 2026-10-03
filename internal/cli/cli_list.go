@@ -23,6 +23,7 @@ func (cli *CLI) runList(args []string) error {
 	dbPath := listCmd.String("db", "", "Path to the database file (required)")
 	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, moves, analyses, imports, stats, players, tags, study (required)")
 	limit := listCmd.Int("limit", 10, "Maximum number of items to list")
+	offset := listCmd.Int("offset", 0, "Number of positions to skip before listing (positions only)")
 
 	// Stats-specific flags (only used when --type stats)
 	statsMetric := listCmd.String("metric", "pr", "Metric to display: pr or mwc (stats only)")
@@ -118,7 +119,7 @@ func (cli *CLI) runList(args []string) error {
 		if strings.ToLower(*statsFormat) == "csv" {
 			return cli.exportPositionsCSV(exportLimit(listCmd, *limit))
 		}
-		return cli.listPositions(*limit)
+		return cli.listPositions(*offset, *limit)
 	case "moves":
 		if strings.ToLower(*statsFormat) != "csv" {
 			return fmt.Errorf("--type moves is a tabular export: add --format csv")
@@ -263,25 +264,30 @@ func (cli *CLI) listTournaments(limit int) error {
 	return nil
 }
 
-// listPositions lists positions in the database
-func (cli *CLI) listPositions(limit int) error {
-	positions, err := cli.db.LoadAllPositions()
+// listPositions lists the window [offset, offset+limit) of the library: only
+// that window is read, whatever the size of the database.
+func (cli *CLI) listPositions(offset, limit int) error {
+	total, err := cli.db.CountPositions()
+	if err != nil {
+		return fmt.Errorf("failed to count positions: %w", err)
+	}
+	if total == 0 {
+		fmt.Println("No positions found in database")
+		return nil
+	}
+	offset = max(offset, 0)
+	ids, err := cli.db.ListPositionIDs(offset, limit)
+	if err != nil {
+		return fmt.Errorf("failed to get positions: %w", err)
+	}
+	positions, err := cli.db.LoadPositionsByIDs(ids)
 	if err != nil {
 		return fmt.Errorf("failed to get positions: %w", err)
 	}
 
-	if len(positions) == 0 {
-		fmt.Println("No positions found in database")
-		return nil
-	}
-
-	fmt.Printf("Found %d position(s):\n\n", len(positions))
+	fmt.Printf("Found %d position(s):\n\n", total)
 
 	displayCount := len(positions)
-	if limit > 0 && limit < len(positions) {
-		displayCount = limit
-	}
-
 	for i := 0; i < displayCount; i++ {
 		pos := positions[i]
 
@@ -296,8 +302,8 @@ func (cli *CLI) listPositions(limit int) error {
 		fmt.Println()
 	}
 
-	if limit > 0 && len(positions) > limit {
-		fmt.Printf("(Showing %d of %d positions, use --limit to see more)\n", displayCount, len(positions))
+	if shown := offset + displayCount; displayCount > 0 && (offset > 0 || shown < total) {
+		fmt.Printf("(Showing %d-%d of %d positions, use --offset and --limit to see more)\n", offset+1, shown, total)
 	}
 
 	return nil

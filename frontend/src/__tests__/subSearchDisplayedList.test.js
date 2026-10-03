@@ -22,7 +22,9 @@ import { tick } from 'svelte';
 
 vi.mock('../../wailsjs/go/database/Database.js', async (importOriginal) => ({
     ...(await importOriginal()),
-    ListPositionIDs: vi.fn(() => Promise.resolve([1, 2, 3])),
+    ListPositionIDs: vi.fn((offset = 0, limit = 0) => Promise.resolve([1, 2, 3].slice(offset, limit > 0 ? offset + limit : undefined))),
+    CountPositions: vi.fn(() => Promise.resolve(3)),
+    IndexOfPosition: vi.fn((/** @type {number} */ id) => Promise.resolve([1, 2, 3].indexOf(id))),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
     LoadComment: vi.fn(() => Promise.resolve('')),
     LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),

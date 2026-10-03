@@ -340,6 +340,34 @@ func (s *positionStore) ListIDs(ctx context.Context, scope string, opts storage.
 	return ids, nil
 }
 
+// Count returns the number of the tenant's stored positions.
+func (s *positionStore) Count(ctx context.Context, scope string) (int, error) {
+	var n int
+	err := s.db.QueryRow(ctx, `SELECT COUNT(*) FROM position WHERE tenant_id = $1`, tenantID(scope)).Scan(&n)
+	if err != nil {
+		return 0, fmt.Errorf("postgres: count positions: %w", err)
+	}
+	return n, nil
+}
+
+// IndexOf returns the rank of id in ListIDs's order: the number of the
+// tenant's positions with a smaller id.
+func (s *positionStore) IndexOf(ctx context.Context, scope string, id int64) (int, bool, error) {
+	var exists bool
+	var rank int
+	err := s.db.QueryRow(ctx,
+		`SELECT EXISTS(SELECT 1 FROM position WHERE tenant_id = $1 AND id = $2),
+		        (SELECT COUNT(*) FROM position WHERE tenant_id = $1 AND id < $2)`,
+		tenantID(scope), id).Scan(&exists, &rank)
+	if err != nil {
+		return 0, false, fmt.Errorf("postgres: index of position: %w", err)
+	}
+	if !exists {
+		return 0, false, nil
+	}
+	return rank, true, nil
+}
+
 // loadByIDsChunk bounds how many ids one `= ANY($2)` query carries.
 // PostgreSQL has no bound-parameter limit, but an unbounded list would let one
 // query carry millions of ids with no chance to notice a cancelled context

@@ -172,6 +172,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/metadata.counts                      JSON
      POST /v1/metadata.version                     JSON
    positions
+     POST /v1/positions.count                      JSON
      POST /v1/positions.delete                     JSON
      POST /v1/positions.epc                        JSON
      POST /v1/positions.exists                     JSON
@@ -179,6 +180,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.fromOGID                   JSON
      POST /v1/positions.fromXGID                   JSON
      POST /v1/positions.fromXGP                    JSON
+     POST /v1/positions.indexOf                    JSON
      POST /v1/positions.legalMoves                 JSON
      POST /v1/positions.list                       NDJSON
      POST /v1/positions.listIds                    JSON

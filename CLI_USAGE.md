@@ -487,6 +487,7 @@ Shows position details:
 
 **Options:**
 - `--limit` - Maximum number of items to display (default: 10)
+- `--offset` - Number of positions to skip before listing; only that window is read
 
 ### Show Database Statistics
 
@@ -2577,6 +2578,8 @@ Options:
     	Maximum number of items to list (default 10)
   -metric string
     	Metric to display: pr or mwc (stats only) (default "pr")
+  -offset int
+    	Number of positions to skip before listing (positions only)
   -player string
     	Filter by player name (stats only)
   -queue

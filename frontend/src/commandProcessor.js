@@ -180,12 +180,13 @@ function handleSearchCommand(command, { isSubSearch }) {
 
     let currentIDs = '';
     if (isSubSearch) {
+        // null is the whole library: searching within it is a plain search.
         const displayed = displayedPositionIDs();
-        if (displayed.length === 0) {
+        if (displayed !== null && displayed.length === 0) {
             statusBarTextStore.set(tMsg('commands.noResultsToSearchIn'));
             return;
         }
-        currentIDs = displayed.join(',');
+        currentIDs = displayed === null ? '' : displayed.join(',');
     }
 
     const bareCommand = isSubSearch ? 'ss' : 's';

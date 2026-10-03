@@ -35,6 +35,34 @@ export const positionsStore = createPositionList({
         return (await LoadPositionsByIDs(ids)) || [];
     }
 });
+
+// The library as a paged list: its length, id windows and ranks come from the storage contract
+// (CountPositions, ListPositionIDs, IndexOfPosition), so opening a library of any size reads
+// one count and the pages browsed.
+const database = () => import('../../wailsjs/go/database/Database.js');
+/** @type {import('./positionList.js').IdSource} */
+export const librarySource = {
+    count: async () => (await (await database()).CountPositions()) || 0,
+    window: async (offset, limit) => (await (await database()).ListPositionIDs(offset, limit)) || [],
+    indexOf: async (id) => {
+        const index = await (await database()).IndexOfPosition(id);
+        return Number.isInteger(index) ? index : -1;
+    }
+};
+
+/**
+ * Browse the whole library; resolves to its length.
+ * @param {{ reset?: boolean }} [options] reset also drops the position cache
+ */
+export function openLibrary(options = {}) {
+    return positionsStore.setSource(librarySource, options);
+}
+
+/** Whether the list browsed is the whole library. */
+export function browsingLibrary() {
+    return positionsStore.isSource(librarySource);
+}
+
 export const positionBeforeFilterLibraryStore = writable(null); // Store position before opening filter library
 export const positionIndexBeforeFilterLibraryStore = writable(-1); // Store position index before opening filter library
 

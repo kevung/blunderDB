@@ -351,7 +351,7 @@ export async function showCard(card) {
     // renders the score sheet.
     if (isScoreCard(card)) return;
     await showPosition(card.position);
-    const idx = positionsStore.indexOf(card.position.id);
+    const idx = await positionsStore.findIndex(card.position.id);
     if (idx >= 0) currentPositionIndexStore.set(idx);
 }
 

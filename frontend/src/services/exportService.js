@@ -4,7 +4,7 @@ import { OpenExportDatabaseDialog, OpenExportMatDialog, ShowAlert } from '../../
 import { ExportDatabase, CollectionCoverage, LoadMetadata, ExportMatchMAT, SuggestMatFilename, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
-import { positionsStore } from '../stores/positionStore.js';
+import { positionsStore, browsingLibrary } from '../stores/positionStore.js';
 import { statusBarModeStore, openModal, closeModal, MODAL } from '../stores/uiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
@@ -30,9 +30,8 @@ export async function exportDatabase() {
         return;
     }
 
-    // The export takes ids (ExportOptions.PositionIDs): the list already is one.
-    const positionIds = get(positionsStore).ids;
-    if (positionIds.length === 0) {
+    // The export takes ids (ExportOptions.PositionIDs), or AllPositions for the library.
+    if (get(positionsStore).length === 0) {
         setStatusBarMessage(tMsg('status.noPositionsToExport'));
         await ShowAlert('No positions to export. Please load positions first.');
         return;
@@ -74,7 +73,11 @@ export async function exportDatabase() {
         // writes membership for positions it exports, so a collection can arrive truncated;
         // the screen says so rather than letting it happen quietly.
         try {
-            exportCollectionCoverageStore.set((await CollectionCoverage(positionIds)) || {});
+            // The whole library covers every collection: no id list to send.
+            const coverage = browsingLibrary()
+                ? Object.fromEntries((get(collectionsStore) || []).map((/** @type {any} */ c) => [c.id, c.positionCount ?? 0]))
+                : (await CollectionCoverage(get(positionsStore).ids)) || {};
+            exportCollectionCoverageStore.set(coverage);
         } catch (e) {
             logger.log('Could not measure collection coverage:', e);
             exportCollectionCoverageStore.set({});
@@ -94,7 +97,7 @@ export async function exportDatabase() {
             logger.log('Could not read the source metadata:', e);
         }
 
-        exportPositionCountStore.set(positionIds.length);
+        exportPositionCountStore.set(get(positionsStore).length);
         exportModalModeStore.set('metadata');
         openModal(MODAL.EXPORT_DATABASE);
     } catch (error) {
@@ -142,7 +145,9 @@ export async function handleExportCommit() {
             // Identifiers, not positions: the whole set can be tens of MB of
             // JSON on the UI thread. The exporter reads its open database
             // (ExportOptions.PositionIDs).
-            positionIDs: get(positionsStore).ids,
+            // The library is never held as ids (positionList.js): AllPositions says it.
+            allPositions: browsingLibrary(),
+            positionIDs: browsingLibrary() ? [] : get(positionsStore).ids,
             metadata: {
                 user: metadata.user || '',
                 description: metadata.description || '',

@@ -1,12 +1,13 @@
 import { tMsg } from '../i18n';
 import { get } from 'svelte/store';
-import { SaveSessionState, LoadSessionState, ListPositionIDs, LoadPositionIDsByFilters, RankPositionIDsByFilters } from '../../wailsjs/go/database/Database.js';
+import { SaveSessionState, LoadSessionState, LoadPositionIDsByFilters, RankPositionIDsByFilters } from '../../wailsjs/go/database/Database.js';
 import { GetLikeLimit } from '../../wailsjs/go/main/Config.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { viewStore } from '../stores/viewStore.js';
+import { librarySource } from '../stores/positionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { getSearchState, setSearchState } from './positionService.js';
 import { logger } from '../utils/logger.js';
@@ -36,20 +37,21 @@ export async function saveSessionState() {
     }
 }
 
-// Replays a list origin into ids; an origin that no longer yields anything (positions deleted,
-// search now empty) falls back to the library.
-async function resolveOriginIds(origin) {
+// Replays a list origin into a positionList snapshot: a search's ids, or the library as a paged
+// list (its length only). An origin that no longer yields anything (positions deleted, search now
+// empty) falls back to the library.
+async function resolveOriginList(origin) {
     if (origin && origin.kind === 'search' && origin.payload) {
         try {
             const ids = origin.payload.likeFilter
                 ? ((await RankPositionIDsByFilters(origin.payload, (await GetLikeLimit()) || 0)) || []).map((n) => n.id)
                 : await LoadPositionIDsByFilters(origin.payload);
-            if (ids && ids.length > 0) return ids;
+            if (ids && ids.length > 0) return { ids };
         } catch (error) {
             logger.error('Error replaying the saved search:', error);
         }
     }
-    return (await ListPositionIDs()) || [];
+    return { source: librarySource, length: await librarySource.count() };
 }
 
 export async function restoreSessionState() {
@@ -58,7 +60,7 @@ export async function restoreSessionState() {
         logger.log('Loaded session state:', sessionState);
 
         if (sessionState && sessionState.viewsJSON) {
-            const viewsRestored = await viewStore.deserialize(sessionState.viewsJSON, resolveOriginIds);
+            const viewsRestored = await viewStore.deserialize(sessionState.viewsJSON, resolveOriginList);
             if (viewsRestored) {
                 setSearchState({
                     lastSearchCommand: sessionState.lastSearchCommand || '',

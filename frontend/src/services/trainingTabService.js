@@ -12,7 +12,7 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 import { GenerateBearoffQuestion, GenerateEvaluationQuestion, LegalMoves } from '../../wailsjs/go/gui/App.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { positionStore, positionsStore } from '../stores/positionStore.js';
+import { positionStore, positionsStore, browsingLibrary } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { emptySearchBoardPosition } from '../stores/searchExcludePositionStore.js';
 import { trainingSessionStore, trainingElapsedStore, trainingJournalStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
@@ -111,7 +111,9 @@ async function buildPipsQuestion(seedSource, seed) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
         if (length === 0) return { question: null, refusal: 'noQuestion' };
-        const id = positionsStore.idAt(Math.floor(Math.random() * length));
+        const index = Math.floor(Math.random() * length);
+        // Held ids answer at once; only a paged list's unread page is awaited.
+        const id = positionsStore.idAt(index) ?? (await positionsStore.resolveIdAt(index));
         if (id == null) return { question: null, refusal: 'noQuestion' };
         const position = await LoadPosition(id);
         if (!position) return { question: null, refusal: 'noQuestion' };
@@ -144,6 +146,39 @@ function drawDistinct(candidates, count) {
     return pool.slice(0, Math.min(count, pool.length));
 }
 
+/**
+ * `count` distinct indices of [0, length), drawn without building the range: the browsed list may
+ * be the library, of any size.
+ * @param {number} length @param {number} count
+ */
+function drawIndices(length, count) {
+    if (length <= count * 2)
+        return drawDistinct(
+            Array.from({ length }, (_, i) => i),
+            count
+        );
+    /** @type {Set<number>} */
+    const drawn = new Set();
+    while (drawn.size < count) drawn.add(Math.floor(Math.random() * length));
+    return [...drawn];
+}
+
+/**
+ * The ids of `count` distinct positions of the browsed list, drawn at random; a paged list reads
+ * only the pages they fall in.
+ * @param {number} count
+ */
+async function drawListIds(count) {
+    const { length } = get(positionsStore);
+    /** @type {number[]} */
+    const out = [];
+    for (const index of drawIndices(length, count)) {
+        const id = positionsStore.idAt(index) ?? (await positionsStore.resolveIdAt(index));
+        if (id != null) out.push(id);
+    }
+    return out;
+}
+
 /** Les deux EPC d'une position engendrée, dans l'ordre du plateau.
  *  @param {any} epc */
 function epcNumbers(epc) {
@@ -165,12 +200,10 @@ function epcNumbers(epc) {
 async function buildBearoffQuestion(seedSource, seed) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
-        const phased = await bearoffIndices();
-        const candidates = phased.length > 0 ? phased : Array.from({ length }, (_, i) => i);
+        const phased = await bearoffIds();
+        const drawn = phased.length > 0 ? drawDistinct(phased, MAX_LIBRARY_DRAWS) : await drawListIds(MAX_LIBRARY_DRAWS);
         let last = 'notBearoff';
-        for (const index of drawDistinct(candidates, MAX_LIBRARY_DRAWS)) {
-            const id = positionsStore.idAt(index);
-            if (id == null) continue;
+        for (const id of drawn) {
             const loaded = await LoadPosition(id);
             if (!loaded) continue;
             const generated = await GenerateBearoffQuestion(/** @type {any} */ ({ source: 'library', seed: loaded }));
@@ -207,7 +240,7 @@ function bearoffQuestion(generated, key, positionId = null, loaded = null) {
 }
 
 /**
- * Les index, dans la liste parcourue, des positions en phase `bearoff`
+ * Les ids, dans la liste parcourue, des positions en phase `bearoff`
  * (ADR-0035), calculés une fois par session. Sans cette restriction, trente
  * tirages à l'aveugle manquent souvent les rares bearoffs d'une base. Elle ne
  * juge pas : le domaine (4 à 15 pions) reste en Go.
@@ -217,7 +250,7 @@ function bearoffQuestion(generated, key, positionId = null, loaded = null) {
  *
  * @returns {Promise<number[]>}
  */
-function bearoffIndices() {
+function bearoffIds() {
     if (!bearoffPhaseIndices) {
         bearoffPhaseIndices = (async () => {
             /** @type {number[]} */
@@ -228,7 +261,8 @@ function bearoffIndices() {
             } catch (error) {
                 logger.error('could not narrow the training draw to bear-offs:', error);
             }
-            return ids.map((id) => positionsStore.indexOf(id)).filter((index) => index >= 0);
+            // The library holds every position: no rank to look up. Another list keeps its own.
+            return browsingLibrary() ? ids : ids.filter((id) => positionsStore.indexOf(id) >= 0);
         })();
     }
     return bearoffPhaseIndices;
@@ -254,12 +288,7 @@ async function buildEvaluationQuestion(seedSource, seed) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
         let last = 'notMoneyCubeDecision';
-        for (const index of drawDistinct(
-            Array.from({ length }, (_, i) => i),
-            MAX_LIBRARY_DRAWS
-        )) {
-            const id = positionsStore.idAt(index);
-            if (id == null) continue;
+        for (const id of await drawListIds(MAX_LIBRARY_DRAWS)) {
             const loaded = await LoadPosition(id);
             if (!loaded) continue;
             const generated = await GenerateEvaluationQuestion(/** @type {any} */ ({ source: 'library', seed: loaded }));
@@ -330,9 +359,14 @@ async function buildDecisionQuestion() {
     const { length } = get(positionsStore);
     /** @type {number[]} */
     const candidates = [];
-    for (let index = 0; index < length; index++) {
-        const id = positionsStore.idAt(index);
-        if (id != null && !decisionSeen.has(id)) candidates.push(id);
+    if (positionsStore.isPaged()) {
+        // A paged list (the library) is drawn from, never walked whole.
+        for (const id of await drawListIds(Math.min(length, MAX_DECISION_DRAWS * 2))) if (!decisionSeen.has(id)) candidates.push(id);
+    } else {
+        for (let index = 0; index < length; index++) {
+            const id = positionsStore.idAt(index);
+            if (id != null && !decisionSeen.has(id)) candidates.push(id);
+        }
     }
     if (candidates.length === 0) return { question: null, refusal: decisionsBuilt > 0 ? 'decisionsExhausted' : 'noAnalysis' };
     for (const id of drawDistinct(candidates, MAX_DECISION_DRAWS)) {
@@ -398,7 +432,7 @@ async function buildQuestion(exercise, seedSource, seed) {
  */
 async function showQuestion(question) {
     if (question?.positionId != null) {
-        const index = positionsStore.indexOf(question.positionId);
+        const index = await positionsStore.findIndex(question.positionId);
         if (index >= 0) {
             // -1 d'abord : pointer l'index déjà courant ne rechargerait rien.
             currentPositionIndexStore.set(-1);

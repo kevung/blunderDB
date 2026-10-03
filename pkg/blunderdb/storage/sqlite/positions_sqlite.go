@@ -314,6 +314,32 @@ func (s *positionStore) ListIDs(ctx context.Context, scope string, opts storage.
 	return ids, nil
 }
 
+// Count returns the number of stored positions.
+func (s *positionStore) Count(ctx context.Context, scope string) (int, error) {
+	var n int
+	if err := s.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM position`).Scan(&n); err != nil {
+		return 0, fmt.Errorf("sqlite: count positions: %w", err)
+	}
+	return n, nil
+}
+
+// IndexOf returns the rank of id in ListIDs's order. The order is by id, so
+// the rank is the number of smaller ids: a primary-key range count, not a
+// walk of the list.
+func (s *positionStore) IndexOf(ctx context.Context, scope string, id int64) (int, bool, error) {
+	var exists, rank int
+	err := s.db.QueryRowContext(ctx,
+		`SELECT EXISTS(SELECT 1 FROM position WHERE id = ?), (SELECT COUNT(*) FROM position WHERE id < ?)`,
+		id, id).Scan(&exists, &rank)
+	if err != nil {
+		return 0, false, fmt.Errorf("sqlite: index of position: %w", err)
+	}
+	if exists == 0 {
+		return 0, false, nil
+	}
+	return rank, true, nil
+}
+
 // LoadByIDs returns the listed positions in the caller's order, skipping
 // unknown ids — see storage.PositionStore. The lookup runs in chunks via
 // forEachIn, staying under SQLite's bound-variable limit.

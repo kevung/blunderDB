@@ -1,6 +1,5 @@
 import { get } from 'svelte/store';
 import {
-    ListPositionIDs,
     TrashPosition,
     DeleteAnalysis,
     UpdatePosition,
@@ -17,7 +16,7 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
-import { positionStore, positionsStore, matchContextStore } from '../stores/positionStore.js';
+import { positionStore, positionsStore, matchContextStore, openLibrary } from '../stores/positionStore.js';
 import { searchExcludePositionStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
 import { epcDataStore, resetEpcReveal } from '../stores/epcStore.js';
@@ -278,10 +277,11 @@ export async function loadAllPositions({ focusId = null } = {}) {
         return;
     }
     try {
-        // Ids only: the positions are fetched by window as the user browses
-        // (positionList.js). A library reload may follow an edit, so the
-        // window cache is dropped with the list.
-        const ids = (await ListPositionIDs()) || [];
+        // Paged: the library's length now, its ids and positions by window as
+        // the user browses (positionList.js). A library reload may follow an
+        // edit, so the window cache is dropped with the list.
+        const total = await openLibrary({ reset: true });
+        const focusIdx = total > 0 && focusId != null ? await positionsStore.findIndex(focusId) : -1;
 
         if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
             SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex).catch((e) => {
@@ -301,12 +301,10 @@ export async function loadAllPositions({ focusId = null } = {}) {
         forgetSubSearchOrigin();
         activeCollectionStore.set(null);
 
-        positionsStore.setIds(ids, { reset: true });
         listOriginStore.set(LIBRARY_ORIGIN);
-        if (ids.length > 0) {
-            const focusIdx = focusId == null ? -1 : ids.indexOf(focusId);
+        if (total > 0) {
             currentPositionIndexStore.set(-1);
-            currentPositionIndexStore.set(focusIdx >= 0 ? focusIdx : ids.length - 1);
+            currentPositionIndexStore.set(focusIdx >= 0 ? focusIdx : total - 1);
             activeTabStore.set('matches');
 
             hasActiveSearch = false;

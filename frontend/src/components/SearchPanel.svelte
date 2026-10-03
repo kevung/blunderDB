@@ -383,8 +383,10 @@
         // Search within the list on screen (same rule as `ss`). An empty list is
         // refused: '' would mean "no restriction" to the backend.
         let restrictToPositionIDs = '';
-        if (searchInCurrentResults) {
-            restrictToPositionIDs = displayedPositionIDs().join(',');
+        // null is the whole library: searching within it is a plain search.
+        const displayed = searchInCurrentResults ? displayedPositionIDs() : null;
+        if (displayed !== null) {
+            restrictToPositionIDs = displayed.join(',');
             if (!restrictToPositionIDs) {
                 statusBarTextStore.set(tMsg('commands.noResultsToSearchIn'));
                 return;

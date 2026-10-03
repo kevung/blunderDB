@@ -42,6 +42,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Position/UpdateRefusesDuplicate", testPositionUpdateRefusesDuplicate},
 		{"Position/ProvenanceIsSticky", testPositionProvenanceSticky},
 		{"Position/ListIDsAndLoadByIDs", testPositionListIDsAndLoadByIDs},
+		{"Position/CountAndIndexOf", testPositionCountAndIndexOf},
 		{"Position/RepairCrawfordSentinel", testRepairCrawfordSentinel},
 		{"Position/RepairCrawfordMergeCarriesDependents", testRepairCrawfordMergeCarriesDependents},
 		{"Position/RepairCrawfordSentinelFromPastedXGID", testRepairCrawfordSentinelFromPastedXGID},

@@ -194,6 +194,10 @@ export function CountOrphans() {
   return window['go']['database']['Database']['CountOrphans']();
 }
 
+export function CountPositions() {
+  return window['go']['database']['Database']['CountPositions']();
+}
+
 export function CountPositionsWithForeignAnalysis() {
   return window['go']['database']['Database']['CountPositionsWithForeignAnalysis']();
 }
@@ -630,6 +634,10 @@ export function ImportXGPPosition(arg1) {
   return window['go']['database']['Database']['ImportXGPPosition'](arg1);
 }
 
+export function IndexOfPosition(arg1) {
+  return window['go']['database']['Database']['IndexOfPosition'](arg1);
+}
+
 export function IsProtectedCopyPath(arg1) {
   return window['go']['database']['Database']['IsProtectedCopyPath'](arg1);
 }
@@ -650,8 +658,8 @@ export function ListImportBatches(arg1, arg2) {
   return window['go']['database']['Database']['ListImportBatches'](arg1, arg2);
 }
 
-export function ListPositionIDs() {
-  return window['go']['database']['Database']['ListPositionIDs']();
+export function ListPositionIDs(arg1, arg2) {
+  return window['go']['database']['Database']['ListPositionIDs'](arg1, arg2);
 }
 
 export function ListRencontres() {

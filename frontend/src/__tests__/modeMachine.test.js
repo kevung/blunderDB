@@ -15,6 +15,8 @@ import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ListPositionIDs: vi.fn(() => Promise.resolve([])),
+    CountPositions: vi.fn(() => Promise.resolve(0)),
+    IndexOfPosition: vi.fn(() => Promise.resolve(-1)),
     DeletePosition: vi.fn(),
     DeleteAnalysis: vi.fn(),
     UpdatePosition: vi.fn(),
@@ -40,7 +42,11 @@ vi.mock('../services/sessionService.js', () => ({
     saveSessionState: vi.fn()
 }));
 
-import { ListPositionIDs, LoadAnalysis, SaveLastVisitedPosition, GetLastVisitedMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
+import { ListPositionIDs, CountPositions, IndexOfPosition, LoadAnalysis, SaveLastVisitedPosition, GetLastVisitedMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
+import { useLibrary } from '../__mocks__/wails.js';
+
+/** The library the bindings serve (CountPositions, ListPositionIDs windows, IndexOfPosition). */
+const serveLibrary = (/** @type {number[]} */ ids) => useLibrary({ CountPositions, ListPositionIDs, IndexOfPosition }, ids);
 import { setStatusBarMessage } from '../services/databaseService.js';
 import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, activeTabStore, openPanels, openPanel, PANEL } from '../stores/uiStore.js';
 import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
@@ -143,6 +149,7 @@ function resetStores() {
 
 beforeEach(() => {
     vi.clearAllMocks();
+    serveLibrary([]);
     resetStores();
     // Un exit précédent peut avoir laissé un contexte : on repart d'un automate vierge.
     forgetContextBeforeEval();
@@ -296,7 +303,7 @@ describe('NORMAL → EVAL → NORMAL', () => {
         expect(get(currentPositionIndexStore)).toBe(0);
         const { beforeEval } = modeState().savedContext;
         expect(beforeEval.mode).toBe(MODE.NORMAL);
-        expect(beforeEval.ids).toEqual(lib.map((p) => p.id));
+        expect(beforeEval.list).toEqual({ ids: lib.map((p) => p.id) });
         expect(beforeEval.position.id).toBe(2);
         expect(beforeEval.positionIndex).toBe(1);
     });
@@ -325,7 +332,8 @@ describe('NORMAL → EVAL → NORMAL', () => {
         await exitEvalMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
-        expect(ListPositionIDs).toHaveBeenCalledTimes(1);
+        // The reload is not awaited, and the library binding is imported lazily.
+        await vi.waitFor(() => expect(CountPositions).toHaveBeenCalledTimes(1));
     });
 });
 
@@ -468,7 +476,7 @@ describe('EDIT → EVAL : l’automate quitte la recherche avant d’entrer dans
         expect(beforeEdit).toBeNull();
         expect(beforeEval.mode).toBe(MODE.NORMAL);
         expect(beforeEval.position.board.bearoff).toEqual([3, 3]);
-        expect(beforeEval.ids).toEqual([1, 2, 3]);
+        expect(beforeEval.list).toEqual({ ids: [1, 2, 3] });
 
         await exitEvalMode();
         expect(get(positionsStore).ids).toEqual([1, 2, 3]);
@@ -535,30 +543,30 @@ describe('une position existante entre dans le panneau Eval et en ressort', () =
 describe('toggleMatchMode', () => {
     test('MATCH → NORMAL : persiste le dernier coup, vide le contexte, recharge la bibliothèque', async () => {
         setMatch(2);
-        ListPositionIDs.mockResolvedValueOnce([1]);
+        serveLibrary([1]);
 
         await toggleMatchMode();
 
         expect(SaveLastVisitedPosition).toHaveBeenCalledWith(7, 2);
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(get(matchContextStore).isMatchMode).toBe(false);
-        expect(ListPositionIDs).toHaveBeenCalledTimes(1);
+        expect(CountPositions).toHaveBeenCalledTimes(1);
     });
 
     test('MATCH → NORMAL : reste sur la position quittée quand la bibliothèque la contient (#201)', async () => {
         setMatch(1); // le coup étudié est la position 102
-        ListPositionIDs.mockResolvedValueOnce([1, 102, 3]);
+        serveLibrary([1, 102, 3]);
 
         await toggleMatchMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
-        expect(get(positionsStore).ids).toEqual([1, 102, 3]);
+        expect(get(positionsStore)).toEqual({ ids: null, length: 3, paged: true });
         expect(get(currentPositionIndexStore), 'l’index de la position quittée, pas la dernière').toBe(1);
     });
 
     test('MATCH → NORMAL : sur la dernière position quand la position quittée n’est pas dans la liste', async () => {
         setMatch(1);
-        ListPositionIDs.mockResolvedValueOnce([1, 2, 3]);
+        serveLibrary([1, 2, 3]);
 
         await toggleMatchMode();
 
@@ -650,7 +658,7 @@ describe('COLLECTION → NORMAL', () => {
         selectedCollectionStore.set({ id: 4 });
         positionService.setSearchState('s', {}, true);
         lastSearchStore.set({ command: 's' });
-        ListPositionIDs.mockResolvedValueOnce(lib.map((p) => p.id));
+        serveLibrary(lib.map((p) => p.id));
 
         await exitCollectionMode();
 
@@ -659,23 +667,23 @@ describe('COLLECTION → NORMAL', () => {
         expect(get(activeCollectionStore)).toBeNull();
         expect(get(selectedCollectionStore)).toBeNull();
         expect(get(collectionPositionsStore)).toEqual([]);
-        expect(get(positionsStore).ids).toEqual(lib.map((p) => p.id));
+        expect(get(positionsStore)).toEqual({ ids: null, length: 3, paged: true });
         expect(get(currentPositionIndexStore), 'retrouvée par id dans la bibliothèque').toBe(1);
         expect(positionService.getSearchState()).toEqual({ lastSearchCommand: '', lastSearchPosition: null, hasActiveSearch: false });
         expect(get(lastSearchStore)).toBeNull();
     });
 
-    test('exitCollectionMode : ListPositionIDs qui échoue retombe sur loadAllPositions au lieu de rester bloqué', async () => {
+    test('exitCollectionMode : CountPositions qui échoue retombe sur loadAllPositions au lieu de rester bloqué', async () => {
         handleOpenCollection({ name: 'Backgames' }, [makePosition(2)]);
-        ListPositionIDs.mockRejectedValueOnce(new Error('db locked'));
-        ListPositionIDs.mockResolvedValueOnce([1, 2, 3]); // l'appel de repli, dans loadAllPositions
+        serveLibrary([1, 2, 3]);
+        CountPositions.mockRejectedValueOnce(new Error('db locked')); // l'appel de repli, dans loadAllPositions, réussit
 
         await exitCollectionMode();
 
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
         expect(get(activeCollectionStore)).toBeNull();
         expect(get(collectionPositionsStore)).toEqual([]);
-        expect(ListPositionIDs).toHaveBeenCalledTimes(2);
+        await vi.waitFor(() => expect(CountPositions).toHaveBeenCalledTimes(2));
     });
 });
 

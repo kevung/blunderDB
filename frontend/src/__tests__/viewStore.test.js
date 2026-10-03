@@ -105,7 +105,7 @@ describe('viewStore — default position shape (regression)', () => {
                 }
             ]
         });
-        const loadAll = async () => []; // nothing in the database matches id 999
+        const loadAll = async () => ({ ids: [] }); // nothing in the database matches id 999
 
         const ok = await ctx.viewStore.deserialize(savedJSON, loadAll);
         expect(ok).toBe(true);
@@ -259,27 +259,34 @@ describe('viewStore — serialize/deserialize round trip', () => {
         expect(parsed.views[0].positionIds).toBeUndefined();
         expect(parsed.views[0].commentText).toBe('remember this');
 
-        // Deserialize into the same fresh instance, checking ids against a
-        // fake "database" (ListPositionIDs). The board comes from the window
+        // Deserialize into the same fresh instance, the library replayed as a
+        // paged list over a fake "database". The board comes from the window
         // cache, still warm from the set() above.
-        const listIds = async (origin) => (origin.kind === 'library' ? [101, 102] : []);
+        const library = [101, 102];
+        const source = {
+            count: async () => library.length,
+            window: async (/** @type {number} */ o, /** @type {number} */ l) => library.slice(o, o + l),
+            indexOf: async (/** @type {number} */ id) => library.indexOf(id)
+        };
+        const listIds = async (origin) => (origin.kind === 'library' ? { source, length: library.length } : { ids: [] });
         const ok = await ctx.viewStore.deserialize(json, listIds);
         expect(ok).toBe(true);
 
         expect(get(ctx.positionStore).id).toBe(101);
-        expect(get(ctx.positionsStore).ids).toEqual([101, 102]);
+        expect(get(ctx.positionsStore)).toMatchObject({ ids: null, length: 2, paged: true });
+        await expect(ctx.positionsStore.resolveIdAt(1)).resolves.toBe(102);
         expect(get(ctx.commentTextStore)).toBe('remember this');
     });
 
     test('deserialize returns false and leaves state untouched on malformed JSON', async () => {
         const before = get(ctx.viewStore.views);
-        const ok = await ctx.viewStore.deserialize('{not valid json', async () => []);
+        const ok = await ctx.viewStore.deserialize('{not valid json', async () => ({ ids: [] }));
         expect(ok).toBe(false);
         expect(get(ctx.viewStore.views)).toBe(before);
     });
 
     test('deserialize returns false when the saved payload has no views', async () => {
-        const ok = await ctx.viewStore.deserialize(JSON.stringify({ views: [] }), async () => []);
+        const ok = await ctx.viewStore.deserialize(JSON.stringify({ views: [] }), async () => ({ ids: [] }));
         expect(ok).toBe(false);
     });
 
@@ -303,7 +310,7 @@ describe('viewStore — serialize/deserialize round trip', () => {
         // statusBarModeStore lives in uiStore; import it fresh alongside the rest.
         const uiStoreMod = await import('../stores/uiStore.js');
 
-        const ok = await ctx.viewStore.deserialize(json, async () => [posA.id]);
+        const ok = await ctx.viewStore.deserialize(json, async () => ({ ids: [posA.id] }));
         expect(ok).toBe(true);
         expect(get(uiStoreMod.statusBarModeStore)).toBe('NORMAL');
     });
@@ -319,7 +326,7 @@ describe('viewStore — serialize/deserialize round trip', () => {
         });
         const uiStoreMod = await import('../stores/uiStore.js');
 
-        const ok = await ctx.viewStore.deserialize(json, async () => [posA.id]);
+        const ok = await ctx.viewStore.deserialize(json, async () => ({ ids: [posA.id] }));
         expect(ok).toBe(true);
         expect(get(uiStoreMod.activeTabStore)).toBe('eval');
         expect(get(uiStoreMod.statusBarModeStore)).toBe('NORMAL');
@@ -354,7 +361,7 @@ describe('viewStore — descriptor, not ids', () => {
         expect(JSON.parse(json).views[0]).toMatchObject({ origin, positionId: 20 });
 
         // The replayed list is ordered differently: the id, not the index, decides.
-        const resolve = vi.fn(async () => [10, 20, 30, 40]);
+        const resolve = vi.fn(async () => ({ ids: [10, 20, 30, 40] }));
         expect(await ctx.viewStore.deserialize(json, resolve)).toBe(true);
         expect(resolve).toHaveBeenCalledWith(origin);
         expect(get(ctx.positionsStore).ids).toEqual([10, 20, 30, 40]);

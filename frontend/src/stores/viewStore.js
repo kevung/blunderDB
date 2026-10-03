@@ -1,5 +1,6 @@
 import { writable, get } from 'svelte/store';
 import { positionStore, positionsStore, matchContextStore, emptyPosition } from './positionStore';
+import { indexInList, listLength } from './positionList.js';
 import { analysisStore, selectedMoveStore } from './analysisStore';
 import { currentPositionIndexStore, activeTabStore, commentTextStore, statusBarModeStore } from './uiStore';
 import { listOriginStore, LIBRARY_ORIGIN } from './listOriginStore';
@@ -32,7 +33,8 @@ function createDefaultView(id) {
     return {
         id,
         name: `#${id}`,
-        ids: [],
+        list: /** @type {import('./positionList.js').ListSnapshot | null} */ (null),
+        positionId: /** @type {number | null} */ (null),
         origin: LIBRARY_ORIGIN,
         positionIndex: 0,
         position: emptyPosition(),
@@ -58,7 +60,8 @@ function createViewStore() {
                 if (v.id === currentId) {
                     return {
                         ...v,
-                        ids: get(positionsStore).ids,
+                        list: positionsStore.snapshotList(),
+                        positionId: positionsStore.idAt(get(currentPositionIndexStore)) ?? null,
                         origin: get(listOriginStore),
                         positionIndex: get(currentPositionIndexStore),
                         position: JSON.parse(JSON.stringify(get(positionStore))),
@@ -76,8 +79,8 @@ function createViewStore() {
     }
 
     function restoreViewState(view) {
-        // The position cache is shared by every view (keyed by id): only the id list moves.
-        positionsStore.setIds(view.ids || []);
+        // The position cache is shared by every view (keyed by id): only the list moves.
+        positionsStore.restoreList(view.list);
         listOriginStore.set(view.origin || LIBRARY_ORIGIN);
         // A view restored from disk has no board: cache, else the index effect fetches it.
         const cached = view.position ? null : positionsStore.peek(view.positionIndex || 0);
@@ -114,7 +117,9 @@ function createViewStore() {
         const vs = get(views);
         const current = vs.find((v) => v.id === currentId);
         const newView = {
-            ...JSON.parse(JSON.stringify(current)),
+            ...JSON.parse(JSON.stringify({ ...current, list: null })),
+            // A paged list's source is functions, which JSON drops: the list is shared, not copied.
+            list: current.list,
             id,
             name: `#${id}`
         };
@@ -156,7 +161,7 @@ function createViewStore() {
                     id: v.id,
                     name: v.name,
                     origin: replayable && v.origin ? v.origin : LIBRARY_ORIGIN,
-                    positionId: (v.ids || [])[v.positionIndex || 0] ?? null,
+                    positionId: v.positionId ?? null,
                     positionIndex: v.positionIndex || 0,
                     selectedMove: v.selectedMove,
                     activeTab: v.activeTab || 'analysis',
@@ -168,9 +173,10 @@ function createViewStore() {
         });
     }
 
-    // Restore views: each list is rebuilt by replaying its origin (resolveIdsFn(origin) → ids),
-    // and the current position is found again by id, the saved index being the fallback.
-    async function deserialize(json, resolveIdsFn) {
+    // Restore views: each list is rebuilt by replaying its origin (resolveListFn(origin) → a
+    // positionList snapshot), and the current position is found again by id, the saved index
+    // being the fallback.
+    async function deserialize(json, resolveListFn) {
         try {
             const data = JSON.parse(json);
             if (!data || !data.views || data.views.length === 0) return false;
@@ -180,13 +186,14 @@ function createViewStore() {
             const restoredViews = [];
             for (const sv of data.views) {
                 const origin = sv.origin || LIBRARY_ORIGIN;
-                const ids = (await resolveIdsFn(origin)) || [];
-                let positionIndex = sv.positionId != null ? ids.indexOf(sv.positionId) : -1;
-                if (positionIndex < 0) positionIndex = Math.min(sv.positionIndex || 0, Math.max(ids.length - 1, 0));
+                const list = (await resolveListFn(origin)) || { ids: [] };
+                let positionIndex = sv.positionId != null ? await indexInList(list, sv.positionId) : -1;
+                if (positionIndex < 0) positionIndex = Math.min(sv.positionIndex || 0, Math.max(listLength(list) - 1, 0));
                 restoredViews.push({
                     id: sv.id,
                     name: sv.name,
-                    ids,
+                    list,
+                    positionId: sv.positionId ?? null,
                     origin,
                     positionIndex,
                     // No board yet: from the cache, or the index effect (getPosition).
@@ -206,6 +213,10 @@ function createViewStore() {
             const targetId = data.activeViewId || restoredViews[0].id;
             activeViewId.set(targetId);
             const target = restoredViews.find((v) => v.id === targetId) || restoredViews[0];
+            // A paged list reads the page of its current position first, so the board can come
+            // from the cache as it does for a list held whole.
+            positionsStore.restoreList(target.list);
+            await positionsStore.ensureIds(target.positionIndex, target.positionIndex);
             restoreViewState(target);
             return true;
         } catch (e) {

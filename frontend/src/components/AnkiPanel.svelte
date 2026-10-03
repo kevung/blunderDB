@@ -644,7 +644,7 @@
                         <!-- Fixed: the 36 unordered scores of 2 to 9 away (ADR-0042 rule 2). -->
                         <span class="search-hint">{$t('anki.scoresCount', { count: UNORDERED_SCORES.length })}</span>
                     {:else}
-                        <span class="search-hint">{$t('anki.positionsCount', { count: positionIds.length })}</span>
+                        <span class="search-hint">{$t('anki.positionsCount', { count: $positionsStore?.length ?? 0 })}</span>
                     {/if}
                     <button class="btn-outline" onclick={createDeck} title={$t('common.create')}>{@render icon(ICON.check)}</button>
                     <button class="btn-outline" onclick={() => (showCreateForm = false)}>{@render icon(ICON.cross)}</button>

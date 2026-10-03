@@ -598,6 +598,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/metadata.version — JSON."
         return self._call("/v1/metadata.version", payload)
 
+    def positions_count(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.count — JSON."
+        return self._call("/v1/positions.count", payload)
+
     def positions_delete(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.delete — JSON."
         return self._call("/v1/positions.delete", payload)
@@ -625,6 +629,10 @@ class GeneratedAPI(BaseClient):
     def positions_from_xgp(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.fromXGP — JSON."
         return self._call("/v1/positions.fromXGP", payload)
+
+    def positions_index_of(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.indexOf — JSON."
+        return self._call("/v1/positions.indexOf", payload)
 
     def positions_legal_moves(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.legalMoves — JSON."

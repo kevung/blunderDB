@@ -41,9 +41,12 @@
     let page = $derived(pageOf(focusIndex));
     let pages = $derived(pageCount(total));
     let bounds = $derived(pageBounds(page, total));
+    /** Les ids de la page affichée : la liste n'est lue que par page (la bibliothèque n'est jamais tenue entière). */
+    /** @type {(number | null)[]} */
+    let pageIds = $state([]);
     let tiles = $derived.by(() => {
         const out = [];
-        for (let i = bounds.from; i < bounds.to; i++) out.push({ index: i, id: $positionsStore.ids[i] });
+        for (let i = bounds.from; i < bounds.to; i++) out.push({ index: i, id: pageIds[i - bounds.from] });
         return out;
     });
 
@@ -63,11 +66,17 @@
     $effect(() => {
         if (!visible) return;
         const { from, to } = bounds;
-        const ids = $positionsStore.ids;
+        // Relire la page quand la liste change.
+        void $positionsStore;
         let cancelled = false;
         (async () => {
             let positions;
+            /** @type {(number | null)[]} */
+            let ids;
             try {
+                ids = await positionsStore.idsBetween(from, to);
+                if (cancelled) return;
+                pageIds = ids;
                 positions = await positionsStore.getPositions(from, to);
             } catch (e) {
                 logger.error('contact sheet: could not load positions:', e);
@@ -75,9 +84,8 @@
             }
             if (cancelled) return;
             const byId = new Map(positions.map((p) => [p.id, p]));
-            untrack(() => evict(from, to, ids));
-            for (let i = from; i < to; i++) {
-                const id = ids[i];
+            untrack(() => evict(ids));
+            for (const id of ids) {
                 if (id == null || untrack(() => images.has(id))) continue;
                 const position = byId.get(id);
                 if (!position) {
@@ -104,13 +112,11 @@
     /**
      * Oublie les vignettes les plus anciennes au-delà de MAX_IMAGES, jamais
      * celles de la page affichée.
-     * @param {number} from
-     * @param {number} to
      * @param {(number|null)[]} ids
      */
-    function evict(from, to, ids) {
+    function evict(ids) {
         if (images.size <= MAX_IMAGES) return;
-        const keep = new Set(ids.slice(from, to));
+        const keep = new Set(ids);
         for (const id of [...images.keys()]) {
             if (images.size <= MAX_IMAGES - PAGE_SIZE) break;
             if (!keep.has(id)) images.delete(id);

@@ -110,6 +110,8 @@ export function CountMatchPositionsToAnalyze(arg1:number):Promise<number>;
 
 export function CountOrphans():Promise<database.OrphanCounts>;
 
+export function CountPositions():Promise<number>;
+
 export function CountPositionsWithForeignAnalysis():Promise<number>;
 
 export function CountPositionsWithStaleGammonNet(arg1:number):Promise<number>;
@@ -328,6 +330,8 @@ export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function ImportXGPPosition(arg1:string):Promise<number>;
 
+export function IndexOfPosition(arg1:number):Promise<number>;
+
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
 export function IsReadOnly():Promise<boolean>;
@@ -338,7 +342,7 @@ export function ListDirections():Promise<Array<service.DirectionSummary>>;
 
 export function ListImportBatches(arg1:number,arg2:number):Promise<Array<domain.ImportBatch>>;
 
-export function ListPositionIDs():Promise<Array<number>>;
+export function ListPositionIDs(arg1:number,arg2:number):Promise<Array<number>>;
 
 export function ListRencontres():Promise<Array<service.RencontreView>>;
 
