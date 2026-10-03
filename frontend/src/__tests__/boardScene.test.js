@@ -395,8 +395,9 @@ describe('drawScores / drawBearoff / drawPipCounts', () => {
         drawScores(post, geom, makeCfg(), pos);
         expect(post.of('text').map((t) => t.args[0])).toEqual(['post', 'crawford', 'unlimited']);
         const scoreY = geom.originY + geom.boardHeight / 2 + 0.2 * cs;
-        expect(post.of('text')[0].args[2]).toBeCloseTo(scoreY - 10, 6);
-        expect(post.of('text')[1].args[2]).toBeCloseTo(scoreY + 10, 6);
+        const lineGap = post.of('text')[0].size / 2;
+        expect(post.of('text')[0].args[2]).toBeCloseTo(scoreY - lineGap, 6);
+        expect(post.of('text')[1].args[2]).toBeCloseTo(scoreY + lineGap, 6);
     });
 
     test('bearoff counts follow the orientation, scores stay on the right', () => {

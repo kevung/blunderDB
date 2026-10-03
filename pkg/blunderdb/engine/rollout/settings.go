@@ -2,8 +2,11 @@ package rollout
 
 import (
 	"fmt"
+	"slices"
+	"strconv"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
@@ -112,9 +115,41 @@ func (s Settings) DepthLabel() string {
 	return fmt.Sprintf("Rollout %d games (%s, %s)", s.MaxGames, gammonnet.DepthLabel(s.Ply), trunc)
 }
 
-// Signature is the full line a rollout is reproduced from: everything that
-// moves a number, in one place.
-func (s Settings) Signature() string {
+// Signature is the full line a rollout of the Candidates best plays is
+// reproduced from: everything that moves a number, in one place.
+func (s Settings) Signature() string { return s.SignatureFor(nil) }
+
+// SignatureFor is the Signature of a rollout of the plays moves names, or of
+// the Candidates best when moves is empty. Which plays are rolled is part of
+// it: two rollouts of different plays are two Configurations, never a longer
+// and a shorter series of one. Neither the order moves are named in nor the
+// spacing inside a name is.
+func (s Settings) SignatureFor(moves []string) string {
+	plays := fmt.Sprintf("candidates %d best", s.Candidates)
+	if len(moves) > 0 {
+		norm := make([]string, len(moves))
+		for i, m := range moves {
+			norm[i] = strings.Join(strings.Fields(m), " ")
+		}
+		plays = "candidates {" + strings.Join(slices.Compact(slices.Sorted(slices.Values(norm))), ", ") + "}"
+	}
+	return s.signature(plays)
+}
+
+// CubeSignature is the Signature of a rollout of a cube decision: its two
+// branches are fixed, so the number of candidates moves nothing.
+func (s Settings) CubeSignature() string { return s.signature("cube decision") }
+
+// SignatureAt is the Signature a rollout of pos with s, no play named,
+// carries: the cube's when pos has no dice, the best plays' otherwise.
+func (s Settings) SignatureAt(pos *domain.Position) string {
+	if hasDice(pos) {
+		return s.Signature()
+	}
+	return s.CubeSignature()
+}
+
+func (s Settings) signature(plays string) string {
 	trunc := "none"
 	if s.Truncation > 0 {
 		trunc = fmt.Sprintf("%d half-moves", s.Truncation)
@@ -123,7 +158,76 @@ func (s Settings) Signature() string {
 	if s.JSDLimit > 0 {
 		stop = fmt.Sprintf("JSD >= %g after %d games", s.JSDLimit, s.MinGames)
 	}
-	return fmt.Sprintf("%s; cubeful; %s plays, cube and leaves; variance reduction 1-ply; "+
+	return fmt.Sprintf("%s; cubeful; %s plays, cube and leaves; %s; variance reduction 1-ply; "+
 		"common quasi-random dice (2 plies); seed %d; games <= %d; stop %s; truncation %s; exact bearoff when covered",
-		EngineVersion, gammonnet.DepthLabel(s.Ply), s.Seed, s.MaxGames, stop, trunc)
+		EngineVersion, gammonnet.DepthLabel(s.Ply), plays, s.Seed, s.MaxGames, stop, trunc)
+}
+
+// ParseSpec reads settings from one line of text, the form `analyze --rollout`,
+// the /v1 routes and the MCP tool share: an optional preset name first
+// ("fast"/"rapide", "standard", or "custom"/"libre", which starts from fast),
+// then key=value overrides — games, min-games, truncation, jsd, ply,
+// candidates, seed — separated by commas or spaces. "games" lowers min-games
+// with it, as the rollout command's --games does. The result is validated.
+func ParseSpec(spec string) (Settings, error) {
+	fields := strings.FieldsFunc(spec, func(r rune) bool { return r == ',' || r == ' ' || r == ';' })
+	s := Fast()
+	for i, f := range fields {
+		key, value, isPair := strings.Cut(f, "=")
+		if !isPair {
+			if i != 0 {
+				return Settings{}, fmt.Errorf("rollout: %q: a preset name comes first", f)
+			}
+			switch strings.ToLower(f) {
+			case "custom", "libre":
+				continue
+			}
+			p, ok := Preset(f)
+			if !ok {
+				return Settings{}, fmt.Errorf("rollout: unknown preset %q (fast, standard, custom)", f)
+			}
+			s = p
+			continue
+		}
+		key = strings.ToLower(strings.TrimSpace(key))
+		if key == "jsd" {
+			v, err := strconv.ParseFloat(value, 64)
+			if err != nil {
+				return Settings{}, fmt.Errorf("rollout: jsd=%q: %w", value, err)
+			}
+			s.JSDLimit = v
+			continue
+		}
+		if key == "seed" {
+			v, err := strconv.ParseUint(value, 10, 64)
+			if err != nil {
+				return Settings{}, fmt.Errorf("rollout: seed=%q: %w", value, err)
+			}
+			s.Seed = v
+			continue
+		}
+		v, err := strconv.Atoi(value)
+		if err != nil {
+			return Settings{}, fmt.Errorf("rollout: %s=%q: %w", key, value, err)
+		}
+		switch key {
+		case "games":
+			s.MaxGames = v
+			s.MinGames = min(s.MinGames, v)
+		case "min-games", "min_games":
+			s.MinGames = v
+		case "truncation":
+			s.Truncation = v
+		case "ply":
+			s.Ply = v
+		case "candidates":
+			s.Candidates = v
+		default:
+			return Settings{}, fmt.Errorf("rollout: unknown setting %q (games, min-games, truncation, jsd, ply, candidates, seed)", key)
+		}
+	}
+	if err := s.Validate(); err != nil {
+		return Settings{}, err
+	}
+	return s, nil
 }

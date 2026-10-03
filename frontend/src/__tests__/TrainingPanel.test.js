@@ -17,6 +17,10 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetTrainingSeedSources: vi.fn(() => Promise.resolve({})),
     SaveTrainingSeedSource: vi.fn(() => Promise.resolve())
 }));
+vi.mock('../services/explainService.js', () => ({
+    explainDecision: vi.fn(() => Promise.resolve({ theme: 'passive', costMp: 42, best: '24/18 13/11' })),
+    playedFromAnalysis: () => ''
+}));
 vi.mock('../services/trainingTabService.js', () => ({
     startTrainingSession: vi.fn(),
     revealQuestion: vi.fn(),
@@ -39,6 +43,7 @@ import TrainingPanel from '../components/TrainingPanel.svelte';
 import { trainingSessionStore, trainingJournalStore } from '../stores/trainingTabStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { newSession, askQuestion, reveal, recordQuestion, failNextQuestion, answerChosen, attachCorrection, setAnswer } from '../services/trainingTab.js';
+import * as explainService from '../services/explainService.js';
 import * as serviceModule from '../services/trainingTabService.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { newPlay, playHop } from '../services/quizPlay.js';
@@ -277,6 +282,26 @@ describe('une action de videau', () => {
         trainingSessionStore.set(answerChosen(decisionSession('cube'), verdict({ notation: 'nd' }), 1000));
         const panel = render(TrainingPanel);
         expect(/** @type {HTMLButtonElement} */ (panel.getByTestId('training-cube-nd')).disabled).toBe(true);
+    });
+});
+
+describe('l’explication de l’erreur dans le verdict', () => {
+    test('une erreur chiffrée est expliquée sous le verdict', async () => {
+        trainingSessionStore.set(answerChosen(decisionSession('checker'), verdict({ errorMp: 42, best: '24/18 13/11' }), 1000));
+        const panel = render(TrainingPanel);
+        await tick();
+        await tick();
+        expect(vi.mocked(explainService.explainDecision)).toHaveBeenCalledWith(7, '6/4 6/3');
+        expect(panel.container.querySelector('.explanation')?.textContent).toContain('24/18 13/11');
+    });
+
+    test('un coup juste n’est pas expliqué', async () => {
+        vi.mocked(explainService.explainDecision).mockClear();
+        trainingSessionStore.set(answerChosen(decisionSession('checker'), verdict(), 1000));
+        const panel = render(TrainingPanel);
+        await tick();
+        expect(explainService.explainDecision).not.toHaveBeenCalled();
+        expect(panel.container.querySelector('.explanation')).toBeNull();
     });
 });
 

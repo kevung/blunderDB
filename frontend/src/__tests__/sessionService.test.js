@@ -16,7 +16,18 @@ const { bindings, searchState, positionService, setStatusBarMessage } = vi.hoist
     const searchState = { lastSearchCommand: '', lastSearchPosition: null, hasActiveSearch: false };
     return {
         searchState,
-        bindings: { SaveSessionState: vi.fn(), LoadSessionState: vi.fn(), ListPositionIDs: vi.fn() },
+        bindings: {
+            SaveSessionState: vi.fn(),
+            LoadSessionState: vi.fn(),
+            ListPositionIDs: vi.fn(),
+            CountPositions: vi.fn(),
+            IndexOfPosition: vi.fn(),
+            LoadPositionIDsByFilters: vi.fn(),
+            CountPositionsByFilters: vi.fn(),
+            SearchPositionIDs: vi.fn(),
+            IndexOfPositionByFilters: vi.fn(),
+            RankPositionIDsByFilters: vi.fn()
+        },
         positionService: {
             getSearchState: () => ({ ...searchState }),
             setSearchState: vi.fn((next) => Object.assign(searchState, next)),
@@ -27,10 +38,12 @@ const { bindings, searchState, positionService, setStatusBarMessage } = vi.hoist
 });
 
 vi.mock('../../wailsjs/go/database/Database.js', () => bindings);
+vi.mock('../../wailsjs/go/main/Config.js', () => ({ GetLikeLimit: vi.fn().mockResolvedValue(10) }));
 vi.mock('../services/positionService.js', () => positionService);
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage }));
 
 import { saveSessionState, restoreSessionState } from '../services/sessionService.js';
+import { useLibrary } from '../__mocks__/wails.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
@@ -47,7 +60,10 @@ beforeEach(() => {
     positionsStore.set([]);
     currentPositionIndexStore.set(-1);
     lastSearchStore.set({ command: 'stale', position: '{}' });
-    bindings.ListPositionIDs.mockResolvedValue(library.map((p) => p.id));
+    useLibrary(
+        bindings,
+        library.map((p) => p.id)
+    );
     bindings.SaveSessionState.mockResolvedValue(undefined);
 });
 
@@ -63,52 +79,94 @@ describe('restoreSessionState', () => {
         expect(setStatusBarMessage).not.toHaveBeenCalled();
     });
 
-    test('session avec recherche active : positions, ordre et index restaurés dans les stores', async () => {
+    const viewsOf = (view) => JSON.stringify({ nextViewId: 2, activeViewId: 1, views: [{ id: 1, name: '#1', positionIndex: 0, ...view }] });
+
+    test('session de recherche : la requête est rejouée, la position courante retrouvée par id', async () => {
+        const payload = { searchText: 'p>10' };
+        const result = [3, 2, 1];
+        bindings.CountPositionsByFilters.mockResolvedValue(result.length);
+        bindings.SearchPositionIDs.mockImplementation(async (_p, offset, limit) => result.slice(offset, limit > 0 ? offset + limit : undefined));
+        bindings.IndexOfPositionByFilters.mockImplementation(async (_p, id) => result.indexOf(id));
         bindings.LoadSessionState.mockResolvedValue({
             hasActiveSearch: true,
             lastSearchCommand: 's p>10',
             lastSearchPosition: JSON.stringify(searchBoard),
-            lastPositionIds: [3, 1],
-            lastPositionIndex: 1
+            viewsJSON: viewsOf({ origin: { kind: 'search', payload }, positionId: 2, positionIndex: 0 })
         });
 
         await restoreSessionState();
 
-        expect(get(positionsStore).ids).toEqual([3, 1]);
+        // Browsed by windows, never fetched whole; a first window shorter than a page is the
+        // whole result, so nothing is counted.
+        expect(bindings.SearchPositionIDs).toHaveBeenCalledWith(payload, 0, positionsStore.firstPageSize());
+        expect(bindings.CountPositionsByFilters).not.toHaveBeenCalled();
+        expect(bindings.LoadPositionIDsByFilters).not.toHaveBeenCalled();
+        expect(get(positionsStore)).toMatchObject({ ids: null, length: 3, paged: true });
         expect(get(currentPositionIndexStore)).toBe(1);
         expect(searchState).toEqual({ lastSearchCommand: 's p>10', lastSearchPosition: searchBoard, hasActiveSearch: true });
-        expect(setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'status.sessionRestored', i18nParams: { count: 2, index: 2 } });
-        expect(positionService.loadAllPositions).not.toHaveBeenCalled();
-    });
-
-    test('index hors bornes : ramené dans la liste restaurée', async () => {
-        bindings.LoadSessionState.mockResolvedValue({ hasActiveSearch: true, lastPositionIds: [2, 3], lastPositionIndex: 9 });
-
-        await restoreSessionState();
-
-        expect(get(currentPositionIndexStore)).toBe(1);
-    });
-
-    test('session avec vues : les onglets sont restaurés et le message le dit', async () => {
-        const viewsJSON = JSON.stringify({ nextViewId: 2, activeViewId: 1, views: [{ id: 1, name: 'Vue 1', positionIds: [2, 3], positionIndex: 1 }] });
-        bindings.LoadSessionState.mockResolvedValue({ viewsJSON, hasActiveSearch: true, lastSearchCommand: 's', lastPositionIds: [2, 3] });
-
-        await restoreSessionState();
-
-        expect(get(positionsStore).ids).toEqual([2, 3]);
-        expect(get(currentPositionIndexStore)).toBe(1);
         expect(setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'status.sessionRestoredViews', i18nParams: null });
         expect(positionService.loadAllPositions).not.toHaveBeenCalled();
     });
 
-    test('positions disparues de la base : repli sur la bibliothèque, sans exception', async () => {
-        bindings.LoadSessionState.mockResolvedValue({ hasActiveSearch: true, lastPositionIds: [42, 43], lastPositionIndex: 0 });
-        bindings.ListPositionIDs.mockResolvedValue([]);
+    test('un grand résultat est rejoué comme une recherche : première fenêtre, sans compte ni rang', async () => {
+        const size = positionsStore.firstPageSize();
+        const result = Array.from({ length: 3 * size }, (_, i) => i + 1);
+        bindings.SearchPositionIDs.mockImplementation(async (_p, offset, limit) => result.slice(offset, limit > 0 ? offset + limit : undefined));
+        // A full scan each: the restore must not wait for them.
+        bindings.CountPositionsByFilters.mockReturnValue(new Promise(() => {}));
+        bindings.IndexOfPositionByFilters.mockReturnValue(new Promise(() => {}));
+        bindings.LoadSessionState.mockResolvedValue({
+            viewsJSON: viewsOf({ origin: { kind: 'search', payload: { searchText: 'w>50' } }, positionId: 2 * size, positionIndex: 7 })
+        });
 
-        await expect(restoreSessionState()).resolves.toBeUndefined();
+        let done = false;
+        const restore = restoreSessionState().then(() => (done = true));
+        await Promise.race([restore, new Promise((resolve) => setTimeout(resolve, 100))]);
 
-        expect(get(positionsStore).ids).toEqual([]);
-        expect(positionService.loadAllPositions).toHaveBeenCalledTimes(1);
+        expect(done).toBe(true);
+        expect(bindings.CountPositionsByFilters).not.toHaveBeenCalled();
+        expect(bindings.IndexOfPositionByFilters).not.toHaveBeenCalled();
+        expect(get(positionsStore)).toMatchObject({ length: size, paged: true });
+        expect(get(currentPositionIndexStore)).toBe(7);
+    });
+
+    test('une vue de match ou de collection revient sur la bibliothèque en mode NORMAL', async () => {
+        const { statusBarModeStore } = await import('../stores/uiStore.js');
+        statusBarModeStore.set('NORMAL');
+        bindings.LoadSessionState.mockResolvedValue({ viewsJSON: viewsOf({ mode: 'MATCH', previousMode: 'COLLECTION' }) });
+
+        await restoreSessionState();
+
+        expect(get(statusBarModeStore)).toBe('NORMAL');
+    });
+
+    test('recherche devenue vide : repli sur la bibliothèque', async () => {
+        bindings.CountPositionsByFilters.mockResolvedValue(0);
+        bindings.SearchPositionIDs.mockResolvedValue([]);
+        bindings.LoadSessionState.mockResolvedValue({ viewsJSON: viewsOf({ origin: { kind: 'search', payload: {} }, positionId: 2 }) });
+
+        await restoreSessionState();
+
+        expect(get(positionsStore)).toMatchObject({ ids: null, length: 3, paged: true });
+        expect(get(currentPositionIndexStore)).toBe(1);
+    });
+
+    test('vue de bibliothèque : position retrouvée par id', async () => {
+        bindings.LoadSessionState.mockResolvedValue({ viewsJSON: viewsOf({ origin: { kind: 'library' }, positionId: 3 }) });
+
+        await restoreSessionState();
+
+        expect(get(positionsStore)).toMatchObject({ ids: null, length: 3, paged: true });
+        expect(get(currentPositionIndexStore)).toBe(2);
+        expect(bindings.CountPositionsByFilters).not.toHaveBeenCalled();
+    });
+
+    test('id disparu : l’index enregistré, ramené dans les bornes', async () => {
+        bindings.LoadSessionState.mockResolvedValue({ viewsJSON: viewsOf({ positionId: 99, positionIndex: 9 }) });
+
+        await restoreSessionState();
+
+        expect(get(currentPositionIndexStore)).toBe(2);
     });
 
     test('binding en erreur : repli sur la bibliothèque, sans exception', async () => {
@@ -129,18 +187,22 @@ describe('restoreSessionState', () => {
 });
 
 describe('saveSessionState (à la fermeture)', () => {
-    test('persiste la liste courante, l’index, la recherche et les vues', async () => {
-        positionsStore.set([pos(3), pos(1)]);
-        currentPositionIndexStore.set(1);
+    test('persiste un descripteur : taille indépendante du nombre de positions', async () => {
         Object.assign(searchState, { lastSearchCommand: 's p>10', lastSearchPosition: searchBoard, hasActiveSearch: true });
-
-        await saveSessionState();
-
-        expect(bindings.SaveSessionState).toHaveBeenCalledTimes(1);
-        const saved = bindings.SaveSessionState.mock.calls[0][0];
-        expect(saved).toMatchObject({ lastPositionIds: [3, 1], lastPositionIndex: 1, hasActiveSearch: true, lastSearchCommand: 's p>10' });
-        expect(JSON.parse(saved.lastSearchPosition)).toEqual(searchBoard);
-        expect(JSON.parse(saved.viewsJSON).views[0].positionIds).toEqual([3, 1]);
+        const sizes = [];
+        for (const n of [10, 100000]) {
+            vi.clearAllMocks();
+            positionsStore.setIds(Array.from({ length: n }, (_, i) => i + 1));
+            currentPositionIndexStore.set(3);
+            await saveSessionState();
+            const saved = bindings.SaveSessionState.mock.calls[0][0];
+            expect(saved).toMatchObject({ lastPositionIds: [], lastPositionIndex: 3, hasActiveSearch: true, lastSearchCommand: 's p>10' });
+            expect(JSON.parse(saved.lastSearchPosition)).toEqual(searchBoard);
+            expect(JSON.parse(saved.viewsJSON).views[0].positionId).toBe(4);
+            sizes.push(JSON.stringify(saved).length);
+        }
+        expect(sizes[1]).toBe(sizes[0]);
+        expect(sizes[1]).toBeLessThan(4000);
     });
 
     test('sans base ouverte : rien n’est écrit', async () => {

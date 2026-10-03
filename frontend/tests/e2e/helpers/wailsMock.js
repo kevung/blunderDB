@@ -74,6 +74,21 @@ export async function installWailsMock(page, overrides = {}) {
                 if (!('ListMatches' in given)) base.ListMatches = constant(given.GetAllMatches);
                 if (!('CountMatches' in given)) base.CountMatches = constant(given.GetAllMatches.length);
             }
+            // La bibliothèque et une recherche se lisent par fenêtres d'ids (compte, fenêtre, rang) :
+            // les trois s'écrivent depuis la liste d'ids que la spec fournit.
+            const slice = (ids, offset, limit) => ids.slice(offset, limit > 0 ? offset + limit : undefined);
+            const library = overrides[ns]?.ListPositionIDs;
+            if (Array.isArray(library)) {
+                base.CountPositions = () => Promise.resolve(library.length);
+                base.ListPositionIDs = (offset = 0, limit = 0) => Promise.resolve(slice(library, offset, limit));
+                base.IndexOfPosition = (id) => Promise.resolve(library.indexOf(id));
+            }
+            const found = overrides[ns]?.LoadPositionIDsByFilters;
+            if (Array.isArray(found)) {
+                base.CountPositionsByFilters = () => Promise.resolve(found.length);
+                base.SearchPositionIDs = (_payload, offset = 0, limit = 0) => Promise.resolve(slice(found, offset, limit));
+                base.IndexOfPositionByFilters = (_payload, id) => Promise.resolve(found.indexOf(id));
+            }
             return base;
         }
 
@@ -287,6 +302,13 @@ export async function overrideDbMethodThen(page, methodName, returnValue, afterC
         ({ method, value, after }) => {
             window.go.database.Database[method] = () => {
                 for (const [m, v] of Object.entries(after)) {
+                    if (m === 'ListPositionIDs' && Array.isArray(v)) {
+                        const db = window.go.database.Database;
+                        db.CountPositions = () => Promise.resolve(v.length);
+                        db.IndexOfPosition = (id) => Promise.resolve(v.indexOf(id));
+                        db.ListPositionIDs = (offset = 0, limit = 0) => Promise.resolve(v.slice(offset, limit > 0 ? offset + limit : undefined));
+                        continue;
+                    }
                     window.go.database.Database[m] = m === 'LoadPositionsByIDs' && Array.isArray(v) ? window.__mockPositionsByIDs(v) : () => Promise.resolve(v);
                 }
                 return Promise.resolve(value);

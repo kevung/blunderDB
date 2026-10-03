@@ -641,13 +641,15 @@ Affiche le contenu de la base de données.
 
 .. code-block:: bash
 
-   ./blunderdb list --db <path> --type <type> [--limit <n>]
+   ./blunderdb list --db <path> --type <type> [--limit <n>] [--offset <n>]
 
 **Types:**
 
 * ``matches`` — Liste des matchs importés.
 * ``tournaments`` — Liste des tournois.
-* ``positions`` — Liste des positions (limité à 10 par défaut). Avec
+* ``positions`` — Liste des positions (limité à 10 par défaut ;
+  ``--offset <n>`` saute les *n* premières). Seule la fenêtre affichée est
+  lue, quelle que soit la taille de la base. Avec
   ``--format csv``, devient un **export tabulaire** : une ligne par position,
   avec son XGID, sa phase, son score, son videau, ses pips et les colonnes
   d'analyse dérivées.
@@ -782,8 +784,8 @@ distinctes.
    porte la moyenne.
 
 Chaque type imprime un bloc par élément, précédé du total trouvé. La ligne
-finale rappelle que la liste est tronquée par ``--limit``, dont la valeur par
-défaut vaut 10 pour les positions :
+finale rappelle quelle fenêtre est affichée, tronquée par ``--limit`` (dont la
+valeur par défaut vaut 10 pour les positions) et décalée par ``--offset`` :
 
 .. code-block:: text
 
@@ -801,7 +803,7 @@ défaut vaut 10 pour les positions :
 
    …
 
-   (Showing 10 of 3859 positions, use --limit to see more)
+   (Showing 1-10 of 3859 positions, use --offset and --limit to see more)
 
 **Exemples:**
 
@@ -1005,6 +1007,14 @@ panneau Stats (voir :ref:`stats`). Les statistiques globales restent sous
   tous).
 * ``--format text|json`` — Le JSON porte chaque groupe avec la liste complète
   de ses positions.
+* ``--quiz`` — Tire au hasard des positions parmi celles des trois groupes
+  les plus coûteux (``--quiz-size <n>``, défaut 20) et les affiche : ce sont
+  les identifiants que le quiz et ``quiz_grade`` jugent. En JSON, champ
+  ``Quiz``.
+* ``--deck <nom>`` — Crée un paquet Anki de ce nom, rempli de toutes les
+  positions des trois groupes les plus coûteux.
+* ``--group <rang>`` — Avec ``--quiz`` ou ``--deck`` : le groupe de ce rang
+  (1 pour le plus coûteux) au lieu des trois premiers.
 
 Un thème de coup de pions est ``gammon``, ``blots``, ``point`` ou
 ``passive`` ; un thème de videau est ``offer_missed``, ``offer_premature``,
@@ -1020,6 +1030,34 @@ part du PR du filtre que le groupe représente.
 
    ./blunderdb stats recurring --db base.db --player "Alice"
    ./blunderdb stats recurring --db base.db --decision-type checker --format json
+   ./blunderdb stats recurring --db base.db --quiz --format json
+   ./blunderdb stats recurring --db base.db --group 1 --deck "Mon pire groupe"
+
+**stats training** — Le PR du quiz Décision, le PR des matchs et la rétention
+Anki, repliés par fenêtre calendaire, comme l'onglet *Entraînement* du panneau
+Stats (voir :ref:`stats`).
+
+.. code-block:: bash
+
+   ./blunderdb stats training --db <fichier> [options]
+
+**Options:**
+
+* ``--window week|month`` — La fenêtre calendaire (défaut ``week``).
+* ``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``,
+  ``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre des
+  matchs ; les journaux du quiz et d'Anki ne portent pas de joueur.
+* ``--format text|json`` — Le JSON porte aussi la liste des sessions de quiz.
+
+Chaque série garde son nombre d'échantillons : une fenêtre sans décision y est
+un tiret en texte, un compte nul en JSON, jamais un zéro.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb stats training --db base.db --player "Alice"
+   ./blunderdb stats training --db base.db --window month --format json
 
 .. _cli_cubematrix:
 
@@ -1079,12 +1117,13 @@ qu'une recherche ne tranche pas : deux coups à quelques millièmes, ou une
 décision de videau où le modèle hésite. Avec des dés, ce sont ses coups qui
 sont joués (les meilleurs à la profondeur du rollout, au moins 2 ply, ou ceux nommés par
 ``--move``) ; sans dés, sa décision de videau (Pas de double et Double/Prend ;
-Double/Passe vaut +1 exactement). Calcul pur : rien n'est enregistré, aucune
-base n'est ouverte.
+Double/Passe vaut +1 exactement). La position vient d'un XGID ou d'un OGID,
+ou d'une base (``--db`` et ``--id``) ; sans ``--store``, rien n'est enregistré.
 
 .. code-block:: bash
 
    ./blunderdb rollout [options] '<XGID|OGID>'
+   ./blunderdb rollout --db <path> --id <position> [--store] [options]
 
 **Options:**
 
@@ -1103,6 +1142,15 @@ base n'est ouverte.
 * ``--jobs`` — Parties jouées en parallèle (défaut : une par cœur) ; seul le
   temps change.
 * ``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : ``text``).
+* ``--db``, ``--id`` — La base et l'identifiant de la position à jouer, à la
+  place d'un XGID.
+* ``--store`` — Enregistre le rollout terminé sur la position, comme une
+  seconde analyse portant ses propres réglages, à côté de l'analyse importée
+  ou évaluée, qu'il ne remplace jamais. Un rollout interrompu n'est pas
+  enregistré ; de deux rollouts aux mêmes réglages, la série la plus longue
+  est gardée, un rollout à d'autres réglages s'ajoute à côté.
+* ``--list`` — Affiche les rollouts enregistrés sur la position, du plus récent
+  au plus ancien, au lieu d'en jouer un.
 
 Tous les candidats jouent les mêmes dés, la chance de chaque lancer est
 retirée du résultat de chaque partie (réduction de variance), les deux premiers
@@ -1119,6 +1167,8 @@ sûr que l'équité absolue. Ctrl-C affiche ce que les parties terminées ont
 
    ./blunderdb rollout 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'
    ./blunderdb rollout --move '8/5 6/5' --move '24/23 13/10' '<XGID>'
+   ./blunderdb rollout --db base.db --id 42 --preset standard --store
+   ./blunderdb rollout --db base.db --id 42 --list
 
 epc — Calculatrice EPC
 ------------------------
@@ -1263,6 +1313,10 @@ trois logiques distinctes (voir :ref:`headless`).
   (0 = toutes).
 * ``--format`` — Format de sortie: ``text`` (défaut, avec la progression) ou
   ``json`` (un seul document récapitulatif, imprimé à la fin).
+* ``--rollout`` — Fait un rollout des positions que choisit ``--query`` au lieu
+  de combler des trous (voir plus bas).
+* ``--query`` — Avec ``--rollout``, les positions à jouer, dans le langage de
+  requête de la recherche (``search --query-help``) ; vide, toutes.
 
 **Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un
 match joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a fait
@@ -1321,6 +1375,24 @@ positions sans analyse » est recalculé à chaque lancement.
 
    # Un seul match, celui qui vient d'être importé
    ./blunderdb analyze --db base.db --match 12
+
+**Rollouts en lot** (``--rollout``). Chaque position que choisit ``--query``
+est jouée par un :ref:`rollout <cli_rollout>`, l'une après l'autre sur tous
+les cœurs, et le rollout est enregistré à côté de son analyse, jamais à sa
+place. La valeur est un préréglage — ``fast`` (216 parties tronquées à 7) ou
+``standard`` (1296 parties tronquées à 11) — ou des réglages libres : un
+préréglage facultatif, puis ``games=``, ``min-games=``, ``truncation=``,
+``jsd=``, ``ply=``, ``candidates=``, ``seed=``, séparés par des virgules. Une
+position qui porte déjà un rollout aux mêmes réglages est sautée : une
+exécution interrompue par Ctrl-C reprend là où elle s'est arrêtée, la position
+en cours étant abandonnée entière. Une position que seul un rollout analyse
+est trouvée par la recherche à travers lui ; une position déjà analysée garde
+les colonnes de son analyse.
+
+.. code-block:: bash
+
+   ./blunderdb analyze --db base.db --rollout fast --query 'E>80'
+   ./blunderdb analyze --db base.db --rollout 'standard,ply=1' --query 'c'
 
 .. _analyze_compare:
 

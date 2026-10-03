@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -26,6 +27,8 @@ type Database struct {
 	mu                sync.RWMutex                        // RWMutex allows concurrent reads
 	cancelMu          sync.Mutex                          // guards importCancel (held briefly, never with mu)
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
+	searchCancels     map[int]context.CancelFunc          // in-flight searches, guarded by cancelMu
+	searchSeq         int                                 // key of the next entry of searchCancels
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	store             *sqlite.Storage                     // SQLite Storage backend, wraps db (P2)
 	// importBatchID stamps every match the in-flight import writes, 0 when none
@@ -34,6 +37,9 @@ type Database struct {
 	// importBatchCounts accumulates what only the writing path sees; the caller
 	// that opened the batch adds the unreadable files when it finishes it.
 	importBatchCounts domain.ImportReport
+	// positionsSinceStats counts the positions imports have written since the
+	// planner statistics were last refreshed (RefreshSearchStatistics).
+	positionsSinceStats int
 	// pendingPhaseBackfill is raised by the 2.19.0 migration step and cleared
 	// by runMigrationChain once EnsureSchema has added position.game_phase.
 	// A migration step cannot write a column the schema pass has not created
@@ -52,6 +58,48 @@ type Database struct {
 	// directionMem is what the direction service keeps between calls: the clock forecasts and
 	// the page catalogue. Per Database, so two open databases never share one language.
 	directionMem service.Memory
+	// generation counts the files this handle has opened, created or closed;
+	// guarded by mu. A background job remembers it at its start and writes
+	// nothing once it has moved: its positions belong to the previous file.
+	generation uint64
+	// beforeSwitch runs before Open, Setup and Close take mu, so the GUI can
+	// stop and wait for the jobs writing the file about to go away (they need
+	// mu to finish their last write). Guarded by switchMu.
+	switchMu     sync.Mutex
+	beforeSwitch func()
+}
+
+// ErrDatabaseChanged refuses a background job's write once another database
+// has been opened (or this one closed) since the job started.
+var ErrDatabaseChanged = errors.New("the open database changed while the job ran")
+
+// SetBeforeSwitch registers fn, run before every OpenDatabase, SetupDatabase
+// and Close; nil clears it. The GUI stops its batches there.
+func (d *Database) SetBeforeSwitch(fn func()) {
+	d.switchMu.Lock()
+	defer d.switchMu.Unlock()
+	d.beforeSwitch = fn
+}
+
+// switchFile runs the beforeSwitch hook; the caller then takes mu and calls
+// bumpGeneration.
+func (d *Database) switchFile() {
+	d.switchMu.Lock()
+	fn := d.beforeSwitch
+	d.switchMu.Unlock()
+	if fn != nil {
+		fn()
+	}
+}
+
+// bumpGeneration marks the file about to change; the caller holds mu.
+func (d *Database) bumpGeneration() { d.generation++ }
+
+// currentGeneration is the generation a background job remembers at its start.
+func (d *Database) currentGeneration() uint64 {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.generation
 }
 
 // lockPathFor returns the file whose advisory lock guards a database against a
@@ -146,6 +194,46 @@ func (d *Database) CancelImport() {
 	}
 }
 
+// beginSearch gives a window, the count or a rank of the browsed search a
+// context that CancelSearch can cancel from another goroutine, while it holds
+// d.mu. A page of ids and its count run side by side, so every such call in
+// flight is registered, not only the last.
+// The returned done func must be deferred.
+func (d *Database) beginSearch() (context.Context, func()) {
+	ctx, cancel := context.WithCancel(context.Background())
+	d.cancelMu.Lock()
+	if d.searchCancels == nil {
+		d.searchCancels = map[int]context.CancelFunc{}
+	}
+	key := d.searchSeq
+	d.searchSeq++
+	d.searchCancels[key] = cancel
+	d.cancelMu.Unlock()
+	return ctx, func() {
+		d.cancelMu.Lock()
+		delete(d.searchCancels, key)
+		d.cancelMu.Unlock()
+		cancel()
+	}
+}
+
+// CancelSearch aborts the browsed search in flight — SearchPositionIDs,
+// CountPositionsByFilters, IndexOfPositionByFilters — each returning an error
+// wrapping context.Canceled. A whole id list (LoadPositionIDsByFilters) runs
+// on: it serves a deck or a session, not the list Escape or a new search
+// replaces. It is bound to the Wails frontend. No-op when idle.
+func (d *Database) CancelSearch() {
+	d.cancelMu.Lock()
+	cancels := make([]context.CancelFunc, 0, len(d.searchCancels))
+	for _, cancel := range d.searchCancels {
+		cancels = append(cancels, cancel)
+	}
+	d.cancelMu.Unlock()
+	for _, cancel := range cancels {
+		cancel()
+	}
+}
+
 // rebuildStore (re)creates the SQLite Storage that wraps the current *sql.DB.
 // It must be called after SetupDatabase/OpenDatabase replace d.db. The Storage
 // borrows the handle (sqlite.New): d.db stays owned by this Database.
@@ -190,9 +278,11 @@ func (d *Database) Checkpoint() error {
 // Close closes the underlying connection and clears it. It is safe to call
 // when the connection is already nil or closed.
 func (d *Database) Close() error {
+	d.switchFile()
 	d.forgetTranscriptSessions()
 	d.mu.Lock()
 	defer d.mu.Unlock()
+	d.bumpGeneration()
 	d.releaseFileLock()
 	wasReadOnly := d.readOnly
 	d.readOnly = false
@@ -211,9 +301,11 @@ func (d *Database) Close() error {
 }
 
 func (d *Database) SetupDatabase(path string) (err error) {
+	d.switchFile()
 	d.forgetTranscriptSessions()
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	d.bumpGeneration()
 
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.
@@ -288,9 +380,11 @@ func (d *Database) SetupDatabase(path string) (err error) {
 }
 
 func (d *Database) OpenDatabase(path string) (err error) {
+	d.switchFile()
 	d.forgetTranscriptSessions()
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	d.bumpGeneration()
 
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.
@@ -376,17 +470,48 @@ func (d *Database) ensureSearchStats() {
 	}
 }
 
-// RefreshSearchStatistics always runs a full ANALYZE: after a batch import
-// the stats are stale rather than absent, which ensureSearchStats would skip.
-// The GUI's batch import calls it as the CLI runs ANALYZE. Best-effort.
+// statsRefreshMinPositions is how many imported positions it takes before
+// RefreshSearchStatistics touches the planner statistics. A batch of a file
+// or two barely moves the row-count ratios the planner reads; the count
+// carries over from batch to batch, so small batches still add up to a
+// refresh.
+const statsRefreshMinPositions = 1000
+
+// statsAnalysisLimit bounds how many index rows ANALYZE reads per index
+// (PRAGMA analysis_limit): approximate statistics at a cost independent of
+// the database size, instead of a scan of every index.
+const statsAnalysisLimit = 1000
+
+// RefreshSearchStatistics refreshes the planner statistics after an import
+// batch — the stats are stale rather than absent, which ensureSearchStats
+// would skip. It does nothing until statsRefreshMinPositions positions have
+// been imported since the last refresh, and then runs PRAGMA optimize under
+// PRAGMA analysis_limit: only the tables whose size has changed enough are
+// analysed, each index sampled rather than scanned. 0x10002 asks optimize to
+// consider every table, not only those this connection has queried. The GUI
+// and CLI batch imports call it once per batch. Best-effort.
 // Takes d.mu exclusively: ANALYZE writes sqlite_stat1/sqlite_stat4.
 func (d *Database) RefreshSearchStatistics() {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-	if d.db == nil {
+	if d.db == nil || d.positionsSinceStats < statsRefreshMinPositions {
 		return
 	}
-	if _, err := d.db.Exec(`ANALYZE`); err != nil {
-		slog.Warn("ANALYZE for search statistics failed", "err", err)
+	ctx := context.Background()
+	// analysis_limit is per connection: both pragmas run on the same one.
+	conn, err := d.db.Conn(ctx)
+	if err != nil {
+		slog.Warn("planner statistics refresh: no connection", "err", err)
+		return
 	}
+	defer conn.Close()
+	if _, err := conn.ExecContext(ctx, fmt.Sprintf(`PRAGMA analysis_limit=%d`, statsAnalysisLimit)); err != nil {
+		slog.Warn("PRAGMA analysis_limit failed", "err", err)
+		return
+	}
+	if _, err := conn.ExecContext(ctx, `PRAGMA optimize=0x10002`); err != nil {
+		slog.Warn("PRAGMA optimize for search statistics failed", "err", err)
+		return
+	}
+	d.positionsSinceStats = 0
 }

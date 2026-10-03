@@ -43,6 +43,7 @@ async function freshViewStore() {
 
 // A minimal stand-in for a domain.Position, shaped like the real thing
 // (Board.svelte-compatible points), distinguishable by its id.
+/** @param {number} id */
 function fakePosition(id) {
     return {
         id,
@@ -61,6 +62,7 @@ function fakePosition(id) {
 }
 
 describe('viewStore — default position shape (regression)', () => {
+    /** @type {Awaited<ReturnType<typeof freshViewStore>>} */
     let ctx;
     beforeEach(async () => {
         ctx = await freshViewStore();
@@ -96,7 +98,7 @@ describe('viewStore — default position shape (regression)', () => {
                 {
                     id: 1,
                     name: '#1',
-                    positionIds: [999], // does not exist
+                    positionId: 999, // does not exist
                     positionIndex: 0,
                     selectedMove: null,
                     activeTab: 'matches',
@@ -105,7 +107,7 @@ describe('viewStore — default position shape (regression)', () => {
                 }
             ]
         });
-        const loadAll = async () => []; // nothing in the database matches id 999
+        const loadAll = async () => ({ ids: [] }); // nothing in the database matches id 999
 
         const ok = await ctx.viewStore.deserialize(savedJSON, loadAll);
         expect(ok).toBe(true);
@@ -122,6 +124,7 @@ describe('viewStore — default position shape (regression)', () => {
 });
 
 describe('viewStore — snapshot/restore across views', () => {
+    /** @type {Awaited<ReturnType<typeof freshViewStore>>} */
     let ctx;
     beforeEach(async () => {
         ctx = await freshViewStore();
@@ -238,6 +241,7 @@ describe('viewStore — snapshot/restore across views', () => {
 });
 
 describe('viewStore — serialize/deserialize round trip', () => {
+    /** @type {Awaited<ReturnType<typeof freshViewStore>>} */
     let ctx;
     beforeEach(async () => {
         ctx = await freshViewStore();
@@ -254,30 +258,39 @@ describe('viewStore — serialize/deserialize round trip', () => {
 
         const json = ctx.viewStore.serialize();
         const parsed = JSON.parse(json);
-        expect(parsed.views[0].positionIds).toEqual([101, 102]);
+        expect(parsed.views[0].positionId).toBe(101);
+        expect(parsed.views[0].origin).toEqual({ kind: 'library' });
+        expect(parsed.views[0].positionIds).toBeUndefined();
         expect(parsed.views[0].commentText).toBe('remember this');
 
-        // Deserialize into the same fresh instance, checking ids against a
-        // fake "database" (ListPositionIDs). The board comes from the window
+        // Deserialize into the same fresh instance, the library replayed as a
+        // paged list over a fake "database". The board comes from the window
         // cache, still warm from the set() above.
-        const listIds = async () => [101, 102];
+        const library = [101, 102];
+        const source = {
+            count: async () => library.length,
+            window: async (/** @type {number} */ o, /** @type {number} */ l) => library.slice(o, o + l),
+            indexOf: async (/** @type {number} */ id) => library.indexOf(id)
+        };
+        const listIds = async (origin) => (origin.kind === 'library' ? { source, length: library.length } : { ids: [] });
         const ok = await ctx.viewStore.deserialize(json, listIds);
         expect(ok).toBe(true);
 
         expect(get(ctx.positionStore).id).toBe(101);
-        expect(get(ctx.positionsStore).ids).toEqual([101, 102]);
+        expect(get(ctx.positionsStore)).toMatchObject({ ids: null, length: 2, paged: true });
+        await expect(ctx.positionsStore.resolveIdAt(1)).resolves.toBe(102);
         expect(get(ctx.commentTextStore)).toBe('remember this');
     });
 
     test('deserialize returns false and leaves state untouched on malformed JSON', async () => {
         const before = get(ctx.viewStore.views);
-        const ok = await ctx.viewStore.deserialize('{not valid json', async () => []);
+        const ok = await ctx.viewStore.deserialize('{not valid json', async () => ({ ids: [] }));
         expect(ok).toBe(false);
         expect(get(ctx.viewStore.views)).toBe(before);
     });
 
     test('deserialize returns false when the saved payload has no views', async () => {
-        const ok = await ctx.viewStore.deserialize(JSON.stringify({ views: [] }), async () => []);
+        const ok = await ctx.viewStore.deserialize(JSON.stringify({ views: [] }), async () => ({ ids: [] }));
         expect(ok).toBe(false);
     });
 
@@ -290,7 +303,7 @@ describe('viewStore — serialize/deserialize round trip', () => {
                 {
                     id: 1,
                     name: '#1',
-                    positionIds: [1],
+                    positionId: 1,
                     positionIndex: 0,
                     activeTab: 'eval',
                     commentText: '',
@@ -301,7 +314,7 @@ describe('viewStore — serialize/deserialize round trip', () => {
         // statusBarModeStore lives in uiStore; import it fresh alongside the rest.
         const uiStoreMod = await import('../stores/uiStore.js');
 
-        const ok = await ctx.viewStore.deserialize(json, async () => [posA]);
+        const ok = await ctx.viewStore.deserialize(json, async () => ({ ids: [posA.id] }));
         expect(ok).toBe(true);
         expect(get(uiStoreMod.statusBarModeStore)).toBe('NORMAL');
     });
@@ -313,15 +326,50 @@ describe('viewStore — serialize/deserialize round trip', () => {
         const json = JSON.stringify({
             nextViewId: 2,
             activeViewId: 1,
-            views: [{ id: 1, name: '#1', positionIds: [1], positionIndex: 0, activeTab: 'epc', commentText: '', mode: 'EPC' }]
+            views: [{ id: 1, name: '#1', positionId: 1, positionIndex: 0, activeTab: 'epc', commentText: '', mode: 'EPC' }]
         });
         const uiStoreMod = await import('../stores/uiStore.js');
 
-        const ok = await ctx.viewStore.deserialize(json, async () => [posA]);
+        const ok = await ctx.viewStore.deserialize(json, async () => ({ ids: [posA.id] }));
         expect(ok).toBe(true);
         expect(get(uiStoreMod.activeTabStore)).toBe('eval');
         expect(get(uiStoreMod.statusBarModeStore)).toBe('NORMAL');
         expect(get(ctx.viewStore.views)[0].activeTab).toBe('eval');
         expect(get(ctx.viewStore.views)[0].mode).toBe('EVAL');
+    });
+});
+
+describe('viewStore — descriptor, not ids', () => {
+    test('the persisted payload does not grow with the list', async () => {
+        const ctx = await freshViewStore();
+        const small = Array.from({ length: 10 }, (_, i) => i + 1);
+        const big = Array.from({ length: 200000 }, (_, i) => i + 1);
+        ctx.positionsStore.setIds(small);
+        ctx.currentPositionIndexStore.set(3);
+        const sizeSmall = ctx.viewStore.serialize().length;
+        ctx.positionsStore.setIds(big);
+        ctx.currentPositionIndexStore.set(3);
+        const sizeBig = ctx.viewStore.serialize().length;
+        expect(sizeBig).toBe(sizeSmall);
+        expect(sizeBig).toBeLessThan(2000);
+    });
+
+    test('a search view replays its search and finds the current position again by id', async () => {
+        const ctx = await freshViewStore();
+        const { listOriginStore } = await import('../stores/listOriginStore.js');
+        const origin = { kind: 'search', payload: { searchText: 'x' } };
+        listOriginStore.set(origin);
+        ctx.positionsStore.setIds([40, 30, 20, 10]);
+        ctx.currentPositionIndexStore.set(2);
+        const json = ctx.viewStore.serialize();
+        expect(JSON.parse(json).views[0]).toMatchObject({ origin, positionId: 20 });
+
+        // The replayed list is ordered differently: the id, not the index, decides.
+        const resolve = vi.fn(async () => ({ ids: [10, 20, 30, 40] }));
+        expect(await ctx.viewStore.deserialize(json, resolve)).toBe(true);
+        expect(resolve).toHaveBeenCalledWith(origin);
+        expect(get(ctx.positionsStore).ids).toEqual([10, 20, 30, 40]);
+        expect(get(ctx.currentPositionIndexStore)).toBe(1);
+        expect(get(listOriginStore)).toEqual(origin);
     });
 });

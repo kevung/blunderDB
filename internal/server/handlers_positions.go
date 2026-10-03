@@ -246,6 +246,22 @@ func (s *Server) positionRoutes() []route {
 		{http.MethodPost, "/v1/positions.listIds", rpc(func(ctx context.Context, scope string, req listReq) ([]int64, error) {
 			return ps().ListIDs(ctx, scope, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
 		})},
+		// The length of positions.listIds, and the rank of one id in it: with
+		// listIds windows, a client browses a library of any size without
+		// holding its id list.
+		{http.MethodPost, "/v1/positions.count", rpc(func(ctx context.Context, scope string, _ struct{}) (int, error) {
+			return ps().Count(ctx, scope)
+		})},
+		{http.MethodPost, "/v1/positions.indexOf", rpc(func(ctx context.Context, scope string, req idReq) (int, error) {
+			if req.ID <= 0 {
+				return 0, errMissing("id")
+			}
+			index, found, err := ps().IndexOf(ctx, scope, req.ID)
+			if err != nil || !found {
+				return -1, err
+			}
+			return index, nil
+		})},
 		// Positions in the order the ids were given; unknown ids are skipped.
 		{http.MethodPost, "/v1/positions.loadByIds", rpc(func(ctx context.Context, scope string, req idsReq) ([]domain.Position, error) {
 			return ps().LoadByIDs(ctx, scope, req.IDs)

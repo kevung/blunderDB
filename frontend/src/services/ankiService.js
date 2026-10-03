@@ -23,6 +23,7 @@ import {
     RemoveAnkiCard,
     ResetAnkiDeck,
     GetAllCollections,
+    ListPositionIDs,
     LoadPositionIDsByFilters
 } from '../../wailsjs/go/database/Database.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
@@ -45,7 +46,11 @@ import { logger } from '../utils/logger.js';
  * ids only.
  *
  * @param {string} sourceCommand
- * @returns {{ ids: number[], command: string | null, position: object }}
+ * A deck made from a list browsed by windows carries that list's descriptor
+ * instead of its ids: `payload` (the search replayed) or `library`.
+ *
+ * @param {string} sourceCommand
+ * @returns {{ ids: number[], command: string | null, position: object, payload?: any, library?: boolean }}
  */
 export function parseSourceCommand(sourceCommand) {
     let data;
@@ -66,7 +71,9 @@ export function parseSourceCommand(sourceCommand) {
     return {
         ids: Array.isArray(data.ids) ? data.ids : [],
         command: typeof data.command === 'string' && data.command ? data.command : null,
-        position
+        position,
+        ...(data.payload && typeof data.payload === 'object' ? { payload: data.payload } : {}),
+        ...(data.library === true ? { library: true } : {})
     };
 }
 
@@ -82,15 +89,19 @@ function parseLegacyIds(text) {
  * matched at creation are kept so a card survives the search no longer
  * matching its position.
  *
+ * A list browsed by windows holds no ids: `list` then describes it (the
+ * search it replays, or the library), and the deck is filled from that.
+ *
  * @param {{ command?: string, position?: string } | null} lastSearch
  * @param {number[]} positionIds
+ * @param {{ payload: any } | { library: true } | null} [list]
  * @returns {string}
  */
-export function buildSearchSource(lastSearch, positionIds) {
+export function buildSearchSource(lastSearch, positionIds, list = null) {
     if (lastSearch && lastSearch.command) {
-        return JSON.stringify({ command: lastSearch.command, position: lastSearch.position, ids: positionIds });
+        return JSON.stringify({ command: lastSearch.command, position: lastSearch.position, ids: positionIds, ...(list ?? {}) });
     }
-    return JSON.stringify({ ids: positionIds });
+    return JSON.stringify({ ids: positionIds, ...(list ?? {}) });
 }
 
 /** Search results plus every stored id not among them, in that order, without duplicates. */
@@ -215,7 +226,10 @@ export async function loadDecks() {
  */
 export async function resolveSearchDeckIds(sourceCommand) {
     try {
-        const { ids: storedIds, command, position } = parseSourceCommand(sourceCommand);
+        const { ids: storedIds, command, position, payload: listPayload, library } = parseSourceCommand(sourceCommand);
+        // The list the deck was made from, when it was browsed by windows: its descriptor.
+        if (library) return mergeIds((await ListPositionIDs(0, 0)) || [], storedIds);
+        if (listPayload) return mergeIds((await LoadPositionIDsByFilters(listPayload)) || [], storedIds);
         if (!command) return storedIds;
 
         let payload;
@@ -271,11 +285,13 @@ export async function syncAllDecksAndReload() {
  * Create a deck and fill it from its source.
  * @returns {Promise<number>} the new deck's id
  */
-export async function createDeck({ name, sourceType, sourceId, lastSearch = null, positionIds = [] }) {
+export async function createDeck({ name, sourceType, sourceId, lastSearch = null, positionIds = [], origin = null }) {
     const search = sourceType === 'search';
+    // A list browsed by windows holds no ids: it is described by its origin instead.
+    const list = search && positionsStore.isPaged() ? (origin?.kind === 'search' && origin.payload ? { payload: origin.payload } : { library: /** @type {true} */ (true) }) : null;
     // A score deck names no source of its own: syncDeckCards below asks the
     // backend to state its 36 cards.
-    const sourceCommand = search ? buildSearchSource(lastSearch, positionIds) : '';
+    const sourceCommand = search ? buildSearchSource(lastSearch, positionIds, list) : '';
     const deckId = await CreateAnkiDeck(name, '', sourceType, search ? 0 : sourceId, sourceCommand);
     await syncDeckCards({ id: deckId, sourceType, sourceCommand });
     await loadDecks();
@@ -351,7 +367,7 @@ export async function showCard(card) {
     // renders the score sheet.
     if (isScoreCard(card)) return;
     await showPosition(card.position);
-    const idx = positionsStore.indexOf(card.position.id);
+    const idx = await positionsStore.findIndex(card.position.id);
     if (idx >= 0) currentPositionIndexStore.set(idx);
 }
 

@@ -463,6 +463,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			"skipped_duplicates": sum.SkippedDuplicates,
 			"matches":            sum.Matches,
 			"match_id":           sum.MatchID,
+			"flags_applied":      sum.FlagsApplied,
 		}
 		// The same end-of-import report the desktop panel shows, in the
 		// terminal event: a client that streams the import gets its summary

@@ -309,7 +309,7 @@ func TestCLI_ListPositions(t *testing.T) {
 	}
 
 	out := captureStdout(t, func() {
-		if err := cli.listPositions(10); err != nil {
+		if err := cli.listPositions(0, 10); err != nil {
 			t.Fatalf("listPositions: %v", err)
 		}
 	})
@@ -319,6 +319,30 @@ func TestCLI_ListPositions(t *testing.T) {
 	}
 	if !bytes.Contains([]byte(out), []byte("position(s)")) {
 		t.Errorf("listPositions output missing position count:\n%s", out)
+	}
+
+	// A window past the first page: only that window is printed.
+	total, err := cli.db.CountPositions()
+	if err != nil || total < 3 {
+		t.Fatalf("CountPositions: %d, %v", total, err)
+	}
+	ids, err := cli.db.ListPositionIDs(1, 1)
+	if err != nil || len(ids) != 1 {
+		t.Fatalf("ListPositionIDs(1, 1): %v, %v", ids, err)
+	}
+	out = captureStdout(t, func() {
+		if err := cli.listPositions(1, 1); err != nil {
+			t.Fatalf("listPositions(1, 1): %v", err)
+		}
+	})
+	if got := strings.Count(out, "ID: "); got != 1 {
+		t.Errorf("listPositions(1, 1) printed %d positions, want 1:\n%s", got, out)
+	}
+	if !strings.Contains(out, fmt.Sprintf("ID: %d\n", ids[0])) {
+		t.Errorf("listPositions(1, 1) did not print the second position (id %d):\n%s", ids[0], out)
+	}
+	if !strings.Contains(out, fmt.Sprintf("Showing 2-2 of %d", total)) {
+		t.Errorf("listPositions(1, 1) footer:\n%s", out)
 	}
 }
 

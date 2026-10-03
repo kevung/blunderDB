@@ -799,6 +799,11 @@ partage un quota global d'octets déposés sur disque : au-delà, un nouvel
 import est refusé (``too many requests``) plutôt que de laisser croître sans
 borne l'occupation de ``$TMPDIR``.
 
+``/v1/imports.json`` relit un export JSON de blunderDB en comblant les vides :
+l'analyse qu'il porte ne s'écrit que sur une position qui n'en a pas encore,
+sans jamais remplacer une analyse existante, et les rollouts des deux côtés
+sont gardés.
+
 La famille ``search`` offre trois portes sur la même recherche.
 ``search.find`` prend l'objet de filtres complet, champ par champ.
 ``search.query`` prend une requête écrite dans le langage de la barre de
@@ -929,6 +934,21 @@ d'évaluer (un score de match hors de la portée de sa table, une décision de
 videau que le modèle refuse) compte comme ``refused``, pas ``failed`` — elle
 n'est jamais retentée en vain sur la passe suivante, contrairement à une
 position réellement en échec.
+
+``rollout.position`` joue une position de la bibliothèque (``positionId``) par
+un :ref:`rollout <cli_rollout>` et rend, pour chaque candidat, l'équité, son
+intervalle à 95 % et la JSD ; ``rollout`` porte les réglages (``fast``,
+``standard`` ou ``standard,ply=1``…), ``store`` enregistre le rollout terminé
+comme une seconde analyse, à côté de celle que porte la position, qu'il ne
+remplace jamais. Une position nue (un XGID) est refusée : le démon opère sur une
+bibliothèque. ``rollout.filter`` est la forme en lot de
+``blunderdb analyze --rollout`` : les positions que choisit ``query`` (le
+langage de la recherche) et qui ne portent pas encore de rollout aux mêmes
+réglages sont jouées l'une après l'autre et enregistrées au fil de l'eau, en
+flux NDJSON (``started``, ``progress`` après chaque série de parties, puis
+``done`` ou ``cancelled``) ; ``rollout.filter.cancel`` l'annule avec son
+``job_id``. Un tenant ne mène qu'un lot à la fois, rollout ou gammonNet.
+``rollout.list`` lit les rollouts enregistrés d'une position.
 
 Corrélation et métriques métier
 --------------------------------
@@ -1589,19 +1609,25 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
    * - ``similar_positions``, ``decode_position``, ``legal_moves``,
        ``race_epc``
      - positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course
-   * - ``list_players``, ``player_stats``, ``recurring_errors``
-     - joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent
+   * - ``list_players``, ``player_stats``, ``recurring_errors``,
+       ``training_stats``
+     - joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent ;
+       PR du quiz et rétention Anki contre le PR réel
    * - ``list_matches``, ``get_match``, ``list_tournaments``
      - matchs, détail d'un match, tournois
    * - ``list_collections``, ``collection_positions``, ``study_decks``
      - collections et leurs positions ; paquets de révision
    * - ``quiz_draw``, ``quiz_grade``
      - tire une position sans sa réponse, puis note la réponse donnée
+   * - ``rollout``
+     - rollout d'une position de la base : équité, intervalle à 95 % et JSD
+       par candidat
 
 Les outils ne font que lire. Quatre outils écrivent — ``save_position``,
 ``comment_position``, ``create_collection``, ``add_to_collection`` — et ne
 sont offerts que sur demande : ``--write`` en local, ``--mcp-write`` sur le
-démon. Aucun n'efface.
+démon ; ``rollout`` y gagne alors l'argument ``store``, qui enregistre le
+rollout à côté de l'analyse de la position. Aucun n'efface.
 
 **En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir
 :ref:`cli`). Pour Claude Code :

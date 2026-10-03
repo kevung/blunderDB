@@ -54,6 +54,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.createDeck — JSON."
         return self._call("/v1/anki.createDeck", payload)
 
+    def anki_create_study_deck(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.createStudyDeck — JSON."
+        return self._call("/v1/anki.createStudyDeck", payload)
+
     def anki_deck_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/anki.deckPositions — NDJSON stream."
         return self._stream("/v1/anki.deckPositions", payload)
@@ -606,6 +610,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/metadata.version — JSON."
         return self._call("/v1/metadata.version", payload)
 
+    def positions_count(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.count — JSON."
+        return self._call("/v1/positions.count", payload)
+
     def positions_delete(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.delete — JSON."
         return self._call("/v1/positions.delete", payload)
@@ -633,6 +641,10 @@ class GeneratedAPI(BaseClient):
     def positions_from_xgp(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.fromXGP — JSON."
         return self._call("/v1/positions.fromXGP", payload)
+
+    def positions_index_of(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.indexOf — JSON."
+        return self._call("/v1/positions.indexOf", payload)
 
     def positions_legal_moves(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.legalMoves — JSON."
@@ -738,9 +750,37 @@ class GeneratedAPI(BaseClient):
         "POST /v1/rencontres.update — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/rencontres.update", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def rollout_filter(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.filter — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rollout.filter", payload)
+
+    def rollout_filter_cancel(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.filter.cancel — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rollout.filter.cancel", payload)
+
+    def rollout_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.list — JSON."
+        return self._call("/v1/rollout.list", payload)
+
+    def rollout_position(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.position — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rollout.position", payload)
+
+    def search_count(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.count — JSON."
+        return self._call("/v1/search.count", payload)
+
     def search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/search.find — NDJSON stream."
         return self._stream("/v1/search.find", payload)
+
+    def search_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.ids — JSON."
+        return self._call("/v1/search.ids", payload)
+
+    def search_index_of(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.indexOf — JSON."
+        return self._call("/v1/search.indexOf", payload)
 
     def search_parse(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/search.parse — JSON."
@@ -818,9 +858,17 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.recurringErrors — JSON."
         return self._call("/v1/stats.recurringErrors", payload)
 
+    def stats_study_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.studyIds — JSON."
+        return self._call("/v1/stats.studyIds", payload)
+
     def stats_tournament_badges(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.tournamentBadges — JSON."
         return self._call("/v1/stats.tournamentBadges", payload)
+
+    def stats_training(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.training — JSON."
+        return self._call("/v1/stats.training", payload)
 
     def tournaments_add_match(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/tournaments.addMatch — JSON."

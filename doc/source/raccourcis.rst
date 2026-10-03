@@ -159,6 +159,7 @@ Ligne de commande
 
    "HAUT", "Parcourir l'historique des commandes vers le haut."
    "BAS", "Parcourir l'historique des commandes vers le bas."
+   "ÉCHAP", "Pendant une recherche : l'interrompre."
 
 .. _raccourcis_search_history:
 
@@ -202,6 +203,7 @@ Panneau d'analyse
    "HAUT, k", "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."
    "BAS, j", "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
    "d", "Basculer entre l'analyse des coups et du cube (navigation match uniquement)."
+   "r", "Lancer le rollout de la position avec le réglage choisi ; une seconde pression l'arrête."
    "Esc", "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 
 .. _raccourcis_eval_panel:

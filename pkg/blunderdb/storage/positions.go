@@ -20,6 +20,12 @@ type PositionStore interface {
 	// created: the caller that may undo its save is the one that made it.
 	SaveCreated(ctx context.Context, scope string, p *domain.Position) (id int64, created bool, err error)
 
+	// RaiseFlag raises the source-tool study mark on the stored position that
+	// p hashes to, and reports whether this call raised it: false when it was
+	// already set or when no such position is stored. The mark is only ever
+	// set, never cleared (ADR-0006).
+	RaiseFlag(ctx context.Context, scope string, p *domain.Position) (bool, error)
+
 	// Update overwrites the stored position with the same id as p.
 	Update(ctx context.Context, scope string, p *domain.Position) error
 
@@ -42,6 +48,15 @@ type PositionStore interface {
 	// that browses a library keeps this list and fetches the positions it
 	// shows with LoadByIDs, instead of materialising every row up front.
 	ListIDs(ctx context.Context, scope string, opts ListOpts) ([]int64, error)
+
+	// Count returns how many positions ListIDs would return unbounded. With
+	// ListIDs windows and IndexOf it lets a client browse a library of any
+	// size while holding only the window it shows.
+	Count(ctx context.Context, scope string) (int, error)
+
+	// IndexOf returns the rank of id in ListIDs's order (0 for the first
+	// position), or found=false when no such position is stored.
+	IndexOf(ctx context.Context, scope string, id int64) (index int, found bool, err error)
 
 	// LoadByIDs returns the positions whose ids are listed, in the order the
 	// caller gave them, in one round trip per batch rather than one per id.

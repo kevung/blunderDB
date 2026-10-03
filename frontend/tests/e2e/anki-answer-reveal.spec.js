@@ -8,7 +8,8 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { installWailsMock, overrideDbMethodByArg } from './helpers/wailsMock.js';
+import { installWailsMock, overrideDbMethodByArg, getWailsCalls } from './helpers/wailsMock.js';
+import { positionA } from './helpers/fixtures.js';
 
 const POSITION_10 = {
     id: 10,
@@ -193,4 +194,127 @@ test('en colonne latérale, la réponse se pose sous la bande et défile au lieu
         const moved = await page.locator('.review-answer').evaluate((el) => el.scrollLeft > 0);
         expect(moved).toBe(true);
     }
+});
+
+// « Répondre au damier » (ADR-0040) : l'option du paquet fait jouer le coup au damier, le quiz le
+// juge et propose une note que le joueur garde la main de corriger.
+const PLAY = {
+    notation: '6/3 4/3',
+    steps: [
+        { from: 6, to: 3, hit: false },
+        { from: 4, to: 3, hit: false }
+    ],
+    result: { board: positionA.board }
+};
+const VERDICT = { legal: true, matched: true, notation: '6/3 4/3', best: '8/5 6/5', errorMp: 42 };
+const ANALYSIS_A = {
+    positionId: positionA.id,
+    analysisType: 'CheckerMove',
+    checkerAnalysis: {
+        moves: [
+            { move: '8/5 6/5', equity: 0.1, equityError: 0 },
+            { move: '6/3 4/3', equity: 0.058, equityError: -0.042 }
+        ]
+    },
+    playedMoves: [],
+    playedCubeActions: []
+};
+
+async function clickPoint(page, point) {
+    const at = await page.evaluate(async (p) => {
+        const { boardMetrics } = await import('/src/utils/boardGeometry.js');
+        const { stackSlotCenter } = await import('/src/utils/boardScene.js');
+        const { defaultBoardConfig } = await import('/src/utils/boardConfig.js');
+        const host = document.getElementById('backgammon-board');
+        const drawing = host.firstElementChild;
+        const width = Number(drawing.getAttribute('width'));
+        const height = Number(drawing.getAttribute('height'));
+        const rect = host.getBoundingClientRect();
+        const cfg = defaultBoardConfig();
+        const { x, y } = stackSlotCenter(boardMetrics(width, height, cfg.widthFactor), cfg, p, 0);
+        return { x: rect.left + (x * rect.width) / width, y: rect.top + (y * rect.height) / height };
+    }, point);
+    await page.mouse.click(at.x, at.y);
+}
+
+async function startBoardReview(page, { option = true } = {}) {
+    const card = { card: { id: 200, state: 0, deckId: 1 }, position: positionA };
+    await installWailsMock(page, {
+        config: { GetLastDatabasePath: '/tmp/e2e-anki.db' },
+        app: { PathExists: true, IsProtectedCopyPath: false, LegalMoves: [PLAY] },
+        database: {
+            GetAllAnkiDecks: [{ ...DECK, cardCount: 1, newCount: 1, dueCount: 1 }],
+            GetAnkiDeckStats: { newCount: 1, learningCount: 0, reviewCount: 0, totalCount: 1, dueCount: 1 },
+            GetAnkiDeckPositions: [positionA],
+            GetNextAnkiCard: card,
+            ReviewAnkiCard: card,
+            SyncAnkiDeck: null,
+            ListPositionIDs: [positionA.id],
+            LoadMetadata: option ? { anki_board_answer_1: '1' } : {},
+            GradeQuizChecker: VERDICT,
+            CheckDatabaseVersion: '2.15.0',
+            GetDatabaseVersion: '2.15.0'
+        }
+    });
+    await page.goto('/');
+    await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
+    await page.keyboard.press('Escape');
+    await overrideDbMethodByArg(page, 'LoadAnalysis', { [positionA.id]: ANALYSIS_A }, null);
+    await page.click('[data-testid="tab-anki"]');
+    await page.click('tbody tr');
+    await page.click('.btn-study');
+    await expect(page.locator('.review-body')).toBeVisible();
+}
+
+test('répondre au damier : le coup se joue, le quiz le juge, la note est proposée et reste corrigeable', async ({ page }) => {
+    await startBoardReview(page);
+
+    const validate = page.getByTestId('anki-board-validate');
+    await expect(validate).toBeDisabled();
+    await expect(page.locator('.answer-masked'), 'la réponse reste masquée tant que rien n’est joué').toBeVisible();
+
+    await clickPoint(page, 6);
+    await clickPoint(page, 3);
+    await clickPoint(page, 4);
+    await clickPoint(page, 3);
+    await expect(validate).toBeEnabled();
+    await validate.click();
+
+    await expect(page.getByTestId('anki-board-verdict')).toContainText('42');
+    await expect(page.locator('.checker-table')).toBeVisible();
+    // 42 mp : une erreur sous le blunder, donc « Difficile » (2) proposé…
+    await expect(page.locator('.btn-rating.suggested')).toHaveCount(1);
+    await expect(page.locator('.btn-rating.suggested .rating-key')).toHaveText('2');
+    const graded = await getWailsCalls(page, 'GradeQuizChecker');
+    expect(graded).toHaveLength(1);
+    expect(graded[0].args[0]).toBe(positionA.id);
+
+    // Le dos explique le coup JOUÉ (8/5 6/5 est le meilleur : l'explication porte sur 6/3 4/3).
+    await expect.poll(async () => (await getWailsCalls(page, 'ExplainDecision')).map((c) => c.args[1])).toContain('6/3 4/3');
+
+    // …et le joueur note ce qu'il veut : rien ne l'impose.
+    await page.keyboard.press('Digit3');
+    const reviews = await getWailsCalls(page, 'ReviewAnkiCard');
+    expect(reviews[0].args[1]).toBe(3);
+});
+
+test('sans l’option, la carte reste en auto-notation : aucun damier armé', async ({ page }) => {
+    await startBoardReview(page, { option: false });
+
+    await expect(page.getByTestId('anki-board-play')).toHaveCount(0);
+    await page.keyboard.press('Space');
+    await expect(page.locator('.checker-table')).toBeVisible();
+    await expect(page.locator('.btn-rating.suggested')).toHaveCount(0);
+    expect(await getWailsCalls(page, 'GradeQuizChecker')).toHaveLength(0);
+});
+
+test('révéler sans jouer abandonne le coup : pas de suggestion, la main reste au joueur', async ({ page }) => {
+    await startBoardReview(page);
+    await expect(page.getByTestId('anki-board-play')).toBeVisible();
+
+    await page.keyboard.press('Space');
+
+    await expect(page.locator('.checker-table')).toBeVisible();
+    await expect(page.getByTestId('anki-board-play')).toHaveCount(0);
+    await expect(page.locator('.btn-rating.suggested')).toHaveCount(0);
 });

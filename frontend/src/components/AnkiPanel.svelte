@@ -21,9 +21,13 @@
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { collectionsStore } from '../stores/collectionStore';
     import { positionsStore } from '../stores/positionStore';
+    import { listOriginStore } from '../stores/listOriginStore.js';
     import { lastSearchStore } from '../stores/searchHistoryStore';
     import { confirmAction } from '../services/confirmService.js';
     import * as anki from '../services/ankiService.js';
+    import { invalidateTrainingStats } from '../stores/statsStore.js';
+    import * as boardAnswer from '../services/ankiBoardAnswer.js';
+    import { quizPlayCompleteStore } from '../stores/quizPlayStore.js';
     import { logger } from '../utils/logger.js';
     import { t, tMsg } from '../i18n';
     import { UpdateAnkiDeck, GetAnkiReviewLog } from '../../wailsjs/go/database/Database.js';
@@ -31,6 +35,7 @@
     import ContextMenu from './ContextMenu.svelte';
     import AnalysisView from './AnalysisView.svelte';
     import ScoreCard from './ScoreCard.svelte';
+    import ExplanationLine from './ExplanationLine.svelte';
     import { buildScoreCard, UNORDERED_SCORES } from '../services/scoreCard.js';
 
     // Read-only store mirrors.
@@ -128,6 +133,8 @@
     // Checkbox + number: nil (no limit) and 0 (serve nothing) differ (ADR-0026 rule 3).
     let settingsLimited = $state(false);
     let settingsSessionLimit = $state(20);
+    let settingsBoardAnswer = $state(false);
+    let boardAnswerWas = false;
     // Deck log measurement; null until loaded, unavailable below the sample floor.
     let retention = $state(null);
 
@@ -205,6 +212,18 @@
         }
     });
 
+    // « Répondre au damier » : armé tant qu'une carte de pions est à répondre sur l'onglet, rendu
+    // dès que la réponse est montrée ou que l'on quitte la révision.
+    const boardState = boardAnswer.ankiBoardAnswerStore;
+    $effect(() => {
+        if (viewMode === 'review' && $activeTabStore === 'anki' && reviewCard && selectedDeck && !cramMode) {
+            if (answerShown) boardAnswer.releaseBoard();
+            else boardAnswer.armBoardAnswer(selectedDeck, reviewCard);
+        } else {
+            boardAnswer.disarmBoardAnswer();
+        }
+    });
+
     // Reload and auto-sync all decks when the tab becomes active, and put the
     // current review card back on the board when returning mid-review.
     $effect(() => {
@@ -238,7 +257,8 @@
                 sourceType: newDeckSourceType,
                 sourceId: newDeckSourceId,
                 lastSearch,
-                positionIds
+                positionIds,
+                origin: $listOriginStore
             });
             newDeckName = '';
             newDeckSourceType = 'collection';
@@ -302,6 +322,7 @@
             // In cram mode the rating is ignored — just advance, never schedule.
             const next = cramMode ? await anki.nextCramCard(selectedDeck, reviewCard) : await anki.reviewCard(reviewCard, rating);
             reviewSessionCount++;
+            invalidateTrainingStats();
 
             // The limit ended the sitting, not an empty queue: its own message
             // (ADR-0026 rule 4). No "keep going": cram serves more.
@@ -392,6 +413,7 @@
         anki.deckRetention(selectedDeck.id)
             .then((r) => (retention = r))
             .catch(() => (retention = null));
+        boardAnswer.boardAnswerEnabled(selectedDeck.id).then((on) => (settingsBoardAnswer = boardAnswerWas = on));
         ankiViewModeStore.set('settings');
     }
 
@@ -404,6 +426,7 @@
                 enableFuzz: settingsFuzz,
                 sessionLimit: settingsLimited ? Math.max(0, Math.trunc(settingsSessionLimit)) : null
             });
+            if (selectedDeck.sourceType !== anki.SOURCE_SCORES && settingsBoardAnswer !== boardAnswerWas) await boardAnswer.setBoardAnswer(selectedDeck.id, settingsBoardAnswer);
             ankiViewModeStore.set('list');
             statusBarTextStore.set(tMsg('anki.settingsSaved'));
         } catch (e) {
@@ -499,7 +522,12 @@
                 {:else}
                     <div class="review-buttons">
                         {#each RATING_BUTTONS as [key, rating] (rating)}
-                            <button class="btn-rating" onclick={() => submitReview(rating)} title={$t(key) + ` (${rating})`}>
+                            <button
+                                class="btn-rating"
+                                class:suggested={$boardState?.phase === 'graded' && $boardState.suggested === rating}
+                                onclick={() => submitReview(rating)}
+                                title={$t(key) + ` (${rating})`}
+                            >
                                 <span class="rating-label">{$t(key)}</span>
                                 <span class="rating-key">{rating}</span>
                             </button>
@@ -507,6 +535,25 @@
                     </div>
                 {/if}
             </div>
+
+            {#if $boardState?.phase === 'play'}
+                <div class="board-answer" data-testid="anki-board-play">
+                    <span>{$t('anki.boardAnswerHint')}</span>
+                    <button type="button" class="btn-primary" data-testid="anki-board-validate" disabled={!$quizPlayCompleteStore} onclick={() => boardAnswer.validateBoardAnswer(reviewCard)}
+                        >{$t('anki.boardAnswerValidate')}</button
+                    >
+                </div>
+            {:else if $boardState?.phase === 'graded'}
+                <div class="board-answer" data-testid="anki-board-verdict">
+                    {#if !$boardState.verdict.legal}
+                        {$t('anki.boardAnswerIllegal')}
+                    {:else if $boardState.suggested === null}
+                        {$t('anki.boardAnswerUnranked')}
+                    {:else}
+                        {$t('anki.boardAnswerSuggest', { rating: $t(RATING_KEYS[$boardState.suggested]), error: $boardState.verdict.errorMp })}
+                    {/if}
+                </div>
+            {/if}
 
             <div class="review-answer">
                 {#if !hasAnswer}
@@ -531,6 +578,8 @@
                         {beaver}
                         {maxCube}
                     />
+                    <!-- Silencieuse quand aucune règle ne s'applique. -->
+                    <ExplanationLine {analysis} played={$boardState?.phase === 'graded' ? $boardState.verdict.notation : ''} neighbours={false} />
                 {:else}
                     <button class="answer-masked" onclick={showAnkiAnswer} title={$t('anki.clickToReveal')}>···</button>
                 {/if}
@@ -569,6 +618,15 @@
                     {$t('anki.enableFuzz')}
                 </label>
             </div>
+            {#if selectedDeck.sourceType !== anki.SOURCE_SCORES}
+                <div class="settings-row">
+                    <label>
+                        <input type="checkbox" data-testid="anki-board-answer-option" bind:checked={settingsBoardAnswer} />
+                        {$t('anki.boardAnswerOption')}
+                    </label>
+                </div>
+                <div class="settings-note">{$t('anki.boardAnswerOptionHint')}</div>
+            {/if}
             <div class="settings-row">
                 <label>
                     <input type="checkbox" bind:checked={settingsLimited} />
@@ -644,7 +702,7 @@
                         <!-- Fixed: the 36 unordered scores of 2 to 9 away (ADR-0042 rule 2). -->
                         <span class="search-hint">{$t('anki.scoresCount', { count: UNORDERED_SCORES.length })}</span>
                     {:else}
-                        <span class="search-hint">{$t('anki.positionsCount', { count: positionIds.length })}</span>
+                        <span class="search-hint">{$t('anki.positionsCount', { count: $positionsStore?.length ?? 0 })}</span>
                     {/if}
                     <button class="btn-outline" onclick={createDeck} title={$t('common.create')}>{@render icon(ICON.check)}</button>
                     <button class="btn-outline" onclick={() => (showCreateForm = false)}>{@render icon(ICON.cross)}</button>
@@ -1049,6 +1107,18 @@
         color: var(--color-text);
         gap: 2px;
     }
+    .btn-rating.suggested {
+        outline: 2px solid var(--accent, currentColor);
+    }
+
+    .board-answer {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        font-size: var(--font-size-small);
+    }
+
     .btn-rating:hover {
         background: var(--color-surface-alt);
     }
