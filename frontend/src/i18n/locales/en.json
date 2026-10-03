@@ -902,6 +902,18 @@
             "saveImageSVG": "Save the image (SVG)…",
             "saveImagePNG": "Save the image (PNG)…",
             "neighbours": "Neighbouring positions"
+        },
+        "scene": {
+            "pip": "pip: {n}",
+            "away": "{n} away",
+            "crawford": "crawford",
+            "post": "post",
+            "unlimited": "unlimited",
+            "off": "({n} OFF)"
+        },
+        "situation": {
+            "search": "Search board: place the checkers to find",
+            "eval": "Evaluation board"
         }
     },
     "epc": {
@@ -2445,7 +2457,8 @@
         "rooms": {
             "title": "Rooms this competition plays in",
             "hint": "None ticked: every table."
-        }
+        },
+        "closeView": "Leave the Direction"
     },
     "palette": {
         "title": "Command palette",

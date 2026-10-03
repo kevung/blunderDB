@@ -902,6 +902,18 @@
             "saveImageSVG": "Salvare l'immagine (SVG)…",
             "saveImagePNG": "Salvare l'immagine (PNG)…",
             "neighbours": "Posizioni vicine"
+        },
+        "scene": {
+            "pip": "pip: {n}",
+            "away": "a {n}",
+            "crawford": "crawford",
+            "post": "post",
+            "unlimited": "illimitato",
+            "off": "({n} fuori)"
+        },
+        "situation": {
+            "search": "Scacchiera di ricerca: disponi le pedine da trovare",
+            "eval": "Scacchiera di valutazione"
         }
     },
     "epc": {
@@ -2445,7 +2457,8 @@
         "rooms": {
             "title": "Sale in cui gioca questa prova",
             "hint": "Nessuna spunta: tutti i tavoli."
-        }
+        },
+        "closeView": "Esci dalla direzione"
     },
     "palette": {
         "title": "Tavolozza dei comandi",

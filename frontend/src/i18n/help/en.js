@@ -289,6 +289,7 @@ export default {
 <p>Each game's header counts its marks, whether the game is expanded or not: you can see without opening it which game holds the blunders.</p>
 <p>The <strong>Merge players</strong> button in the panel toolbar opens a window listing all the player names in the database with their number of matches: select the spelling variants of the same player, choose the canonical name to keep, then merge. Useful to unify per-player statistics when the same player appears under several names.</p>
 <p>When a match is open, an <strong>information bar</strong> appears above the board: it recalls the players involved (<em>player 1</em> versus <em>player 2</em>) as well as the match context (event, location, round, date and match length, when this information is available). This bar is also shown outside match mode: when a studied position (from a search, a collection or a direct access) comes from one or several matches, it indicates its <strong>provenance</strong> — the first match concerned and, where applicable, a "+N" badge listing the others on hover. A position imported on its own, which no match references, shows nothing.</p>
+<p>The <strong>Search</strong> and <strong>Eval</strong> tabs replace the board with a working board: a banner at the top of the board says so ("Search board", "Evaluation board"), and the information bar is hidden while it would describe a position that is not on screen. Returning to the analysis restores the studied position.</p>
 <p>When opening a database that contains matches, the <strong>Matches</strong> panel is shown right away and the review starts directly on the first position, so you can begin navigating immediately.</p>
 <div class="admonition note">
 <p>A database can be opened for writing by only one window at a time. If you open a database already open in another blunderDB window, it opens <strong>read-only</strong>: navigation, search and analysis remain possible, but any modification is disabled and the title bar shows "[read-only]".</p>
@@ -652,7 +653,7 @@ export default {
 <p>In this tab, the <strong>Player</strong> list and the <strong>decision type</strong> choice are disabled: the table shows every player, and already splits checker and cube decisions into separate columns.</p>
 </div>
 <div class="admonition important">
-<p>A dash ("—") marks a value that was <strong>never measured</strong>, not to be confused with zero. That is notably the case of the Luck column for any match imported before schema version 2.15.0: luck was not stored back then, and nothing allows it to be reconstructed afterwards — the source files must be re-imported. Formats that do not carry it (BGF, Jellyfish <code>.mat</code>) never will.</p>
+<p>A dash ("—") marks a value that was <strong>never measured</strong>, not to be confused with zero. That is notably the case of the Luck column for any match imported before schema version 2.15.0: luck was not stored then, and nothing allows it to be reconstructed afterwards. Re-importing the source file is not enough: the import recognises a duplicate and takes only its marks. The match must be deleted, then imported again. Formats that do not carry it (BGF, Jellyfish <code>.mat</code>) never will.</p>
 </div>
 <h4>Aggregation rule</h4>
 <div class="admonition important">

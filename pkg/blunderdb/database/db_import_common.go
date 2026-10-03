@@ -32,8 +32,8 @@ func openExistingSQLite(path string) (*sql.DB, error) {
 // writeImportedMatch persists a mapped MatchGraph through the storage backend,
 // shared by the format-specific Import* methods that delegate to the ingest
 // pipeline. It preserves the GUI/CLI duplicate contract: an exact same-format
-// re-import returns ErrDuplicateMatch (the ingest layer reports it as a silent
-// skip), while a cross-format canonical duplicate is enriched in place and
+// re-import returns a *DuplicateMatchError, which is ErrDuplicateMatch (the
+// ingest layer reports it as a silent skip), while a cross-format canonical duplicate is enriched in place and
 // returns the existing match id without error. Callers must hold d.mu.
 func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGraph) (int64, error) {
 	// Stamp the import batch here, the one point every format passes through.
@@ -48,9 +48,18 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 		return 0, err
 	}
 	if res.Skipped {
-		_ = tx.Rollback()
+		// A duplicate still carries the study marks added in the source tool
+		// since the first import (ADR-0006): they are committed, the rest of
+		// the file was never written.
+		if res.FlagsApplied > 0 {
+			if err := tx.Commit(); err != nil {
+				return 0, err
+			}
+		} else {
+			_ = tx.Rollback()
+		}
 		d.importBatchCounts.MatchesSkipped++
-		return 0, ErrDuplicateMatch
+		return 0, &DuplicateMatchError{MatchID: res.MatchID, FlagsApplied: res.FlagsApplied}
 	}
 	if err := tx.Commit(); err != nil {
 		return 0, err
@@ -62,6 +71,7 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 		d.importBatchCounts.MatchesImported++
 	}
 	d.importBatchCounts.PositionsSaved += res.SavedPositions
+	d.positionsSinceStats += res.SavedPositions
 	return res.MatchID, nil
 }
 
@@ -92,6 +102,7 @@ func (d *Database) writeImportedPosition(ctx context.Context, graphs []ingest.Po
 	if err := tx.Commit(); err != nil {
 		return 0, err
 	}
+	d.positionsSinceStats += len(graphs)
 	return firstID, nil
 }
 
@@ -204,6 +215,24 @@ var normalizeMove = engine.NormalizeMove
 
 // ErrDuplicateMatch is returned when attempting to import a match that already exists
 var ErrDuplicateMatch = fmt.Errorf("duplicate match: this match has already been imported")
+
+// DuplicateMatchError is how an import reports a match already stored:
+// errors.Is(err, ErrDuplicateMatch) holds. FlagsApplied tells "duplicate, N
+// study marks delivered" (committed) from "duplicate, nothing to do" (0).
+type DuplicateMatchError struct {
+	MatchID      int64
+	FlagsApplied int
+}
+
+func (e *DuplicateMatchError) Error() string {
+	if e.FlagsApplied == 0 {
+		return ErrDuplicateMatch.Error()
+	}
+	return fmt.Sprintf("%s (%d study marks applied)", ErrDuplicateMatch.Error(), e.FlagsApplied)
+}
+
+// Is makes every DuplicateMatchError match ErrDuplicateMatch.
+func (e *DuplicateMatchError) Is(target error) bool { return target == ErrDuplicateMatch }
 
 // computeMatchHashFromStoredData computes a hash for existing matches in the database
 // This is used during migration when we don't have access to the original XG file

@@ -902,6 +902,18 @@
             "saveImageSVG": "Guardar la imagen (SVG)…",
             "saveImagePNG": "Guardar la imagen (PNG)…",
             "neighbours": "Posiciones vecinas"
+        },
+        "scene": {
+            "pip": "pip: {n}",
+            "away": "a {n}",
+            "crawford": "crawford",
+            "post": "post",
+            "unlimited": "ilimitado",
+            "off": "({n} fuera)"
+        },
+        "situation": {
+            "search": "Tablero de búsqueda: coloca las fichas que quieres encontrar",
+            "eval": "Tablero de evaluación"
         }
     },
     "epc": {
@@ -2445,7 +2457,8 @@
         "rooms": {
             "title": "Salas donde juega esta prueba",
             "hint": "Ninguna marcada: todas las mesas."
-        }
+        },
+        "closeView": "Salir de la dirección"
     },
     "palette": {
         "title": "Paleta de comandos",

@@ -55,7 +55,7 @@ func TestMapXGCarriesFlags(t *testing.T) {
 
 // TestFlagsReachStorageAndSurviveReimport is the end-to-end guarantee: the marks
 // land in the database, the filter finds exactly them, and re-importing the same
-// file — an exact duplicate that writes nothing else — still delivers them.
+// file — an exact duplicate that writes nothing else — raises no mark twice.
 // That last part is what makes the feature usable on an existing database:
 // flagging a position in XG does not change the match hash, so without it the
 // mark could only arrive by deleting the match and importing it again.
@@ -114,8 +114,8 @@ func TestFlagsReachStorageAndSurviveReimport(t *testing.T) {
 	if !skipped {
 		t.Error("re-importing the same file should be detected as an exact duplicate")
 	}
-	if applied != 4 {
-		t.Errorf("a skipped duplicate should still deliver its %d marks, applied %d", 4, applied)
+	if applied != 0 {
+		t.Errorf("a duplicate whose marks are all already raised reports %d applied, want 0", applied)
 	}
 	if got := countFlagged(); got != first {
 		t.Errorf("re-import changed the flagged count: got %d, want %d", got, first)

@@ -45,6 +45,37 @@ func testPositionSaveLoad(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testPositionRaiseFlag pins the mark's one-way, counted semantics: a raise
+// reports true once, a repeat or an unknown position reports false, and the
+// mark is never cleared.
+func testPositionRaiseFlag(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p := checkerPos()
+	id, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	probe := checkerPos()
+	raised, err := s.Positions().RaiseFlag(ctx, "", &probe)
+	if err != nil || !raised {
+		t.Fatalf("first RaiseFlag = %v, %v; want true, nil", raised, err)
+	}
+	got, err := s.Positions().Load(ctx, "", id)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if !got.Flagged {
+		t.Error("position not flagged after RaiseFlag")
+	}
+	if raised, err = s.Positions().RaiseFlag(ctx, "", &probe); err != nil || raised {
+		t.Errorf("second RaiseFlag = %v, %v; want false, nil", raised, err)
+	}
+	other := cubePos()
+	if raised, err = s.Positions().RaiseFlag(ctx, "", &other); err != nil || raised {
+		t.Errorf("RaiseFlag on an unstored position = %v, %v; want false, nil", raised, err)
+	}
+}
+
 func testPositionDedup(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	p1 := checkerPos()
