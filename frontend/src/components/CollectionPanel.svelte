@@ -292,6 +292,19 @@
         }
     }
 
+    function cancelCreation() {
+        inlineNewName = '';
+        inlineNewDescription = '';
+        creating = false;
+    }
+
+    /** @param {KeyboardEvent} e */
+    function onCreationKeyDown(e) {
+        e.stopPropagation();
+        if (e.key === 'Enter') createCollectionInline();
+        else if (e.key === 'Escape') cancelCreation();
+    }
+
     async function createCollectionInline() {
         if (!inlineNewName.trim()) return;
         if (isDuplicateName(inlineNewName)) {
@@ -685,27 +698,9 @@
             <!-- The creation fields open from the header's "+ Nouvelle collection". -->
             {#if creating}
                 <div class="add-row">
-                    <input
-                        class="add-input"
-                        use:focusOnMount
-                        type="text"
-                        bind:value={inlineNewName}
-                        placeholder={$t('collection.newCollectionPlaceholder')}
-                        onkeydown={(e) => {
-                            e.stopPropagation();
-                            ((e) => e.key === 'Enter' && createCollectionInline())(e);
-                        }}
-                    />
-                    <input
-                        class="add-input desc"
-                        type="text"
-                        bind:value={inlineNewDescription}
-                        placeholder={$t('collection.descriptionInputPlaceholder')}
-                        onkeydown={(e) => {
-                            e.stopPropagation();
-                            ((e) => e.key === 'Enter' && createCollectionInline())(e);
-                        }}
-                    />
+                    <input class="add-input" use:focusOnMount type="text" bind:value={inlineNewName} placeholder={$t('collection.newCollectionPlaceholder')} onkeydown={onCreationKeyDown} />
+                    <input class="add-input desc" type="text" bind:value={inlineNewDescription} placeholder={$t('collection.descriptionInputPlaceholder')} onkeydown={onCreationKeyDown} />
+                    <button class="add-cancel" type="button" onclick={cancelCreation}>{$t('common.cancel')}</button>
                 </div>
             {/if}
         </div>
@@ -900,6 +895,10 @@
     .add-row {
         display: flex;
         gap: 4px;
+    }
+    .add-cancel {
+        font-size: var(--font-size-small);
+        padding: 2px 8px;
     }
     .add-input {
         flex: 1;

@@ -121,6 +121,28 @@ describe('TournamentPanel — list view', () => {
         expect(CreateTournament).toHaveBeenCalledWith('Winter Slam', '', '');
     });
 
+    test('Escape in the creation fields closes the form and forgets what was typed', async () => {
+        renderOpen();
+        await screen.findByText('Blunder Cup');
+
+        const nameInput = await openCreation();
+        await fireEvent.input(nameInput, { target: { value: 'Winter Slam' } });
+        await fireEvent.keyDown(nameInput, { key: 'Escape' });
+
+        expect(screen.queryByPlaceholderText(/new tournament/i)).toBeNull();
+        expect(await openCreation()).toHaveValue('');
+    });
+
+    test('the Cancel button closes the creation form', async () => {
+        renderOpen();
+        await screen.findByText('Blunder Cup');
+
+        await openCreation();
+        await fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+
+        expect(screen.queryByPlaceholderText(/new tournament/i)).toBeNull();
+    });
+
     test('a blank name does not create a tournament', async () => {
         renderOpen();
         await screen.findByText('Blunder Cup');

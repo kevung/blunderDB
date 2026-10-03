@@ -1097,7 +1097,8 @@ Panneau Collections
 
 Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton
 **+ Nouveau…** de l'en-tête est l'unique geste de création : il ouvre le champ
-de saisie. Dans la liste des matchs, l'icône ⌨ ouvre la transcription du match
+de saisie, que *Échap* ou **Annuler** referme dans les panneaux Collections et
+Tournois. Dans la liste des matchs, l'icône ⌨ ouvre la transcription du match
 et l'icône ✎ en corrige les métadonnées.
 
 Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de

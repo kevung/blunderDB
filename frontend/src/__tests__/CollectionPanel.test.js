@@ -131,6 +131,28 @@ describe('CollectionPanel — list view', () => {
         expect(CreateCollection).toHaveBeenCalledWith('Priming', '');
     });
 
+    test('Escape in the creation fields closes the form and forgets what was typed', async () => {
+        render(CollectionPanel, { props: {} });
+        await screen.findByText('Backgames');
+
+        const nameInput = await openCreation();
+        await fireEvent.input(nameInput, { target: { value: 'Priming' } });
+        await fireEvent.keyDown(nameInput, { key: 'Escape' });
+
+        expect(screen.queryByPlaceholderText(/new collection/i)).toBeNull();
+        expect(await openCreation()).toHaveValue('');
+    });
+
+    test('the Cancel button closes the creation form', async () => {
+        render(CollectionPanel, { props: {} });
+        await screen.findByText('Backgames');
+
+        await openCreation();
+        await fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+
+        expect(screen.queryByPlaceholderText(/new collection/i)).toBeNull();
+    });
+
     test('a duplicate collection name is rejected without calling the backend', async () => {
         render(CollectionPanel, { props: {} });
         await screen.findByText('Backgames');

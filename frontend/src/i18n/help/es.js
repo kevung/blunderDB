@@ -268,7 +268,7 @@ export default {
 <p>Consulte la lista de comandos para ver la lista de filtros disponibles.</p>
 </div>
 <h3>Panel de Colecciones</h3>
-<p>En los paneles Colecciones, Torneos, Anki y Transcripción, el botón <strong>+ Nuevo…</strong> del encabezado es el único gesto de creación: abre el campo de entrada. En la lista de partidas, el icono ⌨ abre la transcripción de la partida y el icono ✎ corrige sus metadatos.</p>
+<p>En los paneles Colecciones, Torneos, Anki y Transcripción, el botón <strong>+ Nuevo…</strong> del encabezado es el único gesto de creación: abre el campo de entrada, que <em>Esc</em> o <strong>Cancelar</strong> cierra en los paneles Colecciones y Torneos. En la lista de partidos, el icono ⌨ abre la transcripción del partido y el icono ✎ corrige sus metadatos.</p>
 <p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Se les pueden añadir o quitar posiciones (tecla <em>Supr</em>, se pide confirmación). Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El comando <code>ss</code> busca entre las posiciones de la colección abierta; <em>Esc</em> vuelve después a la colección (véase Panel de Búsqueda). El orden de las colecciones y de las posiciones dentro de una colección puede cambiarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code>collection</code> para mostrar u ocultar el panel.</p>
 <h3>Importación: lo que se escribe, lo que nunca se escribe</h3>
 <p>Importar un match, una posición u otra base añade lo que falta; no reemplaza lo que ya está ahí.</p>

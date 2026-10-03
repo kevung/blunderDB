@@ -256,6 +256,13 @@
         }
     }
 
+    function cancelCreation() {
+        newTournamentName = '';
+        newTournamentDate = '';
+        newTournamentLocation = '';
+        creating = false;
+    }
+
     async function createTournament() {
         if (!newTournamentName.trim()) return;
         try {
@@ -618,7 +625,7 @@
                                 }
                                 if (e.key === 'Escape') {
                                     e.stopPropagation();
-                                    e.currentTarget.blur();
+                                    cancelCreation();
                                 }
                             }}
                         />
@@ -629,7 +636,7 @@
                             onkeydown={(e) => {
                                 if (e.key === 'Escape') {
                                     e.stopPropagation();
-                                    e.currentTarget.blur();
+                                    cancelCreation();
                                 }
                             }}
                         />
@@ -645,10 +652,11 @@
                                 }
                                 if (e.key === 'Escape') {
                                     e.stopPropagation();
-                                    e.currentTarget.blur();
+                                    cancelCreation();
                                 }
                             }}
                         />
+                        <button class="add-cancel" type="button" onclick={cancelCreation}>{$t('common.cancel')}</button>
                     </div>
                 {/if}
             </div>
@@ -976,6 +984,10 @@
         display: flex;
         gap: 4px;
         align-items: center;
+    }
+    .add-cancel {
+        font-size: var(--font-size-small);
+        padding: 2px 8px;
     }
     .add-input {
         padding: 2px 4px;

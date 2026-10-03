@@ -268,7 +268,7 @@ export default {
 <p>Fare riferimento a elenco dei comandi per l'elenco dei filtri disponibili.</p>
 </div>
 <h3>Pannello Raccolte</h3>
-<p>Nei pannelli Raccolte, Tornei, Anki e Trascrizione, il pulsante <strong>+ Nuovo…</strong> dell'intestazione è l'unico gesto di creazione: apre il campo di inserimento. Nell'elenco dei match, l'icona ⌨ apre la trascrizione del match e l'icona ✎ ne corregge i metadati.</p>
+<p>Nei pannelli Collezioni, Tornei, Anki e Trascrizione, il pulsante <strong>+ Nuovo…</strong> dell'intestazione è l'unico gesto di creazione: apre il campo di inserimento, che <em>Esc</em> o <strong>Annulla</strong> chiude nei pannelli Collezioni e Tornei. Nell'elenco dei match, l'icona ⌨ apre la trascrizione del match e l'icona ✎ ne corregge i metadati.</p>
 <p>Il pannello <strong>Collezioni</strong> (<em>CTRL-B</em>) consente di gestire collezioni di posizioni. Le collezioni possono essere create, rinominate ed eliminate. Vi si possono aggiungere o togliere posizioni (tasto <em>Canc</em>, viene chiesta conferma). Fare doppio clic su una collezione per scorrerne le posizioni con i tasti <em>SINISTRA</em> e <em>DESTRA</em>. Il comando <code>ss</code> cerca tra le posizioni della collezione aperta; <em>Esc</em> riporta poi alla collezione (vedere Pannello Ricerca). L'ordine delle collezioni e delle posizioni all'interno di una collezione può essere modificato per trascinamento. Premere <em>CTRL-B</em> o eseguire il comando <code>collection</code> per mostrare o nascondere il pannello.</p>
 <h3>Importazione: cosa viene scritto, cosa non lo è mai</h3>
 <p>Importare un match, una posizione o un altro database aggiunge ciò che manca; non sostituisce ciò che è già presente.</p>
