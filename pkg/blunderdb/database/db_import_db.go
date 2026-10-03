@@ -639,7 +639,7 @@ func readImportCollections(ctx context.Context, importDB *sql.DB) ([]ingest.Sour
 // readImportLessons reads the source's Lessons like readImportCollections; a
 // source from before Lessons existed has none.
 func readImportLessons(ctx context.Context, importDB *sql.DB) ([]*domain.Lesson, error) {
-	if !queryable(importDB, `SELECT id FROM lesson_step LIMIT 0`) {
+	if !sqlite.TableExists(ctx, importDB, "lesson") {
 		return nil, nil
 	}
 	itx, err := importDB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})

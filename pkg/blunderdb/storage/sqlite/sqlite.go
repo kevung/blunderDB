@@ -188,6 +188,20 @@ func (s *Storage) BeginTx(ctx context.Context) (storage.Tx, error) {
 	return newTxImpl(tx), nil
 }
 
+// TableExists reports whether the database holds table name. An import reads a
+// source of any older schema through the current code, so it asks before it
+// reads a family the source's version may not have.
+func TableExists(ctx context.Context, db *sql.DB, name string) bool {
+	var n int
+	err := db.QueryRowContext(ctx, `SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = ?`, name).Scan(&n)
+	return err == nil && n > 0
+}
+
+// HasTable is TableExists on this Storage's own connection.
+func (s *Storage) HasTable(ctx context.Context, name string) bool {
+	return TableExists(ctx, s.sqlDB, name)
+}
+
 // Version reports the schema version recorded in the metadata table.
 func (s *Storage) Version(ctx context.Context) (string, error) {
 	return s.Metadata().Version(ctx, "")

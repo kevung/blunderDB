@@ -74,9 +74,12 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	if err != nil {
 		return Summary{}, err
 	}
-	srcLessons, err := ReadSourceLessons(ctx, source, scope)
-	if err != nil {
-		return Summary{}, err
+	// A source from before Lessons existed (schema < 2.29.0) has none.
+	var srcLessons []*domain.Lesson
+	if source.HasTable(ctx, "lesson") {
+		if srcLessons, err = ReadSourceLessons(ctx, source, scope); err != nil {
+			return Summary{}, err
+		}
 	}
 
 	type srcRecord struct {
