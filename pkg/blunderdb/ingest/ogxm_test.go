@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/ogxmparser"
 )
 
 // A match exported by HedgeHog with its analysis (3 points, rchoice v
@@ -69,9 +70,11 @@ func TestMapOGXMRealMatch(t *testing.T) {
 		t.Errorf("luck of Black's reply: %v, want -9 millipoints", l)
 	}
 
-	// Black's cube decision before rolling 4-6, against the reference's
-	// normalised equities (-0.0111, -0.4485, 1.0000). Its MET is not
-	// blunderDB's, hence the tolerance.
+	// Black's cube decision before rolling 4-6, against the normalised
+	// equities of the reference's projection (-0.011112, -0.448512,
+	// 1.000060). Double/pass is the file's own anchor, hence exact; the two
+	// others differ by what separates the file's MET (rockwell-kazaross) from
+	// blunderDB's (Kazaross-XG2) at this score, measured at 0.0035.
 	second := g.Games[0].Moves[1]
 	var cube *domain.DoublingCubeAnalysis
 	for _, an := range second.Analyses {
@@ -83,15 +86,15 @@ func TestMapOGXMRealMatch(t *testing.T) {
 		t.Fatal("no cube analysis on Black's first roll")
 	}
 	for _, c := range []struct {
-		name      string
-		got, want float64
+		name           string
+		got, want, tol float64
 	}{
-		{"no double", cube.CubefulNoDoubleEquity, -0.0111},
-		{"double/take", cube.CubefulDoubleTakeEquity, -0.4485},
-		{"double/pass", cube.CubefulDoublePassEquity, 1.0},
+		{"no double", cube.CubefulNoDoubleEquity, -0.011112, 0.005},
+		{"double/take", cube.CubefulDoubleTakeEquity, -0.448512, 0.005},
+		{"double/pass", cube.CubefulDoublePassEquity, 1.0, 1e-4},
 	} {
-		if math.Abs(c.got-c.want) > 0.03 {
-			t.Errorf("%s: %.4f, reference %.4f", c.name, c.got, c.want)
+		if math.Abs(c.got-c.want) > c.tol {
+			t.Errorf("%s: %.6f, reference %.6f", c.name, c.got, c.want)
 		}
 	}
 
@@ -109,5 +112,19 @@ func TestMapOGXMRealMatch(t *testing.T) {
 	}
 	if cubes != 2 {
 		t.Errorf("%d doubles, the match has 2", cubes)
+	}
+}
+
+// A block that is not in cubeful money currency would be stored as cubeful
+// equities it is not: it is left out whole, luck included.
+func TestOGXMIgnoresNonCubefulBlocks(t *testing.T) {
+	for _, c := range []ogxmparser.Currency{ogxmparser.Cubeless, ogxmparser.CurrencyUnset, ogxmparser.CubefulMatch} {
+		f := &ogxmparser.File{
+			Match:    &ogxmparser.Match{Length: 3},
+			Analyses: []ogxmparser.Analysis{{Currency: c, Decisions: []ogxmparser.Decision{{Kind: ogxmparser.KindRoll, Roll: &ogxmparser.RollDecision{Luck: 0.1}}}}},
+		}
+		if an := ogxmDecisions(f); an != nil {
+			t.Errorf("currency %d: block imported", c)
+		}
 	}
 }

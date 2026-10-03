@@ -406,7 +406,7 @@
                     <line x1="12" y1="15" x2="12" y2="3" />
                 </svg>
                 <span>{$t('import.dropToImport')}</span>
-                <span class="drop-hint">.db &middot; .xg &middot; .sgf &middot; .mat &middot; .bgf &middot; .txt</span>
+                <span class="drop-hint">.db &middot; .xg &middot; .sgf &middot; .mat &middot; .bgf &middot; .ogxm &middot; .txt</span>
             </div>
         </div>
     {/if}

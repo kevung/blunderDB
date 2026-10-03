@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"log/slog"
 	"math"
 	"path/filepath"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
-	"github.com/kevung/gnubgparser"
 	"github.com/kevung/ogxmparser"
 	"github.com/kevung/ogxmparser/ogid"
 )
@@ -25,14 +26,23 @@ import (
 // start on 1, 12, 17 and 19, as in domain's opening board). blunderDB's
 // player 1 is Black, so Player1Name is the OGXM Black name.
 //
-// Analysis: the first analysis block is read. Checker equities are taken as
-// the block states them (cubeful, on the normalised scale at a match score),
-// like GNU Backgammon's. Cube equities in a match are match winning chances
-// and are converted to normalised equity with the same MET conversion as
-// GNU Backgammon's, so a cube decision reads alike from both sources. A
-// block whose checker currency is match winning chances is not imported:
-// converting a play's MWC needs the post-move score swing, which the file
-// does not carry.
+// Analysis: the first analysis block is read; a later one is logged and
+// left out. Only a block in cubeful money currency (9.10, value 1) is
+// imported: blunderDB stores cubeful equities, so a cubeless block, or one
+// whose currency is not recorded, would be presented as what it is not, and
+// a block in match winning chances cannot be converted play by play (it
+// needs each play's score swing, which the file does not carry). Checker
+// equities and luck are then taken as stated: cubeful, normalised to the
+// current cube at a match score, as GNU Backgammon's are (ADR-0019).
+//
+// Cube equities are the exception. HedgeHog writes them, at a match score,
+// as match winning chances under the block's cubeful-money label (its own
+// JSON projection then normalises them with its MET). They are normalised
+// here on the file's own anchor where it has one: the double/pass equity is
+// the doubler's MWC on winning the current cube, so it scales to +1 exactly.
+// The losing anchor comes from blunderDB's MET (Kazaross-XG2); a file that
+// declares another table is logged, since the no-double and take equities
+// then carry the difference between the two tables.
 
 // MapOGXM maps an .ogxm file into a backend-independent MatchGraph.
 func MapOGXM(path string) (*MatchGraph, error) {
@@ -126,11 +136,24 @@ type ogxmAnalysis struct {
 	byRef map[int]*ogxmPlyDecisions
 }
 
+// ogxmMETID names blunderDB's MET (engine/met.go) the way OGXM's met_id does.
+const ogxmMETID = "kazaross-xg2"
+
 func ogxmDecisions(f *ogxmparser.File) *ogxmAnalysis {
 	if len(f.Analyses) == 0 {
 		return nil
 	}
+	if len(f.Analyses) > 1 {
+		slog.Warn("ogxm import: analysis blocks after the first are not imported", "blocks", len(f.Analyses))
+	}
 	a := &f.Analyses[0]
+	if a.Currency != ogxmparser.CubefulMoney {
+		slog.Warn("ogxm import: analysis not imported, its currency is not cubeful money", "currency", int(a.Currency))
+		return nil
+	}
+	if f.Match.Length > 0 && a.METID != ogxmMETID {
+		slog.Warn("ogxm import: cube equities normalised against blunderDB's MET, not the file's", "file_met", a.METID, "met", ogxmMETID)
+	}
 	out := &ogxmAnalysis{block: a, byRef: map[int]*ogxmPlyDecisions{}}
 	for i := range a.Decisions {
 		d := &a.Decisions[i]
@@ -169,7 +192,10 @@ func mapOGXMGame(f *ogxmparser.File, g *ogxmparser.Game, rp ogxmparser.GameRepla
 			if st.UnplayedRoll {
 				continue
 			}
-			pos := ogxmPosition(&st.Before, matchLength)
+			pos, err := ogxmPosition(&st.Before, matchLength)
+			if err != nil {
+				return nil, fmt.Errorf("ply %d: %w", p.Ref, err)
+			}
 			pos.PlayerOnRoll = player
 			pos.DecisionType = domain.CheckerAction
 			dice := p.Dice()
@@ -207,7 +233,10 @@ func mapOGXMGame(f *ogxmparser.File, g *ogxmparser.Game, rp ogxmparser.GameRepla
 			out = append(out, mg)
 			*moveNumber++
 		case p.Action == ogxmparser.ActionDouble:
-			pos := ogxmPosition(&st.Before, matchLength)
+			pos, err := ogxmPosition(&st.Before, matchLength)
+			if err != nil {
+				return nil, fmt.Errorf("ply %d: %w", p.Ref, err)
+			}
 			pos.PlayerOnRoll = player
 			pos.DecisionType = domain.CubeAction
 			pos.Dice = [2]int{}
@@ -255,7 +284,7 @@ func mapOGXMGame(f *ogxmparser.File, g *ogxmparser.Game, rp ogxmparser.GameRepla
 
 // ogxmPosition converts a replayed OGID to a Position: the board is absolute
 // on both sides, so points map one to one.
-func ogxmPosition(o *ogid.OGID, matchLength int) *domain.Position {
+func ogxmPosition(o *ogid.OGID, matchLength int) (*domain.Position, error) {
 	pos := &domain.Position{}
 	var onBoard [2]int
 	for i, v := range o.Board {
@@ -273,20 +302,24 @@ func ogxmPosition(o *ogid.OGID, matchLength int) *domain.Position {
 	pos.Board.Bearoff[domain.Black] = 15 - onBoard[domain.Black]
 	pos.Board.Bearoff[domain.White] = 15 - onBoard[domain.White]
 	pos.Cube.Value = o.CubeLog2
+	// The replay writes W, B or N only (ogxmparser's ownerChar); a dead or
+	// unknown cube ('D', '?') comes from a pasted OGID, never from a file.
 	switch o.CubeOwner {
 	case 'W':
 		pos.Cube.Owner = domain.White
 	case 'B':
 		pos.Cube.Owner = domain.Black
-	default:
+	case 'N':
 		pos.Cube.Owner = domain.None
+	default:
+		return nil, fmt.Errorf("cube owner %q is neither a player nor centred", o.CubeOwner)
 	}
 	pos.Dice = o.Dice
 	pos.Score = [2]int{domain.Unlimited, domain.Unlimited}
 	if matchLength > 0 {
 		pos.Score = domain.AwayScoresWithCrawford(matchLength, o.Score[ogid.Black], o.Score[ogid.White], o.Crawford)
 	}
-	return pos
+	return pos, nil
 }
 
 // ogxmMoveString writes steps in the mover's own numbering, as the GNU
@@ -342,7 +375,7 @@ func ogxmDepth(l *ogxmparser.Level, cube bool) string {
 }
 
 func ogxmCheckerAnalysis(an *ogxmAnalysis, d *ogxmparser.CheckerDecision, seat ogxmparser.Seat, played string) *domain.PositionAnalysis {
-	if d == nil || len(d.Alternatives) == 0 || an.block.Currency == ogxmparser.CubefulMatch {
+	if d == nil || len(d.Alternatives) == 0 {
 		return nil
 	}
 	decisionLevel := d.Level.Effective(an.block.Level)
@@ -389,17 +422,19 @@ func ogxmCubeAnalysis(an *ogxmAnalysis, d *ogxmparser.CubeDecision, before *ogid
 	if d.NoDoubleEquity == nil || d.DoubleTakeEquity == nil || d.DoublePassEquity == nil {
 		return nil
 	}
-	currency := an.block.Currency
-	if d.Currency != nil {
-		currency = *d.Currency
+	if d.Currency != nil && *d.Currency != ogxmparser.CubefulMoney && *d.Currency != ogxmparser.CubefulMatch {
+		return nil // a cubeless or unknown override: not cubeful equities
 	}
 	nd, dt, dp := *d.NoDoubleEquity, *d.DoubleTakeEquity, *d.DoublePassEquity
-	if matchLength > 0 && currency != ogxmparser.Cubeless {
-		// At a match score the cube equities are match winning chances
-		// whatever the label: convert them as GNU Backgammon's are.
-		ca := gnubgparser.CubeAnalysis{CubefulNoDouble: nd, CubefulDoubleTake: dt, CubefulDoublePass: dp}
-		convertGnuBGCubeMWCToEMG(&ca, before.Score[ogid.Black], before.Score[ogid.White], player, before.CubeValue(), matchLength, crawford)
-		nd, dt, dp = ca.CubefulNoDouble, ca.CubefulDoubleTake, ca.CubefulDoublePass
+	if matchLength > 0 {
+		win := dp // the file's own MWC for the doubler winning the cube
+		lose := engine.GnuBGGetME(before.Score[ogid.Black], before.Score[ogid.White], matchLength,
+			player, before.CubeValue(), 1-player, crawford)
+		if win-lose < 1e-7 {
+			return nil
+		}
+		norm := func(mwc float64) float64 { return (2*mwc - win - lose) / (win - lose) }
+		nd, dt, dp = norm(nd), norm(dt), 1
 	}
 	params := cubeAnalysisParams{
 		Depth:                   ogxmDepth(d.Level.Effective(an.block.Level), true),

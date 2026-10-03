@@ -435,3 +435,13 @@ func TestImportCancel_CrossTenantHTTP(t *testing.T) {
 		t.Fatalf("tenant 10 cancelling its own import: status = %d, cancelled = %v; want 200, true", rec.Code, cancelled)
 	}
 }
+
+// Every upload route streams its import, so it must be in
+// streamingCustomPaths, which kindOf cannot discover on its own.
+func TestUploadRoutesAreStreaming(t *testing.T) {
+	for p := range uploadPaths() {
+		if !streamingCustomPaths[p] {
+			t.Errorf("%s is an upload route missing from streamingCustomPaths", p)
+		}
+	}
+}
