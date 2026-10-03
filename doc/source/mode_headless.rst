@@ -1089,7 +1089,8 @@ liste : ``across.searchFind``, ``across.matchesList``, ``across.statsCompute`` e
 ``across.playerTable`` ; elles lisent ``X-Tenant-ID`` d'abord, puis chaque tenant
 listé dans l'ordre de l'en-tête, 64 tenants distincts au plus en tout. Sur un
 tenant de la liste, nommé avec l'id : ``across.matchesGet``,
-``across.matchMovePositions`` (les positions d'un match, coup par coup) et
+``across.matchMovePositions`` (les positions d'un match, coup par coup, par
+pages ``limit`` / ``offset``) et
 ``across.analysesLoadByIds`` ; un tenant absent de la liste y est refusé. Chaque
 résultat porte son tenant d'origine (``"tenant": "2"``), car un id n'est unique
 que dans son tenant ; une position porte aussi son hachage Zobrist
@@ -1139,7 +1140,10 @@ Quatre lectures servent le club et le coach, sur la même liste
   tenant à l'autre. ``players`` (paires ``tenant``, ``name``) ne garde que ces
   joueurs, ``minDecisions`` écarte ceux qui ont moins de décisions comptées ; à
   PR égal, le rang est partagé, et une ligne sans décision comptée a le rang 0.
-  Ce n'est pas le classement de saison des tournois dirigés.
+  ``filter.TournamentIDs`` y est refusé (``400``) : un id de tournoi ne vaut
+  que dans son tenant. La réponse est une page (``limit``, 100 par défaut, 1000
+  au plus ; ``offset``) avec ``total``, le nombre de lignes du classement
+  entier. Ce n'est pas le classement de saison des tournois dirigés.
 
 .. _headless_sauvegarde:
 

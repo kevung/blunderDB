@@ -68,6 +68,33 @@ func runClubReads(t *testing.T, ctx context.Context, s storage.Storage, set stor
 		}
 	})
 
+	// One read per tenant, past SQLite's batch size, never another tenant's id.
+	t.Run("ExistsManyReadsTheTenantsOwnIDs", func(t *testing.T) {
+		hashes := make([]uint64, 0, storage.MaxZobristLookups)
+		for i := uint64(1); len(hashes) < storage.MaxZobristLookups-1; i++ {
+			if i != hash {
+				hashes = append(hashes, i)
+			}
+		}
+		hashes = append(hashes, hash)
+		for _, scope := range read {
+			want, ok, err := s.Positions().Exists(in(scope), scope, hash)
+			if err != nil || !ok {
+				t.Fatalf("Exists(%s): %v %v", scope, ok, err)
+			}
+			got, err := s.Positions().ExistsMany(in(scope), scope, hashes)
+			if err != nil {
+				t.Fatalf("ExistsMany(%s): %v", scope, err)
+			}
+			if len(got) != 1 || got[hash] != want {
+				t.Errorf("tenant %s: ExistsMany = %v, want {%d: %d}", scope, got, hash, want)
+			}
+		}
+		if got, err := s.Positions().ExistsMany(in(read[0]), read[0], nil); err != nil || len(got) != 0 {
+			t.Errorf("ExistsMany(nil) = %v, %v; want an empty map", got, err)
+		}
+	})
+
 	t.Run("CommentsByZobristBoundsTheLookup", func(t *testing.T) {
 		_, err := storage.CommentsByZobrist(in(read[0]), s, read[0], make([]uint64, storage.MaxZobristLookups+1))
 		if err == nil {

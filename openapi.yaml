@@ -6067,6 +6067,12 @@ components:
         minDecisions:
           type: integer
           format: int32
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
     acrossClubRankingResp:
       type: object
       properties:
@@ -6074,6 +6080,9 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/storage_ClubRow"
+        total:
+          type: integer
+          format: int32
     acrossCollection:
       type: object
       properties:
@@ -6136,6 +6145,12 @@ components:
         matchId:
           type: integer
           format: int64
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
     acrossMatchReq:
       type: object
       properties:

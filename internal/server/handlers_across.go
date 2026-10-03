@@ -52,11 +52,16 @@ type acrossSearchReq struct {
 func (r acrossSearchReq) pageLimit() int { return r.Limit }
 
 // acrossMatchIDReq names one match among the read tenants by its tenant and
-// its id there.
+// its id there, with bounds on its moves (Limit 0 means maxPageSize).
 type acrossMatchIDReq struct {
 	Tenant  string `json:"tenant"`
 	MatchID int64  `json:"matchId"`
+	Limit   int    `json:"limit"`
+	Offset  int    `json:"offset"`
 }
+
+// pageLimit implements pagedReq (handlers_rpc.go).
+func (r acrossMatchIDReq) pageLimit() int { return r.Limit }
 
 // acrossMovePosition is one position of a match read in another tenant: its
 // tenant, its Zobrist hash and the move played there.
@@ -155,16 +160,56 @@ func (r acrossCollectionReq) pageLimit() int { return r.Limit }
 // tenant's player table is computed under (a period is DateFrom / DateTo),
 // the rows kept when Players is not empty, and the fewest counted decisions a
 // row needs to be listed.
+// Limit and Offset page the merged ranking: Limit 0 means
+// clubRankingDefaultLimit, more than maxPageSize is refused.
 type acrossClubRankingReq struct {
 	Filter       storage.StatsFilter  `json:"filter"`
 	Players      []storage.ClubPlayer `json:"players"`
 	MinDecisions int                  `json:"minDecisions"`
+	Limit        int                  `json:"limit"`
+	Offset       int                  `json:"offset"`
 }
 
-// acrossClubRankingResp is one ranking over every read tenant, each row with
-// its tenant.
+// pageLimit implements pagedReq (handlers_rpc.go).
+func (r acrossClubRankingReq) pageLimit() int { return r.Limit }
+
+// clubRankingDefaultLimit is a club ranking's page when the caller names none:
+// a club's table, not every opponent its members ever met.
+const clubRankingDefaultLimit = 100
+
+// acrossClubRankingResp is one page of the ranking over every read tenant,
+// each row with its tenant; Total counts the rows of the whole ranking.
 type acrossClubRankingResp struct {
-	Rows []storage.ClubRow `json:"rows"`
+	Rows  []storage.ClubRow `json:"rows"`
+	Total int               `json:"total"`
+}
+
+// pageOf takes the [offset, offset+limit) items of seq: the store's stream
+// stops once the page is full, so a long match is never read whole.
+func pageOf[T any](seq iter.Seq2[T, error], offset, limit int) iter.Seq2[T, error] {
+	return func(yield func(T, error) bool) {
+		if offset < 0 {
+			var zero T
+			yield(zero, fmt.Errorf("%w: offset %d is negative", storage.ErrInvalid, offset))
+			return
+		}
+		seen, kept := 0, 0
+		for item, err := range seq {
+			if err != nil {
+				yield(item, err)
+				return
+			}
+			if seen++; seen <= offset {
+				continue
+			}
+			if !yield(item, nil) {
+				return
+			}
+			if kept++; kept >= limit {
+				return
+			}
+		}
+	}
 }
 
 type (
@@ -258,7 +303,7 @@ func (s *Server) acrossRoutes() []route {
 		// its hash: what a coach reviews a student's match from.
 		{http.MethodPost, "/v1/across.matchMovePositions", rpcStream(func(ctx context.Context, scope string, req acrossMatchIDReq) iterAcrossMovePositions {
 			seq := storage.StreamOne(ctx, readSetOf(ctx, scope), req.Tenant, func(ctx context.Context, scope string) iter.Seq2[*domain.MatchMovePosition, error] {
-				return st().Matches().MovePositions(ctx, scope, req.MatchID)
+				return pageOf(st().Matches().MovePositions(ctx, scope, req.MatchID), req.Offset, boundedLimit(req.Limit))
 			})
 			return mapTagged(seq, func(tg storage.Tagged[*domain.MatchMovePosition]) acrossMovePosition {
 				var z uint64
@@ -354,8 +399,13 @@ func (s *Server) acrossRoutes() []route {
 		// One ranking over the read tenants' player tables, best PR first.
 		// A name is never merged across tenants: each row says its tenant.
 		{http.MethodPost, "/v1/across.clubRanking", rpc(func(ctx context.Context, scope string, req acrossClubRankingReq) (acrossClubRankingResp, error) {
-			if req.MinDecisions < 0 {
-				return acrossClubRankingResp{}, fmt.Errorf("%w: minDecisions %d is negative", storage.ErrInvalid, req.MinDecisions)
+			if req.MinDecisions < 0 || req.Offset < 0 {
+				return acrossClubRankingResp{}, fmt.Errorf("%w: minDecisions and offset are never negative", storage.ErrInvalid)
+			}
+			// A tournament id names a tournament in one tenant only: applied
+			// to every tenant it would pick unrelated tournaments elsewhere.
+			if len(req.Filter.TournamentIDs) > 0 {
+				return acrossClubRankingResp{}, fmt.Errorf("%w: filter.TournamentIDs is per tenant and not accepted across tenants; use a period (DateFrom, DateTo)", storage.ErrInvalid)
 			}
 			tables, err := storage.ReadAcross(ctx, readSetOf(ctx, scope), func(ctx context.Context, scope string) ([]storage.PlayerRow, error) {
 				return st().Stats().PlayerTable(ctx, scope, req.Filter)
@@ -363,7 +413,14 @@ func (s *Server) acrossRoutes() []route {
 			if err != nil {
 				return acrossClubRankingResp{}, err
 			}
-			return acrossClubRankingResp{Rows: storage.ClubRanking(tables, req.Players, req.MinDecisions)}, nil
+			rows := storage.ClubRanking(tables, req.Players, req.MinDecisions)
+			limit := req.Limit
+			if limit <= 0 {
+				limit = clubRankingDefaultLimit
+			}
+			start := min(req.Offset, len(rows))
+			page := rows[start : start+min(limit, len(rows)-start)]
+			return acrossClubRankingResp{Rows: page, Total: len(rows)}, nil
 		})},
 	}
 }

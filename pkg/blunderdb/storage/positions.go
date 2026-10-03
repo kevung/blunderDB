@@ -36,6 +36,10 @@ type PositionStore interface {
 	// returning its id when found.
 	Exists(ctx context.Context, scope string, zobrist uint64) (id int64, found bool, err error)
 
+	// ExistsMany is Exists for several hashes in one read: the id of each
+	// stored hash, keyed by hash; a hash not stored is absent from the map.
+	ExistsMany(ctx context.Context, scope string, zobrists []uint64) (map[uint64]int64, error)
+
 	// Delete removes the position with the given id (analysis, comments and
 	// collection links cascade).
 	Delete(ctx context.Context, scope string, id int64) error

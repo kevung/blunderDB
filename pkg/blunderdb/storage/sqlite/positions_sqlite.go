@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -244,6 +245,41 @@ func (s *positionStore) Exists(ctx context.Context, scope string, zobrist uint64
 		return 0, false, fmt.Errorf("sqlite: position exists: %w", err)
 	}
 	return id, true, nil
+}
+
+// existsBatch keeps each IN list under SQLite's historical 999-parameter
+// ceiling.
+const existsBatch = 900
+
+// ExistsMany reports the ids of the stored positions among zobrists.
+func (s *positionStore) ExistsMany(ctx context.Context, scope string, zobrists []uint64) (map[uint64]int64, error) {
+	out := make(map[uint64]int64, len(zobrists))
+	for start := 0; start < len(zobrists); start += existsBatch {
+		chunk := zobrists[start:min(start+existsBatch, len(zobrists))]
+		args := make([]any, len(chunk))
+		for i, z := range chunk {
+			args[i] = int64(z)
+		}
+		q := `SELECT zobrist_hash, id FROM position WHERE zobrist_hash IN (?` + strings.Repeat(",?", len(chunk)-1) + `)`
+		rows, err := s.db.QueryContext(ctx, q, args...)
+		if err != nil {
+			return nil, fmt.Errorf("sqlite: positions exist: %w", err)
+		}
+		for rows.Next() {
+			var z, id int64
+			if err := rows.Scan(&z, &id); err != nil {
+				rows.Close()
+				return nil, fmt.Errorf("sqlite: positions exist: %w", err)
+			}
+			out[uint64(z)] = id
+		}
+		err = rows.Err()
+		rows.Close()
+		if err != nil {
+			return nil, fmt.Errorf("sqlite: positions exist: %w", err)
+		}
+	}
+	return out, nil
 }
 
 // Delete removes the position with the given id; analysis, comments and

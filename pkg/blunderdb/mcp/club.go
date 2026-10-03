@@ -170,7 +170,20 @@ func anySlice(v []obj) []any {
 // header, they read this tenant alone. A Zobrist hash travels as a decimal
 // string: it is a 64-bit integer, which a JSON number read as a double loses.
 
-const acrossNote = " Reads this tenant and the tenants the authenticating proxy lists (X-Read-Tenants); every row names its tenant."
+const acrossNote = " Reads this tenant and the tenants the authenticating proxy lists (X-Read-Tenants); every row names its tenant; a list cut at 200 rows says truncated: true."
+
+// streamCapped reads at most maxLimit rows of an across.* stream and says
+// whether more were left: a list the model receives cut short must say so.
+func streamCapped[T any](ctx context.Context, tb *Toolbox, req *sdk.CallToolRequest, method string, in any) ([]T, bool, error) {
+	rows, err := Stream[T](ctx, tb.Engine, req, method, in, maxLimit+1)
+	if err != nil {
+		return nil, false, err
+	}
+	if len(rows) > maxLimit {
+		return rows[:maxLimit], true, nil
+	}
+	return rows, false, nil
+}
 
 func zobristString(z uint64) string { return strconv.FormatUint(z, 10) }
 
@@ -218,7 +231,7 @@ func registerAcrossReads(tb *Toolbox) {
 		Description: "Matches of the read tenants (a coach's students), newest first: tenant, match id, players, length, date, each side's PR." + acrossNote},
 		func(ctx context.Context, req *sdk.CallToolRequest, a matchesIn) (any, error) {
 			body := obj{"playerName": a.Player, "dateFrom": a.DateFrom, "dateTo": a.DateTo, "limit": clampLimit(a.Limit)}
-			rows, err := Stream[obj](ctx, tb.Engine, req, "across.matchesList", body, maxLimit)
+			rows, truncated, err := streamCapped[obj](ctx, tb, req, "across.matchesList", body)
 			if err != nil {
 				return nil, err
 			}
@@ -228,19 +241,21 @@ func registerAcrossReads(tb *Toolbox) {
 				out = append(out, obj{"tenant": r["tenant"], "match": pick(m, "id", "player1_name", "player2_name",
 					"match_length", "match_date", "event", "pr", "pr2")})
 			}
-			return obj{"matches": out}, nil
+			return obj{"matches": out, "truncated": truncated}, nil
 		})
 
 	type matchIn struct {
 		Tenant  string `json:"tenant" jsonschema:"the tenant club_matches named"`
 		MatchID int64  `json:"matchId" jsonschema:"the match id in that tenant"`
 		Limit   int    `json:"limit,omitempty" jsonschema:"positions to return (default 20, at most 200)"`
+		Offset  int    `json:"offset,omitempty" jsonschema:"positions to skip, for the next page"`
 	}
 	Add(tb, Reads, &sdk.Tool{Name: "club_match_positions", Title: "A club match, move by move",
 		Description: "The positions of one match of a read tenant, move by move: the move played, the position summary and its zobrist hash. " +
 			"The hash names the same board in every tenant: pass it to club_comments to read the comments written on it." + acrossNote},
 		func(ctx context.Context, req *sdk.CallToolRequest, a matchIn) (any, error) {
-			rows, err := Stream[acrossMoveRow](ctx, tb.Engine, req, "across.matchMovePositions", obj{"tenant": a.Tenant, "matchId": a.MatchID}, clampLimit(a.Limit))
+			rows, err := Stream[acrossMoveRow](ctx, tb.Engine, req, "across.matchMovePositions",
+				obj{"tenant": a.Tenant, "matchId": a.MatchID, "limit": clampLimit(a.Limit), "offset": a.Offset}, clampLimit(a.Limit))
 			if err != nil {
 				return nil, err
 			}
@@ -267,7 +282,7 @@ func registerAcrossReads(tb *Toolbox) {
 			if err != nil {
 				return nil, err
 			}
-			rows, err := Stream[acrossCommentRow](ctx, tb.Engine, req, "across.commentsByZobrist", obj{"zobrists": hashes}, maxLimit)
+			rows, truncated, err := streamCapped[acrossCommentRow](ctx, tb, req, "across.commentsByZobrist", obj{"zobrists": hashes})
 			if err != nil {
 				return nil, err
 			}
@@ -279,13 +294,13 @@ func registerAcrossReads(tb *Toolbox) {
 				out = append(out, obj{"tenant": r.Tenant, "zobrist": zobristString(r.Zobrist), "positionId": r.PositionID,
 					"text": r.Comment.Text, "origin": r.Comment.Origin, "modifiedAt": r.Comment.ModifiedAt})
 			}
-			return obj{"comments": out}, nil
+			return obj{"comments": out, "truncated": truncated}, nil
 		})
 
 	Add(tb, Reads, &sdk.Tool{Name: "club_library", Title: "Shared library",
 		Description: "The collections of the read tenants, a shared library among them: tenant, collection id, name, description, position count. Read in place, never copied." + acrossNote},
 		func(ctx context.Context, req *sdk.CallToolRequest, _ noInput) (any, error) {
-			rows, err := Stream[obj](ctx, tb.Engine, req, "across.collectionsList", nil, maxLimit)
+			rows, truncated, err := streamCapped[obj](ctx, tb, req, "across.collectionsList", nil)
 			if err != nil {
 				return nil, err
 			}
@@ -294,7 +309,7 @@ func registerAcrossReads(tb *Toolbox) {
 				c, _ := r["collection"].(obj)
 				out = append(out, obj{"tenant": r["tenant"], "collection": pick(c, "id", "name", "description", "positionCount")})
 			}
-			return obj{"collections": out}, nil
+			return obj{"collections": out, "truncated": truncated}, nil
 		})
 
 	type libIn struct {
@@ -326,6 +341,7 @@ func registerAcrossReads(tb *Toolbox) {
 		DateTo       string `json:"dateTo,omitempty" jsonschema:"last match date, YYYY-MM-DD"`
 		Decision     string `json:"decision,omitempty" jsonschema:"checker, cube or empty for both"`
 		MinDecisions int    `json:"minDecisions,omitempty" jsonschema:"leave out players with fewer counted decisions"`
+		Offset       int    `json:"offset,omitempty" jsonschema:"rows to skip, for the next page of 200"`
 		Players      []struct {
 			Tenant string `json:"tenant"`
 			Name   string `json:"name"`
@@ -338,8 +354,11 @@ func registerAcrossReads(tb *Toolbox) {
 			body := statsFilter{DateFrom: a.DateFrom, DateTo: a.DateTo, Decision: a.Decision}.wire()
 			body["minDecisions"] = a.MinDecisions
 			body["players"] = a.Players
+			body["limit"] = maxLimit
+			body["offset"] = a.Offset
 			var v struct {
-				Rows []obj `json:"rows"`
+				Rows  []obj `json:"rows"`
+				Total int   `json:"total"`
 			}
 			if err := tb.Engine.Call(ctx, req, "across.clubRanking", body, &v); err != nil {
 				return nil, err
@@ -350,6 +369,6 @@ func registerAcrossReads(tb *Toolbox) {
 				out = append(out, obj{"tenant": r["tenant"], "rank": r["rank"], "player": pick(p, "name", "matches", "wins", "losses",
 					"decisions", "pr", "pr_checker", "pr_cube", "errors", "blunders")})
 			}
-			return obj{"rows": firstN(anySlice(out), maxLimit)}, nil
+			return obj{"rows": out, "total": v.Total, "truncated": v.Total > a.Offset+len(out)}, nil
 		})
 }

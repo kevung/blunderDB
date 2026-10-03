@@ -15,9 +15,8 @@ import (
 // any other. This file holds the per-tenant halves and the merge that only
 // makes sense once every tenant has answered.
 
-// MaxZobristLookups bounds the hashes one comment lookup takes per tenant: a
-// lookup costs a store call per hash and per tenant, and a whole match is a
-// few hundred positions.
+// MaxZobristLookups bounds the hashes one comment lookup takes: a whole match
+// is a few hundred positions.
 const MaxZobristLookups = 1000
 
 // ZobristComment is one comment of a tenant, joined to the board it was
@@ -30,44 +29,49 @@ type ZobristComment struct {
 }
 
 // CommentsByZobrist returns scope's comments on the boards named by hashes,
-// in the order of hashes and oldest first within a board. A hash scope does
-// not hold is skipped; a repeated hash is read once.
+// in the order of hashes and oldest first within a board, in two reads (the
+// boards, then their comments) whatever the number of hashes. A hash scope
+// does not hold is skipped; a repeated hash is read once.
 func CommentsByZobrist(ctx context.Context, s Storage, scope string, hashes []uint64) ([]ZobristComment, error) {
 	if len(hashes) > MaxZobristLookups {
 		return nil, fmt.Errorf("%w: %d hashes, at most %d", ErrInvalid, len(hashes), MaxZobristLookups)
 	}
 	seen := make(map[uint64]bool, len(hashes))
-	type held struct {
-		zobrist uint64
-		id      int64
-	}
-	var found []held
-	ids := make([]int64, 0, len(hashes))
+	unique := make([]uint64, 0, len(hashes))
 	for _, z := range hashes {
-		if seen[z] {
-			continue
+		if !seen[z] {
+			seen[z] = true
+			unique = append(unique, z)
 		}
-		seen[z] = true
-		id, ok, err := s.Positions().Exists(ctx, scope, z)
-		if err != nil {
-			return nil, err
-		}
-		if ok {
-			found = append(found, held{zobrist: z, id: id})
+	}
+	out := []ZobristComment{}
+	if len(unique) == 0 {
+		return out, nil
+	}
+	byHash, err := s.Positions().ExistsMany(ctx, scope, unique)
+	if err != nil {
+		return nil, err
+	}
+	if len(byHash) == 0 {
+		return out, nil
+	}
+	ids := make([]int64, 0, len(byHash))
+	for _, z := range unique {
+		if id, ok := byHash[z]; ok {
 			ids = append(ids, id)
 		}
-	}
-	if len(ids) == 0 {
-		return []ZobristComment{}, nil
 	}
 	byPos, err := s.Comments().ByPositions(ctx, scope, ids)
 	if err != nil {
 		return nil, err
 	}
-	out := []ZobristComment{}
-	for _, h := range found {
-		for _, c := range byPos[h.id] {
-			out = append(out, ZobristComment{Zobrist: h.zobrist, PositionID: h.id, Comment: c})
+	for _, z := range unique {
+		id, ok := byHash[z]
+		if !ok {
+			continue
+		}
+		for _, c := range byPos[id] {
+			out = append(out, ZobristComment{Zobrist: z, PositionID: id, Comment: c})
 		}
 	}
 	return out, nil

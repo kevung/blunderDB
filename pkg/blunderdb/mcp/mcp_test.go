@@ -541,12 +541,15 @@ func TestAcrossTools(t *testing.T) {
 	first := matches[0].(obj)
 	mid := first["match"].(obj)["id"]
 	pos := list(t, call(t, cs, "club_match_positions", obj{"tenant": "2", "matchId": mid, "limit": 3}), "positions")
+	if len(pos) > 3 {
+		t.Errorf("club_match_positions limit 3 gave %d positions", len(pos))
+	}
 	z, ok := pos[0].(obj)["zobrist"].(string)
 	if !ok || z == "" {
 		t.Fatalf("club_match_positions gives no zobrist string: %v", pos[0])
 	}
-	if _, ok := call(t, cs, "club_comments", obj{"zobrists": []string{z}})["comments"]; !ok {
-		t.Error("club_comments answers no comments")
+	if cm := call(t, cs, "club_comments", obj{"zobrists": []string{z}}); cm["comments"] == nil || cm["truncated"] != false {
+		t.Errorf("club_comments = %v, want comments and truncated false", cm)
 	}
 	if msg := callErr(t, cs, "club_comments", obj{"zobrists": []string{"nope"}}); !strings.Contains(msg, "zobrist") {
 		t.Errorf("club_comments with a bad hash: %s", msg)
@@ -554,8 +557,8 @@ func TestAcrossTools(t *testing.T) {
 	if _, ok := call(t, cs, "club_library", nil)["collections"]; !ok {
 		t.Error("club_library answers no collections")
 	}
-	if _, ok := call(t, cs, "club_ranking", obj{"minDecisions": 1})["rows"]; !ok {
-		t.Error("club_ranking answers no rows")
+	if rk := call(t, cs, "club_ranking", obj{"minDecisions": 1}); rk["rows"] == nil || rk["total"] == nil || rk["truncated"] == nil {
+		t.Errorf("club_ranking = %v, want rows, total and truncated", rk)
 	}
 	call(t, cs, "database_overview", nil)
 
