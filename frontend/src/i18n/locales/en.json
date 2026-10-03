@@ -173,7 +173,8 @@
         "likeLimit": "Neighbours per ranking",
         "likeMaxDistance": "Maximum distance (checker-pips)",
         "likeNote": "Zero: no ceiling. The token like<12 sets its own for one search.",
-        "assistantTitle": "Assistant and MCP"
+        "assistantTitle": "Assistant and MCP",
+        "corpusTitle": "Corpus"
     },
     "toolbar": {
         "copyBoardImage": "Copy Board Image",
@@ -2687,5 +2688,29 @@
         "notFound": "No lesson number {id}.",
         "failed": "Could not read the lessons.",
         "stepMissing": "What this step shows is no longer in the database."
+    },
+    "corpus": {
+        "intro": "Duplicates and spellings: what an import recognises as already stored, and the other names of one player or one event.",
+        "skipDuplicates": "Skip duplicates on import",
+        "skipDuplicatesNote": "When ticked, a match already stored is skipped without offering its deeper analyses. The setting lasts for the session.",
+        "aliasesTitle": "Aliases",
+        "players": "Players",
+        "events": "Events",
+        "aliasLabel": "Alias",
+        "canonicalLabel": "Canonical name",
+        "add": "Add",
+        "remove": "Remove",
+        "noAliases": "No alias.",
+        "suggestNote": "Names that differ only by case, accents or word order",
+        "suggest": "Suggest",
+        "noSuggestion": "No suggestion.",
+        "suggestion": "“{alias}” → “{canonical}”",
+        "apply": "Apply",
+        "duplicatesTitle": "Probable duplicates",
+        "duplicatesNote": "Matches their dice say are the same, under other names or truncated then completed. Nothing is merged.",
+        "findDuplicates": "Search",
+        "noDuplicates": "No probable duplicate.",
+        "suspectSameDice": "#{other} and #{match}: same dice ({otherPlayers} / {players})",
+        "suspectLonger": "#{match} extends #{other} ({players})"
     }
 }

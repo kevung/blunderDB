@@ -173,7 +173,8 @@
         "likeLimit": "並べ替えごとの近い局面の数",
         "likeMaxDistance": "最大距離（チェッカーピップ）",
         "likeNote": "ゼロ：上限なし。トークン like<12 は検索ごとに独自の上限を指定します。",
-        "assistantTitle": "アシスタントと MCP"
+        "assistantTitle": "アシスタントと MCP",
+        "corpusTitle": "コーパス"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",
@@ -2687,5 +2688,29 @@
         "notFound": "レッスン {id} はありません。",
         "failed": "レッスンを読み込めませんでした。",
         "stepMissing": "このステップが示す内容はもうデータベースにありません。"
+    },
+    "corpus": {
+        "intro": "重複と表記ゆれ：インポートが保存済みと認識するもの、同じプレイヤーやイベントの別名。",
+        "skipDuplicates": "インポート時に重複をスキップ",
+        "skipDuplicatesNote": "オンにすると、保存済みのマッチはより深い解析を提供せずにスキップされます。設定はセッション中有効です。",
+        "aliasesTitle": "別名",
+        "players": "プレイヤー",
+        "events": "イベント",
+        "aliasLabel": "別名",
+        "canonicalLabel": "正式名",
+        "add": "追加",
+        "remove": "削除",
+        "noAliases": "別名はありません。",
+        "suggestNote": "大文字小文字、アクセント、語順だけが異なる名前",
+        "suggest": "提案",
+        "noSuggestion": "提案はありません。",
+        "suggestion": "「{alias}」→「{canonical}」",
+        "apply": "適用",
+        "duplicatesTitle": "重複の可能性",
+        "duplicatesNote": "ダイスが同一と示すマッチ（別名、または途中で切れて後に補完されたもの）。何も統合されません。",
+        "findDuplicates": "検索",
+        "noDuplicates": "重複の可能性はありません。",
+        "suspectSameDice": "#{other} と #{match}：同じダイス（{otherPlayers} / {players}）",
+        "suspectLonger": "#{match} は #{other} の続き（{players}）"
     }
 }

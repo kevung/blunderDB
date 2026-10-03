@@ -173,7 +173,8 @@
         "likeLimit": "Naapureita järjestystä kohden",
         "likeMaxDistance": "Enimmäisetäisyys (nappulapip)",
         "likeNote": "Nolla: ei kattoa. Merkintä like<12 asettaa omansa yhtä hakua varten.",
-        "assistantTitle": "Avustaja ja MCP"
+        "assistantTitle": "Avustaja ja MCP",
+        "corpusTitle": "Korpus"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -2687,5 +2688,29 @@
         "notFound": "Oppituntia nro {id} ei ole.",
         "failed": "Oppitunteja ei voitu lukea.",
         "stepMissing": "Tämän vaiheen sisältöä ei enää ole tietokannassa."
+    },
+    "corpus": {
+        "intro": "Kaksoiskappaleet ja kirjoitusasut: mitä tuonti tunnistaa jo tallennetuksi, ja saman pelaajan tai tapahtuman muut nimet.",
+        "skipDuplicates": "Ohita kaksoiskappaleet tuonnissa",
+        "skipDuplicatesNote": "Valittuna jo tallennettu ottelu ohitetaan tarjoamatta sen syvempiä analyyseja. Asetus on voimassa istunnon ajan.",
+        "aliasesTitle": "Aliakset",
+        "players": "Pelaajat",
+        "events": "Tapahtumat",
+        "aliasLabel": "Alias",
+        "canonicalLabel": "Kanoninen nimi",
+        "add": "Lisää",
+        "remove": "Poista",
+        "noAliases": "Ei aliaksia.",
+        "suggestNote": "Nimet, jotka eroavat vain kirjainkoon, aksenttien tai sanajärjestyksen osalta",
+        "suggest": "Ehdota",
+        "noSuggestion": "Ei ehdotuksia.",
+        "suggestion": "”{alias}” → ”{canonical}”",
+        "apply": "Käytä",
+        "duplicatesTitle": "Todennäköiset kaksoiskappaleet",
+        "duplicatesNote": "Ottelut, jotka nopat sanovat samoiksi, eri nimillä tai katkaistuina ja sitten täydennettyinä. Mitään ei yhdistetä.",
+        "findDuplicates": "Etsi",
+        "noDuplicates": "Ei todennäköisiä kaksoiskappaleita.",
+        "suspectSameDice": "#{other} ja #{match}: samat nopat ({otherPlayers} / {players})",
+        "suspectLonger": "#{match} jatkaa ottelua #{other} ({players})"
     }
 }

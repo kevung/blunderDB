@@ -1157,6 +1157,26 @@ export namespace direction {
 
 export namespace domain {
 	
+	export class DuplicateSuspect {
+	    kind: string;
+	    matchId: number;
+	    otherId: number;
+	    players: string;
+	    otherPlayers: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DuplicateSuspect(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.matchId = source["matchId"];
+	        this.otherId = source["otherId"];
+	        this.players = source["players"];
+	        this.otherPlayers = source["otherPlayers"];
+	    }
+	}
 	export class AnkiCard {
 	    id: number;
 	    deckId: number;
@@ -5504,6 +5524,34 @@ export namespace sqlite {
 
 export namespace storage {
 	
+	export class Alias {
+	    alias: string;
+	    canonical: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Alias(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.alias = source["alias"];
+	        this.canonical = source["canonical"];
+	    }
+	}
+	export class AliasSuggestion {
+	    canonical: string;
+	    aliases: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new AliasSuggestion(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.canonical = source["canonical"];
+	        this.aliases = source["aliases"];
+	    }
+	}
 	export class LibrarySettings {
 	    errorThresholdMP: number;
 	    blunderThresholdMP: number;

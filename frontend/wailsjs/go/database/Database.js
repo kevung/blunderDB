@@ -1353,3 +1353,27 @@ export function WriteDirectionUpcomingSheet(arg1, arg2) {
 export function WriteRencontrePage(arg1) {
   return window['go']['database']['Database']['WriteRencontrePage'](arg1);
 }
+
+export function FindDuplicateMatches() {
+  return window['go']['database']['Database']['FindDuplicateMatches']();
+}
+
+export function ListAliases(arg1) {
+  return window['go']['database']['Database']['ListAliases'](arg1);
+}
+
+export function RemoveAlias(arg1, arg2) {
+  return window['go']['database']['Database']['RemoveAlias'](arg1, arg2);
+}
+
+export function SetAlias(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SetAlias'](arg1, arg2, arg3);
+}
+
+export function SetSkipDuplicates(arg1) {
+  return window['go']['database']['Database']['SetSkipDuplicates'](arg1);
+}
+
+export function SuggestAliases(arg1) {
+  return window['go']['database']['Database']['SuggestAliases'](arg1);
+}

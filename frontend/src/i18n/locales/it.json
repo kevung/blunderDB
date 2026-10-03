@@ -173,7 +173,8 @@
         "likeLimit": "Vicine per classifica",
         "likeMaxDistance": "Distanza massima (pip di pedina)",
         "likeNote": "Zero: nessun limite. Il token like<12 impone il proprio per una ricerca.",
-        "assistantTitle": "Assistente e MCP"
+        "assistantTitle": "Assistente e MCP",
+        "corpusTitle": "Corpus"
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",
@@ -2687,5 +2688,29 @@
         "notFound": "Nessuna lezione n. {id}.",
         "failed": "Impossibile leggere le lezioni.",
         "stepMissing": "Ciò che mostra questo passo non è più nel database."
+    },
+    "corpus": {
+        "intro": "Duplicati e grafie: ciò che un'importazione riconosce come già presente, e gli altri nomi di uno stesso giocatore o evento.",
+        "skipDuplicates": "Ignora i duplicati all'importazione",
+        "skipDuplicatesNote": "Se selezionato, un match già presente viene saltato senza offrire le sue analisi più profonde. L'impostazione vale per la sessione.",
+        "aliasesTitle": "Alias",
+        "players": "Giocatori",
+        "events": "Eventi",
+        "aliasLabel": "Alias",
+        "canonicalLabel": "Nome canonico",
+        "add": "Aggiungi",
+        "remove": "Rimuovi",
+        "noAliases": "Nessun alias.",
+        "suggestNote": "Nomi che differiscono solo per maiuscole, accenti o ordine delle parole",
+        "suggest": "Proponi",
+        "noSuggestion": "Nessuna proposta.",
+        "suggestion": "«{alias}» → «{canonical}»",
+        "apply": "Applica",
+        "duplicatesTitle": "Duplicati probabili",
+        "duplicatesNote": "Match che i dadi dicono identici, con altri nomi o troncati e poi completati. Nulla viene unito.",
+        "findDuplicates": "Cerca",
+        "noDuplicates": "Nessun duplicato probabile.",
+        "suspectSameDice": "#{other} e #{match}: stessi dadi ({otherPlayers} / {players})",
+        "suspectLonger": "#{match} prolunga #{other} ({players})"
     }
 }

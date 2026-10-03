@@ -692,3 +692,9 @@ export function WriteDirectionPairingSheet(arg1:number,arg2:number):Promise<stri
 export function WriteDirectionUpcomingSheet(arg1:number,arg2:string):Promise<string>;
 
 export function WriteRencontrePage(arg1:number):Promise<string>;
+export function FindDuplicateMatches():Promise<Array<domain.DuplicateSuspect>>;
+export function ListAliases(arg1:string):Promise<Array<storage.Alias>>;
+export function RemoveAlias(arg1:string,arg2:string):Promise<boolean>;
+export function SetAlias(arg1:string,arg2:string,arg3:string):Promise<void>;
+export function SetSkipDuplicates(arg1:boolean):Promise<void>;
+export function SuggestAliases(arg1:string):Promise<Array<storage.AliasSuggestion>>;

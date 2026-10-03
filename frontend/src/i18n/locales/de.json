@@ -173,7 +173,8 @@
         "likeLimit": "Nachbarn pro Rangliste",
         "likeMaxDistance": "Maximale Distanz (Stein-Pips)",
         "likeNote": "Null: keine Obergrenze. Das Token like<12 setzt seine eigene für eine Suche.",
-        "assistantTitle": "Assistent und MCP"
+        "assistantTitle": "Assistent und MCP",
+        "corpusTitle": "Korpus"
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",
@@ -2687,5 +2688,29 @@
         "notFound": "Keine Lektion Nr. {id}.",
         "failed": "Die Lektionen konnten nicht gelesen werden.",
         "stepMissing": "Was dieser Schritt zeigt, ist nicht mehr in der Datenbank."
+    },
+    "corpus": {
+        "intro": "Duplikate und Schreibweisen: was ein Import als bereits vorhanden erkennt, und die anderen Namen eines Spielers oder einer Veranstaltung.",
+        "skipDuplicates": "Duplikate beim Import überspringen",
+        "skipDuplicatesNote": "Angekreuzt wird ein bereits gespeichertes Match übersprungen, ohne seine tieferen Analysen anzubieten. Die Einstellung gilt für die Sitzung.",
+        "aliasesTitle": "Aliasse",
+        "players": "Spieler",
+        "events": "Veranstaltungen",
+        "aliasLabel": "Alias",
+        "canonicalLabel": "Kanonischer Name",
+        "add": "Hinzufügen",
+        "remove": "Entfernen",
+        "noAliases": "Kein Alias.",
+        "suggestNote": "Namen, die sich nur in Groß-/Kleinschreibung, Akzenten oder Wortreihenfolge unterscheiden",
+        "suggest": "Vorschlagen",
+        "noSuggestion": "Kein Vorschlag.",
+        "suggestion": "„{alias}“ → „{canonical}“",
+        "apply": "Übernehmen",
+        "duplicatesTitle": "Wahrscheinliche Duplikate",
+        "duplicatesNote": "Matches, die laut ihren Würfen identisch sind, unter anderen Namen oder abgebrochen und dann ergänzt. Nichts wird zusammengeführt.",
+        "findDuplicates": "Suchen",
+        "noDuplicates": "Kein wahrscheinliches Duplikat.",
+        "suspectSameDice": "#{other} und #{match}: gleiche Würfe ({otherPlayers} / {players})",
+        "suspectLonger": "#{match} setzt #{other} fort ({players})"
     }
 }
