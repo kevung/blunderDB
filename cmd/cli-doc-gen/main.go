@@ -39,6 +39,8 @@ func composite(name string) []string {
 		return cli.NewCLI().CollectionSubcommands()
 	case "anki":
 		return cli.NewCLI().AnkiSubcommands()
+	case "lesson":
+		return cli.NewCLI().LessonSubcommands()
 	case "bearoff":
 		return cli.NewCLI().BearoffSubcommands()
 	case "tournament":

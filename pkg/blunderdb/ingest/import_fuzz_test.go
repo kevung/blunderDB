@@ -96,6 +96,7 @@ func assertCoherent(t *testing.T, db *sql.DB) {
 const positionIsHeldForTest = `EXISTS (SELECT 1 FROM move WHERE position_id = position.id)
 	OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = position.id)
 	OR EXISTS (SELECT 1 FROM anki_card WHERE position_id = position.id)
+	OR EXISTS (SELECT 1 FROM lesson_step WHERE position_id = position.id)
 	OR EXISTS (SELECT 1 FROM comment WHERE position_id = position.id AND origin = 'user')
 	OR position.individually_imported = 1
 	OR position.flagged = 1`

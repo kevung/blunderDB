@@ -14,6 +14,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"net/url"
 	"path/filepath"
 	"strings"
@@ -63,7 +64,38 @@ func Open(ctx context.Context, dsn string, opts *storage.Options) (*Storage, err
 	if opts != nil {
 		progress = opts.MigrationProgress
 	}
-	return &Storage{binder: binder{db: db}, sqlDB: db, ownsDB: true, migrationProgress: progress}, nil
+	st := &Storage{binder: binder{db: db}, sqlDB: db, ownsDB: true, migrationProgress: progress}
+	if !fresh {
+		if err := st.restoreBulkIndexes(ctx); err != nil {
+			db.Close()
+			return nil, err
+		}
+	}
+	return st, nil
+}
+
+// restoreBulkIndexes recreates the secondary indexes a bulk import dropped
+// and was cut before it rebuilt, on a database already at the current schema.
+// The daemon and the migration open a file without EnsureSchema, which is what
+// repairs this for the desktop; an older database is left to Migrate.
+func (s *Storage) restoreBulkIndexes(ctx context.Context) error {
+	if v, err := s.Version(ctx); err != nil || v != domain.DatabaseVersion {
+		return nil
+	}
+	have, err := indexNames(ctx, s.sqlDB)
+	if err != nil {
+		return err
+	}
+	for name, stmt := range bulkDroppableIndexes() {
+		if have[name] {
+			continue
+		}
+		slog.Warn("sqlite: rebuilding an index a cut bulk import left out", "index", name)
+		if _, err := s.sqlDB.ExecContext(ctx, stmt); err != nil {
+			return fmt.Errorf("sqlite: rebuild index %s: %w", name, err)
+		}
+	}
+	return nil
 }
 
 // New wraps an existing *sql.DB handle. The returned Storage does not own the
@@ -186,6 +218,20 @@ func (s *Storage) BeginTx(ctx context.Context) (storage.Tx, error) {
 		return nil, fmt.Errorf("sqlite: begin tx: %w", err)
 	}
 	return newTxImpl(tx), nil
+}
+
+// TableExists reports whether the database holds table name. An import reads a
+// source of any older schema through the current code, so it asks before it
+// reads a family the source's version may not have.
+func TableExists(ctx context.Context, db *sql.DB, name string) bool {
+	var n int
+	err := db.QueryRowContext(ctx, `SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = ?`, name).Scan(&n)
+	return err == nil && n > 0
+}
+
+// HasTable is TableExists on this Storage's own connection.
+func (s *Storage) HasTable(ctx context.Context, name string) bool {
+	return TableExists(ctx, s.sqlDB, name)
 }
 
 // Version reports the schema version recorded in the metadata table.

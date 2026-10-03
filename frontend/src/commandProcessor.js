@@ -14,6 +14,7 @@ import { tMsg } from './i18n';
 import { withDisplayedPositionIDs, searchQueryBoard } from './services/positionService.js';
 import { openContactSheet } from './services/contactSheet.js';
 import { runRolloutCommand } from './services/rolloutService.js';
+import { listLessons, openLesson } from './services/lessonService.js';
 // The search-token grammar lives in searchFilterService.js (shared with the "retour" replay);
 // re-exported so existing importers keep their path.
 import { parseSearchTokens, stripQuotedTokens } from './services/searchFilterService.js';
@@ -113,6 +114,12 @@ export function processCommand(command) {
         callbacks.focusSearchTab?.();
     } else if (command === 'match' || command === 'ma') {
         callbacks.toggleMatchPanel?.();
+    } else if (command === 'lesson' || command === 'le' || command.startsWith('lesson ') || command.startsWith('le ')) {
+        // `le` liste les leçons, `le N` ouvre la leçon N (ADR-0066).
+        const arg = command.split(/\s+/)[1];
+        if (!databaseLoaded) statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
+        else if (arg && /^\d+$/.test(arg)) openLesson(Number(arg));
+        else listLessons();
     } else if (command === 'collection' || command === 'coll') {
         callbacks.toggleCollectionPanel?.();
     } else if (command === 'eval' || command === 'epc') {

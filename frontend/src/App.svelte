@@ -91,6 +91,7 @@
     import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
     import { maybeRunFirstRunTour } from './services/tourService.js';
     import StudyQueueBar from './components/StudyQueueBar.svelte';
+    import LessonBar from './components/LessonBar.svelte';
     import { startTrainingSession } from './services/trainingTabService.js';
     import { TRAINING_EXERCISES, exerciseForCommand } from './services/trainingTab.js';
     import { showTab, showTrainingPanel } from './services/tabToggles.js';
@@ -468,6 +469,7 @@
          reste de l'application doit rester utilisable pendant le parcours,
          puisque c'est là qu'on commente, qu'on range et qu'on fait une carte. -->
     <div class="chrome"><StudyQueueBar /></div>
+    <div class="chrome"><LessonBar /></div>
 
     <!-- Hors de la zone du plateau : le canevas colle en haut de sa zone, un bandeau posé dessus
          cacherait les numéros de points. -->

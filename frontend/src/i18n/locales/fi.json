@@ -1075,6 +1075,10 @@
         "metadataTitle": "Vietävän tiedoston metatiedot"
     },
     "import": {
+        "minimize": "Pienennä",
+        "rateEta": "{rate} asemaa/s · jäljellä {eta}",
+        "liveCounts": "{imported} tuotu · {skipped} kaksoiskappaletta · {failed} virheellistä",
+        "moreErrors": "… ja {n} muuta virhettä: katso loki",
         "abortImport": "Keskeytä tuonti",
         "added": "Lisätty",
         "analyzing": "Analysoidaan tuontia",
@@ -1356,6 +1360,8 @@
         }
     },
     "status": {
+        "importChip": "Tuonti käynnissä: {percent} %",
+        "importChipShow": "Näytä",
         "boardAnalysisCopied": "Lauta- ja analyysikuva kopioitu leikepöydälle",
         "boardSvgNotFound": "Laudan SVG:tä ei löytynyt",
         "boardElementNotFound": "Lautaelementtiä ei löytynyt",
@@ -2581,6 +2587,7 @@
             "history": "Hakuhistoria",
             "match": "Otteluiden paneeli",
             "collection": "Kokoelmien paneeli",
+            "lesson": "Oppitunnit (le N avaa oppitunnin N)",
             "eval": "Eval-paneeli",
             "rollout": "Rollaa asema (rollout fast|standard, search, stop)",
             "transcribe": "Ottelujen litterointi",
@@ -2667,5 +2674,18 @@
         "space": "Väli",
         "backspace": "Askelpalautin",
         "tab": "Tab"
+    },
+    "lesson": {
+        "title": "Oppitunti",
+        "progress": "Vaihe {i} / {n}",
+        "previous": "Edellinen",
+        "next": "Seuraava",
+        "close": "Sulje",
+        "none": "Tietokannassa ei ole oppitunteja.",
+        "list": "Oppitunnit: {lessons} — avaa yksi kirjoittamalla :le ja numero.",
+        "empty": "Oppitunnilla ei ole vielä vaiheita.",
+        "notFound": "Oppituntia nro {id} ei ole.",
+        "failed": "Oppitunteja ei voitu lukea.",
+        "stepMissing": "Tämän vaiheen sisältöä ei enää ole tietokannassa."
     }
 }

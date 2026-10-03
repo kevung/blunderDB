@@ -1075,6 +1075,10 @@
         "metadataTitle": "Metadata of the exported file"
     },
     "import": {
+        "minimize": "Minimize",
+        "rateEta": "{rate} positions/s · {eta} left",
+        "liveCounts": "{imported} imported · {skipped} duplicates · {failed} failed",
+        "moreErrors": "… and {n} more errors: see the log",
         "abortImport": "Abort Import",
         "added": "Added",
         "analyzing": "Analyzing Import",
@@ -1356,6 +1360,8 @@
         }
     },
     "status": {
+        "importChip": "Importing: {percent}%",
+        "importChipShow": "Show",
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",
         "boardSvgNotFound": "Board SVG not found",
         "boardElementNotFound": "Board element not found",
@@ -2581,6 +2587,7 @@
             "history": "Search history",
             "match": "Matches panel",
             "collection": "Collections panel",
+            "lesson": "Lessons (le N opens lesson N)",
             "eval": "Eval panel",
             "rollout": "Roll out the position (rollout fast|standard, search, stop)",
             "transcribe": "Match transcription",
@@ -2667,5 +2674,18 @@
         "space": "Space",
         "backspace": "Backspace",
         "tab": "Tab"
+    },
+    "lesson": {
+        "title": "Lesson",
+        "progress": "Step {i} / {n}",
+        "previous": "Previous",
+        "next": "Next",
+        "close": "Close",
+        "none": "This database holds no lesson.",
+        "list": "Lessons: {lessons} — type :le followed by a number to open one.",
+        "empty": "This lesson has no step yet.",
+        "notFound": "No lesson number {id}.",
+        "failed": "Could not read the lessons.",
+        "stepMissing": "What this step shows is no longer in the database."
     }
 }

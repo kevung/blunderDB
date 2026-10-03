@@ -7,10 +7,14 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"text/tabwriter"
+	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
@@ -363,6 +367,9 @@ type importBatchResult struct {
 	PositionsImported int                 `json:"positions_imported"`
 	// Report is the end-of-import report over the whole batch.
 	Report *domain.ImportReport `json:"report,omitempty"`
+	// Progress is the run's final throughput: elapsed time, positions per
+	// second, bytes read.
+	Progress *ingest.BatchProgress `json:"progress,omitempty"`
 }
 
 // importBatch imports all .xg files from a directory. It fails when every
@@ -373,29 +380,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
 	}
 
-	var matchFiles []string
-
-	walkFunc := func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		// Skip directories if not recursive (but always process root)
-		if info.IsDir() {
-			if !recursive && path != dirPath {
-				return filepath.SkipDir
-			}
-			return nil
-		}
-
-		if ingest.IsImportable(path) {
-			matchFiles = append(matchFiles, path)
-		}
-
-		return nil
-	}
-
-	err := filepath.Walk(dirPath, walkFunc)
+	matchFiles, err := ingest.CollectFiles(dirPath, recursive)
 	if err != nil {
 		return fmt.Errorf("failed to scan directory: %w", err)
 	}
@@ -418,100 +403,95 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 	duplicateCount := 0
 	totalPositions := 0
 
-	for i, filePath := range matchFiles {
-		relPath, _ := filepath.Rel(dirPath, filePath)
+	// OnFile runs in file order once each group is committed, with the
+	// database lock held: it only prints and tallies.
+	onFile := func(o ingest.FileOutcome) {
+		relPath, _ := filepath.Rel(dirPath, o.Path)
+		result := BatchImportResult{FilePath: relPath}
 		if text {
-			fmt.Printf("[%d/%d] Importing: %s...", i+1, len(matchFiles), relPath)
+			fmt.Printf("[%d/%d] %s:", o.Index+1, len(matchFiles), relPath)
 		}
-
-		result := BatchImportResult{
-			FilePath: relPath,
-		}
-
-		ext := strings.ToLower(filepath.Ext(filePath))
-		var matchID int64
-		switch ext {
-		case ".xgp":
-			posID, posErr := cli.db.ImportXGPPosition(filePath)
-			if posErr != nil {
-				if text {
-					fmt.Printf(" ERROR: %v\n", posErr)
-				}
-				result.Error = posErr.Error()
-				recordFailure(&failures, relPath, posErr)
-				failCount++
-			} else {
-				result.Success = true
-				result.Positions = 1
-				totalPositions++
-				successCount++
-				if text {
-					fmt.Printf(" OK (Position ID: %d)\n", posID)
-				}
-			}
-			results = append(results, result)
-			continue
-		case ".xg":
-			matchID, err = cli.db.ImportXGMatch(filePath)
-		case ".sgf", ".mat", ".txt":
-			matchID, err = cli.db.ImportGnuBGMatch(filePath)
-		case ".bgf":
-			matchID, err = cli.db.ImportBGFMatch(filePath)
-		case ".ogxm":
-			matchID, err = cli.db.ImportOGXMMatch(filePath)
-		}
-
-		if err != nil {
-			if errors.Is(err, ErrDuplicateMatch) {
-				if text {
-					if n := flagsApplied(err); n > 0 {
-						fmt.Printf(" DUPLICATE (%d study marks applied)\n", n)
-					} else {
-						fmt.Println(" DUPLICATE")
-					}
-				}
-				result.Error = "duplicate"
-				duplicateCount++
-			} else {
-				if text {
-					fmt.Printf(" ERROR: %v\n", err)
-				}
-				result.Error = err.Error()
-				recordFailure(&failures, relPath, err)
-				failCount++
-			}
-		} else {
-			result.Success = true
-			result.MatchID = matchID
-			successCount++
-
-			// Get match details
-			match, err := cli.db.GetMatchByID(matchID)
-			if err == nil && match != nil {
-				result.Player1 = match.Player1Name
-				result.Player2 = match.Player2Name
-				result.Games = match.GameCount
-			}
-
-			// Get position count
-			positions, err := cli.db.GetMatchMovePositions(matchID)
-			if err == nil {
-				result.Positions = len(positions)
-				totalPositions += len(positions)
-			}
-
+		switch {
+		case o.Status == ingest.FileDuplicate:
 			if text {
-				fmt.Printf(" OK (ID: %d, %d positions)\n", matchID, result.Positions)
+				if o.FlagsApplied > 0 {
+					fmt.Printf(" DUPLICATE (%d study marks applied)\n", o.FlagsApplied)
+				} else {
+					fmt.Println(" DUPLICATE")
+				}
+			}
+			result.Error = "duplicate"
+			duplicateCount++
+		case o.Status == ingest.FileFailed:
+			if text {
+				fmt.Printf(" ERROR: %s\n", o.Error)
+			}
+			result.Error = o.Error
+			recordFailure(&failures, relPath, errors.New(o.Error))
+			failCount++
+		case o.Status == ingest.FilePosition:
+			result.Success = true
+			result.Positions = o.Positions
+			totalPositions += o.Positions
+			successCount++
+			if text {
+				fmt.Printf(" OK (Position ID: %d)\n", o.PositionID)
+			}
+		default:
+			result.Success = true
+			result.MatchID = o.MatchID
+			result.Player1, result.Player2, result.Games = o.Player1, o.Player2, o.Games
+			result.Positions = o.Positions
+			totalPositions += o.Positions
+			successCount++
+			if text {
+				fmt.Printf(" OK (ID: %d, %d positions)\n", o.MatchID, o.Positions)
 			}
 		}
-
 		results = append(results, result)
+	}
 
-		// After each successful match import, checkpoint the WAL to keep file size bounded.
-		if result.Success && result.MatchID > 0 {
-			_ = cli.db.Checkpoint()
+	onBulk := func(unsafe bool) {
+		if !text {
+			return
+		}
+		if unsafe {
+			fmt.Println("Bulk mode on an empty database: indexes rebuilt at the end, writes not synced.")
+			fmt.Println("A power cut during this import can damage the database: recreate it and import again.")
+		} else {
+			fmt.Println("Bulk mode: larger cache, fewer checkpoints.")
+		}
+		fmt.Println()
+	}
+	var final ingest.BatchProgress
+	onProgress := func(p ingest.BatchProgress) {
+		final = p
+		if text {
+			printProgress(os.Stderr, p)
 		}
 	}
+	// Ctrl-C cancels the import instead of killing the process: the groups
+	// already committed stay and a bulk session rebuilds its indexes. A second
+	// signal, with the handler gone, takes the default action.
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, os.Interrupt, syscall.SIGTERM)
+	stopped := make(chan struct{})
+	go func() {
+		select {
+		case <-sigs:
+			signal.Stop(sigs)
+			cli.db.CancelImport()
+		case <-stopped:
+		}
+	}()
+	_, importErr := cli.db.ImportFiles(matchFiles, database.ImportFilesOptions{OnFile: onFile, OnBulk: onBulk, OnProgress: onProgress})
+	signal.Stop(sigs)
+	close(stopped)
+	if err := importErr; err != nil {
+		cli.finishImportBatch(batchID, failures)
+		return fmt.Errorf("batch import interrupted: %w", err)
+	}
+	_ = cli.db.Checkpoint()
 
 	// After all imports, update query planner statistics.
 	cli.db.RefreshSearchStatistics()
@@ -567,6 +547,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			Failed:            failCount,
 			PositionsImported: totalPositions,
 			Report:            reportOf(report),
+			Progress:          &final,
 		}); err != nil {
 			return err
 		}
@@ -593,4 +574,35 @@ func flagsApplied(err error) int {
 		return dup.FlagsApplied
 	}
 	return 0
+}
+
+// printProgress shows the batch's progress on stderr, rewritten in place on
+// a terminal; elsewhere (a log, a pipe) only the final line, so a night-long
+// import does not write a progress line four times a second to a file.
+func printProgress(w *os.File, p ingest.BatchProgress) {
+	tty := false
+	if fi, err := w.Stat(); err == nil {
+		tty = fi.Mode()&os.ModeCharDevice != 0
+	}
+	if !tty && !p.Done {
+		return
+	}
+	pct := 0.0
+	if p.BytesTotal > 0 {
+		pct = 100 * float64(p.BytesRead) / float64(p.BytesTotal)
+	}
+	eta := "--"
+	if p.ETASeconds >= 0 {
+		eta = (time.Duration(p.ETASeconds) * time.Second).String()
+	}
+	line := fmt.Sprintf("%d/%d files  %.0f%%  %d new  %d duplicates  %d failed  %d positions  %.0f pos/s  ETA %s",
+		p.FilesDone, p.FilesTotal, pct, p.Imported, p.Duplicates, p.Failed, p.Positions, p.PositionsPerSec, eta)
+	if tty {
+		fmt.Fprintf(w, "\r\033[K%s", line)
+		if p.Done {
+			fmt.Fprintln(w)
+		}
+		return
+	}
+	fmt.Fprintln(w, line)
 }

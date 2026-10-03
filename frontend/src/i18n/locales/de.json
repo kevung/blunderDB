@@ -1075,6 +1075,10 @@
         "metadataTitle": "Metadaten der exportierten Datei"
     },
     "import": {
+        "minimize": "Minimieren",
+        "rateEta": "{rate} Positionen/s · noch {eta}",
+        "liveCounts": "{imported} importiert · {skipped} Duplikate · {failed} fehlerhaft",
+        "moreErrors": "… und {n} weitere Fehler: siehe Protokoll",
         "abortImport": "Import abbrechen",
         "added": "Hinzugefügt",
         "analyzing": "Import wird analysiert",
@@ -1356,6 +1360,8 @@
         }
     },
     "status": {
+        "importChip": "Import läuft: {percent} %",
+        "importChipShow": "Anzeigen",
         "boardAnalysisCopied": "Brett- + Analysebild in die Zwischenablage kopiert",
         "boardSvgNotFound": "Brett-SVG nicht gefunden",
         "boardElementNotFound": "Brettelement nicht gefunden",
@@ -2581,6 +2587,7 @@
             "history": "Suchverlauf",
             "match": "Match-Bereich",
             "collection": "Sammlungs-Bereich",
+            "lesson": "Lektionen (le N öffnet Lektion N)",
             "eval": "Eval-Bereich",
             "rollout": "Stellung rollen (rollout fast|standard, search, stop)",
             "transcribe": "Match-Transkription",
@@ -2667,5 +2674,18 @@
         "space": "Leertaste",
         "backspace": "Rücktaste",
         "tab": "Tab"
+    },
+    "lesson": {
+        "title": "Lektion",
+        "progress": "Schritt {i} / {n}",
+        "previous": "Zurück",
+        "next": "Weiter",
+        "close": "Schließen",
+        "none": "Diese Datenbank enthält keine Lektion.",
+        "list": "Lektionen: {lessons} — :le gefolgt von der Nummer öffnet eine.",
+        "empty": "Diese Lektion hat noch keinen Schritt.",
+        "notFound": "Keine Lektion Nr. {id}.",
+        "failed": "Die Lektionen konnten nicht gelesen werden.",
+        "stepMissing": "Was dieser Schritt zeigt, ist nicht mehr in der Datenbank."
     }
 }

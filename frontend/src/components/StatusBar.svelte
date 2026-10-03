@@ -7,7 +7,7 @@
     import { watchImportNoticeStore } from '../stores/watchStore.js';
     import { transcriptionResumeStore, refreshTranscriptionResume, resumeTranscriptionAnalysis, dismissTranscriptionResume } from '../services/transcriptionSave.js';
     import { transcriptionPromptStore, transcriptionNoticeStore } from '../stores/transcriptionStore.js';
-    import { showFileImportModalStore, fileImportModeStore } from '../stores/importModalStore.js';
+    import { showFileImportModalStore, fileImportModeStore, fileImportMinimizedStore, fileImportProgressStore } from '../stores/importModalStore.js';
     import { positionsStore, matchContextStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
     import { gammonNetBatchStore } from '../stores/gammonNetBatchStore';
@@ -251,6 +251,22 @@
     {:else}
         <!-- Live region on this span only: the rest of the bar is not status announcements. -->
         <span class="info-message" role="status" aria-live="polite" data-testid="status-bar-message" title={statusMessage}>{statusMessage}</span>
+    {/if}
+    <!-- Un import réduit continue derrière cette pastille ; elle rouvre la fenêtre. -->
+    {#if $fileImportMinimizedStore && $fileImportModeStore === 'importing'}
+        <span class="watch-import-chip" data-testid="import-chip">
+            {$t('status.importChip', {
+                percent: $fileImportProgressStore && $fileImportProgressStore.bytesTotal > 0 ? Math.round(($fileImportProgressStore.bytesRead / $fileImportProgressStore.bytesTotal) * 100) : 0
+            })}
+            <button
+                type="button"
+                class="watch-import-action"
+                onclick={() => {
+                    fileImportMinimizedStore.set(false);
+                    showFileImportModalStore.set(true);
+                }}>{$t('status.importChipShow')}</button
+            >
+        </span>
     {/if}
     <!-- Imports du dossier surveillé : un bandeau, jamais une fenêtre. -->
     {#if $watchImportNoticeStore}

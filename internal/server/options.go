@@ -181,6 +181,13 @@ type Options struct {
 	// imports. The zero value is unlimited.
 	Quotas TenantQuotas
 
+	// ImportDir is the one directory of this host from which imports.batch
+	// reads match files by path. Empty (the default) refuses every path: a
+	// batch then arrives only as an uploaded archive. The daemon authenticates
+	// nobody, so naming a directory is the operator's decision to let any
+	// caller reach it.
+	ImportDir string
+
 	// Identity signs the watermark of an exports.sqlite response that asked
 	// for one — "the daemon's own" identity, as opposed to the desktop's
 	// per-person key (see ingest.SealWatermark). nil (the default) means

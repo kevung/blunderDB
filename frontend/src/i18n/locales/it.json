@@ -1075,6 +1075,10 @@
         "metadataTitle": "Metadati del file esportato"
     },
     "import": {
+        "minimize": "Riduci",
+        "rateEta": "{rate} posizioni/s · restano {eta}",
+        "liveCounts": "{imported} importati · {skipped} duplicati · {failed} in errore",
+        "moreErrors": "… e altri {n} errori: vedi il registro",
         "abortImport": "Annulla importazione",
         "added": "Aggiunte",
         "analyzing": "Analisi dell'importazione",
@@ -1356,6 +1360,8 @@
         }
     },
     "status": {
+        "importChip": "Importazione in corso: {percent} %",
+        "importChipShow": "Mostra",
         "boardAnalysisCopied": "Immagine board + analisi copiata negli appunti",
         "boardSvgNotFound": "SVG del board non trovato",
         "boardElementNotFound": "Elemento del board non trovato",
@@ -2581,6 +2587,7 @@
             "history": "Cronologia delle ricerche",
             "match": "Pannello dei match",
             "collection": "Pannello delle collezioni",
+            "lesson": "Lezioni (le N apre la lezione N)",
             "eval": "Pannello Eval",
             "rollout": "Rollare la posizione (rollout fast|standard, search, stop)",
             "transcribe": "Trascrizione di match",
@@ -2667,5 +2674,18 @@
         "space": "Spazio",
         "backspace": "Backspace",
         "tab": "Tab"
+    },
+    "lesson": {
+        "title": "Lezione",
+        "progress": "Passo {i} / {n}",
+        "previous": "Precedente",
+        "next": "Successivo",
+        "close": "Chiudi",
+        "none": "Questo database non contiene lezioni.",
+        "list": "Lezioni: {lessons} — digita :le seguito dal numero per aprirne una.",
+        "empty": "Questa lezione non ha ancora passi.",
+        "notFound": "Nessuna lezione n. {id}.",
+        "failed": "Impossibile leggere le lezioni.",
+        "stepMissing": "Ciò che mostra questo passo non è più nel database."
     }
 }

@@ -63,6 +63,9 @@ type Summary struct {
 	// LivingCollectionsSkipped names the imported collections whose
 	// namesake in the target is living, and so received no members.
 	LivingCollectionsSkipped []string `json:"livingCollectionsSkipped,omitempty"`
+	// Lessons counts the Lessons a native .db import created (MergeLessons);
+	// one whose name the target already holds is left alone.
+	Lessons int `json:"lessons,omitempty"`
 	// FlagsApplied counts the source-tool study marks a skipped duplicate
 	// still delivered to its stored positions (ADR-0006).
 	FlagsApplied int `json:"flagsApplied,omitempty"`

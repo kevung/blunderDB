@@ -570,6 +570,29 @@ func registerStudy(tb *Toolbox) {
 			return obj{"positions": summarizeAll(rows)}, nil
 		})
 
+	Add(tb, Reads, &sdk.Tool{Name: "list_lessons", Title: "Lessons",
+		Description: "The lessons a coach wrote: id, name, description and number of steps. Read one with lesson."},
+		func(ctx context.Context, req *sdk.CallToolRequest, _ noInput) (any, error) {
+			var rows []obj
+			if err := tb.Engine.Call(ctx, req, "lessons.list", nil, &rows); err != nil {
+				return nil, err
+			}
+			return obj{"lessons": rows}, nil
+		})
+
+	type lessonIn struct {
+		LessonID int64 `json:"lessonId" jsonschema:"the lesson id"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "lesson", Title: "A lesson",
+		Description: "One lesson with its steps in reading order: each step's title, text, and the collectionId or positionId it shows (0 when none) — read those with collection_positions or the position tools."},
+		func(ctx context.Context, req *sdk.CallToolRequest, a lessonIn) (any, error) {
+			var l obj
+			if err := tb.Engine.Call(ctx, req, "lessons.get", obj{"id": a.LessonID}, &l); err != nil {
+				return nil, err
+			}
+			return l, nil
+		})
+
 	Add(tb, Reads, &sdk.Tool{Name: "study_decks", Title: "Study decks",
 		Description: "The spaced-repetition (Anki-style) decks: id, name, card count and how many cards are due now."},
 		func(ctx context.Context, req *sdk.CallToolRequest, _ noInput) (any, error) {

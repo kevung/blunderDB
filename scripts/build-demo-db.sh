@@ -81,6 +81,7 @@ fi
 echo "== summary"
 "$CLI" info --db "$DB" | sed -n '/^Statistics/,$p'
 "$CLI" collection list --db "$DB"
+"$CLI" lesson list --db "$DB"
 "$CLI" anki decks --db "$DB"
 
 echo "== compacting"

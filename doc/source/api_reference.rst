@@ -154,6 +154,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/history.load                         JSON
      POST /v1/history.save                         JSON
    imports
+     POST /v1/imports.batch                        custom
+     POST /v1/imports.batch.cancel                 JSON
+     POST /v1/imports.batch.status                 JSON
      POST /v1/imports.bgf                          custom
      POST /v1/imports.cancel                       custom
      POST /v1/imports.db                           custom
@@ -165,6 +168,16 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/imports.report                       JSON
      POST /v1/imports.studyQueue                   JSON
      POST /v1/imports.xg                           custom
+   lessons
+     POST /v1/lessons.addStep                      JSON  (Idempotency-Key)
+     POST /v1/lessons.create                       JSON  (Idempotency-Key)
+     POST /v1/lessons.delete                       JSON
+     POST /v1/lessons.get                          JSON
+     POST /v1/lessons.list                         JSON
+     POST /v1/lessons.removeStep                   JSON
+     POST /v1/lessons.reorderSteps                 JSON
+     POST /v1/lessons.update                       JSON
+     POST /v1/lessons.updateStep                   JSON
    librarySettings
      POST /v1/librarySettings.load                 JSON
      POST /v1/librarySettings.save                 JSON
@@ -322,7 +335,7 @@ Idempotence
 La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les
 lectures sont sans effet de bord, et les écritures de ``positions.*`` sont
 idempotentes dans leur effet grâce au hachage Zobrist du contenu — enregistrer
-deux fois la même position renvoie la même ligne, jamais un doublon. 44 méthodes
+deux fois la même position renvoie la même ligne, jamais un doublon. 46 méthodes
 acceptent un en-tête ``Idempotency-Key`` optionnel : celles dont deux appels
 sont deux effets distincts, et ``positions.save``, dont la réponse dit si
 l'appel a créé la position (``created``) et le dirait faux si elle était

@@ -8,7 +8,28 @@ const ImportXGMatch = vi.fn();
 const ImportXGPPosition = vi.fn();
 const loadAllPositions = vi.fn();
 
+// The backend pipeline, played by the one-file mocks: same outcomes, one call.
+const ImportFiles = vi.fn(async (paths) => {
+    const summary = { succeeded: 0, skipped: 0, failed: 0, errors: [], hadMatches: false, lastPositionID: 0, cancelled: false };
+    for (const path of paths) {
+        try {
+            if (path.endsWith('.xgp')) {
+                summary.lastPositionID = await ImportXGPPosition(path);
+            } else {
+                await ImportXGMatch(path);
+                summary.hadMatches = true;
+            }
+            summary.succeeded++;
+        } catch (error) {
+            summary.failed++;
+            summary.errors.push({ file: path, message: error.message });
+        }
+    }
+    return summary;
+});
+
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
+    ImportFiles,
     OpenImportDatabaseDialog: vi.fn(),
     OpenPositionFilesDialog: vi.fn(),
     OpenPositionFolderDialog: vi.fn(),
@@ -46,7 +67,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     RefreshSearchStatistics: vi.fn(),
     CountPositionsWithoutAnalysis: vi.fn(async () => 0)
 }));
-vi.mock('../../wailsjs/runtime/runtime.js', () => ({ ClipboardGetText: vi.fn() }));
+vi.mock('../../wailsjs/runtime/runtime.js', () => ({ ClipboardGetText: vi.fn(), EventsOn: vi.fn(() => () => {}) }));
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() }));
 vi.mock('../services/positionService.js', () => ({ loadAllPositions }));
 

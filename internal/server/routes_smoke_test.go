@@ -50,6 +50,7 @@ var customContentTypes = map[string][]string{
 	"/v1/imports.db":                      {ndjsonContentType},
 	"/v1/imports.position":                {ndjsonContentType},
 	"/v1/imports.cancel":                  {"application/json"},
+	"/v1/imports.batch":                   {"application/json"},
 	"/v1/exports.json":                    {ndjsonContentType},
 	"/v1/exports.sqlite":                  {"application/octet-stream"},
 	"/v1/matches.exportMat":               {"text/plain"},
@@ -81,6 +82,8 @@ var customContentTypes = map[string][]string{
 	// not rpc's, so they classify as kindCustom despite answering exactly
 	// like any other rpc route.
 	"/v1/collections.create": {"application/json"},
+	"/v1/lessons.create":     {"application/json"},
+	"/v1/lessons.addStep":    {"application/json"},
 	"/v1/training.save":      {"application/json"},
 	"/v1/tournaments.create": {"application/json"},
 	"/v1/positions.save":     {"application/json"},

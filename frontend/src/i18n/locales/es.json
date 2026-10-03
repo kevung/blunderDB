@@ -1075,6 +1075,10 @@
         "metadataTitle": "Metadatos del archivo exportado"
     },
     "import": {
+        "minimize": "Minimizar",
+        "rateEta": "{rate} posiciones/s · quedan {eta}",
+        "liveCounts": "{imported} importados · {skipped} duplicados · {failed} con error",
+        "moreErrors": "… y {n} errores más: ver el registro",
         "abortImport": "Cancelar importación",
         "added": "Añadidas",
         "analyzing": "Analizando la importación",
@@ -1356,6 +1360,8 @@
         }
     },
     "status": {
+        "importChip": "Importación en curso: {percent} %",
+        "importChipShow": "Mostrar",
         "boardAnalysisCopied": "Imagen del tablero + análisis copiada al portapapeles",
         "boardSvgNotFound": "SVG del tablero no encontrado",
         "boardElementNotFound": "Elemento del tablero no encontrado",
@@ -2581,6 +2587,7 @@
             "history": "Historial de búsqueda",
             "match": "Panel de matches",
             "collection": "Panel de colecciones",
+            "lesson": "Lecciones (le N abre la lección N)",
             "eval": "Panel Eval",
             "rollout": "Rodar la posición (rollout fast|standard, search, stop)",
             "transcribe": "Transcripción de matches",
@@ -2667,5 +2674,18 @@
         "space": "Espacio",
         "backspace": "Retroceso",
         "tab": "Tab"
+    },
+    "lesson": {
+        "title": "Lección",
+        "progress": "Paso {i} / {n}",
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "close": "Cerrar",
+        "none": "Esta base no contiene ninguna lección.",
+        "list": "Lecciones: {lessons} — escriba :le seguido del número para abrir una.",
+        "empty": "Esta lección aún no tiene pasos.",
+        "notFound": "No existe la lección n.º {id}.",
+        "failed": "No se pudieron leer las lecciones.",
+        "stepMissing": "Lo que muestra este paso ya no está en la base."
     }
 }

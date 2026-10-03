@@ -1112,6 +1112,34 @@ positions au sein des collections peut être modifié par glisser-déposer.
 Appuyer sur *CTRL-B* ou exécuter la commande ``collection`` pour afficher ou
 masquer le panneau.
 
+.. _lecons:
+
+Leçons
+~~~~~~
+
+Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un élève
+et lui remet dans un fichier de base (voir la commande ``lesson export`` de
+:doc:`cli`). Chaque étape a un titre, un texte et peut montrer une collection,
+une position, les deux ou aucune. La commande ``le`` liste les leçons de la
+base dans la barre d'état ; ``le 2`` ouvre la leçon 2.
+
+Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la
+leçon, numéro de l'étape, titre, puis le texte. *Précédente* et *Suivante*
+changent d'étape ; l'étape amène sur le plateau la collection ou la position
+qu'elle montre, que l'on parcourt ensuite par les gestes habituels. *Fermer*
+quitte la leçon. Une étape dont la collection ou la position a été supprimée
+garde son texte.
+
+Lire une leçon ne laisse aucune trace : la base de l'élève n'enregistre ni
+l'étape atteinte ni l'ouverture. Importer un fichier qui contient une leçon la
+crée ; une leçon de même nom déjà présente n'est pas touchée. Les leçons se
+créent et se modifient par la ligne de commande ou par l'API
+(:ref:`headless_lecons`).
+
+Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre d'export
+ou par la ligne de commande — emporte toutes les leçons ; un export partiel
+(une sélection de positions, de collections ou de matchs) ne les emporte pas.
+
 .. _import_regles:
 
 Import : ce qui est écrit, ce qui ne l'est jamais
@@ -1139,6 +1167,32 @@ ne remplace pas ce qui est déjà là.
 * **Réimporter le même fichier ne réécrit rien.** Le match est reconnu comme
   déjà présent ; seules les marques posées dans le logiciel d'origine sont
   ajoutées, sans toucher aux commentaires ni aux analyses.
+
+* **Un dossier s'importe en parallèle.** Les fichiers sont lus sur plusieurs
+  cœurs à la fois et écrits par groupes, toujours dans l'ordre du dossier : les
+  numéros de match ne dépendent pas de la machine. Un fichier identique, octet
+  pour octet, à un fichier déjà lu du même dossier n'est pas relu : il est
+  compté comme doublon. Annuler arrête l'import au groupe en cours ; ce qui
+  était déjà écrit reste.
+
+* **La progression se lit en positions par seconde.** La fenêtre d'import
+  donne le pourcentage lu, le débit, le temps restant estimé et les comptes en
+  cours (importés, doublons, en erreur). **Réduire** la range dans la barre de
+  statut, d'où une pastille la rouvre : l'import continue pendant que vous
+  travaillez, et la fenêtre revient d'elle-même avec le rapport à la fin. Les
+  cent premières erreurs sont listées ; les suivantes sont comptées, et le
+  journal de l'application les nomme toutes. En ligne de commande,
+  ``blunderdb import --type batch`` affiche la même progression sur la sortie
+  d'erreur, et ``--format json`` la rend dans l'objet final (``progress``).
+
+* **Un gros dossier s'importe en mode masse.** À partir de 200 fichiers,
+  blunderDB écrit avec un cache plus grand et moins de points de contrôle. Si
+  la base ne contient encore aucune position, il va plus loin : les index de
+  recherche ne sont reconstruits qu'à la fin, et les écritures ne sont plus
+  synchronisées sur le disque. Une coupure de courant pendant un tel import
+  peut alors abîmer la base : il faut la recréer et relancer l'import. Un
+  arrêt brutal du programme, lui, laisse seulement des index absents, que
+  l'ouverture suivante reconstruit (le journal le signale).
 
 * **Ce que blunderDB n'écrit jamais** : une chance recalculée — elle est lue
   dans le fichier source, ou reste inconnue — et un rollout, dont il n'ouvre

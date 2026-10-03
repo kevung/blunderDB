@@ -270,6 +270,11 @@ export default {
 <h3>Collections Panel</h3>
 <p>In the Collections, Tournaments, Anki and Transcription panels, the <strong>+ New…</strong> button in the header is the single creation gesture: it opens the input field, which <em>Esc</em> or <strong>Cancel</strong> closes in the Collections and Tournaments panels. In the match list, the ⌨ icon opens the match's transcription and the ✎ icon corrects its metadata.</p>
 <p>The <strong>Collections</strong> panel (<em>CTRL-B</em>) manages collections of positions. Collections can be created, renamed and deleted. Positions can be added to them or removed (<em>Del</em> key, confirmation asked). Double-click a collection to browse its positions with the <em>LEFT</em> and <em>RIGHT</em> keys. The <code>ss</code> command searches among the positions of the open collection; <em>Esc</em> then returns to the collection (see Search Panel). The order of the collections, and of the positions within a collection, can be changed by drag and drop. Press <em>CTRL-B</em> or run the <code>collection</code> command to show or hide the panel.</p>
+<h4>Lessons</h4>
+<p>A <strong>lesson</strong> is a sequence of steps that a coach writes once for a student and hands over in a database file (see the <code>lesson export</code> command in cli). Each step has a title, a text and can show a collection, a position, both or neither. The <code>le</code> command lists the database's lessons in the status bar; <code>le 2</code> opens lesson 2.</p>
+<p>A <strong>reading bar</strong> then appears above the board: lesson name, step number, title, then the text. <em>Previous</em> and <em>Next</em> change step; the step brings onto the board the collection or position it shows, which you then browse with the usual gestures. <em>Close</em> leaves the lesson. A step whose collection or position has been deleted keeps its text.</p>
+<p>Reading a lesson leaves no trace: the student's database records neither the step reached nor the opening. Importing a file that contains a lesson creates it; a lesson of the same name already present is left untouched. Lessons are created and edited through the command line or the API (Lessons).</p>
+<p>A backup — exporting the whole library from the export window or by the command line — carries all the lessons; a partial export (a selection of positions, collections or matches) does not.</p>
 <h3>Import: what is written, what never is</h3>
 <p>Importing a match, a position or another database adds what is missing; it does not replace what is already there.</p>
 <ul>
@@ -277,6 +282,9 @@ export default {
 <li><strong>One analysis per engine.</strong> eXtreme Gammon, GNUbg, BGBlitz and the embedded evaluator coexist on the same position, and the Analysis panel shows where each one came from. Importing one never erases another.</li>
 <li><strong>An imported analysis is never recomputed.</strong> blunderDB stores it as-is, with its level label ("3-ply", "XG Roller++", "Book"), its equities, its errors, its probabilities and the roll's luck. The rule is "an evaluation only fills a gap": automatic analysis after import only visits positions with <strong>no</strong> analysis at all, and <em>Re-analyze stale positions</em> leaves untouched any position carrying an imported analysis (see Configuration).</li>
 <li><strong>Reimporting the same file rewrites nothing.</strong> The match is recognised as already present; only the flags set in the originating software are added, without touching comments or analyses.</li>
+<li><strong>A folder is imported in parallel.</strong> Files are read on several cores at once and written in groups, always in folder order: match numbers do not depend on the machine. A file identical, byte for byte, to a file already read from the same folder is not read again: it counts as a duplicate. Cancelling stops the import at the current group; what was already written stays.</li>
+<li><strong>Progress reads in positions per second.</strong> The import window gives the percentage read, the throughput, the estimated time left and the running counts (imported, duplicates, failed). <strong>Minimize</strong> tucks it into the status bar, where a chip reopens it: the import goes on while you work, and the window comes back by itself with the report at the end. The first hundred errors are listed; the rest are counted, and the application log names them all. On the command line, <code>blunderdb import --type batch</code> shows the same progress on standard error, and <code>--format json</code> returns it in the final object (<code>progress</code>).</li>
+<li><strong>A large folder is imported in bulk mode.</strong> From 200 files on, blunderDB writes with a larger cache and fewer checkpoints. If the database holds no position yet, it goes further: search indexes are rebuilt only at the end, and writes are no longer synced to disk. A power cut during such an import can then damage the database: recreate it and run the import again. A program crash, on the other hand, only leaves missing indexes, which the next opening rebuilds (the log says so).</li>
 <li><strong>What blunderDB never writes</strong>: a recomputed luck value — it is read from the source file, or stays unknown — and a rollout, whose data it neither opens from a <code>.xg</code> file nor knows how to produce.</li>
 </ul>
 <p>A collection can be <strong>living</strong>: its content is no longer a hand-made list but the result of a <strong>search</strong>, re-evaluated every time it is opened. The ◇ button at the head of the collection makes it living with the last search run; ◈ says it already is, and the same button gives it back its list. Nothing is destroyed by making it living: the positions it held are still there when you go back.</p>
@@ -1988,6 +1996,10 @@ export default {
 <tr>
 <td>collection, coll</td>
 <td>Show/hide the collections panel.</td>
+</tr>
+<tr>
+<td>lesson, le [N]</td>
+<td>Without an argument, lists the database's lessons in the status bar; <code>le N</code> opens lesson N at its first step (see Lessons).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>

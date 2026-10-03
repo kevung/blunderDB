@@ -362,7 +362,7 @@ func deleteOrphanedPositions(tx *sql.Tx, ids []int64) error {
 // user did on a position that merely happened to occur in it.
 //
 // A position is held by: another match's move; a collection; an Anki card; a
-// comment with origin = 'user'; individual import (ADR-0001); or the source
+// Lesson step (ADR-0066); a comment with origin = 'user'; individual import (ADR-0001); or the source
 // tool's study mark, which the `fl` filter surfaces (ADR-0006).
 //
 // Deliberately NOT held by an analysis (every match position has one, so
@@ -377,6 +377,7 @@ func deleteOrphanedPositions(tx *sql.Tx, ids []int64) error {
 const positionIsHeldSQL = `EXISTS (SELECT 1 FROM move               WHERE position_id = position.id)
 	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = position.id)
 	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = position.id)
+	                       OR EXISTS (SELECT 1 FROM lesson_step         WHERE position_id = position.id)
 	                       OR EXISTS (SELECT 1 FROM comment             WHERE position_id = position.id AND origin = 'user')
 	                       OR position.individually_imported = 1
 	                       OR position.flagged = 1`

@@ -1075,6 +1075,10 @@
         "metadataTitle": "Métadonnées du fichier exporté"
     },
     "import": {
+        "minimize": "Réduire",
+        "rateEta": "{rate} positions/s · reste {eta}",
+        "liveCounts": "{imported} importés · {skipped} doublons · {failed} en erreur",
+        "moreErrors": "… et {n} autres erreurs : voir le journal",
         "abortImport": "Annuler l'import",
         "added": "Ajoutées",
         "analyzing": "Analyse de l'import",
@@ -1356,6 +1360,8 @@
         }
     },
     "status": {
+        "importChip": "Import en cours : {percent} %",
+        "importChipShow": "Afficher",
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",
         "boardSvgNotFound": "SVG du plateau introuvable",
         "boardElementNotFound": "Élément du plateau introuvable",
@@ -2581,6 +2587,7 @@
             "history": "Historique de recherche",
             "match": "Panneau des matchs",
             "collection": "Panneau des collections",
+            "lesson": "Leçons (le N ouvre la leçon N)",
             "eval": "Panneau Eval",
             "rollout": "Rouler la position (rollout fast|standard, search, stop)",
             "transcribe": "Transcription de matchs",
@@ -2667,5 +2674,18 @@
         "space": "Espace",
         "backspace": "Retour arr.",
         "tab": "Tab"
+    },
+    "lesson": {
+        "title": "Leçon",
+        "progress": "Étape {i} / {n}",
+        "previous": "Précédente",
+        "next": "Suivante",
+        "close": "Fermer",
+        "none": "Cette base ne contient aucune leçon.",
+        "list": "Leçons : {lessons} — tapez :le suivi du numéro pour en ouvrir une.",
+        "empty": "Cette leçon n'a encore aucune étape.",
+        "notFound": "Aucune leçon n° {id}.",
+        "failed": "Impossible de lire les leçons.",
+        "stepMissing": "Ce que montre cette étape n'est plus dans la base."
     }
 }

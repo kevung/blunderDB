@@ -734,6 +734,48 @@ ID  Index  Score  Type  XGID
 40  40     7-7    cube  --BEBBB----a--b--cbbBbba--:0:0:1:00:0:0:0:7:0
 ```
 
+## Lesson Command
+
+Manage lessons — ordered steps a coach writes once for a student. Each step has
+a title, a text and may show a collection, a position, both or neither. A lesson
+travels in an exported database (`export`, `.dbx` with `--password`) and is read
+in the GUI with the `:le` command. Every sub-command takes `--db`; `list` and
+`show` print `text` (default) or `json`.
+
+```bash
+./blunderDB lesson <sub-command> [options]
+```
+
+**Sub-commands:**
+- `list` - List lessons: id, name, number of steps
+- `show --id <id>` - The steps of one lesson, in order
+- `create --name <name> [--description <text>]` - Create an empty lesson
+- `edit --id <id> [--name <name>] [--description <text>]` - Rename a lesson or
+  change its description
+- `delete --id <id> --confirm` - Delete a lesson and its steps, for good (there
+  is no trash for lessons); the collections and positions its steps showed stay
+- `add-step --lesson <id> [--title <t>] [--text <t> | --text-file <f>]
+  [--collection <id>] [--position <id>]` - Append a step
+- `edit-step --lesson <id> --step <id> [...]` - Change a step; only the given
+  fields change, `--collection 0` / `--position 0` clear what it showed
+- `remove-step --lesson <id> --step <id>` - Remove a step
+- `reorder --lesson <id> --steps <id,id,…>` - Set the order of the steps
+- `export --id <id[,id…]> --out <file> [--password <pw>] [--watermark <text>]` -
+  Export lessons with the collections and positions their steps show
+
+Importing a file that holds a lesson creates it with its steps; a lesson whose
+name already exists is left untouched, so importing the same file twice changes
+nothing. Reading a lesson records nothing on the reader's side.
+
+**Examples:**
+```bash
+./blunderDB lesson create --db database.db --name "Playing against a prime"
+./blunderDB lesson add-step --db database.db --lesson 1 \
+    --title "Timing" --text "Count the pips." --collection 3
+./blunderDB lesson export --db database.db --id 1 --out lesson.dbx \
+    --password secret --watermark "Course of 12 March"
+```
+
 ## Stats Command
 
 Group the errors of a filter by plan of play and theme, costliest first — the
@@ -2574,6 +2616,226 @@ Examples:
 
   # See where a database came from (works on a protected .dbx too)
   blunderdb info --db cours.db
+```
+
+### `blunderdb lesson add-step`
+
+```
+Usage: blunderdb lesson add-step [options]
+
+Append a step to a lesson. A step may show a collection, a position, both or neither.
+
+Options:
+  -collection int
+    	Collection the step shows (0: none)
+  -db string
+    	Path to the database file (required)
+  -lesson int
+    	Lesson ID (required)
+  -position int
+    	Position the step shows (0: none)
+  -text string
+    	Step text
+  -text-file string
+    	Read the step text from this file (wins over --text)
+  -title string
+    	Step title
+
+Examples:
+  blunderdb lesson add-step --db database.db --lesson 1 --title "Timing" --text-file timing.txt --collection 3
+  blunderdb lesson add-step --db database.db --lesson 1 --title "The key position" --position 412
+```
+
+### `blunderdb lesson create`
+
+```
+Usage: blunderdb lesson create [options]
+
+Create an empty lesson.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -description string
+    	Lesson description
+  -name string
+    	Lesson name (required)
+
+Examples:
+  blunderdb lesson create --db database.db --name "Playing against a prime"
+```
+
+### `blunderdb lesson delete`
+
+```
+Usage: blunderdb lesson delete [options]
+
+Delete a lesson and its steps; the collections and positions they show stay.
+
+Options:
+  -confirm
+    	Confirm the deletion (required)
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Lesson ID (required)
+
+Examples:
+  blunderdb lesson delete --db database.db --id 1 --confirm
+```
+
+### `blunderdb lesson edit`
+
+```
+Usage: blunderdb lesson edit [options]
+
+Rename a lesson or change its description; flags not given keep their value.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -description string
+    	New description
+  -id int
+    	Lesson ID (required)
+  -name string
+    	New name
+
+Examples:
+  blunderdb lesson edit --db database.db --id 1 --name "Primes"
+```
+
+### `blunderdb lesson edit-step`
+
+```
+Usage: blunderdb lesson edit-step [options]
+
+Change a step; flags not given keep their value, 0 clears a collection or a position.
+
+Options:
+  -collection int
+    	Collection the step shows (0: none)
+  -db string
+    	Path to the database file (required)
+  -lesson int
+    	Lesson ID (required)
+  -position int
+    	Position the step shows (0: none)
+  -step lesson show
+    	Step ID, as lesson show prints it (required)
+  -text string
+    	New text
+  -text-file string
+    	Read the new text from this file (wins over --text)
+  -title string
+    	New title
+
+Examples:
+  blunderdb lesson edit-step --db database.db --lesson 1 --step 7 --text "Count again."
+  blunderdb lesson edit-step --db database.db --lesson 1 --step 7 --position 0
+```
+
+### `blunderdb lesson export`
+
+```
+Usage: blunderdb lesson export [options]
+
+Export lessons, with the collections and positions their steps show, to a new database file.
+
+Options:
+  -analysis
+    	Include analyses (default true)
+  -comments
+    	Include comments (default true)
+  -db string
+    	Path to the database file (required)
+  -id string
+    	Lesson ID(s) to export, comma-separated (required)
+  -out string
+    	Path of the database file to write (required)
+  -password string
+    	Encrypt the export into a protected .dbx file
+  -watermark string
+    	Mark the exported file with where it comes from
+  -watermark-note string
+    	Free text attached to the watermark (terms of use, contact)
+
+Examples:
+  blunderdb lesson export --db database.db --id 1 --out lesson.db --watermark "Course of 12 March"
+  blunderdb lesson export --db database.db --id 1,2 --out lessons.dbx --password secret
+```
+
+### `blunderdb lesson list`
+
+```
+Usage: blunderdb lesson list [options]
+
+List the lessons of the database.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb lesson list --db database.db --format json
+```
+
+### `blunderdb lesson remove-step`
+
+```
+Usage: blunderdb lesson remove-step [options]
+
+Remove a step from its lesson.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -step int
+    	Step ID (required)
+
+Examples:
+  blunderdb lesson remove-step --db database.db --step 7
+```
+
+### `blunderdb lesson reorder`
+
+```
+Usage: blunderdb lesson reorder [options]
+
+Set the order of a lesson's steps; --steps names every step once.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -lesson int
+    	Lesson ID (required)
+  -steps string
+    	Step IDs in the new order, comma-separated (required)
+
+Examples:
+  blunderdb lesson reorder --db database.db --lesson 1 --steps 9,7,8
+```
+
+### `blunderdb lesson show`
+
+```
+Usage: blunderdb lesson show [options]
+
+Show a lesson's steps in reading order.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Lesson ID (required)
+
+Examples:
+  blunderdb lesson show --db database.db --id 1
+  blunderdb lesson show --db database.db --id 1 --format json
 ```
 
 ### `blunderdb list`

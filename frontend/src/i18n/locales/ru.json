@@ -1075,6 +1075,10 @@
         "metadataTitle": "Метаданные экспортируемого файла"
     },
     "import": {
+        "minimize": "Свернуть",
+        "rateEta": "{rate} позиций/с · осталось {eta}",
+        "liveCounts": "{imported} импортировано · {skipped} дубликатов · {failed} с ошибкой",
+        "moreErrors": "… и ещё {n} ошибок: см. журнал",
         "abortImport": "Прервать импорт",
         "added": "Добавлено",
         "analyzing": "Анализ импорта",
@@ -1356,6 +1360,8 @@
         }
     },
     "status": {
+        "importChip": "Идёт импорт: {percent} %",
+        "importChipShow": "Показать",
         "boardAnalysisCopied": "Изображение доски + анализа скопировано в буфер обмена",
         "boardSvgNotFound": "SVG доски не найден",
         "boardElementNotFound": "Элемент доски не найден",
@@ -2581,6 +2587,7 @@
             "history": "История поиска",
             "match": "Панель матчей",
             "collection": "Панель коллекций",
+            "lesson": "Уроки (le N открывает урок N)",
             "eval": "Панель Eval",
             "rollout": "Прокатать позицию (rollout fast|standard, search, stop)",
             "transcribe": "Запись матчей",
@@ -2667,5 +2674,18 @@
         "space": "Пробел",
         "backspace": "Backspace",
         "tab": "Tab"
+    },
+    "lesson": {
+        "title": "Урок",
+        "progress": "Шаг {i} / {n}",
+        "previous": "Назад",
+        "next": "Далее",
+        "close": "Закрыть",
+        "none": "В этой базе нет уроков.",
+        "list": "Уроки: {lessons} — введите :le и номер, чтобы открыть урок.",
+        "empty": "В этом уроке ещё нет шагов.",
+        "notFound": "Нет урока № {id}.",
+        "failed": "Не удалось прочитать уроки.",
+        "stepMissing": "То, что показывает этот шаг, больше нет в базе."
     }
 }

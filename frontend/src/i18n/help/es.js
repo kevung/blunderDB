@@ -270,6 +270,11 @@ export default {
 <h3>Panel de Colecciones</h3>
 <p>En los paneles Colecciones, Torneos, Anki y Transcripción, el botón <strong>+ Nuevo…</strong> del encabezado es el único gesto de creación: abre el campo de entrada, que <em>Esc</em> o <strong>Cancelar</strong> cierra en los paneles Colecciones y Torneos. En la lista de partidos, el icono ⌨ abre la transcripción del partido y el icono ✎ corrige sus metadatos.</p>
 <p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Se les pueden añadir o quitar posiciones (tecla <em>Supr</em>, se pide confirmación). Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El comando <code>ss</code> busca entre las posiciones de la colección abierta; <em>Esc</em> vuelve después a la colección (véase Panel de Búsqueda). El orden de las colecciones y de las posiciones dentro de una colección puede cambiarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code>collection</code> para mostrar u ocultar el panel.</p>
+<h4>Lecciones</h4>
+<p>Una <strong>lección</strong> es una secuencia de pasos que un entrenador escribe una sola vez para un alumno y le entrega en un archivo de base (véase el comando <code>lesson export</code> de cli). Cada paso tiene un título, un texto y puede mostrar una colección, una posición, ambas o ninguna. El comando <code>le</code> lista las lecciones de la base en la barra de estado; <code>le 2</code> abre la lección 2.</p>
+<p>Aparece entonces una <strong>barra de lectura</strong> encima del tablero: nombre de la lección, número del paso, título y luego el texto. <em>Anterior</em> y <em>Siguiente</em> cambian de paso; el paso lleva al tablero la colección o la posición que muestra, que se recorre después con los gestos habituales. <em>Cerrar</em> sale de la lección. Un paso cuya colección o posición se ha eliminado conserva su texto.</p>
+<p>Leer una lección no deja ninguna huella: la base del alumno no registra ni el paso alcanzado ni la apertura. Importar un archivo que contiene una lección la crea; una lección del mismo nombre ya presente no se toca. Las lecciones se crean y se modifican por la línea de comandos o por la API (Las lecciones).</p>
+<p>Una copia de seguridad — la exportación de toda la biblioteca desde la ventana de exportación o por la línea de comandos — incluye todas las lecciones; una exportación parcial (una selección de posiciones, colecciones o partidas) no las incluye.</p>
 <h3>Importación: lo que se escribe, lo que nunca se escribe</h3>
 <p>Importar un match, una posición u otra base añade lo que falta; no reemplaza lo que ya está ahí.</p>
 <ul>
@@ -277,6 +282,9 @@ export default {
 <li><strong>Un análisis por motor.</strong> eXtreme Gammon, GNUbg, BGBlitz y el evaluador integrado conviven en una misma posición, y el panel Análisis indica el origen de cada uno. Importar uno no borra el otro.</li>
 <li><strong>Un análisis importado nunca se recalcula.</strong> blunderDB lo guarda tal cual, con su etiqueta de nivel («3-ply», «XG Roller++», «Book»), sus equidades, sus errores, sus probabilidades y la suerte de la tirada. La regla es «una evaluación solo rellena un hueco»: el análisis automático tras la importación solo visita las posiciones sin <strong>ningún</strong> análisis, y <em>Reanalizar posiciones obsoletas</em> deja intacta toda posición que lleve un análisis importado (véase Configuración).</li>
 <li><strong>Reimportar el mismo archivo no reescribe nada.</strong> El match se reconoce como ya presente; solo se añaden las marcas puestas en el software de origen, sin tocar los comentarios ni los análisis.</li>
+<li><strong>Una carpeta se importa en paralelo.</strong> Los archivos se leen en varios núcleos a la vez y se escriben por grupos, siempre en el orden de la carpeta: los números de partida no dependen de la máquina. Un archivo idéntico, byte a byte, a un archivo ya leído de la misma carpeta no se vuelve a leer: cuenta como duplicado. Cancelar detiene la importación en el grupo en curso; lo que ya estaba escrito se queda.</li>
+<li><strong>El progreso se lee en posiciones por segundo.</strong> La ventana de importación muestra el porcentaje leído, el ritmo, el tiempo restante estimado y los recuentos en curso (importados, duplicados, con error). <strong>Minimizar</strong> la guarda en la barra de estado, desde donde una pastilla la vuelve a abrir: la importación continúa mientras usted trabaja, y la ventana vuelve sola con el informe al final. Se listan los cien primeros errores; los siguientes se cuentan, y el registro de la aplicación los nombra todos. En la línea de comandos, <code>blunderdb import --type batch</code> muestra el mismo progreso en la salida de error, y <code>--format json</code> lo devuelve en el objeto final (<code>progress</code>).</li>
+<li><strong>Una carpeta grande se importa en modo masivo.</strong> A partir de 200 archivos, blunderDB escribe con una caché mayor y menos puntos de control. Si la base aún no contiene ninguna posición, va más lejos: los índices de búsqueda solo se reconstruyen al final y las escrituras ya no se sincronizan con el disco. Un corte de corriente durante una importación así puede entonces dañar la base: hay que recrearla y relanzar la importación. Un cierre brusco del programa, en cambio, solo deja índices ausentes, que la siguiente apertura reconstruye (el registro lo indica).</li>
 <li><strong>Lo que blunderDB nunca escribe</strong>: una suerte recalculada — se lee del archivo fuente, o queda desconocida — y un rollout, cuyos datos no abre dentro de un archivo <code>.xg</code> y que no sabe producir.</li>
 </ul>
 <p>Una colección puede estar <strong>viva</strong>: su contenido ya no es una lista hecha a mano sino el resultado de una <strong>búsqueda</strong>, reevaluado cada vez que se abre. El botón ◇ en la cabecera de la colección la hace viva con la última búsqueda lanzada; ◈ indica que ya lo está, y el mismo botón le devuelve su lista. Nada se destruye al hacerla viva: las posiciones que contenía siguen ahí al volver atrás.</p>
@@ -1988,6 +1996,10 @@ export default {
 <tr>
 <td>collection, coll</td>
 <td>Mostrar/ocultar el panel de colecciones.</td>
+</tr>
+<tr>
+<td>lesson, le [N]</td>
+<td>Sin argumento, lista las lecciones de la base en la barra de estado; <code>le N</code> abre la lección N en su primer paso (véase Lecciones).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>

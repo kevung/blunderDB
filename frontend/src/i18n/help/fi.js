@@ -270,6 +270,11 @@ export default {
 <h3>Kokoelmapaneeli</h3>
 <p>Kokoelmat-, Turnaukset-, Anki- ja Litterointi-paneeleissa otsikon <strong>+ Uusi…</strong> -painike on ainoa luontitapa: se avaa syöttökentän, jonka <em>Esc</em> tai <strong>Peruuta</strong> sulkee Kokoelmat- ja Turnaukset-paneeleissa. Otteluluettelossa ⌨-kuvake avaa ottelun litteroinnin ja ✎-kuvake korjaa sen metatiedot.</p>
 <p><strong>Kokoelmat</strong>-paneeli (<em>CTRL-B</em>) hallinnoi asemakokoelmia. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Niihin voi lisätä asemia tai poistaa niitä (<em>Del</em>-näppäin, vahvistus pyydetään). Kaksoisnapsauta kokoelmaa selataksesi sen asemia <em>VASEN</em>- ja <em>OIKEA</em>-näppäimillä. Komento <code>ss</code> hakee avoimen kokoelman asemista; <em>Esc</em> palaa sen jälkeen kokoelmaan (katso Hakupaneeli). Kokoelmien ja kokoelman sisäisten asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Paina <em>CTRL-B</em> tai suorita komento <code>collection</code> näyttääksesi tai piilottaaksesi paneelin.</p>
+<h4>Oppitunnit</h4>
+<p><strong>Oppitunti</strong> on vaiheiden sarja, jonka valmentaja kirjoittaa kerran oppilasta varten ja luovuttaa tälle tietokantatiedostossa (katso komento <code>lesson export</code> sivulla cli). Jokaisella vaiheella on otsikko ja teksti, ja se voi näyttää kokoelman, aseman, molemmat tai ei kumpaakaan. Komento <code>le</code> luettelee tietokannan oppitunnit tilarivillä; <code>le 2</code> avaa oppitunnin 2.</p>
+<p>Laudan yläpuolelle ilmestyy silloin <strong>lukupalkki</strong>: oppitunnin nimi, vaiheen numero, otsikko ja sitten teksti. <em>Edellinen</em> ja <em>Seuraava</em> vaihtavat vaihetta; vaihe tuo laudalle kokoelman tai aseman, jonka se näyttää, ja sitä selataan tavallisin elein. <em>Sulje</em> poistuu oppitunnilta. Vaihe, jonka kokoelma tai asema on poistettu, säilyttää tekstinsä.</p>
+<p>Oppitunnin lukeminen ei jätä jälkeä: oppilaan tietokanta ei tallenna saavutettua vaihetta eikä avaamista. Oppitunnin sisältävän tiedoston tuonti luo oppitunnin; samanniminen jo olemassa oleva oppitunti jätetään koskematta. Oppitunteja luodaan ja muokataan komentorivillä tai API:n kautta (Oppitunnit).</p>
+<p>Varmuuskopio — koko kirjaston vienti vientiikkunasta tai komentoriviltä — sisältää kaikki oppitunnit; osittainen vienti (valinta asemista, kokoelmista tai otteluista) ei sisällä niitä.</p>
 <h3>Tuonti: mitä kirjoitetaan ja mitä ei koskaan</h3>
 <p>Ottelun, aseman tai toisen tietokannan tuonti lisää sen, mikä puuttuu; se ei korvaa sitä, mikä on jo olemassa.</p>
 <ul>
@@ -277,6 +282,9 @@ export default {
 <li><strong>Yksi analyysi moottoria kohti.</strong> eXtreme Gammon, GNUbg, BGBlitz ja sisäänrakennettu evaluaattori elävät rinnakkain samassa asemassa, ja Analyysi-paneeli kertoo kunkin alkuperän. Yhden tuonti ei pyyhi toista pois.</li>
 <li><strong>Tuotua analyysiä ei koskaan lasketa uudelleen.</strong> blunderDB tallettaa sen sellaisenaan, tasomerkintöineen (”3-ply”, ”XG Roller++”, ”Book”), ekviteetteineen, virheineen, todennäköisyyksineen ja heiton tuureineen. Sääntö kuuluu: ”arviointi täyttää vain aukon” — tuonnin jälkeinen automaattinen analyysi käy läpi vain ne asemat, joilla ei ole <strong>yhtään</strong> analyysiä, ja <em>Analysoi vanhentuneet asemat uudelleen</em> jättää koskematta jokaiseen asemaan, jolla on tuotu analyysi (katso Asetukset).</li>
 <li><strong>Saman tiedoston uudelleentuonti ei kirjoita mitään uudelleen.</strong> Ottelu tunnistetaan jo olemassa olevaksi; vain alkuperäisessä ohjelmistossa tehdyt merkinnät lisätään, koskematta kommentteihin tai analyyseihin.</li>
+<li><strong>Kansio tuodaan rinnakkain.</strong> Tiedostot luetaan usealla ytimellä yhtä aikaa ja kirjoitetaan ryhmittäin, aina kansion järjestyksessä: otteluiden numerot eivät riipu koneesta. Tiedostoa, joka on tavu tavulta sama kuin samasta kansiosta jo luettu tiedosto, ei lueta uudelleen: se lasketaan kaksoiskappaleeksi. Peruuttaminen pysäyttää tuonnin meneillään olevaan ryhmään; jo kirjoitettu säilyy.</li>
+<li><strong>Edistyminen luetaan asemina sekunnissa.</strong> Tuontiikkuna näyttää luetun prosenttiosuuden, nopeuden, arvioidun jäljellä olevan ajan ja juoksevat määrät (tuodut, kaksoiskappaleet, virheelliset). <strong>Pienennä</strong> siirtää sen tilariville, josta merkki avaa sen uudelleen: tuonti jatkuu sillä aikaa kun työskentelet, ja ikkuna palaa lopuksi itsestään raportin kanssa. Sata ensimmäistä virhettä luetellaan; loput lasketaan, ja sovelluksen loki nimeää ne kaikki. Komentorivillä <code>blunderdb import --type batch</code> näyttää saman edistymisen virhetulosteessa, ja <code>--format json</code> palauttaa sen lopullisessa oliossa (<code>progress</code>).</li>
+<li><strong>Suuri kansio tuodaan massatilassa.</strong> 200 tiedostosta alkaen blunderDB kirjoittaa suuremmalla välimuistilla ja harvemmilla tarkistuspisteillä. Jos tietokannassa ei ole vielä yhtään asemaa, se menee pidemmälle: hakuindeksit rakennetaan uudelleen vasta lopuksi, eikä kirjoituksia enää synkronoida levylle. Sähkökatko tällaisen tuonnin aikana voi silloin vahingoittaa tietokantaa: se on luotava uudelleen ja tuonti käynnistettävä uudestaan. Ohjelman äkillinen pysähtyminen sen sijaan jättää vain puuttuvia indeksejä, jotka seuraava avaus rakentaa uudelleen (loki kertoo siitä).</li>
 <li><strong>Mitä blunderDB ei koskaan kirjoita</strong>: uudelleenlaskettua tuuria — se luetaan lähdetiedostosta tai jää tuntemattomaksi — eikä rollouttia, jonka tietoja se ei avaa <code>.xg</code>-tiedostosta eikä osaa tuottaa.</li>
 </ul>
 <p>Kokoelma voi olla <strong>elävä</strong>: sen sisältö ei ole enää käsin tehty lista vaan <strong>haun</strong> tulos, joka lasketaan uudelleen joka avauksella. Kokoelman otsikon ◇-painike tekee siitä elävän viimeisimmällä haulla; ◈ kertoo sen jo olevan, ja sama painike palauttaa listan. Mitään ei tuhota: sen sisältämät asemat ovat yhä tallella, kun palaat.</p>
@@ -1988,6 +1996,10 @@ export default {
 <tr>
 <td>collection, coll</td>
 <td>Näytä/piilota kokoelmien paneeli.</td>
+</tr>
+<tr>
+<td>lesson, le [N]</td>
+<td>Ilman argumenttia luettelee tietokannan oppitunnit tilarivillä; <code>le N</code> avaa oppitunnin N sen ensimmäisestä vaiheesta (katso Oppitunnit).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>

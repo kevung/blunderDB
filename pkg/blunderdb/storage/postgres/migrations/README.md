@@ -202,3 +202,7 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   never both; composite tenant keys, cascade with its owner) and
   `tournament.rencontre_rooms`, cleared on detachment. Schema-visible: bumped
   `domain.DatabaseVersion` to 2.28.0.
+- `031_lesson.sql` — the Lesson (ADR-0066): `lesson` and `lesson_step`
+  (composite tenant keys; a Step's collection and position are set to NULL
+  when they are deleted, the Steps cascade with their Lesson). Schema-visible:
+  bumped `domain.DatabaseVersion` to 2.29.0.

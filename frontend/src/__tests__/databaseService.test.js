@@ -86,6 +86,7 @@ import { searchEmptyStore } from '../stores/searchParamsStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, activeModal, MODAL } from '../stores/uiStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiViewModeStore, ankiAnswerShownStore } from '../stores/ankiStore.js';
 import { transcriptionStore } from '../stores/transcriptionStore.js';
+import { lessonStore, lessonStepIndexStore } from '../stores/lessonStore.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -235,6 +236,31 @@ describe('loadDemoDatabase', () => {
 });
 
 // ── openDatabaseByPath ────────────────────────────────────────────────────────
+
+describe('a Lesson being read', () => {
+    const lesson = { id: 1, name: 'L', steps: [{ id: 1 }, { id: 2 }] };
+
+    test('is dropped when another database is opened', async () => {
+        lessonStore.set(lesson);
+        lessonStepIndexStore.set(1);
+
+        await openDatabaseByPath('/tmp/other.db');
+
+        expect(get(lessonStore)).toBeNull();
+        expect(get(lessonStepIndexStore)).toBe(0);
+    });
+
+    test('is dropped when a database is created', async () => {
+        SaveDatabaseDialog.mockResolvedValue('/tmp/new.db');
+        lessonStore.set(lesson);
+        lessonStepIndexStore.set(1);
+
+        await newDatabase();
+
+        expect(get(lessonStore)).toBeNull();
+        expect(get(lessonStepIndexStore)).toBe(0);
+    });
+});
 
 describe('openDatabaseByPath', () => {
     test('protected copy: prompts for a password instead of opening', async () => {

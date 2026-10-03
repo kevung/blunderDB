@@ -65,6 +65,12 @@ type Selection struct {
 	TournamentIDs  []int64
 	// TournamentMatches adds the matches of the selected tournaments.
 	TournamentMatches bool
+
+	AllLessons bool
+	LessonIDs  []int64
+	// LessonContents adds what the selected lessons' steps show: their
+	// collections, with their members, and their positions (ADR-0066).
+	LessonContents bool
 }
 
 // ExportReport counts what an export wrote. Skipped counts rows dropped along
@@ -78,7 +84,7 @@ type ExportReport struct {
 	Positions, Analyses, Comments                int
 	Matches, Games, Moves, MoveAnalyses          int
 	Collections, Tournaments, Filters, AnkiDecks int
-	Transcriptions                               int
+	Transcriptions, Lessons                      int
 	Skipped                                      int
 	// TournamentMap gives, for each exported tournament, the id the new file assigned it.
 	// A Direction travels with its tournament (ADR-0047) but its tables live on the desktop
@@ -93,6 +99,7 @@ func WholeTenant(format Format) ExportOptions {
 		Format: format,
 		Selection: Selection{
 			AllPositions: true, AllCollections: true, AllMatches: true, AllTournaments: true,
+			AllLessons: true,
 		},
 		Analysis: true, Comments: true, PlayedMoves: true, FilterLibrary: true, AnkiDecks: true,
 	}
@@ -230,6 +237,7 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		e.resolveSelection,
 		e.writePositions,
 		e.writeCollections,
+		e.writeLessons,
 		e.writeTournaments,
 		e.writeMatches,
 		e.writeTranscriptions,
@@ -297,6 +305,9 @@ type exporter struct {
 
 	// Resolved selection, in the order rows are written.
 	collectionIDs, tournamentIDs, matchIDs []int64
+	lessonIDs                              []int64
+	lessonCollIDs                          []int64 // collections the lessons' steps show
+	lessonPosIDs                           []int64 // positions the lessons' steps show
 	extraPositionIDs                       []int64 // closure of collections/matches, beyond the explicit positions
 
 	posMap   map[int64]int64 // source position id → exported id
@@ -415,6 +426,10 @@ func (e *exporter) resolveSelection() error {
 		return fmt.Errorf("ingest: list collections: %w", err)
 	}
 
+	if err := e.resolveLessons(); err != nil {
+		return err
+	}
+
 	// Positions reached by the closure, minus the ones the caller listed;
 	// sorted so the file is the same whatever order the closure found them.
 	if sel.AllPositions {
@@ -425,8 +440,17 @@ func (e *exporter) resolveSelection() error {
 		explicit[p.ID] = true
 	}
 	extra := make(map[int64]bool)
+	for _, pid := range e.lessonPosIDs {
+		if !explicit[pid] {
+			extra[pid] = true
+		}
+	}
+	reach := e.lessonCollIDs
 	if sel.CollectionPositions {
-		for _, cid := range e.collectionIDs {
+		reach = e.collectionIDs
+	}
+	{
+		for _, cid := range reach {
 			for p, err := range e.src.Collections().Positions(e.ctx, e.scope, cid, storage.ListOpts{}) {
 				if err != nil {
 					return fmt.Errorf("ingest: list positions of collection %d: %w", cid, err)
@@ -698,6 +722,76 @@ func (e *exporter) writeCollections() error {
 	}
 	if len(e.collectionIDs) > 0 {
 		slog.Info("exported collections", "collections", e.report.Collections)
+	}
+	return nil
+}
+
+// resolveLessons lists the selected lessons and, under LessonContents, adds
+// the collections their steps show to the collections exported.
+func (e *exporter) resolveLessons() error {
+	sel := e.opts.Selection
+	var err error
+	if e.lessonIDs, err = e.resolveIDs(sel.AllLessons, sel.LessonIDs, func(yield func(int64)) error {
+		lessons, err := e.src.Lessons().List(e.ctx, e.scope)
+		if err != nil {
+			return err
+		}
+		for _, l := range lessons {
+			yield(l.ID)
+		}
+		return nil
+	}); err != nil {
+		return fmt.Errorf("ingest: list lessons: %w", err)
+	}
+	if !sel.LessonContents {
+		return nil
+	}
+	colls := toSet(e.collectionIDs)
+	for _, id := range e.lessonIDs {
+		l, err := e.src.Lessons().Get(e.ctx, e.scope, id)
+		if err != nil {
+			e.skip("reading lesson", "lessonID", id, "err", err)
+			continue
+		}
+		for _, st := range l.Steps {
+			if st.CollectionID != 0 {
+				e.lessonCollIDs = append(e.lessonCollIDs, st.CollectionID)
+				if !colls[st.CollectionID] {
+					colls[st.CollectionID] = true
+					e.collectionIDs = append(e.collectionIDs, st.CollectionID)
+				}
+			}
+			if st.PositionID != 0 {
+				e.lessonPosIDs = append(e.lessonPosIDs, st.PositionID)
+			}
+		}
+	}
+	return nil
+}
+
+// writeLessons copies the selected lessons with their steps. A step keeps
+// its text; its collection or position travels only when exported too.
+func (e *exporter) writeLessons() error {
+	dst := e.dst.Lessons()
+	for _, id := range e.lessonIDs {
+		l, err := e.src.Lessons().Get(e.ctx, e.scope, id)
+		if err != nil {
+			e.skip("reading lesson", "lessonID", id, "err", err)
+			continue
+		}
+		newID, err := dst.Create(e.ctx, "", l.Name, l.Description)
+		if err != nil {
+			e.skip("inserting lesson", "lessonID", id, "err", err)
+			continue
+		}
+		e.report.Lessons++
+		for _, st := range l.Steps {
+			st.CollectionID = e.collMap[st.CollectionID]
+			st.PositionID = e.posMap[st.PositionID]
+			if _, err := dst.AddStep(e.ctx, "", newID, st); err != nil {
+				return fmt.Errorf("ingest: write step of lesson %d: %w", id, err)
+			}
+		}
 	}
 	return nil
 }

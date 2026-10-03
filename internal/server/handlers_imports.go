@@ -53,10 +53,15 @@ func newImportID() string {
 
 func (reg *importRegistry) start(scope string, cancel context.CancelFunc) string {
 	id := newImportID()
+	reg.register(id, scope, cancel)
+	return id
+}
+
+// register records a job under an id the caller already chose.
+func (reg *importRegistry) register(id, scope string, cancel context.CancelFunc) {
 	reg.mu.Lock()
 	reg.jobs[id] = importJob{scope: scope, cancel: cancel}
 	reg.mu.Unlock()
-	return id
 }
 
 // startExclusive is start for a job a tenant may only have one of at a time.
@@ -233,6 +238,7 @@ func uploadPaths() map[string]bool {
 	for _, u := range uploadRoutes {
 		m[u.pattern] = true
 	}
+	m["/v1/imports.batch"] = true
 	return m
 }
 
@@ -242,6 +248,7 @@ func (s *Server) ingestRoutes() []route {
 	for _, u := range uploadRoutes {
 		rs = append(rs, route{http.MethodPost, u.pattern, s.handleImport(u.format)})
 	}
+	rs = append(rs, s.batchRoutes()...)
 	return append(rs,
 		route{http.MethodPost, "/v1/imports.cancel", s.handleImportCancel},
 		// Recomputed on every call, so a client that re-analyses the positions
@@ -276,6 +283,10 @@ type exportSQLiteReq struct {
 	// the Anki decks stay behind — they are the sender's, not the
 	// collection's. Empty exports the whole tenant.
 	CollectionIDs []int64 `json:"collectionIds,omitempty"`
+	// LessonIDs narrows the export to these Lessons and what their steps
+	// show, on the same terms as CollectionIDs (ADR-0066); given with
+	// CollectionIDs, both travel.
+	LessonIDs []int64 `json:"lessonIds,omitempty"`
 }
 
 // sealExportWatermark seals a watermark for origin/note with this daemon's own
@@ -336,8 +347,11 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 		defer os.Remove(tmpPath)
 
 		opts := ingest.WholeTenant(ingest.FormatSQLite)
-		if len(req.CollectionIDs) > 0 {
-			opts.Selection = ingest.Selection{CollectionIDs: req.CollectionIDs, CollectionPositions: true}
+		if len(req.CollectionIDs) > 0 || len(req.LessonIDs) > 0 {
+			opts.Selection = ingest.Selection{
+				CollectionIDs: req.CollectionIDs, CollectionPositions: true,
+				LessonIDs: req.LessonIDs, LessonContents: true,
+			}
 			opts.FilterLibrary, opts.AnkiDecks = false, false
 		}
 		opts.Watermark = watermark

@@ -67,3 +67,4 @@ node_modules
 # Local workspace for developing against an unpublished module.
 go.work
 go.work.sum
+/demodb

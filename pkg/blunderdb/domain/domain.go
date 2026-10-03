@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.28.0"
+	DatabaseVersion = "2.29.0"
 )
 
 // Anki deck source types
@@ -526,6 +526,11 @@ type ExportOptions struct {
 	CollectionIDs        []int64           `json:"collectionIDs"`
 	MatchIDs             []int64           `json:"matchIDs"`
 	TournamentIDs        []int64           `json:"tournamentIDs"`
+	// IncludeLessons exports the Lessons named by LessonIDs — every Lesson
+	// when it is empty — with the collections and positions their steps show
+	// (ADR-0066).
+	IncludeLessons bool    `json:"includeLessons"`
+	LessonIDs      []int64 `json:"lessonIDs"`
 
 	// Watermark, WatermarkNote and Password are the two optional mechanisms an export can
 	// carry: a signed statement of where the file comes from, and an encrypted container

@@ -152,6 +152,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"LibrarySettings/BlunderCountPromisesTheSearch", testBlunderCountPromisesTheSearch},
 		{"Rencontre/Lifecycle", testRencontreLifecycle},
 		{"Rencontre/TrashRestores", testRencontreTrashRestores},
+		{"Lesson/Lifecycle", testLessonLifecycle},
 		{"Rencontre/TableSettings", testTableSettingsRencontre},
 		{"Rencontre/TournamentTableSettings", testTableSettingsTournament},
 		{"Rencontre/EventRooms", testEventRooms},

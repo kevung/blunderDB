@@ -546,6 +546,18 @@ class GeneratedAPI(BaseClient):
         "POST /v1/history.save — JSON."
         return self._call("/v1/history.save", payload)
 
+    def imports_batch(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/imports.batch — hand-written handler — see openapi.yaml."
+        return self._call("/v1/imports.batch", payload)
+
+    def imports_batch_cancel(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/imports.batch.cancel — JSON."
+        return self._call("/v1/imports.batch.cancel", payload)
+
+    def imports_batch_status(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/imports.batch.status — JSON."
+        return self._call("/v1/imports.batch.status", payload)
+
     def imports_bgf(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/imports.bgf — hand-written handler — see openapi.yaml."
         return self._call("/v1/imports.bgf", payload)
@@ -589,6 +601,42 @@ class GeneratedAPI(BaseClient):
     def imports_xg(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/imports.xg — hand-written handler — see openapi.yaml."
         return self._call("/v1/imports.xg", payload)
+
+    def lessons_add_step(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/lessons.addStep — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/lessons.addStep", payload, idempotency_key=idempotency_key)
+
+    def lessons_create(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/lessons.create — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/lessons.create", payload, idempotency_key=idempotency_key)
+
+    def lessons_delete(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.delete — JSON."
+        return self._call("/v1/lessons.delete", payload)
+
+    def lessons_get(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.get — JSON."
+        return self._call("/v1/lessons.get", payload)
+
+    def lessons_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.list — JSON."
+        return self._call("/v1/lessons.list", payload)
+
+    def lessons_remove_step(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.removeStep — JSON."
+        return self._call("/v1/lessons.removeStep", payload)
+
+    def lessons_reorder_steps(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.reorderSteps — JSON."
+        return self._call("/v1/lessons.reorderSteps", payload)
+
+    def lessons_update(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.update — JSON."
+        return self._call("/v1/lessons.update", payload)
+
+    def lessons_update_step(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.updateStep — JSON."
+        return self._call("/v1/lessons.updateStep", payload)
 
     def library_settings_load(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/librarySettings.load — JSON."

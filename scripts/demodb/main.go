@@ -142,12 +142,17 @@ func enrich(d *database.Database, now time.Time, seed int64) error {
 	if err != nil {
 		return err
 	}
-	if _, err := createCollection(d, "Décisions de videau",
-		"Les douze décisions de videau les plus coûteuses : doubles manqués, prises et passes.", cubes); err != nil {
+	cubesID, err := createCollection(d, "Décisions de videau",
+		"Les douze décisions de videau les plus coûteuses : doubles manqués, prises et passes.", cubes)
+	if err != nil {
 		return err
 	}
-	if _, err := createCollection(d, "Courses et bearoff",
-		"Positions sans contact, pour comparer l'analyse au compte de pips effectif (EPC).", races); err != nil {
+	racesID, err := createCollection(d, "Courses et bearoff",
+		"Positions sans contact, pour comparer l'analyse au compte de pips effectif (EPC).", races)
+	if err != nil {
+		return err
+	}
+	if err := buildDemoLesson(d, blundersID, cubesID, racesID, blunders); err != nil {
 		return err
 	}
 	if err := commentPositions(d, blunders, cubes); err != nil {
@@ -167,6 +172,35 @@ func enrich(d *database.Database, now time.Time, seed int64) error {
 	}
 	// A directed tournament, so the demonstration shows a room running.
 	return buildDemoDirection(d, now, seed)
+}
+
+// buildDemoLesson writes a short Lesson over the three collections, so the
+// demonstration shows a lesson to follow step by step.
+func buildDemoLesson(d *database.Database, blundersID, cubesID, racesID int64, blunders []int64) error {
+	id, err := d.CreateLesson("Revoir ses erreurs",
+		"Une leçon de démonstration en quatre étapes, des plus grosses erreurs à la course.")
+	if err != nil {
+		return fmt.Errorf("creating lesson: %w", err)
+	}
+	var first int64
+	if len(blunders) > 0 {
+		first = blunders[0]
+	}
+	steps := []struct {
+		title, text string
+		coll, pos   int64
+	}{
+		{"La plus grosse erreur", "Commencez par la position la plus coûteuse de la base : cherchez le coup avant de révéler l'analyse.", 0, first},
+		{"Les blunders", "Parcourez les vingt plus grosses erreurs de pions. Notez celles qui se ressemblent.", blundersID, 0},
+		{"Le videau", "Doubles manqués, prises et passes : pour chaque position, estimez d'abord vos chances de gain.", cubesID, 0},
+		{"La course", "Sans contact, le compte de pips suffit-il ? Comparez-le au compte effectif (EPC).", racesID, 0},
+	}
+	for _, st := range steps {
+		if _, err := d.AddLessonStep(id, st.title, st.text, st.coll, st.pos); err != nil {
+			return fmt.Errorf("adding lesson step %q: %w", st.title, err)
+		}
+	}
+	return nil
 }
 
 // disguiseMatches gives every imported match its fictional identity and

@@ -373,6 +373,17 @@ Match and Tournament each carry their own comment field. Those are annotations o
 or the Tournament, not of its Positions: a commented Match does not make its 300 Positions
 commented, and no Position-level rule in this glossary reads them.
 
+**Lesson**:
+An ordered sequence of Steps a coach writes once for a student and hands over in an exported
+database. It is read, never followed up: the student's progress through it is not recorded
+(ADR-0007). Deleting it is final and leaves the Collections and Positions its Steps show.
+_Avoid_: study queue (computed, no text), course, path.
+
+**Step**:
+One stop of a Lesson: a title, a text and, optionally, a Collection and a Position. A Step may
+be text alone. A Step holds its Position (it is not purged with its match); when the
+Collection or Position it shows is deleted, the Step and its text stay.
+
 ### Training
 
 **Training** (interface: *Entraînement*):

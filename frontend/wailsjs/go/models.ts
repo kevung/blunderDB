@@ -326,6 +326,20 @@ export namespace database {
 	        this.Failed = source["Failed"];
 	    }
 	}
+	export class ImportFilesOptions {
+	    Workers: number;
+	    FilesPerTx: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportFilesOptions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Workers = source["Workers"];
+	        this.FilesPerTx = source["FilesPerTx"];
+	    }
+	}
 	export class IndividualSaveResult {
 	    id: number;
 	    existed: boolean;
@@ -1619,6 +1633,8 @@ export namespace domain {
 	    collectionIDs: number[];
 	    matchIDs: number[];
 	    tournamentIDs: number[];
+	    includeLessons: boolean;
+	    lessonIDs: number[];
 	    watermark: string;
 	    watermarkNote: string;
 	    password: string;
@@ -1643,6 +1659,8 @@ export namespace domain {
 	        this.collectionIDs = source["collectionIDs"];
 	        this.matchIDs = source["matchIDs"];
 	        this.tournamentIDs = source["tournamentIDs"];
+	        this.includeLessons = source["includeLessons"];
+	        this.lessonIDs = source["lessonIDs"];
 	        this.watermark = source["watermark"];
 	        this.watermarkNote = source["watermarkNote"];
 	        this.password = source["password"];
@@ -1947,6 +1965,71 @@ export namespace domain {
 		    return a;
 		}
 	}
+	export class LessonStep {
+	    id: number;
+	    lessonId: number;
+	    title: string;
+	    text: string;
+	    collectionId: number;
+	    positionId: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new LessonStep(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.lessonId = source["lessonId"];
+	        this.title = source["title"];
+	        this.text = source["text"];
+	        this.collectionId = source["collectionId"];
+	        this.positionId = source["positionId"];
+	    }
+	}
+	export class Lesson {
+	    id: number;
+	    name: string;
+	    description: string;
+	    createdAt: string;
+	    updatedAt: string;
+	    stepCount: number;
+	    steps: LessonStep[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Lesson(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.description = source["description"];
+	        this.createdAt = source["createdAt"];
+	        this.updatedAt = source["updatedAt"];
+	        this.stepCount = source["stepCount"];
+	        this.steps = this.convertValues(source["steps"], LessonStep);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 	export class Match {
 	    id: number;
 	    player1_name: string;
@@ -2998,6 +3081,62 @@ export namespace gui {
 		    return a;
 		}
 	}
+	export class ImportFileError {
+	    file: string;
+	    message: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportFileError(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.file = source["file"];
+	        this.message = source["message"];
+	    }
+	}
+	export class ImportFilesSummary {
+	    succeeded: number;
+	    skipped: number;
+	    failed: number;
+	    errors: ImportFileError[];
+	    hadMatches: boolean;
+	    lastPositionID: number;
+	    cancelled: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportFilesSummary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.succeeded = source["succeeded"];
+	        this.skipped = source["skipped"];
+	        this.failed = source["failed"];
+	        this.errors = this.convertValues(source["errors"], ImportFileError);
+	        this.hadMatches = source["hadMatches"];
+	        this.lastPositionID = source["lastPositionID"];
+	        this.cancelled = source["cancelled"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class MCPHostConfig {
 	    enabled: boolean;
 	    port: number;
@@ -3159,6 +3298,47 @@ export namespace gui {
 	        this.running = source["running"];
 	        this.folder = source["folder"];
 	        this.intervalSeconds = source["intervalSeconds"];
+	    }
+	}
+
+}
+
+export namespace ingest {
+	
+	export class FileOutcome {
+	    index: number;
+	    path: string;
+	    size: number;
+	    status: string;
+	    match_id?: number;
+	    position_id?: number;
+	    positions: number;
+	    flags_applied?: number;
+	    player1?: string;
+	    player2?: string;
+	    games?: number;
+	    error?: string;
+	    duplicate_of: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new FileOutcome(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.index = source["index"];
+	        this.path = source["path"];
+	        this.size = source["size"];
+	        this.status = source["status"];
+	        this.match_id = source["match_id"];
+	        this.position_id = source["position_id"];
+	        this.positions = source["positions"];
+	        this.flags_applied = source["flags_applied"];
+	        this.player1 = source["player1"];
+	        this.player2 = source["player2"];
+	        this.games = source["games"];
+	        this.error = source["error"];
+	        this.duplicate_of = source["duplicate_of"];
 	    }
 	}
 
@@ -5323,6 +5503,35 @@ export namespace sqlite {
 }
 
 export namespace storage {
+	
+	export class LibrarySettings {
+	    errorThresholdMP: number;
+	    blunderThresholdMP: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new LibrarySettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.errorThresholdMP = source["errorThresholdMP"];
+	        this.blunderThresholdMP = source["blunderThresholdMP"];
+	    }
+	}
+	export class ListOpts {
+	    Limit: number;
+	    Offset: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ListOpts(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Limit = source["Limit"];
+	        this.Offset = source["Offset"];
+	    }
+	}
 	export class MatchListOpts {
 	    PlayerName: string;
 	    PlayerNameContains: string;
@@ -5351,35 +5560,6 @@ export namespace storage {
 	        this.DateTo = source["DateTo"];
 	        this.MatchLength = source["MatchLength"];
 	        this.Sort = source["Sort"];
-	        this.Limit = source["Limit"];
-	        this.Offset = source["Offset"];
-	    }
-	}
-	
-	export class LibrarySettings {
-	    errorThresholdMP: number;
-	    blunderThresholdMP: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new LibrarySettings(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.errorThresholdMP = source["errorThresholdMP"];
-	        this.blunderThresholdMP = source["blunderThresholdMP"];
-	    }
-	}
-	export class ListOpts {
-	    Limit: number;
-	    Offset: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new ListOpts(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Limit = source["Limit"];
 	        this.Offset = source["Offset"];
 	    }
