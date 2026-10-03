@@ -21,12 +21,44 @@ import { writable } from 'svelte/store';
 /**
  * @typedef {object} IdSource
  * @property {() => Promise<number>} count how many ids the list holds
- * @property {(offset: number, limit: number) => Promise<number[]>} window ids [offset, offset+limit)
+ * @property {(offset: number, limit: number) => Promise<number[]>} window ids [offset, offset+limit), to the
+ *   end when limit <= 0
  * @property {(id: number) => Promise<number>} indexOf the rank of id, or -1
  * @property {boolean} [growsAtEnd] new ids only ever come last (the library, ids ascending), so a
  *   longer list keeps its full pages
  */
-/** @typedef {{ ids: IdList } | { source: IdSource, length: number }} ListSnapshot */
+/**
+ * A paged snapshot is `provisional` when taken before its source was counted: its length is
+ * then the first page's, a lower bound.
+ * @typedef {{ ids: IdList } | { source: IdSource, length: number, provisional?: boolean, firstPage?: number[] }} ListSnapshot
+ */
+
+// The length a source was counted at, whichever list holds it then: a snapshot taken while its
+// count was still running (a view switched, a mode entered) carries the first page's length,
+// which this settles when the snapshot is read or put back.
+/** @type {WeakMap<IdSource, number>} */
+const settledLengths = new WeakMap();
+
+/** @param {{ source: IdSource, length: number, provisional?: boolean }} list */
+const snapshotLength = (list) => (list.provisional ? (settledLengths.get(list.source) ?? list.length) : list.length);
+
+/**
+ * Record what `source` was counted at, for every snapshot of it.
+ * @param {IdSource} source
+ * @param {number} total
+ */
+export function settleLength(source, total) {
+    if (source && Number.isInteger(total)) settledLengths.set(source, total);
+}
+
+/**
+ * Whether a snapshot's length is known: held ids, or a source that was counted. A paged list
+ * opened on its first page is not, until its count comes back.
+ * @param {ListSnapshot | null | undefined} list
+ */
+export function isSettled(list) {
+    return !list || !('source' in list) || !list.provisional || settledLengths.has(list.source);
+}
 
 export const DEFAULT_WINDOW_SIZE = 50;
 export const DEFAULT_CACHE_SIZE = 512;
@@ -59,7 +91,7 @@ export async function indexInList(list, id) {
 /** @param {ListSnapshot | null | undefined} list */
 export function listLength(list) {
     if (!list) return 0;
-    return 'source' in list ? list.length : list.ids.length;
+    return 'source' in list ? snapshotLength(list) : list.ids.length;
 }
 
 const noop = () => {};
@@ -410,6 +442,7 @@ export function createPositionList({
          */
         async setSource(next, { reset = false } = {}) {
             const total = await next.count();
+            settleLength(next, total);
             if (reset) {
                 cache.clear();
                 absent.clear();
@@ -441,6 +474,7 @@ export function createPositionList({
             }
             replaceSource(next, page.length);
             idPageCache.set(0, page);
+            if (page.length < idPageSize) settleLength(next, page.length);
             return { length: page.length, exact: page.length < idPageSize };
         },
 
@@ -452,6 +486,7 @@ export function createPositionList({
          * @param {number} total
          */
         resolveLength(of, total) {
+            settleLength(of, total);
             if (source !== of || !Number.isInteger(total) || total === pagedLength) return length();
             if (total < pagedLength) {
                 replaceSource(of, total);
@@ -473,6 +508,7 @@ export function createPositionList({
             if (!source) return ids.length;
             const current = source;
             const total = await current.count();
+            settleLength(current, total);
             if (source !== current || total === pagedLength) return length();
             if (total < pagedLength || !current.growsAtEnd) {
                 replaceSource(current, total);
@@ -506,16 +542,23 @@ export function createPositionList({
          * @returns {ListSnapshot}
          */
         snapshotList() {
-            return source ? { source, length: pagedLength } : { ids: [...ids] };
+            if (!source) return { ids: [...ids] };
+            return settledLengths.has(source) ? { source, length: pagedLength } : { source, length: pagedLength, provisional: true };
         },
 
         /**
-         * Put back a list taken by `snapshotList`. A paged list keeps its length until `recount`.
+         * Put back a list taken by `snapshotList`. A paged list comes back at the length its source
+         * was last counted at, the snapshot's own if it never was.
          * @param {ListSnapshot | null | undefined} list
          */
         restoreList(list) {
             if (list && 'source' in list) {
-                if (source !== list.source || pagedLength !== list.length) replaceSource(list.source, list.length);
+                const total = snapshotLength(list);
+                if (source !== list.source || pagedLength !== total) {
+                    replaceSource(list.source, total);
+                    // A snapshot replayed from a session brings its first window along.
+                    if (Array.isArray(list.firstPage)) idPageCache.set(0, list.firstPage.slice(0, idPageSize));
+                }
             } else {
                 replaceIds(list && Array.isArray(list.ids) ? [...list.ids] : []);
             }

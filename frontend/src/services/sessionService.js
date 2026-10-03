@@ -7,7 +7,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { viewStore } from '../stores/viewStore.js';
-import { librarySource, searchSource } from '../stores/positionStore.js';
+import { librarySource, searchSource, positionsStore } from '../stores/positionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { getSearchState, setSearchState } from './positionService.js';
 import { logger } from '../utils/logger.js';
@@ -37,18 +37,21 @@ export async function saveSessionState() {
     }
 }
 
-// Replays a list origin into a positionList snapshot: a plain search or the library as a paged
-// list (its length only), a ranked or restricted search as its ids — bounded by the ranking limit
-// or by the list it searched within. An origin that no longer yields anything (positions deleted,
-// search now empty) falls back to the library.
+// Replays a list origin into a positionList snapshot: the library as a paged list (its length
+// only), a plain search as a paged list opened on its first window — as a search shows it, its
+// count left to the view once on screen (viewStore settle) — a ranked or restricted search as its
+// ids, bounded by the ranking limit or by the list it searched within. An origin that no longer
+// yields anything (positions deleted, search now empty) falls back to the library.
 async function resolveOriginList(origin) {
     if (origin && origin.kind === 'search' && origin.payload) {
         try {
             const payload = origin.payload;
             if (!payload.likeFilter && !payload.restrictToPositionIDs) {
                 const source = searchSource(payload);
-                const length = await source.count();
-                if (length > 0) return { source, length };
+                const firstPage = await source.window(0, positionsStore.firstPageSize());
+                // A short window is the whole result: its length is known.
+                const provisional = firstPage.length >= positionsStore.firstPageSize();
+                if (firstPage.length > 0) return { source, length: firstPage.length, provisional, firstPage };
             } else {
                 const ids = payload.likeFilter ? ((await RankPositionIDsByFilters(payload, (await GetLikeLimit()) || 0)) || []).map((n) => n.id) : await LoadPositionIDsByFilters(payload);
                 if (ids && ids.length > 0) return { ids };

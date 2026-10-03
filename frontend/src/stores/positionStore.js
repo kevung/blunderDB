@@ -80,12 +80,13 @@ export function openLibrary(options = {}) {
 
 /**
  * Every id of the browsed list other than the library: held, or read whole from a paged search
- * result — for an operation that sends the ids themselves (an export), bounded by that result.
+ * result — for an operation that sends the ids themselves (an export). Read to the end, not to
+ * the list's length: while the result is still being counted that length is its first page.
  * @returns {Promise<number[]>}
  */
 export async function listedIds() {
     const list = positionsStore.snapshotList();
-    const ids = 'source' in list ? await list.source.window(0, list.length) : list.ids;
+    const ids = 'source' in list ? await list.source.window(0, 0) : list.ids;
     return /** @type {number[]} */ (ids.filter((id) => id != null));
 }
 

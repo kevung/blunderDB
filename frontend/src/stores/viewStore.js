@@ -1,6 +1,6 @@
 import { writable, get } from 'svelte/store';
 import { positionStore, positionsStore, matchContextStore, emptyPosition } from './positionStore';
-import { indexInList, listLength } from './positionList.js';
+import { indexInList, listLength, isSettled } from './positionList.js';
 import { analysisStore, selectedMoveStore } from './analysisStore';
 import { currentPositionIndexStore, activeTabStore, commentTextStore, statusBarModeStore } from './uiStore';
 import { listOriginStore, LIBRARY_ORIGIN } from './listOriginStore';
@@ -52,6 +52,24 @@ let nextViewId = 2;
 function createViewStore() {
     const views = writable([createDefaultView(1)]);
     const activeViewId = writable(1);
+    // Counts a paged list put back before its length was known (positionService, which imports
+    // this store: handed in rather than imported).
+    /** @type {(options: { positionId?: number | null }) => unknown} */
+    let settleList = () => undefined;
+
+    /** @param {(options: { positionId?: number | null }) => unknown} fn */
+    function setListSettler(fn) {
+        settleList = fn;
+    }
+
+    // A view whose list or position is still to be found asks for it once it is on screen; only
+    // the list on screen is counted, so restoring several views scans for one.
+    function settle(view) {
+        const positionId = view.pendingPositionId ?? null;
+        if (positionId == null && isSettled(view.list)) return;
+        views.update((vs) => vs.map((v) => (v.id === view.id ? { ...v, pendingPositionId: null } : v)));
+        Promise.resolve(settleList({ positionId })).catch(() => {});
+    }
 
     function saveCurrentViewState() {
         const currentId = get(activeViewId);
@@ -107,6 +125,7 @@ function createViewStore() {
         if (target) {
             activeViewId.set(viewId);
             restoreViewState(target);
+            settle(target);
         }
     }
 
@@ -166,8 +185,8 @@ function createViewStore() {
                     selectedMove: v.selectedMove,
                     activeTab: v.activeTab || 'analysis',
                     commentText: v.commentText || '',
-                    mode,
-                    previousMode: v.previousMode || 'NORMAL'
+                    mode: replayable ? mode : 'NORMAL',
+                    previousMode: replayable ? v.previousMode || 'NORMAL' : 'NORMAL'
                 };
             })
         });
@@ -183,17 +202,34 @@ function createViewStore() {
 
             nextViewId = data.nextViewId || data.views.length + 1;
 
+            // Side by side: each replay reads at most a first window, as a search does.
+            const lists = await Promise.all(data.views.map(async (sv) => (await resolveListFn(sv.origin || LIBRARY_ORIGIN)) || { ids: [] }));
             const restoredViews = [];
-            for (const sv of data.views) {
+            for (const [i, sv] of data.views.entries()) {
                 const origin = sv.origin || LIBRARY_ORIGIN;
-                const list = (await resolveListFn(origin)) || { ids: [] };
-                let positionIndex = sv.positionId != null ? await indexInList(list, sv.positionId) : -1;
+                const list = lists[i];
+                // A list known only by its first page is not ranked here: the rank of a position
+                // past it is a scan, run once the view is on screen (settle).
+                let positionIndex = -1;
+                let pendingPositionId = null;
+                if (sv.positionId != null) {
+                    if (isSettled(list)) positionIndex = await indexInList(list, sv.positionId);
+                    else {
+                        positionIndex = Array.isArray(list.firstPage) ? list.firstPage.indexOf(sv.positionId) : -1;
+                        if (positionIndex < 0) pendingPositionId = sv.positionId;
+                    }
+                }
                 if (positionIndex < 0) positionIndex = Math.min(sv.positionIndex || 0, Math.max(listLength(list) - 1, 0));
+                // A match or a collection reopens on the library (serialize): as the library.
+                const savedMode = (sv.mode === 'EPC' ? 'EVAL' : sv.mode) || 'NORMAL';
+                const mode = savedMode === 'MATCH' || savedMode === 'COLLECTION' ? 'NORMAL' : savedMode;
+                const previousMode = sv.previousMode === 'MATCH' || sv.previousMode === 'COLLECTION' ? 'NORMAL' : sv.previousMode || 'NORMAL';
                 restoredViews.push({
                     id: sv.id,
                     name: sv.name,
                     list,
                     positionId: sv.positionId ?? null,
+                    pendingPositionId,
                     origin,
                     positionIndex,
                     // No board yet: from the cache, or the index effect (getPosition).
@@ -203,8 +239,8 @@ function createViewStore() {
                     // Old names (`epc` tab, `EPC` mode) reopen as Eval.
                     activeTab: normalizeTabId(sv.activeTab) || 'analysis',
                     commentText: sv.commentText || '',
-                    mode: (sv.mode === 'EPC' ? 'EVAL' : sv.mode) || 'NORMAL',
-                    previousMode: sv.previousMode || 'NORMAL',
+                    mode,
+                    previousMode,
                     matchContext: createDefaultMatchContext()
                 });
             }
@@ -218,6 +254,7 @@ function createViewStore() {
             positionsStore.restoreList(target.list);
             await positionsStore.ensureIds(target.positionIndex, target.positionIndex);
             restoreViewState(target);
+            settle(target);
             return true;
         } catch (e) {
             logger.error('Error deserializing views:', e);
@@ -254,7 +291,8 @@ function createViewStore() {
         selectNextView,
         saveCurrentViewState,
         serialize,
-        deserialize
+        deserialize,
+        setListSettler
     };
 }
 

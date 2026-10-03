@@ -24,6 +24,7 @@ import { epcDataStore, resetEpcReveal } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { listOriginStore, searchOrigin, LIBRARY_ORIGIN } from '../stores/listOriginStore.js';
 import { viewStore } from '../stores/viewStore.js';
+import { isSettled } from '../stores/positionList.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, activeTabStore } from '../stores/uiStore.js';
 import { rankedDistancesStore, rankedTargetStore } from '../stores/rankedStore.js';
 import { GetLikeLimit, GetLikeMaxDistance } from '../../wailsjs/go/main/Config.js';
@@ -371,6 +372,48 @@ export function cancelSearch() {
     setStatusBarMessage(tMsg(search.shown > 0 ? 'status.searchPartial' : 'status.searchCancelled', { n: search.shown }));
 }
 
+/**
+ * Count the paged list on screen when it was put back on its first page alone (a view restored
+ * from the session, or switched to before its count came back), and find `positionId` in it when
+ * the first page did not hold it. It runs as a search does: in the background, given up for
+ * Escape or a new search, and a rank that comes back after the user moved is not applied.
+ * @param {{ positionId?: number | null }} [options]
+ */
+export async function settleDisplayedList({ positionId = null } = {}) {
+    const list = positionsStore.snapshotList();
+    // A running search owns the list being counted: its own count settles it.
+    if (activeSearch || !('source' in list) || (isSettled(list) && positionId == null)) return;
+    const source = list.source;
+    statusBeforeSearch = get(statusBarTextStore);
+    const generation = ++searchGeneration;
+    const stale = () => generation !== searchGeneration;
+    const search = { generation, shown: list.length, timer: null, unregister: closeOnEscape(() => cancelSearch()) };
+    activeSearch = search;
+    const indexAtStart = get(currentPositionIndexStore);
+    try {
+        if (!isSettled(list)) {
+            const found = await source.count();
+            if (stale()) return;
+            positionsStore.resolveLength(source, found);
+            search.shown = 0;
+        }
+        if (positionId != null) {
+            const index = await source.indexOf(positionId);
+            if (stale()) return;
+            if (index >= 0 && positionsStore.isSource(source) && get(currentPositionIndexStore) === indexAtStart) {
+                currentPositionIndexStore.set(index);
+            }
+        }
+    } catch (error) {
+        if (stale()) return;
+        logger.error('could not count the restored list:', error);
+    } finally {
+        if (!stale()) endSearchUI();
+    }
+}
+
+viewStore.setListSettler(settleDisplayedList);
+
 // One options object, not positional arguments: a wrong index would silently
 // shift every later filter and answer a different question.
 export async function loadPositionsByFilters({
@@ -439,15 +482,19 @@ export async function loadPositionsByFilters({
 
     // Feedback for the query itself, which can take a moment on a large database. Set before
     // the backend call so the user sees it immediately, not after the fact.
+    // The generation moves before the await below: a window of the replaced search that lands
+    // while CancelSearch is pending must already find itself stale.
+    const generation = ++searchGeneration;
+    const stale = () => generation !== searchGeneration;
     const replacing = activeSearch !== null;
     if (replacing) {
         endSearchUI();
         // Awaited: the stale scan must be stopped before the new one is asked for.
         await CancelSearch()?.catch?.(() => {});
+        if (stale()) return;
     } else {
         statusBeforeSearch = get(statusBarTextStore);
     }
-    const generation = ++searchGeneration;
     const startedAt = Date.now();
     const search = {
         generation,
@@ -459,7 +506,6 @@ export async function loadPositionsByFilters({
         setStatusBarMessage(tMsg('status.searchingElapsed', { seconds: Math.round((Date.now() - startedAt) / 1000) }));
     }, 1000);
     activeSearch = search;
-    const stale = () => generation !== searchGeneration;
     setStatusBarMessage(tMsg('status.searching'));
     document.body.style.cursor = 'wait';
 

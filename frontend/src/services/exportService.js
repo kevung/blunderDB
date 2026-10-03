@@ -47,6 +47,11 @@ export async function exportDatabase() {
         logger.log('Exporting to:', exportFilePath);
         pendingExportPath = exportFilePath;
 
+        // Read once: a paged search result is read whole for this, a full scan.
+        /** @type {Promise<number[]> | null} */
+        let listed = null;
+        const exportedIds = () => (listed ??= listedIds());
+
         try {
             const matches = await GetAllMatches();
             exportMatchesStore.set(matches || []);
@@ -76,7 +81,7 @@ export async function exportDatabase() {
             // The whole library covers every collection: no id list to send.
             const coverage = browsingLibrary()
                 ? Object.fromEntries((get(collectionsStore) || []).map((/** @type {any} */ c) => [c.id, c.positionCount ?? 0]))
-                : (await CollectionCoverage(await listedIds())) || {};
+                : (await CollectionCoverage(await exportedIds())) || {};
             exportCollectionCoverageStore.set(coverage);
         } catch (e) {
             logger.log('Could not measure collection coverage:', e);
@@ -97,7 +102,9 @@ export async function exportDatabase() {
             logger.log('Could not read the source metadata:', e);
         }
 
-        exportPositionCountStore.set(get(positionsStore).length);
+        // The ids the export will send, not the list's length: a search result still being
+        // counted is only as long as its first page.
+        exportPositionCountStore.set(browsingLibrary() ? get(positionsStore).length : (await exportedIds()).length);
         exportModalModeStore.set('metadata');
         openModal(MODAL.EXPORT_DATABASE);
     } catch (error) {

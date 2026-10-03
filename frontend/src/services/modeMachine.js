@@ -212,7 +212,8 @@ export function withDisplayedPositionIDs(run) {
     if (displayedMatchContext()?.isMatchMode || browsingLibrary() || !positionsStore.isPaged()) return run(displayedPositionIDs());
     const list = positionsStore.snapshotList();
     if (!('source' in list)) return run(displayedPositionIDs());
-    return list.source.window(0, list.length).then((ids) => run([...new Set(ids.filter((id) => id != null))]));
+    // To the end, not to the list's length, which is the first page's while the count runs.
+    return list.source.window(0, 0).then((ids) => run([...new Set(ids.filter((id) => id != null))]));
 }
 
 /**

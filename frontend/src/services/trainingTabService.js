@@ -245,9 +245,11 @@ function bearoffQuestion(generated, key, positionId = null, loaded = null) {
  * les rares bearoffs d'une base. Elle ne juge pas : le domaine (4 à 15 pions)
  * reste en Go.
  *
- * Null (phases jamais calculées, aucun bearoff, ou résultat de recherche
- * parcouru par fenêtres, qu'on ne croise pas) : le tirage retombe sur la liste
- * entière.
+ * Une liste tenue entière restreint la recherche à ses ids ; un résultat de
+ * recherche parcouru par fenêtres est rejoué, sa requête restreinte à la phase.
+ *
+ * Null (phases jamais calculées, aucun bearoff) : le tirage retombe sur la
+ * liste entière.
  *
  * @returns {Promise<{ source: import('../stores/positionList.js').IdSource, length: number } | null>}
  */
@@ -255,13 +257,25 @@ function bearoffList() {
     if (!bearoffPhaseIndices) {
         bearoffPhaseIndices = (async () => {
             /** @type {any} */
-            const filters = { filter: emptySearchBoardPosition(), excludeFilter: emptySearchBoardPosition(), gamePhaseFilter: 'bearoff' };
+            let filters = { filter: emptySearchBoardPosition(), excludeFilter: emptySearchBoardPosition(), gamePhaseFilter: 'bearoff' };
             if (!browsingLibrary()) {
-                // A list held whole restricts the count; a paged search result is not crossed.
                 const held = get(positionsStore).ids;
-                if (!held) return null;
-                filters.restrictToPositionIDs = held.filter((id) => id != null).join(',');
-                if (!filters.restrictToPositionIDs) return null;
+                if (held) {
+                    filters.restrictToPositionIDs = held.filter((id) => id != null).join(',');
+                    if (!filters.restrictToPositionIDs) return null;
+                } else {
+                    // A paged search result: its own query, narrowed to the phase. A query that
+                    // already names phases without bearoff holds none.
+                    const list = positionsStore.snapshotList();
+                    const payload = 'source' in list ? /** @type {any} */ (list.source).payload : null;
+                    if (!payload) return null;
+                    const phases = String(payload.gamePhaseFilter || '')
+                        .split(';')
+                        .map((p) => p.trim().toLowerCase())
+                        .filter(Boolean);
+                    if (phases.length > 0 && !phases.includes('bearoff')) return null;
+                    filters = { ...payload, gamePhaseFilter: 'bearoff' };
+                }
             }
             try {
                 const source = searchSource(filters);
@@ -387,6 +401,17 @@ async function buildDecisionQuestion() {
     if (positionsStore.isPaged()) {
         // A paged list (the library) is drawn from, never walked whole.
         for (const id of await drawListIds(Math.min(length, MAX_DECISION_DRAWS * 2))) if (!decisionSeen.has(id)) candidates.push(id);
+        // Every draw can land on a position already read while others remain: walk on from a
+        // random rank, window by window, until unread ones turn up.
+        if (candidates.length === 0 && decisionSeen.size < length) {
+            const step = MAX_DECISION_DRAWS * 2;
+            const windows = Math.ceil(length / step);
+            const first = Math.floor(Math.random() * windows);
+            for (let k = 0; k < windows && candidates.length === 0; k++) {
+                const from = ((first + k) % windows) * step;
+                for (const id of await positionsStore.idsBetween(from, Math.min(length, from + step))) if (id != null && !decisionSeen.has(id)) candidates.push(id);
+            }
+        }
     } else {
         for (let index = 0; index < length; index++) {
             const id = positionsStore.idAt(index);

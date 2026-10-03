@@ -197,4 +197,15 @@ describe('a paged list opened on its first page', () => {
         list.resolveLength(source, 5);
         expect(get(list).length).toBe(1000);
     });
+    test('a snapshot taken while counting comes back at the settled length', async () => {
+        const { list } = makePaged();
+        const source = makeSource();
+        list.adoptFirstPage(source, await source.window(0, 1000));
+        const taken = list.snapshotList();
+        list.setIds([5, 6]);
+        list.resolveLength(source, MILLION);
+        expect(listLength(taken)).toBe(MILLION);
+        list.restoreList(taken);
+        expect(get(list).length).toBe(MILLION);
+    });
 });
