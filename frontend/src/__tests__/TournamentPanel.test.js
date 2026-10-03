@@ -143,6 +143,17 @@ describe('TournamentPanel — list view', () => {
         expect(screen.queryByPlaceholderText(/new tournament/i)).toBeNull();
     });
 
+    test('a single click highlights the row without opening the tournament', async () => {
+        renderOpen();
+        const row = (await screen.findByText('Blunder Cup')).closest('tr');
+
+        await fireEvent.click(row);
+
+        expect(row.classList.contains('selected')).toBe(true);
+        expect(get(selectedTournamentStore)).toBeNull();
+        expect(GetTournamentMatches).not.toHaveBeenCalled();
+    });
+
     test('a blank name does not create a tournament', async () => {
         renderOpen();
         await screen.findByText('Blunder Cup');

@@ -72,6 +72,7 @@
 
     // Sorting state, cycled by the table header (asc → desc → unsorted)
     let sort = $state({ column: null, direction: 'asc' });
+    let highlightedId = $state(null); // a single click only highlights; opening is the double-click
     let listTable = $state(null); // PanelTable of the tournament list, mounted while none is selected
     const sortedTournaments = $derived(sortTournaments(tournaments, sort));
 
@@ -552,6 +553,8 @@
                     rows={sortedTournaments}
                     columns={tournamentColumns}
                     bind:sort
+                    selectedKey={highlightedId}
+                    onSelect={(tournament) => (highlightedId = tournament.id)}
                     sortOptions={{ tristate: true }}
                     rowClass={(tournament) => (tournamentEdit.isEditing(tournament.id) ? 'editing-row' : '')}
                     onActivate={(tournament) => {
