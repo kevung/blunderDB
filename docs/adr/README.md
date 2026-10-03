@@ -74,3 +74,4 @@ that come out of them.
 | [0057](0057-la-transcription-et-la-direction-s-exposent-par-l-api-a-un-client-externe.md) | La transcription et la direction s'exposent par l'API à un client externe | `/v1/` transcription & direction, If-Match, SSE, `serve --direction`/`--transcription` |
 | [0058](0058-une-table-porte-ses-proprietes-et-une-rencontre-se-partage-en-salles.md) | Une table porte ses propriétés, et une Rencontre se partage en salles | `table_setting`, salles d'une épreuve, table réservée/attitrée, vue Toutes les tables |
 | [0059](0059-blunderdb-s-offre-a-un-assistant-par-mcp.md) | blunderDB s'offre à un assistant par MCP | `pkg/blunderdb/mcp`, `/mcp`, `blunderdb mcp`, `--mcp-write` |
+| [0060](0060-un-rollout-est-sa-propre-configuration-et-se-stocke-a-cote.md) | Un rollout est sa propre Configuration, et se stockera à côté de l'Analysis | `pkg/blunderdb/engine/rollout`, recette P8, presets Rapide/Standard, `blunderdb rollout` |

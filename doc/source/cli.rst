@@ -83,6 +83,7 @@ Commandes disponibles
    "match", "Affiche les positions et analyses d'un match."
    "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."
    "anki", "Paquets de répétition espacée (liste, statistiques, prévision, synchronisation)."
+   "rollout", "Joue une position jusqu'au bout pour départager ses coups ou sa décision de videau (XGID ou OGID)."
    "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID ou OGID)."
    "bearoff", "Fabrique, liste, vérifie et supprime les bases de sortie."
    "analyze", "Écrit une analyse gammonNet pour chaque position qui n'en a aucune."
@@ -1054,6 +1055,57 @@ différentes serait fausse exactement là où le score compte.
 Sortie ``text`` : une grille dont les lignes sont les points restant à faire
 au joueur au trait, les colonnes ceux de l'adversaire, puis la légende des
 sigles ``ND`` / ``DT`` / ``DP`` / ``TG`` et la raison de chaque case refusée.
+
+.. _cli_rollout:
+
+rollout — Rollout d'une position
+---------------------------------
+
+Joue une position un grand nombre de fois avec gammonNet, pour trancher ce
+qu'une recherche ne tranche pas : deux coups à quelques millièmes, ou une
+décision de videau où le modèle hésite. Avec des dés, ce sont ses coups qui
+sont joués (les meilleurs à la profondeur du rollout, au moins 2 ply, ou ceux nommés par
+``--move``) ; sans dés, sa décision de videau (Pas de double et Double/Prend ;
+Double/Passe vaut +1 exactement). Calcul pur : rien n'est enregistré, aucune
+base n'est ouverte.
+
+.. code-block:: bash
+
+   ./blunderdb rollout [options] '<XGID|OGID>'
+
+**Options:**
+
+* ``--preset`` — Réglage de départ : ``fast`` (défaut : 216 parties tronquées
+  à 7 demi-coups, arrêt à JSD 3 après 108) ou ``standard`` (1296 parties
+  tronquées à 11, arrêt à JSD 3 après 324). Les deux jouent à 0 ply — le
+  réseau seul, pour les coups, le videau et les feuilles ; ``--ply 1`` ou plus
+  joue plus profond, pour un temps plusieurs fois plus long. Les options
+  suivantes remplacent le préréglage une à une.
+* ``--games``, ``--min-games``, ``--truncation``, ``--jsd``, ``--ply``,
+  ``--candidates`` — Les paramètres du rollout (``--truncation 0`` joue chaque
+  partie jusqu'au bout, ``--jsd 0`` n'arrête jamais avant la fin).
+* ``--move`` — Un coup à jouer, en notation blunderDB (répétable).
+* ``--seed`` — Graine des dés, fixe par défaut : la même commande donne les
+  mêmes nombres.
+* ``--jobs`` — Parties jouées en parallèle (défaut : une par cœur) ; seul le
+  temps change.
+* ``--format`` — Format de sortie : ``text`` ou ``json`` (défaut : ``text``).
+
+Tous les candidats jouent les mêmes dés, la chance de chaque lancer est
+retirée du résultat de chaque partie (réduction de variance), les deux premiers
+lancers sont stratifiés et une partie s'arrête là où la base de sortie
+two-sided la couvre. Chaque ligne donne l'équité, son intervalle à 95 %, le
+nombre de parties jouées et la JSD, l'écart au meilleur en écarts-types de la
+différence. Le videau est joué pendant les parties : le classement est plus
+sûr que l'équité absolue. Ctrl-C affiche ce que les parties terminées ont
+établi.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb rollout 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'
+   ./blunderdb rollout --move '8/5 6/5' --move '24/23 13/10' '<XGID>'
 
 epc — Calculatrice EPC
 ------------------------
