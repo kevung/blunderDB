@@ -22,6 +22,7 @@ import { searchExcludePositionStore, emptySearchBoardPosition, boardHasCheckers 
 import { analysisStore } from '../stores/analysisStore.js';
 import { epcDataStore, resetEpcReveal } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
+import { listOriginStore, searchOrigin, LIBRARY_ORIGIN } from '../stores/listOriginStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, activeTabStore } from '../stores/uiStore.js';
 import { rankedDistancesStore, rankedTargetStore } from '../stores/rankedStore.js';
@@ -291,6 +292,7 @@ export async function loadAllPositions({ focusId = null } = {}) {
         activeCollectionStore.set(null);
 
         positionsStore.setIds(ids, { reset: true });
+        listOriginStore.set(LIBRARY_ORIGIN);
         if (ids.length > 0) {
             const focusIdx = focusId == null ? -1 : ids.indexOf(focusId);
             currentPositionIndexStore.set(-1);
@@ -569,6 +571,7 @@ export async function loadPositionsByFilters({
             activeCollectionStore.set(null);
 
             positionsStore.setIds(Array.isArray(ids) ? ids : []);
+            listOriginStore.set(searchOrigin(payload));
 
             if (get(currentPositionIndexStore) === 0) {
                 currentPositionIndexStore.set(1);

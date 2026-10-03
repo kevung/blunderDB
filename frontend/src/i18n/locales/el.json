@@ -1325,7 +1325,6 @@
         "importCompleted": "Η εισαγωγή ολοκληρώθηκε: {added} προστέθηκαν, {merged} συγχωνεύτηκαν, {skipped} παραλείφθηκαν",
         "jellyfishMatchImported": "Ο αγώνας Jellyfish TXT εισήχθη με επιτυχία (ID: {matchID})",
         "clipboardMatchImported": "Ο αγώνας εισήχθη από το πρόχειρο με επιτυχία (ID: {matchID})",
-        "sessionRestored": "Η συνεδρία αποκαταστάθηκε: {count} θέσεις, εμφανίζεται η #{index}",
         "unsupportedFileType": "Μη υποστηριζόμενος τύπος αρχείου: {exts}",
         "xgMatchImported": "Ο αγώνας XG εισήχθη με επιτυχία (ID: {matchID})",
         "xgpPosImported": "Η θέση XGP εισήχθη με επιτυχία (ID: {posID})",

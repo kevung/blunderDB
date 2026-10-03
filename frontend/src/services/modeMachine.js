@@ -52,6 +52,7 @@ import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { epcDataStore } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
+import { listOriginStore, LIBRARY_ORIGIN } from '../stores/listOriginStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, PANEL, closePanel, activeTabStore } from '../stores/uiStore.js';
 import { activeCollectionStore, collectionPositionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
@@ -784,6 +785,7 @@ export async function exitCollectionMode() {
     try {
         const ids = (await ListPositionIDs()) || [];
         positionsStore.setIds(ids, { reset: true });
+        listOriginStore.set(LIBRARY_ORIGIN);
         if (ids.length > 0) {
             let targetIdx = ids.length - 1;
             if (lastViewedPosition && lastViewedPosition.id) {

@@ -1325,7 +1325,6 @@
         "importCompleted": "Importación completada: {added} añadidas, {merged} combinadas, {skipped} omitidas",
         "jellyfishMatchImported": "Partida Jellyfish TXT importada correctamente (ID: {matchID})",
         "clipboardMatchImported": "Partida importada desde el portapapeles correctamente (ID: {matchID})",
-        "sessionRestored": "Sesión restaurada: {count} posiciones, mostrando #{index}",
         "unsupportedFileType": "Tipo(s) de archivo no admitido(s): {exts}",
         "xgMatchImported": "Partida XG importada correctamente (ID: {matchID})",
         "xgpPosImported": "Posición XGP importada correctamente (ID: {posID})",

@@ -2,6 +2,7 @@ import { writable, get } from 'svelte/store';
 import { positionStore, positionsStore, matchContextStore, emptyPosition } from './positionStore';
 import { analysisStore, selectedMoveStore } from './analysisStore';
 import { currentPositionIndexStore, activeTabStore, commentTextStore, statusBarModeStore } from './uiStore';
+import { listOriginStore, LIBRARY_ORIGIN } from './listOriginStore';
 import { logger } from '../utils/logger.js';
 import { normalizeTabId } from '../services/tabOrder.js';
 
@@ -32,6 +33,7 @@ function createDefaultView(id) {
         id,
         name: `#${id}`,
         ids: [],
+        origin: LIBRARY_ORIGIN,
         positionIndex: 0,
         position: emptyPosition(),
         analysis: createDefaultAnalysis(),
@@ -57,6 +59,7 @@ function createViewStore() {
                     return {
                         ...v,
                         ids: get(positionsStore).ids,
+                        origin: get(listOriginStore),
                         positionIndex: get(currentPositionIndexStore),
                         position: JSON.parse(JSON.stringify(get(positionStore))),
                         analysis: JSON.parse(JSON.stringify(get(analysisStore))),
@@ -75,6 +78,7 @@ function createViewStore() {
     function restoreViewState(view) {
         // The position cache is shared by every view (keyed by id): only the id list moves.
         positionsStore.setIds(view.ids || []);
+        listOriginStore.set(view.origin || LIBRARY_ORIGIN);
         // A view restored from disk has no board: cache, else the index effect fetches it.
         const cached = view.position ? null : positionsStore.peek(view.positionIndex || 0);
         positionStore.set(view.position ?? (cached ? JSON.parse(JSON.stringify(cached)) : emptyPosition()));
@@ -135,45 +139,56 @@ function createViewStore() {
         views.update((vs) => vs.map((v) => (v.id === viewId ? { ...v, name: newName } : v)));
     }
 
-    // Serialize all views for persistence (only stores position IDs, not full objects)
+    // Serialize all views for persistence: each view's definition (name, where its list comes
+    // from, the id of the position it shows), never the list itself, so the payload does not
+    // grow with the library.
     function serialize() {
         saveCurrentViewState();
         const vs = get(views);
         return JSON.stringify({
             nextViewId,
             activeViewId: get(activeViewId),
-            views: vs.map((v) => ({
-                id: v.id,
-                name: v.name,
-                positionIds: (v.ids || []).filter((id) => id != null),
-                positionIndex: v.positionIndex || 0,
-                selectedMove: v.selectedMove,
-                activeTab: v.activeTab || 'analysis',
-                commentText: v.commentText || '',
-                mode: v.mode || 'NORMAL',
-                previousMode: v.previousMode || 'NORMAL'
-            }))
+            views: vs.map((v) => {
+                const mode = v.mode || 'NORMAL';
+                // A match or a collection is not replayable from the library: reopen on the library.
+                const replayable = mode !== 'MATCH' && mode !== 'COLLECTION';
+                return {
+                    id: v.id,
+                    name: v.name,
+                    origin: replayable && v.origin ? v.origin : LIBRARY_ORIGIN,
+                    positionId: (v.ids || [])[v.positionIndex || 0] ?? null,
+                    positionIndex: v.positionIndex || 0,
+                    selectedMove: v.selectedMove,
+                    activeTab: v.activeTab || 'analysis',
+                    commentText: v.commentText || '',
+                    mode,
+                    previousMode: v.previousMode || 'NORMAL'
+                };
+            })
         });
     }
 
-    // Restore views, dropping saved ids no longer in the database (ListPositionIDs); the rest
-    // keep their order and load on demand.
-    async function deserialize(json, listPositionIdsFn) {
+    // Restore views: each list is rebuilt by replaying its origin (resolveIdsFn(origin) → ids),
+    // and the current position is found again by id, the saved index being the fallback.
+    async function deserialize(json, resolveIdsFn) {
         try {
             const data = JSON.parse(json);
             if (!data || !data.views || data.views.length === 0) return false;
 
-            const stored = new Set((await listPositionIdsFn()) || []);
-
             nextViewId = data.nextViewId || data.views.length + 1;
 
-            const restoredViews = data.views.map((sv) => {
-                const ids = (sv.positionIds || []).filter((id) => stored.has(id));
-                return {
+            const restoredViews = [];
+            for (const sv of data.views) {
+                const origin = sv.origin || LIBRARY_ORIGIN;
+                const ids = (await resolveIdsFn(origin)) || [];
+                let positionIndex = sv.positionId != null ? ids.indexOf(sv.positionId) : -1;
+                if (positionIndex < 0) positionIndex = Math.min(sv.positionIndex || 0, Math.max(ids.length - 1, 0));
+                restoredViews.push({
                     id: sv.id,
                     name: sv.name,
                     ids,
-                    positionIndex: Math.min(sv.positionIndex || 0, Math.max(ids.length - 1, 0)),
+                    origin,
+                    positionIndex,
                     // No board yet: from the cache, or the index effect (getPosition).
                     position: null,
                     analysis: createDefaultAnalysis(),
@@ -184,8 +199,8 @@ function createViewStore() {
                     mode: (sv.mode === 'EPC' ? 'EVAL' : sv.mode) || 'NORMAL',
                     previousMode: sv.previousMode || 'NORMAL',
                     matchContext: createDefaultMatchContext()
-                };
-            });
+                });
+            }
 
             views.set(restoredViews);
             const targetId = data.activeViewId || restoredViews[0].id;

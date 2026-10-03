@@ -1325,7 +1325,6 @@
         "importCompleted": "Import abgeschlossen: {added} hinzugefügt, {merged} zusammengeführt, {skipped} übersprungen",
         "jellyfishMatchImported": "Jellyfish-TXT-Match erfolgreich importiert (ID: {matchID})",
         "clipboardMatchImported": "Match erfolgreich aus der Zwischenablage importiert (ID: {matchID})",
-        "sessionRestored": "Sitzung wiederhergestellt: {count} Positionen, Anzeige von #{index}",
         "unsupportedFileType": "Nicht unterstützte(r) Dateityp(en): {exts}",
         "xgMatchImported": "XG-Match erfolgreich importiert (ID: {matchID})",
         "xgpPosImported": "XGP-Position erfolgreich importiert (ID: {posID})",

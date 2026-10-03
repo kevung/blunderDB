@@ -1325,7 +1325,6 @@
         "importCompleted": "インポート完了：{added}個追加、{merged}個マージ、{skipped}個スキップ",
         "jellyfishMatchImported": "Jellyfish TXTマッチを正常にインポートしました（ID: {matchID}）",
         "clipboardMatchImported": "クリップボードからマッチを正常にインポートしました（ID: {matchID}）",
-        "sessionRestored": "セッションを復元しました：{count}個のポジション、#{index}を表示中",
         "unsupportedFileType": "サポートされていないファイルタイプ：{exts}",
         "xgMatchImported": "XGマッチを正常にインポートしました（ID: {matchID}）",
         "xgpPosImported": "XGPポジションを正常にインポートしました（ID: {posID}）",

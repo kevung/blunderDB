@@ -1325,7 +1325,6 @@
         "importCompleted": "Tuonti valmis: {added} lisätty, {merged} yhdistetty, {skipped} ohitettu",
         "jellyfishMatchImported": "Jellyfish TXT -ottelu tuotu onnistuneesti (ID: {matchID})",
         "clipboardMatchImported": "Ottelu tuotu leikepöydältä onnistuneesti (ID: {matchID})",
-        "sessionRestored": "Istunto palautettu: {count} positiota, näytetään #{index}",
         "unsupportedFileType": "Tuettamaton tiedostotyyppi: {exts}",
         "xgMatchImported": "XG-ottelu tuotu onnistuneesti (ID: {matchID})",
         "xgpPosImported": "XGP-positio tuotu onnistuneesti (ID: {posID})",

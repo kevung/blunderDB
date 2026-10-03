@@ -1325,7 +1325,6 @@
         "importCompleted": "Импорт завершён: добавлено — {added}, объединено — {merged}, пропущено — {skipped}",
         "jellyfishMatchImported": "Матч Jellyfish TXT успешно импортирован (ID: {matchID})",
         "clipboardMatchImported": "Матч успешно импортирован из буфера обмена (ID: {matchID})",
-        "sessionRestored": "Сессия восстановлена: {count} позиций, показана #{index}",
         "unsupportedFileType": "Неподдерживаемый тип файла: {exts}",
         "xgMatchImported": "Матч XG успешно импортирован (ID: {matchID})",
         "xgpPosImported": "Позиция XGP успешно импортирована (ID: {posID})",
