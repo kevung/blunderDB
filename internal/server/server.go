@@ -238,6 +238,9 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 // /metrics. Derived rather than listed so a new probe is public the day it
 // lands, and a new domain route can never be.
 //
+// /mcp is not public either: its tools read and write the tenant's data
+// through /v1.
+//
 // /ops/ is NOT public, and the exclusion is explicit rather than "everything
 // outside /v1": vacuum and purge live under /ops/ and are the two most
 // dangerous calls in the daemon. A purge names the tenant it destroys in the
@@ -246,7 +249,7 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 func (s *Server) publicPaths() map[string]bool {
 	public := make(map[string]bool)
 	for _, rt := range s.routes() {
-		if strings.HasPrefix(rt.pattern, "/v1/") || strings.HasPrefix(rt.pattern, "/ops/") {
+		if strings.HasPrefix(rt.pattern, "/v1/") || strings.HasPrefix(rt.pattern, "/ops/") || rt.pattern == mcpPath {
 			continue
 		}
 		public[rt.pattern] = true

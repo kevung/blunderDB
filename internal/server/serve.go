@@ -66,6 +66,7 @@ type serveConfig struct {
 	enableMetrics  bool
 	enableWebUI    bool
 	enableDir      bool
+	mcpWrite       bool
 	transcription  bool
 	transcriptTTL  time.Duration
 	corsOrigin     string
@@ -104,6 +105,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		logLevel      = fs.String("log-level", envOr("BLUNDERDB_LOG_LEVEL", "info"), "log level: debug|info|warn|error")
 		enableMetrics = fs.Bool("metrics", envBoolOr("BLUNDERDB_METRICS", true), "expose /metrics (Prometheus)")
 		enableWebUI   = fs.Bool("web", envBoolOr("BLUNDERDB_WEB", false), "serve the read-mostly web page under /app/ (off by default: this daemon authenticates nobody — see ADR-0005)")
+		mcpWrite      = fs.Bool("mcp-write", envBoolOr("BLUNDERDB_MCP_WRITE", false), "offer the write tools of /mcp — save a position, comment it, fill a collection (off by default, for the reason --direction is)")
 		enableDir     = fs.Bool("direction", envBoolOr("BLUNDERDB_DIRECTION", false), "serve the gestures of a tournament Direction and of a Rencontre — results, pairings, rooms (off by default: this daemon authenticates nobody, so put a proxy that does in front — see ADR-0005, ADR-0057)")
 		transcribe    = fs.Bool("transcription", envBoolOr("BLUNDERDB_TRANSCRIPTION", false), "serve the transcription gestures (off by default: this daemon authenticates nobody — see ADR-0005, ADR-0057)")
 		transcriptTTL = fs.Duration("transcription-ttl", defaultTranscriptionTTL, "close a transcription session idle for longer (its undo stack goes, nothing typed does)")
@@ -135,6 +137,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		enableMetrics:  *enableMetrics,
 		enableWebUI:    *enableWebUI,
 		enableDir:      *enableDir,
+		mcpWrite:       *mcpWrite,
 		transcription:  *transcribe,
 		transcriptTTL:  *transcriptTTL,
 		corsOrigin:     *corsOrigin,
@@ -219,6 +222,7 @@ func RunServe(args []string) error {
 		EnableMetrics:    cfg.enableMetrics,
 		EnableWebUI:      cfg.enableWebUI,
 		EnableDirection:  cfg.enableDir,
+		MCPWrite:         cfg.mcpWrite,
 		Transcription:    cfg.transcription,
 		TranscriptionTTL: cfg.transcriptTTL,
 		EventsDSN:        eventsDSN(cfg.backend, cfg.dsn),
@@ -239,6 +243,9 @@ func RunServe(args []string) error {
 	logger.Warn("authentication is delegated to the reverse-proxy; do not expose this daemon to the public internet")
 	if cfg.enableDir {
 		logger.Warn("--direction: the gestures of a Direction are served — anyone the proxy lets through can enter results; restrict /v1/directions.* and /v1/rencontres.* at the proxy")
+	}
+	if cfg.mcpWrite {
+		logger.Warn("--mcp-write: the write tools of /mcp are served — anyone the proxy lets through can add positions, comments and collections")
 	}
 	return srv.Run(ctx)
 }

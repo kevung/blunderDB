@@ -125,6 +125,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"tournament":  cli.runTournament,
 		"bearoff":     cli.runBearoff,
 		"healthcheck": cli.runHealthcheck,
+		"mcp":         cli.runMCP,
 		"completion":  cli.runCompletion,
 		"help":        func([]string) error { cli.printUsage(); return nil },
 		"version":     func([]string) error { cli.printVersion(); return nil },
@@ -192,6 +193,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  call      Invoke a daemon handler in-process (scripting/tests)")
 	fmt.Println("  migrate   Copy a SQLite database into PostgreSQL under a tenant")
 	fmt.Println("  healthcheck  Probe a running daemon's /readyz; exit 0 when it is ready")
+	fmt.Println("  mcp          Serve the database's tools to an AI assistant (Model Context Protocol, stdio)")
 	fmt.Println()
 	fmt.Println("Use 'blunderdb <command> --help' for more information about a command.")
 }

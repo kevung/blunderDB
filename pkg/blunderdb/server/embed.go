@@ -69,6 +69,11 @@ type Config struct {
 	// default identity; use issuance.LoadOrCreateIdentity (as the daemon's
 	// --identity-dir does).
 	Identity *issuance.Identity
+
+	// MCPWrite offers the write tools of the /mcp endpoint the Handler
+	// serves beside /v1; its read tools are always served, scoped by the same
+	// X-Tenant-ID. Off by default: the embedder decides who may write.
+	MCPWrite bool
 }
 
 // Bootstrap opens the storage backend, runs migrations, installs RLS policies
@@ -118,6 +123,7 @@ func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error)
 		CORSAllowOrigin:    cfg.CORSAllowOrigin,
 		RequestTimeout:     cfg.RequestTimeout,
 		StreamTimeout:      cfg.StreamTimeout,
+		MCPWrite:           cfg.MCPWrite,
 		Identity:           cfg.Identity,
 	})
 	if err != nil {

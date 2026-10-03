@@ -68,6 +68,10 @@ type Options struct {
 	// authenticates nobody is the operator's decision. The reads are served
 	// either way.
 	Transcription bool
+	// MCPWrite offers the write tools of /mcp (save a position, comment it,
+	// fill a collection). OFF by default for the reason EnableDirection is;
+	// the read tools are served either way.
+	MCPWrite bool
 
 	// SessionPerCall lets a transcription gesture name no session: it then
 	// uses the draft's live session or opens one. Right for `call`, where

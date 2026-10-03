@@ -2560,6 +2560,33 @@ Examples:
   blunderdb match --db database.db --id 1 --output match.json
 ```
 
+### `blunderdb mcp`
+
+```
+Usage: blunderdb mcp --db <file> [options]
+
+Serve a database's tools to an AI assistant over the Model Context Protocol,
+on stdin/stdout. The assistant starts this command itself; for Claude Code:
+
+  claude mcp add blunderdb -- blunderdb mcp --db /path/to/my.db
+
+The tools search positions with the application's query grammar, read a
+position and its analysis, explain an error, compute a player's statistics,
+list matches, tournaments and collections, and run a quiz. They only read,
+unless --write is given: then they may also save a position, comment one,
+create and fill a collection.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -write
+    	Also offer the tools that change the database
+
+Examples:
+  blunderdb mcp --db my.db
+  blunderdb mcp --db my.db --write
+```
+
 ### `blunderdb open`
 
 ```
