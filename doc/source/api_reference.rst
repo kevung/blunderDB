@@ -13,6 +13,18 @@ l'en-tête ``Idempotency-Key`` optionnel.
 
 .. code-block:: text
 
+   across
+     POST /v1/across.analysesLoadByIds             JSON
+     POST /v1/across.clubRanking                   JSON
+     POST /v1/across.collectionPositions           NDJSON
+     POST /v1/across.collectionsList               NDJSON
+     POST /v1/across.commentsByZobrist             NDJSON
+     POST /v1/across.matchMovePositions            NDJSON
+     POST /v1/across.matchesGet                    JSON
+     POST /v1/across.matchesList                   NDJSON
+     POST /v1/across.playerTable                   JSON
+     POST /v1/across.searchFind                    NDJSON
+     POST /v1/across.statsCompute                  JSON
    analyses
      POST /v1/analyses.delete                      JSON
      POST /v1/analyses.load                        JSON
@@ -23,10 +35,13 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/anki.buryCard                        JSON
      POST /v1/anki.createDeck                      JSON
      POST /v1/anki.createStudyDeck                 JSON
+     POST /v1/anki.deckPositionCount               JSON
+     POST /v1/anki.deckPositionIds                 JSON
      POST /v1/anki.deckPositions                   NDJSON
      POST /v1/anki.deckStats                       JSON
      POST /v1/anki.deleteDeck                      JSON
      POST /v1/anki.forecast                        JSON
+     POST /v1/anki.indexOfDeckPosition             JSON
      POST /v1/anki.linkedCard                      JSON
      POST /v1/anki.listDecks                       NDJSON
      POST /v1/anki.nextCard                        JSON
@@ -46,11 +61,14 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/collections.addPositions             JSON
      POST /v1/collections.collectionsOf            NDJSON
      POST /v1/collections.copyPosition             JSON
+     POST /v1/collections.countPositions           JSON
      POST /v1/collections.create                   JSON  (Idempotency-Key)
      POST /v1/collections.delete                   JSON
      POST /v1/collections.get                      JSON
+     POST /v1/collections.indexOfPosition          JSON
      POST /v1/collections.list                     NDJSON
      POST /v1/collections.movePosition             JSON
+     POST /v1/collections.positionIds              JSON
      POST /v1/collections.positionIndexMap         JSON
      POST /v1/collections.positions                NDJSON
      POST /v1/collections.removePosition           JSON
@@ -156,6 +174,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    maintenance
      POST /ops/maintenance.vacuum                  custom
    matches
+     POST /v1/matches.count                        JSON
      POST /v1/matches.createGame                   JSON
      POST /v1/matches.createMove                   JSON
      POST /v1/matches.delete                       JSON
@@ -176,6 +195,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/matches.updateComment                JSON
    metadata
      POST /v1/metadata.counts                      JSON
+     POST /v1/metadata.countsEstimate              JSON
      POST /v1/metadata.version                     JSON
    positions
      POST /v1/positions.count                      JSON

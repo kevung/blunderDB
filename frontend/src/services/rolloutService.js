@@ -5,7 +5,7 @@ import { get } from 'svelte/store';
 import { rolloutStore, rolloutChoiceStore, idleRollout } from '../stores/rolloutStore.js';
 import { positionStore } from '../stores/positionStore.js';
 import { statusBarTextStore, activeTabStore } from '../stores/uiStore.js';
-import { displayedPositionIDs } from './modeMachine.js';
+import { withDisplayedPositionIDs } from './modeMachine.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { confirmAction } from './confirmService.js';
 import { tMsg, t } from '../i18n';
@@ -271,7 +271,8 @@ export async function startRolloutOfSearch(settings) {
     ensureRolloutEvents();
     const problem = settingsProblem(settings);
     if (problem) return refuse(problem);
-    const ids = displayedPositionIDs();
+    // A paged list (a collection, search results) holds no ids of its own: read whole first.
+    const ids = (await withDisplayedPositionIDs((listed) => listed)) ?? [];
     const wire = settingsForWire(settings);
     let total;
     try {

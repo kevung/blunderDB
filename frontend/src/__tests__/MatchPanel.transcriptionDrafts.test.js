@@ -20,7 +20,9 @@ import { tick } from 'svelte';
 const drafts = vi.hoisted(() => ({ rows: /** @type {any[]} */ ([]) }));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    GetAllMatches: vi.fn(() => Promise.resolve([])),
+    ListMatches: vi.fn(() => Promise.resolve([])),
+    CountMatches: vi.fn(() => Promise.resolve(0)),
+    GetMatchByID: vi.fn(() => Promise.resolve(null)),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
     ListTranscriptions: vi.fn(() => Promise.resolve(drafts.rows)),
     DeleteMatch: vi.fn(() => Promise.resolve()),

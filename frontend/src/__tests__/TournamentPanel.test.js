@@ -23,7 +23,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     UpdateTournament: vi.fn().mockResolvedValue(undefined),
     GetTournamentMatches: vi.fn().mockResolvedValue([]),
     RemoveMatchFromTournament: vi.fn().mockResolvedValue(undefined),
-    GetAllMatches: vi.fn().mockResolvedValue([]),
+    ListMatches: vi.fn().mockResolvedValue([]),
     AddMatchToTournament: vi.fn().mockResolvedValue(undefined),
     GetMatchMovePositions: vi.fn().mockResolvedValue([]),
     LoadAnalysis: vi.fn().mockResolvedValue(null),
@@ -34,7 +34,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ReorderTournamentMatches: vi.fn().mockResolvedValue(undefined)
 }));
 
-import { GetAllTournaments, CreateTournament, DeleteTournament, UpdateTournament, GetTournamentMatches, GetAllMatches } from '../../wailsjs/go/database/Database.js';
+import { GetAllTournaments, CreateTournament, DeleteTournament, UpdateTournament, GetTournamentMatches, ListMatches } from '../../wailsjs/go/database/Database.js';
 
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import { openPanels, PANEL, statusBarTextStore } from '../stores/uiStore.js';
@@ -133,7 +133,7 @@ describe('TournamentPanel — list view', () => {
         await fireEvent.click(row);
 
         await vi.waitFor(() => expect(get(selectedTournamentStore)).toMatchObject({ id: 1 }));
-        expect(GetAllMatches).toHaveBeenCalled();
+        expect(ListMatches).toHaveBeenCalledWith(expect.objectContaining({ Unassigned: true }));
         expect(GetTournamentMatches).toHaveBeenCalledWith(1);
         expect(await screen.findByText('Alice')).toBeTruthy();
     });

@@ -6,7 +6,7 @@ import { get } from 'svelte/store';
 import { SaveLastVisitedPosition } from '../../wailsjs/go/database/Database.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
-import { currentPositionIndexStore, pageStepStore, statusBarTextStore, statusBarModeStore, openModal, MODAL } from '../stores/uiStore.js';
+import { currentPositionIndexStore, pageStepStore, pageStepSize, statusBarTextStore, statusBarModeStore, openModal, MODAL } from '../stores/uiStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
@@ -196,7 +196,7 @@ export async function lastPosition() {
 }
 
 /**
- * PageUp / PageDown: jump `direction` (-1 or 1) pages of pageStepStore positions
+ * PageUp / PageDown: jump `direction` (-1 or 1) pages of pageStepStore (positions or a share)
  * through the list, stopping at its ends. Inside a match the keys keep meaning
  * previous / next game, as first/lastPosition do there.
  *
@@ -216,7 +216,7 @@ export async function pagePosition(direction) {
     }
     const count = get(positionsStore)?.length ?? 0;
     if (count === 0) return;
-    const step = Math.max(1, Math.floor(get(pageStepStore)) || 1);
+    const step = pageStepSize(get(pageStepStore), count);
     const target = Math.min(count - 1, Math.max(0, get(currentPositionIndexStore) + direction * step));
     currentPositionIndexStore.set(target);
 }

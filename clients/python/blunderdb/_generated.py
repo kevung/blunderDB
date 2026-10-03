@@ -26,6 +26,50 @@ class GeneratedAPI(BaseClient):
         "POST /ops/tenant.purge — hand-written handler — see openapi.yaml."
         return self._call("/ops/tenant.purge", payload)
 
+    def across_analyses_load_by_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.analysesLoadByIds — JSON."
+        return self._call("/v1/across.analysesLoadByIds", payload)
+
+    def across_club_ranking(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.clubRanking — JSON."
+        return self._call("/v1/across.clubRanking", payload)
+
+    def across_collection_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.collectionPositions — NDJSON stream."
+        return self._stream("/v1/across.collectionPositions", payload)
+
+    def across_collections_list(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.collectionsList — NDJSON stream."
+        return self._stream("/v1/across.collectionsList", payload)
+
+    def across_comments_by_zobrist(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.commentsByZobrist — NDJSON stream."
+        return self._stream("/v1/across.commentsByZobrist", payload)
+
+    def across_match_move_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.matchMovePositions — NDJSON stream."
+        return self._stream("/v1/across.matchMovePositions", payload)
+
+    def across_matches_get(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.matchesGet — JSON."
+        return self._call("/v1/across.matchesGet", payload)
+
+    def across_matches_list(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.matchesList — NDJSON stream."
+        return self._stream("/v1/across.matchesList", payload)
+
+    def across_player_table(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.playerTable — JSON."
+        return self._call("/v1/across.playerTable", payload)
+
+    def across_search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.searchFind — NDJSON stream."
+        return self._stream("/v1/across.searchFind", payload)
+
+    def across_stats_compute(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.statsCompute — JSON."
+        return self._call("/v1/across.statsCompute", payload)
+
     def analyses_delete(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/analyses.delete — JSON."
         return self._call("/v1/analyses.delete", payload)
@@ -58,6 +102,14 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.createStudyDeck — JSON."
         return self._call("/v1/anki.createStudyDeck", payload)
 
+    def anki_deck_position_count(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.deckPositionCount — JSON."
+        return self._call("/v1/anki.deckPositionCount", payload)
+
+    def anki_deck_position_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.deckPositionIds — JSON."
+        return self._call("/v1/anki.deckPositionIds", payload)
+
     def anki_deck_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/anki.deckPositions — NDJSON stream."
         return self._stream("/v1/anki.deckPositions", payload)
@@ -73,6 +125,10 @@ class GeneratedAPI(BaseClient):
     def anki_forecast(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/anki.forecast — JSON."
         return self._call("/v1/anki.forecast", payload)
+
+    def anki_index_of_deck_position(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.indexOfDeckPosition — JSON."
+        return self._call("/v1/anki.indexOfDeckPosition", payload)
 
     def anki_linked_card(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/anki.linkedCard — JSON."
@@ -146,6 +202,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/collections.copyPosition — JSON."
         return self._call("/v1/collections.copyPosition", payload)
 
+    def collections_count_positions(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/collections.countPositions — JSON."
+        return self._call("/v1/collections.countPositions", payload)
+
     def collections_create(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/collections.create — JSON. Accepts an Idempotency-Key."
         return self._call("/v1/collections.create", payload, idempotency_key=idempotency_key)
@@ -158,6 +218,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/collections.get — JSON."
         return self._call("/v1/collections.get", payload)
 
+    def collections_index_of_position(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/collections.indexOfPosition — JSON."
+        return self._call("/v1/collections.indexOfPosition", payload)
+
     def collections_list(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/collections.list — NDJSON stream."
         return self._stream("/v1/collections.list", payload)
@@ -165,6 +229,10 @@ class GeneratedAPI(BaseClient):
     def collections_move_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.movePosition — JSON."
         return self._call("/v1/collections.movePosition", payload)
+
+    def collections_position_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/collections.positionIds — JSON."
+        return self._call("/v1/collections.positionIds", payload)
 
     def collections_position_index_map(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.positionIndexMap — JSON."
@@ -542,6 +610,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/librarySettings.save — JSON."
         return self._call("/v1/librarySettings.save", payload)
 
+    def matches_count(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/matches.count — JSON."
+        return self._call("/v1/matches.count", payload)
+
     def matches_create_game(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/matches.createGame — JSON."
         return self._call("/v1/matches.createGame", payload)
@@ -617,6 +689,10 @@ class GeneratedAPI(BaseClient):
     def metadata_counts(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/metadata.counts — JSON."
         return self._call("/v1/metadata.counts", payload)
+
+    def metadata_counts_estimate(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/metadata.countsEstimate — JSON."
+        return self._call("/v1/metadata.countsEstimate", payload)
 
     def metadata_version(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/metadata.version — JSON."

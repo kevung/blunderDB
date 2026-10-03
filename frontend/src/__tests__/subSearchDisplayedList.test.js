@@ -60,11 +60,12 @@ import { CountPositionsByFilters, SearchPositionIDs, IndexOfPositionByFilters } 
 import { processCommand, initCommandProcessor } from '../commandProcessor.js';
 import { translate, resolveStatusMessage } from '../i18n';
 import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore.js';
-import { positionStore, positionsStore, matchContextStore } from '../stores/positionStore.js';
+import { positionStore, positionsStore, matchContextStore, listedIds } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeCollectionStore, collectionPositionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { MODE, enterEditMode, exitEditMode, handleOpenCollection, leaveSubSearchResults, displayedPositionIDs } from '../services/modeMachine.js';
+import { openCollectionOf } from './collectionFixture.js';
 import { loadPositionsByFilters, loadAllPositions } from '../services/positionService.js';
 import { handleKeyDown } from '../services/keyboardService.js';
 import SearchPanel from '../components/SearchPanel.svelte';
@@ -113,9 +114,9 @@ function setLibrary() {
 }
 
 /** Une collection ouverte sur sa troisième position (id 30). */
-function openCollection() {
+async function openCollection() {
     activeCollectionStore.set(COLLECTION);
-    handleOpenCollection(COLLECTION, [makePosition(10), makePosition(20), makePosition(30)]);
+    await openCollectionOf(handleOpenCollection, COLLECTION, [makePosition(10), makePosition(20), makePosition(30)]);
     currentPositionIndexStore.set(2);
     positionStore.set(makePosition(30));
 }
@@ -170,17 +171,19 @@ afterEach(async () => {
 // ── La liste affichée ─────────────────────────────────────────────────────────
 
 describe('ss cherche dans la liste affichée (#410)', () => {
-    test('collection, tapé directement : les identifiants de la collection', () => {
-        openCollection();
+    test('collection, tapé directement : les identifiants de la collection', async () => {
+        await openCollection();
         processCommand('ss E>80');
+        await flush(); // a collection is browsed by windows: its ids are read before the search runs
         expect(onLoadPositionsByFilters).toHaveBeenCalledTimes(1);
         expect(onLoadPositionsByFilters.mock.calls[0][0].restrictToPositionIDs).toBe('10,20,30');
     });
 
     test('collection, après TAB : les identifiants de la collection', async () => {
-        openCollection();
+        await openCollection();
         await enterEditMode();
         processCommand('ss E>80');
+        await flush();
         expect(onLoadPositionsByFilters.mock.calls[0][0].restrictToPositionIDs).toBe('10,20,30');
     });
 
@@ -215,8 +218,8 @@ describe('ss cherche dans la liste affichée (#410)', () => {
 });
 
 describe('s reste refusé en collection et en match, en disant pourquoi', () => {
-    test('en collection', () => {
-        openCollection();
+    test('en collection', async () => {
+        await openCollection();
         processCommand('s E>80');
         expect(onLoadPositionsByFilters).not.toHaveBeenCalled();
         expect(statusText()).toMatch(/collection/i);
@@ -272,7 +275,7 @@ describe('la case « Rechercher dans les résultats actuels » suit la même rè
     });
 
     test('entré depuis une collection : les positions de la collection', async () => {
-        openCollection();
+        await openCollection();
         activeTabStore.set('search');
         await enterEditMode();
         expect((await searchFromPanel()).restrictToPositionIDs).toBe('10,20,30');
@@ -317,10 +320,10 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
         else expect(get(positionsStore).ids).toEqual(resultIds);
     }
 
-    function expectCollectionBack() {
+    async function expectCollectionBack() {
         expect(get(statusBarModeStore)).toBe(MODE.COLLECTION);
         expect(get(activeCollectionStore)).toEqual(COLLECTION);
-        expect(get(positionsStore).ids).toEqual([10, 20, 30]);
+        expect(await listedIds()).toEqual([10, 20, 30]);
         expect(get(currentPositionIndexStore)).toBe(2);
         expect(get(positionStore).id).toBe(30);
     }
@@ -335,18 +338,18 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
     }
 
     test('collection, directement : la collection entière, sur la même position', async () => {
-        openCollection();
+        await openCollection();
         await subSearch('ss E>80', [20]);
         expect(await leaveSubSearchResults()).toBe(true);
-        expectCollectionBack();
+        await expectCollectionBack();
     });
 
     test('collection, après TAB : la position de la collection, pas le damier de requête', async () => {
-        openCollection();
+        await openCollection();
         await enterEditMode();
         await subSearch('ss E>80', [10, 20]);
         expect(await leaveSubSearchResults()).toBe(true);
-        expectCollectionBack();
+        await expectCollectionBack();
         expect(get(positionStore).board.points[6].checkers).toBe(5);
     });
 
@@ -366,15 +369,15 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
     });
 
     test('une sous-recherche dans les résultats garde l’origine : on revient à la collection', async () => {
-        openCollection();
+        await openCollection();
         await subSearch('ss E>80', [20, 30]);
         await subSearch('ss p<100', [30]);
         expect(await leaveSubSearchResults()).toBe(true);
-        expectCollectionBack();
+        await expectCollectionBack();
     });
 
     test('une recherche dans toute la bibliothèque oublie l’origine', async () => {
-        openCollection();
+        await openCollection();
         await subSearch('ss E>80', [20]);
         await subSearch('s p<100', [1, 2]);
         expect(await leaveSubSearchResults()).toBe(false);
@@ -400,7 +403,7 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
     });
 
     test('après un rechargement de la bibliothèque, il n’y a plus rien à quitter', async () => {
-        openCollection();
+        await openCollection();
         await subSearch('ss E>80', [20]);
         await loadAllPositions();
         expect(await leaveSubSearchResults()).toBe(false);
@@ -413,13 +416,13 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
     });
 
     test('la barre d’état dit comment revenir', async () => {
-        openCollection();
+        await openCollection();
         await subSearch('ss E>80', [20]);
         expect(statusText()).toMatch(/Esc/);
     });
 
     test('`s` depuis le panneau Recherche entré depuis une collection cherche la bibliothèque et oublie le retour', async () => {
-        openCollection();
+        await openCollection();
         await enterEditMode();
         await subSearch('s E>80', [1, 2]);
         expect(await leaveSubSearchResults()).toBe(false);
@@ -458,20 +461,20 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
         }
 
         test('sur le plateau : revient à la collection', async () => {
-            openCollection();
+            await openCollection();
             await subSearch('ss E>80', [20]);
             /** @type {HTMLElement} */ (document.activeElement)?.blur?.();
             press();
             await flush();
-            expectCollectionBack();
+            await expectCollectionBack();
         });
 
         test('panneau Analyse focalisé, rien à y fermer : un seul Échap revient à la collection', async () => {
-            openCollection();
+            await openCollection();
             await subSearch('ss E>80', [20]);
             const onClose = await mountAnalysisPanel();
             await pressFromFocus();
-            expectCollectionBack();
+            await expectCollectionBack();
             expect(onClose).not.toHaveBeenCalled();
         });
 
@@ -494,7 +497,7 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
         });
 
         test('focus dans un menu contextuel : l’Échap n’est pas un retour, on reste dans les résultats', async () => {
-            openCollection();
+            await openCollection();
             await subSearch('ss E>80', [20]);
             const wrapper = document.createElement('div');
             wrapper.className = 'panel-wrapper';

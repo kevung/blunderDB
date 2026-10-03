@@ -757,16 +757,20 @@ export async function toggleMatchMode() {
 // ── COLLECTION ───────────────────────────────────────────────────────────────
 
 /**
- * Any mode → COLLECTION.
+ * Any mode → COLLECTION. The collection is browsed by windows through its id source (the list
+ * never holds its membership): the first position is the only one read here.
  *
  * @param {any} collection
- * @param {any[]} collectionPositions
+ * @param {import('../stores/positionList.js').IdSource} source
  */
-export function handleOpenCollection(collection, collectionPositions) {
-    if (!collectionPositions || collectionPositions.length === 0) {
+export async function handleOpenCollection(collection, source) {
+    const total = await source.count();
+    if (total === 0) {
         statusBarTextStore.set(tMsg('commands.collectionEmpty'));
         return;
     }
+    await positionsStore.setSource(source);
+    const first = await positionsStore.getPosition(0);
 
     savedContext.beforeSubSearch = null;
     if (get(matchContextStore).isMatchMode) {
@@ -780,11 +784,12 @@ export function handleOpenCollection(collection, collectionPositions) {
     }
 
     statusBarModeStore.set(MODE.COLLECTION);
-    positionsStore.set(collectionPositions);
-    positionStore.set(collectionPositions[0]);
+    if (first) {
+        positionStore.set(first);
+        loadAnalysisForPosition(first);
+    }
     currentPositionIndexStore.set(0);
-    loadAnalysisForPosition(collectionPositions[0]);
-    statusBarTextStore.set(tMsg('commands.collectionLoaded', { name: collection.name, count: collectionPositions.length }));
+    statusBarTextStore.set(tMsg('commands.collectionLoaded', { name: collection.name, count: total }));
 }
 
 /** COLLECTION → NORMAL, back on the library at the last viewed position. */

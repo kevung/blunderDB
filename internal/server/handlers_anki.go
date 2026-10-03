@@ -41,6 +41,19 @@ type deckIDReq struct {
 	DeckID int64 `json:"deckId"`
 }
 
+// deckPositionsPageReq names a deck and a window of its position ids; a zero
+// limit means up to the end.
+type deckPositionsPageReq struct {
+	DeckID int64 `json:"deckId"`
+	Limit  int   `json:"limit"`
+	Offset int   `json:"offset"`
+}
+
+type deckPositionReq struct {
+	DeckID     int64 `json:"deckId"`
+	PositionID int64 `json:"positionId"`
+}
+
 type deckSyncPositionsReq struct {
 	DeckID      int64   `json:"deckId"`
 	PositionIDs []int64 `json:"positionIds"`
@@ -125,6 +138,19 @@ func (s *Server) ankiRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/anki.deckPositions", rpcStream(func(ctx context.Context, scope string, req deckIDReq) iterPositions {
 			return as().DeckPositions(ctx, scope, req.DeckID)
+		})},
+		{http.MethodPost, "/v1/anki.deckPositionIds", rpc(func(ctx context.Context, scope string, req deckPositionsPageReq) ([]int64, error) {
+			return as().DeckPositionIDs(ctx, scope, req.DeckID, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
+		})},
+		{http.MethodPost, "/v1/anki.deckPositionCount", rpc(func(ctx context.Context, scope string, req deckIDReq) (int, error) {
+			return as().DeckPositionCount(ctx, scope, req.DeckID)
+		})},
+		{http.MethodPost, "/v1/anki.indexOfDeckPosition", rpc(func(ctx context.Context, scope string, req deckPositionReq) (int, error) {
+			index, found, err := as().IndexOfDeckPosition(ctx, scope, req.DeckID, req.PositionID)
+			if err != nil || !found {
+				return -1, err
+			}
+			return index, nil
 		})},
 		{http.MethodPost, "/v1/anki.deckStats", rpc(func(ctx context.Context, scope string, req deckIDReq) (*domain.AnkiDeckStats, error) {
 			return as().DeckStats(ctx, scope, req.DeckID)

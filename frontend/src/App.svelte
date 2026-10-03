@@ -68,6 +68,8 @@
     import { exportDatabase } from './services/exportService.js';
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
+    import { registerKeys } from './services/keyDispatch.js';
+    import { initPageStep } from './services/pageStepSetting.js';
     import { applyTabPanels } from './services/tabHandler.js';
     import { resizable } from './utils/resizeHandle.js';
     import { fileDrop } from './utils/fileDrop.js';
@@ -94,6 +96,7 @@
     import { showTab, showTrainingPanel } from './services/tabToggles.js';
     import HomeScreen from './components/HomeScreen.svelte';
     import { initFolderWatch } from './services/watchService.js';
+    import { initMCPHost } from './services/mcpHostService.js';
     import { initTheme } from './stores/themeStore.js';
 
     let mainArea;
@@ -316,6 +319,9 @@
         await startTrainingSession({ exercise, seedSource });
     }
 
+    /** @type {(() => void) | null} */
+    let unregisterGlobalKeys = null;
+
     onMount(async () => {
         maybeCheckForUpdate();
 
@@ -348,7 +354,7 @@
             onToggleStats: () => toggleStatsPanel(),
             onLoadBlunders: loadWorstBlunders
         });
-        window.addEventListener('keydown', handleKeyDown);
+        unregisterGlobalKeys = registerKeys('global', handleKeyDown);
         mainArea.addEventListener('wheel', handleWheel);
         window.addEventListener('resize', handleResize);
 
@@ -367,6 +373,7 @@
         initUIScale();
 
         initPanelPosition();
+        initPageStep();
 
         // One-shot seed of the local $state: the resize-handle drag owns it afterwards.
         initPanelSize().then(() => {
@@ -379,6 +386,8 @@
 
         // The watched folder, fire and forget: a vanished folder must not delay startup.
         initFolderWatch();
+        // The localhost MCP server, if the user enabled it; fire and forget as well.
+        initMCPHost();
 
         // A database handed on the command line (file association, Exec=blunderDB %f) takes
         // priority over the remembered one.
@@ -414,7 +423,7 @@
     });
 
     onDestroy(() => {
-        window.removeEventListener('keydown', handleKeyDown);
+        unregisterGlobalKeys?.();
         mainArea.removeEventListener('wheel', handleWheel);
         window.removeEventListener('resize', handleResize);
         unsubscribePositions();

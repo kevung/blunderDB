@@ -226,7 +226,7 @@ func (s *Server) chain(mux http.Handler) http.Handler {
 			writeErrorCode(w, CodeRateLimited, "too many requests")
 		})(h)
 	}
-	h = middleware.Tenant(s.publicPaths(), s.opts.SingleTenant, func(w http.ResponseWriter, _ *http.Request, msg string) {
+	h = middleware.Tenant(s.publicPaths(), s.opts.SingleTenant, s.opts.TrustReadTenants, func(w http.ResponseWriter, _ *http.Request, msg string) {
 		writeErrorCode(w, CodeInvalid, msg)
 	})(h)
 	// Compression sits outside the tenant gate and inside logging/metrics: it

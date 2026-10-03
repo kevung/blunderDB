@@ -70,7 +70,7 @@ export default {
 <li>the command line, accessible by pressing the <em>SPACE</em> key,</li>
 <li>an informational message related to an operation performed by the user,</li>
 <li>the index of the current position, followed by the number of positions in the current library (or move/game info when navigating a match),</li>
-<li>the <strong>library counter</strong> — “412 positions · 38 blunders · 5 matches” — where every number <strong>opens what it counts</strong>: the positions, the <code>E&gt;</code> search prepared in the command line at the library's threshold, or the match list. A figure you cannot follow is a decoration. The blunder threshold is the library's own, set in the <em>Library</em> tab of the settings and shared with the statistics: two thresholds would make the same word mean two things. The counter promises exactly what the link opens, including for a position played several ways, which is worth its largest cost.</li>
+<li>the <strong>library counter</strong> — “412 positions · 38 blunders · 5 matches” — where every number <strong>opens what it counts</strong>: the positions, the <code>E&gt;</code> search prepared in the command line at the library's threshold, or the match list. A figure you cannot follow is a decoration. The blunder threshold is the library's own, set in the <em>Library</em> tab of the settings and shared with the statistics: two thresholds would make the same word mean two things. The counter promises exactly what the link opens, including for a position played several ways, which is worth its largest cost. On a very large library (over 200,000 rows) the counter does not scan the tables: a number prefixed with "≈" is an estimate (an upper bound, since deleted rows leave gaps). If the positions are estimated, the blunder count, which has no honest estimate, shows "?" — the link runs the search, which gives the exact count.</li>
 </ul>
 <div class="admonition note">
 <p>In the case of positions resulting from a user search, the number of positions indicated in the status bar corresponds to the number of filtered positions.</p>
@@ -89,14 +89,15 @@ export default {
 </ul>
 <p>Views are saved with the database session state and restored when it is reopened.</p>
 <h3>Configuration</h3>
-<p>The settings button (gear icon) in the toolbar, to the left of the help button, opens blunderDB's settings window. It is organised in seven tabs:</p>
+<p>The settings button (gear icon) in the toolbar, to the left of the help button, opens blunderDB's settings window. It is organised in eight tabs:</p>
 <ul>
-<li><strong>Interface</strong> — language, display scale, panel position;</li>
+<li><strong>Interface</strong> — language, display scale, panel position, PageUp / PageDown step (10, 50, 100, 500 or 1,000 positions, or 10% of the list);</li>
 <li><strong>Colours</strong> — the board's colours;</li>
 <li><strong>Library</strong> — what belongs to the open database: the error and blunder thresholds, compaction and repair, described below;</li>
 <li><strong>Bearoff</strong> — the bearoff tables used by the Eval panel;</li>
 <li><strong>gammonNet</strong> — the settings of the embedded evaluator, described below;</li>
 <li><strong>Watched folder</strong> — the automatic import of matches arriving in a folder, described below;</li>
+<li><strong>Assistant and MCP</strong> — the local MCP server and the built-in assistant, described below;</li>
 <li><strong>Issuer identity</strong> — the key that signs your watermarks, described in Handing out a database: origin and password.</li>
 </ul>
 <p>The <em>Interface</em> tab starts with a <strong>theme</strong>: <em>follow the system</em>, <em>light</em>, <em>dark</em>, <em>high contrast</em> or <em>printable</em>. The theme sets the interface colours and <strong>proposes a board palette</strong> — a dark interface around a light board is not a dark theme, it is half of one, since the board occupies most of the window.</p>
@@ -150,6 +151,11 @@ export default {
 </ul>
 <p>The default interval is ten seconds; the floor is two. The folder is not walked recursively: a watched folder is where a tool drops its matches, not a tree to crawl. An unmounted network share does not stop the watch, nor does it make its contents pass for new when it comes back.</p>
 <p>The same watch exists on the command line, with <code>blunderdb import --type batch --dir &lt;folder&gt; --watch</code> (see Command Line Interface (CLI)): it is the form a server, a scheduled task or a script can use.</p>
+<h4>Assistant and MCP</h4>
+<p>The <strong>Assistant and MCP</strong> tab controls two things, both disabled by default.</p>
+<p>The <strong>local MCP server</strong> offers blunderDB's tools (search, reading a position and its analysis, a player's statistics, quizzes…) to an assistant that speaks the Model Context Protocol, such as Claude Desktop or Claude Code, as long as the window is open. It listens only on this machine, at <code>http://127.0.0.1:&lt;port&gt;/mcp</code> (port 8765 by default), and rejects a request coming from a web page. It adds two display tools: open a view on a search and show a position. The tools only read, unless <strong>Allow writing</strong> is checked: they can then save a position, comment on it, create and fill a collection; nothing is deleted. Without an open window, <code>blunderdb mcp</code> serves the same tools (see Command Line Interface (CLI)).</p>
+<p>The <strong>built-in assistant</strong> is a client of these same tools. No model is embedded: it talks to an OpenAI-compatible provider — Ollama on this machine by default, or Groq, OpenRouter, Gemini, Anthropic, or another address. Any address outside this machine is remote, whatever the provider chosen: your sentences and the tool results then leave the machine, the tab says so and waits for your agreement for that precise address; another address asks again. The API key goes into the system keyring, never into the database or the settings file. The model suggested by default for Ollama, <code>qwen2.5:7b</code>, is a starting point, not a recommendation: no model recommendation is made without a score from the benchmark shipped with the source code.</p>
+<p>Once enabled, the assistant is an <strong>Assistant</strong> sub-tab of the Search panel. A sentence — "my errors of more than 50 millipoints in the race" — opens a new view named after it, runs the search there and switches to it; its tokens stay in the search history. What the tools return comes from the database; what the model writes is marked <strong>Model's free text</strong>. The assistant only proposes a change if the <strong>Let the assistant propose changes</strong> box is checked — a setting separate from writing on the local MCP server — and each change it prepares is displayed and is only made after <strong>Confirm</strong>.</p>
 <p>The configuration window also provides interface display settings. An <strong>interface scale</strong> slider lets you enlarge or shrink all interface elements, which is useful on high-density screens or to improve readability. A <strong>panel position</strong> menu sets where the panels (search, matches, analysis) appear relative to the board: <em>bottom</em>, <em>side</em> or <em>automatic</em> (the side is then chosen on wide screens to make better use of the available space). Like the other settings, these choices are kept from one session to the next.</p>
 <h3>Guided tours and sample database</h3>
 <p>To make getting started easier, blunderDB offers <strong>guided tours</strong> of the interface. The tour catalogue opens from the toolbar or with the <code>tour</code> command (alias <code>tutorial</code>). Seven tours are available: a general tour of the interface, and tours dedicated to searching positions, reviewing matches, reviewing tournaments, the Eval panel, Anki review and statistics. Each tour highlights the relevant interface elements, step by step, opens the panel it talks about along the way, and can be replayed at any time. On first launch, the general tour is offered automatically.</p>
@@ -278,6 +284,7 @@ export default {
 <p>A living collection whose query carries a token this version no longer knows <strong>refuses to open</strong>, and says so, rather than returning the whole database. That is the one failure a saved filter must not have: widening in silence.</p>
 <h3>Matches Panel</h3>
 <p>The <strong>Matches</strong> panel (<em>CTRL-Tab</em>) lists imported matches. Double-click a match (or press <em>ENTER</em>) to navigate through its moves. The <code>m</code> command resumes navigation in the last visited match.</p>
+<p>The filter field, at the top of the panel (<em>/</em> to go there, <em>Esc</em> to clear it), keeps only the matches where a player, the event, the venue, the tournament or the date contains the typed text. Filtering and column sorting are done by the database: the list loads in pages as you scroll, and the "n / N matches" counter shows the share loaded. Correcting a player, a date or a tournament in the list updates only the edited row.</p>
 <p>The user can:</p>
 <ul>
 <li>browse through the moves of a match using the <em>LEFT</em> and <em>RIGHT</em> keys,</li>
@@ -1014,7 +1021,7 @@ export default {
 </tr>
 <tr>
 <td>PageUp</td>
-<td>Goes back one page of a hundred positions (stops at the start of the list); in a match, previous game.</td>
+<td>Goes back one page (a hundred positions by default, adjustable in Settings &gt; Interface, up to 10% of the list; stops at the start of the list); in a match, previous game.</td>
 </tr>
 <tr>
 <td>LEFT, k</td>
@@ -1038,7 +1045,7 @@ export default {
 </tr>
 <tr>
 <td>PageDown</td>
-<td>Goes forward one page of a hundred positions (stops at the end of the list); in a match, next game.</td>
+<td>Goes forward one page (same step as PageUp; stops at the end of the list); in a match, next game.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1386,6 +1393,10 @@ export default {
 <tr>
 <td>Del</td>
 <td>Delete the selected match.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Go to the filter field (player, event, tournament, date). <em>Esc</em> clears the filter.</td>
 </tr>
 <tr>
 <td>Esc</td>

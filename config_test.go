@@ -137,6 +137,19 @@ func TestSanitizePanelPosition(t *testing.T) {
 	}
 }
 
+func TestSanitizePageStep(t *testing.T) {
+	for _, step := range PageSteps {
+		if got := sanitizePageStep(step); got != step {
+			t.Errorf("sanitizePageStep(%q) = %q, want it kept", step, got)
+		}
+	}
+	for _, step := range []string{"", "0", "-10", "7", "10 %", "abc"} {
+		if got := sanitizePageStep(step); got != DefaultPageStep {
+			t.Errorf("sanitizePageStep(%q) = %q, want %q", step, got, DefaultPageStep)
+		}
+	}
+}
+
 func TestClampPanelHeight(t *testing.T) {
 	cases := []struct {
 		in, want int
@@ -552,5 +565,36 @@ func TestConfig_ConfigVersionStamped(t *testing.T) {
 	}
 	if loaded.ConfigVersion != currentConfigVersion {
 		t.Errorf("receiver ConfigVersion = %d, want %d (mirrors every other field's receiver copy)", loaded.ConfigVersion, currentConfigVersion)
+	}
+}
+
+func TestMCPHostAndAssistantSurviveReload(t *testing.T) {
+	isolateXDGConfig(t)
+	c := NewConfig()
+	if got := c.GetMCPHost(); got.On || got.Write {
+		t.Fatalf("the MCP host must be off by default: %+v", got)
+	}
+	if got := c.GetAssistant(); got.On {
+		t.Fatalf("the assistant must be off by default: %+v", got)
+	}
+	if err := c.SaveMCPHost(MCPHostSettings{On: true, Port: 70000, Write: true}); err != nil {
+		t.Fatal(err)
+	}
+	want := AssistantSettings{On: true, Preset: "groq", BaseURL: "https://x/v1", Model: "m", Write: true, RemoteAck: "https://x/v1"}
+	if err := c.SaveAssistant(want); err != nil {
+		t.Fatal(err)
+	}
+	r := &Config{}
+	if _, err := r.LoadConfig(); err != nil {
+		t.Fatal(err)
+	}
+	if got := r.GetMCPHost(); got != (MCPHostSettings{On: true, Port: 0, Write: true}) {
+		t.Fatalf("mcp host after reload: %+v", got)
+	}
+	if got := r.GetAssistant(); got != want || r.AssistantConsentURL() != "https://x/v1" {
+		t.Fatalf("assistant after reload: %+v", got)
+	}
+	if err := r.SaveMCPHost(MCPHostSettings{}); err != nil || !r.GetAssistant().Write {
+		t.Fatalf("the assistant's write switch must not follow the MCP server's (err %v)", err)
 	}
 }

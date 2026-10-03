@@ -19,6 +19,12 @@ import (
 // stays free of internal/server, which mounts it.
 const TenantHeader = "X-Tenant-ID"
 
+// ReadTenantsHeader lists the tenants an across.* read spans besides
+// TenantHeader (ADR-0063). The engine forwards the value the MCP request
+// carries, and only on across.* calls: the read set is the proxy's, never a
+// choice of the model, and no other route looks at it.
+const ReadTenantsHeader = "X-Read-Tenants"
+
 // Engine is how a tool reaches blunderDB: one /v1 call, dispatched in-process
 // through the very handler the daemon serves. Going through the handler rather
 // than the storage contract keeps one tenant check, one rate limit, one error
@@ -84,6 +90,13 @@ func (e *Engine) send(ctx context.Context, req *sdk.CallToolRequest, method, con
 	}
 	r.Header.Set("Content-Type", contentType)
 	r.Header.Set(TenantHeader, tenant)
+	if strings.HasPrefix(method, "across.") && req != nil && req.Extra != nil {
+		// Every line is forwarded as received, so the /v1 gate refuses a
+		// repeated header here as it does on a direct call.
+		for _, v := range req.Extra.Header.Values(ReadTenantsHeader) {
+			r.Header.Add(ReadTenantsHeader, v)
+		}
+	}
 	w := &recorder{header: http.Header{}, status: http.StatusOK}
 	e.handler.ServeHTTP(w, r)
 	if w.status >= 400 {

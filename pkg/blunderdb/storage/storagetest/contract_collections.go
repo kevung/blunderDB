@@ -335,6 +335,53 @@ func testCollectionRenameAndDelete(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testCollectionReorderLoadedPrefix pins what the GUI relies on when it has
+// loaded only the first window of a long collection and reorders inside it:
+// the ids it sends take the first sort_order values, the members it never
+// loaded keep their order after them, and sort_order reads back strictly
+// increasing.
+func testCollectionReorderLoadedPrefix(t *testing.T, s storage.Storage) {
+	c := context.Background()
+	ids := make([]int64, 5)
+	for i := range ids {
+		p := provenancePos(i + 1)
+		id, err := s.Positions().Save(c, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", i+1, err)
+		}
+		ids[i] = id
+	}
+	col, err := s.Collections().Create(c, "", "prefix", "")
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if err := s.Collections().AddPositions(c, "", col, ids); err != nil {
+		t.Fatalf("AddPositions: %v", err)
+	}
+	if err := s.Collections().ReorderPositions(c, "", col, []int64{ids[2], ids[0], ids[1]}); err != nil {
+		t.Fatalf("ReorderPositions: %v", err)
+	}
+	want := []int64{ids[2], ids[0], ids[1], ids[3], ids[4]}
+	prev := -1
+	i := 0
+	for m, err := range s.Collections().Members(c, "", col) {
+		if err != nil {
+			t.Fatalf("Members: %v", err)
+		}
+		if i >= len(want) || m.PositionID != want[i] {
+			t.Fatalf("member %d: position %d, want %v", i, m.PositionID, want)
+		}
+		if m.SortOrder <= prev {
+			t.Errorf("member %d: SortOrder %d does not follow %d", i, m.SortOrder, prev)
+		}
+		prev = m.SortOrder
+		i++
+	}
+	if i != len(want) {
+		t.Fatalf("Members: %d rows, want %d", i, len(want))
+	}
+}
+
 // testCollectionMembers pins Members: the membership rows come back in
 // collection order — the same walk as Positions — each naming its
 // collection, its position (loaded, not just its id), its rank and when it
@@ -593,5 +640,64 @@ func testCollectionFilterQuery(t *testing.T, s storage.Storage) {
 
 	if err := cs.SetFilterQuery(ctx, "", 99999, query); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("an unknown collection must be ErrNotFound: got %v", err)
+	}
+}
+
+// A collection is browsed by windows: PositionIDs, CountPositions and
+// IndexOfPosition agree with the order Positions walks.
+func testCollectionIDWindows(t *testing.T, s storage.Storage) {
+	c := context.Background()
+	ids := make([]int64, 5)
+	for i := range ids {
+		p := provenancePos(i + 1)
+		id, err := s.Positions().Save(c, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", i, err)
+		}
+		ids[i] = id
+	}
+	col, err := s.Collections().Create(c, "", "windows", "")
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	empty, err := s.Collections().Create(c, "", "empty", "")
+	if err != nil {
+		t.Fatalf("Create empty: %v", err)
+	}
+	// Four members, in an order that is neither the id order nor the save order.
+	order := []int64{ids[3], ids[0], ids[2], ids[1]}
+	if err := s.Collections().AddPositions(c, "", col, order); err != nil {
+		t.Fatalf("AddPositions: %v", err)
+	}
+
+	if n, err := s.Collections().CountPositions(c, "", col); err != nil || n != 4 {
+		t.Errorf("CountPositions: got %d, %v; want 4", n, err)
+	}
+	if n, err := s.Collections().CountPositions(c, "", empty); err != nil || n != 0 {
+		t.Errorf("CountPositions of an empty collection: got %d, %v; want 0", n, err)
+	}
+	if got := collectionPositionIDs(t, s, col); !equalIDs(got, order) {
+		t.Fatalf("Positions order: got %v, want %v", got, order)
+	}
+	for _, w := range []struct{ off, lim, from, to int }{{0, 0, 0, 4}, {0, 2, 0, 2}, {1, 2, 1, 3}, {3, 5, 3, 4}, {2, 0, 2, 4}, {4, 1, 4, 4}} {
+		got, err := s.Collections().PositionIDs(c, "", col, storage.ListOpts{Offset: w.off, Limit: w.lim})
+		if err != nil {
+			t.Fatalf("PositionIDs(%d, %d): %v", w.off, w.lim, err)
+		}
+		if !equalIDs(got, order[w.from:w.to]) {
+			t.Errorf("PositionIDs(%d, %d): got %v, want %v", w.off, w.lim, got, order[w.from:w.to])
+		}
+	}
+	for rank, id := range order {
+		got, found, err := s.Collections().IndexOfPosition(c, "", col, id)
+		if err != nil || !found || got != rank {
+			t.Errorf("IndexOfPosition(%d): got %d, %v, %v; want %d", id, got, found, err, rank)
+		}
+	}
+	if _, found, err := s.Collections().IndexOfPosition(c, "", col, ids[4]); err != nil || found {
+		t.Errorf("IndexOfPosition of a non-member: found=%v err=%v", found, err)
+	}
+	if _, found, err := s.Collections().IndexOfPosition(c, "", empty, ids[0]); err != nil || found {
+		t.Errorf("IndexOfPosition in an empty collection: found=%v err=%v", found, err)
 	}
 }

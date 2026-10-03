@@ -70,7 +70,7 @@ export default {
 <li>komentorivi, joka avataan painamalla <em>VÄLILYÖNTI</em>-näppäintä,</li>
 <li>käyttäjän suorittamaan toimintoon liittyvä tiedotusviesti,</li>
 <li>nykyisen aseman järjestysnumeron, jota seuraa asemien määrä nykyisessä kirjastossa (tai siirto-/pelitiedot ottelua selattaessa),</li>
-<li><strong>kirjastolaskurin</strong> — ”412 asemaa · 38 blunderia · 5 ottelua” — jossa jokainen luku <strong>avaa sen, mitä se laskee</strong>: asemat, komentoriville kirjaston kynnyksellä valmistellun <code>E&gt;</code>-haun tai otteluluettelon. Luku, jota ei voi seurata, on koriste. Blunderin kynnys on kirjaston oma, säädetty asetusten <em>Kirjasto</em>-välilehdellä ja jaettu tilastojen kanssa: kaksi kynnystä saisi saman sanan tarkoittamaan kahta asiaa. Laskuri lupaa täsmälleen sen, minkä linkki avaa, myös sellaisen aseman osalta, joka on pelattu useilla eri tavoilla ja joka on suurimman kustannuksensa arvoinen.</li>
+<li><strong>kirjastolaskurin</strong> — ”412 asemaa · 38 blunderia · 5 ottelua” — jossa jokainen luku <strong>avaa sen, mitä se laskee</strong>: asemat, komentoriville kirjaston kynnyksellä valmistellun <code>E&gt;</code>-haun tai otteluluettelon. Luku, jota ei voi seurata, on koriste. Blunderin kynnys on kirjaston oma, säädetty asetusten <em>Kirjasto</em>-välilehdellä ja jaettu tilastojen kanssa: kaksi kynnystä saisi saman sanan tarkoittamaan kahta asiaa. Laskuri lupaa täsmälleen sen, minkä linkki avaa, myös sellaisen aseman osalta, joka on pelattu useilla eri tavoilla ja joka on suurimman kustannuksensa arvoinen. Hyvin suuressa kirjastossa (yli 200 000 riviä) laskuri ei käy taulukoita läpi: ”≈”-merkillä alkava luku on arvio (yläraja, koska poistetut rivit jättävät aukkoja). Jos positiot ovat arvioita, blunderien määrä, jolle ei ole rehellistä arviota, näkyy muodossa ”?” — linkki käynnistää haun, joka antaa tarkan määrän.</li>
 </ul>
 <div class="admonition note">
 <p>Käyttäjän haun tuloksena saaduissa asemissa tilarivillä näkyvä asemien määrä vastaa suodatettujen asemien määrää.</p>
@@ -89,14 +89,15 @@ export default {
 </ul>
 <p>Näkymät tallennetaan tietokannan istuntotilan mukana ja palautetaan sen uudelleenavauksen yhteydessä.</p>
 <h3>Asetukset</h3>
-<p>Työkalurivin asetuspainike (rataskuvake), ohjepainikkeen vasemmalla puolella, avaa blunderDB:n asetusikkunan. Se on jaettu seitsemään välilehteen:</p>
+<p>Työkalurivin asetuspainike (rataskuvake), ohjepainikkeen vasemmalla puolella, avaa blunderDB:n asetusikkunan. Se on jaettu kahdeksaan välilehteen:</p>
 <ul>
-<li><strong>Käyttöliittymä</strong> — kieli, näytön skaalaus, paneelin sijainti;</li>
+<li><strong>Käyttöliittymä</strong> — kieli, näytön skaalaus, paneelin sijainti, PageUp / PageDown -askel (10, 50, 100, 500 tai 1 000 asemaa tai 10 % luettelosta);</li>
 <li><strong>Laudan värit</strong> — laudan värit;</li>
 <li><strong>Kirjasto</strong> — se, mikä kuuluu avoinna olevaan tietokantaan: virheen ja blunderin kynnykset sekä tiivistys ja korjaus, jotka kuvataan alla;</li>
 <li><strong>Bearoff</strong> — Eval-paneelin käyttämät ulosmenotaulukot;</li>
 <li><strong>gammonNet</strong> — sisäänrakennetun evaluaattorin asetukset, kuvattu alla;</li>
 <li><strong>Valvottu kansio</strong> — kansioon saapuvien otteluiden automaattinen tuonti, kuvattu alla;</li>
+<li><strong>Avustaja ja MCP</strong> — paikallinen MCP-palvelin ja sisäinen avustaja, kuvattu alla;</li>
 <li><strong>Merkitsijän identiteetti</strong> — avain, jolla alkuperämerkintäsi allekirjoitetaan; kuvattu luvussa Tietokannan jakaminen: alkuperä ja salasana.</li>
 </ul>
 <p><em>Käyttöliittymä</em>-välilehti alkaa <strong>teemalla</strong>: <em>seuraa järjestelmää</em>, <em>vaalea</em>, <em>tumma</em>, <em>suuri kontrasti</em> tai <em>tulostettava</em>. Teema asettaa käyttöliittymän värit ja <strong>ehdottaa lautapalettia</strong> — tumma käyttöliittymä vaalean laudan ympärillä ei ole tumma teema vaan puolikas, sillä lauta täyttää suurimman osan ikkunasta.</p>
@@ -150,6 +151,11 @@ export default {
 </ul>
 <p>Oletusväli on kymmenen sekuntia; alaraja kaksi. Kansiota ei käydä läpi rekursiivisesti: valvottu kansio on paikka johon työkalu pudottaa ottelunsa, ei tutkittava puu. Irrotettu verkkojako ei pysäytä valvontaa eikä saa sisältöään käymään uudesta palatessaan.</p>
 <p>Sama valvonta on olemassa komentorivillä komennolla <code>blunderdb import --type batch --dir &lt;kansio&gt; --watch</code> (katso Komentoriviliittymä (CLI)): se on muoto, jota palvelin, ajastettu tehtävä tai skripti voi käyttää.</p>
+<h4>Avustaja ja MCP</h4>
+<p>Välilehti <strong>Avustaja ja MCP</strong> säätää kahta asiaa, jotka kumpikin ovat oletuksena pois päältä.</p>
+<p><strong>Paikallinen MCP-palvelin</strong> tarjoaa blunderDB:n työkalut (haku, aseman ja sen analyysin luku, pelaajan tilastot, tietovisat…) Model Context Protocolia puhuvalle avustajalle, kuten Claude Desktopille tai Claude Codelle, niin kauan kuin ikkuna on auki. Se kuuntelee vain tällä koneella osoitteessa <code>http://127.0.0.1:&lt;port&gt;/mcp</code> (oletusportti 8765) ja hylkää verkkosivulta tulevan pyynnön. Se lisää kaksi näyttötyökalua: näkymän avaaminen hakuun ja aseman näyttäminen. Työkalut vain lukevat, paitsi jos <strong>Salli kirjoittaminen</strong> on valittuna: silloin ne voivat tallentaa aseman, kommentoida sitä sekä luoda ja täyttää kokoelman; mitään ei poisteta. Ilman avointa ikkunaa <code>blunderdb mcp</code> tarjoaa samat työkalut (katso Komentoriviliittymä (CLI)).</p>
+<p><strong>Sisäinen avustaja</strong> on näiden samojen työkalujen asiakas. Mallia ei ole mukana: se käyttää OpenAI-yhteensopivaa palveluntarjoajaa — oletuksena Ollamaa tällä koneella, tai Groqia, OpenRouteria, Geminiä, Anthropicia tai jotakin muuta osoitetta. Etänä on jokainen tämän koneen ulkopuolinen osoite, valitusta palveluntarjoajasta riippumatta: lauseesi ja työkalujen tulokset poistuvat silloin koneelta, välilehti kertoo tämän ja odottaa suostumustasi juuri tälle osoitteelle; toinen osoite kysyy uudelleen. API-avain tallennetaan järjestelmän avainnippuun, ei koskaan tietokantaan tai asetustiedostoon. Ollamalle oletuksena ehdotettu malli, <code>qwen2.5:7b</code>, on lähtökohta, ei suositus: mitään mallisuositusta ei anneta ilman lähdekoodin mukana toimitetun mittauskokeen tulosta.</p>
+<p>Kun avustaja on otettu käyttöön, se on Haku-paneelin <strong>Avustaja</strong>-alivälilehti. Lause — ”yli 50 millipisteen virheeni kisassa” — avaa sen mukaan nimetyn uuden näkymän, suorittaa haun siinä ja siirtyy siihen; sen tunnisteet jäävät hakuhistoriaan. Työkalujen palauttama tieto tulee tietokannasta; mallin kirjoittama on merkitty tekstillä <strong>Mallin vapaata tekstiä</strong>. Avustaja ehdottaa muutoksen vain, jos valintaruutu <strong>Anna avustajan ehdottaa muutoksia (jokainen vahvistetaan)</strong> on valittuna — asetus on erillinen paikallisen MCP-palvelimen kirjoittamisesta — ja jokainen sen valmistelema muutos näytetään, ja se tehdään vasta painikkeella <strong>Vahvista</strong>.</p>
 <p>Asetusikkuna sisältää myös käyttöliittymän näyttöasetukset. <strong>Käyttöliittymän skaalaus</strong> -liukusäätimellä voi suurentaa tai pienentää kaikkia käyttöliittymän elementtejä, mistä on hyötyä korkean tarkkuuden näytöillä tai luettavuuden parantamiseksi. <strong>Paneelien sijainti</strong> -valikko määrittää, missä paneelit (haku, ottelut, analyysi) näkyvät suhteessa lautaan: <em>alhaalla</em>, <em>sivulla</em> tai <em>automaattinen</em> (sivu valitaan tällöin leveillä näytöillä käytettävissä olevan tilan parempaa hyödyntämistä varten). Muiden asetusten tavoin nämä valinnat säilyvät istunnosta toiseen.</p>
 <h3>Opastetut kierrokset ja esimerkkitietokanta</h3>
 <p>Käytön aloittamisen helpottamiseksi blunderDB tarjoaa käyttöliittymästä <strong>opastettuja kierroksia</strong>. Kierrosten luettelo avataan työkalupalkista tai komennolla <code>tour</code> (alias <code>tutorial</code>). Käytettävissä on seitsemän kierrosta: yleinen käyttöliittymäkierros sekä asemien hakuun, otteluiden tarkasteluun, turnausten tarkasteluun, Eval-paneeliin, Anki-kertaukseen ja tilastoihin keskittyvät kierrokset. Jokainen kierros korostaa käyttöliittymän asianmukaiset elementit vaihe vaiheelta, avaa matkan varrella sen paneelin josta se puhuu, ja sen voi toistaa milloin tahansa. Ensimmäisellä käynnistyskerralla yleinen kierros tarjotaan automaattisesti.</p>
@@ -278,6 +284,7 @@ export default {
 <p>Elävä kokoelma, jonka kysely sisältää tunnuksen jota tämä versio ei enää tunne, <strong>kieltäytyy avautumasta</strong> ja sanoo sen sen sijaan että palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla suodattimella ei saa olla: laajeta hiljaisuudessa.</p>
 <h3>Ottelupaneeli</h3>
 <p><strong>Ottelupaneeli</strong> (<em>CTRL-Tab</em>) luettelee tuodut ottelut. Kaksoisnapsauta ottelua (tai paina <em>ENTER</em>) navigoidaksesi sen siirroissa. Komento <code>m</code> jatkaa navigointia viimeksi katsotussa ottelussa.</p>
+<p>Paneelin yläreunan suodatuskenttä (<em>/</em> siirtyy siihen, <em>Esc</em> tyhjentää sen) säilyttää vain ottelut, joissa pelaaja, tapahtuma, paikka, turnaus tai päivämäärä sisältää kirjoitetun tekstin. Suodatuksen ja sarakkeiden lajittelun tekee tietokanta: luettelo latautuu sivuittain vierittäessä, ja laskuri ”n / N ottelua” näyttää ladatun osuuden. Pelaajan, päivämäärän tai turnauksen korjaaminen luettelossa päivittää vain muokatun rivin.</p>
 <p>Käyttäjä voi:</p>
 <ul>
 <li>selata ottelun siirtoja näppäimillä <em>VASEN</em> ja <em>OIKEA</em>,</li>
@@ -1014,7 +1021,7 @@ export default {
 </tr>
 <tr>
 <td>PageUp</td>
-<td>Siirtyy sata asemaa taaksepäin (pysähtyy luettelon alkuun); ottelussa edelliseen peliin.</td>
+<td>Siirtyy sivun taaksepäin (oletuksena sata asemaa, säädettävissä kohdassa Asetukset &gt; Käyttöliittymä, enintään 10 % luettelosta; pysähtyy luettelon alkuun); ottelussa edellinen peli.</td>
 </tr>
 <tr>
 <td>VASEN, k</td>
@@ -1038,7 +1045,7 @@ export default {
 </tr>
 <tr>
 <td>PageDown</td>
-<td>Siirtyy sata asemaa eteenpäin (pysähtyy luettelon loppuun); ottelussa seuraavaan peliin.</td>
+<td>Siirtyy sivun eteenpäin (sama askel kuin PageUp; pysähtyy luettelon loppuun); ottelussa seuraava peli.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1386,6 +1393,10 @@ export default {
 <tr>
 <td>Del</td>
 <td>Poista valittu ottelu.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Siirry suodatuskenttään (pelaaja, tapahtuma, turnaus, päivämäärä). <em>Esc</em> tyhjentää suodattimen.</td>
 </tr>
 <tr>
 <td>Esc</td>

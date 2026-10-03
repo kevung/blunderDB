@@ -484,6 +484,18 @@ func MatchOrderByClause(sort string) string {
 		return "m.match_length DESC, m.id DESC"
 	case "length_asc":
 		return "m.match_length ASC, m.id ASC"
+	case "player1", "player1_asc":
+		return "LOWER(m.player1_name) ASC, m.id ASC"
+	case "player1_desc":
+		return "LOWER(m.player1_name) DESC, m.id DESC"
+	case "player2", "player2_asc":
+		return "LOWER(m.player2_name) ASC, m.id ASC"
+	case "player2_desc":
+		return "LOWER(m.player2_name) DESC, m.id DESC"
+	case "tournament", "tournament_asc": // tournament name, else the event; needs the alias `t`
+		return "LOWER(COALESCE(NULLIF(t.name, ''), m.event, '')) ASC, m.id ASC"
+	case "tournament_desc":
+		return "LOWER(COALESCE(NULLIF(t.name, ''), m.event, '')) DESC, m.id DESC"
 	case "opponent": // by player names, case-insensitive
 		return "LOWER(m.player1_name) ASC, LOWER(m.player2_name) ASC, m.id ASC"
 	default: // "date" / "" — most recent first

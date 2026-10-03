@@ -74,6 +74,7 @@ type serveConfig struct {
 	rateLimitRPS   float64
 	rateLimitBurst int
 	enableRLS      bool
+	readTenants    bool
 	tsPath         string
 	identityDir    string
 	importDir      string
@@ -124,6 +125,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		quotaAnalysis  = fs.Int64("quota-analysis-seconds", int64(envIntOr("BLUNDERDB_QUOTA_ANALYSIS_SECONDS", 0)), "per-tenant engine CPU seconds per UTC day (wall time × workers), over sweeps, comparisons, cube matrices, evaluations and rollouts (0 = unlimited)")
 		quotaImports   = fs.Int("quota-imports", envIntOr("BLUNDERDB_QUOTA_IMPORTS", 0), "per-tenant imports running at once (0 = unlimited)")
 		enableRLS      = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
+		readTenants    = fs.Bool("read-tenants", envBoolOr("BLUNDERDB_READ_TENANTS", false), "honour X-Read-Tenants on the across.* reads (ADR-0063); off by default, and off REFUSES the header (400). Enable only once the proxy strips any client-supplied value and sets it itself: this daemon authenticates nobody (ADR-0005)")
 		tsPath         = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the embedded TS-06-06; the daemon never downloads one")
 		identityDir    = fs.String("identity-dir", os.Getenv("BLUNDERDB_IDENTITY_DIR"), "directory holding this daemon's watermark signing identity (created on first use); a watermarked export is refused when unset")
 		importDir      = fs.String("import-dir", os.Getenv("BLUNDERDB_IMPORT_DIR"), "directory on this host from which imports.batch may read match files by path (off by default: without it a batch comes only as an uploaded archive); a path outside it is refused")
@@ -158,6 +160,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		rateLimitRPS:   *rateLimitRPS,
 		rateLimitBurst: *rateLimitBurst,
 		enableRLS:      *enableRLS,
+		readTenants:    *readTenants,
 		tsPath:         *tsPath,
 		identityDir:    *identityDir,
 		importDir:      *importDir,
@@ -231,6 +234,7 @@ func RunServe(args []string) error {
 		// SQLite has no tenant column: serving several tenants from it would
 		// hand them all the same rows.
 		SingleTenant:     cfg.backend == "sqlite",
+		TrustReadTenants: cfg.readTenants,
 		Storage:          st,
 		Logger:           logger,
 		Metrics:          metrics.New(),

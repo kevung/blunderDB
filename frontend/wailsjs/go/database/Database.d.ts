@@ -115,14 +115,19 @@ export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
 export function CorrectResult(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number,arg6:string):Promise<service.DirectionView>;
 
+export function CountAnkiDeckPositions(arg1:number):Promise<number>;
+
+export function CountCollectionPositions(arg1:number):Promise<number>;
+
 export function CountMatchPositionsToAnalyze(arg1:number):Promise<number>;
+
+export function CountMatches(arg1:storage.MatchListOpts):Promise<number>;
 
 export function CountOrphans():Promise<database.OrphanCounts>;
 
 export function CountPositions():Promise<number>;
 
 export function CountPositionsByFilters(arg1:domain.SearchFilters):Promise<number>;
-
 
 export function CountPositionsWithForeignAnalysis():Promise<number>;
 
@@ -264,6 +269,8 @@ export function GetCommentsByPosition(arg1:number):Promise<Array<domain.CommentE
 
 export function GetDatabaseStats():Promise<Record<string, any>>;
 
+export function GetDatabaseStatsEstimate():Promise<Record<string, any>>;
+
 export function GetDatabaseVersion():Promise<string>;
 
 export function GetDirection(arg1:number):Promise<service.DirectionView>;
@@ -348,10 +355,13 @@ export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function ImportXGPPosition(arg1:string):Promise<number>;
 
+export function IndexOfAnkiDeckPosition(arg1:number,arg2:number):Promise<number>;
+
+export function IndexOfCollectionPosition(arg1:number,arg2:number):Promise<number>;
+
 export function IndexOfPosition(arg1:number):Promise<number>;
 
 export function IndexOfPositionByFilters(arg1:domain.SearchFilters,arg2:number):Promise<number>;
-
 
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
@@ -359,9 +369,15 @@ export function IsReadOnly():Promise<boolean>;
 
 export function LastDecision(arg1:number):Promise<service.LastDecision>;
 
+export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
+
+export function ListCollectionPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
+
 export function ListDirections():Promise<Array<service.DirectionSummary>>;
 
 export function ListImportBatches(arg1:number,arg2:number):Promise<Array<domain.ImportBatch>>;
+
+export function ListMatches(arg1:storage.MatchListOpts):Promise<Array<domain.Match>>;
 
 export function ListPositionIDs(arg1:number,arg2:number):Promise<Array<number>>;
 
@@ -396,7 +412,6 @@ export function LoadPositionsByFilters(arg1:domain.SearchFilters):Promise<Array<
 export function LoadPositionsByFiltersCore(arg1:domain.SearchFilters,arg2:storage.ListOpts):Promise<Array<domain.Position>>;
 
 export function LoadPositionsByFiltersCoreCtx(arg1:context.Context,arg2:domain.SearchFilters,arg3:storage.ListOpts):Promise<Array<domain.Position>>;
-
 
 export function LoadPositionsByIDs(arg1:Array<number>):Promise<Array<domain.Position>>;
 

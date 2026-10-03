@@ -25,6 +25,10 @@ func (cli *CLI) runList(args []string) error {
 	limit := listCmd.Int("limit", 10, "Maximum number of items to list")
 	offset := listCmd.Int("offset", 0, "Number of positions to skip before listing (positions only)")
 
+	// Matches filter and order, applied in SQL like the match panel's search box
+	matchQuery := listCmd.String("query", "", "With --type matches: keep matches whose players, event, location, round, tournament or date contain this text")
+	matchSort := listCmd.String("sort", "", "With --type matches: date (default), date_asc, length_asc, length_desc, player1, player1_desc, player2, player2_desc, tournament, tournament_desc, opponent")
+
 	// Stats-specific flags (only used when --type stats)
 	statsMetric := listCmd.String("metric", "pr", "Metric to display: pr or mwc (stats only)")
 	statsPlayer := listCmd.String("player", "", "Filter by player name (stats only)")
@@ -118,7 +122,7 @@ func (cli *CLI) runList(args []string) error {
 
 	switch strings.ToLower(*listType) {
 	case "matches":
-		return cli.listMatches(*limit)
+		return cli.listMatches(*limit, *matchQuery, *matchSort)
 	case "tournaments":
 		return cli.listTournaments(*limit)
 	case "positions":
@@ -185,24 +189,27 @@ func (cli *CLI) runList(args []string) error {
 	}
 }
 
-// listMatches lists all matches in the database
-func (cli *CLI) listMatches(limit int) error {
-	matches, err := cli.db.GetAllMatches()
+// listMatches lists the matches satisfying query (empty: all), in the order
+// named by sort, at most limit of them (0: no bound).
+func (cli *CLI) listMatches(limit int, query, sort string) error {
+	opts := storage.MatchListOpts{Text: query, Sort: sort, Limit: limit}
+	matches, err := cli.db.ListMatches(opts)
 	if err != nil {
 		return fmt.Errorf("failed to get matches: %w", err)
 	}
+	total, err := cli.db.CountMatches(opts)
+	if err != nil {
+		return fmt.Errorf("failed to count matches: %w", err)
+	}
 
-	if len(matches) == 0 {
+	if total == 0 {
 		fmt.Println("No matches found in database")
 		return nil
 	}
 
-	fmt.Printf("Found %d match(es):\n\n", len(matches))
+	fmt.Printf("Found %d match(es):\n\n", total)
 
 	displayCount := len(matches)
-	if limit > 0 && limit < len(matches) {
-		displayCount = limit
-	}
 
 	for i := 0; i < displayCount; i++ {
 		match := matches[i]
@@ -223,8 +230,8 @@ func (cli *CLI) listMatches(limit int) error {
 		fmt.Println()
 	}
 
-	if limit > 0 && len(matches) > limit {
-		fmt.Printf("(Showing %d of %d matches, use --limit to see more)\n", displayCount, len(matches))
+	if displayCount < total {
+		fmt.Printf("(Showing %d of %d matches, use --limit to see more)\n", displayCount, total)
 	}
 
 	return nil

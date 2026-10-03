@@ -139,6 +139,36 @@ func testMatchListFilterSortPaginate(t *testing.T, s storage.Storage) {
 	eq("offset 2", ids(storage.MatchListOpts{Offset: 2}), []int64{oldID})
 	// Combined: Alice's matches, oldest first, first one only.
 	eq("combined", ids(storage.MatchListOpts{PlayerName: "Alice", Sort: "date_asc", Limit: 1}), []int64{oldID})
+	// Search box: players, tournament name and date, case-insensitively.
+	eq("text player", ids(storage.MatchListOpts{Text: "aLI"}), []int64{recentID, oldID})
+	eq("text tournament", ids(storage.MatchListOpts{Text: "CUP"}), []int64{midID})
+	eq("text date", ids(storage.MatchListOpts{Text: "2024-06"}), []int64{midID})
+	eq("text length", ids(storage.MatchListOpts{Text: "7"}), []int64{oldID})
+	eq("text two-digit length", ids(storage.MatchListOpts{Text: "11"}), []int64{recentID})
+	// The day, not the timestamp: 23:00 on the 15th still reads as the 15th.
+	eq("text full date", ids(storage.MatchListOpts{Text: "2025-06-15"}), []int64{recentID})
+	eq("text wildcard literal", ids(storage.MatchListOpts{Text: "%"}), nil)
+	eq("unassigned", ids(storage.MatchListOpts{Unassigned: true}), []int64{recentID, oldID})
+	// Name sorts, both directions, id as tiebreaker.
+	eq("player1", ids(storage.MatchListOpts{Sort: "player1"}), []int64{oldID, midID, recentID})
+	eq("player1_desc", ids(storage.MatchListOpts{Sort: "player1_desc"}), []int64{recentID, midID, oldID})
+	eq("player2", ids(storage.MatchListOpts{Sort: "player2"}), []int64{recentID, oldID, midID})
+	eq("tournament sort", ids(storage.MatchListOpts{Sort: "tournament"}), []int64{oldID, recentID, midID})
+	// Count ignores the page and answers the filter.
+	for _, c := range []struct {
+		opts storage.MatchListOpts
+		want int
+	}{
+		{storage.MatchListOpts{}, 3},
+		{storage.MatchListOpts{Limit: 1, Offset: 1}, 3},
+		{storage.MatchListOpts{Text: "ali"}, 2},
+		{storage.MatchListOpts{Unassigned: true, Text: "bob"}, 1},
+	} {
+		got, err := ms.Count(ctx, "", c.opts)
+		if err != nil || got != c.want {
+			t.Errorf("Count(%+v) = %d, %v; want %d", c.opts, got, err, c.want)
+		}
+	}
 }
 
 // testMatchSwapCopyOnWrite: swapping a match's players must not mutate

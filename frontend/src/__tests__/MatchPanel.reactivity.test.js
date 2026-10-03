@@ -2,7 +2,7 @@
  * MatchPanel.reactivity.test.js
  *
  * Vérifie que MatchPanel réagit correctement aux changements de openPanels :
- * - loadMatches (= GetAllMatches) n'est appelé que lorsque le panel s'ouvre
+ * - loadMatches (= ListMatches) n'est appelé que lorsque le panel s'ouvre
  * - Plusieurs ouvertures successives déclenchent autant d'appels
  * - Pas de race condition avec des bascules rapides
  *
@@ -15,7 +15,9 @@ import { tick } from 'svelte';
 
 // ── Wails mock ───────────────────────────────────────────────────────────────
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    GetAllMatches: vi.fn(() => Promise.resolve([])),
+    ListMatches: vi.fn(() => Promise.resolve([])),
+    CountMatches: vi.fn(() => Promise.resolve(0)),
+    GetMatchByID: vi.fn(() => Promise.resolve(null)),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
     ListTranscriptions: vi.fn(() => Promise.resolve([])),
     DeleteMatch: vi.fn(() => Promise.resolve()),
@@ -39,7 +41,7 @@ import { tournamentsStore } from '../stores/tournamentStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 
 // ── DB mock ref (pour vérifier les appels) ────────────────────────────────────
-import { GetAllMatches } from '../../wailsjs/go/database/Database.js';
+import { ListMatches } from '../../wailsjs/go/database/Database.js';
 
 // ── Composant ────────────────────────────────────────────────────────────────
 import MatchPanel from '../components/MatchPanel.svelte';
@@ -64,17 +66,17 @@ describe('MatchPanel — réactivité openPanels', () => {
     afterEach(cleanup);
 
     // ── Test 1 : panel non visible → loadMatches pas appelé ──────────────────
-    test('T1 — panel non visible au montage : GetAllMatches non appelé', async () => {
+    test('T1 — panel non visible au montage : ListMatches non appelé', async () => {
         openPanels.set(new Set()); // panel fermé
         render(MatchPanel);
         await tick();
         await tick(); // double tick pour laisser les effets async se stabiliser
 
-        expect(GetAllMatches).not.toHaveBeenCalled();
+        expect(ListMatches).not.toHaveBeenCalled();
     });
 
     // ── Test 2 : ouverture du panel → loadMatches appelé une fois ─────────────
-    test('T2 — ouverture du panel : GetAllMatches appelé exactement une fois', async () => {
+    test('T2 — ouverture du panel : ListMatches appelé exactement une fois', async () => {
         render(MatchPanel);
         await tick();
 
@@ -82,11 +84,11 @@ describe('MatchPanel — réactivité openPanels', () => {
         await tick();
         await tick(); // attendre la résolution des promesses
 
-        expect(GetAllMatches).toHaveBeenCalledTimes(1);
+        expect(ListMatches).toHaveBeenCalledTimes(1);
     });
 
     // ── Test 3 : fermeture puis réouverture → deuxième appel ─────────────────
-    test('T3 — fermeture puis réouverture : GetAllMatches appelé deux fois', async () => {
+    test('T3 — fermeture puis réouverture : ListMatches appelé deux fois', async () => {
         render(MatchPanel);
         await tick();
 
@@ -95,7 +97,7 @@ describe('MatchPanel — réactivité openPanels', () => {
         await tick();
         await tick();
 
-        expect(GetAllMatches).toHaveBeenCalledTimes(1);
+        expect(ListMatches).toHaveBeenCalledTimes(1);
 
         // Fermeture
         openPanels.set(new Set());
@@ -106,11 +108,11 @@ describe('MatchPanel — réactivité openPanels', () => {
         await tick();
         await tick();
 
-        expect(GetAllMatches).toHaveBeenCalledTimes(2);
+        expect(ListMatches).toHaveBeenCalledTimes(2);
     });
 
     // ── Test 4 : bascules rapides → nb appels = nb ouvertures ────────────────
-    test('T4 — 5 ouvertures alternées : GetAllMatches appelé exactement 5 fois', async () => {
+    test('T4 — 5 ouvertures alternées : ListMatches appelé exactement 5 fois', async () => {
         render(MatchPanel);
         await tick();
 
@@ -122,7 +124,7 @@ describe('MatchPanel — réactivité openPanels', () => {
             await tick();
         }
 
-        expect(GetAllMatches).toHaveBeenCalledTimes(5);
+        expect(ListMatches).toHaveBeenCalledTimes(5);
     });
 });
 
@@ -135,7 +137,7 @@ describe('MatchPanel — matchPanelRefreshTriggerStore', () => {
     afterEach(cleanup);
 
     // ── Test 5 : trigger quand panel visible → loadMatches appelé ────────────
-    test('T5 — trigger quand panel ouvert : GetAllMatches rappelé', async () => {
+    test('T5 — trigger quand panel ouvert : ListMatches rappelé', async () => {
         render(MatchPanel);
         await tick();
 
@@ -143,17 +145,17 @@ describe('MatchPanel — matchPanelRefreshTriggerStore', () => {
         openPanels.set(new Set([PANEL.MATCH]));
         await tick();
         await tick();
-        expect(GetAllMatches).toHaveBeenCalledTimes(1);
+        expect(ListMatches).toHaveBeenCalledTimes(1);
 
         // Déclencher le refresh (2e appel)
         matchPanelRefreshTriggerStore.update((n) => n + 1);
         await tick();
         await tick();
-        expect(GetAllMatches).toHaveBeenCalledTimes(2);
+        expect(ListMatches).toHaveBeenCalledTimes(2);
     });
 
     // ── Test 6 : trigger quand panel fermé → loadMatches pas appelé ──────────
-    test('T6 — trigger quand panel fermé : GetAllMatches non rappelé', async () => {
+    test('T6 — trigger quand panel fermé : ListMatches non rappelé', async () => {
         render(MatchPanel);
         await tick();
 
@@ -162,6 +164,6 @@ describe('MatchPanel — matchPanelRefreshTriggerStore', () => {
         await tick();
         await tick();
 
-        expect(GetAllMatches).not.toHaveBeenCalled();
+        expect(ListMatches).not.toHaveBeenCalled();
     });
 });

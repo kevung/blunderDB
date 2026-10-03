@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:36+0200\n"
+"POT-Creation-Date: 2026-10-03 11:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -208,12 +208,15 @@ msgid "PageUp"
 msgstr "AvPág"
 
 #: ../../source/raccourcis.rst:1
+#, no-python-format
 msgid ""
-"Recule d'une page de cent positions (au début de la liste, s'y arrête) ; "
-"dans un match, partie précédente."
+"Recule d'une page (cent positions par défaut, réglable dans les "
+"Paramètres > Interface, jusqu'à 10 % de la liste ; au début de la liste, "
+"s'y arrête) ; dans un match, partie précédente."
 msgstr ""
-"Retrocede una página de cien posiciones (se detiene al principio de la "
-"lista); en una partida, juego anterior."
+"Retrocede una página (cien posiciones por defecto, ajustable en "
+"Configuración > Interfaz, hasta el 10 % de la lista; se detiene al "
+"principio de la lista); en un match, partida anterior."
 
 #: ../../source/raccourcis.rst:1
 msgid "GAUCHE, k"
@@ -261,11 +264,11 @@ msgstr "RePág"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Avance d'une page de cent positions (à la fin de la liste, s'y arrête) ; "
-"dans un match, partie suivante."
+"Avance d'une page (même pas que PageUp ; à la fin de la liste, s'y "
+"arrête) ; dans un match, partie suivante."
 msgstr ""
-"Avanza una página de cien posiciones (se detiene al final de la lista); "
-"en una partida, juego siguiente."
+"Avanza una página (mismo paso que PageUp; se detiene al final de la "
+"lista); en un match, partida siguiente."
 
 #: ../../source/raccourcis.rst:1
 msgid "r"
@@ -749,10 +752,22 @@ msgid "Supprimer le match sélectionné."
 msgstr "Eliminar la partida seleccionada."
 
 #: ../../source/raccourcis.rst:1
+msgid "/"
+msgstr "/"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Aller au champ de filtre (joueur, événement, tournoi, date). *Esc* efface"
+" le filtre."
+msgstr ""
+"Ir al campo de filtro (jugador, evento, torneo, fecha). *Esc* borra el "
+"filtro."
+
+#: ../../source/raccourcis.rst:1
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deseleccionar/cerrar el panel."
 
-#: ../../source/raccourcis.rst:245
+#: ../../source/raccourcis.rst:246
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Panel Anki (repetición espaciada)"
 
@@ -810,7 +825,7 @@ msgstr ""
 "Detener la revisión y volver a la lista de mazos (se puede reanudar más "
 "tarde)."
 
-#: ../../source/raccourcis.rst:263
+#: ../../source/raccourcis.rst:264
 msgid "Panneau des tournois"
 msgstr "Panel de torneos"
 
@@ -850,11 +865,11 @@ msgstr ""
 "Cancelar la edición en curso, si no borrar la búsqueda de añadir partida,"
 " si no deseleccionar el torneo, si no cerrar el panel (por etapas)."
 
-#: ../../source/raccourcis.rst:279
+#: ../../source/raccourcis.rst:280
 msgid "Page Direction"
 msgstr "Página Dirección"
 
-#: ../../source/raccourcis.rst:281
+#: ../../source/raccourcis.rst:282
 msgid ""
 "Sous la page Direction, *J*, *K*, *HAUT*, *BAS* et *ENTRÉE* vont à la "
 "file des propositions, sauf quand le focus est sur une case de la grille "
@@ -918,10 +933,6 @@ msgstr ""
 "mesa); apuntar a una mesa ocupada intercambia las dos partidas."
 
 #: ../../source/raccourcis.rst:1
-msgid "/"
-msgstr "/"
-
-#: ../../source/raccourcis.rst:1
 msgid ""
 "Ouvrir la recherche rapide : joueurs, tables, matchs en cours et épreuves"
 " de l'événement, retrouvés par un nom ou un numéro de table (:ref:`détail"
@@ -976,7 +987,7 @@ msgstr ""
 " y el mismo arrastrar y soltar actúan sobre la mesa de cualquier prueba; "
 "un intercambio con otra prueba nombra a las dos en la confirmación."
 
-#: ../../source/raccourcis.rst:303
+#: ../../source/raccourcis.rst:304
 msgid "Panneau des collections"
 msgstr "Panel de colecciones"
 
@@ -1004,11 +1015,11 @@ msgstr ""
 "Volver a la lista de colecciones, si no deseleccionar la colección, si no"
 " cerrar el panel (por etapas)."
 
-#: ../../source/raccourcis.rst:318
+#: ../../source/raccourcis.rst:319
 msgid "Panneau Transcription"
 msgstr "Panel de transcripción"
 
-#: ../../source/raccourcis.rst:320
+#: ../../source/raccourcis.rst:321
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
 "brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
@@ -1454,7 +1465,7 @@ msgstr "CTRL-MAYÚS-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Rehacer el gesto deshecho."
 
-#: ../../source/raccourcis.rst:370
+#: ../../source/raccourcis.rst:371
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1462,7 +1473,7 @@ msgstr ""
 "Una tirada que no permite ningún movimiento registra el baile por sí "
 "sola, sin pulsación adicional."
 
-#: ../../source/raccourcis.rst:373
+#: ../../source/raccourcis.rst:374
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1489,7 +1500,7 @@ msgstr ""
 "decisión siguiente, como al final del documento, e INTRO lleva allí "
 "también."
 
-#: ../../source/raccourcis.rst:384
+#: ../../source/raccourcis.rst:385
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1502,7 +1513,7 @@ msgstr ""
 "celda que reemplaza, una inserción abre una celda entre sus dos vecinas, "
 "y el bando se lee en la columna. Nada se registra antes de la validación."
 
-#: ../../source/raccourcis.rst:389
+#: ../../source/raccourcis.rst:390
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1514,7 +1525,7 @@ msgstr ""
 "vez en lugar de sobrescribir la de después. El final de la partida o "
 "mover el cursor le pone fin."
 
-#: ../../source/raccourcis.rst:394
+#: ../../source/raccourcis.rst:395
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1526,7 +1537,7 @@ msgstr ""
 "cursor» al final del documento. La frase se borra sola y devuelve el "
 "sitio a la acción esperada."
 
-#: ../../source/raccourcis.rst:399
+#: ../../source/raccourcis.rst:400
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1546,7 +1557,7 @@ msgstr ""
 " «por revisar» hasta la validación. Avanzar o retroceder el cursor "
 "después de haber cambiado algo registra la corrección de paso."
 
-#: ../../source/raccourcis.rst:407
+#: ../../source/raccourcis.rst:408
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1572,7 +1583,7 @@ msgstr ""
 " inserta para el bando al que le faltaba. La pila de deshacer vive en "
 "memoria: se pierde al cerrar el borrador."
 
-#: ../../source/raccourcis.rst:418
+#: ../../source/raccourcis.rst:419
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1582,7 +1593,7 @@ msgstr ""
 "transcripción y la barra del borrador — se describe en "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:425
+#: ../../source/raccourcis.rst:426
 msgid "Planche-contact"
 msgstr "Hoja de contactos"
 
@@ -1630,7 +1641,7 @@ msgstr "Abrir la posición en el tablero y cerrar la hoja."
 msgid "Refermer la planche."
 msgstr "Cerrar la hoja."
 
-#: ../../source/raccourcis.rst:442
+#: ../../source/raccourcis.rst:443
 msgid "Panneau d'aide"
 msgstr "Panel de ayuda"
 

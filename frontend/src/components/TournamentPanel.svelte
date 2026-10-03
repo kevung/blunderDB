@@ -16,7 +16,7 @@
         UpdateTournament,
         GetTournamentMatches,
         RemoveMatchFromTournament,
-        GetAllMatches,
+        ListMatches,
         AddMatchToTournament,
         GetMatchMovePositions,
         LoadAnalysis,
@@ -119,14 +119,12 @@
 
     // Add match to tournament: only matches not yet assigned to one are offered
     let addMatchSearch = $state('');
-    let allMatches = $state([]);
-    const availableMatches = $derived(allMatches.filter((m) => !m.tournament_id));
+    // The matches that can still join a tournament: one bounded page from the
+    // database, narrowed by what is typed (never the whole library).
+    let availableMatches = $state.raw([]);
 
-    function matchMatchesQuery(m, query) {
-        const q = query.trim().toLowerCase();
-        if (!q) return true;
-        return (m.player1_name || '').toLowerCase().includes(q) || (m.player2_name || '').toLowerCase().includes(q) || String(m.match_length || '').includes(q);
-    }
+    // The database already filtered on the typed text.
+    const matchMatchesQuery = () => true;
 
     // Match comment editing (one cell of the matches table)
     const matchCommentEdit = createInlineEdit({
@@ -182,12 +180,24 @@
         }
     }
 
+    let addMatchTimer;
+    $effect(
+        onChange(
+            () => addMatchSearch.trim(),
+            () => {
+                clearTimeout(addMatchTimer);
+                addMatchTimer = setTimeout(loadAllMatches, 200);
+            },
+            ''
+        )
+    );
+
     async function loadAllMatches() {
         try {
-            allMatches = (await GetAllMatches()) || [];
+            availableMatches = (await ListMatches({ Unassigned: true, Text: addMatchSearch.trim(), Limit: 50 })) || [];
         } catch (error) {
             logger.error('Error loading matches:', error);
-            allMatches = [];
+            availableMatches = [];
         }
     }
 

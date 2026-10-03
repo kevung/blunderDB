@@ -70,7 +70,7 @@ export default {
 <li>die Befehlszeile, erreichbar durch Drücken der Taste <em>LEERTASTE</em>,</li>
 <li>eine Informationsmeldung zu einer vom Benutzer ausgeführten Operation,</li>
 <li>den Index der aktuellen Stellung, gefolgt von der Zahl der Stellungen in der aktuellen Bibliothek (oder Zug-/Partieangaben beim Durchgehen eines Matches),</li>
-<li>der <strong>Bibliothekszähler</strong> — „412 Positionen · 38 Blunders · 5 Matches“ — bei dem jede Zahl <strong>öffnet, was sie zählt</strong>: die Positionen, die in der Befehlszeile mit der Schwelle der Bibliothek vorbereitete Suche <code>E&gt;</code>, oder die Liste der Matches. Eine Zahl, der man nicht folgen kann, ist eine Verzierung. Die Blunder-Schwelle ist die der Bibliothek, in der Registerkarte <em>Bibliothek</em> der Konfiguration eingestellt und mit den Statistiken geteilt: zwei Schwellenwerte würden dasselbe Wort zwei Dinge sagen lassen. Der Zähler verspricht genau das, was der Link öffnet, auch für eine Position, die auf mehrere Arten gespielt wurde und die ihre höchsten Kosten wert ist.</li>
+<li>der <strong>Bibliothekszähler</strong> — „412 Positionen · 38 Blunders · 5 Matches“ — bei dem jede Zahl <strong>öffnet, was sie zählt</strong>: die Positionen, die in der Befehlszeile mit der Schwelle der Bibliothek vorbereitete Suche <code>E&gt;</code>, oder die Liste der Matches. Eine Zahl, der man nicht folgen kann, ist eine Verzierung. Die Blunder-Schwelle ist die der Bibliothek, in der Registerkarte <em>Bibliothek</em> der Konfiguration eingestellt und mit den Statistiken geteilt: zwei Schwellenwerte würden dasselbe Wort zwei Dinge sagen lassen. Der Zähler verspricht genau das, was der Link öffnet, auch für eine Position, die auf mehrere Arten gespielt wurde und die ihre höchsten Kosten wert ist. Bei einer sehr großen Bibliothek (mehr als 200 000 Zeilen) durchsucht der Zähler die Tabellen nicht: eine Zahl mit vorangestelltem „≈“ ist eine Schätzung (eine obere Schranke, da gelöschte Zeilen Lücken hinterlassen). Sind die Positionen geschätzt, erscheint die Zahl der Blunders, für die es keine ehrliche Schätzung gibt, als „?“ — der Link startet die Suche, die die genaue Zahl liefert.</li>
 </ul>
 <div class="admonition note">
 <p>Bei Stellungen, die aus einer Suche des Benutzers stammen, entspricht die in der Statusleiste angegebene Anzahl der Stellungen der Anzahl der gefilterten Stellungen.</p>
@@ -89,14 +89,15 @@ export default {
 </ul>
 <p>Die Ansichten werden mit dem Sitzungszustand der Datenbank gespeichert und beim erneuten Öffnen wiederhergestellt.</p>
 <h3>Konfiguration</h3>
-<p>Die Konfigurationsschaltfläche (Zahnradsymbol) in der Werkzeugleiste, links neben der Hilfeschaltfläche, öffnet das Konfigurationsfenster von blunderDB. Es ist in sieben Registerkarten gegliedert:</p>
+<p>Die Konfigurationsschaltfläche (Zahnradsymbol) in der Werkzeugleiste, links neben der Hilfeschaltfläche, öffnet das Konfigurationsfenster von blunderDB. Es ist in acht Registerkarten gegliedert:</p>
 <ul>
-<li><strong>Oberfläche</strong> — Sprache, Anzeigeskalierung, Position des Panels;</li>
+<li><strong>Oberfläche</strong> — Sprache, Anzeigeskalierung, Position des Panels, Schrittweite von PageUp / PageDown (10, 50, 100, 500 oder 1 000 Positionen oder 10 % der Liste);</li>
 <li><strong>Brettfarben</strong> — die Farben des Bretts;</li>
 <li><strong>Bibliothek</strong> — was zur geöffneten Datenbank gehört: die Fehler- und die Blunder-Schwelle, das Komprimieren und das Reparieren, weiter unten beschrieben;</li>
 <li><strong>Bearoff</strong> — die vom Eval-Panel verwendeten Bearoff-Tabellen;</li>
 <li><strong>gammonNet</strong> — die Einstellungen des eingebetteten Evaluators, unten beschrieben;</li>
 <li><strong>Überwachter Ordner</strong> — der automatische Import von Matches, die in einem Ordner eintreffen, unten beschrieben;</li>
+<li><strong>Assistent und MCP</strong> — der lokale MCP-Server und der interne Assistent, unten beschrieben;</li>
 <li><strong>Ausstelleridentität</strong> — der Schlüssel, mit dem Ihre Wasserzeichen signiert werden; beschrieben im Abschnitt Eine Datenbank weitergeben: Herkunft und Passwort.</li>
 </ul>
 <p>Der Reiter <em>Oberfläche</em> beginnt mit einem <strong>Thema</strong>: <em>dem System folgen</em>, <em>hell</em>, <em>dunkel</em>, <em>hoher Kontrast</em> oder <em>druckbar</em>. Das Thema legt die Farben der Oberfläche fest und <strong>schlägt eine Brettpalette vor</strong> — eine dunkle Oberfläche um ein helles Brett ist kein dunkles Thema, sondern ein halbes, denn das Brett nimmt den Großteil des Fensters ein.</p>
@@ -150,6 +151,11 @@ export default {
 </ul>
 <p>Das Standardintervall beträgt zehn Sekunden; die Untergrenze zwei. Der Ordner wird nicht rekursiv durchlaufen: ein überwachter Ordner ist der Ort, an dem ein Werkzeug seine Matches ablegt, kein Baum zum Durchsuchen. Eine ausgehängte Netzwerkfreigabe beendet die Überwachung nicht und lässt ihren Inhalt bei der Rückkehr auch nicht als neu erscheinen.</p>
 <p>Dieselbe Überwachung gibt es auf der Kommandozeile, mit <code>blunderdb import --type batch --dir &lt;Ordner&gt; --watch</code> (siehe Befehlszeilenschnittstelle (CLI)): es ist die Form, die ein Server, eine geplante Aufgabe oder ein Skript verwenden kann.</p>
+<h4>Assistent und MCP</h4>
+<p>Der Reiter <strong>Assistent und MCP</strong> steuert zwei Dinge, die beide standardmäßig deaktiviert sind.</p>
+<p>Der <strong>lokale MCP-Server</strong> stellt die Werkzeuge von blunderDB (Suche, Lesen einer Stellung und ihrer Analyse, Statistiken eines Spielers, Quiz…) einem Assistenten zur Verfügung, der das Model Context Protocol spricht, etwa Claude Desktop oder Claude Code, solange das Fenster geöffnet ist. Er lauscht nur auf diesem Rechner unter <code>http://127.0.0.1:&lt;port&gt;/mcp</code> (standardmäßig Port 8765) und weist eine Anfrage von einer Webseite ab. Er fügt zwei Anzeigewerkzeuge hinzu: eine Ansicht zu einer Suche öffnen und eine Stellung zeigen. Die Werkzeuge lesen nur, außer wenn <strong>Schreiben erlauben</strong> angehakt ist: Dann können sie eine Stellung speichern, kommentieren sowie eine Sammlung anlegen und füllen; nichts wird gelöscht. Ohne geöffnetes Fenster stellt <code>blunderdb mcp</code> dieselben Werkzeuge bereit (siehe Befehlszeilenschnittstelle (CLI)).</p>
+<p>Der <strong>interne Assistent</strong> ist ein Client dieser Werkzeuge. Es ist kein Modell eingebaut: Er wendet sich an einen OpenAI-kompatiblen Anbieter — standardmäßig Ollama auf diesem Rechner, oder Groq, OpenRouter, Gemini, Anthropic oder eine andere Adresse. Entfernt ist jede Adresse außerhalb dieses Rechners, unabhängig vom gewählten Anbieter: Ihre Sätze und die Ergebnisse der Werkzeuge verlassen dann den Rechner, der Reiter weist darauf hin und wartet auf Ihre Zustimmung für genau diese Adresse; eine andere Adresse fragt erneut. Der API-Schlüssel kommt in den Schlüsselbund des Systems, nie in die Datenbank oder die Einstellungsdatei. Das für Ollama standardmäßig vorgeschlagene Modell, <code>qwen2.5:7b</code>, ist ein Ausgangspunkt, keine Empfehlung: Ohne einen Wert aus dem mit dem Quellcode gelieferten Messstand wird keine Modellempfehlung ausgesprochen.</p>
+<p>Nach der Aktivierung ist der Assistent ein Unterreiter <strong>Assistent</strong> des Suchbereichs. Ein Satz — „meine Fehler von mehr als 50 Millipunkten im Rennen“ — öffnet eine neue, nach ihm benannte Ansicht, startet dort die Suche und wechselt dorthin; seine Token bleiben im Suchverlauf. Was die Werkzeuge zurückgeben, stammt aus der Datenbank; was das Modell schreibt, ist als <strong>Freier Text des Modells</strong> gekennzeichnet. Der Assistent schlägt nur dann eine Änderung vor, wenn das Kästchen <strong>Den Assistenten Änderungen vorschlagen lassen</strong> angehakt ist — eine vom Schreiben des lokalen MCP-Servers getrennte Einstellung — und jede Änderung, die er vorbereitet, wird angezeigt und erst nach <strong>Bestätigen</strong> ausgeführt.</p>
 <p>Das Konfigurationsfenster enthält außerdem Anzeigeeinstellungen für die Oberfläche. Ein Schieberegler für die <strong>Oberflächenskalierung</strong> ermöglicht es, alle Oberflächenelemente zu vergrößern oder zu verkleinern, was auf hochauflösenden Bildschirmen oder zur Verbesserung der Lesbarkeit nützlich ist. Ein Menü <strong>Panel-Position</strong> legt fest, wo die Panels (Suche, Matchs, Analyse) relativ zum Brett angezeigt werden: <em>unten</em>, <em>seitlich</em> oder <em>automatisch</em> (auf breiten Bildschirmen wird dann die seitliche Anordnung gewählt, um den verfügbaren Platz besser auszunutzen). Wie die anderen Einstellungen werden auch diese Festlegungen von einer Sitzung zur nächsten beibehalten.</p>
 <h3>Geführte Touren und Beispieldatenbank</h3>
 <p>Um den Einstieg zu erleichtern, bietet blunderDB <strong>geführte Touren</strong> durch die Oberfläche an. Der Katalog der Touren öffnet sich über die Symbolleiste oder mit dem Befehl <code>tour</code> (Alias <code>tutorial</code>). Es stehen sieben Touren zur Verfügung: eine allgemeine Tour durch die Oberfläche sowie Touren zur Stellungssuche, zur Durchsicht der Matches, zur Durchsicht der Turniere, zum Eval-Panel, zur Anki-Wiederholung und zu den Statistiken. Jede Tour hebt Schritt für Schritt die betreffenden Elemente der Oberfläche hervor, öffnet dabei das Panel, von dem sie spricht, und kann jederzeit wiederholt werden. Beim ersten Start wird die allgemeine Tour automatisch angeboten.</p>
@@ -278,6 +284,7 @@ export default {
 <p>Eine lebendige Sammlung, deren Abfrage ein Token trägt, das diese Version nicht mehr kennt, <strong>weigert sich zu öffnen</strong> und sagt es, statt die ganze Datenbank zurückzugeben. Das ist der eine Fehler, den ein gespeicherter Filter nicht haben darf: sich im Stillen zu weiten.</p>
 <h3>Matches-Panel</h3>
 <p>Das Panel <strong>Matches</strong> (<em>CTRL-Tab</em>) listet die importierten Matches auf. Doppelklicken Sie auf ein Match (oder drücken Sie <em>EINGABE</em>), um durch seine Züge zu navigieren. Der Befehl <code>m</code> setzt die Navigation im zuletzt besuchten Match fort.</p>
+<p>Das Filterfeld oben im Panel (<em>/</em> um dorthin zu springen, <em>Esc</em> zum Leeren) behält nur die Matches, bei denen ein Spieler, die Veranstaltung, der Ort, das Turnier oder das Datum den eingegebenen Text enthält. Filter und Spaltensortierung erledigt die Datenbank: Die Liste lädt seitenweise beim Scrollen, und der Zähler „n / N Matches“ zeigt den geladenen Anteil. Das Korrigieren eines Spielers, eines Datums oder eines Turniers in der Liste aktualisiert nur die bearbeitete Zeile.</p>
 <p>Der Benutzer kann:</p>
 <ul>
 <li>die Züge eines Matches mit den Tasten <em>LINKS</em> und <em>RECHTS</em> durchblättern,</li>
@@ -1014,7 +1021,7 @@ export default {
 </tr>
 <tr>
 <td>Bild-auf</td>
-<td>Geht eine Seite von hundert Stellungen zurück (hält am Listenanfang an); in einem Match: vorheriges Spiel.</td>
+<td>Geht eine Seite zurück (standardmäßig hundert Positionen, einstellbar unter Einstellungen &gt; Oberfläche, bis zu 10 % der Liste; hält am Anfang der Liste an); in einem Match vorheriges Spiel.</td>
 </tr>
 <tr>
 <td>LINKS, k</td>
@@ -1038,7 +1045,7 @@ export default {
 </tr>
 <tr>
 <td>Bild-ab</td>
-<td>Geht eine Seite von hundert Stellungen vor (hält am Listenende an); in einem Match: nächstes Spiel.</td>
+<td>Geht eine Seite vor (gleiche Schrittweite wie PageUp; hält am Ende der Liste an); in einem Match nächstes Spiel.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1386,6 +1393,10 @@ export default {
 <tr>
 <td>Entf</td>
 <td>Das ausgewählte Match löschen.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Zum Filterfeld springen (Spieler, Veranstaltung, Turnier, Datum). <em>Esc</em> leert den Filter.</td>
 </tr>
 <tr>
 <td>Esc</td>

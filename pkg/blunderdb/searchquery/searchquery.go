@@ -134,6 +134,26 @@ func Tokenize(command string) []string {
 	return strings.Fields(StripQuoted(cmd))
 }
 
+// Living resolves the saved query of a LIVING collection through the same
+// parser the command bar runs, so a saved filter can never mean something a
+// typed query would not. living is false for a hand-made list (blank query).
+// A query that has become unreadable — a token removed by a later version —
+// is an error rather than the whole library: silently widening is the one
+// failure a saved filter must not have.
+func Living(collectionID int64, query string) (filters domain.SearchFilters, living bool, err error) {
+	query = strings.TrimSpace(query)
+	if query == "" {
+		return domain.SearchFilters{}, false, nil
+	}
+	filters, diags := Parse(query)
+	for _, diag := range diags {
+		if diag.Kind == DiagUnknown {
+			return domain.SearchFilters{}, false, fmt.Errorf("collection %d: its filter carries a token this version does not know: %s", collectionID, diag.Token)
+		}
+	}
+	return filters, true, nil
+}
+
 // Parse reads a search command — `s cube p>30`, `ss t"blunder"`, or the bare
 // token list — into the filters it denotes, plus a diagnostic per token no rule
 // claimed. It never fails: an unreadable token is reported and skipped.

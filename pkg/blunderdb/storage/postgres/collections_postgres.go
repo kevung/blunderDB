@@ -372,6 +372,64 @@ func (s *collectionStore) Positions(ctx context.Context, scope string, collectio
 	}
 }
 
+// PositionIDs returns the window of a collection's position ids, in the order
+// Positions walks them.
+func (s *collectionStore) PositionIDs(ctx context.Context, scope string, collectionID int64, opts storage.ListOpts) ([]int64, error) {
+	rows, err := s.db.Query(ctx,
+		`SELECT position_id FROM collection_position WHERE collection_id = $1 AND tenant_id = $2
+		 ORDER BY sort_order ASC, position_id ASC`+opts.SQL(""), collectionID, tenantID(scope))
+	if err != nil {
+		return nil, fmt.Errorf("postgres: list collection position ids: %w", err)
+	}
+	defer rows.Close()
+	ids := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("postgres: list collection position ids: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: list collection position ids: %w", err)
+	}
+	return ids, nil
+}
+
+// CountPositions returns how many positions a collection holds.
+func (s *collectionStore) CountPositions(ctx context.Context, scope string, collectionID int64) (int, error) {
+	var n int
+	if err := s.db.QueryRow(ctx,
+		`SELECT COUNT(*) FROM collection_position WHERE collection_id = $1 AND tenant_id = $2`,
+		collectionID, tenantID(scope)).Scan(&n); err != nil {
+		return 0, fmt.Errorf("postgres: count collection positions: %w", err)
+	}
+	return n, nil
+}
+
+// IndexOfPosition returns the rank of a position in PositionIDs's order: the
+// number of members that sort before it.
+func (s *collectionStore) IndexOfPosition(ctx context.Context, scope string, collectionID, positionID int64) (int, bool, error) {
+	var sortOrder int64
+	err := s.db.QueryRow(ctx,
+		`SELECT sort_order FROM collection_position WHERE collection_id = $1 AND position_id = $2 AND tenant_id = $3`,
+		collectionID, positionID, tenantID(scope)).Scan(&sortOrder)
+	if errors.Is(err, pgx.ErrNoRows) {
+		return 0, false, nil
+	}
+	if err != nil {
+		return 0, false, fmt.Errorf("postgres: index of collection position: %w", err)
+	}
+	var rank int
+	if err := s.db.QueryRow(ctx,
+		`SELECT COUNT(*) FROM collection_position WHERE collection_id = $1 AND tenant_id = $2
+		 AND (sort_order < $3 OR (sort_order = $3 AND position_id < $4))`,
+		collectionID, tenantID(scope), sortOrder, positionID).Scan(&rank); err != nil {
+		return 0, false, fmt.Errorf("postgres: index of collection position: %w", err)
+	}
+	return rank, true, nil
+}
+
 // leadingScanner forwards Scan to sc with lead prepended to the
 // destinations, so a row that carries extra columns ahead of a position can
 // still be read by scanPosition.

@@ -71,6 +71,40 @@ export function searchSource(payload) {
 }
 
 /**
+ * A collection browsed by windows, as the library is: its count, id windows and ranks come from
+ * the backend, which resolves a living collection through its query. Never held whole.
+ * @param {number} collectionId
+ * @returns {import('./positionList.js').IdSource}
+ */
+export function collectionSource(collectionId) {
+    return {
+        count: async () => (await (await database()).CountCollectionPositions(collectionId)) || 0,
+        window: async (offset, limit) => (await (await database()).ListCollectionPositionIDs(collectionId, offset, limit)) || [],
+        indexOf: async (id) => {
+            const index = await (await database()).IndexOfCollectionPosition(collectionId, id);
+            return Number.isInteger(index) ? index : -1;
+        }
+    };
+}
+
+/**
+ * An Anki deck browsed by windows: the positions its cards link, counted, windowed and ranked by
+ * the backend.
+ * @param {number} deckId
+ * @returns {import('./positionList.js').IdSource}
+ */
+export function deckSource(deckId) {
+    return {
+        count: async () => (await (await database()).CountAnkiDeckPositions(deckId)) || 0,
+        window: async (offset, limit) => (await (await database()).ListAnkiDeckPositionIDs(deckId, offset, limit)) || [],
+        indexOf: async (id) => {
+            const index = await (await database()).IndexOfAnkiDeckPosition(deckId, id);
+            return Number.isInteger(index) ? index : -1;
+        }
+    };
+}
+
+/**
  * Browse the whole library; resolves to its length.
  * @param {{ reset?: boolean }} [options] reset also drops the position cache
  */

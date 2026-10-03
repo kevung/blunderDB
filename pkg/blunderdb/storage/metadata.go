@@ -25,6 +25,19 @@ type Counts struct {
 	Blunders int `json:"blunders"`
 }
 
+// CountsEstimate is the library counter read without scanning the tables: a
+// table whose highest id is under the exact threshold is counted, a larger one
+// is estimated by that highest id (an upper bound: deleted rows leave gaps).
+// The estimate is never presented as exact: Approximate names what it covers.
+type CountsEstimate struct {
+	Counts
+	// Approximate lists the JSON names of the fields that are estimates.
+	Approximate []string `json:"approximate"`
+	// BlundersKnown is false when Blunders was not computed: no honest
+	// estimate of it exists, only the exact count, which scans every analysis.
+	BlundersKnown bool `json:"blunders_known"`
+}
+
 // MetadataStore persists the database-level key/value metadata: schema
 // version, match-equity-table id, and the headline counts.
 type MetadataStore interface {
@@ -42,4 +55,10 @@ type MetadataStore interface {
 
 	// Counts returns the headline row counts.
 	Counts(ctx context.Context, scope string) (Counts, error)
+
+	// EstimatedCounts returns the headline counts without a full scan: exact
+	// while every table's highest id stays under exactBelow, estimated beyond.
+	// IndividualPositions and AnkiCards are not filled. Blunders is filled
+	// only when Positions is exact.
+	EstimatedCounts(ctx context.Context, scope string, exactBelow int) (CountsEstimate, error)
 }

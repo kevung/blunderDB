@@ -1,5 +1,5 @@
 /**
- * Le classement de saison d'un Événement (ADR-0061) : le barème saisi part tel quel, les lignes
+ * Le classement de saison d'un Événement (ADR-0062) : le barème saisi part tel quel, les lignes
  * s'affichent, l'Elo n'a de colonne que demandé.
  */
 

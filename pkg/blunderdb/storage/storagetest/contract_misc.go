@@ -6,6 +6,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"slices"
 	"strings"
 	"testing"
 
@@ -399,6 +400,54 @@ func testMetadataCounts(t *testing.T, s storage.Storage) {
 	}
 	if c != want {
 		t.Fatalf("Counts = %+v, want %+v", c, want)
+	}
+}
+
+// testMetadataEstimatedCounts: N insertions read back as N while the table is
+// under the exact threshold, and as an upper bound flagged approximate above it.
+func testMetadataEstimatedCounts(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	const n = 5
+	for i := 1; i <= n; i++ {
+		p := provenancePos(i)
+		if _, err := s.Positions().Save(ctx, "", &p); err != nil {
+			t.Fatalf("Save position %d: %v", i, err)
+		}
+	}
+	est, err := s.Metadata().EstimatedCounts(ctx, "", 1000)
+	if err != nil {
+		t.Fatalf("EstimatedCounts: %v", err)
+	}
+	if est.Positions != n || len(est.Approximate) != 0 || !est.BlundersKnown {
+		t.Fatalf("under the threshold: %+v, want %d positions, exact, blunders known", est, n)
+	}
+	est, err = s.Metadata().EstimatedCounts(ctx, "", 2)
+	if err != nil {
+		t.Fatalf("EstimatedCounts: %v", err)
+	}
+	// Above it a backend may keep counting (a multi-tenant one has no cheap
+	// estimate) or estimate; either way an estimate is flagged, never silent.
+	if slices.Contains(est.Approximate, "positions") {
+		if est.Positions < n || est.BlundersKnown {
+			t.Fatalf("over the threshold: %+v, want at least %d positions and no blunders", est, n)
+		}
+	} else if est.Positions != n || !est.BlundersKnown {
+		t.Fatalf("over the threshold, counted: %+v, want exactly %d positions and blunders known", est, n)
+	}
+	// Blunders depend on the positions alone: a table that outgrew the
+	// threshold (here the matches) does not take them away.
+	for i := 0; i < n+1; i++ {
+		m := domain.Match{Player1Name: "A", Player2Name: "B"}
+		if _, err := s.Matches().Save(ctx, "", &m); err != nil {
+			t.Fatalf("Save match %d: %v", i, err)
+		}
+	}
+	est, err = s.Metadata().EstimatedCounts(ctx, "", n)
+	if err != nil {
+		t.Fatalf("EstimatedCounts: %v", err)
+	}
+	if slices.Contains(est.Approximate, "positions") || !est.BlundersKnown {
+		t.Fatalf("matches over the threshold, positions under: %+v, want positions not approximate and blunders known", est)
 	}
 }
 

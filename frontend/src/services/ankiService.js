@@ -13,7 +13,6 @@ import {
     SyncAnkiDeckWithPositions,
     GetAnkiDeckStats,
     GetAnkiDeckRetention,
-    GetAnkiDeckPositions,
     GetNextAnkiCard,
     GetLinkedAnkiCard,
     GetRandomAnkiCard,
@@ -28,7 +27,7 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
-import { positionsStore } from '../stores/positionStore.js';
+import { positionsStore, deckSource } from '../stores/positionStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { showPosition } from './positionService.js';
@@ -336,9 +335,8 @@ export async function addPositionToDeck(deckId, positionId) {
 export async function selectDeck(deck) {
     selectedAnkiDeckStore.set(deck);
     await refreshDeckStats(deck.id);
-    const deckPositions = (await GetAnkiDeckPositions(deck.id)) || [];
-    positionsStore.set(deckPositions);
-    if (deckPositions.length > 0) currentPositionIndexStore.set(0);
+    const total = await positionsStore.setSource(deckSource(deck.id));
+    if (total > 0) currentPositionIndexStore.set(0);
 }
 
 /** Wipe a deck's schedule; refresh its stats if it is the selected one. */
@@ -388,7 +386,7 @@ function newQuestion() {
  */
 export async function startSession(deck, { cram = false } = {}) {
     await syncDeckCards(deck);
-    positionsStore.set((await GetAnkiDeckPositions(deck.id)) || []);
+    await positionsStore.setSource(deckSource(deck.id));
     const card = cram ? await GetRandomAnkiCard(deck.id, 0) : await GetNextAnkiCard(deck.id);
     if (!card) return null;
     ankiReviewCardStore.set(card);

@@ -70,7 +70,7 @@ export default {
 <li>la ligne de commande, accessible en appuyant sur la touche <em>ESPACE</em>,</li>
 <li>un message d'information lié à une opération réalisée par l'utilisateur,</li>
 <li>l'index de la position courante, suivi du nombre de positions dans la bibliothèque courante (ou les informations de coup/partie lors de la navigation dans un match),</li>
-<li>le <strong>compteur de bibliothèque</strong> — « 412 positions · 38 blunders · 5 matchs » — où chaque nombre <strong>ouvre ce qu'il compte</strong> : les positions, la recherche <code>E&gt;</code> préparée dans la ligne de commande au seuil de la bibliothèque, ou la liste des matchs. Un chiffre qu'on ne peut pas suivre est une décoration. Le seuil des blunders est celui de la bibliothèque, réglé dans l'onglet <em>Bibliothèque</em> de la configuration et partagé avec les statistiques : deux seuils feraient dire deux choses au même mot. Le compteur promet exactement ce que le lien ouvre, y compris pour une position jouée de plusieurs façons, qui vaut son coût le plus élevé.</li>
+<li>le <strong>compteur de bibliothèque</strong> — « 412 positions · 38 blunders · 5 matchs » — où chaque nombre <strong>ouvre ce qu'il compte</strong> : les positions, la recherche <code>E&gt;</code> préparée dans la ligne de commande au seuil de la bibliothèque, ou la liste des matchs. Un chiffre qu'on ne peut pas suivre est une décoration. Le seuil des blunders est celui de la bibliothèque, réglé dans l'onglet <em>Bibliothèque</em> de la configuration et partagé avec les statistiques : deux seuils feraient dire deux choses au même mot. Le compteur promet exactement ce que le lien ouvre, y compris pour une position jouée de plusieurs façons, qui vaut son coût le plus élevé. Sur une très grande bibliothèque (plus de 200 000 lignes), le compteur ne balaie pas les tables : un nombre précédé de « ≈ » est une estimation (une borne haute, les lignes supprimées laissant des trous). Si les positions sont estimées, le nombre de blunders, qui n'a pas d'estimation honnête, s'affiche « ? » — le lien lance la recherche, qui donne le compte exact.</li>
 </ul>
 <div class="admonition note">
 <p>Dans le cas de positions issues d'une recherche par l'utilisateur, le nombre de positions indiqué dans la barre d'état correspond au nombre de positions filtrées.</p>
@@ -89,14 +89,15 @@ export default {
 </ul>
 <p>Les vues sont enregistrées avec l'état de session de la base de données et restaurées à sa réouverture.</p>
 <h3>Configuration</h3>
-<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de blunderDB. Elle est organisée en sept onglets :</p>
+<p>Le bouton de configuration (icône en forme de rouage) situé dans la barre d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de blunderDB. Elle est organisée en huit onglets :</p>
 <ul>
-<li><strong>Interface</strong> — langue, échelle d'affichage, position du panneau ;</li>
+<li><strong>Interface</strong> — langue, échelle d'affichage, position du panneau, pas de PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste) ;</li>
 <li><strong>Couleurs</strong> — les couleurs du plateau ;</li>
 <li><strong>Bibliothèque</strong> — ce qui appartient à la base ouverte : les seuils d'erreur et de blunder, le compactage et la réparation, décrits ci-dessous ;</li>
 <li><strong>Bearoff</strong> — les tables de sortie utilisées par le panneau Eval ;</li>
 <li><strong>gammonNet</strong> — les réglages de l'évaluateur embarqué, décrits ci-dessous ;</li>
 <li><strong>Dossier surveillé</strong> — l'import automatique des matchs qui arrivent dans un dossier, décrit ci-dessous ;</li>
+<li><strong>Assistant et MCP</strong> — le serveur MCP local et l'assistant interne, décrits ci-dessous ;</li>
 <li><strong>Identité d'émetteur</strong> — la clé qui signe vos filigranes, décrite à la section Diffuser une base : origine et mot de passe.</li>
 </ul>
 <p>L'onglet <em>Interface</em> propose d'abord un <strong>thème</strong> : <em>suivre le système</em>, <em>clair</em>, <em>sombre</em>, <em>contraste élevé</em> ou <em>imprimable</em>. Le thème règle les couleurs de l'interface et <strong>propose une palette de plateau</strong> — une interface sombre autour d'un plateau clair n'est pas un thème sombre, c'est la moitié d'un, puisque le plateau occupe l'essentiel de la fenêtre.</p>
@@ -150,6 +151,11 @@ export default {
 </ul>
 <p>L'intervalle par défaut est de dix secondes ; le plancher est de deux. Le dossier n'est pas parcouru récursivement : un dossier surveillé est l'endroit où un outil dépose ses matchs, pas une arborescence à explorer. Un partage réseau démonté n'arrête pas la surveillance et ne fait pas non plus passer son contenu pour nouveau à son retour.</p>
 <p>La même surveillance existe en ligne de commande, avec <code>blunderdb import --type batch --dir &lt;dossier&gt; --watch</code> (voir Interface en ligne de commande (CLI)) : c'est la forme qu'un serveur, une tâche planifiée ou un script peuvent utiliser.</p>
+<h4>Assistant et MCP</h4>
+<p>L'onglet <strong>Assistant et MCP</strong> règle deux choses, toutes deux désactivées par défaut.</p>
+<p>Le <strong>serveur MCP local</strong> offre les outils de blunderDB (recherche, lecture d'une position et de son analyse, statistiques d'un joueur, quiz…) à un assistant qui parle le Model Context Protocol, comme Claude Desktop ou Claude Code, tant que la fenêtre est ouverte. Il n'écoute que sur cette machine, à l'adresse <code>http://127.0.0.1:&lt;port&gt;/mcp</code> (port 8765 par défaut), et refuse une requête venue d'une page web. Il ajoute deux outils d'affichage : ouvrir une vue sur une recherche et montrer une position. Les outils ne font que lire, sauf si <strong>Autoriser l'écriture</strong> est cochée : ils peuvent alors enregistrer une position, la commenter, créer et remplir une collection ; rien n'efface. Sans fenêtre ouverte, <code>blunderdb mcp</code> sert les mêmes outils (voir Interface en ligne de commande (CLI)).</p>
+<p>L'<strong>assistant interne</strong> est un client de ces mêmes outils. Aucun modèle n'est embarqué : il s'adresse à un fournisseur compatible OpenAI — Ollama sur cette machine par défaut, ou Groq, OpenRouter, Gemini, Anthropic, ou une autre adresse. Est distante toute adresse hors de cette machine, quel que soit le fournisseur choisi : vos phrases et les résultats des outils la quittent alors, l'onglet le dit et attend votre accord pour cette adresse précise ; une autre adresse le redemande. La clé d'API va dans le trousseau du système, jamais dans la base ni dans le fichier de réglages. Le modèle proposé par défaut pour Ollama, <code>qwen2.5:7b</code>, est un point de départ, pas une recommandation : aucune recommandation de modèle n'est faite sans un score du banc de mesure livré avec le code source.</p>
+<p>Une fois activé, l'assistant est un sous-onglet <strong>Assistant</strong> du panneau Recherche. Une phrase — « mes erreurs de plus de 50 millipoints dans la course » — ouvre une nouvelle vue nommée d'après elle, y lance la recherche et y bascule ; ses jetons restent dans l'historique des recherches. Ce que les outils renvoient vient de la base ; ce que le modèle écrit est marqué <strong>Texte libre du modèle</strong>. L'assistant ne propose de modification que si la case <strong>Laisser l'assistant proposer des modifications</strong> est cochée — un réglage distinct de l'écriture du serveur MCP local — et chaque modification qu'il prépare s'affiche et n'est faite qu'après <strong>Confirmer</strong>.</p>
 <p>La fenêtre de configuration regroupe également des réglages d'affichage de l'interface. Un curseur d'<strong>échelle de l'interface</strong> permet d'agrandir ou de réduire l'ensemble des éléments, ce qui est utile sur les écrans à haute densité ou pour améliorer la lisibilité. Un menu <strong>position des panneaux</strong> détermine l'emplacement des panneaux (recherche, matchs, analyse) par rapport au plateau : <em>en bas</em>, <em>sur le côté</em> ou <em>automatique</em> (le côté est alors choisi sur les écrans larges afin de mieux exploiter l'espace disponible). Comme les autres réglages, ces choix sont conservés d'une session à l'autre.</p>
 <h3>Visites guidées et base d'exemple</h3>
 <p>Pour faciliter la prise en main, blunderDB propose des <strong>visites guidées</strong> de l'interface. Le catalogue des visites s'ouvre depuis la barre d'outils ou avec la commande <code>tour</code> (alias <code>tutorial</code>). Sept visites sont disponibles : un tour général de l'interface, et des visites dédiées à la recherche de positions, à la revue des matchs, à la revue des tournois, au panneau Eval, à la révision Anki et aux statistiques. Chaque visite met en évidence les éléments concernés de l'interface, étape par étape, ouvre au passage le panneau dont elle parle, et peut être rejouée à tout moment. Au premier démarrage, le tour général est proposé automatiquement.</p>
@@ -278,6 +284,7 @@ export default {
 <p>Une collection vivante dont la requête porte un jeton que cette version ne connaît plus <strong>refuse de s'ouvrir</strong> en le disant, plutôt que de renvoyer toute la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir : s'élargir en silence.</p>
 <h3>Panneau Matchs</h3>
 <p>Le panneau <strong>Matchs</strong> (<em>CTRL-Tab</em>) liste les matchs importés. Double-cliquer sur un match (ou appuyer sur <em>ENTREE</em>) pour naviguer dans ses coups. La commande <code>m</code> reprend la navigation dans le dernier match visité.</p>
+<p>Le champ de filtre, en haut du panneau (<em>/</em> pour y aller, <em>Esc</em> pour l'effacer), ne garde que les matchs dont un joueur, l'événement, le lieu, le tournoi ou la date contient le texte saisi. Le filtre et le tri des colonnes sont faits par la base : la liste se charge par pages au fil du défilement, et le compteur « n / N matchs » indique la part chargée. Corriger un joueur, une date ou un tournoi dans la liste ne met à jour que la ligne éditée.</p>
 <p>L'utilisateur peut:</p>
 <ul>
 <li>parcourir les coups d'un match en utilisant les touches <em>GAUCHE</em> et <em>DROITE</em>,</li>
@@ -1014,7 +1021,7 @@ export default {
 </tr>
 <tr>
 <td>PageUp</td>
-<td>Recule d'une page de cent positions (au début de la liste, s'y arrête) ; dans un match, partie précédente.</td>
+<td>Recule d'une page (cent positions par défaut, réglable dans les Paramètres &gt; Interface, jusqu'à 10 % de la liste ; au début de la liste, s'y arrête) ; dans un match, partie précédente.</td>
 </tr>
 <tr>
 <td>GAUCHE, k</td>
@@ -1038,7 +1045,7 @@ export default {
 </tr>
 <tr>
 <td>PageDown</td>
-<td>Avance d'une page de cent positions (à la fin de la liste, s'y arrête) ; dans un match, partie suivante.</td>
+<td>Avance d'une page (même pas que PageUp ; à la fin de la liste, s'y arrête) ; dans un match, partie suivante.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1386,6 +1393,10 @@ export default {
 <tr>
 <td>Del</td>
 <td>Supprimer le match sélectionné.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Aller au champ de filtre (joueur, événement, tournoi, date). <em>Esc</em> efface le filtre.</td>
 </tr>
 <tr>
 <td>Esc</td>

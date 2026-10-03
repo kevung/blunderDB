@@ -36,6 +36,17 @@ type Options struct {
 	// valid tenant through, which is what PostgreSQL wants.
 	SingleTenant bool
 
+	// TrustReadTenants honours the X-Read-Tenants header (ADR-0063): the
+	// across.* reads then span the tenants it lists besides X-Tenant-ID.
+	//
+	// Off by default, and off means refused, not ignored: a request carrying a
+	// non-blank X-Read-Tenants gets 400. A proxy configured before the header
+	// existed strips X-Tenant-ID and forwards the rest, so a daemon that
+	// trusted the new header by default would let any client behind it read
+	// other tenants. Turn it on once the proxy removes any client-supplied
+	// value and sets the header itself (`serve --read-tenants`).
+	TrustReadTenants bool
+
 	// Storage is the backend the handlers operate on. Required.
 	Storage storage.Storage
 

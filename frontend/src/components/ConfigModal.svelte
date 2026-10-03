@@ -1,6 +1,8 @@
 <script>
+    import AssistantSettings from './AssistantSettings.svelte';
     import { get } from 'svelte/store';
-    import { configInitialTabStore, statusBarTextStore } from '../stores/uiStore';
+    import { configInitialTabStore, statusBarTextStore, pageStepStore, PAGE_STEPS } from '../stores/uiStore';
+    import { setPageStep } from '../services/pageStepSetting.js';
     import Modal from './Modal.svelte';
     import { t, tMsg, language, setLanguage, LOCALES, LANGUAGE_LABELS } from '../i18n';
     import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
@@ -84,6 +86,7 @@
         { id: 'bearoff', labelKey: 'config.bearoffTitle' },
         { id: 'gammonnet', labelKey: 'config.gammonnetTitle' },
         { id: 'watch', labelKey: 'config.watchTitle' },
+        { id: 'assistant', labelKey: 'config.assistantTitle' },
         { id: 'identity', labelKey: 'config.identityTitle' }
     ];
     let activeTab = $state('interface');
@@ -733,6 +736,14 @@
                         {/each}
                     </select>
                 </div>
+                <div class="setting-row">
+                    <label for="config-page-step">{$t('config.pageStep')}</label>
+                    <select id="config-page-step" class="setting-select" value={String($pageStepStore)} onchange={(e) => setPageStep(e.currentTarget.value)}>
+                        {#each PAGE_STEPS as step (step)}
+                            <option value={step}>{step.endsWith('%') ? $t('config.pageStepPercent', { n: parseInt(step, 10) }) : $t('config.pageStepCount', { n: step })}</option>
+                        {/each}
+                    </select>
+                </div>
                 <p class="setting-note">{$t('config.logsIntro')}</p>
                 <div class="tab-actions">
                     <button class="secondary-button" onclick={openLogsFolder}>{$t('config.logsButton')}</button>
@@ -1025,6 +1036,8 @@
                         {$watchStatusStore.running ? $t('config.watchRunning', { folder: $watchStatusStore.folder }) : $t('config.watchStopped')}
                     </span>
                 </div>
+            {:else if activeTab === 'assistant'}
+                <AssistantSettings />
             {:else if activeTab === 'identity'}
                 <p class="setting-note">{$t('config.identityIntro')}</p>
                 {#if identity?.present}

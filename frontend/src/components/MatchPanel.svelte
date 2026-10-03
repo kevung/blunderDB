@@ -2,14 +2,14 @@
     import { confirmAction, confirmModalStore } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
-    import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
+    import { toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { onChange } from '../utils/onChange.js';
     import { onMount, onDestroy, untrack } from 'svelte';
     import { get } from 'svelte/store';
     import { SvelteSet } from 'svelte/reactivity';
     import {
-        GetAllMatches,
+        GetMatchByID,
         DeleteMatch,
         UpdateMatch,
         UpdateMatchComment,
@@ -47,13 +47,19 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore, isAnyModalOpen } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
+    import { matchListStore } from '../stores/matchListStore.js';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { libraryCountsStore } from '../stores/libraryCountsStore.js';
     import { transcriptionListStore } from '../stores/transcriptionStore.js';
     import { refreshTranscriptionDrafts, draftLabel, showTranscriptionTab } from '../services/transcriptionService.js';
 
     /** @type {any[]} */
-    let matches = $state([]);
+    // The page(s) of the shared match list, filtered and ordered by SQL.
+    const matches = $derived($matchListStore.rows);
+    const matchTotal = $derived($matchListStore.total);
+    let filterText = $state('');
+    let filterInput = $state(null);
+    let filterTimer = null;
     /** @type {any} */
     let selectedMatch = $state(null);
     // A match requested from the command palette is being opened.
@@ -89,7 +95,7 @@
             const name = value.trim();
             try {
                 await SetMatchTournamentByName(matchId, name);
-                await loadMatches();
+                await matchListStore.refreshRow(matchId);
                 await loadTournaments();
                 statusBarTextStore.set(name ? tMsg('match.tournamentSet', { name }) : tMsg('match.tournamentCleared'));
             } catch (error) {
@@ -104,7 +110,7 @@
         onSave: async (matchId, draft) => {
             try {
                 await UpdateMatch(matchId, draft.player1, draft.player2, draft.date);
-                await loadMatches();
+                await matchListStore.refreshRow(matchId);
                 statusBarTextStore.set(tMsg('match.matchUpdated'));
             } catch (error) {
                 logger.error('Error updating match:', error);
@@ -122,9 +128,7 @@
             try {
                 await UpdateMatchComment(matchId, text);
                 if (detailMatch && detailMatch.id === matchId) detailMatch.comment = text;
-                const m = matches.find((x) => x.id === matchId);
-                if (m) m.comment = text;
-                matches = matches;
+                matchListStore.patchRow(matchId, { comment: text });
                 statusBarTextStore.set(tMsg('match.commentUpdated'));
             } catch (error) {
                 logger.error('Error updating comment:', error);
@@ -138,11 +142,11 @@
         const trigger = $matchPanelRefreshTriggerStore;
         if (trigger === 0) return; // skip initial run
         if (untrack(() => !visible || !databaseLoaded)) return;
-        loadMatches().then(() => {
+        loadMatches().then(async () => {
             const lvm = lastVisitedMatch;
             if (openingRequested) return; // the command palette's match wins
             if (lvm && lvm.matchID) {
-                const m = matches.find((mm) => mm.id === lvm.matchID);
+                const m = await findMatch(lvm.matchID);
                 if (m) {
                     selectedMatch = m;
                     loadMatchDetail(m);
@@ -158,11 +162,11 @@
             () => visible, // $derived — tracked
             (opened) => {
                 if (opened && databaseLoaded) {
-                    loadMatches().then(() => {
+                    loadMatches().then(async () => {
                         const lvm = lastVisitedMatch;
                         if (openingRequested) return; // the command palette's match wins
                         if (lvm && lvm.matchID) {
-                            const m = matches.find((mm) => mm.id === lvm.matchID);
+                            const m = await findMatch(lvm.matchID);
                             if (m) {
                                 selectedMatch = m;
                                 loadMatchDetail(m);
@@ -189,12 +193,10 @@
     async function loadMatches() {
         return logger.perf('MatchPanel:loadMatches', async () => {
             try {
-                const loadedMatches = await GetAllMatches();
-                matches = loadedMatches || [];
+                await matchListStore.reload();
                 await loadTournaments();
             } catch (error) {
                 logger.error('Error loading matches:', error);
-                matches = [];
             }
             // Drafts refresh with the matches. Not awaited: onMount awaits this
             // before installing the keyboard handler.
@@ -230,7 +232,35 @@
         });
     }
 
-    let sortedMatches = $derived.by(() => sortMatches(matches, sort.column, sort.direction));
+    // Order is the database's (or the store's, for PR/MWC): follow the header.
+    $effect(() => {
+        const { column, direction } = sort;
+        untrack(() => matchListStore.setSort(column, direction));
+    });
+
+    function onFilterInput() {
+        clearTimeout(filterTimer);
+        filterTimer = setTimeout(() => matchListStore.setText(filterText.trim()), 250);
+    }
+
+    function clearFilter() {
+        clearTimeout(filterTimer);
+        filterText = '';
+        matchListStore.setText('');
+    }
+
+    /** A match by id: from the loaded rows, else read on its own (it may lie beyond the first page). */
+    async function findMatch(id) {
+        const loaded = matches.find((m) => m.id === id);
+        if (loaded) return loaded;
+        try {
+            return (await GetMatchByID(id)) || null;
+        } catch {
+            return null;
+        }
+    }
+
+    const sortedMatches = $derived(matches);
 
     const columns = $derived([
         { key: 'index', label: '#', narrow: true },
@@ -500,20 +530,21 @@
     // the list is loaded; the request is consumed even if the match is gone.
     $effect(() => {
         const requested = $matchOpenRequestStore;
-        if (requested == null || !visible || matches.length === 0) return;
+        if (requested == null || !visible || !$matchListStore.loaded) return;
         untrack(() => {
             matchOpenRequestStore.set(null);
-            const match = matches.find((m) => m.id === requested);
-            if (!match) {
-                statusBarTextStore.set(tMsg('palette.matchGone'));
-                return;
-            }
-            selectedMatch = match;
-            // Load this match's detail first; the flag stops the list's reselect
-            // from loading another detail meanwhile.
+            // Held while the match is fetched: the list's own reselect must not run meanwhile.
             openingRequested = true;
-            loadMatchDetail(match)
-                .then(() => enterMatchMode(match))
+            findMatch(requested)
+                .then(async (match) => {
+                    if (!match) {
+                        statusBarTextStore.set(tMsg('palette.matchGone'));
+                        return;
+                    }
+                    selectedMatch = match;
+                    await loadMatchDetail(match);
+                    await enterMatchMode(match);
+                })
                 .finally(() => (openingRequested = false));
         });
     });
@@ -547,7 +578,7 @@
         event.stopPropagation();
         try {
             await SwapMatchPlayers(match.id);
-            await loadMatches();
+            await matchListStore.refreshRow(match.id);
 
             // If we are currently viewing this match in match mode, update context
             const currentContext = get(matchContextStore);
@@ -628,6 +659,13 @@
             return;
         }
 
+        // `/` goes to the filter field.
+        if (event.key === '/' && !event.altKey) {
+            event.preventDefault();
+            filterInput?.focus();
+            return;
+        }
+
         // j/k walk the list; with no selection, j lands on the first row.
         const delta = navigationDelta(event);
         if (delta !== 0 && sortedMatches.length > 0) {
@@ -696,6 +734,22 @@
         <!-- Match list (left pane) -->
         <div class="match-list-pane" class:has-detail={detailMatch}>
             <div class="match-list-toolbar">
+                <input
+                    bind:this={filterInput}
+                    bind:value={filterText}
+                    oninput={onFilterInput}
+                    onkeydown={(e) => {
+                        if (e.key === 'Escape' && filterText) {
+                            e.stopPropagation();
+                            clearFilter();
+                        }
+                    }}
+                    class="match-filter"
+                    type="search"
+                    placeholder={$t('match.filterPlaceholder')}
+                    aria-label={$t('match.filterAria')}
+                />
+                {#if matches.length > 0 && matches.length < matchTotal}<span class="match-count">{$t('match.countOfTotal', { shown: matches.length, total: matchTotal })}</span>{/if}
                 <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
             <!-- Drafts being transcribed, found here again after a crash; a click opens their tab. -->
@@ -723,7 +777,8 @@
                 onActivate={(match) => {
                     if (!matchEdit.isEditing(match.id)) handleDoubleClick(match);
                 }}
-                emptyText={matches.length === 0 ? $t('match.noMatchesImported') : ''}
+                onNearEnd={matchListStore.loadMore}
+                emptyText={matches.length === 0 && $matchListStore.loaded ? (filterText.trim() ? $t('match.noMatchesFiltered') : $t('match.noMatchesImported')) : ''}
             >
                 {#snippet cells(match, index)}
                     {#if matchEdit.isEditing(match.id)}
@@ -1170,6 +1225,23 @@
     .draft-tag {
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
+    }
+
+    .match-filter {
+        flex: 1;
+        min-width: 0;
+        padding: 2px 6px;
+        font-size: var(--font-size-small);
+        background: var(--color-surface);
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
+        border-radius: 3px;
+    }
+
+    .match-count {
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
+        white-space: nowrap;
     }
 
     .toolbar-btn {

@@ -14,7 +14,12 @@ info:
     trusts the X-Tenant-ID request header verbatim and MUST run behind an
     authenticating reverse-proxy (see ADR-0005 and doc/source/mode_headless.rst).
     X-Tenant-ID is the tenant's positive decimal integer; a name is refused
-    with 400 invalid, never mapped to a tenant by this daemon. Idempotency:
+    with 400 invalid, never mapped to a tenant by this daemon. The across.*
+    reads also span the tenants listed in the X-Read-Tenants header, which the
+    same proxy writes and this daemon trusts the same way (ADR-0063), once
+    started with --read-tenants; without it, a non-blank X-Read-Tenants is
+    refused with 400. Every answer names its tenant, and writes stay in
+    X-Tenant-ID. Idempotency:
     positions.* writes are naturally idempotent through the Zobrist content
     hash — saving the same position twice returns the same row, never a
     duplicate — but positions.save reports created, which a retry would
@@ -54,6 +59,282 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/across.analysesLoadByIds:
+    post:
+      operationId: across.analysesLoadByIds
+      tags: [across]
+      x-kind: json
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/acrossIDsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/acrossAnalyses"
+  /v1/across.clubRanking:
+    post:
+      operationId: across.clubRanking
+      tags: [across]
+      x-kind: json
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/acrossClubRankingReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/acrossClubRankingResp"
+  /v1/across.collectionPositions:
+    post:
+      operationId: across.collectionPositions
+      tags: [across]
+      x-kind: stream
+      x-streaming: true
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/acrossCollectionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/x-ndjson:
+              schema:
+                description: One JSON object per line (NDJSON), each shaped as below.
+                $ref: "#/components/schemas/acrossPosition"
+  /v1/across.collectionsList:
+    post:
+      operationId: across.collectionsList
+      tags: [across]
+      x-kind: stream
+      x-streaming: true
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/x-ndjson:
+              schema:
+                description: One JSON object per line (NDJSON), each shaped as below.
+                $ref: "#/components/schemas/acrossCollection"
+  /v1/across.commentsByZobrist:
+    post:
+      operationId: across.commentsByZobrist
+      tags: [across]
+      x-kind: stream
+      x-streaming: true
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/acrossZobristReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/x-ndjson:
+              schema:
+                description: One JSON object per line (NDJSON), each shaped as below.
+                $ref: "#/components/schemas/acrossComment"
+  /v1/across.matchMovePositions:
+    post:
+      operationId: across.matchMovePositions
+      tags: [across]
+      x-kind: stream
+      x-streaming: true
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/acrossMatchIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/x-ndjson:
+              schema:
+                description: One JSON object per line (NDJSON), each shaped as below.
+                $ref: "#/components/schemas/acrossMovePosition"
+  /v1/across.matchesGet:
+    post:
+      operationId: across.matchesGet
+      tags: [across]
+      x-kind: json
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/acrossMatchReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/acrossMatch"
+  /v1/across.matchesList:
+    post:
+      operationId: across.matchesList
+      tags: [across]
+      x-kind: stream
+      x-streaming: true
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchListReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/x-ndjson:
+              schema:
+                description: One JSON object per line (NDJSON), each shaped as below.
+                $ref: "#/components/schemas/acrossMatch"
+  /v1/across.playerTable:
+    post:
+      operationId: across.playerTable
+      tags: [across]
+      x-kind: json
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/acrossPlayersResp"
+  /v1/across.searchFind:
+    post:
+      operationId: across.searchFind
+      tags: [across]
+      x-kind: stream
+      x-streaming: true
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/acrossSearchReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/x-ndjson:
+              schema:
+                description: One JSON object per line (NDJSON), each shaped as below.
+                $ref: "#/components/schemas/acrossPosition"
+  /v1/across.statsCompute:
+    post:
+      operationId: across.statsCompute
+      tags: [across]
+      x-kind: json
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/acrossStatsResp"
   /v1/analyses.delete:
     post:
       operationId: analyses.delete
@@ -193,6 +474,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idResp"
+  /v1/anki.deckPositionCount:
+    post:
+      operationId: anki.deckPositionCount
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+  /v1/anki.deckPositionIds:
+    post:
+      operationId: anki.deckPositionIds
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckPositionsPageReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
   /v1/anki.deckPositions:
     post:
       operationId: anki.deckPositions
@@ -267,6 +586,24 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/domain_AnkiForecastDay"
+  /v1/anki.indexOfDeckPosition:
+    post:
+      operationId: anki.indexOfDeckPosition
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckPositionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/anki.linkedCard:
     post:
       operationId: anki.linkedCard
@@ -597,6 +934,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/collections.countPositions:
+    post:
+      operationId: collections.countPositions
+      tags: [collections]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/collectionPositionsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/collections.create:
     post:
       operationId: collections.create
@@ -657,6 +1012,24 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_Collection"
                 nullable: true
+  /v1/collections.indexOfPosition:
+    post:
+      operationId: collections.indexOfPosition
+      tags: [collections]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/collPositionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/collections.list:
     post:
       operationId: collections.list
@@ -694,6 +1067,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/collections.positionIds:
+    post:
+      operationId: collections.positionIds
+      tags: [collections]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/collectionPositionsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
   /v1/collections.positionIndexMap:
     post:
       operationId: collections.positionIndexMap
@@ -3185,6 +3578,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/storage_LibrarySettings"
+  /v1/matches.count:
+    post:
+      operationId: matches.count
+      tags: [matches]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchListReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/countResp"
   /v1/matches.createGame:
     post:
       operationId: matches.createGame
@@ -3521,6 +3931,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/storage_Counts"
+  /v1/metadata.countsEstimate:
+    post:
+      operationId: metadata.countsEstimate
+      tags: [metadata]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/countsEstimateReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_CountsEstimate"
   /v1/metadata.version:
     post:
       operationId: metadata.version
@@ -5813,6 +6240,191 @@ components:
     TenantQuotas:
       type: object
       description: "Unresolved local type TenantQuotas."
+    acrossAnalyses:
+      type: object
+      properties:
+        tenant:
+          type: string
+        analyses:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_PositionAnalysis"
+    acrossClubRankingReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        players:
+          type: array
+          items:
+            $ref: "#/components/schemas/storage_ClubPlayer"
+        minDecisions:
+          type: integer
+          format: int32
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    acrossClubRankingResp:
+      type: object
+      properties:
+        rows:
+          type: array
+          items:
+            $ref: "#/components/schemas/storage_ClubRow"
+        total:
+          type: integer
+          format: int32
+    acrossCollection:
+      type: object
+      properties:
+        tenant:
+          type: string
+        collection:
+          $ref: "#/components/schemas/storage_Collection"
+          nullable: true
+    acrossCollectionReq:
+      type: object
+      properties:
+        tenant:
+          type: string
+        collectionId:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    acrossComment:
+      type: object
+      properties:
+        tenant:
+          type: string
+        zobrist:
+          type: integer
+          format: int64
+        positionId:
+          type: integer
+          format: int64
+        comment:
+          $ref: "#/components/schemas/domain_CommentEntry"
+          nullable: true
+    acrossIDsReq:
+      type: object
+      properties:
+        tenant:
+          type: string
+        ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+    acrossMatch:
+      type: object
+      properties:
+        tenant:
+          type: string
+        match:
+          $ref: "#/components/schemas/domain_Match"
+          nullable: true
+    acrossMatchIDReq:
+      type: object
+      properties:
+        tenant:
+          type: string
+        matchId:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    acrossMatchReq:
+      type: object
+      properties:
+        tenant:
+          type: string
+        id:
+          type: integer
+          format: int64
+    acrossMovePosition:
+      type: object
+      properties:
+        tenant:
+          type: string
+        zobrist:
+          type: integer
+          format: int64
+        movePosition:
+          $ref: "#/components/schemas/domain_MatchMovePosition"
+          nullable: true
+    acrossPlayers:
+      type: object
+      properties:
+        tenant:
+          type: string
+        players:
+          type: array
+          items:
+            $ref: "#/components/schemas/storage_PlayerRow"
+    acrossPlayersResp:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/acrossPlayers"
+    acrossPosition:
+      type: object
+      properties:
+        tenant:
+          type: string
+        zobrist:
+          type: integer
+          format: int64
+        position:
+          $ref: "#/components/schemas/domain_Position"
+          nullable: true
+    acrossSearchReq:
+      type: object
+      properties:
+        filters:
+          $ref: "#/components/schemas/domain_SearchFilters"
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    acrossStats:
+      type: object
+      properties:
+        tenant:
+          type: string
+        stats:
+          $ref: "#/components/schemas/storage_StatsResult"
+          nullable: true
+    acrossStatsResp:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/acrossStats"
+    acrossZobristReq:
+      type: object
+      properties:
+        zobrists:
+          type: array
+          items:
+            type: integer
+            format: int64
     analysisSaveReq:
       type: object
       properties:
@@ -5971,6 +6583,12 @@ components:
         count:
           type: integer
           format: int32
+    countsEstimateReq:
+      type: object
+      properties:
+        exact_below:
+          type: integer
+          format: int32
     csvResp:
       type: object
       properties:
@@ -6014,6 +6632,27 @@ components:
           type: integer
           format: int32
           nullable: true
+    deckPositionReq:
+      type: object
+      properties:
+        deckId:
+          type: integer
+          format: int64
+        positionId:
+          type: integer
+          format: int64
+    deckPositionsPageReq:
+      type: object
+      properties:
+        deckId:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
     deckSyncPositionsReq:
       type: object
       properties:
@@ -6607,6 +7246,10 @@ components:
           type: string
         playerNameContains:
           type: string
+        text:
+          type: string
+        unassigned:
+          type: boolean
         tournamentIds:
           type: array
           items:
@@ -7059,12 +7702,21 @@ components:
           $ref: "#/components/schemas/storage_StatsFilter"
         window:
           type: string
+    storage_ClubPlayer:
+      type: object
+      description: "Opaque: see the Go type storage.ClubPlayer (defined outside internal/server, not expanded here)."
+    storage_ClubRow:
+      type: object
+      description: "Opaque: see the Go type storage.ClubRow (defined outside internal/server, not expanded here)."
     storage_Collection:
       type: object
       description: "Opaque: see the Go type storage.Collection (defined outside internal/server, not expanded here)."
     storage_Counts:
       type: object
       description: "Opaque: see the Go type storage.Counts (defined outside internal/server, not expanded here)."
+    storage_CountsEstimate:
+      type: object
+      description: "Opaque: see the Go type storage.CountsEstimate (defined outside internal/server, not expanded here)."
     storage_Filter:
       type: object
       description: "Opaque: see the Go type storage.Filter (defined outside internal/server, not expanded here)."

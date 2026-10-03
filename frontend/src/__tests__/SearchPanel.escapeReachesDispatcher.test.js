@@ -1,15 +1,9 @@
 /**
  * SearchPanel.escapeReachesDispatcher.test.js
  *
- * #201 (D.1): while a field of the search form had the focus, the panel's
- * `document` keydown listener stopped EVERY key, so Escape never reached the
- * global dispatcher (App.svelte listens on `window`, one level up) and the
- * user was stuck in the field with no keyboard way out — the dispatcher is
- * what blurs the field on Escape.
- *
- * Locks the fix: Escape bubbles up to `window`; the bare keys still stay with
- * the field, and so does Tab until #204 settles its global meaning (today the
- * dispatcher would preventDefault it and break moving between fields).
+ * While a field of the search form has the focus, the panel keeps the bare keys and Tab
+ * (moving between fields) but lets Escape through to the global dispatcher, which blurs the
+ * field: without it the user would be stuck in the field with no keyboard way out.
  */
 
 import { describe, test, expect, vi, afterEach } from 'vitest';
@@ -27,6 +21,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 }));
 
 import SearchPanel from '../components/SearchPanel.svelte';
+import { registerKeys } from '../services/keyDispatch.js';
 import { activeTabStore } from '../stores/uiStore.js';
 
 afterEach(() => {
@@ -42,8 +37,8 @@ async function mountWithFocusedField() {
     expect(field).not.toBeNull();
     field.focus();
     const reachedWindow = vi.fn();
-    window.addEventListener('keydown', reachedWindow);
-    return { field, reachedWindow, done: () => window.removeEventListener('keydown', reachedWindow) };
+    const done = registerKeys('global', reachedWindow);
+    return { field, reachedWindow, done };
 }
 
 describe('SearchPanel — keys from a focused field', () => {

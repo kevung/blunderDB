@@ -272,6 +272,35 @@ func (s *positionStore) Exists(ctx context.Context, scope string, zobrist uint64
 	return id, true, nil
 }
 
+func (s *positionStore) ExistsMany(ctx context.Context, scope string, zobrists []uint64) (map[uint64]int64, error) {
+	out := make(map[uint64]int64, len(zobrists))
+	if len(zobrists) == 0 {
+		return out, nil
+	}
+	hashes := make([]int64, len(zobrists))
+	for i, z := range zobrists {
+		hashes[i] = int64(z)
+	}
+	rows, err := s.db.Query(ctx,
+		`SELECT zobrist_hash, id FROM position WHERE tenant_id = $1 AND zobrist_hash = ANY($2)`,
+		tenantID(scope), hashes)
+	if err != nil {
+		return nil, fmt.Errorf("postgres: positions exist: %w", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var z, id int64
+		if err := rows.Scan(&z, &id); err != nil {
+			return nil, fmt.Errorf("postgres: positions exist: %w", err)
+		}
+		out[uint64(z)] = id
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("postgres: positions exist: %w", err)
+	}
+	return out, nil
+}
+
 // Delete removes the position with the given id; analysis, comments and
 // collection links cascade via foreign keys.
 func (s *positionStore) Delete(ctx context.Context, scope string, id int64) error {

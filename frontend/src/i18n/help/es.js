@@ -70,7 +70,7 @@ export default {
 <li>la línea de comandos, accesible pulsando la tecla <em>ESPACIO</em>,</li>
 <li>un mensaje informativo relacionado con una operación realizada por el usuario,</li>
 <li>el índice de la posición actual, seguido del número de posiciones en la biblioteca actual (o la información de jugada/partida al navegar por un partido),</li>
-<li>el <strong>contador de la biblioteca</strong> — «412 posiciones · 38 blunders · 5 partidos» — donde cada número <strong>abre lo que cuenta</strong>: las posiciones, la búsqueda <code>E&gt;</code> preparada en la línea de comandos con el umbral de la biblioteca, o la lista de partidos. Una cifra que no se puede seguir es una decoración. El umbral de los blunders es el de la biblioteca, ajustado en la pestaña <em>Biblioteca</em> de la configuración y compartido con las estadísticas: dos umbrales harían decir dos cosas a la misma palabra. El contador promete exactamente lo que abre su enlace, incluso para una posición jugada de varias maneras, que vale su coste más elevado.</li>
+<li>el <strong>contador de la biblioteca</strong> — «412 posiciones · 38 blunders · 5 partidos» — donde cada número <strong>abre lo que cuenta</strong>: las posiciones, la búsqueda <code>E&gt;</code> preparada en la línea de comandos con el umbral de la biblioteca, o la lista de partidos. Una cifra que no se puede seguir es una decoración. El umbral de los blunders es el de la biblioteca, ajustado en la pestaña <em>Biblioteca</em> de la configuración y compartido con las estadísticas: dos umbrales harían decir dos cosas a la misma palabra. El contador promete exactamente lo que abre su enlace, incluso para una posición jugada de varias maneras, que vale su coste más elevado. En una biblioteca muy grande (más de 200 000 filas) el contador no recorre las tablas: un número precedido de «≈» es una estimación (una cota superior, pues las filas eliminadas dejan huecos). Si las posiciones son estimadas, el número de blunders, que no tiene una estimación honesta, aparece como «?» — el enlace lanza la búsqueda, que da la cuenta exacta.</li>
 </ul>
 <div class="admonition note">
 <p>En el caso de posiciones resultantes de una búsqueda del usuario, el número de posiciones indicado en la barra de estado corresponde al número de posiciones filtradas.</p>
@@ -89,14 +89,15 @@ export default {
 </ul>
 <p>Las vistas se guardan con el estado de sesión de la base de datos y se restauran al reabrirla.</p>
 <h3>Configuración</h3>
-<p>El botón de configuración (icono en forma de rueda dentada) situado en la barra de herramientas, a la izquierda del botón de ayuda, abre la ventana de configuración de blunderDB. Está organizada en siete pestañas:</p>
+<p>El botón de configuración (icono en forma de rueda dentada) situado en la barra de herramientas, a la izquierda del botón de ayuda, abre la ventana de configuración de blunderDB. Está organizada en ocho pestañas:</p>
 <ul>
-<li><strong>Interfaz</strong> — idioma, escala de visualización, posición del panel;</li>
+<li><strong>Interfaz</strong> — idioma, escala de visualización, posición del panel, paso de PageUp / PageDown (10, 50, 100, 500 o 1 000 posiciones, o el 10 % de la lista);</li>
 <li><strong>Colores del tablero</strong> — los colores del tablero;</li>
 <li><strong>Biblioteca</strong> — lo que pertenece a la base de datos abierta: los umbrales de error y de blunder, la compactación y la reparación, descritos más abajo;</li>
 <li><strong>Bearoff</strong> — las tablas de bearoff utilizadas por el panel Eval;</li>
 <li><strong>gammonNet</strong> — los ajustes del evaluador integrado, descritos más abajo;</li>
 <li><strong>Carpeta vigilada</strong> — la importación automática de los partidos que llegan a una carpeta, descrita más abajo;</li>
+<li><strong>Asistente y MCP</strong> — el servidor MCP local y el asistente interno, descritos a continuación;</li>
 <li><strong>Identidad del emisor</strong> — la clave que firma tus marcas de origen, descrita en la sección Distribuir una base de datos: origen y contraseña.</li>
 </ul>
 <p>La pestaña <em>Interfaz</em> empieza con un <strong>tema</strong>: <em>seguir el sistema</em>, <em>claro</em>, <em>oscuro</em>, <em>contraste alto</em> o <em>imprimible</em>. El tema ajusta los colores de la interfaz y <strong>propone una paleta de tablero</strong> — una interfaz oscura alrededor de un tablero claro no es un tema oscuro, es la mitad de uno, ya que el tablero ocupa la mayor parte de la ventana.</p>
@@ -150,6 +151,11 @@ export default {
 </ul>
 <p>El intervalo por defecto es de diez segundos; el mínimo es de dos. La carpeta no se recorre recursivamente: una carpeta vigilada es el sitio donde una herramienta deposita sus partidos, no un árbol que explorar. Un recurso de red desmontado no detiene la vigilancia ni hace que su contenido pase por nuevo a su regreso.</p>
 <p>La misma vigilancia existe en línea de comandos, con <code>blunderdb import --type batch --dir &lt;carpeta&gt; --watch</code> (véase Interfaz de línea de comandos (CLI)): es la forma que puede usar un servidor, una tarea programada o un script.</p>
+<h4>Asistente y MCP</h4>
+<p>La pestaña <strong>Asistente y MCP</strong> regula dos cosas, ambas desactivadas por defecto.</p>
+<p>El <strong>servidor MCP local</strong> ofrece las herramientas de blunderDB (búsqueda, lectura de una posición y de su análisis, estadísticas de un jugador, cuestionarios…) a un asistente que habla el Model Context Protocol, como Claude Desktop o Claude Code, mientras la ventana esté abierta. Solo escucha en esta máquina, en la dirección <code>http://127.0.0.1:&lt;port&gt;/mcp</code> (puerto 8765 por defecto), y rechaza una petición procedente de una página web. Añade dos herramientas de visualización: abrir una vista sobre una búsqueda y mostrar una posición. Las herramientas solo leen, salvo si <strong>Permitir la escritura</strong> está marcada: entonces pueden guardar una posición, comentarla, crear y llenar una colección; nada se borra. Sin ventana abierta, <code>blunderdb mcp</code> sirve las mismas herramientas (véase Interfaz de línea de comandos (CLI)).</p>
+<p>El <strong>asistente interno</strong> es un cliente de esas mismas herramientas. No incorpora ningún modelo: se dirige a un proveedor compatible con OpenAI — Ollama en esta máquina por defecto, o Groq, OpenRouter, Gemini, Anthropic u otra dirección. Es remota toda dirección fuera de esta máquina, sea cual sea el proveedor elegido: sus frases y los resultados de las herramientas salen entonces de la máquina, la pestaña lo indica y espera su acuerdo para esa dirección concreta; otra dirección lo vuelve a pedir. La clave de API va al llavero del sistema, nunca a la base de datos ni al archivo de ajustes. El modelo propuesto por defecto para Ollama, <code>qwen2.5:7b</code>, es un punto de partida, no una recomendación: no se hace ninguna recomendación de modelo sin una puntuación del banco de medición incluido con el código fuente.</p>
+<p>Una vez activado, el asistente es una subpestaña <strong>Asistente</strong> del panel Búsqueda. Una frase — «mis errores de más de 50 milipuntos en la carrera» — abre una nueva vista con su nombre, lanza en ella la búsqueda y cambia a ella; sus tokens permanecen en el historial de búsquedas. Lo que devuelven las herramientas procede de la base; lo que escribe el modelo se marca como <strong>Texto libre del modelo</strong>. El asistente solo propone una modificación si la casilla <strong>Dejar que el asistente proponga cambios (cada uno confirmado)</strong> está marcada — un ajuste distinto de la escritura del servidor MCP local — y cada modificación que prepara se muestra y solo se realiza tras <strong>Confirmar</strong>.</p>
 <p>La ventana de configuración también incluye ajustes de visualización de la interfaz. Un control deslizante de <strong>escala de la interfaz</strong> permite agrandar o reducir todos los elementos, lo que resulta útil en pantallas de alta densidad o para mejorar la legibilidad. Un menú <strong>posición de los paneles</strong> determina la ubicación de los paneles (búsqueda, partidas, análisis) con respecto al tablero: <em>abajo</em>, <em>al lado</em> o <em>automática</em> (en este caso el lado se elige en las pantallas anchas para aprovechar mejor el espacio disponible). Como los demás ajustes, estas opciones se conservan de una sesión a otra.</p>
 <h3>Visitas guiadas y base de ejemplo</h3>
 <p>Para facilitar la toma de contacto, blunderDB ofrece <strong>visitas guiadas</strong> de la interfaz. El catálogo de visitas se abre desde la barra de herramientas o con el comando <code>tour</code> (alias <code>tutorial</code>). Hay siete visitas disponibles: una visita general de la interfaz, y visitas dedicadas a la búsqueda de posiciones, a la revisión de partidas, a la revisión de torneos, al panel Eval, al repaso Anki y a las estadísticas. Cada visita resalta los elementos correspondientes de la interfaz, paso a paso, abre de paso el panel del que habla, y puede repetirse en cualquier momento. En el primer arranque, la visita general se ofrece automáticamente.</p>
@@ -278,6 +284,7 @@ export default {
 <p>Una colección viva cuya consulta lleva un token que esta versión ya no conoce <strong>se niega a abrirse</strong> y lo dice, en vez de devolver toda la base. Es el único fallo que un filtro guardado no debe tener: ensancharse en silencio.</p>
 <h3>Panel de Partidas</h3>
 <p>El panel <strong>Partidas</strong> (<em>CTRL-Tab</em>) lista las partidas importadas. Haga doble clic en una partida (o pulse <em>INTRO</em>) para navegar por sus jugadas. El comando <code>m</code> reanuda la navegación en la última partida visitada.</p>
+<p>El campo de filtro, en la parte superior del panel (<em>/</em> para ir a él, <em>Esc</em> para borrarlo), conserva solo las partidas en las que un jugador, el evento, el lugar, el torneo o la fecha contiene el texto escrito. El filtro y la ordenación de columnas los hace la base de datos: la lista se carga por páginas al desplazarse, y el contador «n / N partidas» indica la parte cargada. Corregir un jugador, una fecha o un torneo en la lista solo actualiza la fila editada.</p>
 <p>El usuario puede:</p>
 <ul>
 <li>recorrer las jugadas de una partida con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>,</li>
@@ -1014,7 +1021,7 @@ export default {
 </tr>
 <tr>
 <td>AvPág</td>
-<td>Retrocede una página de cien posiciones (se detiene al principio de la lista); en una partida, juego anterior.</td>
+<td>Retrocede una página (cien posiciones por defecto, ajustable en Configuración &gt; Interfaz, hasta el 10 % de la lista; se detiene al principio de la lista); en un match, partida anterior.</td>
 </tr>
 <tr>
 <td>IZQUIERDA, k</td>
@@ -1038,7 +1045,7 @@ export default {
 </tr>
 <tr>
 <td>RePág</td>
-<td>Avanza una página de cien posiciones (se detiene al final de la lista); en una partida, juego siguiente.</td>
+<td>Avanza una página (mismo paso que PageUp; se detiene al final de la lista); en un match, partida siguiente.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1386,6 +1393,10 @@ export default {
 <tr>
 <td>Supr</td>
 <td>Eliminar la partida seleccionada.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Ir al campo de filtro (jugador, evento, torneo, fecha). <em>Esc</em> borra el filtro.</td>
 </tr>
 <tr>
 <td>Esc</td>

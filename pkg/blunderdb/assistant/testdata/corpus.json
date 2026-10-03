@@ -1,0 +1,371 @@
+[
+ {
+  "lang": "fr",
+  "intent": "errors100",
+  "text": "Montre-moi les positions où l'erreur dépasse 100 millipoints",
+  "tool": "open_view",
+  "query": "E>100"
+ },
+ {
+  "lang": "fr",
+  "intent": "commented",
+  "text": "Je veux voir les positions que j'ai commentées",
+  "tool": "open_view",
+  "query": "co"
+ },
+ {
+  "lang": "fr",
+  "intent": "raceErrors",
+  "text": "Mes erreurs de plus de 50 millipoints dans la course",
+  "tool": "open_view",
+  "query": "ph:race E>50"
+ },
+ {
+  "lang": "fr",
+  "intent": "bearoff",
+  "text": "Ouvre les positions de sortie des dames",
+  "tool": "open_view",
+  "query": "ph:bearoff"
+ },
+ {
+  "lang": "fr",
+  "intent": "noContact",
+  "text": "Les positions sans contact, s'il te plaît",
+  "tool": "open_view",
+  "query": "nc"
+ },
+ {
+  "lang": "fr",
+  "intent": "playerStats",
+  "text": "Quel est le PR de Ada Fairweather ?",
+  "tool": "player_stats"
+ },
+ {
+  "lang": "en",
+  "intent": "errors100",
+  "text": "Show me the positions where the error is over 100 millipoints",
+  "tool": "open_view",
+  "query": "E>100"
+ },
+ {
+  "lang": "en",
+  "intent": "commented",
+  "text": "I want to see the positions I commented on",
+  "tool": "open_view",
+  "query": "co"
+ },
+ {
+  "lang": "en",
+  "intent": "raceErrors",
+  "text": "My errors above 50 millipoints in the race",
+  "tool": "open_view",
+  "query": "ph:race E>50"
+ },
+ {
+  "lang": "en",
+  "intent": "bearoff",
+  "text": "Open the bear-off positions",
+  "tool": "open_view",
+  "query": "ph:bearoff"
+ },
+ {
+  "lang": "en",
+  "intent": "noContact",
+  "text": "The positions with no contact, please",
+  "tool": "open_view",
+  "query": "nc"
+ },
+ {
+  "lang": "en",
+  "intent": "playerStats",
+  "text": "What is Ada Fairweather's PR?",
+  "tool": "player_stats"
+ },
+ {
+  "lang": "de",
+  "intent": "errors100",
+  "text": "Zeig mir die Positionen, in denen der Fehler über 100 Millipunkte liegt",
+  "tool": "open_view",
+  "query": "E>100"
+ },
+ {
+  "lang": "de",
+  "intent": "commented",
+  "text": "Ich möchte die Positionen sehen, die ich kommentiert habe",
+  "tool": "open_view",
+  "query": "co"
+ },
+ {
+  "lang": "de",
+  "intent": "raceErrors",
+  "text": "Meine Fehler über 50 Millipunkte im Rennen",
+  "tool": "open_view",
+  "query": "ph:race E>50"
+ },
+ {
+  "lang": "de",
+  "intent": "bearoff",
+  "text": "Öffne die Auswürfelpositionen",
+  "tool": "open_view",
+  "query": "ph:bearoff"
+ },
+ {
+  "lang": "de",
+  "intent": "noContact",
+  "text": "Die Positionen ohne Kontakt, bitte",
+  "tool": "open_view",
+  "query": "nc"
+ },
+ {
+  "lang": "de",
+  "intent": "playerStats",
+  "text": "Wie hoch ist der PR von Ada Fairweather?",
+  "tool": "player_stats"
+ },
+ {
+  "lang": "it",
+  "intent": "errors100",
+  "text": "Mostrami le posizioni in cui l'errore supera i 100 millipunti",
+  "tool": "open_view",
+  "query": "E>100"
+ },
+ {
+  "lang": "it",
+  "intent": "commented",
+  "text": "Voglio vedere le posizioni che ho commentato",
+  "tool": "open_view",
+  "query": "co"
+ },
+ {
+  "lang": "it",
+  "intent": "raceErrors",
+  "text": "I miei errori oltre 50 millipunti nella corsa",
+  "tool": "open_view",
+  "query": "ph:race E>50"
+ },
+ {
+  "lang": "it",
+  "intent": "bearoff",
+  "text": "Apri le posizioni di uscita delle pedine",
+  "tool": "open_view",
+  "query": "ph:bearoff"
+ },
+ {
+  "lang": "it",
+  "intent": "noContact",
+  "text": "Le posizioni senza contatto, per favore",
+  "tool": "open_view",
+  "query": "nc"
+ },
+ {
+  "lang": "it",
+  "intent": "playerStats",
+  "text": "Qual è il PR di Ada Fairweather?",
+  "tool": "player_stats"
+ },
+ {
+  "lang": "es",
+  "intent": "errors100",
+  "text": "Muéstrame las posiciones donde el error supera los 100 milipuntos",
+  "tool": "open_view",
+  "query": "E>100"
+ },
+ {
+  "lang": "es",
+  "intent": "commented",
+  "text": "Quiero ver las posiciones que he comentado",
+  "tool": "open_view",
+  "query": "co"
+ },
+ {
+  "lang": "es",
+  "intent": "raceErrors",
+  "text": "Mis errores de más de 50 milipuntos en la carrera",
+  "tool": "open_view",
+  "query": "ph:race E>50"
+ },
+ {
+  "lang": "es",
+  "intent": "bearoff",
+  "text": "Abre las posiciones de salida de fichas",
+  "tool": "open_view",
+  "query": "ph:bearoff"
+ },
+ {
+  "lang": "es",
+  "intent": "noContact",
+  "text": "Las posiciones sin contacto, por favor",
+  "tool": "open_view",
+  "query": "nc"
+ },
+ {
+  "lang": "es",
+  "intent": "playerStats",
+  "text": "¿Cuál es el PR de Ada Fairweather?",
+  "tool": "player_stats"
+ },
+ {
+  "lang": "fi",
+  "intent": "errors100",
+  "text": "Näytä asemat, joissa virhe on yli 100 millipistettä",
+  "tool": "open_view",
+  "query": "E>100"
+ },
+ {
+  "lang": "fi",
+  "intent": "commented",
+  "text": "Haluan nähdä asemat, joita olen kommentoinut",
+  "tool": "open_view",
+  "query": "co"
+ },
+ {
+  "lang": "fi",
+  "intent": "raceErrors",
+  "text": "Virheeni, jotka ovat yli 50 millipistettä kilpajuoksussa",
+  "tool": "open_view",
+  "query": "ph:race E>50"
+ },
+ {
+  "lang": "fi",
+  "intent": "bearoff",
+  "text": "Avaa ulospelausasemat",
+  "tool": "open_view",
+  "query": "ph:bearoff"
+ },
+ {
+  "lang": "fi",
+  "intent": "noContact",
+  "text": "Asemat ilman kontaktia, kiitos",
+  "tool": "open_view",
+  "query": "nc"
+ },
+ {
+  "lang": "fi",
+  "intent": "playerStats",
+  "text": "Mikä on Ada Fairweatherin PR?",
+  "tool": "player_stats"
+ },
+ {
+  "lang": "ja",
+  "intent": "errors100",
+  "text": "エラーが100ミリポイントを超える局面を見せて",
+  "tool": "open_view",
+  "query": "E>100"
+ },
+ {
+  "lang": "ja",
+  "intent": "commented",
+  "text": "自分がコメントした局面を見たい",
+  "tool": "open_view",
+  "query": "co"
+ },
+ {
+  "lang": "ja",
+  "intent": "raceErrors",
+  "text": "レースでの50ミリポイントを超える自分のエラー",
+  "tool": "open_view",
+  "query": "ph:race E>50"
+ },
+ {
+  "lang": "ja",
+  "intent": "bearoff",
+  "text": "ベアオフの局面を開いて",
+  "tool": "open_view",
+  "query": "ph:bearoff"
+ },
+ {
+  "lang": "ja",
+  "intent": "noContact",
+  "text": "接触のない局面をお願いします",
+  "tool": "open_view",
+  "query": "nc"
+ },
+ {
+  "lang": "ja",
+  "intent": "playerStats",
+  "text": "Ada Fairweather の PR はいくつ？",
+  "tool": "player_stats"
+ },
+ {
+  "lang": "el",
+  "intent": "errors100",
+  "text": "Δείξε μου τις θέσεις όπου το σφάλμα ξεπερνά τους 100 χιλιοπόντους",
+  "tool": "open_view",
+  "query": "E>100"
+ },
+ {
+  "lang": "el",
+  "intent": "commented",
+  "text": "Θέλω να δω τις θέσεις που σχολίασα",
+  "tool": "open_view",
+  "query": "co"
+ },
+ {
+  "lang": "el",
+  "intent": "raceErrors",
+  "text": "Τα σφάλματά μου πάνω από 50 χιλιοπόντους στον αγώνα δρόμου",
+  "tool": "open_view",
+  "query": "ph:race E>50"
+ },
+ {
+  "lang": "el",
+  "intent": "bearoff",
+  "text": "Άνοιξε τις θέσεις μαζέματος",
+  "tool": "open_view",
+  "query": "ph:bearoff"
+ },
+ {
+  "lang": "el",
+  "intent": "noContact",
+  "text": "Τις θέσεις χωρίς επαφή, παρακαλώ",
+  "tool": "open_view",
+  "query": "nc"
+ },
+ {
+  "lang": "el",
+  "intent": "playerStats",
+  "text": "Ποιο είναι το PR της Ada Fairweather;",
+  "tool": "player_stats"
+ },
+ {
+  "lang": "ru",
+  "intent": "errors100",
+  "text": "Покажи позиции, где ошибка больше 100 миллипунктов",
+  "tool": "open_view",
+  "query": "E>100"
+ },
+ {
+  "lang": "ru",
+  "intent": "commented",
+  "text": "Хочу увидеть позиции, которые я прокомментировал",
+  "tool": "open_view",
+  "query": "co"
+ },
+ {
+  "lang": "ru",
+  "intent": "raceErrors",
+  "text": "Мои ошибки больше 50 миллипунктов в гонке",
+  "tool": "open_view",
+  "query": "ph:race E>50"
+ },
+ {
+  "lang": "ru",
+  "intent": "bearoff",
+  "text": "Открой позиции выбрасывания шашек",
+  "tool": "open_view",
+  "query": "ph:bearoff"
+ },
+ {
+  "lang": "ru",
+  "intent": "noContact",
+  "text": "Позиции без контакта, пожалуйста",
+  "tool": "open_view",
+  "query": "nc"
+ },
+ {
+  "lang": "ru",
+  "intent": "playerStats",
+  "text": "Какой PR у Ada Fairweather?",
+  "tool": "player_stats"
+ }
+]

@@ -11,6 +11,11 @@ type versionResp struct {
 	Version string `json:"version"`
 }
 
+type countsEstimateReq struct {
+	// ExactBelow is the highest id up to which a table is counted rather than estimated.
+	ExactBelow int `json:"exact_below"`
+}
+
 // metadataRoutes exposes the metadata table read-only, schema version only:
 // it is global infrastructure outside Row-Level Security, and a write route
 // would let one tenant break every other (ADR-0005: no privileged tenant).
@@ -26,6 +31,9 @@ func (s *Server) metadataRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/metadata.counts", rpc(func(ctx context.Context, scope string, _ struct{}) (storage.Counts, error) {
 			return ms().Counts(ctx, scope)
+		})},
+		{http.MethodPost, "/v1/metadata.countsEstimate", rpc(func(ctx context.Context, scope string, req countsEstimateReq) (storage.CountsEstimate, error) {
+			return ms().EstimatedCounts(ctx, scope, req.ExactBelow)
 		})},
 		{http.MethodPost, "/v1/librarySettings.load", rpc(func(ctx context.Context, scope string, _ struct{}) (storage.LibrarySettings, error) {
 			return ls().Load(ctx, scope)

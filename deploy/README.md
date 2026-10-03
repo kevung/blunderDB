@@ -9,7 +9,13 @@ requête qui l'atteint directement peut lire ou écrire les données de
 tient donc dans le reverse-proxy placé devant lui, qui doit authentifier
 l'appelant, retirer tout `X-Tenant-ID` envoyé par le client puis injecter
 l'entier correspondant au compte authentifié (jamais un nom — voir
-l'amendement du 05/09/2026 de l'ADR-0005). PostgreSQL Row-Level Security
+l'amendement du 05/09/2026 de l'ADR-0005). Il retire de même tout `X-Read-Tenants` du client :
+cet en-tête élargit une lecture à d'autres tenants (ADR-0063), et seul un proxy
+qui connaît la relation (coach, club) peut le poser. Le démon ne l'honore
+qu'avec `--read-tenants` (`BLUNDERDB_READ_TENANTS=true`) et le refuse sinon ;
+**avant d'activer cette option sur un déploiement existant**, vérifier que le
+proxy retire bien l'en-tête du client — un proxy antérieur à ADR-0063 ne le
+fait pas. PostgreSQL Row-Level Security
 (`--rls` / `BLUNDERDB_RLS=true`) est une défense en profondeur *à l'intérieur*
 de cette frontière, pas un substitut : elle protège contre un bug de handler,
 pas contre un proxy mal configuré.

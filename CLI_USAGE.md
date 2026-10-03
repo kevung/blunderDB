@@ -1226,6 +1226,7 @@ Display database metadata and statistics.
 **Options:**
 - `--db` - Path to the database file (required)
 - `--format` - Output format: `text` or `json` (default: text)
+- `--estimate` - Answer at once on a very large database: beyond 200,000 rows a count is an estimate (listed in `approximate`), and the blunders are not counted. Default: every row is counted
 
 **Examples:**
 ```bash
@@ -2556,12 +2557,17 @@ Display database metadata and statistics.
 Options:
   -db string
     	Path to the database file (required)
+  -estimate
+    	Estimate the tables beyond 200000 rows instead of counting them, and skip the blunders there (default: count every row)
   -format string
     	Output format: text, json (default "text")
 
 Examples:
   # Display database info
   blunderdb info --db database.db
+
+  # Answer at once on a very large database (estimated counts)
+  blunderdb info --db database.db --estimate
 
   # Output as JSON
   blunderdb info --db database.db --format json
@@ -2598,8 +2604,12 @@ Options:
     	Number of positions to skip before listing (positions only)
   -player string
     	Filter by player name (stats only)
+  -query string
+    	With --type matches: keep matches whose players, event, location, round, tournament or date contain this text
   -queue
     	With --type imports --batch <id>: the study queue that follows the report — what to look at now, in order
+  -sort string
+    	With --type matches: date (default), date_asc, length_asc, length_desc, player1, player1_desc, player2, player2_desc, tournament, tournament_desc, opponent
   -to string
     	End date filter YYYY-MM-DD (stats only)
   -top-blunders int
@@ -2991,6 +3001,41 @@ Examples:
   blunderdb stats recurring --db database.db --quiz --format json
   blunderdb stats recurring --db database.db --group 1 --deck "My worst group"
   blunderdb stats recurring --db database.db --decision-type checker --format json
+```
+
+### `blunderdb stats training`
+
+```
+Usage: blunderdb stats training --db <file> [options]
+
+The Decision quiz PR, the real PR of the matches and the Anki retention,
+folded by calendar window so the three can be read side by side. The quiz
+PR is on the real PR's scale; the retention is the share of review-state
+card reviews rated Hard or better. Each series carries its own count: a
+window with no decision has a count of 0, not a value. The filter options
+restrict the matches only; the quiz and Anki journals carry no player.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type of the matches: all, checker, or cube (default "all")
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -player string
+    	Only this player's matches (the real PR series)
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+  -window string
+    	Calendar window: week or month (default "week")
+
+Examples:
+  blunderdb stats training --db database.db --player "Alice"
+  blunderdb stats training --db database.db --window month --format json
 ```
 
 ### `blunderdb tournament export`

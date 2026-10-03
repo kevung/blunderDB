@@ -198,8 +198,20 @@ export function CorrectResult(arg1, arg2, arg3, arg4, arg5, arg6) {
   return window['go']['database']['Database']['CorrectResult'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
+export function CountAnkiDeckPositions(arg1) {
+  return window['go']['database']['Database']['CountAnkiDeckPositions'](arg1);
+}
+
+export function CountCollectionPositions(arg1) {
+  return window['go']['database']['Database']['CountCollectionPositions'](arg1);
+}
+
 export function CountMatchPositionsToAnalyze(arg1) {
   return window['go']['database']['Database']['CountMatchPositionsToAnalyze'](arg1);
+}
+
+export function CountMatches(arg1) {
+  return window['go']['database']['Database']['CountMatches'](arg1);
 }
 
 export function CountOrphans() {
@@ -494,6 +506,10 @@ export function GetDatabaseStats() {
   return window['go']['database']['Database']['GetDatabaseStats']();
 }
 
+export function GetDatabaseStatsEstimate() {
+  return window['go']['database']['Database']['GetDatabaseStatsEstimate']();
+}
+
 export function GetDatabaseVersion() {
   return window['go']['database']['Database']['GetDatabaseVersion']();
 }
@@ -662,6 +678,14 @@ export function ImportXGPPosition(arg1) {
   return window['go']['database']['Database']['ImportXGPPosition'](arg1);
 }
 
+export function IndexOfAnkiDeckPosition(arg1, arg2) {
+  return window['go']['database']['Database']['IndexOfAnkiDeckPosition'](arg1, arg2);
+}
+
+export function IndexOfCollectionPosition(arg1, arg2) {
+  return window['go']['database']['Database']['IndexOfCollectionPosition'](arg1, arg2);
+}
+
 export function IndexOfPosition(arg1) {
   return window['go']['database']['Database']['IndexOfPosition'](arg1);
 }
@@ -682,12 +706,24 @@ export function LastDecision(arg1) {
   return window['go']['database']['Database']['LastDecision'](arg1);
 }
 
+export function ListAnkiDeckPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ListAnkiDeckPositionIDs'](arg1, arg2, arg3);
+}
+
+export function ListCollectionPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ListCollectionPositionIDs'](arg1, arg2, arg3);
+}
+
 export function ListDirections() {
   return window['go']['database']['Database']['ListDirections']();
 }
 
 export function ListImportBatches(arg1, arg2) {
   return window['go']['database']['Database']['ListImportBatches'](arg1, arg2);
+}
+
+export function ListMatches(arg1) {
+  return window['go']['database']['Database']['ListMatches'](arg1);
 }
 
 export function ListPositionIDs(arg1, arg2) {

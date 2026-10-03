@@ -237,7 +237,7 @@ func TestCLI_ListMatches(t *testing.T) {
 	}
 
 	out := captureStdout(t, func() {
-		if err := cli.listMatches(10); err != nil {
+		if err := cli.listMatches(10, "", ""); err != nil {
 			t.Fatalf("listMatches: %v", err)
 		}
 	})
@@ -248,6 +248,31 @@ func TestCLI_ListMatches(t *testing.T) {
 	// Output should contain "Players:" header.
 	if !bytes.Contains([]byte(out), []byte("Players:")) {
 		t.Errorf("listMatches output missing player info:\n%s", out)
+	}
+}
+
+func TestCLI_ListMatchesQueryAndSort(t *testing.T) {
+	cli := setupCLI(t)
+	if _, err := cli.db.ImportXGMatch(testdataPath("test.xg")); err != nil {
+		t.Fatalf("ImportXGMatch: %v", err)
+	}
+
+	miss := captureStdout(t, func() {
+		if err := cli.listMatches(10, "no-such-player-anywhere", "player1_desc"); err != nil {
+			t.Fatalf("listMatches: %v", err)
+		}
+	})
+	if !bytes.Contains([]byte(miss), []byte("No matches found")) {
+		t.Errorf("a filter that matches nothing should say so:\n%s", miss)
+	}
+
+	all := captureStdout(t, func() {
+		if err := cli.listMatches(10, "", "length_desc"); err != nil {
+			t.Fatalf("listMatches: %v", err)
+		}
+	})
+	if !bytes.Contains([]byte(all), []byte("Found 1 match(es)")) {
+		t.Errorf("an empty filter keeps every match:\n%s", all)
 	}
 }
 
@@ -657,6 +682,38 @@ func TestCLI_InfoJSON(t *testing.T) {
 	trimmed := strings.TrimSpace(out)
 	if !json.Valid([]byte(trimmed)) {
 		t.Errorf("stdout is not a single valid JSON document (status noise leaked onto stdout?):\n%s", out)
+	}
+}
+
+// TestCLI_InfoCountsAreExactUnlessEstimated: scripts reading `info --format json`
+// get exact counts and a blunder_count by default; the estimate is opt-in and
+// says it is one.
+func TestCLI_InfoCountsAreExactUnlessEstimated(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	read := func(extra ...string) map[string]any {
+		var doc struct {
+			Stats map[string]any `json:"stats"`
+		}
+		out := captureStdout(t, func() {
+			if err := cli.Run(append([]string{"info", "--db", dbPath, "--format", "json"}, extra...)); err != nil {
+				t.Fatalf("info: %v", err)
+			}
+		})
+		if err := json.Unmarshal([]byte(out), &doc); err != nil {
+			t.Fatalf("info JSON: %v\n%s", err, out)
+		}
+		return doc.Stats
+	}
+	exact := read()
+	if _, ok := exact["approximate"]; ok {
+		t.Errorf("default info carries an estimate marker: %v", exact)
+	}
+	if _, ok := exact["blunder_count"]; !ok {
+		t.Errorf("default info has no blunder_count: %v", exact)
+	}
+	est := read("--estimate")
+	if _, ok := est["approximate"]; !ok {
+		t.Errorf("--estimate does not say it estimates: %v", est)
 	}
 }
 

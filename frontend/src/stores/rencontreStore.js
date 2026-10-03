@@ -142,7 +142,7 @@ export async function setDirectionTables(tournamentId, settings) {
 }
 
 /**
- * Le classement de saison des tournois clos d'une Rencontre (ADR-0061). Une erreur remonte :
+ * Le classement de saison des tournois clos d'une Rencontre (ADR-0062). Une erreur remonte :
  * le panneau la montre au lieu d'un classement vide trompeur.
  * @param {{rencontreId: number, points?: number[], participation?: number, elo?: boolean}} query
  */

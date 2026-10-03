@@ -9,7 +9,7 @@
     import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
-    import { positionStore } from '../stores/positionStore';
+    import { positionStore, collectionSource } from '../stores/positionStore';
     import { analysisStore } from '../stores/analysisStore';
     import { lastSearchStore } from '../stores/searchHistoryStore';
     import { get } from 'svelte/store';
@@ -19,13 +19,15 @@
         TrashCollection,
         AddPositionToCollection,
         RemovePositionFromCollection,
-        GetCollectionPositions,
+        CountCollectionPositions,
+        ListCollectionPositionIDs,
+        LoadPositionsByIDs,
         SetCollectionFilter,
         ReorderCollectionPositions,
         ReorderCollections,
         UpdateCollection,
         GetPositionCollections,
-        GetPositionIndexMap,
+        IndexOfPosition,
         LoadAnalysis
     } from '../../wailsjs/go/database/Database.js';
     import { t, tMsg } from '../i18n';
@@ -34,6 +36,43 @@
     import { panelKeyGuard } from '../services/keyboardService.js';
 
     let { onOpenCollection } = $props();
+
+    // The detail lists the collection by id pages, never its whole membership: `collectionPositions`
+    // holds the loaded prefix as `{ id }` rows, `collectionTotal` the real length.
+    const ROW_PAGE = 500;
+    let loadedTotal = $state(0);
+    let collectionTotal = $derived(Math.max(loadedTotal, collectionPositions.length));
+    let loadingRows = false;
+
+    /** Reload the rows from the start, keeping at least as many as were loaded; returns the total. */
+    async function refreshRows(collectionId, keep = 0) {
+        const total = (await CountCollectionPositions(collectionId)) || 0;
+        const want = Math.min(total, Math.max(keep, ROW_PAGE));
+        const ids = want > 0 ? (await ListCollectionPositionIDs(collectionId, 0, want)) || [] : [];
+        loadedTotal = total;
+        collectionPositionsStore.set(ids.map((id) => ({ id })));
+        return total;
+    }
+
+    /** The detail scrolled to its last loaded row: read the next page of ids. */
+    async function loadMoreRows() {
+        const id = activeCollection?.id;
+        if (loadingRows || !id || collectionPositions.length >= collectionTotal) return;
+        loadingRows = true;
+        try {
+            const ids = (await ListCollectionPositionIDs(id, collectionPositions.length, ROW_PAGE)) || [];
+            if (activeCollection?.id === id && ids.length > 0) collectionPositionsStore.set([...collectionPositions, ...ids.map((rowId) => ({ id: rowId }))]);
+        } catch (error) {
+            logger.error('Error reading more collection rows:', error);
+        } finally {
+            loadingRows = false;
+        }
+    }
+
+    /** Show the browsed list again from its first position after a change of membership. */
+    async function reopenActive() {
+        if (onOpenCollection && activeCollection && collectionTotal > 0) await onOpenCollection(activeCollection, collectionSource(activeCollection.id));
+    }
 
     // Read-only mirrors of stores
     let collections = $derived($collectionsStore || []);
@@ -91,8 +130,7 @@
             await SetCollectionFilter(activeCollection.id, query);
             activeCollectionStore.set({ ...activeCollection, filterQuery: query });
             await loadCollections();
-            const positions = await GetCollectionPositions(activeCollection.id);
-            collectionPositionsStore.set(positions || []);
+            await refreshRows(activeCollection.id);
             statusBarTextStore.set(query ? tMsg('collection.livingSet', { query }) : tMsg('collection.livingCleared'));
         } catch (error) {
             logger.error('Error setting the collection filter:', error);
@@ -103,7 +141,10 @@
     const selectedPositionIndices = new SvelteSet();
 
     // Position index map (position_id -> 1-based index in DB)
-    let positionIndexMap = $state({});
+    // Rang en bibliothèque des seules lignes affichées, demandé une à une : une carte de toute la
+    // base serait chargée pour trente lignes visibles.
+    let positionIndexMap = $state.raw({});
+    let indexGeneration = 0;
 
     // Inline new description
     let inlineNewDescription = $state('');
@@ -175,11 +216,20 @@
         }
     }
 
-    async function loadPositionIndexMap() {
-        try {
-            positionIndexMap = (await GetPositionIndexMap()) || {};
-        } catch (_error) {
-            positionIndexMap = {};
+    function loadPositionIndexMap() {
+        indexGeneration++;
+        positionIndexMap = {};
+    }
+
+    /** Action : demande le rang de la position quand sa ligne est montée. */
+    function wantIndex(node, id) {
+        const generation = indexGeneration;
+        if (positionIndexMap[id] === undefined) {
+            IndexOfPosition(id)
+                .then((i) => {
+                    if (generation === indexGeneration) positionIndexMap = { ...positionIndexMap, [id]: i + 1 };
+                })
+                .catch(() => {});
         }
     }
 
@@ -227,8 +277,7 @@
             await loadCollections();
             await loadPositionIndexMap();
             if (activeCollection && activeCollection.id === collectionId) {
-                const positions = await GetCollectionPositions(collectionId);
-                collectionPositionsStore.set(positions || []);
+                await refreshRows(collectionId, collectionPositions.length);
             }
         } catch (error) {
             logger.error('Error toggling position in collection:', error);
@@ -257,19 +306,18 @@
     async function openCollection(collection) {
         if (collectionEdit.isEditing(collection.id)) return;
         try {
-            const positions = await GetCollectionPositions(collection.id);
-            if (!positions || positions.length === 0) {
+            const total = await refreshRows(collection.id);
+            if (total === 0) {
                 statusBarTextStore.set(tMsg('collection.isEmpty', { name: collection.name }));
                 return;
             }
             selectedCollectionStore.set(collection);
-            collectionPositionsStore.set(positions);
             activeCollectionStore.set(collection);
             selectedPositionIndices.clear();
             view = 'detail';
             await loadPositionIndexMap();
             if (onOpenCollection) {
-                onOpenCollection(collection, positions);
+                await onOpenCollection(collection, collectionSource(collection.id));
             }
         } catch (error) {
             logger.error('Error opening collection:', error);
@@ -361,9 +409,9 @@
         // effect above would collapse the multi-selection to one index.
         if (isMultiSelectClick) return;
 
-        const position = collectionPositions[index];
-        if (position) {
-            navigateToPosition(position, index);
+        const row = collectionPositions[index];
+        if (row) {
+            navigateToPosition(row, index);
         }
     }
 
@@ -376,12 +424,9 @@
                 await RemovePositionFromCollection(activeCollection.id, collectionPositions[idx].id);
             }
             selectedPositionIndices.clear();
-            const positions = await GetCollectionPositions(activeCollection.id);
-            collectionPositionsStore.set(positions || []);
+            await refreshRows(activeCollection.id, collectionPositions.length);
             await loadCollections();
-            if (onOpenCollection && positions && positions.length > 0) {
-                onOpenCollection(activeCollection, positions);
-            }
+            await reopenActive();
         } catch (error) {
             logger.error('Error removing positions:', error);
         }
@@ -397,22 +442,20 @@
             const shifted = [...selectedPositionIndices].filter((i) => i !== index).map((i) => (i > index ? i - 1 : i));
             selectedPositionIndices.clear();
             for (const i of shifted) selectedPositionIndices.add(i);
-            const positions = await GetCollectionPositions(activeCollection.id);
-            collectionPositionsStore.set(positions || []);
+            await refreshRows(activeCollection.id, collectionPositions.length);
             await loadCollections();
-            if (onOpenCollection && positions && positions.length > 0) {
-                onOpenCollection(activeCollection, positions);
-            }
+            await reopenActive();
         } catch (error) {
             logger.error('Error removing position:', error);
         }
     }
 
-    async function navigateToPosition(position, index) {
-        positionStore.set(position);
+    async function navigateToPosition(row, index) {
         currentPositionIndexStore.set(index);
         try {
-            const analysis = await LoadAnalysis(position.id);
+            const [position] = (await LoadPositionsByIDs([row.id])) || [];
+            if (position) positionStore.set(position);
+            const analysis = await LoadAnalysis(row.id);
             if (analysis) {
                 analysisStore.set(analysis);
             }
@@ -499,12 +542,9 @@
         if (!(await confirmAction($t('collection.confirmRemove', { count: 1 }), { confirmLabel: $t('common.delete') }))) return;
         try {
             await RemovePositionFromCollection(activeCollection.id, positionId);
-            const positions = await GetCollectionPositions(activeCollection.id);
-            collectionPositionsStore.set(positions || []);
+            await refreshRows(activeCollection.id, collectionPositions.length);
             await loadCollections();
-            if (onOpenCollection && positions && positions.length > 0) {
-                onOpenCollection(activeCollection, positions);
-            }
+            await reopenActive();
         } catch (error) {
             logger.error('Error removing position:', error);
         }
@@ -515,8 +555,7 @@
         if (mode === 'COLLECTION' && activeCollection && activeCollection.id) {
             view = 'detail';
             try {
-                const positions = await GetCollectionPositions(activeCollection.id);
-                collectionPositionsStore.set(positions || []);
+                await refreshRows(activeCollection.id);
             } catch (error) {
                 logger.error('Error reloading active collection positions:', error);
             }
@@ -659,6 +698,7 @@
         <div class="table-wrapper">
             <PanelTable
                 rows={collectionPositions}
+                onNearEnd={loadMoreRows}
                 columns={positionColumns}
                 rowClass={(_position, index) => [$currentPositionIndexStore === index ? 'current' : '', selectedPositionIndices.has(index) ? 'multi-selected' : ''].join(' ')}
                 onSelect={(_position, index, e) => selectAndDisplayPosition(index, e)}
@@ -668,7 +708,7 @@
                 {#snippet header()}
                     <button class="back-btn" onclick={goBackToList} title={$t('collection.backToCollections')}>←</button>
                     <span class="detail-title" title={activeCollection.name}>{activeCollection.name}</span>
-                    <span class="detail-count">{$t('collection.posCount', { count: collectionPositions.length })}</span>
+                    <span class="detail-count">{$t('collection.posCount', { count: collectionTotal })}</span>
                     {#if currentPosition && currentPosition.id}
                         <input
                             type="checkbox"
@@ -703,7 +743,7 @@
                 {/snippet}
                 {#snippet cells(position, index)}
                     <td class="narrow-col idx-cell">{index + 1}</td>
-                    <td class="narrow-col id-cell">{positionIndexMap[position.id] || '?'}</td>
+                    <td class="narrow-col id-cell" use:wantIndex={position.id}>{positionIndexMap[position.id] || '?'}</td>
                     <td class="actions-col">
                         <span class="item-actions">
                             <button
@@ -721,7 +761,7 @@
                                     e.stopPropagation();
                                     positionOrder.moveDown(index);
                                 }}
-                                disabled={index === collectionPositions.length - 1}
+                                disabled={index >= collectionPositions.length - 1}
                                 title={$t('collection.moveDown')}>▼</button
                             >
                             <button
