@@ -176,6 +176,23 @@ func (a *App) StartRolloutFiltered(query string, settings rollout.Settings) erro
 	return nil
 }
 
+// CountRolloutFiltered says how many positions StartRolloutFiltered would roll
+// out for query and settings, so the GUI can ask before a long job starts.
+func (a *App) CountRolloutFiltered(query string, settings rollout.Settings) (int, error) {
+	if err := settings.Validate(); err != nil {
+		return 0, err
+	}
+	if a.db == nil {
+		return 0, errors.New("rollout: no database is open")
+	}
+	filters, err := rollouts.ParseQuery(query)
+	if err != nil {
+		return 0, err
+	}
+	positions, err := a.db.PositionsToRollout(a.batchCtx(), filters, settings)
+	return len(positions), err
+}
+
 // RolloutBatchProgressEvent is rollout-batch:progress: Done positions are
 // finished, the one named is at Games of MaxGames.
 type RolloutBatchProgressEvent struct {

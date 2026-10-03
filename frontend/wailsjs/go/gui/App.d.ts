@@ -3,9 +3,9 @@
 import {gui} from '../models';
 import {domain} from '../models';
 import {gammonnet} from '../models';
+import {rollout} from '../models';
 import {race} from '../models';
 import {training} from '../models';
-import {rollout} from '../models';
 
 export function BearoffPlan(arg1:number,arg2:number):Promise<gui.BearoffPlan>;
 
@@ -28,6 +28,8 @@ export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 export function ComputeCubeMatrix(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<gammonnet.CubeMatrix>;
 
 export function CopyImageToClipboard(arg1:string):Promise<string>;
+
+export function CountRolloutFiltered(arg1:string,arg2:rollout.Settings):Promise<number>;
 
 export function DeleteBearoffTable(arg1:string):Promise<void>;
 

@@ -190,6 +190,10 @@ export default {
 <p>La franja aparece solo si de verdad hay varios motores, y existe únicamente en este panel: el panel Eval presenta <strong>una</strong> decisión, la del motor integrado (<code>ADR-0017 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md&gt;</code>__), y una comparación no tendría sitio allí.</p>
 <p>Las jugadas se escriben como se leen en el tablero, aquí igual que en el panel Eval: la ficha menos avanzada se mueve primero, y <strong>una ficha que encadena varios dados se escribe una sola vez</strong> — un 64 jugado con la misma ficha se lee <code>24/14</code>, y <code>24/14*</code> si golpea al llegar. El detalle del encadenamiento solo reaparece cuando dice algo más: un golpe <em>por el camino</em> conserva su punto de paso, <code>24/18* 18/14</code>, sin lo cual el golpe en el 18 desaparecería de la notación.</p>
 <p>La equidad de un análisis importado sigue la misma regla que el panel Eval: la columna indica su propio marco de referencia, «Equity (money)» o «Equity (match)» según el marcador de la posición analizada, nunca un simple «Equity» mudo sobre la escala. Las reglas <strong>Jacoby</strong> y <strong>Beaver</strong> activas en una posición de money game también se muestran, en insignias bajo la tabla de decisión del cubo.</p>
+<h4>Rollouts</h4>
+<p>Bajo el análisis, el panel <strong>Análisis</strong> propone <strong>rodar</strong> la posición: jugar cientos de partidas a partir de cada jugada candidata, o de cada acción del cubo, para desempatar dos opciones que la evaluación directa apenas distingue. Tres ajustes: <strong>Rápido</strong> (216 partidas, truncadas a 7 medias jugadas), <strong>Estándar</strong> (1296 partidas, truncadas a 11 medias jugadas) y <strong>Libre</strong>, donde todos los parámetros son editables — truncamiento, partidas mínimas y máximas (múltiplos de 36), límite de JSD, profundidad (ply), número de candidatas, semilla y número de procesos. El botón <strong>Lanzar el rollout</strong>, la tecla <em>r</em> del panel o el comando <code>rollout</code> (alias <code>ro</code>) lo inician; una barra de progreso sigue las partidas jugadas y <strong>Cancelar</strong> (o <em>r</em> de nuevo) lo detiene sin escribir nada.</p>
+<p>El resultado se <strong>guarda junto al análisis, nunca en su lugar</strong>: un análisis importado no se modifica. Cada rollout forma un bloque con, por candidata, la equidad, el intervalo de confianza del 95 %, la <strong>JSD</strong> (la distancia a la mejor jugada en desviaciones típicas de la diferencia: a partir del límite, la jugada está decidida y deja de jugarse) y el número de partidas. El rollout se detiene en cuanto las jugadas quedan desempatadas. La <strong>Configuración</strong> — el motor y la firma completa de los parámetros — se despliega bajo la tabla: dos rollouts con la misma firma dan los mismos números. Un rollout juega el cubo dentro de sus partidas: la clasificación es fiable, la equidad absoluta algo menos, lo que el bloque recuerda. Una posición que no está en la base se puede rodar, pero no se guarda.</p>
+<p>El botón <strong>Sobre la búsqueda actual…</strong> (o <code>ro search</code>) rueda, una tras otra, las posiciones de la última búsqueda que aún no llevan este rollout; una confirmación da el total antes de empezar. Cada posición se escribe en cuanto termina: cancelar conserva lo hecho, y volver a lanzar continúa donde se detuvo. El avance sobrevive al cierre del panel.</p>
 <h3>Panel de Comentarios</h3>
 <p>El panel <strong>Comentarios</strong> (<em>CTRL-P</em>) muestra, añade y edita los comentarios asociados a la posición actual. Una posición puede llevar varios: se muestran todos, del más reciente al más antiguo. Los comentarios importados de archivos XG se asocian automáticamente a las posiciones correspondientes. Pulse <em>CTRL-P</em> o ejecute el comando <code>comment</code> para mostrar u ocultar el panel.</p>
 <p>Cada comentario procedente de un archivo lleva una <strong>etiqueta de procedencia</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, o <em>importado</em> cuando la procedencia nunca se registró). Los comentarios que usted escribió no llevan ninguna: es el caso corriente, y señalarlo en cada línea sería ruido. Modificar un comentario importado se lo atribuye: tras la modificación, la frase es suya.</p>
@@ -1292,6 +1296,10 @@ export default {
 <td>Alternar entre el análisis de jugadas y de cubo (solo en navegación de partida).</td>
 </tr>
 <tr>
+<td>r</td>
+<td>Lanzar el rollout de la posición con el ajuste elegido; una segunda pulsación lo detiene.</td>
+</tr>
+<tr>
 <td>Esc</td>
 <td>Deseleccionar la jugada. Si no hay ninguna jugada seleccionada, cerrar el panel.</td>
 </tr>
@@ -1920,6 +1928,10 @@ export default {
 <tr>
 <td>comment, co</td>
 <td>Mostrar/escribir comentarios.</td>
+</tr>
+<tr>
+<td>rollout, ro [fast|standard]</td>
+<td>Rueda la posición actual (con el ajuste elegido en el panel Análisis, o el preajuste nombrado) y abre el panel Análisis. <code>ro search [fast|standard]</code> lo lanza sobre la búsqueda actual, tras una confirmación con el total; <code>ro stop</code> detiene el rollout en curso.</td>
 </tr>
 <tr>
 <td>history, hi</td>

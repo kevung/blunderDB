@@ -190,6 +190,10 @@ export default {
 <p>Palkki ilmestyy vain kun moottoreita todella on useampi, ja se on olemassa vain tässä paneelissa: Eval-paneeli esittää <strong>yhden</strong> päätöksen, sisäänrakennetun moottorin (<code>ADR-0017 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md&gt;</code>__), eikä vertailulla olisi siellä sijaa.</p>
 <p>Siirrot kirjoitetaan niin kuin ne luetaan laudalta, täällä kuten Eval-paneelissakin: vähiten edennyt nappula liikkuu ensin, ja <strong>nappula, joka käyttää useamman nopan peräkkäin, kirjoitetaan vain kerran</strong> — samalla nappulalla pelattu 64 luetaan <code>24/14</code>, ja <code>24/14*</code>, jos se lyö perille tullessaan. Ketjun yksityiskohdat näkyvät vain silloin, kun ne kertovat jotakin lisää: <em>matkan varrella</em> tehty lyönti säilyttää välipisteensä, <code>24/18* 18/14</code>, muuten lyönti pisteessä 18 katoaisi merkinnästä.</p>
 <p>Tuodun analyysin ekviteetti noudattaa samaa sääntöä kuin Eval-paneeli: sarake ilmoittaa oman viitekehyksensä, ”Equity (money)” tai ”Equity (match)” analysoidun aseman pistetilanteen mukaan, ei koskaan pelkkää ”Equity”-sanaa kertomatta asteikkoa. Money game -asemassa voimassa olevat <strong>Jacoby</strong>- ja <strong>Beaver</strong>-säännöt näytetään myös pieninä merkkeinä kuutiopäätöstaulukon alla.</p>
+<h4>Rolloutit</h4>
+<p>Analyysin alla <strong>Analyysi</strong>-paneeli tarjoaa aseman <strong>rollaamista</strong>: sadat pelit pelataan jokaisesta ehdokassiirrosta tai tuplauskuution toiminnosta, jotta voidaan erottaa kaksi vaihtoehtoa, joita suora arviointi tuskin erottaa. Kolme asetusta: <strong>Nopea</strong> (216 peliä, katkaistu 7 puolisiirtoon), <strong>Vakio</strong> (1296 peliä, katkaistu 11 puolisiirtoon) ja <strong>Vapaa</strong>, jossa jokainen parametri on muokattavissa — katkaisu, vähimmäis- ja enimmäispelit (36:n monikertoja), JSD-raja, syvyys (ply), ehdokkaiden määrä, siemen ja työprosessien määrä. Painike <strong>Käynnistä rollout</strong>, paneelin näppäin <em>r</em> tai komento <code>rollout</code> (alias <code>ro</code>) käynnistävät sen; edistymispalkki seuraa pelattuja pelejä, ja <strong>Peruuta</strong> (tai <em>r</em> uudelleen) pysäyttää sen kirjoittamatta mitään.</p>
+<p>Tulos <strong>tallennetaan analyysin viereen, ei koskaan sen tilalle</strong>: tuotua analyysia ei muuteta. Jokainen rollout muodostaa lohkon, jossa on kullekin ehdokkaalle equity, 95 %:n luottamusväli, <strong>JSD</strong> (ero parhaaseen siirtoon eron keskihajontoina: rajasta alkaen siirto on ratkaistu eikä sitä enää pelata) ja pelien määrä. Rollout päättyy heti, kun siirrot on erotettu. <strong>Konfiguraatio</strong> — moottori ja parametrien täydellinen allekirjoitus — aukeaa taulukon alle: kaksi samalla allekirjoituksella tehtyä rolloutia antaa samat luvut. Rollout pelaa tuplauskuution peleissään: järjestys on luotettava, absoluuttinen equity hieman vähemmän, minkä lohko muistuttaa. Asema, joka ei ole tietokannassa, voidaan rollata mutta sitä ei tallenneta.</p>
+<p>Painike <strong>Nykyiseen hakuun…</strong> (tai <code>ro search</code>) rollaa peräkkäin viimeisen haun asemat, joilla ei vielä ole tätä rolloutia; vahvistus kertoo kokonaismäärän ennen aloitusta. Jokainen asema kirjoitetaan heti valmistuttuaan: peruutus säilyttää tehdyn, ja uusi käynnistys jatkaa siitä, mihin jäätiin. Eteneminen säilyy paneelin sulkemisen yli.</p>
 <h3>Kommenttipaneeli</h3>
 <p><strong>Kommentit</strong>-paneeli (<em>CTRL-P</em>) näyttää, lisää ja muokkaa nykyiseen asemaan liitettyjä kommentteja. Asemalla voi olla useita: kaikki näytetään, uusimmasta vanhimpaan. XG-tiedostoista tuodut kommentit liitetään automaattisesti vastaaviin asemiin. Paina <em>CTRL-P</em> tai suorita komento <code>comment</code> näyttääksesi tai piilottaaksesi paneelin.</p>
 <p>Jokainen tiedostosta tullut kommentti kantaa <strong>alkuperämerkintää</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, tai <em>tuotu</em>, kun alkuperää ei koskaan tallennettu). Itse kirjoittamasi kommentit eivät kanna sellaista: se on tavallinen tapaus, ja jokaisen rivin merkitseminen olisi vain kohinaa. Tuodun kommentin muokkaaminen tekee siitä sinun: muokkauksen jälkeen lause on sinun.</p>
@@ -1292,6 +1296,10 @@ export default {
 <td>Vaihda nappuloiden ja tuplauskuution analyysin välillä (vain ottelunavigoinnissa).</td>
 </tr>
 <tr>
+<td>r</td>
+<td>Käynnistä aseman rollout valitulla asetuksella; toinen painallus pysäyttää sen.</td>
+</tr>
+<tr>
 <td>Esc</td>
 <td>Poista siirron valinta. Jos mitään siirtoa ei ole valittu, sulje paneeli.</td>
 </tr>
@@ -1920,6 +1928,10 @@ export default {
 <tr>
 <td>comment, co</td>
 <td>Näytä/kirjoita kommentteja.</td>
+</tr>
+<tr>
+<td>rollout, ro [fast|standard]</td>
+<td>Rollaa nykyisen aseman (Analyysi-paneelissa valitulla asetuksella tai nimetyllä esiasetuksella) ja avaa Analyysi-paneelin. <code>ro search [fast|standard]</code> käynnistää sen nykyiseen hakuun vahvistuksen jälkeen, jossa kerrotaan kokonaismäärä; <code>ro stop</code> pysäyttää käynnissä olevan rolloutin.</td>
 </tr>
 <tr>
 <td>history, hi</td>

@@ -23,6 +23,7 @@ var boundAppMethods = []string{
 	"CollectImportableFiles",
 	"ComputeCubeMatrix",
 	"CopyImageToClipboard",
+	"CountRolloutFiltered",
 	"DeleteFile",
 	"EnsureBearoffTables",
 	"GenerateBearoffQuestion",

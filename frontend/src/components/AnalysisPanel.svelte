@@ -17,6 +17,8 @@
     const HIDDEN = '···';
     import AnalysisView from './AnalysisView.svelte';
     import EngineComparison from './EngineComparison.svelte';
+    import RolloutSection from './RolloutSection.svelte';
+    import { toggleRollout } from '../services/rolloutService.js';
     let { onClose } = $props();
 
     // Read-only mirrors of stores
@@ -97,6 +99,8 @@
     });
 
     function handleKeyDown(event) {
+        // A field of the rollout settings keeps its own keys (the arrows are not move navigation).
+        if (event.key !== 'Escape' && event.target?.matches?.('input, select, textarea')) return;
         if (event.key === 'Escape') {
             // Clear selection first if a move is selected. What the panel closes
             // itself, it claims (preventDefault), so the global dispatcher leaves it be.
@@ -109,6 +113,14 @@
                 event.preventDefault();
                 onClose();
             }
+            return;
+        }
+
+        // `r` starts a rollout of the position (or stops the one running); a field of the rollout
+        // settings keeps its own letters.
+        if (isBareLetter(event, 'r') && !event.target?.matches?.('input, select, textarea')) {
+            event.preventDefault();
+            toggleRollout();
             return;
         }
 
@@ -370,6 +382,7 @@
             />
             <!-- Une ligne, et seulement quand une règle est confiante. -->
             <ExplanationLine analysis={analysisData} />
+            <RolloutSection />
         {/if}
     </div>
 </section>

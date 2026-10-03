@@ -28,6 +28,7 @@ export const COMMANDS = [
     { name: 'match', aliases: ['ma'] },
     { name: 'collection', aliases: ['coll'] },
     { name: 'eval', aliases: ['epc'] },
+    { name: 'rollout', aliases: ['ro'] },
     { name: 'transcribe', aliases: ['tr'] },
     { name: 'direct', aliases: [] },
     { name: 'm', aliases: [] },

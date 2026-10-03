@@ -190,6 +190,10 @@ export default {
 <p>The strip appears only when there really are several engines, and it exists in this panel alone: the Eval panel presents <strong>one</strong> decision, the embedded engine's (<code>ADR-0017 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md&gt;</code>__), and a comparison would have no place there.</p>
 <p>Moves are written as they read on the board, here as in the Eval panel: the least advanced checker moves first, and <strong>a checker that chains several dice is written only once</strong> — a 64 played with the same checker reads <code>24/14</code>, and <code>24/14*</code> if it hits on arrival. The detail of the chain only reappears when it says something more: a hit <em>on the way</em> keeps its intermediate point, <code>24/18* 18/14</code>, without which the hit on the 18 would vanish from the notation.</p>
 <p>An imported analysis' equity follows the same rule as the Eval panel: the column states its own referential, “Equity (money)” or “Equity (match)” depending on the score of the analysed position, never a plain “Equity” silent on the scale. The <strong>Jacoby</strong> and <strong>Beaver</strong> rules active on a money-game position are also shown, in badges under the cube decision table.</p>
+<h4>Rollouts</h4>
+<p>Below the analysis, the <strong>Analysis</strong> panel offers to <strong>roll out</strong> the position: to play hundreds of games from each candidate play, or each cube action, in order to separate two choices that direct evaluation barely tells apart. Three settings: <strong>Fast</strong> (216 games, truncated at 7 half-moves), <strong>Standard</strong> (1296 games, truncated at 11 half-moves) and <strong>Custom</strong>, where every parameter is editable — truncation, minimum and maximum games (multiples of 36), JSD limit, depth (ply), number of candidates, seed and number of workers. The <strong>Roll out</strong> button, the panel's <em>r</em> key or the <code>rollout</code> command (alias <code>ro</code>) start it; a progress bar follows the games played and <strong>Cancel</strong> (or <em>r</em> again) stops it without writing anything.</p>
+<p>The result is <strong>stored beside the analysis, never in its place</strong>: an imported analysis is not modified. Each rollout forms a block with, for every candidate, the equity, the 95 % confidence interval, the <strong>JSD</strong> (the gap to the best play in standard deviations of the difference: from the limit on, the play is decided and is no longer played) and the number of games. The rollout stops as soon as the plays are told apart. The <strong>Configuration</strong> — the engine and the full signature of the parameters — unfolds under the table: two rollouts with the same signature are the same numbers. A rollout plays the cube inside its games: the ranking is reliable, the absolute equity a little less so, which the block recalls. A position that is not in the database can be rolled out but is not stored.</p>
+<p>The <strong>On the current search…</strong> button (or <code>ro search</code>) rolls out, one after the other, the positions of the last search that do not carry this rollout yet; a confirmation gives the total before starting. Each position is written as soon as it is finished: cancelling keeps what is done, and running again resumes where it stopped. Progress survives closing the panel.</p>
 <h3>Comments Panel</h3>
 <p>The <strong>Comments</strong> panel (<em>CTRL-P</em>) shows, adds and edits the comments attached to the current position. A position may carry several: all of them are shown, most recent first. Comments imported from XG files are automatically attached to the matching positions. Press <em>CTRL-P</em> or run the <code>comment</code> command to show or hide the panel.</p>
 <p>Every comment that came out of a file carries a <strong>provenance badge</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, or <em>imported</em> when the provenance was never recorded). Comments you wrote carry none: that is the ordinary case, and marking every line would be noise. Editing an imported comment makes it yours: after the edit, the sentence is yours.</p>
@@ -1292,6 +1296,10 @@ export default {
 <td>Toggle between checker and cube analysis (match navigation only).</td>
 </tr>
 <tr>
+<td>r</td>
+<td>Roll out the position with the chosen setting; a second press stops it.</td>
+</tr>
+<tr>
 <td>Esc</td>
 <td>Deselect move. If no move selected, close the panel.</td>
 </tr>
@@ -1920,6 +1928,10 @@ export default {
 <tr>
 <td>comment, co</td>
 <td>Show/write comments.</td>
+</tr>
+<tr>
+<td>rollout, ro [fast|standard]</td>
+<td>Rolls out the current position (with the setting chosen in the Analysis panel, or the named preset) and opens the Analysis panel. <code>ro search [fast|standard]</code> runs it on the current search, after a confirmation with the total; <code>ro stop</code> stops the rollout in progress.</td>
 </tr>
 <tr>
 <td>history, hi</td>

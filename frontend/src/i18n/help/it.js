@@ -190,6 +190,10 @@ export default {
 <p>La fascia appare solo se ci sono davvero più motori, ed esiste unicamente in questo pannello: il pannello Eval presenta <strong>una</strong> decisione, quella del motore integrato (<code>ADR-0017 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md&gt;</code>__), e un confronto non vi avrebbe posto.</p>
 <p>Le mosse sono scritte come si leggono sul tavoliere, qui come nel pannello Eval: la pedina meno avanzata si muove per prima, e <strong>una pedina che concatena più dadi si scrive una sola volta</strong> — un 64 giocato con la stessa pedina si legge <code>24/14</code>, e <code>24/14*</code> se colpisce all'arrivo. Il dettaglio della concatenazione ricompare solo quando dice qualcosa in più: un colpo <em>lungo il percorso</em> conserva il suo punto di passaggio, <code>24/18* 18/14</code>, senza il quale il colpo sul 18 sparirebbe dalla notazione.</p>
 <p>L'equità di un'analisi importata segue la stessa regola del pannello Eval: la colonna indica il proprio referenziale, «Equity (money)» o «Equity (match)» a seconda del punteggio della posizione analizzata, mai un semplice «Equity» muto sulla scala. Le regole <strong>Jacoby</strong> e <strong>Beaver</strong> attive su una posizione money game vengono mostrate anch'esse, in badge sotto la tabella di decisione del cubo.</p>
+<h4>Rollout</h4>
+<p>Sotto l'analisi, il pannello <strong>Analisi</strong> propone di <strong>rollare</strong> la posizione: giocare centinaia di partite a partire da ogni mossa candidata, o da ogni azione del videau, per distinguere due scelte che la valutazione diretta separa a malapena. Tre impostazioni: <strong>Veloce</strong> (216 partite, troncate a 7 semimosse), <strong>Standard</strong> (1296 partite, troncate a 11 semimosse) e <strong>Libera</strong>, dove ogni parametro è modificabile — troncamento, partite minime e massime (multipli di 36), limite di JSD, profondità (ply), numero di candidate, seme e numero di processi. Il pulsante <strong>Avvia il rollout</strong>, il tasto <em>r</em> del pannello o il comando <code>rollout</code> (alias <code>ro</code>) lo avviano; una barra di avanzamento segue le partite giocate e <strong>Annulla</strong> (o <em>r</em> di nuovo) lo ferma senza scrivere nulla.</p>
+<p>Il risultato è <strong>salvato accanto all'analisi, mai al suo posto</strong>: un'analisi importata non viene modificata. Ogni rollout forma un blocco con, per ogni candidata, l'equity, l'intervallo di confidenza al 95 %, la <strong>JSD</strong> (la distanza dalla mossa migliore in deviazioni standard della differenza: dal limite in poi, la mossa è decisa e non viene più giocata) e il numero di partite. Il rollout si ferma appena le mosse sono distinte. La <strong>Configurazione</strong> — il motore e la firma completa dei parametri — si apre sotto la tabella: due rollout con la stessa firma sono gli stessi numeri. Un rollout gioca il videau nelle sue partite: la classifica è affidabile, l'equity assoluta un po' meno, come ricorda il blocco. Una posizione che non è nel database si può rollare, ma non si salva.</p>
+<p>Il pulsante <strong>Sulla ricerca corrente…</strong> (o <code>ro search</code>) rolla, una dopo l'altra, le posizioni dell'ultima ricerca che non portano ancora questo rollout; una conferma indica il totale prima di iniziare. Ogni posizione è scritta appena finita: annullare conserva quanto fatto, e rilanciare riprende da dove ci si è fermati. L'avanzamento sopravvive alla chiusura del pannello.</p>
 <h3>Pannello Commenti</h3>
 <p>Il pannello <strong>Commenti</strong> (<em>CTRL-P</em>) mostra, aggiunge e modifica i commenti associati alla posizione corrente. Una posizione può portarne più d'uno: sono mostrati tutti, dal più recente al più antico. I commenti importati dai file XG vengono associati automaticamente alle posizioni corrispondenti. Premere <em>CTRL-P</em> o eseguire il comando <code>comment</code> per mostrare o nascondere il pannello.</p>
 <p>Ogni commento proveniente da un file porta un'<strong>etichetta di provenienza</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, oppure <em>importato</em> quando la provenienza non è mai stata registrata). I commenti che hai scritto non ne portano: è il caso normale, e segnalarlo a ogni riga sarebbe rumore. Modificare un commento importato te lo attribuisce: dopo la modifica, la frase è la tua.</p>
@@ -1292,6 +1296,10 @@ export default {
 <td>Alterna tra l'analisi delle mosse e del cubo (solo navigazione match).</td>
 </tr>
 <tr>
+<td>r</td>
+<td>Avviare il rollout della posizione con l'impostazione scelta; una seconda pressione lo ferma.</td>
+</tr>
+<tr>
 <td>Esc</td>
 <td>Deseleziona la mossa. Se nessuna mossa è selezionata, chiudi il pannello.</td>
 </tr>
@@ -1920,6 +1928,10 @@ export default {
 <tr>
 <td>comment, co</td>
 <td>Mostra/scrivi commenti.</td>
+</tr>
+<tr>
+<td>rollout, ro [fast|standard]</td>
+<td>Rolla la posizione corrente (con l'impostazione scelta nel pannello Analisi, o il preset indicato) e apre il pannello Analisi. <code>ro search [fast|standard]</code> lo avvia sulla ricerca corrente, dopo una conferma con il totale; <code>ro stop</code> ferma il rollout in corso.</td>
 </tr>
 <tr>
 <td>history, hi</td>

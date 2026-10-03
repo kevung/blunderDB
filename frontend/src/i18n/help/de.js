@@ -190,6 +190,10 @@ export default {
 <p>Der Streifen erscheint nur, wenn es tatsächlich mehrere Engines gibt, und es gibt ihn allein in diesem Panel: das Eval-Panel zeigt <strong>eine</strong> Entscheidung, die der eingebetteten Engine (<code>ADR-0017 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md&gt;</code>__), und ein Vergleich hätte dort keinen Platz.</p>
 <p>Züge werden so geschrieben, wie man sie auf dem Brett liest, hier wie im Eval-Panel: der am wenigsten vorgerückte Stein zieht zuerst, und <strong>ein Stein, der mehrere Würfel hintereinander nutzt, wird nur einmal geschrieben</strong> — eine mit demselben Stein gespielte 64 liest sich <code>24/14</code>, und <code>24/14*</code>, wenn er bei der Ankunft schlägt. Das Detail der Kette taucht nur wieder auf, wenn es etwas mehr aussagt: ein Schlag <em>unterwegs</em> behält seinen Zwischenpunkt, <code>24/18* 18/14</code>, sonst verschwände der Schlag auf der 18 aus der Notation.</p>
 <p>Die Equity einer importierten Analyse folgt derselben Regel wie das Eval-Panel: Die Spalte nennt ihren Bezugsrahmen, „Equity (money)“ oder „Equity (match)“ je nach Spielstand der analysierten Position, nie ein bloßes „Equity“ ohne Angabe der Skala. Die auf einer Money-Game-Position aktiven Regeln <strong>Jacoby</strong> und <strong>Beaver</strong> werden ebenfalls angezeigt, als Badges unter der Tabelle der Doppelwürfel-Entscheidung.</p>
+<h4>Rollouts</h4>
+<p>Unter der Analyse bietet das Panel <strong>Analyse</strong> an, die Stellung zu <strong>rollen</strong>: Hunderte von Partien ab jedem Kandidatenzug oder jeder Würfelaktion zu spielen, um zwei Möglichkeiten zu unterscheiden, die die direkte Bewertung kaum trennt. Drei Einstellungen: <strong>Schnell</strong> (216 Partien, nach 7 Halbzügen abgebrochen), <strong>Standard</strong> (1296 Partien, nach 11 Halbzügen abgebrochen) und <strong>Frei</strong>, wo jeder Parameter editierbar ist — Abbruch, Mindest- und Höchstzahl der Partien (Vielfache von 36), JSD-Grenze, Tiefe (Ply), Zahl der Kandidaten, Seed und Zahl der Worker. Die Schaltfläche <strong>Rollout starten</strong>, die Taste <em>r</em> des Panels oder der Befehl <code>rollout</code> (Alias <code>ro</code>) starten es; ein Fortschrittsbalken folgt den gespielten Partien, und <strong>Abbrechen</strong> (oder erneut <em>r</em>) stoppt es, ohne etwas zu schreiben.</p>
+<p>Das Ergebnis wird <strong>neben der Analyse gespeichert, nie an ihrer Stelle</strong>: eine importierte Analyse wird nicht verändert. Jedes Rollout bildet einen Block mit, je Kandidat, Equity, 95-%-Konfidenzintervall, <strong>JSD</strong> (dem Abstand zum besten Zug in Standardabweichungen der Differenz: ab der Grenze ist der Zug entschieden und wird nicht mehr gespielt) und Partienzahl. Das Rollout endet, sobald die Züge unterschieden sind. Die <strong>Konfiguration</strong> — die Engine und die vollständige Signatur der Parameter — klappt unter der Tabelle auf: zwei Rollouts mit derselben Signatur liefern dieselben Zahlen. Ein Rollout spielt den Würfel in seinen Partien mit: die Rangfolge ist verlässlich, die absolute Equity etwas weniger, woran der Block erinnert. Eine Stellung, die nicht in der Datenbank ist, kann gerollt, aber nicht gespeichert werden.</p>
+<p>Die Schaltfläche <strong>Auf die aktuelle Suche…</strong> (oder <code>ro search</code>) rollt nacheinander die Stellungen der letzten Suche, die dieses Rollout noch nicht tragen; eine Bestätigung nennt vor dem Start die Gesamtzahl. Jede Stellung wird geschrieben, sobald sie fertig ist: Abbrechen behält das Erledigte, ein neuer Start macht dort weiter, wo er aufgehört hat. Der Fortschritt überlebt das Schließen des Panels.</p>
 <h3>Kommentare-Panel</h3>
 <p>Das Panel <strong>Kommentare</strong> (<em>STRG-P</em>) zeigt, ergänzt und bearbeitet die Kommentare zur aktuellen Stellung. Eine Stellung kann mehrere tragen: alle werden angezeigt, die neuesten zuerst. Aus XG-Dateien importierte Kommentare werden den passenden Stellungen automatisch zugeordnet. <em>STRG-P</em> drücken oder den Befehl <code>comment</code> ausführen, um das Panel ein- oder auszublenden.</p>
 <p>Jeder Kommentar aus einer Datei trägt eine <strong>Herkunftsmarkierung</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, oder <em>importiert</em>, wenn die Herkunft nie festgehalten wurde). Von Ihnen geschriebene Kommentare tragen keine: das ist der Normalfall, und jede Zeile zu kennzeichnen wäre nur Lärm. Einen importierten Kommentar zu bearbeiten macht ihn zu Ihrem: nach der Änderung ist der Satz Ihrer.</p>
@@ -1292,6 +1296,10 @@ export default {
 <td>Zwischen Zug- und Dopplerwürfel-Analyse wechseln (nur Match-Navigation).</td>
 </tr>
 <tr>
+<td>r</td>
+<td>Das Rollout der Stellung mit der gewählten Einstellung starten; ein zweiter Druck stoppt es.</td>
+</tr>
+<tr>
 <td>Esc</td>
 <td>Den Zug abwählen. Wenn kein Zug ausgewählt ist, das Fenster schließen.</td>
 </tr>
@@ -1920,6 +1928,10 @@ export default {
 <tr>
 <td>comment, co</td>
 <td>Kommentare anzeigen/schreiben.</td>
+</tr>
+<tr>
+<td>rollout, ro [fast|standard]</td>
+<td>Rollt die aktuelle Stellung (mit der im Panel Analyse gewählten Einstellung oder der genannten Voreinstellung) und öffnet das Panel Analyse. <code>ro search [fast|standard]</code> startet es auf der aktuellen Suche, nach einer Bestätigung mit der Gesamtzahl; <code>ro stop</code> stoppt das laufende Rollout.</td>
 </tr>
 <tr>
 <td>history, hi</td>

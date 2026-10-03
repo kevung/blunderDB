@@ -13,6 +13,7 @@ import { logger } from './utils/logger.js';
 import { tMsg } from './i18n';
 import { displayedPositionIDs, searchQueryBoard } from './services/positionService.js';
 import { openContactSheet } from './services/contactSheet.js';
+import { runRolloutCommand } from './services/rolloutService.js';
 // The search-token grammar lives in searchFilterService.js (shared with the "retour" replay);
 // re-exported so existing importers keep their path.
 import { parseSearchTokens, stripQuotedTokens } from './services/searchFilterService.js';
@@ -116,6 +117,9 @@ export function processCommand(command) {
         callbacks.toggleCollectionPanel?.();
     } else if (command === 'eval' || command === 'epc') {
         callbacks.toggleEvalMode?.();
+    } else if (command === 'rollout' || command === 'ro' || command.startsWith('rollout ') || command.startsWith('ro ')) {
+        // `ro [fast|standard]`, `ro search [fast|standard]`, `ro stop`.
+        runRolloutCommand(command.split(/\s+/).slice(1).join(' '));
     } else if (command === 'transcribe' || command === 'tr') {
         callbacks.toggleTranscriptionPanel?.();
     } else if (command === 'direct') {
