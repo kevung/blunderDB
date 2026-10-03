@@ -47,6 +47,9 @@ async function openDirection(page, opts = {}) {
 
 const proposal = '.proposals .queue li';
 
+/** Le bouton de confirmation de la modale thémée (confirmAction). */
+const confirmButton = (page) => page.locator('[aria-modal="true"] button.danger');
+
 test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
     // « confirmer une proposition | 1 clic ». Le bouton est sur la ligne : pas de sélection
     // préalable, pas de confirmation après.
@@ -235,12 +238,12 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
     // cellule dépend de l'état du joueur (un joueur libre porte aussi « Absenter »).
     test('retirer un joueur tient dans son budget', async ({ page }) => {
         await openDirection(page);
-        // Le retrait se confirme : la boîte de confirmation est acceptée.
-        page.on('dialog', (d) => d.accept());
 
         const counted = await countGestures(page, async (g) => {
             await g.click(page.locator('[data-testid="direction-tab-players"]'));
             await g.click(page.locator('.players tbody tr').first().locator('[data-testid="direction-player-withdraw-now"]'));
+            // Le retrait se confirme dans la modale thémée : un clic de plus, compté.
+            await g.click(confirmButton(page));
             await expect(page.locator('.players tbody tr').first()).toContainText(/retiré|withdrawn/i);
         });
         budget('retirer un joueur', counted, 6);
@@ -250,11 +253,10 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
     // retiré : corriger sa fiche ne le réinscrit plus en silence.
     test('réinscrire un retiré tient en un clic', async ({ page }) => {
         await openDirection(page);
-        // Le retrait se confirme : la boîte de confirmation est acceptée.
-        page.on('dialog', (d) => d.accept());
         await page.locator('[data-testid="direction-tab-players"]').click();
         const row = page.locator('.players tbody tr').first();
         await row.locator('[data-testid="direction-player-withdraw-now"]').click();
+        await confirmButton(page).click();
         await expect(row).toContainText(/retiré|withdrawn/i);
 
         const counted = await countGestures(page, async (g) => {
