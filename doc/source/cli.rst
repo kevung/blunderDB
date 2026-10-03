@@ -964,6 +964,10 @@ leçon dont le nom existe déjà dans la base n'est pas touchée, si bien que
 réimporter le même fichier ne change rien. Lire une leçon n'enregistre rien chez
 celui qui la lit.
 
+L'export de toute la bibliothèque (``export --type database``) emporte toutes
+les leçons avec ce que leurs étapes montrent ; un export partiel ne les emporte
+que nommées, par ``lesson export``.
+
 **Exemples:**
 
 .. code-block:: bash

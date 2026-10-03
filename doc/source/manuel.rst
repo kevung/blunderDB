@@ -1126,6 +1126,10 @@ crée ; une leçon de même nom déjà présente n'est pas touchée. Les leçons
 créent et se modifient par la ligne de commande ou par l'API
 (:ref:`headless_lecons`).
 
+Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre d'export
+ou par la ligne de commande — emporte toutes les leçons ; un export partiel
+(une sélection de positions, de collections ou de matchs) ne les emporte pas.
+
 .. _import_regles:
 
 Import : ce qui est écrit, ce qui ne l'est jamais

@@ -272,6 +272,7 @@ export default {
 <p>A <strong>lesson</strong> is a sequence of steps that a coach writes once for a student and hands over in a database file (see the <code>lesson export</code> command in cli). Each step has a title, a text and can show a collection, a position, both or neither. The <code>le</code> command lists the database's lessons in the status bar; <code>le 2</code> opens lesson 2.</p>
 <p>A <strong>reading bar</strong> then appears above the board: lesson name, step number, title, then the text. <em>Previous</em> and <em>Next</em> change step; the step brings onto the board the collection or position it shows, which you then browse with the usual gestures. <em>Close</em> leaves the lesson. A step whose collection or position has been deleted keeps its text.</p>
 <p>Reading a lesson leaves no trace: the student's database records neither the step reached nor the opening. Importing a file that contains a lesson creates it; a lesson of the same name already present is left untouched. Lessons are created and edited through the command line or the API (Lessons).</p>
+<p>A backup — exporting the whole library from the export window or by the command line — carries all the lessons; a partial export (a selection of positions, collections or matches) does not.</p>
 <h3>Import: what is written, what never is</h3>
 <p>Importing a match, a position or another database adds what is missing; it does not replace what is already there.</p>
 <ul>

@@ -272,6 +272,7 @@ export default {
 <p><strong>Oppitunti</strong> on vaiheiden sarja, jonka valmentaja kirjoittaa kerran oppilasta varten ja luovuttaa tälle tietokantatiedostossa (katso komento <code>lesson export</code> sivulla cli). Jokaisella vaiheella on otsikko ja teksti, ja se voi näyttää kokoelman, aseman, molemmat tai ei kumpaakaan. Komento <code>le</code> luettelee tietokannan oppitunnit tilarivillä; <code>le 2</code> avaa oppitunnin 2.</p>
 <p>Laudan yläpuolelle ilmestyy silloin <strong>lukupalkki</strong>: oppitunnin nimi, vaiheen numero, otsikko ja sitten teksti. <em>Edellinen</em> ja <em>Seuraava</em> vaihtavat vaihetta; vaihe tuo laudalle kokoelman tai aseman, jonka se näyttää, ja sitä selataan tavallisin elein. <em>Sulje</em> poistuu oppitunnilta. Vaihe, jonka kokoelma tai asema on poistettu, säilyttää tekstinsä.</p>
 <p>Oppitunnin lukeminen ei jätä jälkeä: oppilaan tietokanta ei tallenna saavutettua vaihetta eikä avaamista. Oppitunnin sisältävän tiedoston tuonti luo oppitunnin; samanniminen jo olemassa oleva oppitunti jätetään koskematta. Oppitunteja luodaan ja muokataan komentorivillä tai API:n kautta (Oppitunnit).</p>
+<p>Varmuuskopio — koko kirjaston vienti vientiikkunasta tai komentoriviltä — sisältää kaikki oppitunnit; osittainen vienti (valinta asemista, kokoelmista tai otteluista) ei sisällä niitä.</p>
 <h3>Tuonti: mitä kirjoitetaan ja mitä ei koskaan</h3>
 <p>Ottelun, aseman tai toisen tietokannan tuonti lisää sen, mikä puuttuu; se ei korvaa sitä, mikä on jo olemassa.</p>
 <ul>

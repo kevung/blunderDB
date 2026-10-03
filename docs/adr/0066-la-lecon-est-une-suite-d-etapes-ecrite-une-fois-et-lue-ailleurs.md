@@ -25,8 +25,11 @@ ni suite de plusieurs ensembles.
    (`Selection.LessonIDs` / `AllLessons`) et, sous `LessonContents`, ajoute ce que leurs
    Étapes montrent (les Collections et les Positions) : un fichier qui contient une Leçon
    contient de quoi la lire. Les métadonnées de la base passent toujours par
-   `issuance.Carried` (liste d'autorisation, jamais d'exclusion) ; la Leçon, elle, n'entre que
-   par la sélection, jamais par défaut dans un export partiel.
+   `issuance.Carried` (liste d'autorisation, jamais d'exclusion). Un export de toute la
+   bibliothèque (toutes les positions : l'export complet du démon, de la CLI `export --type
+   database` et du bureau) emporte toutes les Leçons, sans qu'on les demande : une sauvegarde
+   ne perd pas en silence ce qu'un coach a écrit. Un export partiel (une sélection de
+   positions, de collections ou de matchs) ne les emporte que si on les nomme.
 3. **À l'import, le nom décide.** `ingest.MergeLessons`, la même règle pour les deux formes
    de `.db` natif : une Leçon dont le nom existe déjà chez le receveur est laissée telle
    quelle (réimporter ne change rien, une Leçon que le receveur a retouchée n'est jamais
