@@ -62,21 +62,22 @@ func SaveAnalysis(ctx context.Context, st storage.Storage, scope string, positio
 // update reads positionID's analysis, an empty one when it has none, lets
 // change rewrite it and writes it back, in one guarded transaction: two
 // writers on the same position cannot both read the row before either writes.
+// The read goes through AnalysisStore.Merge, which locks the row, so an
+// import merging into the same analysis — it takes no advisory lock — waits
+// for this write instead of being overwritten by it.
 func update(ctx context.Context, st storage.Storage, scope string, positionID int64, change func(*domain.PositionAnalysis)) error {
-	tx, err := storage.BeginGuarded(ctx, st, fmt.Sprintf("analysis:%s:%d", scope, positionID))
+	tx, err := storage.BeginGuarded(ctx, st, storage.AnalysisGuardKey(scope, positionID))
 	if err != nil {
 		return err
 	}
 	defer func() { _ = tx.Rollback() }()
-	a, err := tx.Analyses().Load(ctx, scope, positionID)
-	switch {
-	case errors.Is(err, storage.ErrNotFound):
-		a = &domain.PositionAnalysis{PositionID: int(positionID)}
-	case err != nil:
-		return err
-	}
-	change(a)
-	if err := tx.Analyses().Save(ctx, scope, positionID, a); err != nil {
+	if _, err := tx.Analyses().Merge(ctx, scope, positionID, nil, func(a *domain.PositionAnalysis) *domain.PositionAnalysis {
+		if a == nil {
+			a = &domain.PositionAnalysis{PositionID: int(positionID)}
+		}
+		change(a)
+		return a
+	}); err != nil {
 		return err
 	}
 	return tx.Commit()

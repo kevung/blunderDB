@@ -249,6 +249,15 @@ func (s *positionStore) Load(ctx context.Context, scope string, id int64) (*doma
 
 // Exists reports whether a position with the given Zobrist hash is stored for
 // the scope's tenant, returning its id when found.
+// RaiseFlag — see storage.PositionStore.
+func (s *positionStore) RaiseFlag(ctx context.Context, scope string, p *domain.Position) (bool, error) {
+	tag, err := s.db.Exec(ctx, markFlaggedSQL, tenantID(scope), int64(engine.PopulatePositionColumns(p).ZobristHash))
+	if err != nil {
+		return false, fmt.Errorf("postgres: raise position flag: %w", err)
+	}
+	return tag.RowsAffected() > 0, nil
+}
+
 func (s *positionStore) Exists(ctx context.Context, scope string, zobrist uint64) (int64, bool, error) {
 	var id int64
 	err := s.db.QueryRow(ctx,

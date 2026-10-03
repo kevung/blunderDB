@@ -102,6 +102,7 @@ type (
 	StatsResult            = database.StatsResult
 	StatsTotals            = database.StatsTotals
 	TournamentStats        = database.TournamentStats
+	DuplicateMatchError    = database.DuplicateMatchError
 )
 
 // ── persistence functions and values ─────────────────────────────────────────

@@ -649,7 +649,7 @@ export default {
 <p>In questa scheda l'elenco <strong>Giocatore</strong> e la scelta del <strong>tipo di decisione</strong> sono disattivati: la tabella mostra tutti i giocatori e ripartisce già le decisioni di pedine e di cubo in colonne distinte.</p>
 </div>
 <div class="admonition important">
-<p>Un trattino («—») segnala un valore <strong>mai misurato</strong>, da non confondere con zero. È in particolare il caso della colonna Fortuna per ogni match importato prima della versione 2.15.0 dello schema: la fortuna non veniva allora conservata, e nulla ne consente la ricostruzione a posteriori — occorre reimportare i file di origine. I formati che non la trasportano (BGF, Jellyfish <code>.mat</code>) non la forniranno mai.</p>
+<p>Un trattino («—») segnala un valore <strong>mai misurato</strong>, da non confondere con zero. È in particolare il caso della colonna Fortuna per ogni match importato prima della versione 2.15.0 dello schema: la fortuna non veniva allora conservata, e nulla ne consente la ricostruzione a posteriori. Reimportare il file di origine non basta: l'importazione riconosce un duplicato e ne riprende solo i contrassegni. Occorre eliminare il match e poi reimportarlo. I formati che non la trasportano (BGF, Jellyfish <code>.mat</code>) non la forniranno mai.</p>
 </div>
 <h4>Regola di aggregazione</h4>
 <div class="admonition important">

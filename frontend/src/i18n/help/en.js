@@ -649,7 +649,7 @@ export default {
 <p>In this tab, the <strong>Player</strong> list and the <strong>decision type</strong> choice are disabled: the table shows every player, and already splits checker and cube decisions into separate columns.</p>
 </div>
 <div class="admonition important">
-<p>A dash ("—") marks a value that was <strong>never measured</strong>, not to be confused with zero. That is notably the case of the Luck column for any match imported before schema version 2.15.0: luck was not stored back then, and nothing allows it to be reconstructed afterwards — the source files must be re-imported. Formats that do not carry it (BGF, Jellyfish <code>.mat</code>) never will.</p>
+<p>A dash ("—") marks a value that was <strong>never measured</strong>, not to be confused with zero. That is notably the case of the Luck column for any match imported before schema version 2.15.0: luck was not stored then, and nothing allows it to be reconstructed afterwards. Re-importing the source file is not enough: the import recognises a duplicate and takes only its marks. The match must be deleted, then imported again. Formats that do not carry it (BGF, Jellyfish <code>.mat</code>) never will.</p>
 </div>
 <h4>Aggregation rule</h4>
 <div class="admonition important">

@@ -649,7 +649,7 @@ export default {
 <p>In diesem Reiter sind die Liste <strong>Spieler</strong> und die Wahl des <strong>Entscheidungstyps</strong> deaktiviert: Die Tabelle zeigt alle Spieler und teilt Steine- und Doppler-Entscheidungen bereits in getrennte Spalten auf.</p>
 </div>
 <div class="admonition important">
-<p>Ein Gedankenstrich („—“) steht für einen <strong>nie gemessenen</strong> Wert, nicht zu verwechseln mit null. Das gilt insbesondere für die Spalte Glück bei jedem Match, das vor Schemaversion 2.15.0 importiert wurde: Das Glück wurde damals nicht gespeichert, und nichts erlaubt es, es nachträglich zu rekonstruieren — die Quelldateien müssen neu importiert werden. Formate, die es nicht transportieren (BGF, Jellyfish <code>.mat</code>), werden es nie liefern.</p>
+<p>Ein Gedankenstrich („—“) steht für einen <strong>nie gemessenen</strong> Wert, nicht zu verwechseln mit null. Das gilt insbesondere für die Spalte Glück bei jedem Match, das vor Schemaversion 2.15.0 importiert wurde: Das Glück wurde damals nicht gespeichert, und nichts erlaubt es, es nachträglich zu rekonstruieren. Die Quelldatei erneut zu importieren genügt nicht: Der Import erkennt ein Duplikat und übernimmt nur dessen Markierungen. Das Match muss gelöscht und dann erneut importiert werden. Formate, die es nicht transportieren (BGF, Jellyfish <code>.mat</code>), werden es nie liefern.</p>
 </div>
 <h4>Aggregationsregel</h4>
 <div class="admonition important">
