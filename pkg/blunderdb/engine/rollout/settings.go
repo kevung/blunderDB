@@ -1,0 +1,125 @@
+package rollout
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+)
+
+// EngineVersion names this rollout as a Configuration (CONTEXT.md): the
+// rollout procedure on top of the gammonNet Configuration it plays with.
+// A change to the procedure that moves a number (dice, variance reduction,
+// cube policy, leaf valuation) bumps the first part; the second follows the
+// network.
+const EngineVersion = "blunderDB rollout v1 / " + gammonnet.EngineVersion
+
+// DefaultSeed is the seed a rollout uses when none is named, so the same
+// command on the same position prints the same numbers.
+const DefaultSeed uint64 = 0x5EED_B10D_E7DB
+
+// maxGames bounds a request: beyond it a rollout is a background job of
+// hours, which this entry point is not.
+const maxGames = 1 << 20
+
+// Settings are a rollout's parameters. Every field but Workers enters the
+// result: two rollouts with equal Settings (Workers aside) on the same
+// position print the same numbers, bit for bit.
+type Settings struct {
+	// Truncation is how many half-moves each game plays before its position
+	// is valued by the engine; 0 plays every game to its end. A game that
+	// reaches a bearoff the exact table covers stops there whatever this says.
+	Truncation int `json:"truncation"`
+	// MinGames is how many games every candidate plays before the JSD rule
+	// may stop it; MaxGames is the most any candidate plays. Multiples of 36
+	// keep the first roll stratified.
+	MinGames int `json:"min_games"`
+	MaxGames int `json:"max_games"`
+	// JSDLimit stops a candidate once its gap to the best, in standard
+	// deviations of the difference, reaches it; 0 never stops early.
+	JSDLimit float64 `json:"jsd_limit"`
+	// Ply is the gammonNet depth of every decision inside a game — plays,
+	// cube actions — and of the truncation leaf.
+	Ply int `json:"ply"`
+	// Candidates is how many plays, best first at Ply, a checker rollout
+	// rolls when none is named.
+	Candidates int `json:"candidates"`
+	// Seed fixes every die of every game.
+	Seed uint64 `json:"seed"`
+	// Workers is the number of games played at once; 0 means one per core.
+	// It changes the time, never the numbers.
+	Workers int `json:"workers"`
+}
+
+// Fast is the « Rapide » preset: a first sort, to confirm a hint or drop a
+// clear loser — truncated at 7 half-moves, 216 games, stop at JSD 3 after 108.
+func Fast() Settings {
+	return Settings{Truncation: 7, MinGames: 108, MaxGames: 216, JSDLimit: 3, Ply: 0, Candidates: 5, Seed: DefaultSeed}
+}
+
+// Standard is the « Standard » preset: 1296 games (every ordered pair of
+// opening rolls once), stop at JSD 3 after 324, truncated at 11 half-moves
+// as gnubg's default rollout is.
+func Standard() Settings {
+	return Settings{Truncation: 11, MinGames: 324, MaxGames: 1296, JSDLimit: 3, Ply: 0, Candidates: 5, Seed: DefaultSeed}
+}
+
+// Preset returns a named preset: "fast" (rapide) or "standard". A custom
+// (libre) rollout is any Settings value.
+func Preset(name string) (Settings, bool) {
+	switch strings.ToLower(strings.TrimSpace(name)) {
+	case "fast", "rapide":
+		return Fast(), true
+	case "standard":
+		return Standard(), true
+	}
+	return Settings{}, false
+}
+
+// Validate refuses settings no rollout can honour.
+func (s Settings) Validate() error {
+	switch {
+	case s.MaxGames < 1 || s.MaxGames > maxGames:
+		return fmt.Errorf("rollout: max games %d outside 1..%d", s.MaxGames, maxGames)
+	case s.MinGames < 0 || s.MinGames > s.MaxGames:
+		return fmt.Errorf("rollout: min games %d outside 0..%d", s.MinGames, s.MaxGames)
+	case s.Truncation < 0:
+		return fmt.Errorf("rollout: truncation %d is negative", s.Truncation)
+	case s.JSDLimit < 0:
+		return fmt.Errorf("rollout: JSD limit %g is negative", s.JSDLimit)
+	case s.Ply < 0 || s.Ply > gammonnet.MaxPly:
+		return fmt.Errorf("rollout: ply %d outside 0..%d", s.Ply, gammonnet.MaxPly)
+	case s.Candidates < 0:
+		return fmt.Errorf("rollout: candidates %d is negative", s.Candidates)
+	case s.Workers < 0:
+		return fmt.Errorf("rollout: workers %d is negative", s.Workers)
+	}
+	return nil
+}
+
+// DepthLabel is the AnalysisDepth a stored rollout carries. It contains
+// "Rollout", which domain.AnalysisDepthRank places above every ply — and
+// must not end in "-ply", which that rank would read as a depth.
+func (s Settings) DepthLabel() string {
+	trunc := "untruncated"
+	if s.Truncation > 0 {
+		trunc = fmt.Sprintf("truncated %d", s.Truncation)
+	}
+	return fmt.Sprintf("Rollout %d games (%s, %s)", s.MaxGames, gammonnet.DepthLabel(s.Ply), trunc)
+}
+
+// Signature is the full line a rollout is reproduced from: everything that
+// moves a number, in one place.
+func (s Settings) Signature() string {
+	trunc := "none"
+	if s.Truncation > 0 {
+		trunc = fmt.Sprintf("%d half-moves", s.Truncation)
+	}
+	stop := "off"
+	if s.JSDLimit > 0 {
+		stop = fmt.Sprintf("JSD >= %g after %d games", s.JSDLimit, s.MinGames)
+	}
+	return fmt.Sprintf("%s; cubeful; %s plays, cube and leaves; variance reduction 1-ply; "+
+		"common quasi-random dice (2 plies); seed %d; games <= %d; stop %s; truncation %s; exact bearoff when covered",
+		EngineVersion, gammonnet.DepthLabel(s.Ply), s.Seed, s.MaxGames, stop, trunc)
+}

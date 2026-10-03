@@ -836,6 +836,47 @@ its measured error bound; the cube verdict is deliberately never estimated
 ./blunderDB epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd 'XGID=…'
 ```
 
+## Rollout Command
+
+Roll a position out with gammonNet, to settle what a search cannot: two plays a
+few thousandths apart, or a cube decision the cube model is unsure of. With
+dice on the position, its plays are rolled out (the best few at the rollout's
+ply, or the ones named with `--move`); without dice, its cube decision (No
+double and Double/Take; Double/Pass is +1 exactly). Pure computation: nothing
+is stored and no database is needed.
+
+```bash
+./blunderDB rollout [options] '<XGID|OGID>'
+```
+
+**Options:**
+- `--preset` - `fast` (default: 216 games, truncated at 7 half-moves, stop at
+  JSD 3 after 108) or `standard` (1296 games, truncated at 11, stop at JSD 3
+  after 324); every flag below overrides it
+- `--games`, `--min-games`, `--truncation`, `--jsd`, `--ply`, `--candidates` -
+  the rollout's own parameters (`--truncation 0` plays every game to its end,
+  `--jsd 0` never stops early)
+- `--move` - a play to roll out, in blunderDB notation (repeatable)
+- `--seed` - dice seed (fixed by default: the same command prints the same numbers)
+- `--jobs` - games played at once (one per core by default); never changes the numbers
+- `--format` - `text` (default) or `json`
+
+Every candidate plays the same dice, the luck of each roll is taken out of each
+game (variance reduction), the first two rolls are stratified, and a game stops
+where the two-sided bearoff table covers it. Each line gives the equity, its
+95 % interval, the games played and the JSD — the gap to the best in standard
+deviations of the difference. The cube is played inside the games (cubeful), so
+the ranking is more reliable than the absolute equity. Equities are money points
+per unit of cube, or normalised equity at a match score (ADR-0019). Ctrl-C
+prints what the finished games concluded. The choices are ADR-0059's.
+
+**Examples:**
+```bash
+./blunderDB rollout 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'
+./blunderDB rollout --move '8/5 6/5' --move '24/23 13/10' '<XGID>'
+./blunderDB rollout --preset standard --format json '<XGID>'
+```
+
 ## Bearoff Command
 
 Generate, list, verify and delete the bearoff databases the EPC engine and the
@@ -2610,6 +2651,53 @@ Options:
 Examples:
   blunderdb repair --db database.db
   blunderdb repair --db database.db --format json
+```
+
+### `blunderdb rollout`
+
+```
+Usage: blunderdb rollout [options] <XGID|OGID>
+
+Roll a position out with gammonNet: its plays when the position has dice,
+its cube decision otherwise. Each candidate plays the same dice; the luck
+of every roll is taken out of each game (variance reduction); the first two
+rolls are stratified; a game stops where the two-sided bearoff table
+covers it. The cube is played inside the games (cubeful): trust the
+ranking more than the absolute equity.
+
+Equities are money points per unit of the position's cube, or normalised
+equity at a match score. Nothing is stored. Ctrl-C prints what the games
+finished so far concluded.
+
+Options:
+  -candidates int
+    	Plays rolled out when no --move is given, best first (0 = the preset's)
+  -format string
+    	Output format: text, json (default "text")
+  -games int
+    	Most games per candidate (0 = the preset's)
+  -jobs int
+    	Games played at once (0 = one per core); never changes the numbers
+  -jsd float
+    	Stop a candidate when its gap to the best reaches this many standard deviations; 0 never stops early (-1 = the preset's) (default -1)
+  -min-games int
+    	Games before the JSD rule may stop a candidate (-1 = the preset's) (default -1)
+  -move value
+    	A play to roll out, in blunderDB notation (repeatable)
+  -ply int
+    	gammonNet depth of the plays, cube actions and leaves inside the games (-1 = the preset's) (default -1)
+  -preset string
+    	Starting settings: fast (216 games, truncated at 7) or standard (1296 games, truncated at 11); the flags below override it (default "fast")
+  -seed uint
+    	Dice seed: the same seed gives the same numbers (default 104374970738651)
+  -truncation int
+    	Half-moves per game before the engine values it; 0 plays to the end (-1 = the preset's) (default -1)
+
+Examples:
+  blunderdb rollout 'XGID=-b----E-C---eE---c-e----B-:0:0:1:31:0:0:0:0:10'
+  blunderdb rollout --move '8/5 6/5' --move '24/23 13/10' '<XGID>'
+  blunderdb rollout --preset standard --format json '<XGID>'
+  blunderdb rollout --games 648 --truncation 0 --ply 1 '<XGID>'
 ```
 
 ### `blunderdb search`
