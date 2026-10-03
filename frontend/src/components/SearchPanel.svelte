@@ -20,6 +20,7 @@
     import AssistantPanel from './AssistantPanel.svelte';
     import { assistantSettingsStore, loadAssistantSettings } from '../services/assistantService.js';
     import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, DeleteFilter, LoadEditPosition, LoadExcludePosition } from '../../wailsjs/go/database/Database.js';
+    import { registerKeys } from '../services/keyDispatch.js';
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 
@@ -602,7 +603,7 @@
         // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
         if (event.defaultPrevented) return;
         if (event.target.matches('input, textarea, select')) {
-            // Escape reaches the global dispatcher (on `window`), which blurs the
+            // Escape reaches the global dispatcher (keyDispatch.js), which blurs the
             // field. Tab is stopped here so it moves between this form's fields.
             if (event.key === 'Escape') return;
             event.stopPropagation();
@@ -678,9 +679,12 @@
         creationDateRangeMax = saved.creationDateRangeMax;
     }
 
+    /** @type {(() => void) | null} */
+    let unregisterKeys = null;
+
     onMount(async () => {
         loadAssistantSettings();
-        document.addEventListener('keydown', handleKeyDown);
+        unregisterKeys = registerKeys('search', handleKeyDown);
         await tick();
         restoreSearchBoard();
     });
@@ -689,7 +693,7 @@
         saveSearchState();
         // Don't leak the offered-cube flag into normal position editing.
         searchOfferedCubeStore.set(false);
-        document.removeEventListener('keydown', handleKeyDown);
+        unregisterKeys?.();
     });
 </script>
 

@@ -91,7 +91,7 @@ export default {
 <h3>Configuración</h3>
 <p>El botón de configuración (icono en forma de rueda dentada) situado en la barra de herramientas, a la izquierda del botón de ayuda, abre la ventana de configuración de blunderDB. Está organizada en ocho pestañas:</p>
 <ul>
-<li><strong>Interfaz</strong> — idioma, escala de visualización, posición del panel;</li>
+<li><strong>Interfaz</strong> — idioma, escala de visualización, posición del panel, paso de PageUp / PageDown (10, 50, 100, 500 o 1 000 posiciones, o el 10 % de la lista);</li>
 <li><strong>Colores del tablero</strong> — los colores del tablero;</li>
 <li><strong>Biblioteca</strong> — lo que pertenece a la base de datos abierta: los umbrales de error y de blunder, la compactación y la reparación, descritos más abajo;</li>
 <li><strong>Bearoff</strong> — las tablas de bearoff utilizadas por el panel Eval;</li>
@@ -1017,7 +1017,7 @@ export default {
 </tr>
 <tr>
 <td>AvPág</td>
-<td>Retrocede una página de cien posiciones (se detiene al principio de la lista); en una partida, juego anterior.</td>
+<td>Retrocede una página (cien posiciones por defecto, ajustable en Configuración &gt; Interfaz, hasta el 10 % de la lista; se detiene al principio de la lista); en un match, partida anterior.</td>
 </tr>
 <tr>
 <td>IZQUIERDA, k</td>
@@ -1041,7 +1041,7 @@ export default {
 </tr>
 <tr>
 <td>RePág</td>
-<td>Avanza una página de cien posiciones (se detiene al final de la lista); en una partida, juego siguiente.</td>
+<td>Avanza una página (mismo paso que PageUp; se detiene al final de la lista); en un match, partida siguiente.</td>
 </tr>
 <tr>
 <td>r</td>

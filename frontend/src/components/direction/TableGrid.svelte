@@ -16,6 +16,7 @@
     import { pastThreshold, canGrab, dropAction } from '../../services/directionDrag.js';
     import { closeOnEscape } from '../../services/escapeService.js';
     import { confirmAction } from '../../services/confirmService.js';
+    import { registerKeys } from '../../services/keyDispatch.js';
 
     /**
      * Une case de salle (HallView) porte en plus son épreuve : la même grille sert aux deux, et
@@ -239,9 +240,9 @@
     }
 
     $effect(() => {
-        window.addEventListener('keydown', onDigit, true);
+        const unregister = registerKeys('directionGrid', onDigit);
         return () => {
-            window.removeEventListener('keydown', onDigit, true);
+            unregister();
             clearTimeout(digitTimer);
         };
     });

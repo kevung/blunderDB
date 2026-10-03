@@ -37,9 +37,29 @@ export const commandPaletteScopeStore = writable(null);
 export const matchOpenRequestStore = writable(null);
 
 export const currentPositionIndexStore = writable(0);
-// How many positions PageUp / PageDown jump over in a long list.
-export const PAGE_STEP_DEFAULT = 100;
+// How far PageUp / PageDown jump in a long list: a count of positions, or a
+// percentage of the list ("10%"). The Settings offer PAGE_STEPS, the same
+// values config.go accepts.
+export const PAGE_STEPS = Object.freeze(['10', '50', '100', '500', '1000', '10%']);
+export const PAGE_STEP_DEFAULT = '100';
+/** @type {import('svelte/store').Writable<string | number>} */
 export const pageStepStore = writable(PAGE_STEP_DEFAULT);
+
+/**
+ * The jump of one page, in positions, for a list of `count`: at least one.
+ *
+ * @param {string | number} setting - a count, or a percentage such as "10%".
+ * @param {number} count
+ * @returns {number}
+ */
+export function pageStepSize(setting, count) {
+    const text = String(setting ?? '').trim();
+    if (text.endsWith('%')) {
+        const percent = Number(text.slice(0, -1));
+        return Number.isFinite(percent) && percent > 0 ? Math.max(1, Math.round((count * percent) / 100)) : 1;
+    }
+    return Math.max(1, Math.floor(Number(text)) || 1);
+}
 
 // ── Modal identifiers (exclusive — only one modal at a time) ──
 export const MODAL = {

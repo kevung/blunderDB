@@ -3254,6 +3254,7 @@ export namespace main {
 	    panel_position?: string;
 	    panel_height?: number;
 	    panel_width?: number;
+	    page_step?: string;
 	    tour_seen?: boolean;
 	    tab_order?: string[];
 	    hidden_tabs?: string[];
@@ -3301,6 +3302,7 @@ export namespace main {
 	        this.panel_position = source["panel_position"];
 	        this.panel_height = source["panel_height"];
 	        this.panel_width = source["panel_width"];
+	        this.page_step = source["page_step"];
 	        this.tour_seen = source["tour_seen"];
 	        this.tab_order = source["tab_order"];
 	        this.hidden_tabs = source["hidden_tabs"];

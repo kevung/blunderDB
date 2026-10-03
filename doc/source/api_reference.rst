@@ -13,6 +13,14 @@ l'en-tête ``Idempotency-Key`` optionnel.
 
 .. code-block:: text
 
+   across
+     POST /v1/across.analysesLoadByIds             JSON
+     POST /v1/across.matchMovePositions            NDJSON
+     POST /v1/across.matchesGet                    JSON
+     POST /v1/across.matchesList                   NDJSON
+     POST /v1/across.playerTable                   JSON
+     POST /v1/across.searchFind                    NDJSON
+     POST /v1/across.statsCompute                  JSON
    analyses
      POST /v1/analyses.delete                      JSON
      POST /v1/analyses.load                        JSON

@@ -1,5 +1,6 @@
 <script>
     import { viewStore } from '../stores/viewStore';
+    import { registerKeys } from '../services/keyDispatch.js';
     import { t } from '../i18n';
 
     const { views, activeViewId, switchTo, addView, closeView, renameView } = viewStore;
@@ -78,9 +79,9 @@
             }
         }
     }
-</script>
 
-<svelte:window onkeydown={handleKeydown} />
+    $effect(() => registerKeys('viewTabs', handleKeydown));
+</script>
 
 <!-- A single view collapses the bar to the bare "+"; it expands with a second view. -->
 <div class="view-tabs" class:collapsed={$views.length <= 1}>

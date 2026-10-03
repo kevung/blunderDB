@@ -1,6 +1,6 @@
 <script>
     /*
-     * Le classement de saison d'une Rencontre (ADR-0061) : les tournois clos de l'Événement,
+     * Le classement de saison d'une Rencontre (ADR-0062) : les tournois clos de l'Événement,
      * chaque place convertie en points par un barème, et au choix un Elo de club. Calculé à la
      * demande : il rejoue tous les journaux de l'Événement.
      */

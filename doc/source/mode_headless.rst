@@ -155,6 +155,10 @@ depuis plusieurs clients.
      - ``false``
      - PostgreSQL : active la Row-Level Security par tenant (défense en
        profondeur, sur option)
+   * - ``--read-tenants``
+     - ``false``
+     - honore l'en-tête ``X-Read-Tenants`` des lectures ``across.*`` ;
+       désactivé, il est refusé (``400``) — voir :ref:`headless_tenants_lus`
    * - ``--bearoff-ts <fichier>``
      - –
      - base de bearoff two-sided (``.bd``) optionnelle élargissant la table
@@ -183,7 +187,7 @@ La plupart des options peuvent aussi être fournies par variable
 d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
 ``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_METRICS``, ``BLUNDERDB_CORS_ALLOW_ORIGIN``,
 ``BLUNDERDB_RATE_LIMIT_RPS``, ``BLUNDERDB_RATE_LIMIT_BURST``, ``BLUNDERDB_RLS``,
-``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``, ``BLUNDERDB_OPS_ADDR``, ``BLUNDERDB_PPROF_ADDR``) :
+``BLUNDERDB_READ_TENANTS``, ``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``, ``BLUNDERDB_OPS_ADDR``, ``BLUNDERDB_PPROF_ADDR``) :
 un drapeau explicite reste prioritaire sur la variable correspondante.
 
 Le démon n'a **pas** d'option de répertoire de données : il écrit ses tables de
@@ -1059,6 +1063,61 @@ dans les mêmes tables, sans cloison. Le démon refuse donc, sur ce backend, tou
 chacun les lignes de tous derrière un en-tête qui prétend le contraire. Un
 déploiement qui a réellement plusieurs tenants a besoin du backend PostgreSQL.
 
+.. _headless_tenants_lus:
+
+Lire plusieurs tenants
+----------------------
+
+Un coach qui lit les matchs de ses élèves, un club qui partage une bibliothèque :
+la relation entre ces comptes vit chez l'hôte qui les authentifie, jamais dans le
+démon. Le proxy l'exprime par l'en-tête ``X-Read-Tenants``, une liste de tenants
+séparés par des virgules (``X-Read-Tenants: 2, 3``), qu'il pose à côté de
+``X-Tenant-ID``. Le démon lui fait confiance comme à ``X-Tenant-ID`` et
+n'autorise rien lui-même
+(`ADR-0063 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0063-une-lecture-peut-porter-sur-les-tenants-que-le-proxy-liste.md>`__).
+
+La fonction est **désactivée par défaut**, et désactivée veut dire refusée : tant
+que le démon n'est pas lancé avec ``--read-tenants`` (ou
+``BLUNDERDB_READ_TENANTS=true`` ; ``Config.TrustReadTenants`` pour un hôte qui
+embarque le moteur), toute requête qui porte un ``X-Read-Tenants`` non vide est
+refusée (``400``), quelle que soit la route. Ne l'activer qu'une fois le proxy
+configuré pour retirer toute valeur envoyée par le client et poser lui-même la
+liste.
+
+Seules les lectures ``/v1/across.*`` regardent cet en-tête. Sur toute la
+liste : ``across.searchFind``, ``across.matchesList``, ``across.statsCompute`` et
+``across.playerTable`` ; elles lisent ``X-Tenant-ID`` d'abord, puis chaque tenant
+listé dans l'ordre de l'en-tête, 64 tenants distincts au plus en tout. Sur un
+tenant de la liste, nommé avec l'id : ``across.matchesGet``,
+``across.matchMovePositions`` (les positions d'un match, coup par coup) et
+``across.analysesLoadByIds`` ; un tenant absent de la liste y est refusé. Chaque
+résultat porte son tenant d'origine (``"tenant": "2"``), car un id n'est unique
+que dans son tenant ; une position porte aussi son hachage Zobrist
+(``"zobrist"``), qui désigne le même plateau dans tous les tenants. ``limit``
+s'applique à chaque tenant ; 0 vaut 1000, et davantage est refusé. Dans un flux
+NDJSON, une erreur sur un tenant tardif arrive en dernière ligne, après les
+résultats des tenants déjà lus : le flux entier est alors en échec.
+
+.. code-block:: bash
+
+   curl -s http://127.0.0.1:8080/v1/across.matchesList \
+     -H 'X-Tenant-ID: 1' -H 'X-Read-Tenants: 2, 3' -d '{"limit":20}'
+
+Toute écriture reste dans ``X-Tenant-ID`` : aucune autre route ne lit
+``X-Read-Tenants``. Sans l'en-tête, une lecture ``across.*`` ne porte que sur
+``X-Tenant-ID``. Un en-tête mal formé (un nom, un élément vide, plus de 64
+tenants) ou envoyé sur plusieurs lignes refuse la requête entière, quelle que
+soit la route. Sur SQLite, qui n'a qu'un tenant, la liste ne peut contenir que
+``1`` : l'en-tête n'y élargit rien. Ces routes sont propres au serveur : le
+bureau et ``call`` n'ont qu'un tenant.
+
+Une requête ``across.*`` coûte jusqu'à 64 lectures au stockage, mais la limite
+de débit (``--rate-limit-rps``) ne la compte qu'une fois, pour ``X-Tenant-ID`` :
+dimensionner la base et cette limite en conséquence, ou faire borner la liste par
+le proxy. Le journal d'accès d'une route ``across.*`` porte la liste reçue
+(champ ``read_tenants``). L'en-tête ne figure pas parmi les en-têtes CORS
+autorisés : seul le proxy l'écrit, jamais un navigateur.
+
 .. _headless_sauvegarde:
 
 Sauvegarde et restauration
@@ -1291,6 +1350,11 @@ effacé toute valeur reçue du client : la garde ``header_up X-Tenant-ID ""``
 précède l'injection, de sorte qu'un en-tête envoyé par le client ne peut
 atteindre le démon quelles que soient les modifications ultérieures du fichier.
 
+Il en va de même pour ``X-Read-Tenants`` (:ref:`headless_tenants_lus`) : le
+proxy retire celui du client, et ne le pose que s'il connaît la relation entre
+les comptes ; les exemples du dépôt n'en connaissent aucune et le retirent
+toujours.
+
 .. literalinclude:: ../../deploy/Caddyfile
    :language: text
    :caption: deploy/Caddyfile
@@ -1420,6 +1484,14 @@ gestes compte donc.
 Un ``version_mismatch`` qui persiste après le redémarrage, c'est le retour en
 arrière : un binaire plus ancien devant une base déjà migrée. Il n'existe pas de
 migration descendante ; c'est la sauvegarde de l'étape 1 qu'il faut restaurer.
+
+.. important::
+
+   **Avant d'activer** ``--read-tenants`` **sur un déploiement existant**, mettre
+   à jour le proxy : un proxy configuré avant cet en-tête ne retire que
+   ``X-Tenant-ID`` et transmettrait tel quel un ``X-Read-Tenants`` envoyé par le
+   client, qui lirait alors d'autres tenants. Sans l'option, le démon refuse cet
+   en-tête : un proxy qui le laisse passer se voit à ses réponses ``400``.
 
 .. _headless_postgres:
 

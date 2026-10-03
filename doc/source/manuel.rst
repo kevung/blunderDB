@@ -219,7 +219,8 @@ Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
 blunderDB. Elle est organisée en huit onglets :
 
-* **Interface** — langue, échelle d'affichage, position du panneau ;
+* **Interface** — langue, échelle d'affichage, position du panneau, pas de
+  PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste) ;
 * **Couleurs** — les couleurs du plateau ;
 * **Bibliothèque** — ce qui appartient à la base ouverte : les seuils
   d'erreur et de blunder, le compactage et la réparation, décrits ci-dessous ;

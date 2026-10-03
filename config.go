@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"slices"
 	"strings"
 
 	"github.com/adrg/xdg"
@@ -121,6 +122,10 @@ const (
 	PanelPositionSide    = "side"
 	PanelPositionAuto    = "auto"
 	DefaultPanelPosition = PanelPositionBottom
+
+	// DefaultPageStep is how far PageUp / PageDown jump in the position list:
+	// a count of positions, or a percentage of the list ("10%").
+	DefaultPageStep = "100"
 )
 
 // Panel size in pixels: height in bottom mode, width in side mode. The
@@ -175,6 +180,7 @@ type Config struct {
 	PanelPosition   string `json:"panel_position,omitempty"`
 	PanelHeight     int    `json:"panel_height,omitempty"`
 	PanelWidth      int    `json:"panel_width,omitempty"`
+	PageStep        string `json:"page_step,omitempty"`
 	TourSeen        bool   `json:"tour_seen,omitempty"`
 	// TabOrder is the user's order of TabbedPanel.svelte's tab ids; empty
 	// means the built-in order, which the frontend owns.
@@ -251,6 +257,18 @@ func clampUIScale(scale int) int {
 		return MaxUIScale
 	}
 	return scale
+}
+
+// PageSteps are the page sizes offered in the settings; the frontend's
+// PAGE_STEPS (stores/uiStore.js) lists the same values.
+var PageSteps = []string{"10", "50", "100", "500", "1000", "10%"}
+
+// sanitizePageStep maps an empty or unknown page step to the default.
+func sanitizePageStep(step string) string {
+	if slices.Contains(PageSteps, step) {
+		return step
+	}
+	return DefaultPageStep
 }
 
 // sanitizePanelPosition maps an empty or unknown position to bottom.
@@ -342,6 +360,7 @@ func NewConfig() *Config {
 		PanelPosition: DefaultPanelPosition,
 		PanelHeight:   DefaultPanelHeight,
 		PanelWidth:    DefaultPanelWidth,
+		PageStep:      DefaultPageStep,
 		// GammonNetDisplayPly/GammonNetAnalysisPly stay nil: the Get
 		// accessors report DefaultGammonNetPly for a nil pointer.
 		GammonNetPruneK:     DefaultGammonNetPruneK,
@@ -427,6 +446,8 @@ func (c *Config) LoadConfig() (*Config, error) {
 	config.PanelHeight = c.PanelHeight
 	c.PanelWidth = clampPanelWidth(config.PanelWidth)
 	config.PanelWidth = c.PanelWidth
+	c.PageStep = sanitizePageStep(config.PageStep)
+	config.PageStep = c.PageStep
 	c.TourSeen = config.TourSeen
 	c.TabOrder = config.TabOrder
 	c.HiddenTabs = config.HiddenTabs
@@ -614,6 +635,18 @@ func (c *Config) GetPanelPosition() string {
 // a known value.
 func (c *Config) SavePanelPosition(pos string) error {
 	c.PanelPosition = sanitizePanelPosition(pos)
+	return c.SaveConfig(c)
+}
+
+// GetPageStep returns how far PageUp / PageDown jump: a count of positions
+// or a percentage of the list (sanitised; defaults to "100").
+func (c *Config) GetPageStep() string {
+	return sanitizePageStep(c.PageStep)
+}
+
+// SavePageStep persists the PageUp / PageDown step, coerced to an offered value.
+func (c *Config) SavePageStep(step string) error {
+	c.PageStep = sanitizePageStep(step)
 	return c.SaveConfig(c)
 }
 

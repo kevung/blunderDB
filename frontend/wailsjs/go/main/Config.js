@@ -78,6 +78,10 @@ export function GetMCPHost() {
   return window['go']['main']['Config']['GetMCPHost']();
 }
 
+export function GetPageStep() {
+  return window['go']['main']['Config']['GetPageStep']();
+}
+
 export function GetPanelHeight() {
   return window['go']['main']['Config']['GetPanelHeight']();
 }
@@ -196,6 +200,10 @@ export function SaveLikeMaxDistance(arg1) {
 
 export function SaveMCPHost(arg1) {
   return window['go']['main']['Config']['SaveMCPHost'](arg1);
+}
+
+export function SavePageStep(arg1) {
+  return window['go']['main']['Config']['SavePageStep'](arg1);
 }
 
 export function SavePanelHeight(arg1) {

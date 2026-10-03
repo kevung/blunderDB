@@ -26,6 +26,34 @@ class GeneratedAPI(BaseClient):
         "POST /ops/tenant.purge — hand-written handler — see openapi.yaml."
         return self._call("/ops/tenant.purge", payload)
 
+    def across_analyses_load_by_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.analysesLoadByIds — JSON."
+        return self._call("/v1/across.analysesLoadByIds", payload)
+
+    def across_match_move_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.matchMovePositions — NDJSON stream."
+        return self._stream("/v1/across.matchMovePositions", payload)
+
+    def across_matches_get(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.matchesGet — JSON."
+        return self._call("/v1/across.matchesGet", payload)
+
+    def across_matches_list(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.matchesList — NDJSON stream."
+        return self._stream("/v1/across.matchesList", payload)
+
+    def across_player_table(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.playerTable — JSON."
+        return self._call("/v1/across.playerTable", payload)
+
+    def across_search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.searchFind — NDJSON stream."
+        return self._stream("/v1/across.searchFind", payload)
+
+    def across_stats_compute(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.statsCompute — JSON."
+        return self._call("/v1/across.statsCompute", payload)
+
     def analyses_delete(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/analyses.delete — JSON."
         return self._call("/v1/analyses.delete", payload)

@@ -10,7 +10,7 @@ import (
 )
 
 // realServerPaths builds a real *internal/server.Server exactly as
-// production code would and returns its sorted /v1 route patterns — the
+// production code would and returns its sorted documented route patterns (APIPaths) — the
 // runtime ground truth this package's static parser must agree with.
 func realServerPaths(t *testing.T) []string {
 	t.Helper()
@@ -23,7 +23,7 @@ func realServerPaths(t *testing.T) []string {
 	if err != nil {
 		t.Fatalf("internalserver.New: %v", err)
 	}
-	return srv.Paths()
+	return srv.APIPaths()
 }
 
 // TestParse_MatchesRealServerRoutes compares the AST-derived route set with
