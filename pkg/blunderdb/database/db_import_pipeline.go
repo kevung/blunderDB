@@ -54,6 +54,8 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 	}
 	var store ingest.TxBeginner = d.store
 	batchID, sqlDB := d.importBatchID, d.db
+	journal := d.importJournal
+	batches := d.store.ImportBatches()
 	d.mu.RUnlock()
 
 	// An in-memory database has one connection: a dedicated bulk connection
@@ -103,7 +105,7 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 		}
 	}
 
-	out, err := ingest.ImportFiles(ctx, store, paths, ingest.PipelineOptions{
+	popts := ingest.PipelineOptions{
 		Workers:        opts.Workers,
 		FilesPerTx:     opts.FilesPerTx,
 		ImportBatchID:  batchID,
@@ -113,6 +115,7 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 			return d.mu.Unlock
 		},
 		OnCommit: func(group []ingest.FileOutcome) {
+			ingest.RecordOutcomes(context.Background(), batches, "", batchID, group)
 			for _, o := range group {
 				if o.Status == ingest.FileFailed {
 					// The journal is where the full list of refused files
@@ -126,7 +129,11 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 			}
 		},
 		OnRead: onRead,
-	})
+	}
+	if journal != nil {
+		popts.Known = journal.Known
+	}
+	out, err := ingest.ImportFiles(ctx, store, paths, popts)
 	slog.Info("imported files", "files", len(out), "of", len(paths), "err", err)
 	return out, err
 }

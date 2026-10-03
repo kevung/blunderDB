@@ -51,4 +51,13 @@ type ImportBatchStore interface {
 	//
 	// players is read as it is by Report: empty scores both seats.
 	StudyQueue(ctx context.Context, scope string, batchID int64, players []string, limit int) ([]domain.StudyQueueEntry, error)
+
+	// RecordFiles appends lines to the batch's journal: one per file the
+	// import decided. Called after the file's transaction committed, so a
+	// journaled file is a decided file.
+	RecordFiles(ctx context.Context, scope string, batchID int64, files []domain.ImportFileEntry) error
+
+	// Files returns the batch's journal, in the order it was written, or
+	// ErrNotFound when the batch does not exist.
+	Files(ctx context.Context, scope string, batchID int64) ([]domain.ImportFileEntry, error)
 }

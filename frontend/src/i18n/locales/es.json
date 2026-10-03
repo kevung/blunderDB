@@ -1127,7 +1127,16 @@
         "reportAnalyzeNow": "Analizar ahora",
         "reportWorst": "Peores decisiones",
         "reportCube": "cubo",
-        "reportChecker": "fichas"
+        "reportChecker": "fichas",
+        "journalTitle": "Diario de la importación ({n} archivos)",
+        "journalNew": "nuevo",
+        "journalDuplicate": "duplicado",
+        "journalEnriched": "enriquecido",
+        "journalError": "error",
+        "journalOpenMatch": "Abrir la partida {id}",
+        "journalMore": "… y {n} archivos más (diario completo: imports.files o --format json)",
+        "interruptedTitle": "Importación interrumpida",
+        "resume": "Reanudar"
     },
     "warning": {
         "title": "Advertencia",

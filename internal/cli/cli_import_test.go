@@ -3,6 +3,7 @@ package cli
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -252,5 +253,41 @@ func TestCLI_Import_UnknownFormat(t *testing.T) {
 	err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.xg"), "--format", "yaml"})
 	if err == nil {
 		t.Fatal("expected an error for an unknown --format value")
+	}
+}
+
+func TestCLI_ImportBatch_ResumeSkipsJournaledFiles(t *testing.T) {
+	t.Parallel()
+	cli, dbPath := setupCLIWithDB(t)
+	dir := tempDir(t)
+	good, err := os.ReadFile(testdataPath("test.xg"))
+	if err != nil {
+		t.Fatalf("reading fixture: %v", err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "good.xg"), good, 0o644); err != nil {
+		t.Fatalf("WriteFile: %v", err)
+	}
+	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "batch", "--dir", dir}); err != nil {
+		t.Fatalf("first import: %v", err)
+	}
+	batches, err := cli.db.ListImportBatches(10, 0)
+	if err != nil || len(batches) != 1 {
+		t.Fatalf("batches = %v, err %v", batches, err)
+	}
+	id := batches[0].ID
+	journal, err := cli.db.ImportJournal(id)
+	if err != nil || len(journal) != 1 || journal[0].Outcome != "new" || journal[0].MatchID == 0 {
+		t.Fatalf("journal = %+v, err %v", journal, err)
+	}
+
+	// Nothing left to do is a success, and writes nothing more.
+	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "batch", "--dir", dir, "--resume", fmt.Sprint(id)}); err != nil {
+		t.Fatalf("resuming a finished batch: %v", err)
+	}
+	if journal, _ = cli.db.ImportJournal(id); len(journal) != 1 {
+		t.Errorf("a skipped file was journaled again: %+v", journal)
+	}
+	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "batch", "--dir", dir, "--resume", fmt.Sprint(id + 99)}); err == nil {
+		t.Error("resuming an unknown batch must fail")
 	}
 }

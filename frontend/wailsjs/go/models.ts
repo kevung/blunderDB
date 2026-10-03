@@ -1878,6 +1878,30 @@ export namespace domain {
 	}
 	
 	
+	export class ImportFileEntry {
+	    path: string;
+	    size: number;
+	    mtime?: string;
+	    sha256?: string;
+	    outcome: string;
+	    matchId?: number;
+	    error?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportFileEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.path = source["path"];
+	        this.size = source["size"];
+	        this.mtime = source["mtime"];
+	        this.sha256 = source["sha256"];
+	        this.outcome = source["outcome"];
+	        this.matchId = source["matchId"];
+	        this.error = source["error"];
+	    }
+	}
 	
 	export class WatermarkInfo {
 	    origin: string;
@@ -3351,6 +3375,8 @@ export namespace ingest {
 	    index: number;
 	    path: string;
 	    size: number;
+	    mod_time?: string;
+	    sha256?: string;
 	    status: string;
 	    match_id?: number;
 	    position_id?: number;
@@ -3373,6 +3399,8 @@ export namespace ingest {
 	        this.index = source["index"];
 	        this.path = source["path"];
 	        this.size = source["size"];
+	        this.mod_time = source["mod_time"];
+	        this.sha256 = source["sha256"];
 	        this.status = source["status"];
 	        this.match_id = source["match_id"];
 	        this.position_id = source["position_id"];
@@ -5626,6 +5654,7 @@ export namespace storage {
 	}
 	export class MatchListOpts {
 	    PlayerName: string;
+	    PlayerSpellings: string[];
 	    PlayerNameContains: string;
 	    Text: string;
 	    Unassigned: boolean;
@@ -5644,6 +5673,7 @@ export namespace storage {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.PlayerName = source["PlayerName"];
+	        this.PlayerSpellings = source["PlayerSpellings"];
 	        this.PlayerNameContains = source["PlayerNameContains"];
 	        this.Text = source["Text"];
 	        this.Unassigned = source["Unassigned"];

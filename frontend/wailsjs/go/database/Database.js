@@ -678,6 +678,10 @@ export function ImportGnuBGMatchFromText(arg1) {
   return window['go']['database']['Database']['ImportGnuBGMatchFromText'](arg1);
 }
 
+export function ImportJournal(arg1) {
+  return window['go']['database']['Database']['ImportJournal'](arg1);
+}
+
 export function ImportOGXMMatch(arg1) {
   return window['go']['database']['Database']['ImportOGXMMatch'](arg1);
 }
@@ -902,6 +906,10 @@ export function Participants(arg1) {
   return window['go']['database']['Database']['Participants'](arg1);
 }
 
+export function PendingImportFiles(arg1) {
+  return window['go']['database']['Database']['PendingImportFiles'](arg1);
+}
+
 export function PendingTranscriptionAnalysis() {
   return window['go']['database']['Database']['PendingTranscriptionAnalysis']();
 }
@@ -1028,6 +1036,10 @@ export function ResetAnkiDeck(arg1) {
 
 export function RestoreFromTrash(arg1) {
   return window['go']['database']['Database']['RestoreFromTrash'](arg1);
+}
+
+export function ResumeImportBatch(arg1) {
+  return window['go']['database']['Database']['ResumeImportBatch'](arg1);
 }
 
 export function ReviewAnkiCard(arg1, arg2) {

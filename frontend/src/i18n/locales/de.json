@@ -1127,7 +1127,16 @@
         "reportAnalyzeNow": "Jetzt analysieren",
         "reportWorst": "Schlechteste Entscheidungen",
         "reportCube": "Dopplerwürfel",
-        "reportChecker": "Steine"
+        "reportChecker": "Steine",
+        "journalTitle": "Importprotokoll ({n} Dateien)",
+        "journalNew": "neu",
+        "journalDuplicate": "Duplikat",
+        "journalEnriched": "ergänzt",
+        "journalError": "Fehler",
+        "journalOpenMatch": "Match {id} öffnen",
+        "journalMore": "… und {n} weitere Dateien (vollständiges Protokoll: imports.files oder --format json)",
+        "interruptedTitle": "Import unterbrochen",
+        "resume": "Fortsetzen"
     },
     "warning": {
         "title": "Warnung",

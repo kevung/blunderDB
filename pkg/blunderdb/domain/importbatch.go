@@ -177,3 +177,35 @@ type DuplicateSuspect struct {
 	Players      string `json:"players"`
 	OtherPlayers string `json:"otherPlayers"`
 }
+
+// Journal outcomes: what one file of a batch became.
+const (
+	// JournalNew is a file that gave a new match (or a position).
+	JournalNew = "new"
+	// JournalDuplicate is a file whose match is already stored; MatchID is
+	// the match that covers it.
+	JournalDuplicate = "duplicate"
+	// JournalEnriched is a file whose analyses and comments were merged into
+	// a match already stored.
+	JournalEnriched = "enriched"
+	// JournalError is a file the batch could not read or write; Error says why.
+	JournalError = "error"
+)
+
+// ImportFileEntry is one line of a batch's journal: a file, and what it gave.
+// It is import data, never a reading mark.
+type ImportFileEntry struct {
+	// Path is the file as the import met it.
+	Path string `json:"path"`
+	Size int64  `json:"size"`
+	// MTime is the modification time in UTC, "YYYY-MM-DD HH:MM:SS", empty
+	// when unknown.
+	MTime  string `json:"mtime,omitempty"`
+	SHA256 string `json:"sha256,omitempty"`
+	// Outcome is one of the Journal* constants.
+	Outcome string `json:"outcome"`
+	// MatchID is the new match, the enriched one, or the match that covers a
+	// duplicate; 0 when the file gave none.
+	MatchID int64  `json:"matchId,omitempty"`
+	Error   string `json:"error,omitempty"`
+}

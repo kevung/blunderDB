@@ -1127,7 +1127,16 @@
         "reportAnalyzeNow": "今すぐ解析",
         "reportWorst": "最悪の判断",
         "reportCube": "キューブ",
-        "reportChecker": "チェッカー"
+        "reportChecker": "チェッカー",
+        "journalTitle": "インポートの記録（{n} ファイル）",
+        "journalNew": "新規",
+        "journalDuplicate": "重複",
+        "journalEnriched": "補完",
+        "journalError": "エラー",
+        "journalOpenMatch": "マッチ {id} を開く",
+        "journalMore": "…ほか {n} ファイル（全記録：imports.files または --format json）",
+        "interruptedTitle": "インポートが中断されました",
+        "resume": "再開"
     },
     "warning": {
         "title": "警告",

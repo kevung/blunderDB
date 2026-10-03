@@ -150,6 +150,11 @@ Importe des fichiers de matchs ou de positions dans la base de données.
   arrêter).
 * ``--watch-every`` — Intervalle entre deux regards de ``--watch`` (défaut:
   10s, plancher 2s).
+* ``--resume`` — Avec ``--type batch`` : reprend le lot de ce numéro (affiché
+  au départ de l'import, ou ``batch_id`` en JSON). Les fichiers de même
+  chemin, taille et date que dans son journal sont sautés sans être lus, ceux
+  de même contenu sont lus mais pas analysés ; les fichiers en erreur sont
+  retentés.
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``.
 * ``--fail-on-error`` — Échoue si au moins un élément (``position`` ou
   ``batch``) n'a pas pu être importé, même quand d'autres ont réussi.
@@ -274,6 +279,15 @@ Un tableau récapitulatif indique pour chaque fichier si l'import a réussi
 (✓), échoué (✗) ou s'il s'agit d'un doublon (⊘). Un doublon n'est pas
 compté comme un échec, et un lot qui n'en contient que des doublons est un
 succès (voir les règles ci-dessus).
+
+Chaque fichier du lot est journalisé (chemin, taille, date, SHA-256, match
+obtenu ou erreur). Le numéro du lot est affiché au départ ; si l'import est
+interrompu, ``--resume`` le continue sans analyser de nouveau ce qui est décidé. Avec
+``--format json``, l'objet final porte ``batch_id`` et le tableau ``journal``.
+
+.. code-block:: bash
+
+   ./blunderdb import --db base.db --type batch --dir ./matchs/ --resume 12
 
 .. code-block:: text
 

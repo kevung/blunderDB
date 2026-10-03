@@ -1127,7 +1127,16 @@
         "reportAnalyzeNow": "Analysoi nyt",
         "reportWorst": "Huonoimmat päätökset",
         "reportCube": "tuplauskuutio",
-        "reportChecker": "nappulat"
+        "reportChecker": "nappulat",
+        "journalTitle": "Tuonnin loki ({n} tiedostoa)",
+        "journalNew": "uusi",
+        "journalDuplicate": "kaksoiskappale",
+        "journalEnriched": "täydennetty",
+        "journalError": "virhe",
+        "journalOpenMatch": "Avaa ottelu {id}",
+        "journalMore": "… ja {n} tiedostoa lisää (koko loki: imports.files tai --format json)",
+        "interruptedTitle": "Tuonti keskeytyi",
+        "resume": "Jatka"
     },
     "warning": {
         "title": "Varoitus",

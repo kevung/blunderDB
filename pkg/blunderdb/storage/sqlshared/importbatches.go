@@ -406,3 +406,75 @@ func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID 
 	}
 	return out, rows.Err()
 }
+
+// journalChunk bounds the rows of one INSERT, well under both backends'
+// parameter limits.
+const journalChunk = 100
+
+// RecordFiles appends the files to the batch's journal.
+func (s *ImportBatchStore) RecordFiles(ctx context.Context, scope string, batchID int64, files []domain.ImportFileEntry) error {
+	if len(files) == 0 {
+		return nil
+	}
+	tcols, targs := s.DB.TenantColumns(scope)
+	cols := append(append([]string{}, tcols...), "batch_id", "path", "size", "mtime", "sha256", "outcome", "match_id", "error")
+	one := "(" + strings.TrimSuffix(strings.Repeat("?, ", len(tcols)+3), ", ") + ", " + s.DB.TimestampArg() + ", ?, ?, ?, ?)"
+	for start := 0; start < len(files); start += journalChunk {
+		chunk := files[start:min(start+journalChunk, len(files))]
+		var args []any
+		rows := make([]string, len(chunk))
+		for i, f := range chunk {
+			rows[i] = one
+			args = append(args, targs...)
+			args = append(args, batchID, f.Path, f.Size)
+			if f.MTime == "" {
+				args = append(args, nil)
+			} else {
+				args = append(args, f.MTime+"+00")
+			}
+			var match any
+			if f.MatchID != 0 {
+				match = f.MatchID
+			}
+			args = append(args, f.SHA256, f.Outcome, match, f.Error)
+		}
+		if _, err := s.DB.Exec(ctx,
+			`INSERT INTO import_batch_file (`+strings.Join(cols, ", ")+`) VALUES `+strings.Join(rows, ", "), args...); err != nil {
+			return errf(s.DB, fmt.Sprintf("record files of import batch %d", batchID), err)
+		}
+	}
+	return nil
+}
+
+// Files returns the batch's journal.
+func (s *ImportBatchStore) Files(ctx context.Context, scope string, batchID int64) ([]domain.ImportFileEntry, error) {
+	if _, err := s.Load(ctx, scope, batchID); err != nil {
+		return nil, err
+	}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	rows, err := s.DB.Query(ctx,
+		`SELECT path, size, `+s.DB.TimestampText("mtime")+`, sha256, outcome, COALESCE(match_id, 0), error
+		 FROM import_batch_file WHERE batch_id = ? AND `+tenant+` ORDER BY id`,
+		append([]any{batchID}, targs...)...)
+	if err != nil {
+		return nil, errf(s.DB, "list files of import batch", err)
+	}
+	defer rows.Close()
+	var out []domain.ImportFileEntry
+	for rows.Next() {
+		var f domain.ImportFileEntry
+		if err := rows.Scan(&f.Path, &f.Size, &f.MTime, &f.SHA256, &f.Outcome, &f.MatchID, &f.Error); err != nil {
+			return nil, errf(s.DB, "list files of import batch", err)
+		}
+		// SQLite hands back what was written ("... +00"), PostgreSQL what it
+		// renders: both reduce to the same second.
+		if len(f.MTime) > 19 {
+			f.MTime = f.MTime[:19]
+		}
+		out = append(out, f)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "list files of import batch", err)
+	}
+	return out, nil
+}

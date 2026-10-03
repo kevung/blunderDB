@@ -355,6 +355,8 @@ export function ImportGnuBGMatch(arg1:string):Promise<number>;
 
 export function ImportGnuBGMatchFromText(arg1:string):Promise<number>;
 
+export function ImportJournal(arg1:number):Promise<Array<domain.ImportFileEntry>>;
+
 export function ImportOGXMMatch(arg1:string):Promise<number>;
 
 export function ImportReport(arg1:number):Promise<domain.ImportBatch>;
@@ -467,6 +469,8 @@ export function ParsePositionText(arg1:string):Promise<parser.Result>;
 
 export function Participants(arg1:number):Promise<Array<service.ParticipantRow>>;
 
+export function PendingImportFiles(arg1:Array<string>):Promise<Array<string>>;
+
 export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAnalysisResume>;
 
 export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<database.RolloutPlan>;
@@ -530,6 +534,8 @@ export function RepairGamePhases():Promise<number>;
 export function ResetAnkiDeck(arg1:number):Promise<void>;
 
 export function RestoreFromTrash(arg1:number):Promise<number>;
+
+export function ResumeImportBatch(arg1:number):Promise<void>;
 
 export function ReviewAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
 

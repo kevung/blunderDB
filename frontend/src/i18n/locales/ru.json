@@ -1127,7 +1127,16 @@
         "reportAnalyzeNow": "Проанализировать",
         "reportWorst": "Худшие решения",
         "reportCube": "куб",
-        "reportChecker": "шашки"
+        "reportChecker": "шашки",
+        "journalTitle": "Журнал импорта ({n} файлов)",
+        "journalNew": "новый",
+        "journalDuplicate": "дубликат",
+        "journalEnriched": "дополнен",
+        "journalError": "ошибка",
+        "journalOpenMatch": "Открыть матч {id}",
+        "journalMore": "… и ещё {n} файлов (полный журнал: imports.files или --format json)",
+        "interruptedTitle": "Импорт прерван",
+        "resume": "Продолжить"
     },
     "warning": {
         "title": "Предупреждение",

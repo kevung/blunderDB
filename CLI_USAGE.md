@@ -2653,6 +2653,8 @@ Options:
     	Output format: text or json (default "text")
   -recursive
     	Recursively scan subdirectories for batch import (default true)
+  -resume int
+    	With --type batch: continue the batch with this id (the id the earlier run printed, or its JSON batch_id); files with the same path, size and mtime as in its journal are skipped unread, those with the same content are read but not parsed
   -skip-duplicates
     	Skip a match already in the database outright; by default its analyses deeper than the stored ones replace them
   -type string
@@ -2682,6 +2684,9 @@ Examples:
 
   # Batch import, machine-readable, failing the run if any file errored
   blunderdb import --db database.db --type batch --dir ./matches/ --format json --fail-on-error
+
+  # Continue batch 12, interrupted earlier: files already journaled are skipped
+  blunderdb import --db database.db --type batch --dir ./matches/ --resume 12
 
   # Import the folder as it stands, then keep importing what appears in it
   blunderdb import --db database.db --type batch --dir ~/XG/Matches

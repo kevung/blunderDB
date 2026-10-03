@@ -3490,6 +3490,25 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/imports.files:
+    post:
+      operationId: imports.files
+      tags: [imports]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/importReportReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/domain_ImportFileEntry"
   /v1/imports.gnubg:
     post:
       operationId: imports.gnubg
@@ -7323,6 +7342,9 @@ components:
     domain_ImportBatch:
       type: object
       description: "Opaque: see the Go type domain.ImportBatch (defined outside internal/server, not expanded here)."
+    domain_ImportFileEntry:
+      type: object
+      description: "Opaque: see the Go type domain.ImportFileEntry (defined outside internal/server, not expanded here)."
     domain_LegalPlay:
       type: object
       description: "Opaque: see the Go type domain.LegalPlay (defined outside internal/server, not expanded here)."

@@ -307,3 +307,53 @@ func testImportStudyQueue(t *testing.T, s storage.Storage) {
 		t.Errorf("limit 1 gave position %d, want the queue's first (%d)", short[0].PositionID, queue[0].PositionID)
 	}
 }
+
+// testImportBatchJournal pins the per-file journal: lines come back in the
+// order they were written with the modification time to the second, a file
+// that gave no match has none, a batch's journal does not leak into another's,
+// and an unknown batch is ErrNotFound.
+func testImportBatchJournal(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	batches := s.ImportBatches()
+
+	id, err := batches.Begin(ctx, "", "corpus", "mixed")
+	if err != nil {
+		t.Fatalf("Begin: %v", err)
+	}
+	other, err := batches.Begin(ctx, "", "elsewhere", "mixed")
+	if err != nil {
+		t.Fatalf("Begin: %v", err)
+	}
+	matchID, _ := statsFixtureMatchInBatch(t, s, 0, "Alice", "Bob", id)
+
+	in := []domain.ImportFileEntry{
+		{Path: "/c/a.xg", Size: 120, MTime: "2026-03-04 05:06:07", SHA256: "aa", Outcome: domain.JournalNew, MatchID: matchID},
+		{Path: "/c/b.xg", Size: 120, MTime: "2026-03-04 05:06:08", SHA256: "aa", Outcome: domain.JournalDuplicate, MatchID: matchID},
+		{Path: "/c/c.xg", Size: 3, Outcome: domain.JournalError, Error: "not a match"},
+	}
+	if err := batches.RecordFiles(ctx, "", id, in); err != nil {
+		t.Fatalf("RecordFiles: %v", err)
+	}
+	if err := batches.RecordFiles(ctx, "", other, []domain.ImportFileEntry{{Path: "/z.xg", Outcome: domain.JournalNew}}); err != nil {
+		t.Fatalf("RecordFiles (other batch): %v", err)
+	}
+	if err := batches.RecordFiles(ctx, "", id, nil); err != nil {
+		t.Fatalf("RecordFiles (nothing): %v", err)
+	}
+
+	out, err := batches.Files(ctx, "", id)
+	if err != nil {
+		t.Fatalf("Files: %v", err)
+	}
+	if len(out) != len(in) {
+		t.Fatalf("Files: got %d lines, want %d", len(out), len(in))
+	}
+	for i := range in {
+		if out[i] != in[i] {
+			t.Errorf("line %d: got %+v, want %+v", i, out[i], in[i])
+		}
+	}
+	if _, err := batches.Files(ctx, "", other+9999); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("Files of an unknown batch: got %v, want ErrNotFound", err)
+	}
+}

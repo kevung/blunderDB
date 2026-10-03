@@ -262,6 +262,10 @@ func (s *Server) ingestRoutes() []route {
 		route{http.MethodPost, "/v1/imports.studyQueue", rpc(func(ctx context.Context, scope string, req importStudyQueueReq) ([]domain.StudyQueueEntry, error) {
 			return s.opts.Storage.ImportBatches().StudyQueue(ctx, scope, req.BatchID, req.Players, req.Limit)
 		})},
+		// The batch's per-file journal: which file gave which match.
+		route{http.MethodPost, "/v1/imports.files", rpc(func(ctx context.Context, scope string, req importReportReq) ([]domain.ImportFileEntry, error) {
+			return s.opts.Storage.ImportBatches().Files(ctx, scope, req.BatchID)
+		})},
 		route{http.MethodPost, "/v1/imports.list", rpc(func(ctx context.Context, scope string, req listReq) ([]*domain.ImportBatch, error) {
 			return s.opts.Storage.ImportBatches().List(ctx, scope, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
 		})},

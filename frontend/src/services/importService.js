@@ -33,12 +33,17 @@ import {
     CountPositionsWithoutAnalysis,
     BeginImportBatch,
     FinishImportBatch,
+    ResumeImportBatch,
+    PendingImportFiles,
+    ImportJournal,
     ImportReport
 } from '../../wailsjs/go/database/Database.js';
 import { GetGammonNetAutoAnalyze, GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
 import { StartGammonNetBatch } from '../../wailsjs/go/gui/App.js';
 import { ClipboardGetText, EventsOn } from '../../wailsjs/runtime/runtime.js';
 
+import { latestJournalEntries } from './importJournal.js';
+import { openMatchInPanel } from './positionLoader.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, pastePositionTextStore, matchContextStore, clipboardPositionStore } from '../stores/positionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
@@ -55,6 +60,8 @@ import {
     fileImportCurrentFileStore,
     fileImportResultsStore,
     fileImportReportStore,
+    fileImportJournalStore,
+    fileImportInterruptedStore,
     fileImportProgressStore,
     fileImportMinimizedStore
 } from '../stores/importModalStore.js';
@@ -786,14 +793,17 @@ async function beginImportBatch(source, format) {
 async function finishImportBatch(batchID) {
     if (!batchID) {
         fileImportReportStore.set(null);
+        fileImportJournalStore.set([]);
         return;
     }
     try {
         await FinishImportBatch(batchID, {});
         fileImportReportStore.set(await ImportReport(batchID));
+        fileImportJournalStore.set(latestJournalEntries(await ImportJournal(batchID)));
     } catch (error) {
         logger.error('could not read the import report:', error);
         fileImportReportStore.set(null);
+        fileImportJournalStore.set([]);
     }
 }
 
@@ -839,7 +849,14 @@ async function importThroughPipeline(paths, remaining) {
     }
 }
 
-async function importMultipleFilesCore(files, { quiet = false } = {}) {
+// resumeImportBatch continues a batch an earlier run left unfinished: the
+// files its journal already decided (same path, size and modification time,
+// or same content) are not read again.
+export async function resumeImportBatch(batchID, files) {
+    return importMultipleFilesCore(files, { resumeBatchID: batchID });
+}
+
+async function importMultipleFilesCore(files, { quiet = false, resumeBatchID = 0 } = {}) {
     fileImportCancelled = false;
     fileImportTotalFilesStore.set(files.length);
     fileImportCurrentIndexStore.set(0);
@@ -853,7 +870,18 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
 
     // One batch for the whole selection: what the user asked for in one
     // gesture is one import, whether it was a folder or five dropped files.
-    const batchID = await beginImportBatch(files.length === 1 ? files[0] : `${files.length} files`, 'mixed');
+    const requestedFiles = files;
+    let batchID = 0;
+    if (resumeBatchID) {
+        try {
+            await ResumeImportBatch(resumeBatchID);
+            batchID = resumeBatchID;
+            files = await PendingImportFiles(files);
+        } catch (error) {
+            logger.error('could not resume the import batch:', error);
+        }
+    }
+    if (!batchID) batchID = await beginImportBatch(files.length === 1 ? files[0] : `${files.length} files`, 'mixed');
 
     let hadMatches = false;
     let lastPositionID = null;
@@ -895,7 +923,11 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
     }
 
     await finishImportBatch(batchID);
+    // A stopped import keeps what Resume needs, and its summary stays on screen.
+    const interrupted = fileImportCancelled && batchID !== 0 && !quiet;
+    fileImportInterruptedStore.set(interrupted ? { batchID, files: requestedFiles } : null);
     fileImportModeStore.set('completed');
+    if (interrupted) showFileImportModalStore.set(true);
     // A minimised import comes back with its report once finished.
     if (get(fileImportMinimizedStore)) {
         fileImportMinimizedStore.set(false);
@@ -1230,6 +1262,20 @@ export async function parsePositionText(content) {
 
 // openImportedPosition lands on one of the report's worst decisions and closes
 // the modal — the whole point of listing them is being able to go and look.
+// Resume continues the import the user stopped, from its journal.
+export async function resumeInterruptedImport() {
+    const interrupted = get(fileImportInterruptedStore);
+    if (!interrupted) return;
+    await resumeImportBatch(interrupted.batchID, interrupted.files);
+}
+
+// A journal line that gave a match opens it in the matches panel.
+export function openJournalMatch(matchID) {
+    showFileImportModalStore.set(false);
+    fileImportModeStore.set('idle');
+    openMatchInPanel(matchID);
+}
+
 export async function openImportedPosition(positionID) {
     showFileImportModalStore.set(false);
     fileImportModeStore.set('idle');
