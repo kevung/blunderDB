@@ -140,7 +140,7 @@ func (s *Server) handleEvents(w http.ResponseWriter, r *http.Request) {
 
 	write := func(b []byte) bool {
 		_ = rc.SetWriteDeadline(time.Now().Add(eventsWriteTimeout))
-		if _, err := w.Write(b); err != nil { //nolint:gosec // G705: text/event-stream of JSON the daemon encodes, never rendered as HTML
+		if _, err := w.Write(b); err != nil {
 			return false
 		}
 		return rc.Flush() == nil
