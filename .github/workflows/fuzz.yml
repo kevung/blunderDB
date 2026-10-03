@@ -19,10 +19,10 @@ name: Fuzz
 # `gammonnet-kernel-identity-arm64` (the full, non -short kernel-identity
 # sweep on a real arm64 runner — build.yml's `test-os` macOS job only runs
 # the -short quarter of it on every push). That job forces the NEON kernel
-# (BLUNDERDB_GAMMONNET_KERNEL=neon), the default on arm64 since its sweep
-# proved it bit-identical there; each green run keeps that proof current. It
-# also runs an informative go-against-neon benchstat, with no threshold: a
-# record of the kernel's gain, not a gate. The benchstat lives here and
+# (BLUNDERDB_GAMMONNET_KERNEL=neon), the default on arm64; each green run is
+# the proof that it stays bit-identical there. It also runs an informative
+# go-against-neon benchstat, with no threshold: a record of the kernel's
+# gain, not a gate. The benchstat lives here and
 # not in nightly.yml's `benchstat` job because it needs a real arm64 runner
 # and only makes sense next to the identity sweep it qualifies; the cost is
 # one macOS runner up to 25 minutes a week. Nothing here needed a dedicated
@@ -183,12 +183,12 @@ jobs:
   # on a REAL arm64 runner, with the NEON kernel forced: this job is
   # ADR-0024's proof that NEON, the arm64 default (kernel_arm64.go), stays
   # bit-identical to the pure-Go fallback on Apple Silicon. Forcing it also
-  # proves the selector accepts it there; the
-  # identity tests compare every accelerated kernel against the fallback
-  # whatever the selector says, so build.yml's test-os macOS job checks NEON
-  # on the -short quarter at every push. The benchmark pair records what the
-  # kernel gains over the fallback (FMUL+FADD, never FMLA, costs about half
-  # the fused throughput on Apple cores).
+  # proves the selector accepts it there; the identity tests compare every
+  # accelerated kernel against the fallback whatever the selector says, so
+  # build.yml's test-os macOS job checks NEON on the -short quarter at every
+  # push. The benchmark pair records what the kernel gains over the fallback
+  # (FMUL+FADD, never FMLA, costs about half the fused throughput on Apple
+  # cores).
   gammonnet-kernel-identity-arm64:
     runs-on: macos-latest
     timeout-minutes: 25

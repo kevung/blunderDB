@@ -13,7 +13,8 @@ import (
 // batch it consumes.
 //
 // Evaluate (network.go) is the scalar path; EvaluateBatch runs EvalBatchWidth
-// positions, one per SIMD lane, through the AVX2 assembly or its pure-Go twin.
+// positions, one per SIMD lane, through the AVX2 assembly (amd64), the NEON
+// assembly (arm64) or their pure-Go twin.
 //
 // ADR-0024: the batch vectorises over POSITIONS, not over the reduction. Each
 // lane accumulates over j in ascending order, in float32, from the bias, with

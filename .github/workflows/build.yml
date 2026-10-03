@@ -413,9 +413,10 @@ jobs:
       # Named separately from the suite above for visibility: macOS runners
       # are arm64, where the NEON kernel is the default. The identity tests
       # compare every accelerated kernel against the fallback whatever the
-      # selector says, so this step checks NEON bit for bit at every push. `-short` matches
-      # the step above (it only shrinks one sweep's span, nothing is
-      # skipped); the full sweep, NEON forced, runs weekly (fuzz.yml).
+      # selector says, so this step checks NEON bit for bit at every push.
+      # `-short` matches the step above (it only shrinks one sweep's span,
+      # nothing is skipped); the full sweep, NEON forced, runs weekly
+      # (fuzz.yml).
       - name: Kernel identity (arm64, NEON against the pure-Go fallback)
         if: runner.os == 'macOS'
         run: go test -short -count=1 -run 'TestKernel|TestDenseKernelsAgree|TestNEON' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
