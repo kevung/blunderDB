@@ -1,6 +1,7 @@
 <script>
     import { get } from 'svelte/store';
-    import { configInitialTabStore, statusBarTextStore } from '../stores/uiStore';
+    import { configInitialTabStore, statusBarTextStore, pageStepStore, PAGE_STEPS } from '../stores/uiStore';
+    import { setPageStep } from '../services/pageStepSetting.js';
     import Modal from './Modal.svelte';
     import { t, tMsg, language, setLanguage, LOCALES, LANGUAGE_LABELS } from '../i18n';
     import { boardColorsStore, setBoardColor, resetBoardColors } from '../stores/boardColorsStore';
@@ -730,6 +731,14 @@
                     <select id="config-panel-position" class="setting-select" value={$panelPositionStore} onchange={onPanelPositionChange}>
                         {#each PANEL_POSITION_OPTIONS as opt (opt.value)}
                             <option value={opt.value}>{$t(opt.labelKey)}</option>
+                        {/each}
+                    </select>
+                </div>
+                <div class="setting-row">
+                    <label for="config-page-step">{$t('config.pageStep')}</label>
+                    <select id="config-page-step" class="setting-select" value={String($pageStepStore)} onchange={(e) => setPageStep(e.currentTarget.value)}>
+                        {#each PAGE_STEPS as step (step)}
+                            <option value={step}>{step.endsWith('%') ? $t('config.pageStepPercent', { n: parseInt(step, 10) }) : $t('config.pageStepCount', { n: step })}</option>
                         {/each}
                     </select>
                 </div>

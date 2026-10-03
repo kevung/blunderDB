@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:36+0200\n"
+"POT-Creation-Date: 2026-10-03 10:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -206,12 +206,15 @@ msgid "PageUp"
 msgstr "PageUp"
 
 #: ../../source/raccourcis.rst:1
+#, no-python-format
 msgid ""
-"Recule d'une page de cent positions (au début de la liste, s'y arrête) ; "
-"dans un match, partie précédente."
+"Recule d'une page (cent positions par défaut, réglable dans les "
+"Paramètres > Interface, jusqu'à 10 % de la liste ; au début de la liste, "
+"s'y arrête) ; dans un match, partie précédente."
 msgstr ""
-"Πηγαίνει πίσω μια σελίδα εκατό θέσεων (σταματά στην αρχή της λίστας)· σε "
-"έναν αγώνα, προηγούμενο παιχνίδι."
+"Πηγαίνει μία σελίδα πίσω (εκατό θέσεις από προεπιλογή, ρυθμιζόμενο στις "
+"Ρυθμίσεις > Διεπαφή, έως 10 % της λίστας· σταματά στην αρχή της λίστας)· "
+"σε αγώνα, προηγούμενη παρτίδα."
 
 #: ../../source/raccourcis.rst:1
 msgid "GAUCHE, k"
@@ -259,11 +262,11 @@ msgstr "PageDown"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Avance d'une page de cent positions (à la fin de la liste, s'y arrête) ; "
-"dans un match, partie suivante."
+"Avance d'une page (même pas que PageUp ; à la fin de la liste, s'y "
+"arrête) ; dans un match, partie suivante."
 msgstr ""
-"Πηγαίνει μπροστά μια σελίδα εκατό θέσεων (σταματά στο τέλος της λίστας)· "
-"σε έναν αγώνα, επόμενο παιχνίδι."
+"Πηγαίνει μία σελίδα μπροστά (ίδιο βήμα με το PageUp· σταματά στο τέλος "
+"της λίστας)· σε αγώνα, επόμενη παρτίδα."
 
 #: ../../source/raccourcis.rst:1
 msgid "r"

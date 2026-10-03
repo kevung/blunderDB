@@ -14,6 +14,7 @@
     import ContextMenu from '../ContextMenu.svelte';
     import { proposalMenu } from '../../services/directionMenus.js';
     import { menuRequest } from '../../services/contextMenuTrigger.js';
+    import { registerKeys } from '../../services/keyDispatch.js';
 
     /** @typedef {import('../../stores/directionStore.js').ProposalAction} ProposalAction */
 
@@ -203,10 +204,7 @@
         e.stopImmediatePropagation();
     }
 
-    $effect(() => {
-        window.addEventListener('keydown', onKey, true);
-        return () => window.removeEventListener('keydown', onKey, true);
-    });
+    $effect(() => registerKeys('directionQueue', onKey));
 </script>
 
 <section class="proposals">

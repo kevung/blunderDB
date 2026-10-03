@@ -27,6 +27,7 @@
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
+    import { registerKeys } from '../services/keyDispatch.js';
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
     let mode = $derived($statusBarModeStore);
@@ -195,6 +196,9 @@
         scheduleRedraw();
     }
 
+    /** @type {(() => void)[]} */
+    let unregisterKeys = [];
+
     function handleOrientationChange(event) {
         const isAnyModalOpenVal = get(isAnyModalOpen);
         if (isAnyModalOpenVal || showComment) return; // Disable orientation change when any modal or comment panel is open
@@ -266,8 +270,7 @@
         // No direct drawBoard(): the subscriptions fire synchronously and
         // schedule the first paint; drawing here too would build it twice.
         window.addEventListener('resize', resizeBoard);
-        window.addEventListener('keydown', handleOrientationChange);
-        window.addEventListener('keydown', handleKeyDown);
+        unregisterKeys = [registerKeys('boardOrientation', handleOrientationChange), registerKeys('boardEdit', handleKeyDown)];
 
         unsubscribeBoardRedrawTriggers = subscribeBoardRedrawTriggers();
 
@@ -279,8 +282,7 @@
         if (detachInteractions) detachInteractions();
         window.removeEventListener('resize', resizeBoard);
         window.removeEventListener('resize', logCanvasSize);
-        window.removeEventListener('keydown', handleOrientationChange);
-        window.removeEventListener('keydown', handleKeyDown);
+        for (const unregister of unregisterKeys) unregister();
         if (unsubscribeBoardRedrawTriggers) unsubscribeBoardRedrawTriggers();
         // Cancel a pending rAF so drawBoard() never hits a detached two.js.
         if (redrawFrameId !== null) cancelAnimationFrame(redrawFrameId);

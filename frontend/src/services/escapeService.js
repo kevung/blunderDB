@@ -6,11 +6,11 @@
  * panneaux, puis répartiteur global. Les modales gardent leur Échap (Modal.svelte) ; une
  * surcouche SOUS une modale n'est pas fermée à sa place.
  *
- * Pourquoi la capture, et pas `<svelte:window onkeydown>` : celui-ci passerait après le
- * répartiteur et les écouteurs `document` des panneaux, qui consomment Échap, et Svelte 5 le
- * saute dès que `cancelBubble` est vrai. Aucun ordre d'enregistrement ne garantit la
- * priorité ; la capture sur `window` passe avant tout. Un seul écouteur consulte une pile
- * (dernière ouverte, première fermée) : un composant n'a qu'à s'enregistrer.
+ * Pourquoi la capture : le palier OVERLAY de keyDispatch.js passe avant tout, avant même
+ * l'élément qui a le focus, alors qu'un `<svelte:window onkeydown>` passerait après les
+ * panneaux qui consomment Échap, et que Svelte 5 le saute dès que `cancelBubble` est vrai.
+ * Un seul gestionnaire consulte une pile (dernière ouverte, première fermée) : un composant
+ * n'a qu'à s'enregistrer.
  *
  * Usage :
  *
@@ -24,10 +24,13 @@
 
 /** @typedef {{ close: () => void, modalsBelow: number }} Closable */
 
+import { registerKeys } from './keyDispatch.js';
+
 /** @type {Closable[]} La dernière ouverte en haut de la pile. */
 const stack = [];
 
-let installed = false;
+/** @type {(() => void) | null} */
+let unregister = null;
 
 function openModalCount() {
     return document.querySelectorAll('[aria-modal="true"]').length;
@@ -64,15 +67,16 @@ export function hasOpenOverlay() {
  * @returns {() => void} retire l'entrée (à la fermeture, au démontage)
  */
 export function closeOnEscape(close) {
-    if (!installed) {
-        window.addEventListener('keydown', handleEscapeCapture, true);
-        installed = true;
-    }
+    if (stack.length === 0) unregister = registerKeys('overlay', handleEscapeCapture);
     /** @type {Closable} */
     const entry = { close, modalsBelow: openModalCount() };
     stack.push(entry);
     return () => {
         const i = stack.indexOf(entry);
         if (i >= 0) stack.splice(i, 1);
+        if (stack.length === 0 && unregister) {
+            unregister();
+            unregister = null;
+        }
     };
 }

@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { t } from '../i18n';
     import { closeOnEscape } from '../services/escapeService.js';
+    import { registerKeys } from '../services/keyDispatch.js';
 
     /**
      * Reusable context-menu popover.
@@ -82,9 +83,11 @@
         item.onClick();
         onClose?.();
     }
+
+    $effect(() => registerKeys('contextMenu', handleKeyDown));
 </script>
 
-<svelte:window onkeydown={handleKeyDown} onclick={handleWindowClick} oncontextmenucapture={handleWindowContextMenu} />
+<svelte:window onclick={handleWindowClick} oncontextmenucapture={handleWindowContextMenu} />
 
 <div bind:this={menuEl} class="context-menu" style="left:{x}px; top:{y}px" role="menu" aria-label={$t('common.contextMenu')}>
     {#each items as item (item.label)}

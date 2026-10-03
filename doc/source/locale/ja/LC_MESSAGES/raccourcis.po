@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:36+0200\n"
+"POT-Creation-Date: 2026-10-03 10:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -204,10 +204,14 @@ msgid "PageUp"
 msgstr "PageUp"
 
 #: ../../source/raccourcis.rst:1
+#, no-python-format
 msgid ""
-"Recule d'une page de cent positions (au début de la liste, s'y arrête) ; "
-"dans un match, partie précédente."
-msgstr "100 局面ぶん（1 ページ）戻ります（リストの先頭で止まります）。マッチ内では前のゲームです。"
+"Recule d'une page (cent positions par défaut, réglable dans les "
+"Paramètres > Interface, jusqu'à 10 % de la liste ; au début de la liste, "
+"s'y arrête) ; dans un match, partie précédente."
+msgstr ""
+"1 ページ戻ります（既定は 100 局面、設定 > インターフェースで変更可能、最大でリストの 10 "
+"%。リストの先頭で止まります）。マッチ中は前のゲーム。"
 
 #: ../../source/raccourcis.rst:1
 msgid "GAUCHE, k"
@@ -255,9 +259,9 @@ msgstr "PageDown"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Avance d'une page de cent positions (à la fin de la liste, s'y arrête) ; "
-"dans un match, partie suivante."
-msgstr "100 局面ぶん（1 ページ）進みます（リストの末尾で止まります）。マッチ内では次のゲームです。"
+"Avance d'une page (même pas que PageUp ; à la fin de la liste, s'y "
+"arrête) ; dans un match, partie suivante."
+msgstr "1 ページ進みます（PageUp と同じ幅。リストの末尾で止まります）。マッチ中は次のゲーム。"
 
 #: ../../source/raccourcis.rst:1
 msgid "r"

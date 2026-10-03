@@ -91,7 +91,7 @@ export default {
 <h3>Konfiguration</h3>
 <p>Die Konfigurationsschaltfläche (Zahnradsymbol) in der Werkzeugleiste, links neben der Hilfeschaltfläche, öffnet das Konfigurationsfenster von blunderDB. Es ist in sieben Registerkarten gegliedert:</p>
 <ul>
-<li><strong>Oberfläche</strong> — Sprache, Anzeigeskalierung, Position des Panels;</li>
+<li><strong>Oberfläche</strong> — Sprache, Anzeigeskalierung, Position des Panels, Schrittweite von PageUp / PageDown (10, 50, 100, 500 oder 1 000 Positionen oder 10 % der Liste);</li>
 <li><strong>Brettfarben</strong> — die Farben des Bretts;</li>
 <li><strong>Bibliothek</strong> — was zur geöffneten Datenbank gehört: die Fehler- und die Blunder-Schwelle, das Komprimieren und das Reparieren, weiter unten beschrieben;</li>
 <li><strong>Bearoff</strong> — die vom Eval-Panel verwendeten Bearoff-Tabellen;</li>
@@ -1010,7 +1010,7 @@ export default {
 </tr>
 <tr>
 <td>Bild-auf</td>
-<td>Geht eine Seite von hundert Stellungen zurück (hält am Listenanfang an); in einem Match: vorheriges Spiel.</td>
+<td>Geht eine Seite zurück (standardmäßig hundert Positionen, einstellbar unter Einstellungen &gt; Oberfläche, bis zu 10 % der Liste; hält am Anfang der Liste an); in einem Match vorheriges Spiel.</td>
 </tr>
 <tr>
 <td>LINKS, k</td>
@@ -1034,7 +1034,7 @@ export default {
 </tr>
 <tr>
 <td>Bild-ab</td>
-<td>Geht eine Seite von hundert Stellungen vor (hält am Listenende an); in einem Match: nächstes Spiel.</td>
+<td>Geht eine Seite vor (gleiche Schrittweite wie PageUp; hält am Ende der Liste an); in einem Match nächstes Spiel.</td>
 </tr>
 <tr>
 <td>r</td>

@@ -17,6 +17,8 @@ function goStub() {
 }
 
 import ConfigModal from '../components/ConfigModal.svelte';
+import { get } from 'svelte/store';
+import { pageStepStore, PAGE_STEPS, PAGE_STEP_DEFAULT } from '../stores/uiStore.js';
 
 beforeEach(() => {
     window.go = goStub();
@@ -35,5 +37,15 @@ describe('ConfigModal tabs', () => {
         await fireEvent.click(tabs[6]);
         expect(tabs[6].getAttribute('aria-selected')).toBe('true');
         expect(tabs[0].getAttribute('aria-selected')).toBe('false');
+    });
+
+    test('the Interface tab offers every PageUp / PageDown step, 10 % of the list included', async () => {
+        const { container } = render(ConfigModal, { visible: true, onClose: () => {} });
+        const select = /** @type {HTMLSelectElement} */ (container.ownerDocument.getElementById('config-page-step'));
+        expect([...select.options].map((o) => o.value)).toEqual([...PAGE_STEPS]);
+        expect(select.value).toBe(PAGE_STEP_DEFAULT);
+        await fireEvent.change(select, { target: { value: '10%' } });
+        expect(get(pageStepStore)).toBe('10%');
+        pageStepStore.set(PAGE_STEP_DEFAULT);
     });
 });

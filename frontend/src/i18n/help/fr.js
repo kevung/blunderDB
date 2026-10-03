@@ -91,7 +91,7 @@ export default {
 <h3>Configuration</h3>
 <p>Le bouton de configuration (icône en forme de rouage) situé dans la barre d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de blunderDB. Elle est organisée en sept onglets :</p>
 <ul>
-<li><strong>Interface</strong> — langue, échelle d'affichage, position du panneau ;</li>
+<li><strong>Interface</strong> — langue, échelle d'affichage, position du panneau, pas de PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste) ;</li>
 <li><strong>Couleurs</strong> — les couleurs du plateau ;</li>
 <li><strong>Bibliothèque</strong> — ce qui appartient à la base ouverte : les seuils d'erreur et de blunder, le compactage et la réparation, décrits ci-dessous ;</li>
 <li><strong>Bearoff</strong> — les tables de sortie utilisées par le panneau Eval ;</li>
@@ -1010,7 +1010,7 @@ export default {
 </tr>
 <tr>
 <td>PageUp</td>
-<td>Recule d'une page de cent positions (au début de la liste, s'y arrête) ; dans un match, partie précédente.</td>
+<td>Recule d'une page (cent positions par défaut, réglable dans les Paramètres &gt; Interface, jusqu'à 10 % de la liste ; au début de la liste, s'y arrête) ; dans un match, partie précédente.</td>
 </tr>
 <tr>
 <td>GAUCHE, k</td>
@@ -1034,7 +1034,7 @@ export default {
 </tr>
 <tr>
 <td>PageDown</td>
-<td>Avance d'une page de cent positions (à la fin de la liste, s'y arrête) ; dans un match, partie suivante.</td>
+<td>Avance d'une page (même pas que PageUp ; à la fin de la liste, s'y arrête) ; dans un match, partie suivante.</td>
 </tr>
 <tr>
 <td>r</td>

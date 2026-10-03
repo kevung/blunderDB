@@ -91,7 +91,7 @@ export default {
 <h3>Configuration</h3>
 <p>The settings button (gear icon) in the toolbar, to the left of the help button, opens blunderDB's settings window. It is organised in seven tabs:</p>
 <ul>
-<li><strong>Interface</strong> — language, display scale, panel position;</li>
+<li><strong>Interface</strong> — language, display scale, panel position, PageUp / PageDown step (10, 50, 100, 500 or 1,000 positions, or 10% of the list);</li>
 <li><strong>Colours</strong> — the board's colours;</li>
 <li><strong>Library</strong> — what belongs to the open database: the error and blunder thresholds, compaction and repair, described below;</li>
 <li><strong>Bearoff</strong> — the bearoff tables used by the Eval panel;</li>
@@ -1010,7 +1010,7 @@ export default {
 </tr>
 <tr>
 <td>PageUp</td>
-<td>Goes back one page of a hundred positions (stops at the start of the list); in a match, previous game.</td>
+<td>Goes back one page (a hundred positions by default, adjustable in Settings &gt; Interface, up to 10% of the list; stops at the start of the list); in a match, previous game.</td>
 </tr>
 <tr>
 <td>LEFT, k</td>
@@ -1034,7 +1034,7 @@ export default {
 </tr>
 <tr>
 <td>PageDown</td>
-<td>Goes forward one page of a hundred positions (stops at the end of the list); in a match, next game.</td>
+<td>Goes forward one page (same step as PageUp; stops at the end of the list); in a match, next game.</td>
 </tr>
 <tr>
 <td>r</td>

@@ -168,21 +168,23 @@ export function toggleHelpModal() {
 export const focusSearchTab = toggleSearchPanel;
 
 /**
- * The global dispatcher, on window in the bubble phase (App.svelte).
+ * The global dispatcher: the last tier of keyDispatch.js (scope `global` of
+ * shortcutMap.js), registered by App.svelte. keyDispatch keeps a key away from
+ * here while a modal is open or once another scope has claimed it
+ * (preventDefault), Escape excepted.
  *
  * Escape goes to the first of these with something to close, and no further:
  *   1. an open modal (Modal.svelte stops it; this dispatcher returns);
  *   2. the last opened overlay registered with escapeService.closeOnEscape()
- *      (window CAPTURE listener, so before everything below);
+ *      (keyDispatch's capture phase, so before everything below);
  *   3. a panel's own tiers — it claims the press with preventDefault() or stops
- *      it before window;
+ *      it;
  *   4. here: leave the focused text field, else leave `ss` results.
- * A new overlay registers itself (step 2), never via `<svelte:window
- * onkeydown>`, which runs after this dispatcher.
+ * A new overlay registers itself (step 2); a new key handler declares its scope
+ * in shortcutMap.js and registers it with keyDispatch.registerKeys().
  *
  * Never call event.stopPropagation() here: Svelte 5 skips every declarative
- * handler once cancelBubble is set, silencing each `<svelte:window onkeydown>`
- * mounted after App.
+ * handler once cancelBubble is set.
  *
  * @param {KeyboardEvent} event
  */

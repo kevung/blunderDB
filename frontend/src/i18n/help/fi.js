@@ -91,7 +91,7 @@ export default {
 <h3>Asetukset</h3>
 <p>Työkalurivin asetuspainike (rataskuvake), ohjepainikkeen vasemmalla puolella, avaa blunderDB:n asetusikkunan. Se on jaettu seitsemään välilehteen:</p>
 <ul>
-<li><strong>Käyttöliittymä</strong> — kieli, näytön skaalaus, paneelin sijainti;</li>
+<li><strong>Käyttöliittymä</strong> — kieli, näytön skaalaus, paneelin sijainti, PageUp / PageDown -askel (10, 50, 100, 500 tai 1 000 asemaa tai 10 % luettelosta);</li>
 <li><strong>Laudan värit</strong> — laudan värit;</li>
 <li><strong>Kirjasto</strong> — se, mikä kuuluu avoinna olevaan tietokantaan: virheen ja blunderin kynnykset sekä tiivistys ja korjaus, jotka kuvataan alla;</li>
 <li><strong>Bearoff</strong> — Eval-paneelin käyttämät ulosmenotaulukot;</li>
@@ -1010,7 +1010,7 @@ export default {
 </tr>
 <tr>
 <td>PageUp</td>
-<td>Siirtyy sata asemaa taaksepäin (pysähtyy luettelon alkuun); ottelussa edelliseen peliin.</td>
+<td>Siirtyy sivun taaksepäin (oletuksena sata asemaa, säädettävissä kohdassa Asetukset &gt; Käyttöliittymä, enintään 10 % luettelosta; pysähtyy luettelon alkuun); ottelussa edellinen peli.</td>
 </tr>
 <tr>
 <td>VASEN, k</td>
@@ -1034,7 +1034,7 @@ export default {
 </tr>
 <tr>
 <td>PageDown</td>
-<td>Siirtyy sata asemaa eteenpäin (pysähtyy luettelon loppuun); ottelussa seuraavaan peliin.</td>
+<td>Siirtyy sivun eteenpäin (sama askel kuin PageUp; pysähtyy luettelon loppuun); ottelussa seuraava peli.</td>
 </tr>
 <tr>
 <td>r</td>
