@@ -315,7 +315,7 @@ describe('Échap garde sa règle (#414)', () => {
     test('page Direction affichée, Échap descend encore les paliers du panneau', async () => {
         await openTournamentPanel();
         await showDirectionQueue();
-        await fireEvent.click(/** @type {Element} */ (screen.getByText('Open de Lyon').closest('tr')));
+        await fireEvent.dblClick(/** @type {Element} */ (screen.getByText('Open de Lyon').closest('tr')));
         await vi.waitFor(() => expect(get(selectedTournamentStore)).toMatchObject({ id: 1 }));
 
         await press(document.body, 'Escape');

@@ -206,7 +206,7 @@
         "togglePipcount": "Afficher/masquer le pipcount",
         "updatePosition": "Mettre à jour la position",
         "tour": "Visites guidées",
-        "importDatabaseTip": "Fusionner une autre base dans celle-ci : les positions communes ne sont pas dupliquées, leurs analyses et commentaires sont combinés (Ctrl+Maj+I)",
+        "importDatabaseTip": "Fusionner une autre base dans celle-ci : les positions communes ne sont pas dupliquées, leurs analyses et commentaires sont combinés",
         "training": "Entraînement"
     },
     "tour": {
@@ -365,10 +365,12 @@
     },
     "help": {
         "tabManual": "Manuel",
-        "tabShortcuts": "Raccourci",
+        "tabShortcuts": "Raccourcis",
         "tabCommands": "Ligne de commande",
         "tabAbout": "À propos",
-        "loadFailed": "L'aide n'a pas pu être chargée."
+        "loadFailed": "L'aide n'a pas pu être chargée.",
+        "searchPlaceholder": "Rechercher dans l'aide (/)",
+        "searchNone": "aucun résultat"
     },
     "commands": {
         "collectionEmpty": "La collection est vide",
@@ -494,7 +496,11 @@
             "blots": "Blots",
             "textPattern": "Texte / Motif",
             "other": "Autre"
-        }
+        },
+        "noResultsTitle": "Aucune position ne correspond",
+        "noResultsHint": "Élargissez les critères (retirez un filtre, assouplissez une borne) ou effacez-les.",
+        "clearFilters": "Effacer les filtres",
+        "criteriaTab": "Critères"
     },
     "match": {
         "errorExportingMat": "Erreur lors de l'export du match",
@@ -622,7 +628,8 @@
         "livingOff": "Collection vivante ({query}). Cliquer pour la rendre à sa liste faite à la main.",
         "livingNeedsSearch": "Lancez d'abord une recherche : c'est elle que la collection gardera.",
         "livingSet": "Collection vivante : {query}",
-        "livingCleared": "Collection rendue à sa liste faite à la main."
+        "livingCleared": "Collection rendue à sa liste faite à la main.",
+        "newButton": "Nouvelle collection"
     },
     "tournament": {
         "addMatchPlaceholder": "Ajouter un match…",
@@ -655,7 +662,8 @@
         "errorSwapping": "Erreur lors de l'échange des joueurs",
         "noMovesFound": "Aucun coup trouvé pour ce match",
         "swappedPlayers": "Joueurs échangés",
-        "confirmDelete": "Supprimer le tournoi « {name} » ?"
+        "confirmDelete": "Supprimer le tournoi « {name} » ?",
+        "newButton": "Nouveau tournoi"
     },
     "anki": {
         "limitSession": "Limiter la séance",
@@ -679,7 +687,8 @@
         "colActions": "Actions",
         "colCards": "Cartes",
         "colDescription": "Description",
-        "colDue": "À réviser",
+        "colDue": "Échues",
+        "colDueTooltip": "Cartes dont l'échéance est passée, suspendues ou enterrées comprises. Le bouton Étudier ne compte que les cartes disponibles.",
         "colName": "Nom",
         "colNew": "Nouvelles",
         "colSource": "Source",
@@ -706,7 +715,7 @@
         "sourceCurrentSearch": "Recherche actuelle",
         "sourceScores": "Fiches de score",
         "scoresCount": "{count} scores",
-        "scoreQuestion": "Score {a}/{b} away",
+        "scoreQuestion": "Score {a}/{b}",
         "badScoreKey": "Score illisible sur cette carte",
         "statLearning": "En apprentissage",
         "statNew": "Nouvelles",
@@ -746,7 +755,15 @@
         "colRating": "Note",
         "colState": "État",
         "colInterval": "Intervalle",
-        "days": "j"
+        "days": "j",
+        "state": {
+            "new": "Nouvelle",
+            "learning": "En apprentissage",
+            "review": "À réviser",
+            "relearning": "Ré-apprentissage"
+        },
+        "sourceSearch": "Recherche",
+        "sourceCollectionN": "Collection n° {id}"
     },
     "analysis": {
         "analysisDepth": "Profondeur d'analyse",
@@ -771,7 +788,13 @@
         "panelLabel": "Analyse de position",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W"
+        "playerWin": "P W",
+        "hintPlayerWin": "Joueur : chances de gagner",
+        "hintPlayerGammon": "Joueur : chances de gagner un gammon",
+        "hintPlayerBackgammon": "Joueur : chances de gagner un backgammon",
+        "hintOpponentWin": "Adversaire : chances de gagner",
+        "hintOpponentGammon": "Adversaire : chances de gagner un gammon",
+        "hintOpponentBackgammon": "Adversaire : chances de gagner un backgammon"
     },
     "rollout": {
         "title": "Rollout",
@@ -1069,7 +1092,6 @@
         "databaseUpdated": "La base de données a été mise à jour.",
         "failed": "Échec",
         "fileProgressTitle": "Progression de l'import des fichiers",
-        "finished": "Import terminé.",
         "imported": "Importées",
         "importingFileN": "Import du fichier {current} sur {total}...",
         "importingFiles": "Import des fichiers",
@@ -1082,7 +1104,7 @@
         "previewTitle": "Aperçu de l'import",
         "processedN": "Traités : {processed} sur {total} fichier(s).",
         "progressTitle": "Progression de l'import",
-        "skipped": "Ignorées",
+        "skipped": "Doublons ignorés",
         "successful": "Import réussi !",
         "willAdd": "À ajouter",
         "willMakeChanges": "L'opération d'import effectuera les modifications suivantes :",
@@ -1463,7 +1485,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Fermer le panneau Stats",
-        "tabDashboard": "Dashboard",
+        "tabDashboard": "Tableau de bord",
         "tabProgression": "Progression",
         "tabErrors": "Erreurs",
         "tabTraining": "Entraînement",
@@ -1481,19 +1503,19 @@
         "decisionTypeLabel": "Type de décision",
         "decisionLegend": "Décision",
         "decisionAll": "Tout",
-        "decisionChecker": "Coup",
-        "decisionCube": "Cube",
+        "decisionChecker": "Pions",
+        "decisionCube": "Videau",
         "lengthLabel": "Longueur",
         "matchLengthLabel": "Longueur de match",
         "filterLengthHint": "Cliquer pour filtrer sur cette longueur uniquement",
         "selectAllLengths": "Sélectionner toutes les longueurs",
         "all": "Tout",
-        "resetFilters": "↺ Reset",
+        "resetFilters": "↺ Réinitialiser",
         "resetFiltersHint": "Réinitialiser les filtres",
         "noDecisionsEmpty": "Aucune décision sur la période filtrée. Élargissez les filtres.",
-        "cardLabelAll": "PR Global",
-        "cardLabelChecker": "PR Coup",
-        "cardLabelCube": "PR Cube",
+        "cardLabelAll": "PR global",
+        "cardLabelChecker": "PR pions",
+        "cardLabelCube": "PR videau",
         "grade": {
             "worldClass": "Classe mondiale",
             "expert": "Expert",
@@ -1508,12 +1530,12 @@
         "rolling": "Glissant ({metric})",
         "topBlunders": "Top blunders",
         "decisionTypeChecker": "Checker",
-        "decisionTypeCube": "Cube",
+        "decisionTypeCube": "Videau",
         "clickToOpenPosition": "cliquer pour ouvrir la position",
         "openMatch": "Ouvrir le match",
         "tooltipDecisions": "Décisions : {n}",
         "tooltipBlunders": "Blunders  : {n} ({rate}%)",
-        "breakdownCubeAction": "Breakdown par action cube ({metric})",
+        "breakdownCubeAction": "Répartition par action de videau ({metric})",
         "cubeDirections": "Direction des erreurs de videau",
         "cubeAxisOffer": "Offrir",
         "cubeAxisAnswer": "Répondre",
@@ -1522,8 +1544,8 @@
         "cubeOfferPremature": "doubles prématurés",
         "cubeAnswerWrongPass": "passes à tort",
         "cubeAnswerWrongTake": "prises à tort",
-        "noCubeDecisions": "Aucune décision cube sur la période.",
-        "checkerVsCube": "Checker vs Cube ({metric})",
+        "noCubeDecisions": "Aucune décision de videau sur la période.",
+        "checkerVsCube": "Pions vs videau ({metric})",
         "errorMagnitudeHistogram": "Répartition des magnitudes d'erreur (nb positions)",
         "noErrors": "Aucune erreur dans cette période.",
         "openTournament": "Ouvrir le tournoi",
@@ -1542,7 +1564,7 @@
         "playersColPRCube": "PR videau",
         "playersColSnowie": "Snowie",
         "playersColBlunders": "Blunders",
-        "playersColLuck": "Chance",
+        "playersColLuck": "Chance (mp)",
         "playersEmpty": "Aucun joueur dans la période sélectionnée.",
         "playersRowHint": "Voir les statistiques de {name}",
         "playersLuckUnknown": "Chance inconnue : réimportez les matchs pour l'obtenir.",
@@ -1610,7 +1632,7 @@
         "recurringTheme_none": "sans thème",
         "recurringKind_checker": "Pion",
         "recurringKind_cube": "Videau",
-        "compareColumn": "Comp.",
+        "compareColumn": "Comparer",
         "compareToggle": "Comparer {name}",
         "compareTitle": "{a} et {b}, côte à côte",
         "compareClear": "Effacer",
@@ -1625,7 +1647,10 @@
         "trainingQuizPR": "PR du quiz",
         "trainingMatchPR": "PR des matchs",
         "trainingRetention": "Rétention Anki",
-        "trainingSessions": "{n} sessions de quiz Décision enregistrées."
+        "trainingSessions": "{n} sessions de quiz Décision enregistrées.",
+        "compareColumnHint": "Cochez deux joueurs pour comparer leurs chiffres",
+        "playersColPRHint": "PR : erreur moyenne par décision, en millipoints (mp) ; plus bas = meilleur",
+        "playersColLuckHint": "Chance : écart moyen dû aux dés par lancer, en mp ; positif = dés favorables"
     },
     "trash": {
         "title": "Corbeille",
@@ -1732,7 +1757,7 @@
         "cubePrompt": "Choisissez l'action de videau.",
         "exercise": {
             "scores": "Scores",
-            "pips": "Pions",
+            "pips": "Comptage des pips",
             "bearoff": "Bearoff",
             "evaluation": "Évaluation",
             "decision": "Décision"
@@ -1756,7 +1781,7 @@
         "faultHint": "Cliquez le nombre que vous avez raté.",
         "faceYou": "Vous",
         "faceOpponent": "L'adversaire",
-        "scoreCaption": "Score {a}/{b} away",
+        "scoreCaption": "Score {a}/{b}",
         "summary": "Bilan",
         "noSession": "Aucune session",
         "sessionsCount": "{n} sessions",
@@ -1800,7 +1825,8 @@
         },
         "truthExact": "Vérité : la base de bearoff à deux camps, exacte.",
         "truthEvaluated": "Vérité : gammonNet, {depth}.",
-        "epcShown": "EPC — {p1} : {a} · {p2} : {b}"
+        "epcShown": "EPC — {p1} : {a} · {p2} : {b}",
+        "scoresInstruction": "Pour chaque case, estimez le nombre de tête, puis cliquez Révéler. Ensuite, cliquez chaque nombre que vous aviez faux."
     },
     "explain": {
         "blots": "Vous perdez {cost} mMWC : le coup joué laisse {blots} blots là où {best} n'en laisse que {bestBlots}.",
@@ -2623,6 +2649,31 @@
         "needsAck": "Acceptez d'abord l'avertissement de confidentialité de ce fournisseur dans Paramètres › Assistant et MCP.",
         "error": "Erreur : {error}",
         "write": "Laisser l'assistant proposer des modifications (chacune confirmée)"
+    },
+    "emptyState": {
+        "import": "Importer… (Ctrl+I)",
+        "openDatabase": "Ouvrir une base…",
+        "clearFilter": "Effacer le filtre",
+        "backHome": "Retour à l'accueil"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Maj",
+        "alt": "Alt",
+        "left": "Gauche",
+        "right": "Droite",
+        "up": "Haut",
+        "down": "Bas",
+        "delete": "Suppr",
+        "pageUp": "Page préc.",
+        "pageDown": "Page suiv.",
+        "home": "Début",
+        "end": "Fin",
+        "enter": "Entrée",
+        "escape": "Échap",
+        "space": "Espace",
+        "backspace": "Retour arr.",
+        "tab": "Tab"
     },
     "lesson": {
         "title": "Leçon",

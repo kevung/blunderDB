@@ -1,5 +1,6 @@
 <script>
     import { onMount, untrack } from 'svelte';
+    import EmptyState from '../panels/EmptyState.svelte';
     import { get } from 'svelte/store';
     import { statsFilterStore, statsMetricStore, statsInvalidationKeyStore } from '../../stores/statsStore.js';
     import { databaseLoadedStore } from '../../stores/databaseStore.js';
@@ -226,7 +227,7 @@
 
 <div class="filter-bar" aria-label={$t('stats.title')}>
     {#if dbEmpty}
-        <span class="empty-hint">{$t('stats.importMatchesHint')}</span>
+        <EmptyState text={$t('stats.importMatchesHint')} />
     {:else}
         <!-- Player -->
         <label class="fb-label" for="fb-player">{$t('stats.playerLabel')}</label>
@@ -374,11 +375,6 @@
         flex-shrink: 0;
         min-height: 28px;
         background: var(--panel-bg, var(--color-surface-alt));
-    }
-
-    .empty-hint {
-        font-style: italic;
-        color: var(--color-text-muted);
     }
 
     .fb-label {

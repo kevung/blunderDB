@@ -474,7 +474,7 @@ async function buildQuestion(exercise, seedSource, seed) {
 
 /**
  * Amène la question au plateau : par son id si elle vient de la base (sinon la
- * position engendrée elle-même) ; Scores n'y touche pas.
+ * position engendrée elle-même) ; Scores montre son score sur un plateau vide.
  *
  * Par l'index de la liste, jamais `showImportedPosition`, qui bascule sur
  * l'onglet Analyse et cacherait l'onglet où l'on répond (ADR-0040 règle 1).
@@ -482,6 +482,12 @@ async function buildQuestion(exercise, seedSource, seed) {
  * @param {any} question
  */
 async function showQuestion(question) {
+    if (question?.kind === 'scores') {
+        // Scores asks about a score, not a position: the board shows that score on an empty
+        // table rather than whatever position was last on screen.
+        positionStore.set({ ...emptySearchBoardPosition(), score: [question.card.awayYou, question.card.awayOpponent] });
+        return;
+    }
     if (question?.positionId != null) {
         const index = await positionsStore.findIndex(question.positionId);
         if (index >= 0) {

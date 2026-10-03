@@ -13,7 +13,7 @@ export default {
     manual: `
 <h3>Introduction</h3>
 <p>blunderDB is software for creating backgammon position databases. Its main strength is to provide a single place to aggregate positions that a player has encountered (online, in tournaments) and to be able to re-study these positions by filtering them according to various arbitrarily combinable filters. blunderDB can also be used to create catalogs of reference positions.</p>
-<p>Positions are stored in a database represented by a <em>.db</em> file. The desktop application opens this file directly, never a network address: server mode (Headless mode (server)) is another mode of the same binary, and moving from one to the other means exporting or migrating the database, not pointing the application at a URL.</p>
+<p>Positions are stored in a database represented by a <em>.db</em> file. The desktop application opens this file directly, never a network address: server mode is another mode of the same binary, and moving from one to the other means exporting or migrating the database, not pointing the application at a URL.</p>
 <h3>Main Interactions</h3>
 <p>The main interactions possible with blunderDB are:</p>
 <ul>
@@ -220,6 +220,7 @@ export default {
 </div>
 <h3>Search Panel</h3>
 <p>The <strong>Search</strong> panel (<em>CTRL-F</em> or <em>TAB</em>) filters positions using freely combinable criteria: checker structure, cube decision type, error magnitude, dates, tags, etc. The <em>TAB</em> key simultaneously opens the search panel and the position editor, allowing a checker structure to be defined directly on the board.</p>
+<p>Filters are set in the <strong>Criteria</strong> sub-tab. When a search finds nothing, the panel says so ("No position matches") with a <strong>Clear filters</strong> button, rather than leaving it to the status bar.</p>
 <p>To search among the positions on screen, use the <code>ss</code> command followed by filters (e.g.: <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> searches the list on screen: the results of the previous search, the open collection or the positions of the match under review, whether the command is typed directly or from the search panel (<em>TAB</em>). The panel's <em>Search in current results</em> checkbox follows the same rule. In a collection and in a match, <code>s</code> is refused: it would search the whole library and replace the list on screen.</p>
 <p>The results of an <code>ss</code> search run from a collection or a match are left with <em>Esc</em>, in a single press as soon as neither a field nor the focused panel has something to close (a move selected in the analysis, for example): blunderDB returns to the whole collection, or to the match on the move studied, and to the position left. This way back follows <code>ss</code> only: <code>s</code>, run from the search panel opened on a collection or a match, searches the whole library, and <em>Esc</em> no longer returns to the list left.</p>
 <p>A search on a large database is shown before it is counted: the first page of results appears at once, and the status bar shows « Searching… » with the elapsed time until the total is known; it then replaces the provisional length of the list. Only one search runs at a time: starting another abandons the previous one. <em>Esc</em> interrupts the running search and stops its scan of the database; if the first page was already displayed, it stays, alone, and the status bar says so.</p>
@@ -267,6 +268,7 @@ export default {
 <p>Refer to list of commands for the list of available filters.</p>
 </div>
 <h3>Collections Panel</h3>
+<p>In the Collections, Tournaments, Anki and Transcription panels, the <strong>+ New…</strong> button in the header is the single creation gesture: it opens the input field, which <em>Esc</em> or <strong>Cancel</strong> closes in the Collections and Tournaments panels. In the match list, the ⌨ icon opens the match's transcription and the ✎ icon corrects its metadata.</p>
 <p>The <strong>Collections</strong> panel (<em>CTRL-B</em>) manages collections of positions. Collections can be created, renamed and deleted. Positions can be added to them or removed (<em>Del</em> key, confirmation asked). Double-click a collection to browse its positions with the <em>LEFT</em> and <em>RIGHT</em> keys. The <code>ss</code> command searches among the positions of the open collection; <em>Esc</em> then returns to the collection (see Search Panel). The order of the collections, and of the positions within a collection, can be changed by drag and drop. Press <em>CTRL-B</em> or run the <code>collection</code> command to show or hide the panel.</p>
 <p>A collection can be <strong>living</strong>: its content is no longer a hand-made list but the result of a <strong>search</strong>, re-evaluated every time it is opened. The ◇ button at the head of the collection makes it living with the last search run; ◈ says it already is, and the same button gives it back its list. Nothing is destroyed by making it living: the positions it held are still there when you go back.</p>
 <p>A living collection whose query carries a token this version no longer knows <strong>refuses to open</strong>, and says so, rather than returning the whole database. That is the one failure a saved filter must not have: widening in silence.</p>
@@ -290,6 +292,7 @@ export default {
 <h3>Matches Panel</h3>
 <p>The <strong>Matches</strong> panel (<em>CTRL-Tab</em>) lists imported matches. Double-click a match (or press <em>ENTER</em>) to navigate through its moves. The <code>m</code> command resumes navigation in the last visited match.</p>
 <p>The filter field, at the top of the panel (<em>/</em> to go there, <em>Esc</em> to clear it), keeps only the matches where a player, the event, the venue, the tournament or the date contains the typed text. Filtering and column sorting are done by the database: the list loads in pages as you scroll, and the "n / N matches" counter shows the share loaded. Correcting a player, a date or a tournament in the list updates only the edited row.</p>
+<p>When the list is empty, the panel offers <strong>Import… (Ctrl+I)</strong>; with no database open it offers <strong>Open a database…</strong> instead, together with <strong>Back to the welcome screen</strong>. When the text filter emptied the list, it offers <strong>Clear the filter</strong>. The empty Stats, Collections and Anki panels offer the same buttons.</p>
 <p>The user can:</p>
 <ul>
 <li>browse through the moves of a match using the <em>LEFT</em> and <em>RIGHT</em> keys,</li>
@@ -531,7 +534,7 @@ export default {
 <p>Three cards display the PR (or MWC) for:</p>
 <ul>
 <li><strong>PR Global</strong> — all decisions (checker + cube);</li>
-<li><strong>PR Checker</strong> — checker plays only;</li>
+<li><strong>Checker PR</strong> — checker decisions only;</li>
 <li><strong>PR Cube</strong> — cube decisions only.</li>
 </ul>
 <p>Clicking a card loads the positions in the corresponding subset into the analysis panel (drill-down).</p>
@@ -790,6 +793,7 @@ export default {
 <p><strong>A deck of score sheets.</strong> The third source, <em>Score sheets</em>, asks for nothing but a name: blunderDB fills the deck with the 36 unordered scores from 2 to 9 away, and the card of a score is the sheet the Scores exercise displays — take points and gammon values, both faces. That deck exists only if you create it: 36 cards due on the first day are a review debt, and it is contracted on purpose. The sync button regenerates it.</p>
 <p>The two places do not do the same work. The Scores exercise makes you retrieve those numbers <strong>against the clock</strong> and measures the speed; the deck makes them <strong>last over time</strong> and measures none of it. The two histories stay apart: the Training journal ignores Anki reviews, and Anki's statistics ignore Training sessions.</p>
 <p><strong>Reviewing:</strong> Select a deck then click <em>Study</em> (or double-click a deck) to start reviewing due cards. Each card shows the corresponding position on the board. Rate your recall with keys <em>1</em> (Again), <em>2</em> (Hard), <em>3</em> (Good), or <em>4</em> (Easy). Press <em>Esc</em> to stop and return to the deck list.</p>
+<p>Two counts carry distinct names: the <strong>Past due</strong> column of the list counts every card whose due date has passed, suspended or buried cards included; the figure on the <em>Study</em> button counts only the cards available now, and can therefore be smaller.</p>
 <p><strong>Cube decisions make two cards, chained.</strong> A cube decision is two questions — “double?”, then “take?” — and blunderDB has always stored them as two positions. A deck that selects only one half gets the other: the decision is completed, not enlarged. And when both are due, the second comes <strong>immediately</strong> after the first.</p>
 <p>Each keeps its own grade and its own schedule: these are not two stages of one card, they are two cards. Chaining advances no due date — it orders the cards already due, nothing more. Both being born together, they are due together the first time, and that is where it serves.</p>
 <p><strong>Showing the answer:</strong> The card asks a question — which move to play, or which cube action. Think, then press <em>SPACE</em> (or click the masked area) to reveal the answer: the recorded analysis of the position, as the Analysis tab presents it. It appears below the rating buttons, which stay in place and within reach. Clicking a move in the list shows it on the board.</p>
@@ -828,6 +832,7 @@ export default {
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> and <code>train decision</code> open the panel and start straight away; <code>train tp</code> and <code>train takepoint</code> are synonyms of <code>train scores</code>, <code>train epc</code> of <code>train bearoff</code>, <code>train quiz</code> of <code>train decision</code>.</p>
 <h4>The five exercises</h4>
 <p><strong>Scores</strong> draws one of the 36 unordered scores from 2 to 9 away and shows a <strong>score card</strong>: two columns — <em>Vous</em> (you) and <em>L'adversaire</em> (the opponent) — and seven rows — the take point at cube 2 then at cube 4, each for a long race and for the last roll, then the gammon value at cubes 1, 2 and 4.</p>
+<p>An instruction line recalls the gesture — work each number out in your head, then <em>Reveal</em>, then click the ones you missed — and the board shows the drawn score on an empty table.</p>
 <p>Each column carries only the cells the reference tables — those the <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> and <code>gv4</code> commands display — define for its face: three numbers at 2a-2a, fourteen at most, and a single column at a level score. A row neither face defines does not appear on the card — so there is no « n/a » cell to guess. Both faces are there because a cube decision at a score needs both: the corrected take point combines both players' gammon values, and it is the opponent's take point that says whether your double passes.</p>
 <p><strong>Pions</strong> (pips) asks for the pip count of <strong>both</strong> sides. The board's pip count is hidden while the question is open; « Révéler » shows it — <strong>even if you had hidden the pip count</strong> with <code>p</code>, since the answer would otherwise stay invisible and the exercise unverifiable. It is a mask and not a setting: your own choice is not changed, and it takes over again at the next question. The <em>Plateau</em> source asks one question about the position shown, and only one; the <em>Base</em> source draws a new position for every question and brings it onto the board.</p>
 <p><strong>Bearoff</strong> asks for the <strong>EPC of both sides</strong> — the effective pip count, the one that adds to the pip count the wastage of the chequers that come off with pips to spare. It is the domain where the engine is exact, and the one where the EPC really differs from the pip count.</p>
@@ -917,6 +922,7 @@ export default {
 <p>To make a database known, the <em>Show and tell</em> category of the <code>repository discussions &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ serves as a directory: it is a list kept by those who publish, not a service blunderDB renders. Announcing one there takes the link, the four fields above and the fingerprint.</p>
 `,
     shortcuts: `
+<p>The toolbar tooltips recall each button's key under the name it carries on the keyboard of the interface language: <em>Left</em>, <em>Del</em>, <em>PageUp</em>, <em>PageDown</em>, <em>Shift</em>. The tables below and the help window use the same names.</p>
 <h3>Database</h3>
 <table>
 <thead>
@@ -1050,7 +1056,7 @@ export default {
 </tr>
 <tr>
 <td>PageDown</td>
-<td>Goes forward one page (same step as PageUp; stops at the end of the list); in a match, next game.</td>
+<td>Goes forward one page (same step as <em>PageUp</em>; stops at the end of the list); in a match, next game.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1187,7 +1193,7 @@ export default {
 <td>Take back the last decision of a directed tournament (outside an input field, where it undoes the keystroke).</td>
 </tr>
 <tr>
-<td>PAGE UP / PAGE DOWN, HOME / END</td>
+<td>PAGEUP / PAGEDOWN, HOME / END</td>
 <td>Below the page of a directed tournament: scroll the page, without stepping through the board it hides.</td>
 </tr>
 <tr>
@@ -1458,7 +1464,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Click, Double-click</td>
+<td>Double-click</td>
 <td>Select a tournament (show its detail).</td>
 </tr>
 <tr>
@@ -1801,6 +1807,10 @@ export default {
 <tr>
 <td>PageDown</td>
 <td>Bottom of the content.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Search the help: Enter goes to the next occurrence, SHIFT-Enter to the previous one.</td>
 </tr>
 <tr>
 <td>?, CTRL-F, Esc</td>

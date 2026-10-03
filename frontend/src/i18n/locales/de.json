@@ -206,7 +206,7 @@
         "togglePipcount": "Pipcount ein-/ausblenden",
         "updatePosition": "Position aktualisieren",
         "tour": "Geführte Touren",
-        "importDatabaseTip": "Eine andere Datenbank in diese zusammenführen: gemeinsame Stellungen werden nicht dupliziert, ihre Analysen und Kommentare werden vereint (Strg+Umschalt+I)",
+        "importDatabaseTip": "Eine andere Datenbank in diese zusammenführen: gemeinsame Stellungen werden nicht dupliziert, ihre Analysen und Kommentare werden vereint",
         "training": "Training"
     },
     "tour": {
@@ -368,7 +368,9 @@
         "tabShortcuts": "Tastenkürzel",
         "tabCommands": "Befehlszeile",
         "tabAbout": "Über",
-        "loadFailed": "Die Hilfe konnte nicht geladen werden."
+        "loadFailed": "Die Hilfe konnte nicht geladen werden.",
+        "searchPlaceholder": "In der Hilfe suchen (/)",
+        "searchNone": "kein Treffer"
     },
     "commands": {
         "collectionEmpty": "Sammlung ist leer",
@@ -494,7 +496,11 @@
             "blots": "Blots",
             "textPattern": "Text / Muster",
             "other": "Sonstiges"
-        }
+        },
+        "noResultsTitle": "Keine Stellung passt",
+        "noResultsHint": "Kriterien erweitern (Filter entfernen, Grenze lockern) oder zurücksetzen.",
+        "clearFilters": "Filter leeren",
+        "criteriaTab": "Kriterien"
     },
     "match": {
         "errorExportingMat": "Fehler beim Exportieren des Matches",
@@ -622,7 +628,8 @@
         "livingOff": "Lebendige Sammlung ({query}). Klicken, um ihre handgemachte Liste zurückzugeben.",
         "livingNeedsSearch": "Führen Sie zuerst eine Suche aus: Sie ist es, was die Sammlung behält.",
         "livingSet": "Lebendige Sammlung: {query}",
-        "livingCleared": "Die Sammlung hat ihre handgemachte Liste zurück."
+        "livingCleared": "Die Sammlung hat ihre handgemachte Liste zurück.",
+        "newButton": "Neue Sammlung"
     },
     "tournament": {
         "addMatchPlaceholder": "Match hinzufügen…",
@@ -655,7 +662,8 @@
         "errorSwapping": "Fehler beim Tauschen der Spieler",
         "noMovesFound": "Keine Züge für dieses Match gefunden",
         "swappedPlayers": "Spieler getauscht",
-        "confirmDelete": "Turnier „{name}“ löschen?"
+        "confirmDelete": "Turnier „{name}“ löschen?",
+        "newButton": "Neues Turnier"
     },
     "anki": {
         "limitSession": "Sitzung begrenzen",
@@ -679,7 +687,8 @@
         "colActions": "Aktionen",
         "colCards": "Karten",
         "colDescription": "Beschreibung",
-        "colDue": "Fällig",
+        "colDue": "Überfällig",
+        "colDueTooltip": "Karten, deren Fälligkeit überschritten ist, auch ausgesetzte oder zurückgestellte. Die Schaltfläche Lernen zählt nur die verfügbaren Karten.",
         "colName": "Name",
         "colNew": "Neu",
         "colSource": "Quelle",
@@ -706,7 +715,7 @@
         "sourceCurrentSearch": "Aktuelle Suche",
         "sourceScores": "Standkarten",
         "scoresCount": "{count} Stände",
-        "scoreQuestion": "Stand {a}/{b} away",
+        "scoreQuestion": "Stand {a}/{b}",
         "badScoreKey": "Unlesbarer Stand auf dieser Karte",
         "statLearning": "Lernen",
         "statNew": "Neu",
@@ -746,7 +755,15 @@
         "colRating": "Note",
         "colState": "Zustand",
         "colInterval": "Intervall",
-        "days": "T"
+        "days": "T",
+        "state": {
+            "new": "Neu",
+            "learning": "Lernen",
+            "review": "Wiederholung",
+            "relearning": "Wiederlernen"
+        },
+        "sourceSearch": "Suche",
+        "sourceCollectionN": "Sammlung Nr. {id}"
     },
     "analysis": {
         "analysisDepth": "Analysetiefe",
@@ -771,7 +788,13 @@
         "panelLabel": "Positionsanalyse",
         "playerBackgammon": "S B",
         "playerGammon": "S G",
-        "playerWin": "S W"
+        "playerWin": "S W",
+        "hintPlayerWin": "Spieler: Gewinnchance",
+        "hintPlayerGammon": "Spieler: Gammon-Chance",
+        "hintPlayerBackgammon": "Spieler: Backgammon-Chance",
+        "hintOpponentWin": "Gegner: Gewinnchance",
+        "hintOpponentGammon": "Gegner: Gammon-Chance",
+        "hintOpponentBackgammon": "Gegner: Backgammon-Chance"
     },
     "rollout": {
         "title": "Rollout",
@@ -1069,7 +1092,6 @@
         "databaseUpdated": "Die Datenbank wurde aktualisiert.",
         "failed": "Fehlgeschlagen",
         "fileProgressTitle": "Fortschritt des Dateiimports",
-        "finished": "Import abgeschlossen.",
         "imported": "Importiert",
         "importingFileN": "Datei {current} von {total} wird importiert...",
         "importingFiles": "Dateien werden importiert",
@@ -1082,7 +1104,7 @@
         "previewTitle": "Importvorschau",
         "processedN": "{processed} von {total} Datei(en) verarbeitet.",
         "progressTitle": "Importfortschritt",
-        "skipped": "Übersprungen",
+        "skipped": "Duplikate übersprungen",
         "successful": "Import erfolgreich!",
         "willAdd": "Wird hinzugefügt",
         "willMakeChanges": "Der Importvorgang nimmt folgende Änderungen vor:",
@@ -1463,7 +1485,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Stats-Panel schließen",
-        "tabDashboard": "Dashboard",
+        "tabDashboard": "Übersicht",
         "tabProgression": "Verlauf",
         "tabErrors": "Fehler",
         "tabTraining": "Training",
@@ -1488,7 +1510,7 @@
         "filterLengthHint": "Klicken, um nur diese Länge zu filtern",
         "selectAllLengths": "Alle Längen auswählen",
         "all": "Alle",
-        "resetFilters": "↺ Reset",
+        "resetFilters": "↺ Zurücksetzen",
         "resetFiltersHint": "Filter zurücksetzen",
         "noDecisionsEmpty": "Keine Entscheidungen im gefilterten Zeitraum. Filter erweitern.",
         "cardLabelAll": "PR Global",
@@ -1625,7 +1647,10 @@
         "trainingQuizPR": "Quiz-PR",
         "trainingMatchPR": "Match-PR",
         "trainingRetention": "Anki-Retention",
-        "trainingSessions": "{n} Entscheidungs-Quiz-Sitzungen aufgezeichnet."
+        "trainingSessions": "{n} Entscheidungs-Quiz-Sitzungen aufgezeichnet.",
+        "compareColumnHint": "Zwei Spieler ankreuzen, um ihre Werte zu vergleichen",
+        "playersColPRHint": "PR: mittlerer Fehler je Entscheidung in Millipunkten (mp); niedriger ist besser",
+        "playersColLuckHint": "Glück: mittlerer Würfeleinfluss je Wurf in mp; positiv = günstige Würfel"
     },
     "trash": {
         "title": "Papierkorb",
@@ -1756,7 +1781,7 @@
         "faultHint": "Klicken Sie die Zahl an, die Sie falsch hatten.",
         "faceYou": "Sie",
         "faceOpponent": "Der Gegner",
-        "scoreCaption": "Stand {a}/{b} away",
+        "scoreCaption": "Stand {a}/{b}",
         "summary": "Bilanz",
         "noSession": "Keine Sitzung",
         "sessionsCount": "{n} Sitzungen",
@@ -1800,7 +1825,8 @@
         },
         "truthExact": "Wahrheit: die zweiseitige Bearoff-Datenbank, exakt.",
         "truthEvaluated": "Wahrheit: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "Schätzen Sie jede Zahl im Kopf und klicken Sie dann auf Aufdecken. Klicken Sie danach jede Zahl an, die Sie falsch hatten."
     },
     "explain": {
         "blots": "Sie verlieren {cost} mMWC: Der gespielte Zug lässt {blots} Blots stehen, {best} nur {bestBlots}.",
@@ -2623,6 +2649,31 @@
         "needsAck": "Akzeptieren Sie zuerst den Datenschutzhinweis dieses Anbieters unter Einstellungen › Assistent und MCP.",
         "error": "Fehler: {error}",
         "write": "Den Assistenten Änderungen vorschlagen lassen (jede bestätigt)"
+    },
+    "emptyState": {
+        "import": "Importieren… (Strg+I)",
+        "openDatabase": "Datenbank öffnen…",
+        "clearFilter": "Filter löschen",
+        "backHome": "Zurück zum Startbildschirm"
+    },
+    "keyNames": {
+        "ctrl": "Strg",
+        "shift": "Umschalt",
+        "alt": "Alt",
+        "left": "Links",
+        "right": "Rechts",
+        "up": "Hoch",
+        "down": "Runter",
+        "delete": "Entf",
+        "pageUp": "Bild auf",
+        "pageDown": "Bild ab",
+        "home": "Pos1",
+        "end": "Ende",
+        "enter": "Eingabe",
+        "escape": "Esc",
+        "space": "Leertaste",
+        "backspace": "Rücktaste",
+        "tab": "Tab"
     },
     "lesson": {
         "title": "Lektion",

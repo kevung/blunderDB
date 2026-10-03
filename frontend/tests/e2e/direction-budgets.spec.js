@@ -333,6 +333,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
 
         const counted = await countGestures(page, async (g) => {
             // Créer le tournoi. Le nom se tape (hors budget) ; Entrée le crée.
+            await page.locator('#tournamentPanel').getByTestId('panel-new').click();
             const add = page.locator('#tournamentPanel .add-input.name');
             await g.click(add);
             await add.fill('Open de Lyon');
@@ -371,6 +372,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         await openTournaments(page, { directed: false });
 
         const counted = await countGestures(page, async (g) => {
+            await page.locator('#tournamentPanel').getByTestId('panel-new').click();
             const add = page.locator('#tournamentPanel .add-input.name');
             await g.click(add);
             await add.fill('Open de Lyon, avril');

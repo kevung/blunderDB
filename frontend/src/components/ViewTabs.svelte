@@ -108,7 +108,9 @@
             {/each}
         </div>
     {/if}
-    <button class="add-btn" onclick={addView} title={$t('viewTabs.newView')}>+</button>
+    <button class="add-btn" onclick={addView} title={$t('viewTabs.newView')}
+        >+{#if $views.length <= 1}<span class="add-label">{$t('viewTabs.newView')}</span>{/if}</button
+    >
 </div>
 
 <style>
@@ -126,8 +128,12 @@
     }
 
     .view-tabs.collapsed {
-        height: 14px;
+        height: 20px;
         padding-left: 0;
+    }
+
+    .add-label {
+        margin-left: 4px;
     }
 
     .view-tabs.collapsed .add-btn {

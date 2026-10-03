@@ -206,7 +206,7 @@
         "togglePipcount": "Переключить подсчёт pip",
         "updatePosition": "Обновить позицию",
         "tour": "Обучающие туры",
-        "importDatabaseTip": "Объединить другую базу с этой: общие позиции не дублируются, их анализы и комментарии объединяются (Ctrl+Shift+I)",
+        "importDatabaseTip": "Объединить другую базу с этой: общие позиции не дублируются, их анализы и комментарии объединяются",
         "training": "Тренировка"
     },
     "tour": {
@@ -368,7 +368,9 @@
         "tabShortcuts": "Горячие клавиши",
         "tabCommands": "Командная строка",
         "tabAbout": "О программе",
-        "loadFailed": "Не удалось загрузить справку."
+        "loadFailed": "Не удалось загрузить справку.",
+        "searchPlaceholder": "Поиск в справке (/)",
+        "searchNone": "ничего не найдено"
     },
     "commands": {
         "collectionEmpty": "Коллекция пуста",
@@ -494,7 +496,11 @@
             "blots": "Блоты",
             "textPattern": "Текст / Шаблон",
             "other": "Прочее"
-        }
+        },
+        "noResultsTitle": "Ни одна позиция не подходит",
+        "noResultsHint": "Расширьте условия (уберите фильтр, ослабьте границу) или очистите их.",
+        "clearFilters": "Очистить фильтры",
+        "criteriaTab": "Критерии"
     },
     "match": {
         "errorExportingMat": "Ошибка при экспорте матча",
@@ -622,7 +628,8 @@
         "livingOff": "Живая подборка ({query}). Нажмите, чтобы вернуть ей список, собранный вручную.",
         "livingNeedsSearch": "Сначала выполните поиск: именно его сохранит подборка.",
         "livingSet": "Живая подборка: {query}",
-        "livingCleared": "Подборке возвращён список, собранный вручную."
+        "livingCleared": "Подборке возвращён список, собранный вручную.",
+        "newButton": "Новая коллекция"
     },
     "tournament": {
         "addMatchPlaceholder": "Добавить матч…",
@@ -655,7 +662,8 @@
         "errorSwapping": "Ошибка смены игроков",
         "noMovesFound": "Для этого матча не найдено ходов",
         "swappedPlayers": "Игроки поменялись местами",
-        "confirmDelete": "Удалить турнир «{name}»?"
+        "confirmDelete": "Удалить турнир «{name}»?",
+        "newButton": "Новый турнир"
     },
     "anki": {
         "limitSession": "Ограничить сессию",
@@ -679,7 +687,8 @@
         "colActions": "Действия",
         "colCards": "Карточки",
         "colDescription": "Описание",
-        "colDue": "К повторению",
+        "colDue": "Просроченные",
+        "colDueTooltip": "Карточки, срок которых прошёл, включая приостановленные и отложенные. Кнопка «Учить» считает только доступные карточки.",
         "colName": "Имя",
         "colNew": "Новые",
         "colSource": "Источник",
@@ -706,7 +715,7 @@
         "sourceCurrentSearch": "Текущий поиск",
         "sourceScores": "Карточки счёта",
         "scoresCount": "{count} счётов",
-        "scoreQuestion": "Счёт {a}/{b} away",
+        "scoreQuestion": "Счёт {a}/{b}",
         "badScoreKey": "Не удалось прочитать счёт этой карточки",
         "statLearning": "Изучение",
         "statNew": "Новые",
@@ -746,7 +755,15 @@
         "colRating": "Оценка",
         "colState": "Состояние",
         "colInterval": "Интервал",
-        "days": "дн"
+        "days": "дн",
+        "state": {
+            "new": "Новая",
+            "learning": "Изучается",
+            "review": "Повторение",
+            "relearning": "Переучивание"
+        },
+        "sourceSearch": "Поиск",
+        "sourceCollectionN": "Коллекция № {id}"
     },
     "analysis": {
         "analysisDepth": "Глубина анализа",
@@ -771,7 +788,13 @@
         "panelLabel": "Анализ позиции",
         "playerBackgammon": "И B",
         "playerGammon": "И G",
-        "playerWin": "И W"
+        "playerWin": "И W",
+        "hintPlayerWin": "Игрок: шанс на победу",
+        "hintPlayerGammon": "Игрок: шанс выиграть гаммон",
+        "hintPlayerBackgammon": "Игрок: шанс выиграть бэкгаммон",
+        "hintOpponentWin": "Соперник: шанс на победу",
+        "hintOpponentGammon": "Соперник: шанс выиграть гаммон",
+        "hintOpponentBackgammon": "Соперник: шанс выиграть бэкгаммон"
     },
     "rollout": {
         "title": "Роллаут",
@@ -1069,7 +1092,6 @@
         "databaseUpdated": "База данных обновлена.",
         "failed": "Не удалось",
         "fileProgressTitle": "Ход импорта файлов",
-        "finished": "Импорт завершён.",
         "imported": "Импортировано",
         "importingFileN": "Импорт файла {current} из {total}...",
         "importingFiles": "Импорт файлов",
@@ -1082,7 +1104,7 @@
         "previewTitle": "Предпросмотр импорта",
         "processedN": "Обработано {processed} из {total} файл(ов).",
         "progressTitle": "Ход импорта",
-        "skipped": "Пропущено",
+        "skipped": "Дубликаты пропущены",
         "successful": "Импорт выполнен успешно!",
         "willAdd": "Будет добавлено",
         "willMakeChanges": "Операция импорта внесёт следующие изменения:",
@@ -1463,7 +1485,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Закрыть панель статистики",
-        "tabDashboard": "Панель",
+        "tabDashboard": "Сводка",
         "tabProgression": "Прогресс",
         "tabErrors": "Ошибки",
         "tabTraining": "Тренировка",
@@ -1488,7 +1510,7 @@
         "filterLengthHint": "Нажмите для фильтрации только этой длины",
         "selectAllLengths": "Выбрать все длины",
         "all": "Все",
-        "resetFilters": "↺ Сброс",
+        "resetFilters": "↺ Сбросить",
         "resetFiltersHint": "Сбросить фильтры",
         "noDecisionsEmpty": "Нет решений в отфильтрованном периоде. Расширьте фильтры.",
         "cardLabelAll": "PR Общий",
@@ -1625,7 +1647,10 @@
         "trainingQuizPR": "PR викторины",
         "trainingMatchPR": "PR матчей",
         "trainingRetention": "Удержание Anki",
-        "trainingSessions": "Записано сессий викторины «Решение»: {n}."
+        "trainingSessions": "Записано сессий викторины «Решение»: {n}.",
+        "compareColumnHint": "Отметьте двух игроков для сравнения",
+        "playersColPRHint": "PR: средняя ошибка на решение, в миллипунктах (mp); чем ниже, тем лучше",
+        "playersColLuckHint": "Удача: среднее влияние кубиков за бросок, в mp; плюс = удачные кубики"
     },
     "trash": {
         "title": "Корзина",
@@ -1756,7 +1781,7 @@
         "faultHint": "Щёлкните число, в котором ошиблись.",
         "faceYou": "Вы",
         "faceOpponent": "Соперник",
-        "scoreCaption": "Счёт {a}/{b} away",
+        "scoreCaption": "Счёт {a}/{b}",
         "summary": "Итог",
         "noSession": "Нет сессий",
         "sessionsCount": "{n} сессий",
@@ -1800,7 +1825,8 @@
         },
         "truthExact": "Истина: двусторонняя база bearoff, точная.",
         "truthEvaluated": "Истина: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "Оцените число в каждой клетке в уме и нажмите «Показать». Затем щёлкните каждое число, в котором ошиблись."
     },
     "explain": {
         "blots": "Вы теряете {cost} mMWC: сыгранный ход оставляет {blots} блотов там, где {best} оставляет только {bestBlots}.",
@@ -2623,6 +2649,31 @@
         "needsAck": "Сначала примите предупреждение о конфиденциальности этого поставщика в Настройки › Ассистент и MCP.",
         "error": "Ошибка: {error}",
         "write": "Разрешить ассистенту предлагать изменения (каждое с подтверждением)"
+    },
+    "emptyState": {
+        "import": "Импорт… (Ctrl+I)",
+        "openDatabase": "Открыть базу данных…",
+        "clearFilter": "Сбросить фильтр",
+        "backHome": "Вернуться на стартовый экран"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Shift",
+        "alt": "Alt",
+        "left": "Влево",
+        "right": "Вправо",
+        "up": "Вверх",
+        "down": "Вниз",
+        "delete": "Del",
+        "pageUp": "PageUp",
+        "pageDown": "PageDown",
+        "home": "Home",
+        "end": "End",
+        "enter": "Enter",
+        "escape": "Esc",
+        "space": "Пробел",
+        "backspace": "Backspace",
+        "tab": "Tab"
     },
     "lesson": {
         "title": "Урок",

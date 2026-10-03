@@ -1,0 +1,16 @@
+[
+  {"label": "Double", "canonical": "double", "parts": ["double"]},
+  {"label": "Redouble", "canonical": "double", "parts": ["double"]},
+  {"label": "Double/Take", "canonical": "double", "parts": ["double", "take"]},
+  {"label": "Double/Pass", "canonical": "double", "parts": ["double", "pass"]},
+  {"label": "Double, Take", "canonical": "double", "parts": ["double", "take"]},
+  {"label": "Double, Pass", "canonical": "double", "parts": ["double", "pass"]},
+  {"label": "No Double", "canonical": "no double", "parts": ["nodouble"]},
+  {"label": "No Double, Take", "canonical": "no double", "parts": ["nodouble"]},
+  {"label": "No Redouble", "canonical": "no double", "parts": ["nodouble"]},
+  {"label": "Too good to double, pass", "canonical": "no double", "parts": ["nodouble"]},
+  {"label": "Take", "canonical": "take", "parts": ["double", "take"]},
+  {"label": "Pass", "canonical": "pass", "parts": ["double", "pass"]},
+  {"label": "Drop", "canonical": "pass", "parts": ["double", "pass"]},
+  {"label": "", "canonical": "", "parts": [""]}
+]

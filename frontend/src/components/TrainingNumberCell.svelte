@@ -37,6 +37,7 @@
         justify-content: flex-end;
         gap: 0.15em;
         min-width: 3.4em;
+        min-height: 1.7em;
         padding: 0.1em 0.35em;
         border: 1px solid var(--color-border);
         border-radius: 3px;

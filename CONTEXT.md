@@ -280,6 +280,13 @@ ranking: the gap between the Baseline and any play holds the value of the roll �
 position (ADR-0010) — not the merit of the play, which is why it carries no error figure.
 _Avoid_: reference row, row zero, first line
 
+**Decision type (pions / videau)**:
+Whether a Decision is about checkers or about the cube. The French interface says *pions* and
+*videau* wherever it names the type (filters, statistics, training, reports), "PR pions" and
+"PR videau" for the matching Performance Rating, and keeps *coup* for one play. An error is
+counted in mp (millipoints of equity, mMWC at a match score), and any abbreviation on screen
+carries a tooltip that spells it out.
+
 **Decision**:
 The answer to the question the board is asking — the ranked checker plays when dice are on the
 board, the cube actions and their verdict when there are none. A Decision is read **per

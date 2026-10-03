@@ -67,7 +67,7 @@ describe('PanelTable', () => {
 
     test('shows the empty state under an empty table', () => {
         const { container } = mount({ rows: [], emptyText: 'Nothing here' });
-        expect(container.querySelector('.empty-state').textContent).toBe('Nothing here');
+        expect(container.querySelector('.empty-state').textContent.trim()).toBe('Nothing here');
     });
 
     test('clicking a sortable header cycles the sort: asc, desc, then (tristate) cleared', async () => {

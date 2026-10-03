@@ -13,7 +13,7 @@ export default {
     manual: `
 <h3>Johdanto</h3>
 <p>blunderDB on ohjelmisto backgammon-asemien tietokantojen luomiseen. Sen tärkein vahvuus on tarjota yksi paikka koota asemat, joita pelaaja on kohdannut (verkossa, turnauksissa), ja mahdollisuus tutkia näitä asemia uudelleen suodattamalla niitä erilaisilla mielivaltaisesti yhdisteltävillä suodattimilla. blunderDB:tä voi käyttää myös viiteasemien luettelojen luomiseen.</p>
-<p>Asemat tallennetaan tietokantaan, jota edustaa <em>.db</em>-tiedosto. Työpöytäsovellus avaa tämän tiedoston suoraan, ei koskaan verkko-osoitetta: palvelintila (Headless-tila (palvelin)) on saman binäärin toinen tila, ja toisesta toiseen siirrytään viemällä tai migroimalla tietokanta, ei osoittamalla sovellusta URL-osoitteeseen.</p>
+<p>Asemat tallennetaan tietokantaan, jota edustaa <em>.db</em>-tiedosto. Työpöytäsovellus avaa tämän tiedoston suoraan, ei koskaan verkko-osoitetta: palvelintila on saman binäärin toinen tila, ja toisesta toiseen siirrytään viemällä tai migroimalla tietokanta, ei osoittamalla sovellusta URL-osoitteeseen.</p>
 <h3>Päätoiminnot</h3>
 <p>blunderDB:n keskeiset mahdolliset toiminnot ovat:</p>
 <ul>
@@ -220,6 +220,7 @@ export default {
 </div>
 <h3>Hakupaneeli</h3>
 <p><strong>Hakupaneeli</strong> (<em>CTRL-F</em> tai <em>TAB</em>) suodattaa asemia vapaasti yhdisteltävien kriteerien mukaan: pelinappularakenne, kuutiopäätöksen tyyppi, virheen suuruus, päivämäärät, tunnisteet jne. <em>TAB</em>-näppäin avaa samanaikaisesti hakupaneelin ja asemaeditorin, jolloin haettava pelinappularakenne voidaan määrittää suoraan laudalla.</p>
+<p>Suodattimet asetetaan <strong>Ehdot</strong>-alivälilehdellä. Kun haku ei löydä mitään, paneeli kertoo sen (”Mikään asema ei täsmää”) ja tarjoaa <strong>Tyhjennä suodattimet</strong> -painikkeen, eikä vain tilarivi.</p>
 <p>Hae näytetyistä asemista komennolla <code>ss</code>, jota seuraavat suodattimet (esim. <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> hakee näytöllä olevasta luettelosta: edellisen haun tuloksista, avoimesta kokoelmasta tai läpikäytävän ottelun asemista, kirjoitettiinpa komento suoraan tai hakupaneelista (<em>TAB</em>). Paneelin valintaruutu <em>Hae nykyisistä tuloksista</em> noudattaa samaa sääntöä. Kokoelmassa ja ottelussa <code>s</code> hylätään: se hakisi koko kirjastosta ja korvaisi näytetyn luettelon.</p>
 <p>Kokoelmasta tai ottelusta käynnistetyn <code>ss</code>-haun tuloksista poistutaan <em>Esc</em>-näppäimellä yhdellä painalluksella heti, kun kentällä tai kohdistetulla paneelilla ei ole mitään suljettavaa (esimerkiksi analyysissä valittu siirto): blunderDB palaa koko kokoelmaan tai ottelun tarkasteltuun siirtoon ja jätettyyn asemaan. Tämä paluu seuraa vain <code>ss</code>-komentoa: kokoelman tai ottelun päälle avatusta hakupaneelista käynnistetty <code>s</code> hakee koko kirjastosta, eikä <em>Esc</em> enää palaa jätettyyn luetteloon.</p>
 <p>Suuren tietokannan haku näytetään ennen kuin se on laskettu: ensimmäinen tulossivu tulee heti näkyviin, ja tilarivi näyttää « Haetaan… » ja kuluneen ajan, kunnes kokonaismäärä tiedetään; se korvaa silloin luettelon alustavan pituuden. Kerrallaan on käynnissä vain yksi haku: uuden haun aloittaminen hylkää edellisen. <em>Esc</em> keskeyttää käynnissä olevan haun ja pysäyttää sen tietokannan läpikäynnin; jos ensimmäinen sivu oli jo näkyvissä, se jää yksin näkyviin, ja tilarivi kertoo siitä.</p>
@@ -267,6 +268,7 @@ export default {
 <p>Katso saatavilla olevien suodattimien luettelo kohdasta komentoluettelo.</p>
 </div>
 <h3>Kokoelmapaneeli</h3>
+<p>Kokoelmat-, Turnaukset-, Anki- ja Litterointi-paneeleissa otsikon <strong>+ Uusi…</strong> -painike on ainoa luontitapa: se avaa syöttökentän, jonka <em>Esc</em> tai <strong>Peruuta</strong> sulkee Kokoelmat- ja Turnaukset-paneeleissa. Otteluluettelossa ⌨-kuvake avaa ottelun litteroinnin ja ✎-kuvake korjaa sen metatiedot.</p>
 <p><strong>Kokoelmat</strong>-paneeli (<em>CTRL-B</em>) hallinnoi asemakokoelmia. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Niihin voi lisätä asemia tai poistaa niitä (<em>Del</em>-näppäin, vahvistus pyydetään). Kaksoisnapsauta kokoelmaa selataksesi sen asemia <em>VASEN</em>- ja <em>OIKEA</em>-näppäimillä. Komento <code>ss</code> hakee avoimen kokoelman asemista; <em>Esc</em> palaa sen jälkeen kokoelmaan (katso Hakupaneeli). Kokoelmien ja kokoelman sisäisten asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Paina <em>CTRL-B</em> tai suorita komento <code>collection</code> näyttääksesi tai piilottaaksesi paneelin.</p>
 <p>Kokoelma voi olla <strong>elävä</strong>: sen sisältö ei ole enää käsin tehty lista vaan <strong>haun</strong> tulos, joka lasketaan uudelleen joka avauksella. Kokoelman otsikon ◇-painike tekee siitä elävän viimeisimmällä haulla; ◈ kertoo sen jo olevan, ja sama painike palauttaa listan. Mitään ei tuhota: sen sisältämät asemat ovat yhä tallella, kun palaat.</p>
 <p>Elävä kokoelma, jonka kysely sisältää tunnuksen jota tämä versio ei enää tunne, <strong>kieltäytyy avautumasta</strong> ja sanoo sen sen sijaan että palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla suodattimella ei saa olla: laajeta hiljaisuudessa.</p>
@@ -290,6 +292,7 @@ export default {
 <h3>Ottelupaneeli</h3>
 <p><strong>Ottelupaneeli</strong> (<em>CTRL-Tab</em>) luettelee tuodut ottelut. Kaksoisnapsauta ottelua (tai paina <em>ENTER</em>) navigoidaksesi sen siirroissa. Komento <code>m</code> jatkaa navigointia viimeksi katsotussa ottelussa.</p>
 <p>Paneelin yläreunan suodatuskenttä (<em>/</em> siirtyy siihen, <em>Esc</em> tyhjentää sen) säilyttää vain ottelut, joissa pelaaja, tapahtuma, paikka, turnaus tai päivämäärä sisältää kirjoitetun tekstin. Suodatuksen ja sarakkeiden lajittelun tekee tietokanta: luettelo latautuu sivuittain vierittäessä, ja laskuri ”n / N ottelua” näyttää ladatun osuuden. Pelaajan, päivämäärän tai turnauksen korjaaminen luettelossa päivittää vain muokatun rivin.</p>
+<p>Kun luettelo on tyhjä, paneeli tarjoaa <strong>Tuo… (Ctrl+I)</strong>; ilman avattua tietokantaa se tarjoaa sen sijaan <strong>Avaa tietokanta…</strong> sekä <strong>Takaisin aloitusnäyttöön</strong>. Kun tekstisuodatin tyhjensi luettelon, se tarjoaa <strong>Tyhjennä suodatin</strong>. Tyhjät Stats-, Kokoelmat- ja Anki-paneelit tarjoavat samat painikkeet.</p>
 <p>Käyttäjä voi:</p>
 <ul>
 <li>selata ottelun siirtoja näppäimillä <em>VASEN</em> ja <em>OIKEA</em>,</li>
@@ -525,13 +528,13 @@ export default {
 <p>Paneelin otsikon <strong>HTML-raportti</strong>-painike tuottaa <strong>itsenäisen</strong> asiakirjan: yksi tiedosto, ei ulkoista kuvaa, ei etätyylitiedostoa, ei skriptiä. Kaaviot ovat upotettua SVG:tä, piirretty samalla piirtimellä kuin lauta näytöllä, sinun paletillasi. Se aukeaa missä tahansa selaimessa, kulkee sähköpostitse ja <strong>tulostuu PDF:ksi itse selaimesta</strong> — mikä säästää PDF-generaattorin mukaan ottamiselta sellaisen tuottamiseen, joka kaikilla jo on.</p>
 <p>Se sisältää nykyisen alueen tunnusluvut (asemat, ottelut, lasketut päätökset, kokonais-, siirto- ja kuutio-PR), sitten <strong>kymmenen kalleinta päätöstä</strong>, kukin kaavionsa, kustannuksensa, sen ottelun josta se tulee, ja parhaan siirron kun analyysi sen antaa.</p>
 <p>Raportti kantaa Tilastot-paneelin <strong>nykyistä suodatinta</strong>. Raportti joka ei kerro aluettaan on raportti jonka luvut eivät merkitse mitään: aseta suodatin — turnaus, päivämääräväli, pelaaja — ennen kuin tuotat sen.</p>
-<h4>Dashboard-välilehti</h4>
-<p><strong>Dashboard</strong>-välilehti antaa yhteenvetonäkymän keskeisistä tunnusluvuista.</p>
+<h4>Yleiskatsaus-välilehti</h4>
+<p><strong>Yleiskatsaus</strong>-välilehti antaa yhteenvetonäkymän keskeisistä tunnusluvuista.</p>
 <h5>Tasokortit</h5>
 <p>Kolme korttia näyttää PR:n (tai MWC:n) seuraaville:</p>
 <ul>
 <li><strong>PR Yhteensä</strong> — kaikki päätökset (nappulasiirrot + kuutio);</li>
-<li><strong>PR Nappula</strong> — vain pelatut siirrot;</li>
+<li><strong>Pelinappula-PR</strong> — vain nappulapäätökset;</li>
 <li><strong>PR Kuutio</strong> — vain kuutiopäätökset.</li>
 </ul>
 <p>Kortin napsauttaminen lataa analyysipaneeliin vastaavan osajoukon asemat (drill-down).</p>
@@ -670,7 +673,7 @@ export default {
 <p>Käyttö:</p>
 <ul>
 <li><strong>Järjestä</strong> — napsauta sarakeotsikkoa. Taulukko avautuu nousevan PR:n mukaan, paras pelaaja ensin. Pelaajat, joista ei ole mitattu mitään, pysyvät alimpina järjestyssuunnasta riippumatta: tiedon puutteesta johtuva nolla ei ole täydellinen suoritus.</li>
-<li><strong>Avaa pelaajan tiedot</strong> — napsauta riviä. Pelaaja valitaan suodatinpalkissa ja näkymä vaihtuu Dashboard-välilehdelle.</li>
+<li><strong>Avaa pelaajan tiedot</strong> — napsauta riviä. Pelaaja valitaan suodatinpalkissa ja näkymä vaihtuu Yleiskatsaus-välilehdelle.</li>
 <li><strong>Rajaa ajanjaksoa</strong> — päivämäärä-, turnaus- ja ottelupituussuodattimet toimivat tavalliseen tapaan, joten taulukon voi rajata yhden kilpailun päiviin.</li>
 <li><strong>Vertaa kahta pelaajaa</strong> — rastita ensimmäisen sarakkeen ruutu kahdella rivillä. Taulukon yläpuolelle ilmestyy lohko, joka asettaa heidän lukunsa vastakkain; kolmannen pelaajan rastittaminen korvaa vanhemman kahdesta. Ruutu ei valitse riviä: rastitus vertaa, napsautus avaa tiedot.</li>
 </ul>
@@ -790,6 +793,7 @@ export default {
 <p><strong>Tilannekorttien pakka.</strong> Kolmas lähde, <em>Tilannekortit</em>, ei pyydä muuta kuin nimen: blunderDB täyttää pakan 36:lla järjestämättömällä tilanteella väliltä 2–9 away, ja tilanteen kortti on sama taulukko, jonka Tilanteet-harjoitus näyttää — hyväksymispisteet ja gammon-arvot, molemmat puolet. Tämä pakka on olemassa vain, jos luot sen: 36 ensimmäisenä päivänä erääntyvää korttia on kertausvelkaa, ja se otetaan tietoisesti. Synkronointipainike luo pakan uudelleen.</p>
 <p>Nämä kaksi paikkaa eivät tee samaa työtä. Tilanteet-harjoitus panee palauttamaan nämä luvut <strong>kellon käydessä</strong> ja mittaa nopeuden; pakka panee ne <strong>kestämään ajassa</strong> eikä mittaa siitä mitään. Kaksi tarinaa pysyvät erillään: Harjoittelun loki ei näe Anki-kertauksia, eivätkä Ankin tilastot näe harjoitteluistuntoja.</p>
 <p><strong>Kertaaminen:</strong> Valitse pakka ja napsauta <em>Study</em> (tai kaksoisnapsauta pakkaa) aloittaaksesi erääntyneiden korttien kertaamisen. Jokainen kortti näyttää vastaavan aseman laudalla. Arvioi muistamisesi näppäimillä <em>1</em> (Uudelleen), <em>2</em> (Vaikea), <em>3</em> (Hyvä) tai <em>4</em> (Helppo). Paina <em>Esc</em> lopettaaksesi ja palataksesi pakkaluetteloon.</p>
+<p>Kahdella luvulla on eri nimet: luettelon sarake <strong>Erääntyneet</strong> laskee kaikki kortit, joiden eräpäivä on mennyt, myös keskeytetyt ja haudatut; <em>Study</em>-painikkeen luku laskee vain tällä hetkellä käytettävissä olevat kortit ja voi siksi olla pienempi.</p>
 <p><strong>Kuutiopäätöksistä tulee kaksi korttia, ketjutettuina.</strong> Kuutiopäätös on kaksi kysymystä — ”tuplaus?”, sitten ”hyväksy?” — ja blunderDB on aina tallentanut ne kahtena asemana. Pakka, joka valitsee vain toisen puolikkaan, saa toisenkin: päätös täydennetään, ei laajenneta. Ja kun molemmat ovat vuorossa, toinen tulee <strong>heti</strong> ensimmäisen jälkeen.</p>
 <p>Kumpikin säilyttää oman arvosanansa ja oman aikataulunsa: nämä eivät ole yhden kortin kaksi vaihetta, vaan kaksi korttia. Ketjutus ei aikaista mitään eräpäivää — se järjestää jo erääntyneet kortit, ei muuta. Koska ne syntyvät yhdessä, ne erääntyvät yhdessä ensimmäisellä kerralla, ja juuri siinä siitä on hyötyä.</p>
 <p><strong>Vastauksen näyttäminen:</strong> Kortti esittää kysymyksen — mikä siirto pelataan tai mikä kuutiotoimi tehdään. Mieti, ja paina sitten <em>VÄLILYÖNTI</em> (tai napsauta peitettyä aluetta) paljastaaksesi vastauksen: aseman tallennetun analyysin sellaisena kuin Analyysi-välilehti sen esittää. Se ilmestyy arviointipainikkeiden alle, jotka pysyvät paikoillaan ja ulottuvilla. Listan siirron napsauttaminen näyttää sen laudalla.</p>
@@ -828,6 +832,7 @@ export default {
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> ja <code>train decision</code> avaavat paneelin ja aloittavat suoraan; <code>train tp</code> ja <code>train takepoint</code> ovat <code>train scores</code>:n synonyymejä, <code>train epc</code> on <code>train bearoff</code>:n ja <code>train quiz</code> <code>train decision</code>:n synonyymi.</p>
 <h4>Viisi harjoitusta</h4>
 <p><strong>Scores</strong> arpoo yhden 36 järjestämättömästä tilanteesta väliltä 2–9 away ja näyttää <strong>tilannekortin</strong>: kaksi saraketta — <em>Vous</em> (sinä) ja <em>L'adversaire</em> (vastustaja) — ja seitsemän riviä — hyväksymispiste kuutiolla 2 ja sitten kuutiolla 4, kumpikin pitkälle kilpajuoksulle ja viimeiselle heitolle, sitten gammonin arvo kuutioilla 1, 2 ja 4.</p>
+<p>Ohjerivi muistuttaa kulusta — arvioi jokainen luku päässäsi, paljasta, napsauta ne jotka menivät pieleen — ja lauta näyttää arvotun tilanteen tyhjällä pöydällä.</p>
 <p>Kukin sarake kantaa vain ne ruudut, jotka viitetaulukot — ne, jotka komennot <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> ja <code>gv4</code> näyttävät — määrittelevät sen puolelle: kolme lukua tilanteessa 2a-2a, enintään neljätoista, ja vain yksi sarake tasatilanteessa. Rivi, jota kumpikaan puoli ei määrittele, ei esiinny kortilla — arvattavaa « n/a »-ruutua ei siis ole. Molemmat puolet ovat mukana, koska kuutiopäätös tilanteessa tarvitsee kummankin: korjattu hyväksymispiste yhdistää molempien pelaajien gammonarvot, ja juuri vastustajan hyväksymispiste kertoo, meneekö tuplauksesi läpi.</p>
 <p><strong>Pions</strong> (pipit) kysyy <strong>molempien</strong> osapuolten pip-lukua. Laudan pip-luku on piilotettu niin kauan kuin kysymys on auki; « Révéler » näyttää sen — <strong>vaikka olisit piilottanut pip-luvun</strong> näppäimellä <code>p</code>, sillä muuten vastaus jäisi näkymättömiin eikä harjoitusta voisi tarkistaa. Kyse on peitteestä eikä asetuksesta: omaa valintaasi ei muuteta, ja se palaa voimaan seuraavassa kysymyksessä. Lähde <em>Plateau</em> esittää yhden kysymyksen näytetystä asemasta, ja vain yhden; lähde <em>Base</em> arpoo uuden aseman joka kysymykseen ja tuo sen laudalle.</p>
 <p><strong>Bearoff</strong> kysyy <strong>molempien osapuolten EPC:tä</strong> — tehollista pip-lukua, joka lisää pip-laskentaan niiden nappuloiden hukan, jotka poistuvat yli tarpeen. Tällä alueella moottori on tarkka, ja juuri täällä EPC eroaa todella pip-laskennasta.</p>
@@ -917,6 +922,7 @@ export default {
 <p>Tietokannan tunnetuksi tekemiseen <code>varaston keskustelujen &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ <em>Show and tell</em> -kategoria toimii hakemistona: se on julkaisijoiden ylläpitämä lista, ei blunderDB:n tarjoama palvelu. Sinne ilmoittaminen vaatii linkin, yllä olevat neljä kenttää ja sormenjäljen.</p>
 `,
     shortcuts: `
+<p>Työkalupalkin vihjeet muistuttavat kunkin painikkeen näppäimestä sillä nimellä, joka sillä on käyttöliittymän kielen näppäimistössä: <em>Vasen</em>, <em>Poista</em>, <em>Page Up</em>, <em>Page Down</em>, <em>Vaihto</em>. Alla olevat taulukot ja ohjeikkuna käyttävät samoja nimiä.</p>
 <h3>Tietokanta</h3>
 <table>
 <thead>
@@ -935,11 +941,11 @@ export default {
 <td>Avaa olemassa oleva tietokanta.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-I</td>
+<td>CTRL-VAIHTO-I</td>
 <td>Yhdistä tietokanta tähän.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-S</td>
+<td>CTRL-VAIHTO-S</td>
 <td>Vie tietokanta.</td>
 </tr>
 <tr>
@@ -966,7 +972,7 @@ export default {
 <td>Tuo yksi tai useampi asema/ottelu tiedostosta (xg, xgp, sgf, mat, txt, bgf).</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-F</td>
+<td>CTRL-VAIHTO-F</td>
 <td>Tuo ottelu-/asematiedostojen kansio rekursiivisesti.</td>
 </tr>
 <tr>
@@ -1025,7 +1031,7 @@ export default {
 <td>Ensimmäinen asema / Edellinen peli (ottelunavigointi).</td>
 </tr>
 <tr>
-<td>PageUp</td>
+<td>Page Up</td>
 <td>Siirtyy sivun taaksepäin (oletuksena sata asemaa, säädettävissä kohdassa Asetukset &gt; Käyttöliittymä, enintään 10 % luettelosta; pysähtyy luettelon alkuun); ottelussa edellinen peli.</td>
 </tr>
 <tr>
@@ -1049,8 +1055,8 @@ export default {
 <td>Viimeinen asema / Seuraava peli (ottelunavigointi).</td>
 </tr>
 <tr>
-<td>PageDown</td>
-<td>Siirtyy sivun eteenpäin (sama askel kuin PageUp; pysähtyy luettelon loppuun); ottelussa seuraava peli.</td>
+<td>Page Down</td>
+<td>Siirtyy sivun eteenpäin (sama askel kuin <em>Page Up</em>; pysähtyy luettelon loppuun); ottelussa seuraava peli.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1123,7 +1129,7 @@ export default {
 <td>Näytä/piilota analyysi.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-L</td>
+<td>CTRL-VAIHTO-L</td>
 <td>Järjestä nykyisen aseman naapurit.</td>
 </tr>
 <tr>
@@ -1131,7 +1137,7 @@ export default {
 <td>Näytä/piilota kommentit.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-P</td>
+<td>CTRL-VAIHTO-P</td>
 <td>Avaa/sulje komentopaletti: komennot, välilehdet, suodattimet ja ottelut likimääräisellä nimellä.</td>
 </tr>
 <tr>
@@ -1167,7 +1173,7 @@ export default {
 <td>Näytä/piilota Eval-paneeli.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-T</td>
+<td>CTRL-VAIHTO-T</td>
 <td>Näytä/piilota Litterointi-paneeli (otteluluonnokset).</td>
 </tr>
 <tr>
@@ -1218,11 +1224,11 @@ export default {
 <td>Sulje nykyinen näkymä.</td>
 </tr>
 <tr>
-<td>CTRL-PageUp, SHIFT-J</td>
+<td>CTRL-Page Up, VAIHTO-J</td>
 <td>Edellinen näkymä.</td>
 </tr>
 <tr>
-<td>CTRL-PageDown, SHIFT-K</td>
+<td>CTRL-Page Down, VAIHTO-K</td>
 <td>Seuraava näkymä.</td>
 </tr>
 <tr>
@@ -1458,7 +1464,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Napsautus, Kaksoisnapsautus</td>
+<td>Kaksoisnapsautus</td>
 <td>Valitse turnaus (näytä sen tiedot).</td>
 </tr>
 <tr>
@@ -1490,7 +1496,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Napsautus hiiren oikealla, MENU, SHIFT-F10</td>
+<td>Clic droit, MENU, VAIHTO-F10</td>
 <td>Avaa kohdistetun kohteen kontekstivalikko: pöytäruutu, pelaaja, kaavion paikka, paikka, ehdotus, historian rivi. YLÖS/ALAS liikkuvat valikossa, ENTER valitsee, ESC sulkee sen.</td>
 </tr>
 <tr>
@@ -1752,7 +1758,7 @@ export default {
 <td>Sivun ensimmäinen, viimeinen pienoiskuva.</td>
 </tr>
 <tr>
-<td>PageUp, PageDown</td>
+<td>Page Up, Page Down</td>
 <td>Edellinen sivu, seuraava sivu.</td>
 </tr>
 <tr>
@@ -1795,12 +1801,16 @@ export default {
 <td>Seuraava sivu.</td>
 </tr>
 <tr>
-<td>PageUp</td>
+<td>Page Up</td>
 <td>Sisällön alkuun.</td>
 </tr>
 <tr>
-<td>PageDown</td>
+<td>Page Down</td>
 <td>Sisällön loppuun.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Hae ohjeesta: Enter siirtyy seuraavaan osumaan, SHIFT-Enter edelliseen.</td>
 </tr>
 <tr>
 <td>?, CTRL-F, Esc</td>

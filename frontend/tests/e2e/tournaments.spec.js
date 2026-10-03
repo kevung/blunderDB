@@ -7,7 +7,7 @@
 
 import { test, expect } from '@playwright/test';
 import { installWailsMock, getWailsCalls } from './helpers/wailsMock.js';
-import { openLibraryMock, matchSample } from './helpers/fixtures.js';
+import { openLibraryMock, matchSample, matchMovePositions } from './helpers/fixtures.js';
 
 const open = { id: 3, name: 'Open de Lyon', date: '2026-05-01', location: 'Lyon', matchCount: 1 };
 const created = { id: 4, name: 'Coupe d’automne', date: '', location: 'Paris', matchCount: 0 };
@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
     await installWailsMock(
         page,
         openLibraryMock({
-            database: { GetAllTournaments: [open], GetTournamentMatches: [matchSample], GetAllMatches: [matchSample] }
+            database: { GetAllTournaments: [open], GetTournamentMatches: [matchSample], GetAllMatches: [matchSample], GetMatchMovePositions: matchMovePositions }
         })
     );
     await page.goto('/');
@@ -38,6 +38,7 @@ test('créer un tournoi l’enregistre et l’affiche dans la liste', async ({ p
         [open, created]
     );
 
+    await panel(page).getByTestId('panel-new').click();
     await panel(page).locator('.add-input.name').fill('Coupe d’automne');
     await panel(page).locator('.add-input.loc').fill('Paris');
     await panel(page).locator('.add-input.loc').press('Enter');
@@ -46,16 +47,24 @@ test('créer un tournoi l’enregistre et l’affiche dans la liste', async ({ p
     await expect(page.getByTestId('status-bar-message')).toHaveText('Tournament "Coupe d’automne" created');
     const calls = await getWailsCalls(page, 'CreateTournament');
     expect(calls.map((c) => c.args)).toEqual([['Coupe d’automne', '', 'Paris']]);
-    await expect(panel(page).locator('.add-input.name')).toHaveValue('');
+    await expect(panel(page).locator('.add-input.name')).toHaveCount(0);
 });
 
 test('un tournoi s’ouvre sur ses matchs, la flèche ramène à la liste', async ({ page }) => {
     await panel(page).getByText('Open de Lyon').dblclick();
 
-    await expect(panel(page).getByText('Alice')).toBeVisible();
+    await expect(panel(page).getByRole('cell', { name: 'Alice' })).toBeVisible();
     expect((await getWailsCalls(page, 'GetTournamentMatches')).map((c) => c.args[0])).toEqual([3]);
 
     await panel(page).getByTitle('Back to tournaments').click();
     await expect(panel(page).getByText('Open de Lyon')).toBeVisible();
-    await expect(panel(page).getByText('Alice')).toHaveCount(0);
+    await expect(panel(page).getByRole('cell', { name: 'Alice' })).toHaveCount(0);
+});
+
+test('un double-clic sur un match l’ouvre sans toucher au champ d’ajout', async ({ page }) => {
+    await panel(page).getByText('Open de Lyon').dblclick();
+    await panel(page).getByRole('cell', { name: 'Alice' }).dblclick();
+
+    await expect.poll(async () => (await getWailsCalls(page, 'GetMatchMovePositions')).length).toBeGreaterThan(0);
+    expect(await page.evaluate(() => document.activeElement?.getAttribute('role'))).not.toBe('combobox');
 });

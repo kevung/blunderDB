@@ -13,7 +13,7 @@ export default {
     manual: `
 <h3>Introduzione</h3>
 <p>blunderDB è un software per creare database di posizioni di backgammon. Il suo punto di forza principale è fornire un luogo unico in cui aggregare le posizioni che un giocatore ha incontrato (online, in torneo) e poterle riesaminare filtrandole secondo vari filtri combinabili arbitrariamente. blunderDB può anche essere usato per creare cataloghi di posizioni di riferimento.</p>
-<p>Le posizioni sono memorizzate in un database rappresentato da un file <em>.db</em>. L'applicazione desktop apre questo file direttamente, mai un indirizzo di rete: la modalità server (Modalità headless (server)) è un'altra modalità dello stesso binario, e si passa dall'una all'altra esportando o migrando il database, non puntando l'applicazione verso un URL.</p>
+<p>Le posizioni sono memorizzate in un database rappresentato da un file <em>.db</em>. L'applicazione desktop apre questo file direttamente, mai un indirizzo di rete: la modalità server è un'altra modalità dello stesso binario, e si passa dall'una all'altra esportando o migrando il database, non puntando l'applicazione verso un URL.</p>
 <h3>Interazioni principali</h3>
 <p>Le principali interazioni possibili con blunderDB sono:</p>
 <ul>
@@ -220,6 +220,7 @@ export default {
 </div>
 <h3>Pannello Ricerca</h3>
 <p>Il pannello <strong>Ricerca</strong> (<em>CTRL-F</em> o <em>TAB</em>) permette di filtrare le posizioni secondo criteri liberamente combinabili: struttura delle pedine, tipo di decisione di cubo, magnitudo dell'errore, date, tag, ecc. Il tasto <em>TAB</em> apre contemporaneamente il pannello di ricerca e l'editor di posizione, consentendo di definire una struttura di pedine da cercare direttamente sul board.</p>
+<p>I filtri si impostano nella sottoscheda <strong>Criteri</strong>. Quando una ricerca non trova nulla, il pannello lo indica («Nessuna posizione corrisponde») con un pulsante <strong>Cancella i filtri</strong>, senza limitarsi alla barra di stato.</p>
 <p>Per cercare tra le posizioni visualizzate, usare il comando <code>ss</code> seguito da filtri (es.: <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> cerca nell'elenco sullo schermo: i risultati della ricerca precedente, la collezione aperta o le posizioni del match in revisione, sia che il comando venga digitato direttamente sia dal pannello di ricerca (<em>TAB</em>). La casella di spunta <em>Cerca nei risultati correnti</em> del pannello segue la stessa regola. In una collezione e in un match, <code>s</code> viene rifiutato: cercherebbe in tutta la libreria e sostituirebbe l'elenco visualizzato.</p>
 <p>Dai risultati di una ricerca <code>ss</code> avviata da una collezione o da un match si esce con <em>Esc</em>, con una sola pressione non appena né un campo né il pannello che ha il focus ha qualcosa da chiudere (una mossa selezionata nell'analisi, per esempio): blunderDB torna alla collezione intera, o al match sulla mossa studiata, e alla posizione lasciata. Questo ritorno segue solo <code>ss</code>: <code>s</code>, avviato dal pannello di ricerca aperto su una collezione o un match, cerca in tutta la libreria, e <em>Esc</em> non riporta più all'elenco lasciato.</p>
 <p>Una ricerca su un database grande viene mostrata prima di essere contata: la prima pagina di risultati compare subito, e la barra di stato indica « Ricerca… » con il tempo trascorso finché il totale non è noto; questo sostituisce allora la lunghezza provvisoria dell'elenco. Una sola ricerca alla volta è in corso: avviarne un'altra abbandona la precedente. <em>Esc</em> interrompe la ricerca in corso e ferma la sua scansione del database; se la prima pagina era già visualizzata, resta da sola, e la barra di stato lo dice.</p>
@@ -267,6 +268,7 @@ export default {
 <p>Fare riferimento a elenco dei comandi per l'elenco dei filtri disponibili.</p>
 </div>
 <h3>Pannello Raccolte</h3>
+<p>Nei pannelli Collezioni, Tornei, Anki e Trascrizione, il pulsante <strong>+ Nuovo…</strong> dell'intestazione è l'unico gesto di creazione: apre il campo di inserimento, che <em>Esc</em> o <strong>Annulla</strong> chiude nei pannelli Collezioni e Tornei. Nell'elenco dei match, l'icona ⌨ apre la trascrizione del match e l'icona ✎ ne corregge i metadati.</p>
 <p>Il pannello <strong>Collezioni</strong> (<em>CTRL-B</em>) consente di gestire collezioni di posizioni. Le collezioni possono essere create, rinominate ed eliminate. Vi si possono aggiungere o togliere posizioni (tasto <em>Canc</em>, viene chiesta conferma). Fare doppio clic su una collezione per scorrerne le posizioni con i tasti <em>SINISTRA</em> e <em>DESTRA</em>. Il comando <code>ss</code> cerca tra le posizioni della collezione aperta; <em>Esc</em> riporta poi alla collezione (vedere Pannello Ricerca). L'ordine delle collezioni e delle posizioni all'interno di una collezione può essere modificato per trascinamento. Premere <em>CTRL-B</em> o eseguire il comando <code>collection</code> per mostrare o nascondere il pannello.</p>
 <p>Una raccolta può essere <strong>viva</strong>: il suo contenuto non è più una lista fatta a mano ma il risultato di una <strong>ricerca</strong>, rivalutato ogni volta che la si apre. Il pulsante ◇ in testa alla raccolta la rende viva con l'ultima ricerca lanciata; ◈ segnala che lo è già, e lo stesso pulsante le restituisce la lista. Nulla viene distrutto: le posizioni che conteneva sono ancora lì quando si torna indietro.</p>
 <p>Una raccolta viva la cui interrogazione porta un token che questa versione non conosce più <strong>rifiuta di aprirsi</strong> e lo dice, invece di restituire l'intera base. È l'unico guasto che un filtro salvato non deve avere: allargarsi in silenzio.</p>
@@ -290,6 +292,7 @@ export default {
 <h3>Pannello Match</h3>
 <p>Il pannello <strong>Match</strong> (<em>CTRL-Tab</em>) elenca i match importati. Fare doppio clic su un match (o premere <em>INVIO</em>) per navigare tra le sue mosse. Il comando <code>m</code> riprende la navigazione nell'ultimo match visitato.</p>
 <p>Il campo filtro, in alto nel pannello (<em>/</em> per andarci, <em>Esc</em> per cancellarlo), mantiene solo le partite in cui un giocatore, l'evento, il luogo, il torneo o la data contiene il testo digitato. Il filtro e l'ordinamento delle colonne sono eseguiti dal database: l'elenco si carica a pagine durante lo scorrimento e il contatore «n / N partite» indica la parte caricata. Correggere un giocatore, una data o un torneo nell'elenco aggiorna solo la riga modificata.</p>
+<p>Quando l'elenco è vuoto, il pannello propone <strong>Importa… (Ctrl+I)</strong>; senza un database aperto propone invece <strong>Apri un database…</strong>, insieme a <strong>Torna alla schermata iniziale</strong>. Quando è il filtro di testo ad aver svuotato l'elenco, propone <strong>Cancella il filtro</strong>. I pannelli Stats, Collezioni e Anki vuoti offrono gli stessi pulsanti.</p>
 <p>L'utente può:</p>
 <ul>
 <li>scorrere le mosse di un match usando i tasti <em>SINISTRA</em> e <em>DESTRA</em>,</li>
@@ -525,13 +528,13 @@ export default {
 <p>Il pulsante <strong>Rapporto HTML</strong> nell'intestazione del pannello produce un documento <strong>autonomo</strong>: un solo file, senza immagini esterne, senza foglio di stile remoto, senza script. I diagrammi sono SVG in linea, disegnati dallo stesso rendering della dama a schermo, con la vostra tavolozza. Si apre in qualunque browser, viaggia per posta elettronica, e <strong>si stampa in PDF dal browser stesso</strong> — il che evita di imbarcare un generatore di PDF per produrre ciò che tutti hanno già.</p>
 <p>Contiene gli indicatori del perimetro corrente (posizioni, incontri, decisioni contate, PR globale, pedine e cubo), poi le <strong>dieci decisioni più costose</strong>, ciascuna con il suo diagramma, il suo costo, l'incontro da cui viene e la mossa migliore quando un'analisi la fornisce.</p>
 <p>Il rapporto porta il <strong>filtro corrente</strong> del pannello Stats. Un rapporto che non dichiara il proprio perimetro è un rapporto le cui cifre non vogliono dire nulla: regolate il filtro — un torneo, un intervallo di date, un giocatore — prima di produrlo.</p>
-<h4>Scheda Dashboard</h4>
-<p>La scheda <strong>Dashboard</strong> offre una visione sintetica degli indicatori chiave.</p>
+<h4>Scheda Cruscotto</h4>
+<p>La scheda <strong>Cruscotto</strong> offre una visione sintetica degli indicatori chiave.</p>
 <h5>Schede di livello</h5>
 <p>Tre schede visualizzano il PR (o MWC) per:</p>
 <ul>
 <li><strong>PR Globale</strong> — tutte le decisioni (pedine + cubo);</li>
-<li><strong>PR Pedina</strong> — solo mosse di pedine;</li>
+<li><strong>PR pedine</strong> — solo decisioni sulle pedine;</li>
 <li><strong>PR Cubo</strong> — solo decisioni di cubo.</li>
 </ul>
 <p>Cliccando su una scheda si caricano nel pannello di analisi le posizioni del sottoinsieme corrispondente (drill-down).</p>
@@ -670,7 +673,7 @@ export default {
 <p>Utilizzo:</p>
 <ul>
 <li><strong>Ordinare</strong> — fare clic su un'intestazione di colonna. La tabella si apre ordinata per PR crescente, con il miglior giocatore in testa. I giocatori di cui nulla è stato misurato restano in fondo qualunque sia il verso dell'ordinamento: uno zero per mancanza di dati non è una prestazione perfetta.</li>
-<li><strong>Aprire il dettaglio di un giocatore</strong> — fare clic su una riga. Il giocatore viene selezionato nella barra dei filtri e la visualizzazione passa alla scheda Dashboard.</li>
+<li><strong>Aprire il dettaglio di un giocatore</strong> — fare clic su una riga. Il giocatore viene selezionato nella barra dei filtri e la visualizzazione passa alla scheda Cruscotto.</li>
 <li><strong>Restringere il periodo</strong> — i filtri di date, tornei e lunghezza dei match si applicano normalmente, il che consente di delimitare la tabella alle date di una competizione.</li>
 <li><strong>Confrontare due giocatori</strong> — spuntate la casella della prima colonna su due righe. Sopra la tabella compare un blocco che mette i loro indicatori a confronto; spuntare un terzo giocatore sostituisce il più vecchio dei due. La casella non seleziona la riga: spuntare confronta, cliccare apre il dettaglio.</li>
 </ul>
@@ -790,6 +793,7 @@ export default {
 <p><strong>Un mazzo di schede di punteggio.</strong> La terza sorgente, <em>Schede di punteggio</em>, non chiede altro che un nome: blunderDB riempie il mazzo con i 36 punteggi non ordinati da 2 a 9 away, e la carta di un punteggio è la scheda che l'esercizio Punteggi mostra — punti di presa e valori di gammon, entrambe le facce. Questo mazzo esiste solo se lo si crea: 36 carte in scadenza il primo giorno sono un debito di ripasso, e lo si contrae di proposito. Il pulsante di sincronizzazione lo rigenera.</p>
 <p>I due posti non fanno lo stesso lavoro. L'esercizio Punteggi fa ritrovare quei numeri <strong>sotto l'orologio</strong> e ne misura la velocità; il mazzo li fa <strong>durare nel tempo</strong> e non ne misura nulla. Le due storie restano separate: il registro dell'Allenamento ignora i ripassi di Anki, e le statistiche di Anki ignorano le sessioni di Allenamento.</p>
 <p><strong>Revisione:</strong> Selezionare un mazzo e poi cliccare su <em>Study</em> (oppure fare doppio clic su un mazzo) per iniziare la revisione delle carte in scadenza. Ogni carta mostra la posizione corrispondente sul board. Valutare il proprio richiamo con i tasti <em>1</em> (Da rivedere), <em>2</em> (Difficile), <em>3</em> (Bene) o <em>4</em> (Facile). Premere <em>Esc</em> per interrompere e tornare all'elenco dei mazzi.</p>
+<p>Due conteggi portano nomi distinti: la colonna <strong>Scadute</strong> dell'elenco conta tutte le schede la cui scadenza è passata, comprese quelle sospese o sepolte; la cifra del pulsante <em>Study</em> conta solo le schede disponibili adesso e può quindi essere più piccola.</p>
 <p><strong>Le decisioni di cubo fanno due carte, concatenate.</strong> Una decisione di cubo è due domande — «raddoppio?», poi «presa?» — e blunderDB le registra da sempre come due posizioni. Un mazzo che ne seleziona una sola metà riceve l'altra: la decisione è completata, non ampliata. E quando entrambe sono dovute, la seconda arriva <strong>immediatamente</strong> dopo la prima.</p>
 <p>Ciascuna conserva il proprio voto e il proprio calendario: non sono due tempi di una stessa carta, sono due carte. La concatenazione non anticipa alcuna scadenza — ordina le carte già dovute, nulla di più. Nascendo insieme, sono dovute insieme la prima volta, ed è lì che serve.</p>
 <p><strong>Mostrare la risposta:</strong> La carta pone una domanda — quale mossa giocare, o quale azione di cubo. Riflettere, poi premere <em>SPAZIO</em> (o cliccare sulla zona nascosta) per svelare la risposta: l'analisi registrata della posizione, così come la presenta la scheda Analisi. Appare sotto i pulsanti di valutazione, che restano al loro posto e a portata di mano. Cliccare su una mossa dell'elenco la mostra sul tavoliere.</p>
@@ -828,6 +832,7 @@ export default {
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> e <code>train decision</code> aprono il pannello e avviano direttamente; <code>train tp</code> e <code>train takepoint</code> sono sinonimi di <code>train scores</code>, <code>train epc</code> di <code>train bearoff</code>, <code>train quiz</code> di <code>train decision</code>.</p>
 <h4>I cinque esercizi</h4>
 <p><strong>Scores</strong> estrae a sorte uno dei 36 punteggi non ordinati da 2 a 9 away e mostra una <strong>scheda di punteggio</strong>: due colonne — <em>Vous</em> (lei) e <em>L'adversaire</em> (l'avversario) — e sette righe — il punto di presa al cubo 2 e poi al cubo 4, ciascuno in corsa lunga e all'ultimo lancio, poi il valore del gammon ai cubi 1, 2 e 4.</p>
+<p>Una riga di istruzioni ricorda il gesto — stimare ogni numero a mente, poi <em>Rivelare</em>, poi premere quelli sbagliati — e la scacchiera mostra il punteggio estratto su un tavolo vuoto.</p>
 <p>Ogni colonna porta soltanto le caselle che le tabelle di riferimento — quelle che mostrano i comandi <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> e <code>gv4</code> — definiscono per la sua faccia: tre numeri a 2a-2a, quattordici al massimo, e una sola colonna a punteggio pari. Una riga che nessuna delle due facce definisce non compare sulla scheda, quindi non c'è alcuna casella « n/a » da indovinare. Le due facce ci sono perché una decisione di cubo al punteggio ha bisogno di entrambe: il punto di presa corretto combina i valori di gammon dei due giocatori, ed è il punto di presa dell'avversario a dire se il suo raddoppio passa.</p>
 <p><strong>Pions</strong> (pip) chiede il conteggio dei pip di <strong>entrambi</strong> i campi. Il pipcount del tavoliere è nascosto finché la domanda è aperta; « Révéler » lo mostra — <strong>anche se lei aveva nascosto il pipcount</strong> con <code>p</code>, altrimenti la risposta resterebbe invisibile e l'esercizio non verificabile. È una maschera e non un'impostazione: la sua scelta non viene modificata e torna a valere dalla domanda successiva. La fonte <em>Plateau</em> pone una domanda sulla posizione mostrata, e una sola; la fonte <em>Base</em> estrae una nuova posizione a ogni domanda e la porta sul tavoliere.</p>
 <p><strong>Bearoff</strong> chiede l'<strong>EPC dei due lati</strong> — il conteggio effettivo, quello che aggiunge al pipcount lo spreco delle pedine che escono con punti in eccesso. È il dominio in cui il motore è esatto, e quello in cui l'EPC si distingue davvero dal conteggio delle pedine.</p>
@@ -917,6 +922,7 @@ export default {
 <p>Per far conoscere una base, la categoria <em>Show and tell</em> delle <code>discussioni del deposito &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ fa da elenco: è una lista tenuta da chi pubblica, non un servizio reso da blunderDB. Annunciarne una lì richiede il link, i quattro campi qui sopra e l'impronta.</p>
 `,
     shortcuts: `
+<p>I suggerimenti della barra degli strumenti ricordano il tasto di ogni pulsante con il nome che ha sulla tastiera della lingua dell'interfaccia: <em>Sinistra</em>, <em>Canc</em>, <em>Pag su</em>, <em>Pag giù</em>, <em>Maiusc</em>. Le tabelle seguenti e la finestra di aiuto usano gli stessi nomi.</p>
 <h3>Database</h3>
 <table>
 <thead>
@@ -1025,7 +1031,7 @@ export default {
 <td>Prima posizione / Partita precedente (navigazione match).</td>
 </tr>
 <tr>
-<td>PageUp</td>
+<td>Pag su</td>
 <td>Torna indietro di una pagina (cento posizioni per impostazione predefinita, regolabile in Impostazioni &gt; Interfaccia, fino al 10 % dell'elenco; si ferma all'inizio dell'elenco); in un match, partita precedente.</td>
 </tr>
 <tr>
@@ -1045,12 +1051,12 @@ export default {
 <td>Mossa successiva (quando una mossa è selezionata nell'analisi).</td>
 </tr>
 <tr>
-<td>End, l</td>
+<td>Fine, l</td>
 <td>Ultima posizione / Partita successiva (navigazione match).</td>
 </tr>
 <tr>
-<td>PageDown</td>
-<td>Avanza di una pagina (stesso passo di PageUp; si ferma alla fine dell'elenco); in un match, partita successiva.</td>
+<td>Pag giù</td>
+<td>Avanza di una pagina (stesso passo di <em>Pag su</em>; si ferma alla fine dell'elenco); in un match, partita successiva.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1218,11 +1224,11 @@ export default {
 <td>Chiudi la vista corrente.</td>
 </tr>
 <tr>
-<td>CTRL-PageUp, MAIUSC-J</td>
+<td>CTRL-Pag su, MAIUSC-J</td>
 <td>Vista precedente.</td>
 </tr>
 <tr>
-<td>CTRL-PageDown, MAIUSC-K</td>
+<td>CTRL-Pag giù, MAIUSC-K</td>
 <td>Vista successiva.</td>
 </tr>
 <tr>
@@ -1458,7 +1464,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Clic, Doppio clic</td>
+<td>Doppio clic</td>
 <td>Seleziona un torneo (mostrane il dettaglio).</td>
 </tr>
 <tr>
@@ -1752,7 +1758,7 @@ export default {
 <td>Prima, ultima miniatura della pagina.</td>
 </tr>
 <tr>
-<td>PageUp, PageDown</td>
+<td>Pag su, Pag giù</td>
 <td>Pagina precedente, pagina successiva.</td>
 </tr>
 <tr>
@@ -1795,12 +1801,16 @@ export default {
 <td>Pagina successiva.</td>
 </tr>
 <tr>
-<td>PageUp</td>
+<td>Pag su</td>
 <td>Inizio del contenuto.</td>
 </tr>
 <tr>
-<td>PageDown</td>
+<td>Pag giù</td>
 <td>Fine del contenuto.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Cerca nella guida: Invio passa all'occorrenza successiva, MAIUSC-Invio alla precedente.</td>
 </tr>
 <tr>
 <td>?, CTRL-F, Esc</td>

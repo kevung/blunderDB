@@ -206,7 +206,7 @@
         "togglePipcount": "Toggle Pipcount",
         "updatePosition": "Update Position",
         "tour": "Guided tours",
-        "importDatabaseTip": "Merge another database into this one: shared positions are not duplicated, their analyses and comments are combined (Ctrl+Shift+I)",
+        "importDatabaseTip": "Merge another database into this one: shared positions are not duplicated, their analyses and comments are combined",
         "training": "Training"
     },
     "tour": {
@@ -365,10 +365,12 @@
     },
     "help": {
         "tabManual": "Manual",
-        "tabShortcuts": "Shortcut",
+        "tabShortcuts": "Shortcuts",
         "tabCommands": "Command Line",
         "tabAbout": "About",
-        "loadFailed": "The help could not be loaded."
+        "loadFailed": "The help could not be loaded.",
+        "searchPlaceholder": "Search the help (/)",
+        "searchNone": "no result"
     },
     "commands": {
         "collectionEmpty": "Collection is empty",
@@ -494,7 +496,11 @@
             "blots": "Blots",
             "textPattern": "Text / Pattern",
             "other": "Other"
-        }
+        },
+        "noResultsTitle": "No position matches",
+        "noResultsHint": "Widen the criteria (drop a filter, relax a bound) or clear them.",
+        "clearFilters": "Clear filters",
+        "criteriaTab": "Criteria"
     },
     "match": {
         "errorExportingMat": "Error exporting match",
@@ -622,7 +628,8 @@
         "livingOff": "Living collection ({query}). Click to give it back its hand-made list.",
         "livingNeedsSearch": "Run a search first: it is what the collection will keep.",
         "livingSet": "Living collection: {query}",
-        "livingCleared": "Collection given back its hand-made list."
+        "livingCleared": "Collection given back its hand-made list.",
+        "newButton": "New collection"
     },
     "tournament": {
         "addMatchPlaceholder": "Add match…",
@@ -655,7 +662,8 @@
         "errorSwapping": "Error swapping players",
         "noMovesFound": "No moves found for this match",
         "swappedPlayers": "Players swapped",
-        "confirmDelete": "Delete tournament \"{name}\"?"
+        "confirmDelete": "Delete tournament \"{name}\"?",
+        "newButton": "New tournament"
     },
     "anki": {
         "limitSession": "Limit the session",
@@ -679,7 +687,8 @@
         "colActions": "Actions",
         "colCards": "Cards",
         "colDescription": "Description",
-        "colDue": "Due",
+        "colDue": "Past due",
+        "colDueTooltip": "Cards whose due date has passed, suspended or buried ones included. The Study button counts only the available cards.",
         "colName": "Name",
         "colNew": "New",
         "colSource": "Source",
@@ -706,7 +715,7 @@
         "sourceCurrentSearch": "Current search",
         "sourceScores": "Score sheets",
         "scoresCount": "{count} scores",
-        "scoreQuestion": "Score {a}/{b} away",
+        "scoreQuestion": "Score {a}/{b}",
         "badScoreKey": "Unreadable score on this card",
         "statLearning": "Learning",
         "statNew": "New",
@@ -746,7 +755,15 @@
         "colRating": "Grade",
         "colState": "State",
         "colInterval": "Interval",
-        "days": "d"
+        "days": "d",
+        "state": {
+            "new": "New",
+            "learning": "Learning",
+            "review": "Review",
+            "relearning": "Relearning"
+        },
+        "sourceSearch": "Search",
+        "sourceCollectionN": "Collection #{id}"
     },
     "analysis": {
         "analysisDepth": "Analysis Depth",
@@ -771,7 +788,13 @@
         "panelLabel": "Position analysis",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W"
+        "playerWin": "P W",
+        "hintPlayerWin": "Player: chance to win",
+        "hintPlayerGammon": "Player: chance to win a gammon",
+        "hintPlayerBackgammon": "Player: chance to win a backgammon",
+        "hintOpponentWin": "Opponent: chance to win",
+        "hintOpponentGammon": "Opponent: chance to win a gammon",
+        "hintOpponentBackgammon": "Opponent: chance to win a backgammon"
     },
     "rollout": {
         "title": "Rollout",
@@ -1069,7 +1092,6 @@
         "databaseUpdated": "The database has been updated.",
         "failed": "Failed",
         "fileProgressTitle": "File import progress",
-        "finished": "Import finished.",
         "imported": "Imported",
         "importingFileN": "Importing file {current} of {total}...",
         "importingFiles": "Importing Files",
@@ -1082,7 +1104,7 @@
         "previewTitle": "Import Preview",
         "processedN": "Processed {processed} of {total} file(s).",
         "progressTitle": "Import progress",
-        "skipped": "Skipped",
+        "skipped": "Duplicates skipped",
         "successful": "Import successful!",
         "willAdd": "Will Add",
         "willMakeChanges": "The import operation will make the following changes:",
@@ -1625,7 +1647,10 @@
         "trainingQuizPR": "Quiz PR",
         "trainingMatchPR": "Match PR",
         "trainingRetention": "Anki retention",
-        "trainingSessions": "{n} Decision quiz sessions recorded."
+        "trainingSessions": "{n} Decision quiz sessions recorded.",
+        "compareColumnHint": "Tick two players to compare their figures",
+        "playersColPRHint": "PR: average error per decision, in millipoints (mp); lower is better",
+        "playersColLuckHint": "Luck: average dice effect per roll, in mp; positive = favourable dice"
     },
     "trash": {
         "title": "Trash",
@@ -1756,7 +1781,7 @@
         "faultHint": "Click the number you got wrong.",
         "faceYou": "You",
         "faceOpponent": "The opponent",
-        "scoreCaption": "Score {a}/{b} away",
+        "scoreCaption": "Score {a}/{b}",
         "summary": "Summary",
         "noSession": "No session",
         "sessionsCount": "{n} sessions",
@@ -1800,7 +1825,8 @@
         },
         "truthExact": "Truth: the two-sided bear-off database, exact.",
         "truthEvaluated": "Truth: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "For each box, work the number out in your head, then click Reveal. Afterwards, click every number you got wrong."
     },
     "explain": {
         "blots": "You lose {cost} mMWC: the move played leaves {blots} blots where {best} leaves only {bestBlots}.",
@@ -2623,6 +2649,31 @@
         "needsAck": "First accept this provider's privacy warning in Settings › Assistant and MCP.",
         "error": "Error: {error}",
         "write": "Let the assistant propose changes (each one confirmed)"
+    },
+    "emptyState": {
+        "import": "Import… (Ctrl+I)",
+        "openDatabase": "Open a database…",
+        "clearFilter": "Clear the filter",
+        "backHome": "Back to the welcome screen"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Shift",
+        "alt": "Alt",
+        "left": "Left",
+        "right": "Right",
+        "up": "Up",
+        "down": "Down",
+        "delete": "Del",
+        "pageUp": "PageUp",
+        "pageDown": "PageDown",
+        "home": "Home",
+        "end": "End",
+        "enter": "Enter",
+        "escape": "Esc",
+        "space": "Space",
+        "backspace": "Backspace",
+        "tab": "Tab"
     },
     "lesson": {
         "title": "Lesson",

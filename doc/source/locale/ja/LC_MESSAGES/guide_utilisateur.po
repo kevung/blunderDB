@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 04:18+0200\n"
+"POT-Creation-Date: 2026-10-03 12:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -172,13 +172,13 @@ msgstr "マッチのレビュー中の Analysis パネル：指された手が�
 #: ../../source/guide_utilisateur.rst:82
 msgid ""
 "**Trouver les plus grosses erreurs.** Ouvrir le panneau Stats (*CTRL-D*),"
-" onglet *Dashboard* : la liste *Top blunders* donne les dix erreurs les "
-"plus coûteuses, et cliquer sur une ligne charge la position concernée "
-"dans le panneau d'analyse. Pour les habitués, la même chose au clavier : "
-"la commande ``bl`` (ou ``blunders``, *ESPACE* pour ouvrir la ligne de "
-"commande) charge directement ces positions, sans construire de recherche "
-"à la main. Voir :ref:`stats` pour affiner ce choix par joueur ou par "
-"plage de dates une fois plusieurs matchs importés."
+" onglet *Tableau de bord* : la liste *Top blunders* donne les dix erreurs"
+" les plus coûteuses, et cliquer sur une ligne charge la position "
+"concernée dans le panneau d'analyse. Pour les habitués, la même chose au "
+"clavier : la commande ``bl`` (ou ``blunders``, *ESPACE* pour ouvrir la "
+"ligne de commande) charge directement ces positions, sans construire de "
+"recherche à la main. Voir :ref:`stats` pour affiner ce choix par joueur "
+"ou par plage de dates une fois plusieurs matchs importés."
 msgstr ""
 "\\ **最大のエラーを見つける。**\\ 統計パネルを開き（\\ *CTRL-D*\\ ）、\\ *ダッシュボード* タブへ。\\ "
 "*トップブランダー* "
@@ -366,13 +366,14 @@ msgstr "クラブの日曜日、32人、第1試合の2時間前。このチュ�
 
 #: ../../source/guide_utilisateur.rst:189
 msgid ""
-"**Créer le tournoi.** Panneau Tournois (*CTRL-Y*), taper le nom du "
-"tournoi dans le champ du bas, *Entrée*. Ouvrir la ligne créée, puis "
-"**Diriger ce tournoi** : le tournoi remplace le plateau au centre de la "
-"fenêtre."
+"**Créer le tournoi.** Panneau Tournois (*CTRL-Y*), bouton *+ Nouveau "
+"tournoi* en en-tête, taper le nom du tournoi, *Entrée*. Ouvrir la ligne "
+"créée, puis **Diriger ce tournoi** : le tournoi remplace le plateau au "
+"centre de la fenêtre."
 msgstr ""
-"**大会を作る。** 「大会」パネル（*CTRL-Y*）で、下部の欄に大会名を入力し "
-"*Enter*。作成された行を開き、**この大会を運営する** を押すと、大会がウィンドウ中央の盤面に代わって表示されます。"
+"**トーナメントを作成する。** トーナメントパネル(*CTRL-Y*)のヘッダーにある\\ *+ 新規トーナメント*\\ "
+"ボタンを押し、トーナメント名を入力して\\ *Enter*\\ を押します。作成された行を開き、**このトーナメントを運営**\\ "
+"を選ぶと、トーナメントがウィンドウ中央のボードに置き換わります。"
 
 #: ../../source/guide_utilisateur.rst:194
 msgid ""
@@ -649,9 +650,9 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:383
 msgid ""
-"*2:45* — Retour au panneau Stats (*CTRL-D*), onglet Dashboard, pour "
-"montrer où ce travail se lit dans la durée."
-msgstr "*2:45* — Stats パネル（*CTRL-D*）の Dashboard タブに戻り、この取り組みが時間とともにどこに表れるかを示します。"
+"*2:45* — Retour au panneau Stats (*CTRL-D*), onglet Tableau de bord, pour"
+" montrer où ce travail se lit dans la durée."
+msgstr "*2:45* — Stats パネル（*CTRL-D*）の ダッシュボード タブに戻り、この取り組みが時間とともにどこに表れるかを示します。"
 
 #: ../../source/guide_utilisateur.rst:387
 msgid "Créer une nouvelle base de données"
@@ -1279,9 +1280,9 @@ msgstr "コレクションパネルを開きます（\\ *CTRL-B*\\ ）。"
 
 #: ../../source/guide_utilisateur.rst:725
 msgid ""
-"Saisir le nom de la nouvelle collection dans le champ *Nouvelle "
-"collection…* en bas du panneau, puis valider avec *ENTREE*."
-msgstr "パネル下部の *新規コレクション…* 欄に新しいコレクションの名前を入力し、\\ *ENTER* で確定します。"
+"Cliquer *+ Nouvelle collection* en en-tête du panneau, saisir le nom de "
+"la collection, puis valider avec *ENTREE*."
+msgstr "パネルのヘッダーにある\\ *+ 新規コレクション*\\ をクリックし、コレクション名を入力して\\ *ENTER*\\ で確定します。"
 
 #: ../../source/guide_utilisateur.rst:728
 msgid "**Ajouter des positions à une collection:**"
@@ -1329,9 +1330,9 @@ msgstr "トーナメントパネルを開きます（\\ *CTRL-Y*\\ ）。"
 
 #: ../../source/guide_utilisateur.rst:753
 msgid ""
-"Saisir le nom du tournoi dans le champ *Nouveau tournoi…*, puis valider "
-"avec *ENTREE*."
-msgstr "*新規トーナメント…* 欄にトーナメントの名前を入力し、\\ *ENTER* で確定します。"
+"Cliquer *+ Nouveau tournoi* en en-tête du panneau, saisir le nom du "
+"tournoi, puis valider avec *ENTREE*."
+msgstr "パネルのヘッダーにある\\ *+ 新規トーナメント*\\ をクリックし、トーナメント名を入力して\\ *ENTER*\\ で確定します。"
 
 #: ../../source/guide_utilisateur.rst:756
 msgid "**Assigner un match à un tournoi:**"
@@ -1709,3 +1710,16 @@ msgstr ""
 #~ "définitive ; une confirmation est "
 #~ "demandée avant."
 #~ msgstr "ポジションの削除は恒久的であり、事前に確認が求められます。"
+
+#~ msgid ""
+#~ "Saisir le nom de la nouvelle "
+#~ "collection dans le champ *Nouvelle "
+#~ "collection…* en bas du panneau, puis "
+#~ "valider avec *ENTREE*."
+#~ msgstr "パネル下部の *新規コレクション…* 欄に新しいコレクションの名前を入力し、\\ *ENTER* で確定します。"
+
+#~ msgid ""
+#~ "Saisir le nom du tournoi dans le"
+#~ " champ *Nouveau tournoi…*, puis valider "
+#~ "avec *ENTREE*."
+#~ msgstr "*新規トーナメント…* 欄にトーナメントの名前を入力し、\\ *ENTER* で確定します。"

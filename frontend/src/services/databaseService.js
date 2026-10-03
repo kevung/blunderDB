@@ -16,6 +16,7 @@ import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { analysisStore, emptyAnalysis, selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
+import { searchEmptyStore } from '../stores/searchParamsStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
 import { clearTranscription, bumpTranscriptionLibrary } from '../stores/transcriptionStore.js';
 import { resetLessonStores } from '../stores/lessonStore.js';
@@ -28,6 +29,18 @@ export const warningMessageStore = writable('');
 
 function setStatusBarMessage(message) {
     statusBarTextStore.set(message);
+}
+
+// A confirmation, not a state: left up, it would still read "opened" an hour later and
+// hide every later message. It leaves only if nothing else has replaced it.
+const OPEN_NOTICE_MS = 4000;
+let openNoticeTimer;
+function setTransientStatusBarMessage(message) {
+    setStatusBarMessage(message);
+    clearTimeout(openNoticeTimer);
+    openNoticeTimer = setTimeout(() => {
+        if (get(statusBarTextStore) === message) setStatusBarMessage('');
+    }, OPEN_NOTICE_MS);
 }
 
 function getFilenameFromPath(filePath) {
@@ -58,6 +71,8 @@ function resetAnalysisAndCommentStores() {
     analysisStore.set(emptyAnalysis());
     commentTextStore.set('');
     selectedMoveStore.set(null);
+    // A "no match" banner describes the previous library's search.
+    searchEmptyStore.set(false);
 }
 
 function getMajorVersion(version) {
@@ -183,7 +198,7 @@ export async function openDatabaseByPath(filePath) {
             WindowSetTitle(`blunderDB - ${filename} ${tMsg('commands.readOnlySuffix')}`);
             setStatusBarMessage(tMsg('commands.dbReadOnly'));
         } else {
-            setStatusBarMessage(tMsg('commands.dbOpened'));
+            setTransientStatusBarMessage(tMsg('commands.dbOpened'));
             WindowSetTitle(`blunderDB - ${filename}`);
         }
 

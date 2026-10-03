@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 11:17+0200\n"
+"POT-Creation-Date: 2026-10-03 13:02+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -24,7 +24,19 @@ msgstr ""
 msgid "Raccourcis clavier"
 msgstr "Горячие клавиши"
 
-#: ../../source/raccourcis.rst:9
+#: ../../source/raccourcis.rst:6
+msgid ""
+"Les infobulles de la barre d'outils rappellent la touche de chaque "
+"bouton, sous le nom qu'elle porte sur le clavier de la langue de "
+"l'interface : *Gauche*, *Suppr*, *Page préc.*, *Page suiv.*, *Maj*. Les "
+"tableaux ci-dessous et la modale d'aide emploient les mêmes noms."
+msgstr ""
+"Подсказки панели инструментов напоминают клавишу каждой кнопки под тем "
+"названием, которое она носит на клавиатуре языка интерфейса: *Влево*, "
+"*Del*, *PageUp*, *PageDown*, *Shift*. В таблицах ниже и в окне справки "
+"используются те же названия."
+
+#: ../../source/raccourcis.rst:14
 msgid "Base de données"
 msgstr "База данных"
 
@@ -84,7 +96,7 @@ msgstr "CTRL-M"
 msgid "Modifier les métadonnées de la base de données."
 msgstr "Редактировать метаданные базы данных."
 
-#: ../../source/raccourcis.rst:26
+#: ../../source/raccourcis.rst:31
 msgid "Position"
 msgstr "Позиция"
 
@@ -182,7 +194,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Показать метаданные позиции."
 
-#: ../../source/raccourcis.rst:48
+#: ../../source/raccourcis.rst:53
 msgid "Navigation"
 msgstr "Навигация"
 
@@ -195,7 +207,7 @@ msgid "Recharger toutes les positions de la base de données."
 msgstr "Перезагрузить все позиции из базы данных."
 
 #: ../../source/raccourcis.rst:1
-msgid "Home, h"
+msgid "Début, h"
 msgstr "Home, h"
 
 #: ../../source/raccourcis.rst:1
@@ -203,7 +215,7 @@ msgid "Première position / Partie précédente (navigation match)."
 msgstr "Первая позиция / Предыдущая партия (навигация по матчу)."
 
 #: ../../source/raccourcis.rst:1
-msgid "PageUp"
+msgid "Page préc."
 msgstr "PageUp"
 
 #: ../../source/raccourcis.rst:1
@@ -219,7 +231,7 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid "GAUCHE, k"
-msgstr "LEFT, k"
+msgstr "ВЛЕВО, k"
 
 #: ../../source/raccourcis.rst:1
 msgid "Position précédente."
@@ -227,7 +239,7 @@ msgstr "Предыдущая позиция."
 
 #: ../../source/raccourcis.rst:1
 msgid "DROITE, j"
-msgstr "RIGHT, j"
+msgstr "ВПРАВО, j"
 
 #: ../../source/raccourcis.rst:1
 msgid "Position suivante."
@@ -235,7 +247,7 @@ msgstr "Следующая позиция."
 
 #: ../../source/raccourcis.rst:1
 msgid "HAUT, k"
-msgstr "UP, k"
+msgstr "ВВЕРХ, k"
 
 #: ../../source/raccourcis.rst:1
 msgid "Coup précédent (lorsqu'un coup est sélectionné dans l'analyse)."
@@ -243,14 +255,14 @@ msgstr "Предыдущий ход (когда ход выбран в анал�
 
 #: ../../source/raccourcis.rst:1
 msgid "BAS, j"
-msgstr "DOWN, j"
+msgstr "ВНИЗ, j"
 
 #: ../../source/raccourcis.rst:1
 msgid "Coup suivant (lorsqu'un coup est sélectionné dans l'analyse)."
 msgstr "Следующий ход (когда ход выбран в анализе)."
 
 #: ../../source/raccourcis.rst:1
-msgid "End, l"
+msgid "Fin, l"
 msgstr "End, l"
 
 #: ../../source/raccourcis.rst:1
@@ -258,16 +270,16 @@ msgid "Dernière position / Partie suivante (navigation match)."
 msgstr "Последняя позиция / Следующая партия (навигация по матчу)."
 
 #: ../../source/raccourcis.rst:1
-msgid "PageDown"
+msgid "Page suiv."
 msgstr "PageDown"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Avance d'une page (même pas que PageUp ; à la fin de la liste, s'y "
+"Avance d'une page (même pas que *Page préc.* ; à la fin de la liste, s'y "
 "arrête) ; dans un match, partie suivante."
 msgstr ""
-"Переходит на страницу вперёд (тот же шаг, что у PageUp; останавливается в"
-" конце списка); в матче — следующая партия."
+"Переходит на страницу вперёд (тот же шаг, что у *PageUp*; останавливается"
+" в конце списка); в матче — следующая партия."
 
 #: ../../source/raccourcis.rst:1
 msgid "r"
@@ -289,7 +301,7 @@ msgstr ""
 "Выйти из результатов поиска ``ss``, запущенного из коллекции или матча: "
 "возврат к коллекции или к матчу на изучаемом ходе."
 
-#: ../../source/raccourcis.rst:67
+#: ../../source/raccourcis.rst:72
 msgid ""
 "Tant qu'une question du :ref:`panneau Entraînement "
 "<panneau_entrainement>` est posée sur le plateau, les touches qui "
@@ -306,13 +318,13 @@ msgstr ""
 "когда он завершён; в поле записи ВВОД подтверждает набранный ход (``13/7 "
 "8/7``)."
 
-#: ../../source/raccourcis.rst:77
+#: ../../source/raccourcis.rst:82
 msgid "Affichage"
 msgstr "Отображение"
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-GAUCHE"
-msgstr "CTRL-LEFT"
+msgstr "CTRL-ВЛЕВО"
 
 #: ../../source/raccourcis.rst:1
 msgid "Orientation du board à gauche."
@@ -320,7 +332,7 @@ msgstr "Ориентация доски влево."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-DROITE"
-msgstr "CTRL-RIGHT"
+msgstr "CTRL-ВПРАВО"
 
 #: ../../source/raccourcis.rst:1
 msgid "Orientation du board à droite."
@@ -334,7 +346,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Показать/скрыть пипкаунт."
 
-#: ../../source/raccourcis.rst:91
+#: ../../source/raccourcis.rst:96
 msgid "Actions"
 msgstr "Действия"
 
@@ -348,7 +360,7 @@ msgstr "Открыть панель поиска (редактор позици�
 
 #: ../../source/raccourcis.rst:1
 msgid "ESPACE"
-msgstr "SPACE"
+msgstr "ПРОБЕЛ"
 
 #: ../../source/raccourcis.rst:1
 msgid "Ouvrir la ligne de commande."
@@ -362,7 +374,7 @@ msgstr "ALT-1 … ALT-9"
 msgid "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 msgstr "Запустить закреплённый фильтр с этим номером из библиотеки фильтров."
 
-#: ../../source/raccourcis.rst:105
+#: ../../source/raccourcis.rst:110
 msgid "Outils"
 msgstr "Инструменты"
 
@@ -484,7 +496,7 @@ msgstr "В очереди предложений проводимого турн
 
 #: ../../source/raccourcis.rst:1
 msgid "ENTRÉE"
-msgstr "ВВОД"
+msgstr "ENTER"
 
 #: ../../source/raccourcis.rst:1
 msgid "Dans la file des propositions : confirmer la proposition choisie."
@@ -515,8 +527,8 @@ msgstr ""
 "отменяется нажатие клавиши)."
 
 #: ../../source/raccourcis.rst:1
-msgid "PAGE HAUT / PAGE BAS, DÉBUT / FIN"
-msgstr "PAGE UP / PAGE DOWN, HOME / END"
+msgid "PAGE PRÉC. / PAGE SUIV., DÉBUT / FIN"
+msgstr "PAGEUP / PAGEDOWN, HOME / END"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -538,7 +550,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Показать/скрыть справку."
 
-#: ../../source/raccourcis.rst:136
+#: ../../source/raccourcis.rst:141
 msgid "Onglets de vues"
 msgstr "Вкладки представлений"
 
@@ -559,7 +571,7 @@ msgid "Fermer la vue courante."
 msgstr "Закрыть текущее представление."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-PageUp, MAJ-J"
+msgid "CTRL-Page préc., MAJ-J"
 msgstr "CTRL-PageUp, SHIFT-J"
 
 #: ../../source/raccourcis.rst:1
@@ -567,7 +579,7 @@ msgid "Vue précédente."
 msgstr "Предыдущее представление."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-PageDown, MAJ-K"
+msgid "CTRL-Page suiv., MAJ-K"
 msgstr "CTRL-PageDown, SHIFT-K"
 
 #: ../../source/raccourcis.rst:1
@@ -590,13 +602,13 @@ msgstr "Двойной клик по вкладке"
 msgid "Renommer la vue."
 msgstr "Переименовать представление."
 
-#: ../../source/raccourcis.rst:153
+#: ../../source/raccourcis.rst:158
 msgid "Ligne de commande"
 msgstr "Командная строка"
 
 #: ../../source/raccourcis.rst:1
 msgid "HAUT"
-msgstr "UP"
+msgstr "ВВЕРХ"
 
 #: ../../source/raccourcis.rst:1
 msgid "Parcourir l'historique des commandes vers le haut."
@@ -604,7 +616,7 @@ msgstr "Просмотр истории команд вверх."
 
 #: ../../source/raccourcis.rst:1
 msgid "BAS"
-msgstr "DOWN"
+msgstr "ВНИЗ"
 
 #: ../../source/raccourcis.rst:1
 msgid "Parcourir l'historique des commandes vers le bas."
@@ -614,7 +626,7 @@ msgstr "Просмотр истории команд вниз."
 msgid "Pendant une recherche : l'interrompre."
 msgstr "Во время поиска: прервать его."
 
-#: ../../source/raccourcis.rst:167
+#: ../../source/raccourcis.rst:172
 msgid "Historique de recherche"
 msgstr "История поиска"
 
@@ -634,7 +646,7 @@ msgstr "Двойной клик"
 msgid "Exécuter la recherche."
 msgstr "Выполнить поиск."
 
-#: ../../source/raccourcis.rst:180
+#: ../../source/raccourcis.rst:185
 msgid "Bibliothèque de filtres"
 msgstr "Библиотека фильтров"
 
@@ -662,7 +674,7 @@ msgstr "Щелчок (по закреплённой метке)"
 msgid "Exécuter la recherche du filtre épinglé."
 msgstr "Выполнить поиск закреплённого фильтра."
 
-#: ../../source/raccourcis.rst:195
+#: ../../source/raccourcis.rst:200
 msgid "Panneau d'analyse"
 msgstr "Панель анализа"
 
@@ -704,7 +716,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Отменить выбор хода. Если ход не выбран, закрыть панель."
 
-#: ../../source/raccourcis.rst:212
+#: ../../source/raccourcis.rst:217
 msgid "Panneau Eval"
 msgstr "Панель Eval"
 
@@ -712,7 +724,7 @@ msgstr "Панель Eval"
 msgid "Désélectionner le coup."
 msgstr "Отменить выбор хода."
 
-#: ../../source/raccourcis.rst:227
+#: ../../source/raccourcis.rst:232
 msgid "Panneau des matchs"
 msgstr "Панель матчей"
 
@@ -760,13 +772,13 @@ msgstr ""
 msgid "Désélectionner/fermer le panneau."
 msgstr "Отменить выбор/закрыть панель."
 
-#: ../../source/raccourcis.rst:246
+#: ../../source/raccourcis.rst:251
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Панель Anki (интервальное повторение)"
 
 #: ../../source/raccourcis.rst:1
 msgid "ESPACE, Clic"
-msgstr "SPACE, Клик"
+msgstr "ПРОБЕЛ, Clic"
 
 #: ../../source/raccourcis.rst:1
 msgid "Afficher la réponse (l'analyse enregistrée de la position)."
@@ -816,13 +828,9 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Остановить повторение и вернуться к списку колод (можно продолжить позже)."
 
-#: ../../source/raccourcis.rst:264
+#: ../../source/raccourcis.rst:269
 msgid "Panneau des tournois"
 msgstr "Панель турниров"
-
-#: ../../source/raccourcis.rst:1
-msgid "Clic, Double-clic"
-msgstr "Клик, Двойной клик"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner un tournoi (afficher son détail)."
@@ -856,11 +864,11 @@ msgstr ""
 "Отменить текущее редактирование, иначе очистить поиск добавления матча, "
 "иначе снять выбор турнира, иначе закрыть панель (по шагам)."
 
-#: ../../source/raccourcis.rst:280
+#: ../../source/raccourcis.rst:285
 msgid "Page Direction"
 msgstr "Страница проведения"
 
-#: ../../source/raccourcis.rst:282
+#: ../../source/raccourcis.rst:287
 msgid ""
 "Sous la page Direction, *J*, *K*, *HAUT*, *BAS* et *ENTRÉE* vont à la "
 "file des propositions, sauf quand le focus est sur une case de la grille "
@@ -888,7 +896,7 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid "GAUCHE, DROITE, HAUT, BAS, DÉBUT, FIN"
-msgstr "LEFT, RIGHT, UP, DOWN, HOME, END"
+msgstr "ВЛЕВО, ВПРАВО, ВВЕРХ, ВНИЗ, HOME, END"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -976,7 +984,7 @@ msgstr ""
 "действуют на стол любого состязания; обмен с другим состязанием называет "
 "оба в подтверждении."
 
-#: ../../source/raccourcis.rst:304
+#: ../../source/raccourcis.rst:309
 msgid "Panneau des collections"
 msgstr "Панель коллекций"
 
@@ -1002,11 +1010,11 @@ msgstr ""
 "Вернуться к списку коллекций, иначе снять выбор коллекции, иначе закрыть "
 "панель (по шагам)."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:324
 msgid "Panneau Transcription"
 msgstr "Панель транскрипции"
 
-#: ../../source/raccourcis.rst:321
+#: ../../source/raccourcis.rst:326
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
 "brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
@@ -1303,7 +1311,7 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid "GAUCHE, h"
-msgstr "LEFT, h"
+msgstr "ВЛЕВО, h"
 
 #: ../../source/raccourcis.rst:1
 msgid "Reculer le curseur d'une action dans le transcript."
@@ -1311,7 +1319,7 @@ msgstr "Сдвинуть курсор на одно действие назад 
 
 #: ../../source/raccourcis.rst:1
 msgid "DROITE, l"
-msgstr "RIGHT, l"
+msgstr "ВПРАВО, l"
 
 #: ../../source/raccourcis.rst:1
 msgid "Avancer le curseur d'une action."
@@ -1445,7 +1453,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Вернуть отменённый жест."
 
-#: ../../source/raccourcis.rst:371
+#: ../../source/raccourcis.rst:376
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1453,7 +1461,7 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:374
+#: ../../source/raccourcis.rst:379
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1479,7 +1487,7 @@ msgstr ""
 "следующая цифра подтверждает его и открывает следующее решение, как в "
 "конце документа, и ENTER тоже ведёт туда."
 
-#: ../../source/raccourcis.rst:385
+#: ../../source/raccourcis.rst:390
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1492,7 +1500,7 @@ msgstr ""
 "открывает ячейку между двумя соседними, а сторона читается по столбцу. До"
 " подтверждения ничего не записывается."
 
-#: ../../source/raccourcis.rst:390
+#: ../../source/raccourcis.rst:395
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1504,7 +1512,7 @@ msgstr ""
 " не затирает идущее за ним. Конец партии или перемещение курсора это "
 "прекращает."
 
-#: ../../source/raccourcis.rst:395
+#: ../../source/raccourcis.rst:400
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1516,7 +1524,7 @@ msgstr ""
 "действия» в конце документа. Фраза стирается сама и возвращает место "
 "ожидаемому действию."
 
-#: ../../source/raccourcis.rst:400
+#: ../../source/raccourcis.rst:405
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1536,7 +1544,7 @@ msgstr ""
 "Перемещение курсора вперёд или назад после изменения записывает "
 "исправление попутно."
 
-#: ../../source/raccourcis.rst:408
+#: ../../source/raccourcis.rst:413
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1562,7 +1570,7 @@ msgstr ""
 "там, вставляется за ту сторону, которой он недоставал. Стек отмены живёт "
 "в памяти: он теряется при закрытии черновика."
 
-#: ../../source/raccourcis.rst:419
+#: ../../source/raccourcis.rst:424
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1571,13 +1579,13 @@ msgstr ""
 "Сама панель — список черновиков, создание, ввод, запись и панель "
 "черновика — описана в :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:426
+#: ../../source/raccourcis.rst:431
 msgid "Planche-contact"
 msgstr "Контактный лист"
 
 #: ../../source/raccourcis.rst:1
 msgid "GAUCHE, DROITE, HAUT, BAS"
-msgstr "LEFT, RIGHT, UP, DOWN"
+msgstr "ВЛЕВО, ВПРАВО, ВВЕРХ, ВНИЗ"
 
 #: ../../source/raccourcis.rst:1
 msgid "Se déplacer dans la grille."
@@ -1592,7 +1600,7 @@ msgid "Vignette suivante, vignette précédente."
 msgstr "Следующая миниатюра, предыдущая миниатюра."
 
 #: ../../source/raccourcis.rst:1
-msgid "Home, End"
+msgid "Début, Fin"
 msgstr "Home, End"
 
 #: ../../source/raccourcis.rst:1
@@ -1600,7 +1608,7 @@ msgid "Première, dernière vignette de la page."
 msgstr "Первая, последняя миниатюра страницы."
 
 #: ../../source/raccourcis.rst:1
-msgid "PageUp, PageDown"
+msgid "Page préc., Page suiv."
 msgstr "PageUp, PageDown"
 
 #: ../../source/raccourcis.rst:1
@@ -1619,7 +1627,7 @@ msgstr "Открыть позицию на доске и закрыть лист
 msgid "Refermer la planche."
 msgstr "Закрыть лист."
 
-#: ../../source/raccourcis.rst:443
+#: ../../source/raccourcis.rst:448
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 
@@ -1650,6 +1658,14 @@ msgstr "В начало содержимого."
 #: ../../source/raccourcis.rst:1
 msgid "Bas du contenu."
 msgstr "В конец содержимого."
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à"
+" la précédente."
+msgstr ""
+"Поиск в справке: Enter переходит к следующему совпадению, SHIFT-Enter — к"
+" предыдущему."
 
 #: ../../source/raccourcis.rst:1
 msgid "?, CTRL-F, Esc"
@@ -1887,3 +1903,21 @@ msgstr "Закрыть справку."
 
 #~ msgid "PageDown, l"
 #~ msgstr "PageDown, l"
+
+#~ msgid "Clic, Double-clic"
+#~ msgstr "Клик, Двойной клик"
+
+#~ msgid "Home, h"
+#~ msgstr "Home, h"
+
+#~ msgid "PageDown"
+#~ msgstr "PageDown"
+
+#~ msgid "CTRL-PageDown, MAJ-K"
+#~ msgstr "CTRL-PageDown, SHIFT-K"
+
+#~ msgid "Home, End"
+#~ msgstr "Home, End"
+
+#~ msgid "PageUp, PageDown"
+#~ msgstr "PageUp, PageDown"

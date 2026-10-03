@@ -206,7 +206,7 @@
         "togglePipcount": "pip カウント表示切替",
         "updatePosition": "ポジションを更新",
         "tour": "ガイドツアー",
-        "importDatabaseTip": "別のデータベースをこれに統合する：共通する局面は重複せず、その解析とコメントは結合される（Ctrl+Shift+I）",
+        "importDatabaseTip": "別のデータベースをこれに統合する：共通する局面は重複せず、その解析とコメントは結合される",
         "training": "トレーニング"
     },
     "tour": {
@@ -368,7 +368,9 @@
         "tabShortcuts": "ショートカット",
         "tabCommands": "コマンドライン",
         "tabAbout": "情報",
-        "loadFailed": "ヘルプを読み込めませんでした。"
+        "loadFailed": "ヘルプを読み込めませんでした。",
+        "searchPlaceholder": "ヘルプ内を検索 (/)",
+        "searchNone": "該当なし"
     },
     "commands": {
         "collectionEmpty": "コレクションは空です",
@@ -494,7 +496,11 @@
             "blots": "ブロット",
             "textPattern": "テキスト / パターン",
             "other": "その他"
-        }
+        },
+        "noResultsTitle": "一致する局面がありません",
+        "noResultsHint": "条件を緩めるか(フィルターを外す、範囲を広げる)、すべて消去してください。",
+        "clearFilters": "フィルターを消去",
+        "criteriaTab": "条件"
     },
     "match": {
         "errorExportingMat": "マッチのエクスポート中にエラーが発生しました",
@@ -622,7 +628,8 @@
         "livingOff": "生きたコレクション（{query}）。クリックすると手作りのリストに戻します。",
         "livingNeedsSearch": "先に検索してください。それがコレクションに残るものです。",
         "livingSet": "生きたコレクション：{query}",
-        "livingCleared": "コレクションを手作りのリストに戻しました。"
+        "livingCleared": "コレクションを手作りのリストに戻しました。",
+        "newButton": "新しいコレクション"
     },
     "tournament": {
         "addMatchPlaceholder": "マッチを追加…",
@@ -655,7 +662,8 @@
         "errorSwapping": "プレイヤーの入れ替え中にエラーが発生しました",
         "noMovesFound": "このマッチには手が見つかりません",
         "swappedPlayers": "プレイヤーを入れ替えました",
-        "confirmDelete": "トーナメント「{name}」を削除しますか?"
+        "confirmDelete": "トーナメント「{name}」を削除しますか?",
+        "newButton": "新しいトーナメント"
     },
     "anki": {
         "limitSession": "1 セッションの枚数を制限する",
@@ -679,7 +687,8 @@
         "colActions": "操作",
         "colCards": "カード",
         "colDescription": "説明",
-        "colDue": "期限",
+        "colDue": "期限切れ",
+        "colDueTooltip": "期限が過ぎたカードの数で、保留中や一時除外のカードも含みます。「学習」ボタンは利用可能なカードだけを数えます。",
         "colName": "名前",
         "colNew": "新規",
         "colSource": "ソース",
@@ -706,7 +715,7 @@
         "sourceCurrentSearch": "現在の検索",
         "sourceScores": "スコア表",
         "scoresCount": "{count} 件のスコア",
-        "scoreQuestion": "スコア {a}/{b} away",
+        "scoreQuestion": "スコア {a}/{b}",
         "badScoreKey": "このカードのスコアを読み取れません",
         "statLearning": "学習中",
         "statNew": "新規",
@@ -746,7 +755,15 @@
         "colRating": "評価",
         "colState": "状態",
         "colInterval": "間隔",
-        "days": "日"
+        "days": "日",
+        "state": {
+            "new": "新規",
+            "learning": "学習中",
+            "review": "復習",
+            "relearning": "再学習"
+        },
+        "sourceSearch": "検索",
+        "sourceCollectionN": "コレクション #{id}"
     },
     "analysis": {
         "analysisDepth": "解析の深さ",
@@ -771,7 +788,13 @@
         "panelLabel": "ポジション解析",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W"
+        "playerWin": "P W",
+        "hintPlayerWin": "プレイヤー: 勝率",
+        "hintPlayerGammon": "プレイヤー: ギャモン勝率",
+        "hintPlayerBackgammon": "プレイヤー: バックギャモン勝率",
+        "hintOpponentWin": "相手: 勝率",
+        "hintOpponentGammon": "相手: ギャモン勝率",
+        "hintOpponentBackgammon": "相手: バックギャモン勝率"
     },
     "rollout": {
         "title": "ロールアウト",
@@ -1069,7 +1092,6 @@
         "databaseUpdated": "データベースが更新されました。",
         "failed": "失敗",
         "fileProgressTitle": "ファイルインポートの進捗",
-        "finished": "インポートが完了しました。",
         "imported": "インポート済み",
         "importingFileN": "ファイルをインポート中 {current} / {total}...",
         "importingFiles": "ファイルをインポート中",
@@ -1082,7 +1104,7 @@
         "previewTitle": "インポートのプレビュー",
         "processedN": "{processed} / {total} 件のファイルを処理しました。",
         "progressTitle": "インポートの進捗",
-        "skipped": "スキップ済み",
+        "skipped": "重複をスキップ",
         "successful": "インポートに成功しました。",
         "willAdd": "追加されます",
         "willMakeChanges": "インポート操作により次の変更が行われます:",
@@ -1625,7 +1647,10 @@
         "trainingQuizPR": "クイズのPR",
         "trainingMatchPR": "対局のPR",
         "trainingRetention": "Ankiの定着率",
-        "trainingSessions": "決定クイズのセッションを {n} 件記録しました。"
+        "trainingSessions": "決定クイズのセッションを {n} 件記録しました。",
+        "compareColumnHint": "2人を選ぶと数値を比較できます",
+        "playersColPRHint": "PR: 1判断あたりの平均ミス(ミリポイント、mp)。低いほど良い",
+        "playersColLuckHint": "運: 1ロールあたりのダイスの平均影響(mp)。正の値は有利"
     },
     "trash": {
         "title": "ごみ箱",
@@ -1756,7 +1781,7 @@
         "faultHint": "間違えた数値をクリックしてください。",
         "faceYou": "あなた",
         "faceOpponent": "相手",
-        "scoreCaption": "スコア {a}/{b} away",
+        "scoreCaption": "スコア {a}/{b}",
         "summary": "集計",
         "noSession": "セッションなし",
         "sessionsCount": "{n} セッション",
@@ -1800,7 +1825,8 @@
         },
         "truthExact": "正解: 両者のベアオフデータベース (厳密)。",
         "truthEvaluated": "正解: gammonNet、{depth}。",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "各マスの数値を頭の中で見積もってから「公開」を押し、その後、間違えた数値をクリックしてください。"
     },
     "explain": {
         "blots": "{cost} mMWC の損：着手はブロットを {blots} 個残しますが、{best} なら {bestBlots} 個です。",
@@ -2623,6 +2649,31 @@
         "needsAck": "先に設定 › アシスタントと MCP でこのプロバイダーのプライバシー警告に同意してください。",
         "error": "エラー：{error}",
         "write": "アシスタントに変更の提案を許可する（それぞれ確認あり）"
+    },
+    "emptyState": {
+        "import": "インポート… (Ctrl+I)",
+        "openDatabase": "データベースを開く…",
+        "clearFilter": "フィルターを解除",
+        "backHome": "ホーム画面に戻る"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Shift",
+        "alt": "Alt",
+        "left": "←",
+        "right": "→",
+        "up": "↑",
+        "down": "↓",
+        "delete": "Del",
+        "pageUp": "PageUp",
+        "pageDown": "PageDown",
+        "home": "Home",
+        "end": "End",
+        "enter": "Enter",
+        "escape": "Esc",
+        "space": "Space",
+        "backspace": "Backspace",
+        "tab": "Tab"
     },
     "lesson": {
         "title": "レッスン",

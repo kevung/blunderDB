@@ -115,31 +115,22 @@ export function mergeIds(searchIds, storedIds) {
     return out;
 }
 
-/** The FSRS card state as a word. */
-export function stateLabel(state) {
-    switch (state) {
-        case 0:
-            return 'New';
-        case 1:
-            return 'Learning';
-        case 2:
-            return 'Review';
-        case 3:
-            return 'Relearning';
-        default:
-            return '?';
-    }
+const STATE_KEYS = ['anki.state.new', 'anki.state.learning', 'anki.state.review', 'anki.state.relearning'];
+
+/** The FSRS card state as a word, in the user's language (`t` is the i18n translate function). */
+export function stateLabel(state, t) {
+    return STATE_KEYS[state] ? t(STATE_KEYS[state]) : '?';
 }
 
 /** What a deck draws its cards from, as shown in the deck list. */
-export function sourceLabel(deck, collections = []) {
+export function sourceLabel(deck, collections = [], t) {
     if (deck.sourceType === 'collection') {
         const coll = collections.find((c) => c.id === deck.sourceId);
-        return coll ? coll.name : `Collection #${deck.sourceId}`;
+        return coll ? coll.name : t('anki.sourceCollectionN', { id: deck.sourceId });
     }
-    if (deck.sourceType === SOURCE_SCORES) return 'Score sheets';
-    if (!deck.sourceCommand) return 'Search';
-    return parseSourceCommand(deck.sourceCommand).command ?? 'Search';
+    if (deck.sourceType === SOURCE_SCORES) return t('anki.sourceScores');
+    if (!deck.sourceCommand) return t('anki.sourceSearch');
+    return parseSourceCommand(deck.sourceCommand).command ?? t('anki.sourceSearch');
 }
 
 /**

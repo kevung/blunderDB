@@ -25,3 +25,13 @@ describe('normalizeCubeAction', () => {
         expect(normalizeCubeAction('Double')).toEqual(['double']);
     });
 });
+
+// The same labels feed engine.CanonicalCubeAction (analysiscodec_test.go): the two tables agree
+// because both read testdata/cube_action_labels.json, labels the importers really write.
+import labels from '../../../testdata/cube_action_labels.json';
+import { test as t2, expect as e2 } from 'vitest';
+import { normalizeCubeAction as norm2 } from '../utils/cubeAction.js';
+
+t2.each(labels)('normalizeCubeAction reads "$label" as $parts', ({ label, parts }) => {
+    e2(norm2(label)).toEqual(parts);
+});

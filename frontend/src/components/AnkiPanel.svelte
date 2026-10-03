@@ -1,5 +1,6 @@
 <script>
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
+    import NewButton from './panels/NewButton.svelte';
     import { onMount } from 'svelte';
     import {
         ankiDecksStore,
@@ -144,7 +145,7 @@
         { key: 'source', label: $t('anki.colSource') },
         { key: 'cards', label: $t('anki.colCards'), narrow: true, align: 'center' },
         { key: 'new', label: $t('anki.colNew'), narrow: true, align: 'center' },
-        { key: 'due', label: $t('anki.colDue'), narrow: true, align: 'center' },
+        { key: 'due', label: $t('anki.colDue'), title: $t('anki.colDueTooltip'), narrow: true, align: 'center' },
         { key: 'actions', label: $t('anki.colActions'), actions: true }
     ]);
 
@@ -178,7 +179,7 @@
             // Position number or score (ADR-0042); falls back on the id for older journals.
             subject: e.key || e.positionId,
             rating: RATING_KEYS[e.rating] ? $t(RATING_KEYS[e.rating]) : String(e.rating),
-            state: anki.stateLabel(e.state),
+            state: anki.stateLabel(e.state, $t),
             // Days granted; 0 = back in the same session, not missing.
             scheduledDays: `${e.scheduledDays} ${$t('anki.days')}`
         }))
@@ -499,7 +500,7 @@
             {#if cramMode}
                 <span class="card-state state-cram">{$t('anki.cramBadge')}</span>
             {:else}
-                <span class="card-state state-{reviewCard.card.state}">{anki.stateLabel(reviewCard.card.state)}</span>
+                <span class="card-state state-{reviewCard.card.state}">{anki.stateLabel(reviewCard.card.state, $t)}</span>
             {/if}
         </div>
 
@@ -670,10 +671,7 @@
         <!-- Deck List Mode -->
         <div class="deck-toolbar">
             {#if !showCreateForm}
-                <button class="btn-outline" onclick={() => (showCreateForm = true)} title={$t('anki.createNewDeckTooltip')}>
-                    {@render icon(ICON.plus)}
-                    {$t('anki.newDeck')}
-                </button>
+                <NewButton label={$t('anki.newDeck')} title={$t('anki.createNewDeckTooltip')} onclick={() => (showCreateForm = true)} />
             {:else}
                 <div class="create-form">
                     <input
@@ -721,6 +719,7 @@
                 startSession(false);
             }}
             emptyText={$t('anki.empty')}
+            emptyActions
         >
             {#snippet cells(deck)}
                 {#if deckEdit.isEditing(deck.id)}
@@ -734,7 +733,7 @@
                 {:else}
                     <td class="name-cell"><span class="deck-name">{deck.name}</span></td>
                     <td class="desc-cell">{deck.description || ''}</td>
-                    <td class="source-cell">{anki.sourceLabel(deck, collections)}</td>
+                    <td class="source-cell">{anki.sourceLabel(deck, collections, $t)}</td>
                     <td class="narrow-col count-cell">{deck.cardCount}</td>
                     <td class="narrow-col count-cell">{deck.newCount || ''}</td>
                     <td class="narrow-col count-cell">{deck.dueCount || ''}</td>
@@ -846,6 +845,7 @@
     /* --- Deck toolbar --- */
     .deck-toolbar {
         display: flex;
+        min-height: 24px;
         align-items: center;
         padding: 4px 8px;
         border-bottom: 1px solid var(--color-border);

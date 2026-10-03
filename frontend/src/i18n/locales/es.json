@@ -206,7 +206,7 @@
         "togglePipcount": "Alternar conteo de pips",
         "updatePosition": "Actualizar posición",
         "tour": "Visitas guiadas",
-        "importDatabaseTip": "Fusionar otra base en esta: las posiciones comunes no se duplican, sus análisis y comentarios se combinan (Ctrl+Mayús+I)",
+        "importDatabaseTip": "Fusionar otra base en esta: las posiciones comunes no se duplican, sus análisis y comentarios se combinan",
         "training": "Entrenamiento"
     },
     "tour": {
@@ -365,10 +365,12 @@
     },
     "help": {
         "tabManual": "Manual",
-        "tabShortcuts": "Atajo",
+        "tabShortcuts": "Atajos",
         "tabCommands": "Línea de comandos",
         "tabAbout": "Acerca de",
-        "loadFailed": "No se pudo cargar la ayuda."
+        "loadFailed": "No se pudo cargar la ayuda.",
+        "searchPlaceholder": "Buscar en la ayuda (/)",
+        "searchNone": "sin resultados"
     },
     "commands": {
         "collectionEmpty": "La colección está vacía",
@@ -494,7 +496,11 @@
             "blots": "Blots",
             "textPattern": "Texto / Patrón",
             "other": "Otro"
-        }
+        },
+        "noResultsTitle": "Ninguna posición coincide",
+        "noResultsHint": "Amplíe los criterios (quite un filtro, relaje un límite) o bórrelos.",
+        "clearFilters": "Borrar filtros",
+        "criteriaTab": "Criterios"
     },
     "match": {
         "errorExportingMat": "Error al exportar el partido",
@@ -622,7 +628,8 @@
         "livingOff": "Colección viva ({query}). Pulse para devolverle su lista hecha a mano.",
         "livingNeedsSearch": "Lance primero una búsqueda: es lo que la colección guardará.",
         "livingSet": "Colección viva: {query}",
-        "livingCleared": "Colección devuelta a su lista hecha a mano."
+        "livingCleared": "Colección devuelta a su lista hecha a mano.",
+        "newButton": "Nueva colección"
     },
     "tournament": {
         "addMatchPlaceholder": "Añadir partida…",
@@ -655,7 +662,8 @@
         "errorSwapping": "Error al intercambiar jugadores",
         "noMovesFound": "No se encontraron jugadas para esta partida",
         "swappedPlayers": "Jugadores intercambiados",
-        "confirmDelete": "¿Eliminar el torneo \"{name}\"?"
+        "confirmDelete": "¿Eliminar el torneo \"{name}\"?",
+        "newButton": "Nuevo torneo"
     },
     "anki": {
         "limitSession": "Limitar la sesión",
@@ -679,7 +687,8 @@
         "colActions": "Acciones",
         "colCards": "Tarjetas",
         "colDescription": "Descripción",
-        "colDue": "Pendientes",
+        "colDue": "Vencidas",
+        "colDueTooltip": "Tarjetas cuya fecha de vencimiento ha pasado, incluidas las suspendidas o enterradas. El botón Estudiar solo cuenta las tarjetas disponibles.",
         "colName": "Nombre",
         "colNew": "Nuevas",
         "colSource": "Origen",
@@ -706,7 +715,7 @@
         "sourceCurrentSearch": "Búsqueda actual",
         "sourceScores": "Fichas de marcador",
         "scoresCount": "{count} marcadores",
-        "scoreQuestion": "Marcador {a}/{b} away",
+        "scoreQuestion": "Marcador {a}/{b}",
         "badScoreKey": "Marcador ilegible en esta tarjeta",
         "statLearning": "Aprendiendo",
         "statNew": "Nuevas",
@@ -746,7 +755,15 @@
         "colRating": "Nota",
         "colState": "Estado",
         "colInterval": "Intervalo",
-        "days": "d"
+        "days": "d",
+        "state": {
+            "new": "Nueva",
+            "learning": "Aprendiendo",
+            "review": "Repaso",
+            "relearning": "Reaprendiendo"
+        },
+        "sourceSearch": "Búsqueda",
+        "sourceCollectionN": "Colección n.º {id}"
     },
     "analysis": {
         "analysisDepth": "Profundidad de análisis",
@@ -771,7 +788,13 @@
         "panelLabel": "Análisis de la posición",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W"
+        "playerWin": "P W",
+        "hintPlayerWin": "Jugador: probabilidad de ganar",
+        "hintPlayerGammon": "Jugador: probabilidad de gammon",
+        "hintPlayerBackgammon": "Jugador: probabilidad de backgammon",
+        "hintOpponentWin": "Rival: probabilidad de ganar",
+        "hintOpponentGammon": "Rival: probabilidad de gammon",
+        "hintOpponentBackgammon": "Rival: probabilidad de backgammon"
     },
     "rollout": {
         "title": "Rollout",
@@ -1069,7 +1092,6 @@
         "databaseUpdated": "La base de datos se ha actualizado.",
         "failed": "Fallidas",
         "fileProgressTitle": "Progreso de importación de archivos",
-        "finished": "Importación finalizada.",
         "imported": "Importadas",
         "importingFileN": "Importando el archivo {current} de {total}...",
         "importingFiles": "Importando archivos",
@@ -1082,7 +1104,7 @@
         "previewTitle": "Vista previa de la importación",
         "processedN": "Procesados {processed} de {total} archivo(s).",
         "progressTitle": "Progreso de la importación",
-        "skipped": "Omitidas",
+        "skipped": "Duplicadas omitidas",
         "successful": "¡Importación correcta!",
         "willAdd": "Se añadirán",
         "willMakeChanges": "La operación de importación realizará los siguientes cambios:",
@@ -1463,7 +1485,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Cerrar panel de estadísticas",
-        "tabDashboard": "Dashboard",
+        "tabDashboard": "Resumen",
         "tabProgression": "Progresión",
         "tabErrors": "Errores",
         "tabTraining": "Entrenamiento",
@@ -1488,7 +1510,7 @@
         "filterLengthHint": "Clic para filtrar solo esta longitud",
         "selectAllLengths": "Seleccionar todas las longitudes",
         "all": "Todos",
-        "resetFilters": "↺ Reset",
+        "resetFilters": "↺ Restablecer",
         "resetFiltersHint": "Restablecer filtros",
         "noDecisionsEmpty": "No hay decisiones en el período filtrado. Amplíe los filtros.",
         "cardLabelAll": "PR Global",
@@ -1625,7 +1647,10 @@
         "trainingQuizPR": "PR del quiz",
         "trainingMatchPR": "PR de las partidas",
         "trainingRetention": "Retención Anki",
-        "trainingSessions": "{n} sesiones del quiz Decisión registradas."
+        "trainingSessions": "{n} sesiones del quiz Decisión registradas.",
+        "compareColumnHint": "Marque dos jugadores para comparar sus cifras",
+        "playersColPRHint": "PR: error medio por decisión, en milipuntos (mp); más bajo es mejor",
+        "playersColLuckHint": "Suerte: efecto medio de los dados por tirada, en mp; positivo = dados favorables"
     },
     "trash": {
         "title": "Papelera",
@@ -1756,7 +1781,7 @@
         "faultHint": "Haga clic en el número que ha fallado.",
         "faceYou": "Usted",
         "faceOpponent": "El adversario",
-        "scoreCaption": "Marcador {a}/{b} away",
+        "scoreCaption": "Marcador {a}/{b}",
         "summary": "Balance",
         "noSession": "Ninguna sesión",
         "sessionsCount": "{n} sesiones",
@@ -1800,7 +1825,8 @@
         },
         "truthExact": "Verdad: la base de bearoff de dos bandos, exacta.",
         "truthEvaluated": "Verdad: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "Calcule mentalmente cada casilla y pulse Revelar. Después, pulse cada número que haya fallado."
     },
     "explain": {
         "blots": "Pierde {cost} mMWC: la jugada realizada deja {blots} fichas sueltas donde {best} solo deja {bestBlots}.",
@@ -2623,6 +2649,31 @@
         "needsAck": "Acepte primero el aviso de privacidad de este proveedor en Ajustes › Asistente y MCP.",
         "error": "Error: {error}",
         "write": "Dejar que el asistente proponga cambios (cada uno confirmado)"
+    },
+    "emptyState": {
+        "import": "Importar… (Ctrl+I)",
+        "openDatabase": "Abrir una base de datos…",
+        "clearFilter": "Borrar el filtro",
+        "backHome": "Volver a la pantalla de inicio"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Mayús",
+        "alt": "Alt",
+        "left": "Izquierda",
+        "right": "Derecha",
+        "up": "Arriba",
+        "down": "Abajo",
+        "delete": "Supr",
+        "pageUp": "Re Pág",
+        "pageDown": "Av Pág",
+        "home": "Inicio",
+        "end": "Fin",
+        "enter": "Intro",
+        "escape": "Esc",
+        "space": "Espacio",
+        "backspace": "Retroceso",
+        "tab": "Tab"
     },
     "lesson": {
         "title": "Lección",

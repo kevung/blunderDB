@@ -15,7 +15,7 @@ de positions de référence.
 
 Les positions sont stockées dans une base de données représentée par un fichier
 *.db*. L'application de bureau ouvre ce fichier directement, jamais une adresse
-réseau : le mode serveur (:ref:`headless`) est un autre mode du même binaire, et
+réseau : le :ref:`mode serveur <headless>` est un autre mode du même binaire, et
 l'on passe de l'un à l'autre en exportant ou en migrant la base, pas en pointant
 l'application vers une URL.
 
@@ -28,7 +28,7 @@ Les principales interactions possibles avec blunderDB sont:
 
 * modifier une position existante,
 
-* copier l'image du board dans le presse-papier (PNG) via **CTRL-X**, ou avec l'analyse complète via **CTRL-X CTRL-X**,
+* copier l'image du plateau dans le presse-papier (PNG) via **CTRL-X**, ou avec l'analyse complète via **CTRL-X CTRL-X**,
 
 * supprimer une position existante,
 
@@ -95,7 +95,7 @@ Des fenêtres modales peuvent s'afficher pour:
 
 La zone d'affichage principale met à disposition à l'utilisateur:
 
-* un board afin d'afficher ou d'éditer une position de backgammon,
+* un plateau afin d'afficher ou d'éditer une position de backgammon,
 
 * le niveau et le propriétaire du cube,
 
@@ -882,6 +882,10 @@ définir une structure de pions à rechercher sur le plateau.
    Le panneau Recherche : filtres numériques, structure de pions au plateau,
    onglets *Au moins* / *Sauf*.
 
+Les filtres se règlent dans le sous-onglet **Critères**. Quand une recherche ne
+trouve rien, le panneau l'affiche (« Aucune position ne correspond ») avec un
+bouton **Effacer les filtres**, sans se contenter de la barre d'état.
+
 Pour chercher parmi les positions affichées, utiliser la commande ``ss``
 suivie de filtres (ex: ``ss nc``, ``ss E>40``). ``ss`` cherche dans la liste à
 l'écran : les résultats de la recherche précédente, la collection ouverte ou
@@ -1091,6 +1095,12 @@ Panneau Collections
    Le panneau Collections : nom, nombre de positions, description,
    dernière modification.
 
+Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton
+**+ Nouveau…** de l'en-tête est l'unique geste de création : il ouvre le champ
+de saisie, que *Échap* ou **Annuler** referme dans les panneaux Collections et
+Tournois. Dans la liste des matchs, l'icône ⌨ ouvre la transcription du match
+et l'icône ✎ en corrige les métadonnées.
+
 Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de
 positions. Les collections peuvent être créées, renommées et supprimées. Des
 positions peuvent y être ajoutées ou retirées (touche *Suppr*, confirmation
@@ -1217,6 +1227,12 @@ tournoi ou la date contient le texte saisi. Le filtre et le tri des colonnes
 sont faits par la base : la liste se charge par pages au fil du défilement, et
 le compteur « n / N matchs » indique la part chargée. Corriger un joueur, une
 date ou un tournoi dans la liste ne met à jour que la ligne éditée.
+
+Quand la liste est vide, le panneau propose **Importer… (Ctrl+I)** ; sans base
+ouverte, il propose **Ouvrir une base…** à la place, avec **Retour à
+l'accueil**. Quand c'est le filtre de texte qui a vidé la liste, il propose
+**Effacer le filtre**. Les panneaux Stats, Collections et Anki vides offrent les
+mêmes boutons.
 
 L'utilisateur peut:
 
@@ -2256,25 +2272,25 @@ pas son périmètre est un rapport dont les chiffres ne veulent rien dire :
 réglez le filtre — un tournoi, une plage de dates, un joueur — avant de le
 produire.
 
-Onglet Dashboard
-~~~~~~~~~~~~~~~~
+Onglet Tableau de bord
+~~~~~~~~~~~~~~~~~~~~~~
 
-L'onglet **Dashboard** donne une vue synthétique des indicateurs clés.
+L'onglet **Tableau de bord** donne une vue synthétique des indicateurs clés.
 
 .. figure:: img/panel_stats_dashboard.png
    :width: 100%
-   :alt: Onglet Dashboard du panneau Stats
+   :alt: Onglet Tableau de bord du panneau Stats
 
-   L'onglet Dashboard : PR global, PR pions, PR videau.
+   L'onglet Tableau de bord : PR global, PR pions, PR videau.
 
 Cartes de niveau
 ^^^^^^^^^^^^^^^^
 
 Trois cartes affichent le PR (ou MWC) pour :
 
-* **PR Global** — toutes les décisions (coups + videau) ;
-* **PR Coup** — coups joués seulement ;
-* **PR Cube** — décisions de videau seulement.
+* **PR global** — toutes les décisions (pions + videau) ;
+* **PR pions** — décisions de pions seulement ;
+* **PR videau** — décisions de videau seulement.
 
 Cliquer sur une carte charge dans le panneau d'analyse les positions du
 sous-ensemble correspondant (drill-down).
@@ -2574,7 +2590,7 @@ Utilisation :
   pas une performance parfaite.
 * **Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est
   sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet
-  Dashboard.
+  Tableau de bord.
 * **Restreindre la période** — les filtres de dates, de tournois et de longueur
   de match s'appliquent normalement, ce qui permet de borner le tableau aux
   dates d'une compétition.
@@ -3200,6 +3216,11 @@ laisse le plateau tel qu'il est. Évaluez votre rappel avec les touches
 *1* (À revoir), *2* (Difficile), *3* (Bien), ou *4* (Facile). Appuyez sur *Esc*
 pour arrêter et revenir à la liste des paquets.
 
+Deux comptes portent des noms distincts : la colonne **Échues** de la liste
+compte toutes les cartes dont l'échéance est passée, y compris les cartes
+suspendues ou enterrées ; le chiffre du bouton *Study* ne compte que celles qui
+sont disponibles maintenant, et peut donc être plus petit.
+
 **Les décisions de videau font deux cartes, enchaînées.** Une décision de
 videau est deux questions — « double ? », puis « prend ? » — et blunderDB les
 enregistre depuis toujours comme deux positions. Un paquet qui n'en
@@ -3368,6 +3389,10 @@ Les cinq exercices
 affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire* — et
 sept lignes — le point de prise au videau 2 puis au videau 4, chacun en course
 longue et au dernier lancer, puis la valeur du gammon aux videaux 1, 2 et 4.
+
+Une ligne de consigne rappelle le geste — estimer chaque nombre de tête, puis
+*Révéler*, puis cliquer ceux qu'on a ratés —, et le plateau montre le score
+tiré sur une table vide.
 
 Chaque colonne ne porte que les cases que les tables de référence — celles
 qu'affichent les commandes ``tp2_live``, ``tp2_last``, ``tp4_live``,

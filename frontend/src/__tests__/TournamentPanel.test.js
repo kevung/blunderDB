@@ -78,6 +78,12 @@ function renderOpen() {
 
 // ── List view ─────────────────────────────────────────────────────────────────
 
+/** The creation field opens from the header's "+ New …" button. */
+async function openCreation() {
+    await fireEvent.click(screen.getByTestId('panel-new'));
+    return screen.getByPlaceholderText(/new tournament/i);
+}
+
 describe('TournamentPanel — list view', () => {
     test('opening the panel loads the tournament list', async () => {
         renderOpen();
@@ -107,7 +113,7 @@ describe('TournamentPanel — list view', () => {
         renderOpen();
         await screen.findByText('Blunder Cup');
 
-        const nameInput = screen.getByPlaceholderText(/new tournament/i);
+        const nameInput = await openCreation();
         await fireEvent.input(nameInput, { target: { value: 'Winter Slam' } });
         await fireEvent.keyDown(nameInput, { key: 'Enter' });
 
@@ -115,22 +121,55 @@ describe('TournamentPanel — list view', () => {
         expect(CreateTournament).toHaveBeenCalledWith('Winter Slam', '', '');
     });
 
+    test('Escape in the creation fields closes the form and forgets what was typed', async () => {
+        renderOpen();
+        await screen.findByText('Blunder Cup');
+
+        const nameInput = await openCreation();
+        await fireEvent.input(nameInput, { target: { value: 'Winter Slam' } });
+        await fireEvent.keyDown(nameInput, { key: 'Escape' });
+
+        expect(screen.queryByPlaceholderText(/new tournament/i)).toBeNull();
+        expect(await openCreation()).toHaveValue('');
+    });
+
+    test('the Cancel button closes the creation form', async () => {
+        renderOpen();
+        await screen.findByText('Blunder Cup');
+
+        await openCreation();
+        await fireEvent.click(screen.getByRole('button', { name: /cancel/i }));
+
+        expect(screen.queryByPlaceholderText(/new tournament/i)).toBeNull();
+    });
+
+    test('a single click highlights the row without opening the tournament', async () => {
+        renderOpen();
+        const row = (await screen.findByText('Blunder Cup')).closest('tr');
+
+        await fireEvent.click(row);
+
+        expect(row.classList.contains('selected')).toBe(true);
+        expect(get(selectedTournamentStore)).toBeNull();
+        expect(GetTournamentMatches).not.toHaveBeenCalled();
+    });
+
     test('a blank name does not create a tournament', async () => {
         renderOpen();
         await screen.findByText('Blunder Cup');
 
-        const nameInput = screen.getByPlaceholderText(/new tournament/i);
+        const nameInput = await openCreation();
         await fireEvent.keyDown(nameInput, { key: 'Enter' });
 
         expect(CreateTournament).not.toHaveBeenCalled();
     });
 
-    test('clicking a tournament row opens its matches (detail view)', async () => {
+    test('double-clicking a tournament row opens its matches (detail view)', async () => {
         GetTournamentMatches.mockResolvedValue([{ id: 501, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, comment: '' }]);
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
 
-        await fireEvent.click(row);
+        await fireEvent.dblClick(row);
 
         await vi.waitFor(() => expect(get(selectedTournamentStore)).toMatchObject({ id: 1 }));
         expect(ListMatches).toHaveBeenCalledWith(expect.objectContaining({ Unassigned: true }));
@@ -138,11 +177,11 @@ describe('TournamentPanel — list view', () => {
         expect(await screen.findByText('Alice')).toBeTruthy();
     });
 
-    test('clicking a tournament, then the back button, returns to the list with the selection cleared', async () => {
+    test('double-clicking a tournament, then the back button, returns to the list with the selection cleared', async () => {
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
 
-        await fireEvent.click(row);
+        await fireEvent.dblClick(row);
         await vi.waitFor(() => expect(get(selectedTournamentStore)).not.toBeNull());
 
         await fireEvent.click(screen.getByTitle(/back to tournaments/i));
@@ -194,7 +233,7 @@ describe('TournamentPanel — list view', () => {
         renderOpen();
         await screen.findByText('Blunder Cup');
 
-        const sortBtn = screen.getByRole('button', { name: /name/i });
+        const sortBtn = screen.getByRole('button', { name: /^name/i });
         await fireEvent.click(sortBtn);
         await tick();
 
@@ -215,7 +254,7 @@ describe('TournamentPanel — keyboard shortcuts', () => {
         GetTournamentMatches.mockResolvedValue([]);
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
-        await fireEvent.click(row);
+        await fireEvent.dblClick(row);
         await vi.waitFor(() => expect(get(selectedTournamentStore)).not.toBeNull());
 
         await fireEvent.keyDown(document, { key: 'Escape' });
@@ -253,7 +292,7 @@ describe('TournamentPanel — deferred focus', () => {
     // panel instead of the field, and no tournament was created.
     test('does not take the caret from the new-tournament field', async () => {
         renderOpen();
-        const nameInput = screen.getByPlaceholderText(/new tournament/i);
+        const nameInput = await openCreation();
         nameInput.focus();
 
         await pastFocusTimer();

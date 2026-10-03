@@ -206,7 +206,7 @@
         "togglePipcount": "Εναλλαγή μέτρησης pip",
         "updatePosition": "Ενημέρωση θέσης",
         "tour": "Ξεναγήσεις",
-        "importDatabaseTip": "Συγχώνευση μιας άλλης βάσης σε αυτήν: οι κοινές θέσεις δεν διπλασιάζονται, οι αναλύσεις και τα σχόλιά τους συνδυάζονται (Ctrl+Shift+I)",
+        "importDatabaseTip": "Συγχώνευση μιας άλλης βάσης σε αυτήν: οι κοινές θέσεις δεν διπλασιάζονται, οι αναλύσεις και τα σχόλιά τους συνδυάζονται",
         "training": "Εξάσκηση"
     },
     "tour": {
@@ -365,10 +365,12 @@
     },
     "help": {
         "tabManual": "Εγχειρίδιο",
-        "tabShortcuts": "Συντόμευση",
+        "tabShortcuts": "Συντομεύσεις",
         "tabCommands": "Γραμμή εντολών",
         "tabAbout": "Σχετικά",
-        "loadFailed": "Δεν ήταν δυνατή η φόρτωση της βοήθειας."
+        "loadFailed": "Δεν ήταν δυνατή η φόρτωση της βοήθειας.",
+        "searchPlaceholder": "Αναζήτηση στη βοήθεια (/)",
+        "searchNone": "κανένα αποτέλεσμα"
     },
     "commands": {
         "collectionEmpty": "Η συλλογή είναι κενή",
@@ -494,7 +496,11 @@
             "blots": "Blots",
             "textPattern": "Κείμενο / Μοτίβο",
             "other": "Άλλο"
-        }
+        },
+        "noResultsTitle": "Καμία θέση δεν ταιριάζει",
+        "noResultsHint": "Διευρύνετε τα κριτήρια (αφαιρέστε φίλτρο, χαλαρώστε όριο) ή καθαρίστε τα.",
+        "clearFilters": "Εκκαθάριση φίλτρων",
+        "criteriaTab": "Κριτήρια"
     },
     "match": {
         "errorExportingMat": "Σφάλμα κατά την εξαγωγή του αγώνα",
@@ -622,7 +628,8 @@
         "livingOff": "Ζωντανή συλλογή ({query}). Κάντε κλικ για να της επιστρέψετε τη χειροποίητη λίστα.",
         "livingNeedsSearch": "Κάντε πρώτα μια αναζήτηση: αυτή θα κρατήσει η συλλογή.",
         "livingSet": "Ζωντανή συλλογή: {query}",
-        "livingCleared": "Η συλλογή πήρε πίσω τη χειροποίητη λίστα της."
+        "livingCleared": "Η συλλογή πήρε πίσω τη χειροποίητη λίστα της.",
+        "newButton": "Νέα συλλογή"
     },
     "tournament": {
         "addMatchPlaceholder": "Προσθήκη αγώνα…",
@@ -655,7 +662,8 @@
         "errorSwapping": "Σφάλμα κατά την εναλλαγή παικτών",
         "noMovesFound": "Δεν βρέθηκαν κινήσεις για αυτόν τον αγώνα",
         "swappedPlayers": "Οι παίκτες εναλλάχθηκαν",
-        "confirmDelete": "Διαγραφή του τουρνουά «{name}»;"
+        "confirmDelete": "Διαγραφή του τουρνουά «{name}»;",
+        "newButton": "Νέο τουρνουά"
     },
     "anki": {
         "limitSession": "Περιορισμός της συνεδρίας",
@@ -679,7 +687,8 @@
         "colActions": "Ενέργειες",
         "colCards": "Κάρτες",
         "colDescription": "Περιγραφή",
-        "colDue": "Προς εξέταση",
+        "colDue": "Εκπρόθεσμες",
+        "colDueTooltip": "Κάρτες με παρελθούσα προθεσμία, συμπεριλαμβανομένων των αναστελλόμενων ή των θαμμένων. Το κουμπί Μελέτη μετρά μόνο τις διαθέσιμες κάρτες.",
         "colName": "Όνομα",
         "colNew": "Νέες",
         "colSource": "Προέλευση",
@@ -706,7 +715,7 @@
         "sourceCurrentSearch": "Τρέχουσα αναζήτηση",
         "sourceScores": "Καρτέλες σκορ",
         "scoresCount": "{count} σκορ",
-        "scoreQuestion": "Σκορ {a}/{b} away",
+        "scoreQuestion": "Σκορ {a}/{b}",
         "badScoreKey": "Μη αναγνώσιμο σκορ σε αυτή την κάρτα",
         "statLearning": "Εκμάθηση",
         "statNew": "Νέες",
@@ -746,7 +755,15 @@
         "colRating": "Βαθμός",
         "colState": "Κατάσταση",
         "colInterval": "Διάστημα",
-        "days": "ημ"
+        "days": "ημ",
+        "state": {
+            "new": "Νέα",
+            "learning": "Εκμάθηση",
+            "review": "Επανάληψη",
+            "relearning": "Επανεκμάθηση"
+        },
+        "sourceSearch": "Αναζήτηση",
+        "sourceCollectionN": "Συλλογή #{id}"
     },
     "analysis": {
         "analysisDepth": "Βάθος ανάλυσης",
@@ -771,7 +788,13 @@
         "panelLabel": "Ανάλυση θέσης",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W"
+        "playerWin": "P W",
+        "hintPlayerWin": "Παίκτης: πιθανότητα νίκης",
+        "hintPlayerGammon": "Παίκτης: πιθανότητα γκάμον",
+        "hintPlayerBackgammon": "Παίκτης: πιθανότητα μπάκγκαμον",
+        "hintOpponentWin": "Αντίπαλος: πιθανότητα νίκης",
+        "hintOpponentGammon": "Αντίπαλος: πιθανότητα γκάμον",
+        "hintOpponentBackgammon": "Αντίπαλος: πιθανότητα μπάκγκαμον"
     },
     "rollout": {
         "title": "Rollout",
@@ -1069,7 +1092,6 @@
         "databaseUpdated": "Η βάση δεδομένων ενημερώθηκε.",
         "failed": "Απέτυχαν",
         "fileProgressTitle": "Πρόοδος εισαγωγής αρχείου",
-        "finished": "Η εισαγωγή ολοκληρώθηκε.",
         "imported": "Εισήχθησαν",
         "importingFileN": "Εισαγωγή αρχείου {current} από {total}...",
         "importingFiles": "Εισαγωγή αρχείων",
@@ -1082,7 +1104,7 @@
         "previewTitle": "Προεπισκόπηση εισαγωγής",
         "processedN": "Επεξεργάστηκαν {processed} από {total} αρχείο(α).",
         "progressTitle": "Πρόοδος εισαγωγής",
-        "skipped": "Παραλείφθηκαν",
+        "skipped": "Διπλότυπα (παραλείφθηκαν)",
         "successful": "Η εισαγωγή ολοκληρώθηκε με επιτυχία!",
         "willAdd": "Θα προστεθούν",
         "willMakeChanges": "Η λειτουργία εισαγωγής θα κάνει τις ακόλουθες αλλαγές:",
@@ -1463,7 +1485,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Κλείσιμο πλαισίου στατιστικών",
-        "tabDashboard": "Ταμπλό",
+        "tabDashboard": "Πίνακας",
         "tabProgression": "Εξέλιξη",
         "tabErrors": "Σφάλματα",
         "tabTraining": "Εκπαίδευση",
@@ -1625,7 +1647,10 @@
         "trainingQuizPR": "PR κουίζ",
         "trainingMatchPR": "PR αγώνων",
         "trainingRetention": "Διατήρηση Anki",
-        "trainingSessions": "{n} συνεδρίες κουίζ Απόφαση καταγράφηκαν."
+        "trainingSessions": "{n} συνεδρίες κουίζ Απόφαση καταγράφηκαν.",
+        "compareColumnHint": "Επιλέξτε δύο παίκτες για σύγκριση",
+        "playersColPRHint": "PR: μέσο λάθος ανά απόφαση, σε χιλιοστά πόντου (mp)· χαμηλότερο = καλύτερο",
+        "playersColLuckHint": "Τύχη: μέση επίδραση των ζαριών ανά ρίψη, σε mp· θετικό = ευνοϊκά ζάρια"
     },
     "trash": {
         "title": "Κάδος",
@@ -1756,7 +1781,7 @@
         "faultHint": "Κάντε κλικ στον αριθμό που λάθεψατε.",
         "faceYou": "Εσείς",
         "faceOpponent": "Ο αντίπαλος",
-        "scoreCaption": "Σκορ {a}/{b} away",
+        "scoreCaption": "Σκορ {a}/{b}",
         "summary": "Απολογισμός",
         "noSession": "Καμία συνεδρία",
         "sessionsCount": "{n} συνεδρίες",
@@ -1800,7 +1825,8 @@
         },
         "truthExact": "Αλήθεια: η βάση bearoff δύο πλευρών, ακριβής.",
         "truthEvaluated": "Αλήθεια: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "Για κάθε κελί υπολογίστε τον αριθμό με το μυαλό και πατήστε Αποκάλυψη. Έπειτα πατήστε κάθε αριθμό που κάνατε λάθος."
     },
     "explain": {
         "blots": "Χάνετε {cost} mMWC: η κίνηση που παίχτηκε αφήνει {blots} blots εκεί όπου η {best} αφήνει μόνο {bestBlots}.",
@@ -2623,6 +2649,31 @@
         "needsAck": "Αποδεχτείτε πρώτα την προειδοποίηση απορρήτου αυτού του παρόχου στις Ρυθμίσεις › Βοηθός και MCP.",
         "error": "Σφάλμα: {error}",
         "write": "Να μπορεί ο βοηθός να προτείνει αλλαγές (καθεμία επιβεβαιωμένη)"
+    },
+    "emptyState": {
+        "import": "Εισαγωγή… (Ctrl+I)",
+        "openDatabase": "Άνοιγμα βάσης δεδομένων…",
+        "clearFilter": "Εκκαθάριση φίλτρου",
+        "backHome": "Επιστροφή στην αρχική οθόνη"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Shift",
+        "alt": "Alt",
+        "left": "Αριστερά",
+        "right": "Δεξιά",
+        "up": "Πάνω",
+        "down": "Κάτω",
+        "delete": "Del",
+        "pageUp": "PageUp",
+        "pageDown": "PageDown",
+        "home": "Home",
+        "end": "End",
+        "enter": "Enter",
+        "escape": "Esc",
+        "space": "Space",
+        "backspace": "Backspace",
+        "tab": "Tab"
     },
     "lesson": {
         "title": "Μάθημα",

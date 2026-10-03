@@ -17,6 +17,7 @@
 -->
 <script>
     import { onMount, onDestroy, untrack } from 'svelte';
+    import NewButton from './panels/NewButton.svelte';
     import PanelTable from './panels/PanelTable.svelte';
     import { t, tMsg } from '../i18n';
     import { setStatusBarMessage } from '../services/databaseService.js';
@@ -1427,9 +1428,7 @@
         <PanelTable rows={$transcriptionListStore} {columns} emptyText={$t('transcription.empty')} pointerRows onSelect={openDraft}>
             {#snippet header()}
                 <span class="detail-title">{$t('transcription.title')}</span>
-                <button class="new-btn" onclick={openForm} disabled={busy || !$databaseLoadedStore} title={$t('transcription.newTooltip')}>
-                    {$t('transcription.new')}
-                </button>
+                <NewButton label={$t('transcription.new')} title={$t('transcription.newTooltip')} disabled={busy || !$databaseLoadedStore} onclick={openForm} />
             {/snippet}
             {#snippet subheader()}
                 {#if showForm}

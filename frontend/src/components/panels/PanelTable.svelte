@@ -39,6 +39,7 @@
 
 <script>
     import { tick } from 'svelte';
+    import EmptyState from './EmptyState.svelte';
     import { nextSort } from '../../utils/tableSort.js';
     import { dragReorder } from '../../utils/dragReorder.js';
 
@@ -79,6 +80,10 @@
         /** (from, to): enables pointer drag reordering of the rows. */
         onReorder = undefined,
         emptyText = '',
+        /** Offer "Import…" (and the way back to the welcome screen) under the empty text. */
+        emptyActions = false,
+        /** With `emptyActions`: a way to lift the filter that emptied the list, in place of the import. */
+        emptyClear = null,
         class: className = '',
         /** Rendered above the table in a `.detail-header` strip. */
         header = undefined,
@@ -250,7 +255,7 @@
             </tbody>
         </table>
         {#if rows.length === 0 && emptyText}
-            <div class="empty-state">{emptyText}</div>
+            <EmptyState text={emptyText} actions={emptyActions} clear={emptyClear} />
         {/if}
     </div>
 </div>
@@ -453,12 +458,5 @@
         background: var(--color-surface-alt);
         border-bottom: 1px solid var(--color-border);
         flex-shrink: 0;
-    }
-
-    .empty-state {
-        text-align: center;
-        color: var(--color-text-muted);
-        padding: 24px;
-        font-size: var(--font-size-base);
     }
 </style>

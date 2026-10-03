@@ -13,7 +13,7 @@ export default {
     manual: `
 <h3>Einführung</h3>
 <p>blunderDB ist eine Software zum Erstellen von Datenbanken mit Backgammon-Stellungen. Ihre größte Stärke besteht darin, einen einzigen Ort zu bieten, an dem ein Spieler die Stellungen sammeln kann, die ihm begegnet sind (online, im Turnier), und sie erneut studieren kann, indem er sie nach verschiedenen beliebig kombinierbaren Filtern filtert. blunderDB kann außerdem verwendet werden, um Kataloge von Referenzstellungen zu erstellen.</p>
-<p>Die Stellungen werden in einer Datenbank gespeichert, die durch eine Datei <em>.db</em> dargestellt wird. Die Desktop-Anwendung öffnet diese Datei direkt, niemals eine Netzwerkadresse: Der Servermodus (Headless-Modus (Server)) ist ein anderer Modus desselben Binärprogramms, und man wechselt von einem zum anderen durch Exportieren oder Migrieren der Datenbank, nicht indem man die Anwendung auf eine URL zeigen lässt.</p>
+<p>Die Stellungen werden in einer Datenbank gespeichert, die durch eine Datei <em>.db</em> dargestellt wird. Die Desktop-Anwendung öffnet diese Datei direkt, niemals eine Netzwerkadresse: Der Servermodus ist ein anderer Modus desselben Binärprogramms, und man wechselt von einem zum anderen durch Exportieren oder Migrieren der Datenbank, nicht indem man die Anwendung auf eine URL zeigen lässt.</p>
 <h3>Wichtigste Interaktionen</h3>
 <p>Die wichtigsten mit blunderDB möglichen Interaktionen sind:</p>
 <ul>
@@ -220,6 +220,7 @@ export default {
 </div>
 <h3>Such-Panel</h3>
 <p>Das Panel <strong>Suche</strong> (<em>CTRL-F</em> oder <em>TAB</em>) ermöglicht es, Stellungen nach frei kombinierbaren Kriterien zu filtern: Steinstruktur, Typ der Doppler-Entscheidung, Fehlergröße, Datum, Tags usw. Die Taste <em>TAB</em> öffnet gleichzeitig das Suchpanel und den Stellungseditor, sodass eine zu suchende Steinstruktur direkt auf dem Brett definiert werden kann.</p>
+<p>Die Filter werden im Unterreiter <strong>Kriterien</strong> eingestellt. Findet eine Suche nichts, zeigt das Panel es an („Keine Stellung passt“) mit einer Schaltfläche <strong>Filter leeren</strong>, statt es nur der Statusleiste zu überlassen.</p>
 <p>Um unter den angezeigten Stellungen zu suchen, verwenden Sie den Befehl <code>ss</code> gefolgt von Filtern (z. B.: <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> sucht in der Liste auf dem Bildschirm: in den Ergebnissen der vorherigen Suche, in der geöffneten Sammlung oder in den Stellungen des gerade durchgesehenen Matches, ob der Befehl direkt oder aus dem Suchpanel (<em>TAB</em>) eingegeben wird. Das Kontrollkästchen <em>In aktuellen Ergebnissen suchen</em> des Panels folgt derselben Regel. In einer Sammlung und in einem Match wird <code>s</code> abgelehnt: Es würde die ganze Bibliothek durchsuchen und die angezeigte Liste ersetzen.</p>
 <p>Die Ergebnisse einer aus einer Sammlung oder einem Match gestarteten <code>ss</code>-Suche verlässt man mit <em>Esc</em>, mit einem einzigen Druck, sobald weder ein Feld noch das Panel mit dem Fokus etwas zu schließen hat (zum Beispiel einen in der Analyse ausgewählten Zug): blunderDB kehrt zur ganzen Sammlung oder zum Match auf dem betrachteten Zug zurück, und zur verlassenen Stellung. Diese Rückkehr folgt nur auf <code>ss</code>: <code>s</code>, aus dem über einer Sammlung oder einem Match geöffneten Suchpanel gestartet, durchsucht die ganze Bibliothek, und <em>Esc</em> führt nicht mehr zur verlassenen Liste zurück.</p>
 <p>Eine Suche in einer großen Datenbank wird angezeigt, bevor sie gezählt ist: die erste Ergebnisseite erscheint sofort, und die Statusleiste zeigt « Suche… » mit der verstrichenen Zeit, bis die Gesamtzahl bekannt ist; sie ersetzt dann die vorläufige Länge der Liste. Es läuft immer nur eine Suche: eine neue Suche verwirft die vorige. <em>Esc</em> unterbricht die laufende Suche und beendet ihren Durchlauf der Datenbank; war die erste Seite schon angezeigt, bleibt sie allein stehen, und die Statusleiste sagt es.</p>
@@ -267,6 +268,7 @@ export default {
 <p>Siehe Liste der Befehle für die Liste der verfügbaren Filter.</p>
 </div>
 <h3>Sammlungen-Panel</h3>
+<p>In den Fenstern Sammlungen, Turniere, Anki und Transkription ist die Schaltfläche <strong>+ Neu…</strong> in der Kopfzeile die einzige Anlegegeste: Sie öffnet das Eingabefeld, das <em>Esc</em> oder <strong>Abbrechen</strong> in den Fenstern Sammlungen und Turniere schließt. In der Matchliste öffnet das Symbol ⌨ die Transkription des Matches und das Symbol ✎ korrigiert seine Metadaten.</p>
 <p>Das Fenster <strong>Sammlungen</strong> (<em>CTRL-B</em>) verwaltet Stellungssammlungen. Sammlungen können angelegt, umbenannt und gelöscht werden. Stellungen können hinzugefügt oder entfernt werden (Taste <em>Entf</em>, Bestätigung wird verlangt). Ein Doppelklick auf eine Sammlung durchblättert ihre Stellungen mit den Tasten <em>LINKS</em> und <em>RECHTS</em>. Der Befehl <code>ss</code> sucht unter den Stellungen der geöffneten Sammlung; <em>Esc</em> kehrt danach zur Sammlung zurück (siehe Such-Panel). Die Reihenfolge der Sammlungen und der Stellungen innerhalb einer Sammlung lässt sich per Ziehen und Ablegen ändern. <em>CTRL-B</em> drücken oder den Befehl <code>collection</code> ausführen, um das Fenster ein- oder auszublenden.</p>
 <p>Eine Sammlung kann <strong>lebendig</strong> sein: Ihr Inhalt ist keine handgemachte Liste mehr, sondern das Ergebnis einer <strong>Suche</strong>, bei jedem Öffnen neu ausgewertet. Die Schaltfläche ◇ am Kopf der Sammlung macht sie mit der zuletzt ausgeführten Suche lebendig; ◈ sagt, dass sie es schon ist, und dieselbe Schaltfläche gibt ihr die Liste zurück. Nichts wird zerstört: Die Stellungen, die sie enthielt, sind beim Zurückgehen noch da.</p>
 <p>Eine lebendige Sammlung, deren Abfrage ein Token trägt, das diese Version nicht mehr kennt, <strong>weigert sich zu öffnen</strong> und sagt es, statt die ganze Datenbank zurückzugeben. Das ist der eine Fehler, den ein gespeicherter Filter nicht haben darf: sich im Stillen zu weiten.</p>
@@ -290,6 +292,7 @@ export default {
 <h3>Matches-Panel</h3>
 <p>Das Panel <strong>Matches</strong> (<em>CTRL-Tab</em>) listet die importierten Matches auf. Doppelklicken Sie auf ein Match (oder drücken Sie <em>EINGABE</em>), um durch seine Züge zu navigieren. Der Befehl <code>m</code> setzt die Navigation im zuletzt besuchten Match fort.</p>
 <p>Das Filterfeld oben im Panel (<em>/</em> um dorthin zu springen, <em>Esc</em> zum Leeren) behält nur die Matches, bei denen ein Spieler, die Veranstaltung, der Ort, das Turnier oder das Datum den eingegebenen Text enthält. Filter und Spaltensortierung erledigt die Datenbank: Die Liste lädt seitenweise beim Scrollen, und der Zähler „n / N Matches“ zeigt den geladenen Anteil. Das Korrigieren eines Spielers, eines Datums oder eines Turniers in der Liste aktualisiert nur die bearbeitete Zeile.</p>
+<p>Ist die Liste leer, bietet das Panel <strong>Importieren… (Strg+I)</strong> an; ohne geöffnete Datenbank bietet es stattdessen <strong>Datenbank öffnen…</strong> an, zusammen mit <strong>Zurück zum Startbildschirm</strong>. Hat der Textfilter die Liste geleert, bietet es <strong>Filter löschen</strong> an. Die leeren Panels Stats, Sammlungen und Anki bieten dieselben Schaltflächen.</p>
 <p>Der Benutzer kann:</p>
 <ul>
 <li>die Züge eines Matches mit den Tasten <em>LINKS</em> und <em>RECHTS</em> durchblättern,</li>
@@ -525,13 +528,13 @@ export default {
 <p>Die Schaltfläche <strong>HTML-Bericht</strong> in der Kopfzeile des Panels erzeugt ein <strong>eigenständiges</strong> Dokument: eine einzige Datei, ohne externes Bild, ohne entferntes Stylesheet, ohne Skript. Die Diagramme sind eingebettetes SVG, gezeichnet vom selben Renderer wie das Brett auf dem Bildschirm, mit Ihrer Palette. Es öffnet sich in jedem Browser, reist per E-Mail und <strong>wird vom Browser selbst als PDF gedruckt</strong> — was es erspart, einen PDF-Generator mitzuliefern für etwas, das ohnehin jeder hat.</p>
 <p>Er enthält die Kennzahlen des aktuellen Bereichs (Stellungen, Matches, gezählte Entscheidungen, PR gesamt, Steine und Würfel), dann die <strong>zehn teuersten Entscheidungen</strong>, jede mit ihrem Diagramm, ihren Kosten, dem Match, aus dem sie stammt, und dem besten Zug, sofern eine Analyse ihn nennt.</p>
 <p>Der Bericht trägt den <strong>aktuellen Filter</strong> des Statistik-Panels. Ein Bericht, der seinen Bereich nicht nennt, ist ein Bericht, dessen Zahlen nichts bedeuten: setzen Sie den Filter — ein Turnier, ein Zeitraum, ein Spieler — bevor Sie ihn erzeugen.</p>
-<h4>Tab Dashboard</h4>
-<p>Der Tab <strong>Dashboard</strong> gibt eine zusammenfassende Übersicht über die Schlüsselkennzahlen.</p>
+<h4>Tab Übersicht</h4>
+<p>Der Tab <strong>Übersicht</strong> gibt eine zusammenfassende Übersicht über die Schlüsselkennzahlen.</p>
 <h5>Niveau-Karten</h5>
 <p>Drei Karten zeigen den PR (oder MWC) für:</p>
 <ul>
 <li><strong>PR gesamt</strong> — alle Entscheidungen (Steine + Doppler);</li>
-<li><strong>PR Steine</strong> — nur gespielte Steinzüge;</li>
+<li><strong>PR Steine</strong> — nur Steinentscheidungen;</li>
 <li><strong>PR Doppler</strong> — nur Doppler-Entscheidungen.</li>
 </ul>
 <p>Ein Klick auf eine Karte lädt die Stellungen der entsprechenden Teilmenge in das Analyse-Panel (Drill-down).</p>
@@ -670,7 +673,7 @@ export default {
 <p>Verwendung:</p>
 <ul>
 <li><strong>Sortieren</strong> — auf eine Spaltenüberschrift klicken. Die Tabelle öffnet sich nach aufsteigendem PR sortiert, bester Spieler zuerst. Spieler, bei denen nichts gemessen wurde, bleiben unabhängig von der Sortierrichtung unten: eine Null mangels Daten ist keine perfekte Leistung.</li>
-<li><strong>Details eines Spielers öffnen</strong> — auf eine Zeile klicken. Der Spieler wird in der Filterleiste ausgewählt, und die Anzeige wechselt zum Reiter Dashboard.</li>
+<li><strong>Details eines Spielers öffnen</strong> — auf eine Zeile klicken. Der Spieler wird in der Filterleiste ausgewählt, und die Anzeige wechselt zum Reiter Übersicht.</li>
 <li><strong>Zeitraum einschränken</strong> — die Filter für Datum, Turnier und Matchlänge gelten wie gewohnt, wodurch sich die Tabelle auf die Tage eines Turniers begrenzen lässt.</li>
 <li><strong>Zwei Spieler vergleichen</strong> — setzen Sie in der ersten Spalte bei zwei Zeilen ein Häkchen. Über der Tabelle erscheint ein Block, der ihre Kennzahlen gegenüberstellt; ein dritter Spieler ersetzt den älteren der beiden. Das Häkchen wählt die Zeile nicht aus: Ankreuzen vergleicht, Klicken öffnet die Detailansicht.</li>
 </ul>
@@ -790,6 +793,7 @@ export default {
 <p><strong>Ein Stapel mit Standkarten.</strong> Die dritte Quelle, <em>Standkarten</em>, verlangt nichts als einen Namen: blunderDB füllt den Stapel mit den 36 ungeordneten Ständen von 2 bis 9 away, und die Karte eines Standes ist genau das Blatt, das die Übung Stände anzeigt — Annahmepunkte und Gammonwerte, beide Seiten. Diesen Stapel gibt es nur, wenn Sie ihn anlegen: 36 am ersten Tag fällige Karten sind eine Wiederholungsschuld, und die geht man bewusst ein. Die Schaltfläche zum Synchronisieren erzeugt ihn neu.</p>
 <p>Die beiden Orte leisten nicht dasselbe. Die Übung Stände lässt diese Zahlen <strong>unter Zeitdruck</strong> wiederfinden und misst das Tempo; der Stapel lässt sie <strong>über die Zeit halten</strong> und misst davon nichts. Die beiden Geschichten bleiben getrennt: das Trainingsprotokoll kennt die Anki-Wiederholungen nicht, und die Anki-Statistiken kennen die Trainingssitzungen nicht.</p>
 <p><strong>Wiederholung:</strong> Wählen Sie einen Stapel aus und klicken Sie dann auf <em>Study</em> (oder doppelklicken Sie auf einen Stapel), um mit der Wiederholung der fälligen Karten zu beginnen. Jede Karte zeigt die entsprechende Stellung auf dem Brett an. Bewerten Sie Ihre Erinnerung mit den Tasten <em>1</em> (Nochmal), <em>2</em> (Schwierig), <em>3</em> (Gut) oder <em>4</em> (Einfach). Drücken Sie <em>Esc</em>, um anzuhalten und zur Stapelliste zurückzukehren.</p>
+<p>Zwei Zahlen tragen unterschiedliche Namen: Die Spalte <strong>Überfällig</strong> der Liste zählt alle Karten, deren Fälligkeit überschritten ist, einschließlich ausgesetzter oder zurückgestellter Karten; die Zahl auf der Schaltfläche <em>Study</em> zählt nur die jetzt verfügbaren Karten und kann daher kleiner sein.</p>
 <p><strong>Verdopplungsentscheidungen ergeben zwei Karten, verkettet.</strong> Eine Verdopplungsentscheidung ist zwei Fragen — „doppeln?“, dann „annehmen?“ — und blunderDB speichert sie seit jeher als zwei Stellungen. Ein Stapel, der nur eine Hälfte auswählt, bekommt die andere: Die Entscheidung wird vervollständigt, nicht erweitert. Und wenn beide fällig sind, kommt die zweite <strong>unmittelbar</strong> nach der ersten.</p>
 <p>Jede behält ihre eigene Note und ihren eigenen Plan: Das sind nicht zwei Stufen einer Karte, das sind zwei Karten. Die Verkettung zieht keinen Termin vor — sie ordnet die bereits fälligen Karten, mehr nicht. Da beide zusammen entstehen, sind sie beim ersten Mal zusammen fällig, und genau dort nützt sie.</p>
 <p><strong>Antwort anzeigen:</strong> Die Karte stellt eine Frage — welcher Zug zu spielen ist oder welche Doppler-Aktion. Überlegen Sie, und drücken Sie dann <em>LEERTASTE</em> (oder klicken Sie auf den verdeckten Bereich), um die Antwort aufzudecken: die gespeicherte Analyse der Stellung, so wie der Tab Analyse sie darstellt. Sie erscheint unter den Bewertungsschaltflächen, die an ihrem Platz und in Reichweite bleiben. Ein Klick auf einen Zug der Liste zeigt ihn auf dem Brett.</p>
@@ -828,6 +832,7 @@ export default {
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> und <code>train decision</code> öffnen das Panel und starten sofort; <code>train tp</code> und <code>train takepoint</code> sind Synonyme von <code>train scores</code>, <code>train epc</code> von <code>train bearoff</code>, <code>train quiz</code> von <code>train decision</code>.</p>
 <h4>Die fünf Übungen</h4>
 <p><strong>Scores</strong> zieht einen der 36 ungeordneten Stände von 2 bis 9 away und zeigt eine <strong>Standkarte</strong>: zwei Spalten — <em>Vous</em> (Sie) und <em>L'adversaire</em> (der Gegner) — und sieben Zeilen — den Annahmepunkt beim Würfel 2 und beim Würfel 4, jeweils für das lange Rennen und für den letzten Wurf, dann den Gammonwert bei den Würfeln 1, 2 und 4.</p>
+<p>Eine Hinweiszeile erinnert an den Ablauf — jede Zahl im Kopf schätzen, dann <em>Aufdecken</em>, dann die verfehlten anklicken — und das Brett zeigt den gezogenen Stand auf einem leeren Tisch.</p>
 <p>Jede Spalte trägt nur die Felder, welche die Referenztabellen — jene, welche die Befehle <code>tp2_live</code>, <code>tp2_last</code>, <code>tp4_live</code>, <code>tp4_last</code>, <code>gv1</code>, <code>gv2</code> und <code>gv4</code> anzeigen — für ihre Seite definieren: drei Zahlen bei 2a-2a, höchstens vierzehn und nur eine Spalte bei gleichem Stand. Eine Zeile, die keine der beiden Seiten definiert, erscheint nicht auf der Karte — es gibt also kein « n/a »-Feld zu erraten. Beide Seiten stehen da, weil eine Verdopplungsentscheidung beim Stand beide braucht: der korrigierte Annahmepunkt verbindet die Gammonwerte beider Spieler, und es ist der Annahmepunkt des Gegners, der sagt, ob Ihre Verdopplung durchgeht.</p>
 <p><strong>Pions</strong> (Pips) fragt nach der Pip-Zahl <strong>beider</strong> Seiten. Die Pip-Zahl des Bretts ist verdeckt, solange die Frage offen ist; « Révéler » zeigt sie — <strong>auch wenn Sie die Pip-Zahl</strong> mit <code>p</code> <strong>ausgeblendet hatten</strong>, denn sonst bliebe die Antwort unsichtbar und die Übung nicht überprüfbar. Es ist eine Maske und keine Einstellung: Ihre eigene Wahl wird nicht verändert und gilt ab der nächsten Frage wieder. Die Quelle <em>Plateau</em> stellt eine Frage zur angezeigten Stellung, und nur eine; die Quelle <em>Base</em> zieht für jede Frage eine neue Stellung und bringt sie aufs Brett.</p>
 <p><strong>Bearoff</strong> fragt nach dem <strong>EPC beider Seiten</strong> — der effektiven Punktzahl, die zur Punktzahl den Verschnitt der Steine hinzurechnet, die mit überzähligen Augen herauskommen. Es ist der Bereich, in dem die Engine exakt ist, und der, in dem sich der EPC wirklich von der Punktzahl unterscheidet.</p>
@@ -917,6 +922,7 @@ export default {
 <p>Um eine Datenbank bekannt zu machen, dient die Kategorie <em>Show and tell</em> der <code>Diskussionen des Repositorys &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ als Verzeichnis: eine Liste, geführt von denen, die veröffentlichen, kein von blunderDB erbrachter Dienst. Eine dort anzukündigen braucht den Link, die vier obigen Felder und den Fingerabdruck.</p>
 `,
     shortcuts: `
+<p>Die Tooltips der Werkzeugleiste nennen die Taste jeder Schaltfläche unter dem Namen, den sie auf der Tastatur der Oberflächensprache trägt: <em>Links</em>, <em>Entf</em>, <em>Bild auf</em>, <em>Bild ab</em>, <em>Umschalt</em>. Die Tabellen unten und das Hilfefenster verwenden dieselben Namen.</p>
 <h3>Datenbank</h3>
 <table>
 <thead>
@@ -1021,11 +1027,11 @@ export default {
 <td>Alle Positionen aus der Datenbank neu laden.</td>
 </tr>
 <tr>
-<td>Home, h</td>
+<td>Pos1, h</td>
 <td>Erste Position / Vorheriges Spiel (Match-Navigation).</td>
 </tr>
 <tr>
-<td>Bild-auf</td>
+<td>Bild auf</td>
 <td>Geht eine Seite zurück (standardmäßig hundert Positionen, einstellbar unter Einstellungen &gt; Oberfläche, bis zu 10 % der Liste; hält am Anfang der Liste an); in einem Match vorheriges Spiel.</td>
 </tr>
 <tr>
@@ -1037,20 +1043,20 @@ export default {
 <td>Nächste Position.</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Vorheriger Zug (wenn ein Zug in der Analyse ausgewählt ist).</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nächster Zug (wenn ein Zug in der Analyse ausgewählt ist).</td>
 </tr>
 <tr>
-<td>End, l</td>
+<td>Ende, l</td>
 <td>Letzte Position / Nächstes Spiel (Match-Navigation).</td>
 </tr>
 <tr>
-<td>Bild-ab</td>
-<td>Geht eine Seite vor (gleiche Schrittweite wie PageUp; hält am Ende der Liste an); in einem Match nächstes Spiel.</td>
+<td>Bild ab</td>
+<td>Geht eine Seite vor (gleiche Schrittweite wie <em>Bild auf</em>; hält am Ende der Liste an); in einem Match nächstes Spiel.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1218,11 +1224,11 @@ export default {
 <td>Die aktuelle Ansicht schließen.</td>
 </tr>
 <tr>
-<td>STRG-Bild-auf, UMSCHALT-J</td>
+<td>STRG-Bild auf, UMSCHALT-J</td>
 <td>Vorherige Ansicht.</td>
 </tr>
 <tr>
-<td>STRG-Bild-ab, UMSCHALT-K</td>
+<td>STRG-Bild ab, UMSCHALT-K</td>
 <td>Nächste Ansicht.</td>
 </tr>
 <tr>
@@ -1245,11 +1251,11 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>OBEN</td>
+<td>HOCH</td>
 <td>Im Befehlsverlauf nach oben blättern.</td>
 </tr>
 <tr>
-<td>UNTEN</td>
+<td>RUNTER</td>
 <td>Im Befehlsverlauf nach unten blättern.</td>
 </tr>
 <tr>
@@ -1318,11 +1324,11 @@ export default {
 <td>Einen Zug auswählen/abwählen (Pfeile ein-/ausblenden).</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Vorherigen Zug auswählen (wenn ein Zug ausgewählt ist).</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nächsten Zug auswählen (wenn ein Zug ausgewählt ist).</td>
 </tr>
 <tr>
@@ -1353,11 +1359,11 @@ export default {
 <td>Einen Zug auswählen/abwählen (Pfeile ein-/ausblenden).</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Vorherigen Zug auswählen (wenn ein Zug ausgewählt ist).</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nächsten Zug auswählen (wenn ein Zug ausgewählt ist).</td>
 </tr>
 <tr>
@@ -1384,11 +1390,11 @@ export default {
 <td>Im Match navigieren.</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Vorheriges Match auswählen.</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nächstes Match auswählen.</td>
 </tr>
 <tr>
@@ -1458,15 +1464,15 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Klick, Doppelklick</td>
+<td>Doppelklick</td>
 <td>Ein Turnier auswählen (Details anzeigen).</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Vorheriges Turnier auswählen, wenn das Panel den Fokus hat oder kein geleitetes Turnier angezeigt wird.</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nächstes Turnier auswählen, wenn das Panel den Fokus hat oder kein geleitetes Turnier angezeigt wird.</td>
 </tr>
 <tr>
@@ -1494,7 +1500,7 @@ export default {
 <td>Das Kontextmenü des fokussierten Objekts öffnen: Tischfeld, Spieler, Platz im Tableau, Platz, Vorschlag, Verlaufszeile. OBEN/UNTEN bewegen sich im Menü, EINGABE wählt, ESC schließt es.</td>
 </tr>
 <tr>
-<td>LINKS, RECHTS, OBEN, UNTEN, POS1, ENDE</td>
+<td>LINKS, RECHTS, HOCH, RUNTER, POS1, ENDE</td>
 <td>Von einem Feld des Tischrasters zum anderen wechseln (freie Felder eingeschlossen); das Raster nimmt nur einen TAB-Halt ein.</td>
 </tr>
 <tr>
@@ -1561,7 +1567,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>AB, j / AUF, k (Liste der Entwürfe)</td>
+<td>RUNTER, j / HOCH, k (liste des brouillons)</td>
 <td>Die Entwürfe durchlaufen. Der erste ist beim Öffnen hervorgehoben: es ist der zuletzt geänderte.</td>
 </tr>
 <tr>
@@ -1589,11 +1595,11 @@ export default {
 <td>Einen anderen Eröffnungswurf tippen: Würfel von Spieler 1, dann von Spieler 2. Der höhere gewinnt — großer Würfel zuerst, der Zug geht an Spieler 1 unten; kleiner Würfel zuerst, an Spieler 2 oben; der erste Kandidat ist vorausgewählt. Der gleiche Wurf erneut getippt ändert nichts; <em>s</em> gibt den Zug dem anderen Spieler.</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Den nächsten Kandidaten auswählen (die Pfeile des Zuges erscheinen auf dem Brett).</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Den vorherigen Kandidaten auswählen.</td>
 </tr>
 <tr>
@@ -1740,7 +1746,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>LINKS, RECHTS, OBEN, UNTEN</td>
+<td>LINKS, RECHTS, HOCH, RUNTER</td>
 <td>Im Raster bewegen.</td>
 </tr>
 <tr>
@@ -1752,7 +1758,7 @@ export default {
 <td>Erstes, letztes Vorschaubild der Seite.</td>
 </tr>
 <tr>
-<td>Bild-auf, Bild-ab</td>
+<td>Bild auf, Bild ab</td>
 <td>Vorherige Seite, nächste Seite.</td>
 </tr>
 <tr>
@@ -1783,11 +1789,11 @@ export default {
 <td>Nächster Reiter.</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Nach oben scrollen.</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nach unten scrollen.</td>
 </tr>
 <tr>
@@ -1795,12 +1801,16 @@ export default {
 <td>Nächste Seite.</td>
 </tr>
 <tr>
-<td>Bild-auf</td>
+<td>Bild auf</td>
 <td>Anfang des Inhalts.</td>
 </tr>
 <tr>
-<td>Bild-ab</td>
+<td>Bild ab</td>
 <td>Ende des Inhalts.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>In der Hilfe suchen: Eingabe springt zum nächsten Treffer, UMSCHALT-Eingabe zum vorherigen.</td>
 </tr>
 <tr>
 <td>?, STRG-F, Esc</td>

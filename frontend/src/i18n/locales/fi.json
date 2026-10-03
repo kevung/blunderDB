@@ -206,7 +206,7 @@
         "togglePipcount": "Näytä/piilota pip-laskuri",
         "updatePosition": "Päivitä asema",
         "tour": "Opastetut kierrokset",
-        "importDatabaseTip": "Yhdistä toinen tietokanta tähän: yhteisiä asemia ei kahdenneta, niiden analyysit ja kommentit yhdistetään (Ctrl+Vaihto+I)",
+        "importDatabaseTip": "Yhdistä toinen tietokanta tähän: yhteisiä asemia ei kahdenneta, niiden analyysit ja kommentit yhdistetään",
         "training": "Harjoittelu"
     },
     "tour": {
@@ -365,10 +365,12 @@
     },
     "help": {
         "tabManual": "Käyttöopas",
-        "tabShortcuts": "Pikanäppäin",
+        "tabShortcuts": "Pikanäppäimet",
         "tabCommands": "Komentorivi",
         "tabAbout": "Tietoja",
-        "loadFailed": "Ohjetta ei voitu ladata."
+        "loadFailed": "Ohjetta ei voitu ladata.",
+        "searchPlaceholder": "Hae ohjeesta (/)",
+        "searchNone": "ei tuloksia"
     },
     "commands": {
         "collectionEmpty": "Kokoelma on tyhjä",
@@ -494,7 +496,11 @@
             "blots": "Blotit",
             "textPattern": "Teksti / Kuvio",
             "other": "Muu"
-        }
+        },
+        "noResultsTitle": "Mikään asema ei täsmää",
+        "noResultsHint": "Laajenna ehtoja (poista suodatin, löysennä rajaa) tai tyhjennä ne.",
+        "clearFilters": "Tyhjennä suodattimet",
+        "criteriaTab": "Ehdot"
     },
     "match": {
         "errorExportingMat": "Virhe ottelun viennissä",
@@ -622,7 +628,8 @@
         "livingOff": "Elävä kokoelma ({query}). Napsauta palauttaaksesi käsin tehdyn listan.",
         "livingNeedsSearch": "Tee ensin haku: sen kokoelma säilyttää.",
         "livingSet": "Elävä kokoelma: {query}",
-        "livingCleared": "Kokoelma palautettiin käsin tehdyksi listaksi."
+        "livingCleared": "Kokoelma palautettiin käsin tehdyksi listaksi.",
+        "newButton": "Uusi kokoelma"
     },
     "tournament": {
         "addMatchPlaceholder": "Lisää ottelu…",
@@ -655,7 +662,8 @@
         "errorSwapping": "Virhe pelaajien vaihtamisessa",
         "noMovesFound": "Tälle ottelulle ei löytynyt siirtoja",
         "swappedPlayers": "Pelaajat vaihdettu",
-        "confirmDelete": "Poistetaanko turnaus \"{name}\"?"
+        "confirmDelete": "Poistetaanko turnaus \"{name}\"?",
+        "newButton": "Uusi turnaus"
     },
     "anki": {
         "limitSession": "Rajoita istuntoa",
@@ -679,7 +687,8 @@
         "colActions": "Toiminnot",
         "colCards": "Kortit",
         "colDescription": "Kuvaus",
-        "colDue": "Erääntyy",
+        "colDue": "Erääntyneet",
+        "colDueTooltip": "Kortit, joiden eräpäivä on mennyt, myös keskeytetyt ja haudatut. Opiskele-painike laskee vain käytettävissä olevat kortit.",
         "colName": "Nimi",
         "colNew": "Uudet",
         "colSource": "Lähde",
@@ -706,7 +715,7 @@
         "sourceCurrentSearch": "Nykyinen haku",
         "sourceScores": "Tilannekortit",
         "scoresCount": "{count} tilannetta",
-        "scoreQuestion": "Tilanne {a}/{b} away",
+        "scoreQuestion": "Tilanne {a}/{b}",
         "badScoreKey": "Tämän kortin tilannetta ei voi lukea",
         "statLearning": "Opetellaan",
         "statNew": "Uudet",
@@ -746,7 +755,15 @@
         "colRating": "Arvosana",
         "colState": "Tila",
         "colInterval": "Väli",
-        "days": "pv"
+        "days": "pv",
+        "state": {
+            "new": "Uusi",
+            "learning": "Opiskelussa",
+            "review": "Kertaus",
+            "relearning": "Uudelleenopiskelu"
+        },
+        "sourceSearch": "Haku",
+        "sourceCollectionN": "Kokoelma #{id}"
     },
     "analysis": {
         "analysisDepth": "Analyysin syvyys",
@@ -771,7 +788,13 @@
         "panelLabel": "Aseman analyysi",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W"
+        "playerWin": "P W",
+        "hintPlayerWin": "Pelaaja: voittotodennäköisyys",
+        "hintPlayerGammon": "Pelaaja: gammonin todennäköisyys",
+        "hintPlayerBackgammon": "Pelaaja: backgammonin todennäköisyys",
+        "hintOpponentWin": "Vastustaja: voittotodennäköisyys",
+        "hintOpponentGammon": "Vastustaja: gammonin todennäköisyys",
+        "hintOpponentBackgammon": "Vastustaja: backgammonin todennäköisyys"
     },
     "rollout": {
         "title": "Rollout",
@@ -1069,7 +1092,6 @@
         "databaseUpdated": "Tietokanta on päivitetty.",
         "failed": "Epäonnistui",
         "fileProgressTitle": "Tiedoston tuonnin edistyminen",
-        "finished": "Tuonti valmistui.",
         "imported": "Tuotu",
         "importingFileN": "Tuodaan tiedostoa {current}/{total}...",
         "importingFiles": "Tuodaan tiedostoja",
@@ -1082,7 +1104,7 @@
         "previewTitle": "Tuonnin esikatselu",
         "processedN": "Käsitelty {processed}/{total} tiedosto(a).",
         "progressTitle": "Tuonnin edistyminen",
-        "skipped": "Ohitettu",
+        "skipped": "Kaksoiskappaleet ohitettu",
         "successful": "Tuonti onnistui!",
         "willAdd": "Lisätään",
         "willMakeChanges": "Tuontitoiminto tekee seuraavat muutokset:",
@@ -1463,7 +1485,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Sulje tilastot-paneeli",
-        "tabDashboard": "Kojelauta",
+        "tabDashboard": "Yleiskatsaus",
         "tabProgression": "Edistyminen",
         "tabErrors": "Virheet",
         "tabTraining": "Harjoittelu",
@@ -1488,7 +1510,7 @@
         "filterLengthHint": "Napsauta suodattaaksesi vain tämän pituuden",
         "selectAllLengths": "Valitse kaikki pituudet",
         "all": "Kaikki",
-        "resetFilters": "↺ Nollaa",
+        "resetFilters": "↺ Palauta",
         "resetFiltersHint": "Nollaa suodattimet",
         "noDecisionsEmpty": "Ei päätöksiä suodatetulla ajanjaksolla. Laajenna suodattimia.",
         "cardLabelAll": "PR Yhteensä",
@@ -1625,7 +1647,10 @@
         "trainingQuizPR": "Tietovisan PR",
         "trainingMatchPR": "Ottelujen PR",
         "trainingRetention": "Anki-muistaminen",
-        "trainingSessions": "{n} Päätös-tietovisan istuntoa tallennettu."
+        "trainingSessions": "{n} Päätös-tietovisan istuntoa tallennettu.",
+        "compareColumnHint": "Valitse kaksi pelaajaa vertailua varten",
+        "playersColPRHint": "PR: keskimääräinen virhe päätöstä kohti millipisteinä (mp); pienempi on parempi",
+        "playersColLuckHint": "Onni: noppien keskimääräinen vaikutus heittoa kohti, mp; positiivinen = suotuisat nopat"
     },
     "trash": {
         "title": "Roskakori",
@@ -1756,7 +1781,7 @@
         "faultHint": "Napsauta lukua, jonka menit väärin.",
         "faceYou": "Sinä",
         "faceOpponent": "Vastustaja",
-        "scoreCaption": "Tilanne {a}/{b} away",
+        "scoreCaption": "Tilanne {a}/{b}",
         "summary": "Yhteenveto",
         "noSession": "Ei istuntoja",
         "sessionsCount": "{n} istuntoa",
@@ -1800,7 +1825,8 @@
         },
         "truthExact": "Totuus: kaksipuolinen bearoff-tietokanta, tarkka.",
         "truthEvaluated": "Totuus: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "Arvioi jokainen luku päässäsi ja napsauta sitten Paljasta. Napsauta sen jälkeen jokaista lukua, jonka arvasit väärin."
     },
     "explain": {
         "blots": "Menetät {cost} mMWC: pelattu siirto jättää {blots} yksinäistä nappulaa, kun {best} jättää vain {bestBlots}.",
@@ -2623,6 +2649,31 @@
         "needsAck": "Hyväksy ensin tämän palveluntarjoajan tietosuojavaroitus kohdassa Asetukset › Avustaja ja MCP.",
         "error": "Virhe: {error}",
         "write": "Anna avustajan ehdottaa muutoksia (jokainen vahvistetaan)"
+    },
+    "emptyState": {
+        "import": "Tuo… (Ctrl+I)",
+        "openDatabase": "Avaa tietokanta…",
+        "clearFilter": "Tyhjennä suodatin",
+        "backHome": "Takaisin aloitusnäyttöön"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Vaihto",
+        "alt": "Alt",
+        "left": "Vasen",
+        "right": "Oikea",
+        "up": "Ylös",
+        "down": "Alas",
+        "delete": "Poista",
+        "pageUp": "Page Up",
+        "pageDown": "Page Down",
+        "home": "Home",
+        "end": "End",
+        "enter": "Enter",
+        "escape": "Esc",
+        "space": "Väli",
+        "backspace": "Askelpalautin",
+        "tab": "Tab"
     },
     "lesson": {
         "title": "Oppitunti",

@@ -171,3 +171,6 @@ export const showPipcountStore = writable(true);
  * sa valeur impérativement, et une visibilité changée sans repaint ne changerait rien à l'écran.
  */
 export const pipcountVisibleStore = derived([showPipcountStore, trainingPipOverrideStore], ([$preference, $override]) => ($override === null ? $preference : $override));
+
+// The welcome screen is shown while no database is open, unless set aside; an empty panel can bring it back.
+export const homeDismissedStore = writable(false);

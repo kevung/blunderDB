@@ -67,6 +67,8 @@ beforeEach(() => {
     currentPositionIndexStore.set(-1);
 });
 
+const tk = (/** @type {string} */ k) => k;
+
 describe('pure helpers', () => {
     test('parseSourceCommand reads the JSON document and the legacy comma list', () => {
         expect(parseSourceCommand(JSON.stringify({ command: 's e>0.1', position: '{"cube":1}', ids: [1, 2] }))).toEqual({ command: 's e>0.1', position: { cube: 1 }, ids: [1, 2] });
@@ -85,16 +87,16 @@ describe('pure helpers', () => {
     });
 
     test('stateLabel names the four FSRS states', () => {
-        expect([0, 1, 2, 3, 9].map(stateLabel)).toEqual(['New', 'Learning', 'Review', 'Relearning', '?']);
+        expect([0, 1, 2, 3, 9].map((n) => stateLabel(n, tk))).toEqual(['anki.state.new', 'anki.state.learning', 'anki.state.review', 'anki.state.relearning', '?']);
     });
 
     test('sourceLabel names the collection, else the stored command, else "Search"', () => {
         const colls = [{ id: 7, name: 'Openings' }];
-        expect(sourceLabel({ sourceType: 'collection', sourceId: 7 }, colls)).toBe('Openings');
-        expect(sourceLabel({ sourceType: 'collection', sourceId: 8 }, colls)).toBe('Collection #8');
-        expect(sourceLabel({ sourceType: 'search', sourceCommand: JSON.stringify({ command: 's b>0.05' }) })).toBe('s b>0.05');
-        expect(sourceLabel({ sourceType: 'search', sourceCommand: '1,2' })).toBe('Search');
-        expect(sourceLabel({ sourceType: 'search', sourceCommand: '' })).toBe('Search');
+        expect(sourceLabel({ sourceType: 'collection', sourceId: 7 }, colls, tk)).toBe('Openings');
+        expect(sourceLabel({ sourceType: 'collection', sourceId: 8 }, colls, tk)).toBe('anki.sourceCollectionN');
+        expect(sourceLabel({ sourceType: 'search', sourceCommand: JSON.stringify({ command: 's b>0.05' }) }, [], tk)).toBe('s b>0.05');
+        expect(sourceLabel({ sourceType: 'search', sourceCommand: '1,2' }, [], tk)).toBe('anki.sourceSearch');
+        expect(sourceLabel({ sourceType: 'search', sourceCommand: '' }, [], tk)).toBe('anki.sourceSearch');
     });
 
     test('resumedSessionCount resumes only a paused FSRS session on the same deck', () => {

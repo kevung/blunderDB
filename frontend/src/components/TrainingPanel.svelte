@@ -290,6 +290,7 @@
                         {/if}
                     </div>
                 {:else if question.kind === 'scores'}
+                    <p class="hint">{$t('training.scoresInstruction')}</p>
                     <ScoreCard card={question.card} numbers={question.numbers} revealed={session.revealed} faults={session.faults} locked={session.outOfTime} onToggle={markFault} />
                 {:else if entered}
                     <!-- Mode saisi : la vérité à côté de la saisie, sans écart imprimé

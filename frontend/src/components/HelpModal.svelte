@@ -3,10 +3,11 @@
     import Modal from './Modal.svelte';
     import { logger } from '../utils/logger.js';
     import { isBareLetter } from '../utils/keys.js';
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import { metaStore } from '../stores/metaStore'; // Import metaStore
     import { t, language } from '../i18n';
     import { help, loadHelpFor } from '../i18n/help/index.js';
+    import { findInHelp } from '../utils/helpSearch.js';
     import { GetDatabaseVersion } from '../../wailsjs/go/database/Database'; // Correct import path
 
     let { visible = false, onClose } = $props();
@@ -40,13 +41,58 @@
         }
     });
 
+    // Search: Enter steps to the next occurrence, Shift+Enter to the previous one. The match
+    // is shown as the page's own selection, so no markup is added to the generated corpus.
+    let searchQuery = $state('');
+    let searchInput = $state();
+    let matchCount = $state(0);
+    let matchIndex = $state(0);
+    let matches = [];
+
+    function showMatch(index) {
+        if (matches.length === 0) return;
+        matchIndex = (index + matches.length) % matches.length;
+        const range = matches[matchIndex];
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        range.startContainer.parentElement?.scrollIntoView?.({ block: 'center' });
+    }
+
+    function runSearch() {
+        matches = findInHelp(contentArea, searchQuery);
+        matchCount = matches.length;
+        // Typing only counts: moving the page's selection under the caret would cut the word short.
+        matchIndex = -1;
+    }
+
+    function onSearchKeyDown(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            if (matches.length === 0) runSearch();
+            showMatch(matchIndex < 0 ? (event.shiftKey ? -1 : 0) : matchIndex + (event.shiftKey ? -1 : 1));
+        }
+        // Everything else a field needs (letters, arrows, Escape for Modal) is left alone.
+        if (event.key !== 'Escape') event.stopPropagation();
+    }
+
     function switchTab(tab) {
         activeTab = tab;
+        matches = [];
+        matchCount = 0;
+        if (searchQuery) tick().then(runSearch);
     }
 
     // Every key pressed while the help is open belongs to it. Escape is Modal's; the
     // rest is handled here and stopped so the global dispatcher never sees it.
     function handleKeyDown(event) {
+        if (event.target === searchInput) return;
+        if (event.key === '/' && !event.ctrlKey) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            searchInput?.focus();
+            return;
+        }
         event.preventDefault();
         event.stopImmediatePropagation();
         if (event.ctrlKey && event.code === 'KeyF') {
@@ -118,6 +164,22 @@
         <button class={activeTab === 'about' ? 'active' : ''} onclick={() => switchTab('about')}>{$t('help.tabAbout')}</button>
     </div>
 
+    <div class="help-search">
+        <input
+            type="search"
+            bind:this={searchInput}
+            bind:value={searchQuery}
+            oninput={runSearch}
+            onkeydown={onSearchKeyDown}
+            placeholder={$t('help.searchPlaceholder')}
+            aria-label={$t('help.searchPlaceholder')}
+            data-testid="help-search"
+        />
+        {#if searchQuery.trim()}
+            <span class="help-search-count" data-testid="help-search-count">{matchCount === 0 ? $t('help.searchNone') : `${matchIndex + 1} / ${matchCount}`}</span>
+        {/if}
+    </div>
+
     <!-- Tab Content -->
     <div class="tab-content" bind:this={contentArea}>
         {#if $help.failed}
@@ -177,13 +239,30 @@
         font-weight: bold;
     }
 
+    .help-search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 20px;
+    }
+
+    .help-search input {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .help-search-count {
+        color: var(--color-text-muted);
+        white-space: nowrap;
+    }
+
     .tab-content {
         flex-grow: 1;
         overflow-y: auto;
         border-top: 1px solid var(--color-border);
         padding: 0; /* Remove padding */
         box-sizing: border-box;
-        height: calc(100% - 50px); /* Adjust height to ensure uniform tab size */
+        height: calc(100% - 90px); /* Adjust height to ensure uniform tab size */
     }
 
     /* {@html} content escapes scoped CSS: :global() under .tab-content, covering
