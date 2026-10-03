@@ -1116,6 +1116,12 @@ elle en indique la **provenance** — le premier match concerné et, le cas
 échéant, un badge « +N » listant les autres au survol. Une position importée
 seule, qu'aucun match ne référence, n'affiche rien.
 
+Les onglets **Recherche** et **Eval** remplacent le plateau par un plateau
+de travail : un bandeau en haut du plateau le dit (« Plateau de recherche »,
+« Plateau d'évaluation »), et la barre d'informations est masquée tant qu'elle
+décrirait une position qui n'est pas à l'écran. Le retour à l'analyse restaure
+la position étudiée.
+
 À l'ouverture d'une base contenant des matchs, le panneau **Matchs** est affiché
 d'emblée et la revue débute directement sur la première position, afin de
 commencer immédiatement la navigation.

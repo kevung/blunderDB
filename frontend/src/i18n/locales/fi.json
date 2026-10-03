@@ -850,6 +850,10 @@
             "post": "post",
             "unlimited": "rajaton",
             "off": "({n} pois)"
+        },
+        "situation": {
+            "search": "Hakulauta: aseta etsittävät nappulat",
+            "eval": "Arviointilauta"
         }
     },
     "epc": {

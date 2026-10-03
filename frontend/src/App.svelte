@@ -80,6 +80,7 @@
     import { directionFullscreenStore } from './services/directionFullscreen.js';
     import { directionPageShownStore, directionViewLoadedStore } from './stores/directionStore';
     import MatchInfoBar from './components/MatchInfoBar.svelte';
+    import BoardSituationBanner from './components/BoardSituationBanner.svelte';
     import ViewTabs from './components/ViewTabs.svelte';
     import TabbedPanel from './components/TabbedPanel.svelte';
     import StatusBar from './components/StatusBar.svelte';
@@ -463,6 +464,7 @@
                 <DirectionViewComponent />
             {:else}
                 <Board />
+                <BoardSituationBanner />
             {/if}
         </div>
 

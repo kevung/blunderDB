@@ -850,6 +850,10 @@
             "post": "post",
             "unlimited": "illimitato",
             "off": "({n} fuori)"
+        },
+        "situation": {
+            "search": "Scacchiera di ricerca: disponi le pedine da trovare",
+            "eval": "Scacchiera di valutazione"
         }
     },
     "epc": {

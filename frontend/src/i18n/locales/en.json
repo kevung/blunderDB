@@ -850,6 +850,10 @@
             "post": "post",
             "unlimited": "unlimited",
             "off": "({n} OFF)"
+        },
+        "situation": {
+            "search": "Search board: place the checkers to find",
+            "eval": "Evaluation board"
         }
     },
     "epc": {

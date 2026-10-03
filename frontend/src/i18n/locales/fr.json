@@ -850,6 +850,10 @@
             "post": "post",
             "unlimited": "illimité",
             "off": "({n} sortis)"
+        },
+        "situation": {
+            "search": "Plateau de recherche : posez les pions à trouver",
+            "eval": "Plateau d’évaluation"
         }
     },
     "epc": {

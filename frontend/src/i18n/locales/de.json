@@ -850,6 +850,10 @@
             "post": "post",
             "unlimited": "unbegrenzt",
             "off": "({n} raus)"
+        },
+        "situation": {
+            "search": "Suchbrett: Steine so setzen, wie sie gefunden werden sollen",
+            "eval": "Auswertungsbrett"
         }
     },
     "epc": {

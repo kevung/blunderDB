@@ -850,6 +850,10 @@
             "post": "post",
             "unlimited": "ilimitado",
             "off": "({n} fuera)"
+        },
+        "situation": {
+            "search": "Tablero de búsqueda: coloca las fichas que quieres encontrar",
+            "eval": "Tablero de evaluación"
         }
     },
     "epc": {
