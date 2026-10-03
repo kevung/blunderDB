@@ -169,7 +169,8 @@
         "theme_print": "Imprimable",
         "likeLimit": "Voisines par classement",
         "likeMaxDistance": "Distance maximale (pions-pas)",
-        "likeNote": "Zéro : aucun plafond. Le jeton like<12 impose le sien pour une recherche."
+        "likeNote": "Zéro : aucun plafond. Le jeton like<12 impose le sien pour une recherche.",
+        "assistantTitle": "Assistant et MCP"
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
@@ -2569,5 +2570,17 @@
             "gv4": "Valeurs de gammon, videau à 4",
             "clear": "Effacer l'historique des commandes"
         }
+    },
+    "assistant": {
+        "mcpTitle": "Serveur MCP local",
+        "mcpIntro": "Tant que blunderDB tourne, il peut offrir ses outils à un assistant (Claude Desktop, Claude Code, un client local) par le Model Context Protocol, sur cette machine seulement. Désactivé par défaut.",
+        "mcpEnabled": "Servir les outils sur localhost",
+        "mcpPort": "Port",
+        "mcpWrite": "Autoriser l'écriture",
+        "mcpWriteNote": "Sans cette case, les outils ne font que lire. Avec elle, ils peuvent aussi enregistrer une position, la commenter, créer et remplir une collection ; rien n'efface.",
+        "mcpRunning": "À l'écoute sur {url}",
+        "mcpStopped": "Arrêté.",
+        "mcpError": "Impossible d'écouter : {error}",
+        "viewNeedsNormalMode": "L'assistant n'ouvre une vue qu'en mode normal ou édition."
     }
 }

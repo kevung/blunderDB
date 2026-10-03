@@ -94,6 +94,7 @@
     import { showTab, showTrainingPanel } from './services/tabToggles.js';
     import HomeScreen from './components/HomeScreen.svelte';
     import { initFolderWatch } from './services/watchService.js';
+    import { initMCPHost } from './services/mcpHostService.js';
     import { initTheme } from './stores/themeStore.js';
 
     let mainArea;
@@ -379,6 +380,8 @@
 
         // The watched folder, fire and forget: a vanished folder must not delay startup.
         initFolderWatch();
+        // The localhost MCP server, if the user enabled it; fire and forget as well.
+        initMCPHost();
 
         // A database handed on the command line (file association, Exec=blunderDB %f) takes
         // priority over the remembered one.

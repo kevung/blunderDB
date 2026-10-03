@@ -27,6 +27,8 @@ export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 
 export function ComputeCubeMatrix(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<gammonnet.CubeMatrix>;
 
+export function ConfigureMCPHost(arg1:gui.MCPHostConfig):Promise<gui.MCPHostStatus>;
+
 export function CopyImageToClipboard(arg1:string):Promise<string>;
 
 export function CountRolloutIDs(arg1:Array<number>,arg2:rollout.Settings):Promise<number>;
@@ -52,6 +54,8 @@ export function GenerateBearoffTable(arg1:string,arg2:number,arg3:number,arg4:nu
 export function GenerateEvaluationQuestion(arg1:training.EvaluationRequest):Promise<training.EvaluationQuestion>;
 
 export function GetIssuerIdentity():Promise<domain.IssuerIdentityInfo>;
+
+export function GetMCPHostStatus():Promise<gui.MCPHostStatus>;
 
 export function ImportIssuerIdentity(arg1:string,arg2:string):Promise<domain.IssuerIdentityInfo>;
 

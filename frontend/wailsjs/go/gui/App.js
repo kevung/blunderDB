@@ -42,6 +42,10 @@ export function ComputeCubeMatrix(arg1, arg2, arg3, arg4) {
   return window['go']['gui']['App']['ComputeCubeMatrix'](arg1, arg2, arg3, arg4);
 }
 
+export function ConfigureMCPHost(arg1) {
+  return window['go']['gui']['App']['ConfigureMCPHost'](arg1);
+}
+
 export function CopyImageToClipboard(arg1) {
   return window['go']['gui']['App']['CopyImageToClipboard'](arg1);
 }
@@ -92,6 +96,10 @@ export function GenerateEvaluationQuestion(arg1) {
 
 export function GetIssuerIdentity() {
   return window['go']['gui']['App']['GetIssuerIdentity']();
+}
+
+export function GetMCPHostStatus() {
+  return window['go']['gui']['App']['GetMCPHostStatus']();
 }
 
 export function ImportIssuerIdentity(arg1, arg2) {

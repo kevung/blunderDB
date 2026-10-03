@@ -22,6 +22,8 @@ var boundAppMethods = []string{
 	"StartRolloutIDs",
 	"CheckForUpdate",
 	"CollectImportableFiles",
+	"ConfigureMCPHost",
+	"GetMCPHostStatus",
 	"ComputeCubeMatrix",
 	"CopyImageToClipboard",
 	"CountRolloutIDs",

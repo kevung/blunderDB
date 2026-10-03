@@ -169,7 +169,8 @@
         "theme_print": "印刷向け",
         "likeLimit": "並べ替えごとの近い局面の数",
         "likeMaxDistance": "最大距離（チェッカーピップ）",
-        "likeNote": "ゼロ：上限なし。トークン like<12 は検索ごとに独自の上限を指定します。"
+        "likeNote": "ゼロ：上限なし。トークン like<12 は検索ごとに独自の上限を指定します。",
+        "assistantTitle": "アシスタントと MCP"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",
@@ -2569,5 +2570,17 @@
             "gv4": "ギャモン値（キューブ 4）",
             "clear": "コマンド履歴を消去"
         }
+    },
+    "assistant": {
+        "mcpTitle": "ローカル MCP サーバー",
+        "mcpIntro": "blunderDB の実行中、Model Context Protocol を通じてアシスタント（Claude Desktop、Claude Code、ローカルクライアント）にツールを提供できます。このマシン内のみです。既定ではオフです。",
+        "mcpEnabled": "localhost でツールを提供する",
+        "mcpPort": "ポート",
+        "mcpWrite": "書き込みを許可する",
+        "mcpWriteNote": "オフのとき、ツールは読み取りのみです。オンにすると、局面の保存、コメント、コレクションの作成と追加もできます。削除は一切しません。",
+        "mcpRunning": "{url} で待ち受け中",
+        "mcpStopped": "停止中。",
+        "mcpError": "待ち受けできません：{error}",
+        "viewNeedsNormalMode": "アシスタントがビューを開けるのは通常モードか編集モードのときだけです。"
     }
 }

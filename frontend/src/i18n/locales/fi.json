@@ -169,7 +169,8 @@
         "theme_print": "Tulostettava",
         "likeLimit": "Naapureita järjestystä kohden",
         "likeMaxDistance": "Enimmäisetäisyys (nappulapip)",
-        "likeNote": "Nolla: ei kattoa. Merkintä like<12 asettaa omansa yhtä hakua varten."
+        "likeNote": "Nolla: ei kattoa. Merkintä like<12 asettaa omansa yhtä hakua varten.",
+        "assistantTitle": "Avustaja ja MCP"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -2569,5 +2570,17 @@
             "gv4": "Gammon-arvot, kuutio 4:ssä",
             "clear": "Tyhjennä komentohistoria"
         }
+    },
+    "assistant": {
+        "mcpTitle": "Paikallinen MCP-palvelin",
+        "mcpIntro": "Kun blunderDB on käynnissä, se voi tarjota työkalunsa avustajalle (Claude Desktop, Claude Code, paikallinen asiakas) Model Context Protocolin kautta, vain tällä koneella. Oletuksena pois päältä.",
+        "mcpEnabled": "Tarjoa työkalut localhostissa",
+        "mcpPort": "Portti",
+        "mcpWrite": "Salli kirjoittaminen",
+        "mcpWriteNote": "Ilman valintaa työkalut vain lukevat. Valittuna ne voivat myös tallentaa aseman, kommentoida sitä, luoda ja täyttää kokoelman; mitään ei poisteta.",
+        "mcpRunning": "Kuuntelee osoitteessa {url}",
+        "mcpStopped": "Pysäytetty.",
+        "mcpError": "Kuuntelu ei onnistu: {error}",
+        "viewNeedsNormalMode": "Avustaja avaa näkymän vain normaali- tai muokkaustilassa."
     }
 }

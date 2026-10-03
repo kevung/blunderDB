@@ -1,4 +1,5 @@
 <script>
+    import AssistantSettings from './AssistantSettings.svelte';
     import { get } from 'svelte/store';
     import { configInitialTabStore, statusBarTextStore } from '../stores/uiStore';
     import Modal from './Modal.svelte';
@@ -84,6 +85,7 @@
         { id: 'bearoff', labelKey: 'config.bearoffTitle' },
         { id: 'gammonnet', labelKey: 'config.gammonnetTitle' },
         { id: 'watch', labelKey: 'config.watchTitle' },
+        { id: 'assistant', labelKey: 'config.assistantTitle' },
         { id: 'identity', labelKey: 'config.identityTitle' }
     ];
     let activeTab = $state('interface');
@@ -1025,6 +1027,8 @@
                         {$watchStatusStore.running ? $t('config.watchRunning', { folder: $watchStatusStore.folder }) : $t('config.watchStopped')}
                     </span>
                 </div>
+            {:else if activeTab === 'assistant'}
+                <AssistantSettings />
             {:else if activeTab === 'identity'}
                 <p class="setting-note">{$t('config.identityIntro')}</p>
                 {#if identity?.present}

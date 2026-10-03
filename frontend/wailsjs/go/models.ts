@@ -2881,6 +2881,40 @@ export namespace gui {
 		    return a;
 		}
 	}
+	export class MCPHostConfig {
+	    enabled: boolean;
+	    port: number;
+	    write: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new MCPHostConfig(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.enabled = source["enabled"];
+	        this.port = source["port"];
+	        this.write = source["write"];
+	    }
+	}
+	export class MCPHostStatus {
+	    running: boolean;
+	    url: string;
+	    write: boolean;
+	    error: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new MCPHostStatus(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.running = source["running"];
+	        this.url = source["url"];
+	        this.write = source["write"];
+	        this.error = source["error"];
+	    }
+	}
 	
 	export class RolloutPreset {
 	    name: string;
@@ -3015,6 +3049,26 @@ export namespace gui {
 
 export namespace main {
 	
+	export class AssistantSettings {
+	    on: boolean;
+	    preset: string;
+	    baseURL: string;
+	    model: string;
+	    remoteAck: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new AssistantSettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.on = source["on"];
+	        this.preset = source["preset"];
+	        this.baseURL = source["baseURL"];
+	        this.model = source["model"];
+	        this.remoteAck = source["remoteAck"];
+	    }
+	}
 	export class BoardColors {
 	    background: string;
 	    border: string;
@@ -3099,6 +3153,14 @@ export namespace main {
 	    watch_folder?: boolean;
 	    watch_folder_path?: string;
 	    watch_folder_interval_seconds?: number;
+	    mcp_host?: boolean;
+	    mcp_port?: number;
+	    mcp_write?: boolean;
+	    assistant?: boolean;
+	    assistant_preset?: string;
+	    assistant_base_url?: string;
+	    assistant_model?: string;
+	    assistant_remote_ack?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
@@ -3137,6 +3199,14 @@ export namespace main {
 	        this.watch_folder = source["watch_folder"];
 	        this.watch_folder_path = source["watch_folder_path"];
 	        this.watch_folder_interval_seconds = source["watch_folder_interval_seconds"];
+	        this.mcp_host = source["mcp_host"];
+	        this.mcp_port = source["mcp_port"];
+	        this.mcp_write = source["mcp_write"];
+	        this.assistant = source["assistant"];
+	        this.assistant_preset = source["assistant_preset"];
+	        this.assistant_base_url = source["assistant_base_url"];
+	        this.assistant_model = source["assistant_model"];
+	        this.assistant_remote_ack = source["assistant_remote_ack"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3156,6 +3226,22 @@ export namespace main {
 		    }
 		    return a;
 		}
+	}
+	export class MCPHostSettings {
+	    on: boolean;
+	    port: number;
+	    write: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new MCPHostSettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.on = source["on"];
+	        this.port = source["port"];
+	        this.write = source["write"];
+	    }
 	}
 	
 	export class WatchFolderSettings {
