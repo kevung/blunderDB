@@ -992,6 +992,7 @@
         "countMatches": "{n} matches",
         "countPositionsTitle": "Show every position",
         "countBlundersTitle": "Search for errors of at least 100 millipoints",
+        "countBlundersUncounted": "Not counted on a large library: click to search for them",
         "countMatchesTitle": "Open the match list"
     },
     "viewTabs": {

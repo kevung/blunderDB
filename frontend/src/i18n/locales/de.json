@@ -992,6 +992,7 @@
         "countMatches": "{n} Matches",
         "countPositionsTitle": "Alle Stellungen anzeigen",
         "countBlundersTitle": "Fehler ab 100 Millipunkten suchen",
+        "countBlundersUncounted": "Bei einer großen Bibliothek nicht gezählt: klicken, um danach zu suchen",
         "countMatchesTitle": "Matchliste öffnen"
     },
     "viewTabs": {

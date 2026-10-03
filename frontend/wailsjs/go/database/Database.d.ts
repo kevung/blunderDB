@@ -279,6 +279,8 @@ export function GetCommentsByPosition(arg1:number):Promise<Array<domain.CommentE
 
 export function GetDatabaseStats():Promise<Record<string, any>>;
 
+export function GetDatabaseStatsEstimate():Promise<Record<string, any>>;
+
 export function GetDatabaseVersion():Promise<string>;
 
 export function GetDirection(arg1:number):Promise<service.DirectionView>;

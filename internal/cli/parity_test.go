@@ -200,6 +200,7 @@ var databaseParity = map[string]parityEntry{
 	"GetCollectionPositions":            {CLI: "collection show", Server: "/v1/collections.positions"},
 	"GetCommentsByPosition":             {Server: "/v1/comments.byPosition", Why: "the CLI prints a position's comment with `search --format json`; per-entry history is a GUI panel"},
 	"GetDatabaseStats":                  {CLI: "info", Server: "/v1/metadata.counts"},
+	"GetDatabaseStatsEstimate":          {CLI: "info", Server: "/v1/metadata.countsEstimate"},
 	"GetLibrarySettings":                {CLI: "info", Server: "/v1/librarySettings.load"},
 	"GetDatabaseVersion":                {CLI: "info", Server: "/v1/metadata.version"},
 	"GetGamesByMatch":                   {Server: "/v1/matches.games", Why: "`match` prints a match position by position; the game/move split is the GUI navigator's and the daemon's"},

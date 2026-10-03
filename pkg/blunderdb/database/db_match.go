@@ -539,6 +539,35 @@ func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
 	return stats, nil
 }
 
+// EstimateExactBelow is the highest table id up to which the library counter
+// counts instead of estimating: under it a COUNT is instantaneous.
+const EstimateExactBelow = 200_000
+
+// GetDatabaseStatsEstimate is GetDatabaseStats for the status bar: it never
+// scans a large table. Counts of tables beyond EstimateExactBelow rows are
+// estimates, named in "approximate", and "blunder_count" is absent unless
+// every count is exact. GetDatabaseStats is the exact form.
+func (d *Database) GetDatabaseStatsEstimate() (map[string]interface{}, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	est, err := d.store.Metadata().EstimatedCounts(context.Background(), "", EstimateExactBelow)
+	if err != nil {
+		return nil, err
+	}
+	stats := map[string]interface{}{
+		"position_count": int64(est.Positions),
+		"analysis_count": int64(est.Analyses),
+		"match_count":    int64(est.Matches),
+		"game_count":     int64(est.Games),
+		"move_count":     int64(est.Moves),
+		"approximate":    est.Approximate,
+	}
+	if est.BlundersKnown {
+		stats["blunder_count"] = int64(est.Blunders)
+	}
+	return stats, nil
+}
+
 // GetLibrarySettings returns the library's error and blunder thresholds
 // (ADR-0046). A library that has never set them reads the defaults.
 func (d *Database) GetLibrarySettings() (storage.LibrarySettings, error) {

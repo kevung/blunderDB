@@ -148,7 +148,11 @@ suivantes:
   *Bibliothèque* de la configuration et partagé avec les statistiques : deux
   seuils feraient dire deux choses au même mot. Le compteur promet exactement
   ce que le lien ouvre, y compris pour une position jouée de plusieurs façons,
-  qui vaut son coût le plus élevé.
+  qui vaut son coût le plus élevé. Sur une très grande bibliothèque (plus de
+  200 000 lignes), le compteur ne balaie pas les tables : un nombre précédé de
+  « ≈ » est une estimation (une borne haute, les lignes supprimées laissant des
+  trous), et le nombre de blunders, qui n'en a pas d'honnête, s'affiche « ? » —
+  le lien lance la recherche, qui donne le compte exact.
 
 .. note:: Dans le cas de positions issues d'une recherche par l'utilisateur, le
    nombre de positions indiqué dans la barre d'état correspond au nombre de

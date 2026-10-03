@@ -526,6 +526,10 @@ export function GetDatabaseStats() {
   return window['go']['database']['Database']['GetDatabaseStats']();
 }
 
+export function GetDatabaseStatsEstimate() {
+  return window['go']['database']['Database']['GetDatabaseStatsEstimate']();
+}
+
 export function GetDatabaseVersion() {
   return window['go']['database']['Database']['GetDatabaseVersion']();
 }

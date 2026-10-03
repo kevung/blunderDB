@@ -402,6 +402,40 @@ func testMetadataCounts(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testMetadataEstimatedCounts: N insertions read back as N while the table is
+// under the exact threshold, and as an upper bound flagged approximate above it.
+func testMetadataEstimatedCounts(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	const n = 5
+	for i := 1; i <= n; i++ {
+		p := provenancePos(i)
+		if _, err := s.Positions().Save(ctx, "", &p); err != nil {
+			t.Fatalf("Save position %d: %v", i, err)
+		}
+	}
+	est, err := s.Metadata().EstimatedCounts(ctx, "", 1000)
+	if err != nil {
+		t.Fatalf("EstimatedCounts: %v", err)
+	}
+	if est.Positions != n || len(est.Approximate) != 0 || !est.BlundersKnown {
+		t.Fatalf("under the threshold: %+v, want %d positions, exact, blunders known", est, n)
+	}
+	est, err = s.Metadata().EstimatedCounts(ctx, "", 2)
+	if err != nil {
+		t.Fatalf("EstimatedCounts: %v", err)
+	}
+	if est.Positions < n || est.BlundersKnown {
+		t.Fatalf("over the threshold: %+v, want at least %d positions and no blunders", est, n)
+	}
+	flagged := false
+	for _, f := range est.Approximate {
+		flagged = flagged || f == "positions"
+	}
+	if !flagged {
+		t.Fatalf("positions not flagged approximate: %v", est.Approximate)
+	}
+}
+
 func testTxRollbackUndoes(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	tx, err := s.BeginTx(ctx)

@@ -3589,6 +3589,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/storage_Counts"
+  /v1/metadata.countsEstimate:
+    post:
+      operationId: metadata.countsEstimate
+      tags: [metadata]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/countsEstimateReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_CountsEstimate"
   /v1/metadata.version:
     post:
       operationId: metadata.version
@@ -5907,6 +5924,12 @@ components:
         count:
           type: integer
           format: int32
+    countsEstimateReq:
+      type: object
+      properties:
+        exact_below:
+          type: integer
+          format: int32
     csvResp:
       type: object
       properties:
@@ -7012,6 +7035,9 @@ components:
     storage_Counts:
       type: object
       description: "Opaque: see the Go type storage.Counts (defined outside internal/server, not expanded here)."
+    storage_CountsEstimate:
+      type: object
+      description: "Opaque: see the Go type storage.CountsEstimate (defined outside internal/server, not expanded here)."
     storage_Filter:
       type: object
       description: "Opaque: see the Go type storage.Filter (defined outside internal/server, not expanded here)."

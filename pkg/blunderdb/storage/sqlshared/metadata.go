@@ -115,6 +115,51 @@ func (s *MetadataStore) Counts(ctx context.Context, scope string) (storage.Count
 	return c, nil
 }
 
+// EstimatedCounts counts a table exactly when its highest id is under
+// exactBelow and otherwise reports that highest id, flagged approximate. MAX(id)
+// reads one end of the primary-key index, so the cost does not grow with the
+// table.
+func (s *MetadataStore) EstimatedCounts(ctx context.Context, scope string, exactBelow int) (storage.CountsEstimate, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	est := storage.CountsEstimate{Approximate: []string{}}
+	fields := []struct {
+		table, json string
+		dst         *int
+	}{
+		{"position", "positions", &est.Positions},
+		{"analysis", "analyses", &est.Analyses},
+		{"match", "matches", &est.Matches},
+		{"game", "games", &est.Games},
+		{"move", "moves", &est.Moves},
+	}
+	for _, f := range fields {
+		var top int64
+		if err := s.DB.QueryRow(ctx, "SELECT COALESCE(MAX(id), 0) FROM "+f.table+" WHERE "+tenant, targs...).Scan(&top); err != nil {
+			return storage.CountsEstimate{}, errf(s.DB, "database counts", err)
+		}
+		if top > int64(exactBelow) {
+			*f.dst = int(top)
+			est.Approximate = append(est.Approximate, f.json)
+			continue
+		}
+		var n int64
+		if err := s.DB.QueryRow(ctx, "SELECT COUNT(*) FROM "+f.table+" WHERE "+tenant, targs...).Scan(&n); err != nil {
+			return storage.CountsEstimate{}, errf(s.DB, "database counts", err)
+		}
+		*f.dst = int(n)
+	}
+	// The blunders scan every analysis: only worth running where the library
+	// is small enough that its counts are exact too.
+	if len(est.Approximate) == 0 {
+		b, err := s.blunderCount(ctx, scope)
+		if err != nil {
+			return storage.CountsEstimate{}, err
+		}
+		est.Blunders, est.BlundersKnown = b, true
+	}
+	return est, nil
+}
+
 // blunderCount counts the Positions whose largest recorded cost reaches the
 // library's blunder threshold — the set `E>x` returns at that threshold, and
 // therefore the set the status bar's counter may promise.

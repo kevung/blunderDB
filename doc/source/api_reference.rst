@@ -179,6 +179,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/matches.updateComment                JSON
    metadata
      POST /v1/metadata.counts                      JSON
+     POST /v1/metadata.countsEstimate              JSON
      POST /v1/metadata.version                     JSON
    positions
      POST /v1/positions.count                      JSON

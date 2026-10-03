@@ -1,7 +1,7 @@
 <script>
     import { onDestroy, tick } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore, dbMutationCounterStore, activeTabStore } from '../stores/uiStore';
-    import { libraryCountsStore, refreshLibraryCounts } from '../stores/libraryCountsStore.js';
+    import { libraryCountsStore, refreshLibraryCounts, formatCount } from '../stores/libraryCountsStore.js';
     import { databasePathStore } from '../stores/databaseStore';
     import { loadAllPositions } from '../services/positionService.js';
     import { watchImportNoticeStore } from '../stores/watchStore.js';
@@ -306,15 +306,20 @@
     {#if $libraryCountsStore}
         <span class="library-counts">
             <button type="button" class="count-link" onclick={() => showLibrary('positions')} title={$t('statusBar.countPositionsTitle')}>
-                {$t('statusBar.countPositions', { n: $libraryCountsStore.positions })}
+                {$t('statusBar.countPositions', { n: formatCount($libraryCountsStore.positions, $libraryCountsStore.approximate?.positions) })}
             </button>
             <span class="count-sep">·</span>
-            <button type="button" class="count-link" onclick={() => showLibrary('blunders')} title={$t('statusBar.countBlundersTitle')}>
-                {$t('statusBar.countBlunders', { n: $libraryCountsStore.blunders })}
+            <button
+                type="button"
+                class="count-link"
+                onclick={() => showLibrary('blunders')}
+                title={$libraryCountsStore.blunders == null ? $t('statusBar.countBlundersUncounted') : $t('statusBar.countBlundersTitle')}
+            >
+                {$t('statusBar.countBlunders', { n: formatCount($libraryCountsStore.blunders) })}
             </button>
             <span class="count-sep">·</span>
             <button type="button" class="count-link" onclick={() => showLibrary('matches')} title={$t('statusBar.countMatchesTitle')}>
-                {$t('statusBar.countMatches', { n: $libraryCountsStore.matches })}
+                {$t('statusBar.countMatches', { n: formatCount($libraryCountsStore.matches, $libraryCountsStore.approximate?.matches) })}
             </button>
         </span>
     {/if}

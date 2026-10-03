@@ -2556,12 +2556,17 @@ Display database metadata and statistics.
 Options:
   -db string
     	Path to the database file (required)
+  -exact
+    	Count every row, however large the database (default: estimate the tables beyond 200000 rows)
   -format string
     	Output format: text, json (default "text")
 
 Examples:
   # Display database info
   blunderdb info --db database.db
+
+  # Count every row of a very large database (the default estimates)
+  blunderdb info --db database.db --exact
 
   # Output as JSON
   blunderdb info --db database.db --format json
@@ -2995,6 +3000,41 @@ Examples:
   blunderdb stats recurring --db database.db --quiz --format json
   blunderdb stats recurring --db database.db --group 1 --deck "My worst group"
   blunderdb stats recurring --db database.db --decision-type checker --format json
+```
+
+### `blunderdb stats training`
+
+```
+Usage: blunderdb stats training --db <file> [options]
+
+The Decision quiz PR, the real PR of the matches and the Anki retention,
+folded by calendar window so the three can be read side by side. The quiz
+PR is on the real PR's scale; the retention is the share of review-state
+card reviews rated Hard or better. Each series carries its own count: a
+window with no decision has a count of 0, not a value. The filter options
+restrict the matches only; the quiz and Anki journals carry no player.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type of the matches: all, checker, or cube (default "all")
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -player string
+    	Only this player's matches (the real PR series)
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+  -window string
+    	Calendar window: week or month (default "week")
+
+Examples:
+  blunderdb stats training --db database.db --player "Alice"
+  blunderdb stats training --db database.db --window month --format json
 ```
 
 ### `blunderdb tournament export`

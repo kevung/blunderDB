@@ -18,6 +18,7 @@ func (cli *CLI) runInfo(args []string) error {
 	// Define flags
 	dbPath := infoCmd.String("db", "", "Path to the database file (required)")
 	format := infoCmd.String("format", "text", "Output format: text, json")
+	exact := infoCmd.Bool("exact", false, "Count every row, however large the database (default: estimate the tables beyond 200000 rows)")
 
 	infoCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb info [options]")
@@ -30,6 +31,9 @@ func (cli *CLI) runInfo(args []string) error {
 		fmt.Println("Examples:")
 		fmt.Println("  # Display database info")
 		fmt.Println("  blunderdb info --db database.db")
+		fmt.Println()
+		fmt.Println("  # Count every row of a very large database (the default estimates)")
+		fmt.Println("  blunderdb info --db database.db --exact")
 		fmt.Println()
 		fmt.Println("  # Output as JSON")
 		fmt.Println("  blunderdb info --db database.db --format json")
@@ -74,7 +78,11 @@ func (cli *CLI) runInfo(args []string) error {
 	}
 
 	// Get stats
-	stats, err := cli.db.GetDatabaseStats()
+	statsFn := cli.db.GetDatabaseStatsEstimate
+	if *exact {
+		statsFn = cli.db.GetDatabaseStats
+	}
+	stats, err := statsFn()
 	if err != nil {
 		return fmt.Errorf("failed to get database stats: %w", err)
 	}
@@ -120,24 +128,32 @@ func (cli *CLI) runInfo(args []string) error {
 			fmt.Printf("  Date of Creation: %s\n", v)
 		}
 
+		approx := map[string]bool{}
+		if names, ok := stats["approximate"].([]string); ok {
+			for _, n := range names {
+				approx[n] = true
+			}
+		}
+		count := func(label, key, name string) {
+			if n, ok := stats[key].(int64); ok {
+				mark := ""
+				if approx[name] {
+					mark = "≈ "
+				}
+				fmt.Printf("  %s: %s%d\n", label, mark, n)
+			}
+		}
+
 		fmt.Println("\nStatistics:")
-		if posCount, ok := stats["position_count"].(int64); ok {
-			fmt.Printf("  Positions: %d\n", posCount)
-		}
-		if analysisCount, ok := stats["analysis_count"].(int64); ok {
-			fmt.Printf("  Analyses: %d\n", analysisCount)
-		}
-		if matchCount, ok := stats["match_count"].(int64); ok {
-			fmt.Printf("  Matches: %d\n", matchCount)
-		}
-		if gameCount, ok := stats["game_count"].(int64); ok {
-			fmt.Printf("  Games: %d\n", gameCount)
-		}
-		if moveCount, ok := stats["move_count"].(int64); ok {
-			fmt.Printf("  Moves: %d\n", moveCount)
-		}
-		if blunderCount, ok := stats["blunder_count"].(int64); ok {
-			fmt.Printf("  Blunders: %d\n", blunderCount)
+		count("Positions", "position_count", "positions")
+		count("Analyses", "analysis_count", "analyses")
+		count("Matches", "match_count", "matches")
+		count("Games", "game_count", "games")
+		count("Moves", "move_count", "moves")
+		if _, ok := stats["blunder_count"]; ok {
+			count("Blunders", "blunder_count", "blunders")
+		} else {
+			fmt.Println("  Blunders: not counted on a large database (--exact)")
 		}
 
 		fmt.Println("\nThresholds (millipoints):")

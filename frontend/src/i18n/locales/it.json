@@ -992,6 +992,7 @@
         "countMatches": "{n} incontri",
         "countPositionsTitle": "Mostra tutte le posizioni",
         "countBlundersTitle": "Cerca gli errori di almeno 100 millipunti",
+        "countBlundersUncounted": "Non contati in una libreria grande: fare clic per cercarli",
         "countMatchesTitle": "Apri l'elenco degli incontri"
     },
     "viewTabs": {

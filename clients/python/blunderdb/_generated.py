@@ -630,6 +630,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/metadata.counts — JSON."
         return self._call("/v1/metadata.counts", payload)
 
+    def metadata_counts_estimate(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/metadata.countsEstimate — JSON."
+        return self._call("/v1/metadata.countsEstimate", payload)
+
     def metadata_version(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/metadata.version — JSON."
         return self._call("/v1/metadata.version", payload)

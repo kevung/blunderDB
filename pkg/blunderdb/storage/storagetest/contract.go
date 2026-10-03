@@ -95,6 +95,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"SearchHistory/SaveListDelete", testSearchHistory},
 		{"Scope/HistoryAndFilterIsolation", testScopeIsolation},
 		{"Metadata/Counts", testMetadataCounts},
+		{"Metadata/EstimatedCounts", testMetadataEstimatedCounts},
 		{"Training/SaveAndRead", testTrainingSaveAndRead},
 		{"Training/NumberStatsCountByType", testTrainingNumberStatsCountByType},
 		{"Training/DeviationStaysOutOfTheMean", testTrainingDeviationStaysOutOfTheMeanWhenAbsent},
