@@ -16,7 +16,7 @@
     import { loadFilterLibrary, pinnedFilters, setFilterPinned } from '../services/filterLibraryService.js';
     import { searchParamsStore } from '../stores/searchParamsStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
-    import { displayedPositionIDs } from '../services/positionService.js';
+    import { withDisplayedPositionIDs } from '../services/positionService.js';
     import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, DeleteFilter, LoadEditPosition, LoadExcludePosition } from '../../wailsjs/go/database/Database.js';
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
@@ -382,42 +382,45 @@
 
         // Search within the list on screen (same rule as `ss`). An empty list is
         // refused: '' would mean "no restriction" to the backend.
-        let restrictToPositionIDs = '';
         // null is the whole library: searching within it is a plain search.
-        const displayed = searchInCurrentResults ? displayedPositionIDs() : null;
-        if (displayed !== null) {
-            restrictToPositionIDs = displayed.join(',');
-            if (!restrictToPositionIDs) {
-                statusBarTextStore.set(tMsg('commands.noResultsToSearchIn'));
-                return;
+        const send = (/** @type {number[] | null} */ displayed) => {
+            let restrictToPositionIDs = '';
+            if (displayed !== null) {
+                restrictToPositionIDs = displayed.join(',');
+                if (!restrictToPositionIDs) {
+                    statusBarTextStore.set(tMsg('commands.noResultsToSearchIn'));
+                    return;
+                }
             }
-        }
 
-        onLoadPositionsByFilters({
-            filters: activeFilters.length > 0 ? transformedFilters : [],
-            includeCube: parsed.incCube,
-            includeScore: parsed.incScore,
-            ...numericArgs((short) => parsed[`${short}Filter`]),
-            // Only 'contains' sends text; a stale disabled box must not add a content filter.
-            searchText: commentMode === 'contains' && searchText ? `t"${searchText}"` : '',
-            decisionTypeFilter: parsed.dtFilter,
-            diceRollFilter: parsed.drFilter,
-            movePatternFilter: movePattern ? `m"${movePattern}"` : '',
-            dateFilter: parsed.cdFilter,
-            noContactFilter: parsed.ncFilter,
-            mirrorPositionFilter: parsed.mirFilter,
-            individuallyImportedFilter: parsed.iiFilter,
-            flaggedFilter: parsed.flFilter,
-            searchCommand,
-            matchIDsFilter: parsed.matchIDs,
-            tournamentIDsFilter: parsed.tournamentIDs,
-            restrictToPositionIDs,
-            openInNewTab,
-            diceRollMode: parsed.drMode,
-            playerFilter: playerName ? `pl"${playerName}"` : ''
-        });
+            onLoadPositionsByFilters({
+                filters: activeFilters.length > 0 ? transformedFilters : [],
+                includeCube: parsed.incCube,
+                includeScore: parsed.incScore,
+                ...numericArgs((short) => parsed[`${short}Filter`]),
+                // Only 'contains' sends text; a stale disabled box must not add a content filter.
+                searchText: commentMode === 'contains' && searchText ? `t"${searchText}"` : '',
+                decisionTypeFilter: parsed.dtFilter,
+                diceRollFilter: parsed.drFilter,
+                movePatternFilter: movePattern ? `m"${movePattern}"` : '',
+                dateFilter: parsed.cdFilter,
+                noContactFilter: parsed.ncFilter,
+                mirrorPositionFilter: parsed.mirFilter,
+                individuallyImportedFilter: parsed.iiFilter,
+                flaggedFilter: parsed.flFilter,
+                searchCommand,
+                matchIDsFilter: parsed.matchIDs,
+                tournamentIDsFilter: parsed.tournamentIDs,
+                restrictToPositionIDs,
+                openInNewTab,
+                diceRollMode: parsed.drMode,
+                playerFilter: playerName ? `pl"${playerName}"` : ''
+            });
 
-        saveSearchState();
+            saveSearchState();
+        };
+        if (searchInCurrentResults) withDisplayedPositionIDs(send);
+        else send(null);
     }
 
     function clearFilters() {

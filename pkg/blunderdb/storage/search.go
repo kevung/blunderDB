@@ -21,10 +21,11 @@ type SearchHistory struct {
 // SearchStore runs position searches.
 type SearchStore interface {
 	// Find streams the positions matching the given filters. opts bounds the
-	// underlying SQL scan (LIMIT/OFFSET); a zero ListOpts means no limit. The
-	// Go-only filters (mirror, loose structure mask, date/equity/move pattern)
-	// run after, so a page may come back short: opts caps the SQL-matched
-	// candidates, not the survivors.
+	// RESULTS (LIMIT/OFFSET over the survivors); a zero ListOpts means no
+	// limit. Without a Go-only filter (mirror, loose structure mask, comment
+	// text, zone, date/equity/move pattern) the window goes to SQL; with one,
+	// candidates are scanned a chunk at a time until the window is full, so
+	// memory stays bounded by the window, not by the library.
 	Find(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) iter.Seq2[*domain.Position, error]
 
 	// Rank answers a query carrying the `like` token: the same filters as
@@ -38,6 +39,18 @@ type SearchStore interface {
 	// equivalence class (ClassOf). opts bounds the RANKING, not the scan:
 	// every candidate must be seen before any is called nearest (ADR-0043).
 	Rank(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) ([]SimilarPosition, error)
+
+	// FindIDs is Find answering ids only, in the same order and window: a
+	// projection on the id when no Go-only filter is left, so a list of
+	// results is browsed without reconstructing any position.
+	FindIDs(ctx context.Context, scope string, f domain.SearchFilters, opts ListOpts) ([]int64, error)
+
+	// Count is the length of Find's unbounded result.
+	Count(ctx context.Context, scope string, f domain.SearchFilters) (int, error)
+
+	// IndexOf is the rank of id in Find's unbounded result; found is false
+	// when the search does not find it.
+	IndexOf(ctx context.Context, scope string, f domain.SearchFilters, id int64) (index int, found bool, err error)
 }
 
 // SearchHistoryStore persists the log of executed searches.

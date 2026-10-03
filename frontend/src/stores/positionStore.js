@@ -42,6 +42,7 @@ export const positionsStore = createPositionList({
 const database = () => import('../../wailsjs/go/database/Database.js');
 /** @type {import('./positionList.js').IdSource} */
 export const librarySource = {
+    growsAtEnd: true,
     count: async () => (await (await database()).CountPositions()) || 0,
     window: async (offset, limit) => (await (await database()).ListPositionIDs(offset, limit)) || [],
     indexOf: async (id) => {
@@ -51,11 +52,41 @@ export const librarySource = {
 };
 
 /**
+ * A search result browsed by windows, as the library is: the backend counts it, answers a window
+ * of its ids and the rank of one, and the result is never held whole. `payload` is the
+ * SearchFilters it replays, kept so the list can be searched within.
+ * @param {any} payload
+ * @returns {import('./positionList.js').IdSource & { payload: any }}
+ */
+export function searchSource(payload) {
+    return {
+        payload,
+        count: async () => (await (await database()).CountPositionsByFilters(payload)) || 0,
+        window: async (offset, limit) => (await (await database()).SearchPositionIDs(payload, offset, limit)) || [],
+        indexOf: async (id) => {
+            const index = await (await database()).IndexOfPositionByFilters(payload, id);
+            return Number.isInteger(index) ? index : -1;
+        }
+    };
+}
+
+/**
  * Browse the whole library; resolves to its length.
  * @param {{ reset?: boolean }} [options] reset also drops the position cache
  */
 export function openLibrary(options = {}) {
     return positionsStore.setSource(librarySource, options);
+}
+
+/**
+ * Every id of the browsed list other than the library: held, or read whole from a paged search
+ * result — for an operation that sends the ids themselves (an export), bounded by that result.
+ * @returns {Promise<number[]>}
+ */
+export async function listedIds() {
+    const list = positionsStore.snapshotList();
+    const ids = 'source' in list ? await list.source.window(0, list.length) : list.ids;
+    return /** @type {number[]} */ (ids.filter((id) => id != null));
 }
 
 /** Whether the list browsed is the whole library. */

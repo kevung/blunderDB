@@ -4352,6 +4352,24 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_RencontreView"
                 nullable: true
+  /v1/search.count:
+    post:
+      operationId: search.count
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchFindReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/search.find:
     post:
       operationId: search.find
@@ -4372,6 +4390,44 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/domain_Position"
                 nullable: true
+  /v1/search.ids:
+    post:
+      operationId: search.ids
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchFindReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+  /v1/search.indexOf:
+    post:
+      operationId: search.indexOf
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchIndexOfReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/search.parse:
     post:
       operationId: search.parse
@@ -6541,6 +6597,14 @@ components:
           type: string
         excludePosition:
           type: string
+    searchIndexOfReq:
+      type: object
+      properties:
+        filters:
+          $ref: "#/components/schemas/domain_SearchFilters"
+        id:
+          type: integer
+          format: int64
     searchParseResp:
       type: object
       properties:

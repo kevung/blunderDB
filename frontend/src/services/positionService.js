@@ -16,7 +16,7 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
-import { positionStore, positionsStore, matchContextStore, openLibrary } from '../stores/positionStore.js';
+import { positionStore, positionsStore, matchContextStore, openLibrary, searchSource } from '../stores/positionStore.js';
 import { searchExcludePositionStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
 import { epcDataStore, resetEpcReveal } from '../stores/epcStore.js';
@@ -50,7 +50,8 @@ export {
     exitCollectionMode,
     leaveSubSearchResults,
     canLeaveSubSearchResults,
-    displayedPositionIDs
+    displayedPositionIDs,
+    withDisplayedPositionIDs
 } from './modeMachine.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
@@ -527,6 +528,10 @@ export async function loadPositionsByFilters({
         // Appel propre au classement : la distance fait partie de la réponse,
         // sans elle une voisine ne se distingue pas d'une coïncidence.
         let ids;
+        // A plain search is browsed by windows (searchSource), never held whole; a ranked one is
+        // bounded by its limit, a sub-search by the list it searches within.
+        let source = null;
+        let total = 0;
         let rankedSummary = null;
         if (likeFilter) {
             let ranked;
@@ -552,13 +557,18 @@ export async function loadPositionsByFilters({
                     farthest: ranked[ranked.length - 1].distance
                 });
             }
-        } else {
+        } else if (restrictToPositionIDs) {
             ids = await LoadPositionIDsByFilters(payload);
+            rankedDistancesStore.set(new Map());
+            rankedTargetStore.set(0);
+        } else {
+            source = searchSource(payload);
+            total = await source.count();
             rankedDistancesStore.set(new Map());
             rankedTargetStore.set(0);
         }
 
-        if (ids && ids.length > 0) {
+        if (source ? total > 0 : ids && ids.length > 0) {
             if (openInNewTab) {
                 viewStore.addView();
             }
@@ -578,7 +588,8 @@ export async function loadPositionsByFilters({
             });
             activeCollectionStore.set(null);
 
-            positionsStore.setIds(Array.isArray(ids) ? ids : []);
+            if (source) positionsStore.restoreList({ source, length: total });
+            else positionsStore.setIds(Array.isArray(ids) ? ids : []);
             listOriginStore.set(searchOrigin(payload));
 
             if (get(currentPositionIndexStore) === 0) {

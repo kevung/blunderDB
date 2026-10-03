@@ -198,6 +198,10 @@ export function CountPositions() {
   return window['go']['database']['Database']['CountPositions']();
 }
 
+export function CountPositionsByFilters(arg1) {
+  return window['go']['database']['Database']['CountPositionsByFilters'](arg1);
+}
+
 export function CountPositionsWithForeignAnalysis() {
   return window['go']['database']['Database']['CountPositionsWithForeignAnalysis']();
 }
@@ -638,6 +642,10 @@ export function IndexOfPosition(arg1) {
   return window['go']['database']['Database']['IndexOfPosition'](arg1);
 }
 
+export function IndexOfPositionByFilters(arg1, arg2) {
+  return window['go']['database']['Database']['IndexOfPositionByFilters'](arg1, arg2);
+}
+
 export function IsProtectedCopyPath(arg1) {
   return window['go']['database']['Database']['IsProtectedCopyPath'](arg1);
 }
@@ -964,6 +972,10 @@ export function SaveTrainingSession(arg1) {
 
 export function SearchComments(arg1) {
   return window['go']['database']['Database']['SearchComments'](arg1);
+}
+
+export function SearchPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SearchPositionIDs'](arg1, arg2, arg3);
 }
 
 export function SetAnkiCardSuspended(arg1, arg2) {

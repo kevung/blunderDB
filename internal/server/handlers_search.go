@@ -20,6 +20,12 @@ type searchFindReq struct {
 	Offset  int                  `json:"offset"`
 }
 
+// searchIndexOfReq asks for the rank of one position in a search's result.
+type searchIndexOfReq struct {
+	Filters domain.SearchFilters `json:"filters"`
+	ID      int64                `json:"id"`
+}
+
 // searchQueryReq is search.find's other door: the query language the
 // application's command bar speaks, rather than a hand-assembled filter
 // struct. A client that wants `s cube p>30 E>50` need not know which of the
@@ -80,6 +86,25 @@ func (s *Server) searchRoutes() []route {
 	return []route{
 		{http.MethodPost, "/v1/search.find", rpcStream(func(ctx context.Context, scope string, req searchFindReq) iterPositions {
 			return ss().Find(ctx, scope, req.Filters, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
+		})},
+		// search.find answering ids only, its length, and the rank of one id
+		// in it: a client browses a result of any size by windows, without
+		// holding it or shipping whole positions.
+		{http.MethodPost, "/v1/search.ids", rpc(func(ctx context.Context, scope string, req searchFindReq) ([]int64, error) {
+			return ss().FindIDs(ctx, scope, req.Filters, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
+		})},
+		{http.MethodPost, "/v1/search.count", rpc(func(ctx context.Context, scope string, req searchFindReq) (int, error) {
+			return ss().Count(ctx, scope, req.Filters)
+		})},
+		{http.MethodPost, "/v1/search.indexOf", rpc(func(ctx context.Context, scope string, req searchIndexOfReq) (int, error) {
+			if req.ID <= 0 {
+				return 0, errMissing("id")
+			}
+			index, found, err := ss().IndexOf(ctx, scope, req.Filters, req.ID)
+			if err != nil || !found {
+				return -1, err
+			}
+			return index, nil
 		})},
 
 		// search.parse answers what a query means, without touching the

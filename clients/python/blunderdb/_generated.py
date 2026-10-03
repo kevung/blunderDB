@@ -738,9 +738,21 @@ class GeneratedAPI(BaseClient):
         "POST /v1/rencontres.update — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/rencontres.update", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def search_count(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.count — JSON."
+        return self._call("/v1/search.count", payload)
+
     def search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/search.find — NDJSON stream."
         return self._stream("/v1/search.find", payload)
+
+    def search_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.ids — JSON."
+        return self._call("/v1/search.ids", payload)
+
+    def search_index_of(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.indexOf — JSON."
+        return self._call("/v1/search.indexOf", payload)
 
     def search_parse(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/search.parse — JSON."

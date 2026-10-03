@@ -25,9 +25,9 @@ var _ storage.SearchStore = (*SearchStore)(nil)
 // the Database wrapper's LoadPositionsByFiltersCore: cheap predicates in SQL,
 // the rest in Go on the narrowed set.
 //
-// opts.Limit/Offset go into the SQL query, so they bound the SQL-matched
-// candidates, not the results: the Go-side predicates (mirror, structure,
-// date, equity, move pattern) run after and may leave a page short.
+// opts.Limit/Offset bound the results: without a Go-side predicate they go
+// into the SQL query; with one, the candidates are scanned a chunk at a time
+// until the window is full (see scan).
 func (s *SearchStore) Find(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) iter.Seq2[*domain.Position, error] {
 	return func(yield func(*domain.Position, error) bool) {
 		positions, err := s.find(ctx, scope, f, opts)
@@ -399,7 +399,117 @@ func (s *SearchStore) find(ctx context.Context, scope string, f domain.SearchFil
 // select the same rows by the same rules, and differ only in what happens to
 // the survivors afterwards.
 func (s *SearchStore) findWith(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, opts storage.ListOpts) ([]domain.Position, error) {
+	var positions []domain.Position
+	err := s.scan(ctx, f, wc, opts, func(pos domain.Position) bool {
+		positions = append(positions, pos)
+		return true
+	})
+	return positions, err
+}
 
+// searchChunk is how many SQL candidates one round of a Go-filtered scan
+// holds in memory at most: the scan's footprint is bounded by it, not by the
+// size of the library. The first round reads searchFirstChunk and each next
+// one doubles, so a first page whose rows mostly survive does not decode
+// thousands of blobs to fill a hundred lines.
+var searchChunk = 4096
+
+const searchFirstChunk = 256
+
+// goPhase reports whether a predicate is left for applyGoFilters to decide
+// on some row, i.e. whether the SQL match can differ from the result. When it
+// cannot, LIMIT/OFFSET and COUNT go to SQL as they are, and a search for ids
+// never reconstructs a position. It mirrors matchesGoFilters' guards; erring
+// on true only costs speed.
+func (wc searchWhereClause) goPhase(f domain.SearchFilters) bool {
+	return !wc.useSQLFilters ||
+		(wc.bitboardTight && searchfilter.HasBoardFilter(wc.effInclude.Board)) ||
+		searchfilter.HasBoardFilter(f.ExcludeFilter.Board) ||
+		(f.MoveErrorFilter != "" && len(wc.multiPlayed) > 0) ||
+		f.Player1CheckerInZoneFilter != "" || f.Player2CheckerInZoneFilter != "" ||
+		f.Player1OutfieldBlotFilter != "" || f.Player2OutfieldBlotFilter != "" ||
+		f.Player1JanBlotFilter != "" || f.Player2JanBlotFilter != "" ||
+		f.SearchText != "" || f.TagFilter != "" ||
+		f.DateFilter != "" || f.EquityFilter != "" || f.MovePatternFilter != ""
+}
+
+// keysetOrder reports whether the sort is the id alone, so that a chunked
+// scan can resume after the last id seen instead of skipping an OFFSET that
+// grows with every chunk.
+func keysetOrder(sort string) bool {
+	return domain.SearchOrderByClause(sort) == "p.id"
+}
+
+// scan hands visit the survivors of the search, in order, within opts: the
+// window is counted on the survivors, not on the SQL candidates, so a page
+// is never short because the Go phase rejected rows of it. visit returning
+// false stops the scan.
+//
+// Without a Go phase, LIMIT/OFFSET go to SQL and the first page comes back
+// as soon as SQL has it. With one, the candidates are read searchChunk at a
+// time and the scan stops once the window is full.
+func (s *SearchStore) scan(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, opts storage.ListOpts, visit func(domain.Position) bool) error {
+	if !wc.goPhase(f) {
+		positions, _, _, err := s.scanChunk(ctx, f, wc, "", nil, opts.Limit, opts.Offset)
+		if err != nil {
+			return err
+		}
+		for _, pos := range positions {
+			if !visit(pos) {
+				return nil
+			}
+		}
+		return nil
+	}
+
+	keyset := keysetOrder(f.Sort)
+	chunk := min(searchFirstChunk, searchChunk)
+	skip, taken := opts.Offset, 0
+	var after int64
+	resumed := false
+	sqlOffset := 0
+	for {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		extra, extraArgs, offset := "", []any(nil), sqlOffset
+		if keyset {
+			offset = 0
+			if resumed {
+				extra, extraArgs = " AND p.id > ?", []any{after}
+			}
+		}
+		positions, n, lastID, err := s.scanChunk(ctx, f, wc, extra, extraArgs, chunk, offset)
+		if err != nil {
+			return err
+		}
+		for _, pos := range positions {
+			if skip > 0 {
+				skip--
+				continue
+			}
+			if !visit(pos) {
+				return nil
+			}
+			taken++
+			if opts.Limit > 0 && taken >= opts.Limit {
+				return nil
+			}
+		}
+		if n < chunk {
+			return nil
+		}
+		after, resumed = lastID, true
+		sqlOffset += n
+		chunk = min(chunk*2, searchChunk)
+	}
+}
+
+// scanChunk runs one bounded query of the scan — the WHERE clause plus
+// extra, ordered, within limit/offset — and passes its rows through the Go
+// phase. It also returns how many rows SQL gave and the id of the last one,
+// which is where a keyset scan resumes.
+func (s *SearchStore) scanChunk(ctx context.Context, f domain.SearchFilters, wc searchWhereClause, extra string, extraArgs []any, limit, offset int) ([]domain.Position, int, int64, error) {
 	// a.data, the compressed analysis blob (~600 bytes/row), is fetched only
 	// when wc.needAnalysis says a Go-side filter reads it.
 	analysisDataCol := "NULL"
@@ -407,7 +517,7 @@ func (s *SearchStore) findWith(ctx context.Context, f domain.SearchFilters, wc s
 		analysisDataCol = "a.data"
 	}
 
-	limitClause, limitArgs := s.DB.LimitOffset(opts.Limit, opts.Offset)
+	limitClause, limitArgs := s.DB.LimitOffset(limit, offset)
 
 	query := `SELECT p.id, p.state,
 		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
@@ -417,20 +527,126 @@ func (s *SearchStore) findWith(ctx context.Context, f domain.SearchFilters, wc s
 		a.id, ` + analysisDataCol + ` AS data
 	FROM position p
 	LEFT JOIN analysis a ON a.position_id = p.id
-	WHERE ` + wc.where + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort) + limitClause
+	WHERE ` + wc.where + extra + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort) + limitClause
 
-	rows, err := s.DB.Query(ctx, query, append(wc.args, limitArgs...)...)
+	args := append(append(append([]any{}, wc.args...), extraArgs...), limitArgs...)
+	rows, err := s.DB.Query(ctx, query, args...)
 	if err != nil {
-		return nil, errf(s.DB, "search query", err)
+		return nil, 0, 0, errf(s.DB, "search query", err)
 	}
 	defer rows.Close()
 
 	scanned, err := s.scanRows(rows, wc.needAnalysis)
 	if err != nil {
-		return nil, err
+		return nil, 0, 0, err
+	}
+	var lastID int64
+	if len(scanned) > 0 {
+		lastID = scanned[len(scanned)-1].pos.ID
 	}
 
-	return s.applyGoFilters(ctx, f, wc, scanned)
+	positions, err := s.applyGoFilters(ctx, f, wc, scanned)
+	return positions, len(scanned), lastID, err
+}
+
+// FindIDs returns the ids of the survivors of the search, within opts. With
+// no Go phase it is a projection on p.id: no row is decoded, no position
+// reconstructed.
+func (s *SearchStore) FindIDs(ctx context.Context, scope string, f domain.SearchFilters, opts storage.ListOpts) ([]int64, error) {
+	wc, err := s.buildWhere(ctx, scope, f)
+	if err != nil {
+		return nil, err
+	}
+	if wc.goPhase(f) {
+		var ids []int64
+		err := s.scan(ctx, f, wc, opts, func(pos domain.Position) bool {
+			ids = append(ids, pos.ID)
+			return true
+		})
+		return ids, err
+	}
+
+	limitClause, limitArgs := s.DB.LimitOffset(opts.Limit, opts.Offset)
+	query := `SELECT p.id FROM position p
+	LEFT JOIN analysis a ON a.position_id = p.id
+	WHERE ` + wc.where + ` ORDER BY ` + domain.SearchOrderByClause(f.Sort) + limitClause
+	rows, err := s.DB.Query(ctx, query, append(append([]any{}, wc.args...), limitArgs...)...)
+	if err != nil {
+		return nil, errf(s.DB, "search ids query", err)
+	}
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, errf(s.DB, "search ids scan", err)
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "search ids rows", err)
+	}
+	return ids, nil
+}
+
+// Count returns how many positions the search finds: one COUNT in SQL when
+// no Go phase is left, else a chunked scan that holds one chunk at a time.
+func (s *SearchStore) Count(ctx context.Context, scope string, f domain.SearchFilters) (int, error) {
+	wc, err := s.buildWhere(ctx, scope, f)
+	if err != nil {
+		return 0, err
+	}
+	if wc.goPhase(f) {
+		n := 0
+		err := s.scan(ctx, f, wc, storage.ListOpts{}, func(domain.Position) bool {
+			n++
+			return true
+		})
+		return n, err
+	}
+	return s.countWhere(ctx, wc, "", nil)
+}
+
+func (s *SearchStore) countWhere(ctx context.Context, wc searchWhereClause, extra string, extraArgs []any) (int, error) {
+	query := `SELECT COUNT(*) FROM position p
+	LEFT JOIN analysis a ON a.position_id = p.id
+	WHERE ` + wc.where + extra
+	var n int
+	if err := s.DB.QueryRow(ctx, query, append(append([]any{}, wc.args...), extraArgs...)...).Scan(&n); err != nil {
+		return 0, errf(s.DB, "search count", err)
+	}
+	return n, nil
+}
+
+// IndexOf returns the rank of id among the survivors of the search, in their
+// order; found is false when the search does not find id. In id order with
+// no Go phase it is two COUNTs; otherwise the scan walks to id.
+func (s *SearchStore) IndexOf(ctx context.Context, scope string, f domain.SearchFilters, id int64) (int, bool, error) {
+	wc, err := s.buildWhere(ctx, scope, f)
+	if err != nil {
+		return 0, false, err
+	}
+	if !wc.goPhase(f) && keysetOrder(f.Sort) {
+		hit, err := s.countWhere(ctx, wc, " AND p.id = ?", []any{id})
+		if err != nil || hit == 0 {
+			return 0, false, err
+		}
+		before, err := s.countWhere(ctx, wc, " AND p.id < ?", []any{id})
+		return before, err == nil, err
+	}
+	index, found := 0, false
+	err = s.scan(ctx, f, wc, storage.ListOpts{}, func(pos domain.Position) bool {
+		if pos.ID == id {
+			found = true
+			return false
+		}
+		index++
+		return true
+	})
+	if err != nil || !found {
+		return 0, false, err
+	}
+	return index, true, nil
 }
 
 // scannedRow is one row of buildWhere's query, decoded into the shape
@@ -450,8 +666,8 @@ func (s *SearchStore) scanRows(rows Rows, needAnalysis bool) ([]scannedRow, erro
 	// Drain the cursor before filtering: the Go-side predicates open queries
 	// of their own, and a cursor holds its pooled connection until exhausted.
 	// On ":memory:" (one connection, sqlite.ConfigurePool) that deadlocks at
-	// once; on a real pool, under enough concurrent searches. Buffering is
-	// free: find materialises its whole result anyway.
+	// once; on a real pool, under enough concurrent searches. The buffer is
+	// one chunk of the scan, never the whole library.
 	var scanned []scannedRow
 
 	for rows.Next() {

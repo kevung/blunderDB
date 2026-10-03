@@ -544,3 +544,83 @@ func testSearchPagination(t *testing.T, s storage.Storage) {
 		t.Errorf("Find{Limit:2,Offset:10}: got %v, want empty", got)
 	}
 }
+
+// testSearchWindowsAgree checks that FindIDs, Count and IndexOf describe the
+// same list Find returns, with and without a Go-side predicate, in id order
+// and in a sort that cannot resume on the id: a window of survivors is a
+// slice of the whole result, never a short page.
+func testSearchWindowsAgree(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	for n := 1; n <= 9; n++ {
+		p := provenancePos(n)
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save %d: %v", n, err)
+		}
+		if n%2 == 1 {
+			if _, err := s.Comments().Add(ctx, "", id, "keep this one"); err != nil {
+				t.Fatalf("Add comment on %d: %v", id, err)
+			}
+		}
+	}
+	outsider := searchIDs(t, s, domain.SearchFilters{})[1]
+
+	cases := map[string]domain.SearchFilters{
+		"sql only":           {},
+		"sql only, by error": {Sort: "error"},
+		"go phase":           {SearchText: "keep"},
+		"go phase, by error": {SearchText: "keep", Sort: "error"},
+	}
+	for name, f := range cases {
+		t.Run(name, func(t *testing.T) {
+			want := searchIDs(t, s, f)
+			if len(want) == 0 {
+				t.Fatalf("no result to check against")
+			}
+			all, err := s.Search().FindIDs(ctx, "", f, storage.ListOpts{})
+			if err != nil {
+				t.Fatalf("FindIDs: %v", err)
+			}
+			if !reflect.DeepEqual(all, want) {
+				t.Fatalf("FindIDs: got %v, want %v", all, want)
+			}
+			var paged []int64
+			for off := 0; off < len(want)+2; off += 2 {
+				page, err := s.Search().FindIDs(ctx, "", f, storage.ListOpts{Offset: off, Limit: 2})
+				if err != nil {
+					t.Fatalf("FindIDs window %d: %v", off, err)
+				}
+				if off < len(want) && len(page) != min(2, len(want)-off) {
+					t.Errorf("window at %d: %v is short", off, page)
+				}
+				paged = append(paged, page...)
+			}
+			if !reflect.DeepEqual(paged, want) {
+				t.Errorf("windows: got %v, want %v", paged, want)
+			}
+			var found []int64
+			for pos, err := range s.Search().Find(ctx, "", f, storage.ListOpts{Offset: 1, Limit: 3}) {
+				if err != nil {
+					t.Fatalf("Find window: %v", err)
+				}
+				found = append(found, pos.ID)
+			}
+			if !reflect.DeepEqual(found, want[1:min(4, len(want))]) {
+				t.Errorf("Find{Offset:1,Limit:3}: got %v, want %v", found, want[1:min(4, len(want))])
+			}
+			if n, err := s.Search().Count(ctx, "", f); err != nil || n != len(want) {
+				t.Errorf("Count: got %d, %v; want %d", n, err, len(want))
+			}
+			for i, id := range want {
+				if at, ok, err := s.Search().IndexOf(ctx, "", f, id); err != nil || !ok || at != i {
+					t.Errorf("IndexOf(%d): got %d, %v, %v; want %d", id, at, ok, err, i)
+				}
+			}
+			if f.SearchText != "" {
+				if _, ok, err := s.Search().IndexOf(ctx, "", f, outsider); err != nil || ok {
+					t.Errorf("IndexOf(outsider %d): found %v, %v; want not found", outsider, ok, err)
+				}
+			}
+		})
+	}
+}

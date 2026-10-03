@@ -16,7 +16,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveTrainingSession: vi.fn(() => Promise.resolve(1)),
     LoadTrainingSessions: vi.fn(() => Promise.resolve([])),
     LoadTrainingNumberStats: vi.fn(() => Promise.resolve([])),
-    LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
+    CountPositionsByFilters: vi.fn(() => Promise.resolve(0)),
+    SearchPositionIDs: vi.fn(() => Promise.resolve([])),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
     GradeQuizChecker: vi.fn(),
     GradeQuizCheckerMove: vi.fn(),
@@ -133,8 +134,10 @@ beforeEach(() => {
     db.LoadPosition.mockResolvedValue(null);
     app.GenerateBearoffQuestion.mockReset();
     app.GenerateEvaluationQuestion.mockReset();
-    db.LoadPositionIDsByFilters.mockReset();
-    db.LoadPositionIDsByFilters.mockResolvedValue([]);
+    db.CountPositionsByFilters.mockReset();
+    db.CountPositionsByFilters.mockResolvedValue(0);
+    db.SearchPositionIDs.mockReset();
+    db.SearchPositionIDs.mockResolvedValue([]);
     vi.clearAllMocks();
     activeTabStore.set('training');
     currentPositionIndexStore.set(-1);
@@ -410,13 +413,16 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
     // base a déjà calculée ; le moteur reste seul juge du domaine (4 à 15 pions).
     test('le tirage ne regarde que les positions de la liste en phase bearoff', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
-        // 99 est un bearoff de la base, mais pas de la liste parcourue.
-        db.LoadPositionIDsByFilters.mockResolvedValue([99, 9]);
+        // 99 est un bearoff de la base, mais pas de la liste parcourue : la
+        // recherche est restreinte à la liste, et seul 9 en revient.
+        db.CountPositionsByFilters.mockResolvedValue(1);
+        db.SearchPositionIDs.mockImplementation(async (_f, offset) => [[9][offset]]);
         db.LoadPosition.mockResolvedValue(board());
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
 
         expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
-        expect(db.LoadPositionIDsByFilters.mock.calls[0][0].gamePhaseFilter).toBe('bearoff');
+        expect(db.CountPositionsByFilters.mock.calls[0][0].gamePhaseFilter).toBe('bearoff');
+        expect(db.CountPositionsByFilters.mock.calls[0][0].restrictToPositionIDs).toBe('7,8,9,10');
         // Le préchargement tire aussi : toutes les positions chargées sont la seule candidate.
         expect(new Set(db.LoadPosition.mock.calls.map((call) => call[0]))).toEqual(new Set([9]));
         expect(current().question.positionId).toBe(9);
@@ -424,7 +430,8 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
 
     test('la restriction se calcule une fois par session, pas à chaque question', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
-        db.LoadPositionIDsByFilters.mockResolvedValue([8, 9]);
+        db.CountPositionsByFilters.mockResolvedValue(2);
+        db.SearchPositionIDs.mockImplementation(async (_f, offset) => [[8, 9][offset]]);
         db.LoadPosition.mockResolvedValue(board());
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
 
@@ -433,7 +440,7 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
         revealQuestion();
         await nextTrainingQuestion();
         await flush();
-        expect(db.LoadPositionIDsByFilters).toHaveBeenCalledTimes(1);
+        expect(db.CountPositionsByFilters).toHaveBeenCalledTimes(1);
     });
 
     // Une base dont les phases n'ont jamais été calculées (lignes d'avant 2.19.0,
@@ -442,7 +449,7 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
     // refuser une base qui a peut-être des bearoffs.
     test('sans aucune position classée bearoff dans la liste, le tirage retombe sur la liste entière', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
-        db.LoadPositionIDsByFilters.mockResolvedValue([]);
+        db.CountPositionsByFilters.mockResolvedValue(0);
         db.LoadPosition.mockResolvedValue(board());
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
 

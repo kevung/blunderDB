@@ -28,6 +28,9 @@ vi.mock('../../wailsjs/go/database/Database.js', async (importOriginal) => ({
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
     LoadComment: vi.fn(() => Promise.resolve('')),
     LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
+    CountPositionsByFilters: vi.fn(() => Promise.resolve(0)),
+    SearchPositionIDs: vi.fn(() => Promise.resolve([])),
+    IndexOfPositionByFilters: vi.fn(() => Promise.resolve(-1)),
     LoadPositionsByIDs: vi.fn((/** @type {number[]} */ ids) => Promise.resolve(ids.map((id) => makePosition(id)))),
     SaveLastVisitedPosition: vi.fn(() => Promise.resolve()),
     SaveSearchHistory: vi.fn(() => Promise.resolve()),
@@ -53,7 +56,7 @@ vi.mock('../services/importService.js', () => ({
     pastePosition: vi.fn()
 }));
 
-import { LoadPositionIDsByFilters } from '../../wailsjs/go/database/Database.js';
+import { LoadPositionIDsByFilters, CountPositionsByFilters, SearchPositionIDs, IndexOfPositionByFilters } from '../../wailsjs/go/database/Database.js';
 import { processCommand, initCommandProcessor } from '../commandProcessor.js';
 import { translate, resolveStatusMessage } from '../i18n';
 import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore.js';
@@ -288,11 +291,20 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
      * @param {number[]} resultIds
      */
     async function subSearch(command, resultIds) {
-        vi.mocked(LoadPositionIDsByFilters).mockResolvedValueOnce(resultIds);
+        // A sub-search asks for the ids of its results; a plain search is browsed by windows.
+        const plain = !command.startsWith('ss');
+        if (plain) {
+            vi.mocked(CountPositionsByFilters).mockResolvedValueOnce(resultIds.length);
+            vi.mocked(SearchPositionIDs).mockImplementation(async (_p, offset, limit) => resultIds.slice(offset, limit > 0 ? offset + limit : undefined));
+            vi.mocked(IndexOfPositionByFilters).mockImplementation(async (_p, id) => resultIds.indexOf(id));
+        } else {
+            vi.mocked(LoadPositionIDsByFilters).mockResolvedValueOnce(resultIds);
+        }
         processCommand(command);
         await flush();
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
-        expect(get(positionsStore).ids).toEqual(resultIds);
+        if (plain) expect(get(positionsStore)).toMatchObject({ ids: null, length: resultIds.length, paged: true });
+        else expect(get(positionsStore).ids).toEqual(resultIds);
     }
 
     function expectCollectionBack() {
@@ -357,6 +369,16 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
         await subSearch('s p<100', [1, 2]);
         expect(await leaveSubSearchResults()).toBe(false);
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
+    });
+
+    test('dans les résultats d’une recherche parcourus par fenêtres, `ss` les lit en entier et les envoie', async () => {
+        setLibrary();
+        await subSearch('s p<100', [5, 6, 7]);
+        vi.mocked(LoadPositionIDsByFilters).mockResolvedValueOnce([6]);
+        processCommand('ss E>80');
+        await flush();
+        expect(vi.mocked(LoadPositionIDsByFilters).mock.calls.at(-1)?.[0].restrictToPositionIDs).toBe('5,6,7');
+        expect(get(positionsStore).ids).toEqual([6]);
     });
 
     test('une liste remplacée par un autre geste n’est plus celle des résultats : rien ne se passe', async () => {

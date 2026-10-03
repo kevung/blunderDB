@@ -1,7 +1,6 @@
 import { get } from 'svelte/store';
 import {
     LoadPosition,
-    LoadPositionIDsByFilters,
     SaveTrainingSession,
     LoadTrainingSessions,
     LoadTrainingNumberStats,
@@ -12,7 +11,7 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 import { GenerateBearoffQuestion, GenerateEvaluationQuestion, LegalMoves } from '../../wailsjs/go/gui/App.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { positionStore, positionsStore, browsingLibrary } from '../stores/positionStore.js';
+import { positionStore, positionsStore, browsingLibrary, searchSource } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { emptySearchBoardPosition } from '../stores/searchExcludePositionStore.js';
 import { trainingSessionStore, trainingElapsedStore, trainingJournalStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
@@ -200,8 +199,8 @@ function epcNumbers(epc) {
 async function buildBearoffQuestion(seedSource, seed) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
-        const phased = await bearoffIds();
-        const drawn = phased.length > 0 ? drawDistinct(phased, MAX_LIBRARY_DRAWS) : await drawListIds(MAX_LIBRARY_DRAWS);
+        const phased = await drawBearoffIds(MAX_LIBRARY_DRAWS);
+        const drawn = phased.length > 0 ? phased : await drawListIds(MAX_LIBRARY_DRAWS);
         let last = 'notBearoff';
         for (const id of drawn) {
             const loaded = await LoadPosition(id);
@@ -240,32 +239,58 @@ function bearoffQuestion(generated, key, positionId = null, loaded = null) {
 }
 
 /**
- * Les ids, dans la liste parcourue, des positions en phase `bearoff`
- * (ADR-0035), calculés une fois par session. Sans cette restriction, trente
- * tirages à l'aveugle manquent souvent les rares bearoffs d'une base. Elle ne
- * juge pas : le domaine (4 à 15 pions) reste en Go.
+ * Les positions en phase `bearoff` (ADR-0035) de la liste parcourue, comptées
+ * une fois par session et lues par fenêtres : leur liste n'est jamais tenue
+ * entière. Sans cette restriction, trente tirages à l'aveugle manquent souvent
+ * les rares bearoffs d'une base. Elle ne juge pas : le domaine (4 à 15 pions)
+ * reste en Go.
  *
- * Liste vide (phases jamais calculées, ou aucun bearoff) : le tirage retombe
- * sur la liste entière.
+ * Null (phases jamais calculées, aucun bearoff, ou résultat de recherche
+ * parcouru par fenêtres, qu'on ne croise pas) : le tirage retombe sur la liste
+ * entière.
  *
- * @returns {Promise<number[]>}
+ * @returns {Promise<{ source: import('../stores/positionList.js').IdSource, length: number } | null>}
  */
-function bearoffIds() {
+function bearoffList() {
     if (!bearoffPhaseIndices) {
         bearoffPhaseIndices = (async () => {
-            /** @type {number[]} */
-            let ids = [];
+            /** @type {any} */
+            const filters = { filter: emptySearchBoardPosition(), excludeFilter: emptySearchBoardPosition(), gamePhaseFilter: 'bearoff' };
+            if (!browsingLibrary()) {
+                // A list held whole restricts the count; a paged search result is not crossed.
+                const held = get(positionsStore).ids;
+                if (!held) return null;
+                filters.restrictToPositionIDs = held.filter((id) => id != null).join(',');
+                if (!filters.restrictToPositionIDs) return null;
+            }
             try {
-                const filters = /** @type {any} */ ({ filter: emptySearchBoardPosition(), excludeFilter: emptySearchBoardPosition(), gamePhaseFilter: 'bearoff' });
-                ids = (await LoadPositionIDsByFilters(filters)) || [];
+                const source = searchSource(filters);
+                const length = await source.count();
+                return length > 0 ? { source, length } : null;
             } catch (error) {
                 logger.error('could not narrow the training draw to bear-offs:', error);
+                return null;
             }
-            // The library holds every position: no rank to look up. Another list keeps its own.
-            return browsingLibrary() ? ids : ids.filter((id) => positionsStore.indexOf(id) >= 0);
         })();
     }
     return bearoffPhaseIndices;
+}
+
+/**
+ * `count` distinct bearoff ids drawn from the list, one window of one id each; [] when the draw
+ * cannot be narrowed.
+ * @param {number} count
+ */
+async function drawBearoffIds(count) {
+    const list = await bearoffList();
+    if (!list) return [];
+    /** @type {number[]} */
+    const out = [];
+    for (const index of drawIndices(list.length, count)) {
+        const [id] = await list.source.window(index, 1);
+        if (id != null) out.push(id);
+    }
+    return out;
 }
 
 /** Tolérance des chances de gain d'Évaluation, en points de pourcentage : sépare
@@ -482,10 +507,10 @@ let prefetched = null;
 let boardSeed = null;
 
 /**
- * Les index bearoff de la liste parcourue, calculés une fois par session (la
- * liste est celle du démarrage).
+ * Les bearoffs de la liste parcourue (bearoffList), comptés une fois par
+ * session (la liste est celle du démarrage).
  *
- * @type {Promise<number[]>|null}
+ * @type {Promise<{ source: import('../stores/positionList.js').IdSource, length: number } | null>|null}
  */
 let bearoffPhaseIndices = null;
 

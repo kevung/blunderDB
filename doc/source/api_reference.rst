@@ -210,7 +210,10 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/rencontres.trash                     JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.update                    JSON  (Idempotency-Key)  (If-Match)
    search
+     POST /v1/search.count                         JSON
      POST /v1/search.find                          NDJSON
+     POST /v1/search.ids                           JSON
+     POST /v1/search.indexOf                       JSON
      POST /v1/search.parse                         JSON
      POST /v1/search.query                         custom
    searchHistory

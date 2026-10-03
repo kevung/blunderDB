@@ -112,6 +112,8 @@ export function CountOrphans():Promise<database.OrphanCounts>;
 
 export function CountPositions():Promise<number>;
 
+export function CountPositionsByFilters(arg1:domain.SearchFilters):Promise<number>;
+
 export function CountPositionsWithForeignAnalysis():Promise<number>;
 
 export function CountPositionsWithStaleGammonNet(arg1:number):Promise<number>;
@@ -332,6 +334,8 @@ export function ImportXGPPosition(arg1:string):Promise<number>;
 
 export function IndexOfPosition(arg1:number):Promise<number>;
 
+export function IndexOfPositionByFilters(arg1:domain.SearchFilters,arg2:number):Promise<number>;
+
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
 export function IsReadOnly():Promise<boolean>;
@@ -495,6 +499,8 @@ export function SaveSessionState(arg1:database.SessionState):Promise<void>;
 export function SaveTrainingSession(arg1:storage.TrainingSession):Promise<number>;
 
 export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
+
+export function SearchPositionIDs(arg1:domain.SearchFilters,arg2:number,arg3:number):Promise<Array<number>>;
 
 export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
 

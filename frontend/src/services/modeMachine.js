@@ -186,12 +186,33 @@ function returnToStudiedMode(saved) {
  * @returns {number[] | null}
  */
 export function displayedPositionIDs() {
-    const mode = currentMode();
-    const behindQueryBoard = mode === MODE.EDIT ? savedContext.beforeEdit : null;
-    const matchContext = mode === MODE.MATCH ? get(matchContextStore) : behindQueryBoard?.mode === MODE.MATCH ? behindQueryBoard.matchContext : null;
+    const matchContext = displayedMatchContext();
     if (!matchContext?.isMatchMode && browsingLibrary()) return null;
     const ids = matchContext?.isMatchMode ? (matchContext.movePositions ?? []).map((/** @type {any} */ mp) => mp?.position?.id) : (get(positionsStore)?.ids ?? []);
     return [...new Set(ids.filter((/** @type {any} */ id) => id != null))];
+}
+
+/** The match on screen, directly or behind the query board; null outside a match. */
+function displayedMatchContext() {
+    const mode = currentMode();
+    const behindQueryBoard = mode === MODE.EDIT ? savedContext.beforeEdit : null;
+    return mode === MODE.MATCH ? get(matchContextStore) : behindQueryBoard?.mode === MODE.MATCH ? behindQueryBoard.matchContext : null;
+}
+
+/**
+ * Hands `run` what displayedPositionIDs answers. A paged search result holds none of its ids, so
+ * it is read whole first — the one place it is, since searching within it sends its ids — and
+ * `run` is then called asynchronously; any other list answers at once.
+ *
+ * @template T
+ * @param {(ids: number[] | null) => T} run
+ * @returns {T | Promise<T>}
+ */
+export function withDisplayedPositionIDs(run) {
+    if (displayedMatchContext()?.isMatchMode || browsingLibrary() || !positionsStore.isPaged()) return run(displayedPositionIDs());
+    const list = positionsStore.snapshotList();
+    if (!('source' in list)) return run(displayedPositionIDs());
+    return list.source.window(0, list.length).then((ids) => run([...new Set(ids.filter((id) => id != null))]));
 }
 
 /**

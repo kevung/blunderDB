@@ -4,7 +4,7 @@ import { OpenExportDatabaseDialog, OpenExportMatDialog, ShowAlert } from '../../
 import { ExportDatabase, CollectionCoverage, LoadMetadata, ExportMatchMAT, SuggestMatFilename, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
-import { positionsStore, browsingLibrary } from '../stores/positionStore.js';
+import { positionsStore, browsingLibrary, listedIds } from '../stores/positionStore.js';
 import { statusBarModeStore, openModal, closeModal, MODAL } from '../stores/uiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
@@ -76,7 +76,7 @@ export async function exportDatabase() {
             // The whole library covers every collection: no id list to send.
             const coverage = browsingLibrary()
                 ? Object.fromEntries((get(collectionsStore) || []).map((/** @type {any} */ c) => [c.id, c.positionCount ?? 0]))
-                : (await CollectionCoverage(get(positionsStore).ids)) || {};
+                : (await CollectionCoverage(await listedIds())) || {};
             exportCollectionCoverageStore.set(coverage);
         } catch (e) {
             logger.log('Could not measure collection coverage:', e);
@@ -147,7 +147,7 @@ export async function handleExportCommit() {
             // (ExportOptions.PositionIDs).
             // The library is never held as ids (positionList.js): AllPositions says it.
             allPositions: browsingLibrary(),
-            positionIDs: browsingLibrary() ? [] : get(positionsStore).ids,
+            positionIDs: browsingLibrary() ? [] : await listedIds(),
             metadata: {
                 user: metadata.user || '',
                 description: metadata.description || '',

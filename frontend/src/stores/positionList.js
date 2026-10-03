@@ -23,6 +23,8 @@ import { writable } from 'svelte/store';
  * @property {() => Promise<number>} count how many ids the list holds
  * @property {(offset: number, limit: number) => Promise<number[]>} window ids [offset, offset+limit)
  * @property {(id: number) => Promise<number>} indexOf the rank of id, or -1
+ * @property {boolean} [growsAtEnd] new ids only ever come last (the library, ids ascending), so a
+ *   longer list keeps its full pages
  */
 /** @typedef {{ ids: IdList } | { source: IdSource, length: number }} ListSnapshot */
 
@@ -425,7 +427,7 @@ export function createPositionList({
             const current = source;
             const total = await current.count();
             if (source !== current || total === pagedLength) return length();
-            if (total < pagedLength) {
+            if (total < pagedLength || !current.growsAtEnd) {
                 replaceSource(current, total);
             } else {
                 // Grown at the end (ids ascend): full pages still hold, a partial one does not.

@@ -23,6 +23,9 @@ const { bindings, searchState, positionService, setStatusBarMessage } = vi.hoist
             CountPositions: vi.fn(),
             IndexOfPosition: vi.fn(),
             LoadPositionIDsByFilters: vi.fn(),
+            CountPositionsByFilters: vi.fn(),
+            SearchPositionIDs: vi.fn(),
+            IndexOfPositionByFilters: vi.fn(),
             RankPositionIDsByFilters: vi.fn()
         },
         positionService: {
@@ -80,7 +83,10 @@ describe('restoreSessionState', () => {
 
     test('session de recherche : la requête est rejouée, la position courante retrouvée par id', async () => {
         const payload = { searchText: 'p>10' };
-        bindings.LoadPositionIDsByFilters.mockResolvedValue([3, 2, 1]);
+        const result = [3, 2, 1];
+        bindings.CountPositionsByFilters.mockResolvedValue(result.length);
+        bindings.SearchPositionIDs.mockImplementation(async (_p, offset, limit) => result.slice(offset, limit > 0 ? offset + limit : undefined));
+        bindings.IndexOfPositionByFilters.mockImplementation(async (_p, id) => result.indexOf(id));
         bindings.LoadSessionState.mockResolvedValue({
             hasActiveSearch: true,
             lastSearchCommand: 's p>10',
@@ -90,8 +96,10 @@ describe('restoreSessionState', () => {
 
         await restoreSessionState();
 
-        expect(bindings.LoadPositionIDsByFilters).toHaveBeenCalledWith(payload);
-        expect(get(positionsStore).ids).toEqual([3, 2, 1]);
+        // Browsed by windows, never fetched whole.
+        expect(bindings.CountPositionsByFilters).toHaveBeenCalledWith(payload);
+        expect(bindings.LoadPositionIDsByFilters).not.toHaveBeenCalled();
+        expect(get(positionsStore)).toMatchObject({ ids: null, length: 3, paged: true });
         expect(get(currentPositionIndexStore)).toBe(1);
         expect(searchState).toEqual({ lastSearchCommand: 's p>10', lastSearchPosition: searchBoard, hasActiveSearch: true });
         expect(setStatusBarMessage).toHaveBeenCalledWith({ i18nKey: 'status.sessionRestoredViews', i18nParams: null });
@@ -99,7 +107,7 @@ describe('restoreSessionState', () => {
     });
 
     test('recherche devenue vide : repli sur la bibliothèque', async () => {
-        bindings.LoadPositionIDsByFilters.mockResolvedValue([]);
+        bindings.CountPositionsByFilters.mockResolvedValue(0);
         bindings.LoadSessionState.mockResolvedValue({ viewsJSON: viewsOf({ origin: { kind: 'search', payload: {} }, positionId: 2 }) });
 
         await restoreSessionState();
@@ -115,7 +123,7 @@ describe('restoreSessionState', () => {
 
         expect(get(positionsStore)).toMatchObject({ ids: null, length: 3, paged: true });
         expect(get(currentPositionIndexStore)).toBe(2);
-        expect(bindings.LoadPositionIDsByFilters).not.toHaveBeenCalled();
+        expect(bindings.CountPositionsByFilters).not.toHaveBeenCalled();
     });
 
     test('id disparu : l’index enregistré, ramené dans les bornes', async () => {

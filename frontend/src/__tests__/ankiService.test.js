@@ -20,7 +20,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ReviewAnkiCard: vi.fn(() => Promise.resolve(null)),
     ResetAnkiDeck: vi.fn(() => Promise.resolve()),
     GetAllCollections: vi.fn(() => Promise.resolve([])),
-    LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([]))
+    LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
+    ListPositionIDs: vi.fn(() => Promise.resolve([]))
 }));
 vi.mock('../utils/logger.js', () => ({ logger: { error: vi.fn(), perf: (_n, f) => f() } }));
 
@@ -186,6 +187,23 @@ describe('deck lifecycle', () => {
         expect(sourceId).toBe(0);
         expect(JSON.parse(sourceCommand)).toEqual({ command: 's', position: '{}', ids: [8, 9] });
         expect(db.SyncAnkiDeckWithPositions).toHaveBeenCalledWith(42, [8, 9]);
+    });
+
+    test('a deck made while browsing a list by windows carries its descriptor, then its ids', async () => {
+        const source = { count: async () => 3, window: async () => [], indexOf: async () => -1 };
+        await positionsStore.setSource(source);
+        const payload = { gamePhaseFilter: 'bearoff' };
+        db.LoadPositionIDsByFilters.mockResolvedValueOnce([4, 5, 6]);
+        await createDeck({ name: 'P', sourceType: 'search', sourceId: 0, lastSearch: null, positionIds: [], origin: { kind: 'search', payload } });
+        expect(JSON.parse(db.CreateAnkiDeck.mock.calls.at(-1)[4])).toEqual({ ids: [], payload });
+        expect(db.LoadPositionIDsByFilters).toHaveBeenLastCalledWith(payload);
+        expect(db.SyncAnkiDeckWithPositions).toHaveBeenLastCalledWith(42, [4, 5, 6]);
+
+        db.ListPositionIDs.mockResolvedValueOnce([1, 2, 3]);
+        await createDeck({ name: 'L', sourceType: 'search', sourceId: 0, lastSearch: null, positionIds: [], origin: { kind: 'library' } });
+        expect(JSON.parse(db.CreateAnkiDeck.mock.calls.at(-1)[4])).toEqual({ ids: [], library: true });
+        expect(db.SyncAnkiDeckWithPositions).toHaveBeenLastCalledWith(42, [1, 2, 3]);
+        positionsStore.setIds([]);
     });
 
     test('deleteDeck clears the selection only when the deleted deck was selected', async () => {

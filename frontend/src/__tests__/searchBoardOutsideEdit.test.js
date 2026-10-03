@@ -26,7 +26,10 @@ vi.mock('../../wailsjs/go/database/Database.js', async (importOriginal) => ({
     ListPositionIDs: vi.fn(() => Promise.resolve([1, 2, 3])),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
     LoadComment: vi.fn(() => Promise.resolve('')),
+    CountPositionsByFilters: vi.fn(() => Promise.resolve(1)),
     LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([2])),
+    SearchPositionIDs: vi.fn(() => Promise.resolve([2])),
+    IndexOfPositionByFilters: vi.fn(() => Promise.resolve(0)),
     RankPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
     LoadPositionsByIDs: vi.fn((/** @type {number[]} */ ids) => Promise.resolve(ids.map((id) => makePosition(id)))),
     SaveLastVisitedPosition: vi.fn(() => Promise.resolve()),
@@ -47,7 +50,7 @@ vi.mock('../../wailsjs/go/main/Config.js', async (importOriginal) => ({
 
 vi.mock('../services/sessionService.js', () => ({ saveSessionState: vi.fn() }));
 
-import { LoadPositionIDsByFilters, RankPositionIDsByFilters, SaveSearchHistory } from '../../wailsjs/go/database/Database.js';
+import { CountPositionsByFilters, LoadPositionIDsByFilters, RankPositionIDsByFilters, SaveSearchHistory } from '../../wailsjs/go/database/Database.js';
 import { processCommand, initCommandProcessor } from '../commandProcessor.js';
 import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore.js';
 import { positionStore, positionsStore, matchContextStore } from '../stores/positionStore.js';
@@ -100,7 +103,8 @@ const flush = async () => {
  * The SearchFilters payload of the last backend search.
  * @returns {any}
  */
-const sent = () => vi.mocked(LoadPositionIDsByFilters).mock.calls.at(-1)?.[0];
+// A plain search is counted first; a sub-search asks for its ids.
+const sent = () => (vi.mocked(CountPositionsByFilters).mock.calls.at(-1) ?? vi.mocked(LoadPositionIDsByFilters).mock.calls.at(-1))?.[0];
 /** @returns {any[]} */
 const history = () => get(searchHistoryStore);
 
@@ -225,7 +229,7 @@ describe('en EDIT, le plateau de requête reste la structure', () => {
         showLibraryPosition();
         activeTabStore.set('search');
         await enterEditMode();
-        vi.mocked(LoadPositionIDsByFilters).mockClear();
+        vi.mocked(CountPositionsByFilters).mockClear();
         const utils = render(SearchPanel, { props: { onLoadPositionsByFilters: loadPositionsByFilters, onAddToFilterLibrary: vi.fn() } });
         await flush();
         // After mounting: the panel reloads the history from the database on mount.
@@ -235,7 +239,7 @@ describe('en EDIT, le plateau de requête reste la structure', () => {
         await tick();
         await fireEvent.dblClick(/** @type {Element} */ (utils.container.querySelector('.history-table tbody tr')));
         await flush();
-        expect(LoadPositionIDsByFilters).toHaveBeenCalledTimes(1);
+        expect(CountPositionsByFilters).toHaveBeenCalledTimes(1);
         expect(sent().moveErrorFilter).toBe('E>80');
         expect(checkers(sent().filter.board)).toBe(0);
     });

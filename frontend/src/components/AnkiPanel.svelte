@@ -21,6 +21,7 @@
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { collectionsStore } from '../stores/collectionStore';
     import { positionsStore } from '../stores/positionStore';
+    import { listOriginStore } from '../stores/listOriginStore.js';
     import { lastSearchStore } from '../stores/searchHistoryStore';
     import { confirmAction } from '../services/confirmService.js';
     import * as anki from '../services/ankiService.js';
@@ -238,7 +239,8 @@
                 sourceType: newDeckSourceType,
                 sourceId: newDeckSourceId,
                 lastSearch,
-                positionIds
+                positionIds,
+                origin: $listOriginStore
             });
             newDeckName = '';
             newDeckSourceType = 'collection';

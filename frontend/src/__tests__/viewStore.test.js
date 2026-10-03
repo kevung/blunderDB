@@ -43,6 +43,7 @@ async function freshViewStore() {
 
 // A minimal stand-in for a domain.Position, shaped like the real thing
 // (Board.svelte-compatible points), distinguishable by its id.
+/** @param {number} id */
 function fakePosition(id) {
     return {
         id,
@@ -61,6 +62,7 @@ function fakePosition(id) {
 }
 
 describe('viewStore — default position shape (regression)', () => {
+    /** @type {Awaited<ReturnType<typeof freshViewStore>>} */
     let ctx;
     beforeEach(async () => {
         ctx = await freshViewStore();
@@ -122,6 +124,7 @@ describe('viewStore — default position shape (regression)', () => {
 });
 
 describe('viewStore — snapshot/restore across views', () => {
+    /** @type {Awaited<ReturnType<typeof freshViewStore>>} */
     let ctx;
     beforeEach(async () => {
         ctx = await freshViewStore();
@@ -238,6 +241,7 @@ describe('viewStore — snapshot/restore across views', () => {
 });
 
 describe('viewStore — serialize/deserialize round trip', () => {
+    /** @type {Awaited<ReturnType<typeof freshViewStore>>} */
     let ctx;
     beforeEach(async () => {
         ctx = await freshViewStore();

@@ -73,12 +73,37 @@ func (d *Database) LoadPositionIDsByFilters(f SearchFilters) ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var ids []int64
-	for pos, err := range d.store.Search().Find(context.Background(), "", f, storage.ListOpts{}) {
-		if err != nil {
-			return nil, err
-		}
-		ids = append(ids, pos.ID)
+	return d.store.Search().FindIDs(context.Background(), "", f, storage.ListOpts{})
+}
+
+// SearchPositionIDs returns the window [offset, offset+limit) of
+// LoadPositionIDsByFilters's ids; limit <= 0 means up to the end. The GUI
+// browses a search result through such windows, CountPositionsByFilters and
+// IndexOfPositionByFilters, never holding the whole list.
+func (d *Database) SearchPositionIDs(f SearchFilters, offset, limit int) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	return d.store.Search().FindIDs(context.Background(), "", f, storage.ListOpts{Offset: offset, Limit: limit})
+}
+
+// CountPositionsByFilters returns how many positions the search finds.
+func (d *Database) CountPositionsByFilters(f SearchFilters) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	return d.store.Search().Count(context.Background(), "", f)
+}
+
+// IndexOfPositionByFilters returns the rank of id in SearchPositionIDs's
+// order, or -1 when the search does not find it.
+func (d *Database) IndexOfPositionByFilters(f SearchFilters, id int64) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	index, found, err := d.store.Search().IndexOf(context.Background(), "", f, id)
+	if err != nil || !found {
+		return -1, err
 	}
-	return ids, nil
+	return index, nil
 }
