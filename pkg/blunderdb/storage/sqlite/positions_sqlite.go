@@ -281,6 +281,11 @@ func (s *positionStore) List(ctx context.Context, scope string, opts storage.Lis
 
 // ListIDs returns the stored position ids ordered by id.
 func (s *positionStore) ListIDs(ctx context.Context, scope string, opts storage.ListOpts) ([]int64, error) {
+	if opts.Limit > 0 && opts.Offset > 0 {
+		if ids, ok, err := s.listIDsFromEnd(ctx, opts); ok || err != nil {
+			return ids, err
+		}
+	}
 	query := `SELECT id FROM position ORDER BY id`
 	var args []any
 	switch {
@@ -312,6 +317,43 @@ func (s *positionStore) ListIDs(ctx context.Context, scope string, opts storage.
 		return nil, fmt.Errorf("sqlite: list position ids: %w", err)
 	}
 	return ids, nil
+}
+
+// listIDsFromEnd answers a window in the second half of the list by walking
+// from the last id: OFFSET skips rows one by one, and the GUI opens a library
+// on its last page, where an OFFSET from the start walks the whole table. ok
+// is false when the window lies in the first half, which the plain query
+// reaches sooner. The window is one statement, so it sees one snapshot even
+// if a write lands after the count that chose the path.
+func (s *positionStore) listIDsFromEnd(ctx context.Context, opts storage.ListOpts) ([]int64, bool, error) {
+	var total int
+	if err := s.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM position`).Scan(&total); err != nil {
+		return nil, false, fmt.Errorf("sqlite: list position ids: %w", err)
+	}
+	if opts.Offset <= total/2 {
+		return nil, false, nil
+	}
+	rows, err := s.db.QueryContext(ctx, `SELECT id FROM (
+		SELECT id FROM position ORDER BY id DESC
+		LIMIT max(0, min(?1, (SELECT COUNT(*) FROM position) - ?2))
+		OFFSET max(0, (SELECT COUNT(*) FROM position) - ?2 - ?1)
+	) ORDER BY id`, opts.Limit, opts.Offset)
+	if err != nil {
+		return nil, false, fmt.Errorf("sqlite: list position ids: %w", err)
+	}
+	defer rows.Close()
+	ids := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, false, fmt.Errorf("sqlite: list position ids: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, false, fmt.Errorf("sqlite: list position ids: %w", err)
+	}
+	return ids, true, nil
 }
 
 // Count returns the number of stored positions.

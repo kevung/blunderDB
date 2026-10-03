@@ -313,6 +313,19 @@ func testPositionListIDsAndLoadByIDs(t *testing.T, s storage.Storage) {
 		t.Errorf("ListIDs{Limit:2,Offset:1}: got %v, want %v", window, listed[1:3])
 	}
 
+	// Windows past the middle, the last page cut short, and past the end: a
+	// backend may reach them from the last id rather than through OFFSET.
+	for _, w := range []struct{ offset, limit int }{{3, 2}, {3, 1000}, {4, 1}, {5, 2}, {9, 2}} {
+		got, err := ps.ListIDs(ctx, "", storage.ListOpts{Limit: w.limit, Offset: w.offset})
+		if err != nil {
+			t.Fatalf("ListIDs{Limit:%d,Offset:%d}: %v", w.limit, w.offset, err)
+		}
+		want := listed[min(w.offset, len(listed)):min(w.offset+w.limit, len(listed))]
+		if !equalIDs(got, want) {
+			t.Errorf("ListIDs{Limit:%d,Offset:%d}: got %v, want %v", w.limit, w.offset, got, want)
+		}
+	}
+
 	// Caller's order, not id order; an unknown id is skipped, not an error.
 	want := []int64{saved[3], saved[0], saved[4]}
 	got, err := ps.LoadByIDs(ctx, "", []int64{saved[3], 987654321, saved[0], saved[4]})

@@ -39,3 +39,26 @@ fenêtre reste sous la seconde, même avec une phase Go (106 ms contre 34 s pour
 compte d'un filtre Go est un balayage complet (23 s sur 149 k positions, 1,7 Go alloués en
 tout, mémoire vive bornée par le morceau). C'est pourquoi la GUI affiche la fenêtre 1 avant le
 compte et laisse Échap interrompre le balayage.
+
+## Ouverture de la bibliothèque
+
+`BLUNDERDB_SEARCH_DB=<copie> go test -run '^$' -bench '^BenchmarkLibraryOpen' -benchtime 5x
+./pkg/blunderdb/database` (`library_open_benchmark_test.go`) : ce que la GUI attend avant le premier
+plateau (ouvrir, compter, la page d'ids de la dernière position où `loadAllPositions` se pose, les
+positions autour). Base synthétique de GB0.1 (`cmd/blunderdb-synthdb`, graine 1) à 1 000 046
+positions, 3 148 matchs, 803 Mo ; 10 M ne tient pas sur le disque de cette machine (≈ 8 Go, 7 Go
+libres). Charge moyenne ≈ 40 : ordres de grandeur.
+
+| Étape | `OFFSET` depuis le début | Depuis la fin |
+|---|---:|---:|
+| Ouvrir la base | 3 ms | 7 ms |
+| `CountPositions` | 2 ms | 4 ms |
+| Page de la dernière position (1 000 ids) | 0,35 à 1,76 s | 14 ms |
+| 50 positions autour | 4 ms | 3 ms |
+| Compte + page + positions, bout à bout | 0,35 s | 19 ms |
+
+Lecture : `OFFSET ≈ total` saute chaque ligne une à une, linéaire en la taille ; à 10 M la page
+de la dernière position aurait dépassé les 2 s. SQLite répond désormais une fenêtre de la
+seconde moitié en partant du dernier id (`ORDER BY id DESC`), en une requête. `GetAllMatches`,
+que l'onglet Matchs charge en parallèle, prend 30 s sur ces 3 148 matchs : hors du chemin du
+premier plateau, mais l'onglet reste vide pendant ce temps.
