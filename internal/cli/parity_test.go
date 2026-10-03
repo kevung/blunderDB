@@ -76,6 +76,12 @@ const (
 // route must be reachable from databaseParity or named below with a reason.
 // Sorted by route.
 var serverOnly = map[string]string{
+	// One Database method per alias gesture takes the kind ("player" or
+	// "event"); the daemon spells the kind in the path.
+	"/v1/events.alias.list":    "ListAliases(\"event\"), the CLI's `events alias list`: the parity row names the players route of the same method",
+	"/v1/events.alias.set":     "SetAlias(\"event\", …), the CLI's `events alias add`: the parity row names the players route of the same method",
+	"/v1/events.alias.remove":  "RemoveAlias(\"event\", …), the CLI's `events alias remove`: the parity row names the players route of the same method",
+	"/v1/events.alias.suggest": "SuggestAliases(\"event\"), the CLI's `events alias suggest`: the parity row names the players route of the same method",
 	// A batch import over HTTP outlives its request, so it has a handle to
 	// read and to stop. The CLI and the desktop run the same pipeline in the
 	// foreground and read its progress from the call itself.
@@ -441,6 +447,10 @@ var databaseParity = map[string]parityEntry{
 	"RepairGamePhases":                  {CLI: "repair", Server: "/v1/positions.reclassifyPhases"},
 	"RepairCrawfordSentinel":            {CLI: "repair", Server: "/v1/positions.repairCrawford"},
 	"FindDuplicateMatches":              {CLI: "repair --duplicates", Server: "/v1/matches.duplicates"},
+	"ListAliases":                       {CLI: "players alias list", Server: "/v1/players.alias.list"},
+	"SetAlias":                          {CLI: "players alias add", Server: "/v1/players.alias.set"},
+	"RemoveAlias":                       {CLI: "players alias remove", Server: "/v1/players.alias.remove"},
+	"SuggestAliases":                    {CLI: "players alias suggest", Server: "/v1/players.alias.suggest"},
 	"BeginImportBatch":                  {CLI: "import", Server: "/v1/imports.xg", Why: whyBatchIsTheImport},
 	"FinishImportBatch":                 {CLI: "import", Server: "/v1/imports.xg", Why: whyBatchIsTheImport},
 	"ImportReport":                      {CLI: "list", Server: "/v1/imports.report"},

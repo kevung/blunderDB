@@ -1004,6 +1004,17 @@ détection de doublon — de quoi éviter un import redondant avant de l'engager
 identiques — mêmes dés sous d'autres noms, ou version tronquée puis complétée —
 comme ``repair --duplicates``, sans rien fusionner.
 
+Les autres graphies d'un joueur ou d'un événement se gèrent par
+``players.alias.list``, ``players.alias.set`` (``{"alias": …, "canonical": …}``),
+``players.alias.remove`` (``{"alias": …}``, renvoie ``removed``) et
+``players.alias.suggest`` (les noms qui ne diffèrent que par la casse, les
+accents, la ponctuation ou l'ordre des mots, sans rien enregistrer) ; les mêmes
+sous ``events.alias.*`` pour les événements. ``matches.mergePlayers`` crée ces
+alias plutôt que de réécrire les matchs. Un import enregistre le nom canonique
+(les empreintes gardent les noms du fichier), et ``stats.compute``,
+``stats.playerTable``, ``stats.playerNames`` et la recherche par joueur lisent
+toutes les graphies comme une seule personne.
+
 Le champ ``winner`` d'une partie, reçu par ``matches.createGame`` et renvoyé par
 ``matches.games``, a un seul codage : ``1`` pour le joueur 1, ``-1`` pour le
 joueur 2, ``0`` pour une partie inachevée. Un client qui envoie encore ``0``,
@@ -1862,10 +1873,11 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
    * - ``similar_positions``, ``decode_position``, ``legal_moves``,
        ``race_epc``
      - positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course
-   * - ``list_players``, ``player_stats``, ``recurring_errors``,
-       ``training_stats``
-     - joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent ;
-       PR du quiz et rétention Anki contre le PR réel
+   * - ``list_players``, ``player_aliases``, ``player_stats``,
+       ``recurring_errors``, ``training_stats``
+     - joueurs ; leurs alias et les graphies proposées ; PR global, pions,
+       videau, par phase ; erreurs qui reviennent ; PR du quiz et rétention
+       Anki contre le PR réel
    * - ``list_matches``, ``get_match``, ``list_tournaments``
      - matchs, détail d'un match, tournois
    * - ``list_collections``, ``collection_positions``, ``study_decks``

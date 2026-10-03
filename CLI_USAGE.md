@@ -51,6 +51,8 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `analyze` - Write a gammonNet analysis for every position missing one
 - `transcribe` - Replay a .mat, a match or a draft and report its inconsistencies
 - `tournament` - Read a directed tournament (list, verify, standings, page, export)
+- `players` - Other spellings of a player (alias add, list, remove, suggest)
+- `events` - Other spellings of an event (alias add, list, remove, suggest)
 - `info` - Display database metadata
 - `edit` - Edit database metadata
 - `verify` - Verify database integrity
@@ -1182,6 +1184,38 @@ tables; an out-of-service table is refused.
 
 `verify` **exits in error** when a warning remains after the replay: a script
 that runs it over a season's databases wants a status, not a line to grep.
+
+## Players Command
+
+One person often signs several ways across files ("Doe J.", "John Doe"). An
+**alias** says a name is another spelling of a canonical name. The matches keep
+the names their files wrote; the stats, the players table and the `pl"…"` search
+read every spelling as one person, and every later import stores the canonical
+name. The match fingerprints (`match_hash`, `canonical_hash`) keep the file's
+names, so a file imported before its alias existed still finds itself; a match
+whose dice are a stored match's and whose names differ only by known aliases is
+recognised as that match and enriches it. The GUI's merge of players records the
+same aliases.
+
+```bash
+blunderdb players alias add --db base.db "Doe J." "John Doe"
+blunderdb players alias list --db base.db --format json
+blunderdb players alias remove --db base.db "Doe J."
+blunderdb players alias suggest --db base.db   # case, accents, punctuation, word order; nothing recorded
+```
+
+The table stays flat: a canonical that is itself an alias is followed to its own
+canonical, and the aliases of a name that becomes an alias move with it.
+
+## Events Command
+
+The same four actions for event names (a file's Event field). On import, a match
+whose event is an alias is filed under the canonical event's tournament.
+
+```bash
+blunderdb events alias add --db base.db "Open 2025" "Autumn Open 2025"
+blunderdb events alias list --db base.db
+```
 
 ## Trash Command
 
@@ -2429,6 +2463,33 @@ Examples:
   blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd '<XGID>'
 ```
 
+### `blunderdb events`
+
+```
+Usage: blunderdb events alias <add|list|remove|suggest> --db FILE [arguments]
+
+Record the other spellings of a event's name. An import stores the canonical
+name where the file writes an alias; the stats, the players table and the
+search read every spelling as one. The matches already stored keep the
+names their files wrote, and so do the match fingerprints.
+
+Actions:
+  add ALIAS CANONICAL  Make ALIAS a spelling of CANONICAL
+  list                 List the aliases
+  remove ALIAS         Forget an alias
+  suggest              Propose the names that differ only by case, accents,
+                       punctuation or word order (nothing is recorded)
+
+Options:
+  --db FILE        Path to the database file (required)
+  --format FORMAT  Output of list and suggest: text or json (default text)
+
+Examples:
+  blunderdb events alias add --db base.db "Doe J." "John Doe"
+  blunderdb events alias list --db base.db --format json
+  blunderdb events alias suggest --db base.db
+```
+
 ### `blunderdb export`
 
 ```
@@ -3035,6 +3096,33 @@ Options:
 
 Example:
   blunderdb open --db cours.dbx --password secret
+```
+
+### `blunderdb players`
+
+```
+Usage: blunderdb players alias <add|list|remove|suggest> --db FILE [arguments]
+
+Record the other spellings of a player's name. An import stores the canonical
+name where the file writes an alias; the stats, the players table and the
+search read every spelling as one. The matches already stored keep the
+names their files wrote, and so do the match fingerprints.
+
+Actions:
+  add ALIAS CANONICAL  Make ALIAS a spelling of CANONICAL
+  list                 List the aliases
+  remove ALIAS         Forget an alias
+  suggest              Propose the names that differ only by case, accents,
+                       punctuation or word order (nothing is recorded)
+
+Options:
+  --db FILE        Path to the database file (required)
+  --format FORMAT  Output of list and suggest: text or json (default text)
+
+Examples:
+  blunderdb players alias add --db base.db "Doe J." "John Doe"
+  blunderdb players alias list --db base.db --format json
+  blunderdb players alias suggest --db base.db
 ```
 
 ### `blunderdb repair`

@@ -148,6 +148,7 @@ func (s *Server) domainRoutes() []route {
 	rs = append(rs, s.analysisRoutes()...)
 	rs = append(rs, s.quizRoutes()...)
 	rs = append(rs, s.matchRoutes()...)
+	rs = append(rs, s.aliasRoutes()...)
 	rs = append(rs, s.commentRoutes()...)
 	rs = append(rs, s.collectionRoutes()...)
 	rs = append(rs, s.lessonRoutes()...)

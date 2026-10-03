@@ -2004,6 +2004,59 @@ message explicite plutôt que de risquer un compactage interrompu.
 
 .. _cli_repair:
 
+players — Les graphies d'un joueur
+----------------------------------
+
+Une même personne signe parfois de plusieurs façons d'un fichier à l'autre
+(« Doe J. », « John Doe »). Un **alias** dit qu'un nom est une autre graphie
+d'un nom canonique. Les matchs déjà en base gardent les noms que leurs fichiers
+écrivent ; les statistiques, la table Joueurs et la recherche ``pl"…"`` lisent
+toutes les graphies comme une seule personne, et chaque import suivant enregistre
+le nom canonique. La fusion de joueurs de la fenêtre des matchs crée les mêmes
+alias.
+
+.. code-block:: bash
+
+   ./blunderdb players alias <add|list|remove|suggest> --db <chemin> [arguments]
+
+**Actions:**
+
+* ``add ALIAS CANONIQUE`` — ``ALIAS`` devient une graphie de ``CANONIQUE``. Un
+  canonique qui est lui-même un alias est suivi jusqu'à son propre canonique, et
+  les alias qui visaient ``ALIAS`` passent à ``CANONIQUE`` : un seul niveau,
+  jamais de chaîne.
+* ``list [--format text|json]`` — Les alias, rangés par nom canonique.
+* ``remove ALIAS`` — Oublie un alias ; sort en erreur si ce n'en était pas un.
+* ``suggest [--format text|json]`` — Propose les noms qui ne diffèrent que par la
+  casse, les accents, la ponctuation ou l'ordre des mots, avec pour canonique la
+  graphie la plus fréquente. Rien n'est enregistré : chaque proposition s'écrit
+  comme la commande ``add`` qui l'appliquerait.
+
+**Empreintes.** Les empreintes d'un match (``match_hash``, ``canonical_hash``)
+gardent les noms du fichier : l'alias s'applique après elles, aux seuls noms
+enregistrés. Un fichier importé avant que son alias existe se reconnaît donc
+toujours à l'import suivant. Un match importé sous une autre graphie, dont les
+dés sont ceux d'un match en base et dont les noms ne diffèrent que par des alias
+connus, est reconnu comme le même match : ses analyses enrichissent l'existant,
+aucun second match n'est créé.
+
+.. code-block:: bash
+
+   ./blunderdb players alias add --db base.db "Doe J." "John Doe"
+   ./blunderdb players alias suggest --db base.db
+
+events — Les graphies d'un événement
+------------------------------------
+
+Les mêmes actions que ``players alias``, pour les noms d'événement (le champ
+Event d'un fichier). À l'import, un match dont l'événement est un alias est rangé
+dans le tournoi du nom canonique.
+
+.. code-block:: bash
+
+   ./blunderdb events alias add --db base.db "Open 2025" "Open d'automne 2025"
+   ./blunderdb events alias list --db base.db
+
 repair — Recalculer ce qui est dérivé
 --------------------------------------
 

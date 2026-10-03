@@ -132,6 +132,8 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Match/MovesByPositions", testMovesByPositions},
 		{"Match/MoveAnalysisRoundTrip", testMoveAnalysisRoundTrip},
 		{"Match/HashesReadBack", testMatchHashesReadBack},
+		{"Aliases/StayFlat", testAliasesStayFlat},
+		{"Aliases/ReadAsOnePerson", testAliasesReadAsOnePerson},
 		{"Trash/PutListDiscard", testTrashPutListDiscard},
 		{"Trash/PurgeByAge", testTrashPurgeByAge},
 		{"ImportBatch/Lifecycle", testImportBatchLifecycle},

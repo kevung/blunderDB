@@ -548,44 +548,12 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 	return nil
 }
 
-// MergePlayers rewrites every occurrence of the given player names (in both
-// the player1 and player2 columns) to a single canonical name.
+// MergePlayers records every other name as an alias of canonical
+// (storage.AliasStore.Set): the matches keep the names their files wrote, and
+// the stats, the players table, the search and every later import read them
+// as canonical.
 func (s *matchStore) MergePlayers(ctx context.Context, scope string, names []string, canonical string) error {
-	if canonical == "" {
-		return fmt.Errorf("sqlite: merge players: canonical name must not be empty: %w", storage.ErrInvalid)
-	}
-	if len(names) == 0 {
-		return fmt.Errorf("sqlite: merge players: no names to merge: %w", storage.ErrInvalid)
-	}
-	placeholders := make([]string, len(names))
-	args := make([]any, 0, len(names)+1)
-	args = append(args, canonical)
-	for i, n := range names {
-		placeholders[i] = "?"
-		args = append(args, n)
-	}
-	in := ""
-	for i, p := range placeholders {
-		if i > 0 {
-			in += ", "
-		}
-		in += p
-	}
-	err := withTx(ctx, s.db, func(tx execer) error {
-		if _, err := tx.ExecContext(ctx,
-			`UPDATE match SET player1_name = ? WHERE player1_name IN (`+in+`)`, args...); err != nil {
-			return fmt.Errorf("rename player1: %w", err)
-		}
-		if _, err := tx.ExecContext(ctx,
-			`UPDATE match SET player2_name = ? WHERE player2_name IN (`+in+`)`, args...); err != nil {
-			return fmt.Errorf("rename player2: %w", err)
-		}
-		return nil
-	})
-	if err != nil {
-		return fmt.Errorf("sqlite: merge players: %w", err)
-	}
-	return nil
+	return sqlshared.MergeAliases(ctx, shared(binder{s.db}), scope, storage.AliasPlayer, names, canonical)
 }
 
 // SetLastVisitedPosition records the last position index viewed in a match.

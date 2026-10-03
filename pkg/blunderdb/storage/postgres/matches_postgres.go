@@ -592,31 +592,12 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 	})
 }
 
-// MergePlayers rewrites every occurrence of the given player names (in both
-// the player1 and player2 columns) to a single canonical name.
+// MergePlayers records every other name as an alias of canonical
+// (storage.AliasStore.Set): the matches keep the names their files wrote, and
+// the stats, the players table, the search and every later import read them
+// as canonical.
 func (s *matchStore) MergePlayers(ctx context.Context, scope string, names []string, canonical string) error {
-	if canonical == "" {
-		return fmt.Errorf("postgres: merge players: canonical name must not be empty: %w", storage.ErrInvalid)
-	}
-	if len(names) == 0 {
-		return fmt.Errorf("postgres: merge players: no names to merge: %w", storage.ErrInvalid)
-	}
-	tenant := tenantID(scope)
-	return s.inTx(ctx, "merge players", func(tx pgx.Tx) error {
-		if _, err := tx.Exec(ctx,
-			`UPDATE match SET player1_name = $1
-			 WHERE tenant_id = $2 AND player1_name = ANY($3)`,
-			canonical, tenant, names); err != nil {
-			return fmt.Errorf("rename player1: %w", err)
-		}
-		if _, err := tx.Exec(ctx,
-			`UPDATE match SET player2_name = $1
-			 WHERE tenant_id = $2 AND player2_name = ANY($3)`,
-			canonical, tenant, names); err != nil {
-			return fmt.Errorf("rename player2: %w", err)
-		}
-		return nil
-	})
+	return sqlshared.MergeAliases(ctx, shared(binder{s.db}), scope, storage.AliasPlayer, names, canonical)
 }
 
 // inTx runs fn inside a transaction started from the store's execer. When the

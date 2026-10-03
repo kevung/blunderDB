@@ -411,13 +411,26 @@ func registerPositions(tb *Toolbox) {
 
 func registerPlayers(tb *Toolbox) {
 	Add(tb, Reads, &sdk.Tool{Name: "list_players", Title: "Players",
-		Description: "Every player name in the database with how many matches it appears in, most frequent first. The same person may appear under several spellings: pass them as aliases to the statistics tools."},
+		Description: "Every player name in the database with how many matches it appears in, most frequent first, an alias counted under its canonical name (player_aliases). Spellings no alias joins yet may still be one person: pass them as aliases to the statistics tools."},
 		func(ctx context.Context, req *sdk.CallToolRequest, _ noInput) (any, error) {
 			var players []obj
 			if err := tb.Engine.Call(ctx, req, "stats.playerNames", nil, &players); err != nil {
 				return nil, err
 			}
 			return obj{"players": players}, nil
+		})
+
+	Add(tb, Reads, &sdk.Tool{Name: "player_aliases", Title: "Player aliases",
+		Description: "The other spellings recorded for players (alias → canonical name), and the names that differ only by case, accents, punctuation or word order, suggested and never applied. The statistics tools and list_players already read every alias as its canonical name."},
+		func(ctx context.Context, req *sdk.CallToolRequest, _ noInput) (any, error) {
+			var aliases, suggestions obj
+			if err := tb.Engine.Call(ctx, req, "players.alias.list", nil, &aliases); err != nil {
+				return nil, err
+			}
+			if err := tb.Engine.Call(ctx, req, "players.alias.suggest", nil, &suggestions); err != nil {
+				return nil, err
+			}
+			return obj{"aliases": aliases["aliases"], "suggestions": suggestions["suggestions"]}, nil
 		})
 
 	Add(tb, Reads, &sdk.Tool{Name: "player_stats", Title: "Player statistics",

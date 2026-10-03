@@ -3024,6 +3024,74 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_DirectionView"
                 nullable: true
+  /v1/events.alias.list:
+    post:
+      operationId: events.alias.list
+      tags: [events]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/aliasListResp"
+  /v1/events.alias.remove:
+    post:
+      operationId: events.alias.remove
+      tags: [events]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/aliasRemoveReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/aliasRemoveResp"
+  /v1/events.alias.set:
+    post:
+      operationId: events.alias.set
+      tags: [events]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/aliasSetReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/events.alias.suggest:
+    post:
+      operationId: events.alias.suggest
+      tags: [events]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/aliasSuggestResp"
   /v1/exports.json:
     post:
       operationId: exports.json
@@ -3819,6 +3887,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/matches.duplicates:
+    post:
+      operationId: matches.duplicates
+      tags: [matches]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/duplicatesResp"
   /v1/matches.exportMat:
     post:
       operationId: matches.exportMat
@@ -4138,6 +4223,74 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/versionResp"
+  /v1/players.alias.list:
+    post:
+      operationId: players.alias.list
+      tags: [players]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/aliasListResp"
+  /v1/players.alias.remove:
+    post:
+      operationId: players.alias.remove
+      tags: [players]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/aliasRemoveReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/aliasRemoveResp"
+  /v1/players.alias.set:
+    post:
+      operationId: players.alias.set
+      tags: [players]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/aliasSetReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/players.alias.suggest:
+    post:
+      operationId: players.alias.suggest
+      tags: [players]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/aliasSuggestResp"
   /v1/positions.count:
     post:
       operationId: positions.count
@@ -6598,6 +6751,37 @@ components:
           items:
             type: integer
             format: int64
+    aliasListResp:
+      type: object
+      properties:
+        aliases:
+          type: array
+          items:
+            $ref: "#/components/schemas/storage_Alias"
+    aliasRemoveReq:
+      type: object
+      properties:
+        alias:
+          type: string
+    aliasRemoveResp:
+      type: object
+      properties:
+        removed:
+          type: boolean
+    aliasSetReq:
+      type: object
+      properties:
+        alias:
+          type: string
+        canonical:
+          type: string
+    aliasSuggestResp:
+      type: object
+      properties:
+        suggestions:
+          type: array
+          items:
+            $ref: "#/components/schemas/storage_AliasSuggestion"
     analysisSaveReq:
       type: object
       properties:
@@ -7130,6 +7314,9 @@ components:
     domain_CommentEntry:
       type: object
       description: "Opaque: see the Go type domain.CommentEntry (defined outside internal/server, not expanded here)."
+    domain_DuplicateSuspect:
+      type: object
+      description: "Opaque: see the Go type domain.DuplicateSuspect (defined outside internal/server, not expanded here)."
     domain_Game:
       type: object
       description: "Opaque: see the Go type domain.Game (defined outside internal/server, not expanded here)."
@@ -7178,6 +7365,13 @@ components:
     domain_TrashEntry:
       type: object
       description: "Opaque: see the Go type domain.TrashEntry (defined outside internal/server, not expanded here)."
+    duplicatesResp:
+      type: object
+      properties:
+        suspects:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_DuplicateSuspect"
     editPositionSaveReq:
       type: object
       properties:
@@ -7925,6 +8119,12 @@ components:
           $ref: "#/components/schemas/storage_StatsFilter"
         window:
           type: string
+    storage_Alias:
+      type: object
+      description: "Opaque: see the Go type storage.Alias (defined outside internal/server, not expanded here)."
+    storage_AliasSuggestion:
+      type: object
+      description: "Opaque: see the Go type storage.AliasSuggestion (defined outside internal/server, not expanded here)."
     storage_ClubPlayer:
       type: object
       description: "Opaque: see the Go type storage.ClubPlayer (defined outside internal/server, not expanded here)."

@@ -231,6 +231,9 @@ func TestReadTools(t *testing.T) {
 
 	players := list(t, call(t, cs, "list_players", nil), "players")
 	name := players[0].(obj)["Name"].(string)
+	if al := call(t, cs, "player_aliases", nil); al["aliases"] == nil || al["suggestions"] == nil {
+		t.Errorf("player_aliases: %v", al)
+	}
 	st := call(t, cs, "player_stats", obj{"player": name})
 	if st["Totals"].(obj)["NumDecisions"].(float64) == 0 {
 		t.Errorf("player_stats: %v", st["Totals"])

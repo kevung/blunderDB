@@ -68,6 +68,7 @@ type Stores interface {
 	LibrarySettings() LibrarySettingsStore
 	Transcriptions() TranscriptionStore
 	Training() TrainingStore
+	Aliases() AliasStore
 }
 
 // Storage is the root persistence interface implemented by every backend.

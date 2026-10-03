@@ -222,13 +222,15 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en huit onglets :
+blunderDB. Elle est organisée en neuf onglets :
 
 * **Interface** — langue, échelle d'affichage, position du panneau, pas de
   PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste) ;
 * **Couleurs** — les couleurs du plateau ;
 * **Bibliothèque** — ce qui appartient à la base ouverte : les seuils
   d'erreur et de blunder, le compactage et la réparation, décrits ci-dessous ;
+* **Corpus** — les doublons à l'import, les alias de joueurs et d'événements
+  et la recherche des doublons probables (voir l'import de matchs) ;
 * **Bearoff** — les tables de sortie utilisées par le panneau Eval ;
 * **gammonNet** — les réglages de l'évaluateur embarqué, décrits ci-dessous ;
 * **Dossier surveillé** — l'import automatique des matchs qui arrivent dans un
@@ -1197,6 +1199,27 @@ ne remplace pas ce qui est déjà là.
   ``blunderdb repair --duplicates`` liste ces paires dans une base existante,
   ainsi que les matchs tronqués et leur version plus longue.
 
+* **Un nom connu sous une autre graphie est enregistré sous son nom canonique.**
+  Un *alias* dit que « Martin A. » est une autre graphie d'« Alice Martin » (ou
+  qu'un nom d'événement en est un autre). À l'import, les noms des joueurs et de
+  l'événement sont remplacés par leur nom canonique, et le match rangé dans le
+  tournoi de l'événement canonique. Les empreintes du match gardent les noms du
+  fichier : un fichier importé avant que son alias existe se reconnaît donc
+  toujours. Un match dont les dés sont ceux d'un match en base, et dont les noms
+  ne diffèrent que par des alias connus, n'est pas un second match : ses
+  analyses enrichissent celui qui est rangé.
+
+Les alias se gèrent dans l'onglet **Corpus** des paramètres : choisir
+**Joueurs** ou **Événements**, saisir l'alias et le nom canonique, ou retirer un
+alias de la liste. **Proposer** liste les noms qui ne diffèrent que par la
+casse, les accents, la ponctuation ou l'ordre des mots ; rien n'est appliqué
+sans un clic sur **Appliquer**. Le même onglet porte la case **Ignorer les
+doublons à l'import** (l'équivalent de ``--skip-duplicates``, pour la session)
+et la recherche des **doublons probables** d'une base existante, celle de
+``blunderdb repair --duplicates`` : chaque paire est donnée par ses numéros de
+match, rien n'est fusionné. En ligne de commande : ``blunderdb players alias``
+et ``blunderdb events alias``.
+
 * **Un dossier s'importe en parallèle.** Les fichiers sont lus sur plusieurs
   cœurs à la fois et écrits par groupes, toujours dans l'ordre du dossier : les
   numéros de match ne dépendent pas de la machine. Un fichier identique, octet
@@ -1298,8 +1321,11 @@ on voit sans l'ouvrir dans quelle partie se trouvent les blunders.
 Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
 fenêtre listant tous les noms de joueurs de la base avec leur nombre de
 matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le
-nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
-par joueur lorsqu'un même joueur apparaît sous plusieurs noms.
+nom canonique à conserver, puis fusionner. La fusion crée un alias par
+variante : les matchs gardent les noms de leurs fichiers, mais les statistiques,
+la table Joueurs et la recherche ``pl"…"`` lisent toutes les variantes comme un
+seul joueur, et les imports suivants enregistrent le nom canonique. Retirer
+l'alias dans l'onglet **Corpus** des paramètres défait la fusion.
 
 Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-dessus du
 plateau : elle rappelle les joueurs en présence (*joueur 1* contre *joueur 2*)
@@ -2589,7 +2615,7 @@ Colonnes, dans l'ordre :
    :header: "Colonne", "Signification"
    :widths: 22, 78
 
-   "Joueur", "Le nom **tel qu'il figure dans les matchs**. Un joueur enregistré sous deux orthographes apparaît donc sur deux lignes ; utilisez la fusion de joueurs pour les réunir."
+   "Joueur", "Le nom **tel qu'il figure dans les matchs**. Un joueur enregistré sous deux orthographes apparaît sur deux lignes, sauf si l'une est un alias de l'autre (fusion de joueurs, onglet Corpus) : la ligne porte alors le nom canonique."
    "Matchs", "Nombre de matchs disputés dans la période retenue."
    "V–D", "Victoires et défaites. Un match inachevé (journal tronqué, abandon) ne compte ni l'une ni l'autre : V + D peut donc être inférieur au nombre de matchs."
    "Décisions", "Nombre de décisions comptées — le dénominateur du PR. C'est la colonne qui dit ce que valent les taux voisins : un PR calculé sur douze décisions ne signifie rien."

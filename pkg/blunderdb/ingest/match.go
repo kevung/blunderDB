@@ -158,6 +158,19 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 	}
 
+	// The aliases rename what is stored, after both fingerprints: the hashes
+	// keep the names the file wrote, so a file imported before its alias
+	// existed still finds itself on its next import (storage.AliasStore).
+	var aliases aliasMaps
+	fileNames := [2]string{g.Match.Player1Name, g.Match.Player2Name}
+	if !enrich && !replace {
+		var err error
+		if aliases, err = loadAliases(ctx, tx, scope); err != nil {
+			return res, err
+		}
+		aliases.apply(&g.Match)
+	}
+
 	// The names are not in the dice hash: a match stored under other names
 	// is found here, and only signalled.
 	if !enrich && g.Match.DiceHash == "" {
@@ -165,11 +178,17 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		g.Match.DiceHash = DiceMatchHash(int(g.Match.MatchLength), initial, dice)
 	}
 	if !enrich && !replace {
-		suspect, err := probableDuplicate(ctx, tx, scope, &g.Match)
+		suspect, sameID, err := probableDuplicate(ctx, tx, scope, &g.Match, fileNames, aliases.players)
 		if err != nil {
 			return res, err
 		}
 		res.ProbableDuplicate = suspect
+		// The same dice under names the aliases say are the same people: a
+		// known spelling of a stored match, enriched like a cross-format copy.
+		if sameID != 0 {
+			enrich = true
+			matchID = sameID
+		}
 	}
 
 	switch {
@@ -406,23 +425,59 @@ func deepenAnalyses(ctx context.Context, tx storage.Tx, scope string, g *MatchGr
 
 // probableDuplicate looks for a stored match with m's dice under other
 // player names, and returns it as a suspect whose MatchID the caller fills
-// once m is saved; nil when there is none.
-func probableDuplicate(ctx context.Context, tx storage.Tx, scope string, m *domain.Match) (*domain.DuplicateSuspect, error) {
+// once m is saved; nil when there is none. When the names differ only by
+// aliases, the stored match is the same one: its id comes back as sameID and
+// no suspect is raised.
+//
+// fileNames are the names the file wrote, before the aliases renamed m's.
+func probableDuplicate(ctx context.Context, tx storage.Tx, scope string, m *domain.Match, fileNames [2]string, players storage.AliasMap) (suspect *domain.DuplicateSuspect, sameID int64, err error) {
 	others, err := tx.Matches().ListByDiceHash(ctx, scope, m.DiceHash)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	for _, o := range others {
-		if samePlayers(o.Player1Name, o.Player2Name, m.Player1Name, m.Player2Name) {
+		if samePlayers(o.Player1Name, o.Player2Name, fileNames[0], fileNames[1]) {
 			continue
+		}
+		if samePlayers(players.Canonical(o.Player1Name), players.Canonical(o.Player2Name), m.Player1Name, m.Player2Name) {
+			return nil, o.ID, nil
 		}
 		return &domain.DuplicateSuspect{
 			Kind: domain.DuplicateSameDice, OtherID: o.ID,
 			Players:      m.Player1Name + " – " + m.Player2Name,
 			OtherPlayers: o.Player1Name + " – " + o.Player2Name,
-		}, nil
+		}, 0, nil
 	}
-	return nil, nil
+	return nil, 0, nil
+}
+
+// aliasMaps holds the player and event aliases an import renames through.
+type aliasMaps struct {
+	players, events storage.AliasMap
+}
+
+func loadAliases(ctx context.Context, tx storage.Tx, scope string) (aliasMaps, error) {
+	var a aliasMaps
+	p, err := tx.Aliases().List(ctx, scope, storage.AliasPlayer)
+	if err != nil {
+		return a, err
+	}
+	e, err := tx.Aliases().List(ctx, scope, storage.AliasEvent)
+	if err != nil {
+		return a, err
+	}
+	return aliasMaps{players: storage.NewAliasMap(p), events: storage.NewAliasMap(e)}, nil
+}
+
+// apply stores the canonical names in place of the aliases the file wrote.
+func (a aliasMaps) apply(m *domain.Match) {
+	if len(a.players) > 0 {
+		m.Player1Name = a.players.Canonical(m.Player1Name)
+		m.Player2Name = a.players.Canonical(m.Player2Name)
+	}
+	if len(a.events) > 0 && strings.TrimSpace(m.Event) != "" {
+		m.Event = a.events.Canonical(m.Event)
+	}
 }
 
 // samePlayers reports whether two matches name the same two players, in

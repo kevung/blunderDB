@@ -1126,14 +1126,24 @@ func (s *SearchStore) appendIdentityClauses(ctx context.Context, scope string, f
 	// the match-id subquery shape.
 	// The frontend sends the token whole (`pl"Name"`); the CLI and the server
 	// send a bare name. searchfilter.PlayerName accepts both.
+	// An aliased name stands for the whole person: every spelling the alias
+	// table gives them is searched.
 	if playerName := searchfilter.PlayerName(f.PlayerFilter); playerName != "" {
+		aliases, err := aliasMap(ctx, s.DB, scope, storage.AliasPlayer)
+		if err != nil {
+			return err
+		}
 		like := s.DB.ILike()
+		var or []string
+		for _, n := range aliases.Group(playerName) {
+			or = append(or, "mt.player1_name "+like+" ? OR mt.player2_name "+like+" ?")
+			*args = append(*args, n, n)
+		}
 		where.WriteString(
 			" AND p.id IN (SELECT mv.position_id FROM move mv" +
 				" JOIN game g ON mv.game_id = g.id" +
 				" JOIN match mt ON g.match_id = mt.id" +
-				" WHERE mt.player1_name " + like + " ? OR mt.player2_name " + like + " ?)")
-		*args = append(*args, playerName, playerName)
+				" WHERE " + strings.Join(or, " OR ") + ")")
 	}
 
 	if f.RestrictToPositionIDs != "" {
