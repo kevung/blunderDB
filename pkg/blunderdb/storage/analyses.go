@@ -14,6 +14,15 @@ type AnalysisStore interface {
 	// Save stores (or replaces) the analysis for positionID.
 	Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error
 
+	// Merge reads the stored analysis of positionID once, hands it to merge
+	// (nil when there is none) and saves what merge returns, rounded and
+	// encoded as Save would. When the result equals the stored analysis apart
+	// from LastModifiedDate, and the played-action columns derived from it are
+	// unchanged, nothing is written: re-importing what is already there costs
+	// a read, not a rewrite. merge may mutate its argument; returning nil
+	// writes nothing. Reports whether a row was written.
+	Merge(ctx context.Context, scope string, positionID int64, merge func(existing *domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error)
+
 	// LoadMany decodes the analyses of the given positions, keyed by position
 	// id, in one round trip per batch. A position without an analysis has no
 	// entry. A stored payload that cannot be decoded has no entry either, and

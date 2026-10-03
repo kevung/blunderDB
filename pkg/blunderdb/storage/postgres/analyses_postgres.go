@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -57,27 +58,104 @@ ON CONFLICT (position_id) DO UPDATE SET
 // analyses) stays in the caller, which loads, merges, then calls Save.
 func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error {
 	tenant := tenantID(scope)
+	c, err := s.prepare(ctx, tenant, positionID, a)
+	if err != nil {
+		return err
+	}
+	return s.write(ctx, tenant, positionID, a, c)
+}
+
+// Merge — see storage.AnalysisStore.
+func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int64, merge func(*domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error) {
+	tenant := tenantID(scope)
+	var (
+		data   []byte
+		stored storedPlayedColumns
+	)
+	err := s.db.QueryRow(ctx,
+		`SELECT data, COALESCE(best_cube_action,''), COALESCE(cube_error,0), COALESCE(best_move_equity_error,0),
+		        COALESCE(is_forced,FALSE), COALESCE(is_close_cube,FALSE)
+		 FROM analysis WHERE position_id = $1 AND tenant_id = $2`, positionID, tenant).
+		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube)
+	found := err == nil
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		return false, fmt.Errorf("postgres: load analysis for position %d: %w", positionID, err)
+	}
+	var existing *domain.PositionAnalysis
+	var oldKey []byte
+	if found {
+		a, err := engine.DecodeAnalysisFromStorage(data)
+		if err != nil {
+			return false, fmt.Errorf("postgres: decode analysis for position %d: %w", positionID, err)
+		}
+		// The key is taken before merge runs: merge may share and mutate
+		// existing's slices.
+		if oldKey, err = engine.AnalysisContentKey(&a); err != nil {
+			return false, fmt.Errorf("postgres: key analysis for position %d: %w", positionID, err)
+		}
+		existing = &a
+	}
+	merged := merge(existing)
+	if merged == nil {
+		return false, nil
+	}
+	c, err := s.prepare(ctx, tenant, positionID, merged)
+	if err != nil {
+		return false, err
+	}
+	if found && stored.equal(c) {
+		newKey, err := engine.AnalysisContentKey(merged)
+		if err != nil {
+			return false, fmt.Errorf("postgres: key analysis for position %d: %w", positionID, err)
+		}
+		if bytes.Equal(oldKey, newKey) {
+			return false, nil
+		}
+	}
+	return true, s.write(ctx, tenant, positionID, merged, c)
+}
+
+// storedPlayedColumns are the stored columns that depend on the played
+// actions as well as on the blob — the ones RepairDenormalisedColumns checks.
+type storedPlayedColumns struct {
+	bestCube             string
+	cubeErr, bestMoveErr int64
+	forced, closeCube    bool
+}
+
+func (p storedPlayedColumns) equal(c engine.AnalysisColumns) bool {
+	return c.BestCubeAction == p.bestCube && c.CubeError == p.cubeErr &&
+		c.BestMoveEquityError == p.bestMoveErr &&
+		(c.IsForced == 1) == p.forced && (c.IsCloseCube == 1) == p.closeCube
+}
+
+// prepare stamps a with its position, rounds it for storage and derives its
+// scalar columns. The played actions come from the analysis when it states
+// them, and from the match when it does not — see engine.PlayedActionsFor.
+// The lookup is skipped entirely when the blob already answers, so an import
+// carrying its own analysis pays nothing for it.
+func (s *analysisStore) prepare(ctx context.Context, tenant, positionID int64, a *domain.PositionAnalysis) (engine.AnalysisColumns, error) {
 	a.PositionID = int(positionID)
-	// The played actions come from the analysis when it states them, and from
-	// the match when it does not — see engine.PlayedActionsFor. The
-	// lookup is skipped entirely when the blob already answers, so an import
-	// carrying its own analysis pays nothing for it.
 	playedMove, playedCubeAction := engine.PlayedActionsFor(a.PlayedMoves, a.PlayedCubeActions, nil, nil)
 	if playedMove == "" || playedCubeAction == "" {
 		mvMove, mvCube, err := s.playedActionsFromMatch(ctx, tenant, positionID)
 		if err != nil {
-			return err
+			return engine.AnalysisColumns{}, err
 		}
 		playedMove, playedCubeAction = engine.PlayedActionsFor(
 			[]string{playedMove}, []string{playedCubeAction}, []string{mvMove}, []string{mvCube})
 	}
-
 	engine.RoundAnalysisForStorage(a)
+	return engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction), nil
+}
+
+// write encodes a prepared analysis into the BYTEA data column and upserts
+// it with its columns.
+func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *domain.PositionAnalysis, c engine.AnalysisColumns) error {
 	data, err := engine.EncodeAnalysisForStorage(a)
 	if err != nil {
 		return fmt.Errorf("postgres: encode analysis: %w", err)
 	}
-	c := engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction)
 
 	// The analysis row and the position flag it implies are one write.
 	return withTx(ctx, s.db, func(tx execer) error {

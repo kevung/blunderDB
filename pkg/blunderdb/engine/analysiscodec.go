@@ -14,6 +14,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"time"
 	"unicode"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -225,6 +226,15 @@ func EncodeAnalysisForStorage(a *domain.PositionAnalysis) ([]byte, error) {
 		return nil, err
 	}
 	return CompressAnalysisData(jsonData)
+}
+
+// AnalysisContentKey is a's JSON with LastModifiedDate cleared: two analyses
+// with equal keys differ at most by when they were last touched, so a merge
+// that produces the stored key has nothing to write.
+func AnalysisContentKey(a *domain.PositionAnalysis) ([]byte, error) {
+	c := *a
+	c.LastModifiedDate = time.Time{}
+	return json.Marshal(&c)
 }
 
 // DecodeAnalysisFromStorage decompresses (if needed) and unmarshals analysis data.
