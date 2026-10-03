@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -52,6 +53,48 @@ type Database struct {
 	// directionMem is what the direction service keeps between calls: the clock forecasts and
 	// the page catalogue. Per Database, so two open databases never share one language.
 	directionMem service.Memory
+	// generation counts the files this handle has opened, created or closed;
+	// guarded by mu. A background job remembers it at its start and writes
+	// nothing once it has moved: its positions belong to the previous file.
+	generation uint64
+	// beforeSwitch runs before Open, Setup and Close take mu, so the GUI can
+	// stop and wait for the jobs writing the file about to go away (they need
+	// mu to finish their last write). Guarded by switchMu.
+	switchMu     sync.Mutex
+	beforeSwitch func()
+}
+
+// ErrDatabaseChanged refuses a background job's write once another database
+// has been opened (or this one closed) since the job started.
+var ErrDatabaseChanged = errors.New("the open database changed while the job ran")
+
+// SetBeforeSwitch registers fn, run before every OpenDatabase, SetupDatabase
+// and Close; nil clears it. The GUI stops its batches there.
+func (d *Database) SetBeforeSwitch(fn func()) {
+	d.switchMu.Lock()
+	defer d.switchMu.Unlock()
+	d.beforeSwitch = fn
+}
+
+// switchFile runs the beforeSwitch hook; the caller then takes mu and calls
+// bumpGeneration.
+func (d *Database) switchFile() {
+	d.switchMu.Lock()
+	fn := d.beforeSwitch
+	d.switchMu.Unlock()
+	if fn != nil {
+		fn()
+	}
+}
+
+// bumpGeneration marks the file about to change; the caller holds mu.
+func (d *Database) bumpGeneration() { d.generation++ }
+
+// currentGeneration is the generation a background job remembers at its start.
+func (d *Database) currentGeneration() uint64 {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.generation
 }
 
 // lockPathFor returns the file whose advisory lock guards a database against a
@@ -190,9 +233,11 @@ func (d *Database) Checkpoint() error {
 // Close closes the underlying connection and clears it. It is safe to call
 // when the connection is already nil or closed.
 func (d *Database) Close() error {
+	d.switchFile()
 	d.forgetTranscriptSessions()
 	d.mu.Lock()
 	defer d.mu.Unlock()
+	d.bumpGeneration()
 	d.releaseFileLock()
 	wasReadOnly := d.readOnly
 	d.readOnly = false
@@ -211,9 +256,11 @@ func (d *Database) Close() error {
 }
 
 func (d *Database) SetupDatabase(path string) (err error) {
+	d.switchFile()
 	d.forgetTranscriptSessions()
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	d.bumpGeneration()
 
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.
@@ -288,9 +335,11 @@ func (d *Database) SetupDatabase(path string) (err error) {
 }
 
 func (d *Database) OpenDatabase(path string) (err error) {
+	d.switchFile()
 	d.forgetTranscriptSessions()
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	d.bumpGeneration()
 
 	// Close the currently opened database, if any. Best-effort: the handle is
 	// replaced below regardless, but a failure deserves a log line.

@@ -9,7 +9,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 )
@@ -153,7 +152,7 @@ func (cli *CLI) runRollout(args []string) error {
 	runErr := withInterruptibleContext(nil, func(ctx context.Context) error {
 		var err error
 		if fromDB {
-			res, err = database.RolloutPosition(ctx, cli.db, *positionID, s, moves, *store, opt.Progress)
+			res, err = cli.db.RolloutPosition(ctx, *positionID, s, moves, *store, opt.Progress)
 		} else {
 			res, err = rollout.Run(ctx, pos, s, opt)
 		}

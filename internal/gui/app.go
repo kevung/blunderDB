@@ -57,9 +57,12 @@ type App struct {
 	// roMu/roCancel/roDone: the rollout of one position (rollout.go), the
 	// same single-in-flight bookkeeping as the batch; a stored rollout
 	// writes the database, so shutdown waits on roDone too.
+	// roStatus is what RolloutStatus reports. roMu is taken before
+	// gnBatchMu when both are held: the two batches exclude each other.
 	roMu     sync.Mutex
 	roCancel context.CancelFunc
 	roDone   chan struct{}
+	roStatus RolloutStatus
 
 	// trainingGen is built once, lazily (it costs megabytes); trainingErr
 	// keeps why it failed so later questions refuse by name.
@@ -77,7 +80,14 @@ type App struct {
 
 // NewApp creates a new App application struct.
 func NewApp(db *database.Database) *App {
-	return &App{db: db}
+	a := &App{db: db}
+	if db != nil {
+		// Opening, creating or closing a file stops the jobs writing the
+		// current one first; past the grace, the Database refuses their
+		// late writes (ErrDatabaseChanged).
+		db.SetBeforeSwitch(func() { a.stopDatabaseJobs(shutdownJobGrace) })
+	}
+	return a
 }
 
 // PrepareDemoDatabase decompresses the sample database to a fresh temporary

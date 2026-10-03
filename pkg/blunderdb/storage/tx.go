@@ -31,7 +31,11 @@ type GuardedBeginner interface {
 }
 
 // BeginGuarded opens a guarded transaction on keys when st can, and a plain
-// one otherwise.
+// one otherwise. Both backends can; the plain one is for a Storage that wraps
+// one without exposing the guard — a test double, or a transaction seen as a
+// Storage (the direction gesture's), whose BeginTx joins a transaction
+// already guarded. Refusing there would make every such wrapper re-implement
+// a lock it already runs under.
 func BeginGuarded(ctx context.Context, st Storage, keys ...string) (Tx, error) {
 	if gb, ok := st.(GuardedBeginner); ok {
 		return gb.BeginGuardedTx(ctx, keys...)

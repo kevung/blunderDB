@@ -2922,6 +2922,30 @@ export namespace gui {
 		    return a;
 		}
 	}
+	export class RolloutStatus {
+	    running: boolean;
+	    kind?: string;
+	    positionId?: number;
+	    done: number;
+	    total: number;
+	    games: number;
+	    maxGames: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new RolloutStatus(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.running = source["running"];
+	        this.kind = source["kind"];
+	        this.positionId = source["positionId"];
+	        this.done = source["done"];
+	        this.total = source["total"];
+	        this.games = source["games"];
+	        this.maxGames = source["maxGames"];
+	    }
+	}
 	export class UpdateCheckResult {
 	    packageManaged: boolean;
 	    latestVersion?: string;
@@ -3418,6 +3442,93 @@ export namespace race {
 
 export namespace rollout {
 	
+	export class Candidate {
+	    move: string;
+	    equity: number;
+	    std_err: number;
+	    ci95: number;
+	    games: number;
+	    jsd: number;
+	    chances: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Candidate(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.move = source["move"];
+	        this.equity = source["equity"];
+	        this.std_err = source["std_err"];
+	        this.ci95 = source["ci95"];
+	        this.games = source["games"];
+	        this.jsd = source["jsd"];
+	        this.chances = source["chances"];
+	    }
+	}
+	export class Estimate {
+	    equity: number;
+	    std_err: number;
+	    ci95: number;
+	    games: number;
+	    jsd: number;
+	    chances: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Estimate(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.equity = source["equity"];
+	        this.std_err = source["std_err"];
+	        this.ci95 = source["ci95"];
+	        this.games = source["games"];
+	        this.jsd = source["jsd"];
+	        this.chances = source["chances"];
+	    }
+	}
+	export class CubeResult {
+	    no_double: Estimate;
+	    double_take: Estimate;
+	    double_pass: Estimate;
+	    action: string;
+	    jsd_double: number;
+	    jsd_take: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new CubeResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.no_double = this.convertValues(source["no_double"], Estimate);
+	        this.double_take = this.convertValues(source["double_take"], Estimate);
+	        this.double_pass = this.convertValues(source["double_pass"], Estimate);
+	        this.action = source["action"];
+	        this.jsd_double = source["jsd_double"];
+	        this.jsd_take = source["jsd_take"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 	export class Settings {
 	    truncation: number;
 	    min_games: number;
@@ -3442,6 +3553,79 @@ export namespace rollout {
 	        this.candidates = source["candidates"];
 	        this.seed = source["seed"];
 	        this.workers = source["workers"];
+	    }
+	}
+	export class Result {
+	    kind: string;
+	    engine_version: string;
+	    settings: Settings;
+	    signature: string;
+	    candidates: Candidate[];
+	    cube?: CubeResult;
+	    games: number;
+	    stop: string;
+	    cubeful_bias: boolean;
+	    exact_bearoff: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Result(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.engine_version = source["engine_version"];
+	        this.settings = this.convertValues(source["settings"], Settings);
+	        this.signature = source["signature"];
+	        this.candidates = this.convertValues(source["candidates"], Candidate);
+	        this.cube = this.convertValues(source["cube"], CubeResult);
+	        this.games = source["games"];
+	        this.stop = source["stop"];
+	        this.cubeful_bias = source["cubeful_bias"];
+	        this.exact_bearoff = source["exact_bearoff"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
+export namespace rollouts {
+	
+	export class Summary {
+	    total: number;
+	    rolledOut: number;
+	    refused: number;
+	    failed: number;
+	    cancelled: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Summary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.total = source["total"];
+	        this.rolledOut = source["rolledOut"];
+	        this.refused = source["refused"];
+	        this.failed = source["failed"];
+	        this.cancelled = source["cancelled"];
 	    }
 	}
 

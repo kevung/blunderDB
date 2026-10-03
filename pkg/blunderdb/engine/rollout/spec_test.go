@@ -3,6 +3,8 @@ package rollout
 import (
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 func TestParseSpec(t *testing.T) {
@@ -51,5 +53,37 @@ func TestSignatureNamesTheCandidates(t *testing.T) {
 	}
 	if !strings.HasPrefix(five.Signature(), EngineVersion+";") {
 		t.Errorf("Signature %q no longer starts with the EngineVersion", five.Signature())
+	}
+}
+
+// A named play is compared as the legal notation it resolves to: spacing does
+// not make another Configuration.
+func TestSignatureNormalisesNamedPlays(t *testing.T) {
+	s := Fast()
+	if s.SignatureFor([]string{" 8/5  6/5", "13/10 6/5"}) != s.SignatureFor([]string{"13/10 6/5", "8/5 6/5"}) {
+		t.Error("spacing inside a named play changed the Signature")
+	}
+}
+
+// A cube rollout plays two fixed branches: the number of candidates is no
+// part of its Signature, and SignatureAt picks it for a position without
+// dice.
+func TestCubeSignatureIgnoresCandidates(t *testing.T) {
+	five, three := Fast(), Fast()
+	five.Candidates, three.Candidates = 5, 3
+	if five.CubeSignature() != three.CubeSignature() {
+		t.Error("the candidates count entered a cube Signature")
+	}
+	if strings.Contains(five.CubeSignature(), "best") || five.CubeSignature() == five.Signature() {
+		t.Errorf("cube Signature %q", five.CubeSignature())
+	}
+	pos := domain.InitializePosition()
+	pos.Dice = [2]int{0, 0}
+	if five.SignatureAt(&pos) != five.CubeSignature() {
+		t.Error("SignatureAt on a position without dice is not the cube's")
+	}
+	pos.Dice = [2]int{3, 1}
+	if five.SignatureAt(&pos) != five.Signature() {
+		t.Error("SignatureAt on a position with dice is not the best plays'")
 	}
 }

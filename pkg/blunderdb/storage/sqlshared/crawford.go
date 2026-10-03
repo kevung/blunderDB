@@ -689,10 +689,6 @@ func mergeAnalysisInto(ctx context.Context, tx Execer, scope string, keepID, dup
 		append(append([]any{}, targs...), keepID)...).Scan(&keepHas); err != nil {
 		return err
 	}
-	if keepHas > 0 {
-		return nil // the kept row's own analysis wins; the duplicate's cascades away
-	}
-
 	dtenant, dargs := tx.TenantFilter("", scope)
 	var data []byte
 	err := tx.QueryRow(ctx,
@@ -708,6 +704,11 @@ func mergeAnalysisInto(ctx context.Context, tx Execer, scope string, keepID, dup
 	if err != nil {
 		return fmt.Errorf("decode analysis: %w", err)
 	}
+	if keepHas > 0 {
+		// The kept row's own analysis wins and the duplicate's cascades away,
+		// but a rollout is an analysis of its own (ADR-0060 §8): it moves over.
+		return mergeRolloutsInto(ctx, tx, scope, keepID, analysis.Rollouts)
+	}
 	analysis.PositionID = int(keepID)
 	encoded, err := engine.EncodeAnalysisForStorage(&analysis)
 	if err != nil {
@@ -718,6 +719,33 @@ func mergeAnalysisInto(ctx context.Context, tx Execer, scope string, keepID, dup
 	args = append(args, dupID)
 	_, err = tx.Exec(ctx,
 		`UPDATE analysis SET position_id = ?, data = ? WHERE `+utenant+` AND position_id = ?`, args...)
+	return err
+}
+
+// mergeRolloutsInto adds rollouts to keepID's analysis, one per Signature.
+func mergeRolloutsInto(ctx context.Context, tx Execer, scope string, keepID int64, rollouts []domain.RolloutAnalysis) error {
+	if len(rollouts) == 0 {
+		return nil
+	}
+	ktenant, kargs := tx.TenantFilter("", scope)
+	var data []byte
+	if err := tx.QueryRow(ctx,
+		`SELECT data FROM analysis WHERE `+ktenant+` AND position_id = ?`,
+		append(append([]any{}, kargs...), keepID)...).Scan(&data); err != nil {
+		return err
+	}
+	kept, err := engine.DecodeAnalysisFromStorage(data)
+	if err != nil {
+		return fmt.Errorf("decode analysis: %w", err)
+	}
+	kept.Rollouts = domain.MergeRollouts(kept.Rollouts, rollouts)
+	encoded, err := engine.EncodeAnalysisForStorage(&kept)
+	if err != nil {
+		return fmt.Errorf("encode analysis: %w", err)
+	}
+	utenant, uargs := tx.TenantFilter("", scope)
+	args := append([]any{encoded}, uargs...)
+	_, err = tx.Exec(ctx, `UPDATE analysis SET data = ? WHERE `+utenant+` AND position_id = ?`, append(args, keepID)...)
 	return err
 }
 

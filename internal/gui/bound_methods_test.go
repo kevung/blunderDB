@@ -16,6 +16,7 @@ var boundAppMethods = []string{
 	"CancelGammonNetBatch",
 	"CancelRollout",
 	"RolloutPresets",
+	"RolloutStatus",
 	"StartRollout",
 	"StartRolloutFiltered",
 	"CheckForUpdate",

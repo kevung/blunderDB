@@ -174,6 +174,10 @@ export function RolloutPresets() {
   return window['go']['gui']['App']['RolloutPresets']();
 }
 
+export function RolloutStatus() {
+  return window['go']['gui']['App']['RolloutStatus']();
+}
+
 export function SaveBoardImageDialog(arg1, arg2) {
   return window['go']['gui']['App']['SaveBoardImageDialog'](arg1, arg2);
 }

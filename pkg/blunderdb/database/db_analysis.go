@@ -30,8 +30,24 @@ var (
 )
 
 func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) error {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return d.saveAnalysisLocked(positionID, analysis)
+}
+
+// saveAnalysisAt is SaveAnalysis for a job that started on generation gen: it
+// refuses to write once another database has been opened in the meantime.
+func (d *Database) saveAnalysisAt(gen uint64, positionID int64, analysis PositionAnalysis) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	if d.generation != gen {
+		return ErrDatabaseChanged
+	}
+	return d.saveAnalysisLocked(positionID, analysis)
+}
+
+// saveAnalysisLocked is SaveAnalysis's body; the caller holds d.mu.
+func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysis) error {
 
 	// Ensure the positionID is set in the analysis
 	analysis.PositionID = int(positionID)

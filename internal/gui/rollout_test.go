@@ -69,3 +69,69 @@ func TestStartRolloutFiltered_RefusesUpFront(t *testing.T) {
 		<-done
 	}
 }
+
+// The rollout batch and the gammonNet batch exclude each other, as on the
+// daemon: each takes every core.
+func TestRolloutBatchAndGammonNetBatchExcludeEachOther(t *testing.T) {
+	d := database.NewDatabase()
+	if err := d.SetupDatabase(":memory:"); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = d.Close() })
+	a := NewApp(d)
+
+	gnStopped := make(chan struct{})
+	a.gnBatchMu.Lock()
+	a.gnBatchCancel, a.gnBatchDone = func() {}, gnStopped
+	a.gnBatchMu.Unlock()
+	if err := a.StartRolloutFiltered("", rollout.Fast()); err == nil {
+		t.Error("a rollout batch started beside a gammonNet batch")
+	}
+	a.gnBatchMu.Lock()
+	a.gnBatchCancel, a.gnBatchDone = nil, nil
+	a.gnBatchMu.Unlock()
+
+	_, roStopped := a.beginRollout(RolloutStatus{Running: true, Kind: "batch"})
+	a.StartGammonNetBatch(0, 0, 0)
+	a.gnBatchMu.Lock()
+	started := a.gnBatchDone != nil
+	a.gnBatchMu.Unlock()
+	if started {
+		t.Error("a gammonNet batch started beside a rollout batch")
+	}
+	if st := a.RolloutStatus(); !st.Running || st.Kind != "batch" {
+		t.Errorf("RolloutStatus during a batch: %+v", st)
+	}
+	a.endRollout(roStopped)
+	if st := a.RolloutStatus(); st.Running {
+		t.Errorf("RolloutStatus after the batch: %+v", st)
+	}
+}
+
+// Opening another file stops the rollout in flight and waits for it, before
+// the Database takes its lock.
+func TestOpeningAnotherDatabaseStopsTheRollout(t *testing.T) {
+	d := database.NewDatabase()
+	if err := d.SetupDatabase(":memory:"); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = d.Close() })
+	a := NewApp(d)
+	pos := domain.InitializePosition()
+	s := rollout.Standard()
+	s.Truncation = 0
+	if err := a.StartRollout(RolloutRequest{Position: &pos, Settings: s}); err != nil {
+		t.Fatal(err)
+	}
+	a.roMu.Lock()
+	stopped := a.roDone
+	a.roMu.Unlock()
+	if err := d.SetupDatabase(":memory:"); err != nil {
+		t.Fatal(err)
+	}
+	select {
+	case <-stopped:
+	default:
+		t.Error("the rollout still runs after the database changed")
+	}
+}

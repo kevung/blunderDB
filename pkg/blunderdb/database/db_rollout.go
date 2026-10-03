@@ -9,33 +9,35 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
 )
 
-// Rollouts on the local library. The entry points taking a context are
-// package functions, not methods: the Wails binding exposes every method of
-// *Database to the webview, where a context.Context cannot be supplied (the
-// GUI goes through App.StartRollout and App.StartRolloutFiltered).
+// Rollouts on the local library: the same gather, loop and write as the
+// serve daemon (pkg/blunderdb/rollouts), under this wrapper's lock. The lock
+// is taken around each read and each write, never around the games: a
+// rollout runs for seconds to minutes and the library stays usable meanwhile.
 //
-// They run the same gather, loop and write as the serve
-// daemon (pkg/blunderdb/rollouts), under this wrapper's lock. The lock is
-// taken around each read and each write, never around the games: a rollout
-// runs for seconds to minutes and the library stays usable meanwhile.
+// The methods taking a context or a callback are bound to Wails like every
+// method of *Database but cannot be called from the webview, which supplies
+// neither; the GUI goes through App.StartRollout and App.StartRolloutFiltered.
+// Writing an arbitrary result stays unexported: storeRollout trusts res.
 
 // RolloutPosition rolls positionID out with s — its plays when it has dice,
 // its cube decision otherwise, moves naming the plays when set — and, with
 // store, writes the finished rollout beside its analysis. A cancelled
-// rollout returns the games finished so far with ctx's error, unstored.
-func RolloutPosition(ctx context.Context, d *Database, positionID int64, s rollout.Settings, moves []string, store bool, progress func(rollout.Progress)) (*rollout.Result, error) {
+// rollout returns the games finished so far with ctx's error, unstored. A
+// position that cannot be read fails with rollouts.ErrLoad.
+func (d *Database) RolloutPosition(ctx context.Context, positionID int64, s rollout.Settings, moves []string, store bool, progress func(rollout.Progress)) (*rollout.Result, error) {
 	d.mu.RLock()
-	pos, err := d.store.Positions().Load(ctx, "", positionID)
+	gen := d.generation
+	pos, err := rollouts.Load(ctx, d.store, "", positionID)
 	d.mu.RUnlock()
 	if err != nil {
 		return nil, err
 	}
-	res, err := rollout.Run(ctx, *pos, s, rollout.Options{Moves: moves, Progress: progress})
+	res, err := rollouts.Run(ctx, pos, s, moves, progress)
 	if err != nil {
 		return res, err
 	}
 	if store {
-		if err := d.storeRollout(positionID, res); err != nil {
+		if err := d.storeRollout(gen, positionID, res); err != nil {
 			return res, err
 		}
 	}
@@ -44,9 +46,13 @@ func RolloutPosition(ctx context.Context, d *Database, positionID int64, s rollo
 
 // storeRollout writes a finished rollout on positionID (ADR-0060 §8): a
 // second Analysis, beside the imported or evaluated one, replacing nothing.
-func (d *Database) storeRollout(positionID int64, res *rollout.Result) error {
+// It refuses once the open file is no longer the one of generation gen.
+func (d *Database) storeRollout(gen uint64, positionID int64, res *rollout.Result) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
+	if d.generation != gen {
+		return ErrDatabaseChanged
+	}
 	return rollouts.Store(context.Background(), d.store, "", positionID, res)
 }
 
@@ -59,31 +65,44 @@ func (d *Database) LoadRollouts(positionID int64) ([]domain.RolloutAnalysis, err
 
 // PositionsToRollout snapshots the positions f selects that carry no rollout
 // of s's Signature yet: what RolloutFiltered would roll out.
-func PositionsToRollout(ctx context.Context, d *Database, f SearchFilters, s rollout.Settings) ([]Position, error) {
+func (d *Database) PositionsToRollout(ctx context.Context, f SearchFilters, s rollout.Settings) ([]Position, error) {
+	positions, _, err := d.positionsToRollout(ctx, f, s)
+	return positions, err
+}
+
+// positionsToRollout is PositionsToRollout with the generation it read.
+func (d *Database) positionsToRollout(ctx context.Context, f SearchFilters, s rollout.Settings) ([]Position, uint64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
-	return rollouts.Gather(ctx, d.store, "", f, s)
+	positions, err := rollouts.Gather(ctx, d.store, "", f, s)
+	return positions, d.generation, err
 }
 
 // RolloutFiltered rolls out, one after the other, every position f selects
 // that carries no rollout of s's Signature yet, writing each as it finishes.
 // Cancelling ctx keeps what was written; running again resumes.
-func RolloutFiltered(ctx context.Context, d *Database, f SearchFilters, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
+func (d *Database) RolloutFiltered(ctx context.Context, f SearchFilters, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
 	if err := s.Validate(); err != nil {
 		return rollouts.Summary{}, err
 	}
-	positions, err := PositionsToRollout(ctx, d, f, s)
+	positions, gen, err := d.positionsToRollout(ctx, f, s)
 	if err != nil {
 		if errors.Is(err, context.Canceled) {
 			return rollouts.Summary{Cancelled: true}, nil
 		}
 		return rollouts.Summary{}, err
 	}
-	return RolloutPositions(ctx, d, positions, s, progress)
+	return d.rolloutPositionsAt(ctx, gen, positions, s, progress)
 }
 
 // RolloutPositions rolls out positions — a PositionsToRollout snapshot — one
 // after the other, writing each as it finishes.
-func RolloutPositions(ctx context.Context, d *Database, positions []Position, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
-	return rollouts.Batch(ctx, positions, s, progress, d.storeRollout)
+func (d *Database) RolloutPositions(ctx context.Context, positions []Position, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
+	return d.rolloutPositionsAt(ctx, d.currentGeneration(), positions, s, progress)
+}
+
+func (d *Database) rolloutPositionsAt(ctx context.Context, gen uint64, positions []Position, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
+	return rollouts.Batch(ctx, positions, s, progress, func(positionID int64, res *rollout.Result) error {
+		return d.storeRollout(gen, positionID, res)
+	})
 }

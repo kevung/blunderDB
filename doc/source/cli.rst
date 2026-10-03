@@ -1096,8 +1096,8 @@ ou d'une base (``--db`` et ``--id``) ; sans ``--store``, rien n'est enregistré.
 * ``--store`` — Enregistre le rollout terminé sur la position, comme une
   seconde analyse portant ses propres réglages, à côté de l'analyse importée
   ou évaluée, qu'il ne remplace jamais. Un rollout interrompu n'est pas
-  enregistré ; un nouveau rollout aux mêmes réglages remplace le précédent,
-  un rollout à d'autres réglages s'ajoute à côté.
+  enregistré ; de deux rollouts aux mêmes réglages, la série la plus longue
+  est gardée, un rollout à d'autres réglages s'ajoute à côté.
 * ``--list`` — Affiche les rollouts enregistrés sur la position, du plus récent
   au plus ancien, au lieu d'en jouer un.
 

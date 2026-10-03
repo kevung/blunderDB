@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
 )
@@ -25,7 +24,7 @@ func (cli *CLI) runAnalyzeRollout(spec, query string, jobs int, text bool) error
 
 	var sum rollouts.Summary
 	runErr := withInterruptibleContext(nil, func(ctx context.Context) error {
-		todo, err := database.PositionsToRollout(ctx, cli.db, filters, s)
+		todo, err := cli.db.PositionsToRollout(ctx, filters, s)
 		if err != nil {
 			return err
 		}
@@ -39,7 +38,7 @@ func (cli *CLI) runAnalyzeRollout(spec, query string, jobs int, text bool) error
 			fmt.Printf("Rolling out %d position(s): %s\n", len(todo), s.DepthLabel())
 		}
 		last := -1
-		sum, err = database.RolloutPositions(ctx, cli.db, todo, s, func(p rollouts.Progress) {
+		sum, err = cli.db.RolloutPositions(ctx, todo, s, func(p rollouts.Progress) {
 			if !text || p.Done == last {
 				return
 			}

@@ -88,7 +88,16 @@ de videau, et ses intervalles sont optimistes.
    d'analyse principale (`HasPrimary`, ADR-0013 ; un rollout seul n'en est pas une, et
    `AttachRollout` ne pose pas `AnalysisType`), et les rollouts des deux côtés restent. L'ajout
    d'un rollout lit et réécrit l'analyse dans une seule transaction gardée. Un rollout annulé
-   n'est jamais écrit. Les colonnes indexées restent celles de l'analyse
+   n'est jamais écrit. Cette garde (`BEGIN IMMEDIATE` en SQLite, verrou consultatif
+   en PostgreSQL) vaut entre processus ; `Database.SaveAnalysis`, lui, lit puis écrit sous le
+   seul verrou du processus : deux processus écrivant le même fichier (la CLI pendant que la GUI
+   tourne) n'y sont pas gardés l'un de l'autre, et seul le verrou de fichier d'ADR-0004, qui
+   ouvre la seconde instance en lecture seule, les sépare. Changer de base dans la GUI arrête le
+   rollout et les lots en cours et attend leur fin ; passé le délai, la `Database` refuse leurs
+   écritures tardives (génération mémorisée au départ). Supprimer un match
+   supprime avec ses positions orphelines leurs rollouts ; ils se rejouent à l'identique depuis
+   leur `Signature`. Un rollout de videau a sa propre `Signature`, sans nombre de candidats.
+   Les colonnes indexées restent celles de l'analyse
    principale ; une position que seul un rollout analyse les tire de son meilleur rollout
    (`ColumnSource`), et la recherche la trouve. Tout vit dans le blob JSON : **aucune colonne,
    aucun bump de schéma**. Limite assumée : une version antérieure, qui ignore le champ

@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
@@ -114,15 +115,41 @@ func (s Settings) DepthLabel() string {
 	return fmt.Sprintf("Rollout %d games (%s, %s)", s.MaxGames, gammonnet.DepthLabel(s.Ply), trunc)
 }
 
-// Signature is the full line a rollout of the Candidates best plays (or of a
-// cube) is reproduced from: everything that moves a number, in one place.
+// Signature is the full line a rollout of the Candidates best plays is
+// reproduced from: everything that moves a number, in one place.
 func (s Settings) Signature() string { return s.SignatureFor(nil) }
 
 // SignatureFor is the Signature of a rollout of the plays moves names, or of
 // the Candidates best when moves is empty. Which plays are rolled is part of
 // it: two rollouts of different plays are two Configurations, never a longer
-// and a shorter series of one. The order moves are named in is not.
+// and a shorter series of one. Neither the order moves are named in nor the
+// spacing inside a name is.
 func (s Settings) SignatureFor(moves []string) string {
+	plays := fmt.Sprintf("candidates %d best", s.Candidates)
+	if len(moves) > 0 {
+		norm := make([]string, len(moves))
+		for i, m := range moves {
+			norm[i] = strings.Join(strings.Fields(m), " ")
+		}
+		plays = "candidates {" + strings.Join(slices.Compact(slices.Sorted(slices.Values(norm))), ", ") + "}"
+	}
+	return s.signature(plays)
+}
+
+// CubeSignature is the Signature of a rollout of a cube decision: its two
+// branches are fixed, so the number of candidates moves nothing.
+func (s Settings) CubeSignature() string { return s.signature("cube decision") }
+
+// SignatureAt is the Signature a rollout of pos with s, no play named,
+// carries: the cube's when pos has no dice, the best plays' otherwise.
+func (s Settings) SignatureAt(pos *domain.Position) string {
+	if hasDice(pos) {
+		return s.Signature()
+	}
+	return s.CubeSignature()
+}
+
+func (s Settings) signature(plays string) string {
 	trunc := "none"
 	if s.Truncation > 0 {
 		trunc = fmt.Sprintf("%d half-moves", s.Truncation)
@@ -131,11 +158,7 @@ func (s Settings) SignatureFor(moves []string) string {
 	if s.JSDLimit > 0 {
 		stop = fmt.Sprintf("JSD >= %g after %d games", s.JSDLimit, s.MinGames)
 	}
-	plays := fmt.Sprintf("%d best", s.Candidates)
-	if len(moves) > 0 {
-		plays = "{" + strings.Join(slices.Compact(slices.Sorted(slices.Values(moves))), ", ") + "}"
-	}
-	return fmt.Sprintf("%s; cubeful; %s plays, cube and leaves; candidates %s; variance reduction 1-ply; "+
+	return fmt.Sprintf("%s; cubeful; %s plays, cube and leaves; %s; variance reduction 1-ply; "+
 		"common quasi-random dice (2 plies); seed %d; games <= %d; stop %s; truncation %s; exact bearoff when covered",
 		EngineVersion, gammonnet.DepthLabel(s.Ply), plays, s.Seed, s.MaxGames, stop, trunc)
 }

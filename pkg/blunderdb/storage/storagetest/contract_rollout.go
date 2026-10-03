@@ -188,3 +188,65 @@ func testConcurrentRolloutsAllKept(t *testing.T, s storage.Storage) {
 		t.Errorf("%d rollouts kept of %d stored at once", len(got.Rollouts), writers)
 	}
 }
+
+// testRepairCrawfordMergeKeepsRollouts: when the Crawford repair folds a
+// stale row into its stored twin, the twin's analysis wins but the stale
+// row's rollouts move over beside it (ADR-0060 §8).
+func testRepairCrawfordMergeKeepsRollouts(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ps, ms := s.Positions(), s.Matches()
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7, MatchHash: "crawford-rollouts"}
+	matchID, err := ms.Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	var postCrawfordGame int64
+	for i, initial := range [2][2]int32{{6, 2}, {6, 3}} {
+		g := domain.Game{MatchID: matchID, GameNumber: int32(i + 1), InitialScore: initial}
+		if postCrawfordGame, err = ms.CreateGame(ctx, "", &g); err != nil {
+			t.Fatalf("CreateGame %d: %v", i+1, err)
+		}
+	}
+	twin := statsDecisionPos(t, 0)
+	twin.Score = [2]int{domain.PostCrawford, 4}
+	twinID, err := ps.Save(ctx, "", &twin)
+	if err != nil {
+		t.Fatalf("Save twin: %v", err)
+	}
+	stale := statsDecisionPos(t, 0)
+	stale.Score = [2]int{domain.Crawford, 4}
+	staleID, err := ps.Save(ctx, "", &stale)
+	if err != nil || staleID == twinID {
+		t.Fatalf("Save stale: %d, %v", staleID, err)
+	}
+	mv := domain.Move{GameID: postCrawfordGame, MoveNumber: 1, MoveType: "checker",
+		PositionID: staleID, Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
+	if _, err := ms.CreateMove(ctx, "", &mv); err != nil {
+		t.Fatalf("CreateMove: %v", err)
+	}
+
+	imported := domain.PositionAnalysis{PositionID: int(twinID), AnalysisType: "CheckerMove",
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{{Move: "8/5 6/5", Equity: 0.1, AnalysisEngine: "XG", AnalysisDepth: "XG Roller++"}}}}
+	if err := s.Analyses().Save(ctx, "", twinID, &imported); err != nil {
+		t.Fatalf("Save twin analysis: %v", err)
+	}
+	fast := rollout.Fast()
+	if err := rollouts.Store(ctx, s, "", staleID, movesRollout(fast, "8/5 6/5", 0.5)); err != nil {
+		t.Fatalf("Store rollout: %v", err)
+	}
+
+	if _, err := ps.RepairCrawfordSentinel(ctx, ""); err != nil {
+		t.Fatalf("RepairCrawfordSentinel: %v", err)
+	}
+	a, err := s.Analyses().Load(ctx, "", twinID)
+	if err != nil {
+		t.Fatalf("Load twin analysis: %v", err)
+	}
+	if len(a.Rollouts) != 1 || a.Rollouts[0].Signature != fast.Signature() {
+		t.Errorf("twin's rollouts after the merge: %+v", a.Rollouts)
+	}
+	if a.CheckerAnalysis == nil || len(a.CheckerAnalysis.Moves) != 1 || a.CheckerAnalysis.Moves[0].AnalysisEngine != "XG" {
+		t.Errorf("twin's own analysis did not win: %+v", a.CheckerAnalysis)
+	}
+}

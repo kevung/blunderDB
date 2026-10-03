@@ -109,7 +109,6 @@ func Gather(ctx context.Context, st storage.Storage, scope string, f domain.Sear
 		}
 		found = append(found, *p)
 	}
-	sig := s.Signature()
 	out := found[:0]
 	for start := 0; start < len(found); start += loadBatch {
 		chunk := found[start:min(start+loadBatch, len(found))]
@@ -122,7 +121,7 @@ func Gather(ctx context.Context, st storage.Storage, scope string, f domain.Sear
 			return nil, err
 		}
 		for _, p := range chunk {
-			if !analyses[p.ID].HasRollout(sig) {
+			if !analyses[p.ID].HasRollout(s.SignatureAt(&p)) {
 				out = append(out, p)
 			}
 		}
@@ -213,10 +212,27 @@ var ErrLoad = errors.New("rollouts: cannot load position")
 // stores the result with Store when asked to. Cancelled, it returns the games
 // finished so far (Stop = cancelled) with ctx's error.
 func Position(ctx context.Context, st storage.Storage, scope string, positionID int64, s rollout.Settings, moves []string, progress func(rollout.Progress)) (*rollout.Result, error) {
+	pos, err := Load(ctx, st, scope, positionID)
+	if err != nil {
+		return nil, err
+	}
+	return Run(ctx, pos, s, moves, progress)
+}
+
+// Load reads the position a rollout is asked on, a failure wrapped in
+// ErrLoad. Position is Load then Run; a caller that must hold a lock while
+// reading, and not while playing, calls the two itself.
+func Load(ctx context.Context, st storage.Storage, scope string, positionID int64) (*domain.Position, error) {
 	pos, err := st.Positions().Load(ctx, scope, positionID)
 	if err != nil {
 		return nil, fmt.Errorf("%w %d: %w", ErrLoad, positionID, err)
 	}
+	return pos, nil
+}
+
+// Run rolls pos out: its plays, moves naming them when set, or its cube
+// decision.
+func Run(ctx context.Context, pos *domain.Position, s rollout.Settings, moves []string, progress func(rollout.Progress)) (*rollout.Result, error) {
 	return rollout.Run(ctx, *pos, s, rollout.Options{Moves: moves, Progress: progress})
 }
 

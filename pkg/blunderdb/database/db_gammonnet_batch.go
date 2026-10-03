@@ -65,11 +65,12 @@ func (d *Database) positionIDsWithoutAnalysis() ([]int64, error) {
 // onProgress runs on the single writer goroutine with a monotone count of
 // positions PROCESSED (evaluated, refused and failed alike).
 func (d *Database) AnalyzeMissingWithGammonNet(ctx context.Context, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
+	gen := d.currentGeneration()
 	ids, err := d.positionIDsWithoutAnalysis()
 	if err != nil {
 		return GammonNetBatchSummary{}, err
 	}
-	return d.analyzeIDsWithGammonNet(ctx, ids, ply, pruneK, candidates, jobs, yield, onProgress)
+	return d.analyzeIDsWithGammonNet(ctx, gen, ids, ply, pruneK, candidates, jobs, yield, onProgress)
 }
 
 // positionIDsWithStaleGammonNet snapshots the ids gammonnet.IsStaleAnalysis
@@ -118,11 +119,12 @@ func (d *Database) CountPositionsWithStaleGammonNet(ply int) (int, error) {
 // contract as AnalyzeMissingWithGammonNet; a separate pass so ADR-0013 is never
 // read as licensing a general re-analysis switch.
 func (d *Database) AnalyzeStaleGammonNet(ctx context.Context, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
+	gen := d.currentGeneration()
 	ids, err := d.positionIDsWithStaleGammonNet(gammonnet.DepthLabel(ply))
 	if err != nil {
 		return GammonNetBatchSummary{}, err
 	}
-	return d.analyzeIDsWithGammonNet(ctx, ids, ply, pruneK, candidates, jobs, yield, onProgress)
+	return d.analyzeIDsWithGammonNet(ctx, gen, ids, ply, pruneK, candidates, jobs, yield, onProgress)
 }
 
 // gammonNetOutcome is what evaluateOnePositionWithGammonNet's caller decided
@@ -174,7 +176,7 @@ type gammonNetBatchResult struct {
 //
 // A cancelled run starts no further position and drains and writes the
 // results in flight.
-func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, ids []int64, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
+func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids []int64, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
 	total := len(ids)
 	if total == 0 {
 		return GammonNetBatchSummary{}, ctx.Err()
@@ -259,7 +261,7 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, ids []int64, ply
 		if outcome == gnEvaluated {
 			// A write failure is a skip like an evaluation failure: the
 			// position is picked up again on the next run.
-			if err := d.SaveAnalysis(res.id, *res.analysis); err != nil {
+			if err := d.saveAnalysisAt(gen, res.id, *res.analysis); err != nil {
 				outcome = gnFailed
 				slog.Warn("gammonnet batch: saving the computed analysis failed", "position_id", res.id, "error", err)
 			}
@@ -362,9 +364,10 @@ func (d *Database) CountMatchPositionsToAnalyze(matchID int64) (int, error) {
 // batch: a "0 means everything" sentinel is how a scoped batch silently
 // becomes a full one.
 func (d *Database) AnalyzeMatchWithGammonNet(ctx context.Context, matchID int64, ply, pruneK, candidates, jobs int, yield func(), onProgress func(done, total int)) (GammonNetBatchSummary, error) {
+	gen := d.currentGeneration()
 	ids, err := d.positionIDsWithoutAnalysisForMatch(matchID)
 	if err != nil {
 		return GammonNetBatchSummary{}, err
 	}
-	return d.analyzeIDsWithGammonNet(ctx, ids, ply, pruneK, candidates, jobs, yield, onProgress)
+	return d.analyzeIDsWithGammonNet(ctx, gen, ids, ply, pruneK, candidates, jobs, yield, onProgress)
 }

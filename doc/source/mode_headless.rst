@@ -799,6 +799,11 @@ partage un quota global d'octets déposés sur disque : au-delà, un nouvel
 import est refusé (``too many requests``) plutôt que de laisser croître sans
 borne l'occupation de ``$TMPDIR``.
 
+``/v1/imports.json`` relit un export JSON de blunderDB en comblant les vides :
+l'analyse qu'il porte ne s'écrit que sur une position qui n'en a pas encore,
+sans jamais remplacer une analyse existante, et les rollouts des deux côtés
+sont gardés.
+
 La famille ``search`` offre trois portes sur la même recherche.
 ``search.find`` prend l'objet de filtres complet, champ par champ.
 ``search.query`` prend une requête écrite dans le langage de la barre de

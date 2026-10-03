@@ -93,6 +93,8 @@ export function RegenerateIssuerIdentity(arg1:string):Promise<domain.IssuerIdent
 
 export function RolloutPresets():Promise<Array<gui.RolloutPreset>>;
 
+export function RolloutStatus():Promise<gui.RolloutStatus>;
+
 export function SaveBoardImageDialog(arg1:string,arg2:string):Promise<string>;
 
 export function SaveBoardPNG(arg1:string,arg2:string):Promise<void>;
