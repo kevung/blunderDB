@@ -416,3 +416,26 @@ func TestRebindingGuardIsOnByDefault(t *testing.T) {
 		}
 	}
 }
+
+// rollout reads by default — no store argument offered — and writes beside
+// the analysis only on a server that writes.
+func TestRolloutTool(t *testing.T) {
+	const tiny = "fast,games=36,min-games=36,truncation=2,candidates=2"
+	const pos = "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10"
+
+	rw := connect(t, demoServer(t, internalserver.Options{}).Handler(), mcp.Options{Tenant: "1", Write: true})
+	pid := call(t, rw, "save_position", obj{"text": pos})["positionId"]
+	if got := call(t, rw, "rollout", obj{"positionId": pid, "rollout": tiny, "store": true}); got["stored"] != true {
+		t.Errorf("rollout with store: %v", got)
+	}
+
+	ro := connect(t, demoServer(t, internalserver.Options{}).Handler(), mcp.Options{Tenant: "1"})
+	checker := list(t, call(t, ro, "search_positions", obj{"query": "s E>50 d", "limit": 1}), "positions")
+	res := call(t, ro, "rollout", obj{"positionId": id(t, checker[0], "id"), "rollout": tiny})
+	if res["stored"] != false || res["result"] == nil {
+		t.Errorf("read-only rollout: %v", res)
+	}
+	if msg := callErr(t, ro, "rollout", obj{"positionId": id(t, checker[0], "id"), "rollout": tiny, "store": true}); msg == "" {
+		t.Error("a read-only server accepted store")
+	}
+}

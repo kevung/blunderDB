@@ -274,3 +274,36 @@ func TestGammonNetSweepStaleRerunsDepthOnlyChange(t *testing.T) {
 		t.Errorf("the XG-analysed position was touched by sweepStale: engine = %q, want XG", untouched.AnalysisEngineVersion)
 	}
 }
+
+// A sweep rewrites a stale gammonNet analysis and keeps the rollouts beside
+// it, as the GUI and CLI batch do through SaveAnalysis (ADR-0060).
+func TestGammonNetSweepStaleKeepsRollouts(t *testing.T) {
+	ctx := context.Background()
+	srv, s := newGammonNetTestServer(t)
+	pos := bearoffRacePosition()
+	id, err := s.Positions().Save(ctx, "t", &pos)
+	if err != nil {
+		t.Fatal(err)
+	}
+	postNDJSON(t, srv, "/v1/gammonnet.analyzeMissing", `{"ply":0}`)
+	a, err := s.Analyses().Load(ctx, "t", id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	a.AttachRollout(domain.RolloutAnalysis{Signature: "kept", Kind: domain.RolloutKindCube, Games: 216})
+	if err := s.Analyses().Save(ctx, "t", id, a); err != nil {
+		t.Fatal(err)
+	}
+
+	events := postNDJSON(t, srv, "/v1/gammonnet.sweepStale", `{"ply":1}`)
+	if got := int(events[len(events)-1]["evaluated"].(float64)); got != 1 {
+		t.Fatalf("evaluated = %d, want 1", got)
+	}
+	got, err := s.Analyses().Load(ctx, "t", id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !got.HasRollout("kept") || got.DoublingCubeAnalysis == nil || got.DoublingCubeAnalysis.AnalysisDepth != "1-ply" {
+		t.Errorf("rollouts %+v, cube %+v — want the 1-ply analysis beside the kept rollout", got.Rollouts, got.DoublingCubeAnalysis)
+	}
+}

@@ -4329,6 +4329,62 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_RencontreView"
                 nullable: true
+  /v1/rollout.filter:
+    post:
+      operationId: rollout.filter
+      tags: [rollout]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/rollout.filter.cancel:
+    post:
+      operationId: rollout.filter.cancel
+      tags: [rollout]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/rollout.list:
+    post:
+      operationId: rollout.list
+      tags: [rollout]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/positionIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/rolloutListResp"
+  /v1/rollout.position:
+    post:
+      operationId: rollout.position
+      tags: [rollout]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/search.find:
     post:
       operationId: search.find
@@ -5949,6 +6005,9 @@ components:
     domain_PositionAnalysis:
       type: object
       description: "Opaque: see the Go type domain.PositionAnalysis (defined outside internal/server, not expanded here)."
+    domain_RolloutAnalysis:
+      type: object
+      description: "Opaque: see the Go type domain.RolloutAnalysis (defined outside internal/server, not expanded here)."
     domain_SearchFilters:
       type: object
       description: "Opaque: see the Go type domain.SearchFilters (defined outside internal/server, not expanded here)."
@@ -6490,6 +6549,13 @@ components:
       properties:
         since:
           type: string
+    rolloutListResp:
+      type: object
+      properties:
+        rollouts:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_RolloutAnalysis"
     scopeReq:
       type: object
     searchFindReq:

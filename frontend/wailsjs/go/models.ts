@@ -1982,6 +1982,121 @@ export namespace domain {
 	}
 	
 	
+	export class RolloutCandidate {
+	    move: string;
+	    equity: number;
+	    stdErr: number;
+	    ci95: number;
+	    games: number;
+	    jsd: number;
+	    playerWinChance: number;
+	    playerGammonChance: number;
+	    playerBackgammonChance: number;
+	    opponentWinChance: number;
+	    opponentGammonChance: number;
+	    opponentBackgammonChance: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new RolloutCandidate(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.move = source["move"];
+	        this.equity = source["equity"];
+	        this.stdErr = source["stdErr"];
+	        this.ci95 = source["ci95"];
+	        this.games = source["games"];
+	        this.jsd = source["jsd"];
+	        this.playerWinChance = source["playerWinChance"];
+	        this.playerGammonChance = source["playerGammonChance"];
+	        this.playerBackgammonChance = source["playerBackgammonChance"];
+	        this.opponentWinChance = source["opponentWinChance"];
+	        this.opponentGammonChance = source["opponentGammonChance"];
+	        this.opponentBackgammonChance = source["opponentBackgammonChance"];
+	    }
+	}
+	export class RolloutSettings {
+	    truncation: number;
+	    minGames: number;
+	    maxGames: number;
+	    jsdLimit: number;
+	    ply: number;
+	    candidates: number;
+	    seed: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new RolloutSettings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.truncation = source["truncation"];
+	        this.minGames = source["minGames"];
+	        this.maxGames = source["maxGames"];
+	        this.jsdLimit = source["jsdLimit"];
+	        this.ply = source["ply"];
+	        this.candidates = source["candidates"];
+	        this.seed = source["seed"];
+	    }
+	}
+	export class RolloutAnalysis {
+	    analysisEngine: string;
+	    analysisDepth: string;
+	    signature: string;
+	    kind: string;
+	    settings: RolloutSettings;
+	    games: number;
+	    stop: string;
+	    cubefulBias: boolean;
+	    exactBearoff: boolean;
+	    candidates: RolloutCandidate[];
+	    bestCubeAction?: string;
+	    jsdDouble?: number;
+	    jsdTake?: number;
+	    // Go type: time
+	    date: any;
+	
+	    static createFrom(source: any = {}) {
+	        return new RolloutAnalysis(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.analysisEngine = source["analysisEngine"];
+	        this.analysisDepth = source["analysisDepth"];
+	        this.signature = source["signature"];
+	        this.kind = source["kind"];
+	        this.settings = this.convertValues(source["settings"], RolloutSettings);
+	        this.games = source["games"];
+	        this.stop = source["stop"];
+	        this.cubefulBias = source["cubefulBias"];
+	        this.exactBearoff = source["exactBearoff"];
+	        this.candidates = this.convertValues(source["candidates"], RolloutCandidate);
+	        this.bestCubeAction = source["bestCubeAction"];
+	        this.jsdDouble = source["jsdDouble"];
+	        this.jsdTake = source["jsdTake"];
+	        this.date = this.convertValues(source["date"], null);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class PositionAnalysis {
 	    positionId: number;
 	    xgid: string;
@@ -1996,6 +2111,7 @@ export namespace domain {
 	    playedCubeAction?: string;
 	    playedMoves?: string[];
 	    playedCubeActions?: string[];
+	    rollouts?: RolloutAnalysis[];
 	    // Go type: time
 	    creationDate: any;
 	    // Go type: time
@@ -2020,6 +2136,7 @@ export namespace domain {
 	        this.playedCubeAction = source["playedCubeAction"];
 	        this.playedMoves = source["playedMoves"];
 	        this.playedCubeActions = source["playedCubeActions"];
+	        this.rollouts = this.convertValues(source["rollouts"], RolloutAnalysis);
 	        this.creationDate = this.convertValues(source["creationDate"], null);
 	        this.lastModifiedDate = this.convertValues(source["lastModifiedDate"], null);
 	    }
@@ -2042,6 +2159,9 @@ export namespace domain {
 		    return a;
 		}
 	}
+	
+	
+	
 	export class SearchFilters {
 	    filter: Position;
 	    excludeFilter: Position;
@@ -2732,6 +2852,100 @@ export namespace gui {
 		}
 	}
 	
+	export class RolloutPreset {
+	    name: string;
+	    settings: rollout.Settings;
+	
+	    static createFrom(source: any = {}) {
+	        return new RolloutPreset(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.settings = this.convertValues(source["settings"], rollout.Settings);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class RolloutRequest {
+	    positionId: number;
+	    position?: domain.Position;
+	    settings: rollout.Settings;
+	    moves?: string[];
+	    store: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new RolloutRequest(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.positionId = source["positionId"];
+	        this.position = this.convertValues(source["position"], domain.Position);
+	        this.settings = this.convertValues(source["settings"], rollout.Settings);
+	        this.moves = source["moves"];
+	        this.store = source["store"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class RolloutStatus {
+	    running: boolean;
+	    kind?: string;
+	    positionId?: number;
+	    done: number;
+	    total: number;
+	    games: number;
+	    maxGames: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new RolloutStatus(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.running = source["running"];
+	        this.kind = source["kind"];
+	        this.positionId = source["positionId"];
+	        this.done = source["done"];
+	        this.total = source["total"];
+	        this.games = source["games"];
+	        this.maxGames = source["maxGames"];
+	    }
+	}
 	export class UpdateCheckResult {
 	    packageManaged: boolean;
 	    latestVersion?: string;
@@ -3222,6 +3436,197 @@ export namespace race {
 		    }
 		    return a;
 		}
+	}
+
+}
+
+export namespace rollout {
+	
+	export class Candidate {
+	    move: string;
+	    equity: number;
+	    std_err: number;
+	    ci95: number;
+	    games: number;
+	    jsd: number;
+	    chances: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Candidate(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.move = source["move"];
+	        this.equity = source["equity"];
+	        this.std_err = source["std_err"];
+	        this.ci95 = source["ci95"];
+	        this.games = source["games"];
+	        this.jsd = source["jsd"];
+	        this.chances = source["chances"];
+	    }
+	}
+	export class Estimate {
+	    equity: number;
+	    std_err: number;
+	    ci95: number;
+	    games: number;
+	    jsd: number;
+	    chances: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new Estimate(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.equity = source["equity"];
+	        this.std_err = source["std_err"];
+	        this.ci95 = source["ci95"];
+	        this.games = source["games"];
+	        this.jsd = source["jsd"];
+	        this.chances = source["chances"];
+	    }
+	}
+	export class CubeResult {
+	    no_double: Estimate;
+	    double_take: Estimate;
+	    double_pass: Estimate;
+	    action: string;
+	    jsd_double: number;
+	    jsd_take: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new CubeResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.no_double = this.convertValues(source["no_double"], Estimate);
+	        this.double_take = this.convertValues(source["double_take"], Estimate);
+	        this.double_pass = this.convertValues(source["double_pass"], Estimate);
+	        this.action = source["action"];
+	        this.jsd_double = source["jsd_double"];
+	        this.jsd_take = source["jsd_take"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	export class Settings {
+	    truncation: number;
+	    min_games: number;
+	    max_games: number;
+	    jsd_limit: number;
+	    ply: number;
+	    candidates: number;
+	    seed: number;
+	    workers: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Settings(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.truncation = source["truncation"];
+	        this.min_games = source["min_games"];
+	        this.max_games = source["max_games"];
+	        this.jsd_limit = source["jsd_limit"];
+	        this.ply = source["ply"];
+	        this.candidates = source["candidates"];
+	        this.seed = source["seed"];
+	        this.workers = source["workers"];
+	    }
+	}
+	export class Result {
+	    kind: string;
+	    engine_version: string;
+	    settings: Settings;
+	    signature: string;
+	    candidates: Candidate[];
+	    cube?: CubeResult;
+	    games: number;
+	    stop: string;
+	    cubeful_bias: boolean;
+	    exact_bearoff: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Result(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.engine_version = source["engine_version"];
+	        this.settings = this.convertValues(source["settings"], Settings);
+	        this.signature = source["signature"];
+	        this.candidates = this.convertValues(source["candidates"], Candidate);
+	        this.cube = this.convertValues(source["cube"], CubeResult);
+	        this.games = source["games"];
+	        this.stop = source["stop"];
+	        this.cubeful_bias = source["cubeful_bias"];
+	        this.exact_bearoff = source["exact_bearoff"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+
+}
+
+export namespace rollouts {
+	
+	export class Summary {
+	    total: number;
+	    rolledOut: number;
+	    refused: number;
+	    failed: number;
+	    cancelled: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new Summary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.total = source["total"];
+	        this.rolledOut = source["rolledOut"];
+	        this.refused = source["refused"];
+	        this.failed = source["failed"];
+	        this.cancelled = source["cancelled"];
+	    }
 	}
 
 }

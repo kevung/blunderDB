@@ -169,3 +169,34 @@ func TestRunGammonNetBatchSignalsItsEnd(t *testing.T) {
 		t.Error("the finished batch left itself registered as in flight")
 	}
 }
+
+// Two jobs that never stop share one grace period: the wait on the second must
+// end too, not hang because the first already consumed the deadline.
+func TestStopBackgroundJobsGraceCoversEveryJob(t *testing.T) {
+	a := NewApp(nil)
+	a.ctx = context.Background()
+
+	a.gnBatchMu.Lock()
+	a.gnBatchCancel = func() {}
+	a.gnBatchDone = make(chan struct{})
+	a.gnBatchMu.Unlock()
+	a.roMu.Lock()
+	a.roCancel = func() {}
+	a.roDone = make(chan struct{})
+	a.roMu.Unlock()
+
+	returned := make(chan time.Duration, 1)
+	go func() {
+		start := time.Now()
+		a.stopBackgroundJobs(50 * time.Millisecond)
+		returned <- time.Since(start)
+	}()
+	select {
+	case elapsed := <-returned:
+		if elapsed > 2*time.Second {
+			t.Errorf("stopBackgroundJobs took %s", elapsed)
+		}
+	case <-time.After(5 * time.Second):
+		t.Fatal("stopBackgroundJobs hangs on the second job that never stops")
+	}
+}
