@@ -268,6 +268,8 @@ export default {
 </div>
 <h3>Kokoelmapaneeli</h3>
 <p><strong>Kokoelmat</strong>-paneeli (<em>CTRL-B</em>) hallinnoi asemakokoelmia. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Niihin voi lisätä asemia tai poistaa niitä (<em>Del</em>-näppäin, vahvistus pyydetään). Kaksoisnapsauta kokoelmaa selataksesi sen asemia <em>VASEN</em>- ja <em>OIKEA</em>-näppäimillä. Komento <code>ss</code> hakee avoimen kokoelman asemista; <em>Esc</em> palaa sen jälkeen kokoelmaan (katso Hakupaneeli). Kokoelmien ja kokoelman sisäisten asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Paina <em>CTRL-B</em> tai suorita komento <code>collection</code> näyttääksesi tai piilottaaksesi paneelin.</p>
+<p>Kokoelma voi olla <strong>elävä</strong>: sen sisältö ei ole enää käsin tehty lista vaan <strong>haun</strong> tulos, joka lasketaan uudelleen joka avauksella. Kokoelman otsikon ◇-painike tekee siitä elävän viimeisimmällä haulla; ◈ kertoo sen jo olevan, ja sama painike palauttaa listan. Mitään ei tuhota: sen sisältämät asemat ovat yhä tallella, kun palaat.</p>
+<p>Elävä kokoelma, jonka kysely sisältää tunnuksen jota tämä versio ei enää tunne, <strong>kieltäytyy avautumasta</strong> ja sanoo sen sen sijaan että palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla suodattimella ei saa olla: laajeta hiljaisuudessa.</p>
 <h4>Oppitunnit</h4>
 <p><strong>Oppitunti</strong> on vaiheiden sarja, jonka valmentaja kirjoittaa kerran oppilasta varten ja luovuttaa tälle tietokantatiedostossa (katso komento <code>lesson export</code> sivulla cli). Jokaisella vaiheella on otsikko ja teksti, ja se voi näyttää kokoelman, aseman, molemmat tai ei kumpaakaan. Komento <code>le</code> luettelee tietokannan oppitunnit tilarivillä; <code>le 2</code> avaa oppitunnin 2.</p>
 <p>Laudan yläpuolelle ilmestyy silloin <strong>lukupalkki</strong>: oppitunnin nimi, vaiheen numero, otsikko ja sitten teksti. <em>Edellinen</em> ja <em>Seuraava</em> vaihtavat vaihetta; vaihe tuo laudalle kokoelman tai aseman, jonka se näyttää, ja sitä selataan tavallisin elein. <em>Sulje</em> poistuu oppitunnilta. Vaihe, jonka kokoelma tai asema on poistettu, säilyttää tekstinsä.</p>
@@ -283,10 +285,8 @@ export default {
 <li><strong>Kansio tuodaan rinnakkain.</strong> Tiedostot luetaan usealla ytimellä yhtä aikaa ja kirjoitetaan ryhmittäin, aina kansion järjestyksessä: otteluiden numerot eivät riipu koneesta. Tiedostoa, joka on tavu tavulta sama kuin samasta kansiosta jo luettu tiedosto, ei lueta uudelleen: se lasketaan kaksoiskappaleeksi. Peruuttaminen pysäyttää tuonnin meneillään olevaan ryhmään; jo kirjoitettu säilyy.</li>
 <li><strong>Edistyminen luetaan asemina sekunnissa.</strong> Tuontiikkuna näyttää luetun prosenttiosuuden, nopeuden, arvioidun jäljellä olevan ajan ja juoksevat määrät (tuodut, kaksoiskappaleet, virheelliset). <strong>Pienennä</strong> siirtää sen tilariville, josta merkki avaa sen uudelleen: tuonti jatkuu sillä aikaa kun työskentelet, ja ikkuna palaa lopuksi itsestään raportin kanssa. Sata ensimmäistä virhettä luetellaan; loput lasketaan, ja sovelluksen loki nimeää ne kaikki. Komentorivillä <code>blunderdb import --type batch</code> näyttää saman edistymisen virhetulosteessa, ja <code>--format json</code> palauttaa sen lopullisessa oliossa (<code>progress</code>).</li>
 <li><strong>Suuri kansio tuodaan massatilassa.</strong> 200 tiedostosta alkaen blunderDB kirjoittaa suuremmalla välimuistilla ja harvemmilla tarkistuspisteillä. Jos tietokannassa ei ole vielä yhtään asemaa, se menee pidemmälle: hakuindeksit rakennetaan uudelleen vasta lopuksi, eikä kirjoituksia enää synkronoida levylle. Sähkökatko tällaisen tuonnin aikana voi silloin vahingoittaa tietokantaa: se on luotava uudelleen ja tuonti käynnistettävä uudestaan. Ohjelman äkillinen pysähtyminen sen sijaan jättää vain puuttuvia indeksejä, jotka seuraava avaus rakentaa uudelleen (loki kertoo siitä).</li>
-<li><strong>Mitä blunderDB ei koskaan kirjoita</strong>: uudelleenlaskettua tuuria — se luetaan lähdetiedostosta tai jää tuntemattomaksi — eikä rollouttia, jonka tietoja se ei avaa <code>.xg</code>-tiedostosta eikä osaa tuottaa.</li>
+<li><strong>Mitä blunderDB ei koskaan kirjoita</strong>: uudelleen laskettu onni — se luetaan lähdetiedostosta tai jää tuntemattomaksi — ja rollout, jota se ei ole itse ajanut: <code>.xg</code>-tiedoston rollout-tietoja ei avata. Vain blunderDB:n itse tuottamat rollutit (Rolloutit) tallennetaan analyysin viereen.</li>
 </ul>
-<p>Kokoelma voi olla <strong>elävä</strong>: sen sisältö ei ole enää käsin tehty lista vaan <strong>haun</strong> tulos, joka lasketaan uudelleen joka avauksella. Kokoelman otsikon ◇-painike tekee siitä elävän viimeisimmällä haulla; ◈ kertoo sen jo olevan, ja sama painike palauttaa listan. Mitään ei tuhota: sen sisältämät asemat ovat yhä tallella, kun palaat.</p>
-<p>Elävä kokoelma, jonka kysely sisältää tunnuksen jota tämä versio ei enää tunne, <strong>kieltäytyy avautumasta</strong> ja sanoo sen sen sijaan että palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla suodattimella ei saa olla: laajeta hiljaisuudessa.</p>
 <h3>Ottelupaneeli</h3>
 <p><strong>Ottelupaneeli</strong> (<em>CTRL-Tab</em>) luettelee tuodut ottelut. Kaksoisnapsauta ottelua (tai paina <em>ENTER</em>) navigoidaksesi sen siirroissa. Komento <code>m</code> jatkaa navigointia viimeksi katsotussa ottelussa.</p>
 <p>Paneelin yläreunan suodatuskenttä (<em>/</em> siirtyy siihen, <em>Esc</em> tyhjentää sen) säilyttää vain ottelut, joissa pelaaja, tapahtuma, paikka, turnaus tai päivämäärä sisältää kirjoitetun tekstin. Suodatuksen ja sarakkeiden lajittelun tekee tietokanta: luettelo latautuu sivuittain vierittäessä, ja laskuri ”n / N ottelua” näyttää ladatun osuuden. Pelaajan, päivämäärän tai turnauksen korjaaminen luettelossa päivittää vain muokatun rivin.</p>
@@ -2462,12 +2462,12 @@ export default {
 </tr>
 <tr>
 <td>T&gt;x</td>
-<td>Aseman lisäyspäivä x:n jälkeen (VVVV/KK/PP).</td>
+<td>Päivä, jona asema lisättiin tietokantaan, x:n jälkeen (VVVV/KK/PP). Se ei ole ottelun päivämäärä: lisääminen asettaa sen ja kahden tietokannan yhdistäminen säilyttää sen.</td>
 <td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
-<td>Aseman lisäyspäivä ennen x:ää (VVVV/KK/PP).</td>
+<td>Päivä, jona asema lisättiin tietokantaan, ennen x:ää (VVVV/KK/PP). Se ei ole ottelun päivämäärä.</td>
 <td>—</td>
 </tr>
 <tr>

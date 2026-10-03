@@ -268,6 +268,8 @@ export default {
 </div>
 <h3>Collections Panel</h3>
 <p>The <strong>Collections</strong> panel (<em>CTRL-B</em>) manages collections of positions. Collections can be created, renamed and deleted. Positions can be added to them or removed (<em>Del</em> key, confirmation asked). Double-click a collection to browse its positions with the <em>LEFT</em> and <em>RIGHT</em> keys. The <code>ss</code> command searches among the positions of the open collection; <em>Esc</em> then returns to the collection (see Search Panel). The order of the collections, and of the positions within a collection, can be changed by drag and drop. Press <em>CTRL-B</em> or run the <code>collection</code> command to show or hide the panel.</p>
+<p>A collection can be <strong>living</strong>: its content is no longer a hand-made list but the result of a <strong>search</strong>, re-evaluated every time it is opened. The ◇ button at the head of the collection makes it living with the last search run; ◈ says it already is, and the same button gives it back its list. Nothing is destroyed by making it living: the positions it held are still there when you go back.</p>
+<p>A living collection whose query carries a token this version no longer knows <strong>refuses to open</strong>, and says so, rather than returning the whole database. That is the one failure a saved filter must not have: widening in silence.</p>
 <h4>Lessons</h4>
 <p>A <strong>lesson</strong> is a sequence of steps that a coach writes once for a student and hands over in a database file (see the <code>lesson export</code> command in cli). Each step has a title, a text and can show a collection, a position, both or neither. The <code>le</code> command lists the database's lessons in the status bar; <code>le 2</code> opens lesson 2.</p>
 <p>A <strong>reading bar</strong> then appears above the board: lesson name, step number, title, then the text. <em>Previous</em> and <em>Next</em> change step; the step brings onto the board the collection or position it shows, which you then browse with the usual gestures. <em>Close</em> leaves the lesson. A step whose collection or position has been deleted keeps its text.</p>
@@ -283,10 +285,8 @@ export default {
 <li><strong>A folder is imported in parallel.</strong> Files are read on several cores at once and written in groups, always in folder order: match numbers do not depend on the machine. A file identical, byte for byte, to a file already read from the same folder is not read again: it counts as a duplicate. Cancelling stops the import at the current group; what was already written stays.</li>
 <li><strong>Progress reads in positions per second.</strong> The import window gives the percentage read, the throughput, the estimated time left and the running counts (imported, duplicates, failed). <strong>Minimize</strong> tucks it into the status bar, where a chip reopens it: the import goes on while you work, and the window comes back by itself with the report at the end. The first hundred errors are listed; the rest are counted, and the application log names them all. On the command line, <code>blunderdb import --type batch</code> shows the same progress on standard error, and <code>--format json</code> returns it in the final object (<code>progress</code>).</li>
 <li><strong>A large folder is imported in bulk mode.</strong> From 200 files on, blunderDB writes with a larger cache and fewer checkpoints. If the database holds no position yet, it goes further: search indexes are rebuilt only at the end, and writes are no longer synced to disk. A power cut during such an import can then damage the database: recreate it and run the import again. A program crash, on the other hand, only leaves missing indexes, which the next opening rebuilds (the log says so).</li>
-<li><strong>What blunderDB never writes</strong>: a recomputed luck value — it is read from the source file, or stays unknown — and a rollout, whose data it neither opens from a <code>.xg</code> file nor knows how to produce.</li>
+<li><strong>What blunderDB never writes</strong>: a recomputed luck value — it is read from the source file, or stays unknown — and a rollout it did not run itself: the rollout data held in a <code>.xg</code> file is not opened. Only the rollouts blunderDB produces (Rollouts) are stored, next to the analysis.</li>
 </ul>
-<p>A collection can be <strong>living</strong>: its content is no longer a hand-made list but the result of a <strong>search</strong>, re-evaluated every time it is opened. The ◇ button at the head of the collection makes it living with the last search run; ◈ says it already is, and the same button gives it back its list. Nothing is destroyed by making it living: the positions it held are still there when you go back.</p>
-<p>A living collection whose query carries a token this version no longer knows <strong>refuses to open</strong>, and says so, rather than returning the whole database. That is the one failure a saved filter must not have: widening in silence.</p>
 <h3>Matches Panel</h3>
 <p>The <strong>Matches</strong> panel (<em>CTRL-Tab</em>) lists imported matches. Double-click a match (or press <em>ENTER</em>) to navigate through its moves. The <code>m</code> command resumes navigation in the last visited match.</p>
 <p>The filter field, at the top of the panel (<em>/</em> to go there, <em>Esc</em> to clear it), keeps only the matches where a player, the event, the venue, the tournament or the date contains the typed text. Filtering and column sorting are done by the database: the list loads in pages as you scroll, and the "n / N matches" counter shows the share loaded. Correcting a player, a date or a tournament in the list updates only the edited row.</p>
@@ -2462,12 +2462,12 @@ export default {
 </tr>
 <tr>
 <td>T&gt;x</td>
-<td>Date of position addition after x (YYYY/MM/DD).</td>
+<td>Date the position was added to the database, after x (YYYY/MM/DD). This is not the match date: adding sets it and merging two databases keeps it.</td>
 <td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
-<td>Date of position addition before x (YYYY/MM/DD).</td>
+<td>Date the position was added to the database, before x (YYYY/MM/DD). This is not the match date.</td>
 <td>—</td>
 </tr>
 <tr>

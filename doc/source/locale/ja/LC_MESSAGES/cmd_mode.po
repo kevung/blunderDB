@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 11:52+0200\n"
+"POT-Creation-Date: 2026-10-03 13:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -1398,16 +1398,23 @@ msgid "T>x"
 msgstr "T>x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
-msgstr "局面の追加日が x より後（YYYY/MM/DD）。"
+msgid ""
+"Date d'ajout de la position à la base après x (AAAA/MM/JJ). Ce n'est pas "
+"la date du match : l'ajout la fixe et la fusion de deux bases la "
+"conserve."
+msgstr ""
+"ポジションがデータベースに追加された日付が x "
+"より後(YYYY/MM/DD)。マッチの日付ではありません。追加時に設定され、二つのデータベースの統合でも保持されます。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "T<x"
 msgstr "T<x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Date d'ajout de la position avant x (AAAA/MM/JJ)."
-msgstr "局面の追加日が x より前（YYYY/MM/DD）。"
+msgid ""
+"Date d'ajout de la position à la base avant x (AAAA/MM/JJ). Ce n'est pas "
+"la date du match."
+msgstr "ポジションがデータベースに追加された日付が x より前(YYYY/MM/DD)。マッチの日付ではありません。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Tx,y"
@@ -1629,3 +1636,6 @@ msgstr "コマンド履歴を消去します。"
 
 #~ msgid "Chercher parmi les positions actuellement filtrées."
 #~ msgstr "現在フィルタされている局面の中から検索します。"
+
+#~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
+#~ msgstr "局面の追加日が x より後（YYYY/MM/DD）。"

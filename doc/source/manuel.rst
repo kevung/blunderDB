@@ -1102,6 +1102,18 @@ positions au sein des collections peut être modifié par glisser-déposer.
 Appuyer sur *CTRL-B* ou exécuter la commande ``collection`` pour afficher ou
 masquer le panneau.
 
+Une collection peut être **vivante** : sa composition n'est plus une liste
+faite à la main mais le résultat d'une **recherche**, réévalué chaque fois
+qu'on l'ouvre. Le bouton ◇ en tête de la collection la rend vivante avec la
+dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bouton
+la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions
+qu'elle contenait sont toujours là quand on revient en arrière.
+
+Une collection vivante dont la requête porte un jeton que cette version ne
+connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
+la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
+s'élargir en silence.
+
 .. _lecons:
 
 Leçons
@@ -1185,20 +1197,10 @@ ne remplace pas ce qui est déjà là.
   l'ouverture suivante reconstruit (le journal le signale).
 
 * **Ce que blunderDB n'écrit jamais** : une chance recalculée — elle est lue
-  dans le fichier source, ou reste inconnue — et un rollout, dont il n'ouvre
-  pas les données dans un fichier ``.xg`` et qu'il ne sait pas produire.
-
-Une collection peut être **vivante** : sa composition n'est plus une liste
-faite à la main mais le résultat d'une **recherche**, réévalué chaque fois
-qu'on l'ouvre. Le bouton ◇ en tête de la collection la rend vivante avec la
-dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bouton
-la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions
-qu'elle contenait sont toujours là quand on revient en arrière.
-
-Une collection vivante dont la requête porte un jeton que cette version ne
-connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
-la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
-s'élargir en silence.
+  dans le fichier source, ou reste inconnue — et un rollout qu'il n'a pas
+  lancé lui-même : les données d'un rollout contenues dans un fichier ``.xg``
+  ne sont pas ouvertes. Seuls les rollouts que blunderDB produit
+  (:ref:`rollouts`) sont stockés, à côté de l'analyse.
 
 .. _panneau_matchs:
 

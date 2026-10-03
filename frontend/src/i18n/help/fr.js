@@ -268,6 +268,8 @@ export default {
 </div>
 <h3>Panneau Collections</h3>
 <p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de positions. Les collections peuvent être créées, renommées et supprimées. Des positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation demandée). Double-cliquer sur une collection pour parcourir ses positions avec les touches <em>GAUCHE</em> et <em>DROITE</em>. La commande <code>ss</code> cherche parmi les positions de la collection ouverte ; <em>Esc</em> ramène ensuite à la collection (voir Panneau Recherche). L'ordre des collections et des positions au sein des collections peut être modifié par glisser-déposer. Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code>collection</code> pour afficher ou masquer le panneau.</p>
+<p>Une collection peut être <strong>vivante</strong> : sa composition n'est plus une liste faite à la main mais le résultat d'une <strong>recherche</strong>, réévalué chaque fois qu'on l'ouvre. Le bouton ◇ en tête de la collection la rend vivante avec la dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bouton la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions qu'elle contenait sont toujours là quand on revient en arrière.</p>
+<p>Une collection vivante dont la requête porte un jeton que cette version ne connaît plus <strong>refuse de s'ouvrir</strong> en le disant, plutôt que de renvoyer toute la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir : s'élargir en silence.</p>
 <h4>Leçons</h4>
 <p>Une <strong>leçon</strong> est une suite d'étapes qu'un coach écrit une fois pour un élève et lui remet dans un fichier de base (voir la commande <code>lesson export</code> de cli). Chaque étape a un titre, un texte et peut montrer une collection, une position, les deux ou aucune. La commande <code>le</code> liste les leçons de la base dans la barre d'état ; <code>le 2</code> ouvre la leçon 2.</p>
 <p>Une <strong>barre de lecture</strong> apparaît alors au-dessus du plateau : nom de la leçon, numéro de l'étape, titre, puis le texte. <em>Précédente</em> et <em>Suivante</em> changent d'étape ; l'étape amène sur le plateau la collection ou la position qu'elle montre, que l'on parcourt ensuite par les gestes habituels. <em>Fermer</em> quitte la leçon. Une étape dont la collection ou la position a été supprimée garde son texte.</p>
@@ -283,10 +285,8 @@ export default {
 <li><strong>Un dossier s'importe en parallèle.</strong> Les fichiers sont lus sur plusieurs cœurs à la fois et écrits par groupes, toujours dans l'ordre du dossier : les numéros de match ne dépendent pas de la machine. Un fichier identique, octet pour octet, à un fichier déjà lu du même dossier n'est pas relu : il est compté comme doublon. Annuler arrête l'import au groupe en cours ; ce qui était déjà écrit reste.</li>
 <li><strong>La progression se lit en positions par seconde.</strong> La fenêtre d'import donne le pourcentage lu, le débit, le temps restant estimé et les comptes en cours (importés, doublons, en erreur). <strong>Réduire</strong> la range dans la barre de statut, d'où une pastille la rouvre : l'import continue pendant que vous travaillez, et la fenêtre revient d'elle-même avec le rapport à la fin. Les cent premières erreurs sont listées ; les suivantes sont comptées, et le journal de l'application les nomme toutes. En ligne de commande, <code>blunderdb import --type batch</code> affiche la même progression sur la sortie d'erreur, et <code>--format json</code> la rend dans l'objet final (<code>progress</code>).</li>
 <li><strong>Un gros dossier s'importe en mode masse.</strong> À partir de 200 fichiers, blunderDB écrit avec un cache plus grand et moins de points de contrôle. Si la base ne contient encore aucune position, il va plus loin : les index de recherche ne sont reconstruits qu'à la fin, et les écritures ne sont plus synchronisées sur le disque. Une coupure de courant pendant un tel import peut alors abîmer la base : il faut la recréer et relancer l'import. Un arrêt brutal du programme, lui, laisse seulement des index absents, que l'ouverture suivante reconstruit (le journal le signale).</li>
-<li><strong>Ce que blunderDB n'écrit jamais</strong> : une chance recalculée — elle est lue dans le fichier source, ou reste inconnue — et un rollout, dont il n'ouvre pas les données dans un fichier <code>.xg</code> et qu'il ne sait pas produire.</li>
+<li><strong>Ce que blunderDB n'écrit jamais</strong> : une chance recalculée — elle est lue dans le fichier source, ou reste inconnue — et un rollout qu'il n'a pas lancé lui-même : les données d'un rollout contenues dans un fichier <code>.xg</code> ne sont pas ouvertes. Seuls les rollouts que blunderDB produit (Rollouts) sont stockés, à côté de l'analyse.</li>
 </ul>
-<p>Une collection peut être <strong>vivante</strong> : sa composition n'est plus une liste faite à la main mais le résultat d'une <strong>recherche</strong>, réévalué chaque fois qu'on l'ouvre. Le bouton ◇ en tête de la collection la rend vivante avec la dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bouton la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions qu'elle contenait sont toujours là quand on revient en arrière.</p>
-<p>Une collection vivante dont la requête porte un jeton que cette version ne connaît plus <strong>refuse de s'ouvrir</strong> en le disant, plutôt que de renvoyer toute la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir : s'élargir en silence.</p>
 <h3>Panneau Matchs</h3>
 <p>Le panneau <strong>Matchs</strong> (<em>CTRL-Tab</em>) liste les matchs importés. Double-cliquer sur un match (ou appuyer sur <em>ENTREE</em>) pour naviguer dans ses coups. La commande <code>m</code> reprend la navigation dans le dernier match visité.</p>
 <p>Le champ de filtre, en haut du panneau (<em>/</em> pour y aller, <em>Esc</em> pour l'effacer), ne garde que les matchs dont un joueur, l'événement, le lieu, le tournoi ou la date contient le texte saisi. Le filtre et le tri des colonnes sont faits par la base : la liste se charge par pages au fil du défilement, et le compteur « n / N matchs » indique la part chargée. Corriger un joueur, une date ou un tournoi dans la liste ne met à jour que la ligne éditée.</p>
@@ -2462,12 +2462,12 @@ export default {
 </tr>
 <tr>
 <td>T&gt;x</td>
-<td>Date d'ajout de la position après x (AAAA/MM/JJ).</td>
+<td>Date d'ajout de la position à la base après x (AAAA/MM/JJ). Ce n'est pas la date du match : l'ajout la fixe et la fusion de deux bases la conserve.</td>
 <td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
-<td>Date d'ajout de la position avant x (AAAA/MM/JJ).</td>
+<td>Date d'ajout de la position à la base avant x (AAAA/MM/JJ). Ce n'est pas la date du match.</td>
 <td>—</td>
 </tr>
 <tr>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 11:52+0200\n"
+"POT-Creation-Date: 2026-10-03 13:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -1469,16 +1469,26 @@ msgid "T>x"
 msgstr "T>x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
-msgstr "Data di aggiunta della posizione dopo x (AAAA/MM/GG)."
+msgid ""
+"Date d'ajout de la position à la base après x (AAAA/MM/JJ). Ce n'est pas "
+"la date du match : l'ajout la fixe et la fusion de deux bases la "
+"conserve."
+msgstr ""
+"Data in cui la posizione è stata aggiunta alla base, dopo x (AAAA/MM/GG)."
+" Non è la data del match: l'aggiunta la fissa e la fusione di due basi la"
+" conserva."
 
 #: ../../source/cmd_mode.rst:1
 msgid "T<x"
 msgstr "T<x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Date d'ajout de la position avant x (AAAA/MM/JJ)."
-msgstr "Data di aggiunta della posizione prima di x (AAAA/MM/GG)."
+msgid ""
+"Date d'ajout de la position à la base avant x (AAAA/MM/JJ). Ce n'est pas "
+"la date du match."
+msgstr ""
+"Data in cui la posizione è stata aggiunta alla base, prima di x "
+"(AAAA/MM/GG). Non è la data del match."
 
 #: ../../source/cmd_mode.rst:1
 msgid "Tx,y"
@@ -1727,3 +1737,6 @@ msgstr "Cancella la cronologia dei comandi."
 
 #~ msgid "Chercher parmi les positions actuellement filtrées."
 #~ msgstr "Cerca tra le posizioni attualmente filtrate."
+
+#~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
+#~ msgstr "Data di aggiunta della posizione dopo x (AAAA/MM/GG)."

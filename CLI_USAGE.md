@@ -30,29 +30,41 @@ When you provide a CLI command as the first argument, it automatically runs in h
 
 ### Available Commands
 
+<!-- BEGIN GENERATED COMMAND LIST (cmd/cli-doc-gen; do not edit by hand, run `go run ./cmd/cli-doc-gen`) -->
+
 - `create` - Create a new database with optional metadata
 - `import` - Import data into the database (match, position, batch)
 - `export` - Export data from the database
 - `identity` - Show or move your issuer identity
 - `open` - Open a password-protected copy into an ordinary database
-- `search` - Search positions with filters
 - `list` - List database contents
+- `search` - Search positions with filters
 - `match` - Display match positions and analysis
+- `lesson` - Manage lessons (ordered steps showing collections and positions; export them)
 - `collection` - Manage collections (list, show, create, rename, delete, export)
 - `anki` - Spaced-repetition decks (decks, stats, forecast, sync)
-- `epc` - EPC, win probability and money cube verdict for a bearoff position
+- `stats` - Statistics computed apart from list --type stats (recurring)
+- `cubematrix` - Cube verdict at every score of a match, for one position
+- `epc` - EPC, win probability and money cube verdict (bearoff)
+- `rollout` - Roll out a position's plays or cube decision (gammonNet)
+- `bearoff` - Generate, list, verify and delete the bearoff tables
 - `analyze` - Write a gammonNet analysis for every position missing one
-- `transcribe` - Replay a `.mat`, a match or a draft and report its inconsistencies
+- `transcribe` - Replay a .mat, a match or a draft and report its inconsistencies
+- `tournament` - Read a directed tournament (list, verify, standings, page, export)
 - `info` - Display database metadata
 - `edit` - Edit database metadata
 - `verify` - Verify database integrity
 - `vacuum` - Compact the database file, reclaiming freed space
+- `repair` - Recompute the analysis columns from the analyses themselves
 - `delete` - Delete data from the database
-- `healthcheck` - Probe a running `serve` daemon's `/readyz`; exit 0 when it is ready
-- `mcp` - Serve the database's tools to an AI assistant (Model Context Protocol, stdio)
+- `trash` - What was deleted through the trash, and how to put it back
 - `completion` - Print a shell completion script (bash, zsh, fish)
-- `help` - Show help message
+- `help` - Show this help message
 - `version` - Show version information
+- `healthcheck` - Probe a running daemon's /readyz; exit 0 when it is ready
+- `mcp` - Serve the database's tools to an AI assistant (Model Context Protocol, stdio)
+
+<!-- END GENERATED COMMAND LIST -->
 
 Use `blunderDB <command> --help` for more information about a command.
 

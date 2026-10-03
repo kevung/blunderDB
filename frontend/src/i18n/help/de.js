@@ -268,6 +268,8 @@ export default {
 </div>
 <h3>Sammlungen-Panel</h3>
 <p>Das Fenster <strong>Sammlungen</strong> (<em>CTRL-B</em>) verwaltet Stellungssammlungen. Sammlungen können angelegt, umbenannt und gelöscht werden. Stellungen können hinzugefügt oder entfernt werden (Taste <em>Entf</em>, Bestätigung wird verlangt). Ein Doppelklick auf eine Sammlung durchblättert ihre Stellungen mit den Tasten <em>LINKS</em> und <em>RECHTS</em>. Der Befehl <code>ss</code> sucht unter den Stellungen der geöffneten Sammlung; <em>Esc</em> kehrt danach zur Sammlung zurück (siehe Such-Panel). Die Reihenfolge der Sammlungen und der Stellungen innerhalb einer Sammlung lässt sich per Ziehen und Ablegen ändern. <em>CTRL-B</em> drücken oder den Befehl <code>collection</code> ausführen, um das Fenster ein- oder auszublenden.</p>
+<p>Eine Sammlung kann <strong>lebendig</strong> sein: Ihr Inhalt ist keine handgemachte Liste mehr, sondern das Ergebnis einer <strong>Suche</strong>, bei jedem Öffnen neu ausgewertet. Die Schaltfläche ◇ am Kopf der Sammlung macht sie mit der zuletzt ausgeführten Suche lebendig; ◈ sagt, dass sie es schon ist, und dieselbe Schaltfläche gibt ihr die Liste zurück. Nichts wird zerstört: Die Stellungen, die sie enthielt, sind beim Zurückgehen noch da.</p>
+<p>Eine lebendige Sammlung, deren Abfrage ein Token trägt, das diese Version nicht mehr kennt, <strong>weigert sich zu öffnen</strong> und sagt es, statt die ganze Datenbank zurückzugeben. Das ist der eine Fehler, den ein gespeicherter Filter nicht haben darf: sich im Stillen zu weiten.</p>
 <h4>Lektionen</h4>
 <p>Eine <strong>Lektion</strong> ist eine Folge von Schritten, die ein Coach einmal für einen Schüler schreibt und ihm in einer Datenbankdatei übergibt (siehe den Befehl <code>lesson export</code> in cli). Jeder Schritt hat einen Titel, einen Text und kann eine Sammlung, eine Stellung, beides oder nichts zeigen. Der Befehl <code>le</code> listet die Lektionen der Datenbank in der Statusleiste auf; <code>le 2</code> öffnet Lektion 2.</p>
 <p>Über dem Brett erscheint dann eine <strong>Lesezeile</strong>: Name der Lektion, Schrittnummer, Titel, dann der Text. <em>Zurück</em> und <em>Weiter</em> wechseln den Schritt; der Schritt bringt die Sammlung oder Stellung, die er zeigt, auf das Brett, die man dann mit den üblichen Gesten durchsieht. <em>Schließen</em> verlässt die Lektion. Ein Schritt, dessen Sammlung oder Stellung gelöscht wurde, behält seinen Text.</p>
@@ -283,10 +285,8 @@ export default {
 <li><strong>Ein Ordner wird parallel importiert.</strong> Die Dateien werden auf mehreren Kernen gleichzeitig gelesen und in Gruppen geschrieben, stets in der Reihenfolge des Ordners: Die Matchnummern hängen nicht von der Maschine ab. Eine Datei, die Byte für Byte mit einer bereits gelesenen Datei desselben Ordners übereinstimmt, wird nicht erneut gelesen: Sie zählt als Duplikat. Abbrechen stoppt den Import bei der laufenden Gruppe; was bereits geschrieben wurde, bleibt.</li>
 <li><strong>Der Fortschritt wird in Positionen pro Sekunde gemessen.</strong> Das Importfenster zeigt den gelesenen Prozentsatz, den Durchsatz, die geschätzte Restzeit und die laufenden Zähler (importiert, Duplikate, fehlerhaft). <strong>Minimieren</strong> legt es in die Statusleiste, wo ein Chip es wieder öffnet: Der Import läuft weiter, während Sie arbeiten, und das Fenster kehrt am Ende von selbst mit dem Bericht zurück. Die ersten hundert Fehler werden aufgelistet; die übrigen werden gezählt, und das Anwendungsprotokoll nennt sie alle. Auf der Kommandozeile zeigt <code>blunderdb import --type batch</code> denselben Fortschritt auf der Standardfehlerausgabe, und <code>--format json</code> gibt ihn im abschließenden Objekt zurück (<code>progress</code>).</li>
 <li><strong>Ein großer Ordner wird im Massenmodus importiert.</strong> Ab 200 Dateien schreibt blunderDB mit einem größeren Cache und weniger Checkpoints. Enthält die Datenbank noch keine Position, geht es weiter: Die Suchindizes werden erst am Ende neu aufgebaut, und die Schreibvorgänge werden nicht mehr mit der Festplatte synchronisiert. Ein Stromausfall während eines solchen Imports kann die Datenbank dann beschädigen: Sie muss neu angelegt und der Import erneut gestartet werden. Ein Absturz des Programms hinterlässt dagegen nur fehlende Indizes, die beim nächsten Öffnen neu aufgebaut werden (das Protokoll meldet es).</li>
-<li><strong>Was blunderDB niemals schreibt</strong>: ein neu berechnetes Glück — es wird aus der Quelldatei gelesen oder bleibt unbekannt — und ein Rollout, dessen Daten es in einer <code>.xg</code>-Datei nicht öffnet und das es nicht erzeugen kann.</li>
+<li><strong>Was blunderDB nie schreibt</strong>: ein neu berechnetes Glück — es wird aus der Quelldatei gelesen oder bleibt unbekannt — und ein Rollout, das es nicht selbst gestartet hat: Die Rollout-Daten in einer <code>.xg</code>-Datei werden nicht geöffnet. Nur die Rollouts, die blunderDB selbst erzeugt (Rollouts), werden neben der Analyse gespeichert.</li>
 </ul>
-<p>Eine Sammlung kann <strong>lebendig</strong> sein: Ihr Inhalt ist keine handgemachte Liste mehr, sondern das Ergebnis einer <strong>Suche</strong>, bei jedem Öffnen neu ausgewertet. Die Schaltfläche ◇ am Kopf der Sammlung macht sie mit der zuletzt ausgeführten Suche lebendig; ◈ sagt, dass sie es schon ist, und dieselbe Schaltfläche gibt ihr die Liste zurück. Nichts wird zerstört: Die Stellungen, die sie enthielt, sind beim Zurückgehen noch da.</p>
-<p>Eine lebendige Sammlung, deren Abfrage ein Token trägt, das diese Version nicht mehr kennt, <strong>weigert sich zu öffnen</strong> und sagt es, statt die ganze Datenbank zurückzugeben. Das ist der eine Fehler, den ein gespeicherter Filter nicht haben darf: sich im Stillen zu weiten.</p>
 <h3>Matches-Panel</h3>
 <p>Das Panel <strong>Matches</strong> (<em>CTRL-Tab</em>) listet die importierten Matches auf. Doppelklicken Sie auf ein Match (oder drücken Sie <em>EINGABE</em>), um durch seine Züge zu navigieren. Der Befehl <code>m</code> setzt die Navigation im zuletzt besuchten Match fort.</p>
 <p>Das Filterfeld oben im Panel (<em>/</em> um dorthin zu springen, <em>Esc</em> zum Leeren) behält nur die Matches, bei denen ein Spieler, die Veranstaltung, der Ort, das Turnier oder das Datum den eingegebenen Text enthält. Filter und Spaltensortierung erledigt die Datenbank: Die Liste lädt seitenweise beim Scrollen, und der Zähler „n / N Matches“ zeigt den geladenen Anteil. Das Korrigieren eines Spielers, eines Datums oder eines Turniers in der Liste aktualisiert nur die bearbeitete Zeile.</p>
@@ -2462,12 +2462,12 @@ export default {
 </tr>
 <tr>
 <td>T&gt;x</td>
-<td>Datum des Hinzufügens der Position nach x (JJJJ/MM/TT).</td>
+<td>Datum, an dem die Stellung zur Datenbank hinzugefügt wurde, nach x (JJJJ/MM/TT). Es ist nicht das Datum des Matches: Das Hinzufügen legt es fest, und das Zusammenführen zweier Datenbanken behält es bei.</td>
 <td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
-<td>Datum des Hinzufügens der Position vor x (JJJJ/MM/TT).</td>
+<td>Datum, an dem die Stellung zur Datenbank hinzugefügt wurde, vor x (JJJJ/MM/TT). Es ist nicht das Datum des Matches.</td>
 <td>—</td>
 </tr>
 <tr>

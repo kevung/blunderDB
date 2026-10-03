@@ -17,6 +17,7 @@ import (
 	"io"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/kevung/blunderdb/internal/cli"
 )
@@ -25,6 +26,9 @@ const (
 	beginMarker = "<!-- BEGIN GENERATED CLI REFERENCE (cmd/cli-doc-gen; do not edit by hand, run `go run ./cmd/cli-doc-gen`) -->"
 	endMarker   = "<!-- END GENERATED CLI REFERENCE -->"
 	usageFile   = "CLI_USAGE.md"
+
+	listBegin = "<!-- BEGIN GENERATED COMMAND LIST (cmd/cli-doc-gen; do not edit by hand, run `go run ./cmd/cli-doc-gen`) -->"
+	listEnd   = "<!-- END GENERATED COMMAND LIST -->"
 )
 
 // skip lists top-level commands with no flags of their own: capturing their
@@ -85,6 +89,45 @@ func main() {
 	}
 }
 
+// commandList renders the "Available Commands" list. The names come from
+// cli.CommandNames (the dispatch table); each description is read from the
+// banner `blunderdb help` prints, in the banner's order. A command with no
+// line in the banner is an error: the list must never lag the table.
+func commandList() (string, error) {
+	desc := map[string]string{}
+	var order []string
+	for _, line := range strings.Split(captureHelp([]string{"help"}), "\n") {
+		if !strings.HasPrefix(line, "  ") || strings.HasPrefix(line, "   ") {
+			continue
+		}
+		name, d, ok := strings.Cut(strings.TrimSpace(line), " ")
+		if !ok {
+			continue
+		}
+		if _, dup := desc[name]; !dup {
+			order = append(order, name)
+		}
+		desc[name] = strings.TrimSpace(d)
+	}
+	var b strings.Builder
+	b.WriteString(listBegin + "\n\n")
+	seen := map[string]bool{}
+	for _, name := range order {
+		if !cli.IsCommand(name) {
+			continue
+		}
+		seen[name] = true
+		fmt.Fprintf(&b, "- `%s` - %s\n", name, desc[name])
+	}
+	for _, name := range cli.CommandNames() {
+		if !seen[name] {
+			return "", fmt.Errorf("command %q is dispatched but absent from the help banner", name)
+		}
+	}
+	b.WriteString("\n" + listEnd)
+	return b.String(), nil
+}
+
 func run() error {
 	var out bytes.Buffer
 	out.WriteString(beginMarker + "\n\n")
@@ -119,6 +162,15 @@ func run() error {
 		return fmt.Errorf("%s: markers not found (expected %q and %q)", usageFile, beginMarker, endMarker)
 	}
 	updated := re.ReplaceAllLiteral(content, []byte(generated))
+	list, err := commandList()
+	if err != nil {
+		return err
+	}
+	lre := regexp.MustCompile(`(?s)` + regexp.QuoteMeta(listBegin) + `.*` + regexp.QuoteMeta(listEnd))
+	if !lre.Match(updated) {
+		return fmt.Errorf("%s: markers not found (expected %q and %q)", usageFile, listBegin, listEnd)
+	}
+	updated = lre.ReplaceAllLiteral(updated, []byte(list))
 	if err := os.WriteFile(usageFile, updated, 0o644); err != nil {
 		return fmt.Errorf("write %s: %w", usageFile, err)
 	}

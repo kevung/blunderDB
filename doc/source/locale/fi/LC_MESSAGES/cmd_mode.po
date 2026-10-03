@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 11:52+0200\n"
+"POT-Creation-Date: 2026-10-03 13:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1451,16 +1451,26 @@ msgid "T>x"
 msgstr "T>x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
-msgstr "Aseman lisäyspäivä x:n jälkeen (VVVV/KK/PP)."
+msgid ""
+"Date d'ajout de la position à la base après x (AAAA/MM/JJ). Ce n'est pas "
+"la date du match : l'ajout la fixe et la fusion de deux bases la "
+"conserve."
+msgstr ""
+"Päivä, jona asema lisättiin tietokantaan, x:n jälkeen (VVVV/KK/PP). Se ei"
+" ole ottelun päivämäärä: lisääminen asettaa sen ja kahden tietokannan "
+"yhdistäminen säilyttää sen."
 
 #: ../../source/cmd_mode.rst:1
 msgid "T<x"
 msgstr "T<x"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Date d'ajout de la position avant x (AAAA/MM/JJ)."
-msgstr "Aseman lisäyspäivä ennen x:ää (VVVV/KK/PP)."
+msgid ""
+"Date d'ajout de la position à la base avant x (AAAA/MM/JJ). Ce n'est pas "
+"la date du match."
+msgstr ""
+"Päivä, jona asema lisättiin tietokantaan, ennen x:ää (VVVV/KK/PP). Se ei "
+"ole ottelun päivämäärä."
 
 #: ../../source/cmd_mode.rst:1
 msgid "Tx,y"
@@ -1703,3 +1713,6 @@ msgstr "Tyhjentää komentohistorian."
 
 #~ msgid "Chercher parmi les positions actuellement filtrées."
 #~ msgstr "Etsi tällä hetkellä suodatettujen asemien joukosta."
+
+#~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
+#~ msgstr "Aseman lisäyspäivä x:n jälkeen (VVVV/KK/PP)."

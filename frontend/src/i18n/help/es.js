@@ -268,6 +268,8 @@ export default {
 </div>
 <h3>Panel de Colecciones</h3>
 <p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Se les pueden añadir o quitar posiciones (tecla <em>Supr</em>, se pide confirmación). Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El comando <code>ss</code> busca entre las posiciones de la colección abierta; <em>Esc</em> vuelve después a la colección (véase Panel de Búsqueda). El orden de las colecciones y de las posiciones dentro de una colección puede cambiarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code>collection</code> para mostrar u ocultar el panel.</p>
+<p>Una colección puede estar <strong>viva</strong>: su contenido ya no es una lista hecha a mano sino el resultado de una <strong>búsqueda</strong>, reevaluado cada vez que se abre. El botón ◇ en la cabecera de la colección la hace viva con la última búsqueda lanzada; ◈ indica que ya lo está, y el mismo botón le devuelve su lista. Nada se destruye al hacerla viva: las posiciones que contenía siguen ahí al volver atrás.</p>
+<p>Una colección viva cuya consulta lleva un token que esta versión ya no conoce <strong>se niega a abrirse</strong> y lo dice, en vez de devolver toda la base. Es el único fallo que un filtro guardado no debe tener: ensancharse en silencio.</p>
 <h4>Lecciones</h4>
 <p>Una <strong>lección</strong> es una secuencia de pasos que un entrenador escribe una sola vez para un alumno y le entrega en un archivo de base (véase el comando <code>lesson export</code> de cli). Cada paso tiene un título, un texto y puede mostrar una colección, una posición, ambas o ninguna. El comando <code>le</code> lista las lecciones de la base en la barra de estado; <code>le 2</code> abre la lección 2.</p>
 <p>Aparece entonces una <strong>barra de lectura</strong> encima del tablero: nombre de la lección, número del paso, título y luego el texto. <em>Anterior</em> y <em>Siguiente</em> cambian de paso; el paso lleva al tablero la colección o la posición que muestra, que se recorre después con los gestos habituales. <em>Cerrar</em> sale de la lección. Un paso cuya colección o posición se ha eliminado conserva su texto.</p>
@@ -283,10 +285,8 @@ export default {
 <li><strong>Una carpeta se importa en paralelo.</strong> Los archivos se leen en varios núcleos a la vez y se escriben por grupos, siempre en el orden de la carpeta: los números de partida no dependen de la máquina. Un archivo idéntico, byte a byte, a un archivo ya leído de la misma carpeta no se vuelve a leer: cuenta como duplicado. Cancelar detiene la importación en el grupo en curso; lo que ya estaba escrito se queda.</li>
 <li><strong>El progreso se lee en posiciones por segundo.</strong> La ventana de importación muestra el porcentaje leído, el ritmo, el tiempo restante estimado y los recuentos en curso (importados, duplicados, con error). <strong>Minimizar</strong> la guarda en la barra de estado, desde donde una pastilla la vuelve a abrir: la importación continúa mientras usted trabaja, y la ventana vuelve sola con el informe al final. Se listan los cien primeros errores; los siguientes se cuentan, y el registro de la aplicación los nombra todos. En la línea de comandos, <code>blunderdb import --type batch</code> muestra el mismo progreso en la salida de error, y <code>--format json</code> lo devuelve en el objeto final (<code>progress</code>).</li>
 <li><strong>Una carpeta grande se importa en modo masivo.</strong> A partir de 200 archivos, blunderDB escribe con una caché mayor y menos puntos de control. Si la base aún no contiene ninguna posición, va más lejos: los índices de búsqueda solo se reconstruyen al final y las escrituras ya no se sincronizan con el disco. Un corte de corriente durante una importación así puede entonces dañar la base: hay que recrearla y relanzar la importación. Un cierre brusco del programa, en cambio, solo deja índices ausentes, que la siguiente apertura reconstruye (el registro lo indica).</li>
-<li><strong>Lo que blunderDB nunca escribe</strong>: una suerte recalculada — se lee del archivo fuente, o queda desconocida — y un rollout, cuyos datos no abre dentro de un archivo <code>.xg</code> y que no sabe producir.</li>
+<li><strong>Lo que blunderDB nunca escribe</strong>: una suerte recalculada — se lee del archivo de origen o queda desconocida — y un rollout que no ha lanzado él mismo: los datos de rollout de un archivo <code>.xg</code> no se abren. Solo se almacenan los rollouts que produce blunderDB (Rollouts), junto al análisis.</li>
 </ul>
-<p>Una colección puede estar <strong>viva</strong>: su contenido ya no es una lista hecha a mano sino el resultado de una <strong>búsqueda</strong>, reevaluado cada vez que se abre. El botón ◇ en la cabecera de la colección la hace viva con la última búsqueda lanzada; ◈ indica que ya lo está, y el mismo botón le devuelve su lista. Nada se destruye al hacerla viva: las posiciones que contenía siguen ahí al volver atrás.</p>
-<p>Una colección viva cuya consulta lleva un token que esta versión ya no conoce <strong>se niega a abrirse</strong> y lo dice, en vez de devolver toda la base. Es el único fallo que un filtro guardado no debe tener: ensancharse en silencio.</p>
 <h3>Panel de Partidas</h3>
 <p>El panel <strong>Partidas</strong> (<em>CTRL-Tab</em>) lista las partidas importadas. Haga doble clic en una partida (o pulse <em>INTRO</em>) para navegar por sus jugadas. El comando <code>m</code> reanuda la navegación en la última partida visitada.</p>
 <p>El campo de filtro, en la parte superior del panel (<em>/</em> para ir a él, <em>Esc</em> para borrarlo), conserva solo las partidas en las que un jugador, el evento, el lugar, el torneo o la fecha contiene el texto escrito. El filtro y la ordenación de columnas los hace la base de datos: la lista se carga por páginas al desplazarse, y el contador «n / N partidas» indica la parte cargada. Corregir un jugador, una fecha o un torneo en la lista solo actualiza la fila editada.</p>
@@ -2462,12 +2462,12 @@ export default {
 </tr>
 <tr>
 <td>T&gt;x</td>
-<td>Fecha de adición de la posición posterior a x (AAAA/MM/DD).</td>
+<td>Fecha en que la posición se añadió a la base, posterior a x (AAAA/MM/DD). No es la fecha del match: la inserción la fija y la fusión de dos bases la conserva.</td>
 <td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
-<td>Fecha de adición de la posición anterior a x (AAAA/MM/DD).</td>
+<td>Fecha en que la posición se añadió a la base, anterior a x (AAAA/MM/DD). No es la fecha del match.</td>
 <td>—</td>
 </tr>
 <tr>
