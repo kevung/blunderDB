@@ -368,6 +368,7 @@ func TestDecodeOGIDColourField(t *testing.T) {
 		board + "N0N:46:W:R:0:0:3:1":  Black,
 		board + "N0N::w::0:0:3:":      Black,
 		board + "N0N::::0:0:3:":       White,
+		board + "N0N::X::0:0:3:":      White,
 		board + "N0O::B:D:0:0:3:11":   Black,
 		board + "N0O::W:D:0:0:3:11":   White,
 		board + "N0N::W:D:0:0:3:11":   White,

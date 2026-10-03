@@ -151,9 +151,11 @@ func DecodeOGID(ogid string) (Position, error) {
 	// who is on roll of the cube decision. ---
 	pos.PlayerOnRoll = White
 	if len(fields) > 4 && fields[4] != "" {
-		reached := White
-		if fields[4] == "B" || fields[4] == "b" {
-			reached = Black
+		// Anything but W reads as B, as the reference parser reads it, so a
+		// value outside the specification falls back to White on roll.
+		reached := Black
+		if c := fields[4][0]; c == 'W' || c == 'w' {
+			reached = White
 		}
 		pendingDouble := cube[2] == 'O' || cube[2] == 'o' ||
 			(len(fields) > 5 && strings.EqualFold(fields[5], "D"))
