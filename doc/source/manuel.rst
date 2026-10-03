@@ -2606,8 +2606,9 @@ taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.
    avec zéro. C'est notamment le cas de la colonne Chance pour tout match
    importé avant la version 2.15.0 du schéma : la chance n'était alors pas
    conservée, et rien ne permet de la reconstituer après coup. Réimporter le
-   fichier source ne suffit pas : l'import y reconnaît un doublon et n'en reprend
-   que les marques. Il faut supprimer le match, puis le réimporter. Les formats
+   fichier source ne suffit pas : l'import y reconnaît un doublon et n'applique
+   que les marques d'étude nouvellement levées (le rapport en donne le nombre).
+   Il faut supprimer le match, puis le réimporter. Les formats
    qui ne la transportent pas (BGF, Jellyfish ``.mat``) n'en fourniront jamais.
 
 Règle d'agrégation

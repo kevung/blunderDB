@@ -680,7 +680,7 @@ export default {
 <p>Dans cet onglet, la liste <strong>Joueur</strong> et le choix du <strong>type de décision</strong> sont désactivés : le tableau montre tous les joueurs, et il ventile déjà les décisions de pions et de videau en colonnes distinctes.</p>
 </div>
 <div class="admonition important">
-<p>Un tiret (« — ») signale une valeur <strong>jamais mesurée</strong>, à ne pas confondre avec zéro. C'est notamment le cas de la colonne Chance pour tout match importé avant la version 2.15.0 du schéma : la chance n'était alors pas conservée, et rien ne permet de la reconstituer après coup. Réimporter le fichier source ne suffit pas : l'import y reconnaît un doublon et n'en reprend que les marques. Il faut supprimer le match, puis le réimporter. Les formats qui ne la transportent pas (BGF, Jellyfish <code>.mat</code>) n'en fourniront jamais.</p>
+<p>Un tiret (« — ») signale une valeur <strong>jamais mesurée</strong>, à ne pas confondre avec zéro. C'est notamment le cas de la colonne Chance pour tout match importé avant la version 2.15.0 du schéma : la chance n'était alors pas conservée, et rien ne permet de la reconstituer après coup. Réimporter le fichier source ne suffit pas : l'import y reconnaît un doublon et n'applique que les marques d'étude nouvellement levées (le rapport en donne le nombre). Il faut supprimer le match, puis le réimporter. Les formats qui ne la transportent pas (BGF, Jellyfish <code>.mat</code>) n'en fourniront jamais.</p>
 </div>
 <h4>Règle d'agrégation</h4>
 <div class="admonition important">
