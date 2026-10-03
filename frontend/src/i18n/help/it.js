@@ -987,8 +987,12 @@ export default {
 <td>Ricarica tutte le posizioni dal database.</td>
 </tr>
 <tr>
-<td>PageUp, h</td>
+<td>Home, h</td>
 <td>Prima posizione / Partita precedente (navigazione match).</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Torna indietro di una pagina di cento posizioni (si ferma all'inizio dell'elenco); in una partita, gioco precedente.</td>
 </tr>
 <tr>
 <td>SINISTRA, k</td>
@@ -1007,8 +1011,12 @@ export default {
 <td>Mossa successiva (quando una mossa è selezionata nell'analisi).</td>
 </tr>
 <tr>
-<td>PageDown, l</td>
+<td>End, l</td>
 <td>Ultima posizione / Partita successiva (navigazione match).</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Avanza di una pagina di cento posizioni (si ferma alla fine dell'elenco); in una partita, gioco successivo.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1904,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Vai alla posizione con l'indice indicato.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Va a quella percentuale dell'elenco: <code>0%</code> la prima posizione, <code>50%</code> la metà, <code>100%</code> l'ultima.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

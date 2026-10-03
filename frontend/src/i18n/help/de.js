@@ -987,8 +987,12 @@ export default {
 <td>Alle Positionen aus der Datenbank neu laden.</td>
 </tr>
 <tr>
-<td>Bild-auf, h</td>
+<td>Home, h</td>
 <td>Erste Position / Vorheriges Spiel (Match-Navigation).</td>
+</tr>
+<tr>
+<td>Bild-auf</td>
+<td>Geht eine Seite von hundert Stellungen zurück (hält am Listenanfang an); in einem Match: vorheriges Spiel.</td>
 </tr>
 <tr>
 <td>LINKS, k</td>
@@ -1007,8 +1011,12 @@ export default {
 <td>Nächster Zug (wenn ein Zug in der Analyse ausgewählt ist).</td>
 </tr>
 <tr>
-<td>Bild-ab, l</td>
+<td>End, l</td>
 <td>Letzte Position / Nächstes Spiel (Match-Navigation).</td>
+</tr>
+<tr>
+<td>Bild-ab</td>
+<td>Geht eine Seite von hundert Stellungen vor (hält am Listenende an); in einem Match: nächstes Spiel.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1904,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Springt zur Position mit dem angegebenen Index.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Springt zu diesem Prozentsatz der Liste: <code>0%</code> die erste Stellung, <code>50%</code> die Mitte, <code>100%</code> die letzte.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

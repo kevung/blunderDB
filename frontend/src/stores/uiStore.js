@@ -36,6 +36,9 @@ export const commandPaletteScopeStore = writable(null);
 export const matchOpenRequestStore = writable(null);
 
 export const currentPositionIndexStore = writable(0);
+// How many positions PageUp / PageDown jump over in a long list.
+export const PAGE_STEP_DEFAULT = 100;
+export const pageStepStore = writable(PAGE_STEP_DEFAULT);
 
 // ── Modal identifiers (exclusive — only one modal at a time) ──
 export const MODAL = {

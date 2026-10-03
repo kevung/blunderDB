@@ -987,8 +987,12 @@ export default {
 <td>Lataa kaikki tietokannan asemat uudelleen.</td>
 </tr>
 <tr>
-<td>PageUp, h</td>
+<td>Home, h</td>
 <td>Ensimmäinen asema / Edellinen peli (ottelunavigointi).</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Siirtyy sata asemaa taaksepäin (pysähtyy luettelon alkuun); ottelussa edelliseen peliin.</td>
 </tr>
 <tr>
 <td>VASEN, k</td>
@@ -1007,8 +1011,12 @@ export default {
 <td>Seuraava siirto (kun analyysissa on valittu siirto).</td>
 </tr>
 <tr>
-<td>PageDown, l</td>
+<td>End, l</td>
 <td>Viimeinen asema / Seuraava peli (ottelunavigointi).</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Siirtyy sata asemaa eteenpäin (pysähtyy luettelon loppuun); ottelussa seuraavaan peliin.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1904,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Siirry annetun indeksin asemaan.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Siirtyy luettelon tähän prosenttikohtaan: <code>0%</code> ensimmäinen asema, <code>50%</code> keskikohta, <code>100%</code> viimeinen.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

@@ -987,8 +987,12 @@ export default {
 <td>データベースからすべてのポジションを再読み込みする。</td>
 </tr>
 <tr>
-<td>PageUp, h</td>
+<td>Home, h</td>
 <td>最初のポジション / 前のゲーム（マッチナビゲーション）。</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>100 局面ぶん（1 ページ）戻ります（リストの先頭で止まります）。マッチ内では前のゲームです。</td>
 </tr>
 <tr>
 <td>LEFT, k</td>
@@ -1007,8 +1011,12 @@ export default {
 <td>次の手（分析で手が選択されている場合）。</td>
 </tr>
 <tr>
-<td>PageDown, l</td>
+<td>End, l</td>
 <td>最後のポジション / 次のゲーム（マッチナビゲーション）。</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>100 局面ぶん（1 ページ）進みます（リストの末尾で止まります）。マッチ内では次のゲームです。</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1904,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>指定したインデックスの局面に移動します。</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>リストのその割合の位置へ移動します。<code>0%</code> は最初の局面、<code>50%</code> は中間、<code>100%</code> は最後の局面です。</td>
 </tr>
 <tr>
 <td>grid, gr</td>

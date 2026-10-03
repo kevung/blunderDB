@@ -987,8 +987,12 @@ export default {
 <td>Recargar todas las posiciones de la base de datos.</td>
 </tr>
 <tr>
-<td>AvPág, h</td>
+<td>Home, h</td>
 <td>Primera posición / Partida anterior (navegación de partida).</td>
+</tr>
+<tr>
+<td>AvPág</td>
+<td>Retrocede una página de cien posiciones (se detiene al principio de la lista); en una partida, juego anterior.</td>
 </tr>
 <tr>
 <td>IZQUIERDA, k</td>
@@ -1007,8 +1011,12 @@ export default {
 <td>Jugada siguiente (cuando hay una jugada seleccionada en el análisis).</td>
 </tr>
 <tr>
-<td>RePág, l</td>
+<td>End, l</td>
 <td>Última posición / Partida siguiente (navegación de partida).</td>
+</tr>
+<tr>
+<td>RePág</td>
+<td>Avanza una página de cien posiciones (se detiene al final de la lista); en una partida, juego siguiente.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1904,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Ir a la posición del índice indicado.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Ir a ese porcentaje de la lista: <code>0%</code> la primera posición, <code>50%</code> la mitad, <code>100%</code> la última.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

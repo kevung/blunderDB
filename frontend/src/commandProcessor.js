@@ -28,8 +28,15 @@ export function processCommand(command) {
     const positions = get(positionsStore);
     const databaseLoaded = get(databaseLoadedStore);
 
+    const percent = command.match(/^(\d+(?:[.,]\d+)?)\s*%$/);
     const match = command.match(/^(\d+)$/);
-    if (match) {
+    if (percent) {
+        // `:N%` — N percent of the way through the list (0% first, 100% last).
+        const ratio = Math.min(100, parseFloat(percent[1].replace(',', '.'))) / 100;
+        const index = positions.length > 0 ? Math.round(ratio * (positions.length - 1)) : 0;
+        currentPositionIndexStore.set(index);
+        statusBarTextStore.set(tMsg('commands.goToPosition', { n: index + 1 }));
+    } else if (match) {
         const positionNumber = parseInt(match[1], 10);
         let index;
         if (positionNumber < 1) {

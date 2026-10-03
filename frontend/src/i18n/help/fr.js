@@ -987,8 +987,12 @@ export default {
 <td>Recharger toutes les positions de la base de données.</td>
 </tr>
 <tr>
-<td>PageUp, h</td>
+<td>Home, h</td>
 <td>Première position / Partie précédente (navigation match).</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Recule d'une page de cent positions (au début de la liste, s'y arrête) ; dans un match, partie précédente.</td>
 </tr>
 <tr>
 <td>GAUCHE, k</td>
@@ -1007,8 +1011,12 @@ export default {
 <td>Coup suivant (lorsqu'un coup est sélectionné dans l'analyse).</td>
 </tr>
 <tr>
-<td>PageDown, l</td>
+<td>End, l</td>
 <td>Dernière position / Partie suivante (navigation match).</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Avance d'une page de cent positions (à la fin de la liste, s'y arrête) ; dans un match, partie suivante.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1904,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Aller à la position d'indice indiqué.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Aller à ce pourcentage de la liste : <code>0%</code> la première position, <code>50%</code> le milieu, <code>100%</code> la dernière.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

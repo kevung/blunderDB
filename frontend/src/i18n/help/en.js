@@ -987,8 +987,12 @@ export default {
 <td>Reload all the positions from the database.</td>
 </tr>
 <tr>
-<td>PageUp, h</td>
+<td>Home, h</td>
 <td>First position / Previous game (match navigation).</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Goes back one page of a hundred positions (stops at the start of the list); in a match, previous game.</td>
 </tr>
 <tr>
 <td>LEFT, k</td>
@@ -1007,8 +1011,12 @@ export default {
 <td>Next move (when a move is selected in the analysis).</td>
 </tr>
 <tr>
-<td>PageDown, l</td>
+<td>End, l</td>
 <td>Last position / Next game (match navigation).</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Goes forward one page of a hundred positions (stops at the end of the list); in a match, next game.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1904,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Go to the specified index position.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Go to that percentage of the list: <code>0%</code> the first position, <code>50%</code> the middle, <code>100%</code> the last.</td>
 </tr>
 <tr>
 <td>grid, gr</td>
