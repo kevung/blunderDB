@@ -449,6 +449,9 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			successCount++
 			if text {
 				fmt.Printf(" OK (ID: %d, %d positions)\n", o.MatchID, o.Positions)
+				if p := o.ProbableDuplicate; p != nil {
+					fmt.Printf("    probable duplicate of #%d under other names (%s)\n", p.OtherID, p.OtherPlayers)
+				}
 			}
 		}
 		results = append(results, result)

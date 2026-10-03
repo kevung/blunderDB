@@ -118,6 +118,15 @@ func (s *Server) matchRoutes() []route {
 			id, found, err := ms().FindByHash(ctx, scope, req.Hash, req.CanonicalHash)
 			return findByHashResp{ID: id, Found: found}, err
 		})},
+		// Paires de matchs que les dés disent identiques (autres noms, ou
+		// version tronquée puis complétée) : un signal, jamais une fusion.
+		{http.MethodPost, "/v1/matches.duplicates", rpc(func(ctx context.Context, scope string, _ struct{}) (duplicatesResp, error) {
+			out, _, err := ingest.FindDuplicateSuspects(ctx, ms(), scope)
+			if out == nil {
+				out = []domain.DuplicateSuspect{}
+			}
+			return duplicatesResp{Suspects: out}, err
+		})},
 		{http.MethodPost, "/v1/matches.list", rpcStream(func(ctx context.Context, scope string, req matchListReq) iterMatches {
 			return ms().List(ctx, scope, req.opts())
 		})},
@@ -193,4 +202,9 @@ func (s *Server) exportMatchMATHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Header().Set("Content-Disposition", `attachment; filename="match.mat"`)
 	_, _ = io.WriteString(w, ingest.RenderMAT(m, games, moves))
+}
+
+// duplicatesResp lists the suspected duplicate pairs of /v1/matches.duplicates.
+type duplicatesResp struct {
+	Suspects []domain.DuplicateSuspect `json:"suspects"`
 }

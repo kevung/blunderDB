@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -48,11 +49,14 @@ type FileOutcome struct {
 	// Deepened counts, for a duplicate, the stored analyses it deepened: a
 	// duplicate with Deepened > 0 brought a deeper analysis of a match
 	// already here, one with 0 brought nothing new.
-	Deepened int    `json:"deepened,omitempty"`
-	Player1  string `json:"player1,omitempty"`
-	Player2  string `json:"player2,omitempty"`
-	Games    int    `json:"games,omitempty"`
-	Error    string `json:"error,omitempty"`
+	Deepened int `json:"deepened,omitempty"`
+	// ProbableDuplicate is set on an imported match whose dice are those of
+	// a match already stored under other player names.
+	ProbableDuplicate *domain.DuplicateSuspect `json:"probable_duplicate,omitempty"`
+	Player1           string                   `json:"player1,omitempty"`
+	Player2           string                   `json:"player2,omitempty"`
+	Games             int                      `json:"games,omitempty"`
+	Error             string                   `json:"error,omitempty"`
 	// DuplicateOf is the index of an earlier file of the same list with the
 	// same bytes, -1 when the duplicate (if any) was found in the database.
 	DuplicateOf int `json:"duplicate_of"`
@@ -436,6 +440,7 @@ func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error)
 		o.Status, o.Positions = FileEnriched, res.SavedPositions
 	default:
 		o.Status, o.Positions = FileImported, res.SavedPositions
+		o.ProbableDuplicate = res.ProbableDuplicate
 	}
 	// The graph is no longer needed once written; drop it before the group
 	// commits so a group of large files does not stay in memory.

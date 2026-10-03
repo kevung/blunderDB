@@ -449,6 +449,9 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 				if o.Status == ingest.FileImported || o.Status == ingest.FileEnriched {
 					counts.PositionsSaved += o.Positions
 				}
+				if o.ProbableDuplicate != nil {
+					counts.ProbableDuplicates = append(counts.ProbableDuplicates, *o.ProbableDuplicate)
+				}
 				if o.Status == ingest.FileFailed {
 					rel, rerr := filepath.Rel(root, o.Path)
 					if rerr != nil {

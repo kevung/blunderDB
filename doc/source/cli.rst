@@ -2025,6 +2025,17 @@ avait tirées qui sont refaites.
   par passe : ``repaired`` (colonnes d'analyse), ``phases`` (positions
   reclassées) et ``crawford`` (positions réhachées). Chacun dit le nombre de
   lignes réellement changées.
+* ``--duplicates`` — Ne lance aucune des passes : liste les paires de matchs
+  que les dés disent identiques, sans rien fusionner (voir ci-dessous).
+
+**Doublons probables.** ``repair --duplicates`` compare les matchs par leurs
+dés, jamais par leurs noms. Deux cas sont signalés : la même longueur, le même
+score initial et les mêmes dés dans chaque partie sous d'autres noms de
+joueurs, et un match dont les dés prolongent ceux d'un autre — un match tronqué
+puis complété. ``--format json`` rend ``{"suspects": [...]}``, chaque paire
+avec ``kind`` (``same_dice`` ou ``longer``), ``matchId``, ``otherId``,
+``players`` et ``otherPlayers``. Un match importé avant que l'empreinte des dés
+existe la reçoit au passage ; c'est la seule écriture de ce mode.
 
 Utile après une correction de la façon dont une analyse importée est lue. Le
 cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de double » de

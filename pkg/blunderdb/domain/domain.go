@@ -750,6 +750,10 @@ type Match struct {
 	// are set at import time and used by MatchStore dedup. Empty when unknown.
 	MatchHash     string `json:"match_hash,omitempty"`
 	CanonicalHash string `json:"canonical_hash,omitempty"`
+	// DiceHash covers the length, the initial score and the dice of every
+	// game, never the names: the same match stored under other player names
+	// shares it (ingest.DiceMatchHash). Empty until computed.
+	DiceHash string `json:"dice_hash,omitempty"`
 
 	// ImportBatchID names the import this match came in with, zero when
 	// written outside an import. Set by the importer only; deleting the batch

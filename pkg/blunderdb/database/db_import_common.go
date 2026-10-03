@@ -13,6 +13,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // openExistingSQLite opens a database file that is only being read from —
@@ -69,6 +70,9 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 	}
 	if err := tx.Commit(); err != nil {
 		return 0, err
+	}
+	if res.ProbableDuplicate != nil {
+		d.importBatchCounts.ProbableDuplicates = append(d.importBatchCounts.ProbableDuplicates, *res.ProbableDuplicate)
 	}
 	// Only the writing path knows written vs enriched; callers see an id either way.
 	if res.Enriched {
@@ -336,3 +340,16 @@ func (d *Database) CheckMatchExists(matchHash string) (int64, error) {
 // replace them and the rest is skipped; true skips it outright, the behaviour
 // of `import --skip-duplicates`.
 func (d *Database) SetSkipDuplicates(skip bool) { d.skipDuplicates.Store(skip) }
+
+// FindDuplicateMatches lists the pairs of stored matches the dice say are
+// probably one (ingest.FindDuplicateSuspects), filling on the way the
+// dice_hash of the matches imported before it existed. Nothing is merged.
+func (d *Database) FindDuplicateMatches() ([]domain.DuplicateSuspect, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	if d.store == nil {
+		return nil, fmt.Errorf("find duplicate matches: %w", storage.ErrInternal)
+	}
+	out, _, err := ingest.FindDuplicateSuspects(context.Background(), d.store.Matches(), "")
+	return out, err
+}

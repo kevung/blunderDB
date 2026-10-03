@@ -1250,6 +1250,19 @@ a phase or a game type is decided. Nothing runs it automatically.
 **Options:**
 - `--db` - Path to the database file (required)
 - `--format` - Output format: `text` (default) or `json`
+- `--duplicates` - Only list the suspected duplicate matches (see below)
+
+**Suspected duplicates.** `repair --duplicates` runs none of the passes above:
+it lists the pairs of matches whose dice say they are one match, and merges
+nothing. Two kinds: the same length, initial score and dice in every game
+under other player names (`#12 (…) has the dice of #7 (…)`), and a match whose
+dice continue another's, a truncated match later completed (`#31 (…) is a
+longer version of #30 (…)`). `--format json` returns `{"suspects": [{"kind":
+"same_dice"|"longer", "matchId", "otherId", "players", "otherPlayers"}]}`. A
+match imported before the dice hash existed gets it on the way, which is the
+only thing this mode writes. An import also signals a match whose dice are
+already stored under other names: `probable duplicate of #N under other
+names` under its line, and in the import report.
 
 The analyses are left untouched: this repairs only what was derived from them,
 and a position with no analysis keeps its empty columns. Use `analyze` to
@@ -3046,12 +3059,15 @@ Nothing runs it automatically.
 Options:
   -db string
     	Path to the database file (required)
+  -duplicates
+    	Only list the pairs of matches whose dice say they are one: same dice under other player names, or a truncated match and its longer version (nothing is merged)
   -format string
     	Output format: text or json (default "text")
 
 Examples:
   blunderdb repair --db database.db
   blunderdb repair --db database.db --format json
+  blunderdb repair --db database.db --duplicates
 ```
 
 ### `blunderdb rollout`

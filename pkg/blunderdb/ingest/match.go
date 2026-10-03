@@ -70,6 +70,10 @@ type WriteResult struct {
 	// Tournament is the event name the match was filed under, empty when the
 	// file named none or when the match already existed.
 	Tournament string
+	// ProbableDuplicate is set when the match this call created has the dice
+	// of a match already stored under other player names: a signal for the
+	// report, never a merge.
+	ProbableDuplicate *domain.DuplicateSuspect
 }
 
 // WriteMatch persists a MatchGraph through tx. It is the single Storage-based
@@ -154,6 +158,20 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 	}
 
+	// The names are not in the dice hash: a match stored under other names
+	// is found here, and only signalled.
+	if !enrich && g.Match.DiceHash == "" {
+		initial, dice := graphDice(g)
+		g.Match.DiceHash = DiceMatchHash(int(g.Match.MatchLength), initial, dice)
+	}
+	if !enrich && !replace {
+		suspect, err := probableDuplicate(ctx, tx, scope, &g.Match)
+		if err != nil {
+			return res, err
+		}
+		res.ProbableDuplicate = suspect
+	}
+
 	switch {
 	case replace:
 		// The header is re-stated, never re-inserted: ReplaceHeader leaves the
@@ -189,6 +207,9 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 	}
 	res.MatchID = matchID
+	if res.ProbableDuplicate != nil {
+		res.ProbableDuplicate.MatchID = matchID
+	}
 	res.Enriched = enrich
 	res.Replaced = replace
 
@@ -381,4 +402,33 @@ func deepenAnalyses(ctx context.Context, tx storage.Tx, scope string, g *MatchGr
 		}
 	}
 	return n, nil
+}
+
+// probableDuplicate looks for a stored match with m's dice under other
+// player names, and returns it as a suspect whose MatchID the caller fills
+// once m is saved; nil when there is none.
+func probableDuplicate(ctx context.Context, tx storage.Tx, scope string, m *domain.Match) (*domain.DuplicateSuspect, error) {
+	others, err := tx.Matches().ListByDiceHash(ctx, scope, m.DiceHash)
+	if err != nil {
+		return nil, err
+	}
+	for _, o := range others {
+		if samePlayers(o.Player1Name, o.Player2Name, m.Player1Name, m.Player2Name) {
+			continue
+		}
+		return &domain.DuplicateSuspect{
+			Kind: domain.DuplicateSameDice, OtherID: o.ID,
+			Players:      m.Player1Name + " – " + m.Player2Name,
+			OtherPlayers: o.Player1Name + " – " + o.Player2Name,
+		}, nil
+	}
+	return nil, nil
+}
+
+// samePlayers reports whether two matches name the same two players, in
+// either seat, ignoring case and surrounding spaces.
+func samePlayers(a1, a2, b1, b2 string) bool {
+	n := func(s string) string { return strings.ToLower(strings.TrimSpace(s)) }
+	x1, x2, y1, y2 := n(a1), n(a2), n(b1), n(b2)
+	return (x1 == y1 && x2 == y2) || (x1 == y2 && x2 == y1)
 }

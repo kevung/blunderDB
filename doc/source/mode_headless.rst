@@ -897,6 +897,11 @@ fond, le temps qu'il faut. Le lot arrive sous l'une de ces deux formes :
   fichiers de match. C'est la voie des gros corpus, qu'on ne pousse pas par
   HTTP.
 
+Un match déjà en base n'est pas réécrit, mais ses analyses plus profondes que
+celles rangées les remplacent ; ``?skip_duplicates=true``, accepté par
+``imports.batch`` comme par l'import d'un fichier, l'ignore sans rien en
+reprendre que les marques, comme ``--skip-duplicates`` en ligne de commande.
+
 ``Idempotency-Key`` est accepté : rejouer l'appel avec la même clé rend le même
 ``importId`` (en-tête ``Idempotency-Replayed: true``) sans relancer l'import. Pour
 un lot reçu en archive, la clé désigne le lot, pas le contenu de l'archive.
@@ -995,6 +1000,9 @@ Deux méthodes complètent la parité avec l'interface graphique :
 affiché sur sa vignette (PR du joueur de référence), et ``matches.findByHash``
 indique si un match donné est déjà présent, à partir des deux empreintes de
 détection de doublon — de quoi éviter un import redondant avant de l'engager.
+``matches.duplicates`` liste les paires de matchs que les dés disent
+identiques — mêmes dés sous d'autres noms, ou version tronquée puis complétée —
+comme ``repair --duplicates``, sans rien fusionner.
 
 Le champ ``winner`` d'une partie, reçu par ``matches.createGame`` et renvoyé par
 ``matches.games``, a un seul codage : ``1`` pour le joueur 1, ``-1`` pour le

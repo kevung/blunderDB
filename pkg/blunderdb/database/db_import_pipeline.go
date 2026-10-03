@@ -151,5 +151,8 @@ func (d *Database) countImported(o ingest.FileOutcome) {
 	if o.Status == ingest.FileImported || o.Status == ingest.FileEnriched {
 		d.importBatchCounts.PositionsSaved += o.Positions
 	}
+	if o.ProbableDuplicate != nil {
+		d.importBatchCounts.ProbableDuplicates = append(d.importBatchCounts.ProbableDuplicates, *o.ProbableDuplicate)
+	}
 	d.positionsSinceStats += o.Positions
 }

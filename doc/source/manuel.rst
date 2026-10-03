@@ -1189,6 +1189,14 @@ ne remplace pas ce qui est déjà là.
   d'autre que les marques. Un match tronqué puis complété (plus de parties)
   n'est pas le même match : il est importé comme un second match.
 
+* **Un match déjà présent sous d'autres noms est signalé, jamais fusionné.**
+  Les deux empreintes de match portent les noms des joueurs : « Martin A. » et
+  « Alice Martin » font deux matchs. L'import compare aussi les dés (longueur,
+  score initial, dés de chaque partie) et signale, sous la ligne du fichier et
+  dans le rapport, le match déjà en base sous d'autres noms dont il a les dés.
+  ``blunderdb repair --duplicates`` liste ces paires dans une base existante,
+  ainsi que les matchs tronqués et leur version plus longue.
+
 * **Un dossier s'importe en parallèle.** Les fichiers sont lus sur plusieurs
   cœurs à la fois et écrits par groupes, toujours dans l'ordre du dossier : les
   numéros de match ne dépendent pas de la machine. Un fichier identique, octet

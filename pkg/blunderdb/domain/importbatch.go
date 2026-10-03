@@ -45,6 +45,10 @@ type ImportReport struct {
 	// MatchesSkipped - MatchesDeepened.
 	MatchesDeepened  int `json:"matchesDeepened,omitempty"`
 	AnalysesDeepened int `json:"analysesDeepened,omitempty"`
+	// ProbableDuplicates lists the matches this batch wrote whose dice are
+	// those of a match already stored under other player names: signalled,
+	// never merged (DuplicateSuspect).
+	ProbableDuplicates []DuplicateSuspect `json:"probableDuplicates,omitempty"`
 
 	// FilesFailed counts the files the batch could not read at all, and
 	// Failures names the first few of them with the reason. A batch that
@@ -152,3 +156,24 @@ const MaxStudyQueue = 50
 
 // The queue's error threshold is the library's own (storage.LibrarySettings,
 // ADR-0046).
+
+// Kinds of DuplicateSuspect.
+const (
+	// DuplicateSameDice: both matches have the same length, initial score
+	// and dice in every game, under other player names.
+	DuplicateSameDice = "same_dice"
+	// DuplicateLonger: MatchID's dice continue OtherID's — the same match,
+	// truncated in OtherID and completed in MatchID.
+	DuplicateLonger = "longer"
+)
+
+// DuplicateSuspect pairs two stored matches the dice say are probably one.
+// It is a signal for the user, who decides — by an alias, by deleting one —
+// and nothing ever merges them on its own.
+type DuplicateSuspect struct {
+	Kind         string `json:"kind"`
+	MatchID      int64  `json:"matchId"`
+	OtherID      int64  `json:"otherId"`
+	Players      string `json:"players"`
+	OtherPlayers string `json:"otherPlayers"`
+}
