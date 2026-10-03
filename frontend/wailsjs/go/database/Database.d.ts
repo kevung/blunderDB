@@ -237,6 +237,8 @@ export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<str
 
 export function ExportTranscriptionMAT(arg1:number,arg2:string):Promise<void>;
 
+export function FindDuplicateMatches():Promise<Array<domain.DuplicateSuspect>>;
+
 export function FinishImportBatch(arg1:number,arg2:domain.ImportReport):Promise<void>;
 
 export function FinishTranscription(arg1:number):Promise<database.TranscriptionSaveResult>;
@@ -377,6 +379,8 @@ export function IsReadOnly():Promise<boolean>;
 
 export function LastDecision(arg1:number):Promise<service.LastDecision>;
 
+export function ListAliases(arg1:string):Promise<Array<storage.Alias>>;
+
 export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
 
 export function ListCollectionPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
@@ -487,6 +491,8 @@ export function RefreshSearchStatistics():Promise<void>;
 
 export function ReinstateParticipant(arg1:number,arg2:string):Promise<service.DirectionView>;
 
+export function RemoveAlias(arg1:string,arg2:string):Promise<boolean>;
+
 export function RemoveAnkiCard(arg1:number):Promise<void>;
 
 export function RemoveLessonStep(arg1:number):Promise<void>;
@@ -571,6 +577,8 @@ export function SeasonCSV(arg1:service.SeasonQuery):Promise<string>;
 
 export function SeasonRanking(arg1:service.SeasonQuery):Promise<service.SeasonView>;
 
+export function SetAlias(arg1:string,arg2:string,arg3:string):Promise<void>;
+
 export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetBeforeSwitch(arg1:any):Promise<void>;
@@ -601,6 +609,8 @@ export function SetRencontreTableOutOfService(arg1:number,arg2:number,arg3:boole
 
 export function SetRencontreTables(arg1:number,arg2:Array<domain.TableSetting>):Promise<service.RencontreView>;
 
+export function SetSkipDuplicates(arg1:boolean):Promise<void>;
+
 export function SetupDatabase(arg1:string):Promise<void>;
 
 export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.SimilarPosition>>;
@@ -622,6 +632,8 @@ export function StartTranscriptionFromSlot(arg1:number,arg2:string):Promise<data
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
 
 export function StudyPositionIDs(arg1:database.StatsFilter,arg2:number,arg3:number):Promise<Array<number>>;
+
+export function SuggestAliases(arg1:string):Promise<Array<storage.AliasSuggestion>>;
 
 export function SuggestMatFilename(arg1:number):Promise<string>;
 
@@ -692,9 +704,3 @@ export function WriteDirectionPairingSheet(arg1:number,arg2:number):Promise<stri
 export function WriteDirectionUpcomingSheet(arg1:number,arg2:string):Promise<string>;
 
 export function WriteRencontrePage(arg1:number):Promise<string>;
-export function FindDuplicateMatches():Promise<Array<domain.DuplicateSuspect>>;
-export function ListAliases(arg1:string):Promise<Array<storage.Alias>>;
-export function RemoveAlias(arg1:string,arg2:string):Promise<boolean>;
-export function SetAlias(arg1:string,arg2:string,arg3:string):Promise<void>;
-export function SetSkipDuplicates(arg1:boolean):Promise<void>;
-export function SuggestAliases(arg1:string):Promise<Array<storage.AliasSuggestion>>;

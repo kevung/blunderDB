@@ -442,6 +442,10 @@ export function ExportTranscriptionMAT(arg1, arg2) {
   return window['go']['database']['Database']['ExportTranscriptionMAT'](arg1, arg2);
 }
 
+export function FindDuplicateMatches() {
+  return window['go']['database']['Database']['FindDuplicateMatches']();
+}
+
 export function FinishImportBatch(arg1, arg2) {
   return window['go']['database']['Database']['FinishImportBatch'](arg1, arg2);
 }
@@ -722,6 +726,10 @@ export function LastDecision(arg1) {
   return window['go']['database']['Database']['LastDecision'](arg1);
 }
 
+export function ListAliases(arg1) {
+  return window['go']['database']['Database']['ListAliases'](arg1);
+}
+
 export function ListAnkiDeckPositionIDs(arg1, arg2, arg3) {
   return window['go']['database']['Database']['ListAnkiDeckPositionIDs'](arg1, arg2, arg3);
 }
@@ -942,6 +950,10 @@ export function ReinstateParticipant(arg1, arg2) {
   return window['go']['database']['Database']['ReinstateParticipant'](arg1, arg2);
 }
 
+export function RemoveAlias(arg1, arg2) {
+  return window['go']['database']['Database']['RemoveAlias'](arg1, arg2);
+}
+
 export function RemoveAnkiCard(arg1) {
   return window['go']['database']['Database']['RemoveAnkiCard'](arg1);
 }
@@ -1110,6 +1122,10 @@ export function SeasonRanking(arg1) {
   return window['go']['database']['Database']['SeasonRanking'](arg1);
 }
 
+export function SetAlias(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SetAlias'](arg1, arg2, arg3);
+}
+
 export function SetAnkiCardSuspended(arg1, arg2) {
   return window['go']['database']['Database']['SetAnkiCardSuspended'](arg1, arg2);
 }
@@ -1170,6 +1186,10 @@ export function SetRencontreTables(arg1, arg2) {
   return window['go']['database']['Database']['SetRencontreTables'](arg1, arg2);
 }
 
+export function SetSkipDuplicates(arg1) {
+  return window['go']['database']['Database']['SetSkipDuplicates'](arg1);
+}
+
 export function SetupDatabase(arg1) {
   return window['go']['database']['Database']['SetupDatabase'](arg1);
 }
@@ -1212,6 +1232,10 @@ export function StudyImpact(arg1) {
 
 export function StudyPositionIDs(arg1, arg2, arg3) {
   return window['go']['database']['Database']['StudyPositionIDs'](arg1, arg2, arg3);
+}
+
+export function SuggestAliases(arg1) {
+  return window['go']['database']['Database']['SuggestAliases'](arg1);
 }
 
 export function SuggestMatFilename(arg1) {
@@ -1352,28 +1376,4 @@ export function WriteDirectionUpcomingSheet(arg1, arg2) {
 
 export function WriteRencontrePage(arg1) {
   return window['go']['database']['Database']['WriteRencontrePage'](arg1);
-}
-
-export function FindDuplicateMatches() {
-  return window['go']['database']['Database']['FindDuplicateMatches']();
-}
-
-export function ListAliases(arg1) {
-  return window['go']['database']['Database']['ListAliases'](arg1);
-}
-
-export function RemoveAlias(arg1, arg2) {
-  return window['go']['database']['Database']['RemoveAlias'](arg1, arg2);
-}
-
-export function SetAlias(arg1, arg2, arg3) {
-  return window['go']['database']['Database']['SetAlias'](arg1, arg2, arg3);
-}
-
-export function SetSkipDuplicates(arg1) {
-  return window['go']['database']['Database']['SetSkipDuplicates'](arg1);
-}
-
-export function SuggestAliases(arg1) {
-  return window['go']['database']['Database']['SuggestAliases'](arg1);
 }
