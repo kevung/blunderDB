@@ -12,7 +12,8 @@ import (
 )
 
 // DBImporter imports a native blunderDB .db file's position library —
-// positions plus their analysis and comments — into the target Storage. It is
+// positions plus their analysis and comments, and the collections that group
+// them — into the target Storage. It is
 // the backend-agnostic counterpart of database.CommitImportDatabase: a
 // Storage→Storage merge of the position library only, no match/game/move rows.
 //
@@ -20,7 +21,11 @@ import (
 //   - positions dedup by content (PositionStore.Save's Zobrist index);
 //   - an imported analysis is written only when the target has none, or when
 //     the target's analysis is empty-typed and the import's is not;
-//   - a comment is appended only when the target doesn't already contain it.
+//   - a comment is appended only when the target doesn't already contain it;
+//   - a collection merges into the target's collection of the same name, or is
+//     created; its members are added in the source order, those already there
+//     kept where they are. A living collection's query is copied only when the
+//     collection is created: the target's own query is the target's.
 type DBImporter struct{ S storage.Storage }
 
 func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog func(Progress)) (Summary, error) {
@@ -68,6 +73,11 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		return Summary{}, fmt.Errorf("ingest: read source comments: %w", err)
 	}
 
+	srcCollections, err := readSourceCollections(ctx, source, scope)
+	if err != nil {
+		return Summary{}, err
+	}
+
 	type srcRecord struct {
 		pos      *domain.Position
 		analysis *domain.PositionAnalysis
@@ -107,6 +117,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	}
 	saved := make([]savedRecord, 0, len(records))
 	targetIDs := make([]int64, 0, len(records))
+	targetOf := make(map[int64]int64, len(records))
 	for i := range records {
 		if err := ctx.Err(); err != nil {
 			return Summary{}, err
@@ -120,6 +131,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		}
 		saved = append(saved, savedRecord{rec: rec, id: id})
 		targetIDs = append(targetIDs, id)
+		targetOf[rec.pos.ID] = id
 	}
 
 	targetAnalyses, err := tx.Analyses().LoadMany(ctx, scope, targetIDs)
@@ -150,6 +162,12 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		}
 	}
 
+	n, err := mergeDBCollections(ctx, tx, scope, srcCollections, targetOf)
+	if err != nil {
+		return sum, err
+	}
+	sum.Collections = n
+
 	if err := ctx.Err(); err != nil {
 		return sum, err
 	}
@@ -158,6 +176,80 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	}
 	committed = true
 	return sum, nil
+}
+
+// srcCollection is a source collection with its members' source position ids,
+// in collection order.
+type srcCollection struct {
+	coll    storage.Collection
+	members []int64
+}
+
+// readSourceCollections drains the source's collections, then each one's
+// members: the List iterator is closed before Members opens another query.
+func readSourceCollections(ctx context.Context, source storage.Storage, scope string) ([]srcCollection, error) {
+	var out []srcCollection
+	for c, err := range source.Collections().List(ctx, scope) {
+		if err != nil {
+			return nil, fmt.Errorf("ingest: list source collections: %w", err)
+		}
+		out = append(out, srcCollection{coll: *c})
+	}
+	for i := range out {
+		for m, err := range source.Collections().Members(ctx, scope, out[i].coll.ID) {
+			if err != nil {
+				return nil, fmt.Errorf("ingest: read source collection %q: %w", out[i].coll.Name, err)
+			}
+			out[i].members = append(out[i].members, m.PositionID)
+		}
+	}
+	return out, nil
+}
+
+// mergeDBCollections writes the source collections into the target, their
+// members remapped through targetOf (source position id → id Save returned).
+// It reports how many collections it wrote.
+func mergeDBCollections(ctx context.Context, tx storage.Tx, scope string, src []srcCollection, targetOf map[int64]int64) (int, error) {
+	if len(src) == 0 {
+		return 0, nil
+	}
+	byName := map[string]int64{}
+	for c, err := range tx.Collections().List(ctx, scope) {
+		if err != nil {
+			return 0, err
+		}
+		byName[c.Name] = c.ID
+	}
+	for _, sc := range src {
+		if err := ctx.Err(); err != nil {
+			return 0, err
+		}
+		id, ok := byName[sc.coll.Name]
+		if !ok {
+			var err error
+			if id, err = tx.Collections().Create(ctx, scope, sc.coll.Name, sc.coll.Description); err != nil {
+				return 0, err
+			}
+			if sc.coll.FilterQuery != "" {
+				if err := tx.Collections().SetFilterQuery(ctx, scope, id, sc.coll.FilterQuery); err != nil {
+					return 0, err
+				}
+			}
+			byName[sc.coll.Name] = id
+		}
+		ids := make([]int64, 0, len(sc.members))
+		for _, m := range sc.members {
+			if t, ok := targetOf[m]; ok {
+				ids = append(ids, t)
+			}
+		}
+		if len(ids) > 0 {
+			if err := tx.Collections().AddPositions(ctx, scope, id, ids); err != nil {
+				return 0, err
+			}
+		}
+	}
+	return len(src), nil
 }
 
 // mergeDBAnalysisPreloaded writes an imported analysis for positionID as

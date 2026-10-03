@@ -128,6 +128,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/gammonnet.analyzeMissing.cancel      custom
      POST /v1/gammonnet.compare                    custom
      POST /v1/gammonnet.cubeMatrix                 custom
+     POST /v1/gammonnet.evaluate                   custom
      POST /v1/gammonnet.sweepStale                 custom
    history
      POST /v1/history.clear                        JSON
@@ -254,6 +255,10 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/tournaments.tournamentOf             JSON
      POST /v1/tournaments.update                   JSON
      POST /v1/tournaments.updateComment            JSON
+   training
+     POST /v1/training.numberStats                 JSON
+     POST /v1/training.save                        JSON  (Idempotency-Key)
+     POST /v1/training.sessions                    JSON
    transcriptions
      POST /v1/transcriptions.abandon               JSON  (Idempotency-Key)  (If-Match)
      POST /v1/transcriptions.apply                 JSON  (Idempotency-Key)  (If-Match)
@@ -287,7 +292,7 @@ Idempotence
 La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les
 lectures sont sans effet de bord, et les écritures de ``positions.*`` sont
 idempotentes dans leur effet grâce au hachage Zobrist du contenu — enregistrer
-deux fois la même position renvoie la même ligne, jamais un doublon. 43 méthodes
+deux fois la même position renvoie la même ligne, jamais un doublon. 44 méthodes
 acceptent un en-tête ``Idempotency-Key`` optionnel : celles dont deux appels
 sont deux effets distincts, et ``positions.save``, dont la réponse dit si
 l'appel a créé la position (``created``) et le dirait faux si elle était

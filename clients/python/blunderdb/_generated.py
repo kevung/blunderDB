@@ -454,6 +454,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/gammonnet.cubeMatrix — hand-written handler — see openapi.yaml."
         return self._call("/v1/gammonnet.cubeMatrix", payload)
 
+    def gammonnet_evaluate(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/gammonnet.evaluate — hand-written handler — see openapi.yaml."
+        return self._call("/v1/gammonnet.evaluate", payload)
+
     def gammonnet_sweep_stale(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/gammonnet.sweepStale — hand-written handler — see openapi.yaml."
         return self._call("/v1/gammonnet.sweepStale", payload)
@@ -885,6 +889,18 @@ class GeneratedAPI(BaseClient):
     def tournaments_update_comment(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/tournaments.updateComment — JSON."
         return self._call("/v1/tournaments.updateComment", payload)
+
+    def training_number_stats(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/training.numberStats — JSON."
+        return self._call("/v1/training.numberStats", payload)
+
+    def training_save(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/training.save — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/training.save", payload, idempotency_key=idempotency_key)
+
+    def training_sessions(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/training.sessions — JSON."
+        return self._call("/v1/training.sessions", payload)
 
     def transcriptions_abandon(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/transcriptions.abandon — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."

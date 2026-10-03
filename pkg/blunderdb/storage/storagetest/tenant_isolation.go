@@ -40,6 +40,7 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"Anki/Deck", checkAnkiDeckIsolation},
 	{"Direction", checkDirectionIsolation},
 	{"TableSetting", checkTableSettingIsolation},
+	{"Training", checkTrainingIsolation},
 }
 
 // RunTenantIsolationTests runs every family's isolation check against a
@@ -296,5 +297,34 @@ func checkDirectionIsolation(t *testing.T, ctx context.Context, s storage.Storag
 	}
 	if got, err := ds.Pairs(ctx, b, tid); err != nil || len(got) != 0 {
 		t.Errorf("Pairs(%s) = %v, %v; want none of %s's", b, got, err, a)
+	}
+}
+
+// checkTrainingIsolation: a Training journal is the person's own, read back by
+// /v1/training.* — another tenant sees neither its sessions nor its aggregates.
+func checkTrainingIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
+	session := storage.TrainingSession{
+		Exercise: "pips", SeedSource: "pool", NumbersAsked: 2, Faults: 1,
+		Items: []storage.TrainingItem{{NumberType: "pips.bottom", Wrong: true}, {NumberType: "pips.top"}},
+	}
+	if _, err := s.Training().Save(ctx, a, session); err != nil {
+		t.Fatalf("Training.Save(%s): %v", a, err)
+	}
+	sessions, err := s.Training().Sessions(ctx, b, "", 0)
+	if err != nil {
+		t.Fatalf("Training.Sessions(%s): %v", b, err)
+	}
+	if len(sessions) != 0 {
+		t.Errorf("tenant %s sees %d training session(s) of tenant %s, want 0", b, len(sessions), a)
+	}
+	stats, err := s.Training().NumberStats(ctx, b, "pips")
+	if err != nil {
+		t.Fatalf("Training.NumberStats(%s): %v", b, err)
+	}
+	if len(stats) != 0 {
+		t.Errorf("tenant %s sees %d training aggregate(s) of tenant %s, want 0", b, len(stats), a)
+	}
+	if own, err := s.Training().Sessions(ctx, a, "", 0); err != nil || len(own) != 1 {
+		t.Errorf("tenant %s reads back its own session: %d, %v", a, len(own), err)
 	}
 }

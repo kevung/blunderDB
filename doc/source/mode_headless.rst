@@ -835,13 +835,43 @@ chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de position unique
 ``POST /v1/exports.sqlite`` exporte tout le tenant courant — positions,
 collections, matchs, tournois, analyses, commentaires, coups joués,
 bibliothèque de filtres et paquets Anki — dans un fichier SQLite ouvrable tel
-quel par le poste de travail ; l'export porte toujours toute la base, la
-sélection d'un sous-ensemble est un geste du bureau ou de la CLI. Le corps JSON
-de la requête est optionnel et n'accepte que ``watermarkOrigin`` /
-``watermarkNote``, pour apposer un filigrane signé de l'identité propre du
-démon (``--identity-dir``) — sans ces champs, l'export ne porte aucun
-filigrane ; les demander sans identité configurée échoue avec le code
-``invalid``.
+quel par le poste de travail. Le corps JSON de la requête est optionnel :
+``watermarkOrigin`` / ``watermarkNote`` apposent un filigrane signé de
+l'identité propre du démon (``--identity-dir``) — sans ces champs, l'export ne
+porte aucun filigrane ; les demander sans identité configurée échoue avec le
+code ``invalid``. ``collectionIds`` restreint l'export à ces collections et à
+leurs positions, avec analyses, commentaires et coups joués, sans la
+bibliothèque de filtres ni les paquets Anki.
+
+**Partager une collection entre tenants** passe par le client, jamais par une
+lecture d'un tenant dans l'autre : le tenant qui donne appelle
+``exports.sqlite`` avec ``collectionIds`` (et un filigrane, pour que le
+receveur sache d'où vient le fichier), le tenant qui reçoit envoie le fichier
+à ``imports.db``. Chaque requête porte son propre ``X-Tenant-ID`` ; le proxy
+décide qui a le droit de faire l'une et l'autre. À l'import, une collection
+rejoint celle du même nom chez le receveur, ou est créée ; ses positions s'y
+ajoutent à la suite, sans doublon.
+
+.. code-block:: bash
+
+   curl -X POST http://127.0.0.1:8080/v1/exports.sqlite \
+        -H 'X-Tenant-ID: club-lyon' -H 'Content-Type: application/json' \
+        -d '{"collectionIds":[4],"watermarkOrigin":"Club de Lyon"}' -o ouvertures.db
+   curl -X POST http://127.0.0.1:8080/v1/imports.db \
+        -H 'X-Tenant-ID: alice' -F file=@ouvertures.db
+
+La famille ``training`` tient le journal de l'onglet Entraînement :
+``training.save`` ajoute une séance (``exercise``, ``seedSource``, comptes,
+``items``) et rend son ``id`` (``Idempotency-Key`` accepté) ;
+``training.sessions`` relit les séances, la plus récente d'abord (``exercise``
+et ``limit`` facultatifs) ; ``training.numberStats`` agrège les items d'un
+exercice par type de nombre. Les questions, elles, sont tirées par le client.
+
+``gammonnet.evaluate`` évalue une position nue (``position`` ou ``xgid``), sans
+rien lire ni écrire dans le tenant : avec dés, les meilleurs coups
+(``candidates``, 5 par défaut, au plus 20) ; sans dés, la décision de videau.
+``ply`` va de 0 à 2 (2 par défaut) ; une recherche plus profonde est le travail
+d'``analyzeMissing``.
 
 La famille ``anki`` gagne six méthodes qui étendent le planificateur à
 répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque révision —
@@ -1621,12 +1651,23 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
      - collections et leurs positions ; paquets de révision
    * - ``quiz_draw``, ``quiz_grade``
      - tire une position sans sa réponse, puis note la réponse donnée
+   * - ``evaluate``
+     - évaluation gammonNet d'une position donnée en texte, sans
+       l'enregistrer : meilleurs coups ou décision de videau
+   * - ``anki_next``
+     - la prochaine carte due d'un paquet de révision
+   * - ``transcribe_list``, ``transcribe_get``, ``transcribe_mat``
+     - transcriptions de matchs ; détail d'une transcription ; son texte
+       ``.mat``
+   * - ``direction_list``, ``direction_standings``, ``direction_season``
+     - tournois dirigés ; classement d'un tournoi ; classement de saison
    * - ``rollout``
      - rollout d'une position de la base : équité, intervalle à 95 % et JSD
        par candidat
 
-Les outils ne font que lire. Quatre outils écrivent — ``save_position``,
-``comment_position``, ``create_collection``, ``add_to_collection`` — et ne
+Les outils ne font que lire. Cinq outils écrivent — ``save_position``,
+``comment_position``, ``create_collection``, ``add_to_collection`` et
+``anki_review``, qui note une carte tirée par ``anki_next`` — et ne
 sont offerts que sur demande : ``--write`` en local, ``--mcp-write`` sur le
 démon ; ``rollout`` y gagne alors l'argument ``store``, qui enregistre le
 rollout à côté de l'analyse de la position. Aucun n'efface.

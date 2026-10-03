@@ -2848,6 +2848,19 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/gammonnet.evaluate:
+    post:
+      operationId: gammonnet.evaluate
+      tags: [gammonnet]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/gammonnet.sweepStale:
     post:
       operationId: gammonnet.sweepStale
@@ -4992,6 +5005,69 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/training.numberStats:
+    post:
+      operationId: training.numberStats
+      tags: [training]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/trainingStatsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_TrainingNumberStat"
+  /v1/training.save:
+    post:
+      operationId: training.save
+      tags: [training]
+      x-kind: json
+      x-idempotency-key: true
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/storage_TrainingSession"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/trainingSaveResp"
+  /v1/training.sessions:
+    post:
+      operationId: training.sessions
+      tags: [training]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/trainingSessionsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_TrainingSession"
   /v1/transcriptions.abandon:
     post:
       operationId: transcriptions.abandon
@@ -6771,6 +6847,12 @@ components:
     storage_TournamentBadge:
       type: object
       description: "Opaque: see the Go type storage.TournamentBadge (defined outside internal/server, not expanded here)."
+    storage_TrainingNumberStat:
+      type: object
+      description: "Opaque: see the Go type storage.TrainingNumberStat (defined outside internal/server, not expanded here)."
+    storage_TrainingSession:
+      type: object
+      description: "Opaque: see the Go type storage.TrainingSession (defined outside internal/server, not expanded here)."
     stringsResp:
       type: object
       properties:
@@ -6856,6 +6938,25 @@ components:
     tournoi_Player:
       type: object
       description: "Opaque: see the Go type tournoi.Player (defined outside internal/server, not expanded here)."
+    trainingSaveResp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+    trainingSessionsReq:
+      type: object
+      properties:
+        exercise:
+          type: string
+        limit:
+          type: integer
+          format: int32
+    trainingStatsReq:
+      type: object
+      properties:
+        exercise:
+          type: string
     transcript_Gesture:
       type: object
       description: "Opaque: see the Go type transcript.Gesture (defined outside internal/server, not expanded here)."

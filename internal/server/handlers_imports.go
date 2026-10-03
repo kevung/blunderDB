@@ -270,6 +270,12 @@ func (s *Server) ingestRoutes() []route {
 type exportSQLiteReq struct {
 	WatermarkOrigin string `json:"watermarkOrigin"`
 	WatermarkNote   string `json:"watermarkNote"`
+	// CollectionIDs narrows the export to these collections and their
+	// positions, with analyses, comments and played moves: what one tenant
+	// hands another, who imports it with imports.db. The filter library and
+	// the Anki decks stay behind — they are the sender's, not the
+	// collection's. Empty exports the whole tenant.
+	CollectionIDs []int64 `json:"collectionIds,omitempty"`
 }
 
 // sealExportWatermark seals a watermark for origin/note with this daemon's own
@@ -330,6 +336,10 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 		defer os.Remove(tmpPath)
 
 		opts := ingest.WholeTenant(ingest.FormatSQLite)
+		if len(req.CollectionIDs) > 0 {
+			opts.Selection = ingest.Selection{CollectionIDs: req.CollectionIDs, CollectionPositions: true}
+			opts.FilterLibrary, opts.AnkiDecks = false, false
+		}
 		opts.Watermark = watermark
 		exportErr := exp.Export(r.Context(), scopeOf(r), tmp, opts)
 		closeErr := tmp.Close()

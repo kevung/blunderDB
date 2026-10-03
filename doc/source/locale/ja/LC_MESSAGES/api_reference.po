@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 02:55+0200\n"
+"POT-Creation-Date: 2026-10-03 07:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -41,17 +41,17 @@ msgstr ""
 "参照)、レスポンスの形式(JSON、またはストリーミングリストの場合は NDJSON)と、存在する場合は任意の ``Idempotency-"
 "Key`` ヘッダーへの言及を含みます。"
 
-#: ../../source/api_reference.rst:277
+#: ../../source/api_reference.rst:290
 msgid "Idempotence"
 msgstr "冪等性"
 
-#: ../../source/api_reference.rst:279
+#: ../../source/api_reference.rst:292
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 43 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 44 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -60,19 +60,19 @@ msgid ""
 "(Idempotency-Key) » dans le tableau ci-dessus. Aucune autre méthode n'a "
 "besoin ou n'accepte cet en-tête."
 msgstr ""
-"ほとんどのメソッドには特別な仕組みは不要です。読み取りには副作用がなく、\\ ``positions.*``\\ の書き込みは内容の "
-"Zobrist ハッシュによって効果の点で冪等です。同じポジションを 2 回保存しても同じ行が返り、重複は生じません。43 "
-"個のメソッドは任意の\\ ``Idempotency-Key``\\ ヘッダーを受け付けます。2 回の呼び出しが 2 "
-"つの別個の効果になるメソッドと、\\ ``positions.save``\\ です。後者の応答は呼び出しがポジションを作成したかどうか（\\ "
-"``created``\\ "
+"ほとんどのメソッドには特別な仕組みは不要です。読み取りには副作用がなく、\\\\ ``positions.*``\\\\ の書き込みは内容の "
+"Zobrist ハッシュによって効果の点で冪等です。同じポジションを 2 回保存しても同じ行が返り、重複は生じません。44 "
+"個のメソッドは任意の\\\\ ``Idempotency-Key``\\\\ ヘッダーを受け付けます。2 回の呼び出しが 2 "
+"つの別個の効果になるメソッドと、\\\\ ``positions.save``\\\\ "
+"です。後者の応答は呼び出しがポジションを作成したかどうか（\\\\ ``created``\\\\ "
 "）を示し、応答が失われた後に再送されると偽を返してしまうためです。同じキーで再送された呼び出しは、効果を繰り返す代わりに最初の試行の結果を返します。上の表の"
 "「(Idempotency-Key)」の印を参照してください。ほかのメソッドはこのヘッダーを必要とせず、受け付けもしません。"
 
-#: ../../source/api_reference.rst:291
+#: ../../source/api_reference.rst:304
 msgid "Lectures conditionnelles"
 msgstr "条件付き読み取り"
 
-#: ../../source/api_reference.rst:293
+#: ../../source/api_reference.rst:306
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "

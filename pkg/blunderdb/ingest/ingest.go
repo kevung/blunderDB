@@ -57,6 +57,9 @@ type Summary struct {
 	// Enriched counts the cross-format duplicates whose analyses and comments
 	// were merged into a match already stored — neither new nor skipped.
 	Enriched int `json:"enriched,omitempty"`
+	// Collections counts the collections a native .db import brought in,
+	// created or merged into one of the same name.
+	Collections int `json:"collections,omitempty"`
 	// BatchID is the import batch these figures belong to, 0 when the caller
 	// opened none. /v1/imports.* fills it so a client can ask for the full
 	// end-of-import report afterwards.
