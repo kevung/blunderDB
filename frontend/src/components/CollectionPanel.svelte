@@ -27,7 +27,7 @@
         ReorderCollections,
         UpdateCollection,
         GetPositionCollections,
-        GetPositionIndexMap,
+        IndexOfPosition,
         LoadAnalysis
     } from '../../wailsjs/go/database/Database.js';
     import { t, tMsg } from '../i18n';
@@ -141,7 +141,10 @@
     const selectedPositionIndices = new SvelteSet();
 
     // Position index map (position_id -> 1-based index in DB)
-    let positionIndexMap = $state({});
+    // Rang en bibliothèque des seules lignes affichées, demandé une à une : une carte de toute la
+    // base serait chargée pour trente lignes visibles.
+    let positionIndexMap = $state.raw({});
+    let indexGeneration = 0;
 
     // Inline new description
     let inlineNewDescription = $state('');
@@ -213,11 +216,20 @@
         }
     }
 
-    async function loadPositionIndexMap() {
-        try {
-            positionIndexMap = (await GetPositionIndexMap()) || {};
-        } catch (_error) {
-            positionIndexMap = {};
+    function loadPositionIndexMap() {
+        indexGeneration++;
+        positionIndexMap = {};
+    }
+
+    /** Action : demande le rang de la position quand sa ligne est montée. */
+    function wantIndex(node, id) {
+        const generation = indexGeneration;
+        if (positionIndexMap[id] === undefined) {
+            IndexOfPosition(id)
+                .then((i) => {
+                    if (generation === indexGeneration) positionIndexMap = { ...positionIndexMap, [id]: i + 1 };
+                })
+                .catch(() => {});
         }
     }
 
@@ -731,7 +743,7 @@
                 {/snippet}
                 {#snippet cells(position, index)}
                     <td class="narrow-col idx-cell">{index + 1}</td>
-                    <td class="narrow-col id-cell">{positionIndexMap[position.id] || '?'}</td>
+                    <td class="narrow-col id-cell" use:wantIndex={position.id}>{positionIndexMap[position.id] || '?'}</td>
                     <td class="actions-col">
                         <span class="item-actions">
                             <button

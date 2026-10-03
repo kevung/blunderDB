@@ -335,6 +335,53 @@ func testCollectionRenameAndDelete(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testCollectionReorderLoadedPrefix pins what the GUI relies on when it has
+// loaded only the first window of a long collection and reorders inside it:
+// the ids it sends take the first sort_order values, the members it never
+// loaded keep their order after them, and sort_order reads back strictly
+// increasing.
+func testCollectionReorderLoadedPrefix(t *testing.T, s storage.Storage) {
+	c := context.Background()
+	ids := make([]int64, 5)
+	for i := range ids {
+		p := provenancePos(i + 1)
+		id, err := s.Positions().Save(c, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", i+1, err)
+		}
+		ids[i] = id
+	}
+	col, err := s.Collections().Create(c, "", "prefix", "")
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if err := s.Collections().AddPositions(c, "", col, ids); err != nil {
+		t.Fatalf("AddPositions: %v", err)
+	}
+	if err := s.Collections().ReorderPositions(c, "", col, []int64{ids[2], ids[0], ids[1]}); err != nil {
+		t.Fatalf("ReorderPositions: %v", err)
+	}
+	want := []int64{ids[2], ids[0], ids[1], ids[3], ids[4]}
+	prev := -1
+	i := 0
+	for m, err := range s.Collections().Members(c, "", col) {
+		if err != nil {
+			t.Fatalf("Members: %v", err)
+		}
+		if i >= len(want) || m.PositionID != want[i] {
+			t.Fatalf("member %d: position %d, want %v", i, m.PositionID, want)
+		}
+		if m.SortOrder <= prev {
+			t.Errorf("member %d: SortOrder %d does not follow %d", i, m.SortOrder, prev)
+		}
+		prev = m.SortOrder
+		i++
+	}
+	if i != len(want) {
+		t.Fatalf("Members: %d rows, want %d", i, len(want))
+	}
+}
+
 // testCollectionMembers pins Members: the membership rows come back in
 // collection order — the same walk as Positions — each naming its
 // collection, its position (loaded, not just its id), its rank and when it

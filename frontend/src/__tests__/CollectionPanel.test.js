@@ -27,7 +27,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ReorderCollections: vi.fn().mockResolvedValue(undefined),
     UpdateCollection: vi.fn().mockResolvedValue(undefined),
     GetPositionCollections: vi.fn().mockResolvedValue([]),
-    GetPositionIndexMap: vi.fn().mockResolvedValue({}),
+    IndexOfPosition: vi.fn().mockResolvedValue(-1),
     LoadAnalysis: vi.fn().mockResolvedValue(null)
 }));
 

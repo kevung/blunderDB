@@ -59,7 +59,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ReorderCollections: vi.fn(),
     UpdateCollection: vi.fn(),
     GetPositionCollections: vi.fn(() => Promise.resolve([])),
-    GetPositionIndexMap: vi.fn(() => Promise.resolve({}))
+    IndexOfPosition: vi.fn(() => Promise.resolve(-1))
 }));
 
 import MatchPanel from '../components/MatchPanel.svelte';

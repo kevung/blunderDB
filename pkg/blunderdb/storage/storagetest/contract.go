@@ -73,6 +73,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Collection/MoveBetweenCollections", testCollectionMoveBetween},
 		{"Collection/CopyPosition", testCollectionCopyPosition},
 		{"Collection/ReorderPositions", testCollectionReorderPositions},
+		{"Collection/ReorderLoadedPrefix", testCollectionReorderLoadedPrefix},
 		{"Collection/RenameAndDelete", testCollectionRenameAndDelete},
 		{"Collection/PositionIndexMap", testCollectionPositionIndexMap},
 		{"Collection/Members", testCollectionMembers},
