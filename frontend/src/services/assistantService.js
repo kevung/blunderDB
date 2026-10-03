@@ -1,19 +1,19 @@
 import { get, writable } from 'svelte/store';
 import { AssistantAsk, AssistantConfirm, AssistantCancel, AssistantReset, AssistantPresets } from '../../wailsjs/go/gui/App.js';
-import { GetAssistant, SaveAssistant, GetMCPHost } from '../../wailsjs/go/main/Config.js';
+import { GetAssistant, SaveAssistant } from '../../wailsjs/go/main/Config.js';
 import { logger } from '../utils/logger.js';
 
 // The in-app assistant, a client of the window's own MCP tools (ADR-0064). Strictly opt-in:
 // off until the user turns it on, and a remote provider only once its privacy warning is
 // accepted. The API key never passes through here: the Go side reads it from the keyring.
 
-/** @typedef {{ on: boolean, preset: string, baseURL: string, model: string, remoteAck: string }} AssistantSettings */
+/** @typedef {{ on: boolean, preset: string, baseURL: string, model: string, write: boolean, remoteAck: string }} AssistantSettings */
 /** @typedef {{ id: string, name: string, baseURL: string, model: string, remote: boolean, needsKey: boolean }} Preset */
 /** @typedef {{ kind: string, text?: string, tool?: string, args?: string, result?: string, free?: boolean }} Entry */
 
 /** @returns {AssistantSettings} */
 function defaults() {
-    return { on: false, preset: 'ollama', baseURL: '', model: '', remoteAck: '' };
+    return { on: false, preset: 'ollama', baseURL: '', model: '', write: false, remoteAck: '' };
 }
 
 /** @type {import('svelte/store').Writable<AssistantSettings>} */
@@ -53,13 +53,40 @@ export function presetOf(s, presets) {
 }
 
 /**
- * Whether the provider sends the sentences off the machine without the user having accepted it.
+ * The address a sentence actually goes to: the user's, else the preset's.
+ * @param {AssistantSettings} s
+ * @param {Preset[]} presets
+ */
+export function effectiveURL(s, presets) {
+    return (s.baseURL || presetOf(s, presets)?.baseURL || '').trim();
+}
+
+/**
+ * Whether an address is off this machine: any host that is not loopback, whatever preset it came
+ * from; an unreadable address counts as remote. Mirrors assistant.IsRemote, which the Go side
+ * checks again before sending anything.
+ * @param {string} url
+ */
+export function isRemoteURL(url) {
+    let host;
+    try {
+        host = new URL(url).hostname.toLowerCase();
+    } catch {
+        return true;
+    }
+    if (!host) return true;
+    if (host === 'localhost' || host.endsWith('.localhost') || host === '[::1]' || host === '::1') return false;
+    return !/^127(\.\d{1,3}){3}$/.test(host);
+}
+
+/**
+ * Whether the sentences would leave the machine for an address the user has not accepted.
  * @param {AssistantSettings} s
  * @param {Preset[]} presets
  */
 export function needsPrivacyAck(s, presets) {
-    const p = presetOf(s, presets);
-    return !!p?.remote && s.remoteAck !== p.id;
+    const url = effectiveURL(s, presets);
+    return isRemoteURL(url) && s.remoteAck !== url;
 }
 
 /** @param {{ entries?: Entry[], pending?: any }} turn */
@@ -90,13 +117,12 @@ export async function askAssistant(text) {
     assistantErrorStore.set('');
     assistantBusyStore.set(true);
     try {
-        const host = await GetMCPHost();
-        const turn = await AssistantAsk(/** @type {any} */ ({ preset: s.preset, baseURL: s.baseURL, model: s.model, write: !!host?.write, text: sentence }));
+        const turn = await AssistantAsk(/** @type {any} */ ({ preset: s.preset, baseURL: s.baseURL, model: s.model, write: !!s.write, text: sentence }));
         applyTurn(turn);
         return true;
     } catch (error) {
         assistantEntriesStore.update((es) => [...es, { kind: 'user', text: sentence }]);
-        assistantErrorStore.set(message(error));
+        assistantErrorStore.set(/privacy/.test(message(error)) ? 'privacy' : message(error));
         return false;
     } finally {
         assistantBusyStore.set(false);

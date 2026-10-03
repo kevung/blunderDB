@@ -8,12 +8,13 @@ import { tick } from 'svelte';
 
 const state = vi.hoisted(() => ({ on: false, asked: /** @type {any[]} */ ([]), confirmed: /** @type {boolean[]} */ ([]) }));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetAssistant: () => Promise.resolve({ on: state.on, preset: 'ollama', baseURL: '', model: '', remoteAck: '' }),
+    GetAssistant: () => Promise.resolve({ on: state.on, preset: 'ollama', baseURL: '', model: '', write: true, remoteAck: '' }),
     SaveAssistant: () => Promise.resolve(),
-    GetMCPHost: () => Promise.resolve({ on: false, port: 0, write: true })
+    // The MCP server's write switch is off: the assistant's own setting decides.
+    GetMCPHost: () => Promise.resolve({ on: false, port: 0, write: false })
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    AssistantPresets: () => Promise.resolve([{ id: 'ollama', name: 'Ollama', baseURL: 'x', model: 'm', remote: false, needsKey: false }]),
+    AssistantPresets: () => Promise.resolve([{ id: 'ollama', name: 'Ollama', baseURL: 'http://localhost:11434/v1', model: 'm', remote: false, needsKey: false }]),
     AssistantAsk: (req) => {
         state.asked.push(req);
         return Promise.resolve({

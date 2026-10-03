@@ -5,7 +5,7 @@
     import { DEFAULT_MCP_PORT, mcpHostStatusStore, saveMCPHost, refreshMCPHostStatus } from '../services/mcpHostService.js';
     import { logger } from '../utils/logger.js';
     import { AssistantSetKey, AssistantHasKey } from '../../wailsjs/go/gui/App.js';
-    import { assistantSettingsStore, assistantPresetsStore, loadAssistantSettings, saveAssistantSettings, presetOf } from '../services/assistantService.js';
+    import { assistantSettingsStore, assistantPresetsStore, loadAssistantSettings, saveAssistantSettings, presetOf, effectiveURL, isRemoteURL } from '../services/assistantService.js';
 
     // The MCP server the window serves on localhost (ADR-0059): off until the user turns it on.
     let mcp = $state({ on: false, port: DEFAULT_MCP_PORT, write: false });
@@ -35,6 +35,9 @@
     let keyInput = $state('');
     let hasKey = $state(false);
     const preset = $derived(presetOf($assistantSettingsStore, $assistantPresetsStore));
+    // Consent is tied to the address actually used: changing it asks again.
+    const endpoint = $derived(effectiveURL($assistantSettingsStore, $assistantPresetsStore));
+    const remote = $derived(isRemoteURL(endpoint));
 
     onMount(async () => {
         await loadAssistantSettings();
@@ -148,15 +151,20 @@
         <button class="secondary-button" onclick={saveKey}>{$t('assistant.keySave')}</button>
     </div>
     <p class="setting-note" data-testid="assistant-key-state">{hasKey ? $t('assistant.keyStored') : $t('assistant.keyNone')}</p>
-    {#if preset?.remote}
-        <p class="setting-note warn" data-testid="assistant-privacy">{$t('assistant.privacyWarning', { provider: preset.name })}</p>
+    <div class="setting-row">
+        <label for="config-assistant-write">{$t('assistant.write')}</label>
+        <input id="config-assistant-write" type="checkbox" checked={$assistantSettingsStore.write} onchange={(e) => updateAssistant({ write: e.currentTarget.checked })} />
+    </div>
+    {#if remote}
+        <p class="setting-note warn" data-testid="assistant-privacy">{$t('assistant.privacyWarning', { provider: endpoint || preset?.name || '' })}</p>
         <div class="setting-row">
             <label for="config-assistant-ack">{$t('assistant.privacyAccept')}</label>
             <input
                 id="config-assistant-ack"
                 type="checkbox"
-                checked={$assistantSettingsStore.remoteAck === preset.id}
-                onchange={(e) => updateAssistant({ remoteAck: e.currentTarget.checked ? preset.id : '' })}
+                checked={!!endpoint && $assistantSettingsStore.remoteAck === endpoint}
+                disabled={!endpoint}
+                onchange={(e) => updateAssistant({ remoteAck: e.currentTarget.checked ? endpoint : '' })}
             />
         </div>
     {/if}

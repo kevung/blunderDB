@@ -2606,6 +2606,7 @@
         "declined": "refusée par vous ; rien n'a été écrit",
         "disabled": "L'assistant est désactivé : activez-le dans Paramètres › Assistant et MCP.",
         "needsAck": "Acceptez d'abord l'avertissement de confidentialité de ce fournisseur dans Paramètres › Assistant et MCP.",
-        "error": "Erreur : {error}"
+        "error": "Erreur : {error}",
+        "write": "Laisser l'assistant proposer des modifications (chacune confirmée)"
     }
 }

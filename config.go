@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 
 	"github.com/adrg/xdg"
 
@@ -230,8 +231,11 @@ type Config struct {
 	AssistantPreset  string `json:"assistant_preset,omitempty"`
 	AssistantBaseURL string `json:"assistant_base_url,omitempty"`
 	AssistantModel   string `json:"assistant_model,omitempty"`
-	// AssistantRemoteAck is the remote provider whose privacy warning the user
-	// accepted; another provider asks again.
+	// AssistantWrite lets the assistant propose changes, each confirmed by
+	// the user; apart from MCPWrite, where no one confirms.
+	AssistantWrite bool `json:"assistant_write,omitempty"`
+	// AssistantRemoteAck is the remote address whose privacy warning the user
+	// accepted; another address asks again.
 	AssistantRemoteAck string `json:"assistant_remote_ack,omitempty"`
 }
 
@@ -441,6 +445,7 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.MCPHost, c.MCPPort, c.MCPWrite = config.MCPHost, config.MCPPort, config.MCPWrite
 	c.Assistant, c.AssistantPreset, c.AssistantBaseURL = config.Assistant, config.AssistantPreset, config.AssistantBaseURL
 	c.AssistantModel, c.AssistantRemoteAck = config.AssistantModel, config.AssistantRemoteAck
+	c.AssistantWrite = config.AssistantWrite
 	c.ConfigVersion = config.ConfigVersion
 
 	if migrating {
@@ -912,18 +917,25 @@ type AssistantSettings struct {
 	Preset    string `json:"preset"`
 	BaseURL   string `json:"baseURL"`
 	Model     string `json:"model"`
+	Write     bool   `json:"write"`
 	RemoteAck string `json:"remoteAck"`
 }
 
 // GetAssistant returns the in-app assistant's setting.
 func (c *Config) GetAssistant() AssistantSettings {
 	return AssistantSettings{On: c.Assistant, Preset: c.AssistantPreset, BaseURL: c.AssistantBaseURL,
-		Model: c.AssistantModel, RemoteAck: c.AssistantRemoteAck}
+		Model: c.AssistantModel, Write: c.AssistantWrite, RemoteAck: c.AssistantRemoteAck}
 }
 
 // SaveAssistant persists the in-app assistant's setting.
 func (c *Config) SaveAssistant(s AssistantSettings) error {
 	c.Assistant, c.AssistantPreset, c.AssistantBaseURL = s.On, s.Preset, s.BaseURL
-	c.AssistantModel, c.AssistantRemoteAck = s.Model, s.RemoteAck
+	c.AssistantModel, c.AssistantRemoteAck, c.AssistantWrite = s.Model, strings.TrimSpace(s.RemoteAck), s.Write
 	return c.SaveConfig(c)
+}
+
+// AssistantConsentURL is the remote address whose privacy warning the user
+// accepted, read by the assistant before it sends a sentence anywhere remote.
+func (c *Config) AssistantConsentURL() string {
+	return c.AssistantRemoteAck
 }

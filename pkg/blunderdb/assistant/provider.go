@@ -7,14 +7,18 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
+	"net/url"
+	"regexp"
 	"strings"
 	"time"
 )
 
 // Preset is a provider the settings offer by name: an OpenAI-compatible
-// endpoint and a starting model. Remote says the sentences and the tool
-// results leave the machine, which the settings warn about before use.
+// endpoint and a starting model. Remote is IsRemote of its address, given for
+// the settings' first display; what decides is the address actually used,
+// which the user may change (IsRemote).
 type Preset struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
@@ -32,14 +36,50 @@ const DefaultPreset = "ollama"
 // speaks the OpenAI chat-completions protocol with tool calls; "other" is any
 // further endpoint that does.
 func Presets() []Preset {
-	return []Preset{
+	ps := []Preset{
+		// The Ollama model is a starting point, not a measured recommendation:
+		// a recommendation comes from the assistantbench score.
 		{ID: "ollama", Name: "Ollama", BaseURL: "http://localhost:11434/v1", Model: "qwen2.5:7b"},
-		{ID: "groq", Name: "Groq", BaseURL: "https://api.groq.com/openai/v1", Model: "llama-3.3-70b-versatile", Remote: true, NeedsKey: true},
-		{ID: "openrouter", Name: "OpenRouter", BaseURL: "https://openrouter.ai/api/v1", Model: "openai/gpt-4o-mini", Remote: true, NeedsKey: true},
-		{ID: "gemini", Name: "Gemini", BaseURL: "https://generativelanguage.googleapis.com/v1beta/openai", Model: "gemini-2.0-flash", Remote: true, NeedsKey: true},
-		{ID: "anthropic", Name: "Anthropic", BaseURL: "https://api.anthropic.com/v1", Model: "claude-haiku-4-5", Remote: true, NeedsKey: true},
-		{ID: "other", Name: "Other (OpenAI-compatible)", Remote: true},
+		{ID: "groq", Name: "Groq", BaseURL: "https://api.groq.com/openai/v1", Model: "llama-3.3-70b-versatile", NeedsKey: true},
+		{ID: "openrouter", Name: "OpenRouter", BaseURL: "https://openrouter.ai/api/v1", Model: "openai/gpt-4o-mini", NeedsKey: true},
+		{ID: "gemini", Name: "Gemini", BaseURL: "https://generativelanguage.googleapis.com/v1beta/openai", Model: "gemini-2.0-flash", NeedsKey: true},
+		{ID: "anthropic", Name: "Anthropic", BaseURL: "https://api.anthropic.com/v1", Model: "claude-haiku-4-5", NeedsKey: true},
+		{ID: "other", Name: "Other (OpenAI-compatible)"},
 	}
+	for i := range ps {
+		ps[i].Remote = IsRemote(ps[i].BaseURL)
+	}
+	return ps
+}
+
+// IsRemote reports whether an endpoint is off this machine: any host that is
+// not loopback, whatever preset it came from. An address that cannot be read
+// counts as remote — the privacy warning errs on the side of asking.
+func IsRemote(baseURL string) bool {
+	u, err := url.Parse(strings.TrimSpace(baseURL))
+	if err != nil || u.Hostname() == "" {
+		return true
+	}
+	host := u.Hostname()
+	if strings.EqualFold(host, "localhost") || strings.HasSuffix(strings.ToLower(host), ".localhost") {
+		return false
+	}
+	ip := net.ParseIP(host)
+	return ip == nil || !ip.IsLoopback()
+}
+
+// keyLike matches what looks like a credential in a provider's message: the
+// known key prefixes, a bearer token, and any long unbroken token.
+var keyLike = regexp.MustCompile(`(?i)(bearer\s+\S+|\b(sk|gsk|pk|rk|xai)[-_][A-Za-z0-9_\-]{8,}|AIza[A-Za-z0-9_\-]{10,}|[A-Za-z0-9_\-]{32,})`)
+
+// redact masks the key the request carried and anything that looks like a
+// key, so an error shown in the panel or a log never repeats a credential a
+// provider echoed back.
+func redact(s, key string) string {
+	if key != "" {
+		s = strings.ReplaceAll(s, key, "[redacted]")
+	}
+	return keyLike.ReplaceAllString(s, "[redacted]")
 }
 
 // PresetByID returns the preset with that id, the default one when unknown.
@@ -119,7 +159,7 @@ func (p Provider) complete(ctx context.Context, msgs []Message, tools []toolDef)
 		if ctx.Err() != nil {
 			return Message{}, ctx.Err()
 		}
-		return Message{}, fmt.Errorf("%w: %w", ErrNoProvider, err)
+		return Message{}, fmt.Errorf("%w: %s", ErrNoProvider, redact(err.Error(), p.APIKey))
 	}
 	defer resp.Body.Close()
 	raw, err := io.ReadAll(io.LimitReader(resp.Body, 8<<20))
@@ -127,7 +167,7 @@ func (p Provider) complete(ctx context.Context, msgs []Message, tools []toolDef)
 		return Message{}, err
 	}
 	if resp.StatusCode/100 != 2 {
-		return Message{}, fmt.Errorf("provider: HTTP %d: %s", resp.StatusCode, firstLine(raw))
+		return Message{}, fmt.Errorf("provider: HTTP %d: %s", resp.StatusCode, redact(firstLine(raw), p.APIKey))
 	}
 	var out struct {
 		Choices []struct {

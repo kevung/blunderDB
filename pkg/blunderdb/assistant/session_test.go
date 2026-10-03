@@ -166,3 +166,40 @@ func TestPresets(t *testing.T) {
 		}
 	}
 }
+
+func TestIsRemoteFollowsTheAddressNotThePreset(t *testing.T) {
+	for url, want := range map[string]bool{
+		"http://localhost:11434/v1": false, "http://127.0.0.1:8080/v1": false, "http://[::1]:1/v1": false,
+		"https://api.groq.com/openai/v1": true, "http://192.168.1.20:11434/v1": true, "": true, "::nope": true,
+	} {
+		if got := assistant.IsRemote(url); got != want {
+			t.Errorf("IsRemote(%q) = %v, want %v", url, got, want)
+		}
+	}
+}
+
+func TestProviderErrorNeverRepeatsAKey(t *testing.T) {
+	llm := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, `{"error":"Incorrect API key my-secret-key-1 (also sk-proj-abcdefghij1234, `+r.Header.Get("Authorization")+`)"}`, http.StatusUnauthorized)
+	}))
+	defer llm.Close()
+	ctx := context.Background()
+	cs, err := assistant.Connect(ctx, mcp.NewServer(demoEngine(t), mcp.Options{Tenant: "1"}))
+	if err != nil {
+		t.Fatal(err)
+	}
+	sess, err := assistant.NewSession(ctx, assistant.Provider{BaseURL: llm.URL, Model: "m", APIKey: "my-secret-key-1"}, cs)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sess.Close()
+	_, err = sess.Ask(ctx, "bonjour")
+	if err == nil || !strings.Contains(err.Error(), "401") {
+		t.Fatalf("want the HTTP status, got %v", err)
+	}
+	for _, leak := range []string{"my-secret-key-1", "sk-proj-abcdefghij1234", "Bearer"} {
+		if strings.Contains(err.Error(), leak) {
+			t.Fatalf("error repeats %q: %v", leak, err)
+		}
+	}
+}

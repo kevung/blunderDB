@@ -2606,6 +2606,7 @@
         "declined": "hylkäsit sen; mitään ei kirjoitettu",
         "disabled": "Avustaja on pois päältä: ota se käyttöön kohdassa Asetukset › Avustaja ja MCP.",
         "needsAck": "Hyväksy ensin tämän palveluntarjoajan tietosuojavaroitus kohdassa Asetukset › Avustaja ja MCP.",
-        "error": "Virhe: {error}"
+        "error": "Virhe: {error}",
+        "write": "Anna avustajan ehdottaa muutoksia (jokainen vahvistetaan)"
     }
 }

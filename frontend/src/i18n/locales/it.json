@@ -2606,6 +2606,7 @@
         "declined": "rifiutata da voi; nulla è stato scritto",
         "disabled": "L'assistente è disattivato: attivatelo in Impostazioni › Assistente e MCP.",
         "needsAck": "Accettate prima l'avviso sulla riservatezza di questo fornitore in Impostazioni › Assistente e MCP.",
-        "error": "Errore: {error}"
+        "error": "Errore: {error}",
+        "write": "Lasciare che l'assistente proponga modifiche (ciascuna confermata)"
     }
 }

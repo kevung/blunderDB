@@ -20,6 +20,11 @@ import (
 func Run(assets embed.FS, icon []byte, width, height int, db *database.Database, extraBinds []interface{}, startupFilePath string) error {
 	app := NewApp(db)
 	app.startupFilePath = startupFilePath
+	for _, bind := range extraBinds {
+		if c, ok := bind.(AssistantConsent); ok {
+			app.assistant.consent = c.AssistantConsentURL
+		}
+	}
 	return wails.Run(&options.App{
 		Title:  "blunderDB",
 		Width:  width,

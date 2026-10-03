@@ -23,8 +23,10 @@ type AssistantRequest struct {
 	Preset  string `json:"preset"`
 	BaseURL string `json:"baseURL"`
 	Model   string `json:"model"`
-	// Write offers the tools that change the database — each call still
-	// waits for the user's confirmation. The same switch as the MCP server's.
+	// Write offers the model the tools that change the database, each call
+	// still waiting for the user's confirmation. The assistant's own setting,
+	// apart from the localhost MCP server's write switch: there no one
+	// confirms anything.
 	Write bool   `json:"write"`
 	Text  string `json:"text"`
 }
@@ -43,6 +45,44 @@ type assistantState struct {
 
 	cancelMu sync.Mutex
 	cancel   context.CancelFunc
+
+	// consent returns the remote address whose privacy warning the user
+	// accepted, read from the saved settings (set by Run); nil accepts none.
+	consent func() string
+}
+
+// AssistantConsent is what the settings expose for the privacy check: the
+// remote address the user agreed to send sentences to.
+type AssistantConsent interface {
+	AssistantConsentURL() string
+}
+
+// errNoConsent refuses a remote provider whose privacy warning the user has
+// not accepted for that very address.
+const errNoConsent = "privacy: accept this provider's privacy warning in the settings first"
+
+// effectiveEndpoint is the address and model a request goes to: the user's,
+// else the preset's.
+func effectiveEndpoint(req AssistantRequest) (assistant.Preset, string, string) {
+	preset := assistant.PresetByID(req.Preset)
+	base, model := strings.TrimSpace(req.BaseURL), strings.TrimSpace(req.Model)
+	if base == "" {
+		base = preset.BaseURL
+	}
+	if model == "" {
+		model = preset.Model
+	}
+	return preset, base, model
+}
+
+// consented reports whether base may be sent sentences: a loopback address
+// always, a remote one only if it is the address the user accepted. Checked
+// here, not only in the window: the frontend is not the one to trust.
+func (s *assistantState) consented(base string) bool {
+	if !assistant.IsRemote(base) {
+		return true
+	}
+	return s.consent != nil && strings.TrimSpace(s.consent()) == base
 }
 
 func (s *assistantState) currentPhrase() string {
@@ -57,14 +97,7 @@ func (a *App) AssistantPresets() []assistant.Preset {
 }
 
 func (a *App) sessionFor(ctx context.Context, req AssistantRequest) (*assistant.Session, error) {
-	preset := assistant.PresetByID(req.Preset)
-	base, model := strings.TrimSpace(req.BaseURL), strings.TrimSpace(req.Model)
-	if base == "" {
-		base = preset.BaseURL
-	}
-	if model == "" {
-		model = preset.Model
-	}
+	preset, base, model := effectiveEndpoint(req)
 	fp := strings.Join([]string{preset.ID, base, model, boolStr(req.Write)}, "|")
 	if a.assistant.sess != nil && a.assistant.fingerprint == fp {
 		return a.assistant.sess, nil
@@ -129,6 +162,9 @@ func turnError(err error) error {
 func (a *App) AssistantAsk(req AssistantRequest) (assistant.Turn, error) {
 	a.assistant.mu.Lock()
 	defer a.assistant.mu.Unlock()
+	if _, base, _ := effectiveEndpoint(req); !a.assistant.consented(base) {
+		return assistant.Turn{}, newGUIError(CodeInvalid, errNoConsent)
+	}
 	ctx, done := a.assistantContext()
 	defer done()
 	sess, err := a.sessionFor(ctx, req)

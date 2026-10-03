@@ -31,15 +31,21 @@ Code doit pouvoir écrire une phrase dans blunderDB et voir le résultat à l'é
    mémoire du SDK) des mêmes outils : pas un second accès aux données. Fournisseur compatible
    OpenAI (`/chat/completions` avec appels d'outils) ; préréglages Ollama (défaut, local),
    Groq, OpenRouter, Gemini, Anthropic, autre. Aucun modèle n'est embarqué.
-5. **Strictement opt-in.** Désactivé par défaut ; un fournisseur distant n'est utilisé
-   qu'après l'accord explicite de l'utilisateur à l'avertissement de confidentialité, accord
-   lié au fournisseur (en changer le redemande). La clé d'API va dans le trousseau du système
-   (`go-keyring`), jamais dans la base ni dans le fichier de réglages.
+5. **Strictement opt-in.** Désactivé par défaut. Est distante toute adresse dont l'hôte n'est
+   pas une boucle locale (`assistant.IsRemote`), quel que soit le préréglage : un Ollama sur
+   une autre machine est distant. Une adresse distante n'est appelée qu'après l'accord de
+   l'utilisateur à l'avertissement de confidentialité, accord lié à cette adresse précise et
+   vérifié côté Go (`AssistantAsk` refuse sans lui) : la fenêtre n'est pas celle qu'on croit
+   sur parole. La clé d'API va dans le trousseau du système (`go-keyring`), jamais dans la
+   base ni dans le fichier de réglages ; une erreur du fournisseur est rendue la clé connue et
+   tout ce qui ressemble à une clé masqués.
 6. **Une phrase devient une vue.** La vue qu'ouvre l'assistant porte le nom de la phrase, pas
    l'étiquette que le modèle propose ; la recherche y est lancée, la fenêtre y bascule, et ses
    jetons restent dans l'historique du panneau Recherche.
 7. **Toute écriture est préparée puis confirmée.** Les outils d'écriture ne sont offerts au
-   modèle que si l'interrupteur d'écriture est mis, et même alors chaque appel suspend le tour :
+   modèle que si le réglage propre à l'assistant le permet — distinct de l'interrupteur
+   d'écriture du serveur localhost, où personne ne confirme rien — et même alors chaque appel
+   suspend le tour :
    l'utilisateur voit l'outil et ses arguments, confirme ou refuse ; un refus est rendu au
    modèle comme tel.
 8. **Le texte libre du modèle est marqué.** Le panneau sépare ce que les outils ont rendu (des
@@ -48,8 +54,10 @@ Code doit pouvoir écrire une phrase dans blunderDB et voir le résultat à l'é
    langues de l'application, `pkg/blunderdb/assistant/testdata/corpus.json`) et un banc
    (`go test -tags assistantbench`) envoient chaque phrase à un vrai modèle par les vrais outils
    sur la base de démonstration, et notent ce qu'il a fait : la vue ouverte et la forme
-   canonique de sa requête, ou l'outil appelé. La documentation ne recommande un modèle
-   qu'avec un score de ce banc ; sans mesure, elle n'en nomme aucun.
+   canonique de sa requête, ou l'outil appelé. Le modèle du préréglage Ollama, `qwen2.5:7b`,
+   n'est qu'un défaut non mesuré : aucun fournisseur n'était joignable quand ce lot a été
+   livré. La recommandation viendra du score de ce banc, publié avec le modèle mesuré ; d'ici
+   là la documentation n'en nomme aucun.
 
 ## Conséquences
 

@@ -536,18 +536,24 @@ fenêtre ouverte, ``blunderdb mcp`` sert les mêmes outils (voir :ref:`cli`).
 L'**assistant interne** est un client de ces mêmes outils. Aucun modèle n'est
 embarqué : il s'adresse à un fournisseur compatible OpenAI — Ollama sur cette
 machine par défaut, ou Groq, OpenRouter, Gemini, Anthropic, ou une autre
-adresse. Avec un fournisseur distant, vos phrases et les résultats des outils
-quittent la machine : l'onglet le dit et attend votre accord. La clé d'API va
-dans le trousseau du système, jamais dans la base ni dans le fichier de
-réglages.
+adresse. Est distante toute adresse hors de cette machine, quel que soit le
+fournisseur choisi : vos phrases et les résultats des outils la quittent alors,
+l'onglet le dit et attend votre accord pour cette adresse précise ; une autre
+adresse le redemande. La clé d'API va dans le trousseau du système, jamais dans
+la base ni dans le fichier de réglages. Le modèle proposé par défaut pour
+Ollama, ``qwen2.5:7b``, est un point de départ, pas une recommandation : aucune
+recommandation de modèle n'est faite sans un score du banc de mesure livré avec
+le code source.
 
 Une fois activé, l'assistant est un sous-onglet **Assistant** du panneau
 Recherche. Une phrase — « mes erreurs de plus de 50 millipoints dans la
 course » — ouvre une nouvelle vue nommée d'après elle, y lance la recherche et
 y bascule ; ses jetons restent dans l'historique des recherches. Ce que les
 outils renvoient vient de la base ; ce que le modèle écrit est marqué **Texte
-libre du modèle**. Une modification que l'assistant prépare (écriture
-autorisée) s'affiche et n'est faite qu'après **Confirmer**.
+libre du modèle**. L'assistant ne propose de modification que si la case
+**Laisser l'assistant proposer des modifications** est cochée — un réglage
+distinct de l'écriture du serveur MCP local — et chaque modification qu'il
+prépare s'affiche et n'est faite qu'après **Confirmer**.
 
 La fenêtre de configuration regroupe également des réglages d'affichage de
 l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir ou de

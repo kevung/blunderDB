@@ -33,6 +33,22 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
 }));
 
 import AssistantSettings from '../components/AssistantSettings.svelte';
+import { isRemoteURL, needsPrivacyAck } from '../services/assistantService.js';
+
+describe('privacy', () => {
+    test('remote follows the address, not the preset', () => {
+        expect(isRemoteURL('http://localhost:11434/v1')).toBe(false);
+        expect(isRemoteURL('http://127.0.0.1:8080/v1')).toBe(false);
+        expect(isRemoteURL('http://[::1]:1/v1')).toBe(false);
+        expect(isRemoteURL('http://192.168.1.5:11434/v1')).toBe(true);
+        expect(isRemoteURL('')).toBe(true);
+        const presets = [{ id: 'ollama', name: 'Ollama', baseURL: 'http://localhost:11434/v1', model: 'm', remote: false, needsKey: false }];
+        const s = { on: true, preset: 'ollama', baseURL: '', model: '', write: false, remoteAck: '' };
+        expect(needsPrivacyAck(s, presets)).toBe(false);
+        expect(needsPrivacyAck({ ...s, baseURL: 'http://192.168.1.5:11434/v1' }, presets)).toBe(true);
+        expect(needsPrivacyAck({ ...s, baseURL: 'http://192.168.1.5:11434/v1', remoteAck: 'http://192.168.1.5:11434/v1' }, presets)).toBe(false);
+    });
+});
 
 beforeEach(() => {
     calls.saved.length = 0;
@@ -55,7 +71,7 @@ describe('AssistantSettings', () => {
 
     test('a remote provider shows its privacy warning; the key is said to be in the keyring', async () => {
         const { findByTestId, container } = render(AssistantSettings);
-        expect((await findByTestId('assistant-privacy')).textContent).toContain('Groq');
+        expect((await findByTestId('assistant-privacy')).textContent).toContain('api.groq.com');
         expect((await findByTestId('assistant-key-state')).textContent).toBeTruthy();
         expect(/** @type {HTMLInputElement} */ (container.querySelector('#config-assistant-on')).checked).toBe(false);
     });

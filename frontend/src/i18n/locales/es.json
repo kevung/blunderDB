@@ -2606,6 +2606,7 @@
         "declined": "rechazado por usted; no se escribió nada",
         "disabled": "El asistente está desactivado: actívelo en Ajustes › Asistente y MCP.",
         "needsAck": "Acepte primero el aviso de privacidad de este proveedor en Ajustes › Asistente y MCP.",
-        "error": "Error: {error}"
+        "error": "Error: {error}",
+        "write": "Dejar que el asistente proponga cambios (cada uno confirmado)"
     }
 }

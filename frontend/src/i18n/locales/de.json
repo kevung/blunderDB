@@ -2606,6 +2606,7 @@
         "declined": "von Ihnen abgelehnt; nichts wurde geschrieben",
         "disabled": "Der Assistent ist aus: Aktivieren Sie ihn unter Einstellungen › Assistent und MCP.",
         "needsAck": "Akzeptieren Sie zuerst den Datenschutzhinweis dieses Anbieters unter Einstellungen › Assistent und MCP.",
-        "error": "Fehler: {error}"
+        "error": "Fehler: {error}",
+        "write": "Den Assistenten Änderungen vorschlagen lassen (jede bestätigt)"
     }
 }

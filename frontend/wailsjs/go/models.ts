@@ -3171,6 +3171,7 @@ export namespace main {
 	    preset: string;
 	    baseURL: string;
 	    model: string;
+	    write: boolean;
 	    remoteAck: string;
 	
 	    static createFrom(source: any = {}) {
@@ -3183,6 +3184,7 @@ export namespace main {
 	        this.preset = source["preset"];
 	        this.baseURL = source["baseURL"];
 	        this.model = source["model"];
+	        this.write = source["write"];
 	        this.remoteAck = source["remoteAck"];
 	    }
 	}
@@ -3277,6 +3279,7 @@ export namespace main {
 	    assistant_preset?: string;
 	    assistant_base_url?: string;
 	    assistant_model?: string;
+	    assistant_write?: boolean;
 	    assistant_remote_ack?: string;
 	
 	    static createFrom(source: any = {}) {
@@ -3323,6 +3326,7 @@ export namespace main {
 	        this.assistant_preset = source["assistant_preset"];
 	        this.assistant_base_url = source["assistant_base_url"];
 	        this.assistant_model = source["assistant_model"];
+	        this.assistant_write = source["assistant_write"];
 	        this.assistant_remote_ack = source["assistant_remote_ack"];
 	    }
 	
