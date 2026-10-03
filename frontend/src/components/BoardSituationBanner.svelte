@@ -2,6 +2,12 @@
     // Bandeau posé sur le plateau quand il ne montre pas la position courante (services/boardSituation.js).
     import { t } from '../i18n';
     import { boardBannerKeyStore } from '../services/boardSituation.js';
+
+    // Board.svelte measures only on 'resize': refit once the layout has reflowed.
+    $effect(() => {
+        void $boardBannerKeyStore;
+        requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+    });
 </script>
 
 {#if $boardBannerKeyStore}
@@ -9,20 +15,14 @@
 {/if}
 
 <style>
+    /* In the flow, above the board area: the board refits under it. */
     .board-situation-banner {
-        position: absolute;
-        top: 6px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 5;
-        max-width: calc(100% - 120px);
         padding: 2px 10px;
-        border-radius: 3px;
         background: var(--color-surface-alt);
         color: var(--color-text);
-        border: 1px solid var(--color-border);
+        border-bottom: 1px solid var(--color-border);
         font-size: var(--font-size-small);
-        pointer-events: none;
+        text-align: center;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

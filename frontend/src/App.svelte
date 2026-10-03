@@ -461,6 +461,10 @@
          puisque c'est là qu'on commente, qu'on range et qu'on fait une carte. -->
     <div class="chrome"><StudyQueueBar /></div>
 
+    <!-- Hors de la zone du plateau : le canevas colle en haut de sa zone, un bandeau posé dessus
+         cacherait les numéros de points. -->
+    <div class="chrome"><BoardSituationBanner /></div>
+
     <div class="body" class:side={isSidePanel}>
         <div class="scrollable-content" data-tour="board" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>
             {#if $activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}
@@ -473,7 +477,6 @@
                 <DirectionViewComponent />
             {:else}
                 <Board />
-                <BoardSituationBanner />
             {/if}
         </div>
 

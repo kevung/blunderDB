@@ -2398,7 +2398,7 @@
             "title": "Salles où joue cette épreuve",
             "hint": "Aucune coche : toutes les tables."
         },
-        "closeView": "Fermer cette vue"
+        "closeView": "Quitter la direction"
     },
     "palette": {
         "title": "Palette de commandes",

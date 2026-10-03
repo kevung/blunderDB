@@ -1713,7 +1713,7 @@ quelle phase il entrera. Aucun tirage déjà fait n'est refait.
 Un retrait se fait *maintenant* ou *après son match en cours*, selon que le
 joueur part tout de suite ou finit ce qu'il joue ; il se confirme.
 
-Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Absenter**, sur
+Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Marquer absent**, sur
 sa ligne, ouvre un petit formulaire sous son nom — *jusqu'à* une heure
 (pré-remplie sur l'heure qui suit), ou, quand la phase en cours est un suisse
 par rondes, *jusqu'à la ronde* portant son numéro. Le moteur cesse alors de

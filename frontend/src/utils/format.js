@@ -39,6 +39,17 @@ export function formatIsoDay(value) {
     return formatDate(new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
 }
 
+/**
+ * Format the UTC calendar day of a timestamp: the counterpart of reading "2025-03-02" with
+ * `new Date(...)`, which is UTC midnight. Formatting that instant in local time would show the
+ * day before west of Greenwich.
+ */
+export function formatUtcDay(ms) {
+    if (!ms) return '';
+    const d = new Date(ms);
+    return formatDate(new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+}
+
 /** Same as formatDate(), with hour:minute appended per the active language's conventions. */
 export function formatDateTime(value, options) {
     const d = toDate(value);

@@ -2398,7 +2398,7 @@
             "title": "Rooms this competition plays in",
             "hint": "None ticked: every table."
         },
-        "closeView": "Close this view"
+        "closeView": "Leave the Direction"
     },
     "palette": {
         "title": "Command palette",

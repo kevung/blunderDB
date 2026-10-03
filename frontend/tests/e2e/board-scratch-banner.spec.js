@@ -47,3 +47,19 @@ test('changer d’onglet annonce le plateau brouillon et masque la barre du matc
     await expect(infoBar(page)).toBeVisible();
     await expect(board(page)).toHaveAttribute('aria-label', studied);
 });
+
+for (const [width, height] of [
+    [1280, 800],
+    [1024, 700]
+]) {
+    test(`le bandeau ne recouvre rien du plateau à ${width}×${height}`, async ({ page }) => {
+        await page.setViewportSize({ width, height });
+        await tab(page, 'search').click();
+        await expect(banner(page)).toBeVisible();
+        const bar = await banner(page).boundingBox();
+        const svg = await page.locator('#backgammon-board svg').boundingBox();
+        // Le canevas colle en haut de sa zone : tout ce qui le recouvre cache les numéros de points.
+        const overlaps = bar.x < svg.x + svg.width && bar.x + bar.width > svg.x && bar.y < svg.y + svg.height && bar.y + bar.height > svg.y;
+        expect(overlaps).toBe(false);
+    });
+}

@@ -1,7 +1,7 @@
 <script>
     import { loadPositionsFromTournament, loadPositionsFromMatch, openTournamentInPanel, openMatchInPanel } from '../../services/positionLoader.js';
     import { t, translate } from '../../i18n/index.js';
-    import { formatIsoDay, formatDate } from '../../utils/format.js';
+    import { formatIsoDay, formatUtcDay } from '../../utils/format.js';
     import LineChart from './charts/LineChart.svelte';
     import ScatterChart from './charts/ScatterChart.svelte';
     import ContextMenu from '../ContextMenu.svelte';
@@ -158,7 +158,7 @@
 
     function fmtTimestamp(ms) {
         if (!ms) return '';
-        return formatDate(new Date(ms));
+        return formatUtcDay(ms);
     }
 
     function fmtDate(dateStr) {

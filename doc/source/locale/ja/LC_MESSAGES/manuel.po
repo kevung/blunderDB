@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 06:31+0200\n"
+"POT-Creation-Date: 2026-10-03 07:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -3253,8 +3253,8 @@ msgstr "離脱は *いま* か *進行中のマッチのあと* かを選べま�
 
 #: ../../source/manuel.rst:1716
 msgid ""
-"Un joueur qui manque une ronde n'a pas besoin d'être retiré : "
-"**Absenter**, sur sa ligne, ouvre un petit formulaire sous son nom — "
+"Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Marquer "
+"absent**, sur sa ligne, ouvre un petit formulaire sous son nom — "
 "*jusqu'à* une heure (pré-remplie sur l'heure qui suit), ou, quand la "
 "phase en cours est un suisse par rondes, *jusqu'à la ronde* portant son "
 "numéro. Le moteur cesse alors de l'apparier, mais son rang, ses vies et "
@@ -7380,3 +7380,4 @@ msgstr ""
 
 #~ msgid "L'affichage de la salle"
 #~ msgstr "会場ディスプレイ"
+
