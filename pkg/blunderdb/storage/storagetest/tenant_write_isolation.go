@@ -14,6 +14,9 @@ import (
 	"context"
 	"errors"
 	"slices"
+	"sort"
+	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -39,6 +42,10 @@ var tenantWriteCases = []tenantWriteCase{
 	{"Tournament/AddMatch", checkWriteTournamentAddMatch},
 	{"Match/UpdateDelete", checkWriteMatch},
 	{"Direction/SetPair", checkWriteDirectionPair},
+	{"Oracle/Analysis", checkOracleAnalysis},
+	{"Oracle/Collection", checkOracleCollection},
+	{"Oracle/Anki", checkOracleAnki},
+	{"Oracle/TournamentAddMatch", checkOracleTournament},
 }
 
 // RunTenantWriteIsolationTests runs every by-id write against another
@@ -74,7 +81,9 @@ func checkWriteAnalysisSave(t *testing.T, cx func(scope string) context.Context,
 	if err := s.Analyses().Save(cx(a), a, idA, &domain.PositionAnalysis{XGID: "OWNER"}); err != nil {
 		t.Fatalf("Save analysis(%s): %v", a, err)
 	}
-	_ = s.Analyses().Save(cx(b), b, idA, &domain.PositionAnalysis{XGID: "INTRUDER"})
+	if err := s.Analyses().Save(cx(b), b, idA, &domain.PositionAnalysis{XGID: "INTRUDER"}); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("tenant %s's Save over tenant %s's analysis: %v, want ErrNotFound", b, a, err)
+	}
 	got, err := s.Analyses().Load(cx(a), a, idA)
 	if err != nil {
 		t.Fatalf("Load analysis(%s): %v", a, err)
@@ -86,8 +95,8 @@ func checkWriteAnalysisSave(t *testing.T, cx func(scope string) context.Context,
 
 func checkWriteAnalysisFirstSave(t *testing.T, cx func(scope string) context.Context, s storage.Storage, a, b string) {
 	idA := savePos(t, cx, s, a, checkerPos())
-	if err := s.Analyses().Save(cx(b), b, idA, &domain.PositionAnalysis{XGID: "INTRUDER"}); err == nil {
-		t.Errorf("tenant %s saved an analysis on tenant %s's position, want a refusal", b, a)
+	if err := s.Analyses().Save(cx(b), b, idA, &domain.PositionAnalysis{XGID: "INTRUDER"}); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("tenant %s saved an analysis on tenant %s's position, want ErrNotFound", b, a)
 	}
 	// The intruder's attempt must not take the one-analysis slot the owner needs.
 	if err := s.Analyses().Save(cx(a), a, idA, &domain.PositionAnalysis{XGID: "OWNER"}); err != nil {
@@ -144,11 +153,11 @@ func checkWriteComment(t *testing.T, cx func(scope string) context.Context, s st
 
 func checkWriteCommentAdd(t *testing.T, cx func(scope string) context.Context, s storage.Storage, a, b string) {
 	idA := savePos(t, cx, s, a, checkerPos())
-	if _, err := s.Comments().Add(cx(b), b, idA, "intruder's note"); err == nil {
-		t.Errorf("tenant %s added a comment to tenant %s's position, want a refusal", b, a)
+	if _, err := s.Comments().Add(cx(b), b, idA, "intruder's note"); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("tenant %s added a comment to tenant %s's position, want ErrNotFound", b, a)
 	}
-	if _, err := s.Comments().Upsert(cx(b), b, idA, "intruder's note"); err == nil {
-		t.Errorf("tenant %s upserted a comment on tenant %s's position, want a refusal", b, a)
+	if _, err := s.Comments().Upsert(cx(b), b, idA, "intruder's note"); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("tenant %s upserted a comment on tenant %s's position, want ErrNotFound", b, a)
 	}
 }
 
@@ -223,14 +232,14 @@ func checkWriteCollectionAttach(t *testing.T, cx func(scope string) context.Cont
 	}
 	posB := savePos(t, cx, s, b, checkerPos())
 
-	if err := s.Collections().AddPosition(cx(b), b, cidA, posB); err == nil {
-		t.Errorf("tenant %s added a position to tenant %s's collection, want a refusal", b, a)
+	if err := s.Collections().AddPosition(cx(b), b, cidA, posB); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("tenant %s added a position to tenant %s's collection, want ErrNotFound", b, a)
 	}
-	if err := s.Collections().AddPositions(cx(b), b, cidA, []int64{posB}); err == nil {
-		t.Errorf("tenant %s added positions to tenant %s's collection, want a refusal", b, a)
+	if err := s.Collections().AddPositions(cx(b), b, cidA, []int64{posB}); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("tenant %s added positions to tenant %s's collection, want ErrNotFound", b, a)
 	}
-	if err := s.Collections().AddPosition(cx(b), b, cidB, posA); err == nil {
-		t.Errorf("tenant %s put tenant %s's position in its own collection, want a refusal", b, a)
+	if err := s.Collections().AddPosition(cx(b), b, cidB, posA); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("tenant %s put tenant %s's position in its own collection, want ErrNotFound", b, a)
 	}
 	if got := tenantCollectionPositionIDs(t, cx, s, a, cidA); len(got) != 0 {
 		t.Errorf("tenant %s's collection holds %v after tenant %s's attempts, want none", a, got, b)
@@ -264,8 +273,8 @@ func checkWriteTournamentAddMatch(t *testing.T, cx func(scope string) context.Co
 	if err != nil {
 		t.Fatalf("Save match(%s): %v", b, err)
 	}
-	if err := s.Tournaments().AddMatch(cx(b), b, tid, mid); err == nil {
-		t.Errorf("tenant %s put a match in tenant %s's tournament, want a refusal", b, a)
+	if err := s.Tournaments().AddMatch(cx(b), b, tid, mid); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("tenant %s put a match in tenant %s's tournament, want ErrNotFound", b, a)
 	}
 }
 
@@ -308,4 +317,126 @@ func checkWriteDirectionPair(t *testing.T, cx func(scope string) context.Context
 	if got := pairs["P1"]; len(got) != 1 || got[0].Name != "Anna" {
 		t.Errorf("tenant %s's pair P1 is %+v, want [Anna]", a, got)
 	}
+}
+
+// sameRefusal asserts that every probe was refused with ErrNotFound and with
+// one message once the ids the caller passed are masked: a refusal that
+// differs between "a's member", "a's non-member" and "absent" tells tenant b
+// what tenant a holds.
+func sameRefusal(t *testing.T, probes map[string]error, ids ...int64) {
+	t.Helper()
+	strs := make([]string, 0, len(ids))
+	for _, id := range ids {
+		strs = append(strs, strconv.FormatInt(id, 10))
+	}
+	sort.Slice(strs, func(i, j int) bool { return len(strs[i]) > len(strs[j]) })
+	mask := func(msg string) string {
+		for _, s := range strs {
+			msg = strings.ReplaceAll(msg, s, "#")
+		}
+		return msg
+	}
+	first, firstLabel := "", ""
+	for label, err := range probes {
+		if !errors.Is(err, storage.ErrNotFound) {
+			t.Errorf("%s: %v, want ErrNotFound", label, err)
+			continue
+		}
+		m := mask(err.Error())
+		if firstLabel == "" {
+			first, firstLabel = m, label
+		} else if m != first {
+			t.Errorf("refusals differ: %s says %q, %s says %q", firstLabel, first, label, m)
+		}
+	}
+}
+
+func checkOracleAnalysis(t *testing.T, cx func(scope string) context.Context, s storage.Storage, a, b string) {
+	withAnalysis := savePos(t, cx, s, a, provenancePos(1))
+	without := savePos(t, cx, s, a, provenancePos(2))
+	if err := s.Analyses().Save(cx(a), a, withAnalysis, &domain.PositionAnalysis{XGID: "OWNER"}); err != nil {
+		t.Fatalf("Save analysis(%s): %v", a, err)
+	}
+	absent := without + 1_000_000
+	sameRefusal(t, map[string]error{
+		"position with an analysis":    s.Analyses().Save(cx(b), b, withAnalysis, &domain.PositionAnalysis{XGID: "X"}),
+		"position without an analysis": s.Analyses().Save(cx(b), b, without, &domain.PositionAnalysis{XGID: "X"}),
+		"absent position":              s.Analyses().Save(cx(b), b, absent, &domain.PositionAnalysis{XGID: "X"}),
+	}, withAnalysis, without, absent)
+}
+
+func checkOracleCollection(t *testing.T, cx func(scope string) context.Context, s storage.Storage, a, b string) {
+	member := savePos(t, cx, s, a, provenancePos(1))
+	nonMember := savePos(t, cx, s, a, provenancePos(2))
+	cidA, err := s.Collections().Create(cx(a), a, "owner", "")
+	if err != nil {
+		t.Fatalf("Create(%s): %v", a, err)
+	}
+	if err := s.Collections().AddPosition(cx(a), a, cidA, member); err != nil {
+		t.Fatalf("AddPosition(%s): %v", a, err)
+	}
+	cidB, err := s.Collections().Create(cx(b), b, "intruder", "")
+	if err != nil {
+		t.Fatalf("Create(%s): %v", b, err)
+	}
+	absent := cidA + 1_000_000
+	ids := []int64{member, nonMember, cidA, cidB, absent}
+	sameRefusal(t, map[string]error{
+		"AddPosition member":     s.Collections().AddPosition(cx(b), b, cidA, member),
+		"AddPosition non-member": s.Collections().AddPosition(cx(b), b, cidA, nonMember),
+		"AddPosition absent":     s.Collections().AddPosition(cx(b), b, absent, member),
+	}, ids...)
+	sameRefusal(t, map[string]error{
+		"CopyPosition member":     s.Collections().CopyPosition(cx(b), b, cidA, member),
+		"CopyPosition non-member": s.Collections().CopyPosition(cx(b), b, cidA, nonMember),
+		"CopyPosition absent":     s.Collections().CopyPosition(cx(b), b, absent, member),
+	}, ids...)
+	sameRefusal(t, map[string]error{
+		"MovePosition member":     s.Collections().MovePosition(cx(b), b, cidB, cidA, member),
+		"MovePosition non-member": s.Collections().MovePosition(cx(b), b, cidB, cidA, nonMember),
+		"MovePosition absent":     s.Collections().MovePosition(cx(b), b, cidB, absent, member),
+	}, ids...)
+	sameRefusal(t, map[string]error{
+		"AddPositions member":     s.Collections().AddPositions(cx(b), b, cidA, []int64{member}),
+		"AddPositions non-member": s.Collections().AddPositions(cx(b), b, cidA, []int64{nonMember}),
+		"AddPositions absent":     s.Collections().AddPositions(cx(b), b, absent, []int64{member}),
+	}, ids...)
+	if got := tenantCollectionPositionIDs(t, cx, s, a, cidA); !slices.Equal(got, []int64{member}) {
+		t.Errorf("tenant %s's collection holds %v after the probes, want [%d]", a, got, member)
+	}
+}
+
+func checkOracleAnki(t *testing.T, cx func(scope string) context.Context, s storage.Storage, a, b string) {
+	card := savePos(t, cx, s, a, provenancePos(1))
+	nonCard := savePos(t, cx, s, a, provenancePos(2))
+	deck, err := s.Anki().CreateDeck(cx(a), a, "owner", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck(%s): %v", a, err)
+	}
+	if err := s.Anki().SyncWithPositions(cx(a), a, deck, []int64{card}); err != nil {
+		t.Fatalf("SyncWithPositions(%s): %v", a, err)
+	}
+	absent := deck + 1_000_000
+	sameRefusal(t, map[string]error{
+		"existing card": s.Anki().SyncWithPositions(cx(b), b, deck, []int64{card}),
+		"no card":       s.Anki().SyncWithPositions(cx(b), b, deck, []int64{nonCard}),
+		"absent deck":   s.Anki().SyncWithPositions(cx(b), b, absent, []int64{card}),
+	}, card, nonCard, deck, absent)
+}
+
+func checkOracleTournament(t *testing.T, cx func(scope string) context.Context, s storage.Storage, a, b string) {
+	tid, err := s.Tournaments().Create(cx(a), a, "owner", "2026-01-01", "")
+	if err != nil {
+		t.Fatalf("Create(%s): %v", a, err)
+	}
+	m := domain.Match{Player1Name: "Intruder", Player2Name: "Bob", MatchLength: 5}
+	mid, err := s.Matches().Save(cx(b), b, &m)
+	if err != nil {
+		t.Fatalf("Save match(%s): %v", b, err)
+	}
+	absent := tid + 1_000_000
+	sameRefusal(t, map[string]error{
+		"a's tournament":    s.Tournaments().AddMatch(cx(b), b, tid, mid),
+		"absent tournament": s.Tournaments().AddMatch(cx(b), b, absent, mid),
+	}, tid, absent, mid)
 }

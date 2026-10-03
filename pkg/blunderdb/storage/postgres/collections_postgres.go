@@ -158,10 +158,16 @@ func (s *collectionStore) Reorder(ctx context.Context, scope string, collectionI
 // order (a no-op when the position is already a member) and bumps the
 // collection's updated_at. It runs on the caller-provided execer.
 func addPositionTx(ctx context.Context, tx execer, tenant, collectionID, positionID int64) error {
+	if err := requireOwned(ctx, tx, tenant, "collection", collectionID); err != nil {
+		return err
+	}
+	if err := requireOwned(ctx, tx, tenant, "position", positionID); err != nil {
+		return err
+	}
 	var maxOrder int
 	if err := tx.QueryRow(ctx,
-		`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = $1`,
-		collectionID).Scan(&maxOrder); err != nil {
+		`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = $1 AND tenant_id = $2`,
+		collectionID, tenant).Scan(&maxOrder); err != nil {
 		maxOrder = -1
 	}
 	if _, err := tx.Exec(ctx,
@@ -195,10 +201,16 @@ func (s *collectionStore) AddPosition(ctx context.Context, scope string, collect
 func (s *collectionStore) AddPositions(ctx context.Context, scope string, collectionID int64, positionIDs []int64) error {
 	tenant := tenantID(scope)
 	err := withTx(ctx, s.db, func(tx execer) error {
+		if err := requireOwned(ctx, tx, tenant, "collection", collectionID); err != nil {
+			return err
+		}
+		if err := requireOwned(ctx, tx, tenant, "position", positionIDs...); err != nil {
+			return err
+		}
 		var maxOrder int
 		if err := tx.QueryRow(ctx,
-			`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = $1`,
-			collectionID).Scan(&maxOrder); err != nil {
+			`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = $1 AND tenant_id = $2`,
+			collectionID, tenant).Scan(&maxOrder); err != nil {
 			maxOrder = -1
 		}
 		for i, positionID := range positionIDs {

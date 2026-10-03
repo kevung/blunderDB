@@ -37,10 +37,9 @@ const analysisInsertSQL = `INSERT INTO analysis (
 // ids are unique across tenants (one BIGSERIAL sequence), so the index needs
 // no tenant_id and the target is position_id alone. That target also
 // catches another tenant's row, so the WHERE keeps the update inside the
-// writer's tenant: a foreign row is left as it is and Save reports
-// ErrNotFound. A fresh insert on a foreign position is refused by the
-// composite (tenant_id, position_id) foreign key, but an update keeps the
-// existing row's tenant_id and passes that key.
+// writer's tenant: a foreign row is left as it is. Save checks the position
+// is the tenant's first (requireOwned), so a foreign position with or without
+// an analysis gets the same ErrNotFound; the WHERE holds even without it.
 const analysisUpsertSQL = analysisInsertSQL + `
 ON CONFLICT (position_id) DO UPDATE SET
 	data=excluded.data,
@@ -87,6 +86,9 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 
 	// The analysis row and the position flag it implies are one write.
 	return withTx(ctx, s.db, func(tx execer) error {
+		if err := requireOwned(ctx, tx, tenant, "position", positionID); err != nil {
+			return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, err)
+		}
 		tag, err := tx.Exec(ctx, analysisUpsertSQL,
 			tenant, positionID, data,
 			c.BestCubeAction, c.CubeError, c.BestMoveEquityError,

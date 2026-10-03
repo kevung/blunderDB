@@ -189,11 +189,13 @@ func errf(d Dialect, what string, err error) error {
 }
 
 // RequireOwned returns storage.ErrNotFound unless table holds a row with this
-// id in the scope's tenant. A write that attaches a row to a parent through a
-// plain foreign key (parent_id alone, not (tenant_id, parent_id)) must call
-// it first: that key only proves the parent exists in some tenant — ids come
-// from one sequence shared by every tenant, and foreign-key checks bypass
-// row-level security. A backend with no tenant column (SQLite: the file is
+// id in the scope's tenant. A write that attaches a row to a parent calls it
+// first when the database alone would not answer the same way for every
+// foreign id: a plain foreign key (parent_id alone) only proves the parent
+// exists in some tenant — ids come from one sequence shared by every tenant,
+// and foreign-key checks bypass row-level security — and an ON CONFLICT on a
+// unique index without tenant_id tells "already there" from "absent" before
+// any key is checked. A backend with no tenant column (SQLite: the file is
 // its single tenant) has nothing to check and keeps its foreign keys as the
 // only guard. table is a constant of the caller, never user input.
 func RequireOwned(ctx context.Context, db Execer, scope, table string, id int64) error {
