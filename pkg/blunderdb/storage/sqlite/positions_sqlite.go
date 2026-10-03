@@ -74,6 +74,9 @@ const positionInsertSQL = `INSERT INTO position (
 ) VALUES (?,?,?,?,?, ?,?,?,?, ?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?, ?,?,?,?)
 ON CONFLICT(zobrist_hash) DO NOTHING`
 
+// positionIDByHashSQL finds the row a deduplicated Save landed on.
+const positionIDByHashSQL = `SELECT id FROM position WHERE zobrist_hash = ?`
+
 // markIndividualSQL raises the provenance flag on an already-stored position.
 // It only ever sets, never clears — that is what makes the flag sticky.
 const markIndividualSQL = `UPDATE position SET individually_imported = 1
@@ -83,8 +86,6 @@ const markIndividualSQL = `UPDATE position SET individually_imported = 1
 // position. Like markIndividualSQL it only ever sets, never clears — that is
 // what makes the mark sticky across re-imports and across matches sharing the
 // position (docs/adr/0006).
-const positionIDByHashSQL = `SELECT id FROM position WHERE zobrist_hash = ?`
-
 const markFlaggedSQL = `UPDATE position SET flagged = 1
 	WHERE zobrist_hash = ? AND flagged = 0`
 

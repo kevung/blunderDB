@@ -598,6 +598,7 @@ func (im OGXMImporter) Import(ctx context.Context, scope string, src Source, pro
 	sum := Summary{SavedPositions: res.SavedPositions, Matches: 1, MatchID: res.MatchID, BatchID: src.BatchID}
 	if res.Skipped {
 		sum.SkippedDuplicates = 1
+		sum.FlagsApplied = res.FlagsApplied
 		sum.SavedPositions = 0
 	}
 	if res.Enriched {

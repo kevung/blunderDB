@@ -2390,9 +2390,10 @@ taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.
    Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas confondre
    avec zéro. C'est notamment le cas de la colonne Chance pour tout match
    importé avant la version 2.15.0 du schéma : la chance n'était alors pas
-   conservée, et rien ne permet de la reconstituer après coup — il faut
-   réimporter les fichiers source. Les formats qui ne la transportent pas (BGF,
-   Jellyfish ``.mat``) n'en fourniront jamais.
+   conservée, et rien ne permet de la reconstituer après coup. Réimporter le
+   fichier source ne suffit pas : l'import y reconnaît un doublon et n'en reprend
+   que les marques. Il faut supprimer le match, puis le réimporter. Les formats
+   qui ne la transportent pas (BGF, Jellyfish ``.mat``) n'en fourniront jamais.
 
 Règle d'agrégation
 ~~~~~~~~~~~~~~~~~~

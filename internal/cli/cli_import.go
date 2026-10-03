@@ -206,6 +206,9 @@ func (cli *CLI) importMatch(filePath, format string) error {
 		}
 		cli.finishImportBatch(batchID, failures)
 		if errors.Is(err, ErrDuplicateMatch) {
+			if n := flagsApplied(err); n > 0 {
+				return fmt.Errorf("this match has already been imported to the database (%d study marks applied)", n)
+			}
 			return fmt.Errorf("this match has already been imported to the database")
 		}
 		return fmt.Errorf("failed to import match: %w", err)
@@ -461,7 +464,11 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		if err != nil {
 			if errors.Is(err, ErrDuplicateMatch) {
 				if text {
-					fmt.Println(" DUPLICATE")
+					if n := flagsApplied(err); n > 0 {
+						fmt.Printf(" DUPLICATE (%d study marks applied)\n", n)
+					} else {
+						fmt.Println(" DUPLICATE")
+					}
 				}
 				result.Error = "duplicate"
 				duplicateCount++
@@ -576,4 +583,14 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 	}
 
 	return nil
+}
+
+// flagsApplied is how many source-tool study marks a duplicate re-import
+// still delivered, 0 for any other error.
+func flagsApplied(err error) int {
+	var dup *DuplicateMatchError
+	if errors.As(err, &dup) {
+		return dup.FlagsApplied
+	}
+	return 0
 }
