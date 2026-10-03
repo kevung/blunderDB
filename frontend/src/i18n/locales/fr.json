@@ -842,6 +842,14 @@
             "saveImageSVG": "Enregistrer l'image (SVG)…",
             "saveImagePNG": "Enregistrer l'image (PNG)…",
             "neighbours": "Positions voisines"
+        },
+        "scene": {
+            "pip": "pip : {n}",
+            "away": "à {n}",
+            "crawford": "crawford",
+            "post": "post",
+            "unlimited": "illimité",
+            "off": "({n} sortis)"
         }
     },
     "epc": {

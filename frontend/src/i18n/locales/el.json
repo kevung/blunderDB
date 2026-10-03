@@ -842,6 +842,14 @@
             "saveImageSVG": "Αποθήκευση εικόνας (SVG)…",
             "saveImagePNG": "Αποθήκευση εικόνας (PNG)…",
             "neighbours": "Γειτονικές θέσεις"
+        },
+        "scene": {
+            "pip": "pip: {n}",
+            "away": "απομένουν {n}",
+            "crawford": "crawford",
+            "post": "post",
+            "unlimited": "απεριόριστο",
+            "off": "({n} εκτός)"
         }
     },
     "epc": {

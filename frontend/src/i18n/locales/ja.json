@@ -842,6 +842,14 @@
             "saveImageSVG": "画像を保存（SVG）…",
             "saveImagePNG": "画像を保存（PNG）…",
             "neighbours": "近い局面"
+        },
+        "scene": {
+            "pip": "pip: {n}",
+            "away": "あと{n}",
+            "crawford": "クロフォード",
+            "post": "ポスト",
+            "unlimited": "無制限",
+            "off": "({n} OFF)"
         }
     },
     "epc": {
