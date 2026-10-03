@@ -53,7 +53,7 @@
     import { refreshTranscriptionDrafts, draftLabel, showTranscriptionTab } from '../services/transcriptionService.js';
 
     /** @type {any[]} */
-    let matches = $state([]);
+    let matches = $state.raw([]);
     /** @type {any} */
     let selectedMatch = $state(null);
     // A match requested from the command palette is being opened.
@@ -122,9 +122,7 @@
             try {
                 await UpdateMatchComment(matchId, text);
                 if (detailMatch && detailMatch.id === matchId) detailMatch.comment = text;
-                const m = matches.find((x) => x.id === matchId);
-                if (m) m.comment = text;
-                matches = matches;
+                matches = matches.map((x) => (x.id === matchId ? { ...x, comment: text } : x));
                 statusBarTextStore.set(tMsg('match.commentUpdated'));
             } catch (error) {
                 logger.error('Error updating comment:', error);

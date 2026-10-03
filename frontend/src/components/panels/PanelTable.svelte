@@ -84,11 +84,51 @@
         header = undefined,
         /** Rendered between the header strip and the table, as is. */
         subheader = undefined,
+        /** Fixed row height in px, the basis of the window arithmetic. */
+        rowHeight = 28,
+        /** Below this many rows the whole list is rendered (drag reorder, no spacers). */
+        virtualizeAbove = 200,
+        /** Rows rendered beyond the visible ones, on each side. */
+        buffer = 10,
         /** The cells of one row: (row, index). */
         cells
     } = $props();
 
     let tbodyEl = $state(null);
+    let scrollEl = $state(null);
+    let scrollTop = $state(0);
+    let viewportHeight = $state(0);
+
+    // The first rendered row sets the real pitch (cell padding, icon buttons).
+    let measured = $state(0);
+    const rh = $derived(measured || rowHeight);
+    const virtual = $derived(rows.length > virtualizeAbove);
+    // jsdom and a hidden panel report no height; assume a screenful then.
+    const visibleCount = $derived(Math.ceil((viewportHeight || 600) / rh));
+    const first = $derived(virtual ? Math.max(0, Math.floor(scrollTop / rh) - buffer) : 0);
+    const last = $derived(virtual ? Math.min(rows.length, first + visibleCount + 2 * buffer) : rows.length);
+    const windowRows = $derived(virtual ? rows.slice(first, last) : rows);
+
+    $effect(() => {
+        if (!virtual || !tbodyEl) return;
+        void windowRows;
+        const row = tbodyEl.querySelector('tr:not(.spacer)');
+        const h = row ? Math.round(row.getBoundingClientRect().height) : 0;
+        if (h > 0 && h !== measured) measured = h;
+    });
+
+    function onScroll() {
+        if (virtual && scrollEl) scrollTop = scrollEl.scrollTop;
+    }
+
+    $effect(() => {
+        if (!scrollEl) return;
+        viewportHeight = scrollEl.clientHeight;
+        if (typeof ResizeObserver === 'undefined') return;
+        const ro = new ResizeObserver(() => (viewportHeight = scrollEl.clientHeight));
+        ro.observe(scrollEl);
+        return () => ro.disconnect();
+    });
 
     function handleSort(col) {
         if (!col.sortable) return;
@@ -110,7 +150,21 @@
         await tick();
         const key = rowKey(row);
         const index = rows.findIndex((r) => rowKey(r) === key);
-        const el = index >= 0 ? tbodyEl?.children[index] : null;
+        if (index < 0) return;
+        if (virtual && scrollEl) {
+            // The row may not be in the DOM: scroll by arithmetic, minimally.
+            const top = index * rh;
+            const view = scrollEl.clientHeight || viewportHeight || 600;
+            const head = scrollEl.querySelector('thead')?.offsetHeight ?? 0;
+            let target = scrollEl.scrollTop;
+            if (block === 'center') target = top - (view - rh) / 2;
+            else if (top < target) target = top;
+            else if (top + rh > target + view - head) target = top + rh - view + head;
+            scrollEl.scrollTop = Math.max(0, target);
+            scrollTop = scrollEl.scrollTop;
+            return;
+        }
+        const el = tbodyEl?.children[index];
         if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ behavior: 'smooth', block });
     }
 
@@ -139,7 +193,7 @@
     {#if subheader}
         {@render subheader()}
     {/if}
-    <div class="scroll">
+    <div class="scroll" bind:this={scrollEl} onscroll={onScroll}>
         <table>
             <thead>
                 <tr>
@@ -167,8 +221,13 @@
                 </tr>
             </thead>
             <tbody bind:this={tbodyEl} use:dragReorder={{ onReorder: onReorder ?? (() => {}), enabled: !!onReorder }}>
-                {#each rows as row, index (rowKey(row))}
+                {#if virtual && first > 0}
+                    <tr class="spacer" aria-hidden="true" style:height="{first * rh}px"><td colspan={columns.length}></td></tr>
+                {/if}
+                {#each windowRows as row, i (rowKey(row))}
+                    {@const index = first + i}
                     <tr
+                        style:height={virtual ? `${rh}px` : undefined}
                         class={rowClass?.(row, index) ?? ''}
                         class:selected={isSelected(row)}
                         class:pointer={pointerRows}
@@ -179,6 +238,9 @@
                         {@render cells(row, index)}
                     </tr>
                 {/each}
+                {#if virtual && last < rows.length}
+                    <tr class="spacer" aria-hidden="true" style:height="{(rows.length - last) * rh}px"><td colspan={columns.length}></td></tr>
+                {/if}
             </tbody>
         </table>
         {#if rows.length === 0 && emptyText}
@@ -270,6 +332,17 @@
 
     tbody tr:hover {
         background-color: var(--color-surface-alt);
+    }
+
+    tbody tr.spacer,
+    tbody tr.spacer:hover {
+        background: none;
+        pointer-events: none;
+    }
+
+    tbody tr.spacer > :global(td) {
+        padding: 0;
+        border: none;
     }
 
     tbody tr.pointer {

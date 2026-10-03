@@ -119,7 +119,7 @@
 
     // Add match to tournament: only matches not yet assigned to one are offered
     let addMatchSearch = $state('');
-    let allMatches = $state([]);
+    let allMatches = $state.raw([]);
     const availableMatches = $derived(allMatches.filter((m) => !m.tournament_id));
 
     function matchMatchesQuery(m, query) {

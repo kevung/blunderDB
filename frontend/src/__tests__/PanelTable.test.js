@@ -162,3 +162,42 @@ describe('PanelTable', () => {
         expect(tr.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'center' });
     });
 });
+
+describe('virtualization', () => {
+    const BIG = Array.from({ length: 50000 }, (_, i) => ({ id: i + 1, name: `P${i + 1}` }));
+
+    test('50 000 rows render only a window plus buffer', () => {
+        const { container } = mount({ rows: BIG });
+        const rendered = container.querySelectorAll('tbody tr:not(.spacer)').length;
+        expect(rendered).toBeGreaterThan(0);
+        expect(rendered).toBeLessThanOrEqual(Math.ceil(600 / 28) + 2 * 10);
+        expect(container.querySelector('tr.spacer')).not.toBeNull();
+    });
+
+    test('a short list is rendered whole, without spacers', () => {
+        const { container } = mount();
+        expect(container.querySelectorAll('tbody tr').length).toBe(3);
+        expect(container.querySelector('tr.spacer')).toBeNull();
+    });
+
+    test('navigation crosses the window and the row is scrolled to', async () => {
+        const onSelect = vi.fn();
+        const { component, container } = mount({ rows: BIG, selectedKey: 100, onSelect });
+        expect(component.navigate(1)).toBe(true);
+        expect(onSelect).toHaveBeenCalledWith(BIG[100], 100);
+        await tick();
+        await tick();
+        const scroll = container.querySelector('.scroll');
+        expect(scroll.scrollTop).toBeGreaterThan(0);
+    });
+
+    test('scrolling shifts the window and passes absolute indexes to the cells', async () => {
+        const { container } = mount({ rows: BIG });
+        const scroll = container.querySelector('.scroll');
+        scroll.scrollTop = 28 * 20000;
+        await fireEvent.scroll(scroll);
+        const names = [...container.querySelectorAll('.name-cell')].map((e) => e.textContent);
+        expect(names).toContain('P20001');
+        expect(names).not.toContain('P1');
+    });
+});
