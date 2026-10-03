@@ -2617,6 +2617,21 @@ taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.
    désactivés : le tableau montre tous les joueurs, et il ventile déjà les
    décisions de pions et de videau en colonnes distinctes.
 
+Les chiffres par match de ce tableau, de l'onglet Progression et des PR par
+tournoi et par match viennent d'une table tenue à l'import (``match_stats`` :
+par match et par siège, les décisions comptées, l'erreur séparée pions/videau,
+les erreurs, les blunders, les deux termes du Snowie et la chance) plutôt que
+d'un nouveau parcours de chaque décision : sur une bibliothèque de plusieurs
+millions de positions, c'est ce qui garde le panneau rapide. Trois vues de
+corpus en sont tirées, en ligne de commande et par l'API du démon (voir
+:ref:`cli_stats`) : le **face-à-face** de deux joueurs (matchs communs, PR de
+chacun, bilan), le **PR par fenêtre calendaire** glissante (mois, trimestre)
+et le **classement** par PR des joueurs qui ont au moins un nombre donné de
+décisions comptées. Un **filtre de provenance** (moteur d'analyse, profondeur
+minimale) restreint les statistiques aux décisions analysées ainsi ; il porte
+sur chaque décision, et les chiffres qu'il touche sont alors recalculés depuis
+les décisions.
+
 .. important::
    Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas confondre
    avec zéro. C'est notamment le cas de la colonne Chance pour tout match

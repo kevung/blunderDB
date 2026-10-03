@@ -1123,6 +1123,47 @@ un tiret en texte, un compte nul en JSON, jamais un zéro.
    ./blunderdb stats training --db base.db --player "Alice"
    ./blunderdb stats training --db base.db --window month --format json
 
+**stats h2h** — Deux joueurs l'un contre l'autre : les matchs qu'ils ont
+disputés ensemble, le PR de chacun dans chaque match et sur l'ensemble, et le
+bilan des matchs menés à terme.
+
+.. code-block:: bash
+
+   ./blunderdb stats h2h --db <fichier> --player <nom> --opponent <nom> [options]
+
+**stats windows** — Le PR sur une fenêtre calendaire glissante : une ligne par
+mois, chacune couvrant ce mois et les précédents de la fenêtre
+(``--window month``, ``quarter`` ou un nombre de mois).
+
+.. code-block:: bash
+
+   ./blunderdb stats windows --db <fichier> [--player <nom>] [--window quarter]
+
+**stats ranking** — Le classement des joueurs par PR, le plus bas en tête,
+parmi ceux qui ont au moins ``--min-decisions`` décisions comptées (500 par
+défaut) ; deux PR égaux partagent un rang. ``--limit N`` garde les N premiers.
+
+.. code-block:: bash
+
+   ./blunderdb stats ranking --db <fichier> [--min-decisions 1000] [--limit 20]
+
+**Options communes:** ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``,
+``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube``,
+``--format text|json``, et le filtre de provenance ``--engine <nom>`` (le
+moteur d'analyse, nom exact) et ``--min-depth <n>`` (la profondeur minimale de
+l'analyse), que ``list --type stats`` et ``list --type players`` acceptent
+aussi. ``h2h`` et ``windows`` lisent les statistiques par match et refusent le
+filtre de provenance, qui porte sur chaque décision.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb stats h2h --db base.db --player "Alice" --opponent "Bob"
+   ./blunderdb stats windows --db base.db --player "Alice" --window quarter --format json
+   ./blunderdb stats ranking --db base.db --min-decisions 1000 --limit 20
+   ./blunderdb list --type stats --db base.db --player "Alice" --min-depth 3
+
 .. _cli_cubematrix:
 
 cubematrix — Matrice du videau
