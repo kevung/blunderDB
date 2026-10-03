@@ -151,14 +151,16 @@ func TestPositionsFromOGID(t *testing.T) {
 		return rec
 	}
 
-	const start = "11jjjjjhhhccccc:ooddddd88866666:N0N:65:W::6:5:"
+	// The colour field names who reached the position: B puts White on roll.
+	const start = "11jjjjjhhhccccc:ooddddd88866666:N0N:65:B::6:5:"
 	for _, c := range []struct {
 		name, ogid string
 		want       [2]int
+		onRoll     int
 	}{
-		{"in the Crawford game", start + "7C:", [2]int{2, domain.Crawford}},
-		{"after the Crawford game", start + "7:", [2]int{2, domain.PostCrawford}},
-		{"the canonical example", "cccccggggg:ddddiiiiii:N0N:63:W:IW:4:3:7:1:15", [2]int{4, 3}},
+		{"in the Crawford game", start + "7C:", [2]int{2, domain.Crawford}, domain.White},
+		{"after the Crawford game", start + "7:", [2]int{2, domain.PostCrawford}, domain.White},
+		{"the canonical example", "cccccggggg:ddddiiiiii:N0N:63:W:IW:4:3:7:1:15", [2]int{4, 3}, domain.Black},
 	} {
 		t.Run(c.name+"/fromOGID", func(t *testing.T) {
 			rec := post("/v1/positions.fromOGID", map[string]string{"ogid": c.ogid})
@@ -169,8 +171,8 @@ func TestPositionsFromOGID(t *testing.T) {
 			if err := json.Unmarshal(rec.Body.Bytes(), &pos); err != nil {
 				t.Fatalf("decode response: %v", err)
 			}
-			if pos.Score != c.want || pos.PlayerOnRoll != domain.White {
-				t.Errorf("away score = %v, on roll %d; want %v, White", pos.Score, pos.PlayerOnRoll, c.want)
+			if pos.Score != c.want || pos.PlayerOnRoll != c.onRoll {
+				t.Errorf("away score = %v, on roll %d; want %v, %d", pos.Score, pos.PlayerOnRoll, c.want, c.onRoll)
 			}
 		})
 		t.Run(c.name+"/parseText", func(t *testing.T) {

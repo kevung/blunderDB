@@ -410,15 +410,16 @@ jobs:
         run: go test -short -count=1 -timeout 1500s ./...
         shell: bash
 
-      # Named separately from the suite above for visibility (C.2, #189):
-      # macOS runners are arm64, the one platform with no accelerated kernel
-      # (NEON is #151, still open), so this is ADR-0024's bit-identity gate
-      # actually exercising the pure-Go fallback rather than AVX2. `-short`
-      # matches the step above (it only shrinks one sweep's span, nothing is
-      # skipped); the full, non-short sweep runs weekly (fuzz.yml, C.2/#189).
-      - name: Kernel identity (arm64 pure-Go fallback)
+      # Named separately from the suite above for visibility: macOS runners
+      # are arm64, where the NEON kernel is the default. The identity tests
+      # compare every accelerated kernel against the fallback whatever the
+      # selector says, so this step checks NEON bit for bit at every push.
+      # `-short` matches the step above (it only shrinks one sweep's span,
+      # nothing is skipped); the full sweep, NEON forced, runs weekly
+      # (fuzz.yml).
+      - name: Kernel identity (arm64, NEON against the pure-Go fallback)
         if: runner.os == 'macOS'
-        run: go test -short -count=1 -run 'TestKernelIdentity' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
+        run: go test -short -count=1 -run 'TestKernel|TestDenseKernelsAgree|TestNEON' -v -timeout 300s ./pkg/blunderdb/engine/gammonnet/
         shell: bash
 
   # ADR-0004 backstop: run the Go suite in a host stripped of every OPTIONAL
@@ -798,6 +799,12 @@ jobs:
       # specifically call out.
       - name: go vet (GOOS=windows)
         run: GOOS=windows go vet ./...
+        shell: bash
+
+      # The arm64 build carries hand-written NEON assembly; vet's asmdecl
+      # checks its frame and argument offsets against the Go declarations.
+      - name: go vet (GOARCH=arm64)
+        run: GOARCH=arm64 go vet ./...
         shell: bash
 
       # The app version lives in three files (doc/source/conf.py,

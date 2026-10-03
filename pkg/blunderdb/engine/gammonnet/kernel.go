@@ -13,7 +13,8 @@ import (
 // batch it consumes.
 //
 // Evaluate (network.go) is the scalar path; EvaluateBatch runs EvalBatchWidth
-// positions, one per SIMD lane, through the AVX2 assembly or its pure-Go twin.
+// positions, one per SIMD lane, through the AVX2 assembly (amd64), the NEON
+// assembly (arm64) or their pure-Go twin.
 //
 // ADR-0024: the batch vectorises over POSITIONS, not over the reduction. Each
 // lane accumulates over j in ascending order, in float32, from the bias, with
@@ -27,9 +28,9 @@ import (
 const EvalBatchWidth = 8
 
 // KernelEnv names the environment variable that pins the arithmetic path:
-// "go" or, on amd64, "avx2". A diagnosis knob, undocumented for users. A path
-// this build or CPU cannot provide is an error at load, never a silent
-// fallback (ADR-0024).
+// "go", "avx2" on amd64, "neon" on arm64. A diagnosis knob, undocumented for
+// users. A path this build or CPU cannot provide is an error at load, never a
+// silent fallback (ADR-0024).
 const KernelEnv = "BLUNDERDB_GAMMONNET_KERNEL"
 
 // goKernelName is the pure-Go fallback, always available, and the reference
@@ -58,14 +59,17 @@ var resolveKernelOnce = sync.OnceValues(func() (denseKernel, error) {
 })
 
 // resolveKernel picks the arithmetic path. Empty request means "the fastest
-// one this machine actually provides"; a named request is honoured or refused,
-// never approximated.
+// one this machine actually provides"; a named request is honoured or
+// refused, never approximated.
 func resolveKernel(requested string, accelerated []denseKernel) (denseKernel, error) {
 	available := append(append([]denseKernel{}, accelerated...), goKernel)
 
 	requested = strings.TrimSpace(strings.ToLower(requested))
 	if requested == "" {
-		return available[0], nil
+		if len(accelerated) > 0 {
+			return accelerated[0], nil
+		}
+		return goKernel, nil
 	}
 	for _, k := range available {
 		if k.name == requested {

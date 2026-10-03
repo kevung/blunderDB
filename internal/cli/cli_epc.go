@@ -39,7 +39,7 @@ func (cli *CLI) runEpc(args []string) error {
 		fmt.Println("  blunderdb epc 'XGID=-BBBB----------------bbbb-:0:0:1:00:0:0:0:0:10'")
 		fmt.Println()
 		fmt.Println("  # The same position given by its OGID (OpenGammon)")
-		fmt.Println("  blunderdb epc 'llmmnnoo:11223344:N0N::B::0:0::'")
+		fmt.Println("  blunderdb epc 'llmmnnoo:11223344:N0N::W::0:0::'")
 		fmt.Println()
 		fmt.Println("  # With the downloaded/wider database")
 		fmt.Println("  blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd '<XGID>'")
