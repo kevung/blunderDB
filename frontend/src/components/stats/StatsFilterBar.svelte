@@ -34,7 +34,9 @@
         dateFrom: '',
         dateTo: '',
         decisionType: -1,
-        matchLength: []
+        matchLength: [],
+        analysisEngine: '',
+        minAnalysisDepth: 0
     });
     let dateError = $state(false);
     let mounted = $state(false);
@@ -87,7 +89,9 @@
             dateFrom: '',
             dateTo: '',
             decisionType: -1,
-            matchLength: []
+            matchLength: [],
+            analysisEngine: '',
+            minAnalysisDepth: 0
         };
         dateError = false;
         applyFilter();
@@ -201,7 +205,9 @@
                     dateFrom: persisted.date_from ?? '',
                     dateTo: persisted.date_to ?? '',
                     decisionType: persisted.decision_type ?? -1,
-                    matchLength: persisted.match_length ?? []
+                    matchLength: persisted.match_length ?? [],
+                    analysisEngine: '',
+                    minAnalysisDepth: 0
                 };
 
                 if (persisted.metric && (persisted.metric === 'pr' || persisted.metric === 'mwc')) {
@@ -358,12 +364,46 @@
             {/if}
         </div>
 
+        <!-- Provenance: which engine analysed the decisions, and how deep -->
+        <label class="fb-label" for="fb-engine">{$t('stats.engineLabel')}</label>
+        <input
+            id="fb-engine"
+            class="fb-engine"
+            type="text"
+            value={localFilter.analysisEngine}
+            placeholder={$t('stats.engineAny')}
+            title={$t('stats.engineHint')}
+            onchange={(e) => {
+                localFilter = { ...localFilter, analysisEngine: e.target.value.trim() };
+                applyFilter();
+            }}
+        />
+        <label class="fb-label" for="fb-min-depth">{$t('stats.minDepthLabel')}</label>
+        <input
+            id="fb-min-depth"
+            class="fb-depth"
+            type="number"
+            min="0"
+            value={localFilter.minAnalysisDepth}
+            title={$t('stats.minDepthHint')}
+            onchange={(e) => {
+                localFilter = { ...localFilter, minAnalysisDepth: Math.max(0, Number(e.target.value) || 0) };
+                applyFilter();
+            }}
+        />
+
         <!-- Reset -->
         <button class="fb-reset" onclick={resetFilters} title={$t('stats.resetFiltersHint')}>{$t('stats.resetFilters')}</button>
     {/if}
 </div>
 
 <style>
+    .fb-engine {
+        width: 7em;
+    }
+    .fb-depth {
+        width: 4em;
+    }
     .filter-bar {
         display: flex;
         flex-wrap: wrap;

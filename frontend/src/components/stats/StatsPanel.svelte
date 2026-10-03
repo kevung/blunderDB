@@ -31,6 +31,7 @@
     import StatsBreakdownsTab from './StatsBreakdownsTab.svelte';
     import StatsPlayersTab from './StatsPlayersTab.svelte';
     import StatsTrainingTab from './StatsTrainingTab.svelte';
+    import StatsCorpusTab from './StatsCorpusTab.svelte';
 
     /** Currently active inner tab. */
     let activeTab = $state('dashboard');
@@ -109,10 +110,14 @@
             >{$t('stats.tabBreakdowns')}</button
         >
         <button class="tab-btn" class:active={activeTab === 'players'} role="tab" aria-selected={activeTab === 'players'} onclick={() => (activeTab = 'players')}>{$t('stats.tabPlayers')}</button>
+        <button class="tab-btn" class:active={activeTab === 'corpus'} role="tab" aria-selected={activeTab === 'corpus'} onclick={() => (activeTab = 'corpus')}>{$t('stats.tabCorpus')}</button>
     </div>
 
     <div class="tab-content" role="tabpanel">
-        {#if $statsLoadingStore}
+        <!-- Le corpus calcule à la demande : il ne dépend pas du calcul du tableau de bord. -->
+        {#if activeTab === 'corpus'}
+            <StatsCorpusTab filter={$statsFilterStore} />
+        {:else if $statsLoadingStore}
             <p class="loading-msg">{$t('stats.loading')}</p>
         {:else if activeTab === 'dashboard'}
             <StatsDashboardTab result={$statsResultStore} metric={$statsMetricStore} />
