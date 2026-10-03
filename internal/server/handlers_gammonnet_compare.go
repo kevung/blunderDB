@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -46,12 +47,15 @@ func (s *Server) handleGammonNetCompare(w http.ResponseWriter, r *http.Request) 
 
 	ctx := r.Context()
 	scope := scopeOf(r)
+	if s.refuseAnalysis(w, scope) {
+		return
+	}
 	positions, stored, err := gammonnetPositionsWithForeignAnalysis(ctx, s.opts.Storage, scope, req.Limit)
 	if err != nil {
 		writeStorageError(w, err)
 		return
 	}
-	writeJSONResp(w, compareGathered(ctx, positions, stored, req.Ply, req.PruneK, req.Candidates))
+	writeJSONResp(w, compareGathered(ctx, positions, stored, req.Ply, req.PruneK, req.Candidates, s.quota.spender(scope)))
 }
 
 // gammonnetPositionsWithForeignAnalysis returns the positions whose stored
@@ -89,7 +93,7 @@ func gammonnetPositionsWithForeignAnalysis(ctx context.Context, s storage.Storag
 
 // compareGathered runs the engine over the gathered positions on NumCPU
 // goroutines, each reusing one searcher, and folds the samples.
-func compareGathered(ctx context.Context, positions []domain.Position, stored []*domain.PositionAnalysis, ply, pruneK, candidates int) gammonnet.AnalysisComparison {
+func compareGathered(ctx context.Context, positions []domain.Position, stored []*domain.PositionAnalysis, ply, pruneK, candidates int, spend func(time.Duration) bool) gammonnet.AnalysisComparison {
 	total := len(positions)
 	if total == 0 {
 		return gammonnet.Aggregate(nil)
@@ -112,7 +116,11 @@ func compareGathered(ctx context.Context, positions []domain.Position, stored []
 				if i >= int64(total) {
 					return
 				}
+				start := time.Now()
 				results <- gammonnet.CompareOne(&positions[i], stored[i], positions[i].ID, searcher, ply, pruneK, candidates)
+				if !spend(time.Since(start)) {
+					return
+				}
 			}
 		}()
 	}

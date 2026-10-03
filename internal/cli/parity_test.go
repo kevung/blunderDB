@@ -48,6 +48,7 @@ const (
 	whyStoragePrimitive = "a Storage primitive the desktop reaches through a coarser call — SavePosition, or an importer's own transaction, does this inside one operation; an HTTP client has no such operation and needs the piece"
 	whyEnginePure       = "a pure function of the ENGINE on one position, no storage behind it: the GUI binds it on *gui.App (ComputeCubeMatrix) and the CLI has `cubematrix`, so all three modes answer — but there is nothing for the Database wrapper to hold"
 	whyEngineEvaluate   = "a pure function of the ENGINE on one bare position, nothing read from or written to the tenant: the GUI evaluates the board at rest on *gui.App (StartEvaluationAtRest) and an HTTP or MCP client needs it as a route — there is nothing for the Database wrapper to hold"
+	whyTenantQuota      = "the daemon's own accounting of what each tenant takes from a SHARED instance (--quota-*): a desktop or CLI database serves one person, who has nothing to share and no quota to read"
 	whySuggestion       = "a constant of the domain, exposed on the wrapper only so the frontend reads it through the same binding as everything else; the CLI prints it beside `list --type tags` and the daemon returns it in the same answer as the vocabulary"
 	whyExplain          = "the explanation is a THEME plus its measured deltas, rendered into a sentence by the client in its own language; the CLI prints an analysis, not a coaching line, and would have to carry its own nine-language templates to say anything here (#298)"
 	whyStudyImpact      = "a composition of two routes the daemon already serves — /v1/stats.compute over each of the two date windows, and /v1/anki.reviewsByGameType — so a client assembles it without a route of its own, and the desktop assembles it here (#275)"
@@ -95,6 +96,7 @@ var serverOnly = map[string]string{
 	// needs them as routes.
 	"/v1/gammonnet.cubeMatrix": whyEnginePure,
 	"/v1/gammonnet.evaluate":   whyEngineEvaluate,
+	"/v1/tenants.quota":        whyTenantQuota,
 	"/v1/positions.fromOGID":   whyIdentifierDecode,
 	"/v1/positions.fromXGID":   whyPureDomain,
 	"/v1/positions.legalMoves": whyPureDomain,

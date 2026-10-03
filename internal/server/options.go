@@ -166,6 +166,10 @@ type Options struct {
 	// 2×RateLimitRPS (min 1) when zero and rate limiting is enabled.
 	RateLimitBurst int
 
+	// Quotas bound each tenant's stored positions, engine time and concurrent
+	// imports. The zero value is unlimited.
+	Quotas TenantQuotas
+
 	// Identity signs the watermark of an exports.sqlite response that asked
 	// for one — "the daemon's own" identity, as opposed to the desktop's
 	// per-person key (see ingest.SealWatermark). nil (the default) means

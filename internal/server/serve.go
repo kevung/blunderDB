@@ -57,6 +57,7 @@ Flags:
 // NArg rejection, the BLUNDERDB_* fallbacks — is unit-testable without
 // starting a real daemon.
 type serveConfig struct {
+	quotas         TenantQuotas
 	backend        string
 	dsn            string
 	dbPath         string
@@ -114,11 +115,14 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 			fmt.Sprintf("per-tenant sustained requests/second (0 = disabled; default %d, generous headroom for real traffic)", defaultRateLimitRPS))
 		rateLimitBurst = fs.Int("rate-limit-burst", envIntOr("BLUNDERDB_RATE_LIMIT_BURST", defaultRateLimitBurst),
 			fmt.Sprintf("per-tenant token-bucket burst (default %d)", defaultRateLimitBurst))
-		enableRLS   = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
-		tsPath      = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the embedded TS-06-06; the daemon never downloads one")
-		identityDir = fs.String("identity-dir", os.Getenv("BLUNDERDB_IDENTITY_DIR"), "directory holding this daemon's watermark signing identity (created on first use); a watermarked export is refused when unset")
-		opsAddr     = fs.String("ops-addr", envOr("BLUNDERDB_OPS_ADDR", ""), "optional listener for the /ops/ family (maintenance.vacuum, tenant.purge) on a SEPARATE address, e.g. \"127.0.0.1:8081\"; empty (the default) serves /ops/ on --addr, where the reverse proxy in front is expected to refuse the prefix (#233)")
-		pprofAddr   = fs.String("pprof-addr", envOr("BLUNDERDB_PPROF_ADDR", ""), "optional net/http/pprof listener on a SEPARATE address, e.g. \"127.0.0.1:6060\" (debug only; never expose this on the same address as --addr or to the public internet); empty (the default) exposes no pprof endpoint at all (#238)")
+		quotaPositions = fs.Int64("quota-positions", int64(envIntOr("BLUNDERDB_QUOTA_POSITIONS", 0)), "per-tenant bound on stored positions: an import is refused (413) past it (0 = unlimited)")
+		quotaAnalysis  = fs.Int64("quota-analysis-seconds", int64(envIntOr("BLUNDERDB_QUOTA_ANALYSIS_SECONDS", 0)), "per-tenant engine seconds per UTC day, over sweeps, comparisons and evaluations (0 = unlimited)")
+		quotaImports   = fs.Int("quota-imports", envIntOr("BLUNDERDB_QUOTA_IMPORTS", 0), "per-tenant imports running at once (0 = unlimited)")
+		enableRLS      = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
+		tsPath         = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the embedded TS-06-06; the daemon never downloads one")
+		identityDir    = fs.String("identity-dir", os.Getenv("BLUNDERDB_IDENTITY_DIR"), "directory holding this daemon's watermark signing identity (created on first use); a watermarked export is refused when unset")
+		opsAddr        = fs.String("ops-addr", envOr("BLUNDERDB_OPS_ADDR", ""), "optional listener for the /ops/ family (maintenance.vacuum, tenant.purge) on a SEPARATE address, e.g. \"127.0.0.1:8081\"; empty (the default) serves /ops/ on --addr, where the reverse proxy in front is expected to refuse the prefix (#233)")
+		pprofAddr      = fs.String("pprof-addr", envOr("BLUNDERDB_PPROF_ADDR", ""), "optional net/http/pprof listener on a SEPARATE address, e.g. \"127.0.0.1:6060\" (debug only; never expose this on the same address as --addr or to the public internet); empty (the default) exposes no pprof endpoint at all (#238)")
 	)
 	if err := fs.Parse(args); err != nil {
 		return nil, err
@@ -127,7 +131,11 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		return nil, fmt.Errorf("serve: unexpected argument(s) %v — flags are spelled --name value; check for a typo or a stray positional argument", fs.Args())
 	}
 
+	if *quotaPositions < 0 || *quotaAnalysis < 0 || *quotaImports < 0 {
+		return nil, fmt.Errorf("serve: a quota is a bound, 0 or more (0 = unlimited)")
+	}
 	cfg := &serveConfig{
+		quotas:         TenantQuotas{MaxPositions: *quotaPositions, AnalysisSecondsPerDay: *quotaAnalysis, MaxConcurrentImports: *quotaImports},
 		backend:        *backend,
 		dsn:            *dsn,
 		dbPath:         *dbPath,
@@ -229,6 +237,7 @@ func RunServe(args []string) error {
 		CORSAllowOrigin:  cfg.corsOrigin,
 		RateLimitRPS:     cfg.rateLimitRPS,
 		RateLimitBurst:   cfg.rateLimitBurst,
+		Quotas:           cfg.quotas,
 		Identity:         identity,
 	})
 	if err != nil {

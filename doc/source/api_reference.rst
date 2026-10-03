@@ -242,6 +242,8 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.tournamentBadges               JSON
    tenant
      POST /ops/tenant.purge                        custom
+   tenants
+     POST /v1/tenants.quota                        JSON
    tournaments
      POST /v1/tournaments.addMatch                 JSON
      POST /v1/tournaments.create                   JSON  (Idempotency-Key)

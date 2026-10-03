@@ -61,6 +61,8 @@ type Server struct {
 	// spool bounds the total bytes concurrently in-flight imports may hold
 	// spooled to $TMPDIR — see handleImport and Options.MaxSpoolBytes.
 	spool *spoolQuota
+	// quota holds each tenant's use against opts.Quotas.
+	quota *quotaLedger
 	// idempotency backs withIdempotency: at most one cached response per
 	// (tenant, route, Idempotency-Key) triple, for the handful of routes with
 	// no natural dedup key — see idempotency.go.
@@ -94,6 +96,7 @@ func New(opts Options) (*Server, error) {
 		},
 		imports:       newImportRegistry(),
 		gammonnetJobs: newImportRegistry(),
+		quota:         newQuotaLedger(opts.Quotas, opts.now),
 		spool:         newSpoolQuota(opts.MaxSpoolBytes),
 		idempotency:   newIdempotencyStore(opts.now),
 		direction:     &service.Memory{},

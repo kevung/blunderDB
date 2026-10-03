@@ -390,6 +390,10 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			return
 		}
 		defer s.spool.release(s.opts.ImportMaxBodyBytes)
+		if s.refuseImport(r.Context(), w, scopeOf(r)) {
+			return
+		}
+		defer s.quota.endImport(scopeOf(r))
 
 		r.Body = http.MaxBytesReader(w, r.Body, s.opts.ImportMaxBodyBytes)
 		file, header, err := r.FormFile("file")

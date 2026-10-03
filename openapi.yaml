@@ -4785,6 +4785,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/tournamentBadgesResp"
+  /v1/tenants.quota:
+    post:
+      operationId: tenants.quota
+      tags: [tenants]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/tenantQuotaResp"
   /v1/tournaments.addMatch:
     post:
       operationId: tournaments.addMatch
@@ -5601,6 +5618,9 @@ paths:
           description: The daemon is stopping.
 components:
   schemas:
+    TenantQuotas:
+      type: object
+      description: "Unresolved local type TenantQuotas."
     analysisSaveReq:
       type: object
       properties:
@@ -6879,6 +6899,25 @@ components:
           type: array
           items:
             type: string
+    tenantQuotaResp:
+      type: object
+      properties:
+        limits:
+          $ref: "#/components/schemas/TenantQuotas"
+        usage:
+          $ref: "#/components/schemas/tenantQuotaUsage"
+    tenantQuotaUsage:
+      type: object
+      properties:
+        positions:
+          type: integer
+          format: int32
+        analysisSecondsToday:
+          type: number
+          format: double
+        importsInFlight:
+          type: integer
+          format: int32
     textResp:
       type: object
       properties:

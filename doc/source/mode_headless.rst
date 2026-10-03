@@ -137,6 +137,18 @@ depuis plusieurs clients.
    * - ``--rate-limit-burst <n>``
      - ``100``
      - taille du seau de jetons pour les pics de requêtes
+   * - ``--quota-positions <n>``
+     - ``0``
+     - positions qu'un tenant peut stocker : au-delà, un import est refusé
+       (413, ``storage_quota_exceeded``) ; 0 = illimité
+   * - ``--quota-analysis-seconds <n>``
+     - ``0``
+     - secondes de calcul du moteur par tenant et par jour UTC (429,
+       ``quota_exceeded``) ; 0 = illimité
+   * - ``--quota-imports <n>``
+     - ``0``
+     - imports d'un même tenant en cours à la fois (429, ``quota_exceeded``) ;
+       0 = illimité
    * - ``--rls``
      - ``false``
      - PostgreSQL : active la Row-Level Security par tenant (défense en
@@ -1292,6 +1304,36 @@ recommandation de production : elle se remplace par ``forward_auth`` vers un
 fournisseur d'identité réel (OIDC, SSO d'entreprise…), qui authentifie puis
 transmet l'identité au même endroit du fichier. Les deux mots de passe et les
 deux comptes de la table de correspondance sont à remplacer de même.
+
+`deploy/Caddyfile.oidc <https://github.com/kevung/blunderDB/blob/main/deploy/Caddyfile.oidc>`__
+en est la recette OpenID Connect : Caddy interroge oauth2-proxy
+(``forward_auth`` sur ``/oauth2/auth``), qui répond 202 avec l'adresse du
+compte connecté dans ``X-Auth-Request-Email``, ou renvoie vers la page de
+connexion du fournisseur. Le bloc ``map`` associe cette adresse à l'entier du
+tenant, et la même garde ``header_up X-Tenant-ID ""`` précède l'injection.
+Le service oauth2-proxy à ajouter au fichier Compose figure en tête du
+fichier.
+
+Quotas par tenant
+~~~~~~~~~~~~~~~~~
+
+Une instance partagée borne ce que chaque tenant lui prend avec
+``--quota-positions``, ``--quota-analysis-seconds`` et ``--quota-imports``
+(sans option, rien n'est borné). Le temps de calcul compte chaque évaluation
+du moteur demandée par le tenant : ``gammonnet.analyzeMissing``,
+``gammonnet.sweepStale``, ``gammonnet.compare``, ``gammonnet.cubeMatrix`` et
+``gammonnet.evaluate``. Une fois le temps du jour épuisé, ces routes répondent
+429 avec le code ``quota_exceeded`` ; un balayage en cours garde ce qu'il a
+calculé et finit sur l'évènement ``quota_exceeded`` au lieu de ``done``. Le
+compte repart à zéro à minuit UTC et vit en mémoire : un redémarrage du démon
+le remet à zéro. Le quota de positions est vérifié au début d'un import, qui
+n'est pas interrompu en route : un tenant peut le dépasser d'un import.
+Chaque refus porte dans ``details`` la borne (``quota``, ``limit``) et l'usage
+(``used``). ``tenants.quota`` rend au tenant appelant les bornes et son
+usage : positions stockées, secondes de calcul du jour, imports en cours.
+
+Les quotas sont une comptabilité du démon, pas une frontière : ils
+s'appliquent au tenant que le proxy a posé dans ``X-Tenant-ID``.
 
 **Scénario complet, de zéro à un démon qui répond :**
 

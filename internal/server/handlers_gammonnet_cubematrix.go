@@ -48,7 +48,13 @@ func (s *Server) handleGammonNetCubeMatrix(w http.ResponseWriter, r *http.Reques
 		req.PruneK = 12
 	}
 
-	matrix, err := gammonnet.ComputeCubeMatrix(r.Context(), pos, req.MatchLength, req.Ply, req.PruneK, 0)
+	scope := scopeOf(r)
+	if s.refuseAnalysis(w, scope) {
+		return
+	}
+	matrix, err := metered(s, scope, func() (gammonnet.CubeMatrix, error) {
+		return gammonnet.ComputeCubeMatrix(r.Context(), pos, req.MatchLength, req.Ply, req.PruneK, 0)
+	})
 	if err != nil {
 		writeErrorCode(w, CodeInvalid, err.Error())
 		return

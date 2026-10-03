@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -109,6 +110,9 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 	ctx, cancel := context.WithCancel(r.Context())
 	defer cancel()
 	scope := scopeOf(r)
+	if s.refuseAnalysis(w, scope) {
+		return
+	}
 	// One sweep per tenant: two do not go twice as fast, they halve each
 	// other's cores while both write analyses into the rows the other is
 	// reading as missing. The refusal comes BEFORE the NDJSON stream opens,
@@ -171,6 +175,8 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 	}
 
 	var next atomic.Int64
+	var quotaSpent atomic.Bool
+	spend := s.quota.spender(scope)
 	results := make(chan analysed, jobs)
 	var wg sync.WaitGroup
 	wg.Add(jobs)
@@ -190,7 +196,11 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 					return
 				}
 				pos := positions[i]
+				start := time.Now()
 				analysis, err := gammonnetEvaluateOne(searcher, pos, req.Ply, req.PruneK, req.Candidates)
+				if !spend(time.Since(start)) {
+					quotaSpent.Store(true)
+				}
 				oc := outcomeEvaluated
 				switch {
 				case err != nil:
@@ -200,6 +210,9 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 					oc = outcomeRefused
 				}
 				results <- analysed{pos: pos, analysis: analysis, outcome: oc}
+				if quotaSpent.Load() {
+					return
+				}
 			}
 		}()
 	}
@@ -233,6 +246,12 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 
 	if ctx.Err() != nil {
 		emit(map[string]any{"event": "cancelled", "done": done, "total": total, "evaluated": evaluated, "refused": refused, "failed": failed})
+		return
+	}
+	if quotaSpent.Load() && done < total {
+		// The tenant's engine time for the day ran out mid-sweep: what was
+		// computed is saved, the rest waits for tomorrow's allowance.
+		emit(map[string]any{"event": "quota_exceeded", "quota": "analysisSecondsPerDay", "done": done, "total": total, "evaluated": evaluated, "refused": refused, "failed": failed})
 		return
 	}
 	emit(map[string]any{"event": "done", "done": done, "total": total, "evaluated": evaluated, "refused": refused, "failed": failed})
