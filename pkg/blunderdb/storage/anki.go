@@ -45,6 +45,14 @@ type AnkiStore interface {
 	// DeckPositions streams the positions of a deck.
 	DeckPositions(ctx context.Context, scope string, deckID int64) iter.Seq2[*domain.Position, error]
 
+	// DeckPositionIDs returns the window of the position ids a deck's cards
+	// link, in DeckPositions's order; DeckPositionCount and
+	// IndexOfDeckPosition complete it, so a deck is browsed by windows and
+	// never loaded whole. A score card links no position and is not counted.
+	DeckPositionIDs(ctx context.Context, scope string, deckID int64, opts ListOpts) ([]int64, error)
+	DeckPositionCount(ctx context.Context, scope string, deckID int64) (int, error)
+	IndexOfDeckPosition(ctx context.Context, scope string, deckID, positionID int64) (int, bool, error)
+
 	// DeckStats returns the review counters for a deck.
 	DeckStats(ctx context.Context, scope string, deckID int64) (*domain.AnkiDeckStats, error)
 

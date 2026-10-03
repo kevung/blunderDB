@@ -14,7 +14,9 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SyncAnkiDeck: vi.fn(() => Promise.resolve()),
     SyncAnkiDeckWithPositions: vi.fn(() => Promise.resolve()),
     GetAnkiDeckStats: vi.fn(() => Promise.resolve({ dueCount: 1, totalCount: 3 })),
-    GetAnkiDeckPositions: vi.fn(() => Promise.resolve([{ id: 10 }, { id: 11 }])),
+    CountAnkiDeckPositions: vi.fn(() => Promise.resolve(2)),
+    ListAnkiDeckPositionIDs: vi.fn((/** @type {number} */ _deck, offset = 0, limit = 0) => Promise.resolve([10, 11].slice(offset, limit > 0 ? offset + limit : undefined))),
+    IndexOfAnkiDeckPosition: vi.fn((/** @type {number} */ _deck, /** @type {number} */ id) => Promise.resolve([10, 11].indexOf(id))),
     GetNextAnkiCard: vi.fn(() => Promise.resolve(null)),
     GetRandomAnkiCard: vi.fn(() => Promise.resolve(null)),
     ReviewAnkiCard: vi.fn(() => Promise.resolve(null)),
@@ -221,7 +223,8 @@ describe('deck lifecycle', () => {
         await selectDeck({ id: 5 });
         expect(get(selectedAnkiDeckStore)).toEqual({ id: 5 });
         expect(get(ankiDeckStatsStore)).toEqual({ dueCount: 1, totalCount: 3 });
-        expect(get(positionsStore).ids).toEqual([10, 11]);
+        expect(get(positionsStore)).toMatchObject({ ids: null, length: 2, paged: true });
+        expect(db.CountAnkiDeckPositions).toHaveBeenCalledWith(5);
         expect(get(currentPositionIndexStore)).toBe(0);
     });
 

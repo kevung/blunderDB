@@ -20,7 +20,9 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     TrashCollection: vi.fn().mockResolvedValue(undefined),
     AddPositionToCollection: vi.fn().mockResolvedValue(undefined),
     RemovePositionFromCollection: vi.fn().mockResolvedValue(undefined),
-    GetCollectionPositions: vi.fn().mockResolvedValue([]),
+    CountCollectionPositions: vi.fn().mockResolvedValue(0),
+    ListCollectionPositionIDs: vi.fn().mockResolvedValue([]),
+    LoadPositionsByIDs: vi.fn((ids) => Promise.resolve(ids.map((id) => ({ id })))),
     ReorderCollectionPositions: vi.fn().mockResolvedValue(undefined),
     ReorderCollections: vi.fn().mockResolvedValue(undefined),
     UpdateCollection: vi.fn().mockResolvedValue(undefined),
@@ -37,10 +39,27 @@ import {
     TrashCollection,
     AddPositionToCollection,
     RemovePositionFromCollection,
-    GetCollectionPositions,
+    CountCollectionPositions,
+    ListCollectionPositionIDs,
     UpdateCollection
 } from '../../wailsjs/go/database/Database.js';
 import { confirmAction } from '../services/confirmService.js';
+
+/** @param {number[]} ids */
+const pageOf =
+    (ids) =>
+    async (/** @type {number} */ _collection, offset = 0, limit = 0) =>
+        ids.slice(offset, limit > 0 ? offset + limit : undefined);
+/** The collection the backend answers with, from now on. @param {number[]} ids */
+function serve(ids) {
+    CountCollectionPositions.mockResolvedValue(ids.length);
+    ListCollectionPositionIDs.mockImplementation(pageOf(ids));
+}
+/** The collection the backend answers with, once. @param {number[]} ids */
+function serveOnce(ids) {
+    CountCollectionPositions.mockResolvedValueOnce(ids.length);
+    ListCollectionPositionIDs.mockImplementationOnce(pageOf(ids));
+}
 
 import CollectionPanel from '../components/CollectionPanel.svelte';
 import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore.js';
@@ -119,7 +138,7 @@ describe('CollectionPanel — list view', () => {
     });
 
     test('double-clicking a non-empty collection opens the detail view', async () => {
-        GetCollectionPositions.mockResolvedValue([{ id: 101 }, { id: 102 }]);
+        serve([101, 102]);
         const onOpenCollection = vi.fn();
         render(CollectionPanel, { props: { onOpenCollection } });
         const row = (await screen.findByText('Backgames')).closest('tr');
@@ -129,11 +148,11 @@ describe('CollectionPanel — list view', () => {
 
         expect(get(activeCollectionStore)).toMatchObject({ id: 1, name: 'Backgames' });
         expect(get(collectionPositionsStore)).toEqual([{ id: 101 }, { id: 102 }]);
-        expect(onOpenCollection).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }), [{ id: 101 }, { id: 102 }]);
+        expect(onOpenCollection).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }), expect.objectContaining({ count: expect.any(Function), window: expect.any(Function) }));
     });
 
     test('double-clicking an empty collection reports it instead of opening', async () => {
-        GetCollectionPositions.mockResolvedValue([]);
+        serve([]);
         render(CollectionPanel, { props: {} });
         const row = (await screen.findByText('Bear-offs')).closest('tr');
 
@@ -221,7 +240,7 @@ describe('CollectionPanel — detail view', () => {
 
     test('removing a position row calls the backend and refreshes the list', async () => {
         const onOpenCollection = vi.fn();
-        GetCollectionPositions.mockResolvedValue([{ id: 202 }]);
+        serve([202]);
         render(CollectionPanel, { props: { onOpenCollection } });
         await tick();
 
@@ -288,7 +307,8 @@ describe('CollectionPanel — keyboard shortcuts', () => {
         // onMount re-fetches when mode is already COLLECTION at mount (session
         // restore) — the first call must still see the seeded two positions;
         // only the reload after the delete should see the (now empty) result.
-        GetCollectionPositions.mockResolvedValueOnce([{ id: 201 }, { id: 202 }]).mockResolvedValue([]);
+        serveOnce([201, 202]);
+        serve([]);
         render(CollectionPanel, { props: {} });
         await tick();
 
@@ -310,7 +330,8 @@ describe('CollectionPanel — keyboard shortcuts', () => {
         collectionPositionsStore.set([{ id: 201 }, { id: 202 }]);
         statusBarModeStore.set('COLLECTION');
         currentPositionIndexStore.set(1);
-        GetCollectionPositions.mockResolvedValueOnce([{ id: 201 }, { id: 202 }]).mockResolvedValue([{ id: 201 }]);
+        serveOnce([201, 202]);
+        serve([201]);
         render(CollectionPanel, { props: {} });
         await tick();
 

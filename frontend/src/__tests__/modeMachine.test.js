@@ -49,7 +49,7 @@ import { useLibrary } from '../__mocks__/wails.js';
 const serveLibrary = (/** @type {number[]} */ ids) => useLibrary({ CountPositions, ListPositionIDs, IndexOfPosition }, ids);
 import { setStatusBarMessage } from '../services/databaseService.js';
 import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, activeTabStore, openPanels, openPanel, PANEL } from '../stores/uiStore.js';
-import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
+import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore, listedIds } from '../stores/positionStore.js';
 import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeCollectionStore, collectionPositionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
@@ -72,6 +72,7 @@ import {
     exitCollectionMode,
     leaveSubSearchResults
 } from '../services/modeMachine.js';
+import { openCollectionOf } from './collectionFixture.js';
 import * as positionService from '../services/positionService.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -631,28 +632,28 @@ describe('toggleMatchMode', () => {
 // ── COLLECTION → NORMAL ───────────────────────────────────────────────────────
 
 describe('COLLECTION → NORMAL', () => {
-    test('handleOpenCollection entre en COLLECTION sur la première position', () => {
+    test('handleOpenCollection entre en COLLECTION sur la première position', async () => {
         setMatch(1);
         const coll = [makePosition(2), makePosition(3)];
 
-        handleOpenCollection({ name: 'Backgames' }, coll);
+        await openCollectionOf(handleOpenCollection, { name: 'Backgames' }, coll);
 
         expect(get(statusBarModeStore)).toBe(MODE.COLLECTION);
         expect(get(matchContextStore).isMatchMode).toBe(false);
-        expect(get(positionsStore).ids).toEqual([2, 3]);
+        expect(await listedIds()).toEqual([2, 3]);
         expect(get(positionStore).id).toBe(2);
         expect(get(currentPositionIndexStore)).toBe(0);
     });
 
-    test('handleOpenCollection refuse une collection vide', () => {
+    test('handleOpenCollection refuse une collection vide', async () => {
         setLibrary();
-        handleOpenCollection({ name: 'vide' }, []);
+        await openCollectionOf(handleOpenCollection, { name: 'vide' }, []);
         expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
     });
 
     test('exitCollectionMode revient en NORMAL sur la position consultée, vide les stores de collection et l’état de recherche', async () => {
         const lib = [makePosition(1), makePosition(2), makePosition(3)];
-        handleOpenCollection({ name: 'Backgames' }, [lib[1], lib[2]]);
+        await openCollectionOf(handleOpenCollection, { name: 'Backgames' }, [lib[1], lib[2]]);
         openPanel(PANEL.COLLECTION);
         activeCollectionStore.set({ id: 4 });
         selectedCollectionStore.set({ id: 4 });
@@ -674,7 +675,7 @@ describe('COLLECTION → NORMAL', () => {
     });
 
     test('exitCollectionMode : CountPositions qui échoue retombe sur loadAllPositions au lieu de rester bloqué', async () => {
-        handleOpenCollection({ name: 'Backgames' }, [makePosition(2)]);
+        await openCollectionOf(handleOpenCollection, { name: 'Backgames' }, [makePosition(2)]);
         serveLibrary([1, 2, 3]);
         CountPositions.mockRejectedValueOnce(new Error('db locked')); // l'appel de repli, dans loadAllPositions, réussit
 
@@ -700,13 +701,13 @@ describe('COLLECTION → brouillon → COLLECTION (#406 : un plateau brouillon n
      *
      * @param {number | null} [index]
      */
-    function openCollection(index = null) {
+    async function openCollection(index = null) {
         const positions = [makePosition(2), makePosition(3), makePosition(5)];
         selectedCollectionStore.set(COLLECTION);
         collectionPositionsStore.set(positions);
         activeCollectionStore.set(COLLECTION);
         openPanel(PANEL.COLLECTION);
-        handleOpenCollection(COLLECTION, positions);
+        await openCollectionOf(handleOpenCollection, COLLECTION, positions);
         if (index != null) {
             currentPositionIndexStore.set(index);
             positionStore.set(structuredClone(positions[index]));
@@ -719,13 +720,13 @@ describe('COLLECTION → brouillon → COLLECTION (#406 : un plateau brouillon n
      *
      * @param {{ index: number, id: number }} expected
      */
-    function expectBackInCollection({ index, id }) {
+    async function expectBackInCollection({ index, id }) {
         expect(get(statusBarModeStore)).toBe(MODE.COLLECTION);
         expect(get(activeCollectionStore)).toEqual(COLLECTION);
         expect(get(selectedCollectionStore), 'le panneau garde sa collection sélectionnée').toEqual(COLLECTION);
         expect(get(collectionPositionsStore).map((p) => p.id)).toEqual([2, 3, 5]);
         expect(get(openPanels).has(PANEL.COLLECTION), 'l’automate ne ferme pas le panneau').toBe(true);
-        expect(get(positionsStore).ids).toEqual([2, 3, 5]);
+        expect(await listedIds()).toEqual([2, 3, 5]);
         expect(get(currentPositionIndexStore)).toBe(index);
         expect(get(positionStore).id).toBe(id);
         expect(get(positionStore).board.bearoff, 'jamais le damier vierge de la requête').toEqual([3, 3]);
@@ -733,7 +734,7 @@ describe('COLLECTION → brouillon → COLLECTION (#406 : un plateau brouillon n
     }
 
     test('Recherche : entrer puis sortir revient à la même collection, à la même position', async () => {
-        openCollection(1);
+        await openCollection(1);
 
         await enterEditMode();
         expect(get(statusBarModeStore)).toBe(MODE.EDIT);
@@ -741,44 +742,44 @@ describe('COLLECTION → brouillon → COLLECTION (#406 : un plateau brouillon n
 
         await exitEditMode();
 
-        expectBackInCollection({ index: 1, id: 3 });
+        await expectBackInCollection({ index: 1, id: 3 });
     });
 
     test('Recherche ouverte aussitôt la collection ouverte : la position de la collection n’est pas vidée avec le damier', async () => {
         // handleOpenCollection pose la position même de la liste sur le damier,
         // sans clone : vider le damier en place viderait l'enregistrement.
-        const positions = openCollection();
+        const positions = await openCollection();
 
         await enterEditMode();
         expect(positions[0].board.bearoff).toEqual([3, 3]);
         await exitEditMode();
 
-        expectBackInCollection({ index: 0, id: 2 });
+        await expectBackInCollection({ index: 0, id: 2 });
     });
 
     test('Eval : entrer puis sortir revient à la même collection, à la même position (analyse rechargée)', async () => {
-        openCollection(1);
+        await openCollection(1);
 
         await enterEvalMode();
         expect(get(statusBarModeStore)).toBe(MODE.EVAL);
 
         await exitEvalMode();
 
-        expectBackInCollection({ index: 1, id: 3 });
+        await expectBackInCollection({ index: 1, id: 3 });
         expect(LoadAnalysis).toHaveBeenCalledWith(3);
     });
 
     test('Transcription : entrer puis sortir revient à la même collection', async () => {
-        openCollection(1);
+        await openCollection(1);
 
         await enterTranscribeMode();
         await exitTranscribeMode();
 
-        expectBackInCollection({ index: 1, id: 3 });
+        await expectBackInCollection({ index: 1, id: 3 });
     });
 
     test('Recherche puis Eval, enchaînement d’App.svelte : la collection survit aux deux brouillons', async () => {
-        openCollection(1);
+        await openCollection(1);
         await enterEditMode();
 
         exitEditMode(); // sans await, comme App.svelte
@@ -786,11 +787,11 @@ describe('COLLECTION → brouillon → COLLECTION (#406 : un plateau brouillon n
         expect(modeState().savedContext.beforeEval.mode).toBe(MODE.COLLECTION);
         await exitEvalMode();
 
-        expectBackInCollection({ index: 1, id: 3 });
+        await expectBackInCollection({ index: 1, id: 3 });
     });
 
     test('une collection qui n’est plus active à la sortie (mise à la corbeille) n’est pas reprise : NORMAL', async () => {
-        openCollection(1);
+        await openCollection(1);
         await enterEvalMode();
         activeCollectionStore.set(null);
 
@@ -800,7 +801,7 @@ describe('COLLECTION → brouillon → COLLECTION (#406 : un plateau brouillon n
     });
 
     test('depuis une partie, la sortie ne ramène pas une collection ouverte avant la partie', async () => {
-        openCollection(1);
+        await openCollection(1);
         setMatch(1);
         activeCollectionStore.set(null);
 

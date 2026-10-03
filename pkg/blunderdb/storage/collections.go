@@ -62,6 +62,15 @@ type CollectionStore interface {
 	// Positions streams the positions of a collection in order.
 	Positions(ctx context.Context, scope string, collectionID int64, opts ListOpts) iter.Seq2[*domain.Position, error]
 
+	// PositionIDs returns the window of a collection's position ids, in the
+	// order Positions walks them; CountPositions and IndexOfPosition
+	// complete it, so a caller browses a collection by windows without ever
+	// holding its whole membership. IndexOfPosition reports false for a
+	// position the collection does not hold.
+	PositionIDs(ctx context.Context, scope string, collectionID int64, opts ListOpts) ([]int64, error)
+	CountPositions(ctx context.Context, scope string, collectionID int64) (int, error)
+	IndexOfPosition(ctx context.Context, scope string, collectionID, positionID int64) (int, bool, error)
+
 	// Members streams a collection's membership rows in collection order,
 	// each carrying the position it links. Positions is the same walk
 	// projected onto the positions; Members is for a caller that needs the

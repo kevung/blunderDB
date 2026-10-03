@@ -214,26 +214,35 @@ func (d *Database) SetCollectionFilter(collectionID int64, query string) error {
 	return cs.SetFilterQuery(context.Background(), "", collectionID, query)
 }
 
-// GetCollectionPositions returns all positions in a collection.
-//
-// A LIVING collection is resolved here, through the SAME search the command
-// bar runs, so it can never mean something a typed query would not.
-func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error) {
+// livingFilters resolves the query of a LIVING collection through the SAME
+// parser the command bar runs, so a saved filter can never mean something a
+// typed query would not. living is false for a hand-made list.
+func (d *Database) livingFilters(collectionID int64) (filters SearchFilters, living bool, err error) {
 	query, err := d.collectionFilterQuery(collectionID)
+	if err != nil || query == "" {
+		return SearchFilters{}, false, err
+	}
+	filters, diags := searchquery.Parse(query)
+	// A living collection whose query has become unreadable — a token
+	// removed by a later version — returns the error rather than the whole
+	// library. Silently widening is the one failure a saved filter must
+	// not have.
+	for _, diag := range diags {
+		if diag.Kind == searchquery.DiagUnknown {
+			return SearchFilters{}, false, fmt.Errorf("collection %d: its filter carries a token this version does not know: %s", collectionID, diag.Token)
+		}
+	}
+	return filters, true, nil
+}
+
+// GetCollectionPositions returns all positions in a collection. A LIVING
+// collection is resolved by its query (see livingFilters).
+func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error) {
+	filters, living, err := d.livingFilters(collectionID)
 	if err != nil {
 		return nil, err
 	}
-	if query != "" {
-		filters, diags := searchquery.Parse(query)
-		// A living collection whose query has become unreadable — a token
-		// removed by a later version — returns the error rather than the whole
-		// library. Silently widening is the one failure a saved filter must
-		// not have.
-		for _, diag := range diags {
-			if diag.Kind == searchquery.DiagUnknown {
-				return nil, fmt.Errorf("collection %d: its filter carries a token this version does not know: %s", collectionID, diag.Token)
-			}
-		}
+	if living {
 		positions, _, err := d.LoadPositionsByFiltersCore(filters, storage.ListOpts{})
 		return positions, err
 	}
@@ -253,6 +262,75 @@ func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error
 		positions = append(positions, *p)
 	}
 	return positions, nil
+}
+
+// ListCollectionPositionIDs returns the window [offset, offset+limit) of a
+// collection's position ids, in GetCollectionPositions's order; limit <= 0
+// means up to the end. With CountCollectionPositions and
+// IndexOfCollectionPosition it lets the GUI browse a collection by windows,
+// as it does the library, without holding its whole membership.
+func (d *Database) ListCollectionPositionIDs(collectionID int64, offset, limit int) ([]int64, error) {
+	filters, living, err := d.livingFilters(collectionID)
+	if err != nil {
+		return nil, err
+	}
+	if living {
+		return d.SearchPositionIDs(filters, offset, limit)
+	}
+
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	cs, err := d.collectionStore()
+	if err != nil {
+		return nil, err
+	}
+	return cs.PositionIDs(context.Background(), "", collectionID, storage.ListOpts{Offset: offset, Limit: limit})
+}
+
+// CountCollectionPositions returns how many positions a collection holds.
+func (d *Database) CountCollectionPositions(collectionID int64) (int, error) {
+	filters, living, err := d.livingFilters(collectionID)
+	if err != nil {
+		return 0, err
+	}
+	if living {
+		return d.CountPositionsByFilters(filters)
+	}
+
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	cs, err := d.collectionStore()
+	if err != nil {
+		return 0, err
+	}
+	return cs.CountPositions(context.Background(), "", collectionID)
+}
+
+// IndexOfCollectionPosition returns the rank of a position in
+// ListCollectionPositionIDs's order, or -1 when the collection does not hold it.
+func (d *Database) IndexOfCollectionPosition(collectionID, positionID int64) (int, error) {
+	filters, living, err := d.livingFilters(collectionID)
+	if err != nil {
+		return -1, err
+	}
+	if living {
+		return d.IndexOfPositionByFilters(filters, positionID)
+	}
+
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	cs, err := d.collectionStore()
+	if err != nil {
+		return -1, err
+	}
+	index, found, err := cs.IndexOfPosition(context.Background(), "", collectionID, positionID)
+	if err != nil || !found {
+		return -1, err
+	}
+	return index, nil
 }
 
 // ReorderCollectionPositions updates the sort order of positions within a collection

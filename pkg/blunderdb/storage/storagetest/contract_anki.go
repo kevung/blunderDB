@@ -499,3 +499,56 @@ func testAnkiScoreDeckHoldsScores(t *testing.T, s storage.Storage) {
 			stats.DueCount, want-1)
 	}
 }
+
+// A deck is browsed by windows: DeckPositionIDs, DeckPositionCount and
+// IndexOfDeckPosition agree with the order DeckPositions walks.
+func testAnkiDeckIDWindows(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ids := make([]int64, 4)
+	for i := range ids {
+		p := provenancePos(i + 1)
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", i, err)
+		}
+		ids[i] = id
+	}
+	deck, err := s.Anki().CreateDeck(ctx, "", "windows", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck: %v", err)
+	}
+	empty, err := s.Anki().CreateDeck(ctx, "", "empty", "", domain.AnkiSourceSearch, 0, "")
+	if err != nil {
+		t.Fatalf("CreateDeck empty: %v", err)
+	}
+	// Three of the four positions, handed over out of order and once twice.
+	if err := s.Anki().SyncWithPositions(ctx, "", deck, []int64{ids[2], ids[0], ids[3], ids[0]}); err != nil {
+		t.Fatalf("SyncWithPositions: %v", err)
+	}
+	want := []int64{ids[0], ids[2], ids[3]}
+
+	if n, err := s.Anki().DeckPositionCount(ctx, "", deck); err != nil || n != 3 {
+		t.Errorf("DeckPositionCount: got %d, %v; want 3", n, err)
+	}
+	if n, err := s.Anki().DeckPositionCount(ctx, "", empty); err != nil || n != 0 {
+		t.Errorf("DeckPositionCount of an empty deck: got %d, %v; want 0", n, err)
+	}
+	for _, w := range []struct{ off, lim, from, to int }{{0, 0, 0, 3}, {0, 2, 0, 2}, {1, 1, 1, 2}, {2, 5, 2, 3}, {1, 0, 1, 3}, {3, 1, 3, 3}} {
+		got, err := s.Anki().DeckPositionIDs(ctx, "", deck, storage.ListOpts{Offset: w.off, Limit: w.lim})
+		if err != nil {
+			t.Fatalf("DeckPositionIDs(%d, %d): %v", w.off, w.lim, err)
+		}
+		if !equalIDs(got, want[w.from:w.to]) {
+			t.Errorf("DeckPositionIDs(%d, %d): got %v, want %v", w.off, w.lim, got, want[w.from:w.to])
+		}
+	}
+	for rank, id := range want {
+		got, found, err := s.Anki().IndexOfDeckPosition(ctx, "", deck, id)
+		if err != nil || !found || got != rank {
+			t.Errorf("IndexOfDeckPosition(%d): got %d, %v, %v; want %d", id, got, found, err, rank)
+		}
+	}
+	if _, found, err := s.Anki().IndexOfDeckPosition(ctx, "", deck, ids[1]); err != nil || found {
+		t.Errorf("IndexOfDeckPosition of a position the deck lacks: found=%v err=%v", found, err)
+	}
+}

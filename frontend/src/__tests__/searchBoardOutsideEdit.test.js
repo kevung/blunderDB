@@ -61,6 +61,7 @@ import { searchHistoryStore, lastSearchStore } from '../stores/searchHistoryStor
 import { filterLibraryStore } from '../stores/filterLibraryStore.js';
 import { searchExcludePositionStore, emptySearchBoardPosition } from '../stores/searchExcludePositionStore.js';
 import { MODE, enterEditMode, handleOpenCollection } from '../services/modeMachine.js';
+import { openCollectionOf } from './collectionFixture.js';
 import { loadPositionsByFilters, loadAllPositions } from '../services/positionService.js';
 import SearchPanel from '../components/SearchPanel.svelte';
 
@@ -164,7 +165,7 @@ describe('hors EDIT, le plateau affiché n’est pas une structure', () => {
 
     test('collection : `ss E>80` part sans pions', async () => {
         activeCollectionStore.set(/** @type {any} */ ({ id: 4, name: 'Primes' }));
-        handleOpenCollection({ id: 4, name: 'Primes' }, [makePosition(10), makePosition(20)]);
+        await openCollectionOf(handleOpenCollection, { id: 4, name: 'Primes' }, [makePosition(10), makePosition(20)]);
         processCommand('ss E>80');
         await flush();
         expect(sent().restrictToPositionIDs).toBe('10,20');

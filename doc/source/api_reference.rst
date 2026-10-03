@@ -46,11 +46,14 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/collections.addPositions             JSON
      POST /v1/collections.collectionsOf            NDJSON
      POST /v1/collections.copyPosition             JSON
+     POST /v1/collections.countPositions           JSON
      POST /v1/collections.create                   JSON  (Idempotency-Key)
      POST /v1/collections.delete                   JSON
      POST /v1/collections.get                      JSON
+     POST /v1/collections.indexOfPosition          JSON
      POST /v1/collections.list                     NDJSON
      POST /v1/collections.movePosition             JSON
+     POST /v1/collections.positionIds              JSON
      POST /v1/collections.positionIndexMap         JSON
      POST /v1/collections.positions                NDJSON
      POST /v1/collections.removePosition           JSON

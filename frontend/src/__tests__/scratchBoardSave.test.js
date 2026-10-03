@@ -70,6 +70,7 @@ import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { activeCollectionStore, collectionPositionsStore } from '../stores/collectionStore.js';
 import { saveCurrentPosition, updatePosition, enterEditMode, exitEditMode, enterEvalMode, exitEvalMode, sendPositionToEval, setSearchState } from '../services/positionService.js';
 import { joinLibraryBehindScratchBoard, handleOpenCollection } from '../services/modeMachine.js';
+import { openCollectionOf } from './collectionFixture.js';
 
 function emptyPoints() {
     return Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
@@ -278,7 +279,7 @@ describe('saving the Search scratch board', () => {
         const collection = { id: 4, name: 'Backgames' };
         collectionPositionsStore.set(positions);
         activeCollectionStore.set(collection);
-        handleOpenCollection(collection, positions);
+        await openCollectionOf(handleOpenCollection, collection, positions);
         currentPositionIndexStore.set(2);
         positionStore.set(libraryPosition(13));
         activeTabStore.set('search');
@@ -392,7 +393,7 @@ describe('the list behind the Eval board', () => {
         const collection = { id: 4, name: 'Backgames' };
         collectionPositionsStore.set(positions);
         activeCollectionStore.set(collection);
-        handleOpenCollection(collection, positions);
+        await openCollectionOf(handleOpenCollection, collection, positions);
         currentPositionIndexStore.set(2);
         positionStore.set(libraryPosition(13));
         await enterEvalMode();

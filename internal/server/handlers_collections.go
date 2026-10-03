@@ -113,6 +113,19 @@ func (s *Server) collectionRoutes() []route {
 		{http.MethodPost, "/v1/collections.positions", rpcStream(func(ctx context.Context, scope string, req collectionPositionsReq) iterPositions {
 			return cs().Positions(ctx, scope, req.CollectionID, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
 		})},
+		{http.MethodPost, "/v1/collections.positionIds", rpc(func(ctx context.Context, scope string, req collectionPositionsReq) ([]int64, error) {
+			return cs().PositionIDs(ctx, scope, req.CollectionID, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
+		})},
+		{http.MethodPost, "/v1/collections.countPositions", rpc(func(ctx context.Context, scope string, req collectionPositionsReq) (int, error) {
+			return cs().CountPositions(ctx, scope, req.CollectionID)
+		})},
+		{http.MethodPost, "/v1/collections.indexOfPosition", rpc(func(ctx context.Context, scope string, req collPositionReq) (int, error) {
+			index, found, err := cs().IndexOfPosition(ctx, scope, req.CollectionID, req.PositionID)
+			if err != nil || !found {
+				return -1, err
+			}
+			return index, nil
+		})},
 		{http.MethodPost, "/v1/collections.collectionsOf", rpcStream(func(ctx context.Context, scope string, req positionIDReq) iterColls {
 			return cs().CollectionsOf(ctx, scope, req.PositionID)
 		})},

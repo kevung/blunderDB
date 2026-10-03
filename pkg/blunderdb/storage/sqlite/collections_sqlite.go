@@ -335,6 +335,63 @@ func (s *collectionStore) Positions(ctx context.Context, scope string, collectio
 	}
 }
 
+// PositionIDs returns the window of a collection's position ids, in the order
+// Positions walks them.
+func (s *collectionStore) PositionIDs(ctx context.Context, scope string, collectionID int64, opts storage.ListOpts) ([]int64, error) {
+	rows, err := s.db.QueryContext(ctx,
+		`SELECT position_id FROM collection_position WHERE collection_id = ?
+		 ORDER BY sort_order ASC, position_id ASC`+opts.SQL("LIMIT -1"), collectionID)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: list collection position ids: %w", err)
+	}
+	defer rows.Close()
+	ids := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("sqlite: list collection position ids: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("sqlite: list collection position ids: %w", err)
+	}
+	return ids, nil
+}
+
+// CountPositions returns how many positions a collection holds.
+func (s *collectionStore) CountPositions(ctx context.Context, scope string, collectionID int64) (int, error) {
+	var n int
+	if err := s.db.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM collection_position WHERE collection_id = ?`, collectionID).Scan(&n); err != nil {
+		return 0, fmt.Errorf("sqlite: count collection positions: %w", err)
+	}
+	return n, nil
+}
+
+// IndexOfPosition returns the rank of a position in PositionIDs's order: the
+// number of members that sort before it.
+func (s *collectionStore) IndexOfPosition(ctx context.Context, scope string, collectionID, positionID int64) (int, bool, error) {
+	var sortOrder int64
+	err := s.db.QueryRowContext(ctx,
+		`SELECT sort_order FROM collection_position WHERE collection_id = ? AND position_id = ?`,
+		collectionID, positionID).Scan(&sortOrder)
+	if errors.Is(err, sql.ErrNoRows) {
+		return 0, false, nil
+	}
+	if err != nil {
+		return 0, false, fmt.Errorf("sqlite: index of collection position: %w", err)
+	}
+	var rank int
+	if err := s.db.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM collection_position WHERE collection_id = ?
+		 AND (sort_order < ? OR (sort_order = ? AND position_id < ?))`,
+		collectionID, sortOrder, sortOrder, positionID).Scan(&rank); err != nil {
+		return 0, false, fmt.Errorf("sqlite: index of collection position: %w", err)
+	}
+	return rank, true, nil
+}
+
 // leadingScanner forwards Scan to sc with lead prepended to the
 // destinations, so a row that carries extra columns ahead of a position can
 // still be read by scanPosition.

@@ -597,6 +597,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/collections.countPositions:
+    post:
+      operationId: collections.countPositions
+      tags: [collections]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/collectionPositionsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/collections.create:
     post:
       operationId: collections.create
@@ -657,6 +675,24 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_Collection"
                 nullable: true
+  /v1/collections.indexOfPosition:
+    post:
+      operationId: collections.indexOfPosition
+      tags: [collections]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/collPositionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/collections.list:
     post:
       operationId: collections.list
@@ -694,6 +730,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/collections.positionIds:
+    post:
+      operationId: collections.positionIds
+      tags: [collections]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/collectionPositionsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
   /v1/collections.positionIndexMap:
     post:
       operationId: collections.positionIndexMap

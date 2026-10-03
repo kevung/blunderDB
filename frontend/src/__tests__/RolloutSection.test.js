@@ -41,7 +41,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
     })
 }));
 const displayedIDs = vi.fn(() => [3, 5, 8]);
-vi.mock('../services/modeMachine.js', async (importOriginal) => ({ ...(await importOriginal()), displayedPositionIDs: () => displayedIDs() }));
+vi.mock('../services/modeMachine.js', async (importOriginal) => ({ ...(await importOriginal()), withDisplayedPositionIDs: (run) => run(displayedIDs()) }));
 vi.mock('../services/confirmService.js', async (importOriginal) => ({ ...(await importOriginal()), confirmAction: (...a) => confirmAction(...a) }));
 
 const { positionStore } = await import('../stores/positionStore.js');

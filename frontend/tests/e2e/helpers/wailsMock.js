@@ -74,6 +74,23 @@ export async function installWailsMock(page, overrides = {}) {
                 if (!('ListMatches' in given)) base.ListMatches = constant(given.GetAllMatches);
                 if (!('CountMatches' in given)) base.CountMatches = constant(given.GetAllMatches.length);
             }
+            // Un paquet Anki ou une collection se lit par fenêtres d'ids : la liste de positions
+            // déclarée sous GetAnkiDeckPositions / GetCollectionPositions répond au compte, à la
+            // fenêtre, au rang, et aux positions elles-mêmes.
+            if (ns === 'database') {
+                for (const [listed, count, windowOf, indexOf] of [
+                    ['GetAnkiDeckPositions', 'CountAnkiDeckPositions', 'ListAnkiDeckPositionIDs', 'IndexOfAnkiDeckPosition'],
+                    ['GetCollectionPositions', 'CountCollectionPositions', 'ListCollectionPositionIDs', 'IndexOfCollectionPosition']
+                ]) {
+                    const positions = given[listed];
+                    if (!Array.isArray(positions)) continue;
+                    const owned = positions.map((p) => p.id);
+                    if (!(count in given)) base[count] = () => Promise.resolve(owned.length);
+                    if (!(windowOf in given)) base[windowOf] = (_owner, offset = 0, limit = 0) => Promise.resolve(owned.slice(offset, limit > 0 ? offset + limit : undefined));
+                    if (!(indexOf in given)) base[indexOf] = (_owner, id) => Promise.resolve(owned.indexOf(id));
+                    if (!('LoadPositionsByIDs' in given)) base.LoadPositionsByIDs = window.__mockPositionsByIDs(positions);
+                }
+            }
             // La bibliothèque et une recherche se lisent par fenêtres d'ids (compte, fenêtre, rang) :
             // les trois s'écrivent depuis la liste d'ids que la spec fournit.
             const slice = (ids, offset, limit) => ids.slice(offset, limit > 0 ? offset + limit : undefined);

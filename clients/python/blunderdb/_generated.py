@@ -146,6 +146,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/collections.copyPosition — JSON."
         return self._call("/v1/collections.copyPosition", payload)
 
+    def collections_count_positions(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/collections.countPositions — JSON."
+        return self._call("/v1/collections.countPositions", payload)
+
     def collections_create(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/collections.create — JSON. Accepts an Idempotency-Key."
         return self._call("/v1/collections.create", payload, idempotency_key=idempotency_key)
@@ -158,6 +162,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/collections.get — JSON."
         return self._call("/v1/collections.get", payload)
 
+    def collections_index_of_position(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/collections.indexOfPosition — JSON."
+        return self._call("/v1/collections.indexOfPosition", payload)
+
     def collections_list(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/collections.list — NDJSON stream."
         return self._stream("/v1/collections.list", payload)
@@ -165,6 +173,10 @@ class GeneratedAPI(BaseClient):
     def collections_move_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.movePosition — JSON."
         return self._call("/v1/collections.movePosition", payload)
+
+    def collections_position_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/collections.positionIds — JSON."
+        return self._call("/v1/collections.positionIds", payload)
 
     def collections_position_index_map(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.positionIndexMap — JSON."

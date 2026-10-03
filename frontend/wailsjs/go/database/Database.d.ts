@@ -98,7 +98,19 @@ export function ComputeRecurringErrors(arg1:database.StatsFilter):Promise<storag
 
 export function ComputeRecurringErrorsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<storage.RecurringErrors>;
 
+export function CountAnkiDeckPositions(arg1:number):Promise<number>;
+
+export function CountCollectionPositions(arg1:number):Promise<number>;
+
 export function CountMatches(arg1:storage.MatchListOpts):Promise<number>;
+
+export function IndexOfAnkiDeckPosition(arg1:number,arg2:number):Promise<number>;
+
+export function IndexOfCollectionPosition(arg1:number,arg2:number):Promise<number>;
+
+export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
+
+export function ListCollectionPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
 
 export function ListMatches(arg1:storage.MatchListOpts):Promise<Array<domain.Match>>;
 

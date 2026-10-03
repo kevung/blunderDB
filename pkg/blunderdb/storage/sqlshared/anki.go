@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"iter"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -320,6 +321,67 @@ func (s *AnkiStore) DeckPositions(ctx context.Context, scope string, deckID int6
 			}
 		}
 	}
+}
+
+// DeckPositionIDs returns the window of the position ids linked to a deck's
+// cards, ordered by position id.
+func (s *AnkiStore) DeckPositionIDs(ctx context.Context, scope string, deckID int64, opts storage.ListOpts) ([]int64, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	query := `SELECT DISTINCT position_id FROM anki_card WHERE deck_id = ? AND position_id IS NOT NULL AND ` + tenant + `
+		 ORDER BY position_id ASC`
+	args := append([]any{deckID}, targs...)
+	if opts.Limit > 0 || opts.Offset > 0 {
+		limit := int64(math.MaxInt64)
+		if opts.Limit > 0 {
+			limit = int64(opts.Limit)
+		}
+		query += ` LIMIT ? OFFSET ?`
+		args = append(args, limit, max(opts.Offset, 0))
+	}
+	rows, err := s.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, errf(s.DB, "anki deck position ids", err)
+	}
+	defer rows.Close()
+	ids := []int64{}
+	for rows.Next() {
+		var pid int64
+		if err := rows.Scan(&pid); err != nil {
+			return nil, errf(s.DB, "anki deck position ids", err)
+		}
+		ids = append(ids, pid)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "anki deck position ids", err)
+	}
+	return ids, nil
+}
+
+// DeckPositionCount returns how many positions a deck's cards link.
+func (s *AnkiStore) DeckPositionCount(ctx context.Context, scope string, deckID int64) (int, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	var n int
+	if err := s.DB.QueryRow(ctx,
+		`SELECT COUNT(DISTINCT position_id) FROM anki_card WHERE deck_id = ? AND position_id IS NOT NULL AND `+tenant,
+		append([]any{deckID}, targs...)...).Scan(&n); err != nil {
+		return 0, errf(s.DB, "count anki deck positions", err)
+	}
+	return n, nil
+}
+
+// IndexOfDeckPosition returns the rank of a position in DeckPositionIDs's
+// order: the number of linked positions below it.
+func (s *AnkiStore) IndexOfDeckPosition(ctx context.Context, scope string, deckID, positionID int64) (int, bool, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	var held, rank int
+	err := s.DB.QueryRow(ctx,
+		`SELECT COUNT(CASE WHEN position_id = ? THEN 1 END), COUNT(DISTINCT CASE WHEN position_id < ? THEN position_id END)
+		 FROM anki_card WHERE deck_id = ? AND position_id IS NOT NULL AND `+tenant,
+		append([]any{positionID, positionID, deckID}, targs...)...).Scan(&held, &rank)
+	if err != nil {
+		return 0, false, errf(s.DB, "index of anki deck position", err)
+	}
+	return rank, held > 0, nil
 }
 
 // DeckStats returns the review counters for a deck.

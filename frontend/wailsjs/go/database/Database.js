@@ -166,8 +166,32 @@ export function ComputeRecurringErrorsCtx(arg1, arg2) {
   return window['go']['database']['Database']['ComputeRecurringErrorsCtx'](arg1, arg2);
 }
 
+export function CountAnkiDeckPositions(arg1) {
+  return window['go']['database']['Database']['CountAnkiDeckPositions'](arg1);
+}
+
+export function CountCollectionPositions(arg1) {
+  return window['go']['database']['Database']['CountCollectionPositions'](arg1);
+}
+
 export function CountMatches(arg1) {
   return window['go']['database']['Database']['CountMatches'](arg1);
+}
+
+export function IndexOfAnkiDeckPosition(arg1, arg2) {
+  return window['go']['database']['Database']['IndexOfAnkiDeckPosition'](arg1, arg2);
+}
+
+export function IndexOfCollectionPosition(arg1, arg2) {
+  return window['go']['database']['Database']['IndexOfCollectionPosition'](arg1, arg2);
+}
+
+export function ListAnkiDeckPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ListAnkiDeckPositionIDs'](arg1, arg2, arg3);
+}
+
+export function ListCollectionPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ListCollectionPositionIDs'](arg1, arg2, arg3);
 }
 
 export function ListMatches(arg1) {

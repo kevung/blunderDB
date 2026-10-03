@@ -121,6 +121,47 @@ func (d *Database) GetAnkiDeckPositions(deckID int64) ([]Position, error) {
 	return positions, nil
 }
 
+// ListAnkiDeckPositionIDs returns the window [offset, offset+limit) of the
+// position ids a deck links, in GetAnkiDeckPositions's order; limit <= 0 means
+// up to the end. With CountAnkiDeckPositions and IndexOfAnkiDeckPosition the
+// GUI browses a deck by windows, never holding it whole.
+func (d *Database) ListAnkiDeckPositionIDs(deckID int64, offset, limit int) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().DeckPositionIDs(context.Background(), "", deckID, storage.ListOpts{Offset: offset, Limit: limit})
+}
+
+// CountAnkiDeckPositions returns how many positions a deck links.
+func (d *Database) CountAnkiDeckPositions(deckID int64) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return 0, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Anki().DeckPositionCount(context.Background(), "", deckID)
+}
+
+// IndexOfAnkiDeckPosition returns the rank of a position in
+// ListAnkiDeckPositionIDs's order, or -1 when the deck does not link it.
+func (d *Database) IndexOfAnkiDeckPosition(deckID, positionID int64) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return -1, fmt.Errorf("no database is currently open")
+	}
+	index, found, err := d.store.Anki().IndexOfDeckPosition(context.Background(), "", deckID, positionID)
+	if err != nil || !found {
+		return -1, err
+	}
+	return index, nil
+}
+
 // GetAnkiDeckStats returns review statistics for a deck. The queue counters
 // leave suspended and buried cards out; TotalCount counts the whole deck.
 func (d *Database) GetAnkiDeckStats(deckID int64) (AnkiDeckStats, error) {
