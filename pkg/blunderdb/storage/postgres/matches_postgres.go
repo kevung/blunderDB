@@ -114,7 +114,7 @@ func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (i
 		m.TournamentID, m.Comment,
 		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID)).Scan(&id, &importDate)
 	if err != nil {
-		return 0, fmt.Errorf("postgres: save match: %w", err)
+		return 0, fmt.Errorf("postgres: save match: %w", referenced(err))
 	}
 	m.ID = id
 	m.ImportDate = importDate
@@ -661,7 +661,7 @@ func (s *matchStore) CreateGame(ctx context.Context, scope string, g *domain.Gam
 		g.InitialScore[0], g.InitialScore[1],
 		g.Winner, g.PointsWon, g.MoveCount).Scan(&id)
 	if err != nil {
-		return 0, fmt.Errorf("postgres: create game: %w", err)
+		return 0, fmt.Errorf("postgres: create game: %w", referenced(err))
 	}
 	g.ID = id
 	return id, nil
@@ -788,7 +788,7 @@ func (s *matchStore) CreateMoveAnalysis(ctx context.Context, scope string, ma *d
 		int64(math.Round(ma.WinRate)), int64(math.Round(ma.GammonRate)), int64(math.Round(ma.BackgammonRate)),
 		int64(math.Round(ma.OpponentWinRate)), int64(math.Round(ma.OpponentGammonRate)), int64(math.Round(ma.OpponentBackgammonRate))).Scan(&id)
 	if err != nil {
-		return 0, fmt.Errorf("postgres: create move analysis: %w", err)
+		return 0, fmt.Errorf("postgres: create move analysis: %w", referenced(err))
 	}
 	ma.ID = id
 	return id, nil
@@ -855,7 +855,7 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 		tenantID(scope), mv.GameID, mv.MoveNumber, mv.MoveType, positionID, mv.Player,
 		mv.Dice[0], mv.Dice[1], mv.CheckerMove, mv.CubeAction, luckMP).Scan(&id)
 	if err != nil {
-		return 0, fmt.Errorf("postgres: create move: %w", err)
+		return 0, fmt.Errorf("postgres: create move: %w", referenced(err))
 	}
 	mv.ID = id
 	return id, nil

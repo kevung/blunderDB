@@ -11,7 +11,7 @@ import { logger } from './utils/logger.js';
 // NOTE: status messages are emitted as tMsg() descriptors so the status bar can
 // re-translate them live when the language changes.
 import { tMsg } from './i18n';
-import { displayedPositionIDs, searchQueryBoard } from './services/positionService.js';
+import { withDisplayedPositionIDs, searchQueryBoard } from './services/positionService.js';
 import { openContactSheet } from './services/contactSheet.js';
 import { runRolloutCommand } from './services/rolloutService.js';
 // The search-token grammar lives in searchFilterService.js (shared with the "retour" replay);
@@ -199,14 +199,24 @@ function handleSearchCommand(command, { isSubSearch }) {
         return;
     }
 
+    if (isSubSearch) withDisplayedPositionIDs((displayed) => sendSearchCommand(command, { isSubSearch, displayed }));
+    else sendSearchCommand(command, { isSubSearch, displayed: null });
+}
+
+/**
+ * The search `s`/`ss` asks for, once the list a sub-search searches within is known.
+ * @param {string} command
+ * @param {{ isSubSearch: boolean, displayed: number[] | null }} options
+ */
+function sendSearchCommand(command, { isSubSearch, displayed }) {
     let currentIDs = '';
     if (isSubSearch) {
-        const displayed = displayedPositionIDs();
-        if (displayed.length === 0) {
+        // null is the whole library: searching within it is a plain search.
+        if (displayed !== null && displayed.length === 0) {
             statusBarTextStore.set(tMsg('commands.noResultsToSearchIn'));
             return;
         }
-        currentIDs = displayed.join(',');
+        currentIDs = displayed === null ? '' : displayed.join(',');
     }
 
     const bareCommand = isSubSearch ? 'ss' : 's';

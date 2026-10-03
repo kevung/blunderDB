@@ -48,7 +48,16 @@ func (s *Server) handleGammonNetCubeMatrix(w http.ResponseWriter, r *http.Reques
 		req.PruneK = 12
 	}
 
-	matrix, err := gammonnet.ComputeCubeMatrix(r.Context(), pos, req.MatchLength, req.Ply, req.PruneK, 0)
+	scope := scopeOf(r)
+	if s.refuseAnalysis(w, scope) {
+		return
+	}
+	// One search per cell at most: more workers would sit idle and be
+	// charged all the same.
+	workers := min(s.engineWorkers, req.MatchLength*req.MatchLength)
+	matrix, err := metered(s, scope, workers, func() (gammonnet.CubeMatrix, error) {
+		return gammonnet.ComputeCubeMatrix(r.Context(), pos, req.MatchLength, req.Ply, req.PruneK, workers)
+	})
 	if err != nil {
 		writeErrorCode(w, CodeInvalid, err.Error())
 		return

@@ -250,3 +250,4 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 | 2026-08-26 | gnubgparser v1.3.0 ne lisait jamais la chance qu'il parsait (`LU[-0.00537]` à un seul champ, `parseLuck` en exigeait deux) : corrigé amont, **gnubgparser v1.4.0** (traite aussi `LU[-inf]` et la chance d'un nœud « set dice ») ; blunderDB dépend de v1.4.0, `TestMapGnuBGCarriesLuck` et `TestLuckAgreesAcrossFormats` pinent le résultat contre l'import XG du même match. | #116 lot 1 | `96e1ca7d` |
 
 - Rollout GUI : un job instantané peut perdre son bandeau de fin (`startRolloutOfCurrent` remet `outcome: null` après le démarrage).
+- PostgreSQL, suites de l'audit d'écriture par tenant : `positions_postgres.go:227` `ErrConflict` enveloppe la `pgconn.PgError` (texte du pilote vers le client, sans oracle) ; `Tournaments().AddMatch` avec un match étranger ou absent réussit en silence (UPDATE 0 ligne) ; `Analyses.Save` en course avec une suppression rend un autre message (même tenant).

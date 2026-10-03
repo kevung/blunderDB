@@ -19,6 +19,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 )
 
+// TenantQuotas is internal/server's per-tenant bounds, named here so an
+// embedder can set Config.Quotas.
+type TenantQuotas = internalserver.TenantQuotas
+
 // Config configures an embedded engine. Backend is "postgres" in production
 // (the only tenant-isolating backend); "sqlite" is for tests only.
 //
@@ -34,6 +38,10 @@ type Config struct {
 	Logger         *slog.Logger
 	RateLimitRPS   float64
 	RateLimitBurst int
+
+	// Quotas bound each tenant's stored positions, engine time per day and
+	// concurrent imports; the zero value is unlimited.
+	Quotas TenantQuotas
 
 	// MaxBodyBytes caps an ordinary /v1 request body. Defaults to
 	// internal/server's own default (32 MiB) when zero — see
@@ -117,6 +125,7 @@ func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error)
 		EnableMetrics:      cfg.EnableMetrics,
 		RateLimitRPS:       cfg.RateLimitRPS,
 		RateLimitBurst:     cfg.RateLimitBurst,
+		Quotas:             cfg.Quotas,
 		MaxBodyBytes:       cfg.MaxBodyBytes,
 		ImportMaxBodyBytes: cfg.ImportMaxBodyBytes,
 		MaxSpoolBytes:      cfg.MaxSpoolBytes,

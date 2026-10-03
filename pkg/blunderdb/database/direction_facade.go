@@ -46,6 +46,10 @@ type (
 	StandingRow         = service.StandingRow
 	StandingsSection    = service.StandingsSection
 	StandingsView       = service.StandingsView
+	SeasonQuery         = service.SeasonQuery
+	SeasonView          = service.SeasonView
+	SeasonRow           = service.SeasonRow
+	SeasonEvent         = service.SeasonEvent
 	DirectoryEntry      = service.DirectoryEntry
 	DirectorySource     = service.DirectorySource
 	DirectoryCSVError   = service.DirectoryCSVError
@@ -418,6 +422,16 @@ func (d *Database) Standings(tournamentID int64) (*StandingsView, error) {
 // StandingsCSV is service.Service.StandingsCSV on the open database.
 func (d *Database) StandingsCSV(tournamentID int64) (string, error) {
 	return d.directionService().StandingsCSV(context.Background(), tournamentID)
+}
+
+// SeasonRanking is service.Service.SeasonRanking on the open database.
+func (d *Database) SeasonRanking(q SeasonQuery) (*SeasonView, error) {
+	return d.directionService().SeasonRanking(context.Background(), q)
+}
+
+// SeasonCSV is service.Service.SeasonCSV on the open database.
+func (d *Database) SeasonCSV(q SeasonQuery) (string, error) {
+	return d.directionService().SeasonCSV(context.Background(), q)
 }
 
 // CloseDirection is service.Service.CloseDirection on the open database.

@@ -36,7 +36,11 @@ const analysisInsertSQL = `INSERT INTO analysis (
 // same statement, so concurrent saves cannot insert two rows. The conflict
 // target names the UNIQUE index idx_analysis_position; position
 // ids are unique across tenants (one BIGSERIAL sequence), so the index needs
-// no tenant_id and the target is position_id alone.
+// no tenant_id and the target is position_id alone. That target also
+// catches another tenant's row, so the WHERE keeps the update inside the
+// writer's tenant: a foreign row is left as it is. Save checks the position
+// is the tenant's first (requireOwned), so a foreign position with or without
+// an analysis gets the same ErrNotFound; the WHERE holds even without it.
 const analysisUpsertSQL = analysisInsertSQL + `
 ON CONFLICT (position_id) DO UPDATE SET
 	data=excluded.data,
@@ -50,7 +54,8 @@ ON CONFLICT (position_id) DO UPDATE SET
 	player2_gammon_rate=excluded.player2_gammon_rate,
 	player2_backgammon_rate=excluded.player2_backgammon_rate,
 	is_forced=excluded.is_forced,
-	is_close_cube=excluded.is_close_cube`
+	is_close_cube=excluded.is_close_cube
+WHERE analysis.tenant_id = excluded.tenant_id`
 
 // Save stores (or replaces) the analysis for positionID. The analysis JSON is
 // compressed (zstd, see engine.CompressAnalysisData) into the BYTEA data column and the denormalised scalar
@@ -193,13 +198,20 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 
 	// The analysis row and the position flag it implies are one write.
 	return withTx(ctx, s.db, func(tx execer) error {
-		if _, err := tx.Exec(ctx, analysisUpsertSQL,
+		if err := requireOwned(ctx, tx, tenant, "position", positionID); err != nil {
+			return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, err)
+		}
+		tag, err := tx.Exec(ctx, analysisUpsertSQL,
 			tenant, positionID, data,
 			c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
-			c.IsForced != 0, c.IsCloseCube != 0); err != nil {
-			return fmt.Errorf("postgres: save analysis: %w", err)
+			c.IsForced != 0, c.IsCloseCube != 0)
+		if err != nil {
+			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
+		}
+		if tag.RowsAffected() == 0 {
+			return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, storage.ErrNotFound)
 		}
 
 		// Flag the position as a take/pass cube response if any played cube action is

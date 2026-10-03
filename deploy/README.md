@@ -31,12 +31,21 @@ Caddy est le seul service dont un port est publié sur l'hôte.
   avoir explicitement effacé toute valeur reçue du client.
 - `nginx-tenant-proxy.conf` — le même schéma (garde + injection), en snippet
   nginx pour qui a déjà un nginx en place plutôt que Caddy.
+- `Caddyfile.oidc` — la même garde et la même injection, l'appelant étant
+  authentifié par un fournisseur OpenID Connect via oauth2-proxy
+  (`forward_auth`) ; le service oauth2-proxy à ajouter au Compose est en tête
+  du fichier.
 - `.env.example` — variable `POSTGRES_PASSWORD` à définir avant de lancer.
 
 L'authentification HTTP Basic ci-dessus est une **démonstration**, pas une
 recommandation : en production, remplacez-la par `forward_auth` vers votre
 fournisseur d'identité réel (OIDC, SSO d'entreprise…), qui authentifie puis
-transmet l'identité au même endroit du Caddyfile.
+transmet l'identité au même endroit du Caddyfile — `Caddyfile.oidc` en est
+la recette.
+
+Sur une instance partagée, les options `--quota-positions`,
+`--quota-analysis-seconds` et `--quota-imports` du démon bornent ce que chaque
+tenant prend ; elles ne remplacent pas l'authentification du proxy.
 
 Le scénario complet, du conteneur vide à un démon qui répond (avec et sans
 en-tête), est documenté dans `doc/source/mode_headless.rst`, section

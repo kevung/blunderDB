@@ -344,6 +344,19 @@ func testPositionListIDsAndLoadByIDs(t *testing.T, s storage.Storage) {
 		t.Errorf("ListIDs{Limit:2,Offset:1}: got %v, want %v", window, listed[1:3])
 	}
 
+	// Windows past the middle, the last page cut short, and past the end: a
+	// backend may reach them from the last id rather than through OFFSET.
+	for _, w := range []struct{ offset, limit int }{{3, 2}, {3, 1000}, {4, 1}, {5, 2}, {9, 2}} {
+		got, err := ps.ListIDs(ctx, "", storage.ListOpts{Limit: w.limit, Offset: w.offset})
+		if err != nil {
+			t.Fatalf("ListIDs{Limit:%d,Offset:%d}: %v", w.limit, w.offset, err)
+		}
+		want := listed[min(w.offset, len(listed)):min(w.offset+w.limit, len(listed))]
+		if !equalIDs(got, want) {
+			t.Errorf("ListIDs{Limit:%d,Offset:%d}: got %v, want %v", w.limit, w.offset, got, want)
+		}
+	}
+
 	// Caller's order, not id order; an unknown id is skipped, not an error.
 	want := []int64{saved[3], saved[0], saved[4]}
 	got, err := ps.LoadByIDs(ctx, "", []int64{saved[3], 987654321, saved[0], saved[4]})
@@ -367,6 +380,59 @@ func testPositionListIDsAndLoadByIDs(t *testing.T, s storage.Storage) {
 	}
 	if len(empty) != 0 {
 		t.Errorf("LoadByIDs(nil): got %d positions, want 0", len(empty))
+	}
+}
+
+// testPositionCountAndIndexOf pins the two calls that let a client browse a
+// library without holding its id list: Count is ListIDs's length, and
+// IndexOf(id) is the rank of id in ListIDs, so ListIDs{Offset: IndexOf(id),
+// Limit: 1} is [id].
+func testPositionCountAndIndexOf(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	ps := s.Positions()
+
+	if n, err := ps.Count(ctx, ""); err != nil || n != 0 {
+		t.Fatalf("Count on an empty store: got %d, %v; want 0", n, err)
+	}
+	var saved []int64
+	for n := 1; n <= 5; n++ {
+		p := provenancePos(n)
+		id, err := ps.Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save %d: %v", n, err)
+		}
+		saved = append(saved, id)
+	}
+	// A deleted position leaves a hole in the ids: ranks are not ids.
+	if err := ps.Delete(ctx, "", saved[1]); err != nil {
+		t.Fatalf("Delete: %v", err)
+	}
+
+	ids, err := ps.ListIDs(ctx, "", storage.ListOpts{})
+	if err != nil {
+		t.Fatalf("ListIDs: %v", err)
+	}
+	n, err := ps.Count(ctx, "")
+	if err != nil {
+		t.Fatalf("Count: %v", err)
+	}
+	if n != len(ids) || n != 4 {
+		t.Errorf("Count: got %d, want %d (len(ListIDs))", n, len(ids))
+	}
+	for want, id := range ids {
+		got, found, err := ps.IndexOf(ctx, "", id)
+		if err != nil {
+			t.Fatalf("IndexOf(%d): %v", id, err)
+		}
+		if !found || got != want {
+			t.Errorf("IndexOf(%d): got %d (found=%v), want %d", id, got, found, want)
+		}
+	}
+	if _, found, err := ps.IndexOf(ctx, "", saved[1]); err != nil || found {
+		t.Errorf("IndexOf(deleted id): found=%v, %v; want not found", found, err)
+	}
+	if _, found, err := ps.IndexOf(ctx, "", 987654321); err != nil || found {
+		t.Errorf("IndexOf(unknown id): found=%v, %v; want not found", found, err)
 	}
 }
 

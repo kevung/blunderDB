@@ -1,0 +1,25 @@
+goos: linux
+goarch: amd64
+pkg: github.com/kevung/blunderdb/pkg/blunderdb/database
+cpu: AMD Ryzen 7 PRO 6850U with Radeon Graphics     
+BenchmarkScale_ImportSingleXG-16               	       1	 545735627 ns/op	37971264 B/op	  439773 allocs/op
+BenchmarkScale_ImportSingleXG-16               	       1	 231141056 ns/op	20415536 B/op	  439081 allocs/op
+BenchmarkScale_ImportSingleXG-16               	       1	 230475892 ns/op	20377528 B/op	  438969 allocs/op
+BenchmarkScale_SearchWideCube-16               	       1	5453169807 ns/op	    398478 positions	4303304016 B/op	17373556 allocs/op
+BenchmarkScale_SearchWideCube-16               	       1	5632219844 ns/op	    398478 positions	4303131496 B/op	17373492 allocs/op
+BenchmarkScale_SearchWideCube-16               	       1	5531703230 ns/op	    398478 positions	4303131432 B/op	17373488 allocs/op
+BenchmarkScale_SearchWideErrorAboveTenth-16    	       1	2008561725 ns/op	     22037 positions	222581832 B/op	 1157220 allocs/op
+BenchmarkScale_SearchWideErrorAboveTenth-16    	       1	2028263248 ns/op	     22037 positions	222581720 B/op	 1157219 allocs/op
+BenchmarkScale_SearchWideErrorAboveTenth-16    	       1	2093411736 ns/op	     22037 positions	222581816 B/op	 1157220 allocs/op
+BenchmarkScale_SearchNarrowDiceAndScore-16     	       1	 381705451 ns/op	        11.00 positions	   77304 B/op	     554 allocs/op
+BenchmarkScale_SearchNarrowDiceAndScore-16     	       1	 389464148 ns/op	        11.00 positions	   77304 B/op	     554 allocs/op
+BenchmarkScale_SearchNarrowDiceAndScore-16     	       1	 389983299 ns/op	        11.00 positions	   77288 B/op	     554 allocs/op
+BenchmarkScale_StatsCompute-16                 	       1	98588766487 ns/op	406175144 B/op	 9032598 allocs/op
+BenchmarkScale_StatsCompute-16                 	       1	66408268425 ns/op	405941304 B/op	 9030787 allocs/op
+BenchmarkScale_StatsCompute-16                 	       1	63434226384 ns/op	405941240 B/op	 9030786 allocs/op
+BenchmarkScale_ListPositionIDs-16              	       1	 376415129 ns/op	    990216 positions	57519896 B/op	 1980226 allocs/op
+BenchmarkScale_ListPositionIDs-16              	       1	 378237805 ns/op	    990216 positions	57519880 B/op	 1980226 allocs/op
+BenchmarkScale_ListPositionIDs-16              	       1	 359268890 ns/op	    990216 positions	57519912 B/op	 1980226 allocs/op
+BenchmarkScale_GetAllMatches-16                	       1	5727775715 ns/op	      3148 matches	114087992 B/op	 4116555 allocs/op
+BenchmarkScale_GetAllMatches-16                	       1	5676905058 ns/op	      3148 matches	114088232 B/op	 4116554 allocs/op
+BenchmarkScale_GetAllMatches-16                	       1	6438082634 ns/op	      3148 matches	114087944 B/op	 4116553 allocs/op

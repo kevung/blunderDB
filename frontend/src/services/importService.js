@@ -267,12 +267,12 @@ export async function importDatabaseByPath(importFilePath) {
 // loadAllPositions() selects the matches tab.
 export async function showImportedPosition(positionID) {
     if (positionID) {
-        let index = positionsStore.indexOf(positionID);
+        let index = await positionsStore.findIndex(positionID);
         if (index < 0) {
             // The position is not in the current view (search subset, match mode,
             // or a brand-new row): reload the full list so we can point at it.
             await reloadPositions();
-            index = positionsStore.indexOf(positionID);
+            index = await positionsStore.findIndex(positionID);
         }
         if (index >= 0) {
             currentPositionIndexStore.set(-1);
@@ -348,8 +348,9 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
             setStatusBarMessage(announce(positionID, true, tMsg('status.positionMerged')));
 
             if (reload) {
+                const index = await positionsStore.findIndex(positionID);
                 currentPositionIndexStore.set(-1);
-                currentPositionIndexStore.set(positionsStore.indexOf(positionID));
+                currentPositionIndexStore.set(index);
                 commentTextStore.set(mergedComment);
             }
         } catch (error) {

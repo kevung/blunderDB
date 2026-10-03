@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -61,6 +62,11 @@ type Server struct {
 	// spool bounds the total bytes concurrently in-flight imports may hold
 	// spooled to $TMPDIR — see handleImport and Options.MaxSpoolBytes.
 	spool *spoolQuota
+	// quota holds each tenant's use against opts.Quotas.
+	quota *quotaLedger
+	// engineWorkers is how many searches one engine computation runs at once
+	// (a comparison, a cube matrix, a rollout): what cpuTime multiplies by.
+	engineWorkers int
 	// idempotency backs withIdempotency: at most one cached response per
 	// (tenant, route, Idempotency-Key) triple, for the handful of routes with
 	// no natural dedup key — see idempotency.go.
@@ -94,6 +100,8 @@ func New(opts Options) (*Server, error) {
 		},
 		imports:       newImportRegistry(),
 		gammonnetJobs: newImportRegistry(),
+		quota:         newQuotaLedger(opts.Quotas, opts.now),
+		engineWorkers: runtime.NumCPU(),
 		spool:         newSpoolQuota(opts.MaxSpoolBytes),
 		idempotency:   newIdempotencyStore(opts.now),
 		direction:     &service.Memory{},

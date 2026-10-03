@@ -10,8 +10,10 @@ import (
 // analysis into a map keyed by position id, so callers can apply
 // analysis-based filters without per-row LoadAnalysis round-trips.
 //
-// SearchStore.Find takes opts.Limit/Offset into its SQL (zero = unbounded);
-// AnalysisStore.LoadMany loads all analyses in one batched query. Positions
+// opts windows the survivors of the search (zero = unbounded): SearchStore.Find
+// puts it into the SQL when no predicate is left for Go, else counts it on the
+// rows the Go phase keeps. AnalysisStore.LoadMany loads all analyses in one
+// batched query. Positions
 // without an analysis are absent from the map. Uses context.Background();
 // prefer LoadPositionsByFiltersCoreCtx when the caller can cancel.
 func (d *Database) LoadPositionsByFiltersCore(
@@ -48,11 +50,15 @@ func (d *Database) LoadPositionsByFiltersCoreCtx(
 // Unbounded; for callers wanting whole positions in one round trip (tests,
 // scripting). The GUI uses LoadPositionIDsByFilters.
 func (d *Database) LoadPositionsByFilters(f SearchFilters) ([]Position, error) {
+	return d.loadPositionsByFilters(context.Background(), f)
+}
+
+func (d *Database) loadPositionsByFilters(ctx context.Context, f SearchFilters) ([]Position, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
 	var positions []Position
-	for pos, err := range d.store.Search().Find(context.Background(), "", f, storage.ListOpts{}) {
+	for pos, err := range d.store.Search().Find(ctx, "", f, storage.ListOpts{}) {
 		if err != nil {
 			return nil, err
 		}
@@ -66,19 +72,66 @@ func (d *Database) LoadPositionsByFilters(f SearchFilters) ([]Position, error) {
 // Only ids cross the Wails bridge; the frontend fetches the visible window
 // through LoadPositionsByIDs, as it does behind ListPositionIDs.
 //
+// CancelSearch does not reach it: it fills an Anki deck or restores a session
+// while the displayed search changes. A whole list that Escape must stop is
+// SearchPositionIDs(f, 0, 0).
+//
 // Two return values on purpose: Wails v2's dispatcher only handles 1 or 2, so
 // a 3-return method (like LoadPositionsByFiltersCore) resolves to (nil, nil)
 // in JS and must never be called from the frontend.
 func (d *Database) LoadPositionIDsByFilters(f SearchFilters) ([]int64, error) {
+	return d.searchPositionIDs(context.Background(), f, 0, 0)
+}
+
+// SearchPositionIDs returns the window [offset, offset+limit) of
+// LoadPositionIDsByFilters's ids; limit <= 0 means up to the end. The GUI
+// browses a search result through such windows, CountPositionsByFilters and
+// IndexOfPositionByFilters, never holding the whole list. These three are the
+// browsed search CancelSearch stops.
+func (d *Database) SearchPositionIDs(f SearchFilters, offset, limit int) ([]int64, error) {
+	ctx, done := d.beginSearch()
+	defer done()
+	return d.searchPositionIDs(ctx, f, offset, limit)
+}
+
+// searchPositionIDs is SearchPositionIDs under ctx: the scan stops, chunk by
+// chunk, once it is cancelled.
+func (d *Database) searchPositionIDs(ctx context.Context, f SearchFilters, offset, limit int) ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var ids []int64
-	for pos, err := range d.store.Search().Find(context.Background(), "", f, storage.ListOpts{}) {
-		if err != nil {
-			return nil, err
-		}
-		ids = append(ids, pos.ID)
+	return d.store.Search().FindIDs(ctx, "", f, storage.ListOpts{Offset: offset, Limit: limit})
+}
+
+// CountPositionsByFilters returns how many positions the search finds.
+func (d *Database) CountPositionsByFilters(f SearchFilters) (int, error) {
+	ctx, done := d.beginSearch()
+	defer done()
+	return d.countPositionsByFilters(ctx, f)
+}
+
+func (d *Database) countPositionsByFilters(ctx context.Context, f SearchFilters) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	return d.store.Search().Count(ctx, "", f)
+}
+
+// IndexOfPositionByFilters returns the rank of id in SearchPositionIDs's
+// order, or -1 when the search does not find it.
+func (d *Database) IndexOfPositionByFilters(f SearchFilters, id int64) (int, error) {
+	ctx, done := d.beginSearch()
+	defer done()
+	return d.indexOfPositionByFilters(ctx, f, id)
+}
+
+func (d *Database) indexOfPositionByFilters(ctx context.Context, f SearchFilters, id int64) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	index, found, err := d.store.Search().IndexOf(ctx, "", f, id)
+	if err != nil || !found {
+		return -1, err
 	}
-	return ids, nil
+	return index, nil
 }

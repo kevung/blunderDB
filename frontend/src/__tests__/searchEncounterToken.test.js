@@ -6,7 +6,7 @@
  * charge utile ne le portait pas, si bien que la recherche partait sans lui et
  * rendait tout. Ce test suit le jeton de la barre de commande jusqu'à l'appel
  * du backend, sans raccourci : processCommand → loadPositionsByFilters →
- * LoadPositionIDsByFilters.
+ * CountPositionsByFilters.
  */
 
 import { describe, test, expect, vi, beforeEach } from 'vitest';
@@ -17,7 +17,9 @@ const bindings = vi.hoisted(() => ({
     SaveSearchHistory: vi.fn(() => Promise.resolve()),
     ListPositionIDs: vi.fn(() => Promise.resolve([])),
     LoadPositionsByIDs: vi.fn(() => Promise.resolve([])),
-    LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
+    CountPositionsByFilters: vi.fn(() => Promise.resolve(0)),
+    SearchPositionIDs: vi.fn(() => Promise.resolve([])),
+    CancelSearch: vi.fn(() => Promise.resolve()),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
     LoadComment: vi.fn(() => Promise.resolve('')),
     SaveLastVisitedPosition: vi.fn(() => Promise.resolve()),
@@ -48,8 +50,8 @@ async function searchFromCommandBar(command) {
     processCommand(command);
     expect(pending, `${command} never reached loadPositionsByFilters`).toBeDefined();
     await pending;
-    expect(bindings.LoadPositionIDsByFilters).toHaveBeenCalledTimes(1);
-    return bindings.LoadPositionIDsByFilters.mock.calls[0][0];
+    expect(bindings.SearchPositionIDs).toHaveBeenCalledTimes(1);
+    return bindings.SearchPositionIDs.mock.calls[0][0];
 }
 
 beforeEach(() => {

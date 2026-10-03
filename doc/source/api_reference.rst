@@ -22,6 +22,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    anki
      POST /v1/anki.buryCard                        JSON
      POST /v1/anki.createDeck                      JSON
+     POST /v1/anki.createStudyDeck                 JSON
      POST /v1/anki.deckPositions                   NDJSON
      POST /v1/anki.deckStats                       JSON
      POST /v1/anki.deleteDeck                      JSON
@@ -128,6 +129,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/gammonnet.analyzeMissing.cancel      custom
      POST /v1/gammonnet.compare                    custom
      POST /v1/gammonnet.cubeMatrix                 custom
+     POST /v1/gammonnet.evaluate                   custom
      POST /v1/gammonnet.sweepStale                 custom
    history
      POST /v1/history.clear                        JSON
@@ -173,6 +175,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/metadata.counts                      JSON
      POST /v1/metadata.version                     JSON
    positions
+     POST /v1/positions.count                      JSON
      POST /v1/positions.delete                     JSON
      POST /v1/positions.epc                        JSON
      POST /v1/positions.exists                     JSON
@@ -180,6 +183,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.fromOGID                   JSON
      POST /v1/positions.fromXGID                   JSON
      POST /v1/positions.fromXGP                    JSON
+     POST /v1/positions.indexOf                    JSON
      POST /v1/positions.legalMoves                 JSON
      POST /v1/positions.list                       NDJSON
      POST /v1/positions.listIds                    JSON
@@ -202,6 +206,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/rencontres.get                       JSON  (ETag)
      POST /v1/rencontres.list                      JSON  (ETag)
      POST /v1/rencontres.pageHtml                  JSON  (ETag)
+     POST /v1/rencontres.ranking                   JSON
      POST /v1/rencontres.setBreaks                 JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.setEventRooms             JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.setTableOutOfService      JSON  (Idempotency-Key)  (If-Match)
@@ -214,7 +219,10 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/rollout.list                         JSON
      POST /v1/rollout.position                     custom
    search
+     POST /v1/search.count                         JSON
      POST /v1/search.find                          NDJSON
+     POST /v1/search.ids                           JSON
+     POST /v1/search.indexOf                       JSON
      POST /v1/search.parse                         JSON
      POST /v1/search.query                         custom
    searchHistory
@@ -237,9 +245,13 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.positionIdsBySelection         JSON
      POST /v1/stats.positionIdsByTournament        JSON
      POST /v1/stats.recurringErrors                JSON
+     POST /v1/stats.studyIds                       JSON
      POST /v1/stats.tournamentBadges               JSON
+     POST /v1/stats.training                       JSON
    tenant
      POST /ops/tenant.purge                        custom
+   tenants
+     POST /v1/tenants.quota                        JSON
    tournaments
      POST /v1/tournaments.addMatch                 JSON
      POST /v1/tournaments.create                   JSON  (Idempotency-Key)
@@ -253,6 +265,10 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/tournaments.tournamentOf             JSON
      POST /v1/tournaments.update                   JSON
      POST /v1/tournaments.updateComment            JSON
+   training
+     POST /v1/training.numberStats                 JSON
+     POST /v1/training.save                        JSON  (Idempotency-Key)
+     POST /v1/training.sessions                    JSON
    transcriptions
      POST /v1/transcriptions.abandon               JSON  (Idempotency-Key)  (If-Match)
      POST /v1/transcriptions.apply                 JSON  (Idempotency-Key)  (If-Match)
@@ -286,7 +302,7 @@ Idempotence
 La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les
 lectures sont sans effet de bord, et les écritures de ``positions.*`` sont
 idempotentes dans leur effet grâce au hachage Zobrist du contenu — enregistrer
-deux fois la même position renvoie la même ligne, jamais un doublon. 43 méthodes
+deux fois la même position renvoie la même ligne, jamais un doublon. 44 méthodes
 acceptent un en-tête ``Idempotency-Key`` optionnel : celles dont deux appels
 sont deux effets distincts, et ``positions.save``, dont la réponse dit si
 l'appel a créé la position (``created``) et le dirait faux si elle était

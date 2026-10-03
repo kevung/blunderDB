@@ -1,0 +1,73 @@
+# OIDC variant of the Caddyfile: the same guard-then-inject of X-Tenant-ID
+# (ADR-0005), with the caller authenticated by an OpenID Connect provider
+# through oauth2-proxy instead of HTTP Basic Auth.
+#
+# blunderdb-serve still authenticates nobody: this file is the whole security
+# boundary. oauth2-proxy runs beside Caddy on the same internal network, for
+# example as this docker-compose.yml service:
+#
+#   oauth2-proxy:
+#     image: quay.io/oauth2-proxy/oauth2-proxy:v7.6.0
+#     command:
+#       - --http-address=0.0.0.0:4180
+#       - --provider=oidc
+#       - --oidc-issuer-url=https://idp.example.org/realms/club
+#       - --client-id=blunderdb
+#       - --client-secret-file=/run/secrets/oidc_client_secret
+#       - --cookie-secret-file=/run/secrets/cookie_secret
+#       - --email-domain=*
+#       - --reverse-proxy=true
+#       - --set-xauthrequest=true
+#       - --upstream=static://202
+#     networks: [internal]
+#
+# --set-xauthrequest makes /oauth2/auth answer 202 with X-Auth-Request-Email
+# for a signed-in caller and 401 otherwise; Caddy maps that email to the
+# tenant's integer below.
+{
+	auto_https off
+	admin off
+}
+
+:80 {
+	# oauth2-proxy's own pages: sign-in, the provider's callback, sign-out.
+	handle /oauth2/* {
+		reverse_proxy oauth2-proxy:4180 {
+			header_up X-Forwarded-Uri {uri}
+		}
+	}
+
+	handle {
+		# Every other request is checked against oauth2-proxy first. On 202
+		# its X-Auth-Request-Email replaces the request's: copy_headers takes
+		# the auth response's value, and drops the header from the request
+		# when the response has none, so a client cannot send its own.
+		forward_auth oauth2-proxy:4180 {
+			uri /oauth2/auth
+			copy_headers X-Auth-Request-Email
+			@unauthenticated status 401
+			handle_response @unauthenticated {
+				redir * /oauth2/sign_in?rd={scheme}://{host}{uri}
+			}
+		}
+
+		# The identity-to-tenant mapping ADR-0005 gives the proxy: the
+		# daemon sees "1", never the email. An unknown account maps to 0,
+		# which the daemon refuses.
+		map {http.request.header.X-Auth-Request-Email} {tenant_id} {
+			alice@club.example 1
+			bob@club.example 2
+			default 0
+		}
+
+		@private path /ops/* /metrics
+		respond @private 403
+
+		reverse_proxy blunderdb-serve:8080 {
+			# Guard, then inject, exactly as in the Basic Auth Caddyfile.
+			header_up X-Tenant-ID ""
+			header_up X-Tenant-ID {tenant_id}
+			header_up -X-Auth-Request-Email
+		}
+	}
+}

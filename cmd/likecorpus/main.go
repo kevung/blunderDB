@@ -48,7 +48,7 @@ func main() {
 	}
 	defer func() { _ = db.Close() }()
 
-	ids, err := db.ListPositionIDs()
+	ids, err := db.ListPositionIDs(0, 0)
 	if err != nil {
 		fail(err)
 	}

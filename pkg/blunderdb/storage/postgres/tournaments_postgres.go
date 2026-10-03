@@ -142,6 +142,9 @@ func (s *tournamentStore) Delete(ctx context.Context, scope string, id int64) er
 func (s *tournamentStore) AddMatch(ctx context.Context, scope string, tournamentID, matchID int64) error {
 	tenant := tenantID(scope)
 	err := withTx(ctx, s.db, func(tx execer) error {
+		if err := requireOwned(ctx, tx, tenant, "tournament", tournamentID); err != nil {
+			return err
+		}
 		var maxOrder int
 		if err := tx.QueryRow(ctx,
 			`SELECT COALESCE(MAX(tournament_sort_order), -1) FROM match
@@ -163,7 +166,7 @@ func (s *tournamentStore) AddMatch(ctx context.Context, scope string, tournament
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("postgres: add match %d to tournament %d: %w", matchID, tournamentID, err)
+		return fmt.Errorf("postgres: add match %d to tournament %d: %w", matchID, tournamentID, referenced(err))
 	}
 	return nil
 }

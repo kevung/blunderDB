@@ -9,6 +9,7 @@
     import { t } from '../../i18n';
     import { renderConfigChange } from './labels.js';
     import TableSettingsEditor from './TableSettingsEditor.svelte';
+    import SeasonRanking from './SeasonRanking.svelte';
     import { rencontreParticipantsStore } from '../../stores/directionStore.js';
     import {
         listRencontres,
@@ -227,6 +228,7 @@
                 {/if}
             </div>
         </fieldset>
+        <SeasonRanking rencontreId={current.id} />
         <div class="row">
             <button type="button" data-testid="rencontre-detach" onclick={detach}>{$t('direction.rencontre.detach')}</button>
             <button type="button" data-testid="rencontre-trash" onclick={remove}>{$t('direction.rencontre.trash')}</button>

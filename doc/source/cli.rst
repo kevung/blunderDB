@@ -641,13 +641,15 @@ Affiche le contenu de la base de données.
 
 .. code-block:: bash
 
-   ./blunderdb list --db <path> --type <type> [--limit <n>]
+   ./blunderdb list --db <path> --type <type> [--limit <n>] [--offset <n>]
 
 **Types:**
 
 * ``matches`` — Liste des matchs importés.
 * ``tournaments`` — Liste des tournois.
-* ``positions`` — Liste des positions (limité à 10 par défaut). Avec
+* ``positions`` — Liste des positions (limité à 10 par défaut ;
+  ``--offset <n>`` saute les *n* premières). Seule la fenêtre affichée est
+  lue, quelle que soit la taille de la base. Avec
   ``--format csv``, devient un **export tabulaire** : une ligne par position,
   avec son XGID, sa phase, son score, son videau, ses pips et les colonnes
   d'analyse dérivées.
@@ -769,8 +771,8 @@ distinctes.
    porte la moyenne.
 
 Chaque type imprime un bloc par élément, précédé du total trouvé. La ligne
-finale rappelle que la liste est tronquée par ``--limit``, dont la valeur par
-défaut vaut 10 pour les positions :
+finale rappelle quelle fenêtre est affichée, tronquée par ``--limit`` (dont la
+valeur par défaut vaut 10 pour les positions) et décalée par ``--offset`` :
 
 .. code-block:: text
 
@@ -788,7 +790,7 @@ défaut vaut 10 pour les positions :
 
    …
 
-   (Showing 10 of 3859 positions, use --limit to see more)
+   (Showing 1-10 of 3859 positions, use --offset and --limit to see more)
 
 **Exemples:**
 
@@ -992,6 +994,14 @@ panneau Stats (voir :ref:`stats`). Les statistiques globales restent sous
   tous).
 * ``--format text|json`` — Le JSON porte chaque groupe avec la liste complète
   de ses positions.
+* ``--quiz`` — Tire au hasard des positions parmi celles des trois groupes
+  les plus coûteux (``--quiz-size <n>``, défaut 20) et les affiche : ce sont
+  les identifiants que le quiz et ``quiz_grade`` jugent. En JSON, champ
+  ``Quiz``.
+* ``--deck <nom>`` — Crée un paquet Anki de ce nom, rempli de toutes les
+  positions des trois groupes les plus coûteux.
+* ``--group <rang>`` — Avec ``--quiz`` ou ``--deck`` : le groupe de ce rang
+  (1 pour le plus coûteux) au lieu des trois premiers.
 
 Un thème de coup de pions est ``gammon``, ``blots``, ``point`` ou
 ``passive`` ; un thème de videau est ``offer_missed``, ``offer_premature``,
@@ -1007,6 +1017,34 @@ part du PR du filtre que le groupe représente.
 
    ./blunderdb stats recurring --db base.db --player "Alice"
    ./blunderdb stats recurring --db base.db --decision-type checker --format json
+   ./blunderdb stats recurring --db base.db --quiz --format json
+   ./blunderdb stats recurring --db base.db --group 1 --deck "Mon pire groupe"
+
+**stats training** — Le PR du quiz Décision, le PR des matchs et la rétention
+Anki, repliés par fenêtre calendaire, comme l'onglet *Entraînement* du panneau
+Stats (voir :ref:`stats`).
+
+.. code-block:: bash
+
+   ./blunderdb stats training --db <fichier> [options]
+
+**Options:**
+
+* ``--window week|month`` — La fenêtre calendaire (défaut ``week``).
+* ``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``,
+  ``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre des
+  matchs ; les journaux du quiz et d'Anki ne portent pas de joueur.
+* ``--format text|json`` — Le JSON porte aussi la liste des sessions de quiz.
+
+Chaque série garde son nombre d'échantillons : une fenêtre sans décision y est
+un tiret en texte, un compte nul en JSON, jamais un zéro.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb stats training --db base.db --player "Alice"
+   ./blunderdb stats training --db base.db --window month --format json
 
 .. _cli_cubematrix:
 
@@ -1494,6 +1532,17 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
   saison veut un code de retour, pas une ligne à filtrer.
 * ``standings --id N`` — Le classement en CSV, prix compris, dans la langue de
   l'interface.
+* ``ranking --season [--rencontre N] [--from AAAA-MM-JJ] [--to AAAA-MM-JJ]
+  [--points 25,18,15] [--participation P] [--elo] [--format csv|json]`` — Le
+  classement de saison : les tournois clos d'un événement ou d'une période
+  (bornes incluses, sur la date du tournoi ; sans filtre, tous les tournois
+  dirigés), chaque place convertie en points par le barème (vainqueur en tête ;
+  par défaut 25, 18, 15, 12, 10, 8, 6, 4, 2, 1), plus ``--participation`` par
+  tournoi joué. Des ex æquo se partagent la moyenne des places qu'ils occupent.
+  Une personne est reconnue d'un tournoi à l'autre par son nom. ``--elo``
+  ajoute un Elo de club rejoué sur les matchs de la saison (formule FIBS,
+  départ 1500). Le CSV donne une ligne par personne et une colonne de points
+  par tournoi ; un tournoi non clos est listé mais ne rapporte rien.
 * ``page --id N|--rencontre N [--out <dossier>]`` — La page HTML d'affichage
   d'une épreuve (``--id``), ou la page murale d'un événement (``--rencontre`` :
   une ligne par table, quelle que soit l'épreuve qui l'occupe). Exactement l'un
@@ -1533,6 +1582,7 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
    ./blunderdb tournament list --db base.db
    ./blunderdb tournament verify --db base.db --id 3
    ./blunderdb tournament standings --db base.db --id 3 > classement.csv
+   ./blunderdb tournament ranking --db base.db --season --from 2026-01-01 --to 2026-12-31 --elo > saison.csv
    ./blunderdb tournament page --db base.db --id 3 --out /tmp/affichage
    ./blunderdb tournament page --db base.db --rencontre 1 --out /tmp/evenement
    ./blunderdb tournament export --db base.db --id 3 > journal.json

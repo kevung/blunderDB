@@ -43,7 +43,8 @@ présent lot livre le serveur ; l'assistant interne (lot 2) en sera un client.
    | `race_epc` | `positions.epc` | la course, mesurée par la base exacte |
    | `list_players` | `stats.playerNames` | les graphies d'un même joueur |
    | `player_stats` | `stats.compute` | PR global, pions, videau, phases, tournois |
-   | `recurring_errors` | `stats.compute` | les pertes qui reviennent : blunders, actions de videau, étiquettes |
+   | `recurring_errors` | `stats.compute`, `stats.recurringErrors` | les pertes qui reviennent : blunders, actions de videau, étiquettes |
+   | `training_stats` | `stats.training` | le PR du quiz et la rétention Anki, par fenêtre, contre le PR réel |
    | `list_matches`, `get_match` | `matches.list`, `matches.get`, `stats.matchDetail` | un match et ses deux performances |
    | `list_tournaments` | `tournaments.list` | |
    | `list_collections`, `collection_positions` | `collections.*` | le travail déjà rangé |
