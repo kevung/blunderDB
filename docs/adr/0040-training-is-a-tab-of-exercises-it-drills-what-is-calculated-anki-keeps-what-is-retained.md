@@ -73,6 +73,18 @@ application's panels, not in a strip above the board.
   against the match PR and the observed Anki retention on the same calendar windows. The series
   are read from the existing journals (`training_session`, `anki_review_log`), never copied,
   so a window holds no duplicate of a row. The sessions themselves are still played in the GUI.
+- Anki grades a memory, and the player grades it: that stays the default. A deck of checker
+  positions may opt in, per deck, to **answering on the board**: the card arms the same
+  board-play state as the Decision exercise, `GradeCheckerAnswer` judges the move, and the
+  result is a *suggested* grade (correct → Easy if quick, else Good; an error under the blunder
+  threshold → Hard; a blunder or illegal move → Again; a legal move the analysis does not rank
+  → no suggestion). The player validates or corrects it before grading, so the schedule still
+  holds what the player judged of their own recall. Why an option and not the default: a grade
+  from a single played move conflates recall with luck of the dice and time pressure, and every
+  existing deck would change meaning. The option lives in the library metadata (like the
+  progression goal), not in a deck column: no schema, and CLI and daemon read it already.
+  Cube and score cards, and decks of scores, are never played on the board — a cube answer has
+  no move to play, and a score is a memory with nothing to judge.
 - The corrected take point (combining both faces' gammon values) would be a sixth exercise,
   entered over the Scores source — the test of rule 2.
 - Rejected: a training bar above the board — controls live in panels.

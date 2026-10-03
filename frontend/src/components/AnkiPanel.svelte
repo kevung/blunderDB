@@ -24,6 +24,8 @@
     import { lastSearchStore } from '../stores/searchHistoryStore';
     import { confirmAction } from '../services/confirmService.js';
     import * as anki from '../services/ankiService.js';
+    import * as boardAnswer from '../services/ankiBoardAnswer.js';
+    import { quizPlayCompleteStore } from '../stores/quizPlayStore.js';
     import { logger } from '../utils/logger.js';
     import { t, tMsg } from '../i18n';
     import { UpdateAnkiDeck, GetAnkiReviewLog } from '../../wailsjs/go/database/Database.js';
@@ -129,6 +131,8 @@
     // Checkbox + number: nil (no limit) and 0 (serve nothing) differ (ADR-0026 rule 3).
     let settingsLimited = $state(false);
     let settingsSessionLimit = $state(20);
+    let settingsBoardAnswer = $state(false);
+    let boardAnswerWas = false;
     // Deck log measurement; null until loaded, unavailable below the sample floor.
     let retention = $state(null);
 
@@ -203,6 +207,18 @@
             } else if (typeof v === 'number' && v >= 1 && v <= 4) {
                 submitReview(v);
             }
+        }
+    });
+
+    // « Répondre au damier » : armé tant qu'une carte de pions est à répondre sur l'onglet, rendu
+    // dès que la réponse est montrée ou que l'on quitte la révision.
+    const boardState = boardAnswer.ankiBoardAnswerStore;
+    $effect(() => {
+        if (viewMode === 'review' && $activeTabStore === 'anki' && reviewCard && selectedDeck && !cramMode) {
+            if (answerShown) boardAnswer.releaseBoard();
+            else boardAnswer.armBoardAnswer(selectedDeck, reviewCard);
+        } else {
+            boardAnswer.disarmBoardAnswer();
         }
     });
 
@@ -393,6 +409,7 @@
         anki.deckRetention(selectedDeck.id)
             .then((r) => (retention = r))
             .catch(() => (retention = null));
+        boardAnswer.boardAnswerEnabled(selectedDeck.id).then((on) => (settingsBoardAnswer = boardAnswerWas = on));
         ankiViewModeStore.set('settings');
     }
 
@@ -405,6 +422,7 @@
                 enableFuzz: settingsFuzz,
                 sessionLimit: settingsLimited ? Math.max(0, Math.trunc(settingsSessionLimit)) : null
             });
+            if (selectedDeck.sourceType !== anki.SOURCE_SCORES && settingsBoardAnswer !== boardAnswerWas) await boardAnswer.setBoardAnswer(selectedDeck.id, settingsBoardAnswer);
             ankiViewModeStore.set('list');
             statusBarTextStore.set(tMsg('anki.settingsSaved'));
         } catch (e) {
@@ -500,7 +518,12 @@
                 {:else}
                     <div class="review-buttons">
                         {#each RATING_BUTTONS as [key, rating] (rating)}
-                            <button class="btn-rating" onclick={() => submitReview(rating)} title={$t(key) + ` (${rating})`}>
+                            <button
+                                class="btn-rating"
+                                class:suggested={$boardState?.phase === 'graded' && $boardState.suggested === rating}
+                                onclick={() => submitReview(rating)}
+                                title={$t(key) + ` (${rating})`}
+                            >
                                 <span class="rating-label">{$t(key)}</span>
                                 <span class="rating-key">{rating}</span>
                             </button>
@@ -508,6 +531,25 @@
                     </div>
                 {/if}
             </div>
+
+            {#if $boardState?.phase === 'play'}
+                <div class="board-answer" data-testid="anki-board-play">
+                    <span>{$t('anki.boardAnswerHint')}</span>
+                    <button type="button" class="btn-primary" data-testid="anki-board-validate" disabled={!$quizPlayCompleteStore} onclick={() => boardAnswer.validateBoardAnswer(reviewCard)}
+                        >{$t('anki.boardAnswerValidate')}</button
+                    >
+                </div>
+            {:else if $boardState?.phase === 'graded'}
+                <div class="board-answer" data-testid="anki-board-verdict">
+                    {#if !$boardState.verdict.legal}
+                        {$t('anki.boardAnswerIllegal')}
+                    {:else if $boardState.suggested === null}
+                        {$t('anki.boardAnswerUnranked')}
+                    {:else}
+                        {$t('anki.boardAnswerSuggest', { rating: $t(RATING_KEYS[$boardState.suggested]), error: $boardState.verdict.errorMp })}
+                    {/if}
+                </div>
+            {/if}
 
             <div class="review-answer">
                 {#if !hasAnswer}
@@ -572,6 +614,15 @@
                     {$t('anki.enableFuzz')}
                 </label>
             </div>
+            {#if selectedDeck.sourceType !== anki.SOURCE_SCORES}
+                <div class="settings-row">
+                    <label>
+                        <input type="checkbox" data-testid="anki-board-answer-option" bind:checked={settingsBoardAnswer} />
+                        {$t('anki.boardAnswerOption')}
+                    </label>
+                </div>
+                <div class="settings-note">{$t('anki.boardAnswerOptionHint')}</div>
+            {/if}
             <div class="settings-row">
                 <label>
                     <input type="checkbox" bind:checked={settingsLimited} />
@@ -1052,6 +1103,18 @@
         color: var(--color-text);
         gap: 2px;
     }
+    .btn-rating.suggested {
+        outline: 2px solid var(--accent, currentColor);
+    }
+
+    .board-answer {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 8px;
+        font-size: var(--font-size-small);
+    }
+
     .btn-rating:hover {
         background: var(--color-surface-alt);
     }

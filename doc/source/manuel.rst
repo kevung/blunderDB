@@ -3060,6 +3060,18 @@ panneau Éval ou le commentaire de la position, elle vous attendra au retour.
 Une position dépourvue d'analyse enregistrée l'indique directement, sans zone
 masquée.
 
+**Répondre au damier.** Par défaut, vous vous notez vous-même. Dans les
+Paramètres d'un paquet de positions, cochez *Répondre au damier* : pour une
+carte de pions, vous jouez alors le coup sur le damier, comme dans l'exercice
+Décision, puis *Valider*. Le moteur juge le coup contre l'analyse enregistrée,
+dévoile la réponse et **propose une note** : *Facile* pour une bonne réponse
+rapide, *Bien* pour une bonne réponse plus lente, *Difficile* pour une erreur
+sous le seuil du blunder, *À revoir* pour un blunder ou un coup illégal. La note
+proposée est en surbrillance ; vous gardez la main et notez ce que vous voulez
+avec *1* à *4*. Un coup légal que l'analyse ne classe pas ne propose rien. Les
+cartes de videau, les cartes de score et les paquets de fiches de score restent
+en auto-notation. Dévoiler la réponse sans jouer abandonne le coup.
+
 **Limiter la séance.** Par défaut, une séance de révision va jusqu'au bout des
 cartes dues. Vous pouvez la borner à un nombre de cartes, par paquet, dans les
 Paramètres : cochez *Limiter la séance* et indiquez combien de cartes une séance
