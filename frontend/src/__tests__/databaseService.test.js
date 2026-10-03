@@ -268,6 +268,23 @@ describe('openDatabaseByPath', () => {
         expect(get(activeModal)).toBeNull();
     });
 
+    test('the "opened" confirmation leaves the status bar, unless another message replaced it', async () => {
+        vi.useFakeTimers();
+        try {
+            await openDatabaseByPath('/tmp/normal.db');
+            expect(get(statusBarTextStore)).not.toBe('');
+            vi.advanceTimersByTime(5000);
+            expect(get(statusBarTextStore)).toBe('');
+
+            await openDatabaseByPath('/tmp/normal.db');
+            statusBarTextStore.set('autre message');
+            vi.advanceTimersByTime(5000);
+            expect(get(statusBarTextStore)).toBe('autre message');
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
     test('read-only fallback: title and status reflect it, session is still restored', async () => {
         IsReadOnly.mockResolvedValue(true);
 

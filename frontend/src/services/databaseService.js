@@ -29,6 +29,18 @@ function setStatusBarMessage(message) {
     statusBarTextStore.set(message);
 }
 
+// A confirmation, not a state: left up, it would still read "opened" an hour later and
+// hide every later message. It leaves only if nothing else has replaced it.
+const OPEN_NOTICE_MS = 4000;
+let openNoticeTimer;
+function setTransientStatusBarMessage(message) {
+    setStatusBarMessage(message);
+    clearTimeout(openNoticeTimer);
+    openNoticeTimer = setTimeout(() => {
+        if (get(statusBarTextStore) === message) setStatusBarMessage('');
+    }, OPEN_NOTICE_MS);
+}
+
 function getFilenameFromPath(filePath) {
     return filePath.split('/').pop();
 }
@@ -180,7 +192,7 @@ export async function openDatabaseByPath(filePath) {
             WindowSetTitle(`blunderDB - ${filename} ${tMsg('commands.readOnlySuffix')}`);
             setStatusBarMessage(tMsg('commands.dbReadOnly'));
         } else {
-            setStatusBarMessage(tMsg('commands.dbOpened'));
+            setTransientStatusBarMessage(tMsg('commands.dbOpened'));
             WindowSetTitle(`blunderDB - ${filename}`);
         }
 
