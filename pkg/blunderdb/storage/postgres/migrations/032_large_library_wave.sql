@@ -10,6 +10,11 @@
 --     position, kept true by the match store; derived here, set-based.
 --   * import_batch_file — one row per file an import batch met.
 --   * player_alias / event_alias — other spellings of one name.
+--   * match.dice_hash and the source metadata of a match (ratings,
+--     experience, transcriber, Jacoby/Beaver, engine version).
+--   * match_stats — per-match, per-seat tallies the corpus statistics read
+--     (schema_sqlite.go states the arithmetic); filled by the stats store.
+--   * training_item.position_id / answer / error_mp and comment.author.
 --   * Index pruning, decided on the query plans of a 15.6 M-position library
 --     (tasks/search-query-plans.txt): no index leads with decision_type, the
 --     cube-response index keeps only its selective side, and the player-2
@@ -35,7 +40,9 @@ DROP INDEX IF EXISTS idx_position_decision_pip;
 DROP INDEX IF EXISTS idx_position_cube_response;
 DROP INDEX IF EXISTS idx_analysis_win2;
 DROP INDEX IF EXISTS idx_analysis_gammon2;
+DROP INDEX IF EXISTS idx_position_game_phase;
 
+CREATE INDEX IF NOT EXISTS idx_position_phase_off ON position (tenant_id, game_phase, off_1);
 CREATE INDEX IF NOT EXISTS idx_position_cube_take ON position (tenant_id, is_cube_response) WHERE is_cube_response;
 CREATE INDEX IF NOT EXISTS idx_analysis_win_gammon2_covering ON analysis (tenant_id, player2_win_rate, player2_gammon_rate, position_id);
 CREATE INDEX IF NOT EXISTS idx_analysis_engine        ON analysis (tenant_id, analysis_engine);
@@ -79,3 +86,49 @@ CREATE TABLE IF NOT EXISTS event_alias (
     PRIMARY KEY (tenant_id, alias)
 );
 CREATE INDEX IF NOT EXISTS idx_event_alias_canonical ON event_alias (tenant_id, canonical);
+
+ALTER TABLE match ADD COLUMN IF NOT EXISTS dice_hash          TEXT;
+ALTER TABLE match ADD COLUMN IF NOT EXISTS player1_elo        DOUBLE PRECISION;
+ALTER TABLE match ADD COLUMN IF NOT EXISTS player2_elo        DOUBLE PRECISION;
+ALTER TABLE match ADD COLUMN IF NOT EXISTS player1_experience INTEGER;
+ALTER TABLE match ADD COLUMN IF NOT EXISTS player2_experience INTEGER;
+ALTER TABLE match ADD COLUMN IF NOT EXISTS transcriber        TEXT DEFAULT '';
+ALTER TABLE match ADD COLUMN IF NOT EXISTS has_jacoby         BOOLEAN;
+ALTER TABLE match ADD COLUMN IF NOT EXISTS has_beaver         BOOLEAN;
+ALTER TABLE match ADD COLUMN IF NOT EXISTS engine_version     TEXT DEFAULT '';
+CREATE INDEX IF NOT EXISTS idx_match_dice_hash ON match (tenant_id, dice_hash) WHERE dice_hash IS NOT NULL;
+
+CREATE TABLE IF NOT EXISTS match_stats (
+    tenant_id         BIGINT  NOT NULL,
+    match_id          BIGINT  NOT NULL,
+    seat              INTEGER NOT NULL CHECK (seat IN (1, 2)),
+    decisions         INTEGER NOT NULL DEFAULT 0,
+    checker_decisions INTEGER NOT NULL DEFAULT 0,
+    cube_decisions    INTEGER NOT NULL DEFAULT 0,
+    error_mp          BIGINT  NOT NULL DEFAULT 0,
+    pr                DOUBLE PRECISION,
+    luck_mp           BIGINT  NOT NULL DEFAULT 0,
+    luck_rolls        INTEGER NOT NULL DEFAULT 0,
+    blunders          INTEGER NOT NULL DEFAULT 0,
+    analysis_engine   TEXT,
+    analysis_depth    INTEGER,
+    computed_at       TIMESTAMPTZ DEFAULT now(),
+    PRIMARY KEY (tenant_id, match_id, seat),
+    CONSTRAINT match_stats_match_tenant_fkey
+        FOREIGN KEY (tenant_id, match_id) REFERENCES match (tenant_id, id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_match_stats_pr ON match_stats (tenant_id, pr) WHERE pr IS NOT NULL;
+
+ALTER TABLE training_item ADD COLUMN IF NOT EXISTS position_id BIGINT;
+ALTER TABLE training_item ADD COLUMN IF NOT EXISTS answer      TEXT NOT NULL DEFAULT '';
+ALTER TABLE training_item ADD COLUMN IF NOT EXISTS error_mp    INTEGER;
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'training_item_position_fkey') THEN
+        ALTER TABLE training_item ADD CONSTRAINT training_item_position_fkey
+            FOREIGN KEY (tenant_id, position_id)
+            REFERENCES position (tenant_id, id) ON DELETE SET NULL (position_id);
+    END IF;
+END $$;
+CREATE INDEX IF NOT EXISTS idx_training_item_position ON training_item (tenant_id, position_id) WHERE position_id IS NOT NULL;
+
+ALTER TABLE comment ADD COLUMN IF NOT EXISTS author TEXT NOT NULL DEFAULT '';

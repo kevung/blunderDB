@@ -37,8 +37,11 @@ Supprimés en 2.30.0 (prunedIndexes2_30) :
   idx_analysis_win2, idx_analysis_gammon2                             179 + 173 Mo
       fusionnés dans idx_analysis_win_gammon2_covering (290 Mo), couvrant comme son
       jumeau joueur 1 : W 6,36 → 2,96 s, G 6,08 → 2,92 s ; première page 4,4 → 1,1 s.
+  idx_position_game_phase (game_phase)                                163 Mo
+      remplacé par idx_position_phase_off (game_phase, off_1), 181 Mo, dont il est le
+      préfixe : voir 3, race + o.
 
-  Bilan : 893 Mo d'index de recherche retirés, 293 Mo ajoutés.
+  Bilan : 1 056 Mo d'index de recherche retirés, 474 Mo ajoutés.
 
 Conservés, empruntés par le banc :
 
@@ -46,9 +49,9 @@ Conservés, empruntés par le banc :
   idx_position_score_cube        S, D + score (saut de match_length, ANY(match_length))
   idx_position_pip_diff          p, D + p
   idx_position_pip_1             P
-  idx_position_off               o, O, race + o
+  idx_position_off               o, O
+  idx_position_phase_off         race, opening, race + o (couvrant)
   idx_position_back_checkers_1/2 k, K
-  idx_position_game_phase        race, opening
   idx_position_game_type         backgame, acepoint
   idx_position_no_contact        nc (partiel)
   idx_position_flagged           fl (partiel)
@@ -87,8 +90,8 @@ off1 >=10 (o)                    304044 |     695 ms     694 ms |      40 ms    
 off2 =14 (O)                      64076 |     824 ms     128 ms |       2 ms      10 ms
 back1 >=3 (k)                   1944014 |     1.50 s     1.47 s |     257 ms       0 ms
 back2 >=4 (K)                    673285 |     601 ms     590 ms |      88 ms      97 ms
-phase race                      1071515 |     774 ms     761 ms |       0 ms       0 ms
-phase opening                   1205549 |     860 ms     833 ms |       0 ms       0 ms
+phase race                      1071515 |     774 ms     680 ms |       0 ms      43 ms (*)
+phase opening                   1205549 |     860 ms     330 ms |       0 ms      46 ms (*)
 type backgame                    400962 |     316 ms     306 ms |       0 ms       0 ms
 type acepoint                    643280 |     502 ms     497 ms |       0 ms       0 ms
 win 70,80 (w)                    857612 |     2.40 s     2.44 s |     788 ms     786 ms
@@ -99,8 +102,11 @@ p2 gammon >40 (G)               1287758 |     6.08 s     2.92 s |     4.57 s    
 p2 backgammon >10 (B)            154065 |     611 ms     636 ms |     632 ms     655 ms
 cube D + pip diff 40,60          517393 |     2.62 s     3.48 s |     1.51 s       1 ms
 cube D + score 3-3                74829 |     4.85 s     137 ms |     4.82 s      76 ms
-race + off1 >=10                  72337 |     771 ms     1.01 s |       1 ms     846 ms
+race + off1 >=10                  72337 |     771 ms     100 ms |       1 ms       4 ms (*)
 flagged (fl)                      19117 |      17 ms      16 ms |       0 ms       0 ms
+
+(*) Après le remplacement d'idx_position_game_phase par idx_position_phase_off, mesuré
+    avec sqlite3 (paramètres liés) ; voir 3.
 
 Plans des écarts notables (2.30.0) :
 
@@ -110,9 +116,9 @@ Plans des écarts notables (2.30.0) :
                 (ANY(<1re colonne>) AND ...=?) : saut de la première colonne, que seul un
                 ANALYZE complet rend rentable — 2.28.0 : SCAN de tout l'index couvrant.
   D, checker    SCAN p                            — 2.28.0 : idx_position_cube_response
-  race + o      page : SEARCH p USING INDEX idx_position_off (off_1>? AND off_1<?) +
-                USE TEMP B-TREE FOR ORDER BY      — 2.28.0 : idx_position_game_phase,
-                déjà dans l'ordre des id, arrêt à 100.
+  race + o      page : SEARCH p USING COVERING INDEX idx_position_phase_off
+                (game_phase=? AND off_1>? AND off_1<?) + TEMP B-TREE sur 72 337 ids
+                — 2.28.0 : idx_position_game_phase, déjà dans l'ordre des id.
   p > 80        page : idx_position_pip_diff + TEMP B-TREE (82 ms) — 2.28.0 : SCAN p.
 
 
@@ -126,7 +132,7 @@ jeux de statistiques :
   S, Count                 862 ms               921 ms                     120 ms
   O, Count                 917 ms               836 ms                     128 ms
   D + score, Count        2,69 s               2,70 s                      137 ms
-  race + o, page             1 ms                 —                        846 ms
+  race + o, page             1 ms                 —                        846 ms (*)
 
 L'ANALYZE complet coûte 30 s cache chaud, 60 s cache froid, contre 18 min pour les deux
 passes de rétro-remplissage. Sans lui, la migration laissait des statistiques qui ne
@@ -134,11 +140,21 @@ connaissent pas les index créés ; c'est ce qui avait fait croire à une régre
 Count c (4,7 → 20 s) et D + p (2,7 → 12,8 s) : ces mesures-là étaient de plus prises
 cache froid, juste après la migration. Cache chaud, Count c ne bouge pas (4,4 → 4,7 s).
 
-Contrepartie acceptée : avec des estimations justes, la première page de race + o trie
+(*) Avant le composite. Avec des estimations justes, la première page de race + o triait
 304 044 candidats d'idx_position_off au lieu de s'arrêter à 100 dans
-idx_position_game_phase (1 ms → 846 ms). Le même plan sort de tout ANALYZE complet
-(ensureSearchStats sur une base sans statistiques, Vacuum) : c'est une limite du coût
-de LIMIT + ORDER BY id dans le planificateur, pas de la migration.
+idx_position_game_phase ; le même plan sort de tout ANALYZE complet (ensureSearchStats,
+Vacuum). idx_position_phase_off (game_phase, off_1) remplace idx_position_game_phase
+et règle le cas. Mesures sqlite3, paramètres liés, cache chaud, après migration :
+
+                          idx_position_game_phase      idx_position_phase_off
+  race + o, page                 846 ms                        4 ms
+  race + o, Count                1,01 s                        0,10 s
+  race, page                       0 ms                       43 ms
+  race, Count                    0,76 s                        0,68 s
+
+La première page d'une phase seule trie désormais ses ids dans l'index couvrant
+(43 ms pour 1,07 M de lignes) au lieu de les lire dans l'ordre : coût retenu contre un
+index de plus à chaque insertion.
 
 
 4. Insertion
@@ -149,10 +165,11 @@ Banc : 200 000 positions et leurs analyses recopiées dans une transaction annul
 creation_date).
 
                     2.28.0 (froid / chaud)   2.30.0 (deux passes)
-  INSERT position       46,7 / 40,5 s          15,7 / 12,4 s
-  INSERT analysis       54,0 / 27,8 s          34,1 / 35,4 s
+  INSERT position       46,7 / 40,5 s          17,5 / 17,3 s
+  INSERT analysis       54,0 / 27,8 s          29,2 / 29,7 s
 
-position gagne trois fois (cinq index de moins) ; analysis paie les trois index de
+position va 2,3 à 2,7 fois plus vite (quatre index pleins de moins, idx_position_match_date
+en plus) ; analysis gagne à froid et perd un peu à chaud : elle paie les trois index de
 provenance et l'index couvrant joueur 2, plus large que win2 + gammon2.
 
 

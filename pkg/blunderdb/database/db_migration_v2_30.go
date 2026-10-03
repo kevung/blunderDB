@@ -29,6 +29,10 @@ var prunedIndexes2_30 = []string{
 	// player-2 rate filters from the index alone as the player-1 one does.
 	"idx_analysis_win2",
 	"idx_analysis_gammon2",
+	// Replaced by idx_position_phase_off (game_phase, off_1), of which it is
+	// the prefix: the first page of race + off1 fell from 846 ms to 4 ms, a
+	// phase filter alone answers from the composite.
+	"idx_position_game_phase",
 }
 
 // matchDateBackfillKey is the metadata key that says position.match_date

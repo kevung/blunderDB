@@ -3390,8 +3390,20 @@ func TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave(t *testing.T) {
 		`ALTER TABLE analysis DROP COLUMN creation_date`,
 		`ALTER TABLE position DROP COLUMN match_date`,
 		`DROP TABLE import_batch_file`, `DROP TABLE player_alias`, `DROP TABLE event_alias`,
+		`DROP TABLE match_stats`,
+		`DROP INDEX idx_match_dice_hash`, `DROP INDEX idx_training_item_position`,
+		`ALTER TABLE match DROP COLUMN dice_hash`,
+		`ALTER TABLE match DROP COLUMN player1_elo`, `ALTER TABLE match DROP COLUMN player2_elo`,
+		`ALTER TABLE match DROP COLUMN player1_experience`, `ALTER TABLE match DROP COLUMN player2_experience`,
+		`ALTER TABLE match DROP COLUMN transcriber`, `ALTER TABLE match DROP COLUMN has_jacoby`,
+		`ALTER TABLE match DROP COLUMN has_beaver`, `ALTER TABLE match DROP COLUMN engine_version`,
+		`ALTER TABLE training_item DROP COLUMN position_id`,
+		`ALTER TABLE training_item DROP COLUMN answer`, `ALTER TABLE training_item DROP COLUMN error_mp`,
+		`ALTER TABLE comment DROP COLUMN author`,
 		`CREATE INDEX idx_position_decision_dice ON position(decision_type, dice_1, dice_2)`,
 		`CREATE INDEX idx_analysis_win2 ON analysis(player2_win_rate)`,
+		`CREATE INDEX idx_position_game_phase ON position(game_phase)`,
+		`DROP INDEX idx_position_phase_off`,
 		// Statistics of the 2.29.0 library: present, so ensureSearchStats
 		// would keep them, and silent on the indexes the step creates.
 		`ANALYZE`,
@@ -3413,16 +3425,35 @@ func TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave(t *testing.T) {
 	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
 		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
 	}
-	for _, name := range []string{"idx_position_decision_dice", "idx_analysis_win2"} {
+	for _, name := range []string{"idx_position_decision_dice", "idx_analysis_win2", "idx_position_game_phase"} {
 		var n int
 		_ = d.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND name=?`, name).Scan(&n)
 		if n != 0 {
 			t.Errorf("index %s survived the migration", name)
 		}
 	}
-	for _, table := range []string{"import_batch_file", "player_alias", "event_alias"} {
+	for _, table := range []string{"import_batch_file", "player_alias", "event_alias", "match_stats"} {
 		if !tableExists(d.db, table) {
 			t.Errorf("table %s missing after migration", table)
+		}
+	}
+	for table, cols := range map[string][]string{
+		"match": {"dice_hash", "player1_elo", "player2_elo", "player1_experience", "player2_experience",
+			"transcriber", "has_jacoby", "has_beaver", "engine_version"},
+		"training_item": {"position_id", "answer", "error_mp"},
+		"comment":       {"author"},
+	} {
+		for _, c := range cols {
+			if !columnExists(t, d.db, table, c) {
+				t.Errorf("column %s.%s missing after migration", table, c)
+			}
+		}
+	}
+	for _, name := range []string{"idx_match_dice_hash", "idx_training_item_position", "idx_match_stats_pr", "idx_position_phase_off"} {
+		var n int
+		_ = d.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND name=?`, name).Scan(&n)
+		if n != 1 {
+			t.Errorf("index %s missing after migration", name)
 		}
 	}
 	var pending int
@@ -3462,5 +3493,27 @@ func TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave(t *testing.T) {
 	}
 	if err := rows.Err(); err != nil {
 		t.Fatal(err)
+	}
+	// A deleted position leaves the quiz answer, without its position.
+	if _, err := d.db.Exec(`INSERT INTO training_session (exercise) VALUES ('decision')`); err != nil {
+		t.Fatal(err)
+	}
+	var posID int64
+	if err := d.db.QueryRow(`SELECT id FROM position ORDER BY id LIMIT 1`).Scan(&posID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.db.Exec(`INSERT INTO training_item (session_id, number_type, position_id, answer, error_mp)
+		VALUES ((SELECT MAX(id) FROM training_session), 'decision', ?, '13/7 8/7', 120)`, posID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.db.Exec(`PRAGMA foreign_keys = ON`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.db.Exec(`DELETE FROM position WHERE id = ?`, posID); err != nil {
+		t.Fatal(err)
+	}
+	var kept sql.NullInt64
+	if err := d.db.QueryRow(`SELECT position_id FROM training_item WHERE answer = '13/7 8/7'`).Scan(&kept); err != nil || kept.Valid {
+		t.Errorf("training_item after its position was deleted: position_id = %v, %v; want the row with NULL", kept, err)
 	}
 }

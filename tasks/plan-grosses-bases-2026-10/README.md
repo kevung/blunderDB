@@ -355,6 +355,35 @@ Jalon « Grosses bases — corpus BMAB », label `chantier` + `lot:GBn`. Le 2026
 | GB-C13 — UX en situation : plateau, mise en page, thème [M] | #530 | 7 étapes |
 | GB-C14 — UX en situation : libellés, vocabulaire, états vides, gestes [M] | #531 | 8 étapes |
 
+### Ce que le bump 2.30.0 (GB-C6) porte pour les autres chantiers
+
+Porté, schéma seul (SQLite, PostgreSQL `032`, RLS, purge de tenant) ; le remplissage et les
+usages restent aux chantiers nommés :
+
+- C7 : `match.dice_hash` (index partiel) ; `match.player1_elo`/`player2_elo`,
+  `player1_experience`/`player2_experience`, `transcriber`, `has_jacoby`/`has_beaver`,
+  `engine_version` ; tables `player_alias` et `event_alias`.
+- C8 : `position.match_date` (jeton `md`), `analysis.analysis_engine`/`analysis_depth`
+  (jeton `ad`) ; table `match_stats` (par match et par siège : décisions, erreur cumulée en
+  mp, PR, chance, blunders, provenance dominante) avec l'index partiel sur `pr` qu'il faut au
+  jeton `pr`.
+- C11 : `training_item.position_id` (+ `answer`, `error_mp`) et `comment.author`.
+
+Pas porté, et pourquoi :
+
+- C11 GB9.3, marque « traité/vu » : la fiche laisse ouvert où la stocker (colonne ou étiquette
+  réservée, question ADR-0007) ; une étiquette n'exige pas de schéma, une colonne serait un
+  nouveau bump décidé par GB9.3.
+- C11 GB9.1 : `training_item.position_id` est en `ON DELETE SET NULL`, pas une rétention :
+  `positionIsHeldSQL` est inchangé. Si « reprendre mes ratés » doit survivre à la suppression
+  du match, c'est une modification du prédicat (trois copies, `CLAUDE.md`), sans bump.
+- C7 GB5.5 : commentaires d'en-tête et de pied, horloge, MET : aucune colonne demandée par la
+  fiche (les commentaires vont dans la colonne existante `match.comment`). Les colonnes
+  nouvelles de `match` ne passent ni par l'export ni par l'import natif tant que C7 n'a pas
+  décidé de l'allow-list `issuance.Carried` (ADR-0007).
+- C8 : `match_stats` est vide après la migration ; la tenir à l'écriture et `repair --stats`
+  sont GB5.6.
+
 ```
 C1 ─┬─ C2 ─ C3 ─────────────┐
     └─ C4 (étapes 1-2 immédiates) ─┤
