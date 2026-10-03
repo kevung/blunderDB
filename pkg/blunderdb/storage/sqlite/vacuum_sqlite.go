@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -65,6 +67,12 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 			// VACUUM failing midway through rebuilding the file.
 			return storage.VacuumResult{}, fmt.Errorf("vacuum: could not determine free disk space: %w", spaceErr)
 		}
+		if mem, known := availableMemoryBytes(); known && mem < vacuumMinMemoryBytes {
+			return storage.VacuumResult{}, fmt.Errorf(
+				"vacuum: not enough available memory (need at least %s, only %s available): close other applications and retry",
+				humanBytes(vacuumMinMemoryBytes), humanBytes(int64(mem)),
+			)
+		}
 		if needed := uint64(sizeBefore) * 2; free < needed {
 			return storage.VacuumResult{}, fmt.Errorf(
 				"vacuum: not enough free disk space (need about %s, only %s available on the volume holding %s)",
@@ -73,9 +81,7 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 		}
 	}
 
-	// VACUUM cannot run inside a transaction; this is a bare Exec on the
-	// pool, deliberately not going through withTx.
-	if _, err := s.sqlDB.ExecContext(ctx, `VACUUM`); err != nil {
+	if err := s.vacuumOnFileTemp(ctx, path); err != nil {
 		return storage.VacuumResult{SizeBefore: sizeBefore}, fmt.Errorf("vacuum: %w", err)
 	}
 
@@ -99,6 +105,44 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 	}
 
 	return storage.VacuumResult{SizeBefore: sizeBefore, SizeAfter: sizeAfter}, nil
+}
+
+// vacuumMinMemoryBytes is the memory VACUUM still needs once its transient
+// database lives in a file: the page cache and sort buffers, not the data.
+const vacuumMinMemoryBytes = 512 << 20
+
+// vacuumOnFileTemp runs VACUUM on a dedicated connection whose temp_store is
+// FILE. The pool's connections use temp_store=MEMORY, and VACUUM builds its
+// transient copy of the whole database in the temp store: in RAM that is an
+// out-of-memory kill on a database larger than the machine. The temp file
+// goes next to the database (same volume as the free-space check), not in
+// /tmp, which is often a small tmpfs. The settings are undone before the
+// connection returns to the pool. VACUUM cannot run inside a
+// transaction: bare Exec, not withTx.
+func (s *Storage) vacuumOnFileTemp(ctx context.Context, path string) error {
+	conn, err := s.sqlDB.Conn(ctx)
+	if err != nil {
+		return err
+	}
+	// Close hands the connection back to the pool: undo both settings first.
+	// Not ctx: a cancelled vacuum must still restore the pooled connection.
+	defer func() {
+		_, _ = conn.ExecContext(context.WithoutCancel(ctx), `PRAGMA temp_store_directory=''`)
+		_, _ = conn.ExecContext(context.WithoutCancel(ctx), `PRAGMA temp_store=MEMORY`)
+		conn.Close()
+	}()
+
+	if _, err := conn.ExecContext(ctx, `PRAGMA temp_store=FILE`); err != nil {
+		return fmt.Errorf("temp_store: %w", err)
+	}
+	if path != "" {
+		dir := filepath.Dir(path)
+		if _, err := conn.ExecContext(ctx, fmt.Sprintf(`PRAGMA temp_store_directory='%s'`, strings.ReplaceAll(dir, "'", "''"))); err != nil {
+			return fmt.Errorf("temp_store_directory: %w", err)
+		}
+	}
+	_, err = conn.ExecContext(ctx, `VACUUM`)
+	return err
 }
 
 // compactAnalysesBatchSize is how many analysis rows are read and,
