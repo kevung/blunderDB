@@ -56,7 +56,7 @@ permissions:
 
 # Single statement of the Go version for this file (B.19, #187).
 env:
-  GO_VERSION: "1.26.8"
+  GO_VERSION: "1.27.1"
 
 jobs:
   test-os-full:
@@ -137,9 +137,9 @@ jobs:
   # to HEAD, and the tool this gate runs would then change under it on any
   # night with no commit here to show for it. The pin was first chosen when
   # HEAD's go.mod (2026-08) required go >= 1.26 and this workflow set up
-  # 1.25.13; that constraint is gone with 1.26.8 (#412), reproducibility is
+  # 1.25.13; that constraint is gone with 1.27.1 (#412), reproducibility is
   # why it stays. This pseudo-version's go.mod asks for go 1.18 (verified
-  # locally against 1.26.8).
+  # locally against 1.27.1).
   benchstat:
     runs-on: ubuntu-latest
     timeout-minutes: 20

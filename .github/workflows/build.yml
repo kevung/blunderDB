@@ -18,12 +18,12 @@ env:
   # One statement of each toolchain version for the whole file (B.19, #187):
   # they were repeated 7 and 4 times, and a bump that missed one occurrence
   # built half the matrix on a different compiler without saying so.
-  # GO_VERSION is the toolchain, a supported patch release (#412: 1.26.8); it
+  # GO_VERSION is the toolchain, a supported patch release (#412: 1.27.1); it
   # is deliberately ahead of go.mod's `go` line, which states the MINIMUM the
   # dependencies require (1.26.0) because gammonGo embeds pkg/blunderdb/server
   # and inherits it. NODE_VERSION is an LTS line — 23 was an odd-numbered
   # release, out of support since 2025.
-  GO_VERSION: "1.26.8"
+  GO_VERSION: "1.27.1"
   NODE_VERSION: "22.22.2"
 
 # One in-flight run per branch/tag: a burst of 3 commits collapses to the
@@ -780,7 +780,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
         with:
-          version: v2.11.4
+          version: v2.14.0
 
       # The default pass above never sees the `postgres` build tag, so the 16
       # files behind it (storage/postgres, migrate, one server test) were
@@ -818,7 +818,7 @@ jobs:
   # day an x/vuln release requires a newer Go than GO_VERSION the job dies in
   # its install step, before scanning anything — it happened with v1.8.0
   # (go >= 1.26) while this repository was on 1.25.13, and v1.7.0 stayed
-  # pinned until #412 moved GO_VERSION to 1.26.8. The pin is the latest
+  # pinned until #412 moved GO_VERSION to 1.27.1. The pin is the latest
   # release, not a floor: Dependabot does not see a `go run ...@version`, so
   # bump it by hand together with GO_VERSION (check the new release's go.mod
   # `go` line first). The vulnerability database itself is fetched at run time

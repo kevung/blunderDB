@@ -58,7 +58,7 @@ type zeroRow struct{}
 func (zeroRow) Scan(dest ...any) error {
 	for _, d := range dest {
 		v := reflect.ValueOf(d)
-		if v.Kind() == reflect.Ptr && !v.IsNil() {
+		if v.Kind() == reflect.Pointer && !v.IsNil() {
 			v.Elem().Set(reflect.Zero(v.Elem().Type()))
 		}
 	}

@@ -269,7 +269,7 @@ func lockGuardZero(typ reflect.Type) reflect.Value {
 		return reflect.MakeSlice(typ, 0, 0)
 	case reflect.Map:
 		return reflect.MakeMap(typ)
-	case reflect.Ptr:
+	case reflect.Pointer:
 		return reflect.New(typ.Elem())
 	case reflect.Func:
 		return reflect.MakeFunc(typ, func([]reflect.Value) []reflect.Value {

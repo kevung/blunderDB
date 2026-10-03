@@ -70,12 +70,6 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 3
-    # The toolchain stays on Go 1.26 until #409: under 1.27 the Wails CLI
-    # v2.10.2 no longer loads the standard library and golangci-lint v2.11.4
-    # crashes (#412). Lift this rule in the branch that moves to 1.27.
-    ignore:
-      - dependency-name: "golang"
-        versions: [">= 1.27"]
     groups:
       docker-minor-patch:
         update-types:

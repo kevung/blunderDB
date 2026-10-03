@@ -4,7 +4,7 @@
 # instead, since a devcontainer is meant to stay usable for a long time
 # without chasing a fast-moving non-LTS release. It is not used to produce
 # release binaries — do a real build (`make build`) or CI for that.
-FROM golang:1.26.8-bookworm
+FROM golang:1.27.1-bookworm
 
 # webkit2gtk-4.1 matches CLAUDE.md: it is the package `wails dev`/`wails build
 # -tags webkit2_41` link against on Arch and ubuntu-latest; CI's ubuntu-22.04
@@ -26,10 +26,10 @@ RUN go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.2
 # govulncheck: `make check`/`make check-all` both call it.
 RUN go install golang.org/x/vuln/cmd/govulncheck@latest
 
-# golangci-lint v2.11.4 — pinned to match .golangci.yml's documented version
+# golangci-lint v2.14.0 — pinned to match .golangci.yml's documented version
 # (CLAUDE.md); the install script drops the binary in $(go env GOPATH)/bin,
 # already on PATH from the base image.
 RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-        | sh -s -- -b "$(go env GOPATH)/bin" v2.11.4
+        | sh -s -- -b "$(go env GOPATH)/bin" v2.14.0
 
 WORKDIR /workspaces/blunderDB
