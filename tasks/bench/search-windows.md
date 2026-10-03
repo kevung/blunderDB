@@ -20,3 +20,22 @@ Lecture : sans phase Go, la fenêtre est une projection `SELECT p.id … LIMIT` 
 le balayage lit 256 candidats puis double jusqu'à 4 096 : la mémoire reste bornée par le morceau,
 mais le compte et le rang restent un balayage complet avec décodage des blobs — le cas « non
 indexé » de l'issue, qui attend la colonne de date de GB4.1.
+
+## Échantillon BMAB réel
+
+Mêmes bancs sur 299 matchs tirés du corpus BMAB (graine 521, 300 fichiers dont un refusé à
+l'import) : 148 905 positions, base de 118 Mo. Import : 21 min de CPU utilisateur. Même machine,
+charge moyenne ≈ 30 : ordres de grandeur.
+
+| Filtre | Avant : tous les ids | Fenêtre 1 (100) | Count | Rang du dernier |
+|---|---:|---:|---:|---:|
+| Large, SQL : toute la base (148 905) | 3,58 s, 1,73 Go alloués | 0,6 ms, 5 Ko | 214 ms | 156 ms |
+| Large, SQL : videau (56 865) | 1,56 s, 560 Mo | 71 ms | 120 ms | 147 ms |
+| Étroit indexé : dés et score (36) | 13 ms | 4,6 ms | 4,3 ms | 6,6 ms |
+| Non indexé, en Go : date d'analyse (148 904) | 33,9 s, 2,16 Go | 106 ms, 2,5 Mo | 23,0 s | 18,2 s |
+
+Lecture : les écarts de la base synthétique tiennent sur des positions réelles. La première
+fenêtre reste sous la seconde, même avec une phase Go (106 ms contre 34 s pour tout lire) ; le
+compte d'un filtre Go est un balayage complet (23 s sur 149 k positions, 1,7 Go alloués en
+tout, mémoire vive bornée par le morceau). C'est pourquoi la GUI affiche la fenêtre 1 avant le
+compte et laisse Échap interrompre le balayage.
