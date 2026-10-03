@@ -255,31 +255,32 @@ const existsBatch = 900
 func (s *positionStore) ExistsMany(ctx context.Context, scope string, zobrists []uint64) (map[uint64]int64, error) {
 	out := make(map[uint64]int64, len(zobrists))
 	for start := 0; start < len(zobrists); start += existsBatch {
-		chunk := zobrists[start:min(start+existsBatch, len(zobrists))]
-		args := make([]any, len(chunk))
-		for i, z := range chunk {
-			args[i] = int64(z)
-		}
-		q := `SELECT zobrist_hash, id FROM position WHERE zobrist_hash IN (?` + strings.Repeat(",?", len(chunk)-1) + `)`
-		rows, err := s.db.QueryContext(ctx, q, args...)
-		if err != nil {
-			return nil, fmt.Errorf("sqlite: positions exist: %w", err)
-		}
-		for rows.Next() {
-			var z, id int64
-			if err := rows.Scan(&z, &id); err != nil {
-				rows.Close()
-				return nil, fmt.Errorf("sqlite: positions exist: %w", err)
-			}
-			out[uint64(z)] = id
-		}
-		err = rows.Err()
-		rows.Close()
-		if err != nil {
+		if err := s.existsChunk(ctx, zobrists[start:min(start+existsBatch, len(zobrists))], out); err != nil {
 			return nil, fmt.Errorf("sqlite: positions exist: %w", err)
 		}
 	}
 	return out, nil
+}
+
+func (s *positionStore) existsChunk(ctx context.Context, chunk []uint64, out map[uint64]int64) error {
+	args := make([]any, len(chunk))
+	for i, z := range chunk {
+		args[i] = int64(z)
+	}
+	q := `SELECT zobrist_hash, id FROM position WHERE zobrist_hash IN (?` + strings.Repeat(",?", len(chunk)-1) + `)`
+	rows, err := s.db.QueryContext(ctx, q, args...)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var z, id int64
+		if err := rows.Scan(&z, &id); err != nil {
+			return err
+		}
+		out[uint64(z)] = id
+	}
+	return rows.Err()
 }
 
 // Delete removes the position with the given id; analysis, comments and
