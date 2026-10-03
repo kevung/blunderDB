@@ -727,6 +727,8 @@ export namespace database {
 	    DateTo: string;
 	    DecisionType: number;
 	    MatchLength: number[];
+	    AnalysisEngine?: string;
+	    MinAnalysisDepth?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new StatsFilter(source);
@@ -741,6 +743,8 @@ export namespace database {
 	        this.DateTo = source["DateTo"];
 	        this.DecisionType = source["DecisionType"];
 	        this.MatchLength = source["MatchLength"];
+	        this.AnalysisEngine = source["AnalysisEngine"];
+	        this.MinAnalysisDepth = source["MinAnalysisDepth"];
 	    }
 	}
 	export class TagStats {
@@ -5518,6 +5522,79 @@ export namespace sqlite {
 
 export namespace storage {
 	
+	export class HeadToHeadMatch {
+	    id: number;
+	    date: string;
+	    match_length: number;
+	    outcome: number;
+	    decisions_a: number;
+	    decisions_b: number;
+	    pr_a: number;
+	    pr_b: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new HeadToHeadMatch(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.date = source["date"];
+	        this.match_length = source["match_length"];
+	        this.outcome = source["outcome"];
+	        this.decisions_a = source["decisions_a"];
+	        this.decisions_b = source["decisions_b"];
+	        this.pr_a = source["pr_a"];
+	        this.pr_b = source["pr_b"];
+	    }
+	}
+	export class HeadToHead {
+	    player_a: string;
+	    player_b: string;
+	    matches: HeadToHeadMatch[];
+	    wins_a: number;
+	    wins_b: number;
+	    decisions_a: number;
+	    decisions_b: number;
+	    pr_a: number;
+	    pr_b: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new HeadToHead(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.player_a = source["player_a"];
+	        this.player_b = source["player_b"];
+	        this.matches = this.convertValues(source["matches"], HeadToHeadMatch);
+	        this.wins_a = source["wins_a"];
+	        this.wins_b = source["wins_b"];
+	        this.decisions_a = source["decisions_a"];
+	        this.decisions_b = source["decisions_b"];
+	        this.pr_a = source["pr_a"];
+	        this.pr_b = source["pr_b"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 	export class LibrarySettings {
 	    errorThresholdMP: number;
 	    blunderThresholdMP: number;
@@ -5608,6 +5685,48 @@ export namespace storage {
 	        this.name = source["name"];
 	        this.club = source["club"];
 	        this.rating = source["rating"];
+	    }
+	}
+	export class RankedPlayer {
+	    rank: number;
+	    name: string;
+	    matches: number;
+	    wins: number;
+	    losses: number;
+	    decisions: number;
+	    checker_decisions: number;
+	    cube_decisions: number;
+	    pr: number;
+	    pr_checker: number;
+	    pr_cube: number;
+	    snowie_er: number;
+	    errors: number;
+	    blunders: number;
+	    luck_mp_sum: number;
+	    luck_rolls: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new RankedPlayer(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.rank = source["rank"];
+	        this.name = source["name"];
+	        this.matches = source["matches"];
+	        this.wins = source["wins"];
+	        this.losses = source["losses"];
+	        this.decisions = source["decisions"];
+	        this.checker_decisions = source["checker_decisions"];
+	        this.cube_decisions = source["cube_decisions"];
+	        this.pr = source["pr"];
+	        this.pr_checker = source["pr_checker"];
+	        this.pr_cube = source["pr_cube"];
+	        this.snowie_er = source["snowie_er"];
+	        this.errors = source["errors"];
+	        this.blunders = source["blunders"];
+	        this.luck_mp_sum = source["luck_mp_sum"];
+	        this.luck_rolls = source["luck_rolls"];
 	    }
 	}
 	export class RecurringErrorGroup {
@@ -5869,6 +5988,26 @@ export namespace storage {
 		    }
 		    return a;
 		}
+	}
+	export class WindowStats {
+	    from: string;
+	    to: string;
+	    num_matches: number;
+	    num_decisions: number;
+	    pr: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new WindowStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.from = source["from"];
+	        this.to = source["to"];
+	        this.num_matches = source["num_matches"];
+	        this.num_decisions = source["num_decisions"];
+	        this.pr = source["pr"];
+	    }
 	}
 
 }

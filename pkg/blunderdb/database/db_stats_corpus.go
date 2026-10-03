@@ -33,3 +33,18 @@ func (d *Database) PlayerRankingCtx(ctx context.Context, filter StatsFilter, min
 	}
 	return storage.RankPlayers(rows, minDecisions), nil
 }
+
+// HeadToHead is HeadToHeadCtx for the GUI binding, which passes no context.
+func (d *Database) HeadToHead(playerA, playerB string, filter StatsFilter) (*storage.HeadToHead, error) {
+	return d.HeadToHeadCtx(context.Background(), playerA, playerB, filter)
+}
+
+// PRByWindow is PRByWindowCtx for the GUI binding.
+func (d *Database) PRByWindow(filter StatsFilter, months int) ([]storage.WindowStats, error) {
+	return d.PRByWindowCtx(context.Background(), filter, months)
+}
+
+// PlayerRanking is PlayerRankingCtx for the GUI binding.
+func (d *Database) PlayerRanking(filter StatsFilter, minDecisions int) ([]storage.RankedPlayer, error) {
+	return d.PlayerRankingCtx(context.Background(), filter, minDecisions)
+}

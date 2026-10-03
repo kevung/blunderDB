@@ -642,6 +642,14 @@ export function HasDirection(arg1) {
   return window['go']['database']['Database']['HasDirection'](arg1);
 }
 
+export function HeadToHead(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['HeadToHead'](arg1, arg2, arg3);
+}
+
+export function HeadToHeadCtx(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['HeadToHeadCtx'](arg1, arg2, arg3, arg4);
+}
+
 export function History(arg1, arg2, arg3) {
   return window['go']['database']['Database']['History'](arg1, arg2, arg3);
 }
@@ -878,6 +886,14 @@ export function OpenTranscription(arg1) {
   return window['go']['database']['Database']['OpenTranscription'](arg1);
 }
 
+export function PRByWindow(arg1, arg2) {
+  return window['go']['database']['Database']['PRByWindow'](arg1, arg2);
+}
+
+export function PRByWindowCtx(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PRByWindowCtx'](arg1, arg2, arg3);
+}
+
 export function Pairs(arg1) {
   return window['go']['database']['Database']['Pairs'](arg1);
 }
@@ -906,6 +922,14 @@ export function PlanRolloutIDs(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PlanRolloutIDs'](arg1, arg2, arg3);
 }
 
+export function PlayerRanking(arg1, arg2) {
+  return window['go']['database']['Database']['PlayerRanking'](arg1, arg2);
+}
+
+export function PlayerRankingCtx(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PlayerRankingCtx'](arg1, arg2, arg3);
+}
+
 export function PositionsToRollout(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PositionsToRollout'](arg1, arg2, arg3);
 }
@@ -928,6 +952,10 @@ export function RankPositionIDsByFilters(arg1, arg2) {
 
 export function RankPositionsByFilters(arg1, arg2) {
   return window['go']['database']['Database']['RankPositionsByFilters'](arg1, arg2);
+}
+
+export function RebuildMatchStats() {
+  return window['go']['database']['Database']['RebuildMatchStats']();
 }
 
 export function RecommendedTags() {

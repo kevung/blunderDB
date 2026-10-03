@@ -337,6 +337,10 @@ export function GradeQuizCube(arg1:number,arg2:string):Promise<engine.QuizVerdic
 
 export function HasDirection(arg1:number):Promise<boolean>;
 
+export function HeadToHead(arg1:string,arg2:string,arg3:database.StatsFilter):Promise<storage.HeadToHead>;
+
+export function HeadToHeadCtx(arg1:context.Context,arg2:string,arg3:string,arg4:database.StatsFilter):Promise<storage.HeadToHead>;
+
 export function History(arg1:number,arg2:string,arg3:string):Promise<Array<service.HistoryEntry>>;
 
 export function ImportBGFMatch(arg1:string):Promise<number>;
@@ -455,6 +459,10 @@ export function OpenProtectedCopyPath(arg1:string,arg2:string):Promise<string>;
 
 export function OpenTranscription(arg1:number):Promise<database.TranscriptionState>;
 
+export function PRByWindow(arg1:database.StatsFilter,arg2:number):Promise<Array<storage.WindowStats>>;
+
+export function PRByWindowCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:number):Promise<Array<storage.WindowStats>>;
+
 export function Pairs(arg1:number):Promise<Record<string, Array<storage.PairMember>>>;
 
 export function ParseDirectoryCSV(arg1:number,arg2:string):Promise<service.DirectoryImport>;
@@ -469,6 +477,10 @@ export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:
 
 export function PlanRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<database.RolloutPlan>;
 
+export function PlayerRanking(arg1:database.StatsFilter,arg2:number):Promise<Array<storage.RankedPlayer>>;
+
+export function PlayerRankingCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:number):Promise<Array<storage.RankedPlayer>>;
+
 export function PositionsToRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<Array<domain.Position>>;
 
 export function PositionsToRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<Array<domain.Position>>;
@@ -480,6 +492,8 @@ export function PreviewDirectionConfig(arg1:number,arg2:string):Promise<service.
 export function RankPositionIDsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<database.RankedID>>;
 
 export function RankPositionsByFilters(arg1:domain.SearchFilters,arg2:number):Promise<Array<storage.SimilarPosition>>;
+
+export function RebuildMatchStats():Promise<number>;
 
 export function RecommendedTags():Promise<Array<string>>;
 
