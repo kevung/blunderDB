@@ -55,6 +55,7 @@ func (b binder) Trash() storage.TrashStore { return &sqlshared.TrashStore{DB: b.
 func (b binder) LibrarySettings() storage.LibrarySettingsStore {
 	return &sqlshared.LibrarySettingsStore{DB: b.shared()}
 }
+func (b binder) Lessons() storage.LessonStore { return &sqlshared.LessonStore{DB: b.shared()} }
 func (b binder) Rencontres() storage.RencontreStore {
 	return &sqlshared.RencontreStore{DB: b.shared()}
 }

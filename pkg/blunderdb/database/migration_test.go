@@ -3300,3 +3300,41 @@ func TestMigrate_2_27_0_to_2_28_0_TableSettings(t *testing.T) {
 		t.Fatalf("after writing = %+v", r)
 	}
 }
+
+// TestMigrate_2_28_0_to_2_29_0_Lessons opens a 2.28.0 library: it gains
+// lesson and lesson_step, and a Lesson can be written and read back with a
+// Step that shows one of the library's Collections (ADR-0066).
+func TestMigrate_2_28_0_to_2_29_0_Lessons(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2280.db")
+	createOldDatabase(t, dbPath, "2.28.0")
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.28.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if !tableExists(d.db, "lesson") || !tableExists(d.db, "lesson_step") {
+		t.Fatal("lesson and lesson_step should exist after migration")
+	}
+	ctx := context.Background()
+	collID, err := d.store.Collections().Create(ctx, "", "Primes", "")
+	if err != nil {
+		t.Fatalf("create collection: %v", err)
+	}
+	ls := d.store.Lessons()
+	id, err := ls.Create(ctx, "", "Jouer contre une prime", "")
+	if err != nil {
+		t.Fatalf("create lesson on a migrated library: %v", err)
+	}
+	if _, err := ls.AddStep(ctx, "", id, domain.LessonStep{Title: "Voir", Text: "Regardez.", CollectionID: collID}); err != nil {
+		t.Fatalf("add step on a migrated library: %v", err)
+	}
+	l, err := ls.Get(ctx, "", id)
+	if err != nil || len(l.Steps) != 1 || l.Steps[0].CollectionID != collID {
+		t.Fatalf("lesson read back = %+v, %v", l, err)
+	}
+}

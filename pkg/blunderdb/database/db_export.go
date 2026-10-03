@@ -59,6 +59,12 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) er
 		sel.AllMatches = len(opts.MatchIDs) == 0
 	}
 
+	if opts.IncludeLessons {
+		sel.LessonIDs = opts.LessonIDs
+		sel.AllLessons = len(opts.LessonIDs) == 0
+		sel.LessonContents = true
+	}
+
 	_, err = ingest.ExportSQLite(ctx, d.store, "", opts.ExportPath, ingest.ExportOptions{
 		Format:        ingest.FormatSQLite,
 		Selection:     sel,

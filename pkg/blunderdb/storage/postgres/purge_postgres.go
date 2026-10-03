@@ -23,9 +23,9 @@ import (
 var purgeOrder = []string{
 	"move_analysis", "anki_review_log", "collection_position", "training_item",
 	"training_session", "direction_event", "direction", "direction_pair_member",
-	"table_setting",
+	"table_setting", "lesson_step",
 	"comment", "analysis", "move", "anki_card", "game",
-	"collection", "anki_deck", "transcription", "match", "import_batch",
+	"collection", "lesson", "anki_deck", "transcription", "match", "import_batch",
 	"tournament", "rencontre", "position",
 	"filter_library", "command_history", "search_history", "session_state",
 	"library_settings", "trash",

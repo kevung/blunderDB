@@ -60,7 +60,7 @@ var rlsTables = []string{
 	"training_session", "training_item",
 	"import_batch", "trash",
 	"direction", "direction_event", "direction_pair_member", "rencontre",
-	"table_setting",
+	"table_setting", "lesson", "lesson_step",
 }
 
 // ApplyRLS installs (idempotently) Row-Level Security on every tenant-scoped

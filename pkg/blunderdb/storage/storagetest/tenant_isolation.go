@@ -40,6 +40,7 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"Comment", checkCommentIsolation},
 	{"Anki/Deck", checkAnkiDeckIsolation},
 	{"Direction", checkDirectionIsolation},
+	{"Lesson", checkLessonIsolation},
 	{"TableSetting", checkTableSettingIsolation},
 	{"Training", checkTrainingIsolation},
 }

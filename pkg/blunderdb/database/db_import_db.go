@@ -585,6 +585,14 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	if err != nil {
 		return nil, err
 	}
+	srcLessons, err := readImportLessons(ctx, importDB)
+	if err != nil {
+		return nil, err
+	}
+	lessons, err := ingest.MergeLessons(ctx, stx, "", srcLessons, srcCollections, targetOf)
+	if err != nil {
+		return nil, err
+	}
 
 	// Final check for cancellation before committing
 	if err = ctx.Err(); err != nil {
@@ -606,6 +614,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		// The same figures as ingest.Summary on the daemon's imports.db.
 		"collections":              merged.Changed,
 		"livingCollectionsSkipped": merged.LivingSkipped,
+		"lessons":                  lessons,
 	}
 
 	slog.Info("import committed", "added", positionsAdded, "merged", positionsMerged, "skipped", positionsSkipped, "total", totalPositions)
@@ -625,6 +634,20 @@ func readImportCollections(ctx context.Context, importDB *sql.DB) ([]ingest.Sour
 	}
 	defer itx.Rollback()
 	return ingest.ReadSourceCollections(ctx, sqlite.WrapTx(itx), "")
+}
+
+// readImportLessons reads the source's Lessons like readImportCollections; a
+// source from before Lessons existed has none.
+func readImportLessons(ctx context.Context, importDB *sql.DB) ([]*domain.Lesson, error) {
+	if !queryable(importDB, `SELECT id FROM lesson_step LIMIT 0`) {
+		return nil, nil
+	}
+	itx, err := importDB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
+	if err != nil {
+		return nil, err
+	}
+	defer itx.Rollback()
+	return ingest.ReadSourceLessons(ctx, sqlite.WrapTx(itx), "")
 }
 
 // Deprecated: Use AnalyzeImportDatabase followed by CommitImportDatabase instead

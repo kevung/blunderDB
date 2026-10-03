@@ -74,6 +74,10 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	if err != nil {
 		return Summary{}, err
 	}
+	srcLessons, err := ReadSourceLessons(ctx, source, scope)
+	if err != nil {
+		return Summary{}, err
+	}
 
 	type srcRecord struct {
 		pos      *domain.Position
@@ -165,6 +169,9 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	}
 	sum.Collections = merged.Changed
 	sum.LivingCollectionsSkipped = merged.LivingSkipped
+	if sum.Lessons, err = MergeLessons(ctx, tx, scope, srcLessons, srcCollections, targetOf); err != nil {
+		return sum, err
+	}
 
 	if err := ctx.Err(); err != nil {
 		return sum, err

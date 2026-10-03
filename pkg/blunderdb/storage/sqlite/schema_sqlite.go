@@ -382,6 +382,28 @@ var schemaStatements = []string{
 	)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_table_setting_rencontre ON table_setting(rencontre_id, number) WHERE rencontre_id IS NOT NULL`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_table_setting_tournament ON table_setting(tournament_id, number) WHERE tournament_id IS NOT NULL`,
+	// A Lesson (ADR-0066): an ordered sequence of Steps, each a text that may
+	// show a Collection, a Position, both or neither. A deleted Collection or
+	// Position leaves the Step and its text; deleting the Lesson takes its
+	// Steps. A Position a Step shows is held (positionIsHeldSQL).
+	`CREATE TABLE IF NOT EXISTS lesson (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT NOT NULL,
+		description TEXT NOT NULL DEFAULT '',
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	)`,
+	`CREATE TABLE IF NOT EXISTS lesson_step (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		lesson_id INTEGER NOT NULL REFERENCES lesson(id) ON DELETE CASCADE,
+		sort_order INTEGER NOT NULL DEFAULT 0,
+		title TEXT NOT NULL DEFAULT '',
+		text TEXT NOT NULL DEFAULT '',
+		collection_id INTEGER REFERENCES collection(id) ON DELETE SET NULL,
+		position_id INTEGER REFERENCES position(id) ON DELETE SET NULL
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_lesson_step_lesson ON lesson_step(lesson_id, sort_order)`,
+	`CREATE INDEX IF NOT EXISTS idx_lesson_step_position ON lesson_step(position_id)`,
 	// The Direction of a Tournament (ADR-0047): everything the tournament
 	// director decided while running it. One row per directed Tournament, plus
 	// one row per event in direction_event.

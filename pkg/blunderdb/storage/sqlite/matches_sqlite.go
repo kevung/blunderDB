@@ -340,7 +340,8 @@ func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, 
 // and must stay identical in all three.
 //
 // A position is held by: another match's move; a collection membership; an
-// Anki card; a comment with origin = 'user'; the individually_imported mark
+// Anki card; a Lesson step (ADR-0066); a comment with origin = 'user'; the
+// individually_imported mark
 // (ADR-0001); or the source tool's study mark (ADR-0006).
 //
 // Deliberately NOT held by an analysis (every match position has one, so
@@ -352,6 +353,7 @@ func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, 
 const positionIsHeldSQL = `EXISTS (SELECT 1 FROM move               WHERE position_id = position.id)
 	                       OR EXISTS (SELECT 1 FROM collection_position WHERE position_id = position.id)
 	                       OR EXISTS (SELECT 1 FROM anki_card           WHERE position_id = position.id)
+	                       OR EXISTS (SELECT 1 FROM lesson_step         WHERE position_id = position.id)
 	                       OR EXISTS (SELECT 1 FROM comment             WHERE position_id = position.id AND origin = 'user')
 	                       OR position.individually_imported = 1
 	                       OR position.flagged = 1`
