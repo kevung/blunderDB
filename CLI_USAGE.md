@@ -868,7 +868,7 @@ where the two-sided bearoff table covers it. Each line gives the equity, its
 deviations of the difference. The cube is played inside the games (cubeful), so
 the ranking is more reliable than the absolute equity. Equities are money points
 per unit of cube, or normalised equity at a match score (ADR-0019). Ctrl-C
-prints what the finished games concluded. The choices are ADR-0059's.
+prints what the finished games concluded. The choices are ADR-0060's.
 
 **Examples:**
 ```bash

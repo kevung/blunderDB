@@ -19,7 +19,7 @@ type xgPair struct {
 }
 
 // gaugePairs come from testdata/test.xg (game, move): five of the thirty
-// XG Roller++ decisions with a gap under 0.06 measured for ADR-0059.
+// XG Roller++ decisions with a gap under 0.06 measured for ADR-0060.
 var gaugePairs = []xgPair{
 	{"XGID=-a-B-aD-C---dD---bbeB-----:0:0:-1:41:0:0:0:7:0", "24/20 8/7", "24/20 7/6", -0.243, -0.273},      // g0 m10
 	{"XGID=--cB-BBBBA---B-b-bAbc-cA--:1:-1:-1:41:1:0:0:7:0", "10/6 3/2*", "10/6 8/7*", -0.656, -0.693},     // g1 m34
@@ -49,7 +49,7 @@ func rollPair(t *testing.T, p xgPair) map[string]Candidate {
 }
 
 // TestGaugeAgainstXGRollouts measures the Fast preset against XG's own
-// truncated rollouts. On the thirty pairs of ADR-0059 the gap between two
+// truncated rollouts. On the thirty pairs of ADR-0060 the gap between two
 // plays differs from XG's by 0.0066 on average (0.032 at worst) where
 // gammonNet 2-ply differs by 0.0146; the bound below leaves room for that
 // worst case, not for a change of scale or of sign.

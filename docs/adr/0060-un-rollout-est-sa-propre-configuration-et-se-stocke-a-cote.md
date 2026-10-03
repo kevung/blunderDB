@@ -1,4 +1,4 @@
-# ADR-0059 — Un rollout est sa propre Configuration, et se stockera à côté de l'Analysis
+# ADR-0060 — Un rollout est sa propre Configuration, et se stockera à côté de l'Analysis
 
 Statut : acceptée.
 Voir aussi : ADR-0011, ADR-0013, ADR-0019, ADR-0024, ADR-0029 ; `docs/recherche/P8-rollouts.md`.

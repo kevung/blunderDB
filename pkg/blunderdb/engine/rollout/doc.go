@@ -1,7 +1,7 @@
 // Package rollout plays a position out to settle what a search cannot: two
 // plays a few thousandths apart, or a cube decision the cube model is unsure
 // of. It is written on top of gammonnet's Searcher and is meant to move
-// upstream into gammonNet; ADR-0059 fixes its choices.
+// upstream into gammonNet; ADR-0060 fixes its choices.
 //
 // A rollout is its own Configuration (EngineVersion): the gammonNet
 // Configuration that plays the games, plus the procedure around it, which

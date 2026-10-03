@@ -120,7 +120,7 @@ de contact, faute d'un réseau de course.
 
 ## 8. Rollouts tronqués (J.2, #292) — **ÉCRIT ICI, à porter en amont**
 
-Le rollout est écrit dans ce dépôt (`pkg/blunderdb/engine/rollout`, ADR-0059) au-dessus du
+Le rollout est écrit dans ce dépôt (`pkg/blunderdb/engine/rollout`, ADR-0060) au-dessus du
 `Searcher`, sans toucher à l'arithmétique du portage : c'est une procédure, pas une optimisation,
 et sa recette (réduction de variance 1-ply, dés communs, quasi-aléatoire 36/1296, troncature
 exacte en bearoff, graine par partie, somme ordonnée) survit au changement de langage.
@@ -128,7 +128,7 @@ exacte en bearoff, graine par partie, somme ordonnée) survit au changement de l
 - **Référence** : ce paquet, jusqu'au portage ; `rollout.EngineVersion` le nomme
   (`blunderDB rollout v1 / gammonNet v1.2.1`).
 - **Jauge** : 30 décisions XG Roller++ de `testdata/test.xg`, écart moyen 0,0066 à l'écart XG
-  (ADR-0059) ; `TestReproducibleAcrossWorkers` fixe le déterminisme multi-thread.
+  (ADR-0060) ; `TestReproducibleAcrossWorkers` fixe le déterminisme multi-thread.
 - **Attend** : le portage dans gammonNet (`gn_rollout`), avec sa propre jauge ; le rollout de ce
   dépôt devient alors un appel, et `EngineVersion` change de premier terme.
 
