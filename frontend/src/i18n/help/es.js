@@ -268,6 +268,10 @@ export default {
 </div>
 <h3>Panel de Colecciones</h3>
 <p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Se les pueden añadir o quitar posiciones (tecla <em>Supr</em>, se pide confirmación). Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El comando <code>ss</code> busca entre las posiciones de la colección abierta; <em>Esc</em> vuelve después a la colección (véase Panel de Búsqueda). El orden de las colecciones y de las posiciones dentro de una colección puede cambiarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code>collection</code> para mostrar u ocultar el panel.</p>
+<h4>Lecciones</h4>
+<p>Una <strong>lección</strong> es una secuencia de pasos que un entrenador escribe una sola vez para un alumno y le entrega en un archivo de base (véase el comando <code>lesson export</code> de cli). Cada paso tiene un título, un texto y puede mostrar una colección, una posición, ambas o ninguna. El comando <code>le</code> lista las lecciones de la base en la barra de estado; <code>le 2</code> abre la lección 2.</p>
+<p>Aparece entonces una <strong>barra de lectura</strong> encima del tablero: nombre de la lección, número del paso, título y luego el texto. <em>Anterior</em> y <em>Siguiente</em> cambian de paso; el paso lleva al tablero la colección o la posición que muestra, que se recorre después con los gestos habituales. <em>Cerrar</em> sale de la lección. Un paso cuya colección o posición se ha eliminado conserva su texto.</p>
+<p>Leer una lección no deja ninguna huella: la base del alumno no registra ni el paso alcanzado ni la apertura. Importar un archivo que contiene una lección la crea; una lección del mismo nombre ya presente no se toca. Las lecciones se crean y se modifican por la línea de comandos o por la API (Las lecciones).</p>
 <h3>Importación: lo que se escribe, lo que nunca se escribe</h3>
 <p>Importar un match, una posición u otra base añade lo que falta; no reemplaza lo que ya está ahí.</p>
 <ul>
@@ -1978,6 +1982,10 @@ export default {
 <tr>
 <td>collection, coll</td>
 <td>Mostrar/ocultar el panel de colecciones.</td>
+</tr>
+<tr>
+<td>lesson, le [N]</td>
+<td>Sin argumento, lista las lecciones de la base en la barra de estado; <code>le N</code> abre la lección N en su primer paso (véase Lecciones).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>

@@ -590,6 +590,42 @@ class GeneratedAPI(BaseClient):
         "POST /v1/imports.xg — hand-written handler — see openapi.yaml."
         return self._call("/v1/imports.xg", payload)
 
+    def lessons_add_step(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/lessons.addStep — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/lessons.addStep", payload, idempotency_key=idempotency_key)
+
+    def lessons_create(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/lessons.create — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/lessons.create", payload, idempotency_key=idempotency_key)
+
+    def lessons_delete(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.delete — JSON."
+        return self._call("/v1/lessons.delete", payload)
+
+    def lessons_get(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.get — JSON."
+        return self._call("/v1/lessons.get", payload)
+
+    def lessons_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.list — JSON."
+        return self._call("/v1/lessons.list", payload)
+
+    def lessons_remove_step(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.removeStep — JSON."
+        return self._call("/v1/lessons.removeStep", payload)
+
+    def lessons_reorder_steps(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.reorderSteps — JSON."
+        return self._call("/v1/lessons.reorderSteps", payload)
+
+    def lessons_update(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.update — JSON."
+        return self._call("/v1/lessons.update", payload)
+
+    def lessons_update_step(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.updateStep — JSON."
+        return self._call("/v1/lessons.updateStep", payload)
+
     def library_settings_load(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/librarySettings.load — JSON."
         return self._call("/v1/librarySettings.load", payload)

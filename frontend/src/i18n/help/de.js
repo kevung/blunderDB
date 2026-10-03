@@ -268,6 +268,10 @@ export default {
 </div>
 <h3>Sammlungen-Panel</h3>
 <p>Das Fenster <strong>Sammlungen</strong> (<em>CTRL-B</em>) verwaltet Stellungssammlungen. Sammlungen können angelegt, umbenannt und gelöscht werden. Stellungen können hinzugefügt oder entfernt werden (Taste <em>Entf</em>, Bestätigung wird verlangt). Ein Doppelklick auf eine Sammlung durchblättert ihre Stellungen mit den Tasten <em>LINKS</em> und <em>RECHTS</em>. Der Befehl <code>ss</code> sucht unter den Stellungen der geöffneten Sammlung; <em>Esc</em> kehrt danach zur Sammlung zurück (siehe Such-Panel). Die Reihenfolge der Sammlungen und der Stellungen innerhalb einer Sammlung lässt sich per Ziehen und Ablegen ändern. <em>CTRL-B</em> drücken oder den Befehl <code>collection</code> ausführen, um das Fenster ein- oder auszublenden.</p>
+<h4>Lektionen</h4>
+<p>Eine <strong>Lektion</strong> ist eine Folge von Schritten, die ein Coach einmal für einen Schüler schreibt und ihm in einer Datenbankdatei übergibt (siehe den Befehl <code>lesson export</code> in cli). Jeder Schritt hat einen Titel, einen Text und kann eine Sammlung, eine Stellung, beides oder nichts zeigen. Der Befehl <code>le</code> listet die Lektionen der Datenbank in der Statusleiste auf; <code>le 2</code> öffnet Lektion 2.</p>
+<p>Über dem Brett erscheint dann eine <strong>Lesezeile</strong>: Name der Lektion, Schrittnummer, Titel, dann der Text. <em>Zurück</em> und <em>Weiter</em> wechseln den Schritt; der Schritt bringt die Sammlung oder Stellung, die er zeigt, auf das Brett, die man dann mit den üblichen Gesten durchsieht. <em>Schließen</em> verlässt die Lektion. Ein Schritt, dessen Sammlung oder Stellung gelöscht wurde, behält seinen Text.</p>
+<p>Das Lesen einer Lektion hinterlässt keine Spur: Die Datenbank des Schülers speichert weder den erreichten Schritt noch das Öffnen. Der Import einer Datei, die eine Lektion enthält, legt sie an; eine bereits vorhandene Lektion gleichen Namens bleibt unberührt. Lektionen werden über die Kommandozeile oder die API erstellt und bearbeitet (Lektionen).</p>
 <h3>Import: was geschrieben wird, was es niemals ist</h3>
 <p>Das Importieren eines Matches, einer Stellung oder einer anderen Datenbank fügt hinzu, was fehlt; es ersetzt nicht, was bereits da ist.</p>
 <ul>
@@ -1978,6 +1982,10 @@ export default {
 <tr>
 <td>collection, coll</td>
 <td>Sammlungs-Panel anzeigen/ausblenden.</td>
+</tr>
+<tr>
+<td>lesson, le [N]</td>
+<td>Ohne Argument werden die Lektionen der Datenbank in der Statusleiste aufgelistet; <code>le N</code> öffnet die Lektion N bei ihrem ersten Schritt (siehe Lektionen).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>

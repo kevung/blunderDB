@@ -268,6 +268,10 @@ export default {
 </div>
 <h3>Panneau Collections</h3>
 <p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de positions. Les collections peuvent être créées, renommées et supprimées. Des positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation demandée). Double-cliquer sur une collection pour parcourir ses positions avec les touches <em>GAUCHE</em> et <em>DROITE</em>. La commande <code>ss</code> cherche parmi les positions de la collection ouverte ; <em>Esc</em> ramène ensuite à la collection (voir Panneau Recherche). L'ordre des collections et des positions au sein des collections peut être modifié par glisser-déposer. Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code>collection</code> pour afficher ou masquer le panneau.</p>
+<h4>Leçons</h4>
+<p>Une <strong>leçon</strong> est une suite d'étapes qu'un coach écrit une fois pour un élève et lui remet dans un fichier de base (voir la commande <code>lesson export</code> de cli). Chaque étape a un titre, un texte et peut montrer une collection, une position, les deux ou aucune. La commande <code>le</code> liste les leçons de la base dans la barre d'état ; <code>le 2</code> ouvre la leçon 2.</p>
+<p>Une <strong>barre de lecture</strong> apparaît alors au-dessus du plateau : nom de la leçon, numéro de l'étape, titre, puis le texte. <em>Précédente</em> et <em>Suivante</em> changent d'étape ; l'étape amène sur le plateau la collection ou la position qu'elle montre, que l'on parcourt ensuite par les gestes habituels. <em>Fermer</em> quitte la leçon. Une étape dont la collection ou la position a été supprimée garde son texte.</p>
+<p>Lire une leçon ne laisse aucune trace : la base de l'élève n'enregistre ni l'étape atteinte ni l'ouverture. Importer un fichier qui contient une leçon la crée ; une leçon de même nom déjà présente n'est pas touchée. Les leçons se créent et se modifient par la ligne de commande ou par l'API (Les leçons).</p>
 <h3>Import : ce qui est écrit, ce qui ne l'est jamais</h3>
 <p>Importer un match, une position ou une autre base ajoute ce qui manque ; cela ne remplace pas ce qui est déjà là.</p>
 <ul>
@@ -1978,6 +1982,10 @@ export default {
 <tr>
 <td>collection, coll</td>
 <td>Afficher/cacher le panneau des collections.</td>
+</tr>
+<tr>
+<td>lesson, le [N]</td>
+<td>Sans argument, liste les leçons de la base dans la barre d'état ; <code>le N</code> ouvre la leçon N à sa première étape (voir Leçons).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>

@@ -2555,6 +2555,7 @@
             "history": "Historique de recherche",
             "match": "Panneau des matchs",
             "collection": "Panneau des collections",
+            "lesson": "Leçons (le N ouvre la leçon N)",
             "eval": "Panneau Eval",
             "rollout": "Rouler la position (rollout fast|standard, search, stop)",
             "transcribe": "Transcription de matchs",

@@ -3496,6 +3496,179 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/lessons.addStep:
+    post:
+      operationId: lessons.addStep
+      tags: [lessons]
+      x-kind: json
+      x-idempotency-key: true
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/lessonStepReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
+  /v1/lessons.create:
+    post:
+      operationId: lessons.create
+      tags: [lessons]
+      x-kind: json
+      x-idempotency-key: true
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/lessonCreateReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
+  /v1/lessons.delete:
+    post:
+      operationId: lessons.delete
+      tags: [lessons]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/lessons.get:
+    post:
+      operationId: lessons.get
+      tags: [lessons]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/domain_Lesson"
+                nullable: true
+  /v1/lessons.list:
+    post:
+      operationId: lessons.list
+      tags: [lessons]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/domain_Lesson"
+                  nullable: true
+  /v1/lessons.removeStep:
+    post:
+      operationId: lessons.removeStep
+      tags: [lessons]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/lessons.reorderSteps:
+    post:
+      operationId: lessons.reorderSteps
+      tags: [lessons]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/lessonReorderReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/lessons.update:
+    post:
+      operationId: lessons.update
+      tags: [lessons]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/lessonUpdateReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/lessons.updateStep:
+    post:
+      operationId: lessons.updateStep
+      tags: [lessons]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/lessonStepReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/librarySettings.load:
     post:
       operationId: librarySettings.load
@@ -6887,6 +7060,9 @@ components:
     domain_LegalPlay:
       type: object
       description: "Opaque: see the Go type domain.LegalPlay (defined outside internal/server, not expanded here)."
+    domain_Lesson:
+      type: object
+      description: "Opaque: see the Go type domain.Lesson (defined outside internal/server, not expanded here)."
     domain_Match:
       type: object
       description: "Opaque: see the Go type domain.Match (defined outside internal/server, not expanded here)."
@@ -7105,6 +7281,53 @@ components:
         position:
           $ref: "#/components/schemas/domain_Position"
           nullable: true
+    lessonCreateReq:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    lessonReorderReq:
+      type: object
+      properties:
+        lessonId:
+          type: integer
+          format: int64
+        stepIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+    lessonStepReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        lessonId:
+          type: integer
+          format: int64
+        title:
+          type: string
+        text:
+          type: string
+        collectionId:
+          type: integer
+          format: int64
+        positionId:
+          type: integer
+          format: int64
+    lessonUpdateReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
     linkedCardReq:
       type: object
       properties:

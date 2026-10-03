@@ -268,6 +268,10 @@ export default {
 </div>
 <h3>Collections Panel</h3>
 <p>The <strong>Collections</strong> panel (<em>CTRL-B</em>) manages collections of positions. Collections can be created, renamed and deleted. Positions can be added to them or removed (<em>Del</em> key, confirmation asked). Double-click a collection to browse its positions with the <em>LEFT</em> and <em>RIGHT</em> keys. The <code>ss</code> command searches among the positions of the open collection; <em>Esc</em> then returns to the collection (see Search Panel). The order of the collections, and of the positions within a collection, can be changed by drag and drop. Press <em>CTRL-B</em> or run the <code>collection</code> command to show or hide the panel.</p>
+<h4>Lessons</h4>
+<p>A <strong>lesson</strong> is a sequence of steps that a coach writes once for a student and hands over in a database file (see the <code>lesson export</code> command in cli). Each step has a title, a text and can show a collection, a position, both or neither. The <code>le</code> command lists the database's lessons in the status bar; <code>le 2</code> opens lesson 2.</p>
+<p>A <strong>reading bar</strong> then appears above the board: lesson name, step number, title, then the text. <em>Previous</em> and <em>Next</em> change step; the step brings onto the board the collection or position it shows, which you then browse with the usual gestures. <em>Close</em> leaves the lesson. A step whose collection or position has been deleted keeps its text.</p>
+<p>Reading a lesson leaves no trace: the student's database records neither the step reached nor the opening. Importing a file that contains a lesson creates it; a lesson of the same name already present is left untouched. Lessons are created and edited through the command line or the API (Lessons).</p>
 <h3>Import: what is written, what never is</h3>
 <p>Importing a match, a position or another database adds what is missing; it does not replace what is already there.</p>
 <ul>
@@ -1978,6 +1982,10 @@ export default {
 <tr>
 <td>collection, coll</td>
 <td>Show/hide the collections panel.</td>
+</tr>
+<tr>
+<td>lesson, le [N]</td>
+<td>Without an argument, lists the database's lessons in the status bar; <code>le N</code> opens lesson N at its first step (see Lessons).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>

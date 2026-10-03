@@ -268,6 +268,10 @@ export default {
 </div>
 <h3>Pannello Raccolte</h3>
 <p>Il pannello <strong>Collezioni</strong> (<em>CTRL-B</em>) consente di gestire collezioni di posizioni. Le collezioni possono essere create, rinominate ed eliminate. Vi si possono aggiungere o togliere posizioni (tasto <em>Canc</em>, viene chiesta conferma). Fare doppio clic su una collezione per scorrerne le posizioni con i tasti <em>SINISTRA</em> e <em>DESTRA</em>. Il comando <code>ss</code> cerca tra le posizioni della collezione aperta; <em>Esc</em> riporta poi alla collezione (vedere Pannello Ricerca). L'ordine delle collezioni e delle posizioni all'interno di una collezione può essere modificato per trascinamento. Premere <em>CTRL-B</em> o eseguire il comando <code>collection</code> per mostrare o nascondere il pannello.</p>
+<h4>Lezioni</h4>
+<p>Una <strong>lezione</strong> è una sequenza di passi che un coach scrive una sola volta per un allievo e gli consegna in un file di database (vedi il comando <code>lesson export</code> in cli). Ogni passo ha un titolo, un testo e può mostrare una collezione, una posizione, entrambe o nessuna. Il comando <code>le</code> elenca le lezioni del database nella barra di stato; <code>le 2</code> apre la lezione 2.</p>
+<p>Compare allora una <strong>barra di lettura</strong> sopra la scacchiera: nome della lezione, numero del passo, titolo, poi il testo. <em>Precedente</em> e <em>Successivo</em> cambiano passo; il passo porta sulla scacchiera la collezione o la posizione che mostra, che si scorre poi con i gesti consueti. <em>Chiudi</em> esce dalla lezione. Un passo la cui collezione o posizione è stata eliminata conserva il suo testo.</p>
+<p>Leggere una lezione non lascia alcuna traccia: il database dell'allievo non registra né il passo raggiunto né l'apertura. Importare un file che contiene una lezione la crea; una lezione con lo stesso nome già presente non viene toccata. Le lezioni si creano e si modificano dalla riga di comando o dall'API (Le lezioni).</p>
 <h3>Importazione: cosa viene scritto, cosa non lo è mai</h3>
 <p>Importare un match, una posizione o un altro database aggiunge ciò che manca; non sostituisce ciò che è già presente.</p>
 <ul>
@@ -1978,6 +1982,10 @@ export default {
 <tr>
 <td>collection, coll</td>
 <td>Mostra/nascondi il pannello delle collezioni.</td>
+</tr>
+<tr>
+<td>lesson, le [N]</td>
+<td>Senza argomento, elenca le lezioni del database nella barra di stato; <code>le N</code> apre la lezione N al suo primo passo (vedi Lezioni).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>

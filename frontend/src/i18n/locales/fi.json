@@ -2555,6 +2555,7 @@
             "history": "Hakuhistoria",
             "match": "Otteluiden paneeli",
             "collection": "Kokoelmien paneeli",
+            "lesson": "Oppitunnit (le N avaa oppitunnin N)",
             "eval": "Eval-paneeli",
             "rollout": "Rollaa asema (rollout fast|standard, search, stop)",
             "transcribe": "Ottelujen litterointi",

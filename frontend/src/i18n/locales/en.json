@@ -2555,6 +2555,7 @@
             "history": "Search history",
             "match": "Matches panel",
             "collection": "Collections panel",
+            "lesson": "Lessons (le N opens lesson N)",
             "eval": "Eval panel",
             "rollout": "Roll out the position (rollout fast|standard, search, stop)",
             "transcribe": "Match transcription",

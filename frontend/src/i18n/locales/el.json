@@ -2555,6 +2555,7 @@
             "history": "Ιστορικό αναζήτησης",
             "match": "Πάνελ αγώνων",
             "collection": "Πάνελ συλλογών",
+            "lesson": "Μαθήματα (το le N ανοίγει το μάθημα N)",
             "eval": "Πάνελ Eval",
             "rollout": "Rollout της θέσης (rollout fast|standard, search, stop)",
             "transcribe": "Καταγραφή αγώνων",

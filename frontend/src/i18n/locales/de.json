@@ -2555,6 +2555,7 @@
             "history": "Suchverlauf",
             "match": "Match-Bereich",
             "collection": "Sammlungs-Bereich",
+            "lesson": "Lektionen (le N öffnet Lektion N)",
             "eval": "Eval-Bereich",
             "rollout": "Stellung rollen (rollout fast|standard, search, stop)",
             "transcribe": "Match-Transkription",

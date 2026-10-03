@@ -734,6 +734,48 @@ ID  Index  Score  Type  XGID
 40  40     7-7    cube  --BEBBB----a--b--cbbBbba--:0:0:1:00:0:0:0:7:0
 ```
 
+## Lesson Command
+
+Manage lessons — ordered steps a coach writes once for a student. Each step has
+a title, a text and may show a collection, a position, both or neither. A lesson
+travels in an exported database (`export`, `.dbx` with `--password`) and is read
+in the GUI with the `:le` command. Every sub-command takes `--db`; `list` and
+`show` print `text` (default) or `json`.
+
+```bash
+./blunderDB lesson <sub-command> [options]
+```
+
+**Sub-commands:**
+- `list` - List lessons: id, name, number of steps
+- `show --id <id>` - The steps of one lesson, in order
+- `create --name <name> [--description <text>]` - Create an empty lesson
+- `edit --id <id> [--name <name>] [--description <text>]` - Rename a lesson or
+  change its description
+- `delete --id <id> --confirm` - Delete a lesson and its steps, for good (there
+  is no trash for lessons); the collections and positions its steps showed stay
+- `add-step --lesson <id> [--title <t>] [--text <t> | --text-file <f>]
+  [--collection <id>] [--position <id>]` - Append a step
+- `edit-step --lesson <id> --step <id> [...]` - Change a step; only the given
+  fields change, `--collection 0` / `--position 0` clear what it showed
+- `remove-step --lesson <id> --step <id>` - Remove a step
+- `reorder --lesson <id> --steps <id,id,…>` - Set the order of the steps
+- `export --id <id[,id…]> --out <file> [--password <pw>] [--watermark <text>]` -
+  Export lessons with the collections and positions their steps show
+
+Importing a file that holds a lesson creates it with its steps; a lesson whose
+name already exists is left untouched, so importing the same file twice changes
+nothing. Reading a lesson records nothing on the reader's side.
+
+**Examples:**
+```bash
+./blunderDB lesson create --db database.db --name "Playing against a prime"
+./blunderDB lesson add-step --db database.db --lesson 1 \
+    --title "Timing" --text "Count the pips." --collection 3
+./blunderDB lesson export --db database.db --id 1 --out lesson.dbx \
+    --password secret --watermark "Course of 12 March"
+```
+
 ## Stats Command
 
 Group the errors of a filter by plan of play and theme, costliest first — the

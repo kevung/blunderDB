@@ -2555,6 +2555,7 @@
             "history": "История поиска",
             "match": "Панель матчей",
             "collection": "Панель коллекций",
+            "lesson": "Уроки (le N открывает урок N)",
             "eval": "Панель Eval",
             "rollout": "Прокатать позицию (rollout fast|standard, search, stop)",
             "transcribe": "Запись матчей",
