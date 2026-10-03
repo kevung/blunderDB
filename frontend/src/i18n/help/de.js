@@ -517,13 +517,13 @@ export default {
 <p>Die Schaltfläche <strong>HTML-Bericht</strong> in der Kopfzeile des Panels erzeugt ein <strong>eigenständiges</strong> Dokument: eine einzige Datei, ohne externes Bild, ohne entferntes Stylesheet, ohne Skript. Die Diagramme sind eingebettetes SVG, gezeichnet vom selben Renderer wie das Brett auf dem Bildschirm, mit Ihrer Palette. Es öffnet sich in jedem Browser, reist per E-Mail und <strong>wird vom Browser selbst als PDF gedruckt</strong> — was es erspart, einen PDF-Generator mitzuliefern für etwas, das ohnehin jeder hat.</p>
 <p>Er enthält die Kennzahlen des aktuellen Bereichs (Stellungen, Matches, gezählte Entscheidungen, PR gesamt, Steine und Würfel), dann die <strong>zehn teuersten Entscheidungen</strong>, jede mit ihrem Diagramm, ihren Kosten, dem Match, aus dem sie stammt, und dem besten Zug, sofern eine Analyse ihn nennt.</p>
 <p>Der Bericht trägt den <strong>aktuellen Filter</strong> des Statistik-Panels. Ein Bericht, der seinen Bereich nicht nennt, ist ein Bericht, dessen Zahlen nichts bedeuten: setzen Sie den Filter — ein Turnier, ein Zeitraum, ein Spieler — bevor Sie ihn erzeugen.</p>
-<h4>Tab Dashboard</h4>
-<p>Der Tab <strong>Dashboard</strong> gibt eine zusammenfassende Übersicht über die Schlüsselkennzahlen.</p>
+<h4>Tab Übersicht</h4>
+<p>Der Tab <strong>Übersicht</strong> gibt eine zusammenfassende Übersicht über die Schlüsselkennzahlen.</p>
 <h5>Niveau-Karten</h5>
 <p>Drei Karten zeigen den PR (oder MWC) für:</p>
 <ul>
 <li><strong>PR gesamt</strong> — alle Entscheidungen (Steine + Doppler);</li>
-<li><strong>PR Steine</strong> — nur gespielte Steinzüge;</li>
+<li><strong>PR Steine</strong> — nur Steinentscheidungen;</li>
 <li><strong>PR Doppler</strong> — nur Doppler-Entscheidungen.</li>
 </ul>
 <p>Ein Klick auf eine Karte lädt die Stellungen der entsprechenden Teilmenge in das Analyse-Panel (Drill-down).</p>
@@ -662,7 +662,7 @@ export default {
 <p>Verwendung:</p>
 <ul>
 <li><strong>Sortieren</strong> — auf eine Spaltenüberschrift klicken. Die Tabelle öffnet sich nach aufsteigendem PR sortiert, bester Spieler zuerst. Spieler, bei denen nichts gemessen wurde, bleiben unabhängig von der Sortierrichtung unten: eine Null mangels Daten ist keine perfekte Leistung.</li>
-<li><strong>Details eines Spielers öffnen</strong> — auf eine Zeile klicken. Der Spieler wird in der Filterleiste ausgewählt, und die Anzeige wechselt zum Reiter Dashboard.</li>
+<li><strong>Details eines Spielers öffnen</strong> — auf eine Zeile klicken. Der Spieler wird in der Filterleiste ausgewählt, und die Anzeige wechselt zum Reiter Übersicht.</li>
 <li><strong>Zeitraum einschränken</strong> — die Filter für Datum, Turnier und Matchlänge gelten wie gewohnt, wodurch sich die Tabelle auf die Tage eines Turniers begrenzen lässt.</li>
 <li><strong>Zwei Spieler vergleichen</strong> — setzen Sie in der ersten Spalte bei zwei Zeilen ein Häkchen. Über der Tabelle erscheint ein Block, der ihre Kennzahlen gegenüberstellt; ein dritter Spieler ersetzt den älteren der beiden. Das Häkchen wählt die Zeile nicht aus: Ankreuzen vergleicht, Klicken öffnet die Detailansicht.</li>
 </ul>

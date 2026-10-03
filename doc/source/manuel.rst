@@ -2200,25 +2200,25 @@ pas son périmètre est un rapport dont les chiffres ne veulent rien dire :
 réglez le filtre — un tournoi, une plage de dates, un joueur — avant de le
 produire.
 
-Onglet Dashboard
-~~~~~~~~~~~~~~~~
+Onglet Tableau de bord
+~~~~~~~~~~~~~~~~~~~~~~
 
-L'onglet **Dashboard** donne une vue synthétique des indicateurs clés.
+L'onglet **Tableau de bord** donne une vue synthétique des indicateurs clés.
 
 .. figure:: img/panel_stats_dashboard.png
    :width: 100%
-   :alt: Onglet Dashboard du panneau Stats
+   :alt: Onglet Tableau de bord du panneau Stats
 
-   L'onglet Dashboard : PR global, PR pions, PR videau.
+   L'onglet Tableau de bord : PR global, PR pions, PR videau.
 
 Cartes de niveau
 ^^^^^^^^^^^^^^^^
 
 Trois cartes affichent le PR (ou MWC) pour :
 
-* **PR Global** — toutes les décisions (coups + videau) ;
-* **PR Coup** — coups joués seulement ;
-* **PR Cube** — décisions de videau seulement.
+* **PR global** — toutes les décisions (pions + videau) ;
+* **PR pions** — décisions de pions seulement ;
+* **PR videau** — décisions de videau seulement.
 
 Cliquer sur une carte charge dans le panneau d'analyse les positions du
 sous-ensemble correspondant (drill-down).
@@ -2518,7 +2518,7 @@ Utilisation :
   pas une performance parfaite.
 * **Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est
   sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet
-  Dashboard.
+  Tableau de bord.
 * **Restreindre la période** — les filtres de dates, de tournois et de longueur
   de match s'appliquent normalement, ce qui permet de borner le tableau aux
   dates d'une compétition.

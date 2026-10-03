@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 11:25+0200\n"
+"POT-Creation-Date: 2026-10-03 11:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -5061,22 +5061,24 @@ msgstr ""
 "suodatin — turnaus, päivämääräväli, pelaaja — ennen kuin tuotat sen."
 
 #: ../../source/manuel.rst:2204
-msgid "Onglet Dashboard"
-msgstr "Dashboard-välilehti"
+msgid "Onglet Tableau de bord"
+msgstr "Yleiskatsaus-välilehti"
 
 #: ../../source/manuel.rst:2206
-msgid "L'onglet **Dashboard** donne une vue synthétique des indicateurs clés."
+msgid ""
+"L'onglet **Tableau de bord** donne une vue synthétique des indicateurs "
+"clés."
 msgstr ""
-"**Dashboard**-välilehti antaa yhteenvetonäkymän keskeisistä "
+"**Yleiskatsaus**-välilehti antaa yhteenvetonäkymän keskeisistä "
 "tunnusluvuista."
 
 #: ../../source/manuel.rst:2208
-msgid "Onglet Dashboard du panneau Stats"
-msgstr "Stats-paneelin Dashboard-välilehti"
+msgid "Onglet Tableau de bord du panneau Stats"
+msgstr "Stats-paneelin Yleiskatsaus-välilehti"
 
 #: ../../source/manuel.rst:2212
-msgid "L'onglet Dashboard : PR global, PR pions, PR videau."
-msgstr "Dashboard-välilehti: kokonais-PR, pelinappula-PR, kuutio-PR."
+msgid "L'onglet Tableau de bord : PR global, PR pions, PR videau."
+msgstr "Yleiskatsaus-välilehti: kokonais-PR, pelinappula-PR, kuutio-PR."
 
 #: ../../source/manuel.rst:2215
 msgid "Cartes de niveau"
@@ -5087,15 +5089,15 @@ msgid "Trois cartes affichent le PR (ou MWC) pour :"
 msgstr "Kolme korttia näyttää PR:n (tai MWC:n) seuraaville:"
 
 #: ../../source/manuel.rst:2219
-msgid "**PR Global** — toutes les décisions (coups + videau) ;"
+msgid "**PR global** — toutes les décisions (pions + videau) ;"
 msgstr "**PR Yhteensä** — kaikki päätökset (nappulasiirrot + kuutio);"
 
 #: ../../source/manuel.rst:2220
-msgid "**PR Coup** — coups joués seulement ;"
-msgstr "**PR Nappula** — vain pelatut siirrot;"
+msgid "**PR pions** — décisions de pions seulement ;"
+msgstr "**Pelinappula-PR** — vain nappulapäätökset;"
 
 #: ../../source/manuel.rst:2221
-msgid "**PR Cube** — décisions de videau seulement."
+msgid "**PR videau** — décisions de videau seulement."
 msgstr "**PR Kuutio** — vain kuutiopäätökset."
 
 #: ../../source/manuel.rst:2223
@@ -5846,10 +5848,10 @@ msgstr ""
 msgid ""
 "**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
 "sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
-"Dashboard."
+"Tableau de bord."
 msgstr ""
 "**Avaa pelaajan tiedot** — napsauta riviä. Pelaaja valitaan "
-"suodatinpalkissa ja näkymä vaihtuu Dashboard-välilehdelle."
+"suodatinpalkissa ja näkymä vaihtuu Yleiskatsaus-välilehdelle."
 
 #: ../../source/manuel.rst:2522
 msgid ""
@@ -9276,3 +9278,6 @@ msgstr ""
 
 #~ msgid "L'affichage de la salle"
 #~ msgstr "Salin näyttö"
+
+#~ msgid "**PR Coup** — coups joués seulement ;"
+#~ msgstr "**PR Nappula** — vain pelatut siirrot;"

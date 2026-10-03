@@ -517,13 +517,13 @@ export default {
 <p>El botón <strong>Informe HTML</strong> de la cabecera del panel produce un documento <strong>autónomo</strong>: un solo fichero, sin imagen externa, sin hoja de estilo remota, sin script. Los diagramas son SVG en línea, dibujados por el mismo renderizador que el tablero en pantalla, con su paleta. Se abre en cualquier navegador, viaja por correo electrónico, y <strong>se imprime en PDF desde el propio navegador</strong> — lo que evita incorporar un generador de PDF para producir lo que todo el mundo ya tiene.</p>
 <p>Contiene los indicadores del ámbito actual (posiciones, partidos, decisiones contadas, PR global, de fichas y de cubo), luego las <strong>diez decisiones más costosas</strong>, cada una con su diagrama, su coste, el partido del que viene y la mejor jugada cuando un análisis la da.</p>
 <p>El informe lleva el <strong>filtro actual</strong> del panel Estadísticas. Un informe que no dice su ámbito es un informe cuyas cifras no significan nada: ajuste el filtro — un torneo, un rango de fechas, un jugador — antes de producirlo.</p>
-<h4>Pestaña Dashboard</h4>
-<p>La pestaña <strong>Dashboard</strong> ofrece una vista sintética de los indicadores clave.</p>
+<h4>Pestaña Resumen</h4>
+<p>La pestaña <strong>Resumen</strong> ofrece una vista sintética de los indicadores clave.</p>
 <h5>Tarjetas de nivel</h5>
 <p>Tres tarjetas muestran el PR (o MWC) para:</p>
 <ul>
 <li><strong>PR Global</strong> — todas las decisiones (fichas + cubo);</li>
-<li><strong>PR Ficha</strong> — solo jugadas de fichas;</li>
+<li><strong>PR fichas</strong> — solo decisiones de fichas;</li>
 <li><strong>PR Cubo</strong> — solo decisiones de cubo.</li>
 </ul>
 <p>Hacer clic en una tarjeta carga en el panel de análisis las posiciones del subconjunto correspondiente (drill-down).</p>
@@ -662,7 +662,7 @@ export default {
 <p>Uso:</p>
 <ul>
 <li><strong>Ordenar</strong> — haga clic en un encabezado de columna. La tabla se abre ordenada por PR creciente, mejor jugador primero. Los jugadores de los que nada se ha medido permanecen abajo sea cual sea el sentido de la ordenación: un cero por falta de datos no es una actuación perfecta.</li>
-<li><strong>Abrir el detalle de un jugador</strong> — haga clic en una fila. El jugador queda seleccionado en la barra de filtros y la vista cambia a la pestaña Dashboard.</li>
+<li><strong>Abrir el detalle de un jugador</strong> — haga clic en una fila. El jugador queda seleccionado en la barra de filtros y la vista cambia a la pestaña Resumen.</li>
 <li><strong>Restringir el periodo</strong> — los filtros de fechas, de torneos y de longitud de partida se aplican con normalidad, lo que permite acotar la tabla a las fechas de una competición.</li>
 <li><strong>Comparar dos jugadores</strong> — marque la casilla de la primera columna en dos filas. Sobre la tabla aparece un bloque que enfrenta sus indicadores; marcar a un tercer jugador sustituye al más antiguo de los dos. La casilla no selecciona la fila: marcar compara, hacer clic abre el detalle.</li>
 </ul>

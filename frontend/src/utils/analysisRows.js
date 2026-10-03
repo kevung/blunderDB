@@ -210,6 +210,16 @@ export const CHECKER_PROJECTIONS = Object.freeze({
 });
 
 /** @type {Record<string, string>} */
+const CHECKER_HINT_KEYS = {
+    pw: 'analysis.hintPlayerWin',
+    pg: 'analysis.hintPlayerGammon',
+    pb: 'analysis.hintPlayerBackgammon',
+    ow: 'analysis.hintOpponentWin',
+    og: 'analysis.hintOpponentGammon',
+    ob: 'analysis.hintOpponentBackgammon'
+};
+
+/** @type {Record<string, string>} */
 const CHECKER_HEADER_KEYS = {
     move: 'analysis.move',
     equity: 'analysis.equity',
@@ -410,6 +420,8 @@ export function checkerRows(moves, { t, isPlayedMove = () => false, showProvenan
     return {
         columns,
         header: columns.map((c) => (c === 'equity' ? t(equityHeaderKey(isMoney)) : t(CHECKER_HEADER_KEYS[c]))),
+        // A column's longer name, for the opaque abbreviations (P W, O G…); '' where the header says it all.
+        headerTitles: columns.map((c) => (CHECKER_HINT_KEYS[c] ? t(CHECKER_HINT_KEYS[c]) : '')),
         // The pre-roll vector (ADR-0018 rule 2): no error figure — the gap to
         // it is the luck of the roll, never the merit of a play (rule 3).
         baseline: baseline

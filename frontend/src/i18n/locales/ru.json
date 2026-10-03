@@ -779,7 +779,13 @@
         "panelLabel": "Анализ позиции",
         "playerBackgammon": "И B",
         "playerGammon": "И G",
-        "playerWin": "И W"
+        "playerWin": "И W",
+        "hintPlayerWin": "Игрок: шанс на победу",
+        "hintPlayerGammon": "Игрок: шанс выиграть гаммон",
+        "hintPlayerBackgammon": "Игрок: шанс выиграть бэкгаммон",
+        "hintOpponentWin": "Соперник: шанс на победу",
+        "hintOpponentGammon": "Соперник: шанс выиграть гаммон",
+        "hintOpponentBackgammon": "Соперник: шанс выиграть бэкгаммон"
     },
     "rollout": {
         "title": "Роллаут",
@@ -1627,7 +1633,10 @@
         "trainingQuizPR": "PR викторины",
         "trainingMatchPR": "PR матчей",
         "trainingRetention": "Удержание Anki",
-        "trainingSessions": "Записано сессий викторины «Решение»: {n}."
+        "trainingSessions": "Записано сессий викторины «Решение»: {n}.",
+        "compareColumnHint": "Отметьте двух игроков для сравнения",
+        "playersColPRHint": "PR: средняя ошибка на решение, в миллипунктах (mp); чем ниже, тем лучше",
+        "playersColLuckHint": "Удача: среднее влияние кубиков за бросок, в mp; плюс = удачные кубики"
     },
     "trash": {
         "title": "Корзина",

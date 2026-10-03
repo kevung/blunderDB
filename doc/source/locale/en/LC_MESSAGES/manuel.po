@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 11:25+0200\n"
+"POT-Creation-Date: 2026-10-03 11:35+0200\n"
 "PO-Revision-Date: 2025-01-20 13:37+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -5023,19 +5023,21 @@ msgstr ""
 "filter — a tournament, a date range, a player — before producing it."
 
 #: ../../source/manuel.rst:2204
-msgid "Onglet Dashboard"
+msgid "Onglet Tableau de bord"
 msgstr "Dashboard tab"
 
 #: ../../source/manuel.rst:2206
-msgid "L'onglet **Dashboard** donne une vue synthétique des indicateurs clés."
+msgid ""
+"L'onglet **Tableau de bord** donne une vue synthétique des indicateurs "
+"clés."
 msgstr "The **Dashboard** tab gives a summary view of key indicators."
 
 #: ../../source/manuel.rst:2208
-msgid "Onglet Dashboard du panneau Stats"
+msgid "Onglet Tableau de bord du panneau Stats"
 msgstr "Dashboard tab of the Stats panel"
 
 #: ../../source/manuel.rst:2212
-msgid "L'onglet Dashboard : PR global, PR pions, PR videau."
+msgid "L'onglet Tableau de bord : PR global, PR pions, PR videau."
 msgstr "The Dashboard tab: global PR, checker PR, cube PR."
 
 #: ../../source/manuel.rst:2215
@@ -5047,15 +5049,15 @@ msgid "Trois cartes affichent le PR (ou MWC) pour :"
 msgstr "Three cards display the PR (or MWC) for:"
 
 #: ../../source/manuel.rst:2219
-msgid "**PR Global** — toutes les décisions (coups + videau) ;"
+msgid "**PR global** — toutes les décisions (pions + videau) ;"
 msgstr "**PR Global** — all decisions (checker + cube);"
 
 #: ../../source/manuel.rst:2220
-msgid "**PR Coup** — coups joués seulement ;"
-msgstr "**PR Checker** — checker plays only;"
+msgid "**PR pions** — décisions de pions seulement ;"
+msgstr "**Checker PR** — checker decisions only;"
 
 #: ../../source/manuel.rst:2221
-msgid "**PR Cube** — décisions de videau seulement."
+msgid "**PR videau** — décisions de videau seulement."
 msgstr "**PR Cube** — cube decisions only."
 
 #: ../../source/manuel.rst:2223
@@ -5804,7 +5806,7 @@ msgstr ""
 msgid ""
 "**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
 "sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
-"Dashboard."
+"Tableau de bord."
 msgstr ""
 "**Open a player's detail** — click a row. The player is selected in the "
 "filter bar and the display switches to the Dashboard tab."
@@ -9223,3 +9225,6 @@ msgstr ""
 
 #~ msgid "L'affichage de la salle"
 #~ msgstr "The hall display"
+
+#~ msgid "**PR Coup** — coups joués seulement ;"
+#~ msgstr "**PR Checker** — checker plays only;"

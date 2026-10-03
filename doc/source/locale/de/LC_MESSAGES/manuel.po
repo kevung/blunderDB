@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 11:25+0200\n"
+"POT-Creation-Date: 2026-10-03 11:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -5257,22 +5257,24 @@ msgstr ""
 "Spieler — bevor Sie ihn erzeugen."
 
 #: ../../source/manuel.rst:2204
-msgid "Onglet Dashboard"
-msgstr "Tab Dashboard"
+msgid "Onglet Tableau de bord"
+msgstr "Tab Übersicht"
 
 #: ../../source/manuel.rst:2206
-msgid "L'onglet **Dashboard** donne une vue synthétique des indicateurs clés."
+msgid ""
+"L'onglet **Tableau de bord** donne une vue synthétique des indicateurs "
+"clés."
 msgstr ""
-"Der Tab **Dashboard** gibt eine zusammenfassende Übersicht über die "
+"Der Tab **Übersicht** gibt eine zusammenfassende Übersicht über die "
 "Schlüsselkennzahlen."
 
 #: ../../source/manuel.rst:2208
-msgid "Onglet Dashboard du panneau Stats"
-msgstr "Reiter Dashboard des Stats-Panels"
+msgid "Onglet Tableau de bord du panneau Stats"
+msgstr "Reiter Übersicht des Stats-Panels"
 
 #: ../../source/manuel.rst:2212
-msgid "L'onglet Dashboard : PR global, PR pions, PR videau."
-msgstr "Der Reiter Dashboard: globaler PR, PR Steine, PR Würfelbecher."
+msgid "L'onglet Tableau de bord : PR global, PR pions, PR videau."
+msgstr "Der Reiter Übersicht: globaler PR, PR Steine, PR Würfelbecher."
 
 #: ../../source/manuel.rst:2215
 msgid "Cartes de niveau"
@@ -5283,15 +5285,15 @@ msgid "Trois cartes affichent le PR (ou MWC) pour :"
 msgstr "Drei Karten zeigen den PR (oder MWC) für:"
 
 #: ../../source/manuel.rst:2219
-msgid "**PR Global** — toutes les décisions (coups + videau) ;"
+msgid "**PR global** — toutes les décisions (pions + videau) ;"
 msgstr "**PR gesamt** — alle Entscheidungen (Steine + Doppler);"
 
 #: ../../source/manuel.rst:2220
-msgid "**PR Coup** — coups joués seulement ;"
-msgstr "**PR Steine** — nur gespielte Steinzüge;"
+msgid "**PR pions** — décisions de pions seulement ;"
+msgstr "**PR Steine** — nur Steinentscheidungen;"
 
 #: ../../source/manuel.rst:2221
-msgid "**PR Cube** — décisions de videau seulement."
+msgid "**PR videau** — décisions de videau seulement."
 msgstr "**PR Doppler** — nur Doppler-Entscheidungen."
 
 #: ../../source/manuel.rst:2223
@@ -6063,11 +6065,11 @@ msgstr ""
 msgid ""
 "**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
 "sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
-"Dashboard."
+"Tableau de bord."
 msgstr ""
 "**Details eines Spielers öffnen** — auf eine Zeile klicken. Der Spieler "
 "wird in der Filterleiste ausgewählt, und die Anzeige wechselt zum Reiter "
-"Dashboard."
+"Übersicht."
 
 #: ../../source/manuel.rst:2522
 msgid ""
@@ -9613,3 +9615,6 @@ msgstr ""
 
 #~ msgid "L'affichage de la salle"
 #~ msgstr "Die Saalanzeige"
+
+#~ msgid "**PR Coup** — coups joués seulement ;"
+#~ msgstr "**PR Steine** — nur gespielte Steinzüge;"

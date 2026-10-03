@@ -17,17 +17,17 @@
      * at the bottom in both sort directions.
      */
     const COLUMNS = [
-        { key: 'compare', labelKey: 'stats.compareColumn', align: 'left', plain: true },
+        { key: 'compare', labelKey: 'stats.compareColumn', hintKey: 'stats.compareColumnHint', align: 'left', plain: true },
         { key: 'name', labelKey: 'stats.playersColPlayer', align: 'left' },
         { key: 'matches', labelKey: 'stats.playersColMatches' },
         { key: 'record', labelKey: 'stats.playersColRecord' },
         { key: 'decisions', labelKey: 'stats.playersColDecisions' },
-        { key: 'pr', labelKey: 'stats.playersColPR', rate: true },
-        { key: 'pr_checker', labelKey: 'stats.playersColPRChecker', rate: true },
-        { key: 'pr_cube', labelKey: 'stats.playersColPRCube', rate: true },
+        { key: 'pr', labelKey: 'stats.playersColPR', hintKey: 'stats.playersColPRHint', rate: true },
+        { key: 'pr_checker', labelKey: 'stats.playersColPRChecker', hintKey: 'stats.playersColPRHint', rate: true },
+        { key: 'pr_cube', labelKey: 'stats.playersColPRCube', hintKey: 'stats.playersColPRHint', rate: true },
         { key: 'snowie_er', labelKey: 'stats.playersColSnowie', rate: true },
         { key: 'blunders', labelKey: 'stats.playersColBlunders' },
-        { key: 'luck', labelKey: 'stats.playersColLuck', rate: true }
+        { key: 'luck', labelKey: 'stats.playersColLuck', hintKey: 'stats.playersColLuckHint', rate: true }
     ];
 
     // First click sorts in the natural direction (rate ascending, count descending).
@@ -36,6 +36,7 @@
         COLUMNS.map((col) => ({
             key: col.key,
             label: $t(col.labelKey),
+            title: col.hintKey ? $t(col.hintKey) : undefined,
             sortable: !col.plain,
             align: col.align === 'left' ? 'left' : 'right',
             defaultDir: col.rate || col.key === 'name' ? 'asc' : 'desc'

@@ -779,7 +779,13 @@
         "panelLabel": "ポジション解析",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W"
+        "playerWin": "P W",
+        "hintPlayerWin": "プレイヤー: 勝率",
+        "hintPlayerGammon": "プレイヤー: ギャモン勝率",
+        "hintPlayerBackgammon": "プレイヤー: バックギャモン勝率",
+        "hintOpponentWin": "相手: 勝率",
+        "hintOpponentGammon": "相手: ギャモン勝率",
+        "hintOpponentBackgammon": "相手: バックギャモン勝率"
     },
     "rollout": {
         "title": "ロールアウト",
@@ -1627,7 +1633,10 @@
         "trainingQuizPR": "クイズのPR",
         "trainingMatchPR": "対局のPR",
         "trainingRetention": "Ankiの定着率",
-        "trainingSessions": "決定クイズのセッションを {n} 件記録しました。"
+        "trainingSessions": "決定クイズのセッションを {n} 件記録しました。",
+        "compareColumnHint": "2人を選ぶと数値を比較できます",
+        "playersColPRHint": "PR: 1判断あたりの平均ミス(ミリポイント、mp)。低いほど良い",
+        "playersColLuckHint": "運: 1ロールあたりのダイスの平均影響(mp)。正の値は有利"
     },
     "trash": {
         "title": "ごみ箱",

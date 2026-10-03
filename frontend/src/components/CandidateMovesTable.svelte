@@ -44,6 +44,7 @@
                 {#each block.columns as column, i (column)}
                     <th
                         class="sortable"
+                        title={block.headerTitles?.[i] || undefined}
                         class:active-sort={sortColumn === column}
                         onclick={(e) => {
                             e.stopPropagation();

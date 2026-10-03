@@ -779,7 +779,13 @@
         "panelLabel": "Positionsanalyse",
         "playerBackgammon": "S B",
         "playerGammon": "S G",
-        "playerWin": "S W"
+        "playerWin": "S W",
+        "hintPlayerWin": "Spieler: Gewinnchance",
+        "hintPlayerGammon": "Spieler: Gammon-Chance",
+        "hintPlayerBackgammon": "Spieler: Backgammon-Chance",
+        "hintOpponentWin": "Gegner: Gewinnchance",
+        "hintOpponentGammon": "Gegner: Gammon-Chance",
+        "hintOpponentBackgammon": "Gegner: Backgammon-Chance"
     },
     "rollout": {
         "title": "Rollout",
@@ -1627,7 +1633,10 @@
         "trainingQuizPR": "Quiz-PR",
         "trainingMatchPR": "Match-PR",
         "trainingRetention": "Anki-Retention",
-        "trainingSessions": "{n} Entscheidungs-Quiz-Sitzungen aufgezeichnet."
+        "trainingSessions": "{n} Entscheidungs-Quiz-Sitzungen aufgezeichnet.",
+        "compareColumnHint": "Zwei Spieler ankreuzen, um ihre Werte zu vergleichen",
+        "playersColPRHint": "PR: mittlerer Fehler je Entscheidung in Millipunkten (mp); niedriger ist besser",
+        "playersColLuckHint": "Glück: mittlerer Würfeleinfluss je Wurf in mp; positiv = günstige Würfel"
     },
     "trash": {
         "title": "Papierkorb",

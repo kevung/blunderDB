@@ -779,7 +779,13 @@
         "panelLabel": "Análisis de la posición",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W"
+        "playerWin": "P W",
+        "hintPlayerWin": "Jugador: probabilidad de ganar",
+        "hintPlayerGammon": "Jugador: probabilidad de gammon",
+        "hintPlayerBackgammon": "Jugador: probabilidad de backgammon",
+        "hintOpponentWin": "Rival: probabilidad de ganar",
+        "hintOpponentGammon": "Rival: probabilidad de gammon",
+        "hintOpponentBackgammon": "Rival: probabilidad de backgammon"
     },
     "rollout": {
         "title": "Rollout",
@@ -1465,7 +1471,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Cerrar panel de estadísticas",
-        "tabDashboard": "Panel",
+        "tabDashboard": "Resumen",
         "tabProgression": "Progresión",
         "tabErrors": "Errores",
         "tabTraining": "Entrenamiento",
@@ -1627,7 +1633,10 @@
         "trainingQuizPR": "PR del quiz",
         "trainingMatchPR": "PR de las partidas",
         "trainingRetention": "Retención Anki",
-        "trainingSessions": "{n} sesiones del quiz Decisión registradas."
+        "trainingSessions": "{n} sesiones del quiz Decisión registradas.",
+        "compareColumnHint": "Marque dos jugadores para comparar sus cifras",
+        "playersColPRHint": "PR: error medio por decisión, en milipuntos (mp); más bajo es mejor",
+        "playersColLuckHint": "Suerte: efecto medio de los dados por tirada, en mp; positivo = dados favorables"
     },
     "trash": {
         "title": "Papelera",

@@ -517,13 +517,13 @@ export default {
 <p>Il pulsante <strong>Rapporto HTML</strong> nell'intestazione del pannello produce un documento <strong>autonomo</strong>: un solo file, senza immagini esterne, senza foglio di stile remoto, senza script. I diagrammi sono SVG in linea, disegnati dallo stesso rendering della dama a schermo, con la vostra tavolozza. Si apre in qualunque browser, viaggia per posta elettronica, e <strong>si stampa in PDF dal browser stesso</strong> — il che evita di imbarcare un generatore di PDF per produrre ciò che tutti hanno già.</p>
 <p>Contiene gli indicatori del perimetro corrente (posizioni, incontri, decisioni contate, PR globale, pedine e cubo), poi le <strong>dieci decisioni più costose</strong>, ciascuna con il suo diagramma, il suo costo, l'incontro da cui viene e la mossa migliore quando un'analisi la fornisce.</p>
 <p>Il rapporto porta il <strong>filtro corrente</strong> del pannello Stats. Un rapporto che non dichiara il proprio perimetro è un rapporto le cui cifre non vogliono dire nulla: regolate il filtro — un torneo, un intervallo di date, un giocatore — prima di produrlo.</p>
-<h4>Scheda Dashboard</h4>
-<p>La scheda <strong>Dashboard</strong> offre una visione sintetica degli indicatori chiave.</p>
+<h4>Scheda Cruscotto</h4>
+<p>La scheda <strong>Cruscotto</strong> offre una visione sintetica degli indicatori chiave.</p>
 <h5>Schede di livello</h5>
 <p>Tre schede visualizzano il PR (o MWC) per:</p>
 <ul>
 <li><strong>PR Globale</strong> — tutte le decisioni (pedine + cubo);</li>
-<li><strong>PR Pedina</strong> — solo mosse di pedine;</li>
+<li><strong>PR pedine</strong> — solo decisioni sulle pedine;</li>
 <li><strong>PR Cubo</strong> — solo decisioni di cubo.</li>
 </ul>
 <p>Cliccando su una scheda si caricano nel pannello di analisi le posizioni del sottoinsieme corrispondente (drill-down).</p>
@@ -662,7 +662,7 @@ export default {
 <p>Utilizzo:</p>
 <ul>
 <li><strong>Ordinare</strong> — fare clic su un'intestazione di colonna. La tabella si apre ordinata per PR crescente, con il miglior giocatore in testa. I giocatori di cui nulla è stato misurato restano in fondo qualunque sia il verso dell'ordinamento: uno zero per mancanza di dati non è una prestazione perfetta.</li>
-<li><strong>Aprire il dettaglio di un giocatore</strong> — fare clic su una riga. Il giocatore viene selezionato nella barra dei filtri e la visualizzazione passa alla scheda Dashboard.</li>
+<li><strong>Aprire il dettaglio di un giocatore</strong> — fare clic su una riga. Il giocatore viene selezionato nella barra dei filtri e la visualizzazione passa alla scheda Cruscotto.</li>
 <li><strong>Restringere il periodo</strong> — i filtri di date, tornei e lunghezza dei match si applicano normalmente, il che consente di delimitare la tabella alle date di una competizione.</li>
 <li><strong>Confrontare due giocatori</strong> — spuntate la casella della prima colonna su due righe. Sopra la tabella compare un blocco che mette i loro indicatori a confronto; spuntare un terzo giocatore sostituisce il più vecchio dei due. La casella non seleziona la riga: spuntare confronta, cliccare apre il dettaglio.</li>
 </ul>

@@ -779,7 +779,13 @@
         "panelLabel": "Aseman analyysi",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W"
+        "playerWin": "P W",
+        "hintPlayerWin": "Pelaaja: voittotodennäköisyys",
+        "hintPlayerGammon": "Pelaaja: gammonin todennäköisyys",
+        "hintPlayerBackgammon": "Pelaaja: backgammonin todennäköisyys",
+        "hintOpponentWin": "Vastustaja: voittotodennäköisyys",
+        "hintOpponentGammon": "Vastustaja: gammonin todennäköisyys",
+        "hintOpponentBackgammon": "Vastustaja: backgammonin todennäköisyys"
     },
     "rollout": {
         "title": "Rollout",
@@ -1627,7 +1633,10 @@
         "trainingQuizPR": "Tietovisan PR",
         "trainingMatchPR": "Ottelujen PR",
         "trainingRetention": "Anki-muistaminen",
-        "trainingSessions": "{n} Päätös-tietovisan istuntoa tallennettu."
+        "trainingSessions": "{n} Päätös-tietovisan istuntoa tallennettu.",
+        "compareColumnHint": "Valitse kaksi pelaajaa vertailua varten",
+        "playersColPRHint": "PR: keskimääräinen virhe päätöstä kohti millipisteinä (mp); pienempi on parempi",
+        "playersColLuckHint": "Onni: noppien keskimääräinen vaikutus heittoa kohti, mp; positiivinen = suotuisat nopat"
     },
     "trash": {
         "title": "Roskakori",

@@ -779,7 +779,13 @@
         "panelLabel": "Analisi della posizione",
         "playerBackgammon": "G B",
         "playerGammon": "G G",
-        "playerWin": "G V"
+        "playerWin": "G V",
+        "hintPlayerWin": "Giocatore: probabilità di vincere",
+        "hintPlayerGammon": "Giocatore: probabilità di gammon",
+        "hintPlayerBackgammon": "Giocatore: probabilità di backgammon",
+        "hintOpponentWin": "Avversario: probabilità di vincere",
+        "hintOpponentGammon": "Avversario: probabilità di gammon",
+        "hintOpponentBackgammon": "Avversario: probabilità di backgammon"
     },
     "rollout": {
         "title": "Rollout",
@@ -1627,7 +1633,10 @@
         "trainingQuizPR": "PR del quiz",
         "trainingMatchPR": "PR delle partite",
         "trainingRetention": "Ritenzione Anki",
-        "trainingSessions": "{n} sessioni del quiz Decisione registrate."
+        "trainingSessions": "{n} sessioni del quiz Decisione registrate.",
+        "compareColumnHint": "Seleziona due giocatori per confrontare i loro dati",
+        "playersColPRHint": "PR: errore medio per decisione, in millipunti (mp); più basso è meglio",
+        "playersColLuckHint": "Fortuna: effetto medio dei dadi per tiro, in mp; positivo = dadi favorevoli"
     },
     "trash": {
         "title": "Cestino",

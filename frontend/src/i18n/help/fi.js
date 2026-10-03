@@ -517,13 +517,13 @@ export default {
 <p>Paneelin otsikon <strong>HTML-raportti</strong>-painike tuottaa <strong>itsenäisen</strong> asiakirjan: yksi tiedosto, ei ulkoista kuvaa, ei etätyylitiedostoa, ei skriptiä. Kaaviot ovat upotettua SVG:tä, piirretty samalla piirtimellä kuin lauta näytöllä, sinun paletillasi. Se aukeaa missä tahansa selaimessa, kulkee sähköpostitse ja <strong>tulostuu PDF:ksi itse selaimesta</strong> — mikä säästää PDF-generaattorin mukaan ottamiselta sellaisen tuottamiseen, joka kaikilla jo on.</p>
 <p>Se sisältää nykyisen alueen tunnusluvut (asemat, ottelut, lasketut päätökset, kokonais-, siirto- ja kuutio-PR), sitten <strong>kymmenen kalleinta päätöstä</strong>, kukin kaavionsa, kustannuksensa, sen ottelun josta se tulee, ja parhaan siirron kun analyysi sen antaa.</p>
 <p>Raportti kantaa Tilastot-paneelin <strong>nykyistä suodatinta</strong>. Raportti joka ei kerro aluettaan on raportti jonka luvut eivät merkitse mitään: aseta suodatin — turnaus, päivämääräväli, pelaaja — ennen kuin tuotat sen.</p>
-<h4>Dashboard-välilehti</h4>
-<p><strong>Dashboard</strong>-välilehti antaa yhteenvetonäkymän keskeisistä tunnusluvuista.</p>
+<h4>Yleiskatsaus-välilehti</h4>
+<p><strong>Yleiskatsaus</strong>-välilehti antaa yhteenvetonäkymän keskeisistä tunnusluvuista.</p>
 <h5>Tasokortit</h5>
 <p>Kolme korttia näyttää PR:n (tai MWC:n) seuraaville:</p>
 <ul>
 <li><strong>PR Yhteensä</strong> — kaikki päätökset (nappulasiirrot + kuutio);</li>
-<li><strong>PR Nappula</strong> — vain pelatut siirrot;</li>
+<li><strong>Pelinappula-PR</strong> — vain nappulapäätökset;</li>
 <li><strong>PR Kuutio</strong> — vain kuutiopäätökset.</li>
 </ul>
 <p>Kortin napsauttaminen lataa analyysipaneeliin vastaavan osajoukon asemat (drill-down).</p>
@@ -662,7 +662,7 @@ export default {
 <p>Käyttö:</p>
 <ul>
 <li><strong>Järjestä</strong> — napsauta sarakeotsikkoa. Taulukko avautuu nousevan PR:n mukaan, paras pelaaja ensin. Pelaajat, joista ei ole mitattu mitään, pysyvät alimpina järjestyssuunnasta riippumatta: tiedon puutteesta johtuva nolla ei ole täydellinen suoritus.</li>
-<li><strong>Avaa pelaajan tiedot</strong> — napsauta riviä. Pelaaja valitaan suodatinpalkissa ja näkymä vaihtuu Dashboard-välilehdelle.</li>
+<li><strong>Avaa pelaajan tiedot</strong> — napsauta riviä. Pelaaja valitaan suodatinpalkissa ja näkymä vaihtuu Yleiskatsaus-välilehdelle.</li>
 <li><strong>Rajaa ajanjaksoa</strong> — päivämäärä-, turnaus- ja ottelupituussuodattimet toimivat tavalliseen tapaan, joten taulukon voi rajata yhden kilpailun päiviin.</li>
 <li><strong>Vertaa kahta pelaajaa</strong> — rastita ensimmäisen sarakkeen ruutu kahdella rivillä. Taulukon yläpuolelle ilmestyy lohko, joka asettaa heidän lukunsa vastakkain; kolmannen pelaajan rastittaminen korvaa vanhemman kahdesta. Ruutu ei valitse riviä: rastitus vertaa, napsautus avaa tiedot.</li>
 </ul>

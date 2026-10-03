@@ -523,7 +523,7 @@ export default {
 <p>Three cards display the PR (or MWC) for:</p>
 <ul>
 <li><strong>PR Global</strong> — all decisions (checker + cube);</li>
-<li><strong>PR Checker</strong> — checker plays only;</li>
+<li><strong>Checker PR</strong> — checker decisions only;</li>
 <li><strong>PR Cube</strong> — cube decisions only.</li>
 </ul>
 <p>Clicking a card loads the positions in the corresponding subset into the analysis panel (drill-down).</p>

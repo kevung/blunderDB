@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 11:25+0200\n"
+"POT-Creation-Date: 2026-10-03 11:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -5242,20 +5242,22 @@ msgstr ""
 "ημερομηνιών, έναν παίκτη — πριν την παραγάγετε."
 
 #: ../../source/manuel.rst:2204
-msgid "Onglet Dashboard"
-msgstr "Καρτέλα Dashboard"
+msgid "Onglet Tableau de bord"
+msgstr "Καρτέλα Πίνακας"
 
 #: ../../source/manuel.rst:2206
-msgid "L'onglet **Dashboard** donne une vue synthétique des indicateurs clés."
-msgstr "Η καρτέλα **Dashboard** παρέχει μια συνοπτική εικόνα των βασικών δεικτών."
+msgid ""
+"L'onglet **Tableau de bord** donne une vue synthétique des indicateurs "
+"clés."
+msgstr "Η καρτέλα **Πίνακας** παρέχει μια συνοπτική εικόνα των βασικών δεικτών."
 
 #: ../../source/manuel.rst:2208
-msgid "Onglet Dashboard du panneau Stats"
-msgstr "Καρτέλα Dashboard του πίνακα Stats"
+msgid "Onglet Tableau de bord du panneau Stats"
+msgstr "Καρτέλα Πίνακας του πίνακα Stats"
 
 #: ../../source/manuel.rst:2212
-msgid "L'onglet Dashboard : PR global, PR pions, PR videau."
-msgstr "Η καρτέλα Dashboard: συνολικό PR, PR πουλιών, PR κύβου."
+msgid "L'onglet Tableau de bord : PR global, PR pions, PR videau."
+msgstr "Η καρτέλα Πίνακας: συνολικό PR, PR πουλιών, PR κύβου."
 
 #: ../../source/manuel.rst:2215
 msgid "Cartes de niveau"
@@ -5266,15 +5268,15 @@ msgid "Trois cartes affichent le PR (ou MWC) pour :"
 msgstr "Τρεις κάρτες εμφανίζουν το PR (ή το MWC) για:"
 
 #: ../../source/manuel.rst:2219
-msgid "**PR Global** — toutes les décisions (coups + videau) ;"
+msgid "**PR global** — toutes les décisions (pions + videau) ;"
 msgstr "**PR Συνολικό** — όλες τις αποφάσεις (κινήσεις + κύβος)·"
 
 #: ../../source/manuel.rst:2220
-msgid "**PR Coup** — coups joués seulement ;"
-msgstr "**PR Πούλι** — μόνο τις κινήσεις που παίχτηκαν·"
+msgid "**PR pions** — décisions de pions seulement ;"
+msgstr "**PR πουλιών** — μόνο τις αποφάσεις κινήσεων·"
 
 #: ../../source/manuel.rst:2221
-msgid "**PR Cube** — décisions de videau seulement."
+msgid "**PR videau** — décisions de videau seulement."
 msgstr "**PR Κύβος** — μόνο τις αποφάσεις κύβου."
 
 #: ../../source/manuel.rst:2223
@@ -6045,11 +6047,11 @@ msgstr ""
 msgid ""
 "**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
 "sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
-"Dashboard."
+"Tableau de bord."
 msgstr ""
 "**Άνοιγμα λεπτομερειών παίκτη** — κάντε κλικ σε μια γραμμή. Ο παίκτης "
 "επιλέγεται στη γραμμή φίλτρων και η προβολή μεταβαίνει στην καρτέλα "
-"Dashboard."
+"Πίνακας."
 
 #: ../../source/manuel.rst:2522
 msgid ""
@@ -9581,3 +9583,6 @@ msgstr ""
 
 #~ msgid "L'affichage de la salle"
 #~ msgstr "Η οθόνη της αίθουσας"
+
+#~ msgid "**PR Coup** — coups joués seulement ;"
+#~ msgstr "**PR Πούλι** — μόνο τις κινήσεις που παίχτηκαν·"

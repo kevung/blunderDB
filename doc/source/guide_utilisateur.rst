@@ -80,7 +80,7 @@ la liste des positions où vous avez le plus perdu.
       surligné dans la table des coups candidats.
 
 #. **Trouver les plus grosses erreurs.** Ouvrir le panneau Stats (*CTRL-D*),
-   onglet *Dashboard* : la liste *Top blunders* donne les dix erreurs les
+   onglet *Tableau de bord* : la liste *Top blunders* donne les dix erreurs les
    plus coûteuses, et cliquer sur une ligne charge la position concernée
    dans le panneau d'analyse. Pour les habitués, la même chose au clavier :
    la commande ``bl`` (ou ``blunders``, *ESPACE* pour ouvrir la ligne de
@@ -380,7 +380,7 @@ suivant se déroule en trois minutes :
    positions, lancer une carte en *Study* pour montrer le cycle
    question/réponse/notation.
 
-#. *2:45* — Retour au panneau Stats (*CTRL-D*), onglet Dashboard, pour
+#. *2:45* — Retour au panneau Stats (*CTRL-D*), onglet Tableau de bord, pour
    montrer où ce travail se lit dans la durée.
 
 Créer une nouvelle base de données

@@ -517,14 +517,14 @@ export default {
 <p>Le bouton <strong>Rapport HTML</strong> de l'en-tête du panneau produit un document <strong>autonome</strong> : un seul fichier, sans image externe, sans feuille de style distante, sans script. Les diagrammes y sont des SVG en ligne, dessinés par le même rendu que le plateau à l'écran, avec votre palette. Il s'ouvre dans n'importe quel navigateur, s'envoie par courriel, et <strong>s'imprime en PDF par le navigateur lui-même</strong> — ce qui évite d'embarquer un générateur de PDF pour produire ce que tout le monde a déjà.</p>
 <p>Il contient les indicateurs du périmètre courant (positions, matchs, décisions comptées, PR global, pions et videau), puis les <strong>dix décisions les plus coûteuses</strong>, chacune avec son diagramme, son coût, le match d'où elle vient et le meilleur coup lorsqu'une analyse le donne.</p>
 <p>Le rapport porte le <strong>filtre courant</strong> du panneau Stats. Un rapport qui ne dit pas son périmètre est un rapport dont les chiffres ne veulent rien dire : réglez le filtre — un tournoi, une plage de dates, un joueur — avant de le produire.</p>
-<h4>Onglet Dashboard</h4>
-<p>L'onglet <strong>Dashboard</strong> donne une vue synthétique des indicateurs clés.</p>
+<h4>Onglet Tableau de bord</h4>
+<p>L'onglet <strong>Tableau de bord</strong> donne une vue synthétique des indicateurs clés.</p>
 <h5>Cartes de niveau</h5>
 <p>Trois cartes affichent le PR (ou MWC) pour :</p>
 <ul>
-<li><strong>PR Global</strong> — toutes les décisions (coups + videau) ;</li>
-<li><strong>PR Coup</strong> — coups joués seulement ;</li>
-<li><strong>PR Cube</strong> — décisions de videau seulement.</li>
+<li><strong>PR global</strong> — toutes les décisions (pions + videau) ;</li>
+<li><strong>PR pions</strong> — décisions de pions seulement ;</li>
+<li><strong>PR videau</strong> — décisions de videau seulement.</li>
 </ul>
 <p>Cliquer sur une carte charge dans le panneau d'analyse les positions du sous-ensemble correspondant (drill-down).</p>
 <div class="admonition note">
@@ -662,7 +662,7 @@ export default {
 <p>Utilisation :</p>
 <ul>
 <li><strong>Trier</strong> — cliquez sur un en-tête de colonne. Le tableau s'ouvre trié par PR croissant, meilleur joueur en tête. Les joueurs dont rien n'a été mesuré restent en bas quel que soit le sens du tri : un zéro faute de données n'est pas une performance parfaite.</li>
-<li><strong>Ouvrir le détail d'un joueur</strong> — cliquez sur une ligne. Le joueur est sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet Dashboard.</li>
+<li><strong>Ouvrir le détail d'un joueur</strong> — cliquez sur une ligne. Le joueur est sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet Tableau de bord.</li>
 <li><strong>Restreindre la période</strong> — les filtres de dates, de tournois et de longueur de match s'appliquent normalement, ce qui permet de borner le tableau aux dates d'une compétition.</li>
 <li><strong>Comparer deux joueurs</strong> — cochez la case de la première colonne sur deux lignes. Un bloc apparaît au-dessus du tableau et met leurs indicateurs face à face ; cocher un troisième joueur remplace le plus ancien des deux. La case ne sélectionne pas la ligne : cocher compare, cliquer ouvre le détail.</li>
 </ul>

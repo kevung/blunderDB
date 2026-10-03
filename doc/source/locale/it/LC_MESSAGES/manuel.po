@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 11:25+0200\n"
+"POT-Creation-Date: 2026-10-03 11:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -5148,22 +5148,24 @@ msgstr ""
 "date, un giocatore — prima di produrlo."
 
 #: ../../source/manuel.rst:2204
-msgid "Onglet Dashboard"
-msgstr "Scheda Dashboard"
+msgid "Onglet Tableau de bord"
+msgstr "Scheda Cruscotto"
 
 #: ../../source/manuel.rst:2206
-msgid "L'onglet **Dashboard** donne une vue synthétique des indicateurs clés."
+msgid ""
+"L'onglet **Tableau de bord** donne une vue synthétique des indicateurs "
+"clés."
 msgstr ""
-"La scheda **Dashboard** offre una visione sintetica degli indicatori "
+"La scheda **Cruscotto** offre una visione sintetica degli indicatori "
 "chiave."
 
 #: ../../source/manuel.rst:2208
-msgid "Onglet Dashboard du panneau Stats"
-msgstr "Scheda Dashboard del pannello Stats"
+msgid "Onglet Tableau de bord du panneau Stats"
+msgstr "Scheda Cruscotto del pannello Stats"
 
 #: ../../source/manuel.rst:2212
-msgid "L'onglet Dashboard : PR global, PR pions, PR videau."
-msgstr "La scheda Dashboard: PR globale, PR pedine, PR cubo."
+msgid "L'onglet Tableau de bord : PR global, PR pions, PR videau."
+msgstr "La scheda Cruscotto: PR globale, PR pedine, PR cubo."
 
 #: ../../source/manuel.rst:2215
 msgid "Cartes de niveau"
@@ -5174,15 +5176,15 @@ msgid "Trois cartes affichent le PR (ou MWC) pour :"
 msgstr "Tre schede visualizzano il PR (o MWC) per:"
 
 #: ../../source/manuel.rst:2219
-msgid "**PR Global** — toutes les décisions (coups + videau) ;"
+msgid "**PR global** — toutes les décisions (pions + videau) ;"
 msgstr "**PR Globale** — tutte le decisioni (pedine + cubo);"
 
 #: ../../source/manuel.rst:2220
-msgid "**PR Coup** — coups joués seulement ;"
-msgstr "**PR Pedina** — solo mosse di pedine;"
+msgid "**PR pions** — décisions de pions seulement ;"
+msgstr "**PR pedine** — solo decisioni sulle pedine;"
 
 #: ../../source/manuel.rst:2221
-msgid "**PR Cube** — décisions de videau seulement."
+msgid "**PR videau** — décisions de videau seulement."
 msgstr "**PR Cubo** — solo decisioni di cubo."
 
 #: ../../source/manuel.rst:2223
@@ -5946,11 +5948,11 @@ msgstr ""
 msgid ""
 "**Ouvrir le détail d'un joueur** — cliquez sur une ligne. Le joueur est "
 "sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet "
-"Dashboard."
+"Tableau de bord."
 msgstr ""
 "**Aprire il dettaglio di un giocatore** — fare clic su una riga. Il "
 "giocatore viene selezionato nella barra dei filtri e la visualizzazione "
-"passa alla scheda Dashboard."
+"passa alla scheda Cruscotto."
 
 #: ../../source/manuel.rst:2522
 msgid ""
@@ -9450,3 +9452,6 @@ msgstr ""
 
 #~ msgid "L'affichage de la salle"
 #~ msgstr "Il display della sala"
+
+#~ msgid "**PR Coup** — coups joués seulement ;"
+#~ msgstr "**PR Pedina** — solo mosse di pedine;"

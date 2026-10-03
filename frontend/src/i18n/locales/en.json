@@ -779,7 +779,13 @@
         "panelLabel": "Position analysis",
         "playerBackgammon": "P B",
         "playerGammon": "P G",
-        "playerWin": "P W"
+        "playerWin": "P W",
+        "hintPlayerWin": "Player: chance to win",
+        "hintPlayerGammon": "Player: chance to win a gammon",
+        "hintPlayerBackgammon": "Player: chance to win a backgammon",
+        "hintOpponentWin": "Opponent: chance to win",
+        "hintOpponentGammon": "Opponent: chance to win a gammon",
+        "hintOpponentBackgammon": "Opponent: chance to win a backgammon"
     },
     "rollout": {
         "title": "Rollout",
@@ -1627,7 +1633,10 @@
         "trainingQuizPR": "Quiz PR",
         "trainingMatchPR": "Match PR",
         "trainingRetention": "Anki retention",
-        "trainingSessions": "{n} Decision quiz sessions recorded."
+        "trainingSessions": "{n} Decision quiz sessions recorded.",
+        "compareColumnHint": "Tick two players to compare their figures",
+        "playersColPRHint": "PR: average error per decision, in millipoints (mp); lower is better",
+        "playersColLuckHint": "Luck: average dice effect per roll, in mp; positive = favourable dice"
     },
     "trash": {
         "title": "Trash",
