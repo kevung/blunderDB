@@ -1545,6 +1545,17 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
   saison veut un code de retour, pas une ligne à filtrer.
 * ``standings --id N`` — Le classement en CSV, prix compris, dans la langue de
   l'interface.
+* ``ranking --season [--rencontre N] [--from AAAA-MM-JJ] [--to AAAA-MM-JJ]
+  [--points 25,18,15] [--participation P] [--elo] [--format csv|json]`` — Le
+  classement de saison : les tournois clos d'un événement ou d'une période
+  (bornes incluses, sur la date du tournoi ; sans filtre, tous les tournois
+  dirigés), chaque place convertie en points par le barème (vainqueur en tête ;
+  par défaut 25, 18, 15, 12, 10, 8, 6, 4, 2, 1), plus ``--participation`` par
+  tournoi joué. Des ex æquo se partagent la moyenne des places qu'ils occupent.
+  Une personne est reconnue d'un tournoi à l'autre par son nom. ``--elo``
+  ajoute un Elo de club rejoué sur les matchs de la saison (formule FIBS,
+  départ 1500). Le CSV donne une ligne par personne et une colonne de points
+  par tournoi ; un tournoi non clos est listé mais ne rapporte rien.
 * ``page --id N|--rencontre N [--out <dossier>]`` — La page HTML d'affichage
   d'une épreuve (``--id``), ou la page murale d'un événement (``--rencontre`` :
   une ligne par table, quelle que soit l'épreuve qui l'occupe). Exactement l'un
@@ -1584,6 +1595,7 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
    ./blunderdb tournament list --db base.db
    ./blunderdb tournament verify --db base.db --id 3
    ./blunderdb tournament standings --db base.db --id 3 > classement.csv
+   ./blunderdb tournament ranking --db base.db --season --from 2026-01-01 --to 2026-12-31 --elo > saison.csv
    ./blunderdb tournament page --db base.db --id 3 --out /tmp/affichage
    ./blunderdb tournament page --db base.db --rencontre 1 --out /tmp/evenement
    ./blunderdb tournament export --db base.db --id 3 > journal.json

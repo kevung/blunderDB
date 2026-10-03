@@ -54,13 +54,13 @@ Navigation
 
    "CTRL-R", "Recharger toutes les positions de la base de données."
    "Home, h", "Première position / Partie précédente (navigation match)."
-   "PageUp", "Recule d'une page de cent positions (au début de la liste, s'y arrête) ; dans un match, partie précédente."
+   "PageUp", "Recule d'une page (cent positions par défaut, réglable dans les Paramètres > Interface, jusqu'à 10 % de la liste ; au début de la liste, s'y arrête) ; dans un match, partie précédente."
    "GAUCHE, k", "Position précédente."
    "DROITE, j", "Position suivante."
    "HAUT, k", "Coup précédent (lorsqu'un coup est sélectionné dans l'analyse)."
    "BAS, j", "Coup suivant (lorsqu'un coup est sélectionné dans l'analyse)."
    "End, l", "Dernière position / Partie suivante (navigation match)."
-   "PageDown", "Avance d'une page de cent positions (à la fin de la liste, s'y arrête) ; dans un match, partie suivante."
+   "PageDown", "Avance d'une page (même pas que PageUp ; à la fin de la liste, s'y arrête) ; dans un match, partie suivante."
    "r", "Charger une position aléatoire."
    "ÉCHAP", "Quitter les résultats d'une recherche ``ss`` lancée depuis une collection ou un match : retour à la collection, ou au match sur le coup étudié."
 

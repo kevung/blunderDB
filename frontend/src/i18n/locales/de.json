@@ -28,6 +28,9 @@
         "panelPositionBottom": "Unten",
         "panelPositionSide": "Seite",
         "panelPositionAuto": "Automatisch",
+        "pageStep": "Schrittweite von Bild↑ / Bild↓",
+        "pageStepCount": "{n} Positionen",
+        "pageStepPercent": "{n} % der Liste",
         "colors": "Brettfarben",
         "colorBackground": "Hintergrund",
         "colorBorder": "Rahmen",
@@ -2354,6 +2357,20 @@
             "open": "Im Browser öffnen",
             "forget": "Nicht mehr schreiben",
             "error": "Die Anzeigeseite konnte nicht geschrieben werden."
+        },
+        "season": {
+            "title": "Saisonwertung",
+            "hint": "Die abgeschlossenen Turniere der Veranstaltung: jeder Platz bringt die Punkte der Skala (Sieger zuerst); Gleichplatzierte teilen sich den Mittelwert ihrer Plätze. Eine Person wird am Namen erkannt.",
+            "points": "Punkteskala",
+            "elo": "Club-Elo",
+            "compute": "Berechnen",
+            "copy": "Als CSV kopieren",
+            "copied": "Kopiert",
+            "rank": "Platz",
+            "player": "Spieler",
+            "total": "Punkte",
+            "played": "Turniere",
+            "empty": "Kein abgeschlossenes Turnier in dieser Veranstaltung."
         },
         "sheet": {
             "print": "Blatt drucken",

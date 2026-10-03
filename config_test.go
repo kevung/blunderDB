@@ -137,6 +137,19 @@ func TestSanitizePanelPosition(t *testing.T) {
 	}
 }
 
+func TestSanitizePageStep(t *testing.T) {
+	for _, step := range PageSteps {
+		if got := sanitizePageStep(step); got != step {
+			t.Errorf("sanitizePageStep(%q) = %q, want it kept", step, got)
+		}
+	}
+	for _, step := range []string{"", "0", "-10", "7", "10 %", "abc"} {
+		if got := sanitizePageStep(step); got != DefaultPageStep {
+			t.Errorf("sanitizePageStep(%q) = %q, want %q", step, got, DefaultPageStep)
+		}
+	}
+}
+
 func TestClampPanelHeight(t *testing.T) {
 	cases := []struct {
 		in, want int

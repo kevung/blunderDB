@@ -68,6 +68,8 @@
     import { exportDatabase } from './services/exportService.js';
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
+    import { registerKeys } from './services/keyDispatch.js';
+    import { initPageStep } from './services/pageStepSetting.js';
     import { applyTabPanels } from './services/tabHandler.js';
     import { resizable } from './utils/resizeHandle.js';
     import { fileDrop } from './utils/fileDrop.js';
@@ -316,6 +318,9 @@
         await startTrainingSession({ exercise, seedSource });
     }
 
+    /** @type {(() => void) | null} */
+    let unregisterGlobalKeys = null;
+
     onMount(async () => {
         maybeCheckForUpdate();
 
@@ -348,7 +353,7 @@
             onToggleStats: () => toggleStatsPanel(),
             onLoadBlunders: loadWorstBlunders
         });
-        window.addEventListener('keydown', handleKeyDown);
+        unregisterGlobalKeys = registerKeys('global', handleKeyDown);
         mainArea.addEventListener('wheel', handleWheel);
         window.addEventListener('resize', handleResize);
 
@@ -367,6 +372,7 @@
         initUIScale();
 
         initPanelPosition();
+        initPageStep();
 
         // One-shot seed of the local $state: the resize-handle drag owns it afterwards.
         initPanelSize().then(() => {
@@ -414,7 +420,7 @@
     });
 
     onDestroy(() => {
-        window.removeEventListener('keydown', handleKeyDown);
+        unregisterGlobalKeys?.();
         mainArea.removeEventListener('wheel', handleWheel);
         window.removeEventListener('resize', handleResize);
         unsubscribePositions();

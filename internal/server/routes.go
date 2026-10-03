@@ -98,6 +98,7 @@ func (s *Server) routes() []route {
 	}
 	rs = append(rs, s.domainRoutes()...)
 	rs = append(rs, s.eventRoutes()...)
+	rs = append(rs, s.acrossRoutes()...)
 	rs = append(rs, s.mcpRoutes()...)
 	if s.opts.OpsAddr == "" {
 		rs = append(rs, s.opsRoutes()...)
@@ -164,6 +165,8 @@ func (s *Server) domainRoutes() []route {
 	rs = append(rs, s.directionGestureRoutes()...)
 	rs = append(rs, s.rencontreGestureRoutes()...)
 	rs = append(rs, s.transcriptionRoutes()...)
+	rs = append(rs, s.trainingRoutes()...)
+	rs = append(rs, s.tenantQuotaRoutes()...)
 	return rs
 }
 
@@ -230,4 +233,18 @@ func (s *Server) methodNotAllowed(mux http.Handler) http.Handler {
 		}
 		mux.ServeHTTP(w, r)
 	})
+}
+
+// APIPaths returns every POST route under /v1/ or /ops/ this daemon serves,
+// sorted: Paths() plus the server-only POST routes (serverOnlyPaths). It is
+// what openapi.yaml documents; GET /v1/events is documented by hand.
+func (s *Server) APIPaths() []string {
+	var out []string
+	for _, rt := range s.routes() {
+		if rt.method == http.MethodPost && (strings.HasPrefix(rt.pattern, "/v1/") || strings.HasPrefix(rt.pattern, "/ops/")) {
+			out = append(out, rt.pattern)
+		}
+	}
+	sort.Strings(out)
+	return out
 }

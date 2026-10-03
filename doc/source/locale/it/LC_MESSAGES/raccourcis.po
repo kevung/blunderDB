@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 09:50+0200\n"
+"POT-Creation-Date: 2026-10-03 11:17+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -204,12 +204,16 @@ msgid "PageUp"
 msgstr "PageUp"
 
 #: ../../source/raccourcis.rst:1
+#, no-python-format
 msgid ""
-"Recule d'une page de cent positions (au début de la liste, s'y arrête) ; "
-"dans un match, partie précédente."
+"Recule d'une page (cent positions par défaut, réglable dans les "
+"Paramètres > Interface, jusqu'à 10 % de la liste ; au début de la liste, "
+"s'y arrête) ; dans un match, partie précédente."
 msgstr ""
-"Torna indietro di una pagina di cento posizioni (si ferma all'inizio "
-"dell'elenco); in una partita, gioco precedente."
+"Torna indietro di una pagina (cento posizioni per impostazione "
+"predefinita, regolabile in Impostazioni > Interfaccia, fino al 10 % "
+"dell'elenco; si ferma all'inizio dell'elenco); in un match, partita "
+"precedente."
 
 #: ../../source/raccourcis.rst:1
 msgid "GAUCHE, k"
@@ -257,11 +261,11 @@ msgstr "PageDown"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Avance d'une page de cent positions (à la fin de la liste, s'y arrête) ; "
-"dans un match, partie suivante."
+"Avance d'une page (même pas que PageUp ; à la fin de la liste, s'y "
+"arrête) ; dans un match, partie suivante."
 msgstr ""
-"Avanza di una pagina di cento posizioni (si ferma alla fine dell'elenco);"
-" in una partita, gioco successivo."
+"Avanza di una pagina (stesso passo di PageUp; si ferma alla fine "
+"dell'elenco); in un match, partita successiva."
 
 #: ../../source/raccourcis.rst:1
 msgid "r"

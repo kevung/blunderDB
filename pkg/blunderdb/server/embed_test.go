@@ -109,3 +109,31 @@ func TestBootstrapAppliesMaxBodyBytes(t *testing.T) {
 		t.Errorf("status = %d, want %d (body %q)", rec.Code, http.StatusRequestEntityTooLarge, rec.Body.String())
 	}
 }
+
+// TestBootstrapTrustReadTenants: Config.TrustReadTenants reaches
+// internal/server.Options. Off (the default), a non-blank ReadTenantsHeader
+// is refused with 400; on, the across.* read answers. SQLite lists only 1.
+func TestBootstrapTrustReadTenants(t *testing.T) {
+	status := func(trust bool) int {
+		h, closer, err := Bootstrap(context.Background(), Config{Backend: "sqlite", DSN: ":memory:", TrustReadTenants: trust})
+		if err != nil {
+			t.Fatalf("Bootstrap: %v", err)
+		}
+		defer closer.Close()
+		rec := httptest.NewRecorder()
+		req := httptest.NewRequest(http.MethodPost, "/v1/across.matchesList", strings.NewReader(`{}`))
+		req.Header.Set(TenantHeader, "1")
+		req.Header.Set(ReadTenantsHeader, "1")
+		h.ServeHTTP(rec, req)
+		return rec.Code
+	}
+	if got := status(false); got != http.StatusBadRequest {
+		t.Errorf("untrusted: status %d, want 400", got)
+	}
+	if got := status(true); got != http.StatusOK {
+		t.Errorf("trusted: status %d, want 200", got)
+	}
+	if TenantHeader != middleware.TenantHeader || ReadTenantsHeader != "X-Read-Tenants" {
+		t.Errorf("exported header names drifted: %q, %q", TenantHeader, ReadTenantsHeader)
+	}
+}

@@ -3,6 +3,7 @@ package middleware
 import (
 	"log/slog"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -31,6 +32,11 @@ func Logging(logger *slog.Logger, known map[string]bool, now func() time.Time) f
 				"tenant", truncateForLog(r.Header.Get(TenantHeader)),
 				"duration_ms", float64(now().Sub(start).Microseconds()) / 1000.0,
 			}
+			// A read across tenants names whom it read: the set the proxy
+			// sent, raw and bounded like the tenant above.
+			if strings.HasPrefix(r.URL.Path, acrossPrefix) {
+				args = append(args, "read_tenants", truncateForLog(strings.Join(r.Header.Values(ReadTenantsHeader), ",")))
+			}
 			if id, ok := RequestIDFromContext(r.Context()); ok {
 				args = append(args, "request_id", id)
 			}
@@ -49,6 +55,9 @@ func Logging(logger *slog.Logger, known map[string]bool, now func() time.Time) f
 		})
 	}
 }
+
+// acrossPrefix is the route family that reads X-Read-Tenants.
+const acrossPrefix = "/v1/across."
 
 // maxLoggedTenantLen bounds the raw X-Tenant-ID logged before Tenant
 // validates it; a valid tenant is a short integer and is never cut.

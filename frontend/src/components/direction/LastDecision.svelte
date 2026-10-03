@@ -6,6 +6,7 @@
      */
     import { t } from '../../i18n';
     import { closeOnEscape } from '../../services/escapeService.js';
+    import { registerKeys } from '../../services/keyDispatch.js';
     import { isLetter } from '../../utils/keys.js';
     import { isTypingTarget } from '../../utils/panelFocus.js';
     import CorrectionPanel from './CorrectionPanel.svelte';
@@ -42,9 +43,9 @@
         onCorrect(last.matchId, winner, scoreA, scoreB);
         open = false;
     }
-</script>
 
-<svelte:window onkeydown={onKey} />
+    $effect(() => registerKeys('directionUndo', onKey));
+</script>
 
 {#if last}
     <div class="last" data-testid="direction-last">

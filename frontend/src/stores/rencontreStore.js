@@ -16,7 +16,9 @@ import {
     SetRencontreTables,
     SetEventRooms,
     SetDirectionTables,
-    WriteRencontrePage
+    WriteRencontrePage,
+    SeasonRanking,
+    SeasonCSV
 } from '../../wailsjs/go/database/Database.js';
 import { OpenDirectionOutputDialog } from '../../wailsjs/go/gui/App.js';
 import { refreshDirection } from './directionStore.js';
@@ -137,4 +139,18 @@ export async function setDirectionTables(tournamentId, settings) {
     const r = await SetDirectionTables(tournamentId, settings);
     await refreshDirection();
     return r;
+}
+
+/**
+ * Le classement de saison des tournois clos d'une Rencontre (ADR-0062). Une erreur remonte :
+ * le panneau la montre au lieu d'un classement vide trompeur.
+ * @param {{rencontreId: number, points?: number[], participation?: number, elo?: boolean}} query
+ */
+export async function seasonRanking(query) {
+    return SeasonRanking(query);
+}
+
+/** Le même classement en CSV, prêt à coller dans un tableur. @param {{rencontreId: number, points?: number[], participation?: number, elo?: boolean}} query */
+export async function seasonCSV(query) {
+    return SeasonCSV(query);
 }

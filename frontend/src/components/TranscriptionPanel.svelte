@@ -26,6 +26,7 @@
     import { positionStore } from '../stores/positionStore.js';
     import { selectedMoveStore } from '../stores/analysisStore.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
+    import { registerKeys } from '../services/keyDispatch.js';
     import { isBareLetter } from '../utils/keys.js';
     import { isMoneyPosition } from '../utils/cubeDecision.js';
     import {
@@ -972,12 +973,15 @@
         runCommand(wanted === 'redo' ? COMMAND.REDO : COMMAND.UNDO);
     });
 
+    /** @type {(() => void) | null} */
+    let unregisterKeys = null;
+
     onMount(() => {
-        document.addEventListener('keydown', handleKeyDown);
+        unregisterKeys = registerKeys('transcription', handleKeyDown);
     });
 
     onDestroy(() => {
-        document.removeEventListener('keydown', handleKeyDown);
+        unregisterKeys?.();
         clearTimeout(matCopyTimer);
         clearTranscriptionNotice();
         selectedMoveStore.set(null);

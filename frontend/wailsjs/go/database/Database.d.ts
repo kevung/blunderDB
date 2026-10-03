@@ -553,6 +553,9 @@ export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
 
 export function SearchPositionIDs(arg1:domain.SearchFilters,arg2:number,arg3:number):Promise<Array<number>>;
 
+export function SeasonCSV(arg1:service.SeasonQuery):Promise<string>;
+
+export function SeasonRanking(arg1:service.SeasonQuery):Promise<service.SeasonView>;
 
 export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
 

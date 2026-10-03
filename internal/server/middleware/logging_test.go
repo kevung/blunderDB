@@ -112,3 +112,45 @@ func TestLogging_NoRequestIDMiddlewareOmitsFields(t *testing.T) {
 		t.Errorf("log line has an unexpected traceparent field with no RequestID middleware:\n%s", out)
 	}
 }
+
+// TestLogging_ReadTenantsOnAcrossRoutes: a read across tenants logs whom it
+// read, bounded; another route does not log the header.
+func TestLogging_ReadTenantsOnAcrossRoutes(t *testing.T) {
+	logLine := func(path, readTenants string) string {
+		var buf strings.Builder
+		mw := Logging(slog.New(slog.NewTextHandler(&buf, nil)), map[string]bool{}, nil)(
+			http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.WriteHeader(http.StatusOK) }))
+		req := httptest.NewRequest(http.MethodPost, path, nil)
+		req.Header.Set(ReadTenantsHeader, readTenants)
+		mw.ServeHTTP(httptest.NewRecorder(), req)
+		return buf.String()
+	}
+	if out := logLine("/v1/across.matchesList", "2,3"); !strings.Contains(out, "read_tenants=2,3") {
+		t.Errorf("across route does not log its read set:\n%s", out)
+	}
+	long := strings.Repeat("12345,", 40)
+	if out := logLine("/v1/across.matchesList", long); strings.Contains(out, long) || !strings.Contains(out, "…") {
+		t.Errorf("a long read set is not truncated:\n%s", out)
+	}
+	if out := logLine("/v1/matches.list", "2,3"); strings.Contains(out, "read_tenants") {
+		t.Errorf("a route outside across.* logs the header:\n%s", out)
+	}
+}
+
+// TestCORS_DoesNotAllowReadTenants: a browser never sends X-Read-Tenants —
+// only the proxy writes it — so a preflight does not allow it.
+func TestCORS_DoesNotAllowReadTenants(t *testing.T) {
+	mw := CORS("https://app.example")(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {}))
+	req := httptest.NewRequest(http.MethodOptions, "/v1/across.matchesList", nil)
+	req.Header.Set("Origin", "https://app.example")
+	req.Header.Set("Access-Control-Request-Method", "POST")
+	rec := httptest.NewRecorder()
+	mw.ServeHTTP(rec, req)
+	allowed := rec.Header().Get("Access-Control-Allow-Headers")
+	if allowed == "" {
+		t.Fatal("no Access-Control-Allow-Headers on the preflight")
+	}
+	if strings.Contains(allowed, ReadTenantsHeader) {
+		t.Errorf("CORS allows %s: %s", ReadTenantsHeader, allowed)
+	}
+}

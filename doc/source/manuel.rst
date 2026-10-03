@@ -224,7 +224,8 @@ Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
 blunderDB. Elle est organisée en sept onglets :
 
-* **Interface** — langue, échelle d'affichage, position du panneau ;
+* **Interface** — langue, échelle d'affichage, position du panneau, pas de
+  PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste) ;
 * **Couleurs** — les couleurs du plateau ;
 * **Bibliothèque** — ce qui appartient à la base ouverte : les seuils
   d'erreur et de blunder, le compactage et la réparation, décrits ci-dessous ;
@@ -1926,6 +1927,15 @@ déplacer un match. Retirer une salle qui porte un match en cours de l'épreuve 
 refusé, en nommant la table. Une épreuve qui joue seule règle les mêmes propriétés
 de table dans ses propres Réglages, sans salles d'épreuve.
 
+Le **Classement de saison**, dans le panneau Événement, cumule les épreuves
+closes de l'événement : chaque place rapporte les points du **Barème** (vainqueur
+en tête, 25, 18, 15, 12, 10, 8, 6, 4, 2, 1 par défaut), et des ex æquo se
+partagent la moyenne des places qu'ils occupent. Une personne est reconnue d'une
+épreuve à l'autre par son nom. **Elo de club** ajoute une colonne : chacun part
+de 1500 et les matchs de la saison sont rejoués dans l'ordre, selon la formule
+de FIBS. **Calculer** affiche le classement, **Copier en CSV** le copie avec une
+colonne de points par épreuve. Une épreuve non close ne rapporte rien.
+
 Ouvrir la Direction d'une épreuve d'un événement ouvre aussi les autres : un
 onglet par épreuve apparaît en haut de la Direction, chacun avec son résumé —
 propositions en attente, matchs en cours, une alerte s'il y en a. Changer
@@ -1989,7 +1999,10 @@ reste celle d'avant.
 
 Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``
-et ``export`` ; ``page --rencontre`` écrit la page murale d'un événement au lieu
+et ``export`` ; ``ranking --season`` cumule les tournois clos d'un événement ou
+d'une période en un classement de saison, par un barème de points par place et,
+au choix, un Elo de club (deux inscrits de même nom dans une même épreuve
+close font refuser le classement, qui connaît une personne par son nom) ; ``page --rencontre`` écrit la page murale d'un événement au lieu
 de la page d'une seule épreuve. Voir :ref:`cli`.
 
 .. _stats:

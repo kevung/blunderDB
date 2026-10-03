@@ -22,11 +22,10 @@ test.beforeEach(async ({ page }) => {
     expect(Date.now() - t0).toBeLessThan(6000);
 });
 
-// À reprendre : sous ce mock, aucune touche de navigation (même ←) ne déplace le compteur ; la
-// couverture des touches est celle de keyboardService.pageKeys.test.js et positionNavigation.page.test.js.
-test.fixme('End, PageUp, Home, PageDown parcourent la liste', async ({ page }) => {
-    // Le focus part dans le panneau Match, qui garde ses touches : on le rend à la page.
-    await page.getByTestId('status-bar').click();
+test('End, PageUp, Home, PageDown parcourent la liste', async ({ page }) => {
+    // La base s'ouvre sur l'onglet Match, qui garde toutes les touches tant qu'il est affiché :
+    // Échap le ferme et rend les touches au plateau.
+    await page.keyboard.press('Escape');
     await page.keyboard.press('Home');
     await expect(statusBar(page)).toContainText(`1 / ${N}`);
     await page.keyboard.press('PageDown');
@@ -42,4 +41,17 @@ test(':N% va à la proportion demandée de la liste', async ({ page }) => {
     await page.keyboard.type('50%');
     await page.keyboard.press('Enter');
     await expect(statusBar(page)).toContainText(`${N / 2 + 0} / ${N}`.replace(/^\d+/, String(Math.round(0.5 * (N - 1)) + 1)));
+});
+
+test.describe('pas de page à 10 % de la liste', () => {
+    test('PageDown saute un dixième de la liste', async ({ page }) => {
+        await installWailsMock(page, scaleLibraryMock({ ids: N, extra: { config: { GetPageStep: '10%' } } }));
+        await page.goto('/');
+        await expect(statusBar(page)).toContainText(`${N} / ${N}`);
+        await page.keyboard.press('Escape');
+        await page.keyboard.press('Home');
+        await expect(statusBar(page)).toContainText(`1 / ${N}`);
+        await page.keyboard.press('PageDown');
+        await expect(statusBar(page)).toContainText(`${N / 10 + 1} / ${N}`);
+    });
 });

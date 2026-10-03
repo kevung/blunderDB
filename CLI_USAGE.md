@@ -3140,6 +3140,38 @@ Examples:
   blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle
 ```
 
+### `blunderdb tournament ranking`
+
+```
+Usage: blunderdb tournament ranking [options]
+
+Print a season ranking: the finished tournaments of a Rencontre or a period, scored by place.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -elo
+    	Add a club Elo replayed over the season's matches (FIBS formula, start 1500)
+  -format string
+    	Output format: csv or json (default "csv")
+  -from string
+    	First tournament date, YYYY-MM-DD, inclusive
+  -participation float
+    	Points added for every finished tournament played
+  -points string
+    	Points by place, comma-separated, winner first (default 25,18,15,12,10,8,6,4,2,1)
+  -rencontre int
+    	Only the tournaments of this Rencontre
+  -season standings
+    	Rank over several tournaments (required: a single tournament is standings)
+  -to string
+    	Last tournament date, YYYY-MM-DD, inclusive
+
+Examples:
+  blunderdb tournament ranking --db base.db --season --from 2026-01-01 --to 2026-12-31
+  blunderdb tournament ranking --db base.db --season --rencontre 1 --points 10,6,4 --elo --format json
+```
+
 ### `blunderdb tournament standings`
 
 ```

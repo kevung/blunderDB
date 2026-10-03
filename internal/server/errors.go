@@ -36,6 +36,12 @@ const (
 	// CodeUnavailable: the daemon is stopping and takes nothing new; retry
 	// against another instance or later (503).
 	CodeUnavailable = "unavailable"
+	// CodeQuotaExceeded: the tenant spent its engine time for the day, or
+	// runs as many imports as it may (429). details.quota names which.
+	CodeQuotaExceeded = "quota_exceeded"
+	// CodeStorageQuotaExceeded: the tenant stores as many positions as it
+	// may (413).
+	CodeStorageQuotaExceeded = "storage_quota_exceeded"
 )
 
 // errorEnvelope is the wire shape of every error response:
@@ -70,6 +76,10 @@ func statusForCode(code string) int {
 		return http.StatusUnprocessableEntity
 	case CodeUnavailable:
 		return http.StatusServiceUnavailable
+	case CodeQuotaExceeded:
+		return http.StatusTooManyRequests
+	case CodeStorageQuotaExceeded:
+		return http.StatusRequestEntityTooLarge
 	default:
 		return http.StatusInternalServerError
 	}

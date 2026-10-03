@@ -28,6 +28,9 @@
         "panelPositionBottom": "Abajo",
         "panelPositionSide": "Lateral",
         "panelPositionAuto": "Automática",
+        "pageStep": "Paso de RePág / AvPág",
+        "pageStepCount": "{n} posiciones",
+        "pageStepPercent": "{n} % de la lista",
         "colors": "Colores del tablero",
         "colorBackground": "Fondo",
         "colorBorder": "Borde",
@@ -2354,6 +2357,20 @@
             "open": "Abrir en el navegador",
             "forget": "Dejar de escribir",
             "error": "No se ha podido escribir la página de la pantalla."
+        },
+        "season": {
+            "title": "Clasificación de temporada",
+            "hint": "Los torneos cerrados del evento: cada puesto otorga los puntos del baremo (ganador primero); los empatados se reparten la media de sus puestos. Una persona se reconoce por su nombre.",
+            "points": "Baremo",
+            "elo": "Elo de club",
+            "compute": "Calcular",
+            "copy": "Copiar en CSV",
+            "copied": "Copiado",
+            "rank": "Puesto",
+            "player": "Jugador",
+            "total": "Puntos",
+            "played": "Torneos",
+            "empty": "Ningún torneo cerrado en este evento."
         },
         "sheet": {
             "print": "Imprimir la hoja",

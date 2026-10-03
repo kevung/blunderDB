@@ -37,6 +37,12 @@ tests/e2e/
 ├── search-flow.spec.js               – Recherche : filtres + structure, résultats, navigation
 ├── match-navigation.spec.js          – Match : ouverture, parcours des coups, sortie
 ├── import-position.spec.js           – Import : XGID collé, fichier via dialogue
+├── import-folder.spec.js             – Import d'un dossier : progression, doublon ignoré, rapport
+├── import-watched.spec.js            – Dossier surveillé : bandeau, position et onglet conservés
+├── tournaments.spec.js               – Tournois : créer, ouvrir sur ses matchs, revenir
+├── anki-review-session.spec.js       – Anki : une session notée au clavier jusqu'au bilan
+├── stats-tabs.spec.js                – Stats : les six onglets, agrégats chargés à la demande
+├── scale-navigation.spec.js          – 100 000 positions : Home/End, PageUp/PageDown, pas de 10 %, :N%
 ├── transcription-budgets.spec.js     – T3.5 : les budgets de gestes d'ux.md §§4.1–4.3, comptés
 ├── transcription-monkey.spec.js      – séquences aléatoires à graine (MONKEY_SEED, MONKEY_STEPS) et invariants du panneau
 ├── screenshot.spec.js                – Capture documentaire (hors suite, voir plus bas)

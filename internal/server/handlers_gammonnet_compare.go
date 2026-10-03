@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"runtime"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -46,12 +46,25 @@ func (s *Server) handleGammonNetCompare(w http.ResponseWriter, r *http.Request) 
 
 	ctx := r.Context()
 	scope := scopeOf(r)
+	if s.refuseAnalysis(w, scope) {
+		return
+	}
 	positions, stored, err := gammonnetPositionsWithForeignAnalysis(ctx, s.opts.Storage, scope, req.Limit)
 	if err != nil {
 		writeStorageError(w, err)
 		return
 	}
-	writeJSONResp(w, compareGathered(ctx, positions, stored, req.Ply, req.PruneK, req.Candidates))
+	writeJSONResp(w, compareGathered(ctx, positions, stored, req.Ply, req.PruneK, req.Candidates, s.engineWorkers, s.quota.spender(scope)))
+}
+
+// gammonnetCompareResp is the comparison, and whether the tenant's engine
+// time ran out before every gathered position was looked at: such a
+// comparison folds only some of the Gathered positions, and says so rather
+// than pass for the whole library.
+type gammonnetCompareResp struct {
+	gammonnet.AnalysisComparison
+	Gathered      int  `json:"gathered"`
+	QuotaExceeded bool `json:"quotaExceeded"`
 }
 
 // gammonnetPositionsWithForeignAnalysis returns the positions whose stored
@@ -87,14 +100,16 @@ func gammonnetPositionsWithForeignAnalysis(ctx context.Context, s storage.Storag
 	return positions, analyses, nil
 }
 
-// compareGathered runs the engine over the gathered positions on NumCPU
-// goroutines, each reusing one searcher, and folds the samples.
-func compareGathered(ctx context.Context, positions []domain.Position, stored []*domain.PositionAnalysis, ply, pruneK, candidates int) gammonnet.AnalysisComparison {
+// compareGathered runs the engine over the gathered positions on workers
+// goroutines, each reusing one searcher, and folds the samples. A worker
+// stops once spend says the tenant's engine time is out.
+func compareGathered(ctx context.Context, positions []domain.Position, stored []*domain.PositionAnalysis, ply, pruneK, candidates, workers int, spend func(time.Duration) bool) gammonnetCompareResp {
 	total := len(positions)
 	if total == 0 {
-		return gammonnet.Aggregate(nil)
+		return gammonnetCompareResp{AnalysisComparison: gammonnet.Aggregate(nil)}
 	}
-	jobs := min(runtime.NumCPU(), total)
+	jobs := min(max(workers, 1), total)
+	var spent atomic.Bool
 
 	var next atomic.Int64
 	results := make(chan gammonnet.ComparisonSample, jobs)
@@ -112,7 +127,12 @@ func compareGathered(ctx context.Context, positions []domain.Position, stored []
 				if i >= int64(total) {
 					return
 				}
+				start := time.Now()
 				results <- gammonnet.CompareOne(&positions[i], stored[i], positions[i].ID, searcher, ply, pruneK, candidates)
+				if !spend(time.Since(start)) {
+					spent.Store(true)
+					return
+				}
 			}
 		}()
 	}
@@ -125,5 +145,9 @@ func compareGathered(ctx context.Context, positions []domain.Position, stored []
 	for res := range results {
 		samples = append(samples, res)
 	}
-	return gammonnet.Aggregate(samples)
+	return gammonnetCompareResp{
+		AnalysisComparison: gammonnet.Aggregate(samples),
+		Gathered:           total,
+		QuotaExceeded:      spent.Load() && len(samples) < total,
+	}
 }

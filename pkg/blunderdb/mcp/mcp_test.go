@@ -156,7 +156,7 @@ func toolNames(t *testing.T, cs *sdk.ClientSession) []string {
 	return names
 }
 
-var writeTools = []string{"add_to_collection", "comment_position", "create_collection", "save_position"}
+var writeTools = []string{"add_to_collection", "anki_review", "comment_position", "create_collection", "save_position"}
 
 func TestReadOnlyByDefault(t *testing.T) {
 	cs := connect(t, demoServer(t, internalserver.Options{}).Handler(), mcp.Options{Tenant: "1"})
@@ -457,5 +457,38 @@ func TestRolloutTool(t *testing.T) {
 	}
 	if msg := callErr(t, ro, "rollout", obj{"positionId": id(t, checker[0], "id"), "rollout": tiny, "store": true}); msg == "" {
 		t.Error("a read-only server accepted store")
+	}
+}
+
+// TestClubTools: the evaluation, review, transcription and direction tools
+// answer on the demo database through their /v1 routes.
+func TestClubTools(t *testing.T) {
+	cs := connect(t, demoServer(t, internalserver.Options{}).Handler(), mcp.Options{Tenant: "1"})
+
+	ev := call(t, cs, "evaluate", obj{"text": "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10", "ply": 0, "candidates": 3})
+	if ev["decision"] != "checker" || len(list(t, ev, "moves")) == 0 || len(list(t, ev, "moves")) > 3 {
+		t.Errorf("evaluate: %v", ev)
+	}
+	// An absent ply is the documented default, 2, not a 0-ply search.
+	def := call(t, cs, "evaluate", obj{"text": "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10", "candidates": 1})
+	if def["depth"] != "2-ply" {
+		t.Errorf("evaluate without ply searches at %v; want 2-ply", def["depth"])
+	}
+	if msg := callErr(t, cs, "evaluate", obj{"text": ""}); !strings.Contains(msg, "XGID") {
+		t.Errorf("evaluate without text: %s", msg)
+	}
+	for tool, key := range map[string]string{"transcribe_list": "transcriptions", "direction_list": "directions", "direction_season": "rows"} {
+		if _, ok := call(t, cs, tool, nil)[key]; !ok {
+			t.Errorf("%s answers no %s", tool, key)
+		}
+	}
+	decks := list(t, call(t, cs, "study_decks", nil), "decks")
+	if len(decks) > 0 {
+		call(t, cs, "anki_next", obj{"deckId": id(t, decks[0], "id")})
+	}
+	// Nothing is due in a deck that does not exist: the tool says so with a null card, as its
+	// description promises, rather than failing.
+	if c, ok := call(t, cs, "anki_next", obj{"deckId": 987654})["card"]; !ok || c != nil {
+		t.Errorf("anki_next with nothing due: card = %v", c)
 	}
 }

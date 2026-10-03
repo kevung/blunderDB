@@ -76,3 +76,5 @@ that come out of them.
 | [0059](0059-blunderdb-s-offre-a-un-assistant-par-mcp.md) | blunderDB s'offre à un assistant par MCP | `pkg/blunderdb/mcp`, `/mcp`, `blunderdb mcp`, `--mcp-write` |
 | [0060](0060-un-rollout-est-sa-propre-configuration-et-se-stocke-a-cote.md) | Un rollout est sa propre Configuration, et se stockera à côté de l'Analysis | `pkg/blunderdb/engine/rollout`, recette P8, presets Rapide/Standard, `blunderdb rollout` |
 | [0061](0061-pas-d-import-a-seuil-le-corpus-entre-entier.md) | Pas d'import à seuil : un corpus entre entier | GB0.3, options A/B/C, `positionIsHeldSQL`, corpus BMAB en cinq copies |
+| [0062](0062-un-classement-de-saison-cumule-des-places-et-l-elo-de-club-suit-fibs.md) | Un classement de saison cumule des places, et l'Elo de club suit la formule FIBS | `SeasonRanking`, barème, Elo de club, `tournament ranking --season` |
+| [0063](0063-une-lecture-peut-porter-sur-les-tenants-que-le-proxy-liste.md) | Une lecture peut porter sur les tenants que le proxy liste | `X-Read-Tenants`, `/v1/across.*`, `storage.ReadAcross`, club / coach |

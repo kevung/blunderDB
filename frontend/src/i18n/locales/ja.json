@@ -28,6 +28,9 @@
         "panelPositionBottom": "下",
         "panelPositionSide": "横",
         "panelPositionAuto": "自動",
+        "pageStep": "PageUp / PageDown の移動幅",
+        "pageStepCount": "{n} 局面",
+        "pageStepPercent": "リストの {n}%",
         "colors": "ボードの色",
         "colorBackground": "背景",
         "colorBorder": "枠線",
@@ -2354,6 +2357,20 @@
             "open": "ブラウザーで開く",
             "forget": "書き出しをやめる",
             "error": "ディスプレイ用ページを書き出せませんでした。"
+        },
+        "season": {
+            "title": "シーズン順位",
+            "hint": "イベントの終了した大会：各順位に配点表の点数（優勝者から）を与え、同順位の者はその順位の平均を分け合います。同一人物は名前で識別します。",
+            "points": "配点表",
+            "elo": "クラブ Elo",
+            "compute": "計算",
+            "copy": "CSV でコピー",
+            "copied": "コピーしました",
+            "rank": "順位",
+            "player": "プレイヤー",
+            "total": "点数",
+            "played": "大会数",
+            "empty": "このイベントに終了した大会はありません。"
         },
         "sheet": {
             "print": "組み合わせ表を印刷",
