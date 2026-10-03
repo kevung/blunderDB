@@ -750,7 +750,9 @@ group with the full list of its positions.
 A checker theme is `gammon`, `blots`, `point` or `passive` (the rules of the
 Analysis panel's explanation sentence); a cube theme is the direction of the
 cube error: `offer_missed`, `offer_premature`, `answer_wrong_pass`,
-`answer_wrong_take`. `none` groups the errors no rule names. An error is a
+`answer_wrong_take`. The errors no rule names stay out of the ranking, listed
+apart with one line per plan of play (`Unthemed` in JSON): the explanation
+rules only speak from 60 mp, above the Error threshold. An error is a
 counted decision costing at least the library's Error threshold; `COST (PR)` is
 the share of the filter's PR the group accounts for.
 
@@ -2772,9 +2774,10 @@ Usage: blunderdb stats recurring --db <file> [options]
 Group the errors of the filter by plan of play and theme, costliest first.
 A checker theme is the reason the explanation rules name (gammon, blots,
 point, passive); a cube theme is the direction of the cube error. An error
-no rule names is grouped under "none". Cost is the share of the filter's
-PR the group accounts for; an error is a counted decision costing at least
-the library's Error threshold.
+no rule names is listed apart, per plan of play, outside the ranking (JSON:
+"Unthemed"): the rules only speak from 60 mp, above the Error threshold.
+Cost is the share of the filter's PR the group accounts for; an error is a
+counted decision costing at least the library's Error threshold.
 
 Options:
   -db string

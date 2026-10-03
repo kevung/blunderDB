@@ -4652,6 +4652,7 @@ export namespace storage {
 	    NumDecisions: number;
 	    ThresholdMP: number;
 	    Groups: RecurringErrorGroup[];
+	    Unthemed: RecurringErrorGroup[];
 	
 	    static createFrom(source: any = {}) {
 	        return new RecurringErrors(source);
@@ -4662,6 +4663,7 @@ export namespace storage {
 	        this.NumDecisions = source["NumDecisions"];
 	        this.ThresholdMP = source["ThresholdMP"];
 	        this.Groups = this.convertValues(source["Groups"], RecurringErrorGroup);
+	        this.Unthemed = this.convertValues(source["Unthemed"], RecurringErrorGroup);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

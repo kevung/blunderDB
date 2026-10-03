@@ -1488,6 +1488,7 @@
         "recurringTheme": "Teema",
         "recurringCost": "Kustannus (PR)",
         "recurringEmpty": "Ei virheitä tässä suodattimessa.",
+        "recurringUnthemed": "ei tunnistettua teemaa: {n} virhettä, kustannus {cost}",
         "recurringTheme_gammon": "gammon aliarvioitu",
         "recurringTheme_blots": "liikaa blotteja",
         "recurringTheme_point": "piste tekemättä",

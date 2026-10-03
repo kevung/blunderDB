@@ -8,7 +8,8 @@ import "sort"
 // A group is a plan of play (the position's derived game_type) crossed with a
 // theme. A checker theme is engine.ExplainChecker's token; a cube theme is the
 // direction of the cube error (ClassifyCubeDirection). An error neither rule
-// names confidently is grouped under RecurringThemeNone rather than guessed.
+// names confidently is grouped under RecurringThemeNone rather than guessed,
+// and reported apart from the ranking (RecurringErrors.Unthemed).
 
 // RecurringThemeNone groups the errors no rule names: the cost is real, the
 // reason is not one of the themes.
@@ -19,6 +20,7 @@ type RecurringErrorGroup struct {
 	// GameType is the domain.GameType token of the side on roll.
 	GameType string `json:"GameType"`
 	// Kind is "checker" or "cube": the two families have disjoint themes.
+	// It is empty on an unthemed group, which spans both.
 	Kind string `json:"Kind"`
 	// Theme is an engine.Explanation theme (checker), a CubeCell* error cell
 	// (cube), or RecurringThemeNone.
@@ -42,8 +44,14 @@ type RecurringErrors struct {
 	NumDecisions int `json:"NumDecisions"`
 	// ThresholdMP is the library's Error threshold (ADR-0046): a decision
 	// costing less is not an error and joins no group.
-	ThresholdMP int                   `json:"ThresholdMP"`
-	Groups      []RecurringErrorGroup `json:"Groups"`
+	ThresholdMP int `json:"ThresholdMP"`
+	// Groups are the themed groups, ranked by summed cost.
+	Groups []RecurringErrorGroup `json:"Groups"`
+	// Unthemed holds the errors no rule names, one group per plan of play
+	// (checker and cube together), kept out of the ranking: the explanation rules only
+	// speak from engine.ExplainMinCostMP, above the Error threshold, so this
+	// remainder would otherwise top a ranking that says nothing.
+	Unthemed []RecurringErrorGroup `json:"Unthemed"`
 }
 
 // RecurringErrorRow is one classified error, as a backend hands it to
@@ -69,9 +77,12 @@ func GroupRecurringErrors(rows []RecurringErrorRow, numDecisions, thresholdMP in
 	var order []key
 	for _, r := range rows {
 		k := key{r.GameType, r.Kind, r.Theme}
+		if r.Theme == RecurringThemeNone {
+			k.kind = "" // one unthemed line per plan of play, checker and cube together
+		}
 		a, ok := byKey[k]
 		if !ok {
-			a = &acc{g: RecurringErrorGroup{GameType: r.GameType, Kind: r.Kind, Theme: r.Theme}, worst: map[int64]int64{}}
+			a = &acc{g: RecurringErrorGroup{GameType: k.gameType, Kind: k.kind, Theme: k.theme}, worst: map[int64]int64{}}
 			byKey[k] = a
 			order = append(order, k)
 		}
@@ -82,7 +93,8 @@ func GroupRecurringErrors(rows []RecurringErrorRow, numDecisions, thresholdMP in
 		}
 	}
 
-	out := &RecurringErrors{NumDecisions: numDecisions, ThresholdMP: thresholdMP, Groups: []RecurringErrorGroup{}}
+	out := &RecurringErrors{NumDecisions: numDecisions, ThresholdMP: thresholdMP,
+		Groups: []RecurringErrorGroup{}, Unthemed: []RecurringErrorGroup{}}
 	for _, k := range order {
 		a := byKey[k]
 		if numDecisions > 0 {
@@ -99,11 +111,22 @@ func GroupRecurringErrors(rows []RecurringErrorRow, numDecisions, thresholdMP in
 			return ids[i] < ids[j]
 		})
 		a.g.PositionIDs = ids
-		out.Groups = append(out.Groups, a.g)
+		if a.g.Theme == RecurringThemeNone {
+			out.Unthemed = append(out.Unthemed, a.g)
+		} else {
+			out.Groups = append(out.Groups, a.g)
+		}
 	}
-	// A total order, so that both backends and every run rank ties alike.
-	sort.Slice(out.Groups, func(i, j int) bool {
-		a, b := out.Groups[i], out.Groups[j]
+	sortRecurringGroups(out.Groups)
+	sortRecurringGroups(out.Unthemed)
+	return out
+}
+
+// sortRecurringGroups ranks groups by summed cost in a total order, so that
+// both backends and every run rank ties alike.
+func sortRecurringGroups(groups []RecurringErrorGroup) {
+	sort.Slice(groups, func(i, j int) bool {
+		a, b := groups[i], groups[j]
 		if a.SumErrorMP != b.SumErrorMP {
 			return a.SumErrorMP > b.SumErrorMP
 		}
@@ -118,5 +141,4 @@ func GroupRecurringErrors(rows []RecurringErrorRow, numDecisions, thresholdMP in
 		}
 		return a.Theme < b.Theme
 	})
-	return out
 }

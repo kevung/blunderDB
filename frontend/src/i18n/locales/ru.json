@@ -1488,6 +1488,7 @@
         "recurringTheme": "Тема",
         "recurringCost": "Стоимость (PR)",
         "recurringEmpty": "В этом фильтре ошибок нет.",
+        "recurringUnthemed": "тема не определена: ошибок {n}, стоимость {cost}",
         "recurringTheme_gammon": "недооценка гаммона",
         "recurringTheme_blots": "слишком много блотов",
         "recurringTheme_point": "пункт не построен",

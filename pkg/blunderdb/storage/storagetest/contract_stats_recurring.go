@@ -80,7 +80,7 @@ func testStatsRecurringErrors(t *testing.T, s storage.Storage) {
 	for _, g := range res.Groups {
 		got[key{g.Kind, g.Theme}] = g
 	}
-	want := []key{{"checker", "gammon"}, {"checker", storage.RecurringThemeNone},
+	want := []key{{"checker", "gammon"},
 		{"cube", storage.CubeCellOfferMissed}, {"cube", storage.CubeCellAnswerWrongTake}}
 	for _, k := range want {
 		if _, ok := got[k]; !ok {
@@ -97,8 +97,13 @@ func testStatsRecurringErrors(t *testing.T, s storage.Storage) {
 	if want := 500 * 200.0 / 1000 / 5; g.PRCost != want {
 		t.Errorf("gammon PRCost = %v, want %v (the PR formula over every counted decision)", g.PRCost, want)
 	}
-	if n := got[key{"checker", storage.RecurringThemeNone}]; len(n.PositionIDs) != 1 || n.PositionIDs[0] != noneID {
-		t.Errorf("none group = %+v, want position %d", n, noneID)
+	// The errors no rule names stay out of the ranking, listed apart.
+	if len(res.Unthemed) != 1 {
+		t.Fatalf("Unthemed = %+v, want one group", res.Unthemed)
+	}
+	if n := res.Unthemed[0]; n.Theme != storage.RecurringThemeNone || n.Kind != "" ||
+		n.SumErrorMP != 80 || len(n.PositionIDs) != 1 || n.PositionIDs[0] != noneID {
+		t.Errorf("unthemed group = %+v, want one 80 mp error at position %d", n, noneID)
 	}
 	for i := 1; i < len(res.Groups); i++ {
 		if res.Groups[i].SumErrorMP > res.Groups[i-1].SumErrorMP {
@@ -110,8 +115,11 @@ func testStatsRecurringErrors(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("RecurringErrors(Alice): %v", err)
 	}
+	if len(alice.Unthemed) != 0 {
+		t.Errorf("Alice has Bob's unthemed error: %+v", alice.Unthemed)
+	}
 	for _, g := range alice.Groups {
-		if g.Theme == storage.RecurringThemeNone || g.Theme == storage.CubeCellAnswerWrongTake {
+		if g.Theme == storage.CubeCellAnswerWrongTake {
 			t.Errorf("Alice's errors include Bob's group %+v", g)
 		}
 	}

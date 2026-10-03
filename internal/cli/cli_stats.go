@@ -11,6 +11,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -80,9 +81,10 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 		fmt.Println("Group the errors of the filter by plan of play and theme, costliest first.")
 		fmt.Println("A checker theme is the reason the explanation rules name (gammon, blots,")
 		fmt.Println("point, passive); a cube theme is the direction of the cube error. An error")
-		fmt.Println("no rule names is grouped under \"none\". Cost is the share of the filter's")
-		fmt.Println("PR the group accounts for; an error is a counted decision costing at least")
-		fmt.Println("the library's Error threshold.")
+		fmt.Println("no rule names is listed apart, per plan of play, outside the ranking (JSON:")
+		fmt.Println("\"Unthemed\"): the rules only speak from 60 mp, above the Error threshold.")
+		fmt.Println("Cost is the share of the filter's PR the group accounts for; an error is a")
+		fmt.Println("counted decision costing at least the library's Error threshold.")
 		fmt.Println()
 		fmt.Println("Options:")
 		fs.PrintDefaults()
@@ -151,10 +153,27 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 // printRecurringErrors writes the groups as a table, the costliest first.
 func printRecurringErrors(res *storage.RecurringErrors, limit int) {
 	fmt.Printf("Recurring errors — %d counted decisions, error threshold %d mp\n\n", res.NumDecisions, res.ThresholdMP)
-	if len(res.Groups) == 0 {
+	if len(res.Groups) == 0 && len(res.Unthemed) == 0 {
 		fmt.Println("No error in this filter.")
 		return
 	}
+	if len(res.Groups) > 0 {
+		printRecurringRanking(res, limit)
+	}
+	if len(res.Unthemed) > 0 {
+		fmt.Println()
+		fmt.Printf("No theme identified (the explanation rules speak from %d mp), per plan of play:\n", engine.ExplainMinCostMP)
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(w, "PLAN\tERRORS\tCOST (PR)\tPOSITIONS")
+		for _, g := range res.Unthemed {
+			fmt.Fprintf(w, "%s\t%d\t%.2f\t%s\n", g.GameType, g.Count, g.PRCost, idPreview(g.PositionIDs, 5))
+		}
+		w.Flush()
+	}
+}
+
+// printRecurringRanking writes the themed groups, the costliest first.
+func printRecurringRanking(res *storage.RecurringErrors, limit int) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintln(w, "PLAN\tKIND\tTHEME\tERRORS\tCOST (PR)\tPOSITIONS")
 	shown := res.Groups

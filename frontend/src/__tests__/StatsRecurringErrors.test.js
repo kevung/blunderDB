@@ -38,6 +38,16 @@ describe('StatsRecurringErrors', () => {
         expect(loadPositionsFromSelection).toHaveBeenCalledWith([9]);
     });
 
+    test('the unthemed errors stay out of the ranking, listed apart and clickable', async () => {
+        const withRest = { ...data, Unthemed: [{ GameType: 'contact', Kind: '', Theme: 'none', Count: 9, SumErrorMP: 900, PRCost: 45, PositionIDs: [4, 5] }] };
+        render(StatsRecurringErrors, { props: { data: withRest } });
+        expect(screen.getAllByRole('row').slice(1)).toHaveLength(2);
+        const item = screen.getByRole('listitem');
+        expect(item.textContent).toContain('45.00');
+        await fireEvent.click(item.querySelector('button'));
+        expect(loadPositionsFromSelection).toHaveBeenCalledWith([4, 5]);
+    });
+
     test('says so when the filter has no error', () => {
         render(StatsRecurringErrors, { props: { data: { NumDecisions: 4, Groups: [] } } });
         expect(screen.queryAllByRole('row')).toHaveLength(0);

@@ -1488,6 +1488,7 @@
         "recurringTheme": "Θέμα",
         "recurringCost": "Κόστος (PR)",
         "recurringEmpty": "Κανένα λάθος σε αυτό το φίλτρο.",
+        "recurringUnthemed": "χωρίς αναγνωρισμένο θέμα: {n} λάθη, κόστος {cost}",
         "recurringTheme_gammon": "υποτίμηση γκάμον",
         "recurringTheme_blots": "πάρα πολλά μπλοτ",
         "recurringTheme_point": "πόντος που δεν έγινε",

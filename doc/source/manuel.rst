@@ -2194,8 +2194,13 @@ perds le plus ? » : par exemple, « tenue · trop de blots ».
   sous-estimé, trop de blots, point non fait, trop passif. Celui d'une
   décision de videau est le sens de l'erreur, comme dans la direction des
   erreurs de videau ci-dessous : double manqué, double prématuré, passe à
-  tort, prise à tort. Une erreur qu'aucune règle ne nomme avec assurance est
-  rangée **sans thème** plutôt que devinée.
+  tort, prise à tort.
+* Une erreur qu'aucune règle ne nomme avec assurance n'est pas devinée : elle
+  sort du classement et apparaît à part, sous le tableau, en une ligne par
+  plan de jeu (« sans thème identifié : N erreurs, coût X »), cliquable elle
+  aussi. Ce reste est souvent le plus lourd, car l'explication ne se prononce
+  qu'à partir de 60 mp, au-dessus du seuil *Erreur* : classé avec les autres,
+  il coifferait un tableau qui ne dirait rien.
 * Le **coût** est la part du PR du filtre que le groupe représente : la
   formule du PR appliquée aux erreurs du groupe, rapportée à toutes les
   décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR.

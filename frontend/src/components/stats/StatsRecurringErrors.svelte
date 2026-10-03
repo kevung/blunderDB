@@ -9,6 +9,10 @@
     let { data = null, loading = false, error = null } = $props();
 
     let groups = $derived(data?.Groups ?? []);
+    // Les erreurs qu'aucune règle ne nomme restent hors du classement : la
+    // phrase d'explication ne parle qu'à partir de 60 mp, au-dessus du seuil
+    // Erreur, et ce reste coifferait sinon un classement qui ne dit rien.
+    let unthemed = $derived(data?.Unthemed ?? []);
 
     function gameTypeLabel(gameType) {
         const key = `stats.gameType_${gameType}`;
@@ -44,33 +48,46 @@
         <p class="empty-subsection">{$t('stats.loading')}</p>
     {:else if error}
         <p class="empty-subsection">{error}</p>
-    {:else if groups.length === 0}
+    {:else if groups.length === 0 && unthemed.length === 0}
         <p class="empty-subsection">{$t('stats.recurringEmpty')}</p>
     {:else}
-        <table>
-            <thead>
-                <tr>
-                    <th>{$t('stats.gameType')}</th>
-                    <th>{$t('stats.recurringTheme')}</th>
-                    <th class="num">{$t('stats.decisions')}</th>
-                    <th class="num">{$t('stats.recurringCost')}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {#each groups as g (g.GameType + '/' + g.Kind + '/' + g.Theme)}
-                    <tr class="group-row" title={`${(g.SumErrorMP / 1000).toFixed(3)}`}>
-                        <td>{gameTypeLabel(g.GameType)}</td>
-                        <td>
-                            <button type="button" class="group-link" onclick={() => open(g)}>
-                                {$t(`stats.recurringKind_${g.Kind}`)} · {themeLabel(g)}
-                            </button>
-                        </td>
-                        <td class="num">{g.Count}</td>
-                        <td class="num">{g.PRCost.toFixed(2)}</td>
+        {#if groups.length > 0}
+            <table>
+                <thead>
+                    <tr>
+                        <th>{$t('stats.gameType')}</th>
+                        <th>{$t('stats.recurringTheme')}</th>
+                        <th class="num">{$t('stats.decisions')}</th>
+                        <th class="num">{$t('stats.recurringCost')}</th>
                     </tr>
+                </thead>
+                <tbody>
+                    {#each groups as g (g.GameType + '/' + g.Kind + '/' + g.Theme)}
+                        <tr class="group-row" title={`${(g.SumErrorMP / 1000).toFixed(3)}`}>
+                            <td>{gameTypeLabel(g.GameType)}</td>
+                            <td>
+                                <button type="button" class="group-link" onclick={() => open(g)}>
+                                    {$t(`stats.recurringKind_${g.Kind}`)} · {themeLabel(g)}
+                                </button>
+                            </td>
+                            <td class="num">{g.Count}</td>
+                            <td class="num">{g.PRCost.toFixed(2)}</td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        {/if}
+        {#if unthemed.length > 0}
+            <ul class="unthemed">
+                {#each unthemed as g (g.GameType)}
+                    <li>
+                        <button type="button" class="group-link" onclick={() => open(g)}>
+                            {gameTypeLabel(g.GameType)} — {$t('stats.recurringUnthemed', { n: g.Count, cost: g.PRCost.toFixed(2) })}
+                        </button>
+                    </li>
                 {/each}
-            </tbody>
-        </table>
+            </ul>
+        {/if}
     {/if}
 </section>
 
@@ -122,6 +139,14 @@
 
     .group-row:hover {
         background: var(--color-surface-alt);
+    }
+
+    .unthemed {
+        list-style: none;
+        margin: 8px 0 0;
+        padding: 0;
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
     }
 
     .group-link {

@@ -993,9 +993,11 @@ panneau Stats (voir :ref:`stats`). Les statistiques globales restent sous
 
 Un thème de coup de pions est ``gammon``, ``blots``, ``point`` ou
 ``passive`` ; un thème de videau est ``offer_missed``, ``offer_premature``,
-``answer_wrong_pass`` ou ``answer_wrong_take``. ``none`` regroupe les erreurs
-qu'aucune règle ne nomme. La colonne *COST (PR)* est la part du PR du filtre
-que le groupe représente.
+``answer_wrong_pass`` ou ``answer_wrong_take``. Les erreurs qu'aucune règle ne
+nomme sortent du classement : elles sont listées à part, une ligne par plan de
+jeu (champ ``Unthemed`` en JSON), parce que l'explication ne se prononce qu'à
+partir de 60 mp, au-dessus du seuil *Erreur*. La colonne *COST (PR)* est la
+part du PR du filtre que le groupe représente.
 
 **Exemples:**
 

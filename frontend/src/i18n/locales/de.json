@@ -1488,6 +1488,7 @@
         "recurringTheme": "Thema",
         "recurringCost": "Kosten (PR)",
         "recurringEmpty": "Kein Fehler in diesem Filter.",
+        "recurringUnthemed": "kein Thema erkannt: {n} Fehler, Kosten {cost}",
         "recurringTheme_gammon": "Gammon unterschätzt",
         "recurringTheme_blots": "zu viele Blots",
         "recurringTheme_point": "Punkt nicht gemacht",

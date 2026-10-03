@@ -1488,6 +1488,7 @@
         "recurringTheme": "テーマ",
         "recurringCost": "コスト (PR)",
         "recurringEmpty": "このフィルターに誤りはありません。",
+        "recurringUnthemed": "テーマ未特定: 誤り {n} 件、コスト {cost}",
         "recurringTheme_gammon": "ギャモンの過小評価",
         "recurringTheme_blots": "ブロットが多すぎる",
         "recurringTheme_point": "ポイントを作らなかった",
