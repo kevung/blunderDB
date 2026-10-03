@@ -35,6 +35,17 @@ func RunReadAcrossTests(t *testing.T, factory func() storage.Storage, read []str
 	s := factory()
 	defer s.Close()
 
+	// Every direct call runs under its tenant's context, as the daemon's do,
+	// so the suite also holds under PostgreSQL row-level security, where a
+	// call without one sees and writes nothing.
+	in := func(scope string) context.Context {
+		n, err := storage.ParseTenant(scope)
+		if err != nil {
+			t.Fatalf("tenant %q: %v", scope, err)
+		}
+		return storage.WithTenant(ctx, n)
+	}
+
 	// One match and one position per tenant; the player name says the tenant.
 	owners := append(append([]string{}, read...), outsider)
 	if outsider == "" {
@@ -42,11 +53,11 @@ func RunReadAcrossTests(t *testing.T, factory func() storage.Storage, read []str
 	}
 	for _, scope := range owners {
 		m := domain.Match{Player1Name: "player-" + scope, Player2Name: "rival", MatchLength: 5}
-		if _, err := s.Matches().Save(ctx, scope, &m); err != nil {
+		if _, err := s.Matches().Save(in(scope), scope, &m); err != nil {
 			t.Fatalf("Save match(%s): %v", scope, err)
 		}
 		p := checkerPos()
-		if _, err := s.Positions().Save(ctx, scope, &p); err != nil {
+		if _, err := s.Positions().Save(in(scope), scope, &p); err != nil {
 			t.Fatalf("Save position(%s): %v", scope, err)
 		}
 	}
@@ -68,11 +79,14 @@ func RunReadAcrossTests(t *testing.T, factory func() storage.Storage, read []str
 		}
 		for _, scope := range read {
 			want := 0
-			for _, err := range s.Matches().List(ctx, scope, storage.MatchListOpts{}) {
+			for _, err := range s.Matches().List(in(scope), scope, storage.MatchListOpts{}) {
 				if err != nil {
 					t.Fatalf("List(%s): %v", scope, err)
 				}
 				want++
+			}
+			if want == 0 {
+				t.Errorf("tenant %s: its own match is not read back", scope)
 			}
 			if len(got[scope]) != want {
 				t.Errorf("tenant %s: %d match(es) across, %d on its own", scope, len(got[scope]), want)

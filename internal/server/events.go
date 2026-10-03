@@ -57,11 +57,13 @@ var unboundedPaths = map[string]bool{eventsPath: true}
 var serverOnlyPaths = map[string]string{
 	eventsPath: "a stream that tells a connected client of other clients' gestures; " +
 		"`call` answers one request and has no client to tell, and the desktop shows its own gestures",
-	"/v1/across.searchFind":   whyAcross,
-	"/v1/across.matchesList":  whyAcross,
-	"/v1/across.matchesGet":   whyAcross,
-	"/v1/across.statsCompute": whyAcross,
-	"/v1/across.playerTable":  whyAcross,
+	"/v1/across.searchFind":         whyAcross,
+	"/v1/across.matchesList":        whyAcross,
+	"/v1/across.matchesGet":         whyAcross,
+	"/v1/across.matchMovePositions": whyAcross,
+	"/v1/across.analysesLoadByIds":  whyAcross,
+	"/v1/across.statsCompute":       whyAcross,
+	"/v1/across.playerTable":        whyAcross,
 }
 
 // whyAcross is why the across.* reads live outside Paths(): their read set comes from the

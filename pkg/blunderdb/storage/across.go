@@ -107,6 +107,18 @@ func ReadOne[T any](ctx context.Context, tenants ReadTenants, scope string, read
 	return Tagged[T]{Tenant: scope, Item: item}, nil
 }
 
+// StreamOne streams scope through read, under a context scoped to it, provided
+// scope is one of tenants; a tenant outside the set ends the stream with
+// ErrInvalid before any store is called.
+func StreamOne[T any](ctx context.Context, tenants ReadTenants, scope string, read func(ctx context.Context, scope string) iter.Seq2[T, error]) iter.Seq2[Tagged[T], error] {
+	if !tenants.Contains(scope) {
+		return func(yield func(Tagged[T], error) bool) {
+			yield(Tagged[T]{}, fmt.Errorf("%w: tenant %q is not one of this request's read tenants", ErrInvalid, scope))
+		}
+	}
+	return StreamAcross(ctx, ReadTenants{scope}, read)
+}
+
 // ReadAcross calls read once per tenant of tenants, in order, and tags each
 // answer. The first error stops the read and is returned alone: a partial
 // answer would pass for the whole set.
@@ -129,7 +141,9 @@ func ReadAcross[T any](ctx context.Context, tenants ReadTenants, read func(ctx c
 // StreamAcross chains read's streams, one per tenant of tenants, in order,
 // tagging every item. Bounds a caller passes to read (limit, offset) apply to
 // each tenant's stream: the result is the tenants' pages end to end, not one
-// page cut from their merge. An error ends the stream.
+// page cut from their merge. An error ends the stream; it comes after the
+// items of the tenants already read, so a streaming caller must treat the
+// stream as failed, not as those tenants' complete answer.
 func StreamAcross[T any](ctx context.Context, tenants ReadTenants, read func(ctx context.Context, scope string) iter.Seq2[T, error]) iter.Seq2[Tagged[T], error] {
 	return func(yield func(Tagged[T], error) bool) {
 		for _, scope := range tenants {

@@ -2,13 +2,16 @@ package server
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
+	"iter"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
@@ -27,6 +30,7 @@ type scopeLog struct {
 	mu     sync.Mutex
 	reads  []string
 	writes []string
+	limits []int // the limit of every Search().Find call
 }
 
 func (l *scopeLog) read(scope string) { l.mu.Lock(); l.reads = append(l.reads, scope); l.mu.Unlock() }
@@ -57,6 +61,19 @@ func (r recordingStorage) Search() storage.SearchStore {
 	return recordingSearch{r.Storage.Search(), r.log}
 }
 func (r recordingStorage) Stats() storage.StatsStore { return recordingStats{r.Storage.Stats(), r.log} }
+func (r recordingStorage) Analyses() storage.AnalysisStore {
+	return recordingAnalyses{r.Storage.Analyses(), r.log}
+}
+
+type recordingAnalyses struct {
+	storage.AnalysisStore
+	log *scopeLog
+}
+
+func (a recordingAnalyses) LoadMany(ctx context.Context, scope string, ids []int64) (map[int64]*domain.PositionAnalysis, error) {
+	a.log.read(scope)
+	return a.AnalysisStore.LoadMany(ctx, scope, ids)
+}
 
 type recordingMatches struct {
 	storage.MatchStore
@@ -76,6 +93,11 @@ func (m recordingMatches) List(ctx context.Context, scope string, o storage.Matc
 	return m.MatchStore.List(ctx, scope, o)
 }
 
+func (m recordingMatches) MovePositions(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.MatchMovePosition, error] {
+	m.log.read(scope)
+	return m.MatchStore.MovePositions(ctx, scope, matchID)
+}
+
 type recordingPositions struct {
 	storage.PositionStore
 	log *scopeLog
@@ -93,6 +115,9 @@ type recordingSearch struct {
 
 func (s recordingSearch) Find(ctx context.Context, scope string, f domain.SearchFilters, o storage.ListOpts) iterPositions {
 	s.log.read(scope)
+	s.log.mu.Lock()
+	s.log.limits = append(s.log.limits, o.Limit)
+	s.log.mu.Unlock()
 	return s.SearchStore.Find(ctx, scope, f, o)
 }
 
@@ -110,9 +135,16 @@ func (s recordingStats) PlayerTable(ctx context.Context, scope string, f storage
 	return s.StatsStore.PlayerTable(ctx, scope, f)
 }
 
-// newRecordingServer is a multi-tenant daemon (SingleTenant off) over an
+// newRecordingServer is a daemon that trusts X-Read-Tenants, over an
 // in-memory SQLite store whose calls are recorded.
 func newRecordingServer(t *testing.T, singleTenant bool) (*Server, *scopeLog) {
+	t.Helper()
+	return newRecordingServerWith(t, Options{SingleTenant: singleTenant, TrustReadTenants: true})
+}
+
+// newRecordingServerWith builds the recording daemon from o, its Storage and
+// Logger filled in.
+func newRecordingServerWith(t *testing.T, o Options) (*Server, *scopeLog) {
 	t.Helper()
 	st, err := sqlite.Open(context.Background(), ":memory:", nil)
 	if err != nil {
@@ -120,11 +152,9 @@ func newRecordingServer(t *testing.T, singleTenant bool) (*Server, *scopeLog) {
 	}
 	t.Cleanup(func() { st.Close() })
 	log := &scopeLog{}
-	srv, err := New(Options{
-		Storage:      recordingStorage{st, log},
-		Logger:       slog.New(slog.DiscardHandler),
-		SingleTenant: singleTenant,
-	})
+	o.Storage = recordingStorage{st, log}
+	o.Logger = slog.New(slog.DiscardHandler)
+	srv, err := New(o)
 	if err != nil {
 		t.Fatalf("New: %v", err)
 	}
@@ -146,7 +176,8 @@ func serveAcross(t *testing.T, srv *Server, writer, readTenants, path, body stri
 	return rec
 }
 
-// acrossCalls is one call per across.* route.
+// acrossCalls is one call per across.* route that spans the whole read set;
+// the routes naming one tenant are tested on their own.
 var acrossCalls = []struct{ path, body string }{
 	{"/v1/across.searchFind", `{}`},
 	{"/v1/across.matchesList", `{}`},
@@ -231,7 +262,11 @@ func TestAcross_MatchesGetNamesItsTenant(t *testing.T) {
 }
 
 func TestReadTenantsHeader_Malformed(t *testing.T) {
-	many := strings.Repeat("2,", storage.MaxReadTenants) + "3"
+	others := make([]string, storage.MaxReadTenants)
+	for i := range others {
+		others[i] = strconv.Itoa(i + 2)
+	}
+	many := strings.Join(others, ",")
 	for _, tc := range []struct {
 		name, header string
 		single       bool
@@ -276,4 +311,74 @@ func TestReadTenantsHeader_SingleTenantAcceptsItsOwnTenant(t *testing.T) {
 func jsonInt(n int64) string {
 	b, _ := json.Marshal(n)
 	return string(b)
+}
+
+// TestAcross_PositionsCarryTheirZobrist: each position read across tenants
+// carries the hash it is stored under — the one positions.exists answers to —
+// so a caller can join its own rows to it in any tenant.
+func TestAcross_PositionsCarryTheirZobrist(t *testing.T) {
+	srv, _ := newRecordingServer(t, false)
+	if rec := serveAcross(t, srv, "1", "", "/v1/positions.save", `{"position":`+initialPositionJSON(t)+`}`); rec.Code != http.StatusOK {
+		t.Fatalf("positions.save: %d %s", rec.Code, rec.Body)
+	}
+	rec := serveAcross(t, srv, "1", "", "/v1/across.searchFind", `{}`)
+	var item acrossPosition
+	if err := json.Unmarshal(bytes.TrimSpace(rec.Body.Bytes()), &item); err != nil || item.Zobrist == 0 {
+		t.Fatalf("across.searchFind = %s (%v), want a position with its hash", rec.Body, err)
+	}
+	exists := serveAcross(t, srv, "1", "", "/v1/positions.exists", `{"zobrist":`+strconv.FormatUint(item.Zobrist, 10)+`}`)
+	var found existsResp
+	if err := json.Unmarshal(exists.Body.Bytes(), &found); err != nil || !found.Found || found.ID != item.Position.ID {
+		t.Errorf("positions.exists(%d) = %s, want the position read across", item.Zobrist, exists.Body)
+	}
+}
+
+// TestAcross_SearchIsBounded: a stream read across tenants has no unbounded
+// form — limit 0 reads maxPageSize per tenant — and more is refused.
+func TestAcross_SearchIsBounded(t *testing.T) {
+	srv, log := newRecordingServer(t, false)
+	if rec := serveAcross(t, srv, "1", "2", "/v1/across.searchFind", `{}`); rec.Code != http.StatusOK {
+		t.Fatalf("status %d: %s", rec.Code, rec.Body)
+	}
+	log.mu.Lock()
+	limits := slices.Clone(log.limits)
+	log.mu.Unlock()
+	if !slices.Equal(limits, []int{maxPageSize, maxPageSize}) {
+		t.Errorf("Find limits %v, want maxPageSize per tenant", limits)
+	}
+	if rec := serveAcross(t, srv, "1", "", "/v1/across.searchFind", `{"limit":`+strconv.Itoa(maxPageSize+1)+`}`); rec.Code != http.StatusBadRequest {
+		t.Errorf("limit over maxPageSize: status %d, want 400", rec.Code)
+	}
+}
+
+// TestAcross_MatchMovePositionsAndAnalyses: a coach reads a student's match
+// move by move, each position with its hash, then the analyses by id — both
+// in the named tenant only.
+func TestAcross_MatchMovePositionsAndAnalyses(t *testing.T) {
+	srv, log := newRecordingServer(t, false)
+	// No such match: 404 is the store's answer, and it was asked of tenant 2.
+	rec := serveAcross(t, srv, "1", "2", "/v1/across.matchMovePositions", `{"tenant":"2","matchId":1}`)
+	if rec.Code != http.StatusOK && rec.Code != http.StatusNotFound {
+		t.Fatalf("across.matchMovePositions: %d %s", rec.Code, rec.Body)
+	}
+	rec = serveAcross(t, srv, "1", "2", "/v1/across.analysesLoadByIds", `{"tenant":"2","ids":[1,2]}`)
+	var got acrossAnalyses
+	if err := json.Unmarshal(rec.Body.Bytes(), &got); err != nil || got.Tenant != "2" {
+		t.Errorf("across.analysesLoadByIds = %d %s", rec.Code, rec.Body)
+	}
+	if reads, _ := log.snapshot(); !slices.Equal(reads, []string{"2", "2"}) {
+		t.Errorf("store read %v, want tenant 2 twice", reads)
+	}
+	for _, c := range []struct{ path, body string }{
+		{"/v1/across.matchMovePositions", `{"tenant":"9","matchId":1}`},
+		{"/v1/across.analysesLoadByIds", `{"tenant":"9","ids":[1]}`},
+	} {
+		srv, log := newRecordingServer(t, false)
+		if rec := serveAcross(t, srv, "1", "2", c.path, c.body); rec.Code != http.StatusBadRequest {
+			t.Errorf("%s, unlisted tenant: status %d, want 400", c.path, rec.Code)
+		}
+		if reads, _ := log.snapshot(); len(reads) != 0 {
+			t.Errorf("%s: an unlisted tenant reached the store: %v", c.path, reads)
+		}
+	}
 }

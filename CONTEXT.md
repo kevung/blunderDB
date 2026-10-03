@@ -627,7 +627,8 @@ prefer Tenant in prose and design discussion.
 The Tenants one server read spans: the writing Tenant (`X-Tenant-ID`) first, then
 those the authenticating proxy lists in `X-Read-Tenants`, at most 64 in all. Only
 the `across.*` reads use them, every answer names the Tenant it came from, and a
-write still lands in the writing Tenant alone. The relation behind the list (a
+write still lands in the writing Tenant alone. The daemon honours the header
+only when started with `--read-tenants`, and refuses it otherwise. The relation behind the list (a
 coach and their students, a club) lives with the caller; blunderDB authorises
 nothing (ADR-0005, ADR-0061). On SQLite, and on the desktop, the Read tenants are
 the single Tenant.

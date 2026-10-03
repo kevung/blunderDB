@@ -503,3 +503,25 @@ func initialPositionJSON(t *testing.T) string {
 	}
 	return string(b)
 }
+
+// TestReadTenants_RefusedUnlessTrusted: a daemon started without
+// --read-tenants refuses a request carrying X-Read-Tenants, on every route,
+// before any store call. A proxy written before the header existed strips
+// X-Tenant-ID only; a client behind it must not reach other tenants by adding
+// the new header.
+func TestReadTenants_RefusedUnlessTrusted(t *testing.T) {
+	srv, log := newRecordingServerWith(t, Options{})
+	for _, path := range []string{"/v1/across.matchesList", "/v1/across.matchesGet", "/v1/matches.list", "/v1/matches.save"} {
+		rec := serveAcross(t, srv, "1", "2", path, `{}`)
+		if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "--read-tenants") {
+			t.Errorf("%s with %s, untrusted: %d %s; want 400 naming --read-tenants", path, middleware.ReadTenantsHeader, rec.Code, rec.Body)
+		}
+	}
+	if reads, writes := log.snapshot(); len(reads)+len(writes) != 0 {
+		t.Errorf("an untrusted header reached the store: reads %v writes %v", reads, writes)
+	}
+	// Without the header, the across reads still answer, for X-Tenant-ID alone.
+	if rec := serveAcross(t, srv, "1", "", "/v1/across.matchesList", `{}`); rec.Code != http.StatusOK {
+		t.Errorf("untrusted, no header: %d %s", rec.Code, rec.Body)
+	}
+}

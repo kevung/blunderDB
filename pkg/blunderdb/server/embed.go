@@ -3,6 +3,9 @@
 // generic wrapper over the internal serve path — no social logic, no auth.
 // The embedder is responsible for authentication and for setting the
 // X-Tenant-ID header on every request, exactly as the standalone daemon expects.
+// With Config.TrustReadTenants it may also set X-Read-Tenants (ReadTenantsHeader),
+// the other tenants an across.* read spans; it then removes any value the
+// client sent, as it does for X-Tenant-ID (ADR-0005, ADR-0061).
 package server
 
 import (
@@ -16,6 +19,7 @@ import (
 
 	internalserver "github.com/kevung/blunderdb/internal/server"
 	"github.com/kevung/blunderdb/internal/server/metrics"
+	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 )
 
@@ -74,13 +78,28 @@ type Config struct {
 	// serves beside /v1; its read tools are always served, scoped by the same
 	// X-Tenant-ID. Off by default: the embedder decides who may write.
 	MCPWrite bool
+
+	// TrustReadTenants honours ReadTenantsHeader on the across.* reads: the
+	// embedder decides whom a request may read and writes the list there.
+	// Off by default, and off refuses a non-blank header with 400 — an
+	// embedder that never heard of it cannot forward a client's by mistake.
+	TrustReadTenants bool
 }
+
+// TenantHeader is the header the embedder sets to the authenticated tenant.
+const TenantHeader = middleware.TenantHeader
+
+// ReadTenantsHeader is the header listing the tenants an across.* read spans
+// besides TenantHeader, honoured only with Config.TrustReadTenants.
+const ReadTenantsHeader = middleware.ReadTenantsHeader
 
 // Bootstrap opens the storage backend, runs migrations, installs RLS policies
 // when enabled, builds the engine server and returns its http.Handler plus an
 // io.Closer for the storage pool. Mount the handler behind your own auth and
 // inject X-Tenant-ID per request — the tenant's positive decimal integer, a
 // name is refused with 400 (ADR-0005); the engine performs NO authentication.
+// X-Read-Tenants, when Config.TrustReadTenants is set, is the embedder's to
+// write as well: strip the client's before setting it (ADR-0061).
 func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error) {
 	logger := cfg.Logger
 	if logger == nil {
@@ -125,6 +144,7 @@ func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error)
 		StreamTimeout:      cfg.StreamTimeout,
 		MCPWrite:           cfg.MCPWrite,
 		Identity:           cfg.Identity,
+		TrustReadTenants:   cfg.TrustReadTenants,
 	})
 	if err != nil {
 		st.Close()

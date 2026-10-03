@@ -107,3 +107,23 @@ func TestParseServeArgs_PprofAddrDefaultsOffAndHonoursFlagAndEnv(t *testing.T) {
 		t.Errorf("pprofAddr = %q, want %q from BLUNDERDB_PPROF_ADDR", cfg3.pprofAddr, "127.0.0.1:6061")
 	}
 }
+
+// TestServeReadTenantsFlag: X-Read-Tenants is honoured only on request — by
+// flag or environment — and off by default (ADR-0061).
+func TestServeReadTenantsFlag(t *testing.T) {
+	t.Setenv("BLUNDERDB_READ_TENANTS", "")
+	cfg, err := parseServeArgs(nil)
+	if err != nil {
+		t.Fatalf("parseServeArgs: %v", err)
+	}
+	if cfg.readTenants {
+		t.Error("read tenants trusted by default")
+	}
+	if cfg, _ := parseServeArgs([]string{"--read-tenants"}); cfg == nil || !cfg.readTenants {
+		t.Error("--read-tenants does not turn it on")
+	}
+	t.Setenv("BLUNDERDB_READ_TENANTS", "true")
+	if cfg, _ := parseServeArgs(nil); cfg == nil || !cfg.readTenants {
+		t.Error("BLUNDERDB_READ_TENANTS=true does not turn it on")
+	}
+}

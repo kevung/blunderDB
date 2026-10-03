@@ -20,8 +20,10 @@ const TenantHeader = "X-Tenant-ID"
 // besides X-Tenant-ID (ADR-0061): comma-separated tenants, in the order the
 // answers come back. Like X-Tenant-ID, the daemon trusts it: the proxy that
 // authenticates the caller decides whom it may read and writes this header;
-// the daemon authorises nothing (ADR-0005). Only the /v1/across.* reads look
-// at it — every other route, and every write, stays on X-Tenant-ID alone.
+// the daemon authorises nothing (ADR-0005). The daemon honours it only when
+// started with --read-tenants; otherwise a non-blank value is refused. Only the
+// /v1/across.* reads look at it — every other route, and every write, stays on
+// X-Tenant-ID alone.
 const ReadTenantsHeader = "X-Read-Tenants"
 
 type tenantKey struct{}
@@ -50,7 +52,12 @@ const SingleTenantID = "1"
 // refuses any value but SingleTenantID — see Options.SingleTenant for why a
 // backend without a tenant column must say so rather than quietly serve
 // everyone the same rows.
-func Tenant(public map[string]bool, singleTenant bool, errFn func(http.ResponseWriter, *http.Request, string)) func(http.Handler) http.Handler {
+//
+// trustReadTenants, when false (the default), refuses any request carrying a
+// non-blank X-Read-Tenants: a proxy written before the header existed strips
+// X-Tenant-ID but lets this one through, and honouring it would let any client
+// behind such a proxy read other tenants. See Options.TrustReadTenants.
+func Tenant(public map[string]bool, singleTenant, trustReadTenants bool, errFn func(http.ResponseWriter, *http.Request, string)) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			if public[r.URL.Path] {
@@ -73,7 +80,7 @@ func Tenant(public map[string]bool, singleTenant bool, errFn func(http.ResponseW
 					"; a deployment with real tenants needs the PostgreSQL backend")
 				return
 			}
-			readSet, msg := readTenants(r, tenant, singleTenant)
+			readSet, msg := readTenants(r, tenant, singleTenant, trustReadTenants)
 			if msg != "" {
 				errFn(w, r, msg)
 				return
@@ -90,21 +97,35 @@ func Tenant(public map[string]bool, singleTenant bool, errFn func(http.ResponseW
 
 // readTenants builds the request's read set from X-Read-Tenants: the writing
 // tenant first, then each listed one. An absent or blank header is the writing
-// tenant alone — today's behaviour. A malformed header refuses the whole
-// request, whatever its route, rather than be read as a narrower set than the
-// proxy meant: a proxy that sends a broken list has a bug worth surfacing. On
-// a single-tenant backend every listed tenant must be SingleTenantID: SQLite
-// has no other tenant, and the header widens nothing there.
-func readTenants(r *http.Request, writer string, singleTenant bool) (storage.ReadTenants, string) {
-	raw := strings.TrimSpace(strings.Join(r.Header.Values(ReadTenantsHeader), ","))
+// tenant alone — the behaviour before the header existed. Anything else is
+// refused for the whole request, whatever its route, rather than read as a
+// narrower set than meant:
+//   - a header the daemon was not told to trust (trusted false): ignoring it
+//     would hide a proxy that forwards it from the client;
+//   - more than one header line: a proxy that appends instead of replacing
+//     would otherwise merge the client's list with its own;
+//   - a malformed list, or more than storage.MaxReadTenants distinct tenants;
+//   - on a single-tenant backend, any tenant but SingleTenantID: SQLite has no
+//     other tenant, and the header widens nothing there.
+func readTenants(r *http.Request, writer string, singleTenant, trusted bool) (storage.ReadTenants, string) {
+	lines := r.Header.Values(ReadTenantsHeader)
+	raw := strings.TrimSpace(strings.Join(lines, ","))
 	if raw == "" {
 		return storage.ReadTenants{writer}, ""
 	}
-	parts := strings.Split(raw, ",")
-	if len(parts) > storage.MaxReadTenants {
-		return nil, ReadTenantsHeader + " lists " + strconv.Itoa(len(parts)) +
-			" tenants, at most " + strconv.Itoa(storage.MaxReadTenants)
+	if !trusted {
+		return nil, ReadTenantsHeader + " is not accepted: this daemon was started without --read-tenants " +
+			"(BLUNDERDB_READ_TENANTS), so its proxy is not known to set the header; strip it at the proxy, " +
+			"or enable it once the proxy removes any value a client sends"
 	}
+	if len(lines) > 1 {
+		return nil, ReadTenantsHeader + " must be sent once, got " + strconv.Itoa(len(lines)) +
+			" header lines; the proxy must replace the client's value, not append to it"
+	}
+	// The bound of storage.MaxReadTenants counts distinct tenants, so it is
+	// NewReadTenants's to apply, after duplicates are dropped; the header's
+	// own size is already capped by the HTTP server.
+	parts := strings.Split(raw, ",")
 	listed := make([]string, 0, len(parts))
 	for _, p := range parts {
 		p = strings.TrimSpace(p)

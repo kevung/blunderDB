@@ -33,7 +33,7 @@ func probeTenantMode(public map[string]bool, path, header string, singleTenant b
 		p.numeric, _ = storage.TenantFromContext(r.Context())
 		w.WriteHeader(http.StatusNoContent)
 	})
-	mw := Tenant(public, singleTenant, func(w http.ResponseWriter, _ *http.Request, msg string) {
+	mw := Tenant(public, singleTenant, false, func(w http.ResponseWriter, _ *http.Request, msg string) {
 		p.reject = msg
 		w.WriteHeader(http.StatusBadRequest)
 	})(inner)
