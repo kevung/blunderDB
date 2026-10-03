@@ -27,6 +27,18 @@ export function formatDate(value, options) {
     return new Intl.DateTimeFormat(activeLocale(), options ?? { year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
 }
 
+/**
+ * Format the calendar day of an ISO string ("2025-03-02", "2025-03-02T00:00:00Z") in the active
+ * language. The day is read from the first ten characters and built as a local date, so a UTC
+ * midnight does not slide to the day before west of Greenwich. Anything else comes back as is.
+ */
+export function formatIsoDay(value) {
+    if (!value) return '';
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(value));
+    if (!m) return String(value);
+    return formatDate(new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])));
+}
+
 /** Same as formatDate(), with hour:minute appended per the active language's conventions. */
 export function formatDateTime(value, options) {
     const d = toDate(value);

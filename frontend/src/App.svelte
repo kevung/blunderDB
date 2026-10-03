@@ -120,7 +120,14 @@
     // barre du brouillon 34, padding 16, barre d'onglets 30. Appliquée sans toucher la valeur
     // stockée, pour qu'un autre onglet retrouve la hauteur choisie.
     const TRANSCRIPTION_MIN_HEIGHT = 320;
-    let appliedPanelHeight = $derived($activeTabStore === 'transcription' ? Math.max(panelHeight, TRANSCRIPTION_MIN_HEIGHT) : panelHeight);
+    // Stats stacks a filter bar, a row of cards and a summary: at the default height only one
+    // row of cards shows. Same mechanism, same reason: the stored height is left alone.
+    const STATS_MIN_HEIGHT = 400;
+    // A floor never takes more than this share of the window: the board keeps the rest.
+    const MAX_FLOOR_SHARE = 0.55;
+    let windowHeight = $state(typeof window === 'undefined' ? 800 : window.innerHeight);
+    let tabFloor = $derived($activeTabStore === 'transcription' ? TRANSCRIPTION_MIN_HEIGHT : $activeTabStore === 'stats' ? STATS_MIN_HEIGHT : 0);
+    let appliedPanelHeight = $derived(tabFloor ? Math.max(panelHeight, Math.min(tabFloor, Math.round(windowHeight * MAX_FLOOR_SHARE))) : panelHeight);
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
@@ -413,6 +420,8 @@
         unsubscribePositions();
     });
 </script>
+
+<svelte:window bind:innerHeight={windowHeight} />
 
 <main class="main-container" class:td-fullscreen={$directionFullscreenStore} bind:this={mainArea} use:fileDrop={{ onDrop: handleFileDrop, onOverlayChange: (visible) => (showDropOverlay = visible) }}>
     {#if showDropOverlay}

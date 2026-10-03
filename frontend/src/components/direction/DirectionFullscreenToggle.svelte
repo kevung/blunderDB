@@ -9,6 +9,7 @@
     <button
         type="button"
         class="td-fs-toggle"
+        class:windowed={!$directionFullscreenStore}
         data-testid="direction-fullscreen-toggle"
         aria-pressed={$directionFullscreenStore}
         title={$directionFullscreenStore ? $t('direction.fullscreen.exit') : $t('direction.fullscreen.enter')}
@@ -42,6 +43,11 @@
         color: inherit;
         opacity: 0.75;
         cursor: pointer;
+    }
+    /* Out of full screen the status bar sits on the bottom edge: the button rides above it
+       instead of covering the match count. */
+    .td-fs-toggle.windowed {
+        bottom: calc(var(--status-bar-height, 32px) + 10px);
     }
     .td-fs-toggle:hover,
     .td-fs-toggle:focus-visible {
