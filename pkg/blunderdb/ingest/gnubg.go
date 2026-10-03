@@ -392,6 +392,7 @@ func (im GnuBGImporter) Import(ctx context.Context, scope string, src Source, pr
 	sum := Summary{SavedPositions: res.SavedPositions, Matches: 1, MatchID: res.MatchID}
 	if res.Skipped {
 		sum.SkippedDuplicates = 1
+		sum.FlagsApplied = res.FlagsApplied
 		sum.SavedPositions = 0
 	}
 	if res.Enriched {

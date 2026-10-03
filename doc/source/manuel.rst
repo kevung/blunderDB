@@ -693,6 +693,42 @@ l'échelle. Les règles **Jacoby** et **Beaver** actives sur une position en
 money game s'affichent, elles aussi, en badges sous le tableau de décision de
 videau.
 
+.. _rollouts:
+
+Rollouts
+~~~~~~~~
+
+Sous l'analyse, le panneau **Analyse** propose de **rouler** la position :
+jouer des centaines de parties à partir de chaque coup candidat, ou de chaque
+action de videau, pour départager deux choix que l'évaluation directe sépare à
+peine. Trois réglages : **Rapide** (216 parties, tronquées à 7 demi-coups),
+**Standard** (1296 parties, tronquées à 11 demi-coups) et **Libre**, où tous les
+paramètres s'éditent — troncature, parties minimum et maximum (multiples de 36),
+limite de JSD, profondeur (ply), nombre de candidats, graine et nombre de
+processus. Le bouton **Lancer le rollout**, la touche *r* du panneau ou la
+commande ``rollout`` (alias ``ro``) le démarrent ; une barre de progression
+suit les parties jouées et **Annuler** (ou *r* de nouveau) l'arrête sans rien
+écrire.
+
+Le résultat est **stocké à côté de l'analyse, jamais à sa place** : une
+analyse importée n'est pas modifiée. Chaque rollout forme un bloc avec, par
+candidat, l'équité, l'intervalle de confiance à 95 %, la **JSD** (l'écart au
+meilleur coup en écarts-types de la différence : à partir de la limite, le coup
+est tranché et cesse d'être joué) et le nombre de parties. Le rollout s'arrête
+dès que les coups sont départagés. La **Configuration** — le moteur et la
+signature complète des paramètres — se déplie sous le tableau : deux rollouts
+de même signature sont les mêmes nombres. Un rollout joue le videau dans ses
+parties : le classement est fiable, l'équité absolue un peu moins, ce que le
+bloc rappelle. Une position qui n'est pas dans la base se roule, mais ne se
+stocke pas.
+
+Le bouton **Sur la liste affichée…** (ou ``ro search``) roule, l'une après
+l'autre, les positions de la liste affichée — résultats de recherche, match ou
+collection — qui n'ont pas encore ce rollout ; une confirmation donne le total
+avant de commencer. Chaque position est écrite
+dès qu'elle est finie : annuler garde ce qui est fait, et relancer reprend où
+l'on s'est arrêté. L'avancement survit à la fermeture du panneau.
+
 .. _panneau_commentaires:
 
 Panneau Commentaires
@@ -2437,9 +2473,10 @@ taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.
    Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas confondre
    avec zéro. C'est notamment le cas de la colonne Chance pour tout match
    importé avant la version 2.15.0 du schéma : la chance n'était alors pas
-   conservée, et rien ne permet de la reconstituer après coup — il faut
-   réimporter les fichiers source. Les formats qui ne la transportent pas (BGF,
-   Jellyfish ``.mat``) n'en fourniront jamais.
+   conservée, et rien ne permet de la reconstituer après coup. Réimporter le
+   fichier source ne suffit pas : l'import y reconnaît un doublon et n'en reprend
+   que les marques. Il faut supprimer le match, puis le réimporter. Les formats
+   qui ne la transportent pas (BGF, Jellyfish ``.mat``) n'en fourniront jamais.
 
 Règle d'agrégation
 ~~~~~~~~~~~~~~~~~~

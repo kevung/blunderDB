@@ -191,6 +191,10 @@ export default {
 <p>La bande n'apparaît que s'il y a effectivement plusieurs moteurs, et elle n'existe que dans ce panneau : le panneau Eval présente <strong>une</strong> décision, celle du moteur embarqué (<code>ADR-0017 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md&gt;</code>__), et une comparaison n'y aurait pas sa place.</p>
 <p>Les coups sont écrits comme on les lit sur le plateau, ici comme dans le panneau Eval : le pion le moins avancé bouge d'abord, et <strong>un pion qui enchaîne plusieurs dés ne s'écrit qu'une fois</strong> — un 64 joué avec le même pion se lit <code>24/14</code>, et <code>24/14*</code> s'il frappe en arrivant. Le détail de l'enchaînement ne réapparaît que lorsqu'il dit quelque chose de plus : une frappe <em>en cours de route</em> conserve son point de passage, <code>24/18* 18/14</code>, sans quoi la frappe en 18 disparaîtrait de la notation.</p>
 <p>L'équité d'une analyse importée suit la même règle que le panneau Eval : la colonne annonce son référentiel, « Équité (money) » ou « Équité (match) » selon le score de la position analysée, jamais un simple « Équité » muet sur l'échelle. Les règles <strong>Jacoby</strong> et <strong>Beaver</strong> actives sur une position en money game s'affichent, elles aussi, en badges sous le tableau de décision de videau.</p>
+<h4>Rollouts</h4>
+<p>Sous l'analyse, le panneau <strong>Analyse</strong> propose de <strong>rouler</strong> la position : jouer des centaines de parties à partir de chaque coup candidat, ou de chaque action de videau, pour départager deux choix que l'évaluation directe sépare à peine. Trois réglages : <strong>Rapide</strong> (216 parties, tronquées à 7 demi-coups), <strong>Standard</strong> (1296 parties, tronquées à 11 demi-coups) et <strong>Libre</strong>, où tous les paramètres s'éditent — troncature, parties minimum et maximum (multiples de 36), limite de JSD, profondeur (ply), nombre de candidats, graine et nombre de processus. Le bouton <strong>Lancer le rollout</strong>, la touche <em>r</em> du panneau ou la commande <code>rollout</code> (alias <code>ro</code>) le démarrent ; une barre de progression suit les parties jouées et <strong>Annuler</strong> (ou <em>r</em> de nouveau) l'arrête sans rien écrire.</p>
+<p>Le résultat est <strong>stocké à côté de l'analyse, jamais à sa place</strong> : une analyse importée n'est pas modifiée. Chaque rollout forme un bloc avec, par candidat, l'équité, l'intervalle de confiance à 95 %, la <strong>JSD</strong> (l'écart au meilleur coup en écarts-types de la différence : à partir de la limite, le coup est tranché et cesse d'être joué) et le nombre de parties. Le rollout s'arrête dès que les coups sont départagés. La <strong>Configuration</strong> — le moteur et la signature complète des paramètres — se déplie sous le tableau : deux rollouts de même signature sont les mêmes nombres. Un rollout joue le videau dans ses parties : le classement est fiable, l'équité absolue un peu moins, ce que le bloc rappelle. Une position qui n'est pas dans la base se roule, mais ne se stocke pas.</p>
+<p>Le bouton <strong>Sur la liste affichée…</strong> (ou <code>ro search</code>) roule, l'une après l'autre, les positions de la liste affichée — résultats de recherche, match ou collection — qui n'ont pas encore ce rollout ; une confirmation donne le total avant de commencer. Chaque position est écrite dès qu'elle est finie : annuler garde ce qui est fait, et relancer reprend où l'on s'est arrêté. L'avancement survit à la fermeture du panneau.</p>
 <h3>Panneau Commentaires</h3>
 <p>Le panneau <strong>Commentaires</strong> (<em>CTRL-P</em>) affiche, ajoute et modifie les commentaires associés à la position courante. Une position peut en porter plusieurs : ils sont tous affichés, du plus récent au plus ancien. Les commentaires importés depuis les fichiers XG sont automatiquement associés aux positions correspondantes. Appuyer sur <em>CTRL-P</em> ou exécuter la commande <code>comment</code> pour afficher ou masquer le panneau.</p>
 <p>Chaque commentaire venu d'un fichier porte une <strong>étiquette de provenance</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, ou <em>importé</em> lorsque la provenance n'a pas été enregistrée). Les commentaires que vous avez écrits n'en portent pas : c'est le cas courant, et le signaler à chaque ligne serait du bruit. Modifier un commentaire importé vous l'attribue : après la modification, la phrase est la vôtre.</p>
@@ -659,7 +663,7 @@ export default {
 <p>Dans cet onglet, la liste <strong>Joueur</strong> et le choix du <strong>type de décision</strong> sont désactivés : le tableau montre tous les joueurs, et il ventile déjà les décisions de pions et de videau en colonnes distinctes.</p>
 </div>
 <div class="admonition important">
-<p>Un tiret (« — ») signale une valeur <strong>jamais mesurée</strong>, à ne pas confondre avec zéro. C'est notamment le cas de la colonne Chance pour tout match importé avant la version 2.15.0 du schéma : la chance n'était alors pas conservée, et rien ne permet de la reconstituer après coup — il faut réimporter les fichiers source. Les formats qui ne la transportent pas (BGF, Jellyfish <code>.mat</code>) n'en fourniront jamais.</p>
+<p>Un tiret (« — ») signale une valeur <strong>jamais mesurée</strong>, à ne pas confondre avec zéro. C'est notamment le cas de la colonne Chance pour tout match importé avant la version 2.15.0 du schéma : la chance n'était alors pas conservée, et rien ne permet de la reconstituer après coup. Réimporter le fichier source ne suffit pas : l'import y reconnaît un doublon et n'en reprend que les marques. Il faut supprimer le match, puis le réimporter. Les formats qui ne la transportent pas (BGF, Jellyfish <code>.mat</code>) n'en fourniront jamais.</p>
 </div>
 <h4>Règle d'agrégation</h4>
 <div class="admonition important">
@@ -1305,6 +1309,10 @@ export default {
 <td>Basculer entre l'analyse des coups et du cube (navigation match uniquement).</td>
 </tr>
 <tr>
+<td>r</td>
+<td>Lancer le rollout de la position avec le réglage choisi ; une seconde pression l'arrête.</td>
+</tr>
+<tr>
 <td>Esc</td>
 <td>Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau.</td>
 </tr>
@@ -1933,6 +1941,10 @@ export default {
 <tr>
 <td>comment, co</td>
 <td>Afficher/écrire des commentaires.</td>
+</tr>
+<tr>
+<td>rollout, ro [fast|standard]</td>
+<td>Lance le rollout de la position courante (réglage choisi dans le panneau Analyse, ou le préréglage nommé) et ouvre le panneau Analyse. <code>ro search [fast|standard]</code> le lance sur la liste affichée, après confirmation avec le total ; <code>ro stop</code> arrête le rollout en cours.</td>
 </tr>
 <tr>
 <td>history, hi</td>

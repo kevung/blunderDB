@@ -578,7 +578,7 @@ A row is keyed by a player **name exactly as it appears in the matches**, so som
 ./blunderDB list --db database.db --type players --format csv
 ```
 
-**Reading the output:** a `—` (an empty field in CSV) marks a figure that was never measured, which is not the same as zero. Luck in particular is only available for matches imported since database schema 2.15.0, and only from formats that carry it (XG, gnuBG — not BGF or Jellyfish `.mat`); re-import the source files to obtain it. The `luck_rolls` column says how many rolls the average covers.
+**Reading the output:** a `—` (an empty field in CSV) marks a figure that was never measured, which is not the same as zero. Luck in particular is only available for matches imported since database schema 2.15.0, and only from formats that carry it (XG, gnuBG — not BGF or Jellyfish `.mat`). Re-importing the source file is not enough — the import recognises a duplicate and takes only its study marks: delete the match, then import it again. The `luck_rolls` column says how many rolls the average covers.
 
 **CSV columns:** `player`, `matches`, `wins`, `losses`, `decisions`, `pr`, `pr_checker`, `pr_cube`, `snowie_er`, `errors`, `blunders`, `luck_rate_mp`, `luck_rolls`.
 

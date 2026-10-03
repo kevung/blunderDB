@@ -34,6 +34,12 @@ name: Nightly
 # every push to main and was never compared against anything (115s/push,
 # "an artefact nobody compares" — that job is gone, this one replaces it).
 #
+# Also here: the scale benchmarks (`scale-bench`, GB0.1) — search, stats,
+# listings and one import against a synthetic base of a million positions,
+# compared night to night. Building that base and running them takes tens of
+# minutes, which no push-time job can afford; its job comment says how the
+# base and the previous figures are cached.
+#
 # Also here: the daemon's own PostgreSQL integration (`server-postgres`):
 # internal/server under the `postgres` tag — two daemons on one database
 # hearing each other's gestures by LISTEN/NOTIFY, a killed LISTEN
@@ -208,6 +214,108 @@ jobs:
           } > pr-comment-full.md
           gh pr comment "${{ inputs.pr_number }}" --repo "${{ github.repository }}" --body-file pr-comment-full.md
         shell: bash
+
+  # Scale benchmarks (GB0.1). BenchmarkScale_* in pkg/blunderdb/database run
+  # against a synthetic base of SCALE_POSITIONS positions built by
+  # cmd/blunderdb-synthdb, and each is compared with the previous night's
+  # figure by scripts/bench-scale-compare.sh: one benchmark slower than ×1.5
+  # turns the job red. Each benchmark runs three times and the best run
+  # counts: the first pass reads a cold base (up to ×2.4 slower for the
+  # import), which alone would cross the factor. The factor is wide because
+  # a shared runner is noisy; it is there for an index lost or a query turned
+  # into a full scan, not for drift.
+  #
+  # Why nightly: building the base takes about eleven minutes on a laptop
+  # (≈ 1 500 positions/s), more on a runner, and the benchmarks themselves
+  # several more (the unfiltered stats alone run for minutes at this size):
+  # too long for a push. The base is cached on the generator, the fixtures
+  # and the schema — a schema change or a new fixture rebuilds it. The previous night's results come
+  # back from the cache too, saved only when the gate passed, so a regression
+  # never becomes the next night's reference. No versioned baseline file: a
+  # runner is not the machine tasks/bench/ was measured on, so only
+  # runner-to-runner comparisons mean anything.
+  scale-bench:
+    # A dispatch aimed at a PR measures that PR's micro-benchmarks only: an
+    # hour of scale benchmarks would not answer it, and its figures must
+    # never become the night-to-night reference.
+    if: github.event_name != 'workflow_dispatch' || inputs.pr_number == ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      SCALE_POSITIONS: "1000000"
+      BLUNDERDB_SCALE_DB: ${{ github.workspace }}/scale.db
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup GoLang
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          check-latest: true
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: Restore the synthetic base
+        id: scale-db
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: scale.db
+          key: scale-db-${{ env.SCALE_POSITIONS }}-${{ hashFiles('cmd/blunderdb-synthdb/**', 'testdata/*.xg', 'testdata/*/*.xg', 'pkg/blunderdb/database/db_schema.go', 'pkg/blunderdb/storage/sqlite/schema_sqlite.go', 'pkg/blunderdb/engine/analysiscodec.go', 'pkg/blunderdb/ingest/**', 'pkg/blunderdb/domain/**') }}
+
+      - name: Build the synthetic base
+        if: steps.scale-db.outputs.cache-hit != 'true'
+        run: go run ./cmd/blunderdb-synthdb -out scale.db -positions "$SCALE_POSITIONS"
+        shell: bash
+
+      # Saved before the benchmarks run: BenchmarkScale_ImportSingleXG writes
+      # to the base, and the cached copy must stay the generator's output.
+      - name: Save the synthetic base
+        if: steps.scale-db.outputs.cache-hit != 'true'
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: scale.db
+          key: ${{ steps.scale-db.outputs.cache-primary-key }}
+
+      - name: Run the scale benchmarks
+        run: |
+          go test -run '^$' -bench '^BenchmarkScale_' -benchtime 1x -count 3 -benchmem -timeout 120m \
+            ./pkg/blunderdb/database | tee scale-bench.txt
+        shell: bash
+
+      - name: Restore the previous night's results
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: scale-bench-previous.txt
+          key: scale-bench-results-${{ github.run_id }}
+          restore-keys: scale-bench-results-
+
+      - name: Compare with the previous night (×1.5 per benchmark)
+        run: |
+          if [ -f scale-bench-previous.txt ]; then
+            scripts/bench-scale-compare.sh scale-bench-previous.txt scale-bench.txt 1.5 "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No previous scale results: this run becomes the reference." | tee -a "$GITHUB_STEP_SUMMARY"
+          fi
+          cp scale-bench.txt scale-bench-previous.txt
+        shell: bash
+
+      - name: Save these results as the next reference
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: scale-bench-previous.txt
+          key: scale-bench-results-${{ github.run_id }}
+
+      - name: Upload the scale results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: scale-bench
+          path: scale-bench.txt
+          if-no-files-found: ignore
 
   # The serve daemon's PostgreSQL integration: internal/server under the
   # `postgres` tag, -race. Two daemons on one database hearing each other's
@@ -448,7 +556,7 @@ jobs:
         shell: bash
 
   notify-on-failure:
-    needs: [test-os-full, gammonnet-race-full, benchstat, loadtest, notebook]
+    needs: [test-os-full, gammonnet-race-full, benchstat, scale-bench, loadtest, notebook]
     if: >-
       always() && contains(needs.*.result, 'failure') &&
       !(github.event_name == 'workflow_dispatch' && inputs.pr_number != '')

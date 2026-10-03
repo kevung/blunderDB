@@ -62,21 +62,22 @@ func SaveAnalysis(ctx context.Context, st storage.Storage, scope string, positio
 // update reads positionID's analysis, an empty one when it has none, lets
 // change rewrite it and writes it back, in one guarded transaction: two
 // writers on the same position cannot both read the row before either writes.
+// The read goes through AnalysisStore.Merge, which locks the row, so an
+// import merging into the same analysis — it takes no advisory lock — waits
+// for this write instead of being overwritten by it.
 func update(ctx context.Context, st storage.Storage, scope string, positionID int64, change func(*domain.PositionAnalysis)) error {
-	tx, err := storage.BeginGuarded(ctx, st, fmt.Sprintf("analysis:%s:%d", scope, positionID))
+	tx, err := storage.BeginGuarded(ctx, st, storage.AnalysisGuardKey(scope, positionID))
 	if err != nil {
 		return err
 	}
 	defer func() { _ = tx.Rollback() }()
-	a, err := tx.Analyses().Load(ctx, scope, positionID)
-	switch {
-	case errors.Is(err, storage.ErrNotFound):
-		a = &domain.PositionAnalysis{PositionID: int(positionID)}
-	case err != nil:
-		return err
-	}
-	change(a)
-	if err := tx.Analyses().Save(ctx, scope, positionID, a); err != nil {
+	if _, err := tx.Analyses().Merge(ctx, scope, positionID, nil, func(a *domain.PositionAnalysis) *domain.PositionAnalysis {
+		if a == nil {
+			a = &domain.PositionAnalysis{PositionID: int(positionID)}
+		}
+		change(a)
+		return a
+	}); err != nil {
 		return err
 	}
 	return tx.Commit()
@@ -122,6 +123,46 @@ func Gather(ctx context.Context, st storage.Storage, scope string, f domain.Sear
 		}
 		for _, p := range chunk {
 			if !analyses[p.ID].HasRollout(s.SignatureAt(&p)) {
+				out = append(out, p)
+			}
+		}
+	}
+	return out, nil
+}
+
+// GatherIDs is Gather for a list the caller already holds (the positions on
+// screen): those of ids that exist and do not yet carry a rollout of s's
+// Signature, in the order of ids, each once.
+func GatherIDs(ctx context.Context, st storage.Storage, scope string, ids []int64, s rollout.Settings) ([]domain.Position, error) {
+	seen := make(map[int64]bool, len(ids))
+	unique := make([]int64, 0, len(ids))
+	for _, id := range ids {
+		if !seen[id] {
+			seen[id] = true
+			unique = append(unique, id)
+		}
+	}
+	var out []domain.Position
+	for start := 0; start < len(unique); start += loadBatch {
+		chunk := unique[start:min(start+loadBatch, len(unique))]
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		loaded, err := st.Positions().LoadByIDs(ctx, scope, chunk)
+		if err != nil {
+			return nil, err
+		}
+		byID := make(map[int64]domain.Position, len(loaded))
+		for _, p := range loaded {
+			byID[p.ID] = p
+		}
+		analyses, err := st.Analyses().LoadMany(ctx, scope, chunk)
+		if err != nil {
+			return nil, err
+		}
+		for _, id := range chunk {
+			p, ok := byID[id]
+			if ok && !analyses[id].HasRollout(s.SignatureAt(&p)) {
 				out = append(out, p)
 			}
 		}

@@ -3,9 +3,9 @@
 import {gui} from '../models';
 import {domain} from '../models';
 import {gammonnet} from '../models';
+import {rollout} from '../models';
 import {race} from '../models';
 import {training} from '../models';
-import {rollout} from '../models';
 
 export function BearoffPlan(arg1:number,arg2:number):Promise<gui.BearoffPlan>;
 
@@ -28,6 +28,8 @@ export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 export function ComputeCubeMatrix(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<gammonnet.CubeMatrix>;
 
 export function CopyImageToClipboard(arg1:string):Promise<string>;
+
+export function CountRolloutIDs(arg1:Array<number>,arg2:rollout.Settings):Promise<number>;
 
 export function DeleteBearoffTable(arg1:string):Promise<void>;
 
@@ -121,9 +123,11 @@ export function StartGammonNetMatchBatch(arg1:number,arg2:number,arg3:number,arg
 
 export function StartGammonNetStaleBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
 
-export function StartRollout(arg1:gui.RolloutRequest):Promise<void>;
+export function StartRollout(arg1:gui.RolloutRequest):Promise<number>;
 
-export function StartRolloutFiltered(arg1:string,arg2:rollout.Settings):Promise<void>;
+export function StartRolloutFiltered(arg1:string,arg2:rollout.Settings):Promise<number>;
+
+export function StartRolloutIDs(arg1:Array<number>,arg2:rollout.Settings):Promise<number>;
 
 export function StartupFilePath():Promise<string>;
 
