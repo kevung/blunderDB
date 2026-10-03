@@ -1,10 +1,12 @@
 package database
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // ImportFilesOptions tunes Database.ImportFiles; the zero value is usable.
@@ -19,7 +21,17 @@ type ImportFilesOptions struct {
 	OnFile func(ingest.FileOutcome)
 	// OnRead is called from reader goroutines with each file's size once read.
 	OnRead func(size int64)
+	// OnBulk is called once, before any file is written, when the list is
+	// large enough for the bulk mode; unsafe tells that synchronous writes are
+	// off (an empty database: a cut means importing again).
+	OnBulk func(unsafe bool)
 }
+
+// bulkImportMinFiles is the list size from which ImportFiles writes in bulk
+// mode: a larger page cache, rare checkpoints, and on an empty database no
+// secondary index until the end and no synchronous writes. Below it, the
+// cost of rebuilding indexes and the risk outweigh the gain.
+var bulkImportMinFiles = 200
 
 // ImportFiles imports a list of match and position files through the
 // parallel pipeline (ingest.ImportFiles): readers in parallel, one writer, d.mu
@@ -36,8 +48,32 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 		d.mu.RUnlock()
 		return nil, fmt.Errorf("no database is currently open")
 	}
-	store, batchID := d.store, d.importBatchID
+	var store ingest.TxBeginner = d.store
+	batchID, sqlDB := d.importBatchID, d.db
 	d.mu.RUnlock()
+
+	// An in-memory database has one connection: a dedicated bulk connection
+	// would leave none to anyone else.
+	if len(paths) >= bulkImportMinFiles && sqlDB.Stats().MaxOpenConnections != 1 {
+		var held bool
+		if err := sqlDB.QueryRowContext(ctx, `SELECT EXISTS(SELECT 1 FROM position)`).Scan(&held); err != nil {
+			return nil, err
+		}
+		fresh := !held
+		sess, err := sqlite.BeginBulk(ctx, sqlDB, sqlite.BulkOptions{Unsafe: fresh, DropIndexes: fresh})
+		if err != nil {
+			return nil, err
+		}
+		defer func() {
+			if err := sess.Close(context.Background()); err != nil {
+				slog.Error("closing the bulk import session", "err", err)
+			}
+		}()
+		store = sess
+		if opts.OnBulk != nil {
+			opts.OnBulk(fresh)
+		}
+	}
 
 	out, err := ingest.ImportFiles(ctx, store, paths, ingest.PipelineOptions{
 		Workers:       opts.Workers,

@@ -467,7 +467,19 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		results = append(results, result)
 	}
 
-	if _, err := cli.db.ImportFiles(matchFiles, database.ImportFilesOptions{OnFile: onFile}); err != nil {
+	onBulk := func(unsafe bool) {
+		if !text {
+			return
+		}
+		if unsafe {
+			fmt.Println("Bulk mode on an empty database: indexes rebuilt at the end, writes not synced.")
+			fmt.Println("A power cut during this import can damage the database: recreate it and import again.")
+		} else {
+			fmt.Println("Bulk mode: larger cache, fewer checkpoints.")
+		}
+		fmt.Println()
+	}
+	if _, err := cli.db.ImportFiles(matchFiles, database.ImportFilesOptions{OnFile: onFile, OnBulk: onBulk}); err != nil {
 		cli.finishImportBatch(batchID, failures)
 		return fmt.Errorf("batch import interrupted: %w", err)
 	}

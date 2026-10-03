@@ -1067,6 +1067,22 @@ ne remplace pas ce qui est déjà là.
   déjà présent ; seules les marques posées dans le logiciel d'origine sont
   ajoutées, sans toucher aux commentaires ni aux analyses.
 
+* **Un dossier s'importe en parallèle.** Les fichiers sont lus sur plusieurs
+  cœurs à la fois et écrits par groupes, toujours dans l'ordre du dossier : les
+  numéros de match ne dépendent pas de la machine. Un fichier identique, octet
+  pour octet, à un fichier déjà lu du même dossier n'est pas relu : il est
+  compté comme doublon. Annuler arrête l'import au groupe en cours ; ce qui
+  était déjà écrit reste.
+
+* **Un gros dossier s'importe en mode masse.** À partir de 200 fichiers,
+  blunderDB écrit avec un cache plus grand et moins de points de contrôle. Si
+  la base ne contient encore aucune position, il va plus loin : les index de
+  recherche ne sont reconstruits qu'à la fin, et les écritures ne sont plus
+  synchronisées sur le disque. Une coupure de courant pendant un tel import
+  peut alors abîmer la base : il faut la recréer et relancer l'import. Un
+  arrêt brutal du programme, lui, laisse seulement des index absents, que
+  l'ouverture suivante reconstruit (le journal le signale).
+
 * **Ce que blunderDB n'écrit jamais** : une chance recalculée — elle est lue
   dans le fichier source, ou reste inconnue — et un rollout, dont il n'ouvre
   pas les données dans un fichier ``.xg`` et qu'il ne sait pas produire.

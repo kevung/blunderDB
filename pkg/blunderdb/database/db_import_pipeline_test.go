@@ -165,3 +165,44 @@ func TestImportFiles_CountsIntoBatch(t *testing.T) {
 		t.Errorf("%d matches stamped with the batch, want 3", stamped)
 	}
 }
+
+// The bulk mode changes how the database is written, never what it holds:
+// same rows as the ordinary mode, and every index back at the end.
+func TestImportFiles_BulkModeSameDatabase(t *testing.T) {
+	files := pipelineFixture(t)
+	plain := newTestDB(t)
+	if _, err := plain.ImportFiles(files, ImportFilesOptions{}); err != nil {
+		t.Fatal(err)
+	}
+
+	old := bulkImportMinFiles
+	bulkImportMinFiles = 1
+	t.Cleanup(func() { bulkImportMinFiles = old })
+	bulk := newTestDB(t)
+	var unsafe, called bool
+	if _, err := bulk.ImportFiles(files, ImportFilesOptions{OnBulk: func(u bool) { called, unsafe = true, u }}); err != nil {
+		t.Fatal(err)
+	}
+	if !called || !unsafe {
+		t.Errorf("OnBulk called=%v unsafe=%v, want a bulk, unsafe import into an empty database", called, unsafe)
+	}
+	for _, table := range []string{"match", "game", "move", "position", "analysis"} {
+		if a, b := countRows(t, plain.db, table), countRows(t, bulk.db, table); a != b {
+			t.Errorf("%s: ordinary %d rows, bulk %d", table, a, b)
+		}
+	}
+	idx := func(db *Database) int { return countRows(t, db.db, "sqlite_master WHERE type = 'index'") }
+	if a, b := idx(plain), idx(bulk); a != b {
+		t.Errorf("%d indexes after a bulk import, want %d", b, a)
+	}
+
+	// A second bulk import into a database that holds positions keeps its
+	// indexes and synchronous writes.
+	called, unsafe = false, false
+	if _, err := bulk.ImportFiles(files[:2], ImportFilesOptions{OnBulk: func(u bool) { called, unsafe = true, u }}); err != nil {
+		t.Fatal(err)
+	}
+	if !called || unsafe {
+		t.Errorf("OnBulk called=%v unsafe=%v on a non-empty database, want safe", called, unsafe)
+	}
+}
