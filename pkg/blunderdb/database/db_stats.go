@@ -34,6 +34,9 @@ type StatsFilter struct {
 	DateTo        string // ISO "YYYY-MM-DD"
 	DecisionType  int    // -1=all, 0=checker, 1=cube
 	MatchLength   []int
+	// Provenance: see storage.StatsFilter.
+	AnalysisEngine   string `json:"AnalysisEngine,omitempty"`
+	MinAnalysisDepth int    `json:"MinAnalysisDepth,omitempty"`
 }
 
 // StatsTotals holds high-level counts for a stats result.

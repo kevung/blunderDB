@@ -2877,6 +2877,8 @@ Options:
     	Path to the database file (required)
   -decision-type string
     	Decision type: all, checker, or cube (stats only) (default "all")
+  -engine string
+    	Only the decisions analysed by this engine (exact name, as stored)
   -format string
     	Output format: text, json or csv (stats, players and imports only) (default "text")
   -from string
@@ -2885,6 +2887,8 @@ Options:
     	Maximum number of items to list (default 10)
   -metric string
     	Metric to display: pr or mwc (stats only) (default "pr")
+  -min-depth int
+    	Only the decisions analysed at least this deep (plies)
   -offset int
     	Number of positions to skip before listing (positions only)
   -player string
@@ -3046,10 +3050,13 @@ Options:
     	Path to the database file (required)
   -format string
     	Output format: text or json (default "text")
+  -stats
+    	Also recompute the per-match statistics (PR, decisions, blunders, luck of each seat) from scratch
 
 Examples:
   blunderdb repair --db database.db
   blunderdb repair --db database.db --format json
+  blunderdb repair --db database.db --stats
 ```
 
 ### `blunderdb rollout`
@@ -3238,6 +3245,77 @@ Examples:
   blunderdb search --db database.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
 ```
 
+### `blunderdb stats h2h`
+
+```
+Usage: blunderdb stats h2h --db <file> --player <name> --opponent <name> [options]
+
+The matches the two players played against each other, each one's PR in
+each match and over all of them, and the record (decided matches only).
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -engine string
+    	Only the decisions analysed by this engine (exact name, as stored)
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -min-depth int
+    	Only the decisions analysed at least this deep (plies)
+  -opponent string
+    	Second player (required)
+  -player string
+    	First player (required)
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats h2h --db database.db --player "Alice" --opponent "Bob"
+  blunderdb stats h2h --db database.db --player "Alice" --opponent "Bob" --format json
+```
+
+### `blunderdb stats ranking`
+
+```
+Usage: blunderdb stats ranking --db <file> [options]
+
+The players ranked by PR, the lowest first, among those with at least
+--min-decisions counted decisions: a PR over a few decisions is noise.
+Equal PRs share a rank.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -engine string
+    	Only the decisions analysed by this engine (exact name, as stored)
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -limit int
+    	Show only the first N ranks (0: all)
+  -min-decisions int
+    	Rank only the players with at least this many counted decisions (default 500)
+  -min-depth int
+    	Only the decisions analysed at least this deep (plies)
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats ranking --db database.db --min-decisions 1000 --limit 20
+  blunderdb stats ranking --db database.db --from 2024-01-01 --format json
+```
+
 ### `blunderdb stats recurring`
 
 ```
@@ -3321,6 +3399,42 @@ Options:
 Examples:
   blunderdb stats training --db database.db --player "Alice"
   blunderdb stats training --db database.db --window month --format json
+```
+
+### `blunderdb stats windows`
+
+```
+Usage: blunderdb stats windows --db <file> [options]
+
+The PR over a sliding calendar window, one line per month: each line covers
+that month and the ones before it in the window. A window without a counted
+decision shows a dash, not a PR.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -engine string
+    	Only the decisions analysed by this engine (exact name, as stored)
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -min-depth int
+    	Only the decisions analysed at least this deep (plies)
+  -player string
+    	Only this player's decisions
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+  -window string
+    	Sliding window: month, quarter, or a number of months (default "month")
+
+Examples:
+  blunderdb stats windows --db database.db --player "Alice"
+  blunderdb stats windows --db database.db --player "Alice" --window quarter --format json
 ```
 
 ### `blunderdb tournament export`

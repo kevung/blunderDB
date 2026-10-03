@@ -47,12 +47,22 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 
 	result := &storage.StatsResult{PRRolling: make(map[int]float64)}
 
+	// The match-level figures come from match_stats when the filter allows
+	// it: a pass over the table instead of one over every decision row.
+	prPass, snowiePass, tournamentPass, matchPass := s.computePRByDecisionType, s.computeSnowieGlobal, s.computePerTournament, s.computePerMatch
+	if fromMatchStats(filter) {
+		if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
+			return nil, err
+		}
+		prPass, snowiePass, tournamentPass, matchPass = s.prByDecisionTypeFromTable, s.snowieGlobalFromTable, s.perTournamentFromTable, s.perMatchFromTable
+	}
+
 	for _, pass := range []func(context.Context, statsQuery, *storage.StatsResult) error{
 		s.computeTotals,
-		s.computePRByDecisionType,
-		s.computeSnowieGlobal,
-		s.computePerTournament,
-		s.computePerMatch,
+		prPass,
+		snowiePass,
+		tournamentPass,
+		matchPass,
 		s.computeCubeActionBreakdown,
 		s.computeCubeDirections,
 		s.computeErrorHistogram,
@@ -222,25 +232,15 @@ func (s *StatsStore) computePerTournament(ctx context.Context, q statsQuery, res
 	return nil
 }
 
-// computePerMatch fills PerMatch.
-//
-// Without a decision-type split the rows come from match_stats (MatchSeries),
-// which the contract's oracle holds equal to the direct grouping below.
+// computePerMatch fills PerMatch by grouping the decisions directly: the
+// path of a provenance filter, which match_stats cannot apply.
 func (s *StatsStore) computePerMatch(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
-	if q.filter.DecisionType < 0 {
-		series, err := s.MatchSeries(ctx, q.scope, q.filter)
-		if err != nil {
-			return fmt.Errorf("PR per match: %w", err)
-		}
-		result.PerMatch = series
-		return nil
-	}
 	d := s.DB
 	var scanErr error
 	rows, err := s.DB.Query(ctx,
 		`SELECT m.id, `+d.DateText("m.match_date")+`, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*) `+
 			statsBaseJoin+q.whereSQL+
-			` GROUP BY m.id, m.match_date ORDER BY m.match_date`,
+			` GROUP BY m.id, m.match_date ORDER BY m.match_date, m.id`,
 		q.baseArgs...,
 	)
 	if err != nil {

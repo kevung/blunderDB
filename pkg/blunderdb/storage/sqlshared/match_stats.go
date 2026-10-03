@@ -50,6 +50,13 @@ const InvalidateMatchStatsOfPositionsSQL = `DELETE FROM match_stats WHERE match_
 // InvalidateMatchStatsOfPositionsSuffix closes InvalidateMatchStatsOfPositionsSQL's subquery.
 const InvalidateMatchStatsOfPositionsSuffix = `)`
 
+// DropOlderShapeMatchStatsSQL deletes the rows an earlier build of the same
+// schema version wrote, before the error split and the Snowie parts were
+// columns: they are NULL there and nowhere else. Run at every open, after
+// the columns exist; the fill that follows recomputes those matches, so the
+// repair is idempotent and costs one scan of the table once done.
+const DropOlderShapeMatchStatsSQL = `DELETE FROM match_stats WHERE checker_moves IS NULL`
+
 // InvalidateMatchStats drops the rows of matchIDs, in batches.
 func InvalidateMatchStats(ctx context.Context, db Execer, matchIDs []int64) error {
 	return execInBatches(ctx, db, matchIDs, InvalidateMatchStatsOfMatchesSQL, "")
@@ -96,7 +103,7 @@ const seatExpr = "CASE WHEN mv.player = 1 THEN 1 ELSE 2 END"
 // computeMatchStatsRows is the direct calculation of the rows of matchIDs
 // (the matches of the scope among them; at most matchStatsBatch). It reads
 // the same join, counted predicate and error column as Compute.
-func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope string, matchIDs []int64, blunderMP int) ([]storage.MatchStatsRow, error) {
+func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope string, matchIDs []int64, settings storage.LibrarySettings) ([]storage.MatchStatsRow, error) {
 	d := db
 	ph := Placeholders(len(matchIDs))
 	ids := int64Args(matchIDs)
@@ -127,17 +134,19 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 	}
 
 	pTenant, pArgs := d.TenantFilter("p", scope)
-	where := ` WHERE ` + pTenant + ` AND g.match_id IN (` + ph + `) AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + countedExpr(d)
+	analysed := ` WHERE ` + pTenant + ` AND g.match_id IN (` + ph + `) AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL`
+	where := analysed + ` AND ` + countedExpr(d)
 	whereArgs := append(append([]any{}, pArgs...), ids...)
 
 	if err := scanEach(ctx, d,
 		`SELECT g.match_id, `+seatExpr+`, p.decision_type, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
+			d.Bigint(`SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END)`)+`, `+
 			d.Bigint(`SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END)`)+` `+
 			statsBaseJoin+where+` GROUP BY g.match_id, `+seatExpr+`, p.decision_type`,
-		append([]any{blunderMP}, whereArgs...), func(r Rows) error {
-			var id, sum, blunders int64
+		append([]any{settings.ErrorThresholdMP, settings.BlunderThresholdMP}, whereArgs...), func(r Rows) error {
+			var id, sum, errs, blunders int64
 			var seat, dt, n int
-			if err := r.Scan(&id, &seat, &dt, &sum, &n, &blunders); err != nil {
+			if err := r.Scan(&id, &seat, &dt, &sum, &n, &errs, &blunders); err != nil {
 				return err
 			}
 			row, ok := rows[key{id, seat}]
@@ -147,14 +156,58 @@ func (s *StatsStore) computeMatchStatsRows(ctx context.Context, db Execer, scope
 			row.Decisions += n
 			if dt == 1 {
 				row.CubeDecisions += n
+				row.CubeErrorMP += sum
 			} else {
 				row.CheckerDecisions += n
+				row.CheckerErrorMP += sum
 			}
 			row.ErrorMP += sum
+			row.Errors += int(errs)
 			row.Blunders += int(blunders)
 			return nil
 		}); err != nil {
 		return nil, fmt.Errorf("match stats decisions: %w", err)
+	}
+
+	// The Snowie rate's parts, over every analysed decision whether counted
+	// or not (gnuBG formatgs.c:415-424): see computeSnowieGlobal.
+	if err := scanEach(ctx, d,
+		`SELECT g.match_id, `+seatExpr+`, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, `+
+			d.Bigint(`SUM(CASE WHEN p.decision_type = 0 THEN 1 ELSE 0 END)`)+` `+
+			statsBaseJoin+analysed+` GROUP BY g.match_id, `+seatExpr,
+		whereArgs, func(r Rows) error {
+			var id, sum, moves int64
+			var seat int
+			if err := r.Scan(&id, &seat, &sum, &moves); err != nil {
+				return err
+			}
+			if row, ok := rows[key{id, seat}]; ok {
+				row.SnowieErrorMP, row.SnowieMoves = sum, int(moves)
+			}
+			return nil
+		}); err != nil {
+		return nil, fmt.Errorf("match stats snowie: %w", err)
+	}
+
+	// Checker decisions with a position, analysed or not: the players
+	// table's Snowie denominator.
+	if err := scanEach(ctx, d,
+		`SELECT g.match_id, `+seatExpr+`, COUNT(*)
+		 FROM move mv JOIN game g ON g.id = mv.game_id JOIN position p ON p.id = mv.position_id
+		 WHERE g.match_id IN (`+ph+`) AND p.decision_type = 0
+		 GROUP BY g.match_id, `+seatExpr,
+		ids, func(r Rows) error {
+			var id int64
+			var seat, n int
+			if err := r.Scan(&id, &seat, &n); err != nil {
+				return err
+			}
+			if row, ok := rows[key{id, seat}]; ok {
+				row.CheckerMoves = n
+			}
+			return nil
+		}); err != nil {
+		return nil, fmt.Errorf("match stats checker moves: %w", err)
 	}
 
 	// Provenance: the (engine, depth) most counted decisions of the seat
@@ -245,9 +298,9 @@ func scanEach(ctx context.Context, db Execer, query string, args []any, fn func(
 
 // refreshMatchStatsBatch recomputes and replaces the rows of one batch of
 // matches in a single transaction.
-func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, matchIDs []int64, blunderMP int) error {
+func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, matchIDs []int64, settings storage.LibrarySettings) error {
 	return s.DB.Transact(ctx, func(tx Execer) error {
-		rows, err := s.computeMatchStatsRows(ctx, tx, scope, matchIDs, blunderMP)
+		rows, err := s.computeMatchStatsRows(ctx, tx, scope, matchIDs, settings)
 		if err != nil {
 			return err
 		}
@@ -256,7 +309,8 @@ func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, m
 		}
 		tcols, targs := tx.TenantColumns(scope)
 		cols := append(append([]string{}, tcols...), "match_id", "seat", "decisions", "checker_decisions", "cube_decisions",
-			"error_mp", "pr", "luck_mp", "luck_rolls", "blunders", "analysis_engine", "analysis_depth")
+			"error_mp", "pr", "luck_mp", "luck_rolls", "blunders", "analysis_engine", "analysis_depth",
+			"checker_error_mp", "cube_error_mp", "errors", "snowie_error_mp", "snowie_moves", "checker_moves")
 		insert := `INSERT INTO match_stats (` + strings.Join(cols, ", ") + `) VALUES (` + Placeholders(len(cols)) + `)`
 		for _, r := range rows {
 			var prv, eng, depth any
@@ -270,7 +324,8 @@ func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, m
 				depth = r.AnalysisDepth
 			}
 			args := append(append([]any{}, targs...), r.MatchID, r.Seat, r.Decisions, r.CheckerDecisions, r.CubeDecisions,
-				r.ErrorMP, prv, r.LuckMP, r.LuckRolls, r.Blunders, eng, depth)
+				r.ErrorMP, prv, r.LuckMP, r.LuckRolls, r.Blunders, eng, depth,
+				r.CheckerErrorMP, r.CubeErrorMP, r.Errors, r.SnowieErrorMP, r.SnowieMoves, r.CheckerMoves)
 			if _, err := tx.Exec(ctx, insert, args...); err != nil {
 				return fmt.Errorf("match stats insert: %w", err)
 			}
@@ -290,7 +345,7 @@ func (s *StatsStore) RefreshMatchStats(ctx context.Context, scope string, matchI
 		return fmt.Errorf("match stats settings: %w", err)
 	}
 	for start := 0; start < len(matchIDs); start += matchStatsBatch {
-		if err := s.refreshMatchStatsBatch(ctx, scope, matchIDs[start:min(start+matchStatsBatch, len(matchIDs))], settings.BlunderThresholdMP); err != nil {
+		if err := s.refreshMatchStatsBatch(ctx, scope, matchIDs[start:min(start+matchStatsBatch, len(matchIDs))], settings); err != nil {
 			return err
 		}
 	}
@@ -333,7 +388,7 @@ func (s *StatsStore) FillMatchStats(ctx context.Context, scope string, progress 
 			return start, err
 		}
 		end := min(start+matchStatsBatch, len(ids))
-		if err := s.refreshMatchStatsBatch(ctx, scope, ids[start:end], settings.BlunderThresholdMP); err != nil {
+		if err := s.refreshMatchStatsBatch(ctx, scope, ids[start:end], settings); err != nil {
 			return start, err
 		}
 		if progress != nil {
@@ -358,14 +413,16 @@ func (s *StatsStore) MatchStats(ctx context.Context, scope string, matchIDs []in
 	}
 	tenant, args := s.DB.TenantFilter("ms", scope)
 	q := `SELECT ms.match_id, ms.seat, ms.decisions, ms.checker_decisions, ms.cube_decisions, ms.error_mp,
-		COALESCE(ms.pr, 0), ms.luck_mp, ms.luck_rolls, ms.blunders, COALESCE(ms.analysis_engine, ''), COALESCE(ms.analysis_depth, 0)
+		COALESCE(ms.pr, 0), ms.luck_mp, ms.luck_rolls, ms.blunders, COALESCE(ms.analysis_engine, ''), COALESCE(ms.analysis_depth, 0),
+		ms.checker_error_mp, ms.cube_error_mp, ms.errors, ms.snowie_error_mp, ms.snowie_moves, ms.checker_moves
 		FROM match_stats ms WHERE ` + tenant
 	var out []storage.MatchStatsRow
 	collect := func(query string, qargs []any) error {
 		return scanEach(ctx, s.DB, query, qargs, func(r Rows) error {
 			var row storage.MatchStatsRow
 			if err := r.Scan(&row.MatchID, &row.Seat, &row.Decisions, &row.CheckerDecisions, &row.CubeDecisions, &row.ErrorMP,
-				&row.PR, &row.LuckMP, &row.LuckRolls, &row.Blunders, &row.AnalysisEngine, &row.AnalysisDepth); err != nil {
+				&row.PR, &row.LuckMP, &row.LuckRolls, &row.Blunders, &row.AnalysisEngine, &row.AnalysisDepth,
+				&row.CheckerErrorMP, &row.CubeErrorMP, &row.Errors, &row.SnowieErrorMP, &row.SnowieMoves, &row.CheckerMoves); err != nil {
 				return err
 			}
 			out = append(out, row)
@@ -390,43 +447,15 @@ func (s *StatsStore) MatchStats(ctx context.Context, scope string, matchIDs []in
 
 // MatchSeries — see storage.StatsStore.
 func (s *StatsStore) MatchSeries(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.MatchStats, error) {
-	if filter.DecisionType >= 0 {
-		return nil, fmt.Errorf("match series by decision type: %w", storage.ErrInvalid)
+	if !fromMatchStats(filter) {
+		return nil, fmt.Errorf("match series with a provenance filter: %w", storage.ErrInvalid)
 	}
 	if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
 		return nil, err
 	}
-	d := s.DB
-	where, args := s.buildMatchWhereClause(scope, filter)
-	// The seat predicate is where a player's aliases arrive: PlayerNameSet
-	// already folds filter.PlayerAliases into the names matched.
-	if names := storage.PlayerNameSet(filter); len(names) > 0 {
-		ph := Placeholders(len(names))
-		where += " AND ((ms.seat = 1 AND m.player1_name IN (" + ph + ")) OR (ms.seat = 2 AND m.player2_name IN (" + ph + ")))"
-		for range 2 {
-			for _, n := range names {
-				args = append(args, n)
-			}
-		}
+	var res storage.StatsResult
+	if err := s.perMatchFromTable(ctx, statsQuery{scope: scope, filter: filter}, &res); err != nil {
+		return nil, errf(s.DB, "match series", err)
 	}
-	var out []storage.MatchStats
-	err := scanEach(ctx, d,
-		`SELECT m.id, `+d.DateText("m.match_date")+`, `+d.Bigint(`SUM(ms.error_mp)`)+`, `+d.Bigint(`SUM(ms.decisions)`)+`
-		 FROM match_stats ms JOIN match m ON m.id = ms.match_id`+where+`
-		 GROUP BY m.id, m.match_date HAVING SUM(ms.decisions) > 0 ORDER BY m.match_date, m.id`,
-		args, func(r Rows) error {
-			var ms storage.MatchStats
-			var sum, n int64
-			if err := r.Scan(&ms.ID, &ms.Date, &sum, &n); err != nil {
-				return err
-			}
-			ms.NumDecisions = int(n)
-			ms.PR = pr(sum, int(n))
-			out = append(out, ms)
-			return nil
-		})
-	if err != nil {
-		return nil, errf(d, "match series", err)
-	}
-	return out, nil
+	return res.PerMatch, nil
 }

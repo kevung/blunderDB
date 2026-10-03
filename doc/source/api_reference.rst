@@ -269,6 +269,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    stats
      POST /v1/stats.compute                        JSON
      POST /v1/stats.dateRange                      JSON
+     POST /v1/stats.headToHead                     JSON
      POST /v1/stats.matchBadges                    JSON
      POST /v1/stats.matchDetail                    JSON
      POST /v1/stats.matchMoveGrades                JSON
@@ -277,6 +278,8 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.positionIdsByMatch             JSON
      POST /v1/stats.positionIdsBySelection         JSON
      POST /v1/stats.positionIdsByTournament        JSON
+     POST /v1/stats.prByWindow                     JSON
+     POST /v1/stats.ranking                        JSON
      POST /v1/stats.rebuildMatchStats              JSON
      POST /v1/stats.recurringErrors                JSON
      POST /v1/stats.studyIds                       JSON

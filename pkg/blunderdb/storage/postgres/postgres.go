@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // Environment variables overriding the connection-pool defaults below.
@@ -207,6 +209,9 @@ func (s *Storage) Migrate(ctx context.Context) error {
 	if err := migrateForward(ctx, conn); err != nil {
 		return err
 	}
+	if err := repairMatchStatsShape(ctx, conn); err != nil {
+		return err
+	}
 	if err := backfillAnalysisProvenance(ctx, conn); err != nil {
 		return err
 	}
@@ -233,6 +238,50 @@ func setDatabaseVersion(ctx context.Context, db execer) error {
 		 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
 		domain.DatabaseVersion); err != nil {
 		return fmt.Errorf("postgres: set database_version: %w", err)
+	}
+	return nil
+}
+
+// matchStatsLateColumns are the match_stats columns 032 gained after a first
+// 2.30.0 build had already applied it: a database migrated by that build
+// recorded 032 and will never replay it.
+var matchStatsLateColumns = []string{
+	"checker_error_mp BIGINT", "cube_error_mp BIGINT", "errors INTEGER",
+	"snowie_error_mp BIGINT", "snowie_moves INTEGER", "checker_moves INTEGER",
+}
+
+// repairMatchStatsShape adds matchStatsLateColumns where they are missing and
+// drops the rows written without them, which readers then recompute. Both
+// steps are no-ops once done, so it runs at every Migrate. It only writes
+// when there is something to repair: a role that does not own the table (a
+// tenant role under RLS) runs Migrate too, and ALTER TABLE needs ownership
+// even when the column exists.
+func repairMatchStatsShape(ctx context.Context, db execer) error {
+	for _, col := range matchStatsLateColumns {
+		name, _, _ := strings.Cut(col, " ")
+		var exists bool
+		if err := db.QueryRow(ctx,
+			`SELECT EXISTS (SELECT 1 FROM information_schema.columns
+			  WHERE table_schema = current_schema() AND table_name = 'match_stats' AND column_name = $1)`,
+			name).Scan(&exists); err != nil {
+			return fmt.Errorf("postgres: probe match_stats.%s: %w", name, err)
+		}
+		if exists {
+			continue
+		}
+		if _, err := db.Exec(ctx, `ALTER TABLE match_stats ADD COLUMN IF NOT EXISTS `+col); err != nil {
+			return fmt.Errorf("postgres: match_stats column %s: %w", col, err)
+		}
+	}
+	var stale bool
+	if err := db.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM match_stats WHERE checker_moves IS NULL)`).Scan(&stale); err != nil {
+		return fmt.Errorf("postgres: probe match_stats older rows: %w", err)
+	}
+	if !stale {
+		return nil
+	}
+	if _, err := db.Exec(ctx, sqlshared.DropOlderShapeMatchStatsSQL); err != nil {
+		return fmt.Errorf("postgres: match_stats older rows: %w", err)
 	}
 	return nil
 }

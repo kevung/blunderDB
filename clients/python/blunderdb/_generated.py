@@ -950,6 +950,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.dateRange — JSON."
         return self._call("/v1/stats.dateRange", payload)
 
+    def stats_head_to_head(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.headToHead — JSON."
+        return self._call("/v1/stats.headToHead", payload)
+
     def stats_match_badges(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.matchBadges — JSON."
         return self._call("/v1/stats.matchBadges", payload)
@@ -981,6 +985,14 @@ class GeneratedAPI(BaseClient):
     def stats_position_ids_by_tournament(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.positionIdsByTournament — JSON."
         return self._call("/v1/stats.positionIdsByTournament", payload)
+
+    def stats_pr_by_window(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.prByWindow — JSON."
+        return self._call("/v1/stats.prByWindow", payload)
+
+    def stats_ranking(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.ranking — JSON."
+        return self._call("/v1/stats.ranking", payload)
 
     def stats_rebuild_match_stats(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.rebuildMatchStats — JSON."

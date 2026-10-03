@@ -37,6 +37,7 @@ func (cli *CLI) runList(args []string) error {
 	statsTo := listCmd.String("to", "", "End date filter YYYY-MM-DD (stats only)")
 	statsDecisionType := listCmd.String("decision-type", "all", "Decision type: all, checker, or cube (stats only)")
 	statsTopBlunders := listCmd.Int("top-blunders", 10, "Number of top blunders to show (stats only)")
+	statsProvenance := provenanceFlags(listCmd)
 	studyDays := listCmd.Int("days", 30, "Window, in days, for --type study")
 	importQueue := listCmd.Bool("queue", false,
 		"With --type imports --batch <id>: the study queue that follows the report — what to look at now, in order")
@@ -162,6 +163,7 @@ func (cli *CLI) runList(args []string) error {
 			}
 			filter.TournamentIDs = ids
 		}
+		statsProvenance(&filter)
 		return cli.showStats(filter, *statsMetric, *statsFormat, *statsTopBlunders)
 	case "tags":
 		return cli.listTags(strings.ToLower(*statsFormat))
@@ -183,6 +185,7 @@ func (cli *CLI) runList(args []string) error {
 			}
 			filter.TournamentIDs = ids
 		}
+		statsProvenance(&filter)
 		return cli.showPlayerTable(filter, *statsFormat)
 	default:
 		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', 'moves', 'analyses', 'imports', 'stats', 'players', or 'tags')", *listType)

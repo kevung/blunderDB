@@ -258,8 +258,14 @@ var schemaStatements = []string{
 	// threshold (a threshold change recomputes the table), luck_mp the sum of
 	// move.luck_mp over the luck_rolls rolls that carry one. analysis_engine
 	// and analysis_depth are the provenance most of the seat's decisions
-	// carry. A derived table: always recomputable from the moves, and it
-	// holds no position.
+	// carry. checker_error_mp / cube_error_mp split error_mp by decision
+	// type, errors counts the decisions at the error threshold. The Snowie
+	// rate's parts ignore countedExpr: snowie_error_mp is every analysed
+	// decision's error, snowie_moves the analysed checker decisions, and
+	// checker_moves every checker decision with a position, analysed or not
+	// (the players table's denominator). Those six are NULL on a row an
+	// earlier 2.30.0 build wrote, which the open recomputes. A derived table:
+	// always recomputable from the moves, and it holds no position.
 	`CREATE TABLE IF NOT EXISTS match_stats (
 		match_id INTEGER NOT NULL REFERENCES match(id) ON DELETE CASCADE,
 		seat INTEGER NOT NULL CHECK (seat IN (1, 2)),
@@ -274,6 +280,12 @@ var schemaStatements = []string{
 		analysis_engine TEXT,
 		analysis_depth INTEGER,
 		computed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		checker_error_mp INTEGER,
+		cube_error_mp INTEGER,
+		errors INTEGER,
+		snowie_error_mp INTEGER,
+		snowie_moves INTEGER,
+		checker_moves INTEGER,
 		PRIMARY KEY (match_id, seat)
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_stats_pr ON match_stats(pr) WHERE pr IS NOT NULL`,

@@ -28,6 +28,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // migrationStep upgrades a database from schema version from to schema
@@ -204,6 +205,9 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	// match_stats last: it reads the provenance just derived. Missing rows
 	// are the to-do list, so an interrupted fill resumes on the next open,
 	// and an open with every match computed pays one anti-join.
+	if _, err := d.db.ExecContext(ctx, sqlshared.DropOlderShapeMatchStatsSQL); err != nil {
+		return fmt.Errorf("dropping per-match statistics of an older shape: %w", err)
+	}
 	if _, err := sqlite.New(d.db).Stats().FillMatchStats(ctx, "", func(done, total int) {
 		d.emitMigrationProgress("match_stats", done, total)
 	}); err != nil {

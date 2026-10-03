@@ -81,9 +81,9 @@ func (s *LibrarySettingsStore) Save(ctx context.Context, scope string, settings 
 		return errf(s.DB, "save library settings", err)
 	}
 	err = s.DB.Transact(ctx, func(tx Execer) error {
-		// match_stats counts blunders at this threshold: moving it makes
-		// every stored row stale.
-		if before.BlunderThresholdMP != settings.BlunderThresholdMP {
+		// match_stats counts errors and blunders at these thresholds: moving
+		// either makes every stored row stale.
+		if before.BlunderThresholdMP != settings.BlunderThresholdMP || before.ErrorThresholdMP != settings.ErrorThresholdMP {
 			if err := InvalidateAllMatchStats(ctx, tx, scope); err != nil {
 				return err
 			}

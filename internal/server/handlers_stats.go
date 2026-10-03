@@ -11,6 +11,22 @@ type statsComputeReq struct {
 	Filter storage.StatsFilter `json:"filter"`
 }
 
+type statsHeadToHeadReq struct {
+	PlayerA string              `json:"player_a"`
+	PlayerB string              `json:"player_b"`
+	Filter  storage.StatsFilter `json:"filter"`
+}
+
+type statsWindowReq struct {
+	Filter storage.StatsFilter `json:"filter"`
+	Months int                 `json:"months"`
+}
+
+type statsRankingReq struct {
+	Filter       storage.StatsFilter `json:"filter"`
+	MinDecisions int                 `json:"min_decisions"`
+}
+
 type statsTrainingReq struct {
 	Filter storage.StatsFilter `json:"filter"`
 	// Window is "week" (default) or "month".
@@ -101,6 +117,22 @@ func (s *Server) statsRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/stats.playerTable", rpc(func(ctx context.Context, scope string, req statsComputeReq) ([]storage.PlayerRow, error) {
 			return ss().PlayerTable(ctx, scope, req.Filter)
+		})},
+		// Deux joueurs l'un contre l'autre : matchs communs, PR de chacun, bilan.
+		{http.MethodPost, "/v1/stats.headToHead", rpc(func(ctx context.Context, scope string, req statsHeadToHeadReq) (*storage.HeadToHead, error) {
+			return ss().HeadToHead(ctx, scope, req.PlayerA, req.PlayerB, req.Filter)
+		})},
+		// Le PR sur une fenêtre calendaire glissante de Months mois.
+		{http.MethodPost, "/v1/stats.prByWindow", rpc(func(ctx context.Context, scope string, req statsWindowReq) ([]storage.WindowStats, error) {
+			return ss().PRByWindow(ctx, scope, req.Filter, req.Months)
+		})},
+		// Le classement par PR des joueurs d'au moins MinDecisions décisions comptées.
+		{http.MethodPost, "/v1/stats.ranking", rpc(func(ctx context.Context, scope string, req statsRankingReq) ([]storage.RankedPlayer, error) {
+			rows, err := ss().PlayerTable(ctx, scope, req.Filter)
+			if err != nil {
+				return nil, err
+			}
+			return storage.RankPlayers(rows, req.MinDecisions), nil
 		})},
 		{http.MethodPost, "/v1/stats.matchDetail", rpc(func(ctx context.Context, scope string, req matchIDReq) (*storage.MatchDetailStats, error) {
 			return ss().MatchDetail(ctx, scope, req.MatchID)

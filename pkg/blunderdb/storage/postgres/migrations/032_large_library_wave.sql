@@ -113,6 +113,12 @@ CREATE TABLE IF NOT EXISTS match_stats (
     analysis_engine   TEXT,
     analysis_depth    INTEGER,
     computed_at       TIMESTAMPTZ DEFAULT now(),
+    checker_error_mp  BIGINT,
+    cube_error_mp     BIGINT,
+    errors            INTEGER,
+    snowie_error_mp   BIGINT,
+    snowie_moves      INTEGER,
+    checker_moves     INTEGER,
     PRIMARY KEY (tenant_id, match_id, seat),
     CONSTRAINT match_stats_match_tenant_fkey
         FOREIGN KEY (tenant_id, match_id) REFERENCES match (tenant_id, id) ON DELETE CASCADE

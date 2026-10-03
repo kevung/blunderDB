@@ -155,6 +155,15 @@ func (s *StatsStore) buildBaseWhereClauseSeat(scope string, filter storage.Stats
 		}
 	}
 
+	if filter.AnalysisEngine != "" {
+		clauses = append(clauses, "a.analysis_engine = ?")
+		args = append(args, filter.AnalysisEngine)
+	}
+	if filter.MinAnalysisDepth > 0 {
+		clauses = append(clauses, "COALESCE(a.analysis_depth, 0) >= ?")
+		args = append(args, filter.MinAnalysisDepth)
+	}
+
 	clauses = append(clauses, "a.position_id IS NOT NULL")
 	clauses = append(clauses, "("+statsErrExpr+") IS NOT NULL")
 
@@ -781,117 +790,39 @@ func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter stora
 		return nil, fmt.Errorf("PlayerTable settings: %w", err)
 	}
 	f := playerTableFilter(filter)
-	statsWhere, statsArgs := s.buildStatsWhereClause(scope, f)
-	baseWhere, baseArgs := s.buildBaseWhereClause(scope, f)
 	matchWhere, matchArgs := s.buildMatchWhereClause(scope, f)
 
-	// ── Counted decisions, per player and decision type ───────────────────────
 	var decisions []storage.PlayerDecisionStat
-	rows, err := s.DB.Query(ctx,
-		`SELECT `+moverNameExpr+` AS pname, p.decision_type,`+
-			` `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+`, COUNT(*),`+
-			` `+d.Bigint(`COALESCE(SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END),0)`)+`,`+
-			` `+d.Bigint(`COALESCE(SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END),0)`)+` `+
-			statsBaseJoin+statsWhere+
-			` GROUP BY pname, p.decision_type`,
-		append([]any{settings.ErrorThresholdMP, settings.BlunderThresholdMP}, statsArgs...)...)
-	if err != nil {
-		return nil, fmt.Errorf("PlayerTable decisions: %w", err)
-	}
-	var scanErr error
-	func() {
-		defer rows.Close()
-		for rows.Next() {
-			var d storage.PlayerDecisionStat
-			if err := rows.Scan(&d.Name, &d.DecisionType, &d.SumErrMP, &d.Count, &d.Errors, &d.Blunders); err != nil {
-				scanErr = err
-				return
-			}
-			decisions = append(decisions, d)
+	var snowieErr map[string]int64
+	var luck map[string]storage.PlayerLuckAcc
+	// The Snowie denominator per match: every checker decision with a
+	// position, both seats.
+	checkerMoves := `COALESCE((SELECT COUNT(*) FROM move mv2
+		                  JOIN position p2 ON p2.id = mv2.position_id
+		                  JOIN game g2 ON g2.id = mv2.game_id
+		                  WHERE g2.match_id = m.id AND p2.decision_type = 0), 0)`
+	if fromMatchStats(f) {
+		if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
+			return nil, err
 		}
-	}()
-	if scanErr != nil {
-		return nil, fmt.Errorf("PlayerTable decisions scan: %w", scanErr)
+		decisions, snowieErr, luck, err = s.playerSumsFromTable(ctx, scope, f)
+		checkerMoves = `COALESCE((SELECT SUM(ms.checker_moves) FROM match_stats ms WHERE ms.match_id = m.id), 0)`
+	} else {
+		decisions, snowieErr, luck, err = s.playerSumsDirect(ctx, scope, f, settings)
 	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("PlayerTable decisions rows: %w", err)
-	}
-
-	// ── Snowie numerator: every error, counted or not ─────────────────────────
-	snowieErr := map[string]int64{}
-	rows, err = s.DB.Query(ctx,
-		`SELECT `+moverNameExpr+` AS pname, `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+` `+
-			statsBaseJoin+baseWhere+` GROUP BY pname`,
-		baseArgs...)
 	if err != nil {
-		return nil, fmt.Errorf("PlayerTable snowie: %w", err)
-	}
-	var snowieScanErr error
-	func() {
-		defer rows.Close()
-		for rows.Next() {
-			var name string
-			var sum int64
-			if err := rows.Scan(&name, &sum); err != nil {
-				snowieScanErr = err
-				return
-			}
-			snowieErr[name] = sum
-		}
-	}()
-	if snowieScanErr != nil {
-		return nil, fmt.Errorf("PlayerTable snowie scan: %w", snowieScanErr)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("PlayerTable snowie rows: %w", err)
-	}
-
-	// ── Luck, over the rolls that carry it ────────────────────────────────────
-	// COUNT(mv.luck_mp) skips NULLs, so the denominator is the number of rolls
-	// actually measured — never the number played (ADR-0010).
-	luck := map[string]storage.PlayerLuckAcc{}
-	rows, err = s.DB.Query(ctx,
-		`SELECT `+moverNameExpr+` AS pname, `+d.Bigint(`COALESCE(SUM(mv.luck_mp),0)`)+`, COUNT(mv.luck_mp)
-		 FROM move mv
-		 JOIN game g ON g.id = mv.game_id
-		 JOIN match m ON m.id = g.match_id`+matchWhere+
-			` AND mv.luck_mp IS NOT NULL GROUP BY pname`,
-		matchArgs...)
-	if err != nil {
-		return nil, fmt.Errorf("PlayerTable luck: %w", err)
-	}
-	var luckScanErr error
-	func() {
-		defer rows.Close()
-		for rows.Next() {
-			var name string
-			var acc storage.PlayerLuckAcc
-			if err := rows.Scan(&name, &acc.SumMP, &acc.Rolls); err != nil {
-				luckScanErr = err
-				return
-			}
-			luck[name] = acc
-		}
-	}()
-	if luckScanErr != nil {
-		return nil, fmt.Errorf("PlayerTable luck scan: %w", luckScanErr)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("PlayerTable luck rows: %w", err)
+		return nil, err
 	}
 
 	// ── Matches: participation, outcome, and the Snowie denominator ───────────
 	var matches []storage.MatchOutcomeRow
-	rows, err = s.DB.Query(ctx,
+	rows, err := s.DB.Query(ctx,
 		`SELECT COALESCE(m.player1_name,''), COALESCE(m.player2_name,''), COALESCE(m.match_length,0),
 		        `+d.Bigint(`COALESCE((SELECT SUM(g.points_won) FROM game g
 		                  WHERE g.match_id = m.id AND g.winner = 1), 0)`)+`,
 		        `+d.Bigint(`COALESCE((SELECT SUM(g.points_won) FROM game g
 		                  WHERE g.match_id = m.id AND g.winner = -1), 0)`)+`,
-		        COALESCE((SELECT COUNT(*) FROM move mv2
-		                  JOIN position p2 ON p2.id = mv2.position_id
-		                  JOIN game g2 ON g2.id = mv2.game_id
-		                  WHERE g2.match_id = m.id AND p2.decision_type = 0), 0)
+		        `+checkerMoves+`
 		 FROM match m`+matchWhere,
 		matchArgs...)
 	if err != nil {
@@ -918,4 +849,109 @@ func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter stora
 	}
 
 	return storage.BuildPlayerRows(decisions, matches, snowieErr, luck), nil
+}
+
+// playerSumsDirect aggregates the players table's per-player sums from the
+// decisions themselves: the path of a filter match_stats cannot apply.
+func (s *StatsStore) playerSumsDirect(ctx context.Context, scope string, f storage.StatsFilter, settings storage.LibrarySettings) (decisions []storage.PlayerDecisionStat, snowieErr map[string]int64, luck map[string]storage.PlayerLuckAcc, err error) {
+	d := s.DB
+	statsWhere, statsArgs := s.buildStatsWhereClause(scope, f)
+	baseWhere, baseArgs := s.buildBaseWhereClause(scope, f)
+	matchWhere, matchArgs := s.buildMatchWhereClause(scope, f)
+
+	// ── Counted decisions, per player and decision type ───────────────────────
+	rows, err := s.DB.Query(ctx,
+		`SELECT `+moverNameExpr+` AS pname, p.decision_type,`+
+			` `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+`, COUNT(*),`+
+			` `+d.Bigint(`COALESCE(SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END),0)`)+`,`+
+			` `+d.Bigint(`COALESCE(SUM(CASE WHEN (`+statsErrExpr+`) >= ? THEN 1 ELSE 0 END),0)`)+` `+
+			statsBaseJoin+statsWhere+
+			` GROUP BY pname, p.decision_type`,
+		append([]any{settings.ErrorThresholdMP, settings.BlunderThresholdMP}, statsArgs...)...)
+	if err != nil {
+		return nil, nil, nil, fmt.Errorf("PlayerTable decisions: %w", err)
+	}
+	var scanErr error
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var d storage.PlayerDecisionStat
+			if err := rows.Scan(&d.Name, &d.DecisionType, &d.SumErrMP, &d.Count, &d.Errors, &d.Blunders); err != nil {
+				scanErr = err
+				return
+			}
+			decisions = append(decisions, d)
+		}
+	}()
+	if scanErr != nil {
+		return nil, nil, nil, fmt.Errorf("PlayerTable decisions scan: %w", scanErr)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, nil, nil, fmt.Errorf("PlayerTable decisions rows: %w", err)
+	}
+
+	// ── Snowie numerator: every error, counted or not ─────────────────────────
+	snowieErr = map[string]int64{}
+	rows, err = s.DB.Query(ctx,
+		`SELECT `+moverNameExpr+` AS pname, `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+` `+
+			statsBaseJoin+baseWhere+` GROUP BY pname`,
+		baseArgs...)
+	if err != nil {
+		return nil, nil, nil, fmt.Errorf("PlayerTable snowie: %w", err)
+	}
+	var snowieScanErr error
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var name string
+			var sum int64
+			if err := rows.Scan(&name, &sum); err != nil {
+				snowieScanErr = err
+				return
+			}
+			snowieErr[name] = sum
+		}
+	}()
+	if snowieScanErr != nil {
+		return nil, nil, nil, fmt.Errorf("PlayerTable snowie scan: %w", snowieScanErr)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, nil, nil, fmt.Errorf("PlayerTable snowie rows: %w", err)
+	}
+
+	// ── Luck, over the rolls that carry it ────────────────────────────────────
+	// COUNT(mv.luck_mp) skips NULLs, so the denominator is the number of rolls
+	// actually measured — never the number played (ADR-0010).
+	luck = map[string]storage.PlayerLuckAcc{}
+	rows, err = s.DB.Query(ctx,
+		`SELECT `+moverNameExpr+` AS pname, `+d.Bigint(`COALESCE(SUM(mv.luck_mp),0)`)+`, COUNT(mv.luck_mp)
+		 FROM move mv
+		 JOIN game g ON g.id = mv.game_id
+		 JOIN match m ON m.id = g.match_id`+matchWhere+
+			` AND mv.luck_mp IS NOT NULL GROUP BY pname`,
+		matchArgs...)
+	if err != nil {
+		return nil, nil, nil, fmt.Errorf("PlayerTable luck: %w", err)
+	}
+	var luckScanErr error
+	func() {
+		defer rows.Close()
+		for rows.Next() {
+			var name string
+			var acc storage.PlayerLuckAcc
+			if err := rows.Scan(&name, &acc.SumMP, &acc.Rolls); err != nil {
+				luckScanErr = err
+				return
+			}
+			luck[name] = acc
+		}
+	}()
+	if luckScanErr != nil {
+		return nil, nil, nil, fmt.Errorf("PlayerTable luck scan: %w", luckScanErr)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, nil, nil, fmt.Errorf("PlayerTable luck rows: %w", err)
+	}
+
+	return decisions, snowieErr, luck, nil
 }

@@ -1,6 +1,9 @@
 package storage
 
-import "context"
+import (
+	"context"
+	"sort"
+)
 
 // StatsFilter defines the filtering criteria for a stats computation.
 type StatsFilter struct {
@@ -15,6 +18,11 @@ type StatsFilter struct {
 	DateTo        string // ISO "YYYY-MM-DD"
 	DecisionType  int    // -1=all, 0=checker, 1=cube
 	MatchLength   []int
+	// Provenance (ADR-0013): keep only the decisions analysed by this engine
+	// (analysis.analysis_engine, exact) and at least this deep
+	// (analysis.analysis_depth). Empty and 0 keep every analysis.
+	AnalysisEngine   string `json:"AnalysisEngine,omitempty"`
+	MinAnalysisDepth int    `json:"MinAnalysisDepth,omitempty"`
 }
 
 // StatsDateRange is the span of match dates present in the database.
@@ -448,11 +456,26 @@ type StatsStore interface {
 	// MatchSeries is Compute's PerMatch (ID, Date, PR, NumDecisions; MWC
 	// left zero) read from match_stats: the PR of the filter's players in
 	// each match, oldest first, matches without a counted decision absent.
-	// It honours the filter's players (and aliases), tournaments, dates and
-	// match lengths; a DecisionType of 0 or 1 is refused with ErrInvalid —
-	// the table does not split the error by decision type, so the caller
-	// falls back to Compute.
+	// It honours the filter's players (and aliases), tournaments, dates,
+	// match lengths and decision type; a provenance filter is refused with
+	// ErrInvalid — the table keeps one provenance per seat, not per
+	// decision, so the caller falls back to Compute.
 	MatchSeries(ctx context.Context, scope string, filter StatsFilter) ([]MatchStats, error)
+
+	// HeadToHead is the record of two players against each other: the
+	// matches where one sat against the other (aliases of neither are
+	// folded), each player's PR in each of them and over all of them, and
+	// the outcomes (MatchOutcome). The filter's player fields are ignored;
+	// its tournaments, dates, match lengths and decision type apply. A
+	// provenance filter is refused with ErrInvalid, as for MatchSeries.
+	HeadToHead(ctx context.Context, scope, playerA, playerB string, filter StatsFilter) (*HeadToHead, error)
+
+	// PRByWindow is the PR of the filter's players over a sliding calendar
+	// window of `months` months (1 a month, 3 a quarter), one point per
+	// month from the first month with a counted decision to the last, each
+	// point covering that month and the months-1 before it. Read from
+	// match_stats; a provenance filter is refused with ErrInvalid.
+	PRByWindow(ctx context.Context, scope string, filter StatsFilter, months int) ([]WindowStats, error)
 
 	// RefreshMatchStats recomputes the rows of matchIDs now — what an import
 	// does for the match it has just written, inside its transaction.
@@ -489,4 +512,84 @@ type MatchStatsRow struct {
 	Blunders         int     `json:"blunders"`
 	AnalysisEngine   string  `json:"analysis_engine"`
 	AnalysisDepth    int     `json:"analysis_depth"`
+	CheckerErrorMP   int64   `json:"checker_error_mp"`
+	CubeErrorMP      int64   `json:"cube_error_mp"`
+	Errors           int     `json:"errors"`
+	// The Snowie rate's parts, outside the counted predicate: the seat's
+	// error over every analysed decision, its analysed checker decisions,
+	// and its checker decisions analysed or not.
+	SnowieErrorMP int64 `json:"snowie_error_mp"`
+	SnowieMoves   int   `json:"snowie_moves"`
+	CheckerMoves  int   `json:"checker_moves"`
+}
+
+// HeadToHead is the record of two players against each other (StatsStore.HeadToHead).
+type HeadToHead struct {
+	PlayerA    string            `json:"player_a"`
+	PlayerB    string            `json:"player_b"`
+	Matches    []HeadToHeadMatch `json:"matches"`
+	WinsA      int               `json:"wins_a"`
+	WinsB      int               `json:"wins_b"`
+	DecisionsA int               `json:"decisions_a"`
+	DecisionsB int               `json:"decisions_b"`
+	PRA        float64           `json:"pr_a"`
+	PRB        float64           `json:"pr_b"`
+}
+
+// HeadToHeadMatch is one match of a HeadToHead, A's and B's sides whatever
+// their seats. Outcome is MatchOutcome from A's side: 1 A won, -1 B won, 0
+// undecided.
+type HeadToHeadMatch struct {
+	ID          int64   `json:"id"`
+	Date        string  `json:"date"`
+	MatchLength int     `json:"match_length"`
+	Outcome     int     `json:"outcome"`
+	DecisionsA  int     `json:"decisions_a"`
+	DecisionsB  int     `json:"decisions_b"`
+	PRA         float64 `json:"pr_a"`
+	PRB         float64 `json:"pr_b"`
+}
+
+// WindowStats is one point of StatsStore.PRByWindow: the months From..To
+// ("YYYY-MM", both included). A window without a counted decision has
+// NumDecisions 0 and PR 0, which the reader shows as no value.
+type WindowStats struct {
+	From         string  `json:"from"`
+	To           string  `json:"to"`
+	NumMatches   int     `json:"num_matches"`
+	NumDecisions int     `json:"num_decisions"`
+	PR           float64 `json:"pr"`
+}
+
+// RankedPlayer is a PlayerRow with its rank in RankPlayers.
+type RankedPlayer struct {
+	Rank int `json:"rank"`
+	PlayerRow
+}
+
+// RankPlayers ranks the players with at least minDecisions counted
+// decisions by PR, the lowest first; equal PRs share a rank (1, 1, 3) and
+// are listed by name. A PR over few decisions is noise, which is what the
+// floor keeps out of the ranking.
+func RankPlayers(rows []PlayerRow, minDecisions int) []RankedPlayer {
+	out := make([]RankedPlayer, 0, len(rows))
+	for _, r := range rows {
+		if r.Decisions > 0 && r.Decisions >= minDecisions {
+			out = append(out, RankedPlayer{PlayerRow: r})
+		}
+	}
+	sort.SliceStable(out, func(i, j int) bool {
+		if out[i].PR != out[j].PR {
+			return out[i].PR < out[j].PR
+		}
+		return out[i].Name < out[j].Name
+	})
+	for i := range out {
+		if i > 0 && out[i].PR == out[i-1].PR {
+			out[i].Rank = out[i-1].Rank
+		} else {
+			out[i].Rank = i + 1
+		}
+	}
+	return out
 }

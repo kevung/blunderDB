@@ -5364,6 +5364,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/storage_StatsDateRange"
+  /v1/stats.headToHead:
+    post:
+      operationId: stats.headToHead
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsHeadToHeadReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_HeadToHead"
+                nullable: true
   /v1/stats.matchBadges:
     post:
       operationId: stats.matchBadges
@@ -5507,6 +5525,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idsResp"
+  /v1/stats.prByWindow:
+    post:
+      operationId: stats.prByWindow
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsWindowReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_WindowStats"
+  /v1/stats.ranking:
+    post:
+      operationId: stats.ranking
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsRankingReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_RankedPlayer"
   /v1/stats.rebuildMatchStats:
     post:
       operationId: stats.rebuildMatchStats
@@ -7934,6 +7990,23 @@ components:
       properties:
         filter:
           $ref: "#/components/schemas/storage_StatsFilter"
+    statsHeadToHeadReq:
+      type: object
+      properties:
+        player_a:
+          type: string
+        player_b:
+          type: string
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+    statsRankingReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        min_decisions:
+          type: integer
+          format: int32
     statsSelectionReq:
       type: object
       properties:
@@ -7948,6 +8021,14 @@ components:
           $ref: "#/components/schemas/storage_StatsFilter"
         window:
           type: string
+    statsWindowReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        months:
+          type: integer
+          format: int32
     storage_ClubPlayer:
       type: object
       description: "Opaque: see the Go type storage.ClubPlayer (defined outside internal/server, not expanded here)."
@@ -7966,6 +8047,9 @@ components:
     storage_Filter:
       type: object
       description: "Opaque: see the Go type storage.Filter (defined outside internal/server, not expanded here)."
+    storage_HeadToHead:
+      type: object
+      description: "Opaque: see the Go type storage.HeadToHead (defined outside internal/server, not expanded here)."
     storage_LibrarySettings:
       type: object
       description: "Opaque: see the Go type storage.LibrarySettings (defined outside internal/server, not expanded here)."
@@ -7984,6 +8068,9 @@ components:
     storage_PlayerRow:
       type: object
       description: "Opaque: see the Go type storage.PlayerRow (defined outside internal/server, not expanded here)."
+    storage_RankedPlayer:
+      type: object
+      description: "Opaque: see the Go type storage.RankedPlayer (defined outside internal/server, not expanded here)."
     storage_RecurringErrors:
       type: object
       description: "Opaque: see the Go type storage.RecurringErrors (defined outside internal/server, not expanded here)."
@@ -8020,6 +8107,9 @@ components:
     storage_TrainingStats:
       type: object
       description: "Opaque: see the Go type storage.TrainingStats (defined outside internal/server, not expanded here)."
+    storage_WindowStats:
+      type: object
+      description: "Opaque: see the Go type storage.WindowStats (defined outside internal/server, not expanded here)."
     stringsResp:
       type: object
       properties:

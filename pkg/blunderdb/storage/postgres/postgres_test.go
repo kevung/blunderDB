@@ -11,6 +11,7 @@ import (
 	"context"
 	"os"
 	"slices"
+	"strconv"
 	"testing"
 
 	"github.com/jackc/pgx/v5"
@@ -333,5 +334,55 @@ func TestMigrate_013_SessionOutOfMetadata(t *testing.T) {
 	}
 	if again, _ := s.Session().Load(ctx, "7"); again.LastSearchCommand != "cube" {
 		t.Errorf("second Migrate altered scope 7: %+v", *again)
+	}
+}
+
+// A database an earlier 2.30.0 build migrated recorded 032 without the late
+// match_stats columns: Migrate must add them and drop the rows written
+// without them, and stay a no-op on the next run.
+func TestMigrate_RepairsMatchStatsShape(t *testing.T) {
+	ctx := context.Background()
+	dsn := startPostgres(t)
+	s, err := pg.Open(ctx, dsn, nil)
+	if err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	defer s.Close()
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate: %v", err)
+	}
+	matchID, err := s.Matches().Save(ctx, "", &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 5})
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	conn, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatalf("connect: %v", err)
+	}
+	defer conn.Close(ctx)
+	for _, stmt := range []string{
+		`ALTER TABLE match_stats DROP COLUMN checker_error_mp, DROP COLUMN cube_error_mp, DROP COLUMN errors,
+		 DROP COLUMN snowie_error_mp, DROP COLUMN snowie_moves, DROP COLUMN checker_moves`,
+		`INSERT INTO match_stats (tenant_id, match_id, seat) SELECT tenant_id, id, 1 FROM match WHERE id = ` + strconv.FormatInt(matchID, 10),
+	} {
+		if _, err := conn.Exec(ctx, stmt); err != nil {
+			t.Fatalf("rebuild the earlier shape (%s): %v", stmt, err)
+		}
+	}
+	for run := 1; run <= 2; run++ {
+		if err := s.Migrate(ctx); err != nil {
+			t.Fatalf("Migrate %d: %v", run, err)
+		}
+		var n int
+		if err := conn.QueryRow(ctx, `SELECT COUNT(*) FROM match_stats WHERE checker_moves IS NULL`).Scan(&n); err != nil {
+			t.Fatalf("run %d: late column: %v", run, err)
+		}
+		if n != 0 {
+			t.Fatalf("run %d: %d rows of the earlier shape left", run, n)
+		}
+	}
+	rows, err := s.Stats().MatchStats(ctx, "", []int64{matchID})
+	if err != nil || len(rows) != 2 {
+		t.Fatalf("MatchStats after the repair = %d rows, %v; want the match recomputed", len(rows), err)
 	}
 }

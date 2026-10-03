@@ -3517,3 +3517,79 @@ func TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave(t *testing.T) {
 		t.Errorf("training_item after its position was deleted: position_id = %v, %v; want the row with NULL", kept, err)
 	}
 }
+
+// A library an earlier 2.30.0 build migrated has match_stats without the
+// error split and the Snowie parts. The version does not move, so the open
+// itself must add the columns and recompute the rows, and do nothing more
+// on the next open.
+func TestOpen_2_30_0_RepairsMatchStatsShape(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2300_shape.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "test.xg")); err != nil {
+		t.Fatalf("ImportXGMatch: %v", err)
+	}
+	readRows := func(d *Database) map[[2]int64][3]int64 {
+		t.Helper()
+		got := map[[2]int64][3]int64{}
+		rows, err := d.db.Query(`SELECT match_id, seat, checker_error_mp, snowie_moves, checker_moves FROM match_stats`)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var id, seat int64
+			var chk, sm, cm sql.NullInt64
+			if err := rows.Scan(&id, &seat, &chk, &sm, &cm); err != nil {
+				t.Fatal(err)
+			}
+			if !chk.Valid || !sm.Valid || !cm.Valid {
+				t.Fatalf("match %d seat %d: a late column is NULL after the open", id, seat)
+			}
+			got[[2]int64{id, seat}] = [3]int64{chk.Int64, sm.Int64, cm.Int64}
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
+		return got
+	}
+	want := readRows(d)
+	if len(want) == 0 {
+		t.Fatal("the import computed no match_stats row")
+	}
+	// The earlier shape: the late columns absent, the rows still there.
+	for _, col := range []string{"checker_error_mp", "cube_error_mp", "errors", "snowie_error_mp", "snowie_moves", "checker_moves"} {
+		if _, err := d.db.Exec(`ALTER TABLE match_stats DROP COLUMN ` + col); err != nil {
+			t.Fatalf("drop %s: %v", col, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	for open := 1; open <= 2; open++ {
+		d = NewDatabase()
+		if err := d.OpenDatabase(dbPath); err != nil {
+			t.Fatalf("open %d: %v", open, err)
+		}
+		var version string
+		if err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&version); err != nil || version != "2.30.0" {
+			t.Fatalf("open %d: version %q, %v; want 2.30.0", open, version, err)
+		}
+		got := readRows(d)
+		if len(got) != len(want) {
+			t.Fatalf("open %d: %d rows, want %d", open, len(got), len(want))
+		}
+		for k, w := range want {
+			if got[k] != w {
+				t.Errorf("open %d: match %d seat %d = %v, want %v", open, k[0], k[1], got[k], w)
+			}
+		}
+		if err := d.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}
+}

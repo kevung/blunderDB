@@ -67,6 +67,30 @@ func testMatchStatsOracle(t *testing.T, s storage.Storage) {
 				}
 			}
 		}
+		// The split, the error count and the Snowie parts against the same
+		// direct oracle: the players table and the Stats panel read them.
+		for _, id := range []int64{matchA, matchB, matchC, matchD} {
+			detail, err := s.Stats().MatchDetail(ctx, "", id)
+			if err != nil {
+				continue
+			}
+			r1, r2 := bySeat[[2]int64{id, 1}], bySeat[[2]int64{id, 2}]
+			for seat, want := range map[int]storage.MatchPlayerDetailStats{1: detail.Player1, 2: detail.Player2} {
+				got := bySeat[[2]int64{id, int64(seat)}]
+				snowie := 0.0
+				if n := r1.SnowieMoves + r2.SnowieMoves; n > 0 {
+					snowie = 500 * float64(got.SnowieErrorMP) / 1000 / float64(n)
+				}
+				if got.CheckerErrorMP != int64(math.Round(want.CheckerEquityError*1000)) ||
+					got.CheckerErrorMP+got.CubeErrorMP != got.ErrorMP ||
+					got.Errors != want.TotalErrors || math.Abs(snowie-want.SnowieER) > 1e-9 ||
+					got.CheckerMoves < got.SnowieMoves {
+					t.Errorf("%s: match %d seat %d: row %+v, direct checker error=%v errors=%d snowie=%v (from rows %v)",
+						stage, id, seat, got, want.CheckerEquityError, want.TotalErrors, want.SnowieER, snowie)
+				}
+			}
+		}
+
 		if len(bySeat) != len(rows) || len(rows)%2 != 0 {
 			t.Errorf("%s: %d rows, want two distinct seats per match", stage, len(rows))
 		}
@@ -139,8 +163,36 @@ func testMatchStatsOracle(t *testing.T, s storage.Storage) {
 	}
 	checkSeries("all players", storage.StatsFilter{DecisionType: -1})
 	checkSeries("Alice", storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"})
-	if _, err := s.Stats().MatchSeries(ctx, "", storage.StatsFilter{DecisionType: 0}); !errors.Is(err, storage.ErrInvalid) {
-		t.Errorf("MatchSeries by decision type: err %v, want ErrInvalid", err)
+	if _, err := s.Stats().MatchSeries(ctx, "", storage.StatsFilter{DecisionType: -1, MinAnalysisDepth: 2}); !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("MatchSeries with a provenance filter: err %v, want ErrInvalid", err)
+	}
+	// By decision type, the table's split against MatchDetail's.
+	for _, dt := range []int{0, 1} {
+		series, err := s.Stats().MatchSeries(ctx, "", storage.StatsFilter{DecisionType: dt})
+		if err != nil {
+			t.Fatalf("MatchSeries(decision type %d): %v", dt, err)
+		}
+		for _, g := range series {
+			detail, err := s.Stats().MatchDetail(ctx, "", g.ID)
+			if err != nil {
+				t.Fatalf("MatchDetail(%d): %v", g.ID, err)
+			}
+			var n int
+			var errSum float64
+			for _, p := range []storage.MatchPlayerDetailStats{detail.Player1, detail.Player2} {
+				if dt == 0 {
+					n += p.CheckerDecisions
+					errSum += p.PRChecker * float64(p.CheckerDecisions)
+				} else {
+					c := p.TotalDecisions - p.CheckerDecisions
+					n += c
+					errSum += p.PRCube * float64(c)
+				}
+			}
+			if g.NumDecisions != n || math.Abs(g.PR-errSum/float64(max(n, 1))) > 1e-9 {
+				t.Errorf("decision type %d, match %d: series %+v, direct %d decisions PR %v", dt, g.ID, g, n, errSum/float64(max(n, 1)))
+			}
+		}
 	}
 
 	rows, err := s.Stats().MatchStats(ctx, "", []int64{matchD})
@@ -191,5 +243,86 @@ func testMatchStatsOracle(t *testing.T, s storage.Storage) {
 	n, err := s.Stats().RebuildMatchStats(ctx, "", nil)
 	if err != nil || n != 3 {
 		t.Errorf("RebuildMatchStats: %d matches, err %v; want 3", n, err)
+	}
+}
+
+// testHeadToHeadWindowsRanking holds the corpus views read from match_stats
+// to MatchDetail and Compute, the direct calculations.
+func testHeadToHeadWindowsRanking(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	statsFixtureMatch(t, s, 0, "Alice", "Bob")
+	matchB, _ := statsFixtureMatch(t, s, 2, "Bob", "Alice")
+	statsFixtureMatch(t, s, 4, "Alice", "Carol")
+	all := storage.StatsFilter{DecisionType: -1}
+
+	h, err := s.Stats().HeadToHead(ctx, "", "Alice", "Bob", all)
+	if err != nil {
+		t.Fatalf("HeadToHead: %v", err)
+	}
+	if len(h.Matches) != 2 {
+		t.Fatalf("HeadToHead matches = %d, want 2 (the Carol match is not one)", len(h.Matches))
+	}
+	var sumA, sumB float64
+	for _, m := range h.Matches {
+		detail, err := s.Stats().MatchDetail(ctx, "", m.ID)
+		if err != nil {
+			t.Fatalf("MatchDetail(%d): %v", m.ID, err)
+		}
+		a, b := detail.Player1, detail.Player2
+		if m.ID == matchB {
+			a, b = b, a
+		}
+		if m.DecisionsA != a.TotalDecisions || m.DecisionsB != b.TotalDecisions ||
+			math.Abs(m.PRA-a.PR) > 1e-9 || math.Abs(m.PRB-b.PR) > 1e-9 {
+			t.Errorf("match %d: %+v, direct A %d/%v B %d/%v", m.ID, m, a.TotalDecisions, a.PR, b.TotalDecisions, b.PR)
+		}
+		sumA += a.PR * float64(a.TotalDecisions)
+		sumB += b.PR * float64(b.TotalDecisions)
+	}
+	if h.DecisionsA > 0 && math.Abs(h.PRA-sumA/float64(h.DecisionsA)) > 1e-9 {
+		t.Errorf("PR A over the record = %v, want %v", h.PRA, sumA/float64(h.DecisionsA))
+	}
+	if h.DecisionsB > 0 && math.Abs(h.PRB-sumB/float64(h.DecisionsB)) > 1e-9 {
+		t.Errorf("PR B over the record = %v, want %v", h.PRB, sumB/float64(h.DecisionsB))
+	}
+	if _, err := s.Stats().HeadToHead(ctx, "", "Alice", "Alice", all); !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("HeadToHead of a player with himself: %v, want ErrInvalid", err)
+	}
+	if _, err := s.Stats().HeadToHead(ctx, "", "Alice", "Bob", storage.StatsFilter{DecisionType: -1, AnalysisEngine: "x"}); !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("HeadToHead with a provenance filter: %v, want ErrInvalid", err)
+	}
+
+	// Every fixture match is dated June 2025: a quarter window is one point
+	// covering April..June, with Compute's PR for the player.
+	alice := storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"}
+	res, err := s.Stats().Compute(ctx, "", alice)
+	if err != nil {
+		t.Fatalf("Compute: %v", err)
+	}
+	win, err := s.Stats().PRByWindow(ctx, "", alice, 3)
+	if err != nil {
+		t.Fatalf("PRByWindow: %v", err)
+	}
+	if len(win) != 1 || win[0].From != "2025-04" || win[0].To != "2025-06" ||
+		win[0].NumDecisions != res.Totals.NumDecisions || win[0].NumMatches != 3 || math.Abs(win[0].PR-res.PRGlobal) > 1e-9 {
+		t.Errorf("PRByWindow = %+v, want one April..June point with %d decisions, 3 matches, PR %v", win, res.Totals.NumDecisions, res.PRGlobal)
+	}
+	if _, err := s.Stats().PRByWindow(ctx, "", alice, 0); !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("PRByWindow of 0 months: %v, want ErrInvalid", err)
+	}
+
+	// The ranking is the players table's order by PR above a floor.
+	rows, err := s.Stats().PlayerTable(ctx, "", all)
+	if err != nil {
+		t.Fatalf("PlayerTable: %v", err)
+	}
+	ranked := storage.RankPlayers(rows, 1)
+	for i := 1; i < len(ranked); i++ {
+		if ranked[i].PR < ranked[i-1].PR || ranked[i].Rank < ranked[i-1].Rank {
+			t.Errorf("ranking out of order at %d: %+v", i, ranked)
+		}
+	}
+	if len(storage.RankPlayers(rows, 1<<30)) != 0 {
+		t.Error("a floor above every player's decisions still ranks someone")
 	}
 }
