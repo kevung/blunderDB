@@ -746,7 +746,15 @@
         "colRating": "Βαθμός",
         "colState": "Κατάσταση",
         "colInterval": "Διάστημα",
-        "days": "ημ"
+        "days": "ημ",
+        "state": {
+            "new": "Νέα",
+            "learning": "Εκμάθηση",
+            "review": "Επανάληψη",
+            "relearning": "Επανεκμάθηση"
+        },
+        "sourceSearch": "Αναζήτηση",
+        "sourceCollectionN": "Συλλογή #{id}"
     },
     "analysis": {
         "analysisDepth": "Βάθος ανάλυσης",
@@ -1457,7 +1465,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Κλείσιμο πλαισίου στατιστικών",
-        "tabDashboard": "Ταμπλό",
+        "tabDashboard": "Πίνακας",
         "tabProgression": "Εξέλιξη",
         "tabErrors": "Σφάλματα",
         "tabTraining": "Εκπαίδευση",

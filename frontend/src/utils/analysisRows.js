@@ -112,9 +112,12 @@ function verdictText(decision, state, t) {
         case DECISION_STATE.CRAWFORD:
             return t('cube.crawford');
         default:
-            // A live verdict is a key (translated, keeps "too good"); a stored record's engine
-            // words are reported verbatim.
-            return decision?.verdict ? t('cube.verdicts.' + decision.verdict) : (decision?.verdictText ?? '');
+            // A live verdict is a key (translated, keeps "too good"). A stored record's string
+            // is the engine's own wording: its declared best row names the decision in the
+            // user's language; only an unparseable string is reported verbatim.
+            if (decision?.verdict) return t('cube.verdicts.' + decision.verdict);
+            if (decision?.best) return t('cube.verdicts.' + decision.best);
+            return decision?.verdictText ?? '';
     }
 }
 

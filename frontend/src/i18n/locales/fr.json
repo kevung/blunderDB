@@ -746,7 +746,15 @@
         "colRating": "Note",
         "colState": "État",
         "colInterval": "Intervalle",
-        "days": "j"
+        "days": "j",
+        "state": {
+            "new": "Nouvelle",
+            "learning": "En apprentissage",
+            "review": "À réviser",
+            "relearning": "Ré-apprentissage"
+        },
+        "sourceSearch": "Recherche",
+        "sourceCollectionN": "Collection n° {id}"
     },
     "analysis": {
         "analysisDepth": "Profondeur d'analyse",
@@ -1457,7 +1465,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Fermer le panneau Stats",
-        "tabDashboard": "Dashboard",
+        "tabDashboard": "Tableau de bord",
         "tabProgression": "Progression",
         "tabErrors": "Erreurs",
         "tabTraining": "Entraînement",
@@ -1482,7 +1490,7 @@
         "filterLengthHint": "Cliquer pour filtrer sur cette longueur uniquement",
         "selectAllLengths": "Sélectionner toutes les longueurs",
         "all": "Tout",
-        "resetFilters": "↺ Reset",
+        "resetFilters": "↺ Réinitialiser",
         "resetFiltersHint": "Réinitialiser les filtres",
         "noDecisionsEmpty": "Aucune décision sur la période filtrée. Élargissez les filtres.",
         "cardLabelAll": "PR Global",
@@ -1507,7 +1515,7 @@
         "openMatch": "Ouvrir le match",
         "tooltipDecisions": "Décisions : {n}",
         "tooltipBlunders": "Blunders  : {n} ({rate}%)",
-        "breakdownCubeAction": "Breakdown par action cube ({metric})",
+        "breakdownCubeAction": "Répartition par action de videau ({metric})",
         "cubeDirections": "Direction des erreurs de videau",
         "cubeAxisOffer": "Offrir",
         "cubeAxisAnswer": "Répondre",

@@ -746,7 +746,15 @@
         "colRating": "Arvosana",
         "colState": "Tila",
         "colInterval": "Väli",
-        "days": "pv"
+        "days": "pv",
+        "state": {
+            "new": "Uusi",
+            "learning": "Opiskelussa",
+            "review": "Kertaus",
+            "relearning": "Uudelleenopiskelu"
+        },
+        "sourceSearch": "Haku",
+        "sourceCollectionN": "Kokoelma #{id}"
     },
     "analysis": {
         "analysisDepth": "Analyysin syvyys",
@@ -1457,7 +1465,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Sulje tilastot-paneeli",
-        "tabDashboard": "Kojelauta",
+        "tabDashboard": "Yleiskatsaus",
         "tabProgression": "Edistyminen",
         "tabErrors": "Virheet",
         "tabTraining": "Harjoittelu",
@@ -1482,7 +1490,7 @@
         "filterLengthHint": "Napsauta suodattaaksesi vain tämän pituuden",
         "selectAllLengths": "Valitse kaikki pituudet",
         "all": "Kaikki",
-        "resetFilters": "↺ Nollaa",
+        "resetFilters": "↺ Palauta",
         "resetFiltersHint": "Nollaa suodattimet",
         "noDecisionsEmpty": "Ei päätöksiä suodatetulla ajanjaksolla. Laajenna suodattimia.",
         "cardLabelAll": "PR Yhteensä",

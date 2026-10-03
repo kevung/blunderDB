@@ -178,7 +178,7 @@
             // Position number or score (ADR-0042); falls back on the id for older journals.
             subject: e.key || e.positionId,
             rating: RATING_KEYS[e.rating] ? $t(RATING_KEYS[e.rating]) : String(e.rating),
-            state: anki.stateLabel(e.state),
+            state: anki.stateLabel(e.state, $t),
             // Days granted; 0 = back in the same session, not missing.
             scheduledDays: `${e.scheduledDays} ${$t('anki.days')}`
         }))
@@ -499,7 +499,7 @@
             {#if cramMode}
                 <span class="card-state state-cram">{$t('anki.cramBadge')}</span>
             {:else}
-                <span class="card-state state-{reviewCard.card.state}">{anki.stateLabel(reviewCard.card.state)}</span>
+                <span class="card-state state-{reviewCard.card.state}">{anki.stateLabel(reviewCard.card.state, $t)}</span>
             {/if}
         </div>
 
@@ -734,7 +734,7 @@
                 {:else}
                     <td class="name-cell"><span class="deck-name">{deck.name}</span></td>
                     <td class="desc-cell">{deck.description || ''}</td>
-                    <td class="source-cell">{anki.sourceLabel(deck, collections)}</td>
+                    <td class="source-cell">{anki.sourceLabel(deck, collections, $t)}</td>
                     <td class="narrow-col count-cell">{deck.cardCount}</td>
                     <td class="narrow-col count-cell">{deck.newCount || ''}</td>
                     <td class="narrow-col count-cell">{deck.dueCount || ''}</td>

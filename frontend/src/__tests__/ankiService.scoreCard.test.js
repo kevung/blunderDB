@@ -99,6 +99,6 @@ describe('a deck of score sheets', () => {
     });
 
     test('names itself in the deck list', () => {
-        expect(sourceLabel({ sourceType: SOURCE_SCORES })).toBe('Score sheets');
+        expect(sourceLabel({ sourceType: SOURCE_SCORES }, [], (k) => k)).toBe('anki.sourceScores');
     });
 });

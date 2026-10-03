@@ -746,7 +746,15 @@
         "colRating": "Оценка",
         "colState": "Состояние",
         "colInterval": "Интервал",
-        "days": "дн"
+        "days": "дн",
+        "state": {
+            "new": "Новая",
+            "learning": "Изучается",
+            "review": "Повторение",
+            "relearning": "Переучивание"
+        },
+        "sourceSearch": "Поиск",
+        "sourceCollectionN": "Коллекция № {id}"
     },
     "analysis": {
         "analysisDepth": "Глубина анализа",
@@ -1457,7 +1465,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Закрыть панель статистики",
-        "tabDashboard": "Панель",
+        "tabDashboard": "Сводка",
         "tabProgression": "Прогресс",
         "tabErrors": "Ошибки",
         "tabTraining": "Тренировка",
@@ -1482,7 +1490,7 @@
         "filterLengthHint": "Нажмите для фильтрации только этой длины",
         "selectAllLengths": "Выбрать все длины",
         "all": "Все",
-        "resetFilters": "↺ Сброс",
+        "resetFilters": "↺ Сбросить",
         "resetFiltersHint": "Сбросить фильтры",
         "noDecisionsEmpty": "Нет решений в отфильтрованном периоде. Расширьте фильтры.",
         "cardLabelAll": "PR Общий",

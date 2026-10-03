@@ -746,7 +746,15 @@
         "colRating": "Nota",
         "colState": "Estado",
         "colInterval": "Intervalo",
-        "days": "d"
+        "days": "d",
+        "state": {
+            "new": "Nueva",
+            "learning": "Aprendiendo",
+            "review": "Repaso",
+            "relearning": "Reaprendiendo"
+        },
+        "sourceSearch": "Búsqueda",
+        "sourceCollectionN": "Colección n.º {id}"
     },
     "analysis": {
         "analysisDepth": "Profundidad de análisis",
@@ -1457,7 +1465,7 @@
         "metricPR": "PR",
         "metricMWC": "MWC",
         "closePanel": "Cerrar panel de estadísticas",
-        "tabDashboard": "Dashboard",
+        "tabDashboard": "Panel",
         "tabProgression": "Progresión",
         "tabErrors": "Errores",
         "tabTraining": "Entrenamiento",
@@ -1482,7 +1490,7 @@
         "filterLengthHint": "Clic para filtrar solo esta longitud",
         "selectAllLengths": "Seleccionar todas las longitudes",
         "all": "Todos",
-        "resetFilters": "↺ Reset",
+        "resetFilters": "↺ Restablecer",
         "resetFiltersHint": "Restablecer filtros",
         "noDecisionsEmpty": "No hay decisiones en el período filtrado. Amplíe los filtros.",
         "cardLabelAll": "PR Global",

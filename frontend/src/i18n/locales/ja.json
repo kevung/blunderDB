@@ -746,7 +746,15 @@
         "colRating": "評価",
         "colState": "状態",
         "colInterval": "間隔",
-        "days": "日"
+        "days": "日",
+        "state": {
+            "new": "新規",
+            "learning": "学習中",
+            "review": "復習",
+            "relearning": "再学習"
+        },
+        "sourceSearch": "検索",
+        "sourceCollectionN": "コレクション #{id}"
     },
     "analysis": {
         "analysisDepth": "解析の深さ",

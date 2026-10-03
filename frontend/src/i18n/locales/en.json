@@ -746,7 +746,15 @@
         "colRating": "Grade",
         "colState": "State",
         "colInterval": "Interval",
-        "days": "d"
+        "days": "d",
+        "state": {
+            "new": "New",
+            "learning": "Learning",
+            "review": "Review",
+            "relearning": "Relearning"
+        },
+        "sourceSearch": "Search",
+        "sourceCollectionN": "Collection #{id}"
     },
     "analysis": {
         "analysisDepth": "Analysis Depth",

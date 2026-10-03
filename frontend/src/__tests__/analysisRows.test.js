@@ -87,7 +87,7 @@ describe('cubeRows', () => {
             ['+1.000', '+0.000']
         ]);
         expect(block.rows.map((r) => r.best)).toEqual([false, true, false]);
-        expect(block.verdict).toEqual({ label: 'analysis.bestAction', text: 'Double/Take', unavailable: false });
+        expect(block.verdict).toEqual({ label: 'analysis.bestAction', text: 'cube.verdicts.double_take', unavailable: false });
     });
 
     test('a zero error is +0.000 (a measured result), an absent one is empty (ADR-0020 rule 2)', () => {
