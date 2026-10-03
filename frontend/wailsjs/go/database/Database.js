@@ -170,6 +170,14 @@ export function ComputeStatsCtx(arg1, arg2) {
   return window['go']['database']['Database']['ComputeStatsCtx'](arg1, arg2);
 }
 
+export function ComputeTrainingStats(arg1, arg2) {
+  return window['go']['database']['Database']['ComputeTrainingStats'](arg1, arg2);
+}
+
+export function ComputeTrainingStatsCtx(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ComputeTrainingStatsCtx'](arg1, arg2, arg3);
+}
+
 export function ConfirmAllProposals(arg1) {
   return window['go']['database']['Database']['ConfirmAllProposals'](arg1);
 }
@@ -224,6 +232,10 @@ export function CreateDirection(arg1, arg2, arg3) {
 
 export function CreateRencontre(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['CreateRencontre'](arg1, arg2, arg3, arg4);
+}
+
+export function CreateStudyDeck(arg1, arg2) {
+  return window['go']['database']['Database']['CreateStudyDeck'](arg1, arg2);
 }
 
 export function CreateTournament(arg1, arg2, arg3) {
@@ -1096,6 +1108,10 @@ export function StartTranscriptionFromSlot(arg1, arg2) {
 
 export function StudyImpact(arg1) {
   return window['go']['database']['Database']['StudyImpact'](arg1);
+}
+
+export function StudyPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['StudyPositionIDs'](arg1, arg2, arg3);
 }
 
 export function SuggestMatFilename(arg1) {

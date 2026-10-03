@@ -633,7 +633,7 @@ Panneau Analyse
 ---------------
 
 Le panneau **Analyse** (*CTRL-L*) affiche les données d'analyse de la position
-courante importées depuis eXtreme Gammon (XG), GNUbg ou BGBlitz. Il présente
+courante importées depuis eXtreme Gammon (XG), GNUbg, BGBlitz ou gammonNet. Il présente
 les meilleures alternatives (coups de pions ou décisions de videau) avec leurs
 valeurs d'équité et les erreurs correspondantes. La touche *d* bascule entre
 l'analyse des coups de pions et l'analyse du cube. Lors de la navigation dans
@@ -655,6 +655,12 @@ partir duquel les moteurs s'accordent à dire qu'elle en est une. Le reste du
 temps, il n'y a pas de phrase — ni cadre vide, ni « nous ne savons pas ». Une
 explication fausse coûte plus cher que pas d'explication : elle apprend
 quelque chose d'inexact.
+
+La même phrase accompagne l'erreur là où vous venez de la commettre : au dos
+d'une **carte Anki**, sous l'analyse dévoilée, et dans le **verdict du quiz**
+de l'exercice Décision, sous le coût en mMWC. Les mêmes règles de silence y
+valent : un coup juste, ou une erreur qu'aucune règle n'explique, n'ajoute
+rien.
 
 Lorsqu'une position a été jugée par **plusieurs moteurs**, une bande en tête
 du panneau les met côte à côte : une ligne par moteur, avec sa profondeur et
@@ -2255,6 +2261,38 @@ coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré :
 comme le plan de jeu, c'est une étiquette dérivée, non modifiable. En ligne de
 commande : ``blunderdb stats recurring`` (voir :ref:`cli_stats`).
 
+Chaque ligne propose trois gestes pour passer de l'erreur à l'étude :
+**Quiz sur ce groupe** lance l'exercice Décision du panneau
+:ref:`Entraînement <panneau_entrainement>` sur les positions du groupe,
+**Paquet Anki** en fait un paquet de cartes, **Collection** les range dans une
+nouvelle collection. Au-dessus du tableau, **Quiz de mes trois pires groupes**
+tire vingt positions au hasard parmi celles des trois groupes les plus
+coûteux. En ligne de commande, ``stats recurring --quiz`` tire ces
+positions et ``--deck`` crée le paquet.
+
+.. _stats_entrainement:
+
+Entraînement dans le temps
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+L'onglet **Entraînement** met côte à côte, sur les mêmes fenêtres
+calendaires — la **semaine** ou le **mois**, au choix — trois séries qui
+mesurent la progression par trois chemins :
+
+* le **PR du quiz** : celui des sessions de l'exercice Décision du panneau
+  Entraînement, pondéré par le nombre de décisions jugées. Il est calculé sur
+  l'échelle du PR réel, donc comparable à lui ;
+* le **PR des matchs** du filtre courant, pondéré par le nombre de décisions ;
+* la **rétention Anki** : la part des révisions de cartes déjà apprises
+  notées *Difficile* ou mieux, lue sur l'axe de droite (en %).
+
+Entre parenthèses, le nombre de décisions ou de révisions derrière chaque
+valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas un
+zéro. Le filtre ne restreint que les matchs ; le journal du quiz et celui
+d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est enregistré en
+plus : les trois séries sont relues dans les journaux existants. En ligne de
+commande : ``blunderdb stats training`` (voir :ref:`cli_stats`).
+
 Répartition par action de videau
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -3059,6 +3097,18 @@ panneau Éval ou le commentaire de la position, elle vous attendra au retour.
 Une position dépourvue d'analyse enregistrée l'indique directement, sans zone
 masquée.
 
+**Répondre au damier.** Par défaut, vous vous notez vous-même. Dans les
+Paramètres d'un paquet de positions, cochez *Répondre au damier* : pour une
+carte de pions, vous jouez alors le coup sur le damier, comme dans l'exercice
+Décision, puis *Valider*. Le moteur juge le coup contre l'analyse enregistrée,
+dévoile la réponse et **propose une note** : *Facile* pour une bonne réponse
+rapide, *Bien* pour une bonne réponse plus lente, *Difficile* pour une erreur
+sous le seuil du blunder, *À revoir* pour un blunder ou un coup illégal. La note
+proposée est en surbrillance ; vous gardez la main et notez ce que vous voulez
+avec *1* à *4*. Un coup légal que l'analyse ne classe pas ne propose rien. Les
+cartes de videau, les cartes de score et les paquets de fiches de score restent
+en auto-notation. Dévoiler la réponse sans jouer abandonne le coup.
+
 **Limiter la séance.** Par défaut, une séance de révision va jusqu'au bout des
 cartes dues. Vous pouvez la borner à un nombre de cartes, par paquet, dans les
 Paramètres : cochez *Limiter la séance* et indiquez combien de cartes une séance
@@ -3168,6 +3218,10 @@ Trois choix, puis « Démarrer » :
 * la **limite par question** — aucune, 15, 30 ou 60 secondes.
 
 La source choisie est mémorisée pour chaque exercice, d'une session à l'autre.
+
+La liste parcourue peut venir des *erreurs récurrentes* du panneau Stats : un
+clic sur « Quiz sur ce groupe » la remplace par les positions du groupe et
+démarre l'exercice Décision.
 
 ``train scores``, ``train pips``, ``train bearoff``, ``train evaluation`` et
 ``train decision`` ouvrent le panneau et démarrent directement ; ``train tp`` et ``train takepoint``

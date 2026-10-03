@@ -11,6 +11,20 @@ type statsComputeReq struct {
 	Filter storage.StatsFilter `json:"filter"`
 }
 
+type statsTrainingReq struct {
+	Filter storage.StatsFilter `json:"filter"`
+	// Window is "week" (default) or "month".
+	Window string `json:"window"`
+}
+
+type studyIDsReq struct {
+	Filter storage.StatsFilter `json:"filter"`
+	// Rank is 0 for the worst groups, n>0 for the n-th alone.
+	Rank int `json:"rank"`
+	// Size draws at most that many positions; 0 returns them all.
+	Size int `json:"size"`
+}
+
 type statsSelectionReq struct {
 	Filter    storage.StatsFilter   `json:"filter"`
 	Selection storage.SelectionSpec `json:"selection"`
@@ -51,6 +65,19 @@ func (s *Server) statsRoutes() []route {
 		// plus coûteuse d'abord ; chaque groupe porte ses positions.
 		{http.MethodPost, "/v1/stats.recurringErrors", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.RecurringErrors, error) {
 			return ss().RecurringErrors(ctx, scope, req.Filter)
+		})},
+		// Le PR du quiz Décision et la rétention Anki par fenêtre calendaire,
+		// sur le même calendrier que le PR des matchs réels.
+		{http.MethodPost, "/v1/stats.training", rpc(func(ctx context.Context, scope string, req statsTrainingReq) (*storage.TrainingStats, error) {
+			if req.Window == "" {
+				req.Window = storage.TrainingWindowWeek
+			}
+			return storage.ComputeTrainingStats(ctx, s.opts.Storage, scope, req.Filter, req.Window)
+		})},
+		// Les positions des erreurs récurrentes du filtre, tirées pour un quiz si Size > 0.
+		{http.MethodPost, "/v1/stats.studyIds", rpc(func(ctx context.Context, scope string, req studyIDsReq) (idsResp, error) {
+			ids, err := storage.StudyIDs(ctx, s.opts.Storage, scope, req.Filter, req.Rank, req.Size)
+			return idsResp{PositionIDs: ids}, err
 		})},
 		{http.MethodPost, "/v1/stats.positionIdsBySelection", rpc(func(ctx context.Context, scope string, req statsSelectionReq) (idsResp, error) {
 			ids, err := ss().PositionIDsBySelection(ctx, scope, req.Filter, req.Selection)

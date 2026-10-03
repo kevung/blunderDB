@@ -22,6 +22,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    anki
      POST /v1/anki.buryCard                        JSON
      POST /v1/anki.createDeck                      JSON
+     POST /v1/anki.createStudyDeck                 JSON
      POST /v1/anki.deckPositions                   NDJSON
      POST /v1/anki.deckStats                       JSON
      POST /v1/anki.deleteDeck                      JSON
@@ -237,7 +238,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.positionIdsBySelection         JSON
      POST /v1/stats.positionIdsByTournament        JSON
      POST /v1/stats.recurringErrors                JSON
+     POST /v1/stats.studyIds                       JSON
      POST /v1/stats.tournamentBadges               JSON
+     POST /v1/stats.training                       JSON
    tenant
      POST /ops/tenant.purge                        custom
    tournaments

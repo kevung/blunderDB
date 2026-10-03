@@ -22,6 +22,11 @@ type deckUpdateReq struct {
 	Description string `json:"description"`
 }
 
+type studyDeckReq struct {
+	Name        string  `json:"name"`
+	PositionIDs []int64 `json:"positionIds"`
+}
+
 type deckParamsReq struct {
 	ID               int64   `json:"id"`
 	RequestRetention float64 `json:"requestRetention"`
@@ -91,6 +96,10 @@ func (s *Server) ankiRoutes() []route {
 	return []route{
 		{http.MethodPost, "/v1/anki.createDeck", rpc(func(ctx context.Context, scope string, req deckCreateReq) (idResp, error) {
 			id, err := as().CreateDeck(ctx, scope, req.Name, req.Description, req.SourceType, req.SourceID, req.SourceCommand)
+			return idResp{ID: id}, err
+		})},
+		{http.MethodPost, "/v1/anki.createStudyDeck", rpc(func(ctx context.Context, scope string, req studyDeckReq) (idResp, error) {
+			id, err := storage.CreateStudyDeck(ctx, s.opts.Storage, scope, req.Name, req.PositionIDs)
 			return idResp{ID: id}, err
 		})},
 		{http.MethodPost, "/v1/anki.listDecks", rpcStream(func(ctx context.Context, scope string, _ struct{}) iterDecks {

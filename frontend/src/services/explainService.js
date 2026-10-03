@@ -20,13 +20,15 @@ export function cubeActionToken(action) {
 
 /**
  * Le coup ou l'action réellement joués, ou '' si le record n'en connaît aucun.
- * @param {{doublingCubeAnalysis?: object, playedCubeAction?: string,
+ * @param {{analysisType?: string, doublingCubeAnalysis?: object, playedCubeAction?: string,
  *          playedCubeActions?: string[], playedMove?: string,
  *          playedMoves?: string[]}|null} analysis
  */
 export function playedFromAnalysis(analysis) {
     if (!analysis) return '';
-    if (analysis.doublingCubeAnalysis) {
+    // Le type du record prime : un record de pions peut porter un bloc de videau vide.
+    const isCube = analysis.analysisType ? analysis.analysisType === 'DoublingCube' : !!analysis.doublingCubeAnalysis;
+    if (isCube) {
         const action = analysis.playedCubeAction || (analysis.playedCubeActions || [])[0] || '';
         return cubeActionToken(action);
     }
