@@ -710,7 +710,7 @@
         "sourceCurrentSearch": "現在の検索",
         "sourceScores": "スコア表",
         "scoresCount": "{count} 件のスコア",
-        "scoreQuestion": "スコア {a}/{b} away",
+        "scoreQuestion": "スコア {a}/{b}",
         "badScoreKey": "このカードのスコアを読み取れません",
         "statLearning": "学習中",
         "statNew": "新規",
@@ -1771,7 +1771,7 @@
         "faultHint": "間違えた数値をクリックしてください。",
         "faceYou": "あなた",
         "faceOpponent": "相手",
-        "scoreCaption": "スコア {a}/{b} away",
+        "scoreCaption": "スコア {a}/{b}",
         "summary": "集計",
         "noSession": "セッションなし",
         "sessionsCount": "{n} セッション",
@@ -1815,7 +1815,8 @@
         },
         "truthExact": "正解: 両者のベアオフデータベース (厳密)。",
         "truthEvaluated": "正解: gammonNet、{depth}。",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "各マスの数値を頭の中で見積もってから「公開」を押し、その後、間違えた数値をクリックしてください。"
     },
     "explain": {
         "blots": "{cost} mMWC の損：着手はブロットを {blots} 個残しますが、{best} なら {bestBlots} 個です。",

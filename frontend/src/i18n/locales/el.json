@@ -710,7 +710,7 @@
         "sourceCurrentSearch": "Τρέχουσα αναζήτηση",
         "sourceScores": "Καρτέλες σκορ",
         "scoresCount": "{count} σκορ",
-        "scoreQuestion": "Σκορ {a}/{b} away",
+        "scoreQuestion": "Σκορ {a}/{b}",
         "badScoreKey": "Μη αναγνώσιμο σκορ σε αυτή την κάρτα",
         "statLearning": "Εκμάθηση",
         "statNew": "Νέες",
@@ -1771,7 +1771,7 @@
         "faultHint": "Κάντε κλικ στον αριθμό που λάθεψατε.",
         "faceYou": "Εσείς",
         "faceOpponent": "Ο αντίπαλος",
-        "scoreCaption": "Σκορ {a}/{b} away",
+        "scoreCaption": "Σκορ {a}/{b}",
         "summary": "Απολογισμός",
         "noSession": "Καμία συνεδρία",
         "sessionsCount": "{n} συνεδρίες",
@@ -1815,7 +1815,8 @@
         },
         "truthExact": "Αλήθεια: η βάση bearoff δύο πλευρών, ακριβής.",
         "truthEvaluated": "Αλήθεια: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "Για κάθε κελί υπολογίστε τον αριθμό με το μυαλό και πατήστε Αποκάλυψη. Έπειτα πατήστε κάθε αριθμό που κάνατε λάθος."
     },
     "explain": {
         "blots": "Χάνετε {cost} mMWC: η κίνηση που παίχτηκε αφήνει {blots} blots εκεί όπου η {best} αφήνει μόνο {bestBlots}.",

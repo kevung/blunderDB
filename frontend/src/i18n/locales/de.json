@@ -710,7 +710,7 @@
         "sourceCurrentSearch": "Aktuelle Suche",
         "sourceScores": "Standkarten",
         "scoresCount": "{count} Stände",
-        "scoreQuestion": "Stand {a}/{b} away",
+        "scoreQuestion": "Stand {a}/{b}",
         "badScoreKey": "Unlesbarer Stand auf dieser Karte",
         "statLearning": "Lernen",
         "statNew": "Neu",
@@ -1771,7 +1771,7 @@
         "faultHint": "Klicken Sie die Zahl an, die Sie falsch hatten.",
         "faceYou": "Sie",
         "faceOpponent": "Der Gegner",
-        "scoreCaption": "Stand {a}/{b} away",
+        "scoreCaption": "Stand {a}/{b}",
         "summary": "Bilanz",
         "noSession": "Keine Sitzung",
         "sessionsCount": "{n} Sitzungen",
@@ -1815,7 +1815,8 @@
         },
         "truthExact": "Wahrheit: die zweiseitige Bearoff-Datenbank, exakt.",
         "truthEvaluated": "Wahrheit: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "Schätzen Sie jede Zahl im Kopf und klicken Sie dann auf Aufdecken. Klicken Sie danach jede Zahl an, die Sie falsch hatten."
     },
     "explain": {
         "blots": "Sie verlieren {cost} mMWC: Der gespielte Zug lässt {blots} Blots stehen, {best} nur {bestBlots}.",

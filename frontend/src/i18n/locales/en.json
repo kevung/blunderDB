@@ -710,7 +710,7 @@
         "sourceCurrentSearch": "Current search",
         "sourceScores": "Score sheets",
         "scoresCount": "{count} scores",
-        "scoreQuestion": "Score {a}/{b} away",
+        "scoreQuestion": "Score {a}/{b}",
         "badScoreKey": "Unreadable score on this card",
         "statLearning": "Learning",
         "statNew": "New",
@@ -1771,7 +1771,7 @@
         "faultHint": "Click the number you got wrong.",
         "faceYou": "You",
         "faceOpponent": "The opponent",
-        "scoreCaption": "Score {a}/{b} away",
+        "scoreCaption": "Score {a}/{b}",
         "summary": "Summary",
         "noSession": "No session",
         "sessionsCount": "{n} sessions",
@@ -1815,7 +1815,8 @@
         },
         "truthExact": "Truth: the two-sided bear-off database, exact.",
         "truthEvaluated": "Truth: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "For each box, work the number out in your head, then click Reveal. Afterwards, click every number you got wrong."
     },
     "explain": {
         "blots": "You lose {cost} mMWC: the move played leaves {blots} blots where {best} leaves only {bestBlots}.",

@@ -710,7 +710,7 @@
         "sourceCurrentSearch": "Recherche actuelle",
         "sourceScores": "Fiches de score",
         "scoresCount": "{count} scores",
-        "scoreQuestion": "Score {a}/{b} away",
+        "scoreQuestion": "Score {a}/{b}",
         "badScoreKey": "Score illisible sur cette carte",
         "statLearning": "En apprentissage",
         "statNew": "Nouvelles",
@@ -1771,7 +1771,7 @@
         "faultHint": "Cliquez le nombre que vous avez raté.",
         "faceYou": "Vous",
         "faceOpponent": "L'adversaire",
-        "scoreCaption": "Score {a}/{b} away",
+        "scoreCaption": "Score {a}/{b}",
         "summary": "Bilan",
         "noSession": "Aucune session",
         "sessionsCount": "{n} sessions",
@@ -1815,7 +1815,8 @@
         },
         "truthExact": "Vérité : la base de bearoff à deux camps, exacte.",
         "truthEvaluated": "Vérité : gammonNet, {depth}.",
-        "epcShown": "EPC — {p1} : {a} · {p2} : {b}"
+        "epcShown": "EPC — {p1} : {a} · {p2} : {b}",
+        "scoresInstruction": "Pour chaque case, estimez le nombre de tête, puis cliquez Révéler. Ensuite, cliquez chaque nombre que vous aviez faux."
     },
     "explain": {
         "blots": "Vous perdez {cost} mMWC : le coup joué laisse {blots} blots là où {best} n'en laisse que {bestBlots}.",

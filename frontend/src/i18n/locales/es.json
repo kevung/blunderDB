@@ -710,7 +710,7 @@
         "sourceCurrentSearch": "Búsqueda actual",
         "sourceScores": "Fichas de marcador",
         "scoresCount": "{count} marcadores",
-        "scoreQuestion": "Marcador {a}/{b} away",
+        "scoreQuestion": "Marcador {a}/{b}",
         "badScoreKey": "Marcador ilegible en esta tarjeta",
         "statLearning": "Aprendiendo",
         "statNew": "Nuevas",
@@ -1771,7 +1771,7 @@
         "faultHint": "Haga clic en el número que ha fallado.",
         "faceYou": "Usted",
         "faceOpponent": "El adversario",
-        "scoreCaption": "Marcador {a}/{b} away",
+        "scoreCaption": "Marcador {a}/{b}",
         "summary": "Balance",
         "noSession": "Ninguna sesión",
         "sessionsCount": "{n} sesiones",
@@ -1815,7 +1815,8 @@
         },
         "truthExact": "Verdad: la base de bearoff de dos bandos, exacta.",
         "truthEvaluated": "Verdad: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "Calcule mentalmente cada casilla y pulse Revelar. Después, pulse cada número que haya fallado."
     },
     "explain": {
         "blots": "Pierde {cost} mMWC: la jugada realizada deja {blots} fichas sueltas donde {best} solo deja {bestBlots}.",

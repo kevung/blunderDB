@@ -710,7 +710,7 @@
         "sourceCurrentSearch": "Nykyinen haku",
         "sourceScores": "Tilannekortit",
         "scoresCount": "{count} tilannetta",
-        "scoreQuestion": "Tilanne {a}/{b} away",
+        "scoreQuestion": "Tilanne {a}/{b}",
         "badScoreKey": "Tämän kortin tilannetta ei voi lukea",
         "statLearning": "Opetellaan",
         "statNew": "Uudet",
@@ -1771,7 +1771,7 @@
         "faultHint": "Napsauta lukua, jonka menit väärin.",
         "faceYou": "Sinä",
         "faceOpponent": "Vastustaja",
-        "scoreCaption": "Tilanne {a}/{b} away",
+        "scoreCaption": "Tilanne {a}/{b}",
         "summary": "Yhteenveto",
         "noSession": "Ei istuntoja",
         "sessionsCount": "{n} istuntoa",
@@ -1815,7 +1815,8 @@
         },
         "truthExact": "Totuus: kaksipuolinen bearoff-tietokanta, tarkka.",
         "truthEvaluated": "Totuus: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "Arvioi jokainen luku päässäsi ja napsauta sitten Paljasta. Napsauta sen jälkeen jokaista lukua, jonka arvasit väärin."
     },
     "explain": {
         "blots": "Menetät {cost} mMWC: pelattu siirto jättää {blots} yksinäistä nappulaa, kun {best} jättää vain {bestBlots}.",

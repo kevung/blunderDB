@@ -710,7 +710,7 @@
         "sourceCurrentSearch": "Ricerca corrente",
         "sourceScores": "Schede di punteggio",
         "scoresCount": "{count} punteggi",
-        "scoreQuestion": "Punteggio {a}/{b} away",
+        "scoreQuestion": "Punteggio {a}/{b}",
         "badScoreKey": "Punteggio illeggibile su questa scheda",
         "statLearning": "In apprendimento",
         "statNew": "Nuove",
@@ -1771,7 +1771,7 @@
         "faultHint": "Fare clic sul numero sbagliato.",
         "faceYou": "Lei",
         "faceOpponent": "L'avversario",
-        "scoreCaption": "Punteggio {a}/{b} away",
+        "scoreCaption": "Punteggio {a}/{b}",
         "summary": "Bilancio",
         "noSession": "Nessuna sessione",
         "sessionsCount": "{n} sessioni",
@@ -1815,7 +1815,8 @@
         },
         "truthExact": "Verità: la base di bearoff a due parti, esatta.",
         "truthEvaluated": "Verità: gammonNet, {depth}.",
-        "epcShown": "EPC — {p1}: {a} · {p2}: {b}"
+        "epcShown": "EPC — {p1}: {a} · {p2}: {b}",
+        "scoresInstruction": "Per ogni casella stima il numero a mente, poi premi Rivelare. Poi premi ogni numero che hai sbagliato."
     },
     "explain": {
         "blots": "Perdi {cost} mMWC: la mossa giocata lascia {blots} pedine scoperte dove {best} ne lascia solo {bestBlots}.",

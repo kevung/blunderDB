@@ -3320,6 +3320,10 @@ affiche une **fiche de score** : deux colonnes — *Vous* et *L'adversaire* — 
 sept lignes — le point de prise au videau 2 puis au videau 4, chacun en course
 longue et au dernier lancer, puis la valeur du gammon aux videaux 1, 2 et 4.
 
+Une ligne de consigne rappelle le geste — estimer chaque nombre de tête, puis
+*Révéler*, puis cliquer ceux qu'on a ratés —, et le plateau montre le score
+tiré sur une table vide.
+
 Chaque colonne ne porte que les cases que les tables de référence — celles
 qu'affichent les commandes ``tp2_live``, ``tp2_last``, ``tp4_live``,
 ``tp4_last``, ``gv1``, ``gv2`` et ``gv4`` — définissent pour sa face : trois
