@@ -19,3 +19,20 @@ func (d *Database) ComputeTrainingStatsCtx(ctx context.Context, filter StatsFilt
 	defer d.mu.RUnlock()
 	return storage.ComputeTrainingStats(ctx, d.store, "", toStorageStatsFilter(filter), window)
 }
+
+// StudyPositionIDs are the positions of the recurring errors of a filter, by
+// group rank (0: the worst groups), drawn down to size when size is above zero
+// (storage.StudyIDs).
+func (d *Database) StudyPositionIDs(filter StatsFilter, rank, size int) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return storage.StudyIDs(context.Background(), d.store, "", toStorageStatsFilter(filter), rank, size)
+}
+
+// CreateStudyDeck makes an Anki deck of exactly these positions
+// (storage.CreateStudyDeck).
+func (d *Database) CreateStudyDeck(name string, ids []int64) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return storage.CreateStudyDeck(context.Background(), d.store, "", name, ids)
+}

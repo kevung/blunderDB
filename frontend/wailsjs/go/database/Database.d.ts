@@ -132,6 +132,8 @@ export function CreateDirection(arg1:number,arg2:string,arg3:number):Promise<voi
 
 export function CreateRencontre(arg1:string,arg2:string,arg3:string,arg4:number):Promise<service.RencontreView>;
 
+export function CreateStudyDeck(arg1:string,arg2:Array<number>):Promise<number>;
+
 export function CreateTournament(arg1:string,arg2:string,arg3:string):Promise<number>;
 
 export function CreateTranscription(arg1:transcript.Header):Promise<database.TranscriptionState>;
@@ -559,6 +561,8 @@ export function StartMatchManually(arg1:number,arg2:string,arg3:string,arg4:numb
 export function StartTranscriptionFromSlot(arg1:number,arg2:string):Promise<database.TranscriptionState>;
 
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
+
+export function StudyPositionIDs(arg1:database.StatsFilter,arg2:number,arg3:number):Promise<Array<number>>;
 
 export function SuggestMatFilename(arg1:number):Promise<string>;
 

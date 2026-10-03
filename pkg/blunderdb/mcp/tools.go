@@ -436,7 +436,7 @@ func registerPlayers(tb *Toolbox) {
 		Limit int `json:"limit,omitempty" jsonschema:"blunders to return (default 20, at most 200)"`
 	}
 	Add(tb, Reads, &sdk.Tool{Name: "recurring_errors", Title: "Recurring errors",
-		Description: "Where a player loses equity again and again: the biggest blunders (position id, error in mp, description), the cube actions and comment tags ranked by PR, the histogram of error sizes, and the errors grouped by plan of play and theme (Groups, costliest first, each with the worst PositionIDs). Open a blunder with get_position and explain_error; quiz a group by passing its PositionIDs to quiz_grade."},
+		Description: "Where a player loses equity again and again: the biggest blunders (position id, error in mp, description), the cube actions and comment tags ranked by PR, the histogram of error sizes, and the errors grouped by plan of play and theme (Groups, costliest first, each with at most 50 of its worst PositionIDs: Positions is how many it holds, Truncated says the list is cut). Open a blunder with get_position and explain_error; quiz a group by passing its PositionIDs to quiz_grade."},
 		func(ctx context.Context, req *sdk.CallToolRequest, a errorsIn) (any, error) {
 			var res obj
 			if err := tb.Engine.Call(ctx, req, "stats.compute", a.wire(), &res); err != nil {
@@ -451,6 +451,9 @@ func registerPlayers(tb *Toolbox) {
 			groups, _ := recurring["Groups"].([]any)
 			for _, g := range groups {
 				if group, ok := g.(obj); ok {
+					all, _ := group["PositionIDs"].([]any)
+					group["Positions"] = len(all)
+					group["Truncated"] = len(all) > groupIDsShown
 					group["PositionIDs"] = firstN(group["PositionIDs"], groupIDsShown)
 				}
 			}

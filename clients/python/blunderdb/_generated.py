@@ -54,6 +54,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.createDeck — JSON."
         return self._call("/v1/anki.createDeck", payload)
 
+    def anki_create_study_deck(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.createStudyDeck — JSON."
+        return self._call("/v1/anki.createStudyDeck", payload)
+
     def anki_deck_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/anki.deckPositions — NDJSON stream."
         return self._stream("/v1/anki.deckPositions", payload)
@@ -829,6 +833,10 @@ class GeneratedAPI(BaseClient):
     def stats_recurring_errors(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.recurringErrors — JSON."
         return self._call("/v1/stats.recurringErrors", payload)
+
+    def stats_study_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.studyIds — JSON."
+        return self._call("/v1/stats.studyIds", payload)
 
     def stats_tournament_badges(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.tournamentBadges — JSON."

@@ -145,7 +145,9 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 	}
 	var quizIDs []int64
 	if *quiz {
-		quizIDs = storage.DrawStudyQuiz(res.StudyPositionIDs(*group), *quizSize, nil)
+		if quizIDs, err = cli.db.StudyPositionIDs(filter, *group, *quizSize); err != nil {
+			return fmt.Errorf("draw the quiz: %w", err)
+		}
 	}
 	var deckID int64
 	if *deckName != "" {
@@ -154,7 +156,7 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 			return fmt.Errorf("no group to make a deck from")
 		}
 		var err error
-		if deckID, err = cli.createStudyDeck(*deckName, ids); err != nil {
+		if deckID, err = cli.db.CreateStudyDeck(*deckName, ids); err != nil {
 			return err
 		}
 	}
@@ -184,25 +186,6 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 		fmt.Printf("Created deck %d (%s)\n", deckID, *deckName)
 	}
 	return nil
-}
-
-// createStudyDeck makes a search deck of exactly these positions: the ids are
-// stored with the deck, as the GUI does for a deck made from a result list.
-func (cli *CLI) createStudyDeck(name string, ids []int64) (int64, error) {
-	source, err := json.Marshal(struct {
-		IDs []int64 `json:"ids"`
-	}{ids})
-	if err != nil {
-		return 0, fmt.Errorf("marshal deck source: %w", err)
-	}
-	deckID, err := cli.db.CreateAnkiDeck(name, "", AnkiSourceSearch, 0, string(source))
-	if err != nil {
-		return 0, fmt.Errorf("create deck: %w", err)
-	}
-	if err := cli.db.SyncAnkiDeckWithPositions(deckID, ids); err != nil {
-		return 0, fmt.Errorf("fill deck: %w", err)
-	}
-	return deckID, nil
 }
 
 func joinIDs(ids []int64) string {

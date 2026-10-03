@@ -240,6 +240,13 @@ func TestReadTools(t *testing.T) {
 	if groups, _ := recurring["Groups"].([]any); len(groups) > 3 {
 		t.Errorf("recurring_errors: %d groups, limit is 3", len(groups))
 	} else if len(groups) > 0 {
+		g0 := groups[0].(obj)
+		if n, _ := g0["Positions"].(float64); int(n) < len(g0["PositionIDs"].([]any)) {
+			t.Errorf("recurring_errors: Positions = %v, fewer than the ids returned", g0["Positions"])
+		}
+		if _, ok := g0["Truncated"].(bool); !ok {
+			t.Errorf("recurring_errors: Truncated missing: %v", g0)
+		}
 		if ids, _ := groups[0].(obj)["PositionIDs"].([]any); len(ids) == 0 || len(ids) > 50 {
 			t.Errorf("recurring_errors: group ids = %d, want 1..%d", len(ids), 50)
 		}

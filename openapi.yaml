@@ -176,6 +176,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idResp"
+  /v1/anki.createStudyDeck:
+    post:
+      operationId: anki.createStudyDeck
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studyDeckReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
   /v1/anki.deckPositions:
     post:
       operationId: anki.deckPositions
@@ -4737,6 +4754,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_RecurringErrors"
                 nullable: true
+  /v1/stats.studyIds:
+    post:
+      operationId: stats.studyIds
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studyIDsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idsResp"
   /v1/stats.tournamentBadges:
     post:
       operationId: stats.tournamentBadges
@@ -6782,6 +6816,27 @@ components:
           type: array
           items:
             type: string
+    studyDeckReq:
+      type: object
+      properties:
+        name:
+          type: string
+        positionIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+    studyIDsReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        rank:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
     suspendCardReq:
       type: object
       properties:

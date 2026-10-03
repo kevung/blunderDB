@@ -57,7 +57,7 @@
         <p class="empty-subsection">{$t('stats.recurringEmpty')}</p>
     {:else}
         {#if groups.length > 0}
-            <button type="button" class="study-btn worst" data-testid="recurring-quiz-worst" onclick={() => quizOnWorstGroups(groups)}>{$t('stats.recurringQuizWorst')}</button>
+            <button type="button" class="study-btn worst" data-testid="recurring-quiz-worst" onclick={() => quizOnWorstGroups()}>{$t('stats.recurringQuizWorst')}</button>
             <table>
                 <thead>
                     <tr>

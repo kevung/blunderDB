@@ -60,7 +60,7 @@ describe('StatsRecurringErrors', () => {
     test('the quiz of the worst groups heads the section', async () => {
         render(StatsRecurringErrors, { props: { data } });
         await fireEvent.click(screen.getByTestId('recurring-quiz-worst'));
-        expect(quizOnWorstGroups).toHaveBeenCalledWith(data.Groups);
+        expect(quizOnWorstGroups).toHaveBeenCalledWith();
     });
 
     test('the unthemed errors stay out of the ranking, listed apart and clickable', async () => {

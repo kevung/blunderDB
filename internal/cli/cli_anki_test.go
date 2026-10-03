@@ -211,7 +211,7 @@ func TestCLI_StatsRecurringStudyDeck(t *testing.T) {
 	cli, _ := setupCLIWithDB(t)
 	_, ids := seedCollection(t, cli, "Openings", 2)
 
-	deckID, err := cli.createStudyDeck("Worst groups", ids)
+	deckID, err := cli.db.CreateStudyDeck("Worst groups", ids)
 	if err != nil {
 		t.Fatalf("createStudyDeck: %v", err)
 	}
