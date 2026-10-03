@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"strconv"
 	"strings"
 	"testing"
@@ -84,5 +86,31 @@ func TestRolloutCommandStoresAndAnalyzeResumes(t *testing.T) {
 	}
 	if err := (&CLI{db: NewDatabase()}).runAnalyze([]string{"--db", dbPath, "--rollout", "fast", "--stale"}); err == nil {
 		t.Error("--rollout with --stale accepted")
+	}
+}
+
+// A rollout whose write failed is printed, then fails the command: it is not
+// reported as interrupted, and the status is non-zero.
+func TestReportRollout_StoreFailureFailsTheCommand(t *testing.T) {
+	res := &rollout.Result{Games: 36, Stop: rollout.StopMaxGames}
+	boom := errors.New("disk full")
+
+	out := captureStdout(t, func() {
+		err := reportRollout(res, boom, true, 7, "text")
+		if !errors.Is(err, boom) {
+			t.Errorf("err %v, want the storage error", err)
+		}
+	})
+	if strings.Contains(out, "Interrupted") || strings.Contains(out, "Stored on") {
+		t.Errorf("a failed write was reported as: %q", out)
+	}
+
+	out = captureStdout(t, func() {
+		if err := reportRollout(res, context.Canceled, true, 7, "text"); err != nil {
+			t.Errorf("interrupted: %v", err)
+		}
+	})
+	if !strings.Contains(out, "Interrupted: not stored.") {
+		t.Errorf("interrupted output: %q", out)
 	}
 }

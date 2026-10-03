@@ -17,6 +17,7 @@ var boundAppMethods = []string{
 	"CancelRollout",
 	"RolloutPresets",
 	"StartRollout",
+	"StartRolloutFiltered",
 	"CheckForUpdate",
 	"CollectImportableFiles",
 	"ComputeCubeMatrix",

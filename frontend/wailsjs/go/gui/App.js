@@ -230,6 +230,10 @@ export function StartRollout(arg1) {
   return window['go']['gui']['App']['StartRollout'](arg1);
 }
 
+export function StartRolloutFiltered(arg1, arg2) {
+  return window['go']['gui']['App']['StartRolloutFiltered'](arg1, arg2);
+}
+
 export function StartupFilePath() {
   return window['go']['gui']['App']['StartupFilePath']();
 }

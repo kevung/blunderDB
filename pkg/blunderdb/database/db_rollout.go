@@ -9,8 +9,13 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
 )
 
-// Rollouts on the local library: the same gather, loop and write the serve
-// daemon runs (pkg/blunderdb/rollouts), under this wrapper's lock. The lock is
+// Rollouts on the local library. The entry points taking a context are
+// package functions, not methods: the Wails binding exposes every method of
+// *Database to the webview, where a context.Context cannot be supplied (the
+// GUI goes through App.StartRollout and App.StartRolloutFiltered).
+//
+// They run the same gather, loop and write as the serve
+// daemon (pkg/blunderdb/rollouts), under this wrapper's lock. The lock is
 // taken around each read and each write, never around the games: a rollout
 // runs for seconds to minutes and the library stays usable meanwhile.
 
@@ -18,7 +23,7 @@ import (
 // its cube decision otherwise, moves naming the plays when set — and, with
 // store, writes the finished rollout beside its analysis. A cancelled
 // rollout returns the games finished so far with ctx's error, unstored.
-func (d *Database) RolloutPosition(ctx context.Context, positionID int64, s rollout.Settings, moves []string, store bool, progress func(rollout.Progress)) (*rollout.Result, error) {
+func RolloutPosition(ctx context.Context, d *Database, positionID int64, s rollout.Settings, moves []string, store bool, progress func(rollout.Progress)) (*rollout.Result, error) {
 	d.mu.RLock()
 	pos, err := d.store.Positions().Load(ctx, "", positionID)
 	d.mu.RUnlock()
@@ -30,16 +35,16 @@ func (d *Database) RolloutPosition(ctx context.Context, positionID int64, s roll
 		return res, err
 	}
 	if store {
-		if err := d.StoreRollout(positionID, res); err != nil {
+		if err := d.storeRollout(positionID, res); err != nil {
 			return res, err
 		}
 	}
 	return res, nil
 }
 
-// StoreRollout writes a finished rollout on positionID (ADR-0060 §8): a
+// storeRollout writes a finished rollout on positionID (ADR-0060 §8): a
 // second Analysis, beside the imported or evaluated one, replacing nothing.
-func (d *Database) StoreRollout(positionID int64, res *rollout.Result) error {
+func (d *Database) storeRollout(positionID int64, res *rollout.Result) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	return rollouts.Store(context.Background(), d.store, "", positionID, res)
@@ -54,7 +59,7 @@ func (d *Database) LoadRollouts(positionID int64) ([]domain.RolloutAnalysis, err
 
 // PositionsToRollout snapshots the positions f selects that carry no rollout
 // of s's Signature yet: what RolloutFiltered would roll out.
-func (d *Database) PositionsToRollout(ctx context.Context, f SearchFilters, s rollout.Settings) ([]Position, error) {
+func PositionsToRollout(ctx context.Context, d *Database, f SearchFilters, s rollout.Settings) ([]Position, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 	return rollouts.Gather(ctx, d.store, "", f, s)
@@ -63,22 +68,22 @@ func (d *Database) PositionsToRollout(ctx context.Context, f SearchFilters, s ro
 // RolloutFiltered rolls out, one after the other, every position f selects
 // that carries no rollout of s's Signature yet, writing each as it finishes.
 // Cancelling ctx keeps what was written; running again resumes.
-func (d *Database) RolloutFiltered(ctx context.Context, f SearchFilters, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
+func RolloutFiltered(ctx context.Context, d *Database, f SearchFilters, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
 	if err := s.Validate(); err != nil {
 		return rollouts.Summary{}, err
 	}
-	positions, err := d.PositionsToRollout(ctx, f, s)
+	positions, err := PositionsToRollout(ctx, d, f, s)
 	if err != nil {
 		if errors.Is(err, context.Canceled) {
 			return rollouts.Summary{Cancelled: true}, nil
 		}
 		return rollouts.Summary{}, err
 	}
-	return d.RolloutPositions(ctx, positions, s, progress)
+	return RolloutPositions(ctx, d, positions, s, progress)
 }
 
 // RolloutPositions rolls out positions — a PositionsToRollout snapshot — one
 // after the other, writing each as it finishes.
-func (d *Database) RolloutPositions(ctx context.Context, positions []Position, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
-	return rollouts.Batch(ctx, positions, s, progress, d.StoreRollout)
+func RolloutPositions(ctx context.Context, d *Database, positions []Position, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
+	return rollouts.Batch(ctx, positions, s, progress, d.storeRollout)
 }

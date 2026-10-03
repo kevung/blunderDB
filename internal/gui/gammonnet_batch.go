@@ -173,7 +173,10 @@ func (a *App) waitForInteractiveEvaluation() {
 func (a *App) stopBackgroundJobs(grace time.Duration) {
 	a.CancelBearoffGeneration()
 
-	deadline := time.After(grace)
+	// One context for the whole grace period: unlike a timer channel, which
+	// delivers its value once, it stays done for every job still waited on.
+	deadline, release := context.WithTimeout(context.Background(), grace)
+	defer release()
 	for name, stopped := range map[string]<-chan struct{}{
 		"the gammonNet batch": a.cancelGammonNetBatch(),
 		"the rollout":         a.cancelRollout(),
@@ -183,7 +186,7 @@ func (a *App) stopBackgroundJobs(grace time.Duration) {
 		}
 		select {
 		case <-stopped:
-		case <-deadline:
+		case <-deadline.Done():
 			slog.Warn("shutdown: a job writing the database did not stop within the grace period; closing it anyway", "job", name, "grace", grace)
 		}
 	}

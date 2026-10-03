@@ -2,6 +2,8 @@ package database
 
 import (
 	"context"
+	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -33,7 +35,7 @@ func TestRolloutPosition_StoresBesideAndSurvivesSaveAnalysis(t *testing.T) {
 	}
 
 	s := tinySettings()
-	res, err := d.RolloutPosition(context.Background(), id, s, nil, true, nil)
+	res, err := RolloutPosition(context.Background(), d, id, s, nil, true, nil)
 	if err != nil || res == nil {
 		t.Fatalf("RolloutPosition: %v", err)
 	}
@@ -53,12 +55,31 @@ func TestRolloutPosition_StoresBesideAndSurvivesSaveAnalysis(t *testing.T) {
 		}
 	}
 
-	todo, err := d.PositionsToRollout(context.Background(), domain.SearchFilters{}, s)
+	todo, err := PositionsToRollout(context.Background(), d, domain.SearchFilters{}, s)
 	if err != nil || len(todo) != 0 {
 		t.Errorf("PositionsToRollout after the rollout: %d, %v", len(todo), err)
 	}
-	sum, err := d.RolloutFiltered(context.Background(), domain.SearchFilters{}, s, nil)
+	sum, err := RolloutFiltered(context.Background(), d, domain.SearchFilters{}, s, nil)
 	if err != nil || sum.Total != 0 {
 		t.Errorf("RolloutFiltered reran a done position: %+v, %v", sum, err)
+	}
+}
+
+// Wails binds every exported method of *Database to the webview: no rollout
+// method may take a context.Context (nothing there can supply one) nor a
+// Result the caller made up.
+func TestDatabaseBindsNoUncallableRolloutMethod(t *testing.T) {
+	ctxType := reflect.TypeOf((*context.Context)(nil)).Elem()
+	typ := reflect.TypeOf(&Database{})
+	for i := 0; i < typ.NumMethod(); i++ {
+		m := typ.Method(i)
+		if !strings.Contains(m.Name, "Rollout") {
+			continue
+		}
+		for j := 1; j < m.Type.NumIn(); j++ {
+			if m.Type.In(j) == ctxType || m.Type.In(j) == reflect.TypeOf((*rollout.Result)(nil)) {
+				t.Errorf("(*Database).%s is bound to the webview but takes %s", m.Name, m.Type.In(j))
+			}
+		}
 	}
 }

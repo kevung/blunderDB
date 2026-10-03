@@ -9,8 +9,6 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
-	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // Rollouts (ADR-0060): one position on demand, or every position a search
@@ -85,7 +83,10 @@ func (s *Server) handleRolloutPosition(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case errors.Is(err, context.Canceled):
 		return // nobody is listening
-	case errors.Is(err, storage.ErrNotFound):
+	case errors.Is(err, context.DeadlineExceeded):
+		writeErrorCode(w, CodeUnavailable, "the rollout did not finish within the request deadline; nothing was stored")
+		return
+	case errors.Is(err, rollouts.ErrLoad):
 		writeStorageError(w, err)
 		return
 	case err != nil:
@@ -117,12 +118,10 @@ func (s *Server) handleRolloutFilter(w http.ResponseWriter, r *http.Request) {
 		writeErrorCode(w, CodeInvalid, err.Error())
 		return
 	}
-	filters, diags := searchquery.Parse(req.Query)
-	for _, d := range diags {
-		if d.Kind == searchquery.DiagUnknown {
-			writeErrorCode(w, CodeInvalid, "unknown token in query: "+d.Token)
-			return
-		}
+	filters, err := rollouts.ParseQuery(req.Query)
+	if err != nil {
+		writeErrorCode(w, CodeInvalid, err.Error())
+		return
 	}
 
 	ctx, cancel := context.WithCancel(r.Context())
@@ -148,6 +147,11 @@ func (s *Server) handleRolloutFilter(w http.ResponseWriter, r *http.Request) {
 	emit(map[string]any{"event": "started", "job_id": jobID})
 
 	positions, err := rollouts.Gather(ctx, s.opts.Storage, scope, filters, settings)
+	if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+		emit(map[string]any{"event": "cancelled", "total": 0, "rolledOut": 0,
+			"refused": 0, "failed": 0, "signature": settings.Signature()})
+		return
+	}
 	if err != nil {
 		emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
 		return

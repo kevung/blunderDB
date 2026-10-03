@@ -109,9 +109,9 @@ func testRolloutIsASecondAnalysis(t *testing.T, s storage.Storage) {
 	}
 }
 
-// testRolloutAloneFeedsTheSearch: a position nothing else analysed is found
-// by the search through its rollout, and the gap-filling sweep no longer
-// counts it as unanalysed.
+// testRolloutAloneFeedsTheSearch: a position whose only analysis is a rollout
+// is found by the search through it, and the gap-filling sweep counts it as
+// analysed, so it is not offered again.
 func testRolloutAloneFeedsTheSearch(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	p := checkerPos()

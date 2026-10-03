@@ -16,10 +16,12 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
+	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -203,13 +205,37 @@ func Batch(ctx context.Context, positions []domain.Position, s rollout.Settings,
 	return sum, nil
 }
 
+// ErrLoad wraps a failure to read the position a rollout was asked on, so a
+// caller can tell it from the engine refusing the request.
+var ErrLoad = errors.New("rollouts: cannot load position")
+
 // Position loads positionID and rolls it out, writing nothing: the caller
 // stores the result with Store when asked to. Cancelled, it returns the games
 // finished so far (Stop = cancelled) with ctx's error.
 func Position(ctx context.Context, st storage.Storage, scope string, positionID int64, s rollout.Settings, moves []string, progress func(rollout.Progress)) (*rollout.Result, error) {
 	pos, err := st.Positions().Load(ctx, scope, positionID)
 	if err != nil {
-		return nil, fmt.Errorf("rollouts: position %d: %w", positionID, err)
+		return nil, fmt.Errorf("%w %d: %w", ErrLoad, positionID, err)
 	}
 	return rollout.Run(ctx, *pos, s, rollout.Options{Moves: moves, Progress: progress})
+}
+
+// ParseQuery reads query as the search bar does, refusing a token it does not
+// know: a typo must not widen a long rollout to the whole library.
+func ParseQuery(query string) (domain.SearchFilters, error) {
+	q := strings.TrimSpace(query)
+	if q == "" {
+		return domain.SearchFilters{}, nil
+	}
+	filters, diags := searchquery.Parse(q)
+	var unknown []string
+	for _, d := range diags {
+		if d.Kind == searchquery.DiagUnknown {
+			unknown = append(unknown, d.Token)
+		}
+	}
+	if len(unknown) > 0 {
+		return domain.SearchFilters{}, fmt.Errorf("unknown token(s) in query: %s", strings.Join(unknown, ", "))
+	}
+	return filters, nil
 }

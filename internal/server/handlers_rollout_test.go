@@ -2,8 +2,11 @@ package server
 
 import (
 	"bufio"
+	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -68,5 +71,39 @@ func TestRolloutRoutes_StoreListFilter(t *testing.T) {
 	bad.Body.Close()
 	if bad.StatusCode != http.StatusBadRequest {
 		t.Errorf("a rollout without positionId: status %d, want 400", bad.StatusCode)
+	}
+}
+
+// A request cancelled while the sweep gathers its positions ends on the
+// "cancelled" event, as one cancelled between two rollouts does.
+func TestRolloutFilter_CancelledDuringGather(t *testing.T) {
+	_, srv := newTestServerAndHandler(t)
+	body, _ := json.Marshal(rolloutFilterReq{Rollout: tinyRollout})
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	req := httptest.NewRequest(http.MethodPost, "/v1/rollout.filter", bytes.NewReader(body)).WithContext(ctx)
+	rec := httptest.NewRecorder()
+	srv.handleRolloutFilter(rec, req)
+
+	var last map[string]any
+	sc := bufio.NewScanner(rec.Body)
+	for sc.Scan() {
+		last = nil
+		if err := json.Unmarshal(sc.Bytes(), &last); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if last["event"] != "cancelled" {
+		t.Errorf("last event %v, want cancelled", last)
+	}
+}
+
+// A position that is not there is a 404; the engine's refusal is a 400.
+func TestRolloutPosition_UnknownPositionIsNotFound(t *testing.T) {
+	ts := newTestServer(t)
+	resp := post(t, ts, "/v1/rollout.position", rolloutPositionReq{PositionID: 424242, Rollout: tinyRollout})
+	resp.Body.Close()
+	if resp.StatusCode != http.StatusNotFound {
+		t.Errorf("status %d, want 404", resp.StatusCode)
 	}
 }

@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
+	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
 )
 
 // The rollout of one position (ADR-0060): the engine and the write live on
@@ -75,14 +77,7 @@ func (a *App) StartRollout(req RolloutRequest) error {
 		return errors.New("rollout: no database is open")
 	}
 
-	a.roMu.Lock()
-	if a.roCancel != nil {
-		a.roCancel()
-	}
-	ctx, cancel := context.WithCancel(a.batchCtx())
-	stopped := make(chan struct{})
-	a.roCancel, a.roDone = cancel, stopped
-	a.roMu.Unlock()
+	ctx, stopped := a.beginRollout()
 
 	go func() {
 		defer close(stopped)
@@ -95,16 +90,12 @@ func (a *App) StartRollout(req RolloutRequest) error {
 			err error
 		)
 		if req.PositionID != 0 {
-			res, err = a.db.RolloutPosition(ctx, req.PositionID, req.Settings, req.Moves, req.Store, progress)
+			res, err = database.RolloutPosition(ctx, a.db, req.PositionID, req.Settings, req.Moves, req.Store, progress)
 		} else {
 			res, err = rollout.Run(ctx, *req.Position, req.Settings, rollout.Options{Moves: req.Moves, Progress: progress})
 		}
 
-		a.roMu.Lock()
-		if a.roDone == stopped {
-			a.roCancel, a.roDone = nil, nil
-		}
-		a.roMu.Unlock()
+		a.endRollout(stopped)
 
 		switch {
 		case err == nil:
@@ -118,7 +109,94 @@ func (a *App) StartRollout(req RolloutRequest) error {
 	return nil
 }
 
-// CancelRollout stops the rollout in flight and returns at once; it is not
+// StartRolloutFiltered rolls out, one after the other, every position of the
+// open database that query selects and that carries no rollout with
+// settings' Signature yet, cancelling any rollout in flight. Each is written
+// as it finishes, so cancelling keeps what was done and a rerun resumes.
+// An invalid request is refused here; the outcome arrives as events:
+//
+//	rollout-batch:progress  RolloutBatchProgressEvent, after every batch of games
+//	rollout-batch:done      RolloutBatchDoneEvent
+//	rollout-batch:cancelled RolloutBatchDoneEvent (what was done before)
+//	rollout-batch:error     {message}
+func (a *App) StartRolloutFiltered(query string, settings rollout.Settings) error {
+	if err := settings.Validate(); err != nil {
+		return err
+	}
+	if a.db == nil {
+		return errors.New("rollout: no database is open")
+	}
+	filters, err := rollouts.ParseQuery(query)
+	if err != nil {
+		return err
+	}
+
+	ctx, stopped := a.beginRollout()
+	go func() {
+		defer close(stopped)
+		defer recoverBackground(a.ctx, "rollout batch")
+		sum, err := database.RolloutFiltered(ctx, a.db, filters, settings, func(p rollouts.Progress) {
+			a.emitBatch("rollout-batch:progress", RolloutBatchProgressEvent{Done: p.Done, Total: p.Total,
+				PositionID: p.PositionID, Games: p.Games, MaxGames: p.MaxGames})
+		})
+		a.endRollout(stopped)
+
+		done := RolloutBatchDoneEvent{Total: sum.Total, RolledOut: sum.RolledOut, Refused: sum.Refused, Failed: sum.Failed, Signature: settings.Signature()}
+		switch {
+		case err != nil && ctx.Err() == nil:
+			a.emitBatch("rollout-batch:error", map[string]any{"message": fmt.Sprint(err)})
+		case sum.Cancelled || ctx.Err() != nil:
+			a.emitBatch("rollout-batch:cancelled", done)
+		default:
+			a.emitBatch("rollout-batch:done", done)
+		}
+	}()
+	return nil
+}
+
+// RolloutBatchProgressEvent is rollout-batch:progress: Done positions are
+// finished, the one named is at Games of MaxGames.
+type RolloutBatchProgressEvent struct {
+	Done       int   `json:"done"`
+	Total      int   `json:"total"`
+	PositionID int64 `json:"positionId"`
+	Games      int   `json:"games"`
+	MaxGames   int   `json:"maxGames"`
+}
+
+// RolloutBatchDoneEvent is rollout-batch:done and rollout-batch:cancelled.
+type RolloutBatchDoneEvent struct {
+	Total     int    `json:"total"`
+	RolledOut int    `json:"rolledOut"`
+	Refused   int    `json:"refused"`
+	Failed    int    `json:"failed"`
+	Signature string `json:"signature"`
+}
+
+// beginRollout cancels the rollout in flight and registers the next one:
+// its context, and the channel its goroutine closes when it has stopped.
+func (a *App) beginRollout() (context.Context, chan struct{}) {
+	a.roMu.Lock()
+	defer a.roMu.Unlock()
+	if a.roCancel != nil {
+		a.roCancel()
+	}
+	ctx, cancel := context.WithCancel(a.batchCtx())
+	stopped := make(chan struct{})
+	a.roCancel, a.roDone = cancel, stopped
+	return ctx, stopped
+}
+
+// endRollout forgets stopped unless a newer rollout has replaced it.
+func (a *App) endRollout(stopped chan struct{}) {
+	a.roMu.Lock()
+	defer a.roMu.Unlock()
+	if a.roDone == stopped {
+		a.roCancel, a.roDone = nil, nil
+	}
+}
+
+// CancelRollout stops the rollout, or the batch, in flight and returns at once; it is not
 // stored.
 func (a *App) CancelRollout() {
 	a.cancelRollout()

@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 )
@@ -60,8 +61,8 @@ func (cli *CLI) runRollout(args []string) error {
 		fmt.Println("equity at a match score. Ctrl-C prints what the games finished so far")
 		fmt.Println("concluded. With --store, a finished rollout is written on the position as a")
 		fmt.Println("second analysis with its own settings, beside the imported or evaluated one;")
-		fmt.Println("an interrupted rollout is never stored. A rerun with the same settings")
-		fmt.Println("replaces the earlier one.")
+		fmt.Println("an interrupted rollout is never stored. Of two rollouts with the same")
+		fmt.Println("settings, the one with more games is kept (a tie keeps the newer).")
 		fmt.Println()
 		fmt.Println("Options:")
 		cmd.PrintDefaults()
@@ -152,7 +153,7 @@ func (cli *CLI) runRollout(args []string) error {
 	runErr := withInterruptibleContext(nil, func(ctx context.Context) error {
 		var err error
 		if fromDB {
-			res, err = cli.db.RolloutPosition(ctx, *positionID, s, moves, *store, opt.Progress)
+			res, err = database.RolloutPosition(ctx, cli.db, *positionID, s, moves, *store, opt.Progress)
 		} else {
 			res, err = rollout.Run(ctx, pos, s, opt)
 		}
@@ -161,27 +162,39 @@ func (cli *CLI) runRollout(args []string) error {
 	if opt.Progress != nil {
 		fmt.Fprintln(os.Stderr)
 	}
-	if runErr != nil && !errors.Is(runErr, context.Canceled) {
-		return runErr
-	}
-	if res == nil {
-		return runErr
-	}
-	stored := *store && runErr == nil
+	return reportRollout(res, runErr, *store, *positionID, *format)
+}
 
-	if *format == "json" {
+// reportRollout prints what runErr left of a rollout. An interrupted one
+// prints the games finished so far and succeeds; a finished one whose write
+// failed is printed too (the games took minutes) and then fails the command.
+func reportRollout(res *rollout.Result, runErr error, store bool, positionID int64, format string) error {
+	interrupted := errors.Is(runErr, context.Canceled)
+	if res == nil || (runErr != nil && !interrupted && res.Stop == rollout.StopCancelled) {
+		return runErr
+	}
+	var storeErr error
+	if runErr != nil && !interrupted {
+		storeErr = fmt.Errorf("rollout finished but not stored: %w", runErr)
+	}
+
+	if format == "json" {
 		enc := json.NewEncoder(os.Stdout)
 		enc.SetIndent("", "  ")
-		return enc.Encode(res)
+		if err := enc.Encode(res); err != nil {
+			return err
+		}
+		return storeErr
 	}
 	printRollout(res)
 	switch {
-	case stored:
-		fmt.Printf("\nStored on position %d.\n", *positionID)
-	case *store:
+	case storeErr != nil:
+	case store && runErr == nil:
+		fmt.Printf("\nStored on position %d.\n", positionID)
+	case store:
 		fmt.Println("\nInterrupted: not stored.")
 	}
-	return nil
+	return storeErr
 }
 
 // printRollout renders a rollout as XG does: equity, its 95 % interval, the
