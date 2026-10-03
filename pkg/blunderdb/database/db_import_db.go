@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
@@ -263,11 +264,9 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 					// New analysis to add
 					hasNewData = true
 				} else if existingErr == nil {
-					// Check if import has better analysis
 					existingAnalysis, _ := decodeAnalysisFromStorage(existingAnalysisData)
 					importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
-
-					if existingAnalysis.AnalysisType == "" && importAnalysis.AnalysisType != "" {
+					if _, changed := domain.MergeImportedAnalysis(&existingAnalysis, &importAnalysis); changed {
 						hasNewData = true
 					}
 				}
@@ -485,18 +484,13 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 						hasMerged = true
 					}
 				} else if existingErr == nil {
-					// Both have analysis - keep the existing one unless it's empty
 					existingAnalysis, _ := decodeAnalysisFromStorage(existingAnalysisData)
 					importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
-
-					// If import has analysis but existing doesn't, use import
-					if existingAnalysis.AnalysisType == "" && importAnalysis.AnalysisType != "" {
-						recompressed, compErr := recompressAnalysisData(importAnalysisData)
-						if compErr != nil {
-							recompressed = importAnalysisData
-						}
-						_, err = tx.Exec(`UPDATE analysis SET data = ? WHERE position_id = ?`, recompressed, existingPositionID)
-						if err != nil {
+					if merged, changed := domain.MergeImportedAnalysis(&existingAnalysis, &importAnalysis); changed {
+						encoded, encErr := encodeAnalysisForStorage(merged)
+						if encErr != nil {
+							slog.Warn("encoding merged analysis for position", "positionID", existingPositionID, "err", encErr)
+						} else if _, err = tx.Exec(`UPDATE analysis SET data = ? WHERE position_id = ?`, encoded, existingPositionID); err != nil {
 							slog.Warn("updating analysis for position", "positionID", existingPositionID, "err", err)
 						} else {
 							hasMerged = true

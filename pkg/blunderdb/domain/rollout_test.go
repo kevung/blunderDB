@@ -47,3 +47,37 @@ func TestColumnSource(t *testing.T) {
 		t.Errorf("checker view: %+v", m)
 	}
 }
+
+// An import fills the gap a rollout-only position leaves and keeps the
+// rollouts of both sides; it never replaces a primary analysis (ADR-0013).
+func TestMergeImportedAnalysis(t *testing.T) {
+	t0 := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	ra := RolloutAnalysis{Signature: "A", Kind: RolloutKindMoves, Games: 216, Date: t0}
+	rb := RolloutAnalysis{Signature: "B", Kind: RolloutKindMoves, Games: 216, Date: t0.Add(time.Hour)}
+	xg := &CheckerAnalysis{Moves: []CheckerMove{{Move: "8/5 6/5", AnalysisEngine: "XG"}}}
+	gn := &CheckerAnalysis{Moves: []CheckerMove{{Move: "13/10 6/5", AnalysisEngine: "gammonNet"}}}
+
+	rolloutOnly := &PositionAnalysis{Rollouts: []RolloutAnalysis{ra}}
+	rolloutOnly.AttachRollout(rb)
+	if rolloutOnly.AnalysisType != "" {
+		t.Errorf("AttachRollout set AnalysisType %q: an import would read the position as analysed", rolloutOnly.AnalysisType)
+	}
+	got, changed := MergeImportedAnalysis(rolloutOnly, &PositionAnalysis{AnalysisType: "CheckerMove", CheckerAnalysis: xg})
+	if !changed || got.CheckerAnalysis != xg || got.AnalysisType != "CheckerMove" || len(got.Rollouts) != 2 {
+		t.Errorf("rollout-only position: changed=%v %+v — want the imported primary beside both rollouts", changed, got)
+	}
+
+	analysed := &PositionAnalysis{AnalysisType: "CheckerMove", CheckerAnalysis: gn}
+	got, changed = MergeImportedAnalysis(analysed, &PositionAnalysis{AnalysisType: "CheckerMove", CheckerAnalysis: xg, Rollouts: []RolloutAnalysis{ra}})
+	if !changed || got.CheckerAnalysis != gn || len(got.Rollouts) != 1 {
+		t.Errorf("analysed position: changed=%v %+v — want its primary kept and the imported rollout added", changed, got)
+	}
+
+	withRollout := &PositionAnalysis{AnalysisType: "CheckerMove", CheckerAnalysis: gn, Rollouts: []RolloutAnalysis{ra}}
+	if _, changed = MergeImportedAnalysis(withRollout, &PositionAnalysis{AnalysisType: "CheckerMove", CheckerAnalysis: xg, Rollouts: []RolloutAnalysis{ra}}); changed {
+		t.Error("nothing new imported, yet reported as a change")
+	}
+	if got, changed = MergeImportedAnalysis(nil, analysed); !changed || got != analysed {
+		t.Error("no existing analysis: the imported one is written as it is")
+	}
+}

@@ -1,6 +1,9 @@
 package rollout
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestParseSpec(t *testing.T) {
 	std := Standard()
@@ -24,5 +27,29 @@ func TestParseSpec(t *testing.T) {
 		if _, err := ParseSpec(bad); err == nil {
 			t.Errorf("ParseSpec(%q) accepted", bad)
 		}
+	}
+}
+
+// Two rollouts that roll different plays are two Configurations: their
+// Signatures differ, so storing one never drops the other. The order the
+// plays are named in is not part of it.
+func TestSignatureNamesTheCandidates(t *testing.T) {
+	five, three := Fast(), Fast()
+	three.Candidates = 3
+	if five.Signature() == three.Signature() {
+		t.Error("5 and 3 best candidates share a Signature")
+	}
+	named := five.SignatureFor([]string{"13/10 6/5", "8/5 6/5"})
+	if named == five.Signature() {
+		t.Error("named plays share the Signature of the best candidates")
+	}
+	if named != five.SignatureFor([]string{"8/5 6/5", "13/10 6/5", "8/5 6/5"}) {
+		t.Error("the order or repetition of named plays changed the Signature")
+	}
+	if named == five.SignatureFor([]string{"8/5 6/5", "24/21 13/11"}) {
+		t.Error("two different sets of named plays share a Signature")
+	}
+	if !strings.HasPrefix(five.Signature(), EngineVersion+";") {
+		t.Errorf("Signature %q no longer starts with the EngineVersion", five.Signature())
 	}
 }

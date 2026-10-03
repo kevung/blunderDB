@@ -125,16 +125,48 @@ func MergeRollouts(existing, incoming []RolloutAnalysis) []RolloutAnalysis {
 }
 
 // AttachRollout adds r to a beside everything a already holds: no entry of
-// CheckerAnalysis or DoublingCubeAnalysis moves (ADR-0013, ADR-0060).
+// CheckerAnalysis or DoublingCubeAnalysis moves (ADR-0013, ADR-0060), and
+// AnalysisType stays empty on a position only rollouts analyse, so an import
+// still reads it as a gap to fill.
 func (a *PositionAnalysis) AttachRollout(r RolloutAnalysis) {
 	a.Rollouts = MergeRollouts(a.Rollouts, []RolloutAnalysis{r})
-	if a.AnalysisType == "" {
-		if r.Kind == RolloutKindCube {
-			a.AnalysisType = "DoublingCube"
-		} else {
-			a.AnalysisType = "CheckerMove"
+}
+
+// MergeImportedAnalysis is what an import writes over existing: the imported
+// analysis only when existing has no primary analysis (ADR-0013), and in
+// every case the rollouts of both sides (ADR-0060). changed reports whether
+// the result differs from existing, so an unchanged position is not written.
+func MergeImportedAnalysis(existing, imported *PositionAnalysis) (merged *PositionAnalysis, changed bool) {
+	switch {
+	case imported == nil:
+		return existing, false
+	case existing == nil:
+		return imported, true
+	}
+	if !existing.HasPrimary() && imported.HasPrimary() {
+		out := *imported
+		out.Rollouts = MergeRollouts(existing.Rollouts, imported.Rollouts)
+		return &out, true
+	}
+	rollouts := MergeRollouts(existing.Rollouts, imported.Rollouts)
+	if sameRollouts(existing.Rollouts, rollouts) {
+		return existing, false
+	}
+	out := *existing
+	out.Rollouts = rollouts
+	return &out, true
+}
+
+func sameRollouts(a, b []RolloutAnalysis) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i].Signature != b[i].Signature || a[i].Games != b[i].Games || !a[i].Date.Equal(b[i].Date) {
+			return false
 		}
 	}
+	return true
 }
 
 // BestRollout is the rollout that speaks for a when it has no other analysis:
@@ -153,8 +185,11 @@ func (a *PositionAnalysis) BestRollout() *RolloutAnalysis {
 	return best
 }
 
-// hasPrimary reports whether a carries an analysis other than rollouts.
-func (a *PositionAnalysis) hasPrimary() bool {
+// HasPrimary reports whether a carries an analysis other than rollouts.
+func (a *PositionAnalysis) HasPrimary() bool {
+	if a == nil {
+		return false
+	}
 	return a.DoublingCubeAnalysis != nil || (a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) > 0)
 }
 
@@ -164,7 +199,7 @@ func (a *PositionAnalysis) hasPrimary() bool {
 // by the search. A rollout never moves the columns of a position that has
 // another analysis (ADR-0060).
 func (a *PositionAnalysis) ColumnSource() *PositionAnalysis {
-	if a == nil || a.hasPrimary() {
+	if a == nil || a.HasPrimary() {
 		return a
 	}
 	r := a.BestRollout()
@@ -173,8 +208,10 @@ func (a *PositionAnalysis) ColumnSource() *PositionAnalysis {
 	}
 	view := *a
 	if r.Kind == RolloutKindCube {
+		view.AnalysisType = "DoublingCube"
 		view.DoublingCubeAnalysis = r.cubeAnalysis()
 	} else {
+		view.AnalysisType = "CheckerMove"
 		view.CheckerAnalysis = &CheckerAnalysis{Moves: r.checkerMoves()}
 	}
 	return &view

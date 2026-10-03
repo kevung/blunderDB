@@ -29,3 +29,12 @@ type Tx interface {
 type GuardedBeginner interface {
 	BeginGuardedTx(ctx context.Context, keys ...string) (Tx, error)
 }
+
+// BeginGuarded opens a guarded transaction on keys when st can, and a plain
+// one otherwise.
+func BeginGuarded(ctx context.Context, st Storage, keys ...string) (Tx, error) {
+	if gb, ok := st.(GuardedBeginner); ok {
+		return gb.BeginGuardedTx(ctx, keys...)
+	}
+	return st.BeginTx(ctx)
+}

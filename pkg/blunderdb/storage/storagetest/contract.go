@@ -53,6 +53,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Analysis/SaveIsAnUpsert", testAnalysisSaveIsAnUpsert},
 		{"Analysis/RolloutIsASecondAnalysis", testRolloutIsASecondAnalysis},
 		{"Analysis/RolloutAloneFeedsTheSearch", testRolloutAloneFeedsTheSearch},
+		{"Analysis/ConcurrentRolloutsAllKept", testConcurrentRolloutsAllKept},
 		{"Match/CreateGameMoveCascade", testMatchCreateGameMove},
 		{"Match/DeleteCascade", testMatchDeleteCascade},
 		{"Match/DeleteCascadeRetention", testMatchDeleteCascadeRetention},

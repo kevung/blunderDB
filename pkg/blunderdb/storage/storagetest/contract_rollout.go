@@ -2,6 +2,7 @@ package storagetest
 
 import (
 	"context"
+	"sync"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -148,4 +149,42 @@ func findQuery(t *testing.T, s storage.Storage, q string) []int64 {
 		ids = append(ids, pos.ID)
 	}
 	return ids
+}
+
+// testConcurrentRolloutsAllKept: rollouts of different Configurations stored
+// at once on one position all stay — each Store reads and writes the analysis
+// in one guarded transaction, so none writes over a row another just changed.
+func testConcurrentRolloutsAllKept(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p := checkerPos()
+	id, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	const writers = 8
+	var wg sync.WaitGroup
+	errs := make(chan error, writers)
+	for i := range writers {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			set := rollout.Fast()
+			set.Seed = uint64(i + 1)
+			errs <- rollouts.Store(ctx, s, "", id, movesRollout(set, "13/10 6/5", 0.8))
+		}()
+	}
+	wg.Wait()
+	close(errs)
+	for err := range errs {
+		if err != nil {
+			t.Fatalf("Store: %v", err)
+		}
+	}
+	got, err := s.Analyses().Load(ctx, "", id)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if len(got.Rollouts) != writers {
+		t.Errorf("%d rollouts kept of %d stored at once", len(got.Rollouts), writers)
+	}
 }

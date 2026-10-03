@@ -79,12 +79,23 @@ de videau, et ses intervalles sont optimistes.
    `CheckerAnalysis` ni de `DoublingCubeAnalysis` (ADR-0013) — y entrer l'aurait fait : la fusion
    par coup garde le rang de profondeur le plus haut, et « Rollout » passe au-dessus de « XG
    Roller++ ». Un rollout par `Signature` : relancé aux mêmes réglages, il garde la série la plus
-   longue ; à d'autres réglages, il s'ajoute. Chaque fusion d'analyse (`SaveAnalysis`, l'import)
-   reprend les rollouts existants, pour qu'un appelant qui les ignore ne les efface pas. Un
-   rollout annulé n'est jamais écrit. Les colonnes indexées restent celles de l'analyse
+   longue ; à d'autres réglages, il s'ajoute. Les coups roulés entrent dans la `Signature` (les
+   `Candidates` meilleurs, ou l'ensemble des coups nommés, sans ordre) : deux rollouts de coups
+   différents sont deux Configurations. Chaque écriture d'analyse (`SaveAnalysis`, le balayage
+   gammonNet de `serve`, `rollouts.SaveAnalysis`) reprend les rollouts existants, pour qu'un
+   appelant qui les ignore ne les efface pas ; un import passe par
+   `domain.MergeImportedAnalysis` : l'analyse importée ne s'écrit que si la position n'a pas
+   d'analyse principale (`HasPrimary`, ADR-0013 ; un rollout seul n'en est pas une, et
+   `AttachRollout` ne pose pas `AnalysisType`), et les rollouts des deux côtés restent. L'ajout
+   d'un rollout lit et réécrit l'analyse dans une seule transaction gardée. Un rollout annulé
+   n'est jamais écrit. Les colonnes indexées restent celles de l'analyse
    principale ; une position que seul un rollout analyse les tire de son meilleur rollout
    (`ColumnSource`), et la recherche la trouve. Tout vit dans le blob JSON : **aucune colonne,
-   aucun bump de schéma**. Le rassemblement (positions d'une requête sans rollout de cette
+   aucun bump de schéma**. Limite assumée : une version antérieure, qui ignore le champ
+   `rollouts`, l'efface à sa première écriture d'analyse sur la position. Un bump n'y changerait
+   rien : depuis 0.35.0, une version ouvre telle quelle une base de `DatabaseVersion` plus
+   récente (`runMigrationChain`) ; on ne rouvre donc pas avec une version antérieure une base
+   qui porte des rollouts. Le rassemblement (positions d'une requête sans rollout de cette
    `Signature`, d'où la reprise), la boucle et l'écriture sont `pkg/blunderdb/rollouts`, sur le
    contrat de stockage, partagés par la GUI et la CLI (via `Database`) et par `serve`.
 

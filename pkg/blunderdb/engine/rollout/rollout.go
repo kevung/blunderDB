@@ -221,6 +221,7 @@ func Run(ctx context.Context, pos domain.Position, s Settings, opt Options) (*Re
 		if err != nil {
 			return nil, err
 		}
+		res.Signature = s.SignatureFor(opt.Moves)
 	} else {
 		res.Kind = KindCube
 		if !t.canDouble(rootCube, t.root) {

@@ -2,6 +2,7 @@ package rollout
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -113,9 +114,15 @@ func (s Settings) DepthLabel() string {
 	return fmt.Sprintf("Rollout %d games (%s, %s)", s.MaxGames, gammonnet.DepthLabel(s.Ply), trunc)
 }
 
-// Signature is the full line a rollout is reproduced from: everything that
-// moves a number, in one place.
-func (s Settings) Signature() string {
+// Signature is the full line a rollout of the Candidates best plays (or of a
+// cube) is reproduced from: everything that moves a number, in one place.
+func (s Settings) Signature() string { return s.SignatureFor(nil) }
+
+// SignatureFor is the Signature of a rollout of the plays moves names, or of
+// the Candidates best when moves is empty. Which plays are rolled is part of
+// it: two rollouts of different plays are two Configurations, never a longer
+// and a shorter series of one. The order moves are named in is not.
+func (s Settings) SignatureFor(moves []string) string {
 	trunc := "none"
 	if s.Truncation > 0 {
 		trunc = fmt.Sprintf("%d half-moves", s.Truncation)
@@ -124,9 +131,13 @@ func (s Settings) Signature() string {
 	if s.JSDLimit > 0 {
 		stop = fmt.Sprintf("JSD >= %g after %d games", s.JSDLimit, s.MinGames)
 	}
-	return fmt.Sprintf("%s; cubeful; %s plays, cube and leaves; variance reduction 1-ply; "+
+	plays := fmt.Sprintf("%d best", s.Candidates)
+	if len(moves) > 0 {
+		plays = "{" + strings.Join(slices.Compact(slices.Sorted(slices.Values(moves))), ", ") + "}"
+	}
+	return fmt.Sprintf("%s; cubeful; %s plays, cube and leaves; candidates %s; variance reduction 1-ply; "+
 		"common quasi-random dice (2 plies); seed %d; games <= %d; stop %s; truncation %s; exact bearoff when covered",
-		EngineVersion, gammonnet.DepthLabel(s.Ply), s.Seed, s.MaxGames, stop, trunc)
+		EngineVersion, gammonnet.DepthLabel(s.Ply), plays, s.Seed, s.MaxGames, stop, trunc)
 }
 
 // ParseSpec reads settings from one line of text, the form `analyze --rollout`,

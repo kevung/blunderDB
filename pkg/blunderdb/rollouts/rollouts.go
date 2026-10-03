@@ -37,16 +37,47 @@ func Store(ctx context.Context, st storage.Storage, scope string, positionID int
 		return ErrPartial
 	}
 	now := time.Now()
-	a, err := st.Analyses().Load(ctx, scope, positionID)
+	return update(ctx, st, scope, positionID, func(a *domain.PositionAnalysis) {
+		if a.CreationDate.IsZero() {
+			a.CreationDate = now
+		}
+		a.AttachRollout(res.Record(now))
+		a.LastModifiedDate = now
+	})
+}
+
+// SaveAnalysis writes a over positionID's analysis and keeps the rollouts
+// stored there: they are analyses of their own, which a caller writing an
+// Evaluation knows nothing of (ADR-0060).
+func SaveAnalysis(ctx context.Context, st storage.Storage, scope string, positionID int64, a *domain.PositionAnalysis) error {
+	return update(ctx, st, scope, positionID, func(existing *domain.PositionAnalysis) {
+		rollouts := domain.MergeRollouts(existing.Rollouts, a.Rollouts)
+		*existing = *a
+		existing.Rollouts = rollouts
+	})
+}
+
+// update reads positionID's analysis, an empty one when it has none, lets
+// change rewrite it and writes it back, in one guarded transaction: two
+// writers on the same position cannot both read the row before either writes.
+func update(ctx context.Context, st storage.Storage, scope string, positionID int64, change func(*domain.PositionAnalysis)) error {
+	tx, err := storage.BeginGuarded(ctx, st, fmt.Sprintf("analysis:%s:%d", scope, positionID))
+	if err != nil {
+		return err
+	}
+	defer func() { _ = tx.Rollback() }()
+	a, err := tx.Analyses().Load(ctx, scope, positionID)
 	switch {
 	case errors.Is(err, storage.ErrNotFound):
-		a = &domain.PositionAnalysis{PositionID: int(positionID), CreationDate: now}
+		a = &domain.PositionAnalysis{PositionID: int(positionID)}
 	case err != nil:
 		return err
 	}
-	a.AttachRollout(res.Record(now))
-	a.LastModifiedDate = now
-	return st.Analyses().Save(ctx, scope, positionID, a)
+	change(a)
+	if err := tx.Analyses().Save(ctx, scope, positionID, a); err != nil {
+		return err
+	}
+	return tx.Commit()
 }
 
 // List returns the rollouts stored on positionID, newest first; none when it
