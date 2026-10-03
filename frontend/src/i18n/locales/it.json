@@ -494,7 +494,11 @@
             "blots": "Blot",
             "textPattern": "Testo / Schema",
             "other": "Altro"
-        }
+        },
+        "noResultsTitle": "Nessuna posizione corrisponde",
+        "noResultsHint": "Allarga i criteri (togli un filtro, allenta un limite) o cancellali.",
+        "clearFilters": "Cancella i filtri",
+        "criteriaTab": "Criteri"
     },
     "match": {
         "errorExportingMat": "Errore durante l'esportazione del match",

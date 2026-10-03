@@ -494,7 +494,11 @@
             "blots": "ブロット",
             "textPattern": "テキスト / パターン",
             "other": "その他"
-        }
+        },
+        "noResultsTitle": "一致する局面がありません",
+        "noResultsHint": "条件を緩めるか(フィルターを外す、範囲を広げる)、すべて消去してください。",
+        "clearFilters": "フィルターを消去",
+        "criteriaTab": "条件"
     },
     "match": {
         "errorExportingMat": "マッチのエクスポート中にエラーが発生しました",

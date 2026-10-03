@@ -494,7 +494,11 @@
             "blots": "Blots",
             "textPattern": "Texto / Patrón",
             "other": "Otro"
-        }
+        },
+        "noResultsTitle": "Ninguna posición coincide",
+        "noResultsHint": "Amplíe los criterios (quite un filtro, relaje un límite) o bórrelos.",
+        "clearFilters": "Borrar filtros",
+        "criteriaTab": "Criterios"
     },
     "match": {
         "errorExportingMat": "Error al exportar el partido",

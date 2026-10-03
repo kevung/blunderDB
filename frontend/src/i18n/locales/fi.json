@@ -494,7 +494,11 @@
             "blots": "Blotit",
             "textPattern": "Teksti / Kuvio",
             "other": "Muu"
-        }
+        },
+        "noResultsTitle": "Mikään asema ei täsmää",
+        "noResultsHint": "Laajenna ehtoja (poista suodatin, löysennä rajaa) tai tyhjennä ne.",
+        "clearFilters": "Tyhjennä suodattimet",
+        "criteriaTab": "Ehdot"
     },
     "match": {
         "errorExportingMat": "Virhe ottelun viennissä",

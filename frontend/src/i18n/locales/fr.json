@@ -494,7 +494,11 @@
             "blots": "Blots",
             "textPattern": "Texte / Motif",
             "other": "Autre"
-        }
+        },
+        "noResultsTitle": "Aucune position ne correspond",
+        "noResultsHint": "Élargissez les critères (retirez un filtre, assouplissez une borne) ou effacez-les.",
+        "clearFilters": "Effacer les filtres",
+        "criteriaTab": "Critères"
     },
     "match": {
         "errorExportingMat": "Erreur lors de l'export du match",

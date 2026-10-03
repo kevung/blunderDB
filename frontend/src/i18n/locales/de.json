@@ -494,7 +494,11 @@
             "blots": "Blots",
             "textPattern": "Text / Muster",
             "other": "Sonstiges"
-        }
+        },
+        "noResultsTitle": "Keine Stellung passt",
+        "noResultsHint": "Kriterien erweitern (Filter entfernen, Grenze lockern) oder zurücksetzen.",
+        "clearFilters": "Filter leeren",
+        "criteriaTab": "Kriterien"
     },
     "match": {
         "errorExportingMat": "Fehler beim Exportieren des Matches",

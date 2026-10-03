@@ -14,7 +14,7 @@
     import { NUMERIC_FILTERS, NUMERIC_FILTER_BY_LABEL, createFilterState, clear as clearNumeric, toStore as numericToStore, fromStore as numericFromStore } from '../services/filterModel.js';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { loadFilterLibrary, pinnedFilters, setFilterPinned } from '../services/filterLibraryService.js';
-    import { searchParamsStore } from '../stores/searchParamsStore';
+    import { searchParamsStore, searchEmptyStore } from '../stores/searchParamsStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { withDisplayedPositionIDs } from '../services/positionService.js';
     import AssistantPanel from './AssistantPanel.svelte';
@@ -700,7 +700,7 @@
 <div class="search-panel">
     <!-- Left sub-tab sidebar -->
     <div class="sub-tab-sidebar">
-        <button class="sub-tab-btn" class:active={activeSubTab === 'search'} onclick={() => (activeSubTab = 'search')}>{$t('common.search')}</button>
+        <button class="sub-tab-btn" class:active={activeSubTab === 'search'} onclick={() => (activeSubTab = 'search')}>{$t('search.criteriaTab')}</button>
         <button class="sub-tab-btn" class:active={activeSubTab === 'history'} onclick={() => (activeSubTab = 'history')}>{$t('search.historyTab')}</button>
         <button class="sub-tab-btn" class:active={activeSubTab === 'saved'} onclick={() => (activeSubTab = 'saved')}>{$t('search.savedTab')}</button>
         {#if $assistantSettingsStore.on}
@@ -738,9 +738,16 @@
                         <label class="search-in-results"><input type="checkbox" bind:checked={searchInCurrentResults} /> {$t('search.inResults')}</label>
                         <label class="search-in-results"><input type="checkbox" bind:checked={openInNewTab} /> {$t('search.newTab')}</label>
                         <span class="active-count">{$t('search.activeCount', { n: activeFilterCount })}</span>
-                        <button class="btn-search" onclick={handleSearch}>{$t('common.search')}</button>
                         <button class="btn-clear" onclick={clearFilters}>{$t('common.clear')}</button>
+                        <button class="btn-search" onclick={handleSearch}>{$t('common.search')}</button>
                     </div>
+                    {#if $searchEmptyStore}
+                        <div class="no-results" role="status">
+                            <strong>{$t('search.noResultsTitle')}</strong>
+                            <span>{$t('search.noResultsHint')}</span>
+                            <button class="btn-clear" onclick={clearFilters}>{$t('search.clearFilters')}</button>
+                        </div>
+                    {/if}
                     <div class="filter-groups">
                         {#each filterGroups as group (group.name)}
                             <div class="filter-group">
@@ -1257,16 +1264,29 @@
         -webkit-user-select: none;
     }
     .btn-search {
-        padding: 4px 12px;
+        padding: 4px 14px;
         border: none;
         border-radius: 3px;
         cursor: pointer;
         font-size: var(--font-size-base);
-        background: #6c757d;
+        font-weight: 600;
+        background: var(--color-primary);
         color: white;
     }
     .btn-search:hover {
-        background: #5a6268;
+        background: color-mix(in srgb, var(--color-primary) 85%, black);
+    }
+    .no-results {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        padding: 6px 10px;
+        margin: 4px 0;
+        border: 1px solid var(--color-border);
+        border-left: 3px solid var(--color-danger);
+        border-radius: 3px;
+        background: var(--color-surface-alt);
     }
     .btn-clear {
         padding: 4px 12px;

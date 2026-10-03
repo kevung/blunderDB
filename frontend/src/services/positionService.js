@@ -22,6 +22,7 @@ import { searchExcludePositionStore, emptySearchBoardPosition, boardHasCheckers 
 import { analysisStore } from '../stores/analysisStore.js';
 import { epcDataStore, resetEpcReveal } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
+import { searchEmptyStore } from '../stores/searchParamsStore.js';
 import { listOriginStore, searchOrigin, LIBRARY_ORIGIN } from '../stores/listOriginStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, activeTabStore } from '../stores/uiStore.js';
@@ -699,6 +700,7 @@ export async function loadPositionsByFilters({
             rankedTargetStore.set(0);
         }
 
+        searchEmptyStore.set(!(source ? total > 0 : ids && ids.length > 0));
         if (source ? total > 0 : ids && ids.length > 0) {
             if (openInNewTab) {
                 viewStore.addView();

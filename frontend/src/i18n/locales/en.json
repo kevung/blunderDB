@@ -494,7 +494,11 @@
             "blots": "Blots",
             "textPattern": "Text / Pattern",
             "other": "Other"
-        }
+        },
+        "noResultsTitle": "No position matches",
+        "noResultsHint": "Widen the criteria (drop a filter, relax a bound) or clear them.",
+        "clearFilters": "Clear filters",
+        "criteriaTab": "Criteria"
     },
     "match": {
         "errorExportingMat": "Error exporting match",

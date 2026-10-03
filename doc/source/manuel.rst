@@ -882,6 +882,10 @@ définir une structure de pions à rechercher sur le plateau.
    Le panneau Recherche : filtres numériques, structure de pions au plateau,
    onglets *Au moins* / *Sauf*.
 
+Les filtres se règlent dans le sous-onglet **Critères**. Quand une recherche ne
+trouve rien, le panneau l'affiche (« Aucune position ne correspond ») avec un
+bouton **Effacer les filtres**, sans se contenter de la barre d'état.
+
 Pour chercher parmi les positions affichées, utiliser la commande ``ss``
 suivie de filtres (ex: ``ss nc``, ``ss E>40``). ``ss`` cherche dans la liste à
 l'écran : les résultats de la recherche précédente, la collection ouverte ou
