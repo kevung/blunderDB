@@ -1,6 +1,7 @@
 <script>
     import { get } from 'svelte/store';
     import { statsFilterStore } from '../../stores/statsStore.js';
+    import { formatIsoDay } from '../../utils/format.js';
     import { loadPositionsFromStatsSelection, openMatchInPanel } from '../../services/positionLoader.js';
     import { t } from '../../i18n/index.js';
 
@@ -65,10 +66,9 @@
         return (entry.ErrorMP / 1000).toFixed(3);
     }
 
-    /** Short date display (YYYY-MM-DD → YYYY-MM-DD or first 10 chars). */
+    /** Calendar day in the interface language. */
     function shortDate(dateStr) {
-        if (!dateStr) return '';
-        return dateStr.slice(0, 10);
+        return formatIsoDay(dateStr);
     }
 
     /** Number of decisions for tooltip. */
@@ -101,11 +101,11 @@
 {:else}
     <!-- ── Main cards ────────────────────────────────────────────── -->
     <div class="cards-grid">
-        {#each [{ kind: 'all', label: $t('stats.cardLabelAll'), unit: metric === 'pr' ? 'PR' : 'MWC loss' }, { kind: 'checker', label: $t('stats.cardLabelChecker'), unit: metric === 'pr' ? 'PR' : 'MWC loss' }, { kind: 'cube', label: $t('stats.cardLabelCube'), unit: metric === 'pr' ? 'PR' : 'MWC loss' }] as card (card.kind)}
+        {#each [{ kind: 'all', label: $t('stats.cardLabelAll'), unit: metric === 'pr' ? '' : 'MWC loss' }, { kind: 'checker', label: $t('stats.cardLabelChecker'), unit: metric === 'pr' ? '' : 'MWC loss' }, { kind: 'cube', label: $t('stats.cardLabelCube'), unit: metric === 'pr' ? '' : 'MWC loss' }] as card (card.kind)}
             <button class="stat-card" onclick={() => openCard(card.kind)} aria-label="Open {numDecisions()} positions — {card.label}" title="{numDecisions()} decisions · click to open positions">
                 <span class="card-value">{cardValue(card.kind)}</span>
                 <span class="card-label">{card.label}</span>
-                <span class="card-unit">{card.unit}</span>
+                {#if card.unit}<span class="card-unit">{card.unit}</span>{/if}
             </button>
         {/each}
     </div>

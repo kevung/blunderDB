@@ -726,7 +726,7 @@
         <button type="button" class="credit-btn" data-testid="direction-credit" title={$t('direction.credit.open')} aria-label={$t('direction.credit.open')} onclick={() => (creditOpen = !creditOpen)}
             >ⓘ</button
         >
-        <button type="button" class="close" data-testid="direction-close" onclick={closeDirection}>{$t('direction.close')}</button>
+        <button type="button" class="close" data-testid="direction-close" onclick={closeDirection}>{$t('direction.closeView')}</button>
     </header>
 
     {#if creditOpen}
@@ -928,6 +928,8 @@
     }
 
     .direction-view {
+        /* Deliberate: the Direction sets its own text size (--td-font), larger than the
+           application's scale; keep it unless the touch use it serves goes away. */
         --font-size-base: var(--td-font);
         --font-size-small: var(--td-font);
         position: relative;

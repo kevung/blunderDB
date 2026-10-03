@@ -842,6 +842,18 @@
             "saveImageSVG": "Tallenna kuva (SVG)…",
             "saveImagePNG": "Tallenna kuva (PNG)…",
             "neighbours": "Naapuriasemat"
+        },
+        "scene": {
+            "pip": "pip: {n}",
+            "away": "{n} jäljellä",
+            "crawford": "crawford",
+            "post": "post",
+            "unlimited": "rajaton",
+            "off": "({n} pois)"
+        },
+        "situation": {
+            "search": "Hakulauta: aseta etsittävät nappulat",
+            "eval": "Arviointilauta"
         }
     },
     "epc": {
@@ -2385,7 +2397,8 @@
         "rooms": {
             "title": "Salit, joissa tämä kilpailu pelataan",
             "hint": "Ei valintaa: kaikki pöydät."
-        }
+        },
+        "closeView": "Poistu johdosta"
     },
     "palette": {
         "title": "Komentopaletti",

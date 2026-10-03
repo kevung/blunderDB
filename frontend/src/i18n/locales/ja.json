@@ -842,6 +842,18 @@
             "saveImageSVG": "画像を保存（SVG）…",
             "saveImagePNG": "画像を保存（PNG）…",
             "neighbours": "近い局面"
+        },
+        "scene": {
+            "pip": "pip: {n}",
+            "away": "あと{n}",
+            "crawford": "クロフォード",
+            "post": "ポスト",
+            "unlimited": "無制限",
+            "off": "({n} OFF)"
+        },
+        "situation": {
+            "search": "検索ボード：探したいチェッカーを置いてください",
+            "eval": "評価ボード"
         }
     },
     "epc": {
@@ -2385,7 +2397,8 @@
         "rooms": {
             "title": "この種目を行う会場",
             "hint": "未選択：すべてのテーブル。"
-        }
+        },
+        "closeView": "進行管理を終了する"
     },
     "palette": {
         "title": "コマンドパレット",

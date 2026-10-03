@@ -1116,6 +1116,12 @@ elle en indique la **provenance** — le premier match concerné et, le cas
 échéant, un badge « +N » listant les autres au survol. Une position importée
 seule, qu'aucun match ne référence, n'affiche rien.
 
+Les onglets **Recherche** et **Eval** remplacent le plateau par un plateau
+de travail : un bandeau en haut du plateau le dit (« Plateau de recherche »,
+« Plateau d'évaluation »), et la barre d'informations est masquée tant qu'elle
+décrirait une position qui n'est pas à l'écran. Le retour à l'analyse restaure
+la position étudiée.
+
 À l'ouverture d'une base contenant des matchs, le panneau **Matchs** est affiché
 d'emblée et la revue débute directement sur la première position, afin de
 commencer immédiatement la navigation.
@@ -1707,7 +1713,7 @@ quelle phase il entrera. Aucun tirage déjà fait n'est refait.
 Un retrait se fait *maintenant* ou *après son match en cours*, selon que le
 joueur part tout de suite ou finit ce qu'il joue ; il se confirme.
 
-Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Absenter**, sur
+Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Marquer absent**, sur
 sa ligne, ouvre un petit formulaire sous son nom — *jusqu'à* une heure
 (pré-remplie sur l'heure qui suit), ou, quand la phase en cours est un suisse
 par rondes, *jusqu'à la ronde* portant son numéro. Le moteur cesse alors de

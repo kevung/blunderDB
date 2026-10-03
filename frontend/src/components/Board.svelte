@@ -1,5 +1,5 @@
 <script>
-    import { t, tMsg } from '../i18n';
+    import { t, tMsg, translate } from '../i18n';
     import { logger } from '../utils/logger.js';
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
@@ -111,6 +111,12 @@
     $effect(() => {
         applyPalette(boardCfg, $boardColorsStore);
         invalidateStaticLayer(); // triangles, bar and frame carry the palette
+        if (two && canvas) scheduleRedraw();
+    });
+
+    // Les libellés du plateau sont peints, pas rendus par Svelte : un changement de langue les repeint.
+    $effect(() => {
+        void $t;
         if (two && canvas) scheduleRedraw();
     });
 
@@ -450,6 +456,8 @@
         staticFlip = flip;
     }
 
+    const sceneText = (key, params) => translate(`board.scene.${key}`, params);
+
     export function drawBoard() {
         if (!two) return; // Safety check
 
@@ -463,6 +471,7 @@
         if (!staticLayer || staticFlip !== flip) rebuildStaticLayers(geom, flip);
         dynamicLayer.remove(dynamicLayer.children);
         cubePosition = drawDynamicScene(layerOf(two, dynamicLayer), geom, boardCfg, position, {
+            text: sceneText,
             offeredCube: isOfferedCube(position),
             showPipcount,
             play: playHighlights(mirrored),
