@@ -42,6 +42,11 @@ assume which binary wrote it.
 - `cmd/train-analysis-dict` regenerates the dictionary (80/20 split by content hash, ratio
   measured on the held-out part); it needs `zstd --train` and is never a runtime dependency.
 - No change to either backend's schema; both call the shared codec.
+- Only the SQLite `Vacuum` recompresses at level 19. PostgreSQL blobs stay at level 7: the
+  server's compaction is the database's own TOAST storage, not a pass this code runs, and the
+  ~10 % of bytes level 19 would recover is not worth rewriting every row of a shared,
+  multi-tenant database. Both levels decode identically, so a file migrated to SQLite is
+  compacted there.
 - Level-7 blobs carry no content checksum: a corrupted one fails JSON decoding instead of the
   frame check. The checksum returns at compaction.
 - Rejected: level 19 on every write — twenty times the CPU of the import path for 10 % of bytes

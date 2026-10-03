@@ -75,7 +75,8 @@ func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int6
 	err := s.db.QueryRow(ctx,
 		`SELECT data, COALESCE(best_cube_action,''), COALESCE(cube_error,0), COALESCE(best_move_equity_error,0),
 		        COALESCE(is_forced,FALSE), COALESCE(is_close_cube,FALSE)
-		 FROM analysis WHERE position_id = $1 AND tenant_id = $2`, positionID, tenant).
+		 FROM analysis WHERE position_id = $1 AND tenant_id = $2
+		 FOR UPDATE`, positionID, tenant).
 		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube)
 	found := err == nil
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {

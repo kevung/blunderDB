@@ -52,9 +52,9 @@ func newTxImpl(tx *sql.Tx) *txImpl {
 
 // hotStatements are the statements an import runs once per position or per
 // move. Inside a transaction each is prepared on first use and reused until
-// the transaction ends: re-preparing them on every call was a measurable
-// share of an import's CPU. Statements built at run time (IN lists, search
-// filters) are not cached — their text varies, so a cache would only grow.
+// the transaction ends, so parsing and planning are paid once per statement
+// rather than once per row. Statements built at run time (IN lists, search
+// filters) are not cached: their text varies, so a cache would only grow.
 var hotStatements = map[string]bool{
 	positionInsertSQL:      true,
 	positionIDByHashSQL:    true,

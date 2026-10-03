@@ -57,7 +57,7 @@ type MoveGraph struct {
 type WriteResult struct {
 	MatchID        int64
 	Skipped        bool // true when an exact same-format duplicate was found (nothing written but flags)
-	FlagsApplied   int  // source-tool study marks raised on already-stored positions of a skipped duplicate
+	FlagsApplied   int  // study marks a skipped duplicate newly raised on already-stored positions
 	Enriched       bool // true when a cross-format (canonical) duplicate was enriched in place
 	Replaced       bool // true when an existing match was rewritten in place (MatchGraph.ReplaceMatchID)
 	SavedPositions int
@@ -291,12 +291,13 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 }
 
 // applyFlags raises the source-tool study mark on the positions of a graph
-// whose match is already stored, and returns how many it touched.
+// whose match is already stored, and returns how many marks it actually
+// raised — 0 when every mark is already in the database, so the caller can
+// tell "duplicate, nothing to do" from "duplicate, N new marks".
 //
 // It is the one thing an exact duplicate still writes. Only flagged positions
-// are saved — an unflagged one would be a pure no-op — and PositionStore.Save
-// deduplicates by Zobrist hash and ORs the mark, so an existing position is
-// updated in place and never duplicated or cleared.
+// are visited, and PositionStore.RaiseFlag only ever sets the mark on the
+// stored row: nothing is duplicated or cleared.
 func applyFlags(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph) (int, error) {
 	n := 0
 	for gi := range g.Games {
@@ -305,10 +306,13 @@ func applyFlags(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph)
 			if pos == nil || !pos.Flagged {
 				continue
 			}
-			if _, err := tx.Positions().Save(ctx, scope, pos); err != nil {
+			raised, err := tx.Positions().RaiseFlag(ctx, scope, pos)
+			if err != nil {
 				return n, fmt.Errorf("ingest: apply flag to duplicate match position: %w", err)
 			}
-			n++
+			if raised {
+				n++
+			}
 		}
 	}
 	return n, nil

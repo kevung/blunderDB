@@ -63,13 +63,16 @@ func TestReimportedDuplicateDeliversItsStudyMarks(t *testing.T) {
 	if !errors.As(err, &dup) || !errors.Is(err, ErrDuplicateMatch) {
 		t.Fatalf("plain re-import: err = %v, want a DuplicateMatchError", err)
 	}
+	if dup.FlagsApplied != 0 {
+		t.Errorf("plain re-import: FlagsApplied = %d, want 0", dup.FlagsApplied)
+	}
 
 	err = reimport(true)
 	if !errors.As(err, &dup) || !errors.Is(err, ErrDuplicateMatch) {
 		t.Fatalf("marked re-import: err = %v, want a DuplicateMatchError", err)
 	}
-	if dup.FlagsApplied <= before {
-		t.Errorf("FlagsApplied = %d, want more than the %d marks already there", dup.FlagsApplied, before)
+	if dup.FlagsApplied != 1 {
+		t.Errorf("FlagsApplied = %d, want 1: only the newly raised mark counts", dup.FlagsApplied)
 	}
 	if got := countFlagged(); got != before+1 {
 		t.Errorf("flagged positions = %d after the marked re-import, want %d: the mark was rolled back", got, before+1)

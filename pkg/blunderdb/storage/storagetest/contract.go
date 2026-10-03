@@ -37,6 +37,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Position/Save+Load", testPositionSaveLoad},
 		{"Position/DedupByZobrist", testPositionDedup},
 		{"Position/SaveCreatedReportsTheInsert", testPositionSaveCreated},
+		{"Position/RaiseFlagReportsTheRaise", testPositionRaiseFlag},
 		{"Position/SaveCreatedConcurrentOneWinner", testPositionSaveCreatedConcurrent},
 		{"Position/UpdatePreservesId", testPositionUpdatePreservesID},
 		{"Position/UpdateRefusesDuplicate", testPositionUpdateRefusesDuplicate},

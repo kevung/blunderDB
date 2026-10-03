@@ -171,6 +171,19 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 	return id, created, nil
 }
 
+// RaiseFlag — see storage.PositionStore.
+func (s *positionStore) RaiseFlag(ctx context.Context, scope string, p *domain.Position) (bool, error) {
+	res, err := s.db.ExecContext(ctx, markFlaggedSQL, int64(engine.PopulatePositionColumns(p).ZobristHash))
+	if err != nil {
+		return false, fmt.Errorf("sqlite: raise position flag: %w", err)
+	}
+	n, err := res.RowsAffected()
+	if err != nil {
+		return false, fmt.Errorf("sqlite: raise position flag: %w", err)
+	}
+	return n > 0, nil
+}
+
 const positionUpdateSQL = `UPDATE position SET state = ?,
 	zobrist_hash=?, decision_type=?, player_on_roll=?, dice_1=?, dice_2=?,
 	cube_value=?, cube_owner=?, score_1=?, score_2=?,
