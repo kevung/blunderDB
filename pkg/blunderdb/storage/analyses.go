@@ -78,8 +78,8 @@ type AnalysisStore interface {
 	// WithEngine streams, by ascending position id, the analyses whose
 	// provenance column (analysis_engine) starts with enginePrefix or is not
 	// derived yet (NULL). Rows of any other engine are skipped on the column
-	// alone, their payload never read nor decoded: a corpus of XG analyses
-	// costs an index scan, not a decode per row.
+	// alone, their payload never decoded: a corpus of XG analyses costs the
+	// read of one column per row, not a decompression and a JSON decode per row.
 	//
 	// The column describes the entry the verdict is read from, not every entry
 	// of the blob: the caller confirms on the decoded analysis whatever needs

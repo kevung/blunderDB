@@ -297,12 +297,14 @@ l'espace disque laissé par les suppressions (matchs, tournois, purges) : la
 base de données ne rétrécit jamais toute seule quand on supprime des données,
 il faut demander explicitement ce compactage. L'opération peut prendre du
 temps sur une grosse base et nécessite, temporairement, environ deux fois sa
-taille en espace disque libre, dans le dossier de la base et non en mémoire
-vive : une base de plusieurs dizaines de gigaoctets se compacte donc sans
-saturer la mémoire. blunderDB refuse de démarrer, avec un message qui dit ce
-qui manque (espace disque, ou moins de 512 Mo de mémoire disponible), plutôt
-que de risquer un compactage interrompu ; une confirmation est donc demandée avant
-de lancer l'opération. Le résultat — l'espace gagné, en mégaoctets — s'affiche
+taille en espace disque libre, sur disque et non en mémoire vive : une base de
+plusieurs dizaines de gigaoctets se compacte donc sans saturer la mémoire.
+blunderDB refuse de démarrer, avec un message qui dit ce qui manque (espace
+disque, ou moins de 512 Mo de mémoire disponible), plutôt que de risquer un
+compactage interrompu. Les fichiers temporaires vont dans le dossier temporaire
+du système, ou dans celui que désigne la variable d'environnement
+``SQLITE_TMPDIR`` : sur un petit ``/tmp``, pointez-la vers le volume de la base.
+Une confirmation est demandée avant de lancer l'opération. Le résultat — l'espace gagné, en mégaoctets — s'affiche
 ensuite dans la barre d'état. La même opération est disponible en ligne de
 commande via ``blunderdb vacuum`` (voir :ref:`cli`).
 
