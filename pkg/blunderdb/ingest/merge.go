@@ -35,6 +35,20 @@ func sortCubeAnalysesByEngine(analyses []domain.DoublingCubeAnalysis) {
 	})
 }
 
+// checkerMoveRanksFirst orders candidate moves by equity, XG first on a tie,
+// then by notation. The order is total: a merge is then deterministic, so
+// re-merging what is stored reproduces it byte for byte and
+// AnalysisStore.Merge can skip the write.
+func checkerMoveRanksFirst(a, b domain.CheckerMove) bool {
+	if a.Equity != b.Equity {
+		return a.Equity > b.Equity
+	}
+	if pa, pb := enginePriority(a.AnalysisEngine), enginePriority(b.AnalysisEngine); pa != pb {
+		return pa < pb
+	}
+	return a.Move < b.Move
+}
+
 // mergeCheckerMoves merges two sets of checker moves keyed by move string,
 // preferring the higher-depth analysis on conflict, then re-ranks by equity
 // (XG preferred as tiebreaker) and recomputes per-move equity errors.
@@ -58,12 +72,7 @@ func mergeCheckerMoves(existing, incoming []domain.CheckerMove) []domain.Checker
 		result = append(result, m)
 	}
 
-	sort.SliceStable(result, func(i, j int) bool {
-		if result[i].Equity != result[j].Equity {
-			return result[i].Equity > result[j].Equity
-		}
-		return enginePriority(result[i].AnalysisEngine) < enginePriority(result[j].AnalysisEngine)
-	})
+	sort.Slice(result, func(i, j int) bool { return checkerMoveRanksFirst(result[i], result[j]) })
 
 	if len(result) > 0 {
 		bestEquity := result[0].Equity
@@ -110,9 +119,7 @@ func sortCheckerMovesByEquity(a *domain.PositionAnalysis) {
 		return
 	}
 	moves := a.CheckerAnalysis.Moves
-	sort.Slice(moves, func(i, j int) bool {
-		return moves[i].Equity > moves[j].Equity
-	})
+	sort.Slice(moves, func(i, j int) bool { return checkerMoveRanksFirst(moves[i], moves[j]) })
 	bestEquity := moves[0].Equity
 	for i := range moves {
 		moves[i].Index = i
@@ -199,6 +206,10 @@ func mergeAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAn
 			incomingCubeActions = []string{a.PlayedCubeAction}
 		}
 		a.PlayedCubeActions = mergePlayedMoves(existingCubeActions, incomingCubeActions)
+
+		// Rollouts are their own analyses: a caller that does not know them
+		// (an import, the frontend saving what it edited) must not drop them.
+		a.Rollouts = domain.MergeRollouts(existing.Rollouts, a.Rollouts)
 
 		a.PlayedMove = ""
 		a.PlayedCubeAction = ""

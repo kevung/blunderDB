@@ -261,17 +261,11 @@ type gestureTx struct {
 // beginGesture opens the gesture's transaction under the backend's guard and returns the
 // service bound to it.
 func (d *Service) beginGesture(ctx context.Context, keys []gestureLock) (*Service, storage.Tx, error) {
-	var tx storage.Tx
-	var err error
-	if gb, ok := d.st.(storage.GuardedBeginner); ok {
-		names := make([]string, len(keys))
-		for i, k := range keys {
-			names[i] = k.guardKey()
-		}
-		tx, err = gb.BeginGuardedTx(ctx, names...)
-	} else {
-		tx, err = d.st.BeginTx(ctx)
+	names := make([]string, len(keys))
+	for i, k := range keys {
+		names[i] = k.guardKey()
 	}
+	tx, err := storage.BeginGuarded(ctx, d.st, names...)
 	if err != nil {
 		return nil, nil, err
 	}

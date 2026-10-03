@@ -6,7 +6,7 @@ import { get } from 'svelte/store';
 import { SaveLastVisitedPosition } from '../../wailsjs/go/database/Database.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
-import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, openModal, MODAL } from '../stores/uiStore.js';
+import { currentPositionIndexStore, pageStepStore, statusBarTextStore, statusBarModeStore, openModal, MODAL } from '../stores/uiStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
@@ -193,6 +193,32 @@ export async function lastPosition() {
             currentPositionIndexStore.set(positions.length - 1);
         }
     }
+}
+
+/**
+ * PageUp / PageDown: jump `direction` (-1 or 1) pages of pageStepStore positions
+ * through the list, stopping at its ends. Inside a match the keys keep meaning
+ * previous / next game, as first/lastPosition do there.
+ *
+ * @param {-1 | 1} direction
+ */
+export async function pagePosition(direction) {
+    if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode) {
+        return direction < 0 ? firstPosition() : lastPosition();
+    }
+    if (get(statusBarModeStore) === 'EDIT') {
+        setStatusBarMessage(tMsg('status.cannotBrowseEdit'));
+        return;
+    }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
+        return;
+    }
+    const count = get(positionsStore)?.length ?? 0;
+    if (count === 0) return;
+    const step = Math.max(1, Math.floor(get(pageStepStore)) || 1);
+    const target = Math.min(count - 1, Math.max(0, get(currentPositionIndexStore) + direction * step));
+    currentPositionIndexStore.set(target);
 }
 
 export function gotoPosition() {

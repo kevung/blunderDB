@@ -8,6 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // buildOldFormatExportFixture builds the legacy export format blunderDB must
@@ -471,5 +474,90 @@ func TestWrapImportCancelled(t *testing.T) {
 	err2 := wrapImportCancelled(context.DeadlineExceeded)
 	if !errors.Is(err2, ErrImportCancelled) || !errors.Is(err2, context.DeadlineExceeded) {
 		t.Errorf("wrapImportCancelled(context.DeadlineExceeded) = %v, want both sentinels visible via errors.Is", err2)
+	}
+}
+
+// TestImport_KeepsRollouts: a database import fills the analysis a
+// rollout-only target position lacks without dropping its rollout, and brings
+// the source's rollouts to a target position already analysed — the preview
+// counting that position as a merge, not a skip.
+func TestImport_KeepsRollouts(t *testing.T) {
+	t.Parallel()
+	dir := t.TempDir()
+	at := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	xg := func() PositionAnalysis {
+		return PositionAnalysis{AnalysisType: "CheckerMove", CheckerAnalysis: &CheckerAnalysis{
+			Moves: []CheckerMove{{Move: "24/21 13/11", Equity: 0.1, AnalysisEngine: "XG"}}}}
+	}
+	analysed := InitializePosition()
+	analysed.Dice = [2]int{3, 1}
+	rolloutOnly := InitializePosition()
+	rolloutOnly.Dice = [2]int{6, 5}
+
+	srcPath := filepath.Join(dir, "src.db")
+	src := NewDatabase()
+	if err := src.SetupDatabase(srcPath); err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range []Position{analysed, rolloutOnly} {
+		id, err := src.SavePosition(&p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		a := xg()
+		if p.Dice == analysed.Dice {
+			a.Rollouts = []domain.RolloutAnalysis{{Signature: "source", Games: 216, Date: at}}
+		}
+		if err := src.SaveAnalysis(id, a); err != nil {
+			t.Fatal(err)
+		}
+	}
+	src.Close()
+
+	dst := NewDatabase()
+	if err := dst.SetupDatabase(filepath.Join(dir, "dst.db")); err != nil {
+		t.Fatal(err)
+	}
+	defer dst.Close()
+	analysedID, err := dst.SavePosition(&analysed)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := dst.SaveAnalysis(analysedID, xg()); err != nil {
+		t.Fatal(err)
+	}
+	rolloutOnlyID, err := dst.SavePosition(&rolloutOnly)
+	if err != nil {
+		t.Fatal(err)
+	}
+	held := PositionAnalysis{}
+	held.AttachRollout(domain.RolloutAnalysis{Signature: "target", Games: 216, Date: at})
+	if err := dst.SaveAnalysis(rolloutOnlyID, held); err != nil {
+		t.Fatal(err)
+	}
+
+	preview, err := dst.AnalyzeImportDatabase(srcPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if toMerge, _ := preview["toMerge"].(int); toMerge != 2 {
+		t.Errorf("toMerge = %v, want 2: one position gains an analysis, the other a rollout", preview["toMerge"])
+	}
+	if _, err := dst.CommitImportDatabase(srcPath); err != nil {
+		t.Fatal(err)
+	}
+	got, err := dst.LoadAnalysis(analysedID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !got.HasRollout("source") || !got.HasPrimary() {
+		t.Errorf("analysed position: rollouts %+v — want the source rollout beside its analysis", got.Rollouts)
+	}
+	got, err = dst.LoadAnalysis(rolloutOnlyID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !got.HasRollout("target") || !got.HasPrimary() {
+		t.Errorf("rollout-only position: rollouts %+v, primary %v — want the imported analysis beside its rollout", got.Rollouts, got.HasPrimary())
 	}
 }

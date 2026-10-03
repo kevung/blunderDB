@@ -7,6 +7,7 @@
     import { GetMatchByID, GetPositionProvenance } from '../../wailsjs/go/database/Database.js';
     import { boardColorsStore } from '../stores/boardColorsStore';
     import { t } from '../i18n';
+    import { boardBannerKeyStore } from '../services/boardSituation.js';
     import { logger } from '../utils/logger.js';
     import { formatDate as formatDateI18n } from '../utils/format.js';
     import { SvelteSet } from 'svelte/reactivity';
@@ -123,7 +124,9 @@
 
     // Visible in match mode, whenever a studied position resolves to a match, or
     // while a transcription draft is open.
-    let visible = $derived(($matchContextStore.isMatchMode && !!$matchContextStore.matchID) || !!match || !!draftInfo);
+    // Hidden while the board shows a scratch board (search, evaluation): the bar would describe
+    // a position that is not on screen.
+    let visible = $derived(!$boardBannerKeyStore && (($matchContextStore.isMatchMode && !!$matchContextStore.matchID) || !!match || !!draftInfo));
 
     // Board.svelte measures only on 'resize': dispatch one (after a rAF, once the
     // layout has reflowed) when the bar appears or goes.

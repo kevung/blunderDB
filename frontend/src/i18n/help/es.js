@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Solo se importan los ficheros que aparecen.</strong> Lo que la carpeta ya contiene cuando arranca la vigilancia se registra como conocido y se deja en paz: apuntar una vigilancia a cuatro años de partidos no debe importarlos todos. Para importar lo que hay, use la importación de carpeta, que existe para eso — y ambas se componen muy bien, la importación primero, la vigilancia después.</li>
 <li><strong>Un fichero se importa solo cuando su tamaño se ha estabilizado.</strong> Un partido que otro programa está escribiendo crece de un vistazo a otro; importarlo a medio escribir daría un error de análisis sobre el que nadie puede actuar. blunderDB espera, pues, a ver dos veces el mismo fichero sin cambios.</li>
-<li><strong>La importación es silenciosa.</strong> Estaba estudiando una posición cuando llegaron sus partidos: quitarle la pantalla sería el peor momento. La importación se hace sin ventana, y la barra de estado muestra una franja con el recuento de partidos importados, ignorados (duplicados) y fallidos, con un botón que abre el informe completo si lo desea. Todo lo demás es idéntico a una importación manual: mismos duplicados detectados, mismo lote de importación, mismo análisis automático si está activado.</li>
+<li><strong>La importación es silenciosa.</strong> Estaba estudiando una posición cuando llegaron sus partidas: quitarle la pantalla sería el peor momento. El modo, la búsqueda activa, la pestaña y la posición mostrada no se mueven; la lista de posiciones no se recarga y muestra las partidas nuevas en la próxima recarga. La importación se hace sin ventana, y la barra de estado muestra un banner con el recuento de partidas importadas, omitidas (duplicados) y fallidas, con un botón que abre el informe completo si lo desea. Todo lo demás es idéntico a una importación manual: los mismos duplicados detectados, el mismo lote de importación, el mismo análisis automático si está activado.</li>
 </ul>
 <p>El intervalo por defecto es de diez segundos; el mínimo es de dos. La carpeta no se recorre recursivamente: una carpeta vigilada es el sitio donde una herramienta deposita sus partidos, no un árbol que explorar. Un recurso de red desmontado no detiene la vigilancia ni hace que su contenido pase por nuevo a su regreso.</p>
 <p>La misma vigilancia existe en línea de comandos, con <code>blunderdb import --type batch --dir &lt;carpeta&gt; --watch</code> (véase Interfaz de línea de comandos (CLI)): es la forma que puede usar un servidor, una tarea programada o un script.</p>
@@ -285,6 +285,7 @@ export default {
 <p>La cabecera de cada partida cuenta sus marcas, esté desplegada o no: se ve sin abrirla en qué partida están los blunders.</p>
 <p>El botón <strong>Fusionar jugadores</strong> de la barra de herramientas del panel abre una ventana que enumera todos los nombres de jugadores de la base con su número de partidas: seleccionar las variantes de ortografía de un mismo jugador, elegir el nombre canónico que se desea conservar y, a continuación, fusionar. Útil para unificar las estadísticas por jugador cuando un mismo jugador aparece con varios nombres.</p>
 <p>Cuando una partida está abierta, aparece una <strong>barra de información</strong> sobre el tablero: recuerda los jugadores presentes (<em>jugador 1</em> contra <em>jugador 2</em>) así como el contexto de la partida (evento, lugar, ronda, fecha y longitud de la partida, cuando esa información está disponible). Esta barra también se muestra fuera del modo partida: cuando una posición estudiada (procedente de una búsqueda, de una colección o de un acceso directo) proviene de una o varias partidas, indica su <strong>procedencia</strong> — la primera partida implicada y, en su caso, una insignia « +N » que enumera las demás al pasar el cursor. Una posición importada por separado, que ninguna partida referencia, no muestra nada.</p>
+<p>Las pestañas <strong>Búsqueda</strong> y <strong>Eval</strong> sustituyen el tablero por un tablero de trabajo: una cinta en la parte superior del tablero lo indica («Tablero de búsqueda», «Tablero de evaluación») y la barra de información se oculta mientras describiría una posición que no está en pantalla. Volver al análisis restaura la posición estudiada.</p>
 <p>Al abrir una base que contiene partidas, el panel <strong>Partidas</strong> se muestra de inmediato y la revisión comienza directamente en la primera posición, para empezar a navegar de inmediato.</p>
 <div class="admonition note">
 <p>Una base de datos solo puede abrirse en escritura por una única ventana a la vez. Si abre una base ya abierta en otra ventana de blunderDB, se abre en modo de <strong>solo lectura</strong>: la navegación, la búsqueda y el análisis siguen siendo posibles, pero toda modificación queda desactivada y la barra de título muestra « [solo lectura] ».</p>
@@ -648,7 +649,7 @@ export default {
 <p>En esta pestaña, la lista <strong>Jugador</strong> y la elección del <strong>tipo de decisión</strong> están desactivadas: la tabla muestra a todos los jugadores y ya desglosa las decisiones de fichas y de cubo en columnas distintas.</p>
 </div>
 <div class="admonition important">
-<p>Un guion («—») señala un valor <strong>nunca medido</strong>, que no debe confundirse con cero. Es en particular el caso de la columna Suerte para toda partida importada antes de la versión 2.15.0 del esquema: la suerte no se conservaba entonces, y nada permite reconstruirla después — hay que reimportar los archivos de origen. Los formatos que no la transportan (BGF, Jellyfish <code>.mat</code>) no la aportarán nunca.</p>
+<p>Un guion («—») señala un valor <strong>nunca medido</strong>, que no debe confundirse con cero. Es en particular el caso de la columna Suerte para toda partida importada antes de la versión 2.15.0 del esquema: la suerte no se conservaba entonces, y nada permite reconstruirla después. Reimportar el archivo de origen no basta: la importación reconoce un duplicado y solo toma sus marcas. Hay que eliminar la partida y luego volver a importarla. Los formatos que no la transportan (BGF, Jellyfish <code>.mat</code>) no la aportarán nunca.</p>
 </div>
 <h4>Regla de agregación</h4>
 <div class="admonition important">
@@ -987,8 +988,12 @@ export default {
 <td>Recargar todas las posiciones de la base de datos.</td>
 </tr>
 <tr>
-<td>AvPág, h</td>
+<td>Home, h</td>
 <td>Primera posición / Partida anterior (navegación de partida).</td>
+</tr>
+<tr>
+<td>AvPág</td>
+<td>Retrocede una página de cien posiciones (se detiene al principio de la lista); en una partida, juego anterior.</td>
 </tr>
 <tr>
 <td>IZQUIERDA, k</td>
@@ -1007,8 +1012,12 @@ export default {
 <td>Jugada siguiente (cuando hay una jugada seleccionada en el análisis).</td>
 </tr>
 <tr>
-<td>RePág, l</td>
+<td>End, l</td>
 <td>Última posición / Partida siguiente (navegación de partida).</td>
+</tr>
+<tr>
+<td>RePág</td>
+<td>Avanza una página de cien posiciones (se detiene al final de la lista); en una partida, juego siguiente.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1905,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Ir a la posición del índice indicado.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Ir a ese porcentaje de la lista: <code>0%</code> la primera posición, <code>50%</code> la mitad, <code>100%</code> la última.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

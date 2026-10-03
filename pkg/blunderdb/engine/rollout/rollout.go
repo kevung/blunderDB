@@ -214,15 +214,19 @@ func Run(ctx context.Context, pos domain.Position, s Settings, opt Options) (*Re
 
 	var branches []branch
 	var names []string
-	hasDice := pos.Dice[0] >= 1 && pos.Dice[0] <= 6 && pos.Dice[1] >= 1 && pos.Dice[1] <= 6
-	if hasDice {
+	if hasDice(&pos) {
 		res.Kind = KindMoves
 		names, branches, err = moveBranches(&pos, s, opt.Moves, rootCube)
 		if err != nil {
 			return nil, err
 		}
+		if len(opt.Moves) > 0 {
+			// The plays as resolved, not as typed.
+			res.Signature = s.SignatureFor(names)
+		}
 	} else {
 		res.Kind = KindCube
+		res.Signature = s.CubeSignature()
 		if !t.canDouble(rootCube, t.root) {
 			return nil, fmt.Errorf("rollout: the player on roll cannot double here")
 		}
@@ -249,6 +253,12 @@ func Run(ctx context.Context, pos domain.Position, s Settings, opt Options) (*Re
 
 // moveBranches is one branch per candidate play: the position after it, the
 // opponent on roll.
+// hasDice reports a position whose player on roll has rolled: a rollout of
+// its plays; without dice, of its cube decision.
+func hasDice(pos *domain.Position) bool {
+	return pos.Dice[0] >= 1 && pos.Dice[0] <= 6 && pos.Dice[1] >= 1 && pos.Dice[1] <= 6
+}
+
 func moveBranches(pos *domain.Position, s Settings, named []string, cube cubeState) ([]string, []branch, error) {
 	legal := domain.LegalMoves(pos)
 	if len(legal) == 0 {

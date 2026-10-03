@@ -9,7 +9,7 @@ import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import TableGrid from '../components/direction/TableGrid.svelte';
 import { gridKeyAction } from '../services/directionGridKeys.js';
 import { gridHasFocus } from '../services/directionKeys.js';
-import { openDirectionIdStore } from '../stores/directionStore.js';
+import { directionViewLoadedStore, openDirectionIdStore } from '../stores/directionStore.js';
 import { activeTabStore } from '../stores/uiStore.js';
 
 const cell = (/** @type {number} */ table, running = true) =>
@@ -20,12 +20,14 @@ const cell = (/** @type {number} */ table, running = true) =>
 beforeEach(() => {
     activeTabStore.set('tournaments');
     openDirectionIdStore.set(1);
+    directionViewLoadedStore.set(true);
 });
 
 afterEach(() => {
     cleanup();
     vi.useRealTimers();
     openDirectionIdStore.set(null);
+    directionViewLoadedStore.set(false);
 });
 
 /** Place les éléments sur une grille de `cols` colonnes (jsdom ne met rien en page). */

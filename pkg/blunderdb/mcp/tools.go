@@ -176,6 +176,7 @@ func registerBuiltins(tb *Toolbox) {
 	registerPlayers(tb)
 	registerMatches(tb)
 	registerStudy(tb)
+	registerRollout(tb)
 	registerWrites(tb)
 }
 

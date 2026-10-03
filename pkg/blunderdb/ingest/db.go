@@ -160,14 +160,15 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	return sum, nil
 }
 
-// mergeDBAnalysisPreloaded writes an imported analysis for positionID
-// following the "prefer existing non-empty analysis" rule. existing is the
-// target's current analysis, already loaded in Import's batched pass.
+// mergeDBAnalysisPreloaded writes an imported analysis for positionID as
+// domain.MergeImportedAnalysis decides. existing is the target's current
+// analysis, already loaded in Import's batched pass.
 func mergeDBAnalysisPreloaded(ctx context.Context, tx storage.Tx, scope string, positionID int64, existing, imported *domain.PositionAnalysis) error {
-	if existing == nil || (existing.AnalysisType == "" && imported.AnalysisType != "") {
-		return tx.Analyses().Save(ctx, scope, positionID, imported)
+	merged, changed := domain.MergeImportedAnalysis(existing, imported)
+	if !changed {
+		return nil
 	}
-	return nil
+	return tx.Analyses().Save(ctx, scope, positionID, merged)
 }
 
 // mergeDBCommentsPreloaded appends each imported comment to positionID unless

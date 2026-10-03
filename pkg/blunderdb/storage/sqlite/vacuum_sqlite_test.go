@@ -114,6 +114,11 @@ func TestVacuum_RecompressesLegacyAnalysisBlobs(t *testing.T) {
 		t.Fatalf("insert second position: %v", err)
 	}
 	pos2ID, _ := pos2.LastInsertId()
+	pos3, err := st.sqlDB.Exec(`INSERT INTO position (state) VALUES (?)`, "third-position")
+	if err != nil {
+		t.Fatalf("insert third position: %v", err)
+	}
+	pos3ID, _ := pos3.LastInsertId()
 
 	rawJSON := []byte(`{"xgid":"raw-json-legacy"}`)
 	var zlibBuf bytes.Buffer
@@ -127,6 +132,15 @@ func TestVacuum_RecompressesLegacyAnalysisBlobs(t *testing.T) {
 
 	rawID := insertLegacyAnalysis(t, st, pos1ID, rawJSON)
 	zlibID := insertLegacyAnalysis(t, st, pos2ID, zlibBuf.Bytes())
+	// The import path writes zstd level 7; compaction rewrites it at 19.
+	fast, err := engine.CompressAnalysisData([]byte(`{"xgid":"zstd-write-path"}`))
+	if err != nil {
+		t.Fatalf("compress: %v", err)
+	}
+	if !engine.NeedsCompaction(fast) {
+		t.Fatal("a write-path blob already counts as compacted")
+	}
+	fastID := insertLegacyAnalysis(t, st, pos3ID, fast)
 
 	if _, err := st.Vacuum(ctx); err != nil {
 		t.Fatalf("Vacuum: %v", err)
@@ -139,13 +153,14 @@ func TestVacuum_RecompressesLegacyAnalysisBlobs(t *testing.T) {
 	}{
 		{"raw JSON row", rawID, "raw-json-legacy"},
 		{"zlib row", zlibID, "zlib-legacy"},
+		{"zstd level-7 row", fastID, "zstd-write-path"},
 	} {
 		var data []byte
 		if err := st.sqlDB.QueryRow(`SELECT data FROM analysis WHERE id = ?`, tc.id).Scan(&data); err != nil {
 			t.Fatalf("%s: select: %v", tc.name, err)
 		}
-		if engine.NeedsRecompression(data) {
-			t.Errorf("%s: still not zstd after Vacuum: %q", tc.name, data[:min(4, len(data))])
+		if engine.NeedsCompaction(data) {
+			t.Errorf("%s: not compacted after Vacuum: %q", tc.name, data[:min(5, len(data))])
 		}
 		a, err := engine.DecodeAnalysisFromStorage(data)
 		if err != nil {

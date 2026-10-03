@@ -14,6 +14,7 @@ import (
 	"strings"
 	"sync"
 	"sync/atomic"
+	"time"
 	"unicode"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -29,15 +30,22 @@ import (
 //
 // analysis.data holds one of three formats, told apart by content and never
 // by a schema version: raw JSON (first byte '{'), zlib level 9 (CMF/FLG
-// header), or zstd level 19 with the embedded dictionary (magic 0x28 0xB5
-// 0x2F 0xFD). The signatures cannot collide, so any database, however old,
-// still decodes. Each zstd frame carries its Dictionary_ID, so a second
+// header), or zstd with the embedded dictionary (magic 0x28 0xB5 0x2F 0xFD).
+// The signatures cannot collide, so any database, however old, still decodes.
+//
+// zstd comes in two levels, one decoder. The write path (import, merge) uses
+// level 7: level 19 costs twenty times the CPU for 10 % fewer bytes, and a
+// position is re-encoded every time an import merges into it. Compaction
+// (sqlite.Storage.Vacuum) rewrites blobs at level 19, so a compacted database
+// keeps its size. The two are told apart by the frame's Content_Checksum_flag:
+// level-7 frames carry no checksum, level-19 frames do — a one-byte check, no
+// decompression, no schema column. Each zstd frame carries its Dictionary_ID, so a second
 // dictionary later needs no row migration — only registering its bytes in
 // zstdDecoder's dict set.
 //
 // Every write is zstd. zlib/raw rows are read forever and upgraded
-// opportunistically (RecompressAnalysisData on native-.db import, and
-// sqlite.Storage.Vacuum) — never in a schema migration: a schema bump is for
+// opportunistically (RecompressAnalysisData on native-.db import,
+// CompactAnalysisData in sqlite.Storage.Vacuum) — never in a schema migration: a schema bump is for
 // DDL, not for the bytes inside an unchanged BLOB column.
 //
 // analysis_dict.bin is trained offline by cmd/train-analysis-dict; at runtime
@@ -50,27 +58,44 @@ var analysisZstdDict []byte
 // §3.1.1). Checked first so the common case skips a failed zlib-header parse.
 var zstdMagic = []byte{0x28, 0xB5, 0x2F, 0xFD}
 
-// zstdEncoder and zstdDecoder are shared: klauspost documents EncodeAll and
+// zstdChecksumBit is the Content_Checksum_flag in the frame header
+// descriptor, the byte right after the magic (RFC 8878 §3.1.1.1.1).
+const zstdChecksumBit = 1 << 2
+
+// The encoders and the decoder are shared: klauspost documents EncodeAll and
 // DecodeAll as concurrency-safe, and one instance per call is the memory
 // blow-up upstream warns against. Internal concurrency is pinned to 1 —
 // bounded memory over single-call latency, right for few-kilobyte blobs.
 var (
-	zstdEncoder *zstd.Encoder
-	zstdDecoder *zstd.Decoder
+	zstdEncoder        *zstd.Encoder // level 7, no checksum: the write path
+	zstdCompactEncoder *zstd.Encoder // level 19, checksum: compaction
+	zstdDecoder        *zstd.Decoder
 )
 
 func init() {
+	// The dictionary is a build-time asset: failure means a broken binary.
+	// Fail loudly rather than fall back to an un-dictionaried codec.
 	enc, err := zstd.NewWriter(nil,
-		zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(19)),
+		zstd.WithEncoderLevel(zstd.SpeedBetterCompression),
 		zstd.WithEncoderDict(analysisZstdDict),
 		zstd.WithEncoderConcurrency(1),
+		zstd.WithEncoderCRC(false),
 	)
 	if err != nil {
-		// The dictionary is a build-time asset: failure means a broken
-		// binary. Fail loudly rather than fall back to an un-dictionaried codec.
 		panic(fmt.Sprintf("engine: zstd encoder init: %v", err))
 	}
 	zstdEncoder = enc
+
+	compact, err := zstd.NewWriter(nil,
+		zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(19)),
+		zstd.WithEncoderDict(analysisZstdDict),
+		zstd.WithEncoderConcurrency(1),
+		zstd.WithEncoderCRC(true),
+	)
+	if err != nil {
+		panic(fmt.Sprintf("engine: zstd compaction encoder init: %v", err))
+	}
+	zstdCompactEncoder = compact
 
 	dec, err := zstd.NewReader(nil,
 		zstd.WithDecoderDicts(analysisZstdDict),
@@ -86,10 +111,16 @@ func init() {
 	zstdDecoder = dec
 }
 
-// CompressAnalysisData compresses raw JSON bytes with zstd level 19 and the
-// embedded dictionary — the only format ever written.
+// CompressAnalysisData compresses raw JSON bytes with zstd level 7 and the
+// embedded dictionary — the format every write path produces.
 func CompressAnalysisData(jsonData []byte) ([]byte, error) {
 	return zstdEncoder.EncodeAll(jsonData, nil), nil
+}
+
+// isCompactZstdFrame reports whether data is a zstd frame written by the
+// compaction encoder (checksum flag set).
+func isCompactZstdFrame(data []byte) bool {
+	return isZstdFrame(data) && len(data) > len(zstdMagic) && data[len(zstdMagic)]&zstdChecksumBit != 0
 }
 
 // MaxAnalysisBytes bounds what one analysis blob may inflate to. A real one is
@@ -167,6 +198,27 @@ func RecompressAnalysisData(data []byte) ([]byte, error) {
 	return CompressAnalysisData(jsonData)
 }
 
+// NeedsCompaction reports whether data is not yet in the compaction format
+// (zstd level 19): raw JSON, zlib, or a level-7 frame from the write path.
+// Allocation-free, so a full-table pass skips compacted rows cheaply.
+func NeedsCompaction(data []byte) bool {
+	return len(data) > 0 && !isCompactZstdFrame(data)
+}
+
+// CompactAnalysisData rewrites any analysis blob as zstd level 19 and returns
+// a blob already in that format unchanged. It is sqlite.Storage.Vacuum's
+// pass: the write path trades bytes for speed, compaction takes them back.
+func CompactAnalysisData(data []byte) ([]byte, error) {
+	if !NeedsCompaction(data) {
+		return data, nil
+	}
+	jsonData, err := DecompressAnalysisData(data)
+	if err != nil {
+		return nil, err
+	}
+	return zstdCompactEncoder.EncodeAll(jsonData, nil), nil
+}
+
 // EncodeAnalysisForStorage marshals a PositionAnalysis to JSON and compresses it.
 func EncodeAnalysisForStorage(a *domain.PositionAnalysis) ([]byte, error) {
 	jsonData, err := json.Marshal(a)
@@ -174,6 +226,15 @@ func EncodeAnalysisForStorage(a *domain.PositionAnalysis) ([]byte, error) {
 		return nil, err
 	}
 	return CompressAnalysisData(jsonData)
+}
+
+// AnalysisContentKey is a's JSON with LastModifiedDate cleared: two analyses
+// with equal keys differ at most by when they were last touched, so a merge
+// that produces the stored key has nothing to write.
+func AnalysisContentKey(a *domain.PositionAnalysis) ([]byte, error) {
+	c := *a
+	c.LastModifiedDate = time.Time{}
+	return json.Marshal(&c)
 }
 
 // DecodeAnalysisFromStorage decompresses (if needed) and unmarshals analysis data.
@@ -442,6 +503,7 @@ func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 	if a == nil {
 		return c
 	}
+	a = a.ColumnSource()
 
 	if dca := a.DoublingCubeAnalysis; dca != nil {
 		c.BestCubeAction = dca.BestCubeAction

@@ -20,6 +20,12 @@ type PositionStore interface {
 	// created: the caller that may undo its save is the one that made it.
 	SaveCreated(ctx context.Context, scope string, p *domain.Position) (id int64, created bool, err error)
 
+	// RaiseFlag raises the source-tool study mark on the stored position that
+	// p hashes to, and reports whether this call raised it: false when it was
+	// already set or when no such position is stored. The mark is only ever
+	// set, never cleared (ADR-0006).
+	RaiseFlag(ctx context.Context, scope string, p *domain.Position) (bool, error)
+
 	// Update overwrites the stored position with the same id as p.
 	Update(ctx context.Context, scope string, p *domain.Position) error
 

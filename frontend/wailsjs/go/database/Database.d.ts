@@ -13,6 +13,8 @@ import {direction} from '../models';
 import {engine} from '../models';
 import {tournoi} from '../models';
 import {parser} from '../models';
+import {rollout} from '../models';
+import {rollouts} from '../models';
 
 export function AbandonTranscription(arg1:number):Promise<void>;
 
@@ -376,6 +378,8 @@ export function LoadPositionsByFiltersCoreCtx(arg1:context.Context,arg2:domain.S
 
 export function LoadPositionsByIDs(arg1:Array<number>):Promise<Array<domain.Position>>;
 
+export function LoadRollouts(arg1:number):Promise<Array<domain.RolloutAnalysis>>;
+
 export function LoadSearchHistory():Promise<Array<database.SearchHistory>>;
 
 export function LoadSessionState():Promise<database.SessionState>;
@@ -413,6 +417,8 @@ export function ParsePositionText(arg1:string):Promise<parser.Result>;
 export function Participants(arg1:number):Promise<Array<service.ParticipantRow>>;
 
 export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAnalysisResume>;
+
+export function PositionsToRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<Array<domain.Position>>;
 
 export function PreviewAttachToRencontre(arg1:number,arg2:number):Promise<service.ConfigPreview>;
 
@@ -464,6 +470,12 @@ export function RestoreFromTrash(arg1:number):Promise<number>;
 
 export function ReviewAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
 
+export function RolloutFiltered(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
+
+export function RolloutPosition(arg1:context.Context,arg2:number,arg3:rollout.Settings,arg4:Array<string>,arg5:boolean,arg6:any):Promise<rollout.Result>;
+
+export function RolloutPositions(arg1:context.Context,arg2:Array<domain.Position>,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
+
 export function SaveAnalysis(arg1:number,arg2:domain.PositionAnalysis):Promise<void>;
 
 export function SaveCommand(arg1:string):Promise<void>;
@@ -495,6 +507,8 @@ export function SaveTrainingSession(arg1:storage.TrainingSession):Promise<number
 export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
 
 export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
+
+export function SetBeforeSwitch(arg1:any):Promise<void>;
 
 export function SetCollectionFilter(arg1:number,arg2:string):Promise<void>;
 

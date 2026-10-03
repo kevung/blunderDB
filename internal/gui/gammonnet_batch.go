@@ -72,6 +72,14 @@ func (a *App) runGammonNetBatch(run func(ctx context.Context, onProgress func(do
 		return
 	}
 
+	// A rollout batch takes every core as this one does: refused, as the
+	// daemon refuses a second exclusive job.
+	a.roMu.Lock()
+	if a.rolloutBatchRunning() {
+		a.roMu.Unlock()
+		a.emitBatch("gammonnet-batch:error", map[string]string{"message": "a rollout batch is already running"})
+		return
+	}
 	a.gnBatchMu.Lock()
 	if a.gnBatchCancel != nil {
 		a.gnBatchCancel()
@@ -81,6 +89,7 @@ func (a *App) runGammonNetBatch(run func(ctx context.Context, onProgress func(do
 	a.gnBatchCancel = cancel
 	a.gnBatchDone = stopped
 	a.gnBatchMu.Unlock()
+	a.roMu.Unlock()
 
 	go func() {
 		// Registered first so it runs last, even after a panic: shutdown
@@ -167,18 +176,32 @@ func (a *App) waitForInteractiveEvaluation() {
 }
 
 // stopBackgroundJobs, shutdown's first step, cancels every job and waits (up
-// to grace) only for the gammonNet batch, the one that writes the database.
+// to grace, shared) only for the ones that write the database.
 // The bearoff generation never touches it, and waiting for it could hang.
 func (a *App) stopBackgroundJobs(grace time.Duration) {
 	a.CancelBearoffGeneration()
+	a.stopDatabaseJobs(grace)
+}
 
-	stopped := a.cancelGammonNetBatch()
-	if stopped == nil {
-		return
-	}
-	select {
-	case <-stopped:
-	case <-time.After(grace):
-		slog.Warn("shutdown: the gammonNet batch did not stop within the grace period; closing the database anyway", "grace", grace)
+// stopDatabaseJobs cancels the gammonNet batch and the rollout, the jobs that
+// write the database, and waits for them up to grace, shared: before shutdown
+// and before the open file changes.
+func (a *App) stopDatabaseJobs(grace time.Duration) {
+	// One context for the whole grace period: unlike a timer channel, which
+	// delivers its value once, it stays done for every job still waited on.
+	deadline, release := context.WithTimeout(context.Background(), grace)
+	defer release()
+	for name, stopped := range map[string]<-chan struct{}{
+		"the gammonNet batch": a.cancelGammonNetBatch(),
+		"the rollout":         a.cancelRollout(),
+	} {
+		if stopped == nil {
+			continue
+		}
+		select {
+		case <-stopped:
+		case <-deadline.Done():
+			slog.Warn("a job writing the database did not stop within the grace period; going ahead", "job", name, "grace", grace)
+		}
 	}
 }

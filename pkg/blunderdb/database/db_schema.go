@@ -272,11 +272,33 @@ func scanPositionRowWithState(rows *sql.Rows, state *string) (Position, error) {
 	return pos, nil
 }
 
+// mergeRolloutsIntoTx adds rollouts to keepID's analysis, one per Signature.
+func mergeRolloutsIntoTx(ctx context.Context, tx *sql.Tx, keepID int64, rollouts []domain.RolloutAnalysis) error {
+	if len(rollouts) == 0 {
+		return nil
+	}
+	var data []byte
+	if err := tx.QueryRowContext(ctx, `SELECT data FROM analysis WHERE position_id = ?`, keepID).Scan(&data); err != nil {
+		return err
+	}
+	kept, err := decodeAnalysisFromStorage(data)
+	if err != nil {
+		return fmt.Errorf("decode analysis: %w", err)
+	}
+	kept.Rollouts = domain.MergeRollouts(kept.Rollouts, rollouts)
+	encoded, err := encodeAnalysisForStorage(&kept)
+	if err != nil {
+		return fmt.Errorf("encode analysis: %w", err)
+	}
+	_, err = tx.ExecContext(ctx, `UPDATE analysis SET data = ? WHERE position_id = ?`, encoded, keepID)
+	return err
+}
+
 // mergePositionInto moves everything attached to the duplicate position dupID
 // onto keepID — the row the Zobrist index already holds — and deletes dupID.
 // Match moves, collection memberships, Anki cards and comments follow the
 // position; an analysis follows only when keepID has none (it is one per
-// position, and the held row's own analysis wins); the sticky marks
+// position, and the held row's own analysis wins), its rollouts always; the sticky marks
 // (individually_imported, flagged — ADR-0001, ADR-0006) are raised on keepID
 // when dupID carried them and never lowered. Whatever cannot be re-pointed
 // (a membership keepID already has) goes with dupID through ON DELETE CASCADE.
@@ -308,13 +330,21 @@ func mergePositionInto(ctx context.Context, tx *sql.Tx, keepID, dupID int64) err
 		`SELECT EXISTS (SELECT 1 FROM analysis WHERE position_id = ?)`, keepID).Scan(&keepHasAnalysis); err != nil {
 		return fmt.Errorf("merging duplicate position %d into %d: %w", dupID, keepID, err)
 	}
-	if !keepHasAnalysis {
+	{
 		var data []byte
 		switch err := tx.QueryRowContext(ctx, `SELECT data FROM analysis WHERE position_id = ?`, dupID).Scan(&data); {
 		case err == nil:
 			analysis, err := decodeAnalysisFromStorage(data)
 			if err != nil {
 				return fmt.Errorf("merging duplicate position %d into %d: decode analysis: %w", dupID, keepID, err)
+			}
+			if keepHasAnalysis {
+				// The held row's analysis wins, but a rollout is an analysis of
+				// its own (ADR-0060 §8): it moves over.
+				if err := mergeRolloutsIntoTx(ctx, tx, keepID, analysis.Rollouts); err != nil {
+					return fmt.Errorf("merging duplicate position %d into %d: %w", dupID, keepID, err)
+				}
+				break
 			}
 			analysis.PositionID = int(keepID)
 			encoded, err := encodeAnalysisForStorage(&analysis)

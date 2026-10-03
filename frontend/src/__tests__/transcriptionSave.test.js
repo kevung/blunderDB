@@ -61,7 +61,7 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetGammonNetAnalysisPly: vi.fn().mockResolvedValue(2),
     GetGammonNetPruneK: vi.fn().mockResolvedValue(12)
 }));
-vi.mock('../services/confirmService.js', () => ({ confirmAction }));
+vi.mock('../services/confirmService.js', () => ({ confirmAction, confirmModalStore: { subscribe: (run) => (run(null), () => {}) } }));
 
 import { transcriptionStore, transcriptionHistoryStore, setTranscription } from '../stores/transcriptionStore.js';
 import { activeTabStore, statusBarTextStore } from '../stores/uiStore.js';

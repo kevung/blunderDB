@@ -7,7 +7,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => rt);
 
 import { directionFullscreenStore, enterDirectionFullscreen, exitDirectionFullscreen, toggleDirectionFullscreen, directionFullscreenKey } from '../services/directionFullscreen.js';
 import { handleEscapeCapture, closeOnEscape } from '../services/escapeService.js';
-import { openDirectionIdStore } from '../stores/directionStore.js';
+import { openDirectionIdStore, directionViewLoadedStore } from '../stores/directionStore.js';
 import { activeTabStore } from '../stores/uiStore.js';
 
 const key = (k, init = {}) => new KeyboardEvent('keydown', { key: k, cancelable: true, ...init });
@@ -17,10 +17,12 @@ beforeEach(() => {
     rt.WindowIsFullscreen.mockReturnValue(false);
     activeTabStore.set('tournaments');
     openDirectionIdStore.set(1);
+    directionViewLoadedStore.set(true);
 });
 afterEach(async () => {
     await exitDirectionFullscreen();
     openDirectionIdStore.set(null);
+    directionViewLoadedStore.set(false);
 });
 
 describe('plein écran de la Direction', () => {
@@ -66,6 +68,11 @@ describe('plein écran de la Direction', () => {
         off();
         handleEscapeCapture(key('Escape'));
         expect(get(directionFullscreenStore)).toBe(false);
+    });
+
+    test('tant que la vue n’est pas montée, F11 ne lui revient pas', () => {
+        directionViewLoadedStore.set(false);
+        expect(directionFullscreenKey(key('F11'))).toBe(false);
     });
 
     test('F11 nu bascule ; avec un modificateur ou sous un menu, non', async () => {

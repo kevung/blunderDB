@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Nur erscheinende Dateien werden importiert.</strong> Was der Ordner beim Start der Überwachung bereits enthält, wird als bekannt vermerkt und in Ruhe gelassen: eine Überwachung auf vier Jahre Matches zu richten darf nicht alle importieren. Um das Vorhandene zu importieren, gibt es den Ordnerimport — und beide ergänzen sich bestens, erst der Import, dann die Überwachung.</li>
 <li><strong>Eine Datei wird erst importiert, wenn ihre Größe sich gesetzt hat.</strong> Ein Match, das ein anderes Programm gerade schreibt, wächst von einem Blick zum nächsten; es halb geschrieben zu importieren ergäbe einen Parserfehler, mit dem niemand etwas anfangen kann. blunderDB wartet daher, bis es dieselbe Datei zweimal unverändert gesehen hat.</li>
-<li><strong>Der Import ist still.</strong> Sie haben gerade eine Stellung studiert, als Ihre Matches ankamen: Ihnen den Bildschirm wegzunehmen wäre der denkbar schlechteste Moment. Der Import läuft ohne Fenster, und die Statusleiste zeigt einen Streifen mit der Zahl der importierten, übersprungenen (Duplikate) und fehlgeschlagenen Matches, mit einer Schaltfläche, die auf Wunsch den vollständigen Bericht öffnet. Alles Übrige ist identisch mit einem manuellen Import: dieselbe Duplikaterkennung, derselbe Importlauf, dieselbe automatische Analyse, wenn sie eingeschaltet ist.</li>
+<li><strong>Der Import ist still.</strong> Sie waren gerade dabei, eine Stellung zu studieren, als Ihre Matches eintrafen: Ihnen den Bildschirm wegzunehmen wäre der ungünstigste Moment. Modus, aktive Suche, Registerkarte und angezeigte Stellung bleiben unverändert; die Stellungsliste wird nicht neu geladen und zeigt die neuen Matches beim nächsten Neuladen. Der Import läuft ohne Fenster, und die Statusleiste zeigt ein Banner mit der Anzahl importierter, übersprungener (Duplikate) und fehlgeschlagener Matches, mit einer Schaltfläche, die auf Wunsch den vollständigen Bericht öffnet. Alles Übrige entspricht einem manuellen Import: dieselben erkannten Duplikate, derselbe Import-Stapel, dieselbe automatische Analyse, falls aktiviert.</li>
 </ul>
 <p>Das Standardintervall beträgt zehn Sekunden; die Untergrenze zwei. Der Ordner wird nicht rekursiv durchlaufen: ein überwachter Ordner ist der Ort, an dem ein Werkzeug seine Matches ablegt, kein Baum zum Durchsuchen. Eine ausgehängte Netzwerkfreigabe beendet die Überwachung nicht und lässt ihren Inhalt bei der Rückkehr auch nicht als neu erscheinen.</p>
 <p>Dieselbe Überwachung gibt es auf der Kommandozeile, mit <code>blunderdb import --type batch --dir &lt;Ordner&gt; --watch</code> (siehe Befehlszeilenschnittstelle (CLI)): es ist die Form, die ein Server, eine geplante Aufgabe oder ein Skript verwenden kann.</p>
@@ -285,6 +285,7 @@ export default {
 <p>Die Kopfzeile jeder Partie zählt ihre Markierungen, ob sie aufgeklappt ist oder nicht: Man sieht, ohne sie zu öffnen, in welcher Partie die Blunders liegen.</p>
 <p>Die Schaltfläche <strong>Spieler zusammenführen</strong> in der Werkzeugleiste des Panels öffnet ein Fenster, das alle Spielernamen der Datenbank mit ihrer Anzahl an Matches auflistet: die Schreibvarianten desselben Spielers auswählen, den beizubehaltenden kanonischen Namen wählen und dann zusammenführen. Nützlich, um die Statistiken pro Spieler zu vereinheitlichen, wenn derselbe Spieler unter mehreren Namen erscheint.</p>
 <p>Wenn ein Match geöffnet ist, erscheint über dem Brett eine <strong>Informationsleiste</strong>: Sie zeigt die beteiligten Spieler (<em>Spieler 1</em> gegen <em>Spieler 2</em>) sowie den Kontext des Matches (Ereignis, Ort, Runde, Datum und Matchlänge, sofern diese Informationen verfügbar sind). Diese Leiste wird auch außerhalb des Match-Modus angezeigt: Wenn eine untersuchte Position (aus einer Suche, einer Sammlung oder einem direkten Zugriff) aus einem oder mehreren Matches stammt, gibt sie deren <strong>Herkunft</strong> an — das erste betroffene Match und gegebenenfalls ein Badge „+N“, das die übrigen beim Überfahren auflistet. Eine einzeln importierte Position, auf die kein Match verweist, zeigt nichts an.</p>
+<p>Die Reiter <strong>Suche</strong> und <strong>Eval</strong> ersetzen das Brett durch ein Arbeitsbrett: Ein Banner am oberen Brettrand weist darauf hin („Suchbrett“, „Auswertungsbrett“), und die Infoleiste wird ausgeblendet, solange sie eine Stellung beschreiben würde, die nicht auf dem Bildschirm ist. Die Rückkehr zur Analyse stellt die untersuchte Stellung wieder her.</p>
 <p>Beim Öffnen einer Datenbank, die Matchs enthält, wird das Panel <strong>Matchs</strong> sofort angezeigt und die Durchsicht beginnt direkt bei der ersten Stellung, sodass Sie unmittelbar mit der Navigation beginnen können.</p>
 <div class="admonition note">
 <p>Eine Datenbank kann jeweils nur von einem einzigen Fenster zum Schreiben geöffnet werden. Wenn Sie eine Datenbank öffnen, die bereits in einem anderen blunderDB-Fenster geöffnet ist, wird sie <strong>schreibgeschützt</strong> geöffnet: Navigation, Suche und Analyse bleiben möglich, aber jede Änderung ist deaktiviert und die Titelleiste zeigt „[schreibgeschützt]“ an.</p>
@@ -648,7 +649,7 @@ export default {
 <p>In diesem Reiter sind die Liste <strong>Spieler</strong> und die Wahl des <strong>Entscheidungstyps</strong> deaktiviert: Die Tabelle zeigt alle Spieler und teilt Steine- und Doppler-Entscheidungen bereits in getrennte Spalten auf.</p>
 </div>
 <div class="admonition important">
-<p>Ein Gedankenstrich („—“) steht für einen <strong>nie gemessenen</strong> Wert, nicht zu verwechseln mit null. Das gilt insbesondere für die Spalte Glück bei jedem Match, das vor Schemaversion 2.15.0 importiert wurde: Das Glück wurde damals nicht gespeichert, und nichts erlaubt es, es nachträglich zu rekonstruieren — die Quelldateien müssen neu importiert werden. Formate, die es nicht transportieren (BGF, Jellyfish <code>.mat</code>), werden es nie liefern.</p>
+<p>Ein Gedankenstrich („—“) steht für einen <strong>nie gemessenen</strong> Wert, nicht zu verwechseln mit null. Das gilt insbesondere für die Spalte Glück bei jedem Match, das vor Schemaversion 2.15.0 importiert wurde: Das Glück wurde damals nicht gespeichert, und nichts erlaubt es, es nachträglich zu rekonstruieren. Die Quelldatei erneut zu importieren genügt nicht: Der Import erkennt ein Duplikat und übernimmt nur dessen Markierungen. Das Match muss gelöscht und dann erneut importiert werden. Formate, die es nicht transportieren (BGF, Jellyfish <code>.mat</code>), werden es nie liefern.</p>
 </div>
 <h4>Aggregationsregel</h4>
 <div class="admonition important">
@@ -987,8 +988,12 @@ export default {
 <td>Alle Positionen aus der Datenbank neu laden.</td>
 </tr>
 <tr>
-<td>Bild-auf, h</td>
+<td>Home, h</td>
 <td>Erste Position / Vorheriges Spiel (Match-Navigation).</td>
+</tr>
+<tr>
+<td>Bild-auf</td>
+<td>Geht eine Seite von hundert Stellungen zurück (hält am Listenanfang an); in einem Match: vorheriges Spiel.</td>
 </tr>
 <tr>
 <td>LINKS, k</td>
@@ -1007,8 +1012,12 @@ export default {
 <td>Nächster Zug (wenn ein Zug in der Analyse ausgewählt ist).</td>
 </tr>
 <tr>
-<td>Bild-ab, l</td>
+<td>End, l</td>
 <td>Letzte Position / Nächstes Spiel (Match-Navigation).</td>
+</tr>
+<tr>
+<td>Bild-ab</td>
+<td>Geht eine Seite von hundert Stellungen vor (hält am Listenende an); in einem Match: nächstes Spiel.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1905,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Springt zur Position mit dem angegebenen Index.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Springt zu diesem Prozentsatz der Liste: <code>0%</code> die erste Stellung, <code>50%</code> die Mitte, <code>100%</code> die letzte.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

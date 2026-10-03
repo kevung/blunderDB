@@ -1,4 +1,5 @@
 <script>
+    import { confirmAction } from '../../services/confirmService.js';
     /*
      * Le dernier geste du directeur, corrigeable sur place en deux clics (ux.md flux F28), ou
      * par `Ctrl+Z`. Corriger n'efface rien : c'est un événement de plus.
@@ -31,8 +32,8 @@
     });
 
     /* Annuler un match retire un résultat en cours de la grille : on le confirme. */
-    function cancelMatch() {
-        if (!window.confirm($t('direction.result.cancelConfirm', { a: last.aName, b: last.bName }))) return;
+    async function cancelMatch() {
+        if (!(await confirmAction($t('direction.result.cancelConfirm', { a: last.aName, b: last.bName })))) return;
         onCancelMatch(last.matchId);
     }
 

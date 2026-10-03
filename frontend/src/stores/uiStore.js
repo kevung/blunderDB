@@ -1,3 +1,4 @@
+import { confirmModalStore } from '../services/confirmService.js';
 import { writable, derived } from 'svelte/store';
 
 import { trainingPipOverrideStore } from './trainingTabStore.js';
@@ -36,6 +37,9 @@ export const commandPaletteScopeStore = writable(null);
 export const matchOpenRequestStore = writable(null);
 
 export const currentPositionIndexStore = writable(0);
+// How many positions PageUp / PageDown jump over in a long list.
+export const PAGE_STEP_DEFAULT = 100;
+export const pageStepStore = writable(PAGE_STEP_DEFAULT);
 
 // ── Modal identifiers (exclusive — only one modal at a time) ──
 export const MODAL = {
@@ -127,7 +131,8 @@ export function togglePanel(name) {
 }
 
 // ── Derived stores (automatic — no manual enumeration) ──
-export const isAnyModalOpen = derived(activeModal, ($m) => $m !== null);
+// The themed confirm dialog layers over the exclusive modals, so it counts too.
+export const isAnyModalOpen = derived([activeModal, confirmModalStore], ([$m, $c]) => $m !== null || $c !== null);
 
 export const matchPanelRefreshTriggerStore = writable(0);
 

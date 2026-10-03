@@ -606,8 +606,11 @@ type PositionAnalysis struct {
 	PlayedCubeAction      string                 `json:"playedCubeAction,omitempty"`  // Deprecated: Use PlayedCubeActions instead
 	PlayedMoves           []string               `json:"playedMoves,omitempty"`       // All moves played in this position across different matches
 	PlayedCubeActions     []string               `json:"playedCubeActions,omitempty"` // All cube actions taken in this position across different matches
-	CreationDate          time.Time              `json:"creationDate"`
-	LastModifiedDate      time.Time              `json:"lastModifiedDate"`
+	// Rollouts are the rollouts written down on this position, each its own
+	// Configuration, beside the analysis above and never in its place.
+	Rollouts         []RolloutAnalysis `json:"rollouts,omitempty"`
+	CreationDate     time.Time         `json:"creationDate"`
+	LastModifiedDate time.Time         `json:"lastModifiedDate"`
 }
 
 func initializeBoard() Board {
