@@ -22,6 +22,7 @@ var boundAppMethods = []string{
 	"StartRolloutIDs",
 	"CheckForUpdate",
 	"CollectImportableFiles",
+	"ImportFiles",
 	"ComputeCubeMatrix",
 	"CopyImageToClipboard",
 	"CountRolloutIDs",

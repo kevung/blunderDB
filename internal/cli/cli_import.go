@@ -11,6 +11,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
@@ -418,100 +419,59 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 	duplicateCount := 0
 	totalPositions := 0
 
-	for i, filePath := range matchFiles {
-		relPath, _ := filepath.Rel(dirPath, filePath)
+	// OnFile runs in file order once each group is committed, with the
+	// database lock held: it only prints and tallies.
+	onFile := func(o ingest.FileOutcome) {
+		relPath, _ := filepath.Rel(dirPath, o.Path)
+		result := BatchImportResult{FilePath: relPath}
 		if text {
-			fmt.Printf("[%d/%d] Importing: %s...", i+1, len(matchFiles), relPath)
+			fmt.Printf("[%d/%d] %s:", o.Index+1, len(matchFiles), relPath)
 		}
-
-		result := BatchImportResult{
-			FilePath: relPath,
-		}
-
-		ext := strings.ToLower(filepath.Ext(filePath))
-		var matchID int64
-		switch ext {
-		case ".xgp":
-			posID, posErr := cli.db.ImportXGPPosition(filePath)
-			if posErr != nil {
-				if text {
-					fmt.Printf(" ERROR: %v\n", posErr)
-				}
-				result.Error = posErr.Error()
-				recordFailure(&failures, relPath, posErr)
-				failCount++
-			} else {
-				result.Success = true
-				result.Positions = 1
-				totalPositions++
-				successCount++
-				if text {
-					fmt.Printf(" OK (Position ID: %d)\n", posID)
-				}
-			}
-			results = append(results, result)
-			continue
-		case ".xg":
-			matchID, err = cli.db.ImportXGMatch(filePath)
-		case ".sgf", ".mat", ".txt":
-			matchID, err = cli.db.ImportGnuBGMatch(filePath)
-		case ".bgf":
-			matchID, err = cli.db.ImportBGFMatch(filePath)
-		case ".ogxm":
-			matchID, err = cli.db.ImportOGXMMatch(filePath)
-		}
-
-		if err != nil {
-			if errors.Is(err, ErrDuplicateMatch) {
-				if text {
-					if n := flagsApplied(err); n > 0 {
-						fmt.Printf(" DUPLICATE (%d study marks applied)\n", n)
-					} else {
-						fmt.Println(" DUPLICATE")
-					}
-				}
-				result.Error = "duplicate"
-				duplicateCount++
-			} else {
-				if text {
-					fmt.Printf(" ERROR: %v\n", err)
-				}
-				result.Error = err.Error()
-				recordFailure(&failures, relPath, err)
-				failCount++
-			}
-		} else {
-			result.Success = true
-			result.MatchID = matchID
-			successCount++
-
-			// Get match details
-			match, err := cli.db.GetMatchByID(matchID)
-			if err == nil && match != nil {
-				result.Player1 = match.Player1Name
-				result.Player2 = match.Player2Name
-				result.Games = match.GameCount
-			}
-
-			// Get position count
-			positions, err := cli.db.GetMatchMovePositions(matchID)
-			if err == nil {
-				result.Positions = len(positions)
-				totalPositions += len(positions)
-			}
-
+		switch {
+		case o.Status == ingest.FileDuplicate:
 			if text {
-				fmt.Printf(" OK (ID: %d, %d positions)\n", matchID, result.Positions)
+				if o.FlagsApplied > 0 {
+					fmt.Printf(" DUPLICATE (%d study marks applied)\n", o.FlagsApplied)
+				} else {
+					fmt.Println(" DUPLICATE")
+				}
+			}
+			result.Error = "duplicate"
+			duplicateCount++
+		case o.Status == ingest.FileFailed:
+			if text {
+				fmt.Printf(" ERROR: %s\n", o.Error)
+			}
+			result.Error = o.Error
+			recordFailure(&failures, relPath, errors.New(o.Error))
+			failCount++
+		case o.Status == ingest.FilePosition:
+			result.Success = true
+			result.Positions = o.Positions
+			totalPositions += o.Positions
+			successCount++
+			if text {
+				fmt.Printf(" OK (Position ID: %d)\n", o.PositionID)
+			}
+		default:
+			result.Success = true
+			result.MatchID = o.MatchID
+			result.Player1, result.Player2, result.Games = o.Player1, o.Player2, o.Games
+			result.Positions = o.Positions
+			totalPositions += o.Positions
+			successCount++
+			if text {
+				fmt.Printf(" OK (ID: %d, %d positions)\n", o.MatchID, o.Positions)
 			}
 		}
-
 		results = append(results, result)
-
-		// After each successful match import, checkpoint the WAL to keep file size bounded.
-		if result.Success && result.MatchID > 0 {
-			_ = cli.db.Checkpoint()
-		}
 	}
+
+	if _, err := cli.db.ImportFiles(matchFiles, database.ImportFilesOptions{OnFile: onFile}); err != nil {
+		cli.finishImportBatch(batchID, failures)
+		return fmt.Errorf("batch import interrupted: %w", err)
+	}
+	_ = cli.db.Checkpoint()
 
 	// After all imports, update query planner statistics.
 	cli.db.RefreshSearchStatistics()

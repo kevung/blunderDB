@@ -9,7 +9,8 @@ import {
     ReadFileContent,
     ShowAlert,
     IsDirectory,
-    LooksLikeOGID
+    LooksLikeOGID,
+    ImportFiles
 } from '../../wailsjs/go/gui/App.js';
 import {
     SaveIndividualPosition,
@@ -36,7 +37,7 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 import { GetGammonNetAutoAnalyze, GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
 import { StartGammonNetBatch } from '../../wailsjs/go/gui/App.js';
-import { ClipboardGetText } from '../../wailsjs/runtime/runtime.js';
+import { ClipboardGetText, EventsOn } from '../../wailsjs/runtime/runtime.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, pastePositionTextStore, matchContextStore, clipboardPositionStore } from '../stores/positionStore.js';
@@ -789,6 +790,40 @@ async function finishImportBatch(batchID) {
     }
 }
 
+// Extensions the backend pipeline reads without help from the frontend.
+const PIPELINE_EXTENSIONS = ['.xg', '.xgp', '.bgf', '.ogxm', '.sgf', '.mat'];
+
+// importThroughPipeline sends the files in one call; the backend reports each
+// decided file by event, in file order, which drives the progress.
+async function importThroughPipeline(paths, remaining) {
+    const offProgress = EventsOn('import-files:file', (o) => {
+        fileImportCurrentIndexStore.set(o.index + 1);
+        fileImportCurrentFileStore.set(o.path);
+    });
+    try {
+        const summary = await ImportFiles(paths);
+        fileImportResultsStore.update((r) => ({
+            ...r,
+            succeeded: r.succeeded + summary.succeeded,
+            skipped: r.skipped + summary.skipped,
+            failed: r.failed + summary.failed,
+            errors: r.errors.concat(summary.errors ?? [])
+        }));
+        if (summary.cancelled) fileImportCancelled = true;
+        return summary;
+    } catch (error) {
+        logger.error('batch import failed:', error);
+        fileImportResultsStore.update((r) => ({
+            ...r,
+            failed: r.failed + paths.length,
+            errors: r.errors.concat([{ file: `${paths.length + remaining} files`, message: String(error).replace(/^Error:\s*/, '') }])
+        }));
+        return { hadMatches: false, lastPositionID: 0 };
+    } finally {
+        if (typeof offProgress === 'function') offProgress();
+    }
+}
+
 async function importMultipleFilesCore(files, { quiet = false } = {}) {
     fileImportCancelled = false;
     fileImportTotalFilesStore.set(files.length);
@@ -806,10 +841,22 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
     let hadMatches = false;
     let lastPositionID = null;
 
-    for (let i = 0; i < files.length; i++) {
+    // Every file the backend can read alone goes through its parallel
+    // pipeline in one call; a .txt may be a position text only the frontend
+    // parses, so those stay one call each.
+    const pipelined = files.filter((f) => PIPELINE_EXTENSIONS.some((ext) => f.toLowerCase().endsWith(ext)));
+    const oneByOne = files.filter((f) => !pipelined.includes(f));
+
+    if (pipelined.length > 0) {
+        const summary = await importThroughPipeline(pipelined, oneByOne.length);
+        hadMatches = summary.hadMatches;
+        if (summary.lastPositionID) lastPositionID = summary.lastPositionID;
+    }
+
+    for (let i = 0; i < oneByOne.length; i++) {
         if (fileImportCancelled) break;
-        const filePath = files[i];
-        fileImportCurrentIndexStore.set(i + 1);
+        const filePath = oneByOne[i];
+        fileImportCurrentIndexStore.set(pipelined.length + i + 1);
         fileImportCurrentFileStore.set(filePath);
 
         try {
@@ -870,6 +917,7 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
 
 export function handleFileImportCancel() {
     fileImportCancelled = true;
+    CancelImport().catch((err) => logger.error('Error calling CancelImport:', err));
     showFileImportModalStore.set(false);
     fileImportModeStore.set('idle');
     setStatusBarMessage(tMsg('status.importCancelled'));

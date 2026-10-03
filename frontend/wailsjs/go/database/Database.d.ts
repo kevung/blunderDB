@@ -12,6 +12,7 @@ import {storage} from '../models';
 import {direction} from '../models';
 import {engine} from '../models';
 import {tournoi} from '../models';
+import {ingest} from '../models';
 import {parser} from '../models';
 import {rollout} from '../models';
 import {rollouts} from '../models';
@@ -317,6 +318,8 @@ export function ImportBGFPosition(arg1:string):Promise<number>;
 export function ImportBGFPositionFromText(arg1:string):Promise<number>;
 
 export function ImportDatabase(arg1:string):Promise<Record<string, any>>;
+
+export function ImportFiles(arg1:Array<string>,arg2:database.ImportFilesOptions):Promise<Array<ingest.FileOutcome>>;
 
 export function ImportGnuBGMatch(arg1:string):Promise<number>;
 

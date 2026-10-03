@@ -94,6 +94,10 @@ export function GetIssuerIdentity() {
   return window['go']['gui']['App']['GetIssuerIdentity']();
 }
 
+export function ImportFiles(arg1) {
+  return window['go']['gui']['App']['ImportFiles'](arg1);
+}
+
 export function ImportIssuerIdentity(arg1, arg2) {
   return window['go']['gui']['App']['ImportIssuerIdentity'](arg1, arg2);
 }
