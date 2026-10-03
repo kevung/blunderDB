@@ -1121,7 +1121,16 @@
         "reportAnalyzeNow": "Analyser maintenant",
         "reportWorst": "Pires décisions",
         "reportCube": "videau",
-        "reportChecker": "pions"
+        "reportChecker": "pions",
+        "journalTitle": "Journal de l'import ({n} fichiers)",
+        "journalNew": "nouveau",
+        "journalDuplicate": "doublon",
+        "journalEnriched": "enrichi",
+        "journalError": "erreur",
+        "journalOpenMatch": "Ouvrir le match {id}",
+        "journalMore": "… et {n} autres fichiers (journal complet : imports.files, ou --format json)",
+        "interruptedTitle": "Import interrompu",
+        "resume": "Reprendre"
     },
     "warning": {
         "title": "Avertissement",

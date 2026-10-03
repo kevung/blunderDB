@@ -130,3 +130,29 @@ func TestResumeImportBatch(t *testing.T) {
 		t.Errorf("the resumed batch lost its earlier counts: %+v", b.Report)
 	}
 }
+
+// In bulk mode a session holds its own connection while the journal is written
+// through the pool: on a file database both must coexist, and the journal must
+// be complete once the session closes.
+func TestImportFiles_BulkModeJournalsEachFile(t *testing.T) {
+	old := bulkImportMinFiles
+	bulkImportMinFiles = 1
+	t.Cleanup(func() { bulkImportMinFiles = old })
+
+	files := pipelineFixture(t)
+	db := newTestDB(t)
+	id, err := db.BeginImportBatch("fixture", "mixed")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var bulk bool
+	if _, err := db.ImportFiles(files, ImportFilesOptions{OnBulk: func(bool) { bulk = true }}); err != nil {
+		t.Fatal(err)
+	}
+	if !bulk {
+		t.Fatal("the import did not run in bulk mode")
+	}
+	if j := journalByPath(t, db, id); len(j) != len(files) {
+		t.Fatalf("journal has %d files after a bulk import, want %d", len(j), len(files))
+	}
+}

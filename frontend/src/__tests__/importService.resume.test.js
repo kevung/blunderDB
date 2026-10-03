@@ -62,7 +62,8 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({ ClipboardGetText: vi.fn(), 
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn(), openDatabaseByPath: vi.fn() }));
 vi.mock('../services/positionService.js', () => ({ loadAllPositions: vi.fn() }));
 
-const { resumeImportBatch } = await import('../services/importService.js');
+const { resumeImportBatch, resumeInterruptedImport } = await import('../services/importService.js');
+const { fileImportInterruptedStore } = await import('../stores/importModalStore.js');
 
 describe('resumeImportBatch', () => {
     test('reopens the batch and imports only what the journal has not decided', async () => {
@@ -70,5 +71,13 @@ describe('resumeImportBatch', () => {
         expect(ResumeImportBatch).toHaveBeenCalledWith(12);
         expect(BeginImportBatch).not.toHaveBeenCalled();
         expect(ImportFiles).toHaveBeenCalledWith(['/b.xg']);
+    });
+
+    test('the Resume button resumes the interrupted import with its whole file list', async () => {
+        vi.clearAllMocks();
+        fileImportInterruptedStore.set({ batchID: 5, files: ['/x.xg', '/y.xg'] });
+        await resumeInterruptedImport();
+        expect(ResumeImportBatch).toHaveBeenCalledWith(5);
+        expect(PendingImportFiles).toHaveBeenCalledWith(['/x.xg', '/y.xg']);
     });
 });

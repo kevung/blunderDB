@@ -2569,7 +2569,7 @@ Options:
   -recursive
     	Recursively scan subdirectories for batch import (default true)
   -resume int
-    	With --type batch: continue the batch with this id (the id the earlier run printed, or its JSON batch_id); files its journal already decided are skipped without being read
+    	With --type batch: continue the batch with this id (the id the earlier run printed, or its JSON batch_id); files with the same path, size and mtime as in its journal are skipped unread, those with the same content are read but not parsed
   -type string
     	Import type: match, position, batch (required)
   -watch

@@ -1202,9 +1202,13 @@ ne remplace pas ce qui est déjà là.
   taille, la date de modification, l'empreinte SHA-256 et le résultat : match
   nouveau (avec son numéro), doublon (avec le match qui le couvre), match
   enrichi, ou erreur (avec le message). Un import annulé ou coupé se continue
-  sans relire ce qui est déjà décidé : un fichier de même chemin, même taille
-  et même date, ou de même contenu, est sauté ; un fichier en erreur est
-  retenté. En ligne de commande, ``blunderdb import --type batch --dir
+  sans reprendre ce qui est déjà décidé : un fichier de même chemin, même
+  taille et même date est sauté sans être lu ; un fichier de même contenu est
+  lu mais pas analysé ; un fichier en erreur est retenté. Dans l'application, la fenêtre de fin d'import liste le journal (un
+  fichier par ligne, avec son résultat et le message d'une erreur ; un
+  fichier retenté montre sa dernière issue), et une ligne qui a donné un match
+  l'ouvre. Un import **annulé** laisse la fenêtre ouverte avec le bouton
+  **Reprendre**. En ligne de commande, ``blunderdb import --type batch --dir
   <dossier> --resume <lot>`` reprend le lot dont le numéro a été affiché au
   départ de l'import, et ``--format json`` rend le journal dans l'objet final
   (``journal``). Le serveur accepte ``resume`` dans la requête de

@@ -35,7 +35,7 @@ func (cli *CLI) runImport(args []string) error {
 	watchEvery := importCmd.Duration("watch-every", 0,
 		"How often --watch looks at the folder (default 10s, floor 2s)")
 	resume := importCmd.Int64("resume", 0,
-		"With --type batch: continue the batch with this id (the id the earlier run printed, or its JSON batch_id); files its journal already decided are skipped without being read")
+		"With --type batch: continue the batch with this id (the id the earlier run printed, or its JSON batch_id); files with the same path, size and mtime as in its journal are skipped unread, those with the same content are read but not parsed")
 	failOnError := importCmd.Bool("fail-on-error", false,
 		"Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported, duplicates aside) is an error")
 

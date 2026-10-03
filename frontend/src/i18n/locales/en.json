@@ -1121,7 +1121,16 @@
         "reportAnalyzeNow": "Analyse now",
         "reportWorst": "Worst decisions",
         "reportCube": "cube",
-        "reportChecker": "checker"
+        "reportChecker": "checker",
+        "journalTitle": "Import journal ({n} files)",
+        "journalNew": "new",
+        "journalDuplicate": "duplicate",
+        "journalEnriched": "enriched",
+        "journalError": "error",
+        "journalOpenMatch": "Open match {id}",
+        "journalMore": "… and {n} more files (full journal: imports.files, or --format json)",
+        "interruptedTitle": "Import interrupted",
+        "resume": "Resume"
     },
     "warning": {
         "title": "Warning",

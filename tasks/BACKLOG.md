@@ -255,3 +255,5 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 - Rollout GUI : un job instantané peut perdre son bandeau de fin (`startRolloutOfCurrent` remet `outcome: null` après le démarrage).
 - PostgreSQL, suites de l'audit d'écriture par tenant : `positions_postgres.go:227` `ErrConflict` enveloppe la `pgconn.PgError` (texte du pilote vers le client, sans oracle) ; `Tournaments().AddMatch` avec un match étranger ou absent réussit en silence (UPDATE 0 ligne) ; `Analyses.Save` en course avec une suppression rend un autre message (même tenant).
+
+- **Journal d'import hors transaction** (`ingest.RecordOutcomes`, GB2.4) : le journal est écrit après le commit du groupe de fichiers. Un crash entre les deux laisse un match écrit mais non journalisé ; à la reprise le fichier est relu et le match le couvre comme doublon de lui-même. Le journal ne ment pas sur ce qui est en base, mais l'issue « nouveau » est perdue. À faire : écrire les lignes dans la transaction du groupe (le pipeline les produit déjà avant le commit).

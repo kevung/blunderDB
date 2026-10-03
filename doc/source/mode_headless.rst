@@ -914,8 +914,8 @@ chaque fichier, son chemin, sa taille, sa date, son empreinte SHA-256 et le
 résultat (``new``, ``duplicate``, ``enriched`` ou ``error``) avec le match
 obtenu ou le message. Pour continuer un lot interrompu, ``imports.batch``
 accepte ``"resume": <batchId>`` (champ ``resume`` d'un envoi multipart) : les
-fichiers déjà journalisés avec le même chemin, la même taille et la même date,
-ou le même contenu, ne sont pas relus.
+fichiers déjà journalisés avec le même chemin, la même taille et la même date
+sont sautés sans être lus, ceux de même contenu sont lus mais pas analysés.
 
 .. code-block:: bash
 

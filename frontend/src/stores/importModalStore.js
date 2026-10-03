@@ -27,6 +27,12 @@ export const fileImportResultsStore = writable({ succeeded: 0, failed: 0, skippe
 // could not record a batch: a convenience whose absence must never look like a failure.
 export const fileImportReportStore = writable(null);
 
+// The batch's per-file journal, one line per file with its last outcome (new, duplicate, enriched,
+// error). Empty when no batch could be recorded.
+export const fileImportJournalStore = writable([]);
+// {batchID, files} of an import the user stopped, what "Resume" needs; null otherwise.
+export const fileImportInterruptedStore = writable(null);
+
 // The pipeline's progress (files, positions, bytes, rate, ETA), null before the first event.
 export const fileImportProgressStore = writable(null);
 // The import goes on behind a status-bar chip while the user keeps working.

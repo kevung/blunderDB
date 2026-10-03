@@ -1121,7 +1121,16 @@
         "reportAnalyzeNow": "Ανάλυση τώρα",
         "reportWorst": "Χειρότερες αποφάσεις",
         "reportCube": "κύβος",
-        "reportChecker": "πούλια"
+        "reportChecker": "πούλια",
+        "journalTitle": "Ημερολόγιο εισαγωγής ({n} αρχεία)",
+        "journalNew": "νέο",
+        "journalDuplicate": "διπλότυπο",
+        "journalEnriched": "εμπλουτισμένο",
+        "journalError": "σφάλμα",
+        "journalOpenMatch": "Άνοιγμα αγώνα {id}",
+        "journalMore": "… και {n} ακόμη αρχεία (πλήρες ημερολόγιο: imports.files ή --format json)",
+        "interruptedTitle": "Η εισαγωγή διακόπηκε",
+        "resume": "Συνέχιση"
     },
     "warning": {
         "title": "Προειδοποίηση",

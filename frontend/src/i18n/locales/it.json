@@ -1121,7 +1121,16 @@
         "reportAnalyzeNow": "Analizza ora",
         "reportWorst": "Decisioni peggiori",
         "reportCube": "cubo",
-        "reportChecker": "pedine"
+        "reportChecker": "pedine",
+        "journalTitle": "Registro dell'importazione ({n} file)",
+        "journalNew": "nuovo",
+        "journalDuplicate": "duplicato",
+        "journalEnriched": "arricchito",
+        "journalError": "errore",
+        "journalOpenMatch": "Apri la partita {id}",
+        "journalMore": "… e altri {n} file (registro completo: imports.files o --format json)",
+        "interruptedTitle": "Importazione interrotta",
+        "resume": "Riprendi"
     },
     "warning": {
         "title": "Avviso",

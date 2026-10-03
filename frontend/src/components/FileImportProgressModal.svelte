@@ -11,6 +11,10 @@
         results = { succeeded: 0, failed: 0, skipped: 0, errors: [] },
         report = null,
         progress = null,
+        journal = [],
+        interrupted = false,
+        onResume,
+        onOpenMatch,
         onClose,
         onCancel,
         onMinimize,
@@ -28,6 +32,11 @@
     // A folder of thousands of broken files must not render thousands of rows.
     const ERROR_WINDOW = 100;
     let shownErrors = $derived(results.errors.slice(0, ERROR_WINDOW));
+
+    // The journal is windowed like the errors: a corpus has tens of thousands of lines.
+    const JOURNAL_WINDOW = 100;
+    let shownJournal = $derived(journal.slice(0, JOURNAL_WINDOW));
+    const OUTCOME_KEYS = { new: 'import.journalNew', duplicate: 'import.journalDuplicate', enriched: 'import.journalEnriched', error: 'import.journalError' };
 
     function formatEta(seconds) {
         if (seconds == null || seconds < 0) return '…';
@@ -68,7 +77,7 @@
             </p>
         {/if}
     {:else if mode === 'completed'}
-        <h2 class="modal-title">{$t('import.completedTitle')}</h2>
+        <h2 class="modal-title">{interrupted ? $t('import.interruptedTitle') : $t('import.completedTitle')}</h2>
 
         <div class="summary">
             <p>{$t('import.processedN', { processed: results.succeeded + results.failed + results.skipped, total: totalFiles })}</p>
@@ -152,6 +161,26 @@
             </div>
         {/if}
 
+        {#if journal.length > 0}
+            <div class="journal" data-testid="import-journal">
+                <div class="report-label">{$t('import.journalTitle', { n: journal.length })}</div>
+                {#each shownJournal as e (e.path)}
+                    <div class="journal-item" data-outcome={e.outcome}>
+                        <span class="journal-file" title={e.path}>{basename(e.path)}</span>
+                        <span class="journal-outcome">{$t(OUTCOME_KEYS[e.outcome] ?? 'import.journalError')}</span>
+                        {#if e.outcome === 'error'}
+                            <span class="journal-error">{e.error}</span>
+                        {:else if e.matchId}
+                            <button class="report-action" onclick={() => onOpenMatch?.(e.matchId)}>{$t('import.journalOpenMatch', { id: e.matchId })}</button>
+                        {/if}
+                    </div>
+                {/each}
+                {#if journal.length > JOURNAL_WINDOW}
+                    <div class="journal-item" data-testid="more-journal">{$t('import.journalMore', { n: journal.length - JOURNAL_WINDOW })}</div>
+                {/if}
+            </div>
+        {/if}
+
         {#if results.errors.length > 0}
             <div class="error-list">
                 {#each shownErrors as err, i (i)}
@@ -172,6 +201,9 @@
             {/if}
             <button onclick={onCancel}>{$t('common.cancel')}</button>
         {:else if mode === 'completed'}
+            {#if interrupted && onResume}
+                <button onclick={onResume} data-testid="import-resume">{$t('import.resume')}</button>
+            {/if}
             <button onclick={onClose}>{$t('common.close')}</button>
         {/if}
     {/snippet}
@@ -315,6 +347,27 @@
         padding: 10px;
     }
 
+    .journal {
+        margin-top: var(--space-3);
+        max-height: 14rem;
+        overflow-y: auto;
+    }
+    .journal-item {
+        display: flex;
+        align-items: baseline;
+        gap: var(--space-2);
+        padding: 2px 0;
+        font-size: var(--font-size-base);
+    }
+    .journal-file {
+        font-weight: 600;
+    }
+    .journal-outcome {
+        color: var(--color-text-muted);
+    }
+    .journal-error {
+        color: var(--color-error, inherit);
+    }
     .error-item {
         font-size: var(--font-size-base);
         color: var(--color-danger);

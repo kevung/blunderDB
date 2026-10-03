@@ -21,6 +21,8 @@
         fileImportCurrentFileStore,
         fileImportResultsStore,
         fileImportReportStore,
+        fileImportJournalStore,
+        fileImportInterruptedStore,
         fileImportProgressStore
     } from '../stores/importModalStore.js';
     import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore } from '../stores/exportModalStore.js';
@@ -33,6 +35,8 @@
         handleFileImportMinimize,
         handleFileImportClose,
         openImportedPosition,
+        resumeInterruptedImport,
+        openJournalMatch,
         analyzeRemainingAfterImport
     } from '../services/importService.js';
     import { handleExportCommit, handleExportCancel } from '../services/exportService.js';
@@ -106,6 +110,10 @@
     currentFile={$fileImportCurrentFileStore}
     results={$fileImportResultsStore}
     report={$fileImportReportStore}
+    journal={$fileImportJournalStore}
+    interrupted={$fileImportInterruptedStore !== null}
+    onResume={resumeInterruptedImport}
+    onOpenMatch={openJournalMatch}
     progress={$fileImportProgressStore}
     onMinimize={handleFileImportMinimize}
     onCancel={handleFileImportCancel}
