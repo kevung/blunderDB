@@ -2645,6 +2645,8 @@
     },
     "emptyState": {
         "import": "Importer… (Ctrl+I)",
+        "openDatabase": "Ouvrir une base…",
+        "clearFilter": "Effacer le filtre",
         "backHome": "Retour à l'accueil"
     },
     "keyNames": {

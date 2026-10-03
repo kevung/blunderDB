@@ -779,6 +779,7 @@
                 }}
                 onNearEnd={matchListStore.loadMore}
                 emptyActions
+                emptyClear={filterText.trim() ? { label: $t('emptyState.clearFilter'), onClick: clearFilter } : null}
                 emptyText={matches.length === 0 && ($matchListStore.loaded || !$databasePathStore) ? (filterText.trim() ? $t('match.noMatchesFiltered') : $t('match.noMatchesImported')) : ''}
             >
                 {#snippet cells(match, index)}

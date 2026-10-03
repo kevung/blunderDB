@@ -2645,6 +2645,8 @@
     },
     "emptyState": {
         "import": "Importieren… (Strg+I)",
+        "openDatabase": "Datenbank öffnen…",
+        "clearFilter": "Filter löschen",
         "backHome": "Zurück zum Startbildschirm"
     },
     "keyNames": {

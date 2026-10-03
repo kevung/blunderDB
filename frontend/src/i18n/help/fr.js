@@ -284,7 +284,7 @@ export default {
 <h3>Panneau Matchs</h3>
 <p>Le panneau <strong>Matchs</strong> (<em>CTRL-Tab</em>) liste les matchs importés. Double-cliquer sur un match (ou appuyer sur <em>ENTREE</em>) pour naviguer dans ses coups. La commande <code>m</code> reprend la navigation dans le dernier match visité.</p>
 <p>Le champ de filtre, en haut du panneau (<em>/</em> pour y aller, <em>Esc</em> pour l'effacer), ne garde que les matchs dont un joueur, l'événement, le lieu, le tournoi ou la date contient le texte saisi. Le filtre et le tri des colonnes sont faits par la base : la liste se charge par pages au fil du défilement, et le compteur « n / N matchs » indique la part chargée. Corriger un joueur, une date ou un tournoi dans la liste ne met à jour que la ligne éditée.</p>
-<p>Quand la liste est vide, le panneau propose <strong>Importer… (Ctrl+I)</strong> ; sans base ouverte, il propose aussi <strong>Retour à l'accueil</strong>. Les panneaux Stats, Collections et Anki vides offrent les mêmes boutons.</p>
+<p>Quand la liste est vide, le panneau propose <strong>Importer… (Ctrl+I)</strong> ; sans base ouverte, il propose <strong>Ouvrir une base…</strong> à la place, avec <strong>Retour à l'accueil</strong>. Quand c'est le filtre de texte qui a vidé la liste, il propose <strong>Effacer le filtre</strong>. Les panneaux Stats, Collections et Anki vides offrent les mêmes boutons.</p>
 <p>L'utilisateur peut:</p>
 <ul>
 <li>parcourir les coups d'un match en utilisant les touches <em>GAUCHE</em> et <em>DROITE</em>,</li>

@@ -1172,8 +1172,10 @@ le compteur « n / N matchs » indique la part chargée. Corriger un joueur, une
 date ou un tournoi dans la liste ne met à jour que la ligne éditée.
 
 Quand la liste est vide, le panneau propose **Importer… (Ctrl+I)** ; sans base
-ouverte, il propose aussi **Retour à l'accueil**. Les panneaux Stats,
-Collections et Anki vides offrent les mêmes boutons.
+ouverte, il propose **Ouvrir une base…** à la place, avec **Retour à
+l'accueil**. Quand c'est le filtre de texte qui a vidé la liste, il propose
+**Effacer le filtre**. Les panneaux Stats, Collections et Anki vides offrent les
+mêmes boutons.
 
 L'utilisateur peut:
 

@@ -2645,6 +2645,8 @@
     },
     "emptyState": {
         "import": "Импорт… (Ctrl+I)",
+        "openDatabase": "Открыть базу данных…",
+        "clearFilter": "Сбросить фильтр",
         "backHome": "Вернуться на стартовый экран"
     },
     "keyNames": {

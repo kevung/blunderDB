@@ -2645,6 +2645,8 @@
     },
     "emptyState": {
         "import": "インポート… (Ctrl+I)",
+        "openDatabase": "データベースを開く…",
+        "clearFilter": "フィルターを解除",
         "backHome": "ホーム画面に戻る"
     },
     "keyNames": {

@@ -2645,6 +2645,8 @@
     },
     "emptyState": {
         "import": "Tuo… (Ctrl+I)",
+        "openDatabase": "Avaa tietokanta…",
+        "clearFilter": "Tyhjennä suodatin",
         "backHome": "Takaisin aloitusnäyttöön"
     },
     "keyNames": {

@@ -5,16 +5,25 @@
     import { databasePathStore } from '../../stores/databaseStore';
     import { homeDismissedStore } from '../../stores/uiStore';
     import { importPosition } from '../../services/importService';
+    import { openDatabase } from '../../services/databaseService';
 
-    /** @type {{ text: string, actions?: boolean }} */
-    let { text, actions = true } = $props();
+    // `clear` replaces the import gesture when the list is empty because of a filter, not
+    // because nothing was ever imported.
+    /** @type {{ text: string, actions?: boolean, clear?: { label: string, onClick: () => void } | null }} */
+    let { text, actions = true, clear = null } = $props();
 </script>
 
 <div class="empty-state" data-testid="empty-state">
     <span class="empty-text">{text}</span>
     {#if actions}
         <span class="empty-actions">
-            <button type="button" class="empty-btn primary" onclick={() => importPosition()}>{$t('emptyState.import')}</button>
+            {#if clear}
+                <button type="button" class="empty-btn primary" data-testid="empty-clear" onclick={clear.onClick}>{clear.label}</button>
+            {:else if $databasePathStore}
+                <button type="button" class="empty-btn primary" onclick={() => importPosition()}>{$t('emptyState.import')}</button>
+            {:else}
+                <button type="button" class="empty-btn primary" onclick={() => openDatabase()}>{$t('emptyState.openDatabase')}</button>
+            {/if}
             {#if !$databasePathStore}
                 <button type="button" class="empty-btn" onclick={() => homeDismissedStore.set(false)}>{$t('emptyState.backHome')}</button>
             {/if}

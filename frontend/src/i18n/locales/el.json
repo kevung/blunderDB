@@ -2645,6 +2645,8 @@
     },
     "emptyState": {
         "import": "Εισαγωγή… (Ctrl+I)",
+        "openDatabase": "Άνοιγμα βάσης δεδομένων…",
+        "clearFilter": "Εκκαθάριση φίλτρου",
         "backHome": "Επιστροφή στην αρχική οθόνη"
     },
     "keyNames": {
