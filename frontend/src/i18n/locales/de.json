@@ -2397,7 +2397,8 @@
         "rooms": {
             "title": "Säle, in denen dieser Wettbewerb gespielt wird",
             "hint": "Keine Auswahl: alle Tische."
-        }
+        },
+        "closeView": "Diese Ansicht schließen"
     },
     "palette": {
         "title": "Befehlspalette",

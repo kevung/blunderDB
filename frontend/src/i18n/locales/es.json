@@ -2397,7 +2397,8 @@
         "rooms": {
             "title": "Salas donde juega esta prueba",
             "hint": "Ninguna marcada: todas las mesas."
-        }
+        },
+        "closeView": "Cerrar esta vista"
     },
     "palette": {
         "title": "Paleta de comandos",

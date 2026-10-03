@@ -2397,7 +2397,8 @@
         "rooms": {
             "title": "Salit, joissa tämä kilpailu pelataan",
             "hint": "Ei valintaa: kaikki pöydät."
-        }
+        },
+        "closeView": "Sulje tämä näkymä"
     },
     "palette": {
         "title": "Komentopaletti",

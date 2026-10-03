@@ -2397,7 +2397,8 @@
         "rooms": {
             "title": "Rooms this competition plays in",
             "hint": "None ticked: every table."
-        }
+        },
+        "closeView": "Close this view"
     },
     "palette": {
         "title": "Command palette",

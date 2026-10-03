@@ -2397,7 +2397,8 @@
         "rooms": {
             "title": "Sale in cui gioca questa prova",
             "hint": "Nessuna spunta: tutti i tavoli."
-        }
+        },
+        "closeView": "Chiudi questa vista"
     },
     "palette": {
         "title": "Tavolozza dei comandi",
