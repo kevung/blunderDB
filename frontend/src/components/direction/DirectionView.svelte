@@ -1,4 +1,5 @@
 <script>
+    import { confirmAction } from '../../services/confirmService.js';
     /*
      * La vue tournoi, à la place du plateau quand une Direction est ouverte (ADR-0047) ;
      * tout autre onglet ramène le plateau sans rien fermer.
@@ -673,7 +674,7 @@
     }
 
     async function remove() {
-        if (!window.confirm($t('direction.settings.deleteConfirm'))) return;
+        if (!(await confirmAction($t('direction.settings.deleteConfirm'), { confirmLabel: $t('common.delete') }))) return;
         try {
             const tid = view?.tournamentId;
             for (const k of Array.from(scrollPositions.keys())) if (k.startsWith(`${tid}:`)) scrollPositions.delete(k);
@@ -725,7 +726,7 @@
         <button type="button" class="credit-btn" data-testid="direction-credit" title={$t('direction.credit.open')} aria-label={$t('direction.credit.open')} onclick={() => (creditOpen = !creditOpen)}
             >ⓘ</button
         >
-        <button type="button" class="close" data-testid="direction-close" onclick={closeDirection}>{$t('direction.close')}</button>
+        <button type="button" class="close" data-testid="direction-close" onclick={closeDirection}>{$t('direction.closeView')}</button>
     </header>
 
     {#if creditOpen}
@@ -927,6 +928,8 @@
     }
 
     .direction-view {
+        /* Deliberate: the Direction sets its own text size (--td-font), larger than the
+           application's scale; keep it unless the touch use it serves goes away. */
         --font-size-base: var(--td-font);
         --font-size-small: var(--td-font);
         position: relative;

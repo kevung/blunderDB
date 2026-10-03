@@ -120,22 +120,26 @@
 
     <!-- Tab Content -->
     <div class="tab-content" bind:this={contentArea}>
-        {#if activeTab === 'manual'}
+        {#if $help.failed}
+            <p class="help-loading" data-testid="help-failed">{$t('help.loadFailed')}</p>
+        {:else if !$help.ready}
+            <p class="help-loading" data-testid="help-loading"><span class="spinner"></span></p>
+        {:else if activeTab === 'manual'}
             <!-- eslint-disable-next-line svelte/no-at-html-tags -- generated help corpus (cmd/help-gen escapes every string it renders; guarded by help.safety.test.js), no runtime interpolation -->
             {@html $help.manual}
         {/if}
 
-        {#if activeTab === 'shortcuts'}
+        {#if $help.ready && activeTab === 'shortcuts'}
             <!-- eslint-disable-next-line svelte/no-at-html-tags -- generated help corpus (cmd/help-gen escapes every string it renders; guarded by help.safety.test.js), no runtime interpolation -->
             {@html $help.shortcuts}
         {/if}
 
-        {#if activeTab === 'commands'}
+        {#if $help.ready && activeTab === 'commands'}
             <!-- eslint-disable-next-line svelte/no-at-html-tags -- generated help corpus (cmd/help-gen escapes every string it renders; guarded by help.safety.test.js), no runtime interpolation -->
             {@html $help.commands}
         {/if}
 
-        {#if activeTab === 'about'}
+        {#if $help.ready && activeTab === 'about'}
             <!-- eslint-disable-next-line svelte/no-at-html-tags -- the only interpolated placeholders (appVersion/dbVersion) are HTML-escaped in aboutHtml above -->
             {@html aboutHtml}
         {/if}

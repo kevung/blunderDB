@@ -85,12 +85,26 @@ func (s *analysisStore) merge(ctx context.Context, scope string, positionID int6
 		data   []byte
 		stored storedPlayedColumns
 	)
-	err := s.db.QueryRow(ctx,
-		`SELECT data, COALESCE(best_cube_action,''), COALESCE(cube_error,0), COALESCE(best_move_equity_error,0),
-		        COALESCE(is_forced,FALSE), COALESCE(is_close_cube,FALSE)
-		 FROM analysis WHERE position_id = $1 AND tenant_id = $2
-		 FOR UPDATE`, positionID, tenant).
-		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube)
+	load := func() error {
+		return s.db.QueryRow(ctx,
+			`SELECT data, COALESCE(best_cube_action,''), COALESCE(cube_error,0), COALESCE(best_move_equity_error,0),
+			        COALESCE(is_forced,FALSE), COALESCE(is_close_cube,FALSE)
+			 FROM analysis WHERE position_id = $1 AND tenant_id = $2
+			 FOR UPDATE`, positionID, tenant).
+			Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube)
+	}
+	err := load()
+	if errors.Is(err, pgx.ErrNoRows) {
+		// FOR UPDATE locks nothing when there is no row, and two writers would
+		// both insert, the second over the first. The analysis guard — the one
+		// a rollout's guarded transaction holds — serialises them; the row is
+		// read again under it, since the writer we waited for may have made it.
+		if _, err := s.db.Exec(ctx, `SELECT pg_advisory_xact_lock($1)`,
+			guardKey(storage.AnalysisGuardKey(scope, positionID))); err != nil {
+			return false, fmt.Errorf("postgres: guard analysis for position %d: %w", positionID, err)
+		}
+		err = load()
+	}
 	found := err == nil
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		return false, fmt.Errorf("postgres: load analysis for position %d: %w", positionID, err)

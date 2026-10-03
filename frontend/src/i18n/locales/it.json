@@ -363,7 +363,8 @@
         "tabManual": "Manuale",
         "tabShortcuts": "Scorciatoia",
         "tabCommands": "Riga di comando",
-        "tabAbout": "Informazioni"
+        "tabAbout": "Informazioni",
+        "loadFailed": "Impossibile caricare la guida."
     },
     "commands": {
         "collectionEmpty": "La collezione è vuota",
@@ -841,6 +842,18 @@
             "saveImageSVG": "Salvare l'immagine (SVG)…",
             "saveImagePNG": "Salvare l'immagine (PNG)…",
             "neighbours": "Posizioni vicine"
+        },
+        "scene": {
+            "pip": "pip: {n}",
+            "away": "a {n}",
+            "crawford": "crawford",
+            "post": "post",
+            "unlimited": "illimitato",
+            "off": "({n} fuori)"
+        },
+        "situation": {
+            "search": "Scacchiera di ricerca: disponi le pedine da trovare",
+            "eval": "Scacchiera di valutazione"
         }
     },
     "epc": {
@@ -1259,6 +1272,11 @@
         "errorDeletingPosition": "Errore durante l'eliminazione della posizione e dell'analisi associata",
         "errorEnteringMatchMode": "Errore durante l'accesso alla modalità match",
         "errorHandlingDroppedDb": "Errore durante la gestione del database trascinato",
+        "droppedDbMessage": "Un database è già aperto.\n\nCosa desiderate fare con «{filename}»?",
+        "droppedDbOpen": "Apri",
+        "droppedDbMerge": "Unisci",
+        "droppedDbCancel": "Annulla",
+        "directionLoadFailed": "Impossibile caricare la vista Direzione.",
         "errorLoadingAllPositions": "Errore durante il caricamento di tutte le posizioni",
         "errorLoadingByFilters": "Errore durante il caricamento delle posizioni per filtri",
         "errorSavingPosition": "Errore durante il salvataggio della posizione, dell'analisi e del commento",
@@ -2379,7 +2397,8 @@
         "rooms": {
             "title": "Sale in cui gioca questa prova",
             "hint": "Nessuna spunta: tutti i tavoli."
-        }
+        },
+        "closeView": "Esci dalla direzione"
     },
     "palette": {
         "title": "Tavolozza dei comandi",

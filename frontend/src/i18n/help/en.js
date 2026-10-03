@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Only files that appear are imported.</strong> Whatever the folder already holds when the watch starts is recorded as known and left alone: pointing a watch at four years of matches must not import all of them. To import what is there, use the folder import, which exists for that — and the two compose very well, the import first, the watch after.</li>
 <li><strong>A file is imported only once its size has settled.</strong> A match another program is writing grows from one glance to the next; importing it half-written would give a parse error nobody can act on. blunderDB therefore waits to see the same file unchanged twice.</li>
-<li><strong>The import is silent.</strong> You were studying a position when your matches arrived: taking the screen back from you would be the worst possible moment. The import runs without a window, and the status bar shows a strip giving the count of matches imported, skipped (duplicates) and failed, with a button that opens the full report if you want it. Everything else is identical to a manual import: same duplicates detected, same import batch, same automatic analysis if it is on.</li>
+<li><strong>The import is silent.</strong> You were studying a position when your matches arrived: taking the screen back from you would be the worst possible moment. The mode, the active search, the tab and the displayed position do not move; the position list is not reloaded and shows the new matches at the next reload. The import runs without a window, and the status bar shows a banner giving the count of matches imported, skipped (duplicates) and failed, with a button that opens the full report if you wish. Everything else is identical to a manual import: the same duplicates detected, the same import batch, the same automatic analysis if it is enabled.</li>
 </ul>
 <p>The default interval is ten seconds; the floor is two. The folder is not walked recursively: a watched folder is where a tool drops its matches, not a tree to crawl. An unmounted network share does not stop the watch, nor does it make its contents pass for new when it comes back.</p>
 <p>The same watch exists on the command line, with <code>blunderdb import --type batch --dir &lt;folder&gt; --watch</code> (see Command Line Interface (CLI)): it is the form a server, a scheduled task or a script can use.</p>
@@ -285,6 +285,7 @@ export default {
 <p>Each game's header counts its marks, whether the game is expanded or not: you can see without opening it which game holds the blunders.</p>
 <p>The <strong>Merge players</strong> button in the panel toolbar opens a window listing all the player names in the database with their number of matches: select the spelling variants of the same player, choose the canonical name to keep, then merge. Useful to unify per-player statistics when the same player appears under several names.</p>
 <p>When a match is open, an <strong>information bar</strong> appears above the board: it recalls the players involved (<em>player 1</em> versus <em>player 2</em>) as well as the match context (event, location, round, date and match length, when this information is available). This bar is also shown outside match mode: when a studied position (from a search, a collection or a direct access) comes from one or several matches, it indicates its <strong>provenance</strong> — the first match concerned and, where applicable, a "+N" badge listing the others on hover. A position imported on its own, which no match references, shows nothing.</p>
+<p>The <strong>Search</strong> and <strong>Eval</strong> tabs replace the board with a working board: a banner at the top of the board says so ("Search board", "Evaluation board"), and the information bar is hidden while it would describe a position that is not on screen. Returning to the analysis restores the studied position.</p>
 <p>When opening a database that contains matches, the <strong>Matches</strong> panel is shown right away and the review starts directly on the first position, so you can begin navigating immediately.</p>
 <div class="admonition note">
 <p>A database can be opened for writing by only one window at a time. If you open a database already open in another blunderDB window, it opens <strong>read-only</strong>: navigation, search and analysis remain possible, but any modification is disabled and the title bar shows "[read-only]".</p>
@@ -987,8 +988,12 @@ export default {
 <td>Reload all the positions from the database.</td>
 </tr>
 <tr>
-<td>PageUp, h</td>
+<td>Home, h</td>
 <td>First position / Previous game (match navigation).</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Goes back one page of a hundred positions (stops at the start of the list); in a match, previous game.</td>
 </tr>
 <tr>
 <td>LEFT, k</td>
@@ -1007,8 +1012,12 @@ export default {
 <td>Next move (when a move is selected in the analysis).</td>
 </tr>
 <tr>
-<td>PageDown, l</td>
+<td>End, l</td>
 <td>Last position / Next game (match navigation).</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Goes forward one page of a hundred positions (stops at the end of the list); in a match, next game.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1905,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Go to the specified index position.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Go to that percentage of the list: <code>0%</code> the first position, <code>50%</code> the middle, <code>100%</code> the last.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Sono importati solo i file che compaiono.</strong> Ciò che la cartella contiene già quando la sorveglianza parte è registrato come noto e lasciato in pace: puntare una sorveglianza su quattro anni di incontri non deve importarli tutti. Per importare ciò che c'è, usate l'importazione di cartella, che esiste per questo — e le due si compongono benissimo, prima l'importazione, poi la sorveglianza.</li>
 <li><strong>Un file è importato solo quando la sua dimensione si è stabilizzata.</strong> Un incontro che un altro programma sta scrivendo cresce da un'occhiata all'altra; importarlo scritto a metà darebbe un errore di analisi su cui nessuno può agire. blunderDB attende quindi di vedere due volte lo stesso file immutato.</li>
-<li><strong>L'importazione è silenziosa.</strong> Stavate studiando una posizione quando sono arrivati i vostri incontri: togliervi lo schermo sarebbe il momento peggiore. L'importazione avviene senza finestra, e la barra di stato mostra una fascia con il conteggio degli incontri importati, ignorati (duplicati) e falliti, con un pulsante che apre il resoconto completo se lo desiderate. Tutto il resto è identico a un'importazione manuale: stessi duplicati rilevati, stesso lotto di importazione, stessa analisi automatica se è attiva.</li>
+<li><strong>L'importazione è silenziosa.</strong> Stavate studiando una posizione quando sono arrivate le vostre partite: togliervi lo schermo sarebbe il momento peggiore. La modalità, la ricerca attiva, la scheda e la posizione visualizzata non si spostano; l'elenco delle posizioni non viene ricaricato e mostra le nuove partite al prossimo ricaricamento. L'importazione avviene senza finestra, e la barra di stato mostra un banner con il conteggio delle partite importate, ignorate (duplicati) e fallite, con un pulsante che apre il rapporto completo se lo desiderate. Tutto il resto è identico a un'importazione manuale: gli stessi duplicati rilevati, lo stesso lotto di importazione, la stessa analisi automatica se è attivata.</li>
 </ul>
 <p>L'intervallo predefinito è di dieci secondi; il minimo è due. La cartella non è percorsa ricorsivamente: una cartella sorvegliata è il posto dove uno strumento deposita i suoi incontri, non un albero da esplorare. Una condivisione di rete smontata non ferma la sorveglianza e non fa nemmeno passare il suo contenuto per nuovo al ritorno.</p>
 <p>La stessa sorveglianza esiste da riga di comando, con <code>blunderdb import --type batch --dir &lt;cartella&gt; --watch</code> (vedere Interfaccia a riga di comando (CLI)): è la forma che un server, un'attività pianificata o uno script possono usare.</p>
@@ -285,6 +285,7 @@ export default {
 <p>L'intestazione di ogni partita conta i suoi segni, che sia espansa o no: si vede senza aprirla in quale partita si trovano i blunder.</p>
 <p>Il pulsante <strong>Unisci giocatori</strong> della barra degli strumenti del pannello apre una finestra che elenca tutti i nomi dei giocatori del database con il loro numero di match: selezionare le varianti di ortografia di uno stesso giocatore, scegliere il nome canonico da conservare, quindi unire. Utile per unificare le statistiche per giocatore quando uno stesso giocatore compare con più nomi.</p>
 <p>Quando un match è aperto, una <strong>barra delle informazioni</strong> compare sopra il tavoliere: ricorda i giocatori presenti (<em>giocatore 1</em> contro <em>giocatore 2</em>) nonché il contesto del match (evento, luogo, turno, data e lunghezza del match, quando queste informazioni sono disponibili). Questa barra viene mostrata anche al di fuori della modalità match: quando una posizione studiata (proveniente da una ricerca, da una collezione o da un accesso diretto) proviene da uno o più match, ne indica la <strong>provenienza</strong> — il primo match interessato e, se del caso, un badge « +N » che elenca gli altri al passaggio del mouse. Una posizione importata da sola, che nessun match referenzia, non mostra nulla.</p>
+<p>Le schede <strong>Ricerca</strong> e <strong>Eval</strong> sostituiscono la scacchiera con una scacchiera di lavoro: un banner nella parte alta della scacchiera lo segnala («Scacchiera di ricerca», «Scacchiera di valutazione») e la barra informativa viene nascosta finché descriverebbe una posizione che non è sullo schermo. Il ritorno all'analisi ripristina la posizione studiata.</p>
 <p>All'apertura di un database contenente match, il pannello <strong>Match</strong> viene mostrato subito e la revisione inizia direttamente sulla prima posizione, così da cominciare immediatamente la navigazione.</p>
 <div class="admonition note">
 <p>Un database può essere aperto in scrittura da una sola finestra alla volta. Se si apre un database già aperto in un'altra finestra di blunderDB, esso si apre in <strong>sola lettura</strong> : la navigazione, la ricerca e l'analisi restano possibili, ma qualsiasi modifica è disattivata e la barra del titolo mostra « [sola lettura] ».</p>
@@ -987,8 +988,12 @@ export default {
 <td>Ricarica tutte le posizioni dal database.</td>
 </tr>
 <tr>
-<td>PageUp, h</td>
+<td>Home, h</td>
 <td>Prima posizione / Partita precedente (navigazione match).</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Torna indietro di una pagina di cento posizioni (si ferma all'inizio dell'elenco); in una partita, gioco precedente.</td>
 </tr>
 <tr>
 <td>SINISTRA, k</td>
@@ -1007,8 +1012,12 @@ export default {
 <td>Mossa successiva (quando una mossa è selezionata nell'analisi).</td>
 </tr>
 <tr>
-<td>PageDown, l</td>
+<td>End, l</td>
 <td>Ultima posizione / Partita successiva (navigazione match).</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Avanza di una pagina di cento posizioni (si ferma alla fine dell'elenco); in una partita, gioco successivo.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1905,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Vai alla posizione con l'indice indicato.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Va a quella percentuale dell'elenco: <code>0%</code> la prima posizione, <code>50%</code> la metà, <code>100%</code> l'ultima.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

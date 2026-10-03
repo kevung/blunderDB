@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Seuls les fichiers qui apparaissent sont importés.</strong> Ce que le dossier contient déjà au moment où la surveillance démarre est enregistré comme connu et laissé tranquille : pointer une surveillance sur quatre ans de matchs ne doit pas les importer tous. Pour importer ce qui est là, utilisez l'import de dossier, qui existe pour cela — et les deux se composent très bien, l'import d'abord, la surveillance ensuite.</li>
 <li><strong>Un fichier n'est importé qu'une fois sa taille stable.</strong> Un match qu'un autre programme est en train d'écrire grossit d'un coup d'œil à l'autre ; l'importer à moitié écrit donnerait une erreur d'analyse syntaxique sur laquelle personne ne peut agir. blunderDB attend donc de voir deux fois le même fichier inchangé.</li>
-<li><strong>L'import est silencieux.</strong> Vous étiez en train d'étudier une position quand vos matchs sont arrivés : vous reprendre l'écran serait le pire moment. L'import se fait sans fenêtre, et la barre d'état affiche un bandeau donnant le compte des matchs importés, ignorés (doublons) et en échec, avec un bouton qui ouvre le compte rendu complet si vous le souhaitez. Tout le reste est identique à un import manuel : mêmes doublons détectés, même lot d'import, même analyse automatique si elle est activée.</li>
+<li><strong>L'import est silencieux.</strong> Vous étiez en train d'étudier une position quand vos matchs sont arrivés : vous reprendre l'écran serait le pire moment. Le mode, la recherche active, l'onglet et la position affichée ne bougent pas ; la liste des positions n'est pas rechargée et montre les nouveaux matchs au prochain rechargement. L'import se fait sans fenêtre, et la barre d'état affiche un bandeau donnant le compte des matchs importés, ignorés (doublons) et en échec, avec un bouton qui ouvre le compte rendu complet si vous le souhaitez. Tout le reste est identique à un import manuel : mêmes doublons détectés, même lot d'import, même analyse automatique si elle est activée.</li>
 </ul>
 <p>L'intervalle par défaut est de dix secondes ; le plancher est de deux. Le dossier n'est pas parcouru récursivement : un dossier surveillé est l'endroit où un outil dépose ses matchs, pas une arborescence à explorer. Un partage réseau démonté n'arrête pas la surveillance et ne fait pas non plus passer son contenu pour nouveau à son retour.</p>
 <p>La même surveillance existe en ligne de commande, avec <code>blunderdb import --type batch --dir &lt;dossier&gt; --watch</code> (voir Interface en ligne de commande (CLI)) : c'est la forme qu'un serveur, une tâche planifiée ou un script peuvent utiliser.</p>
@@ -285,6 +285,7 @@ export default {
 <p>L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non : on voit sans l'ouvrir dans quelle partie se trouvent les blunders.</p>
 <p>Le bouton <strong>Fusionner les joueurs</strong> de la barre d'outils du panneau ouvre une fenêtre listant tous les noms de joueurs de la base avec leur nombre de matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques par joueur lorsqu'un même joueur apparaît sous plusieurs noms.</p>
 <p>Lorsqu'un match est ouvert, une <strong>barre d'informations</strong> apparaît au-dessus du plateau : elle rappelle les joueurs en présence (<em>joueur 1</em> contre <em>joueur 2</em>) ainsi que le contexte du match (événement, lieu, ronde, date et longueur du match, lorsque ces informations sont disponibles). Cette barre s'affiche aussi en dehors du mode match : lorsqu'une position étudiée (issue d'une recherche, d'une collection ou d'un accès direct) provient d'un ou de plusieurs matchs, elle en indique la <strong>provenance</strong> — le premier match concerné et, le cas échéant, un badge « +N » listant les autres au survol. Une position importée seule, qu'aucun match ne référence, n'affiche rien.</p>
+<p>Les onglets <strong>Recherche</strong> et <strong>Eval</strong> remplacent le plateau par un plateau de travail : un bandeau en haut du plateau le dit (« Plateau de recherche », « Plateau d'évaluation »), et la barre d'informations est masquée tant qu'elle décrirait une position qui n'est pas à l'écran. Le retour à l'analyse restaure la position étudiée.</p>
 <p>À l'ouverture d'une base contenant des matchs, le panneau <strong>Matchs</strong> est affiché d'emblée et la revue débute directement sur la première position, afin de commencer immédiatement la navigation.</p>
 <div class="admonition note">
 <p>Une base de données ne peut être ouverte en écriture que par une seule fenêtre à la fois. Si vous ouvrez une base déjà ouverte dans une autre fenêtre de blunderDB, elle s'ouvre en <strong>lecture seule</strong> : la navigation, la recherche et l'analyse restent possibles, mais toute modification est désactivée et la barre de titre affiche « [lecture seule] ».</p>
@@ -379,7 +380,7 @@ export default {
 <p>Avant <strong>Inscrire</strong>, l'aperçu d'un CSV collé liste les lignes illisibles — sans nom, sans séparateur quand les autres lignes en ont, cote qui n'est pas un nombre — et les doublons, dans le collage ou avec un joueur déjà inscrit. Un doublon n'est pas inscrit, sauf si on coche sa case.</p>
 <p>Un <strong>retardataire</strong> arrivé après le tirage prend une place d'exemption libre si le tableau en offre une, et l'interface écrit à côté du champ où il entrera avant qu'on valide. Sans place libre, il est inscrit quand même et la vue dit dans quelle phase il entrera. Aucun tirage déjà fait n'est refait.</p>
 <p>Un retrait se fait <em>maintenant</em> ou <em>après son match en cours</em>, selon que le joueur part tout de suite ou finit ce qu'il joue ; il se confirme.</p>
-<p>Un joueur qui manque une ronde n'a pas besoin d'être retiré : <strong>Absenter</strong>, sur sa ligne, ouvre un petit formulaire sous son nom — <em>jusqu'à</em> une heure (pré-remplie sur l'heure qui suit), ou, quand la phase en cours est un suisse par rondes, <em>jusqu'à la ronde</em> portant son numéro. Le moteur cesse alors de l'apparier, mais son rang, ses vies et sa place au tableau restent ceux qu'il a gagnés — l'absence n'est pas un forfait. <strong>Revenir</strong>, sur sa ligne, lève l'absence en un clic, avant l'échéance déclarée ou après.</p>
+<p>Un joueur qui manque une ronde n'a pas besoin d'être retiré : <strong>Marquer absent</strong>, sur sa ligne, ouvre un petit formulaire sous son nom — <em>jusqu'à</em> une heure (pré-remplie sur l'heure qui suit), ou, quand la phase en cours est un suisse par rondes, <em>jusqu'à la ronde</em> portant son numéro. Le moteur cesse alors de l'apparier, mais son rang, ses vies et sa place au tableau restent ceux qu'il a gagnés — l'absence n'est pas un forfait. <strong>Revenir</strong>, sur sa ligne, lève l'absence en un clic, avant l'échéance déclarée ou après.</p>
 <p>Corriger la fiche d'un joueur retiré — son nom, son club, sa cote — le laisse retiré. Son retour est un geste à part : <strong>Réinscrire</strong>, sur sa ligne. Il est de nouveau apparié, avec les résultats et les vies qu'il avait en partant ; les matchs perdus par forfait à son retrait le restent.</p>
 <h4>Arbres, emplacements, classement, historique</h4>
 <p>L'onglet <strong>Arbres</strong> dessine les tableaux avec leurs traits, de la première ronde à la finale, la consolante à côté du tableau principal, et, pour un suisse, le tableau des vies. Une poule s'y lit en résultats croisés. Un tableau pas encore tiré montre son squelette grisé. Un match déjà joué y porte son résultat ; un match que le moteur signale y est marqué sur place. Une pastille à côté du nom de l'onglet indique qu'un tableau est en cours.</p>
@@ -987,8 +988,12 @@ export default {
 <td>Recharger toutes les positions de la base de données.</td>
 </tr>
 <tr>
-<td>PageUp, h</td>
+<td>Home, h</td>
 <td>Première position / Partie précédente (navigation match).</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Recule d'une page de cent positions (au début de la liste, s'y arrête) ; dans un match, partie précédente.</td>
 </tr>
 <tr>
 <td>GAUCHE, k</td>
@@ -1007,8 +1012,12 @@ export default {
 <td>Coup suivant (lorsqu'un coup est sélectionné dans l'analyse).</td>
 </tr>
 <tr>
-<td>PageDown, l</td>
+<td>End, l</td>
 <td>Dernière position / Partie suivante (navigation match).</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Avance d'une page de cent positions (à la fin de la liste, s'y arrête) ; dans un match, partie suivante.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1905,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Aller à la position d'indice indiqué.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Aller à ce pourcentage de la liste : <code>0%</code> la première position, <code>50%</code> le milieu, <code>100%</code> la dernière.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

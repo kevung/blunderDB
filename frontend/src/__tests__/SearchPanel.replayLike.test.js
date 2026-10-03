@@ -45,7 +45,7 @@ vi.mock('../services/databaseService.js', () => ({
     warningMessageStore: { subscribe: vi.fn(), set: vi.fn(), update: vi.fn() }
 }));
 vi.mock('../services/sessionService.js', () => ({ saveSessionState: vi.fn() }));
-vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn(() => Promise.resolve(true)) }));
+vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn(() => Promise.resolve(true)), confirmModalStore: { subscribe: (run) => (run(null), () => {}) } }));
 
 import SearchPanel from '../components/SearchPanel.svelte';
 import { processCommand, initCommandProcessor } from '../commandProcessor.js';

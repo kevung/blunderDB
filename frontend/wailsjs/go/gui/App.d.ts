@@ -5,6 +5,7 @@ import {domain} from '../models';
 import {gammonnet} from '../models';
 import {race} from '../models';
 import {training} from '../models';
+import {rollout} from '../models';
 
 export function BearoffPlan(arg1:number,arg2:number):Promise<gui.BearoffPlan>;
 
@@ -17,6 +18,8 @@ export function CancelCubeMatrix():Promise<void>;
 export function CancelEvaluationAtRest():Promise<void>;
 
 export function CancelGammonNetBatch():Promise<void>;
+
+export function CancelRollout():Promise<void>;
 
 export function CheckForUpdate():Promise<gui.UpdateCheckResult>;
 
@@ -88,6 +91,10 @@ export function ReadLogTail(arg1:number):Promise<Array<string>>;
 
 export function RegenerateIssuerIdentity(arg1:string):Promise<domain.IssuerIdentityInfo>;
 
+export function RolloutPresets():Promise<Array<gui.RolloutPreset>>;
+
+export function RolloutStatus():Promise<gui.RolloutStatus>;
+
 export function SaveBoardImageDialog(arg1:string,arg2:string):Promise<string>;
 
 export function SaveBoardPNG(arg1:string,arg2:string):Promise<void>;
@@ -113,6 +120,10 @@ export function StartGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise
 export function StartGammonNetMatchBatch(arg1:number,arg2:number,arg3:number,arg4:number):Promise<void>;
 
 export function StartGammonNetStaleBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
+
+export function StartRollout(arg1:gui.RolloutRequest):Promise<void>;
+
+export function StartRolloutFiltered(arg1:string,arg2:rollout.Settings):Promise<void>;
 
 export function StartupFilePath():Promise<string>;
 

@@ -459,6 +459,8 @@
 
     function handleKeyDown(event) {
         if (!visible) return;
+        // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
+        if (event.defaultPrevented) return;
 
         // No in-panel list navigation: browsing keys also go to the global handler (panelKeyGuard).
         if (panelKeyGuard(event, { allowNavKeys: true })) return;

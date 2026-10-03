@@ -12,6 +12,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -210,7 +211,7 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 	for res := range results {
 		oc := res.outcome
 		if oc == outcomeEvaluated {
-			if err := s.opts.Storage.Analyses().Save(ctx, scope, res.pos.ID, res.analysis); err != nil {
+			if err := rollouts.SaveAnalysis(ctx, s.opts.Storage, scope, res.pos.ID, res.analysis); err != nil {
 				oc = outcomeFailed
 				slog.Warn("gammonnet sweep: saving the computed analysis failed", "position_id", res.pos.ID, "error", err)
 			}

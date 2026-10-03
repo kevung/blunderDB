@@ -357,15 +357,76 @@ export function drawDoublingCube(two, geom, cfg, position, offered) {
     return box;
 }
 
+/** @typedef {(key: string, params?: Record<string, unknown>) => string} SceneText */
+
+const ENGLISH_TEXT = {
+    pip: 'pip: {n}',
+    away: '{n} away',
+    crawford: 'crawford',
+    post: 'post',
+    unlimited: 'unlimited',
+    off: '({n} OFF)'
+};
+
+/**
+ * The scene reads no store, so its words come in as a function; this fallback keeps the
+ * recorder-based tests and any caller without a translator on the English text.
+ *
+ * @type {SceneText}
+ */
+export const defaultSceneText = (key, params = {}) => ENGLISH_TEXT[/** @type {keyof typeof ENGLISH_TEXT} */ (key)].replace(/\{(\w+)\}/g, (m, k) => (k in params ? String(params[k]) : m));
+
+const LABEL_MAX_SIZE = 20;
+const LABEL_MIN_SIZE = 9;
+
+/**
+ * Rendered width of `content` at `size`, estimated per character: the canvas has no text metrics
+ * before it paints, and a label must be sized before it is drawn. Bold Latin is ~0.62 em, an
+ * ideographic character a full em.
+ *
+ * @param {string} content
+ * @param {number} size
+ */
+export function estimateTextWidth(content, size) {
+    let em = 0;
+    for (const ch of content) em += /** @type {number} */ (ch.codePointAt(0)) >= 0x2e80 ? 1 : 0.62;
+    return em * size;
+}
+
+/**
+ * Half the room a side label may take: centred 1.2 checkers from the board edge, it must stay
+ * clear of the board (point numbers sit against it) and of the canvas edge.
+ *
+ * @param {BoardMetrics} geom
+ */
+function sideLabelHalfWidth(geom) {
+    const margin = (geom.width - geom.boardWidth) / 2;
+    return Math.min(1.2 * geom.checkerSize, margin - 1.2 * geom.checkerSize) - 3;
+}
+
+/**
+ * One font size for a whole side column: the largest that keeps its widest label inside the
+ * margin, bounded so a very narrow canvas degrades to small text rather than to none.
+ *
+ * @param {BoardMetrics} geom
+ * @param {string[]} contents
+ */
+export function sideLabelSize(geom, contents) {
+    const widest = Math.max(...contents.map((c) => estimateTextWidth(c, 1)));
+    const fitted = Math.floor((2 * sideLabelHalfWidth(geom)) / widest);
+    return Math.max(LABEL_MIN_SIZE, Math.min(LABEL_MAX_SIZE, fitted));
+}
+
 /**
  * @param {Surface} two
  * @param {string} content
  * @param {number} x
  * @param {number} y
+ * @param {number} [size]
  */
-function boldText(two, content, x, y) {
+function boldText(two, content, x, y, size = LABEL_MAX_SIZE) {
     const t = two.makeText(content, x, y);
-    t.size = 20;
+    t.size = size;
     t.alignment = 'center';
     t.baseline = 'middle';
     t.weight = 'bold';
@@ -378,13 +439,16 @@ function boldText(two, content, x, y) {
  * @param {Surface} two
  * @param {BoardMetrics} geom
  * @param {BoardPosition} position
+ * @param {SceneText} [text]
  */
-export function drawPipCounts(two, geom, position) {
+export function drawPipCounts(two, geom, position, text = defaultSceneText) {
     const { pipCount1, pipCount2 } = computePipCount(position);
     const { originX, originY, boardWidth, boardHeight, checkerSize } = geom;
     const x = originX - boardWidth / 2 - 1.2 * checkerSize;
-    boldText(two, `pip: ${pipCount1}`, x, originY + boardHeight / 2 + 0.2 * checkerSize);
-    boldText(two, `pip: ${pipCount2}`, x, originY - boardHeight / 2 - 0.2 * checkerSize);
+    const labels = [text('pip', { n: pipCount1 }), text('pip', { n: pipCount2 })];
+    const size = sideLabelSize(geom, labels);
+    boldText(two, labels[0], x, originY + boardHeight / 2 + 0.2 * checkerSize, size);
+    boldText(two, labels[1], x, originY - boardHeight / 2 - 0.2 * checkerSize, size);
 }
 
 /**
@@ -424,12 +488,15 @@ export function sideLayout(geom, cfg, playerOnRoll) {
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
+ * @param {SceneText} [text]
  */
-export function drawBearoff(two, geom, cfg, position) {
+export function drawBearoff(two, geom, cfg, position, text = defaultSceneText) {
     const side = sideLayout(geom, cfg, position.player_on_roll);
+    const labels = [0, 1].map((i) => text('off', { n: position.board.bearoff[i] }));
+    const size = sideLabelSize(geom, labels);
     for (const [i, y] of [side.bearoff1Y, side.bearoff2Y].entries()) {
-        const t = two.makeText(`(${position.board.bearoff[i]} OFF)`, side.bearoffX, y);
-        t.size = 20;
+        const t = two.makeText(labels[i], side.bearoffX, y);
+        t.size = size;
         t.alignment = 'center';
         t.baseline = 'middle';
     }
@@ -500,13 +567,14 @@ export function drawDice(two, geom, cfg, position) {
  * The score label for one player: away count, crawford, post-crawford or money.
  *
  * @param {number} score
+ * @param {SceneText} [text]
  * @returns {string}
  */
-export function scoreLabel(score) {
-    if (score === 1) return 'crawford';
-    if (score === 0) return 'post';
-    if (score === -1) return 'unlimited';
-    return `${score} away`;
+export function scoreLabel(score, text = defaultSceneText) {
+    if (score === 1) return text('crawford');
+    if (score === 0) return text('post');
+    if (score === -1) return text('unlimited');
+    return text('away', { n: score });
 }
 
 /**
@@ -516,13 +584,16 @@ export function scoreLabel(score) {
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
+ * @param {SceneText} [text]
  */
-export function drawScores(two, geom, cfg, position) {
+export function drawScores(two, geom, cfg, position, text = defaultSceneText) {
     const side = sideLayout(geom, cfg, position.player_on_roll);
+    const lines = position.score.slice(0, 2).map((score) => scoreLabel(score, text));
+    const size = sideLabelSize(geom, [...lines, text('crawford')]);
     for (const [i, y] of [side.score1Y, side.score2Y].entries()) {
         const score = position.score[i];
-        boldText(two, scoreLabel(score), side.scoreX, y - (score === 0 ? 10 : 0));
-        if (score === 0) boldText(two, 'crawford', side.scoreX, y + 10);
+        boldText(two, lines[i], side.scoreX, y - (score === 0 ? size / 2 : 0), size);
+        if (score === 0) boldText(two, text('crawford'), side.scoreX, y + size / 2, size);
     }
 }
 
@@ -632,16 +703,16 @@ export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
- * @param {{ offeredCube?: boolean, showPipcount?: boolean, moves?: StepMove[] | null, play?: { sources?: Iterable<number>, targets?: Iterable<number>, selected?: number | null } }} [opts]
+ * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, moves?: StepMove[] | null, play?: { sources?: Iterable<number>, targets?: Iterable<number>, selected?: number | null } }} [opts]
  * @returns {CubeBox}
  */
 export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
     const box = drawDoublingCube(two, geom, cfg, position, !!opts.offeredCube);
     drawCheckers(two, geom, cfg, position);
-    drawBearoff(two, geom, cfg, position);
-    if (opts.showPipcount) drawPipCounts(two, geom, position);
+    drawBearoff(two, geom, cfg, position, opts.text);
+    if (opts.showPipcount) drawPipCounts(two, geom, position, opts.text);
     drawDice(two, geom, cfg, position);
-    drawScores(two, geom, cfg, position);
+    drawScores(two, geom, cfg, position, opts.text);
     drawPlayHighlights(two, geom, cfg, position, opts.play ?? {});
     drawMoveArrows(two, geom, cfg, position, opts.moves);
     return box;

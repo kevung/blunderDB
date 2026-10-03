@@ -36,6 +36,8 @@ func (cli *CLI) runAnalyze(args []string) error {
 	compare := analyzeCmd.Bool("compare", false, "Compare gammonNet against the imported analyses instead of writing anything")
 	limit := analyzeCmd.Int("limit", 0, "With --compare: stop after this many positions (0 = all)")
 	format := analyzeCmd.String("format", "text", "Output format: text or json")
+	rolloutSpec := analyzeCmd.String("rollout", "", "Roll out the positions --query selects instead: a preset (fast, standard) or custom settings, e.g. 'standard' or 'games=648,truncation=0,ply=1'")
+	query := analyzeCmd.String("query", "", "With --rollout: the positions to roll out, in the search query language (see search --query-help); empty means every position")
 
 	analyzeCmd.Usage = func() { printAnalyzeUsage(analyzeCmd) }
 
@@ -53,6 +55,19 @@ func (cli *CLI) runAnalyze(args []string) error {
 		return fmt.Errorf("unknown format: %s (must be 'text' or 'json')", *format)
 	}
 	text := formatLower != "json"
+
+	if *rolloutSpec != "" {
+		if *stale || *compare || *matchID != 0 {
+			return fmt.Errorf("--rollout is its own sweep, narrowed by --query: it does not combine with --stale, --compare or --match")
+		}
+		if err := cli.initDatabase(*dbPath); err != nil {
+			return err
+		}
+		return cli.runAnalyzeRollout(*rolloutSpec, *query, *jobs, text)
+	}
+	if *query != "" {
+		return fmt.Errorf("--query narrows a --rollout sweep; give --rollout")
+	}
 
 	if *compare && *stale {
 		return fmt.Errorf("--compare and --stale ask different questions: --compare writes nothing, --stale rewrites; pick one")
@@ -316,6 +331,16 @@ func printAnalyzeUsage(analyzeCmd *flag.FlagSet) {
 	fmt.Println("phase, which is what says where the disagreements sit. Use --limit")
 	fmt.Println("to ask the question of a sample rather than of a whole library.")
 	fmt.Println()
+	fmt.Println("--rollout switches to rollouts: every position --query selects is")
+	fmt.Println("rolled out, one after the other on every core, and the rollout is")
+	fmt.Println("written beside its analysis — never in its place. The value is a")
+	fmt.Println("preset (fast: 216 games truncated at 7; standard: 1296 games")
+	fmt.Println("truncated at 11) or custom settings: an optional preset first, then")
+	fmt.Println("games=, min-games=, truncation=, jsd=, ply=, candidates=, seed=,")
+	fmt.Println("comma-separated. A position already carrying a rollout with the")
+	fmt.Println("same settings is skipped, so an interrupted run resumes; the")
+	fmt.Println("position in hand when Ctrl-C arrives is dropped whole.")
+	fmt.Println()
 	fmt.Println("A position gammonNet declines to evaluate (a match score beyond")
 	fmt.Println("its MET, a cube state it refuses) is reported separately at the")
 	fmt.Println("end, as \"refused\": not a failure, and not retried to no effect.")
@@ -330,4 +355,6 @@ func printAnalyzeUsage(analyzeCmd *flag.FlagSet) {
 	fmt.Println("  blunderdb analyze --db database.db --stale --ply 3")
 	fmt.Println("  blunderdb analyze --db database.db --format json")
 	fmt.Println("  blunderdb analyze --db database.db --compare --limit 500")
+	fmt.Println("  blunderdb analyze --db database.db --rollout fast --query 'E>80'")
+	fmt.Println("  blunderdb analyze --db database.db --rollout 'standard,ply=1' --query 'c'")
 }

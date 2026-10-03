@@ -275,3 +275,30 @@ export const pastedPosition = { ...positionC, id: 0, dice: [3, 1], score: [0, 0]
 
 /** Retour de ParsePositionText : position seule, sans analyse ni commentaire. */
 export const parsedPositionResult = { position: pastedPosition, analysis: null, comment: '' };
+
+// ── Bibliothèque d'échelle ───────────────────────────────────────────────────
+
+/**
+ * Overrides d'une bibliothèque de `ids` positions et de `matches` matchs, générée
+ * à l'appel (rien de versionné). Les ids sont 1..ids ; seules les têtes et queues
+ * de liste ont une position servie (`window` de chaque côté), ce qui suffit à
+ * parcourir les deux extrémités sans sérialiser un million d'objets.
+ *
+ * @param {{ ids?: number, matches?: number, window?: number, extra?: object }} [opts]
+ */
+export function scaleLibraryMock({ ids = 100000, matches = 0, window = 300, extra = {} } = {}) {
+    const served = (id) => ({ ...libraryPositions[id % libraryPositions.length], id });
+    const catalog = [];
+    for (let id = 1; id <= Math.min(window, ids); id++) catalog.push(served(id));
+    for (let id = Math.max(window + 1, ids - window + 1); id <= ids; id++) catalog.push(served(id));
+    const matchRows = Array.from({ length: matches }, (_, i) => ({ ...matchSample, id: i + 1, player1_name: `P${i + 1}`, file_path: `/tmp/m${i + 1}.xg` }));
+    return openLibraryMock({
+        ...extra,
+        database: {
+            ListPositionIDs: Array.from({ length: ids }, (_, i) => i + 1),
+            LoadPositionsByIDs: catalog,
+            GetAllMatches: matchRows,
+            ...(extra.database || {})
+        }
+    });
+}

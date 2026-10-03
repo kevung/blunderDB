@@ -363,7 +363,8 @@
         "tabManual": "Руководство",
         "tabShortcuts": "Горячие клавиши",
         "tabCommands": "Командная строка",
-        "tabAbout": "О программе"
+        "tabAbout": "О программе",
+        "loadFailed": "Не удалось загрузить справку."
     },
     "commands": {
         "collectionEmpty": "Коллекция пуста",
@@ -841,6 +842,18 @@
             "saveImageSVG": "Сохранить изображение (SVG)…",
             "saveImagePNG": "Сохранить изображение (PNG)…",
             "neighbours": "Соседние позиции"
+        },
+        "scene": {
+            "pip": "пип: {n}",
+            "away": "ещё {n}",
+            "crawford": "кроуфорд",
+            "post": "пост",
+            "unlimited": "без лимита",
+            "off": "({n} снято)"
+        },
+        "situation": {
+            "search": "Доска поиска: расставьте фишки, которые нужно найти",
+            "eval": "Доска оценки"
         }
     },
     "epc": {
@@ -1259,6 +1272,11 @@
         "errorDeletingPosition": "Ошибка удаления позиции и связанного анализа",
         "errorEnteringMatchMode": "Ошибка входа в режим матча",
         "errorHandlingDroppedDb": "Ошибка обработки перетащенной базы данных",
+        "droppedDbMessage": "База данных уже открыта.\n\nЧто вы хотите сделать с «{filename}»?",
+        "droppedDbOpen": "Открыть",
+        "droppedDbMerge": "Объединить",
+        "droppedDbCancel": "Отмена",
+        "directionLoadFailed": "Не удалось загрузить представление «Управление».",
         "errorLoadingAllPositions": "Ошибка загрузки всех позиций",
         "errorLoadingByFilters": "Ошибка загрузки позиций по фильтрам",
         "errorSavingPosition": "Ошибка сохранения позиции, анализа и комментария",
@@ -2379,7 +2397,8 @@
         "rooms": {
             "title": "Залы, где играет это состязание",
             "hint": "Ничего не отмечено: все столы."
-        }
+        },
+        "closeView": "Выйти из управления"
     },
     "palette": {
         "title": "Палитра команд",

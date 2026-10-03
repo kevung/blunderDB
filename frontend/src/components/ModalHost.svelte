@@ -78,6 +78,8 @@
     mode="confirm"
     confirmLabel={$confirmModalStore?.confirmLabel || ''}
     cancelLabel={$confirmModalStore?.cancelLabel || ''}
+    choices={$confirmModalStore?.choices || []}
+    onChoose={(v) => resolveConfirm(v)}
     onClose={() => resolveConfirm(false)}
     onConfirm={() => resolveConfirm(true)}
 />

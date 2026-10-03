@@ -363,7 +363,8 @@
         "tabManual": "Handbuch",
         "tabShortcuts": "Tastenkürzel",
         "tabCommands": "Befehlszeile",
-        "tabAbout": "Über"
+        "tabAbout": "Über",
+        "loadFailed": "Die Hilfe konnte nicht geladen werden."
     },
     "commands": {
         "collectionEmpty": "Sammlung ist leer",
@@ -841,6 +842,18 @@
             "saveImageSVG": "Bild speichern (SVG)…",
             "saveImagePNG": "Bild speichern (PNG)…",
             "neighbours": "Benachbarte Stellungen"
+        },
+        "scene": {
+            "pip": "Pip: {n}",
+            "away": "noch {n}",
+            "crawford": "Crawford",
+            "post": "post",
+            "unlimited": "unbegrenzt",
+            "off": "({n} raus)"
+        },
+        "situation": {
+            "search": "Suchbrett: Steine so setzen, wie sie gefunden werden sollen",
+            "eval": "Auswertungsbrett"
         }
     },
     "epc": {
@@ -1259,6 +1272,11 @@
         "errorDeletingPosition": "Fehler beim Löschen der Position und der zugehörigen Analyse",
         "errorEnteringMatchMode": "Fehler beim Wechsel in den Match-Modus",
         "errorHandlingDroppedDb": "Fehler beim Verarbeiten der abgelegten Datenbank",
+        "droppedDbMessage": "Es ist bereits eine Datenbank geöffnet.\n\nWas möchten Sie mit „{filename}“ tun?",
+        "droppedDbOpen": "Öffnen",
+        "droppedDbMerge": "Zusammenführen",
+        "droppedDbCancel": "Abbrechen",
+        "directionLoadFailed": "Die Ansicht „Direction“ konnte nicht geladen werden.",
         "errorLoadingAllPositions": "Fehler beim Laden aller Positionen",
         "errorLoadingByFilters": "Fehler beim Laden der Positionen nach Filtern",
         "errorSavingPosition": "Fehler beim Speichern von Position, Analyse und Kommentar",
@@ -2379,7 +2397,8 @@
         "rooms": {
             "title": "Säle, in denen dieser Wettbewerb gespielt wird",
             "hint": "Keine Auswahl: alle Tische."
-        }
+        },
+        "closeView": "Direktion verlassen"
     },
     "palette": {
         "title": "Befehlspalette",

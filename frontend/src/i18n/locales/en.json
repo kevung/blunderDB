@@ -363,7 +363,8 @@
         "tabManual": "Manual",
         "tabShortcuts": "Shortcut",
         "tabCommands": "Command Line",
-        "tabAbout": "About"
+        "tabAbout": "About",
+        "loadFailed": "The help could not be loaded."
     },
     "commands": {
         "collectionEmpty": "Collection is empty",
@@ -841,6 +842,18 @@
             "saveImageSVG": "Save the image (SVG)…",
             "saveImagePNG": "Save the image (PNG)…",
             "neighbours": "Neighbouring positions"
+        },
+        "scene": {
+            "pip": "pip: {n}",
+            "away": "{n} away",
+            "crawford": "crawford",
+            "post": "post",
+            "unlimited": "unlimited",
+            "off": "({n} OFF)"
+        },
+        "situation": {
+            "search": "Search board: place the checkers to find",
+            "eval": "Evaluation board"
         }
     },
     "epc": {
@@ -1259,6 +1272,11 @@
         "errorDeletingPosition": "Error deleting position and associated analysis",
         "errorEnteringMatchMode": "Error entering match mode",
         "errorHandlingDroppedDb": "Error handling dropped database",
+        "droppedDbMessage": "A database is already open.\n\nWhat would you like to do with \"{filename}\"?",
+        "droppedDbOpen": "Open",
+        "droppedDbMerge": "Merge",
+        "droppedDbCancel": "Cancel",
+        "directionLoadFailed": "Could not load the Direction view.",
         "errorLoadingAllPositions": "Error loading all positions",
         "errorLoadingByFilters": "Error loading positions by filters",
         "errorSavingPosition": "Error saving position, analysis, and comment",
@@ -2379,7 +2397,8 @@
         "rooms": {
             "title": "Rooms this competition plays in",
             "hint": "None ticked: every table."
-        }
+        },
+        "closeView": "Leave the Direction"
     },
     "palette": {
         "title": "Command palette",

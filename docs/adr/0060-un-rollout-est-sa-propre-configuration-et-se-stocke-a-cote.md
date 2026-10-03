@@ -72,15 +72,41 @@ de videau, et ses intervalles sont optimistes.
    équité normalisée au score. Une partie se compte en points money ou en chances de gagner le
    match de la racine ; les deux sont affines dans l'équité de sortie, donc moyenne, σ et JSD se
    convertissent une seule fois, à la fin. Aucune échelle interne ne sort.
-8. **Stockage — décidé ici, livré plus tard.** Un rollout se stockera comme une **seconde
-   Analysis étiquetée** sur la Position : ses entrées portent `AnalysisEngine =
-   rollout.EngineVersion` et `AnalysisDepth = DepthLabel()`, à côté des entrées existantes,
-   **sans en remplacer aucune** (ADR-0013 : une analyse importée n'est jamais écrasée, un rollout
-   ne l'est pas davantage par un rollout suivant d'une autre Configuration). Les colonnes
-   indexées restent dérivées de l'analyse principale ; un rollout ne les déplace que là où la
-   Position n'avait aucune analyse. σ, IC, parties, JSD et `Signature()` voyagent avec les
-   entrées ; s'il faut une colonne, c'est un bump de schéma avec sa migration (CLAUDE.md). Ce
-   ADR ne touche pas encore au stockage.
+8. **Stockage : une seconde Analysis, à côté.** Un rollout s'écrit dans
+   `PositionAnalysis.Rollouts` (`domain.RolloutAnalysis`) : `AnalysisEngine =
+   rollout.EngineVersion`, `AnalysisDepth = DepthLabel()`, `Signature()`, les paramètres, et par
+   candidat l'équité, σ, l'IC 95 %, les parties et la JSD. Il ne remplace **aucune** entrée de
+   `CheckerAnalysis` ni de `DoublingCubeAnalysis` (ADR-0013) — y entrer l'aurait fait : la fusion
+   par coup garde le rang de profondeur le plus haut, et « Rollout » passe au-dessus de « XG
+   Roller++ ». Un rollout par `Signature` : relancé aux mêmes réglages, il garde la série la plus
+   longue ; à d'autres réglages, il s'ajoute. Les coups roulés entrent dans la `Signature` (les
+   `Candidates` meilleurs, ou l'ensemble des coups nommés, sans ordre) : deux rollouts de coups
+   différents sont deux Configurations. Chaque écriture d'analyse (`SaveAnalysis`, le balayage
+   gammonNet de `serve`, `rollouts.SaveAnalysis`) reprend les rollouts existants, pour qu'un
+   appelant qui les ignore ne les efface pas ; un import passe par
+   `domain.MergeImportedAnalysis` : l'analyse importée ne s'écrit que si la position n'a pas
+   d'analyse principale (`HasPrimary`, ADR-0013 ; un rollout seul n'en est pas une, et
+   `AttachRollout` ne pose pas `AnalysisType`), et les rollouts des deux côtés restent. L'ajout
+   d'un rollout lit et réécrit l'analyse dans une seule transaction gardée. Un rollout annulé
+   n'est jamais écrit. Cette garde (`BEGIN IMMEDIATE` en SQLite, verrou consultatif
+   en PostgreSQL) vaut entre processus ; `Database.SaveAnalysis`, lui, lit puis écrit sous le
+   seul verrou du processus : deux processus écrivant le même fichier (la CLI pendant que la GUI
+   tourne) n'y sont pas gardés l'un de l'autre, et seul le verrou de fichier d'ADR-0004, qui
+   ouvre la seconde instance en lecture seule, les sépare. Changer de base dans la GUI arrête le
+   rollout et les lots en cours et attend leur fin ; passé le délai, la `Database` refuse leurs
+   écritures tardives (génération mémorisée au départ). Supprimer un match
+   supprime avec ses positions orphelines leurs rollouts ; ils se rejouent à l'identique depuis
+   leur `Signature`. Un rollout de videau a sa propre `Signature`, sans nombre de candidats.
+   Les colonnes indexées restent celles de l'analyse
+   principale ; une position que seul un rollout analyse les tire de son meilleur rollout
+   (`ColumnSource`), et la recherche la trouve. Tout vit dans le blob JSON : **aucune colonne,
+   aucun bump de schéma**. Limite assumée : une version antérieure, qui ignore le champ
+   `rollouts`, l'efface à sa première écriture d'analyse sur la position. Un bump n'y changerait
+   rien : depuis 0.35.0, une version ouvre telle quelle une base de `DatabaseVersion` plus
+   récente (`runMigrationChain`) ; on ne rouvre donc pas avec une version antérieure une base
+   qui porte des rollouts. Le rassemblement (positions d'une requête sans rollout de cette
+   `Signature`, d'où la reprise), la boucle et l'écriture sont `pkg/blunderdb/rollouts`, sur le
+   contrat de stockage, partagés par la GUI et la CLI (via `Database`) et par `serve`.
 
 ## Jauge
 
@@ -110,8 +136,10 @@ réseaux, deux politiques de videau, deux troncatures.
 - Coût mesuré (16 cœurs, 0 ply) : *Rapide* sur l'ouverture 3-1, cinq coups, 11 s ; deux coups,
   3 à 4 s. Le temps est celui du réseau (la réduction de variance évalue les 21 lancers à chaque
   demi-coup) ; il baissera avec gammonNet, pas ici.
-- La commande `blunderdb rollout` exerce le moteur sur une position, sans base ; la GUI, le lot
-  (`analyze --rollout`) et le stockage viennent ensuite, sur ce même paquet.
+- `blunderdb rollout` joue une position donnée ou une position d'une base (`--store` l'écrit) ;
+  `analyze --rollout` joue les positions d'une requête ; `serve` expose `rollout.position`
+  (une position de la bibliothèque, jamais une position nue : ADR-0015) et `rollout.filter` ;
+  l'outil MCP `rollout` lit, et n'écrit qu'avec le drapeau d'écriture.
 - Rejeté : un rollout non cubeful par défaut — une décision de videau en a besoin, et un seul
   mode garde une seule Configuration. Rejeté : un interrupteur de réduction de variance — la
   recette est la Configuration. Rejeté : arrêter sur l'IC d'un candidat — c'est l'écart-type de

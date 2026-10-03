@@ -503,6 +503,7 @@ func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 	if a == nil {
 		return c
 	}
+	a = a.ColumnSource()
 
 	if dca := a.DoublingCubeAnalysis; dca != nil {
 		c.BestCubeAction = dca.BestCubeAction

@@ -18,7 +18,7 @@ import { confirmAction, resolveConfirm, confirmModalStore } from '../services/co
 describe('confirmAction / resolveConfirm', () => {
     test('resolves true when confirmed', async () => {
         const pending = confirmAction('Delete this?', { confirmLabel: 'Delete' });
-        expect(get(confirmModalStore)).toEqual({ message: 'Delete this?', confirmLabel: 'Delete', cancelLabel: '' });
+        expect(get(confirmModalStore)).toEqual({ message: 'Delete this?', confirmLabel: 'Delete', cancelLabel: '', choices: [] });
         resolveConfirm(true);
         await expect(pending).resolves.toBe(true);
         expect(get(confirmModalStore)).toBeNull();

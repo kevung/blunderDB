@@ -91,6 +91,7 @@ import Board from '../components/Board.svelte';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
 import { selectedMoveStore, analysisStore } from '../stores/analysisStore.js';
 import { boardColorsStore, DEFAULT_BOARD_COLORS } from '../stores/boardColorsStore.js';
+import { estimateTextWidth } from '../utils/boardScene.js';
 
 // ── Deterministic requestAnimationFrame ─────────────────────────────────────
 // Captures scheduled callbacks instead of really waiting a frame; flushFrame()
@@ -397,5 +398,43 @@ describe('Board — selectedMoveStore is reset only when the position id changes
         positionStore.set({ ...get(positionStore), id: 43 });
 
         expect(get(selectedMoveStore)).toBeNull();
+    });
+});
+
+describe('Board — side labels stay inside the canvas', () => {
+    beforeEach(() => {
+        resetStores();
+        stubRaf();
+    });
+    afterEach(() => {
+        cleanup();
+        twoInstances.length = 0;
+        vi.unstubAllGlobals();
+        delete HTMLElement.prototype.clientWidth;
+        delete HTMLElement.prototype.clientHeight;
+    });
+
+    // The window sizes of the review; the board panel is narrower than the window.
+    const containers = [
+        [700, 500],
+        [1024, 700],
+        [1280, 800],
+        [1920, 1080]
+    ];
+
+    test.each(containers)('no label leaves the canvas in a %ix%i container', async (cw, ch) => {
+        Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true, get: () => cw });
+        Object.defineProperty(HTMLElement.prototype, 'clientHeight', { configurable: true, get: () => ch });
+        const base = emptyPosition();
+        positionStore.set({ ...base, score: [0, 15], board: { ...base.board, bearoff: [15, 3] } });
+        const { two } = await mountBoard();
+
+        const labels = two.makeText.mock.calls.map(([content, x], i) => ({ content, x, size: two.makeText.mock.results[i].value.size }));
+        expect(labels.length).toBeGreaterThan(30);
+        for (const { content, x, size } of labels) {
+            const half = estimateTextWidth(String(content), size) / 2;
+            expect(x - half, `${content} at ${size}px, left`).toBeGreaterThanOrEqual(0);
+            expect(x + half, `${content} at ${size}px, right`).toBeLessThanOrEqual(two.width);
+        }
     });
 });

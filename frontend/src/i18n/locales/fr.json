@@ -363,7 +363,8 @@
         "tabManual": "Manuel",
         "tabShortcuts": "Raccourci",
         "tabCommands": "Ligne de commande",
-        "tabAbout": "À propos"
+        "tabAbout": "À propos",
+        "loadFailed": "L'aide n'a pas pu être chargée."
     },
     "commands": {
         "collectionEmpty": "La collection est vide",
@@ -841,6 +842,18 @@
             "saveImageSVG": "Enregistrer l'image (SVG)…",
             "saveImagePNG": "Enregistrer l'image (PNG)…",
             "neighbours": "Positions voisines"
+        },
+        "scene": {
+            "pip": "pip : {n}",
+            "away": "à {n}",
+            "crawford": "crawford",
+            "post": "post",
+            "unlimited": "illimité",
+            "off": "({n} sortis)"
+        },
+        "situation": {
+            "search": "Plateau de recherche : posez les pions à trouver",
+            "eval": "Plateau d’évaluation"
         }
     },
     "epc": {
@@ -1259,6 +1272,11 @@
         "errorDeletingPosition": "Erreur lors de la suppression de la position et de l'analyse associée",
         "errorEnteringMatchMode": "Erreur lors de l'entrée en mode match",
         "errorHandlingDroppedDb": "Erreur lors du traitement de la base de données déposée",
+        "droppedDbMessage": "Une base de données est déjà ouverte.\n\nQue souhaitez-vous faire de « {filename} » ?",
+        "droppedDbOpen": "Ouvrir",
+        "droppedDbMerge": "Fusionner",
+        "droppedDbCancel": "Annuler",
+        "directionLoadFailed": "La vue Direction n'a pas pu être chargée.",
         "errorLoadingAllPositions": "Erreur lors du chargement de toutes les positions",
         "errorLoadingByFilters": "Erreur lors du chargement des positions par filtres",
         "errorSavingPosition": "Erreur lors de l'enregistrement de la position, de l'analyse et du commentaire",
@@ -2011,7 +2029,7 @@
             "withdrawLaterHint": "Il n’est plus apparié mais finit le match qu’il joue.",
             "reinstate": "Réinscrire",
             "reinstateHint": "Le réinscrire : il est de nouveau apparié, avec les résultats et les vies qu'il avait en partant ; les matchs perdus par forfait à son retrait le restent.",
-            "absent": "Absenter",
+            "absent": "Marquer absent",
             "absentHint": "Absent pour un temps : il n'est plus apparié, mais garde son rang, ses vies, sa place — sans le retirer.",
             "absentUntilTime": "Jusqu'à",
             "absentUntilRound": "Jusqu'à la ronde",
@@ -2379,7 +2397,8 @@
         "rooms": {
             "title": "Salles où joue cette épreuve",
             "hint": "Aucune coche : toutes les tables."
-        }
+        },
+        "closeView": "Quitter la direction"
     },
     "palette": {
         "title": "Palette de commandes",

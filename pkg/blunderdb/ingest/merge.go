@@ -207,6 +207,10 @@ func mergeAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAn
 		}
 		a.PlayedCubeActions = mergePlayedMoves(existingCubeActions, incomingCubeActions)
 
+		// Rollouts are their own analyses: a caller that does not know them
+		// (an import, the frontend saving what it edited) must not drop them.
+		a.Rollouts = domain.MergeRollouts(existing.Rollouts, a.Rollouts)
+
 		a.PlayedMove = ""
 		a.PlayedCubeAction = ""
 

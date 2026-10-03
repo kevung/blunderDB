@@ -179,8 +179,17 @@
     }
 
     /* ── Close button ── */
+    /* Themed explicitly: the browser's own button colours leave this one under AA in the dark theme. */
     .report-btn {
         cursor: pointer;
+        background: var(--color-surface-alt);
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
+        border-radius: 4px;
+        padding: 3px 10px;
+    }
+    .report-btn:hover {
+        border-color: var(--color-primary);
     }
 
     .close-btn {

@@ -34,6 +34,9 @@ test('malicious databaseVersion/applicationVersion render as inert text in the A
     await tick();
     await tick();
 
+    // The help bundles load on demand: a spinner stands in until they land.
+    await vi.waitFor(() => expect(screen.queryByTestId('help-loading')).toBeNull());
+
     screen.getByRole('button', { name: /about/i }).click();
     await tick();
 
@@ -47,4 +50,10 @@ test('malicious databaseVersion/applicationVersion render as inert text in the A
     // The escaped source text is still visible to the user, just as text, not markup.
     expect(document.querySelector('.tab-content').textContent).toContain('<img src=x onerror=alert(1)>');
     expect(document.querySelector('.tab-content').textContent).toContain('<script>window.__pwned = true</script>');
+});
+
+test('the manual renders once the on-demand bundles have loaded', async () => {
+    const { container } = render(HelpModal, { visible: true, onClose: () => {} });
+    await vi.waitFor(() => expect(screen.queryByTestId('help-loading')).toBeNull());
+    expect(container.ownerDocument.querySelector('.tab-content')?.textContent?.length).toBeGreaterThan(100);
 });

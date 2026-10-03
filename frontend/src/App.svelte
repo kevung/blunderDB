@@ -76,11 +76,11 @@
     import Toolbar from './components/Toolbar.svelte';
     import CommandPalette from './components/CommandPalette.svelte';
     import Board from './components/Board.svelte';
-    import DirectionView from './components/direction/DirectionView.svelte';
     import DirectionFullscreenToggle from './components/direction/DirectionFullscreenToggle.svelte';
     import { directionFullscreenStore } from './services/directionFullscreen.js';
-    import { directionPageShownStore } from './stores/directionStore';
+    import { directionPageShownStore, directionViewLoadedStore } from './stores/directionStore';
     import MatchInfoBar from './components/MatchInfoBar.svelte';
+    import BoardSituationBanner from './components/BoardSituationBanner.svelte';
     import ViewTabs from './components/ViewTabs.svelte';
     import TabbedPanel from './components/TabbedPanel.svelte';
     import StatusBar from './components/StatusBar.svelte';
@@ -97,12 +97,37 @@
     import { initTheme } from './stores/themeStore.js';
 
     let mainArea;
+    // The Direction view (and everything under direction/) is a separate chunk,
+    // fetched the first time the Tournoi tab shows it; the board stays up meanwhile.
+    let DirectionViewComponent = $state(null);
+    $effect(() => {
+        if ($directionPageShownStore && !DirectionViewComponent) {
+            import('./components/direction/DirectionView.svelte')
+                .then((m) => {
+                    DirectionViewComponent = m.default;
+                    directionViewLoadedStore.set(true);
+                })
+                .catch((error) => {
+                    // Back to the board: the page must not keep claiming keys it does not show.
+                    logger.error('could not load the Direction view:', error);
+                    setStatusBarMessage(tMsg('status.directionLoadFailed'));
+                    activeTabStore.set('matches');
+                });
+        }
+    });
     let panelHeight = $state(DEFAULT_PANEL_HEIGHT);
     // Hauteur plancher de l'onglet Transcription (ADR-0048 décision 5), mesurée : palette 236 px,
     // barre du brouillon 34, padding 16, barre d'onglets 30. Appliquée sans toucher la valeur
     // stockée, pour qu'un autre onglet retrouve la hauteur choisie.
     const TRANSCRIPTION_MIN_HEIGHT = 320;
-    let appliedPanelHeight = $derived($activeTabStore === 'transcription' ? Math.max(panelHeight, TRANSCRIPTION_MIN_HEIGHT) : panelHeight);
+    // Stats stacks a filter bar, a row of cards and a summary: at the default height only one
+    // row of cards shows. Same mechanism, same reason: the stored height is left alone.
+    const STATS_MIN_HEIGHT = 400;
+    // A floor never takes more than this share of the window: the board keeps the rest.
+    const MAX_FLOOR_SHARE = 0.55;
+    let windowHeight = $state(typeof window === 'undefined' ? 800 : window.innerHeight);
+    let tabFloor = $derived($activeTabStore === 'transcription' ? TRANSCRIPTION_MIN_HEIGHT : $activeTabStore === 'stats' ? STATS_MIN_HEIGHT : 0);
+    let appliedPanelHeight = $derived(tabFloor ? Math.max(panelHeight, Math.min(tabFloor, Math.round(windowHeight * MAX_FLOOR_SHARE))) : panelHeight);
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
@@ -396,6 +421,8 @@
     });
 </script>
 
+<svelte:window bind:innerHeight={windowHeight} />
+
 <main class="main-container" class:td-fullscreen={$directionFullscreenStore} bind:this={mainArea} use:fileDrop={{ onDrop: handleFileDrop, onOverlayChange: (visible) => (showDropOverlay = visible) }}>
     {#if showDropOverlay}
         <div class="drop-overlay" transition:fade={{ duration: 150 }}>
@@ -434,6 +461,10 @@
          puisque c'est là qu'on commente, qu'on range et qu'on fait une carte. -->
     <div class="chrome"><StudyQueueBar /></div>
 
+    <!-- Hors de la zone du plateau : le canevas colle en haut de sa zone, un bandeau posé dessus
+         cacherait les numéros de points. -->
+    <div class="chrome"><BoardSituationBanner /></div>
+
     <div class="body" class:side={isSidePanel}>
         <div class="scrollable-content" data-tour="board" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>
             {#if $activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}
@@ -442,8 +473,8 @@
             <!-- La seule chose qui remplace le plateau dans la zone principale (ADR-0047) :
                  l'onglet Tournoi actif ET une Direction ouverte. Tout autre onglet ramène le
                  plateau sans rien fermer — la Direction reste ouverte et continue de vivre. -->
-            {#if $directionPageShownStore}
-                <DirectionView />
+            {#if $directionPageShownStore && DirectionViewComponent}
+                <DirectionViewComponent />
             {:else}
                 <Board />
             {/if}

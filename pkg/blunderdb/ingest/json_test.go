@@ -3,6 +3,7 @@ package ingest
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -86,5 +87,41 @@ func TestJSONImportCancelled(t *testing.T) {
 	counts, _ := dst.Metadata().Counts(context.Background(), "")
 	if counts.Positions != 0 {
 		t.Fatalf("positions after cancelled import = %d, want 0", counts.Positions)
+	}
+}
+
+// An NDJSON record lands on a position the target already holds: its
+// rollouts stay, and its analysis is filled, not replaced.
+func TestJSONImportKeepsRollouts(t *testing.T) {
+	ctx := context.Background()
+	dst, err := sqlite.Open(ctx, ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dst.Close()
+	p := domain.InitializePosition()
+	id, err := dst.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	held := &domain.PositionAnalysis{}
+	held.AttachRollout(domain.RolloutAnalysis{Signature: "held", Games: 216})
+	if err := dst.Analyses().Save(ctx, "", id, held); err != nil {
+		t.Fatal(err)
+	}
+
+	pos := domain.InitializePosition()
+	rec, _ := json.Marshal(positionBundle{Position: &pos, Analysis: &domain.PositionAnalysis{AnalysisType: "CheckerMove",
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{{Move: "8/5 6/5"}}}}})
+	body := string(rec) + "\n"
+	if _, err := (JSONImporter{S: dst}).Import(ctx, "", Source{Reader: strings.NewReader(body)}, nil); err != nil {
+		t.Fatal(err)
+	}
+	got, err := dst.Analyses().Load(ctx, "", id)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !got.HasRollout("held") || !got.HasPrimary() {
+		t.Errorf("rollouts %+v, primary %v — want the held rollout beside the imported analysis", got.Rollouts, got.HasPrimary())
 	}
 }

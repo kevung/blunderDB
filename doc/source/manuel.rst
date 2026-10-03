@@ -492,7 +492,10 @@ Trois points méritent d'être connus avant d'activer la case :
   même fichier inchangé.
 * **L'import est silencieux.** Vous étiez en train d'étudier une position
   quand vos matchs sont arrivés : vous reprendre l'écran serait le pire
-  moment. L'import se fait sans fenêtre, et la barre d'état affiche un
+  moment. Le mode, la recherche active, l'onglet et la position affichée ne
+  bougent pas ; la liste des positions n'est pas rechargée et montre les
+  nouveaux matchs au prochain rechargement. L'import se fait sans fenêtre,
+  et la barre d'état affiche un
   bandeau donnant le compte des matchs importés, ignorés (doublons) et en
   échec, avec un bouton qui ouvre le compte rendu complet si vous le
   souhaitez. Tout le reste est identique à un import manuel : mêmes doublons
@@ -1113,6 +1116,12 @@ elle en indique la **provenance** — le premier match concerné et, le cas
 échéant, un badge « +N » listant les autres au survol. Une position importée
 seule, qu'aucun match ne référence, n'affiche rien.
 
+Les onglets **Recherche** et **Eval** remplacent le plateau par un plateau
+de travail : un bandeau en haut du plateau le dit (« Plateau de recherche »,
+« Plateau d'évaluation »), et la barre d'informations est masquée tant qu'elle
+décrirait une position qui n'est pas à l'écran. Le retour à l'analyse restaure
+la position étudiée.
+
 À l'ouverture d'une base contenant des matchs, le panneau **Matchs** est affiché
 d'emblée et la revue débute directement sur la première position, afin de
 commencer immédiatement la navigation.
@@ -1704,7 +1713,7 @@ quelle phase il entrera. Aucun tirage déjà fait n'est refait.
 Un retrait se fait *maintenant* ou *après son match en cours*, selon que le
 joueur part tout de suite ou finit ce qu'il joue ; il se confirme.
 
-Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Absenter**, sur
+Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Marquer absent**, sur
 sa ligne, ouvre un petit formulaire sous son nom — *jusqu'à* une heure
 (pré-remplie sur l'heure qui suit), ou, quand la phase en cours est un suisse
 par rondes, *jusqu'à la ronde* portant son numéro. Le moteur cesse alors de
