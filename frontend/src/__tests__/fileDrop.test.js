@@ -63,6 +63,13 @@ describe('fileDrop', () => {
         expect(onOverlayChange).toHaveBeenCalledTimes(2);
     });
 
+    // Wails 2.15 only cancels a drop whose dataTransfer lists "Files"; a drag
+    // offering just text/uri-list would otherwise navigate the webview away.
+    test('cancels the browser default on drop', () => {
+        action = fileDrop(node, { onDrop: vi.fn(), onOverlayChange: vi.fn() });
+        expect(drag('drop').defaultPrevented).toBe(true);
+    });
+
     test('a stray dragleave never drives the counter negative', () => {
         const onOverlayChange = vi.fn();
         action = fileDrop(node, { onDrop: vi.fn(), onOverlayChange });
