@@ -3,6 +3,7 @@ package assistant_test
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -122,7 +123,7 @@ func TestWriteWaitsForConfirmation(t *testing.T) {
 	if turn.Pending == nil || turn.Pending.Tool != "create_collection" {
 		t.Fatalf("want a pending write, got %+v", turn)
 	}
-	if _, err := sess.Ask(ctx, "autre chose"); err != assistant.ErrPending {
+	if _, err := sess.Ask(ctx, "autre chose"); !errors.Is(err, assistant.ErrPending) {
 		t.Fatalf("a sentence during a pending write: %v", err)
 	}
 	turn, err = sess.Confirm(ctx, true)

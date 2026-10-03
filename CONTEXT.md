@@ -671,6 +671,16 @@ as the second one. It is a setting the user turns on and points somewhere; blund
 guesses where somebody's matches live.
 _Avoid_: auto-import, sync folder (nothing is synchronised, and nothing is written back)
 
+**Assistant**:
+The in-app client of blunderDB's own MCP tools (ADR-0064): a sentence goes to a language
+model the user chose, the model calls the tools, and a search it builds opens as a new view
+named after the sentence. It reads freely; every write it prepares waits for the user's
+confirmation. What the tools return is the database's; what the model writes is *free text*,
+marked as such and never taken for a measurement. Off by default, and no model ships with
+blunderDB.
+_Avoid_: AI, chatbot (it answers with the tools or not at all), agent (it acts only through the
+tools, and writes only when confirmed)
+
 **Host capability**:
 A facility blunderDB consumes from the machine, OS or desktop it runs on but does **not**
 own — its presence and its shape are not guaranteed and vary from system to system.

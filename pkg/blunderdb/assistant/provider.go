@@ -119,7 +119,7 @@ func (p Provider) complete(ctx context.Context, msgs []Message, tools []toolDef)
 		if ctx.Err() != nil {
 			return Message{}, ctx.Err()
 		}
-		return Message{}, fmt.Errorf("%w: %v", ErrNoProvider, err)
+		return Message{}, fmt.Errorf("%w: %w", ErrNoProvider, err)
 	}
 	defer resp.Body.Close()
 	raw, err := io.ReadAll(io.LimitReader(resp.Body, 8<<20))

@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"errors"
 	"net"
 	"net/http"
 	"os"
@@ -68,7 +69,7 @@ func TestMCPHostIsOptInLocalAndRefusesCrossOrigin(t *testing.T) {
 
 func TestLiveEngineRefusesWithoutDatabase(t *testing.T) {
 	e := &liveEngine{db: database.NewDatabase()}
-	if _, err := e.handler(); err != errNoDatabase {
+	if _, err := e.handler(); !errors.Is(err, errNoDatabase) {
 		t.Fatalf("got %v", err)
 	}
 }
