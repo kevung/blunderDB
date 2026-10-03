@@ -320,6 +320,8 @@ export function ImportGnuBGMatch(arg1:string):Promise<number>;
 
 export function ImportGnuBGMatchFromText(arg1:string):Promise<number>;
 
+export function ImportOGXMMatch(arg1:string):Promise<number>;
+
 export function ImportReport(arg1:number):Promise<domain.ImportBatch>;
 
 export function ImportStudyQueue(arg1:number,arg2:number):Promise<Array<domain.StudyQueueEntry>>;

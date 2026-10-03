@@ -494,6 +494,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/imports.list — JSON."
         return self._call("/v1/imports.list", payload)
 
+    def imports_ogxm(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/imports.ogxm — hand-written handler — see openapi.yaml."
+        return self._call("/v1/imports.ogxm", payload)
+
     def imports_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/imports.position — hand-written handler — see openapi.yaml."
         return self._call("/v1/imports.position", payload)

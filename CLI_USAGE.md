@@ -99,7 +99,7 @@ Database Information:
 
 ## Import Command
 
-Import match files (.xg, .sgf, .mat, .txt, .bgf) or XGP position files (.xgp) into a database.
+Import match files (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position files (.xgp) into a database.
 
 ### Import Match
 
@@ -173,7 +173,7 @@ Import all match files from a directory at once:
 - `--format` - Output format: `text` (default, the summary table below) or `json`
 - `--fail-on-error` - Exit non-zero when any file failed to import, even if others succeeded
 
-Supported file types: `.xg`, `.xgp`, `.sgf`, `.mat`, `.txt`, `.bgf`.
+Supported file types: `.xg`, `.xgp`, `.sgf`, `.mat`, `.txt`, `.bgf`, `.ogxm`.
 
 A batch that finds no supported file, or where every file failed or was a
 duplicate (nothing at all got imported), is always an error. A duplicate is
@@ -2504,7 +2504,7 @@ Options:
     	How often --watch looks at the folder (default 10s, floor 2s)
 
 Import Types:
-  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf) or XGP position (.xgp)
+  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position (.xgp)
   position  Import positions from a text file
   batch     Batch import all match/position files from a directory
 

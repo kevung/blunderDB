@@ -46,6 +46,7 @@ var customContentTypes = map[string][]string{
 	"/v1/imports.xg":                      {ndjsonContentType},
 	"/v1/imports.gnubg":                   {ndjsonContentType},
 	"/v1/imports.bgf":                     {ndjsonContentType},
+	"/v1/imports.ogxm":                    {ndjsonContentType},
 	"/v1/imports.db":                      {ndjsonContentType},
 	"/v1/imports.position":                {ndjsonContentType},
 	"/v1/imports.cancel":                  {"application/json"},

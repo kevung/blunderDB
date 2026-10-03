@@ -20,6 +20,7 @@ const (
 	FormatXG       Format = "xg"
 	FormatGnuBG    Format = "gnubg"
 	FormatBGF      Format = "bgf"
+	FormatOGXM     Format = "ogxm"
 	FormatNativeDB Format = "db"
 	FormatPosition Format = "position"
 	// FormatSQLite serializes a tenant into a fresh, valid blunderDB SQLite file

@@ -200,7 +200,7 @@ Import d'un match
 ^^^^^^^^^^^^^^^^^
 
 Formats supportés: eXtreme Gammon (``.xg``, ``.xgp``), GNUbg (``.sgf``),
-Jellyfish (``.mat``, ``.txt``) et BGBlitz (``.bgf``).
+Jellyfish (``.mat``, ``.txt``), BGBlitz (``.bgf``) et HedgeHog (``.ogxm``).
 
 .. code-block:: bash
 

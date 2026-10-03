@@ -614,6 +614,10 @@ export function ImportGnuBGMatchFromText(arg1) {
   return window['go']['database']['Database']['ImportGnuBGMatchFromText'](arg1);
 }
 
+export function ImportOGXMMatch(arg1) {
+  return window['go']['database']['Database']['ImportOGXMMatch'](arg1);
+}
+
 export function ImportReport(arg1) {
   return window['go']['database']['Database']['ImportReport'](arg1);
 }
