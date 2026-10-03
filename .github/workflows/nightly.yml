@@ -15,7 +15,7 @@ name: Nightly
 #     own — read it before adding a third schedule for the same package.
 #     The go-against-neon benchstat stays there too, not in the `benchstat`
 #     job below: it needs a real arm64 runner (macOS, up to 25 minutes a
-#     week) and qualifies the NEON identity sweep it runs beside; it has no
+#     week) and sits beside the NEON identity sweep it measures; it has no
 #     threshold and no baseline file.
 #   - the Trivy image scan lives in build.yml's docker-serve job, on every
 #     push (non-blocking) — E.7, #223: an image vulnerability is worth

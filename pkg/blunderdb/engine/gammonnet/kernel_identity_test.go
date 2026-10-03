@@ -461,13 +461,4 @@ func TestResolveKernelRefusesWhatItCannotProvide(t *testing.T) {
 	if _, err := resolveKernel("neon", []denseKernel{fake}); err == nil {
 		t.Fatal("a kernel this build does not contain was accepted")
 	}
-
-	// An opt-in kernel is never the default, but is honoured when named.
-	unproven := denseKernel{name: "neon", dense: denseGo, optIn: true}
-	if k, err := resolveKernel("", []denseKernel{unproven}); err != nil || k.name != goKernelName {
-		t.Fatalf("empty selector must skip an opt-in kernel: got %q, %v", k.name, err)
-	}
-	if k, err := resolveKernel("neon", []denseKernel{unproven}); err != nil || k.name != "neon" {
-		t.Fatalf("an opt-in kernel named by the selector: got %q, %v", k.name, err)
-	}
 }

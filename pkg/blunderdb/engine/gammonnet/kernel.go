@@ -49,10 +49,6 @@ type denseFunc func(w, bias, act, out []float32, in, outDim int, relu bool)
 type denseKernel struct {
 	name  string
 	dense denseFunc
-	// optIn keeps a kernel out of the default choice: it runs only when the
-	// selector names it, while its bit-identity is still to be proved on the
-	// hardware it targets.
-	optIn bool
 }
 
 var goKernel = denseKernel{name: goKernelName, dense: denseGo}
@@ -62,19 +58,16 @@ var resolveKernelOnce = sync.OnceValues(func() (denseKernel, error) {
 })
 
 // resolveKernel picks the arithmetic path. Empty request means "the fastest
-// proven one this machine actually provides"; a named request is honoured or
+// one this machine actually provides"; a named request is honoured or
 // refused, never approximated.
 func resolveKernel(requested string, accelerated []denseKernel) (denseKernel, error) {
 	available := append(append([]denseKernel{}, accelerated...), goKernel)
 
 	requested = strings.TrimSpace(strings.ToLower(requested))
 	if requested == "" {
-		for _, k := range accelerated {
-			if !k.optIn {
-				return k, nil
-			}
+		if len(accelerated) > 0 {
+			return accelerated[0], nil
 		}
-		// Every accelerated path is opt-in or there is none: the reference.
 		return goKernel, nil
 	}
 	for _, k := range available {

@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"golang.org/x/sys/cpu"
 )
 
 // The NEON kernel is read back because a fused multiply-add is a different
@@ -51,18 +53,20 @@ func TestNEONKernelHasNoFMA(t *testing.T) {
 	}
 }
 
-// TestNEONIsOptInUntilProven: the default path on arm64 stays the pure-Go
-// one until the identity test has passed on real Apple Silicon; the NEON
-// kernel is reachable only by naming it.
-func TestNEONIsOptInUntilProven(t *testing.T) {
+// TestNEONIsTheDefaultOnArm64: with ASIMD present, an empty selector picks
+// the NEON kernel; the pure-Go fallback stays reachable by name.
+func TestNEONIsTheDefaultOnArm64(t *testing.T) {
 	acc := acceleratedKernels()
-	if len(acc) == 0 {
+	if !cpu.ARM64.HasASIMD {
+		if len(acc) != 0 {
+			t.Fatalf("no ASIMD, yet accelerated kernels %v", acc)
+		}
 		t.Skip("no ASIMD on this CPU")
 	}
-	if k, err := resolveKernel("", acc); err != nil || k.name != goKernelName {
-		t.Fatalf("default kernel on arm64: got %q, %v; want %q", k.name, err, goKernelName)
+	if k, err := resolveKernel("", acc); err != nil || k.name != "neon" {
+		t.Fatalf("default kernel on arm64 with ASIMD: got %q, %v; want neon", k.name, err)
 	}
-	if k, err := resolveKernel("neon", acc); err != nil || k.name != "neon" {
-		t.Fatalf("explicit neon: got %q, %v", k.name, err)
+	if k, err := resolveKernel("go", acc); err != nil || k.name != goKernelName {
+		t.Fatalf("explicit go: got %q, %v", k.name, err)
 	}
 }
