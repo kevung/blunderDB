@@ -83,6 +83,29 @@ func checkPositionIsolation(t *testing.T, ctx context.Context, s storage.Storage
 	if _, found, err := s.Positions().IndexOf(ctx, b, id); err != nil || found {
 		t.Errorf("IndexOf(%s, id from %s): found=%v, %v; want not found", b, a, found, err)
 	}
+
+	// A search browsed by windows is scoped the same way, with and without a
+	// Go phase and in a sort ranked on its key; each search finds id in a.
+	if _, err := s.Comments().Add(ctx, a, id, "isolation"); err != nil {
+		t.Fatalf("Add comment(%s): %v", a, err)
+	}
+	if err := s.Analyses().Save(ctx, a, id, &domain.PositionAnalysis{}); err != nil {
+		t.Fatalf("Save analysis(%s): %v", a, err)
+	}
+	for _, f := range []domain.SearchFilters{{}, {Sort: "error"}, {SearchText: "isolation"}} {
+		if _, found, err := s.Search().IndexOf(ctx, a, f, id); err != nil || !found {
+			t.Fatalf("Search.IndexOf(%s, own id, %+v): found=%v, %v; want found", a, f, found, err)
+		}
+		if ids, err := s.Search().FindIDs(ctx, b, f, storage.ListOpts{}); err != nil || len(ids) != 0 {
+			t.Errorf("Search.FindIDs(%s, %+v): got %v, %v; want none", b, f, ids, err)
+		}
+		if c, err := s.Search().Count(ctx, b, f); err != nil || c != 0 {
+			t.Errorf("Search.Count(%s, %+v): got %d, %v; want 0", b, f, c, err)
+		}
+		if _, found, err := s.Search().IndexOf(ctx, b, f, id); err != nil || found {
+			t.Errorf("Search.IndexOf(%s, id from %s, %+v): found=%v, %v; want not found", b, a, f, found, err)
+		}
+	}
 }
 
 func checkAnalysisIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {

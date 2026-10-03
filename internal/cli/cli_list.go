@@ -105,6 +105,12 @@ func (cli *CLI) runList(args []string) error {
 		return fmt.Errorf("missing required flag: --type")
 	}
 
+	// --offset windows the text listing of positions only; accepted elsewhere
+	// it would be ignored and the user handed a list from the start.
+	if flagSet(listCmd, "offset") && (strings.ToLower(*listType) != "positions" || strings.ToLower(*statsFormat) == "csv") {
+		return fmt.Errorf("--offset applies to --type positions (text output) only")
+	}
+
 	// Initialize database
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
@@ -658,14 +664,20 @@ func orDash(s string) string {
 // user typed a bound. The default of 10 suits a terminal; silently truncating
 // a file export would go unnoticed.
 func exportLimit(fs *flag.FlagSet, limit int) int {
-	explicit := false
-	fs.Visit(func(f *flag.Flag) {
-		if f.Name == "limit" {
-			explicit = true
-		}
-	})
-	if !explicit {
+	if !flagSet(fs, "limit") {
 		return 0
 	}
 	return limit
+}
+
+// flagSet reports whether name was given on the command line, as opposed to
+// holding its default.
+func flagSet(fs *flag.FlagSet, name string) bool {
+	set := false
+	fs.Visit(func(f *flag.Flag) {
+		if f.Name == name {
+			set = true
+		}
+	})
+	return set
 }

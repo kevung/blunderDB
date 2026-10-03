@@ -125,6 +125,7 @@ var databaseParity = map[string]parityEntry{
 	"AnalyzeMatchWithGammonNet":         {CLI: "analyze --match", Why: whyMatchScoped},
 	"AnalyzeMissingWithGammonNet":       {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing"},
 	"AnalyzeStaleGammonNet":             {CLI: "analyze --stale", Server: "/v1/gammonnet.sweepStale"},
+	"CancelSearch":                      {Why: "Escape on the GUI's browsed search, which holds no request of its own to drop; a CLI search is a foreground process stopped by Ctrl-C, and a daemon search stops when its client drops the request, whose context the handler threads into the scan"},
 	"CancelImport":                      {Server: "/v1/imports.cancel", Why: "the CLI import is a foreground process: Ctrl-C is its cancel"},
 	"CheckDatabaseVersion":              {CLI: "info", Server: "/v1/metadata.version"},
 	"CheckSchema":                       {CLI: "verify", Why: "schema drift is what the desktop open's EnsureSchema could not add to a user's SQLite file (issue #177); the daemon's SQLite backend runs the same EnsureSchema on open, and PostgreSQL's schema comes from its versioned migrations alone — its audit is the operator's database tooling"},

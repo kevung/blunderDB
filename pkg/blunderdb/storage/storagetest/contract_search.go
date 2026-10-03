@@ -11,6 +11,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 func testSearchFilterByDecisionType(t *testing.T, s storage.Storage) {
@@ -547,35 +548,77 @@ func testSearchPagination(t *testing.T, s storage.Storage) {
 
 // testSearchWindowsAgree checks that FindIDs, Count and IndexOf describe the
 // same list Find returns, with and without a Go-side predicate, in id order
-// and in a sort that cannot resume on the id: a window of survivors is a
-// slice of the whole result, never a short page.
+// and in sorts that cannot resume on the id, whose keys tie and are NULL for
+// a position without analysis: a window of survivors is a slice of the whole
+// result, never a short page. The Go-filtered scans run once more in chunks
+// of two rows, so resuming after the last id and by OFFSET is exercised on
+// every backend, not only on a library larger than a chunk.
 func testSearchWindowsAgree(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
+	kept := map[int64]bool{}
 	for n := 1; n <= 9; n++ {
 		p := provenancePos(n)
 		id, err := s.Positions().Save(ctx, "", &p)
 		if err != nil {
 			t.Fatalf("Save %d: %v", n, err)
 		}
+		if n%3 != 0 {
+			played := "13/11 24/23"
+			equityError := float64(n%3) * 0.02
+			a := domain.PositionAnalysis{
+				PlayedMoves: []string{played},
+				CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+					{Move: "8/6 6/4", Equity: 0.5, PlayerWinChance: float64(n%4) * 10},
+					{Move: played, Equity: 0.5 - equityError, EquityError: &equityError},
+				}},
+			}
+			if err := s.Analyses().Save(ctx, "", id, &a); err != nil {
+				t.Fatalf("Save analysis %d: %v", n, err)
+			}
+		}
 		if n%2 == 1 {
 			if _, err := s.Comments().Add(ctx, "", id, "keep this one"); err != nil {
 				t.Fatalf("Add comment on %d: %v", id, err)
 			}
+			kept[id] = true
 		}
 	}
 	outsider := searchIDs(t, s, domain.SearchFilters{})[1]
 
-	cases := map[string]domain.SearchFilters{
-		"sql only":           {},
-		"sql only, by error": {Sort: "error"},
-		"go phase":           {SearchText: "keep"},
-		"go phase, by error": {SearchText: "keep", Sort: "error"},
+	type searchCase struct {
+		f     domain.SearchFilters
+		chunk int // 0 keeps the backend's chunk size
 	}
-	for name, f := range cases {
+	cases := map[string]searchCase{}
+	for _, order := range []string{"", "error", "winrate", "close"} {
+		by := ", by " + order
+		if order == "" {
+			by = ", by id"
+		}
+		cases["sql only"+by] = searchCase{f: domain.SearchFilters{Sort: order}}
+		cases["go phase"+by] = searchCase{f: domain.SearchFilters{SearchText: "keep", Sort: order}}
+		cases["go phase in chunks"+by] = searchCase{f: domain.SearchFilters{SearchText: "keep", Sort: order}, chunk: 2}
+	}
+	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
-			want := searchIDs(t, s, f)
+			f := tc.f
+			// The SQL-only order is the reference: the Go phase only drops
+			// rows from it, so its survivors are that order filtered.
+			want := searchIDs(t, s, domain.SearchFilters{Sort: f.Sort})
+			if f.SearchText != "" {
+				var survivors []int64
+				for _, id := range want {
+					if kept[id] {
+						survivors = append(survivors, id)
+					}
+				}
+				want = survivors
+			}
 			if len(want) == 0 {
 				t.Fatalf("no result to check against")
+			}
+			if tc.chunk > 0 {
+				defer sqlshared.SetSearchChunk(tc.chunk)()
 			}
 			all, err := s.Search().FindIDs(ctx, "", f, storage.ListOpts{})
 			if err != nil {

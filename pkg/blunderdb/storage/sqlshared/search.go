@@ -2,12 +2,14 @@ package sqlshared
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"iter"
 	"math"
 	"sort"
 	"strconv"
 	"strings"
+	"sync/atomic"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -411,8 +413,20 @@ func (s *SearchStore) findWith(ctx context.Context, f domain.SearchFilters, wc s
 // holds in memory at most: the scan's footprint is bounded by it, not by the
 // size of the library. The first round reads searchFirstChunk and each next
 // one doubles, so a first page whose rows mostly survive does not decode
-// thousands of blobs to fill a hundred lines.
-var searchChunk = 4096
+// thousands of blobs to fill a hundred lines. Atomic so a test can shrink it
+// (SetSearchChunk) while other searches run.
+var searchChunk atomic.Int64
+
+func init() { searchChunk.Store(4096) }
+
+// SetSearchChunk sets the largest chunk of a Go-filtered scan and returns a
+// func restoring the previous one. For tests only: it lets a handful of
+// positions span several chunks, so the resumption (after the last id, or by
+// OFFSET) is exercised on every backend.
+func SetSearchChunk(n int) (restore func()) {
+	old := searchChunk.Swap(int64(n))
+	return func() { searchChunk.Store(old) }
+}
 
 const searchFirstChunk = 256
 
@@ -463,7 +477,8 @@ func (s *SearchStore) scan(ctx context.Context, f domain.SearchFilters, wc searc
 	}
 
 	keyset := keysetOrder(f.Sort)
-	chunk := min(searchFirstChunk, searchChunk)
+	maxChunk := int(searchChunk.Load())
+	chunk := min(searchFirstChunk, maxChunk)
 	skip, taken := opts.Offset, 0
 	var after int64
 	resumed := false
@@ -501,7 +516,7 @@ func (s *SearchStore) scan(ctx context.Context, f domain.SearchFilters, wc searc
 		}
 		after, resumed = lastID, true
 		sqlOffset += n
-		chunk = min(chunk*2, searchChunk)
+		chunk = min(chunk*2, maxChunk)
 	}
 }
 
@@ -619,20 +634,16 @@ func (s *SearchStore) countWhere(ctx context.Context, wc searchWhereClause, extr
 }
 
 // IndexOf returns the rank of id among the survivors of the search, in their
-// order; found is false when the search does not find id. In id order with
-// no Go phase it is two COUNTs; otherwise the scan walks to id.
+// order; found is false when the search does not find id. With no Go phase it
+// is COUNTs: the rows sorted before id, compared on the sort key then the id.
+// Otherwise the scan walks to id.
 func (s *SearchStore) IndexOf(ctx context.Context, scope string, f domain.SearchFilters, id int64) (int, bool, error) {
 	wc, err := s.buildWhere(ctx, scope, f)
 	if err != nil {
 		return 0, false, err
 	}
-	if !wc.goPhase(f) && keysetOrder(f.Sort) {
-		hit, err := s.countWhere(ctx, wc, " AND p.id = ?", []any{id})
-		if err != nil || hit == 0 {
-			return 0, false, err
-		}
-		before, err := s.countWhere(ctx, wc, " AND p.id < ?", []any{id})
-		return before, err == nil, err
+	if !wc.goPhase(f) {
+		return s.indexOfInSQL(ctx, wc, f.Sort, id)
 	}
 	index, found := 0, false
 	err = s.scan(ctx, f, wc, storage.ListOpts{}, func(pos domain.Position) bool {
@@ -647,6 +658,54 @@ func (s *SearchStore) IndexOf(ctx context.Context, scope string, f domain.Search
 		return 0, false, err
 	}
 	return index, true, nil
+}
+
+// sortKey returns the column a search sort orders on before its p.id
+// tiebreak, descending with NULLs last; "" for the id order. It is read off
+// domain.SearchOrderByClause so the rank cannot drift from the ORDER BY.
+func sortKey(order string) (col string, ok bool) {
+	clause := domain.SearchOrderByClause(order)
+	if clause == "p.id" {
+		return "", true
+	}
+	return strings.CutSuffix(clause, " DESC NULLS LAST, p.id")
+}
+
+// indexOfInSQL ranks id without reading a row: one query for id's sort key
+// (none means the search does not find it), one COUNT of the rows ordered
+// before it under "key DESC NULLS LAST, p.id".
+func (s *SearchStore) indexOfInSQL(ctx context.Context, wc searchWhereClause, order string, id int64) (int, bool, error) {
+	col, ok := sortKey(order)
+	if !ok {
+		return 0, false, fmt.Errorf("search: no rank for sort %q", order)
+	}
+	if col == "" {
+		hit, err := s.countWhere(ctx, wc, " AND p.id = ?", []any{id})
+		if err != nil || hit == 0 {
+			return 0, false, err
+		}
+		before, err := s.countWhere(ctx, wc, " AND p.id < ?", []any{id})
+		return before, err == nil, err
+	}
+
+	query := `SELECT ` + col + ` FROM position p
+	LEFT JOIN analysis a ON a.position_id = p.id
+	WHERE ` + wc.where + ` AND p.id = ?`
+	var key any
+	switch err := s.DB.QueryRow(ctx, query, append(append([]any{}, wc.args...), id)...).Scan(&key); {
+	case errors.Is(err, ErrNoRows):
+		return 0, false, nil
+	case err != nil:
+		return 0, false, errf(s.DB, "search rank key", err)
+	}
+	// NULLs sort last: before a NULL key come every keyed row and the NULL
+	// rows of a smaller id; before a key k, the larger keys and k's smaller ids.
+	extra, extraArgs := " AND ("+col+" IS NOT NULL OR p.id < ?)", []any{id}
+	if key != nil {
+		extra, extraArgs = " AND ("+col+" > ? OR ("+col+" = ? AND p.id < ?))", []any{key, key, id}
+	}
+	before, err := s.countWhere(ctx, wc, extra, extraArgs)
+	return before, err == nil, err
 }
 
 // scannedRow is one row of buildWhere's query, decoded into the shape

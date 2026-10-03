@@ -148,9 +148,10 @@ func (d *Database) CancelImport() {
 	}
 }
 
-// beginSearch gives a search a context that CancelSearch can cancel from
-// another goroutine, while the search holds d.mu. A page of ids and its count
-// run side by side, so every search in flight is registered, not only the last.
+// beginSearch gives a window, the count or a rank of the browsed search a
+// context that CancelSearch can cancel from another goroutine, while it holds
+// d.mu. A page of ids and its count run side by side, so every such call in
+// flight is registered, not only the last.
 // The returned done func must be deferred.
 func (d *Database) beginSearch() (context.Context, func()) {
 	ctx, cancel := context.WithCancel(context.Background())
@@ -170,9 +171,11 @@ func (d *Database) beginSearch() (context.Context, func()) {
 	}
 }
 
-// CancelSearch aborts every search in flight started through the Database
-// wrapper; each returns an error wrapping context.Canceled. It is bound to the
-// Wails frontend. No-op when idle.
+// CancelSearch aborts the browsed search in flight — SearchPositionIDs,
+// CountPositionsByFilters, IndexOfPositionByFilters — each returning an error
+// wrapping context.Canceled. A whole id list (LoadPositionIDsByFilters) runs
+// on: it serves a deck or a session, not the list Escape or a new search
+// replaces. It is bound to the Wails frontend. No-op when idle.
 func (d *Database) CancelSearch() {
 	d.cancelMu.Lock()
 	cancels := make([]context.CancelFunc, 0, len(d.searchCancels))

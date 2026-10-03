@@ -116,7 +116,6 @@ export function CountPositions():Promise<number>;
 
 export function CountPositionsByFilters(arg1:domain.SearchFilters):Promise<number>;
 
-export function CountPositionsByFiltersCtx(arg1:context.Context,arg2:domain.SearchFilters):Promise<number>;
 
 export function CountPositionsWithForeignAnalysis():Promise<number>;
 
@@ -340,7 +339,6 @@ export function IndexOfPosition(arg1:number):Promise<number>;
 
 export function IndexOfPositionByFilters(arg1:domain.SearchFilters,arg2:number):Promise<number>;
 
-export function IndexOfPositionByFiltersCtx(arg1:context.Context,arg2:domain.SearchFilters,arg3:number):Promise<number>;
 
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
@@ -386,7 +384,6 @@ export function LoadPositionsByFiltersCore(arg1:domain.SearchFilters,arg2:storag
 
 export function LoadPositionsByFiltersCoreCtx(arg1:context.Context,arg2:domain.SearchFilters,arg3:storage.ListOpts):Promise<Array<domain.Position>>;
 
-export function LoadPositionsByFiltersCtx(arg1:context.Context,arg2:domain.SearchFilters):Promise<Array<domain.Position>>;
 
 export function LoadPositionsByIDs(arg1:Array<number>):Promise<Array<domain.Position>>;
 
@@ -510,7 +507,6 @@ export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
 
 export function SearchPositionIDs(arg1:domain.SearchFilters,arg2:number,arg3:number):Promise<Array<number>>;
 
-export function SearchPositionIDsCtx(arg1:context.Context,arg2:domain.SearchFilters,arg3:number,arg4:number):Promise<Array<number>>;
 
 export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
 

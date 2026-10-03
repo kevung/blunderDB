@@ -5,7 +5,7 @@ import {
     UpdatePosition,
     SaveAnalysis,
     LoadAnalysis,
-    LoadPositionIDsByFilters,
+    SearchPositionIDs,
     RankPositionIDsByFilters,
     ComputeEPCFromPosition,
     SaveLastVisitedPosition,
@@ -619,7 +619,8 @@ export async function loadPositionsByFilters({
                 });
             }
         } else if (restrictToPositionIDs) {
-            ids = await LoadPositionIDsByFilters(payload);
+            // A window to the end, not LoadPositionIDsByFilters: CancelSearch stops it.
+            ids = (await SearchPositionIDs(payload, 0, 0)) || [];
             if (stale()) return;
             rankedDistancesStore.set(new Map());
             rankedTargetStore.set(0);

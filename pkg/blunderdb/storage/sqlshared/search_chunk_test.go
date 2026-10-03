@@ -2,6 +2,7 @@ package sqlshared_test
 
 import (
 	"context"
+	"database/sql"
 	"reflect"
 	"testing"
 
@@ -54,6 +55,43 @@ func TestSearchScanAcrossChunks(t *testing.T) {
 		}
 		if at, ok, err := s.Search().IndexOf(ctx, "", f, kept[13]); err != nil || !ok || at != 13 {
 			t.Errorf("sort %q: IndexOf = %d, %v, %v; want 13", sort, at, ok, err)
+		}
+	}
+}
+
+// Ranking a position in a sorted search without a Go phase is COUNTs on the
+// sort key: no row of the result is read. A row that cannot be decoded proves
+// it — a walk over the sorted result would fail on it.
+func TestSearchIndexOfSortedReadsNoRow(t *testing.T) {
+	ctx := context.Background()
+	db, err := sql.Open("sqlite", sqlite.DSN(":memory:"))
+	if err != nil {
+		t.Fatalf("sql.Open: %v", err)
+	}
+	defer db.Close()
+	sqlite.ConfigurePool(db, ":memory:")
+	if err := sqlite.Bootstrap(ctx, db); err != nil {
+		t.Fatalf("Bootstrap: %v", err)
+	}
+	s := sqlite.New(db)
+	var ids []int64
+	for n := 1; n <= 4; n++ {
+		p := domain.InitializePosition()
+		p.DecisionType = domain.CheckerAction
+		p.Score = [2]int{n, 0}
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save %d: %v", n, err)
+		}
+		ids = append(ids, id)
+	}
+	if _, err := db.ExecContext(ctx, `UPDATE position SET decision_type = 'undecodable' WHERE id = ?`, ids[0]); err != nil {
+		t.Fatalf("corrupt row: %v", err)
+	}
+	for _, order := range []string{"error", "winrate", "close"} {
+		at, ok, err := s.Search().IndexOf(ctx, "", domain.SearchFilters{Sort: order}, ids[2])
+		if err != nil || !ok || at != 2 {
+			t.Errorf("sort %q: IndexOf = %d, %v, %v; want 2", order, at, ok, err)
 		}
 	}
 }

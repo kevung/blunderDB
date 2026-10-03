@@ -56,7 +56,7 @@ vi.mock('../services/importService.js', () => ({
     pastePosition: vi.fn()
 }));
 
-import { LoadPositionIDsByFilters, CountPositionsByFilters, SearchPositionIDs, IndexOfPositionByFilters } from '../../wailsjs/go/database/Database.js';
+import { CountPositionsByFilters, SearchPositionIDs, IndexOfPositionByFilters } from '../../wailsjs/go/database/Database.js';
 import { processCommand, initCommandProcessor } from '../commandProcessor.js';
 import { translate, resolveStatusMessage } from '../i18n';
 import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore.js';
@@ -290,6 +290,16 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
      * @param {string} command
      * @param {number[]} resultIds
      */
+    /**
+     * A sub-search reads its whole result as one window, SearchPositionIDs(payload, 0, 0), which
+     * CancelSearch stops; the displayed list it searches within keeps answering its own windows.
+     * @param {number[]} resultIds
+     * @param {number[]} [displayedIds]
+     */
+    function subSearchAnswers(resultIds, displayedIds = []) {
+        vi.mocked(SearchPositionIDs).mockImplementation(async (p, offset, limit) => (p?.restrictToPositionIDs ? resultIds : displayedIds.slice(offset, limit > 0 ? offset + limit : undefined)));
+    }
+
     async function subSearch(command, resultIds) {
         // A sub-search asks for the ids of its results; a plain search is browsed by windows.
         const plain = !command.startsWith('ss');
@@ -298,7 +308,7 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
             vi.mocked(SearchPositionIDs).mockImplementation(async (_p, offset, limit) => resultIds.slice(offset, limit > 0 ? offset + limit : undefined));
             vi.mocked(IndexOfPositionByFilters).mockImplementation(async (_p, id) => resultIds.indexOf(id));
         } else {
-            vi.mocked(LoadPositionIDsByFilters).mockResolvedValueOnce(resultIds);
+            subSearchAnswers(resultIds);
         }
         processCommand(command);
         await flush();
@@ -374,10 +384,10 @@ describe('quitter les résultats d’une sous-recherche ramène au mode d’orig
     test('dans les résultats d’une recherche parcourus par fenêtres, `ss` les lit en entier et les envoie', async () => {
         setLibrary();
         await subSearch('s p<100', [5, 6, 7]);
-        vi.mocked(LoadPositionIDsByFilters).mockResolvedValueOnce([6]);
+        subSearchAnswers([6], [5, 6, 7]);
         processCommand('ss E>80');
         await flush();
-        expect(vi.mocked(LoadPositionIDsByFilters).mock.calls.at(-1)?.[0].restrictToPositionIDs).toBe('5,6,7');
+        expect(vi.mocked(SearchPositionIDs).mock.calls.at(-1)?.[0].restrictToPositionIDs).toBe('5,6,7');
         expect(get(positionsStore).ids).toEqual([6]);
     });
 

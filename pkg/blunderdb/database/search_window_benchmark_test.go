@@ -11,9 +11,10 @@ import (
 
 // The search-window benchmarks run on a real-sized base named by
 // BLUNDERDB_SEARCH_DB (a copy: opening it may migrate it), and are skipped
-// without one. Each filter is measured the way the GUI used to read a result
-// (every id, through Find) and the way it reads one now: the first window,
-// the count, the rank of the last id. Figures: tasks/bench/search-windows.md.
+// without one. Each filter is measured two ways, to show what a window saves:
+// the whole result (every id, through Find) and what the GUI asks to show it —
+// the first window, the count, the rank of the last id. Figures:
+// tasks/bench/search-windows.md.
 var (
 	searchDBOnce sync.Once
 	searchDB     *Database
