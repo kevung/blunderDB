@@ -914,7 +914,7 @@ export default {
 <p>Per far conoscere una base, la categoria <em>Show and tell</em> delle <code>discussioni del deposito &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ fa da elenco: è una lista tenuta da chi pubblica, non un servizio reso da blunderDB. Annunciarne una lì richiede il link, i quattro campi qui sopra e l'impronta.</p>
 `,
     shortcuts: `
-<p>I suggerimenti della barra degli strumenti ricordano il tasto di ogni pulsante con il nome che ha sulla tastiera della lingua dell'interfaccia: <em>Sinistra</em>, <em>Canc</em>, <em>Pag su</em>, <em>Pag giù</em>, <em>Maiusc</em>.</p>
+<p>I suggerimenti della barra degli strumenti ricordano il tasto di ogni pulsante con il nome che ha sulla tastiera della lingua dell'interfaccia: <em>Sinistra</em>, <em>Canc</em>, <em>Pag su</em>, <em>Pag giù</em>, <em>Maiusc</em>. Le tabelle seguenti e la finestra di aiuto usano gli stessi nomi.</p>
 <h3>Database</h3>
 <table>
 <thead>
@@ -1023,7 +1023,7 @@ export default {
 <td>Prima posizione / Partita precedente (navigazione match).</td>
 </tr>
 <tr>
-<td>PageUp</td>
+<td>Pag su</td>
 <td>Torna indietro di una pagina (cento posizioni per impostazione predefinita, regolabile in Impostazioni &gt; Interfaccia, fino al 10 % dell'elenco; si ferma all'inizio dell'elenco); in un match, partita precedente.</td>
 </tr>
 <tr>
@@ -1043,12 +1043,12 @@ export default {
 <td>Mossa successiva (quando una mossa è selezionata nell'analisi).</td>
 </tr>
 <tr>
-<td>End, l</td>
+<td>Fine, l</td>
 <td>Ultima posizione / Partita successiva (navigazione match).</td>
 </tr>
 <tr>
-<td>PageDown</td>
-<td>Avanza di una pagina (stesso passo di PageUp; si ferma alla fine dell'elenco); in un match, partita successiva.</td>
+<td>Pag giù</td>
+<td>Avanza di una pagina (stesso passo di <em>Pag su</em>; si ferma alla fine dell'elenco); in un match, partita successiva.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1216,11 +1216,11 @@ export default {
 <td>Chiudi la vista corrente.</td>
 </tr>
 <tr>
-<td>CTRL-PageUp, MAIUSC-J</td>
+<td>CTRL-Pag su, MAIUSC-J</td>
 <td>Vista precedente.</td>
 </tr>
 <tr>
-<td>CTRL-PageDown, MAIUSC-K</td>
+<td>CTRL-Pag giù, MAIUSC-K</td>
 <td>Vista successiva.</td>
 </tr>
 <tr>
@@ -1750,7 +1750,7 @@ export default {
 <td>Prima, ultima miniatura della pagina.</td>
 </tr>
 <tr>
-<td>PageUp, PageDown</td>
+<td>Pag su, Pag giù</td>
 <td>Pagina precedente, pagina successiva.</td>
 </tr>
 <tr>
@@ -1793,11 +1793,11 @@ export default {
 <td>Pagina successiva.</td>
 </tr>
 <tr>
-<td>PageUp</td>
+<td>Pag su</td>
 <td>Inizio del contenuto.</td>
 </tr>
 <tr>
-<td>PageDown</td>
+<td>Pag giù</td>
 <td>Fine del contenuto.</td>
 </tr>
 <tr>

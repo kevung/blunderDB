@@ -914,7 +914,7 @@ export default {
 <p>Para dar a conocer una base, la categoría <em>Show and tell</em> de las <code>discusiones del repositorio &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ sirve de directorio: es una lista mantenida por quienes publican, no un servicio prestado por blunderDB. Anunciar una allí requiere el enlace, los cuatro campos anteriores y la huella.</p>
 `,
     shortcuts: `
-<p>Las ayudas emergentes de la barra de herramientas recuerdan la tecla de cada botón con el nombre que lleva en el teclado del idioma de la interfaz: <em>Izquierda</em>, <em>Supr</em>, <em>Re Pág</em>, <em>Av Pág</em>, <em>Mayús</em>.</p>
+<p>Las ayudas emergentes de la barra de herramientas recuerdan la tecla de cada botón con el nombre que lleva en el teclado del idioma de la interfaz: <em>Izquierda</em>, <em>Supr</em>, <em>Re Pág</em>, <em>Av Pág</em>, <em>Mayús</em>. Las tablas siguientes y la ventana de ayuda emplean los mismos nombres.</p>
 <h3>Base de datos</h3>
 <table>
 <thead>
@@ -1019,11 +1019,11 @@ export default {
 <td>Recargar todas las posiciones de la base de datos.</td>
 </tr>
 <tr>
-<td>Home, h</td>
+<td>Inicio, h</td>
 <td>Primera posición / Partida anterior (navegación de partida).</td>
 </tr>
 <tr>
-<td>AvPág</td>
+<td>Re Pág</td>
 <td>Retrocede una página (cien posiciones por defecto, ajustable en Configuración &gt; Interfaz, hasta el 10 % de la lista; se detiene al principio de la lista); en un match, partida anterior.</td>
 </tr>
 <tr>
@@ -1043,12 +1043,12 @@ export default {
 <td>Jugada siguiente (cuando hay una jugada seleccionada en el análisis).</td>
 </tr>
 <tr>
-<td>End, l</td>
+<td>Fin, l</td>
 <td>Última posición / Partida siguiente (navegación de partida).</td>
 </tr>
 <tr>
-<td>RePág</td>
-<td>Avanza una página (mismo paso que PageUp; se detiene al final de la lista); en un match, partida siguiente.</td>
+<td>Av Pág</td>
+<td>Avanza una página (mismo paso que <em>Re Pág</em>; se detiene al final de la lista); en un match, partida siguiente.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1216,11 +1216,11 @@ export default {
 <td>Cerrar la vista actual.</td>
 </tr>
 <tr>
-<td>CTRL-AvPág, MAYÚS-J</td>
+<td>CTRL-Re Pág, MAYÚS-J</td>
 <td>Vista anterior.</td>
 </tr>
 <tr>
-<td>CTRL-RePág, MAYÚS-K</td>
+<td>CTRL-Av Pág, MAYÚS-K</td>
 <td>Vista siguiente.</td>
 </tr>
 <tr>
@@ -1750,7 +1750,7 @@ export default {
 <td>Primera, última miniatura de la página.</td>
 </tr>
 <tr>
-<td>RePág, AvPág</td>
+<td>Re Pág, Av Pág</td>
 <td>Página anterior, página siguiente.</td>
 </tr>
 <tr>
@@ -1793,11 +1793,11 @@ export default {
 <td>Página siguiente.</td>
 </tr>
 <tr>
-<td>AvPág</td>
+<td>Re Pág</td>
 <td>Principio del contenido.</td>
 </tr>
 <tr>
-<td>RePág</td>
+<td>Av Pág</td>
 <td>Final del contenido.</td>
 </tr>
 <tr>

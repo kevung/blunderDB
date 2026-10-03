@@ -914,7 +914,7 @@ export default {
 <p>To make a database known, the <em>Show and tell</em> category of the <code>repository discussions &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ serves as a directory: it is a list kept by those who publish, not a service blunderDB renders. Announcing one there takes the link, the four fields above and the fingerprint.</p>
 `,
     shortcuts: `
-<p>The toolbar tooltips recall each button's key under the name it carries on the keyboard of the interface language: <em>Left</em>, <em>Del</em>, <em>PageUp</em>, <em>PageDown</em>, <em>Shift</em>.</p>
+<p>The toolbar tooltips recall each button's key under the name it carries on the keyboard of the interface language: <em>Left</em>, <em>Del</em>, <em>PageUp</em>, <em>PageDown</em>, <em>Shift</em>. The tables below and the help window use the same names.</p>
 <h3>Database</h3>
 <table>
 <thead>
@@ -1048,7 +1048,7 @@ export default {
 </tr>
 <tr>
 <td>PageDown</td>
-<td>Goes forward one page (same step as PageUp; stops at the end of the list); in a match, next game.</td>
+<td>Goes forward one page (same step as <em>PageUp</em>; stops at the end of the list); in a match, next game.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1185,7 +1185,7 @@ export default {
 <td>Take back the last decision of a directed tournament (outside an input field, where it undoes the keystroke).</td>
 </tr>
 <tr>
-<td>PAGE UP / PAGE DOWN, HOME / END</td>
+<td>PAGEUP / PAGEDOWN, HOME / END</td>
 <td>Below the page of a directed tournament: scroll the page, without stepping through the board it hides.</td>
 </tr>
 <tr>

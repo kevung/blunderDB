@@ -914,7 +914,7 @@ export default {
 <p>データベースを知ってもらうには、<code>リポジトリのディスカッション &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ の <em>Show and tell</em> カテゴリが目録の役を果たす：公開する人たち自身が保つ一覧であって、blunderDB が提供するサービスではない。そこで告知するには、リンクと上の四つの欄と指紋が要る。</p>
 `,
     shortcuts: `
-<p>ツールバーのツールチップには、各ボタンのキーが表示言語のキーボードでの名前で示されます: <em>←</em>、<em>Del</em>、<em>PageUp</em>、<em>PageDown</em>、<em>Shift</em>。</p>
+<p>ツールバーのツールチップには、各ボタンのキーが表示言語のキーボードでの名前で示されます: <em>←</em>、<em>Del</em>、<em>PageUp</em>、<em>PageDown</em>、<em>Shift</em>。以下の表とヘルプウィンドウでも同じ名前を使います。</p>
 <h3>データベース</h3>
 <table>
 <thead>
@@ -1027,19 +1027,19 @@ export default {
 <td>1 ページ戻ります（既定は 100 局面、設定 &gt; インターフェースで変更可能、最大でリストの 10 %。リストの先頭で止まります）。マッチ中は前のゲーム。</td>
 </tr>
 <tr>
-<td>LEFT, k</td>
+<td>←, k</td>
 <td>前のポジション。</td>
 </tr>
 <tr>
-<td>RIGHT, j</td>
+<td>→, j</td>
 <td>次のポジション。</td>
 </tr>
 <tr>
-<td>UP, k</td>
+<td>↑, k</td>
 <td>前の手（分析で手が選択されている場合）。</td>
 </tr>
 <tr>
-<td>DOWN, j</td>
+<td>↓, j</td>
 <td>次の手（分析で手が選択されている場合）。</td>
 </tr>
 <tr>
@@ -1048,7 +1048,7 @@ export default {
 </tr>
 <tr>
 <td>PageDown</td>
-<td>1 ページ進みます（PageUp と同じ幅。リストの末尾で止まります）。マッチ中は次のゲーム。</td>
+<td>1 ページ進みます（<em>PageUp</em>と同じ幅。リストの末尾で止まります）。マッチ中は次のゲーム。</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1071,11 +1071,11 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>CTRL-LEFT</td>
+<td>CTRL-←</td>
 <td>ボードの向きを左にする。</td>
 </tr>
 <tr>
-<td>CTRL-RIGHT</td>
+<td>CTRL-→</td>
 <td>ボードの向きを右にする。</td>
 </tr>
 <tr>
@@ -1185,7 +1185,7 @@ export default {
 <td>運営中の大会の直前の決定をやり直します（入力欄の中では、打鍵を取り消します）。</td>
 </tr>
 <tr>
-<td>PAGE UP / PAGE DOWN、HOME / END</td>
+<td>PAGEUP / PAGEDOWN, HOME / END</td>
 <td>運営中の大会のページの下で、ページをスクロールします。ページが隠している盤面は辿りません。</td>
 </tr>
 <tr>
@@ -1243,11 +1243,11 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>UP</td>
+<td>↑</td>
 <td>コマンド履歴を上方向に参照する。</td>
 </tr>
 <tr>
-<td>DOWN</td>
+<td>↓</td>
 <td>コマンド履歴を下方向に参照する。</td>
 </tr>
 <tr>
@@ -1316,11 +1316,11 @@ export default {
 <td>手を選択/選択解除する（矢印を表示/非表示）。</td>
 </tr>
 <tr>
-<td>UP, k</td>
+<td>↑, k</td>
 <td>前の手を選択する（手が選択されている場合）。</td>
 </tr>
 <tr>
-<td>DOWN, j</td>
+<td>↓, j</td>
 <td>次の手を選択する（手が選択されている場合）。</td>
 </tr>
 <tr>
@@ -1351,11 +1351,11 @@ export default {
 <td>手を選択/選択解除する（矢印を表示/非表示）。</td>
 </tr>
 <tr>
-<td>UP, k</td>
+<td>↑, k</td>
 <td>前の手を選択する（手が選択されている場合）。</td>
 </tr>
 <tr>
-<td>DOWN, j</td>
+<td>↓, j</td>
 <td>次の手を選択する（手が選択されている場合）。</td>
 </tr>
 <tr>
@@ -1382,11 +1382,11 @@ export default {
 <td>マッチ内をナビゲートする。</td>
 </tr>
 <tr>
-<td>UP, k</td>
+<td>↑, k</td>
 <td>前のマッチを選択する。</td>
 </tr>
 <tr>
-<td>DOWN, j</td>
+<td>↓, j</td>
 <td>次のマッチを選択する。</td>
 </tr>
 <tr>
@@ -1460,11 +1460,11 @@ export default {
 <td>トーナメントを選択する（詳細を表示）。</td>
 </tr>
 <tr>
-<td>UP, k</td>
+<td>↑, k</td>
 <td>前のトーナメントを選択する（パネルにフォーカスがあるとき、または運営中の大会が表示されていないとき）。</td>
 </tr>
 <tr>
-<td>DOWN, j</td>
+<td>↓, j</td>
 <td>次のトーナメントを選択する（パネルにフォーカスがあるとき、または運営中の大会が表示されていないとき）。</td>
 </tr>
 <tr>
@@ -1492,7 +1492,7 @@ export default {
 <td>フォーカスのある対象のコンテキストメニューを開きます。テーブルのセル、プレイヤー、トーナメント表の枠、枠、提案、履歴の行が対象です。UP/DOWN でメニュー内を移動し、ENTER で選び、ESC で閉じます。</td>
 </tr>
 <tr>
-<td>LEFT, RIGHT, UP, DOWN, HOME, END</td>
+<td>←, →, ↑, ↓, HOME, END</td>
 <td>テーブルグリッドのセル間を移動します(空きのセルを含む)。グリッドが占める TAB の停止位置は1つだけです。</td>
 </tr>
 <tr>
@@ -1559,7 +1559,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>下, j / 上, k(下書き一覧)</td>
+<td>↓, j / ↑, k (liste des brouillons)</td>
 <td>下書きをたどる。最初のものが開いた時点で強調されている。最後に更新されたものである。</td>
 </tr>
 <tr>
@@ -1587,11 +1587,11 @@ export default {
 <td>別のオープニングの出目を入力：プレイヤー1のダイス、次にプレイヤー2のダイス。大きいほうが勝ちます — 大きいダイスが先なら手は下側のプレイヤー1に、小さいダイスが先なら上側のプレイヤー2に。最初の候補が事前選択されます。同じ出目を入力し直しても何も変わりません。 <em>s</em> で手をもう一方のプレイヤーに渡します。</td>
 </tr>
 <tr>
-<td>DOWN, j</td>
+<td>↓, j</td>
 <td>次の候補を選択する（着手の矢印が盤面に表示される）。</td>
 </tr>
 <tr>
-<td>UP, k</td>
+<td>↑, k</td>
 <td>前の候補を選択する。</td>
 </tr>
 <tr>
@@ -1667,11 +1667,11 @@ export default {
 <td>手番の側からダブルを提案します（キー d と同じ）。提示されたダブルにキューブは応じません。テイクとパスはボタンの行にあります。</td>
 </tr>
 <tr>
-<td>LEFT, h</td>
+<td>←, h</td>
 <td>棋譜内でカーソルを 1 アクション戻します。</td>
 </tr>
 <tr>
-<td>RIGHT, l</td>
+<td>→, l</td>
 <td>カーソルを 1 アクション進めます。</td>
 </tr>
 <tr>
@@ -1738,7 +1738,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>LEFT, RIGHT, UP, DOWN</td>
+<td>←, →, ↑, ↓</td>
 <td>グリッド内を移動します。</td>
 </tr>
 <tr>
@@ -1773,19 +1773,19 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>LEFT, h</td>
+<td>←, h</td>
 <td>前のタブ。</td>
 </tr>
 <tr>
-<td>RIGHT, l</td>
+<td>→, l</td>
 <td>次のタブ。</td>
 </tr>
 <tr>
-<td>UP, k</td>
+<td>↑, k</td>
 <td>上にスクロールする。</td>
 </tr>
 <tr>
-<td>DOWN, j</td>
+<td>↓, j</td>
 <td>下にスクロールする。</td>
 </tr>
 <tr>

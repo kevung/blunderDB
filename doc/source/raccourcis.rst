@@ -5,7 +5,8 @@ Raccourcis clavier
 
 Les infobulles de la barre d'outils rappellent la touche de chaque bouton, sous
 le nom qu'elle porte sur le clavier de la langue de l'interface : *Gauche*,
-*Suppr*, *Page préc.*, *Page suiv.*, *Maj*.
+*Suppr*, *Page préc.*, *Page suiv.*, *Maj*. Les tableaux ci-dessous et la
+modale d'aide emploient les mêmes noms.
 
 .. _raccourcis_generaux:
 
@@ -57,14 +58,14 @@ Navigation
    :align: center
 
    "CTRL-R", "Recharger toutes les positions de la base de données."
-   "Home, h", "Première position / Partie précédente (navigation match)."
-   "PageUp", "Recule d'une page (cent positions par défaut, réglable dans les Paramètres > Interface, jusqu'à 10 % de la liste ; au début de la liste, s'y arrête) ; dans un match, partie précédente."
+   "Début, h", "Première position / Partie précédente (navigation match)."
+   "Page préc.", "Recule d'une page (cent positions par défaut, réglable dans les Paramètres > Interface, jusqu'à 10 % de la liste ; au début de la liste, s'y arrête) ; dans un match, partie précédente."
    "GAUCHE, k", "Position précédente."
    "DROITE, j", "Position suivante."
    "HAUT, k", "Coup précédent (lorsqu'un coup est sélectionné dans l'analyse)."
    "BAS, j", "Coup suivant (lorsqu'un coup est sélectionné dans l'analyse)."
-   "End, l", "Dernière position / Partie suivante (navigation match)."
-   "PageDown", "Avance d'une page (même pas que PageUp ; à la fin de la liste, s'y arrête) ; dans un match, partie suivante."
+   "Fin, l", "Dernière position / Partie suivante (navigation match)."
+   "Page suiv.", "Avance d'une page (même pas que *Page préc.* ; à la fin de la liste, s'y arrête) ; dans un match, partie suivante."
    "r", "Charger une position aléatoire."
    "ÉCHAP", "Quitter les résultats d'une recherche ``ss`` lancée depuis une collection ou un match : retour à la collection, ou au match sur le coup étudié."
 
@@ -130,7 +131,7 @@ Outils
    "ENTRÉE", "Dans la file des propositions : confirmer la proposition choisie."
    "GAUCHE / DROITE", "Dans la fiche de résultat, hors d'un champ : choisir le joueur de gauche ou celui de droite ; ENTRÉE enregistre sa victoire."
    "CTRL-Z", "Reprendre la dernière décision d'un tournoi dirigé (hors d'un champ de saisie, où il annule la frappe)."
-   "PAGE HAUT / PAGE BAS, DÉBUT / FIN", "Sous la page d'un tournoi dirigé : faire défiler la page, sans parcourir le plateau qu'elle cache."
+   "PAGE PRÉC. / PAGE SUIV., DÉBUT / FIN", "Sous la page d'un tournoi dirigé : faire défiler la page, sans parcourir le plateau qu'elle cache."
    "ÉCHAP", "Fermer la fiche de résultat ou la reprise en cours."
    "?", "Afficher/cacher l'aide."
 
@@ -146,8 +147,8 @@ Onglets de vues
 
    "CTRL-T", "Créer une nouvelle vue (copie de la vue courante)."
    "CTRL-W", "Fermer la vue courante."
-   "CTRL-PageUp, MAJ-J", "Vue précédente."
-   "CTRL-PageDown, MAJ-K", "Vue suivante."
+   "CTRL-Page préc., MAJ-J", "Vue précédente."
+   "CTRL-Page suiv., MAJ-K", "Vue suivante."
    "CTRL-1 … CTRL-9", "Aller directement à la n-ième vue."
    "Double-clic sur l'onglet", "Renommer la vue."
 
@@ -436,8 +437,8 @@ Planche-contact
 
    "GAUCHE, DROITE, HAUT, BAS", "Se déplacer dans la grille."
    "j, k", "Vignette suivante, vignette précédente."
-   "Home, End", "Première, dernière vignette de la page."
-   "PageUp, PageDown", "Page précédente, page suivante."
+   "Début, Fin", "Première, dernière vignette de la page."
+   "Page préc., Page suiv.", "Page précédente, page suivante."
    "ENTREE, Clic", "Ouvrir la position sur le plateau et refermer la planche."
    "Esc", "Refermer la planche."
 
@@ -456,7 +457,7 @@ Panneau d'aide
    "HAUT, k", "Défiler vers le haut."
    "BAS, j", "Défiler vers le bas."
    "ESPACE", "Page suivante."
-   "PageUp", "Haut du contenu."
-   "PageDown", "Bas du contenu."
+   "Page préc.", "Haut du contenu."
+   "Page suiv.", "Bas du contenu."
    "/", "Chercher dans l'aide : Entrée passe à l'occurrence suivante, MAJ-Entrée à la précédente."
    "?, CTRL-F, Esc", "Fermer l'aide."

@@ -914,7 +914,7 @@ export default {
 <p>Tietokannan tunnetuksi tekemiseen <code>varaston keskustelujen &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ <em>Show and tell</em> -kategoria toimii hakemistona: se on julkaisijoiden ylläpitämä lista, ei blunderDB:n tarjoama palvelu. Sinne ilmoittaminen vaatii linkin, yllä olevat neljä kenttää ja sormenjäljen.</p>
 `,
     shortcuts: `
-<p>Työkalupalkin vihjeet muistuttavat kunkin painikkeen näppäimestä sillä nimellä, joka sillä on käyttöliittymän kielen näppäimistössä: <em>Vasen</em>, <em>Poista</em>, <em>Page Up</em>, <em>Page Down</em>, <em>Vaihto</em>.</p>
+<p>Työkalupalkin vihjeet muistuttavat kunkin painikkeen näppäimestä sillä nimellä, joka sillä on käyttöliittymän kielen näppäimistössä: <em>Vasen</em>, <em>Poista</em>, <em>Page Up</em>, <em>Page Down</em>, <em>Vaihto</em>. Alla olevat taulukot ja ohjeikkuna käyttävät samoja nimiä.</p>
 <h3>Tietokanta</h3>
 <table>
 <thead>
@@ -933,11 +933,11 @@ export default {
 <td>Avaa olemassa oleva tietokanta.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-I</td>
+<td>CTRL-VAIHTO-I</td>
 <td>Yhdistä tietokanta tähän.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-S</td>
+<td>CTRL-VAIHTO-S</td>
 <td>Vie tietokanta.</td>
 </tr>
 <tr>
@@ -964,7 +964,7 @@ export default {
 <td>Tuo yksi tai useampi asema/ottelu tiedostosta (xg, xgp, sgf, mat, txt, bgf).</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-F</td>
+<td>CTRL-VAIHTO-F</td>
 <td>Tuo ottelu-/asematiedostojen kansio rekursiivisesti.</td>
 </tr>
 <tr>
@@ -1023,7 +1023,7 @@ export default {
 <td>Ensimmäinen asema / Edellinen peli (ottelunavigointi).</td>
 </tr>
 <tr>
-<td>PageUp</td>
+<td>Page Up</td>
 <td>Siirtyy sivun taaksepäin (oletuksena sata asemaa, säädettävissä kohdassa Asetukset &gt; Käyttöliittymä, enintään 10 % luettelosta; pysähtyy luettelon alkuun); ottelussa edellinen peli.</td>
 </tr>
 <tr>
@@ -1047,8 +1047,8 @@ export default {
 <td>Viimeinen asema / Seuraava peli (ottelunavigointi).</td>
 </tr>
 <tr>
-<td>PageDown</td>
-<td>Siirtyy sivun eteenpäin (sama askel kuin PageUp; pysähtyy luettelon loppuun); ottelussa seuraava peli.</td>
+<td>Page Down</td>
+<td>Siirtyy sivun eteenpäin (sama askel kuin <em>Page Up</em>; pysähtyy luettelon loppuun); ottelussa seuraava peli.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1121,7 +1121,7 @@ export default {
 <td>Näytä/piilota analyysi.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-L</td>
+<td>CTRL-VAIHTO-L</td>
 <td>Järjestä nykyisen aseman naapurit.</td>
 </tr>
 <tr>
@@ -1129,7 +1129,7 @@ export default {
 <td>Näytä/piilota kommentit.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-P</td>
+<td>CTRL-VAIHTO-P</td>
 <td>Avaa/sulje komentopaletti: komennot, välilehdet, suodattimet ja ottelut likimääräisellä nimellä.</td>
 </tr>
 <tr>
@@ -1165,7 +1165,7 @@ export default {
 <td>Näytä/piilota Eval-paneeli.</td>
 </tr>
 <tr>
-<td>CTRL-SHIFT-T</td>
+<td>CTRL-VAIHTO-T</td>
 <td>Näytä/piilota Litterointi-paneeli (otteluluonnokset).</td>
 </tr>
 <tr>
@@ -1216,11 +1216,11 @@ export default {
 <td>Sulje nykyinen näkymä.</td>
 </tr>
 <tr>
-<td>CTRL-PageUp, SHIFT-J</td>
+<td>CTRL-Page Up, VAIHTO-J</td>
 <td>Edellinen näkymä.</td>
 </tr>
 <tr>
-<td>CTRL-PageDown, SHIFT-K</td>
+<td>CTRL-Page Down, VAIHTO-K</td>
 <td>Seuraava näkymä.</td>
 </tr>
 <tr>
@@ -1488,7 +1488,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Napsautus hiiren oikealla, MENU, SHIFT-F10</td>
+<td>Clic droit, MENU, VAIHTO-F10</td>
 <td>Avaa kohdistetun kohteen kontekstivalikko: pöytäruutu, pelaaja, kaavion paikka, paikka, ehdotus, historian rivi. YLÖS/ALAS liikkuvat valikossa, ENTER valitsee, ESC sulkee sen.</td>
 </tr>
 <tr>
@@ -1750,7 +1750,7 @@ export default {
 <td>Sivun ensimmäinen, viimeinen pienoiskuva.</td>
 </tr>
 <tr>
-<td>PageUp, PageDown</td>
+<td>Page Up, Page Down</td>
 <td>Edellinen sivu, seuraava sivu.</td>
 </tr>
 <tr>
@@ -1793,11 +1793,11 @@ export default {
 <td>Seuraava sivu.</td>
 </tr>
 <tr>
-<td>PageUp</td>
+<td>Page Up</td>
 <td>Sisällön alkuun.</td>
 </tr>
 <tr>
-<td>PageDown</td>
+<td>Page Down</td>
 <td>Sisällön loppuun.</td>
 </tr>
 <tr>

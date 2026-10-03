@@ -914,7 +914,7 @@ export default {
 <p>Pour faire connaître une base, la catégorie <em>Show and tell</em> des <code>discussions du dépôt &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ sert d'annuaire : c'est une liste tenue par ceux qui publient, pas un service rendu par blunderDB. Y annoncer une base demande le lien, les quatre champs ci-dessus et l'empreinte.</p>
 `,
     shortcuts: `
-<p>Les infobulles de la barre d'outils rappellent la touche de chaque bouton, sous le nom qu'elle porte sur le clavier de la langue de l'interface : <em>Gauche</em>, <em>Suppr</em>, <em>Page préc.</em>, <em>Page suiv.</em>, <em>Maj</em>.</p>
+<p>Les infobulles de la barre d'outils rappellent la touche de chaque bouton, sous le nom qu'elle porte sur le clavier de la langue de l'interface : <em>Gauche</em>, <em>Suppr</em>, <em>Page préc.</em>, <em>Page suiv.</em>, <em>Maj</em>. Les tableaux ci-dessous et la modale d'aide emploient les mêmes noms.</p>
 <h3>Base de données</h3>
 <table>
 <thead>
@@ -1019,11 +1019,11 @@ export default {
 <td>Recharger toutes les positions de la base de données.</td>
 </tr>
 <tr>
-<td>Home, h</td>
+<td>Début, h</td>
 <td>Première position / Partie précédente (navigation match).</td>
 </tr>
 <tr>
-<td>PageUp</td>
+<td>Page préc.</td>
 <td>Recule d'une page (cent positions par défaut, réglable dans les Paramètres &gt; Interface, jusqu'à 10 % de la liste ; au début de la liste, s'y arrête) ; dans un match, partie précédente.</td>
 </tr>
 <tr>
@@ -1043,12 +1043,12 @@ export default {
 <td>Coup suivant (lorsqu'un coup est sélectionné dans l'analyse).</td>
 </tr>
 <tr>
-<td>End, l</td>
+<td>Fin, l</td>
 <td>Dernière position / Partie suivante (navigation match).</td>
 </tr>
 <tr>
-<td>PageDown</td>
-<td>Avance d'une page (même pas que PageUp ; à la fin de la liste, s'y arrête) ; dans un match, partie suivante.</td>
+<td>Page suiv.</td>
+<td>Avance d'une page (même pas que <em>Page préc.</em> ; à la fin de la liste, s'y arrête) ; dans un match, partie suivante.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1185,7 +1185,7 @@ export default {
 <td>Reprendre la dernière décision d'un tournoi dirigé (hors d'un champ de saisie, où il annule la frappe).</td>
 </tr>
 <tr>
-<td>PAGE HAUT / PAGE BAS, DÉBUT / FIN</td>
+<td>PAGE PRÉC. / PAGE SUIV., DÉBUT / FIN</td>
 <td>Sous la page d'un tournoi dirigé : faire défiler la page, sans parcourir le plateau qu'elle cache.</td>
 </tr>
 <tr>
@@ -1216,11 +1216,11 @@ export default {
 <td>Fermer la vue courante.</td>
 </tr>
 <tr>
-<td>CTRL-PageUp, MAJ-J</td>
+<td>CTRL-Page préc., MAJ-J</td>
 <td>Vue précédente.</td>
 </tr>
 <tr>
-<td>CTRL-PageDown, MAJ-K</td>
+<td>CTRL-Page suiv., MAJ-K</td>
 <td>Vue suivante.</td>
 </tr>
 <tr>
@@ -1746,11 +1746,11 @@ export default {
 <td>Vignette suivante, vignette précédente.</td>
 </tr>
 <tr>
-<td>Home, End</td>
+<td>Début, Fin</td>
 <td>Première, dernière vignette de la page.</td>
 </tr>
 <tr>
-<td>PageUp, PageDown</td>
+<td>Page préc., Page suiv.</td>
 <td>Page précédente, page suivante.</td>
 </tr>
 <tr>
@@ -1793,11 +1793,11 @@ export default {
 <td>Page suivante.</td>
 </tr>
 <tr>
-<td>PageUp</td>
+<td>Page préc.</td>
 <td>Haut du contenu.</td>
 </tr>
 <tr>
-<td>PageDown</td>
+<td>Page suiv.</td>
 <td>Bas du contenu.</td>
 </tr>
 <tr>

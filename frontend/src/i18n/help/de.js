@@ -914,7 +914,7 @@ export default {
 <p>Um eine Datenbank bekannt zu machen, dient die Kategorie <em>Show and tell</em> der <code>Diskussionen des Repositorys &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ als Verzeichnis: eine Liste, geführt von denen, die veröffentlichen, kein von blunderDB erbrachter Dienst. Eine dort anzukündigen braucht den Link, die vier obigen Felder und den Fingerabdruck.</p>
 `,
     shortcuts: `
-<p>Die Tooltips der Werkzeugleiste nennen die Taste jeder Schaltfläche unter dem Namen, den sie auf der Tastatur der Oberflächensprache trägt: <em>Links</em>, <em>Entf</em>, <em>Bild auf</em>, <em>Bild ab</em>, <em>Umschalt</em>.</p>
+<p>Die Tooltips der Werkzeugleiste nennen die Taste jeder Schaltfläche unter dem Namen, den sie auf der Tastatur der Oberflächensprache trägt: <em>Links</em>, <em>Entf</em>, <em>Bild auf</em>, <em>Bild ab</em>, <em>Umschalt</em>. Die Tabellen unten und das Hilfefenster verwenden dieselben Namen.</p>
 <h3>Datenbank</h3>
 <table>
 <thead>
@@ -1019,11 +1019,11 @@ export default {
 <td>Alle Positionen aus der Datenbank neu laden.</td>
 </tr>
 <tr>
-<td>Home, h</td>
+<td>Pos1, h</td>
 <td>Erste Position / Vorheriges Spiel (Match-Navigation).</td>
 </tr>
 <tr>
-<td>Bild-auf</td>
+<td>Bild auf</td>
 <td>Geht eine Seite zurück (standardmäßig hundert Positionen, einstellbar unter Einstellungen &gt; Oberfläche, bis zu 10 % der Liste; hält am Anfang der Liste an); in einem Match vorheriges Spiel.</td>
 </tr>
 <tr>
@@ -1035,20 +1035,20 @@ export default {
 <td>Nächste Position.</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Vorheriger Zug (wenn ein Zug in der Analyse ausgewählt ist).</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nächster Zug (wenn ein Zug in der Analyse ausgewählt ist).</td>
 </tr>
 <tr>
-<td>End, l</td>
+<td>Ende, l</td>
 <td>Letzte Position / Nächstes Spiel (Match-Navigation).</td>
 </tr>
 <tr>
-<td>Bild-ab</td>
-<td>Geht eine Seite vor (gleiche Schrittweite wie PageUp; hält am Ende der Liste an); in einem Match nächstes Spiel.</td>
+<td>Bild ab</td>
+<td>Geht eine Seite vor (gleiche Schrittweite wie <em>Bild auf</em>; hält am Ende der Liste an); in einem Match nächstes Spiel.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1216,11 +1216,11 @@ export default {
 <td>Die aktuelle Ansicht schließen.</td>
 </tr>
 <tr>
-<td>STRG-Bild-auf, UMSCHALT-J</td>
+<td>STRG-Bild auf, UMSCHALT-J</td>
 <td>Vorherige Ansicht.</td>
 </tr>
 <tr>
-<td>STRG-Bild-ab, UMSCHALT-K</td>
+<td>STRG-Bild ab, UMSCHALT-K</td>
 <td>Nächste Ansicht.</td>
 </tr>
 <tr>
@@ -1243,11 +1243,11 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>OBEN</td>
+<td>HOCH</td>
 <td>Im Befehlsverlauf nach oben blättern.</td>
 </tr>
 <tr>
-<td>UNTEN</td>
+<td>RUNTER</td>
 <td>Im Befehlsverlauf nach unten blättern.</td>
 </tr>
 <tr>
@@ -1316,11 +1316,11 @@ export default {
 <td>Einen Zug auswählen/abwählen (Pfeile ein-/ausblenden).</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Vorherigen Zug auswählen (wenn ein Zug ausgewählt ist).</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nächsten Zug auswählen (wenn ein Zug ausgewählt ist).</td>
 </tr>
 <tr>
@@ -1351,11 +1351,11 @@ export default {
 <td>Einen Zug auswählen/abwählen (Pfeile ein-/ausblenden).</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Vorherigen Zug auswählen (wenn ein Zug ausgewählt ist).</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nächsten Zug auswählen (wenn ein Zug ausgewählt ist).</td>
 </tr>
 <tr>
@@ -1382,11 +1382,11 @@ export default {
 <td>Im Match navigieren.</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Vorheriges Match auswählen.</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nächstes Match auswählen.</td>
 </tr>
 <tr>
@@ -1460,11 +1460,11 @@ export default {
 <td>Ein Turnier auswählen (Details anzeigen).</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Vorheriges Turnier auswählen, wenn das Panel den Fokus hat oder kein geleitetes Turnier angezeigt wird.</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nächstes Turnier auswählen, wenn das Panel den Fokus hat oder kein geleitetes Turnier angezeigt wird.</td>
 </tr>
 <tr>
@@ -1492,7 +1492,7 @@ export default {
 <td>Das Kontextmenü des fokussierten Objekts öffnen: Tischfeld, Spieler, Platz im Tableau, Platz, Vorschlag, Verlaufszeile. OBEN/UNTEN bewegen sich im Menü, EINGABE wählt, ESC schließt es.</td>
 </tr>
 <tr>
-<td>LINKS, RECHTS, OBEN, UNTEN, POS1, ENDE</td>
+<td>LINKS, RECHTS, HOCH, RUNTER, POS1, ENDE</td>
 <td>Von einem Feld des Tischrasters zum anderen wechseln (freie Felder eingeschlossen); das Raster nimmt nur einen TAB-Halt ein.</td>
 </tr>
 <tr>
@@ -1559,7 +1559,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>AB, j / AUF, k (Liste der Entwürfe)</td>
+<td>RUNTER, j / HOCH, k (liste des brouillons)</td>
 <td>Die Entwürfe durchlaufen. Der erste ist beim Öffnen hervorgehoben: es ist der zuletzt geänderte.</td>
 </tr>
 <tr>
@@ -1587,11 +1587,11 @@ export default {
 <td>Einen anderen Eröffnungswurf tippen: Würfel von Spieler 1, dann von Spieler 2. Der höhere gewinnt — großer Würfel zuerst, der Zug geht an Spieler 1 unten; kleiner Würfel zuerst, an Spieler 2 oben; der erste Kandidat ist vorausgewählt. Der gleiche Wurf erneut getippt ändert nichts; <em>s</em> gibt den Zug dem anderen Spieler.</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Den nächsten Kandidaten auswählen (die Pfeile des Zuges erscheinen auf dem Brett).</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Den vorherigen Kandidaten auswählen.</td>
 </tr>
 <tr>
@@ -1738,7 +1738,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>LINKS, RECHTS, OBEN, UNTEN</td>
+<td>LINKS, RECHTS, HOCH, RUNTER</td>
 <td>Im Raster bewegen.</td>
 </tr>
 <tr>
@@ -1750,7 +1750,7 @@ export default {
 <td>Erstes, letztes Vorschaubild der Seite.</td>
 </tr>
 <tr>
-<td>Bild-auf, Bild-ab</td>
+<td>Bild auf, Bild ab</td>
 <td>Vorherige Seite, nächste Seite.</td>
 </tr>
 <tr>
@@ -1781,11 +1781,11 @@ export default {
 <td>Nächster Reiter.</td>
 </tr>
 <tr>
-<td>OBEN, k</td>
+<td>HOCH, k</td>
 <td>Nach oben scrollen.</td>
 </tr>
 <tr>
-<td>UNTEN, j</td>
+<td>RUNTER, j</td>
 <td>Nach unten scrollen.</td>
 </tr>
 <tr>
@@ -1793,11 +1793,11 @@ export default {
 <td>Nächste Seite.</td>
 </tr>
 <tr>
-<td>Bild-auf</td>
+<td>Bild auf</td>
 <td>Anfang des Inhalts.</td>
 </tr>
 <tr>
-<td>Bild-ab</td>
+<td>Bild ab</td>
 <td>Ende des Inhalts.</td>
 </tr>
 <tr>
