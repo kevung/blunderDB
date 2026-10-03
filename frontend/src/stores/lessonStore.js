@@ -10,6 +10,12 @@ export const lessonStore = writable(null);
 /** Étape courante, 0-indexée. */
 export const lessonStepIndexStore = writable(0);
 
+/** Une autre base s'ouvre : les ids de la Leçon lue ne désignent plus rien dans celle-ci. */
+export function resetLessonStores() {
+    lessonStore.set(null);
+    lessonStepIndexStore.set(0);
+}
+
 /** L'étape en cours, ou null. */
 export const lessonStepStore = derived([lessonStore, lessonStepIndexStore], ([$lesson, $index]) => {
     if (!$lesson || !$lesson.steps || $lesson.steps.length === 0) return null;
