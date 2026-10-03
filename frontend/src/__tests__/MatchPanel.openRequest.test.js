@@ -21,7 +21,9 @@ const MOVES = [
 ];
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    GetAllMatches: vi.fn(() => Promise.resolve([MATCH])),
+    ListMatches: vi.fn(() => Promise.resolve([MATCH])),
+    CountMatches: vi.fn(() => Promise.resolve(1)),
+    GetMatchByID: vi.fn(() => Promise.resolve(null)),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
     ListTranscriptions: vi.fn(() => Promise.resolve([])),
     DeleteMatch: vi.fn(() => Promise.resolve()),

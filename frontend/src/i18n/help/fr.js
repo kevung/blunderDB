@@ -269,6 +269,7 @@ export default {
 <p>Une collection vivante dont la requête porte un jeton que cette version ne connaît plus <strong>refuse de s'ouvrir</strong> en le disant, plutôt que de renvoyer toute la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir : s'élargir en silence.</p>
 <h3>Panneau Matchs</h3>
 <p>Le panneau <strong>Matchs</strong> (<em>CTRL-Tab</em>) liste les matchs importés. Double-cliquer sur un match (ou appuyer sur <em>ENTREE</em>) pour naviguer dans ses coups. La commande <code>m</code> reprend la navigation dans le dernier match visité.</p>
+<p>Le champ de filtre, en haut du panneau (<em>/</em> pour y aller, <em>Esc</em> pour l'effacer), ne garde que les matchs dont un joueur, l'événement, le lieu, le tournoi ou la date contient le texte saisi. Le filtre et le tri des colonnes sont faits par la base : la liste se charge par pages au fil du défilement, et le compteur « n / N matchs » indique la part chargée. Corriger un joueur, une date ou un tournoi dans la liste ne met à jour que la ligne éditée.</p>
 <p>L'utilisateur peut:</p>
 <ul>
 <li>parcourir les coups d'un match en utilisant les touches <em>GAUCHE</em> et <em>DROITE</em>,</li>
@@ -1356,6 +1357,10 @@ export default {
 <tr>
 <td>Del</td>
 <td>Supprimer le match sélectionné.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Aller au champ de filtre (joueur, événement, tournoi, date). <em>Esc</em> efface le filtre.</td>
 </tr>
 <tr>
 <td>Esc</td>

@@ -522,6 +522,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/librarySettings.save — JSON."
         return self._call("/v1/librarySettings.save", payload)
 
+    def matches_count(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/matches.count — JSON."
+        return self._call("/v1/matches.count", payload)
+
     def matches_create_game(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/matches.createGame — JSON."
         return self._call("/v1/matches.createGame", payload)

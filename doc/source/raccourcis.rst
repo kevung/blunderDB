@@ -235,6 +235,7 @@ Panneau des matchs
    "BAS, j", "Sélectionner le match suivant."
    "ENTREE", "Charger le match sélectionné."
    "Del", "Supprimer le match sélectionné."
+   "/", "Aller au champ de filtre (joueur, événement, tournoi, date). *Esc* efface le filtre."
    "Esc", "Désélectionner/fermer le panneau."
 
 .. _raccourcis_anki_panel:

@@ -67,6 +67,13 @@ export async function installWailsMock(page, overrides = {}) {
             for (const [method, value] of Object.entries(overrides[ns] || {})) {
                 base[method] = method === 'LoadPositionsByIDs' && Array.isArray(value) ? window.__mockPositionsByIDs(value) : constant(value);
             }
+            // Le panneau Matchs lit une page (ListMatches) et son total (CountMatches) :
+            // un jeu de matchs déclaré sous GetAllMatches répond aux trois.
+            const given = overrides[ns] || {};
+            if (ns === 'database' && Array.isArray(given.GetAllMatches)) {
+                if (!('ListMatches' in given)) base.ListMatches = constant(given.GetAllMatches);
+                if (!('CountMatches' in given)) base.CountMatches = constant(given.GetAllMatches.length);
+            }
             return base;
         }
 

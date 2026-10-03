@@ -16,7 +16,9 @@ const MOVES = [];
 // ModalHost brings every application modal, each importing its own bindings: keep them all, stub the ones used here.
 vi.mock('../../wailsjs/go/database/Database.js', async (importOriginal) => ({
     ...(await importOriginal()),
-    GetAllMatches: vi.fn(() => Promise.resolve([MATCH])),
+    ListMatches: vi.fn(() => Promise.resolve([MATCH])),
+    CountMatches: vi.fn(() => Promise.resolve(1)),
+    GetMatchByID: vi.fn(() => Promise.resolve(null)),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
     ListTranscriptions: vi.fn(() => Promise.resolve([])),
     DeleteMatch: vi.fn(() => Promise.resolve()),
@@ -48,7 +50,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
 
 import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { GetAllMatches, DeleteMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
+import { ListMatches, DeleteMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
 import ModalHost from '../components/ModalHost.svelte';
 
@@ -72,7 +74,7 @@ describe('MatchPanel — deleting a match', () => {
 
     test('is confirmed through the dialog; refusing deletes nothing', async () => {
         const { container } = render(MatchPanel);
-        await vi.waitFor(() => expect(GetAllMatches).toHaveBeenCalled());
+        await vi.waitFor(() => expect(ListMatches).toHaveBeenCalled());
         const del = await vi.waitFor(() => {
             const b = container.querySelector('button.icon-btn.delete');
             expect(b).not.toBeNull();
@@ -94,7 +96,7 @@ describe('MatchPanel — deleting a match', () => {
         // before the panel's document listener, as in the application.
         render(ModalHost);
         const { container } = render(MatchPanel);
-        await vi.waitFor(() => expect(GetAllMatches).toHaveBeenCalled());
+        await vi.waitFor(() => expect(ListMatches).toHaveBeenCalled());
         const row = await vi.waitFor(() => {
             const r = container.querySelector('tbody tr');
             expect(r).not.toBeNull();

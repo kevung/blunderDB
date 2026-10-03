@@ -1056,6 +1056,13 @@ Le panneau **Matchs** (*CTRL-Tab*) liste les matchs importés. Double-cliquer
 sur un match (ou appuyer sur *ENTREE*) pour naviguer dans ses coups. La
 commande ``m`` reprend la navigation dans le dernier match visité.
 
+Le champ de filtre, en haut du panneau (*/* pour y aller, *Esc* pour
+l'effacer), ne garde que les matchs dont un joueur, l'événement, le lieu, le
+tournoi ou la date contient le texte saisi. Le filtre et le tri des colonnes
+sont faits par la base : la liste se charge par pages au fil du défilement, et
+le compteur « n / N matchs » indique la part chargée. Corriger un joueur, une
+date ou un tournoi dans la liste ne met à jour que la ligne éditée.
+
 L'utilisateur peut:
 
 * parcourir les coups d'un match en utilisant les touches *GAUCHE* et *DROITE*,

@@ -23,6 +23,9 @@ import { tick } from 'svelte';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllMatches: vi.fn(() => Promise.resolve([])),
+    ListMatches: vi.fn(() => Promise.resolve([])),
+    CountMatches: vi.fn(() => Promise.resolve(0)),
+    GetMatchByID: vi.fn(() => Promise.resolve(null)),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
     ListTranscriptions: vi.fn(() => Promise.resolve([])),
     DeleteMatch: vi.fn(() => Promise.resolve()),
@@ -103,7 +106,7 @@ describe('MatchPanel keyboard guard', () => {
         openPanels.set(new Set([PANEL.MATCH]));
         render(MatchPanel);
         await tick();
-        await tick();
+        await new Promise((resolve) => setTimeout(resolve, 0)); // the list loads before the key handler is installed
         windowSpy.mockClear(); // ignore any keydown noise from mounting
     });
 

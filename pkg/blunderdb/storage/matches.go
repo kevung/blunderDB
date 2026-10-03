@@ -19,10 +19,16 @@ type MatchListOpts struct {
 	// this text, case-insensitively (ASCII only on SQLite, whose LIKE folds
 	// nothing else), with % and _ taken literally. It serves a search box.
 	PlayerNameContains string
-	TournamentIDs      []int64
-	DateFrom           string // ISO "YYYY-MM-DD", inclusive
-	DateTo             string // ISO "YYYY-MM-DD", inclusive
-	MatchLength        []int
+	// Text keeps matches where this text appears, case-insensitively, in a
+	// player name, the event, location, round, tournament name or date: the
+	// match panel's search box. % and _ are taken literally.
+	Text string
+	// Unassigned keeps only matches that belong to no tournament.
+	Unassigned    bool
+	TournamentIDs []int64
+	DateFrom      string // ISO "YYYY-MM-DD", inclusive
+	DateTo        string // ISO "YYYY-MM-DD", inclusive
+	MatchLength   []int
 	// Sort is a key understood by domain.MatchOrderByClause ("" = most recent
 	// first). PR/MWC are not match columns (they are computed badges), so they
 	// are not sortable here.
@@ -51,6 +57,10 @@ type MatchStore interface {
 	// zero MatchListOpts streams every match, most recent first (the historical
 	// behaviour).
 	List(ctx context.Context, scope string, opts MatchListOpts) iter.Seq2[*domain.Match, error]
+
+	// Count returns how many matches satisfy the filters of opts (Sort, Limit
+	// and Offset are ignored): the total behind a paginated List.
+	Count(ctx context.Context, scope string, opts MatchListOpts) (int, error)
 
 	// Update changes the editable header fields of a match.
 	Update(ctx context.Context, scope string, id int64, player1Name, player2Name, matchDate string) error

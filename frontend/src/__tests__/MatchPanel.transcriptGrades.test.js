@@ -29,7 +29,9 @@ const GRADES = [
 ];
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    GetAllMatches: vi.fn(() => Promise.resolve([MATCH])),
+    ListMatches: vi.fn(() => Promise.resolve([MATCH])),
+    CountMatches: vi.fn(() => Promise.resolve(1)),
+    GetMatchByID: vi.fn(() => Promise.resolve(null)),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
     ListTranscriptions: vi.fn(() => Promise.resolve([])),
     DeleteMatch: vi.fn(() => Promise.resolve()),
@@ -56,13 +58,13 @@ import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
 import { libraryCountsStore } from '../stores/libraryCountsStore.js';
-import { GetAllMatches, GetMatchMoveGrades } from '../../wailsjs/go/database/Database.js';
+import { ListMatches, GetMatchMoveGrades } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
 
 async function openTranscript() {
     const view = render(MatchPanel);
     const { container } = view;
-    await vi.waitFor(() => expect(GetAllMatches).toHaveBeenCalledTimes(2));
+    await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(2));
     await new Promise((r) => setTimeout(r, 0));
     for (let i = 0; i < 6; i++) await tick();
     if (!container.querySelector('tbody tr.selected')) {

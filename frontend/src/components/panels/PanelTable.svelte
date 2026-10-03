@@ -90,6 +90,8 @@
         virtualizeAbove = 200,
         /** Rows rendered beyond the visible ones, on each side. */
         buffer = 10,
+        /** The window reached the last loaded rows: load more, when the list is paged. */
+        onNearEnd = undefined,
         /** The cells of one row: (row, index). */
         cells
     } = $props();
@@ -115,6 +117,10 @@
         const row = tbodyEl.querySelector('tr:not(.spacer)');
         const h = row ? Math.round(row.getBoundingClientRect().height) : 0;
         if (h > 0 && h !== measured) measured = h;
+    });
+
+    $effect(() => {
+        if (onNearEnd && rows.length > 0 && last >= rows.length - buffer) onNearEnd();
     });
 
     function onScroll() {

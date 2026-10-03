@@ -169,6 +169,16 @@ func buildMatchListWhere(opts storage.MatchListOpts, next int) (whereSQL string,
 		args = append(args, pat, pat)
 		next += 2
 	}
+	if opts.Text != "" {
+		clauses = append(clauses, fmt.Sprintf(`(m.player1_name ILIKE $%[1]d ESCAPE '\' OR m.player2_name ILIKE $%[1]d ESCAPE '\'
+			OR m.event ILIKE $%[1]d ESCAPE '\' OR m.location ILIKE $%[1]d ESCAPE '\' OR m.round ILIKE $%[1]d ESCAPE '\'
+			OR t.name ILIKE $%[1]d ESCAPE '\' OR CAST(m.match_date AS TEXT) ILIKE $%[1]d ESCAPE '\')`, next))
+		args = append(args, sqlshared.ContainsPattern(opts.Text))
+		next++
+	}
+	if opts.Unassigned {
+		clauses = append(clauses, "m.tournament_id IS NULL")
+	}
 	if len(opts.TournamentIDs) > 0 {
 		ph := make([]string, len(opts.TournamentIDs))
 		for i, id := range opts.TournamentIDs {
@@ -220,6 +230,21 @@ func (s *matchStore) Get(ctx context.Context, scope string, id int64) (*domain.M
 		return nil, fmt.Errorf("postgres: get match %d: %w", id, err)
 	}
 	return &m, nil
+}
+
+// Count returns how many matches satisfy the filters of opts.
+func (s *matchStore) Count(ctx context.Context, scope string, opts storage.MatchListOpts) (int, error) {
+	args := []any{tenantID(scope)}
+	whereSQL, filterArgs := buildMatchListWhere(opts, len(args)+1)
+	args = append(args, filterArgs...)
+	var n int
+	err := s.db.QueryRow(ctx, `SELECT COUNT(*) FROM match m
+		 LEFT JOIN tournament t ON m.tournament_id = t.id
+		 WHERE m.tenant_id = $1`+whereSQL, args...).Scan(&n)
+	if err != nil {
+		return 0, fmt.Errorf("postgres: count matches: %w", err)
+	}
+	return n, nil
 }
 
 // List streams stored matches, filtered/ordered/paginated per opts. A zero

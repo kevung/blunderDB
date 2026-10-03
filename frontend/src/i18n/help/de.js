@@ -269,6 +269,7 @@ export default {
 <p>Eine lebendige Sammlung, deren Abfrage ein Token trägt, das diese Version nicht mehr kennt, <strong>weigert sich zu öffnen</strong> und sagt es, statt die ganze Datenbank zurückzugeben. Das ist der eine Fehler, den ein gespeicherter Filter nicht haben darf: sich im Stillen zu weiten.</p>
 <h3>Matches-Panel</h3>
 <p>Das Panel <strong>Matches</strong> (<em>CTRL-Tab</em>) listet die importierten Matches auf. Doppelklicken Sie auf ein Match (oder drücken Sie <em>EINGABE</em>), um durch seine Züge zu navigieren. Der Befehl <code>m</code> setzt die Navigation im zuletzt besuchten Match fort.</p>
+<p>Das Filterfeld oben im Panel (<em>/</em> um hinzugehen, <em>Esc</em> zum Leeren) behält nur die Matches, in denen ein Spieler, das Ereignis, der Ort, das Turnier oder das Datum den eingegebenen Text enthält. Filtern und Spaltensortierung übernimmt die Datenbank: Die Liste lädt beim Scrollen seitenweise, und der Zähler „n / N Matches“ zeigt den geladenen Teil. Wird in der Liste ein Spieler, ein Datum oder ein Turnier korrigiert, wird nur die bearbeitete Zeile aktualisiert.</p>
 <p>Der Benutzer kann:</p>
 <ul>
 <li>die Züge eines Matches mit den Tasten <em>LINKS</em> und <em>RECHTS</em> durchblättern,</li>
@@ -1356,6 +1357,10 @@ export default {
 <tr>
 <td>Entf</td>
 <td>Das ausgewählte Match löschen.</td>
+</tr>
+<tr>
+<td>/</td>
+<td>Zum Filterfeld springen (Spieler, Ereignis, Turnier, Datum). <em>Esc</em> leert den Filter.</td>
 </tr>
 <tr>
 <td>Esc</td>

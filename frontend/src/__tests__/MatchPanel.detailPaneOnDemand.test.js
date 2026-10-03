@@ -19,7 +19,9 @@ import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    GetAllMatches: vi.fn(() => Promise.resolve([{ id: 7, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, match_date: '2026-01-15', game_count: 2 }])),
+    ListMatches: vi.fn(() => Promise.resolve([{ id: 7, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, match_date: '2026-01-15', game_count: 2 }])),
+    CountMatches: vi.fn(() => Promise.resolve(1)),
+    GetMatchByID: vi.fn(() => Promise.resolve(null)),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
     ListTranscriptions: vi.fn(() => Promise.resolve([])),
     DeleteMatch: vi.fn(() => Promise.resolve()),
@@ -39,7 +41,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 
 import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { GetAllMatches } from '../../wailsjs/go/database/Database.js';
+import { ListMatches } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
 
 /**
@@ -48,7 +50,7 @@ import MatchPanel from '../components/MatchPanel.svelte';
  * touching a row.
  */
 async function settle() {
-    await vi.waitFor(() => expect(GetAllMatches).toHaveBeenCalledTimes(2));
+    await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(2));
     await new Promise((resolve) => setTimeout(resolve, 0));
     for (let i = 0; i < 4; i++) await tick();
 }

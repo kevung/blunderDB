@@ -733,6 +733,19 @@ notebook qui a cessé de fonctionner sans que personne le sache.
 * ``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10).
 * ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
 
+**Options** (type ``matches`` uniquement) :
+
+* ``--query`` — Ne garde que les matchs dont un joueur, l'événement, le lieu,
+  la manche, le tournoi ou la date contient ce texte (sans tenir compte de la
+  casse).
+* ``--sort`` — Ordre : ``date`` (défaut, le plus récent d'abord), ``date_asc``,
+  ``length_asc``, ``length_desc``, ``player1``, ``player1_desc``, ``player2``,
+  ``player2_desc``, ``tournament``, ``tournament_desc`` ou ``opponent``.
+
+Le filtre et le tri sont faits par la base, comme dans le panneau Matchs ; le
+total annoncé est celui des matchs retenus. Le serveur les offre sur
+``/v1/matches.list`` (champs ``text`` et ``sort``) et ``/v1/matches.count``.
+
 **Options** (type ``imports`` uniquement) :
 
 * ``--batch`` — Identifiant d'un lot : affiche son compte rendu complet au lieu

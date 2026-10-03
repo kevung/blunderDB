@@ -54,6 +54,33 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 	return matches, nil
 }
 
+// ListMatches returns one page of matches, filtered and ordered in SQL per
+// opts, with the PR/MWC badges of that page only. A zero opts is GetAllMatches.
+func (d *Database) ListMatches(opts storage.MatchListOpts) ([]Match, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	matches := []Match{}
+	for m, err := range d.store.Matches().List(context.Background(), "", opts) {
+		if err != nil {
+			return nil, err
+		}
+		matches = append(matches, *m)
+	}
+	if err := d.applyMatchBadges(matches); err != nil {
+		slog.Warn("computing match stats", "err", err)
+	}
+	return matches, nil
+}
+
+// CountMatches returns how many matches satisfy the filters of opts (the page
+// bounds are ignored): the total behind a ListMatches page.
+func (d *Database) CountMatches(opts storage.MatchListOpts) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Matches().Count(context.Background(), "", opts)
+}
+
 // GetMatchByID returns a specific match by ID, including the name of the
 // tournament it is assigned to (empty when unassigned) so callers can display
 // the full provenance without a second lookup.

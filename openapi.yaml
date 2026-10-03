@@ -3107,6 +3107,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/storage_LibrarySettings"
+  /v1/matches.count:
+    post:
+      operationId: matches.count
+      tags: [matches]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchListReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/countResp"
   /v1/matches.createGame:
     post:
       operationId: matches.createGame
@@ -6203,6 +6220,10 @@ components:
           type: string
         playerNameContains:
           type: string
+        text:
+          type: string
+        unassigned:
+          type: boolean
         tournamentIds:
           type: array
           items:

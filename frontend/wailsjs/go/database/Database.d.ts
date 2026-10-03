@@ -94,6 +94,10 @@ export function ComputeRecurringErrors(arg1:database.StatsFilter):Promise<storag
 
 export function ComputeRecurringErrorsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<storage.RecurringErrors>;
 
+export function CountMatches(arg1:storage.MatchListOpts):Promise<number>;
+
+export function ListMatches(arg1:storage.MatchListOpts):Promise<Array<domain.Match>>;
+
 export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsResult>;
 
 export function ComputeStatsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<database.StatsResult>;

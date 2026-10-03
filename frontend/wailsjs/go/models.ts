@@ -4563,6 +4563,38 @@ export namespace sqlite {
 }
 
 export namespace storage {
+	export class MatchListOpts {
+	    PlayerName: string;
+	    PlayerNameContains: string;
+	    Text: string;
+	    Unassigned: boolean;
+	    TournamentIDs: number[];
+	    DateFrom: string;
+	    DateTo: string;
+	    MatchLength: number[];
+	    Sort: string;
+	    Limit: number;
+	    Offset: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new MatchListOpts(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.PlayerName = source["PlayerName"];
+	        this.PlayerNameContains = source["PlayerNameContains"];
+	        this.Text = source["Text"];
+	        this.Unassigned = source["Unassigned"];
+	        this.TournamentIDs = source["TournamentIDs"];
+	        this.DateFrom = source["DateFrom"];
+	        this.DateTo = source["DateTo"];
+	        this.MatchLength = source["MatchLength"];
+	        this.Sort = source["Sort"];
+	        this.Limit = source["Limit"];
+	        this.Offset = source["Offset"];
+	    }
+	}
 	
 	export class LibrarySettings {
 	    errorThresholdMP: number;

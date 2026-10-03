@@ -2579,8 +2579,12 @@ Options:
     	Metric to display: pr or mwc (stats only) (default "pr")
   -player string
     	Filter by player name (stats only)
+  -query string
+    	With --type matches: keep matches whose players, event, location, round, tournament or date contain this text
   -queue
     	With --type imports --batch <id>: the study queue that follows the report — what to look at now, in order
+  -sort string
+    	With --type matches: date (default), date_asc, length_asc, length_desc, player1, player1_desc, player2, player2_desc, tournament, tournament_desc, opponent
   -to string
     	End date filter YYYY-MM-DD (stats only)
   -top-blunders int

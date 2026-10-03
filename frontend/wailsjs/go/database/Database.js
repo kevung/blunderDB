@@ -162,6 +162,14 @@ export function ComputeRecurringErrorsCtx(arg1, arg2) {
   return window['go']['database']['Database']['ComputeRecurringErrorsCtx'](arg1, arg2);
 }
 
+export function CountMatches(arg1) {
+  return window['go']['database']['Database']['CountMatches'](arg1);
+}
+
+export function ListMatches(arg1) {
+  return window['go']['database']['Database']['ListMatches'](arg1);
+}
+
 export function ComputeStats(arg1) {
   return window['go']['database']['Database']['ComputeStats'](arg1);
 }

@@ -151,6 +151,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    maintenance
      POST /ops/maintenance.vacuum                  custom
    matches
+     POST /v1/matches.count                        JSON
      POST /v1/matches.createGame                   JSON
      POST /v1/matches.createMove                   JSON
      POST /v1/matches.delete                       JSON

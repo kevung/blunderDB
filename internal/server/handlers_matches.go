@@ -66,6 +66,8 @@ type findByHashResp struct {
 type matchListReq struct {
 	PlayerName         string  `json:"playerName"`
 	PlayerNameContains string  `json:"playerNameContains"`
+	Text               string  `json:"text"`
+	Unassigned         bool    `json:"unassigned"`
 	TournamentIDs      []int64 `json:"tournamentIds"`
 	DateFrom           string  `json:"dateFrom"`
 	DateTo             string  `json:"dateTo"`
@@ -81,6 +83,22 @@ func (r matchListReq) pageLimit() int { return r.Limit }
 
 type gameIDReq struct {
 	GameID int64 `json:"gameId"`
+}
+
+func (r matchListReq) opts() storage.MatchListOpts {
+	return storage.MatchListOpts{
+		PlayerName:         r.PlayerName,
+		PlayerNameContains: r.PlayerNameContains,
+		Text:               r.Text,
+		Unassigned:         r.Unassigned,
+		TournamentIDs:      r.TournamentIDs,
+		DateFrom:           r.DateFrom,
+		DateTo:             r.DateTo,
+		MatchLength:        r.MatchLength,
+		Sort:               r.Sort,
+		Limit:              r.Limit,
+		Offset:             r.Offset,
+	}
 }
 
 func (s *Server) matchRoutes() []route {
@@ -101,17 +119,11 @@ func (s *Server) matchRoutes() []route {
 			return findByHashResp{ID: id, Found: found}, err
 		})},
 		{http.MethodPost, "/v1/matches.list", rpcStream(func(ctx context.Context, scope string, req matchListReq) iterMatches {
-			return ms().List(ctx, scope, storage.MatchListOpts{
-				PlayerName:         req.PlayerName,
-				PlayerNameContains: req.PlayerNameContains,
-				TournamentIDs:      req.TournamentIDs,
-				DateFrom:           req.DateFrom,
-				DateTo:             req.DateTo,
-				MatchLength:        req.MatchLength,
-				Sort:               req.Sort,
-				Limit:              req.Limit,
-				Offset:             req.Offset,
-			})
+			return ms().List(ctx, scope, req.opts())
+		})},
+		{http.MethodPost, "/v1/matches.count", rpc(func(ctx context.Context, scope string, req matchListReq) (countResp, error) {
+			n, err := ms().Count(ctx, scope, req.opts())
+			return countResp{Count: n}, err
 		})},
 		{http.MethodPost, "/v1/matches.update", rpcVoid(func(ctx context.Context, scope string, req matchUpdateReq) error {
 			return ms().Update(ctx, scope, req.ID, req.Player1Name, req.Player2Name, req.MatchDate)

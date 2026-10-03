@@ -165,6 +165,18 @@ func buildMatchListWhere(opts storage.MatchListOpts) (whereSQL string, args []an
 		pat := sqlshared.ContainsPattern(opts.PlayerNameContains)
 		args = append(args, pat, pat)
 	}
+	if opts.Text != "" {
+		clauses = append(clauses, `(m.player1_name LIKE ? ESCAPE '\' OR m.player2_name LIKE ? ESCAPE '\'
+			OR m.event LIKE ? ESCAPE '\' OR m.location LIKE ? ESCAPE '\' OR m.round LIKE ? ESCAPE '\'
+			OR t.name LIKE ? ESCAPE '\' OR substr(m.match_date,1,10) LIKE ? ESCAPE '\')`)
+		pat := sqlshared.ContainsPattern(opts.Text)
+		for range 7 {
+			args = append(args, pat)
+		}
+	}
+	if opts.Unassigned {
+		clauses = append(clauses, "m.tournament_id IS NULL")
+	}
 	if len(opts.TournamentIDs) > 0 {
 		ph := strings.TrimSuffix(strings.Repeat("?,", len(opts.TournamentIDs)), ",")
 		clauses = append(clauses, "m.tournament_id IN ("+ph+")")
@@ -251,6 +263,18 @@ func (s *matchStore) List(ctx context.Context, scope string, opts storage.MatchL
 			yield(nil, fmt.Errorf("sqlite: list matches: %w", err))
 		}
 	}
+}
+
+// Count returns how many matches satisfy the filters of opts.
+func (s *matchStore) Count(ctx context.Context, scope string, opts storage.MatchListOpts) (int, error) {
+	whereSQL, args := buildMatchListWhere(opts)
+	var n int
+	err := s.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM match m
+		 LEFT JOIN tournament t ON m.tournament_id = t.id`+whereSQL, args...).Scan(&n)
+	if err != nil {
+		return 0, fmt.Errorf("sqlite: count matches: %w", err)
+	}
+	return n, nil
 }
 
 // Update changes the editable header fields of a match. matchDate is either
