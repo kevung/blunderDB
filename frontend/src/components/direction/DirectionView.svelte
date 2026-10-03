@@ -1,4 +1,5 @@
 <script>
+    import { confirmAction } from '../../services/confirmService.js';
     /*
      * La vue tournoi, à la place du plateau quand une Direction est ouverte (ADR-0047) ;
      * tout autre onglet ramène le plateau sans rien fermer.
@@ -673,7 +674,7 @@
     }
 
     async function remove() {
-        if (!window.confirm($t('direction.settings.deleteConfirm'))) return;
+        if (!(await confirmAction($t('direction.settings.deleteConfirm'), { confirmLabel: $t('common.delete') }))) return;
         try {
             const tid = view?.tournamentId;
             for (const k of Array.from(scrollPositions.keys())) if (k.startsWith(`${tid}:`)) scrollPositions.delete(k);

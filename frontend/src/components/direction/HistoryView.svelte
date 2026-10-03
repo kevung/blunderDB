@@ -1,4 +1,5 @@
 <script>
+    import { confirmAction } from '../../services/confirmService.js';
     /*
      * La vue Historique (fonctionnel.md §5.8) : la trace lisible des décisions, filtrable par
      * joueur. Une correction s'offre sur la ligne (le match fini n'est plus sur la grille),
@@ -64,8 +65,8 @@
      *
      * @param {import('../../../wailsjs/go/models').service.HistoryEntry} e
      */
-    function cancel(e) {
-        if (!window.confirm($t('direction.result.cancelConfirm', { a: e.aName || e.a || '', b: e.bName || e.b || '' }))) return;
+    async function cancel(e) {
+        if (!(await confirmAction($t('direction.result.cancelConfirm', { a: e.aName || e.a || '', b: e.bName || e.b || '' })))) return;
         onCancel(e.matchId || '');
     }
 

@@ -76,10 +76,9 @@
     import Toolbar from './components/Toolbar.svelte';
     import CommandPalette from './components/CommandPalette.svelte';
     import Board from './components/Board.svelte';
-    import DirectionView from './components/direction/DirectionView.svelte';
     import DirectionFullscreenToggle from './components/direction/DirectionFullscreenToggle.svelte';
     import { directionFullscreenStore } from './services/directionFullscreen.js';
-    import { directionPageShownStore } from './stores/directionStore';
+    import { directionPageShownStore, directionViewLoadedStore } from './stores/directionStore';
     import MatchInfoBar from './components/MatchInfoBar.svelte';
     import ViewTabs from './components/ViewTabs.svelte';
     import TabbedPanel from './components/TabbedPanel.svelte';
@@ -97,6 +96,24 @@
     import { initTheme } from './stores/themeStore.js';
 
     let mainArea;
+    // The Direction view (and everything under direction/) is a separate chunk,
+    // fetched the first time the Tournoi tab shows it; the board stays up meanwhile.
+    let DirectionViewComponent = $state(null);
+    $effect(() => {
+        if ($directionPageShownStore && !DirectionViewComponent) {
+            import('./components/direction/DirectionView.svelte')
+                .then((m) => {
+                    DirectionViewComponent = m.default;
+                    directionViewLoadedStore.set(true);
+                })
+                .catch((error) => {
+                    // Back to the board: the page must not keep claiming keys it does not show.
+                    logger.error('could not load the Direction view:', error);
+                    setStatusBarMessage(tMsg('status.directionLoadFailed'));
+                    activeTabStore.set('matches');
+                });
+        }
+    });
     let panelHeight = $state(DEFAULT_PANEL_HEIGHT);
     // Hauteur plancher de l'onglet Transcription (ADR-0048 décision 5), mesurée : palette 236 px,
     // barre du brouillon 34, padding 16, barre d'onglets 30. Appliquée sans toucher la valeur
@@ -442,8 +459,8 @@
             <!-- La seule chose qui remplace le plateau dans la zone principale (ADR-0047) :
                  l'onglet Tournoi actif ET une Direction ouverte. Tout autre onglet ramène le
                  plateau sans rien fermer — la Direction reste ouverte et continue de vivre. -->
-            {#if $directionPageShownStore}
-                <DirectionView />
+            {#if $directionPageShownStore && DirectionViewComponent}
+                <DirectionViewComponent />
             {:else}
                 <Board />
             {/if}

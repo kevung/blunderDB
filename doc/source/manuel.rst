@@ -492,7 +492,10 @@ Trois points méritent d'être connus avant d'activer la case :
   même fichier inchangé.
 * **L'import est silencieux.** Vous étiez en train d'étudier une position
   quand vos matchs sont arrivés : vous reprendre l'écran serait le pire
-  moment. L'import se fait sans fenêtre, et la barre d'état affiche un
+  moment. Le mode, la recherche active, l'onglet et la position affichée ne
+  bougent pas ; la liste des positions n'est pas rechargée et montre les
+  nouveaux matchs au prochain rechargement. L'import se fait sans fenêtre,
+  et la barre d'état affiche un
   bandeau donnant le compte des matchs importés, ignorés (doublons) et en
   échec, avec un bouton qui ouvre le compte rendu complet si vous le
   souhaitez. Tout le reste est identique à un import manuel : mêmes doublons

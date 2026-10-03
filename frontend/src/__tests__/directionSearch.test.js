@@ -9,7 +9,7 @@ import { get } from 'svelte/store';
 
 import { buildPaletteItems, rankPaletteItems, runPaletteItem, openDirectionSearch, toggleCommandPalette } from '../services/commandPalette.js';
 import { directionSearchKey } from '../services/directionKeys.js';
-import { openDirectionIdStore, directionJumpStore } from '../stores/directionStore.js';
+import { directionViewLoadedStore, openDirectionIdStore, directionJumpStore } from '../stores/directionStore.js';
 import { activeTabStore, commandPaletteOpenStore, commandPaletteScopeStore } from '../stores/uiStore.js';
 import { translate } from '../i18n';
 
@@ -40,9 +40,11 @@ const first = (query) => rankPaletteItems(items, query)[0]?.item;
 beforeEach(() => {
     activeTabStore.set('tournaments');
     openDirectionIdStore.set(1);
+    directionViewLoadedStore.set(true);
 });
 afterEach(() => {
     openDirectionIdStore.set(null);
+    directionViewLoadedStore.set(false);
     directionJumpStore.set(null);
     commandPaletteOpenStore.set(false);
     commandPaletteScopeStore.set(null);
@@ -132,6 +134,7 @@ describe('ouverture', () => {
 
     test('sans Direction ouverte, / n’ouvre rien', () => {
         openDirectionIdStore.set(null);
+        directionViewLoadedStore.set(false);
         openDirectionSearch();
         expect(get(commandPaletteOpenStore)).toBe(false);
     });

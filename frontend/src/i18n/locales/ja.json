@@ -363,7 +363,8 @@
         "tabManual": "マニュアル",
         "tabShortcuts": "ショートカット",
         "tabCommands": "コマンドライン",
-        "tabAbout": "情報"
+        "tabAbout": "情報",
+        "loadFailed": "ヘルプを読み込めませんでした。"
     },
     "commands": {
         "collectionEmpty": "コレクションは空です",
@@ -1259,6 +1260,11 @@
         "errorDeletingPosition": "ポジションと関連する分析の削除中にエラーが発生しました",
         "errorEnteringMatchMode": "マッチモードへの移行中にエラーが発生しました",
         "errorHandlingDroppedDb": "ドロップされたデータベースの処理中にエラーが発生しました",
+        "droppedDbMessage": "データベースはすでに開いています。\n\n「{filename}」をどうしますか？",
+        "droppedDbOpen": "開く",
+        "droppedDbMerge": "マージ",
+        "droppedDbCancel": "キャンセル",
+        "directionLoadFailed": "ディレクションビューを読み込めませんでした。",
         "errorLoadingAllPositions": "すべてのポジションの読み込み中にエラーが発生しました",
         "errorLoadingByFilters": "フィルターによるポジションの読み込み中にエラーが発生しました",
         "errorSavingPosition": "ポジション、分析、コメントの保存中にエラーが発生しました",

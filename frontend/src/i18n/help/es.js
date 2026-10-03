@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Solo se importan los ficheros que aparecen.</strong> Lo que la carpeta ya contiene cuando arranca la vigilancia se registra como conocido y se deja en paz: apuntar una vigilancia a cuatro años de partidos no debe importarlos todos. Para importar lo que hay, use la importación de carpeta, que existe para eso — y ambas se componen muy bien, la importación primero, la vigilancia después.</li>
 <li><strong>Un fichero se importa solo cuando su tamaño se ha estabilizado.</strong> Un partido que otro programa está escribiendo crece de un vistazo a otro; importarlo a medio escribir daría un error de análisis sobre el que nadie puede actuar. blunderDB espera, pues, a ver dos veces el mismo fichero sin cambios.</li>
-<li><strong>La importación es silenciosa.</strong> Estaba estudiando una posición cuando llegaron sus partidos: quitarle la pantalla sería el peor momento. La importación se hace sin ventana, y la barra de estado muestra una franja con el recuento de partidos importados, ignorados (duplicados) y fallidos, con un botón que abre el informe completo si lo desea. Todo lo demás es idéntico a una importación manual: mismos duplicados detectados, mismo lote de importación, mismo análisis automático si está activado.</li>
+<li><strong>La importación es silenciosa.</strong> Estaba estudiando una posición cuando llegaron sus partidas: quitarle la pantalla sería el peor momento. El modo, la búsqueda activa, la pestaña y la posición mostrada no se mueven; la lista de posiciones no se recarga y muestra las partidas nuevas en la próxima recarga. La importación se hace sin ventana, y la barra de estado muestra un banner con el recuento de partidas importadas, omitidas (duplicados) y fallidas, con un botón que abre el informe completo si lo desea. Todo lo demás es idéntico a una importación manual: los mismos duplicados detectados, el mismo lote de importación, el mismo análisis automático si está activado.</li>
 </ul>
 <p>El intervalo por defecto es de diez segundos; el mínimo es de dos. La carpeta no se recorre recursivamente: una carpeta vigilada es el sitio donde una herramienta deposita sus partidos, no un árbol que explorar. Un recurso de red desmontado no detiene la vigilancia ni hace que su contenido pase por nuevo a su regreso.</p>
 <p>La misma vigilancia existe en línea de comandos, con <code>blunderdb import --type batch --dir &lt;carpeta&gt; --watch</code> (véase Interfaz de línea de comandos (CLI)): es la forma que puede usar un servidor, una tarea programada o un script.</p>
@@ -987,8 +987,12 @@ export default {
 <td>Recargar todas las posiciones de la base de datos.</td>
 </tr>
 <tr>
-<td>AvPág, h</td>
+<td>Home, h</td>
 <td>Primera posición / Partida anterior (navegación de partida).</td>
+</tr>
+<tr>
+<td>AvPág</td>
+<td>Retrocede una página de cien posiciones (se detiene al principio de la lista); en una partida, juego anterior.</td>
 </tr>
 <tr>
 <td>IZQUIERDA, k</td>
@@ -1007,8 +1011,12 @@ export default {
 <td>Jugada siguiente (cuando hay una jugada seleccionada en el análisis).</td>
 </tr>
 <tr>
-<td>RePág, l</td>
+<td>End, l</td>
 <td>Última posición / Partida siguiente (navegación de partida).</td>
+</tr>
+<tr>
+<td>RePág</td>
+<td>Avanza una página de cien posiciones (se detiene al final de la lista); en una partida, juego siguiente.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1904,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Ir a la posición del índice indicado.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Ir a ese porcentaje de la lista: <code>0%</code> la primera posición, <code>50%</code> la mitad, <code>100%</code> la última.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

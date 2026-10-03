@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Vain ilmestyvät tiedostot tuodaan.</strong> Se mitä kansiossa jo on valvonnan alkaessa kirjataan tunnetuksi ja jätetään rauhaan: valvonnan osoittaminen neljän vuoden otteluihin ei saa tuoda niitä kaikkia. Paikalla olevan tuomiseen on kansion tuonti, joka on sitä varten — ja nämä kaksi sopivat hyvin yhteen: ensin tuonti, sitten valvonta.</li>
 <li><strong>Tiedosto tuodaan vasta kun sen koko on vakiintunut.</strong> Ottelu, jota toinen ohjelma kirjoittaa, kasvaa vilkaisusta toiseen; puoliksi kirjoitettuna tuotuna siitä tulisi jäsennysvirhe, jolle kukaan ei voi mitään. blunderDB odottaa siis näkevänsä saman tiedoston kahdesti muuttumattomana.</li>
-<li><strong>Tuonti on hiljainen.</strong> Olit tutkimassa asemaa kun ottelusi saapuivat: ruudun viemisestä sinulta olisi pahin mahdollinen hetki. Tuonti tapahtuu ilman ikkunaa, ja tilarivillä näkyy palkki, joka kertoo tuotujen, ohitettujen (kaksoiskappaleet) ja epäonnistuneiden otteluiden määrän, sekä painike joka avaa halutessa koko raportin. Kaikki muu on samaa kuin käsin tehdyssä tuonnissa: samat kaksoiskappaleet havaittuina, sama tuontierä, sama automaattinen analyysi jos se on päällä.</li>
+<li><strong>Tuonti on hiljainen.</strong> Tutkit asemaa, kun ottelusi saapuivat: näytön ottaminen sinulta olisi pahin mahdollinen hetki. Tila, aktiivinen haku, välilehti ja näytettävä asema eivät muutu; asemaluetteloa ei ladata uudelleen, ja se näyttää uudet ottelut seuraavan uudelleenlatauksen yhteydessä. Tuonti tehdään ilman ikkunaa, ja tilapalkki näyttää bannerin, jossa on tuotujen, ohitettujen (kaksoiskappaleet) ja epäonnistuneiden otteluiden määrä, sekä painikkeen, joka avaa halutessasi täydellisen raportin. Kaikki muu on samaa kuin käsin tehdyssä tuonnissa: samat kaksoiskappaleet tunnistetaan, sama tuontierä, sama automaattinen analyysi, jos se on käytössä.</li>
 </ul>
 <p>Oletusväli on kymmenen sekuntia; alaraja kaksi. Kansiota ei käydä läpi rekursiivisesti: valvottu kansio on paikka johon työkalu pudottaa ottelunsa, ei tutkittava puu. Irrotettu verkkojako ei pysäytä valvontaa eikä saa sisältöään käymään uudesta palatessaan.</p>
 <p>Sama valvonta on olemassa komentorivillä komennolla <code>blunderdb import --type batch --dir &lt;kansio&gt; --watch</code> (katso Komentoriviliittymä (CLI)): se on muoto, jota palvelin, ajastettu tehtävä tai skripti voi käyttää.</p>
@@ -987,8 +987,12 @@ export default {
 <td>Lataa kaikki tietokannan asemat uudelleen.</td>
 </tr>
 <tr>
-<td>PageUp, h</td>
+<td>Home, h</td>
 <td>Ensimmäinen asema / Edellinen peli (ottelunavigointi).</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Siirtyy sata asemaa taaksepäin (pysähtyy luettelon alkuun); ottelussa edelliseen peliin.</td>
 </tr>
 <tr>
 <td>VASEN, k</td>
@@ -1007,8 +1011,12 @@ export default {
 <td>Seuraava siirto (kun analyysissa on valittu siirto).</td>
 </tr>
 <tr>
-<td>PageDown, l</td>
+<td>End, l</td>
 <td>Viimeinen asema / Seuraava peli (ottelunavigointi).</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Siirtyy sata asemaa eteenpäin (pysähtyy luettelon loppuun); ottelussa seuraavaan peliin.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1904,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Siirry annetun indeksin asemaan.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Siirtyy luettelon tähän prosenttikohtaan: <code>0%</code> ensimmäinen asema, <code>50%</code> keskikohta, <code>100%</code> viimeinen.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

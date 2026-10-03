@@ -26,14 +26,14 @@
  */
 
 import { get } from 'svelte/store';
-import { directionPageShownStore } from '../stores/directionStore.js';
+import { directionPageShownStore, directionViewLoadedStore } from '../stores/directionStore.js';
 import { hasOpenOverlay } from './escapeService.js';
 import { isTypingTarget } from '../utils/panelFocus.js';
 import { isBareLetter } from '../utils/keys.js';
 
 /** La page Direction remplace-t-elle le plateau en ce moment ? */
 export function directionPageShown() {
-    return get(directionPageShownStore);
+    return get(directionPageShownStore) && get(directionViewLoadedStore);
 }
 
 /** Ce qui fait son propre geste sur ENTRÉE. La file elle-même (un conteneur) n'en est pas. */

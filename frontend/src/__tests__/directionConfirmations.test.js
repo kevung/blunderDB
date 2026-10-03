@@ -3,6 +3,7 @@
  * l'annulation de la frappe ; une table partagée par deux matchs les montre tous les deux.
  */
 import { test, expect, vi, afterEach } from 'vitest';
+import { answerConfirm } from './confirmHelper.js';
 import { render, cleanup, fireEvent, screen } from '@testing-library/svelte';
 import { tick } from 'svelte';
 import PlayersView from '../components/direction/PlayersView.svelte';
@@ -16,28 +17,27 @@ afterEach(() => {
 });
 
 test('retirer un joueur se confirme', async () => {
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
     const onWithdraw = vi.fn();
     const rows = [{ id: 'p1', name: 'Alice', state: 'free', wins: 0, losses: 0 }];
     render(PlayersView, { props: { rows, started: true, onWithdraw } });
     await fireEvent.click(screen.getByTestId('direction-player-withdraw-now'));
-    expect(confirm).toHaveBeenCalled();
+    await answerConfirm(false);
     expect(onWithdraw).not.toHaveBeenCalled();
-    confirm.mockReturnValue(true);
     await fireEvent.click(screen.getByTestId('direction-player-withdraw-now'));
+    await answerConfirm(true);
     expect(onWithdraw).toHaveBeenCalledWith('p1', false);
 });
 
 const started = { kind: 'match_started', seq: 3, matchId: 'm1', a: 'pa', b: 'pb', aName: 'Alice', bName: 'Bruno', cancellable: true, correctable: false };
 
 test('annuler le dernier match lancé se confirme', async () => {
-    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
     const onCancelMatch = vi.fn();
     render(LastDecision, { props: { last: started, onCancelMatch } });
     await fireEvent.click(screen.getByTestId('direction-last-cancel'));
+    await answerConfirm(false);
     expect(onCancelMatch).not.toHaveBeenCalled();
-    confirm.mockReturnValue(true);
     await fireEvent.click(screen.getByTestId('direction-last-cancel'));
+    await answerConfirm(true);
     expect(onCancelMatch).toHaveBeenCalledWith('m1');
 });
 

@@ -524,6 +524,36 @@ describe('processCommand', () => {
         expect(get(currentPositionIndexStore)).toBe(1);
     });
 
+    test('N% refuses like PageUp: no database, empty list, edit mode', () => {
+        positionsStore.set([{ id: 1 }, { id: 2 }, { id: 3 }]);
+        currentPositionIndexStore.set(1);
+        databasePathStore.set('');
+        processCommand('100%');
+        expect(get(currentPositionIndexStore)).toBe(1);
+        databasePathStore.set('/tmp/a.db');
+        statusBarModeStore.set('EDIT');
+        processCommand('100%');
+        expect(get(currentPositionIndexStore)).toBe(1);
+        statusBarModeStore.set('NORMAL');
+        positionsStore.set([]);
+        const before = get(statusBarTextStore);
+        processCommand('100%');
+        expect(get(statusBarTextStore)).toEqual(before);
+    });
+
+    test('N% goes N percent of the way through the list', () => {
+        databasePathStore.set('/tmp/a.db');
+        positionsStore.set(Array.from({ length: 101 }, (_, i) => ({ id: i + 1 })));
+        processCommand('50%');
+        expect(get(currentPositionIndexStore)).toBe(50);
+        processCommand('0%');
+        expect(get(currentPositionIndexStore)).toBe(0);
+        processCommand('100%');
+        expect(get(currentPositionIndexStore)).toBe(100);
+        processCommand('250%');
+        expect(get(currentPositionIndexStore)).toBe(100);
+    });
+
     // -- tag insertion -------------------------------------------------------
     test('# command reports the added tags in the status bar', () => {
         processCommand('#blunder');

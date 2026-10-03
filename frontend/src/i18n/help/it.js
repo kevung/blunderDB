@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Sono importati solo i file che compaiono.</strong> Ciò che la cartella contiene già quando la sorveglianza parte è registrato come noto e lasciato in pace: puntare una sorveglianza su quattro anni di incontri non deve importarli tutti. Per importare ciò che c'è, usate l'importazione di cartella, che esiste per questo — e le due si compongono benissimo, prima l'importazione, poi la sorveglianza.</li>
 <li><strong>Un file è importato solo quando la sua dimensione si è stabilizzata.</strong> Un incontro che un altro programma sta scrivendo cresce da un'occhiata all'altra; importarlo scritto a metà darebbe un errore di analisi su cui nessuno può agire. blunderDB attende quindi di vedere due volte lo stesso file immutato.</li>
-<li><strong>L'importazione è silenziosa.</strong> Stavate studiando una posizione quando sono arrivati i vostri incontri: togliervi lo schermo sarebbe il momento peggiore. L'importazione avviene senza finestra, e la barra di stato mostra una fascia con il conteggio degli incontri importati, ignorati (duplicati) e falliti, con un pulsante che apre il resoconto completo se lo desiderate. Tutto il resto è identico a un'importazione manuale: stessi duplicati rilevati, stesso lotto di importazione, stessa analisi automatica se è attiva.</li>
+<li><strong>L'importazione è silenziosa.</strong> Stavate studiando una posizione quando sono arrivate le vostre partite: togliervi lo schermo sarebbe il momento peggiore. La modalità, la ricerca attiva, la scheda e la posizione visualizzata non si spostano; l'elenco delle posizioni non viene ricaricato e mostra le nuove partite al prossimo ricaricamento. L'importazione avviene senza finestra, e la barra di stato mostra un banner con il conteggio delle partite importate, ignorate (duplicati) e fallite, con un pulsante che apre il rapporto completo se lo desiderate. Tutto il resto è identico a un'importazione manuale: gli stessi duplicati rilevati, lo stesso lotto di importazione, la stessa analisi automatica se è attivata.</li>
 </ul>
 <p>L'intervallo predefinito è di dieci secondi; il minimo è due. La cartella non è percorsa ricorsivamente: una cartella sorvegliata è il posto dove uno strumento deposita i suoi incontri, non un albero da esplorare. Una condivisione di rete smontata non ferma la sorveglianza e non fa nemmeno passare il suo contenuto per nuovo al ritorno.</p>
 <p>La stessa sorveglianza esiste da riga di comando, con <code>blunderdb import --type batch --dir &lt;cartella&gt; --watch</code> (vedere Interfaccia a riga di comando (CLI)): è la forma che un server, un'attività pianificata o uno script possono usare.</p>
@@ -987,8 +987,12 @@ export default {
 <td>Ricarica tutte le posizioni dal database.</td>
 </tr>
 <tr>
-<td>PageUp, h</td>
+<td>Home, h</td>
 <td>Prima posizione / Partita precedente (navigazione match).</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Torna indietro di una pagina di cento posizioni (si ferma all'inizio dell'elenco); in una partita, gioco precedente.</td>
 </tr>
 <tr>
 <td>SINISTRA, k</td>
@@ -1007,8 +1011,12 @@ export default {
 <td>Mossa successiva (quando una mossa è selezionata nell'analisi).</td>
 </tr>
 <tr>
-<td>PageDown, l</td>
+<td>End, l</td>
 <td>Ultima posizione / Partita successiva (navigazione match).</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Avanza di una pagina di cento posizioni (si ferma alla fine dell'elenco); in una partita, gioco successivo.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1904,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Vai alla posizione con l'indice indicato.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Va a quella percentuale dell'elenco: <code>0%</code> la prima posizione, <code>50%</code> la metà, <code>100%</code> l'ultima.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

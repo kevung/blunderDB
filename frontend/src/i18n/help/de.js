@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Nur erscheinende Dateien werden importiert.</strong> Was der Ordner beim Start der Überwachung bereits enthält, wird als bekannt vermerkt und in Ruhe gelassen: eine Überwachung auf vier Jahre Matches zu richten darf nicht alle importieren. Um das Vorhandene zu importieren, gibt es den Ordnerimport — und beide ergänzen sich bestens, erst der Import, dann die Überwachung.</li>
 <li><strong>Eine Datei wird erst importiert, wenn ihre Größe sich gesetzt hat.</strong> Ein Match, das ein anderes Programm gerade schreibt, wächst von einem Blick zum nächsten; es halb geschrieben zu importieren ergäbe einen Parserfehler, mit dem niemand etwas anfangen kann. blunderDB wartet daher, bis es dieselbe Datei zweimal unverändert gesehen hat.</li>
-<li><strong>Der Import ist still.</strong> Sie haben gerade eine Stellung studiert, als Ihre Matches ankamen: Ihnen den Bildschirm wegzunehmen wäre der denkbar schlechteste Moment. Der Import läuft ohne Fenster, und die Statusleiste zeigt einen Streifen mit der Zahl der importierten, übersprungenen (Duplikate) und fehlgeschlagenen Matches, mit einer Schaltfläche, die auf Wunsch den vollständigen Bericht öffnet. Alles Übrige ist identisch mit einem manuellen Import: dieselbe Duplikaterkennung, derselbe Importlauf, dieselbe automatische Analyse, wenn sie eingeschaltet ist.</li>
+<li><strong>Der Import ist still.</strong> Sie waren gerade dabei, eine Stellung zu studieren, als Ihre Matches eintrafen: Ihnen den Bildschirm wegzunehmen wäre der ungünstigste Moment. Modus, aktive Suche, Registerkarte und angezeigte Stellung bleiben unverändert; die Stellungsliste wird nicht neu geladen und zeigt die neuen Matches beim nächsten Neuladen. Der Import läuft ohne Fenster, und die Statusleiste zeigt ein Banner mit der Anzahl importierter, übersprungener (Duplikate) und fehlgeschlagener Matches, mit einer Schaltfläche, die auf Wunsch den vollständigen Bericht öffnet. Alles Übrige entspricht einem manuellen Import: dieselben erkannten Duplikate, derselbe Import-Stapel, dieselbe automatische Analyse, falls aktiviert.</li>
 </ul>
 <p>Das Standardintervall beträgt zehn Sekunden; die Untergrenze zwei. Der Ordner wird nicht rekursiv durchlaufen: ein überwachter Ordner ist der Ort, an dem ein Werkzeug seine Matches ablegt, kein Baum zum Durchsuchen. Eine ausgehängte Netzwerkfreigabe beendet die Überwachung nicht und lässt ihren Inhalt bei der Rückkehr auch nicht als neu erscheinen.</p>
 <p>Dieselbe Überwachung gibt es auf der Kommandozeile, mit <code>blunderdb import --type batch --dir &lt;Ordner&gt; --watch</code> (siehe Befehlszeilenschnittstelle (CLI)): es ist die Form, die ein Server, eine geplante Aufgabe oder ein Skript verwenden kann.</p>
@@ -987,8 +987,12 @@ export default {
 <td>Alle Positionen aus der Datenbank neu laden.</td>
 </tr>
 <tr>
-<td>Bild-auf, h</td>
+<td>Home, h</td>
 <td>Erste Position / Vorheriges Spiel (Match-Navigation).</td>
+</tr>
+<tr>
+<td>Bild-auf</td>
+<td>Geht eine Seite von hundert Stellungen zurück (hält am Listenanfang an); in einem Match: vorheriges Spiel.</td>
 </tr>
 <tr>
 <td>LINKS, k</td>
@@ -1007,8 +1011,12 @@ export default {
 <td>Nächster Zug (wenn ein Zug in der Analyse ausgewählt ist).</td>
 </tr>
 <tr>
-<td>Bild-ab, l</td>
+<td>End, l</td>
 <td>Letzte Position / Nächstes Spiel (Match-Navigation).</td>
+</tr>
+<tr>
+<td>Bild-ab</td>
+<td>Geht eine Seite von hundert Stellungen vor (hält am Listenende an); in einem Match: nächstes Spiel.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1896,6 +1904,10 @@ export default {
 <tr>
 <td>[number]</td>
 <td>Springt zur Position mit dem angegebenen Index.</td>
+</tr>
+<tr>
+<td>[number]%</td>
+<td>Springt zu diesem Prozentsatz der Liste: <code>0%</code> die erste Stellung, <code>50%</code> die Mitte, <code>100%</code> die letzte.</td>
 </tr>
 <tr>
 <td>grid, gr</td>

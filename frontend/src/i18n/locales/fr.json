@@ -363,7 +363,8 @@
         "tabManual": "Manuel",
         "tabShortcuts": "Raccourci",
         "tabCommands": "Ligne de commande",
-        "tabAbout": "À propos"
+        "tabAbout": "À propos",
+        "loadFailed": "L'aide n'a pas pu être chargée."
     },
     "commands": {
         "collectionEmpty": "La collection est vide",
@@ -1259,6 +1260,11 @@
         "errorDeletingPosition": "Erreur lors de la suppression de la position et de l'analyse associée",
         "errorEnteringMatchMode": "Erreur lors de l'entrée en mode match",
         "errorHandlingDroppedDb": "Erreur lors du traitement de la base de données déposée",
+        "droppedDbMessage": "Une base de données est déjà ouverte.\n\nQue souhaitez-vous faire de « {filename} » ?",
+        "droppedDbOpen": "Ouvrir",
+        "droppedDbMerge": "Fusionner",
+        "droppedDbCancel": "Annuler",
+        "directionLoadFailed": "La vue Direction n'a pas pu être chargée.",
         "errorLoadingAllPositions": "Erreur lors du chargement de toutes les positions",
         "errorLoadingByFilters": "Erreur lors du chargement des positions par filtres",
         "errorSavingPosition": "Erreur lors de l'enregistrement de la position, de l'analyse et du commentaire",

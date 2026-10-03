@@ -9,6 +9,8 @@
  * geste, jamais un chemin plus court vers un geste non confirmé.
  */
 
+import { confirmAction } from './confirmService.js';
+
 /** @typedef {import('./contextMenuTrigger.js').MenuItem} MenuItem */
 
 /**
@@ -24,7 +26,7 @@
  * chemin plus court que les boutons, que `busy` désactive déjà.
  * @typedef {{
  *     busy?: boolean,
- *     confirm?: (message: string) => boolean,
+ *     confirm?: (message: string) => boolean | Promise<boolean>,
  *     openResult?: () => void,
  *     openMove?: () => void,
  *     onForfeit?: (matchId: string, winner: string, note: string) => unknown,
@@ -41,7 +43,7 @@
 
 /** @param {MatchActions} h @param {string} message */
 function ask(h, message) {
-    return (h.confirm ?? ((m) => window.confirm(m)))(message);
+    return (h.confirm ?? ((m) => confirmAction(m)))(message);
 }
 
 /**
@@ -65,15 +67,15 @@ export function matchMenu(t, m, h) {
             items.push({
                 label: t('direction.menu.forfeitOf', { name: aName }),
                 disabled: !!h.busy,
-                onClick: () => {
-                    if (ask(h, t('direction.result.forfeitConfirm', { loser: aName, winner: bName }))) forfeit(id, m.b || '', '');
+                onClick: async () => {
+                    if (await ask(h, t('direction.result.forfeitConfirm', { loser: aName, winner: bName }))) forfeit(id, m.b || '', '');
                 }
             });
             items.push({
                 label: t('direction.menu.forfeitOf', { name: bName }),
                 disabled: !!h.busy,
-                onClick: () => {
-                    if (ask(h, t('direction.result.forfeitConfirm', { loser: bName, winner: aName }))) forfeit(id, m.a || '', '');
+                onClick: async () => {
+                    if (await ask(h, t('direction.result.forfeitConfirm', { loser: bName, winner: aName }))) forfeit(id, m.a || '', '');
                 }
             });
         }
@@ -85,8 +87,8 @@ export function matchMenu(t, m, h) {
             items.push({
                 label: t('direction.menu.cancelMatch'),
                 disabled: !!h.busy,
-                onClick: () => {
-                    if (ask(h, t('direction.result.cancelConfirm', { a: aName, b: bName }))) cancel(id);
+                onClick: async () => {
+                    if (await ask(h, t('direction.result.cancelConfirm', { a: aName, b: bName }))) cancel(id);
                 }
             });
         }
@@ -139,7 +141,7 @@ export function cellMenu(t, c, h) {
  *     busy?: boolean,
  *     onManual?: (id: string) => void,
  *     onGoElsewhere?: (event: string) => void,
- *     confirm?: (message: string) => boolean,
+ *     confirm?: (message: string) => boolean | Promise<boolean>,
  *     onGoTable?: (table: number, open: boolean) => void,
  *     onHistory?: (name: string) => void,
  *     onAbsent?: (id: string) => void,
@@ -172,16 +174,16 @@ export function playerMenu(t, p, h) {
         items.push({
             label: t('direction.menu.withdrawNow'),
             disabled: !!h.busy,
-            onClick: () => {
-                if (ask(h, t('direction.players.withdrawNowConfirm', { name: p.name }))) withdraw(p.id, false);
+            onClick: async () => {
+                if (await ask(h, t('direction.players.withdrawNowConfirm', { name: p.name }))) withdraw(p.id, false);
             }
         });
         if (p.state === 'playing') {
             items.push({
                 label: t('direction.menu.withdrawLater'),
                 disabled: !!h.busy,
-                onClick: () => {
-                    if (ask(h, t('direction.players.withdrawLaterConfirm', { name: p.name }))) withdraw(p.id, true);
+                onClick: async () => {
+                    if (await ask(h, t('direction.players.withdrawLaterConfirm', { name: p.name }))) withdraw(p.id, true);
                 }
             });
         }
@@ -219,7 +221,7 @@ export function proposalMenu(t, a, h) {
  * @param {{ correctable?: boolean, cancellable?: boolean, matchId?: string, aName?: string, bName?: string, a?: string, b?: string }} e
  * @param {{
  *     busy?: boolean,
- *     confirm?: (message: string) => boolean,
+ *     confirm?: (message: string) => boolean | Promise<boolean>,
  *     onCorrect?: () => void,
  *     onCancel?: (matchId: string) => unknown,
  *     onNote?: () => void,
@@ -238,8 +240,8 @@ export function historyMenu(t, e, h) {
         items.push({
             label: t('direction.menu.cancelMatch'),
             disabled: !!h.busy,
-            onClick: () => {
-                if (ask(h, t('direction.result.cancelConfirm', { a: aName, b: bName }))) cancel(e.matchId || '');
+            onClick: async () => {
+                if (await ask(h, t('direction.result.cancelConfirm', { a: aName, b: bName }))) cancel(e.matchId || '');
             }
         });
     }

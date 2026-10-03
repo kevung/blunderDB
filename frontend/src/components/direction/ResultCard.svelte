@@ -1,4 +1,5 @@
 <script>
+    import { confirmAction } from '../../services/confirmService.js';
     /*
      * La fiche de résultat : deux clics, la case puis le nom du
      * vainqueur, qui valide. Score facultatif (les deux ou aucun) ; forfait, remarque, table
@@ -87,8 +88,8 @@
      * @param {string} loserName
      * @param {string} winnerName
      */
-    function forfeit(winner, loserName, winnerName) {
-        if (!window.confirm($t('direction.result.forfeitConfirm', { loser: loserName, winner: winnerName }))) return;
+    async function forfeit(winner, loserName, winnerName) {
+        if (!(await confirmAction($t('direction.result.forfeitConfirm', { loser: loserName, winner: winnerName })))) return;
         submit(() => onForfeit(cell.matchId, winner, note.trim()));
     }
 
@@ -97,8 +98,8 @@
         if (n > 0) submit(() => onMove(cell.matchId, n));
     }
 
-    function cancel() {
-        if (!window.confirm($t('direction.result.cancelConfirm', { a: cell.aName ?? cell.a, b: cell.bName ?? cell.b }))) return;
+    async function cancel() {
+        if (!(await confirmAction($t('direction.result.cancelConfirm', { a: cell.aName ?? cell.a, b: cell.bName ?? cell.b })))) return;
         submit(() => onCancel(cell.matchId));
     }
 

@@ -363,7 +363,8 @@
         "tabManual": "Käyttöopas",
         "tabShortcuts": "Pikanäppäin",
         "tabCommands": "Komentorivi",
-        "tabAbout": "Tietoja"
+        "tabAbout": "Tietoja",
+        "loadFailed": "Ohjetta ei voitu ladata."
     },
     "commands": {
         "collectionEmpty": "Kokoelma on tyhjä",
@@ -1259,6 +1260,11 @@
         "errorDeletingPosition": "Virhe poistettaessa positiota ja siihen liittyvää analyysiä",
         "errorEnteringMatchMode": "Virhe siirryttäessä ottelutilaan",
         "errorHandlingDroppedDb": "Virhe käsiteltäessä pudotettua tietokantaa",
+        "droppedDbMessage": "Tietokanta on jo auki.\n\nMitä haluat tehdä tiedostolle ”{filename}”?",
+        "droppedDbOpen": "Avaa",
+        "droppedDbMerge": "Yhdistä",
+        "droppedDbCancel": "Peruuta",
+        "directionLoadFailed": "Johtonäkymää ei voitu ladata.",
         "errorLoadingAllPositions": "Virhe ladattaessa kaikkia positioita",
         "errorLoadingByFilters": "Virhe ladattaessa positioita suodattimilla",
         "errorSavingPosition": "Virhe tallennettaessa positiota, analyysiä ja kommenttia",
