@@ -656,7 +656,7 @@ async function importTxtFile(filePath) {
     return null;
 }
 
-async function importSingleFileBatch(filePath) {
+async function importSingleFileBatch(filePath, { quiet = false } = {}) {
     const lowerPath = filePath.toLowerCase();
     const isXGFile = lowerPath.endsWith('.xg');
     const isXGPFile = lowerPath.endsWith('.xgp');
@@ -678,12 +678,12 @@ async function importSingleFileBatch(filePath) {
         const matchID = await ImportGnuBGMatch(filePath);
         return { type: 'match', id: matchID };
     } else if (isTXTFile) {
-        return await importTxtFileBatch(filePath);
+        return await importTxtFileBatch(filePath, { quiet });
     }
     throw new Error('Unsupported file type');
 }
 
-async function importTxtFileBatch(filePath) {
+async function importTxtFileBatch(filePath, { quiet = false } = {}) {
     const response = await ReadFileContent(filePath);
     if (response.error) throw new Error(response.error);
     const content = response.content;
@@ -699,7 +699,8 @@ async function importTxtFileBatch(filePath) {
         return { type: 'position', id: posID };
     } else {
         const { positionData, parsedAnalysis } = await parsePositionText(content);
-        positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
+        // A quiet import never puts a position on the board: the user may be studying another one.
+        if (!quiet) positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
         const posID = await savePositionAndAnalysis(positionData, parsedAnalysis, '', { reload: false });
         return { type: 'position', id: posID };
     }
@@ -785,7 +786,7 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
         fileImportCurrentFileStore.set(filePath);
 
         try {
-            const result = await importSingleFileBatch(filePath);
+            const result = await importSingleFileBatch(filePath, { quiet });
             fileImportResultsStore.update((r) => ({ ...r, succeeded: r.succeeded + 1 }));
             if (result && result.type === 'match') hadMatches = true;
             if (result && result.type === 'position' && result.id) lastPositionID = result.id;
@@ -817,7 +818,9 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
         matchPanelRefreshTriggerStore.update((n) => n + 1);
         dbMutationCounterStore.update((n) => n + 1);
     }
-    await reloadPositions();
+    // A quiet import leaves mode, search, tab and current position alone:
+    // reloading the list would reset all four.
+    if (!quiet) await reloadPositions();
 
     const results = get(fileImportResultsStore);
     setStatusBarMessage(
