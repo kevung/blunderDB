@@ -2,11 +2,13 @@ package server
 
 // Idempotency-Key, as this server keeps it.
 //
-// Most /v1 methods need no such mechanism: a read is safe to repeat, and
-// positions.save dedups on its Zobrist hash. withIdempotency wraps the calls
-// that write something new on every invocation with no natural dedup key —
-// the "create" calls (collections, tournaments, directions, rencontres,
-// anki.reviewCard) and the gestures that change a direction, a rencontre or
+// Most /v1 methods need no such mechanism: a read is safe to repeat.
+// withIdempotency wraps the calls that write something new on every
+// invocation with no natural dedup key — the "create" calls (collections,
+// tournaments, directions, rencontres, anki.reviewCard) — and
+// positions.save, whose effect dedups on the Zobrist hash but whose response
+// (created) does not: a retry after a lost response must replay created=true.
+// It also wraps the gestures that change a direction, a rencontre or
 // a transcription. Every other route ignores the header.
 //
 // What a key guarantees:

@@ -658,9 +658,9 @@ class GeneratedAPI(BaseClient):
         "POST /v1/positions.repairCrawford — JSON."
         return self._call("/v1/positions.repairCrawford", payload)
 
-    def positions_save(self, payload: Optional[dict] = None) -> Optional[Any]:
-        "POST /v1/positions.save — JSON."
-        return self._call("/v1/positions.save", payload)
+    def positions_save(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/positions.save — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/positions.save", payload, idempotency_key=idempotency_key)
 
     def positions_similar(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.similar — JSON."

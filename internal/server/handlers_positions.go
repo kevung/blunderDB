@@ -92,13 +92,13 @@ func (s *Server) positionRoutes() []route {
 	ps := func() storage.PositionStore { return s.opts.Storage.Positions() }
 	ss := func() storage.SearchStore { return s.opts.Storage.Search() }
 	return []route{
-		{http.MethodPost, "/v1/positions.save", rpc(func(ctx context.Context, scope string, req positionReq) (positionSaveResp, error) {
+		{http.MethodPost, "/v1/positions.save", s.withIdempotency(rpc(func(ctx context.Context, scope string, req positionReq) (positionSaveResp, error) {
 			if req.Position == nil {
 				return positionSaveResp{}, errMissing("position")
 			}
 			id, created, err := ps().SaveCreated(ctx, scope, req.Position)
 			return positionSaveResp{ID: id, Created: created}, err
-		})},
+		}))},
 		{http.MethodPost, "/v1/positions.update", rpcVoid(func(ctx context.Context, scope string, req positionReq) error {
 			if req.Position == nil {
 				return errMissing("position")

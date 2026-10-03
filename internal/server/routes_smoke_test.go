@@ -75,6 +75,7 @@ var customContentTypes = map[string][]string{
 	// like any other rpc route.
 	"/v1/collections.create": {"application/json"},
 	"/v1/tournaments.create": {"application/json"},
+	"/v1/positions.save":     {"application/json"},
 	// The gestures of a Direction, under withIdempotency (handlers_direction_gestures.go).
 	"/v1/directions.create":               {"application/json"},
 	"/v1/directions.setConfig":            {"application/json"},

@@ -24,11 +24,12 @@ info:
     authenticating reverse-proxy (see ADR-0005 and doc/source/mode_headless.rst).
     X-Tenant-ID is the tenant's positive decimal integer; a name is refused
     with 400 invalid, never mapped to a tenant by this daemon. Idempotency:
-    positions.save (and every other positions.* write) is naturally
-    idempotent through its Zobrist content hash — saving the same position
-    twice returns the same row, never a duplicate. collections.create,
-    tournaments.create and anki.reviewCard have no such natural key (two
-    calls are two distinct effects) and instead accept an optional
+    positions.* writes are naturally idempotent through the Zobrist content
+    hash — saving the same position twice returns the same row, never a
+    duplicate — but positions.save reports created, which a retry would
+    flip to false. collections.create, tournaments.create and anki.reviewCard
+    have no natural key (two calls are two distinct effects). These four
+    accept an optional
     Idempotency-Key request header (marked "x-idempotency-key: true" below):
     a retried call carrying the same key replays the first attempt's result
     instead of repeating its effect. Every other route neither needs nor

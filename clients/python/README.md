@@ -47,12 +47,14 @@ daemon of different versions); only `not_found` means the data is missing.
 
 ## Idempotency
 
-Most methods need nothing: reads have no effect, and `positions.save` — like the
-rest of `positions.*` — is naturally idempotent through the position's Zobrist
-content hash. The three that are not (`collections.create`,
-`tournaments.create`, `anki.reviewCard`) take an `idempotency_key=` argument: a
-retried call carrying the same key replays the first attempt's result instead of
-repeating its effect.
+Most methods need nothing: reads have no effect, and the writes of `positions.*`
+are idempotent in their effect through the position's Zobrist content hash. The
+exception is the response of `positions.save`: a retry after a lost response
+reports `created=False`, since the position now exists. So it, like the calls
+with no natural key (`collections.create`, `tournaments.create`,
+`anki.reviewCard`), takes an `idempotency_key=` argument: a retried call
+carrying the same key replays the first attempt's result (`created=True`
+included) instead of repeating its effect.
 
 ## Versioning
 

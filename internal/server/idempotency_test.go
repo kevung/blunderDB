@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/internal/server/middleware"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
@@ -209,4 +211,45 @@ func TestIdempotencyStore_EvictsLeastRecentlyUsed(t *testing.T) {
 
 func keyFor(i int) string {
 	return "k" + string(rune('a'+i%26)) + string(rune('0'+i/26))
+}
+
+// TestIdempotency_PositionsSaveReplaysCreated: a retry of positions.save after
+// a lost response replays created=true; without a key it reports false, the
+// position now existing.
+func TestIdempotency_PositionsSaveReplaysCreated(t *testing.T) {
+	ts, _ := idempotencyTestServer(t)
+	save := func(key string) (positionSaveResp, string) {
+		p := domain.InitializePosition()
+		body, _ := json.Marshal(positionReq{Position: &p})
+		req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/positions.save", bytes.NewReader(body))
+		req.Header.Set(middleware.TenantHeader, "1")
+		req.Header.Set("Content-Type", "application/json")
+		if key != "" {
+			req.Header.Set(IdempotencyKeyHeader, key)
+		}
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer resp.Body.Close()
+		var out positionSaveResp
+		if resp.StatusCode != http.StatusOK {
+			t.Fatalf("status %d", resp.StatusCode)
+		}
+		if err := json.NewDecoder(resp.Body).Decode(&out); err != nil {
+			t.Fatal(err)
+		}
+		return out, resp.Header.Get(idempotencyReplayedHeader)
+	}
+	first, _ := save("k1")
+	if !first.Created {
+		t.Fatalf("first save: created=false")
+	}
+	again, replayed := save("k1")
+	if !again.Created || again.ID != first.ID || replayed != "true" {
+		t.Errorf("retry = %+v replayed=%q, want the first response replayed", again, replayed)
+	}
+	if plain, _ := save(""); plain.Created {
+		t.Errorf("keyless retry: created=true, want false")
+	}
 }

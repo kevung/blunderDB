@@ -187,7 +187,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/positions.parseText                  JSON
      POST /v1/positions.reclassifyPhases           JSON
      POST /v1/positions.repairCrawford             JSON
-     POST /v1/positions.save                       JSON
+     POST /v1/positions.save                       JSON  (Idempotency-Key)
      POST /v1/positions.similar                    JSON
      POST /v1/positions.update                     JSON
    quiz
@@ -280,7 +280,7 @@ La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les
 lectures sont sans effet de bord, et ``positions.save`` (comme le reste de
 ``positions.*``) est naturellement idempotente grâce au hachage Zobrist du
 contenu — enregistrer deux fois la même position renvoie la même ligne, jamais
-un doublon. 42 méthodes n'ont pas cette propriété (deux appels sont deux effets
+un doublon. 43 méthodes n'ont pas cette propriété (deux appels sont deux effets
 distincts) et acceptent un en-tête ``Idempotency-Key`` optionnel : un appel
 rejoué avec la même clé renvoie le résultat de la première tentative au lieu de
 répéter son effet — voir la marque « (Idempotency-Key) » dans le tableau
