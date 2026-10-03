@@ -53,6 +53,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Search/FilterByFlagged", testSearchFilterByFlagged},
 		{"Analysis/SaveAndCompress", testAnalysisSaveAndCompress},
 		{"Analysis/SaveIsAnUpsert", testAnalysisSaveIsAnUpsert},
+		{"Analysis/WithEngineSkipsOtherEngines", testAnalysisWithEngineSkipsOtherEngines},
 		{"Analysis/MergeSkipsAnIdenticalResult", testAnalysisMergeSkipsAnIdenticalResult},
 		{"Analysis/MergeTakesPlayedFromTheCaller", testAnalysisMergeTakesPlayedFromTheCaller},
 		{"Analysis/RolloutIsASecondAnalysis", testRolloutIsASecondAnalysis},

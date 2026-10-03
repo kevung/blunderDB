@@ -317,29 +317,19 @@ func gammonnetPositionsWithoutAnalysis(ctx context.Context, s storage.Storage, s
 // storage.ErrNotFound here in the first place — IsStaleAnalysis itself
 // enforces the same rule for a position that carries BOTH.
 func gammonnetPositionsWithStaleAnalysis(ctx context.Context, s storage.Storage, scope, targetDepth string) ([]domain.Position, error) {
-	all, err := drainPositions(ctx, s, scope)
-	if err != nil {
-		return nil, err
-	}
-
-	var stale []domain.Position
-	for _, p := range all {
-		if ctx.Err() != nil {
-			return stale, nil
-		}
-		a, err := s.Analyses().Load(ctx, scope, p.ID)
-		switch {
-		case err == nil:
-			if gammonnet.IsStaleAnalysis(a, targetDepth) {
-				stale = append(stale, p)
-			}
-		case errors.Is(err, storage.ErrNotFound):
-			continue
-		default:
+	var staleIDs []int64
+	for rec, err := range s.Analyses().WithEngine(ctx, scope, gammonnet.EngineLabelPrefix) {
+		if err != nil {
 			return nil, err
 		}
+		if gammonnet.IsStaleAnalysis(rec.Analysis, targetDepth) {
+			staleIDs = append(staleIDs, rec.PositionID)
+		}
 	}
-	return stale, nil
+	if ctx.Err() != nil || len(staleIDs) == 0 {
+		return nil, nil
+	}
+	return s.Positions().LoadByIDs(ctx, scope, staleIDs)
 }
 
 func drainPositions(ctx context.Context, s storage.Storage, scope string) ([]domain.Position, error) {

@@ -11,6 +11,10 @@ import (
 // like "gammonNet v1.3.0" will.
 const engineVersionPrefix = "gammonNet "
 
+// EngineLabelPrefix is that prefix for callers that narrow a query on the
+// analysis_engine column instead of decoding every blob.
+const EngineLabelPrefix = engineVersionPrefix
+
 // IsStaleAnalysis reports whether a's every entry is gammonNet's own and at
 // least one entry is either older than the running build's EngineVersion or
 // not at targetDepth (the exact DepthLabel string, so a depth change alone

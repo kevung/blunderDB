@@ -447,3 +447,59 @@ func (s *analysisStore) WithoutAnalysis(ctx context.Context, scope string, opts 
 		}
 	}
 }
+
+// withEngineBatch is how many candidate rows WithEngine reads and decodes per
+// round trip.
+const withEngineBatch = 1000
+
+// WithEngine — see storage.AnalysisStore.
+func (s *analysisStore) WithEngine(ctx context.Context, scope, enginePrefix string) iter.Seq2[storage.AnalysisRecord, error] {
+	return func(yield func(storage.AnalysisRecord, error) bool) {
+		var last int64
+		for {
+			raw, ids, err := s.engineBatch(ctx, scope, last, enginePrefix)
+			if err != nil {
+				yield(storage.AnalysisRecord{}, fmt.Errorf("postgres: analyses by engine: %w", err))
+				return
+			}
+			if len(ids) == 0 {
+				return
+			}
+			last = ids[len(ids)-1]
+			decoded, failed := engine.DecodeAnalysesConcurrently(raw)
+			for id, err := range failed {
+				slog.Warn("decoding stored analysis", "positionID", id, "err", err)
+			}
+			for _, id := range ids {
+				if a, ok := decoded[id]; ok && !yield(storage.AnalysisRecord{PositionID: id, Analysis: a}, nil) {
+					return
+				}
+			}
+		}
+	}
+}
+
+func (s *analysisStore) engineBatch(ctx context.Context, scope string, last int64, enginePrefix string) (map[int64][]byte, []int64, error) {
+	rows, err := s.db.Query(ctx,
+		`SELECT position_id, data FROM analysis
+		 WHERE tenant_id = $1 AND position_id > $2
+		   AND (analysis_engine IS NULL OR left(analysis_engine, $3) = $4)
+		 ORDER BY position_id LIMIT $5`,
+		tenantID(scope), last, len(enginePrefix), enginePrefix, withEngineBatch)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer rows.Close()
+	raw := make(map[int64][]byte, withEngineBatch)
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		var data []byte
+		if err := rows.Scan(&id, &data); err != nil {
+			return nil, nil, err
+		}
+		raw[id] = data
+		ids = append(ids, id)
+	}
+	return raw, ids, rows.Err()
+}

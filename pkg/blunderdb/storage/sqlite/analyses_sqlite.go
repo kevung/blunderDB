@@ -412,3 +412,60 @@ func (s *analysisStore) WithoutAnalysis(ctx context.Context, _ string, opts stor
 		}
 	}
 }
+
+// withEngineBatch is how many candidate rows WithEngine reads and decodes per
+// round trip.
+const withEngineBatch = 1000
+
+// WithEngine — see storage.AnalysisStore.
+func (s *analysisStore) WithEngine(ctx context.Context, _ string, enginePrefix string) iter.Seq2[storage.AnalysisRecord, error] {
+	return func(yield func(storage.AnalysisRecord, error) bool) {
+		var last int64
+		for {
+			raw, ids, err := s.engineBatch(ctx, last, enginePrefix)
+			if err != nil {
+				yield(storage.AnalysisRecord{}, fmt.Errorf("sqlite: analyses by engine: %w", err))
+				return
+			}
+			if len(ids) == 0 {
+				return
+			}
+			last = ids[len(ids)-1]
+			decoded, failed := engine.DecodeAnalysesConcurrently(raw)
+			for id, err := range failed {
+				slog.Warn("decoding stored analysis", "positionID", id, "err", err)
+			}
+			for _, id := range ids {
+				if a, ok := decoded[id]; ok && !yield(storage.AnalysisRecord{PositionID: id, Analysis: a}, nil) {
+					return
+				}
+			}
+		}
+	}
+}
+
+// engineBatch reads the next withEngineBatch candidates past last, closing its
+// cursor before returning.
+func (s *analysisStore) engineBatch(ctx context.Context, last int64, enginePrefix string) (map[int64][]byte, []int64, error) {
+	rows, err := s.db.QueryContext(ctx,
+		`SELECT position_id, data FROM analysis
+		 WHERE position_id > ? AND (analysis_engine IS NULL OR substr(analysis_engine, 1, ?) = ?)
+		 ORDER BY position_id LIMIT ?`,
+		last, len(enginePrefix), enginePrefix, withEngineBatch)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer rows.Close()
+	raw := make(map[int64][]byte, withEngineBatch)
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		var data []byte
+		if err := rows.Scan(&id, &data); err != nil {
+			return nil, nil, err
+		}
+		raw[id] = data
+		ids = append(ids, id)
+	}
+	return raw, ids, rows.Err()
+}
