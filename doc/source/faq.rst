@@ -96,6 +96,8 @@ blunderDB supporte les formats de match suivants:
 
 * **BGBlitz**: fichiers *.bgf* et positions texte.
 
+* **HedgeHog** (OpenGammon): fichiers *.ogxm*, avec l'analyse.
+
 L'import peut se faire par fichier unique, par sélection multiple, par dossier
 récursif, par collage depuis le presse-papier, ou par glisser-déposer.
 

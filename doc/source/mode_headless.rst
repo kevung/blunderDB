@@ -793,7 +793,7 @@ répond par un dernier évènement ``{"event":"cancelled"}`` plutôt que de voir
 sa connexion coupée sans explication — avant de fermer le serveur dans le
 délai de grâce habituel. Le fichier temporaire d'un import téléversé ne
 retient de l'extension d'origine que celles connues du démon
-(``.xg``, ``.xgp``, ``.sgf``, ``.mat``, ``.bgf``, ``.txt``, ``.db``,
+(``.xg``, ``.xgp``, ``.sgf``, ``.mat``, ``.bgf``, ``.ogxm``, ``.txt``, ``.db``,
 ``.dbx``), et l'ensemble des imports simultanés — tous tenants confondus —
 partage un quota global d'octets déposés sur disque : au-delà, un nouvel
 import est refusé (``too many requests``) plutôt que de laisser croître sans

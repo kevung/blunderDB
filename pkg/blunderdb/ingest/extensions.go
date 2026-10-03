@@ -11,12 +11,13 @@ import (
 
 // importableExtensions maps a lower-cased extension (with its dot) to true.
 var importableExtensions = map[string]bool{
-	".txt": true, // BGBlitz position text, Snowie-style match text
-	".xg":  true, // eXtreme Gammon match
-	".xgp": true, // eXtreme Gammon single position
-	".sgf": true, // GNU Backgammon match
-	".mat": true, // Jellyfish match
-	".bgf": true, // BGBlitz match
+	".txt":  true, // BGBlitz position text, Snowie-style match text
+	".xg":   true, // eXtreme Gammon match
+	".xgp":  true, // eXtreme Gammon single position
+	".sgf":  true, // GNU Backgammon match
+	".mat":  true, // Jellyfish match
+	".bgf":  true, // BGBlitz match
+	".ogxm": true, // HedgeHog / OpenGammon match
 }
 
 // IsImportable reports whether path's extension is one blunderDB can read.

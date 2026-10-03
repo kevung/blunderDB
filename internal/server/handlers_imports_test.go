@@ -217,6 +217,20 @@ func TestImportBGFEndToEnd(t *testing.T) {
 	}
 }
 
+func TestImportOGXMEndToEnd(t *testing.T) {
+	ts := newTestServer(t)
+
+	fixture, err := os.ReadFile(filepath.Join("..", "..", "testdata", "hedgehog-3pt-analysed.ogxm"))
+	if err != nil {
+		t.Fatalf("read fixture: %v", err)
+	}
+	events := uploadImportNamed(t, ts, "/v1/imports.ogxm", "match.ogxm", fixture)
+	done := events[len(events)-1]
+	if done["event"] != "done" || done["matches"].(float64) != 1 || done["saved_positions"].(float64) == 0 {
+		t.Fatalf("last event = %v", done)
+	}
+}
+
 func TestImportNativeDBEndToEnd(t *testing.T) {
 	ts := newTestServer(t)
 

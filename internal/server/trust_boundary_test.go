@@ -347,7 +347,7 @@ func TestImportsCancel_BodyTooLarge(t *testing.T) {
 func TestLimitBody_ExemptsExactlyTheUploads(t *testing.T) {
 	want := map[string]bool{
 		"/v1/imports.json": true, "/v1/imports.xg": true, "/v1/imports.gnubg": true,
-		"/v1/imports.bgf": true, "/v1/imports.db": true, "/v1/imports.position": true,
+		"/v1/imports.bgf": true, "/v1/imports.ogxm": true, "/v1/imports.db": true, "/v1/imports.position": true,
 	}
 	got := uploadPaths()
 	if len(got) != len(want) {

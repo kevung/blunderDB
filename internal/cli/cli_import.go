@@ -42,7 +42,7 @@ func (cli *CLI) runImport(args []string) error {
 		importCmd.PrintDefaults()
 		fmt.Println()
 		fmt.Println("Import Types:")
-		fmt.Println("  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf) or XGP position (.xgp)")
+		fmt.Println("  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position (.xgp)")
 		fmt.Println("  position  Import positions from a text file")
 		fmt.Println("  batch     Batch import all match/position files from a directory")
 		fmt.Println()
@@ -192,8 +192,10 @@ func (cli *CLI) importMatch(filePath, format string) error {
 		matchID, err = cli.db.ImportGnuBGMatch(filePath)
 	case ".bgf":
 		matchID, err = cli.db.ImportBGFMatch(filePath)
+	case ".ogxm":
+		matchID, err = cli.db.ImportOGXMMatch(filePath)
 	default:
-		return fmt.Errorf("invalid file type: %s (expected .xg, .xgp, .sgf, .mat, .txt, or .bgf)", ext)
+		return fmt.Errorf("invalid file type: %s (expected .xg, .xgp, .sgf, .mat, .txt, .bgf or .ogxm)", ext)
 	}
 
 	if err != nil {
@@ -452,6 +454,8 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			matchID, err = cli.db.ImportGnuBGMatch(filePath)
 		case ".bgf":
 			matchID, err = cli.db.ImportBGFMatch(filePath)
+		case ".ogxm":
+			matchID, err = cli.db.ImportOGXMMatch(filePath)
 		}
 
 		if err != nil {
