@@ -21,7 +21,10 @@ test('« / » cherche dans l’aide, Entrée passe à l’occurrence suivante', 
 
     await page.keyboard.press('/');
     await expect(search).toBeFocused();
-    await search.fill('position');
+    await search.pressSequentially('position');
+    await expect(search).toHaveValue('position');
+    await expect(page.getByTestId('help-search-count')).toHaveText(/^0 \/ \d+$/);
+    await search.press('Enter');
     await expect(page.getByTestId('help-search-count')).toHaveText(/^1 \/ \d+$/);
     await search.press('Enter');
     await expect(page.getByTestId('help-search-count')).toHaveText(/^2 \/ \d+$/);

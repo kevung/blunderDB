@@ -62,15 +62,15 @@
     function runSearch() {
         matches = findInHelp(contentArea, searchQuery);
         matchCount = matches.length;
-        matchIndex = 0;
-        if (matches.length > 0) showMatch(0);
+        // Typing only counts: moving the page's selection under the caret would cut the word short.
+        matchIndex = -1;
     }
 
     function onSearchKeyDown(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
             if (matches.length === 0) runSearch();
-            else showMatch(matchIndex + (event.shiftKey ? -1 : 1));
+            showMatch(matchIndex < 0 ? (event.shiftKey ? -1 : 0) : matchIndex + (event.shiftKey ? -1 : 1));
         }
         // Everything else a field needs (letters, arrows, Escape for Modal) is left alone.
         if (event.key !== 'Escape') event.stopPropagation();

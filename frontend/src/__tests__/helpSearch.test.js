@@ -37,8 +37,12 @@ test('the search field counts the occurrences, Enter steps through them, "/" foc
     await fireEvent.input(input, { target: { value: 'position' } });
     await tick();
     const count = screen.getByTestId('help-search-count').textContent;
-    expect(count).toMatch(/^1 \/ \d+$/);
+    expect(count).toMatch(/^0 \/ \d+$/);
+    expect(window.getSelection().toString()).toBe('');
 
+    await fireEvent.keyDown(input, { key: 'Enter' });
+    await tick();
+    expect(screen.getByTestId('help-search-count').textContent).toMatch(/^1 \/ \d+$/);
     await fireEvent.keyDown(input, { key: 'Enter' });
     await tick();
     expect(screen.getByTestId('help-search-count').textContent).toMatch(/^2 \/ \d+$/);
