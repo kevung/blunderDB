@@ -3,6 +3,7 @@ package ingest
 import (
 	"context"
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
 	"io"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -35,20 +37,31 @@ const (
 
 // FileOutcome is what one file of the list became.
 type FileOutcome struct {
-	Index  int    `json:"index"`
-	Path   string `json:"path"`
-	Size   int64  `json:"size"`
-	Status string `json:"status"`
+	Index int    `json:"index"`
+	Path  string `json:"path"`
+	Size  int64  `json:"size"`
+	// ModTime is the file's modification time, UTC, as JournalTime spells
+	// it; SHA256 its content digest in hex, empty when it could not be read.
+	ModTime string `json:"mod_time,omitempty"`
+	SHA256  string `json:"sha256,omitempty"`
+	Status  string `json:"status"`
 	// MatchID is the written or enriched match, or for a duplicate the stored
 	// match that already covers the file.
-	MatchID      int64  `json:"match_id,omitempty"`
-	PositionID   int64  `json:"position_id,omitempty"`
-	Positions    int    `json:"positions"`
-	FlagsApplied int    `json:"flags_applied,omitempty"`
-	Player1      string `json:"player1,omitempty"`
-	Player2      string `json:"player2,omitempty"`
-	Games        int    `json:"games,omitempty"`
-	Error        string `json:"error,omitempty"`
+	MatchID      int64 `json:"match_id,omitempty"`
+	PositionID   int64 `json:"position_id,omitempty"`
+	Positions    int   `json:"positions"`
+	FlagsApplied int   `json:"flags_applied,omitempty"`
+	// Deepened counts, for a duplicate, the stored analyses it deepened: a
+	// duplicate with Deepened > 0 brought a deeper analysis of a match
+	// already here, one with 0 brought nothing new.
+	Deepened int `json:"deepened,omitempty"`
+	// ProbableDuplicate is set on an imported match whose dice are those of
+	// a match already stored under other player names.
+	ProbableDuplicate *domain.DuplicateSuspect `json:"probable_duplicate,omitempty"`
+	Player1           string                   `json:"player1,omitempty"`
+	Player2           string                   `json:"player2,omitempty"`
+	Games             int                      `json:"games,omitempty"`
+	Error             string                   `json:"error,omitempty"`
 	// DuplicateOf is the index of an earlier file of the same list with the
 	// same bytes, -1 when the duplicate (if any) was found in the database.
 	DuplicateOf int `json:"duplicate_of"`
@@ -73,6 +86,9 @@ type PipelineOptions struct {
 	FilesPerTx int
 	// Scope is the storage scope (tenant), empty for SQLite.
 	Scope string
+	// SkipDuplicates skips an exact duplicate outright instead of offering
+	// its deeper analyses to the stored positions (MatchGraph.SkipDuplicates).
+	SkipDuplicates bool
 	// ImportBatchID stamps every written match.
 	ImportBatchID int64
 	// Lock, when set, is taken around each transaction and returns its
@@ -86,6 +102,11 @@ type PipelineOptions struct {
 	// OnRead is called, from a reader goroutine, when a file has been read
 	// (parsed or not), with its size: progress counts bytes as they are read.
 	OnRead func(size int64)
+	// Known, when set, is asked about each file's SHA-256 (hex) once it is
+	// read: a true answer means the file was already imported, with the match
+	// id it gave (0 when it gave none), and the file is not parsed again: it
+	// comes out as a duplicate of that match.
+	Known func(sha string) (matchID int64, ok bool)
 }
 
 // DefaultFilesPerTx bounds the work a cancellation or a failed write throws
@@ -99,6 +120,9 @@ type readFile struct {
 	digest   [sha256.Size]byte
 	dupOf    int  // earlier index with the same bytes, -1 otherwise
 	hashed   bool // the digest is valid: the file could be read
+	mtime    string
+	knownID  int64 // match of the earlier import of these bytes, when known
+	known    bool
 	graph    *MatchGraph
 	position []PositionGraph
 	err      error
@@ -124,6 +148,21 @@ func mapFile(path string) (*MatchGraph, []PositionGraph, error) {
 		return nil, p, err
 	}
 	return nil, nil, fmt.Errorf("unsupported file type: %s", filepath.Ext(path))
+}
+
+func lookupKnown(known func(string) (int64, bool), d [sha256.Size]byte) (int64, bool) {
+	if known == nil {
+		return 0, false
+	}
+	return known(hex.EncodeToString(d[:]))
+}
+
+func (rf *readFile) outcome() FileOutcome {
+	o := FileOutcome{Index: rf.index, Path: rf.path, Size: rf.size, ModTime: rf.mtime, DuplicateOf: -1}
+	if rf.hashed {
+		o.SHA256 = hex.EncodeToString(rf.digest[:])
+	}
+	return o
 }
 
 func digestFile(path string) ([sha256.Size]byte, int64, error) {
@@ -193,11 +232,16 @@ func ImportFiles(ctx context.Context, store TxBeginner, paths []string, opts Pip
 			defer func() { done <- struct{}{} }()
 			for i := range jobs {
 				rf := &readFile{index: i, path: paths[i], dupOf: -1}
+				if fi, err := os.Stat(rf.path); err == nil {
+					rf.mtime = JournalTime(fi.ModTime())
+				}
 				rf.digest, rf.size, rf.err = digestFile(rf.path)
 				rf.hashed = rf.err == nil
 				if rf.err == nil {
 					if first := claims.claim(rf.digest, i); first < i {
 						rf.dupOf = first
+					} else if id, ok := lookupKnown(opts.Known, rf.digest); ok {
+						rf.known, rf.knownID = true, id
 					} else if ctx.Err() == nil {
 						rf.graph, rf.position, rf.err = mapFile(rf.path)
 					}
@@ -379,7 +423,7 @@ func (w *pipelineWriter) add(rf *readFile) error {
 // write decides one file inside tx. A returned error means tx is spoiled; a
 // file the pipeline could not read is an outcome, not an error.
 func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error) {
-	o := FileOutcome{Index: rf.index, Path: rf.path, Size: rf.size, DuplicateOf: -1}
+	o := rf.outcome()
 	if rf.err != nil {
 		o.Status, o.Error = FileFailed, rf.err.Error()
 		return o, nil
@@ -393,6 +437,10 @@ func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error)
 		o.Status = FileDuplicate
 		o.MatchID, o.PositionID = first.MatchID, first.PositionID
 		o.Player1, o.Player2, o.Games = first.Player1, first.Player2, first.Games
+		return o, nil
+	}
+	if rf.known {
+		o.Status, o.MatchID = FileDuplicate, rf.knownID
 		return o, nil
 	}
 	if rf.position != nil {
@@ -415,6 +463,7 @@ func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error)
 		return o, nil
 	}
 	g.ImportBatchID = w.opts.ImportBatchID
+	g.SkipDuplicates = w.opts.SkipDuplicates
 	o.Player1, o.Player2, o.Games = g.Match.Player1Name, g.Match.Player2Name, len(g.Games)
 	res, err := WriteMatch(w.ctx, tx, w.opts.Scope, g, nil)
 	if err != nil {
@@ -423,11 +472,12 @@ func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error)
 	o.MatchID = res.MatchID
 	switch {
 	case res.Skipped:
-		o.Status, o.FlagsApplied = FileDuplicate, res.FlagsApplied
+		o.Status, o.FlagsApplied, o.Deepened = FileDuplicate, res.FlagsApplied, res.Deepened
 	case res.Enriched:
 		o.Status, o.Positions = FileEnriched, res.SavedPositions
 	default:
 		o.Status, o.Positions = FileImported, res.SavedPositions
+		o.ProbableDuplicate = res.ProbableDuplicate
 	}
 	// The graph is no longer needed once written; drop it before the group
 	// commits so a group of large files does not stay in memory.
@@ -491,7 +541,8 @@ func (w *pipelineWriter) replay(files []*readFile) error {
 				return w.ctx.Err()
 			}
 			w.abort()
-			o = FileOutcome{Index: rf.index, Path: rf.path, Size: rf.size, Status: FileFailed, Error: err.Error(), DuplicateOf: -1}
+			o = rf.outcome()
+			o.Status, o.Error = FileFailed, err.Error()
 			// A file refused at write time is decided: record it outside any
 			// transaction, as a group of one with nothing to commit.
 			if w.opts.Lock != nil {

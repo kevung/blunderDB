@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"sync/atomic"
 
 	"github.com/adrg/xdg"
 
@@ -18,6 +19,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
@@ -34,9 +36,15 @@ type Database struct {
 	// importBatchID stamps every match the in-flight import writes, 0 when none
 	// runs. One at a time, like importCancel.
 	importBatchID int64
+	// skipDuplicates makes an exact duplicate a plain skip again, without
+	// offering its deeper analyses to the stored positions.
+	skipDuplicates atomic.Bool
 	// importBatchCounts accumulates what only the writing path sees; the caller
 	// that opened the batch adds the unreadable files when it finishes it.
 	importBatchCounts domain.ImportReport
+	// importJournal is the journal of a resumed batch (ResumeImportBatch),
+	// nil for a fresh one.
+	importJournal *ingest.Journal
 	// positionsSinceStats counts the positions imports have written since the
 	// planner statistics were last refreshed (RefreshSearchStatistics).
 	positionsSinceStats int

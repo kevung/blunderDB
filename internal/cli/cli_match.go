@@ -116,6 +116,41 @@ func (cli *CLI) formatMatchJSON(match *Match, positions []MatchMovePosition) (st
 	return string(jsonData), nil
 }
 
+// writeSourceMetadata writes the lines of what the source file said of the
+// match, each only when the file said it.
+func writeSourceMetadata(sb *strings.Builder, m *Match) {
+	for i, elo := range [2]*float64{m.Player1Elo, m.Player2Elo} {
+		exp := [2]*int{m.Player1Experience, m.Player2Experience}[i]
+		name := [2]string{m.Player1Name, m.Player2Name}[i]
+		switch {
+		case elo != nil && exp != nil:
+			fmt.Fprintf(sb, "Rating %s: %.0f (experience %d)\n", name, *elo, *exp)
+		case elo != nil:
+			fmt.Fprintf(sb, "Rating %s: %.0f\n", name, *elo)
+		}
+	}
+	if m.Transcriber != "" {
+		fmt.Fprintf(sb, "Transcriber: %s\n", m.Transcriber)
+	}
+	if m.MatchLength == 0 && (m.HasJacoby != nil || m.HasBeaver != nil) {
+		fmt.Fprintf(sb, "Jacoby: %s, Beaver: %s\n", yesNo(m.HasJacoby), yesNo(m.HasBeaver))
+	}
+	if m.EngineVersion != "" {
+		fmt.Fprintf(sb, "Written by: %s\n", m.EngineVersion)
+	}
+}
+
+func yesNo(b *bool) string {
+	switch {
+	case b == nil:
+		return "unknown"
+	case *b:
+		return "yes"
+	default:
+		return "no"
+	}
+}
+
 // formatMatchText formats match data as text
 func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition) (string, error) {
 	var sb strings.Builder
@@ -129,6 +164,7 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition) (st
 		sb.WriteString(fmt.Sprintf("Location: %s\n", match.Location))
 	}
 	sb.WriteString(fmt.Sprintf("Match Length: %d\n", match.MatchLength))
+	writeSourceMetadata(&sb, match)
 	sb.WriteString(fmt.Sprintf("Total Positions: %d\n\n", len(positions)))
 
 	for i, movePos := range positions {
@@ -166,6 +202,7 @@ func (cli *CLI) formatMatchSummary(match *Match, positions []MatchMovePosition) 
 	}
 	sb.WriteString(fmt.Sprintf("Match Length: %d points\n", match.MatchLength))
 	sb.WriteString(fmt.Sprintf("Games: %d\n", match.GameCount))
+	writeSourceMetadata(&sb, match)
 	sb.WriteString(fmt.Sprintf("Total Positions: %d\n\n", len(positions)))
 
 	// Count positions by game

@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -25,6 +26,16 @@ type statsWindowReq struct {
 type statsRankingReq struct {
 	Filter       storage.StatsFilter `json:"filter"`
 	MinDecisions int                 `json:"min_decisions"`
+}
+
+type statsReportReq struct {
+	Filter storage.StatsFilter `json:"filter"`
+	// Language is the report's language ("en" when empty or unknown).
+	Language string `json:"language"`
+}
+
+type statsReportResp struct {
+	HTML string `json:"html"`
 }
 
 type statsTrainingReq struct {
@@ -81,6 +92,12 @@ func (s *Server) statsRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/stats.compute", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StatsResult, error) {
 			return ss().Compute(ctx, scope, req.Filter)
+		})},
+		// Le rapport HTML autonome du filtre, du même générateur que la GUI et
+		// `stats report`.
+		{http.MethodPost, "/v1/stats.report", rpc(func(ctx context.Context, scope string, req statsReportReq) (statsReportResp, error) {
+			html, err := report.Build(ctx, s.opts.Storage, scope, req.Filter, req.Language, nil)
+			return statsReportResp{HTML: html}, err
 		})},
 		// Les erreurs du filtre groupées par plan de jeu et par thème, la
 		// plus coûteuse d'abord ; chaque groupe porte ses positions.

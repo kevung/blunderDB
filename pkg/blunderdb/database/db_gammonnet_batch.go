@@ -74,30 +74,19 @@ func (d *Database) AnalyzeMissingWithGammonNet(ctx context.Context, ply, pruneK,
 }
 
 // positionIDsWithStaleGammonNet snapshots the ids gammonnet.IsStaleAnalysis
-// accepts at targetDepth (gammonnet.DepthLabel(ply)). Engine and depth live
-// inside the compressed blob, so every analysed position is decoded once. An
-// analysis that cannot be loaded is logged and skipped, never silently counted
-// as up to date.
+// accepts at targetDepth (gammonnet.DepthLabel(ply)). The analysis_engine
+// column discards every row another engine wrote without reading its blob;
+// only the survivors (gammonNet's own, or not derived yet) are decoded, by
+// batches, to confirm on every entry. A stored analysis that cannot be decoded
+// is logged by the store and skipped, never silently counted as up to date.
 func (d *Database) positionIDsWithStaleGammonNet(targetDepth string) ([]int64, error) {
-	d.mu.RLock()
-	ids, err := queryInt64s(d.db, `SELECT position_id FROM analysis ORDER BY position_id`)
-	d.mu.RUnlock()
-	if err != nil {
-		return nil, err
-	}
-
 	var stale []int64
-	for _, id := range ids {
-		a, err := d.LoadAnalysis(id)
+	for rec, err := range d.store.Analyses().WithEngine(context.Background(), "", gammonnet.EngineLabelPrefix) {
 		if err != nil {
-			slog.Warn("gammonnet stale sweep: loading stored analysis failed, position left out of the sweep", "position_id", id, "error", err)
-			continue
+			return nil, err
 		}
-		if a == nil {
-			continue
-		}
-		if gammonnet.IsStaleAnalysis(a, targetDepth) {
-			stale = append(stale, id)
+		if gammonnet.IsStaleAnalysis(rec.Analysis, targetDepth) {
+			stale = append(stale, rec.PositionID)
 		}
 	}
 	return stale, nil

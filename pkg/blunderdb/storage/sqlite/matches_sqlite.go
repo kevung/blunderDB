@@ -37,7 +37,9 @@ const matchSelectCols = `m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_n
 	m.tournament_id, COALESCE(t.name,''),
 	COALESCE(m.last_visited_position,-1), COALESCE(m.comment,''),
 	COALESCE(m.tournament_sort_order,0),
-	COALESCE(m.match_hash,''), COALESCE(m.canonical_hash,'')`
+	COALESCE(m.match_hash,''), COALESCE(m.canonical_hash,''), COALESCE(m.dice_hash,''),
+	m.player1_elo, m.player2_elo, m.player1_experience, m.player2_experience,
+	COALESCE(m.transcriber,''), m.has_jacoby, m.has_beaver, COALESCE(m.engine_version,'')`
 
 // scanMatch reconstructs a domain.Match from a row selected with
 // matchSelectCols. match_date and tournament_id are nullable.
@@ -45,6 +47,8 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 	var m domain.Match
 	var matchDate, importDate sql.NullTime
 	var tournamentID sql.NullInt64
+	var elo1, elo2 sql.NullFloat64
+	var exp1, exp2, jacoby, beaver sql.NullInt64
 	if err := sc.Scan(
 		&m.ID, &m.Player1Name, &m.Player2Name,
 		&m.Event, &m.Location, &m.Round,
@@ -53,10 +57,15 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 		&tournamentID, &m.TournamentName,
 		&m.LastVisitedPosition, &m.Comment,
 		&m.TournamentSortOrder,
-		&m.MatchHash, &m.CanonicalHash,
+		&m.MatchHash, &m.CanonicalHash, &m.DiceHash,
+		&elo1, &elo2, &exp1, &exp2,
+		&m.Transcriber, &jacoby, &beaver, &m.EngineVersion,
 	); err != nil {
 		return domain.Match{}, err
 	}
+	m.Player1Elo, m.Player2Elo = nullFloat(elo1), nullFloat(elo2)
+	m.Player1Experience, m.Player2Experience = nullInt(exp1), nullInt(exp2)
+	m.HasJacoby, m.HasBeaver = nullBool(jacoby), nullBool(beaver)
 	if matchDate.Valid {
 		m.MatchDate = matchDate.Time
 	}
@@ -73,8 +82,40 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 const matchInsertSQL = `INSERT INTO match (
 	player1_name, player2_name, event, location, round,
 	match_length, match_date, file_path, game_count, tournament_id, comment,
-	match_hash, canonical_hash, import_batch_id
-) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+	match_hash, canonical_hash, import_batch_id, dice_hash,
+	player1_elo, player2_elo, player1_experience, player2_experience,
+	transcriber, has_jacoby, has_beaver, engine_version
+) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+
+func nullFloat(v sql.NullFloat64) *float64 {
+	if !v.Valid {
+		return nil
+	}
+	return &v.Float64
+}
+
+func nullInt(v sql.NullInt64) *int {
+	if !v.Valid {
+		return nil
+	}
+	n := int(v.Int64)
+	return &n
+}
+
+func nullBool(v sql.NullInt64) *bool {
+	if !v.Valid {
+		return nil
+	}
+	b := v.Int64 != 0
+	return &b
+}
+
+// sourceMetadataArgs are the eight source-metadata columns in the order
+// matchInsertSQL and ReplaceHeader list them. A nil pointer stays NULL.
+func sourceMetadataArgs(m *domain.Match) []any {
+	return []any{m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
+		m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion}
+}
 
 // nullableID returns nil for a zero id so it is stored as SQL NULL — which is
 // what a foreign key with ON DELETE SET NULL expects, and what "this match came
@@ -99,11 +140,13 @@ func nullableString(s string) any {
 // Save stores a new match and returns its id, updating m.ID and m.ImportDate
 // in place.
 func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (int64, error) {
-	res, err := s.db.ExecContext(ctx, matchInsertSQL,
+	args := append([]any{
 		m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round,
 		m.MatchLength, nullableTime(m.MatchDate), m.FilePath, m.GameCount,
 		m.TournamentID, m.Comment,
-		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID))
+		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID),
+		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
+	res, err := s.db.ExecContext(ctx, matchInsertSQL, args...)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: save match: %w", err)
 	}
@@ -151,14 +194,42 @@ func (s *matchStore) FindByHash(ctx context.Context, scope string, hash, canonic
 // from domain.MatchOrderByClause so the key is configurable.
 const matchOrderClause = ` ORDER BY COALESCE(m.match_date, m.import_date) DESC`
 
+// playerFilterNames are the names opts.PlayerName stands for: its spellings
+// when the store resolved them, the name alone otherwise.
+func playerFilterNames(opts storage.MatchListOpts) []string {
+	if opts.PlayerName == "" {
+		return nil
+	}
+	if len(opts.PlayerSpellings) > 0 {
+		return opts.PlayerSpellings
+	}
+	return []string{opts.PlayerName}
+}
+
+// withPlayerSpellings resolves opts.PlayerName to every spelling of the
+// person through the alias table.
+func (s *matchStore) withPlayerSpellings(ctx context.Context, scope string, opts storage.MatchListOpts) (storage.MatchListOpts, error) {
+	names, err := sqlshared.PlayerSpellings(ctx, binder{s.db}.shared(), scope, opts.PlayerName)
+	if err != nil {
+		return opts, fmt.Errorf("sqlite: match list aliases: %w", err)
+	}
+	opts.PlayerSpellings = names
+	return opts, nil
+}
+
 // buildMatchListWhere turns opts filters into a WHERE fragment (empty when no
 // filter applies) and its positional args. Mirrors the Postgres builder; the
 // two must stay in sync.
 func buildMatchListWhere(opts storage.MatchListOpts) (whereSQL string, args []any) {
 	var clauses []string
-	if opts.PlayerName != "" {
-		clauses = append(clauses, "(m.player1_name = ? OR m.player2_name = ?)")
-		args = append(args, opts.PlayerName, opts.PlayerName)
+	if names := playerFilterNames(opts); len(names) > 0 {
+		ph := strings.TrimSuffix(strings.Repeat("?,", len(names)), ",")
+		clauses = append(clauses, "(m.player1_name IN ("+ph+") OR m.player2_name IN ("+ph+"))")
+		for range 2 {
+			for _, n := range names {
+				args = append(args, n)
+			}
+		}
 	}
 	if opts.PlayerNameContains != "" {
 		clauses = append(clauses, `(m.player1_name LIKE ? ESCAPE '\' OR m.player2_name LIKE ? ESCAPE '\')`)
@@ -228,6 +299,11 @@ func (s *matchStore) Get(ctx context.Context, scope string, id int64) (*domain.M
 // MatchListOpts streams every match, most recent first.
 func (s *matchStore) List(ctx context.Context, scope string, opts storage.MatchListOpts) iter.Seq2[*domain.Match, error] {
 	return func(yield func(*domain.Match, error) bool) {
+		opts, err := s.withPlayerSpellings(ctx, scope, opts)
+		if err != nil {
+			yield(nil, err)
+			return
+		}
 		whereSQL, args := buildMatchListWhere(opts)
 		query := `SELECT ` + matchSelectCols + ` FROM match m
 			 LEFT JOIN tournament t ON m.tournament_id = t.id` + whereSQL +
@@ -268,9 +344,13 @@ func (s *matchStore) List(ctx context.Context, scope string, opts storage.MatchL
 
 // Count returns how many matches satisfy the filters of opts.
 func (s *matchStore) Count(ctx context.Context, scope string, opts storage.MatchListOpts) (int, error) {
+	opts, err := s.withPlayerSpellings(ctx, scope, opts)
+	if err != nil {
+		return 0, err
+	}
 	whereSQL, args := buildMatchListWhere(opts)
 	var n int
-	err := s.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM match m
+	err = s.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM match m
 		 LEFT JOIN tournament t ON m.tournament_id = t.id`+whereSQL, args...).Scan(&n)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: count matches: %w", err)
@@ -321,12 +401,14 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 	res, err := s.db.ExecContext(ctx,
 		`UPDATE match SET player1_name = ?, player2_name = ?, event = ?, location = ?,
 		                  round = ?, match_length = ?, match_date = ?, game_count = ?,
-		                  match_hash = ?, canonical_hash = ?
+		                  match_hash = ?, canonical_hash = ?, dice_hash = ?,
+		                  player1_elo = ?, player2_elo = ?, player1_experience = ?, player2_experience = ?,
+		                  transcriber = ?, has_jacoby = ?, has_beaver = ?, engine_version = ?
 		 WHERE id = ?`,
-		m.Player1Name, m.Player2Name, m.Event, m.Location,
-		m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
-		nullableString(m.MatchHash), nullableString(m.CanonicalHash),
-		id)
+		append(append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location,
+			m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
+			nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableString(m.DiceHash)},
+			sourceMetadataArgs(m)...), id)...)
 	if err != nil {
 		return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
 	}
@@ -557,44 +639,12 @@ func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) er
 	return nil
 }
 
-// MergePlayers rewrites every occurrence of the given player names (in both
-// the player1 and player2 columns) to a single canonical name.
+// MergePlayers records every other name as an alias of canonical
+// (storage.AliasStore.Set): the matches keep the names their files wrote, and
+// the stats, the players table, the search and every later import read them
+// as canonical.
 func (s *matchStore) MergePlayers(ctx context.Context, scope string, names []string, canonical string) error {
-	if canonical == "" {
-		return fmt.Errorf("sqlite: merge players: canonical name must not be empty: %w", storage.ErrInvalid)
-	}
-	if len(names) == 0 {
-		return fmt.Errorf("sqlite: merge players: no names to merge: %w", storage.ErrInvalid)
-	}
-	placeholders := make([]string, len(names))
-	args := make([]any, 0, len(names)+1)
-	args = append(args, canonical)
-	for i, n := range names {
-		placeholders[i] = "?"
-		args = append(args, n)
-	}
-	in := ""
-	for i, p := range placeholders {
-		if i > 0 {
-			in += ", "
-		}
-		in += p
-	}
-	err := withTx(ctx, s.db, func(tx execer) error {
-		if _, err := tx.ExecContext(ctx,
-			`UPDATE match SET player1_name = ? WHERE player1_name IN (`+in+`)`, args...); err != nil {
-			return fmt.Errorf("rename player1: %w", err)
-		}
-		if _, err := tx.ExecContext(ctx,
-			`UPDATE match SET player2_name = ? WHERE player2_name IN (`+in+`)`, args...); err != nil {
-			return fmt.Errorf("rename player2: %w", err)
-		}
-		return nil
-	})
-	if err != nil {
-		return fmt.Errorf("sqlite: merge players: %w", err)
-	}
-	return nil
+	return sqlshared.MergeAliases(ctx, shared(binder{s.db}), scope, storage.AliasPlayer, names, canonical)
 }
 
 // SetLastVisitedPosition records the last position index viewed in a match.
@@ -1075,6 +1125,68 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 		}
 		if err := rows.Err(); err != nil {
 			yield(nil, fmt.Errorf("sqlite: move positions for match %d: %w", matchID, err))
+		}
+	}
+}
+
+// ListByDiceHash returns the matches sharing dice_hash — see storage.MatchStore.
+func (s *matchStore) ListByDiceHash(ctx context.Context, scope string, hash string) ([]domain.Match, error) {
+	if hash == "" {
+		return nil, nil
+	}
+	rows, err := s.db.QueryContext(ctx, `SELECT `+matchSelectCols+` FROM match m
+		 LEFT JOIN tournament t ON m.tournament_id = t.id
+		 WHERE m.dice_hash = ? ORDER BY m.id`, hash)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: list matches by dice hash: %w", err)
+	}
+	defer rows.Close()
+	var out []domain.Match
+	for rows.Next() {
+		m, err := scanMatch(rows)
+		if err != nil {
+			return nil, fmt.Errorf("sqlite: list matches by dice hash: %w", err)
+		}
+		out = append(out, m)
+	}
+	return out, rows.Err()
+}
+
+// SetDiceHash stores a match's dice_hash — see storage.MatchStore.
+func (s *matchStore) SetDiceHash(ctx context.Context, scope string, id int64, hash string) error {
+	if _, err := s.db.ExecContext(ctx, `UPDATE match SET dice_hash = ? WHERE id = ?`, nullableString(hash), id); err != nil {
+		return fmt.Errorf("sqlite: set match %d dice hash: %w", id, err)
+	}
+	return nil
+}
+
+// DiceSequences streams every match with its dice — see storage.MatchStore.
+func (s *matchStore) DiceSequences(ctx context.Context, scope string) iter.Seq2[storage.MatchDice, error] {
+	return func(yield func(storage.MatchDice, error) bool) {
+		rows, err := s.db.QueryContext(ctx, fmt.Sprintf(storage.DiceSequencesSQL, "1 = 1"))
+		if err != nil {
+			yield(storage.MatchDice{}, fmt.Errorf("sqlite: match dice: %w", err))
+			return
+		}
+		defer rows.Close()
+		var f storage.DiceFolder
+		for rows.Next() {
+			var r storage.DiceRow
+			if err := rows.Scan(&r.MatchID, &r.Player1, &r.Player2, &r.Length, &r.Hash,
+				&r.GameID, &r.Score1, &r.Score2, &r.D1, &r.D2); err != nil {
+				yield(storage.MatchDice{}, fmt.Errorf("sqlite: match dice: %w", err))
+				return
+			}
+			if m, ok := f.Add(r); ok && !yield(m, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(storage.MatchDice{}, fmt.Errorf("sqlite: match dice: %w", err))
+			return
+		}
+		if m, ok := f.Flush(); ok {
+			yield(m, nil)
 		}
 	}
 }

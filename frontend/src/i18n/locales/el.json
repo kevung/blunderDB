@@ -173,7 +173,8 @@
         "likeLimit": "Γείτονες ανά κατάταξη",
         "likeMaxDistance": "Μέγιστη απόσταση (pip πουλιών)",
         "likeNote": "Μηδέν: χωρίς όριο. Το διακριτικό like<12 ορίζει το δικό του για μία αναζήτηση.",
-        "assistantTitle": "Βοηθός και MCP"
+        "assistantTitle": "Βοηθός και MCP",
+        "corpusTitle": "Σώμα αγώνων"
     },
     "toolbar": {
         "copyBoardImage": "Αντιγραφή εικόνας ταμπλό",
@@ -561,6 +562,11 @@
         "pts": "Πόντοι",
         "review": "Επανεξέταση",
         "round": "Γύρος",
+        "ratings": "Elo (εμπειρία)",
+        "transcriber": "Μεταγραφέας",
+        "sessionRules": "Κανόνες της συνεδρίας",
+        "rulesNone": "κανένας",
+        "writtenBy": "Γράφτηκε από",
         "score": "Σκορ",
         "sourceFile": "Αρχείο προέλευσης",
         "stats": "Στατιστικά",
@@ -1121,7 +1127,16 @@
         "reportAnalyzeNow": "Ανάλυση τώρα",
         "reportWorst": "Χειρότερες αποφάσεις",
         "reportCube": "κύβος",
-        "reportChecker": "πούλια"
+        "reportChecker": "πούλια",
+        "journalTitle": "Ημερολόγιο εισαγωγής ({n} αρχεία)",
+        "journalNew": "νέο",
+        "journalDuplicate": "διπλότυπο",
+        "journalEnriched": "εμπλουτισμένο",
+        "journalError": "σφάλμα",
+        "journalOpenMatch": "Άνοιγμα αγώνα {id}",
+        "journalMore": "… και {n} ακόμη αρχεία (πλήρες ημερολόγιο: imports.files ή --format json)",
+        "interruptedTitle": "Η εισαγωγή διακόπηκε",
+        "resume": "Συνέχιση"
     },
     "warning": {
         "title": "Προειδοποίηση",
@@ -2718,5 +2733,29 @@
         "notFound": "Δεν υπάρχει μάθημα αρ. {id}.",
         "failed": "Αδύνατη η ανάγνωση των μαθημάτων.",
         "stepMissing": "Ό,τι δείχνει αυτό το βήμα δεν υπάρχει πια στη βάση."
+    },
+    "corpus": {
+        "intro": "Διπλότυπα και γραφές: τι αναγνωρίζει μια εισαγωγή ως ήδη αποθηκευμένο, και τα άλλα ονόματα ενός παίκτη ή μιας διοργάνωσης.",
+        "skipDuplicates": "Παράλειψη διπλοτύπων κατά την εισαγωγή",
+        "skipDuplicatesNote": "Όταν είναι επιλεγμένο, ένα ήδη αποθηκευμένο ματς παραλείπεται χωρίς να προσφέρει τις βαθύτερες αναλύσεις του. Η ρύθμιση ισχύει για τη συνεδρία.",
+        "aliasesTitle": "Ψευδώνυμα",
+        "players": "Παίκτες",
+        "events": "Διοργανώσεις",
+        "aliasLabel": "Ψευδώνυμο",
+        "canonicalLabel": "Κανονικό όνομα",
+        "add": "Προσθήκη",
+        "remove": "Αφαίρεση",
+        "noAliases": "Κανένα ψευδώνυμο.",
+        "suggestNote": "Ονόματα που διαφέρουν μόνο σε πεζά/κεφαλαία, τόνους ή σειρά λέξεων",
+        "suggest": "Πρόταση",
+        "noSuggestion": "Καμία πρόταση.",
+        "suggestion": "«{alias}» → «{canonical}»",
+        "apply": "Εφαρμογή",
+        "duplicatesTitle": "Πιθανά διπλότυπα",
+        "duplicatesNote": "Ματς που τα ζάρια τους δείχνουν ίδια, με άλλα ονόματα ή κομμένα και μετά συμπληρωμένα. Τίποτα δεν συγχωνεύεται.",
+        "findDuplicates": "Αναζήτηση",
+        "noDuplicates": "Κανένα πιθανό διπλότυπο.",
+        "suspectSameDice": "#{other} και #{match}: ίδια ζάρια ({otherPlayers} / {players})",
+        "suspectLonger": "Το #{match} συνεχίζει το #{other} ({players})"
     }
 }

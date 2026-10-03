@@ -123,7 +123,16 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 			return searchWhereClause{}, err
 		}
 	}
-	s.appendCorpusClauses(scope, f, prMissing, &where, &args)
+	// An aliased name stands for the whole person: every spelling the alias
+	// table gives them is searched.
+	var aliases storage.AliasMap
+	if f.PlayerFilter != "" || f.OpponentFilter != "" {
+		var err error
+		if aliases, err = aliasMap(ctx, s.DB, scope, storage.AliasPlayer); err != nil {
+			return searchWhereClause{}, err
+		}
+	}
+	s.appendCorpusClauses(scope, f, prMissing, aliases, &where, &args)
 
 	// A ranked query narrows to the target's equivalence class BEFORE anything
 	// else: a neighbour is the same problem nearby, and the rest of the WHERE

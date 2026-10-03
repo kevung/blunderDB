@@ -54,6 +54,8 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 	}
 	var store ingest.TxBeginner = d.store
 	batchID, sqlDB := d.importBatchID, d.db
+	journal := d.importJournal
+	batches := d.store.ImportBatches()
 	d.mu.RUnlock()
 
 	// An in-memory database has one connection: a dedicated bulk connection
@@ -103,15 +105,17 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 		}
 	}
 
-	out, err := ingest.ImportFiles(ctx, store, paths, ingest.PipelineOptions{
-		Workers:       opts.Workers,
-		FilesPerTx:    opts.FilesPerTx,
-		ImportBatchID: batchID,
+	popts := ingest.PipelineOptions{
+		Workers:        opts.Workers,
+		FilesPerTx:     opts.FilesPerTx,
+		ImportBatchID:  batchID,
+		SkipDuplicates: d.skipDuplicates.Load(),
 		Lock: func() func() {
 			d.mu.Lock()
 			return d.mu.Unlock
 		},
 		OnCommit: func(group []ingest.FileOutcome) {
+			ingest.RecordOutcomes(context.Background(), batches, "", batchID, group)
 			for _, o := range group {
 				if o.Status == ingest.FileFailed {
 					// The journal is where the full list of refused files
@@ -125,7 +129,11 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 			}
 		},
 		OnRead: onRead,
-	})
+	}
+	if journal != nil {
+		popts.Known = journal.Known
+	}
+	out, err := ingest.ImportFiles(ctx, store, paths, popts)
 	slog.Info("imported files", "files", len(out), "of", len(paths), "err", err)
 	return out, err
 }
@@ -142,9 +150,16 @@ func (d *Database) countImported(o ingest.FileOutcome) {
 		if o.MatchID != 0 {
 			d.importBatchCounts.MatchesSkipped++
 		}
+		if o.Deepened > 0 {
+			d.importBatchCounts.MatchesDeepened++
+			d.importBatchCounts.AnalysesDeepened += o.Deepened
+		}
 	}
 	if o.Status == ingest.FileImported || o.Status == ingest.FileEnriched {
 		d.importBatchCounts.PositionsSaved += o.Positions
+	}
+	if o.ProbableDuplicate != nil {
+		d.importBatchCounts.ProbableDuplicates = append(d.importBatchCounts.ProbableDuplicates, *o.ProbableDuplicate)
 	}
 	d.positionsSinceStats += o.Positions
 }

@@ -14,6 +14,12 @@ type PlayedActions struct {
 	CubeAction  string
 }
 
+// AnalysisRecord is one stored analysis with the position it belongs to.
+type AnalysisRecord struct {
+	PositionID int64
+	Analysis   *domain.PositionAnalysis
+}
+
 // AnalysisStore persists the engine analysis attached to a position. The
 // backend transparently compresses/decompresses the analysis payload; callers
 // always see a decoded *domain.PositionAnalysis.
@@ -68,4 +74,20 @@ type AnalysisStore interface {
 	// reading it, or the result would depend on the backend's isolation: drain
 	// it first. A fresh call finds whatever is still missing (ADR-0013 resume).
 	WithoutAnalysis(ctx context.Context, scope string, opts ListOpts) iter.Seq2[*domain.Position, error]
+
+	// WithEngine streams, by ascending position id, the analyses whose
+	// provenance column (analysis_engine) starts with enginePrefix or is not
+	// derived yet (NULL). Rows of any other engine are skipped on the column
+	// alone, their payload never decoded: a corpus of XG analyses costs the
+	// read of one column per row, not a decompression and a JSON decode per row.
+	//
+	// The column describes the entry the verdict is read from, not every entry
+	// of the blob: the caller confirms on the decoded analysis whatever needs
+	// all of them (gammonnet.IsStaleAnalysis). A payload that cannot be decoded
+	// is logged and left out, as in LoadMany.
+	//
+	// Pulled by keyset batches with no connection or lock held between two
+	// yields, so the caller may take as long as it likes per record and holds
+	// no list of ids in memory.
+	WithEngine(ctx context.Context, scope, enginePrefix string) iter.Seq2[AnalysisRecord, error]
 }

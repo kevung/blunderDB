@@ -466,6 +466,22 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.withdraw — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/directions.withdraw", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def events_alias_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/events.alias.list — JSON."
+        return self._call("/v1/events.alias.list", payload)
+
+    def events_alias_remove(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/events.alias.remove — JSON."
+        return self._call("/v1/events.alias.remove", payload)
+
+    def events_alias_set(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/events.alias.set — JSON."
+        return self._call("/v1/events.alias.set", payload)
+
+    def events_alias_suggest(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/events.alias.suggest — JSON."
+        return self._call("/v1/events.alias.suggest", payload)
+
     def exports_json(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/exports.json — hand-written handler — see openapi.yaml."
         return self._call("/v1/exports.json", payload)
@@ -570,6 +586,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/imports.db — hand-written handler — see openapi.yaml."
         return self._call("/v1/imports.db", payload)
 
+    def imports_files(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/imports.files — JSON."
+        return self._call("/v1/imports.files", payload)
+
     def imports_gnubg(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/imports.gnubg — hand-written handler — see openapi.yaml."
         return self._call("/v1/imports.gnubg", payload)
@@ -662,6 +682,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/matches.delete — JSON."
         return self._call("/v1/matches.delete", payload)
 
+    def matches_duplicates(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/matches.duplicates — JSON."
+        return self._call("/v1/matches.duplicates", payload)
+
     def matches_export_mat(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/matches.exportMat — hand-written handler — see openapi.yaml."
         return self._call("/v1/matches.exportMat", payload)
@@ -733,6 +757,22 @@ class GeneratedAPI(BaseClient):
     def metadata_version(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/metadata.version — JSON."
         return self._call("/v1/metadata.version", payload)
+
+    def players_alias_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/players.alias.list — JSON."
+        return self._call("/v1/players.alias.list", payload)
+
+    def players_alias_remove(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/players.alias.remove — JSON."
+        return self._call("/v1/players.alias.remove", payload)
+
+    def players_alias_set(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/players.alias.set — JSON."
+        return self._call("/v1/players.alias.set", payload)
+
+    def players_alias_suggest(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/players.alias.suggest — JSON."
+        return self._call("/v1/players.alias.suggest", payload)
 
     def positions_count(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.count — JSON."
@@ -1001,6 +1041,10 @@ class GeneratedAPI(BaseClient):
     def stats_recurring_errors(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.recurringErrors — JSON."
         return self._call("/v1/stats.recurringErrors", payload)
+
+    def stats_report(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.report — JSON."
+        return self._call("/v1/stats.report", payload)
 
     def stats_study_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.studyIds — JSON."

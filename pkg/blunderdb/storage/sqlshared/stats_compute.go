@@ -41,6 +41,10 @@ type statsQuery struct {
 // Compute runs each statistics pass in turn and returns the assembled result.
 // The passes are in stats_compute.go, one per section; see the file header.
 func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.StatsResult, error) {
+	filter, err := s.withPlayerAliases(ctx, scope, filter)
+	if err != nil {
+		return nil, fmt.Errorf("Compute aliases: %w", err)
+	}
 	settings, err := librarySettings(ctx, s.DB, scope)
 	if err != nil {
 		return nil, fmt.Errorf("stats settings: %w", err)

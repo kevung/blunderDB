@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // runRepair is `blunderdb repair`: recompute what the database derives from
@@ -20,6 +22,8 @@ func (cli *CLI) runRepair(args []string) error {
 	dbPath := repairCmd.String("db", "", "Path to the database file (required)")
 	format := repairCmd.String("format", "text", "Output format: text or json")
 	rebuildStats := repairCmd.Bool("stats", false, "Also recompute the per-match statistics (PR, decisions, blunders, luck of each seat) from scratch")
+	duplicates := repairCmd.Bool("duplicates", false,
+		"Only list the pairs of matches whose dice say they are one: same dice under other player names, or a truncated match and its longer version (nothing is merged)")
 
 	repairCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb repair [options]")
@@ -45,6 +49,7 @@ func (cli *CLI) runRepair(args []string) error {
 		fmt.Println("  blunderdb repair --db database.db")
 		fmt.Println("  blunderdb repair --db database.db --format json")
 		fmt.Println("  blunderdb repair --db database.db --stats")
+		fmt.Println("  blunderdb repair --db database.db --duplicates")
 	}
 
 	if err := repairCmd.Parse(args); err != nil {
@@ -63,6 +68,10 @@ func (cli *CLI) runRepair(args []string) error {
 
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
+	}
+
+	if *duplicates {
+		return cli.repairDuplicates(formatLower)
 	}
 
 	repaired, err := cli.db.RepairAnalyses()
@@ -123,5 +132,35 @@ func (cli *CLI) runRepair(args []string) error {
 	if *rebuildStats {
 		fmt.Printf("Per-match statistics recomputed for %d matches.\n", matchStats)
 	}
+	return nil
+}
+
+// repairDuplicates lists the suspected duplicate pairs (repair --duplicates).
+func (cli *CLI) repairDuplicates(format string) error {
+	suspects, err := cli.db.FindDuplicateMatches()
+	if err != nil {
+		return fmt.Errorf("finding duplicate matches: %w", err)
+	}
+	if format == "json" {
+		if suspects == nil {
+			suspects = []domain.DuplicateSuspect{}
+		}
+		return printJSON(struct {
+			Suspects []domain.DuplicateSuspect `json:"suspects"`
+		}{suspects})
+	}
+	if len(suspects) == 0 {
+		fmt.Println("No suspected duplicate match.")
+		return nil
+	}
+	for _, s := range suspects {
+		switch s.Kind {
+		case domain.DuplicateLonger:
+			fmt.Printf("#%d (%s) is a longer version of #%d (%s)\n", s.MatchID, s.Players, s.OtherID, s.OtherPlayers)
+		default:
+			fmt.Printf("#%d (%s) has the dice of #%d (%s)\n", s.MatchID, s.Players, s.OtherID, s.OtherPlayers)
+		}
+	}
+	fmt.Printf("%d suspected pair(s); nothing was merged.\n", len(suspects))
 	return nil
 }

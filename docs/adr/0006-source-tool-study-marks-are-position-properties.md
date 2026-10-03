@@ -18,7 +18,12 @@ BGBlitz records an equivalent. Dropping the mark on import loses the user's stud
 3. A flagged cube decision marks both positions derived from it (double and take/pass).
 4. `WriteMatch` applies flags even to an exact duplicate match it otherwise skips: the match
    hash comes from the play, not the file, so a newly flagged file is not a new match.
-5. A flagged position survives the orphan purge on match deletion (see ADR-0001 rule 4 and
+5. The same holds for a deeper analysis: an exact duplicate also offers its analyses to the
+   stored positions, and one strictly deeper (`domain.AnalysisDepthRank`) than the stored entry
+   replaces it — on a tie the stored one stays (ADR-0013). Only the match, game and move rows
+   are never rewritten. `import --skip-duplicates` (`?skip_duplicates=true`,
+   `Database.SetSkipDuplicates`) restores the plain skip, marks still applied.
+6. A flagged position survives the orphan purge on match deletion (see ADR-0001 rule 4 and
    its three-place retention predicate).
 
 ## Consequences
@@ -39,5 +44,5 @@ BGBlitz records an equivalent. Dropping the mark on import loses the user's stud
 
 ## Guard
 
-`pkg/blunderdb/ingest/xg_flagged_test.go`,
+`pkg/blunderdb/ingest/xg_flagged_test.go`, `pkg/blunderdb/ingest/duplicate_deepen_test.go`,
 `pkg/blunderdb/database/position_is_held_predicate_test.go`.

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math"
+	"sort"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -285,6 +286,10 @@ func scanPositionIDs(rows Rows) ([]int64, error) {
 // always applied so the IDs correspond exactly to what is displayed in the
 // panel.
 func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, filter storage.StatsFilter, sel storage.SelectionSpec) ([]int64, error) {
+	filter, err := s.withPlayerAliases(ctx, scope, filter)
+	if err != nil {
+		return nil, fmt.Errorf("PositionIDsBySelection aliases: %w", err)
+	}
 	whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
 
 	// A cube-direction cell is decided by reading two free-form labels, stated
@@ -360,15 +365,67 @@ func (s *StatsStore) PlayerNames(ctx context.Context, scope string) ([]storage.P
 	}
 	defer rows.Close()
 
-	var result []storage.PlayerFrequency
+	var raw []storage.PlayerFrequency
 	for rows.Next() {
 		var pf storage.PlayerFrequency
 		if err := rows.Scan(&pf.Name, &pf.Count); err != nil {
 			return nil, fmt.Errorf("PlayerNames scan: %w", err)
 		}
-		result = append(result, pf)
+		raw = append(raw, pf)
 	}
-	return result, rows.Err()
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("PlayerNames rows: %w", err)
+	}
+	rows.Close()
+	aliases, err := aliasMap(ctx, s.DB, scope, storage.AliasPlayer)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerNames aliases: %w", err)
+	}
+	return mergePlayerFrequencies(raw, aliases), nil
+}
+
+// mergePlayerFrequencies folds every alias into its canonical name and
+// re-ranks: count descending, then name.
+func mergePlayerFrequencies(raw []storage.PlayerFrequency, aliases storage.AliasMap) []storage.PlayerFrequency {
+	if len(aliases) == 0 {
+		return raw
+	}
+	idx := map[string]int{}
+	var out []storage.PlayerFrequency
+	for _, pf := range raw {
+		name := aliases.Canonical(pf.Name)
+		if i, ok := idx[name]; ok {
+			out[i].Count += pf.Count
+			continue
+		}
+		idx[name] = len(out)
+		out = append(out, storage.PlayerFrequency{Name: name, Count: pf.Count})
+	}
+	sort.SliceStable(out, func(i, j int) bool {
+		if out[i].Count != out[j].Count {
+			return out[i].Count > out[j].Count
+		}
+		return out[i].Name < out[j].Name
+	})
+	return out
+}
+
+// withPlayerAliases widens the filter's player to every spelling the alias
+// table gives the same person, so a stats request names the person and not
+// one of their spellings.
+func (s *StatsStore) withPlayerAliases(ctx context.Context, scope string, filter storage.StatsFilter) (storage.StatsFilter, error) {
+	names := storage.PlayerNameSet(filter)
+	if len(names) == 0 {
+		return filter, nil
+	}
+	aliases, err := aliasMap(ctx, s.DB, scope, storage.AliasPlayer)
+	if err != nil || len(aliases) == 0 {
+		return filter, err
+	}
+	group := aliases.Group(names...)
+	filter.PlayerName = group[0]
+	filter.PlayerAliases = group[1:]
+	return filter, nil
 }
 
 // MatchDetail computes per-player statistics for the given match, scoped to
@@ -801,7 +858,9 @@ func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter stora
 		                  JOIN position p2 ON p2.id = mv2.position_id
 		                  JOIN game g2 ON g2.id = mv2.game_id
 		                  WHERE g2.match_id = m.id AND p2.decision_type = 0), 0)`
-	if fromMatchStats(f) {
+	// A reader that cannot write takes the direct path, as Compute does: the
+	// table may lack matches it is not allowed to fill.
+	if fromMatchStats(f) && !RefusesWrites(ctx, s.DB) {
 		if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
 			return nil, err
 		}
@@ -848,6 +907,11 @@ func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter stora
 		return nil, fmt.Errorf("PlayerTable matches rows: %w", err)
 	}
 
+	aliases, err := aliasMap(ctx, s.DB, scope, storage.AliasPlayer)
+	if err != nil {
+		return nil, fmt.Errorf("PlayerTable aliases: %w", err)
+	}
+	decisions, matches, snowieErr, luck = canonicalPlayerInputs(aliases, decisions, matches, snowieErr, luck)
 	return storage.BuildPlayerRows(decisions, matches, snowieErr, luck), nil
 }
 
@@ -954,4 +1018,51 @@ func (s *StatsStore) playerSumsDirect(ctx context.Context, scope string, f stora
 	}
 
 	return decisions, snowieErr, luck, nil
+}
+
+// canonicalPlayerInputs renames every alias to its canonical name in the
+// players table's raw sums, so one person signing two ways is one row. The
+// sums merge before any rate is taken: a PR is never averaged.
+func canonicalPlayerInputs(aliases storage.AliasMap, decisions []storage.PlayerDecisionStat, matches []storage.MatchOutcomeRow,
+	snowieErr map[string]int64, luck map[string]storage.PlayerLuckAcc,
+) ([]storage.PlayerDecisionStat, []storage.MatchOutcomeRow, map[string]int64, map[string]storage.PlayerLuckAcc) {
+	if len(aliases) == 0 {
+		return decisions, matches, snowieErr, luck
+	}
+	type key struct {
+		name string
+		dt   int
+	}
+	idx := map[key]int{}
+	var dec []storage.PlayerDecisionStat
+	for _, d := range decisions {
+		d.Name = aliases.Canonical(d.Name)
+		k := key{d.Name, int(d.DecisionType)}
+		if i, ok := idx[k]; ok {
+			dec[i].SumErrMP += d.SumErrMP
+			dec[i].Count += d.Count
+			dec[i].Errors += d.Errors
+			dec[i].Blunders += d.Blunders
+			continue
+		}
+		idx[k] = len(dec)
+		dec = append(dec, d)
+	}
+	for i := range matches {
+		matches[i].Player1 = aliases.Canonical(matches[i].Player1)
+		matches[i].Player2 = aliases.Canonical(matches[i].Player2)
+	}
+	sn := make(map[string]int64, len(snowieErr))
+	for n, v := range snowieErr {
+		sn[aliases.Canonical(n)] += v
+	}
+	lk := make(map[string]storage.PlayerLuckAcc, len(luck))
+	for n, v := range luck {
+		c := aliases.Canonical(n)
+		acc := lk[c]
+		acc.SumMP += v.SumMP
+		acc.Rolls += v.Rolls
+		lk[c] = acc
+	}
+	return dec, matches, sn, lk
 }

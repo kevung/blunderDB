@@ -65,6 +65,7 @@ func (b binder) Directions() storage.DirectionStore {
 func (b binder) Transcriptions() storage.TranscriptionStore {
 	return &sqlshared.TranscriptionStore{DB: b.shared()}
 }
+func (b binder) Aliases() storage.AliasStore { return &sqlshared.AliasStore{DB: b.shared()} }
 func (b binder) Training() storage.TrainingStore {
 	return &sqlshared.TrainingStore{DB: b.shared()}
 }

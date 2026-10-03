@@ -442,6 +442,10 @@ export function ExportTranscriptionMAT(arg1, arg2) {
   return window['go']['database']['Database']['ExportTranscriptionMAT'](arg1, arg2);
 }
 
+export function FindDuplicateMatches() {
+  return window['go']['database']['Database']['FindDuplicateMatches']();
+}
+
 export function FinishImportBatch(arg1, arg2) {
   return window['go']['database']['Database']['FinishImportBatch'](arg1, arg2);
 }
@@ -682,6 +686,10 @@ export function ImportGnuBGMatchFromText(arg1) {
   return window['go']['database']['Database']['ImportGnuBGMatchFromText'](arg1);
 }
 
+export function ImportJournal(arg1) {
+  return window['go']['database']['Database']['ImportJournal'](arg1);
+}
+
 export function ImportOGXMMatch(arg1) {
   return window['go']['database']['Database']['ImportOGXMMatch'](arg1);
 }
@@ -728,6 +736,10 @@ export function IsReadOnly() {
 
 export function LastDecision(arg1) {
   return window['go']['database']['Database']['LastDecision'](arg1);
+}
+
+export function ListAliases(arg1) {
+  return window['go']['database']['Database']['ListAliases'](arg1);
 }
 
 export function ListAnkiDeckPositionIDs(arg1, arg2, arg3) {
@@ -910,6 +922,10 @@ export function Participants(arg1) {
   return window['go']['database']['Database']['Participants'](arg1);
 }
 
+export function PendingImportFiles(arg1) {
+  return window['go']['database']['Database']['PendingImportFiles'](arg1);
+}
+
 export function PendingTranscriptionAnalysis() {
   return window['go']['database']['Database']['PendingTranscriptionAnalysis']();
 }
@@ -968,6 +984,10 @@ export function RefreshSearchStatistics() {
 
 export function ReinstateParticipant(arg1, arg2) {
   return window['go']['database']['Database']['ReinstateParticipant'](arg1, arg2);
+}
+
+export function RemoveAlias(arg1, arg2) {
+  return window['go']['database']['Database']['RemoveAlias'](arg1, arg2);
 }
 
 export function RemoveAnkiCard(arg1) {
@@ -1044,6 +1064,10 @@ export function ResetAnkiDeck(arg1) {
 
 export function RestoreFromTrash(arg1) {
   return window['go']['database']['Database']['RestoreFromTrash'](arg1);
+}
+
+export function ResumeImportBatch(arg1) {
+  return window['go']['database']['Database']['ResumeImportBatch'](arg1);
 }
 
 export function ReviewAnkiCard(arg1, arg2) {
@@ -1138,6 +1162,10 @@ export function SeasonRanking(arg1) {
   return window['go']['database']['Database']['SeasonRanking'](arg1);
 }
 
+export function SetAlias(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SetAlias'](arg1, arg2, arg3);
+}
+
 export function SetAnkiCardSuspended(arg1, arg2) {
   return window['go']['database']['Database']['SetAnkiCardSuspended'](arg1, arg2);
 }
@@ -1198,6 +1226,10 @@ export function SetRencontreTables(arg1, arg2) {
   return window['go']['database']['Database']['SetRencontreTables'](arg1, arg2);
 }
 
+export function SetSkipDuplicates(arg1) {
+  return window['go']['database']['Database']['SetSkipDuplicates'](arg1);
+}
+
 export function SetupDatabase(arg1) {
   return window['go']['database']['Database']['SetupDatabase'](arg1);
 }
@@ -1234,12 +1266,24 @@ export function StartTranscriptionFromSlot(arg1, arg2) {
   return window['go']['database']['Database']['StartTranscriptionFromSlot'](arg1, arg2);
 }
 
+export function StatsReportHTML(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['StatsReportHTML'](arg1, arg2, arg3);
+}
+
+export function StatsReportHTMLCtx(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['StatsReportHTMLCtx'](arg1, arg2, arg3, arg4);
+}
+
 export function StudyImpact(arg1) {
   return window['go']['database']['Database']['StudyImpact'](arg1);
 }
 
 export function StudyPositionIDs(arg1, arg2, arg3) {
   return window['go']['database']['Database']['StudyPositionIDs'](arg1, arg2, arg3);
+}
+
+export function SuggestAliases(arg1) {
+  return window['go']['database']['Database']['SuggestAliases'](arg1);
 }
 
 export function SuggestMatFilename(arg1) {

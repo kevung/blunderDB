@@ -10,11 +10,29 @@ import (
 // MatchListOpts filters, orders and paginates a match List query. Zero values
 // mean "no filter" / "default order" / "no limit" / "from the start", so a zero
 // MatchListOpts reproduces the historical stream-everything-by-date behaviour.
+// MatchDice is one match as its dice describe it (MatchStore.DiceSequences).
+// Games holds, per game in order, the dice of its checker moves; Initial is
+// the score at the start of each game, in seat order.
+type MatchDice struct {
+	ID       int64
+	Player1  string
+	Player2  string
+	Length   int
+	DiceHash string
+	Initial  [][2]int
+	Games    [][][2]int
+}
+
 type MatchListOpts struct {
-	// PlayerName keeps only matches where this exact name is player 1 or
-	// player 2. It is the match-level "my matches" filter — distinct from
-	// StatsFilter.PlayerName, which selects a player's decisions by joining moves.
+	// PlayerName keeps only matches where this name, or any spelling the
+	// player aliases give the same person, is player 1 or player 2 — as the
+	// statistics and the position search read a player. It is the
+	// match-level "my matches" filter — distinct from StatsFilter.PlayerName,
+	// which selects a player's decisions by joining moves.
 	PlayerName string
+	// PlayerSpellings is PlayerName's group of spellings, filled by the store
+	// from the alias table; a caller leaves it empty.
+	PlayerSpellings []string
 	// PlayerNameContains keeps matches where either player's name contains
 	// this text, case-insensitively (ASCII only on SQLite, whose LIKE folds
 	// nothing else), with % and _ taken literally. It serves a search box.
@@ -50,6 +68,20 @@ type MatchStore interface {
 	// present. Empty arguments are ignored.
 	FindByHash(ctx context.Context, scope string, hash, canonicalHash string) (id int64, found bool, err error)
 
+	// ListByDiceHash returns the matches whose dice_hash equals hash, by id:
+	// the candidates for "the same match under other names". Empty hash, no
+	// match.
+	ListByDiceHash(ctx context.Context, scope string, hash string) ([]domain.Match, error)
+
+	// SetDiceHash stores a match's dice_hash, computed after the fact for a
+	// match imported before the column existed.
+	SetDiceHash(ctx context.Context, scope string, id int64, hash string) error
+
+	// DiceSequences streams, by match id, every match with the dice of its
+	// checker moves per game in game and move order — what ingest needs to
+	// compute dice_hash and compare matches by their dice.
+	DiceSequences(ctx context.Context, scope string) iter.Seq2[MatchDice, error]
+
 	// Get returns the match with the given id, or ErrNotFound.
 	Get(ctx context.Context, scope string, id int64) (*domain.Match, error)
 
@@ -70,7 +102,8 @@ type MatchStore interface {
 
 	// ReplaceHeader rewrites the header columns of an existing match in place,
 	// from m: the two names, the event, location and round, the length, the
-	// date, the two hashes and the game count. The id, the import date, the
+	// date, the hashes, the game count and the source metadata (Elo,
+	// experience, transcriber, session rules, engine version). The id, the import date, the
 	// tournament, the comment and the last-visited position are NOT touched —
 	// they are what a replacement exists to preserve (ADR-0045 §2), and none of
 	// them is a property of the transcript being re-saved.
@@ -105,8 +138,9 @@ type MatchStore interface {
 	// stored positions accordingly).
 	SwapPlayers(ctx context.Context, scope string, id int64) error
 
-	// MergePlayers rewrites every occurrence of the given player names to a
-	// single canonical name.
+	// MergePlayers makes every other given player name an alias of the
+	// canonical name; the stored matches keep the names their files wrote,
+	// and every reader that groups players resolves them through the aliases.
 	MergePlayers(ctx context.Context, scope string, names []string, canonical string) error
 
 	// SetLastVisitedPosition records the last position index viewed in a match.
@@ -147,4 +181,69 @@ type MatchStore interface {
 	// MoveAnalysesByMatch streams every move analysis of a match, by game,
 	// move, then id.
 	MoveAnalysesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.MoveAnalysis, error]
+}
+
+// DiceSequencesSQL is the query both backends run for DiceSequences, with
+// their own tenant filter in place of %s: one row per checker move with
+// dice, plus one row per match without games and per game without such a
+// move (the LEFT JOINs), ordered so a match's rows arrive together.
+const DiceSequencesSQL = `SELECT m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_name,''),
+	COALESCE(m.match_length,0), COALESCE(m.dice_hash,''),
+	COALESCE(g.id,0), COALESCE(g.initial_score_1,0), COALESCE(g.initial_score_2,0),
+	COALESCE(mv.dice_1,0), COALESCE(mv.dice_2,0)
+FROM match m
+LEFT JOIN game g ON g.match_id = m.id
+LEFT JOIN move mv ON mv.game_id = g.id AND mv.move_type = 'checker' AND mv.dice_1 > 0
+WHERE %s
+ORDER BY m.id, g.game_number, g.id, mv.move_number, mv.id`
+
+// DiceRow is one row of DiceSequencesSQL; GameID and the dice are 0 where
+// the LEFT JOINs found nothing.
+type DiceRow struct {
+	MatchID, GameID        int64
+	Player1, Player2, Hash string
+	Length                 int
+	Score1, Score2, D1, D2 int
+}
+
+// DiceFolder folds the ordered rows of DiceSequencesSQL into MatchDice, one
+// per match: Add returns the previous match once a row of the next arrives,
+// Flush the last one.
+type DiceFolder struct {
+	cur      *MatchDice
+	lastGame int64
+}
+
+// Add folds r in, and returns the match it completed, if any.
+func (f *DiceFolder) Add(r DiceRow) (MatchDice, bool) {
+	var done MatchDice
+	completed := false
+	if f.cur != nil && f.cur.ID != r.MatchID {
+		done, completed = *f.cur, true
+		f.cur = nil
+	}
+	if f.cur == nil {
+		f.cur = &MatchDice{ID: r.MatchID, Player1: r.Player1, Player2: r.Player2, Length: r.Length, DiceHash: r.Hash}
+		f.lastGame = 0
+	}
+	if r.GameID != 0 && r.GameID != f.lastGame {
+		f.cur.Games = append(f.cur.Games, nil)
+		f.cur.Initial = append(f.cur.Initial, [2]int{r.Score1, r.Score2})
+		f.lastGame = r.GameID
+	}
+	if r.GameID != 0 && r.D1 > 0 {
+		last := len(f.cur.Games) - 1
+		f.cur.Games[last] = append(f.cur.Games[last], [2]int{r.D1, r.D2})
+	}
+	return done, completed
+}
+
+// Flush returns the match still being folded, if any.
+func (f *DiceFolder) Flush() (MatchDice, bool) {
+	if f.cur == nil {
+		return MatchDice{}, false
+	}
+	done := *f.cur
+	f.cur = nil
+	return done, true
 }

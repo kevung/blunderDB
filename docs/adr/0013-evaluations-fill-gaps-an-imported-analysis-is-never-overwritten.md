@@ -22,7 +22,13 @@ with `AnalysisEngine` and `AnalysisDepth`, but the search cannot see them.
    idempotence follows from rule 1.
 4. **One job at a time, N−1 cores, interactive evaluation first**: the batch yields within one
    position.
-5. **Display depth and analysis depth are two settings.** Display depth is comfort; analysis
+5. **An imported analysis gives way only to a deeper import of the same match.** Rule 1 is
+   about gammonNet; between two imports, re-importing a match already stored replaces an
+   entry only with a strictly deeper one from the file (a 3-ply analysis by a Roller++ one),
+   never with a shallower or equal one, so the result does not depend on the import order
+   (ADR-0006 rule 5). A truncated match later completed has a different match hash and stays
+   a second match.
+6. **Display depth and analysis depth are two settings.** Display depth is comfort; analysis
    depth is what the batch writes. Both default to the canonical parameters (2-ply, `k=12`).
 
 ## Consequences

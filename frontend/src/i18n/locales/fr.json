@@ -173,7 +173,8 @@
         "likeLimit": "Voisines par classement",
         "likeMaxDistance": "Distance maximale (pions-pas)",
         "likeNote": "Zéro : aucun plafond. Le jeton like<12 impose le sien pour une recherche.",
-        "assistantTitle": "Assistant et MCP"
+        "assistantTitle": "Assistant et MCP",
+        "corpusTitle": "Corpus"
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
@@ -561,6 +562,11 @@
         "pts": "Pts",
         "review": "Revoir",
         "round": "Tour",
+        "ratings": "Elo (expérience)",
+        "transcriber": "Transcripteur",
+        "sessionRules": "Règles de la session",
+        "rulesNone": "aucune",
+        "writtenBy": "Écrit par",
         "score": "Score",
         "sourceFile": "Fichier source",
         "stats": "Statistiques",
@@ -1121,7 +1127,16 @@
         "reportAnalyzeNow": "Analyser maintenant",
         "reportWorst": "Pires décisions",
         "reportCube": "videau",
-        "reportChecker": "pions"
+        "reportChecker": "pions",
+        "journalTitle": "Journal de l'import ({n} fichiers)",
+        "journalNew": "nouveau",
+        "journalDuplicate": "doublon",
+        "journalEnriched": "enrichi",
+        "journalError": "erreur",
+        "journalOpenMatch": "Ouvrir le match {id}",
+        "journalMore": "… et {n} autres fichiers (journal complet : imports.files, ou --format json)",
+        "interruptedTitle": "Import interrompu",
+        "resume": "Reprendre"
     },
     "warning": {
         "title": "Avertissement",
@@ -2718,5 +2733,29 @@
         "notFound": "Aucune leçon n° {id}.",
         "failed": "Impossible de lire les leçons.",
         "stepMissing": "Ce que montre cette étape n'est plus dans la base."
+    },
+    "corpus": {
+        "intro": "Doublons et graphies : ce qu'un import reconnaît comme déjà en base, et les autres noms d'un même joueur ou d'un même événement.",
+        "skipDuplicates": "Ignorer les doublons à l'import",
+        "skipDuplicatesNote": "Coché, un match déjà en base est sauté sans offrir ses analyses plus profondes. Le réglage vaut pour la session.",
+        "aliasesTitle": "Alias",
+        "players": "Joueurs",
+        "events": "Événements",
+        "aliasLabel": "Alias",
+        "canonicalLabel": "Nom canonique",
+        "add": "Ajouter",
+        "remove": "Retirer",
+        "noAliases": "Aucun alias.",
+        "suggestNote": "Noms qui ne diffèrent que par la casse, les accents ou l'ordre des mots",
+        "suggest": "Proposer",
+        "noSuggestion": "Aucune proposition.",
+        "suggestion": "« {alias} » → « {canonical} »",
+        "apply": "Appliquer",
+        "duplicatesTitle": "Doublons probables",
+        "duplicatesNote": "Les matchs que leurs dés disent identiques, sous d'autres noms ou tronqués puis complétés. Rien n'est fusionné.",
+        "findDuplicates": "Chercher",
+        "noDuplicates": "Aucun doublon probable.",
+        "suspectSameDice": "#{other} et #{match} : mêmes dés ({otherPlayers} / {players})",
+        "suspectLonger": "#{match} prolonge #{other} ({players})"
     }
 }

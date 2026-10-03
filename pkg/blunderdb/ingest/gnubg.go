@@ -365,6 +365,7 @@ func (im GnuBGImporter) Import(ctx context.Context, scope string, src Source, pr
 	}
 
 	graph.ImportBatchID = src.BatchID
+	graph.SkipDuplicates = src.SkipDuplicates
 
 	tx, err := im.S.BeginTx(ctx)
 	if err != nil {
@@ -393,6 +394,7 @@ func (im GnuBGImporter) Import(ctx context.Context, scope string, src Source, pr
 	if res.Skipped {
 		sum.SkippedDuplicates = 1
 		sum.FlagsApplied = res.FlagsApplied
+		sum.Deepened = res.Deepened
 		sum.SavedPositions = 0
 	}
 	if res.Enriched {

@@ -218,3 +218,26 @@ func TestFreeSpaceBytes(t *testing.T) {
 		t.Errorf("freeSpaceBytes(%q) = 0, want > 0", wd)
 	}
 }
+
+// TestVacuum_KeepsPoolTempStoreInMemory: the file-backed temp store VACUUM
+// needs lives on a dedicated connection only; the pool keeps temp_store=MEMORY
+// for everything else.
+func TestVacuum_KeepsPoolTempStoreInMemory(t *testing.T) {
+	ctx := context.Background()
+	st, err := Open(ctx, filepath.Join(t.TempDir(), "v.db"), nil)
+	if err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	defer st.Close()
+
+	if _, err := st.Vacuum(ctx); err != nil {
+		t.Fatalf("Vacuum: %v", err)
+	}
+	var mode int
+	if err := st.sqlDB.QueryRow(`PRAGMA temp_store`).Scan(&mode); err != nil {
+		t.Fatalf("PRAGMA temp_store: %v", err)
+	}
+	if mode != 2 { // 2 = MEMORY
+		t.Errorf("pool temp_store = %d after Vacuum, want 2 (MEMORY)", mode)
+	}
+}

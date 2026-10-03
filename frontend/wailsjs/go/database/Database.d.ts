@@ -237,6 +237,8 @@ export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<str
 
 export function ExportTranscriptionMAT(arg1:number,arg2:string):Promise<void>;
 
+export function FindDuplicateMatches():Promise<Array<domain.DuplicateSuspect>>;
+
 export function FinishImportBatch(arg1:number,arg2:domain.ImportReport):Promise<void>;
 
 export function FinishTranscription(arg1:number):Promise<database.TranscriptionSaveResult>;
@@ -357,6 +359,8 @@ export function ImportGnuBGMatch(arg1:string):Promise<number>;
 
 export function ImportGnuBGMatchFromText(arg1:string):Promise<number>;
 
+export function ImportJournal(arg1:number):Promise<Array<domain.ImportFileEntry>>;
+
 export function ImportOGXMMatch(arg1:string):Promise<number>;
 
 export function ImportReport(arg1:number):Promise<domain.ImportBatch>;
@@ -380,6 +384,8 @@ export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 export function IsReadOnly():Promise<boolean>;
 
 export function LastDecision(arg1:number):Promise<service.LastDecision>;
+
+export function ListAliases(arg1:string):Promise<Array<storage.Alias>>;
 
 export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
 
@@ -471,6 +477,8 @@ export function ParsePositionText(arg1:string):Promise<parser.Result>;
 
 export function Participants(arg1:number):Promise<Array<service.ParticipantRow>>;
 
+export function PendingImportFiles(arg1:Array<string>):Promise<Array<string>>;
+
 export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAnalysisResume>;
 
 export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<database.RolloutPlan>;
@@ -500,6 +508,8 @@ export function RecommendedTags():Promise<Array<string>>;
 export function RefreshSearchStatistics():Promise<void>;
 
 export function ReinstateParticipant(arg1:number,arg2:string):Promise<service.DirectionView>;
+
+export function RemoveAlias(arg1:string,arg2:string):Promise<boolean>;
 
 export function RemoveAnkiCard(arg1:number):Promise<void>;
 
@@ -538,6 +548,8 @@ export function RepairGamePhases():Promise<number>;
 export function ResetAnkiDeck(arg1:number):Promise<void>;
 
 export function RestoreFromTrash(arg1:number):Promise<number>;
+
+export function ResumeImportBatch(arg1:number):Promise<void>;
 
 export function ReviewAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
 
@@ -585,6 +597,8 @@ export function SeasonCSV(arg1:service.SeasonQuery):Promise<string>;
 
 export function SeasonRanking(arg1:service.SeasonQuery):Promise<service.SeasonView>;
 
+export function SetAlias(arg1:string,arg2:string,arg3:string):Promise<void>;
+
 export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetBeforeSwitch(arg1:any):Promise<void>;
@@ -615,6 +629,8 @@ export function SetRencontreTableOutOfService(arg1:number,arg2:number,arg3:boole
 
 export function SetRencontreTables(arg1:number,arg2:Array<domain.TableSetting>):Promise<service.RencontreView>;
 
+export function SetSkipDuplicates(arg1:boolean):Promise<void>;
+
 export function SetupDatabase(arg1:string):Promise<void>;
 
 export function SimilarPositions(arg1:number,arg2:number):Promise<Array<storage.SimilarPosition>>;
@@ -633,9 +649,15 @@ export function StartMatchManually(arg1:number,arg2:string,arg3:string,arg4:numb
 
 export function StartTranscriptionFromSlot(arg1:number,arg2:string):Promise<database.TranscriptionState>;
 
+export function StatsReportHTML(arg1:database.StatsFilter,arg2:string,arg3:Record<number, string>):Promise<string>;
+
+export function StatsReportHTMLCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string,arg4:Record<number, string>):Promise<string>;
+
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
 
 export function StudyPositionIDs(arg1:database.StatsFilter,arg2:number,arg3:number):Promise<Array<number>>;
+
+export function SuggestAliases(arg1:string):Promise<Array<storage.AliasSuggestion>>;
 
 export function SuggestMatFilename(arg1:number):Promise<string>;
 

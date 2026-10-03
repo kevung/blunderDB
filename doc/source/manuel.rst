@@ -222,13 +222,15 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en huit onglets :
+blunderDB. Elle est organisée en neuf onglets :
 
 * **Interface** — langue, échelle d'affichage, position du panneau, pas de
   PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste) ;
 * **Couleurs** — les couleurs du plateau ;
 * **Bibliothèque** — ce qui appartient à la base ouverte : les seuils
   d'erreur et de blunder, le compactage et la réparation, décrits ci-dessous ;
+* **Corpus** — les doublons à l'import, les alias de joueurs et d'événements
+  et la recherche des doublons probables (voir l'import de matchs) ;
 * **Bearoff** — les tables de sortie utilisées par le panneau Eval ;
 * **gammonNet** — les réglages de l'évaluateur embarqué, décrits ci-dessous ;
 * **Dossier surveillé** — l'import automatique des matchs qui arrivent dans un
@@ -295,9 +297,14 @@ l'espace disque laissé par les suppressions (matchs, tournois, purges) : la
 base de données ne rétrécit jamais toute seule quand on supprime des données,
 il faut demander explicitement ce compactage. L'opération peut prendre du
 temps sur une grosse base et nécessite, temporairement, environ deux fois sa
-taille en espace disque libre (blunderDB refuse de démarrer plutôt que de
-risquer un compactage interrompu) ; une confirmation est donc demandée avant
-de lancer l'opération. Le résultat — l'espace gagné, en mégaoctets — s'affiche
+taille en espace disque libre, sur disque et non en mémoire vive : une base de
+plusieurs dizaines de gigaoctets se compacte donc sans saturer la mémoire.
+blunderDB refuse de démarrer, avec un message qui dit ce qui manque (espace
+disque, ou moins de 512 Mo de mémoire disponible), plutôt que de risquer un
+compactage interrompu. Les fichiers temporaires vont dans le dossier temporaire
+du système, ou dans celui que désigne la variable d'environnement
+``SQLITE_TMPDIR`` : sur un petit ``/tmp``, pointez-la vers le volume de la base.
+Une confirmation est demandée avant de lancer l'opération. Le résultat — l'espace gagné, en mégaoctets — s'affiche
 ensuite dans la barre d'état. La même opération est disponible en ligne de
 commande via ``blunderdb vacuum`` (voir :ref:`cli`).
 
@@ -1176,9 +1183,47 @@ ne remplace pas ce qui est déjà là.
   *Ré-analyser les positions périmées* laisse intacte toute position portant
   une analyse importée (voir :ref:`configuration`).
 
-* **Réimporter le même fichier ne réécrit rien.** Le match est reconnu comme
-  déjà présent ; seules les marques posées dans le logiciel d'origine sont
-  ajoutées, sans toucher aux commentaires ni aux analyses.
+* **Réimporter un match déjà présent n'apporte que du plus profond.** Le match
+  est reconnu à son jeu (joueurs, longueur, dés, coups, videau), pas à son
+  analyse : aucun match, partie ni coup n'est réécrit. Les marques posées dans
+  le logiciel d'origine sont ajoutées, et une analyse plus profonde que celle
+  rangée la remplace, position par position — une version Roller++ du même
+  match remplace la version 3-ply, quel que soit l'ordre d'import ; à
+  profondeur égale ou moindre, l'analyse rangée reste. Réimporter le même
+  fichier ne réécrit donc rien. Le rapport d'import distingue les doublons qui
+  n'apportaient rien de ceux qui ont approfondi des analyses. En ligne de
+  commande, ``--skip-duplicates`` ignore un doublon sans rien en reprendre
+  d'autre que les marques. Un match tronqué puis complété (plus de parties)
+  n'est pas le même match : il est importé comme un second match.
+
+* **Un match déjà présent sous d'autres noms est signalé, jamais fusionné.**
+  Les deux empreintes de match portent les noms des joueurs : « Martin A. » et
+  « Alice Martin » font deux matchs. L'import compare aussi les dés (longueur,
+  score initial, dés de chaque partie) et signale, sous la ligne du fichier et
+  dans le rapport, le match déjà en base sous d'autres noms dont il a les dés.
+  ``blunderdb repair --duplicates`` liste ces paires dans une base existante,
+  ainsi que les matchs tronqués et leur version plus longue.
+
+* **Un nom connu sous une autre graphie est enregistré sous son nom canonique.**
+  Un *alias* dit que « Martin A. » est une autre graphie d'« Alice Martin » (ou
+  qu'un nom d'événement en est un autre). À l'import, les noms des joueurs et de
+  l'événement sont remplacés par leur nom canonique, et le match rangé dans le
+  tournoi de l'événement canonique. Les empreintes du match gardent les noms du
+  fichier : un fichier importé avant que son alias existe se reconnaît donc
+  toujours. Un match dont les dés sont ceux d'un match en base, et dont les noms
+  ne diffèrent que par des alias connus, n'est pas un second match : ses
+  analyses enrichissent celui qui est rangé.
+
+Les alias se gèrent dans l'onglet **Corpus** des paramètres : choisir
+**Joueurs** ou **Événements**, saisir l'alias et le nom canonique, ou retirer un
+alias de la liste. **Proposer** liste les noms qui ne diffèrent que par la
+casse, les accents, la ponctuation ou l'ordre des mots ; rien n'est appliqué
+sans un clic sur **Appliquer**. Le même onglet porte la case **Ignorer les
+doublons à l'import** (l'équivalent de ``--skip-duplicates``, pour la session)
+et la recherche des **doublons probables** d'une base existante, celle de
+``blunderdb repair --duplicates`` : chaque paire est donnée par ses numéros de
+match, rien n'est fusionné. En ligne de commande : ``blunderdb players alias``
+et ``blunderdb events alias``.
 
 * **Un dossier s'importe en parallèle.** Les fichiers sont lus sur plusieurs
   cœurs à la fois et écrits par groupes, toujours dans l'ordre du dossier : les
@@ -1196,6 +1241,24 @@ ne remplace pas ce qui est déjà là.
   journal de l'application les nomme toutes. En ligne de commande,
   ``blunderdb import --type batch`` affiche la même progression sur la sortie
   d'erreur, et ``--format json`` la rend dans l'objet final (``progress``).
+
+* **Chaque fichier d'un import est journalisé, et un import interrompu se
+  reprend.** Pour chaque fichier, le journal du lot garde le chemin, la
+  taille, la date de modification, l'empreinte SHA-256 et le résultat : match
+  nouveau (avec son numéro), doublon (avec le match qui le couvre), match
+  enrichi, ou erreur (avec le message). Un import annulé ou coupé se continue
+  sans reprendre ce qui est déjà décidé : un fichier de même chemin, même
+  taille et même date est sauté sans être lu ; un fichier de même contenu est
+  lu mais pas analysé ; un fichier en erreur est retenté. Dans l'application, la fenêtre de fin d'import liste le journal (un
+  fichier par ligne, avec son résultat et le message d'une erreur ; un
+  fichier retenté montre sa dernière issue), et une ligne qui a donné un match
+  l'ouvre. Un import **annulé** laisse la fenêtre ouverte avec le bouton
+  **Reprendre**. En ligne de commande, ``blunderdb import --type batch --dir
+  <dossier> --resume <lot>`` reprend le lot dont le numéro a été affiché au
+  départ de l'import, et ``--format json`` rend le journal dans l'objet final
+  (``journal``). Le serveur accepte ``resume`` dans la requête de
+  ``imports.batch`` et rend le journal par ``imports.files``. Le journal est
+  une donnée de l'import : ouvrir ou lire une base n'y écrit rien.
 
 * **Un gros dossier s'importe en mode masse.** À partir de 200 fichiers,
   blunderDB écrit avec un cache plus grand et moins de points de contrôle. Si
@@ -1278,11 +1341,25 @@ l'analyse ne note pas ne porte aucune marque.
 L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non :
 on voit sans l'ouvrir dans quelle partie se trouvent les blunders.
 
+L'onglet **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
+le fichier source dit des joueurs et de la session, quand il le dit — un
+fichier eXtreme Gammon le dit toujours : le classement Elo de chaque joueur et
+son expérience entre parenthèses, le transcripteur, les règles Jacoby et Beaver
+d'une partie libre, et le programme qui a écrit le fichier. Ces informations
+sont exportées avec le match. Réimporter un fichier déjà présent les donne au
+match qui ne les avait pas, sans rien remplacer de ce qu'il porte déjà. La
+commande ``match`` de la ligne de commande les affiche aussi. Les commentaires
+d'en-tête et de pied de match, l'horloge et la table d'équité d'un fichier
+eXtreme Gammon ne sont pas importés.
+
 Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
 fenêtre listant tous les noms de joueurs de la base avec leur nombre de
 matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le
-nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques
-par joueur lorsqu'un même joueur apparaît sous plusieurs noms.
+nom canonique à conserver, puis fusionner. La fusion crée un alias par
+variante : les matchs gardent les noms de leurs fichiers, mais les statistiques,
+la table Joueurs et la recherche ``pl"…"`` lisent toutes les variantes comme un
+seul joueur, et les imports suivants enregistrent le nom canonique. Retirer
+l'alias dans l'onglet **Corpus** des paramètres défait la fusion.
 
 Lorsqu'un match est ouvert, une **barre d'informations** apparaît au-dessus du
 plateau : elle rappelle les joueurs en présence (*joueur 1* contre *joueur 2*)
@@ -2267,6 +2344,12 @@ comptées, PR global, pions et videau), puis les **dix décisions les plus
 coûteuses**, chacune avec son diagramme, son coût, le match d'où elle vient et
 le meilleur coup lorsqu'une analyse le donne.
 
+Le document est construit par le moteur, pas par l'écran : la ligne de commande
+(``stats report --html``, voir :ref:`cli_stats`) et le démon HTTP (route
+``stats.report``) produisent le même rapport, dans l'une des neuf langues de
+l'interface. Seule l'application graphique dessine les diagrammes avec la
+palette du plateau ; les deux autres emploient la palette par défaut.
+
 Le rapport porte le **filtre courant** du panneau Stats. Un rapport qui ne dit
 pas son périmètre est un rapport dont les chiffres ne veulent rien dire :
 réglez le filtre — un tournoi, une plage de dates, un joueur — avant de le
@@ -2572,7 +2655,7 @@ Colonnes, dans l'ordre :
    :header: "Colonne", "Signification"
    :widths: 22, 78
 
-   "Joueur", "Le nom **tel qu'il figure dans les matchs**. Un joueur enregistré sous deux orthographes apparaît donc sur deux lignes ; utilisez la fusion de joueurs pour les réunir."
+   "Joueur", "Le nom **tel qu'il figure dans les matchs**. Un joueur enregistré sous deux orthographes apparaît sur deux lignes, sauf si l'une est un alias de l'autre (fusion de joueurs, onglet Corpus) : la ligne porte alors le nom canonique."
    "Matchs", "Nombre de matchs disputés dans la période retenue."
    "V–D", "Victoires et défaites. Un match inachevé (journal tronqué, abandon) ne compte ni l'une ni l'autre : V + D peut donc être inférieur au nombre de matchs."
    "Décisions", "Nombre de décisions comptées — le dénominateur du PR. C'est la colonne qui dit ce que valent les taux voisins : un PR calculé sur douze décisions ne signifie rien."

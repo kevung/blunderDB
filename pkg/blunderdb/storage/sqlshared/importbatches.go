@@ -155,6 +155,21 @@ func (s *ImportBatchStore) measurePositions(ctx context.Context, scope string, b
 	return row.Scan(&b.Report.PositionsFlagged, &b.Report.PositionsWithoutAnalysis)
 }
 
+// playerClause is batchPlayerClause over every spelling the player aliases
+// give each named player, as the statistics read a player.
+func (s *ImportBatchStore) playerClause(ctx context.Context, scope string, players []string) (string, []any, error) {
+	var names []string
+	for _, p := range players {
+		group, err := PlayerSpellings(ctx, s.DB, scope, p)
+		if err != nil {
+			return "", nil, fmt.Errorf("import batch player aliases: %w", err)
+		}
+		names = append(names, group...)
+	}
+	clause, args := batchPlayerClause(names)
+	return clause, args, nil
+}
+
 // batchPlayerClause narrows a stats query to the decisions of the named
 // players, seat-aware: a row counts only when one of them IS the player who
 // took the decision. Empty names score both seats, and the caller says so in
@@ -186,7 +201,10 @@ func batchPlayerClause(players []string) (string, []any) {
 // the panel must render as "no analysis" rather than as a perfect game.
 func (s *ImportBatchStore) measurePerformance(ctx context.Context, scope string, b *domain.ImportBatch, players []string) error {
 	tenant, targs := s.DB.TenantFilter("p", scope)
-	playerClause, playerArgs := batchPlayerClause(players)
+	playerClause, playerArgs, perr := s.playerClause(ctx, scope, players)
+	if perr != nil {
+		return perr
+	}
 	args := append(append([]any{}, targs...), b.ID)
 	args = append(args, playerArgs...)
 
@@ -212,7 +230,10 @@ func (s *ImportBatchStore) measurePerformance(ctx context.Context, scope string,
 // statistics.
 func (s *ImportBatchStore) measureWorst(ctx context.Context, scope string, b *domain.ImportBatch, players []string) error {
 	tenant, targs := s.DB.TenantFilter("p", scope)
-	playerClause, playerArgs := batchPlayerClause(players)
+	playerClause, playerArgs, perr := s.playerClause(ctx, scope, players)
+	if perr != nil {
+		return perr
+	}
 	args := append(append([]any{}, targs...), b.ID)
 	args = append(args, playerArgs...)
 	limit, largs := s.DB.LimitOffset(domain.MaxImportBlunders, 0)
@@ -342,7 +363,10 @@ func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID
 func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID int64, players []string, limit int,
 	reason domain.StudyQueueReason, extraWhere string, extraArgs []any, orderBy string) ([]domain.StudyQueueEntry, error) {
 	tenant, targs := s.DB.TenantFilter("p", scope)
-	playerClause, playerArgs := batchPlayerClause(players)
+	playerClause, playerArgs, perr := s.playerClause(ctx, scope, players)
+	if perr != nil {
+		return nil, perr
+	}
 	args := append(append([]any{}, targs...), batchID)
 	args = append(args, playerArgs...)
 	args = append(args, extraArgs...)
@@ -381,4 +405,76 @@ func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID 
 		out = append(out, e)
 	}
 	return out, rows.Err()
+}
+
+// journalChunk bounds the rows of one INSERT, well under both backends'
+// parameter limits.
+const journalChunk = 100
+
+// RecordFiles appends the files to the batch's journal.
+func (s *ImportBatchStore) RecordFiles(ctx context.Context, scope string, batchID int64, files []domain.ImportFileEntry) error {
+	if len(files) == 0 {
+		return nil
+	}
+	tcols, targs := s.DB.TenantColumns(scope)
+	cols := append(append([]string{}, tcols...), "batch_id", "path", "size", "mtime", "sha256", "outcome", "match_id", "error")
+	one := "(" + strings.TrimSuffix(strings.Repeat("?, ", len(tcols)+3), ", ") + ", " + s.DB.TimestampArg() + ", ?, ?, ?, ?)"
+	for start := 0; start < len(files); start += journalChunk {
+		chunk := files[start:min(start+journalChunk, len(files))]
+		var args []any
+		rows := make([]string, len(chunk))
+		for i, f := range chunk {
+			rows[i] = one
+			args = append(args, targs...)
+			args = append(args, batchID, f.Path, f.Size)
+			if f.MTime == "" {
+				args = append(args, nil)
+			} else {
+				args = append(args, f.MTime+"+00")
+			}
+			var match any
+			if f.MatchID != 0 {
+				match = f.MatchID
+			}
+			args = append(args, f.SHA256, f.Outcome, match, f.Error)
+		}
+		if _, err := s.DB.Exec(ctx,
+			`INSERT INTO import_batch_file (`+strings.Join(cols, ", ")+`) VALUES `+strings.Join(rows, ", "), args...); err != nil {
+			return errf(s.DB, fmt.Sprintf("record files of import batch %d", batchID), err)
+		}
+	}
+	return nil
+}
+
+// Files returns the batch's journal.
+func (s *ImportBatchStore) Files(ctx context.Context, scope string, batchID int64) ([]domain.ImportFileEntry, error) {
+	if _, err := s.Load(ctx, scope, batchID); err != nil {
+		return nil, err
+	}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	rows, err := s.DB.Query(ctx,
+		`SELECT path, size, `+s.DB.TimestampText("mtime")+`, sha256, outcome, COALESCE(match_id, 0), error
+		 FROM import_batch_file WHERE batch_id = ? AND `+tenant+` ORDER BY id`,
+		append([]any{batchID}, targs...)...)
+	if err != nil {
+		return nil, errf(s.DB, "list files of import batch", err)
+	}
+	defer rows.Close()
+	var out []domain.ImportFileEntry
+	for rows.Next() {
+		var f domain.ImportFileEntry
+		if err := rows.Scan(&f.Path, &f.Size, &f.MTime, &f.SHA256, &f.Outcome, &f.MatchID, &f.Error); err != nil {
+			return nil, errf(s.DB, "list files of import batch", err)
+		}
+		// SQLite hands back what was written ("... +00"), PostgreSQL what it
+		// renders: both reduce to the same second.
+		if len(f.MTime) > 19 {
+			f.MTime = f.MTime[:19]
+		}
+		out = append(out, f)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "list files of import batch", err)
+	}
+	return out, nil
 }

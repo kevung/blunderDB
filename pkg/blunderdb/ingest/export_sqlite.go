@@ -830,6 +830,31 @@ func (e *exporter) writeTournaments() error {
 // analyses. A move whose position was not exported keeps everything but the
 // position; a match whose tournament was not exported keeps everything but
 // the link.
+// exportedMatchColumns are the match columns an export carries, in the
+// order writeMatches binds them: an allow-list, like issuance.Carried for
+// the metadata keys (ADR-0007). A column added to the match table is not
+// exported until it is named here — or in notExportedMatchColumns, with the
+// reason — and TestExportMatchColumnsClassified fails until one of the two
+// says so. The source metadata (ratings, experience, transcriber, session
+// rules, engine version) is what the file said of the match: it travels
+// with it (ADR-0067).
+var exportedMatchColumns = []string{
+	"player1_name", "player2_name", "event", "location", "round", "match_length",
+	"match_date", "import_date", "file_path", "game_count", "match_hash", "canonical_hash",
+	"tournament_id", "tournament_sort_order", "last_visited_position", "comment",
+	"player1_elo", "player2_elo", "player1_experience", "player2_experience",
+	"transcriber", "has_jacoby", "has_beaver", "engine_version",
+}
+
+// notExportedMatchColumns are the match columns an export leaves behind, each
+// with why.
+var notExportedMatchColumns = map[string]string{
+	"id":                 "the export numbers its own rows",
+	"import_batch_id":    "names an import of the source database, not of the export",
+	"dice_hash":          "derived from the games; the recipient computes it again",
+	"direction_match_id": "links a pairing of the source's tournament direction, which is not exported",
+}
+
 func (e *exporter) writeMatches() error {
 	for _, id := range e.matchIDs {
 		if err := e.ctx.Err(); err != nil {
@@ -847,14 +872,15 @@ func (e *exporter) writeMatches() error {
 			}
 		}
 		res, err := e.tx.ExecContext(e.ctx,
-			`INSERT INTO match (player1_name, player2_name, event, location, round, match_length,
-			    match_date, import_date, file_path, game_count, match_hash, canonical_hash,
-			    tournament_id, tournament_sort_order, last_visited_position, comment)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, ?, ?)`,
+			`INSERT INTO match (`+strings.Join(exportedMatchColumns, ", ")+`)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, ?, ?,
+			         ?, ?, ?, ?, ?, ?, ?, ?)`,
 			m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round, m.MatchLength,
 			nullableTime(m.MatchDate), nullableTime(m.ImportDate), m.FilePath, m.GameCount,
 			m.MatchHash, m.CanonicalHash,
-			tournamentID, m.TournamentSortOrder, m.LastVisitedPosition, m.Comment)
+			tournamentID, m.TournamentSortOrder, m.LastVisitedPosition, m.Comment,
+			m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
+			m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion)
 		if err != nil {
 			e.skip("inserting match", "matchID", id, "err", err)
 			continue

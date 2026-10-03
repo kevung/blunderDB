@@ -897,6 +897,11 @@ fond, le temps qu'il faut. Le lot arrive sous l'une de ces deux formes :
   fichiers de match. C'est la voie des gros corpus, qu'on ne pousse pas par
   HTTP.
 
+Un match déjà en base n'est pas réécrit, mais ses analyses plus profondes que
+celles rangées les remplacent ; ``?skip_duplicates=true``, accepté par
+``imports.batch`` comme par l'import d'un fichier, l'ignore sans rien en
+reprendre que les marques, comme ``--skip-duplicates`` en ligne de commande.
+
 ``Idempotency-Key`` est accepté : rejouer l'appel avec la même clé rend le même
 ``importId`` (en-tête ``Idempotency-Replayed: true``) sans relancer l'import. Pour
 un lot reçu en archive, la clé désigne le lot, pas le contenu de l'archive.
@@ -909,7 +914,13 @@ erreurs sont listées avec leur fichier, le total est exact. Un lot terminé res
 lisible une heure. ``imports.batch.cancel`` l'arrête : les groupes de fichiers
 déjà validés restent dans la base, le groupe en cours est annulé.
 ``imports.report`` rend, d'après le ``batchId`` du statut, le rapport de fin
-d'import.
+d'import. ``imports.files`` (``{"batchId": …}``) rend le journal du lot : pour
+chaque fichier, son chemin, sa taille, sa date, son empreinte SHA-256 et le
+résultat (``new``, ``duplicate``, ``enriched`` ou ``error``) avec le match
+obtenu ou le message. Pour continuer un lot interrompu, ``imports.batch``
+accepte ``"resume": <batchId>`` (champ ``resume`` d'un envoi multipart) : les
+fichiers déjà journalisés avec le même chemin, la même taille et la même date
+sont sautés sans être lus, ceux de même contenu sont lus mais pas analysés.
 
 .. code-block:: bash
 
@@ -995,6 +1006,20 @@ Deux méthodes complètent la parité avec l'interface graphique :
 affiché sur sa vignette (PR du joueur de référence), et ``matches.findByHash``
 indique si un match donné est déjà présent, à partir des deux empreintes de
 détection de doublon — de quoi éviter un import redondant avant de l'engager.
+``matches.duplicates`` liste les paires de matchs que les dés disent
+identiques — mêmes dés sous d'autres noms, ou version tronquée puis complétée —
+comme ``repair --duplicates``, sans rien fusionner.
+
+Les autres graphies d'un joueur ou d'un événement se gèrent par
+``players.alias.list``, ``players.alias.set`` (``{"alias": …, "canonical": …}``),
+``players.alias.remove`` (``{"alias": …}``, renvoie ``removed``) et
+``players.alias.suggest`` (les noms qui ne diffèrent que par la casse, les
+accents, la ponctuation ou l'ordre des mots, sans rien enregistrer) ; les mêmes
+sous ``events.alias.*`` pour les événements. ``matches.mergePlayers`` crée ces
+alias plutôt que de réécrire les matchs. Un import enregistre le nom canonique
+(les empreintes gardent les noms du fichier), et ``stats.compute``,
+``stats.playerTable``, ``stats.playerNames`` et la recherche par joueur lisent
+toutes les graphies comme une seule personne.
 
 Le champ ``winner`` d'une partie, reçu par ``matches.createGame`` et renvoyé par
 ``matches.games``, a un seul codage : ``1`` pour le joueur 1, ``-1`` pour le
@@ -1854,10 +1879,11 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
    * - ``similar_positions``, ``decode_position``, ``legal_moves``,
        ``race_epc``
      - positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course
-   * - ``list_players``, ``player_stats``, ``recurring_errors``,
-       ``training_stats``
-     - joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent ;
-       PR du quiz et rétention Anki contre le PR réel
+   * - ``list_players``, ``player_aliases``, ``player_stats``,
+       ``recurring_errors``, ``training_stats``
+     - joueurs ; leurs alias et les graphies proposées ; PR global, pions,
+       videau, par phase ; erreurs qui reviennent ; PR du quiz et rétention
+       Anki contre le PR réel
    * - ``head_to_head``, ``pr_by_window``, ``player_ranking``
      - face-à-face de deux joueurs ; PR par fenêtre calendaire ; classement
        par PR

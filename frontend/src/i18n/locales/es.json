@@ -173,7 +173,8 @@
         "likeLimit": "Vecinas por clasificación",
         "likeMaxDistance": "Distancia máxima (pips de ficha)",
         "likeNote": "Cero: sin límite. El token like<12 impone el suyo para una búsqueda.",
-        "assistantTitle": "Asistente y MCP"
+        "assistantTitle": "Asistente y MCP",
+        "corpusTitle": "Corpus"
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
@@ -561,6 +562,11 @@
         "pts": "Pts",
         "review": "Revisar",
         "round": "Ronda",
+        "ratings": "Elo (experiencia)",
+        "transcriber": "Transcriptor",
+        "sessionRules": "Reglas de la sesión",
+        "rulesNone": "ninguna",
+        "writtenBy": "Escrito por",
         "score": "Marcador",
         "sourceFile": "Archivo de origen",
         "stats": "Estadísticas",
@@ -1121,7 +1127,16 @@
         "reportAnalyzeNow": "Analizar ahora",
         "reportWorst": "Peores decisiones",
         "reportCube": "cubo",
-        "reportChecker": "fichas"
+        "reportChecker": "fichas",
+        "journalTitle": "Diario de la importación ({n} archivos)",
+        "journalNew": "nuevo",
+        "journalDuplicate": "duplicado",
+        "journalEnriched": "enriquecido",
+        "journalError": "error",
+        "journalOpenMatch": "Abrir la partida {id}",
+        "journalMore": "… y {n} archivos más (diario completo: imports.files o --format json)",
+        "interruptedTitle": "Importación interrumpida",
+        "resume": "Reanudar"
     },
     "warning": {
         "title": "Advertencia",
@@ -2718,5 +2733,29 @@
         "notFound": "No existe la lección n.º {id}.",
         "failed": "No se pudieron leer las lecciones.",
         "stepMissing": "Lo que muestra este paso ya no está en la base."
+    },
+    "corpus": {
+        "intro": "Duplicados y grafías: lo que una importación reconoce como ya guardado, y los otros nombres de un mismo jugador o evento.",
+        "skipDuplicates": "Omitir duplicados al importar",
+        "skipDuplicatesNote": "Marcado, un match ya guardado se omite sin ofrecer sus análisis más profundos. El ajuste vale para la sesión.",
+        "aliasesTitle": "Alias",
+        "players": "Jugadores",
+        "events": "Eventos",
+        "aliasLabel": "Alias",
+        "canonicalLabel": "Nombre canónico",
+        "add": "Añadir",
+        "remove": "Quitar",
+        "noAliases": "Ningún alias.",
+        "suggestNote": "Nombres que solo difieren en mayúsculas, acentos u orden de palabras",
+        "suggest": "Proponer",
+        "noSuggestion": "Ninguna propuesta.",
+        "suggestion": "«{alias}» → «{canonical}»",
+        "apply": "Aplicar",
+        "duplicatesTitle": "Duplicados probables",
+        "duplicatesNote": "Matches que sus dados dicen idénticos, con otros nombres o truncados y luego completados. No se fusiona nada.",
+        "findDuplicates": "Buscar",
+        "noDuplicates": "Ningún duplicado probable.",
+        "suspectSameDice": "#{other} y #{match}: mismos dados ({otherPlayers} / {players})",
+        "suspectLonger": "#{match} prolonga #{other} ({players})"
     }
 }

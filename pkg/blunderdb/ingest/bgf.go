@@ -54,6 +54,14 @@ func MapBGF(path string) (*MatchGraph, error) {
 			CanonicalHash: computeCanonicalMatchHashFromBGF(match),
 		},
 	}
+	// The session's rules go on the match when the file states them; the
+	// positions get their copy from createPositionFromBGF.
+	if _, ok := data["useJacoby"]; ok {
+		graph.Match.HasJacoby = &rules.jacoby
+	}
+	if _, ok := data["useBeaver"]; ok {
+		graph.Match.HasBeaver = &rules.beaver
+	}
 
 	for gameIdx, gameRaw := range gamesData {
 		gameData, ok := gameRaw.(map[string]interface{})
@@ -419,6 +427,7 @@ func (im BGFImporter) Import(ctx context.Context, scope string, src Source, prog
 	}
 
 	graph.ImportBatchID = src.BatchID
+	graph.SkipDuplicates = src.SkipDuplicates
 
 	tx, err := im.S.BeginTx(ctx)
 	if err != nil {
@@ -447,6 +456,7 @@ func (im BGFImporter) Import(ctx context.Context, scope string, src Source, prog
 	if res.Skipped {
 		sum.SkippedDuplicates = 1
 		sum.FlagsApplied = res.FlagsApplied
+		sum.Deepened = res.Deepened
 		sum.SavedPositions = 0
 	}
 	if res.Enriched {

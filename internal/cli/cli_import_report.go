@@ -65,6 +65,12 @@ func printImportReport(b *domain.ImportBatch) {
 	if r.MatchesSkipped > 0 {
 		fmt.Fprintf(w, "Already in the database\t%d\n", r.MatchesSkipped)
 	}
+	if n := len(r.ProbableDuplicates); n > 0 {
+		fmt.Fprintf(w, "Probable duplicates under other names\t%d (blunderdb repair --duplicates)\n", n)
+	}
+	if r.MatchesDeepened > 0 {
+		fmt.Fprintf(w, "  of which brought deeper analyses\t%d (%d positions)\n", r.MatchesDeepened, r.AnalysesDeepened)
+	}
 	if r.FilesFailed > 0 {
 		fmt.Fprintf(w, "Files that could not be read\t%d\n", r.FilesFailed)
 	}

@@ -126,6 +126,8 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"anki":        cli.runAnki,
 		"stats":       cli.runStats,
 		"tournament":  cli.runTournament,
+		"players":     cli.runPlayers,
+		"events":      cli.runEvents,
 		"bearoff":     cli.runBearoff,
 		"healthcheck": cli.runHealthcheck,
 		"mcp":         cli.runMCP,
@@ -183,6 +185,8 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  analyze   Write a gammonNet analysis for every position missing one")
 	fmt.Println("  transcribe  Replay a .mat, a match or a draft and report its inconsistencies")
 	fmt.Println("  tournament  Read a directed tournament (list, verify, standings, page, export)")
+	fmt.Println("  players   Other spellings of a player (alias add, list, remove, suggest)")
+	fmt.Println("  events    Other spellings of an event (alias add, list, remove, suggest)")
 	fmt.Println("  info      Display database metadata")
 	fmt.Println("  edit      Edit database metadata")
 	fmt.Println("  verify    Verify database integrity")

@@ -1,6 +1,7 @@
 package ingest
 
 import (
+	"reflect"
 	"sort"
 	"strings"
 	"time"
@@ -232,4 +233,115 @@ func mergeAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAn
 	}
 	sortCheckerMovesByEquity(&a)
 	return a
+}
+
+// deepenAnalysis folds incoming into existing under the rule of a re-imported
+// match: an analysis already stored is replaced only by a strictly deeper one
+// (domain.AnalysisDepthRank), and on a tie the stored one stays — the
+// opposite tie-break of mergeCheckerMoves, which serves the cross-format
+// enrichment where the incoming engine is another one. What existing lacks
+// (a candidate move, a cube analysis, a rollout) is added. It returns
+// existing itself, unchanged, when incoming brings nothing, so the caller can
+// tell a deepened position from an untouched one by pointer.
+func deepenAnalysis(existing *domain.PositionAnalysis, incoming domain.PositionAnalysis) *domain.PositionAnalysis {
+	if existing == nil {
+		a := mergeAnalysis(nil, incoming)
+		return &a
+	}
+	changed := false
+	a := *existing
+
+	if incoming.CheckerAnalysis != nil && len(incoming.CheckerAnalysis.Moves) > 0 {
+		var moves []domain.CheckerMove
+		if existing.CheckerAnalysis != nil {
+			moves = append(moves, existing.CheckerAnalysis.Moves...)
+		}
+		for _, m := range incoming.CheckerAnalysis.Moves {
+			at := -1
+			for i := range moves {
+				if moves[i].Move == m.Move {
+					at = i
+					break
+				}
+			}
+			switch {
+			case at < 0:
+				moves = append(moves, m)
+				changed = true
+			case domain.AnalysisDepthRank(m.AnalysisDepth) > domain.AnalysisDepthRank(moves[at].AnalysisDepth):
+				moves[at] = m
+				changed = true
+			}
+		}
+		if changed {
+			a.CheckerAnalysis = &domain.CheckerAnalysis{Moves: moves}
+		}
+	}
+
+	if in := incoming.DoublingCubeAnalysis; in != nil {
+		cur := existing.DoublingCubeAnalysis
+		switch {
+		case cur == nil:
+			c := *in
+			a.DoublingCubeAnalysis = &c
+			changed = true
+		case cur.AnalysisEngine == in.AnalysisEngine || cur.AnalysisEngine == "" || in.AnalysisEngine == "":
+			if domain.AnalysisDepthRank(in.AnalysisDepth) > domain.AnalysisDepthRank(cur.AnalysisDepth) {
+				c := *in
+				a.DoublingCubeAnalysis = &c
+				if len(existing.AllCubeAnalyses) > 0 {
+					all := append([]domain.DoublingCubeAnalysis(nil), existing.AllCubeAnalyses...)
+					for i := range all {
+						if all[i].AnalysisEngine == cur.AnalysisEngine {
+							all[i] = c
+						}
+					}
+					a.AllCubeAnalyses = all
+				}
+				changed = true
+			}
+		default:
+			all := existing.AllCubeAnalyses
+			if len(all) == 0 {
+				all = []domain.DoublingCubeAnalysis{*cur}
+			}
+			all = append([]domain.DoublingCubeAnalysis(nil), all...)
+			at := -1
+			for i := range all {
+				if all[i].AnalysisEngine == in.AnalysisEngine {
+					at = i
+					break
+				}
+			}
+			switch {
+			case at < 0:
+				all = append(all, *in)
+				changed = true
+			case domain.AnalysisDepthRank(in.AnalysisDepth) > domain.AnalysisDepthRank(all[at].AnalysisDepth):
+				all[at] = *in
+				changed = true
+			}
+			if changed {
+				sortCubeAnalysesByEngine(all)
+				a.AllCubeAnalyses = all
+			}
+		}
+	}
+
+	if len(incoming.Rollouts) > 0 {
+		// Existing is passed as MergeRollouts' incoming side so that it wins
+		// a tie in games, as every stored analysis does under this rule; a
+		// new signature or a longer series of a known one still comes in.
+		if merged := domain.MergeRollouts(incoming.Rollouts, existing.Rollouts); !reflect.DeepEqual(merged, existing.Rollouts) {
+			a.Rollouts = merged
+			changed = true
+		}
+	}
+
+	if !changed {
+		return existing
+	}
+	a.LastModifiedDate = time.Now()
+	sortCheckerMovesByEquity(&a)
+	return &a
 }

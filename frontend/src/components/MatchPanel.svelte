@@ -249,6 +249,18 @@
         matchListStore.setText('');
     }
 
+    /** "1855 (205) – 1600 (0)": each seat's rating and, when stated, its experience, player 1 first. */
+    function formatRatings(m) {
+        const seat = (elo, exp) => (elo == null ? '—' : `${Math.round(elo)}${exp == null ? '' : ` (${exp})`}`);
+        return `${seat(m.player1_elo, m.player1_experience)} – ${seat(m.player2_elo, m.player2_experience)}`;
+    }
+
+    /** The optional rules a money session was played under: "Jacoby, Beaver", or none. */
+    function formatSessionRules(m) {
+        const rules = [m.has_jacoby && 'Jacoby', m.has_beaver && 'Beaver'].filter(Boolean);
+        return rules.length ? rules.join(', ') : $t('match.rulesNone');
+    }
+
     /** A match by id: from the loaded rows, else read on its own (it may lie beyond the first page). */
     async function findMatch(id) {
         const loaded = matches.find((m) => m.id === id);
@@ -1092,6 +1104,18 @@
                                 <tr><td class="meta-label">{$t('match.event')}</td><td class="meta-value">{detailMatch.event || '—'}</td></tr>
                                 <tr><td class="meta-label">{$t('match.location')}</td><td class="meta-value">{detailMatch.location || '—'}</td></tr>
                                 <tr><td class="meta-label">{$t('match.round')}</td><td class="meta-value">{detailMatch.round || '—'}</td></tr>
+                                {#if detailMatch.player1_elo != null || detailMatch.player2_elo != null}
+                                    <tr><td class="meta-label">{$t('match.ratings')}</td><td class="meta-value">{formatRatings(detailMatch)}</td></tr>
+                                {/if}
+                                {#if detailMatch.transcriber}
+                                    <tr><td class="meta-label">{$t('match.transcriber')}</td><td class="meta-value">{detailMatch.transcriber}</td></tr>
+                                {/if}
+                                {#if detailMatch.match_length === 0 && (detailMatch.has_jacoby != null || detailMatch.has_beaver != null)}
+                                    <tr><td class="meta-label">{$t('match.sessionRules')}</td><td class="meta-value">{formatSessionRules(detailMatch)}</td></tr>
+                                {/if}
+                                {#if detailMatch.engine_version}
+                                    <tr><td class="meta-label">{$t('match.writtenBy')}</td><td class="meta-value">{detailMatch.engine_version}</td></tr>
+                                {/if}
                                 <tr><td class="meta-label">{$t('match.sourceFile')}</td><td class="meta-value source-file">{detailMatch.file_path || '—'}</td></tr>
                                 <tr><td class="meta-label">{$t('match.importDate')}</td><td class="meta-value">{formatDate(detailMatch.import_date)}</td></tr>
                                 <tr><td class="meta-label">{$t('match.matchId')}</td><td class="meta-value id-value">{detailMatch.id}</td></tr>

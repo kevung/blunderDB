@@ -51,6 +51,8 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `analyze` - Write a gammonNet analysis for every position missing one
 - `transcribe` - Replay a .mat, a match or a draft and report its inconsistencies
 - `tournament` - Read a directed tournament (list, verify, standings, page, export)
+- `players` - Other spellings of a player (alias add, list, remove, suggest)
+- `events` - Other spellings of an event (alias add, list, remove, suggest)
 - `info` - Display database metadata
 - `edit` - Edit database metadata
 - `verify` - Verify database integrity
@@ -184,8 +186,19 @@ Import all match files from a directory at once:
 - `--recursive` - Recursively scan subdirectories (default: true)
 - `--format` - Output format: `text` (default, the summary table below) or `json`
 - `--fail-on-error` - Exit non-zero when any file failed to import, even if others succeeded
+- `--skip-duplicates` - Skip a match already in the database outright (study marks aside)
 
 Supported file types: `.xg`, `.xgp`, `.sgf`, `.mat`, `.txt`, `.bgf`, `.ogxm`.
+
+A match already in the database is recognised by its play (players, length,
+dice, moves, cube), not by its analysis. Its match, game and move rows are
+never rewritten, but by default its analyses still reach the stored
+positions, and one strictly deeper than the stored entry replaces it: a
+Roller++ version of a match replaces the 3-ply one whatever the import order,
+a shallower or equal one changes nothing. The line reads `DUPLICATE (N
+analyses deepened)` and the report counts those duplicates apart.
+`--skip-duplicates` restores the plain skip. A truncated match later
+completed (more games) is a different match and is imported as a second one.
 
 A batch that finds no supported file, or where every file failed or was a
 duplicate (nothing at all got imported), is always an error. A duplicate is
@@ -1172,6 +1185,38 @@ tables; an out-of-service table is refused.
 `verify` **exits in error** when a warning remains after the replay: a script
 that runs it over a season's databases wants a status, not a line to grep.
 
+## Players Command
+
+One person often signs several ways across files ("Doe J.", "John Doe"). An
+**alias** says a name is another spelling of a canonical name. The matches keep
+the names their files wrote; the stats, the players table and the `pl"…"` search
+read every spelling as one person, and every later import stores the canonical
+name. The match fingerprints (`match_hash`, `canonical_hash`) keep the file's
+names, so a file imported before its alias existed still finds itself; a match
+whose dice are a stored match's and whose names differ only by known aliases is
+recognised as that match and enriches it. The GUI's merge of players records the
+same aliases.
+
+```bash
+blunderdb players alias add --db base.db "Doe J." "John Doe"
+blunderdb players alias list --db base.db --format json
+blunderdb players alias remove --db base.db "Doe J."
+blunderdb players alias suggest --db base.db   # case, accents, punctuation, word order; nothing recorded
+```
+
+The table stays flat: a canonical that is itself an alias is followed to its own
+canonical, and the aliases of a name that becomes an alias move with it.
+
+## Events Command
+
+The same four actions for event names (a file's Event field). On import, a match
+whose event is an alias is filed under the canonical event's tournament.
+
+```bash
+blunderdb events alias add --db base.db "Open 2025" "Autumn Open 2025"
+blunderdb events alias list --db base.db
+```
+
 ## Trash Command
 
 What was deleted through the trash, and how to put it back. A delete is still a
@@ -1240,6 +1285,19 @@ a phase or a game type is decided. Nothing runs it automatically.
 - `--db` - Path to the database file (required)
 - `--format` - Output format: `text` (default) or `json`
 - `--stats` - Also recompute the per-match statistics from scratch
+- `--duplicates` - Only list the suspected duplicate matches (see below)
+
+**Suspected duplicates.** `repair --duplicates` runs none of the passes above:
+it lists the pairs of matches whose dice say they are one match, and merges
+nothing. Two kinds: the same length, initial score and dice in every game
+under other player names (`#12 (…) has the dice of #7 (…)`), and a match whose
+dice continue another's, a truncated match later completed (`#31 (…) is a
+longer version of #30 (…)`). `--format json` returns `{"suspects": [{"kind":
+"same_dice"|"longer", "matchId", "otherId", "players", "otherPlayers"}]}`. A
+match imported before the dice hash existed gets it on the way, which is the
+only thing this mode writes. An import also signals a match whose dice are
+already stored under other names: `probable duplicate of #N under other
+names` under its line, and in the import report.
 
 The analyses are left untouched: this repairs only what was derived from them,
 and a position with no analysis keeps its empty columns. Use `analyze` to
@@ -2416,6 +2474,33 @@ Examples:
   blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd '<XGID>'
 ```
 
+### `blunderdb events`
+
+```
+Usage: blunderdb events alias <add|list|remove|suggest> --db FILE [arguments]
+
+Record the other spellings of a event's name. An import stores the canonical
+name where the file writes an alias; the stats, the players table and the
+search read every spelling as one. The matches already stored keep the
+names their files wrote, and so do the match fingerprints.
+
+Actions:
+  add ALIAS CANONICAL  Make ALIAS a spelling of CANONICAL
+  list                 List the aliases
+  remove ALIAS         Forget an alias
+  suggest              Propose the names that differ only by case, accents,
+                       punctuation or word order (nothing is recorded)
+
+Options:
+  --db FILE        Path to the database file (required)
+  --format FORMAT  Output of list and suggest: text or json (default text)
+
+Examples:
+  blunderdb events alias add --db base.db "Doe J." "John Doe"
+  blunderdb events alias list --db base.db --format json
+  blunderdb events alias suggest --db base.db
+```
+
 ### `blunderdb export`
 
 ```
@@ -2579,6 +2664,10 @@ Options:
     	Output format: text or json (default "text")
   -recursive
     	Recursively scan subdirectories for batch import (default true)
+  -resume int
+    	With --type batch: continue the batch with this id (the id the earlier run printed, or its JSON batch_id); files with the same path, size and mtime as in its journal are skipped unread, those with the same content are read but not parsed
+  -skip-duplicates
+    	Skip a match already in the database outright; by default its analyses deeper than the stored ones replace them
   -type string
     	Import type: match, position, batch (required)
   -watch
@@ -2606,6 +2695,9 @@ Examples:
 
   # Batch import, machine-readable, failing the run if any file errored
   blunderdb import --db database.db --type batch --dir ./matches/ --format json --fail-on-error
+
+  # Continue batch 12, interrupted earlier: files already journaled are skipped
+  blunderdb import --db database.db --type batch --dir ./matches/ --resume 12
 
   # Import the folder as it stands, then keep importing what appears in it
   blunderdb import --db database.db --type batch --dir ~/XG/Matches
@@ -3026,6 +3118,36 @@ Example:
   blunderdb open --db cours.dbx --password secret
 ```
 
+### `blunderdb players`
+
+```
+Usage: blunderdb players alias <add|list|remove|suggest> --db FILE [arguments]
+
+Record the other spellings of a player's name. An import stores the canonical
+name where the file writes an alias; the stats, the players table and the
+search read every spelling as one. The matches already stored keep the
+names their files wrote, and so do the match fingerprints.
+
+Actions:
+  add ALIAS CANONICAL  Make ALIAS a spelling of CANONICAL
+  list                 List the aliases
+  remove ALIAS         Forget an alias
+  suggest              Propose the names that differ only by case, accents,
+                       punctuation or word order (nothing is recorded)
+
+Options:
+  --db FILE        Path to the database file (required)
+  --format FORMAT  Output of list and suggest: text or json (default text)
+
+Examples:
+  blunderdb players alias add --db base.db "Doe J." "John Doe"
+  blunderdb players alias list --db base.db --format json
+  blunderdb players alias suggest --db base.db
+
+Also: `players merge --db FILE --into CANONICAL NAME...` and
+`players swap --db FILE MATCH_ID` (see their --help).
+```
+
 ### `blunderdb repair`
 
 ```
@@ -3048,6 +3170,8 @@ Nothing runs it automatically.
 Options:
   -db string
     	Path to the database file (required)
+  -duplicates
+    	Only list the pairs of matches whose dice say they are one: same dice under other player names, or a truncated match and its longer version (nothing is merged)
   -format string
     	Output format: text or json (default "text")
   -stats
@@ -3057,6 +3181,7 @@ Examples:
   blunderdb repair --db database.db
   blunderdb repair --db database.db --format json
   blunderdb repair --db database.db --stats
+  blunderdb repair --db database.db --duplicates
 ```
 
 ### `blunderdb rollout`
@@ -3268,6 +3393,36 @@ Examples:
   blunderdb search --db database.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
 ```
 
+### `blunderdb stats breakdown`
+
+```
+Usage: blunderdb stats breakdown --db <file> [options]
+
+The Breakdowns tab of the Stats panel: the PR of the filter split by game
+phase, plan of play, comment tag, score (away x away) and cube action, and
+the direction in which the cube decisions went wrong.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD
+  -player string
+    	Only this player's decisions
+  -to string
+    	End date filter YYYY-MM-DD
+  -tournament string
+    	Filter by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats breakdown --db database.db --player "Alice"
+  blunderdb stats breakdown --db database.db --format json
+```
+
 ### `blunderdb stats h2h`
 
 ```
@@ -3301,6 +3456,35 @@ Options:
 Examples:
   blunderdb stats h2h --db database.db --player "Alice" --opponent "Bob"
   blunderdb stats h2h --db database.db --player "Alice" --opponent "Bob" --format json
+```
+
+### `blunderdb stats progression`
+
+```
+Usage: blunderdb stats progression --db <file> [options]
+
+The Progression tab of the Stats panel: the PR of each match in date order,
+each tournament's PR, and the rolling PR over the last N matches.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD
+  -player string
+    	Only this player's decisions
+  -to string
+    	End date filter YYYY-MM-DD
+  -tournament string
+    	Filter by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats progression --db database.db --player "Alice"
+  blunderdb stats progression --db database.db --format json
 ```
 
 ### `blunderdb stats ranking`
@@ -3387,6 +3571,42 @@ Examples:
   blunderdb stats recurring --db database.db --quiz --format json
   blunderdb stats recurring --db database.db --group 1 --deck "My worst group"
   blunderdb stats recurring --db database.db --decision-type checker --format json
+```
+
+### `blunderdb stats report`
+
+```
+Usage: blunderdb stats report --db <file> --html [options]
+
+The HTML report of the Stats panel: the filter's indicators and its ten most
+expensive decisions with their diagrams, as one self-contained file (no image,
+style sheet or script outside it) that a browser prints to PDF.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD
+  -html
+    	Write the report as one self-contained HTML file (the only format)
+  -lang string
+    	Report language: fr, en, de, el, es, fi, it, ja, ru (default "en")
+  -output string
+    	File to write (default: standard output)
+  -player string
+    	Only this player's decisions
+  -to string
+    	End date filter YYYY-MM-DD
+  -tournament string
+    	Filter by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats report --db database.db --html --output rapport.html
+  blunderdb stats report --db database.db --html --player "Alice" --lang fr
 ```
 
 ### `blunderdb stats training`

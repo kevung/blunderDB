@@ -76,6 +76,12 @@ const (
 // route must be reachable from databaseParity or named below with a reason.
 // Sorted by route.
 var serverOnly = map[string]string{
+	// One Database method per alias gesture takes the kind ("player" or
+	// "event"); the daemon spells the kind in the path.
+	"/v1/events.alias.list":    "ListAliases(\"event\"), the CLI's `events alias list`: the parity row names the players route of the same method",
+	"/v1/events.alias.set":     "SetAlias(\"event\", …), the CLI's `events alias add`: the parity row names the players route of the same method",
+	"/v1/events.alias.remove":  "RemoveAlias(\"event\", …), the CLI's `events alias remove`: the parity row names the players route of the same method",
+	"/v1/events.alias.suggest": "SuggestAliases(\"event\"), the CLI's `events alias suggest`: the parity row names the players route of the same method",
 	// A batch import over HTTP outlives its request, so it has a handle to
 	// read and to stop. The CLI and the desktop run the same pipeline in the
 	// foreground and read its progress from the call itself.
@@ -160,6 +166,8 @@ var databaseParity = map[string]parityEntry{
 	"CommitImportDatabase":              {Why: whyTwoPhase},
 	"ComputeEPCFromPosition":            {CLI: "epc", Server: "/v1/positions.epc", Why: whyServerEPC},
 	"ComputeStats":                      {CLI: "list --type stats", Server: "/v1/stats.compute"},
+	"StatsReportHTML":                   {CLI: "stats report", Server: "/v1/stats.report"},
+	"StatsReportHTMLCtx":                {Why: whyCtxVariant},
 	"ComputeStatsCtx":                   {Why: whyCtxVariant},
 	"CopyPositionToCollection":          {Server: "/v1/collections.copyPosition", Why: whyGUIEdit},
 	"CountOrphans":                      {CLI: "verify", Why: "orphaned game/move/analysis rows are the aftermath of the desktop pool enforcing foreign keys on one connection in ten (issue #157); the daemon's SQLite backend has always opened through DSN() and PostgreSQL enforces its keys server-side, so a library never carried any — its integrity is the operator's database tooling"},
@@ -268,6 +276,7 @@ var databaseParity = map[string]parityEntry{
 	"ImportGnuBGMatchFromText":          {Server: "/v1/imports.gnubg", Why: "the clipboard paste of a GNUbg match; the CLI imports the file"},
 	"ImportXGMatch":                     {CLI: "import", Server: "/v1/imports.xg"},
 	"ImportFiles":                       {CLI: "import", Server: "/v1/imports.batch"},
+	"SetSkipDuplicates":                 {CLI: "import --skip-duplicates", Server: "/v1/imports.batch"},
 	"ImportXGPPosition":                 {CLI: "import --type position", Server: "/v1/positions.fromXGP"},
 	"IsProtectedCopyPath":               {CLI: "open", Why: whyIssuance},
 	"IsReadOnly":                        {Why: whyLifecycle + " (ADR-0004: the second desktop instance opens read-only; a CLI run is one process, the daemon owns its store)"},
@@ -382,7 +391,7 @@ var databaseParity = map[string]parityEntry{
 	"SetDirectionOutputDir":             {Why: whyDirection},
 	"LoadTrainingNumberStats":           {Server: "/v1/training.numberStats", Why: whyTrainingJournal},
 	"LoadTrainingSessions":              {Server: "/v1/training.sessions", Why: whyTrainingJournal},
-	"MergePlayers":                      {Server: "/v1/matches.mergePlayers", Why: whyGUIEdit},
+	"MergePlayers":                      {CLI: "players merge", Server: "/v1/matches.mergePlayers"},
 	"MovePositionBetweenCollections":    {Server: "/v1/collections.movePosition", Why: whyGUIEdit},
 	"OpenDatabase":                      {Why: whyLifecycle},
 	"OpenProtectedCopyPath":             {CLI: "open", Why: whyIssuance},
@@ -416,7 +425,7 @@ var databaseParity = map[string]parityEntry{
 	"SetMigrationProgress":              {Why: "progress callback of the GUI's migration dialog"},
 	"SetupDatabase":                     {CLI: "create", Why: "the daemon bootstraps its store at start-up (Storage.Migrate)"},
 	"SuggestMatFilename":                {CLI: "export --type mat", Server: "/v1/matches.exportMat"},
-	"SwapMatchPlayers":                  {Server: "/v1/matches.swapPlayers", Why: whyGUIEdit},
+	"SwapMatchPlayers":                  {CLI: "players swap", Server: "/v1/matches.swapPlayers"},
 	"SyncAnkiDeck":                      {CLI: "anki sync", Server: "/v1/anki.sync"},
 	"SyncAnkiDeckWithPositions":         {CLI: "anki sync", Server: "/v1/anki.syncWithPositions"},
 	"UpdateAnkiDeck":                    {Server: "/v1/anki.updateDeck", Why: whyGUIEdit},
@@ -440,8 +449,16 @@ var databaseParity = map[string]parityEntry{
 	"RepairGamePhases":                  {CLI: "repair", Server: "/v1/positions.reclassifyPhases"},
 	"RepairCrawfordSentinel":            {CLI: "repair", Server: "/v1/positions.repairCrawford"},
 	"RebuildMatchStats":                 {CLI: "repair", Server: "/v1/stats.rebuildMatchStats"},
+	"FindDuplicateMatches":              {CLI: "repair --duplicates", Server: "/v1/matches.duplicates"},
+	"ListAliases":                       {CLI: "players alias list", Server: "/v1/players.alias.list"},
+	"SetAlias":                          {CLI: "players alias add", Server: "/v1/players.alias.set"},
+	"RemoveAlias":                       {CLI: "players alias remove", Server: "/v1/players.alias.remove"},
+	"SuggestAliases":                    {CLI: "players alias suggest", Server: "/v1/players.alias.suggest"},
 	"BeginImportBatch":                  {CLI: "import", Server: "/v1/imports.xg", Why: whyBatchIsTheImport},
 	"FinishImportBatch":                 {CLI: "import", Server: "/v1/imports.xg", Why: whyBatchIsTheImport},
+	"ResumeImportBatch":                 {CLI: "import", Server: "/v1/imports.batch", Why: whyBatchIsTheImport},
+	"PendingImportFiles":                {CLI: "import", Server: "/v1/imports.batch", Why: whyBatchIsTheImport},
+	"ImportJournal":                     {CLI: "import", Server: "/v1/imports.files"},
 	"ImportReport":                      {CLI: "list", Server: "/v1/imports.report"},
 	"CompareWithGammonNet":              {CLI: "analyze", Server: "/v1/gammonnet.compare"},
 	"CountPositionsWithForeignAnalysis": {CLI: "analyze", Server: "/v1/gammonnet.compare"},

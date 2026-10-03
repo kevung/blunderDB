@@ -791,16 +791,81 @@ type Match struct {
 	// are set at import time and used by MatchStore dedup. Empty when unknown.
 	MatchHash     string `json:"match_hash,omitempty"`
 	CanonicalHash string `json:"canonical_hash,omitempty"`
+	// DiceHash covers the length, the initial score and the dice of every
+	// game, never the names: the same match stored under other player names
+	// shares it (ingest.DiceMatchHash). Empty until computed.
+	DiceHash string `json:"dice_hash,omitempty"`
 
 	// ImportBatchID names the import this match came in with, zero when
 	// written outside an import. Set by the importer only; deleting the batch
 	// clears it (ON DELETE SET NULL) and leaves the match alone.
 	ImportBatchID int64 `json:"import_batch_id,omitempty"`
 
-	// Transcriber is who typed the match in, in memory only (no column): the
-	// transcription engine (ADR-0045) sets it for RenderMAT's [Transcriber]
-	// header.
+	// The source metadata: what the file says about the match beyond its
+	// header, which only some formats carry (eXtreme Gammon's above all).
+	// None of it is hashed. A nil pointer is "the file does not say", never
+	// zero: an Elo of 0 and an unrated player are not the same fact.
+	Player1Elo        *float64 `json:"player1_elo,omitempty"`
+	Player2Elo        *float64 `json:"player2_elo,omitempty"`
+	Player1Experience *int     `json:"player1_experience,omitempty"`
+	Player2Experience *int     `json:"player2_experience,omitempty"`
+	// Transcriber is who typed the match in: read from an XG file, set by
+	// the transcription engine (ADR-0045), written in RenderMAT's
+	// [Transcriber] header.
 	Transcriber string `json:"transcriber,omitempty"`
+	// HasJacoby and HasBeaver are the session's rules and the authority on
+	// them; a money position's has_jacoby/has_beaver columns are a copy kept
+	// for the position search, written from these at import (ADR-0067).
+	HasJacoby *bool `json:"has_jacoby,omitempty"`
+	HasBeaver *bool `json:"has_beaver,omitempty"`
+	// EngineVersion names the program that wrote the file, as it states it
+	// ("eXtreme Gammon 2.19.211").
+	EngineVersion string `json:"engine_version,omitempty"`
+}
+
+// CopySourceMetadata sets dst's source metadata to src's.
+func CopySourceMetadata(dst *Match, src *Match) {
+	dst.Player1Elo, dst.Player2Elo = src.Player1Elo, src.Player2Elo
+	dst.Player1Experience, dst.Player2Experience = src.Player1Experience, src.Player2Experience
+	dst.Transcriber = src.Transcriber
+	dst.HasJacoby, dst.HasBeaver = src.HasJacoby, src.HasBeaver
+	dst.EngineVersion = src.EngineVersion
+}
+
+// FillSourceMetadata copies into dst each source-metadata field dst does not
+// know and src does, and reports whether it changed anything. What dst
+// already states is never overwritten.
+func FillSourceMetadata(dst *Match, src *Match) bool {
+	changed := false
+	fillF := func(d **float64, s *float64) {
+		if *d == nil && s != nil {
+			*d, changed = s, true
+		}
+	}
+	fillI := func(d **int, s *int) {
+		if *d == nil && s != nil {
+			*d, changed = s, true
+		}
+	}
+	fillB := func(d **bool, s *bool) {
+		if *d == nil && s != nil {
+			*d, changed = s, true
+		}
+	}
+	fillS := func(d *string, s string) {
+		if *d == "" && s != "" {
+			*d, changed = s, true
+		}
+	}
+	fillF(&dst.Player1Elo, src.Player1Elo)
+	fillF(&dst.Player2Elo, src.Player2Elo)
+	fillI(&dst.Player1Experience, src.Player1Experience)
+	fillI(&dst.Player2Experience, src.Player2Experience)
+	fillS(&dst.Transcriber, src.Transcriber)
+	fillB(&dst.HasJacoby, src.HasJacoby)
+	fillB(&dst.HasBeaver, src.HasBeaver)
+	fillS(&dst.EngineVersion, src.EngineVersion)
+	return changed
 }
 
 // Game.Winner has one encoding in storage, whatever the source of the match:

@@ -173,7 +173,8 @@
         "likeLimit": "Соседей на одно ранжирование",
         "likeMaxDistance": "Максимальное расстояние (шашко-пипсы)",
         "likeNote": "Ноль: без предела. Токен like<12 задаёт свой на один поиск.",
-        "assistantTitle": "Ассистент и MCP"
+        "assistantTitle": "Ассистент и MCP",
+        "corpusTitle": "Корпус"
     },
     "toolbar": {
         "copyBoardImage": "Копировать изображение доски",
@@ -561,6 +562,11 @@
         "pts": "Очк.",
         "review": "Разбор",
         "round": "Раунд",
+        "ratings": "Эло (опыт)",
+        "transcriber": "Транскрибировал",
+        "sessionRules": "Правила сессии",
+        "rulesNone": "нет",
+        "writtenBy": "Записано программой",
         "score": "Счёт",
         "sourceFile": "Исходный файл",
         "stats": "Статистика",
@@ -1121,7 +1127,16 @@
         "reportAnalyzeNow": "Проанализировать",
         "reportWorst": "Худшие решения",
         "reportCube": "куб",
-        "reportChecker": "шашки"
+        "reportChecker": "шашки",
+        "journalTitle": "Журнал импорта ({n} файлов)",
+        "journalNew": "новый",
+        "journalDuplicate": "дубликат",
+        "journalEnriched": "дополнен",
+        "journalError": "ошибка",
+        "journalOpenMatch": "Открыть матч {id}",
+        "journalMore": "… и ещё {n} файлов (полный журнал: imports.files или --format json)",
+        "interruptedTitle": "Импорт прерван",
+        "resume": "Продолжить"
     },
     "warning": {
         "title": "Предупреждение",
@@ -2718,5 +2733,29 @@
         "notFound": "Нет урока № {id}.",
         "failed": "Не удалось прочитать уроки.",
         "stepMissing": "То, что показывает этот шаг, больше нет в базе."
+    },
+    "corpus": {
+        "intro": "Дубликаты и написания: что импорт распознаёт как уже сохранённое, и другие имена одного игрока или события.",
+        "skipDuplicates": "Пропускать дубликаты при импорте",
+        "skipDuplicatesNote": "Если отмечено, уже сохранённый матч пропускается без предложения его более глубоких анализов. Настройка действует в течение сеанса.",
+        "aliasesTitle": "Псевдонимы",
+        "players": "Игроки",
+        "events": "События",
+        "aliasLabel": "Псевдоним",
+        "canonicalLabel": "Каноническое имя",
+        "add": "Добавить",
+        "remove": "Удалить",
+        "noAliases": "Нет псевдонимов.",
+        "suggestNote": "Имена, различающиеся только регистром, диакритикой или порядком слов",
+        "suggest": "Предложить",
+        "noSuggestion": "Нет предложений.",
+        "suggestion": "«{alias}» → «{canonical}»",
+        "apply": "Применить",
+        "duplicatesTitle": "Вероятные дубликаты",
+        "duplicatesNote": "Матчи, которые по броскам совпадают, под другими именами или обрезанные и затем дополненные. Ничего не объединяется.",
+        "findDuplicates": "Искать",
+        "noDuplicates": "Нет вероятных дубликатов.",
+        "suspectSameDice": "#{other} и #{match}: одинаковые броски ({otherPlayers} / {players})",
+        "suspectLonger": "#{match} продолжает #{other} ({players})"
     }
 }

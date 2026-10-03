@@ -316,7 +316,8 @@ func TestMatchSwapPlayers(t *testing.T) {
 	}
 }
 
-// TestMatchMergePlayers checks the canonical-name rewrite.
+// TestMatchMergePlayers checks that a merge records aliases: the matches keep
+// their names and the players list reads one person.
 func TestMatchMergePlayers(t *testing.T) {
 	ctx := context.Background()
 	s, _ := openMatchStore(t)
@@ -336,15 +337,19 @@ func TestMatchMergePlayers(t *testing.T) {
 		t.Fatalf("MergePlayers: %v", err)
 	}
 
+	names, err := s.Stats().PlayerNames(ctx, "")
+	if err != nil {
+		t.Fatalf("PlayerNames: %v", err)
+	}
+	if len(names) != 2 || names[0].Name != "Bob R." || names[0].Count != 4 {
+		t.Errorf("PlayerNames after merge = %+v, want Bob R. ×4 then Opponent", names)
+	}
 	for got, err := range s.Matches().List(ctx, "", storage.MatchListOpts{}) {
 		if err != nil {
 			t.Fatalf("List: %v", err)
 		}
-		if got.Player1Name == "Bob" || got.Player1Name == "Bobby" || got.Player1Name == "Robert" {
-			t.Errorf("player1 not merged: %q", got.Player1Name)
-		}
-		if got.Player2Name == "Bobby" {
-			t.Errorf("player2 not merged: %q", got.Player2Name)
+		if got.Player1Name == "Bob R." || got.Player2Name == "Bob R." {
+			t.Errorf("merge rewrote a stored name: %+v", got)
 		}
 	}
 }

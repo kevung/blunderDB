@@ -1,5 +1,6 @@
 <script>
     import AssistantSettings from './AssistantSettings.svelte';
+    import CorpusSettings from './CorpusSettings.svelte';
     import { get } from 'svelte/store';
     import { configInitialTabStore, statusBarTextStore, pageStepStore, PAGE_STEPS } from '../stores/uiStore';
     import { setPageStep } from '../services/pageStepSetting.js';
@@ -83,6 +84,7 @@
         { id: 'interface', labelKey: 'config.interface' },
         { id: 'colors', labelKey: 'config.colors' },
         { id: 'library', labelKey: 'config.libraryTitle' },
+        { id: 'corpus', labelKey: 'config.corpusTitle' },
         { id: 'bearoff', labelKey: 'config.bearoffTitle' },
         { id: 'gammonnet', labelKey: 'config.gammonnetTitle' },
         { id: 'watch', labelKey: 'config.watchTitle' },
@@ -1036,6 +1038,8 @@
                         {$watchStatusStore.running ? $t('config.watchRunning', { folder: $watchStatusStore.folder }) : $t('config.watchStopped')}
                     </span>
                 </div>
+            {:else if activeTab === 'corpus'}
+                <CorpusSettings />
             {:else if activeTab === 'assistant'}
                 <AssistantSettings />
             {:else if activeTab === 'identity'}

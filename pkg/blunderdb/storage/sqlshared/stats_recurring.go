@@ -2,6 +2,7 @@ package sqlshared
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -21,6 +22,10 @@ import (
 // stats' own counted decisions, so a group's PRCost and the filter's PR are
 // one formula on one scale (ADR-0019).
 func (s *StatsStore) RecurringErrors(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.RecurringErrors, error) {
+	filter, err := s.withPlayerAliases(ctx, scope, filter)
+	if err != nil {
+		return nil, fmt.Errorf("RecurringErrors aliases: %w", err)
+	}
 	settings, err := librarySettings(ctx, s.DB, scope)
 	if err != nil {
 		return nil, errf(s.DB, "RecurringErrors settings", err)

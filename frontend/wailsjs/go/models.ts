@@ -1622,6 +1622,26 @@ export namespace domain {
 	        this.wrongTakePercentage = source["wrongTakePercentage"];
 	    }
 	}
+	export class DuplicateSuspect {
+	    kind: string;
+	    matchId: number;
+	    otherId: number;
+	    players: string;
+	    otherPlayers: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DuplicateSuspect(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.kind = source["kind"];
+	        this.matchId = source["matchId"];
+	        this.otherId = source["otherId"];
+	        this.players = source["players"];
+	        this.otherPlayers = source["otherPlayers"];
+	    }
+	}
 	export class ExportOptions {
 	    exportPath: string;
 	    positions: Position[];
@@ -1766,6 +1786,9 @@ export namespace domain {
 	    matchesImported: number;
 	    matchesSkipped: number;
 	    matchesEnriched: number;
+	    matchesDeepened?: number;
+	    analysesDeepened?: number;
+	    probableDuplicates?: DuplicateSuspect[];
 	    filesFailed: number;
 	    failures?: ImportFailure[];
 	    positionsSaved: number;
@@ -1785,6 +1808,9 @@ export namespace domain {
 	        this.matchesImported = source["matchesImported"];
 	        this.matchesSkipped = source["matchesSkipped"];
 	        this.matchesEnriched = source["matchesEnriched"];
+	        this.matchesDeepened = source["matchesDeepened"];
+	        this.analysesDeepened = source["analysesDeepened"];
+	        this.probableDuplicates = this.convertValues(source["probableDuplicates"], DuplicateSuspect);
 	        this.filesFailed = source["filesFailed"];
 	        this.failures = this.convertValues(source["failures"], ImportFailure);
 	        this.positionsSaved = source["positionsSaved"];
@@ -1856,6 +1882,30 @@ export namespace domain {
 	}
 	
 	
+	export class ImportFileEntry {
+	    path: string;
+	    size: number;
+	    mtime?: string;
+	    sha256?: string;
+	    outcome: string;
+	    matchId?: number;
+	    error?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportFileEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.path = source["path"];
+	        this.size = source["size"];
+	        this.mtime = source["mtime"];
+	        this.sha256 = source["sha256"];
+	        this.outcome = source["outcome"];
+	        this.matchId = source["matchId"];
+	        this.error = source["error"];
+	    }
+	}
 	
 	export class WatermarkInfo {
 	    origin: string;
@@ -2059,8 +2109,16 @@ export namespace domain {
 	    mwc_loss2: number;
 	    match_hash?: string;
 	    canonical_hash?: string;
+	    dice_hash?: string;
 	    import_batch_id?: number;
+	    player1_elo?: number;
+	    player2_elo?: number;
+	    player1_experience?: number;
+	    player2_experience?: number;
 	    transcriber?: string;
+	    has_jacoby?: boolean;
+	    has_beaver?: boolean;
+	    engine_version?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -2090,8 +2148,16 @@ export namespace domain {
 	        this.mwc_loss2 = source["mwc_loss2"];
 	        this.match_hash = source["match_hash"];
 	        this.canonical_hash = source["canonical_hash"];
+	        this.dice_hash = source["dice_hash"];
 	        this.import_batch_id = source["import_batch_id"];
+	        this.player1_elo = source["player1_elo"];
+	        this.player2_elo = source["player2_elo"];
+	        this.player1_experience = source["player1_experience"];
+	        this.player2_experience = source["player2_experience"];
 	        this.transcriber = source["transcriber"];
+	        this.has_jacoby = source["has_jacoby"];
+	        this.has_beaver = source["has_beaver"];
+	        this.engine_version = source["engine_version"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3327,11 +3393,15 @@ export namespace ingest {
 	    index: number;
 	    path: string;
 	    size: number;
+	    mod_time?: string;
+	    sha256?: string;
 	    status: string;
 	    match_id?: number;
 	    position_id?: number;
 	    positions: number;
 	    flags_applied?: number;
+	    deepened?: number;
+	    probable_duplicate?: domain.DuplicateSuspect;
 	    player1?: string;
 	    player2?: string;
 	    games?: number;
@@ -3347,17 +3417,39 @@ export namespace ingest {
 	        this.index = source["index"];
 	        this.path = source["path"];
 	        this.size = source["size"];
+	        this.mod_time = source["mod_time"];
+	        this.sha256 = source["sha256"];
 	        this.status = source["status"];
 	        this.match_id = source["match_id"];
 	        this.position_id = source["position_id"];
 	        this.positions = source["positions"];
 	        this.flags_applied = source["flags_applied"];
+	        this.deepened = source["deepened"];
+	        this.probable_duplicate = this.convertValues(source["probable_duplicate"], domain.DuplicateSuspect);
 	        this.player1 = source["player1"];
 	        this.player2 = source["player2"];
 	        this.games = source["games"];
 	        this.error = source["error"];
 	        this.duplicate_of = source["duplicate_of"];
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 
 }
@@ -5522,6 +5614,34 @@ export namespace sqlite {
 
 export namespace storage {
 	
+	export class Alias {
+	    alias: string;
+	    canonical: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new Alias(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.alias = source["alias"];
+	        this.canonical = source["canonical"];
+	    }
+	}
+	export class AliasSuggestion {
+	    canonical: string;
+	    aliases: string[];
+	
+	    static createFrom(source: any = {}) {
+	        return new AliasSuggestion(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.canonical = source["canonical"];
+	        this.aliases = source["aliases"];
+	    }
+	}
 	export class HeadToHeadMatch {
 	    id: number;
 	    date: string;
@@ -5625,6 +5745,7 @@ export namespace storage {
 	}
 	export class MatchListOpts {
 	    PlayerName: string;
+	    PlayerSpellings: string[];
 	    PlayerNameContains: string;
 	    Text: string;
 	    Unassigned: boolean;
@@ -5643,6 +5764,7 @@ export namespace storage {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.PlayerName = source["PlayerName"];
+	        this.PlayerSpellings = source["PlayerSpellings"];
 	        this.PlayerNameContains = source["PlayerNameContains"];
 	        this.Text = source["Text"];
 	        this.Unassigned = source["Unassigned"];

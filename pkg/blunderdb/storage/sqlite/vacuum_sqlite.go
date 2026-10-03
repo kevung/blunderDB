@@ -65,6 +65,19 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 			// VACUUM failing midway through rebuilding the file.
 			return storage.VacuumResult{}, fmt.Errorf("vacuum: could not determine free disk space: %w", spaceErr)
 		}
+		if mem, known := availableMemoryBytes(); known && mem < vacuumMinMemoryBytes {
+			return storage.VacuumResult{}, fmt.Errorf(
+				"vacuum: not enough available memory (need at least %s, only %s available): close other applications and retry",
+				humanBytes(vacuumMinMemoryBytes), humanBytes(int64(mem)),
+			)
+		}
+		tmp := sqliteTempDir()
+		if tmpFree, err := freeSpaceBytes(tmp); err == nil && tmpFree < uint64(sizeBefore) {
+			return storage.VacuumResult{}, fmt.Errorf(
+				"vacuum: not enough free disk space for the temporary file (need about %s, only %s available in %s): set SQLITE_TMPDIR to a folder with room",
+				humanBytes(sizeBefore), humanBytes(int64(tmpFree)), tmp,
+			)
+		}
 		if needed := uint64(sizeBefore) * 2; free < needed {
 			return storage.VacuumResult{}, fmt.Errorf(
 				"vacuum: not enough free disk space (need about %s, only %s available on the volume holding %s)",
@@ -73,9 +86,7 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 		}
 	}
 
-	// VACUUM cannot run inside a transaction; this is a bare Exec on the
-	// pool, deliberately not going through withTx.
-	if _, err := s.sqlDB.ExecContext(ctx, `VACUUM`); err != nil {
+	if err := s.vacuumOnFileTemp(ctx); err != nil {
 		return storage.VacuumResult{SizeBefore: sizeBefore}, fmt.Errorf("vacuum: %w", err)
 	}
 
@@ -99,6 +110,47 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 	}
 
 	return storage.VacuumResult{SizeBefore: sizeBefore, SizeAfter: sizeAfter}, nil
+}
+
+// vacuumMinMemoryBytes is the memory VACUUM still needs once its transient
+// database lives in a file: the page cache and sort buffers, not the data.
+const vacuumMinMemoryBytes = 512 << 20
+
+// sqliteTempDir is where SQLite creates its temporary files: SQLITE_TMPDIR,
+// else the system's temporary directory.
+func sqliteTempDir() string {
+	if d := os.Getenv("SQLITE_TMPDIR"); d != "" {
+		return d
+	}
+	return os.TempDir()
+}
+
+// vacuumOnFileTemp runs VACUUM on a dedicated connection whose temp_store is
+// FILE. The pool's connections use temp_store=MEMORY, and VACUUM builds its
+// transient copy of the whole database in the temp store: in RAM that is an
+// out-of-memory kill on a database larger than the machine. The temp file
+// goes where SQLite puts them (SQLITE_TMPDIR, else TMPDIR, else /tmp): the
+// directory is process-wide state this code must not touch, since the daemon
+// shares the process with other connections. On a small /tmp, point
+// SQLITE_TMPDIR at the database's volume. The setting is undone before the connection returns to the pool. VACUUM
+// cannot run inside a transaction: bare Exec, not withTx.
+func (s *Storage) vacuumOnFileTemp(ctx context.Context) error {
+	conn, err := s.sqlDB.Conn(ctx)
+	if err != nil {
+		return err
+	}
+	// Close hands the connection back to the pool: undo the setting first.
+	// Not ctx: a cancelled vacuum must still restore the pooled connection.
+	defer func() {
+		_, _ = conn.ExecContext(context.WithoutCancel(ctx), `PRAGMA temp_store=MEMORY`)
+		conn.Close()
+	}()
+
+	if _, err := conn.ExecContext(ctx, `PRAGMA temp_store=FILE`); err != nil {
+		return fmt.Errorf("temp_store: %w", err)
+	}
+	_, err = conn.ExecContext(ctx, `VACUUM`)
+	return err
 }
 
 // compactAnalysesBatchSize is how many analysis rows are read and,

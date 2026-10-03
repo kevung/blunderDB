@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
@@ -91,27 +92,14 @@ func (d *Database) GetMatchByID(matchID int64) (*Match, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var m Match
-	err := d.db.QueryRow(`
-		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round,
-		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
-		       COALESCE(m.last_visited_position, -1) as last_visited_position,
-		       m.tournament_id, COALESCE(t.name, '') AS tournament_name
-		FROM match m
-		LEFT JOIN tournament t ON m.tournament_id = t.id
-		WHERE m.id = ?
-	`, matchID).Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-		&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount, &m.LastVisitedPosition,
-		&m.TournamentID, &m.TournamentName)
-
+	m, err := d.store.Matches().Get(context.Background(), "", matchID)
+	if errors.Is(err, storage.ErrNotFound) {
+		return nil, fmt.Errorf("match not found")
+	}
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("match not found")
-		}
 		return nil, err
 	}
-
-	return &m, nil
+	return m, nil
 }
 
 // GetPositionProvenance returns the matches that reference the given position
@@ -661,59 +649,16 @@ func (d *Database) SwapMatchPlayers(matchID int64) error {
 	return d.store.Matches().SwapPlayers(context.Background(), "", matchID)
 }
 
-// MergePlayers renames all occurrences of the given player names (in both
-// player1_name and player2_name columns of the match table) to canonicalName.
-// names must be non-empty and canonicalName must not be blank.
+// MergePlayers makes every other name of names an alias of canonicalName
+// (storage.AliasStore): the matches keep the names their files wrote, the
+// stats, the players table and the search read them as one person, and every
+// later import stores canonicalName. names must be non-empty and
+// canonicalName must not be blank.
 func (d *Database) MergePlayers(names []string, canonicalName string) error {
-	canonicalName = strings.TrimSpace(canonicalName)
-	if canonicalName == "" {
-		return fmt.Errorf("canonical name must not be empty")
-	}
-	if len(names) == 0 {
-		return fmt.Errorf("no names to merge")
-	}
-
 	d.mu.Lock()
 	defer d.mu.Unlock()
-
 	if d.db == nil {
 		return fmt.Errorf("no database is currently open")
 	}
-
-	tx, err := d.db.Begin()
-	if err != nil {
-		return fmt.Errorf("failed to begin transaction: %w", err)
-	}
-	defer tx.Rollback()
-
-	// Build a parameterized IN clause.
-	placeholders := make([]string, len(names))
-	args := make([]interface{}, len(names))
-	for i, n := range names {
-		placeholders[i] = "?"
-		args[i] = n
-	}
-	inClause := strings.Join(placeholders, ", ")
-
-	// Rename in player1_name
-	args1 := append([]interface{}{canonicalName}, args...)
-	_, err = tx.Exec(
-		"UPDATE match SET player1_name = ? WHERE player1_name IN ("+inClause+")",
-		args1...,
-	)
-	if err != nil {
-		return fmt.Errorf("failed to update player1_name: %w", err)
-	}
-
-	// Rename in player2_name
-	args2 := append([]interface{}{canonicalName}, args...)
-	_, err = tx.Exec(
-		"UPDATE match SET player2_name = ? WHERE player2_name IN ("+inClause+")",
-		args2...,
-	)
-	if err != nil {
-		return fmt.Errorf("failed to update player2_name: %w", err)
-	}
-
-	return tx.Commit()
+	return d.store.Matches().MergePlayers(context.Background(), "", names, canonicalName)
 }

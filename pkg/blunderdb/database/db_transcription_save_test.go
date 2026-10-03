@@ -257,8 +257,8 @@ func TestTranscriptionMAT_MatchesTheSavedMatchExport(t *testing.T) {
 		t.Error("ExportTranscriptionMAT wrote something other than TranscriptionMAT renders")
 	}
 
-	// The transcriber line is the draft's alone, and it is there when the
-	// header names one.
+	// The transcriber line is there when the header names one, and the
+	// saved Match keeps it (its transcriber column).
 	db.withSession(id, func(ed *transcript.Editor) { ed.Doc.Header.Transcriber = transcriber })
 	withTranscriber, err := db.TranscriptionMAT(id)
 	if err != nil {
@@ -289,8 +289,8 @@ func TestTranscriptionMAT_MatchesTheSavedMatchExport(t *testing.T) {
 	if err != nil {
 		t.Fatalf("read the exported .mat: %v", err)
 	}
-	if draftText != string(matchText) {
-		t.Errorf("the draft and its Match export different .mat files\n--- draft ---\n%s\n--- match ---\n%s", draftText, matchText)
+	if withTranscriber != string(matchText) {
+		t.Errorf("the draft and its Match export different .mat files\n--- draft ---\n%s\n--- match ---\n%s", withTranscriber, matchText)
 	}
 
 }

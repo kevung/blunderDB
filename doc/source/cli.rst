@@ -150,9 +150,19 @@ Importe des fichiers de matchs ou de positions dans la base de données.
   arrêter).
 * ``--watch-every`` — Intervalle entre deux regards de ``--watch`` (défaut:
   10s, plancher 2s).
+* ``--resume`` — Avec ``--type batch`` : reprend le lot de ce numéro (affiché
+  au départ de l'import, ou ``batch_id`` en JSON). Les fichiers de même
+  chemin, taille et date que dans son journal sont sautés sans être lus, ceux
+  de même contenu sont lus mais pas analysés ; les fichiers en erreur sont
+  retentés.
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``.
 * ``--fail-on-error`` — Échoue si au moins un élément (``position`` ou
   ``batch``) n'a pas pu être importé, même quand d'autres ont réussi.
+* ``--skip-duplicates`` — Ignore un match déjà en base sans en reprendre les
+  analyses plus profondes (les marques d'étude restent appliquées). Par
+  défaut, un doublon remplace chaque analyse rangée par la sienne quand elle
+  est strictement plus profonde, et la ligne l'indique : ``DUPLICATE (N
+  analyses deepened)``.
 
 Le code de retour obéit à quatre règles :
 
@@ -269,6 +279,15 @@ Un tableau récapitulatif indique pour chaque fichier si l'import a réussi
 (✓), échoué (✗) ou s'il s'agit d'un doublon (⊘). Un doublon n'est pas
 compté comme un échec, et un lot qui n'en contient que des doublons est un
 succès (voir les règles ci-dessus).
+
+Chaque fichier du lot est journalisé (chemin, taille, date, SHA-256, match
+obtenu ou erreur). Le numéro du lot est affiché au départ ; si l'import est
+interrompu, ``--resume`` le continue sans analyser de nouveau ce qui est décidé. Avec
+``--format json``, l'objet final porte ``batch_id`` et le tableau ``journal``.
+
+.. code-block:: bash
+
+   ./blunderdb import --db base.db --type batch --dir ./matchs/ --resume 12
 
 .. code-block:: text
 
@@ -853,7 +872,11 @@ valeur par défaut vaut 10 pour les positions) et décalée par ``--offset`` :
 match — Afficher un match
 --------------------------
 
-Affiche les positions et analyses d'un match importé.
+Affiche les positions et analyses d'un match importé. En sortie ``text`` et
+``summary``, l'en-tête reprend ce que le fichier source dit du match quand il
+le dit : classement Elo et expérience de chaque joueur, transcripteur, règles
+Jacoby et Beaver d'une partie libre, programme qui a écrit le fichier ; la
+sortie ``json`` les porte dans l'objet ``match``.
 
 .. code-block:: bash
 
@@ -1188,6 +1211,74 @@ filtre de provenance, qui porte sur chaque décision.
    ./blunderdb stats windows --db base.db --player "Alice" --window quarter --format json
    ./blunderdb stats ranking --db base.db --min-decisions 1000 --limit 20
    ./blunderdb list --type stats --db base.db --player "Alice" --min-depth 3
+
+**stats progression** — Le PR de chaque match par ordre de date, le PR de
+chaque tournoi et le PR glissant sur les N derniers matchs : l'onglet
+*Progression* du panneau Stats (voir :ref:`stats`).
+
+.. code-block:: bash
+
+   ./blunderdb stats progression --db <fichier> [options]
+
+**Options:**
+
+* ``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``,
+  ``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le même filtre
+  que ``list --type stats``.
+* ``--format text|json`` — Le JSON porte les matchs, les tournois et les PR
+  glissants.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb stats progression --db base.db --player "Alice"
+   ./blunderdb stats progression --db base.db --format json
+
+**stats breakdown** — Le PR du filtre ventilé par phase de jeu, plan de jeu,
+étiquette de commentaire, score (away contre away) et action de videau, avec la
+direction des erreurs de videau : l'onglet *Ventilations* du panneau Stats (voir
+:ref:`stats`). Les options sont celles de ``stats progression``.
+
+.. code-block:: bash
+
+   ./blunderdb stats breakdown --db <fichier> [options]
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb stats breakdown --db base.db --player "Alice"
+   ./blunderdb stats breakdown --db base.db --format json
+
+**stats report** — Le rapport HTML du panneau Stats (voir :ref:`rapport_html`) :
+les indicateurs du filtre et ses dix décisions les plus coûteuses avec leur
+diagramme, en un seul fichier autonome que le navigateur imprime en PDF. Le
+démon HTTP le sert à la route ``stats.report``, du même générateur.
+
+.. code-block:: bash
+
+   ./blunderdb stats report --db <fichier> --html [options]
+
+**Options:**
+
+* ``--html`` — Obligatoire : le HTML est le seul format.
+* ``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard).
+* ``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, ``el``,
+  ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``).
+* ``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``,
+  ``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre : le
+  rapport nomme son périmètre.
+
+Les diagrammes y sont dessinés avec la palette par défaut ; seule l'application
+graphique emploie la palette du plateau choisie à l'écran.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb stats report --db base.db --html --output rapport.html
+   ./blunderdb stats report --db base.db --html --player "Alice" --lang fr
 
 .. _cli_cubematrix:
 
@@ -2065,6 +2156,80 @@ message explicite plutôt que de risquer un compactage interrompu.
 
 .. _cli_repair:
 
+players — Les graphies d'un joueur
+----------------------------------
+
+Une même personne signe parfois de plusieurs façons d'un fichier à l'autre
+(« Doe J. », « John Doe »). Un **alias** dit qu'un nom est une autre graphie
+d'un nom canonique. Les matchs déjà en base gardent les noms que leurs fichiers
+écrivent ; les statistiques, la table Joueurs et la recherche ``pl"…"`` lisent
+toutes les graphies comme une seule personne, et chaque import suivant enregistre
+le nom canonique. La fusion de joueurs de la fenêtre des matchs crée les mêmes
+alias.
+
+.. code-block:: bash
+
+   ./blunderdb players alias <add|list|remove|suggest> --db <chemin> [arguments]
+
+**Actions:**
+
+* ``add ALIAS CANONIQUE`` — ``ALIAS`` devient une graphie de ``CANONIQUE``. Un
+  canonique qui est lui-même un alias est suivi jusqu'à son propre canonique, et
+  les alias qui visaient ``ALIAS`` passent à ``CANONIQUE`` : un seul niveau,
+  jamais de chaîne.
+* ``list [--format text|json]`` — Les alias, rangés par nom canonique.
+* ``remove ALIAS`` — Oublie un alias ; sort en erreur si ce n'en était pas un.
+* ``suggest [--format text|json]`` — Propose les noms qui ne diffèrent que par la
+  casse, les accents, la ponctuation ou l'ordre des mots, avec pour canonique la
+  graphie la plus fréquente. Rien n'est enregistré : chaque proposition s'écrit
+  comme la commande ``add`` qui l'appliquerait.
+
+**Empreintes.** Les empreintes d'un match (``match_hash``, ``canonical_hash``)
+gardent les noms du fichier : l'alias s'applique après elles, aux seuls noms
+enregistrés. Un fichier importé avant que son alias existe se reconnaît donc
+toujours à l'import suivant. Un match importé sous une autre graphie, dont les
+dés sont ceux d'un match en base et dont les noms ne diffèrent que par des alias
+connus, est reconnu comme le même match : ses analyses enrichissent l'existant,
+aucun second match n'est créé.
+
+.. code-block:: bash
+
+   ./blunderdb players alias add --db base.db "Doe J." "John Doe"
+   ./blunderdb players alias suggest --db base.db
+
+**players merge** — La fusion de joueurs de la fenêtre des matchs, du même code
+que la route ``matches.mergePlayers`` du démon : chaque nom devient une graphie
+du nom canonique, comme autant de ``players alias add``.
+
+.. code-block:: bash
+
+   ./blunderdb players merge --db <chemin> --into <CANONIQUE> <NOM> [<NOM>...]
+
+**players swap** — L'inversion des deux joueurs d'un match, que le fichier avait
+nommés dans le mauvais ordre (route ``matches.swapPlayers``). Chaque position du
+match est réécrite du point de vue de l'autre joueur.
+
+.. code-block:: bash
+
+   ./blunderdb players swap --db <chemin> <ID_MATCH>
+
+.. code-block:: bash
+
+   ./blunderdb players merge --db base.db --into "John Doe" "Doe J." "J. Doe"
+   ./blunderdb players swap --db base.db 42
+
+events — Les graphies d'un événement
+------------------------------------
+
+Les mêmes actions que ``players alias``, pour les noms d'événement (le champ
+Event d'un fichier). À l'import, un match dont l'événement est un alias est rangé
+dans le tournoi du nom canonique.
+
+.. code-block:: bash
+
+   ./blunderdb events alias add --db base.db "Open 2025" "Open d'automne 2025"
+   ./blunderdb events alias list --db base.db
+
 repair — Recalculer ce qui est dérivé
 --------------------------------------
 
@@ -2088,6 +2253,8 @@ avait tirées qui sont refaites.
   lignes réellement changées. Avec ``--stats``, s'y ajoute ``match_stats``
   (matchs recalculés).
 * ``--stats`` — Recalcule aussi, de zéro, les statistiques par match.
+* ``--duplicates`` — Ne lance aucune des passes : liste les paires de matchs
+  que les dés disent identiques, sans rien fusionner (voir ci-dessous).
 
 Les statistiques par match sont, pour chaque joueur de chaque match, ses
 décisions, son erreur cumulée, son PR, ses blunders, sa chance et la provenance
@@ -2098,6 +2265,15 @@ d'une de ses positions modifiée, seuil de blunder déplacé) ; la lecture suiva
 recalcule ce qui manque. Une base migrée d'une version antérieure les calcule
 une fois, à sa première ouverture. ``--stats`` les refait toutes : le recours si
 cette tenue de comptes se trompait un jour.
+
+**Doublons probables.** ``repair --duplicates`` compare les matchs par leurs
+dés, jamais par leurs noms. Deux cas sont signalés : la même longueur, le même
+score initial et les mêmes dés dans chaque partie sous d'autres noms de
+joueurs, et un match dont les dés prolongent ceux d'un autre — un match tronqué
+puis complété. ``--format json`` rend ``{"suspects": [...]}``, chaque paire
+avec ``kind`` (``same_dice`` ou ``longer``), ``matchId``, ``otherId``,
+``players`` et ``otherPlayers``. Un match importé avant que l'empreinte des dés
+existe la reçoit au passage ; c'est la seule écriture de ce mode.
 
 Utile après une correction de la façon dont une analyse importée est lue. Le
 cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de double » de

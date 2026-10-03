@@ -30,6 +30,11 @@ type MatchGraph struct {
 	// match keeps its id, which other rows point at, while its games, moves
 	// and positions are rewritten. Importers never set it.
 	ReplaceMatchID int64
+	// SkipDuplicates restores the plain skip of an exact duplicate: by default
+	// a match already stored still hands over the analyses it holds deeper
+	// than the stored ones (deepenAnalyses). Set by the caller, like
+	// ImportBatchID.
+	SkipDuplicates bool
 }
 
 // GameGraph is one game with its ordered moves.
@@ -58,12 +63,17 @@ type WriteResult struct {
 	MatchID        int64
 	Skipped        bool // true when an exact same-format duplicate was found (nothing written but flags)
 	FlagsApplied   int  // study marks a skipped duplicate newly raised on already-stored positions
+	Deepened       int  // positions of a skipped duplicate whose stored analysis this import deepened
 	Enriched       bool // true when a cross-format (canonical) duplicate was enriched in place
 	Replaced       bool // true when an existing match was rewritten in place (MatchGraph.ReplaceMatchID)
 	SavedPositions int
 	// Tournament is the event name the match was filed under, empty when the
 	// file named none or when the match already existed.
 	Tournament string
+	// ProbableDuplicate is set when the match this call created has the dice
+	// of a match already stored under other player names: a signal for the
+	// report, never a merge.
+	ProbableDuplicate *domain.DuplicateSuspect
 }
 
 // WriteMatch persists a MatchGraph through tx. It is the single Storage-based
@@ -72,8 +82,12 @@ type WriteResult struct {
 // cancellable as a unit.
 //
 // Duplicate detection has two levels, mirroring the legacy importers:
-//   - Exact same-format duplicate (MatchHash already present): nothing is
-//     written, WriteResult.Skipped is true.
+//   - Exact same-format duplicate (MatchHash already present): no match, game
+//     or move row is written, WriteResult.Skipped is true. The analyses it
+//     carries are still offered to the stored positions, and only a deeper
+//     one replaces what is stored (deepenAnalyses): a 3-ply then a Roller++
+//     analysis of the same match keep the Roller++ whatever the import order.
+//     MatchGraph.SkipDuplicates turns this off.
 //   - Cross-format duplicate (CanonicalHash present from another format, e.g.
 //     the same match imported from XG and then GnuBG): the match/game/move rows
 //     are NOT recreated, but the graph's positions and analyses are still
@@ -120,7 +134,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			if err != nil {
 				return res, err
 			}
-			return WriteResult{MatchID: id, Skipped: true, FlagsApplied: n}, nil
+			return writeDuplicate(ctx, tx, scope, g, id, n)
 		}
 	}
 
@@ -138,7 +152,51 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 	}
 
+	// The aliases rename what is stored, after both fingerprints: the hashes
+	// keep the names the file wrote, so a file imported before its alias
+	// existed still finds itself on its next import (storage.AliasStore).
+	var aliases aliasMaps
+	fileNames := [2]string{g.Match.Player1Name, g.Match.Player2Name}
+	if !enrich && !replace {
+		var err error
+		if aliases, err = loadAliases(ctx, tx, scope); err != nil {
+			return res, err
+		}
+		aliases.apply(&g.Match)
+	}
+
+	// The names are not in the dice hash: a match stored under other names
+	// is found here, and only signalled.
+	if !enrich && g.Match.DiceHash == "" {
+		initial, dice := graphDice(g)
+		g.Match.DiceHash = DiceMatchHash(int(g.Match.MatchLength), initial, dice)
+	}
+	if !enrich && !replace {
+		suspect, sameID, err := probableDuplicate(ctx, tx, scope, &g.Match, fileNames, aliases.players)
+		if err != nil {
+			return res, err
+		}
+		res.ProbableDuplicate = suspect
+		// The same dice under names the aliases say are the same people: a
+		// known spelling of a stored match, so the same format's same match.
+		// It follows the re-import rule — a deeper analysis replaces, a
+		// shallower one never does — not the cross-format merge, under which
+		// a 3-ply copy would overwrite a stored rollout of the same engine.
+		if sameID != 0 {
+			n, err := applyFlags(ctx, tx, scope, g)
+			if err != nil {
+				return res, err
+			}
+			return writeDuplicate(ctx, tx, scope, g, sameID, n)
+		}
+	}
+
 	switch {
+	case enrich:
+		if err := fillStoredMetadata(ctx, tx, scope, matchID, &g.Match); err != nil {
+			return res, err
+		}
+
 	case replace:
 		// The header is re-stated, never re-inserted: ReplaceHeader leaves the
 		// id, the import date, the import batch, the tournament, the match
@@ -173,6 +231,9 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 	}
 	res.MatchID = matchID
+	if res.ProbableDuplicate != nil {
+		res.ProbableDuplicate.MatchID = matchID
+	}
 	res.Enriched = enrich
 	res.Replaced = replace
 
@@ -322,4 +383,182 @@ func applyFlags(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph)
 		}
 	}
 	return n, nil
+}
+
+// deepenAnalyses offers the analyses of a graph whose match is already stored
+// to the positions it reaches, and returns how many stored analyses it
+// changed. Unlike the cross-format enrichment, the incoming analysis is the
+// same engine's view of the same decisions, so it replaces what is stored only
+// where it is strictly deeper (deepenAnalysis): re-importing the same file,
+// or a shallower version of it, writes nothing. A position no longer stored
+// is left alone rather than recreated.
+func deepenAnalyses(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph) (int, error) {
+	n := 0
+	for gi := range g.Games {
+		for mi := range g.Games[gi].Moves {
+			mg := &g.Games[gi].Moves[mi]
+			if mg.Position == nil || len(mg.Analyses) == 0 {
+				continue
+			}
+			posID, found, err := tx.Positions().Exists(ctx, scope, engine.PopulatePositionColumns(mg.Position).ZobristHash)
+			if err != nil {
+				return n, err
+			}
+			if !found {
+				continue
+			}
+			played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction}
+			written, err := tx.Analyses().Merge(ctx, scope, posID, played, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+				cur := existing
+				for _, frag := range mg.Analyses {
+					if frag == nil {
+						continue
+					}
+					next := deepenAnalysis(cur, *frag)
+					if next != cur {
+						next.PositionID = int(posID)
+						engine.RoundAnalysisForStorage(next)
+					}
+					cur = next
+				}
+				return cur
+			})
+			if err != nil {
+				return n, fmt.Errorf("ingest: deepen duplicate match analysis: %w", err)
+			}
+			if written {
+				n++
+			}
+		}
+	}
+	return n, nil
+}
+
+// probableDuplicate looks for a stored match with m's dice under other
+// player names, and returns it as a suspect whose MatchID the caller fills
+// once m is saved; nil when there is none. When the names differ only by
+// aliases, the stored match is the same one: its id comes back as sameID and
+// no suspect is raised.
+//
+// fileNames are the names the file wrote, before the aliases renamed m's.
+func probableDuplicate(ctx context.Context, tx storage.Tx, scope string, m *domain.Match, fileNames [2]string, players storage.AliasMap) (suspect *domain.DuplicateSuspect, sameID int64, err error) {
+	if m.DiceHash == "" {
+		return nil, 0, nil
+	}
+	others, err := tx.Matches().ListByDiceHash(ctx, scope, m.DiceHash)
+	if err != nil {
+		return nil, 0, err
+	}
+	for _, o := range others {
+		if samePlayers(o.Player1Name, o.Player2Name, fileNames[0], fileNames[1]) {
+			continue
+		}
+		if samePlayers(players.Canonical(o.Player1Name), players.Canonical(o.Player2Name), m.Player1Name, m.Player2Name) {
+			return nil, o.ID, nil
+		}
+		return &domain.DuplicateSuspect{
+			Kind: domain.DuplicateSameDice, OtherID: o.ID,
+			Players:      m.Player1Name + " – " + m.Player2Name,
+			OtherPlayers: o.Player1Name + " – " + o.Player2Name,
+		}, 0, nil
+	}
+	return nil, 0, nil
+}
+
+// aliasMaps holds the player and event aliases an import renames through.
+type aliasMaps struct {
+	players, events storage.AliasMap
+}
+
+func loadAliases(ctx context.Context, tx storage.Tx, scope string) (aliasMaps, error) {
+	var a aliasMaps
+	p, err := tx.Aliases().List(ctx, scope, storage.AliasPlayer)
+	if err != nil {
+		return a, err
+	}
+	e, err := tx.Aliases().List(ctx, scope, storage.AliasEvent)
+	if err != nil {
+		return a, err
+	}
+	return aliasMaps{players: storage.NewAliasMap(p), events: storage.NewAliasMap(e)}, nil
+}
+
+// apply stores the canonical names in place of the aliases the file wrote.
+func (a aliasMaps) apply(m *domain.Match) {
+	if len(a.players) > 0 {
+		m.Player1Name = a.players.Canonical(m.Player1Name)
+		m.Player2Name = a.players.Canonical(m.Player2Name)
+	}
+	if len(a.events) > 0 && strings.TrimSpace(m.Event) != "" {
+		m.Event = a.events.Canonical(m.Event)
+	}
+}
+
+// samePlayers reports whether two matches name the same two players, in
+// either seat, ignoring case and surrounding spaces.
+func samePlayers(a1, a2, b1, b2 string) bool {
+	n := func(s string) string { return strings.ToLower(strings.TrimSpace(s)) }
+	x1, x2, y1, y2 := n(a1), n(a2), n(b1), n(b2)
+	return (x1 == y1 && x2 == y2) || (x1 == y2 && x2 == y1)
+}
+
+// fillStoredMetadata gives a stored match the source metadata it lacks and
+// the file offers — a duplicate re-imported, a copy from another format —
+// without overwriting anything it already states: the corpus gains its Elo
+// and transcriber by importing its files again.
+func fillStoredMetadata(ctx context.Context, tx storage.Tx, scope string, id int64, from *domain.Match) error {
+	stored, err := tx.Matches().Get(ctx, scope, id)
+	if err != nil {
+		return err
+	}
+	if !domain.FillSourceMetadata(stored, from) {
+		return nil
+	}
+	return tx.Matches().ReplaceHeader(ctx, scope, id, stored)
+}
+
+// copySessionRules writes a money session's Jacoby and Beaver rules onto
+// every position of the graph. The match's columns are the authority; the
+// position's are the copy the position search reads (ADR-0067). At a match
+// score neither rule applies, and the positions say nothing.
+func copySessionRules(g *MatchGraph) {
+	if g.Match.MatchLength != 0 {
+		return
+	}
+	jacoby := g.Match.HasJacoby != nil && *g.Match.HasJacoby
+	beaver := g.Match.HasBeaver != nil && *g.Match.HasBeaver
+	if !jacoby && !beaver {
+		return
+	}
+	for gi := range g.Games {
+		for mi := range g.Games[gi].Moves {
+			pos := g.Games[gi].Moves[mi].Position
+			if pos == nil {
+				continue
+			}
+			if jacoby {
+				pos.HasJacoby = 1
+			}
+			if beaver {
+				pos.HasBeaver = 1
+			}
+		}
+	}
+}
+
+// writeDuplicate finishes the import of a match already stored as id: its
+// missing source metadata is filled and, unless the caller skips duplicates,
+// its analyses deepened. flags is what applyFlags already delivered.
+func writeDuplicate(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph, id int64, flags int) (WriteResult, error) {
+	res := WriteResult{MatchID: id, Skipped: true, FlagsApplied: flags}
+	if err := fillStoredMetadata(ctx, tx, scope, id, &g.Match); err != nil {
+		return res, err
+	}
+	if !g.SkipDuplicates {
+		var err error
+		if res.Deepened, err = deepenAnalyses(ctx, tx, scope, g); err != nil {
+			return res, err
+		}
+	}
+	return res, nil
 }

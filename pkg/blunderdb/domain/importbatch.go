@@ -39,6 +39,16 @@ type ImportReport struct {
 	MatchesImported int `json:"matchesImported"`
 	MatchesSkipped  int `json:"matchesSkipped"`
 	MatchesEnriched int `json:"matchesEnriched"`
+	// MatchesDeepened counts the skipped duplicates that still brought a
+	// deeper analysis than the stored one, and AnalysesDeepened the positions
+	// whose analysis they replaced: "duplicate, nothing deeper" is
+	// MatchesSkipped - MatchesDeepened.
+	MatchesDeepened  int `json:"matchesDeepened,omitempty"`
+	AnalysesDeepened int `json:"analysesDeepened,omitempty"`
+	// ProbableDuplicates lists the matches this batch wrote whose dice are
+	// those of a match already stored under other player names: signalled,
+	// never merged (DuplicateSuspect).
+	ProbableDuplicates []DuplicateSuspect `json:"probableDuplicates,omitempty"`
 
 	// FilesFailed counts the files the batch could not read at all, and
 	// Failures names the first few of them with the reason. A batch that
@@ -146,3 +156,56 @@ const MaxStudyQueue = 50
 
 // The queue's error threshold is the library's own (storage.LibrarySettings,
 // ADR-0046).
+
+// Kinds of DuplicateSuspect.
+const (
+	// DuplicateSameDice: both matches have the same length, initial score
+	// and dice in every game, under other player names.
+	DuplicateSameDice = "same_dice"
+	// DuplicateLonger: MatchID's dice continue OtherID's — the same match,
+	// truncated in OtherID and completed in MatchID.
+	DuplicateLonger = "longer"
+)
+
+// DuplicateSuspect pairs two stored matches the dice say are probably one.
+// It is a signal for the user, who decides — by an alias, by deleting one —
+// and nothing ever merges them on its own.
+type DuplicateSuspect struct {
+	Kind         string `json:"kind"`
+	MatchID      int64  `json:"matchId"`
+	OtherID      int64  `json:"otherId"`
+	Players      string `json:"players"`
+	OtherPlayers string `json:"otherPlayers"`
+}
+
+// Journal outcomes: what one file of a batch became.
+const (
+	// JournalNew is a file that gave a new match (or a position).
+	JournalNew = "new"
+	// JournalDuplicate is a file whose match is already stored; MatchID is
+	// the match that covers it.
+	JournalDuplicate = "duplicate"
+	// JournalEnriched is a file whose analyses and comments were merged into
+	// a match already stored.
+	JournalEnriched = "enriched"
+	// JournalError is a file the batch could not read or write; Error says why.
+	JournalError = "error"
+)
+
+// ImportFileEntry is one line of a batch's journal: a file, and what it gave.
+// It is import data, never a reading mark.
+type ImportFileEntry struct {
+	// Path is the file as the import met it.
+	Path string `json:"path"`
+	Size int64  `json:"size"`
+	// MTime is the modification time in UTC, "YYYY-MM-DD HH:MM:SS", empty
+	// when unknown.
+	MTime  string `json:"mtime,omitempty"`
+	SHA256 string `json:"sha256,omitempty"`
+	// Outcome is one of the Journal* constants.
+	Outcome string `json:"outcome"`
+	// MatchID is the new match, the enriched one, or the match that covers a
+	// duplicate; 0 when the file gave none.
+	MatchID int64  `json:"matchId,omitempty"`
+	Error   string `json:"error,omitempty"`
+}

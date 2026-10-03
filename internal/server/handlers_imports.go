@@ -262,6 +262,10 @@ func (s *Server) ingestRoutes() []route {
 		route{http.MethodPost, "/v1/imports.studyQueue", rpc(func(ctx context.Context, scope string, req importStudyQueueReq) ([]domain.StudyQueueEntry, error) {
 			return s.opts.Storage.ImportBatches().StudyQueue(ctx, scope, req.BatchID, req.Players, req.Limit)
 		})},
+		// The batch's per-file journal: which file gave which match.
+		route{http.MethodPost, "/v1/imports.files", rpc(func(ctx context.Context, scope string, req importReportReq) ([]domain.ImportFileEntry, error) {
+			return s.opts.Storage.ImportBatches().Files(ctx, scope, req.BatchID)
+		})},
 		route{http.MethodPost, "/v1/imports.list", rpc(func(ctx context.Context, scope string, req listReq) ([]*domain.ImportBatch, error) {
 			return s.opts.Storage.ImportBatches().List(ctx, scope, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
 		})},
@@ -472,7 +476,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			})
 		}
 
-		sum, err := imp.Import(ctx, scope, ingest.Source{Format: format, Path: tmpPath, BatchID: batchID}, prog)
+		sum, err := imp.Import(ctx, scope, ingest.Source{Format: format, Path: tmpPath, BatchID: batchID, SkipDuplicates: skipDuplicatesParam(r)}, prog)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				// imports.cancel, or a graceful shutdown cancelling every
@@ -492,6 +496,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			"matches":            sum.Matches,
 			"match_id":           sum.MatchID,
 			"flags_applied":      sum.FlagsApplied,
+			"deepened":           sum.Deepened,
 		}
 		// The same end-of-import report the desktop panel shows, in the
 		// terminal event: a client that streams the import gets its summary
@@ -500,10 +505,14 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		if batchID != 0 {
 			done["batch_id"] = batchID
 			counts := domain.ImportReport{
-				MatchesImported: sum.Matches - sum.SkippedDuplicates - sum.Enriched,
-				MatchesSkipped:  sum.SkippedDuplicates,
-				MatchesEnriched: sum.Enriched,
-				PositionsSaved:  sum.SavedPositions,
+				MatchesImported:  sum.Matches - sum.SkippedDuplicates - sum.Enriched,
+				MatchesSkipped:   sum.SkippedDuplicates,
+				MatchesEnriched:  sum.Enriched,
+				PositionsSaved:   sum.SavedPositions,
+				AnalysesDeepened: sum.Deepened,
+			}
+			if sum.Deepened > 0 {
+				counts.MatchesDeepened = 1
 			}
 			if err := batches.Finish(ctx, scope, batchID, counts); err == nil {
 				if rep, err := batches.Report(ctx, scope, batchID, nil); err == nil {

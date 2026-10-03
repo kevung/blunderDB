@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/searchfilter"
 )
 
@@ -20,8 +21,8 @@ const likeEscape = ` ESCAPE '\'`
 // player's PR, the engine and depth of the analysis, the kind of cube decision.
 // They are properties of stored rows, not of the board, so — like the identity
 // clauses — they stay in SQL even in mirror search.
-func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, prMissing *prOfMissing, where *strings.Builder, args *[]any) {
-	s.appendMatchLevelClause(scope, f, prMissing, where, args)
+func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, prMissing *prOfMissing, aliases storage.AliasMap, where *strings.Builder, args *[]any) {
+	s.appendMatchLevelClause(scope, f, prMissing, aliases, where, args)
 
 	if f.MatchDateFilter != "" {
 		from, until, ok := searchfilter.ParseMatchDate(f.MatchDateFilter)
@@ -55,7 +56,7 @@ func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, 
 // of the one who decided, the tournament, the round, the PR — holds of the same
 // match and the same move. Separate subqueries would let `pl"A" op"B"` be
 // satisfied by A's match against C and a match of B against D.
-func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilters, prMissing *prOfMissing, where *strings.Builder, args *[]any) {
+func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilters, prMissing *prOfMissing, aliases storage.AliasMap, where *strings.Builder, args *[]any) {
 	player, seatOnly := searchfilter.PlayerSpec(f.PlayerFilter)
 	opponent := ""
 	if f.OpponentFilter != "" {
@@ -76,28 +77,57 @@ func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilter
 	name := func(col string) string { return col + " " + like + " ?" + likeEscape }
 	pat := searchfilter.NameLikePattern
 
+	// person writes "col matches one of who's spellings": an aliased player is
+	// every name the alias table gives them.
+	person := func(col, who string) (string, []any) {
+		group := aliases.Group(who)
+		if len(group) == 0 {
+			group = []string{who}
+		}
+		parts := make([]string, len(group))
+		vals := make([]any, len(group))
+		for i, n := range group {
+			parts[i] = name(col)
+			vals[i] = pat(n)
+		}
+		return "(" + strings.Join(parts, " OR ") + ")", vals
+	}
+
 	// Who sat where. a is the named player, b the opponent; the seat of the
 	// player who took the decision is move.player (1 = player1, -1 = player2).
 	switch {
 	case player != "" && opponent != "":
-		seat1 := "(" + name("mt.player1_name") + " AND " + name("mt.player2_name") + ")"
-		seat2 := "(" + name("mt.player2_name") + " AND " + name("mt.player1_name") + ")"
+		p1, a1 := person("mt.player1_name", player)
+		o2, b2 := person("mt.player2_name", opponent)
+		p2, a2 := person("mt.player2_name", player)
+		o1, b1 := person("mt.player1_name", opponent)
+		seat1 := "(" + p1 + " AND " + o2 + ")"
+		seat2 := "(" + p2 + " AND " + o1 + ")"
 		if seatOnly {
 			seat1 = "(mv.player = 1 AND " + seat1 + ")"
 			seat2 = "(mv.player = -1 AND " + seat2 + ")"
 		}
 		cond.WriteString(" AND (" + seat1 + " OR " + seat2 + ")")
-		condArgs = append(condArgs, pat(player), pat(opponent), pat(player), pat(opponent))
+		condArgs = append(condArgs, a1...)
+		condArgs = append(condArgs, b2...)
+		condArgs = append(condArgs, a2...)
+		condArgs = append(condArgs, b1...)
 	case player != "" && seatOnly:
-		cond.WriteString(" AND ((mv.player = 1 AND " + name("mt.player1_name") + ") OR (mv.player = -1 AND " + name("mt.player2_name") + "))")
-		condArgs = append(condArgs, pat(player), pat(player))
+		p1, a1 := person("mt.player1_name", player)
+		p2, a2 := person("mt.player2_name", player)
+		cond.WriteString(" AND ((mv.player = 1 AND " + p1 + ") OR (mv.player = -1 AND " + p2 + "))")
+		condArgs = append(condArgs, a1...)
+		condArgs = append(condArgs, a2...)
 	case player != "" || opponent != "":
 		who := player
 		if who == "" {
 			who = opponent
 		}
-		cond.WriteString(" AND (" + name("mt.player1_name") + " OR " + name("mt.player2_name") + ")")
-		condArgs = append(condArgs, pat(who), pat(who))
+		p1, a1 := person("mt.player1_name", who)
+		p2, a2 := person("mt.player2_name", who)
+		cond.WriteString(" AND (" + p1 + " OR " + p2 + ")")
+		condArgs = append(condArgs, a1...)
+		condArgs = append(condArgs, a2...)
 	}
 
 	if tournament != "" {

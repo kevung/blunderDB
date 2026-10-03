@@ -206,6 +206,19 @@ func (s *StatsStore) HeadToHead(ctx context.Context, scope, playerA, playerB str
 	if playerA == "" || playerB == "" || playerA == playerB {
 		return nil, fmt.Errorf("head to head needs two distinct players: %w", storage.ErrInvalid)
 	}
+	// Each side is a person: every spelling the alias table gives them.
+	aliases, err := aliasMap(ctx, s.DB, scope, storage.AliasPlayer)
+	if err != nil {
+		return nil, fmt.Errorf("head to head aliases: %w", err)
+	}
+	if aliases.Canonical(playerA) == aliases.Canonical(playerB) {
+		return nil, fmt.Errorf("head to head needs two distinct players: %w", storage.ErrInvalid)
+	}
+	groupA, groupB := aliases.Group(playerA), aliases.Group(playerB)
+	isA := make(map[string]bool, len(groupA))
+	for _, n := range groupA {
+		isA[n] = true
+	}
 	if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
 		return nil, err
 	}
@@ -213,14 +226,20 @@ func (s *StatsStore) HeadToHead(ctx context.Context, scope, playerA, playerB str
 	f := filter
 	f.PlayerName, f.PlayerAliases = "", nil
 	where, args := s.buildMatchWhereClause(scope, f)
-	where += " AND ((m.player1_name = ? AND m.player2_name = ?) OR (m.player1_name = ? AND m.player2_name = ?))"
-	args = append(args, playerA, playerB, playerB, playerA)
+	phA, phB := Placeholders(len(groupA)), Placeholders(len(groupB))
+	where += " AND ((m.player1_name IN (" + phA + ") AND m.player2_name IN (" + phB + "))" +
+		" OR (m.player1_name IN (" + phB + ") AND m.player2_name IN (" + phA + ")))"
+	for _, g := range [][]string{groupA, groupB, groupB, groupA} {
+		for _, n := range g {
+			args = append(args, n)
+		}
+	}
 	sumErr, count := tableErrDecisions(d, filter.DecisionType)
 	out := &storage.HeadToHead{PlayerA: playerA, PlayerB: playerB, Matches: []storage.HeadToHeadMatch{}}
 	byID := map[int64]*storage.HeadToHeadMatch{}
 	var order []int64
 	var sumA, sumB int64
-	err := scanEach(ctx, d,
+	err = scanEach(ctx, d,
 		`SELECT m.id, `+d.DateText("m.match_date")+`, COALESCE(m.match_length, 0), m.player1_name, ms.seat, `+sumErr+`, `+count+`,
 		        `+d.Bigint(`COALESCE((SELECT SUM(g.points_won) FROM game g WHERE g.match_id = m.id AND g.winner = 1), 0)`)+`,
 		        `+d.Bigint(`COALESCE((SELECT SUM(g.points_won) FROM game g WHERE g.match_id = m.id AND g.winner = -1), 0)`)+
@@ -240,7 +259,7 @@ func (s *StatsStore) HeadToHead(ctx context.Context, scope, playerA, playerB str
 					m.Date = *date
 				}
 				outcome := storage.MatchOutcome(int32(length), int32(pts1), int32(pts2))
-				if p1 != playerA {
+				if !isA[p1] {
 					outcome = -outcome
 				}
 				m.Outcome = outcome
@@ -248,7 +267,7 @@ func (s *StatsStore) HeadToHead(ctx context.Context, scope, playerA, playerB str
 				order = append(order, id)
 			}
 			// Seat 1 is A's when A sat as player 1.
-			if (seat == 1) == (p1 == playerA) {
+			if (seat == 1) == isA[p1] {
 				m.DecisionsA, m.PRA = int(n), pr(sum, int(n))
 				sumA += sum
 				out.DecisionsA += int(n)
@@ -284,6 +303,10 @@ func (s *StatsStore) PRByWindow(ctx context.Context, scope string, filter storag
 	if months < 1 || months > 120 {
 		return nil, fmt.Errorf("window of %d months: %w", months, storage.ErrInvalid)
 	}
+	filter, err := s.withPlayerAliases(ctx, scope, filter)
+	if err != nil {
+		return nil, err
+	}
 	if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
 		return nil, err
 	}
@@ -294,7 +317,7 @@ func (s *StatsStore) PRByWindow(ctx context.Context, scope string, filter storag
 	type bucket struct{ sum, n, matches int64 }
 	buckets := map[string]bucket{}
 	var first, last string
-	err := scanEach(ctx, d,
+	err = scanEach(ctx, d,
 		`SELECT `+month+` AS mon, `+sumErr+`, `+count+`, COUNT(DISTINCT CASE WHEN ms.decisions > 0 THEN m.id END)`+
 			matchStatsJoin+where+` AND m.match_date IS NOT NULL GROUP BY mon HAVING `+count+` > 0 ORDER BY mon`,
 		args, func(r Rows) error {

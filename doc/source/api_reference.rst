@@ -129,6 +129,11 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/directions.updatePair                JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.updateParticipant         JSON  (Idempotency-Key)  (If-Match)
      POST /v1/directions.withdraw                  JSON  (Idempotency-Key)  (If-Match)
+   events
+     POST /v1/events.alias.list                    JSON
+     POST /v1/events.alias.remove                  JSON
+     POST /v1/events.alias.set                     JSON
+     POST /v1/events.alias.suggest                 JSON
    exports
      POST /v1/exports.json                         custom
      POST /v1/exports.sqlite                       custom
@@ -160,6 +165,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/imports.bgf                          custom
      POST /v1/imports.cancel                       custom
      POST /v1/imports.db                           custom
+     POST /v1/imports.files                        JSON
      POST /v1/imports.gnubg                        custom
      POST /v1/imports.json                         custom
      POST /v1/imports.list                         JSON
@@ -188,6 +194,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/matches.createGame                   JSON
      POST /v1/matches.createMove                   JSON
      POST /v1/matches.delete                       JSON
+     POST /v1/matches.duplicates                   JSON
      POST /v1/matches.exportMat                    custom
      POST /v1/matches.findByHash                   JSON
      POST /v1/matches.games                        NDJSON
@@ -207,6 +214,11 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/metadata.counts                      JSON
      POST /v1/metadata.countsEstimate              JSON
      POST /v1/metadata.version                     JSON
+   players
+     POST /v1/players.alias.list                   JSON
+     POST /v1/players.alias.remove                 JSON
+     POST /v1/players.alias.set                    JSON
+     POST /v1/players.alias.suggest                JSON
    positions
      POST /v1/positions.count                      JSON
      POST /v1/positions.delete                     JSON
@@ -282,6 +294,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.ranking                        JSON
      POST /v1/stats.rebuildMatchStats              JSON
      POST /v1/stats.recurringErrors                JSON
+     POST /v1/stats.report                         JSON
      POST /v1/stats.studyIds                       JSON
      POST /v1/stats.tournamentBadges               JSON
      POST /v1/stats.training                       JSON

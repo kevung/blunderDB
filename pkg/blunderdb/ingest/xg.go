@@ -34,6 +34,7 @@ func MapXG(path string) (*MatchGraph, error) {
 	}
 
 	rawCubeInfo := parseRawCubeInfo(segments)
+	header := parseRawMatchHeader(segments)
 	rawMarks := parseRawMoveMarks(segments)
 
 	graph := &MatchGraph{
@@ -52,6 +53,7 @@ func MapXG(path string) (*MatchGraph, error) {
 			CanonicalHash: computeCanonicalMatchHashFromXG(match),
 		},
 	}
+	applyXGSourceMetadata(&graph.Match, header)
 
 	for gameIdx := range match.Games {
 		game := match.Games[gameIdx]
@@ -72,8 +74,46 @@ func MapXG(path string) (*MatchGraph, error) {
 		}
 		graph.Games = append(graph.Games, gg)
 	}
+	copySessionRules(graph)
 
 	return graph, nil
+}
+
+// parseRawMatchHeader returns the XG match header record, which the light
+// parser reads but does not pass on, or nil when the file has none.
+func parseRawMatchHeader(segments []*xgparser.Segment) *xgparser.HeaderMatchEntry {
+	for _, seg := range segments {
+		if seg.Type != xgparser.SegmentXGGameFile {
+			continue
+		}
+		records, _ := xgparser.ParseGameFile(seg.Data, -1)
+		for _, rec := range records {
+			if h, ok := rec.(*xgparser.HeaderMatchEntry); ok {
+				return h
+			}
+		}
+	}
+	return nil
+}
+
+// applyXGSourceMetadata sets m's source metadata from the XG match header.
+// XG writes a rating and an experience for every player, rated or not, so
+// both are kept as the file states them; the session rules are stated
+// outright, true or false. The program version is the file format's: an
+// .xg file does not name the eXtreme Gammon release that wrote it (the GDF
+// header's strings are the match's title, not a version).
+func applyXGSourceMetadata(m *domain.Match, h *xgparser.HeaderMatchEntry) {
+	if h == nil {
+		return
+	}
+	elo1, elo2 := h.Elo1, h.Elo2
+	exp1, exp2 := int(h.Exp1), int(h.Exp2)
+	jacoby, beaver := h.Jacoby, h.Beaver
+	m.Player1Elo, m.Player2Elo = &elo1, &elo2
+	m.Player1Experience, m.Player2Experience = &exp1, &exp2
+	m.HasJacoby, m.HasBeaver = &jacoby, &beaver
+	m.EngineVersion = fmt.Sprintf("eXtreme Gammon, file format %d", h.Version)
+	m.Transcriber = strings.TrimSpace(h.Transcriber)
 }
 
 // rawCubeAction holds raw cube action data extracted from XG game-file segments.
@@ -622,6 +662,7 @@ func (im XGImporter) Import(ctx context.Context, scope string, src Source, prog 
 	}
 
 	graph.ImportBatchID = src.BatchID
+	graph.SkipDuplicates = src.SkipDuplicates
 
 	tx, err := im.S.BeginTx(ctx)
 	if err != nil {
@@ -654,6 +695,7 @@ func (im XGImporter) Import(ctx context.Context, scope string, src Source, prog 
 	if res.Skipped {
 		sum.SkippedDuplicates = 1
 		sum.FlagsApplied = res.FlagsApplied
+		sum.Deepened = res.Deepened
 		sum.SavedPositions = 0
 	}
 	if res.Enriched {

@@ -232,24 +232,7 @@ func testMatchStatsOracle(t *testing.T, s storage.Storage) {
 	check("blunder threshold moved")
 	checkSeries("blunder threshold moved", storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"})
 
-	// The `pr` token reads match_stats: after an invalidation it must see the
-	// matches again without anyone filling the table by hand. Every PR is
-	// below 1000, so the count is that of the positions of matches with a PR.
-	prAll := domain.SearchFilters{PlayerPRFilter: "pr<1000"}
-	before, err := s.Search().Count(ctx, "", prAll)
-	if err != nil || before == 0 {
-		t.Fatalf("pr search before invalidation: %d, %v", before, err)
-	}
-	if err := s.Matches().SwapPlayers(ctx, "", matchB); err != nil {
-		t.Fatalf("SwapPlayers: %v", err)
-	}
-	if err := s.Matches().SwapPlayers(ctx, "", matchB); err != nil {
-		t.Fatalf("SwapPlayers: %v", err)
-	}
-	after, err := s.Search().Count(ctx, "", prAll)
-	if err != nil || after != before {
-		t.Errorf("pr search after invalidation: %d, %v; want %d", after, err, before)
-	}
+	checkPRTokenAfterInvalidation(ctx, t, s, matchB)
 
 	// Deleting an analysis changes the decisions its matches count.
 	if err := s.Analyses().Delete(ctx, "", posA[1]); err != nil {
@@ -268,6 +251,29 @@ func testMatchStatsOracle(t *testing.T, s storage.Storage) {
 	n, err := s.Stats().RebuildMatchStats(ctx, "", nil)
 	if err != nil || n != 3 {
 		t.Errorf("RebuildMatchStats: %d matches, err %v; want 3", n, err)
+	}
+}
+
+// checkPRTokenAfterInvalidation holds the `pr` token, which reads match_stats:
+// after an invalidation it must see the matches again without anyone filling
+// the table by hand. Every PR is below 1000, so the count is that of the
+// positions of matches with a PR.
+func checkPRTokenAfterInvalidation(ctx context.Context, t *testing.T, s storage.Storage, matchB int64) {
+	t.Helper()
+	prAll := domain.SearchFilters{PlayerPRFilter: "pr<1000"}
+	before, err := s.Search().Count(ctx, "", prAll)
+	if err != nil || before == 0 {
+		t.Fatalf("pr search before invalidation: %d, %v", before, err)
+	}
+	if err := s.Matches().SwapPlayers(ctx, "", matchB); err != nil {
+		t.Fatalf("SwapPlayers: %v", err)
+	}
+	if err := s.Matches().SwapPlayers(ctx, "", matchB); err != nil {
+		t.Fatalf("SwapPlayers: %v", err)
+	}
+	after, err := s.Search().Count(ctx, "", prAll)
+	if err != nil || after != before {
+		t.Errorf("pr search after invalidation: %d, %v; want %d", after, err, before)
 	}
 }
 
