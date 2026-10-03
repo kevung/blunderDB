@@ -4,6 +4,8 @@ import { LegalMoves } from '../../wailsjs/go/gui/App.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { ankiAnswerShownStore, showAnkiAnswer } from '../stores/ankiStore.js';
 import { newPlay, completedPlay } from './quizPlay.js';
+import { databasePathStore } from '../stores/databaseStore.js';
+import { loadLibrarySettings, DEFAULT_SETTINGS } from './librarySettingsService.js';
 import { logger } from '../utils/logger.js';
 
 // « Répondre au damier » : une option par paquet qui fait jouer le coup d'une carte de pions sur
@@ -18,11 +20,13 @@ const KEY_PREFIX = 'anki_board_answer_';
 
 /** Au-dessous de ce temps, une bonne réponse mérite « Facile » plutôt que « Bien ». */
 export const FAST_ANSWER_MS = 10000;
-/** À partir de ce coût (millipoints), une erreur est un blunder : « Encore ». */
-export const BLUNDER_MP = 80;
 
 /** @type {Map<number, boolean>} */
 const enabled = new Map();
+
+// Les identifiants de paquet se recoupent d'une base à l'autre : l'option lue dans l'une ne doit
+// pas répondre pour l'autre.
+databasePathStore.subscribe(() => enabled.clear());
 
 /**
  * Le paquet répond-il au damier ?
@@ -48,8 +52,9 @@ export async function boardAnswerEnabled(deckId) {
  */
 export async function setBoardAnswer(deckId, on) {
     const meta = (await LoadMetadata()) || {};
-    if (on) meta[KEY_PREFIX + deckId] = '1';
-    else delete meta[KEY_PREFIX + deckId];
+    // `SaveMetadata` ne fait que remplacer : une clé retirée du dictionnaire reviendrait au
+    // relancement, d'où un « 0 » écrit.
+    meta[KEY_PREFIX + deckId] = on ? '1' : '0';
     await SaveMetadata(meta);
     enabled.set(deckId, on);
 }
@@ -71,13 +76,14 @@ export function isBoardPlayable(card) {
  * n'a pas de coût connu : aucune suggestion.
  * @param {{legal: boolean, matched: boolean, errorMp: number}} verdict
  * @param {number} elapsedMs
+ * @param {number} [blunderMp] le seuil du blunder de la bibliothèque (Réglages)
  * @returns {1|2|3|4|null}
  */
-export function suggestRating(verdict, elapsedMs) {
+export function suggestRating(verdict, elapsedMs, blunderMp = DEFAULT_SETTINGS.blunderThresholdMP) {
     if (!verdict.legal) return 1;
     if (!verdict.matched) return null;
     if (verdict.errorMp === 0) return elapsedMs <= FAST_ANSWER_MS ? 4 : 3;
-    return verdict.errorMp < BLUNDER_MP ? 2 : 1;
+    return verdict.errorMp < blunderMp ? 2 : 1;
 }
 
 /**
@@ -152,8 +158,9 @@ export async function validateBoardAnswer(card) {
         logger.error('could not grade the board answer:', err);
         return;
     }
+    const { blunderThresholdMP } = await loadLibrarySettings();
     if (armedCardId !== id) return;
-    ankiBoardAnswerStore.set({ phase: 'graded', verdict, suggested: suggestRating(verdict, elapsedMs), elapsedMs });
+    ankiBoardAnswerStore.set({ phase: 'graded', verdict, suggested: suggestRating(verdict, elapsedMs, blunderThresholdMP), elapsedMs });
     releaseBoard();
     showAnkiAnswer();
 }

@@ -24,6 +24,7 @@
     import { lastSearchStore } from '../stores/searchHistoryStore';
     import { confirmAction } from '../services/confirmService.js';
     import * as anki from '../services/ankiService.js';
+    import { invalidateTrainingStats } from '../stores/statsStore.js';
     import * as boardAnswer from '../services/ankiBoardAnswer.js';
     import { quizPlayCompleteStore } from '../stores/quizPlayStore.js';
     import { logger } from '../utils/logger.js';
@@ -319,6 +320,7 @@
             // In cram mode the rating is ignored — just advance, never schedule.
             const next = cramMode ? await anki.nextCramCard(selectedDeck, reviewCard) : await anki.reviewCard(reviewCard, rating);
             reviewSessionCount++;
+            invalidateTrainingStats();
 
             // The limit ended the sitting, not an empty queue: its own message
             // (ADR-0026 rule 4). No "keep going": cram serves more.
@@ -575,7 +577,7 @@
                         {maxCube}
                     />
                     <!-- Silencieuse quand aucune règle ne s'applique. -->
-                    <ExplanationLine {analysis} neighbours={false} />
+                    <ExplanationLine {analysis} played={$boardState?.phase === 'graded' ? $boardState.verdict.notation : ''} neighbours={false} />
                 {:else}
                     <button class="answer-masked" onclick={showAnkiAnswer} title={$t('anki.clickToReveal')}>···</button>
                 {/if}

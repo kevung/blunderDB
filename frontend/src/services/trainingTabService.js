@@ -30,6 +30,7 @@ import {
     answerChosen,
     attachCorrection
 } from './trainingTab.js';
+import { invalidateTrainingStats } from '../stores/statsStore.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { newPlay, completedPlay, undoLast, resetPlay, playHop } from './quizPlay.js';
 import { stepsFromNotation } from './transcriptionPlay.js';
@@ -745,6 +746,7 @@ export async function finishTrainingSession() {
         setStatusBarMessage(tMsg('training.journalFailed'));
         return row;
     }
+    invalidateTrainingStats();
     await refreshTrainingJournal();
     if (row.exercise === 'decision') {
         const correct = row.numbersAsked - row.faults;

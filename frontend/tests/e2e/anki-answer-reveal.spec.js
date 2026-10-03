@@ -289,6 +289,9 @@ test('répondre au damier : le coup se joue, le quiz le juge, la note est propos
     expect(graded).toHaveLength(1);
     expect(graded[0].args[0]).toBe(positionA.id);
 
+    // Le dos explique le coup JOUÉ (8/5 6/5 est le meilleur : l'explication porte sur 6/3 4/3).
+    await expect.poll(async () => (await getWailsCalls(page, 'ExplainDecision')).map((c) => c.args[1])).toContain('6/3 4/3');
+
     // …et le joueur note ce qu'il veut : rien ne l'impose.
     await page.keyboard.press('Digit3');
     const reviews = await getWailsCalls(page, 'ReviewAnkiCard');

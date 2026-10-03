@@ -141,6 +141,14 @@ export const trainingWindowStore = writable('week');
 let _cachedTrainingKey = null;
 
 /**
+ * Un quiz terminé ou une carte révisée change la série sans toucher à aucune clé de la requête :
+ * la prochaine lecture doit recalculer.
+ */
+export function invalidateTrainingStats() {
+    _cachedTrainingKey = null;
+}
+
+/**
  * Fetch the training series: the Decision quiz PR and the Anki retention folded by calendar
  * window, with the real PR of the filter's matches on the same windows. Fetched apart from
  * ComputeStats, and only while its tab is open.
