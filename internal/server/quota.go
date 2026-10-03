@@ -15,14 +15,16 @@ import (
 // tenant they apply to is the X-Tenant-ID the proxy set (ADR-0005).
 type TenantQuotas struct {
 	// MaxPositions: an import is refused (413) once the tenant stores this
-	// many positions. One already running is not cut short, so a tenant may
+	// many positions. Only an import's start checks it; positions.save and the
+	// other unit writes do not. One already running is not cut short, so a tenant may
 	// end above the bound by one import's worth.
 	MaxPositions int64 `json:"maxPositions"`
 
-	// AnalysisSecondsPerDay is the engine time a tenant may spend per UTC day,
-	// summed over every evaluation it asks for (sweeps, comparisons, a cube
-	// matrix, a bare evaluation). Past it, a request is refused (429) and a
-	// running sweep stops at the next position.
+	// AnalysisSecondsPerDay is the engine CPU time (see cpuTime) a tenant may
+	// spend per UTC day, summed over every engine computation it asks for:
+	// sweeps, comparisons, a cube matrix, a bare evaluation, rollouts. Past
+	// it, a request is refused (429), a running sweep or rollout stops at its
+	// next step and a comparison answers what it had, flagged quotaExceeded.
 	AnalysisSecondsPerDay int64 `json:"analysisSecondsPerDay"`
 
 	// MaxConcurrentImports: imports of one tenant running at once; one more is
@@ -76,8 +78,18 @@ func (q *quotaLedger) charge(scope string, d time.Duration) {
 	q.spent[scope] += d
 }
 
-// spender charges engine time to scope and reports whether some is left: a
-// worker stops picking positions on false.
+// cpuTime is the one unit of engine time the ledger keeps: a computation's
+// wall time times the searches it ran at once. A sweep's or a comparison's
+// worker runs one search and charges its own wall time; a cube matrix or a
+// rollout spread over every core charges its wall time once per worker.
+// Charged on wall time alone, the same work would cost a tenant NumCPU
+// times less in one request than spread over a sweep.
+func cpuTime(wall time.Duration, workers int) time.Duration {
+	return wall * time.Duration(max(workers, 1))
+}
+
+// spender charges the engine time of one search, run by one worker, to scope
+// and reports whether some is left: a worker stops picking positions on false.
 func (q *quotaLedger) spender(scope string) func(time.Duration) bool {
 	return func(d time.Duration) bool {
 		q.charge(scope, d)
@@ -128,10 +140,47 @@ func (s *Server) refuseAnalysis(w http.ResponseWriter, scope string) bool {
 	return true
 }
 
-// metered runs one engine computation and charges its time to scope.
-func metered[T any](s *Server, scope string, fn func() (T, error)) (T, error) {
-	start := time.Now()
-	defer func() { s.quota.charge(scope, time.Since(start)) }()
+// meter charges a running computation's engine time to scope as it goes,
+// for one that can stop between steps (a rollout's batches of games).
+type meter struct {
+	q       *quotaLedger
+	scope   string
+	workers int
+	// onSpent, when set, runs on the tick that finds the time spent.
+	onSpent func()
+
+	mu   sync.Mutex
+	last time.Time
+}
+
+// meter starts charging a computation that runs workers searches at once.
+func (s *Server) meter(scope string, workers int) *meter {
+	return &meter{q: s.quota, scope: scope, workers: workers, last: time.Now()}
+}
+
+// tick charges the time since the previous tick and reports whether some
+// engine time is left.
+func (m *meter) tick() bool {
+	m.mu.Lock()
+	now := time.Now()
+	wall := now.Sub(m.last)
+	m.last = now
+	m.mu.Unlock()
+	m.q.charge(m.scope, cpuTime(wall, m.workers))
+	if m.q.analysisExhausted(m.scope) {
+		if m.onSpent != nil {
+			m.onSpent()
+		}
+		return false
+	}
+	return true
+}
+
+// metered runs one engine computation of workers searches at once and
+// charges its time to scope.
+func metered[T any](s *Server, scope string, workers int, fn func() (T, error)) (T, error) {
+	m := s.meter(scope, workers)
+	defer m.tick()
 	return fn()
 }
 

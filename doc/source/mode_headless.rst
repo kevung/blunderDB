@@ -139,11 +139,13 @@ depuis plusieurs clients.
      - taille du seau de jetons pour les pics de requêtes
    * - ``--quota-positions <n>``
      - ``0``
-     - positions qu'un tenant peut stocker : au-delà, un import est refusé
-       (413, ``storage_quota_exceeded``) ; 0 = illimité
+     - positions qu'un tenant peut stocker, vérifiées au début d'un import :
+       une fois la borne atteinte, l'import est refusé (413,
+       ``storage_quota_exceeded``) ; ``positions.save`` et les autres écritures
+       unitaires ne sont pas bornées ; 0 = illimité
    * - ``--quota-analysis-seconds <n>``
      - ``0``
-     - secondes de calcul du moteur par tenant et par jour UTC (429,
+     - secondes CPU de calcul du moteur par tenant et par jour UTC (429,
        ``quota_exceeded``) ; 0 = illimité
    * - ``--quota-imports <n>``
      - ``0``
@@ -994,7 +996,7 @@ bibliothèque. ``rollout.filter`` est la forme en lot de
 langage de la recherche) et qui ne portent pas encore de rollout aux mêmes
 réglages sont jouées l'une après l'autre et enregistrées au fil de l'eau, en
 flux NDJSON (``started``, ``progress`` après chaque série de parties, puis
-``done`` ou ``cancelled``) ; ``rollout.filter.cancel`` l'annule avec son
+``done``, ``cancelled`` ou ``quota_exceeded``) ; ``rollout.filter.cancel`` l'annule avec son
 ``job_id``. Un tenant ne mène qu'un lot à la fois, rollout ou gammonNet.
 ``rollout.list`` lit les rollouts enregistrés d'une position.
 
@@ -1321,15 +1323,23 @@ Quotas par tenant
 
 Une instance partagée borne ce que chaque tenant lui prend avec
 ``--quota-positions``, ``--quota-analysis-seconds`` et ``--quota-imports``
-(sans option, rien n'est borné). Le temps de calcul compte chaque évaluation
-du moteur demandée par le tenant : ``gammonnet.analyzeMissing``,
-``gammonnet.sweepStale``, ``gammonnet.compare``, ``gammonnet.cubeMatrix`` et
-``gammonnet.evaluate``. Une fois le temps du jour épuisé, ces routes répondent
-429 avec le code ``quota_exceeded`` ; un balayage en cours garde ce qu'il a
-calculé et finit sur l'évènement ``quota_exceeded`` au lieu de ``done``. Le
-compte repart à zéro à minuit UTC et vit en mémoire : un redémarrage du démon
-le remet à zéro. Le quota de positions est vérifié au début d'un import, qui
-n'est pas interrompu en route : un tenant peut le dépasser d'un import.
+(sans option, rien n'est borné). Le temps de calcul compte chaque calcul du
+moteur demandé par le tenant : ``gammonnet.analyzeMissing``,
+``gammonnet.sweepStale``, ``gammonnet.compare``, ``gammonnet.cubeMatrix``,
+``gammonnet.evaluate``, ``rollout.position`` et ``rollout.filter``. Il se
+compte en secondes CPU : le temps écoulé multiplié par le nombre de recherches
+menées à la fois, si bien qu'un calcul réparti sur tous les cœurs coûte autant
+que le même travail mené position par position. Une fois le temps du jour
+épuisé, ces routes répondent 429 avec le code ``quota_exceeded``. Un balayage
+ou un ``rollout.filter`` en cours garde ce qu'il a enregistré et finit sur
+l'évènement ``quota_exceeded`` au lieu de ``done`` ; un ``rollout.position``
+interrompu répond 429 et n'enregistre rien ; une comparaison interrompue rend
+ce qu'elle a replié avec ``quotaExceeded: true`` et, dans ``gathered``, le
+nombre de positions qu'elle devait examiner. Le compte repart à zéro à minuit
+UTC et vit en mémoire : un redémarrage du démon le remet à zéro. Le quota de
+positions est vérifié au début d'un import, qui n'est pas interrompu en route :
+un tenant peut le dépasser d'autant que ses imports en cours ajoutent.
+``positions.save`` et les autres écritures unitaires ne le vérifient pas.
 Chaque refus porte dans ``details`` la borne (``quota``, ``limit``) et l'usage
 (``used``). ``tenants.quota`` rend au tenant appelant les bornes et son
 usage : positions stockées, secondes de calcul du jour, imports en cours.

@@ -58,7 +58,7 @@ func (s *Server) handleGammonNetEvaluate(w http.ResponseWriter, r *http.Request)
 	if s.refuseAnalysis(w, scope) {
 		return
 	}
-	res, err := metered(s, scope, func() (gammonnet.EvalResult, error) {
+	res, err := metered(s, scope, 1, func() (gammonnet.EvalResult, error) {
 		return gammonnet.EvaluatePosition(pos, ply, 0, req.Candidates)
 	})
 	if err != nil {

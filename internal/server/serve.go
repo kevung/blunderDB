@@ -87,6 +87,10 @@ type serveConfig struct {
 // error — flag.FlagSet stops parsing at the first non-flag argument, so a
 // mistyped or misplaced flag after one would otherwise be silently ignored
 // rather than rejected.
+// quotaPositionsHelp says what refuseImport checks, and no more: the count is
+// read when an import starts, and the unit writes are not bounded.
+const quotaPositionsHelp = "per-tenant bound on stored positions, checked when an import starts: refused (413) once the tenant stores this many; an import already running is not cut short, and positions.save and other unit writes are not bounded (0 = unlimited)"
+
 func parseServeArgs(args []string) (*serveConfig, error) {
 	if len(args) > 0 && args[0] == "serve" {
 		args = args[1:]
@@ -115,8 +119,8 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 			fmt.Sprintf("per-tenant sustained requests/second (0 = disabled; default %d, generous headroom for real traffic)", defaultRateLimitRPS))
 		rateLimitBurst = fs.Int("rate-limit-burst", envIntOr("BLUNDERDB_RATE_LIMIT_BURST", defaultRateLimitBurst),
 			fmt.Sprintf("per-tenant token-bucket burst (default %d)", defaultRateLimitBurst))
-		quotaPositions = fs.Int64("quota-positions", int64(envIntOr("BLUNDERDB_QUOTA_POSITIONS", 0)), "per-tenant bound on stored positions: an import is refused (413) past it (0 = unlimited)")
-		quotaAnalysis  = fs.Int64("quota-analysis-seconds", int64(envIntOr("BLUNDERDB_QUOTA_ANALYSIS_SECONDS", 0)), "per-tenant engine seconds per UTC day, over sweeps, comparisons and evaluations (0 = unlimited)")
+		quotaPositions = fs.Int64("quota-positions", int64(envIntOr("BLUNDERDB_QUOTA_POSITIONS", 0)), quotaPositionsHelp)
+		quotaAnalysis  = fs.Int64("quota-analysis-seconds", int64(envIntOr("BLUNDERDB_QUOTA_ANALYSIS_SECONDS", 0)), "per-tenant engine CPU seconds per UTC day (wall time × workers), over sweeps, comparisons, cube matrices, evaluations and rollouts (0 = unlimited)")
 		quotaImports   = fs.Int("quota-imports", envIntOr("BLUNDERDB_QUOTA_IMPORTS", 0), "per-tenant imports running at once (0 = unlimited)")
 		enableRLS      = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
 		tsPath         = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the embedded TS-06-06; the daemon never downloads one")
