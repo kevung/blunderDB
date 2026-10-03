@@ -2637,5 +2637,9 @@
         "needsAck": "Accettate prima l'avviso sulla riservatezza di questo fornitore in Impostazioni › Assistente e MCP.",
         "error": "Errore: {error}",
         "write": "Lasciare che l'assistente proponga modifiche (ciascuna confermata)"
+    },
+    "emptyState": {
+        "import": "Importa… (Ctrl+I)",
+        "backHome": "Torna alla schermata iniziale"
     }
 }

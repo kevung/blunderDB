@@ -580,6 +580,7 @@
                 onActivate={(collection) => openCollection(collection)}
                 onReorder={collectionOrder.reorder}
                 emptyText={$t('collection.empty')}
+                emptyActions
             >
                 {#snippet cells(collection, index)}
                     <td class="name-cell">

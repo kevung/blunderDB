@@ -1166,6 +1166,10 @@ sont faits par la base : la liste se charge par pages au fil du défilement, et
 le compteur « n / N matchs » indique la part chargée. Corriger un joueur, une
 date ou un tournoi dans la liste ne met à jour que la ligne éditée.
 
+Quand la liste est vide, le panneau propose **Importer… (Ctrl+I)** ; sans base
+ouverte, il propose aussi **Retour à l'accueil**. Les panneaux Stats,
+Collections et Anki vides offrent les mêmes boutons.
+
 L'utilisateur peut:
 
 * parcourir les coups d'un match en utilisant les touches *GAUCHE* et *DROITE*,

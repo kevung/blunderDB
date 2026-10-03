@@ -2637,5 +2637,9 @@
         "needsAck": "First accept this provider's privacy warning in Settings › Assistant and MCP.",
         "error": "Error: {error}",
         "write": "Let the assistant propose changes (each one confirmed)"
+    },
+    "emptyState": {
+        "import": "Import… (Ctrl+I)",
+        "backHome": "Back to the welcome screen"
     }
 }

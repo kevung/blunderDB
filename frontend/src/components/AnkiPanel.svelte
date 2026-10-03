@@ -721,6 +721,7 @@
                 startSession(false);
             }}
             emptyText={$t('anki.empty')}
+            emptyActions
         >
             {#snippet cells(deck)}
                 {#if deckEdit.isEditing(deck.id)}

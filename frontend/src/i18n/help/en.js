@@ -283,6 +283,7 @@ export default {
 <h3>Matches Panel</h3>
 <p>The <strong>Matches</strong> panel (<em>CTRL-Tab</em>) lists imported matches. Double-click a match (or press <em>ENTER</em>) to navigate through its moves. The <code>m</code> command resumes navigation in the last visited match.</p>
 <p>The filter field, at the top of the panel (<em>/</em> to go there, <em>Esc</em> to clear it), keeps only the matches where a player, the event, the venue, the tournament or the date contains the typed text. Filtering and column sorting are done by the database: the list loads in pages as you scroll, and the "n / N matches" counter shows the share loaded. Correcting a player, a date or a tournament in the list updates only the edited row.</p>
+<p>When the list is empty, the panel offers <strong>Import… (Ctrl+I)</strong>; with no database open, it also offers <strong>Back to the welcome screen</strong>. The empty Stats, Collections and Anki panels offer the same buttons.</p>
 <p>The user can:</p>
 <ul>
 <li>browse through the moves of a match using the <em>LEFT</em> and <em>RIGHT</em> keys,</li>

@@ -48,7 +48,7 @@
     import { commentTextStore, isAnyModalOpen } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
     import { matchListStore } from '../stores/matchListStore.js';
-    import { databaseLoadedStore } from '../stores/databaseStore';
+    import { databaseLoadedStore, databasePathStore } from '../stores/databaseStore';
     import { libraryCountsStore } from '../stores/libraryCountsStore.js';
     import { transcriptionListStore } from '../stores/transcriptionStore.js';
     import { refreshTranscriptionDrafts, draftLabel, showTranscriptionTab } from '../services/transcriptionService.js';
@@ -778,7 +778,8 @@
                     if (!matchEdit.isEditing(match.id)) handleDoubleClick(match);
                 }}
                 onNearEnd={matchListStore.loadMore}
-                emptyText={matches.length === 0 && $matchListStore.loaded ? (filterText.trim() ? $t('match.noMatchesFiltered') : $t('match.noMatchesImported')) : ''}
+                emptyActions
+                emptyText={matches.length === 0 && ($matchListStore.loaded || !$databasePathStore) ? (filterText.trim() ? $t('match.noMatchesFiltered') : $t('match.noMatchesImported')) : ''}
             >
                 {#snippet cells(match, index)}
                     {#if matchEdit.isEditing(match.id)}

@@ -30,7 +30,7 @@
     import { databasePathStore } from './stores/databaseStore.js';
     import { positionStore, positionsStore, emptyPosition } from './stores/positionStore.js';
     import { analysisStore, emptyAnalysis } from './stores/analysisStore.js';
-    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, isAnyModalOpen } from './stores/uiStore.js';
+    import { currentPositionIndexStore, statusBarModeStore, positionReloadTriggerStore, activeTabStore, isAnyModalOpen, homeDismissedStore } from './stores/uiStore.js';
     import { transcriptionWheelStore } from './stores/transcriptionStore.js';
 
     import { newDatabase, openDatabase, openDatabaseByPath, loadDemoDatabase, exitApp, setStatusBarMessage } from './services/databaseService.js';
@@ -135,7 +135,6 @@
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
     // Écarté pour la session : le panneau Eval fonctionne sans base.
-    let homeDismissed = $state(false);
     let positionCount = 0;
     let saveSessionTimeout = null;
     let tabInitialized = false;
@@ -451,8 +450,8 @@
          il ne dit ni ce que l'outil sait faire, ni par où commencer. Il
          s'efface dès qu'une base est ouverte, et se laisse écarter pour qui
          veut se servir du panneau Eval sans base. -->
-    {#if !$databasePathStore && !homeDismissed}
-        <HomeScreen onDismiss={() => (homeDismissed = true)} />
+    {#if !$databasePathStore && !$homeDismissedStore}
+        <HomeScreen onDismiss={() => homeDismissedStore.set(true)} />
     {/if}
 
     <!-- Le plein écran de la Direction masque le chrome sans le démonter : `display: contents`

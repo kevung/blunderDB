@@ -2637,5 +2637,9 @@
         "needsAck": "Hyväksy ensin tämän palveluntarjoajan tietosuojavaroitus kohdassa Asetukset › Avustaja ja MCP.",
         "error": "Virhe: {error}",
         "write": "Anna avustajan ehdottaa muutoksia (jokainen vahvistetaan)"
+    },
+    "emptyState": {
+        "import": "Tuo… (Ctrl+I)",
+        "backHome": "Takaisin aloitusnäyttöön"
     }
 }

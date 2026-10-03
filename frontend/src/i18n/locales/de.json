@@ -2637,5 +2637,9 @@
         "needsAck": "Akzeptieren Sie zuerst den Datenschutzhinweis dieses Anbieters unter Einstellungen › Assistent und MCP.",
         "error": "Fehler: {error}",
         "write": "Den Assistenten Änderungen vorschlagen lassen (jede bestätigt)"
+    },
+    "emptyState": {
+        "import": "Importieren… (Strg+I)",
+        "backHome": "Zurück zum Startbildschirm"
     }
 }

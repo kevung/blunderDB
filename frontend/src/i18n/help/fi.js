@@ -283,6 +283,7 @@ export default {
 <h3>Ottelupaneeli</h3>
 <p><strong>Ottelupaneeli</strong> (<em>CTRL-Tab</em>) luettelee tuodut ottelut. Kaksoisnapsauta ottelua (tai paina <em>ENTER</em>) navigoidaksesi sen siirroissa. Komento <code>m</code> jatkaa navigointia viimeksi katsotussa ottelussa.</p>
 <p>Paneelin yläreunan suodatuskenttä (<em>/</em> siirtyy siihen, <em>Esc</em> tyhjentää sen) säilyttää vain ottelut, joissa pelaaja, tapahtuma, paikka, turnaus tai päivämäärä sisältää kirjoitetun tekstin. Suodatuksen ja sarakkeiden lajittelun tekee tietokanta: luettelo latautuu sivuittain vierittäessä, ja laskuri ”n / N ottelua” näyttää ladatun osuuden. Pelaajan, päivämäärän tai turnauksen korjaaminen luettelossa päivittää vain muokatun rivin.</p>
+<p>Kun luettelo on tyhjä, paneeli tarjoaa <strong>Tuo… (Ctrl+I)</strong>; ilman avattua tietokantaa se tarjoaa myös <strong>Takaisin aloitusnäyttöön</strong>. Tyhjät Stats-, Kokoelmat- ja Anki-paneelit tarjoavat samat painikkeet.</p>
 <p>Käyttäjä voi:</p>
 <ul>
 <li>selata ottelun siirtoja näppäimillä <em>VASEN</em> ja <em>OIKEA</em>,</li>

@@ -2637,5 +2637,9 @@
         "needsAck": "Acceptez d'abord l'avertissement de confidentialité de ce fournisseur dans Paramètres › Assistant et MCP.",
         "error": "Erreur : {error}",
         "write": "Laisser l'assistant proposer des modifications (chacune confirmée)"
+    },
+    "emptyState": {
+        "import": "Importer… (Ctrl+I)",
+        "backHome": "Retour à l'accueil"
     }
 }

@@ -283,6 +283,7 @@ export default {
 <h3>Matches-Panel</h3>
 <p>Das Panel <strong>Matches</strong> (<em>CTRL-Tab</em>) listet die importierten Matches auf. Doppelklicken Sie auf ein Match (oder drücken Sie <em>EINGABE</em>), um durch seine Züge zu navigieren. Der Befehl <code>m</code> setzt die Navigation im zuletzt besuchten Match fort.</p>
 <p>Das Filterfeld oben im Panel (<em>/</em> um dorthin zu springen, <em>Esc</em> zum Leeren) behält nur die Matches, bei denen ein Spieler, die Veranstaltung, der Ort, das Turnier oder das Datum den eingegebenen Text enthält. Filter und Spaltensortierung erledigt die Datenbank: Die Liste lädt seitenweise beim Scrollen, und der Zähler „n / N Matches“ zeigt den geladenen Anteil. Das Korrigieren eines Spielers, eines Datums oder eines Turniers in der Liste aktualisiert nur die bearbeitete Zeile.</p>
+<p>Ist die Liste leer, bietet das Panel <strong>Importieren… (Strg+I)</strong> an; ohne geöffnete Datenbank zusätzlich <strong>Zurück zum Startbildschirm</strong>. Die leeren Panels Stats, Sammlungen und Anki bieten dieselben Schaltflächen.</p>
 <p>Der Benutzer kann:</p>
 <ul>
 <li>die Züge eines Matches mit den Tasten <em>LINKS</em> und <em>RECHTS</em> durchblättern,</li>
