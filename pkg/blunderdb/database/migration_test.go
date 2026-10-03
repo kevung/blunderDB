@@ -3392,6 +3392,9 @@ func TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave(t *testing.T) {
 		`DROP TABLE import_batch_file`, `DROP TABLE player_alias`, `DROP TABLE event_alias`,
 		`CREATE INDEX idx_position_decision_dice ON position(decision_type, dice_1, dice_2)`,
 		`CREATE INDEX idx_analysis_win2 ON analysis(player2_win_rate)`,
+		// Statistics of the 2.29.0 library: present, so ensureSearchStats
+		// would keep them, and silent on the indexes the step creates.
+		`ANALYZE`,
 		`UPDATE metadata SET value = '2.29.0' WHERE key = 'database_version'`,
 	} {
 		if _, err := d.db.Exec(stmt); err != nil {
@@ -3426,6 +3429,10 @@ func TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave(t *testing.T) {
 	_ = d.db.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = ?`, matchDateBackfillKey).Scan(&pending)
 	if pending != 0 {
 		t.Error("the match_date backfill key outlived the pass")
+	}
+	var matchDateStat string
+	if err := d.db.QueryRow(`SELECT stat FROM sqlite_stat1 WHERE idx = 'idx_position_match_date'`).Scan(&matchDateStat); err != nil {
+		t.Errorf("planner statistics not refreshed by the migration: idx_position_match_date has no sqlite_stat1 row (%v)", err)
 	}
 	var redated int
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position WHERE match_date IS NOT NULL`).Scan(&redated); err != nil || redated != withDate {

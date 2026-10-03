@@ -190,12 +190,19 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 
 	// The 2.30.0 derived columns, after ensureAllTablesExist created them.
 	// Both passes resume where an interrupted open left them, and cost one
-	// probe when there is nothing to do.
-	if err := d.backfillPositionMatchDates(ctx); err != nil {
+	// probe when there is nothing to do; the statistics are refreshed once
+	// both have run (finishLargeLibraryWave).
+	crossing230, err := d.backfillPositionMatchDates(ctx)
+	if err != nil {
 		return fmt.Errorf("dating the stored positions by their match: %w", err)
 	}
 	if err := d.backfillAnalysisProvenance(ctx); err != nil {
 		return fmt.Errorf("deriving the provenance of the stored analyses: %w", err)
+	}
+	if crossing230 {
+		if err := d.finishLargeLibraryWave(ctx); err != nil {
+			return fmt.Errorf("refreshing the planner statistics: %w", err)
+		}
 	}
 
 	// The chain has ended at DatabaseVersion (or beyond it): every table the

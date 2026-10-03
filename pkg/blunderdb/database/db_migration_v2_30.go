@@ -63,15 +63,17 @@ const backfillBatch = 20000
 
 // backfillPositionMatchDates derives position.match_date for every position
 // while matchDateBackfillKey is set, in id ranges, recording the next id in
-// the same transaction as the batch.
-func (d *Database) backfillPositionMatchDates(ctx context.Context) error {
+// the same transaction as the batch. It reports whether the key was set: the
+// key is left in place, for finishLargeLibraryWave to delete once the
+// statistics are refreshed.
+func (d *Database) backfillPositionMatchDates(ctx context.Context) (bool, error) {
 	var from string
 	err := d.db.QueryRowContext(ctx, `SELECT value FROM metadata WHERE key = ?`, matchDateBackfillKey).Scan(&from)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil
+		return false, nil
 	}
 	if err != nil {
-		return err
+		return false, err
 	}
 	next, err := strconv.ParseInt(from, 10, 64)
 	if err != nil {
@@ -79,11 +81,11 @@ func (d *Database) backfillPositionMatchDates(ctx context.Context) error {
 	}
 	var maxID int64
 	if err := d.db.QueryRowContext(ctx, `SELECT COALESCE(MAX(id), 0) FROM position`).Scan(&maxID); err != nil {
-		return err
+		return false, err
 	}
 	for next <= maxID {
 		if err := ctx.Err(); err != nil {
-			return err
+			return false, err
 		}
 		end := next + backfillBatch
 		err := d.inTx(ctx, func(tx *sql.Tx) error {
@@ -100,12 +102,36 @@ func (d *Database) backfillPositionMatchDates(ctx context.Context) error {
 			return err
 		})
 		if err != nil {
-			return err
+			return false, err
 		}
 		next = end
 		d.emitMigrationProgress("position_match_date", int(next), int(maxID))
 	}
-	_, err = d.db.ExecContext(ctx, `DELETE FROM metadata WHERE key = ?`, matchDateBackfillKey)
+	return true, nil
+}
+
+// finishLargeLibraryWave closes the open crossing 2.30.0, after both
+// backfills: a full ANALYZE, then the deletion of matchDateBackfillKey, so an
+// interruption before the end redoes the ANALYZE on the next open.
+//
+// The statistics the file carries describe the 2.29.0 library: they still
+// name the pruned indexes' neighbours as they were and say nothing of the new
+// ones, and ensureSearchStats keeps any statistics it finds. A sampled
+// refresh (PRAGMA analysis_limit, as RefreshSearchStatistics does) does not
+// help either: it estimates 1000 rows per key on every index. On a
+// 15.6 M-position library both left the score filter (S) and its
+// combination with the decision type seven to twenty times slower than with
+// a full ANALYZE, which costs about 30 s there against 18 min for the
+// backfills. An ANALYZE that fails for another reason than a cancellation is
+// logged and not retried: the library is usable, only slower.
+func (d *Database) finishLargeLibraryWave(ctx context.Context) error {
+	if _, err := d.db.ExecContext(ctx, `ANALYZE`); err != nil {
+		if ctxErr := ctx.Err(); ctxErr != nil {
+			return ctxErr
+		}
+		slog.Warn("refreshing the planner statistics after the 2.30.0 migration failed", "err", err)
+	}
+	_, err := d.db.ExecContext(ctx, `DELETE FROM metadata WHERE key = ?`, matchDateBackfillKey)
 	return err
 }
 
