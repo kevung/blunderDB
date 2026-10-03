@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 15:51+0200\n"
+"POT-Creation-Date: 2026-10-03 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -677,8 +677,8 @@ msgstr ""
 "-vastaus). Edellyttää kuutiopäätöstä."
 
 #: ../../source/cmd_mode.rst:1
-msgid "—"
-msgstr "—"
+msgid "``--cube-response double``"
+msgstr "``--cube-response double``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "dr"
@@ -691,6 +691,10 @@ msgid ""
 msgstr ""
 "Päätös on Take / Pass -vastaus. Edellyttää kuutiopäätöstä; ``dd``:n "
 "kanssa ``dr`` on etusijalla."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--cube-response takepass``"
+msgstr "``--cube-response takepass``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "D"
@@ -733,6 +737,10 @@ msgstr ""
 "Asemaa **ei** ole pelattu heitolla 6-5 (järjestyksestä riippumatta). Arvo"
 " ilmoitetaan tunnuksessa; toistettavissa useiden heittojen "
 "poissulkemiseksi (``xD65 xD54``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "—"
+msgstr "—"
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -1558,6 +1566,10 @@ msgstr ""
 "``*`` korvaa minkä tahansa merkkijonon (esim. ``tn'open*'``)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--tournament-name``"
+msgstr "``--tournament-name``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "rd:x"
 msgstr "rd:x"
 
@@ -1573,6 +1585,10 @@ msgstr ""
 " merkkijonon. Toistettavissa (``rd:1 rd:2``): jompikumpi."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--round``"
+msgstr "``--round``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "ml:x"
 msgstr "ml:x"
 
@@ -1583,6 +1599,10 @@ msgid ""
 msgstr ""
 "Ottelun pituus on x pistettä. Muodot ``ml:7``, ``ml:5,9``, ``ml>5`` ja "
 "``ml<9`` (rajat mukaan lukien)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--match-lengths``"
+msgstr "``--match-lengths``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
@@ -1604,6 +1624,10 @@ msgstr ""
 "``2024-06``, ``2024-06-15``) ja kattaa koko kestonsa, rajat mukaan "
 "lukien: ``md:2024-01..2024-12`` ulottuu 1. tammikuuta 31. joulukuuta "
 "2024. Muodot ``md:2024`` (koko vuosi), ``md>2024-06`` ja ``md<2024-06``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--match-date``"
+msgstr "``--match-date``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "idx"
@@ -1640,6 +1664,10 @@ msgstr ""
 "korvaa minkä tahansa merkkijonon (``pl'Ali*'``)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--player``"
+msgstr "``--player``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "``pl!'nom'``"
 msgstr "``pl!'nimi'``"
 
@@ -1652,6 +1680,10 @@ msgstr ""
 "Vain tämän pelaajan tekemät päätökset: vuorossa oleva pelaaja on se, joka"
 " ottelussa istuu tämännimisellä puolella (pelaaja 1 tai pelaaja 2). Samat"
 " kirjainkoko- ja jokerimerkkisäännöt kuin ``pl``:llä."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--player`` ``--seat-only``"
+msgstr "``--player`` ``--seat-only``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "``op'nom'``"
@@ -1672,6 +1704,10 @@ msgstr ""
 "kirjainkoko- ja jokerimerkkisäännöt."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--opponent``"
+msgstr "``--opponent``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "pr>x"
 msgstr "pr>x"
 
@@ -1686,6 +1722,10 @@ msgstr ""
 "ottelukohtaisista tilastoista tämän pelaajan puolelta (ei vastustajan "
 "PR); ottelu ilman PR:ää suljetaan pois. Muodot ``pr>8``, ``pr<5`` ja "
 "``pr4,9``, rajat mukaan lukien."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--pr``"
+msgstr "``--pr``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "ad:xg"
@@ -1708,6 +1748,10 @@ msgstr ""
 "(rollout, mukaan lukien XG Roller ja Roller++). Toistettavissa: moottorit"
 " ovat vaihtoehtoja, samoin syvyydet, ja sekä moottorin että syvyyden on "
 "täsmättävä (``ad:xg ad:gnubg ad:3ply+``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--analysis``"
+msgstr "``--analysis``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "like, like42, like<12, like42*"

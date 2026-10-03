@@ -10,6 +10,7 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -49,6 +50,16 @@ type searchFlags struct {
 	phase             *string
 	gameType          *string
 	commentOrigin     *string
+	player            *string
+	seatOnly          *bool
+	opponent          *string
+	tournamentName    *string
+	round             *string
+	matchLengths      *string
+	matchDate         *string
+	playerPR          *string
+	analysis          *string
+	cubeResponse      *string
 	query             *string
 	queryHelp         *bool
 }
@@ -92,6 +103,16 @@ func defineSearchFlags(fs *flag.FlagSet) *searchFlags {
 		phase:             fs.String("phase", "", "Only positions in these game phases, comma-separated: opening, middlegame, race, bearoff (derived label, see `blunderdb repair`)"),
 		gameType:          fs.String("game-type", "", "Only positions in these plans of play, comma-separated: race, bearin, crunch, backgame, acepoint, blitz, primevprime, mutualholding, holding, contact (derived label, see `blunderdb repair`)"),
 		commentOrigin:     fs.String("comment-origin", "", "Only positions carrying a comment from these origins, comma-separated: user, xg, gnubg, bgf, unknown"),
+		player:            fs.String("player", "", "Only matches this player sat in (case-insensitive, '*' as a wildcard); same as the pl\"…\" token"),
+		seatOnly:          fs.Bool("seat-only", false, "With --player: only the decisions that player took (pl!\"…\")"),
+		opponent:          fs.String("opponent", "", "With --player, only the matches against this opponent; alone, a name at either seat (op\"…\")"),
+		tournamentName:    fs.String("tournament-name", "", "Only matches of tournaments with this name (case-insensitive, '*' as a wildcard; tn\"…\")"),
+		round:             fs.String("round", "", "Only matches of these rounds, comma-separated ('*' as a wildcard; rd:)"),
+		matchLengths:      fs.String("match-lengths", "", "Length of the match the position was met in: '7', '5,9' (5 to 9), '>5', '<9' (ml)"),
+		matchDate:         fs.String("match-date", "", "Date of the match: '2024', '2024-01..2024-12', '>2024-06', '<2024-06' (md; not the analysis date)"),
+		playerPR:          fs.String("pr", "", "PR of the whole match for the player who took the decision: '>8', '<5', '4,9' (pr)"),
+		analysis:          fs.String("analysis", "", "Engines and depths of the stored verdict, comma-separated: xg, gnubg, bgblitz, hedgehog, gammonnet, 3ply, 3ply+, book, rollout (ad:)"),
+		cubeResponse:      fs.String("cube-response", "", "Only one kind of cube decision: double (double/no double) or takepass (take/pass)"),
 		query:             fs.String("query", "", "Search with the interface's own query language, e.g. 's cube p>30 E>0.05' (see --query-help); exclusive with the filter flags"),
 		queryHelp:         fs.Bool("query-help", false, "List the tokens --query understands, and exit"),
 	}
@@ -154,7 +175,10 @@ func printSearchUsage(fs *flag.FlagSet) {
 	fmt.Println("  # The interface's own query language: cube decisions, 30+ pips behind, 50 millipoints of error")
 	fmt.Println("  blunderdb search --db database.db --query 's cube p>30 E>50'")
 	fmt.Println()
-	fmt.Println("  # Filters no flag exposes: a move pattern, a comment tag, a player, a date")
+	fmt.Println("  # One player's own decisions in 7-point matches of 2024, analysed at 3 plies or more")
+	fmt.Println("  blunderdb search --db database.db --player Alice --seat-only --match-lengths 7 --match-date 2024 --analysis 3ply+")
+	fmt.Println()
+	fmt.Println("  # Filters no flag exposes: a move pattern, a comment tag, an analysis date")
 	fmt.Println("  blunderdb search --db database.db --query 's m\"13/11\" t\"blunder\" pl\"Alice\" T>2026/01/01'")
 }
 
@@ -321,29 +345,114 @@ func (f *searchFlags) toFilters() (SearchFilters, error) {
 		return SearchFilters{}, err
 	}
 
+	corpus, err := f.corpusFilters()
+	if err != nil {
+		return SearchFilters{}, err
+	}
+
 	return SearchFilters{
-		Filter:                  filter,
-		GamePhaseFilter:         phaseFilter,
-		GameTypeFilter:          typeFilter,
-		CommentOriginFilter:     originFilter,
-		IncludeCube:             includeCube,
-		IncludeScore:            includeScore,
-		PipCountFilter:          pipCountFilter,
-		WinRateFilter:           winRateFilter,
-		MoveErrorFilter:         moveErrorFilter,
-		Player1CheckerOffFilter: player1CheckerOffFilter,
-		Player2CheckerOffFilter: player2CheckerOffFilter,
-		DecisionTypeFilter:      decisionTypeFilter,
-		DiceRollFilter:          diceRollFilter,
-		DiceRollMode:            diceRollMode,
-		MatchIDsFilter:          *f.matchIDsFlag,
-		TournamentIDsFilter:     *f.tournamentIDsFlag,
-		PositionIDsFilter:       *f.positionIDsFlag,
+		PlayerFilter:             corpus.PlayerFilter,
+		OpponentFilter:           corpus.OpponentFilter,
+		TournamentNameFilter:     corpus.TournamentNameFilter,
+		RoundFilter:              corpus.RoundFilter,
+		MatchLengthFilter:        corpus.MatchLengthFilter,
+		MatchDateFilter:          corpus.MatchDateFilter,
+		PlayerPRFilter:           corpus.PlayerPRFilter,
+		AnalysisProvenanceFilter: corpus.AnalysisProvenanceFilter,
+		CubeResponseFilter:       corpus.CubeResponseFilter,
+		Filter:                   filter,
+		GamePhaseFilter:          phaseFilter,
+		GameTypeFilter:           typeFilter,
+		CommentOriginFilter:      originFilter,
+		IncludeCube:              includeCube,
+		IncludeScore:             includeScore,
+		PipCountFilter:           pipCountFilter,
+		WinRateFilter:            winRateFilter,
+		MoveErrorFilter:          moveErrorFilter,
+		Player1CheckerOffFilter:  player1CheckerOffFilter,
+		Player2CheckerOffFilter:  player2CheckerOffFilter,
+		DecisionTypeFilter:       decisionTypeFilter,
+		DiceRollFilter:           diceRollFilter,
+		DiceRollMode:             diceRollMode,
+		MatchIDsFilter:           *f.matchIDsFlag,
+		TournamentIDsFilter:      *f.tournamentIDsFlag,
+		PositionIDsFilter:        *f.positionIDsFlag,
 
 		IndividuallyImportedFilter: *f.individual,
 		FlaggedFilter:              *f.flagged,
 		CommentFilter:              commentFilter,
 	}, nil
+}
+
+// corpusFilters renders the corpus flags as the tokens the query language
+// would have produced, so a flag and its token are one filter, not two.
+func (f *searchFlags) corpusFilters() (SearchFilters, error) {
+	var out SearchFilters
+	name := strings.TrimSpace(*f.player)
+	switch {
+	case *f.seatOnly && name == "":
+		return out, fmt.Errorf("--seat-only needs --player")
+	case *f.seatOnly:
+		out.PlayerFilter = quotedToken("pl!", name)
+	default:
+		out.PlayerFilter = quotedToken("pl", name)
+	}
+	out.OpponentFilter = quotedToken("op", *f.opponent)
+	out.TournamentNameFilter = quotedToken("tn", *f.tournamentName)
+	out.RoundFilter = joinList(*f.round)
+	out.MatchLengthFilter = comparisonToken("ml", *f.matchLengths, ":")
+	out.MatchDateFilter = comparisonToken("md", *f.matchDate, ":")
+	out.PlayerPRFilter = comparisonToken("pr", *f.playerPR, "")
+	analysis, err := normaliseClosedList(*f.analysis, "--analysis", provenanceValue.MatchString)
+	if err != nil {
+		return out, err
+	}
+	out.AnalysisProvenanceFilter = analysis
+	switch cr := strings.ToLower(strings.TrimSpace(*f.cubeResponse)); cr {
+	case "", "double", "takepass":
+		out.CubeResponseFilter = cr
+	default:
+		return out, fmt.Errorf("--cube-response: unknown value %q (double, takepass)", *f.cubeResponse)
+	}
+	return out, nil
+}
+
+// quotedToken renders a name as its `prefix"name"` token, or nothing.
+func quotedToken(prefix, name string) string {
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return ""
+	}
+	return prefix + `"` + name + `"`
+}
+
+// comparisonToken prefixes a flag value with its token: a bound ('>5', '<9')
+// follows the prefix directly, anything else after sep ('ml:7', 'pr4,9').
+func comparisonToken(prefix, value, sep string) string {
+	v := strings.TrimSpace(value)
+	if v == "" {
+		return ""
+	}
+	if v[0] == '>' || v[0] == '<' {
+		return prefix + v
+	}
+	return prefix + sep + v
+}
+
+// provenanceValue is the shape of an `ad:` value: an engine name or a depth.
+var provenanceValue = regexp.MustCompile(`^(?:[a-z][a-z0-9]*|\d+ply\+?)$`)
+
+// joinList turns a comma-separated flag value into the ";"-separated form of
+// the filter fields.
+func joinList(value string) string {
+	var out []string
+	for _, item := range strings.Split(value, ",") {
+		item = strings.TrimSpace(item)
+		if item != "" {
+			out = append(out, item)
+		}
+	}
+	return strings.Join(out, ";")
 }
 
 // normaliseClosedList turns a comma-separated flag value into the

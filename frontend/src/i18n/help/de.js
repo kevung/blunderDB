@@ -682,7 +682,7 @@ export default {
 <div class="admonition note">
 <p>In diesem Reiter sind die Liste <strong>Spieler</strong> und die Wahl des <strong>Entscheidungstyps</strong> deaktiviert: Die Tabelle zeigt alle Spieler und teilt Steine- und Doppler-Entscheidungen bereits in getrennte Spalten auf.</p>
 </div>
-<p>Die Zahlen pro Match in dieser Tabelle, im Tab Fortschritt und in den PR pro Turnier und pro Match stammen aus einer beim Import geführten Tabelle (<code>match_stats</code>: pro Match und pro Sitz die gezählten Entscheidungen, die Fehleraufteilung zwischen Steinen und Doppler, die Fehler, die Blunder, die beiden Snowie-Terme und das Glück) statt aus einem erneuten Durchlauf jeder Entscheidung: Bei einer Bibliothek mit mehreren Millionen Positionen hält das den Bereich schnell. Daraus werden drei Korpusansichten abgeleitet, auf der Kommandozeile und über die API des Daemons (siehe stats — Wiederkehrende Fehler): das <strong>Kopf-an-Kopf</strong> zweier Spieler (gemeinsame Matches, PR jedes Spielers, Bilanz), der gleitende <strong>PR pro Kalenderfenster</strong> (Monat, Quartal) und die <strong>Rangliste</strong> nach PR der Spieler, die mindestens eine bestimmte Anzahl gezählter Entscheidungen haben. Ein <strong>Herkunftsfilter</strong> (Analyse-Engine, minimale Tiefe) beschränkt die Statistiken auf so analysierte Entscheidungen; er bezieht sich auf jede Entscheidung, und die davon betroffenen Zahlen werden dann aus den Entscheidungen neu berechnet.</p>
+<p>Die Zahlen pro Match in dieser Tabelle, im Tab Fortschritt und in den PR pro Turnier und pro Match stammen aus einer beim Import geführten Tabelle (<code>match_stats</code>: pro Match und pro Sitz die gezählten Entscheidungen, die Fehleraufteilung zwischen Steinen und Doppler, die Fehler, die Blunder, die beiden Snowie-Terme und das Glück) statt aus einem erneuten Durchlauf jeder Entscheidung: Bei einer Bibliothek mit mehreren Millionen Positionen hält das den Bereich schnell. Daraus werden drei Korpusansichten abgeleitet, im Tab <strong>Korpus</strong> des Bereichs, auf der Kommandozeile und über die API des Daemons (siehe stats — Wiederkehrende Fehler): das <strong>Kopf-an-Kopf</strong> zweier Spieler (gemeinsame Matches, PR jedes Spielers, Bilanz), der gleitende <strong>PR pro Kalenderfenster</strong> (Monat, Quartal) und die <strong>Rangliste</strong> nach PR der Spieler, die mindestens eine bestimmte Anzahl gezählter Entscheidungen haben. Der Tab Korpus berechnet jede Ansicht auf Anfrage, unter dem aktuellen Filter. Ein <strong>Herkunftsfilter</strong> (Felder <em>Engine</em> und <em>Min. Tiefe</em> der Filterleiste) beschränkt die Statistiken auf so analysierte Entscheidungen; er bezieht sich auf jede Entscheidung, und die davon betroffenen Zahlen werden dann aus den Entscheidungen neu berechnet.</p>
 <div class="admonition important">
 <p>Ein Gedankenstrich („—“) steht für einen <strong>nie gemessenen</strong> Wert, nicht zu verwechseln mit null. Das gilt insbesondere für die Spalte Glück bei jedem Match, das vor Schemaversion 2.15.0 importiert wurde: Das Glück wurde damals nicht gespeichert, und nichts erlaubt es, es nachträglich zu rekonstruieren. Die Quelldatei erneut zu importieren genügt nicht: Der Import erkennt ein Duplikat und übernimmt nur die neu gesetzten Lernmarkierungen (der Bericht nennt ihre Zahl). Das Match muss gelöscht und dann erneut importiert werden. Formate, die es nicht transportieren (BGF, Jellyfish <code>.mat</code>), werden es nie liefern.</p>
 </div>
@@ -2084,12 +2084,12 @@ export default {
 <tr>
 <td>dd</td>
 <td>Die Entscheidung ist eine Dopplerwürfel-Aktion vom Typ Doppeln / Nicht doppeln (keine Take-/Pass-Antwort). Impliziert eine Dopplerwürfel-Entscheidung.</td>
-<td>—</td>
+<td><code>--cube-response double</code></td>
 </tr>
 <tr>
 <td>dr</td>
 <td>Die Entscheidung ist eine Take-/Pass-Antwort. Impliziert eine Dopplerwürfel-Entscheidung; zusammen mit <code>dd</code> hat <code>dr</code> Vorrang.</td>
-<td>—</td>
+<td><code>--cube-response takepass</code></td>
 </tr>
 <tr>
 <td>D</td>
@@ -2519,22 +2519,22 @@ export default {
 <tr>
 <td>tn'Name'</td>
 <td>In Turnieren suchen, deren Name <code>Name</code> lautet: Groß-/Kleinschreibung wird ignoriert und <code>*</code> steht für eine beliebige Zeichenfolge (z. B. <code>tn'open*'</code>).</td>
-<td>—</td>
+<td><code>--tournament-name</code></td>
 </tr>
 <tr>
 <td>rd:x</td>
 <td>In den Matches der Runde x suchen (z. B. <code>rd:3</code>, <code>rd:Finale</code>): der Rundentext wird ohne Beachtung der Groß-/Kleinschreibung verglichen, <code>*</code> steht für eine beliebige Zeichenfolge. Wiederholbar (<code>rd:1 rd:2</code>): die eine oder die andere.</td>
-<td>—</td>
+<td><code>--round</code></td>
 </tr>
 <tr>
 <td>ml:x</td>
 <td>Das Match hat eine Länge von x Punkten. Formen <code>ml:7</code>, <code>ml:5,9</code>, <code>ml&gt;5</code> und <code>ml&lt;9</code> (Grenzen eingeschlossen).</td>
-<td>—</td>
+<td><code>--match-lengths</code></td>
 </tr>
 <tr>
 <td>md:x..y</td>
 <td><strong>Matchdatum</strong>, gelesen aus der Spalte <code>match_date</code> der Stellung (das Datum des ältesten Matches, das sie erreicht), und nicht das Erstellungsdatum der Analyse (<code>T</code>). Jede Grenze ist ein Jahr, ein Monat oder ein Tag (<code>2024</code>, <code>2024-06</code>, <code>2024-06-15</code>) und deckt ihre gesamte Dauer ab, Grenzen eingeschlossen: <code>md:2024-01..2024-12</code> reicht vom 1. Januar bis zum 31. Dezember 2024. Formen <code>md:2024</code> (das ganze Jahr), <code>md&gt;2024-06</code> und <code>md&lt;2024-06</code>.</td>
-<td>—</td>
+<td><code>--match-date</code></td>
 </tr>
 <tr>
 <td>idx</td>
@@ -2549,27 +2549,27 @@ export default {
 <tr>
 <td><code>pl'Name'</code></td>
 <td>Stellungen aus einer Partie suchen, an der der genannte Spieler an einer der beiden Seiten beteiligt war (z. B. <code>pl'Alice'</code>). Groß-/Kleinschreibung wird ignoriert und <code>*</code> steht für eine beliebige Zeichenfolge (<code>pl'Ali*'</code>).</td>
-<td>—</td>
+<td><code>--player</code></td>
 </tr>
 <tr>
 <td><code>pl!'Name'</code></td>
 <td>Nur die Entscheidungen dieses Spielers: Der Spieler am Zug ist derjenige, der im Match die Seite mit diesem Namen innehat (Spieler 1 oder Spieler 2). Gleiche Regeln für Groß-/Kleinschreibung und Platzhalter wie bei <code>pl</code>.</td>
-<td>—</td>
+<td><code>--player</code> <code>--seat-only</code></td>
 </tr>
 <tr>
 <td><code>op'Name'</code></td>
 <td>Nur Matches, in denen dieser Spieler der Gegner des Spielers von <code>pl</code> ist (<code>pl'Alice' op'Bob'</code>: Alice gegen Bob, auf der einen oder anderen Seite; mit <code>pl!</code> nur die Entscheidungen von Alice). Ohne <code>pl</code> bezeichnet <code>op</code> allein einen Spieler auf einer der beiden Seiten, wie <code>pl</code>. Gleiche Regeln für Groß-/Kleinschreibung und Platzhalter.</td>
-<td>—</td>
+<td><code>--opponent</code></td>
 </tr>
 <tr>
 <td>pr&gt;x</td>
 <td>Der <strong>Match-PR</strong> des Spielers, der die Entscheidung getroffen hat, beträgt mindestens x, gelesen aus den Statistiken pro Match auf der Seite dieses Spielers (nicht der PR des Gegners); ein Match ohne PR wird ausgeschlossen. Formen <code>pr&gt;8</code>, <code>pr&lt;5</code> und <code>pr4,9</code>, Grenzen eingeschlossen.</td>
-<td>—</td>
+<td><code>--pr</code></td>
 </tr>
 <tr>
 <td>ad:xg</td>
 <td>Engine und Tiefe der für die Stellung gespeicherten Analyse. Engines: <code>xg</code>, <code>gnubg</code>, <code>bgblitz</code>, <code>hedgehog</code>, <code>gammonnet</code> (Anfang des Engine-Namens, Groß-/Kleinschreibung ignoriert). Tiefen: <code>3ply</code> (genau 3 Ply), <code>3ply+</code> (mindestens 3 Ply), <code>book</code> (Eröffnungsbuch), <code>rollout</code> (Rollout, einschließlich XG Roller und Roller++). Wiederholbar: Die Engines sind Alternativen, die Tiefen ebenso, und eine Engine und eine Tiefe müssen beide passen (<code>ad:xg ad:gnubg ad:3ply+</code>).</td>
-<td>—</td>
+<td><code>--analysis</code></td>
 </tr>
 <tr>
 <td>like, like42, like&lt;12, like42*</td>

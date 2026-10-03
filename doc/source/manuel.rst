@@ -2623,12 +2623,13 @@ par match et par siège, les décisions comptées, l'erreur séparée pions/vide
 les erreurs, les blunders, les deux termes du Snowie et la chance) plutôt que
 d'un nouveau parcours de chaque décision : sur une bibliothèque de plusieurs
 millions de positions, c'est ce qui garde le panneau rapide. Trois vues de
-corpus en sont tirées, en ligne de commande et par l'API du démon (voir
-:ref:`cli_stats`) : le **face-à-face** de deux joueurs (matchs communs, PR de
+corpus en sont tirées, dans l'onglet **Corpus** du panneau, en ligne de
+commande et par l'API du démon (voir :ref:`cli_stats`) : le **face-à-face** de deux joueurs (matchs communs, PR de
 chacun, bilan), le **PR par fenêtre calendaire** glissante (mois, trimestre)
 et le **classement** par PR des joueurs qui ont au moins un nombre donné de
-décisions comptées. Un **filtre de provenance** (moteur d'analyse, profondeur
-minimale) restreint les statistiques aux décisions analysées ainsi ; il porte
+décisions comptées. L'onglet Corpus calcule chaque vue à la demande, sous le
+filtre courant. Un **filtre de provenance** (champs *Moteur* et *Profondeur
+min.* de la barre de filtres) restreint les statistiques aux décisions analysées ainsi ; il porte
 sur chaque décision, et les chiffres qu'il touche sont alors recalculés depuis
 les décisions.
 

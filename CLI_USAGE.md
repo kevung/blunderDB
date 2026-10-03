@@ -3128,10 +3128,14 @@ Usage: blunderdb search [options]
 Search for positions in the database using filters.
 
 Options:
+  -analysis string
+    	Engines and depths of the stored verdict, comma-separated: xg, gnubg, bgblitz, hedgehog, gammonnet, 3ply, 3ply+, book, rollout (ad:)
   -comment-origin string
     	Only positions carrying a comment from these origins, comma-separated: user, xg, gnubg, bgf, unknown
   -cube int
     	Filter by cube value
+  -cube-response string
+    	Only one kind of cube decision: double (double/no double) or takepass (take/pass)
   -db string
     	Path to the database file (required)
   -decision string
@@ -3156,10 +3160,14 @@ Options:
     	Only positions imported on their own, not as part of a match
   -limit int
     	Maximum number of results (0 = no limit)
+  -match-date string
+    	Date of the match: '2024', '2024-01..2024-12', '>2024-06', '<2024-06' (md; not the analysis date)
   -match-ids string
     	Filter by match IDs: comma-separated list e.g. '1,3,5', OR a two-value range e.g. '2,7' (2 through 7), OR a semicolon list e.g. '2;7'
   -match-length int
     	Filter by match length
+  -match-lengths string
+    	Length of the match the position was met in: '7', '5,9' (5 to 9), '>5', '<9' (ml)
   -move-error-max float
     	Maximum played move error (millipoints)
   -move-error-min float
@@ -3172,24 +3180,36 @@ Options:
     	Minimum checkers off for player 2
   -offset int
     	Skip this many results before the first one returned (paging, with --limit)
+  -opponent string
+    	With --player, only the matches against this opponent; alone, a name at either seat (op"…")
   -phase blunderdb repair
     	Only positions in these game phases, comma-separated: opening, middlegame, race, bearoff (derived label, see blunderdb repair)
   -pip-max int
     	Maximum pip count difference
   -pip-min int
     	Minimum pip count difference
+  -player string
+    	Only matches this player sat in (case-insensitive, '*' as a wildcard); same as the pl"…" token
   -position-ids string
     	Filter by position IDs (range '2,7' or explicit list '5;10;15')
+  -pr string
+    	PR of the whole match for the player who took the decision: '>8', '<5', '4,9' (pr)
   -query string
     	Search with the interface's own query language, e.g. 's cube p>30 E>0.05' (see --query-help); exclusive with the filter flags
   -query-help
     	List the tokens --query understands, and exit
+  -round string
+    	Only matches of these rounds, comma-separated ('*' as a wildcard; rd:)
   -score1 int
     	Filter by player 1 score (default -1)
   -score2 int
     	Filter by player 2 score (default -1)
+  -seat-only
+    	With --player: only the decisions that player took (pl!"…")
   -tournament-ids string
     	Filter by tournament IDs: comma-separated list e.g. '1,3,5', OR a two-value range e.g. '2,7' (2 through 7), OR a semicolon list e.g. '2;7'
+  -tournament-name string
+    	Only matches of tournaments with this name (case-insensitive, '*' as a wildcard; tn"…")
   -winrate-max float
     	Maximum win rate (%)
   -winrate-min float
@@ -3241,7 +3261,10 @@ Examples:
   # The interface's own query language: cube decisions, 30+ pips behind, 50 millipoints of error
   blunderdb search --db database.db --query 's cube p>30 E>50'
 
-  # Filters no flag exposes: a move pattern, a comment tag, a player, a date
+  # One player's own decisions in 7-point matches of 2024, analysed at 3 plies or more
+  blunderdb search --db database.db --player Alice --seat-only --match-lengths 7 --match-date 2024 --analysis 3ply+
+
+  # Filters no flag exposes: a move pattern, a comment tag, an analysis date
   blunderdb search --db database.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
 ```
 

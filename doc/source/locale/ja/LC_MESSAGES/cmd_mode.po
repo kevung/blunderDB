@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 15:51+0200\n"
+"POT-Creation-Date: 2026-10-03 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -635,8 +635,8 @@ msgid ""
 msgstr "判断がダブル／ノーダブルのキューブアクションである場合です（テイク／パスの応答ではありません）。キューブ判断を含意します。"
 
 #: ../../source/cmd_mode.rst:1
-msgid "—"
-msgstr "—"
+msgid "``--cube-response double``"
+msgstr "``--cube-response double``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "dr"
@@ -647,6 +647,10 @@ msgid ""
 "La décision est une réponse Take / Pass. Implique une décision de videau "
 "; avec ``dd``, ``dr`` l'emporte."
 msgstr "判断がテイク／パスの応答である場合です。キューブ判断を含意します。\\ ``dd`` と併用した場合は ``dr`` が優先されます。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--cube-response takepass``"
+msgstr "``--cube-response takepass``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "D"
@@ -687,6 +691,10 @@ msgstr ""
 "局面が 6-5 の出目で\\ **プレイされていない**\\ "
 "状態です（順序は問いません）。値はトークン内に指定します。複数の出目を除外するために繰り返し使用できます（\\ ``xD65 xD54``\\ "
 "）。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "—"
+msgstr "—"
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -1498,6 +1506,10 @@ msgstr ""
 "``tn'open*'``\\ ）。"
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--tournament-name``"
+msgstr "``--tournament-name``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "rd:x"
 msgstr "rd:x"
 
@@ -1513,6 +1525,10 @@ msgstr ""
 "rd:2``\\ ）で、いずれかに一致すれば対象になります。"
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--round``"
+msgstr "``--round``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "ml:x"
 msgstr "ml:x"
 
@@ -1523,6 +1539,10 @@ msgid ""
 msgstr ""
 "マッチの長さが x ポイントである場合です。\\ ``ml:7``\\ 、\\ ``ml:5,9``\\ 、\\ ``ml>5``\\ 、\\ "
 "``ml<9`` の形式を使えます（境界値を含む）。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--match-lengths``"
+msgstr "``--match-lengths``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
@@ -1544,6 +1564,10 @@ msgstr ""
 "``2024-06-15``\\ ）で、その期間全体を含みます（境界値を含む）。\\ ``md:2024-01..2024-12`` は 2024"
 " 年 1 月 1 日から 12 月 31 日までです。\\ ``md:2024``\\ （その年全体）、\\ ``md>2024-06``\\ "
 "、\\ ``md<2024-06`` の形式も使えます。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--match-date``"
+msgstr "``--match-date``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "idx"
@@ -1579,6 +1603,10 @@ msgstr ""
 "）。大文字・小文字は区別せず、\\ ``*`` は任意の文字列に一致します（\\ ``pl'Ali*'``\\ ）。"
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--player``"
+msgstr "``--player``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "``pl!'nom'``"
 msgstr "``pl!'名前'``"
 
@@ -1590,6 +1618,10 @@ msgid ""
 msgstr ""
 "このプレイヤーが下した判断のみ対象です。手番のプレイヤーとは、マッチでその名前の席に着いているプレイヤー（プレイヤー 1 またはプレイヤー "
 "2）のことです。大文字・小文字とワイルドカードの規則は ``pl`` と同じです。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--player`` ``--seat-only``"
+msgstr "``--player`` ``--seat-only``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "``op'nom'``"
@@ -1608,6 +1640,10 @@ msgstr ""
 "単独で ``pl`` と同様にどちらかの席のプレイヤーを指します。大文字・小文字とワイルドカードの規則は同じです。"
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--opponent``"
+msgstr "``--opponent``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "pr>x"
 msgstr "pr>x"
 
@@ -1622,6 +1658,10 @@ msgstr ""
 "以上である場合です。マッチごとの統計のうち、そのプレイヤーの席の値を読み取ります（対戦相手の PR ではありません）。PR "
 "のないマッチは除外されます。\\ ``pr>8``\\ 、\\ ``pr<5``\\ 、\\ ``pr4,9`` "
 "の形式を使えます（境界値を含む）。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--pr``"
+msgstr "``--pr``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "ad:xg"
@@ -1644,6 +1684,10 @@ msgstr ""
 "Roller++ "
 "を含む）。繰り返し指定可能です。エンジン同士、深さ同士はいずれかに一致すればよく、エンジンと深さの両方が一致する必要があります（\\ "
 "``ad:xg ad:gnubg ad:3ply+``\\ ）。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--analysis``"
+msgstr "``--analysis``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "like, like42, like<12, like42*"

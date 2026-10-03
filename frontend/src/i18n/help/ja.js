@@ -682,7 +682,7 @@ export default {
 <div class="admonition note">
 <p>このタブでは<strong>プレイヤー</strong>の一覧と<strong>判断の種別</strong>の選択は無効です。表はすべてのプレイヤーを表示し、チェッカーとキューブの判断はすでに別の列に分けているからです。</p>
 </div>
-<p>この表、進捗タブ、およびトーナメントごと・マッチごとの PR にあるマッチごとの数値は、各判断を改めて走査するのではなく、インポート時に保守される表( <code>match_stats</code> :マッチごと・席ごとの、カウントされた判断、チェッカーとキューブに分けたエラー、エラー、ブランダー、Snowie の 2 つの項、運)から得られます。数百万局面のライブラリでは、これがパネルを高速に保ちます。そこから 3 つのコーパスビューが、コマンドラインとデーモンの API で得られます( stats — 繰り返されるミス を参照)。2 人の <strong>直接対決</strong> (共通のマッチ、各自の PR、勝敗)、移動する <strong>カレンダー期間ごとの PR</strong> (月、四半期)、カウントされた判断が一定数以上あるプレイヤーの PR による <strong>ランキング</strong> です。 <strong>出所フィルタ</strong> (解析エンジン、最小深度)は、統計をそのように解析された判断に限定します。各判断に対して働き、影響を受ける数値は判断から再計算されます。</p>
+<p>この表、進捗タブ、およびトーナメントごと・マッチごとの PR にあるマッチごとの数値は、各判断を改めて走査するのではなく、インポート時に保守される表( <code>match_stats</code> :マッチごと・席ごとの、カウントされた判断、チェッカーとキューブに分けたエラー、エラー、ブランダー、Snowie の 2 つの項、運)から得られます。数百万局面のライブラリでは、これがパネルを高速に保ちます。そこから 3 つのコーパスビューが、パネルの <strong>コーパス</strong> タブ、コマンドライン、デーモンの API で得られます( stats — 繰り返されるミス を参照)。2 人の <strong>直接対決</strong> (共通のマッチ、各自の PR、勝敗)、移動する <strong>カレンダー期間ごとの PR</strong> (月、四半期)、カウントされた判断が一定数以上あるプレイヤーの PR による <strong>ランキング</strong> です。コーパスタブは各ビューを要求に応じて、現在のフィルターのもとで計算します。 <strong>出所フィルタ</strong> (フィルターバーの <em>エンジン</em> と <em>最小深度</em> の欄)は、統計をそのように解析された判断に限定します。各判断に対して働き、影響を受ける数値は判断から再計算されます。</p>
 <div class="admonition important">
 <p>ダッシュ（「—」）は<strong>一度も測定されていない</strong>値を示すもので、ゼロと混同してはいけません。とくに、スキーマのバージョン 2.15.0 より前にインポートしたすべての対戦の「運」列がこれにあたります。当時は運が保存されておらず、後から復元する手立てもありません。元ファイルを再インポートするだけでは足りません。インポートは重複と判断し、新たに付いた学習マークだけを適用します（レポートにその数が出ます）。対戦を削除してから、あらためてインポートしてください。運を運ばない形式（BGF、Jellyfish の <code>.mat</code>）からは決して得られません。</p>
 </div>
@@ -2084,12 +2084,12 @@ export default {
 <tr>
 <td>dd</td>
 <td>判断がダブル／ノーダブルのキューブアクションである場合です（テイク／パスの応答ではありません）。キューブ判断を含意します。</td>
-<td>—</td>
+<td><code>--cube-response double</code></td>
 </tr>
 <tr>
 <td>dr</td>
 <td>判断がテイク／パスの応答である場合です。キューブ判断を含意します。<code>dd</code> と併用した場合は <code>dr</code> が優先されます。</td>
-<td>—</td>
+<td><code>--cube-response takepass</code></td>
 </tr>
 <tr>
 <td>D</td>
@@ -2519,22 +2519,22 @@ export default {
 <tr>
 <td>tn'名前'</td>
 <td>名前が <code>名前</code> のトーナメントから検索します。大文字・小文字は区別せず、<code>*</code> は任意の文字列に一致します（例：<code>tn'open*'</code>）。</td>
-<td>—</td>
+<td><code>--tournament-name</code></td>
 </tr>
 <tr>
 <td>rd:x</td>
 <td>ラウンド x のマッチから検索します（例：<code>rd:3</code>、<code>rd:決勝</code>）。ラウンドの文字列は大文字・小文字を区別せずに比較され、<code>*</code> は任意の文字列に一致します。繰り返し指定可能（<code>rd:1 rd:2</code>）で、いずれかに一致すれば対象になります。</td>
-<td>—</td>
+<td><code>--round</code></td>
 </tr>
 <tr>
 <td>ml:x</td>
 <td>マッチの長さが x ポイントである場合です。<code>ml:7</code>、<code>ml:5,9</code>、<code>ml&gt;5</code>、<code>ml&lt;9</code> の形式を使えます（境界値を含む）。</td>
-<td>—</td>
+<td><code>--match-lengths</code></td>
 </tr>
 <tr>
 <td>md:x..y</td>
 <td><strong>マッチの日付</strong>。ポジションの <code>match_date</code> 列（そのポジションに到達する最も古いマッチの日付）から読み取ります。解析の作成日（<code>T</code>）ではありません。各境界は年・月・日のいずれか（<code>2024</code>、<code>2024-06</code>、<code>2024-06-15</code>）で、その期間全体を含みます（境界値を含む）。<code>md:2024-01..2024-12</code> は 2024 年 1 月 1 日から 12 月 31 日までです。<code>md:2024</code>（その年全体）、<code>md&gt;2024-06</code>、<code>md&lt;2024-06</code> の形式も使えます。</td>
-<td>—</td>
+<td><code>--match-date</code></td>
 </tr>
 <tr>
 <td>idx</td>
@@ -2549,27 +2549,27 @@ export default {
 <tr>
 <td><code>pl'名前'</code></td>
 <td>指定したプレイヤーが（どちらの席でも）参加した対局のポジションを検索します（例：<code>pl'Alice'</code>）。大文字・小文字は区別せず、<code>*</code> は任意の文字列に一致します（<code>pl'Ali*'</code>）。</td>
-<td>—</td>
+<td><code>--player</code></td>
 </tr>
 <tr>
 <td><code>pl!'名前'</code></td>
 <td>このプレイヤーが下した判断のみ対象です。手番のプレイヤーとは、マッチでその名前の席に着いているプレイヤー（プレイヤー 1 またはプレイヤー 2）のことです。大文字・小文字とワイルドカードの規則は <code>pl</code> と同じです。</td>
-<td>—</td>
+<td><code>--player</code> <code>--seat-only</code></td>
 </tr>
 <tr>
 <td><code>op'名前'</code></td>
 <td>このプレイヤーが <code>pl</code> のプレイヤーの対戦相手であるマッチのみ対象です（<code>pl'Alice' op'Bob'</code>：Alice 対 Bob、どちらの席でも可。<code>pl!</code> を付けると Alice の判断のみ）。<code>pl</code> がない場合、<code>op</code> 単独で <code>pl</code> と同様にどちらかの席のプレイヤーを指します。大文字・小文字とワイルドカードの規則は同じです。</td>
-<td>—</td>
+<td><code>--opponent</code></td>
 </tr>
 <tr>
 <td>pr&gt;x</td>
 <td>判断を下したプレイヤーの<strong>マッチ PR</strong> が x 以上である場合です。マッチごとの統計のうち、そのプレイヤーの席の値を読み取ります（対戦相手の PR ではありません）。PR のないマッチは除外されます。<code>pr&gt;8</code>、<code>pr&lt;5</code>、<code>pr4,9</code> の形式を使えます（境界値を含む）。</td>
-<td>—</td>
+<td><code>--pr</code></td>
 </tr>
 <tr>
 <td>ad:xg</td>
 <td>ポジションに記録されている解析のエンジンと深さ。エンジン：<code>xg</code>、<code>gnubg</code>、<code>bgblitz</code>、<code>hedgehog</code>、<code>gammonnet</code>（エンジン名の先頭部分、大文字・小文字は区別しません）。深さ：<code>3ply</code>（ちょうど 3 プライ）、<code>3ply+</code>（3 プライ以上）、<code>book</code>（オープニングブック）、<code>rollout</code>（ロールアウト。XG Roller と Roller++ を含む）。繰り返し指定可能です。エンジン同士、深さ同士はいずれかに一致すればよく、エンジンと深さの両方が一致する必要があります（<code>ad:xg ad:gnubg ad:3ply+</code>）。</td>
-<td>—</td>
+<td><code>--analysis</code></td>
 </tr>
 <tr>
 <td>like, like42, like&lt;12, like42*</td>

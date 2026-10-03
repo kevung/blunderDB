@@ -682,7 +682,7 @@ export default {
 <div class="admonition note">
 <p>Tällä välilehdellä <strong>Pelaaja</strong>-luettelo ja <strong>päätöstyypin</strong> valinta ovat poissa käytöstä: taulukko näyttää kaikki pelaajat ja erittelee nappula- ja kuutiopäätökset jo omiin sarakkeisiinsa.</p>
 </div>
-<p>Tämän taulukon, Edistyminen-välilehden sekä turnauskohtaisten ja ottelukohtaisten PR:ien ottelukohtaiset luvut tulevat tuonnissa ylläpidetystä taulusta (<code>match_stats</code>: ottelua ja paikkaa kohden lasketut päätökset, virheen jako nappuloiden ja tuplauskuution välillä, virheet, blunderit, Snowien kaksi termiä ja onni) eikä jokaisen päätöksen uudesta läpikäynnistä: usean miljoonan position kirjastossa tämä pitää paneelin nopeana. Siitä johdetaan kolme korpusnäkymää komentorivillä ja daemonin API:n kautta (ks. stats — Toistuvat virheet): kahden pelaajan <strong>kasvokkain</strong>-vertailu (yhteiset ottelut, kummankin PR, tase), liukuva <strong>PR kalenteri-ikkunassa</strong> (kuukausi, neljännes) ja <strong>sijoitus</strong> PR:n mukaan niille pelaajille, joilla on vähintään tietty määrä laskettuja päätöksiä. <strong>Alkuperäsuodatin</strong> (analyysimoottori, vähimmäissyvyys) rajaa tilastot näin analysoituihin päätöksiin; se koskee jokaista päätöstä, ja sen koskettamat luvut lasketaan silloin uudelleen päätöksistä.</p>
+<p>Tämän taulukon, Edistyminen-välilehden sekä turnauskohtaisten ja ottelukohtaisten PR:ien ottelukohtaiset luvut tulevat tuonnissa ylläpidetystä taulusta (<code>match_stats</code>: ottelua ja paikkaa kohden lasketut päätökset, virheen jako nappuloiden ja tuplauskuution välillä, virheet, blunderit, Snowien kaksi termiä ja onni) eikä jokaisen päätöksen uudesta läpikäynnistä: usean miljoonan position kirjastossa tämä pitää paneelin nopeana. Siitä johdetaan kolme korpusnäkymää paneelin <strong>Corpus</strong>-välilehdellä, komentorivillä ja daemonin API:n kautta (ks. stats — Toistuvat virheet): kahden pelaajan <strong>kasvokkain</strong>-vertailu (yhteiset ottelut, kummankin PR, tase), liukuva <strong>PR kalenteri-ikkunassa</strong> (kuukausi, neljännes) ja <strong>sijoitus</strong> PR:n mukaan niille pelaajille, joilla on vähintään tietty määrä laskettuja päätöksiä. Corpus-välilehti laskee kunkin näkymän pyydettäessä nykyisen suodattimen alla. <strong>Alkuperäsuodatin</strong> (suodatinpalkin kentät <em>Moottori</em> ja <em>Väh. syvyys</em>) rajaa tilastot näin analysoituihin päätöksiin; se koskee jokaista päätöstä, ja sen koskettamat luvut lasketaan silloin uudelleen päätöksistä.</p>
 <div class="admonition important">
 <p>Viiva (”—”) merkitsee arvoa, jota <strong>ei ole koskaan mitattu</strong>; sitä ei pidä sekoittaa nollaan. Näin on erityisesti Tuuri-sarakkeen kohdalla kaikissa otteluissa, jotka tuotiin ennen skeemaversiota 2.15.0: tuuria ei silloin tallennettu, eikä mikään salli sen palauttamista jälkikäteen. Lähdetiedoston tuominen uudelleen ei riitä: tuonti tunnistaa kaksoiskappaleen ja ottaa käyttöön vain uudet opiskelumerkinnät (raportti kertoo niiden määrän). Ottelu on poistettava ja tuotava sitten uudelleen. Muodot, jotka eivät sitä kuljeta (BGF, Jellyfish <code>.mat</code>), eivät sitä koskaan tarjoa.</p>
 </div>
@@ -2084,12 +2084,12 @@ export default {
 <tr>
 <td>dd</td>
 <td>Päätös on kuution toiminto tyyppiä Tuplaa / Älä tuplaa (ei Take / Pass -vastaus). Edellyttää kuutiopäätöstä.</td>
-<td>—</td>
+<td><code>--cube-response double</code></td>
 </tr>
 <tr>
 <td>dr</td>
 <td>Päätös on Take / Pass -vastaus. Edellyttää kuutiopäätöstä; <code>dd</code>:n kanssa <code>dr</code> on etusijalla.</td>
-<td>—</td>
+<td><code>--cube-response takepass</code></td>
 </tr>
 <tr>
 <td>D</td>
@@ -2519,22 +2519,22 @@ export default {
 <tr>
 <td>tn'nimi'</td>
 <td>Hae turnauksista, joiden nimi on <code>nimi</code>: kirjainkoolla ei ole väliä ja <code>*</code> korvaa minkä tahansa merkkijonon (esim. <code>tn'open*'</code>).</td>
-<td>—</td>
+<td><code>--tournament-name</code></td>
 </tr>
 <tr>
 <td>rd:x</td>
 <td>Hae kierroksen x otteluista (esim. <code>rd:3</code>, <code>rd:Finaali</code>): kierroksen teksti vertaillaan kirjainkoosta välittämättä, <code>*</code> korvaa minkä tahansa merkkijonon. Toistettavissa (<code>rd:1 rd:2</code>): jompikumpi.</td>
-<td>—</td>
+<td><code>--round</code></td>
 </tr>
 <tr>
 <td>ml:x</td>
 <td>Ottelun pituus on x pistettä. Muodot <code>ml:7</code>, <code>ml:5,9</code>, <code>ml&gt;5</code> ja <code>ml&lt;9</code> (rajat mukaan lukien).</td>
-<td>—</td>
+<td><code>--match-lengths</code></td>
 </tr>
 <tr>
 <td>md:x..y</td>
 <td><strong>Ottelun päivämäärä</strong>, luettuna aseman <code>match_date</code>-sarakkeesta (vanhimman asemaan johtavan ottelun päivämäärä), ei analyysin luontipäivä (<code>T</code>). Jokainen raja on vuosi, kuukausi tai päivä (<code>2024</code>, <code>2024-06</code>, <code>2024-06-15</code>) ja kattaa koko kestonsa, rajat mukaan lukien: <code>md:2024-01..2024-12</code> ulottuu 1. tammikuuta 31. joulukuuta 2024. Muodot <code>md:2024</code> (koko vuosi), <code>md&gt;2024-06</code> ja <code>md&lt;2024-06</code>.</td>
-<td>—</td>
+<td><code>--match-date</code></td>
 </tr>
 <tr>
 <td>idx</td>
@@ -2549,27 +2549,27 @@ export default {
 <tr>
 <td><code>pl'nimi'</code></td>
 <td>Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa puolella (esim. <code>pl'Alice'</code>). Kirjainkoolla ei ole väliä ja <code>*</code> korvaa minkä tahansa merkkijonon (<code>pl'Ali*'</code>).</td>
-<td>—</td>
+<td><code>--player</code></td>
 </tr>
 <tr>
 <td><code>pl!'nimi'</code></td>
 <td>Vain tämän pelaajan tekemät päätökset: vuorossa oleva pelaaja on se, joka ottelussa istuu tämännimisellä puolella (pelaaja 1 tai pelaaja 2). Samat kirjainkoko- ja jokerimerkkisäännöt kuin <code>pl</code>:llä.</td>
-<td>—</td>
+<td><code>--player</code> <code>--seat-only</code></td>
 </tr>
 <tr>
 <td><code>op'nimi'</code></td>
 <td>Vain ottelut, joissa tämä pelaaja on <code>pl</code>:n pelaajan vastustaja (<code>pl'Alice' op'Bob'</code>: Alice Bobia vastaan, kummalla puolella tahansa; <code>pl!</code>:n kanssa vain Alicen päätökset). Ilman <code>pl</code>:ää pelkkä <code>op</code> tarkoittaa pelaajaa kummalla puolella tahansa, kuten <code>pl</code>. Samat kirjainkoko- ja jokerimerkkisäännöt.</td>
-<td>—</td>
+<td><code>--opponent</code></td>
 </tr>
 <tr>
 <td>pr&gt;x</td>
 <td>Päätöksen tehneen pelaajan <strong>ottelun PR</strong> on vähintään x, luettuna ottelukohtaisista tilastoista tämän pelaajan puolelta (ei vastustajan PR); ottelu ilman PR:ää suljetaan pois. Muodot <code>pr&gt;8</code>, <code>pr&lt;5</code> ja <code>pr4,9</code>, rajat mukaan lukien.</td>
-<td>—</td>
+<td><code>--pr</code></td>
 </tr>
 <tr>
 <td>ad:xg</td>
 <td>Asemalle tallennetun analyysin moottori ja syvyys. Moottorit: <code>xg</code>, <code>gnubg</code>, <code>bgblitz</code>, <code>hedgehog</code>, <code>gammonnet</code> (moottorin nimen alku, kirjainkoolla ei ole väliä). Syvyydet: <code>3ply</code> (täsmälleen 3 ply), <code>3ply+</code> (vähintään 3 ply), <code>book</code> (avauskirja), <code>rollout</code> (rollout, mukaan lukien XG Roller ja Roller++). Toistettavissa: moottorit ovat vaihtoehtoja, samoin syvyydet, ja sekä moottorin että syvyyden on täsmättävä (<code>ad:xg ad:gnubg ad:3ply+</code>).</td>
-<td>—</td>
+<td><code>--analysis</code></td>
 </tr>
 <tr>
 <td>like, like42, like&lt;12, like42*</td>

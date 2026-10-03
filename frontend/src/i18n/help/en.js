@@ -682,7 +682,7 @@ export default {
 <div class="admonition note">
 <p>In this tab, the <strong>Player</strong> list and the <strong>decision type</strong> choice are disabled: the table shows every player, and already splits checker and cube decisions into separate columns.</p>
 </div>
-<p>The per-match figures of this table, of the Progress tab and of the PRs per tournament and per match come from a table maintained at import time (<code>match_stats</code>: per match and per seat, the counted decisions, the error split between checker and cube, the errors, the blunders, the two Snowie terms and the luck) rather than from a new pass over every decision: on a library of several million positions, this is what keeps the panel fast. Three corpus views are derived from it, on the command line and through the daemon API (see stats — Recurring errors): the <strong>head-to-head</strong> of two players (common matches, each one's PR, record), the rolling <strong>PR per calendar window</strong> (month, quarter) and the PR <strong>ranking</strong> of players who have at least a given number of counted decisions. A <strong>provenance filter</strong> (analysis engine, minimum depth) restricts the statistics to decisions analysed that way; it applies to each decision, and the figures it affects are then recomputed from the decisions.</p>
+<p>The per-match figures of this table, of the Progress tab and of the PRs per tournament and per match come from a table maintained at import time (<code>match_stats</code>: per match and per seat, the counted decisions, the error split between checker and cube, the errors, the blunders, the two Snowie terms and the luck) rather than from a new pass over every decision: on a library of several million positions, this is what keeps the panel fast. Three corpus views are derived from it, in the panel's <strong>Corpus</strong> tab, on the command line and through the daemon API (see stats — Recurring errors): the <strong>head-to-head</strong> of two players (common matches, each one's PR, record), the rolling <strong>PR per calendar window</strong> (month, quarter) and the PR <strong>ranking</strong> of players who have at least a given number of counted decisions. The Corpus tab computes each view on demand, under the current filter. A <strong>provenance filter</strong> (<em>Engine</em> and <em>Min. depth</em> fields of the filter bar) restricts the statistics to decisions analysed that way; it applies to each decision, and the figures it affects are then recomputed from the decisions.</p>
 <div class="admonition important">
 <p>A dash ("—") marks a value that was <strong>never measured</strong>, not to be confused with zero. That is notably the case of the Luck column for any match imported before schema version 2.15.0: luck was not stored then, and nothing allows it to be reconstructed afterwards. Re-importing the source file is not enough: the import recognises a duplicate and applies only the study marks newly raised (the report gives their number). The match must be deleted, then imported again. Formats that do not carry it (BGF, Jellyfish <code>.mat</code>) never will.</p>
 </div>
@@ -2084,12 +2084,12 @@ export default {
 <tr>
 <td>dd</td>
 <td>The decision is a cube action of type Double / No Double (not a Take / Pass answer). Implies a cube decision.</td>
-<td>—</td>
+<td><code>--cube-response double</code></td>
 </tr>
 <tr>
 <td>dr</td>
 <td>The decision is a Take / Pass answer. Implies a cube decision; together with <code>dd</code>, <code>dr</code> takes precedence.</td>
-<td>—</td>
+<td><code>--cube-response takepass</code></td>
 </tr>
 <tr>
 <td>D</td>
@@ -2519,22 +2519,22 @@ export default {
 <tr>
 <td>tn'name'</td>
 <td>Search in tournaments whose name is <code>name</code>: case is ignored and <code>*</code> stands for any sequence of characters (e.g. <code>tn'open*'</code>).</td>
-<td>—</td>
+<td><code>--tournament-name</code></td>
 </tr>
 <tr>
 <td>rd:x</td>
 <td>Search in matches of round x (e.g. <code>rd:3</code>, <code>rd:Final</code>): the round text is compared case-insensitively, <code>*</code> stands for any sequence of characters. Repeatable (<code>rd:1 rd:2</code>): either one.</td>
-<td>—</td>
+<td><code>--round</code></td>
 </tr>
 <tr>
 <td>ml:x</td>
 <td>The match length is x points. Forms <code>ml:7</code>, <code>ml:5,9</code>, <code>ml&gt;5</code> and <code>ml&lt;9</code> (bounds included).</td>
-<td>—</td>
+<td><code>--match-lengths</code></td>
 </tr>
 <tr>
 <td>md:x..y</td>
 <td><strong>Match date</strong>, read from the position's <code>match_date</code> column (the date of the oldest match that reaches it), not the date the analysis was created (<code>T</code>). Each bound is a year, a month or a day (<code>2024</code>, <code>2024-06</code>, <code>2024-06-15</code>) and covers its whole span, bounds included: <code>md:2024-01..2024-12</code> runs from 1 January to 31 December 2024. Forms <code>md:2024</code> (the whole year), <code>md&gt;2024-06</code> and <code>md&lt;2024-06</code>.</td>
-<td>—</td>
+<td><code>--match-date</code></td>
 </tr>
 <tr>
 <td>idx</td>
@@ -2549,27 +2549,27 @@ export default {
 <tr>
 <td><code>pl'name'</code></td>
 <td>Search positions from a match involving the named player, at either seat (e.g. <code>pl'Alice'</code>). Case is ignored and <code>*</code> stands for any sequence of characters (<code>pl'Ali*'</code>).</td>
-<td>—</td>
+<td><code>--player</code></td>
 </tr>
 <tr>
 <td><code>pl!'name'</code></td>
 <td>Only the decisions made by this player: the player on roll is the one who occupies the seat of that name in the match (player 1 or player 2). Same case and wildcard rules as <code>pl</code>.</td>
-<td>—</td>
+<td><code>--player</code> <code>--seat-only</code></td>
 </tr>
 <tr>
 <td><code>op'name'</code></td>
 <td>Only matches where this player is the opponent of the <code>pl</code> player (<code>pl'Alice' op'Bob'</code>: Alice against Bob, on either side; with <code>pl!</code>, only Alice's decisions). Without <code>pl</code>, <code>op</code> alone designates a player at either seat, like <code>pl</code>. Same case and wildcard rules.</td>
-<td>—</td>
+<td><code>--opponent</code></td>
 </tr>
 <tr>
 <td>pr&gt;x</td>
 <td>The <strong>match PR</strong> of the player who made the decision is at least x, read from the per-match statistics at that player's seat (not the opponent's PR); a match without a PR is excluded. Forms <code>pr&gt;8</code>, <code>pr&lt;5</code> and <code>pr4,9</code>, bounds included.</td>
-<td>—</td>
+<td><code>--pr</code></td>
 </tr>
 <tr>
 <td>ad:xg</td>
 <td>Engine and depth of the analysis recorded for the position. Engines: <code>xg</code>, <code>gnubg</code>, <code>bgblitz</code>, <code>hedgehog</code>, <code>gammonnet</code> (start of the engine name, case ignored). Depths: <code>3ply</code> (exactly 3 plies), <code>3ply+</code> (at least 3 plies), <code>book</code> (opening book), <code>rollout</code> (rollout, including XG Roller and Roller++). Repeatable: engines are alternatives, so are depths, and an engine and a depth must both match (<code>ad:xg ad:gnubg ad:3ply+</code>).</td>
-<td>—</td>
+<td><code>--analysis</code></td>
 </tr>
 <tr>
 <td>like, like42, like&lt;12, like42*</td>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 15:51+0200\n"
+"POT-Creation-Date: 2026-10-03 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -679,8 +679,8 @@ msgstr ""
 "Take / Pass). Подразумевает решение по кубу."
 
 #: ../../source/cmd_mode.rst:1
-msgid "—"
-msgstr "—"
+msgid "``--cube-response double``"
+msgstr "``--cube-response double``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "dr"
@@ -693,6 +693,10 @@ msgid ""
 msgstr ""
 "Решение — это ответ Take / Pass. Подразумевает решение по кубу; вместе с "
 "``dd`` приоритет имеет ``dr``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--cube-response takepass``"
+msgstr "``--cube-response takepass``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "D"
@@ -735,6 +739,10 @@ msgstr ""
 "Позиция **не** была сыграна с броском 6-5 (порядок неважен). Значение "
 "указано в жетоне; повторяемо для исключения нескольких бросков (``xD65 "
 "xD54``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "—"
+msgstr "—"
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -1561,6 +1569,10 @@ msgstr ""
 "заменяет любую последовательность символов (напр. ``tn'open*'``)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--tournament-name``"
+msgstr "``--tournament-name``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "rd:x"
 msgstr "rd:x"
 
@@ -1576,6 +1588,10 @@ msgstr ""
 "символов. Можно повторять (``rd:1 rd:2``): подходит любой из них."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--round``"
+msgstr "``--round``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "ml:x"
 msgstr "ml:x"
 
@@ -1586,6 +1602,10 @@ msgid ""
 msgstr ""
 "Длина матча равна x очкам. Формы ``ml:7``, ``ml:5,9``, ``ml>5`` и "
 "``ml<9`` (границы включены)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--match-lengths``"
+msgstr "``--match-lengths``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
@@ -1607,6 +1627,10 @@ msgstr ""
 "``2024-06``, ``2024-06-15``) и охватывает весь свой период, границы "
 "включены: ``md:2024-01..2024-12`` — с 1 января по 31 декабря 2024 года. "
 "Формы ``md:2024`` (весь год), ``md>2024-06`` и ``md<2024-06``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--match-date``"
+msgstr "``--match-date``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "idx"
@@ -1643,6 +1667,10 @@ msgstr ""
 "последовательность символов (``pl'Ali*'``)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--player``"
+msgstr "``--player``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "``pl!'nom'``"
 msgstr "``pl!'имя'``"
 
@@ -1655,6 +1683,10 @@ msgstr ""
 "Только решения, принятые этим игроком: игрок, чей ход, — тот, кто "
 "занимает в матче сторону с этим именем (игрок 1 или игрок 2). Те же "
 "правила регистра и подстановочного знака, что и для ``pl``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--player`` ``--seat-only``"
+msgstr "``--player`` ``--seat-only``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "``op'nom'``"
@@ -1674,6 +1706,10 @@ msgstr ""
 "стороне, как и ``pl``. Те же правила регистра и подстановочного знака."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--opponent``"
+msgstr "``--opponent``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "pr>x"
 msgstr "pr>x"
 
@@ -1688,6 +1724,10 @@ msgstr ""
 " статистики по матчам для стороны этого игрока (не PR соперника); матч "
 "без PR исключается. Формы ``pr>8``, ``pr<5`` и ``pr4,9``, границы "
 "включены."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--pr``"
+msgstr "``--pr``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "ad:xg"
@@ -1710,6 +1750,10 @@ msgstr ""
 "(ролл-аут, включая XG Roller и Roller++). Можно повторять: движки — "
 "альтернативы, глубины тоже, и должны подходить и движок, и глубина "
 "(``ad:xg ad:gnubg ad:3ply+``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--analysis``"
+msgstr "``--analysis``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "like, like42, like<12, like42*"

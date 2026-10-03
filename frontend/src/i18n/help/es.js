@@ -682,7 +682,7 @@ export default {
 <div class="admonition note">
 <p>En esta pestaña, la lista <strong>Jugador</strong> y la elección del <strong>tipo de decisión</strong> están desactivadas: la tabla muestra a todos los jugadores y ya desglosa las decisiones de fichas y de cubo en columnas distintas.</p>
 </div>
-<p>Las cifras por partida de esta tabla, de la pestaña Progresión y de los PR por torneo y por partida provienen de una tabla mantenida en la importación (<code>match_stats</code>: por partida y por asiento, las decisiones contadas, el error separado entre fichas y cubo, los errores, los blunders, los dos términos de Snowie y la suerte) en lugar de un nuevo recorrido de cada decisión: en una biblioteca de varios millones de posiciones, esto es lo que mantiene el panel rápido. De ella se derivan tres vistas de corpus, en la línea de comandos y por la API del demonio (véase stats — Errores recurrentes): el <strong>cara a cara</strong> de dos jugadores (partidas comunes, PR de cada uno, balance), el <strong>PR por ventana de calendario</strong> deslizante (mes, trimestre) y la <strong>clasificación</strong> por PR de los jugadores que tienen al menos un número dado de decisiones contadas. Un <strong>filtro de procedencia</strong> (motor de análisis, profundidad mínima) restringe las estadísticas a las decisiones analizadas así; se aplica a cada decisión, y las cifras a las que afecta se recalculan entonces a partir de las decisiones.</p>
+<p>Las cifras por partida de esta tabla, de la pestaña Progresión y de los PR por torneo y por partida provienen de una tabla mantenida en la importación (<code>match_stats</code>: por partida y por asiento, las decisiones contadas, el error separado entre fichas y cubo, los errores, los blunders, los dos términos de Snowie y la suerte) en lugar de un nuevo recorrido de cada decisión: en una biblioteca de varios millones de posiciones, esto es lo que mantiene el panel rápido. De ella se derivan tres vistas de corpus, en la pestaña <strong>Corpus</strong> del panel, en la línea de comandos y por la API del demonio (véase stats — Errores recurrentes): el <strong>cara a cara</strong> de dos jugadores (partidas comunes, PR de cada uno, balance), el <strong>PR por ventana de calendario</strong> deslizante (mes, trimestre) y la <strong>clasificación</strong> por PR de los jugadores que tienen al menos un número dado de decisiones contadas. La pestaña Corpus calcula cada vista bajo demanda, con el filtro actual. Un <strong>filtro de procedencia</strong> (campos <em>Motor</em> y <em>Profundidad mín.</em> de la barra de filtros) restringe las estadísticas a las decisiones analizadas así; se aplica a cada decisión, y las cifras a las que afecta se recalculan entonces a partir de las decisiones.</p>
 <div class="admonition important">
 <p>Un guion («—») señala un valor <strong>nunca medido</strong>, que no debe confundirse con cero. Es en particular el caso de la columna Suerte para toda partida importada antes de la versión 2.15.0 del esquema: la suerte no se conservaba entonces, y nada permite reconstruirla después. Reimportar el archivo de origen no basta: la importación reconoce un duplicado y solo aplica las marcas de estudio recién puestas (el informe da su número). Hay que eliminar la partida y luego volver a importarla. Los formatos que no la transportan (BGF, Jellyfish <code>.mat</code>) no la aportarán nunca.</p>
 </div>
@@ -2084,12 +2084,12 @@ export default {
 <tr>
 <td>dd</td>
 <td>La decisión es una acción de cubo de tipo Doblar / No doblar (y no una respuesta Take / Pass). Implica una decisión de cubo.</td>
-<td>—</td>
+<td><code>--cube-response double</code></td>
 </tr>
 <tr>
 <td>dr</td>
 <td>La decisión es una respuesta Take / Pass. Implica una decisión de cubo; con <code>dd</code>, <code>dr</code> prevalece.</td>
-<td>—</td>
+<td><code>--cube-response takepass</code></td>
 </tr>
 <tr>
 <td>D</td>
@@ -2519,22 +2519,22 @@ export default {
 <tr>
 <td>tn'nombre'</td>
 <td>Buscar en los torneos cuyo nombre es <code>nombre</code>: se ignoran las mayúsculas y <code>*</code> sustituye cualquier secuencia de caracteres (ej: <code>tn'open*'</code>).</td>
-<td>—</td>
+<td><code>--tournament-name</code></td>
 </tr>
 <tr>
 <td>rd:x</td>
 <td>Buscar en las partidas de la ronda x (ej: <code>rd:3</code>, <code>rd:Final</code>): el texto de la ronda se compara sin distinguir mayúsculas y minúsculas, <code>*</code> sustituye cualquier secuencia de caracteres. Repetible (<code>rd:1 rd:2</code>): una u otra.</td>
-<td>—</td>
+<td><code>--round</code></td>
 </tr>
 <tr>
 <td>ml:x</td>
 <td>La partida tiene una longitud de x puntos. Formas <code>ml:7</code>, <code>ml:5,9</code>, <code>ml&gt;5</code> y <code>ml&lt;9</code> (límites incluidos).</td>
-<td>—</td>
+<td><code>--match-lengths</code></td>
 </tr>
 <tr>
 <td>md:x..y</td>
 <td><strong>Fecha de la partida</strong>, leída en la columna <code>match_date</code> de la posición (la fecha de la partida más antigua que la alcanza), y no la fecha de creación del análisis (<code>T</code>). Cada límite es un año, un mes o un día (<code>2024</code>, <code>2024-06</code>, <code>2024-06-15</code>) y cubre toda su duración, límites incluidos: <code>md:2024-01..2024-12</code> va del 1 de enero al 31 de diciembre de 2024. Formas <code>md:2024</code> (todo el año), <code>md&gt;2024-06</code> y <code>md&lt;2024-06</code>.</td>
-<td>—</td>
+<td><code>--match-date</code></td>
 </tr>
 <tr>
 <td>idx</td>
@@ -2549,27 +2549,27 @@ export default {
 <tr>
 <td><code>pl'nombre'</code></td>
 <td>Buscar posiciones de una partida en la que participó el jugador indicado, en cualquier lado (ej: <code>pl'Alice'</code>). Se ignoran las mayúsculas y <code>*</code> sustituye cualquier secuencia de caracteres (<code>pl'Ali*'</code>).</td>
-<td>—</td>
+<td><code>--player</code></td>
 </tr>
 <tr>
 <td><code>pl!'nombre'</code></td>
 <td>Solo las decisiones tomadas por este jugador: el jugador con el turno es el que ocupa el lado de ese nombre en la partida (jugador 1 o jugador 2). Mismas reglas de mayúsculas y comodín que <code>pl</code>.</td>
-<td>—</td>
+<td><code>--player</code> <code>--seat-only</code></td>
 </tr>
 <tr>
 <td><code>op'nombre'</code></td>
 <td>Solo las partidas en las que este jugador es el adversario del de <code>pl</code> (<code>pl'Alice' op'Bob'</code>: Alice contra Bob, de un lado u otro; con <code>pl!</code>, solo las decisiones de Alice). Sin <code>pl</code>, <code>op</code> solo designa a un jugador en cualquier lado, como <code>pl</code>. Mismas reglas de mayúsculas y comodín.</td>
-<td>—</td>
+<td><code>--opponent</code></td>
 </tr>
 <tr>
 <td>pr&gt;x</td>
 <td>El <strong>PR de la partida</strong> del jugador que tomó la decisión es al menos x, leído en las estadísticas por partida del lado de ese jugador (no el PR del adversario); una partida sin PR queda excluida. Formas <code>pr&gt;8</code>, <code>pr&lt;5</code> y <code>pr4,9</code>, límites incluidos.</td>
-<td>—</td>
+<td><code>--pr</code></td>
 </tr>
 <tr>
 <td>ad:xg</td>
 <td>Motor y profundidad del análisis registrado para la posición. Motores: <code>xg</code>, <code>gnubg</code>, <code>bgblitz</code>, <code>hedgehog</code>, <code>gammonnet</code> (comienzo del nombre del motor, sin distinguir mayúsculas). Profundidades: <code>3ply</code> (exactamente 3 plies), <code>3ply+</code> (al menos 3 plies), <code>book</code> (libro de aperturas), <code>rollout</code> (rollout, incluidos XG Roller y Roller++). Repetible: los motores son alternativas, las profundidades también, y un motor y una profundidad deben coincidir ambos (<code>ad:xg ad:gnubg ad:3ply+</code>).</td>
-<td>—</td>
+<td><code>--analysis</code></td>
 </tr>
 <tr>
 <td>like, like42, like&lt;12, like42*</td>

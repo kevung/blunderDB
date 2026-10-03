@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 15:51+0200\n"
+"POT-Creation-Date: 2026-10-03 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -689,8 +689,8 @@ msgstr ""
 "Entscheidung."
 
 #: ../../source/cmd_mode.rst:1
-msgid "—"
-msgstr "—"
+msgid "``--cube-response double``"
+msgstr "``--cube-response double``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "dr"
@@ -703,6 +703,10 @@ msgid ""
 msgstr ""
 "Die Entscheidung ist eine Take-/Pass-Antwort. Impliziert eine "
 "Dopplerwürfel-Entscheidung; zusammen mit ``dd`` hat ``dr`` Vorrang."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--cube-response takepass``"
+msgstr "``--cube-response takepass``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "D"
@@ -747,6 +751,10 @@ msgstr ""
 "Die Position wurde **nicht** mit dem Wurf 6-5 gespielt (unabhängig von "
 "der Reihenfolge). Der Wert wird im Token angezeigt; wiederholbar, um "
 "mehrere Würfe auszuschließen (``xD65 xD54``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "—"
+msgstr "—"
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -1585,6 +1593,10 @@ msgstr ""
 "``tn'open*'``)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--tournament-name``"
+msgstr "``--tournament-name``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "rd:x"
 msgstr "rd:x"
 
@@ -1601,6 +1613,10 @@ msgstr ""
 "rd:2``): die eine oder die andere."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--round``"
+msgstr "``--round``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "ml:x"
 msgstr "ml:x"
 
@@ -1611,6 +1627,10 @@ msgid ""
 msgstr ""
 "Das Match hat eine Länge von x Punkten. Formen ``ml:7``, ``ml:5,9``, "
 "``ml>5`` und ``ml<9`` (Grenzen eingeschlossen)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--match-lengths``"
+msgstr "``--match-lengths``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
@@ -1633,6 +1653,10 @@ msgstr ""
 "gesamte Dauer ab, Grenzen eingeschlossen: ``md:2024-01..2024-12`` reicht "
 "vom 1. Januar bis zum 31. Dezember 2024. Formen ``md:2024`` (das ganze "
 "Jahr), ``md>2024-06`` und ``md<2024-06``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--match-date``"
+msgstr "``--match-date``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "idx"
@@ -1670,6 +1694,10 @@ msgstr ""
 "Zeichenfolge (``pl'Ali*'``)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--player``"
+msgstr "``--player``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "``pl!'nom'``"
 msgstr "``pl!'Name'``"
 
@@ -1683,6 +1711,10 @@ msgstr ""
 " der im Match die Seite mit diesem Namen innehat (Spieler 1 oder Spieler "
 "2). Gleiche Regeln für Groß-/Kleinschreibung und Platzhalter wie bei "
 "``pl``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--player`` ``--seat-only``"
+msgstr "``--player`` ``--seat-only``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "``op'nom'``"
@@ -1703,6 +1735,10 @@ msgstr ""
 "``pl``. Gleiche Regeln für Groß-/Kleinschreibung und Platzhalter."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--opponent``"
+msgstr "``--opponent``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "pr>x"
 msgstr "pr>x"
 
@@ -1718,6 +1754,10 @@ msgstr ""
 " dieses Spielers (nicht der PR des Gegners); ein Match ohne PR wird "
 "ausgeschlossen. Formen ``pr>8``, ``pr<5`` und ``pr4,9``, Grenzen "
 "eingeschlossen."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--pr``"
+msgstr "``--pr``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "ad:xg"
@@ -1740,6 +1780,10 @@ msgstr ""
 "``rollout`` (Rollout, einschließlich XG Roller und Roller++). "
 "Wiederholbar: Die Engines sind Alternativen, die Tiefen ebenso, und eine "
 "Engine und eine Tiefe müssen beide passen (``ad:xg ad:gnubg ad:3ply+``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--analysis``"
+msgstr "``--analysis``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "like, like42, like<12, like42*"

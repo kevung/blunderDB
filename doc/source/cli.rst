@@ -491,6 +491,31 @@ Recherche des positions dans la base selon des critères combinables.
 * ``--no-comment`` — Uniquement les positions sans commentaire. Mutuellement
   exclusif avec ``--has-comment``.
 
+Les filtres de corpus portent sur le match où la position a été rencontrée ;
+chacun équivaut à un jeton du langage de requête (:ref:`cmd_filter`) :
+
+* ``--player <nom>`` — Les matchs où ce joueur a joué, d'un côté ou de
+  l'autre ; la casse est ignorée et ``*`` remplace n'importe quelle suite de
+  caractères (``pl"…"``). Avec ``--seat-only``, seulement les décisions prises
+  par ce joueur (``pl!"…"``).
+* ``--opponent <nom>`` — Avec ``--player``, les matchs contre cet adversaire ;
+  seul, un nom d'un côté ou de l'autre (``op"…"``).
+* ``--tournament-name <nom>`` — Les matchs des tournois de ce nom (``tn"…"``).
+* ``--round <r1,r2>`` — Les matchs de ces rondes (``rd:``).
+* ``--match-lengths <expr>`` — La longueur du match : ``7``, ``5,9``, ``>5``,
+  ``<9`` (``ml``). À ne pas confondre avec ``--match-length``, qui accompagne
+  le score de la position.
+* ``--match-date <expr>`` — La date du match : ``2024``,
+  ``2024-01..2024-12``, ``>2024-06``, ``<2024-06`` (``md``) ; ce n'est pas la
+  date de l'analyse.
+* ``--pr <expr>`` — Le PR du match du joueur qui a pris la décision :
+  ``>8``, ``<5``, ``4,9`` (``pr``).
+* ``--analysis <v1,v2>`` — Moteurs et profondeurs de l'analyse enregistrée :
+  ``xg``, ``gnubg``, ``bgblitz``, ``hedgehog``, ``gammonnet``, ``3ply``,
+  ``3ply+``, ``book``, ``rollout`` (``ad:``).
+* ``--cube-response <type>`` — Un seul type de décision de videau :
+  ``double`` (Double / No Double) ou ``takepass`` (Take / Pass).
+
 .. warning::
    ``--error-min`` et ``--move-error-min`` ne mesurent pas la même chose et
    **ne prennent pas la même unité** : le facteur est mille. Le premier se
@@ -558,7 +583,7 @@ sous-commande ``collection show``, elle, régénère le XGID depuis le damier.
 Les drapeaux ci-dessus couvrent une partie des filtres seulement. ``--query``
 donne accès au langage de requête de l'application — celui de la barre de
 commande — et donc à tous les filtres qui ne se dessinent pas sur le plateau :
-motif de coup, texte de commentaire, joueur, date, équité, dés exclus, zones
+motif de coup, texte de commentaire, date d'ajout, équité, dés exclus, zones
 et blots.
 
 La grammaire n'est écrite qu'à un seul endroit, :ref:`cmd_filter`. Sa table

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 15:51+0200\n"
+"POT-Creation-Date: 2026-10-03 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -684,8 +684,8 @@ msgstr ""
 " non una risposta Take / Pass). Implica una decisione del cubo."
 
 #: ../../source/cmd_mode.rst:1
-msgid "—"
-msgstr "—"
+msgid "``--cube-response double``"
+msgstr "``--cube-response double``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "dr"
@@ -698,6 +698,10 @@ msgid ""
 msgstr ""
 "La decisione è una risposta Take / Pass. Implica una decisione del cubo; "
 "con ``dd``, ``dr`` prevale."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--cube-response takepass``"
+msgstr "``--cube-response takepass``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "D"
@@ -742,6 +746,10 @@ msgstr ""
 "La posizione **non** è stata giocata con il lancio 6-5 (in qualsiasi "
 "ordine). Il valore è indicato nel gettone; ripetibile per escludere più "
 "lanci (``xD65 xD54``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "—"
+msgstr "—"
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -1576,6 +1584,10 @@ msgstr ""
 "``*`` sostituisce qualsiasi sequenza di caratteri (es: ``tn'open*'``)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--tournament-name``"
+msgstr "``--tournament-name``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "rd:x"
 msgstr "rd:x"
 
@@ -1592,6 +1604,10 @@ msgstr ""
 "rd:2``): l'uno o l'altro."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--round``"
+msgstr "``--round``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "ml:x"
 msgstr "ml:x"
 
@@ -1602,6 +1618,10 @@ msgid ""
 msgstr ""
 "La partita ha una lunghezza di x punti. Forme ``ml:7``, ``ml:5,9``, "
 "``ml>5`` e ``ml<9`` (estremi inclusi)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--match-lengths``"
+msgstr "``--match-lengths``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "md:x..y"
@@ -1624,6 +1644,10 @@ msgstr ""
 "durata, estremi inclusi: ``md:2024-01..2024-12`` va dal 1° gennaio al 31 "
 "dicembre 2024. Forme ``md:2024`` (tutto l'anno), ``md>2024-06`` e "
 "``md<2024-06``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--match-date``"
+msgstr "``--match-date``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "idx"
@@ -1661,6 +1685,10 @@ msgstr ""
 "(``pl'Ali*'``)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--player``"
+msgstr "``--player``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "``pl!'nom'``"
 msgstr "``pl!'nome'``"
 
@@ -1673,6 +1701,10 @@ msgstr ""
 "Solo le decisioni prese da questo giocatore: il giocatore di turno è "
 "quello che occupa il lato con quel nome nella partita (giocatore 1 o "
 "giocatore 2). Stesse regole di maiuscole e jolly di ``pl``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--player`` ``--seat-only``"
+msgstr "``--player`` ``--seat-only``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "``op'nom'``"
@@ -1693,6 +1725,10 @@ msgstr ""
 "maiuscole e jolly."
 
 #: ../../source/cmd_mode.rst:1
+msgid "``--opponent``"
+msgstr "``--opponent``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "pr>x"
 msgstr "pr>x"
 
@@ -1707,6 +1743,10 @@ msgstr ""
 "x, letto nelle statistiche per partita del lato di quel giocatore (non il"
 " PR dell'avversario); una partita senza PR è esclusa. Forme ``pr>8``, "
 "``pr<5`` e ``pr4,9``, estremi inclusi."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--pr``"
+msgstr "``--pr``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "ad:xg"
@@ -1729,6 +1769,10 @@ msgstr ""
 "``rollout`` (rollout, inclusi XG Roller e Roller++). Ripetibile: i motori"
 " sono alternative, le profondità anche, e un motore e una profondità "
 "devono entrambi corrispondere (``ad:xg ad:gnubg ad:3ply+``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--analysis``"
+msgstr "``--analysis``"
 
 #: ../../source/cmd_mode.rst:1
 msgid "like, like42, like<12, like42*"

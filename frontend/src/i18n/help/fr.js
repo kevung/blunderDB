@@ -682,7 +682,7 @@ export default {
 <div class="admonition note">
 <p>Dans cet onglet, la liste <strong>Joueur</strong> et le choix du <strong>type de décision</strong> sont désactivés : le tableau montre tous les joueurs, et il ventile déjà les décisions de pions et de videau en colonnes distinctes.</p>
 </div>
-<p>Les chiffres par match de ce tableau, de l'onglet Progression et des PR par tournoi et par match viennent d'une table tenue à l'import (<code>match_stats</code> : par match et par siège, les décisions comptées, l'erreur séparée pions/videau, les erreurs, les blunders, les deux termes du Snowie et la chance) plutôt que d'un nouveau parcours de chaque décision : sur une bibliothèque de plusieurs millions de positions, c'est ce qui garde le panneau rapide. Trois vues de corpus en sont tirées, en ligne de commande et par l'API du démon (voir stats — Erreurs récurrentes) : le <strong>face-à-face</strong> de deux joueurs (matchs communs, PR de chacun, bilan), le <strong>PR par fenêtre calendaire</strong> glissante (mois, trimestre) et le <strong>classement</strong> par PR des joueurs qui ont au moins un nombre donné de décisions comptées. Un <strong>filtre de provenance</strong> (moteur d'analyse, profondeur minimale) restreint les statistiques aux décisions analysées ainsi ; il porte sur chaque décision, et les chiffres qu'il touche sont alors recalculés depuis les décisions.</p>
+<p>Les chiffres par match de ce tableau, de l'onglet Progression et des PR par tournoi et par match viennent d'une table tenue à l'import (<code>match_stats</code> : par match et par siège, les décisions comptées, l'erreur séparée pions/videau, les erreurs, les blunders, les deux termes du Snowie et la chance) plutôt que d'un nouveau parcours de chaque décision : sur une bibliothèque de plusieurs millions de positions, c'est ce qui garde le panneau rapide. Trois vues de corpus en sont tirées, dans l'onglet <strong>Corpus</strong> du panneau, en ligne de commande et par l'API du démon (voir stats — Erreurs récurrentes) : le <strong>face-à-face</strong> de deux joueurs (matchs communs, PR de chacun, bilan), le <strong>PR par fenêtre calendaire</strong> glissante (mois, trimestre) et le <strong>classement</strong> par PR des joueurs qui ont au moins un nombre donné de décisions comptées. L'onglet Corpus calcule chaque vue à la demande, sous le filtre courant. Un <strong>filtre de provenance</strong> (champs <em>Moteur</em> et <em>Profondeur min.</em> de la barre de filtres) restreint les statistiques aux décisions analysées ainsi ; il porte sur chaque décision, et les chiffres qu'il touche sont alors recalculés depuis les décisions.</p>
 <div class="admonition important">
 <p>Un tiret (« — ») signale une valeur <strong>jamais mesurée</strong>, à ne pas confondre avec zéro. C'est notamment le cas de la colonne Chance pour tout match importé avant la version 2.15.0 du schéma : la chance n'était alors pas conservée, et rien ne permet de la reconstituer après coup. Réimporter le fichier source ne suffit pas : l'import y reconnaît un doublon et n'applique que les marques d'étude nouvellement levées (le rapport en donne le nombre). Il faut supprimer le match, puis le réimporter. Les formats qui ne la transportent pas (BGF, Jellyfish <code>.mat</code>) n'en fourniront jamais.</p>
 </div>
@@ -2084,12 +2084,12 @@ export default {
 <tr>
 <td>dd</td>
 <td>La décision est un videau de type Double / No Double (et non une réponse Take / Pass). Implique une décision de videau.</td>
-<td>—</td>
+<td><code>--cube-response double</code></td>
 </tr>
 <tr>
 <td>dr</td>
 <td>La décision est une réponse Take / Pass. Implique une décision de videau ; avec <code>dd</code>, <code>dr</code> l'emporte.</td>
-<td>—</td>
+<td><code>--cube-response takepass</code></td>
 </tr>
 <tr>
 <td>D</td>
@@ -2519,22 +2519,22 @@ export default {
 <tr>
 <td>tn'nom'</td>
 <td>Rechercher dans les tournois dont le nom est <code>nom</code> : la casse est ignorée et <code>*</code> remplace n'importe quelle suite de caractères (ex: <code>tn'open*'</code>).</td>
-<td>—</td>
+<td><code>--tournament-name</code></td>
 </tr>
 <tr>
 <td>rd:x</td>
 <td>Rechercher dans les matchs de la ronde x (ex: <code>rd:3</code>, <code>rd:Finale</code>) : le texte de la ronde est comparé sans tenir compte de la casse, <code>*</code> remplace n'importe quelle suite de caractères. Répétable (<code>rd:1 rd:2</code>) : l'une ou l'autre.</td>
-<td>—</td>
+<td><code>--round</code></td>
 </tr>
 <tr>
 <td>ml:x</td>
 <td>Le match a une longueur de x points. Formes <code>ml:7</code>, <code>ml:5,9</code>, <code>ml&gt;5</code> et <code>ml&lt;9</code> (bornes comprises).</td>
-<td>—</td>
+<td><code>--match-lengths</code></td>
 </tr>
 <tr>
 <td>md:x..y</td>
 <td><strong>Date du match</strong>, lue dans la colonne <code>match_date</code> de la position (la date du plus ancien match qui l'atteint), et non la date de création de l'analyse (<code>T</code>). Chaque borne est une année, un mois ou un jour (<code>2024</code>, <code>2024-06</code>, <code>2024-06-15</code>) et couvre toute sa durée, bornes comprises : <code>md:2024-01..2024-12</code> va du 1er janvier au 31 décembre 2024. Formes <code>md:2024</code> (toute l'année), <code>md&gt;2024-06</code> et <code>md&lt;2024-06</code>.</td>
-<td>—</td>
+<td><code>--match-date</code></td>
 </tr>
 <tr>
 <td>idx</td>
@@ -2549,27 +2549,27 @@ export default {
 <tr>
 <td><code>pl'nom'</code></td>
 <td>Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: <code>pl'Alice'</code>). La casse est ignorée et <code>*</code> remplace n'importe quelle suite de caractères (<code>pl'Ali*'</code>).</td>
-<td>—</td>
+<td><code>--player</code></td>
 </tr>
 <tr>
 <td><code>pl!'nom'</code></td>
 <td>Seulement les décisions prises par ce joueur : le joueur au trait est celui qui occupe le camp de ce nom dans le match (joueur 1 ou joueur 2). Même règles de casse et de joker que <code>pl</code>.</td>
-<td>—</td>
+<td><code>--player</code> <code>--seat-only</code></td>
 </tr>
 <tr>
 <td><code>op'nom'</code></td>
 <td>Seulement les matchs où ce joueur est l'adversaire de celui de <code>pl</code> (<code>pl'Alice' op'Bob'</code> : Alice contre Bob, de l'un ou l'autre côté ; avec <code>pl!</code>, les seules décisions d'Alice). Sans <code>pl</code>, <code>op</code> seul désigne un joueur à l'un ou l'autre camp, comme <code>pl</code>. Mêmes règles de casse et de joker.</td>
-<td>—</td>
+<td><code>--opponent</code></td>
 </tr>
 <tr>
 <td>pr&gt;x</td>
 <td>Le <strong>PR du match</strong> du joueur qui a pris la décision est d'au moins x, lu dans les statistiques par match au camp de ce joueur (pas le PR de l'adversaire) ; un match sans PR est exclu. Formes <code>pr&gt;8</code>, <code>pr&lt;5</code> et <code>pr4,9</code>, bornes comprises.</td>
-<td>—</td>
+<td><code>--pr</code></td>
 </tr>
 <tr>
 <td>ad:xg</td>
 <td>Moteur et profondeur de l'analyse enregistrée pour la position. Moteurs : <code>xg</code>, <code>gnubg</code>, <code>bgblitz</code>, <code>hedgehog</code>, <code>gammonnet</code> (début du nom du moteur, casse ignorée). Profondeurs : <code>3ply</code> (exactement 3 plis), <code>3ply+</code> (au moins 3 plis), <code>book</code> (livre d'ouvertures), <code>rollout</code> (rollout, y compris XG Roller et Roller++). Répétable : les moteurs sont des alternatives, les profondeurs aussi, et un moteur et une profondeur doivent tous deux convenir (<code>ad:xg ad:gnubg ad:3ply+</code>).</td>
-<td>—</td>
+<td><code>--analysis</code></td>
 </tr>
 <tr>
 <td>like, like42, like&lt;12, like42*</td>
