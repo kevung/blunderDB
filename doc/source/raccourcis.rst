@@ -272,7 +272,7 @@ Panneau des tournois
    :widths: 7, 20
    :align: center
 
-   "Clic, Double-clic", "Sélectionner un tournoi (afficher son détail)."
+   "Double-clic", "Sélectionner un tournoi (afficher son détail)."
    "HAUT, k", "Sélectionner le tournoi précédent, quand le panneau a le focus ou qu'aucune direction n'est affichée."
    "BAS, j", "Sélectionner le tournoi suivant, quand le panneau a le focus ou qu'aucune direction n'est affichée."
    "Double-clic (sur un match du tournoi)", "Naviguer dans le match."

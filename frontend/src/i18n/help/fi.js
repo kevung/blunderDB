@@ -1455,7 +1455,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Napsautus, Kaksoisnapsautus</td>
+<td>Kaksoisnapsautus</td>
 <td>Valitse turnaus (näytä sen tiedot).</td>
 </tr>
 <tr>

@@ -547,7 +547,7 @@
                     bind:sort
                     sortOptions={{ tristate: true }}
                     rowClass={(tournament) => (tournamentEdit.isEditing(tournament.id) ? 'editing-row' : '')}
-                    onSelect={(tournament) => {
+                    onActivate={(tournament) => {
                         if (!tournamentEdit.isEditing(tournament.id)) selectTournament(tournament);
                     }}
                     emptyText={$t('tournament.noTournaments')}

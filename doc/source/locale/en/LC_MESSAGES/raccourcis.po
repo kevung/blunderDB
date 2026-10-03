@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 12:01+0200\n"
+"POT-Creation-Date: 2026-10-03 12:27+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -825,10 +825,6 @@ msgstr "Stop the review and return to the deck list (can resume later)."
 #: ../../source/raccourcis.rst:268
 msgid "Panneau des tournois"
 msgstr "Tournament Panel"
-
-#: ../../source/raccourcis.rst:1
-msgid "Clic, Double-clic"
-msgstr "Click, Double-click"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner un tournoi (afficher son détail)."
@@ -1906,3 +1902,7 @@ msgstr "Close the help."
 
 #~ msgid "PageDown, l"
 #~ msgstr "PageDown, l"
+
+#~ msgid "Clic, Double-clic"
+#~ msgstr "Click, Double-click"
+

@@ -1455,7 +1455,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Click, Double-click</td>
+<td>Double-click</td>
 <td>Select a tournament (show its detail).</td>
 </tr>
 <tr>

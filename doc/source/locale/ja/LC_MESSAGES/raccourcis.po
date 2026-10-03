@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 12:01+0200\n"
+"POT-Creation-Date: 2026-10-03 12:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -804,10 +804,6 @@ msgstr "レビューを停止してデッキリストに戻る（後で再開可
 #: ../../source/raccourcis.rst:268
 msgid "Panneau des tournois"
 msgstr "トーナメントパネル"
-
-#: ../../source/raccourcis.rst:1
-msgid "Clic, Double-clic"
-msgstr "クリック、ダブルクリック"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner un tournoi (afficher son détail)."
@@ -1700,3 +1696,7 @@ msgstr "ヘルプを閉じる。"
 
 #~ msgid "PageDown, l"
 #~ msgstr "PageDown, l"
+
+#~ msgid "Clic, Double-clic"
+#~ msgstr "クリック、ダブルクリック"
+

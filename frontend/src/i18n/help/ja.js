@@ -1455,7 +1455,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>クリック、ダブルクリック</td>
+<td>ダブルクリック</td>
 <td>トーナメントを選択する（詳細を表示）。</td>
 </tr>
 <tr>

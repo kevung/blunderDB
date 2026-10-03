@@ -131,12 +131,12 @@ describe('TournamentPanel — list view', () => {
         expect(CreateTournament).not.toHaveBeenCalled();
     });
 
-    test('clicking a tournament row opens its matches (detail view)', async () => {
+    test('double-clicking a tournament row opens its matches (detail view)', async () => {
         GetTournamentMatches.mockResolvedValue([{ id: 501, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, comment: '' }]);
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
 
-        await fireEvent.click(row);
+        await fireEvent.dblClick(row);
 
         await vi.waitFor(() => expect(get(selectedTournamentStore)).toMatchObject({ id: 1 }));
         expect(ListMatches).toHaveBeenCalledWith(expect.objectContaining({ Unassigned: true }));
@@ -144,11 +144,11 @@ describe('TournamentPanel — list view', () => {
         expect(await screen.findByText('Alice')).toBeTruthy();
     });
 
-    test('clicking a tournament, then the back button, returns to the list with the selection cleared', async () => {
+    test('double-clicking a tournament, then the back button, returns to the list with the selection cleared', async () => {
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
 
-        await fireEvent.click(row);
+        await fireEvent.dblClick(row);
         await vi.waitFor(() => expect(get(selectedTournamentStore)).not.toBeNull());
 
         await fireEvent.click(screen.getByTitle(/back to tournaments/i));
@@ -221,7 +221,7 @@ describe('TournamentPanel — keyboard shortcuts', () => {
         GetTournamentMatches.mockResolvedValue([]);
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
-        await fireEvent.click(row);
+        await fireEvent.dblClick(row);
         await vi.waitFor(() => expect(get(selectedTournamentStore)).not.toBeNull());
 
         await fireEvent.keyDown(document, { key: 'Escape' });

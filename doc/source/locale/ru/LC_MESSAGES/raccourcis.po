@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 12:01+0200\n"
+"POT-Creation-Date: 2026-10-03 12:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -829,10 +829,6 @@ msgstr "Остановить повторение и вернуться к сп�
 #: ../../source/raccourcis.rst:268
 msgid "Panneau des tournois"
 msgstr "Панель турниров"
-
-#: ../../source/raccourcis.rst:1
-msgid "Clic, Double-clic"
-msgstr "Клик, Двойной клик"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner un tournoi (afficher son détail)."
@@ -1897,3 +1893,7 @@ msgstr "Закрыть справку."
 
 #~ msgid "PageDown, l"
 #~ msgstr "PageDown, l"
+
+#~ msgid "Clic, Double-clic"
+#~ msgstr "Клик, Двойной клик"
+

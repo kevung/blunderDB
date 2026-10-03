@@ -1455,7 +1455,7 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Clic, Doble clic</td>
+<td>Doble clic</td>
 <td>Seleccionar un torneo (mostrar su detalle).</td>
 </tr>
 <tr>
