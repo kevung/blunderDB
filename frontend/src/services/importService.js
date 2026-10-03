@@ -1,4 +1,4 @@
-import { tMsg } from '../i18n';
+import { tMsg, translate } from '../i18n';
 import { get } from 'svelte/store';
 import {
     OpenImportDatabaseDialog,
@@ -1034,10 +1034,17 @@ export async function handleDbFileDrop(dbPath) {
     } else {
         const filename = dbPath.split('/').pop().split('\\').pop();
         try {
-            const answer = await ShowQuestionDialog('Database already open', `A database is already open.\n\nWhat would you like to do with "${filename}"?`, ['Open', 'Merge', 'Cancel'], 'Merge');
-            if (answer === 'Open') {
+            const openLabel = translate('status.droppedDbOpen');
+            const mergeLabel = translate('status.droppedDbMerge');
+            const answer = await ShowQuestionDialog(
+                translate('status.droppedDbTitle'),
+                translate('status.droppedDbMessage', { filename }),
+                [openLabel, mergeLabel, translate('status.droppedDbCancel')],
+                mergeLabel
+            );
+            if (answer === openLabel) {
                 await openDatabaseByPath(dbPath);
-            } else if (answer === 'Merge') {
+            } else if (answer === mergeLabel) {
                 await importDatabaseByPath(dbPath);
             }
         } catch (error) {

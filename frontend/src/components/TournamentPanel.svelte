@@ -1,4 +1,5 @@
 <script>
+    import { confirmAction } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
@@ -255,7 +256,7 @@
 
     async function deleteTournamentEntry(tournament, event) {
         event.stopPropagation();
-        if (!confirm(get(t)('tournament.confirmDelete', { name: tournament.name }))) return;
+        if (!(await confirmAction(get(t)('tournament.confirmDelete', { name: tournament.name }), { confirmLabel: get(t)('common.delete') }))) return;
         try {
             await DeleteTournament(tournament.id);
             await loadTournaments();

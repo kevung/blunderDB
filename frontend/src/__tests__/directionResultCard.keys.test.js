@@ -4,6 +4,7 @@
  * qui retirent un match se confirment.
  */
 import { describe, test, expect, vi, afterEach } from 'vitest';
+import { answerConfirm } from './confirmHelper.js';
 import { render, cleanup, screen, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
 import ResultCard from '../components/direction/ResultCard.svelte';
@@ -107,27 +108,25 @@ describe('attente du backend', () => {
 
 describe('confirmations', () => {
     test('annuler le match se confirme ; refuser ne fait rien', async () => {
-        const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
         const h = mount();
         await fireEvent.click(screen.getByTestId('direction-result-more'));
         await fireEvent.click(screen.getByTestId('direction-result-cancel'));
-        expect(confirm).toHaveBeenCalled();
+        await answerConfirm(false);
         expect(h.onCancel).not.toHaveBeenCalled();
-        confirm.mockReturnValue(true);
         await fireEvent.click(screen.getByTestId('direction-result-cancel'));
+        await answerConfirm(true);
         await flush();
         expect(h.onCancel).toHaveBeenCalledWith('m1');
     });
 
     test('le forfait nomme le vainqueur et se confirme', async () => {
-        const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
         const h = mount();
         await fireEvent.click(screen.getByTestId('direction-result-more'));
         const btn = screen.getByTestId('direction-result-forfeit-a');
         expect(btn.textContent).toContain('Bruno');
         await fireEvent.click(btn);
+        await answerConfirm(true);
         await flush();
-        expect(confirm).toHaveBeenCalled();
         expect(h.onForfeit).toHaveBeenCalledWith('m1', 'pb', '');
     });
 });

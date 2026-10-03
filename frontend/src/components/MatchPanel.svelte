@@ -1,4 +1,5 @@
 <script>
+    import { confirmAction } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { sortMatches, toDateInputValue, formatDate, formatDiceShort, MATCH_STAT_ROWS, GRADE_MARKS, indexMoveGrades, countGrades, fmtGradeCost } from '../utils/matchTable.js';
@@ -519,7 +520,7 @@
 
     async function deleteMatchEntry(match, event) {
         event.stopPropagation();
-        if (!confirm(get(t)('match.confirmDelete', { player1: match.player1_name, player2: match.player2_name }))) return;
+        if (!(await confirmAction(get(t)('match.confirmDelete', { player1: match.player1_name, player2: match.player2_name }), { confirmLabel: get(t)('common.delete') }))) return;
         try {
             await DeleteMatch(match.id);
             await loadMatches();
