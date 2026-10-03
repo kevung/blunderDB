@@ -140,6 +140,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/imports.gnubg                        custom
      POST /v1/imports.json                         custom
      POST /v1/imports.list                         JSON
+     POST /v1/imports.ogxm                         custom
      POST /v1/imports.position                     custom
      POST /v1/imports.report                       JSON
      POST /v1/imports.studyQueue                   JSON

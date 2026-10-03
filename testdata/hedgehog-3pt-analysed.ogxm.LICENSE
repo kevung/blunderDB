@@ -1,0 +1,46 @@
+hedgehog-3pt-analysed.ogxm is a match exported by HedgeHog (hedgehog-bg.com),
+taken from the test data of AnkiGammon
+(github.com/Deinonychus999/AnkiGammon, tests/data/hedgehog/analysis.ogxm),
+distributed under the MIT License:
+
+MIT License
+
+Copyright (c) 2025 AnkiGammon
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Two fixtures are derived from this match, under the same licence:
+
+- ogid_hedgehog.json: the ogid_before of every ply, as HedgeHog's reference
+  implementation reads them (the "ogid_before" fields of
+  github.com/kevung/ogxmparser, testdata/hedgehog-3pt-analysed.ref.json,
+  which that repository's testdata/generate.py writes from ogxm_convert).
+- hedgehog-3pt-analysed.cube-norm.json: the no_double_norm_eq,
+  double_take_norm_eq and double_pass_norm_eq of every cube decision a
+  doubler faces (each ply's analysis.cube_decision, and the analysis of a
+  double ply), rounded to 1e-6, from the output of
+
+      build/ogxm_convert --to-json < testdata/hedgehog-3pt-analysed.ogxm
+
+  The tool is HedgeHog's reference implementation,
+  gitlab.com/eranlambooij/hedgehog-public at commit
+  78693ef862335ab94f80144692e3521fc1281cc7, built with `make ogxm NATIVE=0`
+  and distributed under the MIT License (Copyright (c) 2026 Eran Lambooij;
+  its format specifications under docs/ are CC BY 4.0). The tool's output
+  is data, not a copy of its code.

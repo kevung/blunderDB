@@ -228,6 +228,7 @@ var databaseParity = map[string]parityEntry{
 	"GradeQuizCheckerMove":              {Server: "/v1/quiz.gradeCheckerMove", Why: whyQuiz},
 	"GradeQuizCube":                     {Server: "/v1/quiz.gradeCube", Why: whyQuiz},
 	"ImportBGFMatch":                    {CLI: "import", Server: "/v1/imports.bgf"},
+	"ImportOGXMMatch":                   {CLI: "import", Server: "/v1/imports.ogxm"},
 	"ImportBGFPosition":                 {CLI: "import --type position", Server: "/v1/imports.position"},
 	"ImportBGFPositionFromText":         {Server: "/v1/imports.position", Why: "the clipboard paste of a BGBlitz position; the CLI imports the file"},
 	"ImportDatabase":                    {CLI: "import --type database", Server: "/v1/imports.db"},

@@ -99,7 +99,7 @@ Database Information:
 
 ## Import Command
 
-Import match files (.xg, .sgf, .mat, .txt, .bgf) or XGP position files (.xgp) into a database.
+Import match files (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position files (.xgp) into a database.
 
 ### Import Match
 
@@ -173,7 +173,7 @@ Import all match files from a directory at once:
 - `--format` - Output format: `text` (default, the summary table below) or `json`
 - `--fail-on-error` - Exit non-zero when any file failed to import, even if others succeeded
 
-Supported file types: `.xg`, `.xgp`, `.sgf`, `.mat`, `.txt`, `.bgf`.
+Supported file types: `.xg`, `.xgp`, `.sgf`, `.mat`, `.txt`, `.bgf`, `.ogxm`.
 
 A batch that finds no supported file, or where every file failed or was a
 duplicate (nothing at all got imported), is always an error. A duplicate is
@@ -2253,7 +2253,7 @@ Options:
 Examples:
   blunderdb cubematrix 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'
   blunderdb cubematrix --match-length 5 --format json '<XGID>'
-  blunderdb cubematrix '11ccccchhhjjjjj:66666888dddddoo:N0N::B::0:0:7:'  # an OGID
+  blunderdb cubematrix '11ccccchhhjjjjj:66666888dddddoo:N0N::W::0:0:7:'  # an OGID
 ```
 
 ### `blunderdb delete`
@@ -2343,7 +2343,7 @@ Examples:
   blunderdb epc 'XGID=-BBBB----------------bbbb-:0:0:1:00:0:0:0:0:10'
 
   # The same position given by its OGID (OpenGammon)
-  blunderdb epc 'llmmnnoo:11223344:N0N::B::0:0::'
+  blunderdb epc 'llmmnnoo:11223344:N0N::W::0:0::'
 
   # With the downloaded/wider database
   blunderdb epc --bearoff-ts ~/.local/share/blunderdb/gnubg_ts6x11.bd '<XGID>'
@@ -2520,7 +2520,7 @@ Options:
     	How often --watch looks at the folder (default 10s, floor 2s)
 
 Import Types:
-  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf) or XGP position (.xgp)
+  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position (.xgp)
   position  Import positions from a text file
   batch     Batch import all match/position files from a directory
 
@@ -2771,8 +2771,8 @@ Equities are money points per unit of the position's cube, or normalised
 equity at a match score. Ctrl-C prints what the games finished so far
 concluded. With --store, a finished rollout is written on the position as a
 second analysis with its own settings, beside the imported or evaluated one;
-an interrupted rollout is never stored. A rerun with the same settings
-replaces the earlier one.
+an interrupted rollout is never stored. Of two rollouts with the same
+settings, the one with more games is kept (a tie keeps the newer).
 
 Options:
   -candidates int

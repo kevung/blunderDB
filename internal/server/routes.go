@@ -59,6 +59,7 @@ var streamingCustomPaths = map[string]bool{
 	"/v1/imports.xg":               true,
 	"/v1/imports.gnubg":            true,
 	"/v1/imports.bgf":              true,
+	"/v1/imports.ogxm":             true,
 	"/v1/imports.db":               true,
 	"/v1/imports.position":         true,
 	"/v1/exports.json":             true,

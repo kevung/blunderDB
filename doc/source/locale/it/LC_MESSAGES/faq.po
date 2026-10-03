@@ -220,6 +220,10 @@ msgid "**BGBlitz**: fichiers *.bgf* et positions texte."
 msgstr "**BGBlitz**: file *.bgf* e posizioni testuali."
 
 #: ../../source/faq.rst:99
+msgid "**HedgeHog** (OpenGammon): fichiers *.ogxm*, avec l'analyse."
+msgstr "**HedgeHog** (OpenGammon): file *.ogxm*, con l'analisi."
+
+#: ../../source/faq.rst:101
 msgid ""
 "L'import peut se faire par fichier unique, par sélection multiple, par "
 "dossier récursif, par collage depuis le presse-papier, ou par glisser-"
@@ -229,7 +233,7 @@ msgstr ""
 "cartella ricorsiva, incollaggio dagli appunti o trascinamento (drag and "
 "drop)."
 
-#: ../../source/faq.rst:102
+#: ../../source/faq.rst:104
 msgid ""
 "blunderDB détecte automatiquement les doublons et empêche l'import d'un "
 "match déjà présent dans la base de données."
@@ -237,11 +241,11 @@ msgstr ""
 "blunderDB rileva automaticamente i duplicati e impedisce l'importazione "
 "di un match già presente nel database."
 
-#: ../../source/faq.rst:107
+#: ../../source/faq.rst:109
 msgid "Mes matchs joués en ligne sont-ils importables ?"
 msgstr "Le partite che ho giocato online sono importabili?"
 
-#: ../../source/faq.rst:109
+#: ../../source/faq.rst:111
 msgid ""
 "Oui, par un détour : **Backgammon Studio (Heroes)**, **Backgammon "
 "Galaxy** et **GammonSpace** produisent tous les trois des fichiers que "
@@ -256,7 +260,7 @@ msgstr ""
 "blunderDB per la via ``.xg`` esistente, senza bisogno di un lettore "
 "dedicato."
 
-#: ../../source/faq.rst:116
+#: ../../source/faq.rst:118
 msgid ""
 "Ce que ce détour transporte exactement — analyses, chance du lancer, "
 "marques, commentaires — **n'a pas été mesuré** : il y faudrait un match "
@@ -271,7 +275,7 @@ msgstr ""
 " perde all'importazione, apri una issue con il file: sarà la misura a "
 "decidere se serve un lettore proprio, non una supposizione."
 
-#: ../../source/faq.rst:122
+#: ../../source/faq.rst:124
 msgid ""
 "Les formats texte plus anciens que GNU Backgammon sait déjà lire — "
 "``.sgg`` (GridGammon), ``.tmg``, ``.gam``, le ``.txt`` de Snowie — sont "
@@ -282,11 +286,11 @@ msgstr ""
 "(GridGammon), ``.tmg``, ``.gam``, il ``.txt`` di Snowie — sono nello "
 "stesso caso: passare da GNU Backgammon li rende importabili oggi."
 
-#: ../../source/faq.rst:128
+#: ../../source/faq.rst:130
 msgid "Puis-je synchroniser ma base entre plusieurs machines ?"
 msgstr "Posso sincronizzare la mia base tra più macchine?"
 
-#: ../../source/faq.rst:130
+#: ../../source/faq.rst:132
 msgid ""
 "Une base blunderDB est **un seul fichier**. Cela rend la sauvegarde et la"
 " copie triviales, et cela décide de la réponse :"
@@ -294,7 +298,7 @@ msgstr ""
 "Una base blunderDB è **un solo file**. Questo rende banali il backup e la"
 " copia, e decide la risposta:"
 
-#: ../../source/faq.rst:133
+#: ../../source/faq.rst:135
 msgid ""
 "**Dropbox, Syncthing, iCloud, OneDrive** : cela fonctionne, à une "
 "condition — ne pas ouvrir la base **des deux côtés en même temps**. Ces "
@@ -312,7 +316,7 @@ msgstr ""
 "file aperto, il che protegge una stessa macchina, ma nessun lock "
 "attraversa un servizio di sincronizzazione."
 
-#: ../../source/faq.rst:141
+#: ../../source/faq.rst:143
 msgid ""
 "**Plusieurs postes en même temps** : c'est ce à quoi le mode ``serve`` "
 "répond (voir :doc:`mode_headless`). Un démon détient la base, les postes "
@@ -322,7 +326,7 @@ msgstr ""
 "``serve`` (vedi :doc:`mode_headless`). Un demone detiene la base, le "
 "macchine vi si collegano, e c'è un solo scrittore."
 
-#: ../../source/faq.rst:145
+#: ../../source/faq.rst:147
 msgid ""
 "**Deux bases qui ont divergé** : elles se **fusionnent** plutôt qu'elles "
 "ne se synchronisent — voir « Comment fusionner plusieurs bases de données"
@@ -338,11 +342,11 @@ msgstr ""
 "un'unione, non una riconciliazione: nulla viene cancellato da una parte "
 "perché l'altra l'ha cancellato."
 
-#: ../../source/faq.rst:154
+#: ../../source/faq.rst:156
 msgid "Ai-je besoin d'eXtreme Gammon pour utiliser blunderDB?"
 msgstr "Ho bisogno di eXtreme Gammon per usare blunderDB?"
 
-#: ../../source/faq.rst:156
+#: ../../source/faq.rst:158
 msgid ""
 "Non. blunderDB lit également les fichiers de GNUbg, BGBlitz et Jellyfish,"
 " et son évaluateur embarqué (gammonNet) analyse n'importe quelle position"
@@ -358,18 +362,18 @@ msgstr ""
 "completa (mosse, decisioni di cubo, marcature, fortuna del tiro): è il "
 "formato più ampiamente sfruttato dalle statistiche."
 
-#: ../../source/faq.rst:165
+#: ../../source/faq.rst:167
 msgid "J'utilise déjà eXtreme Gammon : à quoi me sert blunderDB ?"
 msgstr "Uso già eXtreme Gammon: a cosa mi serve blunderDB?"
 
-#: ../../source/faq.rst:167
+#: ../../source/faq.rst:169
 msgid ""
 "blunderDB ne rejoue pas vos matchs, il les rassemble. Trois différences "
 "concrètes :"
 msgstr ""
 "blunderDB non rigioca i vostri match, li raduna. Tre differenze concrete:"
 
-#: ../../source/faq.rst:170
+#: ../../source/faq.rst:172
 msgid ""
 "**agréger** dans un seul fichier des matchs venus d'XG, de GNUbg, de "
 "BGBlitz et de Jellyfish, dédoublonnés position par position ;"
@@ -377,7 +381,7 @@ msgstr ""
 "**aggregare** in un solo file match provenienti da XG, GNUbg, BGBlitz e "
 "Jellyfish, deduplicati posizione per posizione;"
 
-#: ../../source/faq.rst:173
+#: ../../source/faq.rst:175
 msgid ""
 "**chercher** par structure de pions et par erreur : « les prises à ce "
 "score où j'ai perdu plus de 50 millipoints » s'écrit en une ligne de "
@@ -387,7 +391,7 @@ msgstr ""
 "punteggio in cui ho perso più di 50 millipoints » si scrive in una riga "
 "di comando (vedi :ref:`cmd_mode`);"
 
-#: ../../source/faq.rst:177
+#: ../../source/faq.rst:179
 msgid ""
 "**réviser** les positions retenues par répétition espacée, en paquets "
 "Anki (voir :ref:`panneau_anki`)."
@@ -395,7 +399,7 @@ msgstr ""
 "**ripassare** le posizioni trattenute tramite ripetizione dilazionata, "
 "in mazzi Anki (vedi :ref:`panneau_anki`)."
 
-#: ../../source/faq.rst:180
+#: ../../source/faq.rst:182
 msgid ""
 "Vos analyses XG restent celles d'XG : blunderDB les importe telles "
 "quelles et ne les recalcule jamais (voir :ref:`import_regles`)."
@@ -403,11 +407,11 @@ msgstr ""
 "Le vostre analisi XG restano quelle di XG: blunderDB le importa tali e "
 "quali e non le ricalcola mai (vedi :ref:`import_regles`)."
 
-#: ../../source/faq.rst:185
+#: ../../source/faq.rst:187
 msgid "Les rollouts XG sont-ils importés ? blunderDB fait-il des rollouts ?"
 msgstr "I rollout XG vengono importati? blunderDB effettua rollout?"
 
-#: ../../source/faq.rst:187
+#: ../../source/faq.rst:189
 msgid ""
 "Non, dans les deux sens. D'une analyse XG, l'import conserve l'étiquette "
 "de niveau (« 3-ply », « XG Roller++ », « Book »), les équités, les "
@@ -426,11 +430,11 @@ msgstr ""
 "integrato, dal canto suo, non effettua rollout: risponde con una "
 "ricerca a 0 o 2 tiri di anticipo."
 
-#: ../../source/faq.rst:197
+#: ../../source/faq.rst:199
 msgid "Qu'a-t-on mesuré de l'évaluateur intégré, et que n'a-t-on pas mesuré ?"
 msgstr "Cosa è stato misurato del valutatore integrato, e cosa non lo è stato?"
 
-#: ../../source/faq.rst:199
+#: ../../source/faq.rst:201
 #, no-python-format
 msgid ""
 "Une mesure est publiée, sur le régime *évalué* du panneau Eval : 4000 "
@@ -451,11 +455,11 @@ msgstr ""
 "**posizioni di contatto**, per i quali non è pubblicato alcun dato. Il "
 "dettaglio delle ipotesi è in :ref:`epc_methodologie`."
 
-#: ../../source/faq.rst:209
+#: ../../source/faq.rst:211
 msgid "Qu'est-ce qu'une collection?"
 msgstr "Che cos'è una collezione?"
 
-#: ../../source/faq.rst:211
+#: ../../source/faq.rst:213
 msgid ""
 "Une collection est un regroupement personnalisé de positions. "
 "Contrairement à une recherche par filtres qui est dynamique, une "
@@ -469,11 +473,11 @@ msgstr ""
 "consentono, ad esempio, di raggruppare posizioni di riferimento per una "
 "tematica particolare."
 
-#: ../../source/faq.rst:219
+#: ../../source/faq.rst:221
 msgid "Qu'est-ce que l'EPC?"
 msgstr "Che cos'è l'EPC?"
 
-#: ../../source/faq.rst:221
+#: ../../source/faq.rst:223
 msgid ""
 "L'EPC (Effective Pip Count) est une mesure plus précise que le simple pip"
 " count pour évaluer les positions de bearoff. Le panneau Eval de "
@@ -489,7 +493,7 @@ msgstr ""
 "l'EPC, il numero medio di lanci, la deviazione standard, il conteggio pip"
 " e il wastage."
 
-#: ../../source/faq.rst:227
+#: ../../source/faq.rst:229
 msgid ""
 "Sur les positions de bearoff pur, le panneau affiche aussi la probabilité"
 " de gain du joueur au trait et, lorsque la position est couverte par une "
@@ -509,11 +513,11 @@ msgstr ""
 "volutamente mostrato. Vedere la sezione « Metodologia e ipotesi del "
 "pannello Eval » del manuale per il dettaglio delle ipotesi."
 
-#: ../../source/faq.rst:238
+#: ../../source/faq.rst:240
 msgid "Que vaut l'évaluateur intégré (gammonNet) ?"
 msgstr "Quanto vale il valutatore integrato (gammonNet)?"
 
-#: ../../source/faq.rst:240
+#: ../../source/faq.rst:242
 msgid ""
 "gammonNet est un réseau de neurones entraîné par un tiers (voir Crédits),"
 " porté en Go et compilé dans blunderDB : aucun logiciel externe, aucune "
@@ -541,7 +545,7 @@ msgstr ""
 "Vedi la sezione «Pannello Eval» e «Metodologia e ipotesi del pannello "
 "Eval» del manuale."
 
-#: ../../source/faq.rst:252
+#: ../../source/faq.rst:254
 #, no-python-format
 msgid ""
 "**Ce que cela vaut, en chiffres.** Sur les positions de bearoff que la "
@@ -562,7 +566,7 @@ msgstr ""
 " diffuso. Il dettaglio e il metodo sono in «Metodologia e ipotesi del "
 "pannello Eval»."
 
-#: ../../source/faq.rst:260
+#: ../../source/faq.rst:262
 msgid ""
 "Pour la même question posée de **votre** bibliothèque plutôt que d'un "
 "corpus de référence, ``blunderdb analyze --compare`` compare le moteur "
@@ -576,11 +580,11 @@ msgstr ""
 "migliore risposta, costo dei disaccordi, ripartizione per fase di gioco —"
 " **senza scrivere nulla**."
 
-#: ../../source/faq.rst:267
+#: ../../source/faq.rst:269
 msgid "Quelle est la différence entre le PR et le Snowie Error Rate?"
 msgstr "Qual è la differenza tra il PR e lo Snowie Error Rate?"
 
-#: ../../source/faq.rst:269
+#: ../../source/faq.rst:271
 msgid ""
 "Le PR (*Performance Rating*) est l'erreur moyenne d'équité par décision "
 "comptée, multipliée par 500 comme le font eXtreme Gammon et GNUbg ; plus "
@@ -600,11 +604,11 @@ msgstr ""
 "eXtreme Gammon e di GNUbg (vedi :ref:`stats_parity` per il dettaglio "
 "delle regole di conteggio)."
 
-#: ../../source/faq.rst:279
+#: ../../source/faq.rst:281
 msgid "blunderDB dispose-t-il d'une interface en ligne de commande?"
 msgstr "blunderDB dispone di un'interfaccia a riga di comando?"
 
-#: ../../source/faq.rst:281
+#: ../../source/faq.rst:283
 msgid ""
 "Oui, blunderDB dispose d'une interface en ligne de commande (CLI) "
 "permettant d'effectuer sans interface graphique des opérations telles que"
@@ -618,11 +622,11 @@ msgstr ""
 "ricerca di posizioni, la visualizzazione di statistiche, ecc. Consultare "
 "la documentazione CLI per maggiori dettagli."
 
-#: ../../source/faq.rst:289
+#: ../../source/faq.rst:291
 msgid "blunderDB propose-t-il un mode serveur?"
 msgstr "blunderDB propone una modalità server?"
 
-#: ../../source/faq.rst:291
+#: ../../source/faq.rst:293
 msgid ""
 "Oui, un mode « headless » facultatif : le même binaire, lancé avec "
 "``serve``, expose le moteur de blunderDB en HTTP + JSON derrière un "
@@ -646,21 +650,21 @@ msgstr ""
 " e il tutorial «Distribuire la modalità server dietro un proxy» della "
 "guida utente."
 
-#: ../../source/faq.rst:304
+#: ../../source/faq.rst:306
 msgid "Puis-je modifier, copier, partager blunderDB?"
 msgstr "Posso modificare, copiare, condividere blunderDB?"
 
-#: ../../source/faq.rst:306
+#: ../../source/faq.rst:308
 msgid ""
 "Oui, tout à fait (et c'est même encouragé!). blunderDB est sous licence "
 "MIT."
 msgstr "Sì, assolutamente. blunderDB è rilasciato sotto licenza MIT."
 
-#: ../../source/faq.rst:310
+#: ../../source/faq.rst:312
 msgid "Où sont stockées mes données?"
 msgstr "Dove sono conservati i miei dati?"
 
-#: ../../source/faq.rst:312
+#: ../../source/faq.rst:314
 msgid ""
 "Sur votre disque, dans le fichier ``.db`` que vous avez choisi en créant "
 "la base : aucun compte, aucun serveur, aucune synchronisation par défaut."
@@ -674,11 +678,11 @@ msgstr ""
 "server facoltativa (vedi sopra) fa girare blunderDB a distanza, e in quel"
 " caso siete voi a ospitare quel server."
 
-#: ../../source/faq.rst:320
+#: ../../source/faq.rst:322
 msgid "Puis-je partager une base avec un autre joueur?"
 msgstr "Posso condividere un database con un altro giocatore?"
 
-#: ../../source/faq.rst:322
+#: ../../source/faq.rst:324
 msgid ""
 "Oui : une base blunderDB est un simple fichier, il suffit de le copier ou"
 " de l'envoyer. Pour diffuser une base à un tiers, deux mécanismes "
@@ -699,11 +703,11 @@ msgstr ""
 "nulla lato destinatario), e una **protezione con password** produce un "
 "file ``.dbx`` cifrato. Vedi :ref:`diffusion_controlee` nel manuale."
 
-#: ../../source/faq.rst:333
+#: ../../source/faq.rst:335
 msgid "Quel format de données utilise blunderDB?"
 msgstr "Quale formato di dati utilizza blunderDB?"
 
-#: ../../source/faq.rst:335
+#: ../../source/faq.rst:337
 msgid ""
 "La base de données est un simple fichier Sqlite. En l'absence de "
 "blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite."
@@ -711,11 +715,11 @@ msgstr ""
 "Il database è un semplice file SQLite. In assenza di blunderDB, può "
 "quindi essere aperto con qualsiasi editor di file SQLite."
 
-#: ../../source/faq.rst:340
+#: ../../source/faq.rst:342
 msgid "Quels ont été les principes de conception de blunderDB?"
 msgstr "Quali sono stati i principi di progettazione di blunderDB?"
 
-#: ../../source/faq.rst:342
+#: ../../source/faq.rst:344
 msgid ""
 "Je voulais une interface accessible, mais pensée pour un usage avancé et "
 "soutenu, où l'on enchaîne les positions et les recherches. La ligne de "
@@ -728,7 +732,7 @@ msgstr ""
 "scorciatoie da tastiera servono questo utilizzo, senza essere un "
 "passaggio obbligato."
 
-#: ../../source/faq.rst:347
+#: ../../source/faq.rst:349
 msgid ""
 "Je souhaitais par ailleurs blunderDB léger, autonome, sans installation "
 "et disponible pour différentes plateformes, d'où mon choix du langage Go "
@@ -744,7 +748,7 @@ msgstr ""
 "contenere un database. Il formato di file sqlite sembrava perfettamente "
 "indicato."
 
-#: ../../source/faq.rst:354
+#: ../../source/faq.rst:356
 msgid ""
 "Je tenais aussi à ce qu'une base reste un simple fichier, que l'on peut "
 "copier, sauvegarder ou envoyer à un autre joueur."
@@ -752,7 +756,7 @@ msgstr ""
 "Ci tenevo anche a che un database restasse un semplice file, che si può "
 "copiare, salvare o inviare a un altro giocatore."
 
-#: ../../source/faq.rst:357
+#: ../../source/faq.rst:359
 msgid ""
 "Enfin, blunderDB ne se limite plus à l'application de bureau : le même "
 "binaire offre une interface en ligne de commande et un mode serveur "
@@ -766,11 +770,11 @@ msgstr ""
 "multiutente. L'uso normale resta tuttavia l'applicazione desktop. Vedere "
 ":ref:`cli` e :ref:`headless`."
 
-#: ../../source/faq.rst:365
+#: ../../source/faq.rst:367
 msgid "Quelle est l'architecture logicielle de blunderDB?"
 msgstr "Qual è l'architettura software di blunderDB?"
 
-#: ../../source/faq.rst:367
+#: ../../source/faq.rst:369
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données SQLite qui stocke les "
@@ -779,7 +783,7 @@ msgstr ""
 "Il backend è scritto in `Go <https://go.dev/>`_. È responsabile di tutte "
 "le operazioni sul database SQLite che memorizza le posizioni."
 
-#: ../../source/faq.rst:371
+#: ../../source/faq.rst:373
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge"
 " du rendu de l'interface graphique et du board de Backgammon."
@@ -787,7 +791,7 @@ msgstr ""
 "Il frontend è scritto in `Svelte <https://svelte.dev/>`_. È responsabile "
 "del rendering dell'interfaccia grafica e del board del Backgammon."
 
-#: ../../source/faq.rst:374
+#: ../../source/faq.rst:376
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, "
 "permettant la production d'applications Desktop natives, déclinables sous"
@@ -797,11 +801,11 @@ msgstr ""
 "consente di produrre applicazioni desktop native per Windows, Linux e "
 "macOS."
 
-#: ../../source/faq.rst:378
+#: ../../source/faq.rst:380
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr "Il database è gestito da `SQLite <https://www.sqlite.org/>`_."
 
-#: ../../source/faq.rst:380
+#: ../../source/faq.rst:382
 msgid ""
 "Le mode serveur facultatif peut s'appuyer sur `PostgreSQL "
 "<https://www.postgresql.org/>`_ à la place de Sqlite pour les "
@@ -811,7 +815,7 @@ msgstr ""
 "<https://www.postgresql.org/>`_ invece di SQLite per le installazioni "
 "multiutente."
 
-#: ../../source/faq.rst:384
+#: ../../source/faq.rst:386
 msgid ""
 "L'évaluateur embarqué (`gammonNet "
 "<https://github.com/kevung/gammonNet>`_, MIT) est un réseau de neurones "
@@ -824,7 +828,7 @@ msgstr ""
 "in Go e compilata in blunderDB: valuta qualsiasi posizione offline, senza"
 " XG né GNUbg. Vedi «Quanto vale il valutatore integrato?» più sotto."
 
-#: ../../source/faq.rst:389
+#: ../../source/faq.rst:391
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
@@ -832,19 +836,19 @@ msgstr ""
 "Per maggiori informazioni, vedere il `repository GitHub di blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
 
-#: ../../source/faq.rst:392
+#: ../../source/faq.rst:394
 msgid "Sur quelles plateformes blunderDB fonctionne-t-il?"
 msgstr "Su quali piattaforme funziona blunderDB?"
 
-#: ../../source/faq.rst:394
+#: ../../source/faq.rst:396
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "blunderDB funziona su Windows, Linux e Mac."
 
-#: ../../source/faq.rst:397
+#: ../../source/faq.rst:399
 msgid "D'où vient l'icône de blunderDB?"
 msgstr "Da dove proviene l'icona di blunderDB?"
 
-#: ../../source/faq.rst:399
+#: ../../source/faq.rst:401
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."

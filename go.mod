@@ -23,6 +23,7 @@ require (
 	github.com/jackc/pgx/v5 v5.11.0
 	github.com/kevung/bgfparser v1.2.0
 	github.com/kevung/gnubgparser v1.7.0
+	github.com/kevung/ogxmparser v0.1.0
 	github.com/kevung/xgparser v1.4.0
 	github.com/klauspost/compress v1.20.0
 	github.com/open-spaced-repetition/go-fsrs/v3 v3.3.1

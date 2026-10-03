@@ -23,6 +23,7 @@ import {
     ImportGnuBGMatch,
     ImportGnuBGMatchFromText,
     ImportBGFMatch,
+    ImportOGXMMatch,
     ImportBGFPosition,
     ImportBGFPositionFromText,
     ImportXGPPosition,
@@ -469,6 +470,7 @@ async function importSingleFileCore(filePath) {
     const isXGFile = lowerPath.endsWith('.xg');
     const isXGPFile = lowerPath.endsWith('.xgp');
     const isBGFFile = lowerPath.endsWith('.bgf');
+    const isOGXMFile = lowerPath.endsWith('.ogxm');
     const isSGFFile = lowerPath.endsWith('.sgf');
     const isMATFile = lowerPath.endsWith('.mat');
     const isTXTFile = lowerPath.endsWith('.txt');
@@ -505,6 +507,27 @@ async function importSingleFileCore(filePath) {
             } else {
                 setStatusBarMessage(tMsg('status.errorImportingXgMatch', { error }));
                 await ShowAlert('Error importing XG match: ' + error);
+            }
+        }
+    } else if (isOGXMFile) {
+        logger.log('Importing OGXM match file:', filePath);
+        try {
+            const matchID = await ImportOGXMMatch(filePath);
+            setStatusBarMessage(tMsg('status.ogxmMatchImported', { matchID }));
+            matchPanelRefreshTriggerStore.update((n) => n + 1);
+            dbMutationCounterStore.update((n) => n + 1);
+            await reloadPositions();
+            openPanel(PANEL.MATCH);
+            activeTabStore.set('matches');
+            return { type: 'match', id: matchID };
+        } catch (error) {
+            logger.error('Error importing OGXM match:', error);
+            const errorStr = String(error);
+            if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
+                setStatusBarMessage(tMsg('status.matchAlreadyImported'));
+            } else {
+                setStatusBarMessage(tMsg('status.errorImportingOgxmMatch', { error }));
+                await ShowAlert('Error importing HedgeHog match: ' + error);
             }
         }
     } else if (isBGFFile) {
@@ -661,6 +684,7 @@ async function importSingleFileBatch(filePath) {
     const isXGFile = lowerPath.endsWith('.xg');
     const isXGPFile = lowerPath.endsWith('.xgp');
     const isBGFFile = lowerPath.endsWith('.bgf');
+    const isOGXMFile = lowerPath.endsWith('.ogxm');
     const isSGFFile = lowerPath.endsWith('.sgf');
     const isMATFile = lowerPath.endsWith('.mat');
     const isTXTFile = lowerPath.endsWith('.txt');
@@ -673,6 +697,9 @@ async function importSingleFileBatch(filePath) {
         return { type: 'match', id: matchID };
     } else if (isBGFFile) {
         const matchID = await ImportBGFMatch(filePath);
+        return { type: 'match', id: matchID };
+    } else if (isOGXMFile) {
+        const matchID = await ImportOGXMMatch(filePath);
         return { type: 'match', id: matchID };
     } else if (isSGFFile || isMATFile) {
         const matchID = await ImportGnuBGMatch(filePath);
@@ -1014,7 +1041,7 @@ export async function classifyDroppedFiles(paths) {
             const ext = p.toLowerCase().split('.').pop();
             if (ext === 'db') {
                 dbFiles.push(p);
-            } else if (['txt', 'xg', 'xgp', 'sgf', 'mat', 'bgf'].includes(ext)) {
+            } else if (['txt', 'xg', 'xgp', 'sgf', 'mat', 'bgf', 'ogxm'].includes(ext)) {
                 importFiles.push(p);
             } else {
                 unsupported.push(p);

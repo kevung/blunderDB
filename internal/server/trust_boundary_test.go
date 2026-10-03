@@ -347,7 +347,7 @@ func TestImportsCancel_BodyTooLarge(t *testing.T) {
 func TestLimitBody_ExemptsExactlyTheUploads(t *testing.T) {
 	want := map[string]bool{
 		"/v1/imports.json": true, "/v1/imports.xg": true, "/v1/imports.gnubg": true,
-		"/v1/imports.bgf": true, "/v1/imports.db": true, "/v1/imports.position": true,
+		"/v1/imports.bgf": true, "/v1/imports.ogxm": true, "/v1/imports.db": true, "/v1/imports.position": true,
 	}
 	got := uploadPaths()
 	if len(got) != len(want) {
@@ -433,5 +433,15 @@ func TestImportCancel_CrossTenantHTTP(t *testing.T) {
 	rec = serve(t, srv, context.Background(), "10", "/v1/imports.cancel", body())
 	if rec.Code != http.StatusOK || !cancelled {
 		t.Fatalf("tenant 10 cancelling its own import: status = %d, cancelled = %v; want 200, true", rec.Code, cancelled)
+	}
+}
+
+// Every upload route streams its import, so it must be in
+// streamingCustomPaths, which kindOf cannot discover on its own.
+func TestUploadRoutesAreStreaming(t *testing.T) {
+	for p := range uploadPaths() {
+		if !streamingCustomPaths[p] {
+			t.Errorf("%s is an upload route missing from streamingCustomPaths", p)
+		}
 	}
 }

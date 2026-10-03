@@ -43,7 +43,7 @@ func (cli *CLI) runCubeMatrix(args []string) error {
 		fmt.Println("Examples:")
 		fmt.Println("  blunderdb cubematrix 'XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:7:10'")
 		fmt.Println("  blunderdb cubematrix --match-length 5 --format json '<XGID>'")
-		fmt.Println("  blunderdb cubematrix '11ccccchhhjjjjj:66666888dddddoo:N0N::B::0:0:7:'  # an OGID")
+		fmt.Println("  blunderdb cubematrix '11ccccchhhjjjjj:66666888dddddoo:N0N::W::0:0:7:'  # an OGID")
 	}
 
 	if err := cmd.Parse(args); err != nil {
