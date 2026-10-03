@@ -48,7 +48,7 @@ test('un dossier s’importe fichier par fichier, doublon compté à part', asyn
     await expect(done).toBeVisible();
     const stat = (label) => done.locator('.stat-item').filter({ hasText: label }).locator('.stat-value');
     await expect(stat('Imported')).toHaveText('2');
-    await expect(stat('Skipped')).toHaveText('1');
+    await expect(stat('Duplicates skipped')).toHaveText('1');
     await expect(stat('Failed')).toHaveText('0');
 
     const imported = await getWailsCalls(page, 'ImportXGMatch');

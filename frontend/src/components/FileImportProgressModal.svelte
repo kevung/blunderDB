@@ -43,7 +43,7 @@
         <h2 class="modal-title">{$t('import.completedTitle')}</h2>
 
         <div class="summary">
-            <p><strong>{$t('import.finished')}</strong> {$t('import.processedN', { processed: results.succeeded + results.failed + results.skipped, total: totalFiles })}</p>
+            <p>{$t('import.processedN', { processed: results.succeeded + results.failed + results.skipped, total: totalFiles })}</p>
         </div>
 
         <div class="stats">
