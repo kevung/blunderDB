@@ -2081,6 +2081,16 @@ export default {
 <td><code>--decision</code></td>
 </tr>
 <tr>
+<td>dd</td>
+<td>The decision is a cube action of type Double / No Double (not a Take / Pass answer). Implies a cube decision.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>dr</td>
+<td>The decision is a Take / Pass answer. Implies a cube decision; together with <code>dd</code>, <code>dr</code> takes precedence.</td>
+<td>—</td>
+</tr>
+<tr>
 <td>D</td>
 <td>The position matches the dice roll (both dice, any order).</td>
 <td><code>--dice 6,5</code></td>
@@ -2472,12 +2482,12 @@ export default {
 </tr>
 <tr>
 <td>T&gt;x</td>
-<td>Date the position was added to the database, after x (YYYY/MM/DD). This is not the match date: adding sets it and merging two databases keeps it.</td>
+<td>Date the position was added to the database, after x (YYYY/MM/DD). This is not the match date (<code>md</code>): adding sets it and merging two databases keeps it.</td>
 <td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
-<td>Date the position was added to the database, before x (YYYY/MM/DD). This is not the match date.</td>
+<td>Date the position was added to the database, before x (YYYY/MM/DD). This is not the match date (<code>md</code>).</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2506,6 +2516,26 @@ export default {
 <td><code>--tournament-ids</code></td>
 </tr>
 <tr>
+<td>tn'name'</td>
+<td>Search in tournaments whose name is <code>name</code>: case is ignored and <code>*</code> stands for any sequence of characters (e.g. <code>tn'open*'</code>).</td>
+<td>—</td>
+</tr>
+<tr>
+<td>rd:x</td>
+<td>Search in matches of round x (e.g. <code>rd:3</code>, <code>rd:Final</code>): the round text is compared case-insensitively, <code>*</code> stands for any sequence of characters. Repeatable (<code>rd:1 rd:2</code>): either one.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ml:x</td>
+<td>The match length is x points. Forms <code>ml:7</code>, <code>ml:5,9</code>, <code>ml&gt;5</code> and <code>ml&lt;9</code> (bounds included).</td>
+<td>—</td>
+</tr>
+<tr>
+<td>md:x..y</td>
+<td><strong>Match date</strong>, read from the position's <code>match_date</code> column (the date of the oldest match that reaches it), not the date the analysis was created (<code>T</code>). Each bound is a year, a month or a day (<code>2024</code>, <code>2024-06</code>, <code>2024-06-15</code>) and covers its whole span, bounds included: <code>md:2024-01..2024-12</code> runs from 1 January to 31 December 2024. Forms <code>md:2024</code> (the whole year), <code>md&gt;2024-06</code> and <code>md&lt;2024-06</code>.</td>
+<td>—</td>
+</tr>
+<tr>
 <td>idx</td>
 <td>Search for the position with identifier x (e.g. id12).</td>
 <td><code>--position-ids</code></td>
@@ -2517,7 +2547,27 @@ export default {
 </tr>
 <tr>
 <td><code>pl'name'</code></td>
-<td>Search positions from a match involving the named player, at either seat (e.g. <code>pl'Alice'</code>). Case-insensitive.</td>
+<td>Search positions from a match involving the named player, at either seat (e.g. <code>pl'Alice'</code>). Case is ignored and <code>*</code> stands for any sequence of characters (<code>pl'Ali*'</code>).</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>pl!'name'</code></td>
+<td>Only the decisions made by this player: the player on roll is the one who occupies the seat of that name in the match (player 1 or player 2). Same case and wildcard rules as <code>pl</code>.</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>op'name'</code></td>
+<td>Only matches where this player is the opponent of the <code>pl</code> player (<code>pl'Alice' op'Bob'</code>: Alice against Bob, on either side; with <code>pl!</code>, only Alice's decisions). Without <code>pl</code>, <code>op</code> alone designates a player at either seat, like <code>pl</code>. Same case and wildcard rules.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>pr&gt;x</td>
+<td>The <strong>match PR</strong> of the player who made the decision is at least x, read from the per-match statistics at that player's seat (not the opponent's PR); a match without a PR is excluded. Forms <code>pr&gt;8</code>, <code>pr&lt;5</code> and <code>pr4,9</code>, bounds included.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ad:xg</td>
+<td>Engine and depth of the analysis recorded for the position. Engines: <code>xg</code>, <code>gnubg</code>, <code>bgblitz</code>, <code>hedgehog</code>, <code>gammonnet</code> (start of the engine name, case ignored). Depths: <code>3ply</code> (exactly 3 plies), <code>3ply+</code> (at least 3 plies), <code>book</code> (opening book), <code>rollout</code> (rollout, including XG Roller and Roller++). Repeatable: engines are alternatives, so are depths, and an engine and a depth must both match (<code>ad:xg ad:gnubg ad:3ply+</code>).</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2527,7 +2577,7 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>The <code>pl</code>, <code>m</code> and <code>t</code> values open with a double quote or an apostrophe and close with either. A token that keeps a quote without forming a complete value is ignored, and <code>blunderdb search --query</code> reports it. A tag may contain an apostrophe (<code>#l'ouverture</code>), never a double quote. The semicolon is the separator of identifier and tag lists: it appears in no value, and <code>ma1;2</code> is not a token (write <code>ma1 ma2</code>).</p>
+<p>The <code>pl</code>, <code>pl!</code>, <code>op</code>, <code>tn</code>, <code>m</code> and <code>t</code> values open with a double quote or an apostrophe and close with either. A token that keeps a quote without forming a complete value is ignored, and <code>blunderdb search --query</code> reports it. A tag may contain an apostrophe (<code>#l'ouverture</code>), never a double quote. The semicolon is the separator of identifier and tag lists: it appears in no value, and <code>ma1;2</code> is not a token (write <code>ma1 ma2</code>).</p>
 <h3>Transcribing from a terminal</h3>
 <p>The command line has no transcription command: moves are entered in the <em>Transcription</em> tab. Outside the application, they go through <code>blunderdb call</code> (Transcribing through the API), for example <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>. <code>--if-match</code> names the revision returned by the previous call; every call is its own session, with no <code>sessionId</code> and no undo from one call to the next.</p>
 <h3>Various commands</h3>

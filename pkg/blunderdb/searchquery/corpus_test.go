@@ -82,6 +82,14 @@ var corpusField = map[string]string{
 	"matchIDsFilter":                "MatchIDsFilter",
 	"tournamentIDsFilter":           "TournamentIDsFilter",
 	"playerFilter":                  "PlayerFilter",
+	"opponentFilter":                "OpponentFilter",
+	"tournamentNameFilter":          "TournamentNameFilter",
+	"roundFilter":                   "RoundFilter",
+	"matchLengthFilter":             "MatchLengthFilter",
+	"matchDateFilter":               "MatchDateFilter",
+	"playerPRFilter":                "PlayerPRFilter",
+	"analysisProvenanceFilter":      "AnalysisProvenanceFilter",
+	"cubeResponseFilter":            "CubeResponseFilter",
 	"positionIDsFilter":             "PositionIDsFilter",
 }
 

@@ -73,13 +73,13 @@ type Diag struct {
 
 func (d Diag) String() string { return fmt.Sprintf("%s: %s", d.Token, d.Message) }
 
-// Quoted filter values — pl"…" (player), m"…" (move pattern) and t"…" (comment
-// text) — may contain spaces, so they are lifted out of the command before it
+// Quoted filter values — pl"…" and pl!"…" (player), op"…" (opponent), tn"…"
+// (tournament name), m"…" (move pattern) and t"…" (comment text) — may contain spaces, so they are lifted out of the command before it
 // is split. Without that, `t"big win"` tears into `t"big` and `win"`, and the
 // loose `win"` is then read as a win-rate filter: the query silently returns
 // the wrong rows. Both quote styles are accepted, as in the JS.
 var (
-	quotedRe   = regexp.MustCompile(`(?:pl|m|t)["'][^"']*["']`)
+	quotedRe   = regexp.MustCompile(`(?:pl!?|op|tn|m|t)["'][^"']*["']`)
 	exceptDice = regexp.MustCompile(`^xD[1-6][1-6]$`)
 	maRe       = regexp.MustCompile(`^ma\d[^;]*$`)
 	tnRe       = regexp.MustCompile(`^tn\d[^;]*$`)
@@ -103,7 +103,24 @@ var (
 	// neither whitespace nor another '#', nor the ';' a list is joined with.
 	tagRe     = regexp.MustCompile(`^#[^\s#;]+$`)
 	moveErrRe = regexp.MustCompile(`^E\d`)
+	// Match-level tokens. `ml:7`, `ml:5,9`, `ml>5`, `ml<9`: the length of the
+	// match. `md:2024-01..2024-12`, `md:2024`, `md>2024-06`, `md<2024-06`: its
+	// date, each bound a year, a month or a day. `pr>8`, `pr<5`, `pr4,9`: the
+	// PR of the match for the player who took the decision. `rd:3`: the round.
+	// All matched by shape: `md`, `ml`, `pr` and `rd` start like tokens that
+	// take a bare prefix, and a typo must not become a silent filter.
+	matchLenRe  = regexp.MustCompile(`^ml(?::\d+(?:,\d+)?|[<>]\d+)$`)
+	matchDateRe = regexp.MustCompile(`^md(?::` + dateBound + `(?:\.\.` + dateBound + `)?|[<>]` + dateBound + `)$`)
+	prRe        = regexp.MustCompile(`^pr(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?,\d+(?:\.\d+)?)$`)
+	roundRe     = regexp.MustCompile(`^rd:[^\s"';]+$`)
+	// `ad:xg`, `ad:3ply`, `ad:3ply+`, `ad:book`, `ad:rollout`: who analysed the
+	// position and how deep. Any case, kept lower-case.
+	provenanceRe = regexp.MustCompile(`^(?i:ad:(?:[a-z][a-z0-9]*|\d+ply\+?))$`)
 )
+
+// dateBound is a year, a month or a day: 2024, 2024-06, 2024-06-15 (`/` as the
+// separator is read too).
+const dateBound = `\d{4}(?:[-/]\d{2}(?:[-/]\d{2})?)?`
 
 // quotedTag reports whether tok is a tag whose quote characters are plain
 // apostrophes: no double quote, and nothing that, lower-cased as a tag is,
@@ -234,6 +251,16 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	f.IncludeScore = has("score") || has("sco") || has("sc") || has("s")
 	f.NoContactFilter = has("nc")
 	f.DecisionTypeFilter = has("d")
+	// `dr` (a take/pass response) and `dd` (double or no double) narrow the
+	// cube decisions; the command bar writes them after `d`. Asking for both
+	// reads as the response, as the frontend does.
+	dResponse, dDouble := has("dr"), has("dd")
+	switch {
+	case dResponse:
+		f.CubeResponseFilter = "takepass"
+	case dDouble:
+		f.CubeResponseFilter = "double"
+	}
 	// `D` matches the board's dice, `D1` only the first die.
 	dBoth, dFirst := has("D"), has("D1")
 	f.DiceRollFilter = dBoth || dFirst
@@ -264,6 +291,8 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	// Closed vocabularies, claimed BEFORE the numeric ranges: `ph:race` starts
 	// with `p` and would otherwise be swallowed by the pip-count filter, the
 	// way `pl"…"` once was.
+	f.RoundFilter = joinValues(all(func(s string) bool { return roundRe.MatchString(s) }), 3)
+	f.AnalysisProvenanceFilter = strings.ToLower(joinValues(all(func(s string) bool { return provenanceRe.MatchString(s) }), 3))
 	f.GamePhaseFilter = joinValues(all(func(s string) bool { return phaseRe.MatchString(s) }), 3)
 	f.CommentOriginFilter = joinValues(all(func(s string) bool { return originRe.MatchString(s) }), 3)
 	f.GameTypeFilter = joinValues(all(func(s string) bool { return typeRe.MatchString(s) }), 3)
@@ -281,8 +310,11 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 	// Numeric ranges. Each reads `x>n`, `x<n` or `xa,b`; the six count filters
 	// below additionally accept a bare `x5`, which means exactly five.
 	f.PipCountFilter = first(func(s string) bool {
-		return strings.HasPrefix(s, "p") && !strings.HasPrefix(s, "pl") && !strings.HasPrefix(s, "ph")
+		return strings.HasPrefix(s, "p") && !strings.HasPrefix(s, "pl") && !strings.HasPrefix(s, "ph") && !strings.HasPrefix(s, "pr")
 	})
+	f.PlayerPRFilter = first(func(s string) bool { return prRe.MatchString(s) })
+	f.MatchLengthFilter = first(func(s string) bool { return matchLenRe.MatchString(s) })
+	f.MatchDateFilter = first(func(s string) bool { return matchDateRe.MatchString(s) })
 	f.WinRateFilter = first(prefix("w"))
 	// `gt:holding` starts with `g` too, and `first` does not skip a claimed
 	// token: without the exclusion a type search would also carry a
@@ -349,6 +381,14 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 		case strings.HasPrefix(q, "pl"):
 			if f.PlayerFilter == "" {
 				f.PlayerFilter = q
+			}
+		case strings.HasPrefix(q, "op"):
+			if f.OpponentFilter == "" {
+				f.OpponentFilter = q
+			}
+		case strings.HasPrefix(q, "tn"):
+			if f.TournamentNameFilter == "" {
+				f.TournamentNameFilter = q
 			}
 		case strings.HasPrefix(q, "m"):
 			if f.MovePatternFilter == "" {
@@ -428,6 +468,12 @@ func Format(f domain.SearchFilters) string {
 	flag(f.IncludeCube, "cube")
 	flag(f.IncludeScore, "score")
 	flag(f.DecisionTypeFilter, "d")
+	switch f.CubeResponseFilter {
+	case "takepass":
+		add("dr")
+	case "double":
+		add("dd")
+	}
 	if f.DiceRollFilter {
 		if f.DiceRollMode == "first" {
 			add("D1")
@@ -485,11 +531,16 @@ func Format(f domain.SearchFilters) string {
 	add(f.EquityFilter)
 	add(f.MoveErrorFilter)
 	add(f.DateFilter)
+	add(f.PlayerPRFilter)
+	add(f.MatchLengthFilter)
+	add(f.MatchDateFilter)
 
 	add(f.SearchText)
 	add(f.MovePatternFilter)
 	add(f.EncounterFilter)
 	add(f.PlayerFilter)
+	add(f.OpponentFilter)
+	add(f.TournamentNameFilter)
 
 	addList(&parts, "ma", f.MatchIDsFilter)
 	addList(&parts, "tn", f.TournamentIDsFilter)
@@ -497,6 +548,8 @@ func Format(f domain.SearchFilters) string {
 	addList(&parts, "ph:", f.GamePhaseFilter)
 	addList(&parts, "co:", f.CommentOriginFilter)
 	addList(&parts, "gt:", f.GameTypeFilter)
+	addList(&parts, "rd:", f.RoundFilter)
+	addList(&parts, "ad:", f.AnalysisProvenanceFilter)
 	addList(&parts, "", f.TagFilter)
 
 	return strings.Join(parts, " ")
@@ -565,10 +618,17 @@ var FieldTokens = map[string]string{
 	"SearchText":                    `t"…"`,
 	"MovePatternFilter":             `m"…"`,
 	"PlayerFilter":                  `pl"…"`,
+	"OpponentFilter":                `op"…"`,
+	"TournamentNameFilter":          `tn"…"`,
+	"RoundFilter":                   "rd:",
+	"MatchLengthFilter":             "ml",
+	"MatchDateFilter":               "md",
+	"PlayerPRFilter":                "pr",
+	"AnalysisProvenanceFilter":      "ad:",
 	"MatchIDsFilter":                "ma",
 	"TournamentIDsFilter":           "tn",
 	"PositionIDsFilter":             "id",
-	"CubeResponseFilter":            "", // set by the GUI's cube panel, no token yet
+	"CubeResponseFilter":            "dr",
 }
 
 // Unrepresentable lists the domain.SearchFilters fields no token can carry, and

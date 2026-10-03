@@ -2081,6 +2081,16 @@ export default {
 <td><code>--decision</code></td>
 </tr>
 <tr>
+<td>dd</td>
+<td>Die Entscheidung ist eine Dopplerwürfel-Aktion vom Typ Doppeln / Nicht doppeln (keine Take-/Pass-Antwort). Impliziert eine Dopplerwürfel-Entscheidung.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>dr</td>
+<td>Die Entscheidung ist eine Take-/Pass-Antwort. Impliziert eine Dopplerwürfel-Entscheidung; zusammen mit <code>dd</code> hat <code>dr</code> Vorrang.</td>
+<td>—</td>
+</tr>
+<tr>
 <td>D</td>
 <td>Die Position erfüllt den Würfelwurf (beide Würfel, unabhängig von der Reihenfolge).</td>
 <td><code>--dice 6,5</code></td>
@@ -2472,12 +2482,12 @@ export default {
 </tr>
 <tr>
 <td>T&gt;x</td>
-<td>Datum, an dem die Stellung zur Datenbank hinzugefügt wurde, nach x (JJJJ/MM/TT). Es ist nicht das Datum des Matches: Das Hinzufügen legt es fest, und das Zusammenführen zweier Datenbanken behält es bei.</td>
+<td>Datum, an dem die Stellung nach x (JJJJ/MM/TT) zur Datenbank hinzugefügt wurde. Dies ist nicht das Partiedatum (<code>md</code>): das Hinzufügen legt es fest und das Zusammenführen zweier Datenbanken behält es bei.</td>
 <td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
-<td>Datum, an dem die Stellung zur Datenbank hinzugefügt wurde, vor x (JJJJ/MM/TT). Es ist nicht das Datum des Matches.</td>
+<td>Datum, an dem die Stellung vor x (JJJJ/MM/TT) zur Datenbank hinzugefügt wurde. Dies ist nicht das Partiedatum (<code>md</code>).</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2506,6 +2516,26 @@ export default {
 <td><code>--tournament-ids</code></td>
 </tr>
 <tr>
+<td>tn'Name'</td>
+<td>In Turnieren suchen, deren Name <code>Name</code> lautet: Groß-/Kleinschreibung wird ignoriert und <code>*</code> steht für eine beliebige Zeichenfolge (z. B. <code>tn'open*'</code>).</td>
+<td>—</td>
+</tr>
+<tr>
+<td>rd:x</td>
+<td>In den Matches der Runde x suchen (z. B. <code>rd:3</code>, <code>rd:Finale</code>): der Rundentext wird ohne Beachtung der Groß-/Kleinschreibung verglichen, <code>*</code> steht für eine beliebige Zeichenfolge. Wiederholbar (<code>rd:1 rd:2</code>): die eine oder die andere.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ml:x</td>
+<td>Das Match hat eine Länge von x Punkten. Formen <code>ml:7</code>, <code>ml:5,9</code>, <code>ml&gt;5</code> und <code>ml&lt;9</code> (Grenzen eingeschlossen).</td>
+<td>—</td>
+</tr>
+<tr>
+<td>md:x..y</td>
+<td><strong>Matchdatum</strong>, gelesen aus der Spalte <code>match_date</code> der Stellung (das Datum des ältesten Matches, das sie erreicht), und nicht das Erstellungsdatum der Analyse (<code>T</code>). Jede Grenze ist ein Jahr, ein Monat oder ein Tag (<code>2024</code>, <code>2024-06</code>, <code>2024-06-15</code>) und deckt ihre gesamte Dauer ab, Grenzen eingeschlossen: <code>md:2024-01..2024-12</code> reicht vom 1. Januar bis zum 31. Dezember 2024. Formen <code>md:2024</code> (das ganze Jahr), <code>md&gt;2024-06</code> und <code>md&lt;2024-06</code>.</td>
+<td>—</td>
+</tr>
+<tr>
 <td>idx</td>
 <td>Die Position mit der Kennung x suchen (z. B. id12).</td>
 <td><code>--position-ids</code></td>
@@ -2517,7 +2547,27 @@ export default {
 </tr>
 <tr>
 <td><code>pl'Name'</code></td>
-<td>Stellungen aus einer Partie suchen, an der der genannte Spieler an einer der beiden Seiten beteiligt war (z. B. <code>pl'Alice'</code>). Groß-/Kleinschreibung wird ignoriert.</td>
+<td>Stellungen aus einer Partie suchen, an der der genannte Spieler an einer der beiden Seiten beteiligt war (z. B. <code>pl'Alice'</code>). Groß-/Kleinschreibung wird ignoriert und <code>*</code> steht für eine beliebige Zeichenfolge (<code>pl'Ali*'</code>).</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>pl!'Name'</code></td>
+<td>Nur die Entscheidungen dieses Spielers: Der Spieler am Zug ist derjenige, der im Match die Seite mit diesem Namen innehat (Spieler 1 oder Spieler 2). Gleiche Regeln für Groß-/Kleinschreibung und Platzhalter wie bei <code>pl</code>.</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>op'Name'</code></td>
+<td>Nur Matches, in denen dieser Spieler der Gegner des Spielers von <code>pl</code> ist (<code>pl'Alice' op'Bob'</code>: Alice gegen Bob, auf der einen oder anderen Seite; mit <code>pl!</code> nur die Entscheidungen von Alice). Ohne <code>pl</code> bezeichnet <code>op</code> allein einen Spieler auf einer der beiden Seiten, wie <code>pl</code>. Gleiche Regeln für Groß-/Kleinschreibung und Platzhalter.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>pr&gt;x</td>
+<td>Der <strong>Match-PR</strong> des Spielers, der die Entscheidung getroffen hat, beträgt mindestens x, gelesen aus den Statistiken pro Match auf der Seite dieses Spielers (nicht der PR des Gegners); ein Match ohne PR wird ausgeschlossen. Formen <code>pr&gt;8</code>, <code>pr&lt;5</code> und <code>pr4,9</code>, Grenzen eingeschlossen.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ad:xg</td>
+<td>Engine und Tiefe der für die Stellung gespeicherten Analyse. Engines: <code>xg</code>, <code>gnubg</code>, <code>bgblitz</code>, <code>hedgehog</code>, <code>gammonnet</code> (Anfang des Engine-Namens, Groß-/Kleinschreibung ignoriert). Tiefen: <code>3ply</code> (genau 3 Ply), <code>3ply+</code> (mindestens 3 Ply), <code>book</code> (Eröffnungsbuch), <code>rollout</code> (Rollout, einschließlich XG Roller und Roller++). Wiederholbar: Die Engines sind Alternativen, die Tiefen ebenso, und eine Engine und eine Tiefe müssen beide passen (<code>ad:xg ad:gnubg ad:3ply+</code>).</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2527,7 +2577,7 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>Die Werte <code>pl</code>, <code>m</code> und <code>t</code> beginnen mit einem Anführungszeichen oder einem Apostroph und enden mit einem der beiden. Ein Token, das ein Anführungszeichen behält, ohne einen vollständigen Wert zu bilden, wird ignoriert, und <code>blunderdb search --query</code> meldet es. Ein Tag darf einen Apostroph enthalten (<code>#l'ouverture</code>), nie ein Anführungszeichen. Das Semikolon trennt Bezeichner- und Tag-Listen: Es kommt in keinem Wert vor, und <code>ma1;2</code> ist kein Token (<code>ma1 ma2</code> schreiben).</p>
+<p>Die Werte <code>pl</code>, <code>pl!</code>, <code>op</code>, <code>tn</code>, <code>m</code> und <code>t</code> beginnen mit einem Anführungszeichen oder einem Apostroph und enden mit einem der beiden. Ein Token, das ein Anführungszeichen enthält, ohne einen vollständigen Wert zu bilden, wird ignoriert, und <code>blunderdb search --query</code> meldet es. Ein Tag darf einen Apostroph enthalten (<code>#l'ouverture</code>), nie ein Anführungszeichen. Das Semikolon trennt die Listen von Kennungen und Tags: Es kommt in keinem Wert vor, und <code>ma1;2</code> ist kein Token (<code>ma1 ma2</code> schreiben).</p>
 <h3>Von einem Terminal aus transkribieren</h3>
 <p>Die Kommandozeile hat keinen Transkriptionsbefehl: Die Züge werden in der Registerkarte <em>Transkription</em> eingegeben. Außerhalb der Anwendung laufen sie über <code>blunderdb call</code> (Transkribieren über die API), zum Beispiel <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>. <code>--if-match</code> nennt die vom vorherigen Aufruf gelieferte Revision; jeder Aufruf ist eine eigene Sitzung, ohne <code>sessionId</code> und ohne Rückgängigmachen von einem Aufruf zum nächsten.</p>
 <h3>Verschiedene Befehle</h3>

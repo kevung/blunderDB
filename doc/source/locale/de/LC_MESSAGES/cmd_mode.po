@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 13:11+0200\n"
+"POT-Creation-Date: 2026-10-03 15:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -676,6 +676,35 @@ msgid "``--decision``"
 msgstr "``--decision``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "dd"
+msgstr "dd"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La décision est un videau de type Double / No Double (et non une réponse "
+"Take / Pass). Implique une décision de videau."
+msgstr ""
+"Die Entscheidung ist eine Dopplerwürfel-Aktion vom Typ Doppeln / Nicht "
+"doppeln (keine Take-/Pass-Antwort). Impliziert eine Dopplerwürfel-"
+"Entscheidung."
+
+#: ../../source/cmd_mode.rst:1
+msgid "—"
+msgstr "—"
+
+#: ../../source/cmd_mode.rst:1
+msgid "dr"
+msgstr "dr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La décision est une réponse Take / Pass. Implique une décision de videau "
+"; avec ``dd``, ``dr`` l'emporte."
+msgstr ""
+"Die Entscheidung ist eine Take-/Pass-Antwort. Impliziert eine "
+"Dopplerwürfel-Entscheidung; zusammen mit ``dd`` hat ``dr`` Vorrang."
+
+#: ../../source/cmd_mode.rst:1
 msgid "D"
 msgstr "D"
 
@@ -718,10 +747,6 @@ msgstr ""
 "Die Position wurde **nicht** mit dem Wurf 6-5 gespielt (unabhängig von "
 "der Reihenfolge). Der Wert wird im Token angezeigt; wiederholbar, um "
 "mehrere Würfe auszuschließen (``xD65 xD54``)."
-
-#: ../../source/cmd_mode.rst:1
-msgid "—"
-msgstr "—"
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -1478,12 +1503,12 @@ msgstr "T>x"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Date d'ajout de la position à la base après x (AAAA/MM/JJ). Ce n'est pas "
-"la date du match : l'ajout la fixe et la fusion de deux bases la "
-"conserve."
+"la date du match (``md``) : l'ajout la fixe et la fusion de deux bases la"
+" conserve."
 msgstr ""
-"Datum, an dem die Stellung zur Datenbank hinzugefügt wurde, nach x "
-"(JJJJ/MM/TT). Es ist nicht das Datum des Matches: Das Hinzufügen legt es "
-"fest, und das Zusammenführen zweier Datenbanken behält es bei."
+"Datum, an dem die Stellung nach x (JJJJ/MM/TT) zur Datenbank hinzugefügt "
+"wurde. Dies ist nicht das Partiedatum (``md``): das Hinzufügen legt es "
+"fest und das Zusammenführen zweier Datenbanken behält es bei."
 
 #: ../../source/cmd_mode.rst:1
 msgid "T<x"
@@ -1492,10 +1517,10 @@ msgstr "T<x"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Date d'ajout de la position à la base avant x (AAAA/MM/JJ). Ce n'est pas "
-"la date du match."
+"la date du match (``md``)."
 msgstr ""
-"Datum, an dem die Stellung zur Datenbank hinzugefügt wurde, vor x "
-"(JJJJ/MM/TT). Es ist nicht das Datum des Matches."
+"Datum, an dem die Stellung vor x (JJJJ/MM/TT) zur Datenbank hinzugefügt "
+"wurde. Dies ist nicht das Partiedatum (``md``)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "Tx,y"
@@ -1546,6 +1571,70 @@ msgid "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
 msgstr "Sucht in den Turnieren mit den IDs von x bis y (z. B. tn1,3)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "tn'nom'"
+msgstr "tn'Name'"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Rechercher dans les tournois dont le nom est ``nom`` : la casse est "
+"ignorée et ``*`` remplace n'importe quelle suite de caractères (ex: "
+"``tn'open*'``)."
+msgstr ""
+"In Turnieren suchen, deren Name ``Name`` lautet: Groß-/Kleinschreibung "
+"wird ignoriert und ``*`` steht für eine beliebige Zeichenfolge (z. B. "
+"``tn'open*'``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "rd:x"
+msgstr "rd:x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Rechercher dans les matchs de la ronde x (ex: ``rd:3``, ``rd:Finale``) : "
+"le texte de la ronde est comparé sans tenir compte de la casse, ``*`` "
+"remplace n'importe quelle suite de caractères. Répétable (``rd:1 rd:2``) "
+": l'une ou l'autre."
+msgstr ""
+"In den Matches der Runde x suchen (z. B. ``rd:3``, ``rd:Finale``): der "
+"Rundentext wird ohne Beachtung der Groß-/Kleinschreibung verglichen, "
+"``*`` steht für eine beliebige Zeichenfolge. Wiederholbar (``rd:1 "
+"rd:2``): die eine oder die andere."
+
+#: ../../source/cmd_mode.rst:1
+msgid "ml:x"
+msgstr "ml:x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Le match a une longueur de x points. Formes ``ml:7``, ``ml:5,9``, "
+"``ml>5`` et ``ml<9`` (bornes comprises)."
+msgstr ""
+"Das Match hat eine Länge von x Punkten. Formen ``ml:7``, ``ml:5,9``, "
+"``ml>5`` und ``ml<9`` (Grenzen eingeschlossen)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "md:x..y"
+msgstr "md:x..y"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"**Date du match**, lue dans la colonne ``match_date`` de la position (la "
+"date du plus ancien match qui l'atteint), et non la date de création de "
+"l'analyse (``T``). Chaque borne est une année, un mois ou un jour "
+"(``2024``, ``2024-06``, ``2024-06-15``) et couvre toute sa durée, bornes "
+"comprises : ``md:2024-01..2024-12`` va du 1er janvier au 31 décembre "
+"2024. Formes ``md:2024`` (toute l'année), ``md>2024-06`` et "
+"``md<2024-06``."
+msgstr ""
+"**Matchdatum**, gelesen aus der Spalte ``match_date`` der Stellung (das "
+"Datum des ältesten Matches, das sie erreicht), und nicht das "
+"Erstellungsdatum der Analyse (``T``). Jede Grenze ist ein Jahr, ein Monat"
+" oder ein Tag (``2024``, ``2024-06``, ``2024-06-15``) und deckt ihre "
+"gesamte Dauer ab, Grenzen eingeschlossen: ``md:2024-01..2024-12`` reicht "
+"vom 1. Januar bis zum 31. Dezember 2024. Formen ``md:2024`` (das ganze "
+"Jahr), ``md>2024-06`` und ``md<2024-06``."
+
+#: ../../source/cmd_mode.rst:1
 msgid "idx"
 msgstr "idx"
 
@@ -1572,11 +1661,85 @@ msgstr "``pl'Name'``"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Rechercher les positions issues d'un match impliquant le joueur indiqué, "
-"sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée."
+"sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée et "
+"``*`` remplace n'importe quelle suite de caractères (``pl'Ali*'``)."
 msgstr ""
 "Stellungen aus einer Partie suchen, an der der genannte Spieler an einer "
 "der beiden Seiten beteiligt war (z. B. ``pl'Alice'``). "
-"Groß-/Kleinschreibung wird ignoriert."
+"Groß-/Kleinschreibung wird ignoriert und ``*`` steht für eine beliebige "
+"Zeichenfolge (``pl'Ali*'``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``pl!'nom'``"
+msgstr "``pl!'Name'``"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Seulement les décisions prises par ce joueur : le joueur au trait est "
+"celui qui occupe le camp de ce nom dans le match (joueur 1 ou joueur 2). "
+"Même règles de casse et de joker que ``pl``."
+msgstr ""
+"Nur die Entscheidungen dieses Spielers: Der Spieler am Zug ist derjenige,"
+" der im Match die Seite mit diesem Namen innehat (Spieler 1 oder Spieler "
+"2). Gleiche Regeln für Groß-/Kleinschreibung und Platzhalter wie bei "
+"``pl``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``op'nom'``"
+msgstr "``op'Name'``"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Seulement les matchs où ce joueur est l'adversaire de celui de ``pl`` "
+"(``pl'Alice' op'Bob'`` : Alice contre Bob, de l'un ou l'autre côté ; avec"
+" ``pl!``, les seules décisions d'Alice). Sans ``pl``, ``op`` seul désigne"
+" un joueur à l'un ou l'autre camp, comme ``pl``. Mêmes règles de casse et"
+" de joker."
+msgstr ""
+"Nur Matches, in denen dieser Spieler der Gegner des Spielers von ``pl`` "
+"ist (``pl'Alice' op'Bob'``: Alice gegen Bob, auf der einen oder anderen "
+"Seite; mit ``pl!`` nur die Entscheidungen von Alice). Ohne ``pl`` "
+"bezeichnet ``op`` allein einen Spieler auf einer der beiden Seiten, wie "
+"``pl``. Gleiche Regeln für Groß-/Kleinschreibung und Platzhalter."
+
+#: ../../source/cmd_mode.rst:1
+msgid "pr>x"
+msgstr "pr>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Le **PR du match** du joueur qui a pris la décision est d'au moins x, lu "
+"dans les statistiques par match au camp de ce joueur (pas le PR de "
+"l'adversaire) ; un match sans PR est exclu. Formes ``pr>8``, ``pr<5`` et "
+"``pr4,9``, bornes comprises."
+msgstr ""
+"Der **Match-PR** des Spielers, der die Entscheidung getroffen hat, "
+"beträgt mindestens x, gelesen aus den Statistiken pro Match auf der Seite"
+" dieses Spielers (nicht der PR des Gegners); ein Match ohne PR wird "
+"ausgeschlossen. Formen ``pr>8``, ``pr<5`` und ``pr4,9``, Grenzen "
+"eingeschlossen."
+
+#: ../../source/cmd_mode.rst:1
+msgid "ad:xg"
+msgstr "ad:xg"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Moteur et profondeur de l'analyse enregistrée pour la position. Moteurs :"
+" ``xg``, ``gnubg``, ``bgblitz``, ``hedgehog``, ``gammonnet`` (début du "
+"nom du moteur, casse ignorée). Profondeurs : ``3ply`` (exactement 3 "
+"plis), ``3ply+`` (au moins 3 plis), ``book`` (livre d'ouvertures), "
+"``rollout`` (rollout, y compris XG Roller et Roller++). Répétable : les "
+"moteurs sont des alternatives, les profondeurs aussi, et un moteur et une"
+" profondeur doivent tous deux convenir (``ad:xg ad:gnubg ad:3ply+``)."
+msgstr ""
+"Engine und Tiefe der für die Stellung gespeicherten Analyse. Engines: "
+"``xg``, ``gnubg``, ``bgblitz``, ``hedgehog``, ``gammonnet`` (Anfang des "
+"Engine-Namens, Groß-/Kleinschreibung ignoriert). Tiefen: ``3ply`` (genau "
+"3 Ply), ``3ply+`` (mindestens 3 Ply), ``book`` (Eröffnungsbuch), "
+"``rollout`` (Rollout, einschließlich XG Roller und Roller++). "
+"Wiederholbar: Die Engines sind Alternativen, die Tiefen ebenso, und eine "
+"Engine und eine Tiefe müssen beide passen (``ad:xg ad:gnubg ad:3ply+``)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "like, like42, like<12, like42*"
@@ -1597,29 +1760,30 @@ msgstr ""
 "Entscheidungsarten und auf beide Spielformen, Geldspiel und Match. Siehe "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:231
+#: ../../source/cmd_mode.rst:241
 msgid ""
-"Les valeurs ``pl``, ``m`` et ``t`` s'ouvrent par un guillemet ou une "
-"apostrophe et se ferment par l'un des deux. Un jeton qui garde un "
-"guillemet sans former une valeur complète est ignoré, et ``blunderdb "
-"search --query`` le signale. Un tag peut contenir une apostrophe "
-"(``#l'ouverture``), jamais un guillemet. Le point-virgule est le "
-"séparateur des listes d'identifiants et de tags : il ne figure dans "
+"Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
+" un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
+" qui garde un guillemet sans former une valeur complète est ignoré, et "
+"``blunderdb search --query`` le signale. Un tag peut contenir une "
+"apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule est "
+"le séparateur des listes d'identifiants et de tags : il ne figure dans "
 "aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``)."
 msgstr ""
-"Die Werte ``pl``, ``m`` und ``t`` beginnen mit einem Anführungszeichen "
-"oder einem Apostroph und enden mit einem der beiden. Ein Token, das ein "
-"Anführungszeichen behält, ohne einen vollständigen Wert zu bilden, wird "
-"ignoriert, und ``blunderdb search --query`` meldet es. Ein Tag darf einen"
-" Apostroph enthalten (``#l'ouverture``), nie ein Anführungszeichen. Das "
-"Semikolon trennt Bezeichner- und Tag-Listen: Es kommt in keinem Wert vor,"
-" und ``ma1;2`` ist kein Token (``ma1 ma2`` schreiben)."
+"Die Werte ``pl``, ``pl!``, ``op``, ``tn``, ``m`` und ``t`` beginnen mit "
+"einem Anführungszeichen oder einem Apostroph und enden mit einem der "
+"beiden. Ein Token, das ein Anführungszeichen enthält, ohne einen "
+"vollständigen Wert zu bilden, wird ignoriert, und ``blunderdb search "
+"--query`` meldet es. Ein Tag darf einen Apostroph enthalten "
+"(``#l'ouverture``), nie ein Anführungszeichen. Das Semikolon trennt die "
+"Listen von Kennungen und Tags: Es kommt in keinem Wert vor, und ``ma1;2``"
+" ist kein Token (``ma1 ma2`` schreiben)."
 
-#: ../../source/cmd_mode.rst:236
+#: ../../source/cmd_mode.rst:246
 msgid "Transcrire depuis un terminal"
 msgstr "Von einem Terminal aus transkribieren"
 
-#: ../../source/cmd_mode.rst:238
+#: ../../source/cmd_mode.rst:248
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1639,7 +1803,7 @@ msgstr ""
 "eine eigene Sitzung, ohne ``sessionId`` und ohne Rückgängigmachen von "
 "einem Aufruf zum nächsten."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:259
 msgid "Commandes diverses"
 msgstr "Verschiedene Befehle"
 

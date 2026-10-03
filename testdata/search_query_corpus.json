@@ -389,6 +389,250 @@
         "player2CheckerOffFilter": "O>3",
         "player2CheckerInZoneFilter": "Z1,4"
       }
+    },
+    {
+      "command": "s ml:7",
+      "expected": {
+        "matchLengthFilter": "ml:7"
+      }
+    },
+    {
+      "command": "s ml:5,9",
+      "expected": {
+        "matchLengthFilter": "ml:5,9"
+      }
+    },
+    {
+      "command": "s ml>5 ml<3",
+      "expected": {
+        "matchLengthFilter": "ml>5"
+      }
+    },
+    {
+      "command": "s ml<9 cube",
+      "expected": {
+        "matchLengthFilter": "ml<9",
+        "includeCube": true
+      }
+    },
+    {
+      "command": "s ml:abc",
+      "expected": {
+        "matchLengthFilter": ""
+      }
+    },
+    {
+      "command": "s ml:7,",
+      "expected": {
+        "matchLengthFilter": ""
+      }
+    },
+    {
+      "command": "s md:2024-01..2024-12",
+      "expected": {
+        "matchDateFilter": "md:2024-01..2024-12"
+      }
+    },
+    {
+      "command": "s md:2024",
+      "expected": {
+        "matchDateFilter": "md:2024"
+      }
+    },
+    {
+      "command": "s md:2024-03-15",
+      "expected": {
+        "matchDateFilter": "md:2024-03-15"
+      }
+    },
+    {
+      "command": "s md>2024-06",
+      "expected": {
+        "matchDateFilter": "md>2024-06"
+      }
+    },
+    {
+      "command": "s md<2024/06/30 T>2026/01/01",
+      "expected": {
+        "matchDateFilter": "md<2024/06/30",
+        "dateFilter": "T>2026/01/01"
+      }
+    },
+    {
+      "command": "s md:24",
+      "expected": {
+        "matchDateFilter": ""
+      }
+    },
+    {
+      "command": "s md:2024-1..2024-12",
+      "expected": {
+        "matchDateFilter": ""
+      }
+    },
+    {
+      "command": "s tn\"Open Cup\"",
+      "expected": {
+        "tournamentNameFilter": "tn\"Open Cup\""
+      }
+    },
+    {
+      "command": "s tn\"open*\" tn7",
+      "expected": {
+        "tournamentNameFilter": "tn\"open*\"",
+        "tournamentIDsFilter": "7"
+      }
+    },
+    {
+      "command": "s tn\"Open Cup",
+      "expected": {
+        "tournamentNameFilter": ""
+      }
+    },
+    {
+      "command": "s rd:3",
+      "expected": {
+        "roundFilter": "3"
+      }
+    },
+    {
+      "command": "s rd:3 rd:Final*",
+      "expected": {
+        "roundFilter": "3;Final*"
+      }
+    },
+    {
+      "command": "s rd:",
+      "expected": {
+        "roundFilter": ""
+      }
+    },
+    {
+      "command": "s op\"Bob\"",
+      "expected": {
+        "opponentFilter": "op\"Bob\""
+      }
+    },
+    {
+      "command": "s pl\"Alice\" op\"Bob Smith\" o3",
+      "expected": {
+        "playerFilter": "pl\"Alice\"",
+        "opponentFilter": "op\"Bob Smith\"",
+        "player1CheckerOffFilter": "o3,3"
+      }
+    },
+    {
+      "command": "s pl\"Ali*\"",
+      "expected": {
+        "playerFilter": "pl\"Ali*\""
+      }
+    },
+    {
+      "command": "s pl!\"Alice\"",
+      "expected": {
+        "playerFilter": "pl!\"Alice\""
+      }
+    },
+    {
+      "command": "s pl!\"Alice Doe\" p>120",
+      "expected": {
+        "playerFilter": "pl!\"Alice Doe\"",
+        "pipCountFilter": "p>120"
+      }
+    },
+    {
+      "command": "s pr>8",
+      "expected": {
+        "playerPRFilter": "pr>8"
+      }
+    },
+    {
+      "command": "s pr<5.5",
+      "expected": {
+        "playerPRFilter": "pr<5.5"
+      }
+    },
+    {
+      "command": "s pr4,9",
+      "expected": {
+        "playerPRFilter": "pr4,9"
+      }
+    },
+    {
+      "command": "s pr>8 p>30",
+      "expected": {
+        "playerPRFilter": "pr>8",
+        "pipCountFilter": "p>30"
+      }
+    },
+    {
+      "command": "s pr",
+      "expected": {
+        "playerPRFilter": ""
+      }
+    },
+    {
+      "command": "s pr>x",
+      "expected": {
+        "playerPRFilter": ""
+      }
+    },
+    {
+      "command": "s ad:xg",
+      "expected": {
+        "analysisProvenanceFilter": "xg"
+      }
+    },
+    {
+      "command": "s ad:XG ad:GNUbg",
+      "expected": {
+        "analysisProvenanceFilter": "xg;gnubg"
+      }
+    },
+    {
+      "command": "s ad:3ply ad:4ply+ ad:rollout ad:book",
+      "expected": {
+        "analysisProvenanceFilter": "3ply;4ply+;rollout;book"
+      }
+    },
+    {
+      "command": "s ad:",
+      "expected": {
+        "analysisProvenanceFilter": ""
+      }
+    },
+    {
+      "command": "s ad:3-ply",
+      "expected": {
+        "analysisProvenanceFilter": ""
+      }
+    },
+    {
+      "command": "s d dr",
+      "expected": {
+        "decisionTypeFilter": true,
+        "cubeResponseFilter": "takepass"
+      }
+    },
+    {
+      "command": "s d dd",
+      "expected": {
+        "decisionTypeFilter": true,
+        "cubeResponseFilter": "double"
+      }
+    },
+    {
+      "command": "s dd dr",
+      "expected": {
+        "cubeResponseFilter": "takepass"
+      }
+    },
+    {
+      "command": "s d",
+      "expected": {
+        "decisionTypeFilter": true,
+        "cubeResponseFilter": ""
+      }
     }
   ]
 }

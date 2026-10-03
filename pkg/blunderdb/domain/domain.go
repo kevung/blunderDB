@@ -414,7 +414,7 @@ type SearchFilters struct {
 	Player1AbsolutePipCountFilter string `json:"player1AbsolutePipCountFilter"`
 	EquityFilter                  string `json:"equityFilter"`
 	DecisionTypeFilter            bool   `json:"decisionTypeFilter"`
-	CubeResponseFilter            string `json:"cubeResponseFilter"` // "" = all cube decisions, "double" = double/no-double only, "takepass" = take/pass only
+	CubeResponseFilter            string `json:"cubeResponseFilter"` // "" = all cube decisions, "double" = double/no-double only (`dd`), "takepass" = take/pass only (`dr`); either one implies a cube decision
 	DiceRollFilter                bool   `json:"diceRollFilter"`
 	DiceRollMode                  string `json:"diceRollMode"`
 	ExceptDiceFilter              string `json:"exceptDiceFilter"` // ";"-separated rolls to exclude, e.g. "65;54" (xD65 token)
@@ -441,7 +441,48 @@ type SearchFilters struct {
 	MoveErrorFilter     string `json:"moveErrorFilter"`
 	MatchIDsFilter      string `json:"matchIDsFilter"`
 	TournamentIDsFilter string `json:"tournamentIDsFilter"`
-	PlayerFilter        string `json:"playerFilter"` // exact player name (either seat); empty = no filter
+	// PlayerFilter is the `pl"…"` token whole (or a bare name from the CLI and
+	// the server): a player name, case-insensitive, `*` matching any run of
+	// characters. `pl"…"` keeps the positions of matches where that player sat
+	// at either seat; `pl!"…"` only the decisions that player took.
+	PlayerFilter string `json:"playerFilter"`
+
+	// OpponentFilter is the `op"…"` token whole: with PlayerFilter, the matches
+	// where the player faced that opponent; alone, a name at either seat.
+	OpponentFilter string `json:"opponentFilter"`
+
+	// TournamentNameFilter is the `tn"…"` token whole: the tournament's name,
+	// case-insensitive, `*` as a wildcard. TournamentIDsFilter is the same
+	// question asked by id.
+	TournamentNameFilter string `json:"tournamentNameFilter"`
+
+	// RoundFilter lists the `rd:` values, ";"-separated, each compared with the
+	// match's round text (case-insensitive, `*` as a wildcard); a match
+	// satisfies one of them.
+	RoundFilter string `json:"roundFilter"`
+
+	// MatchLengthFilter is the `ml:` token whole (`ml:7`, `ml:5,9`, `ml>5`,
+	// `ml<9`): the length of the match the position was met in, bounds
+	// inclusive. Read on the match, as position.match_length is never written.
+	MatchLengthFilter string `json:"matchLengthFilter"`
+
+	// MatchDateFilter is the `md:` token whole (`md:2024-01..2024-12`,
+	// `md:2024`, `md>2024-06`, `md<2024-06`): the DATE OF THE MATCH, from
+	// position.match_date, bounds inclusive and a month or a year covering its
+	// whole span. DateFilter (`T`) is another date: when the analysis was made.
+	MatchDateFilter string `json:"matchDateFilter"`
+
+	// PlayerPRFilter is the `pr` token whole (`pr>8`, `pr<5`, `pr4,9`): the PR
+	// of the whole match for the player who took the decision, read in
+	// match_stats at that player's seat. A match with no PR is excluded.
+	PlayerPRFilter string `json:"playerPRFilter"`
+
+	// AnalysisProvenanceFilter lists the `ad:` values, ";"-separated and
+	// lower-case: engines (`xg`, `gnubg`, `bgblitz`, `hedgehog`, `gammonnet`)
+	// and depths (`3ply`, `3ply+`, `book`, `rollout`) of the verdict stored for
+	// the position. Engines are alternatives, depths are alternatives, and one
+	// of each kind must hold.
+	AnalysisProvenanceFilter string `json:"analysisProvenanceFilter"`
 
 	PositionIDsFilter     string `json:"positionIDsFilter"`
 	RestrictToPositionIDs string `json:"restrictToPositionIDs"`

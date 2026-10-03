@@ -2423,6 +2423,13 @@ export namespace domain {
 	    matchIDsFilter: string;
 	    tournamentIDsFilter: string;
 	    playerFilter: string;
+	    opponentFilter: string;
+	    tournamentNameFilter: string;
+	    roundFilter: string;
+	    matchLengthFilter: string;
+	    matchDateFilter: string;
+	    playerPRFilter: string;
+	    analysisProvenanceFilter: string;
 	    positionIDsFilter: string;
 	    restrictToPositionIDs: string;
 	    sort: string;
@@ -2483,6 +2490,13 @@ export namespace domain {
 	        this.matchIDsFilter = source["matchIDsFilter"];
 	        this.tournamentIDsFilter = source["tournamentIDsFilter"];
 	        this.playerFilter = source["playerFilter"];
+	        this.opponentFilter = source["opponentFilter"];
+	        this.tournamentNameFilter = source["tournamentNameFilter"];
+	        this.roundFilter = source["roundFilter"];
+	        this.matchLengthFilter = source["matchLengthFilter"];
+	        this.matchDateFilter = source["matchDateFilter"];
+	        this.playerPRFilter = source["playerPRFilter"];
+	        this.analysisProvenanceFilter = source["analysisProvenanceFilter"];
 	        this.positionIDsFilter = source["positionIDsFilter"];
 	        this.restrictToPositionIDs = source["restrictToPositionIDs"];
 	        this.sort = source["sort"];

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 13:11+0200\n"
+"POT-Creation-Date: 2026-10-03 15:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -667,6 +667,34 @@ msgid "``--decision``"
 msgstr "``--decision``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "dd"
+msgstr "dd"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La décision est un videau de type Double / No Double (et non une réponse "
+"Take / Pass). Implique une décision de videau."
+msgstr ""
+"Решение — это действие с кубом типа Удвоить / Не удваивать (а не ответ "
+"Take / Pass). Подразумевает решение по кубу."
+
+#: ../../source/cmd_mode.rst:1
+msgid "—"
+msgstr "—"
+
+#: ../../source/cmd_mode.rst:1
+msgid "dr"
+msgstr "dr"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La décision est une réponse Take / Pass. Implique une décision de videau "
+"; avec ``dd``, ``dr`` l'emporte."
+msgstr ""
+"Решение — это ответ Take / Pass. Подразумевает решение по кубу; вместе с "
+"``dd`` приоритет имеет ``dr``."
+
+#: ../../source/cmd_mode.rst:1
 msgid "D"
 msgstr "D"
 
@@ -707,10 +735,6 @@ msgstr ""
 "Позиция **не** была сыграна с броском 6-5 (порядок неважен). Значение "
 "указано в жетоне; повторяемо для исключения нескольких бросков (``xD65 "
 "xD54``)."
-
-#: ../../source/cmd_mode.rst:1
-msgid "—"
-msgstr "—"
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -1457,11 +1481,11 @@ msgstr "T>x"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Date d'ajout de la position à la base après x (AAAA/MM/JJ). Ce n'est pas "
-"la date du match : l'ajout la fixe et la fusion de deux bases la "
-"conserve."
+"la date du match (``md``) : l'ajout la fixe et la fusion de deux bases la"
+" conserve."
 msgstr ""
-"Дата добавления позиции в базу, после x (ГГГГ/ММ/ДД). Это не дата матча: "
-"добавление фиксирует её, а слияние двух баз сохраняет."
+"Дата добавления позиции в базу после x (ГГГГ/ММ/ДД). Это не дата матча "
+"(``md``): добавление фиксирует её, а слияние двух баз сохраняет."
 
 #: ../../source/cmd_mode.rst:1
 msgid "T<x"
@@ -1470,8 +1494,10 @@ msgstr "T<x"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Date d'ajout de la position à la base avant x (AAAA/MM/JJ). Ce n'est pas "
-"la date du match."
-msgstr "Дата добавления позиции в базу, до x (ГГГГ/ММ/ДД). Это не дата матча."
+"la date du match (``md``)."
+msgstr ""
+"Дата добавления позиции в базу до x (ГГГГ/ММ/ДД). Это не дата матча "
+"(``md``)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "Tx,y"
@@ -1522,6 +1548,67 @@ msgid "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
 msgstr "Поиск в турнирах с идентификаторами от x до y (пример: tn1,3)."
 
 #: ../../source/cmd_mode.rst:1
+msgid "tn'nom'"
+msgstr "tn'имя'"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Rechercher dans les tournois dont le nom est ``nom`` : la casse est "
+"ignorée et ``*`` remplace n'importe quelle suite de caractères (ex: "
+"``tn'open*'``)."
+msgstr ""
+"Поиск по турнирам с названием ``имя``: регистр игнорируется, а ``*`` "
+"заменяет любую последовательность символов (напр. ``tn'open*'``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "rd:x"
+msgstr "rd:x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Rechercher dans les matchs de la ronde x (ex: ``rd:3``, ``rd:Finale``) : "
+"le texte de la ronde est comparé sans tenir compte de la casse, ``*`` "
+"remplace n'importe quelle suite de caractères. Répétable (``rd:1 rd:2``) "
+": l'une ou l'autre."
+msgstr ""
+"Поиск по матчам раунда x (напр. ``rd:3``, ``rd:Финал``): текст раунда "
+"сравнивается без учёта регистра, ``*`` заменяет любую последовательность "
+"символов. Можно повторять (``rd:1 rd:2``): подходит любой из них."
+
+#: ../../source/cmd_mode.rst:1
+msgid "ml:x"
+msgstr "ml:x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Le match a une longueur de x points. Formes ``ml:7``, ``ml:5,9``, "
+"``ml>5`` et ``ml<9`` (bornes comprises)."
+msgstr ""
+"Длина матча равна x очкам. Формы ``ml:7``, ``ml:5,9``, ``ml>5`` и "
+"``ml<9`` (границы включены)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "md:x..y"
+msgstr "md:x..y"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"**Date du match**, lue dans la colonne ``match_date`` de la position (la "
+"date du plus ancien match qui l'atteint), et non la date de création de "
+"l'analyse (``T``). Chaque borne est une année, un mois ou un jour "
+"(``2024``, ``2024-06``, ``2024-06-15``) et couvre toute sa durée, bornes "
+"comprises : ``md:2024-01..2024-12`` va du 1er janvier au 31 décembre "
+"2024. Formes ``md:2024`` (toute l'année), ``md>2024-06`` et "
+"``md<2024-06``."
+msgstr ""
+"**Дата матча**, считываемая из столбца ``match_date`` позиции (дата "
+"самого раннего матча, в котором она встречается), а не дата создания "
+"анализа (``T``). Каждая граница — год, месяц или день (``2024``, "
+"``2024-06``, ``2024-06-15``) и охватывает весь свой период, границы "
+"включены: ``md:2024-01..2024-12`` — с 1 января по 31 декабря 2024 года. "
+"Формы ``md:2024`` (весь год), ``md>2024-06`` и ``md<2024-06``."
+
+#: ../../source/cmd_mode.rst:1
 msgid "idx"
 msgstr "idx"
 
@@ -1548,10 +1635,81 @@ msgstr "``pl'имя'``"
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Rechercher les positions issues d'un match impliquant le joueur indiqué, "
-"sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée."
+"sur l'un ou l'autre camp (ex: ``pl'Alice'``). La casse est ignorée et "
+"``*`` remplace n'importe quelle suite de caractères (``pl'Ali*'``)."
 msgstr ""
 "Поиск позиций из матча с участием указанного игрока на любой стороне "
-"(напр. ``pl'Alice'``). Без учёта регистра."
+"(напр. ``pl'Alice'``). Регистр игнорируется, а ``*`` заменяет любую "
+"последовательность символов (``pl'Ali*'``)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``pl!'nom'``"
+msgstr "``pl!'имя'``"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Seulement les décisions prises par ce joueur : le joueur au trait est "
+"celui qui occupe le camp de ce nom dans le match (joueur 1 ou joueur 2). "
+"Même règles de casse et de joker que ``pl``."
+msgstr ""
+"Только решения, принятые этим игроком: игрок, чей ход, — тот, кто "
+"занимает в матче сторону с этим именем (игрок 1 или игрок 2). Те же "
+"правила регистра и подстановочного знака, что и для ``pl``."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``op'nom'``"
+msgstr "``op'имя'``"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Seulement les matchs où ce joueur est l'adversaire de celui de ``pl`` "
+"(``pl'Alice' op'Bob'`` : Alice contre Bob, de l'un ou l'autre côté ; avec"
+" ``pl!``, les seules décisions d'Alice). Sans ``pl``, ``op`` seul désigne"
+" un joueur à l'un ou l'autre camp, comme ``pl``. Mêmes règles de casse et"
+" de joker."
+msgstr ""
+"Только матчи, в которых этот игрок — соперник игрока из ``pl`` "
+"(``pl'Alice' op'Bob'``: Alice против Bob, на любой стороне; с ``pl!`` — "
+"только решения Alice). Без ``pl`` один ``op`` обозначает игрока на любой "
+"стороне, как и ``pl``. Те же правила регистра и подстановочного знака."
+
+#: ../../source/cmd_mode.rst:1
+msgid "pr>x"
+msgstr "pr>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Le **PR du match** du joueur qui a pris la décision est d'au moins x, lu "
+"dans les statistiques par match au camp de ce joueur (pas le PR de "
+"l'adversaire) ; un match sans PR est exclu. Formes ``pr>8``, ``pr<5`` et "
+"``pr4,9``, bornes comprises."
+msgstr ""
+"**PR матча** игрока, принявшего решение, не меньше x; значение берётся из"
+" статистики по матчам для стороны этого игрока (не PR соперника); матч "
+"без PR исключается. Формы ``pr>8``, ``pr<5`` и ``pr4,9``, границы "
+"включены."
+
+#: ../../source/cmd_mode.rst:1
+msgid "ad:xg"
+msgstr "ad:xg"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Moteur et profondeur de l'analyse enregistrée pour la position. Moteurs :"
+" ``xg``, ``gnubg``, ``bgblitz``, ``hedgehog``, ``gammonnet`` (début du "
+"nom du moteur, casse ignorée). Profondeurs : ``3ply`` (exactement 3 "
+"plis), ``3ply+`` (au moins 3 plis), ``book`` (livre d'ouvertures), "
+"``rollout`` (rollout, y compris XG Roller et Roller++). Répétable : les "
+"moteurs sont des alternatives, les profondeurs aussi, et un moteur et une"
+" profondeur doivent tous deux convenir (``ad:xg ad:gnubg ad:3ply+``)."
+msgstr ""
+"Движок и глубина анализа, записанного для позиции. Движки: ``xg``, "
+"``gnubg``, ``bgblitz``, ``hedgehog``, ``gammonnet`` (начало названия "
+"движка, регистр игнорируется). Глубины: ``3ply`` (ровно 3 хода), "
+"``3ply+`` (не менее 3 ходов), ``book`` (книга дебютов), ``rollout`` "
+"(ролл-аут, включая XG Roller и Roller++). Можно повторять: движки — "
+"альтернативы, глубины тоже, и должны подходить и движок, и глубина "
+"(``ad:xg ad:gnubg ad:3ply+``)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "like, like42, like<12, like42*"
@@ -1571,29 +1729,29 @@ msgstr ""
 "шашко-пипсов, ``like42*`` расширяет класс цели на все типы решений и на "
 "оба режима, на деньги и матч. См. :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:231
+#: ../../source/cmd_mode.rst:241
 msgid ""
-"Les valeurs ``pl``, ``m`` et ``t`` s'ouvrent par un guillemet ou une "
-"apostrophe et se ferment par l'un des deux. Un jeton qui garde un "
-"guillemet sans former une valeur complète est ignoré, et ``blunderdb "
-"search --query`` le signale. Un tag peut contenir une apostrophe "
-"(``#l'ouverture``), jamais un guillemet. Le point-virgule est le "
-"séparateur des listes d'identifiants et de tags : il ne figure dans "
+"Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
+" un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
+" qui garde un guillemet sans former une valeur complète est ignoré, et "
+"``blunderdb search --query`` le signale. Un tag peut contenir une "
+"apostrophe (``#l'ouverture``), jamais un guillemet. Le point-virgule est "
+"le séparateur des listes d'identifiants et de tags : il ne figure dans "
 "aucune valeur, et ``ma1;2`` n'est pas un jeton (écrire ``ma1 ma2``)."
 msgstr ""
-"Значения ``pl``, ``m`` и ``t`` открываются двойной кавычкой или "
-"апострофом и закрываются любым из них. Токен, сохранивший кавычку и не "
-"образующий полного значения, игнорируется, а ``blunderdb search --query``"
-" сообщает о нём. Тег может содержать апостроф (``#l'ouverture``), но не "
-"двойную кавычку. Точка с запятой разделяет списки идентификаторов и "
-"тегов: она не встречается ни в одном значении, и ``ma1;2`` не является "
-"токеном (пишите ``ma1 ma2``)."
+"Значения ``pl``, ``pl!``, ``op``, ``tn``, ``m`` и ``t`` открываются "
+"двойной кавычкой или апострофом и закрываются любым из них. Токен, "
+"сохраняющий кавычку, но не образующий полного значения, игнорируется, и "
+"``blunderdb search --query`` сообщает об этом. Тег может содержать "
+"апостроф (``#l'ouverture``), но никогда двойную кавычку. Точка с запятой "
+"разделяет списки идентификаторов и тегов: она не встречается ни в одном "
+"значении, а ``ma1;2`` не является токеном (пишите ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:236
+#: ../../source/cmd_mode.rst:246
 msgid "Transcrire depuis un terminal"
 msgstr "Запись из терминала"
 
-#: ../../source/cmd_mode.rst:238
+#: ../../source/cmd_mode.rst:248
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1613,7 +1771,7 @@ msgstr ""
 "отдельная сессия, без ``sessionId`` и без отмены от одного вызова к "
 "другому."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:259
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 

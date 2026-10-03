@@ -1,5 +1,14 @@
 import { describe, test, expect, vi } from 'vitest';
-import { buildFilterTokens, buildSearchCommand, parseFilterTokens, parseSearchCommand, filterTokenHint, buildSearchFilterPayload, describeCommandTokens } from '../services/searchFilterService.js';
+import {
+    buildFilterTokens,
+    buildSearchCommand,
+    parseFilterTokens,
+    parseSearchCommand,
+    filterTokenHint,
+    buildSearchFilterPayload,
+    describeCommandTokens,
+    replaySearchArgs
+} from '../services/searchFilterService.js';
 
 // buildFilterTokens/buildSearchCommand are pure (no Wails imports), but the
 // round-trip block below imports commandProcessor's parseFilters, which pulls in
@@ -618,5 +627,33 @@ describe("l'historique de recherche, relisible (#287)", () => {
     test('une commande vide ne produit aucune pastille', () => {
         expect(describeCommandTokens('')).toEqual([]);
         expect(describeCommandTokens('s')).toEqual([]);
+    });
+});
+
+describe('match-level tokens carried to the backend', () => {
+    const command = 's pl!"Alice" op"Bob Smith" tn"open*" rd:3 ml:7 md:2024-01..2024-12 pr>8 ad:XG ad:3ply+ dr';
+
+    test('un rejeu les transmet tous, sans en faire un filtre de pips ou de pions sortis', () => {
+        const { args } = /** @type {any} */ (replaySearchArgs(command));
+        expect(args).toMatchObject({
+            playerFilter: 'pl!"Alice"',
+            opponentFilter: 'op"Bob Smith"',
+            tournamentNameFilter: 'tn"open*"',
+            roundFilter: '3',
+            matchLengthFilter: 'ml:7',
+            matchDateFilter: 'md:2024-01..2024-12',
+            playerPRFilter: 'pr>8',
+            analysisProvenanceFilter: 'xg;3ply+'
+        });
+        expect(args.pipCountFilter).toBeUndefined();
+        expect(args.player1CheckerOffFilter).toBeUndefined();
+    });
+
+    test('la charge utile du moteur de recherche les porte', () => {
+        const pf = parseFilters(command.slice(2).split(' '), command);
+        const payload = buildSearchFilterPayload({}, pf, ['dr']);
+        expect(payload.playerPRFilter).toBe('pr>8');
+        expect(payload.matchDateFilter).toBe('md:2024-01..2024-12');
+        expect(payload.cubeResponseFilter).toBe('takepass');
     });
 });

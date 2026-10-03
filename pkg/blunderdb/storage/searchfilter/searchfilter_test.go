@@ -180,3 +180,48 @@ func TestMatchesDateFilter(t *testing.T) {
 		t.Error("MatchesDateFilter(nil) must be false")
 	}
 }
+
+func TestParseMatchDate(t *testing.T) {
+	cases := []struct {
+		token, from, until string
+		ok                 bool
+	}{
+		{"md:2024-01..2024-12", "2024-01-01", "2025-01-01", true},
+		{"md:2024", "2024-01-01", "2025-01-01", true},
+		{"md:2024-02", "2024-02-01", "2024-03-01", true},
+		{"md:2024-02-29", "2024-02-29", "2024-03-01", true},
+		{"md:2024/06/15..2024/06/20", "2024-06-15", "2024-06-21", true},
+		{"md>2024-06", "2024-06-01", "", true},
+		{"md<2024-06", "", "2024-07-01", true},
+		{"md<2024-12-31", "", "2025-01-01", true},
+		{"md:2024-13", "", "", false},
+		{"md:2023-02-29", "", "", false},
+		{"md:24", "", "", false},
+		{"md", "", "", false},
+		{"T>2024", "", "", false},
+	}
+	for _, c := range cases {
+		from, until, ok := ParseMatchDate(c.token)
+		if ok != c.ok || (ok && (from != c.from || until != c.until)) {
+			t.Errorf("ParseMatchDate(%q) = %q, %q, %v; want %q, %q, %v", c.token, from, until, ok, c.from, c.until, c.ok)
+		}
+	}
+}
+
+func TestPlayerSpecAndPattern(t *testing.T) {
+	if n, only := PlayerSpec(`pl!"Alice"`); n != "Alice" || !only {
+		t.Errorf(`PlayerSpec(pl!"Alice") = %q, %v`, n, only)
+	}
+	if n, only := PlayerSpec(`pl'Ali*'`); n != "Ali*" || only {
+		t.Errorf(`PlayerSpec(pl'Ali*') = %q, %v`, n, only)
+	}
+	if n, only := PlayerSpec("Bob"); n != "Bob" || only {
+		t.Errorf("PlayerSpec(Bob) = %q, %v", n, only)
+	}
+	if got := QuotedName(`op"Bob"`, "op"); got != "Bob" {
+		t.Errorf("QuotedName = %q", got)
+	}
+	if got := NameLikePattern(`a_b%c\d*e`); got != `a\_b\%c\\d%e` {
+		t.Errorf("NameLikePattern = %q", got)
+	}
+}

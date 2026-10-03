@@ -158,6 +158,31 @@ func randomFilters(rng *rand.Rand) domain.SearchFilters {
 	if maybe() {
 		f.PlayerFilter = `pl"` + pick(rng, "Alice", "Kévin Unger") + `"`
 	}
+	if maybe() {
+		f.PlayerFilter = pick(rng, `pl!"Alice"`, `pl!"Ali*"`)
+	}
+	if maybe() {
+		f.OpponentFilter = `op"` + pick(rng, "Bob", "Bob Smith", "B*") + `"`
+	}
+	if maybe() {
+		f.TournamentNameFilter = `tn"` + pick(rng, "Open Cup", "open*") + `"`
+	}
+	if maybe() {
+		f.RoundFilter = pick(rng, "3", "3;Final*", "1;2;4")
+	}
+	if maybe() {
+		f.MatchLengthFilter = pick(rng, "ml:7", "ml:5,9", "ml>5", "ml<9")
+	}
+	if maybe() {
+		f.MatchDateFilter = pick(rng, "md:2024-01..2024-12", "md:2024", "md>2024-06", "md<2024/06/30")
+	}
+	if maybe() {
+		f.PlayerPRFilter = pick(rng, "pr>8", "pr<5.5", "pr4,9")
+	}
+	if maybe() {
+		f.AnalysisProvenanceFilter = pick(rng, "xg", "gnubg;3ply", "4ply+;rollout;book")
+	}
+	f.CubeResponseFilter = pick(rng, "", "double", "takepass")
 	f.MatchIDsFilter = idList(rng, 3)
 	f.TournamentIDsFilter = idList(rng, 2)
 	f.PositionIDsFilter = idList(rng, 4)

@@ -183,15 +183,121 @@ func AnalysisMatchesEquityFilter(filter string, ana *domain.PositionAnalysis) bo
 	return true
 }
 
-// PlayerName unwraps the player filter the frontend sends whole (`pl"Name"`),
-// as t"…" and m"…" are unwrapped where read. A bare name, as the CLI and the
-// server pass it, is returned unchanged.
+// PlayerName unwraps the player filter the frontend sends whole (`pl"Name"` or
+// `pl!"Name"`), as t"…" and m"…" are unwrapped where read. A bare name, as the
+// CLI and the server pass it, is returned unchanged.
 func PlayerName(filter string) string {
+	name, _ := PlayerSpec(filter)
+	return name
+}
+
+// PlayerSpec reads a player filter: the name, and whether only the decisions
+// that player took are wanted (`pl!"Name"`) rather than every decision of the
+// matches they played.
+func PlayerSpec(filter string) (name string, seatOnly bool) {
 	s := strings.TrimSpace(filter)
-	if len(s) >= 4 && strings.HasPrefix(s, "pl") && (s[2] == '"' || s[2] == '\'') && s[len(s)-1] == s[2] {
-		return s[3 : len(s)-1]
+	if rest, ok := strings.CutPrefix(s, "pl!"); ok && quotedWhole(rest) {
+		return rest[1 : len(rest)-1], true
+	}
+	if rest, ok := strings.CutPrefix(s, "pl"); ok && quotedWhole(rest) {
+		return rest[1 : len(rest)-1], false
+	}
+	return s, false
+}
+
+// QuotedName unwraps a `prefix"Name"` token (`op"Name"`, `tn"Name"`); a bare
+// name is returned unchanged.
+func QuotedName(filter, prefix string) string {
+	s := strings.TrimSpace(filter)
+	if rest, ok := strings.CutPrefix(s, prefix); ok && quotedWhole(rest) {
+		return rest[1 : len(rest)-1]
 	}
 	return s
+}
+
+func quotedWhole(s string) bool {
+	return len(s) >= 2 && (s[0] == '"' || s[0] == '\'') && s[len(s)-1] == s[0]
+}
+
+// NameLikePattern turns a name typed in a filter into a LIKE pattern matched
+// with ESCAPE '\': the name is literal, except `*`, which stands for any run
+// of characters.
+func NameLikePattern(name string) string {
+	var b strings.Builder
+	for _, r := range name {
+		switch r {
+		case '*':
+			b.WriteByte('%')
+		case '%', '_', '\\':
+			b.WriteByte('\\')
+			b.WriteRune(r)
+		default:
+			b.WriteRune(r)
+		}
+	}
+	return b.String()
+}
+
+// ParseMatchDate reads a `md` token (`md:2024-01..2024-12`, `md:2024`,
+// `md>2024-06`, `md<2024-06`) into the half-open interval [from, until) of
+// "2006-01-02" days it denotes; an empty bound is open. A bound is a year, a
+// month or a day and covers its whole span, so `md:2024-01..2024-12` runs from
+// 2024-01-01 to the end of December. ok is false for an unreadable token.
+func ParseMatchDate(token string) (from, until string, ok bool) {
+	rest, found := strings.CutPrefix(token, "md")
+	if !found || rest == "" {
+		return "", "", false
+	}
+	switch rest[0] {
+	case '>':
+		from, ok = matchDateStart(rest[1:])
+		return from, "", ok
+	case '<':
+		until, ok = matchDateEnd(rest[1:])
+		return "", until, ok
+	case ':':
+		lo, hi, isRange := strings.Cut(rest[1:], "..")
+		if !isRange {
+			hi = lo
+		}
+		var okLo, okHi bool
+		from, okLo = matchDateStart(lo)
+		until, okHi = matchDateEnd(hi)
+		return from, until, okLo && okHi
+	}
+	return "", "", false
+}
+
+// matchDateSpan parses a year, month or day and returns the first day of the
+// span and the first day after it.
+func matchDateSpan(s string) (start, next time.Time, ok bool) {
+	s = strings.ReplaceAll(s, "/", "-")
+	for _, layout := range []struct{ layout, unit string }{
+		{"2006-01-02", "day"}, {"2006-01", "month"}, {"2006", "year"},
+	} {
+		t, err := time.Parse(layout.layout, s)
+		if err != nil || len(s) != len(layout.layout) {
+			continue
+		}
+		switch layout.unit {
+		case "day":
+			return t, t.AddDate(0, 0, 1), true
+		case "month":
+			return t, t.AddDate(0, 1, 0), true
+		}
+		return t, t.AddDate(1, 0, 0), true
+	}
+	return time.Time{}, time.Time{}, false
+}
+
+func matchDateStart(s string) (string, bool) {
+	start, _, ok := matchDateSpan(s)
+	return start.Format("2006-01-02"), ok
+}
+
+func matchDateEnd(s string) (string, bool) {
+	_, next, ok := matchDateSpan(s)
+	return next.Format("2006-01-02"), ok
 }
 
 // AnalysisMatchesMovePattern checks a move-pattern filter against pre-fetched analysis.

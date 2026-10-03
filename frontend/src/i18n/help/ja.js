@@ -2081,6 +2081,16 @@ export default {
 <td><code>--decision</code></td>
 </tr>
 <tr>
+<td>dd</td>
+<td>判断がダブル／ノーダブルのキューブアクションである場合です（テイク／パスの応答ではありません）。キューブ判断を含意します。</td>
+<td>—</td>
+</tr>
+<tr>
+<td>dr</td>
+<td>判断がテイク／パスの応答である場合です。キューブ判断を含意します。<code>dd</code> と併用した場合は <code>dr</code> が優先されます。</td>
+<td>—</td>
+</tr>
+<tr>
 <td>D</td>
 <td>局面がダイスの目を満たします（順序を問わず両方のダイス）。</td>
 <td><code>--dice 6,5</code></td>
@@ -2472,12 +2482,12 @@ export default {
 </tr>
 <tr>
 <td>T&gt;x</td>
-<td>ポジションがデータベースに追加された日付が x より後(YYYY/MM/DD)。マッチの日付ではありません。追加時に設定され、二つのデータベースの統合でも保持されます。</td>
+<td>ポジションがデータベースに追加された日付が x より後（YYYY/MM/DD）。マッチの日付（<code>md</code>）ではありません。追加時に確定し、2 つのデータベースを統合しても保持されます。</td>
 <td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
-<td>ポジションがデータベースに追加された日付が x より前(YYYY/MM/DD)。マッチの日付ではありません。</td>
+<td>ポジションがデータベースに追加された日付が x より前（YYYY/MM/DD）。マッチの日付（<code>md</code>）ではありません。</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2506,6 +2516,26 @@ export default {
 <td><code>--tournament-ids</code></td>
 </tr>
 <tr>
+<td>tn'名前'</td>
+<td>名前が <code>名前</code> のトーナメントから検索します。大文字・小文字は区別せず、<code>*</code> は任意の文字列に一致します（例：<code>tn'open*'</code>）。</td>
+<td>—</td>
+</tr>
+<tr>
+<td>rd:x</td>
+<td>ラウンド x のマッチから検索します（例：<code>rd:3</code>、<code>rd:決勝</code>）。ラウンドの文字列は大文字・小文字を区別せずに比較され、<code>*</code> は任意の文字列に一致します。繰り返し指定可能（<code>rd:1 rd:2</code>）で、いずれかに一致すれば対象になります。</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ml:x</td>
+<td>マッチの長さが x ポイントである場合です。<code>ml:7</code>、<code>ml:5,9</code>、<code>ml&gt;5</code>、<code>ml&lt;9</code> の形式を使えます（境界値を含む）。</td>
+<td>—</td>
+</tr>
+<tr>
+<td>md:x..y</td>
+<td><strong>マッチの日付</strong>。ポジションの <code>match_date</code> 列（そのポジションに到達する最も古いマッチの日付）から読み取ります。解析の作成日（<code>T</code>）ではありません。各境界は年・月・日のいずれか（<code>2024</code>、<code>2024-06</code>、<code>2024-06-15</code>）で、その期間全体を含みます（境界値を含む）。<code>md:2024-01..2024-12</code> は 2024 年 1 月 1 日から 12 月 31 日までです。<code>md:2024</code>（その年全体）、<code>md&gt;2024-06</code>、<code>md&lt;2024-06</code> の形式も使えます。</td>
+<td>—</td>
+</tr>
+<tr>
 <td>idx</td>
 <td>識別子 x のポジションを検索します（例: id12）。</td>
 <td><code>--position-ids</code></td>
@@ -2517,7 +2547,27 @@ export default {
 </tr>
 <tr>
 <td><code>pl'名前'</code></td>
-<td>指定したプレイヤーが（どちらの席でも）参加した対局のポジションを検索します（例：<code>pl'Alice'</code>）。大文字・小文字は区別しません。</td>
+<td>指定したプレイヤーが（どちらの席でも）参加した対局のポジションを検索します（例：<code>pl'Alice'</code>）。大文字・小文字は区別せず、<code>*</code> は任意の文字列に一致します（<code>pl'Ali*'</code>）。</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>pl!'名前'</code></td>
+<td>このプレイヤーが下した判断のみ対象です。手番のプレイヤーとは、マッチでその名前の席に着いているプレイヤー（プレイヤー 1 またはプレイヤー 2）のことです。大文字・小文字とワイルドカードの規則は <code>pl</code> と同じです。</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>op'名前'</code></td>
+<td>このプレイヤーが <code>pl</code> のプレイヤーの対戦相手であるマッチのみ対象です（<code>pl'Alice' op'Bob'</code>：Alice 対 Bob、どちらの席でも可。<code>pl!</code> を付けると Alice の判断のみ）。<code>pl</code> がない場合、<code>op</code> 単独で <code>pl</code> と同様にどちらかの席のプレイヤーを指します。大文字・小文字とワイルドカードの規則は同じです。</td>
+<td>—</td>
+</tr>
+<tr>
+<td>pr&gt;x</td>
+<td>判断を下したプレイヤーの<strong>マッチ PR</strong> が x 以上である場合です。マッチごとの統計のうち、そのプレイヤーの席の値を読み取ります（対戦相手の PR ではありません）。PR のないマッチは除外されます。<code>pr&gt;8</code>、<code>pr&lt;5</code>、<code>pr4,9</code> の形式を使えます（境界値を含む）。</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ad:xg</td>
+<td>ポジションに記録されている解析のエンジンと深さ。エンジン：<code>xg</code>、<code>gnubg</code>、<code>bgblitz</code>、<code>hedgehog</code>、<code>gammonnet</code>（エンジン名の先頭部分、大文字・小文字は区別しません）。深さ：<code>3ply</code>（ちょうど 3 プライ）、<code>3ply+</code>（3 プライ以上）、<code>book</code>（オープニングブック）、<code>rollout</code>（ロールアウト。XG Roller と Roller++ を含む）。繰り返し指定可能です。エンジン同士、深さ同士はいずれかに一致すればよく、エンジンと深さの両方が一致する必要があります（<code>ad:xg ad:gnubg ad:3ply+</code>）。</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2527,7 +2577,7 @@ export default {
 </tr>
 </tbody>
 </table>
-<p><code>pl</code>、<code>m</code>、<code>t</code> の値は、二重引用符またはアポストロフィで始まり、そのどちらかで終わります。引用符を含んでいても完全な値にならないトークンは無視され、<code>blunderdb search --query</code> がそれを報告します。タグにはアポストロフィを含められますが（<code>#l'ouverture</code>）、二重引用符は含められません。セミコロンは識別子とタグのリストの区切りです。どの値にも現れず、<code>ma1;2</code> はトークンではありません（<code>ma1 ma2</code> と書きます）。</p>
+<p><code>pl</code>、<code>pl!</code>、<code>op</code>、<code>tn</code>、<code>m</code>、<code>t</code> の値は、二重引用符またはアポストロフィで始まり、そのどちらかで終わります。引用符を含みながら完全な値にならないトークンは無視され、<code>blunderdb search --query</code> がそれを報告します。タグにはアポストロフィを含められます（<code>#l'ouverture</code>）が、二重引用符は含められません。セミコロンは ID とタグのリストの区切りです。どの値にも現れず、<code>ma1;2</code> はトークンではありません（<code>ma1 ma2</code> と書きます）。</p>
 <h3>ターミナルから転記する</h3>
 <p>コマンドラインに転記用のコマンドはありません。操作は <em>記譜</em> タブで入力します。アプリケーションの外では <code>blunderdb call</code> (APIで記譜する) を使います。例: <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>。<code>--if-match</code> は直前の呼び出しが返したリビジョンを指定します。呼び出しごとに独自のセッションとなり、<code>sessionId</code> はなく、呼び出しをまたいだ取り消しもできません。</p>
 <h3>その他のコマンド</h3>

@@ -2081,6 +2081,16 @@ export default {
 <td><code>--decision</code></td>
 </tr>
 <tr>
+<td>dd</td>
+<td>La décision est un videau de type Double / No Double (et non une réponse Take / Pass). Implique une décision de videau.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>dr</td>
+<td>La décision est une réponse Take / Pass. Implique une décision de videau ; avec <code>dd</code>, <code>dr</code> l'emporte.</td>
+<td>—</td>
+</tr>
+<tr>
 <td>D</td>
 <td>La position vérifie le lancer de dés (les deux dés, peu importe l'ordre).</td>
 <td><code>--dice 6,5</code></td>
@@ -2472,12 +2482,12 @@ export default {
 </tr>
 <tr>
 <td>T&gt;x</td>
-<td>Date d'ajout de la position à la base après x (AAAA/MM/JJ). Ce n'est pas la date du match : l'ajout la fixe et la fusion de deux bases la conserve.</td>
+<td>Date d'ajout de la position à la base après x (AAAA/MM/JJ). Ce n'est pas la date du match (<code>md</code>) : l'ajout la fixe et la fusion de deux bases la conserve.</td>
 <td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
-<td>Date d'ajout de la position à la base avant x (AAAA/MM/JJ). Ce n'est pas la date du match.</td>
+<td>Date d'ajout de la position à la base avant x (AAAA/MM/JJ). Ce n'est pas la date du match (<code>md</code>).</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2506,6 +2516,26 @@ export default {
 <td><code>--tournament-ids</code></td>
 </tr>
 <tr>
+<td>tn'nom'</td>
+<td>Rechercher dans les tournois dont le nom est <code>nom</code> : la casse est ignorée et <code>*</code> remplace n'importe quelle suite de caractères (ex: <code>tn'open*'</code>).</td>
+<td>—</td>
+</tr>
+<tr>
+<td>rd:x</td>
+<td>Rechercher dans les matchs de la ronde x (ex: <code>rd:3</code>, <code>rd:Finale</code>) : le texte de la ronde est comparé sans tenir compte de la casse, <code>*</code> remplace n'importe quelle suite de caractères. Répétable (<code>rd:1 rd:2</code>) : l'une ou l'autre.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ml:x</td>
+<td>Le match a une longueur de x points. Formes <code>ml:7</code>, <code>ml:5,9</code>, <code>ml&gt;5</code> et <code>ml&lt;9</code> (bornes comprises).</td>
+<td>—</td>
+</tr>
+<tr>
+<td>md:x..y</td>
+<td><strong>Date du match</strong>, lue dans la colonne <code>match_date</code> de la position (la date du plus ancien match qui l'atteint), et non la date de création de l'analyse (<code>T</code>). Chaque borne est une année, un mois ou un jour (<code>2024</code>, <code>2024-06</code>, <code>2024-06-15</code>) et couvre toute sa durée, bornes comprises : <code>md:2024-01..2024-12</code> va du 1er janvier au 31 décembre 2024. Formes <code>md:2024</code> (toute l'année), <code>md&gt;2024-06</code> et <code>md&lt;2024-06</code>.</td>
+<td>—</td>
+</tr>
+<tr>
 <td>idx</td>
 <td>Rechercher la position d'identifiant x (ex: id12).</td>
 <td><code>--position-ids</code></td>
@@ -2517,7 +2547,27 @@ export default {
 </tr>
 <tr>
 <td><code>pl'nom'</code></td>
-<td>Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: <code>pl'Alice'</code>). La casse est ignorée.</td>
+<td>Rechercher les positions issues d'un match impliquant le joueur indiqué, sur l'un ou l'autre camp (ex: <code>pl'Alice'</code>). La casse est ignorée et <code>*</code> remplace n'importe quelle suite de caractères (<code>pl'Ali*'</code>).</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>pl!'nom'</code></td>
+<td>Seulement les décisions prises par ce joueur : le joueur au trait est celui qui occupe le camp de ce nom dans le match (joueur 1 ou joueur 2). Même règles de casse et de joker que <code>pl</code>.</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>op'nom'</code></td>
+<td>Seulement les matchs où ce joueur est l'adversaire de celui de <code>pl</code> (<code>pl'Alice' op'Bob'</code> : Alice contre Bob, de l'un ou l'autre côté ; avec <code>pl!</code>, les seules décisions d'Alice). Sans <code>pl</code>, <code>op</code> seul désigne un joueur à l'un ou l'autre camp, comme <code>pl</code>. Mêmes règles de casse et de joker.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>pr&gt;x</td>
+<td>Le <strong>PR du match</strong> du joueur qui a pris la décision est d'au moins x, lu dans les statistiques par match au camp de ce joueur (pas le PR de l'adversaire) ; un match sans PR est exclu. Formes <code>pr&gt;8</code>, <code>pr&lt;5</code> et <code>pr4,9</code>, bornes comprises.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ad:xg</td>
+<td>Moteur et profondeur de l'analyse enregistrée pour la position. Moteurs : <code>xg</code>, <code>gnubg</code>, <code>bgblitz</code>, <code>hedgehog</code>, <code>gammonnet</code> (début du nom du moteur, casse ignorée). Profondeurs : <code>3ply</code> (exactement 3 plis), <code>3ply+</code> (au moins 3 plis), <code>book</code> (livre d'ouvertures), <code>rollout</code> (rollout, y compris XG Roller et Roller++). Répétable : les moteurs sont des alternatives, les profondeurs aussi, et un moteur et une profondeur doivent tous deux convenir (<code>ad:xg ad:gnubg ad:3ply+</code>).</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2527,7 +2577,7 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>Les valeurs <code>pl</code>, <code>m</code> et <code>t</code> s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton qui garde un guillemet sans former une valeur complète est ignoré, et <code>blunderdb search --query</code> le signale. Un tag peut contenir une apostrophe (<code>#l'ouverture</code>), jamais un guillemet. Le point-virgule est le séparateur des listes d'identifiants et de tags : il ne figure dans aucune valeur, et <code>ma1;2</code> n'est pas un jeton (écrire <code>ma1 ma2</code>).</p>
+<p>Les valeurs <code>pl</code>, <code>pl!</code>, <code>op</code>, <code>tn</code>, <code>m</code> et <code>t</code> s'ouvrent par un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton qui garde un guillemet sans former une valeur complète est ignoré, et <code>blunderdb search --query</code> le signale. Un tag peut contenir une apostrophe (<code>#l'ouverture</code>), jamais un guillemet. Le point-virgule est le séparateur des listes d'identifiants et de tags : il ne figure dans aucune valeur, et <code>ma1;2</code> n'est pas un jeton (écrire <code>ma1 ma2</code>).</p>
 <h3>Transcrire depuis un terminal</h3>
 <p>La ligne de commande n'a pas de commande de transcription : les gestes se tapent dans l'onglet <em>Transcription</em>. Hors de l'application, ils passent par <code>blunderdb call</code> (Transcrire par l'API), par exemple <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>. <code>--if-match</code> nomme la révision rendue par l'appel précédent ; chaque appel est sa propre session, sans <code>sessionId</code> ni annulation d'un appel à l'autre.</p>
 <h3>Commandes diverses</h3>

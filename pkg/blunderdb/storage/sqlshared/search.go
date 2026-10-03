@@ -116,6 +116,7 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	if err := s.appendIdentityClauses(ctx, scope, f, &where, &args); err != nil {
 		return searchWhereClause{}, err
 	}
+	s.appendCorpusClauses(scope, f, &where, &args)
 
 	// A ranked query narrows to the target's equivalence class BEFORE anything
 	// else: a neighbour is the same problem nearby, and the rest of the WHERE
@@ -1075,8 +1076,9 @@ func boolToInt(p *bool) int {
 }
 
 // appendIdentityClauses narrows the search to positions NAMED by something
-// outside the board: the matches or tournaments they were met in, the player
-// who sat at one of the seats, an explicit list of position ids. They are one
+// outside the board: the matches or tournaments they were met in, an explicit
+// list of position ids. (The players, the match's own properties and the
+// verdict's provenance are appendCorpusClauses.) They are one
 // family — each turns a closed list of ids into a `p.id IN (…)` clause, and an
 // empty list means "nothing matches" rather than "no narrowing", which is why
 // each writes `0=1` instead of falling through.
@@ -1117,23 +1119,6 @@ func (s *SearchStore) appendIdentityClauses(ctx context.Context, scope string, f
 		} else {
 			where.WriteString(" AND 0=1")
 		}
-	}
-
-	// Player filter: keep positions that occur in any match where the named
-	// player sat at either seat. A case-insensitive LIKE with no wildcards
-	// (Dialect.ILike: SQLite's LIKE is already case-insensitive for ASCII,
-	// PostgreSQL needs ILIKE) gives exact matching for ASCII names, mirroring
-	// the match-id subquery shape.
-	// The frontend sends the token whole (`pl"Name"`); the CLI and the server
-	// send a bare name. searchfilter.PlayerName accepts both.
-	if playerName := searchfilter.PlayerName(f.PlayerFilter); playerName != "" {
-		like := s.DB.ILike()
-		where.WriteString(
-			" AND p.id IN (SELECT mv.position_id FROM move mv" +
-				" JOIN game g ON mv.game_id = g.id" +
-				" JOIN match mt ON g.match_id = mt.id" +
-				" WHERE mt.player1_name " + like + " ? OR mt.player2_name " + like + " ?)")
-		*args = append(*args, playerName, playerName)
 	}
 
 	if f.RestrictToPositionIDs != "" {

@@ -2081,6 +2081,16 @@ export default {
 <td><code>--decision</code></td>
 </tr>
 <tr>
+<td>dd</td>
+<td>Päätös on kuution toiminto tyyppiä Tuplaa / Älä tuplaa (ei Take / Pass -vastaus). Edellyttää kuutiopäätöstä.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>dr</td>
+<td>Päätös on Take / Pass -vastaus. Edellyttää kuutiopäätöstä; <code>dd</code>:n kanssa <code>dr</code> on etusijalla.</td>
+<td>—</td>
+</tr>
+<tr>
 <td>D</td>
 <td>Asema vastaa nopanheittoa (molemmat nopat, järjestyksestä riippumatta).</td>
 <td><code>--dice 6,5</code></td>
@@ -2472,12 +2482,12 @@ export default {
 </tr>
 <tr>
 <td>T&gt;x</td>
-<td>Päivä, jona asema lisättiin tietokantaan, x:n jälkeen (VVVV/KK/PP). Se ei ole ottelun päivämäärä: lisääminen asettaa sen ja kahden tietokannan yhdistäminen säilyttää sen.</td>
+<td>Päivämäärä, jolloin asema lisättiin tietokantaan, x:n (VVVV/KK/PP) jälkeen. Se ei ole ottelun päivämäärä (<code>md</code>): lisääminen määrittää sen ja kahden tietokannan yhdistäminen säilyttää sen.</td>
 <td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
-<td>Päivä, jona asema lisättiin tietokantaan, ennen x:ää (VVVV/KK/PP). Se ei ole ottelun päivämäärä.</td>
+<td>Päivämäärä, jolloin asema lisättiin tietokantaan, ennen x:ää (VVVV/KK/PP). Se ei ole ottelun päivämäärä (<code>md</code>).</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2506,6 +2516,26 @@ export default {
 <td><code>--tournament-ids</code></td>
 </tr>
 <tr>
+<td>tn'nimi'</td>
+<td>Hae turnauksista, joiden nimi on <code>nimi</code>: kirjainkoolla ei ole väliä ja <code>*</code> korvaa minkä tahansa merkkijonon (esim. <code>tn'open*'</code>).</td>
+<td>—</td>
+</tr>
+<tr>
+<td>rd:x</td>
+<td>Hae kierroksen x otteluista (esim. <code>rd:3</code>, <code>rd:Finaali</code>): kierroksen teksti vertaillaan kirjainkoosta välittämättä, <code>*</code> korvaa minkä tahansa merkkijonon. Toistettavissa (<code>rd:1 rd:2</code>): jompikumpi.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ml:x</td>
+<td>Ottelun pituus on x pistettä. Muodot <code>ml:7</code>, <code>ml:5,9</code>, <code>ml&gt;5</code> ja <code>ml&lt;9</code> (rajat mukaan lukien).</td>
+<td>—</td>
+</tr>
+<tr>
+<td>md:x..y</td>
+<td><strong>Ottelun päivämäärä</strong>, luettuna aseman <code>match_date</code>-sarakkeesta (vanhimman asemaan johtavan ottelun päivämäärä), ei analyysin luontipäivä (<code>T</code>). Jokainen raja on vuosi, kuukausi tai päivä (<code>2024</code>, <code>2024-06</code>, <code>2024-06-15</code>) ja kattaa koko kestonsa, rajat mukaan lukien: <code>md:2024-01..2024-12</code> ulottuu 1. tammikuuta 31. joulukuuta 2024. Muodot <code>md:2024</code> (koko vuosi), <code>md&gt;2024-06</code> ja <code>md&lt;2024-06</code>.</td>
+<td>—</td>
+</tr>
+<tr>
 <td>idx</td>
 <td>Hae asemaa, jonka tunnus on x (esim. id12).</td>
 <td><code>--position-ids</code></td>
@@ -2517,7 +2547,27 @@ export default {
 </tr>
 <tr>
 <td><code>pl'nimi'</code></td>
-<td>Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa puolella (esim. <code>pl'Alice'</code>). Kirjainkoolla ei ole väliä.</td>
+<td>Hae asemia ottelusta, jossa nimetty pelaaja oli mukana kummalla tahansa puolella (esim. <code>pl'Alice'</code>). Kirjainkoolla ei ole väliä ja <code>*</code> korvaa minkä tahansa merkkijonon (<code>pl'Ali*'</code>).</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>pl!'nimi'</code></td>
+<td>Vain tämän pelaajan tekemät päätökset: vuorossa oleva pelaaja on se, joka ottelussa istuu tämännimisellä puolella (pelaaja 1 tai pelaaja 2). Samat kirjainkoko- ja jokerimerkkisäännöt kuin <code>pl</code>:llä.</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>op'nimi'</code></td>
+<td>Vain ottelut, joissa tämä pelaaja on <code>pl</code>:n pelaajan vastustaja (<code>pl'Alice' op'Bob'</code>: Alice Bobia vastaan, kummalla puolella tahansa; <code>pl!</code>:n kanssa vain Alicen päätökset). Ilman <code>pl</code>:ää pelkkä <code>op</code> tarkoittaa pelaajaa kummalla puolella tahansa, kuten <code>pl</code>. Samat kirjainkoko- ja jokerimerkkisäännöt.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>pr&gt;x</td>
+<td>Päätöksen tehneen pelaajan <strong>ottelun PR</strong> on vähintään x, luettuna ottelukohtaisista tilastoista tämän pelaajan puolelta (ei vastustajan PR); ottelu ilman PR:ää suljetaan pois. Muodot <code>pr&gt;8</code>, <code>pr&lt;5</code> ja <code>pr4,9</code>, rajat mukaan lukien.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ad:xg</td>
+<td>Asemalle tallennetun analyysin moottori ja syvyys. Moottorit: <code>xg</code>, <code>gnubg</code>, <code>bgblitz</code>, <code>hedgehog</code>, <code>gammonnet</code> (moottorin nimen alku, kirjainkoolla ei ole väliä). Syvyydet: <code>3ply</code> (täsmälleen 3 ply), <code>3ply+</code> (vähintään 3 ply), <code>book</code> (avauskirja), <code>rollout</code> (rollout, mukaan lukien XG Roller ja Roller++). Toistettavissa: moottorit ovat vaihtoehtoja, samoin syvyydet, ja sekä moottorin että syvyyden on täsmättävä (<code>ad:xg ad:gnubg ad:3ply+</code>).</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2527,7 +2577,7 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>Arvot <code>pl</code>, <code>m</code> ja <code>t</code> alkavat lainausmerkillä tai heittomerkillä ja päättyvät jompaankumpaan. Merkki, joka säilyttää lainausmerkin muodostamatta täydellistä arvoa, ohitetaan, ja <code>blunderdb search --query</code> ilmoittaa siitä. Tunniste voi sisältää heittomerkin (<code>#l'ouverture</code>), mutta ei lainausmerkkiä. Puolipiste erottaa tunnisteluettelot ja tagiluettelot: sitä ei ole missään arvossa, eikä <code>ma1;2</code> ole kelvollinen merkki (kirjoita <code>ma1 ma2</code>).</p>
+<p>Arvot <code>pl</code>, <code>pl!</code>, <code>op</code>, <code>tn</code>, <code>m</code> ja <code>t</code> alkavat lainausmerkillä tai heittomerkillä ja päättyvät jompaankumpaan. Tunniste, jossa on lainausmerkki mutta joka ei muodosta täydellistä arvoa, ohitetaan, ja <code>blunderdb search --query</code> ilmoittaa siitä. Tunniste (tagi) voi sisältää heittomerkin (<code>#l'ouverture</code>), mutta ei koskaan lainausmerkkiä. Puolipiste erottaa tunnus- ja tagiluettelot: se ei esiinny missään arvossa, eikä <code>ma1;2</code> ole tunniste (kirjoita <code>ma1 ma2</code>).</p>
 <h3>Litterointi päätteestä</h3>
 <p>Komentorivillä ei ole litterointikomentoa: eleet kirjoitetaan <em>Litterointi</em>-välilehdellä. Sovelluksen ulkopuolella ne kulkevat komennon <code>blunderdb call</code> kautta (Litterointi rajapinnan kautta), esimerkiksi <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>. <code>--if-match</code> nimeää edellisen kutsun palauttaman revision; jokainen kutsu on oma istuntonsa, ilman <code>sessionId</code>-tunnistetta ja ilman kumoamista kutsusta toiseen.</p>
 <h3>Sekalaisia komentoja</h3>

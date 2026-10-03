@@ -99,12 +99,12 @@ export function buildSearchCommand(tokens) {
     return commandParts.join(' ');
 }
 
-// Quoted values — pl"…", m"…", t"…" — may contain spaces; a whitespace split
+// Quoted values — pl"…", pl!"…", op"…", tn"…", m"…", t"…" — may contain spaces; a whitespace split
 // would leave loose words misread as range filters (`win"` → win-rate). Strip
 // the whole quoted region before splitting (both quote styles).
 /** @param {string} str */
 export function stripQuotedTokens(str) {
-    return str.replace(/(?:pl|m|t)["'][^"']*["']/g, ' ');
+    return str.replace(/(?:pl!?|op|tn|m|t)["'][^"']*["']/g, ' ');
 }
 
 // A tag whose quote characters are plain apostrophes: no double quote.
@@ -150,7 +150,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
     // Format writes the tags last and lower-cased, side by side: if that run
     // would open a quoted value (`#M''` reads as the tag `#m''`), none is kept.
     const quotedTags = filters.filter((f) => typeof f === 'string' && /["']/.test(f));
-    if (/(?:pl|m|t)["'][^"']*["']/.test(quotedTags.join(' ').toLowerCase())) {
+    if (/(?:pl!?|op|tn|m|t)["'][^"']*["']/.test(quotedTags.join(' ').toLowerCase())) {
         for (let i = 0; i < filters.length; i++) if (quotedTags.includes(filters[i])) filters[i] = '';
     }
 
@@ -166,6 +166,9 @@ export function parseSearchTokens(filtersOrCommand, command) {
     const likeMaxDistance = likeMatch && likeMatch[2] ? parseInt(likeMatch[2], 10) : 0;
     const likeWidened = !!(likeMatch && likeMatch[3]);
     const decisionTypeFilter = filters.includes('d');
+    // `dr` (take/pass response) and `dd` (double / no double) narrow the cube
+    // decisions; both at once read as the response.
+    const cubeResponseFilter = filters.includes('dr') ? 'takepass' : filters.includes('dd') ? 'double' : '';
     const diceRollFilter = filters.includes('D') || filters.includes('D1');
     const diceRollMode = filters.includes('D1') ? 'first' : 'both';
     // `xD65` excludes the 6-5 roll (order-insensitive); repeatable (`xD65 xD54`).
@@ -221,9 +224,27 @@ export function parseSearchTokens(filtersOrCommand, command) {
     if (encounterFilter && !/[,<>]/.test(encounterFilter)) {
         encounterFilter = `${encounterFilter},${encounterFilter.slice(1)}`;
     }
-    // Exclude `pl"…"` (player filter) and `ph:…` (phase) — both start with 'p'
-    // and neither is a pipcount.
-    const pipCountFilter = filters.find((f) => typeof f === 'string' && !f.startsWith('pl') && !f.startsWith('ph') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
+    // Match-level tokens, recognised by shape: `ml:7` (match length), `md:2024-01..2024-12`
+    // (match date), `pr>8` (PR of the match for the player who decided), `rd:3`
+    // (round, repeatable) and `ad:xg` (engine/depth, repeatable, lower-cased).
+    const dateBound = '\\d{4}(?:[-/]\\d{2}(?:[-/]\\d{2})?)?';
+    const matchLengthFilter = filters.find((f) => typeof f === 'string' && /^ml(?::\d+(?:,\d+)?|[<>]\d+)$/.test(f)) || '';
+    const matchDateRe = new RegExp(`^md(?::${dateBound}(?:\\.\\.${dateBound})?|[<>]${dateBound})$`);
+    const matchDateFilter = filters.find((f) => typeof f === 'string' && matchDateRe.test(f)) || '';
+    const playerPRFilter = filters.find((f) => typeof f === 'string' && /^pr(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?,\d+(?:\.\d+)?)$/.test(f)) || '';
+    const roundFilter = filters
+        .filter((f) => typeof f === 'string' && /^rd:[^\s"';]+$/.test(f))
+        .map((f) => f.slice(3))
+        .join(';');
+    const analysisProvenanceFilter = filters
+        .filter((f) => typeof f === 'string' && /^ad:(?:[a-z][a-z0-9]*|\d+ply\+?)$/i.test(f))
+        .map((f) => f.slice(3).toLowerCase())
+        .join(';');
+    // Exclude `pl"…"` (player filter), `ph:…` (phase) and `pr…` (PR) — all start
+    // with 'p' and none is a pipcount.
+    const pipCountFilter = filters.find(
+        (f) => typeof f === 'string' && !f.startsWith('pl') && !f.startsWith('ph') && !f.startsWith('pr') && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p'))
+    );
     const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
     // Exclude `gt:…` (game type), which starts with 'g' and is no gammon rate:
     // it would otherwise shadow a real `g>10` placed after it.
@@ -266,8 +287,12 @@ export function parseSearchTokens(filtersOrCommand, command) {
     let movePatternFilter = '';
     let searchText = '';
     let playerFilter = '';
-    for (const [q] of cmd.matchAll(/(?:pl|m|t)["'][^"']*["']/g)) {
+    let opponentFilter = '';
+    let tournamentNameFilter = '';
+    for (const [q] of cmd.matchAll(/(?:pl!?|op|tn|m|t)["'][^"']*["']/g)) {
         if (q.startsWith('pl')) playerFilter ||= q;
+        else if (q.startsWith('op')) opponentFilter ||= q;
+        else if (q.startsWith('tn')) tournamentNameFilter ||= q;
         else if (q.startsWith('m')) movePatternFilter ||= q;
         else searchText ||= q;
     }
@@ -310,6 +335,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
         likeMaxDistance,
         likeWidened,
         decisionTypeFilter,
+        cubeResponseFilter,
         diceRollFilter,
         diceRollMode,
         exceptDiceFilter,
@@ -349,6 +375,13 @@ export function parseSearchTokens(filtersOrCommand, command) {
         matchIDsFilter,
         tournamentIDsFilter,
         playerFilter,
+        opponentFilter,
+        tournamentNameFilter,
+        roundFilter,
+        matchLengthFilter,
+        matchDateFilter,
+        playerPRFilter,
+        analysisProvenanceFilter,
         positionIDsFilter
     };
 }
@@ -462,6 +495,14 @@ export function parseSearchCommand(command) {
         mpf: p.movePatternFilter,
         st: p.searchText,
         plf: p.playerFilter,
+        opf: p.opponentFilter,
+        tnf: p.tournamentNameFilter,
+        rdf: p.roundFilter,
+        mlf: p.matchLengthFilter,
+        mdf: p.matchDateFilter,
+        prf: p.playerPRFilter,
+        adf: p.analysisProvenanceFilter,
+        crf: p.cubeResponseFilter,
         p1ob: p.player1OutfieldBlotFilter,
         p2ob: p.player2OutfieldBlotFilter,
         p1jb: p.player1JanBlotFilter,
@@ -539,6 +580,13 @@ export function replaySearchArgs(command) {
         tournamentIDsFilter: f.tournamentIDs,
         diceRollMode: f.drMode,
         playerFilter: f.plf,
+        opponentFilter: f.opf,
+        tournamentNameFilter: f.tnf,
+        roundFilter: f.rdf,
+        matchLengthFilter: f.mlf,
+        matchDateFilter: f.mdf,
+        playerPRFilter: f.prf,
+        analysisProvenanceFilter: f.adf,
         // Command-line-only tokens: positionService does not re-derive them
         // from `filters`, so a replay would otherwise lose them.
         exceptDiceFilter: f.xd,
@@ -657,6 +705,13 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         matchIDsFilter: pf.matchIDsFilter || '',
         tournamentIDsFilter: pf.tournamentIDsFilter || '',
         playerFilter: pf.playerFilter || '',
+        opponentFilter: pf.opponentFilter || '',
+        tournamentNameFilter: pf.tournamentNameFilter || '',
+        roundFilter: pf.roundFilter || '',
+        matchLengthFilter: pf.matchLengthFilter || '',
+        matchDateFilter: pf.matchDateFilter || '',
+        playerPRFilter: pf.playerPRFilter || '',
+        analysisProvenanceFilter: pf.analysisProvenanceFilter || '',
         positionIDsFilter: pf.positionIDsFilter || '',
         restrictToPositionIDs: ''
     };

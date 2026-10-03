@@ -2081,6 +2081,16 @@ export default {
 <td><code>--decision</code></td>
 </tr>
 <tr>
+<td>dd</td>
+<td>La decisión es una acción de cubo de tipo Doblar / No doblar (y no una respuesta Take / Pass). Implica una decisión de cubo.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>dr</td>
+<td>La decisión es una respuesta Take / Pass. Implica una decisión de cubo; con <code>dd</code>, <code>dr</code> prevalece.</td>
+<td>—</td>
+</tr>
+<tr>
 <td>D</td>
 <td>La posición cumple la tirada de dados (ambos dados, sin importar el orden).</td>
 <td><code>--dice 6,5</code></td>
@@ -2472,12 +2482,12 @@ export default {
 </tr>
 <tr>
 <td>T&gt;x</td>
-<td>Fecha en que la posición se añadió a la base, posterior a x (AAAA/MM/DD). No es la fecha del match: la inserción la fija y la fusión de dos bases la conserva.</td>
+<td>Fecha en que la posición se añadió a la base, posterior a x (AAAA/MM/DD). No es la fecha de la partida (<code>md</code>): la adición la fija y la fusión de dos bases la conserva.</td>
 <td>—</td>
 </tr>
 <tr>
 <td>T&lt;x</td>
-<td>Fecha en que la posición se añadió a la base, anterior a x (AAAA/MM/DD). No es la fecha del match.</td>
+<td>Fecha en que la posición se añadió a la base, anterior a x (AAAA/MM/DD). No es la fecha de la partida (<code>md</code>).</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2506,6 +2516,26 @@ export default {
 <td><code>--tournament-ids</code></td>
 </tr>
 <tr>
+<td>tn'nombre'</td>
+<td>Buscar en los torneos cuyo nombre es <code>nombre</code>: se ignoran las mayúsculas y <code>*</code> sustituye cualquier secuencia de caracteres (ej: <code>tn'open*'</code>).</td>
+<td>—</td>
+</tr>
+<tr>
+<td>rd:x</td>
+<td>Buscar en las partidas de la ronda x (ej: <code>rd:3</code>, <code>rd:Final</code>): el texto de la ronda se compara sin distinguir mayúsculas y minúsculas, <code>*</code> sustituye cualquier secuencia de caracteres. Repetible (<code>rd:1 rd:2</code>): una u otra.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ml:x</td>
+<td>La partida tiene una longitud de x puntos. Formas <code>ml:7</code>, <code>ml:5,9</code>, <code>ml&gt;5</code> y <code>ml&lt;9</code> (límites incluidos).</td>
+<td>—</td>
+</tr>
+<tr>
+<td>md:x..y</td>
+<td><strong>Fecha de la partida</strong>, leída en la columna <code>match_date</code> de la posición (la fecha de la partida más antigua que la alcanza), y no la fecha de creación del análisis (<code>T</code>). Cada límite es un año, un mes o un día (<code>2024</code>, <code>2024-06</code>, <code>2024-06-15</code>) y cubre toda su duración, límites incluidos: <code>md:2024-01..2024-12</code> va del 1 de enero al 31 de diciembre de 2024. Formas <code>md:2024</code> (todo el año), <code>md&gt;2024-06</code> y <code>md&lt;2024-06</code>.</td>
+<td>—</td>
+</tr>
+<tr>
 <td>idx</td>
 <td>Buscar la posición con identificador x (p. ej. id12).</td>
 <td><code>--position-ids</code></td>
@@ -2517,7 +2547,27 @@ export default {
 </tr>
 <tr>
 <td><code>pl'nombre'</code></td>
-<td>Buscar posiciones de una partida en la que participó el jugador indicado, en cualquier lado (ej: <code>pl'Alice'</code>). No distingue mayúsculas y minúsculas.</td>
+<td>Buscar posiciones de una partida en la que participó el jugador indicado, en cualquier lado (ej: <code>pl'Alice'</code>). Se ignoran las mayúsculas y <code>*</code> sustituye cualquier secuencia de caracteres (<code>pl'Ali*'</code>).</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>pl!'nombre'</code></td>
+<td>Solo las decisiones tomadas por este jugador: el jugador con el turno es el que ocupa el lado de ese nombre en la partida (jugador 1 o jugador 2). Mismas reglas de mayúsculas y comodín que <code>pl</code>.</td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>op'nombre'</code></td>
+<td>Solo las partidas en las que este jugador es el adversario del de <code>pl</code> (<code>pl'Alice' op'Bob'</code>: Alice contra Bob, de un lado u otro; con <code>pl!</code>, solo las decisiones de Alice). Sin <code>pl</code>, <code>op</code> solo designa a un jugador en cualquier lado, como <code>pl</code>. Mismas reglas de mayúsculas y comodín.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>pr&gt;x</td>
+<td>El <strong>PR de la partida</strong> del jugador que tomó la decisión es al menos x, leído en las estadísticas por partida del lado de ese jugador (no el PR del adversario); una partida sin PR queda excluida. Formas <code>pr&gt;8</code>, <code>pr&lt;5</code> y <code>pr4,9</code>, límites incluidos.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>ad:xg</td>
+<td>Motor y profundidad del análisis registrado para la posición. Motores: <code>xg</code>, <code>gnubg</code>, <code>bgblitz</code>, <code>hedgehog</code>, <code>gammonnet</code> (comienzo del nombre del motor, sin distinguir mayúsculas). Profundidades: <code>3ply</code> (exactamente 3 plies), <code>3ply+</code> (al menos 3 plies), <code>book</code> (libro de aperturas), <code>rollout</code> (rollout, incluidos XG Roller y Roller++). Repetible: los motores son alternativas, las profundidades también, y un motor y una profundidad deben coincidir ambos (<code>ad:xg ad:gnubg ad:3ply+</code>).</td>
 <td>—</td>
 </tr>
 <tr>
@@ -2527,7 +2577,7 @@ export default {
 </tr>
 </tbody>
 </table>
-<p>Los valores <code>pl</code>, <code>m</code> y <code>t</code> se abren con comillas o un apóstrofo y se cierran con cualquiera de los dos. Un token que conserva una comilla sin formar un valor completo se ignora, y <code>blunderdb search --query</code> lo señala. Una etiqueta puede contener un apóstrofo (<code>#l'ouverture</code>), nunca comillas. El punto y coma es el separador de las listas de identificadores y de etiquetas: no aparece en ningún valor, y <code>ma1;2</code> no es un token (escriba <code>ma1 ma2</code>).</p>
+<p>Los valores <code>pl</code>, <code>pl!</code>, <code>op</code>, <code>tn</code>, <code>m</code> y <code>t</code> se abren con unas comillas o un apóstrofo y se cierran con cualquiera de los dos. Un token que conserva unas comillas sin formar un valor completo se ignora, y <code>blunderdb search --query</code> lo señala. Una etiqueta puede contener un apóstrofo (<code>#l'ouverture</code>), nunca unas comillas. El punto y coma es el separador de las listas de identificadores y de etiquetas: no figura en ningún valor, y <code>ma1;2</code> no es un token (escribir <code>ma1 ma2</code>).</p>
 <h3>Transcribir desde un terminal</h3>
 <p>La línea de comandos no tiene un comando de transcripción: los gestos se teclean en la pestaña <em>Transcripción</em>. Fuera de la aplicación, pasan por <code>blunderdb call</code> (Transcribir por la API), por ejemplo <code>blunderdb call transcriptions.apply --db base.db --if-match 3 --json '{"id":1,"gesture":{"Kind":"validate"}}'</code>. <code>--if-match</code> nombra la revisión devuelta por la llamada anterior; cada llamada es su propia sesión, sin <code>sessionId</code> ni deshacer de una llamada a otra.</p>
 <h3>Comandos diversos</h3>
