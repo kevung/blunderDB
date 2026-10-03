@@ -806,6 +806,14 @@ export function PendingTranscriptionAnalysis() {
   return window['go']['database']['Database']['PendingTranscriptionAnalysis']();
 }
 
+export function PlanRollout(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PlanRollout'](arg1, arg2, arg3);
+}
+
+export function PlanRolloutIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PlanRolloutIDs'](arg1, arg2, arg3);
+}
+
 export function PositionsToRollout(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PositionsToRollout'](arg1, arg2, arg3);
 }
@@ -924,6 +932,10 @@ export function RolloutPosition(arg1, arg2, arg3, arg4, arg5, arg6) {
 
 export function RolloutPositions(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['RolloutPositions'](arg1, arg2, arg3, arg4);
+}
+
+export function RunRolloutPlan(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['RunRolloutPlan'](arg1, arg2, arg3, arg4);
 }
 
 export function SaveAnalysis(arg1, arg2) {

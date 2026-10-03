@@ -117,6 +117,35 @@ func TestRolloutWriteRefusedAfterTheDatabaseChanged(t *testing.T) {
 	}
 }
 
+// A plan read before the file changed writes nothing into the next one.
+func TestRolloutPlanRefusedAfterTheDatabaseChanged(t *testing.T) {
+	d := newTestDB(t)
+	p := domain.InitializePosition()
+	id, err := d.SavePosition(&p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := tinySettings()
+	ctx := context.Background()
+	byIDs, err := d.PlanRolloutIDs(ctx, []int64{id}, s)
+	if err != nil || len(byIDs.Positions) != 1 {
+		t.Fatalf("PlanRolloutIDs: %v, %v", byIDs, err)
+	}
+	byQuery, err := d.PlanRollout(ctx, domain.SearchFilters{}, s)
+	if err != nil || len(byQuery.Positions) != 1 {
+		t.Fatalf("PlanRollout: %v, %v", byQuery, err)
+	}
+	if err := d.SetupDatabase(":memory:"); err != nil {
+		t.Fatal(err)
+	}
+	for name, plan := range map[string]*RolloutPlan{"ids": byIDs, "query": byQuery} {
+		sum, err := d.RunRolloutPlan(ctx, plan, s, nil)
+		if err != nil || sum.RolledOut != 0 || sum.Failed != 1 {
+			t.Errorf("%s plan after a switch: %+v, %v; want one failed write", name, sum, err)
+		}
+	}
+}
+
 // The hook registered with SetBeforeSwitch runs before every switch, outside
 // the lock: a job it waits for can still take the lock to finish its write.
 func TestBeforeSwitchRunsOutsideTheLock(t *testing.T) {

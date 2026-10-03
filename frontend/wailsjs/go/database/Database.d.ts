@@ -418,6 +418,10 @@ export function Participants(arg1:number):Promise<Array<service.ParticipantRow>>
 
 export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAnalysisResume>;
 
+export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<database.RolloutPlan>;
+
+export function PlanRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<database.RolloutPlan>;
+
 export function PositionsToRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<Array<domain.Position>>;
 
 export function PositionsToRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<Array<domain.Position>>;
@@ -477,6 +481,8 @@ export function RolloutFiltered(arg1:context.Context,arg2:domain.SearchFilters,a
 export function RolloutPosition(arg1:context.Context,arg2:number,arg3:rollout.Settings,arg4:Array<string>,arg5:boolean,arg6:any):Promise<rollout.Result>;
 
 export function RolloutPositions(arg1:context.Context,arg2:Array<domain.Position>,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
+
+export function RunRolloutPlan(arg1:context.Context,arg2:database.RolloutPlan,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
 
 export function SaveAnalysis(arg1:number,arg2:domain.PositionAnalysis):Promise<void>;
 

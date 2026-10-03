@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
@@ -70,21 +71,20 @@ func (a *App) RolloutPresets() []RolloutPreset {
 // StartRollout validates req and rolls it out in the background, cancelling
 // any rollout in flight; the outcome arrives as events. An invalid request is
 // refused here, before anything starts.
-func (a *App) StartRollout(req RolloutRequest) error {
+func (a *App) StartRollout(req RolloutRequest) (int64, error) {
 	if err := req.Settings.Validate(); err != nil {
-		return err
+		return 0, err
 	}
 	switch {
 	case req.PositionID == 0 && req.Position == nil:
-		return errors.New("rollout: no position")
+		return 0, errors.New("rollout: no position")
 	case req.Store && req.PositionID == 0:
-		return errors.New("rollout: only a saved position can store its rollout")
+		return 0, errors.New("rollout: only a saved position can store its rollout")
 	case req.PositionID != 0 && a.db == nil:
-		return errors.New("rollout: no database is open")
+		return 0, errors.New("rollout: no database is open")
 	}
 
-	ctx, stopped := a.beginRollout(RolloutStatus{Running: true, Kind: "position", PositionID: req.PositionID, MaxGames: req.Settings.MaxGames})
-	job := a.rolloutJob(stopped)
+	ctx, stopped, job := a.beginRollout(RolloutStatus{Running: true, Kind: "position", PositionID: req.PositionID, MaxGames: req.Settings.MaxGames})
 
 	go func() {
 		defer close(stopped)
@@ -119,7 +119,7 @@ func (a *App) StartRollout(req RolloutRequest) error {
 			a.emitBatch("rollout:error", map[string]any{"job": job, "positionId": req.PositionID, "message": fmt.Sprint(err)})
 		}
 	}()
-	return nil
+	return job, nil
 }
 
 // StartRolloutFiltered rolls out, one after the other, every position of the
@@ -135,60 +135,59 @@ func (a *App) StartRollout(req RolloutRequest) error {
 //	rollout-batch:done      RolloutBatchDoneEvent
 //	rollout-batch:cancelled RolloutBatchDoneEvent (what was done before)
 //	rollout-batch:error     {message}
-func (a *App) StartRolloutFiltered(query string, settings rollout.Settings) error {
+func (a *App) StartRolloutFiltered(query string, settings rollout.Settings) (int64, error) {
 	if err := settings.Validate(); err != nil {
-		return err
+		return 0, err
 	}
 	if a.db == nil {
-		return errors.New("rollout: no database is open")
+		return 0, errors.New("rollout: no database is open")
 	}
 	filters, err := rollouts.ParseQuery(query)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return a.startRolloutBatch(settings, func(ctx context.Context) ([]domain.Position, error) {
-		return a.db.PositionsToRollout(ctx, filters, settings)
+	return a.startRolloutBatch(settings, func(ctx context.Context) (*database.RolloutPlan, error) {
+		return a.db.PlanRollout(ctx, filters, settings)
 	})
 }
 
 // StartRolloutIDs is StartRolloutFiltered for the list the GUI shows: the
 // positions ids names, in that order, that carry no rollout of settings'
 // Signature yet. The events are those of StartRolloutFiltered.
-func (a *App) StartRolloutIDs(ids []int64, settings rollout.Settings) error {
+func (a *App) StartRolloutIDs(ids []int64, settings rollout.Settings) (int64, error) {
 	if err := settings.Validate(); err != nil {
-		return err
+		return 0, err
 	}
 	if a.db == nil {
-		return errors.New("rollout: no database is open")
+		return 0, errors.New("rollout: no database is open")
 	}
-	return a.startRolloutBatch(settings, func(ctx context.Context) ([]domain.Position, error) {
-		return a.db.PositionsToRolloutIDs(ctx, ids, settings)
+	return a.startRolloutBatch(settings, func(ctx context.Context) (*database.RolloutPlan, error) {
+		return a.db.PlanRolloutIDs(ctx, ids, settings)
 	})
 }
 
 // startRolloutBatch runs the batch gather selects, refusing while a gammonNet
 // batch runs.
-func (a *App) startRolloutBatch(settings rollout.Settings, gather func(context.Context) ([]domain.Position, error)) error {
+func (a *App) startRolloutBatch(settings rollout.Settings, gather func(context.Context) (*database.RolloutPlan, error)) (int64, error) {
 	a.roMu.Lock()
 	a.gnBatchMu.Lock()
 	gammonNetRunning := a.gnBatchDone != nil
 	a.gnBatchMu.Unlock()
 	a.roMu.Unlock()
 	if gammonNetRunning {
-		return errors.New("rollout: a gammonNet batch analysis is already running")
+		return 0, errors.New("rollout: a gammonNet batch analysis is already running")
 	}
 
-	ctx, stopped := a.beginRollout(RolloutStatus{Running: true, Kind: "batch", MaxGames: settings.MaxGames})
-	job := a.rolloutJob(stopped)
+	ctx, stopped, job := a.beginRollout(RolloutStatus{Running: true, Kind: "batch", MaxGames: settings.MaxGames})
 	go func() {
 		defer close(stopped)
 		defer recoverBackground(a.ctx, "rollout batch")
 		var sum rollouts.Summary
-		positions, err := gather(ctx)
+		plan, err := gather(ctx)
 		if err == nil {
-			a.noteRollout(stopped, func(st *RolloutStatus) { st.Total = len(positions) })
-			a.emitBatch("rollout-batch:started", map[string]int64{"job": job, "total": int64(len(positions))})
-			sum, err = a.db.RolloutPositions(ctx, positions, settings, func(p rollouts.Progress) {
+			a.noteRollout(stopped, func(st *RolloutStatus) { st.Total = len(plan.Positions) })
+			a.emitBatch("rollout-batch:started", map[string]int64{"job": job, "total": int64(len(plan.Positions))})
+			sum, err = a.db.RunRolloutPlan(ctx, plan, settings, func(p rollouts.Progress) {
 				a.noteRollout(stopped, func(st *RolloutStatus) {
 					st.Done, st.Total, st.PositionID, st.Games, st.MaxGames = p.Done, p.Total, p.PositionID, p.Games, p.MaxGames
 				})
@@ -208,7 +207,7 @@ func (a *App) startRolloutBatch(settings rollout.Settings, gather func(context.C
 			a.emitBatch("rollout-batch:done", done)
 		}
 	}()
-	return nil
+	return job, nil
 }
 
 // CountRolloutIDs says how many of the positions ids names would be rolled
@@ -272,9 +271,10 @@ func (a *App) RolloutStatus() RolloutStatus {
 	return a.roStatus
 }
 
-// beginRollout cancels the rollout in flight and registers the next one:
-// its context, and the channel its goroutine closes when it has stopped.
-func (a *App) beginRollout(status RolloutStatus) (context.Context, chan struct{}) {
+// beginRollout cancels the rollout in flight and registers the next one: its
+// context, the channel its goroutine closes when it has stopped, and its job
+// number.
+func (a *App) beginRollout(status RolloutStatus) (context.Context, chan struct{}, int64) {
 	a.roMu.Lock()
 	defer a.roMu.Unlock()
 	if a.roCancel != nil {
@@ -285,17 +285,7 @@ func (a *App) beginRollout(status RolloutStatus) (context.Context, chan struct{}
 	a.roSeq++
 	status.Job = a.roSeq
 	a.roCancel, a.roDone, a.roStatus = cancel, stopped, status
-	return ctx, stopped
-}
-
-// rolloutJob is the number beginRollout gave the job stopped names.
-func (a *App) rolloutJob(stopped chan struct{}) int64 {
-	a.roMu.Lock()
-	defer a.roMu.Unlock()
-	if a.roDone == stopped {
-		return a.roStatus.Job
-	}
-	return 0
+	return ctx, stopped, status.Job
 }
 
 // noteRollout updates the status of the rollout stopped names, unless a newer

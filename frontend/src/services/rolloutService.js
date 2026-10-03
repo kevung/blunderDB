@@ -33,17 +33,49 @@ function failure(err) {
     return err?.message ?? String(err);
 }
 
+/** Events that arrive while a start call is in flight, before the job it was given is known. */
+let starting = false;
+/** @type {Array<() => void>} */
+let held = [];
+
+function applyJob(change, e) {
+    rolloutStore.update((s) => {
+        const job = e?.job ?? 0;
+        if (!job || job < s.job) return s;
+        return change(s, e ?? {}, job);
+    });
+}
+
 /**
  * Applies an event to the state unless it belongs to a job that was replaced since: a cancelled job
- * still reports its end after the next one has begun.
+ * still reports its end after the next one has begun. While a start is in flight the new job's
+ * number is not known, so the events wait for it and are then filtered against it.
  */
 function onJob(change) {
-    return (e) =>
-        rolloutStore.update((s) => {
-            const job = e?.job ?? 0;
-            if (job && job < s.job) return s;
-            return change(s, e ?? {}, job || s.job);
-        });
+    return (e) => {
+        if (starting) held.push(() => applyJob(change, e));
+        else applyJob(change, e);
+    };
+}
+
+/**
+ * Runs a start call: events wait while it is in flight, then the job it returns is posted before
+ * any of them is applied. Rethrows what the call raised, after releasing the events.
+ */
+async function startJob(call) {
+    starting = true;
+    held = [];
+    let job = 0;
+    try {
+        job = Number(await call()) || 0;
+        return job;
+    } finally {
+        const pending = held;
+        held = [];
+        starting = false;
+        if (job) rolloutStore.update((s) => ({ ...s, job: Math.max(s.job, job) }));
+        for (const apply of pending) apply();
+    }
 }
 
 /** Registers the listeners once for the life of the window; safe to call from every mount. */
@@ -222,7 +254,7 @@ export async function startRolloutOfCurrent(settings) {
     const id = pos?.id ?? 0;
     try {
         rolloutStore.update((s) => ({ ...s, error: '', pendingKey: id ? '' : boardKey(pos) }));
-        await StartRollout({ positionId: id, position: id ? undefined : pos, settings: settingsForWire(settings), moves: [], store: id !== 0 });
+        await startJob(() => StartRollout({ positionId: id, position: id ? undefined : pos, settings: settingsForWire(settings), moves: [], store: id !== 0 }));
         rolloutStore.update((s) => ({ ...s, outcome: null, running: true, kind: 'position', positionId: id, games: 0, maxGames: Number(settings.max_games), candidates: [] }));
         await syncRolloutStatus();
         return '';
@@ -255,7 +287,7 @@ export async function startRolloutOfSearch(settings) {
     if (!ok) return '';
     try {
         rolloutStore.update((s) => ({ ...s, error: '' }));
-        await StartRolloutIDs(ids, wire);
+        await startJob(() => StartRolloutIDs(ids, wire));
         rolloutStore.update((s) => ({ ...idleRollout(), job: s.job, running: true, kind: 'batch', total, revision: s.revision }));
         await syncRolloutStatus();
         return '';

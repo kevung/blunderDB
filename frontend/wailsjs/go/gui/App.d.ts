@@ -123,11 +123,11 @@ export function StartGammonNetMatchBatch(arg1:number,arg2:number,arg3:number,arg
 
 export function StartGammonNetStaleBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
 
-export function StartRollout(arg1:gui.RolloutRequest):Promise<void>;
+export function StartRollout(arg1:gui.RolloutRequest):Promise<number>;
 
-export function StartRolloutFiltered(arg1:string,arg2:rollout.Settings):Promise<void>;
+export function StartRolloutFiltered(arg1:string,arg2:rollout.Settings):Promise<number>;
 
-export function StartRolloutIDs(arg1:Array<number>,arg2:rollout.Settings):Promise<void>;
+export function StartRolloutIDs(arg1:Array<number>,arg2:rollout.Settings):Promise<number>;
 
 export function StartupFilePath():Promise<string>;
 

@@ -72,12 +72,15 @@
         if (settings) await startRolloutOfSearch(settings);
     }
 
-    // Escape leaves a settings field and keeps the panel open (the panel closes on the next one).
-    /** @param {KeyboardEvent} event */
-    function leaveField(event) {
+    // Escape drops what was typed in a settings field, leaves it and keeps the panel open (the panel
+    // closes on the next one). The value is put back first: leaving a field would commit it.
+    /** @param {string} key @param {KeyboardEvent} event */
+    function leaveField(key, event) {
         if (event.key === 'Escape') {
             event.preventDefault();
-            /** @type {HTMLElement} */ (event.currentTarget).blur();
+            const input = /** @type {HTMLInputElement} */ (event.currentTarget);
+            input.value = String(settings?.[key] ?? '');
+            input.blur();
         }
     }
 
@@ -121,7 +124,16 @@
                 {#each FIELDS as [key, label, hint, step] (key)}
                     <label title={$t(hint)}>
                         <span>{$t(label)}</span>
-                        <input type="number" min="0" {step} value={settings[key]} disabled={rollout.running} onchange={(e) => edit(key, e)} onkeydown={leaveField} data-testid={'rollout-' + key} />
+                        <input
+                            type="number"
+                            min="0"
+                            {step}
+                            value={settings[key]}
+                            disabled={rollout.running}
+                            onchange={(e) => edit(key, e)}
+                            onkeydown={(e) => leaveField(key, e)}
+                            data-testid={'rollout-' + key}
+                        />
                     </label>
                 {/each}
             </div>

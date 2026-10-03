@@ -155,13 +155,13 @@ describe('RolloutSection', () => {
     test('progress events fill the bar and Cancel stops the job', async () => {
         render(RolloutSection);
         await screen.findByTestId('rollout-start');
-        handlers['rollout:progress']({ positionId: 7, games: 108, maxGames: 216, candidates: [{ move: '13/7 8/7', equity: 0.1, std_err: 0.01, ci95: 0.02, games: 108, jsd: 0 }] });
+        handlers['rollout:progress']({ job: 1, positionId: 7, games: 108, maxGames: 216, candidates: [{ move: '13/7 8/7', equity: 0.1, std_err: 0.01, ci95: 0.02, games: 108, jsd: 0 }] });
         await tick();
         expect(screen.getByTestId('rollout-progress').textContent).toContain('108/216');
         expect(screen.getByTestId('rollout-live')).toBeTruthy();
         await fireEvent.click(screen.getByTestId('rollout-cancel'));
         expect(cancelRollout).toHaveBeenCalled();
-        handlers['rollout:cancelled']({ positionId: 7, result: null });
+        handlers['rollout:cancelled']({ job: 1, positionId: 7, result: null });
         await tick();
         expect(screen.getByTestId('rollout-outcome')).toBeTruthy();
         expect(screen.queryByTestId('rollout-progress')).toBeNull();
@@ -206,11 +206,11 @@ describe('RolloutSection', () => {
     test('batch events show position count and the end summary', async () => {
         render(RolloutSection);
         await screen.findByTestId('rollout-start');
-        handlers['rollout-batch:started']({ total: 5 });
-        handlers['rollout-batch:progress']({ done: 2, total: 5, positionId: 9, games: 36, maxGames: 216 });
+        handlers['rollout-batch:started']({ job: 1, total: 5 });
+        handlers['rollout-batch:progress']({ job: 1, done: 2, total: 5, positionId: 9, games: 36, maxGames: 216 });
         await tick();
         expect(screen.getByTestId('rollout-progress').textContent).toContain('2');
-        handlers['rollout-batch:done']({ total: 5, rolledOut: 4, refused: 1, failed: 0, signature: 's' });
+        handlers['rollout-batch:done']({ job: 1, total: 5, rolledOut: 4, refused: 1, failed: 0, signature: 's' });
         await tick();
         expect(screen.getByTestId('rollout-outcome').textContent).toContain('4');
         expect(get(rolloutStore).running).toBe(false);
@@ -276,6 +276,41 @@ describe('guards', () => {
         await fireEvent.keyDown(field, { key: 'Escape' });
         expect(document.activeElement).not.toBe(field);
         expect(onClose).not.toHaveBeenCalled();
+    });
+
+    test('Escape in a settings field drops what was typed', async () => {
+        const AnalysisPanel = (await import('../components/AnalysisPanel.svelte')).default;
+        render(AnalysisPanel, { props: { onClose: vi.fn() } });
+        await fireEvent.click(await screen.findByText('Custom'));
+        const field = screen.getByTestId('rollout-ply');
+        const before = field.value;
+        field.focus();
+        await fireEvent.input(field, { target: { value: '7' } });
+        await fireEvent.keyDown(field, { key: 'Escape' });
+        expect(field.value).toBe(before);
+    });
+
+    test('the end of the job a start replaced does not touch the new one', async () => {
+        positionStore.update((p) => ({ ...p, id: 0 }));
+        rolloutStore.set({ ...idleRollout(), job: 4, running: true, kind: 'position' });
+        startRollout.mockImplementationOnce(async () => {
+            handlers['rollout:cancelled']({ job: 4, positionId: 0 });
+            handlers['rollout:done']({ job: 5, positionId: 0, stored: false, record: stored({ signature: 'new-job' }) });
+            return 5;
+        });
+        render(RolloutSection);
+        const start = await screen.findByTestId('rollout-start');
+        rolloutStore.update((s) => ({ ...s, running: false }));
+        await waitFor(() => expect(start.disabled).toBe(false));
+        await fireEvent.click(start);
+        await waitFor(() => expect(screen.getByText('new-job')).toBeTruthy());
+    });
+
+    test('an event without a job number is ignored', async () => {
+        render(RolloutSection);
+        await screen.findByTestId('rollout-start');
+        handlers['rollout:progress']({ positionId: 0, games: 5, maxGames: 10 });
+        expect(get(rolloutStore).running).toBe(false);
     });
 
     test('an unsaved board keeps its result only while that board is on screen', async () => {
