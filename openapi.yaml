@@ -83,6 +83,108 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/acrossAnalyses"
+  /v1/across.clubRanking:
+    post:
+      operationId: across.clubRanking
+      tags: [across]
+      x-kind: json
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/acrossClubRankingReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/acrossClubRankingResp"
+  /v1/across.collectionPositions:
+    post:
+      operationId: across.collectionPositions
+      tags: [across]
+      x-kind: stream
+      x-streaming: true
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/acrossCollectionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/x-ndjson:
+              schema:
+                description: One JSON object per line (NDJSON), each shaped as below.
+                $ref: "#/components/schemas/acrossPosition"
+  /v1/across.collectionsList:
+    post:
+      operationId: across.collectionsList
+      tags: [across]
+      x-kind: stream
+      x-streaming: true
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/x-ndjson:
+              schema:
+                description: One JSON object per line (NDJSON), each shaped as below.
+                $ref: "#/components/schemas/acrossCollection"
+  /v1/across.commentsByZobrist:
+    post:
+      operationId: across.commentsByZobrist
+      tags: [across]
+      x-kind: stream
+      x-streaming: true
+      parameters:
+        - name: X-Read-Tenants
+          in: header
+          required: false
+          description: Comma-separated tenants read besides X-Tenant-ID, written by the authenticating proxy (at most 64 with X-Tenant-ID, one header line); honoured only under serve --read-tenants, refused with 400 otherwise; absent, the read is X-Tenant-ID's alone.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/acrossZobristReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/x-ndjson:
+              schema:
+                description: One JSON object per line (NDJSON), each shaped as below.
+                $ref: "#/components/schemas/acrossComment"
   /v1/across.matchMovePositions:
     post:
       operationId: across.matchMovePositions
@@ -5953,6 +6055,61 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/domain_PositionAnalysis"
+    acrossClubRankingReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        players:
+          type: array
+          items:
+            $ref: "#/components/schemas/storage_ClubPlayer"
+        minDecisions:
+          type: integer
+          format: int32
+    acrossClubRankingResp:
+      type: object
+      properties:
+        rows:
+          type: array
+          items:
+            $ref: "#/components/schemas/storage_ClubRow"
+    acrossCollection:
+      type: object
+      properties:
+        tenant:
+          type: string
+        collection:
+          $ref: "#/components/schemas/storage_Collection"
+          nullable: true
+    acrossCollectionReq:
+      type: object
+      properties:
+        tenant:
+          type: string
+        collectionId:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    acrossComment:
+      type: object
+      properties:
+        tenant:
+          type: string
+        zobrist:
+          type: integer
+          format: int64
+        positionId:
+          type: integer
+          format: int64
+        comment:
+          $ref: "#/components/schemas/domain_CommentEntry"
+          nullable: true
     acrossIDsReq:
       type: object
       properties:
@@ -6051,6 +6208,14 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/acrossStats"
+    acrossZobristReq:
+      type: object
+      properties:
+        zobrists:
+          type: array
+          items:
+            type: integer
+            format: int64
     analysisSaveReq:
       type: object
       properties:
@@ -7258,6 +7423,12 @@ components:
           $ref: "#/components/schemas/storage_StatsFilter"
         window:
           type: string
+    storage_ClubPlayer:
+      type: object
+      description: "Opaque: see the Go type storage.ClubPlayer (defined outside internal/server, not expanded here)."
+    storage_ClubRow:
+      type: object
+      description: "Opaque: see the Go type storage.ClubRow (defined outside internal/server, not expanded here)."
     storage_Collection:
       type: object
       description: "Opaque: see the Go type storage.Collection (defined outside internal/server, not expanded here)."

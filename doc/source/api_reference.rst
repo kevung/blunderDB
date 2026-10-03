@@ -15,6 +15,10 @@ l'en-tête ``Idempotency-Key`` optionnel.
 
    across
      POST /v1/across.analysesLoadByIds             JSON
+     POST /v1/across.clubRanking                   JSON
+     POST /v1/across.collectionPositions           NDJSON
+     POST /v1/across.collectionsList               NDJSON
+     POST /v1/across.commentsByZobrist             NDJSON
      POST /v1/across.matchMovePositions            NDJSON
      POST /v1/across.matchesGet                    JSON
      POST /v1/across.matchesList                   NDJSON

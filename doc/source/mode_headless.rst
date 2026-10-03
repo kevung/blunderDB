@@ -1118,6 +1118,29 @@ le proxy. Le journal d'accès d'une route ``across.*`` porte la liste reçue
 (champ ``read_tenants``). L'en-tête ne figure pas parmi les en-têtes CORS
 autorisés : seul le proxy l'écrit, jamais un navigateur.
 
+Quatre lectures servent le club et le coach, sur la même liste
+(`ADR-0065 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0065-club-et-coach-lisent-a-travers-les-tenants-et-n-ecrivent-que-chez-soi.md>`__) :
+
+- **commentaires du coach** : le coach range chez lui la position d'un élève
+  (``positions.save`` sous son propre ``X-Tenant-ID``, même hachage) et la
+  commente (``comments.add``) ; rien n'est écrit chez l'élève.
+  ``across.commentsByZobrist`` (``{"zobrists": [...]}``, 1000 hachages au plus)
+  rend les commentaires que chaque tenant lu a écrits sur ces plateaux, chacun
+  avec son tenant, l'id de la position chez lui et son origine ;
+- **bibliothèque partagée** : ``across.collectionsList`` liste les collections
+  des tenants lus, ``across.collectionPositions`` (``tenant``,
+  ``collectionId``) les positions de l'une d'elles, chacune avec son hachage. La
+  bibliothèque est lue sur place, jamais copiée : partager une collection par
+  fichier (export puis import) en donne au contraire une copie au receveur ;
+- **classement de club** : ``across.clubRanking`` fusionne les tables de joueurs
+  des tenants lus en un seul classement, meilleur PR d'abord, sur le filtre de
+  statistiques donné (``filter.DateFrom`` et ``filter.DateTo`` pour une
+  période). Chaque ligne porte son tenant ; un nom n'est jamais fusionné d'un
+  tenant à l'autre. ``players`` (paires ``tenant``, ``name``) ne garde que ces
+  joueurs, ``minDecisions`` écarte ceux qui ont moins de décisions comptées ; à
+  PR égal, le rang est partagé, et une ligne sans décision comptée a le rang 0.
+  Ce n'est pas le classement de saison des tournois dirigés.
+
 .. _headless_sauvegarde:
 
 Sauvegarde et restauration
@@ -1792,6 +1815,12 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
    * - ``rollout``
      - rollout d'une position de la base : équité, intervalle à 95 % et JSD
        par candidat
+   * - ``club_matches``, ``club_match_positions``, ``club_comments``,
+       ``club_library``, ``club_library_positions``, ``club_ranking``
+     - lectures à travers les tenants que liste le proxy
+       (:ref:`headless_tenants_lus`) : matchs des élèves, positions d'un match
+       avec leur hachage, commentaires écrits sur ces plateaux, bibliothèque
+       partagée, classement de club ; sans ``X-Read-Tenants``, ce tenant seul
 
 Seuls cinq outils écrivent — ``save_position``, ``comment_position``,
 ``create_collection``, ``add_to_collection`` et ``anki_review``, qui note une

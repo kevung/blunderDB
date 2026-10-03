@@ -3,10 +3,14 @@ package mcp
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // The tools over evaluation, spaced repetition, transcription and tournament
@@ -18,6 +22,7 @@ func registerClub(tb *Toolbox) {
 	registerAnkiReview(tb)
 	registerTranscriptionReads(tb)
 	registerDirectionReads(tb)
+	registerAcrossReads(tb)
 }
 
 func registerEvaluate(tb *Toolbox) {
@@ -157,4 +162,194 @@ func anySlice(v []obj) []any {
 		out[i] = v[i]
 	}
 	return out
+}
+
+// The club and coach reads (ADR-0063, ADR-0065) span the tenants the proxy
+// lists in X-Read-Tenants on the /mcp request; the engine forwards that header
+// on their across.* calls and on nothing else. Over stdio, or without the
+// header, they read this tenant alone. A Zobrist hash travels as a decimal
+// string: it is a 64-bit integer, which a JSON number read as a double loses.
+
+const acrossNote = " Reads this tenant and the tenants the authenticating proxy lists (X-Read-Tenants); every row names its tenant."
+
+func zobristString(z uint64) string { return strconv.FormatUint(z, 10) }
+
+func parseZobrists(in []string) ([]uint64, error) {
+	out := make([]uint64, 0, len(in))
+	for _, s := range in {
+		z, err := strconv.ParseUint(strings.TrimSpace(s), 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("zobrist %q: a decimal hash as club_match_positions or club_library_positions returns it", s)
+		}
+		out = append(out, z)
+	}
+	return out, nil
+}
+
+// acrossPositionRow and its kin decode the across.* wire rows with the hash
+// as an integer, before it is turned into a string for the model.
+type acrossPositionRow struct {
+	Tenant   string           `json:"tenant"`
+	Zobrist  uint64           `json:"zobrist"`
+	Position *domain.Position `json:"position"`
+}
+
+type acrossMoveRow struct {
+	Tenant       string                    `json:"tenant"`
+	Zobrist      uint64                    `json:"zobrist"`
+	MovePosition *domain.MatchMovePosition `json:"movePosition"`
+}
+
+type acrossCommentRow struct {
+	Tenant     string               `json:"tenant"`
+	Zobrist    uint64               `json:"zobrist"`
+	PositionID int64                `json:"positionId"`
+	Comment    *domain.CommentEntry `json:"comment"`
+}
+
+func registerAcrossReads(tb *Toolbox) {
+	type matchesIn struct {
+		Player   string `json:"player,omitempty" jsonschema:"matches with this player, at either seat (exact name)"`
+		DateFrom string `json:"dateFrom,omitempty" jsonschema:"first match date, YYYY-MM-DD"`
+		DateTo   string `json:"dateTo,omitempty" jsonschema:"last match date, YYYY-MM-DD"`
+		Limit    int    `json:"limit,omitempty" jsonschema:"rows per tenant (default 20, at most 200); at most 200 rows overall"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "club_matches", Title: "Matches across the club",
+		Description: "Matches of the read tenants (a coach's students), newest first: tenant, match id, players, length, date, each side's PR." + acrossNote},
+		func(ctx context.Context, req *sdk.CallToolRequest, a matchesIn) (any, error) {
+			body := obj{"playerName": a.Player, "dateFrom": a.DateFrom, "dateTo": a.DateTo, "limit": clampLimit(a.Limit)}
+			rows, err := Stream[obj](ctx, tb.Engine, req, "across.matchesList", body, maxLimit)
+			if err != nil {
+				return nil, err
+			}
+			out := make([]obj, 0, len(rows))
+			for _, r := range rows {
+				m, _ := r["match"].(obj)
+				out = append(out, obj{"tenant": r["tenant"], "match": pick(m, "id", "player1_name", "player2_name",
+					"match_length", "match_date", "event", "pr", "pr2")})
+			}
+			return obj{"matches": out}, nil
+		})
+
+	type matchIn struct {
+		Tenant  string `json:"tenant" jsonschema:"the tenant club_matches named"`
+		MatchID int64  `json:"matchId" jsonschema:"the match id in that tenant"`
+		Limit   int    `json:"limit,omitempty" jsonschema:"positions to return (default 20, at most 200)"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "club_match_positions", Title: "A club match, move by move",
+		Description: "The positions of one match of a read tenant, move by move: the move played, the position summary and its zobrist hash. " +
+			"The hash names the same board in every tenant: pass it to club_comments to read the comments written on it." + acrossNote},
+		func(ctx context.Context, req *sdk.CallToolRequest, a matchIn) (any, error) {
+			rows, err := Stream[acrossMoveRow](ctx, tb.Engine, req, "across.matchMovePositions", obj{"tenant": a.Tenant, "matchId": a.MatchID}, clampLimit(a.Limit))
+			if err != nil {
+				return nil, err
+			}
+			out := make([]obj, 0, len(rows))
+			for _, r := range rows {
+				if r.MovePosition == nil {
+					continue
+				}
+				mp := r.MovePosition
+				out = append(out, obj{"tenant": r.Tenant, "zobrist": zobristString(r.Zobrist), "game": mp.GameNumber,
+					"move": mp.MoveNumber, "player": mp.PlayerOnRoll, "played": mp.CheckerMove, "cubeAction": mp.CubeAction, "position": summarize(&mp.Position)})
+			}
+			return obj{"positions": out}, nil
+		})
+
+	type commentsIn struct {
+		Zobrists []string `json:"zobrists" jsonschema:"board hashes, as club_match_positions or club_library_positions return them (at most 1000)"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "club_comments", Title: "Comments on boards across the club",
+		Description: "The comments every read tenant wrote on the given boards, joined by zobrist hash: a coach's notes, written in the coach's own tenant, on a student's positions. " +
+			"Each comment says its tenant (who wrote it), the board's id there and its origin (user or the file it came from)." + acrossNote},
+		func(ctx context.Context, req *sdk.CallToolRequest, a commentsIn) (any, error) {
+			hashes, err := parseZobrists(a.Zobrists)
+			if err != nil {
+				return nil, err
+			}
+			rows, err := Stream[acrossCommentRow](ctx, tb.Engine, req, "across.commentsByZobrist", obj{"zobrists": hashes}, maxLimit)
+			if err != nil {
+				return nil, err
+			}
+			out := make([]obj, 0, len(rows))
+			for _, r := range rows {
+				if r.Comment == nil {
+					continue
+				}
+				out = append(out, obj{"tenant": r.Tenant, "zobrist": zobristString(r.Zobrist), "positionId": r.PositionID,
+					"text": r.Comment.Text, "origin": r.Comment.Origin, "modifiedAt": r.Comment.ModifiedAt})
+			}
+			return obj{"comments": out}, nil
+		})
+
+	Add(tb, Reads, &sdk.Tool{Name: "club_library", Title: "Shared library",
+		Description: "The collections of the read tenants, a shared library among them: tenant, collection id, name, description, position count. Read in place, never copied." + acrossNote},
+		func(ctx context.Context, req *sdk.CallToolRequest, _ noInput) (any, error) {
+			rows, err := Stream[obj](ctx, tb.Engine, req, "across.collectionsList", nil, maxLimit)
+			if err != nil {
+				return nil, err
+			}
+			out := make([]obj, 0, len(rows))
+			for _, r := range rows {
+				c, _ := r["collection"].(obj)
+				out = append(out, obj{"tenant": r["tenant"], "collection": pick(c, "id", "name", "description", "positionCount")})
+			}
+			return obj{"collections": out}, nil
+		})
+
+	type libIn struct {
+		Tenant       string `json:"tenant" jsonschema:"the tenant club_library named"`
+		CollectionID int64  `json:"collectionId" jsonschema:"the collection id in that tenant"`
+		Limit        int    `json:"limit,omitempty" jsonschema:"positions to return (default 20, at most 200)"`
+		Offset       int    `json:"offset,omitempty" jsonschema:"positions to skip, for the next page"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "club_library_positions", Title: "Positions of a shared collection",
+		Description: "The positions of one collection of a read tenant, in collection order, each with its summary and zobrist hash." + acrossNote},
+		func(ctx context.Context, req *sdk.CallToolRequest, a libIn) (any, error) {
+			body := obj{"tenant": a.Tenant, "collectionId": a.CollectionID, "limit": clampLimit(a.Limit), "offset": a.Offset}
+			rows, err := Stream[acrossPositionRow](ctx, tb.Engine, req, "across.collectionPositions", body, clampLimit(a.Limit))
+			if err != nil {
+				return nil, err
+			}
+			out := make([]obj, 0, len(rows))
+			for _, r := range rows {
+				if r.Position == nil {
+					continue
+				}
+				out = append(out, obj{"tenant": r.Tenant, "zobrist": zobristString(r.Zobrist), "position": summarize(r.Position)})
+			}
+			return obj{"positions": out}, nil
+		})
+
+	type rankingIn struct {
+		DateFrom     string `json:"dateFrom,omitempty" jsonschema:"first match date, YYYY-MM-DD"`
+		DateTo       string `json:"dateTo,omitempty" jsonschema:"last match date, YYYY-MM-DD"`
+		Decision     string `json:"decision,omitempty" jsonschema:"checker, cube or empty for both"`
+		MinDecisions int    `json:"minDecisions,omitempty" jsonschema:"leave out players with fewer counted decisions"`
+		Players      []struct {
+			Tenant string `json:"tenant"`
+			Name   string `json:"name"`
+		} `json:"players,omitempty" jsonschema:"keep only these players, each named with its tenant"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "club_ranking", Title: "Club ranking",
+		Description: "One ranking over the read tenants' players, best PR first, for a period: tenant, rank (ties share it; 0 = no counted decision), name, matches, decisions, PR, errors, blunders. " +
+			"A name is never merged across tenants. Not the season ranking of directed tournaments (direction_season)." + acrossNote},
+		func(ctx context.Context, req *sdk.CallToolRequest, a rankingIn) (any, error) {
+			body := statsFilter{DateFrom: a.DateFrom, DateTo: a.DateTo, Decision: a.Decision}.wire()
+			body["minDecisions"] = a.MinDecisions
+			body["players"] = a.Players
+			var v struct {
+				Rows []obj `json:"rows"`
+			}
+			if err := tb.Engine.Call(ctx, req, "across.clubRanking", body, &v); err != nil {
+				return nil, err
+			}
+			out := make([]obj, 0, len(v.Rows))
+			for _, r := range v.Rows {
+				p, _ := r["player"].(obj)
+				out = append(out, obj{"tenant": r["tenant"], "rank": r["rank"], "player": pick(p, "name", "matches", "wins", "losses",
+					"decisions", "pr", "pr_checker", "pr_cube", "errors", "blunders")})
+			}
+			return obj{"rows": firstN(anySlice(out), maxLimit)}, nil
+		})
 }
