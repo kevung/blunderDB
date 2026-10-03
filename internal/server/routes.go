@@ -62,6 +62,7 @@ var streamingCustomPaths = map[string]bool{
 	"/v1/imports.ogxm":             true,
 	"/v1/imports.db":               true,
 	"/v1/imports.position":         true,
+	"/v1/imports.batch":            true,
 	"/v1/exports.json":             true,
 	"/v1/exports.sqlite":           true,
 	"/v1/gammonnet.analyzeMissing": true,

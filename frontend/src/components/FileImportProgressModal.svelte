@@ -10,14 +10,34 @@
         currentFile = '',
         results = { succeeded: 0, failed: 0, skipped: 0, errors: [] },
         report = null,
+        progress = null,
         onClose,
         onCancel,
+        onMinimize,
         onOpenPosition,
         onAnalyzeRemaining,
         onStartStudyQueue
     } = $props();
 
-    let progressPercent = $derived(totalFiles > 0 ? Math.round((currentIndex / totalFiles) * 100) : 0);
+    // Bytes predict the remaining time better than the file count: a folder
+    // mixes one-game sessions with long matches.
+    let progressPercent = $derived(
+        progress && progress.bytesTotal > 0 ? Math.round((progress.bytesRead / progress.bytesTotal) * 100) : totalFiles > 0 ? Math.round((currentIndex / totalFiles) * 100) : 0
+    );
+
+    // A folder of thousands of broken files must not render thousands of rows.
+    const ERROR_WINDOW = 100;
+    let shownErrors = $derived(results.errors.slice(0, ERROR_WINDOW));
+
+    function formatEta(seconds) {
+        if (seconds == null || seconds < 0) return '…';
+        const s = Math.round(seconds);
+        const h = Math.floor(s / 3600);
+        const m = Math.floor((s % 3600) / 60);
+        if (h > 0) return `${h} h ${String(m).padStart(2, '0')} min`;
+        if (m > 0) return `${m} min ${String(s % 60).padStart(2, '0')} s`;
+        return `${s} s`;
+    }
     // Escape only closes once the terminal state is reached (the "Fermer" button
     // is visible) — while importing is in progress, Escape must not silently
     // abandon it: the user has Annuler for that, deliberately.
@@ -39,6 +59,14 @@
             <div class="progress-bar" style="width: {progressPercent}%"></div>
         </div>
         <p class="progress-text">{progressPercent}%</p>
+        {#if progress}
+            <p class="progress-rate" data-testid="import-rate">
+                {$t('import.rateEta', { rate: Math.round(progress.positionsPerSec), eta: formatEta(progress.etaSeconds) })}
+            </p>
+            <p class="progress-rate">
+                {$t('import.liveCounts', { imported: progress.imported, skipped: progress.duplicates, failed: progress.failed })}
+            </p>
+        {/if}
     {:else if mode === 'completed'}
         <h2 class="modal-title">{$t('import.completedTitle')}</h2>
 
@@ -126,16 +154,22 @@
 
         {#if results.errors.length > 0}
             <div class="error-list">
-                {#each results.errors as err, i (i)}
+                {#each shownErrors as err, i (i)}
                     <div class="error-item">
                         <span class="error-file">{basename(err.file)}</span>: {err.message}
                     </div>
                 {/each}
+                {#if results.errors.length > ERROR_WINDOW}
+                    <div class="error-item" data-testid="more-errors">{$t('import.moreErrors', { n: results.errors.length - ERROR_WINDOW })}</div>
+                {/if}
             </div>
         {/if}
     {/if}
     {#snippet footer()}
         {#if mode === 'importing'}
+            {#if onMinimize}
+                <button onclick={onMinimize}>{$t('import.minimize')}</button>
+            {/if}
             <button onclick={onCancel}>{$t('common.cancel')}</button>
         {:else if mode === 'completed'}
             <button onclick={onClose}>{$t('common.close')}</button>
@@ -224,6 +258,13 @@
         background-color: var(--color-text);
         transition: width 0.2s ease;
         border-radius: 4px;
+    }
+
+    .progress-rate {
+        margin: 4px 0;
+        text-align: center;
+        font-size: var(--font-size-base);
+        color: var(--color-text-muted);
     }
 
     .progress-text {

@@ -1052,6 +1052,10 @@
         "metadataTitle": "Metadati del file esportato"
     },
     "import": {
+        "minimize": "Riduci",
+        "rateEta": "{rate} posizioni/s · restano {eta}",
+        "liveCounts": "{imported} importati · {skipped} duplicati · {failed} in errore",
+        "moreErrors": "… e altri {n} errori: vedi il registro",
         "abortImport": "Annulla importazione",
         "added": "Aggiunte",
         "analyzing": "Analisi dell'importazione",
@@ -1334,6 +1338,8 @@
         }
     },
     "status": {
+        "importChip": "Importazione in corso: {percent} %",
+        "importChipShow": "Mostra",
         "boardAnalysisCopied": "Immagine board + analisi copiata negli appunti",
         "boardSvgNotFound": "SVG del board non trovato",
         "boardElementNotFound": "Elemento del board non trovato",

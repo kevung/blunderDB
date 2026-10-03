@@ -75,6 +75,9 @@ type Config struct {
 	RequestTimeout time.Duration
 	StreamTimeout  time.Duration
 
+	// ImportDir is the one directory from which imports.batch reads match
+	// files by path; empty refuses every path (see internal/server.Options).
+	ImportDir string
 	// Identity signs the watermark of an exports.sqlite response that asks
 	// for one. nil (the default) means no watermarking: such a request fails
 	// with CodeInvalid rather than silently exporting unmarked. There is no
@@ -153,6 +156,7 @@ func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error)
 		StreamTimeout:      cfg.StreamTimeout,
 		MCPWrite:           cfg.MCPWrite,
 		Identity:           cfg.Identity,
+		ImportDir:          cfg.ImportDir,
 		TrustReadTenants:   cfg.TrustReadTenants,
 	})
 	if err != nil {

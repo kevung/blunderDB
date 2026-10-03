@@ -72,6 +72,8 @@ export function GetIssuerIdentity():Promise<domain.IssuerIdentityInfo>;
 
 export function GetMCPHostStatus():Promise<gui.MCPHostStatus>;
 
+export function ImportFiles(arg1:Array<string>):Promise<gui.ImportFilesSummary>;
+
 export function ImportIssuerIdentity(arg1:string,arg2:string):Promise<domain.IssuerIdentityInfo>;
 
 export function IsDirectory(arg1:string):Promise<boolean>;

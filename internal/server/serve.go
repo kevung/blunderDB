@@ -77,6 +77,7 @@ type serveConfig struct {
 	readTenants    bool
 	tsPath         string
 	identityDir    string
+	importDir      string
 	pprofAddr      string
 }
 
@@ -127,6 +128,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		readTenants    = fs.Bool("read-tenants", envBoolOr("BLUNDERDB_READ_TENANTS", false), "honour X-Read-Tenants on the across.* reads (ADR-0063); off by default, and off REFUSES the header (400). Enable only once the proxy strips any client-supplied value and sets it itself: this daemon authenticates nobody (ADR-0005)")
 		tsPath         = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the embedded TS-06-06; the daemon never downloads one")
 		identityDir    = fs.String("identity-dir", os.Getenv("BLUNDERDB_IDENTITY_DIR"), "directory holding this daemon's watermark signing identity (created on first use); a watermarked export is refused when unset")
+		importDir      = fs.String("import-dir", os.Getenv("BLUNDERDB_IMPORT_DIR"), "directory on this host from which imports.batch may read match files by path (off by default: without it a batch comes only as an uploaded archive); a path outside it is refused")
 		opsAddr        = fs.String("ops-addr", envOr("BLUNDERDB_OPS_ADDR", ""), "optional listener for the /ops/ family (maintenance.vacuum, tenant.purge) on a SEPARATE address, e.g. \"127.0.0.1:8081\"; empty (the default) serves /ops/ on --addr, where the reverse proxy in front is expected to refuse the prefix (#233)")
 		pprofAddr      = fs.String("pprof-addr", envOr("BLUNDERDB_PPROF_ADDR", ""), "optional net/http/pprof listener on a SEPARATE address, e.g. \"127.0.0.1:6060\" (debug only; never expose this on the same address as --addr or to the public internet); empty (the default) exposes no pprof endpoint at all (#238)")
 	)
@@ -161,6 +163,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		readTenants:    *readTenants,
 		tsPath:         *tsPath,
 		identityDir:    *identityDir,
+		importDir:      *importDir,
 		pprofAddr:      *pprofAddr,
 	}
 	if cfg.dbPath != "" {
@@ -247,6 +250,7 @@ func RunServe(args []string) error {
 		RateLimitBurst:   cfg.rateLimitBurst,
 		Quotas:           cfg.quotas,
 		Identity:         identity,
+		ImportDir:        cfg.importDir,
 	})
 	if err != nil {
 		return err

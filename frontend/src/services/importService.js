@@ -9,7 +9,8 @@ import {
     ReadFileContent,
     ShowAlert,
     IsDirectory,
-    LooksLikeOGID
+    LooksLikeOGID,
+    ImportFiles
 } from '../../wailsjs/go/gui/App.js';
 import {
     SaveIndividualPosition,
@@ -36,7 +37,7 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 import { GetGammonNetAutoAnalyze, GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
 import { StartGammonNetBatch } from '../../wailsjs/go/gui/App.js';
-import { ClipboardGetText } from '../../wailsjs/runtime/runtime.js';
+import { ClipboardGetText, EventsOn } from '../../wailsjs/runtime/runtime.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, pastePositionTextStore, matchContextStore, clipboardPositionStore } from '../stores/positionStore.js';
@@ -53,7 +54,9 @@ import {
     fileImportCurrentIndexStore,
     fileImportCurrentFileStore,
     fileImportResultsStore,
-    fileImportReportStore
+    fileImportReportStore,
+    fileImportProgressStore,
+    fileImportMinimizedStore
 } from '../stores/importModalStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
@@ -720,8 +723,12 @@ async function importTxtFileBatch(filePath, { quiet = false } = {}) {
     const isBGBlitzTXT = content && content.includes('Position-ID:');
 
     if (isJellyfishTXT) {
-        const matchID = await ImportGnuBGMatch(filePath);
-        return { type: 'match', id: matchID };
+        // Through the pipeline, whose summary says "skipped" for a duplicate:
+        // no error text is read to find out.
+        const summary = await ImportFiles([filePath]);
+        if (summary.skipped > 0) throw Object.assign(new Error('duplicate match'), { duplicate: true });
+        if (summary.failed > 0) throw new Error(summary.errors?.[0]?.message ?? 'import failed');
+        return { type: 'match', id: 0 };
     } else if (isBGBlitzTXT) {
         const posID = await ImportBGFPosition(filePath);
         return { type: 'position', id: posID };
@@ -790,6 +797,48 @@ async function finishImportBatch(batchID) {
     }
 }
 
+// Extensions the backend pipeline reads without help from the frontend.
+const PIPELINE_EXTENSIONS = ['.xg', '.xgp', '.bgf', '.ogxm', '.sgf', '.mat'];
+
+// appendErrors adds to the list in place: copying it at every failure is
+// quadratic over a folder of thousands of broken files.
+function appendErrors(list, more) {
+    for (const e of more) list.push(e);
+    return list;
+}
+
+// importThroughPipeline sends the files in one call; the backend reports each
+// decided file by event, in file order, which drives the progress.
+async function importThroughPipeline(paths, remaining) {
+    const offProgress = EventsOn('import-files:progress', (p) => {
+        fileImportProgressStore.set(p);
+        fileImportCurrentIndexStore.set(p.filesDone);
+        fileImportCurrentFileStore.set(p.currentFile);
+    });
+    try {
+        const summary = await ImportFiles(paths);
+        fileImportResultsStore.update((r) => ({
+            ...r,
+            succeeded: r.succeeded + summary.succeeded,
+            skipped: r.skipped + summary.skipped,
+            failed: r.failed + summary.failed,
+            errors: appendErrors(r.errors, summary.errors ?? [])
+        }));
+        if (summary.cancelled) fileImportCancelled = true;
+        return summary;
+    } catch (error) {
+        logger.error('batch import failed:', error);
+        fileImportResultsStore.update((r) => ({
+            ...r,
+            failed: r.failed + paths.length,
+            errors: r.errors.concat([{ file: `${paths.length + remaining} files`, message: String(error).replace(/^Error:\s*/, '') }])
+        }));
+        return { hadMatches: false, lastPositionID: 0 };
+    } finally {
+        if (typeof offProgress === 'function') offProgress();
+    }
+}
+
 async function importMultipleFilesCore(files, { quiet = false } = {}) {
     fileImportCancelled = false;
     fileImportTotalFilesStore.set(files.length);
@@ -797,6 +846,8 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
     fileImportCurrentFileStore.set('');
     fileImportResultsStore.set({ succeeded: 0, failed: 0, skipped: 0, errors: [] });
     fileImportReportStore.set(null);
+    fileImportProgressStore.set(null);
+    fileImportMinimizedStore.set(false);
     fileImportModeStore.set('importing');
     if (!quiet) showFileImportModalStore.set(true);
 
@@ -807,10 +858,22 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
     let hadMatches = false;
     let lastPositionID = null;
 
-    for (let i = 0; i < files.length; i++) {
+    // Every file the backend can read alone goes through its parallel
+    // pipeline in one call; a .txt may be a position text only the frontend
+    // parses, so those stay one call each.
+    const pipelined = files.filter((f) => PIPELINE_EXTENSIONS.some((ext) => f.toLowerCase().endsWith(ext)));
+    const oneByOne = files.filter((f) => !pipelined.includes(f));
+
+    if (pipelined.length > 0) {
+        const summary = await importThroughPipeline(pipelined, oneByOne.length);
+        hadMatches = summary.hadMatches;
+        if (summary.lastPositionID) lastPositionID = summary.lastPositionID;
+    }
+
+    for (let i = 0; i < oneByOne.length; i++) {
         if (fileImportCancelled) break;
-        const filePath = files[i];
-        fileImportCurrentIndexStore.set(i + 1);
+        const filePath = oneByOne[i];
+        fileImportCurrentIndexStore.set(pipelined.length + i + 1);
         fileImportCurrentFileStore.set(filePath);
 
         try {
@@ -820,20 +883,24 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
             if (result && result.type === 'position' && result.id) lastPositionID = result.id;
         } catch (error) {
             const errorStr = String(error);
-            if (errorStr.includes('duplicate match') || errorStr.includes('already been imported') || errorStr.includes('duplicate') || errorStr.includes('already exists')) {
+            if (error?.duplicate === true) {
                 fileImportResultsStore.update((r) => ({ ...r, skipped: r.skipped + 1 }));
             } else {
-                fileImportResultsStore.update((r) => ({
-                    ...r,
-                    failed: r.failed + 1,
-                    errors: [...r.errors, { file: filePath, message: errorStr.replace(/^Error:\s*/, '') }]
-                }));
+                fileImportResultsStore.update((r) => {
+                    r.errors.push({ file: filePath, message: errorStr.replace(/^Error:\s*/, '') });
+                    return { ...r, failed: r.failed + 1 };
+                });
             }
         }
     }
 
     await finishImportBatch(batchID);
     fileImportModeStore.set('completed');
+    // A minimised import comes back with its report once finished.
+    if (get(fileImportMinimizedStore)) {
+        fileImportMinimizedStore.set(false);
+        if (!quiet) showFileImportModalStore.set(true);
+    }
 
     // Refresh planner statistics once, as the CLI batch importer does:
     // ensureSearchStats only backfills at open when no stats exist at all.
@@ -871,9 +938,16 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
 
 export function handleFileImportCancel() {
     fileImportCancelled = true;
+    CancelImport().catch((err) => logger.error('Error calling CancelImport:', err));
+    fileImportMinimizedStore.set(false);
     showFileImportModalStore.set(false);
     fileImportModeStore.set('idle');
     setStatusBarMessage(tMsg('status.importCancelled'));
+}
+
+export function handleFileImportMinimize() {
+    fileImportMinimizedStore.set(true);
+    showFileImportModalStore.set(false);
 }
 
 export function handleFileImportClose() {

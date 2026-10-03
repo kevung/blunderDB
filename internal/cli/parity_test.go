@@ -76,6 +76,11 @@ const (
 // route must be reachable from databaseParity or named below with a reason.
 // Sorted by route.
 var serverOnly = map[string]string{
+	// A batch import over HTTP outlives its request, so it has a handle to
+	// read and to stop. The CLI and the desktop run the same pipeline in the
+	// foreground and read its progress from the call itself.
+	"/v1/imports.batch.status": "the progress of a batch import running in the daemon's background: the CLI and the desktop get it from the foreground call",
+	"/v1/imports.batch.cancel": "stops a batch import running in the daemon's background: the CLI's is Ctrl-C and the desktop's is CancelImport",
 	// Storage primitives the desktop reaches through a coarser call. The GUI
 	// and the CLI never save a bare match row or ask whether a Zobrist hash is
 	// present: SavePosition and the importers do that inside one operation.
@@ -262,6 +267,7 @@ var databaseParity = map[string]parityEntry{
 	"ImportGnuBGMatch":                  {CLI: "import", Server: "/v1/imports.gnubg"},
 	"ImportGnuBGMatchFromText":          {Server: "/v1/imports.gnubg", Why: "the clipboard paste of a GNUbg match; the CLI imports the file"},
 	"ImportXGMatch":                     {CLI: "import", Server: "/v1/imports.xg"},
+	"ImportFiles":                       {CLI: "import", Server: "/v1/imports.batch"},
 	"ImportXGPPosition":                 {CLI: "import --type position", Server: "/v1/positions.fromXGP"},
 	"IsProtectedCopyPath":               {CLI: "open", Why: whyIssuance},
 	"IsReadOnly":                        {Why: whyLifecycle + " (ADR-0004: the second desktop instance opens read-only; a CLI run is one process, the daemon owns its store)"},

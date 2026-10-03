@@ -20,7 +20,8 @@
         fileImportCurrentIndexStore,
         fileImportCurrentFileStore,
         fileImportResultsStore,
-        fileImportReportStore
+        fileImportReportStore,
+        fileImportProgressStore
     } from '../stores/importModalStore.js';
     import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore } from '../stores/exportModalStore.js';
     import { closeWarningModal, warningMessageStore, protectedCopyPathStore, protectedCopyErrorStore, unlockProtectedCopy, cancelProtectedCopy } from '../services/databaseService.js';
@@ -29,6 +30,7 @@
         handleImportCancel,
         handleImportClose,
         handleFileImportCancel,
+        handleFileImportMinimize,
         handleFileImportClose,
         openImportedPosition,
         analyzeRemainingAfterImport
@@ -104,6 +106,8 @@
     currentFile={$fileImportCurrentFileStore}
     results={$fileImportResultsStore}
     report={$fileImportReportStore}
+    progress={$fileImportProgressStore}
+    onMinimize={handleFileImportMinimize}
     onCancel={handleFileImportCancel}
     onClose={handleFileImportClose}
     onOpenPosition={openImportedPosition}

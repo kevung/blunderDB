@@ -648,12 +648,40 @@ func EnsureSchema(ctx context.Context, db *sql.DB) error {
 			}
 		}
 	}
+	have, err := indexNames(ctx, db)
+	if err != nil {
+		return err
+	}
 	for _, stmt := range ref.indexes {
 		if _, err := db.ExecContext(ctx, stmt); err != nil {
 			slog.Warn("sqlite: cannot ensure index", "stmt", stmt, "err", err)
+			continue
+		}
+		// An index missing from an existing database is the trace of a bulk
+		// import cut before it rebuilt what it had dropped: say so.
+		if m := indexStmt.FindStringSubmatch(stmt); m != nil && len(have) > 0 && !have[m[1]] {
+			slog.Warn("sqlite: rebuilt missing index", "index", m[1])
 		}
 	}
 	return nil
+}
+
+// indexNames lists the named indexes db holds.
+func indexNames(ctx context.Context, db *sql.DB) (map[string]bool, error) {
+	rows, err := db.QueryContext(ctx, `SELECT name FROM sqlite_master WHERE type = 'index'`)
+	if err != nil {
+		return nil, fmt.Errorf("sqlite: list indexes: %w", err)
+	}
+	defer rows.Close()
+	out := map[string]bool{}
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			return nil, err
+		}
+		out[name] = true
+	}
+	return out, rows.Err()
 }
 
 // CreateTableSQL returns the fresh-database DDL of one table, as

@@ -1052,6 +1052,10 @@
         "metadataTitle": "エクスポートするファイルのメタデータ"
     },
     "import": {
+        "minimize": "最小化",
+        "rateEta": "{rate} ポジション/秒 · 残り {eta}",
+        "liveCounts": "インポート {imported} · 重複 {skipped} · エラー {failed}",
+        "moreErrors": "… ほか {n} 件のエラー：ログを参照してください",
         "abortImport": "インポートを中止",
         "added": "追加済み",
         "analyzing": "インポートを解析中",
@@ -1334,6 +1338,8 @@
         }
     },
     "status": {
+        "importChip": "インポート中：{percent} %",
+        "importChipShow": "表示",
         "boardAnalysisCopied": "ボードと分析の画像をクリップボードにコピーしました",
         "boardSvgNotFound": "ボードのSVGが見つかりません",
         "boardElementNotFound": "ボード要素が見つかりません",
