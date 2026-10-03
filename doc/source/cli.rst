@@ -967,6 +967,46 @@ recherche elle-même.
    #
    # 37 card(s) due over 14 day(s)
 
+.. _cli_stats:
+
+stats — Erreurs récurrentes
+---------------------------
+
+Regroupe les erreurs d'un filtre par plan de jeu et par thème, la plus
+coûteuse d'abord : le tableau *Erreurs récurrentes* de l'onglet Erreurs du
+panneau Stats (voir :ref:`stats`). Les statistiques globales restent sous
+``list --type stats``.
+
+.. code-block:: bash
+
+   ./blunderdb stats recurring --db <fichier> [options]
+
+**Options:**
+
+* ``--player <nom>`` — Uniquement les décisions de ce joueur.
+* ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``, ``--to <AAAA-MM-JJ>``,
+  ``--decision-type all|checker|cube`` — Le même filtre que
+  ``list --type stats``.
+* ``--limit <n>`` — Nombre de groupes affichés en texte (défaut 20, ``0`` pour
+  tous).
+* ``--format text|json`` — Le JSON porte chaque groupe avec la liste complète
+  de ses positions.
+
+Un thème de coup de pions est ``gammon``, ``blots``, ``point`` ou
+``passive`` ; un thème de videau est ``offer_missed``, ``offer_premature``,
+``answer_wrong_pass`` ou ``answer_wrong_take``. Les erreurs qu'aucune règle ne
+nomme sortent du classement : elles sont listées à part, une ligne par plan de
+jeu (champ ``Unthemed`` en JSON), parce que l'explication ne se prononce qu'à
+partir de 60 mp, au-dessus du seuil *Erreur*. La colonne *COST (PR)* est la
+part du PR du filtre que le groupe représente.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb stats recurring --db base.db --player "Alice"
+   ./blunderdb stats recurring --db base.db --decision-type checker --format json
+
 .. _cli_cubematrix:
 
 cubematrix — Matrice du videau

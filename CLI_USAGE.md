@@ -733,6 +733,35 @@ ID  Index  Score  Type  XGID
 40  40     7-7    cube  --BEBBB----a--b--cbbBbba--:0:0:1:00:0:0:0:7:0
 ```
 
+## Stats Command
+
+Group the errors of a filter by plan of play and theme, costliest first — the
+*Recurring errors* table of the Stats panel's Errors tab. The global statistics
+stay under `list --type stats`.
+
+```bash
+./blunderDB stats recurring --db <file> [options]
+```
+
+**Options:** `--player`, `--tournament`, `--from`, `--to` and
+`--decision-type` filter as `list --type stats` does; `--limit <n>` bounds the
+groups shown in text (default 20, `0` for all); `--format json` carries each
+group with the full list of its positions.
+
+A checker theme is `gammon`, `blots`, `point` or `passive` (the rules of the
+Analysis panel's explanation sentence); a cube theme is the direction of the
+cube error: `offer_missed`, `offer_premature`, `answer_wrong_pass`,
+`answer_wrong_take`. The errors no rule names stay out of the ranking, listed
+apart with one line per plan of play (`Unthemed` in JSON): the explanation
+rules only speak from 60 mp, above the Error threshold. An error is a
+counted decision costing at least the library's Error threshold; `COST (PR)` is
+the share of the filter's PR the group accounts for.
+
+```bash
+./blunderDB stats recurring --db database.db --player "Alice"
+./blunderDB stats recurring --db database.db --decision-type checker --format json
+```
+
 ## Anki Command
 
 Inspect and maintain the spaced-repetition (FSRS) decks of the GUI's Anki
@@ -2789,6 +2818,42 @@ Examples:
 
   # Filters no flag exposes: a move pattern, a comment tag, a player, a date
   blunderdb search --db database.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
+```
+
+### `blunderdb stats recurring`
+
+```
+Usage: blunderdb stats recurring --db <file> [options]
+
+Group the errors of the filter by plan of play and theme, costliest first.
+A checker theme is the reason the explanation rules name (gammon, blots,
+point, passive); a cube theme is the direction of the cube error. An error
+no rule names is listed apart, per plan of play, outside the ranking (JSON:
+"Unthemed"): the rules only speak from 60 mp, above the Error threshold.
+Cost is the share of the filter's PR the group accounts for; an error is a
+counted decision costing at least the library's Error threshold.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD
+  -limit int
+    	Maximum number of groups shown (text only; 0 = all) (default 20)
+  -player string
+    	Only this player's decisions
+  -to string
+    	End date filter YYYY-MM-DD
+  -tournament string
+    	Filter by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats recurring --db database.db --player "Alice"
+  blunderdb stats recurring --db database.db --decision-type checker --format json
 ```
 
 ### `blunderdb tournament export`

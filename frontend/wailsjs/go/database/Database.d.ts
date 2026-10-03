@@ -8,10 +8,10 @@ import {sqlite} from '../models';
 import {gammonnet} from '../models';
 import {domain} from '../models';
 import {race} from '../models';
+import {storage} from '../models';
 import {direction} from '../models';
 import {engine} from '../models';
 import {tournoi} from '../models';
-import {storage} from '../models';
 import {parser} from '../models';
 
 export function AbandonTranscription(arg1:number):Promise<void>;
@@ -89,6 +89,10 @@ export function CommitImportDatabase(arg1:string):Promise<Record<string, any>>;
 export function CompareWithGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:number,arg6:number,arg7:any):Promise<gammonnet.AnalysisComparison>;
 
 export function ComputeEPCFromPosition(arg1:domain.Position):Promise<race.Result>;
+
+export function ComputeRecurringErrors(arg1:database.StatsFilter):Promise<storage.RecurringErrors>;
+
+export function ComputeRecurringErrorsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<storage.RecurringErrors>;
 
 export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsResult>;
 

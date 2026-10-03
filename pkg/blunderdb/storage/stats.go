@@ -432,4 +432,9 @@ type StatsStore interface {
 	// scope, keyed by tournament id. Tournaments with no counted decisions are
 	// absent from the map.
 	TournamentBadges(ctx context.Context, scope string) (map[int64]TournamentBadge, error)
+
+	// RecurringErrors groups the filter's errors (counted decisions costing
+	// at least the library's Error threshold) by plan of play and theme,
+	// heaviest summed cost first. See GroupRecurringErrors.
+	RecurringErrors(ctx context.Context, scope string, filter StatsFilter) (*RecurringErrors, error)
 }

@@ -806,6 +806,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.positionIdsByTournament — JSON."
         return self._call("/v1/stats.positionIdsByTournament", payload)
 
+    def stats_recurring_errors(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.recurringErrors — JSON."
+        return self._call("/v1/stats.recurringErrors", payload)
+
     def stats_tournament_badges(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.tournamentBadges — JSON."
         return self._call("/v1/stats.tournamentBadges", payload)

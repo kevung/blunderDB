@@ -542,6 +542,16 @@ export default {
 </ul>
 <h4>Onglet Erreurs</h4>
 <p>L'onglet <strong>Erreurs</strong> décompose les sources d'erreurs.</p>
+<h5>Erreurs récurrentes</h5>
+<p>En tête de l'onglet, un tableau regroupe les erreurs du filtre courant — donc celles d'un seul joueur quand un joueur est filtré — par <strong>plan de jeu</strong> et par <strong>thème</strong>, la plus coûteuse d'abord. Il répond à la question « où est-ce que je perds le plus ? » : par exemple, « tenue · trop de blots ».</p>
+<ul>
+<li>Une <strong>erreur</strong> est une décision comptée dont le coût atteint le seuil <em>Erreur</em> de la bibliothèque.</li>
+<li>Le <strong>plan de jeu</strong> est celui du joueur au trait, tel que l'onglet Ventilations le présente.</li>
+<li>Le <strong>thème</strong> d'un coup de pions est celui que nomment les règles de la phrase d'explication du panneau Analyse : gammon sous-estimé, trop de blots, point non fait, trop passif. Celui d'une décision de videau est le sens de l'erreur, comme dans la direction des erreurs de videau ci-dessous : double manqué, double prématuré, passe à tort, prise à tort.</li>
+<li>Une erreur qu'aucune règle ne nomme avec assurance n'est pas devinée : elle sort du classement et apparaît à part, sous le tableau, en une ligne par plan de jeu (« sans thème identifié : N erreurs, coût X »), cliquable elle aussi. Ce reste est souvent le plus lourd, car l'explication ne se prononce qu'à partir de 60 mp, au-dessus du seuil <em>Erreur</em> : classé avec les autres, il coifferait un tableau qui ne dirait rien.</li>
+<li>Le <strong>coût</strong> est la part du PR du filtre que le groupe représente : la formule du PR appliquée aux erreurs du groupe, rapportée à toutes les décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR.</li>
+</ul>
+<p>Cliquer sur un groupe charge ses positions, de la plus coûteuse à la moins coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré : comme le plan de jeu, c'est une étiquette dérivée, non modifiable. En ligne de commande : <code>blunderdb stats recurring</code> (voir stats — Erreurs récurrentes).</p>
 <h5>Répartition par action de videau</h5>
 <p>Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision de videau : <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Chaque barre indique également le nombre de décisions et le taux de blunders en infobulle.</p>
 <p>Cliquer sur une barre charge les positions correspondant à cette action de videau, <strong>uniquement celles avec une erreur</strong> (drill-down).</p>

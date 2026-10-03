@@ -542,6 +542,16 @@ export default {
 </ul>
 <h4>Erreurs-välilehti</h4>
 <p><strong>Erreurs</strong>-välilehti erittelee virheiden lähteet.</p>
+<h5>Toistuvat virheet</h5>
+<p>Välilehden alussa taulukko ryhmittelee nykyisen suodattimen virheet — eli yhden pelaajan virheet, kun pelaaja on suodatettu — <strong>pelisuunnitelman</strong> ja <strong>teeman</strong> mukaan, kallein ensin. Se vastaa kysymykseen ”missä menetän eniten?”: esimerkiksi ”pito · liikaa blotteja”.</p>
+<ul>
+<li><strong>Virhe</strong> on laskettu päätös, jonka kustannus yltää kirjaston <em>Virhe</em>-rajaan.</li>
+<li><strong>Pelisuunnitelma</strong> on vuorossa olevan pelaajan, sellaisena kuin Erittelyt-välilehti sen esittää.</li>
+<li>Nappulasiirron <strong>teema</strong> on se, jonka Analyysipaneelin selityslauseen säännöt nimeävät: gammon aliarvioitu, liikaa blotteja, pistettä ei tehty, liian passiivinen. Kuutiopäätöksen teema on virheen suunta, kuten jäljempänä kuutiovirheiden suunnassa: ohitettu tuplaus, ennenaikainen tuplaus, virheellinen pass, virheellinen take.</li>
+<li>Virhettä, jota mikään sääntö ei nimeä varmasti, ei arvata: se jää pois luokituksesta ja näkyy erikseen taulukon alla, yhtenä rivinä pelisuunnitelmaa kohti (»tunnistamatonta teemaa ei ole: N virhettä, hinta X»), sekin napsautettavana. Tämä jäännös on usein raskain, koska selitys ottaa kantaa vasta 60 mp:stä alkaen, <em>Virhe</em>-kynnyksen yläpuolella: muiden joukossa luokiteltuna se johtaisi taulukkoa, joka ei kertoisi mitään.</li>
+<li><strong>Kustannus</strong> on osuus suodattimen PR:stä, jonka ryhmä edustaa: ryhmän virheisiin sovellettu PR-kaava suhteutettuna kaikkiin laskettuihin päätöksiin. Ryhmien kustannukset eivät siis koskaan ylitä PR:ää.</li>
+</ul>
+<p>Ryhmää napsauttamalla ladataan sen asemat, kalleimmasta halvimpaan. Teema lasketaan uudelleen jokaisella näytöllä eikä sitä tallenneta koskaan: pelisuunnitelman tavoin se on johdettu tunniste, jota ei voi muokata. Komentoriviltä: <code>blunderdb stats recurring</code> (ks. stats — Toistuvat virheet).</p>
 <h5>Jakauma kuutiotoimen mukaan</h5>
 <p>Pylväskaavio näyttää PR:n (tai MWC:n) jokaiselle kuutiopäätöksen tyypille: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jokainen pylväs näyttää myös päätösten määrän ja blunder-osuuden työkaluvihjeessä.</p>
 <p>Pylvään napsauttaminen lataa kyseistä kuutiotoimea vastaavat asemat, <strong>vain ne, joissa on virhe</strong> (drill-down).</p>

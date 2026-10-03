@@ -4624,6 +4624,66 @@ export namespace storage {
 	        this.rating = source["rating"];
 	    }
 	}
+	export class RecurringErrorGroup {
+	    GameType: string;
+	    Kind: string;
+	    Theme: string;
+	    Count: number;
+	    SumErrorMP: number;
+	    PRCost: number;
+	    PositionIDs: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new RecurringErrorGroup(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.GameType = source["GameType"];
+	        this.Kind = source["Kind"];
+	        this.Theme = source["Theme"];
+	        this.Count = source["Count"];
+	        this.SumErrorMP = source["SumErrorMP"];
+	        this.PRCost = source["PRCost"];
+	        this.PositionIDs = source["PositionIDs"];
+	    }
+	}
+	export class RecurringErrors {
+	    NumDecisions: number;
+	    ThresholdMP: number;
+	    Groups: RecurringErrorGroup[];
+	    Unthemed: RecurringErrorGroup[];
+	
+	    static createFrom(source: any = {}) {
+	        return new RecurringErrors(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.NumDecisions = source["NumDecisions"];
+	        this.ThresholdMP = source["ThresholdMP"];
+	        this.Groups = this.convertValues(source["Groups"], RecurringErrorGroup);
+	        this.Unthemed = this.convertValues(source["Unthemed"], RecurringErrorGroup);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class SimilarPosition {
 	    position: domain.Position;
 	    distance: number;

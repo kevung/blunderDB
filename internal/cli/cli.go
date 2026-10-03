@@ -122,6 +122,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"transcribe":  cli.runTranscribe,
 		"collection":  cli.runCollection,
 		"anki":        cli.runAnki,
+		"stats":       cli.runStats,
 		"tournament":  cli.runTournament,
 		"bearoff":     cli.runBearoff,
 		"healthcheck": cli.runHealthcheck,
@@ -171,6 +172,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  match     Display match positions and analysis")
 	fmt.Println("  collection  Manage collections (list, show, create, rename, delete, export)")
 	fmt.Println("  anki      Spaced-repetition decks (decks, stats, forecast, sync)")
+	fmt.Println("  stats     Statistics computed apart from list --type stats (recurring)")
 	fmt.Println("  cubematrix  Cube verdict at every score of a match, for one position")
 	fmt.Println("  epc       EPC, win probability and money cube verdict (bearoff)")
 	fmt.Println("  bearoff   Generate, list, verify and delete the bearoff tables")

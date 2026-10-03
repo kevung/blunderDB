@@ -2177,6 +2177,39 @@ L'onglet **Erreurs** décompose les sources d'erreurs.
 
    L'onglet Erreurs : répartition du PR par action de videau.
 
+Erreurs récurrentes
+^^^^^^^^^^^^^^^^^^^
+
+En tête de l'onglet, un tableau regroupe les erreurs du filtre courant — donc
+celles d'un seul joueur quand un joueur est filtré — par **plan de jeu** et par
+**thème**, la plus coûteuse d'abord. Il répond à la question « où est-ce que je
+perds le plus ? » : par exemple, « tenue · trop de blots ».
+
+* Une **erreur** est une décision comptée dont le coût atteint le seuil
+  *Erreur* de la bibliothèque.
+* Le **plan de jeu** est celui du joueur au trait, tel que l'onglet
+  Ventilations le présente.
+* Le **thème** d'un coup de pions est celui que nomment les règles de la
+  phrase d'explication du :ref:`panneau Analyse <panneau_analyse>` : gammon
+  sous-estimé, trop de blots, point non fait, trop passif. Celui d'une
+  décision de videau est le sens de l'erreur, comme dans la direction des
+  erreurs de videau ci-dessous : double manqué, double prématuré, passe à
+  tort, prise à tort.
+* Une erreur qu'aucune règle ne nomme avec assurance n'est pas devinée : elle
+  sort du classement et apparaît à part, sous le tableau, en une ligne par
+  plan de jeu (« sans thème identifié : N erreurs, coût X »), cliquable elle
+  aussi. Ce reste est souvent le plus lourd, car l'explication ne se prononce
+  qu'à partir de 60 mp, au-dessus du seuil *Erreur* : classé avec les autres,
+  il coifferait un tableau qui ne dirait rien.
+* Le **coût** est la part du PR du filtre que le groupe représente : la
+  formule du PR appliquée aux erreurs du groupe, rapportée à toutes les
+  décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR.
+
+Cliquer sur un groupe charge ses positions, de la plus coûteuse à la moins
+coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré :
+comme le plan de jeu, c'est une étiquette dérivée, non modifiable. En ligne de
+commande : ``blunderdb stats recurring`` (voir :ref:`cli_stats`).
+
 Répartition par action de videau
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
