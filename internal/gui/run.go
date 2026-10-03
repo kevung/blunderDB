@@ -20,6 +20,11 @@ import (
 func Run(assets embed.FS, icon []byte, width, height int, db *database.Database, extraBinds []interface{}, startupFilePath string) error {
 	app := NewApp(db)
 	app.startupFilePath = startupFilePath
+	for _, bind := range extraBinds {
+		if c, ok := bind.(AssistantConsent); ok {
+			app.assistant.consent = c.AssistantConsentURL
+		}
+	}
 	return wails.Run(&options.App{
 		Title:  "blunderDB",
 		Width:  width,
@@ -67,6 +72,8 @@ const shutdownJobGrace = 5 * time.Second
 // stopping first keeps the close from racing the batch's writes on the single connection.
 func shutdown(app *App, binds []interface{}) func(ctx context.Context) {
 	return func(context.Context) {
+		app.stopAssistant()
+		app.stopMCP()
 		app.stopBackgroundJobs(shutdownJobGrace)
 
 		for _, bind := range binds {

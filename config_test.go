@@ -567,3 +567,34 @@ func TestConfig_ConfigVersionStamped(t *testing.T) {
 		t.Errorf("receiver ConfigVersion = %d, want %d (mirrors every other field's receiver copy)", loaded.ConfigVersion, currentConfigVersion)
 	}
 }
+
+func TestMCPHostAndAssistantSurviveReload(t *testing.T) {
+	isolateXDGConfig(t)
+	c := NewConfig()
+	if got := c.GetMCPHost(); got.On || got.Write {
+		t.Fatalf("the MCP host must be off by default: %+v", got)
+	}
+	if got := c.GetAssistant(); got.On {
+		t.Fatalf("the assistant must be off by default: %+v", got)
+	}
+	if err := c.SaveMCPHost(MCPHostSettings{On: true, Port: 70000, Write: true}); err != nil {
+		t.Fatal(err)
+	}
+	want := AssistantSettings{On: true, Preset: "groq", BaseURL: "https://x/v1", Model: "m", Write: true, RemoteAck: "https://x/v1"}
+	if err := c.SaveAssistant(want); err != nil {
+		t.Fatal(err)
+	}
+	r := &Config{}
+	if _, err := r.LoadConfig(); err != nil {
+		t.Fatal(err)
+	}
+	if got := r.GetMCPHost(); got != (MCPHostSettings{On: true, Port: 0, Write: true}) {
+		t.Fatalf("mcp host after reload: %+v", got)
+	}
+	if got := r.GetAssistant(); got != want || r.AssistantConsentURL() != "https://x/v1" {
+		t.Fatalf("assistant after reload: %+v", got)
+	}
+	if err := r.SaveMCPHost(MCPHostSettings{}); err != nil || !r.GetAssistant().Write {
+		t.Fatalf("the assistant's write switch must not follow the MCP server's (err %v)", err)
+	}
+}

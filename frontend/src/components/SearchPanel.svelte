@@ -17,13 +17,15 @@
     import { searchParamsStore } from '../stores/searchParamsStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { withDisplayedPositionIDs } from '../services/positionService.js';
+    import AssistantPanel from './AssistantPanel.svelte';
+    import { assistantSettingsStore, loadAssistantSettings } from '../services/assistantService.js';
     import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, DeleteFilter, LoadEditPosition, LoadExcludePosition } from '../../wailsjs/go/database/Database.js';
     import { registerKeys } from '../services/keyDispatch.js';
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 
     // Sub-tab state
-    let activeSubTab = $state('search'); // 'search', 'history', 'saved'
+    let activeSubTab = $state('search'); // 'search', 'history', 'saved', 'assistant'
 
     // Filter state
     let filterEnabled = $state({});
@@ -681,6 +683,7 @@
     let unregisterKeys = null;
 
     onMount(async () => {
+        loadAssistantSettings();
         unregisterKeys = registerKeys('search', handleKeyDown);
         await tick();
         restoreSearchBoard();
@@ -700,6 +703,9 @@
         <button class="sub-tab-btn" class:active={activeSubTab === 'search'} onclick={() => (activeSubTab = 'search')}>{$t('common.search')}</button>
         <button class="sub-tab-btn" class:active={activeSubTab === 'history'} onclick={() => (activeSubTab = 'history')}>{$t('search.historyTab')}</button>
         <button class="sub-tab-btn" class:active={activeSubTab === 'saved'} onclick={() => (activeSubTab = 'saved')}>{$t('search.savedTab')}</button>
+        {#if $assistantSettingsStore.on}
+            <button class="sub-tab-btn" class:active={activeSubTab === 'assistant'} onclick={() => (activeSubTab = 'assistant')}>{$t('assistant.tab')}</button>
+        {/if}
     </div>
 
     <!-- Content area -->
@@ -928,6 +934,8 @@
                         </div>
                     {/if}
                 </div>
+            {:else if activeSubTab === 'assistant'}
+                <AssistantPanel />
             {:else if activeSubTab === 'saved'}
                 <div class="saved-section">
                     {#if savedFilters.length === 0}

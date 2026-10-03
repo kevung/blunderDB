@@ -172,7 +172,8 @@
         "theme_print": "Druckbar",
         "likeLimit": "Nachbarn pro Rangliste",
         "likeMaxDistance": "Maximale Distanz (Stein-Pips)",
-        "likeNote": "Null: keine Obergrenze. Das Token like<12 setzt seine eigene für eine Suche."
+        "likeNote": "Null: keine Obergrenze. Das Token like<12 setzt seine eigene für eine Suche.",
+        "assistantTitle": "Assistent und MCP"
     },
     "toolbar": {
         "copyBoardImage": "Brettbild kopieren",
@@ -2577,5 +2578,43 @@
             "gv4": "Gammon-Werte, Würfel auf 4",
             "clear": "Befehlsverlauf löschen"
         }
+    },
+    "assistant": {
+        "mcpTitle": "Lokaler MCP-Server",
+        "mcpIntro": "Solange blunderDB läuft, kann es seine Werkzeuge einem Assistenten (Claude Desktop, Claude Code, ein lokaler Client) über das Model Context Protocol anbieten, nur auf diesem Rechner. Standardmäßig aus.",
+        "mcpEnabled": "Werkzeuge auf localhost bereitstellen",
+        "mcpPort": "Port",
+        "mcpWrite": "Schreiben erlauben",
+        "mcpWriteNote": "Ohne Haken lesen die Werkzeuge nur. Mit Haken dürfen sie auch eine Position speichern, kommentieren, eine Sammlung anlegen und füllen; nichts wird gelöscht.",
+        "mcpRunning": "Lauscht auf {url}",
+        "mcpStopped": "Angehalten.",
+        "mcpError": "Lauschen nicht möglich: {error}",
+        "viewNeedsNormalMode": "Der Assistent öffnet eine Ansicht nur im Normal- oder Bearbeitungsmodus.",
+        "title": "Integrierter Assistent",
+        "intro": "Fragen Sie in einem Satz: Der Assistent sucht mit der Grammatik der Befehlszeile und öffnet das Ergebnis in einer neuen Ansicht, die nach Ihrem Satz benannt ist. Er liest überall; jede Änderung wird Ihnen vorgelegt, bevor sie geschieht. Standardmäßig aus; kein Modell ist enthalten.",
+        "enabled": "Assistent aktivieren",
+        "preset": "Anbieter",
+        "baseURL": "Adresse (OpenAI-kompatibel)",
+        "model": "Modell",
+        "key": "API-Schlüssel",
+        "keySave": "Schlüssel speichern",
+        "keyStored": "Ein Schlüssel ist im Schlüsselbund des Systems gespeichert.",
+        "keyNone": "Kein Schlüssel gespeichert (für Ollama nicht nötig).",
+        "privacyWarning": "Mit {provider} verlassen Ihre Sätze und die Werkzeugergebnisse (Positionen, Statistiken, Spielernamen) diesen Rechner zu einem entfernten Dienst.",
+        "privacyAccept": "Ich bin einverstanden, meine Sätze und die Werkzeugergebnisse an diesen Anbieter zu senden",
+        "tab": "Assistent",
+        "placeholder": "Fragen Sie in einem Satz… (Eingabe zum Senden)",
+        "send": "Senden",
+        "cancel": "Anhalten",
+        "reset": "Neues Gespräch",
+        "freeText": "Freier Text des Modells",
+        "pendingTitle": "Vorgeschlagene Änderung",
+        "confirm": "Bestätigen",
+        "decline": "Ablehnen",
+        "declined": "von Ihnen abgelehnt; nichts wurde geschrieben",
+        "disabled": "Der Assistent ist aus: Aktivieren Sie ihn unter Einstellungen › Assistent und MCP.",
+        "needsAck": "Akzeptieren Sie zuerst den Datenschutzhinweis dieses Anbieters unter Einstellungen › Assistent und MCP.",
+        "error": "Fehler: {error}",
+        "write": "Den Assistenten Änderungen vorschlagen lassen (jede bestätigt)"
     }
 }

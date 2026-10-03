@@ -171,3 +171,54 @@ func TestAcross_IdOfAnotherListedTenant_Postgres(t *testing.T) {
 		}
 	}
 }
+
+// TestAcrossClub_Postgres: a coach (tenant 1) comments a student's board
+// (tenant 2) in the coach's own tenant; across.commentsByZobrist with the
+// student listed brings the coach's comment back on the student's hash, and
+// an outsider's comment on the same board (tenant 3) never.
+func TestAcrossClub_Postgres(t *testing.T) {
+	_, srv := newPostgresTestServerAndHandlerWith(t, func(o *Options) { o.TrustReadTenants = true })
+	pos := `{"position":` + initialPositionJSON(t) + `}`
+	ids := map[string]int64{}
+	for _, tenant := range []string{"1", "2", "3"} {
+		rec := serveAcross(t, srv, tenant, "", "/v1/positions.save", pos)
+		var id idResp
+		if rec.Code != 200 || json.Unmarshal(rec.Body.Bytes(), &id) != nil {
+			t.Fatalf("positions.save under %s: %d %s", tenant, rec.Code, rec.Body)
+		}
+		ids[tenant] = id.ID
+	}
+	for _, tenant := range []string{"1", "3"} {
+		body := `{"positionId":` + strconv.FormatInt(ids[tenant], 10) + `,"text":"note-` + tenant + `"}`
+		if rec := serveAcross(t, srv, tenant, "", "/v1/comments.add", body); rec.Code != 200 {
+			t.Fatalf("comments.add under %s: %d %s", tenant, rec.Code, rec.Body)
+		}
+	}
+	var student acrossPosition
+	found := serveAcross(t, srv, "1", "2", "/v1/across.searchFind", `{}`)
+	for _, line := range strings.Split(strings.TrimSpace(found.Body.String()), "\n") {
+		var it acrossPosition
+		if json.Unmarshal([]byte(line), &it) == nil && it.Tenant == "2" {
+			student = it
+		}
+	}
+	if student.Zobrist == 0 {
+		t.Fatalf("no student position with a hash: %s", found.Body)
+	}
+	rec := serveAcross(t, srv, "1", "2", "/v1/across.commentsByZobrist", `{"zobrists":[`+strconv.FormatUint(student.Zobrist, 10)+`]}`)
+	if rec.Code != 200 {
+		t.Fatalf("across.commentsByZobrist: %d %s", rec.Code, rec.Body)
+	}
+	var texts []string
+	sc := bufio.NewScanner(rec.Body)
+	for sc.Scan() {
+		var c acrossComment
+		if err := json.Unmarshal(sc.Bytes(), &c); err != nil {
+			t.Fatalf("line %q: %v", sc.Text(), err)
+		}
+		texts = append(texts, c.Tenant+":"+c.Comment.Text)
+	}
+	if len(texts) != 1 || texts[0] != "1:note-1" {
+		t.Errorf("comments read %v, want the coach's alone [1:note-1]", texts)
+	}
+}

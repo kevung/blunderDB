@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"slices"
+	"strings"
 
 	"github.com/adrg/xdg"
 
@@ -225,6 +226,23 @@ type Config struct {
 	WatchFolder                bool   `json:"watch_folder,omitempty"`
 	WatchFolderPath            string `json:"watch_folder_path,omitempty"`
 	WatchFolderIntervalSeconds int    `json:"watch_folder_interval_seconds,omitempty"`
+
+	// The MCP server the GUI serves on localhost, and the in-app assistant
+	// that is a client of its tools: both off by default (ADR-0059, ADR-0064).
+	// The API key is never here: it lives in the system keyring.
+	MCPHost          bool   `json:"mcp_host,omitempty"`
+	MCPPort          int    `json:"mcp_port,omitempty"`
+	MCPWrite         bool   `json:"mcp_write,omitempty"`
+	Assistant        bool   `json:"assistant,omitempty"`
+	AssistantPreset  string `json:"assistant_preset,omitempty"`
+	AssistantBaseURL string `json:"assistant_base_url,omitempty"`
+	AssistantModel   string `json:"assistant_model,omitempty"`
+	// AssistantWrite lets the assistant propose changes, each confirmed by
+	// the user; apart from MCPWrite, where no one confirms.
+	AssistantWrite bool `json:"assistant_write,omitempty"`
+	// AssistantRemoteAck is the remote address whose privacy warning the user
+	// accepted; another address asks again.
+	AssistantRemoteAck string `json:"assistant_remote_ack,omitempty"`
 }
 
 // clampUIScale clamps scale to the supported range, 0 meaning the default.
@@ -445,6 +463,10 @@ func (c *Config) LoadConfig() (*Config, error) {
 	config.GammonNetCandidates = c.GammonNetCandidates
 	c.GammonNetAutoAnalyze = config.GammonNetAutoAnalyze
 	c.CheckForUpdates = config.CheckForUpdates
+	c.MCPHost, c.MCPPort, c.MCPWrite = config.MCPHost, config.MCPPort, config.MCPWrite
+	c.Assistant, c.AssistantPreset, c.AssistantBaseURL = config.Assistant, config.AssistantPreset, config.AssistantBaseURL
+	c.AssistantModel, c.AssistantRemoteAck = config.AssistantModel, config.AssistantRemoteAck
+	c.AssistantWrite = config.AssistantWrite
 	c.ConfigVersion = config.ConfigVersion
 
 	if migrating {
@@ -897,4 +919,56 @@ func (c *Config) GetCheckForUpdates() bool {
 func (c *Config) SaveCheckForUpdates(on bool) error {
 	c.CheckForUpdates = on
 	return c.SaveConfig(c)
+}
+
+// MCPHostSettings is the localhost MCP server's setting as one value.
+type MCPHostSettings struct {
+	On    bool `json:"on"`
+	Port  int  `json:"port"` // 0 = the default
+	Write bool `json:"write"`
+}
+
+// GetMCPHost returns the localhost MCP server's setting.
+func (c *Config) GetMCPHost() MCPHostSettings {
+	return MCPHostSettings{On: c.MCPHost, Port: c.MCPPort, Write: c.MCPWrite}
+}
+
+// SaveMCPHost persists the localhost MCP server's setting; a port out of
+// range is stored as 0, the default.
+func (c *Config) SaveMCPHost(s MCPHostSettings) error {
+	if s.Port < 0 || s.Port > 65535 {
+		s.Port = 0
+	}
+	c.MCPHost, c.MCPPort, c.MCPWrite = s.On, s.Port, s.Write
+	return c.SaveConfig(c)
+}
+
+// AssistantSettings is the in-app assistant's setting as one value: the
+// provider, never its key.
+type AssistantSettings struct {
+	On        bool   `json:"on"`
+	Preset    string `json:"preset"`
+	BaseURL   string `json:"baseURL"`
+	Model     string `json:"model"`
+	Write     bool   `json:"write"`
+	RemoteAck string `json:"remoteAck"`
+}
+
+// GetAssistant returns the in-app assistant's setting.
+func (c *Config) GetAssistant() AssistantSettings {
+	return AssistantSettings{On: c.Assistant, Preset: c.AssistantPreset, BaseURL: c.AssistantBaseURL,
+		Model: c.AssistantModel, Write: c.AssistantWrite, RemoteAck: c.AssistantRemoteAck}
+}
+
+// SaveAssistant persists the in-app assistant's setting.
+func (c *Config) SaveAssistant(s AssistantSettings) error {
+	c.Assistant, c.AssistantPreset, c.AssistantBaseURL = s.On, s.Preset, s.BaseURL
+	c.AssistantModel, c.AssistantRemoteAck, c.AssistantWrite = s.Model, strings.TrimSpace(s.RemoteAck), s.Write
+	return c.SaveConfig(c)
+}
+
+// AssistantConsentURL is the remote address whose privacy warning the user
+// accepted, read by the assistant before it sends a sentence anywhere remote.
+func (c *Config) AssistantConsentURL() string {
+	return c.AssistantRemoteAck
 }

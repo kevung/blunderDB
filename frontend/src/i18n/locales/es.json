@@ -172,7 +172,8 @@
         "theme_print": "Imprimible",
         "likeLimit": "Vecinas por clasificación",
         "likeMaxDistance": "Distancia máxima (pips de ficha)",
-        "likeNote": "Cero: sin límite. El token like<12 impone el suyo para una búsqueda."
+        "likeNote": "Cero: sin límite. El token like<12 impone el suyo para una búsqueda.",
+        "assistantTitle": "Asistente y MCP"
     },
     "toolbar": {
         "copyBoardImage": "Copiar imagen del tablero",
@@ -2577,5 +2578,43 @@
             "gv4": "Valores de gammon, cubo a 4",
             "clear": "Borrar el historial de comandos"
         }
+    },
+    "assistant": {
+        "mcpTitle": "Servidor MCP local",
+        "mcpIntro": "Mientras blunderDB se ejecuta, puede ofrecer sus herramientas a un asistente (Claude Desktop, Claude Code, un cliente local) mediante el Model Context Protocol, solo en esta máquina. Desactivado por defecto.",
+        "mcpEnabled": "Servir las herramientas en localhost",
+        "mcpPort": "Puerto",
+        "mcpWrite": "Permitir la escritura",
+        "mcpWriteNote": "Sin marcar, las herramientas solo leen. Marcada, también pueden guardar una posición, comentarla, crear y llenar una colección; nada se borra.",
+        "mcpRunning": "Escuchando en {url}",
+        "mcpStopped": "Detenido.",
+        "mcpError": "No se puede escuchar: {error}",
+        "viewNeedsNormalMode": "El asistente solo abre una vista en modo normal o edición.",
+        "title": "Asistente integrado",
+        "intro": "Pregunte en una frase: el asistente busca con la gramática de la barra de comandos y abre el resultado en una nueva vista con el nombre de su frase. Lee en todas partes; todo cambio se le somete antes de hacerse. Desactivado por defecto; no se incluye ningún modelo.",
+        "enabled": "Activar el asistente",
+        "preset": "Proveedor",
+        "baseURL": "Dirección (compatible con OpenAI)",
+        "model": "Modelo",
+        "key": "Clave API",
+        "keySave": "Guardar la clave",
+        "keyStored": "Hay una clave guardada en el llavero del sistema.",
+        "keyNone": "Ninguna clave guardada (no hace falta para Ollama).",
+        "privacyWarning": "Con {provider}, sus frases y los resultados de las herramientas (posiciones, estadísticas, nombres de jugadores) salen de esta máquina hacia un servicio remoto.",
+        "privacyAccept": "Acepto enviar mis frases y los resultados de las herramientas a este proveedor",
+        "tab": "Asistente",
+        "placeholder": "Pregunte en una frase… (Intro para enviar)",
+        "send": "Enviar",
+        "cancel": "Detener",
+        "reset": "Nueva conversación",
+        "freeText": "Texto libre del modelo",
+        "pendingTitle": "Cambio propuesto",
+        "confirm": "Confirmar",
+        "decline": "Rechazar",
+        "declined": "rechazado por usted; no se escribió nada",
+        "disabled": "El asistente está desactivado: actívelo en Ajustes › Asistente y MCP.",
+        "needsAck": "Acepte primero el aviso de privacidad de este proveedor en Ajustes › Asistente y MCP.",
+        "error": "Error: {error}",
+        "write": "Dejar que el asistente proponga cambios (cada uno confirmado)"
     }
 }

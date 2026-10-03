@@ -172,7 +172,8 @@
         "theme_print": "Stampabile",
         "likeLimit": "Vicine per classifica",
         "likeMaxDistance": "Distanza massima (pip di pedina)",
-        "likeNote": "Zero: nessun limite. Il token like<12 impone il proprio per una ricerca."
+        "likeNote": "Zero: nessun limite. Il token like<12 impone il proprio per una ricerca.",
+        "assistantTitle": "Assistente e MCP"
     },
     "toolbar": {
         "copyBoardImage": "Copia immagine tavola",
@@ -2577,5 +2578,43 @@
             "gv4": "Valori di gammon, cubo a 4",
             "clear": "Cancella la cronologia dei comandi"
         }
+    },
+    "assistant": {
+        "mcpTitle": "Server MCP locale",
+        "mcpIntro": "Mentre blunderDB è in esecuzione, può offrire i suoi strumenti a un assistente (Claude Desktop, Claude Code, un client locale) tramite il Model Context Protocol, solo su questa macchina. Disattivato per impostazione predefinita.",
+        "mcpEnabled": "Servire gli strumenti su localhost",
+        "mcpPort": "Porta",
+        "mcpWrite": "Consentire la scrittura",
+        "mcpWriteNote": "Senza spunta, gli strumenti leggono soltanto. Con la spunta, possono anche salvare una posizione, commentarla, creare e riempire una collezione; nulla viene cancellato.",
+        "mcpRunning": "In ascolto su {url}",
+        "mcpStopped": "Fermo.",
+        "mcpError": "Impossibile mettersi in ascolto: {error}",
+        "viewNeedsNormalMode": "L'assistente apre una vista solo in modalità normale o modifica.",
+        "title": "Assistente integrato",
+        "intro": "Chiedete in una frase: l'assistente cerca con la grammatica della barra dei comandi e apre il risultato in una nuova vista che porta il nome della vostra frase. Legge ovunque; ogni modifica vi viene sottoposta prima di essere fatta. Disattivato per impostazione predefinita; nessun modello è incluso.",
+        "enabled": "Attivare l'assistente",
+        "preset": "Fornitore",
+        "baseURL": "Indirizzo (compatibile OpenAI)",
+        "model": "Modello",
+        "key": "Chiave API",
+        "keySave": "Salvare la chiave",
+        "keyStored": "Una chiave è salvata nel portachiavi del sistema.",
+        "keyNone": "Nessuna chiave salvata (non serve per Ollama).",
+        "privacyWarning": "Con {provider}, le vostre frasi e i risultati degli strumenti (posizioni, statistiche, nomi dei giocatori) lasciano questa macchina per un servizio remoto.",
+        "privacyAccept": "Accetto di inviare le mie frasi e i risultati degli strumenti a questo fornitore",
+        "tab": "Assistente",
+        "placeholder": "Chiedete in una frase… (Invio per inviare)",
+        "send": "Invia",
+        "cancel": "Ferma",
+        "reset": "Nuova conversazione",
+        "freeText": "Testo libero del modello",
+        "pendingTitle": "Modifica proposta",
+        "confirm": "Conferma",
+        "decline": "Rifiuta",
+        "declined": "rifiutata da voi; nulla è stato scritto",
+        "disabled": "L'assistente è disattivato: attivatelo in Impostazioni › Assistente e MCP.",
+        "needsAck": "Accettate prima l'avviso sulla riservatezza di questo fornitore in Impostazioni › Assistente e MCP.",
+        "error": "Errore: {error}",
+        "write": "Lasciare che l'assistente proponga modifiche (ciascuna confermata)"
     }
 }

@@ -172,7 +172,8 @@
         "theme_print": "Imprimable",
         "likeLimit": "Voisines par classement",
         "likeMaxDistance": "Distance maximale (pions-pas)",
-        "likeNote": "Zéro : aucun plafond. Le jeton like<12 impose le sien pour une recherche."
+        "likeNote": "Zéro : aucun plafond. Le jeton like<12 impose le sien pour une recherche.",
+        "assistantTitle": "Assistant et MCP"
     },
     "toolbar": {
         "copyBoardImage": "Copier l'image du plateau",
@@ -2577,5 +2578,43 @@
             "gv4": "Valeurs de gammon, videau à 4",
             "clear": "Effacer l'historique des commandes"
         }
+    },
+    "assistant": {
+        "mcpTitle": "Serveur MCP local",
+        "mcpIntro": "Tant que blunderDB tourne, il peut offrir ses outils à un assistant (Claude Desktop, Claude Code, un client local) par le Model Context Protocol, sur cette machine seulement. Désactivé par défaut.",
+        "mcpEnabled": "Servir les outils sur localhost",
+        "mcpPort": "Port",
+        "mcpWrite": "Autoriser l'écriture",
+        "mcpWriteNote": "Sans cette case, les outils ne font que lire. Avec elle, ils peuvent aussi enregistrer une position, la commenter, créer et remplir une collection ; rien n'efface.",
+        "mcpRunning": "À l'écoute sur {url}",
+        "mcpStopped": "Arrêté.",
+        "mcpError": "Impossible d'écouter : {error}",
+        "viewNeedsNormalMode": "L'assistant n'ouvre une vue qu'en mode normal ou édition.",
+        "title": "Assistant interne",
+        "intro": "Posez une question en une phrase : l'assistant cherche avec la grammaire de la barre de commande et ouvre le résultat dans une nouvelle vue nommée d'après votre phrase. Il lit partout ; toute modification vous est soumise avant d'être faite. Désactivé par défaut ; aucun modèle n'est embarqué.",
+        "enabled": "Activer l'assistant",
+        "preset": "Fournisseur",
+        "baseURL": "Adresse (compatible OpenAI)",
+        "model": "Modèle",
+        "key": "Clé API",
+        "keySave": "Enregistrer la clé",
+        "keyStored": "Une clé est enregistrée dans le trousseau du système.",
+        "keyNone": "Aucune clé enregistrée (inutile pour Ollama).",
+        "privacyWarning": "Avec {provider}, vos phrases et les résultats des outils (positions, statistiques, noms de joueurs) quittent cette machine pour un service distant.",
+        "privacyAccept": "J'accepte d'envoyer mes phrases et les résultats des outils à ce fournisseur",
+        "tab": "Assistant",
+        "placeholder": "Demandez en une phrase… (Entrée pour envoyer)",
+        "send": "Envoyer",
+        "cancel": "Arrêter",
+        "reset": "Nouvelle conversation",
+        "freeText": "Texte libre du modèle",
+        "pendingTitle": "Modification proposée",
+        "confirm": "Confirmer",
+        "decline": "Refuser",
+        "declined": "refusée par vous ; rien n'a été écrit",
+        "disabled": "L'assistant est désactivé : activez-le dans Paramètres › Assistant et MCP.",
+        "needsAck": "Acceptez d'abord l'avertissement de confidentialité de ce fournisseur dans Paramètres › Assistant et MCP.",
+        "error": "Erreur : {error}",
+        "write": "Laisser l'assistant proposer des modifications (chacune confirmée)"
     }
 }

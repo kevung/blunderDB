@@ -30,6 +30,22 @@ class GeneratedAPI(BaseClient):
         "POST /v1/across.analysesLoadByIds — JSON."
         return self._call("/v1/across.analysesLoadByIds", payload)
 
+    def across_club_ranking(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.clubRanking — JSON."
+        return self._call("/v1/across.clubRanking", payload)
+
+    def across_collection_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.collectionPositions — NDJSON stream."
+        return self._stream("/v1/across.collectionPositions", payload)
+
+    def across_collections_list(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.collectionsList — NDJSON stream."
+        return self._stream("/v1/across.collectionsList", payload)
+
+    def across_comments_by_zobrist(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.commentsByZobrist — NDJSON stream."
+        return self._stream("/v1/across.commentsByZobrist", payload)
+
     def across_match_move_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/across.matchMovePositions — NDJSON stream."
         return self._stream("/v1/across.matchMovePositions", payload)

@@ -172,7 +172,8 @@
         "theme_print": "Tulostettava",
         "likeLimit": "Naapureita järjestystä kohden",
         "likeMaxDistance": "Enimmäisetäisyys (nappulapip)",
-        "likeNote": "Nolla: ei kattoa. Merkintä like<12 asettaa omansa yhtä hakua varten."
+        "likeNote": "Nolla: ei kattoa. Merkintä like<12 asettaa omansa yhtä hakua varten.",
+        "assistantTitle": "Avustaja ja MCP"
     },
     "toolbar": {
         "copyBoardImage": "Kopioi lautakuva",
@@ -2577,5 +2578,43 @@
             "gv4": "Gammon-arvot, kuutio 4:ssä",
             "clear": "Tyhjennä komentohistoria"
         }
+    },
+    "assistant": {
+        "mcpTitle": "Paikallinen MCP-palvelin",
+        "mcpIntro": "Kun blunderDB on käynnissä, se voi tarjota työkalunsa avustajalle (Claude Desktop, Claude Code, paikallinen asiakas) Model Context Protocolin kautta, vain tällä koneella. Oletuksena pois päältä.",
+        "mcpEnabled": "Tarjoa työkalut localhostissa",
+        "mcpPort": "Portti",
+        "mcpWrite": "Salli kirjoittaminen",
+        "mcpWriteNote": "Ilman valintaa työkalut vain lukevat. Valittuna ne voivat myös tallentaa aseman, kommentoida sitä, luoda ja täyttää kokoelman; mitään ei poisteta.",
+        "mcpRunning": "Kuuntelee osoitteessa {url}",
+        "mcpStopped": "Pysäytetty.",
+        "mcpError": "Kuuntelu ei onnistu: {error}",
+        "viewNeedsNormalMode": "Avustaja avaa näkymän vain normaali- tai muokkaustilassa.",
+        "title": "Sisäänrakennettu avustaja",
+        "intro": "Kysy yhdellä lauseella: avustaja hakee komentorivin kieliopilla ja avaa tuloksen uuteen näkymään, joka nimetään lauseesi mukaan. Se lukee kaikkialla; jokainen muutos esitetään sinulle ennen kuin se tehdään. Oletuksena pois päältä; mallia ei ole mukana.",
+        "enabled": "Ota avustaja käyttöön",
+        "preset": "Palveluntarjoaja",
+        "baseURL": "Osoite (OpenAI-yhteensopiva)",
+        "model": "Malli",
+        "key": "API-avain",
+        "keySave": "Tallenna avain",
+        "keyStored": "Avain on tallennettu järjestelmän avainnippuun.",
+        "keyNone": "Avainta ei ole tallennettu (Ollama ei tarvitse sitä).",
+        "privacyWarning": "Palvelussa {provider} lauseesi ja työkalujen tulokset (asemat, tilastot, pelaajien nimet) lähtevät tältä koneelta etäpalveluun.",
+        "privacyAccept": "Hyväksyn lauseideni ja työkalujen tulosten lähettämisen tälle palveluntarjoajalle",
+        "tab": "Avustaja",
+        "placeholder": "Kysy yhdellä lauseella… (Enter lähettää)",
+        "send": "Lähetä",
+        "cancel": "Pysäytä",
+        "reset": "Uusi keskustelu",
+        "freeText": "Mallin vapaata tekstiä",
+        "pendingTitle": "Ehdotettu muutos",
+        "confirm": "Vahvista",
+        "decline": "Hylkää",
+        "declined": "hylkäsit sen; mitään ei kirjoitettu",
+        "disabled": "Avustaja on pois päältä: ota se käyttöön kohdassa Asetukset › Avustaja ja MCP.",
+        "needsAck": "Hyväksy ensin tämän palveluntarjoajan tietosuojavaroitus kohdassa Asetukset › Avustaja ja MCP.",
+        "error": "Virhe: {error}",
+        "write": "Anna avustajan ehdottaa muutoksia (jokainen vahvistetaan)"
     }
 }

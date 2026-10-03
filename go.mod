@@ -40,10 +40,12 @@ require (
 require (
 	github.com/modelcontextprotocol/go-sdk v1.8.0
 	github.com/shirou/gopsutil/v4 v4.26.8
+	github.com/zalando/go-keyring v0.2.8
 )
 
 require (
 	git.sr.ht/~jackmordaunt/go-toast/v2 v2.0.3 // indirect
+	github.com/danieljoos/wincred v1.2.3 // indirect
 	github.com/google/jsonschema-go v0.4.3 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/segmentio/asm v1.1.3 // indirect

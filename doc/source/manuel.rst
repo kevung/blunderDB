@@ -222,7 +222,7 @@ Configuration
 
 Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
-blunderDB. Elle est organisée en sept onglets :
+blunderDB. Elle est organisée en huit onglets :
 
 * **Interface** — langue, échelle d'affichage, position du panneau, pas de
   PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste) ;
@@ -233,6 +233,8 @@ blunderDB. Elle est organisée en sept onglets :
 * **gammonNet** — les réglages de l'évaluateur embarqué, décrits ci-dessous ;
 * **Dossier surveillé** — l'import automatique des matchs qui arrivent dans un
   dossier, décrit ci-dessous ;
+* **Assistant et MCP** — le serveur MCP local et l'assistant interne, décrits
+  ci-dessous ;
 * **Identité d'émetteur** — la clé qui signe vos filigranes, décrite à la
   section :ref:`diffusion_controlee`.
 
@@ -517,6 +519,47 @@ La même surveillance existe en ligne de commande, avec
 ``blunderdb import --type batch --dir <dossier> --watch`` (voir :ref:`cli`) :
 c'est la forme qu'un serveur, une tâche planifiée ou un script peuvent
 utiliser.
+
+.. _assistant_mcp:
+
+Assistant et MCP
+~~~~~~~~~~~~~~~~
+
+L'onglet **Assistant et MCP** règle deux choses, toutes deux désactivées par
+défaut.
+
+Le **serveur MCP local** offre les outils de blunderDB (recherche, lecture
+d'une position et de son analyse, statistiques d'un joueur, quiz…) à un
+assistant qui parle le Model Context Protocol, comme Claude Desktop ou Claude
+Code, tant que la fenêtre est ouverte. Il n'écoute que sur cette machine, à
+l'adresse ``http://127.0.0.1:<port>/mcp`` (port 8765 par défaut), et refuse une
+requête venue d'une page web. Il ajoute deux outils d'affichage : ouvrir une
+vue sur une recherche et montrer une position. Les outils ne font que lire,
+sauf si **Autoriser l'écriture** est cochée : ils peuvent alors enregistrer une
+position, la commenter, créer et remplir une collection ; rien n'efface. Sans
+fenêtre ouverte, ``blunderdb mcp`` sert les mêmes outils (voir :ref:`cli`).
+
+L'**assistant interne** est un client de ces mêmes outils. Aucun modèle n'est
+embarqué : il s'adresse à un fournisseur compatible OpenAI — Ollama sur cette
+machine par défaut, ou Groq, OpenRouter, Gemini, Anthropic, ou une autre
+adresse. Est distante toute adresse hors de cette machine, quel que soit le
+fournisseur choisi : vos phrases et les résultats des outils la quittent alors,
+l'onglet le dit et attend votre accord pour cette adresse précise ; une autre
+adresse le redemande. La clé d'API va dans le trousseau du système, jamais dans
+la base ni dans le fichier de réglages. Le modèle proposé par défaut pour
+Ollama, ``qwen2.5:7b``, est un point de départ, pas une recommandation : aucune
+recommandation de modèle n'est faite sans un score du banc de mesure livré avec
+le code source.
+
+Une fois activé, l'assistant est un sous-onglet **Assistant** du panneau
+Recherche. Une phrase — « mes erreurs de plus de 50 millipoints dans la
+course » — ouvre une nouvelle vue nommée d'après elle, y lance la recherche et
+y bascule ; ses jetons restent dans l'historique des recherches. Ce que les
+outils renvoient vient de la base ; ce que le modèle écrit est marqué **Texte
+libre du modèle**. L'assistant ne propose de modification que si la case
+**Laisser l'assistant proposer des modifications** est cochée — un réglage
+distinct de l'écriture du serveur MCP local — et chaque modification qu'il
+prépare s'affiche et n'est faite qu'après **Confirmer**.
 
 La fenêtre de configuration regroupe également des réglages d'affichage de
 l'interface. Un curseur d'**échelle de l'interface** permet d'agrandir ou de

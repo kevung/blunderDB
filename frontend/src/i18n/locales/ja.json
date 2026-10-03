@@ -172,7 +172,8 @@
         "theme_print": "印刷向け",
         "likeLimit": "並べ替えごとの近い局面の数",
         "likeMaxDistance": "最大距離（チェッカーピップ）",
-        "likeNote": "ゼロ：上限なし。トークン like<12 は検索ごとに独自の上限を指定します。"
+        "likeNote": "ゼロ：上限なし。トークン like<12 は検索ごとに独自の上限を指定します。",
+        "assistantTitle": "アシスタントと MCP"
     },
     "toolbar": {
         "copyBoardImage": "盤面画像をコピー",
@@ -2577,5 +2578,43 @@
             "gv4": "ギャモン値（キューブ 4）",
             "clear": "コマンド履歴を消去"
         }
+    },
+    "assistant": {
+        "mcpTitle": "ローカル MCP サーバー",
+        "mcpIntro": "blunderDB の実行中、Model Context Protocol を通じてアシスタント（Claude Desktop、Claude Code、ローカルクライアント）にツールを提供できます。このマシン内のみです。既定ではオフです。",
+        "mcpEnabled": "localhost でツールを提供する",
+        "mcpPort": "ポート",
+        "mcpWrite": "書き込みを許可する",
+        "mcpWriteNote": "オフのとき、ツールは読み取りのみです。オンにすると、局面の保存、コメント、コレクションの作成と追加もできます。削除は一切しません。",
+        "mcpRunning": "{url} で待ち受け中",
+        "mcpStopped": "停止中。",
+        "mcpError": "待ち受けできません：{error}",
+        "viewNeedsNormalMode": "アシスタントがビューを開けるのは通常モードか編集モードのときだけです。",
+        "title": "内蔵アシスタント",
+        "intro": "一文で質問してください。アシスタントはコマンドバーの文法で検索し、結果をその文にちなんで名付けた新しいビューで開きます。どこでも読み取りますが、変更は実行前に必ず確認を求めます。既定ではオフで、モデルは同梱していません。",
+        "enabled": "アシスタントを有効にする",
+        "preset": "プロバイダー",
+        "baseURL": "アドレス（OpenAI 互換）",
+        "model": "モデル",
+        "key": "API キー",
+        "keySave": "キーを保存",
+        "keyStored": "キーはシステムのキーリングに保存されています。",
+        "keyNone": "キーは保存されていません（Ollama では不要）。",
+        "privacyWarning": "{provider} を使うと、あなたの文とツールの結果（局面、統計、プレイヤー名）がこのマシンを離れてリモートサービスへ送られます。",
+        "privacyAccept": "文とツールの結果をこのプロバイダーに送ることに同意する",
+        "tab": "アシスタント",
+        "placeholder": "一文で質問…（Enter で送信）",
+        "send": "送信",
+        "cancel": "停止",
+        "reset": "新しい会話",
+        "freeText": "モデルの自由記述",
+        "pendingTitle": "提案された変更",
+        "confirm": "確定",
+        "decline": "拒否",
+        "declined": "あなたが拒否しました。何も書き込まれていません",
+        "disabled": "アシスタントはオフです。設定 › アシスタントと MCP で有効にしてください。",
+        "needsAck": "先に設定 › アシスタントと MCP でこのプロバイダーのプライバシー警告に同意してください。",
+        "error": "エラー：{error}",
+        "write": "アシスタントに変更の提案を許可する（それぞれ確認あり）"
     }
 }
