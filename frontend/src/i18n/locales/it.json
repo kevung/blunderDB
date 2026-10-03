@@ -206,7 +206,7 @@
         "togglePipcount": "Attiva/disattiva conteggio pip",
         "updatePosition": "Aggiorna posizione",
         "tour": "Tour guidati",
-        "importDatabaseTip": "Unisci un altro database a questo: le posizioni comuni non vengono duplicate, le loro analisi e i loro commenti sono combinati (Ctrl+Maiusc+I)",
+        "importDatabaseTip": "Unisci un altro database a questo: le posizioni comuni non vengono duplicate, le loro analisi e i loro commenti sono combinati",
         "training": "Allenamento"
     },
     "tour": {
@@ -2642,5 +2642,24 @@
     "emptyState": {
         "import": "Importa… (Ctrl+I)",
         "backHome": "Torna alla schermata iniziale"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Maiusc",
+        "alt": "Alt",
+        "left": "Sinistra",
+        "right": "Destra",
+        "up": "Su",
+        "down": "Giù",
+        "delete": "Canc",
+        "pageUp": "Pag su",
+        "pageDown": "Pag giù",
+        "home": "Home",
+        "end": "Fine",
+        "enter": "Invio",
+        "escape": "Esc",
+        "space": "Spazio",
+        "backspace": "Backspace",
+        "tab": "Tab"
     }
 }

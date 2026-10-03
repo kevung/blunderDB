@@ -912,6 +912,7 @@ export default {
 <p>Para dar a conocer una base, la categoría <em>Show and tell</em> de las <code>discusiones del repositorio &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ sirve de directorio: es una lista mantenida por quienes publican, no un servicio prestado por blunderDB. Anunciar una allí requiere el enlace, los cuatro campos anteriores y la huella.</p>
 `,
     shortcuts: `
+<p>Las ayudas emergentes de la barra de herramientas recuerdan la tecla de cada botón con el nombre que lleva en el teclado del idioma de la interfaz: <em>Izquierda</em>, <em>Supr</em>, <em>Re Pág</em>, <em>Av Pág</em>, <em>Mayús</em>.</p>
 <h3>Base de datos</h3>
 <table>
 <thead>

@@ -912,6 +912,7 @@ export default {
 <p>Pour faire connaître une base, la catégorie <em>Show and tell</em> des <code>discussions du dépôt &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ sert d'annuaire : c'est une liste tenue par ceux qui publient, pas un service rendu par blunderDB. Y annoncer une base demande le lien, les quatre champs ci-dessus et l'empreinte.</p>
 `,
     shortcuts: `
+<p>Les infobulles de la barre d'outils rappellent la touche de chaque bouton, sous le nom qu'elle porte sur le clavier de la langue de l'interface : <em>Gauche</em>, <em>Suppr</em>, <em>Page préc.</em>, <em>Page suiv.</em>, <em>Maj</em>.</p>
 <h3>Base de données</h3>
 <table>
 <thead>

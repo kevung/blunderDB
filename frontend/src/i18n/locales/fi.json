@@ -206,7 +206,7 @@
         "togglePipcount": "Näytä/piilota pip-laskuri",
         "updatePosition": "Päivitä asema",
         "tour": "Opastetut kierrokset",
-        "importDatabaseTip": "Yhdistä toinen tietokanta tähän: yhteisiä asemia ei kahdenneta, niiden analyysit ja kommentit yhdistetään (Ctrl+Vaihto+I)",
+        "importDatabaseTip": "Yhdistä toinen tietokanta tähän: yhteisiä asemia ei kahdenneta, niiden analyysit ja kommentit yhdistetään",
         "training": "Harjoittelu"
     },
     "tour": {
@@ -2642,5 +2642,24 @@
     "emptyState": {
         "import": "Tuo… (Ctrl+I)",
         "backHome": "Takaisin aloitusnäyttöön"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Vaihto",
+        "alt": "Alt",
+        "left": "Vasen",
+        "right": "Oikea",
+        "up": "Ylös",
+        "down": "Alas",
+        "delete": "Poista",
+        "pageUp": "Page Up",
+        "pageDown": "Page Down",
+        "home": "Home",
+        "end": "End",
+        "enter": "Enter",
+        "escape": "Esc",
+        "space": "Väli",
+        "backspace": "Askelpalautin",
+        "tab": "Tab"
     }
 }

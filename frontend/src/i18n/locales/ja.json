@@ -206,7 +206,7 @@
         "togglePipcount": "pip カウント表示切替",
         "updatePosition": "ポジションを更新",
         "tour": "ガイドツアー",
-        "importDatabaseTip": "別のデータベースをこれに統合する：共通する局面は重複せず、その解析とコメントは結合される（Ctrl+Shift+I）",
+        "importDatabaseTip": "別のデータベースをこれに統合する：共通する局面は重複せず、その解析とコメントは結合される",
         "training": "トレーニング"
     },
     "tour": {
@@ -2642,5 +2642,24 @@
     "emptyState": {
         "import": "インポート… (Ctrl+I)",
         "backHome": "ホーム画面に戻る"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Shift",
+        "alt": "Alt",
+        "left": "←",
+        "right": "→",
+        "up": "↑",
+        "down": "↓",
+        "delete": "Del",
+        "pageUp": "PageUp",
+        "pageDown": "PageDown",
+        "home": "Home",
+        "end": "End",
+        "enter": "Enter",
+        "escape": "Esc",
+        "space": "Space",
+        "backspace": "Backspace",
+        "tab": "Tab"
     }
 }

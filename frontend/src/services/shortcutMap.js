@@ -161,3 +161,33 @@ export const SHORTCUTS = {
         ]
     }
 };
+
+/**
+ * The chord(s) each toolbar button announces in its tooltip, in the chord notation above. The
+ * tooltip names the keys through `utils/keyNames.js`, so a key is spelled once per language.
+ * @type {Record<string, string[]>}
+ */
+export const TOOLBAR_CHORDS = {
+    newDatabase: ['Ctrl+N'],
+    openDatabase: ['Ctrl+O'],
+    exportDatabase: ['Ctrl+Shift+S'],
+    importPositionTip: ['Ctrl+I'],
+    importFolder: ['Ctrl+Shift+F'],
+    savePosition: ['Ctrl+S'],
+    updatePosition: ['Ctrl+U'],
+    deletePosition: ['Delete'],
+    loadAllPositions: ['Ctrl+R'],
+    firstPosition: ['PageUp', 'h'],
+    previousPosition: ['ArrowLeft', 'k'],
+    nextPosition: ['ArrowRight', 'j'],
+    lastPosition: ['PageDown', 'l'],
+    togglePipcount: ['p'],
+    randomPosition: ['r'],
+    training: ['Ctrl+J'],
+    help: ['?'],
+    copyPosition: ['Ctrl+C'],
+    pastePosition: ['Ctrl+V'],
+    copyBoardImage: ['Ctrl+X'],
+    exit: ['Ctrl+Q'],
+    importDatabaseTip: ['Ctrl+Shift+I']
+};

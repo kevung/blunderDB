@@ -3,6 +3,10 @@
 Raccourcis clavier
 ==================
 
+Les infobulles de la barre d'outils rappellent la touche de chaque bouton, sous
+le nom qu'elle porte sur le clavier de la langue de l'interface : *Gauche*,
+*Suppr*, *Page préc.*, *Page suiv.*, *Maj*.
+
 .. _raccourcis_generaux:
 
 Base de données

@@ -912,6 +912,7 @@ export default {
 <p>Per far conoscere una base, la categoria <em>Show and tell</em> delle <code>discussioni del deposito &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ fa da elenco: è una lista tenuta da chi pubblica, non un servizio reso da blunderDB. Annunciarne una lì richiede il link, i quattro campi qui sopra e l'impronta.</p>
 `,
     shortcuts: `
+<p>I suggerimenti della barra degli strumenti ricordano il tasto di ogni pulsante con il nome che ha sulla tastiera della lingua dell'interfaccia: <em>Sinistra</em>, <em>Canc</em>, <em>Pag su</em>, <em>Pag giù</em>, <em>Maiusc</em>.</p>
 <h3>Database</h3>
 <table>
 <thead>

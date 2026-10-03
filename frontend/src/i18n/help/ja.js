@@ -912,6 +912,7 @@ export default {
 <p>データベースを知ってもらうには、<code>リポジトリのディスカッション &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ の <em>Show and tell</em> カテゴリが目録の役を果たす：公開する人たち自身が保つ一覧であって、blunderDB が提供するサービスではない。そこで告知するには、リンクと上の四つの欄と指紋が要る。</p>
 `,
     shortcuts: `
+<p>ツールバーのツールチップには、各ボタンのキーが表示言語のキーボードでの名前で示されます: <em>←</em>、<em>Del</em>、<em>PageUp</em>、<em>PageDown</em>、<em>Shift</em>。</p>
 <h3>データベース</h3>
 <table>
 <thead>

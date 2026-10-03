@@ -206,7 +206,7 @@
         "togglePipcount": "Pipcount ein-/ausblenden",
         "updatePosition": "Position aktualisieren",
         "tour": "Geführte Touren",
-        "importDatabaseTip": "Eine andere Datenbank in diese zusammenführen: gemeinsame Stellungen werden nicht dupliziert, ihre Analysen und Kommentare werden vereint (Strg+Umschalt+I)",
+        "importDatabaseTip": "Eine andere Datenbank in diese zusammenführen: gemeinsame Stellungen werden nicht dupliziert, ihre Analysen und Kommentare werden vereint",
         "training": "Training"
     },
     "tour": {
@@ -2642,5 +2642,24 @@
     "emptyState": {
         "import": "Importieren… (Strg+I)",
         "backHome": "Zurück zum Startbildschirm"
+    },
+    "keyNames": {
+        "ctrl": "Strg",
+        "shift": "Umschalt",
+        "alt": "Alt",
+        "left": "Links",
+        "right": "Rechts",
+        "up": "Hoch",
+        "down": "Runter",
+        "delete": "Entf",
+        "pageUp": "Bild auf",
+        "pageDown": "Bild ab",
+        "home": "Pos1",
+        "end": "Ende",
+        "enter": "Eingabe",
+        "escape": "Esc",
+        "space": "Leertaste",
+        "backspace": "Rücktaste",
+        "tab": "Tab"
     }
 }

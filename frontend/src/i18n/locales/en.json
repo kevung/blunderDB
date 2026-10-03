@@ -206,7 +206,7 @@
         "togglePipcount": "Toggle Pipcount",
         "updatePosition": "Update Position",
         "tour": "Guided tours",
-        "importDatabaseTip": "Merge another database into this one: shared positions are not duplicated, their analyses and comments are combined (Ctrl+Shift+I)",
+        "importDatabaseTip": "Merge another database into this one: shared positions are not duplicated, their analyses and comments are combined",
         "training": "Training"
     },
     "tour": {
@@ -2642,5 +2642,24 @@
     "emptyState": {
         "import": "Import… (Ctrl+I)",
         "backHome": "Back to the welcome screen"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Shift",
+        "alt": "Alt",
+        "left": "Left",
+        "right": "Right",
+        "up": "Up",
+        "down": "Down",
+        "delete": "Del",
+        "pageUp": "PageUp",
+        "pageDown": "PageDown",
+        "home": "Home",
+        "end": "End",
+        "enter": "Enter",
+        "escape": "Esc",
+        "space": "Space",
+        "backspace": "Backspace",
+        "tab": "Tab"
     }
 }

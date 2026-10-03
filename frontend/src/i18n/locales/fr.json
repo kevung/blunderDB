@@ -206,7 +206,7 @@
         "togglePipcount": "Afficher/masquer le pipcount",
         "updatePosition": "Mettre à jour la position",
         "tour": "Visites guidées",
-        "importDatabaseTip": "Fusionner une autre base dans celle-ci : les positions communes ne sont pas dupliquées, leurs analyses et commentaires sont combinés (Ctrl+Maj+I)",
+        "importDatabaseTip": "Fusionner une autre base dans celle-ci : les positions communes ne sont pas dupliquées, leurs analyses et commentaires sont combinés",
         "training": "Entraînement"
     },
     "tour": {
@@ -2642,5 +2642,24 @@
     "emptyState": {
         "import": "Importer… (Ctrl+I)",
         "backHome": "Retour à l'accueil"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Maj",
+        "alt": "Alt",
+        "left": "Gauche",
+        "right": "Droite",
+        "up": "Haut",
+        "down": "Bas",
+        "delete": "Suppr",
+        "pageUp": "Page préc.",
+        "pageDown": "Page suiv.",
+        "home": "Début",
+        "end": "Fin",
+        "enter": "Entrée",
+        "escape": "Échap",
+        "space": "Espace",
+        "backspace": "Retour arr.",
+        "tab": "Tab"
     }
 }

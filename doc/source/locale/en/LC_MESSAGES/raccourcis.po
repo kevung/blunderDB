@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 11:17+0200\n"
+"POT-Creation-Date: 2026-10-03 12:01+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -22,7 +22,17 @@ msgstr ""
 msgid "Raccourcis clavier"
 msgstr "Keyboard shortcuts"
 
-#: ../../source/raccourcis.rst:9
+#: ../../source/raccourcis.rst:6
+msgid ""
+"Les infobulles de la barre d'outils rappellent la touche de chaque "
+"bouton, sous le nom qu'elle porte sur le clavier de la langue de "
+"l'interface : *Gauche*, *Suppr*, *Page préc.*, *Page suiv.*, *Maj*."
+msgstr ""
+"The toolbar tooltips recall each button's key under the name it carries "
+"on the keyboard of the interface language: *Left*, *Del*, *PageUp*, "
+"*PageDown*, *Shift*."
+
+#: ../../source/raccourcis.rst:13
 msgid "Base de données"
 msgstr "Database"
 
@@ -82,7 +92,7 @@ msgstr "CTRL-M"
 msgid "Modifier les métadonnées de la base de données."
 msgstr "Edit database metadata."
 
-#: ../../source/raccourcis.rst:26
+#: ../../source/raccourcis.rst:30
 msgid "Position"
 msgstr "Position"
 
@@ -180,7 +190,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Show the position metadata."
 
-#: ../../source/raccourcis.rst:48
+#: ../../source/raccourcis.rst:52
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -287,7 +297,7 @@ msgstr ""
 "Leave the results of an ``ss`` search run from a collection or a match: "
 "back to the collection, or to the match on the move studied."
 
-#: ../../source/raccourcis.rst:67
+#: ../../source/raccourcis.rst:71
 msgid ""
 "Tant qu'une question du :ref:`panneau Entraînement "
 "<panneau_entrainement>` est posée sur le plateau, les touches qui "
@@ -304,7 +314,7 @@ msgstr ""
 " once it is complete; in the notation field, ENTER validates the typed "
 "move (``13/7 8/7``)."
 
-#: ../../source/raccourcis.rst:77
+#: ../../source/raccourcis.rst:81
 msgid "Affichage"
 msgstr "Display"
 
@@ -332,7 +342,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Show/hide pipcount."
 
-#: ../../source/raccourcis.rst:91
+#: ../../source/raccourcis.rst:95
 msgid "Actions"
 msgstr "Actions"
 
@@ -360,7 +370,7 @@ msgstr "ALT-1 … ALT-9"
 msgid "Lancer le filtre épinglé de ce rang dans la bibliothèque de filtres."
 msgstr "Run the pinned filter of that rank in the filter library."
 
-#: ../../source/raccourcis.rst:105
+#: ../../source/raccourcis.rst:109
 msgid "Outils"
 msgstr "Tools"
 
@@ -536,7 +546,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Show/hide the help."
 
-#: ../../source/raccourcis.rst:136
+#: ../../source/raccourcis.rst:140
 msgid "Onglets de vues"
 msgstr "View Tabs"
 
@@ -588,7 +598,7 @@ msgstr "Double-click the tab"
 msgid "Renommer la vue."
 msgstr "Rename the view."
 
-#: ../../source/raccourcis.rst:153
+#: ../../source/raccourcis.rst:157
 msgid "Ligne de commande"
 msgstr "Command Line"
 
@@ -612,7 +622,7 @@ msgstr "Browse command history down."
 msgid "Pendant une recherche : l'interrompre."
 msgstr "During a search: interrupt it."
 
-#: ../../source/raccourcis.rst:167
+#: ../../source/raccourcis.rst:171
 msgid "Historique de recherche"
 msgstr "Search History"
 
@@ -632,7 +642,7 @@ msgstr "Double-click"
 msgid "Exécuter la recherche."
 msgstr "Execute the search."
 
-#: ../../source/raccourcis.rst:180
+#: ../../source/raccourcis.rst:184
 msgid "Bibliothèque de filtres"
 msgstr "Filter Library"
 
@@ -660,7 +670,7 @@ msgstr "Click (on a pinned chip)"
 msgid "Exécuter la recherche du filtre épinglé."
 msgstr "Run the pinned filter's search."
 
-#: ../../source/raccourcis.rst:195
+#: ../../source/raccourcis.rst:199
 msgid "Panneau d'analyse"
 msgstr "Analysis Panel"
 
@@ -700,7 +710,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deselect move. If no move selected, close the panel."
 
-#: ../../source/raccourcis.rst:212
+#: ../../source/raccourcis.rst:216
 msgid "Panneau Eval"
 msgstr "Eval Panel"
 
@@ -708,7 +718,7 @@ msgstr "Eval Panel"
 msgid "Désélectionner le coup."
 msgstr "Deselect move."
 
-#: ../../source/raccourcis.rst:227
+#: ../../source/raccourcis.rst:231
 msgid "Panneau des matchs"
 msgstr "Match Panel"
 
@@ -756,7 +766,7 @@ msgstr ""
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deselect/close the panel."
 
-#: ../../source/raccourcis.rst:246
+#: ../../source/raccourcis.rst:250
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Anki panel (spaced repetition)"
 
@@ -812,7 +822,7 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Stop the review and return to the deck list (can resume later)."
 
-#: ../../source/raccourcis.rst:264
+#: ../../source/raccourcis.rst:268
 msgid "Panneau des tournois"
 msgstr "Tournament Panel"
 
@@ -852,11 +862,11 @@ msgstr ""
 "Cancel the current edit, otherwise clear the add-match search, otherwise "
 "deselect the tournament, otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:280
+#: ../../source/raccourcis.rst:284
 msgid "Page Direction"
 msgstr "Direction page"
 
-#: ../../source/raccourcis.rst:282
+#: ../../source/raccourcis.rst:286
 msgid ""
 "Sous la page Direction, *J*, *K*, *HAUT*, *BAS* et *ENTRÉE* vont à la "
 "file des propositions, sauf quand le focus est sur une case de la grille "
@@ -971,7 +981,7 @@ msgstr ""
 "drop act on the table of any competition; a swap with another competition"
 " names both in the confirmation."
 
-#: ../../source/raccourcis.rst:304
+#: ../../source/raccourcis.rst:308
 msgid "Panneau des collections"
 msgstr "Collection Panel"
 
@@ -999,11 +1009,11 @@ msgstr ""
 "Go back to the collection list, otherwise deselect the collection, "
 "otherwise close the panel (one step at a time)."
 
-#: ../../source/raccourcis.rst:319
+#: ../../source/raccourcis.rst:323
 msgid "Panneau Transcription"
 msgstr "Transcription Panel"
 
-#: ../../source/raccourcis.rst:321
+#: ../../source/raccourcis.rst:325
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
 "brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
@@ -1444,7 +1454,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Redo the undone gesture."
 
-#: ../../source/raccourcis.rst:371
+#: ../../source/raccourcis.rst:375
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1452,7 +1462,7 @@ msgstr ""
 "A roll that allows no play records the dance on its own, with no extra "
 "keystroke."
 
-#: ../../source/raccourcis.rst:374
+#: ../../source/raccourcis.rst:378
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1479,7 +1489,7 @@ msgstr ""
 "following decision, as at the end of the document, and ENTER leads there "
 "too."
 
-#: ../../source/raccourcis.rst:385
+#: ../../source/raccourcis.rst:389
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1492,7 +1502,7 @@ msgstr ""
 "insertion opens a cell between its two neighbours, and the side is read "
 "from the column. Nothing is recorded before the validation."
 
-#: ../../source/raccourcis.rst:390
+#: ../../source/raccourcis.rst:394
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1504,7 +1514,7 @@ msgstr ""
 "in its turn instead of overwriting the one that follows. The end of the "
 "game or moving the cursor puts an end to it."
 
-#: ../../source/raccourcis.rst:395
+#: ../../source/raccourcis.rst:399
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1516,7 +1526,7 @@ msgstr ""
 " the document. The sentence clears itself and gives the place back to the"
 " expected action."
 
-#: ../../source/raccourcis.rst:400
+#: ../../source/raccourcis.rst:404
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1536,7 +1546,7 @@ msgstr ""
 "review” until it is validated. Moving the cursor forward or back after "
 "changing something records the correction on the way."
 
-#: ../../source/raccourcis.rst:408
+#: ../../source/raccourcis.rst:412
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1562,7 +1572,7 @@ msgstr ""
 "inserted for the side it was missing from. The undo stack lives in "
 "memory: it is lost when the draft is closed."
 
-#: ../../source/raccourcis.rst:419
+#: ../../source/raccourcis.rst:423
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1572,7 +1582,7 @@ msgstr ""
 "transcript and the draft bar — is described in "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:426
+#: ../../source/raccourcis.rst:430
 msgid "Planche-contact"
 msgstr "Contact sheet"
 
@@ -1620,7 +1630,7 @@ msgstr "Open the position on the board and close the sheet."
 msgid "Refermer la planche."
 msgstr "Close the sheet."
 
-#: ../../source/raccourcis.rst:443
+#: ../../source/raccourcis.rst:447
 msgid "Panneau d'aide"
 msgstr "Help Panel"
 

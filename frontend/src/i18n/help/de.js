@@ -912,6 +912,7 @@ export default {
 <p>Um eine Datenbank bekannt zu machen, dient die Kategorie <em>Show and tell</em> der <code>Diskussionen des Repositorys &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ als Verzeichnis: eine Liste, geführt von denen, die veröffentlichen, kein von blunderDB erbrachter Dienst. Eine dort anzukündigen braucht den Link, die vier obigen Felder und den Fingerabdruck.</p>
 `,
     shortcuts: `
+<p>Die Tooltips der Werkzeugleiste nennen die Taste jeder Schaltfläche unter dem Namen, den sie auf der Tastatur der Oberflächensprache trägt: <em>Links</em>, <em>Entf</em>, <em>Bild auf</em>, <em>Bild ab</em>, <em>Umschalt</em>.</p>
 <h3>Datenbank</h3>
 <table>
 <thead>

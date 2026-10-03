@@ -912,6 +912,7 @@ export default {
 <p>To make a database known, the <em>Show and tell</em> category of the <code>repository discussions &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ serves as a directory: it is a list kept by those who publish, not a service blunderDB renders. Announcing one there takes the link, the four fields above and the fingerprint.</p>
 `,
     shortcuts: `
+<p>The toolbar tooltips recall each button's key under the name it carries on the keyboard of the interface language: <em>Left</em>, <em>Del</em>, <em>PageUp</em>, <em>PageDown</em>, <em>Shift</em>.</p>
 <h3>Database</h3>
 <table>
 <thead>

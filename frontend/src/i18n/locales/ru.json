@@ -206,7 +206,7 @@
         "togglePipcount": "Переключить подсчёт pip",
         "updatePosition": "Обновить позицию",
         "tour": "Обучающие туры",
-        "importDatabaseTip": "Объединить другую базу с этой: общие позиции не дублируются, их анализы и комментарии объединяются (Ctrl+Shift+I)",
+        "importDatabaseTip": "Объединить другую базу с этой: общие позиции не дублируются, их анализы и комментарии объединяются",
         "training": "Тренировка"
     },
     "tour": {
@@ -2642,5 +2642,24 @@
     "emptyState": {
         "import": "Импорт… (Ctrl+I)",
         "backHome": "Вернуться на стартовый экран"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Shift",
+        "alt": "Alt",
+        "left": "Влево",
+        "right": "Вправо",
+        "up": "Вверх",
+        "down": "Вниз",
+        "delete": "Del",
+        "pageUp": "PageUp",
+        "pageDown": "PageDown",
+        "home": "Home",
+        "end": "End",
+        "enter": "Enter",
+        "escape": "Esc",
+        "space": "Пробел",
+        "backspace": "Backspace",
+        "tab": "Tab"
     }
 }

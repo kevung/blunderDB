@@ -206,7 +206,7 @@
         "togglePipcount": "Εναλλαγή μέτρησης pip",
         "updatePosition": "Ενημέρωση θέσης",
         "tour": "Ξεναγήσεις",
-        "importDatabaseTip": "Συγχώνευση μιας άλλης βάσης σε αυτήν: οι κοινές θέσεις δεν διπλασιάζονται, οι αναλύσεις και τα σχόλιά τους συνδυάζονται (Ctrl+Shift+I)",
+        "importDatabaseTip": "Συγχώνευση μιας άλλης βάσης σε αυτήν: οι κοινές θέσεις δεν διπλασιάζονται, οι αναλύσεις και τα σχόλιά τους συνδυάζονται",
         "training": "Εξάσκηση"
     },
     "tour": {
@@ -2642,5 +2642,24 @@
     "emptyState": {
         "import": "Εισαγωγή… (Ctrl+I)",
         "backHome": "Επιστροφή στην αρχική οθόνη"
+    },
+    "keyNames": {
+        "ctrl": "Ctrl",
+        "shift": "Shift",
+        "alt": "Alt",
+        "left": "Αριστερά",
+        "right": "Δεξιά",
+        "up": "Πάνω",
+        "down": "Κάτω",
+        "delete": "Del",
+        "pageUp": "PageUp",
+        "pageDown": "PageDown",
+        "home": "Home",
+        "end": "End",
+        "enter": "Enter",
+        "escape": "Esc",
+        "space": "Space",
+        "backspace": "Backspace",
+        "tab": "Tab"
     }
 }

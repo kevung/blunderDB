@@ -912,6 +912,7 @@ export default {
 <p>Tietokannan tunnetuksi tekemiseen <code>varaston keskustelujen &lt;https://github.com/kevung/blunderDB/discussions&gt;</code>_ <em>Show and tell</em> -kategoria toimii hakemistona: se on julkaisijoiden ylläpitämä lista, ei blunderDB:n tarjoama palvelu. Sinne ilmoittaminen vaatii linkin, yllä olevat neljä kenttää ja sormenjäljen.</p>
 `,
     shortcuts: `
+<p>Työkalupalkin vihjeet muistuttavat kunkin painikkeen näppäimestä sillä nimellä, joka sillä on käyttöliittymän kielen näppäimistössä: <em>Vasen</em>, <em>Poista</em>, <em>Page Up</em>, <em>Page Down</em>, <em>Vaihto</em>.</p>
 <h3>Tietokanta</h3>
 <table>
 <thead>
