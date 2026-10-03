@@ -67,6 +67,19 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 
 // Merge — see storage.AnalysisStore.
 func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int64, played *storage.PlayedActions, merge func(*domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error) {
+	// Read, merge and write run in one transaction so the row lock taken by
+	// the read holds until the write: inside a caller's transaction this is a
+	// savepoint and the caller's lock scope applies.
+	var changed bool
+	err := withTx(ctx, s.db, func(tx execer) error {
+		var err error
+		changed, err = (&analysisStore{db: tx}).merge(ctx, scope, positionID, played, merge)
+		return err
+	})
+	return changed, err
+}
+
+func (s *analysisStore) merge(ctx context.Context, scope string, positionID int64, played *storage.PlayedActions, merge func(*domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error) {
 	tenant := tenantID(scope)
 	var (
 		data   []byte
