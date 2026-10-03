@@ -219,9 +219,11 @@ jobs:
   # against a synthetic base of SCALE_POSITIONS positions built by
   # cmd/blunderdb-synthdb, and each is compared with the previous night's
   # figure by scripts/bench-scale-compare.sh: one benchmark slower than ×1.5
-  # turns the job red. The factor is wide because each side is one
-  # -benchtime 1x sample on a shared runner; it is there for an index lost or
-  # a query turned into a full scan, not for drift.
+  # turns the job red. Each benchmark runs three times and the best run
+  # counts: the first pass reads a cold base (up to ×2.4 slower for the
+  # import), which alone would cross the factor. The factor is wide because
+  # a shared runner is noisy; it is there for an index lost or a query turned
+  # into a full scan, not for drift.
   #
   # Why nightly: building the base takes about eleven minutes on a laptop
   # (≈ 1 500 positions/s), more on a runner, and the benchmarks themselves
@@ -233,6 +235,10 @@ jobs:
   # runner is not the machine tasks/bench/ was measured on, so only
   # runner-to-runner comparisons mean anything.
   scale-bench:
+    # A dispatch aimed at a PR measures that PR's micro-benchmarks only: an
+    # hour of scale benchmarks would not answer it, and its figures must
+    # never become the night-to-night reference.
+    if: github.event_name != 'workflow_dispatch' || inputs.pr_number == ''
     runs-on: ubuntu-latest
     timeout-minutes: 180
     env:
@@ -258,7 +264,7 @@ jobs:
         uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           path: scale.db
-          key: scale-db-${{ env.SCALE_POSITIONS }}-${{ hashFiles('cmd/blunderdb-synthdb/**', 'testdata/*.xg', 'testdata/*/*.xg', 'pkg/blunderdb/database/db_schema.go', 'pkg/blunderdb/storage/sqlite/schema_sqlite.go') }}
+          key: scale-db-${{ env.SCALE_POSITIONS }}-${{ hashFiles('cmd/blunderdb-synthdb/**', 'testdata/*.xg', 'testdata/*/*.xg', 'pkg/blunderdb/database/db_schema.go', 'pkg/blunderdb/storage/sqlite/schema_sqlite.go', 'pkg/blunderdb/engine/analysiscodec.go', 'pkg/blunderdb/ingest/**', 'pkg/blunderdb/domain/**') }}
 
       - name: Build the synthetic base
         if: steps.scale-db.outputs.cache-hit != 'true'
@@ -276,7 +282,7 @@ jobs:
 
       - name: Run the scale benchmarks
         run: |
-          go test -run '^$' -bench '^BenchmarkScale_' -benchtime 1x -benchmem -timeout 60m \
+          go test -run '^$' -bench '^BenchmarkScale_' -benchtime 1x -count 3 -benchmem -timeout 120m \
             ./pkg/blunderdb/database | tee scale-bench.txt
         shell: bash
 

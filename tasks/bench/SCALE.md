@@ -75,5 +75,5 @@ linéairement avec la base, sans index qui sauve une recherche étroite (0,39 s 
 balayage) ; les stats sans filtre (66 s) et la liste des matchs (1,8 ms par match) sont
 inutilisables à cette taille et le seront dix fois plus à 10 M — ce sont les cibles des lots 3
 et 5 (stats matérialisées, GB5.6). Le premier passage, cache froid, est plus lent
-que les suivants (×1,5 pour les stats, ×2,4 pour l'import) : le job de nuit, en un seul passage sur base fraîchement restaurée, est toujours
-froid, donc comparable d'une nuit à l'autre.
+que les suivants (×1,5 pour les stats, ×2,4 pour l'import) : le job de nuit lance donc chaque
+benchmark trois fois et `scripts/bench-scale-compare.sh` retient le meilleur passage.

@@ -6,10 +6,14 @@
 #
 #   scripts/bench-scale-compare.sh <previous.txt> <new.txt> [factor] [summary_md]
 #
+# A benchmark listed several times (-count N) counts by its best run: the
+# first pass of a fresh process reads a cold base, and the minimum is the
+# figure that noise moves least.
+#
 # Unlike bench-compare.sh this gates each benchmark, not a geomean: the scale
 # benchmarks are few and measure distinct paths (one import, a search, the
-# stats), so a regression on one must not hide behind the others. Each side
-# is a single -benchtime 1x sample, so the factor is wide (1.5 by default):
+# stats), so a regression on one must not hide behind the others. Samples
+# are few and runners noisy, so the factor is wide (1.5 by default):
 # it catches an index lost or a query turned into a full scan, not drift.
 # A benchmark present on one side only is reported, never gated.
 set -euo pipefail
@@ -24,7 +28,9 @@ table=$(awk -v factor="$factor" '
   FNR == 1 { file++ }
   /^BenchmarkScale_/ {
     for (i = 2; i <= NF; i++) if ($(i+1) == "ns/op") { t = $i; break }
-    if (file == 1) old[name($1)] = t; else cur[name($1)] = t
+    k = name($1)
+    if (file == 1) { if (!(k in old) || t < old[k]) old[k] = t }
+    else           { if (!(k in cur) || t < cur[k]) cur[k] = t }
   }
   END {
     print "| Benchmark | previous (ms) | new (ms) | ratio |"
