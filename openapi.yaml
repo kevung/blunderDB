@@ -193,6 +193,44 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idResp"
+  /v1/anki.deckPositionCount:
+    post:
+      operationId: anki.deckPositionCount
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+  /v1/anki.deckPositionIds:
+    post:
+      operationId: anki.deckPositionIds
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckPositionsPageReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
   /v1/anki.deckPositions:
     post:
       operationId: anki.deckPositions
@@ -267,6 +305,24 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/domain_AnkiForecastDay"
+  /v1/anki.indexOfDeckPosition:
+    post:
+      operationId: anki.indexOfDeckPosition
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/deckPositionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/anki.linkedCard:
     post:
       operationId: anki.linkedCard
@@ -5894,6 +5950,27 @@ components:
           type: integer
           format: int32
           nullable: true
+    deckPositionReq:
+      type: object
+      properties:
+        deckId:
+          type: integer
+          format: int64
+        positionId:
+          type: integer
+          format: int64
+    deckPositionsPageReq:
+      type: object
+      properties:
+        deckId:
+          type: integer
+          format: int64
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
     deckSyncPositionsReq:
       type: object
       properties:

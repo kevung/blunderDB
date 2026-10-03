@@ -275,7 +275,7 @@ export default {
 <p>Una colección viva cuya consulta lleva un token que esta versión ya no conoce <strong>se niega a abrirse</strong> y lo dice, en vez de devolver toda la base. Es el único fallo que un filtro guardado no debe tener: ensancharse en silencio.</p>
 <h3>Panel de Partidas</h3>
 <p>El panel <strong>Partidas</strong> (<em>CTRL-Tab</em>) lista las partidas importadas. Haga doble clic en una partida (o pulse <em>INTRO</em>) para navegar por sus jugadas. El comando <code>m</code> reanuda la navegación en la última partida visitada.</p>
-<p>El campo de filtro, en la parte superior del panel (<em>/</em> para ir a él, <em>Esc</em> para borrarlo), conserva solo las partidas en las que un jugador, el evento, el lugar, el torneo o la fecha contiene el texto escrito. El filtro y la ordenación de columnas los realiza la base de datos: la lista se carga por páginas al desplazarse, y el contador «n / N partidas» indica la parte cargada. Corregir un jugador, una fecha o un torneo en la lista solo actualiza la fila editada.</p>
+<p>El campo de filtro, en la parte superior del panel (<em>/</em> para ir a él, <em>Esc</em> para borrarlo), conserva solo las partidas en las que un jugador, el evento, el lugar, el torneo o la fecha contiene el texto escrito. El filtro y la ordenación de columnas los hace la base de datos: la lista se carga por páginas al desplazarse, y el contador «n / N partidas» indica la parte cargada. Corregir un jugador, una fecha o un torneo en la lista solo actualiza la fila editada.</p>
 <p>El usuario puede:</p>
 <ul>
 <li>recorrer las jugadas de una partida con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>,</li>

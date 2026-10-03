@@ -275,7 +275,7 @@ export default {
 <p>Elävä kokoelma, jonka kysely sisältää tunnuksen jota tämä versio ei enää tunne, <strong>kieltäytyy avautumasta</strong> ja sanoo sen sen sijaan että palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla suodattimella ei saa olla: laajeta hiljaisuudessa.</p>
 <h3>Ottelupaneeli</h3>
 <p><strong>Ottelupaneeli</strong> (<em>CTRL-Tab</em>) luettelee tuodut ottelut. Kaksoisnapsauta ottelua (tai paina <em>ENTER</em>) navigoidaksesi sen siirroissa. Komento <code>m</code> jatkaa navigointia viimeksi katsotussa ottelussa.</p>
-<p>Paneelin yläreunan suodatinkenttä (<em>/</em> siirtää siihen, <em>Esc</em> tyhjentää sen) säilyttää vain ottelut, joissa pelaaja, tapahtuma, paikka, turnaus tai päivämäärä sisältää kirjoitetun tekstin. Tietokanta suodattaa ja lajittelee sarakkeet: luettelo latautuu sivuittain vierittäessä, ja laskuri ”n / N ottelua” näyttää ladatun osan. Pelaajan, päivämäärän tai turnauksen korjaaminen luettelossa päivittää vain muokatun rivin.</p>
+<p>Paneelin yläreunan suodatuskenttä (<em>/</em> siirtyy siihen, <em>Esc</em> tyhjentää sen) säilyttää vain ottelut, joissa pelaaja, tapahtuma, paikka, turnaus tai päivämäärä sisältää kirjoitetun tekstin. Suodatuksen ja sarakkeiden lajittelun tekee tietokanta: luettelo latautuu sivuittain vierittäessä, ja laskuri ”n / N ottelua” näyttää ladatun osuuden. Pelaajan, päivämäärän tai turnauksen korjaaminen luettelossa päivittää vain muokatun rivin.</p>
 <p>Käyttäjä voi:</p>
 <ul>
 <li>selata ottelun siirtoja näppäimillä <em>VASEN</em> ja <em>OIKEA</em>,</li>
@@ -1386,7 +1386,7 @@ export default {
 </tr>
 <tr>
 <td>/</td>
-<td>Siirry suodatinkenttään (pelaaja, tapahtuma, turnaus, päivämäärä). <em>Esc</em> tyhjentää suodattimen.</td>
+<td>Siirry suodatuskenttään (pelaaja, tapahtuma, turnaus, päivämäärä). <em>Esc</em> tyhjentää suodattimen.</td>
 </tr>
 <tr>
 <td>Esc</td>

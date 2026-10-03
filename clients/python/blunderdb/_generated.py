@@ -58,6 +58,14 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.createStudyDeck — JSON."
         return self._call("/v1/anki.createStudyDeck", payload)
 
+    def anki_deck_position_count(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.deckPositionCount — JSON."
+        return self._call("/v1/anki.deckPositionCount", payload)
+
+    def anki_deck_position_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.deckPositionIds — JSON."
+        return self._call("/v1/anki.deckPositionIds", payload)
+
     def anki_deck_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/anki.deckPositions — NDJSON stream."
         return self._stream("/v1/anki.deckPositions", payload)
@@ -73,6 +81,10 @@ class GeneratedAPI(BaseClient):
     def anki_forecast(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/anki.forecast — JSON."
         return self._call("/v1/anki.forecast", payload)
+
+    def anki_index_of_deck_position(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.indexOfDeckPosition — JSON."
+        return self._call("/v1/anki.indexOfDeckPosition", payload)
 
     def anki_linked_card(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/anki.linkedCard — JSON."

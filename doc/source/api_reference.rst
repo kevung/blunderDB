@@ -23,10 +23,13 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/anki.buryCard                        JSON
      POST /v1/anki.createDeck                      JSON
      POST /v1/anki.createStudyDeck                 JSON
+     POST /v1/anki.deckPositionCount               JSON
+     POST /v1/anki.deckPositionIds                 JSON
      POST /v1/anki.deckPositions                   NDJSON
      POST /v1/anki.deckStats                       JSON
      POST /v1/anki.deleteDeck                      JSON
      POST /v1/anki.forecast                        JSON
+     POST /v1/anki.indexOfDeckPosition             JSON
      POST /v1/anki.linkedCard                      JSON
      POST /v1/anki.listDecks                       NDJSON
      POST /v1/anki.nextCard                        JSON

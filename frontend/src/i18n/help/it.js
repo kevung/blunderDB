@@ -275,7 +275,7 @@ export default {
 <p>Una raccolta viva la cui interrogazione porta un token che questa versione non conosce più <strong>rifiuta di aprirsi</strong> e lo dice, invece di restituire l'intera base. È l'unico guasto che un filtro salvato non deve avere: allargarsi in silenzio.</p>
 <h3>Pannello Match</h3>
 <p>Il pannello <strong>Match</strong> (<em>CTRL-Tab</em>) elenca i match importati. Fare doppio clic su un match (o premere <em>INVIO</em>) per navigare tra le sue mosse. Il comando <code>m</code> riprende la navigazione nell'ultimo match visitato.</p>
-<p>Il campo di filtro, in alto nel pannello (<em>/</em> per andarci, <em>Esc</em> per cancellarlo), mantiene solo i match in cui un giocatore, l'evento, il luogo, il torneo o la data contiene il testo digitato. Filtro e ordinamento delle colonne sono eseguiti dal database: la lista si carica a pagine durante lo scorrimento e il contatore «n / N match» indica la parte caricata. Correggere un giocatore, una data o un torneo nella lista aggiorna solo la riga modificata.</p>
+<p>Il campo filtro, in alto nel pannello (<em>/</em> per andarci, <em>Esc</em> per cancellarlo), mantiene solo le partite in cui un giocatore, l'evento, il luogo, il torneo o la data contiene il testo digitato. Il filtro e l'ordinamento delle colonne sono eseguiti dal database: l'elenco si carica a pagine durante lo scorrimento e il contatore «n / N partite» indica la parte caricata. Correggere un giocatore, una data o un torneo nell'elenco aggiorna solo la riga modificata.</p>
 <p>L'utente può:</p>
 <ul>
 <li>scorrere le mosse di un match usando i tasti <em>SINISTRA</em> e <em>DESTRA</em>,</li>
@@ -1386,7 +1386,7 @@ export default {
 </tr>
 <tr>
 <td>/</td>
-<td>Andare al campo di filtro (giocatore, evento, torneo, data). <em>Esc</em> cancella il filtro.</td>
+<td>Vai al campo filtro (giocatore, evento, torneo, data). <em>Esc</em> cancella il filtro.</td>
 </tr>
 <tr>
 <td>Esc</td>
