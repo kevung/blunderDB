@@ -495,7 +495,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 						encoded, encErr := encodeAnalysisForStorage(merged)
 						if encErr != nil {
 							slog.Warn("encoding merged analysis for position", "positionID", existingPositionID, "err", encErr)
-						} else if _, err = tx.Exec(`UPDATE analysis SET data = ? WHERE position_id = ?`, encoded, existingPositionID); err != nil {
+						} else if _, err = tx.Exec(`UPDATE analysis SET data = ?, analysis_engine = NULL WHERE position_id = ?`, encoded, existingPositionID); err != nil {
 							slog.Warn("updating analysis for position", "positionID", existingPositionID, "err", err)
 						} else {
 							hasMerged = true
@@ -603,6 +603,11 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	// Commit the transaction - this makes all changes atomic
 	err = tx.Commit()
 	if err != nil {
+		return nil, err
+	}
+	// The rows written above carry their blob alone; derive their provenance
+	// now rather than on the next open.
+	if err := d.backfillAnalysisProvenance(ctx); err != nil {
 		return nil, err
 	}
 

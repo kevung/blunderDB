@@ -75,6 +75,12 @@ var schemaStatements = []string{
 		-- rather than inside a match. Sticky — see ADR-0001.
 		individually_imported INTEGER NOT NULL DEFAULT 0,
 		flagged INTEGER NOT NULL DEFAULT 0,
+		-- Date of the earliest match that reaches this position (2.30.0), in
+		-- the text form match.match_date holds; NULL when no match reaches
+		-- it. Denormalised so a date filter reads one indexed column instead
+		-- of joining move, game and match; the match store keeps it true when
+		-- a move is written, a match date is edited or a match is deleted.
+		match_date DATETIME,
 		CHECK (dice_1 BETWEEN 0 AND 6),
 		CHECK (dice_2 BETWEEN 0 AND 6),
 		-- cube_value is the EXPONENT (0 = cube at 1), never negative.
@@ -100,6 +106,14 @@ var schemaStatements = []string{
 		player2_backgammon_rate     INTEGER,
 		is_forced                   INTEGER NOT NULL DEFAULT 0,
 		is_close_cube               INTEGER NOT NULL DEFAULT 0,
+		-- Provenance of the verdict (2.30.0, engine.AnalysisProvenance): the
+		-- engine label, the depth as domain.AnalysisDepthRank, and the blob's
+		-- CreationDate. NULL analysis_engine means "not derived yet": a row
+		-- written before the column, or by a path that writes the blob alone;
+		-- the open-time pass (database.backfillAnalysisProvenance) fills it.
+		analysis_engine             TEXT,
+		analysis_depth              INTEGER,
+		creation_date               DATETIME,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`,
 	`CREATE TABLE IF NOT EXISTS comment (
@@ -167,6 +181,25 @@ var schemaStatements = []string{
 		-- JSON rather than columns because the report gains figures over time
 		-- and each one would otherwise be a schema bump.
 		counts TEXT NOT NULL DEFAULT '{}'
+	)`,
+	// One row per file a batch met (2.30.0): what it was (path, size, mtime,
+	// SHA-256) and what it gave. outcome is new | duplicate | enriched |
+	// error; match_id is the new match, or the match that covers a duplicate;
+	// error holds the message. A resumed batch skips a file already listed
+	// with the same path, size and mtime. Import data, never a reading mark
+	// (ADR-0007).
+	`CREATE TABLE IF NOT EXISTS import_batch_file (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		batch_id INTEGER NOT NULL,
+		path     TEXT    NOT NULL,
+		size     INTEGER NOT NULL DEFAULT 0,
+		mtime    DATETIME,
+		sha256   TEXT    NOT NULL DEFAULT '',
+		outcome  TEXT    NOT NULL DEFAULT '',
+		match_id INTEGER,
+		error    TEXT    NOT NULL DEFAULT '',
+		FOREIGN KEY(batch_id) REFERENCES import_batch(id) ON DELETE CASCADE,
+		FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE SET NULL
 	)`,
 	`CREATE TABLE IF NOT EXISTS match (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -386,6 +419,21 @@ var schemaStatements = []string{
 	// show a Collection, a Position, both or neither. A deleted Collection or
 	// Position leaves the Step and its text; deleting the Lesson takes its
 	// Steps. A Position a Step shows is held (positionIsHeldSQL).
+	// Other spellings of one player or one event (2.30.0): alias → the
+	// canonical name the import, the stats and the search read instead.
+	// Names, not ids: a match stores its players and its event as text.
+	`CREATE TABLE IF NOT EXISTS player_alias (
+		alias      TEXT PRIMARY KEY,
+		canonical  TEXT NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_player_alias_canonical ON player_alias(canonical)`,
+	`CREATE TABLE IF NOT EXISTS event_alias (
+		alias      TEXT PRIMARY KEY,
+		canonical  TEXT NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_event_alias_canonical ON event_alias(canonical)`,
 	`CREATE TABLE IF NOT EXISTS lesson (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT NOT NULL,
@@ -533,9 +581,11 @@ var schemaStatements = []string{
 	`CREATE INDEX IF NOT EXISTS idx_anki_review_log_card ON anki_review_log(card_id, reviewed_at)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_review_log_deck ON anki_review_log(deck_id, reviewed_at)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist        ON position(zobrist_hash)`,
-	`CREATE        INDEX IF NOT EXISTS idx_position_decision_pip   ON position(decision_type, pip_diff)`,
-	`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice  ON position(decision_type, dice_1, dice_2)`,
-	`CREATE        INDEX IF NOT EXISTS idx_position_cube_response  ON position(decision_type, is_cube_response)`,
+	// No index leads with decision_type (2.30.0): it splits the library in
+	// two, and a filter on it ran slower through such an index than through
+	// the table (tasks/search-query-plans.txt). Only the take/pass side of
+	// is_cube_response is selective.
+	`CREATE        INDEX IF NOT EXISTS idx_position_cube_take      ON position(is_cube_response) WHERE is_cube_response = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_individual     ON position(individually_imported) WHERE individually_imported = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_flagged        ON position(flagged) WHERE flagged = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
@@ -569,8 +619,15 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_position_game_phase     ON position(game_phase)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_game_type      ON position(game_type)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon1    ON analysis(player1_backgammon_rate)`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_win2           ON analysis(player2_win_rate)`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon2        ON analysis(player2_gammon_rate)`,
+	// The player-2 twin of idx_analysis_win_gammon_covering, for the same
+	// IN-subquery (sqlshared/search.go).
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon2_covering ON analysis(player2_win_rate, player2_gammon_rate, position_id)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_engine         ON analysis(analysis_engine)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_depth          ON analysis(analysis_depth)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_creation_date  ON analysis(creation_date)`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_match_date     ON position(match_date)`,
+	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_batch ON import_batch_file(batch_id)`,
+	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_path  ON import_batch_file(path, size, mtime)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon2    ON analysis(player2_backgammon_rate)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical         ON match(canonical_hash)`,
 	`CREATE        INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,

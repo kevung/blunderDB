@@ -300,13 +300,16 @@ func (s *matchStore) Update(ctx context.Context, scope string, id int64, player1
 		}
 		dateVal = t
 	}
-	if _, err := s.db.Exec(ctx,
-		`UPDATE match SET player1_name = $1, player2_name = $2, match_date = $3
-		 WHERE id = $4 AND tenant_id = $5`,
-		player1Name, player2Name, dateVal, id, tenantID(scope)); err != nil {
-		return fmt.Errorf("postgres: update match %d: %w", id, err)
-	}
-	return nil
+	tenant := tenantID(scope)
+	return s.inTx(ctx, fmt.Sprintf("update match %d", id), func(tx pgx.Tx) error {
+		if _, err := tx.Exec(ctx,
+			`UPDATE match SET player1_name = $1, player2_name = $2, match_date = $3
+			 WHERE id = $4 AND tenant_id = $5`,
+			player1Name, player2Name, dateVal, id, tenant); err != nil {
+			return err
+		}
+		return refreshMatchPositionDates(ctx, tx, tenant, id)
+	})
 }
 
 // ReplaceHeader rewrites a match's header columns in place — see
@@ -330,6 +333,9 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 	// stale id, which must not pass for a rewrite.
 	if tag.RowsAffected() == 0 {
 		return fmt.Errorf("postgres: replace match %d header: %w", id, storage.ErrNotFound)
+	}
+	if err := refreshMatchPositionDates(ctx, s.db, tenantID(scope), id); err != nil {
+		return fmt.Errorf("postgres: replace match %d header: %w", id, err)
 	}
 	return nil
 }
@@ -432,7 +438,7 @@ func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) 
 		if err := deleteOrphanedPositions(ctx, tx, tenant, positionIDs); err != nil {
 			return err
 		}
-		return nil
+		return refreshPositionMatchDates(ctx, tx, tenant, positionIDs)
 	})
 }
 
@@ -471,7 +477,7 @@ func (s *matchStore) DeleteGames(ctx context.Context, scope string, matchID int6
 			`DELETE FROM game WHERE match_id = $1 AND tenant_id = $2`, matchID, tenant); err != nil {
 			return err
 		}
-		return nil
+		return refreshPositionMatchDates(ctx, tx, tenant, positionIDs)
 	})
 	if err != nil {
 		return nil, err
@@ -886,7 +892,57 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 		return 0, fmt.Errorf("postgres: create move: %w", referenced(err))
 	}
 	mv.ID = id
+	if positionID != nil {
+		if _, err := s.db.Exec(ctx, positionMatchDateOnMoveSQL, mv.GameID, positionID, tenantID(scope)); err != nil {
+			return 0, fmt.Errorf("postgres: date position of move: %w", err)
+		}
+	}
 	return id, nil
+}
+
+// positionMatchDateOnMoveSQL lowers position.match_date to the date of the
+// match a new move ties the position to; see the SQLite twin for why it
+// compares instead of taking the MIN over the position's moves.
+const positionMatchDateOnMoveSQL = `UPDATE position SET match_date = d.md
+	FROM (SELECT m.match_date AS md FROM game g
+	        JOIN match m ON m.id = g.match_id AND m.tenant_id = g.tenant_id
+	       WHERE g.id = $1 AND g.tenant_id = $3) AS d
+	WHERE position.id = $2 AND position.tenant_id = $3 AND d.md IS NOT NULL
+	  AND (position.match_date IS NULL OR position.match_date > d.md)`
+
+// refreshPositionMatchDates recomputes position.match_date for ids from every
+// match that still reaches them: the exact form, for the rare edits that can
+// raise the date (a match deleted, its date changed, its games replaced).
+func refreshPositionMatchDates(ctx context.Context, db execer, tenant int64, ids []int64) error {
+	if len(ids) == 0 {
+		return nil
+	}
+	_, err := db.Exec(ctx, `UPDATE position SET match_date =
+		(SELECT MIN(m.match_date) FROM move mv
+		   JOIN game g  ON g.id = mv.game_id AND g.tenant_id = mv.tenant_id
+		   JOIN match m ON m.id = g.match_id AND m.tenant_id = g.tenant_id
+		  WHERE mv.position_id = position.id AND mv.tenant_id = position.tenant_id)
+		WHERE tenant_id = $1 AND id = ANY($2)`, tenant, ids)
+	if err != nil {
+		return fmt.Errorf("refresh position match dates: %w", err)
+	}
+	return nil
+}
+
+// refreshMatchPositionDates re-dates every position matchID reaches.
+func refreshMatchPositionDates(ctx context.Context, db execer, tenant, matchID int64) error {
+	_, err := db.Exec(ctx, `UPDATE position SET match_date =
+		(SELECT MIN(m.match_date) FROM move mv
+		   JOIN game g  ON g.id = mv.game_id AND g.tenant_id = mv.tenant_id
+		   JOIN match m ON m.id = g.match_id AND m.tenant_id = g.tenant_id
+		  WHERE mv.position_id = position.id AND mv.tenant_id = position.tenant_id)
+		WHERE tenant_id = $1 AND id IN (SELECT mv.position_id FROM move mv
+		   JOIN game g ON g.id = mv.game_id AND g.tenant_id = mv.tenant_id
+		  WHERE g.match_id = $2 AND mv.tenant_id = $1 AND mv.position_id IS NOT NULL)`, tenant, matchID)
+	if err != nil {
+		return fmt.Errorf("refresh position match dates: %w", err)
+	}
+	return nil
 }
 
 // Moves streams the moves of a game ordered by move number.

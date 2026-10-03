@@ -290,7 +290,7 @@ func mergeRolloutsIntoTx(ctx context.Context, tx *sql.Tx, keepID int64, rollouts
 	if err != nil {
 		return fmt.Errorf("encode analysis: %w", err)
 	}
-	_, err = tx.ExecContext(ctx, `UPDATE analysis SET data = ? WHERE position_id = ?`, encoded, keepID)
+	_, err = tx.ExecContext(ctx, `UPDATE analysis SET data = ?, analysis_engine = NULL WHERE position_id = ?`, encoded, keepID)
 	return err
 }
 

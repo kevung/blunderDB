@@ -56,15 +56,16 @@ func newTxImpl(tx *sql.Tx) *txImpl {
 // rather than once per row. Statements built at run time (IN lists, search
 // filters) are not cached: their text varies, so a cache would only grow.
 var hotStatements = map[string]bool{
-	positionInsertSQL:      true,
-	positionIDByHashSQL:    true,
-	markFlaggedSQL:         true,
-	markIndividualSQL:      true,
-	analysisMergeSelectSQL: true,
-	analysisUpsertSQL:      true,
-	cubeResponseSQL:        true,
-	playedActionsSQL:       true,
-	moveInsertSQL:          true,
+	positionInsertSQL:          true,
+	positionIDByHashSQL:        true,
+	markFlaggedSQL:             true,
+	markIndividualSQL:          true,
+	analysisMergeSelectSQL:     true,
+	analysisUpsertSQL:          true,
+	cubeResponseSQL:            true,
+	playedActionsSQL:           true,
+	moveInsertSQL:              true,
+	positionMatchDateOnMoveSQL: true,
 }
 
 // stmtTx is the execer of a transaction: a *sql.Tx whose hotStatements are

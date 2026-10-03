@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // GetAllMatches returns all matches from the database
@@ -334,6 +335,10 @@ func (d *Database) DeleteMatch(matchID int64) error {
 	if err := deleteOrphanedPositions(tx, positionIDs); err != nil {
 		return err
 	}
+	// The survivors may have been dated by this match.
+	if err := sqlite.RefreshPositionMatchDates(context.Background(), tx, positionIDs); err != nil {
+		return err
+	}
 
 	return tx.Commit()
 }
@@ -607,14 +612,33 @@ func (d *Database) UpdateMatch(matchID int64, player1Name, player2Name, matchDat
 		dateVal = nil
 	}
 
-	_, err := d.db.Exec(
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	if _, err := tx.Exec(
 		`UPDATE match SET player1_name = ?, player2_name = ?, match_date = ? WHERE id = ?`,
 		strings.TrimSpace(player1Name),
 		strings.TrimSpace(player2Name),
 		dateVal,
 		matchID,
-	)
-	return err
+	); err != nil {
+		return err
+	}
+	positionIDs, err := queryInt64s(tx, `
+		SELECT DISTINCT m.position_id
+		FROM move m
+		INNER JOIN game g ON m.game_id = g.id
+		WHERE g.match_id = ? AND m.position_id IS NOT NULL
+	`, matchID)
+	if err != nil {
+		return err
+	}
+	if err := sqlite.RefreshPositionMatchDates(context.Background(), tx, positionIDs); err != nil {
+		return err
+	}
+	return tx.Commit()
 }
 
 // SwapMatchPlayers swaps the two players in a match: player1 becomes player2 and vice versa.

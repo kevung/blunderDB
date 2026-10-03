@@ -69,8 +69,6 @@ func TestSchemaV200_Indexes(t *testing.T) {
 
 	wantIndexes := []string{
 		"idx_position_zobrist",
-		"idx_position_decision_pip",
-		"idx_position_decision_dice",
 		"idx_position_pip_diff",
 		"idx_position_dice",
 		"idx_position_off",
@@ -79,6 +77,11 @@ func TestSchemaV200_Indexes(t *testing.T) {
 		"idx_analysis_win_gammon_covering",
 		"idx_analysis_cube_error",
 		"idx_analysis_move_error",
+		"idx_analysis_win_gammon2_covering",
+		"idx_analysis_engine",
+		"idx_analysis_depth",
+		"idx_analysis_creation_date",
+		"idx_position_match_date",
 		"idx_move_position",
 		"idx_move_game",
 		"idx_game_match",
