@@ -217,7 +217,7 @@ func (s *collectionStore) AddPositions(ctx context.Context, scope string, collec
 		return nil
 	})
 	if err != nil {
-		return fmt.Errorf("postgres: add positions to collection %d: %w", collectionID, err)
+		return fmt.Errorf("postgres: add positions to collection %d: %w", collectionID, referenced(err))
 	}
 	return nil
 }
@@ -227,8 +227,8 @@ func (s *collectionStore) RemovePosition(ctx context.Context, scope string, coll
 	tenant := tenantID(scope)
 	err := withTx(ctx, s.db, func(tx execer) error {
 		if _, err := tx.Exec(ctx,
-			`DELETE FROM collection_position WHERE collection_id = $1 AND position_id = $2`,
-			collectionID, positionID); err != nil {
+			`DELETE FROM collection_position WHERE collection_id = $1 AND position_id = $2 AND tenant_id = $3`,
+			collectionID, positionID, tenant); err != nil {
 			return err
 		}
 		if _, err := tx.Exec(ctx,
@@ -250,8 +250,8 @@ func (s *collectionStore) RemovePositions(ctx context.Context, scope string, col
 	err := withTx(ctx, s.db, func(tx execer) error {
 		for _, positionID := range positionIDs {
 			if _, err := tx.Exec(ctx,
-				`DELETE FROM collection_position WHERE collection_id = $1 AND position_id = $2`,
-				collectionID, positionID); err != nil {
+				`DELETE FROM collection_position WHERE collection_id = $1 AND position_id = $2 AND tenant_id = $3`,
+				collectionID, positionID, tenant); err != nil {
 				return err
 			}
 		}
@@ -276,8 +276,8 @@ func (s *collectionStore) ReorderPositions(ctx context.Context, scope string, co
 		for i, positionID := range positionIDs {
 			if _, err := tx.Exec(ctx,
 				`UPDATE collection_position SET sort_order = $1
-				 WHERE collection_id = $2 AND position_id = $3`,
-				i, collectionID, positionID); err != nil {
+				 WHERE collection_id = $2 AND position_id = $3 AND tenant_id = $4`,
+				i, collectionID, positionID, tenant); err != nil {
 				return err
 			}
 		}
@@ -300,8 +300,8 @@ func (s *collectionStore) MovePosition(ctx context.Context, scope string, fromCo
 	tenant := tenantID(scope)
 	err := withTx(ctx, s.db, func(tx execer) error {
 		if _, err := tx.Exec(ctx,
-			`DELETE FROM collection_position WHERE collection_id = $1 AND position_id = $2`,
-			fromCollectionID, positionID); err != nil {
+			`DELETE FROM collection_position WHERE collection_id = $1 AND position_id = $2 AND tenant_id = $3`,
+			fromCollectionID, positionID, tenant); err != nil {
 			return err
 		}
 		if err := addPositionTx(ctx, tx, tenant, toCollectionID, positionID); err != nil {
