@@ -441,6 +441,10 @@ résultat, appairer, créer un événement) ne le sont que sous ``serve --direct
   avec ``{"id": N}``. ``rencontres.pageHtml`` rend la page murale de l'événement,
   un document HTML autonome dans le champ ``html`` : un écran mural l'affiche
   et la relit périodiquement.
+* ``rencontres.ranking`` rend le classement de saison, comme ``blunderdb
+  tournament ranking --season`` : ``rencontreId``, ``from``, ``to``, ``points``,
+  ``participation`` et ``elo``, tous facultatifs ; sans ``rencontreId`` ni
+  période, tous les tournois dirigés du tenant comptent.
 
 Les pages sont rendues en français, la langue du moteur de direction. Un
 tournoi qui n'est pas dirigé, ou qui appartient à un autre tenant, répond

@@ -202,6 +202,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/rencontres.get                       JSON  (ETag)
      POST /v1/rencontres.list                      JSON  (ETag)
      POST /v1/rencontres.pageHtml                  JSON  (ETag)
+     POST /v1/rencontres.ranking                   JSON
      POST /v1/rencontres.setBreaks                 JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.setEventRooms             JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.setTableOutOfService      JSON  (Idempotency-Key)  (If-Match)

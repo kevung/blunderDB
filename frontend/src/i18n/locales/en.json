@@ -2260,6 +2260,20 @@
             "forget": "Stop writing",
             "error": "The display page could not be written."
         },
+        "season": {
+            "title": "Season ranking",
+            "hint": "The event's closed tournaments: each place earns the scale's points (winner first); tied players share the mean of their places. A person is recognised by name.",
+            "points": "Scale",
+            "elo": "Club Elo",
+            "compute": "Compute",
+            "copy": "Copy as CSV",
+            "copied": "Copied",
+            "rank": "Rank",
+            "player": "Player",
+            "total": "Points",
+            "played": "Tournaments",
+            "empty": "No closed tournament in this event."
+        },
         "sheet": {
             "print": "Print the sheet",
             "hint": "The round's pairing sheet, to put on the welcome desk. The print dialog opens by itself.",

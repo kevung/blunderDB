@@ -294,6 +294,8 @@ var databaseParity = map[string]parityEntry{
 	"SinceLastGesture":                  {Why: whyDirection},
 	"Standings":                         {Server: "/v1/directions.standings", Why: whyDirectionRead},
 	"StandingsCSV":                      {CLI: "tournament standings", Server: "/v1/directions.standingsCsv"},
+	"SeasonRanking":                     {CLI: "tournament ranking", Server: "/v1/rencontres.ranking"},
+	"SeasonCSV":                         {CLI: "tournament ranking", Why: "the CSV rendering of SeasonRanking; the daemon returns the same rows as JSON"},
 	"CancelMatch":                       {Server: "/v1/directions.cancelMatch", Why: whyDirectionGesture},
 	"EnterParticipants":                 {Server: "/v1/directions.enterParticipants", Why: whyDirectionGesture},
 	"EntrySuggestions":                  {Why: whyDirection},

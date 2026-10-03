@@ -203,6 +203,11 @@ func (s *Server) rencontreReadRoutes() []route {
 			html, err := svc(scope).RencontrePageHTML(ctx, req.ID)
 			return htmlResp{HTML: html}, err
 		})},
+		// The season ranking reads every member and is never cached: an unfinished event can
+		// close between two calls, and no single version covers a period.
+		{http.MethodPost, "/v1/rencontres.ranking", rpc(func(ctx context.Context, scope string, req service.SeasonQuery) (*service.SeasonView, error) {
+			return svc(scope).SeasonRanking(ctx, req)
+		})},
 		// The room view (Salle) joins here, as one more conditional read keyed by
 		// rencontreReq: its version is the Rencontre's, which already covers every member.
 	}

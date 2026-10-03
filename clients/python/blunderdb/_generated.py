@@ -710,6 +710,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/rencontres.pageHtml — JSON."
         return self._call("/v1/rencontres.pageHtml", payload)
 
+    def rencontres_ranking(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.ranking — JSON."
+        return self._call("/v1/rencontres.ranking", payload)
+
     def rencontres_set_breaks(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/rencontres.setBreaks — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/rencontres.setBreaks", payload, if_match=if_match, idempotency_key=idempotency_key)

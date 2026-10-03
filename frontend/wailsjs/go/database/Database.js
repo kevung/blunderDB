@@ -982,6 +982,14 @@ export function SearchComments(arg1) {
   return window['go']['database']['Database']['SearchComments'](arg1);
 }
 
+export function SeasonCSV(arg1) {
+  return window['go']['database']['Database']['SeasonCSV'](arg1);
+}
+
+export function SeasonRanking(arg1) {
+  return window['go']['database']['Database']['SeasonRanking'](arg1);
+}
+
 export function SetAnkiCardSuspended(arg1, arg2) {
   return window['go']['database']['Database']['SetAnkiCardSuspended'](arg1, arg2);
 }

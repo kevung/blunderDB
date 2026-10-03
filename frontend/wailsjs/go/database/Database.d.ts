@@ -506,6 +506,10 @@ export function SaveTrainingSession(arg1:storage.TrainingSession):Promise<number
 
 export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
 
+export function SeasonCSV(arg1:service.SeasonQuery):Promise<string>;
+
+export function SeasonRanking(arg1:service.SeasonQuery):Promise<service.SeasonView>;
+
 export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetBeforeSwitch(arg1:any):Promise<void>;

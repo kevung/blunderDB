@@ -4054,6 +4054,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/htmlResp"
+  /v1/rencontres.ranking:
+    post:
+      operationId: rencontres.ranking
+      tags: [rencontres]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/service_SeasonQuery"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_SeasonView"
+                nullable: true
   /v1/rencontres.setBreaks:
     post:
       operationId: rencontres.setBreaks
@@ -6646,6 +6664,12 @@ components:
     service_RencontreView:
       type: object
       description: "Opaque: see the Go type service.RencontreView (defined outside internal/server, not expanded here)."
+    service_SeasonQuery:
+      type: object
+      description: "Opaque: see the Go type service.SeasonQuery (defined outside internal/server, not expanded here)."
+    service_SeasonView:
+      type: object
+      description: "Opaque: see the Go type service.SeasonView (defined outside internal/server, not expanded here)."
     service_SlotRow:
       type: object
       description: "Opaque: see the Go type service.SlotRow (defined outside internal/server, not expanded here)."

@@ -2260,6 +2260,20 @@
             "forget": "Dejar de escribir",
             "error": "No se ha podido escribir la página de la pantalla."
         },
+        "season": {
+            "title": "Clasificación de temporada",
+            "hint": "Los torneos cerrados del evento: cada puesto otorga los puntos del baremo (ganador primero); los empatados se reparten la media de sus puestos. Una persona se reconoce por su nombre.",
+            "points": "Baremo",
+            "elo": "Elo de club",
+            "compute": "Calcular",
+            "copy": "Copiar en CSV",
+            "copied": "Copiado",
+            "rank": "Puesto",
+            "player": "Jugador",
+            "total": "Puntos",
+            "played": "Torneos",
+            "empty": "Ningún torneo cerrado en este evento."
+        },
         "sheet": {
             "print": "Imprimir la hoja",
             "hint": "La hoja de emparejamientos de la ronda, para dejar en la mesa de recepción. El diálogo de impresión se abre solo.",

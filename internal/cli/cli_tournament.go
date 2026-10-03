@@ -51,6 +51,7 @@ func (cli *CLI) tournamentHandlers() map[string]func([]string) error {
 		"list":      cli.runTournamentList,
 		"verify":    cli.runTournamentVerify,
 		"standings": cli.runTournamentStandings,
+		"ranking":   cli.runTournamentRanking,
 		"page":      cli.runTournamentPage,
 		"export":    cli.runTournamentExport,
 		"move":      cli.runTournamentMove,
@@ -82,6 +83,7 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  list       List the directed tournaments of the database")
 	fmt.Println("  verify     Replay a direction and report any remaining warning")
 	fmt.Println("  standings  Print the standings as CSV")
+	fmt.Println("  ranking    Print a season ranking over several tournaments (CSV or JSON)")
 	fmt.Println("  page       Write the standalone display page, or a Rencontre's wall page")
 	fmt.Println("  export     Print the raw event journal, replayable by the engine's tools")
 	fmt.Println("  move       Move a running match to another table, swapping with its occupant")
@@ -92,6 +94,7 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  blunderdb tournament list --db base.db")
 	fmt.Println("  blunderdb tournament verify --db base.db --id 3")
 	fmt.Println("  blunderdb tournament standings --db base.db --id 3 > classement.csv")
+	fmt.Println("  blunderdb tournament ranking --db base.db --season --from 2026-01-01 --to 2026-12-31")
 	fmt.Println("  blunderdb tournament page --db base.db --id 3 --out /tmp/affichage")
 	fmt.Println("  blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle")
 	fmt.Println("  blunderdb tournament export --db base.db --id 3 > journal.json")
@@ -213,6 +216,60 @@ func (cli *CLI) runTournamentStandings(args []string) error {
 	}
 	_, err = os.Stdout.WriteString(body)
 	return err
+}
+
+// ── ranking ──────────────────────────────────────────────────────────────────
+
+// runTournamentRanking prints the season ranking: the places of several finished tournaments
+// turned into points and summed per person (ADR-0061).
+func (cli *CLI) runTournamentRanking(args []string) error {
+	fs, dbPath := tournamentFlagSet("ranking", "Print a season ranking: the finished tournaments of a Rencontre or a period, scored by place.",
+		"blunderdb tournament ranking --db base.db --season --from 2026-01-01 --to 2026-12-31",
+		"blunderdb tournament ranking --db base.db --season --rencontre 1 --points 10,6,4 --elo --format json")
+	season := fs.Bool("season", false, "Rank over several tournaments (required: a single tournament is `standings`)")
+	rencontre := fs.Int64("rencontre", 0, "Only the tournaments of this Rencontre")
+	from := fs.String("from", "", "First tournament date, YYYY-MM-DD, inclusive")
+	to := fs.String("to", "", "Last tournament date, YYYY-MM-DD, inclusive")
+	points := fs.String("points", "", "Points by place, comma-separated, winner first (default 25,18,15,12,10,8,6,4,2,1)")
+	participation := fs.Float64("participation", 0, "Points added for every finished tournament played")
+	elo := fs.Bool("elo", false, "Add a club Elo replayed over the season's matches (FIBS formula, start 1500)")
+	format := fs.String("format", "csv", "Output format: csv or json")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if !*season {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --season (one tournament's standings: tournament standings)")
+	}
+	q := database.SeasonQuery{RencontreID: *rencontre, From: *from, To: *to, Participation: *participation, Elo: *elo}
+	if *points != "" {
+		for _, f := range strings.Split(*points, ",") {
+			p, err := strconv.ParseFloat(strings.TrimSpace(f), 64)
+			if err != nil {
+				return fmt.Errorf("--points: %q is not a number", f)
+			}
+			q.Points = append(q.Points, p)
+		}
+	}
+	switch *format {
+	case "csv":
+		body, err := cli.db.SeasonCSV(q)
+		if err != nil {
+			return err
+		}
+		_, err = os.Stdout.WriteString(body)
+		return err
+	case "json":
+		v, err := cli.db.SeasonRanking(q)
+		if err != nil {
+			return err
+		}
+		enc := json.NewEncoder(os.Stdout)
+		enc.SetIndent("", "  ")
+		return enc.Encode(v)
+	default:
+		return fmt.Errorf("--format: %q is neither csv nor json", *format)
+	}
 }
 
 // ── page ─────────────────────────────────────────────────────────────────────
