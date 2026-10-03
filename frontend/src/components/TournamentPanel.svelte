@@ -1,4 +1,5 @@
 <script>
+    import { confirmAction } from '../services/confirmService.js';
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
@@ -255,7 +256,7 @@
 
     async function deleteTournamentEntry(tournament, event) {
         event.stopPropagation();
-        if (!confirm(get(t)('tournament.confirmDelete', { name: tournament.name }))) return;
+        if (!(await confirmAction(get(t)('tournament.confirmDelete', { name: tournament.name }), { confirmLabel: get(t)('common.delete') }))) return;
         try {
             await DeleteTournament(tournament.id);
             await loadTournaments();
@@ -448,6 +449,8 @@
 
     function handleKeyDown(event) {
         if (!visible) return;
+        // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
+        if (event.defaultPrevented) return;
 
         // Let Ctrl/Meta combos, Space, '?' and typing in an editable field pass
         // through to the global handler — see keyboardService.panelKeyGuard.

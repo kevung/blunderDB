@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Seuls les fichiers qui apparaissent sont importés.</strong> Ce que le dossier contient déjà au moment où la surveillance démarre est enregistré comme connu et laissé tranquille : pointer une surveillance sur quatre ans de matchs ne doit pas les importer tous. Pour importer ce qui est là, utilisez l'import de dossier, qui existe pour cela — et les deux se composent très bien, l'import d'abord, la surveillance ensuite.</li>
 <li><strong>Un fichier n'est importé qu'une fois sa taille stable.</strong> Un match qu'un autre programme est en train d'écrire grossit d'un coup d'œil à l'autre ; l'importer à moitié écrit donnerait une erreur d'analyse syntaxique sur laquelle personne ne peut agir. blunderDB attend donc de voir deux fois le même fichier inchangé.</li>
-<li><strong>L'import est silencieux.</strong> Vous étiez en train d'étudier une position quand vos matchs sont arrivés : vous reprendre l'écran serait le pire moment. L'import se fait sans fenêtre, et la barre d'état affiche un bandeau donnant le compte des matchs importés, ignorés (doublons) et en échec, avec un bouton qui ouvre le compte rendu complet si vous le souhaitez. Tout le reste est identique à un import manuel : mêmes doublons détectés, même lot d'import, même analyse automatique si elle est activée.</li>
+<li><strong>L'import est silencieux.</strong> Vous étiez en train d'étudier une position quand vos matchs sont arrivés : vous reprendre l'écran serait le pire moment. Le mode, la recherche active, l'onglet et la position affichée ne bougent pas ; la liste des positions n'est pas rechargée et montre les nouveaux matchs au prochain rechargement. L'import se fait sans fenêtre, et la barre d'état affiche un bandeau donnant le compte des matchs importés, ignorés (doublons) et en échec, avec un bouton qui ouvre le compte rendu complet si vous le souhaitez. Tout le reste est identique à un import manuel : mêmes doublons détectés, même lot d'import, même analyse automatique si elle est activée.</li>
 </ul>
 <p>L'intervalle par défaut est de dix secondes ; le plancher est de deux. Le dossier n'est pas parcouru récursivement : un dossier surveillé est l'endroit où un outil dépose ses matchs, pas une arborescence à explorer. Un partage réseau démonté n'arrête pas la surveillance et ne fait pas non plus passer son contenu pour nouveau à son retour.</p>
 <p>La même surveillance existe en ligne de commande, avec <code>blunderdb import --type batch --dir &lt;dossier&gt; --watch</code> (voir Interface en ligne de commande (CLI)) : c'est la forme qu'un serveur, une tâche planifiée ou un script peuvent utiliser.</p>
@@ -182,14 +182,19 @@ export default {
 <p>Les flèches choisissent, <em>ENTREE</em> lance, <em>ECHAP</em> referme. Une commande se lance comme si elle avait été tapée ; <code>s</code> et <code>ss</code> ouvrent la ligne de commande pour y écrire les filtres ; un filtre se lance comme d'un double-clic dans la bibliothèque ; un match s'ouvre comme d'un double-clic dans le panneau Matchs.</p>
 <p>Quand une Direction est ouverte, la palette y ajoute le tournoi : joueurs, tables, matchs en cours et épreuves (voir la recherche rapide).</p>
 <h3>Panneau Analyse</h3>
-<p>Le panneau <strong>Analyse</strong> (<em>CTRL-L</em>) affiche les données d'analyse de la position courante importées depuis eXtreme Gammon (XG), GNUbg ou BGBlitz. Il présente les meilleures alternatives (coups de pions ou décisions de videau) avec leurs valeurs d'équité et les erreurs correspondantes. La touche <em>d</em> bascule entre l'analyse des coups de pions et l'analyse du cube. Lors de la navigation dans un match, le coup effectivement joué est mis en évidence dans la liste des alternatives. Appuyer sur <em>CTRL-L</em> ou exécuter la commande <code>list</code> pour afficher ou masquer le panneau.</p>
+<p>Le panneau <strong>Analyse</strong> (<em>CTRL-L</em>) affiche les données d'analyse de la position courante importées depuis eXtreme Gammon (XG), GNUbg, BGBlitz ou gammonNet. Il présente les meilleures alternatives (coups de pions ou décisions de videau) avec leurs valeurs d'équité et les erreurs correspondantes. La touche <em>d</em> bascule entre l'analyse des coups de pions et l'analyse du cube. Lors de la navigation dans un match, le coup effectivement joué est mis en évidence dans la liste des alternatives. Appuyer sur <em>CTRL-L</em> ou exécuter la commande <code>list</code> pour afficher ou masquer le panneau.</p>
 <p>Sous les tableaux, une <strong>phrase</strong> dit parfois ce que la décision jouée a coûté et pourquoi : « Vous perdez 120 mMWC : le coup joué laisse trois blots là où 13/7 8/7 n'en laisse qu'un. » Elle est produite par six règles mesurables — l'exposition, un point du jan fait ou manqué, les chances de gammon abandonnées, une sécurité qui coûte plus qu'elle ne rapporte, et les deux sens d'une erreur de videau (doubler trop tard ou trop tôt, prendre trop large ou passer trop serré).</p>
 <p>La règle qui compte est celle du <strong>silence</strong> : la phrase n'apparaît que si une règle s'applique de façon confiante, et sur une erreur qui dépasse le seuil à partir duquel les moteurs s'accordent à dire qu'elle en est une. Le reste du temps, il n'y a pas de phrase — ni cadre vide, ni « nous ne savons pas ». Une explication fausse coûte plus cher que pas d'explication : elle apprend quelque chose d'inexact.</p>
+<p>La même phrase accompagne l'erreur là où vous venez de la commettre : au dos d'une <strong>carte Anki</strong>, sous l'analyse dévoilée, et dans le <strong>verdict du quiz</strong> de l'exercice Décision, sous le coût en mMWC. Les mêmes règles de silence y valent : un coup juste, ou une erreur qu'aucune règle n'explique, n'ajoute rien.</p>
 <p>Lorsqu'une position a été jugée par <strong>plusieurs moteurs</strong>, une bande en tête du panneau les met côte à côte : une ligne par moteur, avec sa profondeur et sa réponse — le verdict de videau, ou son propre meilleur coup. Elle dit d'abord s'ils sont d'accord, et c'est le désaccord qui la justifie : « XG dit double, prend ; gammonNet dit pas de double » se lit d'un coup d'œil, là où il fallait comparer deux tableaux en diagonale.</p>
 <p>Le meilleur coup d'un moteur est le meilleur <strong>de ce moteur</strong> : la liste des coups candidats est triée par équité, tous moteurs confondus, et son premier élément n'est donc le meilleur coup d'aucun d'eux en particulier.</p>
 <p>La bande n'apparaît que s'il y a effectivement plusieurs moteurs, et elle n'existe que dans ce panneau : le panneau Eval présente <strong>une</strong> décision, celle du moteur embarqué (<code>ADR-0017 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md&gt;</code>__), et une comparaison n'y aurait pas sa place.</p>
 <p>Les coups sont écrits comme on les lit sur le plateau, ici comme dans le panneau Eval : le pion le moins avancé bouge d'abord, et <strong>un pion qui enchaîne plusieurs dés ne s'écrit qu'une fois</strong> — un 64 joué avec le même pion se lit <code>24/14</code>, et <code>24/14*</code> s'il frappe en arrivant. Le détail de l'enchaînement ne réapparaît que lorsqu'il dit quelque chose de plus : une frappe <em>en cours de route</em> conserve son point de passage, <code>24/18* 18/14</code>, sans quoi la frappe en 18 disparaîtrait de la notation.</p>
 <p>L'équité d'une analyse importée suit la même règle que le panneau Eval : la colonne annonce son référentiel, « Équité (money) » ou « Équité (match) » selon le score de la position analysée, jamais un simple « Équité » muet sur l'échelle. Les règles <strong>Jacoby</strong> et <strong>Beaver</strong> actives sur une position en money game s'affichent, elles aussi, en badges sous le tableau de décision de videau.</p>
+<h4>Rollouts</h4>
+<p>Sous l'analyse, le panneau <strong>Analyse</strong> propose de <strong>rouler</strong> la position : jouer des centaines de parties à partir de chaque coup candidat, ou de chaque action de videau, pour départager deux choix que l'évaluation directe sépare à peine. Trois réglages : <strong>Rapide</strong> (216 parties, tronquées à 7 demi-coups), <strong>Standard</strong> (1296 parties, tronquées à 11 demi-coups) et <strong>Libre</strong>, où tous les paramètres s'éditent — troncature, parties minimum et maximum (multiples de 36), limite de JSD, profondeur (ply), nombre de candidats, graine et nombre de processus. Le bouton <strong>Lancer le rollout</strong>, la touche <em>r</em> du panneau ou la commande <code>rollout</code> (alias <code>ro</code>) le démarrent ; une barre de progression suit les parties jouées et <strong>Annuler</strong> (ou <em>r</em> de nouveau) l'arrête sans rien écrire.</p>
+<p>Le résultat est <strong>stocké à côté de l'analyse, jamais à sa place</strong> : une analyse importée n'est pas modifiée. Chaque rollout forme un bloc avec, par candidat, l'équité, l'intervalle de confiance à 95 %, la <strong>JSD</strong> (l'écart au meilleur coup en écarts-types de la différence : à partir de la limite, le coup est tranché et cesse d'être joué) et le nombre de parties. Le rollout s'arrête dès que les coups sont départagés. La <strong>Configuration</strong> — le moteur et la signature complète des paramètres — se déplie sous le tableau : deux rollouts de même signature sont les mêmes nombres. Un rollout joue le videau dans ses parties : le classement est fiable, l'équité absolue un peu moins, ce que le bloc rappelle. Une position qui n'est pas dans la base se roule, mais ne se stocke pas.</p>
+<p>Le bouton <strong>Sur la liste affichée…</strong> (ou <code>ro search</code>) roule, l'une après l'autre, les positions de la liste affichée — résultats de recherche, match ou collection — qui n'ont pas encore ce rollout ; une confirmation donne le total avant de commencer. Chaque position est écrite dès qu'elle est finie : annuler garde ce qui est fait, et relancer reprend où l'on s'est arrêté. L'avancement survit à la fermeture du panneau.</p>
 <h3>Panneau Commentaires</h3>
 <p>Le panneau <strong>Commentaires</strong> (<em>CTRL-P</em>) affiche, ajoute et modifie les commentaires associés à la position courante. Une position peut en porter plusieurs : ils sont tous affichés, du plus récent au plus ancien. Les commentaires importés depuis les fichiers XG sont automatiquement associés aux positions correspondantes. Appuyer sur <em>CTRL-P</em> ou exécuter la commande <code>comment</code> pour afficher ou masquer le panneau.</p>
 <p>Chaque commentaire venu d'un fichier porte une <strong>étiquette de provenance</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, ou <em>importé</em> lorsque la provenance n'a pas été enregistrée). Les commentaires que vous avez écrits n'en portent pas : c'est le cas courant, et le signaler à chaque ligne serait du bruit. Modifier un commentaire importé vous l'attribue : après la modification, la phrase est la vôtre.</p>
@@ -286,6 +291,7 @@ export default {
 <p>L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non : on voit sans l'ouvrir dans quelle partie se trouvent les blunders.</p>
 <p>Le bouton <strong>Fusionner les joueurs</strong> de la barre d'outils du panneau ouvre une fenêtre listant tous les noms de joueurs de la base avec leur nombre de matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le nom canonique à conserver, puis fusionner. Utile pour unifier les statistiques par joueur lorsqu'un même joueur apparaît sous plusieurs noms.</p>
 <p>Lorsqu'un match est ouvert, une <strong>barre d'informations</strong> apparaît au-dessus du plateau : elle rappelle les joueurs en présence (<em>joueur 1</em> contre <em>joueur 2</em>) ainsi que le contexte du match (événement, lieu, ronde, date et longueur du match, lorsque ces informations sont disponibles). Cette barre s'affiche aussi en dehors du mode match : lorsqu'une position étudiée (issue d'une recherche, d'une collection ou d'un accès direct) provient d'un ou de plusieurs matchs, elle en indique la <strong>provenance</strong> — le premier match concerné et, le cas échéant, un badge « +N » listant les autres au survol. Une position importée seule, qu'aucun match ne référence, n'affiche rien.</p>
+<p>Les onglets <strong>Recherche</strong> et <strong>Eval</strong> remplacent le plateau par un plateau de travail : un bandeau en haut du plateau le dit (« Plateau de recherche », « Plateau d'évaluation »), et la barre d'informations est masquée tant qu'elle décrirait une position qui n'est pas à l'écran. Le retour à l'analyse restaure la position étudiée.</p>
 <p>À l'ouverture d'une base contenant des matchs, le panneau <strong>Matchs</strong> est affiché d'emblée et la revue débute directement sur la première position, afin de commencer immédiatement la navigation.</p>
 <div class="admonition note">
 <p>Une base de données ne peut être ouverte en écriture que par une seule fenêtre à la fois. Si vous ouvrez une base déjà ouverte dans une autre fenêtre de blunderDB, elle s'ouvre en <strong>lecture seule</strong> : la navigation, la recherche et l'analyse restent possibles, mais toute modification est désactivée et la barre de titre affiche « [lecture seule] ».</p>
@@ -380,7 +386,7 @@ export default {
 <p>Avant <strong>Inscrire</strong>, l'aperçu d'un CSV collé liste les lignes illisibles — sans nom, sans séparateur quand les autres lignes en ont, cote qui n'est pas un nombre — et les doublons, dans le collage ou avec un joueur déjà inscrit. Un doublon n'est pas inscrit, sauf si on coche sa case.</p>
 <p>Un <strong>retardataire</strong> arrivé après le tirage prend une place d'exemption libre si le tableau en offre une, et l'interface écrit à côté du champ où il entrera avant qu'on valide. Sans place libre, il est inscrit quand même et la vue dit dans quelle phase il entrera. Aucun tirage déjà fait n'est refait.</p>
 <p>Un retrait se fait <em>maintenant</em> ou <em>après son match en cours</em>, selon que le joueur part tout de suite ou finit ce qu'il joue ; il se confirme.</p>
-<p>Un joueur qui manque une ronde n'a pas besoin d'être retiré : <strong>Absenter</strong>, sur sa ligne, ouvre un petit formulaire sous son nom — <em>jusqu'à</em> une heure (pré-remplie sur l'heure qui suit), ou, quand la phase en cours est un suisse par rondes, <em>jusqu'à la ronde</em> portant son numéro. Le moteur cesse alors de l'apparier, mais son rang, ses vies et sa place au tableau restent ceux qu'il a gagnés — l'absence n'est pas un forfait. <strong>Revenir</strong>, sur sa ligne, lève l'absence en un clic, avant l'échéance déclarée ou après.</p>
+<p>Un joueur qui manque une ronde n'a pas besoin d'être retiré : <strong>Marquer absent</strong>, sur sa ligne, ouvre un petit formulaire sous son nom — <em>jusqu'à</em> une heure (pré-remplie sur l'heure qui suit), ou, quand la phase en cours est un suisse par rondes, <em>jusqu'à la ronde</em> portant son numéro. Le moteur cesse alors de l'apparier, mais son rang, ses vies et sa place au tableau restent ceux qu'il a gagnés — l'absence n'est pas un forfait. <strong>Revenir</strong>, sur sa ligne, lève l'absence en un clic, avant l'échéance déclarée ou après.</p>
 <p>Corriger la fiche d'un joueur retiré — son nom, son club, sa cote — le laisse retiré. Son retour est un geste à part : <strong>Réinscrire</strong>, sur sa ligne. Il est de nouveau apparié, avec les résultats et les vies qu'il avait en partant ; les matchs perdus par forfait à son retrait le restent.</p>
 <h4>Arbres, emplacements, classement, historique</h4>
 <p>L'onglet <strong>Arbres</strong> dessine les tableaux avec leurs traits, de la première ronde à la finale, la consolante à côté du tableau principal, et, pour un suisse, le tableau des vies. Une poule s'y lit en résultats croisés. Un tableau pas encore tiré montre son squelette grisé. Un match déjà joué y porte son résultat ; un match que le moteur signale y est marqué sur place. Une pastille à côté du nom de l'onglet indique qu'un tableau est en cours.</p>
@@ -553,6 +559,15 @@ export default {
 <li>Le <strong>coût</strong> est la part du PR du filtre que le groupe représente : la formule du PR appliquée aux erreurs du groupe, rapportée à toutes les décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR.</li>
 </ul>
 <p>Cliquer sur un groupe charge ses positions, de la plus coûteuse à la moins coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré : comme le plan de jeu, c'est une étiquette dérivée, non modifiable. En ligne de commande : <code>blunderdb stats recurring</code> (voir stats — Erreurs récurrentes).</p>
+<p>Chaque ligne propose trois gestes pour passer de l'erreur à l'étude : <strong>Quiz sur ce groupe</strong> lance l'exercice Décision du panneau Entraînement sur les positions du groupe, <strong>Paquet Anki</strong> en fait un paquet de cartes, <strong>Collection</strong> les range dans une nouvelle collection. Au-dessus du tableau, <strong>Quiz de mes trois pires groupes</strong> tire vingt positions au hasard parmi celles des trois groupes les plus coûteux. En ligne de commande, <code>stats recurring --quiz</code> tire ces positions et <code>--deck</code> crée le paquet.</p>
+<h5>Entraînement dans le temps</h5>
+<p>L'onglet <strong>Entraînement</strong> met côte à côte, sur les mêmes fenêtres calendaires — la <strong>semaine</strong> ou le <strong>mois</strong>, au choix — trois séries qui mesurent la progression par trois chemins :</p>
+<ul>
+<li>le <strong>PR du quiz</strong> : celui des sessions de l'exercice Décision du panneau Entraînement, pondéré par le nombre de décisions jugées. Il est calculé sur l'échelle du PR réel, donc comparable à lui ;</li>
+<li>le <strong>PR des matchs</strong> du filtre courant, pondéré par le nombre de décisions ;</li>
+<li>la <strong>rétention Anki</strong> : la part des révisions de cartes déjà apprises notées <em>Difficile</em> ou mieux, lue sur l'axe de droite (en %).</li>
+</ul>
+<p>Entre parenthèses, le nombre de décisions ou de révisions derrière chaque valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas un zéro. Le filtre ne restreint que les matchs ; le journal du quiz et celui d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est enregistré en plus : les trois séries sont relues dans les journaux existants. En ligne de commande : <code>blunderdb stats training</code> (voir stats — Erreurs récurrentes).</p>
 <h5>Répartition par action de videau</h5>
 <p>Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision de videau : <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Chaque barre indique également le nombre de décisions et le taux de blunders en infobulle.</p>
 <p>Cliquer sur une barre charge les positions correspondant à cette action de videau, <strong>uniquement celles avec une erreur</strong> (drill-down).</p>
@@ -649,7 +664,7 @@ export default {
 <p>Dans cet onglet, la liste <strong>Joueur</strong> et le choix du <strong>type de décision</strong> sont désactivés : le tableau montre tous les joueurs, et il ventile déjà les décisions de pions et de videau en colonnes distinctes.</p>
 </div>
 <div class="admonition important">
-<p>Un tiret (« — ») signale une valeur <strong>jamais mesurée</strong>, à ne pas confondre avec zéro. C'est notamment le cas de la colonne Chance pour tout match importé avant la version 2.15.0 du schéma : la chance n'était alors pas conservée, et rien ne permet de la reconstituer après coup — il faut réimporter les fichiers source. Les formats qui ne la transportent pas (BGF, Jellyfish <code>.mat</code>) n'en fourniront jamais.</p>
+<p>Un tiret (« — ») signale une valeur <strong>jamais mesurée</strong>, à ne pas confondre avec zéro. C'est notamment le cas de la colonne Chance pour tout match importé avant la version 2.15.0 du schéma : la chance n'était alors pas conservée, et rien ne permet de la reconstituer après coup. Réimporter le fichier source ne suffit pas : l'import y reconnaît un doublon et n'en reprend que les marques. Il faut supprimer le match, puis le réimporter. Les formats qui ne la transportent pas (BGF, Jellyfish <code>.mat</code>) n'en fourniront jamais.</p>
 </div>
 <h4>Règle d'agrégation</h4>
 <div class="admonition important">
@@ -764,6 +779,7 @@ export default {
 <p><strong>Afficher la réponse :</strong> La carte pose une question — quel coup jouer, quelle action de videau, ou quels nombres porte un score. Réfléchissez, puis appuyez sur <em>ESPACE</em> (ou cliquez sur la zone masquée) pour dévoiler la réponse : l'analyse enregistrée de la position, telle que l'onglet Analyse la présente, ou la fiche du score, entière. Sur une fiche il n'y a rien à cocher : Anki planifie une mémoire, il ne mesure pas un calcul — c'est l'Entraînement qui compte les fautes. Elle apparaît sous les boutons d'évaluation, qui restent à leur place et à portée. Cliquer sur un coup de la liste le montre sur le plateau.</p>
 <p>Rien ne vous oblige à dévoiler la réponse pour évaluer : si vous êtes sûr de vous, les touches <em>1</em> à <em>4</em> restent actives. La réponse se remasque à la carte suivante, mais pas si vous changez simplement d'onglet — allez consulter le panneau Éval ou le commentaire de la position, elle vous attendra au retour.</p>
 <p>Une position dépourvue d'analyse enregistrée l'indique directement, sans zone masquée.</p>
+<p><strong>Répondre au damier.</strong> Par défaut, vous vous notez vous-même. Dans les Paramètres d'un paquet de positions, cochez <em>Répondre au damier</em> : pour une carte de pions, vous jouez alors le coup sur le damier, comme dans l'exercice Décision, puis <em>Valider</em>. Le moteur juge le coup contre l'analyse enregistrée, dévoile la réponse et <strong>propose une note</strong> : <em>Facile</em> pour une bonne réponse rapide, <em>Bien</em> pour une bonne réponse plus lente, <em>Difficile</em> pour une erreur sous le seuil du blunder, <em>À revoir</em> pour un blunder ou un coup illégal. La note proposée est en surbrillance ; vous gardez la main et notez ce que vous voulez avec <em>1</em> à <em>4</em>. Un coup légal que l'analyse ne classe pas ne propose rien. Les cartes de videau, les cartes de score et les paquets de fiches de score restent en auto-notation. Dévoiler la réponse sans jouer abandonne le coup.</p>
 <p><strong>Limiter la séance.</strong> Par défaut, une séance de révision va jusqu'au bout des cartes dues. Vous pouvez la borner à un nombre de cartes, par paquet, dans les Paramètres : cochez <em>Limiter la séance</em> et indiquez combien de cartes une séance doit servir. Quand la limite est atteinte, la séance s'arrête en le disant — le message distingue « limite atteinte, tant de cartes encore dues » d'une file réellement épuisée. Pour continuer malgré tout, l'entraînement libre est là : il sert d'autres positions sans rien modifier au planning.</p>
 <p>Une limite de <strong>0</strong> ne sert aucune carte : c'est un état à part entière, utile pour geler un paquet le temps de préparer un tournoi, et ce n'est pas la même chose que « pas de limite ». Le bouton <em>Study</em> est alors inactif.</p>
 <p>La limite porte sur la <strong>séance</strong>, pas sur la journée. Un paquet blunderDB est bâti sur une collection ou une recherche : c'est un corpus fini, introduit en quelques séances, dont le volume quotidien est déjà borné par sa taille. Un plafond par jour n'y mordrait jamais, ou bien créerait un retard sur un paquet qui tenait en une séance.</p>
@@ -792,6 +808,7 @@ export default {
 <li>la <strong>limite par question</strong> — aucune, 15, 30 ou 60 secondes.</li>
 </ul>
 <p>La source choisie est mémorisée pour chaque exercice, d'une session à l'autre.</p>
+<p>La liste parcourue peut venir des <em>erreurs récurrentes</em> du panneau Stats : un clic sur « Quiz sur ce groupe » la remplace par les positions du groupe et démarre l'exercice Décision.</p>
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> et <code>train decision</code> ouvrent le panneau et démarrent directement ; <code>train tp</code> et <code>train takepoint</code> sont des synonymes de <code>train scores</code>, <code>train epc</code> de <code>train bearoff</code>, <code>train quiz</code> de <code>train decision</code>.</p>
 <h4>Les cinq exercices</h4>
 <p><strong>Scores</strong> tire au sort l'un des 36 scores non ordonnés de 2 à 9 away et affiche une <strong>fiche de score</strong> : deux colonnes — <em>Vous</em> et <em>L'adversaire</em> — et sept lignes — le point de prise au videau 2 puis au videau 4, chacun en course longue et au dernier lancer, puis la valeur du gammon aux videaux 1, 2 et 4.</p>
@@ -988,8 +1005,12 @@ export default {
 <td>Recharger toutes les positions de la base de données.</td>
 </tr>
 <tr>
-<td>PageUp, h</td>
+<td>Home, h</td>
 <td>Première position / Partie précédente (navigation match).</td>
+</tr>
+<tr>
+<td>PageUp</td>
+<td>Recule d'une page de cent positions (au début de la liste, s'y arrête) ; dans un match, partie précédente.</td>
 </tr>
 <tr>
 <td>GAUCHE, k</td>
@@ -1008,8 +1029,12 @@ export default {
 <td>Coup suivant (lorsqu'un coup est sélectionné dans l'analyse).</td>
 </tr>
 <tr>
-<td>PageDown, l</td>
+<td>End, l</td>
 <td>Dernière position / Partie suivante (navigation match).</td>
+</tr>
+<tr>
+<td>PageDown</td>
+<td>Avance d'une page de cent positions (à la fin de la liste, s'y arrête) ; dans un match, partie suivante.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1287,6 +1312,10 @@ export default {
 <tr>
 <td>d</td>
 <td>Basculer entre l'analyse des coups et du cube (navigation match uniquement).</td>
+</tr>
+<tr>
+<td>r</td>
+<td>Lancer le rollout de la position avec le réglage choisi ; une seconde pression l'arrête.</td>
 </tr>
 <tr>
 <td>Esc</td>
@@ -1903,6 +1932,10 @@ export default {
 <td>Aller à la position d'indice indiqué.</td>
 </tr>
 <tr>
+<td>[number]%</td>
+<td>Aller à ce pourcentage de la liste : <code>0%</code> la première position, <code>50%</code> le milieu, <code>100%</code> la dernière.</td>
+</tr>
+<tr>
 <td>grid, gr</td>
 <td>Ouvre la planche-contact : la liste parcourue en grille de mini-plateaux, une page de vingt-quatre à la fois ; choisir une vignette ouvre sa position.</td>
 </tr>
@@ -1913,6 +1946,10 @@ export default {
 <tr>
 <td>comment, co</td>
 <td>Afficher/écrire des commentaires.</td>
+</tr>
+<tr>
+<td>rollout, ro [fast|standard]</td>
+<td>Lance le rollout de la position courante (réglage choisi dans le panneau Analyse, ou le préréglage nommé) et ouvre le panneau Analyse. <code>ro search [fast|standard]</code> le lance sur la liste affichée, après confirmation avec le total ; <code>ro stop</code> arrête le rollout en cours.</td>
 </tr>
 <tr>
 <td>history, hi</td>

@@ -676,399 +676,401 @@
     }
 </script>
 
-<Modal open={visible} onclose={onClose} size="medium" align="center" compactTitle closeOnOverlay>
+<Modal open={visible} onclose={onClose} size="wide" align="center" compactTitle closeOnOverlay>
     {#snippet title()}{$t('config.title')}{/snippet}
 
-    <div class="tabs" role="tablist">
-        {#each TABS as tab (tab.id)}
-            <button type="button" class="tab" class:active={activeTab === tab.id} role="tab" aria-selected={activeTab === tab.id} onclick={() => (activeTab = tab.id)}>
-                {$t(tab.labelKey)}
-            </button>
-        {/each}
-    </div>
-
-    <div class="tab-body">
-        {#if activeTab === 'interface'}
-            <!-- `system` par défaut : le bureau a déjà choisi clair ou sombre. -->
-            <div class="setting-row">
-                <label for="config-theme">{$t('config.theme')}</label>
-                <select id="config-theme" class="setting-select" value={$themeStore} onchange={(e) => setTheme(e.currentTarget.value)}>
-                    {#each THEME_NAMES as name (name)}
-                        <option value={name}>{$t(`config.theme_${name}`)}</option>
-                    {/each}
-                </select>
-            </div>
-            <p class="setting-note">{$t('config.themeNote')}</p>
-            <div class="setting-row">
-                <label for="config-language">{$t('config.language')}</label>
-                <select id="config-language" class="setting-select" value={$language} onchange={onLanguageChange}>
-                    {#each LOCALES as code (code)}
-                        <option value={code}>{LANGUAGE_LABELS[code]}</option>
-                    {/each}
-                </select>
-            </div>
-            <div class="setting-row">
-                <label for="config-ui-scale">{$t('config.uiScale')}</label>
-                <div class="scale-control">
-                    <input
-                        id="config-ui-scale"
-                        type="range"
-                        class="setting-range"
-                        min={MIN_UI_SCALE}
-                        max={MAX_UI_SCALE}
-                        step={UI_SCALE_STEP}
-                        value={$uiScaleStore}
-                        oninput={onUIScaleInput}
-                        onchange={onUIScaleChange}
-                    />
-                    <span class="scale-value">{$uiScaleStore}%</span>
-                </div>
-            </div>
-            <div class="setting-row">
-                <label for="config-panel-position">{$t('config.panelPosition')}</label>
-                <select id="config-panel-position" class="setting-select" value={$panelPositionStore} onchange={onPanelPositionChange}>
-                    {#each PANEL_POSITION_OPTIONS as opt (opt.value)}
-                        <option value={opt.value}>{$t(opt.labelKey)}</option>
-                    {/each}
-                </select>
-            </div>
-            <p class="setting-note">{$t('config.logsIntro')}</p>
-            <div class="tab-actions">
-                <button class="secondary-button" onclick={openLogsFolder}>{$t('config.logsButton')}</button>
-            </div>
-            <div class="setting-row">
-                <label for="config-check-for-updates">{$t('config.checkForUpdates')}</label>
-                <input id="config-check-for-updates" type="checkbox" checked={checkForUpdates} onchange={onCheckForUpdatesChange} />
-            </div>
-            <p class="setting-note">{$t('config.checkForUpdatesNote')}</p>
-            <div class="setting-row">
-                <label for="config-like-limit">{$t('config.likeLimit')}</label>
-                <input id="config-like-limit" type="number" class="setting-number" min="1" max={MAX_LIKE_LIMIT} value={likeLimit} onchange={onLikeLimitChange} />
-            </div>
-            <div class="setting-row">
-                <label for="config-like-max-distance">{$t('config.likeMaxDistance')}</label>
-                <input id="config-like-max-distance" type="number" class="setting-number" min="0" value={likeMaxDistance} onchange={onLikeMaxDistanceChange} />
-            </div>
-            <p class="setting-note">{$t('config.likeNote')}</p>
-        {:else if activeTab === 'colors'}
-            {#each COLOR_SETTINGS as setting (setting.key)}
-                <div class="setting-row">
-                    <label for={`config-color-${setting.key}`}>{$t(setting.labelKey)}</label>
-                    <input id={`config-color-${setting.key}`} type="color" class="setting-color" value={$boardColorsStore[setting.key]} oninput={(e) => onColorChange(setting.key, e)} />
-                </div>
+    <div class="config-layout">
+        <div class="tabs" role="tablist" aria-orientation="vertical">
+            {#each TABS as tab (tab.id)}
+                <button type="button" class="tab" class:active={activeTab === tab.id} role="tab" aria-selected={activeTab === tab.id} onclick={() => (activeTab = tab.id)}>
+                    {$t(tab.labelKey)}
+                </button>
             {/each}
-            <div class="tab-actions">
-                <button class="secondary-button" onclick={resetBoardColors}>{$t('config.resetColors')}</button>
-            </div>
-        {:else if activeTab === 'library'}
-            <!-- Onglet Bibliothèque (ADR-0046) : ce qui suit le fichier, non la machine. -->
-            {#if !$databasePathStore}
-                <p class="setting-note">{$t('config.libraryNoDatabase')}</p>
-            {:else}
-                <p class="setting-note">{$t('config.thresholdsIntro')}</p>
-                <div class="setting-row">
-                    <label for="config-error-threshold">{$t('config.errorThreshold')}</label>
-                    <input
-                        id="config-error-threshold"
-                        type="number"
-                        class="setting-input"
-                        min="0.001"
-                        max="10"
-                        step="0.001"
-                        value={mpToEquity(librarySettings.errorThresholdMP).toFixed(3)}
-                        onchange={(e) => onThresholdChange('errorThresholdMP', e)}
-                    />
-                </div>
-                <div class="setting-row">
-                    <label for="config-blunder-threshold">{$t('config.blunderThreshold')}</label>
-                    <input
-                        id="config-blunder-threshold"
-                        type="number"
-                        class="setting-input"
-                        min="0.001"
-                        max="10"
-                        step="0.001"
-                        value={mpToEquity(librarySettings.blunderThresholdMP).toFixed(3)}
-                        onchange={(e) => onThresholdChange('blunderThresholdMP', e)}
-                    />
-                </div>
-                {#if libraryError}
-                    <p class="setting-note warn">{libraryError}</p>
-                {/if}
-                <p class="setting-note">{$t('config.thresholdPresetsIntro')}</p>
-                <div class="tab-actions">
-                    {#each THRESHOLD_PRESETS as preset (preset.key)}
-                        <button class="secondary-button" onclick={() => applyLibrarySettings({ errorThresholdMP: preset.errorThresholdMP, blunderThresholdMP: preset.blunderThresholdMP })}>
-                            {$t(`config.thresholdPreset_${preset.key}`)}
-                        </button>
-                    {/each}
-                </div>
-                <p class="setting-note">{$t('config.vacuumIntro')}</p>
-                <div class="tab-actions">
-                    <button class="secondary-button" onclick={vacuumDatabase} disabled={vacuumBusy}>
-                        {vacuumBusy ? $t('config.vacuumRunning') : $t('config.vacuumButton')}
-                    </button>
-                </div>
-                <p class="setting-note">{$t('config.repairIntro')}</p>
-                <div class="tab-actions">
-                    <button class="secondary-button" onclick={repairAnalyses} disabled={repairBusy}>
-                        {repairBusy ? $t('config.repairRunning') : $t('config.repairButton')}
-                    </button>
-                </div>
-            {/if}
-        {:else if activeTab === 'bearoff'}
-            <p class="setting-note">{$t('config.bearoffIntro')}</p>
-            {#if bearoff}
-                <div class="setting-row">
-                    <span class="setting-label">{$t('config.bearoffActive')}</span>
-                    <code class="identity-fingerprint">
-                        {bearoff.active_domain > 0 ? `TS-06-${String(bearoff.active_domain).padStart(2, '0')} — ${bearoff.active_origin}` : $t('config.bearoffNone')}
-                    </code>
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">{$t('config.bearoffEpc')}</span>
-                    <span class="setting-value">{bearoff.one_sided_ready ? $t('config.bearoffEpcReady') : $t('config.bearoffEpcMissing')}</span>
-                </div>
-                {#if bearoffPlan}
-                    <div class="setting-row">
-                        <span class="setting-label">{$t('config.bearoffDataDir')}</span>
-                        <code class="identity-fingerprint">{bearoffPlan.data_dir}</code>
-                    </div>
-                {/if}
+        </div>
 
-                <!-- What is on disk, with a Delete on each: the only place a
-                     user can see the space these take and get it back. -->
-                {#if bearoffPlan?.files?.length}
-                    <p class="setting-note">{$t('config.bearoffFilesTitle')}</p>
-                    <ul class="bearoff-files">
-                        {#each bearoffPlan.files as file (file.name)}
-                            <li>
-                                <code class="identity-fingerprint">{file.name}</code>
-                                <span class="setting-value">{bearoffBytes(file.size)} · {$t(`config.bearoffVerdict_${file.verdict}`)}</span>
-                                <button class="danger-button" onclick={() => deleteBearoffTable(file.name)}>{$t('common.delete')}</button>
-                            </li>
+        <div class="tab-body">
+            {#if activeTab === 'interface'}
+                <!-- `system` par défaut : le bureau a déjà choisi clair ou sombre. -->
+                <div class="setting-row">
+                    <label for="config-theme">{$t('config.theme')}</label>
+                    <select id="config-theme" class="setting-select" value={$themeStore} onchange={(e) => setTheme(e.currentTarget.value)}>
+                        {#each THEME_NAMES as name (name)}
+                            <option value={name}>{$t(`config.theme_${name}`)}</option>
                         {/each}
-                    </ul>
-                {/if}
-
-                <!-- A paused run is never restarted on its own. -->
-                {#each bearoffInterrupted as paused (paused.domain)}
+                    </select>
+                </div>
+                <p class="setting-note">{$t('config.themeNote')}</p>
+                <div class="setting-row">
+                    <label for="config-language">{$t('config.language')}</label>
+                    <select id="config-language" class="setting-select" value={$language} onchange={onLanguageChange}>
+                        {#each LOCALES as code (code)}
+                            <option value={code}>{LANGUAGE_LABELS[code]}</option>
+                        {/each}
+                    </select>
+                </div>
+                <div class="setting-row">
+                    <label for="config-ui-scale">{$t('config.uiScale')}</label>
+                    <div class="scale-control">
+                        <input
+                            id="config-ui-scale"
+                            type="range"
+                            class="setting-range"
+                            min={MIN_UI_SCALE}
+                            max={MAX_UI_SCALE}
+                            step={UI_SCALE_STEP}
+                            value={$uiScaleStore}
+                            oninput={onUIScaleInput}
+                            onchange={onUIScaleChange}
+                        />
+                        <span class="scale-value">{$uiScaleStore}%</span>
+                    </div>
+                </div>
+                <div class="setting-row">
+                    <label for="config-panel-position">{$t('config.panelPosition')}</label>
+                    <select id="config-panel-position" class="setting-select" value={$panelPositionStore} onchange={onPanelPositionChange}>
+                        {#each PANEL_POSITION_OPTIONS as opt (opt.value)}
+                            <option value={opt.value}>{$t(opt.labelKey)}</option>
+                        {/each}
+                    </select>
+                </div>
+                <p class="setting-note">{$t('config.logsIntro')}</p>
+                <div class="tab-actions">
+                    <button class="secondary-button" onclick={openLogsFolder}>{$t('config.logsButton')}</button>
+                </div>
+                <div class="setting-row">
+                    <label for="config-check-for-updates">{$t('config.checkForUpdates')}</label>
+                    <input id="config-check-for-updates" type="checkbox" checked={checkForUpdates} onchange={onCheckForUpdatesChange} />
+                </div>
+                <p class="setting-note">{$t('config.checkForUpdatesNote')}</p>
+                <div class="setting-row">
+                    <label for="config-like-limit">{$t('config.likeLimit')}</label>
+                    <input id="config-like-limit" type="number" class="setting-number" min="1" max={MAX_LIKE_LIMIT} value={likeLimit} onchange={onLikeLimitChange} />
+                </div>
+                <div class="setting-row">
+                    <label for="config-like-max-distance">{$t('config.likeMaxDistance')}</label>
+                    <input id="config-like-max-distance" type="number" class="setting-number" min="0" value={likeMaxDistance} onchange={onLikeMaxDistanceChange} />
+                </div>
+                <p class="setting-note">{$t('config.likeNote')}</p>
+            {:else if activeTab === 'colors'}
+                {#each COLOR_SETTINGS as setting (setting.key)}
                     <div class="setting-row">
-                        <span class="setting-label">{$t('config.bearoffInterrupted', { domain: paused.domain, percent: paused.percent.toFixed(0) })}</span>
-                        <span class="tab-actions">
-                            <button class="secondary-button" onclick={() => startBearoffGeneration(paused)}>{$t('config.bearoffResume')}</button>
-                            <button class="danger-button" onclick={() => discardBearoffCheckpoint(paused.checkers)}>{$t('common.delete')}</button>
-                        </span>
+                        <label for={`config-color-${setting.key}`}>{$t(setting.labelKey)}</label>
+                        <input id={`config-color-${setting.key}`} type="color" class="setting-color" value={$boardColorsStore[setting.key]} oninput={(e) => onColorChange(setting.key, e)} />
                     </div>
                 {/each}
-
-                {#if $bearoffProgress || bearoff.generating}
+                <div class="tab-actions">
+                    <button class="secondary-button" onclick={resetBoardColors}>{$t('config.resetColors')}</button>
+                </div>
+            {:else if activeTab === 'library'}
+                <!-- Onglet Bibliothèque (ADR-0046) : ce qui suit le fichier, non la machine. -->
+                {#if !$databasePathStore}
+                    <p class="setting-note">{$t('config.libraryNoDatabase')}</p>
+                {:else}
+                    <p class="setting-note">{$t('config.thresholdsIntro')}</p>
                     <div class="setting-row">
-                        <span class="setting-label">{$t('config.bearoffGenerating', { domain: $bearoffProgress?.domain || bearoff.generating })}</span>
-                        <progress class="bearoff-progress" max={$bearoffProgress?.total ?? 0} value={$bearoffProgress?.done ?? 0}></progress>
-                    </div>
-                    <p class="setting-note">
-                        {#if bearoffRemaining !== null}
-                            {$t('config.bearoffRemaining', { time: bearoffDuration(bearoffRemaining) })}
-                        {:else}
-                            {$t('config.bearoffStarting')}
-                        {/if}
-                    </p>
-                    <div class="tab-actions">
-                        <button class="secondary-button" onclick={pauseBearoffGeneration}>{$t('config.bearoffPause')}</button>
-                        <button class="secondary-button" onclick={cancelBearoffGeneration}>{$t('common.cancel')}</button>
-                    </div>
-                {:else if bearoffPlan}
-                    <p class="setting-note">{$t('config.bearoffWiderNote')}</p>
-                    <div class="setting-row">
-                        <label for="config-bearoff-checkers">{$t('config.bearoffCheckers')}</label>
-                        <select id="config-bearoff-checkers" class="setting-select" bind:value={bearoffDomain}>
-                            <optgroup label={$t('config.bearoffTwoSided')}>
-                                {#each bearoffPlan.candidates.filter((/** @type {any} */ c) => c.kind === 'two-sided') as candidate (candidate.domain)}
-                                    <option value={candidate.domain} disabled={!candidate.fits}>{candidate.domain}</option>
-                                {/each}
-                            </optgroup>
-                            <optgroup label={$t('config.bearoffOneSided')}>
-                                {#each bearoffPlan.candidates.filter((/** @type {any} */ c) => c.kind === 'one-sided') as candidate (candidate.domain)}
-                                    <option value={candidate.domain} disabled={!candidate.fits}>{candidate.domain}</option>
-                                {/each}
-                            </optgroup>
-                        </select>
+                        <label for="config-error-threshold">{$t('config.errorThreshold')}</label>
+                        <input
+                            id="config-error-threshold"
+                            type="number"
+                            class="setting-input"
+                            min="0.001"
+                            max="10"
+                            step="0.001"
+                            value={mpToEquity(librarySettings.errorThresholdMP).toFixed(3)}
+                            onchange={(e) => onThresholdChange('errorThresholdMP', e)}
+                        />
                     </div>
                     <div class="setting-row">
-                        <label for="config-bearoff-cores">{$t('config.bearoffCores')}</label>
-                        <!-- The one-sided sweep reads only positions below the one it
-                             is on, so cores buy it nothing and the picker says so. -->
-                        <select id="config-bearoff-cores" class="setting-select" disabled={bearoffSelected?.kind === 'one-sided'} bind:value={bearoffCores} onchange={refreshBearoff}>
-                            <option value={0}>{$t('config.bearoffCoresDefault', { n: bearoffPlan.default_cores })}</option>
-                            {#each Array.from({ length: bearoffPlan.default_cores + 1 }, (/** @type {unknown} */ _, /** @type {number} */ i) => i + 1) as n (n)}
-                                <option value={n}>{n}</option>
-                            {/each}
-                        </select>
+                        <label for="config-blunder-threshold">{$t('config.blunderThreshold')}</label>
+                        <input
+                            id="config-blunder-threshold"
+                            type="number"
+                            class="setting-input"
+                            min="0.001"
+                            max="10"
+                            step="0.001"
+                            value={mpToEquity(librarySettings.blunderThresholdMP).toFixed(3)}
+                            onchange={(e) => onThresholdChange('blunderThresholdMP', e)}
+                        />
                     </div>
-                    {#if bearoffSelected}
-                        <p class="setting-note">
-                            {#if bearoffSelected.fits}
-                                {$t(bearoffSelected.kind === 'one-sided' ? 'config.bearoffCostSequential' : 'config.bearoffCost', {
-                                    size: bearoffBytes(bearoffSelected.size),
-                                    ram: bearoffBytes(bearoffSelected.ram_needed),
-                                    time: bearoffDuration(bearoffSelected.seconds),
-                                    cores: bearoffPlan.cores
-                                })}
-                                <span class="setting-value"> {$t(bearoffSelected.kind === 'one-sided' ? 'config.bearoffPurposeOneSided' : 'config.bearoffPurposeTwoSided')}</span>
-                                {#if !bearoffPlan.rate_measured}<span class="setting-value"> {$t('config.bearoffEstimateUnmeasured')}</span>{/if}
-                            {:else}
-                                {$t('config.bearoffTooBig', {
-                                    ram: bearoffBytes(bearoffSelected.ram_needed),
-                                    available: bearoffBytes(bearoffPlan.ram_available)
-                                })}
-                            {/if}
-                        </p>
+                    {#if libraryError}
+                        <p class="setting-note warn">{libraryError}</p>
                     {/if}
+                    <p class="setting-note">{$t('config.thresholdPresetsIntro')}</p>
                     <div class="tab-actions">
-                        <button class="secondary-button" disabled={!bearoffSelected?.fits || bearoffSelected?.present} onclick={() => startBearoffGeneration()}>
-                            {bearoffSelected?.present ? $t('config.bearoffAlreadyThere') : $t('config.bearoffGenerate')}
+                        {#each THRESHOLD_PRESETS as preset (preset.key)}
+                            <button class="secondary-button" onclick={() => applyLibrarySettings({ errorThresholdMP: preset.errorThresholdMP, blunderThresholdMP: preset.blunderThresholdMP })}>
+                                {$t(`config.thresholdPreset_${preset.key}`)}
+                            </button>
+                        {/each}
+                    </div>
+                    <p class="setting-note">{$t('config.vacuumIntro')}</p>
+                    <div class="tab-actions">
+                        <button class="secondary-button" onclick={vacuumDatabase} disabled={vacuumBusy}>
+                            {vacuumBusy ? $t('config.vacuumRunning') : $t('config.vacuumButton')}
+                        </button>
+                    </div>
+                    <p class="setting-note">{$t('config.repairIntro')}</p>
+                    <div class="tab-actions">
+                        <button class="secondary-button" onclick={repairAnalyses} disabled={repairBusy}>
+                            {repairBusy ? $t('config.repairRunning') : $t('config.repairButton')}
                         </button>
                     </div>
                 {/if}
-
-                <div class="setting-row">
-                    <span class="setting-label">{$t('config.bearoffExternal')}</span>
-                    <code class="identity-fingerprint">{bearoffExternal || $t('config.bearoffExternalNone')}</code>
-                </div>
-                <div class="tab-actions">
-                    <button class="secondary-button" onclick={pickBearoffExternal}>{$t('config.bearoffExternalPick')}</button>
-                    {#if bearoffExternal}
-                        <button class="secondary-button" onclick={clearBearoffExternal}>{$t('config.bearoffExternalClear')}</button>
-                    {/if}
-                </div>
-
-                {#if $bearoffErrorStoreRef}<p class="setting-note warn">{$bearoffErrorStoreRef}</p>{/if}
-            {/if}
-        {:else if activeTab === 'gammonnet'}
-            <p class="setting-note">{$t('config.gammonnetIntro')}</p>
-            <div class="setting-row">
-                <label for="config-gn-display-ply">{$t('config.gammonnetDisplayPly')}</label>
-                <select id="config-gn-display-ply" class="setting-select" value={gnDisplayPly} onchange={onGnDisplayPlyChange}>
-                    {#each GAMMONNET_PLY_OPTIONS as ply (ply)}
-                        <option value={ply}>{$t('config.gammonnetPly', { n: ply })}</option>
-                    {/each}
-                </select>
-            </div>
-            <p class="setting-note">{$t('config.gammonnetDisplayPlyNote')}</p>
-            <div class="setting-row">
-                <label for="config-gn-analysis-ply">{$t('config.gammonnetAnalysisPly')}</label>
-                <select id="config-gn-analysis-ply" class="setting-select" value={gnAnalysisPly} onchange={onGnAnalysisPlyChange}>
-                    {#each GAMMONNET_PLY_OPTIONS as ply (ply)}
-                        <option value={ply}>{$t('config.gammonnetPly', { n: ply })}</option>
-                    {/each}
-                </select>
-            </div>
-            <p class="setting-note">{$t('config.gammonnetAnalysisPlyNote')}</p>
-            <div class="setting-row">
-                <label for="config-gn-prune-k">{$t('config.gammonnetPruneK')}</label>
-                <input id="config-gn-prune-k" type="number" class="setting-input" min="1" max="64" value={gnPruneK} onchange={onGnPruneKChange} />
-            </div>
-            <div class="setting-row">
-                <label for="config-gn-candidates">{$t('config.gammonnetCandidates')}</label>
-                <input id="config-gn-candidates" type="number" class="setting-input" min="1" max="50" value={gnCandidates} onchange={onGnCandidatesChange} />
-            </div>
-            <div class="setting-row">
-                <label for="config-gn-auto-analyze">{$t('config.gammonnetAutoAnalyze')}</label>
-                <input id="config-gn-auto-analyze" type="checkbox" checked={gnAutoAnalyze} onchange={onGnAutoAnalyzeChange} />
-            </div>
-            <p class="setting-note">{$t('config.gammonnetAutoAnalyzeNote')}</p>
-            <div class="setting-row">
-                <span class="setting-label">
-                    {gnMissingCount === null ? $t('config.gammonnetCatchUpUnknown') : $t('config.gammonnetCatchUpCount', { n: gnMissingCount })}
-                </span>
-                <button class="secondary-button" disabled={gnCatchUpStarting || gnMissingCount === 0} onclick={startGammonNetCatchUp}>
-                    {$t('config.gammonnetCatchUpStart')}
-                </button>
-            </div>
-            <p class="setting-note">{$t('config.gammonnetCatchUpNote')}</p>
-            <div class="setting-row">
-                <span class="setting-label">
-                    {gnStaleCount === null ? $t('config.gammonnetStaleUnknown') : $t('config.gammonnetStaleCount', { n: gnStaleCount })}
-                </span>
-                <button class="secondary-button" disabled={gnStaleStarting || gnStaleCount === 0} onclick={startGammonNetStaleRerun}>
-                    {$t('config.gammonnetStaleStart')}
-                </button>
-            </div>
-            <p class="setting-note">{$t('config.gammonnetStaleNote')}</p>
-        {:else if activeTab === 'watch'}
-            <p class="setting-note">{$t('config.watchIntro')}</p>
-            <div class="setting-row">
-                <span class="setting-label">{watchFolder || $t('config.watchNoFolder')}</span>
-                <button class="secondary-button" onclick={chooseWatchFolder}>{$t('config.watchChoose')}</button>
-            </div>
-            <div class="setting-row">
-                <span class="setting-label">{$t('config.watchSuggestLabel')}</span>
-                <button class="secondary-button" onclick={suggestWatchFolder}>{$t('config.watchSuggest')}</button>
-            </div>
-            <div class="setting-row">
-                <label for="config-watch-on">{$t('config.watchEnabled')}</label>
-                <input id="config-watch-on" type="checkbox" checked={watchOn} disabled={!watchFolder} onchange={onWatchToggle} />
-            </div>
-            <div class="setting-row">
-                <label for="config-watch-interval">{$t('config.watchInterval')}</label>
-                <input id="config-watch-interval" type="number" class="setting-input" min="0" max="3600" value={watchInterval} onchange={onWatchIntervalChange} />
-            </div>
-            <p class="setting-note">{$t('config.watchIntervalNote')}</p>
-            <p class="setting-note">{$t('config.watchOnlyNewNote')}</p>
-            {#if watchError}
-                <p class="setting-note warn">{watchError}</p>
-            {/if}
-            <div class="setting-row">
-                <span class="setting-label">
-                    {$watchStatusStore.running ? $t('config.watchRunning', { folder: $watchStatusStore.folder }) : $t('config.watchStopped')}
-                </span>
-            </div>
-        {:else if activeTab === 'identity'}
-            <p class="setting-note">{$t('config.identityIntro')}</p>
-            {#if identity?.present}
-                <div class="setting-row">
-                    <label for="config-identity-name">{$t('config.identityName')}</label>
-                    <input id="config-identity-name" type="text" class="setting-input" value={identity.name} onblur={renameIdentity} />
-                </div>
-                <div class="setting-row">
-                    <span class="setting-label">{$t('config.identityFingerprint')}</span>
-                    <code class="identity-fingerprint">{identity.fingerprint}</code>
-                </div>
-            {:else}
-                <p class="setting-note">{$t('config.identityNone')}</p>
-            {/if}
-            <div class="setting-row">
-                <label for="config-identity-passphrase">{$t('config.identityPassphrase')}</label>
-                <input id="config-identity-passphrase" type="password" class="setting-input" bind:value={identityPassphrase} />
-            </div>
-            <p class="setting-note warn">{$t('config.identityWarning')}</p>
-
-            {#if confirmingRegenerate}
-                <div class="regenerate-confirm">
-                    <p class="setting-note warn">{$t('config.identityRegenerateWarning')}</p>
-                    <p class="setting-note">{$t('config.identityRegenerateKeep', { fingerprint: identity?.fingerprint ?? '' })}</p>
-                    <div class="tab-actions">
-                        <button class="secondary-button" onclick={exportIdentity}>{$t('config.identitySaveFirst')}</button>
-                        <button class="secondary-button" onclick={() => (confirmingRegenerate = false)}>{$t('common.cancel')}</button>
-                        <button class="danger-button" onclick={regenerateIdentity}>{$t('config.identityRegenerateConfirm')}</button>
+            {:else if activeTab === 'bearoff'}
+                <p class="setting-note">{$t('config.bearoffIntro')}</p>
+                {#if bearoff}
+                    <div class="setting-row">
+                        <span class="setting-label">{$t('config.bearoffActive')}</span>
+                        <code class="identity-fingerprint">
+                            {bearoff.active_domain > 0 ? `TS-06-${String(bearoff.active_domain).padStart(2, '0')} — ${bearoff.active_origin}` : $t('config.bearoffNone')}
+                        </code>
                     </div>
-                </div>
-            {:else}
-                <div class="tab-actions">
-                    <button class="secondary-button" onclick={exportIdentity}>{$t('config.identityExport')}</button>
-                    <button class="secondary-button" onclick={importIdentity}>{$t('config.identityImport')}</button>
-                    {#if identity?.present}
-                        <button class="secondary-button" onclick={() => (confirmingRegenerate = true)}>
-                            {$t('config.identityRegenerate')}
-                        </button>
+                    <div class="setting-row">
+                        <span class="setting-label">{$t('config.bearoffEpc')}</span>
+                        <span class="setting-value">{bearoff.one_sided_ready ? $t('config.bearoffEpcReady') : $t('config.bearoffEpcMissing')}</span>
+                    </div>
+                    {#if bearoffPlan}
+                        <div class="setting-row">
+                            <span class="setting-label">{$t('config.bearoffDataDir')}</span>
+                            <code class="identity-fingerprint">{bearoffPlan.data_dir}</code>
+                        </div>
                     {/if}
-                </div>
-            {/if}
 
-            {#if identityMessage}<p class="setting-note ok">{identityMessage}</p>{/if}
-            {#if identityError}<p class="setting-note warn">{identityError}</p>{/if}
-        {/if}
+                    <!-- What is on disk, with a Delete on each: the only place a
+                     user can see the space these take and get it back. -->
+                    {#if bearoffPlan?.files?.length}
+                        <p class="setting-note">{$t('config.bearoffFilesTitle')}</p>
+                        <ul class="bearoff-files">
+                            {#each bearoffPlan.files as file (file.name)}
+                                <li>
+                                    <code class="identity-fingerprint">{file.name}</code>
+                                    <span class="setting-value">{bearoffBytes(file.size)} · {$t(`config.bearoffVerdict_${file.verdict}`)}</span>
+                                    <button class="danger-button" onclick={() => deleteBearoffTable(file.name)}>{$t('common.delete')}</button>
+                                </li>
+                            {/each}
+                        </ul>
+                    {/if}
+
+                    <!-- A paused run is never restarted on its own. -->
+                    {#each bearoffInterrupted as paused (paused.domain)}
+                        <div class="setting-row">
+                            <span class="setting-label">{$t('config.bearoffInterrupted', { domain: paused.domain, percent: paused.percent.toFixed(0) })}</span>
+                            <span class="tab-actions">
+                                <button class="secondary-button" onclick={() => startBearoffGeneration(paused)}>{$t('config.bearoffResume')}</button>
+                                <button class="danger-button" onclick={() => discardBearoffCheckpoint(paused.checkers)}>{$t('common.delete')}</button>
+                            </span>
+                        </div>
+                    {/each}
+
+                    {#if $bearoffProgress || bearoff.generating}
+                        <div class="setting-row">
+                            <span class="setting-label">{$t('config.bearoffGenerating', { domain: $bearoffProgress?.domain || bearoff.generating })}</span>
+                            <progress class="bearoff-progress" max={$bearoffProgress?.total ?? 0} value={$bearoffProgress?.done ?? 0}></progress>
+                        </div>
+                        <p class="setting-note">
+                            {#if bearoffRemaining !== null}
+                                {$t('config.bearoffRemaining', { time: bearoffDuration(bearoffRemaining) })}
+                            {:else}
+                                {$t('config.bearoffStarting')}
+                            {/if}
+                        </p>
+                        <div class="tab-actions">
+                            <button class="secondary-button" onclick={pauseBearoffGeneration}>{$t('config.bearoffPause')}</button>
+                            <button class="secondary-button" onclick={cancelBearoffGeneration}>{$t('common.cancel')}</button>
+                        </div>
+                    {:else if bearoffPlan}
+                        <p class="setting-note">{$t('config.bearoffWiderNote')}</p>
+                        <div class="setting-row">
+                            <label for="config-bearoff-checkers">{$t('config.bearoffCheckers')}</label>
+                            <select id="config-bearoff-checkers" class="setting-select" bind:value={bearoffDomain}>
+                                <optgroup label={$t('config.bearoffTwoSided')}>
+                                    {#each bearoffPlan.candidates.filter((/** @type {any} */ c) => c.kind === 'two-sided') as candidate (candidate.domain)}
+                                        <option value={candidate.domain} disabled={!candidate.fits}>{candidate.domain}</option>
+                                    {/each}
+                                </optgroup>
+                                <optgroup label={$t('config.bearoffOneSided')}>
+                                    {#each bearoffPlan.candidates.filter((/** @type {any} */ c) => c.kind === 'one-sided') as candidate (candidate.domain)}
+                                        <option value={candidate.domain} disabled={!candidate.fits}>{candidate.domain}</option>
+                                    {/each}
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="setting-row">
+                            <label for="config-bearoff-cores">{$t('config.bearoffCores')}</label>
+                            <!-- The one-sided sweep reads only positions below the one it
+                             is on, so cores buy it nothing and the picker says so. -->
+                            <select id="config-bearoff-cores" class="setting-select" disabled={bearoffSelected?.kind === 'one-sided'} bind:value={bearoffCores} onchange={refreshBearoff}>
+                                <option value={0}>{$t('config.bearoffCoresDefault', { n: bearoffPlan.default_cores })}</option>
+                                {#each Array.from({ length: bearoffPlan.default_cores + 1 }, (/** @type {unknown} */ _, /** @type {number} */ i) => i + 1) as n (n)}
+                                    <option value={n}>{n}</option>
+                                {/each}
+                            </select>
+                        </div>
+                        {#if bearoffSelected}
+                            <p class="setting-note">
+                                {#if bearoffSelected.fits}
+                                    {$t(bearoffSelected.kind === 'one-sided' ? 'config.bearoffCostSequential' : 'config.bearoffCost', {
+                                        size: bearoffBytes(bearoffSelected.size),
+                                        ram: bearoffBytes(bearoffSelected.ram_needed),
+                                        time: bearoffDuration(bearoffSelected.seconds),
+                                        cores: bearoffPlan.cores
+                                    })}
+                                    <span class="setting-value"> {$t(bearoffSelected.kind === 'one-sided' ? 'config.bearoffPurposeOneSided' : 'config.bearoffPurposeTwoSided')}</span>
+                                    {#if !bearoffPlan.rate_measured}<span class="setting-value"> {$t('config.bearoffEstimateUnmeasured')}</span>{/if}
+                                {:else}
+                                    {$t('config.bearoffTooBig', {
+                                        ram: bearoffBytes(bearoffSelected.ram_needed),
+                                        available: bearoffBytes(bearoffPlan.ram_available)
+                                    })}
+                                {/if}
+                            </p>
+                        {/if}
+                        <div class="tab-actions">
+                            <button class="secondary-button" disabled={!bearoffSelected?.fits || bearoffSelected?.present} onclick={() => startBearoffGeneration()}>
+                                {bearoffSelected?.present ? $t('config.bearoffAlreadyThere') : $t('config.bearoffGenerate')}
+                            </button>
+                        </div>
+                    {/if}
+
+                    <div class="setting-row">
+                        <span class="setting-label">{$t('config.bearoffExternal')}</span>
+                        <code class="identity-fingerprint">{bearoffExternal || $t('config.bearoffExternalNone')}</code>
+                    </div>
+                    <div class="tab-actions">
+                        <button class="secondary-button" onclick={pickBearoffExternal}>{$t('config.bearoffExternalPick')}</button>
+                        {#if bearoffExternal}
+                            <button class="secondary-button" onclick={clearBearoffExternal}>{$t('config.bearoffExternalClear')}</button>
+                        {/if}
+                    </div>
+
+                    {#if $bearoffErrorStoreRef}<p class="setting-note warn">{$bearoffErrorStoreRef}</p>{/if}
+                {/if}
+            {:else if activeTab === 'gammonnet'}
+                <p class="setting-note">{$t('config.gammonnetIntro')}</p>
+                <div class="setting-row">
+                    <label for="config-gn-display-ply">{$t('config.gammonnetDisplayPly')}</label>
+                    <select id="config-gn-display-ply" class="setting-select" value={gnDisplayPly} onchange={onGnDisplayPlyChange}>
+                        {#each GAMMONNET_PLY_OPTIONS as ply (ply)}
+                            <option value={ply}>{$t('config.gammonnetPly', { n: ply })}</option>
+                        {/each}
+                    </select>
+                </div>
+                <p class="setting-note">{$t('config.gammonnetDisplayPlyNote')}</p>
+                <div class="setting-row">
+                    <label for="config-gn-analysis-ply">{$t('config.gammonnetAnalysisPly')}</label>
+                    <select id="config-gn-analysis-ply" class="setting-select" value={gnAnalysisPly} onchange={onGnAnalysisPlyChange}>
+                        {#each GAMMONNET_PLY_OPTIONS as ply (ply)}
+                            <option value={ply}>{$t('config.gammonnetPly', { n: ply })}</option>
+                        {/each}
+                    </select>
+                </div>
+                <p class="setting-note">{$t('config.gammonnetAnalysisPlyNote')}</p>
+                <div class="setting-row">
+                    <label for="config-gn-prune-k">{$t('config.gammonnetPruneK')}</label>
+                    <input id="config-gn-prune-k" type="number" class="setting-input" min="1" max="64" value={gnPruneK} onchange={onGnPruneKChange} />
+                </div>
+                <div class="setting-row">
+                    <label for="config-gn-candidates">{$t('config.gammonnetCandidates')}</label>
+                    <input id="config-gn-candidates" type="number" class="setting-input" min="1" max="50" value={gnCandidates} onchange={onGnCandidatesChange} />
+                </div>
+                <div class="setting-row">
+                    <label for="config-gn-auto-analyze">{$t('config.gammonnetAutoAnalyze')}</label>
+                    <input id="config-gn-auto-analyze" type="checkbox" checked={gnAutoAnalyze} onchange={onGnAutoAnalyzeChange} />
+                </div>
+                <p class="setting-note">{$t('config.gammonnetAutoAnalyzeNote')}</p>
+                <div class="setting-row">
+                    <span class="setting-label">
+                        {gnMissingCount === null ? $t('config.gammonnetCatchUpUnknown') : $t('config.gammonnetCatchUpCount', { n: gnMissingCount })}
+                    </span>
+                    <button class="secondary-button" disabled={gnCatchUpStarting || gnMissingCount === 0} onclick={startGammonNetCatchUp}>
+                        {$t('config.gammonnetCatchUpStart')}
+                    </button>
+                </div>
+                <p class="setting-note">{$t('config.gammonnetCatchUpNote')}</p>
+                <div class="setting-row">
+                    <span class="setting-label">
+                        {gnStaleCount === null ? $t('config.gammonnetStaleUnknown') : $t('config.gammonnetStaleCount', { n: gnStaleCount })}
+                    </span>
+                    <button class="secondary-button" disabled={gnStaleStarting || gnStaleCount === 0} onclick={startGammonNetStaleRerun}>
+                        {$t('config.gammonnetStaleStart')}
+                    </button>
+                </div>
+                <p class="setting-note">{$t('config.gammonnetStaleNote')}</p>
+            {:else if activeTab === 'watch'}
+                <p class="setting-note">{$t('config.watchIntro')}</p>
+                <div class="setting-row">
+                    <span class="setting-label">{watchFolder || $t('config.watchNoFolder')}</span>
+                    <button class="secondary-button" onclick={chooseWatchFolder}>{$t('config.watchChoose')}</button>
+                </div>
+                <div class="setting-row">
+                    <span class="setting-label">{$t('config.watchSuggestLabel')}</span>
+                    <button class="secondary-button" onclick={suggestWatchFolder}>{$t('config.watchSuggest')}</button>
+                </div>
+                <div class="setting-row">
+                    <label for="config-watch-on">{$t('config.watchEnabled')}</label>
+                    <input id="config-watch-on" type="checkbox" checked={watchOn} disabled={!watchFolder} onchange={onWatchToggle} />
+                </div>
+                <div class="setting-row">
+                    <label for="config-watch-interval">{$t('config.watchInterval')}</label>
+                    <input id="config-watch-interval" type="number" class="setting-input" min="0" max="3600" value={watchInterval} onchange={onWatchIntervalChange} />
+                </div>
+                <p class="setting-note">{$t('config.watchIntervalNote')}</p>
+                <p class="setting-note">{$t('config.watchOnlyNewNote')}</p>
+                {#if watchError}
+                    <p class="setting-note warn">{watchError}</p>
+                {/if}
+                <div class="setting-row">
+                    <span class="setting-label">
+                        {$watchStatusStore.running ? $t('config.watchRunning', { folder: $watchStatusStore.folder }) : $t('config.watchStopped')}
+                    </span>
+                </div>
+            {:else if activeTab === 'identity'}
+                <p class="setting-note">{$t('config.identityIntro')}</p>
+                {#if identity?.present}
+                    <div class="setting-row">
+                        <label for="config-identity-name">{$t('config.identityName')}</label>
+                        <input id="config-identity-name" type="text" class="setting-input" value={identity.name} onblur={renameIdentity} />
+                    </div>
+                    <div class="setting-row">
+                        <span class="setting-label">{$t('config.identityFingerprint')}</span>
+                        <code class="identity-fingerprint">{identity.fingerprint}</code>
+                    </div>
+                {:else}
+                    <p class="setting-note">{$t('config.identityNone')}</p>
+                {/if}
+                <div class="setting-row">
+                    <label for="config-identity-passphrase">{$t('config.identityPassphrase')}</label>
+                    <input id="config-identity-passphrase" type="password" class="setting-input" bind:value={identityPassphrase} />
+                </div>
+                <p class="setting-note warn">{$t('config.identityWarning')}</p>
+
+                {#if confirmingRegenerate}
+                    <div class="regenerate-confirm">
+                        <p class="setting-note warn">{$t('config.identityRegenerateWarning')}</p>
+                        <p class="setting-note">{$t('config.identityRegenerateKeep', { fingerprint: identity?.fingerprint ?? '' })}</p>
+                        <div class="tab-actions">
+                            <button class="secondary-button" onclick={exportIdentity}>{$t('config.identitySaveFirst')}</button>
+                            <button class="secondary-button" onclick={() => (confirmingRegenerate = false)}>{$t('common.cancel')}</button>
+                            <button class="danger-button" onclick={regenerateIdentity}>{$t('config.identityRegenerateConfirm')}</button>
+                        </div>
+                    </div>
+                {:else}
+                    <div class="tab-actions">
+                        <button class="secondary-button" onclick={exportIdentity}>{$t('config.identityExport')}</button>
+                        <button class="secondary-button" onclick={importIdentity}>{$t('config.identityImport')}</button>
+                        {#if identity?.present}
+                            <button class="secondary-button" onclick={() => (confirmingRegenerate = true)}>
+                                {$t('config.identityRegenerate')}
+                            </button>
+                        {/if}
+                    </div>
+                {/if}
+
+                {#if identityMessage}<p class="setting-note ok">{identityMessage}</p>{/if}
+                {#if identityError}<p class="setting-note warn">{identityError}</p>{/if}
+            {/if}
+        </div>
     </div>
 
     {#snippet footer()}
@@ -1198,21 +1200,31 @@
         font-size: var(--font-size-small);
     }
 
+    /* Seven tabs do not fit side by side in a modal: the tab names run long in some languages, so
+       they stack in a column and each name keeps its own line. */
+    .config-layout {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
     .tabs {
         display: flex;
+        flex-direction: column;
+        flex: 0 0 180px;
         gap: 2px;
-        border-bottom: 1px solid var(--color-border);
-        margin-bottom: 8px;
+        border-right: 1px solid var(--color-border);
+        padding-right: 8px;
     }
 
     .tab {
-        flex: 1;
         padding: 6px 8px;
         border: none;
-        border-bottom: 2px solid transparent;
+        border-right: 2px solid transparent;
         background: none;
         color: var(--color-text-muted);
         cursor: pointer;
+        text-align: left;
     }
 
     .tab:hover {
@@ -1221,13 +1233,15 @@
 
     .tab.active {
         color: var(--color-primary);
-        border-bottom-color: var(--color-primary);
+        border-right-color: var(--color-primary);
         font-weight: 600;
     }
 
     /* A fixed height, not a floor: a centred box resizing per tab moved under the
        pointer. Content scrolls inside; `min()` fits a short window. */
     .tab-body {
+        flex: 1;
+        min-width: 0;
         height: min(300px, 46vh);
         overflow-y: auto;
         text-align: left;

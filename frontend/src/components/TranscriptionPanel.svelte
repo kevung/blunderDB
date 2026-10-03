@@ -807,6 +807,8 @@
 
     /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
+        // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
+        if (event.defaultPrevented) return;
         if (!draft) return handleListKeyDown(event);
         // Ctrl+Entrée (Ctrl+S est pris globalement) : lu avant panelKeyGuard,
         // qui laisse passer tout combo Ctrl, puis arrêté.

@@ -22,6 +22,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
    anki
      POST /v1/anki.buryCard                        JSON
      POST /v1/anki.createDeck                      JSON
+     POST /v1/anki.createStudyDeck                 JSON
      POST /v1/anki.deckPositions                   NDJSON
      POST /v1/anki.deckStats                       JSON
      POST /v1/anki.deleteDeck                      JSON
@@ -140,6 +141,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/imports.gnubg                        custom
      POST /v1/imports.json                         custom
      POST /v1/imports.list                         JSON
+     POST /v1/imports.ogxm                         custom
      POST /v1/imports.position                     custom
      POST /v1/imports.report                       JSON
      POST /v1/imports.studyQueue                   JSON
@@ -209,6 +211,11 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/rencontres.setTables                 JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.trash                     JSON  (Idempotency-Key)  (If-Match)
      POST /v1/rencontres.update                    JSON  (Idempotency-Key)  (If-Match)
+   rollout
+     POST /v1/rollout.filter                       custom
+     POST /v1/rollout.filter.cancel                custom
+     POST /v1/rollout.list                         JSON
+     POST /v1/rollout.position                     custom
    search
      POST /v1/search.count                         JSON
      POST /v1/search.find                          NDJSON
@@ -236,7 +243,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.positionIdsBySelection         JSON
      POST /v1/stats.positionIdsByTournament        JSON
      POST /v1/stats.recurringErrors                JSON
+     POST /v1/stats.studyIds                       JSON
      POST /v1/stats.tournamentBadges               JSON
+     POST /v1/stats.training                       JSON
    tenant
      POST /ops/tenant.purge                        custom
    tournaments

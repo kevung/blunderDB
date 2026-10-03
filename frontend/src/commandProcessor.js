@@ -13,6 +13,7 @@ import { logger } from './utils/logger.js';
 import { tMsg } from './i18n';
 import { withDisplayedPositionIDs, searchQueryBoard } from './services/positionService.js';
 import { openContactSheet } from './services/contactSheet.js';
+import { runRolloutCommand } from './services/rolloutService.js';
 // The search-token grammar lives in searchFilterService.js (shared with the "retour" replay);
 // re-exported so existing importers keep their path.
 import { parseSearchTokens, stripQuotedTokens } from './services/searchFilterService.js';
@@ -28,8 +29,25 @@ export function processCommand(command) {
     const positions = get(positionsStore);
     const databaseLoaded = get(databaseLoadedStore);
 
+    const percent = command.match(/^(\d+(?:[.,]\d+)?)\s*%$/);
     const match = command.match(/^(\d+)$/);
-    if (match) {
+    if (percent) {
+        // `:N%` — N percent of the way through the list (0% first, 100% last).
+        // Same refusals as PageUp / PageDown (positionNavigation.pagePosition).
+        if (get(statusBarModeStore) === 'EDIT') {
+            statusBarTextStore.set(tMsg('status.cannotBrowseEdit'));
+            return;
+        }
+        if (!databaseLoaded) {
+            statusBarTextStore.set(tMsg('commands.noDatabaseOpened'));
+            return;
+        }
+        if (positions.length === 0) return;
+        const ratio = Math.min(100, parseFloat(percent[1].replace(',', '.'))) / 100;
+        const index = Math.round(ratio * (positions.length - 1));
+        currentPositionIndexStore.set(index);
+        statusBarTextStore.set(tMsg('commands.goToPosition', { n: index + 1 }));
+    } else if (match) {
         const positionNumber = parseInt(match[1], 10);
         let index;
         if (positionNumber < 1) {
@@ -99,6 +117,9 @@ export function processCommand(command) {
         callbacks.toggleCollectionPanel?.();
     } else if (command === 'eval' || command === 'epc') {
         callbacks.toggleEvalMode?.();
+    } else if (command === 'rollout' || command === 'ro' || command.startsWith('rollout ') || command.startsWith('ro ')) {
+        // `ro [fast|standard]`, `ro search [fast|standard]`, `ro stop`.
+        runRolloutCommand(command.split(/\s+/).slice(1).join(' '));
     } else if (command === 'transcribe' || command === 'tr') {
         callbacks.toggleTranscriptionPanel?.();
     } else if (command === 'direct') {

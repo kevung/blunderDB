@@ -242,6 +242,11 @@ func (s *AnkiStore) SyncWithPositions(ctx context.Context, scope string, deckID 
 // key) DO NOTHING" (idx_anki_card_identity) runs identically on both backends.
 func (s *AnkiStore) syncCards(ctx context.Context, scope string, deckID int64, kind string, keys []string) error {
 	err := s.DB.Transact(ctx, func(tx Execer) error {
+		// Before any insert: ON CONFLICT on (deck_id, kind, key), which has
+		// no tenant_id, would otherwise answer for another tenant's deck.
+		if err := RequireOwned(ctx, tx, scope, "anki_deck", deckID); err != nil {
+			return err
+		}
 		now := ankiNow()
 		for _, key := range keys {
 			cols, args := tx.TenantColumns(scope)
@@ -270,7 +275,7 @@ func (s *AnkiStore) syncCards(ctx context.Context, scope string, deckID int64, k
 		return nil
 	})
 	if err != nil {
-		return errf(s.DB, fmt.Sprintf("sync anki deck %d", deckID), err)
+		return errf(s.DB, fmt.Sprintf("sync anki deck %d", deckID), s.DB.Referenced(err))
 	}
 	return nil
 }

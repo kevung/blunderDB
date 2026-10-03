@@ -160,7 +160,7 @@ func (q *spoolQuota) usage() int64 { return q.inFlight.Load() }
 // pattern unfiltered.
 var allowedUploadExtensions = map[string]bool{
 	".xg": true, ".xgp": true, ".sgf": true, ".mat": true,
-	".bgf": true, ".txt": true, ".db": true, ".dbx": true,
+	".bgf": true, ".ogxm": true, ".txt": true, ".db": true, ".dbx": true,
 }
 
 // sanitizeUploadExt returns ext lower-cased when it is on
@@ -185,6 +185,8 @@ func (s *Server) importerFor(f ingest.Format) ingest.Importer {
 		return ingest.GnuBGImporter{S: s.opts.Storage}
 	case ingest.FormatBGF:
 		return ingest.BGFImporter{S: s.opts.Storage}
+	case ingest.FormatOGXM:
+		return ingest.OGXMImporter{S: s.opts.Storage}
 	case ingest.FormatNativeDB:
 		return ingest.DBImporter{S: s.opts.Storage}
 	case ingest.FormatPosition:
@@ -219,6 +221,7 @@ var uploadRoutes = []struct {
 	{"/v1/imports.xg", ingest.FormatXG},
 	{"/v1/imports.gnubg", ingest.FormatGnuBG},
 	{"/v1/imports.bgf", ingest.FormatBGF},
+	{"/v1/imports.ogxm", ingest.FormatOGXM},
 	{"/v1/imports.db", ingest.FormatNativeDB},
 	{"/v1/imports.position", ingest.FormatPosition},
 }
@@ -460,6 +463,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			"skipped_duplicates": sum.SkippedDuplicates,
 			"matches":            sum.Matches,
 			"match_id":           sum.MatchID,
+			"flags_applied":      sum.FlagsApplied,
 		}
 		// The same end-of-import report the desktop panel shows, in the
 		// terminal event: a client that streams the import gets its summary

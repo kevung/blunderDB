@@ -174,6 +174,14 @@ export function ComputeStatsCtx(arg1, arg2) {
   return window['go']['database']['Database']['ComputeStatsCtx'](arg1, arg2);
 }
 
+export function ComputeTrainingStats(arg1, arg2) {
+  return window['go']['database']['Database']['ComputeTrainingStats'](arg1, arg2);
+}
+
+export function ComputeTrainingStatsCtx(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ComputeTrainingStatsCtx'](arg1, arg2, arg3);
+}
+
 export function ConfirmAllProposals(arg1) {
   return window['go']['database']['Database']['ConfirmAllProposals'](arg1);
 }
@@ -236,6 +244,10 @@ export function CreateDirection(arg1, arg2, arg3) {
 
 export function CreateRencontre(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['CreateRencontre'](arg1, arg2, arg3, arg4);
+}
+
+export function CreateStudyDeck(arg1, arg2) {
+  return window['go']['database']['Database']['CreateStudyDeck'](arg1, arg2);
 }
 
 export function CreateTournament(arg1, arg2, arg3) {
@@ -626,6 +638,10 @@ export function ImportGnuBGMatchFromText(arg1) {
   return window['go']['database']['Database']['ImportGnuBGMatchFromText'](arg1);
 }
 
+export function ImportOGXMMatch(arg1) {
+  return window['go']['database']['Database']['ImportOGXMMatch'](arg1);
+}
+
 export function ImportReport(arg1) {
   return window['go']['database']['Database']['ImportReport'](arg1);
 }
@@ -742,6 +758,10 @@ export function LoadPositionsByIDs(arg1) {
   return window['go']['database']['Database']['LoadPositionsByIDs'](arg1);
 }
 
+export function LoadRollouts(arg1) {
+  return window['go']['database']['Database']['LoadRollouts'](arg1);
+}
+
 export function LoadSearchHistory() {
   return window['go']['database']['Database']['LoadSearchHistory']();
 }
@@ -816,6 +836,22 @@ export function Participants(arg1) {
 
 export function PendingTranscriptionAnalysis() {
   return window['go']['database']['Database']['PendingTranscriptionAnalysis']();
+}
+
+export function PlanRollout(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PlanRollout'](arg1, arg2, arg3);
+}
+
+export function PlanRolloutIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PlanRolloutIDs'](arg1, arg2, arg3);
+}
+
+export function PositionsToRollout(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PositionsToRollout'](arg1, arg2, arg3);
+}
+
+export function PositionsToRolloutIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PositionsToRolloutIDs'](arg1, arg2, arg3);
 }
 
 export function PreviewAttachToRencontre(arg1, arg2) {
@@ -918,6 +954,22 @@ export function ReviewAnkiCard(arg1, arg2) {
   return window['go']['database']['Database']['ReviewAnkiCard'](arg1, arg2);
 }
 
+export function RolloutFiltered(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['RolloutFiltered'](arg1, arg2, arg3, arg4);
+}
+
+export function RolloutPosition(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['database']['Database']['RolloutPosition'](arg1, arg2, arg3, arg4, arg5, arg6);
+}
+
+export function RolloutPositions(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['RolloutPositions'](arg1, arg2, arg3, arg4);
+}
+
+export function RunRolloutPlan(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['RunRolloutPlan'](arg1, arg2, arg3, arg4);
+}
+
 export function SaveAnalysis(arg1, arg2) {
   return window['go']['database']['Database']['SaveAnalysis'](arg1, arg2);
 }
@@ -984,6 +1036,10 @@ export function SearchPositionIDs(arg1, arg2, arg3) {
 
 export function SetAnkiCardSuspended(arg1, arg2) {
   return window['go']['database']['Database']['SetAnkiCardSuspended'](arg1, arg2);
+}
+
+export function SetBeforeSwitch(arg1) {
+  return window['go']['database']['Database']['SetBeforeSwitch'](arg1);
 }
 
 export function SetCollectionFilter(arg1, arg2) {
@@ -1076,6 +1132,10 @@ export function StartTranscriptionFromSlot(arg1, arg2) {
 
 export function StudyImpact(arg1) {
   return window['go']['database']['Database']['StudyImpact'](arg1);
+}
+
+export function StudyPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['StudyPositionIDs'](arg1, arg2, arg3);
 }
 
 export function SuggestMatFilename(arg1) {

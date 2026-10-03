@@ -54,6 +54,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.createDeck — JSON."
         return self._call("/v1/anki.createDeck", payload)
 
+    def anki_create_study_deck(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.createStudyDeck — JSON."
+        return self._call("/v1/anki.createStudyDeck", payload)
+
     def anki_deck_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/anki.deckPositions — NDJSON stream."
         return self._stream("/v1/anki.deckPositions", payload)
@@ -494,6 +498,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/imports.list — JSON."
         return self._call("/v1/imports.list", payload)
 
+    def imports_ogxm(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/imports.ogxm — hand-written handler — see openapi.yaml."
+        return self._call("/v1/imports.ogxm", payload)
+
     def imports_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/imports.position — hand-written handler — see openapi.yaml."
         return self._call("/v1/imports.position", payload)
@@ -738,6 +746,22 @@ class GeneratedAPI(BaseClient):
         "POST /v1/rencontres.update — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/rencontres.update", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def rollout_filter(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.filter — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rollout.filter", payload)
+
+    def rollout_filter_cancel(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.filter.cancel — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rollout.filter.cancel", payload)
+
+    def rollout_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.list — JSON."
+        return self._call("/v1/rollout.list", payload)
+
+    def rollout_position(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rollout.position — hand-written handler — see openapi.yaml."
+        return self._call("/v1/rollout.position", payload)
+
     def search_count(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/search.count — JSON."
         return self._call("/v1/search.count", payload)
@@ -830,9 +854,17 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.recurringErrors — JSON."
         return self._call("/v1/stats.recurringErrors", payload)
 
+    def stats_study_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.studyIds — JSON."
+        return self._call("/v1/stats.studyIds", payload)
+
     def stats_tournament_badges(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.tournamentBadges — JSON."
         return self._call("/v1/stats.tournamentBadges", payload)
+
+    def stats_training(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.training — JSON."
+        return self._call("/v1/stats.training", payload)
 
     def tournaments_add_match(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/tournaments.addMatch — JSON."

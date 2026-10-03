@@ -104,18 +104,22 @@
                 break;
             case 'ArrowRight':
                 event.preventDefault();
+                event.stopPropagation();
                 focusTabAt((index + 1) % visibleTabs.length);
                 break;
             case 'ArrowLeft':
                 event.preventDefault();
+                event.stopPropagation();
                 focusTabAt((index - 1 + visibleTabs.length) % visibleTabs.length);
                 break;
             case 'Home':
                 event.preventDefault();
+                event.stopPropagation();
                 focusTabAt(0);
                 break;
             case 'End':
                 event.preventDefault();
+                event.stopPropagation();
                 focusTabAt(visibleTabs.length - 1);
                 break;
         }

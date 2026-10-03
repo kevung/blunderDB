@@ -11,6 +11,7 @@
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import { answerConfirm } from './confirmHelper.js';
 import { render, cleanup, screen, fireEvent, within } from '@testing-library/svelte';
 import { tick } from 'svelte';
 import { get } from 'svelte/store';
@@ -62,7 +63,6 @@ beforeEach(() => {
     vi.clearAllMocks();
     resetStores();
     GetAllTournaments.mockResolvedValue(SAMPLE_TOURNAMENTS);
-    vi.spyOn(window, 'confirm').mockReturnValue(true);
 });
 
 afterEach(() => {
@@ -158,19 +158,19 @@ describe('TournamentPanel — list view', () => {
         GetAllTournaments.mockResolvedValue([SAMPLE_TOURNAMENTS[0]]);
 
         await fireEvent.click(deleteBtn);
+        await answerConfirm(true);
 
         await vi.waitFor(() => expect(DeleteTournament).toHaveBeenCalledWith(2));
-        expect(window.confirm).toHaveBeenCalled();
         await vi.waitFor(() => expect(screen.queryByText('Amsterdam Open')).toBeNull());
     });
 
     test('declining the confirmation leaves the tournament in place', async () => {
-        window.confirm.mockReturnValue(false);
         renderOpen();
         const row = (await screen.findByText('Amsterdam Open')).closest('tr');
         const deleteBtn = within(row).getByTitle(/delete/i);
 
         await fireEvent.click(deleteBtn);
+        await answerConfirm(false);
 
         expect(DeleteTournament).not.toHaveBeenCalled();
         expect(screen.getByText('Amsterdam Open')).toBeTruthy();

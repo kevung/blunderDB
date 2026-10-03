@@ -1,4 +1,5 @@
 <script>
+    import { confirmAction } from '../../services/confirmService.js';
     /*
      * La vue Joueurs (fonctionnel.md §4, ux.md §4.1, §4.2) : inscription au clavier seul, le
      * champ garde le focus. Choisir un Player fixe l'orthographe et pré-remplit la cote : le
@@ -152,8 +153,8 @@
      * @param {{ id: string, name: string }} r
      * @param {boolean} after
      */
-    function withdraw(r, after) {
-        if (!window.confirm($t(after ? 'direction.players.withdrawLaterConfirm' : 'direction.players.withdrawNowConfirm', { name: r.name }))) return;
+    async function withdraw(r, after) {
+        if (!(await confirmAction($t(after ? 'direction.players.withdrawLaterConfirm' : 'direction.players.withdrawNowConfirm', { name: r.name })))) return;
         onWithdraw(r.id, after);
     }
 

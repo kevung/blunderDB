@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-01 05:21+0200\n"
+"POT-Creation-Date: 2026-10-03 07:40+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -359,6 +359,18 @@ msgid "Aller à la position d'indice indiqué."
 msgstr "Go to the specified index position."
 
 #: ../../source/cmd_mode.rst:1
+msgid "[number]%"
+msgstr "[number]%"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Aller à ce pourcentage de la liste : ``0%`` la première position, ``50%``"
+" le milieu, ``100%`` la dernière."
+msgstr ""
+"Go to that percentage of the list: ``0%`` the first position, ``50%`` the"
+" middle, ``100%`` the last."
+
+#: ../../source/cmd_mode.rst:1
 msgid "grid, gr"
 msgstr "grid, gr"
 
@@ -386,6 +398,22 @@ msgstr "comment, co"
 #: ../../source/cmd_mode.rst:1
 msgid "Afficher/écrire des commentaires."
 msgstr "Show/write comments."
+
+#: ../../source/cmd_mode.rst:1
+msgid "rollout, ro [fast|standard]"
+msgstr "rollout, ro [fast|standard]"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Lance le rollout de la position courante (réglage choisi dans le panneau "
+"Analyse, ou le préréglage nommé) et ouvre le panneau Analyse. ``ro search"
+" [fast|standard]`` le lance sur la liste affichée, après confirmation "
+"avec le total ; ``ro stop`` arrête le rollout en cours."
+msgstr ""
+"Rolls out the current position (with the setting chosen in the Analysis "
+"panel, or the named preset) and opens the Analysis panel. ``ro search "
+"[fast|standard]`` runs it on the displayed list, after a confirmation "
+"with the total; ``ro stop`` stops the rollout in progress."
 
 #: ../../source/cmd_mode.rst:1
 msgid "history, hi"
@@ -459,7 +487,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigate to the last visited match."
 
-#: ../../source/cmd_mode.rst:79
+#: ../../source/cmd_mode.rst:81
 msgid "Édition et recherche"
 msgstr "Editing and search"
 
@@ -499,11 +527,11 @@ msgstr ""
 "Search among the positions on screen: current results, open collection or"
 " match under review."
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:97
 msgid "Filtres de recherche"
 msgstr "Search Filters"
 
-#: ../../source/cmd_mode.rst:97
+#: ../../source/cmd_mode.rst:99
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -518,7 +546,7 @@ msgstr ""
 " ``search`` flag that does the same thing (see :ref:`cli`); a dash marks "
 "a filter that only the grammar expresses."
 
-#: ../../source/cmd_mode.rst:104
+#: ../../source/cmd_mode.rst:106
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -538,7 +566,7 @@ msgstr ""
 "compare against an empty board; it is the flags of the third column that "
 "must be used there instead."
 
-#: ../../source/cmd_mode.rst:113
+#: ../../source/cmd_mode.rst:115
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -548,7 +576,7 @@ msgstr ""
 " by ascending distance to a target position, and every other token "
 "narrows the set it ranks."
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:119
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -558,11 +586,11 @@ msgstr ""
 "*millipoints* of the table below: ``E>100`` keeps the moves that cost at "
 "least a tenth of a point, one point being worth 1000 millipoints."
 
-#: ../../source/cmd_mode.rst:121
+#: ../../source/cmd_mode.rst:123
 msgid "Deux recherches complètes :"
 msgstr "Two full searches:"
 
-#: ../../source/cmd_mode.rst:123
+#: ../../source/cmd_mode.rst:125
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -571,7 +599,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — more than 30 pips behind, between 40% and 60% "
 "winning chances, no comment."
 
-#: ../../source/cmd_mode.rst:125
+#: ../../source/cmd_mode.rst:127
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1523,7 +1551,7 @@ msgstr ""
 "``like42*`` widens the target's class to every kind of decision and to "
 "both regimes, money and match. See :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:228
+#: ../../source/cmd_mode.rst:230
 msgid ""
 "Les valeurs ``pl``, ``m`` et ``t`` s'ouvrent par un guillemet ou une "
 "apostrophe et se ferment par l'un des deux. Un jeton qui garde un "
@@ -1541,11 +1569,11 @@ msgstr ""
 " it appears in no value, and ``ma1;2`` is not a token (write ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:233
+#: ../../source/cmd_mode.rst:235
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribing from a terminal"
 
-#: ../../source/cmd_mode.rst:235
+#: ../../source/cmd_mode.rst:237
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1564,7 +1592,7 @@ msgstr ""
 "the revision returned by the previous call; every call is its own "
 "session, with no ``sessionId`` and no undo from one call to the next."
 
-#: ../../source/cmd_mode.rst:246
+#: ../../source/cmd_mode.rst:248
 msgid "Commandes diverses"
 msgstr "Various commands"
 

@@ -29,6 +29,7 @@
     import { logger } from '../utils/logger.js';
     import { numberTypeLabelKey } from '../services/trainingLabels.js';
     import ScoreCard from './ScoreCard.svelte';
+    import ExplanationLine from './ExplanationLine.svelte';
     import TrainingNumberCell from './TrainingNumberCell.svelte';
 
     let exercise = $state(TRAINING_EXERCISES[0].id);
@@ -283,6 +284,9 @@
                                     <span class="best">{$t('training.best', { move: verdict.best })}</span>
                                 {/if}
                             </p>
+                            {#if !session.outOfTime && verdict.matched && verdict.errorMp > 0 && question.positionId}
+                                <ExplanationLine positionId={question.positionId} played={verdict.notation} neighbours={false} />
+                            {/if}
                         {/if}
                     </div>
                 {:else if question.kind === 'scores'}

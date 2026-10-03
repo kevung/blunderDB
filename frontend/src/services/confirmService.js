@@ -19,16 +19,30 @@ let pendingResolve = null;
  * @param {{confirmLabel?: string, cancelLabel?: string}} [options]
  * @returns {Promise<boolean>}
  */
-export function confirmAction(message, { confirmLabel = '', cancelLabel = '' } = {}) {
+export function confirmAction(message, { confirmLabel = '', cancelLabel = '', choices = [] } = {}) {
     if (pendingResolve) {
         const resolvePrevious = pendingResolve;
         pendingResolve = null;
         resolvePrevious(false);
     }
-    confirmModalStore.set({ message, confirmLabel, cancelLabel });
+    confirmModalStore.set({ message, confirmLabel, cancelLabel, choices });
     return new Promise((resolve) => {
         pendingResolve = resolve;
     });
+}
+
+/**
+ * A dialog with several answers (and a cancel): resolves to the chosen
+ * `value`, or null when dismissed. `primary` marks the one Enter picks.
+ *
+ * @param {string} message
+ * @param {{value: string, label: string, primary?: boolean}[]} choices
+ * @param {{cancelLabel?: string}} [options]
+ * @returns {Promise<string | null>}
+ */
+export async function chooseAction(message, choices, { cancelLabel = '' } = {}) {
+    const answer = await confirmAction(message, { cancelLabel, choices });
+    return typeof answer === 'string' ? answer : null;
 }
 
 export function resolveConfirm(result) {

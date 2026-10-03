@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"bytes"
 	"encoding/json"
 	"math"
 	"testing"
@@ -350,7 +351,7 @@ func TestNormalizeMove(t *testing.T) {
 }
 
 // TestRecompressAnalysisData couvre le chemin de mise à niveau opportuniste
-// (import de .db natif, passe de Vacuum) : du JSON brut monte en zstd, du
+// (import de .db natif) : du JSON brut monte en zstd, du
 // zstd ne bouge pas, et le contenu traverse intact.
 func TestRecompressAnalysisData(t *testing.T) {
 	raw, err := json.Marshal(&domain.PositionAnalysis{XGID: "XGID=test", Player1: "Alice"})
@@ -450,5 +451,56 @@ func TestBearoffIndexAndRollDistribution(t *testing.T) {
 	}
 	if _, err := RollDistribution([6]int{15, 15, 0, 0, 0, 0}); err == nil {
 		t.Error("trop de pions est accepté")
+	}
+}
+
+// TestCompactAnalysisData : un blob écrit par le chemin d'import (zstd 7, sans
+// somme de contrôle) se relit, la compaction le réécrit en zstd 19 avec le même
+// contenu, et une seconde compaction ne réécrit rien.
+func TestCompactAnalysisData(t *testing.T) {
+	raw, err := json.Marshal(&domain.PositionAnalysis{XGID: "XGID=compact", Player1: "Bob"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	fast, err := CompressAnalysisData(raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if NeedsRecompression(fast) {
+		t.Error("un blob zstd 7 est pris pour un format hérité")
+	}
+	if !NeedsCompaction(fast) {
+		t.Fatal("un blob zstd 7 passe pour compacté")
+	}
+	if back, err := DecodeAnalysisFromStorage(fast); err != nil || back.XGID != "XGID=compact" {
+		t.Fatalf("relecture du blob zstd 7: %+v, %v", back, err)
+	}
+
+	compact, err := CompactAnalysisData(fast)
+	if err != nil {
+		t.Fatalf("CompactAnalysisData: %v", err)
+	}
+	if NeedsCompaction(compact) {
+		t.Error("le résultat de la compaction n'est pas reconnu comme compacté")
+	}
+	if !isZstdFrame(compact) {
+		t.Error("la compaction ne produit pas du zstd")
+	}
+	back, err := DecodeAnalysisFromStorage(compact)
+	if err != nil || back.XGID != "XGID=compact" || back.Player1 != "Bob" {
+		t.Fatalf("contenu perdu à la compaction: %+v, %v", back, err)
+	}
+	again, err := CompactAnalysisData(compact)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(again, compact) {
+		t.Error("une seconde compaction réécrit le blob")
+	}
+
+	// Un format hérité est compacté directement, sans étape intermédiaire.
+	direct, err := CompactAnalysisData(raw)
+	if err != nil || NeedsCompaction(direct) {
+		t.Errorf("JSON brut non compacté: %v", err)
 	}
 }

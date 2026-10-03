@@ -77,3 +77,10 @@ test('le mode survit aux onglets de direction ; F11 hors de la Direction ne fait
     await page.keyboard.press('F11');
     await expectChrome(page, true);
 });
+
+test('hors plein écran, le bouton ne recouvre pas la barre d’état', async ({ page }) => {
+    await openDirection(page);
+    const button = await page.locator('[data-testid="direction-fullscreen-toggle"]').boundingBox();
+    const bar = await page.locator('[data-testid="status-bar"]').boundingBox();
+    expect(button.y + button.height).toBeLessThanOrEqual(bar.y + 1);
+});

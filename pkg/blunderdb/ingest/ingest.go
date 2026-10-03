@@ -20,6 +20,7 @@ const (
 	FormatXG       Format = "xg"
 	FormatGnuBG    Format = "gnubg"
 	FormatBGF      Format = "bgf"
+	FormatOGXM     Format = "ogxm"
 	FormatNativeDB Format = "db"
 	FormatPosition Format = "position"
 	// FormatSQLite serializes a tenant into a fresh, valid blunderDB SQLite file
@@ -56,6 +57,9 @@ type Summary struct {
 	// Enriched counts the cross-format duplicates whose analyses and comments
 	// were merged into a match already stored — neither new nor skipped.
 	Enriched int `json:"enriched,omitempty"`
+	// FlagsApplied counts the source-tool study marks a skipped duplicate
+	// still delivered to its stored positions (ADR-0006).
+	FlagsApplied int `json:"flagsApplied,omitempty"`
 	// BatchID is the import batch these figures belong to, 0 when the caller
 	// opened none. /v1/imports.* fills it so a client can ask for the full
 	// end-of-import report afterwards.

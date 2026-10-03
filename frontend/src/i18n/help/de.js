@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Nur erscheinende Dateien werden importiert.</strong> Was der Ordner beim Start der Überwachung bereits enthält, wird als bekannt vermerkt und in Ruhe gelassen: eine Überwachung auf vier Jahre Matches zu richten darf nicht alle importieren. Um das Vorhandene zu importieren, gibt es den Ordnerimport — und beide ergänzen sich bestens, erst der Import, dann die Überwachung.</li>
 <li><strong>Eine Datei wird erst importiert, wenn ihre Größe sich gesetzt hat.</strong> Ein Match, das ein anderes Programm gerade schreibt, wächst von einem Blick zum nächsten; es halb geschrieben zu importieren ergäbe einen Parserfehler, mit dem niemand etwas anfangen kann. blunderDB wartet daher, bis es dieselbe Datei zweimal unverändert gesehen hat.</li>
-<li><strong>Der Import ist still.</strong> Sie haben gerade eine Stellung studiert, als Ihre Matches ankamen: Ihnen den Bildschirm wegzunehmen wäre der denkbar schlechteste Moment. Der Import läuft ohne Fenster, und die Statusleiste zeigt einen Streifen mit der Zahl der importierten, übersprungenen (Duplikate) und fehlgeschlagenen Matches, mit einer Schaltfläche, die auf Wunsch den vollständigen Bericht öffnet. Alles Übrige ist identisch mit einem manuellen Import: dieselbe Duplikaterkennung, derselbe Importlauf, dieselbe automatische Analyse, wenn sie eingeschaltet ist.</li>
+<li><strong>Der Import ist still.</strong> Sie waren gerade dabei, eine Stellung zu studieren, als Ihre Matches eintrafen: Ihnen den Bildschirm wegzunehmen wäre der ungünstigste Moment. Modus, aktive Suche, Registerkarte und angezeigte Stellung bleiben unverändert; die Stellungsliste wird nicht neu geladen und zeigt die neuen Matches beim nächsten Neuladen. Der Import läuft ohne Fenster, und die Statusleiste zeigt ein Banner mit der Anzahl importierter, übersprungener (Duplikate) und fehlgeschlagener Matches, mit einer Schaltfläche, die auf Wunsch den vollständigen Bericht öffnet. Alles Übrige entspricht einem manuellen Import: dieselben erkannten Duplikate, derselbe Import-Stapel, dieselbe automatische Analyse, falls aktiviert.</li>
 </ul>
 <p>Das Standardintervall beträgt zehn Sekunden; die Untergrenze zwei. Der Ordner wird nicht rekursiv durchlaufen: ein überwachter Ordner ist der Ort, an dem ein Werkzeug seine Matches ablegt, kein Baum zum Durchsuchen. Eine ausgehängte Netzwerkfreigabe beendet die Überwachung nicht und lässt ihren Inhalt bei der Rückkehr auch nicht als neu erscheinen.</p>
 <p>Dieselbe Überwachung gibt es auf der Kommandozeile, mit <code>blunderdb import --type batch --dir &lt;Ordner&gt; --watch</code> (siehe Befehlszeilenschnittstelle (CLI)): es ist die Form, die ein Server, eine geplante Aufgabe oder ein Skript verwenden kann.</p>
@@ -182,14 +182,19 @@ export default {
 <p>Die Pfeiltasten wählen, <em>EINGABE</em> führt aus, <em>ESC</em> schließt. Ein Befehl läuft, als wäre er getippt worden; <code>s</code> und <code>ss</code> öffnen die Befehlszeile, um die Filter dort einzugeben; ein Filter läuft wie nach einem Doppelklick in der Bibliothek; ein Match öffnet sich wie nach einem Doppelklick im Match-Bereich.</p>
 <p>Ist eine Direction geöffnet, ergänzt die Palette das Turnier: Spieler, Tische, laufende Matches und Wettbewerbe (siehe Schnellsuche).</p>
 <h3>Analyse-Panel</h3>
-<p>Das Panel <strong>Analyse</strong> (<em>CTRL-L</em>) zeigt die Analysedaten der aktuellen Stellung an, importiert aus eXtreme Gammon (XG), GNUbg oder BGBlitz. Es stellt die besten Alternativen (Steinzüge oder Doppler-Entscheidungen) mit ihren Equity-Werten und den entsprechenden Fehlern dar. Die Taste <em>d</em> schaltet zwischen der Analyse der Steinzüge und der Analyse des Dopplers um. Beim Navigieren in einem Match wird der tatsächlich gespielte Zug in der Liste der Alternativen hervorgehoben. Drücken Sie <em>CTRL-L</em> oder führen Sie den Befehl <code>list</code> aus, um das Panel ein- oder auszublenden.</p>
+<p>Das Panel <strong>Analyse</strong> (<em>CTRL-L</em>) zeigt die Analysedaten der aktuellen Stellung an, importiert aus eXtreme Gammon (XG), GNUbg, BGBlitz oder gammonNet. Es stellt die besten Alternativen (Steinzüge oder Doppler-Entscheidungen) mit ihren Equity-Werten und den entsprechenden Fehlern dar. Die Taste <em>d</em> schaltet zwischen der Analyse der Steinzüge und der Analyse des Dopplers um. Beim Navigieren in einem Match wird der tatsächlich gespielte Zug in der Liste der Alternativen hervorgehoben. Drücken Sie <em>CTRL-L</em> oder führen Sie den Befehl <code>list</code> aus, um das Panel ein- oder auszublenden.</p>
 <p>Unter den Tabellen sagt manchmal ein <strong>Satz</strong>, was die gespielte Entscheidung gekostet hat und warum: „Sie verlieren 120 mMWC: Der gespielte Zug lässt drei Blots stehen, 13/7 8/7 nur einen.“ Er stammt aus sechs messbaren Regeln — Blößen, ein gemachter oder verpasster Heimfeldpunkt, aufgegebene Gammon-Chancen, eine Sicherheit, die mehr kostet als sie bringt, und die beiden Richtungen eines Verdopplungsfehlers (zu spät oder zu früh doppeln, zu locker annehmen oder zu eng aufgeben).</p>
 <p>Die Regel, auf die es ankommt, ist das <strong>Schweigen</strong>: Der Satz erscheint nur, wenn eine Regel sicher greift, und bei einem Fehler jenseits der Schwelle, ab der die Engines übereinstimmen, dass es einer ist. Sonst gibt es keinen Satz — keinen leeren Rahmen, kein „wir wissen es nicht“. Eine falsche Erklärung kostet mehr als keine: Sie lehrt etwas Unzutreffendes.</p>
+<p>Derselbe Satz begleitet den Fehler dort, wo Sie ihn gerade gemacht haben: auf der Rückseite einer <strong>Anki-Karte</strong>, unter der aufgedeckten Analyse, und im <strong>Quiz-Urteil</strong> der Übung Entscheidung, unter den Kosten in mMWC. Es gelten dieselben Schweigeregeln: Ein richtiger Zug oder ein Fehler, den keine Regel erklärt, fügt nichts hinzu.</p>
 <p>Wurde eine Stellung von <strong>mehreren Engines</strong> beurteilt, stellt ein Streifen am Kopf des Panels sie nebeneinander: eine Zeile je Engine, mit ihrer Tiefe und ihrer Antwort — dem Würfelurteil oder ihrem eigenen besten Zug. Er sagt zuerst, ob sie übereinstimmen, und der Widerspruch ist es, der ihn rechtfertigt: „XG sagt Doppel, Annahme; gammonNet sagt kein Doppel“ liest sich auf einen Blick, wo zuvor zwei Tabellen quer verglichen werden mussten.</p>
 <p>Der beste Zug einer Engine ist der beste <strong>dieser Engine</strong>: die Kandidatenliste ist über alle Engines hinweg nach Equity sortiert, ihr erster Eintrag ist also niemandes bester Zug im Besonderen.</p>
 <p>Der Streifen erscheint nur, wenn es tatsächlich mehrere Engines gibt, und es gibt ihn allein in diesem Panel: das Eval-Panel zeigt <strong>eine</strong> Entscheidung, die der eingebetteten Engine (<code>ADR-0017 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md&gt;</code>__), und ein Vergleich hätte dort keinen Platz.</p>
 <p>Züge werden so geschrieben, wie man sie auf dem Brett liest, hier wie im Eval-Panel: der am wenigsten vorgerückte Stein zieht zuerst, und <strong>ein Stein, der mehrere Würfel hintereinander nutzt, wird nur einmal geschrieben</strong> — eine mit demselben Stein gespielte 64 liest sich <code>24/14</code>, und <code>24/14*</code>, wenn er bei der Ankunft schlägt. Das Detail der Kette taucht nur wieder auf, wenn es etwas mehr aussagt: ein Schlag <em>unterwegs</em> behält seinen Zwischenpunkt, <code>24/18* 18/14</code>, sonst verschwände der Schlag auf der 18 aus der Notation.</p>
 <p>Die Equity einer importierten Analyse folgt derselben Regel wie das Eval-Panel: Die Spalte nennt ihren Bezugsrahmen, „Equity (money)“ oder „Equity (match)“ je nach Spielstand der analysierten Position, nie ein bloßes „Equity“ ohne Angabe der Skala. Die auf einer Money-Game-Position aktiven Regeln <strong>Jacoby</strong> und <strong>Beaver</strong> werden ebenfalls angezeigt, als Badges unter der Tabelle der Doppelwürfel-Entscheidung.</p>
+<h4>Rollouts</h4>
+<p>Unter der Analyse bietet das Panel <strong>Analyse</strong> an, die Stellung zu <strong>rollen</strong>: Hunderte von Partien ab jedem Kandidatenzug oder jeder Würfelaktion zu spielen, um zwei Möglichkeiten zu unterscheiden, die die direkte Bewertung kaum trennt. Drei Einstellungen: <strong>Schnell</strong> (216 Partien, nach 7 Halbzügen abgebrochen), <strong>Standard</strong> (1296 Partien, nach 11 Halbzügen abgebrochen) und <strong>Frei</strong>, wo jeder Parameter editierbar ist — Abbruch, Mindest- und Höchstzahl der Partien (Vielfache von 36), JSD-Grenze, Tiefe (Ply), Zahl der Kandidaten, Seed und Zahl der Worker. Die Schaltfläche <strong>Rollout starten</strong>, die Taste <em>r</em> des Panels oder der Befehl <code>rollout</code> (Alias <code>ro</code>) starten es; ein Fortschrittsbalken folgt den gespielten Partien, und <strong>Abbrechen</strong> (oder erneut <em>r</em>) stoppt es, ohne etwas zu schreiben.</p>
+<p>Das Ergebnis wird <strong>neben der Analyse gespeichert, nie an ihrer Stelle</strong>: eine importierte Analyse wird nicht verändert. Jedes Rollout bildet einen Block mit, je Kandidat, Equity, 95-%-Konfidenzintervall, <strong>JSD</strong> (dem Abstand zum besten Zug in Standardabweichungen der Differenz: ab der Grenze ist der Zug entschieden und wird nicht mehr gespielt) und Partienzahl. Das Rollout endet, sobald die Züge unterschieden sind. Die <strong>Konfiguration</strong> — die Engine und die vollständige Signatur der Parameter — klappt unter der Tabelle auf: zwei Rollouts mit derselben Signatur liefern dieselben Zahlen. Ein Rollout spielt den Würfel in seinen Partien mit: die Rangfolge ist verlässlich, die absolute Equity etwas weniger, woran der Block erinnert. Eine Stellung, die nicht in der Datenbank ist, kann gerollt, aber nicht gespeichert werden.</p>
+<p>Die Schaltfläche <strong>Auf die angezeigte Liste…</strong> (oder <code>ro search</code>) rollt nacheinander die Stellungen der angezeigten Liste — Suchergebnisse, Match oder Sammlung —, die dieses Rollout noch nicht tragen; eine Bestätigung nennt vor dem Start die Gesamtzahl. Jede Stellung wird geschrieben, sobald sie fertig ist: Abbrechen behält das Erledigte, ein neuer Start macht dort weiter, wo er aufgehört hat. Der Fortschritt überlebt das Schließen des Panels.</p>
 <h3>Kommentare-Panel</h3>
 <p>Das Panel <strong>Kommentare</strong> (<em>STRG-P</em>) zeigt, ergänzt und bearbeitet die Kommentare zur aktuellen Stellung. Eine Stellung kann mehrere tragen: alle werden angezeigt, die neuesten zuerst. Aus XG-Dateien importierte Kommentare werden den passenden Stellungen automatisch zugeordnet. <em>STRG-P</em> drücken oder den Befehl <code>comment</code> ausführen, um das Panel ein- oder auszublenden.</p>
 <p>Jeder Kommentar aus einer Datei trägt eine <strong>Herkunftsmarkierung</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, oder <em>importiert</em>, wenn die Herkunft nie festgehalten wurde). Von Ihnen geschriebene Kommentare tragen keine: das ist der Normalfall, und jede Zeile zu kennzeichnen wäre nur Lärm. Einen importierten Kommentar zu bearbeiten macht ihn zu Ihrem: nach der Änderung ist der Satz Ihrer.</p>
@@ -286,6 +291,7 @@ export default {
 <p>Die Kopfzeile jeder Partie zählt ihre Markierungen, ob sie aufgeklappt ist oder nicht: Man sieht, ohne sie zu öffnen, in welcher Partie die Blunders liegen.</p>
 <p>Die Schaltfläche <strong>Spieler zusammenführen</strong> in der Werkzeugleiste des Panels öffnet ein Fenster, das alle Spielernamen der Datenbank mit ihrer Anzahl an Matches auflistet: die Schreibvarianten desselben Spielers auswählen, den beizubehaltenden kanonischen Namen wählen und dann zusammenführen. Nützlich, um die Statistiken pro Spieler zu vereinheitlichen, wenn derselbe Spieler unter mehreren Namen erscheint.</p>
 <p>Wenn ein Match geöffnet ist, erscheint über dem Brett eine <strong>Informationsleiste</strong>: Sie zeigt die beteiligten Spieler (<em>Spieler 1</em> gegen <em>Spieler 2</em>) sowie den Kontext des Matches (Ereignis, Ort, Runde, Datum und Matchlänge, sofern diese Informationen verfügbar sind). Diese Leiste wird auch außerhalb des Match-Modus angezeigt: Wenn eine untersuchte Position (aus einer Suche, einer Sammlung oder einem direkten Zugriff) aus einem oder mehreren Matches stammt, gibt sie deren <strong>Herkunft</strong> an — das erste betroffene Match und gegebenenfalls ein Badge „+N“, das die übrigen beim Überfahren auflistet. Eine einzeln importierte Position, auf die kein Match verweist, zeigt nichts an.</p>
+<p>Die Reiter <strong>Suche</strong> und <strong>Eval</strong> ersetzen das Brett durch ein Arbeitsbrett: Ein Banner am oberen Brettrand weist darauf hin („Suchbrett“, „Auswertungsbrett“), und die Infoleiste wird ausgeblendet, solange sie eine Stellung beschreiben würde, die nicht auf dem Bildschirm ist. Die Rückkehr zur Analyse stellt die untersuchte Stellung wieder her.</p>
 <p>Beim Öffnen einer Datenbank, die Matchs enthält, wird das Panel <strong>Matchs</strong> sofort angezeigt und die Durchsicht beginnt direkt bei der ersten Stellung, sodass Sie unmittelbar mit der Navigation beginnen können.</p>
 <div class="admonition note">
 <p>Eine Datenbank kann jeweils nur von einem einzigen Fenster zum Schreiben geöffnet werden. Wenn Sie eine Datenbank öffnen, die bereits in einem anderen blunderDB-Fenster geöffnet ist, wird sie <strong>schreibgeschützt</strong> geöffnet: Navigation, Suche und Analyse bleiben möglich, aber jede Änderung ist deaktiviert und die Titelleiste zeigt „[schreibgeschützt]“ an.</p>
@@ -553,6 +559,15 @@ export default {
 <li>Die <strong>Kosten</strong> sind der Anteil am PR des Filters, den die Gruppe ausmacht: die PR-Formel, angewendet auf die Fehler der Gruppe und bezogen auf alle gezählten Entscheidungen. Die Kosten der Gruppen übersteigen den PR daher nie.</li>
 </ul>
 <p>Ein Klick auf eine Gruppe lädt ihre Stellungen, von der teuersten zur günstigsten. Das Thema wird bei jeder Anzeige neu berechnet und nie gespeichert: Wie der Spielplan ist es ein abgeleitetes, nicht bearbeitbares Etikett. In der Kommandozeile: <code>blunderdb stats recurring</code> (siehe stats — Wiederkehrende Fehler).</p>
+<p>Jede Zeile bietet drei Wege vom Fehler zum Lernen: <strong>Quiz zu dieser Gruppe</strong> startet die Übung Entscheidung des Panels Training mit den Stellungen der Gruppe, <strong>Anki-Stapel</strong> macht daraus einen Kartenstapel, <strong>Sammlung</strong> legt sie in einer neuen Sammlung ab. Über der Tabelle zieht <strong>Quiz zu meinen drei schlechtesten Gruppen</strong> zwanzig Stellungen zufällig aus denen der drei teuersten Gruppen. In der Kommandozeile zieht <code>stats recurring --quiz</code> diese Stellungen und <code>--deck</code> legt den Stapel an.</p>
+<h5>Training im Zeitverlauf</h5>
+<p>Der Reiter <strong>Training</strong> stellt über dieselben Kalenderfenster — <strong>Woche</strong> oder <strong>Monat</strong>, nach Wahl — drei Reihen nebeneinander, die den Fortschritt auf drei Wegen messen:</p>
+<ul>
+<li>die <strong>Quiz-PR</strong>: die der Sitzungen der Übung Entscheidung im Training-Panel, gewichtet nach der Zahl der beurteilten Entscheidungen. Sie wird auf der Skala der echten PR berechnet und ist damit mit ihr vergleichbar;</li>
+<li>die <strong>Match-PR</strong> des aktuellen Filters, gewichtet nach der Zahl der Entscheidungen;</li>
+<li>die <strong>Anki-Retention</strong>: der Anteil der Wiederholungen bereits gelernter Karten, die mit <em>Schwer</em> oder besser bewertet wurden, auf der rechten Achse (in %).</li>
+</ul>
+<p>In Klammern steht die Zahl der Entscheidungen oder Wiederholungen hinter jedem Wert: Ein Fenster ohne Stichprobe hat keinen Wert — einen Strich, keine Null. Der Filter schränkt nur die Matches ein; die Journale von Quiz und Anki gehören Ihnen und tragen keinen Spieler. Es wird nichts zusätzlich gespeichert: Die drei Reihen werden aus den vorhandenen Journalen gelesen. In der Befehlszeile: <code>blunderdb stats training</code> (siehe stats — Wiederkehrende Fehler).</p>
 <h5>Aufteilung nach Doppler-Aktion</h5>
 <p>Ein Balkendiagramm zeigt den PR (oder MWC) für jeden Typ von Doppler-Entscheidung an: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jeder Balken gibt außerdem die Anzahl der Entscheidungen und die Blunder-Rate in einem Tooltip an.</p>
 <p>Ein Klick auf einen Balken lädt die zu dieser Doppler-Aktion gehörenden Stellungen, <strong>nur die mit einem Fehler</strong> (Drill-down).</p>
@@ -649,7 +664,7 @@ export default {
 <p>In diesem Reiter sind die Liste <strong>Spieler</strong> und die Wahl des <strong>Entscheidungstyps</strong> deaktiviert: Die Tabelle zeigt alle Spieler und teilt Steine- und Doppler-Entscheidungen bereits in getrennte Spalten auf.</p>
 </div>
 <div class="admonition important">
-<p>Ein Gedankenstrich („—“) steht für einen <strong>nie gemessenen</strong> Wert, nicht zu verwechseln mit null. Das gilt insbesondere für die Spalte Glück bei jedem Match, das vor Schemaversion 2.15.0 importiert wurde: Das Glück wurde damals nicht gespeichert, und nichts erlaubt es, es nachträglich zu rekonstruieren — die Quelldateien müssen neu importiert werden. Formate, die es nicht transportieren (BGF, Jellyfish <code>.mat</code>), werden es nie liefern.</p>
+<p>Ein Gedankenstrich („—“) steht für einen <strong>nie gemessenen</strong> Wert, nicht zu verwechseln mit null. Das gilt insbesondere für die Spalte Glück bei jedem Match, das vor Schemaversion 2.15.0 importiert wurde: Das Glück wurde damals nicht gespeichert, und nichts erlaubt es, es nachträglich zu rekonstruieren. Die Quelldatei erneut zu importieren genügt nicht: Der Import erkennt ein Duplikat und übernimmt nur dessen Markierungen. Das Match muss gelöscht und dann erneut importiert werden. Formate, die es nicht transportieren (BGF, Jellyfish <code>.mat</code>), werden es nie liefern.</p>
 </div>
 <h4>Aggregationsregel</h4>
 <div class="admonition important">
@@ -764,6 +779,7 @@ export default {
 <p><strong>Antwort anzeigen:</strong> Die Karte stellt eine Frage — welcher Zug zu spielen ist oder welche Doppler-Aktion. Überlegen Sie, und drücken Sie dann <em>LEERTASTE</em> (oder klicken Sie auf den verdeckten Bereich), um die Antwort aufzudecken: die gespeicherte Analyse der Stellung, so wie der Tab Analyse sie darstellt. Sie erscheint unter den Bewertungsschaltflächen, die an ihrem Platz und in Reichweite bleiben. Ein Klick auf einen Zug der Liste zeigt ihn auf dem Brett.</p>
 <p>Nichts zwingt Sie, die Antwort aufzudecken, um zu bewerten: wenn Sie sich sicher sind, bleiben die Tasten <em>1</em> bis <em>4</em> aktiv. Die Antwort wird bei der nächsten Karte wieder verdeckt, nicht aber, wenn Sie nur den Tab wechseln — sehen Sie im Eval-Panel oder im Kommentar der Stellung nach, sie wartet bei Ihrer Rückkehr auf Sie.</p>
 <p>Eine Stellung ohne gespeicherte Analyse zeigt dies direkt an, ohne verdeckten Bereich.</p>
+<p><strong>Am Brett antworten.</strong> Standardmäßig bewerten Sie sich selbst. Haken Sie in den Einstellungen eines Stapels <em>Am Brett antworten</em> an: Bei einer Steinkarte spielen Sie den Zug dann wie in der Übung Entscheidung auf dem Brett und drücken <em>Prüfen</em>. Die Engine beurteilt den Zug anhand der gespeicherten Analyse, zeigt die Antwort und <strong>schlägt eine Note vor</strong>: <em>Einfach</em> für eine schnelle richtige Antwort, <em>Gut</em> für eine langsamere richtige, <em>Schwierig</em> für einen Fehler unter der Blunder-Schwelle, <em>Nochmal</em> für einen Blunder oder einen unzulässigen Zug. Die vorgeschlagene Note ist hervorgehoben; Sie behalten die Kontrolle und bewerten mit <em>1</em> bis <em>4</em>, was Sie wollen. Ein regelgerechter Zug, den die Analyse nicht einordnet, schlägt nichts vor. Doppelwürfelkarten, Spielstandkarten und Stapel von Spielstandblättern bleiben selbstbewertet. Die Antwort aufzudecken, ohne zu spielen, gibt den Zug auf.</p>
 <p><strong>Sitzung begrenzen.</strong> Standardmäßig läuft eine Wiederholungssitzung bis zum Ende der fälligen Karten. In den Einstellungen können Sie sie je Deck auf eine Kartenzahl begrenzen: Haken Sie <em>Sitzung begrenzen</em> an und geben Sie an, wie viele Karten eine Sitzung ausgeben soll. Ist die Grenze erreicht, endet die Sitzung mit einem Hinweis — die Meldung unterscheidet „Grenze erreicht, so viele Karten noch fällig“ von einer wirklich leeren Warteschlange. Wer dennoch weitermachen will, hat das freie Üben: Es zeigt andere Stellungen, ohne am Zeitplan etwas zu ändern.</p>
 <p>Eine Grenze von <strong>0</strong> gibt gar keine Karte aus: Das ist ein eigenständiger Zustand, nützlich, um ein Deck während der Turniervorbereitung einzufrieren, und nicht dasselbe wie „keine Grenze“. Die Schaltfläche <em>Study</em> ist dann inaktiv.</p>
 <p>Die Grenze gilt für die <strong>Sitzung</strong>, nicht für den Tag. Ein blunderDB-Deck beruht auf einer Sammlung oder einer Suche: Es ist ein endlicher Bestand, der über wenige Sitzungen eingeführt wird und dessen Tagesvolumen bereits durch seine Größe begrenzt ist. Eine Tagesgrenze würde nie greifen oder aber einen Rückstand auf einem Deck erzeugen, das in eine Sitzung passte.</p>
@@ -792,6 +808,7 @@ export default {
 <li>das <strong>Zeitlimit je Frage</strong> — keines, 15, 30 oder 60 Sekunden.</li>
 </ul>
 <p>Die gewählte Quelle wird für jede Übung von einer Sitzung zur nächsten gemerkt.</p>
+<p>Die durchsuchte Liste kann von den <em>wiederkehrenden Fehlern</em> des Stats-Panels stammen: Ein Klick auf „Quiz zu dieser Gruppe“ ersetzt sie durch die Stellungen der Gruppe und startet die Übung Entscheidung.</p>
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> und <code>train decision</code> öffnen das Panel und starten sofort; <code>train tp</code> und <code>train takepoint</code> sind Synonyme von <code>train scores</code>, <code>train epc</code> von <code>train bearoff</code>, <code>train quiz</code> von <code>train decision</code>.</p>
 <h4>Die fünf Übungen</h4>
 <p><strong>Scores</strong> zieht einen der 36 ungeordneten Stände von 2 bis 9 away und zeigt eine <strong>Standkarte</strong>: zwei Spalten — <em>Vous</em> (Sie) und <em>L'adversaire</em> (der Gegner) — und sieben Zeilen — den Annahmepunkt beim Würfel 2 und beim Würfel 4, jeweils für das lange Rennen und für den letzten Wurf, dann den Gammonwert bei den Würfeln 1, 2 und 4.</p>
@@ -988,8 +1005,12 @@ export default {
 <td>Alle Positionen aus der Datenbank neu laden.</td>
 </tr>
 <tr>
-<td>Bild-auf, h</td>
+<td>Home, h</td>
 <td>Erste Position / Vorheriges Spiel (Match-Navigation).</td>
+</tr>
+<tr>
+<td>Bild-auf</td>
+<td>Geht eine Seite von hundert Stellungen zurück (hält am Listenanfang an); in einem Match: vorheriges Spiel.</td>
 </tr>
 <tr>
 <td>LINKS, k</td>
@@ -1008,8 +1029,12 @@ export default {
 <td>Nächster Zug (wenn ein Zug in der Analyse ausgewählt ist).</td>
 </tr>
 <tr>
-<td>Bild-ab, l</td>
+<td>End, l</td>
 <td>Letzte Position / Nächstes Spiel (Match-Navigation).</td>
+</tr>
+<tr>
+<td>Bild-ab</td>
+<td>Geht eine Seite von hundert Stellungen vor (hält am Listenende an); in einem Match: nächstes Spiel.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1287,6 +1312,10 @@ export default {
 <tr>
 <td>d</td>
 <td>Zwischen Zug- und Dopplerwürfel-Analyse wechseln (nur Match-Navigation).</td>
+</tr>
+<tr>
+<td>r</td>
+<td>Das Rollout der Stellung mit der gewählten Einstellung starten; ein zweiter Druck stoppt es.</td>
 </tr>
 <tr>
 <td>Esc</td>
@@ -1903,6 +1932,10 @@ export default {
 <td>Springt zur Position mit dem angegebenen Index.</td>
 </tr>
 <tr>
+<td>[number]%</td>
+<td>Springt zu diesem Prozentsatz der Liste: <code>0%</code> die erste Stellung, <code>50%</code> die Mitte, <code>100%</code> die letzte.</td>
+</tr>
+<tr>
 <td>grid, gr</td>
 <td>Öffnet den Kontaktbogen: die durchsuchte Liste als Raster aus Mini-Brettern, jeweils eine Seite mit vierundzwanzig; die Wahl eines Vorschaubilds öffnet seine Position.</td>
 </tr>
@@ -1913,6 +1946,10 @@ export default {
 <tr>
 <td>comment, co</td>
 <td>Kommentare anzeigen/schreiben.</td>
+</tr>
+<tr>
+<td>rollout, ro [fast|standard]</td>
+<td>Rollt die aktuelle Stellung (mit der im Panel Analyse gewählten Einstellung oder der genannten Voreinstellung) und öffnet das Panel Analyse. <code>ro search [fast|standard]</code> startet es auf der angezeigten Liste, nach einer Bestätigung mit der Gesamtzahl; <code>ro stop</code> stoppt das laufende Rollout.</td>
 </tr>
 <tr>
 <td>history, hi</td>

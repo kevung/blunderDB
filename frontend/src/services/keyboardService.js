@@ -37,6 +37,7 @@ import {
     loadRandomPosition,
     showDatesAndMetadata
 } from './positionService.js';
+import { pagePosition } from './positionNavigation.js';
 import { importDatabase, importPosition, importFolder, pastePosition } from './importService.js';
 import { undoTranscription } from './transcriptionService.js';
 import { exportDatabase } from './exportService.js';
@@ -62,10 +63,10 @@ const EDITABLE_FIELD_SELECTOR = 'input, textarea, [contenteditable]';
 
 // Position-browsing keys some panels forward to the board instead of using
 // for their own list navigation (see the allowNavKeys option below).
-const NAVIGATION_KEYS = new Set(['j', 'k', 'h', 'l', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown']);
+const NAVIGATION_KEYS = new Set(['j', 'k', 'h', 'l', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End']);
 
 // Position-browsing keys: bare h/j/k/l (Shift-J/K switch views), arrows,
-// PageUp/PageDown. Panels holding a selection keep them for their own list.
+// PageUp/PageDown, Home/End. Panels holding a selection keep them for their own list.
 /** @param {KeyboardEvent} event */
 function isBoardNavigationKey(event) {
     return (
@@ -76,7 +77,9 @@ function isBoardNavigationKey(event) {
         event.key === 'ArrowLeft' ||
         event.key === 'ArrowRight' ||
         event.key === 'PageUp' ||
-        event.key === 'PageDown'
+        event.key === 'PageDown' ||
+        event.key === 'Home' ||
+        event.key === 'End'
     );
 }
 
@@ -355,10 +358,15 @@ export function handleKeyDown(event) {
         updatePosition();
     } else if (event.code === 'Delete') {
         deletePosition();
-    } else if (!event.ctrlKey && event.key === 'PageUp') {
+    } else if (!event.ctrlKey && event.key === 'Home') {
         if (!showComment) {
             event.preventDefault();
             firstPosition();
+        }
+    } else if (!event.ctrlKey && event.key === 'PageUp') {
+        if (!showComment) {
+            event.preventDefault();
+            pagePosition(-1);
         }
     } else if (isBareLetter(event, 'h')) {
         if (!showComment) firstPosition();
@@ -376,10 +384,15 @@ export function handleKeyDown(event) {
         }
     } else if (isBareLetter(event, 'j')) {
         if (!showComment && !get(selectedMoveStore)) nextPosition();
-    } else if (!event.ctrlKey && event.key === 'PageDown') {
+    } else if (!event.ctrlKey && event.key === 'End') {
         if (!showComment) {
             event.preventDefault();
             lastPosition();
+        }
+    } else if (!event.ctrlKey && event.key === 'PageDown') {
+        if (!showComment) {
+            event.preventDefault();
+            pagePosition(1);
         }
     } else if (isBareLetter(event, 'l')) {
         if (!showComment) lastPosition();

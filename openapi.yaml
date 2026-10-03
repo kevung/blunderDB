@@ -176,6 +176,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idResp"
+  /v1/anki.createStudyDeck:
+    post:
+      operationId: anki.createStudyDeck
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studyDeckReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
   /v1/anki.deckPositions:
     post:
       operationId: anki.deckPositions
@@ -2997,6 +3014,19 @@ paths:
                 items:
                   $ref: "#/components/schemas/domain_ImportBatch"
                   nullable: true
+  /v1/imports.ogxm:
+    post:
+      operationId: imports.ogxm
+      tags: [imports]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/imports.position:
     post:
       operationId: imports.position
@@ -4352,6 +4382,62 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_RencontreView"
                 nullable: true
+  /v1/rollout.filter:
+    post:
+      operationId: rollout.filter
+      tags: [rollout]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/rollout.filter.cancel:
+    post:
+      operationId: rollout.filter.cancel
+      tags: [rollout]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/rollout.list:
+    post:
+      operationId: rollout.list
+      tags: [rollout]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/positionIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/rolloutListResp"
+  /v1/rollout.position:
+    post:
+      operationId: rollout.position
+      tags: [rollout]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/search.count:
     post:
       operationId: search.count
@@ -4760,6 +4846,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_RecurringErrors"
                 nullable: true
+  /v1/stats.studyIds:
+    post:
+      operationId: stats.studyIds
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studyIDsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idsResp"
   /v1/stats.tournamentBadges:
     post:
       operationId: stats.tournamentBadges
@@ -4777,6 +4880,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/tournamentBadgesResp"
+  /v1/stats.training:
+    post:
+      operationId: stats.training
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsTrainingReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_TrainingStats"
+                nullable: true
   /v1/tournaments.addMatch:
     post:
       operationId: tournaments.addMatch
@@ -6028,6 +6149,9 @@ components:
     domain_PositionAnalysis:
       type: object
       description: "Opaque: see the Go type domain.PositionAnalysis (defined outside internal/server, not expanded here)."
+    domain_RolloutAnalysis:
+      type: object
+      description: "Opaque: see the Go type domain.RolloutAnalysis (defined outside internal/server, not expanded here)."
     domain_SearchFilters:
       type: object
       description: "Opaque: see the Go type domain.SearchFilters (defined outside internal/server, not expanded here)."
@@ -6569,6 +6693,13 @@ components:
       properties:
         since:
           type: string
+    rolloutListResp:
+      type: object
+      properties:
+        rollouts:
+          type: array
+          items:
+            $ref: "#/components/schemas/domain_RolloutAnalysis"
     scopeReq:
       type: object
     searchFindReq:
@@ -6714,6 +6845,13 @@ components:
           $ref: "#/components/schemas/storage_StatsFilter"
         selection:
           $ref: "#/components/schemas/storage_SelectionSpec"
+    statsTrainingReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        window:
+          type: string
     storage_Collection:
       type: object
       description: "Opaque: see the Go type storage.Collection (defined outside internal/server, not expanded here)."
@@ -6768,6 +6906,9 @@ components:
     storage_TournamentBadge:
       type: object
       description: "Opaque: see the Go type storage.TournamentBadge (defined outside internal/server, not expanded here)."
+    storage_TrainingStats:
+      type: object
+      description: "Opaque: see the Go type storage.TrainingStats (defined outside internal/server, not expanded here)."
     stringsResp:
       type: object
       properties:
@@ -6775,6 +6916,27 @@ components:
           type: array
           items:
             type: string
+    studyDeckReq:
+      type: object
+      properties:
+        name:
+          type: string
+        positionIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+    studyIDsReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        rank:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
     suspendCardReq:
       type: object
       properties:

@@ -86,3 +86,34 @@ describe('les thèmes nommés', () => {
         expect(['light', 'dark']).toContain(resolveTheme(THEME_SYSTEM));
     });
 });
+
+// WCAG 2.x contrast of two #rrggbb colours.
+function luminance(hex) {
+    const channel = (i) => {
+        const c = parseInt(hex.slice(1 + 2 * i, 3 + 2 * i), 16) / 255;
+        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * channel(0) + 0.7152 * channel(1) + 0.0722 * channel(2);
+}
+function contrast(a, b) {
+    const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+    return (hi + 0.05) / (lo + 0.05);
+}
+
+describe('contraste AA des jetons', () => {
+    const PAIRS = [
+        ['--color-text', '--color-surface'],
+        ['--color-text', '--color-surface-alt'],
+        ['--color-text-muted', '--color-surface'],
+        ['--color-text-muted', '--color-surface-alt'],
+        ['--color-primary', '--color-surface'],
+        ['--color-danger', '--color-surface']
+    ];
+    for (const [name, theme] of Object.entries(THEMES)) {
+        test(`${name} : le texte atteint 4,5:1 sur ses fonds`, () => {
+            for (const [fg, bg] of PAIRS) {
+                expect(contrast(theme.ui[fg], theme.ui[bg]), `${name} ${fg} sur ${bg}`).toBeGreaterThanOrEqual(4.5);
+            }
+        });
+    }
+});

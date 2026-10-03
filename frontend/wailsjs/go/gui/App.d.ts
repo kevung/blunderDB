@@ -3,6 +3,7 @@
 import {gui} from '../models';
 import {domain} from '../models';
 import {gammonnet} from '../models';
+import {rollout} from '../models';
 import {race} from '../models';
 import {training} from '../models';
 
@@ -18,6 +19,8 @@ export function CancelEvaluationAtRest():Promise<void>;
 
 export function CancelGammonNetBatch():Promise<void>;
 
+export function CancelRollout():Promise<void>;
+
 export function CheckForUpdate():Promise<gui.UpdateCheckResult>;
 
 export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
@@ -25,6 +28,8 @@ export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 export function ComputeCubeMatrix(arg1:domain.Position,arg2:number,arg3:number,arg4:number):Promise<gammonnet.CubeMatrix>;
 
 export function CopyImageToClipboard(arg1:string):Promise<string>;
+
+export function CountRolloutIDs(arg1:Array<number>,arg2:rollout.Settings):Promise<number>;
 
 export function DeleteBearoffTable(arg1:string):Promise<void>;
 
@@ -88,6 +93,10 @@ export function ReadLogTail(arg1:number):Promise<Array<string>>;
 
 export function RegenerateIssuerIdentity(arg1:string):Promise<domain.IssuerIdentityInfo>;
 
+export function RolloutPresets():Promise<Array<gui.RolloutPreset>>;
+
+export function RolloutStatus():Promise<gui.RolloutStatus>;
+
 export function SaveBoardImageDialog(arg1:string,arg2:string):Promise<string>;
 
 export function SaveBoardPNG(arg1:string,arg2:string):Promise<void>;
@@ -113,6 +122,12 @@ export function StartGammonNetBatch(arg1:number,arg2:number,arg3:number):Promise
 export function StartGammonNetMatchBatch(arg1:number,arg2:number,arg3:number,arg4:number):Promise<void>;
 
 export function StartGammonNetStaleBatch(arg1:number,arg2:number,arg3:number):Promise<void>;
+
+export function StartRollout(arg1:gui.RolloutRequest):Promise<number>;
+
+export function StartRolloutFiltered(arg1:string,arg2:rollout.Settings):Promise<number>;
+
+export function StartRolloutIDs(arg1:Array<number>,arg2:rollout.Settings):Promise<number>;
 
 export function StartupFilePath():Promise<string>;
 

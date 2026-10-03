@@ -171,6 +171,9 @@ func (s *DirectionStore) Pairs(ctx context.Context, scope string, tournamentID i
 // SetPair replaces the persons behind one Participant, seat by seat.
 func (s *DirectionStore) SetPair(ctx context.Context, scope string, tournamentID int64, participantID string, members []storage.PairMember) error {
 	return s.DB.Transact(ctx, func(tx Execer) error {
+		if err := RequireOwned(ctx, tx, scope, "tournament", tournamentID); err != nil {
+			return errf(tx, "set pair", err)
+		}
 		tenant, targs := tx.TenantFilter("", scope)
 		if _, err := tx.Exec(ctx, `DELETE FROM direction_pair_member WHERE tournament_id = ? AND player_id = ? AND `+tenant,
 			append([]any{tournamentID, participantID}, targs...)...); err != nil {

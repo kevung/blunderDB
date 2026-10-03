@@ -1,5 +1,6 @@
 import Two from 'two.js';
 import { get } from 'svelte/store';
+import { translate } from '../i18n';
 import { boardMetrics } from '../utils/boardGeometry.js';
 import { layerOf, drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
 import { defaultBoardConfig, applyPalette } from '../utils/boardConfig.js';
@@ -36,7 +37,7 @@ export function renderPositionSVG(position, { width = DIAGRAM_WIDTH, height = DI
     // Le repère des points est celui du joueur au trait, comme à l'écran.
     const flip = position?.player_on_roll === 1;
     drawStaticScene(layerOf(two, staticLayer), geom, cfg, flip);
-    drawDynamicScene(layerOf(two, dynamicLayer), geom, cfg, position, { offeredCube: false, showPipcount, moves: [] });
+    drawDynamicScene(layerOf(two, dynamicLayer), geom, cfg, position, { text: (key, params) => translate(`board.scene.${key}`, params), offeredCube: false, showPipcount, moves: [] });
     drawFrame(layerOf(two, frameLayer), geom, cfg);
     two.update();
 

@@ -23,7 +23,10 @@ const bindings = vi.hoisted(() => ({
 
 vi.mock('../../wailsjs/go/database/Database.js', () => bindings);
 vi.mock('../services/sessionService.js', () => ({ saveSessionState: vi.fn() }));
-vi.mock('../services/confirmService.js', () => ({ confirmAction: vi.fn(() => Promise.resolve(true)) }));
+vi.mock('../services/confirmService.js', async (importOriginal) => ({
+    ...(await importOriginal()),
+    confirmAction: vi.fn(() => Promise.resolve(true))
+}));
 
 import { cancelSearch, loadPositionsByFilters } from '../services/positionService.js';
 import { viewStore } from '../stores/viewStore.js';

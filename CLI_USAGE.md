@@ -99,7 +99,7 @@ Database Information:
 
 ## Import Command
 
-Import match files (.xg, .sgf, .mat, .txt, .bgf) or XGP position files (.xgp) into a database.
+Import match files (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position files (.xgp) into a database.
 
 ### Import Match
 
@@ -173,7 +173,7 @@ Import all match files from a directory at once:
 - `--format` - Output format: `text` (default, the summary table below) or `json`
 - `--fail-on-error` - Exit non-zero when any file failed to import, even if others succeeded
 
-Supported file types: `.xg`, `.xgp`, `.sgf`, `.mat`, `.txt`, `.bgf`.
+Supported file types: `.xg`, `.xgp`, `.sgf`, `.mat`, `.txt`, `.bgf`, `.ogxm`.
 
 A batch that finds no supported file, or where every file failed or was a
 duplicate (nothing at all got imported), is always an error. A duplicate is
@@ -579,7 +579,7 @@ A row is keyed by a player **name exactly as it appears in the matches**, so som
 ./blunderDB list --db database.db --type players --format csv
 ```
 
-**Reading the output:** a `—` (an empty field in CSV) marks a figure that was never measured, which is not the same as zero. Luck in particular is only available for matches imported since database schema 2.15.0, and only from formats that carry it (XG, gnuBG — not BGF or Jellyfish `.mat`); re-import the source files to obtain it. The `luck_rolls` column says how many rolls the average covers.
+**Reading the output:** a `—` (an empty field in CSV) marks a figure that was never measured, which is not the same as zero. Luck in particular is only available for matches imported since database schema 2.15.0, and only from formats that carry it (XG, gnuBG — not BGF or Jellyfish `.mat`). Re-importing the source file is not enough — the import recognises a duplicate and takes only its study marks: delete the match, then import it again. The `luck_rolls` column says how many rolls the average covers.
 
 **CSV columns:** `player`, `matches`, `wins`, `losses`, `decisions`, `pr`, `pr_checker`, `pr_cube`, `snowie_er`, `errors`, `blunders`, `luck_rate_mp`, `luck_rolls`.
 
@@ -1742,6 +1742,16 @@ imported analysis's own scale? The answer is broken down by game
 phase, which is what says where the disagreements sit. Use --limit
 to ask the question of a sample rather than of a whole library.
 
+--rollout switches to rollouts: every position --query selects is
+rolled out, one after the other on every core, and the rollout is
+written beside its analysis — never in its place. The value is a
+preset (fast: 216 games truncated at 7; standard: 1296 games
+truncated at 11) or custom settings: an optional preset first, then
+games=, min-games=, truncation=, jsd=, ply=, candidates=, seed=,
+comma-separated. A position already carrying a rollout with the
+same settings is skipped, so an interrupted run resumes; the
+position in hand when Ctrl-C arrives is dropped whole.
+
 A position gammonNet declines to evaluate (a match score beyond
 its MET, a cube state it refuses) is reported separately at the
 end, as "refused": not a failure, and not retried to no effect.
@@ -1765,6 +1775,10 @@ Options:
     	Search depth (canonical: 2, k=12) (default 2)
   -prune-k int
     	Pruning width (canonical: 12) (default 12)
+  -query string
+    	With --rollout: the positions to roll out, in the search query language (see search --query-help); empty means every position
+  -rollout string
+    	Roll out the positions --query selects instead: a preset (fast, standard) or custom settings, e.g. 'standard' or 'games=648,truncation=0,ply=1'
   -stale
     	Re-analyse positions whose gammonNet analysis is outdated, instead of filling gaps
 
@@ -1775,6 +1789,8 @@ Examples:
   blunderdb analyze --db database.db --stale --ply 3
   blunderdb analyze --db database.db --format json
   blunderdb analyze --db database.db --compare --limit 500
+  blunderdb analyze --db database.db --rollout fast --query 'E>80'
+  blunderdb analyze --db database.db --rollout 'standard,ply=1' --query 'c'
 ```
 
 ### `blunderdb anki card`
@@ -2505,7 +2521,7 @@ Options:
     	How often --watch looks at the folder (default 10s, floor 2s)
 
 Import Types:
-  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf) or XGP position (.xgp)
+  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf, .ogxm) or XGP position (.xgp)
   position  Import positions from a text file
   batch     Batch import all match/position files from a directory
 
@@ -2745,6 +2761,7 @@ Examples:
 
 ```
 Usage: blunderdb rollout [options] <XGID|OGID>
+       blunderdb rollout --db <file> --id <position> [--store] [options]
 
 Roll a position out with gammonNet: its plays when the position has dice,
 its cube decision otherwise. Each candidate plays the same dice; the luck
@@ -2754,20 +2771,29 @@ covers it. The cube is played inside the games (cubeful): trust the
 ranking more than the absolute equity.
 
 Equities are money points per unit of the position's cube, or normalised
-equity at a match score. Nothing is stored. Ctrl-C prints what the games
-finished so far concluded.
+equity at a match score. Ctrl-C prints what the games finished so far
+concluded. With --store, a finished rollout is written on the position as a
+second analysis with its own settings, beside the imported or evaluated one;
+an interrupted rollout is never stored. Of two rollouts with the same
+settings, the one with more games is kept (a tie keeps the newer).
 
 Options:
   -candidates int
     	Plays rolled out when no --move is given, best first at max(--ply, 2) (0 = the preset's)
+  -db string
+    	Database to read the position from (with --id)
   -format string
     	Output format: text, json (default "text")
   -games int
     	Most games per candidate (0 = the preset's)
+  -id int
+    	Position of --db to roll out, in place of an XGID or OGID
   -jobs int
     	Games played at once (0 = one per core); never changes the numbers
   -jsd float
     	Stop a candidate when its gap to the best reaches this many standard deviations; 0 never stops early (-1 = the preset's) (default -1)
+  -list
+    	Print the rollouts stored on the position of --db instead of rolling it out
   -min-games int
     	Games before the JSD rule may stop a candidate (-1 = the preset's) (default -1)
   -move value
@@ -2778,6 +2804,8 @@ Options:
     	Starting settings, both at 0 ply: fast (216 games, truncated at 7) or standard (1296 games, truncated at 11); the flags below override it, --ply plays deeper (default "fast")
   -seed uint
     	Dice seed: the same seed gives the same numbers (default 104374970738651)
+  -store
+    	Write the finished rollout on the position of --db, beside its analysis (never replacing it)
   -truncation int
     	Half-moves per game before the engine values it; 0 plays to the end (-1 = the preset's) (default -1)
 
@@ -2786,6 +2814,8 @@ Examples:
   blunderdb rollout --move '8/5 6/5' --move '24/23 13/10' '<XGID>'
   blunderdb rollout --preset standard --format json '<XGID>'
   blunderdb rollout --games 648 --truncation 0 --ply 1 '<XGID>'
+  blunderdb rollout --db library.db --id 42 --preset standard --store
+  blunderdb rollout --db library.db --id 42 --list
 ```
 
 ### `blunderdb search`
@@ -2926,19 +2956,31 @@ no rule names is listed apart, per plan of play, outside the ranking (JSON:
 Cost is the share of the filter's PR the group accounts for; an error is a
 counted decision costing at least the library's Error threshold.
 
+--quiz and --deck turn the ranking into study: --quiz draws positions at
+random from the three costliest groups (or the one --group names), --deck
+makes an Anki deck of all their positions.
+
 Options:
   -db string
     	Path to the database file (required)
   -decision-type string
     	Decision type: all, checker, or cube (default "all")
+  -deck string
+    	Create an Anki deck of this name from the positions of the worst groups
   -format string
     	Output format: text or json (default "text")
   -from string
     	Start date filter YYYY-MM-DD
+  -group int
+    	With --quiz or --deck: the rank of one group (1 = costliest) instead of the three costliest
   -limit int
     	Maximum number of groups shown (text only; 0 = all) (default 20)
   -player string
     	Only this player's decisions
+  -quiz
+    	Draw a quiz: position ids picked at random from the worst groups, for the Decision exercise or quiz_grade
+  -quiz-size int
+    	Number of positions --quiz draws (default 20)
   -to string
     	End date filter YYYY-MM-DD
   -tournament string
@@ -2946,6 +2988,8 @@ Options:
 
 Examples:
   blunderdb stats recurring --db database.db --player "Alice"
+  blunderdb stats recurring --db database.db --quiz --format json
+  blunderdb stats recurring --db database.db --group 1 --deck "My worst group"
   blunderdb stats recurring --db database.db --decision-type checker --format json
 ```
 

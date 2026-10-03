@@ -1,4 +1,5 @@
 <script>
+    import { confirmAction } from '../../services/confirmService.js';
     /*
      * L'Événement du tournoi ouvert (ADR-0056, ADR-0058) : le rattacher, l'en détacher, le
      * supprimer, y déclarer une table hors service et les propriétés de ses tables — une fois,
@@ -104,7 +105,7 @@
 
     async function remove() {
         if (!current) return;
-        if (!window.confirm($t('direction.rencontre.trashConfirm', { name: current.name }))) return;
+        if (!(await confirmAction($t('direction.rencontre.trashConfirm', { name: current.name })))) return;
         try {
             await trashRencontre(current.id);
             await reload();

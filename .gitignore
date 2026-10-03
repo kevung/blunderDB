@@ -63,3 +63,7 @@ testdata/Match Report*
 
 # A worktree links node_modules as a symlink, which "node_modules/" does not match.
 node_modules
+
+# Local workspace for developing against an unpublished module.
+go.work
+go.work.sum

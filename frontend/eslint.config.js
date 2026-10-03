@@ -29,7 +29,21 @@ export default [
                     caughtErrorsIgnorePattern: '^_'
                 }
             ],
-            'no-console': 'error'
+            'no-console': 'error',
+            // Native dialogs are invisible or untranslated in some webviews;
+            // confirmAction (services/confirmService.js) is the themed, translated one.
+            'no-restricted-globals': [
+                'error',
+                { name: 'confirm', message: 'Use confirmAction from services/confirmService.js.' },
+                { name: 'alert', message: 'Use the status bar or a modal, not a native alert.' },
+                { name: 'prompt', message: 'Use a modal with an input, not a native prompt.' }
+            ],
+            'no-restricted-properties': [
+                'error',
+                { object: 'window', property: 'confirm', message: 'Use confirmAction from services/confirmService.js.' },
+                { object: 'window', property: 'alert', message: 'Use the status bar or a modal, not a native alert.' },
+                { object: 'window', property: 'prompt', message: 'Use a modal with an input, not a native prompt.' }
+            ]
         }
     },
     {

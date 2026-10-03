@@ -54,6 +54,19 @@ type App struct {
 	// shutdown must wait on it before closing the database.
 	gnBatchDone chan struct{}
 
+	// roMu/roCancel/roDone: the rollout of one position (rollout.go), the
+	// same single-in-flight bookkeeping as the batch; a stored rollout
+	// writes the database, so shutdown waits on roDone too.
+	// roStatus is what RolloutStatus reports. roMu is taken before
+	// gnBatchMu when both are held: the two batches exclude each other.
+	roMu     sync.Mutex
+	roCancel context.CancelFunc
+	roDone   chan struct{}
+	roStatus RolloutStatus
+	// roSeq numbers the jobs, so the GUI can tell a late event of a cancelled
+	// job from the one now running.
+	roSeq int64
+
 	// trainingGen is built once, lazily (it costs megabytes); trainingErr
 	// keeps why it failed so later questions refuse by name.
 	trainingOnce sync.Once
@@ -70,7 +83,14 @@ type App struct {
 
 // NewApp creates a new App application struct.
 func NewApp(db *database.Database) *App {
-	return &App{db: db}
+	a := &App{db: db}
+	if db != nil {
+		// Opening, creating or closing a file stops the jobs writing the
+		// current one first; past the grace, the Database refuses their
+		// late writes (ErrDatabaseChanged).
+		db.SetBeforeSwitch(func() { a.stopDatabaseJobs(shutdownJobGrace) })
+	}
+	return a
 }
 
 // PrepareDemoDatabase decompresses the sample database to a fresh temporary
@@ -237,13 +257,14 @@ func (a *App) OpenPositionFilesDialog() ([]string, error) {
 	return runtime.OpenMultipleFilesDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Import Position or Match Files",
 		Filters: []runtime.FileFilter{
-			{DisplayName: "All Supported Files (*.txt, *.xg, *.xgp, *.sgf, *.mat, *.bgf)", Pattern: "*.txt;*.xg;*.xgp;*.sgf;*.mat;*.bgf"},
+			{DisplayName: "All Supported Files (*.txt, *.xg, *.xgp, *.sgf, *.mat, *.bgf, *.ogxm)", Pattern: "*.txt;*.xg;*.xgp;*.sgf;*.mat;*.bgf;*.ogxm"},
 			{DisplayName: "Position Files (*.txt)", Pattern: "*.txt"},
 			{DisplayName: "XG Match Files (*.xg)", Pattern: "*.xg"},
 			{DisplayName: "XG Position Files (*.xgp)", Pattern: "*.xgp"},
 			{DisplayName: "GnuBG Match Files (*.sgf)", Pattern: "*.sgf"},
 			{DisplayName: "Jellyfish Match Files (*.mat)", Pattern: "*.mat"},
 			{DisplayName: "BGBlitz Match Files (*.bgf)", Pattern: "*.bgf"},
+			{DisplayName: "HedgeHog Match Files (*.ogxm)", Pattern: "*.ogxm"},
 			{DisplayName: "All Files (*.*)", Pattern: "*.*"},
 		},
 	})

@@ -53,12 +53,14 @@ Navigation
    :align: center
 
    "CTRL-R", "Recharger toutes les positions de la base de données."
-   "PageUp, h", "Première position / Partie précédente (navigation match)."
+   "Home, h", "Première position / Partie précédente (navigation match)."
+   "PageUp", "Recule d'une page de cent positions (au début de la liste, s'y arrête) ; dans un match, partie précédente."
    "GAUCHE, k", "Position précédente."
    "DROITE, j", "Position suivante."
    "HAUT, k", "Coup précédent (lorsqu'un coup est sélectionné dans l'analyse)."
    "BAS, j", "Coup suivant (lorsqu'un coup est sélectionné dans l'analyse)."
-   "PageDown, l", "Dernière position / Partie suivante (navigation match)."
+   "End, l", "Dernière position / Partie suivante (navigation match)."
+   "PageDown", "Avance d'une page de cent positions (à la fin de la liste, s'y arrête) ; dans un match, partie suivante."
    "r", "Charger une position aléatoire."
    "ÉCHAP", "Quitter les résultats d'une recherche ``ss`` lancée depuis une collection ou un match : retour à la collection, ou au match sur le coup étudié."
 
@@ -201,6 +203,7 @@ Panneau d'analyse
    "HAUT, k", "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."
    "BAS, j", "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
    "d", "Basculer entre l'analyse des coups et du cube (navigation match uniquement)."
+   "r", "Lancer le rollout de la position avec le réglage choisi ; une seconde pression l'arrête."
    "Esc", "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 
 .. _raccourcis_eval_panel:

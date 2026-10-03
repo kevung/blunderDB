@@ -17,7 +17,7 @@ import { get, writable } from 'svelte/store';
 import { WindowFullscreen, WindowUnfullscreen, WindowIsFullscreen } from '../../wailsjs/runtime/runtime.js';
 import { directionPageShownStore } from '../stores/directionStore.js';
 import { closeOnEscape } from './escapeService.js';
-import { somethingOpenAbove } from './directionKeys.js';
+import { directionPageShown, somethingOpenAbove } from './directionKeys.js';
 
 /** Le plein écran de la Direction est-il actif ? */
 export const directionFullscreenStore = writable(false);
@@ -70,5 +70,5 @@ export function directionFullscreenKey(event) {
     // Le plein écran a lui-même une entrée dans la pile d'Échap : elle ne compte pas comme une surcouche.
     const active = get(directionFullscreenStore);
     if (active ? document.querySelector('[aria-modal="true"], .context-menu') : somethingOpenAbove()) return false;
-    return active || get(directionPageShownStore);
+    return active || directionPageShown();
 }

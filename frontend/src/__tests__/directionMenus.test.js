@@ -8,6 +8,8 @@
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
 import { menuRequest } from '../services/contextMenuTrigger.js';
+import { get } from 'svelte/store';
+import { confirmModalStore, resolveConfirm } from '../services/confirmService.js';
 import SlotsView from '../components/direction/SlotsView.svelte';
 
 import { cellMenu, matchMenu, playerMenu, proposalMenu, historyMenu } from '../services/directionMenus.js';
@@ -28,8 +30,8 @@ const labels = (/** @type {{ label: string }[]} */ items) => items.map((i) => i.
 const RUNNING = { table: 3, free: false, unavailable: false, reserved: false, matchId: 'M1', a: 'a', b: 'b', aName: 'Alice', bName: 'Bob', length: 7 };
 const FREE = { table: 4, free: true, unavailable: false, reserved: false };
 
-describe('contenu des menus', () => {
-    test('une case occupée offre résultat, forfaits, changement de table (M / X), annulation', () => {
+describe('contenu des menus', async () => {
+    test('une case occupée offre résultat, forfaits, changement de table (M / X), annulation', async () => {
         const l = labels(cellMenu(t, RUNNING, { openResult() {}, openMove() {}, onForfeit() {}, onCancel() {} }));
         expect(l).toEqual(['enterResult', 'forfeitOf{"name":"Alice"}', 'forfeitOf{"name":"Bob"}', 'moveTable', 'cancelMatch']);
     });
@@ -45,29 +47,29 @@ describe('contenu des menus', () => {
         expect(cellMenu(t, { ...FREE, elsewhere: 'B' }, h)).toEqual([]);
     });
 
-    test('un forfait confirmé désigne le bon vainqueur ; refusé, il ne fait rien', () => {
+    test('un forfait confirmé désigne le bon vainqueur ; refusé, il ne fait rien', async () => {
         const onForfeit = vi.fn();
         const confirm = vi.fn().mockReturnValue(false);
         const items = matchMenu(t, { ...RUNNING, running: true }, { onForfeit, confirm });
-        items[0].onClick();
+        await items[0].onClick();
         expect(onForfeit).not.toHaveBeenCalled();
         confirm.mockReturnValue(true);
-        items[0].onClick();
+        await items[0].onClick();
         expect(onForfeit).toHaveBeenCalledWith('M1', 'b', '');
     });
 
-    test('annuler un match se confirme', () => {
+    test('annuler un match se confirme', async () => {
         const onCancel = vi.fn();
         const confirm = vi.fn().mockReturnValue(false);
         const cancel = matchMenu(t, { ...RUNNING, running: true }, { onCancel, confirm }).find((i) => i.label.includes('cancelMatch'));
-        cancel?.onClick();
+        await cancel?.onClick();
         expect(onCancel).not.toHaveBeenCalled();
         confirm.mockReturnValue(true);
-        cancel?.onClick();
+        await cancel?.onClick();
         expect(onCancel).toHaveBeenCalledWith('M1');
     });
 
-    test('un joueur : les entrées suivent son état', () => {
+    test('un joueur : les entrées suivent son état', async () => {
         const h = { onGoTable() {}, onHistory() {}, onAbsent() {}, onReturn() {}, onWithdraw() {}, onReinstate() {}, onEdit() {} };
         const p = { id: 'x', name: 'Xavier' };
         expect(labels(playerMenu(t, { ...p, state: 'playing', table: 2 }, h))).toEqual([
@@ -85,18 +87,18 @@ describe('contenu des menus', () => {
         expect(out).not.toContain('withdrawNow');
     });
 
-    test('retirer un joueur se confirme', () => {
+    test('retirer un joueur se confirme', async () => {
         const onWithdraw = vi.fn();
         const confirm = vi.fn().mockReturnValue(false);
         const now = playerMenu(t, { id: 'x', name: 'Xavier', state: 'free' }, { onWithdraw, confirm }).find((i) => i.label.includes('withdrawNow'));
-        now?.onClick();
+        await now?.onClick();
         expect(onWithdraw).not.toHaveBeenCalled();
         confirm.mockReturnValue(true);
-        now?.onClick();
+        await now?.onClick();
         expect(onWithdraw).toHaveBeenCalledWith('x', false);
     });
 
-    test('une proposition : lancer, apparier autrement (un appariement seulement), ignorer', () => {
+    test('une proposition : lancer, apparier autrement (un appariement seulement), ignorer', async () => {
         const h = { onLaunch() {}, onIgnore() {}, onArrange() {} };
         expect(labels(proposalMenu(t, { kind: 'start_match', a: 'a', b: 'b' }, h))).toEqual(['launch', 'arrangeOther', 'ignore']);
         const full = { onLaunch() {}, onIgnore() {}, onArrange() {}, onLaunchAtTable() {}, onChangeLength() {}, onPrintSheet() {} };
@@ -112,10 +114,10 @@ describe('contenu des menus', () => {
     });
 });
 
-describe('un menu est grisé pendant une action en cours', () => {
+describe('un menu est grisé pendant une action en cours', async () => {
     const disabled = (/** @type {{ label: string, disabled?: boolean }[]} */ items) => items.filter((i) => i.disabled).map((i) => i.label.replace(/^direction\.menu\./, '').replace(/\{.*/, ''));
 
-    test('forfaits et annulation du match, mise hors service', () => {
+    test('forfaits et annulation du match, mise hors service', async () => {
         const busy = matchMenu(t, { ...RUNNING, running: true }, { busy: true, openResult() {}, openMove() {}, onForfeit() {}, onCancel() {} });
         expect(disabled(busy)).toEqual(['forfeitOf', 'forfeitOf', 'cancelMatch']);
         expect(disabled(cellMenu(t, FREE, { busy: true, onOutOfService() {}, onLaunchHere() {} }))).toEqual(['launchHere', 'outOfService']);
@@ -123,7 +125,7 @@ describe('un menu est grisé pendant une action en cours', () => {
         expect(disabled(cellMenu(t, FREE, { onOutOfService() {} }))).toEqual([]);
     });
 
-    test('retrait, réintégration, retour, détacher, transcrire', () => {
+    test('retrait, réintégration, retour, détacher, transcrire', async () => {
         const h = { busy: true, onWithdraw() {}, onReinstate() {}, onReturn() {}, onManual() {} };
         expect(disabled(playerMenu(t, { id: 'x', name: 'X', state: 'playing', table: 1 }, h))).toEqual(['withdrawNow', 'withdrawLater']);
         expect(disabled(playerMenu(t, { id: 'x', name: 'X', state: 'withdrawn' }, h))).toEqual(['reinstate']);
@@ -137,30 +139,30 @@ describe('un menu est grisé pendant une action en cours', () => {
     });
 });
 
-describe('entrées du plan : table libre, joueur, rattacher', () => {
-    test('une table réservée ne propose rien ; libre : lancer ici puis hors service', () => {
+describe('entrées du plan : table libre, joueur, rattacher', async () => {
+    test('une table réservée ne propose rien ; libre : lancer ici puis hors service', async () => {
         const h = { onOutOfService() {}, onLaunchHere: vi.fn() };
         expect(cellMenu(t, { ...FREE, free: false, reserved: true }, h)).toEqual([]);
         const items = cellMenu(t, FREE, h);
         expect(labels(items)).toEqual(['launchHere', 'outOfService']);
-        items[0].onClick();
+        await items[0].onClick();
         expect(h.onLaunchHere).toHaveBeenCalledWith(4);
     });
 
-    test('un joueur libre : apparier à la main ; joue aussi ailleurs : aller là-bas', () => {
+    test('un joueur libre : apparier à la main ; joue aussi ailleurs : aller là-bas', async () => {
         const onManual = vi.fn();
         const onGoElsewhere = vi.fn();
         const p = { id: 'x', name: 'Xavier', state: 'free', elsewhere: { event: 'Consolante', table: 3 } };
         const items = playerMenu(t, p, { onManual, onGoElsewhere });
         expect(labels(items)).toEqual(['pairManually', 'playsElsewhere{"event":"Consolante"}']);
-        items[0].onClick();
+        await items[0].onClick();
         items[1].onClick();
         expect(onManual).toHaveBeenCalledWith('x');
         expect(onGoElsewhere).toHaveBeenCalledWith('Consolante');
         expect(labels(playerMenu(t, { ...p, state: 'playing', table: 2 }, { onManual }))).not.toContain('pairManually');
     });
 
-    test('une place sans match : rattacher chaque match attendu ; avec un match : rien', () => {
+    test('une place sans match : rattacher chaque match attendu ; avec un match : rien', async () => {
         const onAttach = vi.fn();
         const attachables = [{ matchId: 'M9', label: 'Alice – Bob' }];
         const items = matchMenu(t, { aName: 'Alice', bName: 'Bob' }, { attachables, onAttach });
@@ -172,7 +174,7 @@ describe('entrées du plan : table libre, joueur, rattacher', () => {
 });
 
 describe("menuRequest : un appui venu d'un enfant n'est pas celui de la ligne", () => {
-    test('la touche Menu sur un bouton de la ligne ouvre rien ; sur la ligne, un menu', () => {
+    test('la touche Menu sur un bouton de la ligne ouvre rien ; sur la ligne, un menu', async () => {
         const row = document.createElement('div');
         const btn = document.createElement('button');
         row.appendChild(btn);
@@ -188,7 +190,7 @@ describe("menuRequest : un appui venu d'un enfant n'est pas celui de la ligne", 
 const menuEl = () => document.querySelector('.context-menu');
 const menuLabels = () => [...document.querySelectorAll('.context-menu-item')].map((b) => b.textContent?.replace(/\s+/g, ' ').trim());
 
-describe('les vues ouvrent leur menu', () => {
+describe('les vues ouvrent leur menu', async () => {
     test('la grille : clic droit sur une case occupée, menu sur le pointeur', async () => {
         const { getByTestId } = render(TableGrid, { props: { cells: [RUNNING, FREE], onOutOfService: () => {} } });
         await fireEvent.contextMenu(getByTestId('direction-table-3'), { button: 2, clientX: 40, clientY: 50 });
@@ -226,11 +228,13 @@ describe('les vues ouvrent leur menu', () => {
 
     test('la grille : « Saisir le résultat » ouvre la fiche, « Forfait » demande confirmation', async () => {
         const onForfeit = vi.fn();
-        const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
         const { getByTestId, queryByTestId } = render(TableGrid, { props: { cells: [RUNNING], onForfeit } });
         await fireEvent.contextMenu(getByTestId('direction-table-3'), { button: 2, clientX: 1, clientY: 1 });
         /** @type {HTMLElement[]} */ ([...document.querySelectorAll('.context-menu-item')])[1].click();
-        expect(confirm).toHaveBeenCalled();
+        await Promise.resolve();
+        expect(get(confirmModalStore)).not.toBeNull();
+        resolveConfirm(false);
+        await Promise.resolve();
         expect(onForfeit).not.toHaveBeenCalled();
         await fireEvent.contextMenu(getByTestId('direction-table-3'), { button: 2, clientX: 1, clientY: 1 });
         /** @type {HTMLElement[]} */ ([...document.querySelectorAll('.context-menu-item')])[0].click();
@@ -327,7 +331,7 @@ describe('les vues ouvrent leur menu', () => {
     });
 });
 
-describe('la grille : accessibilité et ouverture sur le champ de table', () => {
+describe('la grille : accessibilité et ouverture sur le champ de table', async () => {
     test('grille ARIA, un seul arrêt de Tab, aria-haspopup seulement avec des entrées', async () => {
         const { container, getByTestId } = render(TableGrid, { props: { cells: [RUNNING, FREE, { ...FREE, table: 5, free: false, reserved: true }], onOutOfService: () => {} } });
         expect(container.querySelector('[role="grid"]')).not.toBeNull();

@@ -146,7 +146,7 @@ export default {
 <ul>
 <li><strong>Solo se importan los ficheros que aparecen.</strong> Lo que la carpeta ya contiene cuando arranca la vigilancia se registra como conocido y se deja en paz: apuntar una vigilancia a cuatro años de partidos no debe importarlos todos. Para importar lo que hay, use la importación de carpeta, que existe para eso — y ambas se componen muy bien, la importación primero, la vigilancia después.</li>
 <li><strong>Un fichero se importa solo cuando su tamaño se ha estabilizado.</strong> Un partido que otro programa está escribiendo crece de un vistazo a otro; importarlo a medio escribir daría un error de análisis sobre el que nadie puede actuar. blunderDB espera, pues, a ver dos veces el mismo fichero sin cambios.</li>
-<li><strong>La importación es silenciosa.</strong> Estaba estudiando una posición cuando llegaron sus partidos: quitarle la pantalla sería el peor momento. La importación se hace sin ventana, y la barra de estado muestra una franja con el recuento de partidos importados, ignorados (duplicados) y fallidos, con un botón que abre el informe completo si lo desea. Todo lo demás es idéntico a una importación manual: mismos duplicados detectados, mismo lote de importación, mismo análisis automático si está activado.</li>
+<li><strong>La importación es silenciosa.</strong> Estaba estudiando una posición cuando llegaron sus partidas: quitarle la pantalla sería el peor momento. El modo, la búsqueda activa, la pestaña y la posición mostrada no se mueven; la lista de posiciones no se recarga y muestra las partidas nuevas en la próxima recarga. La importación se hace sin ventana, y la barra de estado muestra un banner con el recuento de partidas importadas, omitidas (duplicados) y fallidas, con un botón que abre el informe completo si lo desea. Todo lo demás es idéntico a una importación manual: los mismos duplicados detectados, el mismo lote de importación, el mismo análisis automático si está activado.</li>
 </ul>
 <p>El intervalo por defecto es de diez segundos; el mínimo es de dos. La carpeta no se recorre recursivamente: una carpeta vigilada es el sitio donde una herramienta deposita sus partidos, no un árbol que explorar. Un recurso de red desmontado no detiene la vigilancia ni hace que su contenido pase por nuevo a su regreso.</p>
 <p>La misma vigilancia existe en línea de comandos, con <code>blunderdb import --type batch --dir &lt;carpeta&gt; --watch</code> (véase Interfaz de línea de comandos (CLI)): es la forma que puede usar un servidor, una tarea programada o un script.</p>
@@ -182,14 +182,19 @@ export default {
 <p>Las flechas eligen, <em>INTRO</em> ejecuta, <em>ESC</em> cierra. Un comando se ejecuta como si se hubiera tecleado; <code>s</code> y <code>ss</code> abren la línea de comandos para escribir en ella los filtros; un filtro se ejecuta como con un doble clic en la biblioteca; un match se abre como con un doble clic en el panel de matches.</p>
 <p>Cuando hay una Dirección abierta, la paleta añade el torneo: jugadores, mesas, matches en curso y pruebas (véase la búsqueda rápida).</p>
 <h3>Panel de Análisis</h3>
-<p>El panel <strong>Análisis</strong> (<em>CTRL-L</em>) muestra los datos de análisis de la posición actual importados desde eXtreme Gammon (XG), GNUbg o BGBlitz. Presenta las mejores alternativas (jugadas de fichas o decisiones de cubo) con sus valores de equidad y los errores correspondientes. La tecla <em>d</em> alterna entre el análisis de las jugadas de fichas y el análisis del cubo. Durante la navegación por una partida, la jugada realmente jugada se resalta en la lista de alternativas. Pulse <em>CTRL-L</em> o ejecute el comando <code>list</code> para mostrar u ocultar el panel.</p>
+<p>El panel <strong>Análisis</strong> (<em>CTRL-L</em>) muestra los datos de análisis de la posición actual importados desde eXtreme Gammon (XG), GNUbg, BGBlitz o gammonNet. Presenta las mejores alternativas (jugadas de fichas o decisiones de cubo) con sus valores de equidad y los errores correspondientes. La tecla <em>d</em> alterna entre el análisis de las jugadas de fichas y el análisis del cubo. Durante la navegación por una partida, la jugada realmente jugada se resalta en la lista de alternativas. Pulse <em>CTRL-L</em> o ejecute el comando <code>list</code> para mostrar u ocultar el panel.</p>
 <p>Bajo las tablas, una <strong>frase</strong> dice a veces lo que costó la decisión jugada y por qué: «Pierde 120 mMWC: la jugada realizada deja tres fichas sueltas donde 13/7 8/7 solo deja una.» Procede de seis reglas medibles — la exposición, un punto de la casa hecho o perdido, las posibilidades de gammon abandonadas, una seguridad que cuesta más de lo que aporta, y los dos sentidos de un error de cubo (doblar demasiado tarde o demasiado pronto, aceptar demasiado amplio o pasar demasiado estricto).</p>
 <p>La regla que importa es la del <strong>silencio</strong>: la frase solo aparece cuando una regla se aplica con confianza, y sobre un error que supera el umbral a partir del cual los motores coinciden en que lo es. El resto del tiempo no hay frase — ni marco vacío, ni «no lo sabemos». Una explicación equivocada cuesta más que ninguna: enseña algo inexacto.</p>
+<p>La misma frase acompaña al error allí donde acaba de cometerlo: al dorso de una <strong>tarjeta Anki</strong>, bajo el análisis revelado, y en el <strong>veredicto del quiz</strong> del ejercicio Decisión, bajo el coste en mMWC. Rigen las mismas reglas de silencio: una jugada correcta, o un error que ninguna regla explica, no añade nada.</p>
 <p>Cuando una posición ha sido juzgada por <strong>varios motores</strong>, una franja en la cabecera del panel los pone lado a lado: una línea por motor, con su profundidad y su respuesta — el veredicto de cubo, o su propia mejor jugada. Dice primero si coinciden, y es la discrepancia lo que la justifica: «XG dice doblar, tomar; gammonNet dice no doblar» se lee de un vistazo, donde había que comparar dos tablas en diagonal.</p>
 <p>La mejor jugada de un motor es la mejor <strong>de ese motor</strong>: la lista de jugadas candidatas está ordenada por equidad, con todos los motores mezclados, así que su primer elemento no es la mejor jugada de ninguno en particular.</p>
 <p>La franja aparece solo si de verdad hay varios motores, y existe únicamente en este panel: el panel Eval presenta <strong>una</strong> decisión, la del motor integrado (<code>ADR-0017 &lt;https://github.com/kevung/blunderDB/blob/main/docs/adr/0017-the-panel-shows-position-facts-plus-the-one-decision-the-board-asks.md&gt;</code>__), y una comparación no tendría sitio allí.</p>
 <p>Las jugadas se escriben como se leen en el tablero, aquí igual que en el panel Eval: la ficha menos avanzada se mueve primero, y <strong>una ficha que encadena varios dados se escribe una sola vez</strong> — un 64 jugado con la misma ficha se lee <code>24/14</code>, y <code>24/14*</code> si golpea al llegar. El detalle del encadenamiento solo reaparece cuando dice algo más: un golpe <em>por el camino</em> conserva su punto de paso, <code>24/18* 18/14</code>, sin lo cual el golpe en el 18 desaparecería de la notación.</p>
 <p>La equidad de un análisis importado sigue la misma regla que el panel Eval: la columna indica su propio marco de referencia, «Equity (money)» o «Equity (match)» según el marcador de la posición analizada, nunca un simple «Equity» mudo sobre la escala. Las reglas <strong>Jacoby</strong> y <strong>Beaver</strong> activas en una posición de money game también se muestran, en insignias bajo la tabla de decisión del cubo.</p>
+<h4>Rollouts</h4>
+<p>Bajo el análisis, el panel <strong>Análisis</strong> propone <strong>rodar</strong> la posición: jugar cientos de partidas a partir de cada jugada candidata, o de cada acción del cubo, para desempatar dos opciones que la evaluación directa apenas distingue. Tres ajustes: <strong>Rápido</strong> (216 partidas, truncadas a 7 medias jugadas), <strong>Estándar</strong> (1296 partidas, truncadas a 11 medias jugadas) y <strong>Libre</strong>, donde todos los parámetros son editables — truncamiento, partidas mínimas y máximas (múltiplos de 36), límite de JSD, profundidad (ply), número de candidatas, semilla y número de procesos. El botón <strong>Lanzar el rollout</strong>, la tecla <em>r</em> del panel o el comando <code>rollout</code> (alias <code>ro</code>) lo inician; una barra de progreso sigue las partidas jugadas y <strong>Cancelar</strong> (o <em>r</em> de nuevo) lo detiene sin escribir nada.</p>
+<p>El resultado se <strong>guarda junto al análisis, nunca en su lugar</strong>: un análisis importado no se modifica. Cada rollout forma un bloque con, por candidata, la equidad, el intervalo de confianza del 95 %, la <strong>JSD</strong> (la distancia a la mejor jugada en desviaciones típicas de la diferencia: a partir del límite, la jugada está decidida y deja de jugarse) y el número de partidas. El rollout se detiene en cuanto las jugadas quedan desempatadas. La <strong>Configuración</strong> — el motor y la firma completa de los parámetros — se despliega bajo la tabla: dos rollouts con la misma firma dan los mismos números. Un rollout juega el cubo dentro de sus partidas: la clasificación es fiable, la equidad absoluta algo menos, lo que el bloque recuerda. Una posición que no está en la base se puede rodar, pero no se guarda.</p>
+<p>El botón <strong>Sobre la lista mostrada…</strong> (o <code>ro search</code>) rueda, una tras otra, las posiciones de la lista mostrada — resultados de búsqueda, partido o colección — que aún no llevan este rollout; una confirmación da el total antes de empezar. Cada posición se escribe en cuanto termina: cancelar conserva lo hecho, y volver a lanzar continúa donde se detuvo. El avance sobrevive al cierre del panel.</p>
 <h3>Panel de Comentarios</h3>
 <p>El panel <strong>Comentarios</strong> (<em>CTRL-P</em>) muestra, añade y edita los comentarios asociados a la posición actual. Una posición puede llevar varios: se muestran todos, del más reciente al más antiguo. Los comentarios importados de archivos XG se asocian automáticamente a las posiciones correspondientes. Pulse <em>CTRL-P</em> o ejecute el comando <code>comment</code> para mostrar u ocultar el panel.</p>
 <p>Cada comentario procedente de un archivo lleva una <strong>etiqueta de procedencia</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, o <em>importado</em> cuando la procedencia nunca se registró). Los comentarios que usted escribió no llevan ninguna: es el caso corriente, y señalarlo en cada línea sería ruido. Modificar un comentario importado se lo atribuye: tras la modificación, la frase es suya.</p>
@@ -286,6 +291,7 @@ export default {
 <p>La cabecera de cada partida cuenta sus marcas, esté desplegada o no: se ve sin abrirla en qué partida están los blunders.</p>
 <p>El botón <strong>Fusionar jugadores</strong> de la barra de herramientas del panel abre una ventana que enumera todos los nombres de jugadores de la base con su número de partidas: seleccionar las variantes de ortografía de un mismo jugador, elegir el nombre canónico que se desea conservar y, a continuación, fusionar. Útil para unificar las estadísticas por jugador cuando un mismo jugador aparece con varios nombres.</p>
 <p>Cuando una partida está abierta, aparece una <strong>barra de información</strong> sobre el tablero: recuerda los jugadores presentes (<em>jugador 1</em> contra <em>jugador 2</em>) así como el contexto de la partida (evento, lugar, ronda, fecha y longitud de la partida, cuando esa información está disponible). Esta barra también se muestra fuera del modo partida: cuando una posición estudiada (procedente de una búsqueda, de una colección o de un acceso directo) proviene de una o varias partidas, indica su <strong>procedencia</strong> — la primera partida implicada y, en su caso, una insignia « +N » que enumera las demás al pasar el cursor. Una posición importada por separado, que ninguna partida referencia, no muestra nada.</p>
+<p>Las pestañas <strong>Búsqueda</strong> y <strong>Eval</strong> sustituyen el tablero por un tablero de trabajo: una cinta en la parte superior del tablero lo indica («Tablero de búsqueda», «Tablero de evaluación») y la barra de información se oculta mientras describiría una posición que no está en pantalla. Volver al análisis restaura la posición estudiada.</p>
 <p>Al abrir una base que contiene partidas, el panel <strong>Partidas</strong> se muestra de inmediato y la revisión comienza directamente en la primera posición, para empezar a navegar de inmediato.</p>
 <div class="admonition note">
 <p>Una base de datos solo puede abrirse en escritura por una única ventana a la vez. Si abre una base ya abierta en otra ventana de blunderDB, se abre en modo de <strong>solo lectura</strong>: la navegación, la búsqueda y el análisis siguen siendo posibles, pero toda modificación queda desactivada y la barra de título muestra « [solo lectura] ».</p>
@@ -553,6 +559,15 @@ export default {
 <li>El <strong>coste</strong> es la parte del PR del filtro que representa el grupo: la fórmula del PR aplicada a los errores del grupo, referida a todas las decisiones contadas. Los costes de los grupos nunca superan, pues, el PR.</li>
 </ul>
 <p>Al hacer clic en un grupo se cargan sus posiciones, de la más costosa a la menos costosa. El tema se recalcula en cada visualización y nunca se guarda: como el plan de juego, es una etiqueta derivada, no editable. En línea de comandos: <code>blunderdb stats recurring</code> (véase stats — Errores recurrentes).</p>
+<p>Cada fila ofrece tres gestos para pasar del error al estudio: <strong>Quiz de este grupo</strong> inicia el ejercicio Decisión del panel Entrenamiento con las posiciones del grupo, <strong>Mazo Anki</strong> hace con ellas un mazo de tarjetas, <strong>Colección</strong> las guarda en una colección nueva. Sobre la tabla, <strong>Quiz de mis tres peores grupos</strong> sortea veinte posiciones entre las de los tres grupos más costosos. En la línea de comandos, <code>stats recurring --quiz</code> sortea esas posiciones y <code>--deck</code> crea el mazo.</p>
+<h5>Entrenamiento a lo largo del tiempo</h5>
+<p>La pestaña <strong>Entrenamiento</strong> coloca una junto a otra, sobre las mismas ventanas de calendario — la <strong>semana</strong> o el <strong>mes</strong>, a elección — tres series que miden el progreso por tres vías:</p>
+<ul>
+<li>el <strong>PR del quiz</strong>: el de las sesiones del ejercicio Decisión del panel Entrenamiento, ponderado por el número de decisiones juzgadas. Se calcula en la escala del PR real, por lo que es comparable a él;</li>
+<li>el <strong>PR de las partidas</strong> del filtro actual, ponderado por el número de decisiones;</li>
+<li>la <strong>retención de Anki</strong>: la parte de las revisiones de tarjetas ya aprendidas calificadas <em>Difícil</em> o mejor, leída en el eje derecho (en %).</li>
+</ul>
+<p>Entre paréntesis, el número de decisiones o de revisiones que hay detrás de cada valor: una ventana sin muestras no tiene valor — un guion, no un cero. El filtro solo restringe las partidas; el diario del quiz y el de Anki son suyos y no llevan jugador. No se registra nada más: las tres series se releen de los diarios existentes. En línea de comandos: <code>blunderdb stats training</code> (véase stats — Errores recurrentes).</p>
 <h5>Reparto por acción de cubo</h5>
 <p>Un diagrama de barras muestra el PR (o MWC) para cada tipo de decisión de cubo: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Cada barra indica también el número de decisiones y la tasa de blunders en una información emergente.</p>
 <p>Hacer clic en una barra carga las posiciones correspondientes a esa acción de cubo, <strong>solo las que tienen un error</strong> (drill-down).</p>
@@ -649,7 +664,7 @@ export default {
 <p>En esta pestaña, la lista <strong>Jugador</strong> y la elección del <strong>tipo de decisión</strong> están desactivadas: la tabla muestra a todos los jugadores y ya desglosa las decisiones de fichas y de cubo en columnas distintas.</p>
 </div>
 <div class="admonition important">
-<p>Un guion («—») señala un valor <strong>nunca medido</strong>, que no debe confundirse con cero. Es en particular el caso de la columna Suerte para toda partida importada antes de la versión 2.15.0 del esquema: la suerte no se conservaba entonces, y nada permite reconstruirla después — hay que reimportar los archivos de origen. Los formatos que no la transportan (BGF, Jellyfish <code>.mat</code>) no la aportarán nunca.</p>
+<p>Un guion («—») señala un valor <strong>nunca medido</strong>, que no debe confundirse con cero. Es en particular el caso de la columna Suerte para toda partida importada antes de la versión 2.15.0 del esquema: la suerte no se conservaba entonces, y nada permite reconstruirla después. Reimportar el archivo de origen no basta: la importación reconoce un duplicado y solo toma sus marcas. Hay que eliminar la partida y luego volver a importarla. Los formatos que no la transportan (BGF, Jellyfish <code>.mat</code>) no la aportarán nunca.</p>
 </div>
 <h4>Regla de agregación</h4>
 <div class="admonition important">
@@ -764,6 +779,7 @@ export default {
 <p><strong>Mostrar la respuesta:</strong> La carta plantea una pregunta — qué jugada jugar, o qué acción de cubo. Reflexione y luego pulse <em>ESPACIO</em> (o haga clic en la zona oculta) para desvelar la respuesta: el análisis registrado de la posición, tal como lo presenta la pestaña Análisis. Aparece bajo los botones de evaluación, que permanecen en su sitio y al alcance. Hacer clic en una jugada de la lista la muestra en el tablero.</p>
 <p>Nada le obliga a desvelar la respuesta para evaluar: si está seguro, las teclas <em>1</em> a <em>4</em> siguen activas. La respuesta vuelve a ocultarse en la carta siguiente, pero no si simplemente cambia de pestaña — vaya a consultar el panel Eval o el comentario de la posición, le estará esperando a la vuelta.</p>
 <p>Una posición sin análisis registrado lo indica directamente, sin zona oculta.</p>
+<p><strong>Responder en el tablero.</strong> Por defecto usted se califica. En los Parámetros de un mazo, marque <em>Responder en el tablero</em>: ante una carta de fichas, juega entonces la jugada en el tablero, como en el ejercicio Decisión, y pulsa <em>Validar</em>. El motor juzga la jugada contra el análisis guardado, muestra la respuesta y <strong>propone una nota</strong>: <em>Fácil</em> para una respuesta correcta rápida, <em>Bien</em> para una correcta más lenta, <em>Difícil</em> para un error por debajo del umbral de blunder, <em>Repetir</em> para un blunder o una jugada ilegal. La nota propuesta aparece resaltada; usted conserva el control y califica lo que quiera con <em>1</em> a <em>4</em>. Una jugada legal que el análisis no clasifica no propone nada. Las cartas de cubo, las cartas de marcador y los mazos de fichas de marcador siguen autocalificados. Mostrar la respuesta sin jugar abandona la jugada.</p>
 <p><strong>Limitar la sesión.</strong> De forma predeterminada, una sesión de repaso recorre todas las cartas pendientes. Puede acotarla a un número de cartas, por mazo, en los Ajustes: marque <em>Limitar la sesión</em> e indique cuántas cartas debe servir una sesión. Cuando se alcanza el límite, la sesión se detiene y lo dice — el mensaje distingue «límite alcanzado, quedan tantas cartas pendientes» de una cola realmente agotada. Para seguir de todos modos, ahí está la práctica libre: sirve otras posiciones sin modificar nada del calendario.</p>
 <p>Un límite de <strong>0</strong> no sirve ninguna carta: es un estado por derecho propio, útil para congelar un mazo mientras se prepara un torneo, y no es lo mismo que «sin límite». El botón <em>Study</em> queda entonces inactivo.</p>
 <p>El límite se aplica a la <strong>sesión</strong>, no al día. Un mazo de blunderDB se construye sobre una colección o sobre una búsqueda: es un corpus finito, introducido en unas pocas sesiones, cuyo volumen diario ya está acotado por su tamaño. Un tope diario nunca llegaría a morder, o bien crearía un atraso en un mazo que cabía en una sola sesión.</p>
@@ -792,6 +808,7 @@ export default {
 <li>el <strong>límite por pregunta</strong> — ninguno, 15, 30 o 60 segundos.</li>
 </ul>
 <p>La fuente elegida se recuerda para cada ejercicio, de una sesión a otra.</p>
+<p>La lista explorada puede venir de los <em>errores recurrentes</em> del panel Stats: un clic en «Quiz de este grupo» la sustituye por las posiciones del grupo e inicia el ejercicio Decisión.</p>
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> y <code>train decision</code> abren el panel y arrancan directamente; <code>train tp</code> y <code>train takepoint</code> son sinónimos de <code>train scores</code>, <code>train epc</code> de <code>train bearoff</code>, <code>train quiz</code> de <code>train decision</code>.</p>
 <h4>Los cinco ejercicios</h4>
 <p><strong>Scores</strong> sortea uno de los 36 marcadores no ordenados de 2 a 9 away y muestra una <strong>ficha de marcador</strong>: dos columnas — <em>Vous</em> (usted) y <em>L'adversaire</em> (el adversario) — y siete filas — el punto de aceptación con cubo 2 y luego con cubo 4, cada uno en carrera larga y en la última tirada, y después el valor del gammon con los cubos 1, 2 y 4.</p>
@@ -988,8 +1005,12 @@ export default {
 <td>Recargar todas las posiciones de la base de datos.</td>
 </tr>
 <tr>
-<td>AvPág, h</td>
+<td>Home, h</td>
 <td>Primera posición / Partida anterior (navegación de partida).</td>
+</tr>
+<tr>
+<td>AvPág</td>
+<td>Retrocede una página de cien posiciones (se detiene al principio de la lista); en una partida, juego anterior.</td>
 </tr>
 <tr>
 <td>IZQUIERDA, k</td>
@@ -1008,8 +1029,12 @@ export default {
 <td>Jugada siguiente (cuando hay una jugada seleccionada en el análisis).</td>
 </tr>
 <tr>
-<td>RePág, l</td>
+<td>End, l</td>
 <td>Última posición / Partida siguiente (navegación de partida).</td>
+</tr>
+<tr>
+<td>RePág</td>
+<td>Avanza una página de cien posiciones (se detiene al final de la lista); en una partida, juego siguiente.</td>
 </tr>
 <tr>
 <td>r</td>
@@ -1287,6 +1312,10 @@ export default {
 <tr>
 <td>d</td>
 <td>Alternar entre el análisis de jugadas y de cubo (solo en navegación de partida).</td>
+</tr>
+<tr>
+<td>r</td>
+<td>Lanzar el rollout de la posición con el ajuste elegido; una segunda pulsación lo detiene.</td>
 </tr>
 <tr>
 <td>Esc</td>
@@ -1903,6 +1932,10 @@ export default {
 <td>Ir a la posición del índice indicado.</td>
 </tr>
 <tr>
+<td>[number]%</td>
+<td>Ir a ese porcentaje de la lista: <code>0%</code> la primera posición, <code>50%</code> la mitad, <code>100%</code> la última.</td>
+</tr>
+<tr>
 <td>grid, gr</td>
 <td>Abre la hoja de contactos: la lista recorrida como una cuadrícula de minitableros, una página de veinticuatro cada vez; elegir una miniatura abre su posición.</td>
 </tr>
@@ -1913,6 +1946,10 @@ export default {
 <tr>
 <td>comment, co</td>
 <td>Mostrar/escribir comentarios.</td>
+</tr>
+<tr>
+<td>rollout, ro [fast|standard]</td>
+<td>Rueda la posición actual (con el ajuste elegido en el panel Análisis, o el preajuste nombrado) y abre el panel Análisis. <code>ro search [fast|standard]</code> lo lanza sobre la lista mostrada, tras una confirmación con el total; <code>ro stop</code> detiene el rollout en curso.</td>
 </tr>
 <tr>
 <td>history, hi</td>

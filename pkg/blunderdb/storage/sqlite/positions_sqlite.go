@@ -74,6 +74,9 @@ const positionInsertSQL = `INSERT INTO position (
 ) VALUES (?,?,?,?,?, ?,?,?,?, ?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?, ?,?,?,?)
 ON CONFLICT(zobrist_hash) DO NOTHING`
 
+// positionIDByHashSQL finds the row a deduplicated Save landed on.
+const positionIDByHashSQL = `SELECT id FROM position WHERE zobrist_hash = ?`
+
 // markIndividualSQL raises the provenance flag on an already-stored position.
 // It only ever sets, never clears — that is what makes the flag sticky.
 const markIndividualSQL = `UPDATE position SET individually_imported = 1
@@ -158,8 +161,7 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 				return 0, false, fmt.Errorf("sqlite: mark position flagged: %w", err)
 			}
 		}
-		if err = s.db.QueryRowContext(ctx,
-			`SELECT id FROM position WHERE zobrist_hash = ?`,
+		if err = s.db.QueryRowContext(ctx, positionIDByHashSQL,
 			int64(cols.ZobristHash)).Scan(&id); err != nil {
 			return 0, false, fmt.Errorf("sqlite: save position dedup lookup: %w", err)
 		}
@@ -167,6 +169,19 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 	norm.ID = id
 	*p = norm
 	return id, created, nil
+}
+
+// RaiseFlag — see storage.PositionStore.
+func (s *positionStore) RaiseFlag(ctx context.Context, scope string, p *domain.Position) (bool, error) {
+	res, err := s.db.ExecContext(ctx, markFlaggedSQL, int64(engine.PopulatePositionColumns(p).ZobristHash))
+	if err != nil {
+		return false, fmt.Errorf("sqlite: raise position flag: %w", err)
+	}
+	n, err := res.RowsAffected()
+	if err != nil {
+		return false, fmt.Errorf("sqlite: raise position flag: %w", err)
+	}
+	return n > 0, nil
 }
 
 const positionUpdateSQL = `UPDATE position SET state = ?,

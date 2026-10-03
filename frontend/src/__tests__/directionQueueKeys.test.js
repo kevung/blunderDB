@@ -46,7 +46,7 @@ import ProposalList from '../components/direction/ProposalList.svelte';
 import ContextMenu from '../components/ContextMenu.svelte';
 import { openPanels, PANEL, activeTabStore } from '../stores/uiStore.js';
 import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore.js';
-import { openDirectionIdStore } from '../stores/directionStore.js';
+import { directionViewLoadedStore, openDirectionIdStore } from '../stores/directionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 
 const TOURNAMENTS = [
@@ -86,6 +86,7 @@ async function openTournamentPanel() {
 /** La page Direction affichée, sa file des propositions devant soi. */
 async function showDirectionQueue() {
     openDirectionIdStore.set(1);
+    directionViewLoadedStore.set(true);
     render(ProposalList, { props: { proposals: PROPOSALS, onConfirm } });
     await tick();
 }
@@ -101,6 +102,7 @@ beforeEach(() => {
     selectedTournamentStore.set(null);
     tournamentMatchesStore.set([]);
     openDirectionIdStore.set(null);
+    directionViewLoadedStore.set(false);
     databasePathStore.set('/fake/db.sqlite');
 });
 
@@ -111,6 +113,7 @@ afterEach(() => {
     openPanels.set(new Set());
     activeTabStore.set('');
     openDirectionIdStore.set(null);
+    directionViewLoadedStore.set(false);
     vi.clearAllMocks();
 });
 
@@ -225,6 +228,7 @@ describe('page Direction affichée : la file des propositions a J / K / ENTRÉE'
     test('sur un autre onglet de la Direction, sans file, J ne change pas de tournoi', async () => {
         await openTournamentPanel();
         openDirectionIdStore.set(1);
+        directionViewLoadedStore.set(true);
         await tick();
 
         await press(document.body, 'j');
