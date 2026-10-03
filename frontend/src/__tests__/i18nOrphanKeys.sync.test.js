@@ -38,6 +38,7 @@ const SRC = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DYNAMIC_PREFIXES = [
     'keyNames.', // utils/keyNames.js: t(`keyNames.${key}`)
     'board.scene.',
+    'report.', // the document's labels are read by the Go report generator (pkg/blunderdb/report), which labels_test.go holds to this catalogue
     'search.filters.',
     'search.filterGroups.',
     'cube.verdicts.',

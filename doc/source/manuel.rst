@@ -2342,6 +2342,12 @@ comptées, PR global, pions et videau), puis les **dix décisions les plus
 coûteuses**, chacune avec son diagramme, son coût, le match d'où elle vient et
 le meilleur coup lorsqu'une analyse le donne.
 
+Le document est construit par le moteur, pas par l'écran : la ligne de commande
+(``stats report --html``, voir :ref:`cli_stats`) et le démon HTTP (route
+``stats.report``) produisent le même rapport, dans l'une des neuf langues de
+l'interface. Seule l'application graphique dessine les diagrammes avec la
+palette du plateau ; les deux autres emploient la palette par défaut.
+
 Le rapport porte le **filtre courant** du panneau Stats. Un rapport qui ne dit
 pas son périmètre est un rapport dont les chiffres ne veulent rien dire :
 réglez le filtre — un tournoi, une plage de dates, un joueur — avant de le

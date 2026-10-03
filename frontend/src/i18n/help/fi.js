@@ -535,6 +535,7 @@ export default {
 <h4>HTML-raportti</h4>
 <p>Paneelin otsikon <strong>HTML-raportti</strong>-painike tuottaa <strong>itsenäisen</strong> asiakirjan: yksi tiedosto, ei ulkoista kuvaa, ei etätyylitiedostoa, ei skriptiä. Kaaviot ovat upotettua SVG:tä, piirretty samalla piirtimellä kuin lauta näytöllä, sinun paletillasi. Se aukeaa missä tahansa selaimessa, kulkee sähköpostitse ja <strong>tulostuu PDF:ksi itse selaimesta</strong> — mikä säästää PDF-generaattorin mukaan ottamiselta sellaisen tuottamiseen, joka kaikilla jo on.</p>
 <p>Se sisältää nykyisen alueen tunnusluvut (asemat, ottelut, lasketut päätökset, kokonais-, siirto- ja kuutio-PR), sitten <strong>kymmenen kalleinta päätöstä</strong>, kukin kaavionsa, kustannuksensa, sen ottelun josta se tulee, ja parhaan siirron kun analyysi sen antaa.</p>
+<p>Asiakirjan rakentaa moottori, ei näyttö: komentorivi (<code>stats report --html</code>, katso stats — Toistuvat virheet) ja HTTP-palvelu (reitti <code>stats.report</code>) tuottavat saman raportin jollakin käyttöliittymän yhdeksästä kielestä. Vain graafinen sovellus piirtää kaaviot laudan paletilla; kaksi muuta käyttävät oletuspalettia.</p>
 <p>Raportti kantaa Tilastot-paneelin <strong>nykyistä suodatinta</strong>. Raportti joka ei kerro aluettaan on raportti jonka luvut eivät merkitse mitään: aseta suodatin — turnaus, päivämääräväli, pelaaja — ennen kuin tuotat sen.</p>
 <h4>Yleiskatsaus-välilehti</h4>
 <p><strong>Yleiskatsaus</strong>-välilehti antaa yhteenvetonäkymän keskeisistä tunnusluvuista.</p>

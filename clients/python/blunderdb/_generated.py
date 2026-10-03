@@ -1026,6 +1026,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.recurringErrors — JSON."
         return self._call("/v1/stats.recurringErrors", payload)
 
+    def stats_report(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.report — JSON."
+        return self._call("/v1/stats.report", payload)
+
     def stats_study_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.studyIds — JSON."
         return self._call("/v1/stats.studyIds", payload)

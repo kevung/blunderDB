@@ -40,8 +40,11 @@ func (cli *CLI) runStats(args []string) error {
 // map, like handlers(), so the parity test can walk it.
 func (cli *CLI) statsHandlers() map[string]func([]string) error {
 	return map[string]func([]string) error{
-		"recurring": cli.runStatsRecurring,
-		"training":  cli.runStatsTraining,
+		"recurring":   cli.runStatsRecurring,
+		"training":    cli.runStatsTraining,
+		"progression": cli.runStatsProgression,
+		"breakdown":   cli.runStatsBreakdown,
+		"report":      cli.runStatsReport,
 	}
 }
 
@@ -65,6 +68,9 @@ func (cli *CLI) printStatsUsage() {
 	fmt.Println("Sub-commands:")
 	fmt.Println("  recurring  Errors grouped by plan of play and theme, costliest first")
 	fmt.Println("  training   Quiz PR and Anki retention against real PR, by calendar window")
+	fmt.Println("  progression  PR per match, per tournament and rolling (Progression tab)")
+	fmt.Println("  breakdown  PR by phase, plan of play, tag, score and cube action (Breakdowns tab)")
+	fmt.Println("  report     Self-contained HTML report of the filter (--html)")
 }
 
 func (cli *CLI) runStatsRecurring(args []string) error {

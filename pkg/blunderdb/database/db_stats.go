@@ -3,6 +3,8 @@ package database
 import (
 	"context"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -465,4 +467,30 @@ func (d *Database) GetMatchDetailStats(matchID int64) (*MatchDetailStats, error)
 		return nil, err
 	}
 	return fromStorageMatchDetail(m), nil
+}
+
+// StatsReportHTML is StatsReportHTMLCtx with context.Background(), the shape
+// the desktop bindings call.
+func (d *Database) StatsReportHTML(filter StatsFilter, lang string, diagrams map[int64]string) (string, error) {
+	return d.StatsReportHTMLCtx(context.Background(), filter, lang, diagrams)
+}
+
+// StatsReportHTMLCtx renders the self-contained HTML report of filter (package
+// report), written in lang (English when it has no catalogue). diagrams maps a
+// position id to a ready SVG the caller drew itself, as the desktop app does in
+// the board palette on screen; a position it does not cover gets the built-in
+// diagram, and nil leaves every diagram to it.
+func (d *Database) StatsReportHTMLCtx(ctx context.Context, filter StatsFilter, lang string, diagrams map[int64]string) (string, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	var draw report.Diagrammer
+	if len(diagrams) > 0 {
+		draw = func(p *domain.Position) string {
+			if svg, ok := diagrams[p.ID]; ok && svg != "" {
+				return svg
+			}
+			return report.Diagram(p)
+		}
+	}
+	return report.Build(ctx, d.store, "", toStorageStatsFilter(filter), lang, draw)
 }

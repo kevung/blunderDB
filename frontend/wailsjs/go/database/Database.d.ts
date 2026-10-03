@@ -635,6 +635,10 @@ export function StartMatchManually(arg1:number,arg2:string,arg3:string,arg4:numb
 
 export function StartTranscriptionFromSlot(arg1:number,arg2:string):Promise<database.TranscriptionState>;
 
+export function StatsReportHTML(arg1:database.StatsFilter,arg2:string,arg3:Record<number, string>):Promise<string>;
+
+export function StatsReportHTMLCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string,arg4:Record<number, string>):Promise<string>;
+
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
 
 export function StudyPositionIDs(arg1:database.StatsFilter,arg2:number,arg3:number):Promise<Array<number>>;

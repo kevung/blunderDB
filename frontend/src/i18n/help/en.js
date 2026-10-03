@@ -535,6 +535,7 @@ export default {
 <h4>The HTML report</h4>
 <p>The <strong>HTML report</strong> button in the panel's header produces a <strong>self-contained</strong> document: a single file, with no external image, no remote stylesheet, no script. The diagrams are inline SVG, drawn by the same renderer as the board on screen, with your palette. It opens in any browser, travels by e-mail, and <strong>prints to PDF from the browser itself</strong> — which avoids embedding a PDF generator to produce what everybody already has.</p>
 <p>It carries the current scope's figures (positions, matches, counted decisions, global, checker and cube PR), then the <strong>ten most expensive decisions</strong>, each with its diagram, its cost, the match it comes from and the best move when an analysis gives one.</p>
+<p>The document is built by the engine, not by the screen: the command line (<code>stats report --html</code>, see stats — Recurring errors) and the HTTP daemon (route <code>stats.report</code>) produce the same report, in any of the nine interface languages. Only the graphical application draws the diagrams with the board palette; the other two use the default palette.</p>
 <p>The report carries the Stats panel's <strong>current filter</strong>. A report that does not state its scope is a report whose figures mean nothing: set the filter — a tournament, a date range, a player — before producing it.</p>
 <h4>Dashboard tab</h4>
 <p>The <strong>Dashboard</strong> tab gives a summary view of key indicators.</p>

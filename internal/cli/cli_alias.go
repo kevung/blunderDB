@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 
@@ -12,7 +13,85 @@ import (
 
 // runPlayers is `blunderdb players alias …`: the other spellings of a player.
 func (cli *CLI) runPlayers(args []string) error {
+	if len(args) > 0 {
+		switch strings.ToLower(args[0]) {
+		case "merge":
+			return cli.runPlayersMerge(args[1:])
+		case "swap":
+			return cli.runPlayersSwap(args[1:])
+		}
+	}
 	return cli.runAliasCommand("players", "player", args)
+}
+
+// runPlayersMerge is `players merge`: the window's merge of the matches panel,
+// through the same MergePlayers as the daemon's matches.mergePlayers. It
+// records aliases, so the matches keep the names their files wrote.
+func (cli *CLI) runPlayersMerge(args []string) error {
+	fs := flag.NewFlagSet("players merge", flag.ContinueOnError)
+	dbPath := fs.String("db", "", "Path to the database file (required)")
+	into := fs.String("into", "", "The canonical name the others become spellings of (required)")
+	fs.Usage = func() {
+		fmt.Println("Usage: blunderdb players merge --db FILE --into CANONICAL NAME [NAME...]")
+		fmt.Println()
+		fmt.Println("Make every NAME another spelling of CANONICAL (same as `players alias add`")
+		fmt.Println("for each): the stats, the players table and the search read them as one")
+		fmt.Println("person, every later import stores CANONICAL, and the matches already stored")
+		fmt.Println("keep the names their files wrote.")
+		fmt.Println()
+		fmt.Println("Options:")
+		fs.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  blunderdb players merge --db base.db --into \"John Doe\" \"Doe J.\" \"J. Doe\"")
+	}
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if *into == "" || fs.NArg() == 0 {
+		fs.Usage()
+		return fmt.Errorf("usage: blunderdb players merge --db FILE --into CANONICAL NAME [NAME...]")
+	}
+	if err := cli.db.MergePlayers(fs.Args(), *into); err != nil {
+		return err
+	}
+	fmt.Printf("%d name(s) merged into %q\n", fs.NArg(), strings.TrimSpace(*into))
+	return nil
+}
+
+// runPlayersSwap is `players swap`: the window's inversion of a match's two
+// players, through the same SwapMatchPlayers as the daemon's matches.swapPlayers.
+func (cli *CLI) runPlayersSwap(args []string) error {
+	fs := flag.NewFlagSet("players swap", flag.ContinueOnError)
+	dbPath := fs.String("db", "", "Path to the database file (required)")
+	fs.Usage = func() {
+		fmt.Println("Usage: blunderdb players swap --db FILE MATCH_ID")
+		fmt.Println()
+		fmt.Println("Swap the two players of a match: the file named them in the wrong order.")
+		fmt.Println("Every position of the match is rewritten from the other player's side.")
+		fmt.Println()
+		fmt.Println("Options:")
+		fs.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  blunderdb players swap --db base.db 42")
+	}
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if fs.NArg() != 1 {
+		fs.Usage()
+		return fmt.Errorf("usage: blunderdb players swap --db FILE MATCH_ID")
+	}
+	id, err := strconv.ParseInt(fs.Arg(0), 10, 64)
+	if err != nil || id <= 0 {
+		return fmt.Errorf("invalid match id %q", fs.Arg(0))
+	}
+	if err := cli.db.SwapMatchPlayers(id); err != nil {
+		return err
+	}
+	fmt.Printf("players of match %d swapped\n", id)
+	return nil
 }
 
 // runEvents is `blunderdb events alias …`: the other spellings of an event.
@@ -146,4 +225,9 @@ func printAliasUsage(cmd, kind string) {
 	fmt.Printf("  blunderdb %s alias add --db base.db \"Doe J.\" \"John Doe\"\n", cmd)
 	fmt.Printf("  blunderdb %s alias list --db base.db --format json\n", cmd)
 	fmt.Printf("  blunderdb %s alias suggest --db base.db\n", cmd)
+	if cmd == "players" {
+		fmt.Println()
+		fmt.Println("Also: `players merge --db FILE --into CANONICAL NAME...` and")
+		fmt.Println("`players swap --db FILE MATCH_ID` (see their --help).")
+	}
 }

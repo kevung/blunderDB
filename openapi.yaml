@@ -5697,6 +5697,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_RecurringErrors"
                 nullable: true
+  /v1/stats.report:
+    post:
+      operationId: stats.report
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsReportReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/statsReportResp"
   /v1/stats.studyIds:
     post:
       operationId: stats.studyIds
@@ -8127,6 +8144,18 @@ components:
       properties:
         filter:
           $ref: "#/components/schemas/storage_StatsFilter"
+    statsReportReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        language:
+          type: string
+    statsReportResp:
+      type: object
+      properties:
+        html:
+          type: string
     statsSelectionReq:
       type: object
       properties:

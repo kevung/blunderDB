@@ -1146,6 +1146,74 @@ un tiret en texte, un compte nul en JSON, jamais un zéro.
    ./blunderdb stats training --db base.db --player "Alice"
    ./blunderdb stats training --db base.db --window month --format json
 
+**stats progression** — Le PR de chaque match par ordre de date, le PR de
+chaque tournoi et le PR glissant sur les N derniers matchs : l'onglet
+*Progression* du panneau Stats (voir :ref:`stats`).
+
+.. code-block:: bash
+
+   ./blunderdb stats progression --db <fichier> [options]
+
+**Options:**
+
+* ``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``,
+  ``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le même filtre
+  que ``list --type stats``.
+* ``--format text|json`` — Le JSON porte les matchs, les tournois et les PR
+  glissants.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb stats progression --db base.db --player "Alice"
+   ./blunderdb stats progression --db base.db --format json
+
+**stats breakdown** — Le PR du filtre ventilé par phase de jeu, plan de jeu,
+étiquette de commentaire, score (away contre away) et action de videau, avec la
+direction des erreurs de videau : l'onglet *Ventilations* du panneau Stats (voir
+:ref:`stats`). Les options sont celles de ``stats progression``.
+
+.. code-block:: bash
+
+   ./blunderdb stats breakdown --db <fichier> [options]
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb stats breakdown --db base.db --player "Alice"
+   ./blunderdb stats breakdown --db base.db --format json
+
+**stats report** — Le rapport HTML du panneau Stats (voir :ref:`rapport_html`) :
+les indicateurs du filtre et ses dix décisions les plus coûteuses avec leur
+diagramme, en un seul fichier autonome que le navigateur imprime en PDF. Le
+démon HTTP le sert à la route ``stats.report``, du même générateur.
+
+.. code-block:: bash
+
+   ./blunderdb stats report --db <fichier> --html [options]
+
+**Options:**
+
+* ``--html`` — Obligatoire : le HTML est le seul format.
+* ``--output <fichier>`` — Le fichier écrit (défaut : la sortie standard).
+* ``--lang <code>`` — La langue du rapport : ``fr``, ``en``, ``de``, ``el``,
+  ``es``, ``fi``, ``it``, ``ja`` ou ``ru`` (défaut ``en``).
+* ``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``,
+  ``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre : le
+  rapport nomme son périmètre.
+
+Les diagrammes y sont dessinés avec la palette par défaut ; seule l'application
+graphique emploie la palette du plateau choisie à l'écran.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb stats report --db base.db --html --output rapport.html
+   ./blunderdb stats report --db base.db --html --player "Alice" --lang fr
+
 .. _cli_cubematrix:
 
 cubematrix — Matrice du videau
@@ -2062,6 +2130,27 @@ aucun second match n'est créé.
 
    ./blunderdb players alias add --db base.db "Doe J." "John Doe"
    ./blunderdb players alias suggest --db base.db
+
+**players merge** — La fusion de joueurs de la fenêtre des matchs, du même code
+que la route ``matches.mergePlayers`` du démon : chaque nom devient une graphie
+du nom canonique, comme autant de ``players alias add``.
+
+.. code-block:: bash
+
+   ./blunderdb players merge --db <chemin> --into <CANONIQUE> <NOM> [<NOM>...]
+
+**players swap** — L'inversion des deux joueurs d'un match, que le fichier avait
+nommés dans le mauvais ordre (route ``matches.swapPlayers``). Chaque position du
+match est réécrite du point de vue de l'autre joueur.
+
+.. code-block:: bash
+
+   ./blunderdb players swap --db <chemin> <ID_MATCH>
+
+.. code-block:: bash
+
+   ./blunderdb players merge --db base.db --into "John Doe" "Doe J." "J. Doe"
+   ./blunderdb players swap --db base.db 42
 
 events — Les graphies d'un événement
 ------------------------------------

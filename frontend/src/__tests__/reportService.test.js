@@ -1,22 +1,21 @@
 /**
- * reportService.test.js — le rapport HTML (#279, fiche I.23).
+ * reportService.test.js — le rapport HTML.
  *
- * Ce qui compte dans un document destiné à circuler : qu'il soit AUTONOME (une
- * seule page, aucune ressource externe), qu'il dise son périmètre, et qu'il
- * échappe ce qui vient d'un fichier importé — les noms de joueurs et les coups
- * arrivent de l'extérieur.
+ * Le document lui-même (autonome, échappé, périmètre) est construit par le
+ * moteur et testé en Go (pkg/blunderdb/report). Ici : ce que l'écran lui
+ * fournit — le filtre courant, la langue, un diagramme par décision.
  */
 
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 
 let stats = {};
 let positions = [];
-let analysis = null;
+const StatsReportHTML = vi.fn(() => Promise.resolve('<!doctype html><html></html>'));
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ComputeStats: () => Promise.resolve(stats),
     LoadPositionsByIDs: () => Promise.resolve(positions),
-    LoadAnalysis: () => Promise.resolve(analysis)
+    StatsReportHTML: (...args) => StatsReportHTML(...args)
 }));
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     SaveBoardImageDialog: vi.fn(() => Promise.resolve('')),
@@ -42,58 +41,27 @@ function samplePosition(id) {
 }
 
 beforeEach(() => {
-    stats = {
-        Totals: { NumPositions: 412, NumMatches: 5, NumDecisions: 380 },
-        PRGlobal: 4.71,
-        PRChecker: 4.2,
-        PRCube: 8.3,
-        TopBlunders: []
-    };
+    stats = { TopBlunders: [] };
     positions = [];
-    analysis = null;
+    StatsReportHTML.mockClear();
 });
 
 describe('le rapport HTML', () => {
-    test('est un document complet et autonome', async () => {
+    test('rend le document du moteur', async () => {
         const html = await buildReportHTML();
         expect(html.startsWith('<!doctype html>')).toBe(true);
-        expect(html).toContain('</html>');
-        // Aucune ressource externe : ni script, ni feuille de style distante,
-        // ni image liée. C'est ce qui permet de l'envoyer par courriel.
-        expect(html).not.toContain('<script');
-        expect(html).not.toContain('<link');
-        expect(html).not.toMatch(/<img[^>]+src="http/);
+        expect(StatsReportHTML).toHaveBeenCalledTimes(1);
     });
 
-    test('porte les indicateurs du périmètre courant', async () => {
-        const html = await buildReportHTML();
-        expect(html).toContain('412');
-        expect(html).toContain('4.71');
-    });
-
-    test('dit quand il n’a aucune décision fautive à montrer', async () => {
-        const html = await buildReportHTML();
-        expect(html).toContain('No faulty decision in this scope.');
-    });
-
-    test('intègre un diagramme par décision, en ligne', async () => {
-        stats.TopBlunders = [{ PositionID: 7, ErrorMP: 310, DecisionType: 0, PlayerNames: 'Alice vs Bob', MatchDate: '2026-03-01' }];
-        positions = [samplePosition(7)];
-        analysis = { checkerAnalysis: { moves: [{ move: '13/7 8/7' }] } };
-
-        const html = await buildReportHTML();
-        expect(html).toContain('<svg');
-        expect(html).toContain('0.310');
-        expect(html).toContain('13/7 8/7');
-    });
-
-    // Les noms viennent d'un fichier importé, donc de l'extérieur.
-    test('échappe ce qui vient des données', async () => {
-        stats.TopBlunders = [{ PositionID: 7, ErrorMP: 100, DecisionType: 1, PlayerNames: '<script>alert(1)</script>', MatchDate: '' }];
+    test('donne au moteur le filtre courant, la langue et un diagramme par décision', async () => {
+        stats.TopBlunders = [{ PositionID: 7, ErrorMP: 310, DecisionType: 0 }];
         positions = [samplePosition(7)];
 
-        const html = await buildReportHTML();
-        expect(html).not.toContain('<script>alert(1)</script>');
-        expect(html).toContain('&lt;script&gt;');
+        await buildReportHTML();
+        const [filter, lang, diagrams] = StatsReportHTML.mock.calls[0];
+        expect(filter).toBeDefined();
+        expect(typeof lang).toBe('string');
+        expect(Object.keys(diagrams)).toEqual(['7']);
+        expect(diagrams[7]).toContain('<svg');
     });
 });

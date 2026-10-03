@@ -3128,6 +3128,9 @@ Examples:
   blunderdb players alias add --db base.db "Doe J." "John Doe"
   blunderdb players alias list --db base.db --format json
   blunderdb players alias suggest --db base.db
+
+Also: `players merge --db FILE --into CANONICAL NAME...` and
+`players swap --db FILE MATCH_ID` (see their --help).
 ```
 
 ### `blunderdb repair`
@@ -3349,6 +3352,65 @@ Examples:
   blunderdb search --db database.db --query 's m"13/11" t"blunder" pl"Alice" T>2026/01/01'
 ```
 
+### `blunderdb stats breakdown`
+
+```
+Usage: blunderdb stats breakdown --db <file> [options]
+
+The Breakdowns tab of the Stats panel: the PR of the filter split by game
+phase, plan of play, comment tag, score (away x away) and cube action, and
+the direction in which the cube decisions went wrong.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD
+  -player string
+    	Only this player's decisions
+  -to string
+    	End date filter YYYY-MM-DD
+  -tournament string
+    	Filter by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats breakdown --db database.db --player "Alice"
+  blunderdb stats breakdown --db database.db --format json
+```
+
+### `blunderdb stats progression`
+
+```
+Usage: blunderdb stats progression --db <file> [options]
+
+The Progression tab of the Stats panel: the PR of each match in date order,
+each tournament's PR, and the rolling PR over the last N matches.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD
+  -player string
+    	Only this player's decisions
+  -to string
+    	End date filter YYYY-MM-DD
+  -tournament string
+    	Filter by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats progression --db database.db --player "Alice"
+  blunderdb stats progression --db database.db --format json
+```
+
 ### `blunderdb stats recurring`
 
 ```
@@ -3397,6 +3459,42 @@ Examples:
   blunderdb stats recurring --db database.db --quiz --format json
   blunderdb stats recurring --db database.db --group 1 --deck "My worst group"
   blunderdb stats recurring --db database.db --decision-type checker --format json
+```
+
+### `blunderdb stats report`
+
+```
+Usage: blunderdb stats report --db <file> --html [options]
+
+The HTML report of the Stats panel: the filter's indicators and its ten most
+expensive decisions with their diagrams, as one self-contained file (no image,
+style sheet or script outside it) that a browser prints to PDF.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD
+  -html
+    	Write the report as one self-contained HTML file (the only format)
+  -lang string
+    	Report language: fr, en, de, el, es, fi, it, ja, ru (default "en")
+  -output string
+    	File to write (default: standard output)
+  -player string
+    	Only this player's decisions
+  -to string
+    	End date filter YYYY-MM-DD
+  -tournament string
+    	Filter by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats report --db database.db --html --output rapport.html
+  blunderdb stats report --db database.db --html --player "Alice" --lang fr
 ```
 
 ### `blunderdb stats training`
