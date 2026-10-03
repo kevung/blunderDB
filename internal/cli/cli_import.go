@@ -34,6 +34,8 @@ func (cli *CLI) runImport(args []string) error {
 		"With --type batch: keep running and import each match file as it appears in --dir (Ctrl-C to stop)")
 	watchEvery := importCmd.Duration("watch-every", 0,
 		"How often --watch looks at the folder (default 10s, floor 2s)")
+	skipDuplicates := importCmd.Bool("skip-duplicates", false,
+		"Skip a match already in the database outright; by default its analyses deeper than the stored ones replace them")
 	failOnError := importCmd.Bool("fail-on-error", false,
 		"Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported, duplicates aside) is an error")
 
@@ -95,6 +97,7 @@ func (cli *CLI) runImport(args []string) error {
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
 	}
+	cli.db.SetSkipDuplicates(*skipDuplicates)
 
 	switch strings.ToLower(*importType) {
 	case "match":
@@ -210,8 +213,8 @@ func (cli *CLI) importMatch(filePath, format string) error {
 		}
 		cli.finishImportBatch(batchID, failures)
 		if errors.Is(err, ErrDuplicateMatch) {
-			if n := flagsApplied(err); n > 0 {
-				return fmt.Errorf("this match has already been imported to the database (%d study marks applied)", n)
+			if extra := duplicateExtras(err); extra != "" {
+				return fmt.Errorf("this match has already been imported to the database (%s)", extra)
 			}
 			return fmt.Errorf("this match has already been imported to the database")
 		}
@@ -414,8 +417,8 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		switch {
 		case o.Status == ingest.FileDuplicate:
 			if text {
-				if o.FlagsApplied > 0 {
-					fmt.Printf(" DUPLICATE (%d study marks applied)\n", o.FlagsApplied)
+				if extra := duplicateExtrasOf(o.FlagsApplied, o.Deepened); extra != "" {
+					fmt.Printf(" DUPLICATE (%s)\n", extra)
 				} else {
 					fmt.Println(" DUPLICATE")
 				}
@@ -566,14 +569,26 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 	return nil
 }
 
-// flagsApplied is how many source-tool study marks a duplicate re-import
-// still delivered, 0 for any other error.
-func flagsApplied(err error) int {
+// duplicateExtras says what a duplicate re-import still delivered — study
+// marks, deeper analyses — or "" when nothing, or for any other error.
+func duplicateExtras(err error) string {
 	var dup *DuplicateMatchError
 	if errors.As(err, &dup) {
-		return dup.FlagsApplied
+		return duplicateExtrasOf(dup.FlagsApplied, dup.Deepened)
 	}
-	return 0
+	return ""
+}
+
+// duplicateExtrasOf phrases the two things a duplicate can still deliver.
+func duplicateExtrasOf(flags, deepened int) string {
+	var parts []string
+	if flags > 0 {
+		parts = append(parts, fmt.Sprintf("%d study marks applied", flags))
+	}
+	if deepened > 0 {
+		parts = append(parts, fmt.Sprintf("%d analyses deepened", deepened))
+	}
+	return strings.Join(parts, ", ")
 }
 
 // printProgress shows the batch's progress on stderr, rewritten in place on

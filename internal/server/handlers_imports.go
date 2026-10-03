@@ -472,7 +472,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			})
 		}
 
-		sum, err := imp.Import(ctx, scope, ingest.Source{Format: format, Path: tmpPath, BatchID: batchID}, prog)
+		sum, err := imp.Import(ctx, scope, ingest.Source{Format: format, Path: tmpPath, BatchID: batchID, SkipDuplicates: skipDuplicatesParam(r)}, prog)
 		if err != nil {
 			if errors.Is(err, context.Canceled) {
 				// imports.cancel, or a graceful shutdown cancelling every
@@ -492,6 +492,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			"matches":            sum.Matches,
 			"match_id":           sum.MatchID,
 			"flags_applied":      sum.FlagsApplied,
+			"deepened":           sum.Deepened,
 		}
 		// The same end-of-import report the desktop panel shows, in the
 		// terminal event: a client that streams the import gets its summary
@@ -500,10 +501,14 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 		if batchID != 0 {
 			done["batch_id"] = batchID
 			counts := domain.ImportReport{
-				MatchesImported: sum.Matches - sum.SkippedDuplicates - sum.Enriched,
-				MatchesSkipped:  sum.SkippedDuplicates,
-				MatchesEnriched: sum.Enriched,
-				PositionsSaved:  sum.SavedPositions,
+				MatchesImported:  sum.Matches - sum.SkippedDuplicates - sum.Enriched,
+				MatchesSkipped:   sum.SkippedDuplicates,
+				MatchesEnriched:  sum.Enriched,
+				PositionsSaved:   sum.SavedPositions,
+				AnalysesDeepened: sum.Deepened,
+			}
+			if sum.Deepened > 0 {
+				counts.MatchesDeepened = 1
 			}
 			if err := batches.Finish(ctx, scope, batchID, counts); err == nil {
 				if rep, err := batches.Report(ctx, scope, batchID, nil); err == nil {

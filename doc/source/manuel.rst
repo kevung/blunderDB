@@ -1176,9 +1176,18 @@ ne remplace pas ce qui est déjà là.
   *Ré-analyser les positions périmées* laisse intacte toute position portant
   une analyse importée (voir :ref:`configuration`).
 
-* **Réimporter le même fichier ne réécrit rien.** Le match est reconnu comme
-  déjà présent ; seules les marques posées dans le logiciel d'origine sont
-  ajoutées, sans toucher aux commentaires ni aux analyses.
+* **Réimporter un match déjà présent n'apporte que du plus profond.** Le match
+  est reconnu à son jeu (joueurs, longueur, dés, coups, videau), pas à son
+  analyse : aucun match, partie ni coup n'est réécrit. Les marques posées dans
+  le logiciel d'origine sont ajoutées, et une analyse plus profonde que celle
+  rangée la remplace, position par position — une version Roller++ du même
+  match remplace la version 3-ply, quel que soit l'ordre d'import ; à
+  profondeur égale ou moindre, l'analyse rangée reste. Réimporter le même
+  fichier ne réécrit donc rien. Le rapport d'import distingue les doublons qui
+  n'apportaient rien de ceux qui ont approfondi des analyses. En ligne de
+  commande, ``--skip-duplicates`` ignore un doublon sans rien en reprendre
+  d'autre que les marques. Un match tronqué puis complété (plus de parties)
+  n'est pas le même match : il est importé comme un second match.
 
 * **Un dossier s'importe en parallèle.** Les fichiers sont lus sur plusieurs
   cœurs à la fois et écrits par groupes, toujours dans l'ordre du dossier : les

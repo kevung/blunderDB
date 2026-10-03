@@ -184,8 +184,19 @@ Import all match files from a directory at once:
 - `--recursive` - Recursively scan subdirectories (default: true)
 - `--format` - Output format: `text` (default, the summary table below) or `json`
 - `--fail-on-error` - Exit non-zero when any file failed to import, even if others succeeded
+- `--skip-duplicates` - Skip a match already in the database outright (study marks aside)
 
 Supported file types: `.xg`, `.xgp`, `.sgf`, `.mat`, `.txt`, `.bgf`, `.ogxm`.
+
+A match already in the database is recognised by its play (players, length,
+dice, moves, cube), not by its analysis. Its match, game and move rows are
+never rewritten, but by default its analyses still reach the stored
+positions, and one strictly deeper than the stored entry replaces it: a
+Roller++ version of a match replaces the 3-ply one whatever the import order,
+a shallower or equal one changes nothing. The line reads `DUPLICATE (N
+analyses deepened)` and the report counts those duplicates apart.
+`--skip-duplicates` restores the plain skip. A truncated match later
+completed (more games) is a different match and is imported as a second one.
 
 A batch that finds no supported file, or where every file failed or was a
 duplicate (nothing at all got imported), is always an error. A duplicate is
@@ -2568,6 +2579,8 @@ Options:
     	Output format: text or json (default "text")
   -recursive
     	Recursively scan subdirectories for batch import (default true)
+  -skip-duplicates
+    	Skip a match already in the database outright; by default its analyses deeper than the stored ones replace them
   -type string
     	Import type: match, position, batch (required)
   -watch

@@ -30,6 +30,11 @@ type MatchGraph struct {
 	// match keeps its id, which other rows point at, while its games, moves
 	// and positions are rewritten. Importers never set it.
 	ReplaceMatchID int64
+	// SkipDuplicates restores the plain skip of an exact duplicate: by default
+	// a match already stored still hands over the analyses it holds deeper
+	// than the stored ones (deepenAnalyses). Set by the caller, like
+	// ImportBatchID.
+	SkipDuplicates bool
 }
 
 // GameGraph is one game with its ordered moves.
@@ -58,6 +63,7 @@ type WriteResult struct {
 	MatchID        int64
 	Skipped        bool // true when an exact same-format duplicate was found (nothing written but flags)
 	FlagsApplied   int  // study marks a skipped duplicate newly raised on already-stored positions
+	Deepened       int  // positions of a skipped duplicate whose stored analysis this import deepened
 	Enriched       bool // true when a cross-format (canonical) duplicate was enriched in place
 	Replaced       bool // true when an existing match was rewritten in place (MatchGraph.ReplaceMatchID)
 	SavedPositions int
@@ -72,8 +78,12 @@ type WriteResult struct {
 // cancellable as a unit.
 //
 // Duplicate detection has two levels, mirroring the legacy importers:
-//   - Exact same-format duplicate (MatchHash already present): nothing is
-//     written, WriteResult.Skipped is true.
+//   - Exact same-format duplicate (MatchHash already present): no match, game
+//     or move row is written, WriteResult.Skipped is true. The analyses it
+//     carries are still offered to the stored positions, and only a deeper
+//     one replaces what is stored (deepenAnalyses): a 3-ply then a Roller++
+//     analysis of the same match keep the Roller++ whatever the import order.
+//     MatchGraph.SkipDuplicates turns this off.
 //   - Cross-format duplicate (CanonicalHash present from another format, e.g.
 //     the same match imported from XG and then GnuBG): the match/game/move rows
 //     are NOT recreated, but the graph's positions and analyses are still
@@ -120,7 +130,13 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			if err != nil {
 				return res, err
 			}
-			return WriteResult{MatchID: id, Skipped: true, FlagsApplied: n}, nil
+			res = WriteResult{MatchID: id, Skipped: true, FlagsApplied: n}
+			if !g.SkipDuplicates {
+				if res.Deepened, err = deepenAnalyses(ctx, tx, scope, g); err != nil {
+					return res, err
+				}
+			}
+			return res, nil
 		}
 	}
 
@@ -311,6 +327,55 @@ func applyFlags(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph)
 				return n, fmt.Errorf("ingest: apply flag to duplicate match position: %w", err)
 			}
 			if raised {
+				n++
+			}
+		}
+	}
+	return n, nil
+}
+
+// deepenAnalyses offers the analyses of a graph whose match is already stored
+// to the positions it reaches, and returns how many stored analyses it
+// changed. Unlike the cross-format enrichment, the incoming analysis is the
+// same engine's view of the same decisions, so it replaces what is stored only
+// where it is strictly deeper (deepenAnalysis): re-importing the same file,
+// or a shallower version of it, writes nothing. A position no longer stored
+// is left alone rather than recreated.
+func deepenAnalyses(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph) (int, error) {
+	n := 0
+	for gi := range g.Games {
+		for mi := range g.Games[gi].Moves {
+			mg := &g.Games[gi].Moves[mi]
+			if mg.Position == nil || len(mg.Analyses) == 0 {
+				continue
+			}
+			posID, found, err := tx.Positions().Exists(ctx, scope, engine.PopulatePositionColumns(mg.Position).ZobristHash)
+			if err != nil {
+				return n, err
+			}
+			if !found {
+				continue
+			}
+			played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction}
+			written, err := tx.Analyses().Merge(ctx, scope, posID, played, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+				cur := existing
+				for _, frag := range mg.Analyses {
+					if frag == nil {
+						continue
+					}
+					next := deepenAnalysis(cur, *frag)
+					if next != cur {
+						next.PositionID = int(posID)
+						engine.RoundAnalysisForStorage(next)
+					}
+					cur = next
+				}
+				return cur
+			})
+			if err != nil {
+				return n, fmt.Errorf("ingest: deepen duplicate match analysis: %w", err)
+			}
+			if written {
 				n++
 			}
 		}

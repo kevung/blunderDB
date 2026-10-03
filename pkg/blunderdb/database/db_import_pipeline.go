@@ -104,9 +104,10 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 	}
 
 	out, err := ingest.ImportFiles(ctx, store, paths, ingest.PipelineOptions{
-		Workers:       opts.Workers,
-		FilesPerTx:    opts.FilesPerTx,
-		ImportBatchID: batchID,
+		Workers:        opts.Workers,
+		FilesPerTx:     opts.FilesPerTx,
+		ImportBatchID:  batchID,
+		SkipDuplicates: d.skipDuplicates.Load(),
 		Lock: func() func() {
 			d.mu.Lock()
 			return d.mu.Unlock
@@ -141,6 +142,10 @@ func (d *Database) countImported(o ingest.FileOutcome) {
 	case ingest.FileDuplicate:
 		if o.MatchID != 0 {
 			d.importBatchCounts.MatchesSkipped++
+		}
+		if o.Deepened > 0 {
+			d.importBatchCounts.MatchesDeepened++
+			d.importBatchCounts.AnalysesDeepened += o.Deepened
 		}
 	}
 	if o.Status == ingest.FileImported || o.Status == ingest.FileEnriched {

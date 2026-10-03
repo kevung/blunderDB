@@ -39,6 +39,9 @@ type Source struct {
 	// none. Set by the caller, the only one that knows how many files the user
 	// meant as one import.
 	BatchID int64
+	// SkipDuplicates skips an exact duplicate outright instead of offering
+	// its deeper analyses to the stored positions (MatchGraph.SkipDuplicates).
+	SkipDuplicates bool
 }
 
 // Progress is reported incrementally during an import.
@@ -69,6 +72,9 @@ type Summary struct {
 	// FlagsApplied counts the source-tool study marks a skipped duplicate
 	// still delivered to its stored positions (ADR-0006).
 	FlagsApplied int `json:"flagsApplied,omitempty"`
+	// Deepened counts the stored analyses a skipped duplicate replaced with a
+	// deeper one of its own (WriteResult.Deepened).
+	Deepened int `json:"deepened,omitempty"`
 	// BatchID is the import batch these figures belong to, 0 when the caller
 	// opened none. /v1/imports.* fills it so a client can ask for the full
 	// end-of-import report afterwards.

@@ -268,6 +268,7 @@ var databaseParity = map[string]parityEntry{
 	"ImportGnuBGMatchFromText":          {Server: "/v1/imports.gnubg", Why: "the clipboard paste of a GNUbg match; the CLI imports the file"},
 	"ImportXGMatch":                     {CLI: "import", Server: "/v1/imports.xg"},
 	"ImportFiles":                       {CLI: "import", Server: "/v1/imports.batch"},
+	"SetSkipDuplicates":                 {CLI: "import --skip-duplicates", Server: "/v1/imports.batch"},
 	"ImportXGPPosition":                 {CLI: "import --type position", Server: "/v1/positions.fromXGP"},
 	"IsProtectedCopyPath":               {CLI: "open", Why: whyIssuance},
 	"IsReadOnly":                        {Why: whyLifecycle + " (ADR-0004: the second desktop instance opens read-only; a CLI run is one process, the daemon owns its store)"},

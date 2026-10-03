@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -64,6 +65,9 @@ type batchJob struct {
 	cancel context.CancelFunc
 	// done is closed when the job has ended, whatever the way.
 	done chan struct{}
+	// skipDuplicates is the request's ?skip_duplicates: an exact duplicate
+	// is skipped outright instead of offering its deeper analyses.
+	skipDuplicates bool
 
 	mu       sync.Mutex
 	state    string
@@ -359,6 +363,7 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithCancel(context.Background())
 	s.imports.register(job.id, scope, cancel)
 	job.mu.Lock()
+	job.skipDuplicates = skipDuplicatesParam(r)
 	job.cancel = cancel
 	job.state = batchStateRunning
 	job.progress = ingest.BatchProgress{FilesTotal: len(paths), BytesTotal: size, ETASeconds: -1}
@@ -420,9 +425,10 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 
 	var counts domain.ImportReport
 	_, err = ingest.ImportFiles(ctx, s.opts.Storage, paths, ingest.PipelineOptions{
-		Scope:         scope,
-		ImportBatchID: batchID,
-		OnRead:        meter.Read,
+		Scope:          scope,
+		ImportBatchID:  batchID,
+		SkipDuplicates: job.skipDuplicates,
+		OnRead:         meter.Read,
 		OnCommit: func(group []ingest.FileOutcome) {
 			for _, o := range group {
 				meter.File(o)
@@ -434,6 +440,10 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 				case ingest.FileDuplicate:
 					if o.MatchID != 0 {
 						counts.MatchesSkipped++
+					}
+					if o.Deepened > 0 {
+						counts.MatchesDeepened++
+						counts.AnalysesDeepened += o.Deepened
 					}
 				}
 				if o.Status == ingest.FileImported || o.Status == ingest.FileEnriched {
@@ -505,4 +515,12 @@ func (s *Server) batchRoutes() []route {
 			return okResp{OK: true}, nil
 		})},
 	}
+}
+
+// skipDuplicatesParam reads ?skip_duplicates, the same switch on every import
+// route: true makes an exact duplicate a plain skip, without offering its
+// deeper analyses to the stored positions.
+func skipDuplicatesParam(r *http.Request) bool {
+	v, _ := strconv.ParseBool(r.URL.Query().Get("skip_duplicates"))
+	return v
 }

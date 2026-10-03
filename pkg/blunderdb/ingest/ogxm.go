@@ -574,6 +574,7 @@ func (im OGXMImporter) Import(ctx context.Context, scope string, src Source, pro
 		return Summary{}, err
 	}
 	graph.ImportBatchID = src.BatchID
+	graph.SkipDuplicates = src.SkipDuplicates
 	tx, err := im.S.BeginTx(ctx)
 	if err != nil {
 		return Summary{}, err
@@ -599,6 +600,7 @@ func (im OGXMImporter) Import(ctx context.Context, scope string, src Source, pro
 	if res.Skipped {
 		sum.SkippedDuplicates = 1
 		sum.FlagsApplied = res.FlagsApplied
+		sum.Deepened = res.Deepened
 		sum.SavedPositions = 0
 	}
 	if res.Enriched {

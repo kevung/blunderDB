@@ -41,14 +41,18 @@ type FileOutcome struct {
 	Status string `json:"status"`
 	// MatchID is the written or enriched match, or for a duplicate the stored
 	// match that already covers the file.
-	MatchID      int64  `json:"match_id,omitempty"`
-	PositionID   int64  `json:"position_id,omitempty"`
-	Positions    int    `json:"positions"`
-	FlagsApplied int    `json:"flags_applied,omitempty"`
-	Player1      string `json:"player1,omitempty"`
-	Player2      string `json:"player2,omitempty"`
-	Games        int    `json:"games,omitempty"`
-	Error        string `json:"error,omitempty"`
+	MatchID      int64 `json:"match_id,omitempty"`
+	PositionID   int64 `json:"position_id,omitempty"`
+	Positions    int   `json:"positions"`
+	FlagsApplied int   `json:"flags_applied,omitempty"`
+	// Deepened counts, for a duplicate, the stored analyses it deepened: a
+	// duplicate with Deepened > 0 brought a deeper analysis of a match
+	// already here, one with 0 brought nothing new.
+	Deepened int    `json:"deepened,omitempty"`
+	Player1  string `json:"player1,omitempty"`
+	Player2  string `json:"player2,omitempty"`
+	Games    int    `json:"games,omitempty"`
+	Error    string `json:"error,omitempty"`
 	// DuplicateOf is the index of an earlier file of the same list with the
 	// same bytes, -1 when the duplicate (if any) was found in the database.
 	DuplicateOf int `json:"duplicate_of"`
@@ -73,6 +77,9 @@ type PipelineOptions struct {
 	FilesPerTx int
 	// Scope is the storage scope (tenant), empty for SQLite.
 	Scope string
+	// SkipDuplicates skips an exact duplicate outright instead of offering
+	// its deeper analyses to the stored positions (MatchGraph.SkipDuplicates).
+	SkipDuplicates bool
 	// ImportBatchID stamps every written match.
 	ImportBatchID int64
 	// Lock, when set, is taken around each transaction and returns its
@@ -415,6 +422,7 @@ func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error)
 		return o, nil
 	}
 	g.ImportBatchID = w.opts.ImportBatchID
+	g.SkipDuplicates = w.opts.SkipDuplicates
 	o.Player1, o.Player2, o.Games = g.Match.Player1Name, g.Match.Player2Name, len(g.Games)
 	res, err := WriteMatch(w.ctx, tx, w.opts.Scope, g, nil)
 	if err != nil {
@@ -423,7 +431,7 @@ func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error)
 	o.MatchID = res.MatchID
 	switch {
 	case res.Skipped:
-		o.Status, o.FlagsApplied = FileDuplicate, res.FlagsApplied
+		o.Status, o.FlagsApplied, o.Deepened = FileDuplicate, res.FlagsApplied, res.Deepened
 	case res.Enriched:
 		o.Status, o.Positions = FileEnriched, res.SavedPositions
 	default:

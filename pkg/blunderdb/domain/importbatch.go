@@ -39,6 +39,12 @@ type ImportReport struct {
 	MatchesImported int `json:"matchesImported"`
 	MatchesSkipped  int `json:"matchesSkipped"`
 	MatchesEnriched int `json:"matchesEnriched"`
+	// MatchesDeepened counts the skipped duplicates that still brought a
+	// deeper analysis than the stored one, and AnalysesDeepened the positions
+	// whose analysis they replaced: "duplicate, nothing deeper" is
+	// MatchesSkipped - MatchesDeepened.
+	MatchesDeepened  int `json:"matchesDeepened,omitempty"`
+	AnalysesDeepened int `json:"analysesDeepened,omitempty"`
 
 	// FilesFailed counts the files the batch could not read at all, and
 	// Failures names the first few of them with the reason. A batch that

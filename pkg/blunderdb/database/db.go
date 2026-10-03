@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"sync/atomic"
 
 	"github.com/adrg/xdg"
 
@@ -34,6 +35,9 @@ type Database struct {
 	// importBatchID stamps every match the in-flight import writes, 0 when none
 	// runs. One at a time, like importCancel.
 	importBatchID int64
+	// skipDuplicates makes an exact duplicate a plain skip again, without
+	// offering its deeper analyses to the stored positions.
+	skipDuplicates atomic.Bool
 	// importBatchCounts accumulates what only the writing path sees; the caller
 	// that opened the batch adds the unreadable files when it finishes it.
 	importBatchCounts domain.ImportReport

@@ -153,6 +153,11 @@ Importe des fichiers de matchs ou de positions dans la base de données.
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``.
 * ``--fail-on-error`` — Échoue si au moins un élément (``position`` ou
   ``batch``) n'a pas pu être importé, même quand d'autres ont réussi.
+* ``--skip-duplicates`` — Ignore un match déjà en base sans en reprendre les
+  analyses plus profondes (les marques d'étude restent appliquées). Par
+  défaut, un doublon remplace chaque analyse rangée par la sienne quand elle
+  est strictement plus profonde, et la ligne l'indique : ``DUPLICATE (N
+  analyses deepened)``.
 
 Le code de retour obéit à quatre règles :
 
