@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import NewButton from './panels/NewButton.svelte';
     import { formatDateTime } from '../utils/format.js';
     import { onMount, onDestroy } from 'svelte';
     import { SvelteSet } from 'svelte/reactivity';
@@ -115,6 +116,12 @@
         }
     });
     let inlineNewName = $state('');
+    let creating = $state(false);
+
+    /** @param {HTMLElement} node */
+    function focusOnMount(node) {
+        node.focus();
+    }
 
     // Collection vivante : le titre dit ce que fera le clic ; la liste manuelle est conservée.
     let livingTitle = $derived(activeCollection?.filterQuery ? $t('collection.livingOff', { query: activeCollection.filterQuery }) : $t('collection.livingOn'));
@@ -297,6 +304,7 @@
             statusBarTextStore.set(tMsg('collection.created', { name: inlineNewName.trim() }));
             inlineNewName = '';
             inlineNewDescription = '';
+            creating = false;
         } catch (error) {
             logger.error('Error creating collection:', error);
             statusBarTextStore.set(tMsg('collection.errorCreating'));
@@ -582,6 +590,10 @@
                 emptyText={$t('collection.empty')}
                 emptyActions
             >
+                {#snippet header()}
+                    <span class="detail-title">{$t('collection.title')}</span>
+                    <NewButton label={$t('collection.newButton')} onclick={() => (creating = true)} />
+                {/snippet}
                 {#snippet cells(collection, index)}
                     <td class="name-cell">
                         {#if collectionEdit.isEditing(collection.id)}
@@ -670,29 +682,32 @@
                     </td>
                 {/snippet}
             </PanelTable>
-            <!-- Inline add row below table -->
-            <div class="add-row">
-                <input
-                    class="add-input"
-                    type="text"
-                    bind:value={inlineNewName}
-                    placeholder={$t('collection.newCollectionPlaceholder')}
-                    onkeydown={(e) => {
-                        e.stopPropagation();
-                        ((e) => e.key === 'Enter' && createCollectionInline())(e);
-                    }}
-                />
-                <input
-                    class="add-input desc"
-                    type="text"
-                    bind:value={inlineNewDescription}
-                    placeholder={$t('collection.descriptionInputPlaceholder')}
-                    onkeydown={(e) => {
-                        e.stopPropagation();
-                        ((e) => e.key === 'Enter' && createCollectionInline())(e);
-                    }}
-                />
-            </div>
+            <!-- The creation fields open from the header's "+ Nouvelle collection". -->
+            {#if creating}
+                <div class="add-row">
+                    <input
+                        class="add-input"
+                        use:focusOnMount
+                        type="text"
+                        bind:value={inlineNewName}
+                        placeholder={$t('collection.newCollectionPlaceholder')}
+                        onkeydown={(e) => {
+                            e.stopPropagation();
+                            ((e) => e.key === 'Enter' && createCollectionInline())(e);
+                        }}
+                    />
+                    <input
+                        class="add-input desc"
+                        type="text"
+                        bind:value={inlineNewDescription}
+                        placeholder={$t('collection.descriptionInputPlaceholder')}
+                        onkeydown={(e) => {
+                            e.stopPropagation();
+                            ((e) => e.key === 'Enter' && createCollectionInline())(e);
+                        }}
+                    />
+                </div>
+            {/if}
         </div>
     {:else if view === 'detail' && activeCollection}
         <!-- Positions in active collection -->

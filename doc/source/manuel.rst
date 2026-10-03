@@ -1095,6 +1095,11 @@ Panneau Collections
    Le panneau Collections : nom, nombre de positions, description,
    dernière modification.
 
+Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton
+**+ Nouveau…** de l'en-tête est l'unique geste de création : il ouvre le champ
+de saisie. Dans la liste des matchs, l'icône ⌨ ouvre la transcription du match
+et l'icône ✎ en corrige les métadonnées.
+
 Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de
 positions. Les collections peuvent être créées, renommées et supprimées. Des
 positions peuvent y être ajoutées ou retirées (touche *Suppr*, confirmation

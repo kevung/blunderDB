@@ -97,6 +97,12 @@ afterEach(cleanup);
 
 // ── List view ─────────────────────────────────────────────────────────────────
 
+/** The creation field opens from the header's "+ New …" button. */
+async function openCreation() {
+    await fireEvent.click(screen.getByTestId('panel-new'));
+    return screen.getByPlaceholderText(/new collection/i);
+}
+
 describe('CollectionPanel — list view', () => {
     test('loads collections once the database is open', async () => {
         render(CollectionPanel, { props: {} });
@@ -118,7 +124,7 @@ describe('CollectionPanel — list view', () => {
         render(CollectionPanel, { props: {} });
         await screen.findByText('Backgames');
 
-        const nameInput = screen.getByPlaceholderText(/new collection/i);
+        const nameInput = await openCreation();
         await fireEvent.input(nameInput, { target: { value: 'Priming' } });
         await fireEvent.keyDown(nameInput, { key: 'Enter' });
 
@@ -129,7 +135,7 @@ describe('CollectionPanel — list view', () => {
         render(CollectionPanel, { props: {} });
         await screen.findByText('Backgames');
 
-        const nameInput = screen.getByPlaceholderText(/new collection/i);
+        const nameInput = await openCreation();
         await fireEvent.input(nameInput, { target: { value: 'Backgames' } });
         await fireEvent.keyDown(nameInput, { key: 'Enter' });
 

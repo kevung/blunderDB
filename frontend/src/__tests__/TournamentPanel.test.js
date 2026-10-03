@@ -78,6 +78,12 @@ function renderOpen() {
 
 // ── List view ─────────────────────────────────────────────────────────────────
 
+/** The creation field opens from the header's "+ New …" button. */
+async function openCreation() {
+    await fireEvent.click(screen.getByTestId('panel-new'));
+    return screen.getByPlaceholderText(/new tournament/i);
+}
+
 describe('TournamentPanel — list view', () => {
     test('opening the panel loads the tournament list', async () => {
         renderOpen();
@@ -107,7 +113,7 @@ describe('TournamentPanel — list view', () => {
         renderOpen();
         await screen.findByText('Blunder Cup');
 
-        const nameInput = screen.getByPlaceholderText(/new tournament/i);
+        const nameInput = await openCreation();
         await fireEvent.input(nameInput, { target: { value: 'Winter Slam' } });
         await fireEvent.keyDown(nameInput, { key: 'Enter' });
 
@@ -119,7 +125,7 @@ describe('TournamentPanel — list view', () => {
         renderOpen();
         await screen.findByText('Blunder Cup');
 
-        const nameInput = screen.getByPlaceholderText(/new tournament/i);
+        const nameInput = await openCreation();
         await fireEvent.keyDown(nameInput, { key: 'Enter' });
 
         expect(CreateTournament).not.toHaveBeenCalled();
@@ -194,7 +200,7 @@ describe('TournamentPanel — list view', () => {
         renderOpen();
         await screen.findByText('Blunder Cup');
 
-        const sortBtn = screen.getByRole('button', { name: /name/i });
+        const sortBtn = screen.getByRole('button', { name: /^name/i });
         await fireEvent.click(sortBtn);
         await tick();
 
@@ -253,7 +259,7 @@ describe('TournamentPanel — deferred focus', () => {
     // panel instead of the field, and no tournament was created.
     test('does not take the caret from the new-tournament field', async () => {
         renderOpen();
-        const nameInput = screen.getByPlaceholderText(/new tournament/i);
+        const nameInput = await openCreation();
         nameInput.focus();
 
         await pastFocusTimer();

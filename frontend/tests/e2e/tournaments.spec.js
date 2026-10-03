@@ -38,6 +38,7 @@ test('créer un tournoi l’enregistre et l’affiche dans la liste', async ({ p
         [open, created]
     );
 
+    await panel(page).getByTestId('panel-new').click();
     await panel(page).locator('.add-input.name').fill('Coupe d’automne');
     await panel(page).locator('.add-input.loc').fill('Paris');
     await panel(page).locator('.add-input.loc').press('Enter');
@@ -46,16 +47,16 @@ test('créer un tournoi l’enregistre et l’affiche dans la liste', async ({ p
     await expect(page.getByTestId('status-bar-message')).toHaveText('Tournament "Coupe d’automne" created');
     const calls = await getWailsCalls(page, 'CreateTournament');
     expect(calls.map((c) => c.args)).toEqual([['Coupe d’automne', '', 'Paris']]);
-    await expect(panel(page).locator('.add-input.name')).toHaveValue('');
+    await expect(panel(page).locator('.add-input.name')).toHaveCount(0);
 });
 
 test('un tournoi s’ouvre sur ses matchs, la flèche ramène à la liste', async ({ page }) => {
     await panel(page).getByText('Open de Lyon').dblclick();
 
-    await expect(panel(page).getByText('Alice')).toBeVisible();
+    await expect(panel(page).getByRole('cell', { name: 'Alice' })).toBeVisible();
     expect((await getWailsCalls(page, 'GetTournamentMatches')).map((c) => c.args[0])).toEqual([3]);
 
     await panel(page).getByTitle('Back to tournaments').click();
     await expect(panel(page).getByText('Open de Lyon')).toBeVisible();
-    await expect(panel(page).getByText('Alice')).toHaveCount(0);
+    await expect(panel(page).getByRole('cell', { name: 'Alice' })).toHaveCount(0);
 });

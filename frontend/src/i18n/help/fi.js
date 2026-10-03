@@ -268,6 +268,7 @@ export default {
 <p>Katso saatavilla olevien suodattimien luettelo kohdasta komentoluettelo.</p>
 </div>
 <h3>Kokoelmapaneeli</h3>
+<p>Kokoelmat-, Turnaukset-, Anki- ja Litterointi-paneeleissa otsikon <strong>+ Uusi…</strong> -painike on ainoa luontitapa: se avaa syöttökentän. Otteluluettelossa ⌨-kuvake avaa ottelun litteroinnin ja ✎-kuvake korjaa sen metatiedot.</p>
 <p><strong>Kokoelmat</strong>-paneeli (<em>CTRL-B</em>) hallinnoi asemakokoelmia. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Niihin voi lisätä asemia tai poistaa niitä (<em>Del</em>-näppäin, vahvistus pyydetään). Kaksoisnapsauta kokoelmaa selataksesi sen asemia <em>VASEN</em>- ja <em>OIKEA</em>-näppäimillä. Komento <code>ss</code> hakee avoimen kokoelman asemista; <em>Esc</em> palaa sen jälkeen kokoelmaan (katso Hakupaneeli). Kokoelmien ja kokoelman sisäisten asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Paina <em>CTRL-B</em> tai suorita komento <code>collection</code> näyttääksesi tai piilottaaksesi paneelin.</p>
 <h3>Tuonti: mitä kirjoitetaan ja mitä ei koskaan</h3>
 <p>Ottelun, aseman tai toisen tietokannan tuonti lisää sen, mikä puuttuu; se ei korvaa sitä, mikä on jo olemassa.</p>

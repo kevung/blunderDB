@@ -626,7 +626,8 @@
         "livingOff": "Elävä kokoelma ({query}). Napsauta palauttaaksesi käsin tehdyn listan.",
         "livingNeedsSearch": "Tee ensin haku: sen kokoelma säilyttää.",
         "livingSet": "Elävä kokoelma: {query}",
-        "livingCleared": "Kokoelma palautettiin käsin tehdyksi listaksi."
+        "livingCleared": "Kokoelma palautettiin käsin tehdyksi listaksi.",
+        "newButton": "Uusi kokoelma"
     },
     "tournament": {
         "addMatchPlaceholder": "Lisää ottelu…",
@@ -659,7 +660,8 @@
         "errorSwapping": "Virhe pelaajien vaihtamisessa",
         "noMovesFound": "Tälle ottelulle ei löytynyt siirtoja",
         "swappedPlayers": "Pelaajat vaihdettu",
-        "confirmDelete": "Poistetaanko turnaus \"{name}\"?"
+        "confirmDelete": "Poistetaanko turnaus \"{name}\"?",
+        "newButton": "Uusi turnaus"
     },
     "anki": {
         "limitSession": "Rajoita istuntoa",

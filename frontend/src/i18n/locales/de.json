@@ -626,7 +626,8 @@
         "livingOff": "Lebendige Sammlung ({query}). Klicken, um ihre handgemachte Liste zurückzugeben.",
         "livingNeedsSearch": "Führen Sie zuerst eine Suche aus: Sie ist es, was die Sammlung behält.",
         "livingSet": "Lebendige Sammlung: {query}",
-        "livingCleared": "Die Sammlung hat ihre handgemachte Liste zurück."
+        "livingCleared": "Die Sammlung hat ihre handgemachte Liste zurück.",
+        "newButton": "Neue Sammlung"
     },
     "tournament": {
         "addMatchPlaceholder": "Match hinzufügen…",
@@ -659,7 +660,8 @@
         "errorSwapping": "Fehler beim Tauschen der Spieler",
         "noMovesFound": "Keine Züge für dieses Match gefunden",
         "swappedPlayers": "Spieler getauscht",
-        "confirmDelete": "Turnier „{name}“ löschen?"
+        "confirmDelete": "Turnier „{name}“ löschen?",
+        "newButton": "Neues Turnier"
     },
     "anki": {
         "limitSession": "Sitzung begrenzen",

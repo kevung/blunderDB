@@ -626,7 +626,8 @@
         "livingOff": "Colección viva ({query}). Pulse para devolverle su lista hecha a mano.",
         "livingNeedsSearch": "Lance primero una búsqueda: es lo que la colección guardará.",
         "livingSet": "Colección viva: {query}",
-        "livingCleared": "Colección devuelta a su lista hecha a mano."
+        "livingCleared": "Colección devuelta a su lista hecha a mano.",
+        "newButton": "Nueva colección"
     },
     "tournament": {
         "addMatchPlaceholder": "Añadir partida…",
@@ -659,7 +660,8 @@
         "errorSwapping": "Error al intercambiar jugadores",
         "noMovesFound": "No se encontraron jugadas para esta partida",
         "swappedPlayers": "Jugadores intercambiados",
-        "confirmDelete": "¿Eliminar el torneo \"{name}\"?"
+        "confirmDelete": "¿Eliminar el torneo \"{name}\"?",
+        "newButton": "Nuevo torneo"
     },
     "anki": {
         "limitSession": "Limitar la sesión",

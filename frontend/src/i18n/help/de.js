@@ -268,6 +268,7 @@ export default {
 <p>Siehe Liste der Befehle für die Liste der verfügbaren Filter.</p>
 </div>
 <h3>Sammlungen-Panel</h3>
+<p>In den Panels Sammlungen, Turniere, Anki und Transkription ist die Schaltfläche <strong>+ Neu…</strong> in der Kopfzeile die einzige Anlegegeste: Sie öffnet das Eingabefeld. In der Matchliste öffnet das Symbol ⌨ die Transkription des Matches und das Symbol ✎ korrigiert seine Metadaten.</p>
 <p>Das Fenster <strong>Sammlungen</strong> (<em>CTRL-B</em>) verwaltet Stellungssammlungen. Sammlungen können angelegt, umbenannt und gelöscht werden. Stellungen können hinzugefügt oder entfernt werden (Taste <em>Entf</em>, Bestätigung wird verlangt). Ein Doppelklick auf eine Sammlung durchblättert ihre Stellungen mit den Tasten <em>LINKS</em> und <em>RECHTS</em>. Der Befehl <code>ss</code> sucht unter den Stellungen der geöffneten Sammlung; <em>Esc</em> kehrt danach zur Sammlung zurück (siehe Such-Panel). Die Reihenfolge der Sammlungen und der Stellungen innerhalb einer Sammlung lässt sich per Ziehen und Ablegen ändern. <em>CTRL-B</em> drücken oder den Befehl <code>collection</code> ausführen, um das Fenster ein- oder auszublenden.</p>
 <h3>Import: was geschrieben wird, was es niemals ist</h3>
 <p>Das Importieren eines Matches, einer Stellung oder einer anderen Datenbank fügt hinzu, was fehlt; es ersetzt nicht, was bereits da ist.</p>

@@ -626,7 +626,8 @@
         "livingOff": "Raccolta viva ({query}). Clicca per restituirle la lista fatta a mano.",
         "livingNeedsSearch": "Lancia prima una ricerca: è quella che la raccolta conserverà.",
         "livingSet": "Raccolta viva: {query}",
-        "livingCleared": "Raccolta restituita alla sua lista fatta a mano."
+        "livingCleared": "Raccolta restituita alla sua lista fatta a mano.",
+        "newButton": "Nuova raccolta"
     },
     "tournament": {
         "addMatchPlaceholder": "Aggiungi match…",
@@ -659,7 +660,8 @@
         "errorSwapping": "Errore durante lo scambio dei giocatori",
         "noMovesFound": "Nessuna mossa trovata per questo match",
         "swappedPlayers": "Giocatori scambiati",
-        "confirmDelete": "Eliminare il torneo \"{name}\"?"
+        "confirmDelete": "Eliminare il torneo \"{name}\"?",
+        "newButton": "Nuovo torneo"
     },
     "anki": {
         "limitSession": "Limitare la sessione",

@@ -268,6 +268,7 @@ export default {
 <p>Refer to list of commands for the list of available filters.</p>
 </div>
 <h3>Collections Panel</h3>
+<p>In the Collections, Tournaments, Anki and Transcription panels, the <strong>+ New…</strong> button in the header is the single creation gesture: it opens the input field. In the match list, the ⌨ icon opens the match's transcription and the ✎ icon corrects its metadata.</p>
 <p>The <strong>Collections</strong> panel (<em>CTRL-B</em>) manages collections of positions. Collections can be created, renamed and deleted. Positions can be added to them or removed (<em>Del</em> key, confirmation asked). Double-click a collection to browse its positions with the <em>LEFT</em> and <em>RIGHT</em> keys. The <code>ss</code> command searches among the positions of the open collection; <em>Esc</em> then returns to the collection (see Search Panel). The order of the collections, and of the positions within a collection, can be changed by drag and drop. Press <em>CTRL-B</em> or run the <code>collection</code> command to show or hide the panel.</p>
 <h3>Import: what is written, what never is</h3>
 <p>Importing a match, a position or another database adds what is missing; it does not replace what is already there.</p>

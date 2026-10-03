@@ -1,5 +1,6 @@
 <script>
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
+    import NewButton from './panels/NewButton.svelte';
     import { onMount } from 'svelte';
     import {
         ankiDecksStore,
@@ -670,10 +671,7 @@
         <!-- Deck List Mode -->
         <div class="deck-toolbar">
             {#if !showCreateForm}
-                <button class="btn-outline" onclick={() => (showCreateForm = true)} title={$t('anki.createNewDeckTooltip')}>
-                    {@render icon(ICON.plus)}
-                    {$t('anki.newDeck')}
-                </button>
+                <NewButton label={$t('anki.newDeck')} title={$t('anki.createNewDeckTooltip')} onclick={() => (showCreateForm = true)} />
             {:else}
                 <div class="create-form">
                     <input
@@ -847,6 +845,7 @@
     /* --- Deck toolbar --- */
     .deck-toolbar {
         display: flex;
+        min-height: 24px;
         align-items: center;
         padding: 4px 8px;
         border-bottom: 1px solid var(--color-border);

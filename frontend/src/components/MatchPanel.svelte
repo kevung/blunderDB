@@ -867,7 +867,7 @@
                                         editMatchTranscription(match.id);
                                     }}
                                     title={$t('match.editTranscriptionTooltip')}
-                                    aria-label={$t('match.editTranscription')}>✎</button
+                                    aria-label={$t('match.editTranscription')}>⌨</button
                                 >
                                 <button
                                     class="icon-btn"
@@ -941,7 +941,7 @@
                         <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => switchDetailView('metadata')}>{$t('match.info')}</button>
                         <button class="detail-tab" class:active={detailView === 'stats'} onclick={() => switchDetailView('stats')}>{$t('match.stats')}</button>
                         <button class="detail-tab export-mat-btn" onclick={() => exportMatchMat(detailMatch)} title={$t('match.exportMat')}>⬇ .mat</button>
-                        <button class="detail-tab" onclick={() => editMatchTranscription(detailMatch.id)} title={$t('match.editTranscriptionTooltip')}>✎ {$t('match.editTranscription')}</button>
+                        <button class="detail-tab" onclick={() => editMatchTranscription(detailMatch.id)} title={$t('match.editTranscriptionTooltip')}>⌨ {$t('match.editTranscription')}</button>
                         <button class="detail-tab enter-match-btn" onclick={() => enterMatchMode(detailMatch)} title="{$t('match.enterMatchMode')} (↵)">▶ {$t('match.review')}</button>
                     </div>
                 </div>

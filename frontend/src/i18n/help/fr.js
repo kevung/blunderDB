@@ -268,6 +268,7 @@ export default {
 <p>Se référer à la liste des commandes pour la liste des filtres disponibles.</p>
 </div>
 <h3>Panneau Collections</h3>
+<p>Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton <strong>+ Nouveau…</strong> de l'en-tête est l'unique geste de création : il ouvre le champ de saisie. Dans la liste des matchs, l'icône ⌨ ouvre la transcription du match et l'icône ✎ en corrige les métadonnées.</p>
 <p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de positions. Les collections peuvent être créées, renommées et supprimées. Des positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation demandée). Double-cliquer sur une collection pour parcourir ses positions avec les touches <em>GAUCHE</em> et <em>DROITE</em>. La commande <code>ss</code> cherche parmi les positions de la collection ouverte ; <em>Esc</em> ramène ensuite à la collection (voir Panneau Recherche). L'ordre des collections et des positions au sein des collections peut être modifié par glisser-déposer. Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code>collection</code> pour afficher ou masquer le panneau.</p>
 <h3>Import : ce qui est écrit, ce qui ne l'est jamais</h3>
 <p>Importer un match, une position ou une autre base ajoute ce qui manque ; cela ne remplace pas ce qui est déjà là.</p>

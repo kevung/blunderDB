@@ -626,7 +626,8 @@
         "livingOff": "生きたコレクション（{query}）。クリックすると手作りのリストに戻します。",
         "livingNeedsSearch": "先に検索してください。それがコレクションに残るものです。",
         "livingSet": "生きたコレクション：{query}",
-        "livingCleared": "コレクションを手作りのリストに戻しました。"
+        "livingCleared": "コレクションを手作りのリストに戻しました。",
+        "newButton": "新しいコレクション"
     },
     "tournament": {
         "addMatchPlaceholder": "マッチを追加…",
@@ -659,7 +660,8 @@
         "errorSwapping": "プレイヤーの入れ替え中にエラーが発生しました",
         "noMovesFound": "このマッチには手が見つかりません",
         "swappedPlayers": "プレイヤーを入れ替えました",
-        "confirmDelete": "トーナメント「{name}」を削除しますか?"
+        "confirmDelete": "トーナメント「{name}」を削除しますか?",
+        "newButton": "新しいトーナメント"
     },
     "anki": {
         "limitSession": "1 セッションの枚数を制限する",

@@ -1,5 +1,6 @@
 <script>
     import { confirmAction } from '../services/confirmService.js';
+    import NewButton from './panels/NewButton.svelte';
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
@@ -97,6 +98,12 @@
 
     // New tournament form
     let newTournamentName = $state('');
+    let creating = $state(false);
+
+    /** @param {HTMLElement} node */
+    function focusOnMount(node) {
+        node.focus();
+    }
     let newTournamentDate = $state('');
     let newTournamentLocation = $state('');
 
@@ -258,6 +265,7 @@
             newTournamentName = '';
             newTournamentDate = '';
             newTournamentLocation = '';
+            creating = false;
         } catch (error) {
             logger.error('Error creating tournament:', error);
             statusBarTextStore.set(tMsg('tournament.errorCreating'));
@@ -543,7 +551,12 @@
                         if (!tournamentEdit.isEditing(tournament.id)) selectTournament(tournament);
                     }}
                     emptyText={$t('tournament.noTournaments')}
+                    emptyActions
                 >
+                    {#snippet header()}
+                        <span class="detail-title">{$t('tournament.title')}</span>
+                        <NewButton label={$t('tournament.newButton')} onclick={() => (creating = true)} />
+                    {/snippet}
                     {#snippet cells(tournament)}
                         {#if tournamentEdit.isEditing(tournament.id)}
                             <td><input class="edit-input" type="text" bind:value={tournamentEdit.draft.name} onkeydown={tournamentEdit.onKeyDown} use:autofocus /></td>
@@ -590,51 +603,54 @@
                         {/if}
                     {/snippet}
                 </PanelTable>
-                <div class="add-area">
-                    <input
-                        class="add-input name"
-                        type="text"
-                        bind:value={newTournamentName}
-                        placeholder={$t('tournament.newTournamentPlaceholder')}
-                        onkeydown={(e) => {
-                            if (e.key === 'Enter') {
-                                e.stopPropagation();
-                                createTournament();
-                            }
-                            if (e.key === 'Escape') {
-                                e.stopPropagation();
-                                e.currentTarget.blur();
-                            }
-                        }}
-                    />
-                    <input
-                        class="add-input date"
-                        type="date"
-                        bind:value={newTournamentDate}
-                        onkeydown={(e) => {
-                            if (e.key === 'Escape') {
-                                e.stopPropagation();
-                                e.currentTarget.blur();
-                            }
-                        }}
-                    />
-                    <input
-                        class="add-input loc"
-                        type="text"
-                        bind:value={newTournamentLocation}
-                        placeholder={$t('tournament.location')}
-                        onkeydown={(e) => {
-                            if (e.key === 'Enter') {
-                                e.stopPropagation();
-                                createTournament();
-                            }
-                            if (e.key === 'Escape') {
-                                e.stopPropagation();
-                                e.currentTarget.blur();
-                            }
-                        }}
-                    />
-                </div>
+                {#if creating}
+                    <div class="add-area">
+                        <input
+                            class="add-input name"
+                            use:focusOnMount
+                            type="text"
+                            bind:value={newTournamentName}
+                            placeholder={$t('tournament.newTournamentPlaceholder')}
+                            onkeydown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.stopPropagation();
+                                    createTournament();
+                                }
+                                if (e.key === 'Escape') {
+                                    e.stopPropagation();
+                                    e.currentTarget.blur();
+                                }
+                            }}
+                        />
+                        <input
+                            class="add-input date"
+                            type="date"
+                            bind:value={newTournamentDate}
+                            onkeydown={(e) => {
+                                if (e.key === 'Escape') {
+                                    e.stopPropagation();
+                                    e.currentTarget.blur();
+                                }
+                            }}
+                        />
+                        <input
+                            class="add-input loc"
+                            type="text"
+                            bind:value={newTournamentLocation}
+                            placeholder={$t('tournament.location')}
+                            onkeydown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.stopPropagation();
+                                    createTournament();
+                                }
+                                if (e.key === 'Escape') {
+                                    e.stopPropagation();
+                                    e.currentTarget.blur();
+                                }
+                            }}
+                        />
+                    </div>
+                {/if}
             </div>
         {:else}
             <!-- Matches for selected tournament -->
