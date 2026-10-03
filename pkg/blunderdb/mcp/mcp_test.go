@@ -235,6 +235,12 @@ func TestReadTools(t *testing.T) {
 	if st["Totals"].(obj)["NumDecisions"].(float64) == 0 {
 		t.Errorf("player_stats: %v", st["Totals"])
 	}
+	other := players[1].(obj)["Name"].(string)
+	if h := call(t, cs, "head_to_head", obj{"player": name, "playerB": other}); h["player_a"] != name || h["player_b"] != other {
+		t.Errorf("head_to_head: %v", h)
+	}
+	list(t, call(t, cs, "pr_by_window", obj{"player": name, "months": 12}), "windows")
+	list(t, call(t, cs, "player_ranking", obj{"minDecisions": 1}), "ranking")
 	recurring := call(t, cs, "recurring_errors", obj{"player": name, "limit": 3})
 	list(t, recurring, "TopBlunders")
 	if groups, _ := recurring["Groups"].([]any); len(groups) > 3 {

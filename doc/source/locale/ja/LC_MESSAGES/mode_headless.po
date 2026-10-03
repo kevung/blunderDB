@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 12:43+0200\n"
+"POT-Creation-Date: 2026-10-03 18:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -3544,89 +3544,99 @@ msgid ""
 msgstr "プレイヤー、全体の PR、チェッカー、キューブ、フェーズ別、繰り返される誤り、実際の PR に対するクイズの PR と Anki の定着率"
 
 #: ../../source/mode_headless.rst:1861
+msgid "``head_to_head``, ``pr_by_window``, ``player_ranking``"
+msgstr "``head_to_head``, ``pr_by_window``, ``player_ranking``"
+
+#: ../../source/mode_headless.rst:1862
+msgid ""
+"face-à-face de deux joueurs ; PR par fenêtre calendaire ; classement par "
+"PR"
+msgstr "二人の対戦成績、暦期間ごとの PR、PR によるランキング"
+
+#: ../../source/mode_headless.rst:1864
 msgid "``list_matches``, ``get_match``, ``list_tournaments``"
 msgstr "``list_matches``, ``get_match``, ``list_tournaments``"
 
-#: ../../source/mode_headless.rst:1862
+#: ../../source/mode_headless.rst:1865
 msgid "matchs, détail d'un match, tournois"
 msgstr "マッチ、マッチの詳細、トーナメント"
 
-#: ../../source/mode_headless.rst:1863
+#: ../../source/mode_headless.rst:1866
 msgid "``list_collections``, ``collection_positions``, ``study_decks``"
 msgstr "``list_collections``, ``collection_positions``, ``study_decks``"
 
-#: ../../source/mode_headless.rst:1864
+#: ../../source/mode_headless.rst:1867
 msgid "collections et leurs positions ; paquets de révision"
 msgstr "コレクションとそのポジション、学習デッキ"
 
-#: ../../source/mode_headless.rst:1865
+#: ../../source/mode_headless.rst:1868
 msgid "``list_lessons``, ``lesson``"
 msgstr "``list_lessons``, ``lesson``"
 
-#: ../../source/mode_headless.rst:1866
+#: ../../source/mode_headless.rst:1869
 msgid "leçons ; les étapes d'une leçon, dans l'ordre"
 msgstr "レッスン。レッスンのステップを順に返す"
 
-#: ../../source/mode_headless.rst:1867
+#: ../../source/mode_headless.rst:1870
 msgid "``quiz_draw``, ``quiz_grade``"
 msgstr "``quiz_draw``, ``quiz_grade``"
 
-#: ../../source/mode_headless.rst:1868
+#: ../../source/mode_headless.rst:1871
 msgid "tire une position sans sa réponse, puis note la réponse donnée"
 msgstr "答えを伏せたポジションを出題し、返された答えを採点する"
 
-#: ../../source/mode_headless.rst:1869
+#: ../../source/mode_headless.rst:1872
 msgid "``evaluate``"
 msgstr "``evaluate``"
 
-#: ../../source/mode_headless.rst:1870
+#: ../../source/mode_headless.rst:1873
 msgid ""
 "évaluation gammonNet d'une position donnée en texte, sans l'enregistrer :"
 " meilleurs coups ou décision de videau"
 msgstr "テキストで与えられたポジションの gammonNet 評価（保存はしません）：最善手またはキューブの判断"
 
-#: ../../source/mode_headless.rst:1872
+#: ../../source/mode_headless.rst:1875
 msgid "``anki_next``"
 msgstr "``anki_next``"
 
-#: ../../source/mode_headless.rst:1873
+#: ../../source/mode_headless.rst:1876
 msgid "la prochaine carte due d'un paquet de révision"
 msgstr "復習デッキの次の期限が来たカード"
 
-#: ../../source/mode_headless.rst:1874
+#: ../../source/mode_headless.rst:1877
 msgid "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 msgstr "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 
-#: ../../source/mode_headless.rst:1875
+#: ../../source/mode_headless.rst:1878
 msgid "transcriptions de matchs ; détail d'une transcription ; son texte ``.mat``"
 msgstr "マッチの文字起こし、文字起こしの詳細、その ``.mat`` テキスト"
 
-#: ../../source/mode_headless.rst:1877
+#: ../../source/mode_headless.rst:1880
 msgid "``direction_list``, ``direction_standings``, ``direction_season``"
 msgstr "``direction_list``, ``direction_standings``, ``direction_season``"
 
-#: ../../source/mode_headless.rst:1878
+#: ../../source/mode_headless.rst:1881
 msgid "tournois dirigés ; classement d'un tournoi ; classement de saison"
 msgstr "運営済みの大会、大会の順位表、シーズンランキング"
 
-#: ../../source/mode_headless.rst:1879
+#: ../../source/mode_headless.rst:1882
 msgid "``rollout``"
 msgstr "``rollout``"
 
-#: ../../source/mode_headless.rst:1880
+#: ../../source/mode_headless.rst:1883
 #, no-python-format
 msgid ""
 "rollout d'une position de la base : équité, intervalle à 95 % et JSD par "
 "candidat"
 msgstr "ライブラリの局面のロールアウト：候補ごとのエクイティ、95 % 区間、JSD"
 
-#: ../../source/mode_headless.rst:1882
+#: ../../source/mode_headless.rst:1885
 msgid ""
 "``club_matches``, ``club_match_positions``, ``club_comments``, "
 "``club_library``, ``club_library_positions``, ``club_ranking``"
 msgstr "``club_matches``、``club_match_positions``、``club_comments``、``club_library``、``club_library_positions``、``club_ranking``"
 
-#: ../../source/mode_headless.rst:1884
+#: ../../source/mode_headless.rst:1887
 msgid ""
 "lectures à travers les tenants que liste le proxy "
 "(:ref:`headless_tenants_lus`) : matchs des élèves, positions d'un match "
@@ -3636,7 +3646,7 @@ msgstr ""
 "プロキシが列挙するテナントをまたぐ読み取り（:ref:`headless_tenants_lus`）：生徒のマッチ、ハッシュ付きのマッチのポジション、これらの盤面に書かれたコメント、共有ライブラリ、クラブランキング。``X"
 "-Read-Tenants`` がない場合は、このテナントのみ。"
 
-#: ../../source/mode_headless.rst:1889
+#: ../../source/mode_headless.rst:1892
 msgid ""
 "Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
 "``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
@@ -3651,7 +3661,7 @@ msgstr ""
 "``--write``、デーモンでは ``--mcp-write`` です。ほかのツールはすべて読み取りのみですが、書き込みが提供されているときは"
 " ``rollout`` に引数 ``store`` が加わり、ポジションの分析の隣にロールアウトを記録します。どのツールも削除はしません。"
 
-#: ../../source/mode_headless.rst:1897
+#: ../../source/mode_headless.rst:1900
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -3659,7 +3669,7 @@ msgstr ""
 "**ローカル**\\ では、アシスタントがファイルに対して ``blunderdb mcp`` を起動します（:ref:`cli` "
 "を参照）。Claude Code の場合："
 
-#: ../../source/mode_headless.rst:1904
+#: ../../source/mode_headless.rst:1907
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -3681,7 +3691,7 @@ msgstr ""
 "呼び出しはデーモンのチェーン全体をもう一度通ります。ログに記録され、メトリクスに数えられ、テナントのレート制限に計上されます。それを運ぶ "
 "``/mcp`` リクエストとは別にです。したがってツール呼び出し 1 回は複数のリクエスト分のコストになり、免除されるものはありません。"
 
-#: ../../source/mode_headless.rst:1915
+#: ../../source/mode_headless.rst:1918
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

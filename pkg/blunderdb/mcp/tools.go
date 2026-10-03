@@ -432,6 +432,65 @@ func registerPlayers(tb *Toolbox) {
 				"PerTournament", "CubeDirections"), nil
 		})
 
+	type headToHeadIn struct {
+		statsFilter
+		PlayerB string `json:"playerB" jsonschema:"the opponent, exactly as list_players returns it"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "head_to_head", Title: "Head-to-head",
+		Description: "Two players against each other over the matches the filter keeps: their common matches (date, length, winner, each one's PR), the record, and each one's PR over those matches. `player` is the first player, `playerB` the second."},
+		func(ctx context.Context, req *sdk.CallToolRequest, in headToHeadIn) (any, error) {
+			body := in.wire()
+			filter := body["filter"].(map[string]any)
+			filter["PlayerName"], filter["PlayerAliases"] = "", nil
+			body["player_a"], body["player_b"] = in.Player, in.PlayerB
+			var res obj
+			if err := tb.Engine.Call(ctx, req, "stats.headToHead", body, &res); err != nil {
+				return nil, err
+			}
+			return res, nil
+		})
+
+	type windowsIn struct {
+		statsFilter
+		Months int `json:"months,omitempty" jsonschema:"width of each calendar window in months (default 3)"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "pr_by_window", Title: "PR by calendar window",
+		Description: "A player's PR over consecutive calendar windows of `months` months: each window's dates, matches, counted decisions and PR."},
+		func(ctx context.Context, req *sdk.CallToolRequest, in windowsIn) (any, error) {
+			body := in.wire()
+			body["months"] = in.Months
+			if in.Months <= 0 {
+				body["months"] = 3
+			}
+			var res []obj
+			if err := tb.Engine.Call(ctx, req, "stats.prByWindow", body, &res); err != nil {
+				return nil, err
+			}
+			return obj{"windows": res}, nil
+		})
+
+	type rankingIn struct {
+		TournamentIDs []int64 `json:"tournamentIds,omitempty" jsonschema:"restrict to these tournaments"`
+		DateFrom      string  `json:"dateFrom,omitempty" jsonschema:"first match date, YYYY-MM-DD"`
+		DateTo        string  `json:"dateTo,omitempty" jsonschema:"last match date, YYYY-MM-DD"`
+		MatchLengths  []int   `json:"matchLengths,omitempty" jsonschema:"restrict to these match lengths (0 = money game)"`
+		MinDecisions  int     `json:"minDecisions,omitempty" jsonschema:"only players with at least this many counted decisions (default 500)"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "player_ranking", Title: "Player ranking",
+		Description: "Players ranked by PR (lower is better) over the matches the filter keeps, among those with at least `minDecisions` counted decisions: rank, matches, wins, losses, decisions, PR overall, checker and cube."},
+		func(ctx context.Context, req *sdk.CallToolRequest, in rankingIn) (any, error) {
+			body := statsFilter{TournamentIDs: in.TournamentIDs, DateFrom: in.DateFrom, DateTo: in.DateTo, MatchLengths: in.MatchLengths}.wire()
+			body["min_decisions"] = in.MinDecisions
+			if in.MinDecisions <= 0 {
+				body["min_decisions"] = 500
+			}
+			var res []obj
+			if err := tb.Engine.Call(ctx, req, "stats.ranking", body, &res); err != nil {
+				return nil, err
+			}
+			return obj{"ranking": res}, nil
+		})
+
 	type errorsIn struct {
 		statsFilter
 		Limit int `json:"limit,omitempty" jsonschema:"blunders to return (default 20, at most 200)"`

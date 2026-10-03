@@ -1858,6 +1858,9 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
        ``training_stats``
      - joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent ;
        PR du quiz et rétention Anki contre le PR réel
+   * - ``head_to_head``, ``pr_by_window``, ``player_ranking``
+     - face-à-face de deux joueurs ; PR par fenêtre calendaire ; classement
+       par PR
    * - ``list_matches``, ``get_match``, ``list_tournaments``
      - matchs, détail d'un match, tournois
    * - ``list_collections``, ``collection_positions``, ``study_decks``
