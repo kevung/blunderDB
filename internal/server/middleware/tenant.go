@@ -17,7 +17,7 @@ import (
 const TenantHeader = "X-Tenant-ID"
 
 // ReadTenantsHeader is the request header listing the tenants a read spans
-// besides X-Tenant-ID (ADR-0061): comma-separated tenants, in the order the
+// besides X-Tenant-ID (ADR-0063): comma-separated tenants, in the order the
 // answers come back. Like X-Tenant-ID, the daemon trusts it: the proxy that
 // authenticates the caller decides whom it may read and writes this header;
 // the daemon authorises nothing (ADR-0005). The daemon honours it only when

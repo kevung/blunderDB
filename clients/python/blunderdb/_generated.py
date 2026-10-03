@@ -82,6 +82,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/anki.createDeck — JSON."
         return self._call("/v1/anki.createDeck", payload)
 
+    def anki_create_study_deck(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/anki.createStudyDeck — JSON."
+        return self._call("/v1/anki.createStudyDeck", payload)
+
     def anki_deck_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/anki.deckPositions — NDJSON stream."
         return self._stream("/v1/anki.deckPositions", payload)
@@ -482,6 +486,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/gammonnet.cubeMatrix — hand-written handler — see openapi.yaml."
         return self._call("/v1/gammonnet.cubeMatrix", payload)
 
+    def gammonnet_evaluate(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/gammonnet.evaluate — hand-written handler — see openapi.yaml."
+        return self._call("/v1/gammonnet.evaluate", payload)
+
     def gammonnet_sweep_stale(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/gammonnet.sweepStale — hand-written handler — see openapi.yaml."
         return self._call("/v1/gammonnet.sweepStale", payload)
@@ -630,6 +638,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/metadata.version — JSON."
         return self._call("/v1/metadata.version", payload)
 
+    def positions_count(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.count — JSON."
+        return self._call("/v1/positions.count", payload)
+
     def positions_delete(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.delete — JSON."
         return self._call("/v1/positions.delete", payload)
@@ -657,6 +669,10 @@ class GeneratedAPI(BaseClient):
     def positions_from_xgp(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.fromXGP — JSON."
         return self._call("/v1/positions.fromXGP", payload)
+
+    def positions_index_of(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/positions.indexOf — JSON."
+        return self._call("/v1/positions.indexOf", payload)
 
     def positions_legal_moves(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/positions.legalMoves — JSON."
@@ -738,6 +754,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/rencontres.pageHtml — JSON."
         return self._call("/v1/rencontres.pageHtml", payload)
 
+    def rencontres_ranking(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.ranking — JSON."
+        return self._call("/v1/rencontres.ranking", payload)
+
     def rencontres_set_breaks(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/rencontres.setBreaks — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/rencontres.setBreaks", payload, if_match=if_match, idempotency_key=idempotency_key)
@@ -778,9 +798,21 @@ class GeneratedAPI(BaseClient):
         "POST /v1/rollout.position — hand-written handler — see openapi.yaml."
         return self._call("/v1/rollout.position", payload)
 
+    def search_count(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.count — JSON."
+        return self._call("/v1/search.count", payload)
+
     def search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
         "POST /v1/search.find — NDJSON stream."
         return self._stream("/v1/search.find", payload)
+
+    def search_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.ids — JSON."
+        return self._call("/v1/search.ids", payload)
+
+    def search_index_of(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/search.indexOf — JSON."
+        return self._call("/v1/search.indexOf", payload)
 
     def search_parse(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/search.parse — JSON."
@@ -858,9 +890,21 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.recurringErrors — JSON."
         return self._call("/v1/stats.recurringErrors", payload)
 
+    def stats_study_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.studyIds — JSON."
+        return self._call("/v1/stats.studyIds", payload)
+
     def stats_tournament_badges(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.tournamentBadges — JSON."
         return self._call("/v1/stats.tournamentBadges", payload)
+
+    def stats_training(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.training — JSON."
+        return self._call("/v1/stats.training", payload)
+
+    def tenants_quota(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/tenants.quota — JSON."
+        return self._call("/v1/tenants.quota", payload)
 
     def tournaments_add_match(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/tournaments.addMatch — JSON."
@@ -909,6 +953,18 @@ class GeneratedAPI(BaseClient):
     def tournaments_update_comment(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/tournaments.updateComment — JSON."
         return self._call("/v1/tournaments.updateComment", payload)
+
+    def training_number_stats(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/training.numberStats — JSON."
+        return self._call("/v1/training.numberStats", payload)
+
+    def training_save(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/training.save — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/training.save", payload, idempotency_key=idempotency_key)
+
+    def training_sessions(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/training.sessions — JSON."
+        return self._call("/v1/training.sessions", payload)
 
     def transcriptions_abandon(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/transcriptions.abandon — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."

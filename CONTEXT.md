@@ -328,6 +328,11 @@ question is the board and the Answer its stored Analysis; for a score, the quest
 score and the Answer its Score card. A card asks one question and receives one grade —
 there is no notion of a partly answered card.
 
+**Board answer** (of an Anki deck):
+An option of the deck: a checker Review card is answered by playing the move on the board; the
+quiz judges it and proposes a grade, which the user confirms or changes. Off by default — the
+user grades their own recall (ADR-0040). Never offered for cube cards or decks of scores.
+
 **Session limit** (of an Anki deck):
 How many Review cards one sitting serves before it ends. A property of the deck, like its
 target retention — never a daily quota: a deck is a finite corpus, so the daily volume is
@@ -426,7 +431,8 @@ _Avoid_: run, round, set
 **Journal**:
 The record of Training sessions and their Numbers, kept in the library's own tables so it
 travels with the file; read at rest in the Training tab as a per-Exercise summary
-(*bilan*) and a per-Number detail. Anki reviews are not in it, and it is not in Stats.
+(*bilan*) and a per-Number detail. Anki reviews are not in it; Stats › Training reads its Decision sessions and the Anki review
+log side by side with the real PR, without copying either.
 _Avoid_: history, statistics, log
 
 **Score card** (interface: *fiche de score*):
@@ -630,7 +636,7 @@ the `across.*` reads use them, every answer names the Tenant it came from, and a
 write still lands in the writing Tenant alone. The daemon honours the header
 only when started with `--read-tenants`, and refuses it otherwise. The relation behind the list (a
 coach and their students, a club) lives with the caller; blunderDB authorises
-nothing (ADR-0005, ADR-0061). On SQLite, and on the desktop, the Read tenants are
+nothing (ADR-0005, ADR-0063). On SQLite, and on the desktop, the Read tenants are
 the single Tenant.
 _Avoid_: shared tenant, linked tenants, permissions
 

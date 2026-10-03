@@ -16,7 +16,9 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveTrainingSession: vi.fn(() => Promise.resolve(1)),
     LoadTrainingSessions: vi.fn(() => Promise.resolve([])),
     LoadTrainingNumberStats: vi.fn(() => Promise.resolve([])),
-    LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
+    CountPositionsByFilters: vi.fn(() => Promise.resolve(0)),
+    SearchPositionIDs: vi.fn(() => Promise.resolve([])),
+    IndexOfPositionByFilters: vi.fn(() => Promise.resolve(-1)),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
     GradeQuizChecker: vi.fn(),
     GradeQuizCheckerMove: vi.fn(),
@@ -44,7 +46,7 @@ import * as databaseServiceModule from '../services/databaseService.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { playHop } from '../services/quizPlay.js';
 import fr from '../i18n/locales/fr.json';
-import { positionStore, positionsStore } from '../stores/positionStore.js';
+import { positionStore, positionsStore, searchSource } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { trainingSessionStore, trainingRefusalStore, trainingAnalysisHiddenStore } from '../stores/trainingTabStore.js';
 import { pipcountVisibleStore, activeTabStore, currentPositionIndexStore } from '../stores/uiStore.js';
@@ -133,8 +135,10 @@ beforeEach(() => {
     db.LoadPosition.mockResolvedValue(null);
     app.GenerateBearoffQuestion.mockReset();
     app.GenerateEvaluationQuestion.mockReset();
-    db.LoadPositionIDsByFilters.mockReset();
-    db.LoadPositionIDsByFilters.mockResolvedValue([]);
+    db.CountPositionsByFilters.mockReset();
+    db.CountPositionsByFilters.mockResolvedValue(0);
+    db.SearchPositionIDs.mockReset();
+    db.SearchPositionIDs.mockResolvedValue([]);
     vi.clearAllMocks();
     activeTabStore.set('training');
     currentPositionIndexStore.set(-1);
@@ -410,13 +414,16 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
     // base a déjà calculée ; le moteur reste seul juge du domaine (4 à 15 pions).
     test('le tirage ne regarde que les positions de la liste en phase bearoff', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
-        // 99 est un bearoff de la base, mais pas de la liste parcourue.
-        db.LoadPositionIDsByFilters.mockResolvedValue([99, 9]);
+        // 99 est un bearoff de la base, mais pas de la liste parcourue : la
+        // recherche est restreinte à la liste, et seul 9 en revient.
+        db.CountPositionsByFilters.mockResolvedValue(1);
+        db.SearchPositionIDs.mockImplementation(async (_f, offset) => [[9][offset]]);
         db.LoadPosition.mockResolvedValue(board());
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
 
         expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
-        expect(db.LoadPositionIDsByFilters.mock.calls[0][0].gamePhaseFilter).toBe('bearoff');
+        expect(db.CountPositionsByFilters.mock.calls[0][0].gamePhaseFilter).toBe('bearoff');
+        expect(db.CountPositionsByFilters.mock.calls[0][0].restrictToPositionIDs).toBe('7,8,9,10');
         // Le préchargement tire aussi : toutes les positions chargées sont la seule candidate.
         expect(new Set(db.LoadPosition.mock.calls.map((call) => call[0]))).toEqual(new Set([9]));
         expect(current().question.positionId).toBe(9);
@@ -424,7 +431,8 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
 
     test('la restriction se calcule une fois par session, pas à chaque question', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
-        db.LoadPositionIDsByFilters.mockResolvedValue([8, 9]);
+        db.CountPositionsByFilters.mockResolvedValue(2);
+        db.SearchPositionIDs.mockImplementation(async (_f, offset) => [[8, 9][offset]]);
         db.LoadPosition.mockResolvedValue(board());
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
 
@@ -433,7 +441,22 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
         revealQuestion();
         await nextTrainingQuestion();
         await flush();
-        expect(db.LoadPositionIDsByFilters).toHaveBeenCalledTimes(1);
+        expect(db.CountPositionsByFilters).toHaveBeenCalledTimes(1);
+    });
+
+    test('un résultat de recherche parcouru par fenêtres est rejoué, restreint à la phase', async () => {
+        db.SearchPositionIDs.mockImplementation(async (/** @type {any} */ f, /** @type {any} */ offset, /** @type {any} */ limit) =>
+            f.gamePhaseFilter === 'bearoff' ? [9].slice(offset, offset + limit) : Array.from({ length: limit }, (_, i) => offset + i + 100)
+        );
+        db.CountPositionsByFilters.mockResolvedValue(1);
+        const result = searchSource({ searchText: 'w>50' });
+        positionsStore.adoptFirstPage(result, await result.window(0, positionsStore.firstPageSize()));
+        db.LoadPosition.mockResolvedValue(board());
+        app.GenerateBearoffQuestion.mockResolvedValue(generated());
+
+        expect(await startTrainingSession({ exercise: 'bearoff', seedSource: 'library' })).toBe(true);
+        expect(db.CountPositionsByFilters.mock.calls[0][0]).toMatchObject({ searchText: 'w>50', gamePhaseFilter: 'bearoff' });
+        expect(current().question.positionId).toBe(9);
     });
 
     // Une base dont les phases n'ont jamais été calculées (lignes d'avant 2.19.0,
@@ -442,7 +465,7 @@ describe('la source « base » de Bearoff tire parmi les bearoffs de la liste (A
     // refuser une base qui a peut-être des bearoffs.
     test('sans aucune position classée bearoff dans la liste, le tirage retombe sur la liste entière', async () => {
         positionsStore.setIds([7, 8, 9, 10]);
-        db.LoadPositionIDsByFilters.mockResolvedValue([]);
+        db.CountPositionsByFilters.mockResolvedValue(0);
         db.LoadPosition.mockResolvedValue(board());
         app.GenerateBearoffQuestion.mockResolvedValue(generated());
 
@@ -762,6 +785,37 @@ describe('une session de Décision (#323)', () => {
         app.LegalMoves.mockReset();
         app.LegalMoves.mockResolvedValue([]);
         quizPlayStore.set(null);
+    });
+
+    test('une liste parcourue par fenêtres n’est pas dite épuisée tant qu’il en reste de non lues', async () => {
+        const total = 1000;
+        await positionsStore.setSource({
+            count: async () => total,
+            window: async (offset, limit) => {
+                const end = limit > 0 ? Math.min(total, offset + limit) : total;
+                return Array.from({ length: Math.max(0, end - offset) }, (_, i) => offset + i + 1);
+            },
+            indexOf: async (id) => (id >= 1 && id <= total ? id - 1 : -1)
+        });
+        db.LoadAnalysis.mockResolvedValue(/** @type {any} */ (CUBE));
+        db.LoadPosition.mockImplementation((/** @type {any} */ id) => Promise.resolve({ ...board(), id }));
+        // Every draw lands on the same 120 ranks: once they are read, only a walk finds the rest.
+        let k = 0;
+        const random = vi.spyOn(Math, 'random').mockImplementation(() => ((k++ % 120) + 0.5) / total);
+        try {
+            expect(await startTrainingSession({ exercise: 'decision', seedSource: 'library' })).toBe(true);
+            const asked = new Set([current().question.positionId]);
+            for (let i = 0; i < 125; i++) {
+                await answerCurrent(0);
+                await nextTrainingQuestion();
+                if (!current().question) break;
+                asked.add(current().question.positionId);
+            }
+            expect(current().question).not.toBeNull();
+            expect([...asked].some((id) => id > 120)).toBe(true);
+        } finally {
+            random.mockRestore();
+        }
     });
 
     describe('refuse en le nommant', () => {

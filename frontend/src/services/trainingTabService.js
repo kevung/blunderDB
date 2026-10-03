@@ -1,7 +1,6 @@
 import { get } from 'svelte/store';
 import {
     LoadPosition,
-    LoadPositionIDsByFilters,
     SaveTrainingSession,
     LoadTrainingSessions,
     LoadTrainingNumberStats,
@@ -12,7 +11,7 @@ import {
 } from '../../wailsjs/go/database/Database.js';
 import { GenerateBearoffQuestion, GenerateEvaluationQuestion, LegalMoves } from '../../wailsjs/go/gui/App.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { positionStore, positionsStore } from '../stores/positionStore.js';
+import { positionStore, positionsStore, browsingLibrary, searchSource } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { emptySearchBoardPosition } from '../stores/searchExcludePositionStore.js';
 import { trainingSessionStore, trainingElapsedStore, trainingJournalStore, trainingRefusalStore } from '../stores/trainingTabStore.js';
@@ -30,6 +29,7 @@ import {
     answerChosen,
     attachCorrection
 } from './trainingTab.js';
+import { invalidateTrainingStats } from '../stores/statsStore.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { newPlay, completedPlay, undoLast, resetPlay, playHop } from './quizPlay.js';
 import { stepsFromNotation } from './transcriptionPlay.js';
@@ -111,7 +111,9 @@ async function buildPipsQuestion(seedSource, seed) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
         if (length === 0) return { question: null, refusal: 'noQuestion' };
-        const id = positionsStore.idAt(Math.floor(Math.random() * length));
+        const index = Math.floor(Math.random() * length);
+        // Held ids answer at once; only a paged list's unread page is awaited.
+        const id = positionsStore.idAt(index) ?? (await positionsStore.resolveIdAt(index));
         if (id == null) return { question: null, refusal: 'noQuestion' };
         const position = await LoadPosition(id);
         if (!position) return { question: null, refusal: 'noQuestion' };
@@ -144,6 +146,39 @@ function drawDistinct(candidates, count) {
     return pool.slice(0, Math.min(count, pool.length));
 }
 
+/**
+ * `count` distinct indices of [0, length), drawn without building the range: the browsed list may
+ * be the library, of any size.
+ * @param {number} length @param {number} count
+ */
+function drawIndices(length, count) {
+    if (length <= count * 2)
+        return drawDistinct(
+            Array.from({ length }, (_, i) => i),
+            count
+        );
+    /** @type {Set<number>} */
+    const drawn = new Set();
+    while (drawn.size < count) drawn.add(Math.floor(Math.random() * length));
+    return [...drawn];
+}
+
+/**
+ * The ids of `count` distinct positions of the browsed list, drawn at random; a paged list reads
+ * only the pages they fall in.
+ * @param {number} count
+ */
+async function drawListIds(count) {
+    const { length } = get(positionsStore);
+    /** @type {number[]} */
+    const out = [];
+    for (const index of drawIndices(length, count)) {
+        const id = positionsStore.idAt(index) ?? (await positionsStore.resolveIdAt(index));
+        if (id != null) out.push(id);
+    }
+    return out;
+}
+
 /** Les deux EPC d'une position engendrée, dans l'ordre du plateau.
  *  @param {any} epc */
 function epcNumbers(epc) {
@@ -165,12 +200,10 @@ function epcNumbers(epc) {
 async function buildBearoffQuestion(seedSource, seed) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
-        const phased = await bearoffIndices();
-        const candidates = phased.length > 0 ? phased : Array.from({ length }, (_, i) => i);
+        const phased = await drawBearoffIds(MAX_LIBRARY_DRAWS);
+        const drawn = phased.length > 0 ? phased : await drawListIds(MAX_LIBRARY_DRAWS);
         let last = 'notBearoff';
-        for (const index of drawDistinct(candidates, MAX_LIBRARY_DRAWS)) {
-            const id = positionsStore.idAt(index);
-            if (id == null) continue;
+        for (const id of drawn) {
             const loaded = await LoadPosition(id);
             if (!loaded) continue;
             const generated = await GenerateBearoffQuestion(/** @type {any} */ ({ source: 'library', seed: loaded }));
@@ -207,31 +240,72 @@ function bearoffQuestion(generated, key, positionId = null, loaded = null) {
 }
 
 /**
- * Les index, dans la liste parcourue, des positions en phase `bearoff`
- * (ADR-0035), calculés une fois par session. Sans cette restriction, trente
- * tirages à l'aveugle manquent souvent les rares bearoffs d'une base. Elle ne
- * juge pas : le domaine (4 à 15 pions) reste en Go.
+ * Les positions en phase `bearoff` (ADR-0035) de la liste parcourue, comptées
+ * une fois par session et lues par fenêtres : leur liste n'est jamais tenue
+ * entière. Sans cette restriction, trente tirages à l'aveugle manquent souvent
+ * les rares bearoffs d'une base. Elle ne juge pas : le domaine (4 à 15 pions)
+ * reste en Go.
  *
- * Liste vide (phases jamais calculées, ou aucun bearoff) : le tirage retombe
- * sur la liste entière.
+ * Une liste tenue entière restreint la recherche à ses ids ; un résultat de
+ * recherche parcouru par fenêtres est rejoué, sa requête restreinte à la phase.
  *
- * @returns {Promise<number[]>}
+ * Null (phases jamais calculées, aucun bearoff) : le tirage retombe sur la
+ * liste entière.
+ *
+ * @returns {Promise<{ source: import('../stores/positionList.js').IdSource, length: number } | null>}
  */
-function bearoffIndices() {
+function bearoffList() {
     if (!bearoffPhaseIndices) {
         bearoffPhaseIndices = (async () => {
-            /** @type {number[]} */
-            let ids = [];
+            /** @type {any} */
+            let filters = { filter: emptySearchBoardPosition(), excludeFilter: emptySearchBoardPosition(), gamePhaseFilter: 'bearoff' };
+            if (!browsingLibrary()) {
+                const held = get(positionsStore).ids;
+                if (held) {
+                    filters.restrictToPositionIDs = held.filter((id) => id != null).join(',');
+                    if (!filters.restrictToPositionIDs) return null;
+                } else {
+                    // A paged search result: its own query, narrowed to the phase. A query that
+                    // already names phases without bearoff holds none.
+                    const list = positionsStore.snapshotList();
+                    const payload = 'source' in list ? /** @type {any} */ (list.source).payload : null;
+                    if (!payload) return null;
+                    const phases = String(payload.gamePhaseFilter || '')
+                        .split(';')
+                        .map((p) => p.trim().toLowerCase())
+                        .filter(Boolean);
+                    if (phases.length > 0 && !phases.includes('bearoff')) return null;
+                    filters = { ...payload, gamePhaseFilter: 'bearoff' };
+                }
+            }
             try {
-                const filters = /** @type {any} */ ({ filter: emptySearchBoardPosition(), excludeFilter: emptySearchBoardPosition(), gamePhaseFilter: 'bearoff' });
-                ids = (await LoadPositionIDsByFilters(filters)) || [];
+                const source = searchSource(filters);
+                const length = await source.count();
+                return length > 0 ? { source, length } : null;
             } catch (error) {
                 logger.error('could not narrow the training draw to bear-offs:', error);
+                return null;
             }
-            return ids.map((id) => positionsStore.indexOf(id)).filter((index) => index >= 0);
         })();
     }
     return bearoffPhaseIndices;
+}
+
+/**
+ * `count` distinct bearoff ids drawn from the list, one window of one id each; [] when the draw
+ * cannot be narrowed.
+ * @param {number} count
+ */
+async function drawBearoffIds(count) {
+    const list = await bearoffList();
+    if (!list) return [];
+    /** @type {number[]} */
+    const out = [];
+    for (const index of drawIndices(list.length, count)) {
+        const [id] = await list.source.window(index, 1);
+        if (id != null) out.push(id);
+    }
+    return out;
 }
 
 /** Tolérance des chances de gain d'Évaluation, en points de pourcentage : sépare
@@ -254,12 +328,7 @@ async function buildEvaluationQuestion(seedSource, seed) {
     if (seedSource === 'library') {
         const { length } = get(positionsStore);
         let last = 'notMoneyCubeDecision';
-        for (const index of drawDistinct(
-            Array.from({ length }, (_, i) => i),
-            MAX_LIBRARY_DRAWS
-        )) {
-            const id = positionsStore.idAt(index);
-            if (id == null) continue;
+        for (const id of await drawListIds(MAX_LIBRARY_DRAWS)) {
             const loaded = await LoadPosition(id);
             if (!loaded) continue;
             const generated = await GenerateEvaluationQuestion(/** @type {any} */ ({ source: 'library', seed: loaded }));
@@ -330,9 +399,25 @@ async function buildDecisionQuestion() {
     const { length } = get(positionsStore);
     /** @type {number[]} */
     const candidates = [];
-    for (let index = 0; index < length; index++) {
-        const id = positionsStore.idAt(index);
-        if (id != null && !decisionSeen.has(id)) candidates.push(id);
+    if (positionsStore.isPaged()) {
+        // A paged list (the library) is drawn from, never walked whole.
+        for (const id of await drawListIds(Math.min(length, MAX_DECISION_DRAWS * 2))) if (!decisionSeen.has(id)) candidates.push(id);
+        // Every draw can land on a position already read while others remain: walk on from a
+        // random rank, window by window, until unread ones turn up.
+        if (candidates.length === 0 && decisionSeen.size < length) {
+            const step = MAX_DECISION_DRAWS * 2;
+            const windows = Math.ceil(length / step);
+            const first = Math.floor(Math.random() * windows);
+            for (let k = 0; k < windows && candidates.length === 0; k++) {
+                const from = ((first + k) % windows) * step;
+                for (const id of await positionsStore.idsBetween(from, Math.min(length, from + step))) if (id != null && !decisionSeen.has(id)) candidates.push(id);
+            }
+        }
+    } else {
+        for (let index = 0; index < length; index++) {
+            const id = positionsStore.idAt(index);
+            if (id != null && !decisionSeen.has(id)) candidates.push(id);
+        }
     }
     if (candidates.length === 0) return { question: null, refusal: decisionsBuilt > 0 ? 'decisionsExhausted' : 'noAnalysis' };
     for (const id of drawDistinct(candidates, MAX_DECISION_DRAWS)) {
@@ -398,7 +483,7 @@ async function buildQuestion(exercise, seedSource, seed) {
  */
 async function showQuestion(question) {
     if (question?.positionId != null) {
-        const index = positionsStore.indexOf(question.positionId);
+        const index = await positionsStore.findIndex(question.positionId);
         if (index >= 0) {
             // -1 d'abord : pointer l'index déjà courant ne rechargerait rien.
             currentPositionIndexStore.set(-1);
@@ -448,10 +533,10 @@ let prefetched = null;
 let boardSeed = null;
 
 /**
- * Les index bearoff de la liste parcourue, calculés une fois par session (la
- * liste est celle du démarrage).
+ * Les bearoffs de la liste parcourue (bearoffList), comptés une fois par
+ * session (la liste est celle du démarrage).
  *
- * @type {Promise<number[]>|null}
+ * @type {Promise<{ source: import('../stores/positionList.js').IdSource, length: number } | null>|null}
  */
 let bearoffPhaseIndices = null;
 
@@ -745,6 +830,7 @@ export async function finishTrainingSession() {
         setStatusBarMessage(tMsg('training.journalFailed'));
         return row;
     }
+    invalidateTrainingStats();
     await refreshTrainingJournal();
     if (row.exercise === 'decision') {
         const correct = row.numbersAsked - row.faults;

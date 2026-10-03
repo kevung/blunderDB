@@ -25,7 +25,7 @@ info:
     X-Tenant-ID is the tenant's positive decimal integer; a name is refused
     with 400 invalid, never mapped to a tenant by this daemon. The across.*
     reads also span the tenants listed in the X-Read-Tenants header, which the
-    same proxy writes and this daemon trusts the same way (ADR-0061), once
+    same proxy writes and this daemon trusts the same way (ADR-0063), once
     started with --read-tenants; without it, a non-blank X-Read-Tenants is
     refused with 400. Every answer names its tenant, and writes stay in
     X-Tenant-ID. Idempotency:

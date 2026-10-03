@@ -1,4 +1,4 @@
-# ADR-0061 — Une lecture peut porter sur les tenants que le proxy liste
+# ADR-0063 — Une lecture peut porter sur les tenants que le proxy liste
 
 Statut : acceptée.
 Voir aussi : ADR-0005 (le démon n'authentifie rien), ADR-0057 (lectures conditionnelles),
@@ -118,6 +118,11 @@ Ces fonctions sont une étape suivante ; le socle leur donne :
   d'identité, le refus d'ADR-0005.
 - Rejeté : élargir les routes existantes quand l'en-tête est présent — leurs réponses ne disent
   pas leur Tenant, et un id seul y deviendrait ambigu.
+- Ce n'est pas le partage de collection : `exports.sqlite` (`collectionIds`) puis
+  `imports.db` **copie** des données d'un Tenant chez un autre, par un fichier que l'appelant
+  transporte ; le receveur les possède ensuite. `across.*` ne copie rien et ne fait que lire,
+  le temps d'une requête. Les deux chemins ne se recouvrent pas : partager pour garder,
+  lire across pour consulter.
 - Rejeté : une méthode de stockage à plusieurs scopes — chaque requête SQL et chaque politique
   RLS à réécrire, pour un gain que la boucle par Tenant donne déjà.
 

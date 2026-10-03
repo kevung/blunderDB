@@ -6,7 +6,7 @@ import (
 	"iter"
 )
 
-// A read across tenants (ADR-0061; domain term: Read tenants, see CONTEXT.md)
+// A read across tenants (ADR-0063; domain term: Read tenants, see CONTEXT.md)
 // is the union of single-tenant reads, one per tenant, each result tagged with
 // the tenant it came from. Nothing here decides who may read whom: the set is
 // handed in by the caller (the serve daemon takes it from a header its

@@ -25,9 +25,9 @@ import (
 //  5. A second `wal_checkpoint(TRUNCATE)`: under WAL, VACUUM's output goes
 //     through the WAL and the file only shrinks once checkpointed.
 //
-// Before that, recompressLegacyAnalyses upgrades rows still in a pre-zstd
-// codec (engine.RecompressAnalysisData): vacuum already rewrites the whole
-// file. Its errors are logged, not returned: an unreadable row stays in its
+// Before that, compactAnalyses rewrites every analysis blob not yet at zstd
+// level 19 (engine.CompactAnalysisData): legacy zlib/raw rows and the level-7
+// blobs the import path writes. Vacuum already rewrites the whole file. Its errors are logged, not returned: an unreadable row stays in its
 // old format, which is better than refusing the compaction.
 //
 // Returns the file size in bytes before and after; 0 and 0 on ":memory:",
@@ -42,7 +42,7 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 		return storage.VacuumResult{}, fmt.Errorf("vacuum: %w", err)
 	}
 
-	if err := s.recompressLegacyAnalyses(ctx); err != nil {
+	if err := s.compactAnalyses(ctx); err != nil {
 		return storage.VacuumResult{}, fmt.Errorf("vacuum: recompress analyses: %w", err)
 	}
 
@@ -101,20 +101,20 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 	return storage.VacuumResult{SizeBefore: sizeBefore, SizeAfter: sizeAfter}, nil
 }
 
-// recompressLegacyAnalysesBatchSize is how many analysis rows are read and,
+// compactAnalysesBatchSize is how many analysis rows are read and,
 // if needed, rewritten per transaction — small enough that a big table does
 // not hold one giant transaction open for the whole pass.
-const recompressLegacyAnalysesBatchSize = 2000
+const compactAnalysesBatchSize = 2000
 
-type legacyAnalysisRow struct {
+type analysisRow struct {
 	id   int64
 	data []byte
 }
 
-// fetchLegacyAnalysisBatch reads one page of analysis.data ordered by id,
+// fetchAnalysisBatch reads one page of analysis.data ordered by id,
 // closing its cursor before returning so the caller is free to write on the
 // same connection right after.
-func fetchLegacyAnalysisBatch(ctx context.Context, db execer, afterID int64, limit int) ([]legacyAnalysisRow, error) {
+func fetchAnalysisBatch(ctx context.Context, db execer, afterID int64, limit int) ([]analysisRow, error) {
 	rows, err := db.QueryContext(ctx,
 		`SELECT id, data FROM analysis WHERE id > ? ORDER BY id LIMIT ?`, afterID, limit)
 	if err != nil {
@@ -122,9 +122,9 @@ func fetchLegacyAnalysisBatch(ctx context.Context, db execer, afterID int64, lim
 	}
 	defer rows.Close()
 
-	var batch []legacyAnalysisRow
+	var batch []analysisRow
 	for rows.Next() {
-		var r legacyAnalysisRow
+		var r analysisRow
 		if err := rows.Scan(&r.id, &r.data); err != nil {
 			return nil, err
 		}
@@ -133,15 +133,14 @@ func fetchLegacyAnalysisBatch(ctx context.Context, db execer, afterID int64, lim
 	return batch, rows.Err()
 }
 
-// recompressLegacyAnalyses walks analysis.data in id order and rewrites any
-// row not already in the current zstd format. engine.NeedsRecompression is a
-// cheap prefix check, so an already-current database costs one full-table
-// SELECT and no writes.
-func (s *Storage) recompressLegacyAnalyses(ctx context.Context) error {
+// compactAnalyses walks analysis.data in id order and rewrites any row not
+// already at zstd level 19. engine.NeedsCompaction is a cheap header check, so
+// an already-compacted database costs one full-table SELECT and no writes.
+func (s *Storage) compactAnalyses(ctx context.Context) error {
 	var lastID int64
 	var scanned, upgraded int
 	for {
-		batch, err := fetchLegacyAnalysisBatch(ctx, s.sqlDB, lastID, recompressLegacyAnalysesBatchSize)
+		batch, err := fetchAnalysisBatch(ctx, s.sqlDB, lastID, compactAnalysesBatchSize)
 		if err != nil {
 			return err
 		}
@@ -153,10 +152,10 @@ func (s *Storage) recompressLegacyAnalyses(ctx context.Context) error {
 
 		err = withTx(ctx, s.sqlDB, func(tx execer) error {
 			for _, r := range batch {
-				if !engine.NeedsRecompression(r.data) {
+				if !engine.NeedsCompaction(r.data) {
 					continue
 				}
-				fresh, err := engine.RecompressAnalysisData(r.data)
+				fresh, err := engine.CompactAnalysisData(r.data)
 				if err != nil {
 					// A row this pass cannot read is left exactly as it was:
 					// still readable by DecompressAnalysisData's fallback
@@ -177,7 +176,7 @@ func (s *Storage) recompressLegacyAnalyses(ctx context.Context) error {
 		}
 	}
 	if upgraded > 0 {
-		slog.Info("vacuum: recompressed legacy analysis blobs", "scanned", scanned, "upgraded", upgraded)
+		slog.Info("vacuum: recompressed analysis blobs", "scanned", scanned, "upgraded", upgraded)
 	}
 	return nil
 }

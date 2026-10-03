@@ -13,7 +13,7 @@ gammonGo, already authenticates users, terminates TLS, and fronts the engine eit
    rejects only its absence or an invalid form (rule 3).
 2. Deployments MUST place it behind an authenticating reverse proxy (or embed it in an
    authenticating parent) that strips any client-supplied `X-Tenant-ID` and injects the
-   authenticated tenant — and likewise `X-Read-Tenants`, the tenants a read spans (ADR-0061). It is never exposed directly to the public internet. PostgreSQL
+   authenticated tenant — and likewise `X-Read-Tenants`, the tenants a read spans (ADR-0063). It is never exposed directly to the public internet. PostgreSQL
    Row-Level Security (`serve --rls`) is opt-in defence-in-depth inside that boundary — it
    pins each connection to `app.tenant_id` against a handler bug — not a substitute for the
    proxy.

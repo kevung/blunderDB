@@ -92,3 +92,13 @@ describe('pluralCategory', () => {
         expect(pluralCategory(5)).toBe('many');
     });
 });
+
+describe('formatIsoDay', () => {
+    test('reads the calendar day, whatever the time suffix, without a timezone slide', async () => {
+        const { formatIsoDay, formatDate } = await import('../utils/format.js');
+        expect(formatIsoDay('2025-03-02T00:00:00Z')).toBe(formatDate(new Date(2025, 2, 2)));
+        expect(formatIsoDay('2025-03-02')).toBe(formatDate(new Date(2025, 2, 2)));
+        expect(formatIsoDay('')).toBe('');
+        expect(formatIsoDay('n/a')).toBe('n/a');
+    });
+});

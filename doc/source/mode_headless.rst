@@ -137,6 +137,20 @@ depuis plusieurs clients.
    * - ``--rate-limit-burst <n>``
      - ``100``
      - taille du seau de jetons pour les pics de requêtes
+   * - ``--quota-positions <n>``
+     - ``0``
+     - positions qu'un tenant peut stocker, vérifiées au début d'un import :
+       une fois la borne atteinte, l'import est refusé (413,
+       ``storage_quota_exceeded``) ; ``positions.save`` et les autres écritures
+       unitaires ne sont pas bornées ; 0 = illimité
+   * - ``--quota-analysis-seconds <n>``
+     - ``0``
+     - secondes CPU de calcul du moteur par tenant et par jour UTC (429,
+       ``quota_exceeded``) ; 0 = illimité
+   * - ``--quota-imports <n>``
+     - ``0``
+     - imports d'un même tenant en cours à la fois (429, ``quota_exceeded``) ;
+       0 = illimité
    * - ``--rls``
      - ``false``
      - PostgreSQL : active la Row-Level Security par tenant (défense en
@@ -445,6 +459,10 @@ résultat, appairer, créer un événement) ne le sont que sous ``serve --direct
   avec ``{"id": N}``. ``rencontres.pageHtml`` rend la page murale de l'événement,
   un document HTML autonome dans le champ ``html`` : un écran mural l'affiche
   et la relit périodiquement.
+* ``rencontres.ranking`` rend le classement de saison, comme ``blunderdb
+  tournament ranking --season`` : ``rencontreId``, ``from``, ``to``, ``points``,
+  ``participation`` et ``elo``, tous facultatifs ; sans ``rencontreId`` ni
+  période, tous les tournois dirigés du tenant comptent.
 
 Les pages sont rendues en français, la langue du moteur de direction. Un
 tournoi qui n'est pas dirigé, ou qui appartient à un autre tenant, répond
@@ -835,13 +853,45 @@ chaîne XGID, et ``positions.fromXGP`` à partir d'un fichier de position unique
 ``POST /v1/exports.sqlite`` exporte tout le tenant courant — positions,
 collections, matchs, tournois, analyses, commentaires, coups joués,
 bibliothèque de filtres et paquets Anki — dans un fichier SQLite ouvrable tel
-quel par le poste de travail ; l'export porte toujours toute la base, la
-sélection d'un sous-ensemble est un geste du bureau ou de la CLI. Le corps JSON
-de la requête est optionnel et n'accepte que ``watermarkOrigin`` /
-``watermarkNote``, pour apposer un filigrane signé de l'identité propre du
-démon (``--identity-dir``) — sans ces champs, l'export ne porte aucun
-filigrane ; les demander sans identité configurée échoue avec le code
-``invalid``.
+quel par le poste de travail. Le corps JSON de la requête est optionnel :
+``watermarkOrigin`` / ``watermarkNote`` apposent un filigrane signé de
+l'identité propre du démon (``--identity-dir``) — sans ces champs, l'export ne
+porte aucun filigrane ; les demander sans identité configurée échoue avec le
+code ``invalid``. ``collectionIds`` restreint l'export à ces collections et à
+leurs positions, avec analyses, commentaires et coups joués, sans la
+bibliothèque de filtres ni les paquets Anki.
+
+**Partager une collection entre tenants** passe par le client, jamais par une
+lecture d'un tenant dans l'autre : le tenant qui donne appelle
+``exports.sqlite`` avec ``collectionIds`` (et un filigrane, pour que le
+receveur sache d'où vient le fichier), le tenant qui reçoit envoie le fichier
+à ``imports.db``. Chaque requête porte son propre ``X-Tenant-ID`` ; le proxy
+décide qui a le droit de faire l'une et l'autre. À l'import, une collection
+rejoint celle du même nom chez le receveur, ou est créée ; ses positions s'y
+ajoutent à la suite, sans doublon. Une collection vivante du receveur ne
+reçoit aucune position : sa requête fait son contenu. L'import d'une base
+dans l'application de bureau suit la même règle.
+
+.. code-block:: bash
+
+   curl -X POST http://127.0.0.1:8080/v1/exports.sqlite \
+        -H 'X-Tenant-ID: club-lyon' -H 'Content-Type: application/json' \
+        -d '{"collectionIds":[4],"watermarkOrigin":"Club de Lyon"}' -o ouvertures.db
+   curl -X POST http://127.0.0.1:8080/v1/imports.db \
+        -H 'X-Tenant-ID: alice' -F file=@ouvertures.db
+
+La famille ``training`` tient le journal de l'onglet Entraînement :
+``training.save`` ajoute une séance (``exercise``, ``seedSource``, comptes,
+``items``) et rend son ``id`` (``Idempotency-Key`` accepté) ;
+``training.sessions`` relit les séances, la plus récente d'abord (``exercise``
+et ``limit`` facultatifs) ; ``training.numberStats`` agrège les items d'un
+exercice par type de nombre. Les questions, elles, sont tirées par le client.
+
+``gammonnet.evaluate`` évalue une position nue (``position`` ou ``xgid``), sans
+rien lire ni écrire dans le tenant : avec dés, les meilleurs coups
+(``candidates``, 5 par défaut, au plus 20) ; sans dés, la décision de videau.
+``ply`` va de 0 à 2 (2 par défaut) ; une recherche plus profonde est le travail
+d'``analyzeMissing``.
 
 La famille ``anki`` gagne six méthodes qui étendent le planificateur à
 répétition espacée (FSRS) : ``anki.reviewLog`` (journal de chaque révision —
@@ -950,7 +1000,7 @@ bibliothèque. ``rollout.filter`` est la forme en lot de
 langage de la recherche) et qui ne portent pas encore de rollout aux mêmes
 réglages sont jouées l'une après l'autre et enregistrées au fil de l'eau, en
 flux NDJSON (``started``, ``progress`` après chaque série de parties, puis
-``done`` ou ``cancelled``) ; ``rollout.filter.cancel`` l'annule avec son
+``done``, ``cancelled`` ou ``quota_exceeded``) ; ``rollout.filter.cancel`` l'annule avec son
 ``job_id``. Un tenant ne mène qu'un lot à la fois, rollout ou gammonNet.
 ``rollout.list`` lit les rollouts enregistrés d'une position.
 
@@ -1024,7 +1074,7 @@ démon. Le proxy l'exprime par l'en-tête ``X-Read-Tenants``, une liste de tenan
 séparés par des virgules (``X-Read-Tenants: 2, 3``), qu'il pose à côté de
 ``X-Tenant-ID``. Le démon lui fait confiance comme à ``X-Tenant-ID`` et
 n'autorise rien lui-même
-(`ADR-0061 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0061-une-lecture-peut-porter-sur-les-tenants-que-le-proxy-liste.md>`__).
+(`ADR-0063 <https://github.com/kevung/blunderDB/blob/main/docs/adr/0063-une-lecture-peut-porter-sur-les-tenants-que-le-proxy-liste.md>`__).
 
 La fonction est **désactivée par défaut**, et désactivée veut dire refusée : tant
 que le démon n'est pas lancé avec ``--read-tenants`` (ou
@@ -1322,6 +1372,44 @@ recommandation de production : elle se remplace par ``forward_auth`` vers un
 fournisseur d'identité réel (OIDC, SSO d'entreprise…), qui authentifie puis
 transmet l'identité au même endroit du fichier. Les deux mots de passe et les
 deux comptes de la table de correspondance sont à remplacer de même.
+
+`deploy/Caddyfile.oidc <https://github.com/kevung/blunderDB/blob/main/deploy/Caddyfile.oidc>`__
+en est la recette OpenID Connect : Caddy interroge oauth2-proxy
+(``forward_auth`` sur ``/oauth2/auth``), qui répond 202 avec l'adresse du
+compte connecté dans ``X-Auth-Request-Email``, ou renvoie vers la page de
+connexion du fournisseur. Le bloc ``map`` associe cette adresse à l'entier du
+tenant, et la même garde ``header_up X-Tenant-ID ""`` précède l'injection.
+Le service oauth2-proxy à ajouter au fichier Compose figure en tête du
+fichier.
+
+Quotas par tenant
+~~~~~~~~~~~~~~~~~
+
+Une instance partagée borne ce que chaque tenant lui prend avec
+``--quota-positions``, ``--quota-analysis-seconds`` et ``--quota-imports``
+(sans option, rien n'est borné). Le temps de calcul compte chaque calcul du
+moteur demandé par le tenant : ``gammonnet.analyzeMissing``,
+``gammonnet.sweepStale``, ``gammonnet.compare``, ``gammonnet.cubeMatrix``,
+``gammonnet.evaluate``, ``rollout.position`` et ``rollout.filter``. Il se
+compte en secondes CPU : le temps écoulé multiplié par le nombre de recherches
+menées à la fois, si bien qu'un calcul réparti sur tous les cœurs coûte autant
+que le même travail mené position par position. Une fois le temps du jour
+épuisé, ces routes répondent 429 avec le code ``quota_exceeded``. Un balayage
+ou un ``rollout.filter`` en cours garde ce qu'il a enregistré et finit sur
+l'évènement ``quota_exceeded`` au lieu de ``done`` ; un ``rollout.position``
+interrompu répond 429 et n'enregistre rien ; une comparaison interrompue rend
+ce qu'elle a replié avec ``quotaExceeded: true`` et, dans ``gathered``, le
+nombre de positions qu'elle devait examiner. Le compte repart à zéro à minuit
+UTC et vit en mémoire : un redémarrage du démon le remet à zéro. Le quota de
+positions est vérifié au début d'un import, qui n'est pas interrompu en route :
+un tenant peut le dépasser d'autant que ses imports en cours ajoutent.
+``positions.save`` et les autres écritures unitaires ne le vérifient pas.
+Chaque refus porte dans ``details`` la borne (``quota``, ``limit``) et l'usage
+(``used``). ``tenants.quota`` rend au tenant appelant les bornes et son
+usage : positions stockées, secondes de calcul du jour, imports en cours.
+
+Les quotas sont une comptabilité du démon, pas une frontière : ils
+s'appliquent au tenant que le proxy a posé dans ``X-Tenant-ID``.
 
 **Scénario complet, de zéro à un démon qui répond :**
 
@@ -1681,23 +1769,37 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
    * - ``similar_positions``, ``decode_position``, ``legal_moves``,
        ``race_epc``
      - positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course
-   * - ``list_players``, ``player_stats``, ``recurring_errors``
-     - joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent
+   * - ``list_players``, ``player_stats``, ``recurring_errors``,
+       ``training_stats``
+     - joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent ;
+       PR du quiz et rétention Anki contre le PR réel
    * - ``list_matches``, ``get_match``, ``list_tournaments``
      - matchs, détail d'un match, tournois
    * - ``list_collections``, ``collection_positions``, ``study_decks``
      - collections et leurs positions ; paquets de révision
    * - ``quiz_draw``, ``quiz_grade``
      - tire une position sans sa réponse, puis note la réponse donnée
+   * - ``evaluate``
+     - évaluation gammonNet d'une position donnée en texte, sans
+       l'enregistrer : meilleurs coups ou décision de videau
+   * - ``anki_next``
+     - la prochaine carte due d'un paquet de révision
+   * - ``transcribe_list``, ``transcribe_get``, ``transcribe_mat``
+     - transcriptions de matchs ; détail d'une transcription ; son texte
+       ``.mat``
+   * - ``direction_list``, ``direction_standings``, ``direction_season``
+     - tournois dirigés ; classement d'un tournoi ; classement de saison
    * - ``rollout``
      - rollout d'une position de la base : équité, intervalle à 95 % et JSD
        par candidat
 
-Les outils ne font que lire. Quatre outils écrivent — ``save_position``,
-``comment_position``, ``create_collection``, ``add_to_collection`` — et ne
-sont offerts que sur demande : ``--write`` en local, ``--mcp-write`` sur le
-démon ; ``rollout`` y gagne alors l'argument ``store``, qui enregistre le
-rollout à côté de l'analyse de la position. Aucun n'efface.
+Seuls cinq outils écrivent — ``save_position``, ``comment_position``,
+``create_collection``, ``add_to_collection`` et ``anki_review``, qui note une
+carte tirée par ``anki_next`` — et ils ne sont offerts que sur demande :
+``--write`` en local, ``--mcp-write`` sur le démon. Tous les autres ne font que
+lire ; ``rollout`` gagne cependant, quand l'écriture est offerte, l'argument
+``store``, qui enregistre le rollout à côté de l'analyse de la position. Aucun
+outil n'efface.
 
 **En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir
 :ref:`cli`). Pour Claude Code :

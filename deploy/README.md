@@ -10,11 +10,11 @@ tient donc dans le reverse-proxy placé devant lui, qui doit authentifier
 l'appelant, retirer tout `X-Tenant-ID` envoyé par le client puis injecter
 l'entier correspondant au compte authentifié (jamais un nom — voir
 l'amendement du 05/09/2026 de l'ADR-0005). Il retire de même tout `X-Read-Tenants` du client :
-cet en-tête élargit une lecture à d'autres tenants (ADR-0061), et seul un proxy
+cet en-tête élargit une lecture à d'autres tenants (ADR-0063), et seul un proxy
 qui connaît la relation (coach, club) peut le poser. Le démon ne l'honore
 qu'avec `--read-tenants` (`BLUNDERDB_READ_TENANTS=true`) et le refuse sinon ;
 **avant d'activer cette option sur un déploiement existant**, vérifier que le
-proxy retire bien l'en-tête du client — un proxy antérieur à ADR-0061 ne le
+proxy retire bien l'en-tête du client — un proxy antérieur à ADR-0063 ne le
 fait pas. PostgreSQL Row-Level Security
 (`--rls` / `BLUNDERDB_RLS=true`) est une défense en profondeur *à l'intérieur*
 de cette frontière, pas un substitut : elle protège contre un bug de handler,
@@ -37,12 +37,21 @@ Caddy est le seul service dont un port est publié sur l'hôte.
   avoir explicitement effacé toute valeur reçue du client.
 - `nginx-tenant-proxy.conf` — le même schéma (garde + injection), en snippet
   nginx pour qui a déjà un nginx en place plutôt que Caddy.
+- `Caddyfile.oidc` — la même garde et la même injection, l'appelant étant
+  authentifié par un fournisseur OpenID Connect via oauth2-proxy
+  (`forward_auth`) ; le service oauth2-proxy à ajouter au Compose est en tête
+  du fichier.
 - `.env.example` — variable `POSTGRES_PASSWORD` à définir avant de lancer.
 
 L'authentification HTTP Basic ci-dessus est une **démonstration**, pas une
 recommandation : en production, remplacez-la par `forward_auth` vers votre
 fournisseur d'identité réel (OIDC, SSO d'entreprise…), qui authentifie puis
-transmet l'identité au même endroit du Caddyfile.
+transmet l'identité au même endroit du Caddyfile — `Caddyfile.oidc` en est
+la recette.
+
+Sur une instance partagée, les options `--quota-positions`,
+`--quota-analysis-seconds` et `--quota-imports` du démon bornent ce que chaque
+tenant prend ; elles ne remplacent pas l'authentification du proxy.
 
 Le scénario complet, du conteneur vide à un démon qui répond (avec et sans
 en-tête), est documenté dans `doc/source/mode_headless.rst`, section

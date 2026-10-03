@@ -2,11 +2,11 @@ package ingest
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -57,7 +57,7 @@ type MoveGraph struct {
 type WriteResult struct {
 	MatchID        int64
 	Skipped        bool // true when an exact same-format duplicate was found (nothing written but flags)
-	FlagsApplied   int  // source-tool study marks raised on already-stored positions of a skipped duplicate
+	FlagsApplied   int  // study marks a skipped duplicate newly raised on already-stored positions
 	Enriched       bool // true when a cross-format (canonical) duplicate was enriched in place
 	Replaced       bool // true when an existing match was rewritten in place (MatchGraph.ReplaceMatchID)
 	SavedPositions int
@@ -193,7 +193,8 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		for mi := range gg.Moves {
 			mg := &gg.Moves[mi]
 			if mg.Position != nil {
-				posID, err := savePositionWithAnalyses(ctx, tx, scope, mg.Position, mg.Analyses, mg.Comments, g.CommentOrigin)
+				played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction}
+				posID, err := savePositionWithAnalyses(ctx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin)
 				if err != nil {
 					return res, err
 				}
@@ -227,34 +228,42 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 	return res, nil
 }
 
-// savePositionWithAnalyses saves pos (deduplicated by Zobrist) and applies each
-// analysis fragment in order via load-merge-save, then adds the comments. It is
-// shared by WriteMatch (per move) and the single-position importers.
+// savePositionWithAnalyses saves pos (deduplicated by Zobrist), folds every
+// analysis fragment into whatever is stored for it, then adds the comments.
+// It is shared by WriteMatch (per move) and the single-position importers.
+// played is the decision the graph records at pos (nil for a position
+// imported on its own): the analysis columns take it instead of reading the
+// move table, which on a common position holds thousands of rows.
 //
-// AnalysisStore.Save replaces, so each fragment is merged into whatever is
-// already stored for the position before saving — reproducing the legacy
-// sequence of saveAnalysisInTx calls, including its round-then-recompute of
-// equity errors across successive merges onto one position.
-func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, analyses []*domain.PositionAnalysis, comments []string, origin domain.CommentOrigin) (int64, error) {
+// The fragments are merged in memory and stored with one AnalysisStore.Merge:
+// one read, one encode, one write — and no write at all when the result is
+// what is already stored. Between two fragments the partial result is rounded
+// as storage would round it, so equity errors are recomputed from rounded
+// equities exactly as when each fragment was saved on its own.
+func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, played *storage.PlayedActions, analyses []*domain.PositionAnalysis, comments []string, origin domain.CommentOrigin) (int64, error) {
 	posID, err := tx.Positions().Save(ctx, scope, pos)
 	if err != nil {
 		return 0, err
 	}
+	frags := make([]*domain.PositionAnalysis, 0, len(analyses))
 	for _, frag := range analyses {
-		if frag == nil {
-			continue
+		if frag != nil {
+			frags = append(frags, frag)
 		}
-		var existing *domain.PositionAnalysis
-		switch cur, err := tx.Analyses().Load(ctx, scope, posID); {
-		case err == nil:
-			existing = cur
-		case errors.Is(err, storage.ErrNotFound):
-			// no analysis yet
-		default:
-			return posID, err
-		}
-		merged := mergeAnalysis(existing, *frag)
-		if err := tx.Analyses().Save(ctx, scope, posID, &merged); err != nil {
+	}
+	if len(frags) > 0 {
+		if _, err := tx.Analyses().Merge(ctx, scope, posID, played, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+			cur := existing
+			for i, frag := range frags {
+				merged := mergeAnalysis(cur, *frag)
+				if i < len(frags)-1 {
+					merged.PositionID = int(posID)
+					engine.RoundAnalysisForStorage(&merged)
+				}
+				cur = &merged
+			}
+			return cur
+		}); err != nil {
 			return posID, err
 		}
 	}
@@ -282,12 +291,13 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 }
 
 // applyFlags raises the source-tool study mark on the positions of a graph
-// whose match is already stored, and returns how many it touched.
+// whose match is already stored, and returns how many marks it actually
+// raised — 0 when every mark is already in the database, so the caller can
+// tell "duplicate, nothing to do" from "duplicate, N new marks".
 //
 // It is the one thing an exact duplicate still writes. Only flagged positions
-// are saved — an unflagged one would be a pure no-op — and PositionStore.Save
-// deduplicates by Zobrist hash and ORs the mark, so an existing position is
-// updated in place and never duplicated or cleared.
+// are visited, and PositionStore.RaiseFlag only ever sets the mark on the
+// stored row: nothing is duplicated or cleared.
 func applyFlags(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph) (int, error) {
 	n := 0
 	for gi := range g.Games {
@@ -296,10 +306,13 @@ func applyFlags(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph)
 			if pos == nil || !pos.Flagged {
 				continue
 			}
-			if _, err := tx.Positions().Save(ctx, scope, pos); err != nil {
+			raised, err := tx.Positions().RaiseFlag(ctx, scope, pos)
+			if err != nil {
 				return n, fmt.Errorf("ingest: apply flag to duplicate match position: %w", err)
 			}
-			n++
+			if raised {
+				n++
+			}
 		}
 	}
 	return n, nil

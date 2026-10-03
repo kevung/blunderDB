@@ -1,6 +1,9 @@
 package storage
 
-import "context"
+import (
+	"context"
+	"fmt"
+)
 
 // Tx is a storage transaction. It exposes the same per-family accessors as
 // Storage; every operation performed through them is part of the transaction
@@ -41,4 +44,11 @@ func BeginGuarded(ctx context.Context, st Storage, keys ...string) (Tx, error) {
 		return gb.BeginGuardedTx(ctx, keys...)
 	}
 	return st.BeginTx(ctx)
+}
+
+// AnalysisGuardKey is the guard every writer of positionID's analysis takes
+// when it must not interleave with another one: a guarded transaction that
+// rewrites the analysis, and a backend's Merge that finds no row to lock.
+func AnalysisGuardKey(scope string, positionID int64) string {
+	return fmt.Sprintf("analysis:%s:%d", scope, positionID)
 }

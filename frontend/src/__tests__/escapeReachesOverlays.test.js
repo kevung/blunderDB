@@ -39,7 +39,9 @@ vi.mock('../stores/viewStore', async () => {
         closeView: vi.fn(),
         renameView: vi.fn(),
         selectPreviousView: vi.fn(),
-        selectNextView: vi.fn()
+        selectNextView: vi.fn(),
+        setListSettler: vi.fn(),
+        settleActive: vi.fn()
     });
     return { viewStore: viewStoreMock };
 });

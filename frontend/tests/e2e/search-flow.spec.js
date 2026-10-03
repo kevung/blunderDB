@@ -5,9 +5,9 @@
  * et une structure (XGID collé sur le plateau d'édition), lance la recherche,
  * vérifie les résultats et leur parcours (j/k, flèches), puis réinitialise.
  *
- * Le backend est mocké : LoadPositionIDsByFilters renvoie deux ids quelle que
- * soit la requête (une recherche ne rapporte que des ids, le plateau charge
- * ensuite la fenêtre affichée) ; c'est la requête elle-même que la spec
+ * Le backend est mocké : la recherche (compte, fenêtre, rang) renvoie deux ids
+ * quelle que soit la requête (une recherche ne rapporte que des ids, le plateau
+ * charge ensuite la fenêtre affichée) ; c'est la requête elle-même que la spec
  * vérifie, via le journal d'appels du mock.
  */
 
@@ -61,8 +61,9 @@ test('recherche : deux filtres numériques + structure, résultats, navigation, 
     await expect(statusBar(page)).toContainText('1 / 2');
     await expect(tab(page, 'analysis')).toHaveClass(/active/);
 
-    const searches = await getWailsCalls(page, 'LoadPositionIDsByFilters');
-    expect(searches).toHaveLength(1);
+    // La première fenêtre de la recherche porte la requête.
+    const searches = await getWailsCalls(page, 'SearchPositionIDs');
+    expect(searches.length).toBeGreaterThan(0);
     const query = searches[0].args[0];
     expect(query.pipCountFilter).toBe('p>10');
     expect(query.player1AbsolutePipCountFilter).toBe('P<100');

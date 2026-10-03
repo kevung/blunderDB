@@ -250,3 +250,69 @@ func testRepairCrawfordMergeKeepsRollouts(t *testing.T, s storage.Storage) {
 		t.Errorf("twin's own analysis did not win: %+v", a.CheckerAnalysis)
 	}
 }
+
+// testImportMergeAndRolloutsAllKept: an import folding fragments into an
+// analysis (AnalysisStore.Merge, in its own transaction) and rollouts stored
+// on the same position at the same moment lose nothing of each other — the
+// import's entries and every rollout are all there at the end.
+func testImportMergeAndRolloutsAllKept(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p := checkerPos()
+	id, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	moves := []string{"8/5 6/5", "13/10 6/5", "24/21 13/10", "13/7", "24/18", "8/2 6/2", "13/8 13/10", "24/20 13/10"}
+	var wg sync.WaitGroup
+	errs := make(chan error, 2*len(moves))
+	for i, move := range moves {
+		wg.Add(2)
+		go func() {
+			defer wg.Done()
+			set := rollout.Fast()
+			set.Seed = uint64(i + 1)
+			errs <- rollouts.Store(ctx, s, "", id, movesRollout(set, "13/10 6/5", 0.8))
+		}()
+		go func() {
+			defer wg.Done()
+			tx, err := s.BeginTx(ctx)
+			if err != nil {
+				errs <- err
+				return
+			}
+			defer func() { _ = tx.Rollback() }()
+			if _, err := tx.Analyses().Merge(ctx, "", id, nil, func(a *domain.PositionAnalysis) *domain.PositionAnalysis {
+				if a == nil {
+					a = &domain.PositionAnalysis{AnalysisType: "CheckerMove"}
+				}
+				if a.CheckerAnalysis == nil {
+					a.CheckerAnalysis = &domain.CheckerAnalysis{}
+				}
+				a.AnalysisType = "CheckerMove"
+				a.CheckerAnalysis.Moves = append(a.CheckerAnalysis.Moves, domain.CheckerMove{Move: move, Equity: 0.1, AnalysisEngine: "XG"})
+				return a
+			}); err != nil {
+				errs <- err
+				return
+			}
+			errs <- tx.Commit()
+		}()
+	}
+	wg.Wait()
+	close(errs)
+	for err := range errs {
+		if err != nil {
+			t.Fatalf("concurrent write: %v", err)
+		}
+	}
+	got, err := s.Analyses().Load(ctx, "", id)
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if len(got.Rollouts) != len(moves) {
+		t.Errorf("%d rollouts kept of %d stored", len(got.Rollouts), len(moves))
+	}
+	if got.CheckerAnalysis == nil || len(got.CheckerAnalysis.Moves) != len(moves) {
+		t.Errorf("import entries kept: %+v, want %d", got.CheckerAnalysis, len(moves))
+	}
+}

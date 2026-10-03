@@ -35,6 +35,12 @@ embarque sa doc et ses `.po`.
 | Taille de base | **30 à 55 Go**, dont 10 à 20 Go d'index | 780 o/position |
 | Ouverture de la GUI | 40 à 70 M d'ids (≈ 500 Mo de JSON) traversent Wails ; la session en resérialise autant 500 ms après **chaque** navigation | `positionService.js:273`, `sessionService.js:21-31`, `App.svelte:164-168` |
 
+**Corrigé par GB0.2** ([`MESURES.md`](MESURES.md), § 6) : le corpus est livré en cinq copies
+identiques ; 33 370 matchs distincts, ≈ 16,6 M de positions brutes (499 par match), ≈ 16 M
+uniques, ≈ 13 Go de base, 32 à 55 h d'import avant le lot 1 (84 à 143 positions/s), ≈ 7 h
+après (683 positions/s).
+Les estimations ci-dessus sont gardées pour mémoire ; les objectifs se lisent sur ces chiffres.
+
 Verdict : le moteur de stockage (SQLite, WAL) tient ce volume ; c'est le **chemin d'import**
 (CPU) et le **modèle de données de la GUI** (tout en mémoire) qui ne tiennent pas. Aucun des
 deux ne demande de changer de base : PostgreSQL ne résout ni l'un ni l'autre (même
@@ -303,9 +309,12 @@ saison et export, routes `/v1/training` et outils MCP manquants, quotas et recet
 ### Hors plan, explicitement
 - **PostgreSQL pour la GUI** : `[L]`, sans gain sur les deux goulots. À reconsidérer
   seulement si un corpus partagé entre plusieurs postes devient le besoin.
-- **Import à seuil** (ne garder que les décisions dont l'erreur dépasse X, ou seulement les
-  décisions de videau) : diviserait le volume par 5 à 10, mais rompt « une position par
-  hash » comme matière d'étude. Décision produit, pas technique ; à trancher avant le lot 2.
+- **Import à seuil** : écarté (GB0.3, [ADR-0061](../../docs/adr/0061-pas-d-import-a-seuil-le-corpus-entre-entier.md)).
+  Option A retenue : un corpus entre entier. Un filtre d'import fausserait la PR et les stats
+  sans que la base puisse le dire, et ferait de la provenance une condition d'existence d'une
+  position (ADR-0001, ADR-0028) ; une purge après coup supprimerait des coups de match, que le
+  prédicat de rétention tient. Le volume réel (≈ 16 M de positions, ≈ 13 Go, `MESURES.md`) se
+  traite par les lots 1 à 3.
 
 ## 6. Ordre et dépendances
 

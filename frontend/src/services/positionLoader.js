@@ -8,6 +8,7 @@
  * `ss` and session restore.
  */
 
+import { listOriginStore, LIBRARY_ORIGIN } from '../stores/listOriginStore.js';
 import { get } from 'svelte/store';
 // NOTE: these UI messages are translated at emission time via the non-reactive
 // `translate` helper; already-displayed messages do not retranslate on language change.
@@ -45,6 +46,7 @@ export async function loadPositionsFromSelection(ids, { focusIndex = 0 } = {}) {
     }
 
     positionsStore.setIds(Array.isArray(resultIds) ? resultIds : []);
+    listOriginStore.set(LIBRARY_ORIGIN);
 
     const clampedIndex = Math.max(0, Math.min(focusIndex, resultIds.length - 1));
     // Force a re-render even if the index was already at the same value.

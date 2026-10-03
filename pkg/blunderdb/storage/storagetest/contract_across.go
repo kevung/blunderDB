@@ -1,4 +1,4 @@
-// Reads across tenants (storage/across.go, ADR-0061): the union of single-tenant
+// Reads across tenants (storage/across.go, ADR-0063): the union of single-tenant
 // reads, each result tagged with its tenant, and no tenant outside the read set
 // ever passed to a store.
 //
@@ -165,6 +165,120 @@ func RunReadAcrossTests(t *testing.T, factory func() storage.Storage, read []str
 		}
 		if called {
 			t.Errorf("ReadOne(%s) called the store for a tenant outside the set", stranger)
+		}
+	})
+
+	// A row id is unique within its tenant only. Each tenant below owns a
+	// match with one move and an analysis whose fields name it; a (tenant, id)
+	// pair must resolve in that tenant, and an id that belongs to another
+	// tenant, listed or not, must never bring that tenant's row back.
+	type owned struct{ match, pos int64 }
+	rows := map[string]owned{}
+	for _, scope := range owners {
+		cx := in(scope)
+		m := domain.Match{Player1Name: "mover-" + scope, Player2Name: "rival", MatchLength: 5}
+		matchID, err := s.Matches().Save(cx, scope, &m)
+		if err != nil {
+			t.Fatalf("Save match(%s): %v", scope, err)
+		}
+		gameID, err := s.Matches().CreateGame(cx, scope, &domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 1})
+		if err != nil {
+			t.Fatalf("CreateGame(%s): %v", scope, err)
+		}
+		p := checkerPos()
+		posID, err := s.Positions().Save(cx, scope, &p)
+		if err != nil {
+			t.Fatalf("Save position(%s): %v", scope, err)
+		}
+		mv := domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "checker", PositionID: posID, Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5"}
+		if _, err := s.Matches().CreateMove(cx, scope, &mv); err != nil {
+			t.Fatalf("CreateMove(%s): %v", scope, err)
+		}
+		if err := s.Analyses().Save(cx, scope, posID, &domain.PositionAnalysis{XGID: "analysis-" + scope}); err != nil {
+			t.Fatalf("Save analysis(%s): %v", scope, err)
+		}
+		rows[scope] = owned{match: matchID, pos: posID}
+	}
+
+	movers := func(t *testing.T, named string, matchID int64) []string {
+		t.Helper()
+		var got []string
+		for tg, err := range storage.StreamOne(ctx, set, named, func(ctx context.Context, scope string) iter.Seq2[*domain.MatchMovePosition, error] {
+			return s.Matches().MovePositions(ctx, scope, matchID)
+		}) {
+			if errors.Is(err, storage.ErrNotFound) {
+				return got
+			}
+			if err != nil {
+				t.Fatalf("StreamOne(%s, match %d): %v", named, matchID, err)
+			}
+			if tg.Tenant != named {
+				t.Errorf("match %d asked in %s: a move tagged %s", matchID, named, tg.Tenant)
+			}
+			got = append(got, tg.Item.Player1Name)
+		}
+		return got
+	}
+	analysed := func(t *testing.T, named string, ids []int64) []string {
+		t.Helper()
+		tg, err := storage.ReadOne(ctx, set, named, func(ctx context.Context, scope string) (map[int64]*domain.PositionAnalysis, error) {
+			return s.Analyses().LoadMany(ctx, scope, ids)
+		})
+		if err != nil && !errors.Is(err, storage.ErrNotFound) {
+			t.Fatalf("ReadOne(%s, ids %v): %v", named, ids, err)
+		}
+		if err == nil && tg.Tenant != named {
+			t.Errorf("ids %v asked in %s: answer tagged %s", ids, named, tg.Tenant)
+		}
+		var got []string
+		for _, a := range tg.Item {
+			if a != nil {
+				got = append(got, a.XGID)
+			}
+		}
+		return got
+	}
+
+	t.Run("MatchMovePositionsResolveInTheNamedTenant", func(t *testing.T) {
+		for _, named := range read {
+			got := movers(t, named, rows[named].match)
+			if len(got) == 0 {
+				t.Errorf("tenant %s: its own match %d reads no move", named, rows[named].match)
+			}
+			for _, name := range got {
+				if name != "mover-"+named {
+					t.Errorf("tenant %s's match %d holds a move of %q", named, rows[named].match, name)
+				}
+			}
+			for _, owner := range owners {
+				if owner == named {
+					continue
+				}
+				for _, name := range movers(t, named, rows[owner].match) {
+					if name == "mover-"+owner {
+						t.Errorf("match %d of %s resolved in %s", rows[owner].match, owner, named)
+					}
+				}
+			}
+		}
+	})
+
+	t.Run("AnalysesLoadByIdsResolveInTheNamedTenant", func(t *testing.T) {
+		for _, named := range read {
+			got := analysed(t, named, []int64{rows[named].pos})
+			if len(got) != 1 || got[0] != "analysis-"+named {
+				t.Errorf("tenant %s: its own position %d reads analyses %v", named, rows[named].pos, got)
+			}
+			for _, owner := range owners {
+				if owner == named {
+					continue
+				}
+				for _, xgid := range analysed(t, named, []int64{rows[owner].pos}) {
+					if xgid == "analysis-"+owner {
+						t.Errorf("position %d of %s resolved in %s", rows[owner].pos, owner, named)
+					}
+				}
+			}
 		}
 	})
 }

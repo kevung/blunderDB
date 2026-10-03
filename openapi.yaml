@@ -16,7 +16,7 @@ info:
     X-Tenant-ID is the tenant's positive decimal integer; a name is refused
     with 400 invalid, never mapped to a tenant by this daemon. The across.*
     reads also span the tenants listed in the X-Read-Tenants header, which the
-    same proxy writes and this daemon trusts the same way (ADR-0061), once
+    same proxy writes and this daemon trusts the same way (ADR-0063), once
     started with --read-tenants; without it, a non-blank X-Read-Tenants is
     refused with 400. Every answer names its tenant, and writes stay in
     X-Tenant-ID. Idempotency:
@@ -348,6 +348,23 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/deckCreateReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
+  /v1/anki.createStudyDeck:
+    post:
+      operationId: anki.createStudyDeck
+      tags: [anki]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studyDeckReq"
       responses:
         "200":
           description: OK
@@ -3027,6 +3044,19 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/gammonnet.evaluate:
+    post:
+      operationId: gammonnet.evaluate
+      tags: [gammonnet]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/gammonnet.sweepStale:
     post:
       operationId: gammonnet.sweepStale
@@ -3639,6 +3669,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/versionResp"
+  /v1/positions.count:
+    post:
+      operationId: positions.count
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/positions.delete:
     post:
       operationId: positions.delete
@@ -3760,6 +3808,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/xgpResp"
+  /v1/positions.indexOf:
+    post:
+      operationId: positions.indexOf
+      tags: [positions]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/positions.legalMoves:
     post:
       operationId: positions.legalMoves
@@ -4233,6 +4299,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/htmlResp"
+  /v1/rencontres.ranking:
+    post:
+      operationId: rencontres.ranking
+      tags: [rencontres]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/service_SeasonQuery"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/service_SeasonView"
+                nullable: true
   /v1/rencontres.setBreaks:
     post:
       operationId: rencontres.setBreaks
@@ -4564,6 +4648,24 @@ paths:
             generator's source analysis (a file upload/download, or a route
             registered from a runtime table) — see internal/server for the actual
             implementation.
+  /v1/search.count:
+    post:
+      operationId: search.count
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchFindReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/search.find:
     post:
       operationId: search.find
@@ -4584,6 +4686,44 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/domain_Position"
                 nullable: true
+  /v1/search.ids:
+    post:
+      operationId: search.ids
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchFindReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
+  /v1/search.indexOf:
+    post:
+      operationId: search.indexOf
+      tags: [search]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/searchIndexOfReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
   /v1/search.parse:
     post:
       operationId: search.parse
@@ -4916,6 +5056,23 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_RecurringErrors"
                 nullable: true
+  /v1/stats.studyIds:
+    post:
+      operationId: stats.studyIds
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studyIDsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idsResp"
   /v1/stats.tournamentBadges:
     post:
       operationId: stats.tournamentBadges
@@ -4933,6 +5090,41 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/tournamentBadgesResp"
+  /v1/stats.training:
+    post:
+      operationId: stats.training
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsTrainingReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_TrainingStats"
+                nullable: true
+  /v1/tenants.quota:
+    post:
+      operationId: tenants.quota
+      tags: [tenants]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/tenantQuotaResp"
   /v1/tournaments.addMatch:
     post:
       operationId: tournaments.addMatch
@@ -5153,6 +5345,69 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/training.numberStats:
+    post:
+      operationId: training.numberStats
+      tags: [training]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/trainingStatsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_TrainingNumberStat"
+  /v1/training.save:
+    post:
+      operationId: training.save
+      tags: [training]
+      x-kind: json
+      x-idempotency-key: true
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/storage_TrainingSession"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/trainingSaveResp"
+  /v1/training.sessions:
+    post:
+      operationId: training.sessions
+      tags: [training]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/trainingSessionsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_TrainingSession"
   /v1/transcriptions.abandon:
     post:
       operationId: transcriptions.abandon
@@ -5686,6 +5941,9 @@ paths:
           description: The daemon is stopping.
 components:
   schemas:
+    TenantQuotas:
+      type: object
+      description: "Unresolved local type TenantQuotas."
     acrossAnalyses:
       type: object
       properties:
@@ -6870,6 +7128,14 @@ components:
           type: string
         excludePosition:
           type: string
+    searchIndexOfReq:
+      type: object
+      properties:
+        filters:
+          $ref: "#/components/schemas/domain_SearchFilters"
+        id:
+          type: integer
+          format: int64
     searchParseResp:
       type: object
       properties:
@@ -6932,6 +7198,12 @@ components:
     service_RencontreView:
       type: object
       description: "Opaque: see the Go type service.RencontreView (defined outside internal/server, not expanded here)."
+    service_SeasonQuery:
+      type: object
+      description: "Opaque: see the Go type service.SeasonQuery (defined outside internal/server, not expanded here)."
+    service_SeasonView:
+      type: object
+      description: "Opaque: see the Go type service.SeasonView (defined outside internal/server, not expanded here)."
     service_SlotRow:
       type: object
       description: "Opaque: see the Go type service.SlotRow (defined outside internal/server, not expanded here)."
@@ -6979,6 +7251,13 @@ components:
           $ref: "#/components/schemas/storage_StatsFilter"
         selection:
           $ref: "#/components/schemas/storage_SelectionSpec"
+    statsTrainingReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        window:
+          type: string
     storage_Collection:
       type: object
       description: "Opaque: see the Go type storage.Collection (defined outside internal/server, not expanded here)."
@@ -7033,6 +7312,15 @@ components:
     storage_TournamentBadge:
       type: object
       description: "Opaque: see the Go type storage.TournamentBadge (defined outside internal/server, not expanded here)."
+    storage_TrainingNumberStat:
+      type: object
+      description: "Opaque: see the Go type storage.TrainingNumberStat (defined outside internal/server, not expanded here)."
+    storage_TrainingSession:
+      type: object
+      description: "Opaque: see the Go type storage.TrainingSession (defined outside internal/server, not expanded here)."
+    storage_TrainingStats:
+      type: object
+      description: "Opaque: see the Go type storage.TrainingStats (defined outside internal/server, not expanded here)."
     stringsResp:
       type: object
       properties:
@@ -7040,6 +7328,27 @@ components:
           type: array
           items:
             type: string
+    studyDeckReq:
+      type: object
+      properties:
+        name:
+          type: string
+        positionIds:
+          type: array
+          items:
+            type: integer
+            format: int64
+    studyIDsReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        rank:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
     suspendCardReq:
       type: object
       properties:
@@ -7059,6 +7368,25 @@ components:
           type: array
           items:
             type: string
+    tenantQuotaResp:
+      type: object
+      properties:
+        limits:
+          $ref: "#/components/schemas/TenantQuotas"
+        usage:
+          $ref: "#/components/schemas/tenantQuotaUsage"
+    tenantQuotaUsage:
+      type: object
+      properties:
+        positions:
+          type: integer
+          format: int32
+        analysisSecondsToday:
+          type: number
+          format: double
+        importsInFlight:
+          type: integer
+          format: int32
     textResp:
       type: object
       properties:
@@ -7118,6 +7446,25 @@ components:
     tournoi_Player:
       type: object
       description: "Opaque: see the Go type tournoi.Player (defined outside internal/server, not expanded here)."
+    trainingSaveResp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+    trainingSessionsReq:
+      type: object
+      properties:
+        exercise:
+          type: string
+        limit:
+          type: integer
+          format: int32
+    trainingStatsReq:
+      type: object
+      properties:
+        exercise:
+          type: string
     transcript_Gesture:
       type: object
       description: "Opaque: see the Go type transcript.Gesture (defined outside internal/server, not expanded here)."

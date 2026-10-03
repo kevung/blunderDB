@@ -59,7 +59,8 @@ application's panels, not in a strip above the board.
    rest the tab shows the launcher and, per exercise, one summary line (sessions, fault rate,
    mean deviation, median time, trend over the last ten) unfolding to per-number detail. For
    Decision, « revoir les ratées » makes the browsed list the positions failed in the last
-   session or last *n* sessions. Not in the Stats panel; no chart.
+   session or last *n* sessions. Stats reads the Decision sessions back in its Training tab (below),
+   never the per-number detail.
 7. **Défi stays untouched**, outside any exercise; Training neither drives nor needs it.
 
 ## Consequences
@@ -67,7 +68,23 @@ application's panels, not in a strip above the board.
 - The reference tables (`takePoint*`, `gammonValue*`) are one shared module read by the
   reference modals, the Scores exercise and the Anki score card (ADR-0042).
 - `train` aliases `tp`, `takepoint` → `scores`, `epc` → `bearoff`, `quiz` → `decision`.
-- The CLI and `serve` expose no training.
+- The CLI and `serve` expose the Decision quiz PR only as a series (`stats training`,
+  `/v1/stats.training`): the PR of a quiz is on the real PR's scale on purpose, so it is read
+  against the match PR and the observed Anki retention on the same calendar windows. The series
+  are read from the existing journals (`training_session`, `anki_review_log`), never copied,
+  so a window holds no duplicate of a row. The sessions themselves are still played in the GUI.
+- Anki grades a memory, and the player grades it: that stays the default. A deck of checker
+  positions may opt in, per deck, to **answering on the board**: the card arms the same
+  board-play state as the Decision exercise, `GradeCheckerAnswer` judges the move, and the
+  result is a *suggested* grade (correct → Easy if quick, else Good; an error under the blunder
+  threshold → Hard; a blunder or illegal move → Again; a legal move the analysis does not rank
+  → no suggestion). The player validates or corrects it before grading, so the schedule still
+  holds what the player judged of their own recall. Why an option and not the default: a grade
+  from a single played move conflates recall with luck of the dice and time pressure, and every
+  existing deck would change meaning. The option lives in the library metadata (like the
+  progression goal), not in a deck column: no schema, and CLI and daemon read it already.
+  Cube and score cards, and decks of scores, are never played on the board — a cube answer has
+  no move to play, and a score is a memory with nothing to judge.
 - The corrected take point (combining both faces' gammon values) would be a sixth exercise,
   entered over the Scores source — the test of rule 2.
 - Rejected: a training bar above the board — controls live in panels.
@@ -77,7 +94,8 @@ application's panels, not in a strip above the board.
 - Rejected: one binary verdict per question, or Anki's four grades — loses which cell fails.
 - Rejected: number keys to tick faults — do not scale to fourteen cells.
 - Rejected: a session length chosen at launch — « Terminer » suffices.
-- Rejected: a JSON metadata key for the journal, or a Stats tab — rule 6.
+- Rejected: a JSON metadata key for the journal — rule 6. A Stats tab was rejected too, until a
+  coach needed training and match progression on one calendar.
 - Rejected: forcing seven cells with « 0 »/« — » — a convention, not a calculation.
 
 ## Guard

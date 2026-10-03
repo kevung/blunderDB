@@ -5,7 +5,7 @@
 // X-Tenant-ID header on every request, exactly as the standalone daemon expects.
 // With Config.TrustReadTenants it may also set X-Read-Tenants (ReadTenantsHeader),
 // the other tenants an across.* read spans; it then removes any value the
-// client sent, as it does for X-Tenant-ID (ADR-0005, ADR-0061).
+// client sent, as it does for X-Tenant-ID (ADR-0005, ADR-0063).
 package server
 
 import (
@@ -23,6 +23,10 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 )
 
+// TenantQuotas is internal/server's per-tenant bounds, named here so an
+// embedder can set Config.Quotas.
+type TenantQuotas = internalserver.TenantQuotas
+
 // Config configures an embedded engine. Backend is "postgres" in production
 // (the only tenant-isolating backend); "sqlite" is for tests only.
 //
@@ -38,6 +42,10 @@ type Config struct {
 	Logger         *slog.Logger
 	RateLimitRPS   float64
 	RateLimitBurst int
+
+	// Quotas bound each tenant's stored positions, engine time per day and
+	// concurrent imports; the zero value is unlimited.
+	Quotas TenantQuotas
 
 	// MaxBodyBytes caps an ordinary /v1 request body. Defaults to
 	// internal/server's own default (32 MiB) when zero — see
@@ -99,7 +107,7 @@ const ReadTenantsHeader = middleware.ReadTenantsHeader
 // inject X-Tenant-ID per request — the tenant's positive decimal integer, a
 // name is refused with 400 (ADR-0005); the engine performs NO authentication.
 // X-Read-Tenants, when Config.TrustReadTenants is set, is the embedder's to
-// write as well: strip the client's before setting it (ADR-0061).
+// write as well: strip the client's before setting it (ADR-0063).
 func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error) {
 	logger := cfg.Logger
 	if logger == nil {
@@ -136,6 +144,7 @@ func Bootstrap(ctx context.Context, cfg Config) (http.Handler, io.Closer, error)
 		EnableMetrics:      cfg.EnableMetrics,
 		RateLimitRPS:       cfg.RateLimitRPS,
 		RateLimitBurst:     cfg.RateLimitBurst,
+		Quotas:             cfg.Quotas,
 		MaxBodyBytes:       cfg.MaxBodyBytes,
 		ImportMaxBodyBytes: cfg.ImportMaxBodyBytes,
 		MaxSpoolBytes:      cfg.MaxSpoolBytes,

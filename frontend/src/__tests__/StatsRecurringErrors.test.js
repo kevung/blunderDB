@@ -4,9 +4,16 @@ import { render, cleanup, screen, fireEvent } from '@testing-library/svelte';
 vi.mock('../services/positionLoader.js', () => ({
     loadPositionsFromSelection: vi.fn()
 }));
+vi.mock('../services/recurringStudy.js', () => ({
+    quizOnIds: vi.fn(),
+    quizOnWorstGroups: vi.fn(),
+    deckFromIds: vi.fn(),
+    collectionFromIds: vi.fn()
+}));
 
 import StatsRecurringErrors from '../components/stats/StatsRecurringErrors.svelte';
 import { loadPositionsFromSelection } from '../services/positionLoader.js';
+import { quizOnIds, quizOnWorstGroups, deckFromIds, collectionFromIds } from '../services/recurringStudy.js';
 
 afterEach(() => {
     cleanup();
@@ -33,9 +40,27 @@ describe('StatsRecurringErrors', () => {
 
     test('a click on a group opens its positions', async () => {
         render(StatsRecurringErrors, { props: { data } });
-        const buttons = screen.getAllByRole('button');
-        await fireEvent.click(buttons[1]);
+        const links = document.querySelectorAll('.group-link');
+        await fireEvent.click(links[1]);
         expect(loadPositionsFromSelection).toHaveBeenCalledWith([9]);
+    });
+
+    test('each row offers a quiz, a deck and a collection on its own positions', async () => {
+        render(StatsRecurringErrors, { props: { data } });
+        const row = screen.getAllByRole('row')[1];
+        const [quiz, deck, collection] = row.querySelectorAll('.study-btn');
+        await fireEvent.click(quiz);
+        expect(quizOnIds).toHaveBeenCalledWith([7, 3]);
+        await fireEvent.click(deck);
+        expect(deckFromIds).toHaveBeenCalledWith(expect.stringContaining('blots'), [7, 3]);
+        await fireEvent.click(collection);
+        expect(collectionFromIds).toHaveBeenCalledWith(expect.stringContaining('blots'), [7, 3]);
+    });
+
+    test('the quiz of the worst groups heads the section', async () => {
+        render(StatsRecurringErrors, { props: { data } });
+        await fireEvent.click(screen.getByTestId('recurring-quiz-worst'));
+        expect(quizOnWorstGroups).toHaveBeenCalledWith();
     });
 
     test('the unthemed errors stay out of the ranking, listed apart and clickable', async () => {

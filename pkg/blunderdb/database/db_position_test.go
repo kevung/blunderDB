@@ -33,12 +33,31 @@ func TestListPositionIDsAndLoadPositionsByIDs(t *testing.T) {
 		wantIDs[i] = p.ID
 	}
 
-	ids, err := db.ListPositionIDs()
+	ids, err := db.ListPositionIDs(0, 0)
 	if err != nil {
 		t.Fatalf("ListPositionIDs: %v", err)
 	}
 	if !slices.Equal(ids, wantIDs) {
 		t.Fatalf("ListPositionIDs order differs from LoadAllPositions:\n got %v\nwant %v", ids, wantIDs)
+	}
+
+	// The windowed face the GUI browses with: a window, the count, a rank.
+	window, err := db.ListPositionIDs(1, 2)
+	if err != nil {
+		t.Fatalf("ListPositionIDs(1, 2): %v", err)
+	}
+	if !slices.Equal(window, wantIDs[1:3]) {
+		t.Errorf("ListPositionIDs(1, 2): got %v, want %v", window, wantIDs[1:3])
+	}
+	if n, err := db.CountPositions(); err != nil || n != len(wantIDs) {
+		t.Errorf("CountPositions: got %d, %v; want %d", n, err, len(wantIDs))
+	}
+	last := len(wantIDs) - 1
+	if i, err := db.IndexOfPosition(wantIDs[last]); err != nil || i != last {
+		t.Errorf("IndexOfPosition(last): got %d, %v; want %d", i, err, last)
+	}
+	if i, err := db.IndexOfPosition(987654321); err != nil || i != -1 {
+		t.Errorf("IndexOfPosition(unknown): got %d, %v; want -1", i, err)
 	}
 
 	// A window in the caller's order (reversed here) with one id that no

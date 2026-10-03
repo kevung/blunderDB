@@ -58,6 +58,8 @@ export function CancelImport():Promise<void>;
 
 export function CancelMatch(arg1:number,arg2:string):Promise<service.DirectionView>;
 
+export function CancelSearch():Promise<void>;
+
 export function CheckConstraints():Promise<Array<database.ConstraintViolation>>;
 
 export function CheckCounters():Promise<database.CounterDrift>;
@@ -100,6 +102,10 @@ export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsRe
 
 export function ComputeStatsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<database.StatsResult>;
 
+export function ComputeTrainingStats(arg1:database.StatsFilter,arg2:string):Promise<storage.TrainingStats>;
+
+export function ComputeTrainingStatsCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string):Promise<storage.TrainingStats>;
+
 export function ConfirmAllProposals(arg1:number):Promise<service.DirectionView>;
 
 export function ConfirmProposal(arg1:number,arg2:string):Promise<service.DirectionView>;
@@ -111,6 +117,11 @@ export function CorrectResult(arg1:number,arg2:string,arg3:string,arg4:number,ar
 export function CountMatchPositionsToAnalyze(arg1:number):Promise<number>;
 
 export function CountOrphans():Promise<database.OrphanCounts>;
+
+export function CountPositions():Promise<number>;
+
+export function CountPositionsByFilters(arg1:domain.SearchFilters):Promise<number>;
+
 
 export function CountPositionsWithForeignAnalysis():Promise<number>;
 
@@ -127,6 +138,8 @@ export function CreateCollection(arg1:string,arg2:string):Promise<number>;
 export function CreateDirection(arg1:number,arg2:string,arg3:number):Promise<void>;
 
 export function CreateRencontre(arg1:string,arg2:string,arg3:string,arg4:number):Promise<service.RencontreView>;
+
+export function CreateStudyDeck(arg1:string,arg2:Array<number>):Promise<number>;
 
 export function CreateTournament(arg1:string,arg2:string,arg3:string):Promise<number>;
 
@@ -332,6 +345,11 @@ export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function ImportXGPPosition(arg1:string):Promise<number>;
 
+export function IndexOfPosition(arg1:number):Promise<number>;
+
+export function IndexOfPositionByFilters(arg1:domain.SearchFilters,arg2:number):Promise<number>;
+
+
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
 export function IsReadOnly():Promise<boolean>;
@@ -342,7 +360,7 @@ export function ListDirections():Promise<Array<service.DirectionSummary>>;
 
 export function ListImportBatches(arg1:number,arg2:number):Promise<Array<domain.ImportBatch>>;
 
-export function ListPositionIDs():Promise<Array<number>>;
+export function ListPositionIDs(arg1:number,arg2:number):Promise<Array<number>>;
 
 export function ListRencontres():Promise<Array<service.RencontreView>>;
 
@@ -375,6 +393,7 @@ export function LoadPositionsByFilters(arg1:domain.SearchFilters):Promise<Array<
 export function LoadPositionsByFiltersCore(arg1:domain.SearchFilters,arg2:storage.ListOpts):Promise<Array<domain.Position>>;
 
 export function LoadPositionsByFiltersCoreCtx(arg1:context.Context,arg2:domain.SearchFilters,arg3:storage.ListOpts):Promise<Array<domain.Position>>;
+
 
 export function LoadPositionsByIDs(arg1:Array<number>):Promise<Array<domain.Position>>;
 
@@ -418,7 +437,13 @@ export function Participants(arg1:number):Promise<Array<service.ParticipantRow>>
 
 export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAnalysisResume>;
 
+export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<database.RolloutPlan>;
+
+export function PlanRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<database.RolloutPlan>;
+
 export function PositionsToRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<Array<domain.Position>>;
+
+export function PositionsToRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<Array<domain.Position>>;
 
 export function PreviewAttachToRencontre(arg1:number,arg2:number):Promise<service.ConfigPreview>;
 
@@ -476,6 +501,8 @@ export function RolloutPosition(arg1:context.Context,arg2:number,arg3:rollout.Se
 
 export function RolloutPositions(arg1:context.Context,arg2:Array<domain.Position>,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
 
+export function RunRolloutPlan(arg1:context.Context,arg2:database.RolloutPlan,arg3:rollout.Settings,arg4:any):Promise<rollouts.Summary>;
+
 export function SaveAnalysis(arg1:number,arg2:domain.PositionAnalysis):Promise<void>;
 
 export function SaveCommand(arg1:string):Promise<void>;
@@ -505,6 +532,12 @@ export function SaveSessionState(arg1:database.SessionState):Promise<void>;
 export function SaveTrainingSession(arg1:storage.TrainingSession):Promise<number>;
 
 export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
+
+export function SearchPositionIDs(arg1:domain.SearchFilters,arg2:number,arg3:number):Promise<Array<number>>;
+
+export function SeasonCSV(arg1:service.SeasonQuery):Promise<string>;
+
+export function SeasonRanking(arg1:service.SeasonQuery):Promise<service.SeasonView>;
 
 export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
 
@@ -555,6 +588,8 @@ export function StartMatchManually(arg1:number,arg2:string,arg3:string,arg4:numb
 export function StartTranscriptionFromSlot(arg1:number,arg2:string):Promise<database.TranscriptionState>;
 
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
+
+export function StudyPositionIDs(arg1:database.StatsFilter,arg2:number,arg3:number):Promise<Array<number>>;
 
 export function SuggestMatFilename(arg1:number):Promise<string>;
 

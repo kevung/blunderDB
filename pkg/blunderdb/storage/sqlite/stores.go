@@ -23,7 +23,7 @@ type execer interface {
 }
 
 // binder provides the per-family accessors over an execer. Storage embeds
-// it bound to a *sql.DB; txImpl embeds it bound to a *sql.Tx.
+// it bound to a *sql.DB; txImpl embeds it bound to a stmtTx over a *sql.Tx.
 type binder struct {
 	db execer
 }
@@ -70,7 +70,7 @@ func (b binder) Training() storage.TrainingStore {
 
 // withTx runs fn atomically over db. When db is a *sql.DB it opens a
 // transaction and commits (or rolls back) around fn; when db is already a
-// *sql.Tx — the store is reached through a caller's transaction — fn runs
+// transaction — the store is reached through a caller's transaction — fn runs
 // directly and that outer transaction provides atomicity.
 func withTx(ctx context.Context, db execer, fn func(execer) error) error {
 	sqlDB, ok := db.(*sql.DB)

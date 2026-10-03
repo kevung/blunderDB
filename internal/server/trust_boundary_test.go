@@ -449,7 +449,7 @@ func TestUploadRoutesAreStreaming(t *testing.T) {
 
 // TestReadTenants_UnlistedTenantNeverRead: across.matchesGet addressed to a
 // tenant outside the read set is refused before any store call — the daemon
-// reads only what the proxy listed (ADR-0061).
+// reads only what the proxy listed (ADR-0063).
 func TestReadTenants_UnlistedTenantNeverRead(t *testing.T) {
 	srv, log := newRecordingServer(t, false)
 	rec := serveAcross(t, srv, "1", "2", "/v1/across.matchesGet", `{"tenant":"9","id":1}`)

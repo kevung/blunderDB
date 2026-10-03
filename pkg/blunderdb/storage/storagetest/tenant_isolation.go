@@ -40,6 +40,7 @@ var tenantIsolationCases = []tenantIsolationCase{
 	{"Anki/Deck", checkAnkiDeckIsolation},
 	{"Direction", checkDirectionIsolation},
 	{"TableSetting", checkTableSettingIsolation},
+	{"Training", checkTrainingIsolation},
 }
 
 // RunTenantIsolationTests runs every family's isolation check against a
@@ -76,6 +77,35 @@ func checkPositionIsolation(t *testing.T, ctx context.Context, s storage.Storage
 	}
 	if _, err := s.Positions().Load(ctx, b, id); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("Load(%s, id from %s): got %v, want ErrNotFound", b, a, err)
+	}
+	if c, err := s.Positions().Count(ctx, b); err != nil || c != 0 {
+		t.Errorf("Count(%s): got %d, %v; want 0", b, c, err)
+	}
+	if _, found, err := s.Positions().IndexOf(ctx, b, id); err != nil || found {
+		t.Errorf("IndexOf(%s, id from %s): found=%v, %v; want not found", b, a, found, err)
+	}
+
+	// A search browsed by windows is scoped the same way, with and without a
+	// Go phase and in a sort ranked on its key; each search finds id in a.
+	if _, err := s.Comments().Add(ctx, a, id, "isolation"); err != nil {
+		t.Fatalf("Add comment(%s): %v", a, err)
+	}
+	if err := s.Analyses().Save(ctx, a, id, &domain.PositionAnalysis{}); err != nil {
+		t.Fatalf("Save analysis(%s): %v", a, err)
+	}
+	for _, f := range []domain.SearchFilters{{}, {Sort: "error"}, {SearchText: "isolation"}} {
+		if _, found, err := s.Search().IndexOf(ctx, a, f, id); err != nil || !found {
+			t.Fatalf("Search.IndexOf(%s, own id, %+v): found=%v, %v; want found", a, f, found, err)
+		}
+		if ids, err := s.Search().FindIDs(ctx, b, f, storage.ListOpts{}); err != nil || len(ids) != 0 {
+			t.Errorf("Search.FindIDs(%s, %+v): got %v, %v; want none", b, f, ids, err)
+		}
+		if c, err := s.Search().Count(ctx, b, f); err != nil || c != 0 {
+			t.Errorf("Search.Count(%s, %+v): got %d, %v; want 0", b, f, c, err)
+		}
+		if _, found, err := s.Search().IndexOf(ctx, b, f, id); err != nil || found {
+			t.Errorf("Search.IndexOf(%s, id from %s, %+v): found=%v, %v; want not found", b, a, f, found, err)
+		}
 	}
 }
 
@@ -296,5 +326,34 @@ func checkDirectionIsolation(t *testing.T, ctx context.Context, s storage.Storag
 	}
 	if got, err := ds.Pairs(ctx, b, tid); err != nil || len(got) != 0 {
 		t.Errorf("Pairs(%s) = %v, %v; want none of %s's", b, got, err, a)
+	}
+}
+
+// checkTrainingIsolation: a Training journal is the person's own, read back by
+// /v1/training.* — another tenant sees neither its sessions nor its aggregates.
+func checkTrainingIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
+	session := storage.TrainingSession{
+		Exercise: "pips", SeedSource: "pool", NumbersAsked: 2, Faults: 1,
+		Items: []storage.TrainingItem{{NumberType: "pips.bottom", Wrong: true}, {NumberType: "pips.top"}},
+	}
+	if _, err := s.Training().Save(ctx, a, session); err != nil {
+		t.Fatalf("Training.Save(%s): %v", a, err)
+	}
+	sessions, err := s.Training().Sessions(ctx, b, "", 0)
+	if err != nil {
+		t.Fatalf("Training.Sessions(%s): %v", b, err)
+	}
+	if len(sessions) != 0 {
+		t.Errorf("tenant %s sees %d training session(s) of tenant %s, want 0", b, len(sessions), a)
+	}
+	stats, err := s.Training().NumberStats(ctx, b, "pips")
+	if err != nil {
+		t.Fatalf("Training.NumberStats(%s): %v", b, err)
+	}
+	if len(stats) != 0 {
+		t.Errorf("tenant %s sees %d training aggregate(s) of tenant %s, want 0", b, len(stats), a)
+	}
+	if own, err := s.Training().Sessions(ctx, a, "", 0); err != nil || len(own) != 1 {
+		t.Errorf("tenant %s reads back its own session: %d, %v", a, len(own), err)
 	}
 }

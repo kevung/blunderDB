@@ -12,7 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// The across.* family reads several tenants in one request (ADR-0061): the
+// The across.* family reads several tenants in one request (ADR-0063): the
 // writing tenant (X-Tenant-ID) and every tenant X-Read-Tenants lists, in that
 // order, each answer tagged with the tenant it came from. The family only
 // reads: no route here takes a write, and no other route looks at

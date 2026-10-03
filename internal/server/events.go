@@ -67,7 +67,7 @@ var serverOnlyPaths = map[string]string{
 }
 
 // whyAcross is why the across.* reads live outside Paths(): their read set comes from the
-// X-Read-Tenants header an authenticating proxy writes (ADR-0061), and the desktop and `call`
+// X-Read-Tenants header an authenticating proxy writes (ADR-0063), and the desktop and `call`
 // hold one tenant, with no proxy and nothing beyond it to read.
 const whyAcross = "a read across the tenants an authenticating proxy lists in X-Read-Tenants; " +
 	"the desktop and `call` hold a single tenant and have no other to read"

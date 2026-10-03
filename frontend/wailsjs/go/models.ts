@@ -472,6 +472,36 @@ export namespace database {
 	        this.distance = source["distance"];
 	    }
 	}
+	export class RolloutPlan {
+	    Positions: domain.Position[];
+	
+	    static createFrom(source: any = {}) {
+	        return new RolloutPlan(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Positions = this.convertValues(source["Positions"], domain.Position);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class ScoreCellStats {
 	    MoverAway: number;
 	    OpponentAway: number;
@@ -2923,6 +2953,7 @@ export namespace gui {
 		}
 	}
 	export class RolloutStatus {
+	    job: number;
 	    running: boolean;
 	    kind?: string;
 	    positionId?: number;
@@ -2937,6 +2968,7 @@ export namespace gui {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.job = source["job"];
 	        this.running = source["running"];
 	        this.kind = source["kind"];
 	        this.positionId = source["positionId"];
@@ -4667,6 +4699,120 @@ export namespace service {
 	        this.matchId = source["matchId"];
 	    }
 	}
+	export class SeasonEvent {
+	    tournamentId: number;
+	    name: string;
+	    date: string;
+	    entrants: number;
+	    finished: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new SeasonEvent(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tournamentId = source["tournamentId"];
+	        this.name = source["name"];
+	        this.date = source["date"];
+	        this.entrants = source["entrants"];
+	        this.finished = source["finished"];
+	    }
+	}
+	export class SeasonQuery {
+	    rencontreId?: number;
+	    from?: string;
+	    to?: string;
+	    points?: number[];
+	    participation?: number;
+	    elo?: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new SeasonQuery(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.rencontreId = source["rencontreId"];
+	        this.from = source["from"];
+	        this.to = source["to"];
+	        this.points = source["points"];
+	        this.participation = source["participation"];
+	        this.elo = source["elo"];
+	    }
+	}
+	export class SeasonRow {
+	    rank: number;
+	    name: string;
+	    club?: string;
+	    total: number;
+	    played: number;
+	    best: number;
+	    wins: number;
+	    losses: number;
+	    places: number[];
+	    points: number[];
+	    elo?: number;
+	    matches?: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new SeasonRow(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.rank = source["rank"];
+	        this.name = source["name"];
+	        this.club = source["club"];
+	        this.total = source["total"];
+	        this.played = source["played"];
+	        this.best = source["best"];
+	        this.wins = source["wins"];
+	        this.losses = source["losses"];
+	        this.places = source["places"];
+	        this.points = source["points"];
+	        this.elo = source["elo"];
+	        this.matches = source["matches"];
+	    }
+	}
+	export class SeasonView {
+	    events: SeasonEvent[];
+	    rows: SeasonRow[];
+	    points: number[];
+	    participation: number;
+	    elo: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new SeasonView(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.events = this.convertValues(source["events"], SeasonEvent);
+	        this.rows = this.convertValues(source["rows"], SeasonRow);
+	        this.points = source["points"];
+	        this.participation = source["participation"];
+	        this.elo = source["elo"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class SlotRow {
 	    slotId: string;
 	    label: tournoi.Label;
@@ -5159,6 +5305,52 @@ export namespace storage {
 	        this.meanDeviation = source["meanDeviation"];
 	    }
 	}
+	export class TrainingPeriod {
+	    Start: string;
+	    QuizSessions: number;
+	    QuizDecisions: number;
+	    QuizPR: number;
+	    MatchDecisions: number;
+	    MatchPR: number;
+	    AnkiReviews: number;
+	    AnkiPassed: number;
+	    AnkiRetention: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TrainingPeriod(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Start = source["Start"];
+	        this.QuizSessions = source["QuizSessions"];
+	        this.QuizDecisions = source["QuizDecisions"];
+	        this.QuizPR = source["QuizPR"];
+	        this.MatchDecisions = source["MatchDecisions"];
+	        this.MatchPR = source["MatchPR"];
+	        this.AnkiReviews = source["AnkiReviews"];
+	        this.AnkiPassed = source["AnkiPassed"];
+	        this.AnkiRetention = source["AnkiRetention"];
+	    }
+	}
+	export class TrainingQuizSession {
+	    ID: number;
+	    CreatedAt: string;
+	    Decisions: number;
+	    PR: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TrainingQuizSession(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.ID = source["ID"];
+	        this.CreatedAt = source["CreatedAt"];
+	        this.Decisions = source["Decisions"];
+	        this.PR = source["PR"];
+	    }
+	}
 	export class TrainingSession {
 	    id: number;
 	    exercise: string;
@@ -5189,6 +5381,40 @@ export namespace storage {
 	        this.medianMs = source["medianMs"];
 	        this.pr = source["pr"];
 	        this.items = this.convertValues(source["items"], TrainingItem);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class TrainingStats {
+	    Window: string;
+	    Sessions: TrainingQuizSession[];
+	    Periods: TrainingPeriod[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TrainingStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Window = source["Window"];
+	        this.Sessions = this.convertValues(source["Sessions"], TrainingQuizSession);
+	        this.Periods = this.convertValues(source["Periods"], TrainingPeriod);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

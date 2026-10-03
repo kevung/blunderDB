@@ -27,6 +27,8 @@ type Database struct {
 	mu                sync.RWMutex                        // RWMutex allows concurrent reads
 	cancelMu          sync.Mutex                          // guards importCancel (held briefly, never with mu)
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
+	searchCancels     map[int]context.CancelFunc          // in-flight searches, guarded by cancelMu
+	searchSeq         int                                 // key of the next entry of searchCancels
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	store             *sqlite.Storage                     // SQLite Storage backend, wraps db (P2)
 	// importBatchID stamps every match the in-flight import writes, 0 when none
@@ -35,6 +37,9 @@ type Database struct {
 	// importBatchCounts accumulates what only the writing path sees; the caller
 	// that opened the batch adds the unreadable files when it finishes it.
 	importBatchCounts domain.ImportReport
+	// positionsSinceStats counts the positions imports have written since the
+	// planner statistics were last refreshed (RefreshSearchStatistics).
+	positionsSinceStats int
 	// pendingPhaseBackfill is raised by the 2.19.0 migration step and cleared
 	// by runMigrationChain once EnsureSchema has added position.game_phase.
 	// A migration step cannot write a column the schema pass has not created
@@ -185,6 +190,46 @@ func (d *Database) CancelImport() {
 	cancel := d.importCancel
 	d.cancelMu.Unlock()
 	if cancel != nil {
+		cancel()
+	}
+}
+
+// beginSearch gives a window, the count or a rank of the browsed search a
+// context that CancelSearch can cancel from another goroutine, while it holds
+// d.mu. A page of ids and its count run side by side, so every such call in
+// flight is registered, not only the last.
+// The returned done func must be deferred.
+func (d *Database) beginSearch() (context.Context, func()) {
+	ctx, cancel := context.WithCancel(context.Background())
+	d.cancelMu.Lock()
+	if d.searchCancels == nil {
+		d.searchCancels = map[int]context.CancelFunc{}
+	}
+	key := d.searchSeq
+	d.searchSeq++
+	d.searchCancels[key] = cancel
+	d.cancelMu.Unlock()
+	return ctx, func() {
+		d.cancelMu.Lock()
+		delete(d.searchCancels, key)
+		d.cancelMu.Unlock()
+		cancel()
+	}
+}
+
+// CancelSearch aborts the browsed search in flight — SearchPositionIDs,
+// CountPositionsByFilters, IndexOfPositionByFilters — each returning an error
+// wrapping context.Canceled. A whole id list (LoadPositionIDsByFilters) runs
+// on: it serves a deck or a session, not the list Escape or a new search
+// replaces. It is bound to the Wails frontend. No-op when idle.
+func (d *Database) CancelSearch() {
+	d.cancelMu.Lock()
+	cancels := make([]context.CancelFunc, 0, len(d.searchCancels))
+	for _, cancel := range d.searchCancels {
+		cancels = append(cancels, cancel)
+	}
+	d.cancelMu.Unlock()
+	for _, cancel := range cancels {
 		cancel()
 	}
 }
@@ -425,17 +470,48 @@ func (d *Database) ensureSearchStats() {
 	}
 }
 
-// RefreshSearchStatistics always runs a full ANALYZE: after a batch import
-// the stats are stale rather than absent, which ensureSearchStats would skip.
-// The GUI's batch import calls it as the CLI runs ANALYZE. Best-effort.
+// statsRefreshMinPositions is how many imported positions it takes before
+// RefreshSearchStatistics touches the planner statistics. A batch of a file
+// or two barely moves the row-count ratios the planner reads; the count
+// carries over from batch to batch, so small batches still add up to a
+// refresh.
+const statsRefreshMinPositions = 1000
+
+// statsAnalysisLimit bounds how many index rows ANALYZE reads per index
+// (PRAGMA analysis_limit): approximate statistics at a cost independent of
+// the database size, instead of a scan of every index.
+const statsAnalysisLimit = 1000
+
+// RefreshSearchStatistics refreshes the planner statistics after an import
+// batch — the stats are stale rather than absent, which ensureSearchStats
+// would skip. It does nothing until statsRefreshMinPositions positions have
+// been imported since the last refresh, and then runs PRAGMA optimize under
+// PRAGMA analysis_limit: only the tables whose size has changed enough are
+// analysed, each index sampled rather than scanned. 0x10002 asks optimize to
+// consider every table, not only those this connection has queried. The GUI
+// and CLI batch imports call it once per batch. Best-effort.
 // Takes d.mu exclusively: ANALYZE writes sqlite_stat1/sqlite_stat4.
 func (d *Database) RefreshSearchStatistics() {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-	if d.db == nil {
+	if d.db == nil || d.positionsSinceStats < statsRefreshMinPositions {
 		return
 	}
-	if _, err := d.db.Exec(`ANALYZE`); err != nil {
-		slog.Warn("ANALYZE for search statistics failed", "err", err)
+	ctx := context.Background()
+	// analysis_limit is per connection: both pragmas run on the same one.
+	conn, err := d.db.Conn(ctx)
+	if err != nil {
+		slog.Warn("planner statistics refresh: no connection", "err", err)
+		return
 	}
+	defer conn.Close()
+	if _, err := conn.ExecContext(ctx, fmt.Sprintf(`PRAGMA analysis_limit=%d`, statsAnalysisLimit)); err != nil {
+		slog.Warn("PRAGMA analysis_limit failed", "err", err)
+		return
+	}
+	if _, err := conn.ExecContext(ctx, `PRAGMA optimize=0x10002`); err != nil {
+		slog.Warn("PRAGMA optimize for search statistics failed", "err", err)
+		return
+	}
+	d.positionsSinceStats = 0
 }

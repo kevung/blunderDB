@@ -138,14 +138,36 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 	return positions, nil
 }
 
-// ListPositionIDs returns every stored position id in LoadAllPositions's
-// order: the GUI keeps ids, not tens of megabytes of positions, across the
-// Wails bridge.
-func (d *Database) ListPositionIDs() ([]int64, error) {
+// ListPositionIDs returns the window [offset, offset+limit) of the stored
+// position ids, in LoadAllPositions's order; limit <= 0 means up to the end.
+// The GUI browses a library through such windows, CountPositions and
+// IndexOfPosition, never holding the whole id list.
+func (d *Database) ListPositionIDs(offset, limit int) ([]int64, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	return d.store.Positions().ListIDs(context.Background(), "", storage.ListOpts{})
+	return d.store.Positions().ListIDs(context.Background(), "", storage.ListOpts{Offset: offset, Limit: limit})
+}
+
+// CountPositions returns how many positions the library holds.
+func (d *Database) CountPositions() (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	return d.store.Positions().Count(context.Background(), "")
+}
+
+// IndexOfPosition returns the rank of id in ListPositionIDs's order, or -1
+// when no such position is stored.
+func (d *Database) IndexOfPosition(id int64) (int, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	index, found, err := d.store.Positions().IndexOf(context.Background(), "", id)
+	if err != nil || !found {
+		return -1, err
+	}
+	return index, nil
 }
 
 // LoadPositionsByIDs returns the listed positions in the caller's order,

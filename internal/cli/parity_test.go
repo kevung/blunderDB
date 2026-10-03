@@ -47,6 +47,8 @@ const (
 	whyMetadata         = "the metadata table is database infrastructure, not a tenant's data (« infrastructure de la base, pas une donnée de tenant » — ADR-0005, #156): global to every tenant and outside RLS, so the daemon reads its schema version (metadata.version) and nothing else; load/save/setVersion let one tenant read the others' session state, rewrite database_version and fail /readyz for the whole instance"
 	whyStoragePrimitive = "a Storage primitive the desktop reaches through a coarser call — SavePosition, or an importer's own transaction, does this inside one operation; an HTTP client has no such operation and needs the piece"
 	whyEnginePure       = "a pure function of the ENGINE on one position, no storage behind it: the GUI binds it on *gui.App (ComputeCubeMatrix) and the CLI has `cubematrix`, so all three modes answer — but there is nothing for the Database wrapper to hold"
+	whyEngineEvaluate   = "a pure function of the ENGINE on one bare position, nothing read from or written to the tenant: the GUI evaluates the board at rest on *gui.App (StartEvaluationAtRest) and an HTTP or MCP client needs it as a route, which the CLI reaches through `blunderdb call /v1/gammonnet.evaluate` — there is nothing for the Database wrapper to hold"
+	whyTenantQuota      = "the daemon's own accounting of what each tenant takes from a SHARED instance (--quota-*): a desktop or CLI database serves one person, who has nothing to share and no quota to read"
 	whySuggestion       = "a constant of the domain, exposed on the wrapper only so the frontend reads it through the same binding as everything else; the CLI prints it beside `list --type tags` and the daemon returns it in the same answer as the vocabulary"
 	whyExplain          = "the explanation is a THEME plus its measured deltas, rendered into a sentence by the client in its own language; the CLI prints an analysis, not a coaching line, and would have to carry its own nine-language templates to say anything here (#298)"
 	whyStudyImpact      = "a composition of two routes the daemon already serves — /v1/stats.compute over each of the two date windows, and /v1/anki.reviewsByGameType — so a client assembles it without a route of its own, and the desktop assembles it here (#275)"
@@ -67,7 +69,7 @@ const (
 	whyDirection        = "a Direction is what a tournament DIRECTOR decided while running a tournament (ADR-0047). The daemon serves its reads (/v1/directions.*, /v1/rencontres.*, ADR-0057) and, under `serve --direction` and `call`, its gestures (whyDirectionGesture); this method is neither, a tool of the director's console; the CLI's `tournament` subcommand — list, verify, standings, page, export, move, deliberately non-interactive since Nicomaque ships its own TD console — is the other headless face. This accessor hands out the persistence the direction package runs on; it carries no capability of its own"
 	whyDirectionGesture = "a gesture of a Direction or a Rencontre (ADR-0057): the daemon serves it under `serve --direction`, `call` always, both with If-Match; the CLI adds no writing sub-command, `call` is its writing face (ADR-0056 as amended)"
 	whyDirectionRead    = "a read of the Direction the daemon serves (ADR-0057) to a client that draws the view itself; the CLI's `tournament` subcommand prints the sheets a script needs (list, standings, page, export, verify), not this view"
-	whyTrainingJournal  = "the Training journal records what the USER asked THEMSELVES in front of a board (ADR-0040 rule 6): the questions are drawn, timed and revealed in the tab, and a session exists only because someone answered it. The CLI and the daemon gain nothing in v1 — a script has no session to run, an HTTP client nothing to record — and the two tables live in the library, so a journal written on the desktop travels with the file"
+	whyTrainingJournal  = "the Training journal records what the USER asked THEMSELVES in front of a board (ADR-0040 rule 6): a session exists only because someone answered it. A client that drills a person records and reads it over /v1/training.*, which `blunderdb call` also serves; a CLI sub-command would have no session of its own to run"
 )
 
 // serverOnly is the other direction of the parity check: every /v1 and /ops
@@ -93,6 +95,8 @@ var serverOnly = map[string]string{
 	// the CLI import the package and call them in Go; only an HTTP client
 	// needs them as routes.
 	"/v1/gammonnet.cubeMatrix": whyEnginePure,
+	"/v1/gammonnet.evaluate":   whyEngineEvaluate,
+	"/v1/tenants.quota":        whyTenantQuota,
 	"/v1/positions.fromOGID":   whyIdentifierDecode,
 	"/v1/positions.fromXGID":   whyPureDomain,
 	"/v1/positions.legalMoves": whyPureDomain,
@@ -126,9 +130,14 @@ var databaseParity = map[string]parityEntry{
 	"AnalyzeMatchWithGammonNet":         {CLI: "analyze --match", Why: whyMatchScoped},
 	"AnalyzeMissingWithGammonNet":       {CLI: "analyze", Server: "/v1/gammonnet.analyzeMissing"},
 	"AnalyzeStaleGammonNet":             {CLI: "analyze --stale", Server: "/v1/gammonnet.sweepStale"},
+	"CancelSearch":                      {Why: "Escape on the GUI's browsed search, which holds no request of its own to drop; a CLI search is a foreground process stopped by Ctrl-C, and a daemon search stops when its client drops the request, whose context the handler threads into the scan"},
 	"LoadRollouts":                      {CLI: "rollout --list", Server: "/v1/rollout.list"},
 	"PositionsToRollout":                {CLI: "analyze --rollout", Server: "/v1/rollout.filter"},
 	"RolloutFiltered":                   {CLI: "analyze --rollout", Server: "/v1/rollout.filter"},
+	"PlanRollout":                       {CLI: "analyze --rollout", Server: "/v1/rollout.filter"},
+	"PlanRolloutIDs":                    {Why: "a list on screen is the GUI's: the CLI and the daemon select by query"},
+	"PositionsToRolloutIDs":             {Why: "a list on screen is the GUI's: the CLI and the daemon select by query"},
+	"RunRolloutPlan":                    {CLI: "analyze --rollout", Server: "/v1/rollout.filter"},
 	"RolloutPosition":                   {CLI: "rollout", Server: "/v1/rollout.position"},
 	"RolloutPositions":                  {CLI: "analyze --rollout", Server: "/v1/rollout.filter"},
 	"CancelImport":                      {Server: "/v1/imports.cancel", Why: "the CLI import is a foreground process: Ctrl-C is its cancel"},
@@ -238,7 +247,9 @@ var databaseParity = map[string]parityEntry{
 	"ImportXGPPosition":                 {CLI: "import --type position", Server: "/v1/positions.fromXGP"},
 	"IsProtectedCopyPath":               {CLI: "open", Why: whyIssuance},
 	"IsReadOnly":                        {Why: whyLifecycle + " (ADR-0004: the second desktop instance opens read-only; a CLI run is one process, the daemon owns its store)"},
-	"ListPositionIDs":                   {Server: "/v1/positions.listIds", Why: "the id list the GUI browses a library with (windows are fetched by LoadPositionsByIDs); `list --type positions` prints the positions themselves, which is what a script wants"},
+	"ListPositionIDs":                   {CLI: "list --type positions --offset", Server: "/v1/positions.listIds", Why: "the id windows the GUI browses a library with (positions are fetched by LoadPositionsByIDs); `list --type positions` prints the positions themselves, which is what a script wants"},
+	"CountPositions":                    {CLI: "list --type positions", Server: "/v1/positions.count"},
+	"IndexOfPosition":                   {Server: "/v1/positions.indexOf", Why: "the rank of a position in the browsed library, so the GUI lands on it without holding the id list; a script addresses positions by id"},
 	"LoadAllPositions":                  {CLI: "list --type positions", Server: "/v1/positions.list"},
 	"LoadAnalysis":                      {CLI: "search --format json", Server: "/v1/analyses.load"},
 	"LoadCommandHistory":                {Server: "/v1/history.load", Why: whyGUIState},
@@ -248,7 +259,10 @@ var databaseParity = map[string]parityEntry{
 	"LoadFilters":                       {Server: "/v1/filters.list", Why: whyGUIState},
 	"LoadMetadata":                      {CLI: "info", Why: whyMetadata},
 	"LoadPosition":                      {CLI: "search --position-ids", Server: "/v1/positions.load"},
-	"LoadPositionIDsByFilters":          {Why: "the id list the GUI browses a search result with (windows are fetched by LoadPositionsByIDs), mirroring ListPositionIDs for a search instead of the whole library (D.8, #208); the CLI's `search` and the daemon's /v1/search.find already page real SQL LIMIT/OFFSET (B.10, #178) and print or stream the positions themselves, which is what a script or a remote client wants"},
+	"SearchPositionIDs":                 {CLI: "search", Server: "/v1/search.ids"},
+	"CountPositionsByFilters":           {Server: "/v1/search.count", Why: "the length of a search result the GUI browses by windows; `search --limit/--offset` pages the survivors and a script reads the end of the result where it ends"},
+	"IndexOfPositionByFilters":          {Server: "/v1/search.indexOf", Why: "the rank of a position in a browsed search result, so the GUI lands on it without holding the id list; a script addresses positions by id"},
+	"LoadPositionIDsByFilters":          {Why: "the whole id list of a search the GUI holds bounded (a sub-search within a list on screen, an Anki deck filled from a search); a plain search is browsed by SearchPositionIDs windows. The CLI's `search` and the daemon's /v1/search.find page the survivors and print or stream the positions themselves, which is what a script or a remote client wants"},
 	"LoadPositionsByIDs":                {CLI: "search --position-ids", Server: "/v1/positions.loadByIds"},
 	"LoadPositionsByFilters":            {CLI: "search", Server: "/v1/search.find"},
 	"LoadPositionsByFiltersCore":        {CLI: "search", Server: "/v1/search.find"},
@@ -294,6 +308,8 @@ var databaseParity = map[string]parityEntry{
 	"SinceLastGesture":                  {Why: whyDirection},
 	"Standings":                         {Server: "/v1/directions.standings", Why: whyDirectionRead},
 	"StandingsCSV":                      {CLI: "tournament standings", Server: "/v1/directions.standingsCsv"},
+	"SeasonRanking":                     {CLI: "tournament ranking", Server: "/v1/rencontres.ranking"},
+	"SeasonCSV":                         {CLI: "tournament ranking", Why: "the CSV rendering of SeasonRanking; the daemon returns the same rows as JSON"},
 	"CancelMatch":                       {Server: "/v1/directions.cancelMatch", Why: whyDirectionGesture},
 	"EnterParticipants":                 {Server: "/v1/directions.enterParticipants", Why: whyDirectionGesture},
 	"EntrySuggestions":                  {Why: whyDirection},
@@ -340,8 +356,8 @@ var databaseParity = map[string]parityEntry{
 	"ListDirections":                    {CLI: "tournament list", Server: "/v1/directions.list"},
 	"SetDirectionConfig":                {Server: "/v1/directions.setConfig", Why: whyDirectionGesture},
 	"SetDirectionOutputDir":             {Why: whyDirection},
-	"LoadTrainingNumberStats":           {Why: whyTrainingJournal},
-	"LoadTrainingSessions":              {Why: whyTrainingJournal},
+	"LoadTrainingNumberStats":           {Server: "/v1/training.numberStats", Why: whyTrainingJournal},
+	"LoadTrainingSessions":              {Server: "/v1/training.sessions", Why: whyTrainingJournal},
 	"MergePlayers":                      {Server: "/v1/matches.mergePlayers", Why: whyGUIEdit},
 	"MovePositionBetweenCollections":    {Server: "/v1/collections.movePosition", Why: whyGUIEdit},
 	"OpenDatabase":                      {Why: whyLifecycle},
@@ -369,7 +385,7 @@ var databaseParity = map[string]parityEntry{
 	"SavePosition":                      {CLI: "import --type position", Server: "/v1/positions.save"},
 	"SaveSearchHistory":                 {Server: "/v1/searchHistory.save", Why: whyGUIState},
 	"SaveSessionState":                  {Server: "/v1/session.save", Why: whyGUIState},
-	"SaveTrainingSession":               {Why: whyTrainingJournal},
+	"SaveTrainingSession":               {Server: "/v1/training.save", Why: whyTrainingJournal},
 	"SearchComments":                    {Server: "/v1/comments.search", Why: "the CLI reaches comments through `search --has-comment`; full-text search over them is the GUI's comment browser"},
 	"SetMatchTournamentByName":          {Server: "/v1/tournaments.setMatchByName", Why: whyGUIEdit},
 	"SetBeforeSwitch":                   {Why: "hook by which the GUI stops its batches before the open file changes; the CLI and the daemon never switch file under a running job"},
@@ -419,6 +435,10 @@ var databaseParity = map[string]parityEntry{
 	"Tags":                              {CLI: "list", Server: "/v1/comments.tags"},
 	"ComputeRecurringErrors":            {CLI: "stats recurring", Server: "/v1/stats.recurringErrors"},
 	"ComputeRecurringErrorsCtx":         {CLI: "stats recurring", Server: "/v1/stats.recurringErrors"},
+	"ComputeTrainingStats":              {CLI: "stats training", Server: "/v1/stats.training"},
+	"ComputeTrainingStatsCtx":           {CLI: "stats training", Server: "/v1/stats.training"},
+	"StudyPositionIDs":                  {CLI: "stats recurring", Server: "/v1/stats.studyIds"},
+	"CreateStudyDeck":                   {CLI: "stats recurring", Server: "/v1/anki.createStudyDeck"},
 	"RecommendedTags":                   {CLI: "list", Server: "/v1/comments.tags", Why: whySuggestion},
 }
 

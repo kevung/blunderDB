@@ -66,6 +66,7 @@ var customContentTypes = map[string][]string{
 	// the request, so there is nothing to gather, nothing to store and
 	// nothing to stream.
 	"/v1/gammonnet.cubeMatrix": {"application/json"},
+	"/v1/gammonnet.evaluate":   {"application/json"},
 	// rollout.position answers once the rollout is done: one position, no
 	// partial state to stream. rollout.filter is a sweep and streams.
 	"/v1/rollout.position":      {"application/json"},
@@ -75,11 +76,12 @@ var customContentTypes = map[string][]string{
 	// so an unreadable query is refused before the 200 is committed.
 	"/v1/search.query": {ndjsonContentType},
 
-	// These three are ordinary rpc-shaped JSON handlers, but wrapped with
+	// These are ordinary rpc-shaped JSON handlers, but wrapped with
 	// withIdempotency — the closure kindOf sees at runtime is withIdempotency's,
 	// not rpc's, so they classify as kindCustom despite answering exactly
 	// like any other rpc route.
 	"/v1/collections.create": {"application/json"},
+	"/v1/training.save":      {"application/json"},
 	"/v1/tournaments.create": {"application/json"},
 	"/v1/positions.save":     {"application/json"},
 	// The gestures of a Direction, under withIdempotency (handlers_direction_gestures.go).

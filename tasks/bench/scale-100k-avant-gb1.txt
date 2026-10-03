@@ -1,0 +1,27 @@
+goos: linux
+goarch: amd64
+pkg: github.com/kevung/blunderdb/pkg/blunderdb/database
+cpu: AMD Ryzen 7 PRO 6850U with Radeon Graphics     
+BenchmarkScale_ImportSingleXG-16               	       1	6255284196 ns/op	104181376 B/op	  478206 allocs/op
+BenchmarkScale_ImportSingleXG-16               	       1	4946806037 ns/op	23765072 B/op	  477614 allocs/op
+BenchmarkScale_ImportSingleXG-16               	       1	4886301933 ns/op	23746480 B/op	  477552 allocs/op
+BenchmarkScale_SearchWideCube-16               	       1	 695750786 ns/op	     40096 positions	432303944 B/op	 1748215 allocs/op
+BenchmarkScale_SearchWideCube-16               	       1	 638716650 ns/op	     40096 positions	432295872 B/op	 1748203 allocs/op
+BenchmarkScale_SearchWideCube-16               	       1	 701908110 ns/op	     40096 positions	432290376 B/op	 1748195 allocs/op
+BenchmarkScale_SearchWideErrorAboveTenth-16    	       1	 288372344 ns/op	      2205 positions	17427304 B/op	  115899 allocs/op
+BenchmarkScale_SearchWideErrorAboveTenth-16    	       1	 282793100 ns/op	      2205 positions	17427288 B/op	  115898 allocs/op
+BenchmarkScale_SearchWideErrorAboveTenth-16    	       1	 268447422 ns/op	      2205 positions	17427288 B/op	  115898 allocs/op
+BenchmarkScale_SearchNarrowDiceAndScore-16     	       1	  49311538 ns/op	         5.000 positions	   38248 B/op	     290 allocs/op
+BenchmarkScale_SearchNarrowDiceAndScore-16     	       1	  51356659 ns/op	         5.000 positions	   38264 B/op	     290 allocs/op
+BenchmarkScale_SearchNarrowDiceAndScore-16     	       1	  55011529 ns/op	         5.000 positions	   38264 B/op	     290 allocs/op
+BenchmarkScale_StatsCompute-16                 	       1	7413085433 ns/op	39708408 B/op	  867595 allocs/op
+BenchmarkScale_StatsCompute-16                 	       1	7692225926 ns/op	39737944 B/op	  865815 allocs/op
+BenchmarkScale_StatsCompute-16                 	       1	8331298009 ns/op	39738072 B/op	  865815 allocs/op
+BenchmarkScale_ListPositionIDs-16              	       1	  50685917 ns/op	     99617 positions	 5693592 B/op	  199018 allocs/op
+BenchmarkScale_ListPositionIDs-16              	       1	  58848715 ns/op	     99617 positions	 5693608 B/op	  199019 allocs/op
+BenchmarkScale_ListPositionIDs-16              	       1	  70093104 ns/op	     99617 positions	 5693592 B/op	  199018 allocs/op
+BenchmarkScale_GetAllMatches-16                	       1	 880307151 ns/op	       315.0 matches	10911360 B/op	  368935 allocs/op
+BenchmarkScale_GetAllMatches-16                	       1	 753587015 ns/op	       315.0 matches	10911376 B/op	  368935 allocs/op
+BenchmarkScale_GetAllMatches-16                	       1	 639736979 ns/op	       315.0 matches	10911392 B/op	  368935 allocs/op
+PASS
+ok  	github.com/kevung/blunderdb/pkg/blunderdb/database	45.496s

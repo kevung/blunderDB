@@ -20,7 +20,9 @@ vi.mock('../stores/rencontreStore.js', () => ({
     forgetRencontreOutputDir: vi.fn(),
     writeRencontrePage: vi.fn(),
     setRencontreTables: vi.fn(async () => null),
-    setEventRooms: vi.fn(async () => null)
+    setEventRooms: vi.fn(async () => null),
+    seasonRanking: vi.fn(),
+    seasonCSV: vi.fn()
 }));
 
 import HistoryView from '../components/direction/HistoryView.svelte';

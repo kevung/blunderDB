@@ -633,7 +633,7 @@ Panneau Analyse
 ---------------
 
 Le panneau **Analyse** (*CTRL-L*) affiche les données d'analyse de la position
-courante importées depuis eXtreme Gammon (XG), GNUbg ou BGBlitz. Il présente
+courante importées depuis eXtreme Gammon (XG), GNUbg, BGBlitz ou gammonNet. Il présente
 les meilleures alternatives (coups de pions ou décisions de videau) avec leurs
 valeurs d'équité et les erreurs correspondantes. La touche *d* bascule entre
 l'analyse des coups de pions et l'analyse du cube. Lors de la navigation dans
@@ -655,6 +655,12 @@ partir duquel les moteurs s'accordent à dire qu'elle en est une. Le reste du
 temps, il n'y a pas de phrase — ni cadre vide, ni « nous ne savons pas ». Une
 explication fausse coûte plus cher que pas d'explication : elle apprend
 quelque chose d'inexact.
+
+La même phrase accompagne l'erreur là où vous venez de la commettre : au dos
+d'une **carte Anki**, sous l'analyse dévoilée, et dans le **verdict du quiz**
+de l'exercice Décision, sous le coût en mMWC. Les mêmes règles de silence y
+valent : un coup juste, ou une erreur qu'aucune règle n'explique, n'ajoute
+rien.
 
 Lorsqu'une position a été jugée par **plusieurs moteurs**, une bande en tête
 du panneau les met côte à côte : une ligne par moteur, avec sa profondeur et
@@ -686,6 +692,42 @@ selon le score de la position analysée, jamais un simple « Équité » muet su
 l'échelle. Les règles **Jacoby** et **Beaver** actives sur une position en
 money game s'affichent, elles aussi, en badges sous le tableau de décision de
 videau.
+
+.. _rollouts:
+
+Rollouts
+~~~~~~~~
+
+Sous l'analyse, le panneau **Analyse** propose de **rouler** la position :
+jouer des centaines de parties à partir de chaque coup candidat, ou de chaque
+action de videau, pour départager deux choix que l'évaluation directe sépare à
+peine. Trois réglages : **Rapide** (216 parties, tronquées à 7 demi-coups),
+**Standard** (1296 parties, tronquées à 11 demi-coups) et **Libre**, où tous les
+paramètres s'éditent — troncature, parties minimum et maximum (multiples de 36),
+limite de JSD, profondeur (ply), nombre de candidats, graine et nombre de
+processus. Le bouton **Lancer le rollout**, la touche *r* du panneau ou la
+commande ``rollout`` (alias ``ro``) le démarrent ; une barre de progression
+suit les parties jouées et **Annuler** (ou *r* de nouveau) l'arrête sans rien
+écrire.
+
+Le résultat est **stocké à côté de l'analyse, jamais à sa place** : une
+analyse importée n'est pas modifiée. Chaque rollout forme un bloc avec, par
+candidat, l'équité, l'intervalle de confiance à 95 %, la **JSD** (l'écart au
+meilleur coup en écarts-types de la différence : à partir de la limite, le coup
+est tranché et cesse d'être joué) et le nombre de parties. Le rollout s'arrête
+dès que les coups sont départagés. La **Configuration** — le moteur et la
+signature complète des paramètres — se déplie sous le tableau : deux rollouts
+de même signature sont les mêmes nombres. Un rollout joue le videau dans ses
+parties : le classement est fiable, l'équité absolue un peu moins, ce que le
+bloc rappelle. Une position qui n'est pas dans la base se roule, mais ne se
+stocke pas.
+
+Le bouton **Sur la liste affichée…** (ou ``ro search``) roule, l'une après
+l'autre, les positions de la liste affichée — résultats de recherche, match ou
+collection — qui n'ont pas encore ce rollout ; une confirmation donne le total
+avant de commencer. Chaque position est écrite
+dès qu'elle est finie : annuler garde ce qui est fait, et relancer reprend où
+l'on s'est arrêté. L'avancement survit à la fermeture du panneau.
 
 .. _panneau_commentaires:
 
@@ -808,6 +850,14 @@ exemple) : blunderDB revient à la collection entière, ou au match sur le coup
 Ce retour ne suit que ``ss`` : ``s``, lancé depuis le panneau de recherche
 ouvert sur une collection ou un match, cherche dans toute la bibliothèque, et
 *Esc* ne ramène plus à la liste quittée.
+
+Une recherche sur une grande base se montre avant d'être comptée : la première
+page de résultats s'affiche aussitôt, et la barre d'état indique « Recherche… »
+avec le temps écoulé tant que le nombre total n'est pas connu ; il remplace
+alors la longueur provisoire de la liste. Une seule recherche court à la
+fois : en lancer une autre abandonne la précédente. *Esc* interrompt la
+recherche en cours et arrête son balayage de la base ; si la première page
+était déjà affichée, elle reste, seule, et la barre d'état le dit.
 
 Le panneau propose un contrôle explicite du **type de décision** recherché :
 *Indifférent* (aucun filtre), *Pions* (décisions de coup) ou *Videau*
@@ -1115,6 +1165,12 @@ d'une collection ou d'un accès direct) provient d'un ou de plusieurs matchs,
 elle en indique la **provenance** — le premier match concerné et, le cas
 échéant, un badge « +N » listant les autres au survol. Une position importée
 seule, qu'aucun match ne référence, n'affiche rien.
+
+Les onglets **Recherche** et **Eval** remplacent le plateau par un plateau
+de travail : un bandeau en haut du plateau le dit (« Plateau de recherche »,
+« Plateau d'évaluation »), et la barre d'informations est masquée tant qu'elle
+décrirait une position qui n'est pas à l'écran. Le retour à l'analyse restaure
+la position étudiée.
 
 À l'ouverture d'une base contenant des matchs, le panneau **Matchs** est affiché
 d'emblée et la revue débute directement sur la première position, afin de
@@ -1707,7 +1763,7 @@ quelle phase il entrera. Aucun tirage déjà fait n'est refait.
 Un retrait se fait *maintenant* ou *après son match en cours*, selon que le
 joueur part tout de suite ou finit ce qu'il joue ; il se confirme.
 
-Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Absenter**, sur
+Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Marquer absent**, sur
 sa ligne, ouvre un petit formulaire sous son nom — *jusqu'à* une heure
 (pré-remplie sur l'heure qui suit), ou, quand la phase en cours est un suisse
 par rondes, *jusqu'à la ronde* portant son numéro. Le moteur cesse alors de
@@ -1858,6 +1914,15 @@ déplacer un match. Retirer une salle qui porte un match en cours de l'épreuve 
 refusé, en nommant la table. Une épreuve qui joue seule règle les mêmes propriétés
 de table dans ses propres Réglages, sans salles d'épreuve.
 
+Le **Classement de saison**, dans le panneau Événement, cumule les épreuves
+closes de l'événement : chaque place rapporte les points du **Barème** (vainqueur
+en tête, 25, 18, 15, 12, 10, 8, 6, 4, 2, 1 par défaut), et des ex æquo se
+partagent la moyenne des places qu'ils occupent. Une personne est reconnue d'une
+épreuve à l'autre par son nom. **Elo de club** ajoute une colonne : chacun part
+de 1500 et les matchs de la saison sont rejoués dans l'ordre, selon la formule
+de FIBS. **Calculer** affiche le classement, **Copier en CSV** le copie avec une
+colonne de points par épreuve. Une épreuve non close ne rapporte rien.
+
 Ouvrir la Direction d'une épreuve d'un événement ouvre aussi les autres : un
 onglet par épreuve apparaît en haut de la Direction, chacun avec son résumé —
 propositions en attente, matchs en cours, une alerte s'il y en a. Changer
@@ -1921,7 +1986,10 @@ reste celle d'avant.
 
 Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``
-et ``export`` ; ``page --rencontre`` écrit la page murale d'un événement au lieu
+et ``export`` ; ``ranking --season`` cumule les tournois clos d'un événement ou
+d'une période en un classement de saison, par un barème de points par place et,
+au choix, un Elo de club (deux inscrits de même nom dans une même épreuve
+close font refuser le classement, qui connaît une personne par son nom) ; ``page --rencontre`` écrit la page murale d'un événement au lieu
 de la page d'une seule épreuve. Voir :ref:`cli`.
 
 .. _stats:
@@ -2213,6 +2281,38 @@ coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré :
 comme le plan de jeu, c'est une étiquette dérivée, non modifiable. En ligne de
 commande : ``blunderdb stats recurring`` (voir :ref:`cli_stats`).
 
+Chaque ligne propose trois gestes pour passer de l'erreur à l'étude :
+**Quiz sur ce groupe** lance l'exercice Décision du panneau
+:ref:`Entraînement <panneau_entrainement>` sur les positions du groupe,
+**Paquet Anki** en fait un paquet de cartes, **Collection** les range dans une
+nouvelle collection. Au-dessus du tableau, **Quiz de mes trois pires groupes**
+tire vingt positions au hasard parmi celles des trois groupes les plus
+coûteux. En ligne de commande, ``stats recurring --quiz`` tire ces
+positions et ``--deck`` crée le paquet.
+
+.. _stats_entrainement:
+
+Entraînement dans le temps
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+L'onglet **Entraînement** met côte à côte, sur les mêmes fenêtres
+calendaires — la **semaine** ou le **mois**, au choix — trois séries qui
+mesurent la progression par trois chemins :
+
+* le **PR du quiz** : celui des sessions de l'exercice Décision du panneau
+  Entraînement, pondéré par le nombre de décisions jugées. Il est calculé sur
+  l'échelle du PR réel, donc comparable à lui ;
+* le **PR des matchs** du filtre courant, pondéré par le nombre de décisions ;
+* la **rétention Anki** : la part des révisions de cartes déjà apprises
+  notées *Difficile* ou mieux, lue sur l'axe de droite (en %).
+
+Entre parenthèses, le nombre de décisions ou de révisions derrière chaque
+valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas un
+zéro. Le filtre ne restreint que les matchs ; le journal du quiz et celui
+d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est enregistré en
+plus : les trois séries sont relues dans les journaux existants. En ligne de
+commande : ``blunderdb stats training`` (voir :ref:`cli_stats`).
+
 Répartition par action de videau
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -2393,9 +2493,10 @@ taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.
    Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas confondre
    avec zéro. C'est notamment le cas de la colonne Chance pour tout match
    importé avant la version 2.15.0 du schéma : la chance n'était alors pas
-   conservée, et rien ne permet de la reconstituer après coup — il faut
-   réimporter les fichiers source. Les formats qui ne la transportent pas (BGF,
-   Jellyfish ``.mat``) n'en fourniront jamais.
+   conservée, et rien ne permet de la reconstituer après coup. Réimporter le
+   fichier source ne suffit pas : l'import y reconnaît un doublon et n'en reprend
+   que les marques. Il faut supprimer le match, puis le réimporter. Les formats
+   qui ne la transportent pas (BGF, Jellyfish ``.mat``) n'en fourniront jamais.
 
 Règle d'agrégation
 ~~~~~~~~~~~~~~~~~~
@@ -3016,6 +3117,18 @@ panneau Éval ou le commentaire de la position, elle vous attendra au retour.
 Une position dépourvue d'analyse enregistrée l'indique directement, sans zone
 masquée.
 
+**Répondre au damier.** Par défaut, vous vous notez vous-même. Dans les
+Paramètres d'un paquet de positions, cochez *Répondre au damier* : pour une
+carte de pions, vous jouez alors le coup sur le damier, comme dans l'exercice
+Décision, puis *Valider*. Le moteur juge le coup contre l'analyse enregistrée,
+dévoile la réponse et **propose une note** : *Facile* pour une bonne réponse
+rapide, *Bien* pour une bonne réponse plus lente, *Difficile* pour une erreur
+sous le seuil du blunder, *À revoir* pour un blunder ou un coup illégal. La note
+proposée est en surbrillance ; vous gardez la main et notez ce que vous voulez
+avec *1* à *4*. Un coup légal que l'analyse ne classe pas ne propose rien. Les
+cartes de videau, les cartes de score et les paquets de fiches de score restent
+en auto-notation. Dévoiler la réponse sans jouer abandonne le coup.
+
 **Limiter la séance.** Par défaut, une séance de révision va jusqu'au bout des
 cartes dues. Vous pouvez la borner à un nombre de cartes, par paquet, dans les
 Paramètres : cochez *Limiter la séance* et indiquez combien de cartes une séance
@@ -3125,6 +3238,10 @@ Trois choix, puis « Démarrer » :
 * la **limite par question** — aucune, 15, 30 ou 60 secondes.
 
 La source choisie est mémorisée pour chaque exercice, d'une session à l'autre.
+
+La liste parcourue peut venir des *erreurs récurrentes* du panneau Stats : un
+clic sur « Quiz sur ce groupe » la remplace par les positions du groupe et
+démarre l'exercice Décision.
 
 ``train scores``, ``train pips``, ``train bearoff``, ``train evaluation`` et
 ``train decision`` ouvrent le panneau et démarrent directement ; ``train tp`` et ``train takepoint``

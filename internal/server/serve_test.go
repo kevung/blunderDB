@@ -109,7 +109,7 @@ func TestParseServeArgs_PprofAddrDefaultsOffAndHonoursFlagAndEnv(t *testing.T) {
 }
 
 // TestServeReadTenantsFlag: X-Read-Tenants is honoured only on request — by
-// flag or environment — and off by default (ADR-0061).
+// flag or environment — and off by default (ADR-0063).
 func TestServeReadTenantsFlag(t *testing.T) {
 	t.Setenv("BLUNDERDB_READ_TENANTS", "")
 	cfg, err := parseServeArgs(nil)

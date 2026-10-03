@@ -24,7 +24,7 @@ const idsFrom = (from, to) => Array.from({ length: to - from + 1 }, (_, i) => fr
 describe('list value and lookups', () => {
     test('starts empty and publishes { ids, length }', () => {
         const { list } = makeList();
-        expect(get(list)).toEqual({ ids: [], length: 0 });
+        expect(get(list)).toEqual({ ids: [], length: 0, paged: false });
         expect(list.idAt(0)).toBeUndefined();
         expect(list.indexOf(1)).toBe(-1);
     });
@@ -32,7 +32,7 @@ describe('list value and lookups', () => {
     test('setIds publishes the ids; idAt / indexOf read them', () => {
         const { list } = makeList();
         list.setIds([30, 10, 20]);
-        expect(get(list)).toEqual({ ids: [30, 10, 20], length: 3 });
+        expect(get(list)).toEqual({ ids: [30, 10, 20], length: 3, paged: false });
         expect(list.idAt(1)).toBe(10);
         expect(list.idAt(3)).toBeUndefined();
         expect(list.idAt(-1)).toBeUndefined();
