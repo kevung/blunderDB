@@ -2262,6 +2262,9 @@ msgid ""
 " <https://github.com/kevung/blunderDB/blob/main/docs/adr/0065-club-et-"
 "coach-lisent-a-travers-les-tenants-et-n-ecrivent-que-chez-soi.md>`__) :"
 msgstr ""
+"4つの読み取りが、同じリストでクラブとコーチに対応します（\\ `ADR-0065 "
+"<https://github.com/kevung/blunderDB/blob/main/docs/adr/0065-club-et-"
+"coach-lisent-a-travers-les-tenants-et-n-ecrivent-que-chez-soi.md>`__\\ ）。"
 
 #: ../../source/mode_headless.rst:1124
 #, no-python-brace-format
@@ -2274,6 +2277,11 @@ msgid ""
 "plateaux, chacun avec son tenant, l'id de la position chez lui et son "
 "origine ;"
 msgstr ""
+"**コーチのコメント**：コーチは生徒のポジションを自分のテナントに保存し（自分の ``X-Tenant-ID`` での "
+"``positions.save``、ハッシュは同一）、それにコメントします（``comments.add``）。生徒側には何も書き込まれません。``across.commentsByZobrist``\\"
+" （``{\"zobrists\": "
+"[...]}``、ハッシュは最大1000件）は、読み取り対象の各テナントがこれらの盤面に書いたコメントを、テナント、そのテナントでのポジション "
+"id、由来とともに返します。"
 
 #: ../../source/mode_headless.rst:1130
 msgid ""
@@ -2284,6 +2292,9 @@ msgid ""
 "collection par fichier (export puis import) en donne au contraire une "
 "copie au receveur ;"
 msgstr ""
+"**共有ライブラリ**：``across.collectionsList`` "
+"は読み取り対象のテナントのコレクションを一覧し、``across.collectionPositions``\\ "
+"（``tenant``、``collectionId``）はそのうち1つのポジションを、それぞれのハッシュとともに返します。ライブラリはその場で読まれ、コピーされることはありません。これに対し、ファイルでコレクションを共有する（エクスポートしてからインポートする）と、受け取り側にはコピーが渡ります。"
 
 #: ../../source/mode_headless.rst:1135
 msgid ""
@@ -2297,6 +2308,12 @@ msgid ""
 "décision comptée a le rang 0. Ce n'est pas le classement de saison des "
 "tournois dirigés."
 msgstr ""
+"**クラブランキング**：``across.clubRanking`` は、読み取り対象のテナントのプレイヤー表を1つのランキングに統合し、PR "
+"の良い順に並べます。指定された統計フィルター（期間には ``filter.DateFrom`` と "
+"``filter.DateTo``）が適用されます。各行にはそのテナントが付き、名前がテナントをまたいで統合されることはありません。``players``\\"
+" （``tenant`` と ``name`` の組）は該当するプレイヤーだけを残し、``minDecisions`` "
+"は集計された判断の数がそれ未満のプレイヤーを除外します。PR が同じ場合は順位を共有し、集計された判断がない行の順位は 0 "
+"です。これは、運営されるトーナメントのシーズンランキングではありません。"
 
 #: ../../source/mode_headless.rst:1147
 msgid "Sauvegarde et restauration"
@@ -3484,7 +3501,7 @@ msgstr "ライブラリの局面のロールアウト：候補ごとのエクイ
 msgid ""
 "``club_matches``, ``club_match_positions``, ``club_comments``, "
 "``club_library``, ``club_library_positions``, ``club_ranking``"
-msgstr ""
+msgstr "``club_matches``、``club_match_positions``、``club_comments``、``club_library``、``club_library_positions``、``club_ranking``"
 
 #: ../../source/mode_headless.rst:1820
 msgid ""
@@ -3493,6 +3510,8 @@ msgid ""
 "avec leur hachage, commentaires écrits sur ces plateaux, bibliothèque "
 "partagée, classement de club ; sans ``X-Read-Tenants``, ce tenant seul"
 msgstr ""
+"プロキシが列挙するテナントをまたぐ読み取り（:ref:`headless_tenants_lus`）：生徒のマッチ、ハッシュ付きのマッチのポジション、これらの盤面に書かれたコメント、共有ライブラリ、クラブランキング。``X"
+"-Read-Tenants`` がない場合は、このテナントのみ。"
 
 #: ../../source/mode_headless.rst:1825
 msgid ""
@@ -3566,4 +3585,3 @@ msgstr ""
 #~ "通知は、ローカルのメッセージと同様に、データベースへの書き込みの後に送られます。この 2 "
 #~ "つの間でインスタンスが突然停止した場合、その操作は他のインスタンスに通知されず、それらのクライアントは次の ``resync``"
 #~ " で初めて知ることになります。"
-
