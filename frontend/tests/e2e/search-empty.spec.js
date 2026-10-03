@@ -31,4 +31,16 @@ test('recherche sans résultat : état vide dans le panneau, bouton primaire, so
     await expect(empty).toContainText('No position matches');
     await empty.getByRole('button', { name: 'Clear filters' }).click();
     await expect(page.locator('.active-count')).toHaveText('0 active');
+    await expect(page.locator('.no-results')).toHaveCount(0);
+
+    // The banner reports a search; listing the whole library ends that search too.
+    await pipDiff.getByRole('checkbox').check();
+    await pipDiff.getByRole('spinbutton').first().fill('10');
+    await page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true }).click();
+    await expect(page.locator('.no-results')).toBeVisible();
+    await page.keyboard.press('Control+r');
+    await expect(statusBar(page)).toContainText('3 / 3');
+    if (!(await page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true }).isVisible())) await page.keyboard.press('Control+f');
+    await expect(page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true })).toBeVisible();
+    await expect(page.locator('.no-results')).toHaveCount(0);
 });

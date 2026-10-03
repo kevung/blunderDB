@@ -427,6 +427,7 @@
     }
 
     function clearFilters() {
+        searchEmptyStore.set(false);
         availableFilters.forEach((f) => (filterEnabled[f] = false));
         filterEnabled['Matches & Tournaments'] = false;
         filterEnabled = filterEnabled;

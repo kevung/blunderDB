@@ -280,6 +280,8 @@ export async function loadAllPositions({ focusId = null } = {}) {
         setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
+    // Listing everything ends the search whose empty result the banner reports.
+    searchEmptyStore.set(false);
     try {
         // Paged: the library's length now, its ids and positions by window as
         // the user browses (positionList.js). A library reload may follow an

@@ -16,6 +16,7 @@ import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { analysisStore, emptyAnalysis, selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
+import { searchEmptyStore } from '../stores/searchParamsStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
 import { clearTranscription, bumpTranscriptionLibrary } from '../stores/transcriptionStore.js';
 import { logger } from '../utils/logger.js';
@@ -67,6 +68,8 @@ function resetAnalysisAndCommentStores() {
     analysisStore.set(emptyAnalysis());
     commentTextStore.set('');
     selectedMoveStore.set(null);
+    // A "no match" banner describes the previous library's search.
+    searchEmptyStore.set(false);
 }
 
 function getMajorVersion(version) {
