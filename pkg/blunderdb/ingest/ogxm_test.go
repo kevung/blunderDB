@@ -337,3 +337,62 @@ func TestOGXMPositionsMatchOGIDCodec(t *testing.T) {
 		t.Fatalf("aligned %d of %d plies, %d positions checked", k, len(fixture.Plies), checked)
 	}
 }
+
+// The losing anchor is looked up under the opponent, the score, the cube's
+// value and the Crawford rule; any of them differing falls back to the MET,
+// and each fallback is counted.
+func TestOGXMCubeAnchorKeys(t *testing.T) {
+	const length = 5
+	at := func(cubeLog2 int) *ogid.OGID {
+		o := ogid.New()
+		o.Score[ogid.Black], o.Score[ogid.White] = 4, 2
+		o.CubeLog2 = cubeLog2
+		return &o
+	}
+	an := &ogxmAnalysis{
+		block: &ogxmparser.Analysis{Currency: ogxmparser.CubefulMoney, METID: "other"},
+		winAnchor: map[ogxmAnchorKey]float64{
+			ogxmAnchorKeyAt(at(1), domain.Black, false): 0.9,
+			ogxmAnchorKeyAt(at(1), domain.White, false): 0.4,
+			ogxmAnchorKeyAt(at(1), domain.White, true):  0.3,
+		},
+	}
+	eq := func(v float64) *float64 { return &v }
+	nd := func(player int, o *ogid.OGID, crawford bool, win float64) float64 {
+		d := &ogxmparser.CubeDecision{NoDoubleEquity: eq(0.75), DoubleTakeEquity: eq(0.75), DoublePassEquity: eq(win)}
+		c := ogxmCubeAnalysis(an, d, o, player, length, crawford)
+		if c == nil || c.CubefulDoublePassEquity != 1 {
+			t.Fatalf("player %d cube %d crawford %v: %+v", player, o.CubeValue(), crawford, c)
+		}
+		return c.CubefulNoDoubleEquity
+	}
+	lose := func(player int, o *ogid.OGID, crawford bool) float64 {
+		return engine.GnuBGGetME(4, 2, length, player, o.CubeValue(), 1-player, crawford)
+	}
+	norm := func(mwc, win, lose float64) float64 { return (2*mwc - win - lose) / (win - lose) }
+	for _, c := range []struct {
+		name      string
+		player    int
+		cubeLog2  int
+		crawford  bool
+		win, want float64
+		fallback  bool
+	}{
+		{"Black, cube 2, White's anchor", domain.Black, 1, false, 0.9, norm(0.75, 0.9, 0.6), false},
+		{"Black, cube 2, Crawford anchor", domain.Black, 1, true, 0.9, norm(0.75, 0.9, 0.7), false},
+		{"White, cube 2, Black's anchor", domain.White, 1, false, 0.4, norm(0.75, 0.4, 0.1), false},
+		{"White, cube 2, no Crawford anchor", domain.White, 1, true, 0.95, norm(0.75, 0.95, lose(domain.White, at(1), true)), true},
+		{"Black, cube 1, no anchor", domain.Black, 0, false, 0.95, norm(0.75, 0.95, lose(domain.Black, at(0), false)), true},
+	} {
+		before := an.metFallbacks
+		if got := nd(c.player, at(c.cubeLog2), c.crawford, c.win); math.Abs(got-c.want) > 1e-9 {
+			t.Errorf("%s: no double %.6f, want %.6f", c.name, got, c.want)
+		}
+		if fell := an.metFallbacks > before; fell != c.fallback {
+			t.Errorf("%s: MET fallback %v, want %v", c.name, fell, c.fallback)
+		}
+	}
+	if an.metFallbacks != 2 {
+		t.Errorf("%d fallbacks counted, want 2", an.metFallbacks)
+	}
+}

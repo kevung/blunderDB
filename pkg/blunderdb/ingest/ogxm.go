@@ -116,6 +116,7 @@ func mapOGXM(f *ogxmparser.File, path string) (*MatchGraph, error) {
 		gg.Moves = moves
 		graph.Games = append(graph.Games, gg)
 	}
+	decisions.warnMETFallbacks()
 	return graph, nil
 }
 
@@ -143,6 +144,20 @@ type ogxmAnalysis struct {
 	// noCube leaves the block's cube analysis out: its double/pass
 	// equities are not the MWC they are read as.
 	noCube bool
+	// metFallbacks counts the cube decisions normalised on blunderDB's MET
+	// for want of the opponent's double/pass.
+	metFallbacks int
+}
+
+// warnMETFallbacks reports the cube decisions whose losing anchor came from
+// blunderDB's MET while the file declares another table: they carry the
+// difference between the two.
+func (an *ogxmAnalysis) warnMETFallbacks() {
+	if an == nil || an.metFallbacks == 0 || an.block.METID == ogxmMETID {
+		return
+	}
+	slog.Warn("ogxm import: some cube equities normalised against blunderDB's MET, not the file's",
+		"file_met", an.block.METID, "met", ogxmMETID, "decisions", an.metFallbacks)
 }
 
 // ogxmAnchorKey is what a double/pass anchor depends on: who wins the cube,
@@ -198,20 +213,6 @@ func (an *ogxmAnalysis) indexCubeAnchors(f *ogxmparser.File, replays []ogxmparse
 				an.winAnchor[k] = dp
 			}
 		}
-	}
-	if an.block.METID == ogxmMETID {
-		return
-	}
-	fallbacks := 0
-	for k := range an.winAnchor {
-		k.player = 1 - k.player
-		if _, ok := an.winAnchor[k]; !ok {
-			fallbacks++
-		}
-	}
-	if fallbacks > 0 {
-		slog.Warn("ogxm import: some cube equities normalised against blunderDB's MET, not the file's",
-			"file_met", an.block.METID, "met", ogxmMETID, "anchors", fallbacks)
 	}
 }
 
@@ -517,6 +518,7 @@ func ogxmCubeAnalysis(an *ogxmAnalysis, d *ogxmparser.CubeDecision, before *ogid
 		if opp, ok := an.winAnchor[ogxmAnchorKeyAt(before, 1-player, crawford)]; ok {
 			lose = 1 - opp
 		} else {
+			an.metFallbacks++
 			lose = engine.GnuBGGetME(before.Score[ogid.Black], before.Score[ogid.White], matchLength,
 				player, before.CubeValue(), 1-player, crawford)
 		}
