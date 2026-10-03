@@ -841,7 +841,7 @@ its measured error bound; the cube verdict is deliberately never estimated
 Roll a position out with gammonNet, to settle what a search cannot: two plays a
 few thousandths apart, or a cube decision the cube model is unsure of. With
 dice on the position, its plays are rolled out (the best few at the rollout's
-ply, or the ones named with `--move`); without dice, its cube decision (No
+ply, at least 2, or the ones named with `--move`); without dice, its cube decision (No
 double and Double/Take; Double/Pass is +1 exactly). Pure computation: nothing
 is stored and no database is needed.
 
@@ -852,7 +852,9 @@ is stored and no database is needed.
 **Options:**
 - `--preset` - `fast` (default: 216 games, truncated at 7 half-moves, stop at
   JSD 3 after 108) or `standard` (1296 games, truncated at 11, stop at JSD 3
-  after 324); every flag below overrides it
+  after 324). Both play at 0 ply — gammonNet's network alone, for plays, cube
+  actions and leaves; `--ply 1` or more plays deeper, at several times the
+  cost. Every flag below overrides the preset
 - `--games`, `--min-games`, `--truncation`, `--jsd`, `--ply`, `--candidates` -
   the rollout's own parameters (`--truncation 0` plays every game to its end,
   `--jsd 0` never stops early)
@@ -2671,7 +2673,7 @@ finished so far concluded.
 
 Options:
   -candidates int
-    	Plays rolled out when no --move is given, best first (0 = the preset's)
+    	Plays rolled out when no --move is given, best first at max(--ply, 2) (0 = the preset's)
   -format string
     	Output format: text, json (default "text")
   -games int
@@ -2687,7 +2689,7 @@ Options:
   -ply int
     	gammonNet depth of the plays, cube actions and leaves inside the games (-1 = the preset's) (default -1)
   -preset string
-    	Starting settings: fast (216 games, truncated at 7) or standard (1296 games, truncated at 11); the flags below override it (default "fast")
+    	Starting settings, both at 0 ply: fast (216 games, truncated at 7) or standard (1296 games, truncated at 11); the flags below override it, --ply plays deeper (default "fast")
   -seed uint
     	Dice seed: the same seed gives the same numbers (default 104374970738651)
   -truncation int

@@ -22,12 +22,12 @@ de videau, et ses intervalles sont optimistes.
    (`blunderDB rollout v1 / gammonNet v1.2.1`) plus ses paramètres. Tout changement de procédure
    qui déplace un nombre (dés, réduction de variance, politique de videau, valeur des feuilles)
    incrémente `v1`. Les paramètres sont ceux de `Settings` : troncature (demi-coups, 0 = jusqu'au
-   bout), parties min/max, seuil JSD, ply, nombre de candidats, graine. `Signature()` en donne la
+   bout), parties min/max (multiples de 36, sans quoi le premier lancer n'est plus stratifié), seuil JSD, ply, nombre de candidats, graine. `Signature()` en donne la
    ligne complète, `DepthLabel()` l'`AnalysisDepth` (« Rollout 216 games (0-ply, truncated 7) »,
    classé au-dessus de tout ply par `domain.AnalysisDepthRank`).
 3. **Trois réglages.** *Rapide* : tronqué à 7, 216 parties, min 108, JSD ≥ 3. *Standard* : 1296
    parties, min 324, JSD ≥ 3, tronqué à 11 comme le défaut de gnubg. *Libre* : tout paramètre.
-   Les deux préréglages jouent à **0 ply** : une décision 2-ply coûte environ 200 ms (mesure
+   Les deux préréglages jouent à **0 ply** (les candidats, eux, sont choisis à 2 ply au moins) : une décision 2-ply coûte environ 200 ms (mesure
    d'AMONT-GAMMONNET §1), soit des heures pour 1296 parties ; 1 ply triple le temps de *Rapide*
    (mesuré : 35 s contre 11 s, ouverture 3-1, 5 candidats, 16 cœurs) pour un écart d'au plus 0,004 sur
    les équités. Monter le ply reste un réglage *Libre*.
@@ -38,7 +38,9 @@ de videau, et ses intervalles sont optimistes.
    Dans une partie, le videau est offert, pris ou passé par `gammonnet.Decide` à `Ply` ; une
    feuille tronquée vaut la valeur de cette décision. Le résultat porte `CubefulBias` dès que le
    modèle de videau intervient : **le classement est fiable, l'équité absolue moins** (P8 §2, §5).
-   Pas de beaver (Decide n'en a pas) ; Jacoby compte en money tant que le videau est centré.
+   Pas de beaver (Decide n'en a pas) ; Jacoby compte en money tant que le videau est centré —
+   dans la décision de videau, la feuille et l'enjeu final ; `SearchConfig` n'ayant pas de règle
+   Jacoby, les feuilles internes d'une recherche l'ignorent, comme dans gammonNet.
 5. **La recette P8, toujours active, sans interrupteur.**
    - *Réduction de variance 1-ply* : avant chaque lancer, la valeur du joueur au trait est la
      moyenne, sur les 21 lancers, du meilleur coup 0-ply ; la chance du lancer joué est sa
@@ -97,8 +99,10 @@ meilleurs coups sont en XG Roller++ et à moins de 0,06 l'un de l'autre, le pré
 
 Le cas `-CCDaB-----a--aab--bcbBbA-:1:1:-1:32:1:0:0:5:0` (partie 4, coup 129) est le départage :
 2-ply préfère 11/8 10/8 de 0,060, XG Roller++ préfère 21/19 14/11 de 0,024, le rollout aussi
-(+0,024, JSD 3,5). `TestGaugeAgainstXGRollouts` et `TestRolloutOverturnsTheSearch` gardent cinq
-de ces paires, hors `-short` et `-race`. L'écart n'est pas nul et ne doit pas l'être : deux
+(+0,024, JSD 3,5). `TestRolloutOverturnsTheSearch` garde ce cas, hors `-short` et `-race`. `TestGaugeAgainstXGRollouts` relit le corpus et roule
+30 décisions — celles dont la notation XG coïncide avec un coup légal de blunderDB, un ensemble
+voisin du tableau — : écart moyen mesuré 0,0076, seuil 0,015 (entre le rollout et le 2-ply), et
+l'ordre d'XG exigé dès qu'XG sépare les coups de 0,01 ou que la JSD atteint 3. L'écart n'est pas nul et ne doit pas l'être : deux
 réseaux, deux politiques de videau, deux troncatures.
 
 ## Conséquences

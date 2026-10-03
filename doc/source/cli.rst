@@ -1023,7 +1023,7 @@ rollout — Rollout d'une position
 Joue une position un grand nombre de fois avec gammonNet, pour trancher ce
 qu'une recherche ne tranche pas : deux coups à quelques millièmes, ou une
 décision de videau où le modèle hésite. Avec des dés, ce sont ses coups qui
-sont joués (les meilleurs à la profondeur du rollout, ou ceux nommés par
+sont joués (les meilleurs à la profondeur du rollout, au moins 2 ply, ou ceux nommés par
 ``--move``) ; sans dés, sa décision de videau (Pas de double et Double/Prend ;
 Double/Passe vaut +1 exactement). Calcul pur : rien n'est enregistré, aucune
 base n'est ouverte.
@@ -1036,8 +1036,10 @@ base n'est ouverte.
 
 * ``--preset`` — Réglage de départ : ``fast`` (défaut : 216 parties tronquées
   à 7 demi-coups, arrêt à JSD 3 après 108) ou ``standard`` (1296 parties
-  tronquées à 11, arrêt à JSD 3 après 324). Les options suivantes le
-  remplacent une à une.
+  tronquées à 11, arrêt à JSD 3 après 324). Les deux jouent à 0 ply — le
+  réseau seul, pour les coups, le videau et les feuilles ; ``--ply 1`` ou plus
+  joue plus profond, pour un temps plusieurs fois plus long. Les options
+  suivantes remplacent le préréglage une à une.
 * ``--games``, ``--min-games``, ``--truncation``, ``--jsd``, ``--ply``,
   ``--candidates`` — Les paramètres du rollout (``--truncation 0`` joue chaque
   partie jusqu'au bout, ``--jsd 0`` n'arrête jamais avant la fin).

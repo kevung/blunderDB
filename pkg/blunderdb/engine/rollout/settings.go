@@ -20,7 +20,7 @@ const DefaultSeed uint64 = 0x5EED_B10D_E7DB
 
 // maxGames bounds a request: beyond it a rollout is a background job of
 // hours, which this entry point is not.
-const maxGames = 1 << 20
+const maxGames = 36 * 36 * 36 * 16
 
 // Settings are a rollout's parameters. Every field but Workers enters the
 // result: two rollouts with equal Settings (Workers aside) on the same
@@ -31,8 +31,8 @@ type Settings struct {
 	// reaches a bearoff the exact table covers stops there whatever this says.
 	Truncation int `json:"truncation"`
 	// MinGames is how many games every candidate plays before the JSD rule
-	// may stop it; MaxGames is the most any candidate plays. Multiples of 36
-	// keep the first roll stratified.
+	// may stop it; MaxGames is the most any candidate plays. Both are
+	// multiples of 36, which keeps the first roll stratified.
 	MinGames int `json:"min_games"`
 	MaxGames int `json:"max_games"`
 	// JSDLimit stops a candidate once its gap to the best, in standard
@@ -41,8 +41,8 @@ type Settings struct {
 	// Ply is the gammonNet depth of every decision inside a game — plays,
 	// cube actions — and of the truncation leaf.
 	Ply int `json:"ply"`
-	// Candidates is how many plays, best first at Ply, a checker rollout
-	// rolls when none is named.
+	// Candidates is how many plays a checker rollout rolls when none is
+	// named, best first at max(Ply, 2).
 	Candidates int `json:"candidates"`
 	// Seed fixes every die of every game.
 	Seed uint64 `json:"seed"`
@@ -83,6 +83,10 @@ func (s Settings) Validate() error {
 		return fmt.Errorf("rollout: max games %d outside 1..%d", s.MaxGames, maxGames)
 	case s.MinGames < 0 || s.MinGames > s.MaxGames:
 		return fmt.Errorf("rollout: min games %d outside 0..%d", s.MinGames, s.MaxGames)
+	case s.MaxGames%36 != 0 || s.MinGames%36 != 0:
+		// The first roll is stratified over 36 games: any other count
+		// leaves some opening rolls over-represented.
+		return fmt.Errorf("rollout: min games %d and max games %d must be multiples of 36", s.MinGames, s.MaxGames)
 	case s.Truncation < 0:
 		return fmt.Errorf("rollout: truncation %d is negative", s.Truncation)
 	case s.JSDLimit < 0:

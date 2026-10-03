@@ -50,8 +50,10 @@ type table struct {
 	away     [2]int // indexed by colour
 	crawford bool
 	jacoby   bool // money only
-	settings Settings
-	bearoff  *race.TwoSided
+	// withoutLuck keeps the luck out of the result (Options.withoutLuck).
+	withoutLuck bool
+	settings    Settings
+	bearoff     *race.TwoSided
 }
 
 // outcome is one game of one branch.
@@ -129,6 +131,10 @@ func (t *table) canDouble(c cubeState, mover uint8) bool {
 	return t.match || c.value < maxMoneyCube
 }
 
+// configure aims s at mover's view of the cube and score. SearchConfig has
+// no Jacoby rule: the search values its leaves without it, as gammonNet's
+// own search does. Jacoby enters where the rollout settles a value itself —
+// the cube decision (decide), the truncation leaf and the final stake.
 func (t *table) configure(s *gammonnet.Searcher, ply int, c cubeState, mover uint8) error {
 	cfg := gammonnet.DefaultConfig(ply)
 	if st := t.state(c, mover); st != nil {
@@ -229,7 +235,9 @@ func (w *worker) play(b *branch, dice gameDice) (outcome, error) {
 		if err != nil {
 			return outcome{}, err
 		}
-		luck += t.toRoot(mover, actual, c) - t.toRoot(mover, mean, c)
+		if !t.withoutLuck {
+			luck += t.toRoot(mover, actual, c) - t.toRoot(mover, mean, c)
+		}
 
 		// At 0 ply the luck pass has already found the policy's play.
 		if t.settings.Ply > 0 {

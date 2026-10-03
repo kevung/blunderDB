@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
 
@@ -70,17 +71,31 @@ func TestDiceStreamIsAFunctionOfSeedAndGame(t *testing.T) {
 // TestReproducibleAcrossWorkers holds the determinism contract: one worker or
 // many, the same settings give the same numbers bit for bit — plays and cube.
 func TestReproducibleAcrossWorkers(t *testing.T) {
-	positions := map[string]string{
-		"moves": opening31,
-		"cube":  "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10",
-		"match": "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:2:3:0:7:10",
+	cases := []struct {
+		name string
+		xgid string
+		ply  int
+	}{
+		{"moves", opening31, 0},
+		// At 1 ply the plays come from policy.BestPlay, not from the luck pass.
+		{"moves-1ply", opening31, 1},
+		{"cube", "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10", 0},
+		{"match", "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:2:3:0:7:10", 0},
 	}
-	for name, xgid := range positions {
-		t.Run(name, func(t *testing.T) {
-			pos := decode(t, xgid)
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			pos := decode(t, tc.xgid)
+			settings := func() Settings {
+				s := small()
+				s.Ply = tc.ply
+				if tc.ply > 0 {
+					s.MaxGames = 36
+				}
+				return s
+			}
 			var runs []*Result
 			for _, workers := range []int{1, 7} {
-				s := small()
+				s := settings()
 				s.Workers = workers
 				r, err := Run(context.Background(), pos, s, Options{NoBearoffTable: true})
 				if err != nil {
@@ -92,10 +107,10 @@ func TestReproducibleAcrossWorkers(t *testing.T) {
 			if !reflect.DeepEqual(runs[0], runs[1]) {
 				t.Fatalf("1 worker and 7 workers disagree:\n%+v\n%+v", runs[0].Candidates, runs[1].Candidates)
 			}
-			if runs[0].Games != small().MaxGames {
-				t.Fatalf("played %d games, want %d", runs[0].Games, small().MaxGames)
+			if runs[0].Games != settings().MaxGames {
+				t.Fatalf("played %d games, want %d", runs[0].Games, settings().MaxGames)
 			}
-			s := small()
+			s := settings()
 			s.Seed++
 			other, err := Run(context.Background(), pos, s, Options{NoBearoffTable: true})
 			if err != nil {
@@ -220,5 +235,81 @@ func TestExactBearoffEndsTheGame(t *testing.T) {
 	c := r.Cube
 	if c.NoDouble.Equity != 1 || c.DoubleTake.Equity != 2 || c.NoDouble.StdErr != 0 || c.Action != "Double, pass" {
 		t.Fatalf("ND %+.4f DT %+.4f sigma %g action %s: want +1, +2, 0, Double, pass", c.NoDouble.Equity, c.DoubleTake.Equity, c.NoDouble.StdErr, c.Action)
+	}
+}
+
+// TestVarianceReductionKeepsTheMean: with and without the luck correction,
+// the same games give the same mean within a few standard deviations, and
+// the correction narrows the interval.
+func TestVarianceReductionKeepsTheMean(t *testing.T) {
+	heavy(t)
+	s := small()
+	s.MaxGames = 1296
+	opt := Options{Moves: []string{"8/5 6/5"}, NoBearoffTable: true}
+	with, err := Run(context.Background(), decode(t, opening31), s, opt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	opt.withoutLuck = true
+	without, err := Run(context.Background(), decode(t, opening31), s, opt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	a, b := with.Candidates[0], without.Candidates[0]
+	if d := math.Abs(a.Equity - b.Equity); d > 4*math.Hypot(a.StdErr, b.StdErr) {
+		t.Fatalf("variance reduction moved the mean: %+.4f ± %.4f against %+.4f ± %.4f", a.Equity, a.StdErr, b.Equity, b.StdErr)
+	}
+	if a.StdErr >= b.StdErr {
+		t.Fatalf("variance reduction did not reduce: σ %.4f with, %.4f without", a.StdErr, b.StdErr)
+	}
+}
+
+// TestOwnedCubeRolloutScale: with a 2-cube the player on roll owns, No
+// double is counted per unit of that cube, as the search reports it — a
+// rollout counted in raw points would read twice as large.
+func TestOwnedCubeRolloutScale(t *testing.T) {
+	pos := decode(t, "XGID=-CCCBBB-----------bbbccc--:1:1:1:00:0:0:0:0:10")
+	eval, err := gammonnet.EvaluatePosition(pos, 0, 0, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s := small()
+	r, err := Run(context.Background(), pos, s, Options{NoBearoffTable: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	want := eval.Cube.CubefulNoDoubleEquity
+	if got := r.Cube.NoDouble.Equity; math.Abs(got-want) > 0.15 {
+		t.Fatalf("owned 2-cube: rollout No double %+.4f, search %+.4f", got, want)
+	}
+	if r.Cube.DoublePass.Equity != 1 {
+		t.Fatalf("Double/Pass %+.4f, want +1 (the cube's own value)", r.Cube.DoublePass.Equity)
+	}
+}
+
+// TestMatchMoveRollout: at a match score the plays come out in normalised
+// equity, on the search's scale and in its order for a clear decision.
+func TestMatchMoveRollout(t *testing.T) {
+	pos := decode(t, "XGID=-b----E-C---eE---c-e----B-:0:0:1:31:2:3:0:7:10")
+	eval, err := gammonnet.EvaluatePosition(pos, 0, 0, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	searched := map[string]float64{}
+	for _, m := range eval.Moves {
+		searched[m.Move] = m.Equity
+	}
+	s := small()
+	r, err := Run(context.Background(), pos, s, Options{Moves: []string{"13/10 10/9", "8/5 6/5"}, NoBearoffTable: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Candidates[0].Move != "8/5 6/5" {
+		t.Fatalf("best %s, want 8/5 6/5", r.Candidates[0].Move)
+	}
+	for _, c := range r.Candidates {
+		if math.Abs(c.Equity-searched[c.Move]) > 0.15 {
+			t.Fatalf("%s: rollout %+.4f, search %+.4f — not the same scale", c.Move, c.Equity, searched[c.Move])
+		}
 	}
 }

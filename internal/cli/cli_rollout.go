@@ -29,13 +29,13 @@ func (cli *CLI) runRollout(args []string) error {
 	cmd := flag.NewFlagSet("rollout", flag.ContinueOnError)
 
 	format := cmd.String("format", "text", "Output format: text, json")
-	preset := cmd.String("preset", "fast", "Starting settings: fast (216 games, truncated at 7) or standard (1296 games, truncated at 11); the flags below override it")
+	preset := cmd.String("preset", "fast", "Starting settings, both at 0 ply: fast (216 games, truncated at 7) or standard (1296 games, truncated at 11); the flags below override it, --ply plays deeper")
 	games := cmd.Int("games", 0, "Most games per candidate (0 = the preset's)")
 	minGames := cmd.Int("min-games", -1, "Games before the JSD rule may stop a candidate (-1 = the preset's)")
 	truncation := cmd.Int("truncation", -1, "Half-moves per game before the engine values it; 0 plays to the end (-1 = the preset's)")
 	jsd := cmd.Float64("jsd", -1, "Stop a candidate when its gap to the best reaches this many standard deviations; 0 never stops early (-1 = the preset's)")
 	ply := cmd.Int("ply", -1, "gammonNet depth of the plays, cube actions and leaves inside the games (-1 = the preset's)")
-	candidates := cmd.Int("candidates", 0, "Plays rolled out when no --move is given, best first (0 = the preset's)")
+	candidates := cmd.Int("candidates", 0, "Plays rolled out when no --move is given, best first at max(--ply, 2) (0 = the preset's)")
 	seed := cmd.Uint64("seed", rollout.DefaultSeed, "Dice seed: the same seed gives the same numbers")
 	jobs := cmd.Int("jobs", 0, "Games played at once (0 = one per core); never changes the numbers")
 	var moves moveList

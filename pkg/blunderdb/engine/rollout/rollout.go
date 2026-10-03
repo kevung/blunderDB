@@ -19,6 +19,10 @@ import (
 // one stratum of first rolls, so a stop never lands mid-stratum.
 const batchGames = 36
 
+// preselectPly is the least depth the candidates of a checker rollout are
+// chosen at when none is named.
+const preselectPly = 2
+
 // z95 is the two-sided 95 % normal quantile.
 const z95 = 1.959963984540054
 
@@ -124,6 +128,9 @@ type Options struct {
 	// NoBearoffTable turns the exact bearoff off, for a rollout that must
 	// not depend on what this machine has generated.
 	NoBearoffTable bool
+	// withoutLuck turns the variance reduction off, for the test that
+	// shows it leaves the mean where it was.
+	withoutLuck bool
 }
 
 // accumulator is a running mean and variance (Welford), fed in game order
@@ -185,6 +192,7 @@ func Run(ctx context.Context, pos domain.Position, s Settings, opt Options) (*Re
 		t.away[1-t.root] = state.AwayOpponent
 		t.crawford = state.Crawford
 	}
+	t.withoutLuck = opt.withoutLuck
 	if !opt.NoBearoffTable {
 		t.bearoff = race.Resolve()
 	}
@@ -256,7 +264,9 @@ func moveBranches(pos *domain.Position, s Settings, named []string, cube cubeSta
 		if k <= 0 {
 			k = 5
 		}
-		eval, err := gammonnet.EvaluatePosition(*pos, s.Ply, 0, k)
+		// Chosen at 2 ply at least: a 0-ply preset must not leave out the
+		// play a deeper search ranks first.
+		eval, err := gammonnet.EvaluatePosition(*pos, max(s.Ply, preselectPly), 0, k)
 		if err != nil {
 			return nil, nil, err
 		}

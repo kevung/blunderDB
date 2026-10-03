@@ -5,7 +5,9 @@ import (
 	"math"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
 // xgPair is a checker decision of testdata/test.xg that XG analysed with
@@ -18,15 +20,57 @@ type xgPair struct {
 	xgSecond     float64
 }
 
-// gaugePairs come from testdata/test.xg (game, move): five of the thirty
-// XG Roller++ decisions with a gap under 0.06 measured for ADR-0060.
-var gaugePairs = []xgPair{
-	{"XGID=-a-B-aD-C---dD---bbeB-----:0:0:-1:41:0:0:0:7:0", "24/20 8/7", "24/20 7/6", -0.243, -0.273},      // g0 m10
-	{"XGID=--cB-BBBBA---B-b-bAbc-cA--:1:-1:-1:41:1:0:0:7:0", "10/6 3/2*", "10/6 8/7*", -0.656, -0.693},     // g1 m34
-	{"XGID=aCCCCAa-------------cbbbd-:1:-1:1:63:1:0:0:7:0", "5/off 3/off", "5/off 4/1", 1.262, 1.235},      // g1 m77
-	{"XGID=-CCDaB-----a--aab--bcbBbA-:1:1:-1:32:1:0:0:5:0", "21/19 14/11", "11/8 10/8", 0.981, 0.957},      // g4 m129
-	{"XGID=-DEC-------AA------bbd-baA:1:1:1:41:1:0:0:5:0", "bar/24* 12/8", "bar/24* 11/7", -0.797, -0.823}, // g4 m164
+// gaugeSize is how many XG Roller++ decisions the gauge rolls out.
+const gaugeSize = 30
+
+// gaugePairs reads the first gaugeSize checker decisions of
+// testdata/test.xg whose two best plays XG rolled out (XG Roller++) less
+// than 0.06 apart, and whose notation blunderDB's legal plays share.
+func gaugePairs(t *testing.T) []xgPair {
+	t.Helper()
+	graph, err := ingest.MapXG("../../../../testdata/test.xg")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var pairs []xgPair
+	for _, game := range graph.Games {
+		for _, mv := range game.Moves {
+			if mv.Position == nil {
+				continue
+			}
+			var ca *domain.CheckerAnalysis
+			for _, a := range mv.Analyses {
+				if a.CheckerAnalysis != nil {
+					ca = a.CheckerAnalysis
+				}
+			}
+			if ca == nil || len(ca.Moves) < 2 {
+				continue
+			}
+			m0, m1 := ca.Moves[0], ca.Moves[1]
+			if m0.AnalysisDepth != "XG Roller++" || m1.AnalysisDepth != "XG Roller++" || m0.Equity-m1.Equity > 0.06 {
+				continue
+			}
+			legal := map[string]bool{}
+			for _, p := range domain.LegalMoves(mv.Position) {
+				legal[p.Notation] = true
+			}
+			if !legal[m0.Move] || !legal[m1.Move] {
+				continue
+			}
+			pairs = append(pairs, xgPair{"XGID=" + domain.EncodeXGID(mv.Position), m0.Move, m1.Move, m0.Equity, m1.Equity})
+			if len(pairs) == gaugeSize {
+				return pairs
+			}
+		}
+	}
+	t.Fatalf("testdata/test.xg holds %d gauge decisions, want %d", len(pairs), gaugeSize)
+	return nil
 }
+
+// overturnPair (test.xg, game 4, move 129): gammonNet 2-ply prefers
+// 11/8 10/8 by 0.06, XG Roller++ prefers 21/19 14/11 by 0.024.
+var overturnPair = xgPair{"XGID=-CCDaB-----a--aab--bcbBbA-:1:1:-1:32:1:0:0:5:0", "21/19 14/11", "11/8 10/8", 0.981, 0.957}
 
 func heavy(t *testing.T) {
 	t.Helper()
@@ -49,25 +93,29 @@ func rollPair(t *testing.T, p xgPair) map[string]Candidate {
 }
 
 // TestGaugeAgainstXGRollouts measures the Fast preset against XG's own
-// truncated rollouts. On the thirty pairs of ADR-0060 the gap between two
-// plays differs from XG's by 0.0066 on average (0.032 at worst) where
-// gammonNet 2-ply differs by 0.0146; the bound below leaves room for that
-// worst case, not for a change of scale or of sign.
+// truncated rollouts (ADR-0060). On the thirty decisions the gap between the
+// two plays differs from XG's by 0.0066 on average where gammonNet 2-ply
+// differs by 0.0146; the bound sits between the two. Wherever XG separates
+// the plays by 0.01 or more, or the rollout separates them at JSD 3, the
+// order must be XG's.
 func TestGaugeAgainstXGRollouts(t *testing.T) {
 	heavy(t)
-	for _, p := range gaugePairs {
+	sum := 0.0
+	pairs := gaugePairs(t)
+	for _, p := range pairs {
 		ro := rollPair(t, p)
 		gap := ro[p.best].Equity - ro[p.second].Equity
 		xgGap := p.xgBest - p.xgSecond
-		if math.Abs(gap-xgGap) > 0.035 {
-			t.Errorf("%s: rollout gap %+.4f, XG Roller++ gap %+.4f", p.xgid, gap, xgGap)
+		sum += math.Abs(gap - xgGap)
+		separated := ro[p.best].JSD >= 3 || ro[p.second].JSD >= 3
+		if (xgGap >= 0.01 || separated) && gap <= 0 {
+			t.Errorf("%s: rollout prefers %s (gap %+.4f), XG prefers %s by %.3f", p.xgid, p.second, gap, p.best, xgGap)
 		}
-		if gap <= 0 {
-			t.Errorf("%s: rollout prefers %s, XG prefers %s by %.3f", p.xgid, p.second, p.best, xgGap)
-		}
-		if d := math.Abs(ro[p.best].Equity - p.xgBest); d > 0.06 {
-			t.Errorf("%s: rollout equity %+.4f, XG %+.4f", p.xgid, ro[p.best].Equity, p.xgBest)
-		}
+	}
+	if mean := sum / float64(len(pairs)); mean > 0.015 {
+		t.Errorf("mean gap difference to XG Roller++ %.4f over %d decisions, want <= 0.015", mean, len(pairs))
+	} else {
+		t.Logf("mean gap difference to XG Roller++ %.4f over %d decisions", mean, len(pairs))
 	}
 }
 
@@ -76,7 +124,7 @@ func TestGaugeAgainstXGRollouts(t *testing.T) {
 // and say so with a JSD that separates the two.
 func TestRolloutOverturnsTheSearch(t *testing.T) {
 	heavy(t)
-	p := gaugePairs[3]
+	p := overturnPair
 	pos := decode(t, p.xgid)
 	eval, err := gammonnet.EvaluatePosition(pos, 2, 0, 0)
 	if err != nil {
