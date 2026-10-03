@@ -1589,6 +1589,8 @@
         "undoHop": "Deshacer paso",
         "resetPlay": "Empezar de nuevo",
         "playOnBoard": "Juegue la jugada en el tablero y luego compruébela.",
+        "notationPlaceholder": "Jugada en notación, p. ej. 13/7 8/7",
+        "notationLabel": "Jugada escrita en notación",
         "cubePrompt": "Elija la acción de cubo.",
         "exercise": {
             "scores": "Marcadores",

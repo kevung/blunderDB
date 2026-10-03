@@ -3219,7 +3219,12 @@ autant de fois qu'il y a de dés. Le damier n'offre que ce qui est jouable — u
 clic qu'aucun coup légal n'autorise ne déplace rien. Dans le panneau,
 « Annuler le pas » revient d'un dé, « Recommencer » remet la position telle que
 la question la pose (un double-clic hors du damier fait de même), et
-« Valider », actif une fois le coup complet, le fait juger. Sur une décision de
+« Valider », actif une fois le coup complet, le fait juger. Le champ de
+notation accepte aussi le coup tapé (``13/7 8/7``, la notation de la
+transcription) : les pas se posent sur le damier à chaque frappe, un champ
+rougi dit qu'un pas n'est pas jouable, et ENTRÉE valide le coup complet. Le
+panneau ayant le focus, RETOUR ARRIÈRE défait un pas, ÉCHAP recommence le coup et
+ENTRÉE le valide. Sur une décision de
 videau, cliquez *Pas de double*, *Double, prend* ou *Double, passe* : le clic
 est la réponse.
 

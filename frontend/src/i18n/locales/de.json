@@ -1589,6 +1589,8 @@
         "undoHop": "Schritt zurück",
         "resetPlay": "Neu beginnen",
         "playOnBoard": "Spielen Sie den Zug auf dem Brett und prüfen Sie ihn dann.",
+        "notationPlaceholder": "Zug in Notation, z. B. 13/7 8/7",
+        "notationLabel": "Zug in Notation",
         "cubePrompt": "Wählen Sie die Doppelentscheidung.",
         "exercise": {
             "scores": "Stände",
