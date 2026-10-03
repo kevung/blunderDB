@@ -165,11 +165,17 @@ export function mirrorPositionForSearch(pos) {
     return mirrored;
 }
 
+// Bumped by every request to show a position: the replies of the IPC calls come back in any
+// order, and only the last request may write the analysis and comment stores. Without it,
+// holding a navigation key lets the analysis of position N-1 land on the board of N.
+let displayGeneration = 0;
+
 export async function showPosition(position) {
     if (!position) {
         logger.error('Invalid position:', position);
         return;
     }
+    const generation = ++displayGeneration;
 
     // JSON round-trip, not structuredClone: in MATCH mode the position is a
     // Svelte 5 proxy, on which structuredClone throws DataCloneError.
@@ -181,6 +187,8 @@ export async function showPosition(position) {
     const [analysisResult, commentResult] = await Promise.allSettled([Promise.resolve().then(() => LoadAnalysis(position.id)), Promise.resolve().then(() => LoadComment(position.id))]);
     const analysis = analysisResult.status === 'fulfilled' ? analysisResult.value : null;
     const comment = commentResult.status === 'fulfilled' ? commentResult.value : '';
+
+    if (generation !== displayGeneration) return;
 
     const matchCtx = get(matchContextStore);
     const inMatchMode = get(statusBarModeStore) === 'MATCH' && matchCtx.isMatchMode;
@@ -226,9 +234,11 @@ export async function showPosition(position) {
 
 export async function loadAnalysisForPosition(position) {
     if (!position || !position.id) return;
+    const generation = ++displayGeneration;
 
     try {
         const analysis = await LoadAnalysis(position.id);
+        if (generation !== displayGeneration) return;
         if (analysis) {
             analysisStore.set(analysis);
         } else {
