@@ -470,7 +470,7 @@ func CanonicalCubeAction(action string) string {
 	case s == "":
 		return CubeUnknown
 	// Before the "double" test: "doubleno" contains "double".
-	case s == "nd" || strings.Contains(s, "nodouble") || strings.Contains(s, "doubleno"):
+	case s == "nd" || strings.Contains(s, "nodouble") || strings.Contains(s, "noredouble") || strings.Contains(s, "doubleno") || strings.Contains(s, "toogood"):
 		return CubeNoDouble
 	case strings.Contains(s, "double"): // double, double/take, double/pass, redouble
 		return CubeDouble
