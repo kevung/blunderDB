@@ -21,7 +21,8 @@ test('le plateau entier est visible avec le panneau Transcription ouvert', async
 
     const area = page.locator('.scrollable-content');
     const svg = page.locator('#backgammon-board svg');
-    await expect.poll(async () => (await svg.boundingBox()).height).toBeGreaterThan(200);
+    // 1024×700 : 700 − chrome − panneau plancher (320) − barre d'état laisse ~280 px au plateau.
+    await expect.poll(async () => (await svg.boundingBox()).height).toBeGreaterThan(250);
 
     const box = await svg.boundingBox();
     const zone = await area.boundingBox();
