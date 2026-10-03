@@ -21,7 +21,7 @@ func TestStepTargetGone(t *testing.T) {
 		t.Fatalf("FK violation = %v; want ErrInvalid only", err)
 	}
 	other := errors.New("disk full")
-	if err := stepTargetGone(fakeDialect{}, other); err != other {
+	if err := stepTargetGone(fakeDialect{}, other); !errors.Is(err, other) {
 		t.Fatalf("other error = %v; want it unchanged", err)
 	}
 }

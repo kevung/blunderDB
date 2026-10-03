@@ -326,7 +326,7 @@ func (s *LessonStore) ReorderSteps(ctx context.Context, scope string, lessonID i
 // and the write, and the caller's request is invalid, not a server fault.
 func stepTargetGone(d Dialect, err error) error {
 	if errors.Is(d.Referenced(err), storage.ErrNotFound) {
-		return fmt.Errorf("a collection or position the step shows no longer exists (%v): %w", err, storage.ErrInvalid)
+		return fmt.Errorf("a collection or position the step shows no longer exists (%w): %w", err, storage.ErrInvalid)
 	}
 	return err
 }
