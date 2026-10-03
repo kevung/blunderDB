@@ -186,8 +186,8 @@ Diriger son premier tournoi
 Un dimanche de club, trente-deux joueurs, deux heures avant le premier match.
 Ce tutoriel va de la salle vide à la première ronde lancée.
 
-#. **Créer le tournoi.** Panneau Tournois (*CTRL-Y*), taper le nom du
-   tournoi dans le champ du bas, *Entrée*. Ouvrir la ligne créée, puis
+#. **Créer le tournoi.** Panneau Tournois (*CTRL-Y*), bouton *+ Nouveau
+   tournoi* en en-tête, taper le nom du tournoi, *Entrée*. Ouvrir la ligne créée, puis
    **Diriger ce tournoi** : le tournoi remplace le plateau au centre de la
    fenêtre.
 
@@ -722,8 +722,8 @@ Pour accéder au panneau des collections, appuyer sur *CTRL-B*.
 
 #. Ouvrir le panneau des collections (*CTRL-B*).
 
-#. Saisir le nom de la nouvelle collection dans le champ *Nouvelle
-   collection…* en bas du panneau, puis valider avec *ENTREE*.
+#. Cliquer *+ Nouvelle collection* en en-tête du panneau, saisir le nom de la
+   collection, puis valider avec *ENTREE*.
 
 **Ajouter des positions à une collection:**
 
@@ -750,8 +750,8 @@ Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*.
 
 #. Ouvrir le panneau des tournois (*CTRL-Y*).
 
-#. Saisir le nom du tournoi dans le champ *Nouveau tournoi…*, puis valider
-   avec *ENTREE*.
+#. Cliquer *+ Nouveau tournoi* en en-tête du panneau, saisir le nom du
+   tournoi, puis valider avec *ENTREE*.
 
 **Assigner un match à un tournoi:**
 
