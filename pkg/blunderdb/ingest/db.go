@@ -13,19 +13,16 @@ import (
 
 // DBImporter imports a native blunderDB .db file's position library —
 // positions plus their analysis and comments, and the collections that group
-// them — into the target Storage. It is
-// the backend-agnostic counterpart of database.CommitImportDatabase: a
-// Storage→Storage merge of the position library only, no match/game/move rows.
+// them — into the target Storage. It is the backend-agnostic counterpart of
+// database.CommitImportDatabase, with which it shares MergeCollections: a
+// Storage→Storage merge of positions and collections, no match/game/move rows.
 //
 // Merge semantics:
 //   - positions dedup by content (PositionStore.Save's Zobrist index);
 //   - an imported analysis is written only when the target has none, or when
 //     the target's analysis is empty-typed and the import's is not;
 //   - a comment is appended only when the target doesn't already contain it;
-//   - a collection merges into the target's collection of the same name, or is
-//     created; its members are added in the source order, those already there
-//     kept where they are. A living collection's query is copied only when the
-//     collection is created: the target's own query is the target's.
+//   - collections follow MergeCollections, the rule the desktop import shares.
 type DBImporter struct{ S storage.Storage }
 
 func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog func(Progress)) (Summary, error) {
@@ -73,7 +70,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		return Summary{}, fmt.Errorf("ingest: read source comments: %w", err)
 	}
 
-	srcCollections, err := readSourceCollections(ctx, source, scope)
+	srcCollections, err := ReadSourceCollections(ctx, source, scope)
 	if err != nil {
 		return Summary{}, err
 	}
@@ -162,11 +159,12 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		}
 	}
 
-	n, err := mergeDBCollections(ctx, tx, scope, srcCollections, targetOf)
+	merged, err := MergeCollections(ctx, tx, scope, srcCollections, targetOf)
 	if err != nil {
 		return sum, err
 	}
-	sum.Collections = n
+	sum.Collections = merged.Changed
+	sum.LivingCollectionsSkipped = merged.LivingSkipped
 
 	if err := ctx.Err(); err != nil {
 		return sum, err
@@ -178,78 +176,115 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	return sum, nil
 }
 
-// srcCollection is a source collection with its members' source position ids,
-// in collection order.
-type srcCollection struct {
-	coll    storage.Collection
-	members []int64
+// SourceCollection is a collection of a native .db being imported, with its
+// members' source position ids in collection order.
+type SourceCollection struct {
+	Coll    storage.Collection
+	Members []int64
 }
 
-// readSourceCollections drains the source's collections, then each one's
+// ReadSourceCollections drains a source's collections, then each one's
 // members: the List iterator is closed before Members opens another query.
-func readSourceCollections(ctx context.Context, source storage.Storage, scope string) ([]srcCollection, error) {
-	var out []srcCollection
+func ReadSourceCollections(ctx context.Context, source storage.Stores, scope string) ([]SourceCollection, error) {
+	var out []SourceCollection
 	for c, err := range source.Collections().List(ctx, scope) {
 		if err != nil {
 			return nil, fmt.Errorf("ingest: list source collections: %w", err)
 		}
-		out = append(out, srcCollection{coll: *c})
+		out = append(out, SourceCollection{Coll: *c})
 	}
 	for i := range out {
-		for m, err := range source.Collections().Members(ctx, scope, out[i].coll.ID) {
+		for m, err := range source.Collections().Members(ctx, scope, out[i].Coll.ID) {
 			if err != nil {
-				return nil, fmt.Errorf("ingest: read source collection %q: %w", out[i].coll.Name, err)
+				return nil, fmt.Errorf("ingest: read source collection %q: %w", out[i].Coll.Name, err)
 			}
-			out[i].members = append(out[i].members, m.PositionID)
+			out[i].Members = append(out[i].Members, m.PositionID)
 		}
 	}
 	return out, nil
 }
 
-// mergeDBCollections writes the source collections into the target, their
-// members remapped through targetOf (source position id → id Save returned).
-// It reports how many collections it wrote.
-func mergeDBCollections(ctx context.Context, tx storage.Tx, scope string, src []srcCollection, targetOf map[int64]int64) (int, error) {
+// CollectionMerge says what MergeCollections changed in the target.
+type CollectionMerge struct {
+	// Changed counts the collections created or given new members.
+	Changed int
+	// LivingSkipped names the source collections with members whose
+	// namesake in the target is living: its membership is its query, so
+	// those members are not added.
+	LivingSkipped []string
+}
+
+// MergeCollections is the one rule both native .db imports (the daemon's
+// DBImporter and the desktop's Database.CommitImportDatabase) apply: a source
+// collection merges into the target's collection of the same name, or is
+// created with the source's description and, when living, its query. Members
+// are remapped through targetOf (source position id → target id); those the
+// target already holds keep their place and are not rewritten, so importing
+// the same file twice changes nothing. A living target collection receives no
+// members: a living collection stores none (storage.Collection.FilterQuery).
+func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src []SourceCollection, targetOf map[int64]int64) (CollectionMerge, error) {
+	var res CollectionMerge
 	if len(src) == 0 {
-		return 0, nil
+		return res, nil
 	}
-	byName := map[string]int64{}
+	byName := map[string]storage.Collection{}
 	for c, err := range tx.Collections().List(ctx, scope) {
 		if err != nil {
-			return 0, err
+			return res, err
 		}
-		byName[c.Name] = c.ID
+		byName[c.Name] = *c
 	}
 	for _, sc := range src {
 		if err := ctx.Err(); err != nil {
-			return 0, err
+			return res, err
 		}
-		id, ok := byName[sc.coll.Name]
-		if !ok {
-			var err error
-			if id, err = tx.Collections().Create(ctx, scope, sc.coll.Name, sc.coll.Description); err != nil {
-				return 0, err
+		target, exists := byName[sc.Coll.Name]
+		held := map[int64]bool{}
+		if exists {
+			if target.FilterQuery != "" {
+				if len(sc.Members) > 0 {
+					res.LivingSkipped = append(res.LivingSkipped, sc.Coll.Name)
+				}
+				continue
 			}
-			if sc.coll.FilterQuery != "" {
-				if err := tx.Collections().SetFilterQuery(ctx, scope, id, sc.coll.FilterQuery); err != nil {
-					return 0, err
+			for m, err := range tx.Collections().Members(ctx, scope, target.ID) {
+				if err != nil {
+					return res, err
+				}
+				held[m.PositionID] = true
+			}
+		} else {
+			id, err := tx.Collections().Create(ctx, scope, sc.Coll.Name, sc.Coll.Description)
+			if err != nil {
+				return res, err
+			}
+			target = storage.Collection{ID: id, Name: sc.Coll.Name, FilterQuery: sc.Coll.FilterQuery}
+			if sc.Coll.FilterQuery != "" {
+				if err := tx.Collections().SetFilterQuery(ctx, scope, id, sc.Coll.FilterQuery); err != nil {
+					return res, err
 				}
 			}
-			byName[sc.coll.Name] = id
+			byName[sc.Coll.Name] = target
 		}
-		ids := make([]int64, 0, len(sc.members))
-		for _, m := range sc.members {
-			if t, ok := targetOf[m]; ok {
-				ids = append(ids, t)
+		var ids []int64
+		if target.FilterQuery == "" {
+			for _, m := range sc.Members {
+				if t, ok := targetOf[m]; ok && !held[t] {
+					held[t] = true
+					ids = append(ids, t)
+				}
 			}
 		}
 		if len(ids) > 0 {
-			if err := tx.Collections().AddPositions(ctx, scope, id, ids); err != nil {
-				return 0, err
+			if err := tx.Collections().AddPositions(ctx, scope, target.ID, ids); err != nil {
+				return res, err
 			}
 		}
+		if !exists || len(ids) > 0 {
+			res.Changed++
+		}
 	}
-	return len(src), nil
+	return res, nil
 }
 
 // mergeDBAnalysisPreloaded writes an imported analysis for positionID as

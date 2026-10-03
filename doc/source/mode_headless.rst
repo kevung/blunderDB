@@ -862,7 +862,9 @@ receveur sache d'où vient le fichier), le tenant qui reçoit envoie le fichier
 à ``imports.db``. Chaque requête porte son propre ``X-Tenant-ID`` ; le proxy
 décide qui a le droit de faire l'une et l'autre. À l'import, une collection
 rejoint celle du même nom chez le receveur, ou est créée ; ses positions s'y
-ajoutent à la suite, sans doublon.
+ajoutent à la suite, sans doublon. Une collection vivante du receveur ne
+reçoit aucune position : sa requête fait son contenu. L'import d'une base
+dans l'application de bureau suit la même règle.
 
 .. code-block:: bash
 

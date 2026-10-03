@@ -11,6 +11,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -407,6 +408,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	var positionsAdded int
 	var positionsMerged int
 	var positionsSkipped int
+	// targetOf maps each source position id to the id it holds here, for the
+	// collections merged after the positions.
+	targetOf := map[int64]int64{}
 
 	for rows.Next() {
 		// Check for cancellation
@@ -448,6 +452,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		}
 
 		if existsInCurrent {
+			targetOf[id] = existingPositionID
 			// Track if we actually merge anything
 			hasMerged := false
 
@@ -535,6 +540,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				positionsSkipped++
 				continue
 			}
+			targetOf[id] = newPositionID
 
 			// Copy analysis if it exists
 			var importAnalysisData []byte
@@ -571,6 +577,15 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, err
 	}
 
+	srcCollections, err := readImportCollections(ctx, importDB)
+	if err != nil {
+		return nil, err
+	}
+	merged, err := ingest.MergeCollections(ctx, stx, "", srcCollections, targetOf)
+	if err != nil {
+		return nil, err
+	}
+
 	// Final check for cancellation before committing
 	if err = ctx.Err(); err != nil {
 		slog.Info("import cancelled by user before commit")
@@ -588,10 +603,28 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		"merged":  positionsMerged,
 		"skipped": positionsSkipped,
 		"total":   totalPositions,
+		// The same figures as ingest.Summary on the daemon's imports.db.
+		"collections":              merged.Changed,
+		"livingCollectionsSkipped": merged.LivingSkipped,
 	}
 
 	slog.Info("import committed", "added", positionsAdded, "merged", positionsMerged, "skipped", positionsSkipped, "total", totalPositions)
 	return result, nil
+}
+
+// readImportCollections reads the source's collections through a read-only
+// transaction seen as the Storage contract. A source from before collections
+// existed has none.
+func readImportCollections(ctx context.Context, importDB *sql.DB) ([]ingest.SourceCollection, error) {
+	if !queryable(importDB, `SELECT id FROM collection LIMIT 0`) {
+		return nil, nil
+	}
+	itx, err := importDB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
+	if err != nil {
+		return nil, err
+	}
+	defer itx.Rollback()
+	return ingest.ReadSourceCollections(ctx, sqlite.WrapTx(itx), "")
 }
 
 // Deprecated: Use AnalyzeImportDatabase followed by CommitImportDatabase instead

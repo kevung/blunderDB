@@ -49,6 +49,10 @@ func checkDBImportCollections(t *testing.T, target storage.Storage, scope string
 	if err := src.Collections().SetFilterQuery(ctx, "", cLive, "e>0.1"); err != nil {
 		t.Fatal(err)
 	}
+	cPlain, _ := src.Collections().Create(ctx, "", "Vivante", "")
+	if err := src.Collections().AddPositions(ctx, "", cPlain, []int64{so}); err != nil {
+		t.Fatal(err)
+	}
 	src.Close()
 
 	// The target already holds its own "Ouvertures", with the reply and a
@@ -69,13 +73,29 @@ func checkDBImportCollections(t *testing.T, target storage.Storage, scope string
 		t.Fatal(err)
 	}
 
+	// The target's "Vivante" is living: its membership is its query.
+	tLive, err := target.Collections().Create(ctx, scope, "Vivante", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := target.Collections().SetFilterQuery(ctx, scope, tLive, "s>0"); err != nil {
+		t.Fatal(err)
+	}
+
 	for pass := 1; pass <= 2; pass++ {
 		sum, err := DBImporter{S: target}.Import(ctx, scope, Source{Format: FormatNativeDB, Path: srcPath}, nil)
 		if err != nil {
 			t.Fatalf("pass %d: import: %v", pass, err)
 		}
-		if sum.Collections != 2 {
-			t.Errorf("pass %d: Summary.Collections = %d, want 2", pass, sum.Collections)
+		// Pass 1 fills Ouvertures and creates Gaffes; pass 2 changes nothing.
+		if want := map[int]int{1: 2, 2: 0}[pass]; sum.Collections != want {
+			t.Errorf("pass %d: Summary.Collections = %d, want %d", pass, sum.Collections, want)
+		}
+		if !reflect.DeepEqual(sum.LivingCollectionsSkipped, []string{"Vivante"}) {
+			t.Errorf("pass %d: LivingCollectionsSkipped = %v, want [Vivante]", pass, sum.LivingCollectionsSkipped)
+		}
+		for m, err := range target.Collections().Members(ctx, scope, tLive) {
+			t.Errorf("pass %d: the living Vivante stores a member: %+v, %v", pass, m, err)
 		}
 
 		colls := map[string]storage.Collection{}
@@ -85,7 +105,7 @@ func checkDBImportCollections(t *testing.T, target storage.Storage, scope string
 			}
 			colls[c.Name] = *c
 		}
-		if len(colls) != 2 {
+		if len(colls) != 3 {
 			t.Fatalf("pass %d: target collections = %v, want Ouvertures and Gaffes", pass, colls)
 		}
 		if got := colls["Ouvertures"]; got.ID != tColl || got.Description != "la mienne" {

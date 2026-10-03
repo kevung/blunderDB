@@ -57,9 +57,12 @@ type Summary struct {
 	// Enriched counts the cross-format duplicates whose analyses and comments
 	// were merged into a match already stored — neither new nor skipped.
 	Enriched int `json:"enriched,omitempty"`
-	// Collections counts the collections a native .db import brought in,
-	// created or merged into one of the same name.
+	// Collections counts the collections a native .db import created or gave
+	// new members (MergeCollections); a re-import of the same file counts 0.
 	Collections int `json:"collections,omitempty"`
+	// LivingCollectionsSkipped names the imported collections whose
+	// namesake in the target is living, and so received no members.
+	LivingCollectionsSkipped []string `json:"livingCollectionsSkipped,omitempty"`
 	// BatchID is the import batch these figures belong to, 0 when the caller
 	// opened none. /v1/imports.* fills it so a client can ask for the full
 	// end-of-import report afterwards.
