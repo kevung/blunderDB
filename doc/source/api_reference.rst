@@ -277,14 +277,15 @@ Idempotence
 -----------
 
 La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les
-lectures sont sans effet de bord, et ``positions.save`` (comme le reste de
-``positions.*``) est naturellement idempotente grâce au hachage Zobrist du
-contenu — enregistrer deux fois la même position renvoie la même ligne, jamais
-un doublon. 43 méthodes n'ont pas cette propriété (deux appels sont deux effets
-distincts) et acceptent un en-tête ``Idempotency-Key`` optionnel : un appel
-rejoué avec la même clé renvoie le résultat de la première tentative au lieu de
-répéter son effet — voir la marque « (Idempotency-Key) » dans le tableau
-ci-dessus. Aucune autre méthode n'a besoin ou n'accepte cet en-tête.
+lectures sont sans effet de bord, et les écritures de ``positions.*`` sont
+idempotentes dans leur effet grâce au hachage Zobrist du contenu — enregistrer
+deux fois la même position renvoie la même ligne, jamais un doublon. 43 méthodes
+acceptent un en-tête ``Idempotency-Key`` optionnel : celles dont deux appels
+sont deux effets distincts, et ``positions.save``, dont la réponse dit si
+l'appel a créé la position (``created``) et le dirait faux si elle était
+rejouée après une réponse perdue. Un appel rejoué avec la même clé renvoie le
+résultat de la première tentative au lieu de répéter son effet — voir la marque
+« (Idempotency-Key) » dans le tableau ci-dessus. Aucune autre méthode n'a besoin ou n'accepte cet en-tête.
 
 Lectures conditionnelles
 ------------------------
