@@ -62,6 +62,7 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 		d.importBatchCounts.MatchesImported++
 	}
 	d.importBatchCounts.PositionsSaved += res.SavedPositions
+	d.positionsSinceStats += res.SavedPositions
 	return res.MatchID, nil
 }
 
@@ -92,6 +93,7 @@ func (d *Database) writeImportedPosition(ctx context.Context, graphs []ingest.Po
 	if err := tx.Commit(); err != nil {
 		return 0, err
 	}
+	d.positionsSinceStats += len(graphs)
 	return firstID, nil
 }
 
