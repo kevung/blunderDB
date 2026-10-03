@@ -767,7 +767,7 @@
         "summary": "{games} partidas (al menos {min}), truncadas a {truncation} medias jugadas, parada en JSD {jsd}, {ply}-ply",
         "start": "Lanzar el rollout",
         "cancel": "Cancelar",
-        "batch": "Sobre la búsqueda actual…",
+        "batch": "Sobre la lista mostrada…",
         "shortcut": "R: lanzar el rollout de la posición (otra vez para detenerlo)",
         "elsewhere": "Se está ejecutando el rollout de otra posición.",
         "notStored": "no guardado",
@@ -793,9 +793,7 @@
         "batchDone": "Rollouts terminados: {rolledOut} de {total} posiciones (rechazadas {refused}, fallidas {failed}).",
         "batchCancelled": "Lote cancelado: {rolledOut} de {total} posiciones hechas; un nuevo lanzamiento continúa.",
         "batchNothing": "Nada que rodar: todas las posiciones ya llevan este rollout.",
-        "batchConfirm": "¿Rodar {total} posiciones ({scope}), como máximo {depth} partidas cada una? Puede tardar horas; cancelar conserva lo hecho.",
-        "batchScopeSearch": "búsqueda actual",
-        "batchScopeLibrary": "biblioteca entera",
+        "batchConfirm": "¿Rodar {total} de las {listed} posiciones listadas (las que aún no llevan este rollout), como máximo {depth} partidas cada una? Puede tardar horas; cancelar conserva lo hecho.",
         "usage": "Uso: rollout [fast|standard] · rollout search [fast|standard] · rollout stop",
         "unavailable": "Los ajustes del rollout no están disponibles.",
         "truncation": "Truncamiento (medias jugadas)",
@@ -813,7 +811,12 @@
         "seed": "Semilla",
         "seedHint": "Fija todos los dados: misma semilla, mismos números",
         "workers": "Procesos",
-        "workersHint": "Partidas jugadas a la vez; 0 pone uno por núcleo"
+        "workersHint": "Partidas jugadas a la vez; 0 pone uno por núcleo",
+        "invalidSettings": "Un ajuste no es un número.",
+        "invalidSeed": "La semilla debe ser un entero de 0 a 9007199254740991.",
+        "replaceConfirm": "Hay un rollout en curso. ¿Cancelarlo y lanzar este?",
+        "replace": "Reemplazar",
+        "batchRunning": "Hay un lote en curso: use su botón Cancelar."
     },
     "cube": {
         "verdicts": {

@@ -5,12 +5,13 @@ import { get } from 'svelte/store';
 import { rolloutStore, rolloutChoiceStore, idleRollout } from '../stores/rolloutStore.js';
 import { positionStore } from '../stores/positionStore.js';
 import { statusBarTextStore, activeTabStore } from '../stores/uiStore.js';
-import { lastSearchStore } from '../stores/searchHistoryStore.js';
+import { displayedPositionIDs } from './modeMachine.js';
+import { databasePathStore } from '../stores/databaseStore.js';
 import { confirmAction } from './confirmService.js';
 import { tMsg, t } from '../i18n';
 import { logger } from '../utils/logger.js';
 import { EventsOn } from '../../wailsjs/runtime/runtime.js';
-import { StartRollout, StartRolloutFiltered, CancelRollout, RolloutPresets, RolloutStatus, CountRolloutFiltered } from '../../wailsjs/go/gui/App.js';
+import { StartRollout, StartRolloutIDs, CancelRollout, RolloutPresets, RolloutStatus, CountRolloutIDs } from '../../wailsjs/go/gui/App.js';
 
 let listening = false;
 /** @type {{fast: any, standard: any} | null} */
@@ -32,14 +33,29 @@ function failure(err) {
     return err?.message ?? String(err);
 }
 
+/**
+ * Applies an event to the state unless it belongs to a job that was replaced since: a cancelled job
+ * still reports its end after the next one has begun.
+ */
+function onJob(change) {
+    return (e) =>
+        rolloutStore.update((s) => {
+            const job = e?.job ?? 0;
+            if (job && job < s.job) return s;
+            return change(s, e ?? {}, job || s.job);
+        });
+}
+
 /** Registers the listeners once for the life of the window; safe to call from every mount. */
 export function ensureRolloutEvents() {
     if (listening) return;
     listening = true;
     try {
-        EventsOn('rollout:progress', (p) =>
-            rolloutStore.update((s) => ({
+        EventsOn(
+            'rollout:progress',
+            onJob((s, p, job) => ({
                 ...s,
+                job,
                 running: true,
                 kind: 'position',
                 positionId: p.positionId ?? 0,
@@ -49,21 +65,35 @@ export function ensureRolloutEvents() {
                 outcome: null
             }))
         );
-        EventsOn('rollout:done', (e) =>
-            rolloutStore.update((s) => ({
+        EventsOn(
+            'rollout:done',
+            onJob((s, e, job) => ({
                 ...idleRollout(),
-                result: e.stored ? null : e.result,
+                job,
+                result: e.stored ? null : (e.record ?? null),
+                resultKey: e.stored ? '' : s.pendingKey,
                 outcome: { type: 'done', positionId: e.positionId ?? 0, stored: !!e.stored },
                 revision: s.revision + 1
             }))
         );
-        EventsOn('rollout:cancelled', (e) => rolloutStore.update((s) => ({ ...idleRollout(), outcome: { type: 'cancelled', positionId: e?.positionId ?? 0 }, revision: s.revision + 1 })));
-        EventsOn('rollout:error', (e) => rolloutStore.update((s) => ({ ...idleRollout(), outcome: { type: 'error', message: e?.message ?? '' }, revision: s.revision + 1 })));
+        EventsOn(
+            'rollout:cancelled',
+            onJob((s, e, job) => ({ ...idleRollout(), job, outcome: { type: 'cancelled', positionId: e.positionId ?? 0 }, revision: s.revision + 1 }))
+        );
+        EventsOn(
+            'rollout:error',
+            onJob((s, e, job) => ({ ...idleRollout(), job, outcome: { type: 'error', message: e.message ?? '' }, revision: s.revision + 1 }))
+        );
 
-        EventsOn('rollout-batch:started', (e) => rolloutStore.update((s) => ({ ...idleRollout(), running: true, kind: 'batch', total: e?.total ?? 0, revision: s.revision })));
-        EventsOn('rollout-batch:progress', (p) =>
-            rolloutStore.update((s) => ({
+        EventsOn(
+            'rollout-batch:started',
+            onJob((s, e, job) => ({ ...idleRollout(), job, running: true, kind: 'batch', total: e.total ?? 0, revision: s.revision }))
+        );
+        EventsOn(
+            'rollout-batch:progress',
+            onJob((s, p, job) => ({
                 ...s,
+                job,
                 running: true,
                 kind: 'batch',
                 done: p.done,
@@ -73,9 +103,18 @@ export function ensureRolloutEvents() {
                 maxGames: p.maxGames
             }))
         );
-        EventsOn('rollout-batch:done', (e) => rolloutStore.update((s) => ({ ...idleRollout(), outcome: { type: 'batch-done', ...e }, revision: s.revision + 1 })));
-        EventsOn('rollout-batch:cancelled', (e) => rolloutStore.update((s) => ({ ...idleRollout(), outcome: { type: 'batch-cancelled', ...e }, revision: s.revision + 1 })));
-        EventsOn('rollout-batch:error', (e) => rolloutStore.update((s) => ({ ...idleRollout(), outcome: { type: 'batch-error', message: e?.message ?? '' }, revision: s.revision + 1 })));
+        EventsOn(
+            'rollout-batch:done',
+            onJob((s, e, job) => ({ ...idleRollout(), job, outcome: { ...e, type: 'batch-done' }, revision: s.revision + 1 }))
+        );
+        EventsOn(
+            'rollout-batch:cancelled',
+            onJob((s, e, job) => ({ ...idleRollout(), job, outcome: { ...e, type: 'batch-cancelled' }, revision: s.revision + 1 }))
+        );
+        EventsOn(
+            'rollout-batch:error',
+            onJob((s, e, job) => ({ ...idleRollout(), job, outcome: { type: 'batch-error', message: e.message ?? '' }, revision: s.revision + 1 }))
+        );
     } catch (err) {
         listening = false;
         logger.error('Rollout events unavailable:', err);
@@ -90,6 +129,7 @@ export async function syncRolloutStatus() {
             st?.running
                 ? {
                       ...s,
+                      job: Math.max(s.job, st.job ?? 0),
                       running: true,
                       kind: st.kind || 'position',
                       positionId: st.positionId ?? 0,
@@ -100,7 +140,7 @@ export async function syncRolloutStatus() {
                       outcome: null
                   }
                 : s.running
-                  ? { ...idleRollout(), revision: s.revision + 1 }
+                  ? { ...idleRollout(), job: s.job, pendingKey: s.pendingKey, result: s.result, resultKey: s.resultKey, revision: s.revision + 1 }
                   : s
         );
     } catch (err) {
@@ -128,6 +168,22 @@ export function chosenSettings(choice, available) {
     return available[choice.preset] ?? available.standard;
 }
 
+const FIELDS = ['truncation', 'min_games', 'max_games', 'jsd_limit', 'ply', 'candidates', 'seed', 'workers'];
+
+/**
+ * Why a form cannot be sent ('' when it can): every field a number, and a seed JavaScript holds
+ * exactly — a larger one would be rounded on the way, and a rollout would no longer be the one
+ * its signature names.
+ */
+export function settingsProblem(s) {
+    for (const key of FIELDS) {
+        const v = s[key];
+        if (v === '' || v == null || !Number.isFinite(Number(v))) return get(t)('rollout.invalidSettings');
+    }
+    if (!Number.isSafeInteger(Number(s.seed)) || Number(s.seed) < 0) return get(t)('rollout.invalidSeed');
+    return '';
+}
+
 /** A form value as Go reads it: numbers only. */
 export function settingsForWire(s) {
     return {
@@ -146,47 +202,65 @@ function say(key, params) {
     statusBarTextStore.set(tMsg(key, params));
 }
 
+/** Records why a start was refused, and returns it. */
+function refuse(message) {
+    rolloutStore.update((s) => ({ ...s, error: message }));
+    return message;
+}
+
+/** The board a result describes: a rollout of an unsaved board is shown only while it is on screen. */
+export function boardKey(position) {
+    return JSON.stringify([get(databasePathStore), position]);
+}
+
 /** Rolls out the position on the board. Resolves to an error message, or '' once started. */
 export async function startRolloutOfCurrent(settings) {
     ensureRolloutEvents();
+    const problem = settingsProblem(settings);
+    if (problem) return refuse(problem);
     const pos = get(positionStore);
     const id = pos?.id ?? 0;
     try {
+        rolloutStore.update((s) => ({ ...s, error: '', pendingKey: id ? '' : boardKey(pos) }));
         await StartRollout({ positionId: id, position: id ? undefined : pos, settings: settingsForWire(settings), moves: [], store: id !== 0 });
         rolloutStore.update((s) => ({ ...s, outcome: null, running: true, kind: 'position', positionId: id, games: 0, maxGames: Number(settings.max_games), candidates: [] }));
+        await syncRolloutStatus();
         return '';
     } catch (err) {
-        return failure(err);
+        return refuse(failure(err));
     }
 }
 
 /**
- * Rolls out the positions the current search selects, after saying how many that is.
- * Resolves to an error message, or '' (started, declined, or nothing to do).
+ * Rolls out the positions of the list on screen — the search results, a match, a collection — after
+ * saying how many that is. Resolves to an error message, or '' (started, declined, or nothing to do).
  */
 export async function startRolloutOfSearch(settings) {
     ensureRolloutEvents();
-    const query = (get(lastSearchStore)?.command ?? '').trim();
+    const problem = settingsProblem(settings);
+    if (problem) return refuse(problem);
+    const ids = displayedPositionIDs();
     const wire = settingsForWire(settings);
     let total;
     try {
-        total = await CountRolloutFiltered(query, wire);
+        total = ids.length ? await CountRolloutIDs(ids, wire) : 0;
     } catch (err) {
-        return failure(err);
+        return refuse(failure(err));
     }
     if (!total) {
         say('rollout.batchNothing');
         return '';
     }
-    const label = get(t)(query ? 'rollout.batchScopeSearch' : 'rollout.batchScopeLibrary');
-    const ok = await confirmAction(get(t)('rollout.batchConfirm', { total, scope: label, depth: `${wire.max_games}` }), { confirmLabel: get(t)('rollout.start') });
+    const ok = await confirmAction(get(t)('rollout.batchConfirm', { total, listed: ids.length, depth: `${wire.max_games}` }), { confirmLabel: get(t)('rollout.start') });
     if (!ok) return '';
     try {
-        await StartRolloutFiltered(query, wire);
-        rolloutStore.update((s) => ({ ...idleRollout(), running: true, kind: 'batch', total, revision: s.revision }));
+        rolloutStore.update((s) => ({ ...s, error: '' }));
+        await StartRolloutIDs(ids, wire);
+        rolloutStore.update((s) => ({ ...idleRollout(), job: s.job, running: true, kind: 'batch', total, revision: s.revision }));
+        await syncRolloutStatus();
         return '';
     } catch (err) {
-        return failure(err);
+        return refuse(failure(err));
     }
 }
 
@@ -198,15 +272,26 @@ export function cancelRollout() {
     }
 }
 
-/** The panel's `r`: start with the chosen setting, or stop the one running. */
+/**
+ * The panel's `r`: start with the chosen setting, or stop the rollout of a position running. A
+ * batch is stopped by its own button only. Resolves to an error message, or ''.
+ */
 export async function toggleRollout() {
-    if (get(rolloutStore).running) {
-        cancelRollout();
+    const now = get(rolloutStore);
+    if (now.running) {
+        if (now.kind === 'position') cancelRollout();
+        else say('rollout.batchRunning');
         return '';
     }
     const available = await loadRolloutPresets();
     const settings = chosenSettings(get(rolloutChoiceStore), available);
     return settings ? startRolloutOfCurrent(settings) : '';
+}
+
+/** Whether a job in progress may give way to the new one: the person decides. */
+async function mayReplaceRunning() {
+    if (!get(rolloutStore).running) return true;
+    return !!(await confirmAction(get(t)('rollout.replaceConfirm'), { confirmLabel: get(t)('rollout.replace') }));
 }
 
 /**
@@ -231,9 +316,9 @@ export async function runRolloutCommand(args) {
         say('rollout.unavailable');
         return;
     }
-    const choice = name ? { preset: name, custom: null } : get(rolloutChoiceStore);
-    const settings = chosenSettings(choice, available);
+    const settings = chosenSettings(name ? { preset: name, custom: null } : get(rolloutChoiceStore), available);
     activeTabStore.set('analysis');
+    if (!(await mayReplaceRunning())) return;
     const err = await (batch ? startRolloutOfSearch(settings) : startRolloutOfCurrent(settings));
     if (err) say('rollout.error', { message: err });
 }

@@ -767,7 +767,7 @@
         "summary": "{games} peliä (vähintään {min}), katkaistu {truncation} puolisiirtoon, pysäytys JSD {jsd}, {ply}-ply",
         "start": "Käynnistä rollout",
         "cancel": "Peruuta",
-        "batch": "Nykyiseen hakuun…",
+        "batch": "Näytettyyn luetteloon…",
         "shortcut": "R: käynnistä aseman rollout (uudelleen pysäyttää sen)",
         "elsewhere": "Toisen aseman rollout on käynnissä.",
         "notStored": "ei tallennettu",
@@ -793,9 +793,7 @@
         "batchDone": "Rolloutit valmiit: {rolledOut}/{total} asemaa (hylätty {refused}, epäonnistui {failed}).",
         "batchCancelled": "Erä peruutettu: {rolledOut}/{total} asemaa tehty; uusi käynnistys jatkaa.",
         "batchNothing": "Ei rollattavaa: jokaisella asemalla on jo tämä rollout.",
-        "batchConfirm": "Rollataanko {total} asemaa ({scope}), enintään {depth} peliä kutakin? Tähän voi mennä tunteja; peruutus säilyttää tehdyn.",
-        "batchScopeSearch": "nykyinen haku",
-        "batchScopeLibrary": "koko kirjasto",
+        "batchConfirm": "Rollataanko {total} luetellun {listed} aseman joukosta (ne, joilla ei vielä ole tätä rolloutia), enintään {depth} peliä kutakin? Tähän voi mennä tunteja; peruutus säilyttää tehdyn.",
         "usage": "Käyttö: rollout [fast|standard] · rollout search [fast|standard] · rollout stop",
         "unavailable": "Rolloutin asetukset eivät ole käytettävissä.",
         "truncation": "Katkaisu (puolisiirrot)",
@@ -813,7 +811,12 @@
         "seed": "Siemen",
         "seedHint": "Kiinnittää kaikki nopat: sama siemen, samat luvut",
         "workers": "Työprosessit",
-        "workersHint": "Samaan aikaan pelattavat pelit; 0 tarkoittaa yhtä ydintä kohti"
+        "workersHint": "Samaan aikaan pelattavat pelit; 0 tarkoittaa yhtä ydintä kohti",
+        "invalidSettings": "Asetus ei ole luku.",
+        "invalidSeed": "Siemenen on oltava kokonaisluku väliltä 0–9007199254740991.",
+        "replaceConfirm": "Rollout on käynnissä. Peruutetaanko se ja käynnistetään tämä?",
+        "replace": "Korvaa",
+        "batchRunning": "Erä on käynnissä: käytä sen Peruuta-painiketta."
     },
     "cube": {
         "verdicts": {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
@@ -36,6 +37,7 @@ type RolloutRequest struct {
 
 // RolloutProgressEvent is rollout:progress: the candidates as they stand.
 type RolloutProgressEvent struct {
+	Job        int64               `json:"job"`
 	PositionID int64               `json:"positionId"`
 	Games      int                 `json:"games"`
 	MaxGames   int                 `json:"maxGames"`
@@ -44,9 +46,13 @@ type RolloutProgressEvent struct {
 
 // RolloutDoneEvent is rollout:done and rollout:cancelled.
 type RolloutDoneEvent struct {
+	Job        int64           `json:"job"`
 	PositionID int64           `json:"positionId"`
 	Result     *rollout.Result `json:"result"`
-	Stored     bool            `json:"stored"`
+	// Record is Result as the panel reads a stored rollout, so a rollout that
+	// is not stored (an unsaved board) is shown by the same code.
+	Record *domain.RolloutAnalysis `json:"record,omitempty"`
+	Stored bool                    `json:"stored"`
 }
 
 // RolloutPreset is one of the GUI's starting points.
@@ -78,13 +84,14 @@ func (a *App) StartRollout(req RolloutRequest) error {
 	}
 
 	ctx, stopped := a.beginRollout(RolloutStatus{Running: true, Kind: "position", PositionID: req.PositionID, MaxGames: req.Settings.MaxGames})
+	job := a.rolloutJob(stopped)
 
 	go func() {
 		defer close(stopped)
 		defer recoverBackground(a.ctx, "rollout")
 		progress := func(p rollout.Progress) {
 			a.noteRollout(stopped, func(st *RolloutStatus) { st.Games, st.MaxGames = p.Games, p.MaxGames })
-			a.emitBatch("rollout:progress", RolloutProgressEvent{PositionID: req.PositionID, Games: p.Games, MaxGames: p.MaxGames, Candidates: p.Candidates})
+			a.emitBatch("rollout:progress", RolloutProgressEvent{Job: job, PositionID: req.PositionID, Games: p.Games, MaxGames: p.MaxGames, Candidates: p.Candidates})
 		}
 		var (
 			res *rollout.Result
@@ -100,11 +107,16 @@ func (a *App) StartRollout(req RolloutRequest) error {
 
 		switch {
 		case err == nil:
-			a.emitBatch("rollout:done", RolloutDoneEvent{PositionID: req.PositionID, Result: res, Stored: req.Store})
+			done := RolloutDoneEvent{Job: job, PositionID: req.PositionID, Result: res, Stored: req.Store}
+			if res != nil {
+				rec := res.Record(time.Now())
+				done.Record = &rec
+			}
+			a.emitBatch("rollout:done", done)
 		case ctx.Err() != nil:
-			a.emitBatch("rollout:cancelled", RolloutDoneEvent{PositionID: req.PositionID, Result: res})
+			a.emitBatch("rollout:cancelled", RolloutDoneEvent{Job: job, PositionID: req.PositionID, Result: res})
 		default:
-			a.emitBatch("rollout:error", map[string]any{"positionId": req.PositionID, "message": fmt.Sprint(err)})
+			a.emitBatch("rollout:error", map[string]any{"job": job, "positionId": req.PositionID, "message": fmt.Sprint(err)})
 		}
 	}()
 	return nil
@@ -134,7 +146,29 @@ func (a *App) StartRolloutFiltered(query string, settings rollout.Settings) erro
 	if err != nil {
 		return err
 	}
+	return a.startRolloutBatch(settings, func(ctx context.Context) ([]domain.Position, error) {
+		return a.db.PositionsToRollout(ctx, filters, settings)
+	})
+}
 
+// StartRolloutIDs is StartRolloutFiltered for the list the GUI shows: the
+// positions ids names, in that order, that carry no rollout of settings'
+// Signature yet. The events are those of StartRolloutFiltered.
+func (a *App) StartRolloutIDs(ids []int64, settings rollout.Settings) error {
+	if err := settings.Validate(); err != nil {
+		return err
+	}
+	if a.db == nil {
+		return errors.New("rollout: no database is open")
+	}
+	return a.startRolloutBatch(settings, func(ctx context.Context) ([]domain.Position, error) {
+		return a.db.PositionsToRolloutIDs(ctx, ids, settings)
+	})
+}
+
+// startRolloutBatch runs the batch gather selects, refusing while a gammonNet
+// batch runs.
+func (a *App) startRolloutBatch(settings rollout.Settings, gather func(context.Context) ([]domain.Position, error)) error {
 	a.roMu.Lock()
 	a.gnBatchMu.Lock()
 	gammonNetRunning := a.gnBatchDone != nil
@@ -145,28 +179,29 @@ func (a *App) StartRolloutFiltered(query string, settings rollout.Settings) erro
 	}
 
 	ctx, stopped := a.beginRollout(RolloutStatus{Running: true, Kind: "batch", MaxGames: settings.MaxGames})
+	job := a.rolloutJob(stopped)
 	go func() {
 		defer close(stopped)
 		defer recoverBackground(a.ctx, "rollout batch")
 		var sum rollouts.Summary
-		positions, err := a.db.PositionsToRollout(ctx, filters, settings)
+		positions, err := gather(ctx)
 		if err == nil {
 			a.noteRollout(stopped, func(st *RolloutStatus) { st.Total = len(positions) })
-			a.emitBatch("rollout-batch:started", map[string]int{"total": len(positions)})
+			a.emitBatch("rollout-batch:started", map[string]int64{"job": job, "total": int64(len(positions))})
 			sum, err = a.db.RolloutPositions(ctx, positions, settings, func(p rollouts.Progress) {
 				a.noteRollout(stopped, func(st *RolloutStatus) {
 					st.Done, st.Total, st.PositionID, st.Games, st.MaxGames = p.Done, p.Total, p.PositionID, p.Games, p.MaxGames
 				})
-				a.emitBatch("rollout-batch:progress", RolloutBatchProgressEvent{Done: p.Done, Total: p.Total,
+				a.emitBatch("rollout-batch:progress", RolloutBatchProgressEvent{Job: job, Done: p.Done, Total: p.Total,
 					PositionID: p.PositionID, Games: p.Games, MaxGames: p.MaxGames})
 			})
 		}
 		a.endRollout(stopped)
 
-		done := RolloutBatchDoneEvent{Total: sum.Total, RolledOut: sum.RolledOut, Refused: sum.Refused, Failed: sum.Failed, Signature: settings.Signature()}
+		done := RolloutBatchDoneEvent{Job: job, Total: sum.Total, RolledOut: sum.RolledOut, Refused: sum.Refused, Failed: sum.Failed, Signature: settings.Signature()}
 		switch {
 		case err != nil && ctx.Err() == nil:
-			a.emitBatch("rollout-batch:error", map[string]any{"message": fmt.Sprint(err)})
+			a.emitBatch("rollout-batch:error", map[string]any{"job": job, "message": fmt.Sprint(err)})
 		case sum.Cancelled || ctx.Err() != nil:
 			a.emitBatch("rollout-batch:cancelled", done)
 		default:
@@ -176,26 +211,24 @@ func (a *App) StartRolloutFiltered(query string, settings rollout.Settings) erro
 	return nil
 }
 
-// CountRolloutFiltered says how many positions StartRolloutFiltered would roll
-// out for query and settings, so the GUI can ask before a long job starts.
-func (a *App) CountRolloutFiltered(query string, settings rollout.Settings) (int, error) {
+// CountRolloutIDs says how many of the positions ids names would be rolled
+// out by StartRolloutIDs (those without a rollout of settings' Signature), so
+// the GUI can ask before a long job starts.
+func (a *App) CountRolloutIDs(ids []int64, settings rollout.Settings) (int, error) {
 	if err := settings.Validate(); err != nil {
 		return 0, err
 	}
 	if a.db == nil {
 		return 0, errors.New("rollout: no database is open")
 	}
-	filters, err := rollouts.ParseQuery(query)
-	if err != nil {
-		return 0, err
-	}
-	positions, err := a.db.PositionsToRollout(a.batchCtx(), filters, settings)
+	positions, err := a.db.PositionsToRolloutIDs(a.batchCtx(), ids, settings)
 	return len(positions), err
 }
 
 // RolloutBatchProgressEvent is rollout-batch:progress: Done positions are
 // finished, the one named is at Games of MaxGames.
 type RolloutBatchProgressEvent struct {
+	Job        int64 `json:"job"`
 	Done       int   `json:"done"`
 	Total      int   `json:"total"`
 	PositionID int64 `json:"positionId"`
@@ -205,6 +238,7 @@ type RolloutBatchProgressEvent struct {
 
 // RolloutBatchDoneEvent is rollout-batch:done and rollout-batch:cancelled.
 type RolloutBatchDoneEvent struct {
+	Job       int64  `json:"job"`
 	Total     int    `json:"total"`
 	RolledOut int    `json:"rolledOut"`
 	Refused   int    `json:"refused"`
@@ -217,6 +251,7 @@ type RolloutBatchDoneEvent struct {
 // batch, Done of Total positions are behind and PositionID is the one in
 // hand, at Games of MaxGames.
 type RolloutStatus struct {
+	Job        int64  `json:"job"`
 	Running    bool   `json:"running"`
 	Kind       string `json:"kind,omitempty"`
 	PositionID int64  `json:"positionId,omitempty"`
@@ -247,8 +282,20 @@ func (a *App) beginRollout(status RolloutStatus) (context.Context, chan struct{}
 	}
 	ctx, cancel := context.WithCancel(a.batchCtx())
 	stopped := make(chan struct{})
+	a.roSeq++
+	status.Job = a.roSeq
 	a.roCancel, a.roDone, a.roStatus = cancel, stopped, status
 	return ctx, stopped
+}
+
+// rolloutJob is the number beginRollout gave the job stopped names.
+func (a *App) rolloutJob(stopped chan struct{}) int64 {
+	a.roMu.Lock()
+	defer a.roMu.Unlock()
+	if a.roDone == stopped {
+		return a.roStatus.Job
+	}
+	return 0
 }
 
 // noteRollout updates the status of the rollout stopped names, unless a newer

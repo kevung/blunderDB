@@ -420,6 +420,8 @@ export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAna
 
 export function PositionsToRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<Array<domain.Position>>;
 
+export function PositionsToRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<Array<domain.Position>>;
+
 export function PreviewAttachToRencontre(arg1:number,arg2:number):Promise<service.ConfigPreview>;
 
 export function PreviewDirectionConfig(arg1:number,arg2:string):Promise<service.ConfigPreview>;

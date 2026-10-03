@@ -2,9 +2,10 @@
     // Les rollouts d'une position, à côté de l'analyse et jamais à sa place (ADR-0013, ADR-0060) :
     // une Configuration par bloc, ses candidats avec équité, IC 95 % et JSD.
     import { t } from '../i18n';
+    import { formatEquity } from '../utils/analysisRows.js';
 
-    /** @type {{ rollouts?: any[], live?: any[], liveGames?: number, liveMaxGames?: number, unsaved?: any }} */
-    let { rollouts = [], live = [], liveGames = 0, liveMaxGames = 0, unsaved = null } = $props();
+    /** @type {{ rollouts?: any[], live?: any[], liveGames?: number, liveMaxGames?: number, unsaved?: any, isMoney?: boolean }} */
+    let { rollouts = [], live = [], liveGames = 0, liveMaxGames = 0, unsaved = null, isMoney = undefined } = $props();
 
     const CUBE_KEYS = { 'No double': 'analysis.noDouble', 'Double/Take': 'analysis.doubleTake', 'Double/Pass': 'analysis.doublePass' };
 
@@ -13,29 +14,18 @@
         const key = CUBE_KEYS[move];
         return key ? $t(key) : move;
     }
+    // Signed, three decimals, as every analysis table writes an equity.
     /** @param {number} v */
-    const eq = (v) => (Number.isFinite(v) ? v.toFixed(3) : '');
+    const eq = (v) => formatEquity(v) ?? '';
+    /** @param {number} v */
+    const spread = (v) => (Number.isFinite(v) ? v.toFixed(3) : '');
     /** @param {number} v */
     const jsd = (v) => (Number.isFinite(v) && v > 0 ? v.toFixed(1) : '');
+    // The column says its scale: money points at money play, normalised equity at a score (ADR-0019).
+    let equityLabel = $derived(isMoney === true ? $t('analysis.equityMoney') : isMoney === false ? $t('analysis.equityMatch') : $t('analysis.equity'));
 
-    /** A live or unsaved result put in the shape of a stored one. */
-    let unsavedBlock = $derived(
-        unsaved
-            ? {
-                  analysisEngine: unsaved.engine_version,
-                  analysisDepth: '',
-                  signature: unsaved.signature,
-                  kind: unsaved.kind,
-                  settings: { jsdLimit: unsaved.settings?.jsd_limit ?? 0 },
-                  games: unsaved.games,
-                  stop: unsaved.stop,
-                  cubefulBias: unsaved.cubeful_bias,
-                  exactBearoff: unsaved.exact_bearoff,
-                  candidates: (unsaved.candidates ?? []).map((/** @type {any} */ c) => ({ move: c.move, equity: c.equity, stdErr: c.std_err, ci95: c.ci95, games: c.games, jsd: c.jsd }))
-              }
-            : null
-    );
-    let blocks = $derived([...(unsavedBlock ? [unsavedBlock] : []), ...rollouts]);
+    // A rollout that is not stored comes first: it describes the board on screen.
+    let blocks = $derived([...(unsaved ? [unsaved] : []), ...rollouts]);
 </script>
 
 {#snippet table(/** @type {any[]} */ candidates, /** @type {number} */ limit)}
@@ -43,7 +33,7 @@
         <thead>
             <tr>
                 <th class="move">{$t('analysis.move')}</th>
-                <th>{$t('analysis.equity')}</th>
+                <th>{equityLabel}</th>
                 <th title={$t('rollout.ciHint')}>{$t('rollout.ci95')}</th>
                 <th title={$t('rollout.jsdHint')}>{$t('rollout.jsd')}</th>
                 <th>{$t('rollout.games')}</th>
@@ -54,7 +44,7 @@
                 <tr class:best={i === 0}>
                     <td class="move">{label(c.move)}</td>
                     <td class="num">{eq(c.equity)}</td>
-                    <td class="num" title={$t('rollout.stdErr', { value: eq(c.stdErr) })}>±{eq(c.ci95)}</td>
+                    <td class="num" title={$t('rollout.stdErr', { value: spread(c.stdErr) })}>±{spread(c.ci95)}</td>
                     <td class="num" class:decided={limit > 0 && c.jsd >= limit}>{jsd(c.jsd)}</td>
                     <td class="num">{c.games}</td>
                 </tr>
@@ -75,7 +65,7 @@
         <h3>
             {$t('rollout.title')}
             {r.analysisDepth || ''}
-            {#if r === unsavedBlock}<span class="muted">· {$t('rollout.notStored')}</span>{/if}
+            {#if r === unsaved}<span class="muted">· {$t('rollout.notStored')}</span>{/if}
         </h3>
         {@render table(r.candidates ?? [], r.settings?.jsdLimit ?? 0)}
         {#if r.kind === 'cube' && r.bestCubeAction}

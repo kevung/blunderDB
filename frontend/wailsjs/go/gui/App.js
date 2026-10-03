@@ -46,8 +46,8 @@ export function CopyImageToClipboard(arg1) {
   return window['go']['gui']['App']['CopyImageToClipboard'](arg1);
 }
 
-export function CountRolloutFiltered(arg1, arg2) {
-  return window['go']['gui']['App']['CountRolloutFiltered'](arg1, arg2);
+export function CountRolloutIDs(arg1, arg2) {
+  return window['go']['gui']['App']['CountRolloutIDs'](arg1, arg2);
 }
 
 export function DeleteBearoffTable(arg1) {
@@ -240,6 +240,10 @@ export function StartRollout(arg1) {
 
 export function StartRolloutFiltered(arg1, arg2) {
   return window['go']['gui']['App']['StartRolloutFiltered'](arg1, arg2);
+}
+
+export function StartRolloutIDs(arg1, arg2) {
+  return window['go']['gui']['App']['StartRolloutIDs'](arg1, arg2);
 }
 
 export function StartupFilePath() {

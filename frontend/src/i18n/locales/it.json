@@ -767,7 +767,7 @@
         "summary": "{games} partite (almeno {min}), troncate a {truncation} semimosse, arresto a JSD {jsd}, {ply}-ply",
         "start": "Avvia il rollout",
         "cancel": "Annulla",
-        "batch": "Sulla ricerca corrente…",
+        "batch": "Sulla lista mostrata…",
         "shortcut": "R: avvia il rollout della posizione (di nuovo per fermarlo)",
         "elsewhere": "È in corso il rollout di un'altra posizione.",
         "notStored": "non salvato",
@@ -793,9 +793,7 @@
         "batchDone": "Rollout terminati: {rolledOut} posizioni su {total} (rifiutate {refused}, fallite {failed}).",
         "batchCancelled": "Lotto annullato: {rolledOut} posizioni su {total} fatte; un nuovo avvio riprende.",
         "batchNothing": "Niente da rollare: ogni posizione porta già questo rollout.",
-        "batchConfirm": "Rollare {total} posizioni ({scope}), al massimo {depth} partite ciascuna? Può richiedere ore; annullare conserva quanto fatto.",
-        "batchScopeSearch": "ricerca corrente",
-        "batchScopeLibrary": "intera libreria",
+        "batchConfirm": "Rollare {total} delle {listed} posizioni elencate (quelle che non portano ancora questo rollout), al massimo {depth} partite ciascuna? Può richiedere ore; annullare conserva quanto fatto.",
         "usage": "Uso: rollout [fast|standard] · rollout search [fast|standard] · rollout stop",
         "unavailable": "Le impostazioni del rollout non sono disponibili.",
         "truncation": "Troncamento (semimosse)",
@@ -813,7 +811,12 @@
         "seed": "Seme",
         "seedHint": "Fissa tutti i dadi: stesso seme, stessi numeri",
         "workers": "Processi",
-        "workersHint": "Partite giocate insieme; 0 ne usa uno per core"
+        "workersHint": "Partite giocate insieme; 0 ne usa uno per core",
+        "invalidSettings": "Un'impostazione non è un numero.",
+        "invalidSeed": "Il seme deve essere un intero da 0 a 9007199254740991.",
+        "replaceConfirm": "Un rollout è in corso. Annullarlo e avviare questo?",
+        "replace": "Sostituisci",
+        "batchRunning": "Un lotto è in corso: usare il suo pulsante Annulla."
     },
     "cube": {
         "verdicts": {

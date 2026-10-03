@@ -716,9 +716,10 @@ parties : le classement est fiable, l'équité absolue un peu moins, ce que le
 bloc rappelle. Une position qui n'est pas dans la base se roule, mais ne se
 stocke pas.
 
-Le bouton **Sur la recherche courante…** (ou ``ro search``) roule, l'une après
-l'autre, les positions de la dernière recherche qui n'ont pas encore ce rollout
-; une confirmation donne le total avant de commencer. Chaque position est écrite
+Le bouton **Sur la liste affichée…** (ou ``ro search``) roule, l'une après
+l'autre, les positions de la liste affichée — résultats de recherche, match ou
+collection — qui n'ont pas encore ce rollout ; une confirmation donne le total
+avant de commencer. Chaque position est écrite
 dès qu'elle est finie : annuler garde ce qui est fait, et relancer reprend où
 l'on s'est arrêté. L'avancement survit à la fermeture du panneau.
 

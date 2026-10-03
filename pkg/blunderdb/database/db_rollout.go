@@ -70,6 +70,21 @@ func (d *Database) PositionsToRollout(ctx context.Context, f SearchFilters, s ro
 	return positions, err
 }
 
+// PositionsToRolloutIDs snapshots the positions of ids that carry no rollout of
+// s's Signature yet, in the order of ids: what RolloutPositions rolls out for
+// a list on screen.
+func (d *Database) PositionsToRolloutIDs(ctx context.Context, ids []int64, s rollout.Settings) ([]Position, error) {
+	positions, _, err := d.positionsToRolloutIDs(ctx, ids, s)
+	return positions, err
+}
+
+func (d *Database) positionsToRolloutIDs(ctx context.Context, ids []int64, s rollout.Settings) ([]Position, uint64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	positions, err := rollouts.GatherIDs(ctx, d.store, "", ids, s)
+	return positions, d.generation, err
+}
+
 // positionsToRollout is PositionsToRollout with the generation it read.
 func (d *Database) positionsToRollout(ctx context.Context, f SearchFilters, s rollout.Settings) ([]Position, uint64, error) {
 	d.mu.RLock()

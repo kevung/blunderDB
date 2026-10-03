@@ -810,6 +810,10 @@ export function PositionsToRollout(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PositionsToRollout'](arg1, arg2, arg3);
 }
 
+export function PositionsToRolloutIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PositionsToRolloutIDs'](arg1, arg2, arg3);
+}
+
 export function PreviewAttachToRencontre(arg1, arg2) {
   return window['go']['database']['Database']['PreviewAttachToRencontre'](arg1, arg2);
 }

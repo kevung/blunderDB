@@ -14,18 +14,18 @@ const STANDARD = { truncation: 11, min_games: 324, max_games: 1296, jsd_limit: 3
 
 const handlers = {};
 const startRollout = vi.fn(() => Promise.resolve());
-const startFiltered = vi.fn(() => Promise.resolve());
+const startIDs = vi.fn(() => Promise.resolve());
 const cancelRollout = vi.fn();
-const countFiltered = vi.fn(() => Promise.resolve(42));
+const countIDs = vi.fn(() => Promise.resolve(42));
 const rolloutStatus = vi.fn(() => Promise.resolve({ running: false }));
 const loadRollouts = vi.fn(() => Promise.resolve([]));
 const confirmAction = vi.fn(() => Promise.resolve(true));
 
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     StartRollout: (...a) => startRollout(...a),
-    StartRolloutFiltered: (...a) => startFiltered(...a),
+    StartRolloutIDs: (...a) => startIDs(...a),
     CancelRollout: (...a) => cancelRollout(...a),
-    CountRolloutFiltered: (...a) => countFiltered(...a),
+    CountRolloutIDs: (...a) => countIDs(...a),
     RolloutStatus: (...a) => rolloutStatus(...a),
     RolloutPresets: () =>
         Promise.resolve([
@@ -40,12 +40,13 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
         return () => {};
     })
 }));
+const displayedIDs = vi.fn(() => [3, 5, 8]);
+vi.mock('../services/modeMachine.js', async (importOriginal) => ({ ...(await importOriginal()), displayedPositionIDs: () => displayedIDs() }));
 vi.mock('../services/confirmService.js', async (importOriginal) => ({ ...(await importOriginal()), confirmAction: (...a) => confirmAction(...a) }));
 
 const { positionStore } = await import('../stores/positionStore.js');
 const { databasePathStore } = await import('../stores/databaseStore.js');
 const { rolloutStore, rolloutChoiceStore, idleRollout } = await import('../stores/rolloutStore.js');
-const { lastSearchStore } = await import('../stores/searchHistoryStore.js');
 const RolloutSection = (await import('../components/RolloutSection.svelte')).default;
 const RolloutResults = (await import('../components/RolloutResults.svelte')).default;
 const { runRolloutCommand } = await import('../services/rolloutService.js');
@@ -73,7 +74,7 @@ beforeEach(() => {
     rolloutChoiceStore.set({ preset: 'standard', custom: null });
     databasePathStore.set('/tmp/x.db');
     positionStore.update((p) => ({ ...p, id: 7 }));
-    lastSearchStore.set({ command: 'p>3', position: '{}' });
+    displayedIDs.mockReturnValue([3, 5, 8]);
     loadRollouts.mockResolvedValue([]);
     rolloutStatus.mockResolvedValue({ running: false });
 });
@@ -81,8 +82,9 @@ afterEach(() => cleanup());
 
 describe('RolloutResults', () => {
     test('shows equity, 95 % CI and JSD per candidate, and the Configuration', () => {
-        render(RolloutResults, { props: { rollouts: [stored()] } });
-        expect(screen.getByText('0.123')).toBeTruthy();
+        render(RolloutResults, { props: { rollouts: [stored()], isMoney: true } });
+        expect(screen.getByText('+0.123')).toBeTruthy();
+        expect(screen.getAllByText(/Equity \((money|match)\)/).length).toBeGreaterThan(0);
         expect(screen.getByText('±0.008')).toBeTruthy();
         expect(screen.getByText('3.4')).toBeTruthy();
         expect(screen.getByText('sig-A')).toBeTruthy();
@@ -180,15 +182,15 @@ describe('RolloutSection', () => {
         expect(screen.getByTestId('rollout-cancel')).toBeTruthy();
     });
 
-    test('the batch asks with the total, then starts on the current search', async () => {
+    test('the batch rolls out exactly the list on screen, after asking with the total', async () => {
         render(RolloutSection);
         const batch = await screen.findByTestId('rollout-batch');
         await waitFor(() => expect(batch.disabled).toBe(false));
         await fireEvent.click(batch);
-        await waitFor(() => expect(startFiltered).toHaveBeenCalledTimes(1));
-        expect(countFiltered.mock.calls[0][0]).toBe('p>3');
+        await waitFor(() => expect(startIDs).toHaveBeenCalledTimes(1));
+        expect(countIDs.mock.calls[0][0]).toEqual([3, 5, 8]);
         expect(confirmAction.mock.calls[0][0]).toContain('42');
-        expect(startFiltered.mock.calls[0][0]).toBe('p>3');
+        expect(startIDs.mock.calls[0][0]).toEqual([3, 5, 8]);
     });
 
     test('declining the confirmation starts nothing', async () => {
@@ -198,7 +200,7 @@ describe('RolloutSection', () => {
         await waitFor(() => expect(batch.disabled).toBe(false));
         await fireEvent.click(batch);
         await waitFor(() => expect(confirmAction).toHaveBeenCalled());
-        expect(startFiltered).not.toHaveBeenCalled();
+        expect(startIDs).not.toHaveBeenCalled();
     });
 
     test('batch events show position count and the end summary', async () => {
@@ -212,6 +214,80 @@ describe('RolloutSection', () => {
         await tick();
         expect(screen.getByTestId('rollout-outcome').textContent).toContain('4');
         expect(get(rolloutStore).running).toBe(false);
+    });
+});
+
+describe('guards', () => {
+    test('a seed beyond what JavaScript holds exactly is refused, never rounded', async () => {
+        render(RolloutSection);
+        await fireEvent.click(await screen.findByText('Custom'));
+        await fireEvent.change(screen.getByTestId('rollout-seed'), { target: { value: '18014398509481984' } });
+        await fireEvent.click(screen.getByTestId('rollout-start'));
+        expect(startRollout).not.toHaveBeenCalled();
+        await waitFor(() => expect(screen.getByRole('alert')).toBeTruthy());
+    });
+
+    test('an event of a replaced job is ignored', async () => {
+        render(RolloutSection);
+        await screen.findByTestId('rollout-start');
+        handlers['rollout:progress']({ job: 5, positionId: 7, games: 36, maxGames: 216, candidates: [] });
+        handlers['rollout:cancelled']({ job: 4, positionId: 7 });
+        await tick();
+        expect(screen.getByTestId('rollout-progress')).toBeTruthy();
+        expect(get(rolloutStore).job).toBe(5);
+    });
+
+    test('r stops a rollout of a position but not a batch', async () => {
+        const { toggleRollout } = await import('../services/rolloutService.js');
+        rolloutStore.set({ ...idleRollout(), running: true, kind: 'batch', total: 3 });
+        await toggleRollout();
+        expect(cancelRollout).not.toHaveBeenCalled();
+        rolloutStore.set({ ...idleRollout(), running: true, kind: 'position', positionId: 7 });
+        await toggleRollout();
+        expect(cancelRollout).toHaveBeenCalledTimes(1);
+    });
+
+    test('a refusal started with r is shown in the panel', async () => {
+        const { toggleRollout } = await import('../services/rolloutService.js');
+        startRollout.mockRejectedValueOnce(new Error('rollout: no database is open'));
+        render(RolloutSection);
+        await screen.findByTestId('rollout-start');
+        await toggleRollout();
+        await waitFor(() => expect(screen.getByRole('alert').textContent).toContain('no database is open'));
+    });
+
+    test('a command asks before replacing a running job', async () => {
+        rolloutStore.set({ ...idleRollout(), running: true, kind: 'batch', total: 3 });
+        confirmAction.mockResolvedValueOnce(false);
+        await runRolloutCommand('fast');
+        expect(startRollout).not.toHaveBeenCalled();
+        confirmAction.mockResolvedValueOnce(true);
+        await runRolloutCommand('fast');
+        expect(startRollout).toHaveBeenCalledTimes(1);
+    });
+
+    test('Escape in a settings field leaves the field and does not close the panel', async () => {
+        const onClose = vi.fn();
+        const AnalysisPanel = (await import('../components/AnalysisPanel.svelte')).default;
+        render(AnalysisPanel, { props: { onClose } });
+        await fireEvent.click(await screen.findByText('Custom'));
+        const field = screen.getByTestId('rollout-ply');
+        field.focus();
+        await fireEvent.keyDown(field, { key: 'Escape' });
+        expect(document.activeElement).not.toBe(field);
+        expect(onClose).not.toHaveBeenCalled();
+    });
+
+    test('an unsaved board keeps its result only while that board is on screen', async () => {
+        positionStore.update((p) => ({ ...p, id: 0 }));
+        render(RolloutSection);
+        const start = await screen.findByTestId('rollout-start');
+        await waitFor(() => expect(start.disabled).toBe(false));
+        await fireEvent.click(start);
+        handlers['rollout:done']({ job: 1, positionId: 0, stored: false, record: stored({ signature: 'unsaved-sig' }) });
+        await waitFor(() => expect(screen.getByText('unsaved-sig')).toBeTruthy());
+        positionStore.update((p) => ({ ...p, dice: [6, 6] }));
+        await waitFor(() => expect(screen.queryByText('unsaved-sig')).toBeNull());
     });
 });
 

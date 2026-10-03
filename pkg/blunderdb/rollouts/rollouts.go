@@ -129,6 +129,46 @@ func Gather(ctx context.Context, st storage.Storage, scope string, f domain.Sear
 	return out, nil
 }
 
+// GatherIDs is Gather for a list the caller already holds (the positions on
+// screen): those of ids that exist and do not yet carry a rollout of s's
+// Signature, in the order of ids, each once.
+func GatherIDs(ctx context.Context, st storage.Storage, scope string, ids []int64, s rollout.Settings) ([]domain.Position, error) {
+	seen := make(map[int64]bool, len(ids))
+	unique := make([]int64, 0, len(ids))
+	for _, id := range ids {
+		if !seen[id] {
+			seen[id] = true
+			unique = append(unique, id)
+		}
+	}
+	var out []domain.Position
+	for start := 0; start < len(unique); start += loadBatch {
+		chunk := unique[start:min(start+loadBatch, len(unique))]
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		loaded, err := st.Positions().LoadByIDs(ctx, scope, chunk)
+		if err != nil {
+			return nil, err
+		}
+		byID := make(map[int64]domain.Position, len(loaded))
+		for _, p := range loaded {
+			byID[p.ID] = p
+		}
+		analyses, err := st.Analyses().LoadMany(ctx, scope, chunk)
+		if err != nil {
+			return nil, err
+		}
+		for _, id := range chunk {
+			p, ok := byID[id]
+			if ok && !analyses[id].HasRollout(s.SignatureAt(&p)) {
+				out = append(out, p)
+			}
+		}
+	}
+	return out, nil
+}
+
 // Progress is reported after every batch of games of the position being
 // rolled out, and once more when it is written.
 type Progress struct {

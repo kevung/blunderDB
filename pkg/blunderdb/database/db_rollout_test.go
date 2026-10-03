@@ -188,3 +188,37 @@ func TestMergePositionIntoKeepsTheDuplicatesRollouts(t *testing.T) {
 		t.Errorf("the kept analysis did not win: %+v", a.CheckerAnalysis)
 	}
 }
+
+// A list on screen is rolled out as listed: in its order, each position once,
+// unknown ids dropped, and those already carrying this rollout skipped.
+func TestPositionsToRolloutIDsFollowsTheList(t *testing.T) {
+	d := newTestDB(t)
+	ctx := context.Background()
+	s := tinySettings()
+	ids := make([]int64, 0, 2)
+	for _, pos := range []domain.Position{domain.InitializePosition(), domain.InitializePosition()} {
+		pos.Dice = [2]int{3, 1}
+		if len(ids) == 1 {
+			pos.Dice = [2]int{6, 4}
+		}
+		id, err := d.SavePosition(&pos)
+		if err != nil {
+			t.Fatal(err)
+		}
+		ids = append(ids, id)
+	}
+	if ids[0] == ids[1] {
+		t.Skip("the two positions hash alike")
+	}
+	got, err := d.PositionsToRolloutIDs(ctx, []int64{ids[1], 987654, ids[0], ids[1]}, s)
+	if err != nil || len(got) != 2 || got[0].ID != ids[1] || got[1].ID != ids[0] {
+		t.Fatalf("PositionsToRolloutIDs: %v, %v", got, err)
+	}
+	if _, err := d.RolloutPosition(ctx, ids[1], s, nil, true, nil); err != nil {
+		t.Fatal(err)
+	}
+	got, err = d.PositionsToRolloutIDs(ctx, []int64{ids[1], ids[0]}, s)
+	if err != nil || len(got) != 1 || got[0].ID != ids[0] {
+		t.Fatalf("after one rollout: %v, %v", got, err)
+	}
+}

@@ -767,7 +767,7 @@
         "summary": "{games} ゲーム(最低 {min})、{truncation} ハーフムーブで打ち切り、JSD {jsd} で停止、{ply}-ply",
         "start": "ロールアウトを開始",
         "cancel": "キャンセル",
-        "batch": "現在の検索に対して…",
+        "batch": "表示中の一覧に対して…",
         "shortcut": "R: この局面のロールアウトを開始(もう一度押すと停止)",
         "elsewhere": "別の局面のロールアウトが実行中です。",
         "notStored": "未保存",
@@ -793,9 +793,7 @@
         "batchDone": "ロールアウト完了: {total} 局面中 {rolledOut}(拒否 {refused}、失敗 {failed})。",
         "batchCancelled": "バッチをキャンセルしました: {total} 局面中 {rolledOut} 完了。再実行すると続きから始まります。",
         "batchNothing": "ロールアウトするものはありません。すべての局面がこのロールアウトを持っています。",
-        "batchConfirm": "{total} 局面({scope})をロールアウトしますか?1 局面あたり最大 {depth} ゲームです。数時間かかることがあります。キャンセルしても完了分は残ります。",
-        "batchScopeSearch": "現在の検索",
-        "batchScopeLibrary": "ライブラリ全体",
+        "batchConfirm": "一覧の {listed} 局面のうち {total} 局面(まだこのロールアウトを持たないもの)をロールアウトしますか?1 局面あたり最大 {depth} ゲームです。数時間かかることがあります。キャンセルしても完了分は残ります。",
         "usage": "使い方: rollout [fast|standard] · rollout search [fast|standard] · rollout stop",
         "unavailable": "ロールアウトの設定を利用できません。",
         "truncation": "打ち切り(ハーフムーブ)",
@@ -813,7 +811,12 @@
         "seed": "シード",
         "seedHint": "すべてのサイコロを固定: 同じシードなら同じ数値",
         "workers": "ワーカー",
-        "workersHint": "同時にプレイするゲーム数。0 ならコア数"
+        "workersHint": "同時にプレイするゲーム数。0 ならコア数",
+        "invalidSettings": "数値でない設定があります。",
+        "invalidSeed": "シードは 0 から 9007199254740991 までの整数でなければなりません。",
+        "replaceConfirm": "ロールアウトが実行中です。キャンセルしてこれを開始しますか?",
+        "replace": "置き換える",
+        "batchRunning": "バッチが実行中です。そのキャンセルボタンを使ってください。"
     },
     "cube": {
         "verdicts": {

@@ -2923,6 +2923,7 @@ export namespace gui {
 		}
 	}
 	export class RolloutStatus {
+	    job: number;
 	    running: boolean;
 	    kind?: string;
 	    positionId?: number;
@@ -2937,6 +2938,7 @@ export namespace gui {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.job = source["job"];
 	        this.running = source["running"];
 	        this.kind = source["kind"];
 	        this.positionId = source["positionId"];

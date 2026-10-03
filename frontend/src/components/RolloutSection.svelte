@@ -5,14 +5,14 @@
     import { t } from '../i18n';
     import { positionStore } from '../stores/positionStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
+    import { isMoneyPosition } from '../utils/cubeDecision.js';
     import { rolloutStore, rolloutChoiceStore } from '../stores/rolloutStore.js';
-    import { ensureRolloutEvents, syncRolloutStatus, loadRolloutPresets, chosenSettings, startRolloutOfCurrent, startRolloutOfSearch, cancelRollout } from '../services/rolloutService.js';
+    import { ensureRolloutEvents, syncRolloutStatus, loadRolloutPresets, chosenSettings, startRolloutOfCurrent, startRolloutOfSearch, cancelRollout, boardKey } from '../services/rolloutService.js';
     import { logger } from '../utils/logger.js';
     import RolloutResults from './RolloutResults.svelte';
 
     let presets = $state(/** @type {any} */ (null));
     let stored = $state(/** @type {any[]} */ ([]));
-    let failure = $state('');
 
     let rollout = $derived($rolloutStore);
     let choice = $derived($rolloutChoiceStore);
@@ -66,12 +66,19 @@
     }
 
     async function start() {
-        failure = '';
-        if (settings) failure = await startRolloutOfCurrent(settings);
+        if (settings) await startRolloutOfCurrent(settings);
     }
     async function startBatch() {
-        failure = '';
-        if (settings) failure = await startRolloutOfSearch(settings);
+        if (settings) await startRolloutOfSearch(settings);
+    }
+
+    // Escape leaves a settings field and keeps the panel open (the panel closes on the next one).
+    /** @param {KeyboardEvent} event */
+    function leaveField(event) {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            /** @type {HTMLElement} */ (event.currentTarget).blur();
+        }
     }
 
     const FIELDS = [
@@ -92,7 +99,9 @@
 
     let busyOther = $derived(rollout.running && (rollout.kind === 'batch' || rollout.positionId !== positionId));
     let live = $derived(rollout.running && rollout.kind === 'position' && rollout.positionId === positionId ? rollout.candidates : []);
-    let unsaved = $derived(!positionId && !rollout.running ? rollout.result : null);
+    // A rollout of a board that is not saved describes that board, in that database: it goes with them.
+    let unsaved = $derived(!positionId && !rollout.running && rollout.result && rollout.resultKey === boardKey($positionStore) ? rollout.result : null);
+    let isMoney = $derived(isMoneyPosition($positionStore));
     let out = $derived(rollout.outcome);
     let percent = $derived(rollout.maxGames > 0 ? Math.min(100, Math.round((100 * rollout.games) / rollout.maxGames)) : 0);
 </script>
@@ -112,7 +121,7 @@
                 {#each FIELDS as [key, label, hint, step] (key)}
                     <label title={$t(hint)}>
                         <span>{$t(label)}</span>
-                        <input type="number" min="0" {step} value={settings[key]} disabled={rollout.running} onchange={(e) => edit(key, e)} data-testid={'rollout-' + key} />
+                        <input type="number" min="0" {step} value={settings[key]} disabled={rollout.running} onchange={(e) => edit(key, e)} onkeydown={leaveField} data-testid={'rollout-' + key} />
                     </label>
                 {/each}
             </div>
@@ -142,8 +151,8 @@
         </div>
     {/if}
 
-    {#if failure}
-        <p class="error" role="alert">{$t('rollout.error', { message: failure })}</p>
+    {#if rollout.error}
+        <p class="error" role="alert">{$t('rollout.error', { message: rollout.error })}</p>
     {:else if out && !rollout.running}
         <p class="outcome" role="status" data-testid="rollout-outcome">
             {#if out.type === 'done'}
@@ -160,7 +169,7 @@
         </p>
     {/if}
 
-    <RolloutResults rollouts={stored} {live} liveGames={rollout.games} liveMaxGames={rollout.maxGames} {unsaved} />
+    <RolloutResults rollouts={stored} {live} liveGames={rollout.games} liveMaxGames={rollout.maxGames} {unsaved} {isMoney} />
 </section>
 
 <style>

@@ -767,7 +767,7 @@
         "summary": "{games} parties (au moins {min}), tronquées à {truncation} demi-coups, arrêt à JSD {jsd}, {ply}-ply",
         "start": "Lancer le rollout",
         "cancel": "Annuler",
-        "batch": "Sur la recherche courante…",
+        "batch": "Sur la liste affichée…",
         "shortcut": "R : lancer le rollout de la position (encore pour l'arrêter)",
         "elsewhere": "Le rollout d'une autre position est en cours.",
         "notStored": "non stocké",
@@ -793,9 +793,7 @@
         "batchDone": "Rollouts terminés : {rolledOut} positions sur {total} (refusées {refused}, en échec {failed}).",
         "batchCancelled": "Lot annulé : {rolledOut} positions sur {total} faites ; un nouveau lancement reprend.",
         "batchNothing": "Rien à rouler : chaque position porte déjà ce rollout.",
-        "batchConfirm": "Rouler {total} positions ({scope}), {depth} parties au plus chacune ? Cela peut prendre des heures ; annuler garde ce qui est fait.",
-        "batchScopeSearch": "recherche courante",
-        "batchScopeLibrary": "bibliothèque entière",
+        "batchConfirm": "Rouler {total} des {listed} positions listées (celles qui n'ont pas encore ce rollout), {depth} parties au plus chacune ? Cela peut prendre des heures ; annuler garde ce qui est fait.",
         "usage": "Usage : rollout [fast|standard] · rollout search [fast|standard] · rollout stop",
         "unavailable": "Les réglages du rollout sont indisponibles.",
         "truncation": "Troncature (demi-coups)",
@@ -813,7 +811,12 @@
         "seed": "Graine",
         "seedHint": "Fixe tous les dés : même graine, mêmes nombres",
         "workers": "Processus",
-        "workersHint": "Parties jouées à la fois ; 0 en met un par cœur"
+        "workersHint": "Parties jouées à la fois ; 0 en met un par cœur",
+        "invalidSettings": "Un réglage n'est pas un nombre.",
+        "invalidSeed": "La graine doit être un entier de 0 à 9007199254740991.",
+        "replaceConfirm": "Un rollout est en cours. L'annuler et lancer celui-ci ?",
+        "replace": "Remplacer",
+        "batchRunning": "Un lot est en cours : utilisez son bouton Annuler."
     },
     "cube": {
         "verdicts": {

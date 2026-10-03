@@ -99,8 +99,9 @@
     });
 
     function handleKeyDown(event) {
-        // A field of the rollout settings keeps its own keys (the arrows are not move navigation).
-        if (event.key !== 'Escape' && event.target?.matches?.('input, select, textarea')) return;
+        // A field of the rollout settings keeps its own keys (the arrows are not move navigation)
+        // and its own Escape, which only leaves the field.
+        if (event.target?.matches?.('input, select, textarea')) return;
         if (event.key === 'Escape') {
             // Clear selection first if a move is selected. What the panel closes
             // itself, it claims (preventDefault), so the global dispatcher leaves it be.
@@ -116,9 +117,9 @@
             return;
         }
 
-        // `r` starts a rollout of the position (or stops the one running); a field of the rollout
-        // settings keeps its own letters.
-        if (isBareLetter(event, 'r') && !event.target?.matches?.('input, select, textarea')) {
+        // `r` starts a rollout of the position, or stops the one running; a refusal is shown with
+        // the buttons' (the store carries it).
+        if (isBareLetter(event, 'r')) {
             event.preventDefault();
             toggleRollout();
             return;

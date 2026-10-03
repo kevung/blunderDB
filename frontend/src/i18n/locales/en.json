@@ -767,7 +767,7 @@
         "summary": "{games} games (at least {min}), truncated at {truncation} half-moves, stop at JSD {jsd}, {ply}-ply",
         "start": "Roll out",
         "cancel": "Cancel",
-        "batch": "On the current search…",
+        "batch": "On the displayed list…",
         "shortcut": "R: roll out the position (again to stop it)",
         "elsewhere": "A rollout of another position is running.",
         "notStored": "not stored",
@@ -793,9 +793,7 @@
         "batchDone": "Rollouts finished: {rolledOut} of {total} positions (refused {refused}, failed {failed}).",
         "batchCancelled": "Batch cancelled: {rolledOut} of {total} positions done; a rerun resumes.",
         "batchNothing": "Nothing to roll out: every position already carries this rollout.",
-        "batchConfirm": "Roll out {total} positions ({scope}), at most {depth} games each? This can take hours; cancelling keeps what is done.",
-        "batchScopeSearch": "current search",
-        "batchScopeLibrary": "whole library",
+        "batchConfirm": "Roll out {total} of the {listed} positions listed (those without this rollout yet), at most {depth} games each? This can take hours; cancelling keeps what is done.",
         "usage": "Usage: rollout [fast|standard] · rollout search [fast|standard] · rollout stop",
         "unavailable": "Rollout settings are unavailable.",
         "truncation": "Truncation (half-moves)",
@@ -813,7 +811,12 @@
         "seed": "Seed",
         "seedHint": "Fixes every die: same seed, same numbers",
         "workers": "Workers",
-        "workersHint": "Games played at once; 0 means one per core"
+        "workersHint": "Games played at once; 0 means one per core",
+        "invalidSettings": "A setting is not a number.",
+        "invalidSeed": "The seed must be a whole number from 0 to 9007199254740991.",
+        "replaceConfirm": "A rollout is running. Cancel it and start this one?",
+        "replace": "Replace",
+        "batchRunning": "A batch is running: use its Cancel button."
     },
     "cube": {
         "verdicts": {
