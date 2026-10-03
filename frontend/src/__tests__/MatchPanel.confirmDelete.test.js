@@ -7,14 +7,15 @@
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, cleanup, fireEvent } from '@testing-library/svelte';
-import { get } from 'svelte/store';
 import { answerConfirm } from './confirmHelper.js';
-import { confirmModalStore, resolveConfirm } from '../services/confirmService.js';
+import { confirmModalStore } from '../services/confirmService.js';
 
 const MATCH = { id: 7, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, match_date: '2026-01-15', game_count: 2 };
 const MOVES = [];
 
-vi.mock('../../wailsjs/go/database/Database.js', () => ({
+// ModalHost brings every application modal, each importing its own bindings: keep them all, stub the ones used here.
+vi.mock('../../wailsjs/go/database/Database.js', async (importOriginal) => ({
+    ...(await importOriginal()),
     GetAllMatches: vi.fn(() => Promise.resolve([MATCH])),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
     ListTranscriptions: vi.fn(() => Promise.resolve([])),
@@ -37,21 +38,36 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     LoadCommandHistory: vi.fn(() => Promise.resolve([])),
     SaveCommand: vi.fn(() => Promise.resolve())
 }));
+vi.mock('../../wailsjs/runtime/runtime.js', () => ({
+    EventsOn: () => () => {},
+    EventsOff: () => {},
+    WindowSetTitle: () => {},
+    Quit: () => {},
+    ClipboardGetText: () => Promise.resolve('')
+}));
 
 import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { GetAllMatches, DeleteMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
+import ModalHost from '../components/ModalHost.svelte';
+
+// window.go.<ns>.<struct>.<Method>() → Promise<null>, for the bindings not stubbed above.
+function goStub() {
+    return new Proxy(() => Promise.resolve(null), { get: (_t, key) => (key === 'then' ? undefined : goStub()) });
+}
 
 describe('MatchPanel — deleting a match', () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        window.go = goStub();
         databasePathStore.set('/tmp/test.db');
         openPanels.set(new Set([PANEL.MATCH]));
     });
     afterEach(() => {
         cleanup();
         openPanels.set(new Set());
+        confirmModalStore.set(null);
     });
 
     test('is confirmed through the dialog; refusing deletes nothing', async () => {
@@ -74,6 +90,9 @@ describe('MatchPanel — deleting a match', () => {
     });
 
     test('Enter on the confirmation does not also open the match', async () => {
+        // The dialog is mounted where the app mounts it, so its delegated handler runs
+        // before the panel's document listener, as in the application.
+        render(ModalHost);
         const { container } = render(MatchPanel);
         await vi.waitFor(() => expect(GetAllMatches).toHaveBeenCalled());
         const row = await vi.waitFor(() => {
@@ -84,11 +103,17 @@ describe('MatchPanel — deleting a match', () => {
         await fireEvent.click(row);
         const del = container.querySelector('button.icon-btn.delete');
         await fireEvent.click(del);
-        await vi.waitFor(() => expect(get(confirmModalStore)).not.toBeNull());
+        const dialog = await vi.waitFor(() => {
+            const d = document.querySelector('[role="dialog"]');
+            expect(d).not.toBeNull();
+            expect(d.contains(document.activeElement)).toBe(true);
+            return d;
+        });
         const loadsBefore = GetMatchMovePositions.mock.calls.length;
-        await fireEvent.keyDown(document.body, { key: 'Enter' });
+        await fireEvent.keyDown(document.activeElement, { key: 'Enter' });
+        await vi.waitFor(() => expect(DeleteMatch).toHaveBeenCalledWith(7));
         await new Promise((r) => setTimeout(r, 50));
         expect(GetMatchMovePositions.mock.calls.length).toBe(loadsBefore);
-        resolveConfirm(false);
+        expect(dialog.isConnected).toBe(false);
     });
 });

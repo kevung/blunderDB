@@ -449,6 +449,8 @@
 
     function handleKeyDown(event) {
         if (!visible) return;
+        // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
+        if (event.defaultPrevented) return;
 
         // Let Ctrl/Meta combos, Space, '?' and typing in an editable field pass
         // through to the global handler — see keyboardService.panelKeyGuard.

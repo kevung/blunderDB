@@ -592,6 +592,8 @@
 
     function handleKeyDown(event) {
         if ($activeTabStore !== 'search') return;
+        // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
+        if (event.defaultPrevented) return;
         if (event.target.matches('input, textarea, select')) {
             // Escape reaches the global dispatcher (on `window`), which blurs the
             // field. Tab is stopped here so it moves between this form's fields.

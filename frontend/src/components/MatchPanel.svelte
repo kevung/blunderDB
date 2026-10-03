@@ -593,6 +593,8 @@
 
     function handleKeyDown(event) {
         if (!visible) return;
+        // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
+        if (event.defaultPrevented) return;
         // A confirmation is up: Enter / Escape / Delete belong to it.
         if (get(confirmModalStore)) return;
         // Don't intercept keys while the merge players modal is open
