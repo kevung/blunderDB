@@ -206,6 +206,9 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 		if err := requireOwned(ctx, tx, tenant, "position", positionID); err != nil {
 			return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, err)
 		}
+		if err := invalidateMatchStatsOnAnalysis(ctx, tx, tenant, positionID, c); err != nil {
+			return err
+		}
 		tag, err := tx.Exec(ctx, analysisUpsertSQL,
 			tenant, positionID, data,
 			c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
@@ -386,6 +389,12 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 			return repaired, err
 		}
 		if len(page) == 0 {
+			// A repaired column is one match_stats summarises.
+			if repaired > 0 {
+				if _, err := s.db.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1`, tid); err != nil {
+					return repaired, fmt.Errorf("postgres: repair: invalidate match stats: %w", err)
+				}
+			}
 			return repaired, nil
 		}
 		lastID = page[len(page)-1].id
@@ -446,4 +455,37 @@ func (s *analysisStore) WithoutAnalysis(ctx context.Context, scope string, opts 
 			yield(nil, fmt.Errorf("postgres: list positions without analysis: %w", err))
 		}
 	}
+}
+
+// invalidateMatchStatsOnAnalysis drops the match_stats rows of every match
+// reaching positionID when the analysis about to be written changes a column
+// those rows summarise (or the position had no analysis). An unchanged
+// rewrite costs one indexed read and invalidates nothing.
+func invalidateMatchStatsOnAnalysis(ctx context.Context, tx execer, tenant, positionID int64, c engine.AnalysisColumns) error {
+	var cubeErr, moveErr, depth *int64
+	var forced, closeCube *bool
+	var eng *string
+	err := tx.QueryRow(ctx, `SELECT cube_error, best_move_equity_error, is_forced, is_close_cube,
+		analysis_engine, analysis_depth FROM analysis WHERE position_id = $1 AND tenant_id = $2`, positionID, tenant).
+		Scan(&cubeErr, &moveErr, &forced, &closeCube, &eng, &depth)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		return fmt.Errorf("postgres: read analysis columns: %w", err)
+	}
+	deref := func(p *int64) int64 {
+		if p == nil {
+			return 0
+		}
+		return *p
+	}
+	if err == nil && cubeErr != nil && *cubeErr == c.CubeError && moveErr != nil && *moveErr == c.BestMoveEquityError &&
+		forced != nil && *forced == (c.IsForced != 0) && closeCube != nil && *closeCube == (c.IsCloseCube != 0) &&
+		eng != nil && *eng == c.AnalysisEngine && deref(depth) == c.AnalysisDepth {
+		return nil
+	}
+	if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1 AND match_id IN
+		(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id
+		  WHERE mv.position_id = $2 AND mv.tenant_id = $1)`, tenant, positionID); err != nil {
+		return fmt.Errorf("postgres: invalidate match stats: %w", err)
+	}
+	return nil
 }

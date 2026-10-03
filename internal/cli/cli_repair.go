@@ -19,6 +19,7 @@ func (cli *CLI) runRepair(args []string) error {
 
 	dbPath := repairCmd.String("db", "", "Path to the database file (required)")
 	format := repairCmd.String("format", "text", "Output format: text or json")
+	rebuildStats := repairCmd.Bool("stats", false, "Also recompute the per-match statistics (PR, decisions, blunders, luck of each seat) from scratch")
 
 	repairCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb repair [options]")
@@ -43,6 +44,7 @@ func (cli *CLI) runRepair(args []string) error {
 		fmt.Println("Examples:")
 		fmt.Println("  blunderdb repair --db database.db")
 		fmt.Println("  blunderdb repair --db database.db --format json")
+		fmt.Println("  blunderdb repair --db database.db --stats")
 	}
 
 	if err := repairCmd.Parse(args); err != nil {
@@ -76,12 +78,23 @@ func (cli *CLI) runRepair(args []string) error {
 		return fmt.Errorf("repair failed: %w", err)
 	}
 
+	// The counter is in the JSON report only when the pass ran.
+	matchStats := 0
+	var matchStatsReport *int
+	if *rebuildStats {
+		if matchStats, err = cli.db.RebuildMatchStats(); err != nil {
+			return fmt.Errorf("repair failed: %w", err)
+		}
+		matchStatsReport = &matchStats
+	}
+
 	if formatLower == "json" {
 		return printJSON(struct {
-			Repaired int `json:"repaired"`
-			Phases   int `json:"phases"`
-			Crawford int `json:"crawford"`
-		}{repaired, phases, crawford})
+			Repaired   int  `json:"repaired"`
+			Phases     int  `json:"phases"`
+			Crawford   int  `json:"crawford"`
+			MatchStats *int `json:"match_stats,omitempty"`
+		}{repaired, phases, crawford, matchStatsReport})
 	}
 	switch repaired {
 	case 0:
@@ -106,6 +119,9 @@ func (cli *CLI) runRepair(args []string) error {
 		fmt.Println("1 position rehashed onto the right Crawford sentinel.")
 	default:
 		fmt.Printf("%d positions rehashed onto the right Crawford sentinel.\n", crawford)
+	}
+	if *rebuildStats {
+		fmt.Printf("Per-match statistics recomputed for %d matches.\n", matchStats)
 	}
 	return nil
 }

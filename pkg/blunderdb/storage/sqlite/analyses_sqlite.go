@@ -14,6 +14,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 type analysisStore struct{ db execer }
@@ -59,10 +60,11 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 	if err != nil {
 		return err
 	}
-	return s.write(ctx, positionID, a, c)
+	return s.write(ctx, positionID, a, c, nil)
 }
 
-const analysisMergeSelectSQL = `SELECT data, best_cube_action, cube_error, best_move_equity_error, is_forced, is_close_cube
+const analysisMergeSelectSQL = `SELECT data, best_cube_action, cube_error, best_move_equity_error, is_forced, is_close_cube,
+	analysis_engine, analysis_depth
 	FROM analysis WHERE position_id = ?`
 
 const cubeResponseSQL = `UPDATE position SET is_cube_response = 1 WHERE id = ?`
@@ -70,11 +72,13 @@ const cubeResponseSQL = `UPDATE position SET is_cube_response = 1 WHERE id = ?`
 // Merge — see storage.AnalysisStore.
 func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int64, played *storage.PlayedActions, merge func(*domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error) {
 	var (
-		data   []byte
-		stored storedPlayedColumns
+		data      []byte
+		stored    storedPlayedColumns
+		storedEng sql.NullString
+		storedDep sql.NullInt64
 	)
 	err := s.db.QueryRowContext(ctx, analysisMergeSelectSQL, positionID).
-		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube)
+		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube, &storedEng, &storedDep)
 	found := err == nil
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return false, fmt.Errorf("sqlite: load analysis for position %d: %w", positionID, err)
@@ -110,7 +114,13 @@ func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int6
 			return false, nil
 		}
 	}
-	return true, s.write(ctx, positionID, merged, c)
+	// The columns just read decide the match_stats invalidation: the import
+	// path pays no second read for it.
+	statsChanged := !found || !stored.cubeErr.Valid || !stored.bestMoveErr.Valid ||
+		stored.cubeErr.Int64 != c.CubeError || stored.bestMoveErr.Int64 != c.BestMoveEquityError ||
+		stored.forced.Int64 != c.IsForced || stored.closeCube.Int64 != c.IsCloseCube ||
+		storedEng.String != c.AnalysisEngine || storedDep.Int64 != c.AnalysisDepth
+	return true, s.write(ctx, positionID, merged, c, &statsChanged)
 }
 
 // storedPlayedColumns are the stored columns that depend on the played
@@ -155,7 +165,11 @@ func (s *analysisStore) prepare(ctx context.Context, positionID int64, a *domain
 }
 
 // write encodes a prepared analysis and upserts it with its columns.
-func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.PositionAnalysis, c engine.AnalysisColumns) error {
+//
+// statsChanged says whether the write changes a column match_stats
+// summarises; nil when the caller has not read the stored row, and write
+// reads it.
+func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.PositionAnalysis, c engine.AnalysisColumns, statsChanged *bool) error {
 	data, err := engine.EncodeAnalysisForStorage(a)
 	if err != nil {
 		return fmt.Errorf("sqlite: encode analysis: %w", err)
@@ -165,6 +179,18 @@ func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.P
 	// caller that already holds a transaction writes inside it, a caller that
 	// does not gets one of its own (withTx).
 	return withTx(ctx, s.db, func(tx execer) error {
+		if statsChanged == nil {
+			changed, err := analysisStatsColumnsChange(ctx, tx, positionID, c)
+			if err != nil {
+				return err
+			}
+			statsChanged = &changed
+		}
+		if *statsChanged {
+			if _, err := tx.ExecContext(ctx, invalidateMatchStatsOfPositionSQL, positionID); err != nil {
+				return fmt.Errorf("sqlite: invalidate match stats: %w", err)
+			}
+		}
 		if _, err := tx.ExecContext(ctx, analysisUpsertSQL,
 			positionID, data,
 			c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
@@ -344,6 +370,12 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 			return repaired, err
 		}
 		if len(page) == 0 {
+			// A repaired column is one match_stats summarises.
+			if repaired > 0 {
+				if _, err := s.db.ExecContext(ctx, `DELETE FROM match_stats`); err != nil {
+					return repaired, fmt.Errorf("sqlite: repair: invalidate match stats: %w", err)
+				}
+			}
 			return repaired, nil
 		}
 		lastID = page[len(page)-1].id
@@ -411,4 +443,29 @@ func (s *analysisStore) WithoutAnalysis(ctx context.Context, _ string, opts stor
 			yield(nil, fmt.Errorf("sqlite: list positions without analysis: %w", err))
 		}
 	}
+}
+
+// invalidateMatchStatsOfPositionSQL drops the match_stats rows of every
+// match reaching one position: an analysis write that changes a column
+// those rows summarise (or gives the position its first analysis) makes
+// them stale.
+const invalidateMatchStatsOfPositionSQL = sqlshared.InvalidateMatchStatsOfPositionsSQL + "(?)" + sqlshared.InvalidateMatchStatsOfPositionsSuffix
+
+// analysisStatsColumnsChange reports whether writing c over positionID's
+// stored analysis changes a column match_stats summarises.
+func analysisStatsColumnsChange(ctx context.Context, tx execer, positionID int64, c engine.AnalysisColumns) (bool, error) {
+	var cubeErr, moveErr, forced, closeCube, depth sql.NullInt64
+	var eng sql.NullString
+	err := tx.QueryRowContext(ctx, `SELECT cube_error, best_move_equity_error, is_forced, is_close_cube,
+		analysis_engine, analysis_depth FROM analysis WHERE position_id = ?`, positionID).
+		Scan(&cubeErr, &moveErr, &forced, &closeCube, &eng, &depth)
+	if errors.Is(err, sql.ErrNoRows) {
+		return true, nil
+	}
+	if err != nil {
+		return false, fmt.Errorf("sqlite: read analysis columns: %w", err)
+	}
+	return !cubeErr.Valid || !moveErr.Valid || cubeErr.Int64 != c.CubeError || moveErr.Int64 != c.BestMoveEquityError ||
+		forced.Int64 != c.IsForced || closeCube.Int64 != c.IsCloseCube ||
+		eng.String != c.AnalysisEngine || depth.Int64 != c.AnalysisDepth, nil
 }

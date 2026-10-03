@@ -58,6 +58,11 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.dateRange", rpc(func(ctx context.Context, scope string, _ struct{}) (storage.StatsDateRange, error) {
 			return ss().DateRange(ctx, scope)
 		})},
+		// The per-match statistics recomputed from scratch (repair --stats).
+		{http.MethodPost, "/v1/stats.rebuildMatchStats", rpc(func(ctx context.Context, scope string, _ struct{}) (rebuildMatchStatsResp, error) {
+			n, err := ss().RebuildMatchStats(ctx, scope, nil)
+			return rebuildMatchStatsResp{Matches: n}, err
+		})},
 		{http.MethodPost, "/v1/stats.compute", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StatsResult, error) {
 			return ss().Compute(ctx, scope, req.Filter)
 		})},
@@ -112,4 +117,9 @@ func (s *Server) statsRoutes() []route {
 			return tournamentBadgesResp{Badges: badges}, err
 		})},
 	}
+}
+
+// rebuildMatchStatsResp reports how many matches had their statistics recomputed.
+type rebuildMatchStatsResp struct {
+	Matches int `json:"matches"`
 }

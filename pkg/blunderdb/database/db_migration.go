@@ -26,6 +26,8 @@ import (
 	"log/slog"
 	"strconv"
 	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // migrationStep upgrades a database from schema version from to schema
@@ -198,6 +200,14 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	}
 	if err := d.backfillAnalysisProvenance(ctx); err != nil {
 		return fmt.Errorf("deriving the provenance of the stored analyses: %w", err)
+	}
+	// match_stats last: it reads the provenance just derived. Missing rows
+	// are the to-do list, so an interrupted fill resumes on the next open,
+	// and an open with every match computed pays one anti-join.
+	if _, err := sqlite.New(d.db).Stats().FillMatchStats(ctx, "", func(done, total int) {
+		d.emitMigrationProgress("match_stats", done, total)
+	}); err != nil {
+		return fmt.Errorf("computing the per-match statistics: %w", err)
 	}
 	if crossing230 {
 		if err := d.finishLargeLibraryWave(ctx); err != nil {

@@ -2019,7 +2019,19 @@ avait tirées qui sont refaites.
 * ``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` — un compteur
   par passe : ``repaired`` (colonnes d'analyse), ``phases`` (positions
   reclassées) et ``crawford`` (positions réhachées). Chacun dit le nombre de
-  lignes réellement changées.
+  lignes réellement changées. Avec ``--stats``, s'y ajoute ``match_stats``
+  (matchs recalculés).
+* ``--stats`` — Recalcule aussi, de zéro, les statistiques par match.
+
+Les statistiques par match sont, pour chaque joueur de chaque match, ses
+décisions, son erreur cumulée, son PR, ses blunders, sa chance et la provenance
+dominante de ses analyses ; les statistiques les lisent au lieu de reparcourir
+chaque décision. Elles s'écrivent avec le match à l'import et s'effacent à
+chaque changement qui les altère (match supprimé, joueurs permutés, analyse
+d'une de ses positions modifiée, seuil de blunder déplacé) ; la lecture suivante
+recalcule ce qui manque. Une base migrée d'une version antérieure les calcule
+une fois, à sa première ouverture. ``--stats`` les refait toutes : le recours si
+cette tenue de comptes se trompait un jour.
 
 Utile après une correction de la façon dont une analyse importée est lue. Le
 cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de double » de

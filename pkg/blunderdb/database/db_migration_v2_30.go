@@ -8,6 +8,8 @@ import (
 	"log/slog"
 	"strconv"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
@@ -158,6 +160,10 @@ func (d *Database) backfillAnalysisProvenance(ctx context.Context) error {
 	if err := d.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM analysis WHERE analysis_engine IS NULL`).Scan(&total); err != nil {
 		return err
 	}
+	// The provenance written here is a column match_stats summarises; on the
+	// crossing itself the table is still empty and nothing needs dropping.
+	var statsProbe int
+	haveStats := d.db.QueryRowContext(ctx, `SELECT 1 FROM match_stats LIMIT 1`).Scan(&statsProbe) == nil
 	done := 0
 	var last int64
 	for {
@@ -193,6 +199,17 @@ func (d *Database) backfillAnalysisProvenance(ctx context.Context) error {
 					createdVal = created
 				}
 				if _, err := stmt.ExecContext(ctx, eng, depth, createdVal, id); err != nil {
+					return err
+				}
+			}
+			if haveStats {
+				args := make([]any, len(ids))
+				for i, id := range ids {
+					args[i] = id
+				}
+				if _, err := tx.ExecContext(ctx, `DELETE FROM match_stats WHERE match_id IN
+					(SELECT g.match_id FROM analysis a JOIN move mv ON mv.position_id = a.position_id
+					   JOIN game g ON g.id = mv.game_id WHERE a.id IN (`+sqlshared.Placeholders(len(ids))+`))`, args...); err != nil {
 					return err
 				}
 			}

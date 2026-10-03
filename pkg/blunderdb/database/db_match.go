@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -322,6 +324,10 @@ func (d *Database) DeleteMatch(matchID int64) error {
 	`, matchID)
 	if err != nil {
 		return fmt.Errorf("error collecting position IDs: %w", err)
+	}
+
+	if _, err = tx.Exec(sqlshared.InvalidateMatchStatsOfMatchesSQL+"(?)", matchID); err != nil {
+		return fmt.Errorf("error deleting match stats: %w", err)
 	}
 
 	// Foreign key constraints will cascade delete to game, move, and move_analysis

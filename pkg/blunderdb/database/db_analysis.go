@@ -8,6 +8,8 @@ import (
 	"sort"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -297,6 +299,9 @@ func (d *Database) DeleteAnalysis(positionID int64) error {
 	if err != nil {
 		return err
 	}
+	if _, err := d.db.Exec(sqlshared.InvalidateMatchStatsOfPositionsSQL+"(?)"+sqlshared.InvalidateMatchStatsOfPositionsSuffix, positionID); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -361,4 +366,18 @@ func mergeCubeAnalyses(existing *DoublingCubeAnalysis, existingAll []DoublingCub
 		return primary, nil
 	}
 	return primary, all
+}
+
+// RebuildMatchStats discards the per-match statistics (match_stats) and
+// computes them all again from the moves; it returns the number of matches.
+// Every write that changes what a row summarises already drops it, so this
+// is the explicit way back after a bug in that bookkeeping, never a routine.
+func (d *Database) RebuildMatchStats() (int, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return 0, fmt.Errorf("no database is currently open")
+	}
+	return d.store.Stats().RebuildMatchStats(context.Background(), "", nil)
 }

@@ -78,6 +78,12 @@ func RepairCrawfordSentinel(ctx context.Context, db Execer, scope string, positi
 	if err != nil {
 		return fail(err)
 	}
+	// The repaired scores feed countedExpr: every match_stats row may be stale.
+	if outOf+into > 0 {
+		if err := InvalidateAllMatchStats(ctx, db, scope); err != nil {
+			return fail(err)
+		}
+	}
 	return outOf + into, nil
 }
 

@@ -119,6 +119,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Comments/TagVocabulary", testTagVocabulary},
 		{"Search/TagFilterIsDelimited", testTagSearchIsDelimited},
 		{"Stats/MatchDetail", testStatsMatchDetail},
+		{"Stats/MatchStatsOracle", testMatchStatsOracle},
 		{"Stats/MatchMoveGrades", testStatsMatchMoveGrades},
 		{"Stats/SnowieDenominatorCountsBothPlayers", testStatsSnowieDenominator},
 		{"Stats/PlayerTable", testStatsPlayerTable},

@@ -66,6 +66,9 @@ var hotStatements = map[string]bool{
 	playedActionsSQL:           true,
 	moveInsertSQL:              true,
 	positionMatchDateOnMoveSQL: true,
+	// A fresh position's first analysis: the match_stats rows of the
+	// matches reaching it (none, on an import) are dropped.
+	invalidateMatchStatsOfPositionSQL: true,
 }
 
 // stmtTx is the execer of a transaction: a *sql.Tx whose hotStatements are

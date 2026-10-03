@@ -277,6 +277,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.positionIdsByMatch             JSON
      POST /v1/stats.positionIdsBySelection         JSON
      POST /v1/stats.positionIdsByTournament        JSON
+     POST /v1/stats.rebuildMatchStats              JSON
      POST /v1/stats.recurringErrors                JSON
      POST /v1/stats.studyIds                       JSON
      POST /v1/stats.tournamentBadges               JSON

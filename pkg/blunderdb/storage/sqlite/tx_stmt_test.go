@@ -98,10 +98,10 @@ func TestImportPathStatementsArePreparedOnceAndSkipTheMoveTable(t *testing.T) {
 	if n := count.sent[playedActionsSQL]; n != 0 {
 		t.Errorf("the move table was read %d times although the graph knew every played action", n)
 	}
-	if per := (count.total() - before) / decisions; per != 5 {
-		t.Errorf("%d statements per decision, want 5 (position, analysis read, analysis upsert, move, position match date): %v", per, count.sent)
+	if per := (count.total() - before) / decisions; per != 6 {
+		t.Errorf("%d statements per decision, want 6 (position, analysis read, match stats invalidation, analysis upsert, move, position match date): %v", per, count.sent)
 	}
-	for _, q := range []string{positionInsertSQL, analysisMergeSelectSQL, analysisUpsertSQL, moveInsertSQL, positionMatchDateOnMoveSQL} {
+	for _, q := range []string{positionInsertSQL, analysisMergeSelectSQL, invalidateMatchStatsOfPositionSQL, analysisUpsertSQL, moveInsertSQL, positionMatchDateOnMoveSQL} {
 		if _, ok := stx.stmts[q]; !ok {
 			t.Errorf("hot statement not prepared: %.40q", q)
 		}

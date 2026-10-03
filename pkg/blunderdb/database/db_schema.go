@@ -9,6 +9,8 @@ import (
 	"log/slog"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
+
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
@@ -303,6 +305,10 @@ func mergeRolloutsIntoTx(ctx context.Context, tx *sql.Tx, keepID int64, rollouts
 // when dupID carried them and never lowered. Whatever cannot be re-pointed
 // (a membership keepID already has) goes with dupID through ON DELETE CASCADE.
 func mergePositionInto(ctx context.Context, tx *sql.Tx, keepID, dupID int64) error {
+	// dupID's matches are about to be scored by keepID's analysis.
+	if _, err := tx.ExecContext(ctx, sqlshared.InvalidateMatchStatsOfPositionsSQL+"(?)"+sqlshared.InvalidateMatchStatsOfPositionsSuffix, dupID); err != nil {
+		return err
+	}
 	for _, stmt := range []string{
 		`UPDATE move SET position_id = ? WHERE position_id = ?`,
 		`UPDATE OR IGNORE collection_position SET position_id = ? WHERE position_id = ?`,

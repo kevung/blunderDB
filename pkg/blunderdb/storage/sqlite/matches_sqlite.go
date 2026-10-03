@@ -410,6 +410,9 @@ func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) 
 			return fmt.Errorf("collect positions: %w", err)
 		}
 
+		if _, err := tx.ExecContext(ctx, sqlshared.InvalidateMatchStatsOfMatchesSQL+"(?)", id); err != nil {
+			return fmt.Errorf("invalidate match stats: %w", err)
+		}
 		// game/move/move_analysis cascade off the match delete.
 		if _, err := tx.ExecContext(ctx, `DELETE FROM match WHERE id = ?`, id); err != nil {
 			return err
@@ -442,6 +445,9 @@ func (s *matchStore) DeleteGames(ctx context.Context, scope string, matchID int6
 			return fmt.Errorf("collect positions: %w", err)
 		}
 		positionIDs = ids
+		if _, err := tx.ExecContext(ctx, sqlshared.InvalidateMatchStatsOfMatchesSQL+"(?)", matchID); err != nil {
+			return fmt.Errorf("invalidate match stats: %w", err)
+		}
 		// move/move_analysis cascade off the game delete.
 		if _, err := tx.ExecContext(ctx, `DELETE FROM game WHERE match_id = ?`, matchID); err != nil {
 			return err
@@ -470,6 +476,10 @@ func (s *matchStore) PurgeOrphanPositions(ctx context.Context, scope string, ids
 // cube-owner columns of every position the match's moves reference.
 func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) error {
 	err := withTx(ctx, s.db, func(tx execer) error {
+		// The seats trade places: each row now describes the other player.
+		if _, err := tx.ExecContext(ctx, sqlshared.InvalidateMatchStatsOfMatchesSQL+"(?)", id); err != nil {
+			return fmt.Errorf("invalidate match stats: %w", err)
+		}
 		if _, err := tx.ExecContext(ctx,
 			`UPDATE match SET player1_name = player2_name, player2_name = player1_name
 			 WHERE id = ?`, id); err != nil {
@@ -644,6 +654,10 @@ func (s *matchStore) CreateGame(ctx context.Context, scope string, g *domain.Gam
 		return 0, fmt.Errorf("sqlite: create game id: %w", err)
 	}
 	g.ID = id
+	// The match gains moves: its rows no longer cover all of them.
+	if _, err := s.db.ExecContext(ctx, sqlshared.InvalidateMatchStatsOfMatchesSQL+"(?)", g.MatchID); err != nil {
+		return 0, fmt.Errorf("sqlite: invalidate match stats: %w", err)
+	}
 	return id, nil
 }
 

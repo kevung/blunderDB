@@ -437,4 +437,56 @@ type StatsStore interface {
 	// at least the library's Error threshold) by plan of play and theme,
 	// heaviest summed cost first. See GroupRecurringErrors.
 	RecurringErrors(ctx context.Context, scope string, filter StatsFilter) (*RecurringErrors, error)
+
+	// MatchStats returns the stored per-match, per-seat tallies of the given
+	// matches (every match in scope when matchIDs is empty), two rows per
+	// match, ordered by match then seat. A match whose rows are missing — a
+	// fresh import, an invalidated match — is recomputed first, so the rows
+	// always agree with the decisions they summarise.
+	MatchStats(ctx context.Context, scope string, matchIDs []int64) ([]MatchStatsRow, error)
+
+	// MatchSeries is Compute's PerMatch (ID, Date, PR, NumDecisions; MWC
+	// left zero) read from match_stats: the PR of the filter's players in
+	// each match, oldest first, matches without a counted decision absent.
+	// It honours the filter's players (and aliases), tournaments, dates and
+	// match lengths; a DecisionType of 0 or 1 is refused with ErrInvalid —
+	// the table does not split the error by decision type, so the caller
+	// falls back to Compute.
+	MatchSeries(ctx context.Context, scope string, filter StatsFilter) ([]MatchStats, error)
+
+	// RefreshMatchStats recomputes the rows of matchIDs now — what an import
+	// does for the match it has just written, inside its transaction.
+	RefreshMatchStats(ctx context.Context, scope string, matchIDs []int64) error
+
+	// FillMatchStats computes the rows of every match in scope that has none,
+	// in committed batches: an interrupted run resumes where it stopped.
+	// progress, when not nil, is told done/total after each batch. It returns
+	// the number of matches computed.
+	FillMatchStats(ctx context.Context, scope string, progress func(done, total int)) (int, error)
+
+	// RebuildMatchStats discards every stored row of the scope and computes
+	// them all again (repair --stats). It returns the number of matches.
+	RebuildMatchStats(ctx context.Context, scope string, progress func(done, total int)) (int, error)
+}
+
+// MatchStatsRow is one seat of one match as the match_stats table holds it:
+// the same counted decisions, error column and blunder threshold as Compute,
+// so a PR read here equals the PR Compute derives for that seat's decisions.
+// Seat 1 is the match's player1, seat 2 its player2; the table stores no
+// name, so a renamed player keeps his rows. AnalysisEngine / AnalysisDepth
+// are the provenance most of the seat's counted decisions carry ("" / 0 when
+// none does).
+type MatchStatsRow struct {
+	MatchID          int64   `json:"match_id"`
+	Seat             int     `json:"seat"`
+	Decisions        int     `json:"decisions"`
+	CheckerDecisions int     `json:"checker_decisions"`
+	CubeDecisions    int     `json:"cube_decisions"`
+	ErrorMP          int64   `json:"error_mp"`
+	PR               float64 `json:"pr"` // 0 when Decisions is 0 (NULL in the table)
+	LuckMP           int64   `json:"luck_mp"`
+	LuckRolls        int     `json:"luck_rolls"`
+	Blunders         int     `json:"blunders"`
+	AnalysisEngine   string  `json:"analysis_engine"`
+	AnalysisDepth    int     `json:"analysis_depth"`
 }

@@ -429,6 +429,9 @@ func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) 
 			return fmt.Errorf("collect positions: %w", err)
 		}
 
+		if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE match_id = $1 AND tenant_id = $2`, id, tenant); err != nil {
+			return fmt.Errorf("invalidate match stats: %w", err)
+		}
 		// game/move/move_analysis cascade off the match delete.
 		if _, err := tx.Exec(ctx,
 			`DELETE FROM match WHERE id = $1 AND tenant_id = $2`, id, tenant); err != nil {
@@ -472,6 +475,9 @@ func (s *matchStore) DeleteGames(ctx context.Context, scope string, matchID int6
 			return fmt.Errorf("collect positions: %w", err)
 		}
 
+		if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE match_id = $1 AND tenant_id = $2`, matchID, tenant); err != nil {
+			return fmt.Errorf("invalidate match stats: %w", err)
+		}
 		// move/move_analysis cascade off the game delete.
 		if _, err := tx.Exec(ctx,
 			`DELETE FROM game WHERE match_id = $1 AND tenant_id = $2`, matchID, tenant); err != nil {
@@ -502,6 +508,10 @@ func (s *matchStore) PurgeOrphanPositions(ctx context.Context, scope string, ids
 func (s *matchStore) SwapPlayers(ctx context.Context, scope string, id int64) error {
 	tenant := tenantID(scope)
 	return s.inTx(ctx, "swap players", func(tx pgx.Tx) error {
+		// The seats trade places: each row now describes the other player.
+		if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE match_id = $1 AND tenant_id = $2`, id, tenant); err != nil {
+			return fmt.Errorf("invalidate match stats: %w", err)
+		}
 		if _, err := tx.Exec(ctx,
 			`UPDATE match SET player1_name = player2_name, player2_name = player1_name
 			 WHERE id = $1 AND tenant_id = $2`, id, tenant); err != nil {
@@ -698,6 +708,10 @@ func (s *matchStore) CreateGame(ctx context.Context, scope string, g *domain.Gam
 		return 0, fmt.Errorf("postgres: create game: %w", referenced(err))
 	}
 	g.ID = id
+	// The match gains moves: its rows no longer cover all of them.
+	if _, err := s.db.Exec(ctx, `DELETE FROM match_stats WHERE match_id = $1 AND tenant_id = $2`, g.MatchID, tenantID(scope)); err != nil {
+		return 0, fmt.Errorf("postgres: invalidate match stats: %w", err)
+	}
 	return id, nil
 }
 

@@ -5507,6 +5507,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idsResp"
+  /v1/stats.rebuildMatchStats:
+    post:
+      operationId: stats.rebuildMatchStats
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/rebuildMatchStatsResp"
   /v1/stats.recurringErrors:
     post:
       operationId: stats.recurringErrors
@@ -7611,6 +7628,12 @@ components:
     race_Result:
       type: object
       description: "Opaque: see the Go type race.Result (defined outside internal/server, not expanded here)."
+    rebuildMatchStatsResp:
+      type: object
+      properties:
+        matches:
+          type: integer
+          format: int32
     reclassifyResp:
       type: object
       properties:

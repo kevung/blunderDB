@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 12:20+0200\n"
+"POT-Creation-Date: 2026-10-03 16:10+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -413,8 +413,8 @@ msgstr "Δημιουργεί ένα νέο αρχείο βάσης δεδομέ�
 #: ../../source/cli.rst:1532 ../../source/cli.rst:1733
 #: ../../source/cli.rst:1807 ../../source/cli.rst:1841
 #: ../../source/cli.rst:1975 ../../source/cli.rst:2016
-#: ../../source/cli.rst:2080 ../../source/cli.rst:2110
-#: ../../source/cli.rst:2153
+#: ../../source/cli.rst:2092 ../../source/cli.rst:2122
+#: ../../source/cli.rst:2165
 msgid "**Options:**"
 msgstr "**Επιλογές:**"
 
@@ -453,8 +453,8 @@ msgstr ""
 "δημιουργούνται όταν χρειάζεται."
 
 #: ../../source/cli.rst:126 ../../source/cli.rst:1425 ../../source/cli.rst:1579
-#: ../../source/cli.rst:1989 ../../source/cli.rst:2061
-#: ../../source/cli.rst:2122
+#: ../../source/cli.rst:1989 ../../source/cli.rst:2073
+#: ../../source/cli.rst:2134
 msgid "**Exemple:**"
 msgstr "**Παράδειγμα:**"
 
@@ -832,7 +832,7 @@ msgstr ""
 #: ../../source/cli.rst:1329 ../../source/cli.rst:1655
 #: ../../source/cli.rst:1710 ../../source/cli.rst:1743
 #: ../../source/cli.rst:1823 ../../source/cli.rst:1896
-#: ../../source/cli.rst:2089 ../../source/cli.rst:2181
+#: ../../source/cli.rst:2101 ../../source/cli.rst:2193
 msgid "**Exemples:**"
 msgstr "**Παραδείγματα:**"
 
@@ -979,7 +979,7 @@ msgstr "**Κύριες επιλογές:**"
 #: ../../source/cli.rst:443 ../../source/cli.rst:839 ../../source/cli.rst:1365
 #: ../../source/cli.rst:1735 ../../source/cli.rst:1809
 #: ../../source/cli.rst:1843 ../../source/cli.rst:1977
-#: ../../source/cli.rst:2018 ../../source/cli.rst:2082
+#: ../../source/cli.rst:2018 ../../source/cli.rst:2094
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Βάση δεδομένων (υποχρεωτικό)."
 
@@ -3678,14 +3678,46 @@ msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` — un "
 "compteur par passe : ``repaired`` (colonnes d'analyse), ``phases`` "
 "(positions reclassées) et ``crawford`` (positions réhachées). Chacun dit "
-"le nombre de lignes réellement changées."
+"le nombre de lignes réellement changées. Avec ``--stats``, s'y ajoute "
+"``match_stats`` (matchs recalculés)."
 msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` — ένας "
 "μετρητής ανά πέρασμα: ``repaired`` (στήλες ανάλυσης), ``phases`` (θέσεις "
 "που αναταξινομήθηκαν) και ``crawford`` (θέσεις με νέο hash). Ο καθένας "
-"δίνει τον αριθμό των γραμμών που άλλαξαν πραγματικά."
+"δίνει τον αριθμό των γραμμών που άλλαξαν πραγματικά. Με το ``--stats`` "
+"προστίθεται το ``match_stats`` (αγώνες που υπολογίστηκαν ξανά)."
 
 #: ../../source/cli.rst:2024
+msgid "``--stats`` — Recalcule aussi, de zéro, les statistiques par match."
+msgstr ""
+"``--stats`` — Υπολογίζει επίσης εκ νέου, από το μηδέν, τα στατιστικά ανά "
+"αγώνα."
+
+#: ../../source/cli.rst:2026
+msgid ""
+"Les statistiques par match sont, pour chaque joueur de chaque match, ses "
+"décisions, son erreur cumulée, son PR, ses blunders, sa chance et la "
+"provenance dominante de ses analyses ; les statistiques les lisent au "
+"lieu de reparcourir chaque décision. Elles s'écrivent avec le match à "
+"l'import et s'effacent à chaque changement qui les altère (match "
+"supprimé, joueurs permutés, analyse d'une de ses positions modifiée, "
+"seuil de blunder déplacé) ; la lecture suivante recalcule ce qui manque. "
+"Une base migrée d'une version antérieure les calcule une fois, à sa "
+"première ouverture. ``--stats`` les refait toutes : le recours si cette "
+"tenue de comptes se trompait un jour."
+msgstr ""
+"Τα στατιστικά ανά αγώνα είναι, για κάθε παίκτη κάθε αγώνα, οι αποφάσεις "
+"του, το αθροιστικό του σφάλμα, το PR του, τα blunder του, η τύχη του και "
+"η κυρίαρχη προέλευση των αναλύσεών του· τα στατιστικά τα διαβάζουν αντί "
+"να ξαναδιατρέχουν κάθε απόφαση. Γράφονται μαζί με τον αγώνα κατά την "
+"εισαγωγή και σβήνονται σε κάθε αλλαγή που τα μεταβάλλει (διαγραφή αγώνα, "
+"εναλλαγή παικτών, τροποποίηση της ανάλυσης μιας από τις θέσεις του, "
+"μετακίνηση του ορίου blunder)· η επόμενη ανάγνωση υπολογίζει ό,τι λείπει."
+" Μια βάση που μετατράπηκε από προηγούμενη έκδοση τα υπολογίζει μία φορά, "
+"στο πρώτο άνοιγμα. Το ``--stats`` τα ξαναφτιάχνει όλα: η λύση αν αυτή η "
+"τήρηση λογαριασμών κάποτε πάει στραβά."
+
+#: ../../source/cli.rst:2036
 msgid ""
 "Utile après une correction de la façon dont une analyse importée est lue."
 " Le cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de "
@@ -3708,7 +3740,7 @@ msgstr ""
 "ανάγνωσης δεν αλλάζει τίποτα στις ήδη γραμμένες γραμμές· αυτή η εντολή "
 "τις ξαναφτιάχνει."
 
-#: ../../source/cli.rst:2034
+#: ../../source/cli.rst:2046
 msgid ""
 "La passe Crawford, elle, touche les positions elles-mêmes. Un score à "
 "``1`` signifie « un point à faire, et cette partie EST la Crawford » ; "
@@ -3760,7 +3792,7 @@ msgstr ""
 " άλλη θέση χωρίς αγώνα μένει ως έχει: τίποτα δεν αντιφάσκει με όσα "
 "δηλώνει το σκορ της."
 
-#: ../../source/cli.rst:2056
+#: ../../source/cli.rst:2068
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
@@ -3772,11 +3804,11 @@ msgstr ""
 " με το απλό άνοιγμα μιας βάσης δεν είναι κάτι που ένα εργαλείο πρέπει να "
 "κάνει πίσω από την πλάτη του χρήστη του."
 
-#: ../../source/cli.rst:2072
+#: ../../source/cli.rst:2084
 msgid "delete — Supprimer des données"
 msgstr "delete — Διαγραφή δεδομένων"
 
-#: ../../source/cli.rst:2074
+#: ../../source/cli.rst:2086
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
@@ -3784,19 +3816,19 @@ msgstr ""
 "Διαγράφει έναν αγώνα και όλα τα σχετικά δεδομένα (παρτίδες, κινήσεις, "
 "αναλύσεις)."
 
-#: ../../source/cli.rst:2083
+#: ../../source/cli.rst:2095
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Τύπος διαγραφής: ``match`` (υποχρεωτικό)."
 
-#: ../../source/cli.rst:2084
+#: ../../source/cli.rst:2096
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID του στοιχείου προς διαγραφή (υποχρεωτικό)."
 
-#: ../../source/cli.rst:2085
+#: ../../source/cli.rst:2097
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Διαγραφή χωρίς αίτημα επιβεβαίωσης."
 
-#: ../../source/cli.rst:2086
+#: ../../source/cli.rst:2098
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -3805,11 +3837,11 @@ msgstr ""
 "``--format`` — Μορφή εξόδου: ``text`` (προεπιλογή) ή ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:2098
+#: ../../source/cli.rst:2110
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Έλεγχος ενός δαίμονα"
 
-#: ../../source/cli.rst:2100
+#: ../../source/cli.rst:2112
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -3823,7 +3855,7 @@ msgstr ""
 "έκδοση), ``1`` αλλιώς — αποθήκευση μη προσβάσιμη, ξεπερασμένο σχήμα ή "
 "τίποτα δεν ακούει στη διεύθυνση. Δεν ανοίγει κανένα αρχείο βάσης."
 
-#: ../../source/cli.rst:2112
+#: ../../source/cli.rst:2124
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -3834,7 +3866,7 @@ msgstr ""
 "(``:8080``) ή με γενικό host (``0.0.0.0``, ``[::]``) ελέγχεται μέσω της "
 "διεπαφής loopback."
 
-#: ../../source/cli.rst:2115
+#: ../../source/cli.rst:2127
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -3842,7 +3874,7 @@ msgstr ""
 "``--timeout`` — Χρόνος μετά τον οποίο ο έλεγχος εγκαταλείπει (``2s`` από "
 "προεπιλογή)."
 
-#: ../../source/cli.rst:2117
+#: ../../source/cli.rst:2129
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -3854,7 +3886,7 @@ msgstr ""
 "από το ``cmd/serve`` την καταλαβαίνει επίσης. Είναι εξίσου χρήσιμη σε ένα"
 " script ή σε μια μονάδα systemd."
 
-#: ../../source/cli.rst:2131
+#: ../../source/cli.rst:2143
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -3862,11 +3894,11 @@ msgstr ""
 "Σε περίπτωση αποτυχίας εμφανίζεται η αιτία, την οποία το ``docker "
 "inspect`` αναπαράγει για ένα container ``unhealthy``:"
 
-#: ../../source/cli.rst:2139
+#: ../../source/cli.rst:2151
 msgid "mcp — Offrir la base à un assistant IA"
 msgstr "mcp — Προσφορά της βάσης σε έναν βοηθό ΤΝ"
 
-#: ../../source/cli.rst:2141
+#: ../../source/cli.rst:2153
 msgid ""
 "Sert les outils de la base à un assistant IA par le *Model Context "
 "Protocol*, sur l'entrée et la sortie standard : c'est l'assistant qui "
@@ -3885,11 +3917,11 @@ msgstr ""
 "θέτουν ένα κουίζ. Μόνο διαβάζουν, εκτός αν δοθεί ``--write``. Ο πλήρης "
 "κατάλογος και το ισοδύναμο HTTP του δαίμονα: :ref:`headless_mcp`."
 
-#: ../../source/cli.rst:2155
+#: ../../source/cli.rst:2167
 msgid "``--db`` — Fichier de base de données (obligatoire)."
 msgstr "``--db`` — Αρχείο βάσης δεδομένων (υποχρεωτικό)."
 
-#: ../../source/cli.rst:2156
+#: ../../source/cli.rst:2168
 msgid ""
 "``--write`` — Offre aussi les outils qui écrivent : enregistrer une "
 "position, la commenter, créer et remplir une collection. Rien n'efface."
@@ -3898,7 +3930,7 @@ msgstr ""
 " σχολιασμός της, δημιουργία και συμπλήρωση συλλογής. Τίποτα δεν "
 "διαγράφεται."
 
-#: ../../source/cli.rst:2159
+#: ../../source/cli.rst:2171
 msgid ""
 "Comme ``call``, la commande migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."
@@ -3906,15 +3938,15 @@ msgstr ""
 "Όπως η ``call``, η εντολή μεταφέρει το σχήμα μιας παλαιότερης βάσης κατά "
 "το άνοιγμα, ακόμη και χωρίς ``--write``."
 
-#: ../../source/cli.rst:2162
+#: ../../source/cli.rst:2174
 msgid "**Exemple:** déclarer la base à Claude Code."
 msgstr "**Παράδειγμα:** δήλωση της βάσης στο Claude Code."
 
-#: ../../source/cli.rst:2169
+#: ../../source/cli.rst:2181
 msgid "completion — Complétion shell"
 msgstr "completion — Συμπλήρωση κελύφους"
 
-#: ../../source/cli.rst:2171
+#: ../../source/cli.rst:2183
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -3930,7 +3962,7 @@ msgstr ""
 "προσφέρεται από τη συμπλήρωση μόλις συνδεθεί, χωρίς τίποτα να χρειάζεται "
 "χειροκίνητη συντήρηση."
 
-#: ../../source/cli.rst:2195
+#: ../../source/cli.rst:2207
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -3948,11 +3980,11 @@ msgstr ""
 "αποθετήριο, οπότε η συμπλήρωση δεν μπορεί ποτέ να αποκλίνει από τον "
 "πίνακα υποεντολών."
 
-#: ../../source/cli.rst:2203
+#: ../../source/cli.rst:2215
 msgid "version — Afficher la version"
 msgstr "version — Εμφάνιση της έκδοσης"
 
-#: ../../source/cli.rst:2205
+#: ../../source/cli.rst:2217
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -3962,35 +3994,35 @@ msgstr ""
 "δεδομένων που γράφει αυτό το εκτελέσιμο· είναι το πρώτο πράγμα που "
 "επισυνάπτεται σε μια αναφορά σφάλματος."
 
-#: ../../source/cli.rst:2214
+#: ../../source/cli.rst:2226
 msgid "Exemples de flux de travail"
 msgstr "Παραδείγματα ροών εργασίας"
 
-#: ../../source/cli.rst:2217
+#: ../../source/cli.rst:2229
 msgid "Import d'un répertoire de tournoi"
 msgstr "Εισαγωγή ενός καταλόγου τουρνουά"
 
-#: ../../source/cli.rst:2226
+#: ../../source/cli.rst:2238
 msgid "Sauvegarde régulière"
 msgstr "Τακτικό αντίγραφο ασφαλείας"
 
-#: ../../source/cli.rst:2233
+#: ../../source/cli.rst:2245
 msgid "Analyse des erreurs"
 msgstr "Ανάλυση σφαλμάτων"
 
-#: ../../source/cli.rst:2245
+#: ../../source/cli.rst:2257
 msgid "Codes de retour"
 msgstr "Κωδικοί εξόδου"
 
-#: ../../source/cli.rst:2247
+#: ../../source/cli.rst:2259
 msgid "``0`` — Succès."
 msgstr "``0`` — Επιτυχία."
 
-#: ../../source/cli.rst:2248
+#: ../../source/cli.rst:2260
 msgid "``1`` — Erreur."
 msgstr "``1`` — Σφάλμα."
 
-#: ../../source/cli.rst:2250
+#: ../../source/cli.rst:2262
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Αυτό επιτρέπει τη χρήση της CLI σε σενάρια με διαχείριση σφαλμάτων:"
 

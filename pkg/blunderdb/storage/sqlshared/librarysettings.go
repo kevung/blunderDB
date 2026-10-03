@@ -76,7 +76,18 @@ func (s *LibrarySettingsStore) Save(ctx context.Context, scope string, settings 
 		ON CONFLICT (` + strings.Join(conflict, ", ") + `) DO UPDATE SET value = EXCLUDED.value`
 
 	rows := settings.Rows()
-	err := s.DB.Transact(ctx, func(tx Execer) error {
+	before, err := s.Load(ctx, scope)
+	if err != nil {
+		return errf(s.DB, "save library settings", err)
+	}
+	err = s.DB.Transact(ctx, func(tx Execer) error {
+		// match_stats counts blunders at this threshold: moving it makes
+		// every stored row stale.
+		if before.BlunderThresholdMP != settings.BlunderThresholdMP {
+			if err := InvalidateAllMatchStats(ctx, tx, scope); err != nil {
+				return err
+			}
+		}
 		// Ordered, so a diff of two libraries' write logs lines up.
 		for _, key := range []string{storage.LibrarySettingErrorKey, storage.LibrarySettingBlunderKey} {
 			args := append(append([]any{}, prefix...), key, rows[key])

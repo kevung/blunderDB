@@ -10,7 +10,11 @@ package sqlshared
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"math"
+	"reflect"
+	"runtime"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -63,9 +67,12 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 		s.computePerScore,
 		s.computePerTag,
 	} {
+		start := time.Now()
 		if err := pass(ctx, q, result); err != nil {
 			return nil, err
 		}
+		// Which pass a slow Stats panel waits on, without a profiler.
+		slog.Debug("stats pass", "pass", runtime.FuncForPC(reflect.ValueOf(pass).Pointer()).Name(), "elapsed", time.Since(start))
 	}
 	return result, nil
 }
@@ -216,7 +223,18 @@ func (s *StatsStore) computePerTournament(ctx context.Context, q statsQuery, res
 }
 
 // computePerMatch fills PerMatch.
+//
+// Without a decision-type split the rows come from match_stats (MatchSeries),
+// which the contract's oracle holds equal to the direct grouping below.
 func (s *StatsStore) computePerMatch(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
+	if q.filter.DecisionType < 0 {
+		series, err := s.MatchSeries(ctx, q.scope, q.filter)
+		if err != nil {
+			return fmt.Errorf("PR per match: %w", err)
+		}
+		result.PerMatch = series
+		return nil
+	}
 	d := s.DB
 	var scanErr error
 	rows, err := s.DB.Query(ctx,

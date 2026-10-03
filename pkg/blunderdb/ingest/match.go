@@ -225,6 +225,12 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			return res, err
 		}
 	}
+
+	// The match's per-seat tallies, in the same transaction as its moves: a
+	// library never holds a match whose stats a reader must wait for.
+	if err := tx.Stats().RefreshMatchStats(ctx, scope, []int64{matchID}); err != nil {
+		return res, err
+	}
 	return res, nil
 }
 

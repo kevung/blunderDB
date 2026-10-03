@@ -1239,6 +1239,7 @@ a phase or a game type is decided. Nothing runs it automatically.
 **Options:**
 - `--db` - Path to the database file (required)
 - `--format` - Output format: `text` (default) or `json`
+- `--stats` - Also recompute the per-match statistics from scratch
 
 The analyses are left untouched: this repairs only what was derived from them,
 and a position with no analysis keeps its empty columns. Use `analyze` to
@@ -1267,7 +1268,17 @@ and proves nothing. Any other position without a match is left alone — nothing
 contradicts what its score says.
 
 The JSON report has one counter per pass: `repaired` (analysis columns),
-`phases` (positions reclassified) and `crawford` (positions rehashed).
+`phases` (positions reclassified) and `crawford` (positions rehashed), plus
+`match_stats` (matches recomputed) with `--stats`.
+
+The per-match statistics are the decisions, error, PR, blunders, luck and
+dominant analysis provenance of each seat of each match, which the statistics
+read instead of rescanning every decision. They are written with the match at
+import and dropped by every change that alters them (a match deleted, its seats
+swapped, an analysis of one of its positions changed, the blunder threshold
+moved); the next read recomputes what is missing. A database migrated from an
+older version computes them once, when it is first opened. `--stats` rebuilds
+them all: the way back if that bookkeeping were ever wrong.
 
 ## Info Command
 
