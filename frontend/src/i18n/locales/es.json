@@ -1036,6 +1036,10 @@
         "metadataTitle": "Metadatos del archivo exportado"
     },
     "import": {
+        "minimize": "Minimizar",
+        "rateEta": "{rate} posiciones/s · quedan {eta}",
+        "liveCounts": "{imported} importados · {skipped} duplicados · {failed} con error",
+        "moreErrors": "… y {n} errores más: ver el registro",
         "abortImport": "Cancelar importación",
         "added": "Añadidas",
         "analyzing": "Analizando la importación",
@@ -1318,6 +1322,8 @@
         }
     },
     "status": {
+        "importChip": "Importación en curso: {percent} %",
+        "importChipShow": "Mostrar",
         "boardAnalysisCopied": "Imagen del tablero + análisis copiada al portapapeles",
         "boardSvgNotFound": "SVG del tablero no encontrado",
         "boardElementNotFound": "Elemento del tablero no encontrado",

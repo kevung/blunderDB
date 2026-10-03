@@ -9,8 +9,9 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
-// importFileEvent carries one decided file of an ImportFiles call.
-const importFileEvent = "import-files:file"
+// importProgressEvent carries an ImportFiles call's progress, at most four
+// times a second and once at the end.
+const importProgressEvent = "import-files:progress"
 
 // ImportFileError is one file the import could not bring in.
 type ImportFileError struct {
@@ -19,7 +20,7 @@ type ImportFileError struct {
 }
 
 // ImportFilesSummary is what the frontend needs once a list of files has gone
-// through the pipeline; the per-file detail travels by event as it happens.
+// through the pipeline; the progress travels by event as it happens.
 type ImportFilesSummary struct {
 	Succeeded      int               `json:"succeeded"`
 	Skipped        int               `json:"skipped"`
@@ -52,14 +53,14 @@ func summarize(out []ingest.FileOutcome) ImportFilesSummary {
 }
 
 // ImportFiles imports a list of files in one call through the parallel
-// pipeline, emitting one event per decided file. CancelImport (bound on the
+// pipeline, emitting its progress by event. CancelImport (bound on the
 // Database) stops it; what was committed stays and is summarised.
 func (a *App) ImportFiles(paths []string) (ImportFilesSummary, error) {
 	if a.db == nil {
 		return ImportFilesSummary{}, fmt.Errorf("no database is currently open")
 	}
 	out, err := a.db.ImportFiles(paths, database.ImportFilesOptions{
-		OnFile: func(o ingest.FileOutcome) { a.emitBatch(importFileEvent, o) },
+		OnProgress: func(p ingest.BatchProgress) { a.emitBatch(importProgressEvent, p) },
 	})
 	s := summarize(out)
 	if err != nil {

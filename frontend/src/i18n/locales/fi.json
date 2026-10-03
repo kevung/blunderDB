@@ -1036,6 +1036,10 @@
         "metadataTitle": "Vietävän tiedoston metatiedot"
     },
     "import": {
+        "minimize": "Pienennä",
+        "rateEta": "{rate} asemaa/s · jäljellä {eta}",
+        "liveCounts": "{imported} tuotu · {skipped} kaksoiskappaletta · {failed} virheellistä",
+        "moreErrors": "… ja {n} muuta virhettä: katso loki",
         "abortImport": "Keskeytä tuonti",
         "added": "Lisätty",
         "analyzing": "Analysoidaan tuontia",
@@ -1318,6 +1322,8 @@
         }
     },
     "status": {
+        "importChip": "Tuonti käynnissä: {percent} %",
+        "importChipShow": "Näytä",
         "boardAnalysisCopied": "Lauta- ja analyysikuva kopioitu leikepöydälle",
         "boardSvgNotFound": "Laudan SVG:tä ei löytynyt",
         "boardElementNotFound": "Lautaelementtiä ei löytynyt",

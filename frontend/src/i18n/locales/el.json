@@ -1036,6 +1036,10 @@
         "metadataTitle": "Μεταδεδομένα του εξαγόμενου αρχείου"
     },
     "import": {
+        "minimize": "Ελαχιστοποίηση",
+        "rateEta": "{rate} θέσεις/s · απομένουν {eta}",
+        "liveCounts": "{imported} εισήχθησαν · {skipped} διπλότυπα · {failed} με σφάλμα",
+        "moreErrors": "… και {n} ακόμη σφάλματα: δείτε το αρχείο καταγραφής",
         "abortImport": "Ματαίωση εισαγωγής",
         "added": "Προστέθηκαν",
         "analyzing": "Ανάλυση εισαγωγής",
@@ -1318,6 +1322,8 @@
         }
     },
     "status": {
+        "importChip": "Εισαγωγή σε εξέλιξη: {percent} %",
+        "importChipShow": "Εμφάνιση",
         "boardAnalysisCopied": "Η εικόνα ταμπλό + ανάλυσης αντιγράφηκε στο πρόχειρο",
         "boardSvgNotFound": "Το SVG του ταμπλό δεν βρέθηκε",
         "boardElementNotFound": "Το στοιχείο του ταμπλό δεν βρέθηκε",

@@ -54,7 +54,9 @@ import {
     fileImportCurrentIndexStore,
     fileImportCurrentFileStore,
     fileImportResultsStore,
-    fileImportReportStore
+    fileImportReportStore,
+    fileImportProgressStore,
+    fileImportMinimizedStore
 } from '../stores/importModalStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
@@ -793,12 +795,20 @@ async function finishImportBatch(batchID) {
 // Extensions the backend pipeline reads without help from the frontend.
 const PIPELINE_EXTENSIONS = ['.xg', '.xgp', '.bgf', '.ogxm', '.sgf', '.mat'];
 
+// appendErrors adds to the list in place: copying it at every failure is
+// quadratic over a folder of thousands of broken files.
+function appendErrors(list, more) {
+    for (const e of more) list.push(e);
+    return list;
+}
+
 // importThroughPipeline sends the files in one call; the backend reports each
 // decided file by event, in file order, which drives the progress.
 async function importThroughPipeline(paths, remaining) {
-    const offProgress = EventsOn('import-files:file', (o) => {
-        fileImportCurrentIndexStore.set(o.index + 1);
-        fileImportCurrentFileStore.set(o.path);
+    const offProgress = EventsOn('import-files:progress', (p) => {
+        fileImportProgressStore.set(p);
+        fileImportCurrentIndexStore.set(p.filesDone);
+        fileImportCurrentFileStore.set(p.currentFile);
     });
     try {
         const summary = await ImportFiles(paths);
@@ -807,7 +817,7 @@ async function importThroughPipeline(paths, remaining) {
             succeeded: r.succeeded + summary.succeeded,
             skipped: r.skipped + summary.skipped,
             failed: r.failed + summary.failed,
-            errors: r.errors.concat(summary.errors ?? [])
+            errors: appendErrors(r.errors, summary.errors ?? [])
         }));
         if (summary.cancelled) fileImportCancelled = true;
         return summary;
@@ -831,6 +841,8 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
     fileImportCurrentFileStore.set('');
     fileImportResultsStore.set({ succeeded: 0, failed: 0, skipped: 0, errors: [] });
     fileImportReportStore.set(null);
+    fileImportProgressStore.set(null);
+    fileImportMinimizedStore.set(false);
     fileImportModeStore.set('importing');
     if (!quiet) showFileImportModalStore.set(true);
 
@@ -869,17 +881,21 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
             if (errorStr.includes('duplicate match') || errorStr.includes('already been imported') || errorStr.includes('duplicate') || errorStr.includes('already exists')) {
                 fileImportResultsStore.update((r) => ({ ...r, skipped: r.skipped + 1 }));
             } else {
-                fileImportResultsStore.update((r) => ({
-                    ...r,
-                    failed: r.failed + 1,
-                    errors: [...r.errors, { file: filePath, message: errorStr.replace(/^Error:\s*/, '') }]
-                }));
+                fileImportResultsStore.update((r) => {
+                    r.errors.push({ file: filePath, message: errorStr.replace(/^Error:\s*/, '') });
+                    return { ...r, failed: r.failed + 1 };
+                });
             }
         }
     }
 
     await finishImportBatch(batchID);
     fileImportModeStore.set('completed');
+    // A minimised import comes back with its report once finished.
+    if (get(fileImportMinimizedStore)) {
+        fileImportMinimizedStore.set(false);
+        if (!quiet) showFileImportModalStore.set(true);
+    }
 
     // Refresh planner statistics once, as the CLI batch importer does:
     // ensureSearchStats only backfills at open when no stats exist at all.
@@ -918,9 +934,15 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
 export function handleFileImportCancel() {
     fileImportCancelled = true;
     CancelImport().catch((err) => logger.error('Error calling CancelImport:', err));
+    fileImportMinimizedStore.set(false);
     showFileImportModalStore.set(false);
     fileImportModeStore.set('idle');
     setStatusBarMessage(tMsg('status.importCancelled'));
+}
+
+export function handleFileImportMinimize() {
+    fileImportMinimizedStore.set(true);
+    showFileImportModalStore.set(false);
 }
 
 export function handleFileImportClose() {

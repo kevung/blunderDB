@@ -1074,6 +1074,16 @@ ne remplace pas ce qui est déjà là.
   compté comme doublon. Annuler arrête l'import au groupe en cours ; ce qui
   était déjà écrit reste.
 
+* **La progression se lit en positions par seconde.** La fenêtre d'import
+  donne le pourcentage lu, le débit, le temps restant estimé et les comptes en
+  cours (importés, doublons, en erreur). **Réduire** la range dans la barre de
+  statut, d'où une pastille la rouvre : l'import continue pendant que vous
+  travaillez, et la fenêtre revient d'elle-même avec le rapport à la fin. Les
+  cent premières erreurs sont listées ; les suivantes sont comptées, et le
+  journal de l'application les nomme toutes. En ligne de commande,
+  ``blunderdb import --type batch`` affiche la même progression sur la sortie
+  d'erreur, et ``--format json`` la rend dans l'objet final (``progress``).
+
 * **Un gros dossier s'importe en mode masse.** À partir de 200 fichiers,
   blunderDB écrit avec un cache plus grand et moins de points de contrôle. Si
   la base ne contient encore aucune position, il va plus loin : les index de

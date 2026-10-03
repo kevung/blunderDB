@@ -1036,6 +1036,10 @@
         "metadataTitle": "Métadonnées du fichier exporté"
     },
     "import": {
+        "minimize": "Réduire",
+        "rateEta": "{rate} positions/s · reste {eta}",
+        "liveCounts": "{imported} importés · {skipped} doublons · {failed} en erreur",
+        "moreErrors": "… et {n} autres erreurs : voir le journal",
         "abortImport": "Annuler l'import",
         "added": "Ajoutées",
         "analyzing": "Analyse de l'import",
@@ -1318,6 +1322,8 @@
         }
     },
     "status": {
+        "importChip": "Import en cours : {percent} %",
+        "importChipShow": "Afficher",
         "boardAnalysisCopied": "Image du plateau + analyse copiée dans le presse-papiers",
         "boardSvgNotFound": "SVG du plateau introuvable",
         "boardElementNotFound": "Élément du plateau introuvable",

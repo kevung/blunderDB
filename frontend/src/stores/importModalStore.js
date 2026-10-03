@@ -26,3 +26,8 @@ export const fileImportResultsStore = writable({ succeeded: 0, failed: 0, skippe
 // The end-of-import report (PR, worst decisions, flagged and unjudged counts). null when an import
 // could not record a batch: a convenience whose absence must never look like a failure.
 export const fileImportReportStore = writable(null);
+
+// The pipeline's progress (files, positions, bytes, rate, ETA), null before the first event.
+export const fileImportProgressStore = writable(null);
+// The import goes on behind a status-bar chip while the user keeps working.
+export const fileImportMinimizedStore = writable(false);

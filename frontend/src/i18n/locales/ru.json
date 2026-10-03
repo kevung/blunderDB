@@ -1036,6 +1036,10 @@
         "metadataTitle": "Метаданные экспортируемого файла"
     },
     "import": {
+        "minimize": "Свернуть",
+        "rateEta": "{rate} позиций/с · осталось {eta}",
+        "liveCounts": "{imported} импортировано · {skipped} дубликатов · {failed} с ошибкой",
+        "moreErrors": "… и ещё {n} ошибок: см. журнал",
         "abortImport": "Прервать импорт",
         "added": "Добавлено",
         "analyzing": "Анализ импорта",
@@ -1318,6 +1322,8 @@
         }
     },
     "status": {
+        "importChip": "Идёт импорт: {percent} %",
+        "importChipShow": "Показать",
         "boardAnalysisCopied": "Изображение доски + анализа скопировано в буфер обмена",
         "boardSvgNotFound": "SVG доски не найден",
         "boardElementNotFound": "Элемент доски не найден",

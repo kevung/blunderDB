@@ -1036,6 +1036,10 @@
         "metadataTitle": "Metadaten der exportierten Datei"
     },
     "import": {
+        "minimize": "Minimieren",
+        "rateEta": "{rate} Positionen/s · noch {eta}",
+        "liveCounts": "{imported} importiert · {skipped} Duplikate · {failed} fehlerhaft",
+        "moreErrors": "… und {n} weitere Fehler: siehe Protokoll",
         "abortImport": "Import abbrechen",
         "added": "Hinzugefügt",
         "analyzing": "Import wird analysiert",
@@ -1318,6 +1322,8 @@
         }
     },
     "status": {
+        "importChip": "Import läuft: {percent} %",
+        "importChipShow": "Anzeigen",
         "boardAnalysisCopied": "Brett- + Analysebild in die Zwischenablage kopiert",
         "boardSvgNotFound": "Brett-SVG nicht gefunden",
         "boardElementNotFound": "Brettelement nicht gefunden",

@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"text/tabwriter"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -364,6 +365,9 @@ type importBatchResult struct {
 	PositionsImported int                 `json:"positions_imported"`
 	// Report is the end-of-import report over the whole batch.
 	Report *domain.ImportReport `json:"report,omitempty"`
+	// Progress is the run's final throughput: elapsed time, positions per
+	// second, bytes read.
+	Progress *ingest.BatchProgress `json:"progress,omitempty"`
 }
 
 // importBatch imports all .xg files from a directory. It fails when every
@@ -479,7 +483,14 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		}
 		fmt.Println()
 	}
-	if _, err := cli.db.ImportFiles(matchFiles, database.ImportFilesOptions{OnFile: onFile, OnBulk: onBulk}); err != nil {
+	var final ingest.BatchProgress
+	onProgress := func(p ingest.BatchProgress) {
+		final = p
+		if text {
+			printProgress(os.Stderr, p)
+		}
+	}
+	if _, err := cli.db.ImportFiles(matchFiles, database.ImportFilesOptions{OnFile: onFile, OnBulk: onBulk, OnProgress: onProgress}); err != nil {
 		cli.finishImportBatch(batchID, failures)
 		return fmt.Errorf("batch import interrupted: %w", err)
 	}
@@ -539,6 +550,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			Failed:            failCount,
 			PositionsImported: totalPositions,
 			Report:            reportOf(report),
+			Progress:          &final,
 		}); err != nil {
 			return err
 		}
@@ -565,4 +577,35 @@ func flagsApplied(err error) int {
 		return dup.FlagsApplied
 	}
 	return 0
+}
+
+// printProgress shows the batch's progress on stderr, rewritten in place on
+// a terminal; elsewhere (a log, a pipe) only the final line, so a night-long
+// import does not write a progress line four times a second to a file.
+func printProgress(w *os.File, p ingest.BatchProgress) {
+	tty := false
+	if fi, err := w.Stat(); err == nil {
+		tty = fi.Mode()&os.ModeCharDevice != 0
+	}
+	if !tty && !p.Done {
+		return
+	}
+	pct := 0.0
+	if p.BytesTotal > 0 {
+		pct = 100 * float64(p.BytesRead) / float64(p.BytesTotal)
+	}
+	eta := "--"
+	if p.ETASeconds >= 0 {
+		eta = (time.Duration(p.ETASeconds) * time.Second).String()
+	}
+	line := fmt.Sprintf("%d/%d files  %.0f%%  %d new  %d duplicates  %d failed  %d positions  %.0f pos/s  ETA %s",
+		p.FilesDone, p.FilesTotal, pct, p.Imported, p.Duplicates, p.Failed, p.Positions, p.PositionsPerSec, eta)
+	if tty {
+		fmt.Fprintf(w, "\r\033[K%s", line)
+		if p.Done {
+			fmt.Fprintln(w)
+		}
+		return
+	}
+	fmt.Fprintln(w, line)
 }

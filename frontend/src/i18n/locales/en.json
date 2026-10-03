@@ -1036,6 +1036,10 @@
         "metadataTitle": "Metadata of the exported file"
     },
     "import": {
+        "minimize": "Minimize",
+        "rateEta": "{rate} positions/s · {eta} left",
+        "liveCounts": "{imported} imported · {skipped} duplicates · {failed} failed",
+        "moreErrors": "… and {n} more errors: see the log",
         "abortImport": "Abort Import",
         "added": "Added",
         "analyzing": "Analyzing Import",
@@ -1318,6 +1322,8 @@
         }
     },
     "status": {
+        "importChip": "Importing: {percent}%",
+        "importChipShow": "Show",
         "boardAnalysisCopied": "Board + analysis image copied to clipboard",
         "boardSvgNotFound": "Board SVG not found",
         "boardElementNotFound": "Board element not found",

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"os"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
@@ -25,6 +26,9 @@ type ImportFilesOptions struct {
 	// large enough for the bulk mode; unsafe tells that synchronous writes are
 	// off (an empty database: a cut means importing again).
 	OnBulk func(unsafe bool)
+	// OnProgress receives the run's progress at most four times a second,
+	// and once more at the end (Done set).
+	OnProgress func(ingest.BatchProgress)
 }
 
 // bulkImportMinFiles is the list size from which ImportFiles writes in bulk
@@ -75,6 +79,30 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 		}
 	}
 
+	onRead, onFile := opts.OnRead, opts.OnFile
+	if opts.OnProgress != nil {
+		var total int64
+		for _, p := range paths {
+			if fi, err := os.Stat(p); err == nil {
+				total += fi.Size()
+			}
+		}
+		meter := ingest.NewProgressMeter(len(paths), total, ingest.ProgressInterval, opts.OnProgress)
+		defer meter.Finish()
+		onRead = func(size int64) {
+			meter.Read(size)
+			if opts.OnRead != nil {
+				opts.OnRead(size)
+			}
+		}
+		onFile = func(o ingest.FileOutcome) {
+			meter.File(o)
+			if opts.OnFile != nil {
+				opts.OnFile(o)
+			}
+		}
+	}
+
 	out, err := ingest.ImportFiles(ctx, store, paths, ingest.PipelineOptions{
 		Workers:       opts.Workers,
 		FilesPerTx:    opts.FilesPerTx,
@@ -85,13 +113,18 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 		},
 		OnCommit: func(group []ingest.FileOutcome) {
 			for _, o := range group {
+				if o.Status == ingest.FileFailed {
+					// The journal is where the full list of refused files
+					// lives: the GUI shows the first hundred.
+					slog.Warn("import: file refused", "file", o.Path, "err", o.Error)
+				}
 				d.countImported(o)
-				if opts.OnFile != nil {
-					opts.OnFile(o)
+				if onFile != nil {
+					onFile(o)
 				}
 			}
 		},
-		OnRead: opts.OnRead,
+		OnRead: onRead,
 	})
 	slog.Info("imported files", "files", len(out), "of", len(paths), "err", err)
 	return out, err
