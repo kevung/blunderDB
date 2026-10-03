@@ -478,6 +478,18 @@ class GeneratedAPI(BaseClient):
         "POST /v1/history.save — JSON."
         return self._call("/v1/history.save", payload)
 
+    def imports_batch(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/imports.batch — hand-written handler — see openapi.yaml."
+        return self._call("/v1/imports.batch", payload)
+
+    def imports_batch_cancel(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/imports.batch.cancel — JSON."
+        return self._call("/v1/imports.batch.cancel", payload)
+
+    def imports_batch_status(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/imports.batch.status — JSON."
+        return self._call("/v1/imports.batch.status", payload)
+
     def imports_bgf(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/imports.bgf — hand-written handler — see openapi.yaml."
         return self._call("/v1/imports.bgf", payload)

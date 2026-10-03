@@ -378,29 +378,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 		fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
 	}
 
-	var matchFiles []string
-
-	walkFunc := func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
-		// Skip directories if not recursive (but always process root)
-		if info.IsDir() {
-			if !recursive && path != dirPath {
-				return filepath.SkipDir
-			}
-			return nil
-		}
-
-		if ingest.IsImportable(path) {
-			matchFiles = append(matchFiles, path)
-		}
-
-		return nil
-	}
-
-	err := filepath.Walk(dirPath, walkFunc)
+	matchFiles, err := ingest.CollectFiles(dirPath, recursive)
 	if err != nil {
 		return fmt.Errorf("failed to scan directory: %w", err)
 	}

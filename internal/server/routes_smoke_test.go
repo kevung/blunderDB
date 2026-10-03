@@ -50,6 +50,7 @@ var customContentTypes = map[string][]string{
 	"/v1/imports.db":                      {ndjsonContentType},
 	"/v1/imports.position":                {ndjsonContentType},
 	"/v1/imports.cancel":                  {"application/json"},
+	"/v1/imports.batch":                   {"application/json"},
 	"/v1/exports.json":                    {ndjsonContentType},
 	"/v1/exports.sqlite":                  {"application/octet-stream"},
 	"/v1/matches.exportMat":               {"text/plain"},

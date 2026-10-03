@@ -2942,6 +2942,54 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/imports.batch:
+    post:
+      operationId: imports.batch
+      tags: [imports]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/imports.batch.cancel:
+    post:
+      operationId: imports.batch.cancel
+      tags: [imports]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/importBatchIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/imports.batch.status:
+    post:
+      operationId: imports.batch.status
+      tags: [imports]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/importBatchIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/batchStatus"
+                nullable: true
   /v1/imports.bgf:
     post:
       operationId: imports.bgf
@@ -5774,6 +5822,37 @@ components:
         analysis:
           $ref: "#/components/schemas/domain_PositionAnalysis"
           nullable: true
+    batchFileError:
+      type: object
+      properties:
+        path:
+          type: string
+        error:
+          type: string
+    batchStatus:
+      type: object
+      properties:
+        importId:
+          type: string
+        state:
+          type: string
+        batchId:
+          type: integer
+          format: int64
+          nullable: true
+        progress:
+          $ref: "#/components/schemas/ingest_BatchProgress"
+        errors:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/batchFileError"
+        errorsTotal:
+          type: integer
+          format: int32
+        error:
+          type: string
+          nullable: true
     cardIDReq:
       type: object
       properties:
@@ -6425,6 +6504,11 @@ components:
           items:
             type: integer
             format: int64
+    importBatchIDReq:
+      type: object
+      properties:
+        importId:
+          type: string
     importReportReq:
       type: object
       properties:
@@ -6451,6 +6535,9 @@ components:
           type: integer
           format: int32
           nullable: true
+    ingest_BatchProgress:
+      type: object
+      description: "Opaque: see the Go type ingest.BatchProgress (defined outside internal/server, not expanded here)."
     lastVisitedReq:
       type: object
       properties:

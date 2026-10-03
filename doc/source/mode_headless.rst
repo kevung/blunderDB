@@ -165,6 +165,11 @@ depuis plusieurs clients.
      - répertoire de l'identité de signature du démon (créée au premier
        usage) ; nécessaire pour qu'``exports.sqlite`` puisse apposer un
        filigrane — voir plus bas
+   * - ``--import-dir <répertoire>``
+     - –
+     - répertoire de la machine du démon que ``imports.batch`` peut lire par
+       chemin ; désactivé par défaut (un lot n'arrive alors que sous forme
+       d'archive) — voir plus bas
    * - ``--ops-addr <hôte:port>``
      - –
      - sert la famille ``/ops/`` (``maintenance.vacuum``, ``tenant.purge``)
@@ -183,7 +188,7 @@ La plupart des options peuvent aussi être fournies par variable
 d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
 ``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_METRICS``, ``BLUNDERDB_CORS_ALLOW_ORIGIN``,
 ``BLUNDERDB_RATE_LIMIT_RPS``, ``BLUNDERDB_RATE_LIMIT_BURST``, ``BLUNDERDB_RLS``,
-``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``, ``BLUNDERDB_OPS_ADDR``, ``BLUNDERDB_PPROF_ADDR``) :
+``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``, ``BLUNDERDB_IMPORT_DIR``, ``BLUNDERDB_OPS_ADDR``, ``BLUNDERDB_PPROF_ADDR``) :
 un drapeau explicite reste prioritaire sur la variable correspondante.
 
 Le démon n'a **pas** d'option de répertoire de données : il écrit ses tables de
@@ -856,6 +861,46 @@ porte aucun filigrane ; les demander sans identité configurée échoue avec le
 code ``invalid``. ``collectionIds`` restreint l'export à ces collections et à
 leurs positions, avec analyses, commentaires et coups joués, sans la
 bibliothèque de filtres ni les paquets Anki.
+
+**Importer un dossier ou un corpus** se fait par ``imports.batch``, qui passe
+par le même pipeline que ``blunderdb import --type batch`` : mêmes matchs,
+mêmes empreintes ``canonical_hash``, un doublon n'est écrit qu'une fois. L'appel
+rend aussitôt ``{"importId": …, "files": N}`` et l'import continue en tâche de
+fond, le temps qu'il faut. Le lot arrive sous l'une de ces deux formes :
+
+* une **archive** ``.zip`` ou ``.tar`` envoyée en multipart (champ ``file``) ; seuls les
+  fichiers importables en sont extraits, et la taille de l'archive comme celle
+  de son contenu décompressé sont bornées par ``ImportMaxBodyBytes`` (512 Mio
+  par défaut) ;
+* un **chemin local au démon**, ``{"path": "corpus", "recursive": true}``, lu
+  dans le répertoire que l'opérateur a ouvert avec ``--import-dir``. Sans cette
+  option, tout chemin est refusé (code ``invalid``) ; avec elle, un chemin qui
+  sort du répertoire, lien symbolique compris, l'est aussi. Le démon n'authentifie
+  personne : nommer un répertoire, c'est laisser tout appelant y lire des
+  fichiers de match. C'est la voie des gros corpus, qu'on ne pousse pas par
+  HTTP.
+
+``Idempotency-Key`` est accepté : rejouer l'appel avec la même clé rend le même
+``importId`` (en-tête ``Idempotency-Replayed: true``) sans relancer l'import. Pour
+un lot reçu en archive, la clé désigne le lot, pas le contenu de l'archive.
+
+``imports.batch.status`` (``{"importId": …}``) rend l'état (``receiving``,
+``running``, ``done``, ``cancelled`` ou ``failed``) et la progression
+mesurée par le pipeline : fichiers traités, matchs importés, doublons, fichiers en
+erreur, positions, octets lus, débit, durée restante estimée. Les cent premières
+erreurs sont listées avec leur fichier, le total est exact. Un lot terminé reste
+lisible une heure. ``imports.batch.cancel`` l'arrête : les groupes de fichiers
+déjà validés restent dans la base, le groupe en cours est annulé.
+``imports.report`` rend, d'après le ``batchId`` du statut, le rapport de fin
+d'import.
+
+.. code-block:: bash
+
+   curl -X POST http://127.0.0.1:8080/v1/imports.batch \
+        -H 'X-Tenant-ID: club-lyon' -F file=@corpus.zip
+   curl -X POST http://127.0.0.1:8080/v1/imports.batch.status \
+        -H 'X-Tenant-ID: club-lyon' -H 'Content-Type: application/json' \
+        -d '{"importId":"3f9c…"}'
 
 **Partager une collection entre tenants** passe par le client, jamais par une
 lecture d'un tenant dans l'autre : le tenant qui donne appelle

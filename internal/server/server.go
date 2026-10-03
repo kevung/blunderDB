@@ -50,6 +50,9 @@ type Server struct {
 	allowedMethod map[string]string
 
 	imports *importRegistry
+	// batches holds the batch imports (imports.batch) by id, readable after
+	// they end for a while.
+	batches *batchRegistry
 	// transcriptSvc holds the transcription sessions (handlers_transcriptions.go).
 	transcriptsOnce sync.Once
 	transcriptSvc   *transcription.Service
@@ -99,6 +102,7 @@ func New(opts Options) (*Server, error) {
 			ExpectedVersion: domain.DatabaseVersion,
 		},
 		imports:       newImportRegistry(),
+		batches:       newBatchRegistry(),
 		gammonnetJobs: newImportRegistry(),
 		quota:         newQuotaLedger(opts.Quotas, opts.now),
 		engineWorkers: runtime.NumCPU(),

@@ -136,6 +136,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/history.load                         JSON
      POST /v1/history.save                         JSON
    imports
+     POST /v1/imports.batch                        custom
+     POST /v1/imports.batch.cancel                 JSON
+     POST /v1/imports.batch.status                 JSON
      POST /v1/imports.bgf                          custom
      POST /v1/imports.cancel                       custom
      POST /v1/imports.db                           custom
