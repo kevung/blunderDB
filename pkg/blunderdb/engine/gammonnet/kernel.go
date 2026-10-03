@@ -27,7 +27,7 @@ import (
 const EvalBatchWidth = 8
 
 // KernelEnv names the environment variable that pins the arithmetic path:
-// "go" or, on amd64, "avx2". A diagnosis knob, undocumented for users. A path
+// "go", "avx2" on amd64, "neon" on arm64. A diagnosis knob, undocumented for users. A path
 // this build or CPU cannot provide is an error at load, never a silent
 // fallback (ADR-0024).
 const KernelEnv = "BLUNDERDB_GAMMONNET_KERNEL"
@@ -49,6 +49,10 @@ type denseFunc func(w, bias, act, out []float32, in, outDim int, relu bool)
 type denseKernel struct {
 	name  string
 	dense denseFunc
+	// optIn keeps a kernel out of the default choice: it runs only when the
+	// selector names it, while its bit-identity is still to be proved on the
+	// hardware it targets.
+	optIn bool
 }
 
 var goKernel = denseKernel{name: goKernelName, dense: denseGo}
@@ -58,14 +62,18 @@ var resolveKernelOnce = sync.OnceValues(func() (denseKernel, error) {
 })
 
 // resolveKernel picks the arithmetic path. Empty request means "the fastest
-// one this machine actually provides"; a named request is honoured or refused,
-// never approximated.
+// proven one this machine actually provides"; a named request is honoured or
+// refused, never approximated.
 func resolveKernel(requested string, accelerated []denseKernel) (denseKernel, error) {
 	available := append(append([]denseKernel{}, accelerated...), goKernel)
 
 	requested = strings.TrimSpace(strings.ToLower(requested))
 	if requested == "" {
-		return available[0], nil
+		for _, k := range available {
+			if !k.optIn {
+				return k, nil
+			}
+		}
 	}
 	for _, k := range available {
 		if k.name == requested {

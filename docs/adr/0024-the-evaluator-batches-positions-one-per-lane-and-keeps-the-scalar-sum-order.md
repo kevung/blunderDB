@@ -27,8 +27,9 @@ one bit.
    avo) and a pure-Go fallback of the same layout, which is the reference of the bit-identity
    test on every CI runner. `BLUNDERDB_GAMMONNET_KERNEL=go|avx2|neon` selects one; the default
    is the best available; **a requested-but-unavailable kernel is an error at load**, never a
-   silent fallback. No cgo. arm64 runs the fallback: a NEON kernel is added only once it can be
-   run through the identity test on real arm64 hardware — never written blind.
+   silent fallback. No cgo. On arm64 the default is the fallback; the NEON kernel (hand-written,
+   avo has no arm64 back end) is **opt-in**, selectable only by name, until the identity test
+   has passed on real Apple Silicon. Emulation (qemu) is a local check, not that proof.
 4. **Skipping zero inputs is allowed** (`acc + w × 0.0 = acc` in IEEE 754), proved by the same
    identity test, not assumed.
 5. **Parallelism is production behaviour.** The analysis batch runs positions across `NumCPU`
