@@ -365,7 +365,7 @@
     },
     "help": {
         "tabManual": "Manuale",
-        "tabShortcuts": "Scorciatoia",
+        "tabShortcuts": "Scorciatoie",
         "tabCommands": "Riga di comando",
         "tabAbout": "Informazioni",
         "loadFailed": "Impossibile caricare la guida."

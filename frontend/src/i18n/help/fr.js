@@ -13,13 +13,13 @@ export default {
     manual: `
 <h3>Introduction</h3>
 <p>blunderDB est un logiciel pour constituer des bases de données de positions de backgammon. Sa force principale est de fournir un lieu unique pour agréger les positions qu'un joueur a rencontrées (en ligne, en tournoi) et de pouvoir les réétudier en les filtrant selon divers filtres arbitrairement combinables. blunderDB peut également être utilisé pour créer des catalogues de positions de référence.</p>
-<p>Les positions sont stockées dans une base de données représentée par un fichier <em>.db</em>. L'application de bureau ouvre ce fichier directement, jamais une adresse réseau : le mode serveur (Mode headless (serveur)) est un autre mode du même binaire, et l'on passe de l'un à l'autre en exportant ou en migrant la base, pas en pointant l'application vers une URL.</p>
+<p>Les positions sont stockées dans une base de données représentée par un fichier <em>.db</em>. L'application de bureau ouvre ce fichier directement, jamais une adresse réseau : le mode serveur est un autre mode du même binaire, et l'on passe de l'un à l'autre en exportant ou en migrant la base, pas en pointant l'application vers une URL.</p>
 <h3>Interactions principales</h3>
 <p>Les principales interactions possibles avec blunderDB sont:</p>
 <ul>
 <li>ajouter une nouvelle position,</li>
 <li>modifier une position existante,</li>
-<li>copier l'image du board dans le presse-papier (PNG) via <strong>CTRL-X</strong>, ou avec l'analyse complète via <strong>CTRL-X CTRL-X</strong>,</li>
+<li>copier l'image du plateau dans le presse-papier (PNG) via <strong>CTRL-X</strong>, ou avec l'analyse complète via <strong>CTRL-X CTRL-X</strong>,</li>
 <li>supprimer une position existante,</li>
 <li>rechercher une ou plusieurs positions,</li>
 <li>importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, Jellyfish), y compris les commentaires depuis les fichiers XG,</li>
@@ -57,7 +57,7 @@ export default {
 </ul>
 <p>La zone d'affichage principale met à disposition à l'utilisateur:</p>
 <ul>
-<li>un board afin d'afficher ou d'éditer une position de backgammon,</li>
+<li>un plateau afin d'afficher ou d'éditer une position de backgammon,</li>
 <li>le niveau et le propriétaire du cube,</li>
 <li>le compte de course de chaque joueur,</li>
 <li>le score de chaque joueur,</li>

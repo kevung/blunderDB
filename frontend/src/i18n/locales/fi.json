@@ -365,7 +365,7 @@
     },
     "help": {
         "tabManual": "Käyttöopas",
-        "tabShortcuts": "Pikanäppäin",
+        "tabShortcuts": "Pikanäppäimet",
         "tabCommands": "Komentorivi",
         "tabAbout": "Tietoja",
         "loadFailed": "Ohjetta ei voitu ladata."

@@ -15,7 +15,7 @@ de positions de référence.
 
 Les positions sont stockées dans une base de données représentée par un fichier
 *.db*. L'application de bureau ouvre ce fichier directement, jamais une adresse
-réseau : le mode serveur (:ref:`headless`) est un autre mode du même binaire, et
+réseau : le :ref:`mode serveur <headless>` est un autre mode du même binaire, et
 l'on passe de l'un à l'autre en exportant ou en migrant la base, pas en pointant
 l'application vers une URL.
 
@@ -28,7 +28,7 @@ Les principales interactions possibles avec blunderDB sont:
 
 * modifier une position existante,
 
-* copier l'image du board dans le presse-papier (PNG) via **CTRL-X**, ou avec l'analyse complète via **CTRL-X CTRL-X**,
+* copier l'image du plateau dans le presse-papier (PNG) via **CTRL-X**, ou avec l'analyse complète via **CTRL-X CTRL-X**,
 
 * supprimer une position existante,
 
@@ -95,7 +95,7 @@ Des fenêtres modales peuvent s'afficher pour:
 
 La zone d'affichage principale met à disposition à l'utilisateur:
 
-* un board afin d'afficher ou d'éditer une position de backgammon,
+* un plateau afin d'afficher ou d'éditer une position de backgammon,
 
 * le niveau et le propriétaire du cube,
 

@@ -13,7 +13,7 @@ export default {
     manual: `
 <h3>Johdanto</h3>
 <p>blunderDB on ohjelmisto backgammon-asemien tietokantojen luomiseen. Sen tärkein vahvuus on tarjota yksi paikka koota asemat, joita pelaaja on kohdannut (verkossa, turnauksissa), ja mahdollisuus tutkia näitä asemia uudelleen suodattamalla niitä erilaisilla mielivaltaisesti yhdisteltävillä suodattimilla. blunderDB:tä voi käyttää myös viiteasemien luettelojen luomiseen.</p>
-<p>Asemat tallennetaan tietokantaan, jota edustaa <em>.db</em>-tiedosto. Työpöytäsovellus avaa tämän tiedoston suoraan, ei koskaan verkko-osoitetta: palvelintila (Headless-tila (palvelin)) on saman binäärin toinen tila, ja toisesta toiseen siirrytään viemällä tai migroimalla tietokanta, ei osoittamalla sovellusta URL-osoitteeseen.</p>
+<p>Asemat tallennetaan tietokantaan, jota edustaa <em>.db</em>-tiedosto. Työpöytäsovellus avaa tämän tiedoston suoraan, ei koskaan verkko-osoitetta: palvelintila on saman binäärin toinen tila, ja toisesta toiseen siirrytään viemällä tai migroimalla tietokanta, ei osoittamalla sovellusta URL-osoitteeseen.</p>
 <h3>Päätoiminnot</h3>
 <p>blunderDB:n keskeiset mahdolliset toiminnot ovat:</p>
 <ul>

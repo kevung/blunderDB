@@ -13,7 +13,7 @@ export default {
     manual: `
 <h3>Einführung</h3>
 <p>blunderDB ist eine Software zum Erstellen von Datenbanken mit Backgammon-Stellungen. Ihre größte Stärke besteht darin, einen einzigen Ort zu bieten, an dem ein Spieler die Stellungen sammeln kann, die ihm begegnet sind (online, im Turnier), und sie erneut studieren kann, indem er sie nach verschiedenen beliebig kombinierbaren Filtern filtert. blunderDB kann außerdem verwendet werden, um Kataloge von Referenzstellungen zu erstellen.</p>
-<p>Die Stellungen werden in einer Datenbank gespeichert, die durch eine Datei <em>.db</em> dargestellt wird. Die Desktop-Anwendung öffnet diese Datei direkt, niemals eine Netzwerkadresse: Der Servermodus (Headless-Modus (Server)) ist ein anderer Modus desselben Binärprogramms, und man wechselt von einem zum anderen durch Exportieren oder Migrieren der Datenbank, nicht indem man die Anwendung auf eine URL zeigen lässt.</p>
+<p>Die Stellungen werden in einer Datenbank gespeichert, die durch eine Datei <em>.db</em> dargestellt wird. Die Desktop-Anwendung öffnet diese Datei direkt, niemals eine Netzwerkadresse: Der Servermodus ist ein anderer Modus desselben Binärprogramms, und man wechselt von einem zum anderen durch Exportieren oder Migrieren der Datenbank, nicht indem man die Anwendung auf eine URL zeigen lässt.</p>
 <h3>Wichtigste Interaktionen</h3>
 <p>Die wichtigsten mit blunderDB möglichen Interaktionen sind:</p>
 <ul>

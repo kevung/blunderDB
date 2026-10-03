@@ -365,7 +365,7 @@
     },
     "help": {
         "tabManual": "Εγχειρίδιο",
-        "tabShortcuts": "Συντόμευση",
+        "tabShortcuts": "Συντομεύσεις",
         "tabCommands": "Γραμμή εντολών",
         "tabAbout": "Σχετικά",
         "loadFailed": "Δεν ήταν δυνατή η φόρτωση της βοήθειας."

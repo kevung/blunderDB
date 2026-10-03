@@ -13,7 +13,7 @@ export default {
     manual: `
 <h3>Introduzione</h3>
 <p>blunderDB è un software per creare database di posizioni di backgammon. Il suo punto di forza principale è fornire un luogo unico in cui aggregare le posizioni che un giocatore ha incontrato (online, in torneo) e poterle riesaminare filtrandole secondo vari filtri combinabili arbitrariamente. blunderDB può anche essere usato per creare cataloghi di posizioni di riferimento.</p>
-<p>Le posizioni sono memorizzate in un database rappresentato da un file <em>.db</em>. L'applicazione desktop apre questo file direttamente, mai un indirizzo di rete: la modalità server (Modalità headless (server)) è un'altra modalità dello stesso binario, e si passa dall'una all'altra esportando o migrando il database, non puntando l'applicazione verso un URL.</p>
+<p>Le posizioni sono memorizzate in un database rappresentato da un file <em>.db</em>. L'applicazione desktop apre questo file direttamente, mai un indirizzo di rete: la modalità server è un'altra modalità dello stesso binario, e si passa dall'una all'altra esportando o migrando il database, non puntando l'applicazione verso un URL.</p>
 <h3>Interazioni principali</h3>
 <p>Le principali interazioni possibili con blunderDB sono:</p>
 <ul>

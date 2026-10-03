@@ -365,7 +365,7 @@
     },
     "help": {
         "tabManual": "Manuel",
-        "tabShortcuts": "Raccourci",
+        "tabShortcuts": "Raccourcis",
         "tabCommands": "Ligne de commande",
         "tabAbout": "À propos",
         "loadFailed": "L'aide n'a pas pu être chargée."
