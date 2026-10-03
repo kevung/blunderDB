@@ -116,7 +116,14 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	if err := s.appendIdentityClauses(ctx, scope, f, &where, &args); err != nil {
 		return searchWhereClause{}, err
 	}
-	s.appendCorpusClauses(scope, f, &where, &args)
+	var prMissing *prOfMissing
+	if f.PlayerPRFilter != "" {
+		var err error
+		if prMissing, err = s.prOfMissingMatches(ctx, scope, f.PlayerPRFilter); err != nil {
+			return searchWhereClause{}, err
+		}
+	}
+	s.appendCorpusClauses(scope, f, prMissing, &where, &args)
 
 	// A ranked query narrows to the target's equivalence class BEFORE anything
 	// else: a neighbour is the same problem nearby, and the rest of the WHERE

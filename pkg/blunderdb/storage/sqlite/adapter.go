@@ -92,6 +92,13 @@ func (a shared) Transact(ctx context.Context, fn func(sqlshared.Execer) error) e
 	return withTx(ctx, a.db, func(tx execer) error { return fn(shared{tx}) })
 }
 
+// RefusesWrites reports the connection's query_only setting, which the
+// read-only fallback turns on.
+func (a shared) RefusesWrites(ctx context.Context) bool {
+	var on int
+	return a.db.QueryRowContext(ctx, `PRAGMA query_only`).Scan(&on) == nil && on != 0
+}
+
 // sqlRow translates database/sql's no-row sentinel to the shared one.
 type sqlRow struct{ row *sql.Row }
 

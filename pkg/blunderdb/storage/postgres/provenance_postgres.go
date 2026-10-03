@@ -75,6 +75,15 @@ func backfillAnalysisProvenance(ctx context.Context, db execer) error {
 			ids, engines, depths, created); err != nil {
 			return fmt.Errorf("postgres: write analysis provenance: %w", err)
 		}
+		// Provenance is a column match_stats summarises: the matches reaching
+		// these analyses are recomputed on the next read.
+		if _, err := db.Exec(ctx,
+			`DELETE FROM match_stats ms USING analysis a, move mv, game g
+			  WHERE a.id = ANY($1::bigint[]) AND mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id
+			    AND g.id = mv.game_id AND ms.match_id = g.match_id AND ms.tenant_id = a.tenant_id`,
+			ids); err != nil {
+			return fmt.Errorf("postgres: invalidate match stats after provenance: %w", err)
+		}
 		last = ids[len(ids)-1]
 		done += len(ids)
 	}

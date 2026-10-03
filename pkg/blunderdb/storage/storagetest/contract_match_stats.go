@@ -232,6 +232,31 @@ func testMatchStatsOracle(t *testing.T, s storage.Storage) {
 	check("blunder threshold moved")
 	checkSeries("blunder threshold moved", storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"})
 
+	// The `pr` token reads match_stats: after an invalidation it must see the
+	// matches again without anyone filling the table by hand. Every PR is
+	// below 1000, so the count is that of the positions of matches with a PR.
+	prAll := domain.SearchFilters{PlayerPRFilter: "pr<1000"}
+	before, err := s.Search().Count(ctx, "", prAll)
+	if err != nil || before == 0 {
+		t.Fatalf("pr search before invalidation: %d, %v", before, err)
+	}
+	if err := s.Matches().SwapPlayers(ctx, "", matchB); err != nil {
+		t.Fatalf("SwapPlayers: %v", err)
+	}
+	if err := s.Matches().SwapPlayers(ctx, "", matchB); err != nil {
+		t.Fatalf("SwapPlayers: %v", err)
+	}
+	after, err := s.Search().Count(ctx, "", prAll)
+	if err != nil || after != before {
+		t.Errorf("pr search after invalidation: %d, %v; want %d", after, err, before)
+	}
+
+	// Deleting an analysis changes the decisions its matches count.
+	if err := s.Analyses().Delete(ctx, "", posA[1]); err != nil {
+		t.Fatalf("Analyses().Delete: %v", err)
+	}
+	check("analysis deleted")
+
 	if err := s.Matches().DeleteCascade(ctx, "", matchC); err != nil {
 		t.Fatalf("DeleteCascade: %v", err)
 	}

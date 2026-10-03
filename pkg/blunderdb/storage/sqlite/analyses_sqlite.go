@@ -284,12 +284,19 @@ func SaveAnalysisUncompressed(ctx context.Context, tx *sql.Tx, positionID int64,
 }
 
 // Delete removes the analysis for positionID.
+// The matches reaching the position lose their match_stats rows with it:
+// their counted decisions just changed.
 func (s *analysisStore) Delete(ctx context.Context, scope string, positionID int64) error {
-	if _, err := s.db.ExecContext(ctx,
-		`DELETE FROM analysis WHERE position_id = ?`, positionID); err != nil {
-		return fmt.Errorf("sqlite: delete analysis for position %d: %w", positionID, err)
-	}
-	return nil
+	return withTx(ctx, s.db, func(tx execer) error {
+		if _, err := tx.ExecContext(ctx, invalidateMatchStatsOfPositionSQL, positionID); err != nil {
+			return fmt.Errorf("sqlite: invalidate match stats of position %d: %w", positionID, err)
+		}
+		if _, err := tx.ExecContext(ctx,
+			`DELETE FROM analysis WHERE position_id = ?`, positionID); err != nil {
+			return fmt.Errorf("sqlite: delete analysis for position %d: %w", positionID, err)
+		}
+		return nil
+	})
 }
 
 func firstOf(s []string) string {

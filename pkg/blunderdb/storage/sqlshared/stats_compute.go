@@ -53,7 +53,10 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 	// The match-level figures come from match_stats when the filter allows
 	// it: a pass over the table instead of one over every decision row. The
 	// table is repaired before the read transaction opens, since that is a write.
-	useTable := fromMatchStats(filter)
+	// A read-only connection can neither repair the table nor create the
+	// selection tables: it reads every decision directly, to the same figures.
+	readOnly := RefusesWrites(ctx, s.DB)
+	useTable := fromMatchStats(filter) && !readOnly
 	if useTable {
 		if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
 			return nil, err
@@ -64,12 +67,15 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 	// tables need, and gives every pass the same snapshot.
 	err = s.DB.Transact(ctx, func(tx Execer) error {
 		ts := &StatsStore{DB: tx}
-		join, err := ts.materializeSelection(ctx, scope, filter)
-		if err != nil {
-			return err
+		q.join = statsBaseJoin
+		if !readOnly {
+			join, err := ts.materializeSelection(ctx, scope, filter)
+			if err != nil {
+				return err
+			}
+			defer ts.dropSelection(ctx)
+			q.join = join
 		}
-		defer ts.dropSelection(ctx)
-		q.join = join
 
 		prPass, snowiePass, tournamentPass, matchPass := ts.computePRByDecisionType, ts.computeSnowieGlobal, ts.computePerTournament, ts.computePerMatch
 		if useTable {

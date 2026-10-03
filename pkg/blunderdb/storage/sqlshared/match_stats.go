@@ -25,6 +25,7 @@ package sqlshared
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -352,6 +353,23 @@ func (s *StatsStore) RefreshMatchStats(ctx context.Context, scope string, matchI
 	return nil
 }
 
+// ErrMatchStatsIncomplete reports a match_stats table missing rows that a
+// read-only connection cannot fill.
+var ErrMatchStatsIncomplete = errors.New("match statistics incomplete")
+
+// writeRefuser is implemented by an Execer whose connection may refuse writes
+// (SQLite's read-only fallback sets query_only).
+type writeRefuser interface {
+	RefusesWrites(ctx context.Context) bool
+}
+
+// RefusesWrites reports whether db's connection refuses writes. A backend
+// that cannot say is taken to accept them.
+func RefusesWrites(ctx context.Context, db Execer) bool {
+	w, ok := db.(writeRefuser)
+	return ok && w.RefusesWrites(ctx)
+}
+
 // missingMatchStats lists the matches of the scope without rows.
 func (s *StatsStore) missingMatchStats(ctx context.Context, scope string) ([]int64, error) {
 	tenant, args := s.DB.TenantFilter("m", scope)
@@ -378,6 +396,11 @@ func (s *StatsStore) FillMatchStats(ctx context.Context, scope string, progress 
 	ids, err := s.missingMatchStats(ctx, scope)
 	if err != nil || len(ids) == 0 {
 		return 0, err
+	}
+	// A reader that cannot write must not answer from an incomplete table:
+	// the figures would quietly leave out the matches it lacks.
+	if RefusesWrites(ctx, s.DB) {
+		return 0, fmt.Errorf("%w: %d match(es) have no statistics yet and the database is open read-only; open it for writing once", ErrMatchStatsIncomplete, len(ids))
 	}
 	settings, err := librarySettings(ctx, s.DB, scope)
 	if err != nil {

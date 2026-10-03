@@ -1,6 +1,7 @@
 package sqlshared
 
 import (
+	"context"
 	"math"
 	"strconv"
 	"strings"
@@ -19,8 +20,8 @@ const likeEscape = ` ESCAPE '\'`
 // player's PR, the engine and depth of the analysis, the kind of cube decision.
 // They are properties of stored rows, not of the board, so — like the identity
 // clauses — they stay in SQL even in mirror search.
-func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, where *strings.Builder, args *[]any) {
-	s.appendMatchLevelClause(scope, f, where, args)
+func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, prMissing *prOfMissing, where *strings.Builder, args *[]any) {
+	s.appendMatchLevelClause(scope, f, prMissing, where, args)
 
 	if f.MatchDateFilter != "" {
 		from, until, ok := searchfilter.ParseMatchDate(f.MatchDateFilter)
@@ -54,7 +55,7 @@ func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, 
 // of the one who decided, the tournament, the round, the PR — holds of the same
 // match and the same move. Separate subqueries would let `pl"A" op"B"` be
 // satisfied by A's match against C and a match of B against D.
-func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilters, where *strings.Builder, args *[]any) {
+func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilters, prMissing *prOfMissing, where *strings.Builder, args *[]any) {
 	player, seatOnly := searchfilter.PlayerSpec(f.PlayerFilter)
 	opponent := ""
 	if f.OpponentFilter != "" {
@@ -134,7 +135,7 @@ func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilter
 			// PR is stored per match and per seat; the seat is the one of the
 			// move's player. A NULL PR fails every comparison, so it drops out.
 			msTenant, msArgs := s.DB.TenantFilter("ms", scope)
-			cond.WriteString(" AND EXISTS (SELECT 1 FROM match_stats ms WHERE " + msTenant +
+			cond.WriteString(" AND (EXISTS (SELECT 1 FROM match_stats ms WHERE " + msTenant +
 				" AND ms.match_id = mt.id AND ms.seat = (CASE WHEN mv.player = 1 THEN 1 ELSE 2 END)")
 			condArgs = append(condArgs, msArgs...)
 			switch {
@@ -150,6 +151,20 @@ func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilter
 			default:
 				cond.WriteString(" AND ms.pr <= ?")
 				condArgs = append(condArgs, hi)
+			}
+			cond.WriteString(")")
+			// Matches the table lacks, measured on the fly by a reader that
+			// could not fill it (prOfMissingMatches).
+			if prMissing != nil {
+				for _, side := range []struct {
+					seat string
+					ids  []int64
+				}{{"mv.player = 1", prMissing.seat1}, {"mv.player <> 1", prMissing.seat2}} {
+					if len(side.ids) > 0 {
+						cond.WriteString(" OR (" + side.seat + " AND mt.id IN (" + Placeholders(len(side.ids)) + "))")
+						condArgs = append(condArgs, int64Args(side.ids)...)
+					}
+				}
 			}
 			cond.WriteString(")")
 		}
@@ -215,4 +230,64 @@ func (s *SearchStore) appendProvenanceClause(scope string, f domain.SearchFilter
 		*args = append(*args, depthArgs...)
 	}
 	where.WriteString(")")
+}
+
+// prOfMissing lists, per seat, the matches absent from match_stats whose PR
+// satisfies the `pr` filter.
+type prOfMissing struct{ seat1, seat2 []int64 }
+
+// prOfMissingMatches makes match_stats complete before the `pr` filter reads
+// it. A connection that cannot write measures the missing matches instead,
+// from their decisions, and returns those that pass; nil means the table
+// answers alone.
+func (s *SearchStore) prOfMissingMatches(ctx context.Context, scope, filter string) (*prOfMissing, error) {
+	st := &StatsStore{DB: s.DB}
+	if !RefusesWrites(ctx, s.DB) {
+		_, err := st.FillMatchStats(ctx, scope, nil)
+		return nil, err
+	}
+	ids, err := st.missingMatchStats(ctx, scope)
+	if err != nil || len(ids) == 0 {
+		return nil, err
+	}
+	lo, hi, hasLo, hasHi := searchfilter.ParseFloatFilterExpr(filter, "pr")
+	if !hasLo && !hasHi {
+		return nil, nil
+	}
+	settings, err := librarySettings(ctx, s.DB, scope)
+	if err != nil {
+		return nil, err
+	}
+	rows, err := st.computeMatchStatsRows(ctx, s.DB, scope, ids, settings)
+	if err != nil {
+		return nil, err
+	}
+	out := &prOfMissing{}
+	for _, r := range rows {
+		// The table stores NULL for a seat without decisions, which no
+		// comparison accepts.
+		if r.Decisions == 0 {
+			continue
+		}
+		var ok bool
+		switch {
+		case hasLo && hasHi && lo == hi:
+			ok = r.PR == lo
+		case hasLo && hasHi:
+			ok = r.PR >= math.Min(lo, hi) && r.PR <= math.Max(lo, hi)
+		case hasLo:
+			ok = r.PR >= lo
+		default:
+			ok = r.PR <= hi
+		}
+		if !ok {
+			continue
+		}
+		if r.Seat == 1 {
+			out.seat1 = append(out.seat1, r.MatchID)
+		} else {
+			out.seat2 = append(out.seat2, r.MatchID)
+		}
+	}
+	return out, nil
 }
