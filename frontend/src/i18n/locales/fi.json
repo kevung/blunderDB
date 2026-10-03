@@ -991,7 +991,7 @@
         "countBlunders": "{n} blunderia",
         "countMatches": "{n} ottelua",
         "countPositionsTitle": "Näytä kaikki asemat",
-        "countBlundersTitle": "Hae vähintään 100 millipisteen virheet",
+        "countBlundersTitle": "Hae vähintään {mp} millipisteen virheet",
         "countBlundersUncounted": "Ei lasketa suuressa kirjastossa: etsi napsauttamalla",
         "countMatchesTitle": "Avaa otteluluettelo"
     },

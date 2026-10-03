@@ -4,6 +4,7 @@ import { get } from 'svelte/store';
 const estimate = vi.fn();
 const exact = vi.fn();
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    GetLibrarySettings: () => Promise.resolve({ errorThresholdMP: 80, blunderThresholdMP: 150 }),
     GetDatabaseStatsEstimate: (...a) => estimate(...a),
     GetDatabaseStats: (...a) => exact(...a)
 }));
@@ -26,6 +27,7 @@ describe('compteur de bibliothèque', () => {
             positions: 12,
             blunders: 4,
             matches: 3,
+            blunderThresholdMP: 150,
             approximate: { positions: false, matches: false }
         });
     });

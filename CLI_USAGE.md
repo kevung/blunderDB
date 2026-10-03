@@ -1226,6 +1226,7 @@ Display database metadata and statistics.
 **Options:**
 - `--db` - Path to the database file (required)
 - `--format` - Output format: `text` or `json` (default: text)
+- `--estimate` - Answer at once on a very large database: beyond 200,000 rows a count is an estimate (listed in `approximate`), and the blunders are not counted. Default: every row is counted
 
 **Examples:**
 ```bash
@@ -2556,8 +2557,8 @@ Display database metadata and statistics.
 Options:
   -db string
     	Path to the database file (required)
-  -exact
-    	Count every row, however large the database (default: estimate the tables beyond 200000 rows)
+  -estimate
+    	Estimate the tables beyond 200000 rows instead of counting them, and skip the blunders there (default: count every row)
   -format string
     	Output format: text, json (default "text")
 
@@ -2565,8 +2566,8 @@ Examples:
   # Display database info
   blunderdb info --db database.db
 
-  # Count every row of a very large database (the default estimates)
-  blunderdb info --db database.db --exact
+  # Answer at once on a very large database (estimated counts)
+  blunderdb info --db database.db --estimate
 
   # Output as JSON
   blunderdb info --db database.db --format json

@@ -212,3 +212,77 @@ func TestInvalidJSONBody(t *testing.T) {
 		t.Fatalf("code = %q, want %q", env.Error.Code, CodeInvalid)
 	}
 }
+
+// TestLivingCollectionRoutesResolveTheQuery: a living collection holds no
+// membership rows, its positions are those its saved query finds. The daemon
+// answers as the GUI and the CLI do, on every route that reads a collection.
+func TestLivingCollectionRoutesResolveTheQuery(t *testing.T) {
+	ts := newTestServer(t)
+	saveID := func(p domain.Position) int64 {
+		resp := post(t, ts, "/v1/positions.save", positionReq{Position: &p})
+		defer resp.Body.Close()
+		var saved idResp
+		if err := json.NewDecoder(resp.Body).Decode(&saved); err != nil {
+			t.Fatal(err)
+		}
+		return saved.ID
+	}
+	checker := domain.InitializePosition()
+	checker.DecisionType = domain.CheckerAction
+	cube := domain.InitializePosition()
+	cube.DecisionType = domain.CubeAction
+	cube.Board.Points[1] = domain.Point{Checkers: 1, Color: domain.White}
+	cube.Board.Points[3] = domain.Point{Checkers: 1, Color: domain.White}
+	saveID(checker)
+	cubeID := saveID(cube)
+
+	resp := post(t, ts, "/v1/collections.create", collectionCreateReq{Name: "living"})
+	var col idResp
+	if err := json.NewDecoder(resp.Body).Decode(&col); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	post(t, ts, "/v1/collections.setFilter", collectionFilterReq{ID: col.ID, Query: "s n<1"}).Body.Close()
+
+	req := collectionPositionsReq{CollectionID: col.ID}
+	var ids []int64
+	resp = post(t, ts, "/v1/collections.positionIds", req)
+	if err := json.NewDecoder(resp.Body).Decode(&ids); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if len(ids) != 2 {
+		t.Fatalf("positionIds = %v, want both positions (none was ever played)", ids)
+	}
+	var n int
+	resp = post(t, ts, "/v1/collections.countPositions", req)
+	if err := json.NewDecoder(resp.Body).Decode(&n); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if n != 2 {
+		t.Errorf("countPositions = %d, want 2", n)
+	}
+	var idx int
+	resp = post(t, ts, "/v1/collections.indexOfPosition", collPositionReq{CollectionID: col.ID, PositionID: cubeID})
+	if err := json.NewDecoder(resp.Body).Decode(&idx); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if idx < 0 {
+		t.Errorf("indexOfPosition = %d, want the rank of a held position", idx)
+	}
+	resp = post(t, ts, "/v1/collections.positions", req)
+	defer resp.Body.Close()
+	lines := 0
+	sc := bufio.NewScanner(resp.Body)
+	sc.Buffer(make([]byte, 1<<20), 1<<24)
+	for sc.Scan() {
+		if strings.TrimSpace(sc.Text()) != "" {
+			lines++
+		}
+	}
+	if lines != 2 {
+		t.Errorf("positions streamed %d rows, want 2", lines)
+	}
+}

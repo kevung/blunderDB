@@ -172,7 +172,8 @@ func buildMatchListWhere(opts storage.MatchListOpts, next int) (whereSQL string,
 	if opts.Text != "" {
 		clauses = append(clauses, fmt.Sprintf(`(m.player1_name ILIKE $%[1]d ESCAPE '\' OR m.player2_name ILIKE $%[1]d ESCAPE '\'
 			OR m.event ILIKE $%[1]d ESCAPE '\' OR m.location ILIKE $%[1]d ESCAPE '\' OR m.round ILIKE $%[1]d ESCAPE '\'
-			OR t.name ILIKE $%[1]d ESCAPE '\' OR CAST(m.match_date AS TEXT) ILIKE $%[1]d ESCAPE '\')`, next))
+			OR t.name ILIKE $%[1]d ESCAPE '\' OR CAST(m.match_date::date AS TEXT) ILIKE $%[1]d ESCAPE '\'
+			OR CAST(m.match_length AS TEXT) ILIKE $%[1]d ESCAPE '\')`, next))
 		args = append(args, sqlshared.ContainsPattern(opts.Text))
 		next++
 	}

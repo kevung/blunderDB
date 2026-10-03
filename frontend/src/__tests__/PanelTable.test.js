@@ -200,4 +200,30 @@ describe('virtualization', () => {
         expect(names).toContain('P20001');
         expect(names).not.toContain('P1');
     });
+
+    test('a drag reorder reports data indexes, not DOM positions, in a scrolled window', async () => {
+        const onReorder = vi.fn();
+        const { container } = mount({ rows: BIG, onReorder });
+        const scroll = container.querySelector('.scroll');
+        scroll.scrollTop = 28 * 20000;
+        await fireEvent.scroll(scroll);
+        const trs = [...container.querySelectorAll('tbody > tr')];
+        // Lay the rendered rows out one under the other, spacers included.
+        trs.forEach((tr, i) => {
+            tr.getBoundingClientRect = () => ({ top: i * 28, bottom: (i + 1) * 28, left: 0, right: 100, height: 28, width: 100 });
+        });
+        const data = trs.filter((tr) => !tr.classList.contains('spacer'));
+        const lead = trs.indexOf(data[0]);
+        const down = (y) => new PointerEvent('pointerdown', { bubbles: true, cancelable: true, pointerId: 1, button: 0, clientY: y, clientX: 0 });
+        const win = (type, y) => window.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, pointerId: 1, clientY: y, clientX: 20 }));
+        const names = data.map((tr) => tr.textContent);
+        const from = 12;
+        const to = 15;
+        data[from].dispatchEvent(down((lead + from) * 28 + 5));
+        win('pointermove', (lead + to) * 28 + 5);
+        win('pointerup', (lead + to) * 28 + 5);
+        const index = (name) => Number(name.slice(1)) - 1;
+        expect(onReorder).toHaveBeenCalledWith(index(names[from]), index(names[to]));
+        expect(index(names[from])).toBeGreaterThan(19000);
+    });
 });

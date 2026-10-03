@@ -3,7 +3,10 @@ package server
 import (
 	"context"
 	"net/http"
+	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -60,6 +63,16 @@ type collectionFilterReq struct {
 	Query string `json:"query"`
 }
 
+// livingFilters is Database.livingFilters for the daemon: a living collection
+// is read by its saved query, a hand-made one by its membership rows.
+func (s *Server) livingFilters(ctx context.Context, scope string, collectionID int64) (domain.SearchFilters, bool, error) {
+	col, err := s.opts.Storage.Collections().Get(ctx, scope, collectionID)
+	if err != nil {
+		return domain.SearchFilters{}, false, err
+	}
+	return searchquery.Living(collectionID, strings.TrimSpace(col.FilterQuery))
+}
+
 func (s *Server) collectionRoutes() []route {
 	cs := func() storage.CollectionStore { return s.opts.Storage.Collections() }
 	return []route{
@@ -111,16 +124,49 @@ func (s *Server) collectionRoutes() []route {
 			return cs().CopyPosition(ctx, scope, req.ToCollectionID, req.PositionID)
 		})},
 		{http.MethodPost, "/v1/collections.positions", rpcStream(func(ctx context.Context, scope string, req collectionPositionsReq) iterPositions {
-			return cs().Positions(ctx, scope, req.CollectionID, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
+			opts := storage.ListOpts{Limit: req.Limit, Offset: req.Offset}
+			filters, living, err := s.livingFilters(ctx, scope, req.CollectionID)
+			if err != nil {
+				return func(yield func(*domain.Position, error) bool) { yield(nil, err) }
+			}
+			if living {
+				return s.opts.Storage.Search().Find(ctx, scope, filters, opts)
+			}
+			return cs().Positions(ctx, scope, req.CollectionID, opts)
 		})},
 		{http.MethodPost, "/v1/collections.positionIds", rpc(func(ctx context.Context, scope string, req collectionPositionsReq) ([]int64, error) {
-			return cs().PositionIDs(ctx, scope, req.CollectionID, storage.ListOpts{Limit: req.Limit, Offset: req.Offset})
+			opts := storage.ListOpts{Limit: req.Limit, Offset: req.Offset}
+			filters, living, err := s.livingFilters(ctx, scope, req.CollectionID)
+			if err != nil {
+				return nil, err
+			}
+			if living {
+				return s.opts.Storage.Search().FindIDs(ctx, scope, filters, opts)
+			}
+			return cs().PositionIDs(ctx, scope, req.CollectionID, opts)
 		})},
 		{http.MethodPost, "/v1/collections.countPositions", rpc(func(ctx context.Context, scope string, req collectionPositionsReq) (int, error) {
+			filters, living, err := s.livingFilters(ctx, scope, req.CollectionID)
+			if err != nil {
+				return 0, err
+			}
+			if living {
+				return s.opts.Storage.Search().Count(ctx, scope, filters)
+			}
 			return cs().CountPositions(ctx, scope, req.CollectionID)
 		})},
 		{http.MethodPost, "/v1/collections.indexOfPosition", rpc(func(ctx context.Context, scope string, req collPositionReq) (int, error) {
-			index, found, err := cs().IndexOfPosition(ctx, scope, req.CollectionID, req.PositionID)
+			filters, living, err := s.livingFilters(ctx, scope, req.CollectionID)
+			if err != nil {
+				return -1, err
+			}
+			var index int
+			var found bool
+			if living {
+				index, found, err = s.opts.Storage.Search().IndexOf(ctx, scope, filters, req.PositionID)
+			} else {
+				index, found, err = cs().IndexOfPosition(ctx, scope, req.CollectionID, req.PositionID)
+			}
 			if err != nil || !found {
 				return -1, err
 			}

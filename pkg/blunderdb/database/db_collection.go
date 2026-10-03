@@ -219,20 +219,10 @@ func (d *Database) SetCollectionFilter(collectionID int64, query string) error {
 // typed query would not. living is false for a hand-made list.
 func (d *Database) livingFilters(collectionID int64) (filters SearchFilters, living bool, err error) {
 	query, err := d.collectionFilterQuery(collectionID)
-	if err != nil || query == "" {
+	if err != nil {
 		return SearchFilters{}, false, err
 	}
-	filters, diags := searchquery.Parse(query)
-	// A living collection whose query has become unreadable — a token
-	// removed by a later version — returns the error rather than the whole
-	// library. Silently widening is the one failure a saved filter must
-	// not have.
-	for _, diag := range diags {
-		if diag.Kind == searchquery.DiagUnknown {
-			return SearchFilters{}, false, fmt.Errorf("collection %d: its filter carries a token this version does not know: %s", collectionID, diag.Token)
-		}
-	}
-	return filters, true, nil
+	return searchquery.Living(collectionID, query)
 }
 
 // GetCollectionPositions returns all positions in a collection. A LIVING

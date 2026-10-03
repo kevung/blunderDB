@@ -143,6 +143,10 @@ func testMatchListFilterSortPaginate(t *testing.T, s storage.Storage) {
 	eq("text player", ids(storage.MatchListOpts{Text: "aLI"}), []int64{recentID, oldID})
 	eq("text tournament", ids(storage.MatchListOpts{Text: "CUP"}), []int64{midID})
 	eq("text date", ids(storage.MatchListOpts{Text: "2024-06"}), []int64{midID})
+	eq("text length", ids(storage.MatchListOpts{Text: "7"}), []int64{oldID})
+	eq("text two-digit length", ids(storage.MatchListOpts{Text: "11"}), []int64{recentID})
+	// The day, not the timestamp: 23:00 on the 15th still reads as the 15th.
+	eq("text full date", ids(storage.MatchListOpts{Text: "2025-06-15"}), []int64{recentID})
 	eq("text wildcard literal", ids(storage.MatchListOpts{Text: "%"}), nil)
 	eq("unassigned", ids(storage.MatchListOpts{Unassigned: true}), []int64{recentID, oldID})
 	// Name sorts, both directions, id as tiebreaker.

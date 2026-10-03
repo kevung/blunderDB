@@ -30,6 +30,7 @@ type tenantIsolationCase struct {
 
 var tenantIsolationCases = []tenantIsolationCase{
 	{"Position", checkPositionIsolation},
+	{"EstimatedCounts", checkEstimatedCountsIsolation},
 	{"TranscriptionRevision", checkTranscriptionRevisionIsolation},
 	{"Analysis", checkAnalysisIsolation},
 	{"Collection", checkCollectionIsolation},
@@ -325,5 +326,28 @@ func checkDirectionIsolation(t *testing.T, ctx context.Context, s storage.Storag
 	}
 	if got, err := ds.Pairs(ctx, b, tid); err != nil || len(got) != 0 {
 		t.Errorf("Pairs(%s) = %v, %v; want none of %s's", b, got, err, a)
+	}
+}
+
+// checkEstimatedCountsIsolation: ids come from one sequence shared by every
+// tenant, so a tenant that wrote a little after a neighbour wrote a lot must
+// still read its own count, exactly, whatever the exact threshold.
+func checkEstimatedCountsIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
+	for i := 1; i <= 5; i++ {
+		p := provenancePos(i)
+		if _, err := s.Positions().Save(ctx, a, &p); err != nil {
+			t.Fatalf("Save(%s): %v", a, err)
+		}
+	}
+	p := provenancePos(100)
+	if _, err := s.Positions().Save(ctx, b, &p); err != nil {
+		t.Fatalf("Save(%s): %v", b, err)
+	}
+	est, err := s.Metadata().EstimatedCounts(ctx, b, 2)
+	if err != nil {
+		t.Fatalf("EstimatedCounts(%s): %v", b, err)
+	}
+	if est.Positions != 1 || len(est.Approximate) != 0 || !est.BlundersKnown {
+		t.Errorf("tenant %s: %+v, want exactly 1 position and nothing approximate", b, est)
 	}
 }

@@ -991,7 +991,7 @@
         "countBlunders": "{n} blunders",
         "countMatches": "{n} αγώνες",
         "countPositionsTitle": "Εμφάνιση όλων των θέσεων",
-        "countBlundersTitle": "Αναζήτηση σφαλμάτων τουλάχιστον 100 χιλιοστών",
+        "countBlundersTitle": "Αναζήτηση σφαλμάτων τουλάχιστον {mp} χιλιοστών",
         "countBlundersUncounted": "Δεν μετράται σε μεγάλη βιβλιοθήκη: κάντε κλικ για αναζήτηση",
         "countMatchesTitle": "Άνοιγμα λίστας αγώνων"
     },

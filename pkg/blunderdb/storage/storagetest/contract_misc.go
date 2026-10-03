@@ -6,6 +6,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"slices"
 	"strings"
 	"testing"
 
@@ -424,15 +425,29 @@ func testMetadataEstimatedCounts(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("EstimatedCounts: %v", err)
 	}
-	if est.Positions < n || est.BlundersKnown {
-		t.Fatalf("over the threshold: %+v, want at least %d positions and no blunders", est, n)
+	// Above it a backend may keep counting (a multi-tenant one has no cheap
+	// estimate) or estimate; either way an estimate is flagged, never silent.
+	if slices.Contains(est.Approximate, "positions") {
+		if est.Positions < n || est.BlundersKnown {
+			t.Fatalf("over the threshold: %+v, want at least %d positions and no blunders", est, n)
+		}
+	} else if est.Positions != n || !est.BlundersKnown {
+		t.Fatalf("over the threshold, counted: %+v, want exactly %d positions and blunders known", est, n)
 	}
-	flagged := false
-	for _, f := range est.Approximate {
-		flagged = flagged || f == "positions"
+	// Blunders depend on the positions alone: a table that outgrew the
+	// threshold (here the matches) does not take them away.
+	for i := 0; i < n+1; i++ {
+		m := domain.Match{Player1Name: "A", Player2Name: "B"}
+		if _, err := s.Matches().Save(ctx, "", &m); err != nil {
+			t.Fatalf("Save match %d: %v", i, err)
+		}
 	}
-	if !flagged {
-		t.Fatalf("positions not flagged approximate: %v", est.Approximate)
+	est, err = s.Metadata().EstimatedCounts(ctx, "", n)
+	if err != nil {
+		t.Fatalf("EstimatedCounts: %v", err)
+	}
+	if slices.Contains(est.Approximate, "positions") || !est.BlundersKnown {
+		t.Fatalf("matches over the threshold, positions under: %+v, want positions not approximate and blunders known", est)
 	}
 }
 

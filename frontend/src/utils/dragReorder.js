@@ -16,7 +16,7 @@
  * @param {boolean} [params.enabled=true] - Whether drag is enabled
  */
 export function dragReorder(node, params) {
-    let onReorder, itemSelector, dragOverClass, draggingClass, deadZone, enabled;
+    let onReorder, itemSelector, dragOverClass, draggingClass, deadZone, enabled, indexOffset;
 
     function updateParams(p) {
         onReorder = p.onReorder;
@@ -25,6 +25,8 @@ export function dragReorder(node, params) {
         draggingClass = p.draggingClass || 'dragging';
         deadZone = p.deadZone ?? 5;
         enabled = p.enabled !== false;
+        // Rank of the first listed row in the data, when only a window of it is in the DOM.
+        indexOffset = p.indexOffset ?? 0;
     }
     updateParams(params);
 
@@ -126,7 +128,7 @@ export function dragReorder(node, params) {
             setTimeout(() => node.removeEventListener('click', suppressClick, { capture: true }), 200);
 
             if (from >= 0 && to >= 0 && from !== to) {
-                onReorder(from, to);
+                onReorder(from + indexOffset, to + indexOffset);
             }
         }
     }

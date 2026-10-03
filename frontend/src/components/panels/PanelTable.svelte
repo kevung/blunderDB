@@ -163,7 +163,7 @@
             const view = scrollEl.clientHeight || viewportHeight || 600;
             const head = scrollEl.querySelector('thead')?.offsetHeight ?? 0;
             let target = scrollEl.scrollTop;
-            if (block === 'center') target = top - (view - rh) / 2;
+            if (block === 'center') target = top - (view - head - rh) / 2;
             else if (top < target) target = top;
             else if (top + rh > target + view - head) target = top + rh - view + head;
             scrollEl.scrollTop = Math.max(0, target);
@@ -226,7 +226,7 @@
                     {/each}
                 </tr>
             </thead>
-            <tbody bind:this={tbodyEl} use:dragReorder={{ onReorder: onReorder ?? (() => {}), enabled: !!onReorder }}>
+            <tbody bind:this={tbodyEl} use:dragReorder={{ onReorder: onReorder ?? (() => {}), enabled: !!onReorder, itemSelector: 'tr:not(.spacer)', indexOffset: first }}>
                 {#if virtual && first > 0}
                     <tr class="spacer" aria-hidden="true" style:height="{first * rh}px"><td colspan={columns.length}></td></tr>
                 {/if}

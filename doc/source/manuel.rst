@@ -151,8 +151,9 @@ suivantes:
   qui vaut son coût le plus élevé. Sur une très grande bibliothèque (plus de
   200 000 lignes), le compteur ne balaie pas les tables : un nombre précédé de
   « ≈ » est une estimation (une borne haute, les lignes supprimées laissant des
-  trous), et le nombre de blunders, qui n'en a pas d'honnête, s'affiche « ? » —
-  le lien lance la recherche, qui donne le compte exact.
+  trous). Si les positions sont estimées, le nombre de blunders, qui n'a pas
+  d'estimation honnête, s'affiche « ? » — le lien lance la recherche, qui
+  donne le compte exact.
 
 .. note:: Dans le cas de positions issues d'une recherche par l'utilisateur, le
    nombre de positions indiqué dans la barre d'état correspond au nombre de

@@ -1652,15 +1652,17 @@ Affiche les métadonnées et les statistiques d'une base de données.
 
 .. code-block:: bash
 
-   ./blunderdb info --db <path> [--format <format>] [--exact]
+   ./blunderdb info --db <path> [--format <format>] [--estimate]
 
 **Options:**
 
 * ``--db`` — Base de données (obligatoire).
 * ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
-* ``--exact`` — Compte toutes les lignes. Par défaut, au-delà de 200 000
-  lignes par table, le nombre est une estimation précédée de « ≈ » et les
-  blunders ne sont pas comptés.
+* ``--estimate`` — Répond tout de suite sur une très grande base : au-delà de
+  200 000 lignes, un nombre est une estimation (borne haute), listée dans
+  ``approximate`` en JSON et précédée de « ≈ » en texte, et les blunders ne
+  sont pas comptés (pas de ``blunder_count``). Par défaut, toutes les lignes
+  sont comptées.
 
 **Exemples:**
 

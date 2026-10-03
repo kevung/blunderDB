@@ -991,7 +991,7 @@
         "countBlunders": "ブランダー {n}",
         "countMatches": "マッチ {n}",
         "countPositionsTitle": "すべての局面を表示",
-        "countBlundersTitle": "100 ミリポイント以上の誤りを検索",
+        "countBlundersTitle": "{mp} ミリポイント以上の誤りを検索",
         "countBlundersUncounted": "大きなライブラリでは数えません。クリックして検索",
         "countMatchesTitle": "マッチ一覧を開く"
     },

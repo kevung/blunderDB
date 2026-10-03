@@ -685,6 +685,38 @@ func TestCLI_InfoJSON(t *testing.T) {
 	}
 }
 
+// TestCLI_InfoCountsAreExactUnlessEstimated: scripts reading `info --format json`
+// get exact counts and a blunder_count by default; the estimate is opt-in and
+// says it is one.
+func TestCLI_InfoCountsAreExactUnlessEstimated(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	read := func(extra ...string) map[string]any {
+		var doc struct {
+			Stats map[string]any `json:"stats"`
+		}
+		out := captureStdout(t, func() {
+			if err := cli.Run(append([]string{"info", "--db", dbPath, "--format", "json"}, extra...)); err != nil {
+				t.Fatalf("info: %v", err)
+			}
+		})
+		if err := json.Unmarshal([]byte(out), &doc); err != nil {
+			t.Fatalf("info JSON: %v\n%s", err, out)
+		}
+		return doc.Stats
+	}
+	exact := read()
+	if _, ok := exact["approximate"]; ok {
+		t.Errorf("default info carries an estimate marker: %v", exact)
+	}
+	if _, ok := exact["blunder_count"]; !ok {
+		t.Errorf("default info has no blunder_count: %v", exact)
+	}
+	est := read("--estimate")
+	if _, ok := est["approximate"]; !ok {
+		t.Errorf("--estimate does not say it estimates: %v", est)
+	}
+}
+
 func TestCLI_Edit(t *testing.T) {
 	t.Parallel()
 	cli, dbPath := setupCLIWithDB(t)

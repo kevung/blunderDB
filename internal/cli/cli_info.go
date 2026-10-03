@@ -18,7 +18,7 @@ func (cli *CLI) runInfo(args []string) error {
 	// Define flags
 	dbPath := infoCmd.String("db", "", "Path to the database file (required)")
 	format := infoCmd.String("format", "text", "Output format: text, json")
-	exact := infoCmd.Bool("exact", false, "Count every row, however large the database (default: estimate the tables beyond 200000 rows)")
+	estimate := infoCmd.Bool("estimate", false, "Estimate the tables beyond 200000 rows instead of counting them, and skip the blunders there (default: count every row)")
 
 	infoCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb info [options]")
@@ -32,8 +32,8 @@ func (cli *CLI) runInfo(args []string) error {
 		fmt.Println("  # Display database info")
 		fmt.Println("  blunderdb info --db database.db")
 		fmt.Println()
-		fmt.Println("  # Count every row of a very large database (the default estimates)")
-		fmt.Println("  blunderdb info --db database.db --exact")
+		fmt.Println("  # Answer at once on a very large database (estimated counts)")
+		fmt.Println("  blunderdb info --db database.db --estimate")
 		fmt.Println()
 		fmt.Println("  # Output as JSON")
 		fmt.Println("  blunderdb info --db database.db --format json")
@@ -78,9 +78,9 @@ func (cli *CLI) runInfo(args []string) error {
 	}
 
 	// Get stats
-	statsFn := cli.db.GetDatabaseStatsEstimate
-	if *exact {
-		statsFn = cli.db.GetDatabaseStats
+	statsFn := cli.db.GetDatabaseStats
+	if *estimate {
+		statsFn = cli.db.GetDatabaseStatsEstimate
 	}
 	stats, err := statsFn()
 	if err != nil {
@@ -153,7 +153,7 @@ func (cli *CLI) runInfo(args []string) error {
 		if _, ok := stats["blunder_count"]; ok {
 			count("Blunders", "blunder_count", "blunders")
 		} else {
-			fmt.Println("  Blunders: not counted on a large database (--exact)")
+			fmt.Println("  Blunders: not counted on a large database (omit --estimate)")
 		}
 
 		fmt.Println("\nThresholds (millipoints):")

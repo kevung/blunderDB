@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"math"
+	"slices"
 	"sort"
 	"strings"
 
@@ -116,11 +117,16 @@ func (s *MetadataStore) Counts(ctx context.Context, scope string) (storage.Count
 }
 
 // EstimatedCounts counts a table exactly when its highest id is under
-// exactBelow and otherwise reports that highest id, flagged approximate. MAX(id)
-// reads one end of the primary-key index, so the cost does not grow with the
-// table.
+// exactBelow and otherwise reports that highest id, flagged approximate. Where
+// the database holds one library (no tenant column) MAX(id) is one probe of the
+// primary-key index, so its cost does not grow with the table. A multi-tenant
+// database has no such shortcut: ids are drawn from one sequence shared by every
+// tenant, so a tenant's highest id says nothing about how many rows it owns, and
+// no (tenant_id, id) index makes the probe cheap. There every table is counted.
 func (s *MetadataStore) EstimatedCounts(ctx context.Context, scope string, exactBelow int) (storage.CountsEstimate, error) {
 	tenant, targs := s.DB.TenantFilter("", scope)
+	tenantCols, _ := s.DB.TenantColumns(scope)
+	shared := len(tenantCols) > 0
 	est := storage.CountsEstimate{Approximate: []string{}}
 	fields := []struct {
 		table, json string
@@ -134,8 +140,10 @@ func (s *MetadataStore) EstimatedCounts(ctx context.Context, scope string, exact
 	}
 	for _, f := range fields {
 		var top int64
-		if err := s.DB.QueryRow(ctx, "SELECT COALESCE(MAX(id), 0) FROM "+f.table+" WHERE "+tenant, targs...).Scan(&top); err != nil {
-			return storage.CountsEstimate{}, errf(s.DB, "database counts", err)
+		if !shared {
+			if err := s.DB.QueryRow(ctx, "SELECT COALESCE(MAX(id), 0) FROM "+f.table+" WHERE "+tenant, targs...).Scan(&top); err != nil {
+				return storage.CountsEstimate{}, errf(s.DB, "database counts", err)
+			}
 		}
 		if top > int64(exactBelow) {
 			*f.dst = int(top)
@@ -148,9 +156,10 @@ func (s *MetadataStore) EstimatedCounts(ctx context.Context, scope string, exact
 		}
 		*f.dst = int(n)
 	}
-	// The blunders scan every analysis: only worth running where the library
-	// is small enough that its counts are exact too.
-	if len(est.Approximate) == 0 {
+	// The blunders scan every analysis, so they are counted only while the
+	// positions are: a library whose positions are exact is small enough that
+	// the scan is acceptable, one whose positions are estimated is not.
+	if !slices.Contains(est.Approximate, "positions") {
 		b, err := s.blunderCount(ctx, scope)
 		if err != nil {
 			return storage.CountsEstimate{}, err

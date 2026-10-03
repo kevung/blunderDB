@@ -991,7 +991,7 @@
         "countBlunders": "{n} blunders",
         "countMatches": "{n} partidos",
         "countPositionsTitle": "Ver todas las posiciones",
-        "countBlundersTitle": "Buscar errores de al menos 100 milipuntos",
+        "countBlundersTitle": "Buscar errores de al menos {mp} milipuntos",
         "countBlundersUncounted": "No se cuenta en una biblioteca grande: haga clic para buscarlos",
         "countMatchesTitle": "Abrir la lista de partidos"
     },

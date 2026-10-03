@@ -268,6 +268,30 @@ describe('CollectionPanel — detail view', () => {
     });
 });
 
+describe('CollectionPanel — a partly loaded collection', () => {
+    test('the last loaded row cannot move down: its neighbour is not loaded', async () => {
+        const all = Array.from({ length: 700 }, (_, i) => i + 1);
+        CountCollectionPositions.mockResolvedValue(all.length);
+        // The next page never arrives: the detail stays at its first 500 rows.
+        ListCollectionPositionIDs.mockImplementation((_collection, offset) => (offset === 0 ? Promise.resolve(all.slice(0, 500)) : new Promise(() => {})));
+        render(CollectionPanel, { props: {} });
+        await fireEvent.dblClick(await screen.findByText('Backgames'));
+        await vi.waitFor(() => expect(get(collectionPositionsStore).length).toBe(500));
+        await tick();
+
+        // Drive the window to the end of the loaded rows.
+        const scroll = [...document.querySelectorAll('.scroll')].pop();
+        scroll.scrollTop = 28 * 490;
+        await fireEvent.scroll(scroll);
+        const rows = [...document.querySelectorAll('tbody tr:not(.spacer)')];
+        const last = rows.find((r) => r.querySelector('.idx-cell')?.textContent === '500');
+        expect(last).toBeTruthy();
+        expect(within(last).getByTitle(/move down/i).disabled).toBe(true);
+        const before = rows.find((r) => r.querySelector('.idx-cell')?.textContent === '499');
+        expect(within(before).getByTitle(/move down/i).disabled).toBe(false);
+    });
+});
+
 // ── Keyboard shortcuts ────────────────────────────────────────────────────────
 
 describe('CollectionPanel — keyboard shortcuts', () => {

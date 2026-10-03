@@ -96,7 +96,7 @@
 
     /**
      * Chaque nombre ouvre ce qu'il compte ; « Blunders » passe par la ligne de
-     * commande (`E>100`, le même seuil), visible de l'utilisateur.
+     * commande (`E>` au seuil de la bibliothèque), visible de l'utilisateur.
      * @param {'positions'|'blunders'|'matches'} what
      */
     async function showLibrary(what) {
@@ -105,7 +105,7 @@
             return;
         }
         if (what === 'blunders') {
-            commandTextStore.set('s E>100');
+            commandTextStore.set(`s E>${$libraryCountsStore?.blunderThresholdMP ?? 100}`);
             showCommandInputStore.set(true);
             await tick();
             inputEl?.focus();
@@ -313,7 +313,7 @@
                 type="button"
                 class="count-link"
                 onclick={() => showLibrary('blunders')}
-                title={$libraryCountsStore.blunders == null ? $t('statusBar.countBlundersUncounted') : $t('statusBar.countBlundersTitle')}
+                title={$libraryCountsStore.blunders == null ? $t('statusBar.countBlundersUncounted') : $t('statusBar.countBlundersTitle', { mp: $libraryCountsStore.blunderThresholdMP })}
             >
                 {$t('statusBar.countBlunders', { n: formatCount($libraryCountsStore.blunders) })}
             </button>

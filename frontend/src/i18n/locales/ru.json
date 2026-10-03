@@ -991,7 +991,7 @@
         "countBlunders": "бландеров: {n}",
         "countMatches": "матчей: {n}",
         "countPositionsTitle": "Показать все позиции",
-        "countBlundersTitle": "Найти ошибки от 100 миллипунктов",
+        "countBlundersTitle": "Найти ошибки от {mp} миллипунктов",
         "countBlundersUncounted": "В большой библиотеке не подсчитывается: нажмите, чтобы найти",
         "countMatchesTitle": "Открыть список матчей"
     },

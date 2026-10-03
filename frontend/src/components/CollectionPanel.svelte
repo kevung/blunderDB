@@ -761,7 +761,7 @@
                                     e.stopPropagation();
                                     positionOrder.moveDown(index);
                                 }}
-                                disabled={index === collectionTotal - 1}
+                                disabled={index >= collectionPositions.length - 1}
                                 title={$t('collection.moveDown')}>▼</button
                             >
                             <button

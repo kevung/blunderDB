@@ -7,7 +7,7 @@ import { writable } from 'svelte/store';
 
 /**
  * @typedef {{positions: number, blunders: number | null, matches: number,
- *   approximate: {positions: boolean, matches: boolean}} | null} LibraryCounts
+ *   approximate: {positions: boolean, matches: boolean}, blunderThresholdMP: number} | null} LibraryCounts
  */
 
 /** @type {import('svelte/store').Writable<LibraryCounts>} */
@@ -23,11 +23,13 @@ export async function refreshLibraryCounts() {
     }
     try {
         const { GetDatabaseStatsEstimate } = await import('../../wailsjs/go/database/Database.js');
-        const stats = (await GetDatabaseStatsEstimate()) || {};
+        const { loadLibrarySettings } = await import('../services/librarySettingsService.js');
+        const [stats, settings] = await Promise.all([GetDatabaseStatsEstimate().then((s) => s || {}), loadLibrarySettings()]);
         libraryCountsStore.set({
             positions: Number(stats.position_count || 0),
             blunders: stats.blunder_count == null ? null : Number(stats.blunder_count),
             matches: Number(stats.match_count || 0),
+            blunderThresholdMP: settings.blunderThresholdMP,
             approximate: {
                 positions: (stats.approximate || []).includes('positions'),
                 matches: (stats.approximate || []).includes('matches')
