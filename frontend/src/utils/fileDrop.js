@@ -5,7 +5,9 @@
  *
  * Paths come from Wails (OnFileDrop — the browser drop event carries none); the highlight from the
  * browser's dragover/dragleave/drop on `window`. On Linux the WebView must keep receiving the drop
- * (DisableWebViewDrop false, internal/gui/run.go): this action only listens, never cancels.
+ * (DisableWebViewDrop false, internal/gui/run.go). The browser's own handling is cancelled, though:
+ * the Wails runtime does so only for drags it sees typed "Files", which WebKitGTK does not always
+ * report, and an uncancelled drop navigates the window to the dropped file.
  *
  * @param {HTMLElement} _node - unused: the listeners are window-wide
  * @param {Object} params
@@ -38,7 +40,8 @@ export function fileDrop(_node, params) {
             setOverlay(false);
         }
     }
-    function onDrop() {
+    function onDrop(e) {
+        e.preventDefault();
         dragCounter = 0;
         setOverlay(false);
     }

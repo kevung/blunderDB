@@ -896,7 +896,7 @@ jobs:
 
       # install wails
       - name: Install Wails
-        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.2
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.15.0
         shell: bash
 
       - name: Install UPX

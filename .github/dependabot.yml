@@ -22,12 +22,6 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
-    # Wails is bumped by hand, with the application run on each OS (#409):
-    # 2.15 needs go-webview2 v1.0.22 against our v1.0.16 `replace`, and a
-    # grouped bump only turns every x/ update red on windows-latest (#419).
-    ignore:
-      - dependency-name: "github.com/wailsapp/wails/v2"
-        versions: [">= 2.11.0"]
     groups:
       go-minor-patch:
         update-types:
