@@ -2616,5 +2616,18 @@
         "needsAck": "Hyväksy ensin tämän palveluntarjoajan tietosuojavaroitus kohdassa Asetukset › Avustaja ja MCP.",
         "error": "Virhe: {error}",
         "write": "Anna avustajan ehdottaa muutoksia (jokainen vahvistetaan)"
+    },
+    "lesson": {
+        "title": "Oppitunti",
+        "progress": "Vaihe {i} / {n}",
+        "previous": "Edellinen",
+        "next": "Seuraava",
+        "close": "Sulje",
+        "none": "Tietokannassa ei ole oppitunteja.",
+        "list": "Oppitunnit: {lessons} — avaa yksi kirjoittamalla :le ja numero.",
+        "empty": "Oppitunnilla ei ole vielä vaiheita.",
+        "notFound": "Oppituntia nro {id} ei ole.",
+        "failed": "Oppitunteja ei voitu lukea.",
+        "stepMissing": "Tämän vaiheen sisältöä ei enää ole tietokannassa."
     }
 }

@@ -14,6 +14,10 @@ export function AddDirectionNote(arg1, arg2) {
   return window['go']['database']['Database']['AddDirectionNote'](arg1, arg2);
 }
 
+export function AddLessonStep(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['database']['Database']['AddLessonStep'](arg1, arg2, arg3, arg4, arg5);
+}
+
 export function AddMatchToTournament(arg1, arg2) {
   return window['go']['database']['Database']['AddMatchToTournament'](arg1, arg2);
 }
@@ -166,38 +170,6 @@ export function ComputeRecurringErrorsCtx(arg1, arg2) {
   return window['go']['database']['Database']['ComputeRecurringErrorsCtx'](arg1, arg2);
 }
 
-export function CountAnkiDeckPositions(arg1) {
-  return window['go']['database']['Database']['CountAnkiDeckPositions'](arg1);
-}
-
-export function CountCollectionPositions(arg1) {
-  return window['go']['database']['Database']['CountCollectionPositions'](arg1);
-}
-
-export function CountMatches(arg1) {
-  return window['go']['database']['Database']['CountMatches'](arg1);
-}
-
-export function IndexOfAnkiDeckPosition(arg1, arg2) {
-  return window['go']['database']['Database']['IndexOfAnkiDeckPosition'](arg1, arg2);
-}
-
-export function IndexOfCollectionPosition(arg1, arg2) {
-  return window['go']['database']['Database']['IndexOfCollectionPosition'](arg1, arg2);
-}
-
-export function ListAnkiDeckPositionIDs(arg1, arg2, arg3) {
-  return window['go']['database']['Database']['ListAnkiDeckPositionIDs'](arg1, arg2, arg3);
-}
-
-export function ListCollectionPositionIDs(arg1, arg2, arg3) {
-  return window['go']['database']['Database']['ListCollectionPositionIDs'](arg1, arg2, arg3);
-}
-
-export function ListMatches(arg1) {
-  return window['go']['database']['Database']['ListMatches'](arg1);
-}
-
 export function ComputeStats(arg1) {
   return window['go']['database']['Database']['ComputeStats'](arg1);
 }
@@ -230,8 +202,20 @@ export function CorrectResult(arg1, arg2, arg3, arg4, arg5, arg6) {
   return window['go']['database']['Database']['CorrectResult'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
+export function CountAnkiDeckPositions(arg1) {
+  return window['go']['database']['Database']['CountAnkiDeckPositions'](arg1);
+}
+
+export function CountCollectionPositions(arg1) {
+  return window['go']['database']['Database']['CountCollectionPositions'](arg1);
+}
+
 export function CountMatchPositionsToAnalyze(arg1) {
   return window['go']['database']['Database']['CountMatchPositionsToAnalyze'](arg1);
+}
+
+export function CountMatches(arg1) {
+  return window['go']['database']['Database']['CountMatches'](arg1);
 }
 
 export function CountOrphans() {
@@ -272,6 +256,10 @@ export function CreateCollection(arg1, arg2) {
 
 export function CreateDirection(arg1, arg2, arg3) {
   return window['go']['database']['Database']['CreateDirection'](arg1, arg2, arg3);
+}
+
+export function CreateLesson(arg1, arg2) {
+  return window['go']['database']['Database']['CreateLesson'](arg1, arg2);
 }
 
 export function CreateRencontre(arg1, arg2, arg3, arg4) {
@@ -316,6 +304,10 @@ export function DeleteDirection(arg1) {
 
 export function DeleteFilter(arg1) {
   return window['go']['database']['Database']['DeleteFilter'](arg1);
+}
+
+export function DeleteLesson(arg1) {
+  return window['go']['database']['Database']['DeleteLesson'](arg1);
 }
 
 export function DeleteMatch(arg1) {
@@ -550,6 +542,10 @@ export function GetLastVisitedMatch() {
   return window['go']['database']['Database']['GetLastVisitedMatch']();
 }
 
+export function GetLesson(arg1) {
+  return window['go']['database']['Database']['GetLesson'](arg1);
+}
+
 export function GetLibrarySettings() {
   return window['go']['database']['Database']['GetLibrarySettings']();
 }
@@ -694,6 +690,14 @@ export function ImportXGPPosition(arg1) {
   return window['go']['database']['Database']['ImportXGPPosition'](arg1);
 }
 
+export function IndexOfAnkiDeckPosition(arg1, arg2) {
+  return window['go']['database']['Database']['IndexOfAnkiDeckPosition'](arg1, arg2);
+}
+
+export function IndexOfCollectionPosition(arg1, arg2) {
+  return window['go']['database']['Database']['IndexOfCollectionPosition'](arg1, arg2);
+}
+
 export function IndexOfPosition(arg1) {
   return window['go']['database']['Database']['IndexOfPosition'](arg1);
 }
@@ -714,12 +718,28 @@ export function LastDecision(arg1) {
   return window['go']['database']['Database']['LastDecision'](arg1);
 }
 
+export function ListAnkiDeckPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ListAnkiDeckPositionIDs'](arg1, arg2, arg3);
+}
+
+export function ListCollectionPositionIDs(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ListCollectionPositionIDs'](arg1, arg2, arg3);
+}
+
 export function ListDirections() {
   return window['go']['database']['Database']['ListDirections']();
 }
 
 export function ListImportBatches(arg1, arg2) {
   return window['go']['database']['Database']['ListImportBatches'](arg1, arg2);
+}
+
+export function ListLessons() {
+  return window['go']['database']['Database']['ListLessons']();
+}
+
+export function ListMatches(arg1) {
+  return window['go']['database']['Database']['ListMatches'](arg1);
 }
 
 export function ListPositionIDs(arg1, arg2) {
@@ -922,6 +942,10 @@ export function RemoveAnkiCard(arg1) {
   return window['go']['database']['Database']['RemoveAnkiCard'](arg1);
 }
 
+export function RemoveLessonStep(arg1) {
+  return window['go']['database']['Database']['RemoveLessonStep'](arg1);
+}
+
 export function RemoveMatchFromTournament(arg1) {
   return window['go']['database']['Database']['RemoveMatchFromTournament'](arg1);
 }
@@ -960,6 +984,10 @@ export function ReorderCollectionPositions(arg1, arg2) {
 
 export function ReorderCollections(arg1) {
   return window['go']['database']['Database']['ReorderCollections'](arg1);
+}
+
+export function ReorderLessonSteps(arg1, arg2) {
+  return window['go']['database']['Database']['ReorderLessonSteps'](arg1, arg2);
 }
 
 export function ReorderTournamentMatches(arg1, arg2) {
@@ -1256,6 +1284,14 @@ export function UpdateCommentEntry(arg1, arg2) {
 
 export function UpdateFilter(arg1, arg2, arg3) {
   return window['go']['database']['Database']['UpdateFilter'](arg1, arg2, arg3);
+}
+
+export function UpdateLesson(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['UpdateLesson'](arg1, arg2, arg3);
+}
+
+export function UpdateLessonStep(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['database']['Database']['UpdateLessonStep'](arg1, arg2, arg3, arg4, arg5);
 }
 
 export function UpdateMatch(arg1, arg2, arg3, arg4) {

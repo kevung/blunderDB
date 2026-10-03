@@ -2616,5 +2616,18 @@
         "needsAck": "First accept this provider's privacy warning in Settings › Assistant and MCP.",
         "error": "Error: {error}",
         "write": "Let the assistant propose changes (each one confirmed)"
+    },
+    "lesson": {
+        "title": "Lesson",
+        "progress": "Step {i} / {n}",
+        "previous": "Previous",
+        "next": "Next",
+        "close": "Close",
+        "none": "This database holds no lesson.",
+        "list": "Lessons: {lessons} — type :le followed by a number to open one.",
+        "empty": "This lesson has no step yet.",
+        "notFound": "No lesson number {id}.",
+        "failed": "Could not read the lessons.",
+        "stepMissing": "What this step shows is no longer in the database."
     }
 }

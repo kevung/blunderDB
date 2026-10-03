@@ -163,6 +163,15 @@ var databaseParity = map[string]parityEntry{
 	"CountPositionsWithStaleGammonNet":  {CLI: "analyze --stale", Server: "/v1/gammonnet.sweepStale"},
 	"CreateAnkiDeck":                    {Server: "/v1/anki.createDeck", Why: "a deck is created from the GUI's current collection or search; the CLI lists, inspects and syncs decks"},
 	"CreateCollection":                  {CLI: "collection create", Server: "/v1/collections.create"},
+	"CreateLesson":                      {CLI: "lesson create", Server: "/v1/lessons.create"},
+	"ListLessons":                       {CLI: "lesson list", Server: "/v1/lessons.list"},
+	"GetLesson":                         {CLI: "lesson show", Server: "/v1/lessons.get"},
+	"UpdateLesson":                      {CLI: "lesson edit", Server: "/v1/lessons.update"},
+	"DeleteLesson":                      {CLI: "lesson delete", Server: "/v1/lessons.delete"},
+	"AddLessonStep":                     {CLI: "lesson add-step", Server: "/v1/lessons.addStep"},
+	"UpdateLessonStep":                  {CLI: "lesson edit-step", Server: "/v1/lessons.updateStep"},
+	"RemoveLessonStep":                  {CLI: "lesson remove-step", Server: "/v1/lessons.removeStep"},
+	"ReorderLessonSteps":                {CLI: "lesson reorder", Server: "/v1/lessons.reorderSteps"},
 	"CreateTournament":                  {Server: "/v1/tournaments.create", Why: whyGUIEdit},
 	"DeleteAnalysis":                    {Server: "/v1/analyses.delete", Why: whyGUIEdit},
 	"DeleteAnkiDeck":                    {Server: "/v1/anki.deleteDeck", Why: "deleting a deck discards its review history: kept behind the GUI's confirmation"},
@@ -487,6 +496,7 @@ func TestDatabaseParity(t *testing.T) {
 	subcommands := map[string]map[string]func([]string) error{
 		"collection": c.collectionHandlers(),
 		"anki":       c.ankiHandlers(),
+		"lesson":     c.lessonHandlers(),
 		"stats":      c.statsHandlers(),
 	}
 	paths := serverPaths(t)

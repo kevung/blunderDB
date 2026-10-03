@@ -2616,5 +2616,18 @@
         "needsAck": "Acceptez d'abord l'avertissement de confidentialité de ce fournisseur dans Paramètres › Assistant et MCP.",
         "error": "Erreur : {error}",
         "write": "Laisser l'assistant proposer des modifications (chacune confirmée)"
+    },
+    "lesson": {
+        "title": "Leçon",
+        "progress": "Étape {i} / {n}",
+        "previous": "Précédente",
+        "next": "Suivante",
+        "close": "Fermer",
+        "none": "Cette base ne contient aucune leçon.",
+        "list": "Leçons : {lessons} — tapez :le suivi du numéro pour en ouvrir une.",
+        "empty": "Cette leçon n'a encore aucune étape.",
+        "notFound": "Aucune leçon n° {id}.",
+        "failed": "Impossible de lire les leçons.",
+        "stepMissing": "Ce que montre cette étape n'est plus dans la base."
     }
 }

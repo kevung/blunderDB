@@ -276,6 +276,10 @@ type exportSQLiteReq struct {
 	// the Anki decks stay behind — they are the sender's, not the
 	// collection's. Empty exports the whole tenant.
 	CollectionIDs []int64 `json:"collectionIds,omitempty"`
+	// LessonIDs narrows the export to these Lessons and what their steps
+	// show, on the same terms as CollectionIDs (ADR-0066); given with
+	// CollectionIDs, both travel.
+	LessonIDs []int64 `json:"lessonIds,omitempty"`
 }
 
 // sealExportWatermark seals a watermark for origin/note with this daemon's own
@@ -336,8 +340,11 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 		defer os.Remove(tmpPath)
 
 		opts := ingest.WholeTenant(ingest.FormatSQLite)
-		if len(req.CollectionIDs) > 0 {
-			opts.Selection = ingest.Selection{CollectionIDs: req.CollectionIDs, CollectionPositions: true}
+		if len(req.CollectionIDs) > 0 || len(req.LessonIDs) > 0 {
+			opts.Selection = ingest.Selection{
+				CollectionIDs: req.CollectionIDs, CollectionPositions: true,
+				LessonIDs: req.LessonIDs, LessonContents: true,
+			}
 			opts.FilterLibrary, opts.AnkiDecks = false, false
 		}
 		opts.Watermark = watermark

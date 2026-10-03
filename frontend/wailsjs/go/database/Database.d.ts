@@ -22,6 +22,8 @@ export function AddComment(arg1:number,arg2:string):Promise<void>;
 
 export function AddDirectionNote(arg1:number,arg2:string):Promise<service.DirectionView>;
 
+export function AddLessonStep(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number):Promise<number>;
+
 export function AddMatchToTournament(arg1:number,arg2:number):Promise<void>;
 
 export function AddPair(arg1:number,arg2:string,arg3:number):Promise<service.DirectionView>;
@@ -98,22 +100,6 @@ export function ComputeRecurringErrors(arg1:database.StatsFilter):Promise<storag
 
 export function ComputeRecurringErrorsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<storage.RecurringErrors>;
 
-export function CountAnkiDeckPositions(arg1:number):Promise<number>;
-
-export function CountCollectionPositions(arg1:number):Promise<number>;
-
-export function CountMatches(arg1:storage.MatchListOpts):Promise<number>;
-
-export function IndexOfAnkiDeckPosition(arg1:number,arg2:number):Promise<number>;
-
-export function IndexOfCollectionPosition(arg1:number,arg2:number):Promise<number>;
-
-export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
-
-export function ListCollectionPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
-
-export function ListMatches(arg1:storage.MatchListOpts):Promise<Array<domain.Match>>;
-
 export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsResult>;
 
 export function ComputeStatsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<database.StatsResult>;
@@ -130,14 +116,19 @@ export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
 export function CorrectResult(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number,arg6:string):Promise<service.DirectionView>;
 
+export function CountAnkiDeckPositions(arg1:number):Promise<number>;
+
+export function CountCollectionPositions(arg1:number):Promise<number>;
+
 export function CountMatchPositionsToAnalyze(arg1:number):Promise<number>;
+
+export function CountMatches(arg1:storage.MatchListOpts):Promise<number>;
 
 export function CountOrphans():Promise<database.OrphanCounts>;
 
 export function CountPositions():Promise<number>;
 
 export function CountPositionsByFilters(arg1:domain.SearchFilters):Promise<number>;
-
 
 export function CountPositionsWithForeignAnalysis():Promise<number>;
 
@@ -152,6 +143,8 @@ export function CreateAnkiDeck(arg1:string,arg2:string,arg3:string,arg4:number,a
 export function CreateCollection(arg1:string,arg2:string):Promise<number>;
 
 export function CreateDirection(arg1:number,arg2:string,arg3:number):Promise<void>;
+
+export function CreateLesson(arg1:string,arg2:string):Promise<number>;
 
 export function CreateRencontre(arg1:string,arg2:string,arg3:string,arg4:number):Promise<service.RencontreView>;
 
@@ -174,6 +167,8 @@ export function DeleteCommentEntry(arg1:number):Promise<void>;
 export function DeleteDirection(arg1:number):Promise<void>;
 
 export function DeleteFilter(arg1:number):Promise<void>;
+
+export function DeleteLesson(arg1:number):Promise<void>;
 
 export function DeleteMatch(arg1:number):Promise<void>;
 
@@ -291,6 +286,8 @@ export function GetIssuanceInfo():Promise<domain.IssuanceInfo>;
 
 export function GetLastVisitedMatch():Promise<domain.Match>;
 
+export function GetLesson(arg1:number):Promise<domain.Lesson>;
+
 export function GetLibrarySettings():Promise<storage.LibrarySettings>;
 
 export function GetLinkedAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
@@ -363,10 +360,13 @@ export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function ImportXGPPosition(arg1:string):Promise<number>;
 
+export function IndexOfAnkiDeckPosition(arg1:number,arg2:number):Promise<number>;
+
+export function IndexOfCollectionPosition(arg1:number,arg2:number):Promise<number>;
+
 export function IndexOfPosition(arg1:number):Promise<number>;
 
 export function IndexOfPositionByFilters(arg1:domain.SearchFilters,arg2:number):Promise<number>;
-
 
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
@@ -374,9 +374,17 @@ export function IsReadOnly():Promise<boolean>;
 
 export function LastDecision(arg1:number):Promise<service.LastDecision>;
 
+export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
+
+export function ListCollectionPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
+
 export function ListDirections():Promise<Array<service.DirectionSummary>>;
 
 export function ListImportBatches(arg1:number,arg2:number):Promise<Array<domain.ImportBatch>>;
+
+export function ListLessons():Promise<Array<domain.Lesson>>;
+
+export function ListMatches(arg1:storage.MatchListOpts):Promise<Array<domain.Match>>;
 
 export function ListPositionIDs(arg1:number,arg2:number):Promise<Array<number>>;
 
@@ -411,7 +419,6 @@ export function LoadPositionsByFilters(arg1:domain.SearchFilters):Promise<Array<
 export function LoadPositionsByFiltersCore(arg1:domain.SearchFilters,arg2:storage.ListOpts):Promise<Array<domain.Position>>;
 
 export function LoadPositionsByFiltersCoreCtx(arg1:context.Context,arg2:domain.SearchFilters,arg3:storage.ListOpts):Promise<Array<domain.Position>>;
-
 
 export function LoadPositionsByIDs(arg1:Array<number>):Promise<Array<domain.Position>>;
 
@@ -479,6 +486,8 @@ export function ReinstateParticipant(arg1:number,arg2:string):Promise<service.Di
 
 export function RemoveAnkiCard(arg1:number):Promise<void>;
 
+export function RemoveLessonStep(arg1:number):Promise<void>;
+
 export function RemoveMatchFromTournament(arg1:number):Promise<void>;
 
 export function RemovePositionFromCollection(arg1:number,arg2:number):Promise<void>;
@@ -498,6 +507,8 @@ export function ReopenDirection(arg1:number):Promise<service.DirectionView>;
 export function ReorderCollectionPositions(arg1:number,arg2:Array<number>):Promise<void>;
 
 export function ReorderCollections(arg1:Array<number>):Promise<void>;
+
+export function ReorderLessonSteps(arg1:number,arg2:Array<number>):Promise<void>;
 
 export function ReorderTournamentMatches(arg1:number,arg2:Array<number>):Promise<void>;
 
@@ -646,6 +657,10 @@ export function UpdateCollection(arg1:number,arg2:string,arg3:string):Promise<vo
 export function UpdateCommentEntry(arg1:number,arg2:string):Promise<void>;
 
 export function UpdateFilter(arg1:number,arg2:string,arg3:string):Promise<void>;
+
+export function UpdateLesson(arg1:number,arg2:string,arg3:string):Promise<void>;
+
+export function UpdateLessonStep(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number):Promise<void>;
 
 export function UpdateMatch(arg1:number,arg2:string,arg3:string,arg4:string):Promise<void>;
 

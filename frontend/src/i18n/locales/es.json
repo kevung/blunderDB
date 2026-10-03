@@ -2616,5 +2616,18 @@
         "needsAck": "Acepte primero el aviso de privacidad de este proveedor en Ajustes › Asistente y MCP.",
         "error": "Error: {error}",
         "write": "Dejar que el asistente proponga cambios (cada uno confirmado)"
+    },
+    "lesson": {
+        "title": "Lección",
+        "progress": "Paso {i} / {n}",
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "close": "Cerrar",
+        "none": "Esta base no contiene ninguna lección.",
+        "list": "Lecciones: {lessons} — escriba :le seguido del número para abrir una.",
+        "empty": "Esta lección aún no tiene pasos.",
+        "notFound": "No existe la lección n.º {id}.",
+        "failed": "No se pudieron leer las lecciones.",
+        "stepMissing": "Lo que muestra este paso ya no está en la base."
     }
 }
