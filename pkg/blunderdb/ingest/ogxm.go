@@ -38,11 +38,13 @@ import (
 // Cube equities are the exception. HedgeHog writes them, at a match score,
 // as match winning chances under the block's cubeful-money label (its own
 // JSON projection then normalises them with its MET). They are normalised
-// here on the file's own anchor where it has one: the double/pass equity is
-// the doubler's MWC on winning the current cube, so it scales to +1 exactly.
-// The losing anchor comes from blunderDB's MET (Kazaross-XG2); a file that
-// declares another table is logged, since the no-double and take equities
-// then carry the difference between the two tables.
+// here on the file's own anchors: the doubler's double/pass equity is its MWC
+// on winning the current cube, so it scales to +1 exactly, and the losing
+// anchor is 1 minus the opponent's double/pass at the same score and cube,
+// which a match file nearly always holds. blunderDB's MET (Kazaross-XG2)
+// stands in only where the opponent never faced that cube at that score. A
+// double/pass that strays from the MET's winning anchor means the block does
+// not hold MWC as assumed: its cube analysis is then left out whole.
 
 // MapOGXM maps an .ogxm file into a backend-independent MatchGraph.
 func MapOGXM(path string) (*MatchGraph, error) {
@@ -86,6 +88,7 @@ func mapOGXM(f *ogxmparser.File, path string) (*MatchGraph, error) {
 
 	decisions := ogxmDecisions(f)
 	replays := f.Replay()
+	decisions.indexCubeAnchors(f, replays)
 	moveNumber := int32(0)
 	for gi := range f.Games {
 		g := &f.Games[gi]
@@ -134,6 +137,88 @@ type ogxmPlyDecisions struct {
 type ogxmAnalysis struct {
 	block *ogxmparser.Analysis
 	byRef map[int]*ogxmPlyDecisions
+	// winAnchor holds, at a match score, each player's MWC on winning the
+	// current cube, read from the file's double/pass equities.
+	winAnchor map[ogxmAnchorKey]float64
+	// noCube leaves the block's cube analysis out: its double/pass
+	// equities are not the MWC they are read as.
+	noCube bool
+}
+
+// ogxmAnchorKey is what a double/pass anchor depends on: who wins the cube,
+// the score, the cube's value and the Crawford rule.
+type ogxmAnchorKey struct {
+	player, scoreBlack, scoreWhite, cube int
+	crawford                             bool
+}
+
+func ogxmAnchorKeyAt(o *ogid.OGID, player int, crawford bool) ogxmAnchorKey {
+	return ogxmAnchorKey{player, o.Score[ogid.Black], o.Score[ogid.White], o.CubeValue(), crawford}
+}
+
+// ogxmPlausibleMWC bounds how far a double/pass may stray from the MET's
+// winning anchor: two published tables differ by a few thousandths.
+const ogxmPlausibleMWC = 0.01
+
+// indexCubeAnchors reads the winning anchors of a match file's cube
+// decisions and checks each against blunderDB's MET.
+func (an *ogxmAnalysis) indexCubeAnchors(f *ogxmparser.File, replays []ogxmparser.GameReplay) {
+	if an == nil || f.Match.Length <= 0 {
+		return
+	}
+	an.winAnchor = map[ogxmAnchorKey]float64{}
+	length := f.Match.Length
+	for gi := range f.Games {
+		g, rp := &f.Games[gi], replays[gi]
+		for pi := range g.Plies {
+			if rp.FailedAt >= 0 && pi >= rp.FailedAt {
+				break
+			}
+			p := &g.Plies[pi]
+			pd := an.byRef[p.Ref]
+			if pd == nil || pd.cube == nil || !ogxmCubeful(pd.cube) || pd.cube.DoublePassEquity == nil {
+				continue
+			}
+			if !p.IsDiceAction() && p.Action != ogxmparser.ActionDouble {
+				continue
+			}
+			before := &rp.Plies[pi].Before
+			player := ogxmColour(p.Seat)
+			dp := *pd.cube.DoublePassEquity
+			met := engine.GnuBGGetME(before.Score[ogid.Black], before.Score[ogid.White], length,
+				player, before.CubeValue(), player, rp.Crawford)
+			if math.Abs(dp-met) > ogxmPlausibleMWC {
+				slog.Warn("ogxm import: cube analysis not imported, a double/pass equity is not the match winning chance it should be",
+					"game", gi+1, "ply", p.Ref, "double_pass", dp, "met", met)
+				an.noCube = true
+				return
+			}
+			k := ogxmAnchorKeyAt(before, player, rp.Crawford)
+			if _, ok := an.winAnchor[k]; !ok {
+				an.winAnchor[k] = dp
+			}
+		}
+	}
+	if an.block.METID == ogxmMETID {
+		return
+	}
+	fallbacks := 0
+	for k := range an.winAnchor {
+		k.player = 1 - k.player
+		if _, ok := an.winAnchor[k]; !ok {
+			fallbacks++
+		}
+	}
+	if fallbacks > 0 {
+		slog.Warn("ogxm import: some cube equities normalised against blunderDB's MET, not the file's",
+			"file_met", an.block.METID, "met", ogxmMETID, "anchors", fallbacks)
+	}
+}
+
+// ogxmCubeful reports whether a cube decision's own currency, when it
+// overrides the block's, still states cubeful equities.
+func ogxmCubeful(d *ogxmparser.CubeDecision) bool {
+	return d.Currency == nil || *d.Currency == ogxmparser.CubefulMoney || *d.Currency == ogxmparser.CubefulMatch
 }
 
 // ogxmMETID names blunderDB's MET (engine/met.go) the way OGXM's met_id does.
@@ -150,9 +235,6 @@ func ogxmDecisions(f *ogxmparser.File) *ogxmAnalysis {
 	if a.Currency != ogxmparser.CubefulMoney {
 		slog.Warn("ogxm import: analysis not imported, its currency is not cubeful money", "currency", int(a.Currency))
 		return nil
-	}
-	if f.Match.Length > 0 && a.METID != ogxmMETID {
-		slog.Warn("ogxm import: cube equities normalised against blunderDB's MET, not the file's", "file_met", a.METID, "met", ogxmMETID)
 	}
 	out := &ogxmAnalysis{block: a, byRef: map[int]*ogxmPlyDecisions{}}
 	for i := range a.Decisions {
@@ -422,14 +504,22 @@ func ogxmCubeAnalysis(an *ogxmAnalysis, d *ogxmparser.CubeDecision, before *ogid
 	if d.NoDoubleEquity == nil || d.DoubleTakeEquity == nil || d.DoublePassEquity == nil {
 		return nil
 	}
-	if d.Currency != nil && *d.Currency != ogxmparser.CubefulMoney && *d.Currency != ogxmparser.CubefulMatch {
-		return nil // a cubeless or unknown override: not cubeful equities
+	if !ogxmCubeful(d) || an.noCube {
+		return nil
+	}
+	if matchLength == 0 && d.Currency != nil && *d.Currency == ogxmparser.CubefulMatch {
+		return nil // match winning chances have no meaning at money play
 	}
 	nd, dt, dp := *d.NoDoubleEquity, *d.DoubleTakeEquity, *d.DoublePassEquity
 	if matchLength > 0 {
 		win := dp // the file's own MWC for the doubler winning the cube
-		lose := engine.GnuBGGetME(before.Score[ogid.Black], before.Score[ogid.White], matchLength,
-			player, before.CubeValue(), 1-player, crawford)
+		var lose float64
+		if opp, ok := an.winAnchor[ogxmAnchorKeyAt(before, 1-player, crawford)]; ok {
+			lose = 1 - opp
+		} else {
+			lose = engine.GnuBGGetME(before.Score[ogid.Black], before.Score[ogid.White], matchLength,
+				player, before.CubeValue(), 1-player, crawford)
+		}
 		if win-lose < 1e-7 {
 			return nil
 		}
