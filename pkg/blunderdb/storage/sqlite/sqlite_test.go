@@ -20,3 +20,16 @@ func TestContract_SQLite(t *testing.T) {
 		return s
 	})
 }
+
+// TestReadAcross_SQLite: SQLite holds one tenant, so its read set is that
+// tenant alone — the daemon's "1" — and a read across it is a plain read,
+// tagged. There is no outsider to leave out: the header widens nothing here.
+func TestReadAcross_SQLite(t *testing.T) {
+	storagetest.RunReadAcrossTests(t, func() storage.Storage {
+		s, err := sqlite.Open(context.Background(), ":memory:", nil)
+		if err != nil {
+			t.Fatalf("sqlite.Open: %v", err)
+		}
+		return s
+	}, []string{"1"}, "")
+}

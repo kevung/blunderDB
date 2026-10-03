@@ -2353,6 +2353,20 @@
             "forget": "Lopeta kirjoittaminen",
             "error": "Näyttösivun kirjoittaminen epäonnistui."
         },
+        "season": {
+            "title": "Kauden sijoitukset",
+            "hint": "Tapahtuman päättyneet turnaukset: jokainen sija tuo asteikon pisteet (voittaja ensin); tasasijoilla olevat jakavat sijojensa keskiarvon. Henkilö tunnistetaan nimestä.",
+            "points": "Pisteasteikko",
+            "elo": "Seuran Elo",
+            "compute": "Laske",
+            "copy": "Kopioi CSV:nä",
+            "copied": "Kopioitu",
+            "rank": "Sija",
+            "player": "Pelaaja",
+            "total": "Pisteet",
+            "played": "Turnaukset",
+            "empty": "Tapahtumassa ei ole päättyneitä turnauksia."
+        },
         "sheet": {
             "print": "Tulosta lomake",
             "hint": "Kierroksen parituslomake ilmoittautumispöydälle. Tulostusikkuna avautuu itsestään.",

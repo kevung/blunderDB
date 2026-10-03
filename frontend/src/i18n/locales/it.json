@@ -2353,6 +2353,20 @@
             "forget": "Non scrivere più",
             "error": "Impossibile scrivere la pagina del display."
         },
+        "season": {
+            "title": "Classifica stagionale",
+            "hint": "I tornei chiusi dell'evento: ogni posto vale i punti della scala (vincitore per primo); i pari merito si dividono la media dei loro posti. Una persona è riconosciuta dal nome.",
+            "points": "Scala punti",
+            "elo": "Elo di club",
+            "compute": "Calcola",
+            "copy": "Copia in CSV",
+            "copied": "Copiato",
+            "rank": "Posto",
+            "player": "Giocatore",
+            "total": "Punti",
+            "played": "Tornei",
+            "empty": "Nessun torneo chiuso in questo evento."
+        },
         "sheet": {
             "print": "Stampa il foglio",
             "hint": "Il foglio degli abbinamenti del turno, da posare sul tavolo dell'accoglienza. La finestra di stampa si apre da sola.",

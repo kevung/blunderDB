@@ -51,5 +51,9 @@
 		# have run.
 		header_up X-Tenant-ID ""
 		header_up X-Tenant-ID {tenant_id}
+		# X-Read-Tenants widens a read to other tenants (ADR-0063): only a
+		# proxy that knows the relation (coach, club) may set it. This demo
+		# knows none, so it drops whatever the client sent.
+		header_up -X-Read-Tenants
 	}
 }

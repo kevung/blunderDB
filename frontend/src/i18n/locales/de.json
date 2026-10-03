@@ -2353,6 +2353,20 @@
             "forget": "Nicht mehr schreiben",
             "error": "Die Anzeigeseite konnte nicht geschrieben werden."
         },
+        "season": {
+            "title": "Saisonwertung",
+            "hint": "Die abgeschlossenen Turniere der Veranstaltung: jeder Platz bringt die Punkte der Skala (Sieger zuerst); Gleichplatzierte teilen sich den Mittelwert ihrer Plätze. Eine Person wird am Namen erkannt.",
+            "points": "Punkteskala",
+            "elo": "Club-Elo",
+            "compute": "Berechnen",
+            "copy": "Als CSV kopieren",
+            "copied": "Kopiert",
+            "rank": "Platz",
+            "player": "Spieler",
+            "total": "Punkte",
+            "played": "Turniere",
+            "empty": "Kein abgeschlossenes Turnier in dieser Veranstaltung."
+        },
         "sheet": {
             "print": "Blatt drucken",
             "hint": "Das Paarungsblatt der Runde, für den Empfangstisch. Der Druckdialog öffnet sich von selbst.",

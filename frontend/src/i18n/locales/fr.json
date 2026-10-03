@@ -2353,6 +2353,20 @@
             "forget": "Ne plus écrire",
             "error": "Impossible d'écrire la page d'affichage."
         },
+        "season": {
+            "title": "Classement de saison",
+            "hint": "Les tournois clos de l'événement : chaque place rapporte les points du barème (vainqueur en tête), des ex æquo se partagent la moyenne de leurs places. Une personne est reconnue par son nom.",
+            "points": "Barème",
+            "elo": "Elo de club",
+            "compute": "Calculer",
+            "copy": "Copier en CSV",
+            "copied": "Copié",
+            "rank": "Rang",
+            "player": "Joueur",
+            "total": "Points",
+            "played": "Tournois",
+            "empty": "Aucun tournoi clos dans cet événement."
+        },
         "sheet": {
             "print": "Imprimer la feuille",
             "hint": "La feuille d'appariements de la ronde, à poser sur la table d'accueil. Le dialogue d'impression s'ouvre tout seul.",

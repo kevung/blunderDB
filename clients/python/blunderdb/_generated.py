@@ -26,6 +26,34 @@ class GeneratedAPI(BaseClient):
         "POST /ops/tenant.purge — hand-written handler — see openapi.yaml."
         return self._call("/ops/tenant.purge", payload)
 
+    def across_analyses_load_by_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.analysesLoadByIds — JSON."
+        return self._call("/v1/across.analysesLoadByIds", payload)
+
+    def across_match_move_positions(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.matchMovePositions — NDJSON stream."
+        return self._stream("/v1/across.matchMovePositions", payload)
+
+    def across_matches_get(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.matchesGet — JSON."
+        return self._call("/v1/across.matchesGet", payload)
+
+    def across_matches_list(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.matchesList — NDJSON stream."
+        return self._stream("/v1/across.matchesList", payload)
+
+    def across_player_table(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.playerTable — JSON."
+        return self._call("/v1/across.playerTable", payload)
+
+    def across_search_find(self, payload: Optional[dict] = None) -> Iterator[Any]:
+        "POST /v1/across.searchFind — NDJSON stream."
+        return self._stream("/v1/across.searchFind", payload)
+
+    def across_stats_compute(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/across.statsCompute — JSON."
+        return self._call("/v1/across.statsCompute", payload)
+
     def analyses_delete(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/analyses.delete — JSON."
         return self._call("/v1/analyses.delete", payload)
@@ -458,6 +486,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/gammonnet.cubeMatrix — hand-written handler — see openapi.yaml."
         return self._call("/v1/gammonnet.cubeMatrix", payload)
 
+    def gammonnet_evaluate(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/gammonnet.evaluate — hand-written handler — see openapi.yaml."
+        return self._call("/v1/gammonnet.evaluate", payload)
+
     def gammonnet_sweep_stale(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/gammonnet.sweepStale — hand-written handler — see openapi.yaml."
         return self._call("/v1/gammonnet.sweepStale", payload)
@@ -722,6 +754,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/rencontres.pageHtml — JSON."
         return self._call("/v1/rencontres.pageHtml", payload)
 
+    def rencontres_ranking(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/rencontres.ranking — JSON."
+        return self._call("/v1/rencontres.ranking", payload)
+
     def rencontres_set_breaks(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/rencontres.setBreaks — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/rencontres.setBreaks", payload, if_match=if_match, idempotency_key=idempotency_key)
@@ -866,6 +902,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.training — JSON."
         return self._call("/v1/stats.training", payload)
 
+    def tenants_quota(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/tenants.quota — JSON."
+        return self._call("/v1/tenants.quota", payload)
+
     def tournaments_add_match(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/tournaments.addMatch — JSON."
         return self._call("/v1/tournaments.addMatch", payload)
@@ -913,6 +953,18 @@ class GeneratedAPI(BaseClient):
     def tournaments_update_comment(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/tournaments.updateComment — JSON."
         return self._call("/v1/tournaments.updateComment", payload)
+
+    def training_number_stats(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/training.numberStats — JSON."
+        return self._call("/v1/training.numberStats", payload)
+
+    def training_save(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/training.save — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/training.save", payload, idempotency_key=idempotency_key)
+
+    def training_sessions(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/training.sessions — JSON."
+        return self._call("/v1/training.sessions", payload)
 
     def transcriptions_abandon(self, payload: Optional[dict] = None, *, if_match: Union[int, str], idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/transcriptions.abandon — JSON. Requires If-Match: the draft's revision. Accepts an Idempotency-Key."

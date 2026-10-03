@@ -16,6 +16,7 @@ import (
 
 	"github.com/kevung/blunderdb/internal/server/metrics"
 	"github.com/kevung/blunderdb/internal/server/middleware"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -443,5 +444,84 @@ func TestUploadRoutesAreStreaming(t *testing.T) {
 		if !streamingCustomPaths[p] {
 			t.Errorf("%s is an upload route missing from streamingCustomPaths", p)
 		}
+	}
+}
+
+// TestReadTenants_UnlistedTenantNeverRead: across.matchesGet addressed to a
+// tenant outside the read set is refused before any store call — the daemon
+// reads only what the proxy listed (ADR-0063).
+func TestReadTenants_UnlistedTenantNeverRead(t *testing.T) {
+	srv, log := newRecordingServer(t, false)
+	rec := serveAcross(t, srv, "1", "2", "/v1/across.matchesGet", `{"tenant":"9","id":1}`)
+	if rec.Code != http.StatusBadRequest {
+		t.Errorf("unlisted tenant: status %d, want 400", rec.Code)
+	}
+	if reads, _ := log.snapshot(); len(reads) != 0 {
+		t.Errorf("an unlisted tenant reached the store: %v", reads)
+	}
+	for _, c := range acrossCalls {
+		srv, log := newRecordingServer(t, false)
+		serveAcross(t, srv, "1", "2", c.path, c.body)
+		reads, _ := log.snapshot()
+		for _, scope := range reads {
+			if scope != "1" && scope != "2" {
+				t.Errorf("%s read tenant %s, outside [1 2]", c.path, scope)
+			}
+		}
+	}
+}
+
+// TestReadTenants_WritesStayInXTenantID: X-Read-Tenants widens reads only; a
+// write sent with it still lands in X-Tenant-ID and nowhere else.
+func TestReadTenants_WritesStayInXTenantID(t *testing.T) {
+	srv, log := newRecordingServer(t, false)
+	for _, c := range []struct{ path, body string }{
+		{"/v1/matches.save", `{"match":{"player1_name":"A","player2_name":"B","match_length":5}}`},
+		{"/v1/positions.save", `{"position":` + initialPositionJSON(t) + `}`},
+	} {
+		if rec := serveAcross(t, srv, "1", "2,3", c.path, c.body); rec.Code != http.StatusOK {
+			t.Fatalf("%s: status %d: %s", c.path, rec.Code, rec.Body)
+		}
+	}
+	_, writes := log.snapshot()
+	if len(writes) == 0 {
+		t.Fatal("no write recorded")
+	}
+	for _, scope := range writes {
+		if scope != "1" {
+			t.Errorf("a write landed in tenant %s; X-Tenant-ID was 1", scope)
+		}
+	}
+}
+
+func initialPositionJSON(t *testing.T) string {
+	t.Helper()
+	p := domain.InitializePosition()
+	b, err := json.Marshal(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(b)
+}
+
+// TestReadTenants_RefusedUnlessTrusted: a daemon started without
+// --read-tenants refuses a request carrying X-Read-Tenants, on every route,
+// before any store call. A proxy written before the header existed strips
+// X-Tenant-ID only; a client behind it must not reach other tenants by adding
+// the new header.
+func TestReadTenants_RefusedUnlessTrusted(t *testing.T) {
+	srv, log := newRecordingServerWith(t, Options{})
+	for _, path := range []string{"/v1/across.matchesList", "/v1/across.matchesGet", "/v1/matches.list", "/v1/matches.save"} {
+		rec := serveAcross(t, srv, "1", "2", path, `{}`)
+		if rec.Code != http.StatusBadRequest || !strings.Contains(rec.Body.String(), "--read-tenants") {
+			t.Errorf("%s with %s, untrusted: %d %s; want 400 naming --read-tenants", path, middleware.ReadTenantsHeader, rec.Code, rec.Body)
+		}
+	}
+	if reads, writes := log.snapshot(); len(reads)+len(writes) != 0 {
+		t.Errorf("an untrusted header reached the store: reads %v writes %v", reads, writes)
+	}
+	// Without the header, the across reads still answer, for X-Tenant-ID alone.
+	if rec := serveAcross(t, srv, "1", "", "/v1/across.matchesList", `{}`); rec.Code != http.StatusOK {
+		t.Errorf("untrusted, no header: %d %s", rec.Code, rec.Body)
 	}
 }

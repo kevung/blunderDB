@@ -266,3 +266,18 @@ func TestCompositeForeignKeyRejectsCrossTenant(t *testing.T) {
 		t.Errorf("comment table holds %d row(s) after a rejected insert, want 0", n)
 	}
 }
+
+// TestReadAcross_Postgres runs storagetest's read-across checks on a real
+// multi-tenant database: tenants 201 and 202 are read, 203 holds rows of its
+// own and is left out of the set.
+func TestReadAcross_Postgres(t *testing.T) {
+	dsn := startPostgres(t)
+	storagetest.RunReadAcrossTests(t, func() storage.Storage {
+		resetPublicSchema(t, dsn)
+		s, err := pg.Open(context.Background(), dsn, nil)
+		if err != nil {
+			t.Fatalf("Open: %v", err)
+		}
+		return s
+	}, []string{"201", "202"}, "203")
+}

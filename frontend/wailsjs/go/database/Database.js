@@ -1034,6 +1034,14 @@ export function SearchPositionIDs(arg1, arg2, arg3) {
   return window['go']['database']['Database']['SearchPositionIDs'](arg1, arg2, arg3);
 }
 
+export function SeasonCSV(arg1) {
+  return window['go']['database']['Database']['SeasonCSV'](arg1);
+}
+
+export function SeasonRanking(arg1) {
+  return window['go']['database']['Database']['SeasonRanking'](arg1);
+}
+
 export function SetAnkiCardSuspended(arg1, arg2) {
   return window['go']['database']['Database']['SetAnkiCardSuspended'](arg1, arg2);
 }
