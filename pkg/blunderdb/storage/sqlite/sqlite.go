@@ -185,7 +185,7 @@ func (s *Storage) BeginTx(ctx context.Context) (storage.Tx, error) {
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: begin tx: %w", err)
 	}
-	return &txImpl{binder: binder{db: tx}, tx: tx}, nil
+	return newTxImpl(tx), nil
 }
 
 // Version reports the schema version recorded in the metadata table.

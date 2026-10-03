@@ -36,7 +36,7 @@ func testAnalysisMergeSkipsAnIdenticalResult(t *testing.T, s storage.Storage) {
 	}
 	merge := func(fn func(*domain.PositionAnalysis) *domain.PositionAnalysis) bool {
 		t.Helper()
-		wrote, err := s.Analyses().Merge(ctx, "", posID, fn)
+		wrote, err := s.Analyses().Merge(ctx, "", posID, nil, fn)
 		if err != nil {
 			t.Fatalf("Merge: %v", err)
 		}
@@ -83,5 +83,60 @@ func testAnalysisMergeSkipsAnIdenticalResult(t *testing.T, s storage.Storage) {
 	}
 	if got.CheckerAnalysis == nil || got.CheckerAnalysis.Moves[0].Move != "8/5 6/5" {
 		t.Errorf("changed analysis not stored: %+v", got.CheckerAnalysis)
+	}
+}
+
+// testAnalysisMergeTakesPlayedFromTheCaller: the played actions Merge is
+// given fill the columns where the analysis names none, in place of the
+// move table; nil reads the move table. The move table here says the
+// second-best move was played, the caller says the best: RepairDenormalised-
+// Columns, which always reads the move table, tells which source the columns
+// came from.
+func testAnalysisMergeTakesPlayedFromTheCaller(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	matchID, err := s.Matches().Save(ctx, "", &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7})
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	gameID, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+	const best, second = "8/6 6/5", "13/11 24/23"
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "checker",
+		PositionID: posID, Player: 1, CheckerMove: second}); err != nil {
+		t.Fatalf("CreateMove: %v", err)
+	}
+	loss := 0.080
+	analysis := func(*domain.PositionAnalysis) *domain.PositionAnalysis {
+		return &domain.PositionAnalysis{
+			AnalysisType: "CheckerMove",
+			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+				{Index: 0, Move: best, Equity: 0.400},
+				{Index: 1, Move: second, Equity: 0.320, EquityError: &loss},
+			}},
+		}
+	}
+
+	if _, err := s.Analyses().Merge(ctx, "", posID, &storage.PlayedActions{CheckerMove: best}, analysis); err != nil {
+		t.Fatalf("Merge with played: %v", err)
+	}
+	if n, err := s.Analyses().RepairDenormalisedColumns(ctx, ""); err != nil || n != 1 {
+		t.Errorf("after a Merge given the best move, repair changed %d rows (err %v), want 1: the columns read the move table", n, err)
+	}
+
+	if err := s.Analyses().Delete(ctx, "", posID); err != nil {
+		t.Fatalf("Delete: %v", err)
+	}
+	if _, err := s.Analyses().Merge(ctx, "", posID, nil, analysis); err != nil {
+		t.Fatalf("Merge without played: %v", err)
+	}
+	if n, err := s.Analyses().RepairDenormalisedColumns(ctx, ""); err != nil || n != 0 {
+		t.Errorf("after a Merge without played, repair changed %d rows (err %v), want 0: the columns ignored the move table", n, err)
 	}
 }

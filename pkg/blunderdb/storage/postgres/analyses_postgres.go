@@ -58,7 +58,7 @@ ON CONFLICT (position_id) DO UPDATE SET
 // analyses) stays in the caller, which loads, merges, then calls Save.
 func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error {
 	tenant := tenantID(scope)
-	c, err := s.prepare(ctx, tenant, positionID, a)
+	c, err := s.prepare(ctx, tenant, positionID, a, nil)
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 }
 
 // Merge — see storage.AnalysisStore.
-func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int64, merge func(*domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error) {
+func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int64, played *storage.PlayedActions, merge func(*domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error) {
 	tenant := tenantID(scope)
 	var (
 		data   []byte
@@ -99,7 +99,7 @@ func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int6
 	if merged == nil {
 		return false, nil
 	}
-	c, err := s.prepare(ctx, tenant, positionID, merged)
+	c, err := s.prepare(ctx, tenant, positionID, merged, played)
 	if err != nil {
 		return false, err
 	}
@@ -131,13 +131,19 @@ func (p storedPlayedColumns) equal(c engine.AnalysisColumns) bool {
 
 // prepare stamps a with its position, rounds it for storage and derives its
 // scalar columns. The played actions come from the analysis when it states
-// them, and from the match when it does not — see engine.PlayedActionsFor.
-// The lookup is skipped entirely when the blob already answers, so an import
-// carrying its own analysis pays nothing for it.
-func (s *analysisStore) prepare(ctx context.Context, tenant, positionID int64, a *domain.PositionAnalysis) (engine.AnalysisColumns, error) {
+// them, and from the match when it does not — see engine.PlayedActionsFor:
+// from played when the caller knows the decision, else from the move table.
+// The lookup is skipped when the blob or played already answers, so an import
+// pays nothing for it.
+func (s *analysisStore) prepare(ctx context.Context, tenant, positionID int64, a *domain.PositionAnalysis, played *storage.PlayedActions) (engine.AnalysisColumns, error) {
 	a.PositionID = int(positionID)
 	playedMove, playedCubeAction := engine.PlayedActionsFor(a.PlayedMoves, a.PlayedCubeActions, nil, nil)
-	if playedMove == "" || playedCubeAction == "" {
+	switch {
+	case playedMove != "" && playedCubeAction != "":
+	case played != nil:
+		playedMove, playedCubeAction = engine.PlayedActionsFor(
+			[]string{playedMove}, []string{playedCubeAction}, []string{played.CheckerMove}, []string{played.CubeAction})
+	default:
 		mvMove, mvCube, err := s.playedActionsFromMatch(ctx, tenant, positionID)
 		if err != nil {
 			return engine.AnalysisColumns{}, err

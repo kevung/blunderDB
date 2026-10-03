@@ -193,7 +193,8 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		for mi := range gg.Moves {
 			mg := &gg.Moves[mi]
 			if mg.Position != nil {
-				posID, err := savePositionWithAnalyses(ctx, tx, scope, mg.Position, mg.Analyses, mg.Comments, g.CommentOrigin)
+				played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction}
+				posID, err := savePositionWithAnalyses(ctx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin)
 				if err != nil {
 					return res, err
 				}
@@ -230,13 +231,16 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 // savePositionWithAnalyses saves pos (deduplicated by Zobrist), folds every
 // analysis fragment into whatever is stored for it, then adds the comments.
 // It is shared by WriteMatch (per move) and the single-position importers.
+// played is the decision the graph records at pos (nil for a position
+// imported on its own): the analysis columns take it instead of reading the
+// move table, which on a common position holds thousands of rows.
 //
 // The fragments are merged in memory and stored with one AnalysisStore.Merge:
 // one read, one encode, one write — and no write at all when the result is
 // what is already stored. Between two fragments the partial result is rounded
 // as storage would round it, so equity errors are recomputed from rounded
 // equities exactly as when each fragment was saved on its own.
-func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, analyses []*domain.PositionAnalysis, comments []string, origin domain.CommentOrigin) (int64, error) {
+func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, played *storage.PlayedActions, analyses []*domain.PositionAnalysis, comments []string, origin domain.CommentOrigin) (int64, error) {
 	posID, err := tx.Positions().Save(ctx, scope, pos)
 	if err != nil {
 		return 0, err
@@ -248,7 +252,7 @@ func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, 
 		}
 	}
 	if len(frags) > 0 {
-		if _, err := tx.Analyses().Merge(ctx, scope, posID, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+		if _, err := tx.Analyses().Merge(ctx, scope, posID, played, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
 			cur := existing
 			for i, frag := range frags {
 				merged := mergeAnalysis(cur, *frag)

@@ -83,6 +83,8 @@ const markIndividualSQL = `UPDATE position SET individually_imported = 1
 // position. Like markIndividualSQL it only ever sets, never clears — that is
 // what makes the mark sticky across re-imports and across matches sharing the
 // position (docs/adr/0006).
+const positionIDByHashSQL = `SELECT id FROM position WHERE zobrist_hash = ?`
+
 const markFlaggedSQL = `UPDATE position SET flagged = 1
 	WHERE zobrist_hash = ? AND flagged = 0`
 
@@ -158,8 +160,7 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 				return 0, false, fmt.Errorf("sqlite: mark position flagged: %w", err)
 			}
 		}
-		if err = s.db.QueryRowContext(ctx,
-			`SELECT id FROM position WHERE zobrist_hash = ?`,
+		if err = s.db.QueryRowContext(ctx, positionIDByHashSQL,
 			int64(cols.ZobristHash)).Scan(&id); err != nil {
 			return 0, false, fmt.Errorf("sqlite: save position dedup lookup: %w", err)
 		}

@@ -7,6 +7,13 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
+// PlayedActions is the checker move and cube action played at a decision, as
+// the caller knows them. An empty field is a known "nothing played".
+type PlayedActions struct {
+	CheckerMove string
+	CubeAction  string
+}
+
 // AnalysisStore persists the engine analysis attached to a position. The
 // backend transparently compresses/decompresses the analysis payload; callers
 // always see a decoded *domain.PositionAnalysis.
@@ -21,7 +28,12 @@ type AnalysisStore interface {
 	// unchanged, nothing is written: re-importing what is already there costs
 	// a read, not a rewrite. merge may mutate its argument; returning nil
 	// writes nothing. Reports whether a row was written.
-	Merge(ctx context.Context, scope string, positionID int64, merge func(existing *domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error)
+	//
+	// played is what the caller already knows was played at the position —
+	// the decision of the match being imported. The columns take it where the
+	// analysis names no played action, without reading the move table; nil
+	// (a position imported on its own) reads the match's record as Save does.
+	Merge(ctx context.Context, scope string, positionID int64, played *PlayedActions, merge func(existing *domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error)
 
 	// LoadMany decodes the analyses of the given positions, keyed by position
 	// id, in one round trip per batch. A position without an analysis has no

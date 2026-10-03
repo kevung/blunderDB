@@ -51,22 +51,25 @@ ON CONFLICT(position_id) DO UPDATE SET
 // merge logic (combining XG and GnuBG analyses) stays in the Database wrapper,
 // which loads, merges, then calls Save.
 func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64, a *domain.PositionAnalysis) error {
-	c, err := s.prepare(ctx, positionID, a)
+	c, err := s.prepare(ctx, positionID, a, nil)
 	if err != nil {
 		return err
 	}
 	return s.write(ctx, positionID, a, c)
 }
 
+const analysisMergeSelectSQL = `SELECT data, best_cube_action, cube_error, best_move_equity_error, is_forced, is_close_cube
+	FROM analysis WHERE position_id = ?`
+
+const cubeResponseSQL = `UPDATE position SET is_cube_response = 1 WHERE id = ?`
+
 // Merge — see storage.AnalysisStore.
-func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int64, merge func(*domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error) {
+func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int64, played *storage.PlayedActions, merge func(*domain.PositionAnalysis) *domain.PositionAnalysis) (bool, error) {
 	var (
 		data   []byte
 		stored storedPlayedColumns
 	)
-	err := s.db.QueryRowContext(ctx,
-		`SELECT data, best_cube_action, cube_error, best_move_equity_error, is_forced, is_close_cube
-		 FROM analysis WHERE position_id = ?`, positionID).
+	err := s.db.QueryRowContext(ctx, analysisMergeSelectSQL, positionID).
 		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube)
 	found := err == nil
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
@@ -90,7 +93,7 @@ func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int6
 	if merged == nil {
 		return false, nil
 	}
-	c, err := s.prepare(ctx, positionID, merged)
+	c, err := s.prepare(ctx, positionID, merged, played)
 	if err != nil {
 		return false, err
 	}
@@ -123,13 +126,19 @@ func (p storedPlayedColumns) equal(c engine.AnalysisColumns) bool {
 
 // prepare stamps a with its position, rounds it for storage and derives its
 // scalar columns. The played actions come from the analysis when it states
-// them, and from the match when it does not — see engine.PlayedActionsFor.
-// The lookup is skipped entirely when the blob already answers, so an import
-// carrying its own analysis pays nothing for it.
-func (s *analysisStore) prepare(ctx context.Context, positionID int64, a *domain.PositionAnalysis) (engine.AnalysisColumns, error) {
+// them, and from the match when it does not — see engine.PlayedActionsFor:
+// from played when the caller knows the decision, else from the move table.
+// The lookup is skipped when the blob or played already answers, so an import
+// pays nothing for it.
+func (s *analysisStore) prepare(ctx context.Context, positionID int64, a *domain.PositionAnalysis, played *storage.PlayedActions) (engine.AnalysisColumns, error) {
 	a.PositionID = int(positionID)
 	playedMove, playedCubeAction := engine.PlayedActionsFor(a.PlayedMoves, a.PlayedCubeActions, nil, nil)
-	if playedMove == "" || playedCubeAction == "" {
+	switch {
+	case playedMove != "" && playedCubeAction != "":
+	case played != nil:
+		playedMove, playedCubeAction = engine.PlayedActionsFor(
+			[]string{playedMove}, []string{playedCubeAction}, []string{played.CheckerMove}, []string{played.CubeAction})
+	default:
 		mvMove, mvCube, err := s.playedActionsFromMatch(ctx, positionID)
 		if err != nil {
 			return engine.AnalysisColumns{}, err
@@ -165,8 +174,7 @@ func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.P
 		// a response (only ever set to 1; OR semantics for a deduped position).
 		for _, action := range a.PlayedCubeActions {
 			if engine.IsResponseCubeAction(action) {
-				if _, err := tx.ExecContext(ctx,
-					`UPDATE position SET is_cube_response = 1 WHERE id = ?`, positionID); err != nil {
+				if _, err := tx.ExecContext(ctx, cubeResponseSQL, positionID); err != nil {
 					return fmt.Errorf("sqlite: flag cube response: %w", err)
 				}
 				break
