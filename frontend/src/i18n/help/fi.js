@@ -554,6 +554,7 @@ export default {
 <li><strong>Kustannus</strong> on osuus suodattimen PR:stä, jonka ryhmä edustaa: ryhmän virheisiin sovellettu PR-kaava suhteutettuna kaikkiin laskettuihin päätöksiin. Ryhmien kustannukset eivät siis koskaan ylitä PR:ää.</li>
 </ul>
 <p>Ryhmää napsauttamalla ladataan sen asemat, kalleimmasta halvimpaan. Teema lasketaan uudelleen jokaisella näytöllä eikä sitä tallenneta koskaan: pelisuunnitelman tavoin se on johdettu tunniste, jota ei voi muokata. Komentoriviltä: <code>blunderdb stats recurring</code> (ks. stats — Toistuvat virheet).</p>
+<p>Jokainen rivi tarjoaa kolme tapaa siirtyä virheestä opiskeluun: <strong>Tietovisa tästä ryhmästä</strong> käynnistää Harjoittelu-paneelin Päätös-harjoituksen ryhmän asemilla, <strong>Anki-pakka</strong> tekee niistä korttipakan, <strong>Kokoelma</strong> tallentaa ne uuteen kokoelmaan. Taulukon yläpuolella <strong>Tietovisa kolmesta pahimmasta ryhmästäni</strong> arpoo kaksikymmentä asemaa kolmen kalleimman ryhmän asemista. Komentorivillä <code>stats recurring --quiz</code> arpoo nämä asemat ja <code>--deck</code> luo pakan.</p>
 <h5>Jakauma kuutiotoimen mukaan</h5>
 <p>Pylväskaavio näyttää PR:n (tai MWC:n) jokaiselle kuutiopäätöksen tyypille: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jokainen pylväs näyttää myös päätösten määrän ja blunder-osuuden työkaluvihjeessä.</p>
 <p>Pylvään napsauttaminen lataa kyseistä kuutiotoimea vastaavat asemat, <strong>vain ne, joissa on virhe</strong> (drill-down).</p>
@@ -793,6 +794,7 @@ export default {
 <li><strong>aikaraja kysymystä kohti</strong> — ei rajaa, 15, 30 tai 60 sekuntia.</li>
 </ul>
 <p>Valittu lähde muistetaan kullekin harjoitukselle istunnosta toiseen.</p>
+<p>Selattava luettelo voi tulla Tilastot-paneelin <em>toistuvista virheistä</em>: napsautus kohtaan "Tietovisa tästä ryhmästä" korvaa sen ryhmän asemilla ja käynnistää Päätös-harjoituksen.</p>
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> ja <code>train decision</code> avaavat paneelin ja aloittavat suoraan; <code>train tp</code> ja <code>train takepoint</code> ovat <code>train scores</code>:n synonyymejä, <code>train epc</code> on <code>train bearoff</code>:n ja <code>train quiz</code> <code>train decision</code>:n synonyymi.</p>
 <h4>Viisi harjoitusta</h4>
 <p><strong>Scores</strong> arpoo yhden 36 järjestämättömästä tilanteesta väliltä 2–9 away ja näyttää <strong>tilannekortin</strong>: kaksi saraketta — <em>Vous</em> (sinä) ja <em>L'adversaire</em> (vastustaja) — ja seitsemän riviä — hyväksymispiste kuutiolla 2 ja sitten kuutiolla 4, kumpikin pitkälle kilpajuoksulle ja viimeiselle heitolle, sitten gammonin arvo kuutioilla 1, 2 ja 4.</p>

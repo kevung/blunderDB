@@ -2953,19 +2953,31 @@ no rule names is listed apart, per plan of play, outside the ranking (JSON:
 Cost is the share of the filter's PR the group accounts for; an error is a
 counted decision costing at least the library's Error threshold.
 
+--quiz and --deck turn the ranking into study: --quiz draws positions at
+random from the three costliest groups (or the one --group names), --deck
+makes an Anki deck of all their positions.
+
 Options:
   -db string
     	Path to the database file (required)
   -decision-type string
     	Decision type: all, checker, or cube (default "all")
+  -deck string
+    	Create an Anki deck of this name from the positions of the worst groups
   -format string
     	Output format: text or json (default "text")
   -from string
     	Start date filter YYYY-MM-DD
+  -group int
+    	With --quiz or --deck: the rank of one group (1 = costliest) instead of the three costliest
   -limit int
     	Maximum number of groups shown (text only; 0 = all) (default 20)
   -player string
     	Only this player's decisions
+  -quiz
+    	Draw a quiz: position ids picked at random from the worst groups, for the Decision exercise or quiz_grade
+  -quiz-size int
+    	Number of positions --quiz draws (default 20)
   -to string
     	End date filter YYYY-MM-DD
   -tournament string
@@ -2973,6 +2985,8 @@ Options:
 
 Examples:
   blunderdb stats recurring --db database.db --player "Alice"
+  blunderdb stats recurring --db database.db --quiz --format json
+  blunderdb stats recurring --db database.db --group 1 --deck "My worst group"
   blunderdb stats recurring --db database.db --decision-type checker --format json
 ```
 

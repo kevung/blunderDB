@@ -992,6 +992,14 @@ panneau Stats (voir :ref:`stats`). Les statistiques globales restent sous
   tous).
 * ``--format text|json`` — Le JSON porte chaque groupe avec la liste complète
   de ses positions.
+* ``--quiz`` — Tire au hasard des positions parmi celles des trois groupes
+  les plus coûteux (``--quiz-size <n>``, défaut 20) et les affiche : ce sont
+  les identifiants que le quiz et ``quiz_grade`` jugent. En JSON, champ
+  ``Quiz``.
+* ``--deck <nom>`` — Crée un paquet Anki de ce nom, rempli de toutes les
+  positions des trois groupes les plus coûteux.
+* ``--group <rang>`` — Avec ``--quiz`` ou ``--deck`` : le groupe de ce rang
+  (1 pour le plus coûteux) au lieu des trois premiers.
 
 Un thème de coup de pions est ``gammon``, ``blots``, ``point`` ou
 ``passive`` ; un thème de videau est ``offer_missed``, ``offer_premature``,
@@ -1007,6 +1015,8 @@ part du PR du filtre que le groupe représente.
 
    ./blunderdb stats recurring --db base.db --player "Alice"
    ./blunderdb stats recurring --db base.db --decision-type checker --format json
+   ./blunderdb stats recurring --db base.db --quiz --format json
+   ./blunderdb stats recurring --db base.db --group 1 --deck "Mon pire groupe"
 
 .. _cli_cubematrix:
 

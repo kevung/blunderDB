@@ -554,6 +554,7 @@ export default {
 <li>Il <strong>costo</strong> è la quota del PR del filtro che il gruppo rappresenta: la formula del PR applicata agli errori del gruppo, rapportata a tutte le decisioni conteggiate. I costi dei gruppi non superano quindi mai il PR.</li>
 </ul>
 <p>Facendo clic su un gruppo se ne caricano le posizioni, dalla più costosa alla meno costosa. Il tema viene ricalcolato a ogni visualizzazione e non è mai salvato: come il piano di gioco, è un'etichetta derivata, non modificabile. Da riga di comando: <code>blunderdb stats recurring</code> (vedi stats — Errori ricorrenti).</p>
+<p>Ogni riga offre tre gesti per passare dall'errore allo studio: <strong>Quiz su questo gruppo</strong> avvia l'esercizio Decisione del pannello Allenamento sulle posizioni del gruppo, <strong>Mazzo Anki</strong> ne fa un mazzo di carte, <strong>Raccolta</strong> le archivia in una nuova raccolta. Sopra la tabella, <strong>Quiz sui miei tre gruppi peggiori</strong> estrae venti posizioni a caso tra quelle dei tre gruppi più costosi. Dalla riga di comando, <code>stats recurring --quiz</code> estrae queste posizioni e <code>--deck</code> crea il mazzo.</p>
 <h5>Ripartizione per azione di cubo</h5>
 <p>Un diagramma a barre visualizza il PR (o MWC) per ciascun tipo di decisione di cubo: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Ogni barra indica inoltre il numero di decisioni e il tasso di blunder in un suggerimento.</p>
 <p>Cliccando su una barra si caricano le posizioni corrispondenti a quell'azione di cubo, <strong>solo quelle con un errore</strong> (drill-down).</p>
@@ -793,6 +794,7 @@ export default {
 <li>il <strong>limite per domanda</strong> — nessuno, 15, 30 o 60 secondi.</li>
 </ul>
 <p>La sorgente scelta è ricordata per ogni esercizio, da una sessione all'altra.</p>
+<p>L'elenco sfogliato può provenire dagli <em>errori ricorrenti</em> del pannello Stats: un clic su «Quiz su questo gruppo» lo sostituisce con le posizioni del gruppo e avvia l'esercizio Decisione.</p>
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> e <code>train decision</code> aprono il pannello e avviano direttamente; <code>train tp</code> e <code>train takepoint</code> sono sinonimi di <code>train scores</code>, <code>train epc</code> di <code>train bearoff</code>, <code>train quiz</code> di <code>train decision</code>.</p>
 <h4>I cinque esercizi</h4>
 <p><strong>Scores</strong> estrae a sorte uno dei 36 punteggi non ordinati da 2 a 9 away e mostra una <strong>scheda di punteggio</strong>: due colonne — <em>Vous</em> (lei) e <em>L'adversaire</em> (l'avversario) — e sette righe — il punto di presa al cubo 2 e poi al cubo 4, ciascuno in corsa lunga e all'ultimo lancio, poi il valore del gammon ai cubi 1, 2 e 4.</p>

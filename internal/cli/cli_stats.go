@@ -75,6 +75,10 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 	decisionType := fs.String("decision-type", "all", "Decision type: all, checker, or cube")
 	limit := fs.Int("limit", 20, "Maximum number of groups shown (text only; 0 = all)")
 	format := fs.String("format", "text", "Output format: text or json")
+	quiz := fs.Bool("quiz", false, "Draw a quiz: position ids picked at random from the worst groups, for the Decision exercise or quiz_grade")
+	quizSize := fs.Int("quiz-size", storage.StudyQuizSize, "Number of positions --quiz draws")
+	deckName := fs.String("deck", "", "Create an Anki deck of this name from the positions of the worst groups")
+	group := fs.Int("group", 0, "With --quiz or --deck: the rank of one group (1 = costliest) instead of the three costliest")
 	fs.Usage = func() {
 		fmt.Println("Usage: blunderdb stats recurring --db <file> [options]")
 		fmt.Println()
@@ -86,11 +90,17 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 		fmt.Println("Cost is the share of the filter's PR the group accounts for; an error is a")
 		fmt.Println("counted decision costing at least the library's Error threshold.")
 		fmt.Println()
+		fmt.Println("--quiz and --deck turn the ranking into study: --quiz draws positions at")
+		fmt.Println("random from the three costliest groups (or the one --group names), --deck")
+		fmt.Println("makes an Anki deck of all their positions.")
+		fmt.Println()
 		fmt.Println("Options:")
 		fs.PrintDefaults()
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  blunderdb stats recurring --db database.db --player \"Alice\"")
+		fmt.Println("  blunderdb stats recurring --db database.db --quiz --format json")
+		fmt.Println("  blunderdb stats recurring --db database.db --group 1 --deck \"My worst group\"")
 		fmt.Println("  blunderdb stats recurring --db database.db --decision-type checker --format json")
 	}
 	if err := fs.Parse(args); err != nil {
@@ -100,22 +110,15 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 		fs.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
-	filter := StatsFilter{PlayerName: *player, DateFrom: *from, DateTo: *to, DecisionType: -1}
-	switch strings.ToLower(*decisionType) {
-	case "all":
-	case "checker":
-		filter.DecisionType = 0
-	case "cube":
-		filter.DecisionType = 1
-	default:
-		return fmt.Errorf("invalid --decision-type %q: want all, checker or cube", *decisionType)
+	filter, err := buildStatsFilter(*player, *tournament, *from, *to, *decisionType)
+	if err != nil {
+		return err
 	}
-	if *tournament != "" {
-		ids, err := parseIDList(*tournament)
-		if err != nil {
-			return fmt.Errorf("invalid --tournament: %w", err)
-		}
-		filter.TournamentIDs = ids
+	if *group < 0 {
+		return fmt.Errorf("invalid --group %d: want 0 or a rank from 1", *group)
+	}
+	if *quizSize < 1 {
+		return fmt.Errorf("invalid --quiz-size %d: want at least 1", *quizSize)
 	}
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
@@ -123,7 +126,7 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 
 	textOutput := strings.ToLower(*format) != "json"
 	var res *storage.RecurringErrors
-	err := withInterruptibleContext(func() {
+	err = withInterruptibleContext(func() {
 		if textOutput {
 			fmt.Println("\nCancelling...")
 		}
@@ -138,8 +141,28 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 		}
 		return fmt.Errorf("recurring errors: %w", err)
 	}
+	var quizIDs []int64
+	if *quiz {
+		quizIDs = storage.DrawStudyQuiz(res.StudyPositionIDs(*group), *quizSize, nil)
+	}
+	var deckID int64
+	if *deckName != "" {
+		ids := res.StudyPositionIDs(*group)
+		if len(ids) == 0 {
+			return fmt.Errorf("no group to make a deck from")
+		}
+		var err error
+		if deckID, err = cli.createStudyDeck(*deckName, ids); err != nil {
+			return err
+		}
+	}
 	if !textOutput {
-		data, err := json.MarshalIndent(res, "", "  ")
+		out := struct {
+			*storage.RecurringErrors
+			Quiz   []int64 `json:"Quiz,omitempty"`
+			DeckID int64   `json:"DeckID,omitempty"`
+		}{res, quizIDs, deckID}
+		data, err := json.MarshalIndent(out, "", "  ")
 		if err != nil {
 			return fmt.Errorf("marshal recurring errors: %w", err)
 		}
@@ -147,7 +170,67 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 		return nil
 	}
 	printRecurringErrors(res, *limit)
+	if *quiz {
+		fmt.Println()
+		if len(quizIDs) == 0 {
+			fmt.Println("Quiz: no position to draw from.")
+		} else {
+			fmt.Printf("Quiz — %d positions: %s\n", len(quizIDs), joinIDs(quizIDs))
+		}
+	}
+	if deckID != 0 {
+		fmt.Printf("Created deck %d (%s)\n", deckID, *deckName)
+	}
 	return nil
+}
+
+// createStudyDeck makes a search deck of exactly these positions: the ids are
+// stored with the deck, as the GUI does for a deck made from a result list.
+func (cli *CLI) createStudyDeck(name string, ids []int64) (int64, error) {
+	source, err := json.Marshal(struct {
+		IDs []int64 `json:"ids"`
+	}{ids})
+	if err != nil {
+		return 0, fmt.Errorf("marshal deck source: %w", err)
+	}
+	deckID, err := cli.db.CreateAnkiDeck(name, "", AnkiSourceSearch, 0, string(source))
+	if err != nil {
+		return 0, fmt.Errorf("create deck: %w", err)
+	}
+	if err := cli.db.SyncAnkiDeckWithPositions(deckID, ids); err != nil {
+		return 0, fmt.Errorf("fill deck: %w", err)
+	}
+	return deckID, nil
+}
+
+func joinIDs(ids []int64) string {
+	parts := make([]string, len(ids))
+	for i, id := range ids {
+		parts[i] = fmt.Sprint(id)
+	}
+	return strings.Join(parts, ",")
+}
+
+// buildStatsFilter reads the filter flags the stats sub-commands share.
+func buildStatsFilter(player, tournament, from, to, decisionType string) (StatsFilter, error) {
+	filter := StatsFilter{PlayerName: player, DateFrom: from, DateTo: to, DecisionType: -1}
+	switch strings.ToLower(decisionType) {
+	case "all":
+	case "checker":
+		filter.DecisionType = 0
+	case "cube":
+		filter.DecisionType = 1
+	default:
+		return filter, fmt.Errorf("invalid --decision-type %q: want all, checker or cube", decisionType)
+	}
+	if tournament != "" {
+		ids, err := parseIDList(tournament)
+		if err != nil {
+			return filter, fmt.Errorf("invalid --tournament: %w", err)
+		}
+		filter.TournamentIDs = ids
+	}
+	return filter, nil
 }
 
 // printRecurringErrors writes the groups as a table, the costliest first.

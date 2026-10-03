@@ -554,6 +554,7 @@ export default {
 <li><strong>コスト</strong>は、そのグループがフィルターの PR に占める割合です。グループのミスに PR の式を適用し、カウント対象のすべての判断で割ったものです。したがって、グループのコストの合計が PR を超えることはありません。</li>
 </ul>
 <p>グループをクリックすると、そのポジションがコストの大きい順に読み込まれます。テーマは表示のたびに再計算され、保存されません。プランと同様、派生したラベルであり編集できません。コマンドラインでは <code>blunderdb stats recurring</code> を使います（stats — 繰り返されるミスを参照）。</p>
+<p>各行には、誤りから学習へ進む3つの操作があります。<strong>このグループのクイズ</strong>は、トレーニング パネルの「決定」練習をそのグループのポジションで開始し、<strong>Ankiデッキ</strong>はそれらからカードのデッキを作り、<strong>コレクション</strong>はそれらを新しいコレクションに入れます。表の上の<strong>最悪の3グループのクイズ</strong>は、最もコストの高い3グループのポジションから20個を無作為に引きます。コマンドラインでは、<code>stats recurring --quiz</code> がこれらのポジションを引き、<code>--deck</code> がデッキを作成します。</p>
 <h5>キューブのアクションごとの内訳</h5>
 <p>棒グラフが各種のキューブの判断について PR（または MWC）を表示します：<em>NoDouble</em>、<em>DoubleTake</em>、<em>DoublePass</em>、<em>TooGood</em>。各バーはツールチップで判断数とブランダー率も示します。</p>
 <p>バーをクリックすると、そのキューブのアクションに対応するポジションのうち <strong>エラーがあるものだけ</strong> が読み込まれます（ドリルダウン）。</p>
@@ -793,6 +794,7 @@ export default {
 <li><strong>1問あたりの制限</strong> — なし、15、30 または 60 秒。</li>
 </ul>
 <p>選んだソースは練習ごとに記憶され、セッションをまたいで引き継がれます。</p>
+<p>閲覧中のリストは、統計パネルの<em>繰り返しの誤り</em>から来ることがあります。「このグループのクイズ」をクリックすると、リストがそのグループのポジションに置き換わり、「決定」練習が始まります。</p>
 <p><code>train scores</code>、<code>train pips</code>、<code>train bearoff</code>、<code>train evaluation</code>、<code>train decision</code> はパネルを開いてそのまま開始します。<code>train tp</code> と <code>train takepoint</code> は <code>train scores</code> の別名、<code>train epc</code> は <code>train bearoff</code> の別名、<code>train quiz</code> は <code>train decision</code> の別名です。</p>
 <h4>五つの練習</h4>
 <p><strong>Scores</strong> は 2 から 9 away までの順序なし 36 スコアから 1 つを引き、<strong>スコアカード</strong>を表示します: 2 列 — <em>Vous</em>（あなた）と <em>L'adversaire</em>（相手）— と 7 行 — キューブ 2 のテイクポイント、次にキューブ 4 のテイクポイント（それぞれロングレースとラストロール）、そしてキューブ 1、2、4 のギャモン価値。</p>

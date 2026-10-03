@@ -554,6 +554,7 @@ export default {
 <li>Die <strong>Kosten</strong> sind der Anteil am PR des Filters, den die Gruppe ausmacht: die PR-Formel, angewendet auf die Fehler der Gruppe und bezogen auf alle gezählten Entscheidungen. Die Kosten der Gruppen übersteigen den PR daher nie.</li>
 </ul>
 <p>Ein Klick auf eine Gruppe lädt ihre Stellungen, von der teuersten zur günstigsten. Das Thema wird bei jeder Anzeige neu berechnet und nie gespeichert: Wie der Spielplan ist es ein abgeleitetes, nicht bearbeitbares Etikett. In der Kommandozeile: <code>blunderdb stats recurring</code> (siehe stats — Wiederkehrende Fehler).</p>
+<p>Jede Zeile bietet drei Wege vom Fehler zum Lernen: <strong>Quiz zu dieser Gruppe</strong> startet die Übung Entscheidung des Panels Training mit den Stellungen der Gruppe, <strong>Anki-Stapel</strong> macht daraus einen Kartenstapel, <strong>Sammlung</strong> legt sie in einer neuen Sammlung ab. Über der Tabelle zieht <strong>Quiz zu meinen drei schlechtesten Gruppen</strong> zwanzig Stellungen zufällig aus denen der drei teuersten Gruppen. In der Kommandozeile zieht <code>stats recurring --quiz</code> diese Stellungen und <code>--deck</code> legt den Stapel an.</p>
 <h5>Aufteilung nach Doppler-Aktion</h5>
 <p>Ein Balkendiagramm zeigt den PR (oder MWC) für jeden Typ von Doppler-Entscheidung an: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jeder Balken gibt außerdem die Anzahl der Entscheidungen und die Blunder-Rate in einem Tooltip an.</p>
 <p>Ein Klick auf einen Balken lädt die zu dieser Doppler-Aktion gehörenden Stellungen, <strong>nur die mit einem Fehler</strong> (Drill-down).</p>
@@ -793,6 +794,7 @@ export default {
 <li>das <strong>Zeitlimit je Frage</strong> — keines, 15, 30 oder 60 Sekunden.</li>
 </ul>
 <p>Die gewählte Quelle wird für jede Übung von einer Sitzung zur nächsten gemerkt.</p>
+<p>Die durchsuchte Liste kann von den <em>wiederkehrenden Fehlern</em> des Stats-Panels stammen: Ein Klick auf „Quiz zu dieser Gruppe“ ersetzt sie durch die Stellungen der Gruppe und startet die Übung Entscheidung.</p>
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> und <code>train decision</code> öffnen das Panel und starten sofort; <code>train tp</code> und <code>train takepoint</code> sind Synonyme von <code>train scores</code>, <code>train epc</code> von <code>train bearoff</code>, <code>train quiz</code> von <code>train decision</code>.</p>
 <h4>Die fünf Übungen</h4>
 <p><strong>Scores</strong> zieht einen der 36 ungeordneten Stände von 2 bis 9 away und zeigt eine <strong>Standkarte</strong>: zwei Spalten — <em>Vous</em> (Sie) und <em>L'adversaire</em> (der Gegner) — und sieben Zeilen — den Annahmepunkt beim Würfel 2 und beim Würfel 4, jeweils für das lange Rennen und für den letzten Wurf, dann den Gammonwert bei den Würfeln 1, 2 und 4.</p>

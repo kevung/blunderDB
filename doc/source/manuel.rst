@@ -2225,6 +2225,15 @@ coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré :
 comme le plan de jeu, c'est une étiquette dérivée, non modifiable. En ligne de
 commande : ``blunderdb stats recurring`` (voir :ref:`cli_stats`).
 
+Chaque ligne propose trois gestes pour passer de l'erreur à l'étude :
+**Quiz sur ce groupe** lance l'exercice Décision du panneau
+:ref:`Entraînement <panneau_entrainement>` sur les positions du groupe,
+**Paquet Anki** en fait un paquet de cartes, **Collection** les range dans une
+nouvelle collection. Au-dessus du tableau, **Quiz de mes trois pires groupes**
+tire vingt positions au hasard parmi celles des trois groupes les plus
+coûteux. En ligne de commande, ``stats recurring --quiz`` tire ces
+positions et ``--deck`` crée le paquet.
+
 Répartition par action de videau
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -3137,6 +3146,10 @@ Trois choix, puis « Démarrer » :
 * la **limite par question** — aucune, 15, 30 ou 60 secondes.
 
 La source choisie est mémorisée pour chaque exercice, d'une session à l'autre.
+
+La liste parcourue peut venir des *erreurs récurrentes* du panneau Stats : un
+clic sur « Quiz sur ce groupe » la remplace par les positions du groupe et
+démarre l'exercice Décision.
 
 ``train scores``, ``train pips``, ``train bearoff``, ``train evaluation`` et
 ``train decision`` ouvrent le panneau et démarrent directement ; ``train tp`` et ``train takepoint``

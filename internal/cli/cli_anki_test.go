@@ -206,3 +206,32 @@ func TestCLI_AnkiUsageErrors(t *testing.T) {
 		}
 	}
 }
+
+func TestCLI_StatsRecurringStudyDeck(t *testing.T) {
+	cli, _ := setupCLIWithDB(t)
+	_, ids := seedCollection(t, cli, "Openings", 2)
+
+	deckID, err := cli.createStudyDeck("Worst groups", ids)
+	if err != nil {
+		t.Fatalf("createStudyDeck: %v", err)
+	}
+	deckPositions, err := cli.db.GetAnkiDeckPositions(deckID)
+	if err != nil {
+		t.Fatalf("GetAnkiDeckPositions: %v", err)
+	}
+	if len(deckPositions) != len(ids) {
+		t.Errorf("deck holds %d positions, want the %d given", len(deckPositions), len(ids))
+	}
+}
+
+func TestCLI_StatsRecurringRejectsBadStudyFlags(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	for _, args := range [][]string{
+		{"stats", "recurring", "--db", dbPath, "--group", "-1"},
+		{"stats", "recurring", "--db", dbPath, "--quiz", "--quiz-size", "0"},
+	} {
+		if err := cli.Run(args); err == nil {
+			t.Errorf("%v: want an error", args)
+		}
+	}
+}

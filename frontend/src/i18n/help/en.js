@@ -554,6 +554,7 @@ export default {
 <li>The <strong>cost</strong> is the share of the filter's PR that the group represents: the PR formula applied to the group's errors, divided by all counted decisions. The costs of the groups therefore never exceed the PR.</li>
 </ul>
 <p>Clicking a group loads its positions, from the most costly to the least costly. The theme is recomputed at every display, never stored: like the game plan, it is a derived label that cannot be edited. On the command line: <code>blunderdb stats recurring</code> (see stats — Recurring errors).</p>
+<p>Each row offers three ways to go from the error to study: <strong>Quiz this group</strong> starts the Decision exercise of the Training panel on the group's positions, <strong>Anki deck</strong> makes a deck of cards from them, <strong>Collection</strong> files them in a new collection. Above the table, <strong>Quiz my three worst groups</strong> draws twenty positions at random from those of the three costliest groups. On the command line, <code>stats recurring --quiz</code> draws these positions and <code>--deck</code> creates the deck.</p>
 <h5>Breakdown by cube action</h5>
 <p>A bar chart displays the PR (or MWC) for each type of cube decision: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Each bar also shows the number of decisions and the blunder rate in a tooltip.</p>
 <p>Clicking a bar loads the positions matching that cube action, <strong>only those with an error</strong> (drill-down).</p>
@@ -793,6 +794,7 @@ export default {
 <li>the <strong>limit per question</strong> — none, 15, 30 or 60 seconds.</li>
 </ul>
 <p>The chosen source is remembered for each exercise, from one session to the next.</p>
+<p>The browsed list can come from the <em>recurring errors</em> of the Stats panel: a click on "Quiz this group" replaces it with the group's positions and starts the Decision exercise.</p>
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> and <code>train decision</code> open the panel and start straight away; <code>train tp</code> and <code>train takepoint</code> are synonyms of <code>train scores</code>, <code>train epc</code> of <code>train bearoff</code>, <code>train quiz</code> of <code>train decision</code>.</p>
 <h4>The five exercises</h4>
 <p><strong>Scores</strong> draws one of the 36 unordered scores from 2 to 9 away and shows a <strong>score card</strong>: two columns — <em>Vous</em> (you) and <em>L'adversaire</em> (the opponent) — and seven rows — the take point at cube 2 then at cube 4, each for a long race and for the last roll, then the gammon value at cubes 1, 2 and 4.</p>

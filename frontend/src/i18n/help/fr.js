@@ -554,6 +554,7 @@ export default {
 <li>Le <strong>coût</strong> est la part du PR du filtre que le groupe représente : la formule du PR appliquée aux erreurs du groupe, rapportée à toutes les décisions comptées. Les coûts des groupes ne dépassent donc jamais le PR.</li>
 </ul>
 <p>Cliquer sur un groupe charge ses positions, de la plus coûteuse à la moins coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré : comme le plan de jeu, c'est une étiquette dérivée, non modifiable. En ligne de commande : <code>blunderdb stats recurring</code> (voir stats — Erreurs récurrentes).</p>
+<p>Chaque ligne propose trois gestes pour passer de l'erreur à l'étude : <strong>Quiz sur ce groupe</strong> lance l'exercice Décision du panneau Entraînement sur les positions du groupe, <strong>Paquet Anki</strong> en fait un paquet de cartes, <strong>Collection</strong> les range dans une nouvelle collection. Au-dessus du tableau, <strong>Quiz de mes trois pires groupes</strong> tire vingt positions au hasard parmi celles des trois groupes les plus coûteux. En ligne de commande, <code>stats recurring --quiz</code> tire ces positions et <code>--deck</code> crée le paquet.</p>
 <h5>Répartition par action de videau</h5>
 <p>Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision de videau : <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Chaque barre indique également le nombre de décisions et le taux de blunders en infobulle.</p>
 <p>Cliquer sur une barre charge les positions correspondant à cette action de videau, <strong>uniquement celles avec une erreur</strong> (drill-down).</p>
@@ -793,6 +794,7 @@ export default {
 <li>la <strong>limite par question</strong> — aucune, 15, 30 ou 60 secondes.</li>
 </ul>
 <p>La source choisie est mémorisée pour chaque exercice, d'une session à l'autre.</p>
+<p>La liste parcourue peut venir des <em>erreurs récurrentes</em> du panneau Stats : un clic sur « Quiz sur ce groupe » la remplace par les positions du groupe et démarre l'exercice Décision.</p>
 <p><code>train scores</code>, <code>train pips</code>, <code>train bearoff</code>, <code>train evaluation</code> et <code>train decision</code> ouvrent le panneau et démarrent directement ; <code>train tp</code> et <code>train takepoint</code> sont des synonymes de <code>train scores</code>, <code>train epc</code> de <code>train bearoff</code>, <code>train quiz</code> de <code>train decision</code>.</p>
 <h4>Les cinq exercices</h4>
 <p><strong>Scores</strong> tire au sort l'un des 36 scores non ordonnés de 2 à 9 away et affiche une <strong>fiche de score</strong> : deux colonnes — <em>Vous</em> et <em>L'adversaire</em> — et sept lignes — le point de prise au videau 2 puis au videau 4, chacun en course longue et au dernier lancer, puis la valeur du gammon aux videaux 1, 2 et 4.</p>

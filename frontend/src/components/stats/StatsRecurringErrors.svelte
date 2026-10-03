@@ -3,6 +3,7 @@
     // et par thème, la plus coûteuse d'abord. Le coût est celui du PR, sur les
     // mêmes décisions comptées : la somme des groupes ne dépasse jamais le PR.
     import { loadPositionsFromSelection } from '../../services/positionLoader.js';
+    import { quizOnIds, quizOnWorstGroups, deckFromIds, collectionFromIds } from '../../services/recurringStudy.js';
     import { t } from '../../i18n/index.js';
 
     /** @type {{ data: { NumDecisions: number, Groups: Array<object> }|null, loading?: boolean, error?: string|null }} */
@@ -35,6 +36,10 @@
         return label === key ? g.Theme : label;
     }
 
+    function studyName(g) {
+        return $t('stats.recurringStudyName', { name: `${gameTypeLabel(g.GameType)} · ${$t(`stats.recurringKind_${g.Kind}`)} · ${themeLabel(g)}` });
+    }
+
     function open(g) {
         if (!g.PositionIDs?.length) return;
         loadPositionsFromSelection(g.PositionIDs);
@@ -52,6 +57,7 @@
         <p class="empty-subsection">{$t('stats.recurringEmpty')}</p>
     {:else}
         {#if groups.length > 0}
+            <button type="button" class="study-btn worst" data-testid="recurring-quiz-worst" onclick={() => quizOnWorstGroups(groups)}>{$t('stats.recurringQuizWorst')}</button>
             <table>
                 <thead>
                     <tr>
@@ -59,6 +65,7 @@
                         <th>{$t('stats.recurringTheme')}</th>
                         <th class="num">{$t('stats.decisions')}</th>
                         <th class="num">{$t('stats.recurringCost')}</th>
+                        <th>{$t('stats.recurringActions')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -72,6 +79,11 @@
                             </td>
                             <td class="num">{g.Count}</td>
                             <td class="num">{g.PRCost.toFixed(2)}</td>
+                            <td class="actions">
+                                <button type="button" class="study-btn" onclick={() => quizOnIds(g.PositionIDs ?? [])}>{$t('stats.recurringQuiz')}</button>
+                                <button type="button" class="study-btn" onclick={() => deckFromIds(studyName(g), g.PositionIDs ?? [])}>{$t('stats.recurringDeck')}</button>
+                                <button type="button" class="study-btn" onclick={() => collectionFromIds(studyName(g), g.PositionIDs ?? [])}>{$t('stats.recurringCollection')}</button>
+                            </td>
                         </tr>
                     {/each}
                 </tbody>
@@ -147,6 +159,21 @@
         padding: 0;
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
+    }
+
+    .actions {
+        white-space: nowrap;
+    }
+
+    .study-btn {
+        font-size: var(--font-size-small);
+        padding: 1px 8px;
+        margin-right: 4px;
+        cursor: pointer;
+    }
+
+    .worst {
+        margin: 0 0 8px;
     }
 
     .group-link {
