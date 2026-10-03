@@ -1,99 +1,168 @@
-EXPLAIN QUERY PLAN — blunderDB v2.0.0 search queries
-Generated: 2026-04-18
-DB: /tmp/queryplan.db (345 positions, 341 analysis rows; imported from testdata/test.xg)
-SQLite version: modernc.org/sqlite (pure-Go)
+EXPLAIN QUERY PLAN — blunderDB, recherche sur une bibliothèque réelle (schéma 2.28.0 → 2.30.0)
+==========================================================================================
 
-Indexes present in v2.0.0 schema:
-  idx_position_decision_pip      (decision_type, pip_diff)
-  idx_position_decision_dice     (decision_type, dice_1, dice_2)
-  idx_position_score             (score_1, score_2)
-  idx_position_off               (off_1, off_2)
-  idx_position_zobrist           (zobrist_hash) UNIQUE
-  idx_analysis_position          (position_id) UNIQUE
-  idx_analysis_win1              (player1_win_rate)
-  idx_analysis_cube_error        (cube_error)
-  idx_analysis_move_error        (best_move_equity_error)
-  idx_move_game                  (game_id)
-  idx_move_position              (position_id)
-  idx_match_canonical            (canonical_hash)
-  idx_match_hash                 (match_hash)
+Remplace la version v2.0.0 de ce fichier (345 positions), dont les plans ne disaient rien
+d'une grande base : le planificateur ne choisit pas les mêmes index à 15 M de lignes.
 
-=== 1. decision_type filter ===
-Query: WHERE p.decision_type = 1
+Corpus    bibliothèque réelle de tournois : 15 625 009 positions, 15 623 468 analyses,
+          16,6 M coups ; fichier de 12,8 Go en 2.28.0.
+Moteur    modernc.org/sqlite v1.59.0 (SQLite pur Go), cache_size 64 Mo, mmap 256 Mo,
+          une connexion ; Ryzen 6850U, NVMe, 14 Go de RAM.
+Requêtes  chaque filtre passe par Search().Count puis Search().FindIDs(limit 100) du
+          magasin SQLite (sqlshared/search.go), plan relevé par EXPLAIN QUERY PLAN sur
+          la requête réellement émise.
+Mesure    cache chaud : deux passes, la seconde retenue. Les écarts de ±10 % sont du bruit
+          (un même plan a varié de 4,4 à 5,1 s d'une passe à l'autre).
+2.28.0    la base telle qu'importée : statistiques échantillonnées par
+          RefreshSearchStatistics (PRAGMA analysis_limit=1000, « 1001 lignes par clé »
+          sur presque tous les index).
+2.30.0    la même base migrée, ANALYZE complet compris (finishLargeLibraryWave).
 
-QUERY PLAN
-|--SEARCH p USING INDEX idx_position_decision_pip (decision_type=?)
-|--SEARCH a USING INDEX idx_analysis_position (position_id=?) LEFT-JOIN
-`--USE TEMP B-TREE FOR ORDER BY
 
-Note: Uses idx_position_decision_pip (composite index). Temp B-TREE for ORDER BY
-because the index sort order is (decision_type, pip_diff), not (id). Acceptable —
-the sort step runs on the already-filtered subset, not the full table.
+1. Index → requêtes qui l'empruntent → décision
+-----------------------------------------------
 
-=== 2. score + cube filter ===
-Query: WHERE p.score_1 = 2 AND p.score_2 = 2 AND p.cube_value = 2
+Supprimés en 2.30.0 (prunedIndexes2_30) :
 
-QUERY PLAN
-|--SCAN p
-`--SEARCH a USING INDEX idx_analysis_position (position_id=?) LEFT-JOIN
+  idx_position_decision_dice (decision_type, dice_1, dice_2)          196 Mo
+      plus emprunté ; d31 passe par idx_position_dice : Count 5,54 → 1,68 s,
+      première page 5,06 → 1,25 s.
+  idx_position_decision_pip (decision_type, pip_diff)                 180 Mo
+      D + pip : Count 2,62 → 3,48 s (seule régression retenue, voir 3) ;
+      première page 1,51 s → 1 ms (le parcours par id s'arrête à 100).
+  idx_position_cube_response (decision_type, is_cube_response)        165 Mo
+      D, checker, D + score l'empruntaient sur decision_type seul, qui coupe la base en
+      deux : Count D 8,26 → 5,59 s, checker 10,4 → 7,5 s ; première page 5,2 s → 0 ms.
+      Remplacé par le partiel idx_position_cube_take (is_cube_response = 1), 2,6 Mo.
+  idx_analysis_win2, idx_analysis_gammon2                             179 + 173 Mo
+      fusionnés dans idx_analysis_win_gammon2_covering (290 Mo), couvrant comme son
+      jumeau joueur 1 : W 6,36 → 2,96 s, G 6,08 → 2,92 s ; première page 4,4 → 1,1 s.
 
-Note: SCAN (full table scan on position) because idx_position_score covers
-(score_1, score_2) but cube_value is not in that index. For a real tournament DB
-with thousands of score-filtered searches, add idx_position_score_cube covering
-(score_1, score_2, cube_value) if this query path becomes hot.
+  Bilan : 893 Mo d'index de recherche retirés, 293 Mo ajoutés.
 
-=== 3. pip diff window ===
-Query: WHERE p.pip_diff BETWEEN -3 AND 3
+Conservés, empruntés par le banc :
 
-QUERY PLAN
-|--SCAN p
-`--SEARCH a USING INDEX idx_analysis_position (position_id=?) LEFT-JOIN
+  idx_position_dice              d31
+  idx_position_score_cube        S, D + score (saut de match_length, ANY(match_length))
+  idx_position_pip_diff          p, D + p
+  idx_position_pip_1             P
+  idx_position_off               o, O, race + o
+  idx_position_back_checkers_1/2 k, K
+  idx_position_game_phase        race, opening
+  idx_position_game_type         backgame, acepoint
+  idx_position_no_contact        nc (partiel)
+  idx_position_flagged           fl (partiel)
+  idx_analysis_win_gammon_covering   w, g (sous-requête IN sur l'index seul)
+  idx_analysis_backgammon1/2     b, B
+  idx_analysis_position          jointure LEFT de chaque Count, MovesByMatch
 
-Note: SCAN because pip_diff alone has no single-column index; the composite
-idx_position_decision_pip only helps when decision_type is also constrained.
-A standalone idx_position_pip_diff would turn this into a range SEARCH. Low
-priority — pip diff windows typically match 30–50% of positions anyway.
+Conservés hors banc : idx_position_zobrist (identité), idx_analysis_cube_error et
+idx_analysis_move_error (tri et filtres d'erreur), idx_analysis_is_forced et
+idx_analysis_is_close_cube (partiels), idx_position_cube_take (filtre take/pass).
 
-=== 4. win_rate + gammon_rate filter ===
-Query: WHERE a.player1_win_rate >= 0.5 AND a.player1_gammon_rate >= 0.1
+Ajoutés par 2.30.0 pour la provenance et les dates, pas pour ce banc :
+idx_position_match_date (607 Mo après REINDEX, 692 Mo tel que la migration le laisse),
+idx_analysis_creation_date (448 Mo), idx_analysis_engine (180 Mo), idx_analysis_depth
+(164 Mo). Un REINDEX ne les réduit que de 12 % pour 2 min 10 : la migration ne le fait pas.
 
-QUERY PLAN
-|--SEARCH a USING INDEX idx_analysis_win1 (player1_win_rate>?)
-|--SEARCH p USING INTEGER PRIMARY KEY (rowid=?)
-`--USE TEMP B-TREE FOR ORDER BY
 
-Note: Query starts from the analysis side (idx_analysis_win1) then does PK
-lookup on position. This is correct — the analysis table drives the join when
-the analysis predicate is highly selective. gammon_rate filter is applied
-post-lookup (no index, but win_rate already narrows the set).
+2. Requêtes : 2.28.0 → 2.30.0
+-----------------------------
 
-=== 5. bitboard prime pattern pre-filter ===
-Query: WHERE (p.occupancy_1 & 1985) = 1985 AND (p.point_mask_1 & 1985) = 1985
+Count = Search().Count ; page = Search().FindIDs(limit 100).
 
-QUERY PLAN
-|--SCAN p
-`--SEARCH a USING INDEX idx_analysis_position (position_id=?) LEFT-JOIN
+filtre                           lignes | Count 2.28 Count 2.30 |  page 2.28  page 2.30
+all (empty filter)             15625009 |     9.23 s     8.86 s |       1 ms       0 ms
+decision cube (D)               5961951 |     8.26 s     5.59 s |     5.22 s       0 ms
+decision checker                9663058 |    10.40 s     7.52 s |     5.85 s       0 ms
+dice 31 (d31)                    532075 |     5.54 s     1.68 s |     5.06 s     1.25 s
+score 3-3 (S)                    177094 |     878 ms     120 ms |       1 ms      28 ms
+cube value 2 (c)                3956467 |     4.43 s     4.71 s |       0 ms       0 ms
+no contact (nc)                 1973128 |     1.29 s     1.28 s |       0 ms       0 ms
+pip diff 40,60 (p)              1246414 |     2.03 s     1.99 s |     163 ms       0 ms
+pip diff >80 (p)                 804128 |     1.18 s     1.18 s |       0 ms      82 ms
+pip1 <20 (P)                     527773 |     1.22 s     1.23 s |       1 ms       1 ms
+pip1 100,120 (P)                2017218 |     3.09 s     3.09 s |     265 ms       0 ms
+off1 >=10 (o)                    304044 |     695 ms     694 ms |      40 ms      44 ms
+off2 =14 (O)                      64076 |     824 ms     128 ms |       2 ms      10 ms
+back1 >=3 (k)                   1944014 |     1.50 s     1.47 s |     257 ms       0 ms
+back2 >=4 (K)                    673285 |     601 ms     590 ms |      88 ms      97 ms
+phase race                      1071515 |     774 ms     761 ms |       0 ms       0 ms
+phase opening                   1205549 |     860 ms     833 ms |       0 ms       0 ms
+type backgame                    400962 |     316 ms     306 ms |       0 ms       0 ms
+type acepoint                    643280 |     502 ms     497 ms |       0 ms       0 ms
+win 70,80 (w)                    857612 |     2.40 s     2.44 s |     788 ms     786 ms
+gammon >40 (g)                  1021597 |     2.43 s     2.52 s |     976 ms     990 ms
+backgammon >10 (b)               124089 |     583 ms     624 ms |     613 ms     642 ms
+p2 win 70,80 (W)                1162532 |     6.36 s     2.96 s |     4.41 s     1.09 s
+p2 gammon >40 (G)               1287758 |     6.08 s     2.92 s |     4.57 s     1.25 s
+p2 backgammon >10 (B)            154065 |     611 ms     636 ms |     632 ms     655 ms
+cube D + pip diff 40,60          517393 |     2.62 s     3.48 s |     1.51 s       1 ms
+cube D + score 3-3                74829 |     4.85 s     137 ms |     4.82 s      76 ms
+race + off1 >=10                  72337 |     771 ms     1.01 s |       1 ms     846 ms
+flagged (fl)                      19117 |      17 ms      16 ms |       0 ms       0 ms
 
-Note: SCAN is expected — bitwise AND expressions cannot use B-tree indexes in
-SQLite. The pre-filter value is crucial: these two AND conditions together rule
-out ~98% of rows cheaply (integer arithmetic, no I/O), so the effective cost is
-a fast sequential scan of the integer columns only (state JSON is not read until
-the row passes both masks).
+Plans des écarts notables (2.30.0) :
 
-=== 6. match IDs subquery ===
-Query: WHERE p.id IN (SELECT m.position_id FROM move m
-                       WHERE m.game_id IN (SELECT id FROM game WHERE match_id IN (1,2,3)))
+  D + score     SEARCH p USING INDEX idx_position_score_cube (ANY(match_length) AND
+                score_1=? AND score_2=?)          — 2.28.0 : idx_position_cube_response
+  S, O          SEARCH p USING COVERING INDEX idx_position_score_cube / idx_position_off
+                (ANY(<1re colonne>) AND ...=?) : saut de la première colonne, que seul un
+                ANALYZE complet rend rentable — 2.28.0 : SCAN de tout l'index couvrant.
+  D, checker    SCAN p                            — 2.28.0 : idx_position_cube_response
+  race + o      page : SEARCH p USING INDEX idx_position_off (off_1>? AND off_1<?) +
+                USE TEMP B-TREE FOR ORDER BY      — 2.28.0 : idx_position_game_phase,
+                déjà dans l'ordre des id, arrêt à 100.
+  p > 80        page : idx_position_pip_diff + TEMP B-TREE (82 ms) — 2.28.0 : SCAN p.
 
-QUERY PLAN
-|--SEARCH p USING INTEGER PRIMARY KEY (rowid=?)
-|--LIST SUBQUERY 2
-|  |--SEARCH m USING INDEX idx_move_game (game_id=?)
-|  `--LIST SUBQUERY 1
-|     `--SCAN game
-`--SEARCH a USING INDEX idx_analysis_position (position_id=?) LEFT-JOIN
 
-Note: p drives via PK lookup; inner subquery uses idx_move_game efficiently.
-The SCAN game is a full scan of the game table to find matching match_ids —
-acceptable because the game table is small (O(games in selected matches)).
-If this query path is called with very large tournament filters (hundreds of
-matches), add idx_game_match (match_id) to the game table.
+3. Statistiques du planificateur
+--------------------------------
+
+La migration rafraîchit les statistiques par un ANALYZE complet. Même base 2.30.0, trois
+jeux de statistiques :
+
+  filtre              périmées (2.28.0)   échantillonnées (limit 1000)   ANALYZE complet
+  S, Count                 862 ms               921 ms                     120 ms
+  O, Count                 917 ms               836 ms                     128 ms
+  D + score, Count        2,69 s               2,70 s                      137 ms
+  race + o, page             1 ms                 —                        846 ms
+
+L'ANALYZE complet coûte 30 s cache chaud, 60 s cache froid, contre 18 min pour les deux
+passes de rétro-remplissage. Sans lui, la migration laissait des statistiques qui ne
+connaissent pas les index créés ; c'est ce qui avait fait croire à une régression de
+Count c (4,7 → 20 s) et D + p (2,7 → 12,8 s) : ces mesures-là étaient de plus prises
+cache froid, juste après la migration. Cache chaud, Count c ne bouge pas (4,4 → 4,7 s).
+
+Contrepartie acceptée : avec des estimations justes, la première page de race + o trie
+304 044 candidats d'idx_position_off au lieu de s'arrêter à 100 dans
+idx_position_game_phase (1 ms → 846 ms). Le même plan sort de tout ANALYZE complet
+(ensureSearchStats sur une base sans statistiques, Vacuum) : c'est une limite du coût
+de LIMIT + ORDER BY id dans le planificateur, pas de la migration.
+
+
+4. Insertion
+------------
+
+Banc : 200 000 positions et leurs analyses recopiées dans une transaction annulée
+(c6/insert-bench.sql ; en 2.30.0 avec match_date, analysis_engine, analysis_depth,
+creation_date).
+
+                    2.28.0 (froid / chaud)   2.30.0 (deux passes)
+  INSERT position       46,7 / 40,5 s          15,7 / 12,4 s
+  INSERT analysis       54,0 / 27,8 s          34,1 / 35,4 s
+
+position gagne trois fois (cinq index de moins) ; analysis paie les trois index de
+provenance et l'index couvrant joueur 2, plus large que win2 + gammon2.
+
+
+5. Correspondances et purge
+---------------------------
+
+Inchangés par 2.30.0 :
+
+  MovesByMatch     idx_game_match → idx_move_game → idx_analysis_position, 18 ms / 426
+  MovePositions    rowid match → idx_game_match → idx_move_game → rowid position, 5 ms
+  purge orpheline  rowid position, puis par position : idx_move_position,
+                   idx_lesson_step_position, idx_comment_position ; collection_position
+                   et anki_card parcourus (petites tables).
