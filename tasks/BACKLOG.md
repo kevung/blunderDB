@@ -123,6 +123,10 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   passant ».
 ## Ouvert — Produit / docs
 
+- **Export fédéral du classement de club** (#529) — reporté par décision produit du
+  2026-10-03 : le CSV/JSON générique par épreuve et par saison suffit. À reprendre seulement
+  sur un besoin réel, avec un fichier modèle de la fédération visée (FFBG ou autre), testé
+  contre ce modèle ; ne jamais coder un format supposé.
 - **Direction, simulation 2026-09** ([rapport](nicomaque/simulation-2026-09/rapport/README.md)) —
   cinq lots mesurés, #380 reste ouverte :
   - D5 l'échelle, bugs compris : #434-#443 ;
