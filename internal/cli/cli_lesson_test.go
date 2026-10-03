@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"database/sql"
 	"encoding/json"
 	"os"
 	"path/filepath"
@@ -53,5 +54,27 @@ func TestCLI_LessonLifecycle(t *testing.T) {
 	run("delete", "--id", "1", "--confirm")
 	if out := run("list"); !strings.Contains(out, "No lessons.") {
 		t.Fatalf("list after delete:\n%s", out)
+	}
+}
+
+// `export --type database` is the whole library: its Lessons leave with it.
+func TestCLI_DatabaseExportCarriesLessons(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	seedCollection(t, cli, "Primes", 1)
+	if err := cli.Run([]string{"lesson", "create", "--db", dbPath, "--name", "Sauvegardée"}); err != nil {
+		t.Fatal(err)
+	}
+	out := filepath.Join(t.TempDir(), "backup.db")
+	if err := cli.Run([]string{"export", "--db", dbPath, "--type", "database", "--file", out}); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := sql.Open("sqlite", out)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer raw.Close()
+	var n int
+	if err := raw.QueryRow(`SELECT COUNT(*) FROM lesson WHERE name = 'Sauvegardée'`).Scan(&n); err != nil || n != 1 {
+		t.Fatalf("lessons in the exported file = %d, %v; want 1", n, err)
 	}
 }

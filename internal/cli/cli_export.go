@@ -301,12 +301,14 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 		IncludePlayedMoves:   includePlayedMoves,
 		IncludeMatches:       includeMatches,
 		IncludeCollections:   includeCollections,
-		CollectionIDs:        collectionIDs,
-		MatchIDs:             matchIDs,
-		TournamentIDs:        tournamentIDs,
-		Watermark:            marking.watermark,
-		WatermarkNote:        marking.note,
-		Password:             marking.password,
+		// The CLI's database export is the whole library: every Lesson goes with it.
+		IncludeLessons: true,
+		CollectionIDs:  collectionIDs,
+		MatchIDs:       matchIDs,
+		TournamentIDs:  tournamentIDs,
+		Watermark:      marking.watermark,
+		WatermarkNote:  marking.note,
+		Password:       marking.password,
 	}
 	err = withInterruptibleContext(func() {
 		if text {

@@ -217,7 +217,7 @@ func (s *LessonStore) AddStep(ctx context.Context, scope string, lessonID int64,
 		id, err = tx.Insert(ctx,
 			`INSERT INTO lesson_step (`+strings.Join(cols, ", ")+`) VALUES (`+Placeholders(len(cols))+`)`, args...)
 		if err != nil {
-			return errf(tx, "add lesson step", err)
+			return errf(tx, "add lesson step", stepTargetGone(tx, err))
 		}
 		return s.touch(ctx, tx, scope, lessonID)
 	})
@@ -251,7 +251,7 @@ func (s *LessonStore) UpdateStep(ctx context.Context, scope string, step domain.
 		if _, err := tx.Exec(ctx,
 			`UPDATE lesson_step SET title = ?, text = ?, collection_id = ?, position_id = ? WHERE id = ? AND `+tenant,
 			append([]any{step.Title, step.Text, nullID(step.CollectionID), nullID(step.PositionID), step.ID}, targs...)...); err != nil {
-			return errf(tx, "update lesson step", err)
+			return errf(tx, "update lesson step", stepTargetGone(tx, err))
 		}
 		return s.touch(ctx, tx, scope, lessonID)
 	})
@@ -319,4 +319,14 @@ func (s *LessonStore) ReorderSteps(ctx context.Context, scope string, lessonID i
 		}
 		return s.touch(ctx, tx, scope, lessonID)
 	})
+}
+
+// stepTargetGone turns the database's own FOREIGN KEY refusal into the error
+// checkTargets gives: the Collection or Position was deleted between the check
+// and the write, and the caller's request is invalid, not a server fault.
+func stepTargetGone(d Dialect, err error) error {
+	if errors.Is(d.Referenced(err), storage.ErrNotFound) {
+		return fmt.Errorf("a collection or position the step shows no longer exists (%v): %w", err, storage.ErrInvalid)
+	}
+	return err
 }

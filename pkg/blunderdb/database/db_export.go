@@ -63,6 +63,11 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) er
 		sel.LessonIDs = opts.LessonIDs
 		sel.AllLessons = len(opts.LessonIDs) == 0
 		sel.LessonContents = true
+	} else if sel.AllPositions {
+		// A whole-library export is a backup: Lessons travel with it, as with the
+		// daemon's whole-tenant export, instead of being lost without a word.
+		sel.AllLessons = true
+		sel.LessonContents = true
 	}
 
 	_, err = ingest.ExportSQLite(ctx, d.store, "", opts.ExportPath, ingest.ExportOptions{

@@ -106,3 +106,47 @@ func TestLessonStepHoldsItsPosition(t *testing.T) {
 		t.Fatalf("lesson after delete = %+v, %v", l, err)
 	}
 }
+
+// A whole-library export carries every Lesson without being asked: a backup
+// made from the desktop must not lose them.
+func TestWholeLibraryExportCarriesLessons(t *testing.T) {
+	isolateIdentity(t)
+	src := newTestDB(t)
+	pos, err := src.SavePosition(ptr(initialPosition()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, name := range []string{"Une", "Deux"} {
+		id, err := src.CreateLesson(name, "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := src.AddLessonStep(id, "étape", "texte", 0, pos); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	path := exportTo(t, src, filepath.Join(t.TempDir(), "sauvegarde.db"), ExportOptions{
+		AllPositions: true, IncludeAnalysis: true, IncludeComments: true,
+	})
+	dst := newTestDB(t)
+	if _, err := dst.CommitImportDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	lessons, err := dst.ListLessons()
+	if err != nil || len(lessons) != 2 {
+		t.Fatalf("lessons after a whole-library export = %+v, %v; want 2", lessons, err)
+	}
+
+	// A subset of positions keeps leaving the Lessons behind.
+	subset := exportTo(t, src, filepath.Join(t.TempDir(), "partiel.db"), ExportOptions{
+		PositionIDs: []int64{pos}, IncludeAnalysis: true,
+	})
+	other := newTestDB(t)
+	if _, err := other.CommitImportDatabase(subset); err != nil {
+		t.Fatal(err)
+	}
+	if lessons, _ := other.ListLessons(); len(lessons) != 0 {
+		t.Fatalf("a position subset carried %d lessons, want 0", len(lessons))
+	}
+}
