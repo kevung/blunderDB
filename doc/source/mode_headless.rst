@@ -1615,4 +1615,11 @@ démon. Aucun n'efface.
 ``X-Tenant-ID`` et chaque outil travaille dans ce tenant ; un programme qui
 embarque ``pkg/blunderdb/server`` le sert aussi. Le démon n'authentifie
 personne (ADR-0005) : ``/mcp`` se protège au proxy comme ``/v1``, et
-``--mcp-write`` s'y décide comme ``--direction``.
+``--mcp-write`` s'y décide comme ``--direction``. Chaque appel ``/v1`` que
+fait un outil repasse par toute la chaîne du démon : il est journalisé, compté
+dans les métriques et imputé à la limite de débit du tenant, en plus de la
+requête ``/mcp`` qui le porte. Un appel d'outil coûte donc plusieurs requêtes ;
+aucune n'en est exemptée.
+
+Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à
+l'ouverture, même sans ``--write``.

@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"sync"
@@ -269,7 +270,7 @@ func TestWriteTools(t *testing.T) {
 	cs := connect(t, demoServer(t, internalserver.Options{}).Handler(), mcp.Options{Tenant: "1", Write: true})
 	names := toolNames(t, cs)
 	for _, w := range writeTools {
-		if sort.SearchStrings(names, w) == len(names) || names[sort.SearchStrings(names, w)] != w {
+		if !slices.Contains(names, w) {
 			t.Errorf("write tool %s missing with Write", w)
 		}
 	}
@@ -335,7 +336,7 @@ func httpClient(t *testing.T, url, tenant string) (*sdk.ClientSession, error) {
 func TestHTTPToolsRunAsTheRequestTenant(t *testing.T) {
 	srv := demoServer(t, internalserver.Options{})
 	spy := &tenantSpy{next: srv.Handler(), tenants: map[string]bool{}}
-	ts := httptest.NewServer(mcp.NewHTTPHandler(spy, mcp.Options{}))
+	ts := httptest.NewServer(mcp.NewHTTPHandler(spy, mcp.Options{AllowRemoteHost: true}))
 	defer ts.Close()
 
 	cs, err := httpClient(t, ts.URL, "7")
@@ -388,7 +389,30 @@ func TestDaemonMountsMCPBehindTheTenantGate(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer wcs.Close()
-	if names := toolNames(t, wcs); sort.SearchStrings(names, "save_position") == len(names) {
+	if names := toolNames(t, wcs); !slices.Contains(names, "save_position") {
 		t.Error("MCPWrite does not offer the write tools")
+	}
+}
+
+// Without AllowRemoteHost a loopback listener refuses a foreign Host: the guard
+// a GUI-hosted server relies on against DNS rebinding.
+func TestRebindingGuardIsOnByDefault(t *testing.T) {
+	srv := demoServer(t, internalserver.Options{})
+	for _, allow := range []bool{false, true} {
+		ts := httptest.NewServer(mcp.NewHTTPHandler(srv.Handler(), mcp.Options{Tenant: "1", AllowRemoteHost: allow}))
+		body := `{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}`
+		req, _ := http.NewRequest(http.MethodPost, ts.URL, strings.NewReader(body))
+		req.Host = "evil.example"
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Accept", "application/json, text/event-stream")
+		resp, err := http.DefaultClient.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		resp.Body.Close()
+		ts.Close()
+		if forbidden := resp.StatusCode == http.StatusForbidden; forbidden == allow {
+			t.Errorf("AllowRemoteHost=%v: status %d", allow, resp.StatusCode)
+		}
 	}
 }

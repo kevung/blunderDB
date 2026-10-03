@@ -53,7 +53,8 @@ présent lot livre le serveur ; l'assistant interne (lot 2) en sera un client.
    Hors de la liste, et pourquoi : la Direction et la transcription (un geste à version,
    ADR-0057, n'est pas un outil de conversation), l'import et l'export (des fichiers, pas des
    phrases), gammonNet (un calcul de plusieurs minutes, pas un appel d'outil), le rollout
-   (aucune route ne l'expose encore).
+   (aucune route ne l'expose encore : son outil viendra avec l'étape 2 de J.2, quand le
+   rollout sera stocké).
 4. **Lecture seule par défaut.** Quatre outils écrivent — `save_position`,
    `comment_position`, `create_collection`, `add_to_collection` — et ne sont offerts que
    derrière un drapeau : `blunderdb mcp --write`, `serve --mcp-write`, `Config.MCPWrite` pour
@@ -64,14 +65,20 @@ présent lot livre le serveur ; l'assistant interne (lot 2) en sera un client.
      `pkg/blunderdb/server` (gammonGo l'hérite). Sans état : chaque requête se suffit, aucune
      session n'attache un client à une instance. `/mcp` n'est pas un chemin public : le
      middleware de tenant exige `X-Tenant-ID` comme sur `/v1`, et chaque outil appelle `/v1`
-     sous le tenant de **sa** requête, jamais un tenant par défaut. La garde anti-rebinding
-     DNS du SDK est coupée : elle refuse un `Host` non local sur une connexion locale, ce
+     sous le tenant de **sa** requête, jamais un tenant par défaut. Chaque appel `/v1` d'un
+     outil retraverse toute la chaîne : il est journalisé, compté dans les métriques et
+     imputé à la limite de débit du tenant, en plus du `POST /mcp` qui le porte. Ce coût est
+     voulu — un outil ne doit pas contourner la limite — et rien n'en est exempté. La garde
+     anti-rebinding DNS du SDK est coupée sur le démon seul (`Options.AllowRemoteHost`) : elle refuse un `Host` non local sur une connexion locale, ce
      qu'envoie justement le proxy authentifiant de l'ADR-0005. Aucune authentification
      n'est ajoutée.
    - **stdio**, `blunderdb mcp --db <fichier>` : l'assistant lance la commande ; tenant 1,
-     journaux sur stderr, stdout réservé au protocole.
+     journaux sur stderr, stdout réservé au protocole. Même sans `--write`, l'ouverture migre
+     le schéma d'une base ancienne, comme `call`.
 6. **Le troisième transport s'ajoute sans toucher aux outils.** Le serveur hébergé par la
-   GUI (ouvrir une vue, montrer une position) n'est pas dans ce lot. `Options.Extensions`
+   GUI (ouvrir une vue, montrer une position) est le lot D2 : sur localhost, il garde la
+   garde anti-rebinding (`AllowRemoteHost` faux, le défaut) et y ajoute
+   `CrossOriginProtection`, car là l'attaquant est une page web que l'utilisateur visite. `Options.Extensions`
    reçoit des fonctions `func(*Toolbox)` qui enregistrent leurs outils par `mcp.Add`, sous le
    même interrupteur d'écriture.
 7. **Les unités restent celles de l'application** (ADR-0019) : erreurs en millipoints,

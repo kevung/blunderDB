@@ -22,6 +22,13 @@ type Options struct {
 	// GUI-hosted server offers (open a view, show a position). Each receives
 	// the Toolbox, so its tools obey the same write gate.
 	Extensions []Extension
+	// AllowRemoteHost turns off the SDK's DNS-rebinding guard, which refuses a
+	// loopback connection whose Host is not loopback. A daemon behind an
+	// authenticating reverse proxy on the same machine receives exactly that
+	// (ADR-0005), so it sets this. Anything else listening on localhost — the
+	// server a GUI will host — keeps it false: there a web page the user visits
+	// is the attacker the guard stops.
+	AllowRemoteHost bool
 }
 
 // Extension registers further tools on a server.
@@ -88,14 +95,11 @@ func NewServer(handler http.Handler, opts Options) *sdk.Server {
 // NewHTTPHandler serves the MCP server over streamable HTTP, stateless: every
 // POST is self-contained, so no session pins a client to one daemon instance
 // and the tenant is read from each request's own X-Tenant-ID.
-//
-// The SDK's DNS-rebinding guard is off: it refuses a loopback connection whose
-// Host is not loopback, which is exactly what an authenticating reverse proxy
-// on the same machine sends. The daemon's trust model is that proxy (ADR-0005).
+// The DNS-rebinding guard stays on unless opts.AllowRemoteHost.
 func NewHTTPHandler(handler http.Handler, opts Options) http.Handler {
 	srv := NewServer(handler, opts)
 	return sdk.NewStreamableHTTPHandler(func(*http.Request) *sdk.Server { return srv },
-		&sdk.StreamableHTTPOptions{Stateless: true, JSONResponse: true, DisableLocalhostProtection: true})
+		&sdk.StreamableHTTPOptions{Stateless: true, JSONResponse: true, DisableLocalhostProtection: opts.AllowRemoteHost})
 }
 
 const instructions = `blunderDB is a backgammon blunder database: positions from imported matches,

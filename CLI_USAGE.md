@@ -1407,6 +1407,8 @@ chapter of the docs, and ADR-0059 for the list).
 - `--db` - Path to the database file (required)
 - `--write` - Also offer the tools that change the database: save a position, comment one, create and fill a collection. None deletes.
 
+Like `call`, the command migrates an older database's schema when it opens it, even without `--write`.
+
 **Example:** register the database with Claude Code.
 ```bash
 claude mcp add blunderdb -- blunderdb mcp --db /path/to/my.db

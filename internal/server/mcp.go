@@ -23,7 +23,13 @@ func (s *Server) mcpRoutes() []route {
 	// The tools call /v1 through the fully chained handler, built after the
 	// routes: resolved at request time.
 	engine := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { s.http.Handler.ServeHTTP(w, r) })
-	h := mcp.NewHTTPHandler(engine, mcp.Options{Write: s.opts.MCPWrite})
+	// Each /v1 call a tool makes runs the whole chain again: it is logged,
+	// counted in the metrics and charged to the tenant's rate limit like a
+	// direct call, on top of the POST /mcp that carried it. Deliberate — a tool
+	// must not be a way around the limit (ADR-0059).
+	// The daemon sits behind its authenticating proxy, whose Host the SDK's
+	// anti-rebinding guard would refuse on a loopback connection.
+	h := mcp.NewHTTPHandler(engine, mcp.Options{Write: s.opts.MCPWrite, AllowRemoteHost: true})
 	return []route{{http.MethodPost, mcpPath, h.ServeHTTP}}
 }
 

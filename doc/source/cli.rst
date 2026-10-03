@@ -1898,6 +1898,9 @@ La liste complète et l'équivalent HTTP du démon : :ref:`headless_mcp`.
 * ``--write`` — Offre aussi les outils qui écrivent : enregistrer une
   position, la commenter, créer et remplir une collection. Rien n'efface.
 
+Comme ``call``, la commande migre le schéma d'une base ancienne à
+l'ouverture, même sans ``--write``.
+
 **Exemple:** déclarer la base à Claude Code.
 
 .. code-block:: bash

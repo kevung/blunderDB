@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 03:12+0200\n"
+"POT-Creation-Date: 2026-10-03 03:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -813,7 +813,7 @@ msgstr ""
 #: ../../source/cli.rst:1110 ../../source/cli.rst:1403
 #: ../../source/cli.rst:1457 ../../source/cli.rst:1485
 #: ../../source/cli.rst:1565 ../../source/cli.rst:1638
-#: ../../source/cli.rst:1831 ../../source/cli.rst:1920
+#: ../../source/cli.rst:1831 ../../source/cli.rst:1923
 msgid "**Exemples:**"
 msgstr "**Esempi:**"
 
@@ -3329,14 +3329,22 @@ msgstr ""
 "cancellato."
 
 #: ../../source/cli.rst:1901
+msgid ""
+"Comme ``call``, la commande migre le schéma d'une base ancienne à "
+"l'ouverture, même sans ``--write``."
+msgstr ""
+"Come ``call``, il comando migra lo schema di un database meno recente "
+"all'apertura, anche senza ``--write``."
+
+#: ../../source/cli.rst:1904
 msgid "**Exemple:** déclarer la base à Claude Code."
 msgstr "**Esempio:** dichiarare il database a Claude Code."
 
-#: ../../source/cli.rst:1908
+#: ../../source/cli.rst:1911
 msgid "completion — Complétion shell"
 msgstr "completion — Completamento shell"
 
-#: ../../source/cli.rst:1910
+#: ../../source/cli.rst:1913
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -3352,7 +3360,7 @@ msgstr ""
 "dal completamento non appena viene collegato, senza nulla da mantenere "
 "manualmente."
 
-#: ../../source/cli.rst:1934
+#: ../../source/cli.rst:1937
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -3370,11 +3378,11 @@ msgstr ""
 "repository, quindi il completamento non può mai discostarsi dalla tabella"
 " dei sottocomandi."
 
-#: ../../source/cli.rst:1942
+#: ../../source/cli.rst:1945
 msgid "version — Afficher la version"
 msgstr "version — Mostrare la versione"
 
-#: ../../source/cli.rst:1944
+#: ../../source/cli.rst:1947
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -3384,35 +3392,35 @@ msgstr ""
 "questo binario scrive; è la prima cosa da allegare a una segnalazione di "
 "bug."
 
-#: ../../source/cli.rst:1953
+#: ../../source/cli.rst:1956
 msgid "Exemples de flux de travail"
 msgstr "Esempi di flusso di lavoro"
 
-#: ../../source/cli.rst:1956
+#: ../../source/cli.rst:1959
 msgid "Import d'un répertoire de tournoi"
 msgstr "Import di una cartella di torneo"
 
-#: ../../source/cli.rst:1965
+#: ../../source/cli.rst:1968
 msgid "Sauvegarde régulière"
 msgstr "Backup periodico"
 
-#: ../../source/cli.rst:1972
+#: ../../source/cli.rst:1975
 msgid "Analyse des erreurs"
 msgstr "Analisi degli errori"
 
-#: ../../source/cli.rst:1984
+#: ../../source/cli.rst:1987
 msgid "Codes de retour"
 msgstr "Codici di uscita"
 
-#: ../../source/cli.rst:1986
+#: ../../source/cli.rst:1989
 msgid "``0`` — Succès."
 msgstr "``0`` — Successo."
 
-#: ../../source/cli.rst:1987
+#: ../../source/cli.rst:1990
 msgid "``1`` — Erreur."
 msgstr "``1`` — Errore."
 
-#: ../../source/cli.rst:1989
+#: ../../source/cli.rst:1992
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Questo permette di utilizzare la CLI in script con gestione degli errori:"
 
