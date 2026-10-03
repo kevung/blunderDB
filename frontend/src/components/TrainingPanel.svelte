@@ -23,7 +23,8 @@
         answerDecisionBoard,
         answerDecisionCube,
         undoDecisionStep,
-        resetDecisionPlay
+        resetDecisionPlay,
+        playDecisionNotation
     } from '../services/trainingTabService.js';
     import { logger } from '../utils/logger.js';
     import { numberTypeLabelKey } from '../services/trainingLabels.js';
@@ -56,6 +57,45 @@
     let judgedByEngine = $derived(!!session && isChosenExercise(session.exercise));
     let hasSteps = $derived(($quizPlayStore?.steps.length ?? 0) > 0);
     let verdict = $derived(session?.verdict ?? null);
+
+    // Le coup tapé en notation : posé sur le damier à chaque frappe, jugé par ENTRÉE.
+    let notation = $state('');
+    let notationRefused = $state(false);
+    $effect(() => {
+        // Une autre question repart d'un champ vide.
+        void question;
+        notation = '';
+        notationRefused = false;
+    });
+
+    /** @param {string} text */
+    function typeNotation(text) {
+        notation = text;
+        notationRefused = text.trim() !== '' && playDecisionNotation(text) !== 'ok';
+        if (text.trim() === '') resetDecisionPlay();
+    }
+
+    // Les gestes de la transcription, quand le panneau a le focus : RETOUR ARRIÈRE défait un pas,
+    // ENTRÉE valide le coup complet, ÉCHAP le recommence. Dans un champ de texte, ils restent au champ.
+    /** @param {KeyboardEvent} event */
+    function onPanelKey(event) {
+        if (!session || session.revealed || question?.kind !== 'decision' || question.prompt !== 'checker') return;
+        const target = /** @type {HTMLElement} */ (event.target);
+        if (event.ctrlKey || event.metaKey || event.altKey) return;
+        if (target.matches?.('input, textarea, select')) return;
+        if (event.key === 'Backspace') {
+            event.preventDefault();
+            undoDecisionStep();
+            notation = '';
+        } else if (event.key === 'Escape' && hasSteps) {
+            event.preventDefault();
+            resetDecisionPlay();
+            notation = '';
+        } else if (event.key === 'Enter' && !target.matches?.('button') && $quizPlayCompleteStore) {
+            event.preventDefault();
+            answerDecisionBoard();
+        }
+    }
 
     /** Les trois actions de videau, dans l'ordre où la décision se lit. */
     const CUBE_ACTIONS = [
@@ -154,7 +194,7 @@
     }
 </script>
 
-<div class="training-panel" data-testid="training-panel">
+<div class="training-panel" data-testid="training-panel" role="presentation" onkeydown={onPanelKey}>
     {#if session}
         <div class="session" role="group" aria-label={$t('training.title')}>
             <div class="session-head">
@@ -202,6 +242,24 @@
                                     <button type="button" disabled={!hasSteps} data-testid="training-undo-step" onclick={() => undoDecisionStep()}>{$t('training.undoHop')}</button>
                                     <button type="button" disabled={!hasSteps} data-testid="training-reset-play" onclick={() => resetDecisionPlay()}>{$t('training.resetPlay')}</button>
                                 </div>
+                                <input
+                                    type="text"
+                                    class="notation"
+                                    class:fault={notationRefused}
+                                    data-testid="training-notation"
+                                    autocomplete="off"
+                                    spellcheck="false"
+                                    placeholder={$t('training.notationPlaceholder')}
+                                    aria-label={$t('training.notationLabel')}
+                                    value={notation}
+                                    oninput={(event) => typeNotation(event.currentTarget.value)}
+                                    onkeydown={(event) => {
+                                        if (event.key === 'Enter') {
+                                            event.preventDefault();
+                                            if ($quizPlayCompleteStore) answerDecisionBoard();
+                                        }
+                                    }}
+                                />
                             {/if}
                         {/if}
                         {#if session.revealed && verdict}
@@ -486,6 +544,17 @@
         border-radius: 3px;
         background: var(--color-surface);
         color: var(--color-text);
+    }
+
+    .notation {
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 0.4em;
+        font-family: monospace;
+    }
+
+    .notation.fault {
+        border-color: var(--color-danger, #c00);
     }
 
     .choices {

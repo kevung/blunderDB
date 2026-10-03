@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-02 07:47+0200\n"
+"POT-Creation-Date: 2026-10-03 02:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -6197,16 +6197,25 @@ msgid ""
 "Dans le panneau, « Annuler le pas » revient d'un dé, « Recommencer » "
 "remet la position telle que la question la pose (un double-clic hors du "
 "damier fait de même), et « Valider », actif une fois le coup complet, le "
-"fait juger. Sur une décision de videau, cliquez *Pas de double*, *Double,"
-" prend* ou *Double, passe* : le clic est la réponse."
+"fait juger. Le champ de notation accepte aussi le coup tapé (``13/7 "
+"8/7``, la notation de la transcription) : les pas se posent sur le damier"
+" à chaque frappe, un champ rougi dit qu'un pas n'est pas jouable, et "
+"ENTRÉE valide le coup complet. Le panneau ayant le focus, RETOUR ARRIÈRE "
+"défait un pas, ÉCHAP recommence le coup et ENTRÉE le valide. Sur une "
+"décision de videau, cliquez *Pas de double*, *Double, prend* ou *Double, "
+"passe* : le clic est la réponse."
 msgstr ""
 "*Décision* は\\ **選択**\\ 方式です。チェッカーの判断では、\\ **盤上で手を打ちます**\\ "
 "。出発点をクリックしてから目的地をクリックするか、駒をドラッグします。これをサイコロの数だけ繰り返します。盤は打てる手だけを提示し、合法手が許さないクリックは何も動かしません。パネルでは"
 " « Annuler le pas » がサイコロ一つ分だけ戻り、« Recommencer » "
 "が問題の示すとおりの局面に戻し（盤の外でのダブルクリックも同じ働きをします）、手が完成すると有効になる « Valider » "
-"が判定に回します。キューブの判断では *ノーダブル*、*ダブル、テイク*、*ダブル、パス* のいずれかをクリックします。そのクリックが答えです。"
+"が判定に回します。表記欄には、入力した手（\\ ``13/7 8/7``\\ "
+"、棋譜の表記）も使えます。ステップは一打ごとに盤上に置かれ、欄が赤くなればそのステップは打てないことを示し、 ENTER "
+"で完成した手全体を確定します。パネルにフォーカスがあるときは、 BACKSPACE でステップを一つ取り消し、 ESC で手をやり直し、 "
+"ENTER で確定します。キューブの判断では *ノーダブル*、*ダブル、テイク*、*ダブル、パス* "
+"のいずれかをクリックします。そのクリックが答えです。"
 
-#: ../../source/manuel.rst:3226
+#: ../../source/manuel.rst:3231
 msgid ""
 "La correction distingue trois issues, et les confondre mentirait. Un "
 "**coup illégal** n'est pas un coup mal choisi — c'est une faute de règle."
@@ -6220,7 +6229,7 @@ msgstr ""
 "は選択の誤りではなく、ルール違反です。**合法だがエンジンが評価しなかった手** "
 "は判断の誤りではありません。値段がないだけで、損は何もつきません。評価された手は、分析が示す分だけミリポイントで損をします。正解は、評価されていて損のない手だけです。最善手はどの場合も表示されます。"
 
-#: ../../source/manuel.rst:3233
+#: ../../source/manuel.rst:3238
 msgid ""
 "Le chronomètre part à l'affichage de la question et s'arrête à « Révéler "
 "», à « Valider » ou au clic d'une action de videau de *Décision* ; la "
@@ -6238,7 +6247,7 @@ msgstr ""
 "として数えられます。数値はすべて誤りとなり、その時間は中央値に入りません。与えられなかった答えは測らないからです。時間切れの判断は最善手を表示し、セッションの"
 " PR には入りません。"
 
-#: ../../source/manuel.rst:3243
+#: ../../source/manuel.rst:3248
 msgid ""
 "« Suivante » enregistre la question et en pose une autre. La session n'a "
 "pas de longueur fixée : elle dure jusqu'à « Terminer », qui l'écrit au "
@@ -6250,7 +6259,7 @@ msgstr ""
 "»（ジャーナルに書き込む）または « Quitter "
 "»（破棄する）まで続きます。すべてのボタンはパネルにあります。盤は問題とその答えを示すだけで、操作は一切持ちません。"
 
-#: ../../source/manuel.rst:3248
+#: ../../source/manuel.rst:3253
 msgid ""
 "Tant qu'une question est posée sur le plateau, révélée ou non, les "
 "touches qui parcourent la liste ne la font pas défiler : la question "
@@ -6259,11 +6268,11 @@ msgstr ""
 "問題が盤上に出ているあいだは、開いていてもいなくても、リストをたどるキーでリストは送られません。« Suivante »、« Terminer "
 "»、« Quitter » のいずれかまで、問題が盤を保持します。"
 
-#: ../../source/manuel.rst:3253
+#: ../../source/manuel.rst:3258
 msgid "Le journal et le bilan"
 msgstr "ジャーナルと集計"
 
-#: ../../source/manuel.rst:3255
+#: ../../source/manuel.rst:3260
 msgid ""
 "Les sessions terminées sont conservées dans la base elle-même — elles "
 "suivent donc le fichier — et sans plafond. Au repos, le panneau affiche "
@@ -6276,7 +6285,7 @@ msgstr ""
 "行を表示します: セッション数、誤り率、中央値の時間、そして 10 セッション以降は\\ **傾向**、すなわち直近 10 "
 "セッションの誤り率と全体の誤り率との差 — 負であれば上達しています。"
 
-#: ../../source/manuel.rst:3262
+#: ../../source/manuel.rst:3267
 msgid ""
 "Pour *Décision*, la ligne donne aussi le **PR** de la dernière session, "
 "calculé par la formule que les statistiques appliquent au jeu réel — 500 "
@@ -6288,7 +6297,7 @@ msgstr ""
 "判定された判断についての、正規化エクイティの平均誤差 × 500 — で計算されます。練習の PR 6 とマッチの PR 6 "
 "は、同じ尺度で同じものを測っています。"
 
-#: ../../source/manuel.rst:3268
+#: ../../source/manuel.rst:3273
 msgid ""
 "Cliquer le nom de l'exercice déplie le détail **par type de nombre** : « "
 "Point de prise 4 · dernier lancer, 6 / 9 ». C'est ce détail qui fait "
@@ -6300,11 +6309,11 @@ msgstr ""
 "lancer, 6 / 9 »。この内訳こそがジャーナルの値打ちであり、面ではなく種類で数えます: 同じ表の同じマスは、どちらの側から見ても 1 "
 "つの弱点です。"
 
-#: ../../source/manuel.rst:3276
+#: ../../source/manuel.rst:3281
 msgid "Panneau Métadonnées"
 msgstr "メタデータパネル"
 
-#: ../../source/manuel.rst:3278
+#: ../../source/manuel.rst:3283
 msgid ""
 "Le panneau **Métadonnées** affiche les informations générales de la base "
 "de données courante : nom, description, nombre de positions, nombre de "
@@ -6314,7 +6323,7 @@ msgstr ""
 "**メタデータ** パネルは、現在のデータベースの一般情報を表示します：名前、説明、ポジション数、マッチ数とゲーム数、スキーマのバージョン。\\ "
 "``meta`` コマンドでアクセスできます。"
 
-#: ../../source/manuel.rst:3282
+#: ../../source/manuel.rst:3287
 msgid ""
 "Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir"
 " :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette "
@@ -6323,11 +6332,11 @@ msgstr ""
 "また、\\ **存在する場合に限り**\\ データベースの出所も表示します（\\ :ref:`diffusion_controlee`\\ "
 "を参照）。通常のデータベースではこの区画は表示されません。"
 
-#: ../../source/manuel.rst:3288
+#: ../../source/manuel.rst:3293
 msgid "Diffuser une base : origine et mot de passe"
 msgstr "データベースの配布：出所とパスワード"
 
-#: ../../source/manuel.rst:3290
+#: ../../source/manuel.rst:3295
 msgid ""
 "Un enseignant qui distribue une base de positions dispose de deux "
 "mécanismes, indépendants l'un de l'autre, tous deux facultatifs et "
@@ -6337,7 +6346,7 @@ msgstr ""
 "ポジションのデータベースを配る指導者には、互いに独立した二つの仕組みがあります。どちらも任意で、\\ **エクスポート時**\\ "
 "に選びます。ファイルに出所を記載すること、そしてパスワードで保護することです。"
 
-#: ../../source/manuel.rst:3297
+#: ../../source/manuel.rst:3302
 msgid ""
 "Aucun des deux ne suit ce que devient le fichier. blunderDB "
 "**n'enregistre rien du côté de celui qui reçoit la base** : ouvrir une "
@@ -6347,11 +6356,11 @@ msgstr ""
 "どちらもファイルのその後を追跡しません。blunderDB は\\ **データベースを受け取った側では何も記録しません**\\ "
 "。記載のあるデータベースを開く操作は、ほかのどのデータベースを開く場合とまったく同じで、誰がいつ開いたのか、内容がどこから来たのかは、どこにも残りません。"
 
-#: ../../source/manuel.rst:3303
+#: ../../source/manuel.rst:3308
 msgid "Marquer une base de son origine"
 msgstr "データベースに出所を記載する"
 
-#: ../../source/manuel.rst:3305
+#: ../../source/manuel.rst:3310
 msgid ""
 "La fenêtre d'export tient en un seul écran : le formulaire, puis une "
 "progression qui se superpose à lui le temps de l'écriture. Elle se ferme "
@@ -6359,11 +6368,11 @@ msgid ""
 "d'état."
 msgstr "エクスポートのウィンドウは一画面に収まります。入力フォームがあり、書き込み中はその上に進捗表示が重なります。完了すると自動的に閉じ、結果はステータスバーに表示されます。"
 
-#: ../../source/manuel.rst:3309
+#: ../../source/manuel.rst:3314
 msgid "Trois points méritent l'attention :"
 msgstr "注意すべき点が三つあります。"
 
-#: ../../source/manuel.rst:3311
+#: ../../source/manuel.rst:3316
 msgid ""
 "**L'export porte sur les positions actuellement affichées**, pas sur la "
 "base entière. Après une recherche, seuls les résultats partent — la "
@@ -6372,7 +6381,7 @@ msgstr ""
 "**エクスポートの対象は現在表示中のポジション**\\ "
 "であり、データベース全体ではありません。検索後は結果だけが書き出されます。ウィンドウの冒頭にもその旨が示されます。"
 
-#: ../../source/manuel.rst:3314
+#: ../../source/manuel.rst:3319
 msgid ""
 "**Une collection dont toutes les positions ne sont pas dans la sélection "
 "arrive tronquée.** La liste affiche donc, pour chaque collection, la part"
@@ -6381,7 +6390,7 @@ msgstr ""
 "**選択に含まれないポジションがあるコレクションは、欠けた状態で届きます。**\\ "
 "そのため一覧には、コレクションごとに含まれている割合（「12/40」）が示され、不完全な場合は赤で強調されます。"
 
-#: ../../source/manuel.rst:3317
+#: ../../source/manuel.rst:3322
 msgid ""
 "**Les tournois ne peuvent être exportés qu'avec les matchs** : sans eux, "
 "le lien tournoi–match n'existe pas et le tournoi arriverait vide. La case"
@@ -6390,7 +6399,7 @@ msgstr ""
 "**トーナメントはマッチと一緒でなければエクスポートできません**\\ "
 "。マッチがなければトーナメントとマッチの結び付きが存在せず、トーナメントは空のまま届いてしまいます。「マッチを含める」が選ばれるまで、このチェックボックスは無効のままです。"
 
-#: ../../source/manuel.rst:3321
+#: ../../source/manuel.rst:3326
 msgid ""
 "Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier "
 "produit** ; ils sont préremplis depuis la base source. La case *Mes "
@@ -6402,11 +6411,11 @@ msgstr ""
 "を説明するもので、元のデータベースの値があらかじめ入力されています。\\ *保存済みフィルター*\\ "
 "のチェックボックスだけは性質が異なり、内容ではなく自分の保存した検索を書き出します。他人のデータベースでは役に立ちません。"
 
-#: ../../source/manuel.rst:3327
+#: ../../source/manuel.rst:3332
 msgid "Cocher **Marquer ce fichier de son origine** fait apparaître deux champs :"
 msgstr "**このファイルに出所を記載する**\\ にチェックを入れると、二つの入力欄が現れます。"
 
-#: ../../source/manuel.rst:3329
+#: ../../source/manuel.rst:3334
 msgid ""
 "**Origine** — ce qu'est ce fichier et d'où il vient, dans vos mots : « "
 "Cours de Jean Dupont — 12 mars 2026 ». Ce champ est **obligatoire** : "
@@ -6415,13 +6424,13 @@ msgstr ""
 "**出所** — このファイルが何であり、どこから来たのかを自分の言葉で書きます。たとえば「Jean Dupont のレッスン — "
 "2026年3月12日」。この欄は\\ **必須**\\ で、空のあいだはエクスポートのボタンが押せません。"
 
-#: ../../source/manuel.rst:3332
+#: ../../source/manuel.rst:3337
 msgid ""
 "**Note**, facultative — conditions d'utilisation, adresse de contact, une"
 " demande de ne pas rediffuser."
 msgstr "**備考**\\ （任意） — 利用条件、連絡先、再配布しないでほしいという依頼など。"
 
-#: ../../source/manuel.rst:3335
+#: ../../source/manuel.rst:3340
 msgid ""
 "La marque est signée avec votre identité d'émetteur. Elle est donc "
 "**inaltérable et infalsifiable** : nul ne peut la modifier, ni en "
@@ -6434,11 +6443,11 @@ msgstr ""
 "。配布されるファイルはごく普通の SQLite データベースであり、blunderDB "
 "は自由ソフトウェアだからです。記載は何かを禁じるものではなく、ファイルの出所を告げるだけです。"
 
-#: ../../source/manuel.rst:3342
+#: ../../source/manuel.rst:3347
 msgid "Identité d'émetteur"
 msgstr "発行者の識別情報"
 
-#: ../../source/manuel.rst:3344
+#: ../../source/manuel.rst:3349
 msgid ""
 "Les marques sont signées avec votre **identité d'émetteur**, créée toute "
 "seule la première fois que vous marquez un fichier ; il n'y a rien à "
@@ -6450,7 +6459,7 @@ msgstr ""
 "で署名されます。これは初めてファイルに記載したときに自動で作られ、設定は不要です。データベースではなく人に属するので、あなたのすべてのファイルが\\"
 " ``A3F1-9C24-7B05-E1D8``\\ のような同じ公開フィンガープリントを持ちます。"
 
-#: ../../source/manuel.rst:3349
+#: ../../source/manuel.rst:3354
 msgid ""
 "Vous pouvez communiquer cette empreinte à vos destinataires pour qu'ils "
 "vérifient qu'un fichier vient bien de vous. L'identité se transporte d'un"
@@ -6462,7 +6471,7 @@ msgstr ""
 "``.bdbid``\\ ）として別のパソコンへ持ち運べ、必要ならパスフレーズで保護できます。\\ "
 "**このファイルがあればあなたの名前で署名できます。共有しないでください。**"
 
-#: ../../source/manuel.rst:3355
+#: ../../source/manuel.rst:3360
 msgid ""
 "Dans les préférences (icône engrenage de la barre d'outils), l'onglet "
 "*Identité d'émetteur* affiche votre nom et votre empreinte, et propose "
@@ -6471,7 +6480,7 @@ msgstr ""
 "設定（ツールバーの歯車アイコン）の\\ *発行者の識別情報*\\ タブには、名前とフィンガープリントが表示され、\\ *識別情報を保存…*\\ "
 "、\\ *識別情報を読み込む…*\\ 、\\ *再生成…*\\ が用意されています。"
 
-#: ../../source/manuel.rst:3361
+#: ../../source/manuel.rst:3366
 msgid ""
 "**Régénérer ne révoque rien.** Un filigrane embarque la clé publique qui "
 "l'a signé : il se vérifie donc pour toujours, tout seul. Si votre fichier"
@@ -6481,24 +6490,24 @@ msgstr ""
 "**再生成しても、何かが失効するわけではありません。**\\ "
 "記載には署名に使われた公開鍵が埋め込まれているため、それ自体でいつまでも検証できます。識別情報のファイルが漏れた場合、それを持つ人は古いフィンガープリントで署名し続けられ、その記載は有効なままです。"
 
-#: ../../source/manuel.rst:3366
+#: ../../source/manuel.rst:3371
 msgid ""
 "Ce qui vous protège après une fuite n'est pas logiciel : c'est de publier"
 " votre nouvelle empreinte et de désavouer l'ancienne auprès de vos "
 "destinataires."
 msgstr "漏洩のあとにあなたを守るのはソフトウェアではありません。新しいフィンガープリントを公表し、古いものはもう自分のものではないと配布先に伝えることです。"
 
-#: ../../source/manuel.rst:3370
+#: ../../source/manuel.rst:3375
 msgid ""
 "La régénération écrase la clé actuelle ; blunderDB propose de "
 "l'enregistrer avant de la remplacer."
 msgstr "再生成は現在の鍵を上書きします。blunderDB は置き換える前に保存するかどうかを尋ねます。"
 
-#: ../../source/manuel.rst:3374
+#: ../../source/manuel.rst:3379
 msgid "Protéger une base par un mot de passe"
 msgstr "データベースをパスワードで保護する"
 
-#: ../../source/manuel.rst:3376
+#: ../../source/manuel.rst:3381
 msgid ""
 "Le mot de passe se saisit masqué, ici comme à l'ouverture d'un fichier "
 "protégé ; l'icône en forme d'œil l'affiche **tant qu'on la maintient "
@@ -6507,7 +6516,7 @@ msgstr ""
 "パスワードは伏せ字で入力します。保護されたファイルを開くときも同じです。目の形のアイコンは\\ **押している間だけ**\\ "
 "パスワードを表示し、離すとすぐにまた隠します。"
 
-#: ../../source/manuel.rst:3380
+#: ../../source/manuel.rst:3385
 msgid ""
 "Cocher **Protéger ce fichier par un mot de passe** produit un fichier "
 "d'extension ``.dbx`` — y compris si vous aviez choisi un nom en ``.db`` "
@@ -6522,7 +6531,7 @@ msgstr ""
 "の名前を選んでいた場合も同じです。開くときは通常のデータベースを開く操作を使います。選択ダイアログは\\ ``.db``\\ も\\ "
 "``.dbx``\\ も受け付けます。blunderDB はパスワードを尋ね、その隣に通常のデータベースを用意します。以後は何も尋ねられません。"
 
-#: ../../source/manuel.rst:3388
+#: ../../source/manuel.rst:3393
 msgid ""
 "La fenêtre propose de **supprimer le fichier protégé une fois ouvert** : "
 "sans cela vous conservez le même contenu sous deux noms. La case n'est "
@@ -6533,7 +6542,7 @@ msgstr ""
 "ウィンドウでは\\ **開いたあとに保護ファイルを削除する**\\ "
 "ことも選べます。そうしなければ、同じ内容を二つの名前で持ち続けることになります。このチェックは既定では入っていません（渡すつもりなら保護ファイルは手元に残ります）。削除は開くことに成功したあとにだけ行われます。"
 
-#: ../../source/manuel.rst:3395
+#: ../../source/manuel.rst:3400
 msgid ""
 "Le mot de passe protège le **transport** du fichier, pas la base. Il "
 "empêche un tiers d'ouvrir un fichier qui traîne dans un dossier de "
@@ -6543,13 +6552,13 @@ msgstr ""
 "パスワードが守るのはファイルの\\ **受け渡し**\\ "
 "であって、データベースそのものではありません。ダウンロードフォルダーに置き忘れたファイルや、誤って転送された添付ファイルを第三者が開くのを防ぎます。パスワードを教えた相手からは守れません。"
 
-#: ../../source/manuel.rst:3400
+#: ../../source/manuel.rst:3405
 msgid ""
 "Le mot de passe est vérifié à **chaque** ouverture, y compris lorsque le "
 "fichier a déjà été ouvert auparavant sur ce poste."
 msgstr "パスワードは\\ **開くたびに**\\ 検証されます。そのパソコンで以前に開いたことがあるファイルでも同じです。"
 
-#: ../../source/manuel.rst:3403
+#: ../../source/manuel.rst:3408
 msgid ""
 "Techniquement, la base est chiffrée par **AES-256 en mode GCM**, avec une"
 " clé dérivée du mot de passe par **Argon2id** (64 Mio de mémoire, 3 "
@@ -6562,17 +6571,17 @@ msgstr ""
 " （メモリ 64 MiB、3 パス、4 スレッド）で導出されます。ソルトはファイルごとに無作為です。GCM "
 "モードは全体を認証するため、誤ったパスワードはそれと判別され、暗号化ファイルの改変も同様に検出されます。壊れたデータベースが黙って開かれることはありません。"
 
-#: ../../source/manuel.rst:3410
+#: ../../source/manuel.rst:3415
 msgid ""
 "L'en-tête du fichier protégé reste **en clair** : son origine demeure "
 "lisible sans le mot de passe."
 msgstr "保護ファイルのヘッダーは\\ **平文のまま**\\ です。出所はパスワードなしでも読めます。"
 
-#: ../../source/manuel.rst:3414
+#: ../../source/manuel.rst:3419
 msgid "Lire l'origine d'un fichier"
 msgstr "ファイルの出所を読む"
 
-#: ../../source/manuel.rst:3416
+#: ../../source/manuel.rst:3421
 msgid ""
 "Dans l'application, ouvrez le fichier et affichez le panneau "
 "**Métadonnées** (commande ``meta``). Une section **Origine** apparaît en "
@@ -6582,27 +6591,27 @@ msgstr ""
 "アプリケーションでファイルを開き、\\ **メタデータ**\\ パネルを表示します（コマンド\\ ``meta``\\ "
 "）。パネルの先頭に読み取り専用の\\ **出所**\\ の区画が現れ、何が記載されたか、誰が、いつ、そして署名の状態が示されます。"
 
-#: ../../source/manuel.rst:3421
+#: ../../source/manuel.rst:3426
 msgid ""
 "« ✓ signature vérifiée — marquée par vous » : le fichier porte votre "
 "marque, intacte ;"
 msgstr "「✓ 署名を検証しました — あなたによる記載」：そのファイルにはあなたの記載がそのまま残っています。"
 
-#: ../../source/manuel.rst:3423
+#: ../../source/manuel.rst:3428
 msgid ""
 "« ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé"
 " — comparez son empreinte à celle que le producteur vous a communiquée ;"
 msgstr "「✓ 署名を検証しました」：記載は無傷で、別の鍵によるものです。作成者から伝えられたフィンガープリントと見比べてください。"
 
-#: ../../source/manuel.rst:3425
+#: ../../source/manuel.rst:3430
 msgid "« ⚠ signature invalide » : le document a été modifié ou contrefait."
 msgstr "「⚠ 署名が無効です」：文書が改変されたか、偽造されています。"
 
-#: ../../source/manuel.rst:3427
+#: ../../source/manuel.rst:3432
 msgid "Cette section n'apparaît pas sur une base ordinaire."
 msgstr "通常のデータベースではこの区画は表示されません。"
 
-#: ../../source/manuel.rst:3429
+#: ../../source/manuel.rst:3434
 msgid ""
 "En ligne de commande, ``blunderdb info --db fichier.db`` affiche "
 "l'origine et l'état de la signature, **sans jamais écrire dans le "
@@ -6615,11 +6624,11 @@ msgstr ""
 "``--watermark``\\ と\\ ``--password``\\ 、および\\ ``identity``\\ と\\ "
 "``open``\\ については\\ ``CLI_USAGE.md``\\ を参照してください。"
 
-#: ../../source/manuel.rst:3438
+#: ../../source/manuel.rst:3443
 msgid "Publier une base pour d'autres"
 msgstr "データベースを他者に公開する"
 
-#: ../../source/manuel.rst:3440
+#: ../../source/manuel.rst:3445
 msgid ""
 "Une base marquée se distribue comme n'importe quel fichier — courriel, "
 "site personnel, clé USB. blunderDB **ne fournit aucun service** : ni "
@@ -6632,26 +6641,26 @@ msgstr ""
 "**いかなるサービスも提供しない**\\ ：リポジトリも、ホストされたカタログも、アカウントもない。これは設計から直接導かれる\\ "
 "：ファイルを受け取った側では何も記録されないのだから、たとえサービスがあったとしても報告するものが何もない。"
 
-#: ../../source/manuel.rst:3446
+#: ../../source/manuel.rst:3451
 msgid ""
 "Ce qui rend une base publiée utilisable par quelqu'un d'autre tient à "
 "quatre champs, tous déjà là :"
 msgstr "公開されたデータベースを他人が使えるものにするのは、すでに存在する四つの欄に尽きる\\ ："
 
-#: ../../source/manuel.rst:3449
+#: ../../source/manuel.rst:3454
 msgid ""
 "**Utilisateur** — qui l'a constituée, sous le nom que vous voulez voir "
 "cité."
 msgstr "**ユーザー**\\ ——誰が構築したか。名前として挙げてほしい表記で書く。"
 
-#: ../../source/manuel.rst:3450
+#: ../../source/manuel.rst:3455
 msgid ""
 "**Description** — ce que la base contient, en une phrase qui tienne dans "
 "une liste : « 240 décisions de videau au score, commentées, niveau "
 "intermédiaire »."
 msgstr "**説明**\\ ——データベースの中身を、一覧に収まる一文で\\ ：「スコアでのキューブ判断 240 件、コメント付き、中級」。"
 
-#: ../../source/manuel.rst:3452
+#: ../../source/manuel.rst:3457
 msgid ""
 "**Origine** (du filigrane) — ce qu'est ce fichier et pour qui il a été "
 "produit. C'est ce que le destinataire lit en premier dans le panneau "
@@ -6660,7 +6669,7 @@ msgstr ""
 "**出所**\\ （透かしの）——このファイルが何であり、誰のために作られたか。受け取った側が\\ *メタデータ*\\ "
 "パネルで最初に読むものである。"
 
-#: ../../source/manuel.rst:3455
+#: ../../source/manuel.rst:3460
 msgid ""
 "**Empreinte d'émetteur** — publiez-la à côté du fichier, pas dedans : "
 "c'est en la comparant que le destinataire vérifie que le fichier vient de"
@@ -6669,7 +6678,7 @@ msgstr ""
 "**発行者の指紋**\\ ——ファイルの中ではなく、ファイルの傍らに公開する\\ "
 "：受け取った側はそれを照合して、そのファイルがあなたから来たものであり、あなたの名を騙る誰かからのものではないことを確かめる。"
 
-#: ../../source/manuel.rst:3459
+#: ../../source/manuel.rst:3464
 msgid ""
 "Une base publiée sans filigrane reste parfaitement utilisable ; elle est "
 "simplement anonyme, et le panneau *Métadonnées* n'affiche alors aucune "
@@ -6678,7 +6687,7 @@ msgstr ""
 "透かしなしで公開されたデータベースも完全に使える。ただ匿名であるというだけで、\\ *メタデータ*\\ パネルには\\ *出所*\\ "
 "の節が現れない。"
 
-#: ../../source/manuel.rst:3463
+#: ../../source/manuel.rst:3468
 msgid ""
 "Pour faire connaître une base, la catégorie *Show and tell* des "
 "`discussions du dépôt <https://github.com/kevung/blunderDB/discussions>`_"
@@ -7285,4 +7294,3 @@ msgstr ""
 
 #~ msgid "L'affichage de la salle"
 #~ msgstr "会場ディスプレイ"
-

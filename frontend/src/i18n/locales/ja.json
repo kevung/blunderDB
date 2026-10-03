@@ -1589,6 +1589,8 @@
         "undoHop": "1手戻す",
         "resetPlay": "やり直す",
         "playOnBoard": "盤上で手を指してから判定してください。",
+        "notationPlaceholder": "表記で手を入力 例 13/7 8/7",
+        "notationLabel": "表記で入力した手",
         "cubePrompt": "キューブアクションを選んでください。",
         "exercise": {
             "scores": "スコア",

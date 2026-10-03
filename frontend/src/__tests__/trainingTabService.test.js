@@ -61,6 +61,7 @@ import {
     answerDecisionBoard,
     answerDecisionCube,
     undoDecisionStep,
+    playDecisionNotation,
     resetDecisionPlay
 } from '../services/trainingTabService.js';
 
@@ -835,6 +836,24 @@ describe('une session de Décision (#323)', () => {
             resetDecisionPlay();
             expect(get(quizPlayStore)?.steps).toHaveLength(0);
             expect(get(quizPlayStore)?.board.points[6]).toEqual({ checkers: 2, color: 0 });
+        });
+
+        test('le coup tapé en notation se pose sur le damier, puis se juge', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            expect(playDecisionNotation('6/4 6/3')).toBe('ok');
+            expect(get(quizPlayStore)?.steps).toHaveLength(2);
+            db.GradeQuizChecker.mockResolvedValue(/** @type {any} */ (verdict()));
+            await answerDecisionBoard();
+            expect(db.GradeQuizChecker).toHaveBeenCalled();
+        });
+
+        test('un pas que les coups légaux n’offrent pas arrête la pose là', async () => {
+            library({ 7: CHECKER });
+            await startTrainingSession({ exercise: 'decision', seedSource: 'library' });
+            expect(playDecisionNotation('6/4 9/1')).toBe('partial');
+            expect(get(quizPlayStore)?.steps).toHaveLength(1);
+            expect(playDecisionNotation('   ')).toBe('empty');
         });
 
         test('un juge en échec laisse la question ouverte, et le dit', async () => {

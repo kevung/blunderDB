@@ -31,6 +31,7 @@ vi.mock('../services/trainingTabService.js', () => ({
     answerDecisionCube: vi.fn(),
     undoDecisionStep: vi.fn(),
     resetDecisionPlay: vi.fn(),
+    playDecisionNotation: vi.fn(() => 'ok'),
     refusalMessageKey: (/** @type {string} */ code) => (code && code !== 'noQuestion' ? `training.refusal.${code}` : 'training.noQuestion')
 }));
 
@@ -198,6 +199,56 @@ describe('une décision de pions', () => {
         reset.click();
         expect(service.undoDecisionStep).toHaveBeenCalled();
         expect(service.resetDecisionPlay).toHaveBeenCalled();
+    });
+
+    test('le coup tapé en notation est posé à chaque frappe, et ENTRÉE le valide quand il est complet', async () => {
+        trainingSessionStore.set(decisionSession('checker'));
+        quizPlayStore.set(newPlay(POSITION, [PLAY]));
+        const panel = render(TrainingPanel);
+        const field = /** @type {HTMLInputElement} */ (panel.getByTestId('training-notation'));
+        await fireEvent.input(field, { target: { value: '6/4 6/3' } });
+        expect(service.playDecisionNotation).toHaveBeenCalledWith('6/4 6/3');
+        await fireEvent.keyDown(field, { key: 'Enter' });
+        expect(service.answerDecisionBoard, 'coup incomplet : rien n’est jugé').not.toHaveBeenCalled();
+        quizPlayStore.update((s) => (s ? playHop(playHop(s, 6, 4), 6, 3) : s));
+        await tick();
+        await fireEvent.keyDown(field, { key: 'Enter' });
+        expect(service.answerDecisionBoard).toHaveBeenCalledTimes(1);
+    });
+
+    test('une notation refusée est signalée', async () => {
+        vi.mocked(service.playDecisionNotation).mockReturnValueOnce('partial');
+        trainingSessionStore.set(decisionSession('checker'));
+        quizPlayStore.set(newPlay(POSITION, [PLAY]));
+        const panel = render(TrainingPanel);
+        const field = panel.getByTestId('training-notation');
+        await fireEvent.input(field, { target: { value: '9/1' } });
+        expect(field.classList.contains('fault')).toBe(true);
+    });
+
+    test('les gestes de la transcription valent quand le panneau a le focus', async () => {
+        trainingSessionStore.set(decisionSession('checker'));
+        quizPlayStore.set(newPlay(POSITION, [PLAY]));
+        const panel = render(TrainingPanel);
+        quizPlayStore.update((s) => (s ? playHop(s, 6, 4) : s));
+        await tick();
+        const undo = panel.getByTestId('training-undo-step');
+        await fireEvent.keyDown(undo, { key: 'Backspace' });
+        expect(service.undoDecisionStep).toHaveBeenCalledTimes(1);
+        await fireEvent.keyDown(undo, { key: 'Escape' });
+        expect(service.resetDecisionPlay).toHaveBeenCalledTimes(1);
+        quizPlayStore.update((s) => (s ? playHop(s, 6, 3) : s));
+        await tick();
+        await fireEvent.keyDown(panel.getByTestId('training-panel'), { key: 'Enter' });
+        expect(service.answerDecisionBoard).toHaveBeenCalledTimes(1);
+    });
+
+    test('RETOUR ARRIÈRE reste au champ de notation', async () => {
+        trainingSessionStore.set(decisionSession('checker'));
+        quizPlayStore.set(newPlay(POSITION, [PLAY]));
+        const panel = render(TrainingPanel);
+        await fireEvent.keyDown(panel.getByTestId('training-notation'), { key: 'Backspace' });
+        expect(service.undoDecisionStep).not.toHaveBeenCalled();
     });
 
     test('ni « Révéler » ni case à cocher : c’est le juge qui répond', () => {

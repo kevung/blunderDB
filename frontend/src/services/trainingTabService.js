@@ -31,7 +31,8 @@ import {
     attachCorrection
 } from './trainingTab.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
-import { newPlay, completedPlay, undoLast, resetPlay } from './quizPlay.js';
+import { newPlay, completedPlay, undoLast, resetPlay, playHop } from './quizPlay.js';
+import { stepsFromNotation } from './transcriptionPlay.js';
 import { UNORDERED_SCORES, buildScoreCard, scoreCardNumbers } from './scoreCard.js';
 import { computePipCount } from '../utils/boardGeometry.js';
 import { setStatusBarMessage } from './databaseService.js';
@@ -625,6 +626,34 @@ export function undoDecisionStep() {
 export function resetDecisionPlay() {
     const question = openCheckerQuestion();
     if (question) quizPlayStore.update((state) => (state ? resetPlay(state, question.position) : state));
+}
+
+/**
+ * Pose sur le damier le coup tapé en notation (`13/7 8/7`), même parseur que la
+ * transcription. Le coup repart de la position de la question : ce qui était
+ * joué est remplacé. Un pas que les coups légaux n'offrent pas arrête la pose
+ * là, et le damier montre ce qui a été compris.
+ * @param {string} text
+ * @returns {'empty'|'partial'|'ok'} `partial` : un pas a été refusé.
+ */
+export function playDecisionNotation(text) {
+    const question = openCheckerQuestion();
+    const state = get(quizPlayStore);
+    if (!question || !state) return 'empty';
+    const steps = stepsFromNotation(text, state.mover);
+    if (steps.length === 0) return 'empty';
+    let next = resetPlay(state, question.position);
+    let outcome = /** @type {'partial'|'ok'} */ ('ok');
+    for (const step of steps) {
+        const played = playHop(next, step.from, step.to);
+        if (played === next) {
+            outcome = 'partial';
+            break;
+        }
+        next = played;
+    }
+    quizPlayStore.set(next);
+    return outcome;
 }
 
 /** La question de Décision de pions ouverte, s'il y en a une. */
