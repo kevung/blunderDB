@@ -555,6 +555,14 @@ export default {
 </ul>
 <p>Ein Klick auf eine Gruppe lädt ihre Stellungen, von der teuersten zur günstigsten. Das Thema wird bei jeder Anzeige neu berechnet und nie gespeichert: Wie der Spielplan ist es ein abgeleitetes, nicht bearbeitbares Etikett. In der Kommandozeile: <code>blunderdb stats recurring</code> (siehe stats — Wiederkehrende Fehler).</p>
 <p>Jede Zeile bietet drei Wege vom Fehler zum Lernen: <strong>Quiz zu dieser Gruppe</strong> startet die Übung Entscheidung des Panels Training mit den Stellungen der Gruppe, <strong>Anki-Stapel</strong> macht daraus einen Kartenstapel, <strong>Sammlung</strong> legt sie in einer neuen Sammlung ab. Über der Tabelle zieht <strong>Quiz zu meinen drei schlechtesten Gruppen</strong> zwanzig Stellungen zufällig aus denen der drei teuersten Gruppen. In der Kommandozeile zieht <code>stats recurring --quiz</code> diese Stellungen und <code>--deck</code> legt den Stapel an.</p>
+<h5>Training im Zeitverlauf</h5>
+<p>Der Reiter <strong>Training</strong> stellt über dieselben Kalenderfenster — <strong>Woche</strong> oder <strong>Monat</strong>, nach Wahl — drei Reihen nebeneinander, die den Fortschritt auf drei Wegen messen:</p>
+<ul>
+<li>die <strong>Quiz-PR</strong>: die der Sitzungen der Übung Entscheidung im Training-Panel, gewichtet nach der Zahl der beurteilten Entscheidungen. Sie wird auf der Skala der echten PR berechnet und ist damit mit ihr vergleichbar;</li>
+<li>die <strong>Match-PR</strong> des aktuellen Filters, gewichtet nach der Zahl der Entscheidungen;</li>
+<li>die <strong>Anki-Retention</strong>: der Anteil der Wiederholungen bereits gelernter Karten, die mit <em>Schwer</em> oder besser bewertet wurden, auf der rechten Achse (in %).</li>
+</ul>
+<p>In Klammern steht die Zahl der Entscheidungen oder Wiederholungen hinter jedem Wert: Ein Fenster ohne Stichprobe hat keinen Wert — einen Strich, keine Null. Der Filter schränkt nur die Matches ein; die Journale von Quiz und Anki gehören Ihnen und tragen keinen Spieler. Es wird nichts zusätzlich gespeichert: Die drei Reihen werden aus den vorhandenen Journalen gelesen. In der Befehlszeile: <code>blunderdb stats training</code> (siehe stats — Wiederkehrende Fehler).</p>
 <h5>Aufteilung nach Doppler-Aktion</h5>
 <p>Ein Balkendiagramm zeigt den PR (oder MWC) für jeden Typ von Doppler-Entscheidung an: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jeder Balken gibt außerdem die Anzahl der Entscheidungen und die Blunder-Rate in einem Tooltip an.</p>
 <p>Ein Klick auf einen Balken lädt die zu dieser Doppler-Aktion gehörenden Stellungen, <strong>nur die mit einem Fehler</strong> (Drill-down).</p>

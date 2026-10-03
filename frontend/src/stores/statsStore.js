@@ -1,5 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
-import { ComputeStats, ComputeRecurringErrors, GetPlayerTable } from '../../wailsjs/go/database/Database.js';
+import { ComputeStats, ComputeRecurringErrors, ComputeTrainingStats, GetPlayerTable } from '../../wailsjs/go/database/Database.js';
 import { databasePathStore } from './databaseStore.js';
 import { dbMutationCounterStore } from './uiStore.js';
 
@@ -127,5 +127,43 @@ export async function refreshRecurringErrors(filter, invalidationKey) {
         recurringErrorsStore.set(null);
     } finally {
         recurringErrorsLoadingStore.set(false);
+    }
+}
+
+export const trainingStatsStore = writable(null);
+export const trainingStatsLoadingStore = writable(false);
+export const trainingStatsErrorStore = writable(null);
+
+/** The calendar window the training series are folded by: `week` or `month`. */
+export const trainingWindowStore = writable('week');
+
+/** Cache key of the last successful training-stats fetch. */
+let _cachedTrainingKey = null;
+
+/**
+ * Fetch the training series: the Decision quiz PR and the Anki retention folded by calendar
+ * window, with the real PR of the filter's matches on the same windows. Fetched apart from
+ * ComputeStats, and only while its tab is open.
+ *
+ * @param {object} filter          - StatsFilter object (it restricts the matches only)
+ * @param {string} invalidationKey - value of statsInvalidationKeyStore
+ * @param {string} window          - `week` or `month`
+ */
+export async function refreshTrainingStats(filter, invalidationKey, window) {
+    const key = JSON.stringify(filter) + '||' + invalidationKey + '||' + window;
+    if (key === _cachedTrainingKey && get(trainingStatsStore) !== null) {
+        return;
+    }
+    _cachedTrainingKey = key;
+    trainingStatsLoadingStore.set(true);
+    trainingStatsErrorStore.set(null);
+    try {
+        trainingStatsStore.set(await ComputeTrainingStats(filter, window));
+    } catch (err) {
+        _cachedTrainingKey = null; // allow retry on error
+        trainingStatsErrorStore.set(err?.message ?? String(err));
+        trainingStatsStore.set(null);
+    } finally {
+        trainingStatsLoadingStore.set(false);
     }
 }

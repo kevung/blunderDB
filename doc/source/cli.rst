@@ -1018,6 +1018,32 @@ part du PR du filtre que le groupe représente.
    ./blunderdb stats recurring --db base.db --quiz --format json
    ./blunderdb stats recurring --db base.db --group 1 --deck "Mon pire groupe"
 
+**stats training** — Le PR du quiz Décision, le PR des matchs et la rétention
+Anki, repliés par fenêtre calendaire, comme l'onglet *Entraînement* du panneau
+Stats (voir :ref:`stats`).
+
+.. code-block:: bash
+
+   ./blunderdb stats training --db <fichier> [options]
+
+**Options:**
+
+* ``--window week|month`` — La fenêtre calendaire (défaut ``week``).
+* ``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``,
+  ``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre des
+  matchs ; les journaux du quiz et d'Anki ne portent pas de joueur.
+* ``--format text|json`` — Le JSON porte aussi la liste des sessions de quiz.
+
+Chaque série garde son nombre d'échantillons : une fenêtre sans décision y est
+un tiret en texte, un compte nul en JSON, jamais un zéro.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb stats training --db base.db --player "Alice"
+   ./blunderdb stats training --db base.db --window month --format json
+
 .. _cli_cubematrix:
 
 cubematrix — Matrice du videau

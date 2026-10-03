@@ -1381,6 +1381,7 @@
         "tabDashboard": "Dashboard",
         "tabProgression": "Progresión",
         "tabErrors": "Errores",
+        "tabTraining": "Entrenamiento",
         "tabPlayers": "Jugadores",
         "importMatchesHint": "Importe partidas para activar los filtros.",
         "playerLabel": "Jugador",
@@ -1528,7 +1529,18 @@
         "compareToggle": "Comparar {name}",
         "compareTitle": "{a} y {b}, lado a lado",
         "compareClear": "Borrar",
-        "compareBlunderRate": "Blunders / 100 dec."
+        "compareBlunderRate": "Blunders / 100 dec.",
+        "trainingTitle": "Entrenamiento y progresión",
+        "trainingHint": "El PR del quiz Decisión, el PR de las partidas del filtro y la retención Anki, en las mismas ventanas de calendario. El PR del quiz está en la escala del PR real; la retención se lee en el eje derecho (%). Entre paréntesis, el número de decisiones o de repasos: una ventana sin muestra no tiene valor.",
+        "trainingWindow": "Ventana de calendario",
+        "trainingWeek": "Semana",
+        "trainingMonth": "Mes",
+        "trainingEmpty": "Todavía no hay sesión de quiz, partida ni repaso Anki.",
+        "trainingPeriod": "Inicio de la ventana",
+        "trainingQuizPR": "PR del quiz",
+        "trainingMatchPR": "PR de las partidas",
+        "trainingRetention": "Retención Anki",
+        "trainingSessions": "{n} sesiones del quiz Decisión registradas."
     },
     "trash": {
         "title": "Papelera",

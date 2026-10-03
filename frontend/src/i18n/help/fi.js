@@ -555,6 +555,14 @@ export default {
 </ul>
 <p>Ryhmää napsauttamalla ladataan sen asemat, kalleimmasta halvimpaan. Teema lasketaan uudelleen jokaisella näytöllä eikä sitä tallenneta koskaan: pelisuunnitelman tavoin se on johdettu tunniste, jota ei voi muokata. Komentoriviltä: <code>blunderdb stats recurring</code> (ks. stats — Toistuvat virheet).</p>
 <p>Jokainen rivi tarjoaa kolme tapaa siirtyä virheestä opiskeluun: <strong>Tietovisa tästä ryhmästä</strong> käynnistää Harjoittelu-paneelin Päätös-harjoituksen ryhmän asemilla, <strong>Anki-pakka</strong> tekee niistä korttipakan, <strong>Kokoelma</strong> tallentaa ne uuteen kokoelmaan. Taulukon yläpuolella <strong>Tietovisa kolmesta pahimmasta ryhmästäni</strong> arpoo kaksikymmentä asemaa kolmen kalleimman ryhmän asemista. Komentorivillä <code>stats recurring --quiz</code> arpoo nämä asemat ja <code>--deck</code> luo pakan.</p>
+<h5>Harjoittelu ajan myötä</h5>
+<p><strong>Harjoittelu</strong>-välilehti asettaa rinnakkain samoissa kalenteri-ikkunoissa — valintasi mukaan <strong>viikko</strong> tai <strong>kuukausi</strong> — kolme sarjaa, jotka mittaavat edistymistä kolmella tavalla:</p>
+<ul>
+<li><strong>visan PR</strong>: Harjoittelu-paneelin Päätös-harjoituksen istuntojen PR, painotettuna arvioitujen päätösten määrällä. Se lasketaan todellisen PR:n asteikolla, joten se on vertailukelpoinen sen kanssa;</li>
+<li>nykyisen suodattimen <strong>otteluiden PR</strong>, painotettuna päätösten määrällä;</li>
+<li><strong>Ankin pysyvyys</strong>: jo opittujen korttien kertausten osuus, jotka on arvioitu <em>Vaikea</em> tai paremmaksi, luettuna oikealta akselilta (%).</li>
+</ul>
+<p>Sulkeissa kunkin arvon takana oleva päätösten tai kertausten määrä: ikkunalla ilman otosta ei ole arvoa — viiva, ei nolla. Suodatin rajaa vain ottelut; visan ja Ankin lokit ovat omiasi eivätkä sisällä pelaajaa. Mitään ei tallenneta lisää: kolme sarjaa luetaan olemassa olevista lokeista. Komentorivillä: <code>blunderdb stats training</code> (katso stats — Toistuvat virheet).</p>
 <h5>Jakauma kuutiotoimen mukaan</h5>
 <p>Pylväskaavio näyttää PR:n (tai MWC:n) jokaiselle kuutiopäätöksen tyypille: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jokainen pylväs näyttää myös päätösten määrän ja blunder-osuuden työkaluvihjeessä.</p>
 <p>Pylvään napsauttaminen lataa kyseistä kuutiotoimea vastaavat asemat, <strong>vain ne, joissa on virhe</strong> (drill-down).</p>

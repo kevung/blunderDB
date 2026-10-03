@@ -245,6 +245,11 @@ func TestReadTools(t *testing.T) {
 		}
 	}
 
+	training := call(t, cs, "training_stats", obj{"player": name, "window": "month"})
+	if training["Window"] != "month" {
+		t.Errorf("training_stats: window = %v, want month", training["Window"])
+	}
+
 	matches := list(t, call(t, cs, "list_matches", obj{"player": name}), "matches")
 	mid := id(t, matches[0], "id")
 	if call(t, cs, "get_match", obj{"matchId": mid})["performance"] == nil {

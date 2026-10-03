@@ -419,6 +419,8 @@ var databaseParity = map[string]parityEntry{
 	"Tags":                              {CLI: "list", Server: "/v1/comments.tags"},
 	"ComputeRecurringErrors":            {CLI: "stats recurring", Server: "/v1/stats.recurringErrors"},
 	"ComputeRecurringErrorsCtx":         {CLI: "stats recurring", Server: "/v1/stats.recurringErrors"},
+	"ComputeTrainingStats":              {CLI: "stats training", Server: "/v1/stats.training"},
+	"ComputeTrainingStatsCtx":           {CLI: "stats training", Server: "/v1/stats.training"},
 	"RecommendedTags":                   {CLI: "list", Server: "/v1/comments.tags", Why: whySuggestion},
 }
 

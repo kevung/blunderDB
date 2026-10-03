@@ -100,6 +100,10 @@ export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsRe
 
 export function ComputeStatsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<database.StatsResult>;
 
+export function ComputeTrainingStats(arg1:database.StatsFilter,arg2:string):Promise<storage.TrainingStats>;
+
+export function ComputeTrainingStatsCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string):Promise<storage.TrainingStats>;
+
 export function ConfirmAllProposals(arg1:number):Promise<service.DirectionView>;
 
 export function ConfirmProposal(arg1:number,arg2:string):Promise<service.DirectionView>;

@@ -2234,6 +2234,29 @@ tire vingt positions au hasard parmi celles des trois groupes les plus
 coûteux. En ligne de commande, ``stats recurring --quiz`` tire ces
 positions et ``--deck`` crée le paquet.
 
+.. _stats_entrainement:
+
+Entraînement dans le temps
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+L'onglet **Entraînement** met côte à côte, sur les mêmes fenêtres
+calendaires — la **semaine** ou le **mois**, au choix — trois séries qui
+mesurent la progression par trois chemins :
+
+* le **PR du quiz** : celui des sessions de l'exercice Décision du panneau
+  Entraînement, pondéré par le nombre de décisions jugées. Il est calculé sur
+  l'échelle du PR réel, donc comparable à lui ;
+* le **PR des matchs** du filtre courant, pondéré par le nombre de décisions ;
+* la **rétention Anki** : la part des révisions de cartes déjà apprises
+  notées *Difficile* ou mieux, lue sur l'axe de droite (en %).
+
+Entre parenthèses, le nombre de décisions ou de révisions derrière chaque
+valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas un
+zéro. Le filtre ne restreint que les matchs ; le journal du quiz et celui
+d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est enregistré en
+plus : les trois séries sont relues dans les journaux existants. En ligne de
+commande : ``blunderdb stats training`` (voir :ref:`cli_stats`).
+
 Répartition par action de videau
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

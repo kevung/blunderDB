@@ -457,6 +457,24 @@ func registerPlayers(tb *Toolbox) {
 			out["Groups"] = firstN(groups, clampLimit(a.Limit))
 			return out, nil
 		})
+
+	type trainingIn struct {
+		statsFilter
+		Window string `json:"window,omitempty" jsonschema:"calendar window: week (default) or month"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "training_stats", Title: "Training progress",
+		Description: "Quiz PR per session and per calendar window, set against the real PR of the same windows, with the Anki retention observed on the same time scale. Use it to tell whether what is drilled shows up in play."},
+		func(ctx context.Context, req *sdk.CallToolRequest, a trainingIn) (any, error) {
+			wire := a.wire()
+			if a.Window != "" {
+				wire["window"] = a.Window
+			}
+			var res obj
+			if err := tb.Engine.Call(ctx, req, "stats.training", wire, &res); err != nil {
+				return nil, err
+			}
+			return res, nil
+		})
 }
 
 func registerMatches(tb *Toolbox) {

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 06:16+0200\n"
+"POT-Creation-Date: 2026-10-03 07:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -3032,49 +3032,55 @@ msgid "positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course"
 msgstr "近いポジション、XGID の読み取り、合法手、レースの EPC"
 
 #: ../../source/mode_headless.rst:1612
-msgid "``list_players``, ``player_stats``, ``recurring_errors``"
-msgstr "``list_players``, ``player_stats``, ``recurring_errors``"
-
-#: ../../source/mode_headless.rst:1613
-msgid "joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent"
-msgstr "プレイヤー、全体の PR、チェッカープレイ、キューブ、局面別、繰り返されるミス"
+msgid ""
+"``list_players``, ``player_stats``, ``recurring_errors``, "
+"``training_stats``"
+msgstr ""
+"``list_players``, ``player_stats``, ``recurring_errors``, "
+"``training_stats``"
 
 #: ../../source/mode_headless.rst:1614
+msgid ""
+"joueurs ; PR global, pions, videau, par phase ; erreurs qui reviennent ; "
+"PR du quiz et rétention Anki contre le PR réel"
+msgstr "プレイヤー、全体の PR、チェッカー、キューブ、フェーズ別、繰り返される誤り、実際の PR に対するクイズの PR と Anki の定着率"
+
+#: ../../source/mode_headless.rst:1616
 msgid "``list_matches``, ``get_match``, ``list_tournaments``"
 msgstr "``list_matches``, ``get_match``, ``list_tournaments``"
 
-#: ../../source/mode_headless.rst:1615
+#: ../../source/mode_headless.rst:1617
 msgid "matchs, détail d'un match, tournois"
 msgstr "マッチ、マッチの詳細、トーナメント"
 
-#: ../../source/mode_headless.rst:1616
+#: ../../source/mode_headless.rst:1618
 msgid "``list_collections``, ``collection_positions``, ``study_decks``"
 msgstr "``list_collections``, ``collection_positions``, ``study_decks``"
 
-#: ../../source/mode_headless.rst:1617
+#: ../../source/mode_headless.rst:1619
 msgid "collections et leurs positions ; paquets de révision"
 msgstr "コレクションとそのポジション、学習デッキ"
 
-#: ../../source/mode_headless.rst:1618
+#: ../../source/mode_headless.rst:1620
 msgid "``quiz_draw``, ``quiz_grade``"
 msgstr "``quiz_draw``, ``quiz_grade``"
 
-#: ../../source/mode_headless.rst:1619
+#: ../../source/mode_headless.rst:1621
 msgid "tire une position sans sa réponse, puis note la réponse donnée"
 msgstr "答えを伏せたポジションを出題し、返された答えを採点する"
 
-#: ../../source/mode_headless.rst:1620
+#: ../../source/mode_headless.rst:1622
 msgid "``rollout``"
 msgstr "``rollout``"
 
-#: ../../source/mode_headless.rst:1621
+#: ../../source/mode_headless.rst:1623
 #, no-python-format
 msgid ""
 "rollout d'une position de la base : équité, intervalle à 95 % et JSD par "
 "candidat"
 msgstr "ライブラリの局面のロールアウト：候補ごとのエクイティ、95 % 区間、JSD"
 
-#: ../../source/mode_headless.rst:1624
+#: ../../source/mode_headless.rst:1626
 msgid ""
 "Les outils ne font que lire. Quatre outils écrivent — ``save_position``, "
 "``comment_position``, ``create_collection``, ``add_to_collection`` — et "
@@ -3088,7 +3094,7 @@ msgstr ""
 "``--mcp-write`` です。\\ ``rollout`` にはこのとき引数 ``store`` "
 "が加わり、局面の解析の隣にロールアウトを記録します。どのツールも削除は行いません。"
 
-#: ../../source/mode_headless.rst:1630
+#: ../../source/mode_headless.rst:1632
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -3096,7 +3102,7 @@ msgstr ""
 "**ローカル**\\ では、アシスタントがファイルに対して ``blunderdb mcp`` を起動します（:ref:`cli` "
 "を参照）。Claude Code の場合："
 
-#: ../../source/mode_headless.rst:1637
+#: ../../source/mode_headless.rst:1639
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -3118,7 +3124,7 @@ msgstr ""
 "呼び出しはデーモンのチェーン全体をもう一度通ります。ログに記録され、メトリクスに数えられ、テナントのレート制限に計上されます。それを運ぶ "
 "``/mcp`` リクエストとは別にです。したがってツール呼び出し 1 回は複数のリクエスト分のコストになり、免除されるものはありません。"
 
-#: ../../source/mode_headless.rst:1648
+#: ../../source/mode_headless.rst:1650
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

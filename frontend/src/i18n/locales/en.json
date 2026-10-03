@@ -1381,6 +1381,7 @@
         "tabDashboard": "Dashboard",
         "tabProgression": "Progression",
         "tabErrors": "Errors",
+        "tabTraining": "Training",
         "tabPlayers": "Players",
         "importMatchesHint": "Import matches to activate filters.",
         "playerLabel": "Player",
@@ -1528,7 +1529,18 @@
         "compareToggle": "Compare {name}",
         "compareTitle": "{a} and {b}, side by side",
         "compareClear": "Clear",
-        "compareBlunderRate": "Blunders / 100 dec."
+        "compareBlunderRate": "Blunders / 100 dec.",
+        "trainingTitle": "Training and progression",
+        "trainingHint": "The Decision quiz PR, the PR of the filter's matches and the Anki retention, on the same calendar windows. The quiz PR is on the real PR's scale; the retention reads on the right axis (%). In brackets, the number of decisions or reviews: a window with no sample has no value.",
+        "trainingWindow": "Calendar window",
+        "trainingWeek": "Week",
+        "trainingMonth": "Month",
+        "trainingEmpty": "No quiz session, no match and no Anki review yet.",
+        "trainingPeriod": "Window start",
+        "trainingQuizPR": "Quiz PR",
+        "trainingMatchPR": "Match PR",
+        "trainingRetention": "Anki retention",
+        "trainingSessions": "{n} Decision quiz sessions recorded."
     },
     "trash": {
         "title": "Trash",

@@ -238,6 +238,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.positionIdsByTournament        JSON
      POST /v1/stats.recurringErrors                JSON
      POST /v1/stats.tournamentBadges               JSON
+     POST /v1/stats.training                       JSON
    tenant
      POST /ops/tenant.purge                        custom
    tournaments

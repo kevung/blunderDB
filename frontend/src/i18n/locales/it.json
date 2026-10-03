@@ -1381,6 +1381,7 @@
         "tabDashboard": "Dashboard",
         "tabProgression": "Progressione",
         "tabErrors": "Errori",
+        "tabTraining": "Allenamento",
         "tabPlayers": "Giocatori",
         "importMatchesHint": "Importa delle partite per attivare i filtri.",
         "playerLabel": "Giocatore",
@@ -1528,7 +1529,18 @@
         "compareToggle": "Confronta {name}",
         "compareTitle": "{a} e {b}, affiancati",
         "compareClear": "Cancella",
-        "compareBlunderRate": "Blunder / 100 dec."
+        "compareBlunderRate": "Blunder / 100 dec.",
+        "trainingTitle": "Allenamento e progressione",
+        "trainingHint": "Il PR del quiz Decisione, il PR delle partite del filtro e la ritenzione Anki, sulle stesse finestre di calendario. Il PR del quiz è sulla scala del PR reale; la ritenzione si legge sull'asse destro (%). Tra parentesi, il numero di decisioni o di ripassi: una finestra senza campione non ha valore.",
+        "trainingWindow": "Finestra di calendario",
+        "trainingWeek": "Settimana",
+        "trainingMonth": "Mese",
+        "trainingEmpty": "Ancora nessuna sessione di quiz, nessuna partita e nessun ripasso Anki.",
+        "trainingPeriod": "Inizio finestra",
+        "trainingQuizPR": "PR del quiz",
+        "trainingMatchPR": "PR delle partite",
+        "trainingRetention": "Ritenzione Anki",
+        "trainingSessions": "{n} sessioni del quiz Decisione registrate."
     },
     "trash": {
         "title": "Cestino",

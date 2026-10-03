@@ -555,6 +555,14 @@ export default {
 </ul>
 <p>Clicking a group loads its positions, from the most costly to the least costly. The theme is recomputed at every display, never stored: like the game plan, it is a derived label that cannot be edited. On the command line: <code>blunderdb stats recurring</code> (see stats — Recurring errors).</p>
 <p>Each row offers three ways to go from the error to study: <strong>Quiz this group</strong> starts the Decision exercise of the Training panel on the group's positions, <strong>Anki deck</strong> makes a deck of cards from them, <strong>Collection</strong> files them in a new collection. Above the table, <strong>Quiz my three worst groups</strong> draws twenty positions at random from those of the three costliest groups. On the command line, <code>stats recurring --quiz</code> draws these positions and <code>--deck</code> creates the deck.</p>
+<h5>Training over time</h5>
+<p>The <strong>Training</strong> tab sets side by side, over the same calendar windows — the <strong>week</strong> or the <strong>month</strong>, as you choose — three series that measure progress in three ways:</p>
+<ul>
+<li>the <strong>quiz PR</strong>: that of the Decision exercise sessions in the Training panel, weighted by the number of decisions judged. It is computed on the real PR scale, so it is comparable to it;</li>
+<li>the <strong>match PR</strong> of the current filter, weighted by the number of decisions;</li>
+<li>the <strong>Anki retention</strong>: the share of reviews of already learned cards graded <em>Hard</em> or better, read on the right axis (in %).</li>
+</ul>
+<p>In parentheses, the number of decisions or reviews behind each value: a window without samples has no value — a dash, not a zero. The filter restricts the matches only; the quiz and Anki journals are yours and carry no player. Nothing more is recorded: the three series are read back from the existing journals. On the command line: <code>blunderdb stats training</code> (see stats — Recurring errors).</p>
 <h5>Breakdown by cube action</h5>
 <p>A bar chart displays the PR (or MWC) for each type of cube decision: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Each bar also shows the number of decisions and the blunder rate in a tooltip.</p>
 <p>Clicking a bar loads the positions matching that cube action, <strong>only those with an error</strong> (drill-down).</p>

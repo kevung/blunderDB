@@ -1381,6 +1381,7 @@
         "tabDashboard": "Панель",
         "tabProgression": "Прогресс",
         "tabErrors": "Ошибки",
+        "tabTraining": "Тренировка",
         "tabPlayers": "Игроки",
         "importMatchesHint": "Импортируйте партии для активации фильтров.",
         "playerLabel": "Игрок",
@@ -1528,7 +1529,18 @@
         "compareToggle": "Сравнить {name}",
         "compareTitle": "{a} и {b}, рядом",
         "compareClear": "Очистить",
-        "compareBlunderRate": "Бландеры / 100 реш."
+        "compareBlunderRate": "Бландеры / 100 реш.",
+        "trainingTitle": "Тренировка и прогресс",
+        "trainingHint": "PR викторины «Решение», PR матчей фильтра и удержание Anki в одних и тех же календарных окнах. PR викторины — в шкале реального PR; удержание читается по правой оси (%). В скобках — число решений или повторений: у окна без выборки нет значения.",
+        "trainingWindow": "Календарное окно",
+        "trainingWeek": "Неделя",
+        "trainingMonth": "Месяц",
+        "trainingEmpty": "Пока нет ни сессии викторины, ни матча, ни повторения Anki.",
+        "trainingPeriod": "Начало окна",
+        "trainingQuizPR": "PR викторины",
+        "trainingMatchPR": "PR матчей",
+        "trainingRetention": "Удержание Anki",
+        "trainingSessions": "Записано сессий викторины «Решение»: {n}."
     },
     "trash": {
         "title": "Корзина",

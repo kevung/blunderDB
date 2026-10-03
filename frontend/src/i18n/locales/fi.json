@@ -1381,6 +1381,7 @@
         "tabDashboard": "Kojelauta",
         "tabProgression": "Edistyminen",
         "tabErrors": "Virheet",
+        "tabTraining": "Harjoittelu",
         "tabPlayers": "Pelaajat",
         "importMatchesHint": "Tuo otteluita aktivoidaksesi suodattimet.",
         "playerLabel": "Pelaaja",
@@ -1528,7 +1529,18 @@
         "compareToggle": "Vertaa {name}",
         "compareTitle": "{a} ja {b} rinnakkain",
         "compareClear": "Tyhjennä",
-        "compareBlunderRate": "Blunderit / 100 päät."
+        "compareBlunderRate": "Blunderit / 100 päät.",
+        "trainingTitle": "Harjoittelu ja edistyminen",
+        "trainingHint": "Päätös-tietovisan PR, suodattimen ottelujen PR ja Anki-muistaminen samoissa kalenteri-ikkunoissa. Tietovisan PR on oikean PR:n asteikolla; muistaminen luetaan oikeasta akselista (%). Sulkeissa päätösten tai kertausten määrä: ikkunalla ilman otosta ei ole arvoa.",
+        "trainingWindow": "Kalenteri-ikkuna",
+        "trainingWeek": "Viikko",
+        "trainingMonth": "Kuukausi",
+        "trainingEmpty": "Ei vielä tietovisaistuntoa, ottelua eikä Anki-kertausta.",
+        "trainingPeriod": "Ikkunan alku",
+        "trainingQuizPR": "Tietovisan PR",
+        "trainingMatchPR": "Ottelujen PR",
+        "trainingRetention": "Anki-muistaminen",
+        "trainingSessions": "{n} Päätös-tietovisan istuntoa tallennettu."
     },
     "trash": {
         "title": "Roskakori",

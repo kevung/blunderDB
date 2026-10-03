@@ -4754,6 +4754,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/tournamentBadgesResp"
+  /v1/stats.training:
+    post:
+      operationId: stats.training
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsTrainingReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_TrainingStats"
+                nullable: true
   /v1/tournaments.addMatch:
     post:
       operationId: tournaments.addMatch
@@ -6693,6 +6711,13 @@ components:
           $ref: "#/components/schemas/storage_StatsFilter"
         selection:
           $ref: "#/components/schemas/storage_SelectionSpec"
+    statsTrainingReq:
+      type: object
+      properties:
+        filter:
+          $ref: "#/components/schemas/storage_StatsFilter"
+        window:
+          type: string
     storage_Collection:
       type: object
       description: "Opaque: see the Go type storage.Collection (defined outside internal/server, not expanded here)."
@@ -6747,6 +6772,9 @@ components:
     storage_TournamentBadge:
       type: object
       description: "Opaque: see the Go type storage.TournamentBadge (defined outside internal/server, not expanded here)."
+    storage_TrainingStats:
+      type: object
+      description: "Opaque: see the Go type storage.TrainingStats (defined outside internal/server, not expanded here)."
     stringsResp:
       type: object
       properties:

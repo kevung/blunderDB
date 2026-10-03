@@ -555,6 +555,14 @@ export default {
 </ul>
 <p>Facendo clic su un gruppo se ne caricano le posizioni, dalla più costosa alla meno costosa. Il tema viene ricalcolato a ogni visualizzazione e non è mai salvato: come il piano di gioco, è un'etichetta derivata, non modificabile. Da riga di comando: <code>blunderdb stats recurring</code> (vedi stats — Errori ricorrenti).</p>
 <p>Ogni riga offre tre gesti per passare dall'errore allo studio: <strong>Quiz su questo gruppo</strong> avvia l'esercizio Decisione del pannello Allenamento sulle posizioni del gruppo, <strong>Mazzo Anki</strong> ne fa un mazzo di carte, <strong>Raccolta</strong> le archivia in una nuova raccolta. Sopra la tabella, <strong>Quiz sui miei tre gruppi peggiori</strong> estrae venti posizioni a caso tra quelle dei tre gruppi più costosi. Dalla riga di comando, <code>stats recurring --quiz</code> estrae queste posizioni e <code>--deck</code> crea il mazzo.</p>
+<h5>Allenamento nel tempo</h5>
+<p>La scheda <strong>Allenamento</strong> affianca, sulle stesse finestre di calendario — la <strong>settimana</strong> o il <strong>mese</strong>, a scelta — tre serie che misurano il progresso in tre modi:</p>
+<ul>
+<li>il <strong>PR del quiz</strong>: quello delle sessioni dell'esercizio Decisione del pannello Allenamento, ponderato per il numero di decisioni giudicate. È calcolato sulla scala del PR reale, quindi è confrontabile con esso;</li>
+<li>il <strong>PR delle partite</strong> del filtro corrente, ponderato per il numero di decisioni;</li>
+<li>la <strong>ritenzione Anki</strong>: la quota di ripassi di carte già apprese valutati <em>Difficile</em> o meglio, letta sull'asse destro (in %).</li>
+</ul>
+<p>Tra parentesi, il numero di decisioni o di ripassi dietro ogni valore: una finestra senza campioni non ha valore — un trattino, non uno zero. Il filtro restringe solo le partite; il diario del quiz e quello di Anki sono vostri e non portano un giocatore. Non si registra nient'altro: le tre serie sono rilette dai diari esistenti. Da riga di comando: <code>blunderdb stats training</code> (vedi stats — Errori ricorrenti).</p>
 <h5>Ripartizione per azione di cubo</h5>
 <p>Un diagramma a barre visualizza il PR (o MWC) per ciascun tipo di decisione di cubo: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Ogni barra indica inoltre il numero di decisioni e il tasso di blunder in un suggerimento.</p>
 <p>Cliccando su una barra si caricano le posizioni corrispondenti a quell'azione di cubo, <strong>solo quelle con un errore</strong> (drill-down).</p>

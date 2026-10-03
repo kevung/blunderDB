@@ -1381,6 +1381,7 @@
         "tabDashboard": "ダッシュボード",
         "tabProgression": "推移",
         "tabErrors": "エラー",
+        "tabTraining": "トレーニング",
         "tabPlayers": "プレイヤー",
         "importMatchesHint": "フィルターを有効にするには対局をインポートしてください。",
         "playerLabel": "プレイヤー",
@@ -1528,7 +1529,18 @@
         "compareToggle": "{name} を比較",
         "compareTitle": "{a} と {b} を並べて",
         "compareClear": "クリア",
-        "compareBlunderRate": "ブランダー / 100 判断"
+        "compareBlunderRate": "ブランダー / 100 判断",
+        "trainingTitle": "トレーニングと上達",
+        "trainingHint": "決定クイズのPR、フィルターの対局のPR、Ankiの定着率を、同じ暦の期間で表示します。クイズのPRは実際のPRと同じ尺度で、定着率は右軸（％）で読みます。括弧内は決定数または復習数で、標本のない期間には値がありません。",
+        "trainingWindow": "暦の期間",
+        "trainingWeek": "週",
+        "trainingMonth": "月",
+        "trainingEmpty": "クイズのセッション、対局、Ankiの復習はまだありません。",
+        "trainingPeriod": "期間の開始",
+        "trainingQuizPR": "クイズのPR",
+        "trainingMatchPR": "対局のPR",
+        "trainingRetention": "Ankiの定着率",
+        "trainingSessions": "決定クイズのセッションを {n} 件記録しました。"
     },
     "trash": {
         "title": "ごみ箱",

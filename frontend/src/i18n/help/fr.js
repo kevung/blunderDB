@@ -555,6 +555,14 @@ export default {
 </ul>
 <p>Cliquer sur un groupe charge ses positions, de la plus coûteuse à la moins coûteuse. Le thème est recalculé à chaque affichage, jamais enregistré : comme le plan de jeu, c'est une étiquette dérivée, non modifiable. En ligne de commande : <code>blunderdb stats recurring</code> (voir stats — Erreurs récurrentes).</p>
 <p>Chaque ligne propose trois gestes pour passer de l'erreur à l'étude : <strong>Quiz sur ce groupe</strong> lance l'exercice Décision du panneau Entraînement sur les positions du groupe, <strong>Paquet Anki</strong> en fait un paquet de cartes, <strong>Collection</strong> les range dans une nouvelle collection. Au-dessus du tableau, <strong>Quiz de mes trois pires groupes</strong> tire vingt positions au hasard parmi celles des trois groupes les plus coûteux. En ligne de commande, <code>stats recurring --quiz</code> tire ces positions et <code>--deck</code> crée le paquet.</p>
+<h5>Entraînement dans le temps</h5>
+<p>L'onglet <strong>Entraînement</strong> met côte à côte, sur les mêmes fenêtres calendaires — la <strong>semaine</strong> ou le <strong>mois</strong>, au choix — trois séries qui mesurent la progression par trois chemins :</p>
+<ul>
+<li>le <strong>PR du quiz</strong> : celui des sessions de l'exercice Décision du panneau Entraînement, pondéré par le nombre de décisions jugées. Il est calculé sur l'échelle du PR réel, donc comparable à lui ;</li>
+<li>le <strong>PR des matchs</strong> du filtre courant, pondéré par le nombre de décisions ;</li>
+<li>la <strong>rétention Anki</strong> : la part des révisions de cartes déjà apprises notées <em>Difficile</em> ou mieux, lue sur l'axe de droite (en %).</li>
+</ul>
+<p>Entre parenthèses, le nombre de décisions ou de révisions derrière chaque valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas un zéro. Le filtre ne restreint que les matchs ; le journal du quiz et celui d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est enregistré en plus : les trois séries sont relues dans les journaux existants. En ligne de commande : <code>blunderdb stats training</code> (voir stats — Erreurs récurrentes).</p>
 <h5>Répartition par action de videau</h5>
 <p>Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision de videau : <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Chaque barre indique également le nombre de décisions et le taux de blunders en infobulle.</p>
 <p>Cliquer sur une barre charge les positions correspondant à cette action de videau, <strong>uniquement celles avec une erreur</strong> (drill-down).</p>

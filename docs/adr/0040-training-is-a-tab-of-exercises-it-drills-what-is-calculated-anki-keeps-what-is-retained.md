@@ -59,7 +59,8 @@ application's panels, not in a strip above the board.
    rest the tab shows the launcher and, per exercise, one summary line (sessions, fault rate,
    mean deviation, median time, trend over the last ten) unfolding to per-number detail. For
    Decision, « revoir les ratées » makes the browsed list the positions failed in the last
-   session or last *n* sessions. Not in the Stats panel; no chart.
+   session or last *n* sessions. Stats reads the Decision sessions back in its Training tab (below),
+   never the per-number detail.
 7. **Défi stays untouched**, outside any exercise; Training neither drives nor needs it.
 
 ## Consequences
@@ -67,7 +68,11 @@ application's panels, not in a strip above the board.
 - The reference tables (`takePoint*`, `gammonValue*`) are one shared module read by the
   reference modals, the Scores exercise and the Anki score card (ADR-0042).
 - `train` aliases `tp`, `takepoint` → `scores`, `epc` → `bearoff`, `quiz` → `decision`.
-- The CLI and `serve` expose no training.
+- The CLI and `serve` expose the Decision quiz PR only as a series (`stats training`,
+  `/v1/stats.training`): the PR of a quiz is on the real PR's scale on purpose, so it is read
+  against the match PR and the observed Anki retention on the same calendar windows. The series
+  are read from the existing journals (`training_session`, `anki_review_log`), never copied,
+  so a window holds no duplicate of a row. The sessions themselves are still played in the GUI.
 - The corrected take point (combining both faces' gammon values) would be a sixth exercise,
   entered over the Scores source — the test of rule 2.
 - Rejected: a training bar above the board — controls live in panels.
@@ -77,7 +82,8 @@ application's panels, not in a strip above the board.
 - Rejected: one binary verdict per question, or Anki's four grades — loses which cell fails.
 - Rejected: number keys to tick faults — do not scale to fourteen cells.
 - Rejected: a session length chosen at launch — « Terminer » suffices.
-- Rejected: a JSON metadata key for the journal, or a Stats tab — rule 6.
+- Rejected: a JSON metadata key for the journal — rule 6. A Stats tab was rejected too, until a
+  coach needed training and match progression on one calendar.
 - Rejected: forcing seven cells with « 0 »/« — » — a convention, not a calculation.
 
 ## Guard

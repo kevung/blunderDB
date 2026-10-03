@@ -170,6 +170,14 @@ export function ComputeStatsCtx(arg1, arg2) {
   return window['go']['database']['Database']['ComputeStatsCtx'](arg1, arg2);
 }
 
+export function ComputeTrainingStats(arg1, arg2) {
+  return window['go']['database']['Database']['ComputeTrainingStats'](arg1, arg2);
+}
+
+export function ComputeTrainingStatsCtx(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ComputeTrainingStatsCtx'](arg1, arg2, arg3);
+}
+
 export function ConfirmAllProposals(arg1) {
   return window['go']['database']['Database']['ConfirmAllProposals'](arg1);
 }

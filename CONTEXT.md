@@ -426,7 +426,8 @@ _Avoid_: run, round, set
 **Journal**:
 The record of Training sessions and their Numbers, kept in the library's own tables so it
 travels with the file; read at rest in the Training tab as a per-Exercise summary
-(*bilan*) and a per-Number detail. Anki reviews are not in it, and it is not in Stats.
+(*bilan*) and a per-Number detail. Anki reviews are not in it; Stats › Training reads its Decision sessions and the Anki review
+log side by side with the real PR, without copying either.
 _Avoid_: history, statistics, log
 
 **Score card** (interface: *fiche de score*):

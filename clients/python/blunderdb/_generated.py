@@ -834,6 +834,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.tournamentBadges — JSON."
         return self._call("/v1/stats.tournamentBadges", payload)
 
+    def stats_training(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.training — JSON."
+        return self._call("/v1/stats.training", payload)
+
     def tournaments_add_match(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/tournaments.addMatch — JSON."
         return self._call("/v1/tournaments.addMatch", payload)

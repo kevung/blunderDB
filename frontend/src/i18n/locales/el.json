@@ -1381,6 +1381,7 @@
         "tabDashboard": "Ταμπλό",
         "tabProgression": "Εξέλιξη",
         "tabErrors": "Σφάλματα",
+        "tabTraining": "Εκπαίδευση",
         "tabPlayers": "Παίκτες",
         "importMatchesHint": "Εισαγάγετε παιχνίδια για να ενεργοποιήσετε τα φίλτρα.",
         "playerLabel": "Παίκτης",
@@ -1528,7 +1529,18 @@
         "compareToggle": "Σύγκριση {name}",
         "compareTitle": "{a} και {b}, δίπλα δίπλα",
         "compareClear": "Καθαρισμός",
-        "compareBlunderRate": "Blunder / 100 αποφ."
+        "compareBlunderRate": "Blunder / 100 αποφ.",
+        "trainingTitle": "Εκπαίδευση και πρόοδος",
+        "trainingHint": "Το PR του κουίζ Απόφαση, το PR των αγώνων του φίλτρου και η διατήρηση Anki, στα ίδια ημερολογιακά παράθυρα. Το PR του κουίζ είναι στην κλίμακα του πραγματικού PR· η διατήρηση διαβάζεται στον δεξιό άξονα (%). Σε παρένθεση, το πλήθος αποφάσεων ή επαναλήψεων: ένα παράθυρο χωρίς δείγμα δεν έχει τιμή.",
+        "trainingWindow": "Ημερολογιακό παράθυρο",
+        "trainingWeek": "Εβδομάδα",
+        "trainingMonth": "Μήνας",
+        "trainingEmpty": "Καμία συνεδρία κουίζ, κανένας αγώνας και καμία επανάληψη Anki ακόμη.",
+        "trainingPeriod": "Αρχή παραθύρου",
+        "trainingQuizPR": "PR κουίζ",
+        "trainingMatchPR": "PR αγώνων",
+        "trainingRetention": "Διατήρηση Anki",
+        "trainingSessions": "{n} συνεδρίες κουίζ Απόφαση καταγράφηκαν."
     },
     "trash": {
         "title": "Κάδος",
