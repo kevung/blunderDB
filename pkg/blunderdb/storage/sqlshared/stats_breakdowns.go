@@ -23,7 +23,7 @@ func (s *StatsStore) computePerPhase(ctx context.Context, q statsQuery, result *
 	rows, err := s.DB.Query(ctx,
 		`SELECT COALESCE(p.game_phase, 0), `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
 			d.Bigint(`SUM(CASE WHEN `+statsErrExpr+` >= ? THEN 1 ELSE 0 END)`)+` `+
-			statsBaseJoin+q.whereSQL+` GROUP BY p.game_phase`,
+			q.join+q.whereSQL+` GROUP BY p.game_phase`,
 		append([]any{q.settings.BlunderThresholdMP}, q.baseArgs...)...)
 	if err != nil {
 		return fmt.Errorf("per-phase query: %w", err)
@@ -50,7 +50,7 @@ func (s *StatsStore) computePerGameType(ctx context.Context, q statsQuery, resul
 	rows, err := s.DB.Query(ctx,
 		`SELECT COALESCE(p.game_type, 0), `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
 			d.Bigint(`SUM(CASE WHEN `+statsErrExpr+` >= ? THEN 1 ELSE 0 END)`)+` `+
-			statsBaseJoin+q.whereSQL+` GROUP BY p.game_type`,
+			q.join+q.whereSQL+` GROUP BY p.game_type`,
 		append([]any{q.settings.BlunderThresholdMP}, q.baseArgs...)...)
 	if err != nil {
 		return fmt.Errorf("per-game-type query: %w", err)
@@ -88,7 +88,7 @@ func (s *StatsStore) computePerScore(ctx context.Context, q statsQuery, result *
 		`SELECT COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), `+
 			d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
 			d.Bigint(`SUM(CASE WHEN `+statsErrExpr+` >= ? THEN 1 ELSE 0 END)`)+` `+
-			statsBaseJoin+q.whereSQL+` GROUP BY p.score_1, p.score_2`,
+			q.join+q.whereSQL+` GROUP BY p.score_1, p.score_2`,
 		append([]any{q.settings.BlunderThresholdMP}, q.baseArgs...)...)
 	if err != nil {
 		return fmt.Errorf("per-score query: %w", err)
@@ -133,7 +133,7 @@ func (s *StatsStore) computePerTag(ctx context.Context, q statsQuery, result *st
 	positions := map[int64]bool{}
 
 	rows, err := s.DB.Query(ctx,
-		`SELECT p.id, COALESCE(`+statsErrExpr+`, 0) `+statsBaseJoin+q.whereSQL, q.baseArgs...)
+		`SELECT p.id, COALESCE(`+statsErrExpr+`, 0) `+q.join+q.whereSQL, q.baseArgs...)
 	if err != nil {
 		return fmt.Errorf("per-tag decisions query: %w", err)
 	}

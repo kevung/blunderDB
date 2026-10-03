@@ -33,6 +33,9 @@ type statsQuery struct {
 	// (ADR-0046), read once at the top of Compute and carried to every pass
 	// so a single run cannot draw the line in two places.
 	settings storage.LibrarySettings
+	// join is the FROM fragment every pass reads: statsBaseJoin's shape over
+	// the selection Compute materialised (see stats_selection.go).
+	join string
 }
 
 // Compute runs each statistics pass in turn and returns the assembled result.
@@ -48,41 +51,62 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 	result := &storage.StatsResult{PRRolling: make(map[int]float64)}
 
 	// The match-level figures come from match_stats when the filter allows
-	// it: a pass over the table instead of one over every decision row.
-	prPass, snowiePass, tournamentPass, matchPass := s.computePRByDecisionType, s.computeSnowieGlobal, s.computePerTournament, s.computePerMatch
-	if fromMatchStats(filter) {
+	// it: a pass over the table instead of one over every decision row. The
+	// table is repaired before the read transaction opens, since that is a write.
+	useTable := fromMatchStats(filter)
+	if useTable {
 		if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
 			return nil, err
 		}
-		prPass, snowiePass, tournamentPass, matchPass = s.prByDecisionTypeFromTable, s.snowieGlobalFromTable, s.perTournamentFromTable, s.perMatchFromTable
 	}
 
-	for _, pass := range []func(context.Context, statsQuery, *storage.StatsResult) error{
-		s.computeTotals,
-		prPass,
-		snowiePass,
-		tournamentPass,
-		matchPass,
-		s.computeCubeActionBreakdown,
-		s.computeCubeDirections,
-		s.computeErrorHistogram,
-		s.computeTopBlunders,
-		s.computeRollingPR,
-		s.computeMWCPass,
-		// The breakdowns, last: each reuses the same counted
-		// predicate and error column as the passes above, so none of them can
-		// disagree with the global figures they slice.
-		s.computePerPhase,
-		s.computePerGameType,
-		s.computePerScore,
-		s.computePerTag,
-	} {
-		start := time.Now()
-		if err := pass(ctx, q, result); err != nil {
-			return nil, err
+	// One transaction pins one connection, which the session-local selection
+	// tables need, and gives every pass the same snapshot.
+	err = s.DB.Transact(ctx, func(tx Execer) error {
+		ts := &StatsStore{DB: tx}
+		join, err := ts.materializeSelection(ctx, scope, filter)
+		if err != nil {
+			return err
 		}
-		// Which pass a slow Stats panel waits on, without a profiler.
-		slog.Debug("stats pass", "pass", runtime.FuncForPC(reflect.ValueOf(pass).Pointer()).Name(), "elapsed", time.Since(start))
+		defer ts.dropSelection(ctx)
+		q.join = join
+
+		prPass, snowiePass, tournamentPass, matchPass := ts.computePRByDecisionType, ts.computeSnowieGlobal, ts.computePerTournament, ts.computePerMatch
+		if useTable {
+			prPass, snowiePass, tournamentPass, matchPass = ts.prByDecisionTypeFromTable, ts.snowieGlobalFromTable, ts.perTournamentFromTable, ts.perMatchFromTable
+		}
+
+		for _, pass := range []func(context.Context, statsQuery, *storage.StatsResult) error{
+			ts.computeTotals,
+			prPass,
+			snowiePass,
+			tournamentPass,
+			matchPass,
+			ts.computeCubeActionBreakdown,
+			ts.computeCubeDirections,
+			ts.computeErrorHistogram,
+			ts.computeTopBlunders,
+			ts.computeRollingPR,
+			ts.computeMWCPass,
+			// The breakdowns, last: each reuses the same counted
+			// predicate and error column as the passes above, so none of them can
+			// disagree with the global figures they slice.
+			ts.computePerPhase,
+			ts.computePerGameType,
+			ts.computePerScore,
+			ts.computePerTag,
+		} {
+			start := time.Now()
+			if err := pass(ctx, q, result); err != nil {
+				return err
+			}
+			// Which pass a slow Stats panel waits on, without a profiler.
+			slog.Debug("stats pass", "pass", runtime.FuncForPC(reflect.ValueOf(pass).Pointer()).Name(), "elapsed", time.Since(start))
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 	return result, nil
 }
@@ -92,7 +116,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 func (s *StatsStore) computeTotals(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
 	row := s.DB.QueryRow(ctx,
 		`SELECT COUNT(DISTINCT p.id), COUNT(DISTINCT m.id), COUNT(DISTINCT m.tournament_id), COUNT(*) `+
-			statsBaseJoin+q.whereSQL,
+			q.join+q.whereSQL,
 		q.baseArgs...,
 	)
 	if err := row.Scan(
@@ -111,7 +135,7 @@ func (s *StatsStore) computePRByDecisionType(ctx context.Context, q statsQuery, 
 	d := s.DB
 	rows, err := s.DB.Query(ctx,
 		`SELECT p.decision_type, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*) `+
-			statsBaseJoin+q.whereSQL+
+			q.join+q.whereSQL+
 			` GROUP BY p.decision_type`,
 		q.baseArgs...,
 	)
@@ -166,7 +190,7 @@ func (s *StatsStore) computeSnowieGlobal(ctx context.Context, q statsQuery, resu
 		numWhere, numArgs := s.buildBaseWhereClause(q.scope, snowieFilter)
 		var snowieSumErr int64
 		if err := s.DB.QueryRow(ctx,
-			`SELECT `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+` `+statsBaseJoin+numWhere,
+			`SELECT `+d.Bigint(`COALESCE(SUM(`+statsErrExpr+`),0)`)+` `+q.join+numWhere,
 			numArgs...,
 		).Scan(&snowieSumErr); err != nil {
 			return fmt.Errorf("snowie ER (global) numerator: %w", err)
@@ -176,7 +200,7 @@ func (s *StatsStore) computeSnowieGlobal(ctx context.Context, q statsQuery, resu
 		var snowieCheckerCnt int
 		if err := s.DB.QueryRow(ctx,
 			`SELECT `+d.Bigint(`COALESCE(SUM(CASE WHEN p.decision_type=0 THEN 1 ELSE 0 END),0)`)+` `+
-				statsBaseJoin+denWhere,
+				q.join+denWhere,
 			denArgs...,
 		).Scan(&snowieCheckerCnt); err != nil {
 			return fmt.Errorf("snowie ER (global) denominator: %w", err)
@@ -200,7 +224,7 @@ func (s *StatsStore) computePerTournament(ctx context.Context, q statsQuery, res
 	// tournament column: PostgreSQL requires it, SQLite accepts it.
 	rows, err := s.DB.Query(ctx,
 		`SELECT m.tournament_id, COALESCE(t.name,''), COALESCE(t.date,''), `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*) `+
-			statsBaseJoin+q.whereSQL+
+			q.join+q.whereSQL+
 			` AND m.tournament_id IS NOT NULL`+
 			` GROUP BY m.tournament_id, t.name, t.date, t.created_at ORDER BY t.date, t.created_at`,
 		q.baseArgs...,
@@ -239,7 +263,7 @@ func (s *StatsStore) computePerMatch(ctx context.Context, q statsQuery, result *
 	var scanErr error
 	rows, err := s.DB.Query(ctx,
 		`SELECT m.id, `+d.DateText("m.match_date")+`, `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*) `+
-			statsBaseJoin+q.whereSQL+
+			q.join+q.whereSQL+
 			` GROUP BY m.id, m.match_date ORDER BY m.match_date, m.id`,
 		q.baseArgs...,
 	)
@@ -277,7 +301,7 @@ func (s *StatsStore) computeCubeActionBreakdown(ctx context.Context, q statsQuer
 	rows, err := s.DB.Query(ctx,
 		`SELECT COALESCE(a.best_cube_action,''), `+d.Bigint(`SUM(a.cube_error)`)+`, COUNT(*),`+
 			` `+d.Bigint(`SUM(CASE WHEN a.cube_error >= ? THEN 1 ELSE 0 END)`)+` `+
-			statsBaseJoin+cubeWhere+
+			q.join+cubeWhere+
 			` GROUP BY a.best_cube_action`,
 		append([]any{q.settings.BlunderThresholdMP}, q.baseArgs...)...,
 	)
@@ -318,7 +342,7 @@ func (s *StatsStore) computeCubeDirections(ctx context.Context, q statsQuery, re
 		rows, err := s.DB.Query(ctx,
 			`SELECT COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,''), COUNT(*),`+
 				` `+d.Bigint(`COALESCE(SUM(a.cube_error),0)`)+` `+
-				statsBaseJoin+cubeWhere+
+				q.join+cubeWhere+
 				` GROUP BY a.best_cube_action, mv.cube_action`,
 			q.baseArgs...,
 		)
@@ -362,7 +386,7 @@ func (s *StatsStore) computeErrorHistogram(ctx context.Context, q statsQuery, re
 			ELSE 100
 		END as bucket,
 		COUNT(*) ` +
-		statsBaseJoin + q.whereSQL +
+		q.join + q.whereSQL +
 		` GROUP BY bucket ORDER BY bucket`
 
 	rows, err := s.DB.Query(ctx, histogramSQL, q.baseArgs...)
@@ -403,7 +427,7 @@ func (s *StatsStore) computeTopBlunders(ctx context.Context, q statsQuery, resul
 			` p.decision_type,`+
 			` `+d.DateText("m.match_date")+` as match_date,`+
 			` COALESCE(m.player1_name, '') || ' vs ' || COALESCE(m.player2_name, '') as player_names `+
-			statsBaseJoin+q.whereSQL+
+			q.join+q.whereSQL+
 			` ORDER BY emg DESC LIMIT 10`,
 		q.baseArgs...,
 	)
@@ -439,7 +463,7 @@ func (s *StatsStore) computeRollingPR(ctx context.Context, q statsQuery, result 
 
 	recentRows, err := s.DB.Query(ctx,
 		`SELECT (`+statsErrExpr+`) as err `+
-			statsBaseJoin+q.whereSQL+
+			q.join+q.whereSQL+
 			` ORDER BY m.match_date DESC, mv.move_number DESC LIMIT ?`,
 		append(q.baseArgs, maxN)...,
 	)
@@ -493,7 +517,7 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 			` ` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0),` +
 			` COALESCE(m.tournament_id, 0), m.id,` +
 			` COALESCE(a.best_cube_action, ''), p.decision_type, p.id ` +
-			statsBaseJoin + q.whereSQL +
+			q.join + q.whereSQL +
 			` ORDER BY m.match_date DESC, mv.move_number DESC`
 
 		mwcRows, mwcErr := s.DB.Query(ctx, mwcPassSQL, q.baseArgs...)
