@@ -36,9 +36,9 @@ name: Nightly
 #
 # Also here: the scale benchmarks (`scale-bench`, GB0.1) — search, stats,
 # listings and one import against a synthetic base of a million positions,
-# compared night to night. Building that base takes hours before lot GB1, and
-# no push-time job can afford it; its job comment says how the base and the
-# previous figures are cached.
+# compared night to night. Building that base and running them takes tens of
+# minutes, which no push-time job can afford; its job comment says how the
+# base and the previous figures are cached.
 #
 # Also here: the daemon's own PostgreSQL integration (`server-postgres`):
 # internal/server under the `postgres` tag — two daemons on one database
@@ -223,17 +223,18 @@ jobs:
   # -benchtime 1x sample on a shared runner; it is there for an index lost or
   # a query turned into a full scan, not for drift.
   #
-  # Why nightly: building the base costs hours at the current import rate
-  # (≈ 120 positions/s before the import CPU work of lot GB1), so it is built
-  # once and cached on the generator, the fixtures and the schema — a schema
-  # change or a new fixture rebuilds it. The previous night's results come
+  # Why nightly: building the base takes about eleven minutes on a laptop
+  # (≈ 1 500 positions/s), more on a runner, and the benchmarks themselves
+  # several more (the unfiltered stats alone run for minutes at this size):
+  # too long for a push. The base is cached on the generator, the fixtures
+  # and the schema — a schema change or a new fixture rebuilds it. The previous night's results come
   # back from the cache too, saved only when the gate passed, so a regression
   # never becomes the next night's reference. No versioned baseline file: a
   # runner is not the machine tasks/bench/ was measured on, so only
   # runner-to-runner comparisons mean anything.
   scale-bench:
     runs-on: ubuntu-latest
-    timeout-minutes: 350
+    timeout-minutes: 180
     env:
       SCALE_POSITIONS: "1000000"
       BLUNDERDB_SCALE_DB: ${{ github.workspace }}/scale.db

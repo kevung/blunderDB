@@ -42,6 +42,21 @@ limite de 2 h de la tâche de fond après 1 237 fichiers ; les chiffres portent 
 | Pic RSS | **566 Mo** pour le lot de 50 fichiers sur la base de 600 000 positions (313 Mo sur base neuve, README § 1) |
 | Fichiers refusés | 1,3 % de doublons exacts ; 0,08 % d'erreurs (1 fichier : « xg get file segments: seek … invalid argument », fichier tronqué ou segment mal formé) |
 
+## 3 bis. Import à la CLI, après le lot GB1 (`main` @ 4acd39446, codec du chantier GB-C2)
+
+Même échantillon, même commande, base neuve, poste au repos ; les 2 000 fichiers en entier.
+
+| Grandeur | Avant (§ 3) | Après |
+|---|---|---|
+| Fichiers | 1 237 traités en 2 h (arrêt) | **2 000 en 1 433 s** : 1 957 importés, 42 doublons exacts (les 42 copies SHA-256 du § 2), 1 erreur (le même fichier) |
+| Positions écrites | 608 785 | 979 035, 948 681 distinctes (dédup Zobrist 3,1 %) |
+| **Débit** | 84 positions/s (partagé), 143 (repos) | **683 positions/s**, ≈ 0,7 s par fichier : ×4,8 sur le chiffre au repos |
+| Taille | 795 o/position | 820 o/position — `analysis` 345 o (codec plus rapide, un peu moins dense), index 293 o |
+| Pic RSS | 566 Mo (50 fichiers sur base pleine) | 458 Mo sur tout l'import |
+
+À ce débit, les 33 370 matchs distincts du corpus (≈ 16,6 M de positions) s'importent en
+**≈ 7 h** sur un cœur, contre 32 à 55 h avant le lot 1.
+
 ## 4. Doublons au-delà du fichier
 
 | Niveau | Mesure |
@@ -77,5 +92,5 @@ XG Roller.
 | Fichiers distincts | ≈ 190 000 | **33 370** |
 | Positions brutes | ≈ 72 M | **≈ 16,6 M** (499 par match) |
 | Positions uniques | 40 à 70 M | **≈ 16 M** (dédup Zobrist 2,7 % mesurée, un peu plus à l'échelle) |
-| Durée d'import, débit d'avant le lot 1 | 90 à 170 h | **32 à 55 h** (143 positions/s au repos, 84 sur poste partagé), davantage si le débit baisse avec la taille |
+| Durée d'import | 90 à 170 h | **32 à 55 h** avant le lot 1 (143 positions/s au repos, 84 sur poste partagé) ; **≈ 7 h** après (683 positions/s) |
 | Taille de base | 30 à 55 Go | **≈ 13 Go**, dont ≈ 4,7 Go d'index |

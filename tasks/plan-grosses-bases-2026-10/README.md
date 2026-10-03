@@ -37,7 +37,8 @@ embarque sa doc et ses `.po`.
 
 **Corrigé par GB0.2** ([`MESURES.md`](MESURES.md), § 6) : le corpus est livré en cinq copies
 identiques ; 33 370 matchs distincts, ≈ 16,6 M de positions brutes (499 par match), ≈ 16 M
-uniques, ≈ 13 Go de base, 32 à 55 h d'import au débit d'avant le lot 1 (84 à 143 positions/s mesurées).
+uniques, ≈ 13 Go de base, 32 à 55 h d'import avant le lot 1 (84 à 143 positions/s), ≈ 7 h
+après (683 positions/s).
 Les estimations ci-dessus sont gardées pour mémoire ; les objectifs se lisent sur ces chiffres.
 
 Verdict : le moteur de stockage (SQLite, WAL) tient ce volume ; c'est le **chemin d'import**
