@@ -26,6 +26,8 @@ type Database struct {
 	mu                sync.RWMutex                        // RWMutex allows concurrent reads
 	cancelMu          sync.Mutex                          // guards importCancel (held briefly, never with mu)
 	importCancel      context.CancelFunc                  // cancels the in-flight import/migration; nil when idle
+	searchCancels     map[int]context.CancelFunc          // in-flight searches, guarded by cancelMu
+	searchSeq         int                                 // key of the next entry of searchCancels
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 	store             *sqlite.Storage                     // SQLite Storage backend, wraps db (P2)
 	// importBatchID stamps every match the in-flight import writes, 0 when none
@@ -142,6 +144,43 @@ func (d *Database) CancelImport() {
 	cancel := d.importCancel
 	d.cancelMu.Unlock()
 	if cancel != nil {
+		cancel()
+	}
+}
+
+// beginSearch gives a search a context that CancelSearch can cancel from
+// another goroutine, while the search holds d.mu. A page of ids and its count
+// run side by side, so every search in flight is registered, not only the last.
+// The returned done func must be deferred.
+func (d *Database) beginSearch() (context.Context, func()) {
+	ctx, cancel := context.WithCancel(context.Background())
+	d.cancelMu.Lock()
+	if d.searchCancels == nil {
+		d.searchCancels = map[int]context.CancelFunc{}
+	}
+	key := d.searchSeq
+	d.searchSeq++
+	d.searchCancels[key] = cancel
+	d.cancelMu.Unlock()
+	return ctx, func() {
+		d.cancelMu.Lock()
+		delete(d.searchCancels, key)
+		d.cancelMu.Unlock()
+		cancel()
+	}
+}
+
+// CancelSearch aborts every search in flight started through the Database
+// wrapper; each returns an error wrapping context.Canceled. It is bound to the
+// Wails frontend. No-op when idle.
+func (d *Database) CancelSearch() {
+	d.cancelMu.Lock()
+	cancels := make([]context.CancelFunc, 0, len(d.searchCancels))
+	for _, cancel := range d.searchCancels {
+		cancels = append(cancels, cancel)
+	}
+	d.cancelMu.Unlock()
+	for _, cancel := range cancels {
 		cancel()
 	}
 }

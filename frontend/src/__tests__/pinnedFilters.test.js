@@ -23,6 +23,8 @@ const bindings = vi.hoisted(() => ({
     LoadEditPosition: vi.fn(() => Promise.resolve(null)),
     LoadExcludePosition: vi.fn(() => Promise.resolve(null)),
     CountPositionsByFilters: vi.fn(() => Promise.resolve(0)),
+    SearchPositionIDs: vi.fn(() => Promise.resolve([])),
+    CancelSearch: vi.fn(() => Promise.resolve()),
     RankPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
     LoadPositionsByIDs: vi.fn(() => Promise.resolve([])),
     ListPositionIDs: vi.fn(() => Promise.resolve([])),
@@ -116,13 +118,13 @@ describe('ALT-n lance le n-ième filtre épinglé', () => {
         await settle();
         expect(event.defaultPrevented).toBe(true);
         expect(bindings.LoadEditPosition).toHaveBeenCalledWith('cube');
-        expect(bindings.CountPositionsByFilters).toHaveBeenCalledTimes(1);
+        expect(bindings.SearchPositionIDs).toHaveBeenCalledTimes(1);
     });
 
     test('un rang sans épingle le dit, sans rien chercher', async () => {
         useLibrary();
         await runPinnedFilter(3);
-        expect(bindings.CountPositionsByFilters).not.toHaveBeenCalled();
+        expect(bindings.SearchPositionIDs).not.toHaveBeenCalled();
         expect(get(statusBarTextStore)).toEqual(tMsg('search.noPinnedAt', { n: 3 }));
     });
 
@@ -130,7 +132,7 @@ describe('ALT-n lance le n-ième filtre épinglé', () => {
         useLibrary();
         statusBarModeStore.set('MATCH');
         await runPinnedFilter(1);
-        expect(bindings.CountPositionsByFilters).not.toHaveBeenCalled();
+        expect(bindings.SearchPositionIDs).not.toHaveBeenCalled();
         expect(get(statusBarTextStore)).toEqual(tMsg('commands.searchRequiresMode'));
     });
 
@@ -175,8 +177,8 @@ describe('ALT-n pose la question du double-clic', () => {
         await fireEvent.dblClick(container.querySelector('.saved-item'));
         for (let i = 0; i < 10 && !pending; i++) await tick();
         await pending;
-        expect(bindings.CountPositionsByFilters).toHaveBeenCalledTimes(1);
-        const fromPanel = bindings.CountPositionsByFilters.mock.calls[0];
+        expect(bindings.SearchPositionIDs).toHaveBeenCalledTimes(1);
+        const fromPanel = bindings.SearchPositionIDs.mock.calls[0];
         cleanup();
         vi.clearAllMocks();
         useLibrary();
@@ -185,8 +187,8 @@ describe('ALT-n pose la question du double-clic', () => {
         statusBarModeStore.set('NORMAL');
         positionStore.set(emptyPosition());
         await runPinnedFilter(1);
-        expect(bindings.CountPositionsByFilters).toHaveBeenCalledTimes(1);
-        const fromAlt = bindings.CountPositionsByFilters.mock.calls[0];
+        expect(bindings.SearchPositionIDs).toHaveBeenCalledTimes(1);
+        const fromAlt = bindings.SearchPositionIDs.mock.calls[0];
         expect(fromAlt).toEqual(fromPanel);
         expect(fromAlt[0].filter.board.points[6].checkers).toBe(5);
     });

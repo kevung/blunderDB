@@ -166,3 +166,35 @@ describe('paged list', () => {
         expect(get(list).length).toBe(11);
     });
 });
+
+describe('a paged list opened on its first page', () => {
+    test('is as long as the page until the count settles it, the page read once', async () => {
+        const { list } = makePaged();
+        const source = makeSource();
+        const first = await source.window(0, list.firstPageSize());
+
+        expect(list.adoptFirstPage(source, first)).toEqual({ length: 1000, exact: false });
+        expect(get(list).length).toBe(1000);
+
+        list.resolveLength(source, MILLION);
+        expect(get(list).length).toBe(MILLION);
+        expect(await list.getPosition(5)).toEqual(pos(idOf(5)));
+        expect(source.window).toHaveBeenCalledTimes(1);
+    });
+
+    test('a short first page is the whole list', async () => {
+        const { list } = makePaged();
+        const source = makeSource(3);
+        const first = await source.window(0, list.firstPageSize());
+        expect(list.adoptFirstPage(source, first)).toEqual({ length: 3, exact: true });
+    });
+
+    test('a length settled for another list is ignored', async () => {
+        const { list } = makePaged();
+        const source = makeSource();
+        list.adoptFirstPage(source, await source.window(0, 1000));
+        list.adoptFirstPage(makeSource(), await source.window(0, 1000));
+        list.resolveLength(source, 5);
+        expect(get(list).length).toBe(1000);
+    });
+});

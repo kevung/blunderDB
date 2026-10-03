@@ -211,6 +211,7 @@ export default {
 <p><strong>Hakupaneeli</strong> (<em>CTRL-F</em> tai <em>TAB</em>) suodattaa asemia vapaasti yhdisteltävien kriteerien mukaan: pelinappularakenne, kuutiopäätöksen tyyppi, virheen suuruus, päivämäärät, tunnisteet jne. <em>TAB</em>-näppäin avaa samanaikaisesti hakupaneelin ja asemaeditorin, jolloin haettava pelinappularakenne voidaan määrittää suoraan laudalla.</p>
 <p>Hae näytetyistä asemista komennolla <code>ss</code>, jota seuraavat suodattimet (esim. <code>ss nc</code>, <code>ss E&gt;40</code>). <code>ss</code> hakee näytöllä olevasta luettelosta: edellisen haun tuloksista, avoimesta kokoelmasta tai läpikäytävän ottelun asemista, kirjoitettiinpa komento suoraan tai hakupaneelista (<em>TAB</em>). Paneelin valintaruutu <em>Hae nykyisistä tuloksista</em> noudattaa samaa sääntöä. Kokoelmassa ja ottelussa <code>s</code> hylätään: se hakisi koko kirjastosta ja korvaisi näytetyn luettelon.</p>
 <p>Kokoelmasta tai ottelusta käynnistetyn <code>ss</code>-haun tuloksista poistutaan <em>Esc</em>-näppäimellä yhdellä painalluksella heti, kun kentällä tai kohdistetulla paneelilla ei ole mitään suljettavaa (esimerkiksi analyysissä valittu siirto): blunderDB palaa koko kokoelmaan tai ottelun tarkasteltuun siirtoon ja jätettyyn asemaan. Tämä paluu seuraa vain <code>ss</code>-komentoa: kokoelman tai ottelun päälle avatusta hakupaneelista käynnistetty <code>s</code> hakee koko kirjastosta, eikä <em>Esc</em> enää palaa jätettyyn luetteloon.</p>
+<p>Suuren tietokannan haku näytetään ennen kuin se on laskettu: ensimmäinen tulossivu tulee heti näkyviin, ja tilarivi näyttää « Haetaan… » ja kuluneen ajan, kunnes kokonaismäärä tiedetään; se korvaa silloin luettelon alustavan pituuden. Kerrallaan on käynnissä vain yksi haku: uuden haun aloittaminen hylkää edellisen. <em>Esc</em> keskeyttää käynnissä olevan haun ja pysäyttää sen tietokannan läpikäynnin; jos ensimmäinen sivu oli jo näkyvissä, se jää yksin näkyviin, ja tilarivi kertoo siitä.</p>
 <p>Paneeli tarjoaa nimenomaisen hallinnan haettavalle <strong>päätöstyypille</strong>: <em>Indifférent</em> (ei suodatinta), <em>Siirto</em> (siirtopäätökset) tai <em>Tuplaus</em> (kuutiopäätökset). Kun <em>Tuplaus</em> on valittuna, toinen luettelo tarkentaa alityypin: <em>Kaikki</em>, <em>Tuplaus / Ei tuplausta</em> (vuorossa olevan pelaajan on päätettävä, tuplaako) tai <em>Hyväksy / Luovuta</em> (vastaus vastustajan tuplaukseen). Hallinta on synkronoitu laudan kanssa: noppien tai kuution muuttaminen laudalla päivittää päätöstyypin ja päinvastoin. <em>Hyväksy / Luovuta</em> -tilassa kuutio näytetään laudan keskellä tarjotulla arvolla; tämä arvo on edelleen muokattavissa.</p>
 <p><strong>Pelin vaihe</strong> — avaus, keskipeli, kilpajuoksu, nappuloiden poisto — on merkintä, jonka blunderDB laskee pelkästä laudasta. Sitä ei voi koskaan muokata, ja se on haettavissa komentorivin <code>ph:</code>-merkinnällä (<code>ph:race</code>, toistettavissa: <code>ph:race ph:bearoff</code>). Kolme sen neljästä rajasta ovat ne, joilla GNU Backgammon ohjaa verkkojaan; neljäs, jossa avaus päättyy, on blunderDB:n käytäntö: asema on yhä avauksessa niin kauan kuin kumpikaan puoli ei ole siirtänyt yli neljää nappulaa lähtöpisteiltään, mitään ei ole poistettu eikä mikään ole palkissa.</p>
 <div class="admonition note">
@@ -1209,6 +1210,10 @@ export default {
 <tr>
 <td>ALAS</td>
 <td>Selaa komentohistoriaa alaspäin.</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>Haun aikana: keskeyttää haun.</td>
 </tr>
 </tbody>
 </table>

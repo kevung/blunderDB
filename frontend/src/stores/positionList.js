@@ -418,6 +418,53 @@ export function createPositionList({
             return pagedLength;
         },
 
+        /** How many ids a first page holds: the window to read before `adoptFirstPage`. */
+        firstPageSize() {
+            return idPageSize;
+        },
+
+        /**
+         * Replace the list by a paged one whose first id page is already read (`rows`, from
+         * `next.window(0, firstPageSize())`) without waiting for its length: the list is as long
+         * as that page, a lower bound, and the caller settles the real length later with
+         * `resolveLength`. Returns `{ length, exact }`; `exact` when the page is short, which
+         * means it was the whole list and there is nothing to settle.
+         * @param {IdSource} next
+         * @param {number[]} rows
+         * @param {{ reset?: boolean }} [options]
+         */
+        adoptFirstPage(next, rows, { reset = false } = {}) {
+            const page = Array.isArray(rows) ? rows : [];
+            if (reset) {
+                cache.clear();
+                absent.clear();
+            }
+            replaceSource(next, page.length);
+            idPageCache.set(0, page);
+            return { length: page.length, exact: page.length < idPageSize };
+        },
+
+        /**
+         * Settle the length of a list opened with `openFirstPage`, keeping the id pages already
+         * read (a partial one is dropped: it may have been cut short). Ignored when the list is
+         * no longer that source.
+         * @param {IdSource} of
+         * @param {number} total
+         */
+        resolveLength(of, total) {
+            if (source !== of || !Number.isInteger(total) || total === pagedLength) return length();
+            if (total < pagedLength) {
+                replaceSource(of, total);
+                return length();
+            }
+            for (const [page, rows] of idPageCache) if (rows.length < idPageSize) idPageCache.delete(page);
+            listEpoch++;
+            idPagePending.clear();
+            pagedLength = total;
+            publish(snapshot(null, pagedLength));
+            return length();
+        },
+
         /**
          * Re-read a paged list's length after positions were added (they come last, ids ascending)
          * or removed (every page is refetched). A local list is left as it is.

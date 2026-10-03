@@ -157,6 +157,7 @@ Ligne de commande
 
    "HAUT", "Parcourir l'historique des commandes vers le haut."
    "BAS", "Parcourir l'historique des commandes vers le bas."
+   "ÉCHAP", "Pendant une recherche : l'interrompre."
 
 .. _raccourcis_search_history:
 

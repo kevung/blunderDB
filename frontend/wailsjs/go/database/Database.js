@@ -86,6 +86,10 @@ export function CancelMatch(arg1, arg2) {
   return window['go']['database']['Database']['CancelMatch'](arg1, arg2);
 }
 
+export function CancelSearch() {
+  return window['go']['database']['Database']['CancelSearch']();
+}
+
 export function CheckConstraints() {
   return window['go']['database']['Database']['CheckConstraints']();
 }
@@ -200,6 +204,10 @@ export function CountPositions() {
 
 export function CountPositionsByFilters(arg1) {
   return window['go']['database']['Database']['CountPositionsByFilters'](arg1);
+}
+
+export function CountPositionsByFiltersCtx(arg1, arg2) {
+  return window['go']['database']['Database']['CountPositionsByFiltersCtx'](arg1, arg2);
 }
 
 export function CountPositionsWithForeignAnalysis() {
@@ -646,6 +654,10 @@ export function IndexOfPositionByFilters(arg1, arg2) {
   return window['go']['database']['Database']['IndexOfPositionByFilters'](arg1, arg2);
 }
 
+export function IndexOfPositionByFiltersCtx(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['IndexOfPositionByFiltersCtx'](arg1, arg2, arg3);
+}
+
 export function IsProtectedCopyPath(arg1) {
   return window['go']['database']['Database']['IsProtectedCopyPath'](arg1);
 }
@@ -732,6 +744,10 @@ export function LoadPositionsByFiltersCore(arg1, arg2) {
 
 export function LoadPositionsByFiltersCoreCtx(arg1, arg2, arg3) {
   return window['go']['database']['Database']['LoadPositionsByFiltersCoreCtx'](arg1, arg2, arg3);
+}
+
+export function LoadPositionsByFiltersCtx(arg1, arg2) {
+  return window['go']['database']['Database']['LoadPositionsByFiltersCtx'](arg1, arg2);
 }
 
 export function LoadPositionsByIDs(arg1) {
@@ -976,6 +992,10 @@ export function SearchComments(arg1) {
 
 export function SearchPositionIDs(arg1, arg2, arg3) {
   return window['go']['database']['Database']['SearchPositionIDs'](arg1, arg2, arg3);
+}
+
+export function SearchPositionIDsCtx(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['SearchPositionIDsCtx'](arg1, arg2, arg3, arg4);
 }
 
 export function SetAnkiCardSuspended(arg1, arg2) {

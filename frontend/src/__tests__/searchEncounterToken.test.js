@@ -18,6 +18,8 @@ const bindings = vi.hoisted(() => ({
     ListPositionIDs: vi.fn(() => Promise.resolve([])),
     LoadPositionsByIDs: vi.fn(() => Promise.resolve([])),
     CountPositionsByFilters: vi.fn(() => Promise.resolve(0)),
+    SearchPositionIDs: vi.fn(() => Promise.resolve([])),
+    CancelSearch: vi.fn(() => Promise.resolve()),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
     LoadComment: vi.fn(() => Promise.resolve('')),
     SaveLastVisitedPosition: vi.fn(() => Promise.resolve()),
@@ -48,8 +50,8 @@ async function searchFromCommandBar(command) {
     processCommand(command);
     expect(pending, `${command} never reached loadPositionsByFilters`).toBeDefined();
     await pending;
-    expect(bindings.CountPositionsByFilters).toHaveBeenCalledTimes(1);
-    return bindings.CountPositionsByFilters.mock.calls[0][0];
+    expect(bindings.SearchPositionIDs).toHaveBeenCalledTimes(1);
+    return bindings.SearchPositionIDs.mock.calls[0][0];
 }
 
 beforeEach(() => {

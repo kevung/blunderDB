@@ -806,6 +806,14 @@ Ce retour ne suit que ``ss`` : ``s``, lancé depuis le panneau de recherche
 ouvert sur une collection ou un match, cherche dans toute la bibliothèque, et
 *Esc* ne ramène plus à la liste quittée.
 
+Une recherche sur une grande base se montre avant d'être comptée : la première
+page de résultats s'affiche aussitôt, et la barre d'état indique « Recherche… »
+avec le temps écoulé tant que le nombre total n'est pas connu ; il remplace
+alors la longueur provisoire de la liste. Une seule recherche court à la
+fois : en lancer une autre abandonne la précédente. *Esc* interrompt la
+recherche en cours et arrête son balayage de la base ; si la première page
+était déjà affichée, elle reste, seule, et la barre d'état le dit.
+
 Le panneau propose un contrôle explicite du **type de décision** recherché :
 *Indifférent* (aucun filtre), *Pions* (décisions de coup) ou *Videau*
 (décisions de cube). Lorsque *Videau* est sélectionné, une seconde liste précise

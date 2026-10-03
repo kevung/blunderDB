@@ -76,3 +76,45 @@ func TestLoadPositionsByFiltersCoreStillWorksWithoutContext(t *testing.T) {
 		t.Fatal("LoadPositionsByFiltersCore: want at least one position from the XG fixture")
 	}
 }
+
+func TestSearchCtxVariantsRespectCancellation(t *testing.T) {
+	t.Parallel()
+	db := newTestDBWithXG(t)
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	f := SearchFilters{Filter: emptyFilter()}
+
+	if _, err := db.SearchPositionIDsCtx(ctx, f, 0, 10); !errors.Is(err, context.Canceled) {
+		t.Errorf("SearchPositionIDsCtx: err = %v, want context.Canceled", err)
+	}
+	if _, err := db.CountPositionsByFiltersCtx(ctx, f); !errors.Is(err, context.Canceled) {
+		t.Errorf("CountPositionsByFiltersCtx: err = %v, want context.Canceled", err)
+	}
+	if _, err := db.IndexOfPositionByFiltersCtx(ctx, f, 1); !errors.Is(err, context.Canceled) {
+		t.Errorf("IndexOfPositionByFiltersCtx: err = %v, want context.Canceled", err)
+	}
+	if _, err := db.LoadPositionsByFiltersCtx(ctx, f); !errors.Is(err, context.Canceled) {
+		t.Errorf("LoadPositionsByFiltersCtx: err = %v, want context.Canceled", err)
+	}
+}
+
+// CancelSearch reaches a search that the wrapper started, and only those in
+// flight: a search begun afterwards runs.
+func TestCancelSearchCancelsRegisteredSearches(t *testing.T) {
+	t.Parallel()
+	db := newTestDBWithXG(t)
+
+	ctx, done := db.beginSearch()
+	db.CancelSearch()
+	if ctx.Err() == nil {
+		t.Fatal("CancelSearch left a registered search running")
+	}
+	done()
+	if len(db.searchCancels) != 0 {
+		t.Errorf("done left %d searches registered", len(db.searchCancels))
+	}
+
+	if _, err := db.CountPositionsByFilters(SearchFilters{Filter: emptyFilter()}); err != nil {
+		t.Errorf("a search begun after CancelSearch failed: %v", err)
+	}
+}

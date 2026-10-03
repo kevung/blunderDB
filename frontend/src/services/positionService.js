@@ -12,7 +12,8 @@ import {
     SaveEditPosition,
     SaveExcludePosition,
     SaveFilter,
-    LoadComment
+    LoadComment,
+    CancelSearch
 } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -30,6 +31,7 @@ import { activeCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { confirmAction } from './confirmService.js';
 import { logger } from '../utils/logger.js';
+import { closeOnEscape } from './escapeService.js';
 import { forgetContextBeforeEval, forgetSubSearchOrigin, noteSubSearchOrigin } from './modeMachine.js';
 // Ctrl-G status line (keyboardService imports it from here).
 export { showDatesAndMetadata } from './metadataStatus.js';
@@ -335,6 +337,40 @@ export async function reloadAllPositions() {
     }
 }
 
+// One search at a time. A search owns the status line, the cursor and Escape until it ends; a new
+// one, or Escape, makes it stale: whatever it still awaits is dropped, and the backend is told to
+// stop scanning for it (CancelSearch, which the Go scan checks chunk by chunk).
+let searchGeneration = 0;
+/** @type {{ generation: number, shown: number, timer: ReturnType<typeof setInterval> | null, unregister: () => void } | null} */
+let activeSearch = null;
+let statusBeforeSearch = null;
+
+function endSearchUI() {
+    if (!activeSearch) return;
+    if (activeSearch.timer) clearInterval(activeSearch.timer);
+    activeSearch.unregister();
+    activeSearch = null;
+    document.body.style.cursor = '';
+}
+
+/** Whether a search is running. */
+export function isSearching() {
+    return activeSearch !== null;
+}
+
+/**
+ * Stop the running search (Escape). What it had already put on screen stays: a result list whose
+ * length was still being counted is then only its first page, which the status line says.
+ */
+export function cancelSearch() {
+    const search = activeSearch;
+    if (!search) return;
+    searchGeneration++;
+    endSearchUI();
+    CancelSearch()?.catch?.(() => {});
+    setStatusBarMessage(tMsg(search.shown > 0 ? 'status.searchPartial' : 'status.searchCancelled', { n: search.shown }));
+}
+
 // One options object, not positional arguments: a wrong index would silently
 // shift every later filter and answer a different question.
 export async function loadPositionsByFilters({
@@ -403,7 +439,27 @@ export async function loadPositionsByFilters({
 
     // Feedback for the query itself, which can take a moment on a large database. Set before
     // the backend call so the user sees it immediately, not after the fact.
-    const previousStatusMessage = get(statusBarTextStore);
+    const replacing = activeSearch !== null;
+    if (replacing) {
+        endSearchUI();
+        // Awaited: the stale scan must be stopped before the new one is asked for.
+        await CancelSearch()?.catch?.(() => {});
+    } else {
+        statusBeforeSearch = get(statusBarTextStore);
+    }
+    const generation = ++searchGeneration;
+    const startedAt = Date.now();
+    const search = {
+        generation,
+        shown: 0,
+        timer: /** @type {ReturnType<typeof setInterval> | null} */ (null),
+        unregister: closeOnEscape(() => cancelSearch())
+    };
+    search.timer = setInterval(() => {
+        setStatusBarMessage(tMsg('status.searchingElapsed', { seconds: Math.round((Date.now() - startedAt) / 1000) }));
+    }, 1000);
+    activeSearch = search;
+    const stale = () => generation !== searchGeneration;
     setStatusBarMessage(tMsg('status.searching'));
     document.body.style.cursor = 'wait';
 
@@ -532,6 +588,9 @@ export async function loadPositionsByFilters({
         // bounded by its limit, a sub-search by the list it searches within.
         let source = null;
         let total = 0;
+        /** @type {number[]} */
+        let firstPage = [];
+        let countPending = false;
         let rankedSummary = null;
         if (likeFilter) {
             let ranked;
@@ -543,10 +602,12 @@ export async function loadPositionsByFilters({
                 if (!payload.likeMaxDistance) payload.likeMaxDistance = ceiling || 0;
                 ranked = (await RankPositionIDsByFilters(payload, limit || 0)) || [];
             } catch (error) {
+                if (stale()) return;
                 logger.error('could not rank the neighbours:', error);
                 setStatusBarMessage(tMsg('similar.failed'));
                 return;
             }
+            if (stale()) return;
             ids = ranked.map((n) => n.id);
             rankedDistancesStore.set(new Map(ranked.map((n) => [n.id, n.distance])));
             rankedTargetStore.set(likeTarget);
@@ -559,11 +620,17 @@ export async function loadPositionsByFilters({
             }
         } else if (restrictToPositionIDs) {
             ids = await LoadPositionIDsByFilters(payload);
+            if (stale()) return;
             rankedDistancesStore.set(new Map());
             rankedTargetStore.set(0);
         } else {
+            // The first window shows at once; the count, a full scan when a filter runs in Go,
+            // arrives after and settles the length (adoptFirstPage, resolveLength).
             source = searchSource(payload);
-            total = await source.count();
+            firstPage = await source.window(0, positionsStore.firstPageSize());
+            if (stale()) return;
+            total = firstPage.length;
+            countPending = total >= positionsStore.firstPageSize();
             rankedDistancesStore.set(new Map());
             rankedTargetStore.set(0);
         }
@@ -588,8 +655,10 @@ export async function loadPositionsByFilters({
             });
             activeCollectionStore.set(null);
 
-            if (source) positionsStore.restoreList({ source, length: total });
-            else positionsStore.setIds(Array.isArray(ids) ? ids : []);
+            if (source) {
+                positionsStore.adoptFirstPage(source, firstPage);
+                search.shown = firstPage.length;
+            } else positionsStore.setIds(Array.isArray(ids) ? ids : []);
             listOriginStore.set(searchOrigin(payload));
 
             if (get(currentPositionIndexStore) === 0) {
@@ -616,6 +685,15 @@ export async function loadPositionsByFilters({
                 // the user was studying is no longer on screen.
                 setStatusBarMessage(tMsg(subSearchOrigin === 'MATCH' ? 'status.subSearchInMatch' : 'status.subSearchInCollection'));
             }
+
+            if (source && countPending) {
+                const found = await source.count();
+                if (stale()) return;
+                positionsStore.resolveLength(source, found);
+                search.shown = 0;
+                const seconds = Math.round((Date.now() - startedAt) / 1000);
+                if (seconds >= 1) setStatusBarMessage(tMsg('status.searchFound', { n: found, seconds }));
+            }
         } else {
             // Un classement vide dit « aucune n'est proche », pas « aucune ne
             // correspond » (ADR-0043).
@@ -625,18 +703,22 @@ export async function loadPositionsByFilters({
             }
         }
     } catch (error) {
+        if (stale()) return;
         logger.error('Error loading positions by filters:', error);
         setStatusBarMessage(tMsg('status.errorLoadingByFilters'));
         if (get(activeTabStore) === 'search') {
             statusBarModeStore.set('EDIT');
         }
     } finally {
-        document.body.style.cursor = '';
-        // Restore the pre-search message unless a no-match or error branch
-        // already replaced the "searching" placeholder.
-        const current = get(statusBarTextStore);
-        if (current && typeof current === 'object' && current.i18nKey === 'status.searching') {
-            statusBarTextStore.set(previousStatusMessage);
+        // A stale search leaves the status line and the cursor to the one that replaced it.
+        if (!stale()) {
+            endSearchUI();
+            // Restore the pre-search message unless a no-match or error branch
+            // already replaced the "searching" placeholder.
+            const current = get(statusBarTextStore);
+            if (current && typeof current === 'object' && String(current.i18nKey).startsWith('status.searching')) {
+                statusBarTextStore.set(statusBeforeSearch);
+            }
         }
     }
 }
