@@ -54,6 +54,9 @@ type indexDecl struct {
 	columns []string // key columns and predicate columns, tenant_id dropped, sorted
 }
 
+// dropIndexRE finds the indexes a migration drops.
+var dropIndexRE = regexp.MustCompile(`(?im)^\s*DROP\s+INDEX\s+(?:IF\s+EXISTS\s+)?(\w+)`)
+
 var createIndexRE = regexp.MustCompile(
 	`CREATE\s+(UNIQUE\s+)?INDEX\s+IF\s+NOT\s+EXISTS\s+(idx_\w+)\s+ON\s+(\w+)\s*\(([^)]*)\)([^;` + "`" + `]*)`)
 
@@ -146,8 +149,15 @@ func TestIndexParityWithSQLite(t *testing.T) {
 		if err != nil {
 			t.Fatalf("read %s: %v", path, err)
 		}
-		for name, decl := range parseIndexes(string(b), "--") {
+		declared := parseIndexes(string(b), "--")
+		for name, decl := range declared {
 			pgIdx[name] = decl
+		}
+		// A migration that drops an index without rebuilding it retires it.
+		for _, m := range dropIndexRE.FindAllStringSubmatch(string(b), -1) {
+			if _, rebuilt := declared[m[1]]; !rebuilt {
+				delete(pgIdx, m[1])
+			}
 		}
 	}
 	if len(pgIdx) == 0 {

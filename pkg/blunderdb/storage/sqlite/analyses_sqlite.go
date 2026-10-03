@@ -25,8 +25,9 @@ const analysisInsertSQL = `INSERT INTO analysis (
 	best_cube_action, cube_error, best_move_equity_error,
 	player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
 	player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
-	is_forced, is_close_cube
-) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?,?)`
+	is_forced, is_close_cube,
+	analysis_engine, analysis_depth, creation_date
+) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?,?, ?,?,?)`
 
 // analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
 // same statement, so concurrent saves cannot insert two rows. The target is
@@ -44,7 +45,10 @@ ON CONFLICT(position_id) DO UPDATE SET
 	player2_gammon_rate=excluded.player2_gammon_rate,
 	player2_backgammon_rate=excluded.player2_backgammon_rate,
 	is_forced=excluded.is_forced,
-	is_close_cube=excluded.is_close_cube`
+	is_close_cube=excluded.is_close_cube,
+	analysis_engine=excluded.analysis_engine,
+	analysis_depth=excluded.analysis_depth,
+	creation_date=excluded.creation_date`
 
 // Save stores (or replaces) the analysis for positionID. The analysis JSON is
 // compressed (zstd, see engine.CompressAnalysisData) and the denormalised scalar columns are derived. Higher-level
@@ -166,7 +170,8 @@ func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.P
 			c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
-			c.IsForced, c.IsCloseCube); err != nil {
+			c.IsForced, c.IsCloseCube,
+			c.AnalysisEngine, c.AnalysisDepth, nullableString(c.CreationDate)); err != nil {
 			return fmt.Errorf("sqlite: save analysis: %w", err)
 		}
 
@@ -245,7 +250,8 @@ func SaveAnalysisUncompressed(ctx context.Context, tx *sql.Tx, positionID int64,
 		c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
 		c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 		c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
-		c.IsForced, c.IsCloseCube); err != nil {
+		c.IsForced, c.IsCloseCube,
+		c.AnalysisEngine, c.AnalysisDepth, nullableString(c.CreationDate)); err != nil {
 		return fmt.Errorf("sqlite: save analysis: %w", err)
 	}
 	return nil

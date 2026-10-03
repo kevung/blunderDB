@@ -29,8 +29,10 @@ const analysisInsertSQL = `INSERT INTO analysis (
 	best_cube_action, cube_error, best_move_equity_error,
 	player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
 	player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
-	is_forced, is_close_cube
-) VALUES ($1,$2,$3, $4,$5,$6, $7,$8,$9, $10,$11,$12, $13,$14)`
+	is_forced, is_close_cube,
+	analysis_engine, analysis_depth, creation_date
+) VALUES ($1,$2,$3, $4,$5,$6, $7,$8,$9, $10,$11,$12, $13,$14,
+	$15,$16,$17::timestamp AT TIME ZONE 'UTC')`
 
 // analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
 // same statement, so concurrent saves cannot insert two rows. The conflict
@@ -54,7 +56,10 @@ ON CONFLICT (position_id) DO UPDATE SET
 	player2_gammon_rate=excluded.player2_gammon_rate,
 	player2_backgammon_rate=excluded.player2_backgammon_rate,
 	is_forced=excluded.is_forced,
-	is_close_cube=excluded.is_close_cube
+	is_close_cube=excluded.is_close_cube,
+	analysis_engine=excluded.analysis_engine,
+	analysis_depth=excluded.analysis_depth,
+	creation_date=excluded.creation_date
 WHERE analysis.tenant_id = excluded.tenant_id`
 
 // Save stores (or replaces) the analysis for positionID. The analysis JSON is
@@ -206,7 +211,8 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 			c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
-			c.IsForced != 0, c.IsCloseCube != 0)
+			c.IsForced != 0, c.IsCloseCube != 0,
+			c.AnalysisEngine, c.AnalysisDepth, nullableString(c.CreationDate))
 		if err != nil {
 			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
 		}

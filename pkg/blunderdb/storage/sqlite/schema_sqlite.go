@@ -75,6 +75,12 @@ var schemaStatements = []string{
 		-- rather than inside a match. Sticky — see ADR-0001.
 		individually_imported INTEGER NOT NULL DEFAULT 0,
 		flagged INTEGER NOT NULL DEFAULT 0,
+		-- Date of the earliest match that reaches this position, in
+		-- the text form match.match_date holds; NULL when no match reaches
+		-- it. Denormalised so a date filter reads one indexed column instead
+		-- of joining move, game and match; the match store keeps it true when
+		-- a move is written, a match date is edited or a match is deleted.
+		match_date DATETIME,
 		CHECK (dice_1 BETWEEN 0 AND 6),
 		CHECK (dice_2 BETWEEN 0 AND 6),
 		-- cube_value is the EXPONENT (0 = cube at 1), never negative.
@@ -100,6 +106,14 @@ var schemaStatements = []string{
 		player2_backgammon_rate     INTEGER,
 		is_forced                   INTEGER NOT NULL DEFAULT 0,
 		is_close_cube               INTEGER NOT NULL DEFAULT 0,
+		-- Provenance of the verdict (engine.AnalysisProvenance): the
+		-- engine label, the depth as domain.AnalysisDepthRank, and the blob's
+		-- CreationDate. NULL analysis_engine means "not derived yet": a row
+		-- written before the column, or by a path that writes the blob alone;
+		-- the open-time pass (database.backfillAnalysisProvenance) fills it.
+		analysis_engine             TEXT,
+		analysis_depth              INTEGER,
+		creation_date               DATETIME,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`,
 	`CREATE TABLE IF NOT EXISTS comment (
@@ -114,6 +128,11 @@ var schemaStatements = []string{
 		-- claiming the user wrote it would make the purge spare positions it
 		-- has always dropped.
 		origin TEXT NOT NULL DEFAULT 'unknown',
+		-- The person behind the comment, free text ('' when unknown), beside
+		-- origin, which only says which program carried it: a coach and a
+		-- student annotating one shared library are two authors of origin
+		-- 'user'. A position may carry several comments.
+		author TEXT NOT NULL DEFAULT '',
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`,
 	`CREATE TABLE IF NOT EXISTS metadata (
@@ -168,6 +187,25 @@ var schemaStatements = []string{
 		-- and each one would otherwise be a schema bump.
 		counts TEXT NOT NULL DEFAULT '{}'
 	)`,
+	// One row per file a batch met: what it was (path, size, mtime,
+	// SHA-256) and what it gave. outcome is new | duplicate | enriched |
+	// error; match_id is the new match, or the match that covers a duplicate;
+	// error holds the message. A resumed batch skips a file already listed
+	// with the same path, size and mtime. Import data, never a reading mark
+	// (ADR-0007).
+	`CREATE TABLE IF NOT EXISTS import_batch_file (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		batch_id INTEGER NOT NULL,
+		path     TEXT    NOT NULL,
+		size     INTEGER NOT NULL DEFAULT 0,
+		mtime    DATETIME,
+		sha256   TEXT    NOT NULL DEFAULT '',
+		outcome  TEXT    NOT NULL DEFAULT '',
+		match_id INTEGER,
+		error    TEXT    NOT NULL DEFAULT '',
+		FOREIGN KEY(batch_id) REFERENCES import_batch(id) ON DELETE CASCADE,
+		FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE SET NULL
+	)`,
 	`CREATE TABLE IF NOT EXISTS match (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		player1_name TEXT,
@@ -191,9 +229,54 @@ var schemaStatements = []string{
 		-- Nicomaque match id ("M12"), empty when the Match fills no Slot. A Match
 		-- fills at most one Slot and a Slot carries at most one Match, which the
 		-- unique index below enforces per tournament.
-		direction_match_id TEXT DEFAULT ''
+		direction_match_id TEXT DEFAULT '',
+		-- Length, initial score and the dice of every game, in order: the
+		-- same match under other player names has the same dice_hash, which
+		-- match_hash and canonical_hash (both over the names) cannot see.
+		-- NULL until computed.
+		dice_hash TEXT,
+		-- What the source file says of the players and the session, NULL or
+		-- '' when it says nothing: XG rating and experience per seat, the
+		-- transcriber, the Jacoby and Beaver rules of a money session, and
+		-- the program version that wrote the analyses.
+		player1_elo REAL,
+		player2_elo REAL,
+		player1_experience INTEGER,
+		player2_experience INTEGER,
+		transcriber TEXT DEFAULT '',
+		has_jacoby INTEGER,
+		has_beaver INTEGER,
+		engine_version TEXT DEFAULT ''
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`,
+	`CREATE INDEX IF NOT EXISTS idx_match_dice_hash ON match(dice_hash) WHERE dice_hash IS NOT NULL`,
+	// The per-match, per-seat tallies the corpus statistics read instead of
+	// re-aggregating move × analysis on every request, with the arithmetic
+	// of sqlshared/stats.go: decisions counted by countedExpr, error_mp the
+	// sum of their statsErrExpr in millipoints, pr = 500 × error_mp / 1000 /
+	// decisions (NULL without a decision), blunders at the library's
+	// threshold (a threshold change recomputes the table), luck_mp the sum of
+	// move.luck_mp over the luck_rolls rolls that carry one. analysis_engine
+	// and analysis_depth are the provenance most of the seat's decisions
+	// carry. A derived table: always recomputable from the moves, and it
+	// holds no position.
+	`CREATE TABLE IF NOT EXISTS match_stats (
+		match_id INTEGER NOT NULL REFERENCES match(id) ON DELETE CASCADE,
+		seat INTEGER NOT NULL CHECK (seat IN (1, 2)),
+		decisions INTEGER NOT NULL DEFAULT 0,
+		checker_decisions INTEGER NOT NULL DEFAULT 0,
+		cube_decisions INTEGER NOT NULL DEFAULT 0,
+		error_mp INTEGER NOT NULL DEFAULT 0,
+		pr REAL,
+		luck_mp INTEGER NOT NULL DEFAULT 0,
+		luck_rolls INTEGER NOT NULL DEFAULT 0,
+		blunders INTEGER NOT NULL DEFAULT 0,
+		analysis_engine TEXT,
+		analysis_depth INTEGER,
+		computed_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+		PRIMARY KEY (match_id, seat)
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_match_stats_pr ON match_stats(pr) WHERE pr IS NOT NULL`,
 	`CREATE TABLE IF NOT EXISTS game (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		match_id INTEGER,
@@ -329,10 +412,19 @@ var schemaStatements = []string{
 		wrong INTEGER NOT NULL DEFAULT 0,
 		has_deviation INTEGER NOT NULL DEFAULT 0,
 		deviation REAL NOT NULL DEFAULT 0,
+		-- The position a decision question was asked on, the answer given
+		-- (the move or cube action as the quiz renders it) and its cost in
+		-- millipoints; NULL, '' and NULL for the number exercises. SET NULL,
+		-- not a hold: a quiz answer does not keep a position its match no
+		-- longer reaches (positionIsHeldSQL is unchanged).
+		position_id INTEGER REFERENCES position(id) ON DELETE SET NULL,
+		answer TEXT NOT NULL DEFAULT '',
+		error_mp INTEGER,
 		FOREIGN KEY(session_id) REFERENCES training_session(id) ON DELETE CASCADE
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_training_item_session ON training_item(session_id)`,
 	`CREATE INDEX IF NOT EXISTS idx_training_item_type ON training_item(number_type)`,
+	`CREATE INDEX IF NOT EXISTS idx_training_item_position ON training_item(position_id) WHERE position_id IS NOT NULL`,
 	// A Rencontre is the room several directed Tournaments share (ADR-0056):
 	// its tables, and the output folder of its wall page. What happens in the
 	// room — a table out of service, a break — is not stored here: it is an
@@ -382,6 +474,21 @@ var schemaStatements = []string{
 	)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_table_setting_rencontre ON table_setting(rencontre_id, number) WHERE rencontre_id IS NOT NULL`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_table_setting_tournament ON table_setting(tournament_id, number) WHERE tournament_id IS NOT NULL`,
+	// Other spellings of one player or one event: alias → the
+	// canonical name the import, the stats and the search read instead.
+	// Names, not ids: a match stores its players and its event as text.
+	`CREATE TABLE IF NOT EXISTS player_alias (
+		alias      TEXT PRIMARY KEY,
+		canonical  TEXT NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_player_alias_canonical ON player_alias(canonical)`,
+	`CREATE TABLE IF NOT EXISTS event_alias (
+		alias      TEXT PRIMARY KEY,
+		canonical  TEXT NOT NULL,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_event_alias_canonical ON event_alias(canonical)`,
 	// A Lesson (ADR-0066): an ordered sequence of Steps, each a text that may
 	// show a Collection, a Position, both or neither. A deleted Collection or
 	// Position leaves the Step and its text; deleting the Lesson takes its
@@ -533,9 +640,11 @@ var schemaStatements = []string{
 	`CREATE INDEX IF NOT EXISTS idx_anki_review_log_card ON anki_review_log(card_id, reviewed_at)`,
 	`CREATE INDEX IF NOT EXISTS idx_anki_review_log_deck ON anki_review_log(deck_id, reviewed_at)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist        ON position(zobrist_hash)`,
-	`CREATE        INDEX IF NOT EXISTS idx_position_decision_pip   ON position(decision_type, pip_diff)`,
-	`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice  ON position(decision_type, dice_1, dice_2)`,
-	`CREATE        INDEX IF NOT EXISTS idx_position_cube_response  ON position(decision_type, is_cube_response)`,
+	// No index leads with decision_type: it splits the library in
+	// two, and a filter on it ran slower through such an index than through
+	// the table (tasks/search-query-plans.txt). Only the take/pass side of
+	// is_cube_response is selective.
+	`CREATE        INDEX IF NOT EXISTS idx_position_cube_take      ON position(is_cube_response) WHERE is_cube_response = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_individual     ON position(individually_imported) WHERE individually_imported = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_flagged        ON position(flagged) WHERE flagged = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
@@ -566,11 +675,21 @@ var schemaStatements = []string{
 	`CREATE        INDEX IF NOT EXISTS idx_position_back_checkers_2 ON position(back_checkers_2)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_pip_1          ON position(pip_1)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_no_contact     ON position(no_contact) WHERE no_contact = 1`,
-	`CREATE        INDEX IF NOT EXISTS idx_position_game_phase     ON position(game_phase)`,
+	// game_phase leads, so a phase filter alone still reads it; off_1 follows
+	// because the race filter is the one combined with a bear-off count, and
+	// without it the planner sorted every off_1 candidate for a first page.
+	`CREATE        INDEX IF NOT EXISTS idx_position_phase_off      ON position(game_phase, off_1)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_game_type      ON position(game_type)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon1    ON analysis(player1_backgammon_rate)`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_win2           ON analysis(player2_win_rate)`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_gammon2        ON analysis(player2_gammon_rate)`,
+	// The player-2 twin of idx_analysis_win_gammon_covering, for the same
+	// IN-subquery (sqlshared/search.go).
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon2_covering ON analysis(player2_win_rate, player2_gammon_rate, position_id)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_engine         ON analysis(analysis_engine)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_depth          ON analysis(analysis_depth)`,
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_creation_date  ON analysis(creation_date)`,
+	`CREATE        INDEX IF NOT EXISTS idx_position_match_date     ON position(match_date)`,
+	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_batch ON import_batch_file(batch_id)`,
+	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_path  ON import_batch_file(path, size, mtime)`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_backgammon2    ON analysis(player2_backgammon_rate)`,
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical         ON match(canonical_hash)`,
 	`CREATE        INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,

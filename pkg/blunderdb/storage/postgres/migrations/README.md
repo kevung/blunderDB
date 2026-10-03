@@ -206,3 +206,18 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   (composite tenant keys; a Step's collection and position are set to NULL
   when they are deleted, the Steps cascade with their Lesson). Schema-visible:
   bumped `domain.DatabaseVersion` to 2.29.0.
+- `032_large_library_wave.sql` — the large-library wave: `analysis`
+  provenance columns (`analysis_engine`, `analysis_depth`, `creation_date`),
+  derived in Go after the forward chain by `backfillAnalysisProvenance`
+  (`provenance_postgres.go`, the blob is compressed JSON) and resumable on
+  their NULLs; `position.match_date`, the earliest match reaching the
+  position, backfilled set-based here and kept by the match store;
+  `import_batch_file` (the per-file import journal), `player_alias` and
+  `event_alias`; `match.dice_hash` and the source metadata of a match
+  (ratings, experience, transcriber, Jacoby/Beaver, engine version); the
+  `match_stats` table (per-match, per-seat tallies, empty until the stats
+  store fills it); `training_item.position_id`/`answer`/`error_mp` and
+  `comment.author`; and the index pruning decided on a 15.6 M-position
+  library (`tasks/search-query-plans.txt`), `(game_phase, off_1)` replacing
+  the phase index. Schema-visible: bumped
+  `domain.DatabaseVersion` to 2.30.0.

@@ -321,6 +321,41 @@ type AnalysisColumns struct {
 	Player2WinRate        int64
 	Player2GammonRate     int64
 	Player2BackgammonRate int64
+	// Provenance of the verdict the columns above come from (AnalysisProvenance).
+	AnalysisEngine string
+	AnalysisDepth  int64
+	CreationDate   string
+}
+
+// AnalysisProvenance names who rendered an analysis's verdict and how deep:
+// the engine label and the domain.AnalysisDepthRank of the entry the scalar
+// columns are read from — the cube analysis when there is one, else the best
+// checker move, on the ColumnSource view so a rollout-only analysis answers
+// for its rollout. An analysis with no entry answers ("", -1). creation is the
+// blob's CreationDate in UTC as "2006-01-02 15:04:05", "" when unset.
+//
+// One entry and not a summary of all of them: the depth filter and the
+// provenance filter of the stats ask who gave the verdict, and an XG analysis
+// carries a different depth on each candidate move. A caller that needs every
+// entry (gammonnet.IsStaleAnalysis) narrows with the columns and confirms on
+// the decoded blob.
+func AnalysisProvenance(a *domain.PositionAnalysis) (engineLabel string, depth int64, creation string) {
+	if a == nil {
+		return "", -1, ""
+	}
+	if !a.CreationDate.IsZero() {
+		creation = a.CreationDate.UTC().Format(time.DateTime)
+	}
+	src := a.ColumnSource()
+	switch {
+	case src.DoublingCubeAnalysis != nil:
+		d := src.DoublingCubeAnalysis
+		return d.AnalysisEngine, int64(domain.AnalysisDepthRank(d.AnalysisDepth)), creation
+	case src.CheckerAnalysis != nil && len(src.CheckerAnalysis.Moves) > 0:
+		m := src.CheckerAnalysis.Moves[0]
+		return m.AnalysisEngine, int64(domain.AnalysisDepthRank(m.AnalysisDepth)), creation
+	}
+	return "", -1, creation
 }
 
 // closeCubeThreshold is the gnuBG isCloseCubedecision equity gap threshold.
@@ -503,6 +538,7 @@ func PopulateAnalysisColumns(a *domain.PositionAnalysis, playedMove, playedCubeA
 	if a == nil {
 		return c
 	}
+	c.AnalysisEngine, c.AnalysisDepth, c.CreationDate = AnalysisProvenance(a)
 	a = a.ColumnSource()
 
 	if dca := a.DoublingCubeAnalysis; dca != nil {

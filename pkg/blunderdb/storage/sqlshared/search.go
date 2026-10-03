@@ -250,10 +250,21 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		}
 		bMin, bMax, bHasMin, bHasMax := searchfilter.ParseFloatFilterExpr(f.BackgammonRateFilter, "b")
 		searchfilter.AppendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, &where, &args)
+		// The player-2 rates take the same IN-subquery, answered from
+		// idx_analysis_win_gammon2_covering: through the LEFT JOIN the scan
+		// went by rate order, then looked up and sorted every candidate.
+		var winGammon2Where strings.Builder
+		var winGammon2Args []any
 		WMin, WMax, WHasMin, WHasMax := searchfilter.ParseFloatFilterExpr(f.Player2WinRateFilter, "W")
-		searchfilter.AppendIntRangeSQL("a.player2_win_rate", int(math.Round(WMin*100)), int(math.Round(WMax*100)), WHasMin, WHasMax, &where, &args)
+		searchfilter.AppendIntRangeSQL("player2_win_rate", int(math.Round(WMin*100)), int(math.Round(WMax*100)), WHasMin, WHasMax, &winGammon2Where, &winGammon2Args)
 		GMin, GMax, GHasMin, GHasMax := searchfilter.ParseFloatFilterExpr(f.Player2GammonRateFilter, "G")
-		searchfilter.AppendIntRangeSQL("a.player2_gammon_rate", int(math.Round(GMin*100)), int(math.Round(GMax*100)), GHasMin, GHasMax, &where, &args)
+		searchfilter.AppendIntRangeSQL("player2_gammon_rate", int(math.Round(GMin*100)), int(math.Round(GMax*100)), GHasMin, GHasMax, &winGammon2Where, &winGammon2Args)
+		if winGammon2Where.Len() > 0 {
+			aTenant, aArgs := s.DB.TenantFilter("", scope)
+			where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE " + aTenant + winGammon2Where.String() + ")")
+			args = append(args, aArgs...)
+			args = append(args, winGammon2Args...)
+		}
 		BMin, BMax, BHasMin, BHasMax := searchfilter.ParseFloatFilterExpr(f.Player2BackgammonRateFilter, "B")
 		searchfilter.AppendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, &where, &args)
 

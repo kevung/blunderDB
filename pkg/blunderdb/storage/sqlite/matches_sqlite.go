@@ -289,12 +289,28 @@ func (s *matchStore) Update(ctx context.Context, scope string, id int64, player1
 		}
 		dateVal = t
 	}
-	if _, err := s.db.ExecContext(ctx,
-		`UPDATE match SET player1_name = ?, player2_name = ?, match_date = ? WHERE id = ?`,
-		player1Name, player2Name, dateVal, id); err != nil {
+	err := withTx(ctx, s.db, func(tx execer) error {
+		if _, err := tx.ExecContext(ctx,
+			`UPDATE match SET player1_name = ?, player2_name = ?, match_date = ? WHERE id = ?`,
+			player1Name, player2Name, dateVal, id); err != nil {
+			return err
+		}
+		return refreshMatchPositionDates(ctx, tx, id)
+	})
+	if err != nil {
 		return fmt.Errorf("sqlite: update match %d: %w", id, err)
 	}
 	return nil
+}
+
+// refreshMatchPositionDates re-dates every position matchID reaches, after
+// an edit of its date.
+func refreshMatchPositionDates(ctx context.Context, tx execer, matchID int64) error {
+	ids, err := queryInt64s(ctx, tx, matchPositionIDsSQL, matchID)
+	if err != nil {
+		return err
+	}
+	return RefreshPositionMatchDates(ctx, tx, ids)
 }
 
 // ReplaceHeader rewrites a match's header columns in place — see
@@ -320,6 +336,9 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 		return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
 	} else if n == 0 {
 		return fmt.Errorf("sqlite: replace match %d header: %w", id, storage.ErrNotFound)
+	}
+	if err := refreshMatchPositionDates(ctx, s.db, id); err != nil {
+		return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
 	}
 	return nil
 }
@@ -399,7 +418,7 @@ func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) 
 		if err := deleteOrphanedPositions(ctx, tx, positionIDs); err != nil {
 			return err
 		}
-		return nil
+		return RefreshPositionMatchDates(ctx, tx, positionIDs)
 	})
 	if err != nil {
 		return fmt.Errorf("sqlite: delete match %d: %w", id, err)
@@ -427,7 +446,7 @@ func (s *matchStore) DeleteGames(ctx context.Context, scope string, matchID int6
 		if _, err := tx.ExecContext(ctx, `DELETE FROM game WHERE match_id = ?`, matchID); err != nil {
 			return err
 		}
-		return nil
+		return RefreshPositionMatchDates(ctx, tx, ids)
 	})
 	if err != nil {
 		return nil, fmt.Errorf("sqlite: delete games of match %d: %w", matchID, err)
@@ -736,8 +755,60 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 		return 0, fmt.Errorf("sqlite: create move id: %w", err)
 	}
 	mv.ID = id
+	if positionID != nil {
+		if _, err := s.db.ExecContext(ctx, positionMatchDateOnMoveSQL, mv.GameID, positionID); err != nil {
+			return 0, fmt.Errorf("sqlite: date position of move: %w", err)
+		}
+	}
 	return id, nil
 }
+
+// positionMatchDateOnMoveSQL lowers position.match_date to the date of the
+// match a new move ties the position to. It compares with the stored value
+// rather than taking the MIN over the position's moves: an opening position
+// is reached by thousands of moves, and an import would pay that scan on
+// every one of them.
+const positionMatchDateOnMoveSQL = `UPDATE position SET match_date = d.md
+	FROM (SELECT m.match_date AS md FROM game g JOIN match m ON m.id = g.match_id WHERE g.id = ?) AS d
+	WHERE position.id = ? AND d.md IS NOT NULL
+	  AND (position.match_date IS NULL OR position.match_date > d.md)`
+
+// positionMatchDateRefreshSQL recomputes position.match_date from every match
+// that still reaches the position: the slow, exact form, for the rare edits
+// that can raise the date (a match deleted, its date changed, its games
+// replaced). Takes the IN list of ids.
+const positionMatchDateRefreshSQL = `UPDATE position SET match_date =
+	(SELECT MIN(m.match_date) FROM move mv
+	   JOIN game g ON g.id = mv.game_id
+	   JOIN match m ON m.id = g.match_id
+	  WHERE mv.position_id = position.id)
+	WHERE id IN `
+
+// RefreshPositionMatchDates recomputes position.match_date for ids, in
+// batches; see positionMatchDateRefreshSQL. Exported for the Database
+// wrapper, whose match edits run their own SQL.
+func RefreshPositionMatchDates(ctx context.Context, db interface {
+	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
+}, ids []int64) error {
+	const batch = 500
+	for start := 0; start < len(ids); start += batch {
+		chunk := ids[start:min(start+batch, len(ids))]
+		args := make([]any, len(chunk))
+		for i, id := range chunk {
+			args[i] = id
+		}
+		q := positionMatchDateRefreshSQL + "(" + strings.TrimSuffix(strings.Repeat("?,", len(chunk)), ",") + ")"
+		if _, err := db.ExecContext(ctx, q, args...); err != nil {
+			return fmt.Errorf("refresh position match dates: %w", err)
+		}
+	}
+	return nil
+}
+
+// matchPositionIDsSQL lists the positions a match's moves reach.
+const matchPositionIDsSQL = `SELECT DISTINCT mv.position_id
+	FROM move mv INNER JOIN game g ON mv.game_id = g.id
+	WHERE g.match_id = ? AND mv.position_id IS NOT NULL`
 
 // Moves streams the moves of a game ordered by move number.
 func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error] {

@@ -1122,7 +1122,7 @@ func TestMigrate_1_9_0_to_2_0_0(t *testing.T) {
 	}
 
 	// Check that key indexes exist
-	for _, idx := range []string{"idx_position_zobrist", "idx_position_decision_pip", "idx_analysis_position"} {
+	for _, idx := range []string{"idx_position_zobrist", "idx_position_pip_diff", "idx_analysis_position"} {
 		var name string
 		if err := d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='index' AND name=?`, idx).Scan(&name); err != nil {
 			t.Fatal(err)
@@ -3336,5 +3336,184 @@ func TestMigrate_2_28_0_to_2_29_0_Lessons(t *testing.T) {
 	l, err := ls.Get(ctx, "", id)
 	if err != nil || len(l.Steps) != 1 || l.Steps[0].CollectionID != collID {
 		t.Fatalf("lesson read back = %+v, %v", l, err)
+	}
+}
+
+// TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave rolls a real library back to
+// its 2.29.0 shape — the derived columns gone, the pruned indexes back — and
+// checks that the open crossing 2.30.0 drops the indexes, creates the new
+// tables, and derives match_date and the analysis provenance exactly as the
+// write path would.
+func TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2290.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "test.xg")); err != nil {
+		t.Fatalf("ImportXGMatch: %v", err)
+	}
+	// What the write path stored: the reference the backfill must reproduce.
+	wantEngine := map[int64]string{}
+	wantDepth := map[int64]int64{}
+	func() {
+		rows, err := d.db.Query(`SELECT id, analysis_engine, analysis_depth FROM analysis`)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var id, depth int64
+			var eng string
+			if err := rows.Scan(&id, &eng, &depth); err != nil {
+				t.Fatal(err)
+			}
+			wantEngine[id], wantDepth[id] = eng, depth
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
+	}()
+	if len(wantEngine) == 0 {
+		t.Fatal("the fixture stored no analysis")
+	}
+	var withDate int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position WHERE match_date IS NOT NULL`).Scan(&withDate); err != nil || withDate == 0 {
+		t.Fatalf("positions dated by the import = %d, %v; want some", withDate, err)
+	}
+	for _, stmt := range []string{
+		`DROP INDEX idx_analysis_engine`, `DROP INDEX idx_analysis_depth`,
+		`DROP INDEX idx_analysis_creation_date`, `DROP INDEX idx_position_match_date`,
+		`ALTER TABLE analysis DROP COLUMN analysis_engine`,
+		`ALTER TABLE analysis DROP COLUMN analysis_depth`,
+		`ALTER TABLE analysis DROP COLUMN creation_date`,
+		`ALTER TABLE position DROP COLUMN match_date`,
+		`DROP TABLE import_batch_file`, `DROP TABLE player_alias`, `DROP TABLE event_alias`,
+		`DROP TABLE match_stats`,
+		`DROP INDEX idx_match_dice_hash`, `DROP INDEX idx_training_item_position`,
+		`ALTER TABLE match DROP COLUMN dice_hash`,
+		`ALTER TABLE match DROP COLUMN player1_elo`, `ALTER TABLE match DROP COLUMN player2_elo`,
+		`ALTER TABLE match DROP COLUMN player1_experience`, `ALTER TABLE match DROP COLUMN player2_experience`,
+		`ALTER TABLE match DROP COLUMN transcriber`, `ALTER TABLE match DROP COLUMN has_jacoby`,
+		`ALTER TABLE match DROP COLUMN has_beaver`, `ALTER TABLE match DROP COLUMN engine_version`,
+		`ALTER TABLE training_item DROP COLUMN position_id`,
+		`ALTER TABLE training_item DROP COLUMN answer`, `ALTER TABLE training_item DROP COLUMN error_mp`,
+		`ALTER TABLE comment DROP COLUMN author`,
+		`CREATE INDEX idx_position_decision_dice ON position(decision_type, dice_1, dice_2)`,
+		`CREATE INDEX idx_analysis_win2 ON analysis(player2_win_rate)`,
+		`CREATE INDEX idx_position_game_phase ON position(game_phase)`,
+		`DROP INDEX idx_position_phase_off`,
+		// Statistics of the 2.29.0 library: present, so ensureSearchStats
+		// would keep them, and silent on the indexes the step creates.
+		`ANALYZE`,
+		`UPDATE metadata SET value = '2.29.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.29.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	for _, name := range []string{"idx_position_decision_dice", "idx_analysis_win2", "idx_position_game_phase"} {
+		var n int
+		_ = d.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND name=?`, name).Scan(&n)
+		if n != 0 {
+			t.Errorf("index %s survived the migration", name)
+		}
+	}
+	for _, table := range []string{"import_batch_file", "player_alias", "event_alias", "match_stats"} {
+		if !tableExists(d.db, table) {
+			t.Errorf("table %s missing after migration", table)
+		}
+	}
+	for table, cols := range map[string][]string{
+		"match": {"dice_hash", "player1_elo", "player2_elo", "player1_experience", "player2_experience",
+			"transcriber", "has_jacoby", "has_beaver", "engine_version"},
+		"training_item": {"position_id", "answer", "error_mp"},
+		"comment":       {"author"},
+	} {
+		for _, c := range cols {
+			if !columnExists(t, d.db, table, c) {
+				t.Errorf("column %s.%s missing after migration", table, c)
+			}
+		}
+	}
+	for _, name := range []string{"idx_match_dice_hash", "idx_training_item_position", "idx_match_stats_pr", "idx_position_phase_off"} {
+		var n int
+		_ = d.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type='index' AND name=?`, name).Scan(&n)
+		if n != 1 {
+			t.Errorf("index %s missing after migration", name)
+		}
+	}
+	var pending int
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = ?`, matchDateBackfillKey).Scan(&pending)
+	if pending != 0 {
+		t.Error("the match_date backfill key outlived the pass")
+	}
+	var matchDateStat string
+	if err := d.db.QueryRow(`SELECT stat FROM sqlite_stat1 WHERE idx = 'idx_position_match_date'`).Scan(&matchDateStat); err != nil {
+		t.Errorf("planner statistics not refreshed by the migration: idx_position_match_date has no sqlite_stat1 row (%v)", err)
+	}
+	var redated int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position WHERE match_date IS NOT NULL`).Scan(&redated); err != nil || redated != withDate {
+		t.Errorf("positions dated after migration = %d, %v; want %d", redated, err, withDate)
+	}
+	var wrongDate int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position WHERE match_date IS NOT
+		(SELECT MIN(m.match_date) FROM move mv JOIN game g ON g.id = mv.game_id JOIN match m ON m.id = g.match_id
+		  WHERE mv.position_id = position.id)`).Scan(&wrongDate); err != nil || wrongDate != 0 {
+		t.Errorf("positions whose match_date is not their earliest match's = %d, %v", wrongDate, err)
+	}
+	rows, err := d.db.Query(`SELECT id, analysis_engine, analysis_depth FROM analysis`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		var eng sql.NullString
+		var depth sql.NullInt64
+		if err := rows.Scan(&id, &eng, &depth); err != nil {
+			t.Fatal(err)
+		}
+		if !eng.Valid || eng.String != wantEngine[id] || depth.Int64 != wantDepth[id] {
+			t.Errorf("analysis %d: provenance after backfill = (%v, %v), want (%q, %d)", id, eng, depth, wantEngine[id], wantDepth[id])
+		}
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+	// A deleted position leaves the quiz answer, without its position.
+	if _, err := d.db.Exec(`INSERT INTO training_session (exercise) VALUES ('decision')`); err != nil {
+		t.Fatal(err)
+	}
+	var posID int64
+	if err := d.db.QueryRow(`SELECT id FROM position ORDER BY id LIMIT 1`).Scan(&posID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.db.Exec(`INSERT INTO training_item (session_id, number_type, position_id, answer, error_mp)
+		VALUES ((SELECT MAX(id) FROM training_session), 'decision', ?, '13/7 8/7', 120)`, posID); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.db.Exec(`PRAGMA foreign_keys = ON`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.db.Exec(`DELETE FROM position WHERE id = ?`, posID); err != nil {
+		t.Fatal(err)
+	}
+	var kept sql.NullInt64
+	if err := d.db.QueryRow(`SELECT position_id FROM training_item WHERE answer = '13/7 8/7'`).Scan(&kept); err != nil || kept.Valid {
+		t.Errorf("training_item after its position was deleted: position_id = %v, %v; want the row with NULL", kept, err)
 	}
 }

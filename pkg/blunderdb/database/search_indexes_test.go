@@ -16,8 +16,7 @@ func TestSearchFilterIndexesExist(t *testing.T) {
 		"idx_position_pip_1",
 		"idx_position_no_contact",
 		"idx_analysis_backgammon1",
-		"idx_analysis_win2",
-		"idx_analysis_gammon2",
+		"idx_analysis_win_gammon2_covering",
 		"idx_analysis_backgammon2",
 	}
 	for _, idx := range want {

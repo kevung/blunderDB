@@ -78,6 +78,7 @@ var migrationSteps = []migrationStep{
 	{"2.26.0", "2.27.0", (*Database).migrate_2_26_0_to_2_27_0},
 	{"2.27.0", "2.28.0", (*Database).migrate_2_27_0_to_2_28_0},
 	{"2.28.0", "2.29.0", (*Database).migrate_2_28_0_to_2_29_0},
+	{"2.29.0", "2.30.0", (*Database).migrate_2_29_0_to_2_30_0},
 }
 
 // findMigrationStep returns the registered step that starts from the given
@@ -184,6 +185,23 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 		}
 		if err := d.ensureAllTablesExist(); err != nil {
 			return err
+		}
+	}
+
+	// The 2.30.0 derived columns, after ensureAllTablesExist created them.
+	// Both passes resume where an interrupted open left them, and cost one
+	// probe when there is nothing to do; the statistics are refreshed once
+	// both have run (finishLargeLibraryWave).
+	crossing230, err := d.backfillPositionMatchDates(ctx)
+	if err != nil {
+		return fmt.Errorf("dating the stored positions by their match: %w", err)
+	}
+	if err := d.backfillAnalysisProvenance(ctx); err != nil {
+		return fmt.Errorf("deriving the provenance of the stored analyses: %w", err)
+	}
+	if crossing230 {
+		if err := d.finishLargeLibraryWave(ctx); err != nil {
+			return fmt.Errorf("refreshing the planner statistics: %w", err)
 		}
 	}
 
