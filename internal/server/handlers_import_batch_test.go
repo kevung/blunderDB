@@ -291,3 +291,35 @@ func TestImportBatch_CancelBeforeStart(t *testing.T) {
 		t.Fatal("the job's context is not cancelled")
 	}
 }
+
+func TestImportBatch_ResumeSkipsJournaledFiles(t *testing.T) {
+	dir := batchDir(t)
+	ts, srv, st := batchServer(t, filepath.Dir(dir))
+
+	_, out := postBatch(t, ts, "", importBatchPathReq{Path: filepath.Base(dir)})
+	first := waitBatch(t, srv, out.ImportID)
+	if first.State != batchStateDone || first.BatchID == 0 {
+		t.Fatalf("first run = %+v", first)
+	}
+	journal, err := st.ImportBatches().Files(context.Background(), testTenant, first.BatchID)
+	if err != nil || len(journal) != 2 {
+		t.Fatalf("journal = %+v, err %v", journal, err)
+	}
+
+	resp, out := postBatch(t, ts, "", importBatchPathReq{Path: filepath.Base(dir), Resume: first.BatchID})
+	if resp.StatusCode != http.StatusOK || out.Files != 0 {
+		t.Fatalf("resume = %d %+v, want 200 with nothing left", resp.StatusCode, out)
+	}
+	second := waitBatch(t, srv, out.ImportID)
+	if second.State != batchStateDone || second.BatchID != first.BatchID {
+		t.Fatalf("resumed run = %+v", second)
+	}
+	if got := len(canonicalHashes(t, st)); got != 2 {
+		t.Errorf("%d matches after resuming, want 2", got)
+	}
+
+	resp, _ = postBatch(t, ts, "", importBatchPathReq{Path: filepath.Base(dir), Resume: first.BatchID + 99})
+	if resp.StatusCode != http.StatusNotFound {
+		t.Errorf("resuming an unknown batch = %d, want 404", resp.StatusCode)
+	}
+}

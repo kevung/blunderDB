@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -188,6 +189,9 @@ type importBatchPathReq struct {
 	// or relative to it.
 	Path      string `json:"path"`
 	Recursive *bool  `json:"recursive,omitempty"`
+	// Resume names an earlier batch (its batchId) to continue: the files its
+	// journal already decided are skipped.
+	Resume int64 `json:"resume,omitempty"`
 }
 
 type importBatchResp struct {
@@ -257,6 +261,7 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 		paths         []string
 		label         string
 		reserved      int64
+		resume        int64
 	)
 	release := func() {
 		if reserved > 0 {
@@ -317,6 +322,12 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		label = filepath.Base(header.Filename)
+		if v := r.FormValue("resume"); v != "" {
+			if resume, err = strconv.ParseInt(v, 10, 64); err != nil || resume <= 0 {
+				writeErrorCode(w, CodeInvalid, "resume must be a batch id")
+				return
+			}
+		}
 	} else {
 		var req importBatchPathReq
 		if err := decodeJSON(r, &req); err != nil {
@@ -328,7 +339,7 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 			writeStorageError(w, err)
 			return
 		}
-		root = dir
+		root, resume = dir, req.Resume
 		label = filepath.Base(dir)
 		recursive := req.Recursive == nil || *req.Recursive
 		files, err := ingest.CollectFiles(root, recursive)
@@ -348,6 +359,16 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 	if len(paths) == 0 {
 		writeErrorCode(w, CodeInvalid, "no match file found ("+strings.Join(ingest.ImportableExtensions(), ", ")+")")
 		return
+	}
+
+	var journal *ingest.Journal
+	if resume != 0 {
+		var err error
+		if journal, err = ingest.LoadJournal(r.Context(), s.opts.Storage.ImportBatches(), scope, resume); err != nil {
+			writeStorageError(w, err)
+			return
+		}
+		paths, _ = journal.Pending(paths)
 	}
 
 	var size int64
@@ -370,7 +391,7 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 		defer s.imports.finish(job.id)
 		defer s.quota.endImport(scope)
 		defer release()
-		s.runBatch(ctx, job, root, paths, label)
+		s.runBatch(ctx, job, root, paths, label, resume, journal)
 	}()
 
 	writeBatchAccepted(w, job)
@@ -398,7 +419,7 @@ func copyToFile(path string, r io.Reader) error {
 // runBatch is the job's goroutine: it feeds the paths to the pipeline, keeps
 // the job's progress and error list current, and closes the import batch with
 // the counts of what was written.
-func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths []string, label string) {
+func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths []string, label string, resume int64, journal *ingest.Journal) {
 	job.mu.Lock()
 	total := job.progress.BytesTotal
 	job.mu.Unlock()
@@ -409,8 +430,20 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 	})
 	scope := job.scope
 	batches := s.opts.Storage.ImportBatches()
-	batchID, err := batches.Begin(ctx, scope, label, "batch")
-	if err != nil {
+	var (
+		batchID int64
+		counts  domain.ImportReport
+		err     error
+	)
+	if journal != nil {
+		// A resumed batch goes on from its stored counts; the files that
+		// failed before are tried again and counted again if they fail again.
+		batchID = resume
+		if b, lerr := batches.Load(ctx, scope, resume); lerr == nil {
+			counts = b.Report
+			counts.FilesFailed, counts.Failures = 0, nil
+		}
+	} else if batchID, err = batches.Begin(ctx, scope, label, "batch"); err != nil {
 		slog.Warn("import batch: opening the batch failed", "err", err)
 		batchID = 0
 	}
@@ -418,12 +451,12 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 	job.batchID = batchID
 	job.mu.Unlock()
 
-	var counts domain.ImportReport
-	_, err = ingest.ImportFiles(ctx, s.opts.Storage, paths, ingest.PipelineOptions{
+	popts := ingest.PipelineOptions{
 		Scope:         scope,
 		ImportBatchID: batchID,
 		OnRead:        meter.Read,
 		OnCommit: func(group []ingest.FileOutcome) {
+			ingest.RecordOutcomes(context.Background(), batches, scope, batchID, group)
 			for _, o := range group {
 				meter.File(o)
 				switch o.Status {
@@ -457,7 +490,11 @@ func (s *Server) runBatch(ctx context.Context, job *batchJob, root string, paths
 				}
 			}
 		},
-	})
+	}
+	if journal != nil {
+		popts.Known = journal.Known
+	}
+	_, err = ingest.ImportFiles(ctx, s.opts.Storage, paths, popts)
 	final := meter.Finish()
 	job.mu.Lock()
 	job.progress = final

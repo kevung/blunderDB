@@ -678,6 +678,10 @@ export function ImportOGXMMatch(arg1) {
   return window['go']['database']['Database']['ImportOGXMMatch'](arg1);
 }
 
+export function ImportJournal(arg1) {
+  return window['go']['database']['Database']['ImportJournal'](arg1);
+}
+
 export function ImportReport(arg1) {
   return window['go']['database']['Database']['ImportReport'](arg1);
 }
@@ -732,6 +736,14 @@ export function ListCollectionPositionIDs(arg1, arg2, arg3) {
 
 export function ListDirections() {
   return window['go']['database']['Database']['ListDirections']();
+}
+
+export function PendingImportFiles(arg1) {
+  return window['go']['database']['Database']['PendingImportFiles'](arg1);
+}
+
+export function ResumeImportBatch(arg1) {
+  return window['go']['database']['Database']['ResumeImportBatch'](arg1);
 }
 
 export function ListImportBatches(arg1, arg2) {

@@ -1744,6 +1744,30 @@ export namespace domain {
 	        this.isCube = source["isCube"];
 	    }
 	}
+	export class ImportFileEntry {
+	    path: string;
+	    size: number;
+	    mtime?: string;
+	    sha256?: string;
+	    outcome: string;
+	    matchId?: number;
+	    error?: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ImportFileEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.path = source["path"];
+	        this.size = source["size"];
+	        this.mtime = source["mtime"];
+	        this.sha256 = source["sha256"];
+	        this.outcome = source["outcome"];
+	        this.matchId = source["matchId"];
+	        this.error = source["error"];
+	    }
+	}
 	export class ImportFailure {
 	    source: string;
 	    reason: string;

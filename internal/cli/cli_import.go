@@ -34,6 +34,8 @@ func (cli *CLI) runImport(args []string) error {
 		"With --type batch: keep running and import each match file as it appears in --dir (Ctrl-C to stop)")
 	watchEvery := importCmd.Duration("watch-every", 0,
 		"How often --watch looks at the folder (default 10s, floor 2s)")
+	resume := importCmd.Int64("resume", 0,
+		"With --type batch: continue the batch with this id (the id the earlier run printed, or its JSON batch_id); files its journal already decided are skipped without being read")
 	failOnError := importCmd.Bool("fail-on-error", false,
 		"Exit non-zero when any item failed to import (position/batch); by default only a total failure (nothing imported, duplicates aside) is an error")
 
@@ -65,6 +67,9 @@ func (cli *CLI) runImport(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Batch import, machine-readable, failing the run if any file errored")
 		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/ --format json --fail-on-error")
+		fmt.Println()
+		fmt.Println("  # Continue batch 12, interrupted earlier: files already journaled are skipped")
+		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/ --resume 12")
 		fmt.Println()
 		fmt.Println("  # Import the folder as it stands, then keep importing what appears in it")
 		fmt.Println("  blunderdb import --db database.db --type batch --dir ~/XG/Matches")
@@ -126,10 +131,13 @@ func (cli *CLI) runImport(args []string) error {
 		if info, err := os.Stat(*inputDir); os.IsNotExist(err) || !info.IsDir() {
 			return fmt.Errorf("directory does not exist or is not a directory: %s", *inputDir)
 		}
+		if *resume != 0 && *watchFolder {
+			return fmt.Errorf("--resume cannot be combined with --watch")
+		}
 		if *watchFolder {
 			return cli.importWatch(*inputDir, formatLower, *watchEvery, *failOnError)
 		}
-		return cli.importBatch(*inputDir, *recursive, formatLower, *failOnError)
+		return cli.importBatch(*inputDir, *recursive, formatLower, *failOnError, *resume)
 	default:
 		return fmt.Errorf("unknown import type: %s (must be 'match', 'position', or 'batch')", *importType)
 	}
@@ -370,12 +378,19 @@ type importBatchResult struct {
 	// Progress is the run's final throughput: elapsed time, positions per
 	// second, bytes read.
 	Progress *ingest.BatchProgress `json:"progress,omitempty"`
+	// BatchID is the batch's id, the value --resume takes. Skipped counts the
+	// files a resumed run left out because the journal had decided them.
+	BatchID int64 `json:"batch_id,omitempty"`
+	Skipped int   `json:"resumed_skipped,omitempty"`
+	// Journal is the batch's per-file journal: each file, and the match it
+	// gave or the match that covers it.
+	Journal []domain.ImportFileEntry `json:"journal,omitempty"`
 }
 
 // importBatch imports all .xg files from a directory. It fails when every
 // file failed, and with failOnError when any file errored. A duplicate is not
 // a failure: re-importing an unchanged directory stays a success.
-func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failOnError bool) error {
+func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failOnError bool, resume int64) error {
 	if format != "json" {
 		fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
 	}
@@ -390,11 +405,29 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 	}
 
 	text := format != "json"
-	if text {
-		fmt.Printf("Found %d match file(s) to import\n\n", len(matchFiles))
+	var batchID int64
+	skipped := 0
+	if resume != 0 {
+		if err := cli.db.ResumeImportBatch(resume); err != nil {
+			return fmt.Errorf("cannot resume batch %d: %w", resume, err)
+		}
+		batchID = resume
+		total := len(matchFiles)
+		matchFiles = cli.db.PendingImportFiles(matchFiles)
+		skipped = total - len(matchFiles)
+		if text {
+			fmt.Printf("Resuming batch %d: %d file(s) already journaled, %d left\n\n", resume, skipped, len(matchFiles))
+		}
+	} else {
+		batchID = cli.beginImportBatch(dirPath, "mixed")
+		if text {
+			fmt.Printf("Found %d match file(s) to import\n", len(matchFiles))
+			if batchID != 0 {
+				fmt.Printf("Batch %d: if the run is interrupted, continue it with --resume %d\n", batchID, batchID)
+			}
+			fmt.Println()
+		}
 	}
-
-	batchID := cli.beginImportBatch(dirPath, "mixed")
 	var failures domain.ImportReport
 
 	var results []BatchImportResult
@@ -497,6 +530,10 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 	cli.db.RefreshSearchStatistics()
 
 	report := cli.finishImportBatch(batchID, failures)
+	var journal []domain.ImportFileEntry
+	if !text && batchID != 0 {
+		journal, _ = cli.db.ImportJournal(batchID)
+	}
 
 	if text {
 		// Print summary table
@@ -548,6 +585,9 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 			PositionsImported: totalPositions,
 			Report:            reportOf(report),
 			Progress:          &final,
+			BatchID:           batchID,
+			Skipped:           skipped,
+			Journal:           journal,
 		}); err != nil {
 			return err
 		}
@@ -555,7 +595,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool, format string, failO
 
 	// Every file failed: always an error. --fail-on-error also fails a
 	// partial batch. All-duplicates is a success (a nightly re-import).
-	if successCount == 0 && duplicateCount == 0 {
+	if successCount == 0 && duplicateCount == 0 && skipped == 0 {
 		return fmt.Errorf("no file was imported from %s (%d failure(s) out of %d file(s))",
 			dirPath, failCount, len(matchFiles))
 	}

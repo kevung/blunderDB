@@ -134,6 +134,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Trash/PutListDiscard", testTrashPutListDiscard},
 		{"Trash/PurgeByAge", testTrashPurgeByAge},
 		{"ImportBatch/Lifecycle", testImportBatchLifecycle},
+		{"ImportBatch/Journal", testImportBatchJournal},
 		{"ImportBatch/ReportIsMeasuredNotStored", testImportBatchReportIsMeasured},
 		{"ImportBatch/ReportIsAboutOneImport", testImportBatchReportIgnoresOtherBatches},
 		{"ImportBatch/StudyQueue", testImportStudyQueue},

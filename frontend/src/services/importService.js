@@ -33,6 +33,8 @@ import {
     CountPositionsWithoutAnalysis,
     BeginImportBatch,
     FinishImportBatch,
+    ResumeImportBatch,
+    PendingImportFiles,
     ImportReport
 } from '../../wailsjs/go/database/Database.js';
 import { GetGammonNetAutoAnalyze, GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
@@ -839,7 +841,14 @@ async function importThroughPipeline(paths, remaining) {
     }
 }
 
-async function importMultipleFilesCore(files, { quiet = false } = {}) {
+// resumeImportBatch continues a batch an earlier run left unfinished: the
+// files its journal already decided (same path, size and modification time,
+// or same content) are not read again.
+export async function resumeImportBatch(batchID, files) {
+    return importMultipleFilesCore(files, { resumeBatchID: batchID });
+}
+
+async function importMultipleFilesCore(files, { quiet = false, resumeBatchID = 0 } = {}) {
     fileImportCancelled = false;
     fileImportTotalFilesStore.set(files.length);
     fileImportCurrentIndexStore.set(0);
@@ -853,7 +862,17 @@ async function importMultipleFilesCore(files, { quiet = false } = {}) {
 
     // One batch for the whole selection: what the user asked for in one
     // gesture is one import, whether it was a folder or five dropped files.
-    const batchID = await beginImportBatch(files.length === 1 ? files[0] : `${files.length} files`, 'mixed');
+    let batchID = 0;
+    if (resumeBatchID) {
+        try {
+            await ResumeImportBatch(resumeBatchID);
+            batchID = resumeBatchID;
+            files = await PendingImportFiles(files);
+        } catch (error) {
+            logger.error('could not resume the import batch:', error);
+        }
+    }
+    if (!batchID) batchID = await beginImportBatch(files.length === 1 ? files[0] : `${files.length} files`, 'mixed');
 
     let hadMatches = false;
     let lastPositionID = null;

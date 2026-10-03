@@ -18,6 +18,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
@@ -37,6 +38,9 @@ type Database struct {
 	// importBatchCounts accumulates what only the writing path sees; the caller
 	// that opened the batch adds the unreadable files when it finishes it.
 	importBatchCounts domain.ImportReport
+	// importJournal is the journal of a resumed batch (ResumeImportBatch),
+	// nil for a fresh one.
+	importJournal *ingest.Journal
 	// positionsSinceStats counts the positions imports have written since the
 	// planner statistics were last refreshed (RefreshSearchStatistics).
 	positionsSinceStats int

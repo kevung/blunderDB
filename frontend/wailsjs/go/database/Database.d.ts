@@ -355,6 +355,8 @@ export function ImportGnuBGMatchFromText(arg1:string):Promise<number>;
 
 export function ImportOGXMMatch(arg1:string):Promise<number>;
 
+export function ImportJournal(arg1:number):Promise<Array<domain.ImportFileEntry>>;
+
 export function ImportReport(arg1:number):Promise<domain.ImportBatch>;
 
 export function ImportStudyQueue(arg1:number,arg2:number):Promise<Array<domain.StudyQueueEntry>>;
@@ -382,6 +384,10 @@ export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Pro
 export function ListCollectionPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
 
 export function ListDirections():Promise<Array<service.DirectionSummary>>;
+
+export function PendingImportFiles(arg1:Array<string>):Promise<Array<string>>;
+
+export function ResumeImportBatch(arg1:number):Promise<void>;
 
 export function ListImportBatches(arg1:number,arg2:number):Promise<Array<domain.ImportBatch>>;
 

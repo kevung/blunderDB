@@ -1197,6 +1197,20 @@ ne remplace pas ce qui est déjà là.
   ``blunderdb import --type batch`` affiche la même progression sur la sortie
   d'erreur, et ``--format json`` la rend dans l'objet final (``progress``).
 
+* **Chaque fichier d'un import est journalisé, et un import interrompu se
+  reprend.** Pour chaque fichier, le journal du lot garde le chemin, la
+  taille, la date de modification, l'empreinte SHA-256 et le résultat : match
+  nouveau (avec son numéro), doublon (avec le match qui le couvre), match
+  enrichi, ou erreur (avec le message). Un import annulé ou coupé se continue
+  sans relire ce qui est déjà décidé : un fichier de même chemin, même taille
+  et même date, ou de même contenu, est sauté ; un fichier en erreur est
+  retenté. En ligne de commande, ``blunderdb import --type batch --dir
+  <dossier> --resume <lot>`` reprend le lot dont le numéro a été affiché au
+  départ de l'import, et ``--format json`` rend le journal dans l'objet final
+  (``journal``). Le serveur accepte ``resume`` dans la requête de
+  ``imports.batch`` et rend le journal par ``imports.files``. Le journal est
+  une donnée de l'import : ouvrir ou lire une base n'y écrit rien.
+
 * **Un gros dossier s'importe en mode masse.** À partir de 200 fichiers,
   blunderDB écrit avec un cache plus grand et moins de points de contrôle. Si
   la base ne contient encore aucune position, il va plus loin : les index de
