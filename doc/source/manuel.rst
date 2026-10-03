@@ -1318,6 +1318,17 @@ l'analyse ne note pas ne porte aucune marque.
 L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non :
 on voit sans l'ouvrir dans quelle partie se trouvent les blunders.
 
+L'onglet **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
+le fichier source dit des joueurs et de la session, quand il le dit — un
+fichier eXtreme Gammon le dit toujours : le classement Elo de chaque joueur et
+son expérience entre parenthèses, le transcripteur, les règles Jacoby et Beaver
+d'une partie libre, et le programme qui a écrit le fichier. Ces informations
+sont exportées avec le match. Réimporter un fichier déjà présent les donne au
+match qui ne les avait pas, sans rien remplacer de ce qu'il porte déjà. La
+commande ``match`` de la ligne de commande les affiche aussi. Les commentaires
+d'en-tête et de pied de match, l'horloge et la table d'équité d'un fichier
+eXtreme Gammon ne sont pas importés.
+
 Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
 fenêtre listant tous les noms de joueurs de la base avec leur nombre de
 matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le

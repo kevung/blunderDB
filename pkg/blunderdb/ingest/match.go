@@ -135,6 +135,9 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 				return res, err
 			}
 			res = WriteResult{MatchID: id, Skipped: true, FlagsApplied: n}
+			if err := fillStoredMetadata(ctx, tx, scope, id, &g.Match); err != nil {
+				return res, err
+			}
 			if !g.SkipDuplicates {
 				if res.Deepened, err = deepenAnalyses(ctx, tx, scope, g); err != nil {
 					return res, err
@@ -192,6 +195,11 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 	}
 
 	switch {
+	case enrich:
+		if err := fillStoredMetadata(ctx, tx, scope, matchID, &g.Match); err != nil {
+			return res, err
+		}
+
 	case replace:
 		// The header is re-stated, never re-inserted: ReplaceHeader leaves the
 		// id, the import date, the import batch, the tournament, the match
@@ -486,4 +494,48 @@ func samePlayers(a1, a2, b1, b2 string) bool {
 	n := func(s string) string { return strings.ToLower(strings.TrimSpace(s)) }
 	x1, x2, y1, y2 := n(a1), n(a2), n(b1), n(b2)
 	return (x1 == y1 && x2 == y2) || (x1 == y2 && x2 == y1)
+}
+
+// fillStoredMetadata gives a stored match the source metadata it lacks and
+// the file offers — a duplicate re-imported, a copy from another format —
+// without overwriting anything it already states: the corpus gains its Elo
+// and transcriber by importing its files again.
+func fillStoredMetadata(ctx context.Context, tx storage.Tx, scope string, id int64, from *domain.Match) error {
+	stored, err := tx.Matches().Get(ctx, scope, id)
+	if err != nil {
+		return err
+	}
+	if !domain.FillSourceMetadata(stored, from) {
+		return nil
+	}
+	return tx.Matches().ReplaceHeader(ctx, scope, id, stored)
+}
+
+// copySessionRules writes a money session's Jacoby and Beaver rules onto
+// every position of the graph. The match's columns are the authority; the
+// position's are the copy the position search reads (ADR-0067). At a match
+// score neither rule applies, and the positions say nothing.
+func copySessionRules(g *MatchGraph) {
+	if g.Match.MatchLength != 0 {
+		return
+	}
+	jacoby := g.Match.HasJacoby != nil && *g.Match.HasJacoby
+	beaver := g.Match.HasBeaver != nil && *g.Match.HasBeaver
+	if !jacoby && !beaver {
+		return
+	}
+	for gi := range g.Games {
+		for mi := range g.Games[gi].Moves {
+			pos := g.Games[gi].Moves[mi].Position
+			if pos == nil {
+				continue
+			}
+			if jacoby {
+				pos.HasJacoby = 1
+			}
+			if beaver {
+				pos.HasBeaver = 1
+			}
+		}
+	}
 }

@@ -117,6 +117,13 @@ func (s *Service) writeMatch(ctx context.Context, scope string, id, rev int64, g
 		// imported again, a duplicate of this Match rather than a second copy.
 		if IsImported(old) {
 			header.MatchHash, header.CanonicalHash = old.MatchHash, old.CanonicalHash
+			// The source metadata is the file's too; a correction of the
+			// moves does not unsay the players' ratings.
+			transcriber := header.Transcriber
+			domain.CopySourceMetadata(&header, old)
+			if header.Transcriber == "" {
+				header.Transcriber = transcriber
+			}
 		}
 	}
 	res, err = ingest.WriteMatch(ctx, tx, scope, graph, nil)

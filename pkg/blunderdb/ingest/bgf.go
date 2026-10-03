@@ -54,6 +54,14 @@ func MapBGF(path string) (*MatchGraph, error) {
 			CanonicalHash: computeCanonicalMatchHashFromBGF(match),
 		},
 	}
+	// The session's rules go on the match when the file states them; the
+	// positions get their copy from createPositionFromBGF.
+	if _, ok := data["useJacoby"]; ok {
+		graph.Match.HasJacoby = &rules.jacoby
+	}
+	if _, ok := data["useBeaver"]; ok {
+		graph.Match.HasBeaver = &rules.beaver
+	}
 
 	for gameIdx, gameRaw := range gamesData {
 		gameData, ok := gameRaw.(map[string]interface{})

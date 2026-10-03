@@ -2083,7 +2083,14 @@ export namespace domain {
 	    canonical_hash?: string;
 	    dice_hash?: string;
 	    import_batch_id?: number;
+	    player1_elo?: number;
+	    player2_elo?: number;
+	    player1_experience?: number;
+	    player2_experience?: number;
 	    transcriber?: string;
+	    has_jacoby?: boolean;
+	    has_beaver?: boolean;
+	    engine_version?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -2115,7 +2122,14 @@ export namespace domain {
 	        this.canonical_hash = source["canonical_hash"];
 	        this.dice_hash = source["dice_hash"];
 	        this.import_batch_id = source["import_batch_id"];
+	        this.player1_elo = source["player1_elo"];
+	        this.player2_elo = source["player2_elo"];
+	        this.player1_experience = source["player1_experience"];
+	        this.player2_experience = source["player2_experience"];
 	        this.transcriber = source["transcriber"];
+	        this.has_jacoby = source["has_jacoby"];
+	        this.has_beaver = source["has_beaver"];
+	        this.engine_version = source["engine_version"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

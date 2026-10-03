@@ -833,7 +833,11 @@ valeur par défaut vaut 10 pour les positions) et décalée par ``--offset`` :
 match — Afficher un match
 --------------------------
 
-Affiche les positions et analyses d'un match importé.
+Affiche les positions et analyses d'un match importé. En sortie ``text`` et
+``summary``, l'en-tête reprend ce que le fichier source dit du match quand il
+le dit : classement Elo et expérience de chaque joueur, transcripteur, règles
+Jacoby et Beaver d'une partie libre, programme qui a écrit le fichier ; la
+sortie ``json`` les porte dans l'objet ``match``.
 
 .. code-block:: bash
 

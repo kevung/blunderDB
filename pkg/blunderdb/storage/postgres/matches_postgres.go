@@ -49,7 +49,9 @@ const matchSelectCols = `m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_n
 	m.tournament_id, COALESCE(t.name,''),
 	COALESCE(m.last_visited_position,-1), COALESCE(m.comment,''),
 	COALESCE(m.tournament_sort_order,0),
-	COALESCE(m.match_hash,''), COALESCE(m.canonical_hash,''), COALESCE(m.dice_hash,'')`
+	COALESCE(m.match_hash,''), COALESCE(m.canonical_hash,''), COALESCE(m.dice_hash,''),
+	m.player1_elo, m.player2_elo, m.player1_experience, m.player2_experience,
+	COALESCE(m.transcriber,''), m.has_jacoby, m.has_beaver, COALESCE(m.engine_version,'')`
 
 // scanMatch reconstructs a domain.Match from a row selected with
 // matchSelectCols. match_date is nullable; tournament_id is nullable.
@@ -66,6 +68,8 @@ func scanMatch(sc scanner) (domain.Match, error) {
 		&m.LastVisitedPosition, &m.Comment,
 		&m.TournamentSortOrder,
 		&m.MatchHash, &m.CanonicalHash, &m.DiceHash,
+		&m.Player1Elo, &m.Player2Elo, &m.Player1Experience, &m.Player2Experience,
+		&m.Transcriber, &m.HasJacoby, &m.HasBeaver, &m.EngineVersion,
 	); err != nil {
 		return domain.Match{}, err
 	}
@@ -79,9 +83,19 @@ func scanMatch(sc scanner) (domain.Match, error) {
 const matchInsertSQL = `INSERT INTO match (
 	tenant_id, player1_name, player2_name, event, location, round,
 	match_length, match_date, file_path, game_count, tournament_id, comment,
-	match_hash, canonical_hash, import_batch_id, dice_hash
-) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)
+	match_hash, canonical_hash, import_batch_id, dice_hash,
+	player1_elo, player2_elo, player1_experience, player2_experience,
+	transcriber, has_jacoby, has_beaver, engine_version
+) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,
+	$17,$18,$19,$20,$21,$22,$23,$24)
 RETURNING id, import_date`
+
+// sourceMetadataArgs are the eight source-metadata columns in the order
+// matchInsertSQL and ReplaceHeader list them. A nil pointer stays NULL.
+func sourceMetadataArgs(m *domain.Match) []any {
+	return []any{m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
+		m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion}
+}
 
 // nullableID returns nil for a zero id so it is stored as SQL NULL — which is
 // what a foreign key with ON DELETE SET NULL expects, and what "this match came
@@ -108,12 +122,13 @@ func nullableString(s string) any {
 func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (int64, error) {
 	var id int64
 	var importDate time.Time
-	err := s.db.QueryRow(ctx, matchInsertSQL,
+	args := append([]any{
 		tenantID(scope), m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round,
 		m.MatchLength, nullableTime(m.MatchDate), m.FilePath, m.GameCount,
 		m.TournamentID, m.Comment,
 		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID),
-		nullableString(m.DiceHash)).Scan(&id, &importDate)
+		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
+	err := s.db.QueryRow(ctx, matchInsertSQL, args...).Scan(&id, &importDate)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: save match: %w", referenced(err))
 	}
@@ -321,12 +336,15 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 	tag, err := s.db.Exec(ctx,
 		`UPDATE match SET player1_name = $1, player2_name = $2, event = $3, location = $4,
 		                  round = $5, match_length = $6, match_date = $7, game_count = $8,
-		                  match_hash = $9, canonical_hash = $10, dice_hash = $11
-		 WHERE id = $12 AND tenant_id = $13`,
-		m.Player1Name, m.Player2Name, m.Event, m.Location,
-		m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
-		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableString(m.DiceHash),
-		id, tenantID(scope))
+		                  match_hash = $9, canonical_hash = $10, dice_hash = $11,
+		                  player1_elo = $12, player2_elo = $13, player1_experience = $14,
+		                  player2_experience = $15, transcriber = $16, has_jacoby = $17,
+		                  has_beaver = $18, engine_version = $19
+		 WHERE id = $20 AND tenant_id = $21`,
+		append(append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location,
+			m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
+			nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableString(m.DiceHash)},
+			sourceMetadataArgs(m)...), id, tenantID(scope))...)
 	if err != nil {
 		return fmt.Errorf("postgres: replace match %d header: %w", id, err)
 	}

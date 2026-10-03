@@ -97,7 +97,8 @@ type MatchStore interface {
 
 	// ReplaceHeader rewrites the header columns of an existing match in place,
 	// from m: the two names, the event, location and round, the length, the
-	// date, the two hashes and the game count. The id, the import date, the
+	// date, the hashes, the game count and the source metadata (Elo,
+	// experience, transcriber, session rules, engine version). The id, the import date, the
 	// tournament, the comment and the last-visited position are NOT touched —
 	// they are what a replacement exists to preserve (ADR-0045 §2), and none of
 	// them is a property of the transcript being re-saved.

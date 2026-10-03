@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
@@ -89,27 +90,14 @@ func (d *Database) GetMatchByID(matchID int64) (*Match, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var m Match
-	err := d.db.QueryRow(`
-		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round,
-		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
-		       COALESCE(m.last_visited_position, -1) as last_visited_position,
-		       m.tournament_id, COALESCE(t.name, '') AS tournament_name
-		FROM match m
-		LEFT JOIN tournament t ON m.tournament_id = t.id
-		WHERE m.id = ?
-	`, matchID).Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-		&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount, &m.LastVisitedPosition,
-		&m.TournamentID, &m.TournamentName)
-
+	m, err := d.store.Matches().Get(context.Background(), "", matchID)
+	if errors.Is(err, storage.ErrNotFound) {
+		return nil, fmt.Errorf("match not found")
+	}
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, fmt.Errorf("match not found")
-		}
 		return nil, err
 	}
-
-	return &m, nil
+	return m, nil
 }
 
 // GetPositionProvenance returns the matches that reference the given position

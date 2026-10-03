@@ -37,7 +37,9 @@ const matchSelectCols = `m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_n
 	m.tournament_id, COALESCE(t.name,''),
 	COALESCE(m.last_visited_position,-1), COALESCE(m.comment,''),
 	COALESCE(m.tournament_sort_order,0),
-	COALESCE(m.match_hash,''), COALESCE(m.canonical_hash,''), COALESCE(m.dice_hash,'')`
+	COALESCE(m.match_hash,''), COALESCE(m.canonical_hash,''), COALESCE(m.dice_hash,''),
+	m.player1_elo, m.player2_elo, m.player1_experience, m.player2_experience,
+	COALESCE(m.transcriber,''), m.has_jacoby, m.has_beaver, COALESCE(m.engine_version,'')`
 
 // scanMatch reconstructs a domain.Match from a row selected with
 // matchSelectCols. match_date and tournament_id are nullable.
@@ -45,6 +47,8 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 	var m domain.Match
 	var matchDate, importDate sql.NullTime
 	var tournamentID sql.NullInt64
+	var elo1, elo2 sql.NullFloat64
+	var exp1, exp2, jacoby, beaver sql.NullInt64
 	if err := sc.Scan(
 		&m.ID, &m.Player1Name, &m.Player2Name,
 		&m.Event, &m.Location, &m.Round,
@@ -54,9 +58,14 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 		&m.LastVisitedPosition, &m.Comment,
 		&m.TournamentSortOrder,
 		&m.MatchHash, &m.CanonicalHash, &m.DiceHash,
+		&elo1, &elo2, &exp1, &exp2,
+		&m.Transcriber, &jacoby, &beaver, &m.EngineVersion,
 	); err != nil {
 		return domain.Match{}, err
 	}
+	m.Player1Elo, m.Player2Elo = nullFloat(elo1), nullFloat(elo2)
+	m.Player1Experience, m.Player2Experience = nullInt(exp1), nullInt(exp2)
+	m.HasJacoby, m.HasBeaver = nullBool(jacoby), nullBool(beaver)
 	if matchDate.Valid {
 		m.MatchDate = matchDate.Time
 	}
@@ -73,8 +82,40 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 const matchInsertSQL = `INSERT INTO match (
 	player1_name, player2_name, event, location, round,
 	match_length, match_date, file_path, game_count, tournament_id, comment,
-	match_hash, canonical_hash, import_batch_id, dice_hash
-) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+	match_hash, canonical_hash, import_batch_id, dice_hash,
+	player1_elo, player2_elo, player1_experience, player2_experience,
+	transcriber, has_jacoby, has_beaver, engine_version
+) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+
+func nullFloat(v sql.NullFloat64) *float64 {
+	if !v.Valid {
+		return nil
+	}
+	return &v.Float64
+}
+
+func nullInt(v sql.NullInt64) *int {
+	if !v.Valid {
+		return nil
+	}
+	n := int(v.Int64)
+	return &n
+}
+
+func nullBool(v sql.NullInt64) *bool {
+	if !v.Valid {
+		return nil
+	}
+	b := v.Int64 != 0
+	return &b
+}
+
+// sourceMetadataArgs are the eight source-metadata columns in the order
+// matchInsertSQL and ReplaceHeader list them. A nil pointer stays NULL.
+func sourceMetadataArgs(m *domain.Match) []any {
+	return []any{m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
+		m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion}
+}
 
 // nullableID returns nil for a zero id so it is stored as SQL NULL — which is
 // what a foreign key with ON DELETE SET NULL expects, and what "this match came
@@ -99,12 +140,13 @@ func nullableString(s string) any {
 // Save stores a new match and returns its id, updating m.ID and m.ImportDate
 // in place.
 func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (int64, error) {
-	res, err := s.db.ExecContext(ctx, matchInsertSQL,
+	args := append([]any{
 		m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round,
 		m.MatchLength, nullableTime(m.MatchDate), m.FilePath, m.GameCount,
 		m.TournamentID, m.Comment,
 		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID),
-		nullableString(m.DiceHash))
+		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
+	res, err := s.db.ExecContext(ctx, matchInsertSQL, args...)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: save match: %w", err)
 	}
@@ -322,12 +364,14 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 	res, err := s.db.ExecContext(ctx,
 		`UPDATE match SET player1_name = ?, player2_name = ?, event = ?, location = ?,
 		                  round = ?, match_length = ?, match_date = ?, game_count = ?,
-		                  match_hash = ?, canonical_hash = ?, dice_hash = ?
+		                  match_hash = ?, canonical_hash = ?, dice_hash = ?,
+		                  player1_elo = ?, player2_elo = ?, player1_experience = ?, player2_experience = ?,
+		                  transcriber = ?, has_jacoby = ?, has_beaver = ?, engine_version = ?
 		 WHERE id = ?`,
-		m.Player1Name, m.Player2Name, m.Event, m.Location,
-		m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
-		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableString(m.DiceHash),
-		id)
+		append(append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location,
+			m.Round, m.MatchLength, nullableTime(m.MatchDate), m.GameCount,
+			nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableString(m.DiceHash)},
+			sourceMetadataArgs(m)...), id)...)
 	if err != nil {
 		return fmt.Errorf("sqlite: replace match %d header: %w", id, err)
 	}
