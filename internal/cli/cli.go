@@ -197,6 +197,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  verify    Verify database integrity")
 	fmt.Println("  vacuum    Compact the database file, reclaiming freed space")
 	fmt.Println("  repair    Recompute the analysis columns from the analyses themselves")
+	fmt.Println("  met       List, import or choose the database's match equity table")
 	fmt.Println("  reencode  Rewrite analyses stored by older releases in the compact format")
 	fmt.Println("  delete    Delete data from the database")
 	fmt.Println("  comment   Comments on a position, signed by their author (add, list)")

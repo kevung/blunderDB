@@ -754,6 +754,22 @@ class GeneratedAPI(BaseClient):
         "POST /v1/matches.updateComment — JSON."
         return self._call("/v1/matches.updateComment", payload)
 
+    def met_import(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/met.import — JSON."
+        return self._call("/v1/met.import", payload)
+
+    def met_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/met.list — JSON."
+        return self._call("/v1/met.list", payload)
+
+    def met_of_analysis(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/met.ofAnalysis — JSON."
+        return self._call("/v1/met.ofAnalysis", payload)
+
+    def met_set_current(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/met.setCurrent — JSON."
+        return self._call("/v1/met.setCurrent", payload)
+
     def metadata_counts(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/metadata.counts — JSON."
         return self._call("/v1/metadata.counts", payload)

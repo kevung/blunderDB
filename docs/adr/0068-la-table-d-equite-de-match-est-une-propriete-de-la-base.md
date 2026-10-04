@@ -27,13 +27,16 @@ nombre dise avec quelle table il a été calculé.
    désignent la même table, et deux bases qui la tiennent s'accordent sur ce qui est
    comparable. Le texte du fichier est gardé (`source`) pour être relu et réexporté. Une
    table importée dont l'empreinte est celle de Kazaross-XG2 se résout en la table intégrée.
-3. **Chaque analyse porte sa table** : `analysis.met_digest`, `NULL` pour Kazaross-XG2. Une
-   analyse gammonNet écrit l'empreinte de la table courante au moment du calcul. Une analyse
+3. **Chaque analyse porte sa table** : `analysis.met_id`, l'identifiant de la ligne
+   `match_equity_table` de la base, `NULL` pour Kazaross-XG2. Une analyse gammonNet écrit la
+   table courante au début du lot qui la calcule. Une analyse
    importée (XG, GNUbg, BGBlitz) écrit `NULL` : ces fichiers ne disent pas leur table, et leur
    réglage par défaut est Kazaross-XG2.
 4. **« MET différente » est un état lu, jamais écrit.** Une analyse à un score de match dont
    l'empreinte n'est pas celle de la table courante est montrée « MET différente » et sortie
-   des comparaisons (moyennes d'erreur, PR, classements, côte à côte de deux joueurs). Une
+   des comparaisons (moyennes d'erreur, PR, classements, côte à côte de deux joueurs) :
+   décision par décision, et match entier pour les agrégats par match (`match_stats`), qui
+   ne retiennent un match que si toutes ses analyses ont la table courante. Une
    analyse en money n'est jamais différente : la MET n'y intervient pas (ADR-0016, règle 3).
    Changer la table courante ne réécrit aucune analyse (ADR-0013) ; il change seulement ce
    que les comparaisons retiennent.
@@ -49,12 +52,17 @@ nombre dise avec quelle table il a été calculé.
 ## Conséquences
 
 - Schéma 2.31.0 : table `match_equity_table` (empreinte unique par tenant), colonne
-  `analysis.met_digest` ajoutée `NULL` (aucune ligne réécrite), migration
-  `033_met_progress_move_error.sql` côté PostgreSQL. Contrat :
-  `storage.MatchEquityTableStore` (`Save` idempotent sur l'empreinte, `List`, `Current`,
-  `SetCurrent`).
-- Le moteur prend la table de la base au lieu d'une constante : `MatchStateFromPosition`
-  et la recherche reçoivent la table à utiliser ; la parité avec le C reste mesurée sur
-  Kazaross-XG2.
-- L'import du `.xml`, l'écriture de `met_digest` par le lot et l'état « MET différente »
-  dans l'interface et les statistiques restent à livrer.
+  `analysis.met_id` ajoutée `NULL` (aucune ligne réécrite), index partiel `idx_analysis_met`
+  sur les seules analyses étiquetées. Contrat `storage.MatchEquityTableStore` (`Save`
+  idempotent sur l'empreinte, `List`, `Current`, `SetCurrent`, `TagAnalyses`, `OfAnalysis`) ;
+  le paquet `mets` le sert aux trois modes (GUI : onglet *gammonNet* et badge du panneau
+  d'analyse ; CLI : `met` ; démon : routes `met.*`).
+- Le moteur prend la table de la base au lieu d'une constante : `engine.MET` (nil =
+  Kazaross-XG2, bit pour bit), portée par `gammonnet.MatchState` jusqu'à `metAfter`. Seules
+  les tables gnubg explicites sont lues ; au-delà de leur longueur, la table intégrée
+  répond. La parité avec le C reste mesurée sur Kazaross-XG2.
+- L'empreinte est un SHA-256 d'une forme canonique des valeurs (`blunderdb-met/1`) ; le
+  `Kazaross-XG2.xml` de gnubg a celle de la table intégrée.
+- La règle 5 n'est pas livrée : importer une base dans une autre ne transporte ni la table
+  ni le `met_id`, et le receveur lit l'analyse comme calculée avec Kazaross-XG2.
+- Les rollouts et les conversions MWC des importeurs restent sur Kazaross-XG2.

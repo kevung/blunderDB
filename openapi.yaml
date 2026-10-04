@@ -4222,6 +4222,78 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/met.import:
+    post:
+      operationId: met.import
+      tags: [met]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/importReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/domain_MatchEquityTable"
+                nullable: true
+  /v1/met.list:
+    post:
+      operationId: met.list
+      tags: [met]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/domain_MatchEquityTable"
+                  nullable: true
+  /v1/met.ofAnalysis:
+    post:
+      operationId: met.ofAnalysis
+      tags: [met]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/positionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/mets_Status"
+  /v1/met.setCurrent:
+    post:
+      operationId: met.setCurrent
+      tags: [met]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
   /v1/metadata.counts:
     post:
       operationId: metadata.counts
@@ -7498,6 +7570,9 @@ components:
     domain_Match:
       type: object
       description: "Opaque: see the Go type domain.Match (defined outside internal/server, not expanded here)."
+    domain_MatchEquityTable:
+      type: object
+      description: "Opaque: see the Go type domain.MatchEquityTable (defined outside internal/server, not expanded here)."
     domain_MatchMovePosition:
       type: object
       description: "Opaque: see the Go type domain.MatchMovePosition (defined outside internal/server, not expanded here)."
@@ -7695,6 +7770,9 @@ components:
           nullable: true
           items:
             type: string
+    importReq:
+      type: object
+      description: "Unresolved local type importReq."
     importStudyQueueReq:
       type: object
       properties:
@@ -7882,6 +7960,9 @@ components:
             type: string
         canonical:
           type: string
+    mets_Status:
+      type: object
+      description: "Opaque: see the Go type mets.Status (defined outside internal/server, not expanded here)."
     movePositionReq:
       type: object
       properties:

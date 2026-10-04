@@ -75,7 +75,7 @@ func ParseGnubgMET(data []byte) (*MET, error) {
 	dec.CharsetReader = charset.NewReaderLabel
 	dec.Strict = false
 	if err := dec.Decode(&doc); err != nil {
-		return nil, fmt.Errorf("%w: %v", ErrMETFormat, err)
+		return nil, fmt.Errorf("%w: %w", ErrMETFormat, err)
 	}
 	length, err := strconv.Atoi(strings.TrimSpace(doc.Info.Length))
 	if err != nil || length < 1 || length > MaxScore {

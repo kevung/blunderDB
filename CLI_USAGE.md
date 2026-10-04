@@ -59,6 +59,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `verify` - Verify database integrity
 - `vacuum` - Compact the database file, reclaiming freed space
 - `repair` - Recompute the analysis columns from the analyses themselves
+- `met` - List, import or choose the database's match equity table
 - `reencode` - Rewrite analyses stored by older releases in the compact format
 - `delete` - Delete data from the database
 - `comment` - Comments on a position, signed by their author (add, list)
@@ -1594,6 +1595,35 @@ Compacting database...
   Before: 128.4 MiB
   After:  41.2 MiB
   Reclaimed: 87.2 MiB
+```
+
+## Met Command
+
+List, import or choose the match equity table (MET) gammonNet values a
+database's match scores with: the built-in Kazaross-XG2 by default, or an
+explicit gnubg `.xml` table. The table belongs to the database, not to the
+application. Every analysis gammonNet computes records its table; an analysis
+at a match score computed with another table than the current one is shown as
+"different MET" and left out of the statistics. Changing the table rewrites no
+analysis. The daemon exposes the same operations as `met.list`, `met.import`,
+`met.setCurrent` and `met.ofAnalysis`, limited to the caller's tenant.
+
+```bash
+./blunderDB met --db database.db --import Rockwell-Kazaross.xml --current
+./blunderDB met --db database.db --use 0
+```
+
+**Options:**
+- `--db` - Path to the database file (required)
+- `--import` - Import a gnubg table; a table already held, or equal to Kazaross-XG2, is not added twice
+- `--current` - With `--import`: make the imported table current
+- `--use` - Make table ID current; `0` returns to Kazaross-XG2
+- `--format` - Output format: `text` (default) or `json`
+
+**Example output:**
+```
+      0  Kazaross-XG2
+  *   1  Rockwell/Kazaross 25 point MET
 ```
 
 ## Reencode Command
@@ -3231,6 +3261,37 @@ Options:
 Examples:
   blunderdb mcp --db my.db
   blunderdb mcp --db my.db --write
+```
+
+### `blunderdb met`
+
+```
+Usage: blunderdb met [options]
+
+List, import or choose the match equity table (MET) of a database.
+Each database has its own table, Kazaross-XG2 by default. gammonNet
+values match scores with the current table, and every analysis it
+computes records that table. An analysis at a match score valued with
+another table is shown as "different MET" and left out of the
+statistics. Changing the current table rewrites no analysis.
+Only explicit gnubg tables are read (not the parametric zadeh or mec).
+
+Options:
+  -current
+    	With --import: make the imported table current
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -import string
+    	Import a gnubg match equity table (.xml)
+  -use int
+    	Make table ID current (0: the built-in Kazaross-XG2) (default -1)
+
+Examples:
+  blunderdb met --db database.db
+  blunderdb met --db database.db --import Rockwell-Kazaross.xml --current
+  blunderdb met --db database.db --use 0
 ```
 
 ### `blunderdb open`
