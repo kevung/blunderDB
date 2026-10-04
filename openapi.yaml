@@ -3128,6 +3128,11 @@ paths:
       operationId: exports.sqlite
       tags: [exports]
       x-kind: custom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/exportSQLiteReq"
       responses:
         "200":
           description: OK
@@ -7762,6 +7767,31 @@ components:
           format: int64
         played:
           type: string
+    exportSQLiteReq:
+      type: object
+      properties:
+        watermarkOrigin:
+          type: string
+        watermarkNote:
+          type: string
+        collectionIds:
+          type: array
+          nullable: true
+          items:
+            type: integer
+            format: int64
+        lessonIds:
+          type: array
+          nullable: true
+          items:
+            type: integer
+            format: int64
+        deckIds:
+          type: array
+          nullable: true
+          items:
+            type: integer
+            format: int64
     filterNameReq:
       type: object
       properties:
@@ -8691,6 +8721,9 @@ components:
         positions:
           type: integer
           format: int32
+        storedBytes:
+          type: integer
+          format: int64
         analysisSecondsToday:
           type: number
           format: double

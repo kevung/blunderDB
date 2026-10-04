@@ -363,6 +363,8 @@ Exporte le contenu de la base vers des fichiers.
 * ``--collection-ids`` — IDs de collections à exporter (séparés par des virgules).
 * ``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, vide = tous).
 * ``--tournament-ids`` — IDs de tournois à exporter (séparés par des virgules).
+* ``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions, sans
+  leur historique de révision (séparés par des virgules).
 * ``--password`` — Enveloppe le résultat dans un conteneur chiffré (``.dbx``).
 * ``--watermark`` — Écrit une déclaration d'origine **signée** dans le fichier
   exporté (voir :ref:`diffusion_controlee`).

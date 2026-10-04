@@ -151,6 +151,11 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
        une fois la borne atteinte, l'import est refusé (413,
        ``storage_quota_exceeded``) ; ``positions.save`` et les autres écritures
        unitaires ne sont pas bornées ; 0 = illimité
+   * - ``--quota-bytes <n>``
+     - ``0``
+     - octets qu'un tenant peut occuper sur disque (tables et index),
+       vérifiés au début d'un import comme ``--quota-positions`` (413,
+       ``storage_quota_exceeded``) ; 0 = illimité
    * - ``--quota-analysis-seconds <n>``
      - ``0``
      - secondes CPU de calcul du moteur par tenant et par jour UTC (429,
@@ -159,6 +164,14 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
      - ``0``
      - imports d'un même tenant en cours à la fois (429, ``quota_exceeded``) ;
        0 = illimité
+   * - ``--analysis-workers <n>``
+     - ``0``
+     - travailleurs du moteur que partagent les balayages et les évaluations
+       de tous les tenants ; 0 = un par cœur
+   * - ``--analysis-weights <liste>``
+     - (vide)
+     - ``tenant=poids,…`` : positions servies à un tenant à chaque tour des
+       travailleurs partagés ; un tenant absent de la liste pèse 1
    * - ``--rls``
      - ``false``
      - PostgreSQL : active la Row-Level Security par tenant (défense en
@@ -887,7 +900,9 @@ l'identité propre du démon (``--identity-dir``) — sans ces champs, l'export 
 porte aucun filigrane ; les demander sans identité configurée échoue avec le
 code ``invalid``. ``collectionIds`` restreint l'export à ces collections et à
 leurs positions, avec analyses, commentaires et coups joués, sans la
-bibliothèque de filtres ni les paquets Anki.
+bibliothèque de filtres ni les autres paquets Anki. ``deckIds`` fait de même
+pour des paquets Anki : chacun voyage avec ses positions, sans l'historique de
+révision de celui qui l'envoie. Les deux champs se combinent.
 
 **Importer un dossier ou un corpus** se fait par ``imports.batch``, qui passe
 par le même pipeline que ``blunderdb import --type batch`` : mêmes matchs,
@@ -948,8 +963,12 @@ receveur sache d'où vient le fichier), le tenant qui reçoit envoie le fichier
 décide qui a le droit de faire l'une et l'autre. À l'import, une collection
 rejoint celle du même nom chez le receveur, ou est créée ; ses positions s'y
 ajoutent à la suite, sans doublon. Une collection vivante du receveur ne
-reçoit aucune position : sa requête fait son contenu. L'import d'une base
-dans l'application de bureau suit la même règle.
+reçoit aucune position : sa requête fait son contenu. Un paquet Anki se
+partage de même, avec ``deckIds`` : le receveur l'étudie à neuf, ses cartes
+toutes nouvelles ; un paquet dont il tient déjà le nom est laissé tel quel,
+cartes et calendrier compris, si bien qu'importer deux fois le même fichier ne
+change rien. L'import d'une base dans l'application de bureau suit les mêmes
+règles.
 
 .. code-block:: bash
 
@@ -1513,8 +1532,8 @@ Quotas par tenant
 ~~~~~~~~~~~~~~~~~
 
 Une instance partagée borne ce que chaque tenant lui prend avec
-``--quota-positions``, ``--quota-analysis-seconds`` et ``--quota-imports``
-(sans option, rien n'est borné). Le temps de calcul compte chaque calcul du
+``--quota-positions``, ``--quota-bytes``, ``--quota-analysis-seconds`` et
+``--quota-imports`` (sans option, rien n'est borné). Le temps de calcul compte chaque calcul du
 moteur demandé par le tenant : ``gammonnet.analyzeMissing``,
 ``gammonnet.sweepStale``, ``gammonnet.compare``, ``gammonnet.cubeMatrix``,
 ``gammonnet.evaluate``, ``rollout.position`` et ``rollout.filter``. Il se
@@ -1531,12 +1550,31 @@ UTC et vit en mémoire : un redémarrage du démon le remet à zéro. Le quota d
 positions est vérifié au début d'un import, qui n'est pas interrompu en route :
 un tenant peut le dépasser d'autant que ses imports en cours ajoutent.
 ``positions.save`` et les autres écritures unitaires ne le vérifient pas.
+Le quota d'octets se vérifie au même moment et avec la même latitude. Sous
+SQLite, une base ne tient qu'une bibliothèque : le tenant occupe les pages
+vivantes du fichier. Sous PostgreSQL, les tenants partagent les tables et
+aucune ligne ne porte sa taille : l'espace de chaque table (index compris) se
+répartit au prorata des lignes, si bien qu'un tenant qui tient le tiers des
+lignes d'une table se voit compter le tiers de son espace. C'est une
+estimation, qui suit les statistiques du planificateur.
 Chaque refus porte dans ``details`` la borne (``quota``, ``limit``) et l'usage
 (``used``). ``tenants.quota`` rend au tenant appelant les bornes et son
-usage : positions stockées, secondes de calcul du jour, imports en cours.
+usage : positions stockées, octets occupés (``storedBytes``), secondes de calcul du jour, imports en cours.
 
 Les quotas sont une comptabilité du démon, pas une frontière : ils
 s'appliquent au tenant que le proxy a posé dans ``X-Tenant-ID``.
+
+Les balayages (``gammonnet.analyzeMissing``, ``gammonnet.sweepStale``) et les
+évaluations (``gammonnet.evaluate``) passent par une seule file d'analyse : un
+jeu de travailleurs du moteur (``--analysis-workers``), chacun avec son
+chercheur réutilisé, qui prennent les positions une à une en faisant le tour
+des tenants qui ont du travail. Deux tenants qui balaient en même temps se
+partagent les cœurs au lieu de les réclamer chacun ; une évaluation demandée
+pendant le balayage d'un autre tenant attend une position, pas tout le
+balayage. Avec ``--analysis-weights club=3``, le tenant ``club`` reçoit trois
+positions par tour quand un autre en reçoit une. Les travaux d'un même tenant
+passent dans l'ordre où ils sont arrivés. Les comparaisons, les matrices de
+videau et les rollouts gardent leurs propres travailleurs.
 
 **Scénario complet, de zéro à un démon qui répond :**
 
@@ -1933,10 +1971,16 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
        avec leur hachage, commentaires écrits sur ces plateaux, bibliothèque
        partagée, classement de club ; sans ``X-Read-Tenants``, ce tenant seul
 
-Seuls cinq outils écrivent — ``save_position``, ``comment_position`` (qui
+Seuls ces outils écrivent — ``save_position``, ``comment_position`` (qui
 signe de l'argument ``author``, sinon de l'en-tête ``X-User-Name``),
-``create_collection``, ``add_to_collection`` et ``anki_review``, qui note une
-carte tirée par ``anki_next`` — et ils ne sont offerts que sur demande :
+``create_collection``, ``add_to_collection``, ``anki_review``, qui note une
+carte tirée par ``anki_next``, et les gestes de transcription
+``transcribe_create``, ``transcribe_open``, ``transcribe_apply``,
+``transcribe_undo``, ``transcribe_redo`` et ``transcribe_finish``, servis
+seulement par un démon lancé avec ``--transcription`` ; chaque geste qui
+change le brouillon nomme sa session et la révision vue en dernier, et une
+révision périmée est refusée comme pour un client direct — et ils ne sont
+offerts que sur demande :
 ``--write`` en local, ``--mcp-write`` sur le démon. Tous les autres ne font que
 lire ; ``rollout`` gagne cependant, quand l'écriture est offerte, l'argument
 ``store``, qui enregistre le rollout à côté de l'analyse de la position. Aucun

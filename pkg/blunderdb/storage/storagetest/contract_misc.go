@@ -403,6 +403,37 @@ func testMetadataCounts(t *testing.T, s storage.Storage) {
 	}
 }
 
+// testMetadataStoredBytes: the space charged to a tenant is positive once it
+// stores something, and grows as it stores more.
+func testMetadataStoredBytes(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	save := func(from, to int) int64 {
+		t.Helper()
+		for i := from; i <= to; i++ {
+			// The hash clamps a score to 63: spread i over both scores so
+			// every position is distinct.
+			p := provenancePos(0)
+			p.Score = [2]int{i % 60, i / 60}
+			if _, err := s.Positions().Save(ctx, "", &p); err != nil {
+				t.Fatalf("Save position %d: %v", i, err)
+			}
+		}
+		n, err := s.Metadata().StoredBytes(ctx, "")
+		if err != nil {
+			t.Fatalf("StoredBytes: %v", err)
+		}
+		return n
+	}
+	first := save(1, 1)
+	if first <= 0 {
+		t.Fatalf("StoredBytes = %d with a position stored, want > 0", first)
+	}
+	// Enough rows to need pages of their own on either backend.
+	if more := save(2, 400); more <= first {
+		t.Fatalf("StoredBytes = %d after 400 positions, want more than the %d of one", more, first)
+	}
+}
+
 // testMetadataEstimatedCounts: N insertions read back as N while the table is
 // under the exact threshold, and as an upper bound flagged approximate above it.
 func testMetadataEstimatedCounts(t *testing.T, s storage.Storage) {

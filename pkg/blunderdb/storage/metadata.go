@@ -61,4 +61,12 @@ type MetadataStore interface {
 	// IndividualPositions and AnkiCards are not filled. Blunders is filled
 	// only when Positions is exact.
 	EstimatedCounts(ctx context.Context, scope string, exactBelow int) (CountsEstimate, error)
+
+	// StoredBytes is the disk space the scope's tenant holds, tables and
+	// indexes together. Where the database holds one library it is the live
+	// pages of the file, exact. Where tenants share tables no row carries its
+	// own size, so each table's space is shared out by row count: a tenant
+	// holding a third of a table's rows is charged a third of its space,
+	// and a tenant that holds no row is charged nothing.
+	StoredBytes(ctx context.Context, scope string) (int64, error)
 }

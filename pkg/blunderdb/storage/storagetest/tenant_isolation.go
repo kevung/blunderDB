@@ -31,6 +31,7 @@ type tenantIsolationCase struct {
 var tenantIsolationCases = []tenantIsolationCase{
 	{"Position", checkPositionIsolation},
 	{"EstimatedCounts", checkEstimatedCountsIsolation},
+	{"StoredBytes", checkStoredBytesIsolation},
 	{"TranscriptionRevision", checkTranscriptionRevisionIsolation},
 	{"Analysis", checkAnalysisIsolation},
 	{"Collection", checkCollectionIsolation},
@@ -381,5 +382,33 @@ func checkTrainingIsolation(t *testing.T, ctx context.Context, s storage.Storage
 	}
 	if own, err := s.Training().Sessions(ctx, a, "", 0); err != nil || len(own) != 1 {
 		t.Errorf("tenant %s reads back its own session: %d, %v", a, len(own), err)
+	}
+}
+
+// checkStoredBytesIsolation: what tenant a stores is charged to a, never to b.
+func checkStoredBytesIsolation(t *testing.T, ctx context.Context, s storage.Storage, a, b string) {
+	before, err := s.Metadata().StoredBytes(ctx, b)
+	if err != nil {
+		t.Fatalf("StoredBytes(%s): %v", b, err)
+	}
+	for i := 1; i <= 50; i++ {
+		p := provenancePos(i)
+		if _, err := s.Positions().Save(ctx, a, &p); err != nil {
+			t.Fatalf("Save(%s): %v", a, err)
+		}
+	}
+	mine, err := s.Metadata().StoredBytes(ctx, a)
+	if err != nil {
+		t.Fatalf("StoredBytes(%s): %v", a, err)
+	}
+	if mine <= 0 {
+		t.Fatalf("StoredBytes(%s) = %d after 50 positions, want > 0", a, mine)
+	}
+	after, err := s.Metadata().StoredBytes(ctx, b)
+	if err != nil {
+		t.Fatalf("StoredBytes(%s): %v", b, err)
+	}
+	if after != before {
+		t.Fatalf("StoredBytes(%s) went from %d to %d when only %s wrote", b, before, after, a)
 	}
 }

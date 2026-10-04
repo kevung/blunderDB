@@ -157,7 +157,8 @@ func toolNames(t *testing.T, cs *sdk.ClientSession) []string {
 	return names
 }
 
-var writeTools = []string{"add_to_collection", "anki_review", "comment_position", "create_collection", "save_position"}
+var writeTools = []string{"add_to_collection", "anki_review", "comment_position", "create_collection", "save_position",
+	"transcribe_apply", "transcribe_create", "transcribe_finish", "transcribe_open", "transcribe_redo", "transcribe_undo"}
 
 func TestReadOnlyByDefault(t *testing.T) {
 	cs := connect(t, demoServer(t, internalserver.Options{}).Handler(), mcp.Options{Tenant: "1"})
@@ -618,5 +619,33 @@ func TestTrainingMissedTool(t *testing.T) {
 	got := list(t, call(t, cs, "training_missed", nil), "PositionIDs")
 	if len(got) != 1 || got[0].(float64) != float64(pid) {
 		t.Fatalf("training_missed = %v, want [%d]", got, pid)
+	}
+}
+
+// TestTranscribeWriteTools: a draft typed through the tools moves revision by
+// revision, and refuses a gesture typed against a stale one.
+func TestTranscribeWriteTools(t *testing.T) {
+	cs := connect(t, demoServer(t, internalserver.Options{Transcription: true}).Handler(), mcp.Options{Tenant: "1", Write: true})
+	st := call(t, cs, "transcribe_create", obj{"header": obj{"match_length": 7, "player1": "A", "player2": "B"}})
+	draft, session := st["id"], st["sessionId"]
+	if draft == nil || session == "" {
+		t.Fatalf("transcribe_create: %v", st)
+	}
+	first := st["revision"]
+	for _, g := range []obj{{"Kind": "enter_die", "Die": 3}, {"Kind": "enter_die", "Die": 1}, {"Kind": "select_candidate", "Candidate": 0}, {"Kind": "validate"}} {
+		st = call(t, cs, "transcribe_apply", obj{"id": draft, "sessionId": session, "revision": st["revision"], "gesture": g})
+	}
+	if st["revision"] == first {
+		t.Fatalf("a validated play did not move the revision: %v", st["revision"])
+	}
+	if msg := callErr(t, cs, "transcribe_apply", obj{"id": draft, "sessionId": session, "revision": first, "gesture": obj{"Kind": "enter_die", "Die": 6}}); !strings.Contains(msg, "409") && !strings.Contains(strings.ToLower(msg), "revision") {
+		t.Errorf("a stale revision is not refused: %s", msg)
+	}
+	st = call(t, cs, "transcribe_undo", obj{"id": draft, "sessionId": session, "revision": st["revision"]})
+	if st["canRedo"] != true {
+		t.Errorf("undo leaves nothing to redo: %v", st)
+	}
+	if names := toolNames(t, cs); slices.Contains(names, "transcribe_abandon") {
+		t.Error("a tool deletes a draft: no tool erases")
 	}
 }

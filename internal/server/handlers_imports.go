@@ -300,6 +300,10 @@ type exportSQLiteReq struct {
 	// show, on the same terms as CollectionIDs (ADR-0066); given with
 	// CollectionIDs, both travel.
 	LessonIDs []int64 `json:"lessonIds,omitempty"`
+	// DeckIDs narrows the export to these Anki decks and their positions, on
+	// the same terms: the recipient studies them afresh, without the
+	// sender's review history. Given with the others, all travel.
+	DeckIDs []int64 `json:"deckIds,omitempty"`
 }
 
 // sealExportWatermark seals a watermark for origin/note with this daemon's own
@@ -321,9 +325,9 @@ func (s *Server) sealExportWatermark(origin, note string) (string, error) {
 // collection, match and tournament, with analyses, comments, played moves,
 // the filter library and Anki decks — into a blunderDB SQLite file and
 // returns it as a binary download. An optional JSON body asks for a
-// watermark (see exportSQLiteReq); everything else about the export is
-// WholeTenant, matching the GUI/CLI's "export everything" preset — a
-// selective server-side export is not offered yet.
+// watermark and narrows it to collections, lessons or decks (see
+// exportSQLiteReq); with none given the export is WholeTenant, matching the
+// GUI/CLI's "export everything" preset.
 //
 // ingest.SQLiteExporter already materializes the whole file into its own temp
 // path before copying it to the writer it is given, but this handler must not
@@ -360,10 +364,11 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 		defer os.Remove(tmpPath)
 
 		opts := ingest.WholeTenant(ingest.FormatSQLite)
-		if len(req.CollectionIDs) > 0 || len(req.LessonIDs) > 0 {
+		if len(req.CollectionIDs) > 0 || len(req.LessonIDs) > 0 || len(req.DeckIDs) > 0 {
 			opts.Selection = ingest.Selection{
 				CollectionIDs: req.CollectionIDs, CollectionPositions: true,
 				LessonIDs: req.LessonIDs, LessonContents: true,
+				DeckIDs: req.DeckIDs, DeckPositions: true,
 			}
 			opts.FilterLibrary, opts.AnkiDecks = false, false
 		}

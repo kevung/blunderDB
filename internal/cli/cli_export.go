@@ -28,6 +28,7 @@ func (cli *CLI) runExport(args []string) error {
 	includeCollections := exportCmd.Bool("collections", false, "Include collections in database export (default: false)")
 	collectionIDsStr := exportCmd.String("collection-ids", "", "Comma-separated list of collection IDs to export")
 	matchIDsStr := exportCmd.String("match-ids", "", "Comma-separated list of match IDs to export (empty = all)")
+	deckIDsStr := exportCmd.String("deck-ids", "", "Comma-separated list of Anki deck IDs to export with their positions, without their review history")
 	tournamentIDsStr := exportCmd.String("tournament-ids", "", "Comma-separated list of tournament IDs to export")
 	watermark := exportCmd.String("watermark", "", "Mark the exported file with where it comes from, e.g. \"Cours de Jean Dupont - 12 mars 2026\"")
 	watermarkNote := exportCmd.String("watermark-note", "", "Free text attached to the watermark (terms of use, contact)")
@@ -127,6 +128,14 @@ func (cli *CLI) runExport(args []string) error {
 			return fmt.Errorf("invalid collection-ids: %w", parseErr)
 		}
 	}
+	var deckIDs []int64
+	if *deckIDsStr != "" {
+		var parseErr error
+		deckIDs, parseErr = parseIDList(*deckIDsStr)
+		if parseErr != nil {
+			return fmt.Errorf("invalid deck-ids: %w", parseErr)
+		}
+	}
 	if *matchIDsStr != "" {
 		var parseErr error
 		matchIDs, parseErr = parseIDList(*matchIDsStr)
@@ -154,7 +163,7 @@ func (cli *CLI) runExport(args []string) error {
 	case "database":
 		return cli.exportDatabaseWithOptions(*outputFile, *includeAnalysis, *includeComments,
 			*includeFilterLibrary, *includePlayedMoves, *includeMatches,
-			*includeCollections, collectionIDs, matchIDs, tournamentIDs, marking, text)
+			*includeCollections, collectionIDs, matchIDs, tournamentIDs, deckIDs, marking, text)
 	case "positions":
 		return cli.exportPositions(*outputFile, text)
 	case "matches":
@@ -270,7 +279,7 @@ type exportMarking struct {
 
 func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis bool, includeComments bool,
 	includeFilterLibrary bool, includePlayedMoves bool, includeMatches bool,
-	includeCollections bool, collectionIDs []int64, matchIDs []int64, tournamentIDs []int64,
+	includeCollections bool, collectionIDs []int64, matchIDs []int64, tournamentIDs []int64, deckIDs []int64,
 	marking exportMarking, text bool) error {
 	if text {
 		fmt.Printf("Exporting database to: %s\n", outputFile)
@@ -306,6 +315,7 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 		CollectionIDs:  collectionIDs,
 		MatchIDs:       matchIDs,
 		TournamentIDs:  tournamentIDs,
+		DeckIDs:        deckIDs,
 		Watermark:      marking.watermark,
 		WatermarkNote:  marking.note,
 		Password:       marking.password,

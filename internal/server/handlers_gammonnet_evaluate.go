@@ -65,9 +65,22 @@ func (s *Server) handleGammonNetEvaluate(w http.ResponseWriter, r *http.Request)
 		writeStorageError(w, err)
 		return
 	}
-	res, err := metered(s, scope, 1, func() (gammonnet.EvalResult, error) {
-		return gammonnet.EvaluatePositionWithMET(nil, pos, met, ply, 0, req.Candidates)
+	// One position, queued on the shared workers like a sweep's: it waits its
+	// tenant's turn, never more than a position's time per tenant ahead.
+	// A client gone before its turn costs neither engine time nor quota.
+	var res gammonnet.EvalResult
+	ran := s.analysis.run(r.Context(), scope, func(get searcherFor) {
+		res, err = metered(s, scope, 1, func() (gammonnet.EvalResult, error) {
+			return gammonnet.EvaluatePositionWithMET(get(ply, 0), pos, met, ply, 0, req.Candidates)
+		})
 	})
+	if !ran {
+		if r.Context().Err() != nil {
+			return
+		}
+		writeErrorCode(w, CodeUnavailable, "the daemon is stopping: no evaluation is taken")
+		return
+	}
 	if err != nil {
 		writeErrorCode(w, CodeInvalid, fmt.Sprintf("not evaluable: %v", err))
 		return

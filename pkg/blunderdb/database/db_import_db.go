@@ -666,6 +666,14 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	if err != nil {
 		return nil, err
 	}
+	srcDecks, err := readImportDecks(ctx, importDB)
+	if err != nil {
+		return nil, err
+	}
+	decks, err := ingest.MergeDecks(ctx, stx, "", srcDecks, srcCollections, targetOf)
+	if err != nil {
+		return nil, err
+	}
 
 	// Final check for cancellation before committing
 	if err = ctx.Err(); err != nil {
@@ -693,6 +701,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		"collections":              merged.Changed,
 		"livingCollectionsSkipped": merged.LivingSkipped,
 		"lessons":                  lessons,
+		"decks":                    decks,
 	}
 
 	slog.Info("import committed", "added", positionsAdded, "merged", positionsMerged, "skipped", positionsSkipped, "total", totalPositions)
@@ -786,6 +795,19 @@ func readImportLessons(ctx context.Context, importDB *sql.DB) ([]*domain.Lesson,
 	}
 	defer itx.Rollback()
 	return ingest.ReadSourceLessons(ctx, sqlite.WrapTx(itx), "")
+}
+
+// readImportDecks reads the source's Anki decks like readImportCollections.
+func readImportDecks(ctx context.Context, importDB *sql.DB) ([]ingest.SourceDeck, error) {
+	if !sqlite.TableExists(ctx, importDB, "anki_deck") {
+		return nil, nil
+	}
+	itx, err := importDB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
+	if err != nil {
+		return nil, err
+	}
+	defer itx.Rollback()
+	return ingest.ReadSourceDecks(ctx, sqlite.WrapTx(itx), "")
 }
 
 // Deprecated: Use AnalyzeImportDatabase followed by CommitImportDatabase instead

@@ -59,6 +59,8 @@ func (d *Database) ExportDatabaseCtx(ctx context.Context, opts ExportOptions) er
 		sel.AllMatches = len(opts.MatchIDs) == 0
 	}
 
+	sel.DeckIDs, sel.DeckPositions = opts.DeckIDs, len(opts.DeckIDs) > 0
+
 	if opts.IncludeLessons {
 		sel.LessonIDs = opts.LessonIDs
 		sel.AllLessons = len(opts.LessonIDs) == 0

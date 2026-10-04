@@ -14,6 +14,7 @@ type tenantQuotaResp struct {
 
 type tenantQuotaUsage struct {
 	Positions            int     `json:"positions"`
+	StoredBytes          int64   `json:"storedBytes"`
 	AnalysisSecondsToday float64 `json:"analysisSecondsToday"`
 	ImportsInFlight      int     `json:"importsInFlight"`
 }
@@ -25,9 +26,13 @@ func (s *Server) tenantQuotaRoutes() []route {
 			if err != nil {
 				return tenantQuotaResp{}, err
 			}
+			stored, err := s.opts.Storage.Metadata().StoredBytes(ctx, scope)
+			if err != nil {
+				return tenantQuotaResp{}, err
+			}
 			spent, imports := s.quota.usage(scope)
 			return tenantQuotaResp{Limits: s.quota.limits, Usage: tenantQuotaUsage{
-				Positions: counts.Positions, AnalysisSecondsToday: spent.Seconds(), ImportsInFlight: imports,
+				Positions: counts.Positions, StoredBytes: stored, AnalysisSecondsToday: spent.Seconds(), ImportsInFlight: imports,
 			}}, nil
 		})},
 	}

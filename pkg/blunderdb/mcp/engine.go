@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 
 	sdk "github.com/modelcontextprotocol/go-sdk/mcp"
@@ -83,7 +84,28 @@ func (e *Engine) do(ctx context.Context, req *sdk.CallToolRequest, method string
 	return e.send(ctx, req, method, "application/json", body)
 }
 
-func (e *Engine) send(ctx context.Context, req *sdk.CallToolRequest, method, contentType string, body []byte) (*recorder, error) {
+// CallIfMatch is Call for a gesture written against a revision: the route
+// refuses a stale one (409) as it does for a direct client.
+func (e *Engine) CallIfMatch(ctx context.Context, req *sdk.CallToolRequest, method string, revision int64, in, out any) error {
+	if in == nil {
+		in = struct{}{}
+	}
+	body, err := json.Marshal(in)
+	if err != nil {
+		return err
+	}
+	w, err := e.send(ctx, req, method, "application/json", body, "If-Match", strconv.Quote(strconv.FormatInt(revision, 10)))
+	if err != nil || out == nil {
+		return err
+	}
+	if err := json.Unmarshal(w.body.Bytes(), out); err != nil {
+		return fmt.Errorf("%s: decode answer: %w", method, err)
+	}
+	return nil
+}
+
+// send posts body to /v1/<method>; extra is header name/value pairs.
+func (e *Engine) send(ctx context.Context, req *sdk.CallToolRequest, method, contentType string, body []byte, extra ...string) (*recorder, error) {
 	tenant, err := e.tenantOf(req)
 	if err != nil {
 		return nil, err
@@ -94,6 +116,9 @@ func (e *Engine) send(ctx context.Context, req *sdk.CallToolRequest, method, con
 	}
 	r.Header.Set("Content-Type", contentType)
 	r.Header.Set(TenantHeader, tenant)
+	for i := 0; i+1 < len(extra); i += 2 {
+		r.Header.Set(extra[i], extra[i+1])
+	}
 	if req != nil && req.Extra != nil && req.Extra.Header != nil {
 		// The person the proxy names signs what is written, as on a direct call.
 		if u := req.Extra.Header.Get(UserHeader); u != "" {
