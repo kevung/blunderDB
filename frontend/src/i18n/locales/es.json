@@ -2636,7 +2636,8 @@
             "draw": "Sorteo realizado",
             "matchLaunched": "Partida {a} – {b} iniciada",
             "allLaunched": "Toda la cola está iniciada",
-            "launched": "Propuesta iniciada"
+            "launched": "Propuesta iniciada",
+            "forfeitWithdrawFailed": "Abandono registrado, pero no se pudo retirar al jugador."
         }
     },
     "palette": {

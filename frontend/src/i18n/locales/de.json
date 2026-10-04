@@ -2636,7 +2636,8 @@
             "draw": "Auslosung erfolgt",
             "matchLaunched": "Match {a} – {b} gestartet",
             "allLaunched": "Die ganze Warteschlange ist gestartet",
-            "launched": "Vorschlag gestartet"
+            "launched": "Vorschlag gestartet",
+            "forfeitWithdrawFailed": "Aufgabe erfasst, aber das Zurückziehen des Spielers ist fehlgeschlagen."
         }
     },
     "palette": {

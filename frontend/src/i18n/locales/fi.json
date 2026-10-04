@@ -2636,7 +2636,8 @@
             "draw": "Arvonta tehty",
             "matchLaunched": "Ottelu {a} – {b} aloitettu",
             "allLaunched": "Koko jono on aloitettu",
-            "launched": "Ehdotus aloitettu"
+            "launched": "Ehdotus aloitettu",
+            "forfeitWithdrawFailed": "Luovutus kirjattu, mutta pelaajan poistaminen epäonnistui."
         }
     },
     "palette": {

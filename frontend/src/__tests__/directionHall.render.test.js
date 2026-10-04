@@ -12,11 +12,15 @@ vi.mock('../stores/directionStore', () => ({
     hallEnterForfeit: vi.fn(async () => null),
     hallMoveMatch: vi.fn(async () => null),
     hallCancelMatch: vi.fn(async () => null),
-    hallConfirmProposal: vi.fn(async () => null)
+    hallConfirmProposal: vi.fn(async () => null),
+    hallWithdrawParticipant: vi.fn(async () => null)
 }));
 
 import HallView from '../components/direction/HallView.svelte';
-import { hallConfirmProposal } from '../stores/directionStore';
+import { hallConfirmProposal, hallEnterForfeit, hallWithdrawParticipant } from '../stores/directionStore';
+import { confirmModalStore, resolveConfirm } from '../services/confirmService.js';
+import { get } from 'svelte/store';
+import { screen } from '@testing-library/svelte';
 
 afterEach(() => {
     cleanup();
@@ -86,6 +90,18 @@ describe('la Salle', () => {
         expect(rows[1].textContent).toContain('Principal');
         await fireEvent.click(/** @type {HTMLElement} */ (rows[0].querySelector('button.go')));
         expect(hallConfirmProposal).toHaveBeenCalledWith(4, hall.queue[0].action);
+    });
+
+    test('le forfait de la Salle peut retirer le perdant, dans l’épreuve de sa case', async () => {
+        const act = vi.fn(async (fn) => (await fn(), true));
+        const { getByTestId } = render(HallView, { props: { hall, act } });
+        await fireEvent.click(getByTestId('direction-table-2'));
+        await fireEvent.click(screen.getByTestId('direction-result-more'));
+        await fireEvent.click(screen.getByTestId('direction-result-forfeit-a'));
+        await vi.waitFor(() => expect(get(confirmModalStore)).not.toBeNull());
+        resolveConfirm('forfeitWithdraw');
+        await vi.waitFor(() => expect(hallWithdrawParticipant).toHaveBeenCalledWith(4, 'a', false));
+        expect(hallEnterForfeit).toHaveBeenCalledWith(4, 'm1', 'b', '');
     });
 
     test('un match retenu sans table reste dans la file, sans bouton « Lancer »', () => {

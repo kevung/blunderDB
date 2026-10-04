@@ -472,7 +472,14 @@
     const onForfeit = async (/** @type {string} */ m, /** @type {string} */ w, /** @type {string} */ note, /** @type {unknown} */ _cell, /** @type {string | undefined} */ withdrawLoser) =>
         act(async () => {
             await enterForfeit(m, w, note);
-            if (withdrawLoser) await withdrawParticipant(withdrawLoser, false);
+            if (!withdrawLoser) return;
+            // Le forfait est acquis : un retrait refusé se dit à part, sans le défaire.
+            try {
+                await withdrawParticipant(withdrawLoser, false);
+            } catch (e) {
+                logger.error('direction: withdraw after forfeit failed', e);
+                statusBarTextStore.set(tMsg('direction.feedback.forfeitWithdrawFailed'));
+            }
         }, 'direction.result.error');
     /** @type {(m: string, table: number) => Promise<boolean>} */
     const onMove = (m, table) =>

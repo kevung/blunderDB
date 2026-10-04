@@ -2636,7 +2636,8 @@
             "draw": "Sorteggio effettuato",
             "matchLaunched": "Partita {a} – {b} avviata",
             "allLaunched": "Tutta la coda è avviata",
-            "launched": "Proposta avviata"
+            "launched": "Proposta avviata",
+            "forfeitWithdrawFailed": "Forfait registrato, ma il ritiro del giocatore non è riuscito."
         }
     },
     "palette": {

@@ -968,6 +968,9 @@ export const hallEnterResult = (tid, matchId, winner, a = 0, b = 0, note = '') =
 /** @param {number} tid @param {string} matchId @param {string} winner @param {string} [note] */
 export const hallEnterForfeit = (tid, matchId, winner, note = '') => hallGesture(() => EnterForfeit(tid, matchId, winner, note));
 
+/** @param {number} tid @param {string} participantId @param {boolean} after */
+export const hallWithdrawParticipant = (tid, participantId, after) => hallGesture(() => WithdrawParticipant(tid, participantId, after));
+
 /**
  * Déplace un match de la Salle ; sur une table occupée par une épreuve sœur, le service échange
  * les deux matchs, un changement de table dans chaque journal.

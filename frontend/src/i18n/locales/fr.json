@@ -2636,7 +2636,8 @@
             "draw": "Tirage effectué",
             "matchLaunched": "Match {a} – {b} lancé",
             "allLaunched": "Toute la file est lancée",
-            "launched": "Proposition lancée"
+            "launched": "Proposition lancée",
+            "forfeitWithdrawFailed": "Forfait enregistré, mais le retrait du joueur a échoué."
         }
     },
     "palette": {

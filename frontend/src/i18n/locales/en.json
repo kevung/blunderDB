@@ -2636,7 +2636,8 @@
             "draw": "Draw done",
             "matchLaunched": "Match {a} – {b} started",
             "allLaunched": "The whole queue is started",
-            "launched": "Proposal started"
+            "launched": "Proposal started",
+            "forfeitWithdrawFailed": "Forfeit recorded, but withdrawing the player failed."
         }
     },
     "palette": {

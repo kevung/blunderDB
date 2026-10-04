@@ -2636,7 +2636,8 @@
             "draw": "抽選を行いました",
             "matchLaunched": "マッチ {a} – {b} を開始しました",
             "allLaunched": "待ち行列をすべて開始しました",
-            "launched": "提案を開始しました"
+            "launched": "提案を開始しました",
+            "forfeitWithdrawFailed": "棄権は記録されましたが、選手の退会に失敗しました。"
         }
     },
     "palette": {
