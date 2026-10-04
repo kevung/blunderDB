@@ -1182,6 +1182,10 @@ export function SetCollectionFilter(arg1, arg2) {
   return window['go']['database']['Database']['SetCollectionFilter'](arg1, arg2);
 }
 
+export function SetCommentAuthor(arg1) {
+  return window['go']['database']['Database']['SetCommentAuthor'](arg1);
+}
+
 export function SetDirectionConfig(arg1, arg2) {
   return window['go']['database']['Database']['SetDirectionConfig'](arg1, arg2);
 }

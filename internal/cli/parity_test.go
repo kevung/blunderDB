@@ -133,6 +133,7 @@ var serverOnly = map[string]string{
 // databaseParity is the allow-list. Keep it sorted by method name.
 var databaseParity = map[string]parityEntry{
 	"AddComment":                        {Server: "/v1/comments.add", Why: whyGUIEdit},
+	"SetCommentAuthor":                  {Why: "the signature of the comments this process writes: the desktop sets it from « Votre nom »; the daemon reads X-User-Name per request instead, and the CLI writes no comment"},
 	"AddMatchToTournament":              {Server: "/v1/tournaments.addMatch", Why: whyGUIEdit},
 	"BuryAnkiCard":                      {CLI: "anki card", Server: "/v1/anki.buryCard"},
 	"AddPositionToCollection":           {Server: "/v1/collections.addPosition", Why: whyGUIEdit},

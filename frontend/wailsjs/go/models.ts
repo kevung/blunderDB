@@ -1558,6 +1558,7 @@ export namespace domain {
 	    createdAt: string;
 	    modifiedAt: string;
 	    origin: string;
+	    author: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new CommentEntry(source);
@@ -1571,6 +1572,7 @@ export namespace domain {
 	        this.createdAt = source["createdAt"];
 	        this.modifiedAt = source["modifiedAt"];
 	        this.origin = source["origin"];
+	        this.author = source["author"];
 	    }
 	}
 	

@@ -90,6 +90,14 @@ func Tenant(public map[string]bool, singleTenant, trustReadTenants bool, errFn f
 			// Also carry the numeric tenant so the PostgreSQL backend can set the
 			// app.tenant_id GUC when RLS is enabled (no-op otherwise).
 			ctx = storage.WithTenant(ctx, numeric)
+			// A comment written through the daemon is signed by the person the
+			// proxy names, or by the tenant when it names nobody. Like the
+			// tenant itself, the header is trusted, never checked (ADR-0005).
+			author := storage.NormalizeCommentAuthor(r.Header.Get("X-User-Name"))
+			if author == "" {
+				author = tenant
+			}
+			ctx = storage.WithCommentAuthor(ctx, author)
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

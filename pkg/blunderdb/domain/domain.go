@@ -211,6 +211,10 @@ type CommentEntry struct {
 	// Origin says who wrote this comment; it lets a match deletion spare the
 	// user's notes while discarding the source file's remarks.
 	Origin CommentOrigin `json:"origin"`
+	// Author is the person behind the comment, free text, "" when unknown.
+	// Origin says which program carried the text; Author tells a coach from
+	// a student when both write in blunderDB.
+	Author string `json:"author"`
 }
 
 // CommentOrigin names who wrote the text a comment row currently holds.

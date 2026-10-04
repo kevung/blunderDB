@@ -159,3 +159,26 @@ func TestTenant_SingleTenantBackendRefusesTheOthers(t *testing.T) {
 		t.Errorf("/healthz must stay public: ran=%v code=%d", p.ran, code)
 	}
 }
+
+// A comment written through the daemon is signed by X-User-Name, or by the
+// tenant when the proxy names nobody.
+func TestTenant_CommentAuthor(t *testing.T) {
+	for _, tc := range []struct{ header, want string }{{"  Alice ", "Alice"}, {"", "7"}} {
+		var got string
+		mw := Tenant(nil, false, false, func(w http.ResponseWriter, _ *http.Request, msg string) {
+			http.Error(w, msg, http.StatusBadRequest)
+		})
+		h := mw(http.HandlerFunc(func(_ http.ResponseWriter, r *http.Request) {
+			got = storage.CommentAuthorFromContext(r.Context())
+		}))
+		req := httptest.NewRequest(http.MethodPost, "/v1/comments.add", nil)
+		req.Header.Set("X-Tenant-ID", "7")
+		if tc.header != "" {
+			req.Header.Set("X-User-Name", tc.header)
+		}
+		h.ServeHTTP(httptest.NewRecorder(), req)
+		if got != tc.want {
+			t.Errorf("X-User-Name %q: author = %q, want %q", tc.header, got, tc.want)
+		}
+	}
+}

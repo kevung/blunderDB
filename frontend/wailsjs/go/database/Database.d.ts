@@ -607,6 +607,8 @@ export function SetBeforeSwitch(arg1:any):Promise<void>;
 
 export function SetCollectionFilter(arg1:number,arg2:string):Promise<void>;
 
+export function SetCommentAuthor(arg1:string):Promise<void>;
+
 export function SetDirectionConfig(arg1:number,arg2:string):Promise<void>;
 
 export function SetDirectionOutputDir(arg1:number,arg2:string):Promise<void>;

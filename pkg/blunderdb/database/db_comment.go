@@ -34,6 +34,21 @@ func collectComments(seq iter.Seq2[*CommentEntry, error]) ([]CommentEntry, error
 	return entries, nil
 }
 
+// SetCommentAuthor names who signs the comments written from now on: the
+// desktop's « Votre nom » setting, the CLI's --author. An empty name leaves
+// them unsigned.
+func (d *Database) SetCommentAuthor(name string) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	d.commentAuthor = storage.NormalizeCommentAuthor(name)
+}
+
+// authorCtx is the context of a comment write: it carries the author. The
+// caller holds d.mu.
+func (d *Database) authorCtx() context.Context {
+	return storage.WithCommentAuthor(context.Background(), d.commentAuthor)
+}
+
 // DeleteComment removes every comment entry of a position.
 func (d *Database) DeleteComment(positionID int64) error {
 	d.mu.Lock()
@@ -55,7 +70,7 @@ func (d *Database) AddComment(positionID int64, text string) error {
 	if err != nil {
 		return err
 	}
-	_, err = cs.Add(context.Background(), "", positionID, text)
+	_, err = cs.Add(d.authorCtx(), "", positionID, text)
 	return err
 }
 
@@ -68,7 +83,7 @@ func (d *Database) UpdateCommentEntry(commentID int64, text string) error {
 	if err != nil {
 		return err
 	}
-	return cs.Update(context.Background(), "", commentID, text)
+	return cs.Update(d.authorCtx(), "", commentID, text)
 }
 
 // DeleteCommentEntry deletes a specific comment by its ID
@@ -96,7 +111,7 @@ func (d *Database) SaveComment(positionID int64, text string) error {
 	if err != nil {
 		return err
 	}
-	_, err = cs.Upsert(context.Background(), "", positionID, text)
+	_, err = cs.Upsert(d.authorCtx(), "", positionID, text)
 	return err
 }
 

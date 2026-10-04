@@ -58,6 +58,7 @@ type Database struct {
 	pendingAnkiCardKinds bool
 	lock                 *fileLock // single-writer advisory lock on the open file (nil for :memory:/read-only)
 	readOnly             bool      // opened read-only because another instance holds the write lock
+	commentAuthor        string    // who signs the comments written here (SetCommentAuthor); guarded by mu
 	// transcriptSvc is the transcription service over this handle's store
 	// (db_transcription.go), holding the open drafts' sessions; transcriptMu
 	// guards the pointer.
