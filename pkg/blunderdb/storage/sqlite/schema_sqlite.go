@@ -69,7 +69,7 @@ var schemaStatements = []string{
 		occupancy_2       INTEGER,
 		point_mask_1      INTEGER,
 		point_mask_2      INTEGER,
-		-- The board, 28 signed bytes (engine.EncodeBoardState, ADR-0070).
+		-- The board, 28 signed bytes (engine.EncodeBoardState, ADR-0071).
 		-- Declared TEXT so that a migrated library and a fresh one share one
 		-- declaration: TEXT affinity stores a BLOB as it is. Rows older than
 		-- 2.31.0 the migration could not read keep their text;
@@ -81,7 +81,7 @@ var schemaStatements = []string{
 		individually_imported INTEGER NOT NULL DEFAULT 0,
 		flagged INTEGER NOT NULL DEFAULT 0,
 		-- Date of the earliest match that reaches this position, in Unix
-		-- seconds UTC (ADR-0070, derived by sqlite.UnixFromMatchDateSQL);
+		-- seconds UTC (ADR-0071, derived by sqlite.UnixFromMatchDateSQL);
 		-- NULL when no match reaches it. Denormalised so a date filter reads
 		-- one indexed column instead of joining move, game and match; the
 		-- match store keeps it true when a move is written, a match date is
@@ -114,7 +114,7 @@ var schemaStatements = []string{
 		is_close_cube               INTEGER NOT NULL DEFAULT 0,
 		-- Provenance of the verdict (engine.AnalysisProvenance): the
 		-- engine label, the depth as domain.AnalysisDepthRank, and the blob's
-		-- CreationDate in Unix seconds UTC (ADR-0070). NULL analysis_engine
+		-- CreationDate in Unix seconds UTC (ADR-0071). NULL analysis_engine
 		-- means "not derived yet": a row written before the column, or by a
 		-- path that writes the blob alone;
 		-- the open-time pass (database.backfillAnalysisProvenance) fills it.

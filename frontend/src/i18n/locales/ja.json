@@ -656,6 +656,7 @@
         "newTournamentPlaceholder": "新規トーナメント…",
         "noMatches": "マッチがありません",
         "noTournaments": "トーナメントがありません",
+        "openHint": "ダブルクリックまたは Enter で開く",
         "notesPlaceholder": "メモ…",
         "player1": "プレイヤー 1",
         "player2": "プレイヤー 2",
@@ -2426,6 +2427,7 @@
             "prize": "賞金",
             "wins": "勝",
             "losses_column": "敗",
+            "section_column": "区分",
             "opponents": "対戦した相手",
             "waiting": "待機",
             "state": "状態",
@@ -2533,7 +2535,11 @@
             "noChange": "なし：テーブルはすでにイベントのものです。",
             "confirm": "追加",
             "wall": {
-                "rounds": "{n} ラウンド発表済み"
+                "rounds": "{n} ラウンド発表済み",
+                "status": "出場しますか？",
+                "bye": "不戦 — 第{round}回戦から参加",
+                "eliminated": "敗退",
+                "qualified": "進出 — {phase}"
             },
             "trashConfirm": "イベント「{name}」を削除しますか？各種目は切り離されて残ります。"
         },
@@ -2775,6 +2781,9 @@
         "findDuplicates": "検索",
         "noDuplicates": "重複の可能性はありません。",
         "suspectSameDice": "#{other} と #{match}：同じダイス（{otherPlayers} / {players}）",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "これらの別名を作成",
+        "pairingApplied": "別名を作成しました",
         "suspectLonger": "#{match} は #{other} の続き（{players}）"
     }
 }

@@ -31,7 +31,7 @@ func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, 
 			where.WriteString(" AND 0=1")
 		}
 		// Half-open on the day after the last bound, so a time of day on the
-		// last day still counts. A day bound is midnight UTC (ADR-0070).
+		// last day still counts. A day bound is midnight UTC (ADR-0071).
 		for _, b := range []struct{ day, op string }{{from, " >= "}, {until, " < "}} {
 			if b.day == "" {
 				continue

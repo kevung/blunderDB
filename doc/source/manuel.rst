@@ -1243,7 +1243,11 @@ sans un clic sur **Appliquer**. Le même onglet porte la case **Ignorer les
 doublons à l'import** (l'équivalent de ``--skip-duplicates``, pour la session)
 et la recherche des **doublons probables** d'une base existante, celle de
 ``blunderdb repair --duplicates`` : chaque paire est donnée par ses numéros de
-match, rien n'est fusionné. En ligne de commande : ``blunderdb players alias``
+match, rien n'est fusionné. Sous une paire aux mêmes dés, **Créer ces alias**
+enregistre en un clic les alias de joueur qui feraient nommer aux deux matchs
+les mêmes joueurs, la graphie du match le plus récent devenant l'alias : une
+seule proposition quand un nom est commun aux deux, sinon deux — siège pour
+siège, puis croisée — dont on choisit celle qui dit qui est qui. En ligne de commande : ``blunderdb players alias``
 et ``blunderdb events alias``.
 
 * **Un dossier s'importe en parallèle.** Les fichiers sont lus sur plusieurs
@@ -2170,8 +2174,13 @@ les menus contextuels, le clavier et le glisser-déposer y fonctionnent comme
 dans la grille d'une épreuve, et chaque geste s'adresse à l'épreuve de la case.
 Glisser un match sur une table occupée par une autre épreuve échange les deux
 matchs après une confirmation qui nomme les deux épreuves. Sous la grille, les
-propositions de toutes les épreuves sont groupées par épreuve, chacune avec son
-bouton *Lancer*. Cliquer sur une épreuve ou sur un onglet de vue quitte *Toutes les tables*.
+propositions de toutes les épreuves forment une seule file, chacune marquée de
+son épreuve et munie de son bouton *Lancer* : les joueurs qui attendent depuis le
+plus longtemps passent d'abord, si bien qu'une épreuve n'attend pas la fin de la
+ronde d'une autre. Un match sans table — toutes les tables prises, ou un joueur
+retenu par un match d'une autre épreuve — suit la file avec sa raison, sans
+bouton *Lancer*, jusqu'à ce qu'une table ou le joueur se libère. Cliquer sur une
+épreuve ou sur un onglet de vue quitte *Toutes les tables*.
 
 Quand l'événement a plusieurs salles, la grille se groupe par salle, sous le nom de chacune. Le nom
 d'une table s'affiche à côté de son numéro, avec un drapeau pour une table réservée et une étoile suivie des
@@ -2181,7 +2190,8 @@ Une même personne peut jouer plusieurs épreuves de l'événement : deux
 Participants du même nom sont la même personne, et pour une paire de doubles
 chacun des deux membres compte. Tant qu'elle joue dans une épreuve, les autres ne
 la proposent pas, et leur liste *En attente* dit où elle joue : « joue au
-principal, table 4 ». L'appariement à la main reste permis : le match démarre, et
+principal, table 4 ». Un match de tableau qui l'attend reste dans la file, et le
+lancer est refusé tant qu'elle joue. L'appariement à la main reste permis : le match démarre, et
 sa case de la grille porte la même mention.
 
 L'affichage du tournoi
@@ -2216,6 +2226,13 @@ se recharge toujours toutes les trente secondes et reprend la rotation là où e
 en était. Une
 épreuve sans tableau — une phase suisse, par exemple — n'a pas d'arbre et la page
 reste celle d'avant.
+
+Sous la rubrique « Est-ce que je joue ? », la page d'une épreuve et la page
+murale de l'événement nomment les joueurs dont le sort est réglé : « éliminé(e) »
+dès qu'il ne reste plus de match à jouer, « qualifié(e) » avec le nom de la phase
+suivante quand une phase est terminée, et « exempté(e) — entre au tour N » pour
+un joueur tiré sans adversaire dans le tableau, tant qu'il n'a pas joué. Le
+classement prend le relais une fois le tournoi terminé.
 
 Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``
@@ -2742,7 +2759,8 @@ décisions comptées. L'onglet Corpus calcule chaque vue à la demande, sous le
 filtre courant. Un **filtre de provenance** (champs *Moteur* et *Profondeur
 min.* de la barre de filtres) restreint les statistiques aux décisions analysées ainsi ; il porte
 sur chaque décision, et les chiffres qu'il touche sont alors recalculés depuis
-les décisions.
+les décisions. Comme le reste de la barre, il est conservé d'une session à
+l'autre.
 
 .. important::
    Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas confondre

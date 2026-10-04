@@ -511,6 +511,8 @@ export function RebuildMatchStats():Promise<number>;
 
 export function RecommendedTags():Promise<Array<string>>;
 
+export function ReencodeAnalyses():Promise<database.ReencodeResult>;
+
 export function RefreshSearchStatistics():Promise<void>;
 
 export function ReinstateParticipant(arg1:number,arg2:string):Promise<service.DirectionView>;

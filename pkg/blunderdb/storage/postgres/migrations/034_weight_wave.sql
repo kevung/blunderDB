@@ -1,5 +1,5 @@
 -- Forward migration: completes the 2.31.0 wave with the weight wave of the
--- large-library plan (ADR-0070). The SQLite side lives in
+-- large-library plan (ADR-0071). The SQLite side lives in
 -- migrate_2_30_0_to_2_31_0; 2.31.0 was never published, so this does not bump
 -- domain.DatabaseVersion.
 --

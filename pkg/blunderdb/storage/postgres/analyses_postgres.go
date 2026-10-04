@@ -14,6 +14,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 type analysisStore struct{ db execer }
@@ -260,21 +261,24 @@ func (s *analysisStore) Load(ctx context.Context, scope string, positionID int64
 }
 
 // Delete removes the analysis for positionID.
-// The matches reaching the position lose their match_stats rows first: their
-// counted decisions change with it. Dropped rows are only recomputed, so an
-// invalidation left behind by a failed delete costs time, never a figure.
+// The matches reaching the position lose their match_stats rows in the same
+// transaction: their counted decisions change with it, and a Compute running
+// between two separate statements could refill a row from the analysis about
+// to disappear.
 func (s *analysisStore) Delete(ctx context.Context, scope string, positionID int64) error {
-	if _, err := s.db.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1 AND match_id IN
-		(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id
-		  WHERE mv.position_id = $2 AND mv.tenant_id = $1)`, tenantID(scope), positionID); err != nil {
-		return fmt.Errorf("postgres: invalidate match stats of position %d: %w", positionID, err)
-	}
-	if _, err := s.db.Exec(ctx,
-		`DELETE FROM analysis WHERE position_id = $1 AND tenant_id = $2`,
-		positionID, tenantID(scope)); err != nil {
-		return fmt.Errorf("postgres: delete analysis for position %d: %w", positionID, err)
-	}
-	return nil
+	return withTx(ctx, s.db, func(tx execer) error {
+		if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1 AND match_id IN
+			(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id
+			  WHERE mv.position_id = $2 AND mv.tenant_id = $1)`, tenantID(scope), positionID); err != nil {
+			return fmt.Errorf("postgres: invalidate match stats of position %d: %w", positionID, err)
+		}
+		if _, err := tx.Exec(ctx,
+			`DELETE FROM analysis WHERE position_id = $1 AND tenant_id = $2`,
+			positionID, tenantID(scope)); err != nil {
+			return fmt.Errorf("postgres: delete analysis for position %d: %w", positionID, err)
+		}
+		return nil
+	})
 }
 
 // playedActionsFromMatch reads the earliest recorded checker move and cube
@@ -552,4 +556,9 @@ func (s *analysisStore) engineBatch(ctx context.Context, scope string, last int6
 		ids = append(ids, id)
 	}
 	return raw, ids, rows.Err()
+}
+
+// ReencodeAnalyses — see storage.AnalysisStore.
+func (s *analysisStore) ReencodeAnalyses(ctx context.Context, scope string, after int64, limit int) (int64, int, error) {
+	return sqlshared.ReencodeAnalyses(ctx, binder{s.db}.shared(), scope, after, limit)
 }

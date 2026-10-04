@@ -656,6 +656,7 @@
         "newTournamentPlaceholder": "Neues Turnier…",
         "noMatches": "Keine Matches",
         "noTournaments": "Keine Turniere",
+        "openHint": "Doppelklick oder Eingabetaste zum Öffnen",
         "notesPlaceholder": "Notizen…",
         "player1": "Spieler 1",
         "player2": "Spieler 2",
@@ -2426,6 +2427,7 @@
             "prize": "Preis",
             "wins": "S",
             "losses_column": "N",
+            "section_column": "Abschnitt",
             "opponents": "Bisherige Gegner",
             "waiting": "Wartend",
             "state": "Status",
@@ -2533,7 +2535,11 @@
             "noChange": "Nichts: seine Tische sind bereits die der Veranstaltung.",
             "confirm": "Zuordnen",
             "wall": {
-                "rounds": "{n} Runden angekündigt"
+                "rounds": "{n} Runden angekündigt",
+                "status": "Spiele ich?",
+                "bye": "Freilos — steigt in Runde {round} ein",
+                "eliminated": "ausgeschieden",
+                "qualified": "qualifiziert — {phase}"
             },
             "trashConfirm": "Veranstaltung „{name}“ löschen? Ihre Wettbewerbe bleiben, abgelöst."
         },
@@ -2775,6 +2781,9 @@
         "findDuplicates": "Suchen",
         "noDuplicates": "Kein wahrscheinliches Duplikat.",
         "suspectSameDice": "#{other} und #{match}: gleiche Würfe ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Diese Aliasse anlegen",
+        "pairingApplied": "Aliasse angelegt",
         "suspectLonger": "#{match} setzt #{other} fort ({players})"
     }
 }

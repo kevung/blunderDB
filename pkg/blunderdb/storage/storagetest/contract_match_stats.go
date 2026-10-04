@@ -3,6 +3,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"fmt"
 	"math"
 	"testing"
 
@@ -163,8 +164,18 @@ func testMatchStatsOracle(t *testing.T, s storage.Storage) {
 	}
 	checkSeries("all players", storage.StatsFilter{DecisionType: -1})
 	checkSeries("Alice", storage.StatsFilter{DecisionType: -1, PlayerName: "Alice"})
-	if _, err := s.Stats().MatchSeries(ctx, "", storage.StatsFilter{DecisionType: -1, MinAnalysisDepth: 2}); !errors.Is(err, storage.ErrInvalid) {
-		t.Errorf("MatchSeries with a provenance filter: err %v, want ErrInvalid", err)
+	// MatchSeries is Compute's PerMatch for every filter, the provenance
+	// filters the table cannot apply included.
+	for _, f := range []storage.StatsFilter{
+		{DecisionType: -1},
+		{DecisionType: 0, PlayerName: "Alice"},
+		{DecisionType: 1},
+		{DecisionType: -1, MinAnalysisDepth: 2},
+		{DecisionType: -1, PlayerName: "Alice", AnalysisEngine: "XG"},
+	} {
+		if got, want := seriesKey(t, s, f, true), seriesKey(t, s, f, false); got != want {
+			t.Errorf("filter %+v: MatchSeries %s, Compute's PerMatch %s", f, got, want)
+		}
 	}
 	// By decision type, the table's split against MatchDetail's.
 	for _, dt := range []int{0, 1} {
@@ -356,4 +367,29 @@ func testHeadToHeadWindowsRanking(t *testing.T, s storage.Storage) {
 	if len(storage.RankPlayers(rows, 1<<30)) != 0 {
 		t.Error("a floor above every player's decisions still ranks someone")
 	}
+}
+
+// seriesKey renders the per-match series of f, from MatchSeries or from the
+// full Compute, without the MWC MatchSeries leaves zero.
+func seriesKey(t *testing.T, s storage.Storage, f storage.StatsFilter, fromSeries bool) string {
+	t.Helper()
+	ctx := context.Background()
+	var series []storage.MatchStats
+	if fromSeries {
+		var err error
+		if series, err = s.Stats().MatchSeries(ctx, "", f); err != nil {
+			t.Fatalf("MatchSeries %+v: %v", f, err)
+		}
+	} else {
+		res, err := s.Stats().Compute(ctx, "", f)
+		if err != nil {
+			t.Fatalf("Compute %+v: %v", f, err)
+		}
+		series = res.PerMatch
+	}
+	out := ""
+	for _, m := range series {
+		out += fmt.Sprintf("[%d %s %d %v]", m.ID, m.Date, m.NumDecisions, m.PR)
+	}
+	return out
 }

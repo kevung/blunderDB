@@ -656,6 +656,7 @@
         "newTournamentPlaceholder": "Nouveau tournoi…",
         "noMatches": "Aucun match",
         "noTournaments": "Aucun tournoi",
+        "openHint": "Double-clic ou Entrée pour ouvrir",
         "notesPlaceholder": "Notes…",
         "player1": "Joueur 1",
         "player2": "Joueur 2",
@@ -2426,6 +2427,7 @@
             "prize": "Prix",
             "wins": "V",
             "losses_column": "D",
+            "section_column": "Section",
             "opponents": "Adversaires rencontrés",
             "waiting": "Attente",
             "state": "État",
@@ -2533,7 +2535,11 @@
             "noChange": "Rien : ses tables sont déjà celles de l'événement.",
             "confirm": "Rattacher",
             "wall": {
-                "rounds": "{n} rondes annoncées"
+                "rounds": "{n} rondes annoncées",
+                "status": "Est-ce que je joue ?",
+                "bye": "exempté(e) — entre au tour {round}",
+                "eliminated": "éliminé(e)",
+                "qualified": "qualifié(e) — {phase}"
             },
             "trashConfirm": "Supprimer l'événement « {name} » ? Ses épreuves restent, détachées."
         },
@@ -2775,6 +2781,9 @@
         "findDuplicates": "Chercher",
         "noDuplicates": "Aucun doublon probable.",
         "suspectSameDice": "#{other} et #{match} : mêmes dés ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Créer ces alias",
+        "pairingApplied": "Alias créés",
         "suspectLonger": "#{match} prolonge #{other} ({players})"
     }
 }

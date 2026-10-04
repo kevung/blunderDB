@@ -765,7 +765,7 @@ func (s *SearchStore) scanRows(rows Rows, needAnalysis bool) ([]scannedRow, erro
 		// NULL; the flags are INTEGER 0/1 on SQLite and BOOLEAN on PostgreSQL,
 		// and both drivers convert either into a *bool.
 		var posID int64
-		var posState []byte // position.state is a BLOB (ADR-0070)
+		var posState []byte // position.state is a BLOB (ADR-0071)
 		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2 *int64
 		var pHJ, pHB, pICR, pII, pFlag *bool
 		var pMC *int64

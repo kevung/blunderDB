@@ -656,6 +656,7 @@
         "newTournamentPlaceholder": "Новый турнир…",
         "noMatches": "Нет матчей",
         "noTournaments": "Нет турниров",
+        "openHint": "Двойной щелчок или Enter, чтобы открыть",
         "notesPlaceholder": "Заметки…",
         "player1": "Игрок 1",
         "player2": "Игрок 2",
@@ -2426,6 +2427,7 @@
             "prize": "Приз",
             "wins": "П",
             "losses_column": "Пр",
+            "section_column": "Раздел",
             "opponents": "Сыгранные соперники",
             "waiting": "Ожидание",
             "state": "Статус",
@@ -2533,7 +2535,11 @@
             "noChange": "Ничего: его столы уже совпадают со столами мероприятия.",
             "confirm": "Присоединить",
             "wall": {
-                "rounds": "{n} объявленных туров"
+                "rounds": "{n} объявленных туров",
+                "status": "Играю ли я?",
+                "bye": "без игры — вступает в раунде {round}",
+                "eliminated": "выбыл(а)",
+                "qualified": "прошёл(ла) — {phase}"
             },
             "trashConfirm": "Удалить мероприятие «{name}»? Его состязания останутся, отсоединённые."
         },
@@ -2775,6 +2781,9 @@
         "findDuplicates": "Искать",
         "noDuplicates": "Нет вероятных дубликатов.",
         "suspectSameDice": "#{other} и #{match}: одинаковые броски ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Создать эти псевдонимы",
+        "pairingApplied": "Псевдонимы созданы",
         "suspectLonger": "#{match} продолжает #{other} ({players})"
     }
 }

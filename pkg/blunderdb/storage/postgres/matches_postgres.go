@@ -117,7 +117,7 @@ func nullableString(s string) any {
 	return s
 }
 
-// nullableUnix binds a Unix-seconds date (ADR-0070), 0 meaning unset, to a
+// nullableUnix binds a Unix-seconds date (ADR-0071), 0 meaning unset, to a
 // TIMESTAMPTZ column: PostgreSQL already stores that type as an integer
 // count in UTC.
 func nullableUnix(n int64) any {

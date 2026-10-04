@@ -137,7 +137,7 @@ func nullableString(s string) any {
 	return s
 }
 
-// nullableUnix binds a Unix-seconds date column (ADR-0070), 0 meaning unset.
+// nullableUnix binds a Unix-seconds date column (ADR-0071), 0 meaning unset.
 func nullableUnix(n int64) any {
 	if n == 0 {
 		return nil

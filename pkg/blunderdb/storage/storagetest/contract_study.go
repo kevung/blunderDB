@@ -3,6 +3,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"reflect"
 	"testing"
 	"time"
 
@@ -52,6 +53,33 @@ func testTrainingStatsAndStudy(t *testing.T, s storage.Storage) {
 	}
 	if quizDecisions != 4 || len(got.Sessions) != 1 {
 		t.Errorf("quiz decisions = %d, sessions = %d, want 4 and 1", quizDecisions, len(got.Sessions))
+	}
+
+	// The targeted series gives the windows the full Compute gave, for every
+	// filter: the provenance ones and the decision types included.
+	sessions, err := s.Training().Sessions(ctx, "", "decision", 0)
+	if err != nil {
+		t.Fatalf("Sessions: %v", err)
+	}
+	for _, f := range []storage.StatsFilter{
+		filter,
+		{DecisionType: 0},
+		{DecisionType: 1, PlayerName: "Alice"},
+		{DecisionType: -1, MinAnalysisDepth: 2},
+		{DecisionType: -1, AnalysisEngine: "GNU"},
+	} {
+		got, err := storage.ComputeTrainingStats(ctx, s, "", f, storage.TrainingWindowMonth)
+		if err != nil {
+			t.Fatalf("ComputeTrainingStats %+v: %v", f, err)
+		}
+		full, err := s.Stats().Compute(ctx, "", f)
+		if err != nil {
+			t.Fatalf("Compute %+v: %v", f, err)
+		}
+		want := storage.BuildTrainingStats(storage.TrainingWindowMonth, sessions, full.PerMatch, nil)
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("filter %+v:\n targeted %+v\n full     %+v", f, got, want)
+		}
 	}
 
 	ids, err := storage.StudyIDs(ctx, s, "", filter, 0, 0)

@@ -1,6 +1,6 @@
 # Schéma 2.31.0 complété — plans de requêtes et mesure
 
-Plans EXPLAIN QUERY PLAN sur l'échantillon à 2 % de BMAB (ADR-0070), avant et après le retrait de
+Plans EXPLAIN QUERY PLAN sur l'échantillon à 2 % de BMAB (ADR-0071), avant et après le retrait de
 `idx_analysis_engine` / `idx_analysis_depth` et l'ajout de `idx_analysis_provenance_pending`.
 Aucune requête de recherche ni de match_stats ne lisait ces index ; le filtre de statistiques par
 moteur les lisait faute de statistiques, et retombe sur `move` puis `idx_analysis_position`.

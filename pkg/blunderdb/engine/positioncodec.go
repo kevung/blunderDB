@@ -121,7 +121,7 @@ func EncodeBoardCompact(b domain.Board) string {
 }
 
 // BoardStateLen is the length of the binary state: one signed byte per value
-// of the compact array (ADR-0070).
+// of the compact array (ADR-0071).
 const BoardStateLen = 28
 
 // EncodeBoardState encodes a Board as the binary state position.state holds

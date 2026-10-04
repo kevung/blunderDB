@@ -15,6 +15,7 @@
     import { proposalMenu } from '../../services/directionMenus.js';
     import { menuRequest } from '../../services/contextMenuTrigger.js';
     import { registerKeys } from '../../services/keyDispatch.js';
+    import { keepFocus } from '../../utils/keepFocus.js';
 
     /** @typedef {import('../../stores/directionStore.js').ProposalAction} ProposalAction */
 
@@ -207,7 +208,7 @@
     $effect(() => registerKeys('directionQueue', onKey));
 </script>
 
-<section class="proposals">
+<section class="proposals" use:keepFocus={() => /** @type {HTMLElement | null} */ (queueEl?.querySelector('li.selected') ?? queueEl)}>
     <header>
         <h3>{$t('direction.proposals.title', { n: shown.length })}</h3>
         {#if launchable.length > 1}

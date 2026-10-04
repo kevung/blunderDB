@@ -26,33 +26,55 @@ import (
 // derivation of the denormalised scalar columns, and float rounding for
 // compact storage. They perform no database I/O.
 //
-// # Blob codec and format compatibility (ADR-0030)
+// # Blob codec and format compatibility (ADR-0030, ADR-0070)
 //
-// analysis.data holds one of three formats, told apart by content and never
-// by a schema version: raw JSON (first byte '{'), zlib level 9 (CMF/FLG
-// header), or zstd with the embedded dictionary (magic 0x28 0xB5 0x2F 0xFD).
-// The signatures cannot collide, so any database, however old, still decodes.
+// analysis.data holds one of four formats, told apart by content and never
+// by a schema version:
+//
+//   - binary (written today): the two bytes 0xBA, version, then a zstd frame
+//     with its four-byte magic stripped, compressed with the embedded binary
+//     dictionary; the frame decompresses to the payload of analysisbin.go;
+//   - legacy JSON in zstd with the JSON dictionary (magic 0x28 0xB5 0x2F 0xFD);
+//   - legacy zlib level 9 (CMF/FLG header);
+//   - legacy raw JSON (first byte '{').
+//
+// The signatures cannot collide: 0xBA is neither '{', the zstd magic's first
+// byte nor a zlib CMF (whose low nibble is 8). Legacy rows are read forever
+// and upgraded opportunistically (RecompressAnalysisData on native-.db import,
+// CompactAnalysisData in sqlite.Storage.Vacuum and in the explicit
+// re-encoding pass) — never in a schema migration: a schema bump is for DDL,
+// not for the bytes inside an unchanged BLOB column.
 //
 // zstd comes in two levels, one decoder. The write path (import, merge) uses
-// level 7: level 19 costs twenty times the CPU for 10 % fewer bytes, and a
-// position is re-encoded every time an import merges into it. Compaction
-// (sqlite.Storage.Vacuum) rewrites blobs at level 19, so a compacted database
-// keeps its size. The two are told apart by the frame's Content_Checksum_flag:
-// level-7 frames carry no checksum, level-19 frames do — a one-byte check, no
-// decompression, no schema column. Each zstd frame carries its Dictionary_ID, so a second
-// dictionary later needs no row migration — only registering its bytes in
-// zstdDecoder's dict set.
+// level 7: level 19 costs twenty times the CPU for a few percent of bytes, and
+// a position is re-encoded every time an import merges into it. Compaction
+// rewrites blobs at level 19. The two are told apart by the frame's
+// Content_Checksum_flag: level-7 frames carry no checksum, level-19 frames do
+// — a one-byte check, no decompression, no schema column. Each zstd frame
+// carries its Dictionary_ID, so both dictionaries live in one decoder.
 //
-// Every write is zstd. zlib/raw rows are read forever and upgraded
-// opportunistically (RecompressAnalysisData on native-.db import,
-// CompactAnalysisData in sqlite.Storage.Vacuum) — never in a schema migration: a schema bump is for
-// DDL, not for the bytes inside an unchanged BLOB column.
-//
-// analysis_dict.bin is trained offline by cmd/train-analysis-dict; at runtime
-// the pure-Go klauspost decoder reads it, no zstd binary or cgo needed.
+// The dictionaries are trained offline by cmd/train-analysis-dict; at runtime
+// the pure-Go klauspost decoder reads them, no zstd binary or cgo needed.
 
 //go:embed analysis_dict.bin
 var analysisZstdDict []byte
+
+// analysisBinDict is the dictionary of the binary format (ADR-0070); the JSON
+// one above is frozen, kept only to read legacy rows.
+//
+//go:embed analysis_bin_dict.bin
+var analysisBinDict []byte
+
+// binHeaderTag opens every binary blob; the byte after it is the version.
+const (
+	binHeaderTag     = 0xBA
+	binFormatVersion = 1
+	binHeaderLen     = 2
+)
+
+// ErrUnknownAnalysisFormat reports a binary blob of a version this build
+// cannot read (written by a newer release).
+var ErrUnknownAnalysisFormat = errors.New("analysis blob of an unknown binary format version")
 
 // zstdMagic is the four-byte signature every zstd frame starts with (RFC 8878
 // §3.1.1). Checked first so the common case skips a failed zlib-header parse.
@@ -67,8 +89,8 @@ const zstdChecksumBit = 1 << 2
 // blow-up upstream warns against. Internal concurrency is pinned to 1 —
 // bounded memory over single-call latency, right for few-kilobyte blobs.
 var (
-	zstdEncoder        *zstd.Encoder // level 7, no checksum: the write path
-	zstdCompactEncoder *zstd.Encoder // level 19, checksum: compaction
+	zstdEncoder        *zstd.Encoder // binary dictionary, level 7, no checksum: the write path
+	zstdCompactEncoder *zstd.Encoder // binary dictionary, level 19, checksum: compaction
 	zstdDecoder        *zstd.Decoder
 )
 
@@ -77,7 +99,7 @@ func init() {
 	// Fail loudly rather than fall back to an un-dictionaried codec.
 	enc, err := zstd.NewWriter(nil,
 		zstd.WithEncoderLevel(zstd.SpeedBetterCompression),
-		zstd.WithEncoderDict(analysisZstdDict),
+		zstd.WithEncoderDict(analysisBinDict),
 		zstd.WithEncoderConcurrency(1),
 		zstd.WithEncoderCRC(false),
 	)
@@ -88,7 +110,7 @@ func init() {
 
 	compact, err := zstd.NewWriter(nil,
 		zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(19)),
-		zstd.WithEncoderDict(analysisZstdDict),
+		zstd.WithEncoderDict(analysisBinDict),
 		zstd.WithEncoderConcurrency(1),
 		zstd.WithEncoderCRC(true),
 	)
@@ -98,7 +120,7 @@ func init() {
 	zstdCompactEncoder = compact
 
 	dec, err := zstd.NewReader(nil,
-		zstd.WithDecoderDicts(analysisZstdDict),
+		zstd.WithDecoderDicts(analysisZstdDict, analysisBinDict),
 		// Same cap as the zlib path, far below klauspost's 64 GiB default:
 		// a crafted frame claiming gigabytes is refused before decoding.
 		zstd.WithDecoderMaxMemory(MaxAnalysisBytes),
@@ -111,16 +133,57 @@ func init() {
 	zstdDecoder = dec
 }
 
-// CompressAnalysisData compresses raw JSON bytes with zstd level 7 and the
-// embedded dictionary — the format every write path produces.
-func CompressAnalysisData(jsonData []byte) ([]byte, error) {
-	return zstdEncoder.EncodeAll(jsonData, nil), nil
+// encodeBinaryBlob compresses a binary payload with enc and frames it: the
+// header replaces the zstd magic, which the version byte already implies.
+func encodeBinaryBlob(enc *zstd.Encoder, payload []byte) []byte {
+	frame := enc.EncodeAll(payload, make([]byte, 0, len(payload)/2+32))
+	frame[2] = binHeaderTag
+	frame[3] = binFormatVersion
+	return frame[len(zstdMagic)-binHeaderLen:]
 }
 
-// isCompactZstdFrame reports whether data is a zstd frame written by the
-// compaction encoder (checksum flag set).
-func isCompactZstdFrame(data []byte) bool {
-	return isZstdFrame(data) && len(data) > len(zstdMagic) && data[len(zstdMagic)]&zstdChecksumBit != 0
+// BinaryBlobPrefix is the first byte of every binary blob, for a query that
+// tells legacy rows from binary ones in SQL.
+func BinaryBlobPrefix() []byte { return []byte{binHeaderTag} }
+
+// isBinaryBlob reports whether data is in the binary format (any version).
+func isBinaryBlob(data []byte) bool {
+	return len(data) > binHeaderLen && data[0] == binHeaderTag
+}
+
+// isCompactBinaryBlob reports whether data is a binary blob written by the
+// compaction encoder (checksum flag of the frame header descriptor set).
+func isCompactBinaryBlob(data []byte) bool {
+	return isBinaryBlob(data) && data[1] == binFormatVersion && data[binHeaderLen]&zstdChecksumBit != 0
+}
+
+// decodeBinaryBlob restores the zstd magic, decompresses and decodes.
+func decodeBinaryBlob(data []byte) (domain.PositionAnalysis, error) {
+	if data[1] != binFormatVersion {
+		return domain.PositionAnalysis{}, fmt.Errorf("%w: version %d", ErrUnknownAnalysisFormat, data[1])
+	}
+	frame := make([]byte, 0, len(zstdMagic)+len(data)-binHeaderLen)
+	frame = append(frame, zstdMagic...)
+	frame = append(frame, data[binHeaderLen:]...)
+	payload, err := zstdDecoder.DecodeAll(frame, nil)
+	if err != nil {
+		if errors.Is(err, zstd.ErrDecoderSizeExceeded) {
+			return domain.PositionAnalysis{}, ErrAnalysisTooLarge
+		}
+		return domain.PositionAnalysis{}, err
+	}
+	return UnmarshalAnalysisBinary(payload)
+}
+
+// CompressAnalysisData turns the JSON of a PositionAnalysis into a blob of
+// the format every write path produces (binary, level 7). JSON that does not
+// decode into a PositionAnalysis is an error.
+func CompressAnalysisData(jsonData []byte) ([]byte, error) {
+	var a domain.PositionAnalysis
+	if err := json.Unmarshal(jsonData, &a); err != nil {
+		return nil, err
+	}
+	return EncodeAnalysisForStorage(&a)
 }
 
 // MaxAnalysisBytes bounds what one analysis blob may inflate to. A real one is
@@ -137,9 +200,24 @@ func isZstdFrame(data []byte) bool {
 	return len(data) >= len(zstdMagic) && bytes.Equal(data[:len(zstdMagic)], zstdMagic)
 }
 
-// DecompressAnalysisData detects the blob's format (raw JSON, zlib, zstd)
-// from its content. Inflation past MaxAnalysisBytes is an error.
+// DecompressAnalysisData returns the JSON of the analysis a blob holds,
+// whatever its format: the legacy formats inflate to their stored JSON, a
+// binary blob is decoded and marshalled. Inflation past MaxAnalysisBytes is an
+// error.
 func DecompressAnalysisData(data []byte) ([]byte, error) {
+	if isBinaryBlob(data) {
+		a, err := decodeBinaryBlob(data)
+		if err != nil {
+			return nil, err
+		}
+		return json.Marshal(&a)
+	}
+	return inflateLegacyAnalysis(data)
+}
+
+// inflateLegacyAnalysis inflates a legacy blob (raw JSON, zlib, JSON in zstd)
+// to its JSON text.
+func inflateLegacyAnalysis(data []byte) ([]byte, error) {
 	if len(data) == 0 {
 		return data, nil
 	}
@@ -173,59 +251,52 @@ func DecompressAnalysisData(data []byte) ([]byte, error) {
 	return out, nil
 }
 
-// NeedsRecompression reports whether data is raw JSON or legacy zlib rather
-// than zstd — an allocation-free check so a full-table pass skips current rows
-// without decompressing them.
+// NeedsRecompression reports whether data is in a legacy format (raw JSON,
+// zlib, JSON in zstd) rather than binary — an allocation-free check so a
+// full-table pass skips current rows without decompressing them.
 func NeedsRecompression(data []byte) bool {
-	return len(data) > 0 && !isZstdFrame(data)
+	return len(data) > 0 && !isBinaryBlob(data)
 }
 
-// RecompressAnalysisData recompresses raw JSON or zlib data to zstd and
-// returns zstd data unchanged. It is the opportunistic upgrade path (native-.db
-// import, sqlite.Storage.Vacuum), so no migration step is needed.
-
+// RecompressAnalysisData rewrites a legacy blob in the binary format and
+// returns a binary blob unchanged. It is the opportunistic upgrade path
+// (native-.db import), so no migration step is needed.
 func RecompressAnalysisData(data []byte) ([]byte, error) {
-	if len(data) == 0 {
+	if !NeedsRecompression(data) {
 		return data, nil
 	}
-	if isZstdFrame(data) {
-		return data, nil
-	}
-	jsonData, err := DecompressAnalysisData(data)
+	a, err := DecodeAnalysisFromStorage(data)
 	if err != nil {
 		return nil, err
 	}
-	return CompressAnalysisData(jsonData)
+	return EncodeAnalysisForStorage(&a)
 }
 
 // NeedsCompaction reports whether data is not yet in the compaction format
-// (zstd level 19): raw JSON, zlib, or a level-7 frame from the write path.
-// Allocation-free, so a full-table pass skips compacted rows cheaply.
+// (binary, level 19): a legacy blob or a level-7 binary blob from the write
+// path. Allocation-free, so a full-table pass skips compacted rows cheaply.
 func NeedsCompaction(data []byte) bool {
-	return len(data) > 0 && !isCompactZstdFrame(data)
+	return len(data) > 0 && !isCompactBinaryBlob(data)
 }
 
-// CompactAnalysisData rewrites any analysis blob as zstd level 19 and returns
-// a blob already in that format unchanged. It is sqlite.Storage.Vacuum's
-// pass: the write path trades bytes for speed, compaction takes them back.
+// CompactAnalysisData rewrites any analysis blob as binary at level 19 and
+// returns a blob already in that format unchanged. The write path trades
+// bytes for speed, compaction takes them back.
 func CompactAnalysisData(data []byte) ([]byte, error) {
 	if !NeedsCompaction(data) {
 		return data, nil
 	}
-	jsonData, err := DecompressAnalysisData(data)
+	a, err := DecodeAnalysisFromStorage(data)
 	if err != nil {
 		return nil, err
 	}
-	return zstdCompactEncoder.EncodeAll(jsonData, nil), nil
+	return encodeBinaryBlob(zstdCompactEncoder, MarshalAnalysisBinary(&a)), nil
 }
 
-// EncodeAnalysisForStorage marshals a PositionAnalysis to JSON and compresses it.
+// EncodeAnalysisForStorage encodes a PositionAnalysis as a binary blob at
+// level 7, the format every write produces.
 func EncodeAnalysisForStorage(a *domain.PositionAnalysis) ([]byte, error) {
-	jsonData, err := json.Marshal(a)
-	if err != nil {
-		return nil, err
-	}
-	return CompressAnalysisData(jsonData)
+	return encodeBinaryBlob(zstdEncoder, MarshalAnalysisBinary(a)), nil
 }
 
 // AnalysisContentKey is a's JSON with LastModifiedDate cleared: two analyses
@@ -237,10 +308,13 @@ func AnalysisContentKey(a *domain.PositionAnalysis) ([]byte, error) {
 	return json.Marshal(&c)
 }
 
-// DecodeAnalysisFromStorage decompresses (if needed) and unmarshals analysis data.
+// DecodeAnalysisFromStorage decodes a stored blob of any format.
 func DecodeAnalysisFromStorage(data []byte) (domain.PositionAnalysis, error) {
+	if isBinaryBlob(data) {
+		return decodeBinaryBlob(data)
+	}
 	var a domain.PositionAnalysis
-	jsonData, err := DecompressAnalysisData(data)
+	jsonData, err := inflateLegacyAnalysis(data)
 	if err != nil {
 		return a, err
 	}
@@ -334,7 +408,7 @@ type AnalysisColumns struct {
 // columns are read from — the cube analysis when there is one, else the best
 // checker move, on the ColumnSource view so a rollout-only analysis answers
 // for its rollout. An analysis with no entry answers ("", -1). creation is the
-// blob's CreationDate in Unix seconds, 0 when unset (ADR-0070).
+// blob's CreationDate in Unix seconds, 0 when unset (ADR-0071).
 //
 // One entry and not a summary of all of them: the depth filter and the
 // provenance filter of the stats ask who gave the verdict, and an XG analysis

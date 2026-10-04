@@ -29,7 +29,7 @@ func TestBuildWhereMatchDateIsHalfOpenOnTheLastDay(t *testing.T) {
 	if !strings.Contains(wc.where, "p.match_date >= ? AND p.match_date < ?") {
 		t.Errorf("where = %q, want a half-open interval on position.match_date", wc.where)
 	}
-	// Day bounds are midnight UTC, bound as Unix seconds (ADR-0070).
+	// Day bounds are midnight UTC, bound as Unix seconds (ADR-0071).
 	if len(wc.args) != 2 || wc.args[0] != int64(1704067200) || wc.args[1] != int64(1735689600) {
 		t.Errorf("args = %v, want [1704067200 1735689600] (2024-01-01 and 2025-01-01 UTC)", wc.args)
 	}

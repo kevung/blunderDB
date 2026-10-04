@@ -656,6 +656,7 @@
         "newTournamentPlaceholder": "Nuovo torneo…",
         "noMatches": "Nessun match",
         "noTournaments": "Nessun torneo",
+        "openHint": "Doppio clic o Invio per aprire",
         "notesPlaceholder": "Note…",
         "player1": "Giocatore 1",
         "player2": "Giocatore 2",
@@ -2426,6 +2427,7 @@
             "prize": "Premio",
             "wins": "V",
             "losses_column": "S",
+            "section_column": "Sezione",
             "opponents": "Avversari incontrati",
             "waiting": "Attesa",
             "state": "Stato",
@@ -2533,7 +2535,11 @@
             "noChange": "Niente: i suoi tavoli sono già quelli dell'evento.",
             "confirm": "Collega",
             "wall": {
-                "rounds": "{n} turni annunciati"
+                "rounds": "{n} turni annunciati",
+                "status": "Gioco io?",
+                "bye": "esentato/a — entra al turno {round}",
+                "eliminated": "eliminato/a",
+                "qualified": "qualificato/a — {phase}"
             },
             "trashConfirm": "Eliminare l’evento «{name}»? Le sue prove restano, staccate."
         },
@@ -2775,6 +2781,9 @@
         "findDuplicates": "Cerca",
         "noDuplicates": "Nessun duplicato probabile.",
         "suspectSameDice": "#{other} e #{match}: stessi dadi ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Crea questi alias",
+        "pairingApplied": "Alias creati",
         "suspectLonger": "#{match} prolunga #{other} ({players})"
     }
 }

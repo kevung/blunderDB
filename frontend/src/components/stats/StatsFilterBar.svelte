@@ -65,7 +65,9 @@
                 // send null when -1 so Go *int receives nil
                 decision_type: localFilter.decisionType === -1 ? null : localFilter.decisionType,
                 match_length: localFilter.matchLength,
-                metric: $statsMetricStore
+                metric: $statsMetricStore,
+                analysis_engine: localFilter.analysisEngine,
+                min_analysis_depth: localFilter.minAnalysisDepth
             };
             SaveStatsFilter(persisted).catch(console.error); // eslint-disable-line no-console
         }, 500);
@@ -206,8 +208,8 @@
                     dateTo: persisted.date_to ?? '',
                     decisionType: persisted.decision_type ?? -1,
                     matchLength: persisted.match_length ?? [],
-                    analysisEngine: '',
-                    minAnalysisDepth: 0
+                    analysisEngine: persisted.analysis_engine ?? '',
+                    minAnalysisDepth: persisted.min_analysis_depth ?? 0
                 };
 
                 if (persisted.metric && (persisted.metric === 'pr' || persisted.metric === 'mwc')) {

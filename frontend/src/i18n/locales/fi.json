@@ -656,6 +656,7 @@
         "newTournamentPlaceholder": "Uusi turnaus…",
         "noMatches": "Ei otteluita",
         "noTournaments": "Ei turnauksia",
+        "openHint": "Avaa kaksoisnapsautuksella tai Enterillä",
         "notesPlaceholder": "Muistiinpanot…",
         "player1": "Pelaaja 1",
         "player2": "Pelaaja 2",
@@ -2426,6 +2427,7 @@
             "prize": "Palkinto",
             "wins": "V",
             "losses_column": "T",
+            "section_column": "Osio",
             "opponents": "Kohdatut vastustajat",
             "waiting": "Odottaa",
             "state": "Tila",
@@ -2533,7 +2535,11 @@
             "noChange": "Ei mitään: sen pöydät ovat jo tapahtuman pöydät.",
             "confirm": "Liitä",
             "wall": {
-                "rounds": "{n} kierrosta ilmoitettu"
+                "rounds": "{n} kierrosta ilmoitettu",
+                "status": "Pelaanko?",
+                "bye": "vapaakierros — tulee mukaan kierroksella {round}",
+                "eliminated": "pudonnut",
+                "qualified": "jatkoon — {phase}"
             },
             "trashConfirm": "Poistetaanko tapahtuma ”{name}”? Sen kilpailut jäävät, irrotettuina."
         },
@@ -2775,6 +2781,9 @@
         "findDuplicates": "Etsi",
         "noDuplicates": "Ei todennäköisiä kaksoiskappaleita.",
         "suspectSameDice": "#{other} ja #{match}: samat nopat ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Luo nämä aliakset",
+        "pairingApplied": "Aliakset luotu",
         "suspectLonger": "#{match} jatkaa ottelua #{other} ({players})"
     }
 }

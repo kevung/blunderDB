@@ -159,6 +159,15 @@ func (cli *CLI) repairDuplicates(format string) error {
 			fmt.Printf("#%d (%s) is a longer version of #%d (%s)\n", s.MatchID, s.Players, s.OtherID, s.OtherPlayers)
 		default:
 			fmt.Printf("#%d (%s) has the dice of #%d (%s)\n", s.MatchID, s.Players, s.OtherID, s.OtherPlayers)
+			// Each reading of who is who, as the alias commands that record it.
+			for i, p := range s.Pairings {
+				if len(s.Pairings) > 1 {
+					fmt.Printf("  reading %d:\n", i+1)
+				}
+				for _, a := range p.Aliases {
+					fmt.Printf("    blunderdb players alias add --db FILE %q %q\n", a.Alias, a.Canonical)
+				}
+			}
 		}
 	}
 	fmt.Printf("%d suspected pair(s); nothing was merged.\n", len(suspects))

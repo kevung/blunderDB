@@ -656,6 +656,7 @@
         "newTournamentPlaceholder": "Nuevo torneo…",
         "noMatches": "Sin partidas",
         "noTournaments": "Sin torneos",
+        "openHint": "Doble clic o Intro para abrir",
         "notesPlaceholder": "Notas…",
         "player1": "Jugador 1",
         "player2": "Jugador 2",
@@ -2426,6 +2427,7 @@
             "prize": "Premio",
             "wins": "V",
             "losses_column": "D",
+            "section_column": "Sección",
             "opponents": "Rivales enfrentados",
             "waiting": "Espera",
             "state": "Estado",
@@ -2533,7 +2535,11 @@
             "noChange": "Nada: sus mesas ya son las del evento.",
             "confirm": "Vincular",
             "wall": {
-                "rounds": "{n} rondas anunciadas"
+                "rounds": "{n} rondas anunciadas",
+                "status": "¿Juego yo?",
+                "bye": "exento/a — entra en la ronda {round}",
+                "eliminated": "eliminado/a",
+                "qualified": "clasificado/a — {phase}"
             },
             "trashConfirm": "¿Eliminar el evento «{name}»? Sus pruebas se mantienen, desvinculadas."
         },
@@ -2775,6 +2781,9 @@
         "findDuplicates": "Buscar",
         "noDuplicates": "Ningún duplicado probable.",
         "suspectSameDice": "#{other} y #{match}: mismos dados ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Crear estos alias",
+        "pairingApplied": "Alias creados",
         "suspectLonger": "#{match} prolonga #{other} ({players})"
     }
 }

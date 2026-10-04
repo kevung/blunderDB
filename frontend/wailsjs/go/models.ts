@@ -1083,6 +1083,18 @@ export namespace database {
 	        this.action_count = source["action_count"];
 	    }
 	}
+	export class ReencodeResult {
+	    Rewritten: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ReencodeResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Rewritten = source["Rewritten"];
+	    }
+	}
 	export class VacuumResult {
 	    SizeBefore: number;
 	    SizeAfter: number;
@@ -1656,12 +1668,57 @@ export namespace domain {
 	        this.wrongTakePercentage = source["wrongTakePercentage"];
 	    }
 	}
+	export class PlayerAlias {
+	    alias: string;
+	    canonical: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new PlayerAlias(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.alias = source["alias"];
+	        this.canonical = source["canonical"];
+	    }
+	}
+	export class AliasPairing {
+	    aliases: PlayerAlias[];
+	
+	    static createFrom(source: any = {}) {
+	        return new AliasPairing(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.aliases = this.convertValues(source["aliases"], PlayerAlias);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class DuplicateSuspect {
 	    kind: string;
 	    matchId: number;
 	    otherId: number;
 	    players: string;
 	    otherPlayers: string;
+	    pairings?: AliasPairing[];
 	
 	    static createFrom(source: any = {}) {
 	        return new DuplicateSuspect(source);
@@ -1674,7 +1731,26 @@ export namespace domain {
 	        this.otherId = source["otherId"];
 	        this.players = source["players"];
 	        this.otherPlayers = source["otherPlayers"];
+	        this.pairings = this.convertValues(source["pairings"], AliasPairing);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class ExportOptions {
 	    exportPath: string;
@@ -3554,6 +3630,8 @@ export namespace main {
 	    decision_type?: number;
 	    match_length: number[];
 	    metric: string;
+	    analysis_engine: string;
+	    min_analysis_depth: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new StatsFilterPersisted(source);
@@ -3568,6 +3646,8 @@ export namespace main {
 	        this.decision_type = source["decision_type"];
 	        this.match_length = source["match_length"];
 	        this.metric = source["metric"];
+	        this.analysis_engine = source["analysis_engine"];
+	        this.min_analysis_depth = source["min_analysis_depth"];
 	    }
 	}
 	export class Config {
@@ -4872,7 +4952,6 @@ export namespace service {
 	    tournamentId: number;
 	    name: string;
 	    index: number;
-	    proposals: tournoi.Action[];
 	    names: Record<string, string>;
 	    error?: string;
 	
@@ -4885,9 +4964,42 @@ export namespace service {
 	        this.tournamentId = source["tournamentId"];
 	        this.name = source["name"];
 	        this.index = source["index"];
-	        this.proposals = this.convertValues(source["proposals"], tournoi.Action);
 	        this.names = source["names"];
 	        this.error = source["error"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class HallProposal {
+	    tournamentId: number;
+	    eventIndex: number;
+	    action: tournoi.Action;
+	
+	    static createFrom(source: any = {}) {
+	        return new HallProposal(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tournamentId = source["tournamentId"];
+	        this.eventIndex = source["eventIndex"];
+	        this.action = this.convertValues(source["action"], tournoi.Action);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -4914,6 +5026,8 @@ export namespace service {
 	    events: HallEvent[];
 	    cells: HallCell[];
 	    rooms: string[];
+	    queue: HallProposal[];
+	    held: HallProposal[];
 	
 	    static createFrom(source: any = {}) {
 	        return new HallView(source);
@@ -4926,6 +5040,8 @@ export namespace service {
 	        this.events = this.convertValues(source["events"], HallEvent);
 	        this.cells = this.convertValues(source["cells"], HallCell);
 	        this.rooms = source["rooms"];
+	        this.queue = this.convertValues(source["queue"], HallProposal);
+	        this.held = this.convertValues(source["held"], HallProposal);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

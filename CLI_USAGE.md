@@ -59,6 +59,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `verify` - Verify database integrity
 - `vacuum` - Compact the database file, reclaiming freed space
 - `repair` - Recompute the analysis columns from the analyses themselves
+- `reencode` - Rewrite analyses stored by older releases in the compact format
 - `delete` - Delete data from the database
 - `comment` - Comments on a position, signed by their author (add, list)
 - `trash` - What was deleted through the trash, and how to put it back
@@ -1331,8 +1332,15 @@ it lists the pairs of matches whose dice say they are one match, and merges
 nothing. Two kinds: the same length, initial score and dice in every game
 under other player names (`#12 (…) has the dice of #7 (…)`), and a match whose
 dice continue another's, a truncated match later completed (`#31 (…) is a
-longer version of #30 (…)`). `--format json` returns `{"suspects": [{"kind":
-"same_dice"|"longer", "matchId", "otherId", "players", "otherPlayers"}]}`. A
+longer version of #30 (…)`). Under a same-dice pair, the text output gives the
+`players alias add` commands that would make the two matches name the same
+players: one reading when a name is common to both (the other name can only be
+the other player), else two — seat for seat, then crosswise — numbered, of which
+only one is to be run. The spelling of the later match is the alias, that of the
+earlier one the canonical name. `--format json` returns `{"suspects": [{"kind":
+"same_dice"|"longer", "matchId", "otherId", "players", "otherPlayers",
+"pairings": [{"aliases": [{"alias", "canonical"}]}]}]}`, `pairings` on a
+same-dice pair only. A
 match imported before the dice hash existed gets it on the way, which is the
 only thing this mode writes. An import also signals a match whose dice are
 already stored under other names: `probable duplicate of #N under other
@@ -1571,7 +1579,9 @@ honest, then checks that the volume has roughly twice the current file size
 free (SQLite rebuilds the whole database before swapping it in — it refuses
 with a clear error rather than run out of room partway through), runs
 `VACUUM`, and finishes with `ANALYZE` so the query planner's statistics match
-the rebuilt file.
+the rebuilt file. Before the `VACUUM`, every analysis is rewritten in the
+compact binary format at the strongest compression, including those an older
+release stored as JSON (see `reencode`).
 
 **Example:**
 ```bash
@@ -1584,6 +1594,34 @@ Compacting database...
   Before: 128.4 MiB
   After:  41.2 MiB
   Reclaimed: 87.2 MiB
+```
+
+## Reencode Command
+
+Rewrite the analyses an older release stored as JSON in the compact binary
+format (about half the size, several times faster to read). Old analyses stay
+readable without it; `vacuum` performs the same conversion while it compacts.
+`reencode` converts without compacting: useful on a large database, where
+`vacuum` needs twice the file size in free space, or on a PostgreSQL server,
+which has no `vacuum`. The daemon exposes the same pass as
+`maintenance.reencode`, limited to the caller's tenant.
+
+```bash
+./blunderDB reencode --db database.db
+```
+
+**Options:**
+- `--db` - Path to the database file (required)
+- `--format` - Output format: `text` (default) or `json` (`{"rewritten"}`, the number of analyses rewritten)
+
+It works in batches of 2,000 analyses, each in its own transaction.
+Interrupted, it resumes on the next run where it stopped: analyses already
+converted are skipped without being read. An analysis that does not decode is
+left as it is and logged. It never runs automatically.
+
+**Example output:**
+```
+  Analyses rewritten: 15623468
 ```
 
 ## Healthcheck Command
@@ -3247,6 +3285,28 @@ Also: `players merge --db FILE --into CANONICAL NAME...` and
 `players swap --db FILE MATCH_ID` (see their --help).
 ```
 
+### `blunderdb reencode`
+
+```
+Usage: blunderdb reencode [options]
+
+Rewrite the analyses an older release stored as JSON in the compact
+binary format, which is about half the size and reads several times
+faster. Old analyses stay readable without it; vacuum does the same
+conversion. It works in batches: interrupted, it resumes where it
+stopped on the next run. It never runs automatically.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb reencode --db database.db
+  blunderdb reencode --db database.db --format json
+```
+
 ### `blunderdb repair`
 
 ```
@@ -3803,7 +3863,7 @@ Examples:
 ```
 Usage: blunderdb tournament hall [options]
 
-Print a Rencontre's tables, every event together, and the proposals of each event.
+Print a Rencontre's tables, every event together, then the proposals of every event in one queue and the matches held for want of a table.
 
 Options:
   -db string

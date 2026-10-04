@@ -1,4 +1,4 @@
-# ADR-0070 — Les dates et le plateau se stockent en entiers
+# ADR-0071 — Les dates et le plateau se stockent en entiers
 
 Statut : acceptée. Complète le schéma 2.31.0 (non publié) sans nouveau numéro.
 Voir aussi : ADR-0001 (identité par Zobrist, inchangée), ADR-0068 (table d'équité de match) ;

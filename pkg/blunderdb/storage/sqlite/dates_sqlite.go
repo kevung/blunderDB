@@ -3,7 +3,7 @@ package sqlite
 import "strings"
 
 // UnixFromMatchDateSQL renders the SQL expression that turns a match.match_date
-// value into the Unix seconds position.match_date stores (ADR-0070).
+// value into the Unix seconds position.match_date stores (ADR-0071).
 //
 // match.match_date keeps the text the driver writes for a time.Time, Go's
 // String form "2006-01-02 15:04:05[.fffffffff] -0700 MST". The first 19

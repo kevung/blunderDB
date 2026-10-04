@@ -454,8 +454,8 @@ func TestBearoffIndexAndRollDistribution(t *testing.T) {
 	}
 }
 
-// TestCompactAnalysisData : un blob écrit par le chemin d'import (zstd 7, sans
-// somme de contrôle) se relit, la compaction le réécrit en zstd 19 avec le même
+// TestCompactAnalysisData : un blob écrit par le chemin d'import (binaire,
+// zstd 7 sans somme de contrôle) se relit, la compaction le réécrit en zstd 19 avec le même
 // contenu, et une seconde compaction ne réécrit rien.
 func TestCompactAnalysisData(t *testing.T) {
 	raw, err := json.Marshal(&domain.PositionAnalysis{XGID: "XGID=compact", Player1: "Bob"})
@@ -483,8 +483,8 @@ func TestCompactAnalysisData(t *testing.T) {
 	if NeedsCompaction(compact) {
 		t.Error("le résultat de la compaction n'est pas reconnu comme compacté")
 	}
-	if !isZstdFrame(compact) {
-		t.Error("la compaction ne produit pas du zstd")
+	if !isBinaryBlob(compact) {
+		t.Error("la compaction ne produit pas le format binaire")
 	}
 	back, err := DecodeAnalysisFromStorage(compact)
 	if err != nil || back.XGID != "XGID=compact" || back.Player1 != "Bob" {

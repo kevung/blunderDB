@@ -272,8 +272,14 @@ func (d *Direction) Apply(ctx context.Context, ev tournoi.Event) error {
 	if err := d.append(ctx, ev); err != nil {
 		return err
 	}
-	if ev.Kind == tournoi.EvMatchStarted {
+	switch ev.Kind {
+	case tournoi.EvMatchStarted:
 		return d.markRunning(ctx)
+	case tournoi.EvFinished:
+		// The close reaches here from the standings' button and from the queue alike: the
+		// stored state follows the log whichever way it came.
+		d.rec.State = StateFinished
+		return d.store.UpdateDirection(ctx, d.rec)
 	}
 	return nil
 }
@@ -311,11 +317,7 @@ func (d *Direction) Finish(ctx context.Context, now time.Time) error {
 	if d.st.Finished {
 		return ErrFinished
 	}
-	if err := d.Apply(ctx, tournoi.Event{Version: tournoi.JournalVersion, Kind: tournoi.EvFinished, Time: now}); err != nil {
-		return err
-	}
-	d.rec.State = StateFinished
-	return d.store.UpdateDirection(ctx, d.rec)
+	return d.Apply(ctx, tournoi.Event{Version: tournoi.JournalVersion, Kind: tournoi.EvFinished, Time: now})
 }
 
 // Delete removes the Direction and its log. The Tournament and its Matches stay: the Matches

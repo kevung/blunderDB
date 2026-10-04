@@ -159,7 +159,7 @@ type Dialect interface {
 	TimestampArg() string
 
 	// InstantArg binds an instant compared with position.match_date (and any
-	// other column ADR-0070 stores as an instant): Unix seconds in SQLite,
+	// other column ADR-0071 stores as an instant): Unix seconds in SQLite,
 	// a TIMESTAMPTZ in PostgreSQL.
 	InstantArg(t time.Time) (placeholder string, arg any)
 

@@ -56,6 +56,7 @@ var customContentTypes = map[string][]string{
 	"/v1/matches.exportMat":               {"text/plain"},
 	"/ops/tenant.purge":                   {"application/json"},
 	"/ops/maintenance.vacuum":             {"application/json"},
+	"/v1/maintenance.reencode":            {"application/json"},
 	"/v1/gammonnet.analyzeMissing":        {ndjsonContentType},
 	"/v1/gammonnet.analyzeMissing.cancel": {"application/json"},
 	"/v1/gammonnet.sweepStale":            {ndjsonContentType},
