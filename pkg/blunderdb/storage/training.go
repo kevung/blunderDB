@@ -88,6 +88,20 @@ type TrainingStore interface {
 	// means every exercise). A limit of zero means no bound. A position since
 	// deleted is not returned.
 	Missed(ctx context.Context, scope string, filter TrainingMissedFilter) ([]int64, error)
+	// DecisionErrors returns the judged decision questions of the Decision
+	// exercise that still reach a position, oldest first: the date of their
+	// session, the position's plan of play and the cost of the answer.
+	DecisionErrors(ctx context.Context, scope string) ([]TrainingDecisionError, error)
+}
+
+// TrainingDecisionError is one judged decision question, seen from the
+// theme of its position.
+type TrainingDecisionError struct {
+	CreatedAt string
+	// GameType is the position's domain.GameType code.
+	GameType int
+	// ErrorMp is the cost of the answer in millipoints of normalised equity.
+	ErrorMp int
 }
 
 // TrainingMissedFilter selects the missed questions Missed returns.
