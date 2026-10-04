@@ -165,6 +165,10 @@ func (s *StatsStore) buildBaseWhereClauseSeat(scope string, filter storage.Stats
 		args = append(args, filter.MinAnalysisDepth)
 	}
 
+	metClause, metArgs := metComparableDecision(s.DB, scope)
+	clauses = append(clauses, metClause)
+	args = append(args, metArgs...)
+
 	clauses = append(clauses, "a.position_id IS NOT NULL")
 	clauses = append(clauses, "("+statsErrExpr+") IS NOT NULL")
 
@@ -832,6 +836,10 @@ func (s *StatsStore) buildMatchWhereClause(scope string, filter storage.StatsFil
 			args = append(args, ml)
 		}
 	}
+
+	metClause, metArgs := metComparableMatch(s.DB, scope)
+	clauses = append(clauses, metClause)
+	args = append(args, metArgs...)
 
 	return " WHERE " + strings.Join(clauses, " AND "), args
 }

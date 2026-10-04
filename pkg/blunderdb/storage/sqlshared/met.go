@@ -117,3 +117,45 @@ func (s *MatchEquityTableStore) SetCurrent(ctx context.Context, scope string, id
 		return nil
 	})
 }
+
+func (s *MatchEquityTableStore) TagAnalyses(ctx context.Context, scope string, metID int64, positionIDs []int64) error {
+	if len(positionIDs) == 0 {
+		return nil
+	}
+	var value any
+	if metID != 0 {
+		value = metID
+	}
+	return s.DB.Transact(ctx, func(tx Execer) error {
+		tenant, targs := tx.TenantFilter("", scope)
+		for start := 0; start < len(positionIDs); start += 500 {
+			chunk := positionIDs[start:min(start+500, len(positionIDs))]
+			args := append([]any{value}, targs...)
+			for _, id := range chunk {
+				args = append(args, id)
+			}
+			if _, err := tx.Exec(ctx, `UPDATE analysis SET met_id = ? WHERE `+tenant+
+				` AND position_id IN (`+Placeholders(len(chunk))+`)`, args...); err != nil {
+				return errf(tx, "tag analyses with their match equity table", err)
+			}
+		}
+		return nil
+	})
+}
+
+func (s *MatchEquityTableStore) OfAnalysis(ctx context.Context, scope string, positionID int64) (int64, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	var id *int64
+	err := s.DB.QueryRow(ctx, `SELECT met_id FROM analysis WHERE `+tenant+` AND position_id = ?`,
+		append(targs, positionID)...).Scan(&id)
+	if errors.Is(err, ErrNoRows) {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, errf(s.DB, "match equity table of an analysis", err)
+	}
+	if id == nil {
+		return 0, nil
+	}
+	return *id, nil
+}
