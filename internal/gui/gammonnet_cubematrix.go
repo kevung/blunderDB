@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"sync"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
@@ -52,7 +54,15 @@ func (a *App) ComputeCubeMatrix(pos domain.Position, matchLength, ply, pruneK in
 		cancel()
 	}()
 
-	return gammonnet.ComputeCubeMatrix(ctx, pos, matchLength, ply, pruneK, 0)
+	// The library's table values the grid, as it values its analyses (ADR-0068).
+	var met *engine.MET
+	if a.db != nil {
+		var err error
+		if met, err = database.CurrentMET(a.db); err != nil {
+			return gammonnet.CubeMatrix{}, err
+		}
+	}
+	return gammonnet.ComputeCubeMatrixMET(ctx, pos, met, matchLength, ply, pruneK, 0)
 }
 
 // CancelCubeMatrix stops the sweep in flight, if any, within one cell's

@@ -234,7 +234,7 @@ func TakePoint(in CubeInputs, owner CubeOwner, efficiency float64) (tp float64, 
 // per stake level, as gn_cube.c does.
 
 // matchMaxAway is the away-score horizon this recursion trusts: the extent of
-// blunderDB's MET (engine.GnuBGGetME). Beyond it the table silently reuses
+// the match equity table (state.MET.GetME). Beyond it the table silently reuses
 // its last row, so such a state is refused rather than approximated.
 // gammonNet's own ceiling is 25, its table's extent.
 const matchMaxAway = engine.MaxScore
@@ -245,6 +245,10 @@ type MatchState struct {
 	AwayOpponent int  // points the opponent still needs; >= 1
 	Cube         int  // cube value: 1, 2, 4, 8, ...
 	Crawford     bool // true iff the game being evaluated IS the Crawford game
+	// MET is the match equity table the state is valued with; nil is the
+	// built-in Kazaross-XG2 (ADR-0068). The evaluation cache holds network
+	// outputs only, so a searcher reused across tables never mixes them.
+	MET *engine.MET
 }
 
 // IsValid reports whether the state can be evaluated at all: positive away
@@ -258,7 +262,7 @@ func (s MatchState) IsValid() bool {
 		return false
 	}
 	// The Crawford flag is only coherent when one away score is already 1;
-	// engine.GnuBGGetME assumes it (unlike gn_met_after, which silently
+	// state.MET.GetME assumes it (unlike gn_met_after, which silently
 	// falls back to the pre-Crawford table), so anything else is refused.
 	if s.Crawford && s.AwayOnRoll != 1 && s.AwayOpponent != 1 {
 		return false
@@ -274,7 +278,7 @@ func (s MatchState) Swap() MatchState {
 }
 
 // metAfter is the on-roll player's MWC if the game ends with points going to
-// one side, through blunderDB's MET (engine.GnuBGGetME) rather than a
+// one side, through the match equity table (state.MET.GetME) rather than a
 // re-ported gn_met.c. Only away scores matter, so matchTo is the larger one.
 func metAfter(state MatchState, points int, onRollWins bool) (float64, bool) {
 	if !state.IsValid() || points < 1 {
@@ -290,7 +294,7 @@ func metAfter(state MatchState, points int, onRollWins bool) (float64, bool) {
 	if !onRollWins {
 		fWhoWins = 1
 	}
-	return engine.GnuBGGetME(score0, score1, matchTo, 0, points, fWhoWins, state.Crawford), true
+	return state.MET.GetME(score0, score1, matchTo, 0, points, fWhoWins, state.Crawford), true
 }
 
 // matchWinningChance is the on-roll player's MWC if the cube never moves

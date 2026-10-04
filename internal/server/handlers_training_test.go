@@ -5,8 +5,10 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -87,5 +89,34 @@ func TestGammonNetEvaluate(t *testing.T) {
 	r.Body.Close()
 	if r.StatusCode != http.StatusBadRequest {
 		t.Errorf("ply 5: status %d; want 400", r.StatusCode)
+	}
+}
+
+// TestGammonNetEvaluateUsesTheTenantsMET: a bare evaluation at a match score
+// is valued with the tenant's current table, as its stored analyses are
+// (ADR-0068).
+func TestGammonNetEvaluateUsesTheTenantsMET(t *testing.T) {
+	ts := newTestServer(t)
+	zero := 0
+	req := gammonnetEvaluateReq{XGID: "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:2:4:0:7:10", Ply: &zero}
+	var builtIn, club gammonnetEvaluateResp
+	postDecode(t, ts, "/v1/gammonnet.evaluate", req, &builtIn)
+	if builtIn.Cube == nil {
+		t.Fatalf("gammonnet.evaluate = %+v; want a cube decision", builtIn)
+	}
+
+	source, err := os.ReadFile("../../pkg/blunderdb/engine/testdata/met/Rockwell-Kazaross.xml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var table domain.MatchEquityTable
+	postDecode(t, ts, "/v1/met.import", map[string]any{"source": string(source)}, &table)
+	var ok struct{}
+	postDecode(t, ts, "/v1/met.setCurrent", map[string]any{"id": table.ID}, &ok)
+
+	postDecode(t, ts, "/v1/gammonnet.evaluate", req, &club)
+	if club.Cube == nil || club.Cube.CubefulNoDoubleEquity == builtIn.Cube.CubefulNoDoubleEquity {
+		t.Errorf("no-double equity %v under the club table, %v under the built-in one; want them to differ",
+			club.Cube, builtIn.Cube.CubefulNoDoubleEquity)
 	}
 }

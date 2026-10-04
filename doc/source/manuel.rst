@@ -456,6 +456,33 @@ Fermer l'application pendant l'un ou l'autre ne perd rien : chaque position
 analysée est écrite au fil de l'eau, et un prochain lancement reprend
 exactement là où l'analyse s'était arrêtée, sans aucun journal à tenir.
 
+**Table d'équité de match de la base.** Au bas de l'onglet, la liste
+**Table d'équité de match (MET) de la base** choisit la table avec laquelle
+gammonNet valorise les scores de match : Kazaross-XG2, intégrée, par défaut,
+ou une table importée d'un fichier ``.xml`` de GNUbg par le bouton
+**Importer une MET .xml…**. Le choix appartient à la base, pas à
+l'application : ouvrir une autre base, c'est retrouver sa table. Seules les
+tables explicites sont lues (pas les tables paramétriques ``zadeh`` ou
+``mec``) ; au-delà de la longueur d'une table importée, la table intégrée
+prend le relais. Une table s'identifie par ses valeurs, non par son nom :
+importer le ``Kazaross-XG2.xml`` de GNUbg n'ajoute rien, c'est la table
+intégrée. Chaque analyse calculée par gammonNet enregistre la table avec
+laquelle elle l'a été ; les analyses importées (XG, GNUbg, BGBlitz) sont
+réputées calculées avec Kazaross-XG2. Une analyse à un score de match
+calculée avec une autre table que la table courante est marquée
+**MET différente** dans le panneau d'analyse et sortie des statistiques
+(moyennes d'erreur, PR, classements, face-à-face) ; une analyse en money game
+ne l'est jamais. Changer de table ne réécrit aucune analyse : seul change ce
+que les comparaisons retiennent.
+
+L'évaluation en direct du panneau et la grille de videau sont valorisées avec
+la table de la base, comme les analyses qu'elle enregistre. Une table voyage
+avec les analyses qui la citent : l'export d'une base l'emporte, et l'import
+d'une base l'ajoute à la base qui reçoit, sans doublon (une table déjà présente
+est reconnue à ses valeurs) et sans la rendre courante. Une analyse gammonNet
+remplacée par celle d'un autre moteur (XG, GNUbg) redevient réputée calculée
+avec Kazaross-XG2.
+
 **Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un match
 joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a fait
 passer par XG : blunderDB en connaissait les positions et les coups joués,
@@ -3031,6 +3058,11 @@ et le verdict est donc celui d'un videau libre. C'est justement pourquoi le
 badge est là : un videau plafonné est la seule raison visible pour laquelle
 blunderDB et eXtreme Gammon peuvent annoncer deux verdicts différents sur la
 même position.
+
+Sous le verdict, une ligne **MET différente** signale une analyse à un score
+de match calculée avec une autre table d'équité de match que celle de la base,
+et nomme cette table ; une telle analyse est sortie des statistiques (voir
+l'onglet *gammonNet* de la configuration).
 
 Le badge de régime, la profondeur d'évaluation, le lien vers le moteur et la
 case *Défi* forment une bande à part, alignée à droite au-dessus des

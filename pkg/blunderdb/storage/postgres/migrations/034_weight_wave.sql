@@ -53,6 +53,9 @@ END $$;
 DROP INDEX IF EXISTS idx_analysis_engine;
 DROP INDEX IF EXISTS idx_analysis_depth;
 CREATE INDEX IF NOT EXISTS idx_analysis_provenance_pending ON analysis (id) WHERE analysis_engine IS NULL;
+-- The few analyses computed with an imported table, which the stats leave
+-- out when another table is current (ADR-0068).
+CREATE INDEX IF NOT EXISTS idx_analysis_met ON analysis (met_id) WHERE met_id IS NOT NULL;
 
 -- Who signs match.comment: a comment an XG file carries is signed by its
 -- transcriber, a comment written in blunderDB by its author.

@@ -34,22 +34,26 @@ var (
 func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
-	return d.saveAnalysisLocked(positionID, analysis)
+	return d.saveAnalysisLocked(positionID, analysis, nil)
 }
 
 // saveAnalysisAt is SaveAnalysis for a job that started on generation gen: it
 // refuses to write once another database has been opened in the meantime.
-func (d *Database) saveAnalysisAt(gen uint64, positionID int64, analysis PositionAnalysis) error {
+// The analysis is a gammonNet verdict valued with the table metID.
+func (d *Database) saveAnalysisAt(gen uint64, positionID int64, analysis PositionAnalysis, metID int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	if d.generation != gen {
 		return ErrDatabaseChanged
 	}
-	return d.saveAnalysisLocked(positionID, analysis)
+	return d.saveAnalysisLocked(positionID, analysis, &metID)
 }
 
-// saveAnalysisLocked is SaveAnalysis's body; the caller holds d.mu.
-func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysis) error {
+// saveAnalysisLocked is SaveAnalysis's body; the caller holds d.mu. A
+// non-nil metID is the match equity table a gammonNet verdict was valued
+// with (0: the built-in one), written in the analysis's own transaction: a
+// verdict stored without its table would be read as Kazaross-XG2 (ADR-0068).
+func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysis, metID *int64) error {
 
 	// Ensure the positionID is set in the analysis
 	analysis.PositionID = int(positionID)
@@ -61,7 +65,7 @@ func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysi
 	var existingID int64
 	var existingAnalysisData []byte
 	err := d.db.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
-	if err != nil && err != sql.ErrNoRows {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return err
 	}
 
@@ -179,7 +183,22 @@ func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysi
 
 	// The store rounds, encodes and derives the scalar columns, then
 	// inserts-or-updates the row keyed by position_id.
-	return d.store.Analyses().Save(context.Background(), "", positionID, &analysis)
+	ctx := context.Background()
+	if metID == nil {
+		return d.store.Analyses().Save(ctx, "", positionID, &analysis)
+	}
+	tx, err := d.store.BeginTx(ctx)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = tx.Rollback() }()
+	if err := tx.Analyses().Save(ctx, "", positionID, &analysis); err != nil {
+		return err
+	}
+	if err := tx.MatchEquityTables().TagAnalyses(ctx, "", *metID, []int64{positionID}); err != nil {
+		return err
+	}
+	return tx.Commit()
 }
 
 func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {

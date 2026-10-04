@@ -23,7 +23,7 @@ import (
 
 const (
 	selPositionCols = "id, decision_type, cube_value, game_phase, game_type, match_length, score_1, score_2"
-	selAnalysisCols = "position_id, analysis_depth, analysis_engine, best_cube_action, best_move_equity_error, cube_error, is_close_cube, is_forced"
+	selAnalysisCols = "position_id, analysis_depth, analysis_engine, best_cube_action, best_move_equity_error, cube_error, is_close_cube, is_forced, met_id"
 	selMoveCols     = "id, position_id, game_id, cube_action, luck_mp, move_number, player"
 )
 

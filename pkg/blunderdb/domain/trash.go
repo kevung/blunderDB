@@ -56,6 +56,9 @@ type TrashPositionPayload struct {
 	Position Position          `json:"position"`
 	Analysis *PositionAnalysis `json:"analysis,omitempty"`
 	Comments []CommentEntry    `json:"comments,omitempty"`
+	// MET is the table the analysis was valued with, 0 for the built-in one.
+	// Tables are never deleted, so the id still names it at restore.
+	MET int64 `json:"met,omitempty"`
 }
 
 // TrashCollectionPayload is what a deleted collection keeps: enough of the

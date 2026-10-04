@@ -8,6 +8,7 @@ import (
 	"sync/atomic"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // The cube matrix: the cube verdict of one position at every away × away
@@ -64,6 +65,13 @@ var CubeMatrixLengths = []int{5, 7, 9}
 // Searcher; the grid does not depend on workers. ctx cancels between cells,
 // and a cancelled call returns what it had.
 func ComputeCubeMatrix(ctx context.Context, pos domain.Position, matchLength, ply, pruneK, workers int) (CubeMatrix, error) {
+	return ComputeCubeMatrixMET(ctx, pos, nil, matchLength, ply, pruneK, workers)
+}
+
+// ComputeCubeMatrixMET is ComputeCubeMatrix valued with the match equity
+// table met (nil: the built-in Kazaross-XG2), the table of the library the
+// position is studied in (ADR-0068).
+func ComputeCubeMatrixMET(ctx context.Context, pos domain.Position, met *engine.MET, matchLength, ply, pruneK, workers int) (CubeMatrix, error) {
 	if matchLength < 1 {
 		return CubeMatrix{}, fmt.Errorf("gammonnet: cube matrix needs a match length of at least 1")
 	}
@@ -109,7 +117,7 @@ func ComputeCubeMatrix(ctx context.Context, pos domain.Position, matchLength, pl
 					return
 				}
 				j := jobs[n]
-				cells[n] = cubeMatrixCell(pos, matchLength, j.onRoll, j.opponent, searcher, ply, pruneK)
+				cells[n] = cubeMatrixCell(pos, met, j.onRoll, j.opponent, searcher, ply, pruneK)
 			}
 		}()
 	}
@@ -120,13 +128,13 @@ func ComputeCubeMatrix(ctx context.Context, pos domain.Position, matchLength, pl
 
 // cubeMatrixCell evaluates one cell. A refusal is recorded in the cell, never
 // returned as an error: one unevaluable score must not cost the whole grid.
-func cubeMatrixCell(pos domain.Position, matchLength, awayOnRoll, awayOpponent int, searcher *Searcher, ply, pruneK int) CubeMatrixCell {
+func cubeMatrixCell(pos domain.Position, met *engine.MET, awayOnRoll, awayOpponent int, searcher *Searcher, ply, pruneK int) CubeMatrixCell {
 	cell := CubeMatrixCell{AwayOnRoll: awayOnRoll, AwayOpponent: awayOpponent}
 
 	at := pos
 	at.Score = scoreForCell(pos.PlayerOnRoll, awayOnRoll, awayOpponent)
 
-	cfg, state, err := ConfigForPosition(&at, ply, pruneK)
+	cfg, state, err := ConfigForPositionMET(&at, met, ply, pruneK)
 	if err != nil {
 		cell.Refused, cell.Reason = true, err.Error()
 		return cell

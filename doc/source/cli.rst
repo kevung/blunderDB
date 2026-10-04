@@ -2267,6 +2267,44 @@ rangées en JSON (voir ``reencode``).
    #   After:  41.2 MiB
    #   Reclaimed: 87.2 MiB
 
+met — La table d'équité de match de la base
+--------------------------------------------
+
+Liste, importe ou choisit la table d'équité de match (MET) avec laquelle
+gammonNet valorise les scores de match de la base : Kazaross-XG2, intégrée,
+par défaut, ou une table explicite au format ``.xml`` de GNUbg. Chaque analyse
+calculée enregistre sa table ; une analyse à un score de match calculée avec
+une autre table que la table courante est sortie des statistiques. Changer de
+table ne réécrit aucune analyse.
+
+.. code-block:: bash
+
+   ./blunderdb met --db <path> [--import <fichier.xml> [--current] | --use <id>]
+
+**Options:**
+
+* ``--db`` — Base de données (obligatoire).
+* ``--import`` — Importe une table ``.xml`` de GNUbg. Une table déjà présente,
+  ou identique à Kazaross-XG2, n'est pas ajoutée une seconde fois.
+* ``--current`` — Avec ``--import`` : rend la table importée courante.
+* ``--use`` — Rend courante la table d'identifiant donné ; ``0`` revient à
+  Kazaross-XG2.
+* ``--format`` — Format de sortie : ``text`` (défaut) ou ``json``.
+
+La commande affiche ensuite les tables de la base, la courante marquée d'un
+``*``. Le démon expose les mêmes opérations sur les routes ``met.list``,
+``met.import``, ``met.setCurrent`` et ``met.ofAnalysis``, limitées au tenant
+de l'appelant.
+
+**Exemple:**
+
+.. code-block:: bash
+
+   ./blunderdb met --db base.db --import Rockwell-Kazaross.xml --current
+
+   #     0  Kazaross-XG2
+   # *   1  Rockwell/Kazaross 25 point MET
+
 reencode — Réécrire les analyses au format compact
 --------------------------------------------------
 

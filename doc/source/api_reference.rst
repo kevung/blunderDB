@@ -213,6 +213,11 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/matches.swapPlayers                  JSON
      POST /v1/matches.update                       JSON
      POST /v1/matches.updateComment                JSON
+   met
+     POST /v1/met.import                           JSON
+     POST /v1/met.list                             JSON
+     POST /v1/met.ofAnalysis                       JSON
+     POST /v1/met.setCurrent                       JSON
    metadata
      POST /v1/metadata.counts                      JSON
      POST /v1/metadata.countsEstimate              JSON

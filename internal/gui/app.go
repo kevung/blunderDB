@@ -482,3 +482,11 @@ func copyImageViaTempFile(pngData []byte, buildCmd func(path string) *exec.Cmd) 
 	}
 	return nil
 }
+
+// OpenMETDialog picks a gnubg match equity table (.xml) to import.
+func (a *App) OpenMETDialog() (string, error) {
+	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Title:   "Import Match Equity Table",
+		Filters: []runtime.FileFilter{{DisplayName: "gnubg match equity tables (*.xml)", Pattern: "*.xml"}},
+	})
+}

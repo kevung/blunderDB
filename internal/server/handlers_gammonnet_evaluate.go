@@ -6,6 +6,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 )
 
 // gammonnetEvaluateReq is one bare position to evaluate, given whole or as an
@@ -58,8 +59,14 @@ func (s *Server) handleGammonNetEvaluate(w http.ResponseWriter, r *http.Request)
 	if s.refuseAnalysis(w, scope) {
 		return
 	}
+	// The tenant's table values the verdict, as it values its analyses (ADR-0068).
+	_, met, err := mets.Current(r.Context(), s.opts.Storage, scope)
+	if err != nil {
+		writeStorageError(w, err)
+		return
+	}
 	res, err := metered(s, scope, 1, func() (gammonnet.EvalResult, error) {
-		return gammonnet.EvaluatePosition(pos, ply, 0, req.Candidates)
+		return gammonnet.EvaluatePositionWithMET(nil, pos, met, ply, 0, req.Candidates)
 	})
 	if err != nil {
 		writeErrorCode(w, CodeInvalid, fmt.Sprintf("not evaluable: %v", err))

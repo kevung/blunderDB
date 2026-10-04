@@ -6,6 +6,7 @@ import (
 	"math"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // EngineVersion is the AnalysisEngine string every gammonNet-produced
@@ -87,6 +88,12 @@ func IsMoneyPosition(pos *domain.Position) bool {
 // money) for the caller's EquityScale. Every caller goes through it, so a
 // panel never mixes differently configured searches.
 func ConfigForPosition(pos *domain.Position, ply, pruneK int) (SearchConfig, *MatchState, error) {
+	return ConfigForPositionMET(pos, nil, ply, pruneK)
+}
+
+// ConfigForPositionMET is ConfigForPosition valued with the library's match
+// equity table met (nil: the built-in Kazaross-XG2). Money ignores it.
+func ConfigForPositionMET(pos *domain.Position, met *engine.MET, ply, pruneK int) (SearchConfig, *MatchState, error) {
 	cfg := DefaultConfig(ply)
 	if pruneK > 0 {
 		cfg.PruneK = pruneK
@@ -103,6 +110,7 @@ func ConfigForPosition(pos *domain.Position, ply, pruneK int) (SearchConfig, *Ma
 		if !ok {
 			return SearchConfig{}, nil, fmt.Errorf("%w: match score %v is beyond this build's MET horizon", ErrNotEvaluable, pos.Score)
 		}
+		m.MET = met
 		cfg.UseMatch = true
 		cfg.Match = m
 		state = &m
@@ -163,8 +171,22 @@ func NewBatchSearcher(ply, pruneK int) (*Searcher, error) {
 // configuration first, and only the cache survives. searcher must not be
 // shared between goroutines.
 func EvaluatePositionWith(searcher *Searcher, pos domain.Position, ply, pruneK, candidates int) (EvalResult, error) {
+	return EvaluatePositionWithMET(searcher, pos, nil, ply, pruneK, candidates)
+}
+
+// EvaluatePositionWithMET is EvaluatePositionWith valued with the match
+// equity table met (nil: the built-in Kazaross-XG2), the table a library
+// records on the analysis it stores (ADR-0068).
+func EvaluatePositionWithMET(searcher *Searcher, pos domain.Position, met *engine.MET, ply, pruneK, candidates int) (EvalResult, error) {
 	if searcher == nil {
-		return EvaluatePosition(pos, ply, pruneK, candidates)
+		if met == nil {
+			return EvaluatePosition(pos, ply, pruneK, candidates)
+		}
+		fresh, err := NewSearcher(DefaultConfig(ply))
+		if err != nil {
+			return EvalResult{}, err
+		}
+		searcher = fresh.WithWorkers(LiveWorkers(fresh.cfg.Ply))
 	}
 
 	gnPos, err := FromDomain(&pos)
@@ -172,7 +194,7 @@ func EvaluatePositionWith(searcher *Searcher, pos domain.Position, ply, pruneK, 
 		return EvalResult{}, err
 	}
 
-	cfg, state, err := ConfigForPosition(&pos, ply, pruneK)
+	cfg, state, err := ConfigForPositionMET(&pos, met, ply, pruneK)
 	if err != nil {
 		return EvalResult{}, err
 	}

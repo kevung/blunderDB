@@ -223,3 +223,16 @@ func TestMigrateDryRun(t *testing.T) {
 		t.Fatalf("dry-run report %+v != source %+v", rep, srcCounts)
 	}
 }
+
+func TestMigrateCarriesMETs_Postgres(t *testing.T) {
+	ctx := context.Background()
+	dst, err := postgres.Open(ctx, startPostgres(t), nil)
+	if err != nil {
+		t.Fatalf("open postgres: %v", err)
+	}
+	defer dst.Close()
+	if err := dst.Migrate(ctx); err != nil {
+		t.Fatal(err)
+	}
+	checkMETsMigrated(t, dst, "1")
+}

@@ -10,7 +10,9 @@
 // membership). App-state families (anki decks/cards, filter library, search and
 // command history, session state) are intentionally NOT migrated, and reported
 // as such in NotMigrated. The library's error and blunder thresholds
-// (ADR-0046) ARE carried: they decide what the counts mean.
+// (ADR-0046) ARE carried: they decide what the counts mean. So are the match
+// equity tables, the current one, and the table each analysis was valued
+// with (ADR-0068): a gammonNet verdict read under another table is wrong.
 package migrate
 
 import (
@@ -20,6 +22,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -130,6 +133,7 @@ type mover struct {
 
 	posID  map[int64]int64
 	tourID map[int64]int64
+	tables *mets.Carrier
 }
 
 func (m *mover) progress(rep *Report) {
@@ -142,6 +146,9 @@ func (m *mover) run(rep *Report) error {
 	m.posID = make(map[int64]int64)
 	m.tourID = make(map[int64]int64)
 
+	if err := m.copyTables(); err != nil {
+		return err
+	}
 	if err := m.copyPositions(rep); err != nil {
 		return err
 	}
@@ -177,6 +184,30 @@ func (m *mover) copyLibrarySettings() error {
 	return nil
 }
 
+// copyTables copies every match equity table, cited or not, and the current
+// one: a migration moves the whole library, not an export of it.
+func (m *mover) copyTables() error {
+	tables, err := mets.ReadTables(m.ctx, m.src.MatchEquityTables(), "")
+	if err != nil {
+		return fmt.Errorf("migrate: read match equity tables: %w", err)
+	}
+	m.tables = mets.NewCarrier(m.dst.MatchEquityTables(), m.scope, tables)
+	for _, t := range tables {
+		if _, err := m.tables.Target(m.ctx, t.ID); err != nil {
+			return fmt.Errorf("migrate: write match equity table %q: %w", t.Name, err)
+		}
+	}
+	cur, err := m.src.MatchEquityTables().Current(m.ctx, "")
+	if err != nil || cur == nil {
+		return err
+	}
+	id, err := m.tables.Target(m.ctx, cur.ID)
+	if err != nil {
+		return err
+	}
+	return m.dst.MatchEquityTables().SetCurrent(m.ctx, m.scope, id)
+}
+
 // copyPositions copies every position (and its analysis + comments), building
 // the position id remap that later families rely on. The source list is drained
 // before issuing per-position follow-up reads to avoid grabbing a second
@@ -207,6 +238,9 @@ func (m *mover) copyPositions(rep *Report) error {
 			if err := m.dst.Analyses().Save(m.ctx, m.scope, newID, a); err != nil {
 				return fmt.Errorf("migrate: save analysis for position %d: %w", oldID, err)
 			}
+			if err := m.copyAnalysisTable(oldID, newID); err != nil {
+				return err
+			}
 			rep.Analyses++
 		} else if !isNotFound(err) {
 			return fmt.Errorf("migrate: load analysis for position %d: %w", oldID, err)
@@ -224,6 +258,20 @@ func (m *mover) copyPositions(rep *Report) error {
 	}
 	m.progress(rep)
 	return nil
+}
+
+// copyAnalysisTable names on newID's analysis the table oldID's was valued
+// with; Save leaves a new analysis on the built-in one.
+func (m *mover) copyAnalysisTable(oldID, newID int64) error {
+	srcMET, err := m.src.MatchEquityTables().OfAnalysis(m.ctx, "", oldID)
+	if err != nil {
+		return fmt.Errorf("migrate: read table of analysis %d: %w", oldID, err)
+	}
+	met, err := m.tables.Target(m.ctx, srcMET)
+	if err != nil || met == 0 {
+		return err
+	}
+	return m.dst.MatchEquityTables().TagAnalyses(m.ctx, m.scope, met, []int64{newID})
 }
 
 func (m *mover) copyTournaments(rep *Report) error {

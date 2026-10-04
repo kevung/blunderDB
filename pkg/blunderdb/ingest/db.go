@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -82,6 +83,19 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		}
 	}
 
+	// The tables the source's analyses cite travel with them (ADR-0068); a
+	// source from before them (schema < 2.31.0) cites none.
+	var srcTables []*domain.MatchEquityTable
+	srcMET := map[int64]int64{}
+	if source.HasTable(ctx, "match_equity_table") {
+		if srcTables, err = mets.ReadTables(ctx, source.MatchEquityTables(), scope); err != nil {
+			return Summary{}, fmt.Errorf("ingest: read source match equity tables: %w", err)
+		}
+		if srcMET, err = source.MatchEquityTables().OfAnalyses(ctx, scope, ids); err != nil {
+			return Summary{}, fmt.Errorf("ingest: read source analyses' match equity tables: %w", err)
+		}
+	}
+
 	type srcRecord struct {
 		pos      *domain.Position
 		analysis *domain.PositionAnalysis
@@ -142,13 +156,18 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		return Summary{}, err
 	}
 
+	carrier := mets.NewCarrier(tx.MatchEquityTables(), scope, srcTables)
 	var sum Summary
 	for _, s := range saved {
 		if err := ctx.Err(); err != nil {
 			return sum, err
 		}
 		if s.rec.analysis != nil {
-			if err := mergeDBAnalysis(ctx, tx, scope, s.id, s.rec.analysis); err != nil {
+			met, err := carrier.Target(ctx, srcMET[s.rec.pos.ID])
+			if err != nil {
+				return sum, err
+			}
+			if err := mergeDBAnalysis(ctx, tx, scope, s.id, s.rec.analysis, met); err != nil {
 				return sum, err
 			}
 		}
@@ -297,15 +316,30 @@ func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src 
 // locks the row (or takes the analysis guard when there is none) until the
 // write: a rollout committed between a plain read and the write would be
 // overwritten.
-func mergeDBAnalysis(ctx context.Context, tx storage.Tx, scope string, positionID int64, imported *domain.PositionAnalysis) error {
-	_, err := tx.Analyses().Merge(ctx, scope, positionID, nil, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+func mergeDBAnalysis(ctx context.Context, tx storage.Tx, scope string, positionID int64, imported *domain.PositionAnalysis, importedMET int64) error {
+	importedSide := mets.SideOf(imported, importedMET)
+	var met, existingMET int64
+	var readErr error
+	wrote, err := tx.Analyses().Merge(ctx, scope, positionID, nil, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+		// Read under Merge's lock, so the table belongs to the row merged.
+		if existingMET, readErr = tx.MatchEquityTables().OfAnalysis(ctx, scope, positionID); readErr != nil {
+			return nil
+		}
+		existingSide := mets.SideOf(existing, existingMET)
 		merged, changed := domain.MergeImportedAnalysis(existing, imported)
 		if !changed {
 			return nil
 		}
+		met = mets.AfterMerge(merged, existingSide, importedSide)
 		return merged
 	})
-	return err
+	if err == nil {
+		err = readErr
+	}
+	if err != nil || !wrote || (met == 0 && existingMET == 0) {
+		return err
+	}
+	return tx.MatchEquityTables().TagAnalyses(ctx, scope, met, []int64{positionID})
 }
 
 // mergeDBCommentsPreloaded appends each imported comment to positionID unless

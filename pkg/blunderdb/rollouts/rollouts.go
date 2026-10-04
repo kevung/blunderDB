@@ -45,18 +45,32 @@ func Store(ctx context.Context, st storage.Storage, scope string, positionID int
 		}
 		a.AttachRollout(res.Record(now))
 		a.LastModifiedDate = now
-	})
+	}, nil)
 }
 
 // SaveAnalysis writes a over positionID's analysis and keeps the rollouts
 // stored there: they are analyses of their own, which a caller writing an
 // Evaluation knows nothing of (ADR-0060).
 func SaveAnalysis(ctx context.Context, st storage.Storage, scope string, positionID int64, a *domain.PositionAnalysis) error {
-	return update(ctx, st, scope, positionID, func(existing *domain.PositionAnalysis) {
+	return update(ctx, st, scope, positionID, replaceKeepingRollouts(a), nil)
+}
+
+// SaveValuedAnalysis is SaveAnalysis for a gammonNet verdict valued with the
+// match equity table metID (0: the built-in one). The analysis and the table
+// it names are one write: a verdict stored without its table would be read
+// as valued with Kazaross-XG2 (ADR-0068).
+func SaveValuedAnalysis(ctx context.Context, st storage.Storage, scope string, positionID int64, a *domain.PositionAnalysis, metID int64) error {
+	return update(ctx, st, scope, positionID, replaceKeepingRollouts(a), func(tx storage.Tx) error {
+		return tx.MatchEquityTables().TagAnalyses(ctx, scope, metID, []int64{positionID})
+	})
+}
+
+func replaceKeepingRollouts(a *domain.PositionAnalysis) func(*domain.PositionAnalysis) {
+	return func(existing *domain.PositionAnalysis) {
 		rollouts := domain.MergeRollouts(existing.Rollouts, a.Rollouts)
 		*existing = *a
 		existing.Rollouts = rollouts
-	})
+	}
 }
 
 // update reads positionID's analysis, an empty one when it has none, lets
@@ -66,7 +80,8 @@ func SaveAnalysis(ctx context.Context, st storage.Storage, scope string, positio
 // import merging into the same analysis — a match, a native database or an
 // NDJSON file, all through Merge, none taking an advisory lock — waits for
 // this write instead of being overwritten by it.
-func update(ctx context.Context, st storage.Storage, scope string, positionID int64, change func(*domain.PositionAnalysis)) error {
+// then, when not nil, writes in the same transaction after the analysis.
+func update(ctx context.Context, st storage.Storage, scope string, positionID int64, change func(*domain.PositionAnalysis), then func(storage.Tx) error) error {
 	tx, err := storage.BeginGuarded(ctx, st, storage.AnalysisGuardKey(scope, positionID))
 	if err != nil {
 		return err
@@ -80,6 +95,11 @@ func update(ctx context.Context, st storage.Storage, scope string, positionID in
 		return a
 	}); err != nil {
 		return err
+	}
+	if then != nil {
+		if err := then(tx); err != nil {
+			return err
+		}
 	}
 	return tx.Commit()
 }

@@ -757,6 +757,9 @@ var schemaStatements = []string{
 	// looking for are the only ones this partial index holds — it is empty
 	// once the pass is over.
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_provenance_pending ON analysis(id) WHERE analysis_engine IS NULL`,
+	// The few analyses computed with an imported table: the stats read them to
+	// leave out what another table valued (ADR-0068).
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_met            ON analysis(met_id) WHERE met_id IS NOT NULL`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_creation_date  ON analysis(creation_date)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_match_date     ON position(match_date)`,
 	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_batch ON import_batch_file(batch_id)`,
