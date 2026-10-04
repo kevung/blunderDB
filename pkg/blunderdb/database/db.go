@@ -445,6 +445,18 @@ func (d *Database) OpenDatabase(path string) (err error) {
 		if _, err = d.db.Exec(`PRAGMA query_only = ON`); err != nil {
 			return fmt.Errorf("cannot open database read-only: %w", err)
 		}
+		// The writer may be an older blunderDB that never migrated the file:
+		// this instance cannot migrate it without writing (ADR-0007), and
+		// reading an older schema with today's queries would fail table by
+		// table, so it refuses up front.
+		var onDisk string
+		if err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&onDisk); err != nil {
+			return fmt.Errorf("cannot open database read-only: reading its version: %w", err)
+		}
+		if cmp, cerr := compareVersions(onDisk, DatabaseVersion); cerr != nil || cmp != 0 {
+			return fmt.Errorf("cannot open database read-only: its schema is %s and this blunderDB reads %s; "+
+				"close the other instance holding it so this one can open it for writing", onDisk, DatabaseVersion)
+		}
 		d.rebuildStore()
 		return nil
 	}

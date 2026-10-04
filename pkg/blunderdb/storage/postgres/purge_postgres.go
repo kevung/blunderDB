@@ -28,7 +28,7 @@ var purgeOrder = []string{
 	"collection", "lesson", "anki_deck", "transcription", "match", "import_batch",
 	"tournament", "rencontre", "position",
 	"filter_library", "command_history", "search_history", "session_state",
-	"library_settings", "trash", "match_equity_table",
+	"library_settings", "trash", "match_equity_table", "action_label",
 }
 
 // PurgeTenant permanently deletes every row belonging to scope across all

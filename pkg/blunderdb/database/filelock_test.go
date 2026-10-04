@@ -2,6 +2,7 @@ package database
 
 import (
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -151,4 +152,35 @@ func TestOpenDatabase_MidOpenFailureReleasesLock(t *testing.T) {
 		t.Fatalf("SetupDatabase(:memory:) after a prior failure: %v", err)
 	}
 	d.Close()
+}
+
+// TestFileLock_ReadOnlyRefusesAnOlderSchema covers a writer that is an older
+// blunderDB: the file stays at its schema, and the read-only instance, which
+// may not migrate it, refuses it instead of failing query by query.
+func TestFileLock_ReadOnlyRefusesAnOlderSchema(t *testing.T) {
+	t.Parallel()
+	path := filepath.Join(t.TempDir(), "older.db")
+
+	d1 := NewDatabase()
+	if err := d1.SetupDatabase(path); err != nil {
+		t.Fatalf("SetupDatabase (writer): %v", err)
+	}
+	defer d1.Close()
+	if _, err := d1.conn().Exec(`UPDATE metadata SET value = '2.30.0' WHERE key = 'database_version'`); err != nil {
+		t.Fatal(err)
+	}
+
+	d2 := NewDatabase()
+	err := d2.OpenDatabase(path)
+	if err == nil {
+		d2.Close()
+		t.Fatal("a read-only open of an older schema should be refused")
+	}
+	if !strings.Contains(err.Error(), "2.30.0") {
+		t.Errorf("error should name the schema on disk: %v", err)
+	}
+	var v string
+	if err := d1.conn().QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&v); err != nil || v != "2.30.0" {
+		t.Errorf("the refused open wrote to the file: version %q, err %v", v, err)
+	}
 }

@@ -98,6 +98,9 @@ func TestMigrate_034_WeightWaveOnAPopulatedLibrary(t *testing.T) {
 				}
 				out[fmt.Sprintf("%s.%s:%d", c.table, c.column, id)] = label
 			}
+			if err := rows.Err(); err != nil {
+				t.Fatal(err)
+			}
 			rows.Close()
 		}
 		return out

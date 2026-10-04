@@ -941,11 +941,11 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	if mv.LuckMP != nil {
 		luckMP = *mv.LuckMP
 	}
-	moveType, err := actionCode(ctx, s.db, mv.MoveType)
+	moveType, err := actionCode(ctx, s.db, tenantID(scope), mv.MoveType)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: create move: %w", err)
 	}
-	cubeAction, err := actionCode(ctx, s.db, mv.CubeAction)
+	cubeAction, err := actionCode(ctx, s.db, tenantID(scope), mv.CubeAction)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: create move: %w", err)
 	}

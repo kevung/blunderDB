@@ -50,6 +50,18 @@ lise ces index.
    `ActionIsSQL` / `ActionNotInSQL`. Aucune requête n'épelle un code. L'étape SQLite reconstruit
    chaque colonne en `INTEGER` (une colonne déclarée `TEXT` stockerait le code en texte) ;
    PostgreSQL fait de même dans `034_weight_wave.sql`.
+
+   **Sous PostgreSQL, `action_label` est une table de tenant**, pas une table globale : un
+   libellé enregistré est du texte qu'un import a apporté (une chaîne libre d'un fichier), donc
+   une donnée du tenant. Partagé, il fuirait vers les autres tenants, et la purge d'un tenant
+   ne saurait pas s'il peut l'effacer. La table porte donc `tenant_id`, la RLS
+   `tenant_isolation`, et figure dans `rlsTables` et `purgeOrder` ; un libellé est unique par
+   `(tenant_id, label)`, l'enregistrement et la recherche par libellé filtrent le tenant. Le
+   code, lui, vient d'une séquence (`action_label_code_seq`, à partir de 1000) et est unique
+   pour toute la base : `ActionLabelSQL`, commune aux deux moteurs, résout un code sans filtre
+   de tenant et n'atteint pourtant que la ligne que son propre tenant a enregistrée. Un
+   `MAX(code) + 1` ne le permettait pas — sous RLS chaque tenant n'y voit que ses lignes et
+   tirerait des codes déjà pris. SQLite n'a qu'un tenant et garde la table sans `tenant_id`.
 8. **`analysis_engine` reste du texte.** C'est un libellé libre (nom et version du moteur,
    « XG Roller++ », « gammonNet 1.4 »…) que la recherche (`ae:`) et les statistiques filtrent
    par préfixe ou `LIKE` : un code ne se compare pas par préfixe sans relire tous les libellés.
@@ -67,5 +79,9 @@ lise ces index.
   `POIDS.md` § 3.4, qui comptait aussi `state` et `analysis_engine`.
 - Une lecture d'action coûte un `CASE` d'une quarantaine de branches ; un libellé enregistré
   ajoute une sous-requête sur `action_label`, que `COALESCE` n'atteint que pour lui.
+- Une instance qui ouvre la base en lecture seule (une autre tient le verrou d'écriture) ne
+  peut pas la migrer sans écrire (ADR-0007) : si le schéma sur disque n'est pas le sien — le
+  détenteur est un blunderDB plus ancien —, elle refuse l'ouverture avec un message qui nomme
+  les deux versions, au lieu d'échouer requête par requête sur `action_label` ou `state`.
 - Une base déjà en 2.31.0 (versions de développement) ne rejoue pas l'étape ; elle lit
   toujours ses anciennes valeurs, mais garde leur poids.

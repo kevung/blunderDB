@@ -210,7 +210,7 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 		if err := invalidateMatchStatsOnAnalysis(ctx, tx, tenant, positionID, c); err != nil {
 			return err
 		}
-		bestCube, err := actionCode(ctx, tx, c.BestCubeAction)
+		bestCube, err := actionCode(ctx, tx, tenant, c.BestCubeAction)
 		if err != nil {
 			return fmt.Errorf("postgres: save analysis: %w", err)
 		}
@@ -429,7 +429,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 				(c.IsForced == 1) == r.forced && (c.IsCloseCube == 1) == r.closeCub {
 				continue
 			}
-			bestCube, err := actionCode(ctx, s.db, c.BestCubeAction)
+			bestCube, err := actionCode(ctx, s.db, tid, c.BestCubeAction)
 			if err != nil {
 				return repaired, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
 			}
