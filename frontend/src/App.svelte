@@ -131,7 +131,12 @@
     const MAX_FLOOR_SHARE = 0.55;
     let windowHeight = $state(typeof window === 'undefined' ? 800 : window.innerHeight);
     let tabFloor = $derived($activeTabStore === 'transcription' ? TRANSCRIPTION_MIN_HEIGHT : $activeTabStore === 'stats' ? STATS_MIN_HEIGHT : 0);
-    let appliedPanelHeight = $derived(tabFloor ? Math.max(panelHeight, Math.min(tabFloor, Math.round(windowHeight * MAX_FLOOR_SHARE))) : panelHeight);
+    let floorPanelHeight = $derived(tabFloor ? Math.max(panelHeight, Math.min(tabFloor, Math.round(windowHeight * MAX_FLOOR_SHARE))) : panelHeight);
+    // The Direction page replaces the board: in a short window (a 150 % zoom is 512 px high) a
+    // dock at its stored height leaves it a few dozen pixels and hides its buttons behind the
+    // tab bar. The dock yields to this share of the window; the stored height is left alone.
+    const DIRECTION_DOCK_SHARE = 0.3;
+    let appliedPanelHeight = $derived($directionPageShownStore ? Math.min(floorPanelHeight, Math.round(windowHeight * DIRECTION_DOCK_SHARE)) : floorPanelHeight);
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
