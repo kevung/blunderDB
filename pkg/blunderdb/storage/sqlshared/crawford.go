@@ -684,6 +684,12 @@ func repointTrashPayload(kind domain.TrashKind, payload string, keepID, dupID in
 	return string(blob), true, nil
 }
 
+// AfterDuplicateAnalysisRead, when set, runs in the Crawford merge right after
+// the duplicate's analysis is read and before anything is written — the
+// window a concurrent writer of that analysis must not get into. A test sets
+// it to put a writer there for sure; nil otherwise.
+var AfterDuplicateAnalysisRead func(dupID int64)
+
 // mergeAnalysisInto hands the duplicate's analysis to the kept position when
 // that one has none. The blob names its position INSIDE the JSON as well as in
 // the row, so it is re-encoded rather than merely re-pointed.
@@ -720,6 +726,9 @@ func mergeAnalysisInto(ctx context.Context, tx Execer, scope string, keepID, dup
 	err := tx.QueryRow(ctx,
 		`SELECT data FROM analysis WHERE `+dtenant+` AND position_id = ?`+tx.ForUpdate(),
 		append(append([]any{}, dargs...), dupID)...).Scan(&data)
+	if hook := AfterDuplicateAnalysisRead; hook != nil {
+		hook(dupID)
+	}
 	if errors.Is(err, ErrNoRows) {
 		return nil
 	}

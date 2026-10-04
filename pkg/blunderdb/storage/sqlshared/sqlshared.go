@@ -132,14 +132,17 @@ type Dialect interface {
 
 	// ForUpdate is the suffix of a SELECT whose rows the transaction is about
 	// to rewrite: " FOR UPDATE" on PostgreSQL, so a concurrent writer waits
-	// instead of being overwritten; "" on SQLite, whose single writer already
-	// serialises every write transaction.
+	// instead of being overwritten; "" on SQLite. That no-op is sound only
+	// when the transaction has already written before it reads: a deferred
+	// SQLite transaction takes the write lock at its first write, and from
+	// then on no other writer can commit between its read and its rewrite. A
+	// read made before any write holds nothing.
 	ForUpdate() string
 
 	// Guard renders the statement taking, until the enclosing transaction
 	// ends, the guard named key — the lock storage.BeginGuarded takes for the
-	// same key: pg_advisory_xact_lock on PostgreSQL; "" on SQLite, for the
-	// same reason as ForUpdate.
+	// same key: pg_advisory_xact_lock on PostgreSQL; "" on SQLite, under the
+	// same condition as ForUpdate — the transaction has already written.
 	Guard(key string) (query string, args []any)
 
 	// LimitOffset renders a ListOpts as the trailing clause of a SELECT

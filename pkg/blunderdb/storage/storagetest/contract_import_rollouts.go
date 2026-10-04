@@ -6,14 +6,17 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // importRolloutWriters is how many rollouts are stored on the target, and how
@@ -118,11 +121,18 @@ func testJSONImportAndRolloutsAllKept(t *testing.T, s storage.Storage) {
 	})
 }
 
-// testRepairCrawfordAndRolloutsAllKept: rollouts stored on both rows while the
-// Crawford repair folds the stale one into its twin all end up on the twin —
-// those written on the twin are not overwritten by the fold, and every one
-// written on the stale row before it went is carried over. A rollout aimed at
-// the stale row after it went fails: its position no longer exists.
+// windowWait is how long the rollout written inside the Crawford merge's
+// window is given to finish before the merge goes on. A writer the merge
+// locks out waits for the merge's commit, so the wait runs out; one it does
+// not lock out finishes at once, in the window.
+const windowWait = 300 * time.Millisecond
+
+// testRepairCrawfordAndRolloutsAllKept: a rollout written on the stale row
+// between the Crawford repair's read of its analysis and the fold either
+// waits for the fold — and then finds its position gone — or is carried to
+// the twin; never lost. Rollouts stored on the twin meanwhile are kept too.
+// The stale-row writer is put in the window by sqlshared's hook, so a repair
+// that reads without locking loses it every time.
 func testRepairCrawfordAndRolloutsAllKept(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	twinID, staleID := crawfordTwins(t, s)
@@ -132,54 +142,79 @@ func testRepairCrawfordAndRolloutsAllKept(t *testing.T, s storage.Storage) {
 		t.Fatalf("Store rollout: %v", err)
 	}
 
-	var (
-		wg       sync.WaitGroup
-		mu       sync.Mutex
-		kept     = 1
-		failures []error
-	)
-	store := func(pos int64, seed uint64) {
-		defer wg.Done()
-		set := rollout.Fast()
-		set.Seed = seed
-		err := rollouts.Store(ctx, s, "", pos, movesRollout(set, "8/5 6/5", 0.6))
-		mu.Lock()
-		defer mu.Unlock()
-		switch {
-		case err == nil:
-			kept++
-		case pos == staleID:
-			// The stale row was folded and deleted before this write.
-		default:
-			failures = append(failures, err)
+	inWindow := rollout.Fast()
+	inWindow.Seed = 2000
+	windowDone := make(chan error, 1)
+	sqlshared.AfterDuplicateAnalysisRead = func(dupID int64) {
+		if dupID != staleID {
+			return
+		}
+		go func() {
+			windowDone <- rollouts.Store(ctx, s, "", staleID, movesRollout(inWindow, "8/5 6/5", 0.6))
+		}()
+		select {
+		case err := <-windowDone:
+			windowDone <- err
+		case <-time.After(windowWait):
 		}
 	}
+	t.Cleanup(func() { sqlshared.AfterDuplicateAnalysisRead = nil })
+
+	var wg sync.WaitGroup
+	errs := make(chan error, importRolloutWriters+1)
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
 		if _, err := s.Positions().RepairCrawfordSentinel(ctx, ""); err != nil {
-			mu.Lock()
-			failures = append(failures, fmt.Errorf("repair: %w", err))
-			mu.Unlock()
+			errs <- fmt.Errorf("repair: %w", err)
 		}
 	}()
 	for i := range importRolloutWriters {
-		wg.Add(2)
-		go store(twinID, uint64(1+i))
-		go store(staleID, uint64(500+i))
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			set := rollout.Fast()
+			set.Seed = uint64(1 + i)
+			if err := rollouts.Store(ctx, s, "", twinID, movesRollout(set, "8/5 6/5", 0.6)); err != nil {
+				errs <- err
+			}
+		}()
 	}
 	wg.Wait()
-	if err := errors.Join(failures...); err != nil {
+	close(errs)
+	if err := errors.Join(slices.Collect(chanValues(errs))...); err != nil {
 		t.Fatalf("concurrent write: %v", err)
 	}
+	windowErr := <-windowDone
+	want := 1 + importRolloutWriters
+	switch {
+	case windowErr == nil:
+		want++
+	case errors.Is(windowErr, storage.ErrNotFound):
+		// It waited for the fold and found its position gone.
+	default:
+		t.Fatalf("rollout written in the repair's window: %v, want success or ErrNotFound", windowErr)
+	}
+
 	a, err := s.Analyses().Load(ctx, "", twinID)
 	if err != nil {
 		t.Fatalf("Load twin analysis: %v", err)
 	}
-	if len(a.Rollouts) != kept {
-		t.Errorf("%d rollouts on the twin, %d were stored", len(a.Rollouts), kept)
+	if len(a.Rollouts) != want {
+		t.Errorf("%d rollouts on the twin, want %d (window write: %v)", len(a.Rollouts), want, windowErr)
 	}
 	if _, err := s.Analyses().Load(ctx, "", staleID); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("stale row's analysis after the repair: err = %v, want ErrNotFound", err)
+	}
+}
+
+// chanValues yields what c holds until it is closed.
+func chanValues[T any](c <-chan T) func(func(T) bool) {
+	return func(yield func(T) bool) {
+		for v := range c {
+			if !yield(v) {
+				return
+			}
+		}
 	}
 }
