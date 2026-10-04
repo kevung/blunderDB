@@ -925,47 +925,53 @@ func diceCoherent(b domain.Board, steps []domain.CheckerStep, dice [2]int, mover
 		c := b.Points[pt]
 		return !(c.Color == opponent(mover) && c.Checkers >= 2)
 	}
-	// chain tries to cover the step by dice from the current point to its target.
-	var chain func(s domain.CheckerStep, at int, k int, next func() bool) bool
-	var assign func(k int) bool
-	chain = func(s domain.CheckerStep, at int, k int, next func() bool) bool {
+	// need is the pip distance from a point to bearing off.
+	need := func(at int) int {
+		if mover == domain.Black {
+			return at
+		}
+		return 25 - at
+	}
+	onBoard := func(pt int) bool { return pt >= 1 && pt <= 24 }
+	// chain covers the step from at to its target with unused dice, each non-final
+	// die landing on a point the mover may use. A bar start is at the bar's index, so
+	// the first die enters; a bear-off ends on the die that exactly or over-covers.
+	var chain func(s domain.CheckerStep, at int, next func() bool) bool
+	chain = func(s domain.CheckerStep, at int, next func() bool) bool {
 		for j := range avail {
 			if used[j] {
 				continue
 			}
 			to := at + dir*avail[j]
-			if dir*(s.To-to) < 0 {
-				continue
-			}
 			used[j] = true
-			if to == s.To {
+			switch {
+			case s.To == domain.Off:
+				if avail[j] >= need(at) {
+					if next() {
+						return true
+					}
+				} else if open(to) && chain(s, to, next) {
+					return true
+				}
+			case to == s.To:
 				if next() {
 					return true
 				}
-			} else if to >= 1 && to <= 24 && open(to) && chain(s, to, k, next) {
+			case dir*(s.To-to) > 0 && onBoard(to) && open(to) && chain(s, to, next):
 				return true
 			}
 			used[j] = false
 		}
 		return false
 	}
+	var assign func(k int) bool
 	assign = func(k int) bool {
 		if k == len(steps) {
 			return true
 		}
 		s := steps[k]
-		if s.From >= 1 && s.From <= 24 && s.To >= 1 && s.To <= 24 {
-			return chain(s, s.From, k, func() bool { return assign(k + 1) })
-		}
-		for j := range avail {
-			if used[j] || !domain.StepUsesDie(s, mover, avail[j]) {
-				continue
-			}
-			used[j] = true
-			if assign(k + 1) {
-				return true
-			}
-			used[j] = false
+		if (onBoard(s.From) || s.From == barOf(mover)) && (onBoard(s.To) || s.To == domain.Off) {
+			return chain(s, s.From, func() bool { return assign(k + 1) })
 		}
 		return false
 	}
