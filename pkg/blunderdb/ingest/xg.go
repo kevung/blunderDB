@@ -93,6 +93,32 @@ func applyXGSourceMetadata(m *domain.Match, md *xgparser.MatchMetadata) {
 	m.HasJacoby, m.HasBeaver = &jacoby, &beaver
 	m.EngineVersion = fmt.Sprintf("eXtreme Gammon, file format %d", md.EngineVersion)
 	m.Transcriber = strings.TrimSpace(md.Transcriber)
+	applyXGMatchComments(m, md)
+}
+
+// xgCommentAuthor signs the comments of an XG file that names no transcriber.
+const xgCommentAuthor = "XG"
+
+// applyXGMatchComments makes the match header and footer comments of an XG
+// file the match's comment, header first, signed by the file's transcriber
+// (xgCommentAuthor when it names none). A file with neither leaves the
+// match's comment as it was.
+func applyXGMatchComments(m *domain.Match, md *xgparser.MatchMetadata) {
+	var parts []string
+	for _, c := range []string{md.MatchHeaderComment, md.MatchFooterComment} {
+		if c = strings.TrimSpace(c); c != "" {
+			parts = append(parts, c)
+		}
+	}
+	if len(parts) == 0 {
+		return
+	}
+	m.Comment = strings.Join(parts, "\n\n")
+	m.CommentAuthor = m.Transcriber
+	if m.CommentAuthor == "" {
+		m.CommentAuthor = xgCommentAuthor
+	}
+	m.CommentAuthor = storage.NormalizeCommentAuthor(m.CommentAuthor)
 }
 
 // rawCubeAction holds raw cube action data extracted from XG game-file segments.

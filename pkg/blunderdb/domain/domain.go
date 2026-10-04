@@ -792,11 +792,15 @@ type Match struct {
 	TournamentName      string    `json:"tournament_name"`
 	LastVisitedPosition int       `json:"last_visited_position"`
 	Comment             string    `json:"comment"`
-	TournamentSortOrder int       `json:"tournament_sort_order"`
-	PR                  float64   `json:"pr"`
-	MWCLoss             float64   `json:"mwc_loss"`
-	PR2                 float64   `json:"pr2"`
-	MWCLoss2            float64   `json:"mwc_loss2"`
+	// CommentAuthor signs Comment: whoever last wrote it, or for a comment
+	// carried by the imported file, its transcriber ("XG" when the file
+	// names none). '' when unknown.
+	CommentAuthor       string  `json:"comment_author,omitempty"`
+	TournamentSortOrder int     `json:"tournament_sort_order"`
+	PR                  float64 `json:"pr"`
+	MWCLoss             float64 `json:"mwc_loss"`
+	PR2                 float64 `json:"pr2"`
+	MWCLoss2            float64 `json:"mwc_loss2"`
 	// MatchHash is the format-specific content hash; CanonicalHash is the
 	// format-independent hash used for cross-format duplicate detection. Both
 	// are set at import time and used by MatchStore dedup. Empty when unknown.

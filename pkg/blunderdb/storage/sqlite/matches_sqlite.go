@@ -35,7 +35,7 @@ const matchSelectCols = `m.id, COALESCE(m.player1_name,''), COALESCE(m.player2_n
 	COALESCE(m.match_length,0), m.match_date, m.import_date,
 	COALESCE(m.file_path,''), COALESCE(m.game_count,0),
 	m.tournament_id, COALESCE(t.name,''),
-	COALESCE(m.last_visited_position,-1), COALESCE(m.comment,''),
+	COALESCE(m.last_visited_position,-1), COALESCE(m.comment,''), COALESCE(m.comment_author,''),
 	COALESCE(m.tournament_sort_order,0),
 	COALESCE(m.match_hash,''), COALESCE(m.canonical_hash,''), COALESCE(m.dice_hash,''),
 	m.player1_elo, m.player2_elo, m.player1_experience, m.player2_experience,
@@ -55,7 +55,7 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 		&m.MatchLength, &matchDate, &importDate,
 		&m.FilePath, &m.GameCount,
 		&tournamentID, &m.TournamentName,
-		&m.LastVisitedPosition, &m.Comment,
+		&m.LastVisitedPosition, &m.Comment, &m.CommentAuthor,
 		&m.TournamentSortOrder,
 		&m.MatchHash, &m.CanonicalHash, &m.DiceHash,
 		&elo1, &elo2, &exp1, &exp2,
@@ -81,11 +81,11 @@ func scanMatch(sc interface{ Scan(...any) error }) (domain.Match, error) {
 
 const matchInsertSQL = `INSERT INTO match (
 	player1_name, player2_name, event, location, round,
-	match_length, match_date, file_path, game_count, tournament_id, comment,
+	match_length, match_date, file_path, game_count, tournament_id, comment, comment_author,
 	match_hash, canonical_hash, import_batch_id, dice_hash,
 	player1_elo, player2_elo, player1_experience, player2_experience,
 	transcriber, has_jacoby, has_beaver, engine_version
-) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
 
 func nullFloat(v sql.NullFloat64) *float64 {
 	if !v.Valid {
@@ -151,7 +151,7 @@ func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (i
 	args := append([]any{
 		m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round,
 		m.MatchLength, nullableTime(m.MatchDate), m.FilePath, m.GameCount,
-		m.TournamentID, m.Comment,
+		m.TournamentID, m.Comment, m.CommentAuthor,
 		nullableString(m.MatchHash), nullableString(m.CanonicalHash), nullableID(m.ImportBatchID),
 		nullableString(m.DiceHash)}, sourceMetadataArgs(m)...)
 	res, err := s.db.ExecContext(ctx, matchInsertSQL, args...)
@@ -433,10 +433,12 @@ func (s *matchStore) ReplaceHeader(ctx context.Context, scope string, id int64, 
 	return nil
 }
 
-// UpdateComment sets the free-text comment on a match.
+// UpdateComment sets the free-text comment on a match, signed by the
+// context's comment author (storage.WithCommentAuthor).
 func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, comment string) error {
 	if _, err := s.db.ExecContext(ctx,
-		`UPDATE match SET comment = ? WHERE id = ?`, comment, id); err != nil {
+		`UPDATE match SET comment = ?, comment_author = ? WHERE id = ?`,
+		comment, storage.CommentAuthorFromContext(ctx), id); err != nil {
 		return fmt.Errorf("sqlite: update match %d comment: %w", id, err)
 	}
 	return nil

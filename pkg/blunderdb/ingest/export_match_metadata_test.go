@@ -11,6 +11,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/xgparser/xgparser"
 )
 
 // exportOneMatch stores m in a fresh library, exports it and returns the
@@ -204,5 +205,26 @@ func TestReimportFillsMissingSourceMetadata(t *testing.T) {
 	}
 	if got.Player2Elo == nil || *got.Player2Elo != sentinel {
 		t.Errorf("stated rating overwritten: %v", got.Player2Elo)
+	}
+}
+
+// The header and footer comments of an XG file become the match's comment,
+// signed by the transcriber, or by "XG" when the file names none.
+func TestApplyXGMatchComments(t *testing.T) {
+	for _, tc := range []struct {
+		name, transcriber, header, footer string
+		wantComment, wantAuthor           string
+	}{
+		{"both", "Carol", " Opening notes ", "Final words", "Opening notes\n\nFinal words", "Carol"},
+		{"footer only, no transcriber", "", "", "Final words", "Final words", "XG"},
+		{"none", "Carol", "  ", "", "kept", ""},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			m := domain.Match{Comment: "kept", Transcriber: tc.transcriber}
+			applyXGMatchComments(&m, &xgparser.MatchMetadata{MatchHeaderComment: tc.header, MatchFooterComment: tc.footer})
+			if m.Comment != tc.wantComment || m.CommentAuthor != tc.wantAuthor {
+				t.Errorf("comment %q by %q, want %q by %q", m.Comment, m.CommentAuthor, tc.wantComment, tc.wantAuthor)
+			}
+		})
 	}
 }

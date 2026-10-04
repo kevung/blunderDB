@@ -841,7 +841,7 @@ func (e *exporter) writeTournaments() error {
 var exportedMatchColumns = []string{
 	"player1_name", "player2_name", "event", "location", "round", "match_length",
 	"match_date", "import_date", "file_path", "game_count", "match_hash", "canonical_hash",
-	"tournament_id", "tournament_sort_order", "last_visited_position", "comment",
+	"tournament_id", "tournament_sort_order", "last_visited_position", "comment", "comment_author",
 	"player1_elo", "player2_elo", "player1_experience", "player2_experience",
 	"transcriber", "has_jacoby", "has_beaver", "engine_version",
 }
@@ -873,12 +873,12 @@ func (e *exporter) writeMatches() error {
 		}
 		res, err := e.tx.ExecContext(e.ctx,
 			`INSERT INTO match (`+strings.Join(exportedMatchColumns, ", ")+`)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, ?, ?,
+			 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, ?, ?, ?,
 			         ?, ?, ?, ?, ?, ?, ?, ?)`,
 			m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round, m.MatchLength,
 			nullableTime(m.MatchDate), nullableTime(m.ImportDate), m.FilePath, m.GameCount,
 			m.MatchHash, m.CanonicalHash,
-			tournamentID, m.TournamentSortOrder, m.LastVisitedPosition, m.Comment,
+			tournamentID, m.TournamentSortOrder, m.LastVisitedPosition, m.Comment, m.CommentAuthor,
 			m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
 			m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion)
 		if err != nil {

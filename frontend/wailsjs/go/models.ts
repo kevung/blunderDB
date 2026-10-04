@@ -2138,6 +2138,7 @@ export namespace domain {
 	    tournament_name: string;
 	    last_visited_position: number;
 	    comment: string;
+	    comment_author?: string;
 	    tournament_sort_order: number;
 	    pr: number;
 	    mwc_loss: number;
@@ -2177,6 +2178,7 @@ export namespace domain {
 	        this.tournament_name = source["tournament_name"];
 	        this.last_visited_position = source["last_visited_position"];
 	        this.comment = source["comment"];
+	        this.comment_author = source["comment_author"];
 	        this.tournament_sort_order = source["tournament_sort_order"];
 	        this.pr = source["pr"];
 	        this.mwc_loss = source["mwc_loss"];

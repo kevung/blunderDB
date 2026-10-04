@@ -232,6 +232,9 @@ var schemaStatements = []string{
 		last_visited_position INTEGER DEFAULT -1,
 		canonical_hash TEXT,
 		comment TEXT DEFAULT '',
+		-- Who signs match.comment (domain.Match.CommentAuthor), '' when
+		-- unknown.
+		comment_author TEXT NOT NULL DEFAULT '',
 		tournament_sort_order INTEGER DEFAULT 0,
 		import_batch_id INTEGER REFERENCES import_batch(id) ON DELETE SET NULL,
 		-- The Slot this Match fills in its Tournament's Direction (ADR-0047): the

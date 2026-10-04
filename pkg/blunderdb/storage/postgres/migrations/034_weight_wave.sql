@@ -20,3 +20,7 @@ ALTER TABLE analysis ADD COLUMN IF NOT EXISTS met_id BIGINT REFERENCES match_equ
 DROP INDEX IF EXISTS idx_analysis_engine;
 DROP INDEX IF EXISTS idx_analysis_depth;
 CREATE INDEX IF NOT EXISTS idx_analysis_provenance_pending ON analysis (id) WHERE analysis_engine IS NULL;
+
+-- Who signs match.comment: a comment an XG file carries is signed by its
+-- transcriber, a comment written in blunderDB by its author.
+ALTER TABLE match ADD COLUMN IF NOT EXISTS comment_author TEXT NOT NULL DEFAULT '';

@@ -56,6 +56,23 @@ func testMatchSourceMetadata(t *testing.T, s storage.Storage) {
 		t.Fatal(err)
 	}
 	assertSourceMetadata(t, "replaced", got, &next)
+
+	// A match comment keeps its signature, and an edit signs it anew.
+	signed := domain.Match{Player1Name: "Gina", Player2Name: "Hugo", MatchLength: 3,
+		Comment: "From the file", CommentAuthor: "Carol"}
+	signedID, err := ms.Save(ctx, "", &signed)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, err = ms.Get(ctx, "", signedID); err != nil || got.Comment != "From the file" || got.CommentAuthor != "Carol" {
+		t.Fatalf("saved comment = %q by %q, %v; want %q by %q", got.Comment, got.CommentAuthor, err, "From the file", "Carol")
+	}
+	if err := ms.UpdateComment(storage.WithCommentAuthor(ctx, "Ivy"), "", signedID, "Edited"); err != nil {
+		t.Fatal(err)
+	}
+	if got, err = ms.Get(ctx, "", signedID); err != nil || got.Comment != "Edited" || got.CommentAuthor != "Ivy" {
+		t.Errorf("edited comment = %q by %q, %v; want %q by %q", got.Comment, got.CommentAuthor, err, "Edited", "Ivy")
+	}
 }
 
 func assertSourceMetadata(t *testing.T, label string, got, want *domain.Match) {
