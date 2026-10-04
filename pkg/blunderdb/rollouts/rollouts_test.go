@@ -10,9 +10,9 @@ import (
 )
 
 // TestSaveValuedAnalysisSupersedesAnEarlierDepth: the storage path a daemon's
-// stale sweep writes through replaces gammonNet's previous verdict, so a
-// verdict at a shallower depth leaves nothing stale at that depth — the same
-// outcome Database.AnalyzeStaleGammonNet reaches for the CLI and the GUI.
+// stale sweep writes through replaces gammonNet's previous entries, so a
+// verdict at a shallower depth leaves nothing stale at that depth. The rest
+// of the row is the storagetest contract's (ContractGammonNetVerdict).
 func TestSaveValuedAnalysisSupersedesAnEarlierDepth(t *testing.T) {
 	ctx := context.Background()
 	st, err := sqlite.Open(ctx, ":memory:", nil)
