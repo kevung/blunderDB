@@ -19,7 +19,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
-// referenceMigrate_2_30_0_to_2_31_0 is the weight wave of the large-library plan
+// referenceMigrate230To231 is the weight wave of the large-library plan
 // (ADR-0071), plus additions EnsureSchema creates from the one schema after
 // the chain: match_equity_table and analysis.met_id (ADR-0068),
 // lesson_progress (ADR-0069) and move.error_mp, all added NULL. Scoring the
@@ -29,7 +29,7 @@ import (
 // The step rewrites the two date columns 2.30.0 stored as text into Unix
 // seconds. A position whose date is still NULL here (the 2.30.0 backfill not
 // finished) is dated by that backfill after the chain, already as an integer.
-func (d *Database) referenceMigrate_2_30_0_to_2_31_0(ctx context.Context) error {
+func (d *Database) referenceMigrate230To231(ctx context.Context) error {
 	for _, name := range prunedIndexes2_31 {
 		if _, err := d.db.ExecContext(ctx, `DROP INDEX IF EXISTS `+name); err != nil {
 			return fmt.Errorf("dropping %s: %w", name, err)

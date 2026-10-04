@@ -133,7 +133,7 @@ func migrateByReference(t *testing.T, path string) {
 	if d.db, err = sql.Open("sqlite", sqlite.DSN(path)); err != nil {
 		t.Fatal(err)
 	}
-	if err := d.referenceMigrate_2_30_0_to_2_31_0(ctx); err != nil {
+	if err := d.referenceMigrate230To231(ctx); err != nil {
 		t.Fatalf("reference step: %v", err)
 	}
 	if err := d.referenceBackfillAnalysisProvenance(ctx); err != nil {
@@ -166,38 +166,27 @@ func libraryContent(t *testing.T, path string) map[string]string {
 	defer db.Close()
 	out := map[string]string{}
 	var tables []string
-	rows, err := db.Query(`SELECT type, name, COALESCE(sql, '') FROM sqlite_master ORDER BY name`)
-	if err != nil {
-		t.Fatal(err)
-	}
-	for rows.Next() {
+	eachRow(t, db, `SELECT type, name, COALESCE(sql, '') FROM sqlite_master ORDER BY name`, func(r *sql.Rows) {
 		var typ, name, ddl string
-		if err := rows.Scan(&typ, &name, &ddl); err != nil {
+		if err := r.Scan(&typ, &name, &ddl); err != nil {
 			t.Fatal(err)
 		}
-		switch typ {
-		case "table":
+		if typ == "table" {
 			tables = append(tables, name)
-		default:
+		} else {
 			out["schema "+typ+" "+name] = ddl
 		}
-	}
-	rows.Close()
+	})
 	for _, table := range tables {
 		var cols []string
-		crows, err := db.Query(`SELECT name, type FROM pragma_table_info(?)`, table)
-		if err != nil {
-			t.Fatal(err)
-		}
-		for crows.Next() {
+		eachRow(t, db, `SELECT name, type FROM pragma_table_info('`+table+`')`, func(r *sql.Rows) {
 			var name, typ string
-			if err := crows.Scan(&name, &typ); err != nil {
+			if err := r.Scan(&name, &typ); err != nil {
 				t.Fatal(err)
 			}
 			cols = append(cols, name)
 			out["column "+table+"."+name] = typ
-		}
-		crows.Close()
+		})
 		slices.Sort(cols)
 		quoted := make([]string, len(cols))
 		for i, c := range cols {
@@ -207,19 +196,14 @@ func libraryContent(t *testing.T, path string) map[string]string {
 		if strings.HasPrefix(table, "sqlite_stat") {
 			rowid = "0"
 		}
-		q := `SELECT ` + rowid + `, ` + strings.Join(quoted, ", ") + ` FROM "` + table + `"`
-		vrows, err := db.Query(q)
-		if err != nil {
-			t.Fatalf("%s: %v", q, err)
-		}
 		vals := make([]sql.NullString, len(cols)+1)
 		ptrs := make([]any, len(vals))
 		for i := range vals {
 			ptrs[i] = &vals[i]
 		}
 		n := 0
-		for vrows.Next() {
-			if err := vrows.Scan(ptrs...); err != nil {
+		eachRow(t, db, `SELECT `+rowid+`, `+strings.Join(quoted, ", ")+` FROM "`+table+`"`, func(r *sql.Rows) {
+			if err := r.Scan(ptrs...); err != nil {
 				t.Fatal(err)
 			}
 			key := vals[0].String
@@ -233,8 +217,7 @@ func libraryContent(t *testing.T, path string) map[string]string {
 				out[table+"#"+key+"."+c] = vals[i+1].String
 			}
 			n++
-		}
-		vrows.Close()
+		})
 	}
 	return out
 }
@@ -440,5 +423,20 @@ func TestMigrate_2_31_ResumesAfterCancel(t *testing.T) {
 				t.Errorf("%d cells, the reference %d", len(got), len(want))
 			}
 		})
+	}
+}
+
+func eachRow(t *testing.T, db *sql.DB, q string, each func(*sql.Rows)) {
+	t.Helper()
+	rows, err := db.Query(q)
+	if err != nil {
+		t.Fatalf("%s: %v", q, err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		each(rows)
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
 	}
 }
