@@ -115,6 +115,36 @@ func TestQuotaRefusesImportPastMaxPositions(t *testing.T) {
 	}
 }
 
+// TestQuotaRefusesImportPastMaxStoredBytes: a tenant that holds its disk
+// space is refused a new import, and tenants.quota reports what it holds.
+func TestQuotaRefusesImportPastMaxStoredBytes(t *testing.T) {
+	ts, srv := newQuotaTestServer(t, TenantQuotas{MaxStoredBytes: 1})
+	var body bytes.Buffer
+	mw := multipart.NewWriter(&body)
+	fw, _ := mw.CreateFormFile("file", "data.ndjson")
+	_, _ = fw.Write([]byte("{}\n"))
+	mw.Close()
+	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/imports.json", &body)
+	req.Header.Set(middleware.TenantHeader, testTenant)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	status, e := errorOf(t, resp)
+	if status != http.StatusRequestEntityTooLarge || e.Code != CodeStorageQuotaExceeded || e.Details["quota"] != "maxStoredBytes" {
+		t.Fatalf("import past the bound: %d %+v; want 413 storage_quota_exceeded on maxStoredBytes", status, e)
+	}
+	if _, n := srv.quota.usage(testTenant); n != 0 {
+		t.Errorf("a refused import holds no slot: %d", n)
+	}
+	var got tenantQuotaResp
+	postDecode(t, ts, "/v1/tenants.quota", nil, &got)
+	if got.Limits.MaxStoredBytes != 1 || got.Usage.StoredBytes <= 0 {
+		t.Fatalf("tenants.quota = %+v; want the bound and the space held", got)
+	}
+}
+
 // TestQuotaPositionsHelpSaysWhatIsChecked: --quota-positions promises what
 // the daemon holds — an import refused at its start — and no bound on the
 // unit writes, which the daemon does not check.

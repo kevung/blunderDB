@@ -178,6 +178,10 @@ export function OpenLogsFolder() {
   return window['go']['gui']['App']['OpenLogsFolder']();
 }
 
+export function OpenMETDialog() {
+  return window['go']['gui']['App']['OpenMETDialog']();
+}
+
 export function OpenPositionFilesDialog() {
   return window['go']['gui']['App']['OpenPositionFilesDialog']();
 }

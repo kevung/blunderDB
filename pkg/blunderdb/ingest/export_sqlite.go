@@ -16,6 +16,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -71,6 +72,14 @@ type Selection struct {
 	// LessonContents adds what the selected lessons' steps show: their
 	// collections, with their members, and their positions (ADR-0066).
 	LessonContents bool
+
+	// DeckIDs exports these Anki decks even when ExportOptions.AnkiDecks is
+	// off — a deck handed to someone else, without the sender's other decks.
+	// Like every deck, it travels without its review history.
+	DeckIDs []int64
+	// DeckPositions adds the members of the decks in DeckIDs to the positions
+	// exported.
+	DeckPositions bool
 }
 
 // ExportReport counts what an export wrote. Skipped counts rows dropped along
@@ -306,6 +315,7 @@ type exporter struct {
 	// Resolved selection, in the order rows are written.
 	collectionIDs, tournamentIDs, matchIDs []int64
 	lessonIDs                              []int64
+	deckIDs                                []int64
 	lessonCollIDs                          []int64 // collections the lessons' steps show
 	lessonPosIDs                           []int64 // positions the lessons' steps show
 	extraPositionIDs                       []int64 // closure of collections/matches, beyond the explicit positions
@@ -315,8 +325,23 @@ type exporter struct {
 	collMap  map[int64]int64
 	tourMap  map[int64]int64
 	matchMap map[int64]int64
+	tables   *mets.Carrier // the tables the exported analyses cite, built on first use
 
 	report ExportReport
+}
+
+// carrier returns the export's table carrier: the source's tables, copied
+// into the file the first time an exported analysis cites one (ADR-0068,
+// rule 5). They arrive without their current flag.
+func (e *exporter) carrier() (*mets.Carrier, error) {
+	if e.tables == nil {
+		tables, err := mets.ReadTables(e.ctx, e.src.MatchEquityTables(), e.scope)
+		if err != nil {
+			return nil, fmt.Errorf("cannot read match equity tables to export: %w", err)
+		}
+		e.tables = mets.NewCarrier(e.dst.MatchEquityTables(), "", tables)
+	}
+	return e.tables, nil
 }
 
 func (e *exporter) skip(msg string, args ...any) {
@@ -429,6 +454,7 @@ func (e *exporter) resolveSelection() error {
 	if err := e.resolveLessons(); err != nil {
 		return err
 	}
+	e.deckIDs, _ = e.resolveIDs(false, sel.DeckIDs, nil)
 
 	// Positions reached by the closure, minus the ones the caller listed;
 	// sorted so the file is the same whatever order the closure found them.
@@ -454,6 +480,20 @@ func (e *exporter) resolveSelection() error {
 			for p, err := range e.src.Collections().Positions(e.ctx, e.scope, cid, storage.ListOpts{}) {
 				if err != nil {
 					return fmt.Errorf("ingest: list positions of collection %d: %w", cid, err)
+				}
+				if !explicit[p.ID] {
+					extra[p.ID] = true
+				}
+			}
+		}
+	}
+	if sel.DeckPositions {
+		// DeckPositions reads the scope's own decks only: an id another
+		// tenant owns lists nothing.
+		for _, did := range e.deckIDs {
+			for p, err := range e.src.Anki().DeckPositions(e.ctx, e.scope, did) {
+				if err != nil {
+					return fmt.Errorf("ingest: list positions of deck %d: %w", did, err)
 				}
 				if !explicit[p.ID] {
 					extra[p.ID] = true
@@ -576,12 +616,16 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 		}
 	}
 	var analyses map[int64]*domain.PositionAnalysis
+	var analysisMET map[int64]int64
 	var moves map[int64][]*domain.Move
 	var comments map[int64][]*domain.CommentEntry
 	var err error
 	if e.opts.Analysis {
 		if analyses, err = e.src.Analyses().LoadMany(e.ctx, e.scope, ids); err != nil {
 			return fmt.Errorf("cannot read analyses to export: %w", err)
+		}
+		if analysisMET, err = e.src.MatchEquityTables().OfAnalyses(e.ctx, e.scope, ids); err != nil {
+			return fmt.Errorf("cannot read the analyses' match equity tables to export: %w", err)
 		}
 		if e.opts.PlayedMoves {
 			if moves, err = e.src.Matches().MovesByPositions(e.ctx, e.scope, ids); err != nil {
@@ -629,6 +673,9 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 				e.skip("inserting analysis for position", "newID", newID, "oldID", p.ID, "err", err)
 			} else {
 				e.report.Analyses++
+				if err := e.carryTable(analysisMET[p.ID], newID); err != nil {
+					return err
+				}
 			}
 		}
 		for _, c := range comments[p.ID] {
@@ -641,6 +688,30 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 			}
 			e.report.Comments++
 		}
+	}
+	return nil
+}
+
+// carryTable records that the exported analysis of newID was valued with the
+// source table srcMET. A failure fails the export: an analysis written without
+// its table would be read as Kazaross-XG2 by whoever opens the file.
+func (e *exporter) carryTable(srcMET, newID int64) error {
+	if srcMET == 0 {
+		return nil
+	}
+	c, err := e.carrier()
+	if err != nil {
+		return err
+	}
+	met, err := c.Target(e.ctx, srcMET)
+	if err != nil {
+		return fmt.Errorf("cannot export a match equity table: %w", err)
+	}
+	if met == 0 {
+		return nil
+	}
+	if err := e.dst.MatchEquityTables().TagAnalyses(e.ctx, "", met, []int64{newID}); err != nil {
+		return fmt.Errorf("cannot export an analysis's match equity table: %w", err)
 	}
 	return nil
 }
@@ -1041,9 +1112,10 @@ func (e *exporter) writeTranscriptions() error {
 // review history is intentionally left behind: an export is a fresh study
 // copy, not a scheduler snapshot.
 func (e *exporter) writeAnkiDecks() error {
-	if !e.opts.AnkiDecks {
+	if !e.opts.AnkiDecks && len(e.deckIDs) == 0 {
 		return nil
 	}
+	picked := toSet(e.deckIDs)
 	type srcDeck struct {
 		d      domain.AnkiDeck
 		posIDs []int64
@@ -1053,7 +1125,9 @@ func (e *exporter) writeAnkiDecks() error {
 		if err != nil {
 			return fmt.Errorf("ingest: list decks: %w", err)
 		}
-		decks = append(decks, srcDeck{d: *d})
+		if e.opts.AnkiDecks || picked[d.ID] {
+			decks = append(decks, srcDeck{d: *d})
+		}
 	}
 	for i := range decks {
 		for p, err := range e.src.Anki().DeckPositions(e.ctx, e.scope, decks[i].d.ID) {

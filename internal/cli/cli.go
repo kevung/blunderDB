@@ -121,10 +121,12 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"vacuum":      cli.runVacuum,
 		"repair":      cli.runRepair,
 		"reencode":    cli.runReencode,
+		"met":         cli.runMET,
 		"analyze":     cli.runAnalyze,
 		"transcribe":  cli.runTranscribe,
 		"collection":  cli.runCollection,
 		"lesson":      cli.runLesson,
+		"study":       cli.runStudy,
 		"anki":        cli.runAnki,
 		"stats":       cli.runStats,
 		"training":    cli.runTraining,
@@ -178,6 +180,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  search    Search positions with filters")
 	fmt.Println("  match     Display match positions and analysis")
 	fmt.Println("  lesson      Manage lessons (ordered steps showing collections and positions; export them)")
+	fmt.Println("  study       The study backlog: your unhandled blunders across every import, and the \"studied\" mark")
 	fmt.Println("  collection  Manage collections (list, show, create, rename, delete, export)")
 	fmt.Println("  anki      Spaced-repetition decks (decks, stats, forecast, sync)")
 	fmt.Println("  stats     Statistics computed apart from list --type stats (recurring)")
@@ -196,6 +199,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  verify    Verify database integrity")
 	fmt.Println("  vacuum    Compact the database file, reclaiming freed space")
 	fmt.Println("  repair    Recompute the analysis columns from the analyses themselves")
+	fmt.Println("  met       List, import or choose the database's match equity table")
 	fmt.Println("  reencode  Rewrite analyses stored by older releases in the compact format")
 	fmt.Println("  delete    Delete data from the database")
 	fmt.Println("  comment   Comments on a position, signed by their author (add, list)")

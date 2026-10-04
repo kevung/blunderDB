@@ -8,7 +8,9 @@ import (
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
@@ -151,7 +153,16 @@ func (a *App) evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int
 	}
 	defer release()
 
-	result, err := gammonnet.EvaluatePositionWith(searcher, pos, ply, pruneK, candidates)
+	// The library's table values the live verdict, as it values the stored
+	// one (ADR-0068): the panel never shows a number another table produced.
+	var met *engine.MET
+	if a.db != nil {
+		if met, err = database.CurrentMET(a.db); err != nil {
+			return GammonNetEvalResult{}, err
+		}
+	}
+
+	result, err := gammonnet.EvaluatePositionWithMET(searcher, pos, met, ply, pruneK, candidates)
 	if err != nil {
 		// A refusal is an answer ("this build cannot judge that score"), a
 		// breakage is not. Only the first travels as data.
@@ -161,8 +172,8 @@ func (a *App) evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int
 		return GammonNetEvalResult{}, err
 	}
 
-	raceEval := evaluateRaceRegime(searcher, &pos, ply, pruneK)
-	preRoll := preRollFacts(searcher, &pos, ply, pruneK, result.PreRoll)
+	raceEval := evaluateRaceRegime(searcher, &pos, met, ply, pruneK)
+	preRoll := preRollFacts(searcher, &pos, met, ply, pruneK, result.PreRoll)
 
 	verdict := race.Verdict("")
 	if result.Cube != nil {
@@ -175,7 +186,7 @@ func (a *App) evaluateGammonNet(pos domain.Position, ply, pruneK, candidates int
 // preRollFacts is the position's fact vector (ADR-0017): relabelled when
 // the Cube branch produced it for free, otherwise a second, dice-free search
 // on the call's already-acquired searcher.
-func preRollFacts(searcher *gammonnet.Searcher, pos *domain.Position, ply, pruneK int, free *gammonnet.PreRollFacts) *PositionFacts {
+func preRollFacts(searcher *gammonnet.Searcher, pos *domain.Position, met *engine.MET, ply, pruneK int, free *gammonnet.PreRollFacts) *PositionFacts {
 	if free != nil {
 		return &PositionFacts{
 			PlayerWinChance:          free.PlayerWinChance,
@@ -195,7 +206,7 @@ func preRollFacts(searcher *gammonnet.Searcher, pos *domain.Position, ply, prune
 
 	// Same configuration as the decision (ADR-0016, ADR-0023); an
 	// unevaluable score yields no facts, never a silent fall to money.
-	cfg, state, err := gammonnet.ConfigForPosition(pos, ply, pruneK)
+	cfg, state, err := gammonnet.ConfigForPositionMET(pos, met, ply, pruneK)
 	if err != nil {
 		return nil
 	}
@@ -238,7 +249,7 @@ func preRollFacts(searcher *gammonnet.Searcher, pos *domain.Position, ply, prune
 //
 // It lives here, not in race, because gammonnet's internal tests import race
 // and race importing gammonnet would be a cycle.
-func evaluateRaceRegime(searcher *gammonnet.Searcher, pos *domain.Position, ply, pruneK int) *race.Eval {
+func evaluateRaceRegime(searcher *gammonnet.Searcher, pos *domain.Position, met *engine.MET, ply, pruneK int) *race.Eval {
 	fast := race.Evaluate(pos)
 	if fast.Race == nil {
 		return nil
@@ -250,7 +261,7 @@ func evaluateRaceRegime(searcher *gammonnet.Searcher, pos *domain.Position, ply,
 
 	// Same configuration as the decision next to it (ADR-0023); an
 	// unevaluable score is refused, never degraded to money.
-	cfg, state, err := gammonnet.ConfigForPosition(pos, ply, pruneK)
+	cfg, state, err := gammonnet.ConfigForPositionMET(pos, met, ply, pruneK)
 	if err != nil {
 		return nil
 	}

@@ -475,67 +475,51 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 }
 
 // GetDatabaseStats returns statistics about the database
+//
+// Every number comes from the store's Counts, read once: the table counts
+// were counted here a second time before, which on a 15 M-row library
+// doubled the wait of `info`.
 func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	stats := make(map[string]interface{})
-
-	// Count positions
-	var posCount int64
-	err := d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount)
-	if err != nil {
-		return nil, err
+	// Blunders are counted at the library's threshold (ADR-0046), by the
+	// store's rule — the same as the status bar link's search, a
+	// multi-played Position scored by its largest play. Not restated here,
+	// so it cannot drift. It counts POSITIONS, not PR decisions: "how much
+	// to look at".
+	c, err := d.store.Metadata().Counts(context.Background(), "")
+	if err == nil {
+		return map[string]interface{}{
+			"position_count": int64(c.Positions),
+			"analysis_count": int64(c.Analyses),
+			"match_count":    int64(c.Matches),
+			"game_count":     int64(c.Games),
+			"move_count":     int64(c.Moves),
+			"blunder_count":  int64(c.Blunders),
+		}, nil
 	}
-	stats["position_count"] = posCount
-
-	// Count analyses
-	var analysisCount int64
-	err = d.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&analysisCount)
-	if err != nil {
-		return nil, err
+	// The blunder count is the fragile part (it reads every analysis): its
+	// failure must not take the whole of `info` down. The tables are counted
+	// one by one and the blunders reported as 0.
+	slog.Warn("database stats: counting at once failed; counting table by table, blunders at 0", "err", err)
+	stats := map[string]interface{}{"blunder_count": int64(0)}
+	for _, t := range []struct {
+		table, key string
+		required   bool
+	}{
+		{"position", "position_count", true}, {"analysis", "analysis_count", true},
+		{"match", "match_count", false}, {"game", "game_count", false}, {"move", "move_count", false},
+	} {
+		var n int64
+		if err := d.db.QueryRow(`SELECT COUNT(*) FROM ` + t.table).Scan(&n); err != nil {
+			if t.required {
+				return nil, err
+			}
+			slog.Warn("database stats: counting a table", "table", t.table, "err", err)
+		}
+		stats[t.key] = n
 	}
-	stats["analysis_count"] = analysisCount
-
-	// Count matches
-	var matchCount int64
-	err = d.db.QueryRow(`SELECT COUNT(*) FROM match`).Scan(&matchCount)
-	if err != nil {
-		// Table might not exist in older databases
-		stats["match_count"] = int64(0)
-	} else {
-		stats["match_count"] = matchCount
-	}
-
-	// Count games
-	var gameCount int64
-	err = d.db.QueryRow(`SELECT COUNT(*) FROM game`).Scan(&gameCount)
-	if err != nil {
-		stats["game_count"] = int64(0)
-	} else {
-		stats["game_count"] = gameCount
-	}
-
-	// Count moves
-	var moveCount int64
-	err = d.db.QueryRow(`SELECT COUNT(*) FROM move`).Scan(&moveCount)
-	if err != nil {
-		stats["move_count"] = int64(0)
-	} else {
-		stats["move_count"] = moveCount
-	}
-
-	// Count blunders at the library's threshold (ADR-0046), by the store's
-	// rule — the same as the status bar link's search, a multi-played
-	// Position scored by its largest play. Not restated here, so it cannot
-	// drift. It counts POSITIONS, not PR decisions: "how much to look at".
-	counts, err := d.store.Metadata().Counts(context.Background(), "")
-	if err != nil {
-		stats["blunder_count"] = int64(0)
-	} else {
-		stats["blunder_count"] = int64(counts.Blunders)
-	}
-
 	return stats, nil
 }
 

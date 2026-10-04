@@ -69,6 +69,19 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 - **Tests par backend redondants** : `comments_*_test.go` / `collections_*_test.go` de `storage/sqlite` et `storage/postgres` doublonnent les cas de contrat ajoutés le 2026-09-02. Effort S. → fiche B.14 (#182).
 - **Étapes de migration 1.0.0→1.6.0** : la bizarrerie « table déjà présente ⇒ chaîne arrêtée » (`errStepNotApplicable`, registre `migrationSteps`) est conservée par fidélité ; rendre ces étapes inconditionnelles (leur DDL est `IF NOT EXISTS`). Effort S, test de migration à ajouter. → fiche B.9 (#177).
 - **Drapeau `python-format` faux positif dans les `.po`** : Babel marque les msgid contenant « 12 % de » ; `msgfmt -c` échoue sur 2 à 4 entrées par langue, Sphinx s'en moque. Remède côté extraction (`no-python-format`) ou reformulation. Effort S. → fiche H.13 (#255).
+- **Décompte des gaffes d'`info` à la demande ou en cache** (revue de la branche `perf/migration-2-31`, point 9) : `GetDatabaseStats` lit `Counts` d'un coup, et `blunderCount` parcourt toute `analysis` — des secondes à des dizaines de secondes sur une base BMAB. Le calculer seulement sur demande (`info --blunders`) ou le garder en cache dans `metadata`, invalidé par import/suppression/changement de seuil. Effort M.
+- **Course Stat/Rename du vacuum par remplacement** (`database/db_vacuum.go`, `vacuumBySwap`) : l'absence de `-wal` est constatée par `os.Stat` puis le fichier remplacé par `os.Rename` ; un autre processus qui ouvre la base entre les deux lit l'ancien inode et y écrit à perte. Fenêtre de quelques microsecondes, sans verrou de fichier pour la fermer. Prendre un verrou exclusif SQLite (`BEGIN EXCLUSIVE` sur une connexion tenue jusqu'au rename) ou un verrou consultatif. Effort S-M.
+
+- **File d'étude transversale — la requête de la grammaire qui la reproduit.** → #528
+  (étape 4). La file (`StudyBacklog`, `sqlshared/importbatches.go`) n'a pas de jeton
+  équivalent, pour trois raisons : elle compte les décisions comme Stats (`countedExpr` :
+  coups forcés exclus, conventions du pas-de-double), ce que la grammaire n'exprime pas ;
+  son coût est celui de l'analyse (`statsErrExpr`), alors que `E` filtre l'erreur du coup
+  joué, coup par coup ; l'absence de carte, de collection et de marque « vu » n'a pas de
+  jeton (`xco` couvre seulement le commentaire). Un jeton `nt` (« non traité ») couvrirait
+  le dernier point ; l'égalité exacte demande en plus de choisir lequel des deux sens du
+  coût et du décompte fait foi, puis de redéfinir la file sur la grammaire. Cette décision
+  passe par Opus, avec un test d'égalité jeton ↔ `StudyBacklog` sur les deux backends.
 
 ## Ouvert — Moteur (dettes nommées dans les ADR)
 
@@ -264,3 +277,7 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 - **Journal d'import hors transaction** (`ingest.RecordOutcomes`, GB2.4) : le journal est écrit après le commit du groupe de fichiers. Un crash entre les deux laisse un match écrit mais non journalisé ; à la reprise le fichier est relu et le match le couvre comme doublon de lui-même. Le journal ne ment pas sur ce qui est en base, mais l'issue « nouveau » est perdue. À faire : écrire les lignes dans la transaction du groupe (le pipeline les produit déjà avant le commit).
 
 - **`move.error_mp` sans lecteur ni tenue** (mesure BMAB #6/#8, `tasks/mesure-bmab-0.37.md` § 9) : seule `repair --move-errors` l'écrit ; ni l'import ni l'analyse n'appellent `RescorePositionMoves`, aucune requête ne la lit. Pour que `E` s'y appuie (SQL exact, sans phase Go), il faut une tenue à jour à chaque écriture d'analyse ou de coup et un moyen de distinguer « pas noté » de « non notable » (NULL ambigu).
+
+- **Serveur : compare, cubeMatrix et rollouts hors de la file partagée** : ces trois routes lancent `NumCPU` goroutines par requête, sans passer par la file bornée des évaluations ; plusieurs requêtes simultanées saturent le processeur au-delà de la borne. À faire : les faire passer par la même file.
+- **Serveur : quota en octets sous PostgreSQL** : la mesure repose sur `pg_total_relation_size` et `reltuples`, globaux à la base et non au locataire, donc un canal auxiliaire faible (un locataire devine la taille des autres) ; et les 13 `COUNT` par appel ont un coût. À faire : compter par locataire, avec un cache ou un compteur tenu à jour.
+- **Export GUI : sélecteur de paquets** : l'export serveur sait se limiter à des collections, leçons ou paquets Anki (`collectionIds`, `lessonIds`, `deckIds`), le dialogue d'export de la GUI n'offre pas ce choix.

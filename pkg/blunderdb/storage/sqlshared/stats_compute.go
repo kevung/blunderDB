@@ -79,6 +79,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			}
 			defer ts.dropSelection(ctx)
 			q.join = join
+			ts = &StatsStore{DB: selectionExecer{tx}}
 		}
 
 		prPass, snowiePass, tournamentPass, matchPass := ts.computePRByDecisionType, ts.computeSnowieGlobal, ts.computePerTournament, ts.computePerMatch
@@ -540,7 +541,12 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 		mwcByTournament := make(map[int64]float64)
 		mwcByMatch := make(map[int64]float64)
 		mwcByCubeAction := make(map[string]float64)
-		blunderMWC := make(map[int64]float64)
+		// Only the top blunders' losses are read back: keeping every
+		// decision's would hold the whole selection in memory.
+		blunderMWC := make(map[int64]float64, len(result.TopBlunders))
+		for _, be := range result.TopBlunders {
+			blunderMWC[be.PositionID] = math.NaN()
+		}
 
 		var mwcGlobal, mwcChecker, mwcCube float64
 		var mwcAvailable bool
@@ -598,7 +604,9 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 					if dt == 1 {
 						mwcByCubeAction[cubeAction] += mwcLoss
 					}
-					blunderMWC[posID] = mwcLoss
+					if _, top := blunderMWC[posID]; top {
+						blunderMWC[posID] = mwcLoss
+					}
 					mwcRollingCum += mwcLoss
 				}
 
@@ -632,7 +640,7 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 			result.CubeActionBreakdown[i].MWC = mwcByCubeAction[cs.Action]
 		}
 		for i, be := range result.TopBlunders {
-			if loss, ok := blunderMWC[be.PositionID]; ok {
+			if loss := blunderMWC[be.PositionID]; !math.IsNaN(loss) {
 				result.TopBlunders[i].MWCLoss = loss
 			}
 		}

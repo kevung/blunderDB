@@ -471,6 +471,13 @@ type StatsStore interface {
 	// writes computes the seat rows from the decisions instead of the table.
 	HeadToHead(ctx context.Context, scope, playerA, playerB string, filter StatsFilter) (*HeadToHead, error)
 
+	// PlayerContrast lists the positions both players decided (as the one who
+	// took the decision; aliases folded) where one played well and the other
+	// did not, at the library's Error threshold. The filter's player fields
+	// are ignored; its tournaments, dates, match lengths, decision type and
+	// provenance apply. Two players that are one person are ErrInvalid.
+	PlayerContrast(ctx context.Context, scope, playerA, playerB string, filter StatsFilter) (*PlayerContrast, error)
+
 	// PRByWindow is the PR of the filter's players over a sliding calendar
 	// window of `months` months (1 a month, 3 a quarter), one point per
 	// month from the first month with a counted decision to the last, each

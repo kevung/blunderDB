@@ -382,6 +382,9 @@ func DecodeAnalysesConcurrently(raw map[int64][]byte) (decoded map[int64]*domain
 
 	results := make([]*domain.PositionAnalysis, len(jobs))
 	errs := make([]error, len(jobs))
+	// The bulk decoder, not the shared one: the shared decoder has a single
+	// slot, and every worker would queue on it.
+	_, dec := bulkCodecs()
 	workers := min(runtime.NumCPU(), len(jobs))
 	var wg sync.WaitGroup
 	var next atomic.Int64
@@ -394,7 +397,7 @@ func DecodeAnalysesConcurrently(raw map[int64][]byte) (decoded map[int64]*domain
 				if i >= len(jobs) {
 					return
 				}
-				a, err := DecodeAnalysisFromStorage(jobs[i].data)
+				a, err := decodeAnalysisWith(dec, jobs[i].data)
 				if err != nil {
 					errs[i] = err
 					continue

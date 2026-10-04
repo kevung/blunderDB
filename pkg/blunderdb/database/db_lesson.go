@@ -119,3 +119,23 @@ func (d *Database) ReorderLessonSteps(lessonID int64, stepIDs []int64) error {
 		return ls.ReorderSteps(context.Background(), "", lessonID, stepIDs)
 	})
 }
+
+// SetLessonStepDone records (done) or withdraws the reader's "step done"
+// gesture on a step. It is the only writer of a Lesson's progress
+// (ADR-0069): opening or reading a Lesson writes nothing.
+func (d *Database) SetLessonStepDone(stepID int64, done bool) error {
+	return d.writeLessons(func(ls storage.LessonStore) error {
+		return ls.SetStepDone(context.Background(), "", stepID, done)
+	})
+}
+
+// LessonDoneSteps returns the date of the "step done" gesture for each step
+// of the Lesson marked done, keyed by step id.
+func (d *Database) LessonDoneSteps(lessonID int64) (map[int64]string, error) {
+	var out map[int64]string
+	err := d.readLessons(func(ls storage.LessonStore) (err error) {
+		out, err = ls.DoneSteps(context.Background(), "", lessonID)
+		return err
+	})
+	return out, err
+}

@@ -112,7 +112,7 @@ func TestRolloutWriteRefusedAfterTheDatabaseChanged(t *testing.T) {
 	if err != nil || sum.RolledOut != 0 || sum.Failed != 1 {
 		t.Errorf("batch after a switch: %+v, %v; want one failed write", sum, err)
 	}
-	if err := d.saveAnalysisAt(gen, id, PositionAnalysis{}); !errors.Is(err, ErrDatabaseChanged) {
+	if err := d.saveAnalysisAt(gen, id, PositionAnalysis{}, 0); !errors.Is(err, ErrDatabaseChanged) {
 		t.Errorf("saveAnalysisAt after a switch: %v, want ErrDatabaseChanged", err)
 	}
 }

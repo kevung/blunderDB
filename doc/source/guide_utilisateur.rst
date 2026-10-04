@@ -652,6 +652,33 @@ La même liste s'obtient en ligne de commande :
 
    $ blunderdb list --db base.db --type imports --batch 3 --queue
 
+.. _file_etude_transversale:
+
+Les blunders que rien n'a encore traités
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Une file ne couvre qu'un import. La commande ``:study`` (ou ``:sq``) ouvre la
+file **transversale** : vos blunders de toute la base, tous imports confondus,
+qui n'ont encore ni commentaire, ni carte Anki, ni collection, et que vous
+n'avez pas marqués comme vus. « Vos » désigne le joueur de référence de la
+base, avec ses autres graphies ; l'erreur doit atteindre le seuil d'erreur de
+la bibliothèque. La file va du plus coûteux au moins coûteux, bornée à
+cinquante positions.
+
+Dans cette file, la bande offre deux gestes de plus. **Marquer vu** écrit une
+marque sur la position, qui la sort de la file, puis passe à la suivante :
+c'est le seul endroit où blunderDB note qu'une position a été vue, et il ne le
+fait que sur ce geste. **Démarquer** retire la dernière marque posée, et la
+position revient dans la file. La marque est une donnée de votre base : elle
+n'est jamais incluse dans un export, et n'empêche pas la suppression d'un
+match de purger la position.
+
+.. code-block:: console
+
+   $ blunderdb study queue --db base.db --limit 20
+   $ blunderdb study mark --db base.db --id 1234
+   $ blunderdb study unmark --db base.db --id 1234
+
 Glisser-déposer
 ----------------
 

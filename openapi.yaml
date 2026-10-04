@@ -3128,6 +3128,11 @@ paths:
       operationId: exports.sqlite
       tags: [exports]
       x-kind: custom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/exportSQLiteReq"
       responses:
         "200":
           description: OK
@@ -3716,6 +3721,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/lessons.doneSteps:
+    post:
+      operationId: lessons.doneSteps
+      tags: [lessons]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
   /v1/lessons.get:
     post:
       operationId: lessons.get
@@ -3781,6 +3805,23 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/lessonReorderReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
+  /v1/lessons.setStepDone:
+    post:
+      operationId: lessons.setStepDone
+      tags: [lessons]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/lessonStepDoneReq"
       responses:
         "200":
           description: OK
@@ -4239,6 +4280,78 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/met.import:
+    post:
+      operationId: met.import
+      tags: [met]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/importReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/domain_MatchEquityTable"
+                nullable: true
+  /v1/met.list:
+    post:
+      operationId: met.list
+      tags: [met]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/domain_MatchEquityTable"
+                  nullable: true
+  /v1/met.ofAnalysis:
+    post:
+      operationId: met.ofAnalysis
+      tags: [met]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/positionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/mets_Status"
+  /v1/met.setCurrent:
+    post:
+      operationId: met.setCurrent
+      tags: [met]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
   /v1/metadata.counts:
     post:
       operationId: metadata.counts
@@ -5656,6 +5769,24 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/storage_MoveGrade"
+  /v1/stats.playerContrast:
+    post:
+      operationId: stats.playerContrast
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsHeadToHeadReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_PlayerContrast"
+                nullable: true
   /v1/stats.playerNames:
     post:
       operationId: stats.playerNames
@@ -5887,6 +6018,42 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_TrainingStats"
                 nullable: true
+  /v1/study.backlog:
+    post:
+      operationId: study.backlog
+      tags: [study]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/importStudyQueueReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/domain_StudyQueueEntry"
+  /v1/study.setStudied:
+    post:
+      operationId: study.setStudied
+      tags: [study]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studySetStudiedReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/tenants.quota:
     post:
       operationId: tenants.quota
@@ -7515,6 +7682,9 @@ components:
     domain_Match:
       type: object
       description: "Opaque: see the Go type domain.Match (defined outside internal/server, not expanded here)."
+    domain_MatchEquityTable:
+      type: object
+      description: "Opaque: see the Go type domain.MatchEquityTable (defined outside internal/server, not expanded here)."
     domain_MatchMovePosition:
       type: object
       description: "Opaque: see the Go type domain.MatchMovePosition (defined outside internal/server, not expanded here)."
@@ -7597,6 +7767,31 @@ components:
           format: int64
         played:
           type: string
+    exportSQLiteReq:
+      type: object
+      properties:
+        watermarkOrigin:
+          type: string
+        watermarkNote:
+          type: string
+        collectionIds:
+          type: array
+          nullable: true
+          items:
+            type: integer
+            format: int64
+        lessonIds:
+          type: array
+          nullable: true
+          items:
+            type: integer
+            format: int64
+        deckIds:
+          type: array
+          nullable: true
+          items:
+            type: integer
+            format: int64
     filterNameReq:
       type: object
       properties:
@@ -7712,6 +7907,9 @@ components:
           nullable: true
           items:
             type: string
+    importReq:
+      type: object
+      description: "Unresolved local type importReq."
     importStudyQueueReq:
       type: object
       properties:
@@ -7763,6 +7961,14 @@ components:
           items:
             type: integer
             format: int64
+    lessonStepDoneReq:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        done:
+          type: boolean
     lessonStepReq:
       type: object
       properties:
@@ -7899,6 +8105,9 @@ components:
             type: string
         canonical:
           type: string
+    mets_Status:
+      type: object
+      description: "Opaque: see the Go type mets.Status (defined outside internal/server, not expanded here)."
     movePositionReq:
       type: object
       properties:
@@ -8390,6 +8599,9 @@ components:
     storage_MoveGrade:
       type: object
       description: "Opaque: see the Go type storage.MoveGrade (defined outside internal/server, not expanded here)."
+    storage_PlayerContrast:
+      type: object
+      description: "Opaque: see the Go type storage.PlayerContrast (defined outside internal/server, not expanded here)."
     storage_PlayerFrequency:
       type: object
       description: "Opaque: see the Go type storage.PlayerFrequency (defined outside internal/server, not expanded here)."
@@ -8469,6 +8681,14 @@ components:
         size:
           type: integer
           format: int32
+    studySetStudiedReq:
+      type: object
+      properties:
+        positionId:
+          type: integer
+          format: int64
+        studied:
+          type: boolean
     suspendCardReq:
       type: object
       properties:
@@ -8501,6 +8721,9 @@ components:
         positions:
           type: integer
           format: int32
+        storedBytes:
+          type: integer
+          format: int64
         analysisSecondsToday:
           type: number
           format: double

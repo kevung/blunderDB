@@ -9,7 +9,7 @@ import { installDirectionEngine } from './helpers/directionEngine.js';
 
 async function openDirection(page) {
     await page.setViewportSize({ width: 1024, height: 768 });
-    await installWailsMock(page, openLibraryMock({ config: { GetPanelHeight: 250, GetPanelPosition: 'bottom' } }));
+    await installWailsMock(page, openLibraryMock({ config: { GetPanelPosition: 'bottom' } }));
     await installDirectionEngine(page);
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();

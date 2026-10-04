@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 05:30+0200\n"
+"POT-Creation-Date: 2026-10-04 22:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -433,16 +433,31 @@ msgid "Afficher/cacher le panneau des collections."
 msgstr "コレクションパネルを表示／非表示にします。"
 
 #: ../../source/cmd_mode.rst:1
-msgid "lesson, le [N]"
-msgstr "lesson, le [N]"
+msgid "lesson, le [N | edit [N]]"
+msgstr "lesson, le [N | edit [N]]"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Sans argument, liste les leçons de la base dans la barre d'état ; ``le "
-"N`` ouvre la leçon N à sa première étape (voir :ref:`lecons`)."
+"N`` ouvre la leçon N à sa première étape ; ``le edit`` ouvre l'éditeur de"
+" leçons, ``le edit N`` sur la leçon N (voir :ref:`lecons`)."
 msgstr ""
-"引数なしでは、データベースのレッスンをステータスバーに一覧表示します。``le N`` はレッスン N "
-"を最初のステップで開きます(:ref:`lecons` を参照)。"
+"引数なしでは、データベースのレッスンをステータスバーに一覧表示します。``le N`` はレッスン N を最初のステップで開き、``le "
+"edit`` はレッスンエディタを開き、``le edit N`` はレッスン N を開いた状態でエディタを開きます(:ref:`lecons` "
+"を参照)。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "study, sq"
+msgstr "study, sq"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la file d'étude transversale : vos blunders que rien n'a encore "
+"traités, du plus coûteux au moins coûteux (voir "
+":ref:`file_etude_transversale`)."
+msgstr ""
+"横断学習キューを開きます。まだ何も処理されていないあなたのブランダーを、コストの大きいものから小さいものへ表示します(:ref:`file_etude_transversale`\\"
+" を参照)。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "#tag1 tag2 ..."
@@ -481,7 +496,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "最後に閲覧したマッチ内を移動します。"
 
-#: ../../source/cmd_mode.rst:83
+#: ../../source/cmd_mode.rst:84
 msgid "Édition et recherche"
 msgstr "編集と検索"
 
@@ -519,11 +534,11 @@ msgid ""
 "ouverte ou match en cours de revue."
 msgstr "表示中のポジションの中を検索：現在の結果、開いているコレクション、またはレビュー中のマッチ。"
 
-#: ../../source/cmd_mode.rst:99
+#: ../../source/cmd_mode.rst:100
 msgid "Filtres de recherche"
 msgstr "検索フィルタ"
 
-#: ../../source/cmd_mode.rst:101
+#: ../../source/cmd_mode.rst:102
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -537,7 +552,7 @@ msgstr ""
 "のフラグが存在する場合にそれを示します（\\ :ref:`cli`\\ "
 "を参照）。ダッシュは、この文法でしか表現できないフィルターであることを示します。"
 
-#: ../../source/cmd_mode.rst:108
+#: ../../source/cmd_mode.rst:109
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -554,7 +569,7 @@ msgstr ""
 "は存在せず、数字を持つのは除外の形（\\ ``xD65``\\ "
 "）だけです。盤面のないコマンドラインでは、これらのトークンは空の盤面と比較されます。そこでは第3列のフラグを使ってください。"
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:118
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -563,7 +578,7 @@ msgstr ""
 "トークンのうち ``like`` だけは、絞り込むのではなく\\ **並べ替え**\\ "
 "ます。目標局面からの距離の昇順に結果を並べ、ほかのトークンはすべて、そうして並んだ集合を絞り込みます。"
 
-#: ../../source/cmd_mode.rst:121
+#: ../../source/cmd_mode.rst:122
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -572,18 +587,18 @@ msgstr ""
 "エラーとエクイティは\\ **エクイティの千分の1**\\ 単位で数えます——下の表でいう *ミリポイント* です。\\ ``E>100`` "
 "は、少なくとも 0.1 ポイントを失った手を残します。1ポイントは 1000 ミリポイントです。"
 
-#: ../../source/cmd_mode.rst:125
+#: ../../source/cmd_mode.rst:126
 msgid "Deux recherches complètes :"
 msgstr "完全な検索の例を二つ："
 
-#: ../../source/cmd_mode.rst:127
+#: ../../source/cmd_mode.rst:128
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
 "chances de gain, aucun commentaire."
 msgstr "``s p>30 w40,60 xco`` — 30 ピップ以上遅れており、勝率が 40 % から 60 % の間で、コメントがないもの。"
 
-#: ../../source/cmd_mode.rst:129
+#: ../../source/cmd_mode.rst:130
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -782,12 +797,14 @@ msgstr "n>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position a été rencontrée plus de x fois dans la base — le nombre de "
-"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
-"``n3,10`` et ``n4`` (exactement quatre)."
+"La position a été rencontrée au moins x fois dans la base — le nombre de "
+"décisions prises sur elle, tous matchs et tous joueurs confondus ; avec "
+"``pl``, ``pl!`` ou ``op``, seules les occurrences de ce joueur comptent. "
+"Formes ``n>3``, ``n<2``, ``n3,10`` et ``n4`` (exactement quatre)."
 msgstr ""
-"その局面がデータベース中で x 回より多く現れた——全マッチを通じて、そこへ至る着手の数です。書式は "
-"``n>3``、``n<2``、``n3,10``、``n4``\\ （ちょうど四回）。"
+"その局面がデータベースで少なくともx回出現したこと — その局面で下された判断の数（すべての対局とすべてのプレイヤーの合計）。\\ "
+"``pl``、``pl!``\\ または\\ ``op``\\ を併用すると、そのプレイヤーの出現のみを数えます。形式は\\ "
+"``n>3``、``n<2``、``n3,10``\\ と\\ ``n4``\\ （ちょうど4回）です。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1730,7 +1747,7 @@ msgstr ""
 "は番号42の局面を取り、\\ ``like<12`` は十二チェッカーピップを超えるものを除き、\\ ``like42*`` "
 "は目標のクラスをすべての決定の種類と、マネーとマッチの両方の形式に広げます。\\ :ref:`panneau_recherche`\\ を参照。"
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:244
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1746,11 +1763,11 @@ msgstr ""
 "``#l'ouverture``\\ ）が、二重引用符は含められません。セミコロンは ID とタグのリストの区切りです。どの値にも現れず、\\ "
 "``ma1;2`` はトークンではありません（\\ ``ma1 ma2`` と書きます）。"
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:249
 msgid "Transcrire depuis un terminal"
 msgstr "ターミナルから転記する"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:251
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1768,7 +1785,7 @@ msgstr ""
 "は直前の呼び出しが返したリビジョンを指定します。呼び出しごとに独自のセッションとなり、\\ ``sessionId`` "
 "はなく、呼び出しをまたいだ取り消しもできません。"
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:262
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 
@@ -1857,4 +1874,3 @@ msgstr "コマンド履歴を消去します。"
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "局面の追加日が x より後（YYYY/MM/DD）。"
-

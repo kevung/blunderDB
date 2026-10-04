@@ -5,9 +5,10 @@
     // panneau où ce geste se prend déjà. C'est délibéré : commenter, ranger en
     // collection et faire une carte existent, avec leurs règles et leurs
     // messages ; les refaire ici en aurait fait des demi-copies qui dérivent.
-    // La file apporte l'ordre et le parcours, pas de nouveaux gestes.
-    import { studyQueueStore, studyQueueIndexStore, studyQueueActiveStore, studyQueueCurrentStore } from '../stores/studyQueueStore.js';
-    import { nextInQueue, previousInQueue, stopStudyQueue, actOnCurrent } from '../services/studyQueueService.js';
+    // La file apporte l'ordre et le parcours, pas de nouveaux gestes. Seule exception : la file
+    // transversale offre « marquer vu », la marque de l'utilisateur qui sort une position de cette file.
+    import { studyQueueStore, studyQueueIndexStore, studyQueueActiveStore, studyQueueCurrentStore, studyQueueBacklogStore, studyQueueLastMarkedStore } from '../stores/studyQueueStore.js';
+    import { nextInQueue, previousInQueue, stopStudyQueue, actOnCurrent, markCurrentStudied, unmarkLastStudied } from '../services/studyQueueService.js';
     import { t } from '../i18n';
 
     let total = $derived($studyQueueStore.length);
@@ -23,6 +24,8 @@
                 return $t('studyQueue.reasonFlagged');
             case 'close':
                 return $t('studyQueue.reasonClose');
+            case 'backlog':
+                return $t('studyQueue.reasonBacklog');
             default:
                 return reason;
         }
@@ -43,6 +46,12 @@
             <button type="button" onclick={() => actOnCurrent('comments')}>{$t('studyQueue.comment')}</button>
             <button type="button" onclick={() => actOnCurrent('collections')}>{$t('studyQueue.collection')}</button>
             <button type="button" onclick={() => actOnCurrent('anki')}>{$t('studyQueue.anki')}</button>
+            {#if $studyQueueBacklogStore}
+                <button type="button" onclick={markCurrentStudied}>{$t('studyQueue.markStudied')}</button>
+                {#if $studyQueueLastMarkedStore}
+                    <button type="button" onclick={unmarkLastStudied}>{$t('studyQueue.unmark')}</button>
+                {/if}
+            {/if}
             <button type="button" disabled={position <= 1} onclick={previousInQueue}>{$t('studyQueue.previous')}</button>
             <button type="button" onclick={nextInQueue}>{position >= total ? $t('studyQueue.finish') : $t('studyQueue.skip')}</button>
             <button type="button" onclick={() => stopStudyQueue()}>{$t('studyQueue.leave')}</button>

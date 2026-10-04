@@ -51,6 +51,7 @@
     import MetModal from './MetModal.svelte';
     import CubeMatrixModal from './CubeMatrixModal.svelte';
     import TagsModal from './TagsModal.svelte';
+    import LessonEditorModal from './LessonEditorModal.svelte';
     import DataTableModal from './DataTableModal.svelte';
     import WarningModal from './WarningModal.svelte';
     import ProtectedCopyModal from './ProtectedCopyModal.svelte';
@@ -72,6 +73,8 @@
 <CubeMatrixModal visible={$activeModal === MODAL.CUBE_MATRIX} onClose={() => closeModal()} />
 
 <TagsModal visible={$activeModal === MODAL.TAGS} onClose={() => closeModal()} />
+
+<LessonEditorModal visible={$activeModal === MODAL.LESSON_EDITOR} onClose={() => closeModal()} />
 
 <LogModal visible={$activeModal === MODAL.LOG} onClose={() => closeModal()} />
 <ContactSheetModal visible={$activeModal === MODAL.CONTACT_SHEET} onClose={() => closeModal()} />

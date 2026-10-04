@@ -5,6 +5,7 @@ package storagetest
 import (
 	"context"
 	"reflect"
+	"slices"
 	"sort"
 	"testing"
 	"time"
@@ -752,5 +753,68 @@ func testCommentRestrictionLosesNothing(t *testing.T, s storage.Storage) {
 	}
 	if got := searchIDs(t, s, domain.SearchFilters{}); len(got) != 2 {
 		t.Errorf("unfiltered search returned %v, want both positions", got)
+	}
+}
+
+// testSearchEncounterCountsEveryOccurrence: `n` counts every occurrence of a
+// position in the library (`n>x` is "at least x"), whoever played it, and with a player filter only the
+// occurrences of that player (`pl!`: the decisions they took; `pl`: those of the
+// matches they played).
+func testSearchEncounterCountsEveryOccurrence(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	mkGame := func(p1, p2 string, day int) int64 {
+		m := domain.Match{Player1Name: p1, Player2Name: p2, MatchLength: 7,
+			MatchDate: time.Date(2025, 6, day, 0, 0, 0, 0, time.UTC)}
+		matchID, err := s.Matches().Save(ctx, "", &m)
+		if err != nil {
+			t.Fatalf("Save match: %v", err)
+		}
+		g := domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 1}
+		gameID, err := s.Matches().CreateGame(ctx, "", &g)
+		if err != nil {
+			t.Fatalf("CreateGame: %v", err)
+		}
+		return gameID
+	}
+	gameA, gameB := mkGame("me", "them", 1), mkGame("carol", "dave", 2)
+	pos := statsDecisionPos(t, 0)
+	x, err := s.Positions().Save(ctx, "", &pos)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	var n int32
+	meet := func(gameID int64, player int32, times int) {
+		for range times {
+			n++
+			mv := domain.Move{GameID: gameID, MoveNumber: n, MoveType: "checker",
+				PositionID: x, Player: player, CheckerMove: "13/11 24/23"}
+			if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+				t.Fatalf("CreateMove: %v", err)
+			}
+		}
+	}
+	meet(gameA, 1, 3)  // me decides three times
+	meet(gameA, -1, 1) // them once
+	meet(gameB, 1, 2)  // another match, two more
+
+	for _, tc := range []struct {
+		name, player, enc string
+		want              bool
+	}{
+		{"all, bound", "", "n>6", true},
+		{"all, exact", "", "n6", true},
+		{"all, too many", "", "n>7", false},
+		{"seat me, exact", `pl!"me"`, "n3", true},
+		{"seat me, over", `pl!"me"`, "n>4", false},
+		{"seat them, exact", `pl!"them"`, "n1", true},
+		{"seat them, over", `pl!"them"`, "n>2", false},
+		{"matches of me, exact", `pl"me"`, "n4", true},
+		{"matches of me, over", `pl"me"`, "n>5", false},
+		{"seat carol", `pl!"carol"`, "n2", true},
+	} {
+		got := searchIDs(t, s, domain.SearchFilters{PlayerFilter: tc.player, EncounterFilter: tc.enc})
+		if has := slices.Contains(got, x); has != tc.want {
+			t.Errorf("%s (%s %s): matched=%v, want %v", tc.name, tc.player, tc.enc, has, tc.want)
+		}
 	}
 }

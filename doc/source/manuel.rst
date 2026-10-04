@@ -82,6 +82,8 @@ Des panneaux peuvent être affichés pour:
 
 * afficher les métadonnées de la base de données (panneau métadonnées).
 
+La hauteur du panneau se règle en tirant sa poignée ; chaque onglet retient la sienne.
+
 Des fenêtres modales peuvent s'afficher pour:
 
 * afficher l'aide de blunderDB,
@@ -296,14 +298,17 @@ Le même onglet propose aussi le bouton **Compacter la base**, qui récupère
 l'espace disque laissé par les suppressions (matchs, tournois, purges) : la
 base de données ne rétrécit jamais toute seule quand on supprime des données,
 il faut demander explicitement ce compactage. L'opération peut prendre du
-temps sur une grosse base et nécessite, temporairement, environ deux fois sa
-taille en espace disque libre, sur disque et non en mémoire vive : une base de
-plusieurs dizaines de gigaoctets se compacte donc sans saturer la mémoire.
-blunderDB refuse de démarrer, avec un message qui dit ce qui manque (espace
-disque, ou moins de 512 Mo de mémoire disponible), plutôt que de risquer un
-compactage interrompu. Les fichiers temporaires vont dans le dossier temporaire
-du système, ou dans celui que désigne la variable d'environnement
-``SQLITE_TMPDIR`` : sur un petit ``/tmp``, pointez-la vers le volume de la base.
+temps sur une grosse base. La copie compactée est écrite à côté du fichier,
+puis le remplace : il faut, temporairement, environ la taille de la base en
+espace disque libre sur son volume, et non en mémoire vive. Si un autre
+programme a la base ouverte (une seconde instance en lecture seule, par
+exemple), le fichier n'est pas remplacé : la base est compactée sur place, ce
+qui demande environ deux fois sa taille en espace libre, et un fichier
+temporaire va dans le dossier temporaire du système, ou dans celui que
+désigne la variable d'environnement ``SQLITE_TMPDIR`` : sur un petit
+``/tmp``, pointez-la vers le volume de la base. blunderDB refuse de démarrer,
+avec un message qui dit ce qui manque (espace disque, ou moins de 512 Mo de
+mémoire disponible), plutôt que de risquer un compactage interrompu.
 Une confirmation est demandée avant de lancer l'opération. Le résultat — l'espace gagné, en mégaoctets — s'affiche
 ensuite dans la barre d'état. La même opération est disponible en ligne de
 commande via ``blunderdb vacuum`` (voir :ref:`cli`).
@@ -455,6 +460,33 @@ combien ont **échoué** (retentées, inchangées, au prochain lancement).
 Fermer l'application pendant l'un ou l'autre ne perd rien : chaque position
 analysée est écrite au fil de l'eau, et un prochain lancement reprend
 exactement là où l'analyse s'était arrêtée, sans aucun journal à tenir.
+
+**Table d'équité de match de la base.** Au bas de l'onglet, la liste
+**Table d'équité de match (MET) de la base** choisit la table avec laquelle
+gammonNet valorise les scores de match : Kazaross-XG2, intégrée, par défaut,
+ou une table importée d'un fichier ``.xml`` de GNUbg par le bouton
+**Importer une MET .xml…**. Le choix appartient à la base, pas à
+l'application : ouvrir une autre base, c'est retrouver sa table. Seules les
+tables explicites sont lues (pas les tables paramétriques ``zadeh`` ou
+``mec``) ; au-delà de la longueur d'une table importée, la table intégrée
+prend le relais. Une table s'identifie par ses valeurs, non par son nom :
+importer le ``Kazaross-XG2.xml`` de GNUbg n'ajoute rien, c'est la table
+intégrée. Chaque analyse calculée par gammonNet enregistre la table avec
+laquelle elle l'a été ; les analyses importées (XG, GNUbg, BGBlitz) sont
+réputées calculées avec Kazaross-XG2. Une analyse à un score de match
+calculée avec une autre table que la table courante est marquée
+**MET différente** dans le panneau d'analyse et sortie des statistiques
+(moyennes d'erreur, PR, classements, face-à-face) ; une analyse en money game
+ne l'est jamais. Changer de table ne réécrit aucune analyse : seul change ce
+que les comparaisons retiennent.
+
+L'évaluation en direct du panneau et la grille de videau sont valorisées avec
+la table de la base, comme les analyses qu'elle enregistre. Une table voyage
+avec les analyses qui la citent : l'export d'une base l'emporte, et l'import
+d'une base l'ajoute à la base qui reçoit, sans doublon (une table déjà présente
+est reconnue à ses valeurs) et sans la rendre courante. Une analyse gammonNet
+remplacée par celle d'un autre moteur (XG, GNUbg) redevient réputée calculée
+avec Kazaross-XG2.
 
 **Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un match
 joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a fait
@@ -986,11 +1018,16 @@ lance aussi sans passer par la ligne de commande : *CTRL-MAJ-L*, ou l'entrée
 **Positions voisines** du menu contextuel du plateau.
 
 Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions
-auxquelles plus de trois coups aboutissent, tous matchs confondus. C'est une
+rencontrées au moins trois fois dans la base, tous matchs et tous joueurs
+confondus. C'est une
 autre question que « qu'ai-je raté » — une position rencontrée vingt fois et
 bien jouée dix-neuf reste celle qu'il faut savoir par cœur. Le compte porte
-sur les coups, pas sur les matchs : la même position deux fois dans un match
-compte pour deux, parce que c'étaient deux décisions.
+sur les décisions, pas sur les matchs : la même position deux fois dans un
+match compte pour deux, parce que c'étaient deux décisions. Combiné à un
+filtre de joueur, il ne compte plus que les occurrences de ce joueur : ``n>3
+pl!"Alice"`` retient les positions qu'Alice a eu à jouer au moins trois fois,
+et ``pl"Alice"`` celles des matchs qu'elle a disputés ; ``op"Bob"`` restreint
+de même le compte aux matchs contre Bob.
 
 Le **plan de jeu** est une seconde étiquette dérivée, à côté de la phase, et
 elle répond à la question qu'un paquet de filtres sauvegardés ne sait pas
@@ -1155,7 +1192,8 @@ Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un élè
 et lui remet dans un fichier de base (voir la commande ``lesson export`` de
 :doc:`cli`). Chaque étape a un titre, un texte et peut montrer une collection,
 une position, les deux ou aucune. La commande ``le`` liste les leçons de la
-base dans la barre d'état ; ``le 2`` ouvre la leçon 2.
+base dans la barre d'état ; ``le 2`` ouvre la leçon 2 ; ``le edit`` ouvre
+l'éditeur de leçons.
 
 Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la
 leçon, numéro de l'étape, titre, puis le texte. *Précédente* et *Suivante*
@@ -1164,15 +1202,34 @@ qu'elle montre, que l'on parcourt ensuite par les gestes habituels. *Fermer*
 quitte la leçon. Une étape dont la collection ou la position a été supprimée
 garde son texte.
 
-Lire une leçon ne laisse aucune trace : la base de l'élève n'enregistre ni
-l'étape atteinte ni l'ouverture. Importer un fichier qui contient une leçon la
-crée ; une leçon de même nom déjà présente n'est pas touchée. Les leçons se
-créent et se modifient par la ligne de commande ou par l'API
+La case *Étape faite* de la barre marque l'étape courante comme faite ; un
+second clic retire la marque, et la barre compte les étapes faites. C'est le
+seul geste qui écrive quelque chose : lire une leçon, changer d'étape ou
+l'ouvrir n'enregistre rien, ni l'étape atteinte ni l'ouverture. La marque
+s'écrit dans la base ouverte, celle de l'élève, et aucun export ne l'emporte.
+Importer un fichier qui contient une leçon la crée ; une leçon de même nom déjà
+présente n'est pas touchée.
+
+**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la leçon 2)
+ou par le bouton *Modifier* de la barre de lecture. À gauche, la liste des
+leçons et un champ pour en créer une ; à droite, le nom et la description de la
+leçon choisie, puis ses étapes. Chaque étape a un titre, un texte, une
+collection choisie dans la liste et une position : *Position courante* y
+attache la position affichée sur le plateau, *Détacher la position* l'en
+retire. *Enregistrer l'étape* écrit ses changements ; les flèches la déplacent
+d'un cran ; *Ajouter une étape* en ajoute une à la fin. *Lire* ferme l'éditeur
+et ouvre la leçon à sa première étape ; *Supprimer* efface la leçon et ses
+étapes, sans toucher aux collections ni aux positions qu'elles montraient. Les
+leçons se créent et se modifient aussi par la ligne de commande ou par l'API
 (:ref:`headless_lecons`).
 
 Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre d'export
-ou par la ligne de commande — emporte toutes les leçons ; un export partiel
-(une sélection de positions, de collections ou de matchs) ne les emporte pas.
+ou par la ligne de commande — emporte toutes les leçons. Dans la fenêtre
+d'export, la case *Inclure les leçons* les choisit une à une : chaque leçon
+cochée part avec les collections et les positions que ses étapes montrent, et
+le fichier peut être filigrané ou protégé par mot de passe (``.dbx``) comme tout
+export. Sans cette case, un export partiel (une sélection de positions, de
+collections ou de matchs) n'emporte pas les leçons.
 
 .. _import_regles:
 
@@ -2769,6 +2826,16 @@ Utilisation :
   lignes. Un bloc apparaît au-dessus du tableau et met leurs indicateurs face à
   face ; cocher un troisième joueur remplace le plus ancien des deux. La case ne
   sélectionne pas la ligne : cocher compare, cliquer ouvre le détail.
+* **Voir les positions où l'un a mieux joué** — le bouton du bloc de comparaison
+  liste les positions que les deux joueurs ont eu à jouer et où l'un a bien joué
+  (en dessous du seuil Erreur de la bibliothèque) et l'autre non, l'écart le plus
+  large d'abord ; le joueur est jugé sur son pire coup de la position. *Ouvrir
+  ces positions* les charge dans la vue analyse. La ligne de commande et le
+  serveur donnent la même liste (``stats contrast``).
+* **Noter les coups d'abord** — la liste ne compare que les coups dont l'erreur
+  est notée, et aucun import ne les note : la notation se fait sur demande. Tant
+  qu'il en reste à noter, le bloc en donne le nombre avec un bouton *Noter les
+  coups* ; la ligne de commande fait la même chose avec ``repair --move-errors``.
 
 Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des deux
 est mis en gras. Trois indicateurs n'en reçoivent jamais, et il vaut de dire
@@ -3016,6 +3083,11 @@ et le verdict est donc celui d'un videau libre. C'est justement pourquoi le
 badge est là : un videau plafonné est la seule raison visible pour laquelle
 blunderDB et eXtreme Gammon peuvent annoncer deux verdicts différents sur la
 même position.
+
+Sous le verdict, une ligne **MET différente** signale une analyse à un score
+de match calculée avec une autre table d'équité de match que celle de la base,
+et nomme cette table ; une telle analyse est sortie des statistiques (voir
+l'onglet *gammonNet* de la configuration).
 
 Le badge de régime, la profondeur d'évaluation, le lien vers le moteur et la
 case *Défi* forment une bande à part, alignée à droite au-dessus des

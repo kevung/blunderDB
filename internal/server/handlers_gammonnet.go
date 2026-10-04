@@ -6,13 +6,13 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
-	"runtime"
-	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -144,23 +144,22 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 	}
 	total := len(positions)
 
-	// The positions of a sweep are independent, so they are evaluated on
-	// NumCPU goroutines, each owning one reused Searcher. Nothing is
-	// exposed in the request body: the daemon owns its machine, and a
-	// per-caller core budget is a scheduling decision that belongs to
-	// whoever runs it, not to the protocol. Known and accepted: two tenants
-	// sweeping at the same time ask for NumCPU goroutines each, so they
-	// share the cores rather than getting them — the Go scheduler makes that
-	// fair, and a sweep is a maintenance operation, not a latency budget.
+	// The sweep is valued with the tenant's table current at its start, and
+	// each analysis records it (ADR-0068).
+	metID, met, err := mets.Current(ctx, s.opts.Storage, scope)
+	if err != nil {
+		emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
+		return
+	}
+
+	// The positions of a sweep are independent: the daemon's shared engine
+	// workers take them one at a time (analysisPool), in turn with the other
+	// tenants' work, each on its own reused Searcher.
 	//
 	// Writing and emitting stay on THIS goroutine. http.ResponseWriter is
 	// not safe for concurrent use, and a single writer also keeps the
-	// progress count monotone under parallelism.
-	jobs := runtime.NumCPU()
-	if jobs > total {
-		jobs = total
-	}
-
+	// progress count monotone under parallelism. The results channel holds
+	// every position, so a slow client never holds up a shared worker.
 	type outcome int
 	const (
 		outcomeEvaluated outcome = iota
@@ -174,50 +173,35 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 		outcome  outcome
 	}
 
-	var next atomic.Int64
 	var quotaSpent atomic.Bool
 	spend := s.quota.spender(scope)
-	results := make(chan analysed, jobs)
-	var wg sync.WaitGroup
-	wg.Add(jobs)
-	for wk := 0; wk < jobs; wk++ {
-		go func() {
-			defer wg.Done()
-			searcher, err := gammonnet.NewBatchSearcher(req.Ply, req.PruneK)
-			if err != nil {
-				searcher = nil // EvaluatePositionWith falls back to a per-position searcher
+	results := make(chan analysed, total)
+	next := 0
+	job := s.analysis.submit(scope, func() (func(searcherFor), bool) {
+		if next >= total || ctx.Err() != nil || quotaSpent.Load() {
+			return nil, false
+		}
+		pos := positions[next]
+		next++
+		return func(get searcherFor) {
+			start := time.Now()
+			analysis, err := gammonnetEvaluateOne(get(req.Ply, req.PruneK), pos, met, req.Ply, req.PruneK, req.Candidates)
+			if !spend(time.Since(start)) {
+				quotaSpent.Store(true)
 			}
-			for {
-				if ctx.Err() != nil {
-					return
-				}
-				i := next.Add(1) - 1
-				if i >= int64(total) {
-					return
-				}
-				pos := positions[i]
-				start := time.Now()
-				analysis, err := gammonnetEvaluateOne(searcher, pos, req.Ply, req.PruneK, req.Candidates)
-				if !spend(time.Since(start)) {
-					quotaSpent.Store(true)
-				}
-				oc := outcomeEvaluated
-				switch {
-				case err != nil:
-					oc = outcomeFailed
-					slog.Warn("gammonnet sweep: evaluating a position failed", "position_id", pos.ID, "error", err)
-				case analysis == nil:
-					oc = outcomeRefused
-				}
-				results <- analysed{pos: pos, analysis: analysis, outcome: oc}
-				if quotaSpent.Load() {
-					return
-				}
+			oc := outcomeEvaluated
+			switch {
+			case err != nil:
+				oc = outcomeFailed
+				slog.Warn("gammonnet sweep: evaluating a position failed", "position_id", pos.ID, "error", err)
+			case analysis == nil:
+				oc = outcomeRefused
 			}
-		}()
-	}
+			results <- analysed{pos: pos, analysis: analysis, outcome: oc}
+		}, true
+	})
 	go func() {
-		wg.Wait()
+		job.wait()
 		close(results)
 	}()
 
@@ -225,7 +209,7 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 	for res := range results {
 		oc := res.outcome
 		if oc == outcomeEvaluated {
-			if err := rollouts.SaveAnalysis(ctx, s.opts.Storage, scope, res.pos.ID, res.analysis); err != nil {
+			if err := rollouts.SaveValuedAnalysis(ctx, s.opts.Storage, scope, res.pos.ID, res.analysis, metID); err != nil {
 				oc = outcomeFailed
 				slog.Warn("gammonnet sweep: saving the computed analysis failed", "position_id", res.pos.ID, "error", err)
 			}
@@ -350,8 +334,8 @@ func drainPositions(ctx context.Context, s storage.Storage, scope string) ([]dom
 // position"). A nil analysis with a nil error means "nothing to write, and
 // that is not a failure": a dance (no legal move) or gammonnet.ErrNotEvaluable
 // (a match score beyond the MET's horizon, a cube state the model declines).
-func gammonnetEvaluateOne(searcher *gammonnet.Searcher, pos domain.Position, ply, pruneK, candidates int) (*domain.PositionAnalysis, error) {
-	result, err := gammonnet.EvaluatePositionWith(searcher, pos, ply, pruneK, candidates)
+func gammonnetEvaluateOne(searcher *gammonnet.Searcher, pos domain.Position, met *engine.MET, ply, pruneK, candidates int) (*domain.PositionAnalysis, error) {
+	result, err := gammonnet.EvaluatePositionWithMET(searcher, pos, met, ply, pruneK, candidates)
 	if err != nil {
 		if errors.Is(err, gammonnet.ErrNotEvaluable) {
 			return nil, nil

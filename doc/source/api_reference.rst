@@ -179,10 +179,12 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/lessons.addStep                      JSON  (Idempotency-Key)
      POST /v1/lessons.create                       JSON  (Idempotency-Key)
      POST /v1/lessons.delete                       JSON
+     POST /v1/lessons.doneSteps                    JSON
      POST /v1/lessons.get                          JSON
      POST /v1/lessons.list                         JSON
      POST /v1/lessons.removeStep                   JSON
      POST /v1/lessons.reorderSteps                 JSON
+     POST /v1/lessons.setStepDone                  JSON
      POST /v1/lessons.update                       JSON
      POST /v1/lessons.updateStep                   JSON
    librarySettings
@@ -213,6 +215,11 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/matches.swapPlayers                  JSON
      POST /v1/matches.update                       JSON
      POST /v1/matches.updateComment                JSON
+   met
+     POST /v1/met.import                           JSON
+     POST /v1/met.list                             JSON
+     POST /v1/met.ofAnalysis                       JSON
+     POST /v1/met.setCurrent                       JSON
    metadata
      POST /v1/metadata.counts                      JSON
      POST /v1/metadata.countsEstimate              JSON
@@ -288,6 +295,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.matchBadges                    JSON
      POST /v1/stats.matchDetail                    JSON
      POST /v1/stats.matchMoveGrades                JSON
+     POST /v1/stats.playerContrast                 JSON
      POST /v1/stats.playerNames                    JSON
      POST /v1/stats.playerTable                    JSON
      POST /v1/stats.positionIdsByMatch             JSON
@@ -301,6 +309,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.studyIds                       JSON
      POST /v1/stats.tournamentBadges               JSON
      POST /v1/stats.training                       JSON
+   study
+     POST /v1/study.backlog                        JSON
+     POST /v1/study.setStudied                     JSON
    tenant
      POST /ops/tenant.purge                        custom
    tenants

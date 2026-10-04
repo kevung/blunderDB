@@ -63,7 +63,7 @@ var wantTables = []string{
 	"filter_library", "game", "import_batch", "import_batch_file",
 	"lesson", "lesson_progress", "lesson_step", "library_settings", "match", "match_equity_table", "match_stats",
 	"metadata", "move", "move_analysis",
-	"player_alias", "position", "rencontre", "schema_migrations", "search_history", "session_state",
+	"player_alias", "position", "rencontre", "schema_migrations", "search_history", "session_state", "study_mark",
 	"table_setting", "tournament", "training_item", "training_session", "transcription",
 	"trash",
 }
@@ -73,7 +73,7 @@ var wantIndexes = []string{
 	"idx_analysis_backgammon1", "idx_analysis_backgammon2",
 	"idx_analysis_creation_date", "idx_analysis_cube_error",
 	"idx_analysis_is_close_cube",
-	"idx_analysis_is_forced", "idx_analysis_move_error",
+	"idx_analysis_is_forced", "idx_analysis_met", "idx_analysis_move_error",
 	"idx_analysis_position", "idx_analysis_provenance_pending",
 	"idx_analysis_win_gammon2_covering", "idx_analysis_win_gammon_covering",
 	"idx_anki_card_deck", "idx_anki_card_due", "idx_anki_card_identity",

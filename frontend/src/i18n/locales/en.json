@@ -140,6 +140,11 @@
         "gammonnetStaleCount": "{n} stale gammonNet analysis(es).",
         "gammonnetStaleStart": "Re-analyze stale positions",
         "gammonnetStaleNote": "Re-runs gammonNet on positions it already analyzed, but written with an older engine version or a different depth than configured here — XG, GNUbg and BGBlitz analyses are never touched.",
+        "metCurrent": "Library match equity table (MET)",
+        "metImport": "Import a .xml MET…",
+        "metNote": "gammonNet values match scores with this table, and every analysis it computes records it. An analysis at a match score computed with another table is marked \"different MET\" and left out of the statistics. Changing the table rewrites no analysis. Only explicit gnubg tables are read.",
+        "metImported": "Table imported: {name}",
+        "metBuiltInImported": "This file is Kazaross-XG2, the built-in table: nothing was added.",
         "checkForUpdates": "Check for updates at startup",
         "checkForUpdatesNote": "Queries GitHub's release page once at startup. Off by default, and never enabled automatically on a package-managed install (Flatpak, a distro package, Homebrew…).",
         "repairIntro": "Recomputes the analysis columns from the analyses themselves. Those columns are a projection of the stored data, which stays intact: a fault in the projection is repairable without re-importing anything. Explicit and never automatic.",
@@ -778,6 +783,8 @@
     },
     "analysis": {
         "analysisDepth": "Analysis Depth",
+        "metDifferent": "Different MET: analysis computed with {name}",
+        "metDifferentTitle": "Computed with {name}; the library uses {current}. This analysis is left out of the statistics.",
         "bestAction": "Best Action",
         "noDouble": "No Double",
         "doubleTake": "Double/Take",
@@ -1084,7 +1091,10 @@
         "descProtected": "a password",
         "tournamentsNeedMatches": "A tournament is linked to its matches only when the matches are exported too — tick “include matches” first.",
         "filterLibraryHint": "Your own saved searches, not content: they are of no use in someone else's database.",
-        "metadataTitle": "Metadata of the exported file"
+        "metadataTitle": "Metadata of the exported file",
+        "includeLessons": "Include lessons ({count})",
+        "selectLessons": "Select lessons to export",
+        "descLessons": "{count} lesson(s)"
     },
     "import": {
         "minimize": "Minimize",
@@ -1658,6 +1668,12 @@
         "compareToggle": "Compare {name}",
         "compareTitle": "{a} and {b}, side by side",
         "compareClear": "Clear",
+        "contrastButton": "Positions played well by one and not the other",
+        "contrastSummary": "{n} of {total} common positions: {a} played {na} well, {b} played {nb} well.",
+        "contrastEmpty": "None of the {total} common positions was played well by one and not the other.",
+        "contrastOpen": "Open these positions",
+        "contrastUnscored": "{n} plays of these two players are not scored yet and are left out: plays are scored only on request.",
+        "contrastScore": "Score the plays",
         "compareBlunderRate": "Blunders / 100 dec.",
         "trainingTitle": "Training and progression",
         "trainingHint": "The Decision quiz PR, the PR of the filter's matches and the Anki retention, on the same calendar windows. The quiz PR is on the real PR's scale; the retention reads on the right axis (%). In brackets, the number of decisions or reviews: a window with no sample has no value.",
@@ -1754,7 +1770,13 @@
         "empty": "This import has nothing worth a second look.",
         "failed": "The study queue could not be built.",
         "finished": "Study queue finished: {n} positions walked.",
-        "stopped": "Study queue left."
+        "stopped": "Study queue left.",
+        "reasonBacklog": "unhandled blunder",
+        "markStudied": "Mark studied",
+        "unmark": "Unmark",
+        "backlogEmpty": "No blunder waiting: everything is commented, filed, carded or marked studied.",
+        "markFailed": "The mark could not be written.",
+        "unmarked": "Mark withdrawn: the position is back in the queue."
     },
     "home": {
         "title": "blunderDB",
@@ -2690,7 +2712,8 @@
             "history": "Search history",
             "match": "Matches panel",
             "collection": "Collections panel",
-            "lesson": "Lessons (le N opens lesson N)",
+            "lesson": "Lessons (le N opens lesson N, le edit opens the editor)",
+            "study": "Study queue: your untreated blunders",
             "eval": "Eval panel",
             "rollout": "Roll out the position (rollout fast|standard, search, stop)",
             "transcribe": "Match transcription",
@@ -2789,7 +2812,11 @@
         "empty": "This lesson has no step yet.",
         "notFound": "No lesson number {id}.",
         "failed": "Could not read the lessons.",
-        "stepMissing": "What this step shows is no longer in the database."
+        "stepMissing": "What this step shows is no longer in the database.",
+        "edit": "Edit",
+        "stepDone": "Step done",
+        "stepDoneHint": "Marks the step done in this database; a second click removes the mark. Nothing else about reading is recorded.",
+        "doneCount": "{done} / {n} done"
     },
     "corpus": {
         "intro": "Duplicates and spellings: what an import recognises as already stored, and the other names of one player or one event.",
@@ -2817,5 +2844,32 @@
         "applyPairing": "Create these aliases",
         "pairingApplied": "Aliases created",
         "suspectLonger": "#{match} extends #{other} ({players})"
+    },
+    "lessonEditor": {
+        "title": "Lessons",
+        "failed": "Failed: {error}",
+        "confirmDelete": "Delete the lesson “{name}”? Its collections and positions stay.",
+        "newStepTitle": "Step {n}",
+        "confirmRemoveStep": "Remove the step “{title}”?",
+        "noCurrentPosition": "No position on the board.",
+        "newLessonName": "Name of the new lesson",
+        "create": "Create",
+        "name": "Name",
+        "description": "Description",
+        "save": "Save",
+        "read": "Read",
+        "delete": "Delete",
+        "stepTitle": "Step title",
+        "up": "Move up",
+        "down": "Move down",
+        "stepText": "Step text",
+        "collection": "Collection shown",
+        "noCollection": "No collection",
+        "position": "Position {id}",
+        "useCurrentPosition": "Current position",
+        "detachPosition": "Detach the position",
+        "saveStep": "Save the step",
+        "removeStep": "Remove the step",
+        "addStep": "Add a step"
     }
 }

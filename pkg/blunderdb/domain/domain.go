@@ -583,6 +583,9 @@ type ExportOptions struct {
 	// (ADR-0066).
 	IncludeLessons bool    `json:"includeLessons"`
 	LessonIDs      []int64 `json:"lessonIDs"`
+	// DeckIDs exports these Anki decks with their positions, without their
+	// review history; empty exports no deck.
+	DeckIDs []int64 `json:"deckIDs"`
 
 	// Watermark, WatermarkNote and Password are the two optional mechanisms an export can
 	// carry: a signed statement of where the file comes from, and an encrypted container

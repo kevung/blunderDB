@@ -1,10 +1,15 @@
 package database
 
 import (
+	"database/sql"
+	"errors"
+	"maps"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 // TestVacuum_ReclaimsSpaceAfterDeletes: a database inflated by deletions shrinks back down after Vacuum, and the
@@ -144,5 +149,145 @@ func TestVacuum_NoDatabaseOpen(t *testing.T) {
 	d := NewDatabase()
 	if _, err := d.Vacuum(); err == nil {
 		t.Fatal("Vacuum on an unopened Database: want error, got nil")
+	}
+}
+
+// vacuumFixture is a library with free pages to give back: two imports of
+// the same match under different names would deduplicate, so one match is
+// imported and its analyses' blobs inflated, then deflated again.
+func vacuumFixture(t *testing.T) (*Database, string) {
+	t.Helper()
+	path := filepath.Join(tempDir(t), "vacuum.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	closeOnCleanup(t, d)
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "test.xg")); err != nil {
+		t.Fatal(err)
+	}
+	for _, stmt := range []string{
+		`CREATE TABLE filler (b BLOB)`,
+		`INSERT INTO filler SELECT randomblob(4000) FROM (SELECT 1 FROM position LIMIT 500)`,
+		`DROP TABLE filler`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatal(err)
+		}
+	}
+	return d, path
+}
+
+func withoutStats(m map[string]string) map[string]string {
+	out := map[string]string{}
+	for k, v := range m {
+		if !strings.Contains(k, "sqlite_stat") {
+			out[k] = v
+		}
+	}
+	return out
+}
+
+// TestVacuum_ReplacesTheFile: the library is compacted into a copy that
+// replaces the file, content unchanged, nothing left beside it, and the
+// handle works on the new file.
+func TestVacuum_ReplacesTheFile(t *testing.T) {
+	t.Parallel()
+	d, path := vacuumFixture(t)
+	want := withoutStats(libraryContent(t, path))
+	before, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := d.Vacuum()
+	if err != nil {
+		t.Fatalf("Vacuum: %v", err)
+	}
+	if after, err := os.Stat(path); err != nil || os.SameFile(before, after) {
+		t.Fatalf("the file was not replaced (%v)", err)
+	}
+	if res.SizeAfter >= res.SizeBefore || res.SizeAfter == 0 {
+		t.Fatalf("size %d → %d; want it to shrink", res.SizeBefore, res.SizeAfter)
+	}
+	if _, err := os.Stat(path + ".vacuum"); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("the compacted copy is still beside the file: %v", err)
+	}
+	if got := withoutStats(libraryContent(t, path)); !maps.Equal(got, want) {
+		t.Fatalf("content changed by the vacuum (%d cells, want %d)", len(got), len(want))
+	}
+	var n int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&n); err != nil || n == 0 {
+		t.Fatalf("the handle after the swap: %d positions, %v", n, err)
+	}
+	if _, err := d.db.Exec(`INSERT INTO metadata (key, value) VALUES ('vacuum_probe', '1')`); err != nil {
+		t.Fatalf("writing after the swap: %v", err)
+	}
+}
+
+// TestVacuum_KeepsTheFileMode: the copy that replaces the library is created
+// under the umask; it must come out with the library's own mode.
+func TestVacuum_KeepsTheFileMode(t *testing.T) {
+	t.Parallel()
+	d, path := vacuumFixture(t)
+	if err := os.Chmod(path, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	before, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.Vacuum(); err != nil {
+		t.Fatalf("Vacuum: %v", err)
+	}
+	after, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if os.SameFile(before, after) {
+		t.Fatal("the file was not replaced; the test proves nothing")
+	}
+	if got := after.Mode().Perm(); got != 0o600 {
+		t.Fatalf("mode after the vacuum %v, want -rw-------", after.Mode().Perm())
+	}
+}
+
+// TestVacuum_InPlaceWhileAnotherConnectionHoldsTheFile: a connection of
+// another process would keep reading the replaced inode, so the file is not
+// replaced while one exists; the vacuum runs in place instead.
+func TestVacuum_InPlaceWhileAnotherConnectionHoldsTheFile(t *testing.T) {
+	t.Parallel()
+	d, path := vacuumFixture(t)
+	other, err := sql.Open("sqlite", sqlite.DSN(path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer other.Close()
+	var n int
+	if err := other.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	before, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	res, err := d.Vacuum()
+	if err != nil {
+		t.Fatalf("Vacuum: %v", err)
+	}
+	if res.SizeAfter >= res.SizeBefore {
+		t.Fatalf("size %d → %d; want it to shrink", res.SizeBefore, res.SizeAfter)
+	}
+	after, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !os.SameFile(before, after) {
+		t.Fatal("the file was replaced under another connection")
+	}
+	if _, err := os.Stat(path + ".vacuum"); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("the compacted copy is still beside the file: %v", err)
+	}
+	if err := other.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&n); err != nil || n == 0 {
+		t.Fatalf("the other connection after the vacuum: %d, %v", n, err)
 	}
 }

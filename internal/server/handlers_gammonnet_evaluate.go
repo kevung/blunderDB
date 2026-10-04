@@ -6,6 +6,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 )
 
 // gammonnetEvaluateReq is one bare position to evaluate, given whole or as an
@@ -58,9 +59,28 @@ func (s *Server) handleGammonNetEvaluate(w http.ResponseWriter, r *http.Request)
 	if s.refuseAnalysis(w, scope) {
 		return
 	}
-	res, err := metered(s, scope, 1, func() (gammonnet.EvalResult, error) {
-		return gammonnet.EvaluatePosition(pos, ply, 0, req.Candidates)
+	// The tenant's table values the verdict, as it values its analyses (ADR-0068).
+	_, met, err := mets.Current(r.Context(), s.opts.Storage, scope)
+	if err != nil {
+		writeStorageError(w, err)
+		return
+	}
+	// One position, queued on the shared workers like a sweep's: it waits its
+	// tenant's turn, never more than a position's time per tenant ahead.
+	// A client gone before its turn costs neither engine time nor quota.
+	var res gammonnet.EvalResult
+	ran := s.analysis.run(r.Context(), scope, func(get searcherFor) {
+		res, err = metered(s, scope, 1, func() (gammonnet.EvalResult, error) {
+			return gammonnet.EvaluatePositionWithMET(get(ply, 0), pos, met, ply, 0, req.Candidates)
+		})
 	})
+	if !ran {
+		if r.Context().Err() != nil {
+			return
+		}
+		writeErrorCode(w, CodeUnavailable, "the daemon is stopping: no evaluation is taken")
+		return
+	}
 	if err != nil {
 		writeErrorCode(w, CodeInvalid, fmt.Sprintf("not evaluable: %v", err))
 		return

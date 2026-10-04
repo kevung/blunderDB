@@ -140,6 +140,11 @@
         "gammonnetStaleCount": "{n} position(s) périmée(s).",
         "gammonnetStaleStart": "Ré-analyser les positions périmées",
         "gammonnetStaleNote": "Relance gammonNet sur les positions déjà analysées par gammonNet mais écrites avec une version du moteur ou une profondeur différente de celle configurée ici — les analyses XG, GNUbg et BGBlitz ne sont jamais touchées.",
+        "metCurrent": "Table d'équité de match (MET) de la base",
+        "metImport": "Importer une MET .xml…",
+        "metNote": "gammonNet valorise les scores de match avec cette table, et chaque analyse qu'il calcule l'enregistre. Une analyse à un score de match calculée avec une autre table est marquée « MET différente » et sortie des statistiques. Changer de table ne réécrit aucune analyse. Seules les tables gnubg explicites sont lues.",
+        "metImported": "Table importée : {name}",
+        "metBuiltInImported": "Ce fichier est Kazaross-XG2, la table intégrée : rien n'a été ajouté.",
         "checkForUpdates": "Vérifier les mises à jour au démarrage",
         "checkForUpdatesNote": "Interroge une fois la page des versions GitHub au démarrage. Désactivé par défaut, et jamais activé automatiquement sur une installation via un gestionnaire de paquets (Flatpak, paquet de distribution, Homebrew…).",
         "repairIntro": "Recalcule les colonnes d'analyse à partir des analyses elles-mêmes. Ces colonnes sont une projection des données stockées, intactes : un défaut de projection se répare donc sans rien réimporter. Explicite et jamais automatique.",
@@ -778,6 +783,8 @@
     },
     "analysis": {
         "analysisDepth": "Profondeur d'analyse",
+        "metDifferent": "MET différente : analyse calculée avec {name}",
+        "metDifferentTitle": "Calculée avec {name} ; la base utilise {current}. Cette analyse est sortie des statistiques.",
         "bestAction": "Meilleure action",
         "noDouble": "Pas de double",
         "doubleTake": "Double/Prend",
@@ -1084,7 +1091,10 @@
         "descProtected": "un mot de passe",
         "tournamentsNeedMatches": "Un tournoi n'est relié à ses matchs que si les matchs sont exportés aussi — cochez d'abord « inclure les matchs ».",
         "filterLibraryHint": "Vos propres recherches enregistrées, pas du contenu : elles n'ont aucune utilité dans la base de quelqu'un d'autre.",
-        "metadataTitle": "Métadonnées du fichier exporté"
+        "metadataTitle": "Métadonnées du fichier exporté",
+        "includeLessons": "Inclure les leçons ({count})",
+        "selectLessons": "Sélectionner les leçons à exporter",
+        "descLessons": "{count} leçon(s)"
     },
     "import": {
         "minimize": "Réduire",
@@ -1658,6 +1668,12 @@
         "compareToggle": "Comparer {name}",
         "compareTitle": "{a} et {b}, côte à côte",
         "compareClear": "Effacer",
+        "contrastButton": "Positions bien jouées par l'un et pas par l'autre",
+        "contrastSummary": "{n} positions communes sur {total} : {a} en a bien joué {na}, {b} en a bien joué {nb}.",
+        "contrastEmpty": "Aucune des {total} positions communes n'a été bien jouée par l'un et pas par l'autre.",
+        "contrastOpen": "Ouvrir ces positions",
+        "contrastUnscored": "{n} coups de ces deux joueurs ne sont pas encore notés et sont laissés de côté : la notation des coups n'est faite que sur demande.",
+        "contrastScore": "Noter les coups",
         "compareBlunderRate": "Blunders / 100 déc.",
         "trainingTitle": "Entraînement et progression",
         "trainingHint": "Le PR du quiz Décision, le PR des matchs du filtre et la rétention Anki, sur les mêmes fenêtres calendaires. Le PR du quiz est sur l'échelle du PR réel ; la rétention est lue sur l'axe de droite (%). Entre parenthèses, le nombre de décisions ou de révisions : une fenêtre sans échantillon n'a pas de valeur.",
@@ -1754,7 +1770,13 @@
         "empty": "Cet import n'a rien qui mérite un second regard.",
         "failed": "La file d'étude n'a pas pu être construite.",
         "finished": "File d'étude terminée : {n} positions parcourues.",
-        "stopped": "File d'étude quittée."
+        "stopped": "File d'étude quittée.",
+        "reasonBacklog": "blunder non traité",
+        "markStudied": "Marquer vu",
+        "unmark": "Démarquer",
+        "backlogEmpty": "Aucun blunder en attente : tout est commenté, rangé, en carte ou marqué vu.",
+        "markFailed": "La marque n'a pas pu être écrite.",
+        "unmarked": "Marque retirée : la position revient dans la file."
     },
     "home": {
         "title": "blunderDB",
@@ -2690,7 +2712,8 @@
             "history": "Historique de recherche",
             "match": "Panneau des matchs",
             "collection": "Panneau des collections",
-            "lesson": "Leçons (le N ouvre la leçon N)",
+            "lesson": "Leçons (le N ouvre la leçon N, le edit ouvre l'éditeur)",
+            "study": "File d'étude : vos blunders non traités",
             "eval": "Panneau Eval",
             "rollout": "Rouler la position (rollout fast|standard, search, stop)",
             "transcribe": "Transcription de matchs",
@@ -2789,7 +2812,11 @@
         "empty": "Cette leçon n'a encore aucune étape.",
         "notFound": "Aucune leçon n° {id}.",
         "failed": "Impossible de lire les leçons.",
-        "stepMissing": "Ce que montre cette étape n'est plus dans la base."
+        "stepMissing": "Ce que montre cette étape n'est plus dans la base.",
+        "edit": "Modifier",
+        "stepDone": "Étape faite",
+        "stepDoneHint": "Marque l'étape faite dans cette base ; un second clic retire la marque. Rien d'autre n'est enregistré de la lecture.",
+        "doneCount": "{done} / {n} faites"
     },
     "corpus": {
         "intro": "Doublons et graphies : ce qu'un import reconnaît comme déjà en base, et les autres noms d'un même joueur ou d'un même événement.",
@@ -2817,5 +2844,32 @@
         "applyPairing": "Créer ces alias",
         "pairingApplied": "Alias créés",
         "suspectLonger": "#{match} prolonge #{other} ({players})"
+    },
+    "lessonEditor": {
+        "title": "Leçons",
+        "failed": "Échec : {error}",
+        "confirmDelete": "Supprimer la leçon « {name} » ? Ses collections et ses positions restent.",
+        "newStepTitle": "Étape {n}",
+        "confirmRemoveStep": "Retirer l'étape « {title} » ?",
+        "noCurrentPosition": "Aucune position sur le plateau.",
+        "newLessonName": "Nom de la nouvelle leçon",
+        "create": "Créer",
+        "name": "Nom",
+        "description": "Description",
+        "save": "Enregistrer",
+        "read": "Lire",
+        "delete": "Supprimer",
+        "stepTitle": "Titre de l'étape",
+        "up": "Monter",
+        "down": "Descendre",
+        "stepText": "Texte de l'étape",
+        "collection": "Collection montrée",
+        "noCollection": "Aucune collection",
+        "position": "Position {id}",
+        "useCurrentPosition": "Position courante",
+        "detachPosition": "Détacher la position",
+        "saveStep": "Enregistrer l'étape",
+        "removeStep": "Retirer l'étape",
+        "addStep": "Ajouter une étape"
     }
 }

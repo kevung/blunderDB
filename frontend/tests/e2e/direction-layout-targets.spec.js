@@ -12,7 +12,7 @@ import { installWailsMock } from './helpers/wailsMock.js';
 import { openLibraryMock } from './helpers/fixtures.js';
 import { installDirectionEngine, S2_HALL } from './helpers/directionEngine.js';
 
-const DOCK = { GetPanelHeight: 250, GetPanelPosition: 'bottom' };
+const DOCK = { GetPanelPosition: 'bottom' };
 const MIN = 24;
 
 async function open(page, viewport, engine = S2_HALL) {

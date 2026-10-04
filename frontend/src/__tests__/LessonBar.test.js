@@ -13,12 +13,14 @@ import { tick } from 'svelte';
 const service = vi.hoisted(() => ({
     nextStep: vi.fn(),
     previousStep: vi.fn(),
-    closeLesson: vi.fn()
+    closeLesson: vi.fn(),
+    toggleStepDone: vi.fn(),
+    openLessonEditor: vi.fn()
 }));
 vi.mock('../services/lessonService.js', () => service);
 
 import LessonBar from '../components/LessonBar.svelte';
-import { lessonStore, lessonStepIndexStore } from '../stores/lessonStore.js';
+import { lessonStore, lessonStepIndexStore, lessonDoneStore } from '../stores/lessonStore.js';
 
 const lesson = {
     id: 1,
@@ -32,6 +34,7 @@ const lesson = {
 beforeEach(() => {
     lessonStore.set(null);
     lessonStepIndexStore.set(0);
+    lessonDoneStore.set({});
     vi.clearAllMocks();
 });
 
@@ -73,10 +76,29 @@ describe('LessonBar', () => {
     test('the buttons call the reading service', async () => {
         lessonStore.set(lesson);
         const { container } = render(LessonBar);
-        const [, next, close] = container.querySelectorAll('.actions button');
+        const [, next, edit, close] = container.querySelectorAll('.actions button');
         await fireEvent.click(next);
+        await fireEvent.click(edit);
         await fireEvent.click(close);
         expect(service.nextStep).toHaveBeenCalledTimes(1);
+        expect(service.openLessonEditor).toHaveBeenCalledWith(1);
         expect(service.closeLesson).toHaveBeenCalledTimes(1);
+    });
+
+    test('"step done" reflects the recorded progress and is the only writer', async () => {
+        lessonStore.set(lesson);
+        lessonDoneStore.set({ 10: '2026-10-04' });
+        const { container } = render(LessonBar);
+        const box = container.querySelector('.done input');
+        expect(box.checked).toBe(true);
+        expect(container.querySelector('.done-count').textContent).toContain('1');
+
+        lessonStepIndexStore.set(1);
+        await tick();
+        expect(box.checked).toBe(false);
+        // Moving between steps writes nothing.
+        expect(service.toggleStepDone).not.toHaveBeenCalled();
+        await fireEvent.click(box);
+        expect(service.toggleStepDone).toHaveBeenCalledWith(11);
     });
 });

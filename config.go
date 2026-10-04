@@ -139,6 +139,8 @@ const (
 	MinPanelHeight     = 80
 	MaxPanelHeight     = 4000
 	DefaultPanelHeight = 250
+	// AnyTabPanelHeight keys, in PanelHeights, the height of the tabs that have none of their own.
+	AnyTabPanelHeight = "*"
 
 	MinPanelWidth     = 150
 	MaxPanelWidth     = 4000
@@ -189,10 +191,15 @@ type Config struct {
 	CommentAuthor   string `json:"comment_author,omitempty"`
 	LikeMaxDistance int    `json:"like_max_distance,omitempty"`
 	PanelPosition   string `json:"panel_position,omitempty"`
-	PanelHeight     int    `json:"panel_height,omitempty"`
-	PanelWidth      int    `json:"panel_width,omitempty"`
-	PageStep        string `json:"page_step,omitempty"`
-	TourSeen        bool   `json:"tour_seen,omitempty"`
+	// PanelHeight is read once from a config written before heights were per tab, to seed
+	// PanelHeights; it is never written back.
+	PanelHeight int `json:"panel_height,omitempty"`
+	PanelWidth  int `json:"panel_width,omitempty"`
+	// PanelHeights is the bottom-mode height each tab last had, by tab id; a tab
+	// absent from it uses the AnyTabPanelHeight entry if any, else the default height.
+	PanelHeights map[string]int `json:"panel_heights,omitempty"`
+	PageStep     string         `json:"page_step,omitempty"`
+	TourSeen     bool           `json:"tour_seen,omitempty"`
 	// TabOrder is the user's order of TabbedPanel.svelte's tab ids; empty
 	// means the built-in order, which the frontend owns.
 	TabOrder []string `json:"tab_order,omitempty"`
@@ -369,7 +376,6 @@ func NewConfig() *Config {
 		BoardColors:   DefaultBoardColors(),
 		UIScale:       DefaultUIScale,
 		PanelPosition: DefaultPanelPosition,
-		PanelHeight:   DefaultPanelHeight,
 		PanelWidth:    DefaultPanelWidth,
 		PageStep:      DefaultPageStep,
 		// GammonNetDisplayPly/GammonNetAnalysisPly stay nil: the Get
@@ -453,10 +459,17 @@ func (c *Config) LoadConfig() (*Config, error) {
 	config.UIScale = c.UIScale
 	c.PanelPosition = sanitizePanelPosition(config.PanelPosition)
 	config.PanelPosition = c.PanelPosition
-	c.PanelHeight = clampPanelHeight(config.PanelHeight)
-	config.PanelHeight = c.PanelHeight
 	c.PanelWidth = clampPanelWidth(config.PanelWidth)
 	config.PanelWidth = c.PanelWidth
+	c.PanelHeights = clampPanelHeights(config.PanelHeights)
+	if c.PanelHeights == nil && config.PanelHeight > 0 && config.PanelHeight != DefaultPanelHeight {
+		// The height a user dragged before heights were per tab becomes the one of every tab
+		// that has none of its own.
+		c.PanelHeights = map[string]int{AnyTabPanelHeight: clampPanelHeight(config.PanelHeight)}
+	}
+	config.PanelHeights = c.PanelHeights
+	config.PanelHeight = 0
+	c.PanelHeight = 0
 	c.PageStep = sanitizePageStep(config.PageStep)
 	config.PageStep = c.PageStep
 	c.TourSeen = config.TourSeen
@@ -678,16 +691,44 @@ func (c *Config) SavePageStep(step string) error {
 	return c.SaveConfig(c)
 }
 
-// GetPanelHeight returns the persisted bottom-mode panel height in pixels
-// (clamped; defaults to 380).
-func (c *Config) GetPanelHeight() int {
-	return clampPanelHeight(c.PanelHeight)
+// clampPanelHeights clamps every remembered height and drops entries with no tab id or no height.
+func clampPanelHeights(heights map[string]int) map[string]int {
+	if len(heights) == 0 {
+		return nil
+	}
+	out := make(map[string]int, len(heights))
+	for tab, h := range heights {
+		if tab != "" && h > 0 {
+			out[tab] = clampPanelHeight(h)
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
 }
 
-// SavePanelHeight persists the bottom-mode panel height, clamped to the
+// GetTabPanelHeights returns the bottom-mode panel height remembered per tab id.
+func (c *Config) GetTabPanelHeights() map[string]int {
+	out := clampPanelHeights(c.PanelHeights)
+	if out == nil {
+		return map[string]int{}
+	}
+	return out
+}
+
+// SaveTabPanelHeight remembers the bottom-mode panel height of one tab, clamped to the
 // supported range.
-func (c *Config) SavePanelHeight(height int) error {
-	c.PanelHeight = clampPanelHeight(height)
+func (c *Config) SaveTabPanelHeight(tab string, height int) error {
+	if tab == "" {
+		return nil
+	}
+	heights := clampPanelHeights(c.PanelHeights)
+	if heights == nil {
+		heights = map[string]int{}
+	}
+	heights[tab] = clampPanelHeight(height)
+	c.PanelHeights = heights
 	return c.SaveConfig(c)
 }
 

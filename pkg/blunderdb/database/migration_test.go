@@ -3628,8 +3628,10 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	}
 	for _, stmt := range []string{
 		`ALTER TABLE move DROP COLUMN error_mp`,
+		`DROP INDEX idx_analysis_met`,
 		`ALTER TABLE analysis DROP COLUMN met_id`,
 		`DROP TABLE lesson_progress`,
+		`DROP TABLE study_mark`,
 		`DROP TABLE match_equity_table`,
 		// 2.30.0 stored both dates as text, and indexed engine and depth.
 		`DROP INDEX idx_analysis_provenance_pending`,
@@ -3728,8 +3730,8 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 			t.Errorf("index %s present = %v after migration, want %v", name, n == 1, want)
 		}
 	}
-	if !tableExists(d.db, "lesson_progress") || !tableExists(d.db, "match_equity_table") {
-		t.Fatal("lesson_progress and match_equity_table should exist after migration")
+	if !tableExists(d.db, "lesson_progress") || !tableExists(d.db, "match_equity_table") || !tableExists(d.db, "study_mark") {
+		t.Fatal("lesson_progress, match_equity_table and study_mark should exist after migration")
 	}
 	var scored int
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM move WHERE error_mp IS NOT NULL`).Scan(&scored); err != nil || scored != 0 {

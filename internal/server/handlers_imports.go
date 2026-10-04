@@ -262,6 +262,15 @@ func (s *Server) ingestRoutes() []route {
 		route{http.MethodPost, "/v1/imports.studyQueue", rpc(func(ctx context.Context, scope string, req importStudyQueueReq) ([]domain.StudyQueueEntry, error) {
 			return s.opts.Storage.ImportBatches().StudyQueue(ctx, scope, req.BatchID, req.Players, req.Limit)
 		})},
+		// The library-wide backlog of unhandled blunders, and the user's
+		// "studied" mark that takes a position out of it. The mark is written
+		// only by this call (ADR-0007) and is never exported.
+		route{http.MethodPost, "/v1/study.backlog", rpc(func(ctx context.Context, scope string, req importStudyQueueReq) ([]domain.StudyQueueEntry, error) {
+			return s.opts.Storage.ImportBatches().StudyBacklog(ctx, scope, req.Players, req.Limit)
+		})},
+		route{http.MethodPost, "/v1/study.setStudied", rpcVoid(func(ctx context.Context, scope string, req studySetStudiedReq) error {
+			return s.opts.Storage.ImportBatches().SetStudied(ctx, scope, req.PositionID, req.Studied)
+		})},
 		// The batch's per-file journal: which file gave which match.
 		route{http.MethodPost, "/v1/imports.files", rpc(func(ctx context.Context, scope string, req importReportReq) ([]domain.ImportFileEntry, error) {
 			return s.opts.Storage.ImportBatches().Files(ctx, scope, req.BatchID)
@@ -291,6 +300,10 @@ type exportSQLiteReq struct {
 	// show, on the same terms as CollectionIDs (ADR-0066); given with
 	// CollectionIDs, both travel.
 	LessonIDs []int64 `json:"lessonIds,omitempty"`
+	// DeckIDs narrows the export to these Anki decks and their positions, on
+	// the same terms: the recipient studies them afresh, without the
+	// sender's review history. Given with the others, all travel.
+	DeckIDs []int64 `json:"deckIds,omitempty"`
 }
 
 // sealExportWatermark seals a watermark for origin/note with this daemon's own
@@ -312,9 +325,9 @@ func (s *Server) sealExportWatermark(origin, note string) (string, error) {
 // collection, match and tournament, with analyses, comments, played moves,
 // the filter library and Anki decks — into a blunderDB SQLite file and
 // returns it as a binary download. An optional JSON body asks for a
-// watermark (see exportSQLiteReq); everything else about the export is
-// WholeTenant, matching the GUI/CLI's "export everything" preset — a
-// selective server-side export is not offered yet.
+// watermark and narrows it to collections, lessons or decks (see
+// exportSQLiteReq); with none given the export is WholeTenant, matching the
+// GUI/CLI's "export everything" preset.
 //
 // ingest.SQLiteExporter already materializes the whole file into its own temp
 // path before copying it to the writer it is given, but this handler must not
@@ -351,10 +364,11 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 		defer os.Remove(tmpPath)
 
 		opts := ingest.WholeTenant(ingest.FormatSQLite)
-		if len(req.CollectionIDs) > 0 || len(req.LessonIDs) > 0 {
+		if len(req.CollectionIDs) > 0 || len(req.LessonIDs) > 0 || len(req.DeckIDs) > 0 {
 			opts.Selection = ingest.Selection{
 				CollectionIDs: req.CollectionIDs, CollectionPositions: true,
 				LessonIDs: req.LessonIDs, LessonContents: true,
+				DeckIDs: req.DeckIDs, DeckPositions: true,
 			}
 			opts.FilterLibrary, opts.AnkiDecks = false, false
 		}
@@ -612,4 +626,11 @@ type importStudyQueueReq struct {
 	BatchID int64    `json:"batchId"`
 	Players []string `json:"players,omitempty"`
 	Limit   int      `json:"limit,omitempty"`
+}
+
+// studySetStudiedReq writes (Studied true) or withdraws the "studied" mark of
+// one position.
+type studySetStudiedReq struct {
+	PositionID int64 `json:"positionId"`
+	Studied    bool  `json:"studied"`
 }

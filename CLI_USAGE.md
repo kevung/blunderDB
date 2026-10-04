@@ -41,6 +41,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `search` - Search positions with filters
 - `match` - Display match positions and analysis
 - `lesson` - Manage lessons (ordered steps showing collections and positions; export them)
+- `study` - The study backlog: your unhandled blunders across every import, and the "studied" mark
 - `collection` - Manage collections (list, show, create, rename, delete, export)
 - `anki` - Spaced-repetition decks (decks, stats, forecast, sync)
 - `stats` - Statistics computed apart from list --type stats (recurring)
@@ -59,6 +60,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `verify` - Verify database integrity
 - `vacuum` - Compact the database file, reclaiming freed space
 - `repair` - Recompute the analysis columns from the analyses themselves
+- `met` - List, import or choose the database's match equity table
 - `reencode` - Rewrite analyses stored by older releases in the compact format
 - `delete` - Delete data from the database
 - `comment` - Comments on a position, signed by their author (add, list)
@@ -760,6 +762,28 @@ ID  Index  Score  Type  XGID
 --  -----  -----  ----  ----
 12  12     7-7    cube  -a-B-aD-C---cD---cbeB-----:0:0:1:00:0:0:0:7:0
 40  40     7-7    cube  --BEBBB----a--b--cbbBbba--:0:0:1:00:0:0:0:7:0
+```
+
+## Study Command
+
+The study backlog: the reference player's blunders, across every import, that
+nothing has dealt with yet — no comment, no Anki card, in no collection, no
+"studied" mark. Every sub-command takes `--db`.
+
+```bash
+./blunderDB study <sub-command> [options]
+```
+
+**Sub-commands:**
+- `queue [--limit <n>] [--format text|json]` - The backlog, costliest first,
+  at most 50 positions
+- `mark --id <id>` - Mark a position studied: it leaves the backlog. The mark is
+  the user's own data and is never exported
+- `unmark --id <id>` - Withdraw the mark: the position returns to the backlog
+
+```bash
+./blunderDB study queue --db database.db --limit 20
+./blunderDB study mark --db database.db --id 1234
 ```
 
 ## Lesson Command
@@ -1596,13 +1620,42 @@ Compacting database...
   Reclaimed: 87.2 MiB
 ```
 
+## Met Command
+
+List, import or choose the match equity table (MET) gammonNet values a
+database's match scores with: the built-in Kazaross-XG2 by default, or an
+explicit gnubg `.xml` table. The table belongs to the database, not to the
+application. Every analysis gammonNet computes records its table; an analysis
+at a match score computed with another table than the current one is shown as
+"different MET" and left out of the statistics. Changing the table rewrites no
+analysis. The daemon exposes the same operations as `met.list`, `met.import`,
+`met.setCurrent` and `met.ofAnalysis`, limited to the caller's tenant.
+
+```bash
+./blunderDB met --db database.db --import Rockwell-Kazaross.xml --current
+./blunderDB met --db database.db --use 0
+```
+
+**Options:**
+- `--db` - Path to the database file (required)
+- `--import` - Import a gnubg table; a table already held, or equal to Kazaross-XG2, is not added twice
+- `--current` - With `--import`: make the imported table current
+- `--use` - Make table ID current; `0` returns to Kazaross-XG2
+- `--format` - Output format: `text` (default) or `json`
+
+**Example output:**
+```
+      0  Kazaross-XG2
+  *   1  Rockwell/Kazaross 25 point MET
+```
+
 ## Reencode Command
 
 Rewrite the analyses an older release stored as JSON in the compact binary
 format (about half the size, several times faster to read). Old analyses stay
 readable without it; `vacuum` performs the same conversion while it compacts.
-`reencode` converts without compacting: useful on a large database, where
-`vacuum` needs twice the file size in free space, or on a PostgreSQL server,
+`reencode` converts without compacting: useful when the disk has no room for
+the compacted copy `vacuum` writes beside the file, or on a PostgreSQL server,
 which has no `vacuum`. The daemon exposes the same pass as
 `maintenance.reencode`, limited to the caller's tenant.
 
@@ -2656,6 +2709,8 @@ Options:
     	Include comments in database export (default: true) (default true)
   -db string
     	Path to the database file (required)
+  -deck-ids string
+    	Comma-separated list of Anki deck IDs to export with their positions, without their review history
   -dir string
     	Output directory for .mat batch export (type=mat, multiple matches)
   -file string
@@ -2936,6 +2991,26 @@ Examples:
   blunderdb lesson delete --db database.db --id 1 --confirm
 ```
 
+### `blunderdb lesson done`
+
+```
+Usage: blunderdb lesson done [options]
+
+Mark a step done, the reader's own progress (ADR-0069). It is written only by this gesture, in this database; no export carries it.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -step int
+    	Step ID (required)
+  -undo
+    	Withdraw the mark instead of setting it
+
+Examples:
+  blunderdb lesson done --db database.db --step 7
+  blunderdb lesson done --db database.db --step 7 --undo
+```
+
 ### `blunderdb lesson edit`
 
 ```
@@ -3032,6 +3107,26 @@ Options:
 
 Examples:
   blunderdb lesson list --db database.db --format json
+```
+
+### `blunderdb lesson progress`
+
+```
+Usage: blunderdb lesson progress [options]
+
+Show which steps of a lesson are marked done, and the date of the gesture.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Lesson ID (required)
+
+Examples:
+  blunderdb lesson progress --db database.db --id 1
+  blunderdb lesson progress --db database.db --id 1 --format json
 ```
 
 ### `blunderdb lesson remove-step`
@@ -3231,6 +3326,37 @@ Options:
 Examples:
   blunderdb mcp --db my.db
   blunderdb mcp --db my.db --write
+```
+
+### `blunderdb met`
+
+```
+Usage: blunderdb met [options]
+
+List, import or choose the match equity table (MET) of a database.
+Each database has its own table, Kazaross-XG2 by default. gammonNet
+values match scores with the current table, and every analysis it
+computes records that table. An analysis at a match score valued with
+another table is shown as "different MET" and left out of the
+statistics. Changing the current table rewrites no analysis.
+Only explicit gnubg tables are read (not the parametric zadeh or mec).
+
+Options:
+  -current
+    	With --import: make the imported table current
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -import string
+    	Import a gnubg match equity table (.xml)
+  -use int
+    	Make table ID current (0: the built-in Kazaross-XG2) (default -1)
+
+Examples:
+  blunderdb met --db database.db
+  blunderdb met --db database.db --import Rockwell-Kazaross.xml --current
+  blunderdb met --db database.db --use 0
 ```
 
 ### `blunderdb open`
@@ -3587,6 +3713,49 @@ Examples:
   blunderdb stats breakdown --db database.db --format json
 ```
 
+### `blunderdb stats contrast`
+
+```
+Usage: blunderdb stats contrast --db <file> --player <name> --opponent <name> [options]
+
+The positions both players decided, whoever they played against, where one
+played well and the other did not: the widest gap first. A player's error on
+a position is their worst play of it; "well" means below the library's Error
+threshold. Open the positions with --format json (position_id).
+
+Only scored plays are compared, and no import scores them: run
+`blunderdb repair --db <file> --move-errors` first. The count of plays still
+unscored is printed (unscored_moves in JSON).
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -engine string
+    	Only the decisions analysed by this engine (exact name, as stored)
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -limit int
+    	Maximum number of positions shown (text only; 0 = all) (default 20)
+  -min-depth int
+    	Only the decisions analysed at least this deep (plies)
+  -opponent string
+    	Second player (required)
+  -player string
+    	First player (required)
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats contrast --db database.db --player "Alice" --opponent "Bob"
+  blunderdb stats contrast --db database.db --player "Alice" --opponent "Bob" --format json
+```
+
 ### `blunderdb stats h2h`
 
 ```
@@ -3842,6 +4011,61 @@ Options:
 Examples:
   blunderdb stats windows --db database.db --player "Alice"
   blunderdb stats windows --db database.db --player "Alice" --window quarter --format json
+```
+
+### `blunderdb study mark`
+
+```
+Usage: blunderdb study mark [options]
+
+Mark a position studied: it leaves the study backlog.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Position ID (required)
+
+Examples:
+  blunderdb study mark --db database.db --id 1234
+```
+
+### `blunderdb study queue`
+
+```
+Usage: blunderdb study queue [options]
+
+List your unhandled blunders across the whole library, costliest first.
+Your name is the database's reference player (see `blunderdb players`).
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -limit int
+    	Maximum number of positions (default and ceiling: 50)
+
+Examples:
+  blunderdb study queue --db database.db
+  blunderdb study queue --db database.db --limit 10 --format json
+```
+
+### `blunderdb study unmark`
+
+```
+Usage: blunderdb study unmark [options]
+
+Withdraw a position's studied mark: it returns to the study backlog.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Position ID (required)
+
+Examples:
+  blunderdb study unmark --db database.db --id 1234
 ```
 
 ### `blunderdb tournament confirm`

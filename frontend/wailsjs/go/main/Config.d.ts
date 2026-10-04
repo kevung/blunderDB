@@ -44,7 +44,7 @@ export function GetMCPHost():Promise<main.MCPHostSettings>;
 
 export function GetPageStep():Promise<string>;
 
-export function GetPanelHeight():Promise<number>;
+export function GetTabPanelHeights():Promise<Record<string, number>>;
 
 export function GetPanelPosition():Promise<string>;
 
@@ -108,7 +108,7 @@ export function SaveMCPHost(arg1:main.MCPHostSettings):Promise<void>;
 
 export function SavePageStep(arg1:string):Promise<void>;
 
-export function SavePanelHeight(arg1:number):Promise<void>;
+export function SaveTabPanelHeight(arg1:string,arg2:number):Promise<void>;
 
 export function SavePanelPosition(arg1:string):Promise<void>;
 

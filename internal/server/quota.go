@@ -21,6 +21,11 @@ type TenantQuotas struct {
 	// most MaxConcurrentImports of them).
 	MaxPositions int64 `json:"maxPositions"`
 
+	// MaxStoredBytes: an import is refused (413) once the tenant holds this
+	// much disk space (storage.MetadataStore.StoredBytes). Checked at the
+	// same moment and with the same latitude as MaxPositions.
+	MaxStoredBytes int64 `json:"maxStoredBytes"`
+
 	// AnalysisSecondsPerDay is the engine CPU time (see cpuTime) a tenant may
 	// spend per UTC day, summed over every engine computation it asks for:
 	// sweeps, comparisons, a cube matrix, a bare evaluation, rollouts. Past
@@ -198,6 +203,19 @@ func (s *Server) refuseImport(ctx context.Context, w http.ResponseWriter, scope 
 		if int64(counts.Positions) >= max {
 			writeErrorDetails(w, CodeStorageQuotaExceeded, "this tenant stores as many positions as it may", map[string]any{
 				"quota": "maxPositions", "limit": max, "used": counts.Positions,
+			})
+			return true
+		}
+	}
+	if max := s.quota.limits.MaxStoredBytes; max > 0 {
+		used, err := s.opts.Storage.Metadata().StoredBytes(ctx, scope)
+		if err != nil {
+			writeStorageError(w, err)
+			return true
+		}
+		if used >= max {
+			writeErrorDetails(w, CodeStorageQuotaExceeded, "this tenant holds as much disk space as it may", map[string]any{
+				"quota": "maxStoredBytes", "limit": max, "used": used,
 			})
 			return true
 		}

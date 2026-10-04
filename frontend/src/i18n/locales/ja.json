@@ -140,6 +140,11 @@
         "gammonnetStaleCount": "古くなった gammonNet 解析が {n} 件あります。",
         "gammonnetStaleStart": "古くなったポジションを再解析",
         "gammonnetStaleNote": "すでに gammonNet で解析済みだが、ここで設定したものより古いエンジンバージョンや異なる深さで書き込まれたポジションに対して、gammonNet を再実行します — XG、GNUbg、BGBlitz の解析には一切触れません。",
+        "metCurrent": "データベースのマッチエクイティテーブル（MET）",
+        "metImport": ".xml の MET を読み込む…",
+        "metNote": "gammonNet はマッチスコアをこのテーブルで評価し、計算した各解析にそれを記録します。別のテーブルで計算されたマッチスコアの解析は「異なる MET」と表示され、統計から除外されます。テーブルを変えても解析は書き換えられません。読み込めるのは明示的な gnubg テーブルのみです。",
+        "metImported": "テーブルを読み込みました：{name}",
+        "metBuiltInImported": "このファイルは内蔵テーブル Kazaross-XG2 です。何も追加されていません。",
         "checkForUpdates": "起動時に更新を確認する",
         "checkForUpdatesNote": "起動時に一度だけGitHubのリリースページを確認します。既定では無効で、パッケージ管理でインストールされた場合(Flatpak、ディストリビューションのパッケージ、Homebrewなど)は自動的に有効になることはありません。",
         "repairIntro": "分析の列を、分析そのものから計算し直します。これらの列は保存データの射影であり、データ自体は損なわれません。射影の不具合は再取り込みなしに直せます。明示的で、自動では決して行いません。",
@@ -778,6 +783,8 @@
     },
     "analysis": {
         "analysisDepth": "解析の深さ",
+        "metDifferent": "異なる MET：{name} で計算された解析",
+        "metDifferentTitle": "{name} で計算されました。データベースは {current} を使用しています。この解析は統計から除外されます。",
         "bestAction": "ベストアクション",
         "noDouble": "ノーダブル",
         "doubleTake": "ダブル/テイク",
@@ -1084,7 +1091,10 @@
         "descProtected": "パスワード",
         "tournamentsNeedMatches": "大会はマッチも一緒にエクスポートした場合にのみ紐付きます。先に「マッチを含める」を選んでください。",
         "filterLibraryHint": "内容ではなく、あなた自身の保存済み検索です。他人のデータベースでは役に立ちません。",
-        "metadataTitle": "エクスポートするファイルのメタデータ"
+        "metadataTitle": "エクスポートするファイルのメタデータ",
+        "includeLessons": "レッスンを含める ({count})",
+        "selectLessons": "エクスポートするレッスンを選択",
+        "descLessons": "レッスン {count} 件"
     },
     "import": {
         "minimize": "最小化",
@@ -1658,6 +1668,12 @@
         "compareToggle": "{name} を比較",
         "compareTitle": "{a} と {b} を並べて",
         "compareClear": "クリア",
+        "contrastButton": "一方がうまく打ち、もう一方がそうでなかった局面",
+        "contrastSummary": "共通の{total}局面のうち{n}局面：{a}が{na}局面、{b}が{nb}局面をうまく打ちました。",
+        "contrastEmpty": "共通の{total}局面に、一方がうまく打ち、もう一方がそうでなかった局面はありません。",
+        "contrastOpen": "これらの局面を開く",
+        "contrastUnscored": "この2人のプレイヤーの {n} 手はまだ採点されておらず、除外されています。手の採点は要求時にのみ行われます。",
+        "contrastScore": "手を採点する",
         "compareBlunderRate": "ブランダー / 100 判断",
         "trainingTitle": "トレーニングと上達",
         "trainingHint": "決定クイズのPR、フィルターの対局のPR、Ankiの定着率を、同じ暦の期間で表示します。クイズのPRは実際のPRと同じ尺度で、定着率は右軸（％）で読みます。括弧内は決定数または復習数で、標本のない期間には値がありません。",
@@ -1754,7 +1770,13 @@
         "empty": "この取り込みには、見直す価値のあるものがありません。",
         "failed": "学習キューを作成できませんでした。",
         "finished": "学習キューを終えました：{n} 局面。",
-        "stopped": "学習キューをやめました。"
+        "stopped": "学習キューをやめました。",
+        "reasonBacklog": "未処理のブランダー",
+        "markStudied": "確認済みにする",
+        "unmark": "確認済みを解除",
+        "backlogEmpty": "待機中のブランダーはありません。すべてコメント済み、整理済み、カード化済み、または確認済みです。",
+        "markFailed": "マークを書き込めませんでした。",
+        "unmarked": "マークを解除しました。局面はキューに戻ります。"
     },
     "home": {
         "title": "blunderDB",
@@ -2690,7 +2712,8 @@
             "history": "検索履歴",
             "match": "マッチパネル",
             "collection": "コレクションパネル",
-            "lesson": "レッスン (le N でレッスン N を開く)",
+            "lesson": "レッスン (le N でレッスン N を開く、le edit でエディタを開く)",
+            "study": "学習キュー: 未処理の大きなミス",
             "eval": "Eval パネル",
             "rollout": "局面をロールアウト(rollout fast|standard, search, stop)",
             "transcribe": "マッチの書き起こし",
@@ -2789,7 +2812,11 @@
         "empty": "このレッスンにはまだステップがありません。",
         "notFound": "レッスン {id} はありません。",
         "failed": "レッスンを読み込めませんでした。",
-        "stepMissing": "このステップが示す内容はもうデータベースにありません。"
+        "stepMissing": "このステップが示す内容はもうデータベースにありません。",
+        "edit": "編集",
+        "stepDone": "ステップ完了",
+        "stepDoneHint": "このデータベースでステップを完了として記録します。もう一度クリックすると記録を取り消します。読んだこと自体は何も記録されません。",
+        "doneCount": "{done} / {n} 完了"
     },
     "corpus": {
         "intro": "重複と表記ゆれ：インポートが保存済みと認識するもの、同じプレイヤーやイベントの別名。",
@@ -2817,5 +2844,32 @@
         "applyPairing": "これらの別名を作成",
         "pairingApplied": "別名を作成しました",
         "suspectLonger": "#{match} は #{other} の続き（{players}）"
+    },
+    "lessonEditor": {
+        "title": "レッスン",
+        "failed": "失敗しました: {error}",
+        "confirmDelete": "レッスン「{name}」を削除しますか？コレクションとポジションは残ります。",
+        "newStepTitle": "ステップ {n}",
+        "confirmRemoveStep": "ステップ「{title}」を削除しますか？",
+        "noCurrentPosition": "盤面にポジションがありません。",
+        "newLessonName": "新しいレッスンの名前",
+        "create": "作成",
+        "name": "名前",
+        "description": "説明",
+        "save": "保存",
+        "read": "読む",
+        "delete": "削除",
+        "stepTitle": "ステップのタイトル",
+        "up": "上へ",
+        "down": "下へ",
+        "stepText": "ステップのテキスト",
+        "collection": "表示するコレクション",
+        "noCollection": "コレクションなし",
+        "position": "ポジション {id}",
+        "useCurrentPosition": "現在のポジション",
+        "detachPosition": "ポジションを外す",
+        "saveStep": "ステップを保存",
+        "removeStep": "ステップを削除",
+        "addStep": "ステップを追加"
     }
 }

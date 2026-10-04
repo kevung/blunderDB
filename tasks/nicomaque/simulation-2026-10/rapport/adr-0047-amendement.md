@@ -1,7 +1,8 @@
 # Projet d'amendement de l'ADR-0047 : l'écran des joueurs est la page murale
 
-Statut : **projet**. Il tranche #457 et attend une relecture avant d'entrer dans
-`docs/adr/0047-directing-a-tournament-creates-its-matches-before-they-are-played.md`.
+Statut : **intégré** dans
+`docs/adr/0047-directing-a-tournament-creates-its-matches-before-they-are-played.md`, avec les
+chiffres de la [contre-épreuve](contre-epreuve.md). Ce fichier garde le projet tel que relu.
 L'utilisateur a jugé que la simulation de #380 suffit pour trancher ; les chiffres viennent de
 [README.md](README.md) § 2 et de [ecarts.md](ecarts.md).
 

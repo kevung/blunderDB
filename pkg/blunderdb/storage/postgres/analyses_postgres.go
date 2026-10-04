@@ -44,6 +44,7 @@ const analysisInsertSQL = `INSERT INTO analysis (
 // writer's tenant: a foreign row is left as it is. Save checks the position
 // is the tenant's first (requireOwned), so a foreign position with or without
 // an analysis gets the same ErrNotFound; the WHERE holds even without it.
+// met_id follows the SQLite upsert: dropped unless the verdict is gammonNet's.
 const analysisUpsertSQL = analysisInsertSQL + `
 ON CONFLICT (position_id) DO UPDATE SET
 	data=excluded.data,
@@ -60,7 +61,8 @@ ON CONFLICT (position_id) DO UPDATE SET
 	is_close_cube=excluded.is_close_cube,
 	analysis_engine=excluded.analysis_engine,
 	analysis_depth=excluded.analysis_depth,
-	creation_date=excluded.creation_date
+	creation_date=excluded.creation_date,
+	met_id=CASE WHEN excluded.analysis_engine LIKE 'gammonNet%' THEN analysis.met_id END
 WHERE analysis.tenant_id = excluded.tenant_id`
 
 // Save stores (or replaces) the analysis for positionID. The analysis JSON is

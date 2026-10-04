@@ -265,6 +265,112 @@ Pour la release : #1 et #2 décident si un utilisateur de BMAB peut réellement 
 30 % promis par la 2.31 ; #3 et #5 sont les seules attentes de plusieurs minutes dans un
 usage courant ; #4 est payé une fois par base.
 
+### 7.2 Point #3 traité (branche `perf/stats-globales`)
+
+Copie `run/bmab-europe.db` (2.31, `match_stats` rempli, 9 852 942 décisions comptées), même
+poste, binaire de `main` (`f275853da`) contre celui de la branche, enchaînés à charge égale
+(charge 3 à 5, sessions parallèles) ; `list --type stats --format json`, journal des passes
+par `BLUNDERDB_DEBUG=1`.
+
+| | Avant | Après |
+|---|---:|---:|
+| `list --type stats` (toute la base) | 621 s, 5,46 Go | **323 s, 3,75 Go** |
+| `list --type stats --engine XG` | > 900 s (arrêté à 31 min, § 3) | **464 s, 3,74 Go** |
+| copie de la sélection | ≈ 175 s (3 tables + 3 index) | ≈ 150 s (1 table plate) |
+| une passe par décision (histogramme, phases, etc.) | 21-59 s (MWC : 72 s) | 6-18 s (MWC : 43 s) |
+| PR, Snowie, par tournoi, par match (`match_stats`) | < 0,5 s | < 0,5 s |
+
+- **Ce que `match_stats` donne déjà** : PR global, contrôle/cube, Snowie, par tournoi et par
+  match passaient déjà par la table (moins d'une demi-seconde). Le reste (totaux, histogramme,
+  cube, phases, types de jeu, scores, étiquettes, MWC, PR glissant, pires erreurs) est par
+  décision et n'est pas dans la table : chaque passe refaisait la jointure position × analyse
+  × coup × partie sur les copies de session, 1 à 2,5 min chacune. La copie est désormais
+  **une seule table plate** (la jointure faite une fois) que chaque passe parcourt, jointe
+  seulement à `match` et `tournament` ; le SQL des passes est inchangé, réécrit
+  (`p.x` → `d.p_x`) par `selectionExecer`.
+- **Filtre moteur** : le plan ne finissait pas parce que les copies n'avaient pas de
+  statistiques d'optimiseur : la passe par match parcourait chaque match puis, pour chacun,
+  toutes les analyses copiées (index automatique sur `analysis_engine`, qui ne filtre rien
+  quand tout est XG) — quadratique. Sans jointure entre copies, ce plan n'existe plus.
+- **Mémoire** : la passe MWC gardait la perte de chaque décision dans une table de hachage
+  pour en relire dix ; la passe par étiquette chargeait toutes les décisions pour en garder
+  celles des 7 833 positions commentées. Les deux ne lisent plus que ce qui sert.
+- **Mêmes chiffres** : sorties JSON identiques à l'octet sur l'échantillon à 2 % (global,
+  joueur, cube seul). Sur BMAB, 19 champs sur 21 identiques ; `PerTournament` et `PerMatch`
+  diffèrent sur le seul MWC de 110 tournois et 593 matchs, au dernier bit (écart relatif
+  ≤ 4,5 × 10⁻¹⁶) : somme de flottants dans l'ordre d'un `ORDER BY match_date, move_number`
+  qui n'est pas total, donc qui suit l'ordre de lecture. Le filtre moteur (tout est XG) rend
+  les mêmes chiffres que le global. Tests : `TestComputeSelectionMatchesDirectReadAndReadOnlyWritesNothing`
+  (sélection contre lecture directe des tables, octet pour octet, neuf filtres), parité avec
+  l'oracle figé, suite de contrat sur SQLite et PostgreSQL.
+- **Reste ouvert** : passer sous la minute demande de ne plus copier les décisions du tout,
+  donc de tenir par match les ventilations (histogramme, cube, phases, types, scores, MWC)
+  dans une table dérivée à côté de `match_stats` — changement de schéma (version, migration
+  des deux moteurs). La copie (≈ 150 s) et la passe MWC (tri complet pour le MWC glissant,
+  43 s) sont les deux postes restants.
+
+### 7.3 Points #4, #10, #2, #9 traités (branche `perf/migration-2-31`)
+
+**Banc.** L'original 2.30 n'existe plus : la seule copie, `run/bmab-europe.db`, est déjà migrée
+en 2.31. Chaque mesure part d'une copie de celle-ci (`~/src/bench-scale/mig231/`, jamais
+l'original ni `run/` lui-même), **ramenée à la forme 2.30** par un harnais (`cmd/zz-mig231`,
+non committé) : plateaux en tableau JSON, dates en texte, colonnes d'action retypées TEXT et
+remplies d'étiquettes, provenance remise à NULL, `match_stats` vidé, remplissage `match_date`
+à 11 320 000, `idx_analysis_engine`/`depth` recréés. Même copie reconstruite pour l'ancien
+binaire (`main` à `f275853da`) et le nouveau, une répétition chacun, poste partagé (charge
+7-12 pour l'ancien, 1-2 pour le nouveau : l'écart est en partie flatté).
+
+| Ouverture migrante 2.30 → 2.31 | Avant | Après |
+|---|---:|---:|
+| **Total** | **2 306 s** | **749 s (−68 %)** |
+| CPU | 1 798 s | 2 024 s (16 cœurs) |
+| **WAL maximal / disque libre consommé** | **6,17 Go / 7,35 Go** | **0,20 Go / 0,20 Go** |
+| RSS maximal | 1 316 Mo | 1 352 Mo |
+| Dates, plateau (`position`) | 191 + 348 s | 65 s (une passe) |
+| Dates, code d'action (`analysis`) | 100 + 376 s | 82 s (une passe) |
+| Codes d'action (`move`) + index | 180 s | 71 s |
+| Provenance des analyses | 690 s | 228 s |
+| Enregistrement des étiquettes (avant les passes) | — | 40 s |
+| `match_dates` 2.30, `match_stats` + `ANALYZE` | 54 + 360 s | 44 + 219 s |
+
+- **Une passe par table** : toutes les conversions d'une table dans le même `UPDATE` par
+  tranches de 50 000 ids ; une ligne déjà convertie n'est pas réécrite. Le plateau est lu par
+  une fonction Go enregistrée dans SQLite ; l'expression à 28 `json_extract` ne sert plus
+  qu'aux formes qu'elle décline (JSON5, valeurs < −256…).
+- **Plus de `DROP COLUMN`** : les colonnes d'action sont retypées INTEGER par édition du
+  `CREATE TABLE` (`writable_schema`, procédure documentée par SQLite, cookie de schéma
+  incrémenté), puis converties sur place. Repli sur l'ancien ADD/DROP/RENAME si la
+  déclaration n'est pas la forme simple `col TEXT`. Un marqueur dans `metadata`, écrit dans
+  la transaction de l'édition, dit qu'une colonne INTEGER a encore des étiquettes : une
+  reprise les finit, une colonne INTEGER sans marqueur n'est pas touchée.
+- **Provenance** : décodeur zstd par cœur (le décodeur partagé n'a qu'une place et
+  sérialisait `DecodeAnalysesConcurrently`, cf. § 7.1) et pipeline lecture/décodage/écriture.
+- **WAL** : `wal_checkpoint(TRUNCATE)` après chaque passe et après la provenance ; le pic
+  restant est la plus grosse transaction (une tranche, un `CREATE INDEX`).
+- **Identité** : `TestMigrate_2_31_MatchesReference` garde l'étape d'origine comme oracle et
+  compare chaque cellule de chaque table, les types déclarés et les index ;
+  `TestMigrate_2_31_ResumesAfterCancel` coupe l'ouverture dans chacune des six phases puis
+  rouvre : même contenu. Sur BMAB, les agrégats (codes d'action, moteurs et profondeurs,
+  `action_label`, plateaux, dates, `match_stats`) sont identiques entre la copie migrée par
+  l'ancien binaire (`run/`) et celle migrée par le nouveau.
+
+**#2 `vacuum`** : le bureau et la CLI écrivent la base compactée par `VACUUM INTO` à côté du
+fichier puis la renomment par-dessus ; il faut la taille du fichier en libre, au lieu de deux
+fois plus un fichier temporaire de la même taille. Si une autre connexion tient le fichier
+(son `-wal` survit à la fermeture des nôtres), il n'est pas remplacé et le `VACUUM` sur place
+reste le chemin, comme pour le démon. Sur la copie migrée (blobs JSON),
+où le `VACUUM` sur place était impossible (§ 4) : **14,45 → 9,79 Go (−32 %)** en 3 622 s sous
+une charge de 45 à 55 (recompression des 15,6 M blobs 46 min, `VACUUM INTO` + remplacement +
+`ANALYZE` 15 min). Le pic de disque, relevé sur tout le volume que d'autres sessions
+écrivaient, est de 14,95 Go et n'est pas attribuable ; le minimum théorique est la copie
+(9,79 Go) plus le WAL d'une tranche.
+
+**#9 `info`** : `GetDatabaseStats` comptait chaque table deux fois (ses cinq `COUNT`, puis
+ceux de `Counts`) ; il lit désormais `Counts` une fois. Le gain n'a pas pu être chronométré
+proprement (poste à une charge de 25 à 55 pendant la mesure, 70 à 800 s par appel selon le
+cache). Le décompte des gaffes reste l'essentiel du temps : **#9 reste ouvert** pour un
+décompte à la demande ou mis en cache.
+
 ## 8. Reproduire
 
 Scripts dans `~/src/bench-scale/mesure-0.37/` : `mesure.py` (temps, CPU, RSS), `rep.sh`

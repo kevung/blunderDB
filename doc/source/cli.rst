@@ -363,6 +363,8 @@ Exporte le contenu de la base vers des fichiers.
 * ``--collection-ids`` — IDs de collections à exporter (séparés par des virgules).
 * ``--match-ids`` — IDs de matchs à exporter (séparés par des virgules, vide = tous).
 * ``--tournament-ids`` — IDs de tournois à exporter (séparés par des virgules).
+* ``--deck-ids`` — IDs de paquets Anki à exporter avec leurs positions, sans
+  leur historique de révision (séparés par des virgules).
 * ``--password`` — Enveloppe le résultat dans un conteneur chiffré (``.dbx``).
 * ``--watermark`` — Écrit une déclaration d'origine **signée** dans le fichier
   exporté (voir :ref:`diffusion_controlee`).
@@ -973,6 +975,33 @@ tout de même avec le code 0.
    ./blunderdb collection export --db base.db --id 3,4 --out ouvertures.db \
        --watermark "Cours de Jean Dupont - 12 mars 2026"
 
+study — La file d'étude transversale
+------------------------------------
+
+Liste les blunders du joueur de référence de la base, tous imports confondus,
+que rien n'a encore traités : sans commentaire, sans carte Anki, hors de toute
+collection et sans marque « vu » (voir :ref:`file_etude_transversale`). Chaque
+sous-commande prend ``--db``.
+
+.. code-block:: bash
+
+   ./blunderdb study <subcommand> [options]
+
+**Sous-commandes:**
+
+* ``queue [--limit <n>] [--format text|json]`` — La file, du plus coûteux au
+  moins coûteux ; cinquante positions au plus.
+* ``mark --id <id>`` — Marque la position vue : elle sort de la file. La marque
+  est une donnée de la base, jamais exportée.
+* ``unmark --id <id>`` — Retire la marque : la position revient dans la file.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb study queue --db base.db --limit 20
+   ./blunderdb study mark --db base.db --id 1234
+
 lesson — Gérer les leçons
 -------------------------
 
@@ -1014,11 +1043,16 @@ acceptent ``--format text`` (défaut) ou ``json``.
   collections et les positions que leurs étapes montrent, vers un nouveau
   fichier de base ; avec ``--password``, le fichier est un ``.dbx`` protégé
   (voir la commande ``export`` pour le filigrane).
+* ``done --step <id> [--undo]`` — Marque une étape comme faite dans cette base,
+  ou retire la marque avec ``--undo`` : c'est la progression de celui qui lit
+  la leçon, et aucun export ne l'emporte.
+* ``progress --id <id> [--format text|json]`` — Montre les étapes de la leçon
+  marquées faites, avec la date du geste.
 
 Importer un fichier qui contient une leçon crée celle-ci avec ses étapes ; une
 leçon dont le nom existe déjà dans la base n'est pas touchée, si bien que
 réimporter le même fichier ne change rien. Lire une leçon n'enregistre rien chez
-celui qui la lit.
+celui qui la lit ; seul ``done`` écrit sa progression.
 
 L'export de toute la bibliothèque (``export --type database``) emporte toutes
 les leçons avec ce que leurs étapes montrent ; un export partiel ne les emporte
@@ -1187,6 +1221,16 @@ bilan des matchs menés à terme.
 
    ./blunderdb stats h2h --db <fichier> --player <nom> --opponent <nom> [options]
 
+**stats contrast** — Les positions que deux joueurs ont tous deux eu à jouer et
+où l'un a bien joué (sous le seuil Erreur) et l'autre non, l'écart le plus large
+d'abord ; un joueur est jugé sur son pire coup de la position. ``--limit N``
+garde les N premières lignes du texte ; le JSON donne tout, avec les
+``position_id``.
+
+.. code-block:: bash
+
+   ./blunderdb stats contrast --db <fichier> --player <nom> --opponent <nom> [options]
+
 **stats windows** — Le PR sur une fenêtre calendaire glissante : une ligne par
 mois, chacune couvrant ce mois et les précédents de la fenêtre
 (``--window month``, ``quarter`` ou un nombre de mois).
@@ -1216,6 +1260,7 @@ filtre de provenance, qui porte sur chaque décision.
 .. code-block:: bash
 
    ./blunderdb stats h2h --db base.db --player "Alice" --opponent "Bob"
+   ./blunderdb stats contrast --db base.db --player "Alice" --opponent "Bob"
    ./blunderdb stats windows --db base.db --player "Alice" --window quarter --format json
    ./blunderdb stats ranking --db base.db --min-decisions 1000 --limit 20
    ./blunderdb list --type stats --db base.db --player "Alice" --min-depth 3
@@ -2234,16 +2279,18 @@ l'ouverture d'une base, car son coût est imprévisible sur une grosse base.
   (``{"size_before", "size_after", "reclaimed"}``, en octets).
 
 La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la taille
-affichée avant compactage soit honnête, vérifie qu'il reste sur le disque
-environ deux fois la taille actuelle du fichier (SQLite reconstruit
-entièrement la base avant de basculer dessus), effectue le ``VACUUM`` puis un
-``ANALYZE`` pour rafraîchir les statistiques utilisées par le planificateur de
-requêtes. Si l'espace disque manque, la commande refuse de démarrer avec un
-message explicite plutôt que de risquer un compactage interrompu.
+affichée avant compactage soit honnête, vérifie qu'il reste à côté du fichier
+environ sa taille en espace libre, écrit la base compactée dans une copie
+(``VACUUM INTO``) qui remplace ensuite le fichier, puis lance un ``ANALYZE``
+pour rafraîchir les statistiques utilisées par le planificateur de requêtes.
+Si un autre programme a la base ouverte, le fichier n'est pas remplacé : la
+commande compacte sur place (``VACUUM``), ce qui demande environ deux fois la
+taille du fichier en espace libre. Si l'espace disque manque, la commande
+refuse de démarrer avec un message explicite plutôt que de risquer un
+compactage interrompu.
 
-Avant le ``VACUUM``, chaque analyse est réécrite au format binaire compact,
-compressé au plus fort : y compris celles qu'une version antérieure avait
-rangées en JSON (voir ``reencode``).
+Avant le compactage, chaque analyse encore rangée en JSON par une version
+antérieure est réécrite au format binaire compact (voir ``reencode``).
 
 **Exemple:**
 
@@ -2256,6 +2303,44 @@ rangées en JSON (voir ``reencode``).
    #   After:  41.2 MiB
    #   Reclaimed: 87.2 MiB
 
+met — La table d'équité de match de la base
+--------------------------------------------
+
+Liste, importe ou choisit la table d'équité de match (MET) avec laquelle
+gammonNet valorise les scores de match de la base : Kazaross-XG2, intégrée,
+par défaut, ou une table explicite au format ``.xml`` de GNUbg. Chaque analyse
+calculée enregistre sa table ; une analyse à un score de match calculée avec
+une autre table que la table courante est sortie des statistiques. Changer de
+table ne réécrit aucune analyse.
+
+.. code-block:: bash
+
+   ./blunderdb met --db <path> [--import <fichier.xml> [--current] | --use <id>]
+
+**Options:**
+
+* ``--db`` — Base de données (obligatoire).
+* ``--import`` — Importe une table ``.xml`` de GNUbg. Une table déjà présente,
+  ou identique à Kazaross-XG2, n'est pas ajoutée une seconde fois.
+* ``--current`` — Avec ``--import`` : rend la table importée courante.
+* ``--use`` — Rend courante la table d'identifiant donné ; ``0`` revient à
+  Kazaross-XG2.
+* ``--format`` — Format de sortie : ``text`` (défaut) ou ``json``.
+
+La commande affiche ensuite les tables de la base, la courante marquée d'un
+``*``. Le démon expose les mêmes opérations sur les routes ``met.list``,
+``met.import``, ``met.setCurrent`` et ``met.ofAnalysis``, limitées au tenant
+de l'appelant.
+
+**Exemple:**
+
+.. code-block:: bash
+
+   ./blunderdb met --db base.db --import Rockwell-Kazaross.xml --current
+
+   #     0  Kazaross-XG2
+   # *   1  Rockwell/Kazaross 25 point MET
+
 reencode — Réécrire les analyses au format compact
 --------------------------------------------------
 
@@ -2264,9 +2349,9 @@ plus petit que le JSON compressé des versions antérieures et plusieurs fois
 plus rapide à relire. Une base créée avant ce format reste lisible telle
 quelle : ses anciennes analyses sont converties quand elles sont réécrites (un
 import qui les enrichit, un ``vacuum``). ``reencode`` les convertit toutes,
-sans compacter le fichier : utile sur une grosse base, où un ``vacuum`` demande
-le double de l'espace disque, ou sur un serveur PostgreSQL, qui n'a pas de
-``vacuum``.
+sans compacter le fichier : utile quand le disque n'a pas la place de la
+copie compactée qu'écrit un ``vacuum``, ou sur un serveur PostgreSQL, qui n'a
+pas de ``vacuum``.
 
 .. code-block:: bash
 

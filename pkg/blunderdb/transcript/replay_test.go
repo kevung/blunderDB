@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kevung/blunderdb/internal/cputime"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
@@ -142,18 +143,22 @@ func TestReplayLatency(t *testing.T) {
 	doc.Actions = doc.Actions[:actions]
 	doc.Cursor = len(doc.Actions)
 
+	// Processor time, not wall time: beside a heavy package of `go test ./...`
+	// a wall clock also counts the wait for a core (see internal/cputime).
 	best := time.Duration(1<<63 - 1)
+	unit := ""
 	for i := 0; i < 3; i++ {
-		start := time.Now()
+		clock := cputime.Start()
+		unit = clock.Unit()
 		ann := Replay(doc, 0)
-		if elapsed := time.Since(start); elapsed < best {
+		if elapsed := clock.Elapsed(); elapsed < best {
 			best = elapsed
 		}
 		if len(ann.Actions) != actions {
 			t.Fatalf("replayed %d actions", len(ann.Actions))
 		}
 	}
-	t.Logf("Replay of %d Actions: %v (%v per Action)", actions, best, best/actions)
+	t.Logf("Replay of %d Actions: %v of %s (%v per Action)", actions, best, unit, best/actions)
 	if best > ceiling {
 		t.Errorf("Replay of %d Actions took %v, over the %v guard", actions, best, ceiling)
 	}

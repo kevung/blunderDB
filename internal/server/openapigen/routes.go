@@ -154,10 +154,25 @@ func classifyHandler(e ast.Expr, types map[string]typeInfo) (kind, req, resp, it
 		if fn.Sel.Name == "withIfMatch" && len(call.Args) == 1 {
 			return classifyHandler(call.Args[0], types)
 		}
+		// A hand-written handler's response is opaque, but its JSON request
+		// body is a declared type: s.handleX() is looked up in
+		// customRequestTypes so the contract still documents what it accepts.
+		if call.Args == nil || len(call.Args) == 0 {
+			if sx, ok := fn.X.(*ast.Ident); ok && sx.Name == "s" {
+				return kindCustom, customRequestTypes[fn.Sel.Name], "", "", false
+			}
+		}
 		return kindCustom, "", "", "", false
 	default:
 		return kindCustom, "", "", "", false
 	}
+}
+
+// customRequestTypes maps a hand-written handler constructor to the request
+// type it decodes, for the routes whose response is a file and so stay
+// custom. A handler absent here documents no request body.
+var customRequestTypes = map[string]string{
+	"handleExportSQLite": "exportSQLiteReq",
 }
 
 // classifyRPCCall handles a call whose Fun is a bare identifier: "rpc",

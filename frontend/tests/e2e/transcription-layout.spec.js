@@ -65,7 +65,7 @@ async function interposition(page) {
 
 test.describe('dock bas, à la hauteur plancher de l’onglet', () => {
     test.beforeEach(async ({ page }) => {
-        await openDraft(page, { GetPanelPosition: 'bottom', GetPanelHeight: 280 });
+        await openDraft(page, { GetPanelPosition: 'bottom', GetTabPanelHeights: { '*': 280 } });
     });
 
     test('le panneau ne défile pas', async ({ page }) => {

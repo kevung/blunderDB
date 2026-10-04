@@ -48,3 +48,16 @@ func (d *Database) PRByWindow(filter StatsFilter, months int) ([]storage.WindowS
 func (d *Database) PlayerRanking(filter StatsFilter, minDecisions int) ([]storage.RankedPlayer, error) {
 	return d.PlayerRankingCtx(context.Background(), filter, minDecisions)
 }
+
+// PlayerContrastCtx lists the positions two players both decided and answered
+// differently (storage.StatsStore.PlayerContrast).
+func (d *Database) PlayerContrastCtx(ctx context.Context, playerA, playerB string, filter StatsFilter) (*storage.PlayerContrast, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().PlayerContrast(ctx, "", playerA, playerB, toStorageStatsFilter(filter))
+}
+
+// PlayerContrast is PlayerContrastCtx for the GUI binding.
+func (d *Database) PlayerContrast(playerA, playerB string, filter StatsFilter) (*storage.PlayerContrast, error) {
+	return d.PlayerContrastCtx(context.Background(), playerA, playerB, filter)
+}

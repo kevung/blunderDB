@@ -100,10 +100,14 @@ def build(ep, n26):
     sheet = {"name": ep, "n26": n26, "players": [{"id": p["player"], "name": p["playerName"]} for p in roster],
              "phases": phases_of(last), "events": []}
     phase = 0
+    pending_rep = {}
     for i, e in enumerate(evs):
         t = e["type"]
         if t == "match":
             sheet["events"].append({"type": "match", "phase": phase, "a": pid(e["a"]), "b": pid(e["b"]), "winner": pid(e["winner"])})
+        elif t == "repechage":
+            # Noté au passage de phase : le repêché de la poule du retiré (« poule:A » → « Poule A »).
+            pending_rep["Poule " + e["pool"].split(":")[-1]] = pid(e["player"])
         elif t == "withdraw":
             sheet["events"].append({"type": "withdraw", "player": pid(e["player"])})
         elif t == "bye":
@@ -114,7 +118,11 @@ def build(ep, n26):
         elif t in ("next_phase", "draw"):
             if t == "next_phase":
                 phase += 1
-                sheet["events"].append({"type": "next_phase"})
+                ev = {"type": "next_phase"}
+                if pending_rep and n26 == "repechage":
+                    ev["repechage"] = dict(pending_rep)
+                pending_rep.clear()
+                sheet["events"].append(ev)
             # le tirage relevé juste après ce lancement
             key = min((k for k in draws if int(k.split("#")[1]) > raw["events"].index(e) and (t == "next_phase" or True)), key=lambda k: int(k.split("#")[1]), default=None)
             br = draws.get(key)
@@ -127,7 +135,7 @@ def build(ep, n26):
             elif br[phase]["kind"] != "swiss_lives":
                 if not any(x.get("type") == "draw" and "slots" in x for x in sheet["events"]):
                     slots = slots_of(br, phase)
-                    rep = repechage(sheet) if n26 == "repechage" else None
+                    rep = repechage(sheet) if n26 == "repechage" and None in slots else None
                     if rep and None in slots:
                         # Ce que Léa voulait : le repêché à la place laissée vide par le retiré.
                         slots[slots.index(None)] = rep
@@ -155,12 +163,13 @@ def app_ranks(ep):
 
 
 repA = build(A, "repechage")
-# Avec le repêché, le tableau voulu diffère dès le 1er tour de celui que l'appli a fait jouer :
-# les matchs du tableau joués à l'écran ne se rattachent plus. La variante repêchage s'arrête
-# donc au tirage ; on compare la phase de poules (qualifiés) et le tableau voulu.
-cut = next(i for i, e in enumerate(repA["events"]) if e["type"] == "draw" and "slots" in e)
-repA["events_tableau_non_rejouables"] = len([e for e in repA["events"][cut + 1:] if e["type"] == "match"])
-repA["events"] = repA["events"][:cut + 1]
+# Si l'appli a laissé une exemption là où Léa voulait le repêché (n26_note), le tableau voulu
+# diffère dès le 1er tour : les matchs joués à l'écran ne se rattachent plus et la variante
+# s'arrête au tirage. Quand l'appli a repêché elle-même, la feuille se rejoue jusqu'au bout.
+if "n26_note" in repA:
+    cut = next(i for i, e in enumerate(repA["events"]) if e["type"] == "draw" and "slots" in e)
+    repA["events_tableau_non_rejouables"] = len([e for e in repA["events"][cut + 1:] if e["type"] == "match"])
+    repA["events"] = repA["events"][:cut + 1]
 motA = build(A, "moteur")
 feuille = {"rencontre": "Rencontre du club", "epreuves": [repA, build(B, "repechage")], "variante_moteur": motA}
 os.makedirs(os.path.join(root, "feuilles"), exist_ok=True)
@@ -171,7 +180,8 @@ mp = os.path.join(d, "T3-moteur.json")
 json.dump(moteur, open(mp, "w"), ensure_ascii=False, indent=1)
 
 report = {}
-for variant, path in (("repechage", fp), ("moteur", mp)):
+# La variante « moteur » (place du retiré perdue) n'a de sens que si l'appli n'a pas repêché.
+for variant, path in (("repechage", fp), ("moteur", mp))[: 2 if "n26_note" in repA else 1]:
     res = oracle(path)
     report[variant] = res
     json.dump(res, open(os.path.join(d, "oracle-%s.json" % variant), "w"), ensure_ascii=False, indent=1)
@@ -179,7 +189,7 @@ for variant, path in (("repechage", fp), ("moteur", mp)):
 for ep_i, ep in enumerate((A, B)):
     app, st = app_ranks(ep)
     print("==", ep, "app:", len(app), "joueurs")
-    for variant in ("repechage", "moteur"):
+    for variant in report:
         res = report[variant]
         if "error" in res:
             print(variant, "ERREUR", res["error"][-600:])

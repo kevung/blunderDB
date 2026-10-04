@@ -86,8 +86,8 @@ export function GetPageStep() {
   return window['go']['main']['Config']['GetPageStep']();
 }
 
-export function GetPanelHeight() {
-  return window['go']['main']['Config']['GetPanelHeight']();
+export function GetTabPanelHeights() {
+  return window['go']['main']['Config']['GetTabPanelHeights']();
 }
 
 export function GetPanelPosition() {
@@ -214,8 +214,8 @@ export function SavePageStep(arg1) {
   return window['go']['main']['Config']['SavePageStep'](arg1);
 }
 
-export function SavePanelHeight(arg1) {
-  return window['go']['main']['Config']['SavePanelHeight'](arg1);
+export function SaveTabPanelHeight(arg1, arg2) {
+  return window['go']['main']['Config']['SaveTabPanelHeight'](arg1, arg2);
 }
 
 export function SavePanelPosition(arg1) {

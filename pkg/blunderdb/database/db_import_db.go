@@ -12,6 +12,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -425,6 +426,14 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, err
 	}
 
+	// The tables the source's analyses cite travel with them (ADR-0068,
+	// rule 5). A failure to carry one fails the import: the analysis would be
+	// read as valued with Kazaross-XG2.
+	carrier, srcMET, err := readImportMETs(ctx, importDB, stx)
+	if err != nil {
+		return nil, err
+	}
+
 	// OPTIMIZATION: Build a hash map of all current positions ONCE
 	// This converts O(n²) to O(n) complexity
 	currentPositionsMap, err := positionIdentityIndex(tx)
@@ -523,15 +532,28 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 						slog.Warn("inserting analysis for position", "positionID", existingPositionID, "err", err)
 					} else {
 						hasMerged = true
+						if err := carryTable(ctx, stx, carrier, srcMET[id], existingPositionID); err != nil {
+							_ = tx.Rollback()
+							return nil, err
+						}
 					}
 				} else if existingErr == nil {
 					existingAnalysis, _ := decodeAnalysisFromStorage(existingAnalysisData)
 					importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
+					existingSide, importedSide, metErr := mergeSides(ctx, stx, carrier, srcMET[id], existingPositionID, &existingAnalysis, &importAnalysis)
+					if metErr != nil {
+						_ = tx.Rollback()
+						return nil, metErr
+					}
 					if merged, changed := domain.MergeImportedAnalysis(&existingAnalysis, &importAnalysis); changed {
+						var metID any
+						if met := mets.AfterMerge(merged, existingSide, importedSide); met != 0 {
+							metID = met
+						}
 						encoded, encErr := encodeAnalysisForStorage(merged)
 						if encErr != nil {
 							slog.Warn("encoding merged analysis for position", "positionID", existingPositionID, "err", encErr)
-						} else if _, err = tx.Exec(`UPDATE analysis SET data = ?, analysis_engine = NULL WHERE position_id = ?`, encoded, existingPositionID); err != nil {
+						} else if _, err = tx.Exec(`UPDATE analysis SET data = ?, analysis_engine = NULL, met_id = ? WHERE position_id = ?`, encoded, metID, existingPositionID); err != nil {
 							slog.Warn("updating analysis for position", "positionID", existingPositionID, "err", err)
 						} else {
 							hasMerged = true
@@ -604,6 +626,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, updatedAnalysisData)
 				if err != nil {
 					slog.Warn("inserting analysis for new position", "positionID", newPositionID, "err", err)
+				} else if err := carryTable(ctx, stx, carrier, srcMET[id], newPositionID); err != nil {
+					_ = tx.Rollback()
+					return nil, err
 				}
 			}
 
@@ -641,6 +666,14 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	if err != nil {
 		return nil, err
 	}
+	srcDecks, err := readImportDecks(ctx, importDB)
+	if err != nil {
+		return nil, err
+	}
+	decks, err := ingest.MergeDecks(ctx, stx, "", srcDecks, srcCollections, targetOf)
+	if err != nil {
+		return nil, err
+	}
 
 	// Final check for cancellation before committing
 	if err = ctx.Err(); err != nil {
@@ -668,6 +701,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		"collections":              merged.Changed,
 		"livingCollectionsSkipped": merged.LivingSkipped,
 		"lessons":                  lessons,
+		"decks":                    decks,
 	}
 
 	slog.Info("import committed", "added", positionsAdded, "merged", positionsMerged, "skipped", positionsSkipped, "total", totalPositions)
@@ -689,6 +723,66 @@ func readImportCollections(ctx context.Context, importDB *sql.DB) ([]ingest.Sour
 	return ingest.ReadSourceCollections(ctx, sqlite.WrapTx(itx), "")
 }
 
+// carryTable records that the imported analysis now at positionID was valued
+// with the source table srcMET.
+func carryTable(ctx context.Context, stx storage.Stores, carrier *mets.Carrier, srcMET, positionID int64) error {
+	met, err := carrier.Target(ctx, srcMET)
+	if err != nil || met == 0 {
+		return err
+	}
+	return stx.MatchEquityTables().TagAnalyses(ctx, "", met, []int64{positionID})
+}
+
+// mergeSides describes the two analyses an import merges, each with the
+// receiver's id of the table its verdict was valued with, read before the
+// merge mutates either side: the merged verdict keeps the table of the side
+// it came from.
+func mergeSides(ctx context.Context, stx storage.Stores, carrier *mets.Carrier, srcMET, positionID int64, existing, imported *PositionAnalysis) (mets.Side, mets.Side, error) {
+	existingMET, err := stx.MatchEquityTables().OfAnalysis(ctx, "", positionID)
+	if err != nil {
+		return mets.Side{}, mets.Side{}, err
+	}
+	importedMET, err := carrier.Target(ctx, srcMET)
+	if err != nil {
+		return mets.Side{}, mets.Side{}, err
+	}
+	return mets.SideOf(existing, existingMET), mets.SideOf(imported, importedMET), nil
+}
+
+// readImportMETs reads the source's tables and the table of each analysis
+// citing one, and returns a carrier into the receiver. A source from before
+// the tables (schema < 2.31.0) cites none.
+func readImportMETs(ctx context.Context, importDB *sql.DB, dst storage.Stores) (*mets.Carrier, map[int64]int64, error) {
+	ofPosition := map[int64]int64{}
+	var tables []*domain.MatchEquityTable
+	if sqlite.TableExists(ctx, importDB, "match_equity_table") {
+		itx, err := importDB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
+		if err != nil {
+			return nil, nil, err
+		}
+		defer itx.Rollback()
+		if tables, err = mets.ReadTables(ctx, sqlite.WrapTx(itx).MatchEquityTables(), ""); err != nil {
+			return nil, nil, fmt.Errorf("reading the source's match equity tables: %w", err)
+		}
+		rows, err := itx.QueryContext(ctx, `SELECT position_id, met_id FROM analysis WHERE met_id IS NOT NULL`)
+		if err != nil {
+			return nil, nil, fmt.Errorf("reading the source analyses' match equity tables: %w", err)
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var pos, met int64
+			if err := rows.Scan(&pos, &met); err != nil {
+				return nil, nil, err
+			}
+			ofPosition[pos] = met
+		}
+		if err := rows.Err(); err != nil {
+			return nil, nil, err
+		}
+	}
+	return mets.NewCarrier(dst.MatchEquityTables(), "", tables), ofPosition, nil
+}
+
 // readImportLessons reads the source's Lessons like readImportCollections; a
 // source from before Lessons existed has none.
 func readImportLessons(ctx context.Context, importDB *sql.DB) ([]*domain.Lesson, error) {
@@ -701,6 +795,19 @@ func readImportLessons(ctx context.Context, importDB *sql.DB) ([]*domain.Lesson,
 	}
 	defer itx.Rollback()
 	return ingest.ReadSourceLessons(ctx, sqlite.WrapTx(itx), "")
+}
+
+// readImportDecks reads the source's Anki decks like readImportCollections.
+func readImportDecks(ctx context.Context, importDB *sql.DB) ([]ingest.SourceDeck, error) {
+	if !sqlite.TableExists(ctx, importDB, "anki_deck") {
+		return nil, nil
+	}
+	itx, err := importDB.BeginTx(ctx, &sql.TxOptions{ReadOnly: true})
+	if err != nil {
+		return nil, err
+	}
+	defer itx.Rollback()
+	return ingest.ReadSourceDecks(ctx, sqlite.WrapTx(itx), "")
 }
 
 // Deprecated: Use AnalyzeImportDatabase followed by CommitImportDatabase instead

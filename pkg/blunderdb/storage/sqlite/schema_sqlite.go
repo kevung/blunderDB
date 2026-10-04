@@ -560,6 +560,14 @@ var schemaStatements = []string{
 		lesson_step_id INTEGER PRIMARY KEY REFERENCES lesson_step(id) ON DELETE CASCADE,
 		done_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 	)`,
+	// The positions the user marked "studied" in the library-wide study
+	// backlog: written only by that gesture, reversible, never exported (a
+	// table of its own so that no exporter carries it). Not a retention
+	// reason: marking a position studied keeps nothing alive.
+	`CREATE TABLE IF NOT EXISTS study_mark (
+		position_id INTEGER PRIMARY KEY REFERENCES position(id) ON DELETE CASCADE,
+		marked_at INTEGER NOT NULL
+	)`,
 	// The action labels the fixed list of domain.ActionCode lacks, each under
 	// a code from domain.FirstRegisteredActionCode up (ADR-0071).
 	`CREATE TABLE IF NOT EXISTS action_label (
@@ -757,6 +765,9 @@ var schemaStatements = []string{
 	// looking for are the only ones this partial index holds — it is empty
 	// once the pass is over.
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_provenance_pending ON analysis(id) WHERE analysis_engine IS NULL`,
+	// The few analyses computed with an imported table: the stats read them to
+	// leave out what another table valued (ADR-0068).
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_met            ON analysis(met_id) WHERE met_id IS NOT NULL`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_creation_date  ON analysis(creation_date)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_match_date     ON position(match_date)`,
 	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_batch ON import_batch_file(batch_id)`,

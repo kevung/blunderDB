@@ -140,6 +140,11 @@
         "gammonnetStaleCount": "{n} vanhentunutta gammonNet-analyysiä.",
         "gammonnetStaleStart": "Analysoi vanhentuneet positiot uudelleen",
         "gammonnetStaleNote": "Suorittaa gammonNetin uudelleen jo analysoiduille positioille, jotka on kirjoitettu vanhemmalla moottoriversiolla tai eri syvyydellä kuin tässä on asetettu — XG-, GNUbg- ja BGBlitz-analyyseihin ei koskaan kosketa.",
+        "metCurrent": "Tietokannan ottelun pääomataulukko (MET)",
+        "metImport": "Tuo .xml-MET…",
+        "metNote": "gammonNet arvottaa ottelutilanteet tällä taulukolla, ja jokainen sen laskema analyysi tallentaa sen. Ottelutilanteen analyysi, joka on laskettu toisella taulukolla, merkitään ”eri MET” ja jätetään tilastojen ulkopuolelle. Taulukon vaihto ei kirjoita yhtään analyysia uudelleen. Vain eksplisiittiset gnubg-taulukot luetaan.",
+        "metImported": "Taulukko tuotu: {name}",
+        "metBuiltInImported": "Tämä tiedosto on Kazaross-XG2, sisäänrakennettu taulukko: mitään ei lisätty.",
         "checkForUpdates": "Tarkista päivitykset käynnistyksen yhteydessä",
         "checkForUpdatesNote": "Kysyy kerran GitHubin julkaisusivulta käynnistyksen yhteydessä. Oletuksena pois päältä, eikä koskaan oteta automaattisesti käyttöön pakettienhallinnan kautta asennetussa versiossa (Flatpak, jakelupaketti, Homebrew…).",
         "repairIntro": "Laskee analyysisarakkeet uudelleen itse analyyseista. Sarakkeet ovat projektio tallennetusta datasta, joka pysyy koskemattomana: projektion vika on korjattavissa ilman uudelleentuontia. Nimenomainen eikä koskaan automaattinen.",
@@ -778,6 +783,8 @@
     },
     "analysis": {
         "analysisDepth": "Analyysin syvyys",
+        "metDifferent": "Eri MET: analyysi laskettu taulukolla {name}",
+        "metDifferentTitle": "Laskettu taulukolla {name}; tietokanta käyttää taulukkoa {current}. Analyysi on jätetty tilastojen ulkopuolelle.",
         "bestAction": "Paras toiminto",
         "noDouble": "Ei tuplausta",
         "doubleTake": "Tuplaus/Otto",
@@ -1084,7 +1091,10 @@
         "descProtected": "salasana",
         "tournamentsNeedMatches": "Turnaus liitetään otteluihinsa vain jos ottelutkin viedään — valitse ensin ”sisällytä ottelut”.",
         "filterLibraryHint": "Omat tallennetut hakusi, ei sisältöä: toisen tietokannassa niistä ei ole hyötyä.",
-        "metadataTitle": "Vietävän tiedoston metatiedot"
+        "metadataTitle": "Vietävän tiedoston metatiedot",
+        "includeLessons": "Sisällytä oppitunnit ({count})",
+        "selectLessons": "Valitse vietävät oppitunnit",
+        "descLessons": "{count} oppituntia"
     },
     "import": {
         "minimize": "Pienennä",
@@ -1658,6 +1668,12 @@
         "compareToggle": "Vertaa {name}",
         "compareTitle": "{a} ja {b} rinnakkain",
         "compareClear": "Tyhjennä",
+        "contrastButton": "Paikat, jotka toinen pelasi hyvin ja toinen ei",
+        "contrastSummary": "{n} / {total} yhteisestä paikasta: {a} pelasi {na} hyvin, {b} pelasi {nb} hyvin.",
+        "contrastEmpty": "Yksikään {total} yhteisestä paikasta ei ollut sellainen, jonka toinen pelasi hyvin ja toinen ei.",
+        "contrastOpen": "Avaa nämä paikat",
+        "contrastUnscored": "{n} näiden kahden pelaajan siirtoa ei ole vielä pisteytetty, ja ne jätetään pois: siirrot pisteytetään vain pyynnöstä.",
+        "contrastScore": "Pisteytä siirrot",
         "compareBlunderRate": "Blunderit / 100 päät.",
         "trainingTitle": "Harjoittelu ja edistyminen",
         "trainingHint": "Päätös-tietovisan PR, suodattimen ottelujen PR ja Anki-muistaminen samoissa kalenteri-ikkunoissa. Tietovisan PR on oikean PR:n asteikolla; muistaminen luetaan oikeasta akselista (%). Sulkeissa päätösten tai kertausten määrä: ikkunalla ilman otosta ei ole arvoa.",
@@ -1754,7 +1770,13 @@
         "empty": "Tässä tuonnissa ei ole mitään toisen katseen arvoista.",
         "failed": "Opiskelujonoa ei voitu rakentaa.",
         "finished": "Opiskelujono valmis: {n} asemaa käyty läpi.",
-        "stopped": "Opiskelujonosta poistuttiin."
+        "stopped": "Opiskelujonosta poistuttiin.",
+        "reasonBacklog": "käsittelemätön virhe",
+        "markStudied": "Merkitse nähdyksi",
+        "unmark": "Poista merkintä",
+        "backlogEmpty": "Ei odottavia virheitä: kaikki on kommentoitu, lajiteltu, kortilla tai merkitty nähdyksi.",
+        "markFailed": "Merkintää ei voitu tallentaa.",
+        "unmarked": "Merkintä poistettu: asema palaa jonoon."
     },
     "home": {
         "title": "blunderDB",
@@ -2690,7 +2712,8 @@
             "history": "Hakuhistoria",
             "match": "Otteluiden paneeli",
             "collection": "Kokoelmien paneeli",
-            "lesson": "Oppitunnit (le N avaa oppitunnin N)",
+            "lesson": "Oppitunnit (le N avaa oppitunnin N, le edit avaa muokkaimen)",
+            "study": "Opiskelujono: käsittelemättömät pahat virheesi",
             "eval": "Eval-paneeli",
             "rollout": "Rollaa asema (rollout fast|standard, search, stop)",
             "transcribe": "Ottelujen litterointi",
@@ -2789,7 +2812,11 @@
         "empty": "Oppitunnilla ei ole vielä vaiheita.",
         "notFound": "Oppituntia nro {id} ei ole.",
         "failed": "Oppitunteja ei voitu lukea.",
-        "stepMissing": "Tämän vaiheen sisältöä ei enää ole tietokannassa."
+        "stepMissing": "Tämän vaiheen sisältöä ei enää ole tietokannassa.",
+        "edit": "Muokkaa",
+        "stepDone": "Vaihe tehty",
+        "stepDoneHint": "Merkitsee vaiheen tehdyksi tähän tietokantaan; toinen napsautus poistaa merkinnän. Lukemisesta ei tallenneta muuta.",
+        "doneCount": "{done} / {n} tehty"
     },
     "corpus": {
         "intro": "Kaksoiskappaleet ja kirjoitusasut: mitä tuonti tunnistaa jo tallennetuksi, ja saman pelaajan tai tapahtuman muut nimet.",
@@ -2817,5 +2844,32 @@
         "applyPairing": "Luo nämä aliakset",
         "pairingApplied": "Aliakset luotu",
         "suspectLonger": "#{match} jatkaa ottelua #{other} ({players})"
+    },
+    "lessonEditor": {
+        "title": "Oppitunnit",
+        "failed": "Epäonnistui: {error}",
+        "confirmDelete": "Poistetaanko oppitunti ”{name}”? Sen kokoelmat ja asemat säilyvät.",
+        "newStepTitle": "Vaihe {n}",
+        "confirmRemoveStep": "Poistetaanko vaihe ”{title}”?",
+        "noCurrentPosition": "Laudalla ei ole asemaa.",
+        "newLessonName": "Uuden oppitunnin nimi",
+        "create": "Luo",
+        "name": "Nimi",
+        "description": "Kuvaus",
+        "save": "Tallenna",
+        "read": "Lue",
+        "delete": "Poista",
+        "stepTitle": "Vaiheen otsikko",
+        "up": "Ylös",
+        "down": "Alas",
+        "stepText": "Vaiheen teksti",
+        "collection": "Näytettävä kokoelma",
+        "noCollection": "Ei kokoelmaa",
+        "position": "Asema {id}",
+        "useCurrentPosition": "Nykyinen asema",
+        "detachPosition": "Irrota asema",
+        "saveStep": "Tallenna vaihe",
+        "removeStep": "Poista vaihe",
+        "addStep": "Lisää vaihe"
     }
 }

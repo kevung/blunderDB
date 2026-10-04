@@ -69,6 +69,9 @@ type Summary struct {
 	// Lessons counts the Lessons a native .db import created (MergeLessons);
 	// one whose name the target already holds is left alone.
 	Lessons int `json:"lessons,omitempty"`
+	// Decks counts the Anki decks a native .db import created (MergeDecks);
+	// one whose name the target already holds is left alone.
+	Decks int `json:"decks,omitempty"`
 	// FlagsApplied counts the source-tool study marks a skipped duplicate
 	// still delivered to its stored positions (ADR-0006).
 	FlagsApplied int `json:"flagsApplied,omitempty"`

@@ -12,7 +12,7 @@ import { installDirectionEngine } from './helpers/directionEngine.js';
 
 // Dock à sa hauteur par défaut : sans elle, le mock rend null et le dock prend une hauteur
 // automatique qui écrase la page Direction (voir direction-hall-768.spec.js).
-const DOCK = { GetPanelHeight: 250, GetPanelPosition: 'bottom' };
+const DOCK = { GetPanelPosition: 'bottom' };
 
 const ROOM = {
     id: 5,
