@@ -832,16 +832,18 @@ func (e *exporter) writeTournaments() error {
 // the link.
 // exportedMatchColumns are the match columns an export carries, in the
 // order writeMatches binds them: an allow-list, like issuance.Carried for
-// the metadata keys (ADR-0007). A column added to the match table is not
+// the metadata keys (ADR-0007). The match's own note and its author travel
+// by issuance.CarriedMatchCommentColumns instead, like a position's
+// comments, and are appended after these. A column added to the match table is not
 // exported until it is named here — or in notExportedMatchColumns, with the
-// reason — and TestExportMatchColumnsClassified fails until one of the two
-// says so. The source metadata (ratings, experience, transcriber, session
+// reason — and TestExportMatchColumnsClassified fails until one of the
+// lists says so. The source metadata (ratings, experience, transcriber, session
 // rules, engine version) is what the file said of the match: it travels
 // with it (ADR-0067).
 var exportedMatchColumns = []string{
 	"player1_name", "player2_name", "event", "location", "round", "match_length",
 	"match_date", "import_date", "file_path", "game_count", "match_hash", "canonical_hash",
-	"tournament_id", "tournament_sort_order", "last_visited_position", "comment", "comment_author",
+	"tournament_id", "tournament_sort_order", "last_visited_position",
 	"player1_elo", "player2_elo", "player1_experience", "player2_experience",
 	"transcriber", "has_jacoby", "has_beaver", "engine_version",
 }
@@ -871,16 +873,17 @@ func (e *exporter) writeMatches() error {
 				tournamentID = newID
 			}
 		}
+		noteCols, noteArgs := carriedMatchComment(m)
 		res, err := e.tx.ExecContext(e.ctx,
-			`INSERT INTO match (`+strings.Join(exportedMatchColumns, ", ")+`)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, ?, ?, ?,
-			         ?, ?, ?, ?, ?, ?, ?, ?)`,
-			m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round, m.MatchLength,
-			nullableTime(m.MatchDate), nullableTime(m.ImportDate), m.FilePath, m.GameCount,
-			m.MatchHash, m.CanonicalHash,
-			tournamentID, m.TournamentSortOrder, m.LastVisitedPosition, m.Comment, m.CommentAuthor,
-			m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
-			m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion)
+			`INSERT INTO match (`+strings.Join(append(slices.Clone(exportedMatchColumns), noteCols...), ", ")+`)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, ?,
+			         ?, ?, ?, ?, ?, ?, ?, ?`+strings.Repeat(", ?", len(noteArgs))+`)`,
+			append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round, m.MatchLength,
+				nullableTime(m.MatchDate), nullableTime(m.ImportDate), m.FilePath, m.GameCount,
+				m.MatchHash, m.CanonicalHash,
+				tournamentID, m.TournamentSortOrder, m.LastVisitedPosition,
+				m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
+				m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion}, noteArgs...)...)
 		if err != nil {
 			e.skip("inserting match", "matchID", id, "err", err)
 			continue
@@ -1113,6 +1116,24 @@ func remapIDList(csv string, m map[int64]int64) string {
 		}
 	}
 	return strings.Join(out, ",")
+}
+
+// carriedMatchComment spells the match's own note from the
+// issuance.CarriedMatchCommentColumns allow-list, as carriedComment does for
+// a position's comments.
+func carriedMatchComment(m *domain.Match) (cols []string, args []any) {
+	for _, col := range issuance.CarriedMatchCommentColumns {
+		switch col {
+		case "comment":
+			args = append(args, m.Comment)
+		case "comment_author":
+			args = append(args, m.CommentAuthor)
+		default:
+			panic("issuance.CarriedMatchCommentColumns names " + col + ", which the export does not know how to copy")
+		}
+		cols = append(cols, col)
+	}
+	return cols, args
 }
 
 // carriedComment spells the INSERT of one exported comment from the

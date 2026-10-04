@@ -1,0 +1,102 @@
+/**
+ * MatchPanel.commentAuthor.test.js
+ *
+ * The match sheet names who signs the match comment — the author the source
+ * file gave its header or footer note, or « Votre nom » after an edit — as the
+ * comment panel does for a position's comments.
+ */
+
+import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, cleanup, fireEvent } from '@testing-library/svelte';
+import { tick } from 'svelte';
+
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    ListMatches: vi.fn(() =>
+        Promise.resolve([
+            { id: 7, player1_name: 'Alice', player2_name: 'Bob', match_length: 5, match_date: '2026-01-15', game_count: 2, comment: 'Opening notes', comment_author: 'Carol' },
+            { id: 8, player1_name: 'Dave', player2_name: 'Erin', match_length: 5, match_date: '2026-01-16', game_count: 1, comment: 'Unsigned note' }
+        ])
+    ),
+    CountMatches: vi.fn(() => Promise.resolve(1)),
+    GetMatchByID: vi.fn(() => Promise.resolve(null)),
+    GetAllTournaments: vi.fn(() => Promise.resolve([])),
+    ListTranscriptions: vi.fn(() => Promise.resolve([])),
+    DeleteMatch: vi.fn(() => Promise.resolve()),
+    UpdateMatch: vi.fn(() => Promise.resolve()),
+    UpdateMatchComment: vi.fn(() => Promise.resolve()),
+    GetMatchMovePositions: vi.fn(() => Promise.resolve([])),
+    GetGamesByMatch: vi.fn(() => Promise.resolve([])),
+    GetMatchDetailStats: vi.fn(() => Promise.resolve(null)),
+    GetMatchMoveGrades: vi.fn(() => Promise.resolve([])),
+    LoadAnalysis: vi.fn(() => Promise.resolve(null)),
+    SetMatchTournamentByName: vi.fn(() => Promise.resolve()),
+    SwapMatchPlayers: vi.fn(() => Promise.resolve()),
+    SaveLastVisitedPosition: vi.fn(() => Promise.resolve()),
+    LoadCommandHistory: vi.fn(() => Promise.resolve([])),
+    SaveCommand: vi.fn(() => Promise.resolve())
+}));
+
+import { openPanels, PANEL } from '../stores/uiStore.js';
+import { databasePathStore } from '../stores/databaseStore.js';
+import { ListMatches, GetMatchByID, UpdateMatchComment } from '../../wailsjs/go/database/Database.js';
+import MatchPanel from '../components/MatchPanel.svelte';
+
+/**
+ * The list is loaded twice at mount (onMount, then the visibility effect) and
+ * the second load clears the selection when it resolves: wait for both before
+ * touching a row.
+ */
+async function settle() {
+    await vi.waitFor(() => expect(ListMatches).toHaveBeenCalledTimes(2));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    for (let i = 0; i < 4; i++) await tick();
+}
+
+async function select(container, name) {
+    const cell = () => [...container.querySelectorAll('tbody tr td')].find((td) => td.textContent.includes(name));
+    await vi.waitFor(() => expect(cell()).toBeTruthy());
+    await fireEvent.click(cell());
+    await vi.waitFor(() => expect(container.querySelector('.detail-pane')).not.toBeNull());
+    await fireEvent.click(container.querySelectorAll('.detail-tab')[1]);
+    for (let i = 0; i < 4; i++) await tick();
+    return container.querySelector('.detail-pane').textContent;
+}
+
+describe('MatchPanel — the author of the match comment', () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        databasePathStore.set('/tmp/test.db');
+        openPanels.set(new Set([PANEL.MATCH]));
+    });
+    afterEach(cleanup);
+
+    test('a signed match comment shows its author', async () => {
+        const { container } = render(MatchPanel);
+        await settle();
+        await select(container, 'Alice');
+        expect(container.querySelector('.match-comment-display').textContent).toContain('Opening notes');
+        expect(container.querySelector('.match-comment-author')?.textContent).toBe('Carol');
+    });
+
+    test('an unsigned match comment shows no author', async () => {
+        const { container } = render(MatchPanel);
+        await settle();
+        await select(container, 'Dave');
+        expect(container.querySelector('.match-comment-display').textContent).toContain('Unsigned note');
+        expect(container.querySelector('.match-comment-author')).toBeNull();
+    });
+
+    test('an edited comment shows the author the backend signed it with', async () => {
+        const { container } = render(MatchPanel);
+        await settle();
+        await select(container, 'Alice');
+        GetMatchByID.mockResolvedValue({ id: 7, comment: 'Revised', comment_author: 'Ivy' });
+        await fireEvent.click(container.querySelector('.match-comment-display'));
+        await tick();
+        const input = container.querySelector('.match-comment-input');
+        await fireEvent.input(input, { target: { value: 'Revised' } });
+        await fireEvent.keyDown(input, { key: 'Enter' });
+        await vi.waitFor(() => expect(UpdateMatchComment).toHaveBeenCalledWith(7, 'Revised'));
+        await vi.waitFor(() => expect(container.querySelector('.match-comment-author')?.textContent).toBe('Ivy'));
+    });
+});

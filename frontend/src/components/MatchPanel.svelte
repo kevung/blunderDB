@@ -128,8 +128,10 @@
         onSave: async (matchId, text) => {
             try {
                 await UpdateMatchComment(matchId, text);
-                if (detailMatch && detailMatch.id === matchId) detailMatch.comment = text;
-                matchListStore.patchRow(matchId, { comment: text });
+                // The backend signs the edit with « Votre nom »; read back who it names.
+                const comment_author = (await GetMatchByID(matchId))?.comment_author || '';
+                if (detailMatch && detailMatch.id === matchId) Object.assign(detailMatch, { comment: text, comment_author });
+                matchListStore.patchRow(matchId, { comment: text, comment_author });
                 statusBarTextStore.set(tMsg('match.commentUpdated'));
             } catch (error) {
                 logger.error('Error updating comment:', error);
@@ -1081,6 +1083,9 @@
                                             <span class="match-comment-display" onclick={() => commentEdit.start(detailMatch.id, detailMatch.comment || '')} title={$t('match.clickToAddComment')}>
                                                 {detailMatch.comment || $t('match.addComment')}
                                             </span>
+                                            {#if detailMatch.comment && detailMatch.comment_author}
+                                                <span class="match-comment-author">{detailMatch.comment_author}</span>
+                                            {/if}
                                         {/if}
                                     </td>
                                 </tr>
@@ -1677,6 +1682,13 @@
 
     .match-comment-display:hover {
         background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
+    }
+
+    .match-comment-author {
+        margin-left: 6px;
+        font-size: var(--font-size-small);
+        font-weight: 600;
+        color: var(--color-text);
     }
 
     .match-comment-input {

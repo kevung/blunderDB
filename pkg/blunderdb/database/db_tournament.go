@@ -92,7 +92,8 @@ func (d *Database) RemoveMatchFromTournament(matchID int64) error {
 	return d.store.Tournaments().RemoveMatch(context.Background(), "", matchID)
 }
 
-// UpdateMatchComment updates the comment of a match
+// UpdateMatchComment updates the comment of a match, signed like a position
+// comment by the author SetCommentAuthor named.
 func (d *Database) UpdateMatchComment(matchID int64, comment string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -100,7 +101,7 @@ func (d *Database) UpdateMatchComment(matchID int64, comment string) error {
 	if d.db == nil {
 		return fmt.Errorf("no database is currently open")
 	}
-	return d.store.Matches().UpdateComment(context.Background(), "", matchID, comment)
+	return d.store.Matches().UpdateComment(d.authorCtx(), "", matchID, comment)
 }
 
 // UpdateTournamentComment updates the comment of a tournament

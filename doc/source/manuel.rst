@@ -1382,7 +1382,9 @@ match qui ne les avait pas, sans rien remplacer de ce qu'il porte déjà. La
 commande ``match`` de la ligne de commande les affiche aussi. Les commentaires
 d'en-tête et de pied de match d'un fichier eXtreme Gammon deviennent le
 commentaire du match, signé du nom de son transcripteur, ou ``XG`` si le fichier
-n'en nomme pas ; l'horloge et la table d'équité ne sont pas importées.
+n'en nomme pas ; l'horloge et la table d'équité ne sont pas importées. La
+fiche affiche cet auteur à côté du commentaire, et l'export le copie avec lui ;
+modifier le commentaire le signe de **Votre nom** (réglages).
 
 Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
 fenêtre listant tous les noms de joueurs de la base avec leur nombre de

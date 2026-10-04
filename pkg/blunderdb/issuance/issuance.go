@@ -85,6 +85,11 @@ var CarriedMetadataKeys = []string{"user", "description", "dateOfCreation"}
 // producer's own import history and does not.
 var CarriedCommentColumns = []string{"text", "created_at", "modified_at", "author"}
 
+// CarriedMatchCommentColumns is the same allow-list for the note a match
+// carries itself: its text and who signs it — the producer's statement, or
+// the author the source file named for its header or footer comment.
+var CarriedMatchCommentColumns = []string{"comment", "comment_author"}
+
 // Carried returns the subset of md that may travel inside an exported file.
 func Carried(md map[string]string) map[string]string {
 	out := make(map[string]string, len(CarriedMetadataKeys))

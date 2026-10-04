@@ -269,6 +269,7 @@ func TestUpdateMatchComment(t *testing.T) {
 	matches, _ := db.GetAllMatches()
 	matchID := matches[0].ID
 
+	db.SetCommentAuthor("Alice")
 	if err := db.UpdateMatchComment(matchID, "Nice match"); err != nil {
 		t.Fatalf("UpdateMatchComment: %v", err)
 	}
@@ -276,8 +277,8 @@ func TestUpdateMatchComment(t *testing.T) {
 	matches2, _ := db.GetAllMatches()
 	for _, m := range matches2 {
 		if m.ID == matchID {
-			if m.Comment != "Nice match" {
-				t.Errorf("comment = %q, want %q", m.Comment, "Nice match")
+			if m.Comment != "Nice match" || m.CommentAuthor != "Alice" {
+				t.Errorf("comment = %q by %q, want %q by %q", m.Comment, m.CommentAuthor, "Nice match", "Alice")
 			}
 			return
 		}
