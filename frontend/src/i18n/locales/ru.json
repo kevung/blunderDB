@@ -1125,6 +1125,7 @@
         "reportDecisions": "по {n} решениям ({who})",
         "reportBothPlayers": "оба игрока",
         "reportNoAnalysis": "нет анализа для оценки",
+        "reportDroppedAnalyses": "{n} решен. импортировано без анализа (значение не конечное число)",
         "reportUnanalysed": "{n} позиц. без анализа",
         "reportAnalyzeNow": "Проанализировать",
         "reportWorst": "Худшие решения",

@@ -63,8 +63,9 @@ func SaveAnalysis(ctx context.Context, st storage.Storage, scope string, positio
 // change rewrite it and writes it back, in one guarded transaction: two
 // writers on the same position cannot both read the row before either writes.
 // The read goes through AnalysisStore.Merge, which locks the row, so an
-// import merging into the same analysis — it takes no advisory lock — waits
-// for this write instead of being overwritten by it.
+// import merging into the same analysis — a match, a native database or an
+// NDJSON file, all through Merge, none taking an advisory lock — waits for
+// this write instead of being overwritten by it.
 func update(ctx context.Context, st storage.Storage, scope string, positionID int64, change func(*domain.PositionAnalysis)) error {
 	tx, err := storage.BeginGuarded(ctx, st, storage.AnalysisGuardKey(scope, positionID))
 	if err != nil {

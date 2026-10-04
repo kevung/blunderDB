@@ -55,6 +55,9 @@ type FileOutcome struct {
 	// duplicate with Deepened > 0 brought a deeper analysis of a match
 	// already here, one with 0 brought nothing new.
 	Deepened int `json:"deepened,omitempty"`
+	// DroppedAnalyses counts the decisions imported without their analysis,
+	// which held a value that is not a finite number.
+	DroppedAnalyses int `json:"dropped_analyses,omitempty"`
 	// ProbableDuplicate is set on an imported match whose dice are those of
 	// a match already stored under other player names.
 	ProbableDuplicate *domain.DuplicateSuspect `json:"probable_duplicate,omitempty"`
@@ -470,6 +473,7 @@ func (w *pipelineWriter) write(tx storage.Tx, rf *readFile) (FileOutcome, error)
 		return o, err
 	}
 	o.MatchID = res.MatchID
+	o.DroppedAnalyses = res.DroppedAnalyses
 	switch {
 	case res.Skipped:
 		o.Status, o.FlagsApplied, o.Deepened = FileDuplicate, res.FlagsApplied, res.Deepened

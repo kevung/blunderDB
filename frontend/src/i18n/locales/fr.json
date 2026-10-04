@@ -1125,6 +1125,7 @@
         "reportDecisions": "sur {n} décisions ({who})",
         "reportBothPlayers": "les deux joueurs",
         "reportNoAnalysis": "aucune analyse à évaluer",
+        "reportDroppedAnalyses": "{n} décision(s) importée(s) sans leur analyse (valeur non finie)",
         "reportUnanalysed": "{n} position(s) sans analyse",
         "reportAnalyzeNow": "Analyser maintenant",
         "reportWorst": "Pires décisions",

@@ -1,6 +1,6 @@
 # ADR-0066 — La Leçon est une suite d'étapes écrite une fois et lue ailleurs
 
-Statut : acceptée.
+Statut : acceptée. Règle 5 amendée par ADR-0069 (le geste « étape faite »).
 Voir aussi : ADR-0001 (le hachage identifie la position), ADR-0007 (le receveur n'écrit rien),
 ADR-0046 (la file d'étude), ADR-0065 (le coach écrit chez lui) ; `tasks/plan-2026-10b.md`, I.21.
 

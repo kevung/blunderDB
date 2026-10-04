@@ -330,3 +330,59 @@ func stepTargetGone(d Dialect, err error) error {
 	}
 	return err
 }
+
+func (s *LessonStore) SetStepDone(ctx context.Context, scope string, stepID int64, done bool) error {
+	return s.DB.Transact(ctx, func(tx Execer) error {
+		if _, err := s.stepLesson(ctx, tx, scope, stepID); err != nil {
+			return err
+		}
+		if !done {
+			tenant, targs := tx.TenantFilter("", scope)
+			if _, err := tx.Exec(ctx, `DELETE FROM lesson_progress WHERE lesson_step_id = ? AND `+tenant,
+				append([]any{stepID}, targs...)...); err != nil {
+				return errf(tx, "withdraw lesson step done", err)
+			}
+			return nil
+		}
+		cols, args := tx.TenantColumns(scope)
+		cols = append(cols, "lesson_step_id")
+		args = append(args, stepID)
+		if _, err := tx.Exec(ctx, `INSERT INTO lesson_progress (`+strings.Join(cols, ", ")+`) VALUES (`+
+			Placeholders(len(cols))+`) ON CONFLICT (lesson_step_id) DO NOTHING`, args...); err != nil {
+			return errf(tx, "mark lesson step done", err)
+		}
+		return nil
+	})
+}
+
+func (s *LessonStore) DoneSteps(ctx context.Context, scope string, lessonID int64) (map[int64]string, error) {
+	ok, err := rowExists(ctx, s.DB, scope, "lesson", lessonID)
+	if err != nil {
+		return nil, err
+	}
+	if !ok {
+		return nil, fmt.Errorf("%s: lesson %d: %w", s.DB.Name(), lessonID, storage.ErrNotFound)
+	}
+	tenant, targs := s.DB.TenantFilter("st", scope)
+	rows, err := s.DB.Query(ctx,
+		`SELECT p.lesson_step_id, `+s.DB.TimestampText("p.done_at")+`
+		 FROM lesson_progress p JOIN lesson_step st ON st.id = p.lesson_step_id
+		 WHERE st.lesson_id = ? AND `+tenant, append([]any{lessonID}, targs...)...)
+	if err != nil {
+		return nil, errf(s.DB, "list lesson progress", err)
+	}
+	defer rows.Close()
+	done := map[int64]string{}
+	for rows.Next() {
+		var id int64
+		var at string
+		if err := rows.Scan(&id, &at); err != nil {
+			return nil, errf(s.DB, "scan lesson progress", err)
+		}
+		done[id] = at
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "list lesson progress", err)
+	}
+	return done, nil
+}

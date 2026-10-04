@@ -75,6 +75,9 @@ type Summary struct {
 	// Deepened counts the stored analyses a skipped duplicate replaced with a
 	// deeper one of its own (WriteResult.Deepened).
 	Deepened int `json:"deepened,omitempty"`
+	// DroppedAnalyses counts the decisions imported without their analysis,
+	// which held a value that is not a finite number (WriteResult.DroppedAnalyses).
+	DroppedAnalyses int `json:"droppedAnalyses,omitempty"`
 	// BatchID is the import batch these figures belong to, 0 when the caller
 	// opened none. /v1/imports.* fills it so a client can ask for the full
 	// end-of-import report afterwards.

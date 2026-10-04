@@ -17,6 +17,8 @@ import (
 // duration of the test (restored via t.Cleanup), so a test can assert on
 // what a function logged via the bare slog.Warn/Info/... package funcs
 // (as opposed to an injected *slog.Logger).
+// captureSlog replaces slog's process-wide default: a test using it must not
+// call t.Parallel, or other tests' logs and restores interleave with its own.
 func captureSlog(t *testing.T) *strings.Builder {
 	t.Helper()
 	var buf strings.Builder
@@ -696,7 +698,7 @@ func TestExport_NoTournaments(t *testing.T) {
 // collection or tournament id is logged (slog.Warn per row plus a "skipped"
 // count) rather than vanishing silently, and the export still succeeds.
 func TestExport_UnknownCollectionAndTournamentAreLoggedAndCounted(t *testing.T) {
-	t.Parallel()
+	// Not parallel: captureSlog swaps the process-wide default logger.
 	db, dir, cleanup := setupExportTestDB(t)
 	defer cleanup()
 

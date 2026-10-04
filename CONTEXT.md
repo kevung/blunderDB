@@ -190,9 +190,17 @@ whole of what produces a number. `gammonNet 2-ply` names a Configuration, not a 
 Configurations sharing a Network are still two Configurations.
 
 **Canonical parameters**:
-The Configuration blunderDB writes down: 2-ply, pruning `k=12`, Kazaross-XG2. What the user
-adjusts for comfort while reading the board is a different setting, and it never reaches the
-database.
+The Configuration blunderDB writes down: 2-ply, pruning `k=12`, and the library's Match
+equity table (Kazaross-XG2 unless the library chose another). What the user adjusts for
+comfort while reading the board is a different setting, and it never reaches the database.
+
+**Match equity table** (MET):
+The table of match-winning chances at each score a match-score number is computed with. A
+property of the library, not of the application: the built-in Kazaross-XG2 unless the
+library imported a gnubg `.xml` and made it current. Every analysis records the table it was
+computed with; one computed with another table than the current one is shown as *different
+MET* and left out of comparisons. Money numbers never depend on it (ADR-0068).
+_Avoid_: MET setting (there is no global switch).
 
 **Referential**:
 The scale a number about a Position is expressed in, and which of two questions it answers.
@@ -375,14 +383,21 @@ commented, and no Position-level rule in this glossary reads them.
 
 **Lesson**:
 An ordered sequence of Steps a coach writes once for a student and hands over in an exported
-database. It is read, never followed up: the student's progress through it is not recorded
-(ADR-0007). Deleting it is final and leaves the Collections and Positions its Steps show.
+database. Reading it records nothing (ADR-0007); its only follow-up is the Steps the student
+marks done (ADR-0069). Deleting it is final and leaves the Collections and Positions its
+Steps show. "Parcours" may name it in the interface; it is not a second object.
 _Avoid_: study queue (computed, no text), course, path.
 
 **Step**:
 One stop of a Lesson: a title, a text and, optionally, a Collection and a Position. A Step may
 be text alone. A Step holds its Position (it is not purged with its match); when the
 Collection or Position it shows is deleted, the Step and its text stay.
+
+**Step done**:
+The student's explicit gesture on a Step of a Lesson, dated, in the student's own library —
+the only thing that writes progress. Opening, reading, importing or exporting a Lesson never
+marks a Step, and no export carries the marks (ADR-0069).
+_Avoid_: seen, visited, read (none of them is recorded).
 
 ### Training
 

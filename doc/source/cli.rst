@@ -164,6 +164,11 @@ Importe des fichiers de matchs ou de positions dans la base de données.
   est strictement plus profonde, et la ligne l'indique : ``DUPLICATE (N
   analyses deepened)``.
 
+Une décision dont l'analyse contient une valeur qui n'est pas un nombre fini
+(NaN ou infini) est importée sans cette analyse, et le reste du match entre
+normalement ; le compte rendu du lot en donne le nombre (``Decisions imported
+without their analysis``).
+
 Le code de retour obéit à quatre règles :
 
 * **rien n'a été reconnu** — chaque fichier a échoué — : erreur, que

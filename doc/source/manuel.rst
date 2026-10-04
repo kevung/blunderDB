@@ -1201,6 +1201,12 @@ ne remplace pas ce qui est déjà là.
   d'autre que les marques. Un match tronqué puis complété (plus de parties)
   n'est pas le même match : il est importé comme un second match.
 
+* **Une analyse illisible n'empêche pas l'import du match.** Une décision dont
+  l'analyse contient une valeur qui n'est pas un nombre fini (NaN ou infini,
+  que portent certains fichiers XG) est importée sans cette analyse ; le reste
+  du match entre normalement, et le rapport d'import compte les décisions
+  concernées.
+
 * **Un match déjà présent sous d'autres noms est signalé, jamais fusionné.**
   Les deux empreintes de match portent les noms des joueurs : « Martin A. » et
   « Alice Martin » font deux matchs. L'import compare aussi les dés (longueur,

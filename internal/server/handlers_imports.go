@@ -497,6 +497,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 			"match_id":           sum.MatchID,
 			"flags_applied":      sum.FlagsApplied,
 			"deepened":           sum.Deepened,
+			"dropped_analyses":   sum.DroppedAnalyses,
 		}
 		// The same end-of-import report the desktop panel shows, in the
 		// terminal event: a client that streams the import gets its summary
@@ -510,6 +511,7 @@ func (s *Server) handleImport(format ingest.Format) http.HandlerFunc {
 				MatchesEnriched:  sum.Enriched,
 				PositionsSaved:   sum.SavedPositions,
 				AnalysesDeepened: sum.Deepened,
+				AnalysesDropped:  sum.DroppedAnalyses,
 			}
 			if sum.Deepened > 0 {
 				counts.MatchesDeepened = 1
