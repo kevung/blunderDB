@@ -93,7 +93,9 @@ func (a *PositionAnalysis) HasRollout(signature string) bool {
 // MergeRollouts keeps every rollout either side knows, one per Signature.
 // When both carry the same Signature, the one with more games stays (a rerun
 // of the same Configuration is the same numbers or a longer series of them);
-// on a tie, incoming. The result is ordered by date, newest first.
+// on a tie, incoming. The result is ordered by date, newest first, then by
+// Signature: a total order, so the same rollouts listed in another order by
+// either side merge to the same list and compare equal to what is stored.
 func MergeRollouts(existing, incoming []RolloutAnalysis) []RolloutAnalysis {
 	if len(existing) == 0 && len(incoming) == 0 {
 		return nil
@@ -120,7 +122,12 @@ func MergeRollouts(existing, incoming []RolloutAnalysis) []RolloutAnalysis {
 		index[r.Signature] = len(out)
 		out = append(out, r)
 	}
-	sort.SliceStable(out, func(i, j int) bool { return out[i].Date.After(out[j].Date) })
+	sort.Slice(out, func(i, j int) bool {
+		if !out[i].Date.Equal(out[j].Date) {
+			return out[i].Date.After(out[j].Date)
+		}
+		return out[i].Signature < out[j].Signature
+	})
 	return out
 }
 

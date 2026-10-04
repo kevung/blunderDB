@@ -238,12 +238,31 @@ func TestOGXMCubeEquitiesMatchReference(t *testing.T) {
 func TestOGXMImplausibleDoublePassDropsCubeAnalysis(t *testing.T) {
 	f, replays, _ := parseOGXMReal(t)
 	an := ogxmDecisions(f)
-	for _, pd := range an.byRef {
-		if pd.cube != nil && pd.cube.DoublePassEquity != nil {
+	// The first decision indexCubeAnchors checks, found in ply order: a
+	// decision it skips (a ply past a failed replay, an action that is neither
+	// a roll nor a double) would leave the cube analysis in place.
+	perturbed := false
+plies:
+	for gi := range f.Games {
+		for pi, p := range f.Games[gi].Plies {
+			if rp := replays[gi]; rp.FailedAt >= 0 && pi >= rp.FailedAt {
+				break
+			}
+			pd := an.byRef[p.Ref]
+			if pd == nil || pd.cube == nil || !ogxmCubeful(pd.cube) || pd.cube.DoublePassEquity == nil {
+				continue
+			}
+			if !p.IsDiceAction() && p.Action != ogxmparser.ActionDouble {
+				continue
+			}
 			off := *pd.cube.DoublePassEquity + 0.05
 			pd.cube.DoublePassEquity = &off
-			break
+			perturbed = true
+			break plies
 		}
+	}
+	if !perturbed {
+		t.Fatal("no double/pass equity to perturb in the fixture")
 	}
 	an.indexCubeAnchors(f, replays)
 	if !an.noCube {

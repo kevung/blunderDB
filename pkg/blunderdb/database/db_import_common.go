@@ -49,6 +49,7 @@ func (d *Database) writeImportedMatch(ctx context.Context, graph *ingest.MatchGr
 		_ = tx.Rollback()
 		return 0, err
 	}
+	d.importBatchCounts.AnalysesDropped += res.DroppedAnalyses
 	if res.Skipped {
 		// A duplicate still carries the study marks added in the source tool
 		// since the first import (ADR-0006), and the analyses deeper than the

@@ -1125,6 +1125,7 @@
         "reportDecisions": "{n} päätöksestä ({who})",
         "reportBothPlayers": "molemmat pelaajat",
         "reportNoAnalysis": "ei analyysiä pisteytettäväksi",
+        "reportDroppedAnalyses": "{n} päätöstä tuotu ilman analyysiään (arvo ei ole äärellinen luku)",
         "reportUnanalysed": "{n} asemaa ilman analyysiä",
         "reportAnalyzeNow": "Analysoi nyt",
         "reportWorst": "Huonoimmat päätökset",
