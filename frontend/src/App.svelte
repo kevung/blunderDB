@@ -14,18 +14,7 @@
     import { initLanguage, t, tMsg } from './i18n';
     import { initBoardColors } from './stores/boardColorsStore';
     import { initUIScale } from './stores/uiScaleStore';
-    import {
-        initPanelPosition,
-        effectivePositionStore,
-        PANEL_SIDE,
-        initPanelSize,
-        panelHeightStore,
-        panelWidthStore,
-        savePanelHeight,
-        savePanelWidth,
-        DEFAULT_PANEL_HEIGHT,
-        DEFAULT_PANEL_WIDTH
-    } from './stores/panelLayoutStore';
+    import { initPanelPosition, effectivePositionStore, PANEL_SIDE, initPanelSize, panelWidthStore, savePanelWidth, DEFAULT_PANEL_HEIGHT, DEFAULT_PANEL_WIDTH } from './stores/panelLayoutStore';
 
     import { databasePathStore } from './stores/databaseStore.js';
     import { positionStore, positionsStore, emptyPosition } from './stores/positionStore.js';
@@ -72,7 +61,7 @@
     import { initPageStep } from './services/pageStepSetting.js';
     import { applyTabPanels } from './services/tabHandler.js';
     import { resizable } from './utils/resizeHandle.js';
-    import { rememberedTabHeight, rememberTabHeight } from './utils/tabHeights.js';
+    import { initTabHeights, tabPanelHeight, rememberTabHeight } from './utils/tabHeights.js';
     import { fileDrop } from './utils/fileDrop.js';
     import { loadWorstBlunders } from './services/positionLoader.js';
 
@@ -235,8 +224,7 @@
                 // Transcription is a scratch mode too: the board belongs to the draft's Cursor (ADR-0045).
                 if (tab === 'transcription' && $statusBarModeStore !== 'TRANSCRIBE') enterTranscribeMode();
                 else if (!isFirstRun && prevTab === 'transcription' && tab !== 'transcription' && $statusBarModeStore === 'TRANSCRIBE') exitTranscribeMode();
-                const remembered = rememberedTabHeight(tab);
-                if (remembered) panelHeight = remembered;
+                panelHeight = tabPanelHeight(tab);
                 applyTabPanels(tab);
             });
         });
@@ -251,10 +239,7 @@
     }
     function savePanelSize(size, side) {
         if (side) savePanelWidth(size);
-        else {
-            savePanelHeight(size);
-            rememberTabHeight($activeTabStore, size);
-        }
+        else rememberTabHeight($activeTabStore, size);
     }
 
     // A trackpad fires many wheel events per gesture, each a Wails round trip; 60 ms between
@@ -392,8 +377,8 @@
         initPageStep();
 
         // One-shot seed of the local $state: the resize-handle drag owns it afterwards.
-        initPanelSize().then(() => {
-            panelHeight = rememberedTabHeight(get(activeTabStore)) ?? get(panelHeightStore);
+        Promise.all([initPanelSize(), initTabHeights()]).then(() => {
+            panelHeight = tabPanelHeight(get(activeTabStore));
             panelWidth = get(panelWidthStore);
         });
 

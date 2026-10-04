@@ -1,29 +1,33 @@
-// Panel height remembered per tab: Stats wants a tall dock, Search a short one, and a single
-// stored height made each switch undo the last drag. Kept in the viewer's browser: it is a
-// layout convenience, not data.
-const KEY = 'blunderdb.tabPanelHeights';
+// Panel height remembered per tab, persisted through Config like every other layout
+// preference (the webview's localStorage is not guaranteed to survive a restart). A tab with
+// no remembered height uses the default, never the one last dragged on another tab.
+import { GetTabPanelHeights, SaveTabPanelHeight } from '../../wailsjs/go/main/Config.js';
+import { DEFAULT_PANEL_HEIGHT } from '../stores/panelLayoutStore.js';
+import { logger } from './logger.js';
 
-function read() {
+/** @type {Record<string, number>} */
+let heights = {};
+
+export async function initTabHeights() {
     try {
-        const parsed = JSON.parse(localStorage.getItem(KEY) || '{}');
-        return parsed && typeof parsed === 'object' ? parsed : {};
-    } catch {
-        return {};
+        heights = (await GetTabPanelHeights()) || {};
+    } catch (err) {
+        logger.error('Failed to load per-tab panel heights, using default:', err);
+        heights = {};
     }
 }
 
-/** @param {string} tab @returns {number|null} */
-export function rememberedTabHeight(tab) {
-    const h = read()[tab];
-    return Number.isFinite(h) && h > 0 ? h : null;
+/** @param {string} tab @returns {number} */
+export function tabPanelHeight(tab) {
+    const h = heights[tab];
+    return Number.isFinite(h) && h > 0 ? h : DEFAULT_PANEL_HEIGHT;
 }
 
 /** @param {string} tab @param {number} height */
 export function rememberTabHeight(tab, height) {
-    if (!Number.isFinite(height) || height <= 0) return;
-    try {
-        localStorage.setItem(KEY, JSON.stringify({ ...read(), [tab]: Math.round(height) }));
-    } catch {
-        // storage blocked: the height simply is not remembered
-    }
+    if (!tab || !Number.isFinite(height) || height <= 0) return;
+    heights = { ...heights, [tab]: Math.round(height) };
+    Promise.resolve()
+        .then(() => SaveTabPanelHeight(tab, Math.round(height)))
+        .catch((err) => logger.error('Failed to save panel height:', err));
 }

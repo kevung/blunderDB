@@ -1,21 +1,38 @@
-import { describe, test, expect, beforeEach } from 'vitest';
-import { rememberedTabHeight, rememberTabHeight } from '../utils/tabHeights.js';
+import { describe, test, expect, beforeEach, vi } from 'vitest';
 
-beforeEach(() => localStorage.clear());
+const saved = vi.fn(() => Promise.resolve());
+let stored = {};
+vi.mock('../../wailsjs/go/main/Config.js', () => ({
+    GetTabPanelHeights: () => Promise.resolve(stored),
+    SaveTabPanelHeight: (...a) => saved(...a)
+}));
+
+import { initTabHeights, tabPanelHeight, rememberTabHeight } from '../utils/tabHeights.js';
+import { DEFAULT_PANEL_HEIGHT } from '../stores/panelLayoutStore.js';
+
+beforeEach(() => {
+    saved.mockClear();
+    stored = {};
+});
 
 describe('tabHeights', () => {
-    test('chaque onglet garde sa hauteur', () => {
+    test('un onglet sans hauteur mémorisée prend la hauteur par défaut, pas celle d un autre', async () => {
+        await initTabHeights();
         rememberTabHeight('stats', 460);
-        rememberTabHeight('search', 220.4);
-        expect(rememberedTabHeight('stats')).toBe(460);
-        expect(rememberedTabHeight('search')).toBe(220);
-        expect(rememberedTabHeight('eval')).toBeNull();
+        expect(tabPanelHeight('stats')).toBe(460);
+        expect(tabPanelHeight('search')).toBe(DEFAULT_PANEL_HEIGHT);
+        await vi.waitFor(() => expect(saved).toHaveBeenCalledWith('stats', 460));
     });
-    test('une valeur absurde ou un stockage corrompu ne casse rien', () => {
+    test('les hauteurs persistées sont relues au démarrage', async () => {
+        stored = { eval: 300 };
+        await initTabHeights();
+        expect(tabPanelHeight('eval')).toBe(300);
+    });
+    test('une valeur absurde n est ni retenue ni envoyée', async () => {
+        await initTabHeights();
         rememberTabHeight('stats', NaN);
         rememberTabHeight('stats', -5);
-        expect(rememberedTabHeight('stats')).toBeNull();
-        localStorage.setItem('blunderdb.tabPanelHeights', '{oops');
-        expect(rememberedTabHeight('stats')).toBeNull();
+        expect(tabPanelHeight('stats')).toBe(DEFAULT_PANEL_HEIGHT);
+        expect(saved).not.toHaveBeenCalled();
     });
 });
