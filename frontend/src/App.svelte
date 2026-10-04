@@ -134,9 +134,14 @@
     let floorPanelHeight = $derived(tabFloor ? Math.max(panelHeight, Math.min(tabFloor, Math.round(windowHeight * MAX_FLOOR_SHARE))) : panelHeight);
     // The Direction page replaces the board: in a short window (a 150 % zoom is 512 px high) a
     // dock at its stored height leaves it a few dozen pixels and hides its buttons behind the
-    // tab bar. The dock yields to this share of the window; the stored height is left alone.
+    // tab bar. Only then does the dock yield; the stored height is left alone.
+    const DIRECTION_MIN_HEIGHT = 360;
     const DIRECTION_DOCK_SHARE = 0.3;
-    let appliedPanelHeight = $derived($directionPageShownStore ? Math.min(floorPanelHeight, Math.round(windowHeight * DIRECTION_DOCK_SHARE)) : floorPanelHeight);
+    let appliedPanelHeight = $derived(
+        $directionPageShownStore && windowHeight - floorPanelHeight < DIRECTION_MIN_HEIGHT
+            ? Math.min(floorPanelHeight, Math.max(windowHeight - DIRECTION_MIN_HEIGHT, Math.round(windowHeight * DIRECTION_DOCK_SHARE)))
+            : floorPanelHeight
+    );
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
     let showDropOverlay = $state(false);
@@ -495,7 +500,11 @@
             {/if}
         </div>
 
-        <div class="resize-handle" class:side={isSidePanel} use:resizable={{ side: isSidePanel, size: isSidePanel ? panelWidth : panelHeight, onResize: setPanelSize, onCommit: savePanelSize }}></div>
+        <div
+            class="resize-handle"
+            class:side={isSidePanel}
+            use:resizable={{ side: isSidePanel, size: isSidePanel ? panelWidth : appliedPanelHeight, onResize: setPanelSize, onCommit: savePanelSize }}
+        ></div>
 
         <div class="panel-wrapper" class:side={isSidePanel} data-tour="panels" style={isSidePanel ? `width: ${panelWidth}px;` : `height: ${appliedPanelHeight}px;`}>
             <TabbedPanel

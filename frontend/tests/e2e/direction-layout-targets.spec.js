@@ -15,10 +15,10 @@ import { installDirectionEngine, S2_HALL } from './helpers/directionEngine.js';
 const DOCK = { GetPanelHeight: 250, GetPanelPosition: 'bottom' };
 const MIN = 24;
 
-async function open(page, viewport) {
+async function open(page, viewport, engine = S2_HALL) {
     await page.setViewportSize(viewport);
     await installWailsMock(page, openLibraryMock({ config: DOCK }));
-    await installDirectionEngine(page, S2_HALL);
+    await installDirectionEngine(page, engine);
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
     await expect(page.locator('#tournamentPanel')).toBeVisible();
@@ -92,6 +92,7 @@ test('zoom 150 % (911×512) : « Lancer » et les cases de table ne sont masqué
     });
     const c = await coveredBy(cell);
     expect(c.ok, `case de table masquée par ${c.hit}`).toBe(true);
+    expect(c.inView, 'case de table hors de la fenêtre').toBe(true);
     // Un lancement va au bout.
     await go.click();
     await expect(page.locator('.grid .cell.busy').first()).toBeVisible();
@@ -106,4 +107,18 @@ test('1920×1080 : « Enregistrer » des Réglages n’est masqué par aucun cha
     await expect(apply).toBeVisible();
     const a = await coveredBy(apply);
     expect(a.ok, `« Enregistrer » masqué par ${a.hit}`).toBe(true);
+});
+
+test('tournoi non dirigé : « Diriger » mesure au moins 24 px de haut', async ({ page }) => {
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await installWailsMock(page, openLibraryMock({ config: DOCK }));
+    await installDirectionEngine(page, { ...S2_HALL, directed: false });
+    await page.goto('/');
+    await page.locator('[data-testid="tab-tournaments"]').click();
+    await page.locator('#tournamentPanel').getByTestId('panel-new').click();
+    await page.locator('#tournamentPanel .add-input.name').fill('Open de Lyon');
+    await page.keyboard.press('Enter');
+    await page.locator('#tournamentPanel tbody tr').first().dblclick();
+    const s = await size(page.locator('[data-testid="tournament-direct"]'));
+    expect(s.h, `« Diriger » : ${s.w}×${s.h}`).toBeGreaterThanOrEqual(MIN);
 });

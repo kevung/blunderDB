@@ -562,7 +562,7 @@
             </div>
         </details>
 
-        <div class="actions">
+        <div class="actions apply-bar">
             <button type="button" class="primary" data-testid="direction-settings-apply" onclick={askApply}>
                 {$t('direction.settings.apply')}
             </button>
@@ -757,6 +757,9 @@
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
+    }
+
+    .apply-bar {
         position: sticky;
         bottom: 0;
         padding: 0.4rem 0;
