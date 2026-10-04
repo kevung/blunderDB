@@ -1,6 +1,6 @@
 # The referential is a property of the position, and the search honours it
 
-Status: accepted.
+Status: accepted. Rule 6 amended by ADR-0068 (the MET is a property of the library).
 See also: ADR-0011, ADR-0013, ADR-0019, ADR-0023
 
 ## Context

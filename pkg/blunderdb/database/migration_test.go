@@ -3576,8 +3576,8 @@ func TestOpen_2_30_0_RepairsMatchStatsShape(t *testing.T) {
 			t.Fatalf("open %d: %v", open, err)
 		}
 		var version string
-		if err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&version); err != nil || version != "2.30.0" {
-			t.Fatalf("open %d: version %q, %v; want 2.30.0", open, version, err)
+		if err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&version); err != nil || version != DatabaseVersion {
+			t.Fatalf("open %d: version %q, %v; want %s", open, version, err, DatabaseVersion)
 		}
 		got := readRows(d)
 		if len(got) != len(want) {
@@ -3590,6 +3590,124 @@ func TestOpen_2_30_0_RepairsMatchStatsShape(t *testing.T) {
 		}
 		if err := d.Close(); err != nil {
 			t.Fatal(err)
+		}
+	}
+}
+
+// TestMigrate_2_30_0_to_2_31_0 rolls an imported library back to its 2.30.0
+// shape and opens it: the MET, progress and error columns and tables come
+// back, the open writes no move error (the pass is not part of the
+// migration), and the resumable ScoreMoves pass then stores, for every move,
+// exactly the error the read path computes from the analysis.
+func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2300.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "test.xg")); err != nil {
+		t.Fatalf("ImportXGMatch: %v", err)
+	}
+	for _, stmt := range []string{
+		`ALTER TABLE move DROP COLUMN error_mp`,
+		`ALTER TABLE analysis DROP COLUMN met_digest`,
+		`DROP TABLE lesson_progress`,
+		`DROP TABLE match_equity_table`,
+		`UPDATE metadata SET value = '2.30.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.30.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if !columnExists(t, d.db, "move", "error_mp") || !columnExists(t, d.db, "analysis", "met_digest") {
+		t.Fatal("move.error_mp and analysis.met_digest should exist after migration")
+	}
+	if !tableExists(d.db, "lesson_progress") || !tableExists(d.db, "match_equity_table") {
+		t.Fatal("lesson_progress and match_equity_table should exist after migration")
+	}
+	var scored int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM move WHERE error_mp IS NOT NULL`).Scan(&scored); err != nil || scored != 0 {
+		t.Fatalf("moves scored by the open = %d, %v; want 0", scored, err)
+	}
+
+	ctx := context.Background()
+	ms := d.store.Matches()
+	var next int64
+	total := 0
+	for {
+		n, k, err := ms.ScoreMoves(ctx, "", next, 7)
+		if err != nil {
+			t.Fatalf("ScoreMoves: %v", err)
+		}
+		if n == 0 {
+			break
+		}
+		next, total = n, total+k
+	}
+	if total == 0 {
+		t.Fatal("the pass scored no move of an analysed match")
+	}
+	var matchID int64
+	if err := d.db.QueryRow(`SELECT id FROM match LIMIT 1`).Scan(&matchID); err != nil {
+		t.Fatal(err)
+	}
+	stored := map[int64]sql.NullInt64{}
+	func() {
+		rows, err := d.db.Query(`SELECT id, error_mp FROM move`)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var id int64
+			var e sql.NullInt64
+			if err := rows.Scan(&id, &e); err != nil {
+				t.Fatal(err)
+			}
+			stored[id] = e
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
+	}()
+	checked := 0
+	for mv, err := range ms.MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		got := stored[mv.ID]
+		switch {
+		case mv.ErrorMP == nil && got.Valid:
+			t.Errorf("move %d: stored %d, read path unscored", mv.ID, got.Int64)
+		case mv.ErrorMP != nil && (!got.Valid || got.Int64 != int64(*mv.ErrorMP)):
+			t.Errorf("move %d: stored %v, read path %d", mv.ID, got, *mv.ErrorMP)
+		}
+		checked++
+	}
+	if checked == 0 {
+		t.Fatal("the match has no move")
+	}
+	if n, _, err := ms.ScoreMoves(ctx, "", 0, 1000); err != nil {
+		t.Fatalf("second pass: %v", err)
+	} else if n != 0 {
+		// Only analysed plays the analysis cannot score are visited again.
+		var unscorable int
+		_ = d.db.QueryRow(`SELECT COUNT(*) FROM move mv JOIN analysis a ON a.position_id = mv.position_id WHERE mv.error_mp IS NULL`).Scan(&unscorable)
+		if unscorable == 0 {
+			t.Errorf("second pass visited move %d with nothing left to score", n)
 		}
 	}
 }

@@ -174,6 +174,21 @@ type MatchStore interface {
 	// it — keyed by position id, in id order.
 	MovesByPositions(ctx context.Context, scope string, positionIDs []int64) (map[int64][]*domain.Move, error)
 
+	// ScoreMoves writes move.error_mp (domain.Move.ErrorMP) for at most limit
+	// unscored moves past the id after whose position carries an analysis,
+	// in id order, and returns the id of the last move it examined (0 when
+	// none is left) and how many it scored. A play the analysis cannot score
+	// stays NULL. It is the resumable pass that scores a library older than
+	// the column: the caller loops from 0 on the id it gets back, and a pass
+	// interrupted and restarted skips what it already wrote.
+	ScoreMoves(ctx context.Context, scope string, after int64, limit int) (next int64, scored int, err error)
+
+	// RescorePositionMoves rewrites move.error_mp for every move played from
+	// the position, from its current analysis (NULL when it has none, or
+	// when a play is absent from it): an analysis written or replaced makes
+	// the stored errors of its moves stale.
+	RescorePositionMoves(ctx context.Context, scope string, positionID int64) error
+
 	// CreateMoveAnalysis stores an evaluation row attached to a move and
 	// returns its id, updating ma.ID in place.
 	CreateMoveAnalysis(ctx context.Context, scope string, ma *domain.MoveAnalysis) (int64, error)

@@ -114,6 +114,12 @@ var schemaStatements = []string{
 		analysis_engine             TEXT,
 		analysis_depth              INTEGER,
 		creation_date               DATETIME,
+		-- The match equity table the verdict was computed with (ADR-0068):
+		-- the digest of a match_equity_table row, NULL for the built-in
+		-- Kazaross-XG2. An analysis whose digest differs from the library's
+		-- current table is shown as "different MET" and left out of the
+		-- comparisons.
+		met_digest                  TEXT,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`,
 	`CREATE TABLE IF NOT EXISTS comment (
@@ -312,6 +318,13 @@ var schemaStatements = []string{
 		checker_move TEXT,
 		cube_action TEXT,
 		luck_mp INTEGER,
+		-- The equity this play gave up against the best one, in non-negative
+		-- millipoints (domain.Move.ErrorMP), stored so that a statistic over
+		-- the plays of one player reads a column instead of decoding every
+		-- analysis. NULL means unscored: no analysis, a play absent from the
+		-- candidates, or a row older than the column that the resumable pass
+		-- (MatchStore.ScoreMoves) has not reached yet.
+		error_mp INTEGER,
 		FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
 	)`,
@@ -523,6 +536,25 @@ var schemaStatements = []string{
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_lesson_step_lesson ON lesson_step(lesson_id, sort_order)`,
 	`CREATE INDEX IF NOT EXISTS idx_lesson_step_position ON lesson_step(position_id)`,
+	// The student's progress through a Lesson (ADR-0069): one row per Step
+	// marked done, written only by the explicit "step done" gesture, never by
+	// reading, opening or importing. A table of its own so that no exporter,
+	// which copies lesson and lesson_step, ever carries it.
+	`CREATE TABLE IF NOT EXISTS lesson_progress (
+		lesson_step_id INTEGER PRIMARY KEY REFERENCES lesson_step(id) ON DELETE CASCADE,
+		done_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+	)`,
+	// The match equity tables of the library (ADR-0068): each imported from
+	// a gnubg .xml file, identified by the digest of its values. At most one
+	// is current; none current means the built-in Kazaross-XG2.
+	`CREATE TABLE IF NOT EXISTS match_equity_table (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT NOT NULL,
+		digest TEXT NOT NULL UNIQUE,
+		source TEXT NOT NULL,
+		is_current INTEGER NOT NULL DEFAULT 0,
+		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+	)`,
 	// The Direction of a Tournament (ADR-0047): everything the tournament
 	// director decided while running it. One row per directed Tournament, plus
 	// one row per event in direction_event.
