@@ -20,6 +20,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 	"github.com/kevung/blunderdb/pkg/blunderdb/searchquery"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -55,12 +56,22 @@ func SaveAnalysis(ctx context.Context, st storage.Storage, scope string, positio
 	return update(ctx, st, scope, positionID, replaceKeepingRollouts(a), nil)
 }
 
-// SaveValuedAnalysis is SaveAnalysis for a gammonNet verdict valued with the
-// match equity table metID (0: the built-in one). The analysis and the table
-// it names are one write: a verdict stored without its table would be read
-// as valued with Kazaross-XG2 (ADR-0068).
+// SaveValuedAnalysis writes a gammonNet verdict valued with the match equity
+// table metID (0: the built-in one) by gammonnet.SupersedeEntries, the rule
+// the CLI and the GUI write by: gammonNet's earlier entries go, the rest of
+// the row stays. The analysis and the table it names are one write: a
+// verdict stored without its table would be read as valued with
+// Kazaross-XG2 (ADR-0068).
 func SaveValuedAnalysis(ctx context.Context, st storage.Storage, scope string, positionID int64, a *domain.PositionAnalysis, metID int64) error {
-	return update(ctx, st, scope, positionID, replaceKeepingRollouts(a), func(tx storage.Tx) error {
+	now := time.Now()
+	return update(ctx, st, scope, positionID, func(existing *domain.PositionAnalysis) {
+		*existing = gammonnet.SupersedeEntries(existing, *a)
+		existing.PositionID = int(positionID)
+		if existing.CreationDate.IsZero() {
+			existing.CreationDate = now
+		}
+		existing.LastModifiedDate = now
+	}, func(tx storage.Tx) error {
 		return tx.MatchEquityTables().TagAnalyses(ctx, scope, metID, []int64{positionID})
 	})
 }

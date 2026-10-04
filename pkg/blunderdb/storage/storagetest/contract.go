@@ -58,6 +58,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Analysis/MergeTakesPlayedFromTheCaller", testAnalysisMergeTakesPlayedFromTheCaller},
 		{"Analysis/RolloutIsASecondAnalysis", testRolloutIsASecondAnalysis},
 		{"Analysis/RolloutAloneFeedsTheSearch", testRolloutAloneFeedsTheSearch},
+		{"Analysis/GammonNetVerdictKeepsTheRow", testGammonNetVerdictKeepsTheRow},
 		{"Analysis/RepairCrawfordMergeKeepsRollouts", testRepairCrawfordMergeKeepsRollouts},
 		{"Analysis/ConcurrentRolloutsAllKept", testConcurrentRolloutsAllKept},
 		{"Analysis/ImportMergeAndRolloutsAllKept", testImportMergeAndRolloutsAllKept},
