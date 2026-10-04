@@ -333,3 +333,45 @@ func TestAnalyzeMissingWithGammonNetYieldGatesEachPosition(t *testing.T) {
 		t.Errorf("CountPositionsWithoutAnalysis after release = %d, want 0", n2)
 	}
 }
+
+// TestAnalyzeStaleGammonNetConvergesToAShallowerDepth: a sweep at a depth
+// below the stored one rewrites gammonNet's own checker entries at the depth
+// asked for, so a second sweep with the same options finds nothing. Merging
+// by "the deeper entry wins" kept the stored moves and left the position
+// stale forever.
+func TestAnalyzeStaleGammonNetConvergesToAShallowerDepth(t *testing.T) {
+	t.Parallel()
+	d := newBatchTestDB(t)
+
+	pos := racePosition(8, 17, domain.White)
+	pos.Dice = [2]int{6, 5}
+	id, err := d.SavePosition(&pos)
+	if err != nil {
+		t.Fatalf("SavePosition: %v", err)
+	}
+	if s, err := d.AnalyzeMissingWithGammonNet(context.Background(), 1, 0, 0, 1, nil, nil); err != nil || s.Evaluated != 1 {
+		t.Fatalf("AnalyzeMissingWithGammonNet (1-ply) = %+v, %v; want Evaluated=1", s, err)
+	}
+	if n, err := d.CountPositionsWithStaleGammonNet(0); err != nil || n != 1 {
+		t.Fatalf("CountPositionsWithStaleGammonNet(0) = %d (err=%v), want 1", n, err)
+	}
+
+	if s, err := d.AnalyzeStaleGammonNet(context.Background(), 0, 0, 0, 1, nil, nil); err != nil || s.Evaluated != 1 {
+		t.Fatalf("AnalyzeStaleGammonNet (0-ply) = %+v, %v; want Evaluated=1", s, err)
+	}
+	if n, err := d.CountPositionsWithStaleGammonNet(0); err != nil || n != 0 {
+		t.Errorf("CountPositionsWithStaleGammonNet(0) after the sweep = %d (err=%v), want 0", n, err)
+	}
+	got, err := d.LoadAnalysis(id)
+	if err != nil {
+		t.Fatalf("LoadAnalysis: %v", err)
+	}
+	if got.CheckerAnalysis == nil || len(got.CheckerAnalysis.Moves) == 0 {
+		t.Fatal("expected a checker analysis")
+	}
+	for _, m := range got.CheckerAnalysis.Moves {
+		if m.AnalysisDepth != "0-ply" {
+			t.Errorf("move %s kept depth %q, want every entry at 0-ply", m.Move, m.AnalysisDepth)
+		}
+	}
+}
