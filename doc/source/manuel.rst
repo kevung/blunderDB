@@ -1818,7 +1818,7 @@ les **Réglages**, chaque section se replie sur son titre, et le bouton **Ouvrir
 dans le navigateur** de l'en-tête ouvre la page murale en un clic dès qu'un
 dossier de sortie est choisi.
 
-Une Direction s'ouvre sur ses **Réglages** tant que le tournoi n'est pas lancé,
+Une Direction s'ouvre sur ses **Joueurs** tant que le tournoi n'est pas lancé,
 sur l'onglet **Direction** ensuite, et sur l'onglet où on l'avait laissée quand
 on la rouvre. Après un rechargement ou une relance de l'application, la dernière
 Direction ouverte se rouvre d'elle-même, sur le même onglet. Un second clic sur

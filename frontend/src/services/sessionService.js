@@ -20,6 +20,8 @@ export async function saveSessionState() {
     try {
         const currentPositionIndex = get(currentPositionIndexStore);
         const searchState = getSearchState();
+        // Loaded on demand: the Direction store pulls in the whole Direction engine bindings.
+        const { directionSessionState } = await import('../stores/directionStore.js');
 
         const sessionState = {
             lastSearchCommand: searchState.lastSearchCommand,
@@ -27,7 +29,7 @@ export async function saveSessionState() {
             lastPositionIndex: currentPositionIndex,
             lastPositionIds: [],
             hasActiveSearch: searchState.hasActiveSearch,
-            viewsJSON: viewStore.serialize()
+            viewsJSON: JSON.stringify({ ...JSON.parse(viewStore.serialize()), direction: directionSessionState() })
         };
 
         await SaveSessionState(sessionState);
@@ -64,10 +66,26 @@ async function resolveOriginList(origin) {
 }
 
 export async function restoreSessionState() {
+    let sessionState = null;
     try {
-        const sessionState = await LoadSessionState();
+        sessionState = await LoadSessionState();
         logger.log('Loaded session state:', sessionState);
+    } catch (error) {
+        logger.error('Error loading session state:', error);
+    }
+    await restoreViews(sessionState);
+    // The Direction comes back last and on the open database: its tournaments live there.
+    try {
+        const { restoreDirection } = await import('../stores/directionStore.js');
+        await restoreDirection(JSON.parse(sessionState?.viewsJSON || 'null')?.direction);
+    } catch (error) {
+        logger.error('Error restoring the Direction:', error);
+    }
+}
 
+/** @param {any} sessionState */
+async function restoreViews(sessionState) {
+    try {
         if (sessionState && sessionState.viewsJSON) {
             const viewsRestored = await viewStore.deserialize(sessionState.viewsJSON, resolveOriginList);
             if (viewsRestored) {

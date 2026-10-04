@@ -64,6 +64,7 @@ import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
 import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 import { loadAllPositions } from '../services/positionService.js';
 import { restoreSessionState, saveSessionState } from '../services/sessionService.js';
+import { openDirectionIdStore } from '../stores/directionStore.js';
 
 import {
     newDatabase,
@@ -263,6 +264,24 @@ describe('a Lesson being read', () => {
 });
 
 describe('openDatabaseByPath', () => {
+    test('the session (and the Direction in it) is restored only once the database is open', async () => {
+        /** @type {string[]} */
+        const order = [];
+        OpenDatabase.mockImplementation(async () => void order.push('open'));
+        restoreSessionState.mockImplementation(async () => void order.push('restore'));
+
+        await openDatabaseByPath('/tmp/ordered.db');
+
+        expect(order).toEqual(['open', 'restore']);
+        restoreSessionState.mockResolvedValue(undefined);
+    });
+
+    test('opening another database closes the Direction of the previous one', async () => {
+        openDirectionIdStore.set(4);
+        await openDatabaseByPath('/tmp/next.db');
+        expect(get(openDirectionIdStore)).toBeNull();
+    });
+
     test('protected copy: prompts for a password instead of opening', async () => {
         IsProtectedCopyPath.mockResolvedValue(true);
 

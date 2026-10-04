@@ -173,6 +173,7 @@ export async function openDatabaseByPath(filePath) {
         resetAnkiStores();
         resetTranscriptionStores();
 
+        (await import('../stores/directionStore.js')).forgetDirection();
         databasePathStore.set(filePath);
         logger.log('databasePathStore:', filePath);
 

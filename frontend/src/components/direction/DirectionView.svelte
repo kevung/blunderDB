@@ -126,7 +126,7 @@
         return !!ph && ph.kind === 'swiss_lives' && ph.mode === 'rounds';
     });
 
-    /* Onglet d'ouverture : Réglages en préparation, Direction en cours. Seulement à
+    /* Onglet d'ouverture : Joueurs en préparation, Direction en cours. Seulement à
        l'ouverture : les Réglages restent accessibles en cours de tournoi. */
     /* Prend le clavier à l'ouverture (services/directionKeys.js), sinon J / K iraient au
        panneau Tournois ; jamais au détriment d'un champ. */
@@ -217,7 +217,7 @@
             focusPanelUnlessTyping(el);
         });
     });
-    /* L'onglet se choisit pour chaque tournoi à son arrivée : celui où il fut laissé, sinon Réglages
+    /* L'onglet se choisit pour chaque tournoi à son arrivée : celui où il fut laissé, sinon Joueurs
        en préparation et Direction en cours. Il ne se hérite jamais d'un autre tournoi ; seul le
        passage d'une épreuve à l'autre d'une même Rencontre garde l'onglet courant. */
     let shownTournamentId = /** @type {number | null} */ (null);
@@ -230,7 +230,7 @@
         const sameRencontre = shownTournamentId !== null && $epreuveTabsStore.some((e) => e.tournamentId === shownTournamentId) && $epreuveTabsStore.some((e) => e.tournamentId === id);
         shownTournamentId = id;
         if (sameRencontre) return;
-        tab = recalledDirectionTab(id) ?? (directionState !== 'draft' ? 'direction' : 'settings');
+        tab = recalledDirectionTab(id) ?? (directionState !== 'draft' ? 'direction' : 'players');
     });
     $effect(() => {
         if (shownTournamentId !== null && shownTournamentId === view?.tournamentId) rememberDirectionTab(shownTournamentId, tab);

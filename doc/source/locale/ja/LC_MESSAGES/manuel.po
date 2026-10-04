@@ -3457,14 +3457,14 @@ msgstr ""
 
 #: ../../source/manuel.rst:1821
 msgid ""
-"Une Direction s'ouvre sur ses **Réglages** tant que le tournoi n'est pas "
+"Une Direction s'ouvre sur ses **Joueurs** tant que le tournoi n'est pas "
 "lancé, sur l'onglet **Direction** ensuite, et sur l'onglet où on l'avait "
 "laissée quand on la rouvre. Après un rechargement ou une relance de "
 "l'application, la dernière Direction ouverte se rouvre d'elle-même, sur "
 "le même onglet. Un second clic sur *Diriger* ou *Ouvrir la direction* "
 "pendant que la vue se charge est ignoré."
 msgstr ""
-"大会運営は、大会が開始されるまでは\\ **設定**\\ で開き、開始後は\\ **運営**\\ タブで開き、再び開くときは最後に表示していたタブで開きます。アプリケーションの再読み込みや再起動の後も、最後に開いていた運営が同じタブで自動的に開き直されます。ビューの読み込み中に\\ *運営する*\\ または\\ *運営を開く*\\ を続けてクリックしても、2回目のクリックは無視されます。"
+"大会運営は、大会が開始されるまでは\\ **選手**\\ で開き、開始後は\\ **運営**\\ タブで開き、再び開くときは最後に表示していたタブで開きます。アプリケーションの再読み込みや再起動の後も、最後に開いていた運営が同じタブで自動的に開き直されます。ビューの読み込み中に\\ *運営する*\\ または\\ *運営を開く*\\ を続けてクリックしても、2回目のクリックは無視されます。"
 
 #: ../../source/manuel.rst:1827
 msgid ""

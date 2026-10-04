@@ -14,8 +14,7 @@ vi.mock('../../wailsjs/go/database/Database.js', async (importOriginal) => {
 
 import * as DB from '../../wailsjs/go/database/Database.js';
 import DirectionView from '../components/direction/DirectionView.svelte';
-import { directionStore, openDirectionIdStore, restoreDirection, closeDirection } from '../stores/directionStore.js';
-import { databasePathStore } from '../stores/databaseStore.js';
+import { directionStore, openDirectionIdStore, restoreDirection, closeDirection, forgetDirection, directionSessionState } from '../stores/directionStore.js';
 import { activeTabStore } from '../stores/uiStore.js';
 
 const view = (/** @type {number} */ id, /** @type {string} */ state) =>
@@ -23,14 +22,12 @@ const view = (/** @type {number} */ id, /** @type {string} */ state) =>
 const active = () => document.querySelector('[data-testid^="direction-tab-"].active')?.getAttribute('data-testid');
 
 beforeEach(() => {
-    localStorage.clear();
-    databasePathStore.set('/tmp/a.db');
+    forgetDirection();
 });
 afterEach(() => {
     cleanup();
     closeDirection();
     directionStore.set(null);
-    databasePathStore.set('');
 });
 
 test('une autre Direction ouverte sans fermer la première ne reprend pas son onglet', async () => {
@@ -46,7 +43,7 @@ test('une autre Direction ouverte sans fermer la première ne reprend pas son on
     directionStore.set(view(2, 'draft'));
     await tick();
     await tick();
-    expect(active()).toBe('direction-tab-settings');
+    expect(active()).toBe('direction-tab-players');
 });
 
 test('rouverte après démontage, une Direction retrouve son onglet', async () => {
@@ -65,19 +62,27 @@ test('rouverte après démontage, une Direction retrouve son onglet', async () =
 });
 
 test('après un rechargement, la dernière Direction se rouvre', async () => {
-    localStorage.setItem('blunderdb.direction', JSON.stringify({ dbPath: '/tmp/a.db', openId: 7, tabs: { 7: 'standings' } }));
     vi.mocked(DB.ListDirections).mockResolvedValue(/** @type {any} */ ([{ tournamentId: 7 }]));
     activeTabStore.set('matches');
 
-    await restoreDirection();
+    await restoreDirection({ openId: 7, tabs: { 7: 'standings' } });
 
     expect(get(openDirectionIdStore)).toBe(7);
     expect(get(activeTabStore)).toBe('tournaments');
+    expect(directionSessionState().tabs[7]).toBe('standings');
 });
 
-test('une Direction fermée ne se rouvre pas, ni celle d’une autre base', async () => {
-    localStorage.setItem('blunderdb.direction', JSON.stringify({ dbPath: '/tmp/other.db', openId: 7, tabs: {} }));
+test('une Direction fermée ne se rouvre pas, ni celle dont le tournoi a disparu', async () => {
     vi.mocked(DB.ListDirections).mockResolvedValue(/** @type {any} */ ([{ tournamentId: 7 }]));
-    await restoreDirection();
+    await restoreDirection({ openId: null, tabs: {} });
     expect(get(openDirectionIdStore)).toBeNull();
+    await restoreDirection({ openId: 9, tabs: {} });
+    expect(get(openDirectionIdStore)).toBeNull();
+});
+
+test('changer de base oublie la Direction et sa mémoire', async () => {
+    openDirectionIdStore.set(1);
+    forgetDirection();
+    expect(get(openDirectionIdStore)).toBeNull();
+    expect(directionSessionState()).toEqual({ openId: null, tabs: {} });
 });

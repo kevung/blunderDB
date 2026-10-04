@@ -41,6 +41,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => bindings);
 vi.mock('../../wailsjs/go/main/Config.js', () => ({ GetLikeLimit: vi.fn().mockResolvedValue(10) }));
 vi.mock('../services/positionService.js', () => positionService);
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage }));
+const { restoreDirection } = vi.hoisted(() => ({ restoreDirection: vi.fn() }));
+vi.mock('../stores/directionStore.js', () => ({ restoreDirection, directionSessionState: () => ({ openId: 3, tabs: { 3: 'standings' } }) }));
 
 import { saveSessionState, restoreSessionState } from '../services/sessionService.js';
 import { useLibrary } from '../__mocks__/wails.js';
@@ -68,6 +70,20 @@ beforeEach(() => {
 });
 
 describe('restoreSessionState', () => {
+    test('la Direction laissée ouverte est rendue à restoreDirection, après les vues', async () => {
+        bindings.LoadSessionState.mockResolvedValue({ viewsJSON: JSON.stringify({ direction: { openId: 3, tabs: { 3: 'standings' } } }) });
+
+        await restoreSessionState();
+
+        expect(restoreDirection).toHaveBeenCalledWith({ openId: 3, tabs: { 3: 'standings' } });
+    });
+
+    test('saveSessionState écrit la Direction dans les vues de la session', async () => {
+        await saveSessionState();
+        const saved = bindings.SaveSessionState.mock.calls[0][0];
+        expect(JSON.parse(saved.viewsJSON).direction).toEqual({ openId: 3, tabs: { 3: 'standings' } });
+    });
+
     test('sans session enregistrée : état de recherche vierge et bibliothèque entière', async () => {
         bindings.LoadSessionState.mockResolvedValue(null);
 
