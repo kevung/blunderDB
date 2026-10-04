@@ -176,3 +176,51 @@ func TestAliasedCopyNeverDegradesTheStoredAnalysis(t *testing.T) {
 		t.Error("taking the rollouts degraded the checker or cube analysis")
 	}
 }
+
+// deepenRolloutPair is the stored and the incoming analysis of one position,
+// alike apart from the rollouts each test gives them.
+func deepenRolloutPair() (existing, incoming *domain.PositionAnalysis) {
+	return analysedGraph("4-ply", 0.1).Games[0].Moves[0].Analyses[0],
+		analysedGraph("4-ply", 0.1).Games[0].Moves[0].Analyses[0]
+}
+
+// A longer series of a stored Configuration, and nothing else new, deepens.
+func TestDeepenAnalysisTakesALongerRolloutOfTheSameSignature(t *testing.T) {
+	existing, incoming := deepenRolloutPair()
+	day := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	existing.Rollouts = []domain.RolloutAnalysis{{Signature: "cfg-a", Games: 1296, Date: day}}
+	incoming.Rollouts = []domain.RolloutAnalysis{{Signature: "cfg-a", Games: 5184, Date: day}}
+	got := deepenAnalysis(existing, *incoming)
+	if got == existing || len(got.Rollouts) != 1 || got.Rollouts[0].Games != 5184 {
+		t.Fatalf("rollouts = %+v, want the 5184-game cfg-a alone", got.Rollouts)
+	}
+}
+
+// At equal games the stored rollout stays, even when the incoming one differs.
+func TestDeepenAnalysisKeepsTheStoredRolloutAtEqualGames(t *testing.T) {
+	existing, incoming := deepenRolloutPair()
+	day := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	existing.Rollouts = []domain.RolloutAnalysis{{Signature: "cfg-a", Games: 1296, Date: day, Stop: "stored"}}
+	incoming.Rollouts = []domain.RolloutAnalysis{{Signature: "cfg-a", Games: 1296, Date: day.Add(time.Hour), Stop: "incoming"}}
+	if got := deepenAnalysis(existing, *incoming); got != existing {
+		t.Fatalf("rollouts = %+v, want the stored analysis untouched", got.Rollouts)
+	}
+}
+
+// Rollouts of one date that the copy lists in another order bring nothing:
+// the merge orders them totally, so the stored list compares equal.
+func TestDeepenAnalysisIgnoresTheOrderOfSameDateRollouts(t *testing.T) {
+	existing, incoming := deepenRolloutPair()
+	day := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
+	a := domain.RolloutAnalysis{Signature: "cfg-a", Games: 1296, Date: day}
+	b := domain.RolloutAnalysis{Signature: "cfg-b", Games: 1296, Date: day}
+	existing.Rollouts = domain.MergeRollouts(nil, []domain.RolloutAnalysis{b, a})
+	incoming.Rollouts = []domain.RolloutAnalysis{b, a}
+	if got := deepenAnalysis(existing, *incoming); got != existing {
+		t.Fatalf("rollouts = %+v, want the stored analysis untouched", got.Rollouts)
+	}
+	incoming.Rollouts = []domain.RolloutAnalysis{a, b}
+	if got := deepenAnalysis(existing, *incoming); got != existing {
+		t.Fatalf("rollouts = %+v, want the stored analysis untouched", got.Rollouts)
+	}
+}
