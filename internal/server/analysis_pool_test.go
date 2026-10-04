@@ -1,6 +1,8 @@
 package server
 
 import (
+	"context"
+	"net/http"
 	"slices"
 	"sync"
 	"testing"
@@ -125,5 +127,61 @@ func TestParseAnalysisWeights(t *testing.T) {
 		if _, err := parseAnalysisWeights(bad); err == nil {
 			t.Errorf("%q accepted", bad)
 		}
+	}
+}
+
+// TestAnalysisPoolRunSkipsAnEndedContext: a unit whose caller left before
+// its turn does not run.
+func TestAnalysisPoolRunSkipsAnEndedContext(t *testing.T) {
+	p := newAnalysisPool(1, nil)
+	t.Cleanup(p.close)
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if p.run(ctx, "a", func(searcherFor) { t.Error("ran for a caller already gone") }) {
+		t.Error("run reports a unit that did not run")
+	}
+}
+
+const evalXGID = "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:0:0:10"
+
+// TestEvaluateOnStoppedPoolIs503: an evaluation the stopping daemon no
+// longer takes is refused, never answered 200 with an empty verdict.
+func TestEvaluateOnStoppedPoolIs503(t *testing.T) {
+	ts, srv := newQuotaTestServer(t, TenantQuotas{})
+	srv.analysis.close()
+	resp := post(t, ts, "/v1/gammonnet.evaluate", gammonnetEvaluateReq{XGID: evalXGID})
+	status, e := errorOf(t, resp)
+	if status != http.StatusServiceUnavailable || e.Code != CodeUnavailable {
+		t.Fatalf("evaluate on a stopped pool: %d %+v; want 503 unavailable", status, e)
+	}
+}
+
+// TestAnalysisPoolRunSkipsAContextEndedInQueue: a caller that leaves while
+// its unit waits behind another tenant's costs nothing once the turn comes —
+// the evaluate route's client gone before its turn.
+func TestAnalysisPoolRunSkipsAContextEndedInQueue(t *testing.T) {
+	p := newAnalysisPool(1, nil)
+	t.Cleanup(p.close)
+	gate := make(chan struct{})
+	held := p.submit("other", func() func() (func(searcherFor), bool) {
+		taken := false
+		return func() (func(searcherFor), bool) {
+			if taken {
+				return nil, false
+			}
+			taken = true
+			return func(searcherFor) { <-gate }, true
+		}
+	}())
+	ctx, cancel := context.WithCancel(context.Background())
+	result := make(chan bool)
+	go func() {
+		result <- p.run(ctx, "a", func(searcherFor) { t.Error("ran for a caller gone while queued") })
+	}()
+	cancel()
+	close(gate)
+	held.wait()
+	if <-result {
+		t.Error("run reports a unit that did not run")
 	}
 }

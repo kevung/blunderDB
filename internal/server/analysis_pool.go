@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -85,16 +86,24 @@ func (p *analysisPool) submit(scope string, next func() (func(searcherFor), bool
 	return j
 }
 
-// run queues one unit for scope and waits for it.
-func (p *analysisPool) run(scope string, unit func(searcherFor)) {
-	taken := false
+// run queues one unit for scope, waits for it and reports whether it ran:
+// false when ctx ended before its turn came or the pool was closed.
+func (p *analysisPool) run(ctx context.Context, scope string, unit func(searcherFor)) bool {
+	taken, ran := false, false
 	p.submit(scope, func() (func(searcherFor), bool) {
-		if taken {
+		if taken || ctx.Err() != nil {
 			return nil, false
 		}
 		taken = true
-		return unit, true
+		return func(get searcherFor) {
+			if ctx.Err() != nil {
+				return
+			}
+			ran = true
+			unit(get)
+		}, true
 	}).wait()
+	return ran
 }
 
 // close stops the workers once their current unit is done; a job still
