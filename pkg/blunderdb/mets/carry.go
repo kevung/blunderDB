@@ -52,6 +52,12 @@ func NewCarrier(dst storage.MatchEquityTableStore, scope string, tables []*domai
 	return c
 }
 
+// Add makes one more source table known, for a source that reveals its
+// tables as it is read (an NDJSON stream).
+func (c *Carrier) Add(t *domain.MatchEquityTable) {
+	c.tables[t.ID] = t
+}
+
 // Target returns the receiver's id for the source table srcID: 0 for the
 // built-in table, whether the source names it by 0 or by its digest.
 func (c *Carrier) Target(ctx context.Context, srcID int64) (int64, error) {

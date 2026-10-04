@@ -39,6 +39,9 @@ func Position(ctx context.Context, s storage.Stores, scope string, positionID in
 	switch a, err := s.Analyses().Load(ctx, scope, positionID); {
 	case err == nil:
 		payload.Analysis = a
+		if payload.MET, err = s.MatchEquityTables().OfAnalysis(ctx, scope, positionID); err != nil {
+			return 0, err
+		}
 	case !errors.Is(err, storage.ErrNotFound):
 		return 0, err
 	}
@@ -181,6 +184,13 @@ func restorePosition(ctx context.Context, s storage.Stores, scope string, entry 
 		case errors.Is(err, storage.ErrNotFound):
 			if err := s.Analyses().Save(ctx, scope, id, payload.Analysis); err != nil {
 				return 0, err
+			}
+			// Save leaves a new row on the built-in table; a verdict valued
+			// with another one must say so again (ADR-0068).
+			if payload.MET != 0 {
+				if err := s.MatchEquityTables().TagAnalyses(ctx, scope, payload.MET, []int64{id}); err != nil {
+					return 0, err
+				}
 			}
 		case err != nil:
 			return 0, err

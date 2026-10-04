@@ -317,13 +317,14 @@ func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src 
 // write: a rollout committed between a plain read and the write would be
 // overwritten.
 func mergeDBAnalysis(ctx context.Context, tx storage.Tx, scope string, positionID int64, imported *domain.PositionAnalysis, importedMET int64) error {
-	existingMET, err := tx.MatchEquityTables().OfAnalysis(ctx, scope, positionID)
-	if err != nil {
-		return err
-	}
 	importedSide := mets.SideOf(imported, importedMET)
-	var met int64
+	var met, existingMET int64
+	var readErr error
 	wrote, err := tx.Analyses().Merge(ctx, scope, positionID, nil, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+		// Read under Merge's lock, so the table belongs to the row merged.
+		if existingMET, readErr = tx.MatchEquityTables().OfAnalysis(ctx, scope, positionID); readErr != nil {
+			return nil
+		}
 		existingSide := mets.SideOf(existing, existingMET)
 		merged, changed := domain.MergeImportedAnalysis(existing, imported)
 		if !changed {
@@ -332,6 +333,9 @@ func mergeDBAnalysis(ctx context.Context, tx storage.Tx, scope string, positionI
 		met = mets.AfterMerge(merged, existingSide, importedSide)
 		return merged
 	})
+	if err == nil {
+		err = readErr
+	}
 	if err != nil || !wrote || (met == 0 && existingMET == 0) {
 		return err
 	}

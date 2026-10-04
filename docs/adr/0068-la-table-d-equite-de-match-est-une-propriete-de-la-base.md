@@ -67,7 +67,12 @@ nombre dise avec quelle table il a été calculé.
   du GUI/CLI (`CommitImportDatabase`) copient chaque table citée par `mets.Carrier`, qui la
   range par `Save` (dédoublonnée par empreinte, jamais courante) et remappe le `met_id`. À
   la fusion d'une analyse, le verdict gardé garde la table de son côté (`mets.AfterMerge`).
-  L'export et l'import NDJSON ne portent pas la table : l'analyse y arrive Kazaross-XG2.
+  L'export NDJSON écrit chaque table citée une fois, sur une ligne à elle
+  (`matchEquityTable`) avant la première analyse qui la cite (`met`, son id dans le flux) ;
+  l'import la passe au même `Carrier`, et refuse une analyse qui cite une table absente du
+  flux plutôt que de la lire sous Kazaross-XG2. La migration SQLite → PostgreSQL copie
+  toutes les tables, la courante et le `met_id` de chaque analyse ; la corbeille garde le
+  `met_id` d'une position supprimée et le rend à la restauration.
 - Le `met_id` suit le verdict : l'upsert d'une analyse le remet à `NULL` dès que le verdict
   des colonnes n'est plus celui de gammonNet (XG, GNUbg, rollout), et un calcul gammonNet
   écrit l'analyse et sa table dans une seule transaction (`rollouts.SaveValuedAnalysis`,

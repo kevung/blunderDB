@@ -1,8 +1,11 @@
 package storagetest
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -12,6 +15,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/trash"
 )
 
 // clubMET is a table of a club, told apart from the built-in one by its digest.
@@ -229,5 +233,125 @@ func testMETTravelsWithExport(t *testing.T, s storage.Storage) {
 	}
 	if got, err := out.MatchEquityTables().OfAnalysis(ctx, "", outID); err != nil || got != list[0].ID {
 		t.Errorf("exported analysis names table %d, %v; want %d", got, err, list[0].ID)
+	}
+}
+
+// testMETTravelsWithNDJSON: the NDJSON interchange carries the table each
+// analysis cites, once, and the receiver stores it, not current, and tags
+// the analysis with it — in both directions through s (ADR-0068, rule 5).
+func testMETTravelsWithNDJSON(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	now := time.Date(2026, 9, 1, 0, 0, 0, 0, time.UTC)
+	src, err := sqlite.Open(ctx, filepath.Join(t.TempDir(), "src.db"), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer src.Close()
+	srcClub, err := src.MatchEquityTables().Save(ctx, "", clubMET)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := src.MatchEquityTables().SetCurrent(ctx, "", srcClub); err != nil {
+		t.Fatal(err)
+	}
+	positions := [3]domain.Position{provenancePos(61), provenancePos(62), provenancePos(63)}
+	for i, met := range []int64{srcClub, 0, srcClub} {
+		id, err := src.Positions().Save(ctx, "", &positions[i])
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := rollouts.SaveValuedAnalysis(ctx, src, "", id, verdictBy(gammonNetLabel, now), met); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	var stream bytes.Buffer
+	if err := (ingest.JSONExporter{S: src}).Export(ctx, "", &stream, ingest.ExportOptions{}); err != nil {
+		t.Fatalf("Export: %v", err)
+	}
+	if n := strings.Count(stream.String(), `"matchEquityTable"`); n != 1 {
+		t.Errorf("stream carries the table %d times, want once", n)
+	}
+	if _, err := (ingest.JSONImporter{S: s}).Import(ctx, "", ingest.Source{Reader: &stream}, nil); err != nil {
+		t.Fatalf("Import: %v", err)
+	}
+	checkCarried := func(dst storage.Storage, where string) {
+		t.Helper()
+		list, err := dst.MatchEquityTables().List(ctx, "")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(list) != 1 || list[0].Digest != clubMET.Digest || list[0].Current {
+			t.Fatalf("%s: tables %+v, want the club table, not current", where, list)
+		}
+		for i, want := range []int64{list[0].ID, 0, list[0].ID} {
+			p := positions[i]
+			id, err := dst.Positions().Save(ctx, "", &p)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if got, err := dst.MatchEquityTables().OfAnalysis(ctx, "", id); err != nil || got != want {
+				t.Errorf("%s: position %d names table %d, %v; want %d", where, i+61, got, err, want)
+			}
+		}
+	}
+	checkCarried(s, "receiver")
+
+	var back bytes.Buffer
+	if err := (ingest.JSONExporter{S: s}).Export(ctx, "", &back, ingest.ExportOptions{}); err != nil {
+		t.Fatalf("Export from s: %v", err)
+	}
+	out, err := sqlite.Open(ctx, filepath.Join(t.TempDir(), "out.db"), nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer out.Close()
+	if _, err := (ingest.JSONImporter{S: out}).Import(ctx, "", ingest.Source{Reader: &back}, nil); err != nil {
+		t.Fatalf("Import from s: %v", err)
+	}
+	checkCarried(out, "re-export")
+
+	// A record citing a table the stream never carried is refused.
+	orphan := `{"position":` + mustJSON(t, provenancePos(64)) + `,"analysis":` + mustJSON(t, verdictBy(gammonNetLabel, now)) + `,"met":99}` + "\n"
+	if _, err := (ingest.JSONImporter{S: out}).Import(ctx, "", ingest.Source{Reader: strings.NewReader(orphan)}, nil); err == nil {
+		t.Error("Import of a record citing an absent table succeeded, want an error")
+	}
+}
+
+func mustJSON(t *testing.T, v any) string {
+	t.Helper()
+	b, err := json.Marshal(v)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return string(b)
+}
+
+// testMETKeptByTrash: restoring a deleted position gives its analysis back
+// with the table it was valued with.
+func testMETKeptByTrash(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	club, err := s.MatchEquityTables().Save(ctx, "", clubMET)
+	if err != nil {
+		t.Fatal(err)
+	}
+	p := provenancePos(71)
+	id, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := rollouts.SaveValuedAnalysis(ctx, s, "", id, verdictBy(gammonNetLabel, time.Date(2026, 9, 1, 0, 0, 0, 0, time.UTC)), club); err != nil {
+		t.Fatal(err)
+	}
+	entry, err := trash.Position(ctx, s, "", id)
+	if err != nil {
+		t.Fatalf("trash.Position: %v", err)
+	}
+	restored, err := trash.Restore(ctx, s, "", entry)
+	if err != nil {
+		t.Fatalf("trash.Restore: %v", err)
+	}
+	if got := ofAnalysis(t, s, restored); got != club {
+		t.Errorf("restored analysis names table %d, want %d", got, club)
 	}
 }

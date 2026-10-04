@@ -234,7 +234,7 @@ func TakePoint(in CubeInputs, owner CubeOwner, efficiency float64) (tp float64, 
 // per stake level, as gn_cube.c does.
 
 // matchMaxAway is the away-score horizon this recursion trusts: the extent of
-// blunderDB's MET (engine.GnuBGGetME). Beyond it the table silently reuses
+// the match equity table (state.MET.GetME). Beyond it the table silently reuses
 // its last row, so such a state is refused rather than approximated.
 // gammonNet's own ceiling is 25, its table's extent.
 const matchMaxAway = engine.MaxScore
@@ -262,7 +262,7 @@ func (s MatchState) IsValid() bool {
 		return false
 	}
 	// The Crawford flag is only coherent when one away score is already 1;
-	// engine.GnuBGGetME assumes it (unlike gn_met_after, which silently
+	// state.MET.GetME assumes it (unlike gn_met_after, which silently
 	// falls back to the pre-Crawford table), so anything else is refused.
 	if s.Crawford && s.AwayOnRoll != 1 && s.AwayOpponent != 1 {
 		return false
@@ -278,7 +278,7 @@ func (s MatchState) Swap() MatchState {
 }
 
 // metAfter is the on-roll player's MWC if the game ends with points going to
-// one side, through blunderDB's MET (engine.GnuBGGetME) rather than a
+// one side, through the match equity table (state.MET.GetME) rather than a
 // re-ported gn_met.c. Only away scores matter, so matchTo is the larger one.
 func metAfter(state MatchState, points int, onRollWins bool) (float64, bool) {
 	if !state.IsValid() || points < 1 {

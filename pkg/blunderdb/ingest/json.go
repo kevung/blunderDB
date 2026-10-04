@@ -10,6 +10,7 @@ import (
 	"slices"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -24,6 +25,12 @@ type positionBundle struct {
 	// for comments nobody signed. A separate list keeps every older record
 	// readable, and an import never signs in the importer's name.
 	CommentAuthors []string `json:"commentAuthors,omitempty"`
+	// MET is the id, within this stream, of the table the analysis was
+	// valued with; absent for the built-in one (ADR-0068, rule 5).
+	MET int64 `json:"met,omitempty"`
+	// Table, on a record of its own without a position, is a table cited by
+	// a later record's MET. Readers that predate it skip the record.
+	Table *domain.MatchEquityTable `json:"matchEquityTable,omitempty"`
 }
 
 // commentAuthor is the author of the bundle's i-th comment, "" when unsigned.
@@ -61,6 +68,7 @@ func (e JSONExporter) Export(ctx context.Context, scope string, w io.Writer, _ E
 
 	enc := json.NewEncoder(w)
 	fl, _ := w.(flusher)
+	written := map[int64]bool{}
 	for _, p := range positions {
 		if err := ctx.Err(); err != nil {
 			return err
@@ -70,10 +78,25 @@ func (e JSONExporter) Export(ctx context.Context, scope string, w io.Writer, _ E
 		switch {
 		case err == nil:
 			b.Analysis = a
+			if b.MET, err = e.S.MatchEquityTables().OfAnalysis(ctx, scope, p.ID); err != nil {
+				return err
+			}
 		case errors.Is(err, storage.ErrNotFound):
 			// no analysis for this position
 		default:
 			return err
+		}
+		if b.MET != 0 && !written[b.MET] {
+			t, err := e.S.MatchEquityTables().Load(ctx, scope, b.MET)
+			if err != nil {
+				return err
+			}
+			// The receiver keeps its own choice of table (ADR-0007).
+			t.Current, t.CreatedAt = false, ""
+			if err := enc.Encode(positionBundle{Table: t}); err != nil {
+				return err
+			}
+			written[b.MET] = true
 		}
 		for c, err := range e.S.Comments().ByPosition(ctx, scope, p.ID) {
 			if err != nil {
@@ -118,6 +141,7 @@ func (im JSONImporter) Import(ctx context.Context, scope string, src Source, pro
 	}()
 
 	var sum Summary
+	tables := mets.NewCarrier(tx.MatchEquityTables(), scope, nil)
 	dec := json.NewDecoder(r)
 	for dec.More() {
 		if err := ctx.Err(); err != nil {
@@ -126,6 +150,9 @@ func (im JSONImporter) Import(ctx context.Context, scope string, src Source, pro
 		var b positionBundle
 		if err := dec.Decode(&b); err != nil {
 			return sum, fmt.Errorf("ingest: decode bundle: %w", err)
+		}
+		if b.Table != nil {
+			tables.Add(b.Table)
 		}
 		if b.Position == nil {
 			continue
@@ -141,7 +168,13 @@ func (im JSONImporter) Import(ctx context.Context, scope string, src Source, pro
 			return sum, err
 		}
 		if b.Analysis != nil {
-			if err := mergeDBAnalysis(ctx, tx, scope, id, b.Analysis, 0); err != nil {
+			// A record citing a table the stream never carried fails the
+			// import rather than read its verdict under another table.
+			met, err := tables.Target(ctx, b.MET)
+			if err != nil {
+				return sum, fmt.Errorf("ingest: position %d: %w", sum.SavedPositions+1, err)
+			}
+			if err := mergeDBAnalysis(ctx, tx, scope, id, b.Analysis, met); err != nil {
 				return sum, err
 			}
 		}
