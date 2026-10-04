@@ -2230,6 +2230,10 @@ entièrement la base avant de basculer dessus), effectue le ``VACUUM`` puis un
 requêtes. Si l'espace disque manque, la commande refuse de démarrer avec un
 message explicite plutôt que de risquer un compactage interrompu.
 
+Avant le ``VACUUM``, chaque analyse est réécrite au format binaire compact,
+compressé au plus fort : y compris celles qu'une version antérieure avait
+rangées en JSON (voir ``reencode``).
+
 **Exemple:**
 
 .. code-block:: bash
@@ -2240,6 +2244,43 @@ message explicite plutôt que de risquer un compactage interrompu.
    #   Before: 128.4 MiB
    #   After:  41.2 MiB
    #   Reclaimed: 87.2 MiB
+
+reencode — Réécrire les analyses au format compact
+--------------------------------------------------
+
+Les analyses sont rangées dans un format binaire compact, environ deux fois
+plus petit que le JSON compressé des versions antérieures et plusieurs fois
+plus rapide à relire. Une base créée avant ce format reste lisible telle
+quelle : ses anciennes analyses sont converties quand elles sont réécrites (un
+import qui les enrichit, un ``vacuum``). ``reencode`` les convertit toutes,
+sans compacter le fichier : utile sur une grosse base, où un ``vacuum`` demande
+le double de l'espace disque, ou sur un serveur PostgreSQL, qui n'a pas de
+``vacuum``.
+
+.. code-block:: bash
+
+   ./blunderdb reencode --db <path>
+
+**Options:**
+
+* ``--db`` — Base de données (obligatoire).
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``
+  (``{"rewritten"}``, le nombre d'analyses réécrites).
+
+La conversion avance par lots de 2 000 analyses, chacun dans sa propre
+transaction. Interrompue, elle reprend au lancement suivant là où elle s'était
+arrêtée : les analyses déjà converties sont sautées sans être relues. Une
+analyse illisible est laissée telle quelle et signalée dans le journal. Elle
+ne se lance jamais d'elle-même. Le démon expose la même opération sur la route
+``maintenance.reencode``, limitée au tenant de l'appelant.
+
+**Exemple:**
+
+.. code-block:: bash
+
+   ./blunderdb reencode --db base.db
+
+   #   Analyses rewritten: 15623468
 
 .. _cli_repair:
 

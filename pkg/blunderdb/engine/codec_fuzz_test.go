@@ -53,8 +53,8 @@ func FuzzDecodeBoardCompact(f *testing.F) {
 
 // FuzzDecodeAnalysisFromStorage exercises the analysis blob decoder against
 // arbitrary bytes. The blob is read from the `analysis.data` column (raw
-// JSON, legacy zlib, or current zstd — see the format-detection doc comment
-// on DecompressAnalysisData); the auto-detection path must never panic on
+// JSON, legacy zlib, legacy JSON in zstd, or the current binary format — see
+// the format-detection doc comment of analysiscodec.go); the auto-detection path must never panic on
 // garbage bytes, only return an error. One seed per format: a real
 
 // blob written by each codec this package has ever produced, plus a
@@ -63,10 +63,13 @@ func FuzzDecodeAnalysisFromStorage(f *testing.F) {
 	// A valid raw-JSON blob (first byte '{' → returned as-is).
 	f.Add([]byte(`{}`))
 	f.Add([]byte(`{"player1WinRate":0.5}`))
-	// A valid zstd blob — the current codec (CompressAnalysisData).
-	if c, err := CompressAnalysisData([]byte(`{"player1WinRate":0.5}`)); err == nil {
+	// A valid binary blob — the current codec (CompressAnalysisData).
+	if c, err := CompressAnalysisData([]byte(`{"xgid":"XGID=x","player1":"A"}`)); err == nil {
 		f.Add(c)
 	}
+	// A valid legacy JSON-in-zstd blob, as releases before ADR-0070 wrote.
+	f.Add(legacyZstdJSON(f, []byte(`{"player1WinRate":0.5}`)))
+	f.Add([]byte{binHeaderTag, binFormatVersion, 0x00}) // truncated binary frame
 	// A valid legacy zlib blob — every 2.x release before this one wrote this
 	// format, and it must decode forever (see the package doc comment).
 	f.Add(zlibCompressForFuzzSeed([]byte(`{"player1WinRate":0.5}`)))
@@ -79,6 +82,7 @@ func FuzzDecodeAnalysisFromStorage(f *testing.F) {
 	// both, not allocate for either.
 	f.Add(zlibZeroBomb(64 << 20))
 	f.Add(zstdZeroBomb(64 << 20))
+	f.Add(binaryZeroBomb(64 << 20))
 
 	f.Fuzz(func(t *testing.T, data []byte) {
 		// Contract: never panics. Both error and success are acceptable.

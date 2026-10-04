@@ -990,6 +990,10 @@ export function RecommendedTags() {
   return window['go']['database']['Database']['RecommendedTags']();
 }
 
+export function ReencodeAnalyses() {
+  return window['go']['database']['Database']['ReencodeAnalyses']();
+}
+
 export function RefreshSearchStatistics() {
   return window['go']['database']['Database']['RefreshSearchStatistics']();
 }

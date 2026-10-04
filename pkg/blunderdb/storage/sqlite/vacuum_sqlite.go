@@ -25,9 +25,10 @@ import (
 //  5. A second `wal_checkpoint(TRUNCATE)`: under WAL, VACUUM's output goes
 //     through the WAL and the file only shrinks once checkpointed.
 //
-// Before that, compactAnalyses rewrites every analysis blob not yet at zstd
-// level 19 (engine.CompactAnalysisData): legacy zlib/raw rows and the level-7
-// blobs the import path writes. Vacuum already rewrites the whole file. Its errors are logged, not returned: an unreadable row stays in its
+// Before that, compactAnalyses rewrites every analysis blob not yet in the
+// binary format at zstd level 19 (engine.CompactAnalysisData, ADR-0070):
+// legacy JSON rows (raw, zlib, zstd) and the level-7 binary blobs the import
+// path writes. Vacuum already rewrites the whole file. Its errors are logged, not returned: an unreadable row stays in its
 // old format, which is better than refusing the compaction.
 //
 // Returns the file size in bytes before and after; 0 and 0 on ":memory:",
@@ -186,7 +187,7 @@ func fetchAnalysisBatch(ctx context.Context, db execer, afterID int64, limit int
 }
 
 // compactAnalyses walks analysis.data in id order and rewrites any row not
-// already at zstd level 19. engine.NeedsCompaction is a cheap header check, so
+// already binary at zstd level 19. engine.NeedsCompaction is a cheap header check, so
 // an already-compacted database costs one full-table SELECT and no writes.
 func (s *Storage) compactAnalyses(ctx context.Context) error {
 	var lastID int64
