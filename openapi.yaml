@@ -8603,6 +8603,9 @@ components:
         positions:
           type: integer
           format: int32
+        storedBytes:
+          type: integer
+          format: int64
         analysisSecondsToday:
           type: number
           format: double

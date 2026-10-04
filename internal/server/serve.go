@@ -122,6 +122,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		rateLimitBurst = fs.Int("rate-limit-burst", envIntOr("BLUNDERDB_RATE_LIMIT_BURST", defaultRateLimitBurst),
 			fmt.Sprintf("per-tenant token-bucket burst (default %d)", defaultRateLimitBurst))
 		quotaPositions = fs.Int64("quota-positions", int64(envIntOr("BLUNDERDB_QUOTA_POSITIONS", 0)), quotaPositionsHelp)
+		quotaBytes     = fs.Int64("quota-bytes", int64(envIntOr("BLUNDERDB_QUOTA_BYTES", 0)), "per-tenant bound on disk space held (tables and indexes, shared out by row count on PostgreSQL), checked when an import starts like --quota-positions: refused (413) past it (0 = unlimited)")
 		quotaAnalysis  = fs.Int64("quota-analysis-seconds", int64(envIntOr("BLUNDERDB_QUOTA_ANALYSIS_SECONDS", 0)), "per-tenant engine CPU seconds per UTC day (wall time × workers), over sweeps, comparisons, cube matrices, evaluations and rollouts (0 = unlimited)")
 		quotaImports   = fs.Int("quota-imports", envIntOr("BLUNDERDB_QUOTA_IMPORTS", 0), "per-tenant imports running at once (0 = unlimited)")
 		enableRLS      = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
@@ -139,11 +140,11 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		return nil, fmt.Errorf("serve: unexpected argument(s) %v — flags are spelled --name value; check for a typo or a stray positional argument", fs.Args())
 	}
 
-	if *quotaPositions < 0 || *quotaAnalysis < 0 || *quotaImports < 0 {
+	if *quotaPositions < 0 || *quotaBytes < 0 || *quotaAnalysis < 0 || *quotaImports < 0 {
 		return nil, fmt.Errorf("serve: a quota is a bound, 0 or more (0 = unlimited)")
 	}
 	cfg := &serveConfig{
-		quotas:         TenantQuotas{MaxPositions: *quotaPositions, AnalysisSecondsPerDay: *quotaAnalysis, MaxConcurrentImports: *quotaImports},
+		quotas:         TenantQuotas{MaxPositions: *quotaPositions, MaxStoredBytes: *quotaBytes, AnalysisSecondsPerDay: *quotaAnalysis, MaxConcurrentImports: *quotaImports},
 		backend:        *backend,
 		dsn:            *dsn,
 		dbPath:         *dbPath,

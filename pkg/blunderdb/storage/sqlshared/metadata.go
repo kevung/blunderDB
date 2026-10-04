@@ -245,3 +245,49 @@ func (s *MetadataStore) blunderCount(ctx context.Context, scope string) (int, er
 	}
 	return total - counted + byLargest, nil
 }
+
+// storedBytesTables are the tenant tables whose space StoredBytes shares out
+// on a multi-tenant database: the ones an import or an analysis grows. The
+// small per-tenant settings tables weigh nothing next to them, and counting
+// their rows would only lengthen the probe.
+var storedBytesTables = []string{
+	"position", "analysis", "match", "game", "move", "move_analysis",
+	"match_stats", "comment", "transcription", "collection_position",
+	"anki_card", "anki_review_log", "training_item",
+}
+
+// StoredBytes implements storage.MetadataStore.
+func (s *MetadataStore) StoredBytes(ctx context.Context, scope string) (int64, error) {
+	if cols, _ := s.DB.TenantColumns(scope); len(cols) == 0 {
+		// One library per file: its live pages are the tenant's, exactly.
+		var n int64
+		err := s.DB.QueryRow(ctx, `SELECT (c.page_count - f.freelist_count) * z.page_size
+			FROM pragma_page_count() c, pragma_freelist_count() f, pragma_page_size() z`).Scan(&n)
+		if err != nil {
+			return 0, errf(s.DB, "stored bytes", err)
+		}
+		return n, nil
+	}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	var total float64
+	for _, t := range storedBytesTables {
+		var mine int64
+		if err := s.DB.QueryRow(ctx, "SELECT COUNT(*) FROM "+t+" WHERE "+tenant, targs...).Scan(&mine); err != nil {
+			return 0, errf(s.DB, "stored bytes", err)
+		}
+		if mine == 0 {
+			continue
+		}
+		// reltuples is the planner's row estimate, -1 before the table is
+		// first analysed: the tenant's own count then stands for the
+		// table, so a fresh table is charged whole rather than for free.
+		var size, rows float64
+		err := s.DB.QueryRow(ctx, `SELECT pg_total_relation_size(c.oid)::float8, c.reltuples::float8
+			FROM pg_class c WHERE c.oid = to_regclass(?)`, t).Scan(&size, &rows)
+		if err != nil {
+			return 0, errf(s.DB, "stored bytes", err)
+		}
+		total += size * float64(mine) / max(rows, float64(mine), 1)
+	}
+	return int64(math.Round(total)), nil
+}

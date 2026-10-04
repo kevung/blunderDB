@@ -151,6 +151,11 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
        une fois la borne atteinte, l'import est refusé (413,
        ``storage_quota_exceeded``) ; ``positions.save`` et les autres écritures
        unitaires ne sont pas bornées ; 0 = illimité
+   * - ``--quota-bytes <n>``
+     - ``0``
+     - octets qu'un tenant peut occuper sur disque (tables et index),
+       vérifiés au début d'un import comme ``--quota-positions`` (413,
+       ``storage_quota_exceeded``) ; 0 = illimité
    * - ``--quota-analysis-seconds <n>``
      - ``0``
      - secondes CPU de calcul du moteur par tenant et par jour UTC (429,
@@ -1511,8 +1516,8 @@ Quotas par tenant
 ~~~~~~~~~~~~~~~~~
 
 Une instance partagée borne ce que chaque tenant lui prend avec
-``--quota-positions``, ``--quota-analysis-seconds`` et ``--quota-imports``
-(sans option, rien n'est borné). Le temps de calcul compte chaque calcul du
+``--quota-positions``, ``--quota-bytes``, ``--quota-analysis-seconds`` et
+``--quota-imports`` (sans option, rien n'est borné). Le temps de calcul compte chaque calcul du
 moteur demandé par le tenant : ``gammonnet.analyzeMissing``,
 ``gammonnet.sweepStale``, ``gammonnet.compare``, ``gammonnet.cubeMatrix``,
 ``gammonnet.evaluate``, ``rollout.position`` et ``rollout.filter``. Il se
@@ -1529,9 +1534,16 @@ UTC et vit en mémoire : un redémarrage du démon le remet à zéro. Le quota d
 positions est vérifié au début d'un import, qui n'est pas interrompu en route :
 un tenant peut le dépasser d'autant que ses imports en cours ajoutent.
 ``positions.save`` et les autres écritures unitaires ne le vérifient pas.
+Le quota d'octets se vérifie au même moment et avec la même latitude. Sous
+SQLite, une base ne tient qu'une bibliothèque : le tenant occupe les pages
+vivantes du fichier. Sous PostgreSQL, les tenants partagent les tables et
+aucune ligne ne porte sa taille : l'espace de chaque table (index compris) se
+répartit au prorata des lignes, si bien qu'un tenant qui tient le tiers des
+lignes d'une table se voit compter le tiers de son espace. C'est une
+estimation, qui suit les statistiques du planificateur.
 Chaque refus porte dans ``details`` la borne (``quota``, ``limit``) et l'usage
 (``used``). ``tenants.quota`` rend au tenant appelant les bornes et son
-usage : positions stockées, secondes de calcul du jour, imports en cours.
+usage : positions stockées, octets occupés (``storedBytes``), secondes de calcul du jour, imports en cours.
 
 Les quotas sont une comptabilité du démon, pas une frontière : ils
 s'appliquent au tenant que le proxy a posé dans ``X-Tenant-ID``.
