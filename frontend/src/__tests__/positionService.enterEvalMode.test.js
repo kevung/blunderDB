@@ -19,13 +19,17 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { get } from 'svelte/store';
 
 // ── Mocks Wails (doivent précéder les imports des modules qui les utilisent) ──
+// showPosition fuses analysis and comment into one call; the tests keep steering the analysis through LoadAnalysis.
+const loadAnalysisMock = vi.hoisted(() => vi.fn());
+
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     LoadAllPositions: vi.fn(() => Promise.resolve([])),
     DeletePosition: vi.fn(),
     DeleteAnalysis: vi.fn(),
     UpdatePosition: vi.fn(),
     SaveAnalysis: vi.fn(),
-    LoadAnalysis: vi.fn(),
+    LoadAnalysis: loadAnalysisMock,
+    LoadPositionView: vi.fn(async (id) => ({ analysis: await loadAnalysisMock(id), comment: '' })),
     LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
     ComputeEPCFromPosition: vi.fn(() => Promise.resolve({})),
     SaveLastVisitedPosition: vi.fn(),

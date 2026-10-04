@@ -1,5 +1,5 @@
 /**
- * showPosition : les réponses de LoadAnalysis/LoadComment reviennent dans le
+ * showPosition : les réponses de LoadPositionView reviennent dans le
  * désordre quand une touche de navigation est maintenue ; seule la dernière
  * position demandée écrit les stores d'analyse et de commentaire.
  */
@@ -9,7 +9,7 @@ import { get } from 'svelte/store';
 
 const bindings = vi.hoisted(() => ({
     LoadAnalysis: vi.fn(),
-    LoadComment: vi.fn(),
+    LoadPositionView: vi.fn(),
     ListPositionIDs: vi.fn(() => Promise.resolve([])),
     LoadPositionsByIDs: vi.fn(() => Promise.resolve([])),
     LoadPositionIDsByFilters: vi.fn(() => Promise.resolve([])),
@@ -47,18 +47,15 @@ beforeEach(() => {
 
 describe('showPosition', () => {
     test('une analyse périmée, arrivée après la suivante, est ignorée', async () => {
-        const replies = { 1: { analysis: deferred(), comment: deferred() }, 2: { analysis: deferred(), comment: deferred() } };
-        bindings.LoadAnalysis.mockImplementation((id) => replies[id].analysis.promise);
-        bindings.LoadComment.mockImplementation((id) => replies[id].comment.promise);
+        const replies = { 1: deferred(), 2: deferred() };
+        bindings.LoadPositionView.mockImplementation((id) => replies[id].promise);
 
         const first = showPosition(pos(1));
         const second = showPosition(pos(2));
 
-        replies[2].analysis.resolve({ positionId: 2, xgid: 'N2' });
-        replies[2].comment.resolve('note 2');
+        replies[2].resolve({ analysis: { positionId: 2, xgid: 'N2' }, comment: 'note 2' });
         await second;
-        replies[1].analysis.resolve({ positionId: 1, xgid: 'N1' });
-        replies[1].comment.resolve('note 1');
+        replies[1].resolve({ analysis: { positionId: 1, xgid: 'N1' }, comment: 'note 1' });
         await first;
 
         expect(get(positionStore).id).toBe(2);
@@ -69,16 +66,15 @@ describe('showPosition', () => {
     test('une analyse périmée, arrivée avant la suivante, est ignorée aussi', async () => {
         const a1 = deferred();
         const a2 = deferred();
-        bindings.LoadAnalysis.mockImplementation((id) => (id === 1 ? a1.promise : a2.promise));
-        bindings.LoadComment.mockResolvedValue('');
+        bindings.LoadPositionView.mockImplementation((id) => (id === 1 ? a1.promise : a2.promise));
 
         const first = showPosition(pos(1));
         const second = showPosition(pos(2));
-        a1.resolve({ positionId: 1 });
+        a1.resolve({ analysis: { positionId: 1 }, comment: '' });
         await first;
         expect(get(analysisStore).positionId).not.toBe(1);
 
-        a2.resolve({ positionId: 2 });
+        a2.resolve({ analysis: { positionId: 2 }, comment: '' });
         await second;
         expect(get(analysisStore).positionId).toBe(2);
     });
@@ -86,7 +82,7 @@ describe('showPosition', () => {
     test('loadAnalysisForPosition respecte le même jeton', async () => {
         const a1 = deferred();
         bindings.LoadAnalysis.mockImplementation((id) => (id === 1 ? a1.promise : Promise.resolve({ positionId: 2 })));
-        bindings.LoadComment.mockResolvedValue('');
+        bindings.LoadPositionView.mockResolvedValue({ analysis: { positionId: 2 }, comment: '' });
 
         const stale = loadAnalysisForPosition(pos(1));
         await showPosition(pos(2));

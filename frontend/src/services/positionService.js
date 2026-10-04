@@ -12,7 +12,7 @@ import {
     SaveEditPosition,
     SaveExcludePosition,
     SaveFilter,
-    LoadComment,
+    LoadPositionView,
     CancelSearch
 } from '../../wailsjs/go/database/Database.js';
 
@@ -185,11 +185,16 @@ export async function showPosition(position) {
     const positionCopy = JSON.parse(JSON.stringify(position));
     positionStore.set(positionCopy);
 
-    // Analysis and comment fetched concurrently. Each call is deferred into
-    // .then() so a synchronous throw becomes a rejection allSettled catches.
-    const [analysisResult, commentResult] = await Promise.allSettled([Promise.resolve().then(() => LoadAnalysis(position.id)), Promise.resolve().then(() => LoadComment(position.id))]);
-    const analysis = analysisResult.status === 'fulfilled' ? analysisResult.value : null;
-    const comment = commentResult.status === 'fulfilled' ? commentResult.value : '';
+    // Analysis and comment in one IPC round trip. A failure leaves both empty,
+    // the same display as a position without either.
+    let view = null;
+    try {
+        view = await LoadPositionView(position.id);
+    } catch (error) {
+        logger.error('Error loading position view:', error);
+    }
+    const analysis = view?.analysis ?? null;
+    const comment = view?.comment ?? '';
 
     if (generation !== displayGeneration) return;
 
