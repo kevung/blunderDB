@@ -86,11 +86,11 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 - **`MatchEquityTableStore.Save` croit le `Digest` fourni** (`sqlshared/met.go`). Le
   digest est la clé de dédoublonnage et le nom de la table pour `analysis.met_id` ; il est
   calculé par `engine.MET.Digest()` sur les valeurs parsées, pas sur les octets de `Source`.
-  `mets.Import` le calcule bien, mais `mets/carry.go` recopie le digest d'une base importée :
-  une base étrangère au digest incohérent avec sa source est crue, et peut usurper une table
-  déjà tenue (ou la table intégrée Kazaross-XG2). Remède : `Save` parse `Source`
-  (`engine.ParseGnubgMET`), recalcule et refuse `ErrInvalid` sur écart. Pas une retouche :
-  les ~15 fixtures des contrats (`storagetest/contract_schema_2_31.go`, `contract_met_*.go`)
+  Les deux appelants le recalculent depuis la source (`mets.Import`, et `mets.Carrier` pour
+  l'export, l'import, la fusion et la migration de bases), mais le contrat ne le garantit
+  pas : un futur appelant pourrait encore enregistrer un digest incohérent. Remède : `Save`
+  parse `Source` (`engine.ParseGnubgMET`), recalcule et refuse `ErrInvalid` sur écart. Les
+  ~15 fixtures des contrats (`storagetest/contract_schema_2_31.go`, `contract_met_*.go`)
   passent des sources factices (`<met/>`, digest `"aaa"`) à réécrire en tables gnubg
   valides, sur les deux backends. Effort S-M, test de contrat « digest incohérent refusé ».
 

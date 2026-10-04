@@ -71,15 +71,33 @@ func (c *Carrier) Target(ctx context.Context, srcID int64) (int64, error) {
 	if !ok {
 		return 0, fmt.Errorf("source match equity table %d: %w", srcID, storage.ErrNotFound)
 	}
+	digest, err := sourceDigest(t)
+	if err != nil {
+		return 0, err
+	}
 	var id int64
-	if t.Digest != engine.KazarossXG2Digest() {
-		var err error
-		if id, err = c.dst.Save(ctx, c.scope, domain.MatchEquityTable{Name: t.Name, Digest: t.Digest, Source: t.Source}); err != nil {
+	if digest != engine.KazarossXG2Digest() {
+		if id, err = c.dst.Save(ctx, c.scope, domain.MatchEquityTable{Name: t.Name, Digest: digest, Source: t.Source}); err != nil {
 			return 0, err
 		}
 	}
 	c.target[srcID] = id
 	return id, nil
+}
+
+// sourceDigest is the digest of the values t's source holds. The digest a
+// source database declares is not believed: it names the table in the
+// receiver, so a forged one would pass another table's analyses off as valued
+// with a table already held, the built-in one included.
+func sourceDigest(t *domain.MatchEquityTable) (string, error) {
+	if len(t.Source) > MaxSourceBytes {
+		return "", fmt.Errorf("source match equity table %d: %w: %d bytes", t.ID, storage.ErrInvalid, len(t.Source))
+	}
+	m, err := engine.ParseGnubgMET([]byte(t.Source))
+	if err != nil {
+		return "", fmt.Errorf("source match equity table %d: %w: %w", t.ID, storage.ErrInvalid, err)
+	}
+	return m.Digest(), nil
 }
 
 // Side is one of the two analyses a merge combines, with the table its

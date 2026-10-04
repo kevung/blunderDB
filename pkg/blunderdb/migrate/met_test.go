@@ -2,10 +2,13 @@ package migrate_test
 
 import (
 	"context"
+	"os"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/migrate"
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -27,11 +30,17 @@ func checkMETsMigrated(t *testing.T, dst storage.Storage, scope string) {
 		t.Fatal(err)
 	}
 	mt := src.MatchEquityTables()
-	club, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "Club", Digest: "club-digest", Source: "<met>club</met>"})
+	rk, err := os.ReadFile("../engine/testdata/met/Rockwell-Kazaross.xml")
 	if err != nil {
 		t.Fatal(err)
 	}
-	other, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "Other", Digest: "other-digest", Source: "<met>other</met>"})
+	otherSource := strings.Replace(string(rk), "<me>0.676888</me>", "<me>0.670000</me>", 1)
+	clubDigest, otherDigest := metDigest(t, rk), metDigest(t, []byte(otherSource))
+	club, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "Club", Digest: clubDigest, Source: string(rk)})
+	if err != nil {
+		t.Fatal(err)
+	}
+	other, err := mt.Save(ctx, "", domain.MatchEquityTable{Name: "Other", Digest: otherDigest, Source: otherSource})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -67,19 +76,28 @@ func checkMETsMigrated(t *testing.T, dst storage.Storage, scope string) {
 	for _, tb := range list {
 		ids[tb.Digest] = tb.ID
 	}
-	if len(list) != 2 || ids["club-digest"] == 0 || ids["other-digest"] == 0 {
+	if len(list) != 2 || ids[clubDigest] == 0 || ids[otherDigest] == 0 {
 		t.Fatalf("migrated tables %+v, want Club and Other", list)
 	}
-	if cur, err := dst.MatchEquityTables().Current(ctx, scope); err != nil || cur == nil || cur.ID != ids["other-digest"] {
+	if cur, err := dst.MatchEquityTables().Current(ctx, scope); err != nil || cur == nil || cur.ID != ids[otherDigest] {
 		t.Errorf("current table %+v, %v; want Other", cur, err)
 	}
 	dstID, err := dst.Positions().Save(ctx, scope, &pos)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got, err := dst.MatchEquityTables().OfAnalysis(ctx, scope, dstID); err != nil || got != ids["club-digest"] {
-		t.Errorf("migrated analysis names table %d, %v; want Club (%d)", got, err, ids["club-digest"])
+	if got, err := dst.MatchEquityTables().OfAnalysis(ctx, scope, dstID); err != nil || got != ids[clubDigest] {
+		t.Errorf("migrated analysis names table %d, %v; want Club (%d)", got, err, ids[clubDigest])
 	}
+}
+
+func metDigest(t *testing.T, data []byte) string {
+	t.Helper()
+	m, err := engine.ParseGnubgMET(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return m.Digest()
 }
 
 func TestMigrateCarriesMETs_SQLite(t *testing.T) {

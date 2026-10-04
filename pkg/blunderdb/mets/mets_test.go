@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -102,17 +103,46 @@ func TestCurrentOverviewAndStatus(t *testing.T) {
 	}
 }
 
+// variant is a valid table whose values differ from Rockwell-Kazaross.
+func variant(t *testing.T) []byte {
+	t.Helper()
+	rk := string(readFile(t, "Rockwell-Kazaross.xml"))
+	v := strings.Replace(rk, "<me>0.676888</me>", "<me>0.670000</me>", 1)
+	if v == rk {
+		t.Fatal("variant: value to change not found")
+	}
+	return []byte(v)
+}
+
+func digestOf(t *testing.T, data []byte) string {
+	t.Helper()
+	m, err := engine.ParseGnubgMET(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return m.Digest()
+}
+
+// The carrier names a table by the digest of its source, never by the one
+// the source database declares.
 func TestCarrierMergesByDigestAndMapsTheBuiltInToZero(t *testing.T) {
 	ctx := context.Background()
 	dst := openStore(t)
-	held, err := dst.MatchEquityTables().Save(ctx, "", domain.MatchEquityTable{Name: "Held", Digest: "club", Source: "<met/>"})
+	rk, other, kxg := readFile(t, "Rockwell-Kazaross.xml"), variant(t), readFile(t, "Kazaross-XG2.xml")
+	if digestOf(t, other) == digestOf(t, rk) {
+		t.Fatal("variant has the digest of Rockwell-Kazaross")
+	}
+	held, err := dst.MatchEquityTables().Save(ctx, "", domain.MatchEquityTable{Name: "Held", Digest: digestOf(t, rk), Source: string(rk)})
 	if err != nil {
 		t.Fatal(err)
 	}
 	c := NewCarrier(dst.MatchEquityTables(), "", []*domain.MatchEquityTable{
-		{ID: 7, Name: "Club", Digest: "club", Source: "<met/>"},
-		{ID: 8, Name: "New", Digest: "new", Source: "<met/>"},
-		{ID: 9, Name: "Kazaross copy", Digest: engine.KazarossXG2Digest(), Source: "<met/>"},
+		{ID: 7, Name: "Club", Digest: "declared", Source: string(rk)},
+		{ID: 8, Name: "New", Digest: "new", Source: string(other)},
+		{ID: 9, Name: "Kazaross copy", Digest: "copy", Source: string(kxg)},
+		{ID: 10, Name: BuiltInName, Digest: engine.KazarossXG2Digest(), Source: string(other)},
+		{ID: 11, Name: "Usurper", Digest: digestOf(t, rk), Source: string(other)},
+		{ID: 12, Name: "Garbage", Digest: "garbage", Source: "<met/>"},
 	})
 	for src, want := range map[int64]int64{0: 0, 7: held, 9: 0} {
 		if got, err := c.Target(ctx, src); err != nil || got != want {
@@ -126,8 +156,16 @@ func TestCarrierMergesByDigestAndMapsTheBuiltInToZero(t *testing.T) {
 	if again, _ := c.Target(ctx, 8); again != fresh {
 		t.Errorf("Target(new) twice = %d then %d", fresh, again)
 	}
+	for _, src := range []int64{10, 11} {
+		if got, err := c.Target(ctx, src); err != nil || got != fresh {
+			t.Errorf("Target(forged %d) = %d, %v; want the table its source holds (%d)", src, got, err, fresh)
+		}
+	}
 	if cur, err := dst.MatchEquityTables().Current(ctx, ""); err != nil || cur != nil {
 		t.Errorf("carried tables made current: %+v, %v", cur, err)
+	}
+	if _, err := c.Target(ctx, 12); !errors.Is(err, storage.ErrInvalid) {
+		t.Errorf("Target(unparseable) = %v, want ErrInvalid", err)
 	}
 	if _, err := c.Target(ctx, 99); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("Target(unknown) = %v, want ErrNotFound", err)
