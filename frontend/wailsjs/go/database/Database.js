@@ -1170,6 +1170,10 @@ export function SaveTrainingSession(arg1) {
   return window['go']['database']['Database']['SaveTrainingSession'](arg1);
 }
 
+export function ScoreMoves() {
+  return window['go']['database']['Database']['ScoreMoves']();
+}
+
 export function SearchComments(arg1) {
   return window['go']['database']['Database']['SearchComments'](arg1);
 }

@@ -3597,6 +3597,10 @@ played well and the other did not: the widest gap first. A player's error on
 a position is their worst play of it; "well" means below the library's Error
 threshold. Open the positions with --format json (position_id).
 
+Only scored plays are compared, and no import scores them: run
+`blunderdb repair --db <file> --move-errors` first. The count of plays still
+unscored is printed (unscored_moves in JSON).
+
 Options:
   -db string
     	Path to the database file (required)

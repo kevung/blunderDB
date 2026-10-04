@@ -23,6 +23,9 @@ func (s *StatsStore) PlayerContrast(ctx context.Context, scope, playerA, playerB
 	if err != nil {
 		return nil, errf(s.DB, "PlayerContrast settings", err)
 	}
+	// unscored counts the plays the contrast cannot judge yet: error_mp is
+	// written by the explicit ScoreMoves pass, never by an import.
+	unscored := 0
 	rowsOf := func(name string) ([]storage.ContrastRow, error) {
 		f := filter
 		f.PlayerName, f.PlayerAliases = name, nil
@@ -35,8 +38,9 @@ func (s *StatsStore) PlayerContrast(ctx context.Context, scope, playerA, playerB
 		// two players answering one position differently are scored each on
 		// their own play.
 		rows, err := s.DB.Query(ctx,
-			`SELECT p.id, `+s.DB.Bigint("MAX(mv.error_mp)")+`, COUNT(*) `+statsBaseJoin+where+
-				` AND mv.error_mp IS NOT NULL GROUP BY p.id ORDER BY p.id`, args...)
+			`SELECT p.id, `+s.DB.Bigint("COALESCE(MAX(mv.error_mp), -1)")+`, COUNT(mv.error_mp), `+
+				`SUM(CASE WHEN mv.error_mp IS NULL THEN 1 ELSE 0 END) `+statsBaseJoin+where+
+				` GROUP BY p.id ORDER BY p.id`, args...)
 		if err != nil {
 			return nil, err
 		}
@@ -44,10 +48,14 @@ func (s *StatsStore) PlayerContrast(ctx context.Context, scope, playerA, playerB
 		var out []storage.ContrastRow
 		for rows.Next() {
 			var r storage.ContrastRow
-			if err := rows.Scan(&r.PositionID, &r.WorstMP, &r.Times); err != nil {
+			var missing int
+			if err := rows.Scan(&r.PositionID, &r.WorstMP, &r.Times, &missing); err != nil {
 				return nil, err
 			}
-			out = append(out, r)
+			unscored += missing
+			if r.Times > 0 {
+				out = append(out, r)
+			}
 		}
 		return out, rows.Err()
 	}
@@ -61,5 +69,5 @@ func (s *StatsStore) PlayerContrast(ctx context.Context, scope, playerA, playerB
 	}
 	common, positions := storage.ContrastPlayers(a, b, settings.ErrorThresholdMP)
 	return &storage.PlayerContrast{PlayerA: playerA, PlayerB: playerB, ThresholdMP: settings.ErrorThresholdMP,
-		CommonPositions: common, Positions: positions}, nil
+		CommonPositions: common, Positions: positions, UnscoredMoves: unscored}, nil
 }

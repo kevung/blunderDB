@@ -1662,6 +1662,8 @@
         "contrastSummary": "{n} von {total} gemeinsamen Stellungen: {a} spielte {na} gut, {b} spielte {nb} gut.",
         "contrastEmpty": "Keine der {total} gemeinsamen Stellungen wurde von einem gut und vom anderen nicht gut gespielt.",
         "contrastOpen": "Diese Stellungen öffnen",
+        "contrastUnscored": "{n} Züge dieser beiden Spieler sind noch nicht bewertet und bleiben außen vor: Züge werden nur auf Anfrage bewertet.",
+        "contrastScore": "Züge bewerten",
         "compareBlunderRate": "Blunder / 100 Entsch.",
         "trainingTitle": "Training und Fortschritt",
         "trainingHint": "Der PR des Entscheidungs-Quiz, der PR der Matches des Filters und die Anki-Retention, in denselben Kalenderfenstern. Der Quiz-PR liegt auf der Skala des echten PR; die Retention liest man an der rechten Achse (%). In Klammern die Zahl der Entscheidungen oder Wiederholungen: Ein Fenster ohne Stichprobe hat keinen Wert.",

@@ -79,13 +79,26 @@ func testStatsPlayerContrast(t *testing.T, s storage.Storage) {
 	decide(2, "13/9 24/22", "24/18 6/4", 0.200, 0.150)               // both badly
 	decide(3, "13/11 6/4", "24/22 13/11", 0.005, 0.020)              // both well
 	decide(4, "24/20 13/11", "", 0.400, 0)                           // Alice only
-	if _, _, err := s.Matches().ScoreMoves(ctx, "", 0, 1000); err != nil {
-		t.Fatalf("ScoreMoves: %v", err)
+
+	// As an import leaves it: no play scored, so nothing to contrast yet, and
+	// the response says how many plays wait for the explicit pass.
+	fresh, err := s.Stats().PlayerContrast(ctx, "", "Alice", "Bob", storage.StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatalf("PlayerContrast before scoring: %v", err)
+	}
+	if fresh.UnscoredMoves != 9 || len(fresh.Positions) != 0 || fresh.CommonPositions != 0 {
+		t.Fatalf("before scoring = %+v, want 9 unscored plays and nothing listed", fresh)
+	}
+	if _, err := storage.ScoreAllMoves(ctx, s.Matches(), "", nil, nil); err != nil {
+		t.Fatalf("ScoreAllMoves: %v", err)
 	}
 
 	got, err := s.Stats().PlayerContrast(ctx, "", "Alice", "Bob", storage.StatsFilter{DecisionType: -1})
 	if err != nil {
 		t.Fatalf("PlayerContrast: %v", err)
+	}
+	if got.UnscoredMoves != 0 {
+		t.Errorf("UnscoredMoves after scoring = %d, want 0", got.UnscoredMoves)
 	}
 	if got.CommonPositions != 4 {
 		t.Errorf("CommonPositions = %d, want 4", got.CommonPositions)

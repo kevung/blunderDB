@@ -3,7 +3,11 @@ import { render, cleanup, fireEvent, waitFor } from '@testing-library/svelte';
 
 const contrast = vi.fn();
 const load = vi.fn();
-vi.mock('../../wailsjs/go/database/Database.js', () => ({ PlayerContrast: (...args) => contrast(...args) }));
+const score = vi.fn();
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
+    PlayerContrast: (...args) => contrast(...args),
+    ScoreMoves: (...args) => score(...args)
+}));
 vi.mock('../services/positionLoader.js', () => ({ loadPositionsFromSelection: (...args) => load(...args) }));
 
 const { default: PlayerComparison } = await import('../components/stats/PlayerComparison.svelte');
@@ -14,6 +18,7 @@ afterEach(() => {
     cleanup();
     contrast.mockReset();
     load.mockReset();
+    score.mockReset();
 });
 
 describe('PlayerComparison contrast', () => {
@@ -44,5 +49,19 @@ describe('PlayerComparison contrast', () => {
         await fireEvent.click(container.querySelector('[data-testid="player-contrast"] button'));
         await waitFor(() => expect(container.querySelector('[data-testid="player-contrast"] p')).not.toBeNull());
         expect(container.querySelector('[data-testid="player-contrast"] button')).toBeNull();
+    });
+
+    test('offers to score the plays an import left unscored, then reloads', async () => {
+        contrast
+            .mockResolvedValueOnce({ common_positions: 0, positions: [], unscored_moves: 9 })
+            .mockResolvedValueOnce({ common_positions: 4, positions: [{ position_id: 7, well_played: 'b' }], unscored_moves: 0 });
+        score.mockResolvedValue(9);
+        const { container } = render(PlayerComparison, { a: row('Alice'), b: row('Bob') });
+        await fireEvent.click(container.querySelector('[data-testid="player-contrast"] button'));
+        await waitFor(() => expect(container.querySelector('[data-testid="contrast-unscored"]')).not.toBeNull());
+        await fireEvent.click(container.querySelector('[data-testid="player-contrast"] button'));
+        await waitFor(() => expect(contrast).toHaveBeenCalledTimes(2));
+        expect(score).toHaveBeenCalledTimes(1);
+        await waitFor(() => expect(container.querySelector('[data-testid="contrast-unscored"]')).toBeNull());
     });
 });

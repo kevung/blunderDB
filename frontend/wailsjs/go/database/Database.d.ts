@@ -601,6 +601,8 @@ export function SaveSessionState(arg1:database.SessionState):Promise<void>;
 
 export function SaveTrainingSession(arg1:storage.TrainingSession):Promise<number>;
 
+export function ScoreMoves():Promise<number>;
+
 export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
 
 export function SearchPositionIDs(arg1:domain.SearchFilters,arg2:number,arg3:number):Promise<Array<number>>;

@@ -7,7 +7,7 @@
     import { t } from '../../i18n/index.js';
     import { get } from 'svelte/store';
     import { compareRows } from '../../services/playerComparison.js';
-    import { PlayerContrast } from '../../../wailsjs/go/database/Database.js';
+    import { PlayerContrast, ScoreMoves } from '../../../wailsjs/go/database/Database.js';
     import { statsFilterStore } from '../../stores/statsStore.js';
     import { loadPositionsFromSelection } from '../../services/positionLoader.js';
 
@@ -44,6 +44,22 @@
             contrastError = /** @type {any} */ (err)?.message ?? String(err);
         } finally {
             contrastLoading = false;
+        }
+    }
+
+    // Les coups ne sont notés que sur demande (aucun import ne le fait) : tant
+    // qu'il en reste à noter, le contraste les ignore, et le bouton lance la passe.
+    let scoring = $state(false);
+    async function scoreMoves() {
+        scoring = true;
+        contrastError = '';
+        try {
+            await ScoreMoves();
+            await loadContrast();
+        } catch (err) {
+            contrastError = /** @type {any} */ (err)?.message ?? String(err);
+        } finally {
+            scoring = false;
         }
     }
 
@@ -90,6 +106,11 @@
                 })}
             </p>
             <button type="button" onclick={openContrast}>{$t('stats.contrastOpen')}</button>
+        {/if}
+        {#if contrast?.unscored_moves > 0}
+            <p class="note" data-testid="contrast-unscored">{$t('stats.contrastUnscored', { n: contrast.unscored_moves })}</p>
+            <button type="button" disabled={scoring} onclick={scoreMoves}>{$t('stats.contrastScore')}</button>
+            {#if contrastError}<p class="note">{contrastError}</p>{/if}
         {/if}
     </div>
 </section>

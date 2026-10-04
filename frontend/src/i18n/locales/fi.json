@@ -1662,6 +1662,8 @@
         "contrastSummary": "{n} / {total} yhteisestä paikasta: {a} pelasi {na} hyvin, {b} pelasi {nb} hyvin.",
         "contrastEmpty": "Yksikään {total} yhteisestä paikasta ei ollut sellainen, jonka toinen pelasi hyvin ja toinen ei.",
         "contrastOpen": "Avaa nämä paikat",
+        "contrastUnscored": "{n} näiden kahden pelaajan siirtoa ei ole vielä pisteytetty, ja ne jätetään pois: siirrot pisteytetään vain pyynnöstä.",
+        "contrastScore": "Pisteytä siirrot",
         "compareBlunderRate": "Blunderit / 100 päät.",
         "trainingTitle": "Harjoittelu ja edistyminen",
         "trainingHint": "Päätös-tietovisan PR, suodattimen ottelujen PR ja Anki-muistaminen samoissa kalenteri-ikkunoissa. Tietovisan PR on oikean PR:n asteikolla; muistaminen luetaan oikeasta akselista (%). Sulkeissa päätösten tai kertausten määrä: ikkunalla ilman otosta ei ole arvoa.",

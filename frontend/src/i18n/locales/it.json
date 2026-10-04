@@ -1662,6 +1662,8 @@
         "contrastSummary": "{n} di {total} posizioni comuni: {a} ne ha giocate bene {na}, {b} ne ha giocate bene {nb}.",
         "contrastEmpty": "Nessuna delle {total} posizioni comuni è stata giocata bene da uno e non dall'altro.",
         "contrastOpen": "Apri queste posizioni",
+        "contrastUnscored": "{n} mosse di questi due giocatori non sono ancora valutate e sono escluse: le mosse vengono valutate solo su richiesta.",
+        "contrastScore": "Valuta le mosse",
         "compareBlunderRate": "Blunder / 100 dec.",
         "trainingTitle": "Allenamento e progressione",
         "trainingHint": "Il PR del quiz Decisione, il PR delle partite del filtro e la ritenzione Anki, sulle stesse finestre di calendario. Il PR del quiz è sulla scala del PR reale; la ritenzione si legge sull'asse destro (%). Tra parentesi, il numero di decisioni o di ripassi: una finestra senza campione non ha valore.",

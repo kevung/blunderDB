@@ -141,6 +141,10 @@ func (cli *CLI) runStatsContrast(args []string) error {
 		fmt.Println("a position is their worst play of it; \"well\" means below the library's Error")
 		fmt.Println("threshold. Open the positions with --format json (position_id).")
 		fmt.Println()
+		fmt.Println("Only scored plays are compared, and no import scores them: run")
+		fmt.Println("`blunderdb repair --db <file> --move-errors` first. The count of plays still")
+		fmt.Println("unscored is printed (unscored_moves in JSON).")
+		fmt.Println()
 		fmt.Println("Options:")
 		fs.PrintDefaults()
 		fmt.Println()
@@ -173,6 +177,9 @@ func (cli *CLI) runStatsContrast(args []string) error {
 	}
 	fmt.Printf("%s / %s — %d common positions, %d where one played well and the other did not (error threshold %d mp)\n\n",
 		res.PlayerA, res.PlayerB, res.CommonPositions, len(res.Positions), res.ThresholdMP)
+	if res.UnscoredMoves > 0 {
+		fmt.Printf("%d plays of these two players are not scored yet and are left out: run\n  blunderdb repair --db <file> --move-errors\n\n", res.UnscoredMoves)
+	}
 	if len(res.Positions) == 0 {
 		return nil
 	}

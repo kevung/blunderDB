@@ -1662,6 +1662,8 @@
         "contrastSummary": "{n} of {total} common positions: {a} played {na} well, {b} played {nb} well.",
         "contrastEmpty": "None of the {total} common positions was played well by one and not the other.",
         "contrastOpen": "Open these positions",
+        "contrastUnscored": "{n} plays of these two players are not scored yet and are left out: plays are scored only on request.",
+        "contrastScore": "Score the plays",
         "compareBlunderRate": "Blunders / 100 dec.",
         "trainingTitle": "Training and progression",
         "trainingHint": "The Decision quiz PR, the PR of the filter's matches and the Anki retention, on the same calendar windows. The quiz PR is on the real PR's scale; the retention reads on the right axis (%). In brackets, the number of decisions or reviews: a window with no sample has no value.",

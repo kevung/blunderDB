@@ -5854,6 +5854,7 @@ export namespace storage {
 	    threshold_mp: number;
 	    common_positions: number;
 	    positions: ContrastPosition[];
+	    unscored_moves: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new PlayerContrast(source);
@@ -5866,6 +5867,7 @@ export namespace storage {
 	        this.threshold_mp = source["threshold_mp"];
 	        this.common_positions = source["common_positions"];
 	        this.positions = this.convertValues(source["positions"], ContrastPosition);
+	        this.unscored_moves = source["unscored_moves"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
