@@ -1,0 +1,197 @@
+{
+ "name": "T2 — Club du jeudi",
+ "persona": "Yanis (P2)",
+ "players": [
+  {
+   "id": "adèle-fournier",
+   "name": "Adèle Fournier",
+   "rating": 3.6
+  },
+  {
+   "id": "bruno-lacaze",
+   "name": "Bruno Lacaze",
+   "rating": 6.8
+  },
+  {
+   "id": "chloé-marchetti",
+   "name": "Chloé Marchetti",
+   "rating": 5
+  },
+  {
+   "id": "denis-rocher",
+   "name": "Denis Rocher",
+   "rating": 6.6
+  },
+  {
+   "id": "élodie-brunet",
+   "name": "Élodie Brunet",
+   "rating": 5.5
+  },
+  {
+   "id": "fabien-ollier",
+   "name": "Fabien Ollier",
+   "rating": 5.6
+  },
+  {
+   "id": "gisèle-taupin",
+   "name": "Gisèle Taupin",
+   "rating": 11.4
+  },
+  {
+   "id": "hugo-ferrand",
+   "name": "Hugo Ferrand",
+   "rating": 10.8
+  },
+  {
+   "id": "inès-delorme",
+   "name": "Inès Delorme",
+   "rating": 11.8
+  },
+  {
+   "id": "jules-barrault",
+   "name": "Jules Barrault",
+   "rating": 7.2
+  },
+  {
+   "id": "karine-vidal",
+   "name": "Karine Vidal",
+   "rating": 7
+  },
+  {
+   "id": "lucas-perrot",
+   "name": "Lucas Perrot",
+   "rating": 4.7
+  },
+  {
+   "id": "manon-girard",
+   "name": "Manon Girard",
+   "rating": 4.7
+  },
+  {
+   "id": "nathan-coste",
+   "name": "Nathan Coste",
+   "rating": 5.2
+  },
+  {
+   "id": "océane-joly",
+   "name": "Océane Joly",
+   "rating": 4.6
+  },
+  {
+   "id": "pascal-renaud",
+   "name": "Pascal Renaud",
+   "rating": 3.3
+  },
+  {
+   "id": "quentin-morel",
+   "name": "Quentin Morel",
+   "rating": 10
+  },
+  {
+   "id": "rose-aubert",
+   "name": "Rose Aubert",
+   "rating": 8.9
+  },
+  {
+   "id": "samuel-leroux",
+   "name": "Samuel Leroux",
+   "rating": 10.2
+  },
+  {
+   "id": "tatiana-klein",
+   "name": "Tatiana Klein",
+   "rating": 7.9
+  },
+  {
+   "id": "ugo-benard",
+   "name": "Ugo Benard",
+   "rating": 4.3
+  },
+  {
+   "id": "valérie-mace",
+   "name": "Valérie Mace",
+   "rating": 4.2
+  },
+  {
+   "id": "william-royer",
+   "name": "William Royer",
+   "rating": 11
+  },
+  {
+   "id": "xavier-pons",
+   "name": "Xavier Pons",
+   "rating": 8.5
+  },
+  {
+   "id": "yasmine-hadad",
+   "name": "Yasmine Hadad",
+   "rating": 10
+  },
+  {
+   "id": "zoé-carlier",
+   "name": "Zoé Carlier",
+   "rating": 7.8
+  },
+  {
+   "id": "arthur-lemoine",
+   "name": "Arthur Lemoine",
+   "rating": 6.2
+  },
+  {
+   "id": "bérénice-gomez",
+   "name": "Bérénice Gomez",
+   "rating": 8.7
+  },
+  {
+   "id": "cyril-dumas",
+   "name": "Cyril Dumas",
+   "rating": 10.4
+  },
+  {
+   "id": "diane-leclerc",
+   "name": "Diane Leclerc",
+   "rating": 9.7
+  },
+  {
+   "id": "étienne-robin",
+   "name": "Étienne Robin",
+   "rating": 6.5
+  },
+  {
+   "id": "florence-guyot",
+   "name": "Florence Guyot",
+   "rating": 10.3
+  }
+ ],
+ "phases": [
+  {
+   "kind": "swiss_lives",
+   "lives": 2,
+   "target": 16,
+   "entry": "survivors"
+  },
+  {
+   "kind": "lives_bracket",
+   "entry": "survivors"
+  }
+ ],
+ "events": [
+  {
+   "type": "match",
+   "id": "M7",
+   "phase": 0,
+   "a": "pascal-renaud",
+   "b": "xavier-pons",
+   "winner": "pascal-renaud"
+  },
+  {
+   "type": "match",
+   "id": "M1",
+   "phase": 0,
+   "a": "yasmine-hadad",
+   "b": "arthur-lemoine",
+   "winner": "arthur-lemoine"
+  }
+ ],
+ "incidents": []
+}
