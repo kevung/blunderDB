@@ -40,5 +40,11 @@ test('recherche sans résultat : état vide dans le panneau, bouton primaire, so
     await expect(page.locator('.no-results')).toBeVisible();
     await page.keyboard.press('Control+r');
     await expect(statusBar(page)).toContainText('3 / 3');
+    // Ctrl+R lands on the Analysis tab once the library is listed; back on Search, the banner is gone.
+    const searchButton = page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true });
+    // Not merely « Search hidden »: the reload passes through the Matches tab before Analysis.
+    await expect(page.getByTestId('tab-analysis')).toHaveAttribute('aria-selected', 'true');
+    await page.keyboard.press('Control+f');
+    await expect(searchButton).toBeVisible();
     await expect(page.locator('.no-results')).toHaveCount(0);
 });
