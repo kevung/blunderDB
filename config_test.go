@@ -624,3 +624,39 @@ func TestCommentAuthorSettingSignsAndSurvivesReload(t *testing.T) {
 		t.Errorf("reloaded author = %q, want Alice", got)
 	}
 }
+
+func TestTabPanelHeights(t *testing.T) {
+	isolateXDGConfig(t)
+
+	c := NewConfig()
+	if got := c.GetTabPanelHeights(); len(got) != 0 {
+		t.Fatalf("fresh config remembers %v, want nothing", got)
+	}
+	if err := c.SaveTabPanelHeight("stats", MaxPanelHeight+500); err != nil {
+		t.Fatal(err)
+	}
+	if err := c.SaveTabPanelHeight("search", MinPanelHeight-30); err != nil {
+		t.Fatal(err)
+	}
+	if err := c.SaveTabPanelHeight("eval", 300); err != nil {
+		t.Fatal(err)
+	}
+	if err := c.SaveTabPanelHeight("", 300); err != nil {
+		t.Fatal(err)
+	}
+
+	loader := &Config{}
+	if _, err := loader.LoadConfig(); err != nil {
+		t.Fatalf("LoadConfig: %v", err)
+	}
+	got := loader.GetTabPanelHeights()
+	want := map[string]int{"stats": MaxPanelHeight, "search": MinPanelHeight, "eval": 300}
+	if len(got) != len(want) {
+		t.Fatalf("heights = %v, want %v", got, want)
+	}
+	for tab, h := range want {
+		if got[tab] != h {
+			t.Errorf("height of %q = %d, want %d", tab, got[tab], h)
+		}
+	}
+}

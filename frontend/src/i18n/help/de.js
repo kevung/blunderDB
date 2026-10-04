@@ -48,6 +48,7 @@ export default {
 <li>Stellungen durch verteiltes Wiederholen zu studieren (Anki-Panel),</li>
 <li>die Metadaten der Datenbank anzuzeigen (Metadaten-Panel).</li>
 </ul>
+<p>Die Höhe des Bereichs wird über seinen Griff eingestellt; jeder Reiter merkt sich seine eigene.</p>
 <p>Es können modale Fenster angezeigt werden, um:</p>
 <ul>
 <li>die Hilfe von blunderDB anzuzeigen,</li>

@@ -48,6 +48,7 @@ export default {
 <li>opiskella asemia välitoistolla (Anki-paneeli),</li>
 <li>näyttävät tietokannan metatiedot (Metatiedot-paneeli).</li>
 </ul>
+<p>Paneelin korkeutta säädetään vetämällä sen kahvaa; jokainen välilehti muistaa omansa.</p>
 <p>Modaali-ikkunoita voidaan näyttää seuraaviin tarkoituksiin:</p>
 <ul>
 <li>näyttää blunderDB:n ohje,</li>

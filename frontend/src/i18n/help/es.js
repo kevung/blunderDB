@@ -48,6 +48,7 @@ export default {
 <li>estudiar las posiciones mediante repetición espaciada (panel Anki),</li>
 <li>ver los metadatos de la base de datos (panel Metadatos).</li>
 </ul>
+<p>La altura del panel se ajusta arrastrando su asa; cada pestaña recuerda la suya.</p>
 <p>Pueden mostrarse ventanas modales para:</p>
 <ul>
 <li>mostrar la ayuda de blunderDB,</li>

@@ -1372,8 +1372,10 @@
 
     .match-length-badge {
         display: inline-block;
-        background: color-mix(in srgb, var(--color-primary) 12%, var(--color-surface));
-        color: color-mix(in srgb, var(--color-primary) 80%, var(--color-text));
+        /* Text and fill come from a token pair the theme contrast test covers, so the badge stays AA in every theme. */
+        background: var(--color-surface-alt);
+        color: var(--color-text);
+        border: 1px solid var(--color-primary);
         font-size: var(--font-size-small);
         font-weight: 600;
         padding: 1px 6px;
