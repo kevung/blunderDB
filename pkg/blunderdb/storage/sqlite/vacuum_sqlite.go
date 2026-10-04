@@ -2,9 +2,11 @@ package sqlite
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
+	"path/filepath"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -311,4 +313,62 @@ func humanBytes(b int64) string {
 		exp++
 	}
 	return fmt.Sprintf("%.1f %ciB", float64(b)/float64(div), "KMG"[exp])
+}
+
+// ErrVacuumIntoNoRoom is VacuumInto refusing a copy the volume of its target
+// cannot hold.
+var ErrVacuumIntoNoRoom = errors.New("not enough free disk space for the compacted copy")
+
+// VacuumInto is the first half of a vacuum by file replacement: the same
+// compaction of legacy analyses as Vacuum, then `VACUUM INTO target`, which
+// writes the compacted database straight into a new file — no transient
+// copy in the temp store, no WAL the size of the database. The peak is the
+// file plus its compacted copy, against about three times the file for an
+// in-place VACUUM under WAL. Swapping target in is the owner's business: only
+// the holder of the file can close every connection to it first
+// (database.Vacuum).
+//
+// target must not exist. Returns the size of the file before, WAL folded in.
+func (s *Storage) VacuumInto(ctx context.Context, target string) (int64, error) {
+	if s.sqlDB == nil {
+		return 0, fmt.Errorf("vacuum: no database open")
+	}
+	path, err := mainFilePath(ctx, s.sqlDB)
+	if err != nil {
+		return 0, fmt.Errorf("vacuum: %w", err)
+	}
+	if path == "" {
+		return 0, fmt.Errorf("vacuum into: the database has no file")
+	}
+	if err := s.compactAnalyses(ctx); err != nil {
+		return 0, fmt.Errorf("vacuum: recompress analyses: %w", err)
+	}
+	if _, err := s.sqlDB.ExecContext(ctx, `PRAGMA wal_checkpoint(TRUNCATE)`); err != nil {
+		return 0, fmt.Errorf("vacuum: wal checkpoint: %w", err)
+	}
+	sizeBefore, err := fileSize(path)
+	if err != nil {
+		return 0, fmt.Errorf("vacuum: %w", err)
+	}
+	free, err := freeSpaceBytes(filepath.Dir(target))
+	if err != nil {
+		return sizeBefore, fmt.Errorf("vacuum: could not determine free disk space: %w", err)
+	}
+	if free < uint64(sizeBefore) {
+		return sizeBefore, fmt.Errorf("vacuum: %w (need about %s, only %s available beside %s)",
+			ErrVacuumIntoNoRoom, humanBytes(sizeBefore), humanBytes(int64(free)), path)
+	}
+	if _, err := s.sqlDB.ExecContext(ctx, `VACUUM INTO ?`, target); err != nil {
+		_ = os.Remove(target)
+		return sizeBefore, fmt.Errorf("vacuum into: %w", err)
+	}
+	return sizeBefore, nil
+}
+
+// FilePath is the file the main database lives in, "" for ":memory:".
+func (s *Storage) FilePath(ctx context.Context) (string, error) {
+	if s.sqlDB == nil {
+		return "", fmt.Errorf("no database open")
+	}
+	return mainFilePath(ctx, s.sqlDB)
 }

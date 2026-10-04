@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
@@ -475,67 +476,62 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 }
 
 // GetDatabaseStats returns statistics about the database
+//
+// The counts run side by side, each on its own pooled connection: on a
+// 15 M-row library each COUNT and the blunder count take seconds to tens of
+// seconds, and in a row they made `info` wait for their sum.
 func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	stats := make(map[string]interface{})
-
-	// Count positions
-	var posCount int64
-	err := d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount)
-	if err != nil {
-		return nil, err
+	ctx := context.Background()
+	tables := []struct {
+		key, table string
+		required   bool
+	}{
+		{"position_count", "position", true},
+		{"analysis_count", "analysis", true},
+		// match, game and move might not exist in older databases.
+		{"match_count", "match", false},
+		{"game_count", "game", false},
+		{"move_count", "move", false},
 	}
-	stats["position_count"] = posCount
-
-	// Count analyses
-	var analysisCount int64
-	err = d.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&analysisCount)
-	if err != nil {
-		return nil, err
+	counts := make([]int64, len(tables))
+	errs := make([]error, len(tables))
+	var blunders int64
+	var wg sync.WaitGroup
+	for i, t := range tables {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			errs[i] = d.db.QueryRowContext(ctx, `SELECT COUNT(*) FROM `+t.table).Scan(&counts[i])
+		}()
 	}
-	stats["analysis_count"] = analysisCount
-
-	// Count matches
-	var matchCount int64
-	err = d.db.QueryRow(`SELECT COUNT(*) FROM match`).Scan(&matchCount)
-	if err != nil {
-		// Table might not exist in older databases
-		stats["match_count"] = int64(0)
-	} else {
-		stats["match_count"] = matchCount
-	}
-
-	// Count games
-	var gameCount int64
-	err = d.db.QueryRow(`SELECT COUNT(*) FROM game`).Scan(&gameCount)
-	if err != nil {
-		stats["game_count"] = int64(0)
-	} else {
-		stats["game_count"] = gameCount
-	}
-
-	// Count moves
-	var moveCount int64
-	err = d.db.QueryRow(`SELECT COUNT(*) FROM move`).Scan(&moveCount)
-	if err != nil {
-		stats["move_count"] = int64(0)
-	} else {
-		stats["move_count"] = moveCount
-	}
-
 	// Count blunders at the library's threshold (ADR-0046), by the store's
 	// rule — the same as the status bar link's search, a multi-played
 	// Position scored by its largest play. Not restated here, so it cannot
 	// drift. It counts POSITIONS, not PR decisions: "how much to look at".
-	counts, err := d.store.Metadata().Counts(context.Background(), "")
-	if err != nil {
-		stats["blunder_count"] = int64(0)
-	} else {
-		stats["blunder_count"] = int64(counts.Blunders)
-	}
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		if c, err := d.store.Metadata().Counts(ctx, ""); err == nil {
+			blunders = int64(c.Blunders)
+		}
+	}()
+	wg.Wait()
 
+	stats := make(map[string]interface{})
+	for i, t := range tables {
+		switch {
+		case errs[i] == nil:
+			stats[t.key] = counts[i]
+		case t.required:
+			return nil, errs[i]
+		default:
+			stats[t.key] = int64(0)
+		}
+	}
+	stats["blunder_count"] = blunders
 	return stats, nil
 }
 
