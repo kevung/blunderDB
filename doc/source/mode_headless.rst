@@ -1969,10 +1969,16 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
        avec leur hachage, commentaires écrits sur ces plateaux, bibliothèque
        partagée, classement de club ; sans ``X-Read-Tenants``, ce tenant seul
 
-Seuls cinq outils écrivent — ``save_position``, ``comment_position`` (qui
+Seuls ces outils écrivent — ``save_position``, ``comment_position`` (qui
 signe de l'argument ``author``, sinon de l'en-tête ``X-User-Name``),
-``create_collection``, ``add_to_collection`` et ``anki_review``, qui note une
-carte tirée par ``anki_next`` — et ils ne sont offerts que sur demande :
+``create_collection``, ``add_to_collection``, ``anki_review``, qui note une
+carte tirée par ``anki_next``, et les gestes de transcription
+``transcribe_create``, ``transcribe_open``, ``transcribe_apply``,
+``transcribe_undo``, ``transcribe_redo`` et ``transcribe_finish``, servis
+seulement par un démon lancé avec ``--transcription`` ; chaque geste qui
+change le brouillon nomme sa session et la révision vue en dernier, et une
+révision périmée est refusée comme pour un client direct — et ils ne sont
+offerts que sur demande :
 ``--write`` en local, ``--mcp-write`` sur le démon. Tous les autres ne font que
 lire ; ``rollout`` gagne cependant, quand l'écriture est offerte, l'argument
 ``store``, qui enregistre le rollout à côté de l'analyse de la position. Aucun

@@ -117,6 +117,72 @@ func registerTranscriptionReads(tb *Toolbox) {
 			err := tb.Engine.Call(ctx, req, "transcriptions.exportMat", obj{"id": a.ID}, &t)
 			return t, err
 		})
+	if tb.write {
+		registerTranscriptionWrites(tb)
+	}
+}
+
+// registerTranscriptionWrites are the gestures of the transcription routes,
+// served only by a daemon run with --transcription (404 otherwise). Each one
+// that changes the draft names the revision it was typed against, which the
+// route checks as it does for a direct client: a stale one fails with the
+// current state, to show before replaying the gesture. Abandoning a draft is
+// left out: no tool erases.
+func registerTranscriptionWrites(tb *Toolbox) {
+	type createIn struct {
+		Header map[string]any `json:"header" jsonschema:"the match header: match_length (0 = money), player1, player2, jacoby, beaver, event, location, round"`
+	}
+	Add(tb, Writes, &sdk.Tool{Name: "transcribe_create", Title: "Start a transcription",
+		Description: "Start a new transcription draft from a match header. Answers the draft's state: its id, revision and sessionId, which every later gesture names."},
+		func(ctx context.Context, req *sdk.CallToolRequest, a createIn) (any, error) {
+			var st obj
+			err := tb.Engine.Call(ctx, req, "transcriptions.create", obj{"header": a.Header}, &st)
+			return st, err
+		})
+	type openIn struct {
+		ID int64 `json:"id" jsonschema:"a transcription id from transcribe_list"`
+	}
+	Add(tb, Writes, &sdk.Tool{Name: "transcribe_open", Title: "Open a transcription",
+		Description: "Open a draft to keep transcribing it: answers its state with a sessionId (the live one when a session holds it) and its revision."},
+		func(ctx context.Context, req *sdk.CallToolRequest, a openIn) (any, error) {
+			var st obj
+			err := tb.Engine.Call(ctx, req, "transcriptions.open", obj{"id": a.ID}, &st)
+			return st, err
+		})
+	type applyIn struct {
+		ID        int64          `json:"id" jsonschema:"the draft's id"`
+		SessionID string         `json:"sessionId" jsonschema:"the sessionId transcribe_open or transcribe_create answered"`
+		Revision  int64          `json:"revision" jsonschema:"the revision of the state last seen"`
+		Gesture   map[string]any `json:"gesture" jsonschema:"one gesture, e.g. {\"Kind\":\"enter_die\",\"Die\":6}, {\"Kind\":\"select_candidate\",\"Candidate\":0}, {\"Kind\":\"validate\"}, {\"Kind\":\"double\"}, {\"Kind\":\"take\"}"`
+	}
+	Add(tb, Writes, &sdk.Tool{Name: "transcribe_apply", Title: "Enter a transcription gesture",
+		Description: "Apply one gesture to a draft (a die, a candidate play, a cube action, a correction), as the transcription screen does. Answers the new state and its revision."},
+		func(ctx context.Context, req *sdk.CallToolRequest, a applyIn) (any, error) {
+			if len(a.Gesture) == 0 {
+				return nil, errors.New("give a gesture: an object with its Kind")
+			}
+			var st obj
+			err := tb.Engine.CallIfMatch(ctx, req, "transcriptions.apply", a.Revision,
+				obj{"id": a.ID, "sessionId": a.SessionID, "gesture": a.Gesture}, &st)
+			return st, err
+		})
+	type sessionIn struct {
+		ID        int64  `json:"id" jsonschema:"the draft's id"`
+		SessionID string `json:"sessionId" jsonschema:"the sessionId transcribe_open or transcribe_create answered"`
+		Revision  int64  `json:"revision" jsonschema:"the revision of the state last seen"`
+	}
+	for _, g := range []struct{ name, route, title, desc string }{
+		{"transcribe_undo", "transcriptions.undo", "Undo a transcription gesture", "Undo the session's last gesture. Answers the new state."},
+		{"transcribe_redo", "transcriptions.redo", "Redo a transcription gesture", "Redo the gesture last undone. Answers the new state."},
+		{"transcribe_finish", "transcriptions.finish", "Finish a transcription", "Save the draft as a Match and delete the draft. Answers the saved match."},
+	} {
+		Add(tb, Writes, &sdk.Tool{Name: g.name, Title: g.title, Description: g.desc},
+			func(ctx context.Context, req *sdk.CallToolRequest, a sessionIn) (any, error) {
+				var out obj
+				err := tb.Engine.CallIfMatch(ctx, req, g.route, a.Revision, obj{"id": a.ID, "sessionId": a.SessionID}, &out)
+				return out, err
+			})
+	}
 }
 
 func registerDirectionReads(tb *Toolbox) {
