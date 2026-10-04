@@ -34,16 +34,38 @@ lise ces index.
    l'index partiel `idx_analysis_provenance_pending` (`WHERE analysis_engine IS NULL`), vide
    une fois la passe finie.
 6. Le commentaire d'un match est signé : `match.comment_author`. Un fichier XG donne ses
-   commentaires d'en-tête et de pied, signés de son transcripteur, ou `XG`.
+   commentaires d'en-tête et de pied, signés de son transcripteur, ou `XG`. L'export le
+   copie par l'allow-list `issuance.CarriedMatchCommentColumns`, comme l'auteur d'un
+   commentaire de position (ADR-0007).
+7. **Les libellés d'action se stockent en codes entiers** : `analysis.best_cube_action`,
+   `move.move_type` et `move.cube_action` (`INTEGER` des deux côtés). Un code tient lieu d'une
+   chaîne exacte, jamais d'une normalisation : « No Double » et « NoDouble » gardent deux
+   codes, et ce que l'on relit est octet pour octet ce qui a été écrit. NULL reste NULL, `""`
+   est le code 0. La liste fixe (`domain.ActionLabels`, l'indice est le code) n'est
+   qu'allongée. Un libellé qu'elle ignore n'est pas refusé — les importeurs en écrivent de
+   libres, BMAB contient `Unknown(-1)` — : la base l'enregistre dans `action_label` sous un
+   code ≥ `domain.FirstRegisteredActionCode` (1000). Toute lecture passe par
+   `sqlshared.ActionLabelSQL` (un `CASE` des codes fixes, puis `action_label`), toute écriture
+   par `sqlshared.ActionCodeFor` ; une requête qui compare à un libellé fixe passe par
+   `ActionIsSQL` / `ActionNotInSQL`. Aucune requête n'épelle un code. L'étape SQLite reconstruit
+   chaque colonne en `INTEGER` (une colonne déclarée `TEXT` stockerait le code en texte) ;
+   PostgreSQL fait de même dans `034_weight_wave.sql`.
+8. **`analysis_engine` reste du texte.** C'est un libellé libre (nom et version du moteur,
+   « XG Roller++ », « gammonNet 1.4 »…) que la recherche (`ae:`) et les statistiques filtrent
+   par préfixe ou `LIKE` : un code ne se compare pas par préfixe sans relire tous les libellés.
+   Sa cardinalité est faible mais ouverte, et sa colonne n'est plus indexée (décision 5) : le
+   gain d'un code y est de quelques octets par analyse, au prix de chaque filtre réécrit.
 
 ## Conséquences
 
 - Mesuré sur un échantillon à 2 % de BMAB (312 586 positions) migré puis `VACUUM` :
   292,6 Mo → 247,7 Mo hors `match`/`game` (**−15,3 %**) ; `position` 51,0 → 31,4 Mo,
   `idx_position_match_date` 11,6 → 4,0 Mo, `idx_analysis_creation_date` 8,5 → 4,0 Mo.
-- Les énumérations texte (`best_cube_action`, `move.move_type`, `move.cube_action`,
-  `analysis_engine`) restent du texte : `analysis_engine` est un libellé libre filtré par
-  préfixe, et les trois autres sont lues par une centaine de requêtes partagées. Leur passage
-  en codes entiers est un chantier séparé.
+- Codes d'action, mesurés à part sur le même échantillon : 249,7 Mo → 245,7 Mo hors
+  `match`/`game` (**−1,6 %**, −4,0 Mo) ; les 312 544 meilleures actions et les 332 152 types et
+  actions de coup se relisent à l'identique, ligne par ligne. Le gain est sous l'estimation de
+  `POIDS.md` § 3.4, qui comptait aussi `state` et `analysis_engine`.
+- Une lecture d'action coûte un `CASE` d'une quarantaine de branches ; un libellé enregistré
+  ajoute une sous-requête sur `action_label`, que `COALESCE` n'atteint que pour lui.
 - Une base déjà en 2.31.0 (versions de développement) ne rejoue pas l'étape ; elle lit
   toujours ses anciennes valeurs, mais garde leur poids.
