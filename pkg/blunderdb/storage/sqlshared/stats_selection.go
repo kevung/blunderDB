@@ -3,64 +3,101 @@ package sqlshared
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // Compute runs some fifteen passes over the same decisions. Each pass that
-// joins position and analysis directly pays the I/O of those tables again —
-// wide rows spread over a large file, cheap on a demo database and minutes on
-// a corpus of millions of positions. Compute therefore copies, once, the
-// columns the passes read for the rows its filter can reach into three
-// session-local tables, and every pass joins those instead (selectionJoin).
+// joins position, analysis, move and game pays that join again — four index
+// lookups per decision, cheap on a demo database and minutes on a corpus of
+// millions of positions. Compute therefore performs the join once, into a
+// single session-local table holding, per decision, the columns the passes
+// read of those four tables (selectionCols), and every pass scans that table,
+// joined only to match and tournament: small tables, and the only ones holding
+// text, which the copy would repeat on every decision.
+//
+// The passes keep their SQL as written against statsBaseJoin's aliases:
+// selectionExecer rewrites p., a., mv. and g. columns into the flat table's
+// alias_column on the queries that read it, so a pass has one text, whichever
+// source it runs on. A column missing from selectionCols fails with
+// an SQL error rather than a wrong figure.
 //
 // The copy holds a superset: the filter without its decision type and with the
 // seat-agnostic player clause (both seats of every selected match, which the
 // Snowie denominator needs). Every pass still applies its own WHERE clause, so
-// the copy changes what is read, never what is counted. A pass that reads a
-// column missing here fails with an SQL error rather than a wrong figure.
+// the copy changes what is read, never what is counted.
 
-const (
-	selPositionCols = "id, decision_type, cube_value, game_phase, game_type, match_length, score_1, score_2"
-	selAnalysisCols = "position_id, analysis_depth, analysis_engine, best_cube_action, best_move_equity_error, cube_error, is_close_cube, is_forced, met_id"
-	selMoveCols     = "id, position_id, game_id, cube_action, luck_mp, move_number, player"
-)
-
-// selectionJoin is statsBaseJoin with position, analysis and move replaced
-// by their selected copies; game, match and tournament are small and stay.
-const selectionJoin = `FROM stats_sel_p p
-JOIN stats_sel_a a ON a.position_id = p.id
-JOIN stats_sel_mv mv ON mv.position_id = p.id
-JOIN game g ON g.id = mv.game_id
-JOIN match m ON m.id = g.match_id
-LEFT JOIN tournament t ON t.id = m.tournament_id`
-
-var selectionTables = []string{"stats_sel_mv", "stats_sel_a", "stats_sel_p"}
-
-// prefixed renders a column list qualified by alias.
-func prefixed(alias, cols string) string {
-	parts := strings.Split(cols, ", ")
-	for i, c := range parts {
-		parts[i] = alias + "." + c
-	}
-	return strings.Join(parts, ", ")
+// selectionCols are the columns of statsBaseJoin the passes read, by alias.
+var selectionCols = []struct{ alias, cols string }{
+	{"p", "id, decision_type, cube_value, game_phase, game_type, match_length, score_1, score_2"},
+	{"a", "position_id, analysis_depth, analysis_engine, best_cube_action, best_move_equity_error, cube_error, is_close_cube, is_forced, met_id"},
+	{"mv", "id, position_id, game_id, cube_action, luck_mp, move_number, player"},
+	{"g", "id, match_id"},
 }
 
-// materializeSelection fills the selection tables for filter and returns the
-// FROM fragment that reads them. s.DB must be a single connection (an open
-// transaction): the tables are temporary, visible to that session only.
+// selectionTable is the flat copy; selectionJoin the FROM clause that reads it.
+const (
+	selectionTable = "stats_sel_d"
+	selectionJoin  = "FROM " + selectionTable + " d" + `
+JOIN match m ON m.id = d.g_match_id
+LEFT JOIN tournament t ON t.id = m.tournament_id`
+)
+
+var selectionTables = []string{selectionTable}
+
+// selectionColumn matches a column read through one of the copied tables'
+// aliases; the word boundary keeps al.code, ms.seat or m.id out.
+var selectionColumn = regexp.MustCompile(`\b(mv|p|a|g)\.([A-Za-z_][A-Za-z0-9_]*)`)
+
+// onSelection renders query against the flat table when it reads it, and
+// returns it unchanged otherwise (the match_stats passes share the handle).
+func onSelection(query string) string {
+	if !strings.Contains(query, selectionJoin) {
+		return query
+	}
+	return selectionColumn.ReplaceAllString(query, "d.${1}_${2}")
+}
+
+// selectionExecer is the transaction the passes run on, with every query that
+// reads the selection rewritten by onSelection.
+type selectionExecer struct{ Execer }
+
+func (e selectionExecer) Exec(ctx context.Context, query string, args ...any) (int64, error) {
+	return e.Execer.Exec(ctx, onSelection(query), args...)
+}
+
+func (e selectionExecer) Query(ctx context.Context, query string, args ...any) (Rows, error) {
+	return e.Execer.Query(ctx, onSelection(query), args...)
+}
+
+func (e selectionExecer) QueryRow(ctx context.Context, query string, args ...any) Row {
+	return e.Execer.QueryRow(ctx, onSelection(query), args...)
+}
+
+// materializeSelection fills the selection table for filter and returns the
+// FROM fragment that reads it. s.DB must be a single connection (an open
+// transaction): the table is temporary, visible to that session only. Queries
+// reading the fragment must go through selectionExecer.
 func (s *StatsStore) materializeSelection(ctx context.Context, scope string, filter storage.StatsFilter) (string, error) {
-	posCols := selPositionCols
-	moveCols, analysisCols := selMoveCols, selAnalysisCols
+	cols := selectionCols
 	// The tenant predicate every pass opens with names p's tenant column when
 	// the backend has one, and the action-label reads name mv's and a's
-	// (ActionLabelFor); the copies must carry them.
+	// (ActionLabelFor); the copy must carry them.
 	if _, tenantArgs := s.DB.TenantFilter("p", scope); len(tenantArgs) > 0 {
-		posCols += ", tenant_id"
-		moveCols += ", tenant_id"
-		analysisCols += ", tenant_id"
+		cols = append(cols[:len(cols):len(cols)],
+			struct{ alias, cols string }{"p", "tenant_id"},
+			struct{ alias, cols string }{"a", "tenant_id"},
+			struct{ alias, cols string }{"mv", "tenant_id"})
 	}
+	var sel []string
+	for _, c := range cols {
+		for _, col := range strings.Split(c.cols, ", ") {
+			sel = append(sel, c.alias+"."+col+" AS "+c.alias+"_"+col)
+		}
+	}
+	selectList := strings.Join(sel, ", ")
 
 	s.dropSelection(ctx)
 	superset := filter
@@ -74,15 +111,8 @@ func (s *StatsStore) materializeSelection(ctx context.Context, scope string, fil
 		// Created empty from the source tables so each column keeps its type
 		// on both backends; filled by INSERT, which takes parameters where
 		// CREATE TABLE AS does not on PostgreSQL.
-		{`CREATE TEMP TABLE stats_sel_mv AS SELECT ` + prefixed("mv", moveCols) + ` FROM move mv WHERE 1 = 0`, nil},
-		{`CREATE TEMP TABLE stats_sel_p AS SELECT ` + prefixed("p", posCols) + ` FROM position p WHERE 1 = 0`, nil},
-		{`CREATE TEMP TABLE stats_sel_a AS SELECT ` + prefixed("a", analysisCols) + ` FROM analysis a WHERE 1 = 0`, nil},
-		{`INSERT INTO stats_sel_mv SELECT DISTINCT ` + prefixed("mv", moveCols) + ` ` + statsBaseJoin + where, args},
-		{`INSERT INTO stats_sel_p SELECT ` + prefixed("p", posCols) + ` FROM position p WHERE p.id IN (SELECT position_id FROM stats_sel_mv)`, nil},
-		{`INSERT INTO stats_sel_a SELECT ` + prefixed("a", analysisCols) + ` FROM analysis a WHERE a.position_id IN (SELECT id FROM stats_sel_p)`, nil},
-		{`CREATE INDEX stats_sel_p_id ON stats_sel_p (id)`, nil},
-		{`CREATE INDEX stats_sel_a_pos ON stats_sel_a (position_id)`, nil},
-		{`CREATE INDEX stats_sel_mv_pos ON stats_sel_mv (position_id)`, nil},
+		{`CREATE TEMP TABLE ` + selectionTable + ` AS SELECT ` + selectList + ` ` + statsBaseJoin + ` WHERE 1 = 0`, nil},
+		{`INSERT INTO ` + selectionTable + ` SELECT ` + selectList + ` ` + statsBaseJoin + where, args},
 	}
 	for _, st := range steps {
 		if _, err := s.DB.Exec(ctx, st.query, st.args...); err != nil {
