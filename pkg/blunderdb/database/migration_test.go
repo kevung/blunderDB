@@ -6,13 +6,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 	"maps"
 	"os"
 	"path/filepath"
 	"slices"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 
 	_ "modernc.org/sqlite"
 
@@ -3861,11 +3862,7 @@ func actionLabelsByRow(t *testing.T, db *sql.DB, read func(col string) string) m
 	t.Helper()
 	out := map[string]string{}
 	for _, c := range actionColumns2_31 {
-		rows, err := db.Query(`SELECT id, ` + read(c.column) + ` FROM ` + c.table)
-		if err != nil {
-			t.Fatal(err)
-		}
-		for rows.Next() {
+		readColumn(t, db, `SELECT id, `+read(c.column)+` FROM `+c.table, func(rows *sql.Rows) {
 			var id int64
 			var v sql.NullString
 			if err := rows.Scan(&id, &v); err != nil {
@@ -3876,13 +3873,26 @@ func actionLabelsByRow(t *testing.T, db *sql.DB, read func(col string) string) m
 				label = "=" + v.String
 			}
 			out[fmt.Sprintf("%s.%s:%d", c.table, c.column, id)] = label
-		}
-		if err := rows.Close(); err != nil {
-			t.Fatal(err)
-		}
+		})
 	}
 	if len(out) == 0 {
 		t.Fatal("no action label to compare")
 	}
 	return out
+}
+
+// readColumn runs query and hands each row to scan.
+func readColumn(t *testing.T, db *sql.DB, query string, scan func(*sql.Rows)) {
+	t.Helper()
+	rows, err := db.Query(query)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		scan(rows)
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
 }

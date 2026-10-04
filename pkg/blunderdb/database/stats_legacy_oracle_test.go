@@ -10,9 +10,10 @@ package database
 
 import (
 	"fmt"
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 	"math"
 	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
