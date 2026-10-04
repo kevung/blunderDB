@@ -179,6 +179,16 @@
         if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView({ behavior: 'smooth', block });
     }
 
+    /** Move the keyboard focus onto the row (it must be activatable, i.e. carry a tabindex). */
+    export async function focusRow(row) {
+        await scrollToRow(row);
+        await tick();
+        const index = rows.findIndex((r) => rowKey(r) === rowKey(row));
+        if (index < 0) return;
+        const els = tbodyEl ? [...tbodyEl.querySelectorAll('tr:not(.spacer)')] : [];
+        /** @type {HTMLElement | undefined} */ (els[index - first])?.focus();
+    }
+
     export function scrollToSelected(block = 'nearest') {
         const row = rows.find((r) => isSelected(r));
         if (row) scrollToRow(row, block);
@@ -242,9 +252,19 @@
                         class={rowClass?.(row, index) ?? ''}
                         class:selected={isSelected(row)}
                         class:pointer={pointerRows}
+                        tabindex={onActivate ? 0 : undefined}
                         {...rowAttrs?.(row, index)}
                         onclick={onSelect ? (e) => onSelect(row, index, e) : undefined}
                         ondblclick={onActivate ? (e) => onActivate(row, index, e) : undefined}
+                        onkeydown={onActivate
+                            ? (e) => {
+                                  // Only the row itself: Enter on a button or field inside it keeps its own gesture.
+                                  if (e.key === 'Enter' && e.target === e.currentTarget && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                                      e.preventDefault();
+                                      onActivate(row, index, e);
+                                  }
+                              }
+                            : undefined}
                     >
                         {@render cells(row, index)}
                     </tr>

@@ -1215,6 +1215,10 @@ export default {
 <td>Retomar la última decisión de un torneo dirigido (fuera de un campo de entrada, donde deshace la pulsación).</td>
 </tr>
 <tr>
+<td>TAB (foco perdido)</td>
+<td>Bajo la página de un torneo dirigido, cuando el foco ha caído en la página: devolverlo al primer elemento de la página, sin abrir la búsqueda.</td>
+</tr>
+<tr>
 <td>RE PÁG / AV PÁG, INICIO / FIN</td>
 <td>Bajo la página de un torneo dirigido: desplazar la página, sin recorrer el tablero que oculta.</td>
 </tr>
@@ -1486,8 +1490,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Doble clic</td>
-<td>Seleccionar un torneo (mostrar su detalle).</td>
+<td>Doble clic, INTRO (fila con foco)</td>
+<td>Seleccionar un torneo (mostrar su detalle). TAB llega a las filas; un clic simple solo resalta.</td>
 </tr>
 <tr>
 <td>ARRIBA, k</td>

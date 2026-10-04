@@ -1215,6 +1215,10 @@ export default {
 <td>Riprendere l'ultima decisione di un torneo diretto (fuori da un campo di immissione, dove annulla la battuta).</td>
 </tr>
 <tr>
+<td>TAB (focus perso)</td>
+<td>Sotto la pagina di un torneo diretto, quando il focus è caduto sulla pagina: riportarlo sul primo elemento della pagina, senza aprire la ricerca.</td>
+</tr>
+<tr>
 <td>PAG SU / PAG GIÙ, HOME / FINE</td>
 <td>Sotto la pagina di un torneo diretto: scorrere la pagina, senza percorrere il tavoliere che nasconde.</td>
 </tr>
@@ -1486,8 +1490,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Doppio clic</td>
-<td>Seleziona un torneo (mostrane il dettaglio).</td>
+<td>Doppio clic, INVIO (riga con focus)</td>
+<td>Selezionare un torneo (mostrarne il dettaglio). TAB raggiunge le righe; un clic singolo evidenzia soltanto.</td>
 </tr>
 <tr>
 <td>SU, k</td>

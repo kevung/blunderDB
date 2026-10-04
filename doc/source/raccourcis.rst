@@ -131,6 +131,7 @@ Outils
    "ENTRÉE", "Dans la file des propositions : confirmer la proposition choisie."
    "GAUCHE / DROITE", "Dans la fiche de résultat, hors d'un champ : choisir le joueur de gauche ou celui de droite ; ENTRÉE enregistre sa victoire."
    "CTRL-Z", "Reprendre la dernière décision d'un tournoi dirigé (hors d'un champ de saisie, où il annule la frappe)."
+   "TAB (focus perdu)", "Sous la page d'un tournoi dirigé, quand le focus est tombé sur la page : le ramener sur le premier élément de la page, sans ouvrir la recherche."
    "PAGE PRÉC. / PAGE SUIV., DÉBUT / FIN", "Sous la page d'un tournoi dirigé : faire défiler la page, sans parcourir le plateau qu'elle cache."
    "ÉCHAP", "Fermer la fiche de résultat ou la reprise en cours."
    "?", "Afficher/cacher l'aide."
@@ -273,7 +274,7 @@ Panneau des tournois
    :widths: 7, 20
    :align: center
 
-   "Double-clic", "Sélectionner un tournoi (afficher son détail)."
+   "Double-clic, ENTRÉE (ligne au focus)", "Sélectionner un tournoi (afficher son détail). TAB atteint les lignes ; un clic simple ne fait que surligner."
    "HAUT, k", "Sélectionner le tournoi précédent, quand le panneau a le focus ou qu'aucune direction n'est affichée."
    "BAS, j", "Sélectionner le tournoi suivant, quand le panneau a le focus ou qu'aucune direction n'est affichée."
    "Double-clic (sur un match du tournoi)", "Naviguer dans le match."

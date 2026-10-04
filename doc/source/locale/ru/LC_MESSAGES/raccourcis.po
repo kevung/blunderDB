@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 04:12+0200\n"
+"POT-Creation-Date: 2026-10-04 06:51+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -528,6 +528,18 @@ msgstr ""
 "отменяется нажатие клавиши)."
 
 #: ../../source/raccourcis.rst:1
+msgid "TAB (focus perdu)"
+msgstr "TAB (фокус потерян)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sous la page d'un tournoi dirigé, quand le focus est tombé sur la page : "
+"le ramener sur le premier élément de la page, sans ouvrir la recherche."
+msgstr ""
+"На странице проводимого турнира, когда фокус упал на страницу: вернуть "
+"его на первый элемент страницы, не открывая поиск."
+
+#: ../../source/raccourcis.rst:1
 msgid "PAGE PRÉC. / PAGE SUIV., DÉBUT / FIN"
 msgstr "PAGEUP / PAGEDOWN, HOME / END"
 
@@ -551,7 +563,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Показать/скрыть справку."
 
-#: ../../source/raccourcis.rst:141
+#: ../../source/raccourcis.rst:142
 msgid "Onglets de vues"
 msgstr "Вкладки представлений"
 
@@ -603,7 +615,7 @@ msgstr "Двойной клик по вкладке"
 msgid "Renommer la vue."
 msgstr "Переименовать представление."
 
-#: ../../source/raccourcis.rst:158
+#: ../../source/raccourcis.rst:159
 msgid "Ligne de commande"
 msgstr "Командная строка"
 
@@ -627,7 +639,7 @@ msgstr "Просмотр истории команд вниз."
 msgid "Pendant une recherche : l'interrompre."
 msgstr "Во время поиска: прервать его."
 
-#: ../../source/raccourcis.rst:172
+#: ../../source/raccourcis.rst:173
 msgid "Historique de recherche"
 msgstr "История поиска"
 
@@ -647,7 +659,7 @@ msgstr "Двойной клик"
 msgid "Exécuter la recherche."
 msgstr "Выполнить поиск."
 
-#: ../../source/raccourcis.rst:185
+#: ../../source/raccourcis.rst:186
 msgid "Bibliothèque de filtres"
 msgstr "Библиотека фильтров"
 
@@ -675,7 +687,7 @@ msgstr "Щелчок (по закреплённой метке)"
 msgid "Exécuter la recherche du filtre épinglé."
 msgstr "Выполнить поиск закреплённого фильтра."
 
-#: ../../source/raccourcis.rst:200
+#: ../../source/raccourcis.rst:201
 msgid "Panneau d'analyse"
 msgstr "Панель анализа"
 
@@ -717,7 +729,7 @@ msgstr "Esc"
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Отменить выбор хода. Если ход не выбран, закрыть панель."
 
-#: ../../source/raccourcis.rst:217
+#: ../../source/raccourcis.rst:218
 msgid "Panneau Eval"
 msgstr "Панель Eval"
 
@@ -725,7 +737,7 @@ msgstr "Панель Eval"
 msgid "Désélectionner le coup."
 msgstr "Отменить выбор хода."
 
-#: ../../source/raccourcis.rst:232
+#: ../../source/raccourcis.rst:233
 msgid "Panneau des matchs"
 msgstr "Панель матчей"
 
@@ -773,7 +785,7 @@ msgstr ""
 msgid "Désélectionner/fermer le panneau."
 msgstr "Отменить выбор/закрыть панель."
 
-#: ../../source/raccourcis.rst:251
+#: ../../source/raccourcis.rst:252
 msgid "Panneau Anki (répétition espacée)"
 msgstr "Панель Anki (интервальное повторение)"
 
@@ -829,13 +841,21 @@ msgstr ""
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr "Остановить повторение и вернуться к списку колод (можно продолжить позже)."
 
-#: ../../source/raccourcis.rst:269
+#: ../../source/raccourcis.rst:270
 msgid "Panneau des tournois"
 msgstr "Панель турниров"
 
 #: ../../source/raccourcis.rst:1
-msgid "Sélectionner un tournoi (afficher son détail)."
-msgstr "Выбрать турнир (показать его подробности)."
+msgid "Double-clic, ENTRÉE (ligne au focus)"
+msgstr "Двойной щелчок, ENTER (строка в фокусе)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Sélectionner un tournoi (afficher son détail). TAB atteint les lignes ; "
+"un clic simple ne fait que surligner."
+msgstr ""
+"Выбрать турнир (показать его детали). TAB доходит до строк; одиночный "
+"щелчок только подсвечивает."
 
 #: ../../source/raccourcis.rst:1
 msgid ""
@@ -865,11 +885,11 @@ msgstr ""
 "Отменить текущее редактирование, иначе очистить поиск добавления матча, "
 "иначе снять выбор турнира, иначе закрыть панель (по шагам)."
 
-#: ../../source/raccourcis.rst:285
+#: ../../source/raccourcis.rst:286
 msgid "Page Direction"
 msgstr "Страница проведения"
 
-#: ../../source/raccourcis.rst:287
+#: ../../source/raccourcis.rst:288
 msgid ""
 "Sous la page Direction, *J*, *K*, *HAUT*, *BAS* et *ENTRÉE* vont à la "
 "file des propositions, sauf quand le focus est sur une case de la grille "
@@ -985,7 +1005,7 @@ msgstr ""
 "действуют на стол любого состязания; обмен с другим состязанием называет "
 "оба в подтверждении."
 
-#: ../../source/raccourcis.rst:309
+#: ../../source/raccourcis.rst:310
 msgid "Panneau des collections"
 msgstr "Панель коллекций"
 
@@ -1011,11 +1031,11 @@ msgstr ""
 "Вернуться к списку коллекций, иначе снять выбор коллекции, иначе закрыть "
 "панель (по шагам)."
 
-#: ../../source/raccourcis.rst:324
+#: ../../source/raccourcis.rst:325
 msgid "Panneau Transcription"
 msgstr "Панель транскрипции"
 
-#: ../../source/raccourcis.rst:326
+#: ../../source/raccourcis.rst:327
 msgid ""
 "Le panneau prend ces touches lorsqu'il a le focus. Devant la liste des "
 "brouillons il en prend déjà quelques-unes, pour que reprendre le travail "
@@ -1454,7 +1474,7 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Вернуть отменённый жест."
 
-#: ../../source/raccourcis.rst:376
+#: ../../source/raccourcis.rst:377
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1462,7 +1482,7 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:379
+#: ../../source/raccourcis.rst:380
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1488,7 +1508,7 @@ msgstr ""
 "следующая цифра подтверждает его и открывает следующее решение, как в "
 "конце документа, и ENTER тоже ведёт туда."
 
-#: ../../source/raccourcis.rst:390
+#: ../../source/raccourcis.rst:391
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1501,7 +1521,7 @@ msgstr ""
 "открывает ячейку между двумя соседними, а сторона читается по столбцу. До"
 " подтверждения ничего не записывается."
 
-#: ../../source/raccourcis.rst:395
+#: ../../source/raccourcis.rst:396
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1513,7 +1533,7 @@ msgstr ""
 " не затирает идущее за ним. Конец партии или перемещение курсора это "
 "прекращает."
 
-#: ../../source/raccourcis.rst:400
+#: ../../source/raccourcis.rst:401
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1525,7 +1545,7 @@ msgstr ""
 "действия» в конце документа. Фраза стирается сама и возвращает место "
 "ожидаемому действию."
 
-#: ../../source/raccourcis.rst:405
+#: ../../source/raccourcis.rst:406
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1545,7 +1565,7 @@ msgstr ""
 "Перемещение курсора вперёд или назад после изменения записывает "
 "исправление попутно."
 
-#: ../../source/raccourcis.rst:413
+#: ../../source/raccourcis.rst:414
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1571,7 +1591,7 @@ msgstr ""
 "там, вставляется за ту сторону, которой он недоставал. Стек отмены живёт "
 "в памяти: он теряется при закрытии черновика."
 
-#: ../../source/raccourcis.rst:424
+#: ../../source/raccourcis.rst:425
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1580,7 +1600,7 @@ msgstr ""
 "Сама панель — список черновиков, создание, ввод, запись и панель "
 "черновика — описана в :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:431
+#: ../../source/raccourcis.rst:432
 msgid "Planche-contact"
 msgstr "Контактный лист"
 
@@ -1628,7 +1648,7 @@ msgstr "Открыть позицию на доске и закрыть лист
 msgid "Refermer la planche."
 msgstr "Закрыть лист."
 
-#: ../../source/raccourcis.rst:448
+#: ../../source/raccourcis.rst:449
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 
@@ -1922,3 +1942,6 @@ msgstr "Закрыть справку."
 
 #~ msgid "PageUp, PageDown"
 #~ msgstr "PageUp, PageDown"
+
+#~ msgid "Sélectionner un tournoi (afficher son détail)."
+#~ msgstr "Выбрать турнир (показать его подробности)."

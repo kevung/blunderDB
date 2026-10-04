@@ -1215,6 +1215,10 @@ export default {
 <td>Die letzte Entscheidung eines geleiteten Turniers zurücknehmen (außerhalb eines Eingabefelds, wo es den Tastendruck rückgängig macht).</td>
 </tr>
 <tr>
+<td>TAB (Fokus verloren)</td>
+<td>Unter der Seite eines geleiteten Turniers, wenn der Fokus auf die Seite gefallen ist: ihn auf das erste Element der Seite zurückbringen, ohne die Suche zu öffnen.</td>
+</tr>
+<tr>
 <td>BILD AUF / BILD AB, POS1 / ENDE</td>
 <td>Unterhalb der Seite eines geleiteten Turniers: die Seite scrollen, ohne das Brett zu durchlaufen, das sie verdeckt.</td>
 </tr>
@@ -1486,8 +1490,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Doppelklick</td>
-<td>Ein Turnier auswählen (Details anzeigen).</td>
+<td>Doppelklick, EINGABE (Zeile mit Fokus)</td>
+<td>Ein Turnier auswählen (Details anzeigen). TAB erreicht die Zeilen; ein einfacher Klick hebt nur hervor.</td>
 </tr>
 <tr>
 <td>HOCH, k</td>

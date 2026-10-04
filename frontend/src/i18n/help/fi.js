@@ -1215,6 +1215,10 @@ export default {
 <td>Peru johdetun turnauksen viimeisin päätös (syöttökentän ulkopuolella, jossa se kumoaa näppäilyn).</td>
 </tr>
 <tr>
+<td>TAB (kohdistus kadonnut)</td>
+<td>Johdetun turnauksen sivulla, kun kohdistus on pudonnut sivulle: palauttaa sen sivun ensimmäiseen elementtiin avaamatta hakua.</td>
+</tr>
+<tr>
 <td>PAGE UP / PAGE DOWN, HOME / END</td>
 <td>Johdetun turnauksen sivun alla: vieritä sivua selaamatta sen peittämää lautaa.</td>
 </tr>
@@ -1486,8 +1490,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Kaksoisnapsautus</td>
-<td>Valitse turnaus (näytä sen tiedot).</td>
+<td>Kaksoisnapsautus, ENTER (kohdistettu rivi)</td>
+<td>Valitse turnaus (näytä sen tiedot). TAB tavoittaa rivit; yksittäinen napsautus vain korostaa.</td>
 </tr>
 <tr>
 <td>YLÖS, k</td>
