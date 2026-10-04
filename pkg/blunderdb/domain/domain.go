@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.30.0"
+	DatabaseVersion = "2.31.0"
 )
 
 // Anki deck source types
@@ -941,7 +941,9 @@ type Move struct {
 	// the search's E filter scores a play. It is read per Move, not from the
 	// Position: a Position reached twice and played two ways has two costs.
 	// nil means unscored (no analysis, or a play absent from the candidates).
-	// Filled by the match stores' move reads; never written.
+	// The match stores' move reads score it from the analysis; the same score
+	// is stored in move.error_mp by MatchStore.ScoreMoves and
+	// RescorePositionMoves, for the statistics that read a column.
 	ErrorMP *int32 `json:"error_mp,omitempty"`
 }
 

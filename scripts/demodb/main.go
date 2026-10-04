@@ -234,8 +234,10 @@ func disguiseMatches(d *database.Database) error {
 		if err := d.UpdateMatch(m.ID, f.player1, f.player2, f.date); err != nil {
 			return fmt.Errorf("renaming match %d: %w", m.ID, err)
 		}
+		// The transcriber comes from the source file's header and names a
+		// real person; the demo keeps none.
 		if _, err := database.RawConn(d).Exec(
-			`UPDATE match SET event = ?, location = ?, round = ?, file_path = ? WHERE id = ?`,
+			`UPDATE match SET event = ?, location = ?, round = ?, file_path = ?, transcriber = '' WHERE id = ?`,
 			f.event, f.location, f.round, f.filePath, m.ID); err != nil {
 			return fmt.Errorf("relabelling match %d: %w", m.ID, err)
 		}

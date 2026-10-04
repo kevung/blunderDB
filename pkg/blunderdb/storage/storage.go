@@ -54,6 +54,7 @@ type Stores interface {
 	Tournaments() TournamentStore
 	Rencontres() RencontreStore
 	Lessons() LessonStore
+	MatchEquityTables() MatchEquityTableStore
 	Directions() DirectionStore
 	Anki() AnkiStore
 	Filters() FilterStore

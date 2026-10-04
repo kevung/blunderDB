@@ -221,3 +221,11 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   library (`tasks/search-query-plans.txt`), `(game_phase, off_1)` replacing
   the phase index. Schema-visible: bumped
   `domain.DatabaseVersion` to 2.30.0.
+- `033_met_progress_move_error.sql` — the 2.31.0 wave: `match_equity_table`
+  (the tenant's imported match equity tables, at most one current, ADR-0068)
+  and `analysis.met_digest`; `lesson_progress`, the Steps a student marked
+  done (ADR-0069), with the `(tenant_id, id)` key on `lesson_step` its
+  composite foreign key needs; `move.error_mp`, added NULL so the migration
+  rewrites nothing, scored afterwards by the resumable
+  `MatchStore.ScoreMoves`. Schema-visible: bumped `domain.DatabaseVersion`
+  to 2.31.0.
