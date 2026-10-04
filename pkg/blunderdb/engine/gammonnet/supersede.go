@@ -20,7 +20,9 @@ import (
 // Everything else the row holds is not gammonNet's to drop and is kept: the
 // other engines' entries (ADR-0013), the rollouts (ADR-0060), the moves and
 // cube actions played there — they feed the denormalised error columns the
-// search reads — and the creation date.
+// search reads — the creation date, and the XGID and player names an import
+// recorded when the verdict carries none: the XGID is what the Crawford
+// repair reads the match state from.
 func SupersedeEntries(existing *domain.PositionAnalysis, verdict domain.PositionAnalysis) domain.PositionAnalysis {
 	out := verdict
 	if out.PlayedMove != "" && len(out.PlayedMoves) == 0 {
@@ -38,6 +40,15 @@ func SupersedeEntries(existing *domain.PositionAnalysis, verdict domain.Position
 	kept := withoutOurEntries(existing)
 	if !kept.CreationDate.IsZero() {
 		out.CreationDate = kept.CreationDate
+	}
+	if out.XGID == "" {
+		out.XGID = kept.XGID
+	}
+	if out.Player1 == "" {
+		out.Player1 = kept.Player1
+	}
+	if out.Player2 == "" {
+		out.Player2 = kept.Player2
 	}
 
 	switch {

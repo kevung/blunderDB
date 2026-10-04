@@ -70,19 +70,31 @@ func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysi
 		return err
 	}
 
+	// A gammonNet verdict is written by the rule the serve daemon writes by
+	// too, with or without a stored row, so both leave the same row
+	// (CLI/GUI/server parity); everything below is the merge of any other
+	// caller.
+	if metID != nil {
+		var existing *PositionAnalysis
+		if existingID > 0 {
+			decoded, err := decodeAnalysisFromStorage(existingAnalysisData)
+			if err != nil {
+				return err
+			}
+			existing = &decoded
+		}
+		analysis = gammonnet.SupersedeEntries(existing, analysis)
+		if analysis.CreationDate.IsZero() {
+			analysis.CreationDate = time.Now()
+		}
+		return d.saveAnalysisTx(positionID, &analysis, *metID)
+	}
+
 	if existingID > 0 {
 		// Parse existing analysis
 		existingAnalysis, err := decodeAnalysisFromStorage(existingAnalysisData)
 		if err != nil {
 			return err
-		}
-
-		// A gammonNet verdict follows the rule the serve daemon writes by
-		// too (CLI/GUI/server parity); everything below is the merge of any
-		// other caller.
-		if metID != nil {
-			analysis = gammonnet.SupersedeEntries(&existingAnalysis, analysis)
-			return d.saveAnalysisTx(positionID, &analysis, *metID)
 		}
 
 		// Preserve the existing creation date

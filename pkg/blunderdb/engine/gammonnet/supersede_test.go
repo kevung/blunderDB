@@ -15,6 +15,9 @@ func TestSupersedeEntriesKeepsWhatIsNotOurs(t *testing.T) {
 	xgCube := domain.DoublingCubeAnalysis{AnalysisEngine: "XG", BestCubeAction: "No Double"}
 	existing := &domain.PositionAnalysis{
 		CreationDate: created,
+		XGID:         "XGID=-b----E-C---eE---c-e----B-:0:0:1:52:0:0:3:0:10",
+		Player1:      "Alice",
+		Player2:      "Bob",
 		PlayedMoves:  []string{"13/11 6/4"},
 		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
 			{Move: "8/6 6/4", Equity: 0.5, AnalysisEngine: EngineVersion, AnalysisDepth: "2-ply"},
@@ -41,6 +44,12 @@ func TestSupersedeEntriesKeepsWhatIsNotOurs(t *testing.T) {
 	}
 	if len(got.PlayedMoves) != 1 || got.PlayedMoves[0] != "13/11 6/4" {
 		t.Errorf("PlayedMoves = %v", got.PlayedMoves)
+	}
+	if got.XGID != existing.XGID || got.Player1 != "Alice" || got.Player2 != "Bob" {
+		t.Errorf("XGID/players = %q %q %q, want the imported ones", got.XGID, got.Player1, got.Player2)
+	}
+	if again := SupersedeEntries(existing, domain.PositionAnalysis{XGID: "XGID=other", Player1: "Carol"}); again.XGID != "XGID=other" || again.Player1 != "Carol" || again.Player2 != "Bob" {
+		t.Errorf("a verdict's own XGID/players must win: %q %q %q", again.XGID, again.Player1, again.Player2)
 	}
 	if !got.CreationDate.Equal(created) || len(got.Rollouts) != 1 {
 		t.Errorf("CreationDate %v, rollouts %d", got.CreationDate, len(got.Rollouts))
