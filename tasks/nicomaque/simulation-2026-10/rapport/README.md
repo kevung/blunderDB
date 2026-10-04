@@ -16,7 +16,8 @@ T2 et T3 ont été rejoués après sa correction (voir le piège UIScale dans l'
 | [T2.md](T2.md) | 32 joueurs, Yanis (P2), incidents dont SIGKILL et reprise |
 | [T3.md](T3.md) | Rencontre à deux épreuves, Léa (P3), N26 et sorties de page |
 | [ecarts.md](ecarts.md) | 25 écarts consolidés (6 bloquants, 14 d'ergonomie, 5 de confort), avec critère de correction, synthèse par persona et défauts de harnais |
-| [adr-0047-amendement.md](adr-0047-amendement.md) | projet d'amendement de l'ADR-0047 qui tranche #457 (écran des joueurs) |
+| [adr-0047-amendement.md](adr-0047-amendement.md) | projet d'amendement de l'ADR-0047 qui tranche #457 (écran des joueurs) ; intégré à l'ADR |
+| [contre-epreuve.md](contre-epreuve.md) | T1-T3 rejoués après la correction des 25 écarts : oracle = app partout, 17 interruptions en V1 au lieu de 58, un écart nouveau (E26) corrigé |
 
 ## 1. Les trois tournois
 
@@ -78,9 +79,10 @@ pour une ronde (T1) ; 3 clics depuis la salle d'une Rencontre (T3).
 - **Hélène à 150 %** n'a rejoué qu'une partie du tournoi ; le masque du dock (E19) n'est pas
   rejoué.
 
-**#380 reste ouverte** : son critère est un vrai tournoi de club dirigé. La simulation montre
-que la Direction mène trois tournois jusqu'au bout avec un classement juste et une reprise
-intacte, et elle donne la liste des écarts à traiter avant ce tournoi réel.
+**#380 est close sur la simulation** (décision de l'utilisateur) : la Direction mène trois
+tournois jusqu'au bout avec un classement égal à la feuille papier et une reprise intacte ; les
+écarts sont devenus des issues (#542-#566), toutes corrigées, et la
+[contre-épreuve](contre-epreuve.md) l'a vérifié en rejouant T1-T3.
 
 ## 5. Décision à éclairer : #457 (écran des joueurs)
 
@@ -95,6 +97,7 @@ fermée par l'ADR-0047, avec le compte réel des interruptions. Ce que la simula
   porter (E9 : écrire « exempté », « éliminé », « qualifié »), sans écran personnel.
 - **Ce qu'un écran personnel apporterait et que la page ne peut pas** : l'annonce sans attendre
   le rafraîchissement, et la lecture hors de la salle. La simulation ne sait pas le chiffrer.
-- **Décision proposée** (l'utilisateur a jugé que la simulation suffit pour trancher) : pas
-  d'écran personnel ; la page murale devient l'écran des joueurs, à condition de corriger E4, E8
-  et E9. Projet : [adr-0047-amendement.md](adr-0047-amendement.md).
+- **Décision** (l'utilisateur a jugé que la simulation suffit pour trancher) : pas d'écran
+  personnel ; la page murale est l'écran des joueurs. E4, E8 et E9 corrigés, la contre-épreuve
+  compte 17 interruptions sur 337. Écrite dans l'ADR-0047 (amendement) ; projet d'origine :
+  [adr-0047-amendement.md](adr-0047-amendement.md).

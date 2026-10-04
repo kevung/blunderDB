@@ -87,163 +87,51 @@
      "type": "draw",
      "groups": [
       [
-       "karim-delorme",
-       "benoît-carrel",
-       "laure-gauthier",
-       "pauline-brunet"
-      ],
-      [
-       "chloé-ferrand",
-       "david-pujol",
-       "olivier-caron",
-       "jules-perrin"
-      ],
-      [
        "gaëlle-tessier",
-       "elsa-marchand",
-       "nadia-lefort",
+       "olivier-caron",
+       "hugo-bastide",
+       "nadia-lefort"
+      ],
+      [
+       "agathe-lemoine",
+       "pauline-brunet",
+       "mathis-aubry",
        "fabien-roux"
       ],
       [
+       "benoît-carrel",
+       "karim-delorme",
+       "elsa-marchand",
+       "jules-perrin"
+      ],
+      [
        "inès-vautrin",
-       "agathe-lemoine",
-       "hugo-bastide",
-       "mathis-aubry"
+       "chloé-ferrand",
+       "laure-gauthier",
+       "david-pujol"
       ]
      ]
     },
     {
      "type": "match",
      "phase": 0,
-     "a": "karim-delorme",
-     "b": "benoît-carrel",
-     "winner": "benoît-carrel"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "laure-gauthier",
-     "b": "pauline-brunet",
-     "winner": "pauline-brunet"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "chloé-ferrand",
-     "b": "david-pujol",
-     "winner": "chloé-ferrand"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "karim-delorme",
-     "b": "pauline-brunet",
-     "winner": "karim-delorme"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "benoît-carrel",
-     "b": "laure-gauthier",
-     "winner": "benoît-carrel"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "olivier-caron",
-     "b": "jules-perrin",
-     "winner": "olivier-caron"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "karim-delorme",
-     "b": "laure-gauthier",
-     "winner": "karim-delorme"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "pauline-brunet",
-     "b": "benoît-carrel",
-     "winner": "benoît-carrel"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "chloé-ferrand",
-     "b": "jules-perrin",
-     "winner": "chloé-ferrand"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "david-pujol",
-     "b": "olivier-caron",
-     "winner": "david-pujol"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "chloé-ferrand",
+     "a": "gaëlle-tessier",
      "b": "olivier-caron",
      "winner": "olivier-caron"
     },
     {
      "type": "match",
      "phase": 0,
-     "a": "jules-perrin",
-     "b": "david-pujol",
-     "winner": "david-pujol"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "david-pujol",
-     "b": "chloé-ferrand",
-     "winner": "david-pujol"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "david-pujol",
-     "b": "olivier-caron",
-     "winner": "david-pujol"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "olivier-caron",
-     "b": "chloé-ferrand",
-     "winner": "chloé-ferrand"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "gaëlle-tessier",
-     "b": "elsa-marchand",
-     "winner": "elsa-marchand"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "nadia-lefort",
-     "b": "fabien-roux",
-     "winner": "fabien-roux"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "gaëlle-tessier",
-     "b": "fabien-roux",
-     "winner": "fabien-roux"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "elsa-marchand",
+     "a": "hugo-bastide",
      "b": "nadia-lefort",
-     "winner": "elsa-marchand"
+     "winner": "nadia-lefort"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "agathe-lemoine",
+     "b": "pauline-brunet",
+     "winner": "agathe-lemoine"
     },
     {
      "type": "match",
@@ -255,75 +143,244 @@
     {
      "type": "match",
      "phase": 0,
-     "a": "fabien-roux",
-     "b": "elsa-marchand",
-     "winner": "fabien-roux"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "inès-vautrin",
-     "b": "agathe-lemoine",
-     "winner": "agathe-lemoine"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "hugo-bastide",
-     "b": "mathis-aubry",
-     "winner": "mathis-aubry"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "inès-vautrin",
-     "b": "mathis-aubry",
-     "winner": "mathis-aubry"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "agathe-lemoine",
+     "a": "olivier-caron",
      "b": "hugo-bastide",
-     "winner": "agathe-lemoine"
+     "winner": "olivier-caron"
     },
     {
      "type": "match",
      "phase": 0,
-     "a": "inès-vautrin",
+     "a": "gaëlle-tessier",
      "b": "hugo-bastide",
      "winner": "hugo-bastide"
     },
     {
      "type": "match",
      "phase": 0,
+     "a": "nadia-lefort",
+     "b": "olivier-caron",
+     "winner": "olivier-caron"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "gaëlle-tessier",
+     "b": "hugo-bastide",
+     "winner": "gaëlle-tessier"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "gaëlle-tessier",
+     "b": "nadia-lefort",
+     "winner": "gaëlle-tessier"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "hugo-bastide",
+     "b": "nadia-lefort",
+     "winner": "nadia-lefort"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "gaëlle-tessier",
+     "b": "nadia-lefort",
+     "winner": "gaëlle-tessier"
+    },
+    {
+     "type": "match",
+     "phase": 0,
      "a": "mathis-aubry",
-     "b": "agathe-lemoine",
+     "b": "fabien-roux",
+     "winner": "fabien-roux"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "pauline-brunet",
+     "b": "mathis-aubry",
+     "winner": "pauline-brunet"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "benoît-carrel",
+     "b": "karim-delorme",
+     "winner": "benoît-carrel"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "agathe-lemoine",
+     "b": "fabien-roux",
      "winner": "agathe-lemoine"
     },
     {
-     "type": "withdraw",
-     "player": "benoît-carrel"
+     "type": "match",
+     "phase": 0,
+     "a": "elsa-marchand",
+     "b": "jules-perrin",
+     "winner": "elsa-marchand"
     },
     {
-     "type": "next_phase"
+     "type": "match",
+     "phase": 0,
+     "a": "agathe-lemoine",
+     "b": "mathis-aubry",
+     "winner": "agathe-lemoine"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "fabien-roux",
+     "b": "pauline-brunet",
+     "winner": "fabien-roux"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "benoît-carrel",
+     "b": "jules-perrin",
+     "winner": "jules-perrin"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "karim-delorme",
+     "b": "elsa-marchand",
+     "winner": "karim-delorme"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "inès-vautrin",
+     "b": "chloé-ferrand",
+     "winner": "chloé-ferrand"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "benoît-carrel",
+     "b": "elsa-marchand",
+     "winner": "elsa-marchand"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "jules-perrin",
+     "b": "karim-delorme",
+     "winner": "karim-delorme"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "laure-gauthier",
+     "b": "david-pujol",
+     "winner": "david-pujol"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "inès-vautrin",
+     "b": "david-pujol",
+     "winner": "david-pujol"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "chloé-ferrand",
+     "b": "laure-gauthier",
+     "winner": "chloé-ferrand"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "inès-vautrin",
+     "b": "laure-gauthier",
+     "winner": "inès-vautrin"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "david-pujol",
+     "b": "chloé-ferrand",
+     "winner": "david-pujol"
+    },
+    {
+     "type": "withdraw",
+     "player": "olivier-caron"
+    },
+    {
+     "type": "next_phase",
+     "repechage": {
+      "Poule A": "hugo-bastide"
+     }
     },
     {
      "type": "draw",
      "slots": [
       "chloé-ferrand",
-      "pauline-brunet",
-      "elsa-marchand",
-      "mathis-aubry",
-      "fabien-roux",
-      "david-pujol",
+      "gaëlle-tessier",
+      "hugo-bastide",
+      "agathe-lemoine",
       "karim-delorme",
-      "agathe-lemoine"
+      "elsa-marchand",
+      "david-pujol",
+      "fabien-roux"
      ]
+    },
+    {
+     "type": "match",
+     "phase": 1,
+     "a": "chloé-ferrand",
+     "b": "gaëlle-tessier",
+     "winner": "chloé-ferrand"
+    },
+    {
+     "type": "match",
+     "phase": 1,
+     "a": "hugo-bastide",
+     "b": "agathe-lemoine",
+     "winner": "hugo-bastide"
+    },
+    {
+     "type": "match",
+     "phase": 1,
+     "a": "karim-delorme",
+     "b": "elsa-marchand",
+     "winner": "elsa-marchand"
+    },
+    {
+     "type": "match",
+     "phase": 1,
+     "a": "chloé-ferrand",
+     "b": "hugo-bastide",
+     "winner": "chloé-ferrand"
+    },
+    {
+     "type": "match",
+     "phase": 1,
+     "a": "david-pujol",
+     "b": "fabien-roux",
+     "winner": "david-pujol"
+    },
+    {
+     "type": "match",
+     "phase": 1,
+     "a": "elsa-marchand",
+     "b": "david-pujol",
+     "winner": "david-pujol"
+    },
+    {
+     "type": "match",
+     "phase": 1,
+     "a": "chloé-ferrand",
+     "b": "david-pujol",
+     "winner": "david-pujol"
     }
-   ],
-   "n26_note": "place du retiré donnée à Pauline Brunet (voulu par la directrice ; l'appli a laissé une exemption)",
-   "events_tableau_non_rejouables": 6
+   ]
   },
   {
    "name": "Suisse B",
@@ -378,22 +435,29 @@
     {
      "type": "match",
      "phase": 0,
-     "a": "pauline-brunet",
-     "b": "rose-valette",
-     "winner": "rose-valette"
+     "a": "hugo-bastide",
+     "b": "thaïs-guérin",
+     "winner": "hugo-bastide"
     },
     {
      "type": "match",
      "phase": 0,
-     "a": "thaïs-guérin",
-     "b": "quentin-morel",
-     "winner": "quentin-morel"
+     "a": "pauline-brunet",
+     "b": "simon-arnaud",
+     "winner": "simon-arnaud"
     },
     {
      "type": "match",
      "phase": 0,
      "a": "rose-valette",
-     "b": "quentin-morel",
+     "b": "agathe-lemoine",
+     "winner": "rose-valette"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "rose-valette",
+     "b": "simon-arnaud",
      "winner": "rose-valette"
     },
     {
@@ -406,30 +470,23 @@
     {
      "type": "match",
      "phase": 0,
-     "a": "simon-arnaud",
-     "b": "léa-chauvin",
-     "winner": "léa-chauvin"
-    },
-    {
-     "type": "match",
-     "phase": 0,
      "a": "rose-valette",
      "b": "hugo-bastide",
-     "winner": "rose-valette"
+     "winner": "hugo-bastide"
     },
     {
      "type": "match",
      "phase": 0,
-     "a": "quentin-morel",
-     "b": "simon-arnaud",
+     "a": "agathe-lemoine",
+     "b": "thaïs-guérin",
+     "winner": "agathe-lemoine"
+    },
+    {
+     "type": "match",
+     "phase": 0,
+     "a": "léa-chauvin",
+     "b": "quentin-morel",
      "winner": "quentin-morel"
-    },
-    {
-     "type": "match",
-     "phase": 0,
-     "a": "rose-valette",
-     "b": "léa-chauvin",
-     "winner": "léa-chauvin"
     },
     {
      "type": "next_phase"
@@ -437,22 +494,15 @@
     {
      "type": "draw",
      "slots": [
-      "léa-chauvin",
+      "hugo-bastide",
       null,
+      "léa-chauvin",
       "rose-valette",
       "quentin-morel",
-      "agathe-lemoine",
       null,
-      "hugo-bastide",
-      "thaïs-guérin"
+      "agathe-lemoine",
+      "simon-arnaud"
      ]
-    },
-    {
-     "type": "match",
-     "phase": 1,
-     "a": "rose-valette",
-     "b": "quentin-morel",
-     "winner": "rose-valette"
     },
     {
      "type": "match",
@@ -465,20 +515,27 @@
      "type": "match",
      "phase": 1,
      "a": "hugo-bastide",
-     "b": "thaïs-guérin",
+     "b": "léa-chauvin",
      "winner": "hugo-bastide"
     },
     {
      "type": "match",
      "phase": 1,
      "a": "agathe-lemoine",
-     "b": "hugo-bastide",
+     "b": "simon-arnaud",
      "winner": "agathe-lemoine"
     },
     {
      "type": "match",
      "phase": 1,
-     "a": "léa-chauvin",
+     "a": "quentin-morel",
+     "b": "agathe-lemoine",
+     "winner": "agathe-lemoine"
+    },
+    {
+     "type": "match",
+     "phase": 1,
+     "a": "hugo-bastide",
      "b": "agathe-lemoine",
      "winner": "agathe-lemoine"
     }
@@ -571,163 +628,51 @@
     "type": "draw",
     "groups": [
      [
-      "karim-delorme",
-      "benoît-carrel",
-      "laure-gauthier",
-      "pauline-brunet"
-     ],
-     [
-      "chloé-ferrand",
-      "david-pujol",
-      "olivier-caron",
-      "jules-perrin"
-     ],
-     [
       "gaëlle-tessier",
-      "elsa-marchand",
-      "nadia-lefort",
+      "olivier-caron",
+      "hugo-bastide",
+      "nadia-lefort"
+     ],
+     [
+      "agathe-lemoine",
+      "pauline-brunet",
+      "mathis-aubry",
       "fabien-roux"
      ],
      [
+      "benoît-carrel",
+      "karim-delorme",
+      "elsa-marchand",
+      "jules-perrin"
+     ],
+     [
       "inès-vautrin",
-      "agathe-lemoine",
-      "hugo-bastide",
-      "mathis-aubry"
+      "chloé-ferrand",
+      "laure-gauthier",
+      "david-pujol"
      ]
     ]
    },
    {
     "type": "match",
     "phase": 0,
-    "a": "karim-delorme",
-    "b": "benoît-carrel",
-    "winner": "benoît-carrel"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "laure-gauthier",
-    "b": "pauline-brunet",
-    "winner": "pauline-brunet"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "chloé-ferrand",
-    "b": "david-pujol",
-    "winner": "chloé-ferrand"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "karim-delorme",
-    "b": "pauline-brunet",
-    "winner": "karim-delorme"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "benoît-carrel",
-    "b": "laure-gauthier",
-    "winner": "benoît-carrel"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "olivier-caron",
-    "b": "jules-perrin",
-    "winner": "olivier-caron"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "karim-delorme",
-    "b": "laure-gauthier",
-    "winner": "karim-delorme"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "pauline-brunet",
-    "b": "benoît-carrel",
-    "winner": "benoît-carrel"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "chloé-ferrand",
-    "b": "jules-perrin",
-    "winner": "chloé-ferrand"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "david-pujol",
-    "b": "olivier-caron",
-    "winner": "david-pujol"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "chloé-ferrand",
+    "a": "gaëlle-tessier",
     "b": "olivier-caron",
     "winner": "olivier-caron"
    },
    {
     "type": "match",
     "phase": 0,
-    "a": "jules-perrin",
-    "b": "david-pujol",
-    "winner": "david-pujol"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "david-pujol",
-    "b": "chloé-ferrand",
-    "winner": "david-pujol"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "david-pujol",
-    "b": "olivier-caron",
-    "winner": "david-pujol"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "olivier-caron",
-    "b": "chloé-ferrand",
-    "winner": "chloé-ferrand"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "gaëlle-tessier",
-    "b": "elsa-marchand",
-    "winner": "elsa-marchand"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "nadia-lefort",
-    "b": "fabien-roux",
-    "winner": "fabien-roux"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "gaëlle-tessier",
-    "b": "fabien-roux",
-    "winner": "fabien-roux"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "elsa-marchand",
+    "a": "hugo-bastide",
     "b": "nadia-lefort",
-    "winner": "elsa-marchand"
+    "winner": "nadia-lefort"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "agathe-lemoine",
+    "b": "pauline-brunet",
+    "winner": "agathe-lemoine"
    },
    {
     "type": "match",
@@ -739,55 +684,174 @@
    {
     "type": "match",
     "phase": 0,
-    "a": "fabien-roux",
-    "b": "elsa-marchand",
-    "winner": "fabien-roux"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "inès-vautrin",
-    "b": "agathe-lemoine",
-    "winner": "agathe-lemoine"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "hugo-bastide",
-    "b": "mathis-aubry",
-    "winner": "mathis-aubry"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "inès-vautrin",
-    "b": "mathis-aubry",
-    "winner": "mathis-aubry"
-   },
-   {
-    "type": "match",
-    "phase": 0,
-    "a": "agathe-lemoine",
+    "a": "olivier-caron",
     "b": "hugo-bastide",
-    "winner": "agathe-lemoine"
+    "winner": "olivier-caron"
    },
    {
     "type": "match",
     "phase": 0,
-    "a": "inès-vautrin",
+    "a": "gaëlle-tessier",
     "b": "hugo-bastide",
     "winner": "hugo-bastide"
    },
    {
     "type": "match",
     "phase": 0,
+    "a": "nadia-lefort",
+    "b": "olivier-caron",
+    "winner": "olivier-caron"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "gaëlle-tessier",
+    "b": "hugo-bastide",
+    "winner": "gaëlle-tessier"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "gaëlle-tessier",
+    "b": "nadia-lefort",
+    "winner": "gaëlle-tessier"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "hugo-bastide",
+    "b": "nadia-lefort",
+    "winner": "nadia-lefort"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "gaëlle-tessier",
+    "b": "nadia-lefort",
+    "winner": "gaëlle-tessier"
+   },
+   {
+    "type": "match",
+    "phase": 0,
     "a": "mathis-aubry",
-    "b": "agathe-lemoine",
+    "b": "fabien-roux",
+    "winner": "fabien-roux"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "pauline-brunet",
+    "b": "mathis-aubry",
+    "winner": "pauline-brunet"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "benoît-carrel",
+    "b": "karim-delorme",
+    "winner": "benoît-carrel"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "agathe-lemoine",
+    "b": "fabien-roux",
     "winner": "agathe-lemoine"
    },
    {
+    "type": "match",
+    "phase": 0,
+    "a": "elsa-marchand",
+    "b": "jules-perrin",
+    "winner": "elsa-marchand"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "agathe-lemoine",
+    "b": "mathis-aubry",
+    "winner": "agathe-lemoine"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "fabien-roux",
+    "b": "pauline-brunet",
+    "winner": "fabien-roux"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "benoît-carrel",
+    "b": "jules-perrin",
+    "winner": "jules-perrin"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "karim-delorme",
+    "b": "elsa-marchand",
+    "winner": "karim-delorme"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "inès-vautrin",
+    "b": "chloé-ferrand",
+    "winner": "chloé-ferrand"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "benoît-carrel",
+    "b": "elsa-marchand",
+    "winner": "elsa-marchand"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "jules-perrin",
+    "b": "karim-delorme",
+    "winner": "karim-delorme"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "laure-gauthier",
+    "b": "david-pujol",
+    "winner": "david-pujol"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "inès-vautrin",
+    "b": "david-pujol",
+    "winner": "david-pujol"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "chloé-ferrand",
+    "b": "laure-gauthier",
+    "winner": "chloé-ferrand"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "inès-vautrin",
+    "b": "laure-gauthier",
+    "winner": "inès-vautrin"
+   },
+   {
+    "type": "match",
+    "phase": 0,
+    "a": "david-pujol",
+    "b": "chloé-ferrand",
+    "winner": "david-pujol"
+   },
+   {
     "type": "withdraw",
-    "player": "benoît-carrel"
+    "player": "olivier-caron"
    },
    {
     "type": "next_phase"
@@ -796,56 +860,63 @@
     "type": "draw",
     "slots": [
      "chloé-ferrand",
-     null,
-     "elsa-marchand",
-     "mathis-aubry",
-     "fabien-roux",
-     "david-pujol",
+     "gaëlle-tessier",
+     "hugo-bastide",
+     "agathe-lemoine",
      "karim-delorme",
-     "agathe-lemoine"
+     "elsa-marchand",
+     "david-pujol",
+     "fabien-roux"
     ]
    },
    {
     "type": "match",
     "phase": 1,
-    "a": "elsa-marchand",
-    "b": "mathis-aubry",
-    "winner": "elsa-marchand"
-   },
-   {
-    "type": "match",
-    "phase": 1,
-    "a": "fabien-roux",
-    "b": "david-pujol",
-    "winner": "fabien-roux"
-   },
-   {
-    "type": "match",
-    "phase": 1,
     "a": "chloé-ferrand",
+    "b": "gaëlle-tessier",
+    "winner": "chloé-ferrand"
+   },
+   {
+    "type": "match",
+    "phase": 1,
+    "a": "hugo-bastide",
+    "b": "agathe-lemoine",
+    "winner": "hugo-bastide"
+   },
+   {
+    "type": "match",
+    "phase": 1,
+    "a": "karim-delorme",
     "b": "elsa-marchand",
     "winner": "elsa-marchand"
    },
    {
     "type": "match",
     "phase": 1,
-    "a": "karim-delorme",
-    "b": "agathe-lemoine",
-    "winner": "agathe-lemoine"
+    "a": "chloé-ferrand",
+    "b": "hugo-bastide",
+    "winner": "chloé-ferrand"
    },
    {
     "type": "match",
     "phase": 1,
-    "a": "fabien-roux",
-    "b": "agathe-lemoine",
-    "winner": "agathe-lemoine"
+    "a": "david-pujol",
+    "b": "fabien-roux",
+    "winner": "david-pujol"
    },
    {
     "type": "match",
     "phase": 1,
     "a": "elsa-marchand",
-    "b": "agathe-lemoine",
-    "winner": "agathe-lemoine"
+    "b": "david-pujol",
+    "winner": "david-pujol"
+   },
+   {
+    "type": "match",
+    "phase": 1,
+    "a": "chloé-ferrand",
+    "b": "david-pujol",
+    "winner": "david-pujol"
    }
   ]
  }

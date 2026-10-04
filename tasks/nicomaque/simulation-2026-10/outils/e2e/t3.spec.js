@@ -158,11 +158,21 @@ test('T3 : Rencontre poules + suisse, Léa (P3)', async ({ page }) => {
         const ensureHall = async (g) => {
             if ((await hallTab().getAttribute('aria-pressed')) !== 'true') await g.click('[data-testid="epreuve-tab-hall"]');
         };
-        const hallItems = () => page.locator('[data-testid="hall-proposals"] li:has(.go)');
+        const hallItems = () => page.locator('[data-testid="hall-queue"] li:has(.go)');
         const busyCells = () => page.locator('[data-testid="direction-hall"] [role="gridcell"].busy');
         const drawOf = async (ep) => {
             const br = await shimCall(shim.url, 'Brackets', tid[ep]).catch((e) => ({ error: String(e) }));
             raw.draws[`${ep}#${raw.events.length}`] = br;
+            // « Est-ce que je joue ? » : ce que le mur répond à ce moment, par épreuve.
+            await page.waitForTimeout(300);
+            const html = fs.existsSync(wallFile) ? fs.readFileSync(wallFile, 'utf8') : '';
+            const blocks = [...html.matchAll(/<section class="statuts"><h2>([^<]*)<\/h2><ul>([\s\S]*?)<\/ul><\/section>/g)];
+            raw.statusBlocks = raw.statusBlocks || [];
+            raw.statusBlocks.push({
+                ep,
+                at: raw.events.length,
+                blocks: blocks.map((b) => ({ head: b[1], items: [...b[2].matchAll(/<li[^>]*>([^<]*)<\/li>/g)].map((x) => x[1].replace(/&#39;/g, "'")) }))
+            });
             return br;
         };
         let checkedLaunch = 0;
@@ -173,12 +183,16 @@ test('T3 : Rencontre poules + suisse, Léa (P3)', async ({ page }) => {
             let n = 0;
             for (let guard = 0; guard < 20; guard++) {
                 let items = hallItems();
-                if (only) items = page.locator(`[data-testid="hall-proposals-${tid[only]}"] li:has(.go)`);
+                if (only) items = page.locator(`[data-testid="hall-queue"] li[data-testid="hall-proposal-${tid[only]}"]:has(.go)`);
                 if (!(await items.count())) break;
                 const li = items.first();
-                const label = (await li.innerText()).replace(/\s*Lancer\s*$/, '').replace(/\n/g, ' · ');
-                const group = await li.locator('xpath=ancestor::div[starts-with(@data-testid,"hall-proposals-")]').getAttribute('data-testid');
+                const group = await li.getAttribute('data-testid');
                 const ep = Number(group.split('-').pop()) === tid[A] ? A : B;
+                // La salle mêle les épreuves : chaque ligne commence par le nom de la sienne.
+                const label = (await li.innerText())
+                    .replace(/\s*Lancer\s*$/, '')
+                    .replace(/\n/g, ' · ')
+                    .replace(new RegExp(`^${ep} · `), '');
                 if (/Phase suivante/.test(label) && ep === A && !raw.n26.done) return { n, stop: 'n26' };
                 m.o.checkViewports = checkedLaunch++ < 3;
                 const r = await m.act({ action: 'salle : Lancer la proposition en tête' }, async (g) => g.click(li.locator('.go')));
@@ -371,8 +385,8 @@ test('T3 : Rencontre poules + suisse, Léa (P3)', async ({ page }) => {
         await dump('avant-n26');
 
         // ---------- N26 : un qualifié de poule se retire avant le tableau ----------
-        const qa = page.locator(`[data-testid="hall-proposals-${tid[A]}"] li:has(.go)`);
-        raw.n26.queueBefore = await page.locator(`[data-testid="hall-proposals-${tid[A]}"]`).innerText().catch(() => '');
+        const qa = page.locator(`[data-testid="hall-queue"] li[data-testid="hall-proposal-${tid[A]}"]:has(.go)`);
+        raw.n26.queueBefore = (await page.locator(`[data-testid="hall-queue"] li[data-testid="hall-proposal-${tid[A]}"]`).allInnerTexts().catch(() => [])).join('\n');
         await m.act({ action: 'N26 : A → Classement (qui est qualifié ?)' }, async (g) => {
             await g.click(`[data-testid="epreuve-tab-${tid[A]}"]`);
             await g.click('[data-testid="direction-tab-standings"]');
@@ -428,8 +442,8 @@ test('T3 : Rencontre poules + suisse, Léa (P3)', async ({ page }) => {
             await page.waitForTimeout(300);
             await dump('n26-confirm');
             const dlg = page.locator('[role="dialog"], [role="alertdialog"], .modal').filter({ hasText: quitter }).last();
-            // Le bouton de confirmation d'un retrait (réversible) s'intitule « Supprimer ».
-            const btn = page.locator('[role="dialog"][aria-label="Confirmation"] button:has-text("Supprimer")').first();
+            // Le bouton de confirmation d'un retrait porte le nom du geste (« Retirer »).
+            const btn = page.locator('[role="dialog"][aria-label="Confirmation"] button').filter({ hasText: /^(Retirer|Supprimer)$/ }).first();
             raw.n26.confirmText = await dlg.innerText().catch(() => '');
             await g.click(btn);
         });
@@ -439,6 +453,17 @@ test('T3 : Rencontre poules + suisse, Léa (P3)', async ({ page }) => {
         await dump('n26-file-apres-retrait');
         raw.n26.queueAfter = await page.locator('[data-testid="direction-pane-direction"] .proposals').innerText().catch(() => '');
         raw.n26.repechageOffered = /rep[êe]ch|suivant|remplac/i.test(raw.n26.queueAfter + (await page.locator('body').innerText()));
+        // Ce que Léa voulait : le suivant de la poule prend la place. La file le propose ; elle
+        // prend la première proposition de repêchage et note sur sa feuille qui elle a repêché.
+        const rep = page.locator('[data-testid="direction-pane-direction"] .proposals .queue li:not(.empty)', { hasText: /Repêchage/ }).first();
+        if (await rep.isVisible().catch(() => false)) {
+            raw.n26.repechageLabel = (await rep.innerText()).split('\n')[0];
+            raw.n26.picked = raw.n26.repechageLabel.split(' remplace ')[0].trim();
+            await m.act({ action: `N26 : repêcher ${raw.n26.picked}` }, async (g) => g.click(rep.locator('.go')));
+            await page.waitForTimeout(400);
+            raw.events.push({ ep: A, type: 'repechage', pool: raw.n26.pool, player: raw.n26.picked });
+            raw.n26.queueAfterRepechage = await page.locator('[data-testid="direction-pane-direction"] .proposals').innerText().catch(() => '');
+        }
         raw.n26.done = true;
         await m.act({ action: 'N26 : retour à la salle' }, async (g) => g.click('[data-testid="epreuve-tab-hall"]'));
 
