@@ -34,6 +34,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 vi.mock('../services/positionService.js', () => ({ showPosition: vi.fn(() => Promise.resolve()) }));
 
 import * as db from '../../wailsjs/go/database/Database.js';
+import { showPosition } from '../services/positionService.js';
 import AnkiPanel from '../components/AnkiPanel.svelte';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, ankiReviewActionStore, ankiPausedSessionStore } from '../stores/ankiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -137,6 +138,35 @@ describe('reaching the limit', () => {
         await settle();
 
         expect(get(ankiViewModeStore)).toBe('review');
+    });
+});
+
+describe('grading faster than the board loads', () => {
+    test('a grade given while the previous card is still loading counts both', async () => {
+        const deck = deckWith(null);
+        ankiDecksStore.set([deck]);
+        selectedAnkiDeckStore.set(deck);
+        ankiReviewCardStore.set(CARD(1));
+        ankiViewModeStore.set('review');
+        db.ReviewAnkiCard.mockImplementation((/** @type {number} */ id) => Promise.resolve(id === 1 ? CARD(2) : null));
+        // The second card is on screen, its board still loading.
+        /** @type {(v?: unknown) => void} */
+        let release = () => {};
+        vi.mocked(showPosition).mockImplementationOnce(() => new Promise((resolve) => (release = resolve)));
+
+        const { container } = render(AnkiPanel);
+        await settle();
+        await fireEvent.click(container.querySelectorAll('.btn-rating')[2]);
+        await settle();
+        expect(get(ankiReviewCardStore)?.card.id).toBe(2);
+        await fireEvent.click(container.querySelectorAll('.btn-rating')[0]);
+        await settle();
+        release();
+        await settle();
+
+        const said = get(statusBarTextStore);
+        expect(said.i18nKey).toBe('anki.reviewComplete');
+        expect(said.i18nParams.count).toBe(2);
     });
 });
 

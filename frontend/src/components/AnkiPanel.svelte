@@ -319,22 +319,31 @@
 
     async function submitReview(rating) {
         if (!reviewCard) return;
+        // Counted when given, not once the next card is on the board: the next card shows before
+        // its board has loaded, and a grade given on it then must not overtake this one's count.
+        const count = ++reviewSessionCount;
+        let next;
         try {
             // In cram mode the rating is ignored — just advance, never schedule.
-            const next = cramMode ? await anki.nextCramCard(selectedDeck, reviewCard) : await anki.reviewCard(reviewCard, rating);
-            reviewSessionCount++;
+            next = cramMode ? await anki.nextCramCard(selectedDeck, reviewCard) : await anki.reviewCard(reviewCard, rating);
+        } catch (e) {
+            reviewSessionCount--;
+            fail(e);
+            return;
+        }
+        try {
             invalidateTrainingStats();
 
             // The limit ended the sitting, not an empty queue: its own message
             // (ADR-0026 rule 4). No "keep going": cram serves more.
-            if (next && anki.sessionLimitReached(selectedDeck, reviewSessionCount, { cram: cramMode })) {
+            if (next && anki.sessionLimitReached(selectedDeck, count, { cram: cramMode })) {
                 ankiViewModeStore.set('list');
                 ankiPausedSessionStore.set(null);
                 await anki.loadDecks();
                 const fresh = selectedDeck ? await anki.refreshDeckStats(selectedDeck.id) : null;
                 statusBarTextStore.set(
                     tMsg('anki.sessionLimitReached', {
-                        count: reviewSessionCount,
+                        count,
                         remaining: fresh?.dueCount ?? stats?.dueCount ?? 0
                     })
                 );
