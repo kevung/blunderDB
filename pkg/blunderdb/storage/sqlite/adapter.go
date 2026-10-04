@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
@@ -58,10 +59,11 @@ func (shared) LimitOffset(limit, offset int) (string, []any) {
 		return " LIMIT ? OFFSET ?", []any{limit, offset}
 	}
 }
-func (shared) TimestampArg() string            { return "?" }
-func (shared) DateText(col string) string      { return "COALESCE(" + col + ",'')" }
-func (shared) TimestampText(col string) string { return "COALESCE(" + col + ",'')" }
-func (shared) Referenced(err error) error      { return referenced(err) }
+func (shared) TimestampArg() string                 { return "?" }
+func (shared) InstantArg(t time.Time) (string, any) { return "?", t.Unix() }
+func (shared) DateText(col string) string           { return "COALESCE(" + col + ",'')" }
+func (shared) TimestampText(col string) string      { return "COALESCE(" + col + ",'')" }
+func (shared) Referenced(err error) error           { return referenced(err) }
 
 func (a shared) Exec(ctx context.Context, query string, args ...any) (int64, error) {
 	res, err := a.db.ExecContext(ctx, query, args...)

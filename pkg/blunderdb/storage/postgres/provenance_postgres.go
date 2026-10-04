@@ -54,13 +54,13 @@ func backfillAnalysisProvenance(ctx context.Context, db execer) error {
 		decoded, failed := engine.DecodeAnalysesConcurrently(raw)
 		engines := make([]string, len(ids))
 		depths := make([]int64, len(ids))
-		created := make([]*string, len(ids))
+		created := make([]*int64, len(ids))
 		for i, id := range ids {
 			engines[i], depths[i] = "", -1
 			if a := decoded[id]; a != nil {
-				var c string
+				var c int64
 				engines[i], depths[i], c = engine.AnalysisProvenance(a)
-				if c != "" {
+				if c != 0 {
 					created[i] = &c
 				}
 			} else if err := failed[id]; err != nil {
@@ -69,8 +69,8 @@ func backfillAnalysisProvenance(ctx context.Context, db execer) error {
 		}
 		if _, err := db.Exec(ctx,
 			`UPDATE analysis a SET analysis_engine = v.e, analysis_depth = v.d,
-			        creation_date = v.c::timestamp AT TIME ZONE 'UTC'
-			   FROM unnest($1::bigint[], $2::text[], $3::int[], $4::text[]) AS v(id, e, d, c)
+			        creation_date = to_timestamp(v.c)
+			   FROM unnest($1::bigint[], $2::text[], $3::int[], $4::bigint[]) AS v(id, e, d, c)
 			  WHERE a.id = v.id`,
 			ids, engines, depths, created); err != nil {
 			return fmt.Errorf("postgres: write analysis provenance: %w", err)

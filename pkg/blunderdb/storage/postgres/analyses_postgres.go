@@ -215,7 +215,7 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 			c.IsForced != 0, c.IsCloseCube != 0,
-			c.AnalysisEngine, c.AnalysisDepth, nullableString(c.CreationDate))
+			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate))
 		if err != nil {
 			return fmt.Errorf("postgres: save analysis: %w", referenced(err))
 		}

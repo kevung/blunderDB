@@ -197,7 +197,7 @@ func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.P
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 			c.IsForced, c.IsCloseCube,
-			c.AnalysisEngine, c.AnalysisDepth, nullableString(c.CreationDate)); err != nil {
+			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate)); err != nil {
 			return fmt.Errorf("sqlite: save analysis: %w", referenced(err))
 		}
 
@@ -277,7 +277,7 @@ func SaveAnalysisUncompressed(ctx context.Context, tx *sql.Tx, positionID int64,
 		c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 		c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 		c.IsForced, c.IsCloseCube,
-		c.AnalysisEngine, c.AnalysisDepth, nullableString(c.CreationDate)); err != nil {
+		c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate)); err != nil {
 		return fmt.Errorf("sqlite: save analysis: %w", err)
 	}
 	return nil

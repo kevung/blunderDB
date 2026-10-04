@@ -324,7 +324,9 @@ type AnalysisColumns struct {
 	// Provenance of the verdict the columns above come from (AnalysisProvenance).
 	AnalysisEngine string
 	AnalysisDepth  int64
-	CreationDate   string
+	// CreationDate is the blob's CreationDate in Unix seconds (UTC), 0 when
+	// unset; storage writes 0 as NULL.
+	CreationDate int64
 }
 
 // AnalysisProvenance names who rendered an analysis's verdict and how deep:
@@ -332,19 +334,19 @@ type AnalysisColumns struct {
 // columns are read from — the cube analysis when there is one, else the best
 // checker move, on the ColumnSource view so a rollout-only analysis answers
 // for its rollout. An analysis with no entry answers ("", -1). creation is the
-// blob's CreationDate in UTC as "2006-01-02 15:04:05", "" when unset.
+// blob's CreationDate in Unix seconds, 0 when unset (ADR-0070).
 //
 // One entry and not a summary of all of them: the depth filter and the
 // provenance filter of the stats ask who gave the verdict, and an XG analysis
 // carries a different depth on each candidate move. A caller that needs every
 // entry (gammonnet.IsStaleAnalysis) narrows with the columns and confirms on
 // the decoded blob.
-func AnalysisProvenance(a *domain.PositionAnalysis) (engineLabel string, depth int64, creation string) {
+func AnalysisProvenance(a *domain.PositionAnalysis) (engineLabel string, depth int64, creation int64) {
 	if a == nil {
-		return "", -1, ""
+		return "", -1, 0
 	}
 	if !a.CreationDate.IsZero() {
-		creation = a.CreationDate.UTC().Format(time.DateTime)
+		creation = a.CreationDate.Unix()
 	}
 	src := a.ColumnSource()
 	switch {

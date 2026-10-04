@@ -75,12 +75,13 @@ var schemaStatements = []string{
 		-- rather than inside a match. Sticky — see ADR-0001.
 		individually_imported INTEGER NOT NULL DEFAULT 0,
 		flagged INTEGER NOT NULL DEFAULT 0,
-		-- Date of the earliest match that reaches this position, in
-		-- the text form match.match_date holds; NULL when no match reaches
-		-- it. Denormalised so a date filter reads one indexed column instead
-		-- of joining move, game and match; the match store keeps it true when
-		-- a move is written, a match date is edited or a match is deleted.
-		match_date DATETIME,
+		-- Date of the earliest match that reaches this position, in Unix
+		-- seconds UTC (ADR-0070, derived by sqlite.UnixFromMatchDateSQL);
+		-- NULL when no match reaches it. Denormalised so a date filter reads
+		-- one indexed column instead of joining move, game and match; the
+		-- match store keeps it true when a move is written, a match date is
+		-- edited or a match is deleted.
+		match_date INTEGER,
 		CHECK (dice_1 BETWEEN 0 AND 6),
 		CHECK (dice_2 BETWEEN 0 AND 6),
 		-- cube_value is the EXPONENT (0 = cube at 1), never negative.
@@ -108,18 +109,20 @@ var schemaStatements = []string{
 		is_close_cube               INTEGER NOT NULL DEFAULT 0,
 		-- Provenance of the verdict (engine.AnalysisProvenance): the
 		-- engine label, the depth as domain.AnalysisDepthRank, and the blob's
-		-- CreationDate. NULL analysis_engine means "not derived yet": a row
-		-- written before the column, or by a path that writes the blob alone;
+		-- CreationDate in Unix seconds UTC (ADR-0070). NULL analysis_engine
+		-- means "not derived yet": a row written before the column, or by a
+		-- path that writes the blob alone;
 		-- the open-time pass (database.backfillAnalysisProvenance) fills it.
 		analysis_engine             TEXT,
 		analysis_depth              INTEGER,
-		creation_date               DATETIME,
+		creation_date               INTEGER,
 		-- The match equity table the verdict was computed with (ADR-0068):
-		-- the digest of a match_equity_table row, NULL for the built-in
-		-- Kazaross-XG2. An analysis whose digest differs from the library's
-		-- current table is shown as "different MET" and left out of the
-		-- comparisons.
-		met_digest                  TEXT,
+		-- the id of a match_equity_table row (whose digest names the table),
+		-- NULL for the built-in Kazaross-XG2. An analysis whose table differs
+		-- from the library's current one is shown as "different MET" and
+		-- left out of the comparisons. An integer rather than the digest
+		-- itself: eight bytes in place of a 64-character hex string.
+		met_id                      INTEGER REFERENCES match_equity_table(id),
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`,
 	`CREATE TABLE IF NOT EXISTS comment (
@@ -728,8 +731,13 @@ var schemaStatements = []string{
 	// The player-2 twin of idx_analysis_win_gammon_covering, for the same
 	// IN-subquery (sqlshared/search.go).
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon2_covering ON analysis(player2_win_rate, player2_gammon_rate, position_id)`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_engine         ON analysis(analysis_engine)`,
-	`CREATE        INDEX IF NOT EXISTS idx_analysis_depth          ON analysis(analysis_depth)`,
+	// No index on analysis_engine or analysis_depth: their filters run inside
+	// a correlated EXISTS on position_id (search) or on a join reached by
+	// move (stats), and a library rarely holds more than one engine. Only the
+	// provenance backfill looks rows up by a NULL engine, and the rows it is
+	// looking for are the only ones this partial index holds — it is empty
+	// once the pass is over.
+	`CREATE        INDEX IF NOT EXISTS idx_analysis_provenance_pending ON analysis(id) WHERE analysis_engine IS NULL`,
 	`CREATE        INDEX IF NOT EXISTS idx_analysis_creation_date  ON analysis(creation_date)`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_match_date     ON position(match_date)`,
 	`CREATE        INDEX IF NOT EXISTS idx_import_batch_file_batch ON import_batch_file(batch_id)`,

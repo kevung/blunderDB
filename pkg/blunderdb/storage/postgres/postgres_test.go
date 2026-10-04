@@ -71,10 +71,10 @@ var wantTables = []string{
 // wantIndexes is the full set of named idx_* indexes, sorted.
 var wantIndexes = []string{
 	"idx_analysis_backgammon1", "idx_analysis_backgammon2",
-	"idx_analysis_creation_date", "idx_analysis_cube_error", "idx_analysis_depth",
-	"idx_analysis_engine", "idx_analysis_is_close_cube",
+	"idx_analysis_creation_date", "idx_analysis_cube_error",
+	"idx_analysis_is_close_cube",
 	"idx_analysis_is_forced", "idx_analysis_move_error",
-	"idx_analysis_position",
+	"idx_analysis_position", "idx_analysis_provenance_pending",
 	"idx_analysis_win_gammon2_covering", "idx_analysis_win_gammon_covering",
 	"idx_anki_card_deck", "idx_anki_card_due", "idx_anki_card_identity",
 	"idx_anki_review_log_card", "idx_anki_review_log_deck",

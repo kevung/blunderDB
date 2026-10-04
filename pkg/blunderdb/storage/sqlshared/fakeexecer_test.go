@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"reflect"
+	"time"
 )
 
 // A fake Execer lets a test fail exactly one row of exactly one query and
@@ -48,10 +49,11 @@ func (fakeDialect) LimitOffset(limit, offset int) (string, []any) {
 	}
 	return " LIMIT ? OFFSET ?", []any{limit, offset}
 }
-func (fakeDialect) TimestampArg() string            { return "?" }
-func (fakeDialect) DateText(col string) string      { return col }
-func (fakeDialect) TimestampText(col string) string { return col }
-func (fakeDialect) Referenced(err error) error      { return err }
+func (fakeDialect) TimestampArg() string                 { return "?" }
+func (fakeDialect) InstantArg(t time.Time) (string, any) { return "?", t.Unix() }
+func (fakeDialect) DateText(col string) string           { return col }
+func (fakeDialect) TimestampText(col string) string      { return col }
+func (fakeDialect) Referenced(err error) error           { return err }
 
 // zeroRow is a Row that fills every destination with its zero value and
 // never fails — the answer every QueryRow the test does not care about

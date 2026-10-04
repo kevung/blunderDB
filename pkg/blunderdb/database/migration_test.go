@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"strings"
@@ -3383,7 +3384,7 @@ func TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave(t *testing.T) {
 		t.Fatalf("positions dated by the import = %d, %v; want some", withDate, err)
 	}
 	for _, stmt := range []string{
-		`DROP INDEX idx_analysis_engine`, `DROP INDEX idx_analysis_depth`,
+		`DROP INDEX IF EXISTS idx_analysis_engine`, `DROP INDEX IF EXISTS idx_analysis_depth`, `DROP INDEX IF EXISTS idx_analysis_provenance_pending`,
 		`DROP INDEX idx_analysis_creation_date`, `DROP INDEX idx_position_match_date`,
 		`ALTER TABLE analysis DROP COLUMN analysis_engine`,
 		`ALTER TABLE analysis DROP COLUMN analysis_depth`,
@@ -3471,7 +3472,7 @@ func TestMigrate_2_29_0_to_2_30_0_LargeLibraryWave(t *testing.T) {
 	}
 	var wrongDate int
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position WHERE match_date IS NOT
-		(SELECT MIN(m.match_date) FROM move mv JOIN game g ON g.id = mv.game_id JOIN match m ON m.id = g.match_id
+		(SELECT MIN(` + sqlite.UnixFromMatchDateSQL("m.match_date") + `) FROM move mv JOIN game g ON g.id = mv.game_id JOIN match m ON m.id = g.match_id
 		  WHERE mv.position_id = position.id)`).Scan(&wrongDate); err != nil || wrongDate != 0 {
 		t.Errorf("positions whose match_date is not their earliest match's = %d, %v", wrongDate, err)
 	}
@@ -3609,11 +3610,25 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	if _, err := d.ImportXGMatch(filepath.Join("testdata", "test.xg")); err != nil {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
+	// The values the 2.31.0 representation must read back: Unix seconds.
+	wantMatchDate := unixColumn(t, d.db, "position", "match_date")
+	wantCreation := unixColumn(t, d.db, "analysis", "creation_date")
+	if len(wantMatchDate) == 0 || len(wantCreation) == 0 {
+		t.Fatalf("fixture dates: %d positions, %d analyses; want some of each", len(wantMatchDate), len(wantCreation))
+	}
 	for _, stmt := range []string{
 		`ALTER TABLE move DROP COLUMN error_mp`,
-		`ALTER TABLE analysis DROP COLUMN met_digest`,
+		`ALTER TABLE analysis DROP COLUMN met_id`,
 		`DROP TABLE lesson_progress`,
 		`DROP TABLE match_equity_table`,
+		// 2.30.0 stored both dates as text, and indexed engine and depth.
+		`DROP INDEX idx_analysis_provenance_pending`,
+		`UPDATE position SET match_date = (SELECT MIN(m.match_date) FROM move mv
+		   JOIN game g ON g.id = mv.game_id JOIN match m ON m.id = g.match_id
+		  WHERE mv.position_id = position.id)`,
+		`UPDATE analysis SET creation_date = datetime(creation_date, 'unixepoch')`,
+		`CREATE INDEX idx_analysis_engine ON analysis(analysis_engine)`,
+		`CREATE INDEX idx_analysis_depth ON analysis(analysis_depth)`,
 		`UPDATE metadata SET value = '2.30.0' WHERE key = 'database_version'`,
 	} {
 		if _, err := d.db.Exec(stmt); err != nil {
@@ -3632,8 +3647,30 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
 		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
 	}
-	if !columnExists(t, d.db, "move", "error_mp") || !columnExists(t, d.db, "analysis", "met_digest") {
-		t.Fatal("move.error_mp and analysis.met_digest should exist after migration")
+	if !columnExists(t, d.db, "move", "error_mp") || !columnExists(t, d.db, "analysis", "met_id") {
+		t.Fatal("move.error_mp and analysis.met_id should exist after migration")
+	}
+	for _, c := range []struct {
+		table, column string
+		want          map[int64]int64
+	}{{"position", "match_date", wantMatchDate}, {"analysis", "creation_date", wantCreation}} {
+		var text int
+		if err := d.db.QueryRow(`SELECT COUNT(*) FROM ` + c.table + ` WHERE typeof(` + c.column + `) = 'text'`).Scan(&text); err != nil || text != 0 {
+			t.Errorf("%s.%s: %d text values left, %v", c.table, c.column, text, err)
+		}
+		if got := unixColumn(t, d.db, c.table, c.column); !maps.Equal(got, c.want) {
+			t.Errorf("%s.%s after migration = %v, want %v", c.table, c.column, got, c.want)
+		}
+	}
+	for name, want := range map[string]bool{
+		"idx_analysis_engine": false, "idx_analysis_depth": false,
+		"idx_analysis_provenance_pending": true, "idx_position_match_date": true, "idx_analysis_creation_date": true,
+	} {
+		var n int
+		_ = d.db.QueryRow(`SELECT COUNT(*) FROM sqlite_master WHERE type = 'index' AND name = ?`, name).Scan(&n)
+		if (n == 1) != want {
+			t.Errorf("index %s present = %v after migration, want %v", name, n == 1, want)
+		}
 	}
 	if !tableExists(d.db, "lesson_progress") || !tableExists(d.db, "match_equity_table") {
 		t.Fatal("lesson_progress and match_equity_table should exist after migration")
@@ -3710,4 +3747,26 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 			t.Errorf("second pass visited move %d with nothing left to score", n)
 		}
 	}
+}
+
+// unixColumn reads the non-NULL integer values of table.column by row id.
+func unixColumn(t *testing.T, db *sql.DB, table, column string) map[int64]int64 {
+	t.Helper()
+	rows, err := db.Query(`SELECT id, ` + column + ` FROM ` + table + ` WHERE typeof(` + column + `) = 'integer'`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	out := map[int64]int64{}
+	for rows.Next() {
+		var id, v int64
+		if err := rows.Scan(&id, &v); err != nil {
+			t.Fatal(err)
+		}
+		out[id] = v
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+	return out
 }

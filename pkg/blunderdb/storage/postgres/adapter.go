@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/jackc/pgx/v5"
 
@@ -61,7 +62,8 @@ func (shared) LimitOffset(limit, offset int) (string, []any) {
 		return " LIMIT ? OFFSET ?", []any{limit, offset}
 	}
 }
-func (shared) TimestampArg() string { return "?::timestamptz" }
+func (shared) TimestampArg() string                 { return "?::timestamptz" }
+func (shared) InstantArg(t time.Time) (string, any) { return "?", t.UTC() }
 func (shared) DateText(col string) string {
 	return "COALESCE(TO_CHAR(" + col + " AT TIME ZONE 'UTC','YYYY-MM-DD'),'')"
 }

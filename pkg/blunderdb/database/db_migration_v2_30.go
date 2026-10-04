@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"strconv"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -96,7 +97,7 @@ func (d *Database) backfillPositionMatchDates(ctx context.Context) (bool, error)
 		end := next + backfillBatch
 		err := d.inTx(ctx, func(tx *sql.Tx) error {
 			if _, err := tx.ExecContext(ctx, `UPDATE position SET match_date =
-				(SELECT MIN(m.match_date) FROM move mv
+				(SELECT MIN(`+sqlite.UnixFromMatchDateSQL("m.match_date")+`) FROM move mv
 				   JOIN game g ON g.id = mv.game_id
 				   JOIN match m ON m.id = g.match_id
 				  WHERE mv.position_id = position.id)
@@ -145,7 +146,7 @@ func (d *Database) finishLargeLibraryWave(ctx context.Context) error {
 // creation_date (engine.AnalysisProvenance) for every analysis row whose
 // analysis_engine is NULL: every row on the open crossing 2.30.0, and on
 // later opens the few a blob-only writer left. The probe is one step of
-// idx_analysis_engine, so an open with nothing to do pays nothing. Resumable
+// idx_analysis_provenance_pending, so an open with nothing to do pays nothing. Resumable
 // by construction: a written row is no longer NULL.
 func (d *Database) backfillAnalysisProvenance(ctx context.Context) error {
 	var probe int
@@ -188,14 +189,14 @@ func (d *Database) backfillAnalysisProvenance(ctx context.Context) error {
 			for _, id := range ids {
 				// An undecodable blob is written as "no entry" so that it is not
 				// retried on every open; `blunderdb verify` still reports it.
-				eng, depth, created := "", int64(-1), ""
+				eng, depth, created := "", int64(-1), int64(0)
 				if a := decoded[id]; a != nil {
 					eng, depth, created = engine.AnalysisProvenance(a)
 				} else if err := failed[id]; err != nil {
 					slog.Warn("analysis provenance: undecodable blob", "analysis_id", id, "error", err)
 				}
 				var createdVal any
-				if created != "" {
+				if created != 0 {
 					createdVal = created
 				}
 				if _, err := stmt.ExecContext(ctx, eng, depth, createdVal, id); err != nil {

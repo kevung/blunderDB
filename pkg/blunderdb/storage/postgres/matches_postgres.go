@@ -117,6 +117,16 @@ func nullableString(s string) any {
 	return s
 }
 
+// nullableUnix binds a Unix-seconds date (ADR-0070), 0 meaning unset, to a
+// TIMESTAMPTZ column: PostgreSQL already stores that type as an integer
+// count in UTC.
+func nullableUnix(n int64) any {
+	if n == 0 {
+		return nil
+	}
+	return time.Unix(n, 0).UTC()
+}
+
 // Save stores a new match and returns its id, updating m.ID and m.ImportDate
 // in place.
 func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (int64, error) {

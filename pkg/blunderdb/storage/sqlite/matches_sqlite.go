@@ -137,6 +137,14 @@ func nullableString(s string) any {
 	return s
 }
 
+// nullableUnix binds a Unix-seconds date column (ADR-0070), 0 meaning unset.
+func nullableUnix(n int64) any {
+	if n == 0 {
+		return nil
+	}
+	return n
+}
+
 // Save stores a new match and returns its id, updating m.ID and m.ImportDate
 // in place.
 func (s *matchStore) Save(ctx context.Context, scope string, m *domain.Match) (int64, error) {
@@ -832,8 +840,8 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 // rather than taking the MIN over the position's moves: an opening position
 // is reached by thousands of moves, and an import would pay that scan on
 // every one of them.
-const positionMatchDateOnMoveSQL = `UPDATE position SET match_date = d.md
-	FROM (SELECT m.match_date AS md FROM game g JOIN match m ON m.id = g.match_id WHERE g.id = ?) AS d
+var positionMatchDateOnMoveSQL = `UPDATE position SET match_date = d.md
+	FROM (SELECT ` + UnixFromMatchDateSQL("m.match_date") + ` AS md FROM game g JOIN match m ON m.id = g.match_id WHERE g.id = ?) AS d
 	WHERE position.id = ? AND d.md IS NOT NULL
 	  AND (position.match_date IS NULL OR position.match_date > d.md)`
 
@@ -841,8 +849,8 @@ const positionMatchDateOnMoveSQL = `UPDATE position SET match_date = d.md
 // that still reaches the position: the slow, exact form, for the rare edits
 // that can raise the date (a match deleted, its date changed, its games
 // replaced). Takes the IN list of ids.
-const positionMatchDateRefreshSQL = `UPDATE position SET match_date =
-	(SELECT MIN(m.match_date) FROM move mv
+var positionMatchDateRefreshSQL = `UPDATE position SET match_date =
+	(SELECT MIN(` + UnixFromMatchDateSQL("m.match_date") + `) FROM move mv
 	   JOIN game g ON g.id = mv.game_id
 	   JOIN match m ON m.id = g.match_id
 	  WHERE mv.position_id = position.id)

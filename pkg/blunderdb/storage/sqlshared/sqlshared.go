@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -156,6 +157,11 @@ type Dialect interface {
 	// TimestampArg is the placeholder for a match_date bound as a string:
 	// "?" in SQLite (match_date is TEXT), "?::timestamptz" in PostgreSQL.
 	TimestampArg() string
+
+	// InstantArg binds an instant compared with position.match_date (and any
+	// other column ADR-0070 stores as an instant): Unix seconds in SQLite,
+	// a TIMESTAMPTZ in PostgreSQL.
+	InstantArg(t time.Time) (placeholder string, arg any)
 
 	// DateText renders a match_date column as a text date (YYYY-MM-DD…, '' for
 	// NULL) and TimestampText a created_at/modified_at column as text

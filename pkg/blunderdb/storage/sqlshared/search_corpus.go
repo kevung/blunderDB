@@ -5,6 +5,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -30,14 +31,19 @@ func (s *SearchStore) appendCorpusClauses(scope string, f domain.SearchFilters, 
 			where.WriteString(" AND 0=1")
 		}
 		// Half-open on the day after the last bound, so a time of day on the
-		// last day still counts and both dialects compare the same text/date.
-		if from != "" {
-			where.WriteString(" AND p.match_date >= " + s.DB.TimestampArg())
-			*args = append(*args, from)
-		}
-		if until != "" {
-			where.WriteString(" AND p.match_date < " + s.DB.TimestampArg())
-			*args = append(*args, until)
+		// last day still counts. A day bound is midnight UTC (ADR-0070).
+		for _, b := range []struct{ day, op string }{{from, " >= "}, {until, " < "}} {
+			if b.day == "" {
+				continue
+			}
+			t, err := time.Parse(time.DateOnly, b.day)
+			if err != nil {
+				where.WriteString(" AND 0=1")
+				continue
+			}
+			ph, arg := s.DB.InstantArg(t)
+			where.WriteString(" AND p.match_date" + b.op + ph)
+			*args = append(*args, arg)
 		}
 	}
 
