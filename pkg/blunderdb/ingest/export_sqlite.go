@@ -16,6 +16,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
@@ -315,8 +316,23 @@ type exporter struct {
 	collMap  map[int64]int64
 	tourMap  map[int64]int64
 	matchMap map[int64]int64
+	tables   *mets.Carrier // the tables the exported analyses cite, built on first use
 
 	report ExportReport
+}
+
+// carrier returns the export's table carrier: the source's tables, copied
+// into the file the first time an exported analysis cites one (ADR-0068,
+// rule 5). They arrive without their current flag.
+func (e *exporter) carrier() (*mets.Carrier, error) {
+	if e.tables == nil {
+		tables, err := mets.ReadTables(e.ctx, e.src.MatchEquityTables(), e.scope)
+		if err != nil {
+			return nil, fmt.Errorf("cannot read match equity tables to export: %w", err)
+		}
+		e.tables = mets.NewCarrier(e.dst.MatchEquityTables(), "", tables)
+	}
+	return e.tables, nil
 }
 
 func (e *exporter) skip(msg string, args ...any) {
@@ -576,12 +592,16 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 		}
 	}
 	var analyses map[int64]*domain.PositionAnalysis
+	var analysisMET map[int64]int64
 	var moves map[int64][]*domain.Move
 	var comments map[int64][]*domain.CommentEntry
 	var err error
 	if e.opts.Analysis {
 		if analyses, err = e.src.Analyses().LoadMany(e.ctx, e.scope, ids); err != nil {
 			return fmt.Errorf("cannot read analyses to export: %w", err)
+		}
+		if analysisMET, err = e.src.MatchEquityTables().OfAnalyses(e.ctx, e.scope, ids); err != nil {
+			return fmt.Errorf("cannot read the analyses' match equity tables to export: %w", err)
 		}
 		if e.opts.PlayedMoves {
 			if moves, err = e.src.Matches().MovesByPositions(e.ctx, e.scope, ids); err != nil {
@@ -629,6 +649,9 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 				e.skip("inserting analysis for position", "newID", newID, "oldID", p.ID, "err", err)
 			} else {
 				e.report.Analyses++
+				if err := e.carryTable(analysisMET[p.ID], newID); err != nil {
+					return err
+				}
 			}
 		}
 		for _, c := range comments[p.ID] {
@@ -641,6 +664,30 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 			}
 			e.report.Comments++
 		}
+	}
+	return nil
+}
+
+// carryTable records that the exported analysis of newID was valued with the
+// source table srcMET. A failure fails the export: an analysis written without
+// its table would be read as Kazaross-XG2 by whoever opens the file.
+func (e *exporter) carryTable(srcMET, newID int64) error {
+	if srcMET == 0 {
+		return nil
+	}
+	c, err := e.carrier()
+	if err != nil {
+		return err
+	}
+	met, err := c.Target(e.ctx, srcMET)
+	if err != nil {
+		return fmt.Errorf("cannot export a match equity table: %w", err)
+	}
+	if met == 0 {
+		return nil
+	}
+	if err := e.dst.MatchEquityTables().TagAnalyses(e.ctx, "", met, []int64{newID}); err != nil {
+		return fmt.Errorf("cannot export an analysis's match equity table: %w", err)
 	}
 	return nil
 }

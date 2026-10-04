@@ -32,7 +32,10 @@ const analysisInsertSQL = `INSERT INTO analysis (
 
 // analysisUpsertSQL is analysisInsertSQL with the conflict resolved in the
 // same statement, so concurrent saves cannot insert two rows. The target is
-// the UNIQUE index idx_analysis_position.
+// the UNIQUE index idx_analysis_position. met_id names the table a gammonNet
+// verdict was valued with (ADR-0068): a replacement whose verdict comes from
+// another engine (XG, GNUbg, a rollout) drops it, and a gammonNet one keeps
+// it until its writer tags it in the same transaction.
 const analysisUpsertSQL = analysisInsertSQL + `
 ON CONFLICT(position_id) DO UPDATE SET
 	data=excluded.data,
@@ -49,7 +52,8 @@ ON CONFLICT(position_id) DO UPDATE SET
 	is_close_cube=excluded.is_close_cube,
 	analysis_engine=excluded.analysis_engine,
 	analysis_depth=excluded.analysis_depth,
-	creation_date=excluded.creation_date`
+	creation_date=excluded.creation_date,
+	met_id=CASE WHEN excluded.analysis_engine LIKE 'gammonNet%' THEN analysis.met_id END`
 
 // Save stores (or replaces) the analysis for positionID. The analysis JSON is
 // compressed (zstd, see engine.CompressAnalysisData) and the denormalised scalar columns are derived. Higher-level

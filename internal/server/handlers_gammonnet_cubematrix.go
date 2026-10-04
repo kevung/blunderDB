@@ -6,6 +6,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 )
 
 // /v1/gammonnet.cubeMatrix — the cube verdict at every score of a match. The
@@ -55,8 +56,14 @@ func (s *Server) handleGammonNetCubeMatrix(w http.ResponseWriter, r *http.Reques
 	// One search per cell at most: more workers would sit idle and be
 	// charged all the same.
 	workers := min(s.engineWorkers, req.MatchLength*req.MatchLength)
+	// The tenant's table values the grid, as it values its analyses (ADR-0068).
+	_, met, err := mets.Current(r.Context(), s.opts.Storage, scope)
+	if err != nil {
+		writeStorageError(w, err)
+		return
+	}
 	matrix, err := metered(s, scope, workers, func() (gammonnet.CubeMatrix, error) {
-		return gammonnet.ComputeCubeMatrix(r.Context(), pos, req.MatchLength, req.Ply, req.PruneK, workers)
+		return gammonnet.ComputeCubeMatrixMET(r.Context(), pos, met, req.MatchLength, req.Ply, req.PruneK, workers)
 	})
 	if err != nil {
 		writeErrorCode(w, CodeInvalid, err.Error())

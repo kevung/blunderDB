@@ -235,11 +235,9 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 	for res := range results {
 		oc := res.outcome
 		if oc == outcomeEvaluated {
-			if err := rollouts.SaveAnalysis(ctx, s.opts.Storage, scope, res.pos.ID, res.analysis); err != nil {
+			if err := rollouts.SaveValuedAnalysis(ctx, s.opts.Storage, scope, res.pos.ID, res.analysis, metID); err != nil {
 				oc = outcomeFailed
 				slog.Warn("gammonnet sweep: saving the computed analysis failed", "position_id", res.pos.ID, "error", err)
-			} else if err := s.opts.Storage.MatchEquityTables().TagAnalyses(ctx, scope, metID, []int64{res.pos.ID}); err != nil {
-				slog.Warn("gammonnet sweep: recording the analysis's match equity table failed", "position_id", res.pos.ID, "error", err)
 			}
 		}
 		switch oc {

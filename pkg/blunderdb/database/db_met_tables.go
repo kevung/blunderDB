@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 )
 
@@ -44,4 +45,16 @@ func (d *Database) AnalysisMETStatus(positionID int64) (mets.Status, error) {
 		return mets.Status{}, err
 	}
 	return mets.AnalysisStatus(context.Background(), d.store, "", positionID, pos.IsMoney())
+}
+
+// CurrentMET is the table a live evaluation of d's library is valued with:
+// nil for the built-in one, or when no file is open. A function, not a
+// method, so the Wails binding never exposes it.
+func CurrentMET(d *Database) (*engine.MET, error) {
+	st, _ := CurrentStore(d)
+	if st == nil {
+		return nil, nil
+	}
+	_, m, err := mets.Current(context.Background(), st, "")
+	return m, err
 }

@@ -30,16 +30,23 @@ func metComparableDecision(d Dialect, scope string) (string, []any) {
 // table current, only the matches touching an analysis it tagged can
 // qualify, and only they are checked for an untagged one.
 func metComparableMatch(d Dialect, scope string) (string, []any) {
-	cur1, a1 := currentMETExpr(d, scope)
-	cur2, a2 := currentMETExpr(d, scope)
-	cur3, a3 := currentMETExpr(d, scope)
-	cur4, a4 := currentMETExpr(d, scope)
+	var args []any
+	// cur and tenant append their arguments in the order their text appears.
+	cur := func() string {
+		sql, a := currentMETExpr(d, scope)
+		args = append(args, a...)
+		return sql
+	}
+	tenant := func() string {
+		sql, a := d.TenantFilter("a", scope)
+		args = append(args, a...)
+		return sql
+	}
 	const movesOf = ` FROM analysis a JOIN move mv ON mv.position_id = a.position_id JOIN game g ON g.id = mv.game_id`
 	sql := `(` + matchIsMoney +
-		` OR (m.id NOT IN (SELECT g.match_id` + movesOf + ` WHERE a.met_id IS NOT NULL AND a.met_id IS DISTINCT FROM ` + cur1 + `)` +
-		` AND (` + cur2 + ` IS NULL OR (m.id IN (SELECT g.match_id` + movesOf + ` WHERE a.met_id = ` + cur3 + `)` +
-		` AND NOT EXISTS (SELECT 1 FROM game g JOIN move mv ON mv.game_id = g.id JOIN analysis a ON a.position_id = mv.position_id` +
-		` WHERE g.match_id = m.id AND a.met_id IS DISTINCT FROM ` + cur4 + `)))))`
-	args := append(append(append(a1, a2...), a3...), a4...)
+		` OR (m.id NOT IN (SELECT g.match_id` + movesOf + ` WHERE ` + tenant() + ` AND a.met_id IS NOT NULL AND a.met_id IS DISTINCT FROM ` + cur() + `)`
+	sql += ` AND (` + cur() + ` IS NULL OR (m.id IN (SELECT g.match_id` + movesOf + ` WHERE ` + tenant() + ` AND a.met_id = ` + cur() + `)`
+	sql += ` AND NOT EXISTS (SELECT 1 FROM game g JOIN move mv ON mv.game_id = g.id JOIN analysis a ON a.position_id = mv.position_id` +
+		` WHERE ` + tenant() + ` AND g.match_id = m.id AND a.met_id IS DISTINCT FROM ` + cur() + `)))))`
 	return sql, args
 }

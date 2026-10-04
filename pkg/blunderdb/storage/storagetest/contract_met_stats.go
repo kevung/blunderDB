@@ -26,7 +26,7 @@ func testMETDifferentLeftOut(t *testing.T, s storage.Storage) {
 			t.Fatalf("%s: Compute: %v", label, err)
 		}
 		if res.Totals.NumMatches != wantMatches {
-			t.Errorf("%s: %d matches retained, want %d", label, res.Totals.NumMatches, wantMatches)
+			t.Errorf("%s: %d matches with a retained decision, want %d", label, res.Totals.NumMatches, wantMatches)
 		}
 		rows, err := s.Stats().PlayerTable(ctx, "", storage.StatsFilter{DecisionType: -1})
 		if err != nil {
@@ -67,7 +67,18 @@ func testMETDifferentLeftOut(t *testing.T, s storage.Storage) {
 		t.Errorf("OfAnalysis(untagged) = %d, %v; want 0", got, err)
 	}
 
+	// A match whose analyses are partly tagged keeps, decision by decision,
+	// the ones valued with the current table, and is never whole under either
+	// table for the per-match aggregates.
+	if err := mt.TagAnalyses(ctx, "", id, posB[:1]); err != nil {
+		t.Fatal(err)
+	}
+	retained("imported current, match B half tagged", 2, "Abe", "Ann")
 	if err := mt.SetCurrent(ctx, "", 0); err != nil {
+		t.Fatal(err)
+	}
+	retained("built-in current, match A tagged, match B half tagged", 1)
+	if err := mt.TagAnalyses(ctx, "", 0, posB[:1]); err != nil {
 		t.Fatal(err)
 	}
 	retained("built-in current, match A tagged", 1, "Bea", "Bob")

@@ -63,6 +63,17 @@ nombre dise avec quelle table il a été calculé.
   répond. La parité avec le C reste mesurée sur Kazaross-XG2.
 - L'empreinte est un SHA-256 d'une forme canonique des valeurs (`blunderdb-met/1`) ; le
   `Kazaross-XG2.xml` de gnubg a celle de la table intégrée.
-- La règle 5 n'est pas livrée : importer une base dans une autre ne transporte ni la table
-  ni le `met_id`, et le receveur lit l'analyse comme calculée avec Kazaross-XG2.
+- Règle 5 : l'export SQLite, l'import d'une base (`ingest.DBImporter`) et la fusion de base
+  du GUI/CLI (`CommitImportDatabase`) copient chaque table citée par `mets.Carrier`, qui la
+  range par `Save` (dédoublonnée par empreinte, jamais courante) et remappe le `met_id`. À
+  la fusion d'une analyse, le verdict gardé garde la table de son côté (`mets.AfterMerge`).
+  L'export et l'import NDJSON ne portent pas la table : l'analyse y arrive Kazaross-XG2.
+- Le `met_id` suit le verdict : l'upsert d'une analyse le remet à `NULL` dès que le verdict
+  des colonnes n'est plus celui de gammonNet (XG, GNUbg, rollout), et un calcul gammonNet
+  écrit l'analyse et sa table dans une seule transaction (`rollouts.SaveValuedAnalysis`,
+  `Database.saveAnalysisAt`) : un échec n'en laisse aucune des deux.
+- L'évaluation en direct (panneau, `gammonnet.evaluate`, grille de videau) est valorisée
+  avec la table courante de la base, comme le lot : le panneau ne montre jamais un nombre
+  d'une autre table que l'analyse qu'il remplacerait. La commande `cubematrix` de la CLI,
+  qui n'ouvre pas de base, reste sur Kazaross-XG2.
 - Les rollouts et les conversions MWC des importeurs restent sur Kazaross-XG2.

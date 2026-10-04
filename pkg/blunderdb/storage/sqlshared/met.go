@@ -159,3 +159,47 @@ func (s *MatchEquityTableStore) OfAnalysis(ctx context.Context, scope string, po
 	}
 	return *id, nil
 }
+
+func (s *MatchEquityTableStore) Load(ctx context.Context, scope string, id int64) (*domain.MatchEquityTable, error) {
+	tenant, targs := s.DB.TenantFilter("", scope)
+	m, err := scanMET(s.DB.QueryRow(ctx, `SELECT `+s.cols(true)+` FROM match_equity_table WHERE `+tenant+
+		` AND id = ?`, append(targs, id)...))
+	if errors.Is(err, ErrNoRows) {
+		return nil, fmt.Errorf("%s: match equity table %d: %w", s.DB.Name(), id, storage.ErrNotFound)
+	}
+	if err != nil {
+		return nil, errf(s.DB, "load match equity table", err)
+	}
+	return m, nil
+}
+
+func (s *MatchEquityTableStore) OfAnalyses(ctx context.Context, scope string, positionIDs []int64) (map[int64]int64, error) {
+	out := map[int64]int64{}
+	tenant, targs := s.DB.TenantFilter("", scope)
+	for start := 0; start < len(positionIDs); start += 500 {
+		chunk := positionIDs[start:min(start+500, len(positionIDs))]
+		args := append([]any{}, targs...)
+		for _, id := range chunk {
+			args = append(args, id)
+		}
+		rows, err := s.DB.Query(ctx, `SELECT position_id, met_id FROM analysis WHERE `+tenant+
+			` AND met_id IS NOT NULL AND position_id IN (`+Placeholders(len(chunk))+`)`, args...)
+		if err != nil {
+			return nil, errf(s.DB, "match equity tables of analyses", err)
+		}
+		for rows.Next() {
+			var pos, met int64
+			if err := rows.Scan(&pos, &met); err != nil {
+				rows.Close()
+				return nil, errf(s.DB, "scan match equity table of an analysis", err)
+			}
+			out[pos] = met
+		}
+		err = rows.Err()
+		rows.Close()
+		if err != nil {
+			return nil, errf(s.DB, "match equity tables of analyses", err)
+		}
+	}
+	return out, nil
+}

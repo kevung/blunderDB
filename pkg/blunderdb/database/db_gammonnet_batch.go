@@ -259,11 +259,9 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 		if outcome == gnEvaluated {
 			// A write failure is a skip like an evaluation failure: the
 			// position is picked up again on the next run.
-			if err := d.saveAnalysisAt(gen, res.id, *res.analysis); err != nil {
+			if err := d.saveAnalysisAt(gen, res.id, *res.analysis, metID); err != nil {
 				outcome = gnFailed
 				slog.Warn("gammonnet batch: saving the computed analysis failed", "position_id", res.id, "error", err)
-			} else if err := d.store.MatchEquityTables().TagAnalyses(ctx, "", metID, []int64{res.id}); err != nil {
-				slog.Warn("gammonnet batch: recording the analysis's match equity table failed", "position_id", res.id, "error", err)
 			}
 		}
 
