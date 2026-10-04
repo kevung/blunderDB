@@ -6,12 +6,14 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -78,6 +80,14 @@ func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysi
 
 		// Preserve the existing creation date
 		analysis.CreationDate = existingAnalysis.CreationDate
+
+		// A gammonNet verdict supersedes gammonNet's earlier entries whatever
+		// their depth or version: merged by "the deeper entry wins", a sweep
+		// at a shallower depth would keep the old moves and find the position
+		// stale again on every pass. Other engines' entries stay (ADR-0013).
+		if metID != nil {
+			dropGammonNetEntries(&existingAnalysis)
+		}
 
 		// Merge checker analysis if both exist
 		if existingAnalysis.CheckerAnalysis != nil && analysis.CheckerAnalysis != nil {
@@ -399,4 +409,39 @@ func (d *Database) RebuildMatchStats() (int, error) {
 		return 0, fmt.Errorf("no database is currently open")
 	}
 	return d.store.Stats().RebuildMatchStats(context.Background(), "", nil)
+}
+
+// dropGammonNetEntries removes from a every checker move and cube entry
+// gammonNet wrote, at any version, so the verdict about to be merged in is
+// the only gammonNet one left. A primary cube analysis that was gammonNet's
+// falls back to another engine's entry, or to none.
+func dropGammonNetEntries(a *PositionAnalysis) {
+	ours := func(engine string) bool { return strings.HasPrefix(engine, gammonnet.EngineLabelPrefix) }
+	if a.CheckerAnalysis != nil {
+		kept := a.CheckerAnalysis.Moves[:0]
+		for _, m := range a.CheckerAnalysis.Moves {
+			if !ours(m.AnalysisEngine) {
+				kept = append(kept, m)
+			}
+		}
+		if len(kept) == 0 {
+			a.CheckerAnalysis = nil
+		} else {
+			a.CheckerAnalysis.Moves = kept
+		}
+	}
+	var others []DoublingCubeAnalysis
+	for _, ca := range a.AllCubeAnalyses {
+		if !ours(ca.AnalysisEngine) {
+			others = append(others, ca)
+		}
+	}
+	a.AllCubeAnalyses = others
+	if a.DoublingCubeAnalysis != nil && ours(a.DoublingCubeAnalysis.AnalysisEngine) {
+		a.DoublingCubeAnalysis = nil
+		if len(others) > 0 {
+			first := others[0]
+			a.DoublingCubeAnalysis = &first
+		}
+	}
 }
