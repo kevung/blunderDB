@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 05:05+0200\n"
+"POT-Creation-Date: 2026-10-04 05:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -333,10 +333,10 @@ msgstr "resume"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Liste les imports que rien n'a terminé (arrêt de l'application, import "
-"annulé) et reprend celui qu'on choisit, en désignant à nouveau le dossier"
-" ou les fichiers."
-msgstr "何も完了させていないインポート（アプリケーションの停止、取り消されたインポート）を一覧し、フォルダまたはファイルをもう一度指定したうえで、選んだものを再開します。"
+"Liste les imports que rien n'a terminé (arrêt de l'application) et "
+"reprend celui qu'on choisit, en désignant à nouveau le dossier ou les "
+"fichiers."
+msgstr "何も完了させていないインポート（アプリケーションの停止）を一覧し、フォルダまたはファイルをもう一度指定したうえで、選んだものを再開します。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "[number]"

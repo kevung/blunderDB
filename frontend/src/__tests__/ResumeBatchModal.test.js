@@ -20,6 +20,7 @@ vi.mock('../services/importService.js', () => ({
     resumeImportBatch: mocks.resumeImportBatch
 }));
 
+import { fileImportModeStore } from '../stores/importModalStore.js';
 import ResumeBatchModal from '../components/ResumeBatchModal.svelte';
 
 const batches = [
@@ -32,7 +33,10 @@ beforeEach(() => {
     vi.clearAllMocks();
     mocks.ListImportBatches.mockResolvedValue(batches);
 });
-afterEach(cleanup);
+afterEach(() => {
+    cleanup();
+    fileImportModeStore.set('idle');
+});
 
 describe('ResumeBatchModal', () => {
     test('ne liste que les lots inachevés', async () => {
@@ -76,5 +80,13 @@ describe('ResumeBatchModal', () => {
         await waitFor(() => expect(mocks.pickFilesToResumeFromFolder).toHaveBeenCalled());
         expect(mocks.resumeImportBatch).not.toHaveBeenCalled();
         expect(onClose).not.toHaveBeenCalled();
+    });
+
+    test('pendant un import en cours, aucun lot n’est proposé à la reprise', async () => {
+        fileImportModeStore.set('importing');
+        const { findByTestId, queryAllByTestId } = render(ResumeBatchModal, { props: { visible: true, onClose: vi.fn() } });
+        await findByTestId('resume-batch-running');
+        expect(queryAllByTestId('resume-batch-row')).toHaveLength(0);
+        expect(mocks.resumeImportBatch).not.toHaveBeenCalled();
     });
 });

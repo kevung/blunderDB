@@ -1,11 +1,11 @@
 <script>
-    // Reprendre un lot d'import que rien n'a terminé : coupure de l'application,
-    // plantage, import annulé lors d'une session précédente. Le journal du lot
-    // (qui est déjà en base) dit ce qui est décidé ; on ne redemande à
+    // Reprendre un lot d'import que rien n'a terminé : coupure de l'application.
+    // Le journal du lot (déjà en base) dit ce qui est décidé ; on ne redemande à
     // l'utilisateur que l'endroit où sont les fichiers, comme `--dir` en CLI.
     import Modal from './Modal.svelte';
     import { ListImportBatches } from '../../wailsjs/go/database/Database.js';
     import { pickFilesToResumeFromFolder, pickFilesToResume, resumeImportBatch } from '../services/importService.js';
+    import { fileImportModeStore } from '../stores/importModalStore.js';
     import { logger } from '../utils/logger.js';
     import { t } from '../i18n';
 
@@ -16,6 +16,8 @@
     /** @type {ImportBatch[]} */
     let batches = $state([]);
     let busy = $state(false);
+    // A running import has no end date either: resuming its batch would start a second one on it.
+    let importing = $derived($fileImportModeStore === 'importing');
 
     // A batch the import never finished has no end date.
     const PAGE = 200;
@@ -38,6 +40,7 @@
      * @param {'folder' | 'files'} how
      */
     async function resume(batch, how) {
+        if (importing) return;
         busy = true;
         try {
             const files = how === 'folder' ? await pickFilesToResumeFromFolder() : await pickFilesToResume();
@@ -54,7 +57,9 @@
 <Modal open={visible} onclose={onClose} size="large" label={$t('resumeBatch.title')}>
     <h2 class="modal-title">{$t('resumeBatch.title')}</h2>
 
-    {#if batches.length === 0}
+    {#if importing}
+        <p class="empty" data-testid="resume-batch-running">{$t('resumeBatch.running')}</p>
+    {:else if batches.length === 0}
         <p class="empty" data-testid="resume-batch-empty">{$t('resumeBatch.empty')}</p>
     {:else}
         <p class="hint">{$t('resumeBatch.hint')}</p>

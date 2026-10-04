@@ -1970,7 +1970,7 @@ export default {
 </tr>
 <tr>
 <td>resume</td>
-<td>Listet die Importe auf, die nichts beendet hat (Anwendung beendet, Import abgebrochen), und setzt den gewählten fort, nachdem Ordner oder Dateien erneut angegeben wurden.</td>
+<td>Listet die Importe auf, die nichts beendet hat (Anwendung beendet), und setzt den gewählten fort, nachdem Ordner oder Dateien erneut angegeben wurden.</td>
 </tr>
 <tr>
 <td>[number]</td>

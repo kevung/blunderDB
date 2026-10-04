@@ -1970,7 +1970,7 @@ export default {
 </tr>
 <tr>
 <td>resume</td>
-<td>Liste les imports que rien n'a terminé (arrêt de l'application, import annulé) et reprend celui qu'on choisit, en désignant à nouveau le dossier ou les fichiers.</td>
+<td>Liste les imports que rien n'a terminé (arrêt de l'application) et reprend celui qu'on choisit, en désignant à nouveau le dossier ou les fichiers.</td>
 </tr>
 <tr>
 <td>[number]</td>

@@ -1970,7 +1970,7 @@ export default {
 </tr>
 <tr>
 <td>resume</td>
-<td>Lista las importaciones que nada ha terminado (aplicación detenida, importación cancelada) y reanuda la elegida, indicando de nuevo la carpeta o los archivos.</td>
+<td>Lista las importaciones que nada ha terminado (aplicación detenida) y reanuda la elegida, indicando de nuevo la carpeta o los archivos.</td>
 </tr>
 <tr>
 <td>[number]</td>

@@ -1703,7 +1703,8 @@
         "empty": "Es wartet kein Import auf eine Fortsetzung.",
         "hint": "Diese Importe wurden vor dem Ende abgebrochen. Wählen Sie die Dateien erneut aus: Was das Journal schon entschieden hat, wird nicht noch einmal gelesen.",
         "chooseFolder": "Ordner wählen…",
-        "chooseFiles": "Dateien wählen…"
+        "chooseFiles": "Dateien wählen…",
+        "running": "Ein Import läuft: Setzen Sie einen anderen fort, wenn er beendet ist."
     },
     "trash": {
         "title": "Papierkorb",

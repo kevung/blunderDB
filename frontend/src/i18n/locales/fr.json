@@ -1703,7 +1703,8 @@
         "empty": "Aucun import n'attend d'être repris.",
         "hint": "Ces imports se sont arrêtés avant la fin. Désignez à nouveau les fichiers : ce que le journal a déjà tranché n'est pas relu.",
         "chooseFolder": "Choisir le dossier…",
-        "chooseFiles": "Choisir les fichiers…"
+        "chooseFiles": "Choisir les fichiers…",
+        "running": "Un import est en cours : reprenez-en un autre quand il sera terminé."
     },
     "trash": {
         "title": "Corbeille",

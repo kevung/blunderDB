@@ -1970,7 +1970,7 @@ export default {
 </tr>
 <tr>
 <td>resume</td>
-<td>Lists the imports nothing has finished (application stopped, import cancelled) and resumes the one you pick, once you point at the folder or files again.</td>
+<td>Lists the imports nothing has finished (application stopped) and resumes the one you pick, once you point at the folder or files again.</td>
 </tr>
 <tr>
 <td>[number]</td>

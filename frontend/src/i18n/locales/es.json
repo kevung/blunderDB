@@ -1703,7 +1703,8 @@
         "empty": "Ninguna importación espera ser reanudada.",
         "hint": "Estas importaciones se detuvieron antes del final. Indique de nuevo los archivos: lo que el diario ya ha decidido no se vuelve a leer.",
         "chooseFolder": "Elegir la carpeta…",
-        "chooseFiles": "Elegir los archivos…"
+        "chooseFiles": "Elegir los archivos…",
+        "running": "Hay una importación en curso: reanude otra cuando haya terminado."
     },
     "trash": {
         "title": "Papelera",

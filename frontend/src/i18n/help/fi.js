@@ -1970,7 +1970,7 @@ export default {
 </tr>
 <tr>
 <td>resume</td>
-<td>Luettelee tuonnit, joita mikään ei ole päättänyt (sovellus pysäytettiin, tuonti peruttiin) ja jatkaa valittua, kun kansio tai tiedostot on osoitettu uudelleen.</td>
+<td>Luettelee tuonnit, joita mikään ei ole päättänyt (sovellus pysäytettiin) ja jatkaa valittua, kun kansio tai tiedostot on osoitettu uudelleen.</td>
 </tr>
 <tr>
 <td>[number]</td>

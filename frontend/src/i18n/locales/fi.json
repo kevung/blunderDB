@@ -1703,7 +1703,8 @@
         "empty": "Mikään tuonti ei odota jatkamista.",
         "hint": "Nämä tuonnit keskeytyivät ennen loppua. Valitse tiedostot uudelleen: sitä, minkä loki on jo ratkaissut, ei lueta uudelleen.",
         "chooseFolder": "Valitse kansio…",
-        "chooseFiles": "Valitse tiedostot…"
+        "chooseFiles": "Valitse tiedostot…",
+        "running": "Tuonti on käynnissä: jatka toista, kun se on valmis."
     },
     "trash": {
         "title": "Roskakori",

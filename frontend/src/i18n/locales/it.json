@@ -1703,7 +1703,8 @@
         "empty": "Nessuna importazione attende di essere ripresa.",
         "hint": "Queste importazioni si sono fermate prima della fine. Indica di nuovo i file: ciò che il registro ha già deciso non viene riletto.",
         "chooseFolder": "Scegli la cartella…",
-        "chooseFiles": "Scegli i file…"
+        "chooseFiles": "Scegli i file…",
+        "running": "Un'importazione è in corso: riprendine un'altra quando sarà terminata."
     },
     "trash": {
         "title": "Cestino",
