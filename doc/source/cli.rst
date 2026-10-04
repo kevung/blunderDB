@@ -2234,16 +2234,18 @@ l'ouverture d'une base, car son coût est imprévisible sur une grosse base.
   (``{"size_before", "size_after", "reclaimed"}``, en octets).
 
 La commande commence par un ``wal_checkpoint(TRUNCATE)`` pour que la taille
-affichée avant compactage soit honnête, vérifie qu'il reste sur le disque
-environ deux fois la taille actuelle du fichier (SQLite reconstruit
-entièrement la base avant de basculer dessus), effectue le ``VACUUM`` puis un
-``ANALYZE`` pour rafraîchir les statistiques utilisées par le planificateur de
-requêtes. Si l'espace disque manque, la commande refuse de démarrer avec un
-message explicite plutôt que de risquer un compactage interrompu.
+affichée avant compactage soit honnête, vérifie qu'il reste à côté du fichier
+environ sa taille en espace libre, écrit la base compactée dans une copie
+(``VACUUM INTO``) qui remplace ensuite le fichier, puis lance un ``ANALYZE``
+pour rafraîchir les statistiques utilisées par le planificateur de requêtes.
+Si un autre programme a la base ouverte, le fichier n'est pas remplacé : la
+commande compacte sur place (``VACUUM``), ce qui demande environ deux fois la
+taille du fichier en espace libre. Si l'espace disque manque, la commande
+refuse de démarrer avec un message explicite plutôt que de risquer un
+compactage interrompu.
 
-Avant le ``VACUUM``, chaque analyse est réécrite au format binaire compact,
-compressé au plus fort : y compris celles qu'une version antérieure avait
-rangées en JSON (voir ``reencode``).
+Avant le compactage, chaque analyse encore rangée en JSON par une version
+antérieure est réécrite au format binaire compact (voir ``reencode``).
 
 **Exemple:**
 
@@ -2302,9 +2304,9 @@ plus petit que le JSON compressé des versions antérieures et plusieurs fois
 plus rapide à relire. Une base créée avant ce format reste lisible telle
 quelle : ses anciennes analyses sont converties quand elles sont réécrites (un
 import qui les enrichit, un ``vacuum``). ``reencode`` les convertit toutes,
-sans compacter le fichier : utile sur une grosse base, où un ``vacuum`` demande
-le double de l'espace disque, ou sur un serveur PostgreSQL, qui n'a pas de
-``vacuum``.
+sans compacter le fichier : utile quand le disque n'a pas la place de la
+copie compactée qu'écrit un ``vacuum``, ou sur un serveur PostgreSQL, qui n'a
+pas de ``vacuum``.
 
 .. code-block:: bash
 

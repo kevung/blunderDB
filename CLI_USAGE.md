@@ -1631,8 +1631,8 @@ analysis. The daemon exposes the same operations as `met.list`, `met.import`,
 Rewrite the analyses an older release stored as JSON in the compact binary
 format (about half the size, several times faster to read). Old analyses stay
 readable without it; `vacuum` performs the same conversion while it compacts.
-`reencode` converts without compacting: useful on a large database, where
-`vacuum` needs twice the file size in free space, or on a PostgreSQL server,
+`reencode` converts without compacting: useful when the disk has no room for
+the compacted copy `vacuum` writes beside the file, or on a PostgreSQL server,
 which has no `vacuum`. The daemon exposes the same pass as
 `maintenance.reencode`, limited to the caller's tenant.
 
