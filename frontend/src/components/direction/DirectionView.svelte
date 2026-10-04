@@ -5,6 +5,7 @@
      * tout autre onglet ramène le plateau sans rien fermer.
      */
     import { tick } from 'svelte';
+    import { get } from 'svelte/store';
     import { t } from '../../i18n';
     import { statusBarTextStore, activeTabStore } from '../../stores/uiStore';
     import { tMsg } from '../../i18n';
@@ -36,6 +37,7 @@
         openDirectionIdStore,
         directionJumpStore,
         epreuveTabsStore,
+        hallOpenStore,
         rememberDirectionTab,
         recalledDirectionTab,
         switchEpreuve,
@@ -402,7 +404,10 @@
      * Elle remplace les volets de l'épreuve sans les démonter ; un clic sur une épreuve ou sur un
      * onglet de vue la quitte. Rechargée quand l'épreuve ouverte ou une sœur change.
      */
-    let hallOpen = $state(false);
+    let hallOpen = $state(get(hallOpenStore));
+    $effect(() => {
+        hallOpenStore.set(hallOpen);
+    });
     let hall = $state(/** @type {import('../../../wailsjs/go/models').service.HallView | null} */ (null));
     const hasHall = $derived($epreuveTabsStore.length > 1);
     $effect(() => {
@@ -846,6 +851,13 @@
         {#if visited.direction}
             <div class="pane" hidden={hallOpen || tab !== 'direction'} tabindex="-1" data-testid="direction-pane-direction" use:registerPane={'direction'} onscroll={() => onPaneScroll('direction')}>
                 <div class="direction-page">
+                    <!-- Premier arrêt de Tab dans la page : la file est à un Tab, pas derrière la grille. -->
+                    <button
+                        type="button"
+                        class="skip-queue"
+                        data-testid="direction-skip-queue"
+                        onclick={() => /** @type {HTMLElement | null | undefined} */ (root?.querySelector('[data-testid="direction-queue"]'))?.focus()}>{$t('direction.proposals.skip')}</button
+                    >
                     {#if (view?.warnings || []).length}
                         <!-- Visible tant que dure sa cause, jamais bloquant. -->
                         <ul class="warnings" data-testid="direction-warnings">
@@ -933,7 +945,7 @@
         {/if}
         {#if visited.standings}
             <div class="pane" hidden={hallOpen || tab !== 'standings'} tabindex="-1" data-testid="direction-pane-standings" use:registerPane={'standings'} onscroll={() => onPaneScroll('standings')}>
-                <StandingsView view={ranking} {busy} running={view?.running?.length || 0} {onClose} {onReopen} {onCSV} onSave={onSaveStandings} />
+                <StandingsView view={ranking} {busy} running={view?.running?.length || 0} {onClose} {onReopen} {onCSV} onSave={onSaveStandings} onHistory={showHistory} />
             </div>
         {/if}
         {#if visited.history}
@@ -992,6 +1004,13 @@
 </div>
 
 <style>
+    .skip-queue {
+        position: absolute;
+        left: -9999px;
+    }
+    .skip-queue:focus {
+        position: static;
+    }
     .direction-view:focus {
         outline: none;
     }

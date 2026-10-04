@@ -2133,6 +2133,8 @@
             "player_busy": "別の種目で対局中"
         },
         "proposals": {
+            "keys": "J / K または ↑ ↓：提案を選ぶ · Enter：開始 · ← →：テーブル間の移動",
+            "skip": "待ち行列へ移動",
             "title": "提案（{n}件）",
             "all": "すべて開始",
             "allHint": "待ち行列をまとめて開始します。",
@@ -2291,6 +2293,7 @@
             "reopenConfirm": "この大会を再開しますか？　最終順位は確定ではなくなり、再開は記録に残ります。",
             "save": "保存…",
             "saveHint": "順位表をCSVファイルに保存します。内容はコピーと同じです。",
+            "historyHint": "この選手の履歴（結果の訂正用）",
             "saved": "順位表を保存しました：{path}",
             "saveFailed": "順位表を保存できませんでした。",
             "fileWord": "順位表"
@@ -2306,10 +2309,10 @@
             "withdrawn": "{player} が棄権",
             "updated": "{player} の登録情報を修正",
             "started": "{a} – {b} 開始 · {where}",
-            "result": "{winner} が {scoreA}–{scoreB} で勝利",
-            "resultNoScore": "{winner} が勝利",
-            "forfeit": "{winner} が不戦勝",
-            "corrected": "結果を訂正：{winner} の勝ち",
+            "result": "{winner} が {loser} に {scoreA}–{scoreB} で勝利",
+            "resultNoScore": "{winner} が {loser} に勝利",
+            "forfeit": "{winner} が {loser} に不戦勝",
+            "corrected": "結果を訂正：{winner} が {loser} に勝利",
             "cancelled": "試合 {match} を取り消し",
             "bye": "不戦勝：{player}",
             "draw": "抽選：{where}",
