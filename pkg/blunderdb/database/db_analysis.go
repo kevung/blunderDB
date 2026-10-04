@@ -199,7 +199,7 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 	// Load ALL played moves/cube actions from move table for this position
 	// This supplements the PlayedMoves/PlayedCubeActions arrays stored in analysis
 	rows, err := d.db.Query(`
-		SELECT checker_move, cube_action
+		SELECT checker_move, `+sqlshared.ActionLabelSQL("cube_action")+`
 		FROM move
 		WHERE position_id = ?
 	`, positionID)

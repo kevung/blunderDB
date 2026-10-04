@@ -101,7 +101,9 @@ var schemaStatements = []string{
 		id                          INTEGER PRIMARY KEY,
 		position_id                 INTEGER,
 		data                        JSON,
-		best_cube_action            TEXT,
+		-- Action code (domain.ActionCode, ADR-0071); read through
+		-- sqlshared.ActionLabelSQL.
+		best_cube_action            INTEGER,
 		cube_error                  INTEGER,
 		best_move_equity_error      INTEGER,
 		player1_win_rate            INTEGER,
@@ -321,13 +323,15 @@ var schemaStatements = []string{
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		game_id INTEGER,
 		move_number INTEGER,
-		move_type TEXT,
+		-- move_type and cube_action are action codes (domain.ActionCode,
+		-- ADR-0071); read through sqlshared.ActionLabelSQL.
+		move_type INTEGER,
 		position_id INTEGER,
 		player INTEGER,
 		dice_1 INTEGER,
 		dice_2 INTEGER,
 		checker_move TEXT,
-		cube_action TEXT,
+		cube_action INTEGER,
 		luck_mp INTEGER,
 		-- The equity this play gave up against the best one, in non-negative
 		-- millipoints (domain.Move.ErrorMP), stored so that a statistic over
@@ -554,6 +558,12 @@ var schemaStatements = []string{
 	`CREATE TABLE IF NOT EXISTS lesson_progress (
 		lesson_step_id INTEGER PRIMARY KEY REFERENCES lesson_step(id) ON DELETE CASCADE,
 		done_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+	)`,
+	// The action labels the fixed list of domain.ActionCode lacks, each under
+	// a code from domain.FirstRegisteredActionCode up (ADR-0071).
+	`CREATE TABLE IF NOT EXISTS action_label (
+		code  INTEGER PRIMARY KEY,
+		label TEXT NOT NULL UNIQUE
 	)`,
 	// The match equity tables of the library (ADR-0068): each imported from
 	// a gnubg .xml file, identified by the digest of its values. At most one

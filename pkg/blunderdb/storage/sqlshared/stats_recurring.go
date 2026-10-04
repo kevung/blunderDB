@@ -40,7 +40,7 @@ func (s *StatsStore) RecurringErrors(ctx context.Context, scope string, filter s
 	rows, err := s.DB.Query(ctx,
 		`SELECT p.id, p.state, COALESCE(p.player_on_roll, 0), COALESCE(p.dice_1, 0), COALESCE(p.dice_2, 0),
 			COALESCE(p.game_type, 0), p.decision_type, (`+statsErrExpr+`),
-			COALESCE(mv.checker_move, ''), COALESCE(mv.cube_action, ''), COALESCE(a.best_cube_action, ''),
+			COALESCE(mv.checker_move, ''), `+ActionLabelOrEmptySQL("mv.cube_action")+`, `+ActionLabelOrEmptySQL("a.best_cube_action")+`,
 			CASE WHEN p.decision_type = 0 THEN a.data END `+
 			statsBaseJoin+whereSQL+` AND (`+statsErrExpr+`) >= ?`,
 		append(append([]any{}, baseArgs...), settings.ErrorThresholdMP)...)

@@ -54,7 +54,7 @@ const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.bes
 // A function of the dialect because the two flags are INTEGER 0/1 on SQLite,
 // BOOLEAN on PostgreSQL.
 func countedExpr(d Dialect) string {
-	return "((p.decision_type = 0 AND " + d.Bool("a.is_forced", false) + ") OR (p.decision_type = 1 AND (COALESCE(mv.cube_action, '') NOT IN ('', 'No Double', 'NoDouble') OR (" + d.Bool("a.is_close_cube", true) + " AND NOT (COALESCE(a.cube_error, 0) = 0 AND COALESCE(p.cube_value, 0) = 0 AND CASE WHEN mv.player = 1 THEN COALESCE(p.score_1, 99) ELSE COALESCE(p.score_2, 99) END <= 2)))))"
+	return "((p.decision_type = 0 AND " + d.Bool("a.is_forced", false) + ") OR (p.decision_type = 1 AND (" + ActionNotInSQL("mv.cube_action", "", "No Double", "NoDouble") + " OR (" + d.Bool("a.is_close_cube", true) + " AND NOT (COALESCE(a.cube_error, 0) = 0 AND COALESCE(p.cube_value, 0) = 0 AND CASE WHEN mv.player = 1 THEN COALESCE(p.score_1, 99) ELSE COALESCE(p.score_2, 99) END <= 2)))))"
 }
 
 // cubeMultiplierExpr is the cube value (1, 2, 4, …) from its stored log2
@@ -213,7 +213,7 @@ func buildSelectionWhereClause(sel storage.SelectionSpec) (whereAdd string, orde
 			whereAdd += " AND (" + statsErrExpr + ") > 0"
 		}
 	case "cube_action":
-		whereAdd = " AND p.decision_type = 1 AND a.best_cube_action = ?"
+		whereAdd = " AND p.decision_type = 1 AND " + ActionLabelSQL("a.best_cube_action") + " = ?"
 		args = append(args, sel.CubeAction)
 		if sel.OnlyWithError {
 			whereAdd += " AND (" + statsErrExpr + ") > 0"
@@ -296,7 +296,7 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 	// once in Go (storage.ClassifyCubeDirection), so it is filtered here.
 	if sel.Kind == "cube_direction" {
 		rows, err := s.DB.Query(ctx,
-			"SELECT DISTINCT p.id, COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,'') "+
+			"SELECT DISTINCT p.id, "+ActionLabelOrEmptySQL("a.best_cube_action")+", "+ActionLabelOrEmptySQL("mv.cube_action")+" "+
 				statsBaseJoin+whereSQL+" AND p.decision_type = 1", baseArgs...)
 		if err != nil {
 			return nil, fmt.Errorf("PositionIDsBySelection (cube_direction): %w", err)
@@ -436,7 +436,7 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		return nil, fmt.Errorf("MatchDetail settings: %w", err)
 	}
 	tenant, targs := s.DB.TenantFilter("p", scope)
-	query := `SELECT mv.player, p.decision_type, COALESCE(mv.cube_action,''),
+	query := `SELECT mv.player, p.decision_type, ` + ActionLabelOrEmptySQL("mv.cube_action") + `,
 		(` + statsErrExpr + `) as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
 		` + cubeMultiplierExpr + `,

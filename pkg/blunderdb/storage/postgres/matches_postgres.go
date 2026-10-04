@@ -794,13 +794,13 @@ func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) ite
 
 // moveSelectCols reads a domain.Move (scanMove is its counterpart);
 // moveSelectColsMV is the same list qualified with the alias mv for joins.
-const moveSelectCols = `id, game_id, COALESCE(move_number,0), COALESCE(move_type,''),
+var moveSelectCols = `id, game_id, COALESCE(move_number,0), ` + sqlshared.ActionLabelOrEmptySQL("move_type") + `,
 	position_id, COALESCE(player,0), COALESCE(dice_1,0), COALESCE(dice_2,0),
-	COALESCE(checker_move,''), COALESCE(cube_action,''), luck_mp`
+	COALESCE(checker_move,''), ` + sqlshared.ActionLabelOrEmptySQL("cube_action") + `, luck_mp`
 
-const moveSelectColsMV = `mv.id, mv.game_id, COALESCE(mv.move_number,0), COALESCE(mv.move_type,''),
+var moveSelectColsMV = `mv.id, mv.game_id, COALESCE(mv.move_number,0), ` + sqlshared.ActionLabelOrEmptySQL("mv.move_type") + `,
 	mv.position_id, COALESCE(mv.player,0), COALESCE(mv.dice_1,0), COALESCE(mv.dice_2,0),
-	COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,''), mv.luck_mp`
+	COALESCE(mv.checker_move,''), ` + sqlshared.ActionLabelOrEmptySQL("mv.cube_action") + `, mv.luck_mp`
 
 func scanMove(sc scanner) (domain.Move, error) {
 	var mv domain.Move
@@ -941,10 +941,18 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	if mv.LuckMP != nil {
 		luckMP = *mv.LuckMP
 	}
+	moveType, err := actionCode(ctx, s.db, mv.MoveType)
+	if err != nil {
+		return 0, fmt.Errorf("postgres: create move: %w", err)
+	}
+	cubeAction, err := actionCode(ctx, s.db, mv.CubeAction)
+	if err != nil {
+		return 0, fmt.Errorf("postgres: create move: %w", err)
+	}
 	var id int64
-	err := s.db.QueryRow(ctx, moveInsertSQL,
-		tenantID(scope), mv.GameID, mv.MoveNumber, mv.MoveType, positionID, mv.Player,
-		mv.Dice[0], mv.Dice[1], mv.CheckerMove, mv.CubeAction, luckMP).Scan(&id)
+	err = s.db.QueryRow(ctx, moveInsertSQL,
+		tenantID(scope), mv.GameID, mv.MoveNumber, moveType, positionID, mv.Player,
+		mv.Dice[0], mv.Dice[1], mv.CheckerMove, cubeAction, luckMP).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: create move: %w", referenced(err))
 	}
@@ -1103,11 +1111,11 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 
 		rows, err := s.db.Query(ctx,
 			`SELECT mv.id, mv.game_id, COALESCE(g.game_number,0), COALESCE(mv.move_number,0),
-			        COALESCE(mv.move_type,''), COALESCE(mv.player,0), mv.position_id,
+			        `+sqlshared.ActionLabelOrEmptySQL("mv.move_type")+`, COALESCE(mv.player,0), mv.position_id,
 			        p.state, p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 			        p.cube_value, p.cube_owner, p.score_1, p.score_2,
 			        p.has_jacoby, p.has_beaver, p.max_cube,
-			        COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,'')
+			        COALESCE(mv.checker_move,''), `+sqlshared.ActionLabelOrEmptySQL("mv.cube_action")+`
 			 FROM move mv
 			 INNER JOIN game g ON mv.game_id = g.id
 			 INNER JOIN position p ON mv.position_id = p.id
@@ -1199,7 +1207,7 @@ func (s *matchStore) SetDiceHash(ctx context.Context, scope string, id int64, ha
 // storage.MatchStore.
 func (s *matchStore) DiceSequences(ctx context.Context, scope string) iter.Seq2[storage.MatchDice, error] {
 	return func(yield func(storage.MatchDice, error) bool) {
-		rows, err := s.db.Query(ctx, fmt.Sprintf(storage.DiceSequencesSQL, "m.tenant_id = $1"), tenantID(scope))
+		rows, err := s.db.Query(ctx, fmt.Sprintf(sqlshared.DiceSequencesSQL, "m.tenant_id = $1"), tenantID(scope))
 		if err != nil {
 			yield(storage.MatchDice{}, fmt.Errorf("postgres: match dice: %w", err))
 			return

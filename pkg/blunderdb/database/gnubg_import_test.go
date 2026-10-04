@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 	"os"
 	"path/filepath"
 	"testing"
@@ -885,7 +886,7 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 			rows, err := db.Query(`
 				SELECT m.move_number, m.player, m.dice_1, m.dice_2
 				FROM move m JOIN game g ON m.game_id = g.id
-				WHERE g.match_id = ? AND g.game_number = ? AND m.move_type = 'checker'
+				WHERE g.match_id = ? AND g.game_number = ? AND `+sqlshared.ActionIsSQL("m.move_type", "checker")+`
 				ORDER BY m.move_number
 			`, matchID, gameNum)
 			if err != nil {
@@ -954,7 +955,7 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 				FROM move m
 				JOIN game g ON m.game_id = g.id
 				JOIN position p ON m.position_id = p.id
-				WHERE g.match_id = ? AND g.game_number = 1 AND m.move_type = 'checker'
+				WHERE g.match_id = ? AND g.game_number = 1 AND `+sqlshared.ActionIsSQL("m.move_type", "checker")+`
 				ORDER BY m.move_number
 				LIMIT 10
 			`, matchID)

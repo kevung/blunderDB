@@ -116,7 +116,7 @@ func loadPlayer1Moves(ctx context.Context, db Execer, positionIDs []int64) (map[
 	checkerSets := make(map[int64]map[string]bool)
 	cubeSets := make(map[int64]map[string]bool)
 	err := forEachIDBatch(ctx, db, positionIDs,
-		`SELECT position_id, checker_move, cube_action FROM move WHERE player = 1 AND position_id IN `,
+		`SELECT position_id, checker_move, `+ActionLabelSQL("cube_action")+` FROM move WHERE player = 1 AND position_id IN `,
 		``,
 		func(rows Rows) error {
 			var id int64
@@ -184,7 +184,7 @@ func multiPlayedPlayer1Positions(ctx context.Context, db Execer, scope string) (
 		 JOIN move m2 ON m2.position_id = m1.position_id AND m2.id > m1.id AND m2.player = 1
 		 WHERE `+tenant+` AND m1.player = 1 AND m1.position_id IS NOT NULL
 		   AND (COALESCE(m1.checker_move, '') <> COALESCE(m2.checker_move, '')
-		     OR COALESCE(m1.cube_action, '') <> COALESCE(m2.cube_action, ''))`,
+		     OR `+ActionCodeOrEmptySQL("m1.cube_action")+` <> `+ActionCodeOrEmptySQL("m2.cube_action")+`)`,
 		args...)
 	if err != nil {
 		return nil, errf(db, "multi-played positions", err)

@@ -10,6 +10,7 @@ package database
 
 import (
 	"fmt"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 	"math"
 	"strings"
 
@@ -58,7 +59,9 @@ const blunderThresholdMP = 100
 // at this score are always counted regardless.
 //
 // Note: mv is accessible because statsBaseJoin includes JOIN move mv.
-const statsCountedExpr = "((p.decision_type = 0 AND a.is_forced = 0) OR (p.decision_type = 1 AND (COALESCE(mv.cube_action, '') NOT IN ('', 'No Double', 'NoDouble') OR (a.is_close_cube = 1 AND NOT (COALESCE(a.cube_error, 0) = 0 AND COALESCE(p.cube_value, 0) = 0 AND CASE WHEN mv.player = 1 THEN COALESCE(p.score_1, 99) ELSE COALESCE(p.score_2, 99) END <= 2)))))"
+// The oracle reads the action labels through sqlshared.ActionLabelOrEmptySQL:
+// their storage changed (ADR-0071), not what the oracle computes from them.
+var statsCountedExpr = "((p.decision_type = 0 AND a.is_forced = 0) OR (p.decision_type = 1 AND (" + sqlshared.ActionLabelOrEmptySQL("mv.cube_action") + " NOT IN ('', 'No Double', 'NoDouble') OR (a.is_close_cube = 1 AND NOT (COALESCE(a.cube_error, 0) = 0 AND COALESCE(p.cube_value, 0) = 0 AND CASE WHEN mv.player = 1 THEN COALESCE(p.score_1, 99) ELSE COALESCE(p.score_2, 99) END <= 2)))))"
 
 // pr computes the Performance Rating from a sum of errors (millipoints stored
 // units) and the number of decisions. Formula: 500 × sumErrMP / 1000 / nDecisions.
@@ -288,7 +291,7 @@ func legacyComputeStats(d *Database, filter StatsFilter) (*StatsResult, error) {
 	{
 		cubeWhere := whereSQL + " AND p.decision_type = 1"
 		rows, err = d.db.Query(
-			`SELECT COALESCE(a.best_cube_action,''), SUM(a.cube_error), COUNT(*),`+
+			`SELECT `+sqlshared.ActionLabelOrEmptySQL("a.best_cube_action")+`, SUM(a.cube_error), COUNT(*),`+
 				` SUM(CASE WHEN a.cube_error > ? THEN 1 ELSE 0 END) `+
 				statsBaseJoin+cubeWhere+
 				` GROUP BY a.best_cube_action`,
@@ -320,7 +323,7 @@ func legacyComputeStats(d *Database, filter StatsFilter) (*StatsResult, error) {
 	{
 		cubeWhere := whereSQL + " AND p.decision_type = 1"
 		rows, err = d.db.Query(
-			`SELECT COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,''), COUNT(*),`+
+			`SELECT `+sqlshared.ActionLabelOrEmptySQL("a.best_cube_action")+`, `+sqlshared.ActionLabelOrEmptySQL("mv.cube_action")+`, COUNT(*),`+
 				` COALESCE(SUM(a.cube_error),0) `+
 				statsBaseJoin+cubeWhere+
 				` GROUP BY a.best_cube_action, mv.cube_action`,
@@ -456,7 +459,7 @@ func legacyComputeStats(d *Database, filter StatsFilter) (*StatsResult, error) {
 			` COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,` +
 			` (1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0),` +
 			` COALESCE(m.tournament_id, 0), m.id,` +
-			` COALESCE(a.best_cube_action, ''), p.decision_type, p.id ` +
+			` ` + sqlshared.ActionLabelOrEmptySQL("a.best_cube_action") + `, p.decision_type, p.id ` +
 			statsBaseJoin + whereSQL +
 			` ORDER BY m.match_date DESC, mv.move_number DESC`
 
@@ -580,7 +583,7 @@ func buildSelectionWhereClause(sel SelectionSpec) (whereAdd string, orderLimit s
 			whereAdd += " AND (" + statsErrExpr + ") > 0"
 		}
 	case "cube_action":
-		whereAdd = " AND p.decision_type = 1 AND a.best_cube_action = ?"
+		whereAdd = " AND p.decision_type = 1 AND " + sqlshared.ActionLabelSQL("a.best_cube_action") + " = ?"
 		args = append(args, sel.CubeAction)
 		if sel.OnlyWithError {
 			whereAdd += " AND (" + statsErrExpr + ") > 0"
@@ -736,7 +739,7 @@ func legacyGetMatchDetailStats(d *Database, matchID int64) (*MatchDetailStats, e
 		return nil, fmt.Errorf("no database is currently open")
 	}
 
-	query := `SELECT mv.player, p.decision_type, COALESCE(mv.cube_action,''),
+	query := `SELECT mv.player, p.decision_type, ` + sqlshared.ActionLabelOrEmptySQL("mv.cube_action") + `,
 		(` + statsErrExpr + `) as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
 		(1 << COALESCE(p.cube_value, 0)),

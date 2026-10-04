@@ -63,7 +63,7 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 	return s.write(ctx, positionID, a, c, nil)
 }
 
-const analysisMergeSelectSQL = `SELECT data, best_cube_action, cube_error, best_move_equity_error, is_forced, is_close_cube,
+var analysisMergeSelectSQL = `SELECT data, ` + sqlshared.ActionLabelSQL("best_cube_action") + `, cube_error, best_move_equity_error, is_forced, is_close_cube,
 	analysis_engine, analysis_depth
 	FROM analysis WHERE position_id = ?`
 
@@ -191,9 +191,13 @@ func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.P
 				return fmt.Errorf("sqlite: invalidate match stats: %w", err)
 			}
 		}
+		bestCube, err := actionCode(ctx, tx, c.BestCubeAction)
+		if err != nil {
+			return fmt.Errorf("sqlite: save analysis: %w", err)
+		}
 		if _, err := tx.ExecContext(ctx, analysisUpsertSQL,
 			positionID, data,
-			c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
+			bestCube, c.CubeError, c.BestMoveEquityError,
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 			c.IsForced, c.IsCloseCube,
@@ -271,9 +275,13 @@ func SaveAnalysisUncompressed(ctx context.Context, tx *sql.Tx, positionID int64,
 		return fmt.Errorf("sqlite: encode analysis: %w", err)
 	}
 	c := engine.PopulateAnalysisColumns(a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions))
+	bestCube, err := actionCode(ctx, tx, c.BestCubeAction)
+	if err != nil {
+		return fmt.Errorf("sqlite: save analysis: %w", err)
+	}
 	if _, err := tx.ExecContext(ctx, analysisInsertSQL,
 		positionID, data,
-		c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
+		bestCube, c.CubeError, c.BestMoveEquityError,
 		c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 		c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 		c.IsForced, c.IsCloseCube,
@@ -326,9 +334,9 @@ func (s *analysisStore) playedActionsFromMatch(ctx context.Context, positionID i
 // position may have several move rows, and each column wants the earliest
 // NON-EMPTY one of its own — a cube action and a checker move are recorded on
 // different rows.
-const playedActionsSQL = `SELECT
+var playedActionsSQL = `SELECT
 	(SELECT mv.checker_move FROM move mv WHERE mv.position_id = ? AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
-	(SELECT mv.cube_action  FROM move mv WHERE mv.position_id = ? AND COALESCE(mv.cube_action, '')  <> '' ORDER BY mv.id LIMIT 1)`
+	(SELECT ` + sqlshared.ActionLabelSQL("mv.cube_action") + ` FROM move mv WHERE mv.position_id = ? AND ` + sqlshared.ActionNotEmptySQL("mv.cube_action") + ` ORDER BY mv.id LIMIT 1)`
 
 // repairPageSize bounds how many analysis rows RepairDenormalisedColumns
 // holds in memory at once (id keyset pagination, both backends): a real
@@ -357,9 +365,9 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		var page []row
 		if err := func() error {
 			rows, err := s.db.QueryContext(ctx,
-				`SELECT a.id, a.data, a.best_cube_action, a.cube_error, a.best_move_equity_error, a.is_forced, a.is_close_cube,
+				`SELECT a.id, a.data, `+sqlshared.ActionLabelSQL("a.best_cube_action")+`, a.cube_error, a.best_move_equity_error, a.is_forced, a.is_close_cube,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
-				        (SELECT mv.cube_action  FROM move mv WHERE mv.position_id = a.position_id AND COALESCE(mv.cube_action, '')  <> '' ORDER BY mv.id LIMIT 1)
+				        (SELECT `+sqlshared.ActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1)
 				 FROM analysis a WHERE a.id > ? ORDER BY a.id LIMIT ?`, lastID, repairPageSize)
 			if err != nil {
 				return fmt.Errorf("sqlite: repair: read analyses: %w", err)
@@ -406,10 +414,14 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 				c.IsCloseCube == r.closeCub.Int64 {
 				continue
 			}
+			bestCube, err := actionCode(ctx, s.db, c.BestCubeAction)
+			if err != nil {
+				return repaired, fmt.Errorf("sqlite: repair: update %d: %w", r.id, err)
+			}
 			if _, err := s.db.ExecContext(ctx,
 				`UPDATE analysis SET best_cube_action=?, cube_error=?, best_move_equity_error=?,
 				 is_forced=?, is_close_cube=? WHERE id=?`,
-				c.BestCubeAction, c.CubeError, c.BestMoveEquityError, c.IsForced, c.IsCloseCube, r.id); err != nil {
+				bestCube, c.CubeError, c.BestMoveEquityError, c.IsForced, c.IsCloseCube, r.id); err != nil {
 				return repaired, fmt.Errorf("sqlite: repair: update %d: %w", r.id, err)
 			}
 			repaired++

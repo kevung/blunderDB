@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // prunedIndexes2_31 are the indexes the 2.31.0 schema no longer declares:
@@ -49,6 +51,83 @@ func (d *Database) migrate_2_30_0_to_2_31_0(ctx context.Context) error {
 	}
 	if err := d.batchByID(ctx, "position", binaryStateSQL, "position_state_binary"); err != nil {
 		return fmt.Errorf("converting position.state to binary: %w", err)
+	}
+	if _, err := d.db.ExecContext(ctx, actionLabelDDL); err != nil {
+		return fmt.Errorf("creating action_label: %w", err)
+	}
+	actions := []struct {
+		table   string
+		columns []string
+	}{
+		{"analysis", []string{"best_cube_action"}},
+		{"move", []string{"move_type", "cube_action"}},
+	}
+	for _, a := range actions {
+		if err := d.actionCodeColumns(ctx, a.table, a.columns); err != nil {
+			return fmt.Errorf("converting %s action labels to codes: %w", a.table, err)
+		}
+	}
+	return nil
+}
+
+// actionLabelDDL is the action_label table of the 2.31.0 schema, which the
+// step fills before EnsureSchema runs.
+const actionLabelDDL = `CREATE TABLE IF NOT EXISTS action_label (
+	code  INTEGER PRIMARY KEY,
+	label TEXT NOT NULL UNIQUE
+)`
+
+// actionCodeColumns rewrites the text action labels of table.columns as
+// action codes (domain.ActionCode). The labels the fixed list lacks are
+// registered first; each column is then rebuilt as an INTEGER column — a text
+// column would store the codes back as text — filled in id ranges, the text
+// one dropped and the new one renamed. A column already INTEGER, or absent,
+// is left alone.
+func (d *Database) actionCodeColumns(ctx context.Context, table string, columns []string) error {
+	var todo []string
+	for _, col := range columns {
+		var typ string
+		err := d.db.QueryRowContext(ctx,
+			`SELECT type FROM pragma_table_info(?) WHERE name = ?`, table, col).Scan(&typ)
+		if err == sql.ErrNoRows || strings.EqualFold(typ, "INTEGER") {
+			continue
+		}
+		if err != nil {
+			return err
+		}
+		todo = append(todo, col)
+	}
+	if len(todo) == 0 {
+		return nil
+	}
+	set := make([]string, len(todo))
+	for i, col := range todo {
+		if _, err := d.db.ExecContext(ctx, `INSERT INTO action_label (code, label)
+			SELECT (SELECT COALESCE(MAX(code), ?) FROM action_label) + ROW_NUMBER() OVER (ORDER BY v), v
+			FROM (SELECT DISTINCT `+col+` AS v FROM `+table+`
+			      WHERE `+col+` IS NOT NULL AND `+col+` NOT IN `+sqlshared.FixedActionLabelsSQL()+`
+			        AND `+col+` NOT IN (SELECT label FROM action_label))`,
+			domain.FirstRegisteredActionCode-1); err != nil {
+			return fmt.Errorf("registering the labels of %s: %w", col, err)
+		}
+		if _, err := d.db.ExecContext(ctx, `ALTER TABLE `+table+` ADD COLUMN `+col+`_code INTEGER`); err != nil {
+			return err
+		}
+		set[i] = col + `_code = ` + sqlshared.ActionLabelCodesSQL(col)
+	}
+	update := `UPDATE ` + table + ` SET ` + strings.Join(set, ", ") + ` WHERE id >= ? AND id < ?`
+	if err := d.batchByID(ctx, table, update, table+"_action_codes"); err != nil {
+		return err
+	}
+	for _, col := range todo {
+		for _, stmt := range []string{
+			`ALTER TABLE ` + table + ` DROP COLUMN ` + col,
+			`ALTER TABLE ` + table + ` RENAME COLUMN ` + col + `_code TO ` + col,
+		} {
+			if _, err := d.db.ExecContext(ctx, stmt); err != nil {
+				return err
+			}
+		}
 	}
 	return nil
 }

@@ -169,6 +169,8 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Lesson/Lifecycle", testLessonLifecycle},
 		{"Lesson/Progress", testLessonProgress},
 		{"MatchEquityTable/Lifecycle", testMETLifecycle},
+		{"ActionLabel/ReadBackVerbatim", testActionLabelsReadBackVerbatim},
+		{"ActionLabel/SelectsByBestCubeAction", testActionLabelSelectsByBestCubeAction},
 		{"Match/ScoreMovesResumes", testScoreMovesResumes},
 		{"Analysis/ReencodeSkipsBinary", testReencodeSkipsBinary},
 		{"Rencontre/TableSettings", testTableSettingsRencontre},

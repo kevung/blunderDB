@@ -754,9 +754,15 @@ func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) ite
 }
 
 // moveSelectCols reads a domain.Move; scanMove is its counterpart.
-const moveSelectCols = `id, COALESCE(game_id,0), COALESCE(move_number,0), COALESCE(move_type,''),
-	position_id, COALESCE(player,0), COALESCE(dice_1,0), COALESCE(dice_2,0),
-	COALESCE(checker_move,''), COALESCE(cube_action,''), luck_mp`
+var moveSelectCols = moveColsOf("")
+
+// moveColsOf renders moveSelectCols with every column prefixed by p ("mv."
+// for a join).
+func moveColsOf(p string) string {
+	return p + `id, COALESCE(` + p + `game_id,0), COALESCE(` + p + `move_number,0), ` + sqlshared.ActionLabelOrEmptySQL(p+"move_type") + `,
+	` + p + `position_id, COALESCE(` + p + `player,0), COALESCE(` + p + `dice_1,0), COALESCE(` + p + `dice_2,0),
+	COALESCE(` + p + `checker_move,''), ` + sqlshared.ActionLabelOrEmptySQL(p+"cube_action") + `, ` + p + `luck_mp`
+}
 
 func scanMove(sc interface{ Scan(...any) error }) (domain.Move, error) {
 	var mv domain.Move
@@ -818,9 +824,17 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	if mv.LuckMP != nil {
 		luckMP = *mv.LuckMP
 	}
+	moveType, err := actionCode(ctx, s.db, mv.MoveType)
+	if err != nil {
+		return 0, fmt.Errorf("sqlite: create move: %w", err)
+	}
+	cubeAction, err := actionCode(ctx, s.db, mv.CubeAction)
+	if err != nil {
+		return 0, fmt.Errorf("sqlite: create move: %w", err)
+	}
 	res, err := s.db.ExecContext(ctx, moveInsertSQL,
-		mv.GameID, mv.MoveNumber, mv.MoveType, positionID, mv.Player,
-		mv.Dice[0], mv.Dice[1], mv.CheckerMove, mv.CubeAction, luckMP)
+		mv.GameID, mv.MoveNumber, moveType, positionID, mv.Player,
+		mv.Dice[0], mv.Dice[1], mv.CheckerMove, cubeAction, luckMP)
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: create move: %w", err)
 	}
@@ -888,7 +902,7 @@ const matchPositionIDsSQL = `SELECT DISTINCT mv.position_id
 func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter.Seq2[*domain.Move, error] {
 	return func(yield func(*domain.Move, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT `+qualify(moveSelectCols, "mv")+`, a.data
+			`SELECT `+moveColsOf("mv.")+`, a.data
 			 FROM move mv LEFT JOIN analysis a ON a.position_id = mv.position_id
 			 WHERE mv.game_id = ? ORDER BY mv.move_number`, gameID)
 		if err != nil {
@@ -919,7 +933,7 @@ func (s *matchStore) Moves(ctx context.Context, scope string, gameID int64) iter
 func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int64) iter.Seq2[*domain.Move, error] {
 	return func(yield func(*domain.Move, error) bool) {
 		rows, err := s.db.QueryContext(ctx,
-			`SELECT `+qualify(moveSelectCols, "mv")+`, a.data
+			`SELECT `+moveColsOf("mv.")+`, a.data
 			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
 			 LEFT JOIN analysis a ON a.position_id = mv.position_id
 			 WHERE g.match_id = ?
@@ -944,37 +958,6 @@ func (s *matchStore) MovesByMatch(ctx context.Context, scope string, matchID int
 			yield(nil, fmt.Errorf("sqlite: list moves by match: %w", err))
 		}
 	}
-}
-
-// qualify prefixes every column of a moveSelectCols-style list with alias —
-// the list is written unqualified so it can serve single-table queries too.
-func qualify(cols, alias string) string {
-	var out []string
-	depth, start := 0, 0
-	emit := func(c string) {
-		c = strings.TrimSpace(c)
-		if strings.HasPrefix(c, "COALESCE(") {
-			c = "COALESCE(" + alias + "." + c[len("COALESCE("):]
-		} else {
-			c = alias + "." + c
-		}
-		out = append(out, c)
-	}
-	for i, r := range cols {
-		switch r {
-		case '(':
-			depth++
-		case ')':
-			depth--
-		case ',':
-			if depth == 0 {
-				emit(cols[start:i])
-				start = i + 1
-			}
-		}
-	}
-	emit(cols[start:])
-	return strings.Join(out, ", ")
 }
 
 // MovesByPositions — see storage.MatchStore.
@@ -1084,11 +1067,11 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 
 		rows, err := s.db.QueryContext(ctx,
 			`SELECT mv.id, COALESCE(mv.game_id,0), COALESCE(g.game_number,0), COALESCE(mv.move_number,0),
-			        COALESCE(mv.move_type,''), COALESCE(mv.player,0), mv.position_id,
+			        `+sqlshared.ActionLabelOrEmptySQL("mv.move_type")+`, COALESCE(mv.player,0), mv.position_id,
 			        p.state, p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 			        p.cube_value, p.cube_owner, p.score_1, p.score_2,
 			        p.has_jacoby, p.has_beaver, p.max_cube,
-			        COALESCE(mv.checker_move,''), COALESCE(mv.cube_action,'')
+			        COALESCE(mv.checker_move,''), `+sqlshared.ActionLabelOrEmptySQL("mv.cube_action")+`
 			 FROM move mv
 			 INNER JOIN game g ON mv.game_id = g.id
 			 INNER JOIN position p ON mv.position_id = p.id
@@ -1173,7 +1156,7 @@ func (s *matchStore) SetDiceHash(ctx context.Context, scope string, id int64, ha
 // DiceSequences streams every match with its dice — see storage.MatchStore.
 func (s *matchStore) DiceSequences(ctx context.Context, scope string) iter.Seq2[storage.MatchDice, error] {
 	return func(yield func(storage.MatchDice, error) bool) {
-		rows, err := s.db.QueryContext(ctx, fmt.Sprintf(storage.DiceSequencesSQL, "1 = 1"))
+		rows, err := s.db.QueryContext(ctx, fmt.Sprintf(sqlshared.DiceSequencesSQL, "1 = 1"))
 		if err != nil {
 			yield(storage.MatchDice{}, fmt.Errorf("sqlite: match dice: %w", err))
 			return
@@ -1209,4 +1192,35 @@ func (s *matchStore) ScoreMoves(ctx context.Context, scope string, after int64, 
 // RescorePositionMoves — see storage.MatchStore.
 func (s *matchStore) RescorePositionMoves(ctx context.Context, scope string, positionID int64) error {
 	return sqlshared.RescorePositionMoves(ctx, binder{s.db}.shared(), scope, positionID)
+}
+
+// qualify prefixes every column of a plain column list (moveSelectCols has its own moveColsOf) with alias —
+// the list is written unqualified so it can serve single-table queries too.
+func qualify(cols, alias string) string {
+	var out []string
+	depth, start := 0, 0
+	emit := func(c string) {
+		c = strings.TrimSpace(c)
+		if strings.HasPrefix(c, "COALESCE(") {
+			c = "COALESCE(" + alias + "." + c[len("COALESCE("):]
+		} else {
+			c = alias + "." + c
+		}
+		out = append(out, c)
+	}
+	for i, r := range cols {
+		switch r {
+		case '(':
+			depth++
+		case ')':
+			depth--
+		case ',':
+			if depth == 0 {
+				emit(cols[start:i])
+				start = i + 1
+			}
+		}
+	}
+	emit(cols[start:])
+	return strings.Join(out, ", ")
 }

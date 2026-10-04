@@ -98,7 +98,7 @@ func (s *analysisStore) merge(ctx context.Context, scope string, positionID int6
 	)
 	load := func() error {
 		return s.db.QueryRow(ctx,
-			`SELECT data, COALESCE(best_cube_action,''), COALESCE(cube_error,0), COALESCE(best_move_equity_error,0),
+			`SELECT data, `+sqlshared.ActionLabelOrEmptySQL("best_cube_action")+`, COALESCE(cube_error,0), COALESCE(best_move_equity_error,0),
 			        COALESCE(is_forced,FALSE), COALESCE(is_close_cube,FALSE)
 			 FROM analysis WHERE position_id = $1 AND tenant_id = $2
 			 FOR UPDATE`, positionID, tenant).
@@ -210,9 +210,13 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 		if err := invalidateMatchStatsOnAnalysis(ctx, tx, tenant, positionID, c); err != nil {
 			return err
 		}
+		bestCube, err := actionCode(ctx, tx, c.BestCubeAction)
+		if err != nil {
+			return fmt.Errorf("postgres: save analysis: %w", err)
+		}
 		tag, err := tx.Exec(ctx, analysisUpsertSQL,
 			tenant, positionID, data,
-			c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
+			bestCube, c.CubeError, c.BestMoveEquityError,
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 			c.IsForced != 0, c.IsCloseCube != 0,
@@ -303,9 +307,9 @@ func (s *analysisStore) playedActionsFromMatch(ctx context.Context, tenant int64
 // position may have several move rows, and each column wants the earliest
 // NON-EMPTY one of its own — a cube action and a checker move are recorded on
 // different rows.
-const playedActionsSQL = `SELECT
+var playedActionsSQL = `SELECT
 	(SELECT mv.checker_move FROM move mv WHERE mv.position_id = $1 AND mv.tenant_id = $2 AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
-	(SELECT mv.cube_action  FROM move mv WHERE mv.position_id = $1 AND mv.tenant_id = $2 AND COALESCE(mv.cube_action, '')  <> '' ORDER BY mv.id LIMIT 1)`
+	(SELECT ` + sqlshared.ActionLabelSQL("mv.cube_action") + ` FROM move mv WHERE mv.position_id = $1 AND mv.tenant_id = $2 AND ` + sqlshared.ActionNotEmptySQL("mv.cube_action") + ` ORDER BY mv.id LIMIT 1)`
 
 func deref(s *string) string {
 	if s == nil {
@@ -379,10 +383,10 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 		var page []row
 		if err := func() error {
 			rows, err := s.db.Query(ctx,
-				`SELECT a.id, a.data, COALESCE(a.best_cube_action,''), COALESCE(a.cube_error,0),
+				`SELECT a.id, a.data, `+sqlshared.ActionLabelOrEmptySQL("a.best_cube_action")+`, COALESCE(a.cube_error,0),
 				        COALESCE(a.best_move_equity_error,0), a.is_forced, a.is_close_cube,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
-				        (SELECT mv.cube_action  FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND COALESCE(mv.cube_action, '')  <> '' ORDER BY mv.id LIMIT 1)
+				        (SELECT `+sqlshared.ActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1)
 				 FROM analysis a WHERE a.tenant_id = $1 AND a.id > $2 ORDER BY a.id LIMIT $3`,
 				tid, lastID, repairPageSize)
 			if err != nil {
@@ -425,10 +429,14 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 				(c.IsForced == 1) == r.forced && (c.IsCloseCube == 1) == r.closeCub {
 				continue
 			}
+			bestCube, err := actionCode(ctx, s.db, c.BestCubeAction)
+			if err != nil {
+				return repaired, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
+			}
 			if _, err := s.db.Exec(ctx,
 				`UPDATE analysis SET best_cube_action=$1, cube_error=$2, best_move_equity_error=$3,
 				 is_forced=$4, is_close_cube=$5 WHERE id=$6 AND tenant_id=$7`,
-				c.BestCubeAction, c.CubeError, c.BestMoveEquityError,
+				bestCube, c.CubeError, c.BestMoveEquityError,
 				c.IsForced == 1, c.IsCloseCube == 1, r.id, tid); err != nil {
 				return repaired, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
 			}

@@ -8,8 +8,8 @@ import (
 
 // scoredMoveCols reads what PlayScorer needs from a move and its position's
 // analysis, joined as mv and a.
-const scoredMoveCols = `mv.id, COALESCE(mv.position_id, 0), COALESCE(mv.move_type, ''),
-	COALESCE(mv.checker_move, ''), COALESCE(mv.cube_action, ''), a.data`
+var scoredMoveCols = `mv.id, COALESCE(mv.position_id, 0), ` + ActionLabelOrEmptySQL("mv.move_type") + `,
+	COALESCE(mv.checker_move, ''), ` + ActionLabelOrEmptySQL("mv.cube_action") + `, a.data`
 
 type moveScore struct {
 	id  int64

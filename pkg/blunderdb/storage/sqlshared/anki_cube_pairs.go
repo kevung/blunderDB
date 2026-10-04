@@ -48,7 +48,7 @@ func cubeCounterparts(ctx context.Context, db Execer, scope string, positionIDs 
 		`SELECT DISTINCT b.position_id
 		 FROM move a
 		 INNER JOIN move b ON b.game_id = a.game_id AND b.move_number = a.move_number
-		 WHERE a.move_type = 'cube' AND b.move_type = 'cube'
+		 WHERE `+ActionIsSQL("a.move_type", "cube")+` AND `+ActionIsSQL("b.move_type", "cube")+`
 		   AND b.position_id <> a.position_id
 		   AND a.position_id IN (`+Placeholders(len(positionIDs))+`)
 		   AND `+tenantA+` AND `+tenantB, args...)

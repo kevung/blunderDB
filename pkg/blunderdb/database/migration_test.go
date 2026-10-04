@@ -6,9 +6,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 	"maps"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -3642,6 +3644,36 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 			t.Fatalf("%s: %v", stmt, err)
 		}
 	}
+	// 2.30.0 stored the action labels as text, with no action_label table;
+	// a label outside the fixed list and a NULL must survive the conversion.
+	for _, c := range actionColumns2_31 {
+		for _, stmt := range []string{
+			`ALTER TABLE ` + c.table + ` ADD COLUMN ` + c.column + `_text TEXT`,
+			`UPDATE ` + c.table + ` SET ` + c.column + `_text = ` + sqlshared.ActionLabelSQL(c.column),
+			`ALTER TABLE ` + c.table + ` DROP COLUMN ` + c.column,
+			`ALTER TABLE ` + c.table + ` RENAME COLUMN ` + c.column + `_text TO ` + c.column,
+		} {
+			if _, err := d.db.Exec(stmt); err != nil {
+				t.Fatalf("%s: %v", stmt, err)
+			}
+		}
+	}
+	for _, stmt := range []string{
+		`DROP TABLE action_label`,
+		`UPDATE move SET cube_action = 'Unknown(-1)' WHERE id = (SELECT MIN(id) FROM move WHERE move_type = 'cube')`,
+		`UPDATE move SET cube_action = NULL WHERE id = (SELECT MAX(id) FROM move WHERE move_type = 'cube')`,
+		`UPDATE analysis SET best_cube_action = 'Doppel, Annahme' WHERE id = (SELECT MIN(id) FROM analysis)`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	wantLabels := actionLabelsByRow(t, d.db, func(col string) string { return col })
+	for _, edge := range []string{"=Unknown(-1)", "=Doppel, Annahme", "<NULL>", "=cube", "=checker"} {
+		if !slices.Contains(slices.Collect(maps.Values(wantLabels)), edge) {
+			t.Fatalf("the fixture lacks the label %s", edge)
+		}
+	}
 	if err := d.Close(); err != nil {
 		t.Fatal(err)
 	}
@@ -3649,6 +3681,15 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	d = NewDatabase()
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("open v2.30.0 database: %v", err)
+	}
+	if got := actionLabelsByRow(t, d.db, sqlshared.ActionLabelSQL); !maps.Equal(got, wantLabels) {
+		t.Errorf("action labels after migration differ from the text before:\n got %v\nwant %v", got, wantLabels)
+	}
+	for _, c := range actionColumns2_31 {
+		var text int
+		if err := d.db.QueryRow(`SELECT COUNT(*) FROM ` + c.table + ` WHERE typeof(` + c.column + `) NOT IN ('integer', 'null')`).Scan(&text); err != nil || text != 0 {
+			t.Errorf("%s.%s: %d values not coded, %v", c.table, c.column, text, err)
+		}
 	}
 	closeOnCleanup(t, d)
 	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
@@ -3804,6 +3845,44 @@ func boardsByID(t *testing.T, db *sql.DB) map[int64]domain.Board {
 	}
 	if err := rows.Err(); err != nil {
 		t.Fatal(err)
+	}
+	return out
+}
+
+// actionColumns2_31 are the columns 2.31.0 stores as action codes.
+var actionColumns2_31 = []struct{ table, column string }{
+	{"analysis", "best_cube_action"}, {"move", "move_type"}, {"move", "cube_action"},
+}
+
+// actionLabelsByRow reads every action label, keyed "table.column:id", through
+// read (the bare column on a text library, sqlshared.ActionLabelSQL on a coded
+// one); a NULL reads as "<NULL>", a label as "=" and the label.
+func actionLabelsByRow(t *testing.T, db *sql.DB, read func(col string) string) map[string]string {
+	t.Helper()
+	out := map[string]string{}
+	for _, c := range actionColumns2_31 {
+		rows, err := db.Query(`SELECT id, ` + read(c.column) + ` FROM ` + c.table)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for rows.Next() {
+			var id int64
+			var v sql.NullString
+			if err := rows.Scan(&id, &v); err != nil {
+				t.Fatal(err)
+			}
+			label := "<NULL>"
+			if v.Valid {
+				label = "=" + v.String
+			}
+			out[fmt.Sprintf("%s.%s:%d", c.table, c.column, id)] = label
+		}
+		if err := rows.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if len(out) == 0 {
+		t.Fatal("no action label to compare")
 	}
 	return out
 }

@@ -309,7 +309,7 @@ func (s *StatsStore) computeCubeActionBreakdown(ctx context.Context, q statsQuer
 	d := s.DB
 	cubeWhere := q.whereSQL + " AND p.decision_type = 1"
 	rows, err := s.DB.Query(ctx,
-		`SELECT COALESCE(a.best_cube_action,''), `+d.Bigint(`SUM(a.cube_error)`)+`, COUNT(*),`+
+		`SELECT `+ActionLabelOrEmptySQL("a.best_cube_action")+`, `+d.Bigint(`SUM(a.cube_error)`)+`, COUNT(*),`+
 			` `+d.Bigint(`SUM(CASE WHEN a.cube_error >= ? THEN 1 ELSE 0 END)`)+` `+
 			q.join+cubeWhere+
 			` GROUP BY a.best_cube_action`,
@@ -350,7 +350,7 @@ func (s *StatsStore) computeCubeDirections(ctx context.Context, q statsQuery, re
 	{
 		cubeWhere := q.whereSQL + " AND p.decision_type = 1"
 		rows, err := s.DB.Query(ctx,
-			`SELECT COALESCE(a.best_cube_action,''), COALESCE(mv.cube_action,''), COUNT(*),`+
+			`SELECT `+ActionLabelOrEmptySQL("a.best_cube_action")+`, `+ActionLabelOrEmptySQL("mv.cube_action")+`, COUNT(*),`+
 				` `+d.Bigint(`COALESCE(SUM(a.cube_error),0)`)+` `+
 				q.join+cubeWhere+
 				` GROUP BY a.best_cube_action, mv.cube_action`,
@@ -526,7 +526,7 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 			` COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,` +
 			` ` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0),` +
 			` COALESCE(m.tournament_id, 0), m.id,` +
-			` COALESCE(a.best_cube_action, ''), p.decision_type, p.id ` +
+			` ` + ActionLabelOrEmptySQL("a.best_cube_action") + `, p.decision_type, p.id ` +
 			q.join + q.whereSQL +
 			` ORDER BY m.match_date DESC, mv.move_number DESC`
 

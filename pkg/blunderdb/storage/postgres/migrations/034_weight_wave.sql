@@ -43,3 +43,42 @@ DO $$ BEGIN
         ALTER TABLE position ALTER COLUMN state SET NOT NULL;
     END IF;
 END $$;
+
+-- Action labels become integer codes (domain.ActionCode, ADR-0071):
+-- analysis.best_cube_action, move.move_type and move.cube_action. The fixed
+-- codes below are domain.ActionLabels, index for index (the migration test
+-- reads every one of them back); a label outside them is registered in
+-- action_label from 1000 up. NULL stays NULL, '' is code 0. ALTER ... USING
+-- admits no subquery, hence the column swap. Skipped once a column is INTEGER.
+CREATE TABLE IF NOT EXISTS action_label (
+    code  INTEGER PRIMARY KEY,
+    label TEXT NOT NULL UNIQUE
+);
+
+DO $$
+DECLARE
+    c RECORD;
+BEGIN
+    CREATE TEMP TABLE action_label_fixed (code INTEGER PRIMARY KEY, label TEXT NOT NULL UNIQUE) ON COMMIT DROP;
+    INSERT INTO action_label_fixed (code, label) VALUES (0, ''), (1, 'checker'), (2, 'cube'), (3, 'No Double'), (4, 'Double, Take'), (5, 'Double, Pass'), (6, 'Too good to double, pass'), (7, 'Too good to double, take'), (8, 'Double'), (9, 'Take'), (10, 'Pass'), (11, 'Drop'), (12, 'Beaver'), (13, 'Double/Take'), (14, 'Double/Pass'), (15, 'Double/Beaver'), (16, 'NoDouble'), (17, 'No double'), (18, 'Double, take'), (19, 'Double, pass'), (20, 'Too good to double'), (21, 'Too good'), (22, 'TG'), (23, 'Redouble'), (24, 'No Redouble'), (25, 'Redouble, Take'), (26, 'Redouble, Pass'), (27, 'Double / Take'), (28, 'Double / Pass'), (29, 'Double / Prendre'), (30, 'Double / Refuser'), (31, 'Double / Reject'), (32, 'No redouble'), (33, 'Redouble, take'), (34, 'Redouble, pass'), (35, 'Too good to redouble, pass'), (36, 'Too good to redouble, take'), (37, 'Double, Beaver'), (38, 'Double, beaver'), (39, 'Too Good'), (40, 'No Double, Take'), (41, 'No Double, Pass');
+    FOR c IN SELECT * FROM (VALUES ('analysis', 'best_cube_action'), ('move', 'move_type'), ('move', 'cube_action')) AS t(tbl, col) LOOP
+        IF (SELECT data_type FROM information_schema.columns
+             WHERE table_schema = current_schema() AND table_name = c.tbl AND column_name = c.col) = 'text' THEN
+            EXECUTE format(
+                'INSERT INTO action_label (code, label)
+                 SELECT (SELECT COALESCE(MAX(code), 999) FROM action_label) + ROW_NUMBER() OVER (ORDER BY v), v
+                 FROM (SELECT DISTINCT %1$I AS v FROM %2$I WHERE %1$I IS NOT NULL) d
+                 WHERE v NOT IN (SELECT label FROM action_label_fixed)
+                   AND v NOT IN (SELECT label FROM action_label)', c.col, c.tbl);
+            EXECUTE format('ALTER TABLE %I ADD COLUMN %I INTEGER', c.tbl, c.col || '_code');
+            EXECUTE format(
+                'UPDATE %2$I SET %3$I = COALESCE(
+                     (SELECT f.code FROM action_label_fixed f WHERE f.label = %2$I.%1$I),
+                     (SELECT l.code FROM action_label l WHERE l.label = %2$I.%1$I))
+                 WHERE %1$I IS NOT NULL', c.col, c.tbl, c.col || '_code');
+            EXECUTE format('ALTER TABLE %I DROP COLUMN %I', c.tbl, c.col);
+            EXECUTE format('ALTER TABLE %I RENAME COLUMN %I TO %I', c.tbl, c.col || '_code', c.col);
+        END IF;
+    END LOOP;
+    DROP TABLE action_label_fixed;
+END $$;

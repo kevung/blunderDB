@@ -21,7 +21,7 @@ func insertCubeFixtureRow(t *testing.T, db *Database, matchID, gameID int64,
 
 	if _, err = db.db.Exec(
 		`INSERT INTO analysis (position_id, data, best_cube_action, cube_error, best_move_equity_error, is_close_cube) VALUES (?, '{}', ?, ?, 0, 1)`,
-		posID, cubeAction, cubeErrMP,
+		posID, testActionCode(t, db.db, cubeAction), cubeErrMP,
 	); err != nil {
 		t.Fatalf("insert cube analysis: %v", err)
 	}
@@ -75,7 +75,7 @@ func TestBuildSelectionWhereClause_CheckerOnlyWithError(t *testing.T) {
 func TestBuildSelectionWhereClause_CubeAction(t *testing.T) {
 	t.Parallel()
 	whereAdd, _, args := buildSelectionWhereClause(SelectionSpec{Kind: "cube_action", CubeAction: "DoubleTake"})
-	if !containsStr(whereAdd, "best_cube_action = ?") {
+	if !containsStr(whereAdd, "a.best_cube_action)) = ?") {
 		t.Errorf("missing best_cube_action=? in whereAdd: %q", whereAdd)
 	}
 	if len(args) != 1 || args[0] != "DoubleTake" {

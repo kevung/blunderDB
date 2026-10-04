@@ -249,8 +249,8 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 	defer d.mu.RUnlock()
 
 	rows, err := d.db.Query(`
-		SELECT id, game_id, move_number, move_type, position_id, player,
-		       dice_1, dice_2, checker_move, cube_action, luck_mp
+		SELECT id, game_id, move_number, `+sqlshared.ActionLabelSQL("move_type")+`, position_id, player,
+		       dice_1, dice_2, checker_move, `+sqlshared.ActionLabelSQL("cube_action")+`, luck_mp
 		FROM move
 		WHERE game_id = ?
 		ORDER BY move_number ASC
@@ -407,7 +407,7 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			m.game_id,
 			g.game_number,
 			m.move_number,
-			m.move_type,
+			`+sqlshared.ActionLabelSQL("m.move_type")+`,
 			m.player,
 			m.position_id,
 			p.state as position_state,
@@ -415,7 +415,7 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			p.cube_value, p.cube_owner, p.score_1, p.score_2,
 			p.has_jacoby, p.has_beaver,
 			COALESCE(m.checker_move, '') as checker_move,
-			COALESCE(m.cube_action, '') as cube_action
+			`+sqlshared.ActionLabelOrEmptySQL("m.cube_action")+` as cube_action
 		FROM move m
 		INNER JOIN game g ON m.game_id = g.id
 		INNER JOIN position p ON m.position_id = p.id
