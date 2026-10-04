@@ -1,8 +1,10 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
@@ -53,18 +55,30 @@ func (s *Server) handleGammonNetCubeMatrix(w http.ResponseWriter, r *http.Reques
 	if s.refuseAnalysis(w, scope) {
 		return
 	}
-	// One search per cell at most: more workers would sit idle and be
-	// charged all the same.
-	workers := min(s.engineWorkers, req.MatchLength*req.MatchLength)
 	// The tenant's table values the grid, as it values its analyses (ADR-0068).
 	_, met, err := mets.Current(r.Context(), s.opts.Storage, scope)
 	if err != nil {
 		writeStorageError(w, err)
 		return
 	}
-	matrix, err := metered(s, scope, workers, func() (gammonnet.CubeMatrix, error) {
-		return gammonnet.ComputeCubeMatrixMET(r.Context(), pos, met, req.MatchLength, req.Ply, req.PruneK, workers)
+	// Each cell is a unit of the shared workers. The grid is one answer:
+	// it is finished and charged even if the tenant's time runs out midway.
+	charge := s.quota.spender(scope)
+	matrix, err := gammonnet.ComputeCubeMatrixExec(r.Context(), pos, met, req.MatchLength, req.Ply, req.PruneK, func(n int, cell func(int, *gammonnet.Searcher)) error {
+		return s.analysis.each(r.Context(), scope, n, func(d time.Duration) bool {
+			charge(d)
+			return true
+		}, func(i int, get searcherFor) {
+			cell(i, get(req.Ply, req.PruneK))
+		})
 	})
+	switch {
+	case errors.Is(err, context.Canceled):
+		return // nobody is listening
+	case errors.Is(err, errPoolClosed):
+		writeErrorCode(w, CodeUnavailable, err.Error())
+		return
+	}
 	if err != nil {
 		writeErrorCode(w, CodeInvalid, err.Error())
 		return

@@ -75,6 +75,29 @@ func ComputeCubeMatrixMET(ctx context.Context, pos domain.Position, met *engine.
 	if matchLength < 1 {
 		return CubeMatrix{}, fmt.Errorf("gammonnet: cube matrix needs a match length of at least 1")
 	}
+	if workers <= 0 {
+		workers = runtime.NumCPU()
+	}
+	return computeCubeMatrix(ctx, pos, met, matchLength, ply, pruneK, cubeMatrixGoroutines(workers, ply, pruneK))
+}
+
+// CellExec runs the n cells of a cube matrix: it calls cell(i, s) once for
+// every i in [0, n), on any goroutines and in any order, s a Searcher built
+// by NewBatchSearcher(ply, pruneK) that the goroutine reuses (nil: one is
+// made per cell), and returns once every call it made has returned. It may
+// leave cells uncalled only when ctx has ended or by returning an error.
+type CellExec func(n int, cell func(i int, s *Searcher)) error
+
+// ComputeCubeMatrixExec is ComputeCubeMatrixMET with the cells run by exec,
+// for a caller that shares its cores between several computations.
+func ComputeCubeMatrixExec(ctx context.Context, pos domain.Position, met *engine.MET, matchLength, ply, pruneK int, exec CellExec) (CubeMatrix, error) {
+	if matchLength < 1 {
+		return CubeMatrix{}, fmt.Errorf("gammonnet: cube matrix needs a match length of at least 1")
+	}
+	return computeCubeMatrix(ctx, pos, met, matchLength, ply, pruneK, exec)
+}
+
+func computeCubeMatrix(ctx context.Context, pos domain.Position, met *engine.MET, matchLength, ply, pruneK int, exec CellExec) (CubeMatrix, error) {
 	// Pre-roll, like every cube decision: the dice on the position are not
 	// part of the question.
 	pos.Dice = [2]int{0, 0}
@@ -90,40 +113,45 @@ func ComputeCubeMatrixMET(ctx context.Context, pos domain.Position, met *engine.
 		}
 	}
 	cells := make([]CubeMatrixCell, len(jobs))
-
-	if workers <= 0 {
-		workers = runtime.NumCPU()
+	err := exec(len(jobs), func(n int, searcher *Searcher) {
+		if ctx.Err() != nil {
+			return
+		}
+		j := jobs[n]
+		cells[n] = cubeMatrixCell(pos, met, j.onRoll, j.opponent, searcher, ply, pruneK)
+	})
+	if ctx.Err() != nil {
+		return CubeMatrix{MatchLength: matchLength, Ply: ply, Cells: cells}, ctx.Err()
 	}
-	if workers > len(jobs) {
-		workers = len(jobs)
-	}
+	return CubeMatrix{MatchLength: matchLength, Ply: ply, Cells: cells}, err
+}
 
-	var next atomic.Int64
-	var wg sync.WaitGroup
-	wg.Add(workers)
-	for w := 0; w < workers; w++ {
-		go func() {
-			defer wg.Done()
-			searcher, err := NewBatchSearcher(ply, pruneK)
-			if err != nil {
-				searcher = nil
-			}
-			for {
-				if ctx.Err() != nil {
-					return
+// cubeMatrixGoroutines is the CellExec of a computation that owns its
+// cores: workers goroutines, each reusing one searcher.
+func cubeMatrixGoroutines(workers, ply, pruneK int) CellExec {
+	return func(n int, cell func(int, *Searcher)) error {
+		var next atomic.Int64
+		var wg sync.WaitGroup
+		for range min(max(workers, 1), n) {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				searcher, err := NewBatchSearcher(ply, pruneK)
+				if err != nil {
+					searcher = nil
 				}
-				n := next.Add(1) - 1
-				if n >= int64(len(jobs)) {
-					return
+				for {
+					i := next.Add(1) - 1
+					if i >= int64(n) {
+						return
+					}
+					cell(int(i), searcher)
 				}
-				j := jobs[n]
-				cells[n] = cubeMatrixCell(pos, met, j.onRoll, j.opponent, searcher, ply, pruneK)
-			}
-		}()
+			}()
+		}
+		wg.Wait()
+		return nil
 	}
-	wg.Wait()
-
-	return CubeMatrix{MatchLength: matchLength, Ply: ply, Cells: cells}, ctx.Err()
 }
 
 // cubeMatrixCell evaluates one cell. A refusal is recorded in the cell, never

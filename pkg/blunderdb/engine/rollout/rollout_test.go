@@ -107,6 +107,21 @@ func TestReproducibleAcrossWorkers(t *testing.T) {
 			if !reflect.DeepEqual(runs[0], runs[1]) {
 				t.Fatalf("1 worker and 7 workers disagree:\n%+v\n%+v", runs[0].Candidates, runs[1].Candidates)
 			}
+			// A caller's Exec playing the games backwards, as a shared
+			// pool hands them out in whatever order its turns fall.
+			backwards := func(n int, task func(int)) error {
+				for i := n - 1; i >= 0; i-- {
+					task(i)
+				}
+				return nil
+			}
+			viaExec, err := Run(context.Background(), pos, settings(), Options{NoBearoffTable: true, Exec: backwards})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !reflect.DeepEqual(runs[0], viaExec) {
+				t.Fatalf("own workers and a caller's Exec disagree:\n%+v\n%+v", runs[0].Candidates, viaExec.Candidates)
+			}
 			if runs[0].Games != settings().MaxGames {
 				t.Fatalf("played %d games, want %d", runs[0].Games, settings().MaxGames)
 			}
@@ -120,6 +135,20 @@ func TestReproducibleAcrossWorkers(t *testing.T) {
 				t.Fatal("a different seed gave the same numbers: the seed does not reach the dice")
 			}
 		})
+	}
+}
+
+// TestExecSkippingAGameIsRefused: a batch summed short of a game would pass
+// for a rollout of the settings it does not honour.
+func TestExecSkippingAGameIsRefused(t *testing.T) {
+	skip := func(n int, task func(int)) error {
+		for i := 1; i < n; i++ {
+			task(i)
+		}
+		return nil
+	}
+	if _, err := Run(context.Background(), decode(t, opening31), small(), Options{NoBearoffTable: true, Exec: skip}); err == nil {
+		t.Fatal("a batch missing a game was summed")
 	}
 }
 

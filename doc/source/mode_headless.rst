@@ -1564,8 +1564,11 @@ usage : positions stockées, octets occupés (``storedBytes``), secondes de calc
 Les quotas sont une comptabilité du démon, pas une frontière : ils
 s'appliquent au tenant que le proxy a posé dans ``X-Tenant-ID``.
 
-Les balayages (``gammonnet.analyzeMissing``, ``gammonnet.sweepStale``) et les
-évaluations (``gammonnet.evaluate``) passent par une seule file d'analyse : un
+Tous les calculs du moteur passent par une seule file d'analyse : balayages
+(``gammonnet.analyzeMissing``, ``gammonnet.sweepStale``), évaluations
+(``gammonnet.evaluate``), comparaisons (``gammonnet.compare``), matrices de
+videau (``gammonnet.cubeMatrix``) et rollouts (``rollout.position``,
+``rollout.filter``). C'est un
 jeu de travailleurs du moteur (``--analysis-workers``), chacun avec son
 chercheur réutilisé, qui prennent les positions une à une en faisant le tour
 des tenants qui ont du travail. Deux tenants qui balaient en même temps se
@@ -1573,8 +1576,11 @@ partagent les cœurs au lieu de les réclamer chacun ; une évaluation demandée
 pendant le balayage d'un autre tenant attend une position, pas tout le
 balayage. Avec ``--analysis-weights club=3``, le tenant ``club`` reçoit trois
 positions par tour quand un autre en reçoit une. Les travaux d'un même tenant
-passent dans l'ordre où ils sont arrivés. Les comparaisons, les matrices de
-videau et les rollouts gardent leurs propres travailleurs.
+passent dans l'ordre où ils sont arrivés. Un rollout prend son tour partie
+par partie : un rollout long d'un tenant n'empêche pas la requête courte d'un
+autre d'être servie avant sa fin, et ses résultats ne changent pas (ils ne
+dépendent que des réglages et de la graine). Chaque position, case ou partie
+calculée est imputée au quota de secondes de calcul de son tenant.
 
 **Scénario complet, de zéro à un démon qui répond :**
 

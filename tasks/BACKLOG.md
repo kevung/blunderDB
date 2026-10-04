@@ -289,6 +289,5 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 - **`move.error_mp` sans lecteur ni tenue** (mesure BMAB #6/#8, `tasks/mesure-bmab-0.37.md` § 9) : seule `repair --move-errors` l'écrit ; ni l'import ni l'analyse n'appellent `RescorePositionMoves`, aucune requête ne la lit. Pour que `E` s'y appuie (SQL exact, sans phase Go), il faut une tenue à jour à chaque écriture d'analyse ou de coup et un moyen de distinguer « pas noté » de « non notable » (NULL ambigu).
 
-- **Serveur : compare, cubeMatrix et rollouts hors de la file partagée** : ces trois routes lancent `NumCPU` goroutines par requête, sans passer par la file bornée des évaluations ; plusieurs requêtes simultanées saturent le processeur au-delà de la borne. À faire : les faire passer par la même file.
 - **Serveur : quota en octets sous PostgreSQL** : la mesure repose sur `pg_total_relation_size` et `reltuples`, globaux à la base et non au locataire, donc un canal auxiliaire faible (un locataire devine la taille des autres) ; et les 13 `COUNT` par appel ont un coût. À faire : compter par locataire, avec un cache ou un compteur tenu à jour.
 - **Export GUI : sélecteur de paquets** : l'export serveur sait se limiter à des collections, leçons ou paquets Anki (`collectionIds`, `lessonIds`, `deckIds`), le dialogue d'export de la GUI n'offre pas ce choix.

@@ -50,7 +50,8 @@ type Settings struct {
 	// Seed fixes every die of every game.
 	Seed uint64 `json:"seed"`
 	// Workers is the number of games played at once; 0 means one per core.
-	// It changes the time, never the numbers.
+	// It changes the time, never the numbers. Ignored when Options.Exec is
+	// set: the caller's Exec decides how many games run at once.
 	Workers int `json:"workers"`
 }
 

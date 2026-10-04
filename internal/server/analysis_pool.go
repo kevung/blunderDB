@@ -2,7 +2,10 @@ package server
 
 import (
 	"context"
+	"errors"
 	"sync"
+	"sync/atomic"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
@@ -34,6 +37,8 @@ type analysisPool struct {
 	turn   int
 	credit int
 	closed bool
+	// served counts the units handed out per tenant since the pool started.
+	served map[string]int64
 }
 
 // searcherFor hands a unit the worker's own Searcher for a ply and pruning
@@ -58,7 +63,7 @@ type poolJob struct {
 func (j *poolJob) wait() { <-j.done }
 
 func newAnalysisPool(workers int, weights map[string]int) *analysisPool {
-	p := &analysisPool{workers: max(workers, 1), weights: weights, queues: map[string][]*poolJob{}}
+	p := &analysisPool{workers: max(workers, 1), weights: weights, queues: map[string][]*poolJob{}, served: map[string]int64{}}
 	p.cond = sync.NewCond(&p.mu)
 	return p
 }
@@ -106,6 +111,53 @@ func (p *analysisPool) run(ctx context.Context, scope string, unit func(searcher
 	return ran
 }
 
+// errPoolClosed ends a computation the daemon stopped before it was done.
+var errPoolClosed = errors.New("the analysis workers are shutting down")
+
+// errAnalysisSpent ends a computation whose tenant ran out of engine time.
+var errAnalysisSpent = errors.New("analysis time for today is spent")
+
+// each runs unit(i) for every i in [0, n) as n units of one job of scope,
+// each unit's time charged with charge; it is how a computation made of many
+// independent steps (a comparison's positions, a cube matrix's cells, a
+// rollout's games) shares the workers with the other tenants instead of
+// starting goroutines of its own. It stops handing out units once ctx ends
+// (returning ctx's error) or charge reports the time spent (errAnalysisSpent),
+// and returns errPoolClosed when the pool closed first.
+func (p *analysisPool) each(ctx context.Context, scope string, n int, charge func(time.Duration) bool, unit func(i int, get searcherFor)) error {
+	var ran atomic.Int64
+	var spent atomic.Bool
+	next := 0
+	p.submit(scope, func() (func(searcherFor), bool) {
+		if next >= n || ctx.Err() != nil || spent.Load() {
+			return nil, false
+		}
+		i := next
+		next++
+		return func(get searcherFor) {
+			if ctx.Err() != nil || spent.Load() {
+				return
+			}
+			start := time.Now()
+			unit(i, get)
+			ran.Add(1)
+			if !charge(time.Since(start)) {
+				spent.Store(true)
+			}
+		}, true
+	}).wait()
+	switch {
+	case ctx.Err() != nil:
+		return ctx.Err()
+	case ran.Load() == int64(n):
+		return nil
+	case spent.Load():
+		return errAnalysisSpent
+	default:
+		return errPoolClosed
+	}
+}
+
 // close stops the workers once their current unit is done; a job still
 // queued is ended unrun.
 func (p *analysisPool) close() {
@@ -122,6 +174,13 @@ func (p *analysisPool) close() {
 	}
 	p.queues, p.ring = map[string][]*poolJob{}, nil
 	p.cond.Broadcast()
+}
+
+// servedTo is how many units scope has been handed so far.
+func (p *analysisPool) servedTo(scope string) int64 {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.served[scope]
 }
 
 func (p *analysisPool) weight(scope string) int {
@@ -159,6 +218,7 @@ func (p *analysisPool) takeLocked() (*poolJob, func(searcherFor), bool) {
 			j := jobs[0]
 			if unit, ok := j.next(); ok {
 				j.inflight++
+				p.served[scope]++
 				p.queues[scope] = jobs
 				if p.credit--; p.credit <= 0 {
 					p.turn++
