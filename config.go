@@ -196,7 +196,7 @@ type Config struct {
 	PanelHeight int `json:"panel_height,omitempty"`
 	PanelWidth  int `json:"panel_width,omitempty"`
 	// PanelHeights is the bottom-mode height each tab last had, by tab id; a tab
-	// absent from it uses the default height.
+	// absent from it uses the AnyTabPanelHeight entry if any, else the default height.
 	PanelHeights map[string]int `json:"panel_heights,omitempty"`
 	PageStep     string         `json:"page_step,omitempty"`
 	TourSeen     bool           `json:"tour_seen,omitempty"`

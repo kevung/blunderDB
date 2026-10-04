@@ -1,6 +1,7 @@
 // Panel height remembered per tab, persisted through Config like every other layout
 // preference (the webview's localStorage is not guaranteed to survive a restart). A tab with
-// no remembered height uses the default, never the one last dragged on another tab.
+// no remembered height uses the fallback entry (a config written before heights were per tab),
+// else the default, never the one last dragged on another tab.
 import { GetTabPanelHeights, SaveTabPanelHeight } from '../../wailsjs/go/main/Config.js';
 import { DEFAULT_PANEL_HEIGHT } from '../stores/panelLayoutStore.js';
 import { logger } from './logger.js';
