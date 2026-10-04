@@ -24,6 +24,7 @@
         ListCollectionPositionIDs,
         LoadPositionsByIDs,
         SetCollectionFilter,
+        FreezeCollection,
         ReorderCollectionPositions,
         ReorderCollections,
         UpdateCollection,
@@ -141,6 +142,19 @@
             statusBarTextStore.set(query ? tMsg('collection.livingSet', { query }) : tMsg('collection.livingCleared'));
         } catch (error) {
             logger.error('Error setting the collection filter:', error);
+        }
+    }
+
+    async function freezeLiving() {
+        if (!activeCollection?.filterQuery) return;
+        try {
+            const count = await FreezeCollection(activeCollection.id);
+            activeCollectionStore.set({ ...activeCollection, filterQuery: '' });
+            await loadCollections();
+            await refreshRows(activeCollection.id);
+            statusBarTextStore.set(tMsg('collection.frozen', { count }));
+        } catch (error) {
+            logger.error('Error freezing the collection:', error);
         }
     }
 
@@ -732,6 +746,9 @@
                     <button class="icon-btn" onclick={toggleLiving} title={livingTitle}>
                         {activeCollection.filterQuery ? '◈' : '◇'}
                     </button>
+                    {#if activeCollection.filterQuery}
+                        <button class="icon-btn" onclick={freezeLiving} title={$t('collection.freezeTitle')}>❄</button>
+                    {/if}
                 {/snippet}
                 {#snippet subheader()}
                     {#if collectionEdit.isEditing(activeCollection.id)}

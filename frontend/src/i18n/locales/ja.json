@@ -635,6 +635,8 @@
         "livingNeedsSearch": "先に検索してください。それがコレクションに残るものです。",
         "livingSet": "生きたコレクション：{query}",
         "livingCleared": "コレクションを手作りのリストに戻しました。",
+        "freezeTitle": "固定: 現在の結果を通常のコレクションとして保持します。",
+        "frozen": "{count} 件のポジションでコレクションを固定しました。",
         "newButton": "新しいコレクション"
     },
     "tournament": {

@@ -91,3 +91,37 @@ type CollectionStore interface {
 	// PositionIndexMap returns, for every stored position id, its display index.
 	PositionIndexMap(ctx context.Context, scope string) (map[int64]int, error)
 }
+
+// FreezeCollection turns a LIVING collection into an ordinary one: the
+// positions its query selects now become its membership rows, in the order
+// the search returns them, and the query is cleared. filters is the query
+// already resolved by the caller, through the parser the command bar runs.
+//
+// The query is cleared last, so a failure midway leaves the collection living
+// rather than half-frozen under a query it no longer obeys. It returns how
+// many positions the collection now holds.
+func FreezeCollection(ctx context.Context, st Storage, scope string, id int64, filters domain.SearchFilters) (int, error) {
+	cs := st.Collections()
+	ids, err := st.Search().FindIDs(ctx, scope, filters, ListOpts{})
+	if err != nil {
+		return 0, err
+	}
+	old, err := cs.PositionIDs(ctx, scope, id, ListOpts{})
+	if err != nil {
+		return 0, err
+	}
+	if len(old) > 0 {
+		if err := cs.RemovePositions(ctx, scope, id, old); err != nil {
+			return 0, err
+		}
+	}
+	if len(ids) > 0 {
+		if err := cs.AddPositions(ctx, scope, id, ids); err != nil {
+			return 0, err
+		}
+	}
+	if err := cs.SetFilterQuery(ctx, scope, id, ""); err != nil {
+		return 0, err
+	}
+	return len(ids), nil
+}

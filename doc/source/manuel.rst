@@ -1126,6 +1126,11 @@ dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bout
 la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions
 qu'elle contenait sont toujours là quand on revient en arrière.
 
+Le bouton ❄, visible sur une collection vivante, la **fige** : les positions
+que la recherche sélectionne à cet instant deviennent la composition d'une
+collection ordinaire, dans l'ordre de la recherche, et la requête s'efface.
+Les positions qu'elle contenait avant d'être vivante sont remplacées.
+
 Une collection vivante dont la requête porte un jeton que cette version ne
 connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
