@@ -25,7 +25,7 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
 		       m.tournament_id, COALESCE(t.name, '') as tournament_name,
 		       COALESCE(m.last_visited_position, -1) as last_visited_position,
-		       COALESCE(m.comment, '') as comment
+		       COALESCE(m.comment, '') as comment, COALESCE(m.comment_author, '') as comment_author
 		FROM match m
 		LEFT JOIN tournament t ON m.tournament_id = t.id
 		ORDER BY CASE WHEN m.match_date IS NULL OR m.match_date = '' OR m.match_date = '0001-01-01T00:00:00Z' THEN m.import_date ELSE m.match_date END DESC
@@ -40,7 +40,7 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 		var m Match
 		err := rows.Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
 			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount,
-			&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition, &m.Comment)
+			&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition, &m.Comment, &m.CommentAuthor)
 		if err != nil {
 			slog.Warn("scanning match", "err", err)
 			continue

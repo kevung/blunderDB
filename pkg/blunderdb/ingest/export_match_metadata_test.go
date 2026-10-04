@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/xgparser/xgparser"
@@ -60,7 +61,7 @@ func TestExportMatchColumnsClassified(t *testing.T) {
 			t.Fatal(err)
 		}
 		_, left := notExportedMatchColumns[col]
-		carried := slices.Contains(exportedMatchColumns, col)
+		carried := slices.Contains(exportedMatchColumns, col) || slices.Contains(issuance.CarriedMatchCommentColumns, col)
 		if carried == left {
 			t.Errorf("match column %q: carried=%v, left behind=%v — name it in exactly one list", col, carried, left)
 		}
@@ -103,6 +104,42 @@ func TestExportCarriesMatchSourceMetadata(t *testing.T) {
 	}
 	if got.Transcriber != "Carol" || got.HasJacoby == nil || !*got.HasJacoby || got.EngineVersion != m.EngineVersion {
 		t.Errorf("transcriber/rules/version not carried: %+v", got)
+	}
+}
+
+// exportedMatchNote reads back the comment and its author of the one match
+// an export holds.
+func exportedMatchNote(t *testing.T, path string) (comment, author string) {
+	t.Helper()
+	ctx := context.Background()
+	dst, err := sqlite.Open(ctx, path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer dst.Close()
+	for mm, err := range dst.Matches().List(ctx, "", storage.MatchListOpts{}) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		comment, author = mm.Comment, mm.CommentAuthor
+	}
+	return comment, author
+}
+
+// The match's note travels with whoever signs it, and it is
+// issuance.CarriedMatchCommentColumns that decides: a column it stops
+// naming stays home (ADR-0007).
+func TestExportCarriesMatchCommentAuthorByAllowList(t *testing.T) {
+	m := domain.Match{Player1Name: "A", Player2Name: "B", Comment: "Opening notes", CommentAuthor: "Carol"}
+	if c, a := exportedMatchNote(t, exportOneMatch(t, m)); c != "Opening notes" || a != "Carol" {
+		t.Errorf("exported note = %q by %q, want %q by %q", c, a, "Opening notes", "Carol")
+	}
+
+	saved := issuance.CarriedMatchCommentColumns
+	t.Cleanup(func() { issuance.CarriedMatchCommentColumns = saved })
+	issuance.CarriedMatchCommentColumns = []string{"comment"}
+	if c, a := exportedMatchNote(t, exportOneMatch(t, m)); c != "Opening notes" || a != "" {
+		t.Errorf("with the author off the allow-list, exported note = %q by %q, want %q unsigned", c, a, "Opening notes")
 	}
 }
 
