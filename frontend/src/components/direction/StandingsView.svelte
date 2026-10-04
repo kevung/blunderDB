@@ -181,7 +181,6 @@
         border: none;
         padding: 0;
         color: inherit;
-        font: inherit;
         cursor: pointer;
         text-decoration: underline dotted;
     }
