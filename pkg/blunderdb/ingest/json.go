@@ -141,7 +141,7 @@ func (im JSONImporter) Import(ctx context.Context, scope string, src Source, pro
 	}()
 
 	var sum Summary
-	tables := mets.NewCarrier(tx.MatchEquityTables(), scope, nil)
+	tables := mets.NewCarrier("import", tx.MatchEquityTables(), scope, nil)
 	dec := json.NewDecoder(r)
 	for dec.More() {
 		if err := ctx.Err(); err != nil {
