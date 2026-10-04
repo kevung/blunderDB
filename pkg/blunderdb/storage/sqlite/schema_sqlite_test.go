@@ -118,3 +118,37 @@ func TestCheckSchema(t *testing.T) {
 		t.Errorf("second CheckSchema = %+v, want the same drift", again)
 	}
 }
+
+// TestAnalysisMETFallsBackOnDelete: deleting a match equity table nulls the
+// met_id of the analyses computed with it, on a fresh library and on one whose
+// column EnsureSchema adds — the PostgreSQL key does the same.
+func TestAnalysisMETFallsBackOnDelete(t *testing.T) {
+	ctx := context.Background()
+	db := openMemory(t)
+	if err := Bootstrap(ctx, db); err != nil {
+		t.Fatal(err)
+	}
+	var onDelete string
+	if err := db.QueryRowContext(ctx, `SELECT on_delete FROM pragma_foreign_key_list('analysis')
+		WHERE "from" = 'met_id'`).Scan(&onDelete); err != nil {
+		t.Fatalf("analysis.met_id foreign key: %v", err)
+	}
+	if onDelete != "SET NULL" {
+		t.Errorf("analysis.met_id ON DELETE %s, want SET NULL", onDelete)
+	}
+
+	ref, err := referenceSchema(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tbl := range ref.tables {
+		if tbl.name != "analysis" {
+			continue
+		}
+		for _, c := range tbl.columns {
+			if c.name == "met_id" && !strings.Contains(c.definition, "ON DELETE SET NULL") {
+				t.Errorf("met_id is added as %q, without ON DELETE SET NULL", c.definition)
+			}
+		}
+	}
+}

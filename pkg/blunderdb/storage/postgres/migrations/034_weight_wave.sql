@@ -34,8 +34,8 @@ BEGIN
 END $$;
 
 -- met_id names a row of the analysis's own tenant: the foreign key is
--- composite, like every other tenant-scoped reference (014), and deleting the
--- table falls back to the built-in one by nulling met_id alone.
+-- composite, like every other tenant-scoped reference (017), and deleting the
+-- table falls back to the built-in one by nulling met_id alone, as on SQLite.
 ALTER TABLE analysis DROP COLUMN IF EXISTS met_digest;
 ALTER TABLE analysis ADD COLUMN IF NOT EXISTS met_id BIGINT;
 DO $$ BEGIN
@@ -86,9 +86,9 @@ END $$;
 --
 -- A registered label is text a tenant's import brought, so action_label is
 -- tenant-scoped like every other table: a label is unique per tenant, and its
--- code comes from a sequence so that it is unique across tenants — the read
--- expression (sqlshared.ActionLabelSQL) resolves a code without a tenant
--- filter and still reaches only the row its own tenant registered.
+-- code comes from a sequence so that it is unique across tenants. The read
+-- expression (sqlshared.TenantActionLabelSQL) still confines the lookup to the
+-- tenant of the row it reads.
 CREATE SEQUENCE IF NOT EXISTS action_label_code_seq START 1000;
 CREATE TABLE IF NOT EXISTS action_label (
     code      INTEGER PRIMARY KEY DEFAULT nextval('action_label_code_seq'),

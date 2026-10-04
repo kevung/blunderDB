@@ -129,7 +129,8 @@ var schemaStatements = []string{
 		-- from the library's current one is shown as "different MET" and
 		-- left out of the comparisons. An integer rather than the digest
 		-- itself: eight bytes in place of a 64-character hex string.
-		met_id                      INTEGER REFERENCES match_equity_table(id),
+		-- Deleting the table falls back to the built-in one.
+		met_id                      INTEGER REFERENCES match_equity_table(id) ON DELETE SET NULL,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
 	)`,
 	`CREATE TABLE IF NOT EXISTS comment (
