@@ -243,14 +243,16 @@ donc bruitée), binaire de la branche contre le binaire de la mesure :
 
 | | Avant | Après |
 |---|---:|---:|
-| `vacuum` (JSON → binaire niveau 7, VACUUM, ANALYZE) | **744 s** | **13,7 s** (269,1 → 218,0 Mo) |
-| `vacuum`, blobs déjà binaires (niveau 7) | 730-741 s | pas de réécriture : VACUUM + ANALYZE seuls (≈ 3,5 s) |
+| `vacuum` (JSON → binaire, VACUUM, ANALYZE) | **744 s** (282,2 → 227,7 Mo, § 4) | **13,7 s** (282,2 → 228,6 Mo) |
+| `vacuum`, blobs déjà binaires niveau 7 (autre base, 239,2 Mo) | 730-741 s | pas de réécriture : VACUUM + ANALYZE seuls (≈ 3,5 s) |
 | `reencode` | 24,1 s | **11,5 s** |
 
 - `vacuum` ne recompresse plus au niveau 19 : il ne réécrit que les blobs hérités, au niveau 7
   (le chemin de `reencode`). Le niveau 19 ne rendait que 1,6 % de la taille d'un blob.
-  Taille finale de l'échantillon : 218,0 Mo, contre 227,8 Mo avec le niveau 19 (+4 %, la
-  charge de `analysis` seule). Sur BMAB : ≈ 10 h de recompression en moins.
+  Même base de départ des deux côtés : l'échantillon JSON de 282,2 Mo (le « Avant » est la
+  ligne « Blobs JSON » du § 4 ; `vacuum` affiche des Mio : 269,1 → 218,0). Taille finale
+  228,6 Mo contre 227,7 Mo avec le niveau 19 : +0,9 Mo, soit +0,4 % du fichier (≈ 2,6 o par
+  blob, ≈ 41 Mo sur BMAB). Sur BMAB : ≈ 10 h de recompression en moins.
 - La recompression se fait sur tous les cœurs (`engine.RecompressAnalysesConcurrently`),
   par lots de 2 000 comme avant, pour `vacuum` et pour `reencode` (les deux backends).
 - Piège trouvé : `zstdEncoder` et `zstdDecoder` sont à concurrence 1, ce qui sérialise

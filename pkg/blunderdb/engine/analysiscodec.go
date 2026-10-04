@@ -41,17 +41,15 @@ import (
 // The signatures cannot collide: 0xBA is neither '{', the zstd magic's first
 // byte nor a zlib CMF (whose low nibble is 8). Legacy rows are read forever
 // and upgraded opportunistically (RecompressAnalysisData on native-.db import,
-// CompactAnalysisData in sqlite.Storage.Vacuum and in the explicit
+// RecompressAnalysesConcurrently in sqlite.Storage.Vacuum and in the explicit
 // re-encoding pass) — never in a schema migration: a schema bump is for DDL,
 // not for the bytes inside an unchanged BLOB column.
 //
-// zstd comes in two levels, one decoder. The write path (import, merge) uses
-// level 7: level 19 costs twenty times the CPU for a few percent of bytes, and
-// a position is re-encoded every time an import merges into it. Compaction
-// rewrites blobs at level 19. The two are told apart by the frame's
-// Content_Checksum_flag: level-7 frames carry no checksum, level-19 frames do
-// — a one-byte check, no decompression, no schema column. Each zstd frame
-// carries its Dictionary_ID, so both dictionaries live in one decoder.
+// zstd is written at level 7: level 19 costs twenty times the CPU for under
+// two percent of a blob's bytes, and a position is re-encoded every time an
+// import merges into it. Blobs a former release compacted at level 19 (frames
+// with the Content_Checksum_flag) are still read: each zstd frame carries its
+// Dictionary_ID, so both dictionaries live in one decoder.
 //
 // The dictionaries are trained offline by cmd/train-analysis-dict; at runtime
 // the pure-Go klauspost decoder reads them, no zstd binary or cgo needed.
@@ -80,18 +78,13 @@ var ErrUnknownAnalysisFormat = errors.New("analysis blob of an unknown binary fo
 // §3.1.1). Checked first so the common case skips a failed zlib-header parse.
 var zstdMagic = []byte{0x28, 0xB5, 0x2F, 0xFD}
 
-// zstdChecksumBit is the Content_Checksum_flag in the frame header
-// descriptor, the byte right after the magic (RFC 8878 §3.1.1.1.1).
-const zstdChecksumBit = 1 << 2
-
 // The encoders and the decoder are shared: klauspost documents EncodeAll and
 // DecodeAll as concurrency-safe, and one instance per call is the memory
 // blow-up upstream warns against. Internal concurrency is pinned to 1 —
 // bounded memory over single-call latency, right for few-kilobyte blobs.
 var (
-	zstdEncoder        *zstd.Encoder // binary dictionary, level 7, no checksum: the write path
-	zstdCompactEncoder *zstd.Encoder // binary dictionary, level 19, checksum: compaction
-	zstdDecoder        *zstd.Decoder
+	zstdEncoder *zstd.Encoder // binary dictionary, level 7, no checksum: the write path
+	zstdDecoder *zstd.Decoder
 )
 
 func init() {
@@ -107,17 +100,6 @@ func init() {
 		panic(fmt.Sprintf("engine: zstd encoder init: %v", err))
 	}
 	zstdEncoder = enc
-
-	compact, err := zstd.NewWriter(nil,
-		zstd.WithEncoderLevel(zstd.EncoderLevelFromZstd(19)),
-		zstd.WithEncoderDict(analysisBinDict),
-		zstd.WithEncoderConcurrency(1),
-		zstd.WithEncoderCRC(true),
-	)
-	if err != nil {
-		panic(fmt.Sprintf("engine: zstd compaction encoder init: %v", err))
-	}
-	zstdCompactEncoder = compact
 
 	dec, err := zstd.NewReader(nil,
 		zstd.WithDecoderDicts(analysisZstdDict, analysisBinDict),
@@ -149,12 +131,6 @@ func BinaryBlobPrefix() []byte { return []byte{binHeaderTag} }
 // isBinaryBlob reports whether data is in the binary format (any version).
 func isBinaryBlob(data []byte) bool {
 	return len(data) > binHeaderLen && data[0] == binHeaderTag
-}
-
-// isCompactBinaryBlob reports whether data is a binary blob written by the
-// compaction encoder (checksum flag of the frame header descriptor set).
-func isCompactBinaryBlob(data []byte) bool {
-	return isBinaryBlob(data) && data[1] == binFormatVersion && data[binHeaderLen]&zstdChecksumBit != 0
 }
 
 // decodeBinaryBlob restores the zstd magic, decompresses and decodes.
@@ -346,27 +322,6 @@ func RecompressAnalysesConcurrently(blobs [][]byte) (fresh [][]byte, errs []erro
 	}
 	wg.Wait()
 	return fresh, errs
-}
-
-// NeedsCompaction reports whether data is not yet in the compaction format
-// (binary, level 19): a legacy blob or a level-7 binary blob from the write
-// path. Allocation-free, so a full-table pass skips compacted rows cheaply.
-func NeedsCompaction(data []byte) bool {
-	return len(data) > 0 && !isCompactBinaryBlob(data)
-}
-
-// CompactAnalysisData rewrites any analysis blob as binary at level 19 and
-// returns a blob already in that format unchanged. The write path trades
-// bytes for speed, compaction takes them back.
-func CompactAnalysisData(data []byte) ([]byte, error) {
-	if !NeedsCompaction(data) {
-		return data, nil
-	}
-	a, err := DecodeAnalysisFromStorage(data)
-	if err != nil {
-		return nil, err
-	}
-	return encodeBinaryBlob(zstdCompactEncoder, MarshalAnalysisBinary(&a)), nil
 }
 
 // EncodeAnalysisForStorage encodes a PositionAnalysis as a binary blob at
