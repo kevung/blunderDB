@@ -258,6 +258,6 @@ msgstr ""
 "Font License 1.1)."
 
 msgid ""
-"le moteur de tournoi **Nicomaque** est l'œuvre de *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__) : il tient le format, les appariements, les tableaux et le classement d'un tournoi dirigé depuis blunderDB. Sa `documentation <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ est publiée à part ;"
+"le moteur de tournoi **Nicomaque** est l'œuvre de *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__) : il tient le format, les appariements, les tableaux et le classement d'un tournoi dirigé depuis blunderDB. Sa `documentation <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ se trouve dans le dossier ``docs`` de son dépôt ;"
 msgstr ""
-"the tournament engine **Nicomaque** is the work of *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__): it holds the format, the pairings, the brackets and the standings of a tournament directed from blunderDB. Its `documentation <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ is published separately;"
+"the tournament engine **Nicomaque** is the work of *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__): it holds the format, the pairings, the brackets and the standings of a tournament directed from blunderDB. Its `documentation <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ is in the ``docs`` folder of its repository;"

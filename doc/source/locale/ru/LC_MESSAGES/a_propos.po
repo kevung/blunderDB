@@ -261,6 +261,6 @@ msgstr ""
 "License 1.1)."
 
 msgid ""
-"le moteur de tournoi **Nicomaque** est l'œuvre de *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__) : il tient le format, les appariements, les tableaux et le classement d'un tournoi dirigé depuis blunderDB. Sa `documentation <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ est publiée à part ;"
+"le moteur de tournoi **Nicomaque** est l'œuvre de *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__) : il tient le format, les appariements, les tableaux et le classement d'un tournoi dirigé depuis blunderDB. Sa `documentation <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ se trouve dans le dossier ``docs`` de son dépôt ;"
 msgstr ""
-"турнирный движок **Nicomaque** создан *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__): он держит формат, жеребьёвку, сетки и таблицу турнира, проводимого из blunderDB. Его `документация <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ публикуется отдельно;"
+"турнирный движок **Nicomaque** создан *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__): он держит формат, жеребьёвку, сетки и таблицу турнира, проводимого из blunderDB. Его `документация <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ находится в каталоге ``docs`` его репозитория;"
