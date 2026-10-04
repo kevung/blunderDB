@@ -22,7 +22,7 @@ var corruptAnalysisBlobs = map[string][]byte{
 // is logged where the batch was decoded (AnalysisStore.LoadMany). That is the
 // outcome that lets the recipient import the file.
 func TestExport_CorruptAnalysisIsSkipped(t *testing.T) {
-	t.Parallel()
+	// Not parallel: captureSlog swaps the process-wide default logger.
 	for name, corrupt := range corruptAnalysisBlobs {
 		t.Run(name, func(t *testing.T) {
 			db, dir, cleanup := setupExportTestDB(t)
