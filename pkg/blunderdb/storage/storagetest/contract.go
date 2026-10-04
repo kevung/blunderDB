@@ -107,6 +107,8 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Training/SaveAndRead", testTrainingSaveAndRead},
 		{"Training/NumberStatsCountByType", testTrainingNumberStatsCountByType},
 		{"Training/DeviationStaysOutOfTheMean", testTrainingDeviationStaysOutOfTheMeanWhenAbsent},
+		{"Training/MissedPositions", testTrainingMissedPositions},
+		{"Comment/AuthorFromContext", testCommentAuthorFromContext},
 		{"Session/SaveLoadEmpty", testSessionSaveLoad},
 		{"Session/MultiScopeIsolation", testSessionMultiScope},
 		{"Search/FilterByDecisionType", testSearchFilterByDecisionType},

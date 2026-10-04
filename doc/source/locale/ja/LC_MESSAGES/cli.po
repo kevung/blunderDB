@@ -2243,6 +2243,83 @@ msgid ""
 msgstr "図はここでは既定のパレットで描かれます。画面で選んだボードのパレットを使うのはグラフィカルアプリケーションだけです。"
 
 #: ../../source/cli.rst:1294
+msgid "training — Le journal d'entraînement"
+msgstr "training — トレーニングジャーナル"
+
+#: ../../source/cli.rst:1296
+msgid ""
+"Relit le journal de l'onglet Entraînement (voir "
+":ref:`panneau_entrainement`) et fait des questions ratées de quoi "
+"réviser. Le journal est écrit par l'application graphique, ou par un "
+"client du démon à la route ``training.save`` ; la ligne de commande ne "
+"pose pas de questions."
+msgstr ""
+"「トレーニング」タブのジャーナル(:ref:`panneau_entrainement` "
+"を参照)を読み直し、間違えた問題を復習の材料にします。ジャーナルはグラフィカルアプリケーション、またはデーモンのクライアントが "
+"``training.save`` ルート経由で書き込みます。コマンドラインは問題を出しません。"
+
+#: ../../source/cli.rst:1301
+msgid ""
+"**training sessions** — Les séances, la plus récente d'abord, avec leur "
+"identifiant ; le PR n'existe que pour *Décision*."
+msgstr "**training sessions** — セッションを新しい順に、識別子付きで表示します。PR があるのは「判断」だけです。"
+
+#: ../../source/cli.rst:1310
+msgid ""
+"``--exercise <nom>`` — Un seul exercice : ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` ou ``decision``."
+msgstr ""
+"``--exercise <名前>`` — "
+"単一の演習:``scores``、``pips``、``bearoff``、``evaluation``、``decision`` のいずれか。"
+
+#: ../../source/cli.rst:1312
+msgid "``--limit <n>`` — Nombre de séances (défaut 20 ; 0 = toutes)."
+msgstr "``--limit <n>`` — セッション数(既定 20、0 = すべて)。"
+
+#: ../../source/cli.rst:1313
+msgid "``--format text|json`` — Format de sortie."
+msgstr "``--format text|json`` — 出力形式。"
+
+#: ../../source/cli.rst:1315
+msgid ""
+"**training missed** — Les positions ratées, chacune une fois, la plus "
+"récemment ratée d'abord ; une question hors délai compte comme ratée. "
+"Seules les questions de *Décision* gardent leur position."
+msgstr ""
+"**training missed** — 間違えたポジションを、それぞれ 1 "
+"回ずつ、最近間違えたものから順に表示します。時間切れの問題は間違いとして数えます。ポジションを保持するのは「判断」の問題だけです。"
+
+#: ../../source/cli.rst:1325
+msgid "``--exercise <nom>`` — Les séances d'un seul exercice."
+msgstr "``--exercise <名前>`` — 単一の演習のセッション。"
+
+#: ../../source/cli.rst:1326
+msgid ""
+"``--session <id>`` — Une seule séance (un identifiant de ``training "
+"sessions``)."
+msgstr "``--session <id>`` — 単一のセッション(``training sessions`` の識別子)。"
+
+#: ../../source/cli.rst:1328
+msgid "``--limit <n>`` — Nombre de positions (défaut 0 = toutes)."
+msgstr "``--limit <n>`` — ポジション数(既定 0 = すべて)。"
+
+#: ../../source/cli.rst:1329
+msgid "``--deck <nom>`` — Crée un paquet Anki de ces positions."
+msgstr "``--deck <名前>`` — これらのポジションから Anki デッキを作成します。"
+
+#: ../../source/cli.rst:1330
+msgid "``--collection <nom>`` — Crée une collection de ces positions."
+msgstr "``--collection <名前>`` — これらのポジションからコレクションを作成します。"
+
+#: ../../source/cli.rst:1331
+msgid ""
+"``--format text|json`` — Format de sortie ; en JSON, ``PositionIDs``, et "
+"``DeckID`` ou ``CollectionID`` quand ils sont créés."
+msgstr ""
+"``--format text|json`` — 出力形式。JSON では ``PositionIDs`` に加え、作成された場合は "
+"``DeckID`` または ``CollectionID`` を返します。"
+
+#: ../../source/cli.rst:1294
 msgid "cubematrix — Matrice du videau"
 msgstr "cubematrix — キューブ判断のマトリクス"
 
@@ -3209,6 +3286,40 @@ msgid ""
 "jamais à l'ouverture d'une base."
 msgstr "三十日より古いものは ``blunderdb vacuum`` が削除する——データベースを開いたときには決して削除しない。"
 
+#: ../../source/cli.rst:1941
+msgid "comment — Les commentaires d'une position"
+msgstr "comment — ポジションのコメント"
+
+#: ../../source/cli.rst:1943
+msgid ""
+"Une position porte autant de commentaires qu'on veut, chacun signé de son"
+" auteur."
+msgstr "ポジションには好きなだけコメントを付けられ、各コメントには著者の署名が付きます。"
+
+#: ../../source/cli.rst:1952
+msgid ""
+"``add --position N --text T [--author A]`` — Ajoute un commentaire à la "
+"position N, signé de A (sans ``--author``, il n'est pas signé)."
+msgstr ""
+"``add --position N --text T [--author A]`` — ポジション N にコメントを追加し、A "
+"の署名を付けます(``--author`` を省略すると署名なしになります)。"
+
+#: ../../source/cli.rst:1954
+msgid ""
+"``list [--position N] [--author A]`` — Liste les commentaires d'une "
+"position, ou de toute la base, éventuellement ceux d'un seul auteur."
+msgstr ""
+"``list [--position N] [--author A]`` — "
+"ポジション、またはデータベース全体のコメントを一覧表示します。必要に応じて、特定の著者のコメントだけに絞れます。"
+
+#: ../../source/cli.rst:1957
+msgid ""
+"**Options communes:** ``--db`` (obligatoire) ; ``list`` accepte "
+"``--format`` (``text`` ou ``json``)."
+msgstr ""
+"**共通オプション:** ``--db``\\ (必須)。``list`` は ``--format``\\ (``text`` または "
+"``json``)を受け付けます。"
+
 #: ../../source/cli.rst:1890
 msgid "info — Métadonnées de la base"
 msgstr "info — データベースのメタデータ"
@@ -3929,3 +4040,4 @@ msgstr "これにより、エラー処理を含むスクリプトでCLIを使用
 
 #~ msgid "Affiche les positions et analyses d'un match importé."
 #~ msgstr "インポートされたマッチのポジションと分析を表示します。"
+

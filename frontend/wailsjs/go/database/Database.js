@@ -858,6 +858,10 @@ export function LoadSessionState() {
   return window['go']['database']['Database']['LoadSessionState']();
 }
 
+export function LoadTrainingMissed(arg1) {
+  return window['go']['database']['Database']['LoadTrainingMissed'](arg1);
+}
+
 export function LoadTrainingNumberStats(arg1) {
   return window['go']['database']['Database']['LoadTrainingNumberStats'](arg1);
 }
@@ -1184,6 +1188,10 @@ export function SetBeforeSwitch(arg1) {
 
 export function SetCollectionFilter(arg1, arg2) {
   return window['go']['database']['Database']['SetCollectionFilter'](arg1, arg2);
+}
+
+export function SetCommentAuthor(arg1) {
+  return window['go']['database']['Database']['SetCommentAuthor'](arg1);
 }
 
 export function SetDirectionConfig(arg1, arg2) {

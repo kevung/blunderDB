@@ -203,7 +203,8 @@ export default {
 <p>The result is <strong>stored beside the analysis, never in its place</strong>: an imported analysis is not modified. Each rollout forms a block with, for every candidate, the equity, the 95 % confidence interval, the <strong>JSD</strong> (the gap to the best play in standard deviations of the difference: from the limit on, the play is decided and is no longer played) and the number of games. The rollout stops as soon as the plays are told apart. The <strong>Configuration</strong> — the engine and the full signature of the parameters — unfolds under the table: two rollouts with the same signature are the same numbers. A rollout plays the cube inside its games: the ranking is reliable, the absolute equity a little less so, which the block recalls. A position that is not in the database can be rolled out but is not stored.</p>
 <p>The <strong>On the displayed list…</strong> button (or <code>ro search</code>) rolls out, one after the other, the positions of the displayed list — search results, match or collection — that do not carry this rollout yet; a confirmation gives the total before starting. Each position is written as soon as it is finished: cancelling keeps what is done, and running again resumes where it stopped. Progress survives closing the panel.</p>
 <h3>Comments Panel</h3>
-<p>The <strong>Comments</strong> panel (<em>CTRL-P</em>) shows, adds and edits the comments attached to the current position. A position may carry several: all of them are shown, most recent first. Comments imported from XG files are automatically attached to the matching positions. Press <em>CTRL-P</em> or run the <code>comment</code> command to show or hide the panel.</p>
+<p>The <strong>Comments</strong> panel (<em>CTRL-P</em>) shows, adds and edits the comments attached to the current position. A position may carry several, written by different people: all of them are shown as a thread, most recent first, each with its author's name, and yours come first. Comments imported from XG files are automatically attached to the matching positions. Press <em>CTRL-P</em> or run the <code>comment</code> command to show or hide the panel.</p>
+<p>The name that signs your comments is set in the preferences, <em>Interface</em> tab, <strong>Your name</strong> field; when empty, your comments are unsigned. Comments from an XG import are signed <code>XG</code>, those from a match file with the name of its transcriber. Rewriting a comment signs it with your name. The <code>au"Alice"</code> search keeps the positions Alice has commented on; outside the interface, <code>blunderdb comment add --author</code> writes a signed comment and <code>blunderdb comment list</code> reads them back (see Command Line Interface (CLI)).</p>
 <p>Every comment that came out of a file carries a <strong>provenance badge</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, or <em>imported</em> when the provenance was never recorded). Comments you wrote carry none: that is the ordinary case, and marking every line would be noise. Editing an imported comment makes it yours: after the edit, the sentence is yours.</p>
 <p>That distinction shows elsewhere: deleting a match no longer destroys a position <strong>you</strong> had written on. A note lifted from the source file does still go with the match that brought it in.</p>
 <h4>Tags</h4>
@@ -872,6 +873,13 @@ export default {
 <p>Finished sessions are kept in the library itself — so they travel with the file — and without any cap. At rest, the panel shows one line per exercise: the number of sessions, the fault rate, the median time and, from ten sessions on, the <strong>trend</strong>, that is the gap between the fault rate of the last ten sessions and that of all of them — negative, you are improving.</p>
 <p>For <em>Décision</em>, the line also gives the <strong>PR</strong> of the last session, computed by the formula the statistics apply to real play — 500 × mean error in normalised equity, over the graded decisions. A training PR of 6 and a match PR of 6 measure the same thing on the same scale.</p>
 <p>Clicking the exercise's name unfolds the detail <strong>by number type</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». That detail is what makes the journal worth keeping, and it counts by type and not by face: the same cell of the same table, seen from either side, is one single weakness.</p>
+<p>A <em>Decision</em> question keeps in the log its position, the answer given and its cost in millipoints. The <em>Decision</em> detail therefore carries three buttons that act on all the missed positions, each once, most recently missed first — a question that timed out counts as missed:</p>
+<ul>
+<li><strong>Retake my misses</strong> — the missed positions become the list browsed and a <em>Decision</em> session restarts on them;</li>
+<li><strong>Anki deck of misses</strong> — an Anki deck of these positions;</li>
+<li><strong>Collection of misses</strong> — a collection of these positions.</li>
+</ul>
+<p>The deck and the collection are named "Decision misses" followed by today's date. On the command line, <code>training missed</code> returns the same list and makes a deck (<code>--deck</code>) or a collection (<code>--collection</code>) of it, and <code>training sessions</code> reads the log back (see training — The training log).</p>
 <h3>Metadata Panel</h3>
 <p>The <strong>Metadata</strong> panel displays general information about the current database: name, description, number of positions, matches and games, schema version. Accessible via the <code>meta</code> command.</p>
 <p>It also shows the database's origin <strong>when there is one</strong> — see Handing out a database: origin and password. An ordinary database does not show that section.</p>
@@ -2487,6 +2495,11 @@ export default {
 <td>co:user</td>
 <td>The position carries a comment of a given origin: <code>user</code> (written by you), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (brought in by a match import) or <code>unknown</code>. Repeatable (<code>co:xg co:gnubg</code>).</td>
 <td><code>--comment-origin</code></td>
+</tr>
+<tr>
+<td><code>au'Alice'</code></td>
+<td>The position carries a comment signed by this author (full name, case-insensitive).</td>
+<td><code>--comment-author</code></td>
 </tr>
 <tr>
 <td><code>m'pattern1,pattern2,...'</code></td>

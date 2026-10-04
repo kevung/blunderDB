@@ -119,6 +119,9 @@ func runGUI(startupFilePath string) {
 		os.Exit(1)
 	}
 
+	cfg.applyCommentAuthor = db.SetCommentAuthor
+	db.SetCommentAuthor(config.GetCommentAuthor())
+
 	// Apply the persisted two-sided bearoff path to the engine (ADR-0009).
 	if p := config.GetBearoffTSPath(); p != "" {
 		race.SetExternalPath(p)

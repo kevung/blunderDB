@@ -1415,6 +1415,20 @@ msgid "``--comment-origin``"
 msgstr "``--comment-origin``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "``au'Alice'``"
+msgstr "``au'Alice'``"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position porte un commentaire signé de cet auteur (nom entier, sans "
+"distinction de casse)."
+msgstr "このポジションには、この著者が署名したコメントがあります(名前は完全一致、大文字小文字の区別なし)。"
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--comment-author``"
+msgstr "``--comment-author``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "``m'motif1,motif2,...'``"
 msgstr "``m'パターン1,パターン2,...'``"
 
@@ -1843,3 +1857,4 @@ msgstr "コマンド履歴を消去します。"
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "局面の追加日が x より後（YYYY/MM/DD）。"
+

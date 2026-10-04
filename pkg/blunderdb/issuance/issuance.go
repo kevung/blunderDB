@@ -78,6 +78,13 @@ const KeyWatermark = "watermark"
 // default because nobody remembered to exclude it.
 var CarriedMetadataKeys = []string{"user", "description", "dateOfCreation"}
 
+// CarriedCommentColumns is the allow-list of comment columns an exported file
+// carries, for the same reason: a column added to `comment` later stays home
+// until it is named here. The author is the producer's statement about who
+// wrote the note, so it travels (ADR-0007); the origin describes the
+// producer's own import history and does not.
+var CarriedCommentColumns = []string{"text", "created_at", "modified_at", "author"}
+
 // Carried returns the subset of md that may travel inside an exported file.
 func Carried(md map[string]string) map[string]string {
 	out := make(map[string]string, len(CarriedMetadataKeys))

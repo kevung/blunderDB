@@ -1590,6 +1590,7 @@ export namespace domain {
 	    createdAt: string;
 	    modifiedAt: string;
 	    origin: string;
+	    author: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new CommentEntry(source);
@@ -1603,6 +1604,7 @@ export namespace domain {
 	        this.createdAt = source["createdAt"];
 	        this.modifiedAt = source["modifiedAt"];
 	        this.origin = source["origin"];
+	        this.author = source["author"];
 	    }
 	}
 	
@@ -3576,6 +3578,7 @@ export namespace main {
 	    board_colors?: BoardColors;
 	    ui_scale?: number;
 	    like_limit?: number;
+	    comment_author?: string;
 	    like_max_distance?: number;
 	    panel_position?: string;
 	    panel_height?: number;
@@ -3624,6 +3627,7 @@ export namespace main {
 	        this.board_colors = this.convertValues(source["board_colors"], BoardColors);
 	        this.ui_scale = source["ui_scale"];
 	        this.like_limit = source["like_limit"];
+	        this.comment_author = source["comment_author"];
 	        this.like_max_distance = source["like_max_distance"];
 	        this.panel_position = source["panel_position"];
 	        this.panel_height = source["panel_height"];
@@ -5984,6 +5988,9 @@ export namespace storage {
 	    wrong: boolean;
 	    hasDeviation: boolean;
 	    deviation: number;
+	    positionId?: number;
+	    answer?: string;
+	    errorMp?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new TrainingItem(source);
@@ -5995,6 +6002,25 @@ export namespace storage {
 	        this.wrong = source["wrong"];
 	        this.hasDeviation = source["hasDeviation"];
 	        this.deviation = source["deviation"];
+	        this.positionId = source["positionId"];
+	        this.answer = source["answer"];
+	        this.errorMp = source["errorMp"];
+	    }
+	}
+	export class TrainingMissedFilter {
+	    exercise: string;
+	    sessionId: number;
+	    limit: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TrainingMissedFilter(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.exercise = source["exercise"];
+	        this.sessionId = source["sessionId"];
+	        this.limit = source["limit"];
 	    }
 	}
 	export class TrainingNumberStat {

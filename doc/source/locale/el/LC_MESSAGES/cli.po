@@ -2514,6 +2514,90 @@ msgstr ""
 "οθόνη."
 
 #: ../../source/cli.rst:1294
+msgid "training — Le journal d'entraînement"
+msgstr "training — Το ημερολόγιο εκπαίδευσης"
+
+#: ../../source/cli.rst:1296
+msgid ""
+"Relit le journal de l'onglet Entraînement (voir "
+":ref:`panneau_entrainement`) et fait des questions ratées de quoi "
+"réviser. Le journal est écrit par l'application graphique, ou par un "
+"client du démon à la route ``training.save`` ; la ligne de commande ne "
+"pose pas de questions."
+msgstr ""
+"Διαβάζει ξανά το ημερολόγιο της καρτέλας Εκπαίδευση (βλ. "
+":ref:`panneau_entrainement`) και μετατρέπει τις λανθασμένες ερωτήσεις σε "
+"υλικό επανάληψης. Το ημερολόγιο γράφεται από τη γραφική εφαρμογή ή από "
+"έναν πελάτη του δαίμονα μέσω της διαδρομής ``training.save``· η γραμμή "
+"εντολών δεν θέτει ερωτήσεις."
+
+#: ../../source/cli.rst:1301
+msgid ""
+"**training sessions** — Les séances, la plus récente d'abord, avec leur "
+"identifiant ; le PR n'existe que pour *Décision*."
+msgstr ""
+"**training sessions** — Οι συνεδρίες, η πιο πρόσφατη πρώτη, με το "
+"αναγνωριστικό τους· το PR υπάρχει μόνο για την *Απόφαση*."
+
+#: ../../source/cli.rst:1310
+msgid ""
+"``--exercise <nom>`` — Un seul exercice : ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` ou ``decision``."
+msgstr ""
+"``--exercise <όνομα>`` — Μία μόνο άσκηση: ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` ή ``decision``."
+
+#: ../../source/cli.rst:1312
+msgid "``--limit <n>`` — Nombre de séances (défaut 20 ; 0 = toutes)."
+msgstr "``--limit <n>`` — Αριθμός συνεδριών (προεπιλογή 20· 0 = όλες)."
+
+#: ../../source/cli.rst:1313
+msgid "``--format text|json`` — Format de sortie."
+msgstr "``--format text|json`` — Μορφή εξόδου."
+
+#: ../../source/cli.rst:1315
+msgid ""
+"**training missed** — Les positions ratées, chacune une fois, la plus "
+"récemment ratée d'abord ; une question hors délai compte comme ratée. "
+"Seules les questions de *Décision* gardent leur position."
+msgstr ""
+"**training missed** — Οι λανθασμένες θέσεις, η καθεμία μία φορά, η πιο "
+"πρόσφατα λανθασμένη πρώτη· μια ερώτηση που έληξε ο χρόνος της μετράει ως "
+"λανθασμένη. Μόνο οι ερωτήσεις της *Απόφασης* κρατούν τη θέση τους."
+
+#: ../../source/cli.rst:1325
+msgid "``--exercise <nom>`` — Les séances d'un seul exercice."
+msgstr "``--exercise <όνομα>`` — Οι συνεδρίες μίας μόνο άσκησης."
+
+#: ../../source/cli.rst:1326
+msgid ""
+"``--session <id>`` — Une seule séance (un identifiant de ``training "
+"sessions``)."
+msgstr ""
+"``--session <id>`` — Μία μόνο συνεδρία (ένα αναγνωριστικό από το "
+"``training sessions``)."
+
+#: ../../source/cli.rst:1328
+msgid "``--limit <n>`` — Nombre de positions (défaut 0 = toutes)."
+msgstr "``--limit <n>`` — Αριθμός θέσεων (προεπιλογή 0 = όλες)."
+
+#: ../../source/cli.rst:1329
+msgid "``--deck <nom>`` — Crée un paquet Anki de ces positions."
+msgstr "``--deck <όνομα>`` — Δημιουργεί μια τράπουλα Anki με αυτές τις θέσεις."
+
+#: ../../source/cli.rst:1330
+msgid "``--collection <nom>`` — Crée une collection de ces positions."
+msgstr "``--collection <όνομα>`` — Δημιουργεί μια συλλογή με αυτές τις θέσεις."
+
+#: ../../source/cli.rst:1331
+msgid ""
+"``--format text|json`` — Format de sortie ; en JSON, ``PositionIDs``, et "
+"``DeckID`` ou ``CollectionID`` quand ils sont créés."
+msgstr ""
+"``--format text|json`` — Μορφή εξόδου· σε JSON, ``PositionIDs``, και "
+"``DeckID`` ή ``CollectionID`` όταν δημιουργούνται."
+
+#: ../../source/cli.rst:1294
 msgid "cubematrix — Matrice du videau"
 msgstr "cubematrix — Μήτρα του κύβου"
 
@@ -3654,6 +3738,43 @@ msgstr ""
 "Ό,τι είναι παλαιότερο από τριάντα ημέρες το διαγράφει η ``blunderdb "
 "vacuum`` — ποτέ το άνοιγμα μιας βάσης."
 
+#: ../../source/cli.rst:1941
+msgid "comment — Les commentaires d'une position"
+msgstr "comment — Τα σχόλια μιας θέσης"
+
+#: ../../source/cli.rst:1943
+msgid ""
+"Une position porte autant de commentaires qu'on veut, chacun signé de son"
+" auteur."
+msgstr ""
+"Μια θέση μπορεί να φέρει όσα σχόλια θέλετε, καθένα υπογεγραμμένο από τον "
+"συγγραφέα του."
+
+#: ../../source/cli.rst:1952
+msgid ""
+"``add --position N --text T [--author A]`` — Ajoute un commentaire à la "
+"position N, signé de A (sans ``--author``, il n'est pas signé)."
+msgstr ""
+"``add --position N --text T [--author A]`` — Προσθέτει ένα σχόλιο στη "
+"θέση N, υπογεγραμμένο από τον A (χωρίς ``--author``, δεν είναι "
+"υπογεγραμμένο)."
+
+#: ../../source/cli.rst:1954
+msgid ""
+"``list [--position N] [--author A]`` — Liste les commentaires d'une "
+"position, ou de toute la base, éventuellement ceux d'un seul auteur."
+msgstr ""
+"``list [--position N] [--author A]`` — Απαριθμεί τα σχόλια μιας θέσης ή "
+"ολόκληρης της βάσης, ενδεχομένως μόνο εκείνα ενός συγγραφέα."
+
+#: ../../source/cli.rst:1957
+msgid ""
+"**Options communes:** ``--db`` (obligatoire) ; ``list`` accepte "
+"``--format`` (``text`` ou ``json``)."
+msgstr ""
+"**Κοινές επιλογές:** ``--db`` (υποχρεωτική)· η ``list`` δέχεται "
+"``--format`` (``text`` ή ``json``)."
+
 #: ../../source/cli.rst:1890
 msgid "info — Métadonnées de la base"
 msgstr "info — Μεταδεδομένα της βάσης"
@@ -4503,3 +4624,4 @@ msgstr "Αυτό επιτρέπει τη χρήση της CLI σε σενάρι
 
 #~ msgid "Affiche les positions et analyses d'un match importé."
 #~ msgstr "Εμφανίζει τις θέσεις και τις αναλύσεις ενός εισαγμένου αγώνα."
+

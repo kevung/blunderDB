@@ -6094,6 +6094,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/training.missed:
+    post:
+      operationId: training.missed
+      tags: [training]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/storage_TrainingMissedFilter"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
   /v1/training.numberStats:
     post:
       operationId: training.numberStats
@@ -7033,6 +7053,9 @@ components:
           format: int64
         text:
           type: string
+        author:
+          type: string
+          nullable: true
     commentIDReq:
       type: object
       properties:
@@ -8367,6 +8390,9 @@ components:
     storage_TournamentBadge:
       type: object
       description: "Opaque: see the Go type storage.TournamentBadge (defined outside internal/server, not expanded here)."
+    storage_TrainingMissedFilter:
+      type: object
+      description: "Opaque: see the Go type storage.TrainingMissedFilter (defined outside internal/server, not expanded here)."
     storage_TrainingNumberStat:
       type: object
       description: "Opaque: see the Go type storage.TrainingNumberStat (defined outside internal/server, not expanded here)."

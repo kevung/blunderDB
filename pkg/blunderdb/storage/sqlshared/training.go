@@ -34,8 +34,10 @@ func (s *TrainingStore) Save(ctx context.Context, scope string, session storage.
 		}
 		for _, item := range session.Items {
 			icols, iargs := tx.TenantColumns(scope)
-			icols = append(icols, "session_id", "number_type", "wrong", "has_deviation", "deviation")
-			iargs = append(iargs, id, item.NumberType, tx.BoolArg(item.Wrong), tx.BoolArg(item.HasDeviation), item.Deviation)
+			icols = append(icols, "session_id", "number_type", "wrong", "has_deviation", "deviation",
+				"position_id", "answer", "error_mp")
+			iargs = append(iargs, id, item.NumberType, tx.BoolArg(item.Wrong), tx.BoolArg(item.HasDeviation), item.Deviation,
+				item.PositionID, item.Answer, item.ErrorMp)
 			if _, err := tx.Exec(ctx,
 				`INSERT INTO training_item (`+strings.Join(icols, ", ")+`) VALUES (`+Placeholders(len(icols))+`)`, iargs...); err != nil {
 				return err
@@ -122,6 +124,51 @@ func (s *TrainingStore) NumberStats(ctx context.Context, scope, exercise string)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, errf(s.DB, "aggregate the training items", err)
+	}
+	return out, nil
+}
+
+// Missed returns the positions answered wrong, each once, the most recently
+// missed first. Ordering by the last item, not the session, keeps a position
+// missed twice at the place of its latest miss.
+func (s *TrainingStore) Missed(ctx context.Context, scope string, filter storage.TrainingMissedFilter) ([]int64, error) {
+	itemTenant, itemArgs := s.DB.TenantFilter("i", scope)
+	sessionTenant, sessionArgs := s.DB.TenantFilter("s", scope)
+	positionTenant, positionArgs := s.DB.TenantFilter("p", scope)
+	where := itemTenant + " AND " + sessionTenant + " AND " + positionTenant +
+		" AND i.position_id IS NOT NULL AND " + s.DB.Bool("i.wrong", true)
+	args := append(append(append([]any{}, itemArgs...), sessionArgs...), positionArgs...)
+	if filter.Exercise != "" {
+		where += " AND s.exercise = ?"
+		args = append(args, filter.Exercise)
+	}
+	if filter.SessionID > 0 {
+		where += " AND i.session_id = ?"
+		args = append(args, filter.SessionID)
+	}
+	clause, largs := s.DB.LimitOffset(filter.Limit, 0)
+	rows, err := s.DB.Query(ctx,
+		`SELECT i.position_id
+		 FROM training_item i
+		 JOIN training_session s ON s.id = i.session_id
+		 JOIN position p ON p.id = i.position_id
+		 WHERE `+where+`
+		 GROUP BY i.position_id
+		 ORDER BY MAX(i.id) DESC`+clause, append(args, largs...)...)
+	if err != nil {
+		return nil, errf(s.DB, "list the missed questions", err)
+	}
+	defer rows.Close()
+	var out []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, errf(s.DB, "list the missed questions", err)
+		}
+		out = append(out, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "list the missed questions", err)
 	}
 	return out, nil
 }

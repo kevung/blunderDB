@@ -2421,6 +2421,89 @@ msgstr ""
 " application uses the board palette chosen on screen."
 
 #: ../../source/cli.rst:1294
+msgid "training — Le journal d'entraînement"
+msgstr "training — The training log"
+
+#: ../../source/cli.rst:1296
+msgid ""
+"Relit le journal de l'onglet Entraînement (voir "
+":ref:`panneau_entrainement`) et fait des questions ratées de quoi "
+"réviser. Le journal est écrit par l'application graphique, ou par un "
+"client du démon à la route ``training.save`` ; la ligne de commande ne "
+"pose pas de questions."
+msgstr ""
+"Reads back the log of the Training tab (see :ref:`panneau_entrainement`) "
+"and turns missed questions into something to review. The log is written "
+"by the graphical application, or by a daemon client through the "
+"``training.save`` route; the command line does not ask questions."
+
+#: ../../source/cli.rst:1301
+msgid ""
+"**training sessions** — Les séances, la plus récente d'abord, avec leur "
+"identifiant ; le PR n'existe que pour *Décision*."
+msgstr ""
+"**training sessions** — The sessions, most recent first, with their "
+"identifier; the PR exists only for *Decision*."
+
+#: ../../source/cli.rst:1310
+msgid ""
+"``--exercise <nom>`` — Un seul exercice : ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` ou ``decision``."
+msgstr ""
+"``--exercise <name>`` — A single exercise: ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` or ``decision``."
+
+#: ../../source/cli.rst:1312
+msgid "``--limit <n>`` — Nombre de séances (défaut 20 ; 0 = toutes)."
+msgstr "``--limit <n>`` — Number of sessions (default 20; 0 = all)."
+
+#: ../../source/cli.rst:1313
+msgid "``--format text|json`` — Format de sortie."
+msgstr "``--format text|json`` — Output format."
+
+#: ../../source/cli.rst:1315
+msgid ""
+"**training missed** — Les positions ratées, chacune une fois, la plus "
+"récemment ratée d'abord ; une question hors délai compte comme ratée. "
+"Seules les questions de *Décision* gardent leur position."
+msgstr ""
+"**training missed** — The missed positions, each once, most recently "
+"missed first; a question that timed out counts as missed. Only *Decision*"
+" questions keep their position."
+
+#: ../../source/cli.rst:1325
+msgid "``--exercise <nom>`` — Les séances d'un seul exercice."
+msgstr "``--exercise <name>`` — The sessions of a single exercise."
+
+#: ../../source/cli.rst:1326
+msgid ""
+"``--session <id>`` — Une seule séance (un identifiant de ``training "
+"sessions``)."
+msgstr ""
+"``--session <id>`` — A single session (an identifier from ``training "
+"sessions``)."
+
+#: ../../source/cli.rst:1328
+msgid "``--limit <n>`` — Nombre de positions (défaut 0 = toutes)."
+msgstr "``--limit <n>`` — Number of positions (default 0 = all)."
+
+#: ../../source/cli.rst:1329
+msgid "``--deck <nom>`` — Crée un paquet Anki de ces positions."
+msgstr "``--deck <name>`` — Creates an Anki deck of these positions."
+
+#: ../../source/cli.rst:1330
+msgid "``--collection <nom>`` — Crée une collection de ces positions."
+msgstr "``--collection <name>`` — Creates a collection of these positions."
+
+#: ../../source/cli.rst:1331
+msgid ""
+"``--format text|json`` — Format de sortie ; en JSON, ``PositionIDs``, et "
+"``DeckID`` ou ``CollectionID`` quand ils sont créés."
+msgstr ""
+"``--format text|json`` — Output format; in JSON, ``PositionIDs``, and "
+"``DeckID`` or ``CollectionID`` when they are created."
+
+#: ../../source/cli.rst:1294
 msgid "cubematrix — Matrice du videau"
 msgstr "cubematrix — Cube matrix"
 
@@ -3526,6 +3609,42 @@ msgstr ""
 "Anything older than thirty days is dropped by ``blunderdb vacuum`` — "
 "never on opening a database."
 
+#: ../../source/cli.rst:1941
+msgid "comment — Les commentaires d'une position"
+msgstr "comment — The comments of a position"
+
+#: ../../source/cli.rst:1943
+msgid ""
+"Une position porte autant de commentaires qu'on veut, chacun signé de son"
+" auteur."
+msgstr ""
+"A position carries as many comments as you like, each signed by its "
+"author."
+
+#: ../../source/cli.rst:1952
+msgid ""
+"``add --position N --text T [--author A]`` — Ajoute un commentaire à la "
+"position N, signé de A (sans ``--author``, il n'est pas signé)."
+msgstr ""
+"``add --position N --text T [--author A]`` — Adds a comment to position "
+"N, signed A (without ``--author``, it is unsigned)."
+
+#: ../../source/cli.rst:1954
+msgid ""
+"``list [--position N] [--author A]`` — Liste les commentaires d'une "
+"position, ou de toute la base, éventuellement ceux d'un seul auteur."
+msgstr ""
+"``list [--position N] [--author A]`` — Lists the comments of a position, "
+"or of the whole database, optionally those of a single author."
+
+#: ../../source/cli.rst:1957
+msgid ""
+"**Options communes:** ``--db`` (obligatoire) ; ``list`` accepte "
+"``--format`` (``text`` ou ``json``)."
+msgstr ""
+"**Common options:** ``--db`` (required); ``list`` accepts ``--format`` "
+"(``text`` or ``json``)."
+
 #: ../../source/cli.rst:1890
 msgid "info — Métadonnées de la base"
 msgstr "info — Database metadata"
@@ -4341,3 +4460,4 @@ msgstr "This makes the CLI suitable for use in scripts with error handling:"
 
 #~ msgid "Affiche les positions et analyses d'un match importé."
 #~ msgstr "Display positions and analysis of an imported match."
+

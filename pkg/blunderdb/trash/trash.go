@@ -199,7 +199,7 @@ func restorePosition(ctx context.Context, s storage.Stores, scope string, entry 
 		if c.Text == "" || existing[c.Text] {
 			continue
 		}
-		if _, err := s.Comments().AddFrom(ctx, scope, id, c.Text, c.Origin); err != nil {
+		if _, err := s.Comments().AddFrom(storage.WithCommentAuthor(ctx, c.Author), scope, id, c.Text, c.Origin); err != nil {
 			return 0, err
 		}
 	}
@@ -243,7 +243,7 @@ func restoreComment(ctx context.Context, s storage.Stores, scope string, entry *
 	if _, err := s.Positions().Load(ctx, scope, payload.Comment.PositionID); err != nil {
 		return 0, fmt.Errorf("restoring a comment on position %d: %w", payload.Comment.PositionID, err)
 	}
-	return s.Comments().AddFrom(ctx, scope, payload.Comment.PositionID,
+	return s.Comments().AddFrom(storage.WithCommentAuthor(ctx, payload.Comment.Author), scope, payload.Comment.PositionID,
 		payload.Comment.Text, payload.Comment.Origin)
 }
 

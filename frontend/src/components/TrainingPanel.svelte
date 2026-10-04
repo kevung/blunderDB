@@ -28,6 +28,7 @@
     } from '../services/trainingTabService.js';
     import { logger } from '../utils/logger.js';
     import { numberTypeLabelKey } from '../services/trainingLabels.js';
+    import { retakeMissed, missedToDeck, missedToCollection } from '../services/trainingMissed.js';
     import ScoreCard from './ScoreCard.svelte';
     import ExplanationLine from './ExplanationLine.svelte';
     import TrainingNumberCell from './TrainingNumberCell.svelte';
@@ -511,6 +512,14 @@
                             </li>
                         {/each}
                     </ul>
+                    {#if item.id === 'decision'}
+                        <!-- Les ratés gardent leur position au journal : on y revient en un clic. -->
+                        <div class="actions missed" data-testid="training-missed">
+                            <button type="button" data-testid="training-missed-retake" onclick={retakeMissed}>{$t('training.missedRetake')}</button>
+                            <button type="button" data-testid="training-missed-deck" onclick={missedToDeck}>{$t('training.missedDeck')}</button>
+                            <button type="button" data-testid="training-missed-collection" onclick={missedToCollection}>{$t('training.missedCollection')}</button>
+                        </div>
+                    {/if}
                 {/if}
             {/each}
         </div>

@@ -288,6 +288,12 @@
       }
     },
     {
+      "command": "s au\"Alice\"",
+      "expected": {
+        "commentAuthorFilter": "au\"Alice\""
+      }
+    },
+    {
       "command": "s co:user",
       "expected": {
         "commentOriginFilter": "user"

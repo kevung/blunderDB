@@ -632,10 +632,10 @@ func (e *exporter) writeBatch(positions []*domain.Position) error {
 			}
 		}
 		for _, c := range comments[p.ID] {
+			cols, marks, args := carriedComment(c)
 			if _, err := e.tx.ExecContext(e.ctx,
-				`INSERT INTO comment (position_id, text, created_at, modified_at)
-				 VALUES (?, ?, COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP), NULLIF(?, ''))`,
-				newID, c.Text, c.CreatedAt, c.ModifiedAt); err != nil {
+				`INSERT INTO comment (position_id, `+strings.Join(cols, ", ")+`) VALUES (?, `+strings.Join(marks, ", ")+`)`,
+				append([]any{newID}, args...)...); err != nil {
 				e.skip("inserting comment for position", "newID", newID, "oldID", p.ID, "err", err)
 				continue
 			}
@@ -1113,4 +1113,26 @@ func remapIDList(csv string, m map[int64]int64) string {
 		}
 	}
 	return strings.Join(out, ",")
+}
+
+// carriedComment spells the INSERT of one exported comment from the
+// issuance.CarriedCommentColumns allow-list: a column it does not name is not
+// copied, and a name it adds without a value here fails the export loudly.
+func carriedComment(c *domain.CommentEntry) (cols, marks []string, args []any) {
+	for _, col := range issuance.CarriedCommentColumns {
+		switch col {
+		case "text":
+			marks, args = append(marks, "?"), append(args, c.Text)
+		case "created_at":
+			marks, args = append(marks, "COALESCE(NULLIF(?, ''), CURRENT_TIMESTAMP)"), append(args, c.CreatedAt)
+		case "modified_at":
+			marks, args = append(marks, "NULLIF(?, '')"), append(args, c.ModifiedAt)
+		case "author":
+			marks, args = append(marks, "?"), append(args, c.Author)
+		default:
+			panic("issuance.CarriedCommentColumns names " + col + ", which the export does not know how to copy")
+		}
+		cols = append(cols, col)
+	}
+	return cols, marks, args
 }

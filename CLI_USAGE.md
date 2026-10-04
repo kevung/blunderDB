@@ -44,6 +44,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `collection` - Manage collections (list, show, create, rename, delete, export)
 - `anki` - Spaced-repetition decks (decks, stats, forecast, sync)
 - `stats` - Statistics computed apart from list --type stats (recurring)
+- `training` - The Training journal (sessions, missed positions)
 - `cubematrix` - Cube verdict at every score of a match, for one position
 - `epc` - EPC, win probability and money cube verdict (bearoff)
 - `rollout` - Roll out a position's plays or cube decision (gammonNet)
@@ -59,6 +60,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `vacuum` - Compact the database file, reclaiming freed space
 - `repair` - Recompute the analysis columns from the analyses themselves
 - `delete` - Delete data from the database
+- `comment` - Comments on a position, signed by their author (add, list)
 - `trash` - What was deleted through the trash, and how to put it back
 - `completion` - Print a shell completion script (bash, zsh, fish)
 - `help` - Show this help message
@@ -828,6 +830,43 @@ the share of the filter's PR the group accounts for.
 ```bash
 ./blunderDB stats recurring --db database.db --player "Alice"
 ./blunderDB stats recurring --db database.db --decision-type checker --format json
+```
+
+## Training Command
+
+Read back the journal of the Training tab and turn the missed questions into
+study material. The journal is written by the GUI, or by a daemon client over
+`training.save`; the CLI asks no question itself.
+
+```bash
+./blunderDB training sessions --db <file> [--exercise <name>] [--limit <n>] [--format json]
+./blunderDB training missed --db <file> [--session <id>] [--deck <name>] [--collection <name>]
+```
+
+`training sessions` lists the sessions, most recent first, with the id
+`--session` takes; the PR exists for the Decision exercise only.
+`training missed` returns the positions answered wrong, each once, the most
+recently missed first — a question that ran out of time counts as missed; only
+Decision questions keep their position. `--deck` makes an Anki deck of them,
+`--collection` a collection.
+
+```bash
+./blunderDB training missed --db database.db --session 12 --deck "Monday's misses"
+./blunderDB training missed --db database.db --collection "My misses" --format json
+```
+
+## Comment Command
+
+Several people can annotate the same database: each comment is signed by whoever
+wrote it, so a coach's notes and a student's questions stay apart. `--author`
+signs what `add` writes (without it, the comment is unsigned); on `list` it keeps
+one author's comments, whole name and any case, as the search's `au"…"` token
+does. An import keeps the source's signatures and never signs in the importer's
+name.
+
+```bash
+./blunderDB comment add --db base.db --position 412 --text "Cube too early" --author Alice
+./blunderDB comment list --db base.db --author alice --format json
 ```
 
 ## Anki Command
@@ -2315,6 +2354,49 @@ Examples:
   blunderdb collection show --db database.db --id 3 --format json
 ```
 
+### `blunderdb comment add`
+
+```
+Usage: blunderdb comment add [options]
+
+Add a comment to a position.
+
+Options:
+  -author string
+    	Who signs the comment (empty: unsigned)
+  -db string
+    	Path to the database file (required)
+  -position int
+    	Position id (required)
+  -text string
+    	Comment text (required)
+
+Examples:
+  blunderdb comment add --db database.db --position 412 --text "Cube too early" --author Alice
+```
+
+### `blunderdb comment list`
+
+```
+Usage: blunderdb comment list [options]
+
+List the comments of a position, or of the whole database.
+
+Options:
+  -author string
+    	Only the comments signed by this author (whole name, any case)
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -position int
+    	Only the comments of this position id (0: every position)
+
+Examples:
+  blunderdb comment list --db database.db --position 412
+  blunderdb comment list --db database.db --author Alice --format json
+```
+
 ### `blunderdb completion`
 
 ```
@@ -3272,6 +3354,8 @@ Search for positions in the database using filters.
 Options:
   -analysis string
     	Engines and depths of the stored verdict, comma-separated: xg, gnubg, bgblitz, hedgehog, gammonnet, 3ply, 3ply+, book, rollout (ad:)
+  -comment-author string
+    	Only positions carrying a comment signed by this author (whole name, any case)
   -comment-origin string
     	Only positions carrying a comment from these origins, comma-separated: user, xg, gnubg, bgf, unknown
   -cube int
@@ -3889,6 +3973,62 @@ Options:
 Examples:
   blunderdb tournament verify --db base.db --id 3
   blunderdb tournament verify --db base.db --id 3 --format json
+```
+
+### `blunderdb training missed`
+
+```
+Usage: blunderdb training missed --db <file> [options]
+
+The positions answered wrong in the Training journal, each once, the most
+recently missed first. A question that ran out of time counts as missed.
+Only the Decision exercise records the position of each question, so only
+its sessions have missed positions.
+--deck and --collection turn them into study material.
+
+Options:
+  -collection string
+    	Make a collection of these positions, with this name
+  -db string
+    	Path to the database file (required)
+  -deck string
+    	Make an Anki deck of these positions, with this name
+  -exercise string
+    	Only this exercise's sessions (decision: the only exercise that records its positions)
+  -format string
+    	Output format: text or json (default "text")
+  -limit int
+    	Number of positions (0 = all)
+  -session training sessions
+    	Only this session (an id from training sessions)
+
+Examples:
+  blunderdb training missed --db database.db
+  blunderdb training missed --db database.db --session 12 --deck "Missed on Monday"
+  blunderdb training missed --db database.db --collection "My misses" --format json
+```
+
+### `blunderdb training sessions`
+
+```
+Usage: blunderdb training sessions --db <file> [options]
+
+The sessions of the Training journal, most recent first, with their id
+(for `training missed --session`). PR is the Decision exercise's only.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -exercise string
+    	Only this exercise (scores, pips, bearoff, evaluation, decision)
+  -format string
+    	Output format: text or json (default "text")
+  -limit int
+    	Number of sessions shown (0 = all) (default 20)
+
+Examples:
+  blunderdb training sessions --db database.db
+  blunderdb training sessions --db database.db --exercise decision --format json
 ```
 
 ### `blunderdb transcribe`

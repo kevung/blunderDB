@@ -203,7 +203,8 @@ export default {
 <p>Il risultato è <strong>salvato accanto all'analisi, mai al suo posto</strong>: un'analisi importata non viene modificata. Ogni rollout forma un blocco con, per ogni candidata, l'equity, l'intervallo di confidenza al 95 %, la <strong>JSD</strong> (la distanza dalla mossa migliore in deviazioni standard della differenza: dal limite in poi, la mossa è decisa e non viene più giocata) e il numero di partite. Il rollout si ferma appena le mosse sono distinte. La <strong>Configurazione</strong> — il motore e la firma completa dei parametri — si apre sotto la tabella: due rollout con la stessa firma sono gli stessi numeri. Un rollout gioca il videau nelle sue partite: la classifica è affidabile, l'equity assoluta un po' meno, come ricorda il blocco. Una posizione che non è nel database si può rollare, ma non si salva.</p>
 <p>Il pulsante <strong>Sulla lista mostrata…</strong> (o <code>ro search</code>) rolla, una dopo l'altra, le posizioni della lista mostrata — risultati di ricerca, partita o raccolta — che non portano ancora questo rollout; una conferma indica il totale prima di iniziare. Ogni posizione è scritta appena finita: annullare conserva quanto fatto, e rilanciare riprende da dove ci si è fermati. L'avanzamento sopravvive alla chiusura del pannello.</p>
 <h3>Pannello Commenti</h3>
-<p>Il pannello <strong>Commenti</strong> (<em>CTRL-P</em>) mostra, aggiunge e modifica i commenti associati alla posizione corrente. Una posizione può portarne più d'uno: sono mostrati tutti, dal più recente al più antico. I commenti importati dai file XG vengono associati automaticamente alle posizioni corrispondenti. Premere <em>CTRL-P</em> o eseguire il comando <code>comment</code> per mostrare o nascondere il pannello.</p>
+<p>Il pannello <strong>Commenti</strong> (<em>CTRL-P</em>) mostra, aggiunge e modifica i commenti associati alla posizione corrente. Una posizione può averne diversi, scritti da persone diverse: sono tutti mostrati in un thread, dal più recente al più vecchio, ciascuno con il nome del suo autore, e i vostri vengono per primi. I commenti importati dai file XG sono associati automaticamente alle posizioni corrispondenti. Premere <em>CTRL-P</em> o eseguire il comando <code>comment</code> per mostrare o nascondere il pannello.</p>
+<p>Il nome che firma i vostri commenti si imposta nelle preferenze, scheda <em>Interfaccia</em>, campo <strong>Il vostro nome</strong>; se è vuoto, i vostri commenti non sono firmati. I commenti di un'importazione XG sono firmati <code>XG</code>, quelli di un file di partita con il nome del suo trascrittore. Riscrivere un commento lo firma con il vostro nome. La ricerca <code>au"Alice"</code> trattiene le posizioni che Alice ha commentato; fuori dall'interfaccia, <code>blunderdb comment add --author</code> scrive un commento firmato e <code>blunderdb comment list</code> li rilegge (vedere Interfaccia a riga di comando (CLI)).</p>
 <p>Ogni commento proveniente da un file porta un'<strong>etichetta di provenienza</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, oppure <em>importato</em> quando la provenienza non è mai stata registrata). I commenti che hai scritto non ne portano: è il caso normale, e segnalarlo a ogni riga sarebbe rumore. Modificare un commento importato te lo attribuisce: dopo la modifica, la frase è la tua.</p>
 <p>Questa distinzione si vede altrove: cancellare una partita non distrugge più una posizione su cui <strong>tu</strong> avevi scritto. Una nota ripresa dal file di origine, invece, sparisce con la partita che l'ha portata.</p>
 <h4>I tag</h4>
@@ -872,6 +873,13 @@ export default {
 <p>Le sessioni terminate sono conservate nella base stessa — seguono quindi il file — e senza limite. A riposo, il pannello mostra una riga per esercizio: il numero di sessioni, il tasso di errori, il tempo mediano e, a partire da dieci sessioni, la <strong>tendenza</strong>, cioè lo scarto tra il tasso di errori delle ultime dieci sessioni e quello di tutte — negativo, lei sta migliorando.</p>
 <p>Per <em>Décision</em>, la riga dà anche il <strong>PR</strong> dell'ultima sessione, calcolato con la formula che le statistiche applicano al gioco reale — 500 × errore medio in equità normalizzata, sulle decisioni giudicate. Un PR di allenamento di 6 e un PR di incontro di 6 misurano la stessa cosa sulla stessa scala.</p>
 <p>Facendo clic sul nome dell'esercizio si apre il dettaglio <strong>per tipo di numero</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». È questo dettaglio a dare valore al diario, e conta per tipo e non per faccia: la stessa casella della stessa tabella, vista da un lato o dall'altro, è una sola debolezza.</p>
+<p>Una domanda di <em>Decisione</em> conserva nel registro la sua posizione, la risposta data e il suo costo in millipunti. Il dettaglio di <em>Decisione</em> include quindi tre pulsanti che agiscono su tutte le posizioni sbagliate, ciascuna una volta, la sbagliata più di recente per prima — una domanda scaduta conta come sbagliata:</p>
+<ul>
+<li><strong>Riprendi i miei errori</strong> — le posizioni sbagliate diventano la lista scorsa e una sessione <em>Decisione</em> riparte su di esse;</li>
+<li><strong>Mazzo Anki degli errori</strong> — un mazzo Anki con queste posizioni;</li>
+<li><strong>Collezione degli errori</strong> — una collezione con queste posizioni.</li>
+</ul>
+<p>Il mazzo e la collezione si chiamano «Errori in Decisione» seguito dalla data odierna. Da riga di comando, <code>training missed</code> restituisce la stessa lista e ne fa un mazzo (<code>--deck</code>) o una collezione (<code>--collection</code>), e <code>training sessions</code> rilegge il registro (vedi training — Il registro di allenamento).</p>
 <h3>Pannello Metadati</h3>
 <p>Il pannello <strong>Metadati</strong> visualizza le informazioni generali del database corrente: nome, descrizione, numero di posizioni, numero di match e di partite, versione dello schema. Accessibile tramite il comando <code>meta</code>.</p>
 <p>Mostra inoltre, <strong>quando esiste</strong>, l'origine del database — vedere Distribuire un database: origine e password. Un database ordinario non mostra questa sezione.</p>
@@ -2487,6 +2495,11 @@ export default {
 <td>co:user</td>
 <td>La posizione porta un commento di una data provenienza: <code>user</code> (scritto da te), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (portato dall'importazione di una partita) o <code>unknown</code>. Ripetibile (<code>co:xg co:gnubg</code>).</td>
 <td><code>--comment-origin</code></td>
+</tr>
+<tr>
+<td><code>au'Alice'</code></td>
+<td>La posizione ha un commento firmato da questo autore (nome intero, senza distinzione tra maiuscole e minuscole).</td>
+<td><code>--comment-author</code></td>
 </tr>
 <tr>
 <td><code>m'schema1,schema2,...'</code></td>

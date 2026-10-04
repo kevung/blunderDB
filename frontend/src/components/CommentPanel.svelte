@@ -6,6 +6,7 @@
     import { currentPositionIndexStore } from '../stores/uiStore';
     import { positionStore } from '../stores/positionStore';
     import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, TrashCommentEntry, Tags, RecommendedTags } from '../../wailsjs/go/database/Database.js';
+    import { GetCommentAuthor } from '../../wailsjs/go/main/Config.js';
     import { MODAL, openModal } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { t } from '../i18n';
@@ -14,6 +15,8 @@
     let allComments = $state([]);
     let searchQuery = $state('');
     let displayedComments = $state([]);
+    // « Votre nom »: the thread of a position lists the user's own comments first.
+    let myName = $state('');
     let feedEl;
     let promptEl;
     let editingCommentId = $state(null);
@@ -93,6 +96,9 @@
         if (visible) {
             loadComments();
             loadTagVocabulary();
+            GetCommentAuthor()
+                .then((n) => (myName = n || ''))
+                .catch(() => (myName = ''));
             if (promptEl) promptEl.focus();
         }
     });
@@ -106,9 +112,20 @@
         if (searchQuery.trim()) {
             filterComments(searchQuery.trim());
         } else {
-            displayedComments = allComments;
+            displayedComments = ownFirst(allComments, myName);
         }
     });
+
+    /**
+     * Own comments first, each group keeping the server's order. Without a name
+     * set, nothing is "mine" and the order is untouched.
+     * @param {any[]} list
+     * @param {string} me
+     */
+    function ownFirst(list, me) {
+        if (!me) return list;
+        return [...list.filter((c) => c.author === me), ...list.filter((c) => c.author !== me)];
+    }
 
     // Provenance: 'user', 'xg'/'gnubg'/'bgf' or 'unknown'; the user's own notes get no badge.
     function originLabel(origin) {
@@ -349,6 +366,9 @@
                                     ? formatDate(comment.modifiedAt) + ' ' + $t('comment.editedSuffix')
                                     : formatDate(comment.createdAt)}</span
                             >
+                            {#if comment.author}
+                                <span class="msg-author">{comment.author}{myName && comment.author === myName ? ' (' + $t('comment.you') + ')' : ''}</span>
+                            {/if}
                             <!-- Only for a note the user did not write. -->
                             {#if originLabel(comment.origin)}
                                 <span class="msg-origin" title={originTitle(comment.origin)}>{originLabel(comment.origin)}</span>
@@ -529,6 +549,11 @@
         font-size: var(--font-size-small);
         color: var(--color-text-muted);
         font-style: italic;
+    }
+    .msg-author {
+        font-size: var(--font-size-small);
+        font-weight: 600;
+        color: var(--color-text);
     }
     .msg-origin {
         font-size: var(--font-size-small);
