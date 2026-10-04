@@ -74,7 +74,7 @@ func demoAnalysisBlobs(t testing.TB) map[int64][]byte {
 	return out
 }
 
-// requireExactRoundTrip encodes a in the binary format at both levels and
+// requireExactRoundTrip encodes a in the binary format and
 // requires the very same value back: DeepEqual (floats bit for bit, nil and
 // empty slices apart, time zones) and the same JSON.
 func requireExactRoundTrip(t *testing.T, name string, a domain.PositionAnalysis) {
@@ -87,11 +87,7 @@ func requireExactRoundTrip(t *testing.T, name string, a domain.PositionAnalysis)
 	if err != nil {
 		t.Fatalf("%s: encode: %v", name, err)
 	}
-	compact, err := CompactAnalysisData(fast)
-	if err != nil {
-		t.Fatalf("%s: compact: %v", name, err)
-	}
-	for level, blob := range map[string][]byte{"level 7": fast, "level 19": compact} {
+	for level, blob := range map[string][]byte{"level 7": fast} {
 		if !isBinaryBlob(blob) || NeedsRecompression(blob) {
 			t.Fatalf("%s %s: not a binary blob", name, level)
 		}
@@ -361,10 +357,10 @@ func TestLegacyBlobsUpgradeToBinary(t *testing.T) {
 		"zlib": zlibCompressForFuzzSeed(js),
 		"zstd": legacyZstdJSON(t, js),
 	} {
-		if !NeedsRecompression(blob) || !NeedsCompaction(blob) {
+		if !NeedsRecompression(blob) {
 			t.Fatalf("%s: legacy blob not flagged for upgrade", name)
 		}
-		for step, up := range map[string]func([]byte) ([]byte, error){"recompress": RecompressAnalysisData, "compact": CompactAnalysisData} {
+		for step, up := range map[string]func([]byte) ([]byte, error){"recompress": RecompressAnalysisData} {
 			out, err := up(blob)
 			if err != nil {
 				t.Fatalf("%s %s: %v", name, step, err)

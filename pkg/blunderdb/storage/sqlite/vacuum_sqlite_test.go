@@ -4,11 +4,14 @@ import (
 	"bytes"
 	"compress/zlib"
 	"context"
+	"encoding/json"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
@@ -120,10 +123,33 @@ func TestVacuum_RecompressesLegacyAnalysisBlobs(t *testing.T) {
 	}
 	pos3ID, _ := pos3.LastInsertId()
 
-	rawJSON := []byte(`{"xgid":"raw-json-legacy"}`)
+	zero := 0.0
+	full := func(xgid string) domain.PositionAnalysis {
+		return domain.PositionAnalysis{
+			XGID: xgid, Player1: "Alice", Player2: "Bob",
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{PlayerWinChances: 51.2, OpponentWinChances: 48.8},
+			CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+				{Move: "8/2 6/2", Equity: 0.25}, {Move: "13/7", Equity: 0.1, EquityError: &zero},
+			}},
+			PlayedMoves: []string{"8/2 6/2"},
+		}
+	}
+	// What each row must decode to before and after Vacuum.
+	wantAnalysis := map[string]domain.PositionAnalysis{
+		"raw JSON row": full("raw-json-legacy"), "zlib row": full("zlib-legacy"),
+		"binary level-7 row": full("zstd-write-path"),
+	}
+	rawJSON, err := json.Marshal(ptr(wantAnalysis["raw JSON row"]))
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	zlibJSON, err := json.Marshal(ptr(wantAnalysis["zlib row"]))
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
 	var zlibBuf bytes.Buffer
 	zw := zlib.NewWriter(&zlibBuf)
-	if _, err := zw.Write([]byte(`{"xgid":"zlib-legacy"}`)); err != nil {
+	if _, err := zw.Write(zlibJSON); err != nil {
 		t.Fatalf("zlib write: %v", err)
 	}
 	if err := zw.Close(); err != nil {
@@ -132,15 +158,21 @@ func TestVacuum_RecompressesLegacyAnalysisBlobs(t *testing.T) {
 
 	rawID := insertLegacyAnalysis(t, st, pos1ID, rawJSON)
 	zlibID := insertLegacyAnalysis(t, st, pos2ID, zlibBuf.Bytes())
-	// The import path writes zstd level 7; compaction rewrites it at 19.
-	fast, err := engine.CompressAnalysisData([]byte(`{"xgid":"zstd-write-path"}`))
+	// A write-path blob is already binary: Vacuum must leave it byte for byte.
+	fastJSON, err := json.Marshal(ptr(wantAnalysis["binary level-7 row"]))
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	fast, err := engine.CompressAnalysisData(fastJSON)
 	if err != nil {
 		t.Fatalf("compress: %v", err)
 	}
-	if !engine.NeedsCompaction(fast) {
-		t.Fatal("a write-path blob already counts as compacted")
+	if engine.NeedsRecompression(fast) {
+		t.Fatal("a write-path blob counts as legacy")
 	}
 	fastID := insertLegacyAnalysis(t, st, pos3ID, fast)
+
+	original := map[string][]byte{"raw JSON row": rawJSON, "zlib row": zlibBuf.Bytes(), "binary level-7 row": fast}
 
 	if _, err := st.Vacuum(ctx); err != nil {
 		t.Fatalf("Vacuum: %v", err)
@@ -153,14 +185,14 @@ func TestVacuum_RecompressesLegacyAnalysisBlobs(t *testing.T) {
 	}{
 		{"raw JSON row", rawID, "raw-json-legacy"},
 		{"zlib row", zlibID, "zlib-legacy"},
-		{"zstd level-7 row", fastID, "zstd-write-path"},
+		{"binary level-7 row", fastID, "zstd-write-path"},
 	} {
 		var data []byte
 		if err := st.sqlDB.QueryRow(`SELECT data FROM analysis WHERE id = ?`, tc.id).Scan(&data); err != nil {
 			t.Fatalf("%s: select: %v", tc.name, err)
 		}
-		if engine.NeedsCompaction(data) {
-			t.Errorf("%s: not compacted after Vacuum: %q", tc.name, data[:min(5, len(data))])
+		if engine.NeedsRecompression(data) {
+			t.Errorf("%s: not re-encoded after Vacuum: %q", tc.name, data[:min(5, len(data))])
 		}
 		a, err := engine.DecodeAnalysisFromStorage(data)
 		if err != nil {
@@ -169,6 +201,24 @@ func TestVacuum_RecompressesLegacyAnalysisBlobs(t *testing.T) {
 		if a.XGID != tc.want {
 			t.Errorf("%s: XGID = %q, want %q", tc.name, a.XGID, tc.want)
 		}
+		// The whole analysis, not just its key: checker, cube and moves.
+		want := wantAnalysis[tc.name]
+		before, err := engine.DecodeAnalysisFromStorage(original[tc.name])
+		if err != nil {
+			t.Fatalf("%s: decode original: %v", tc.name, err)
+		}
+		if !reflect.DeepEqual(a, before) || a.CheckerAnalysis == nil || len(a.CheckerAnalysis.Moves) != len(want.CheckerAnalysis.Moves) ||
+			a.DoublingCubeAnalysis == nil || len(a.PlayedMoves) != 1 {
+			t.Errorf("%s: decodes differently after Vacuum\n got %+v\nwant %+v", tc.name, a, before)
+		}
+	}
+
+	var fastAfter []byte
+	if err := st.sqlDB.QueryRow(`SELECT data FROM analysis WHERE id = ?`, fastID).Scan(&fastAfter); err != nil {
+		t.Fatalf("select binary row: %v", err)
+	}
+	if !bytes.Equal(fast, fastAfter) {
+		t.Errorf("Vacuum rewrote a binary blob")
 	}
 
 	// A second Vacuum must not touch already-current rows (nothing to
@@ -241,3 +291,5 @@ func TestVacuum_KeepsPoolTempStoreInMemory(t *testing.T) {
 		t.Errorf("pool temp_store = %d after Vacuum, want 2 (MEMORY)", mode)
 	}
 }
+
+func ptr[T any](v T) *T { return &v }

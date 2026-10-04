@@ -45,21 +45,26 @@ func ReencodeAnalyses(ctx context.Context, db Execer, scope string, after int64,
 		return 0, 0, nil
 	}
 
+	blobs := make([][]byte, len(page))
+	for i, r := range page {
+		blobs[i] = r.data
+	}
+	fresh, encErrs := engine.RecompressAnalysesConcurrently(blobs)
+
 	rewritten := 0
 	err = db.Transact(ctx, func(tx Execer) error {
-		for _, r := range page {
+		for i, r := range page {
 			if !engine.NeedsRecompression(r.data) {
 				continue
 			}
-			fresh, err := engine.RecompressAnalysisData(r.data)
-			if err != nil {
+			if encErrs[i] != nil {
 				// Left as it is: its bytes are the only trace of that analysis.
 				slog.Warn("reencode analyses: blob does not decode, left as is",
-					"position_id", r.id, "err", err)
+					"position_id", r.id, "err", encErrs[i])
 				continue
 			}
 			utenant, uargs := tx.TenantFilter("", scope)
-			args := append([]any{fresh}, uargs...)
+			args := append([]any{fresh[i]}, uargs...)
 			if _, err := tx.Exec(ctx, `UPDATE analysis SET data = ? WHERE `+utenant+` AND position_id = ?`,
 				append(args, r.id)...); err != nil {
 				return err

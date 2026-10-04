@@ -3,7 +3,9 @@ package engine
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"math"
+	"reflect"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -454,53 +456,74 @@ func TestBearoffIndexAndRollDistribution(t *testing.T) {
 	}
 }
 
-// TestCompactAnalysisData : un blob écrit par le chemin d'import (binaire,
-// zstd 7 sans somme de contrôle) se relit, la compaction le réécrit en zstd 19 avec le même
-// contenu, et une seconde compaction ne réécrit rien.
-func TestCompactAnalysisData(t *testing.T) {
-	raw, err := json.Marshal(&domain.PositionAnalysis{XGID: "XGID=compact", Player1: "Bob"})
-	if err != nil {
-		t.Fatal(err)
+// TestRecompressAnalysesConcurrently : le passage en masse rend, à l'indice
+// de chaque blob, ce que RecompressAnalysisData rend seul : un blob hérité
+// devient binaire avec le même contenu, un blob binaire reste identique, un
+// blob illisible est signalé sans gêner les autres.
+func TestRecompressAnalysesConcurrently(t *testing.T) {
+	var blobs [][]byte
+	var want []string
+	for i := 0; i < 40; i++ {
+		xgid := fmt.Sprintf("XGID=bulk-%d", i)
+		full := fullTestAnalysis(xgid)
+		raw, err := json.Marshal(&full)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if i%3 == 0 {
+			bin, err := CompressAnalysisData(raw)
+			if err != nil {
+				t.Fatal(err)
+			}
+			raw = bin
+		}
+		blobs = append(blobs, raw)
+		want = append(want, xgid)
 	}
-	fast, err := CompressAnalysisData(raw)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if NeedsRecompression(fast) {
-		t.Error("un blob zstd 7 est pris pour un format hérité")
-	}
-	if !NeedsCompaction(fast) {
-		t.Fatal("un blob zstd 7 passe pour compacté")
-	}
-	if back, err := DecodeAnalysisFromStorage(fast); err != nil || back.XGID != "XGID=compact" {
-		t.Fatalf("relecture du blob zstd 7: %+v, %v", back, err)
-	}
+	blobs = append(blobs, []byte(`{"xgid": truncated`))
 
-	compact, err := CompactAnalysisData(fast)
-	if err != nil {
-		t.Fatalf("CompactAnalysisData: %v", err)
+	fresh, errs := RecompressAnalysesConcurrently(blobs)
+	for i, w := range want {
+		if errs[i] != nil {
+			t.Fatalf("blob %d: %v", i, errs[i])
+		}
+		if NeedsRecompression(fresh[i]) {
+			t.Errorf("blob %d: still legacy", i)
+		}
+		a, err := DecodeAnalysisFromStorage(fresh[i])
+		if err != nil {
+			t.Fatalf("blob %d: %v", i, err)
+		}
+		before, err := DecodeAnalysisFromStorage(blobs[i])
+		if err != nil {
+			t.Fatalf("blob %d before: %v", i, err)
+		}
+		if a.XGID != w || !reflect.DeepEqual(a, before) {
+			t.Errorf("blob %d: decodes differently once rewritten\n got %+v\nwant %+v", i, a, before)
+		}
+		if a.CheckerAnalysis == nil || a.DoublingCubeAnalysis == nil || len(a.PlayedMoves) == 0 {
+			t.Errorf("blob %d: checker, cube or moves lost: %+v", i, a)
+		}
+		if i%3 == 0 && !bytes.Equal(fresh[i], blobs[i]) {
+			t.Errorf("blob %d: a binary blob was rewritten", i)
+		}
 	}
-	if NeedsCompaction(compact) {
-		t.Error("le résultat de la compaction n'est pas reconnu comme compacté")
+	if last := len(blobs) - 1; errs[last] == nil || fresh[last] != nil {
+		t.Errorf("unreadable blob: fresh=%v err=%v", fresh[last], errs[last])
 	}
-	if !isBinaryBlob(compact) {
-		t.Error("la compaction ne produit pas le format binaire")
-	}
-	back, err := DecodeAnalysisFromStorage(compact)
-	if err != nil || back.XGID != "XGID=compact" || back.Player1 != "Bob" {
-		t.Fatalf("contenu perdu à la compaction: %+v, %v", back, err)
-	}
-	again, err := CompactAnalysisData(compact)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if !bytes.Equal(again, compact) {
-		t.Error("une seconde compaction réécrit le blob")
-	}
+}
 
-	// Un format hérité est compacté directement, sans étape intermédiaire.
-	direct, err := CompactAnalysisData(raw)
-	if err != nil || NeedsCompaction(direct) {
-		t.Errorf("JSON brut non compacté: %v", err)
+// fullTestAnalysis is an analysis with a checker analysis, a cube analysis and
+// played moves, so a round trip that loses a section shows.
+func fullTestAnalysis(xgid string) domain.PositionAnalysis {
+	zero := 0.0
+	return domain.PositionAnalysis{
+		XGID: xgid, Player1: "Alice", Player2: "Bob",
+		DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{PlayerWinChances: 51.2, OpponentWinChances: 48.8},
+		CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+			{Move: "8/2 6/2", Equity: 0.25},
+			{Move: "13/7", Equity: 0.1, EquityError: &zero},
+		}},
+		PlayedMoves: []string{"8/2 6/2"},
 	}
 }
