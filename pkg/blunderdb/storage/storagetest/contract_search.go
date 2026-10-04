@@ -313,6 +313,19 @@ func testSearchFilterByCommentPresence(t *testing.T, s storage.Storage) {
 	if got := find(domain.SearchFilters{CommentAuthorFilter: `au"Carol"`}); len(got) != 0 {
 		t.Errorf(`CommentAuthorFilter au"Carol" returned %v, want nothing`, got)
 	}
+	// Any case means Unicode case, on both backends alike: SQLite's LOWER
+	// folds ASCII only, so an accented or Cyrillic name is the real test.
+	accented := save(5)
+	for _, name := range []string{"Élodie", "Пётр"} {
+		if _, err := s.Comments().Add(storage.WithCommentAuthor(ctx, name), "", accented, name+"'s view"); err != nil {
+			t.Fatalf("Add comment signed %q: %v", name, err)
+		}
+	}
+	for _, q := range []string{`au"élodie"`, `au"ÉLODIE"`, `au"пётр"`, `au"ПЁТР"`} {
+		if got := find(domain.SearchFilters{CommentAuthorFilter: q}); len(got) != 1 || got[0] != accented {
+			t.Errorf("CommentAuthorFilter %q returned %v, want exactly [%d]", q, got, accented)
+		}
+	}
 }
 
 // testSearchFilterByFlagged pins the source-tool study mark (docs/adr/0006):

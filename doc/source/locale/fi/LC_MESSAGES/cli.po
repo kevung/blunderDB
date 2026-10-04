@@ -2481,6 +2481,89 @@ msgstr ""
 " näytöllä valittua laudan palettia."
 
 #: ../../source/cli.rst:1294
+msgid "training — Le journal d'entraînement"
+msgstr "training — Harjoituspäiväkirja"
+
+#: ../../source/cli.rst:1296
+msgid ""
+"Relit le journal de l'onglet Entraînement (voir "
+":ref:`panneau_entrainement`) et fait des questions ratées de quoi "
+"réviser. Le journal est écrit par l'application graphique, ou par un "
+"client du démon à la route ``training.save`` ; la ligne de commande ne "
+"pose pas de questions."
+msgstr ""
+"Lukee uudelleen Harjoitus-välilehden päiväkirjan (katso "
+":ref:`panneau_entrainement`) ja tekee epäonnistuneista kysymyksistä "
+"kertausaineistoa. Päiväkirjan kirjoittaa graafinen sovellus tai daemonin "
+"asiakas reitin ``training.save`` kautta; komentorivi ei esitä kysymyksiä."
+
+#: ../../source/cli.rst:1301
+msgid ""
+"**training sessions** — Les séances, la plus récente d'abord, avec leur "
+"identifiant ; le PR n'existe que pour *Décision*."
+msgstr ""
+"**training sessions** — Istunnot, uusin ensin, tunnisteineen; PR on "
+"olemassa vain *Päätös*-harjoitukselle."
+
+#: ../../source/cli.rst:1310
+msgid ""
+"``--exercise <nom>`` — Un seul exercice : ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` ou ``decision``."
+msgstr ""
+"``--exercise <nimi>`` — Yksi harjoitus: ``scores``, ``pips``, "
+"``bearoff``, ``evaluation`` tai ``decision``."
+
+#: ../../source/cli.rst:1312
+msgid "``--limit <n>`` — Nombre de séances (défaut 20 ; 0 = toutes)."
+msgstr "``--limit <n>`` — Istuntojen määrä (oletus 20; 0 = kaikki)."
+
+#: ../../source/cli.rst:1313
+msgid "``--format text|json`` — Format de sortie."
+msgstr "``--format text|json`` — Tulostusmuoto."
+
+#: ../../source/cli.rst:1315
+msgid ""
+"**training missed** — Les positions ratées, chacune une fois, la plus "
+"récemment ratée d'abord ; une question hors délai compte comme ratée. "
+"Seules les questions de *Décision* gardent leur position."
+msgstr ""
+"**training missed** — Epäonnistuneet asemat, kukin kerran, viimeksi "
+"epäonnistunut ensin; aikarajan ylittänyt kysymys lasketaan "
+"epäonnistuneeksi. Vain *Päätös*-kysymykset säilyttävät asemansa."
+
+#: ../../source/cli.rst:1325
+msgid "``--exercise <nom>`` — Les séances d'un seul exercice."
+msgstr "``--exercise <nimi>`` — Yhden harjoituksen istunnot."
+
+#: ../../source/cli.rst:1326
+msgid ""
+"``--session <id>`` — Une seule séance (un identifiant de ``training "
+"sessions``)."
+msgstr ""
+"``--session <id>`` — Yksi istunto (``training sessions`` -komennon "
+"tunniste)."
+
+#: ../../source/cli.rst:1328
+msgid "``--limit <n>`` — Nombre de positions (défaut 0 = toutes)."
+msgstr "``--limit <n>`` — Asemien määrä (oletus 0 = kaikki)."
+
+#: ../../source/cli.rst:1329
+msgid "``--deck <nom>`` — Crée un paquet Anki de ces positions."
+msgstr "``--deck <nimi>`` — Luo näistä asemista Anki-pakan."
+
+#: ../../source/cli.rst:1330
+msgid "``--collection <nom>`` — Crée une collection de ces positions."
+msgstr "``--collection <nimi>`` — Luo näistä asemista kokoelman."
+
+#: ../../source/cli.rst:1331
+msgid ""
+"``--format text|json`` — Format de sortie ; en JSON, ``PositionIDs``, et "
+"``DeckID`` ou ``CollectionID`` quand ils sont créés."
+msgstr ""
+"``--format text|json`` — Tulostusmuoto; JSON-muodossa ``PositionIDs`` "
+"sekä ``DeckID`` tai ``CollectionID``, kun ne luodaan."
+
+#: ../../source/cli.rst:1294
 msgid "cubematrix — Matrice du videau"
 msgstr "cubematrix — Tuplauskuution matriisi"
 
@@ -3599,6 +3682,43 @@ msgstr ""
 "Yli kolmekymmentä päivää vanhat poistaa ``blunderdb vacuum`` — ei koskaan"
 " tietokannan avaaminen."
 
+#: ../../source/cli.rst:1941
+msgid "comment — Les commentaires d'une position"
+msgstr "comment — Position kommentit"
+
+#: ../../source/cli.rst:1943
+msgid ""
+"Une position porte autant de commentaires qu'on veut, chacun signé de son"
+" auteur."
+msgstr ""
+"Positiolla voi olla niin monta kommenttia kuin halutaan, ja kukin on "
+"allekirjoitettu tekijänsä nimellä."
+
+#: ../../source/cli.rst:1952
+msgid ""
+"``add --position N --text T [--author A]`` — Ajoute un commentaire à la "
+"position N, signé de A (sans ``--author``, il n'est pas signé)."
+msgstr ""
+"``add --position N --text T [--author A]`` — Lisää kommentin positioon N,"
+" allekirjoitettuna nimellä A (ilman ``--author``-valitsinta se on "
+"allekirjoittamaton)."
+
+#: ../../source/cli.rst:1954
+msgid ""
+"``list [--position N] [--author A]`` — Liste les commentaires d'une "
+"position, ou de toute la base, éventuellement ceux d'un seul auteur."
+msgstr ""
+"``list [--position N] [--author A]`` — Luettelee position tai koko "
+"tietokannan kommentit, tarvittaessa vain yhden tekijän kommentit."
+
+#: ../../source/cli.rst:1957
+msgid ""
+"**Options communes:** ``--db`` (obligatoire) ; ``list`` accepte "
+"``--format`` (``text`` ou ``json``)."
+msgstr ""
+"**Yhteiset valitsimet:** ``--db`` (pakollinen); ``list`` hyväksyy "
+"valitsimen ``--format`` (``text`` tai ``json``)."
+
 #: ../../source/cli.rst:1890
 msgid "info — Métadonnées de la base"
 msgstr "info — Tietokannan metatiedot"
@@ -4437,3 +4557,4 @@ msgstr ""
 
 #~ msgid "Affiche les positions et analyses d'un match importé."
 #~ msgstr "Näytä tuodun ottelun asemat ja analyysit."
+

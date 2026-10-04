@@ -855,6 +855,20 @@ Decision questions keep their position. `--deck` makes an Anki deck of them,
 ./blunderDB training missed --db database.db --collection "My misses" --format json
 ```
 
+## Comment Command
+
+Several people can annotate the same database: each comment is signed by whoever
+wrote it, so a coach's notes and a student's questions stay apart. `--author`
+signs what `add` writes (without it, the comment is unsigned); on `list` it keeps
+one author's comments, whole name and any case, as the search's `au"…"` token
+does. An import keeps the source's signatures and never signs in the importer's
+name.
+
+```bash
+./blunderDB comment add --db base.db --position 412 --text "Cube too early" --author Alice
+./blunderDB comment list --db base.db --author alice --format json
+```
+
 ## Anki Command
 
 Inspect and maintain the spaced-repetition (FSRS) decks of the GUI's Anki
@@ -2370,7 +2384,7 @@ List the comments of a position, or of the whole database.
 
 Options:
   -author string
-    	Only the comments signed by this author
+    	Only the comments signed by this author (whole name, any case)
   -db string
     	Path to the database file (required)
   -format string
@@ -3968,6 +3982,8 @@ Usage: blunderdb training missed --db <file> [options]
 
 The positions answered wrong in the Training journal, each once, the most
 recently missed first. A question that ran out of time counts as missed.
+Only the Decision exercise records the position of each question, so only
+its sessions have missed positions.
 --deck and --collection turn them into study material.
 
 Options:
@@ -3978,7 +3994,7 @@ Options:
   -deck string
     	Make an Anki deck of these positions, with this name
   -exercise string
-    	Only this exercise's sessions (decision, evaluation)
+    	Only this exercise's sessions (decision: the only exercise that records its positions)
   -format string
     	Output format: text or json (default "text")
   -limit int

@@ -1461,6 +1461,22 @@ msgid "``--comment-origin``"
 msgstr "``--comment-origin``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "``au'Alice'``"
+msgstr "``au'Alice'``"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position porte un commentaire signé de cet auteur (nom entier, sans "
+"distinction de casse)."
+msgstr ""
+"Positiolla on tämän tekijän allekirjoittama kommentti (koko nimi, isoja "
+"ja pieniä kirjaimia erottamatta)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--comment-author``"
+msgstr "``--comment-author``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "``m'motif1,motif2,...'``"
 msgstr "``m'kuvio1,kuvio2,...'``"
 
@@ -1918,3 +1934,4 @@ msgstr "Tyhjentää komentohistorian."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Aseman lisäyspäivä x:n jälkeen (VVVV/KK/PP)."
+

@@ -75,6 +75,14 @@ depuis plusieurs clients.
    au reverse-proxy de faire correspondre le compte authentifié à cet entier.
    Un nom (``alice``) est refusé avec ``400 invalid``, jamais converti.
 
+L'en-tête facultatif ``X-User-Name`` nomme la personne derrière la requête : il
+signe les commentaires qu'elle écrit (``comments.add``, l'outil MCP
+``comment_position``), et le démon le croit sans le vérifier, comme
+``X-Tenant-ID``. Sans lui, le commentaire n'a pas d'auteur — jamais le tenant,
+qui partirait avec un export. Un import ne signe pas au nom de qui importe : les
+notes d'un fichier XG sont signées « XG », celles d'un autre fichier de son
+transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
+
 **Options:**
 
 .. list-table::

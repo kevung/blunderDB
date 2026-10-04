@@ -91,13 +91,11 @@ func Tenant(public map[string]bool, singleTenant, trustReadTenants bool, errFn f
 			// app.tenant_id GUC when RLS is enabled (no-op otherwise).
 			ctx = storage.WithTenant(ctx, numeric)
 			// A comment written through the daemon is signed by the person the
-			// proxy names, or by the tenant when it names nobody. Like the
-			// tenant itself, the header is trusted, never checked (ADR-0005).
-			author := storage.NormalizeCommentAuthor(r.Header.Get("X-User-Name"))
-			if author == "" {
-				author = tenant
-			}
-			ctx = storage.WithCommentAuthor(ctx, author)
+			// proxy names, and by nobody when it names nobody: the tenant is an
+			// account, not a person, and a signature travels with an export.
+			// Like the tenant itself, the header is trusted, never checked
+			// (ADR-0005).
+			ctx = storage.WithCommentAuthor(ctx, r.Header.Get("X-User-Name"))
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}

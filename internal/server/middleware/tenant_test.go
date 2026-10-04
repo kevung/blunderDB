@@ -160,10 +160,11 @@ func TestTenant_SingleTenantBackendRefusesTheOthers(t *testing.T) {
 	}
 }
 
-// A comment written through the daemon is signed by X-User-Name, or by the
-// tenant when the proxy names nobody.
+// A comment written through the daemon is signed by X-User-Name, and by
+// nobody when the proxy names nobody: the tenant must never sign, since a
+// signature leaves with an export.
 func TestTenant_CommentAuthor(t *testing.T) {
-	for _, tc := range []struct{ header, want string }{{"  Alice ", "Alice"}, {"", "7"}} {
+	for _, tc := range []struct{ header, want string }{{"  Alice ", "Alice"}, {"", ""}, {"   ", ""}} {
 		var got string
 		mw := Tenant(nil, false, false, func(w http.ResponseWriter, _ *http.Request, msg string) {
 			http.Error(w, msg, http.StatusBadRequest)

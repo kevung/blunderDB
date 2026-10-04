@@ -131,7 +131,7 @@ func (cli *CLI) runTrainingSessions(args []string) error {
 func (cli *CLI) runTrainingMissed(args []string) error {
 	fs := flag.NewFlagSet("training missed", flag.ContinueOnError)
 	dbPath := fs.String("db", "", "Path to the database file (required)")
-	exercise := fs.String("exercise", "", "Only this exercise's sessions (decision, evaluation)")
+	exercise := fs.String("exercise", "", "Only this exercise's sessions (decision: the only exercise that records its positions)")
 	session := fs.Int64("session", 0, "Only this session (an id from `training sessions`)")
 	limit := fs.Int("limit", 0, "Number of positions (0 = all)")
 	deckName := fs.String("deck", "", "Make an Anki deck of these positions, with this name")
@@ -142,6 +142,8 @@ func (cli *CLI) runTrainingMissed(args []string) error {
 		fmt.Println()
 		fmt.Println("The positions answered wrong in the Training journal, each once, the most")
 		fmt.Println("recently missed first. A question that ran out of time counts as missed.")
+		fmt.Println("Only the Decision exercise records the position of each question, so only")
+		fmt.Println("its sessions have missed positions.")
 		fmt.Println("--deck and --collection turn them into study material.")
 		fmt.Println()
 		fmt.Println("Options:")

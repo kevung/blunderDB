@@ -85,14 +85,12 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	type srcRecord struct {
 		pos      *domain.Position
 		analysis *domain.PositionAnalysis
-		comments []string
+		comments []*domain.CommentEntry
 	}
 	records := make([]srcRecord, 0, len(positions))
 	for _, p := range positions {
 		rec := srcRecord{pos: p, analysis: srcAnalyses[p.ID]}
-		for _, c := range srcComments[p.ID] {
-			rec.comments = append(rec.comments, c.Text)
-		}
+		rec.comments = srcComments[p.ID]
 		records = append(records, rec)
 	}
 
@@ -313,7 +311,9 @@ func mergeDBAnalysis(ctx context.Context, tx storage.Tx, scope string, positionI
 // mergeDBCommentsPreloaded appends each imported comment to positionID unless
 // the position's existing comment text already contains it. existing is the
 // target's current comment entries, already loaded in Import's batched pass.
-func mergeDBCommentsPreloaded(ctx context.Context, tx storage.Tx, scope string, positionID int64, existingEntries []*domain.CommentEntry, comments []string) error {
+// Each appended comment keeps the source's author, never the importer's: the
+// source database states who wrote it (ADR-0007).
+func mergeDBCommentsPreloaded(ctx context.Context, tx storage.Tx, scope string, positionID int64, existingEntries []*domain.CommentEntry, comments []*domain.CommentEntry) error {
 	if len(comments) == 0 {
 		return nil
 	}
@@ -322,12 +322,13 @@ func mergeDBCommentsPreloaded(ctx context.Context, tx storage.Tx, scope string, 
 		parts[i] = e.Text
 	}
 	existing := strings.Join(parts, "\n\n")
-	for _, text := range comments {
+	for _, c := range comments {
+		text := c.Text
 		trimmed := strings.TrimSpace(text)
 		if trimmed == "" || strings.Contains(existing, trimmed) {
 			continue
 		}
-		if _, err := tx.Comments().Add(ctx, scope, positionID, text); err != nil {
+		if _, err := tx.Comments().Add(storage.WithCommentAuthor(ctx, c.Author), scope, positionID, text); err != nil {
 			return err
 		}
 		if existing == "" {

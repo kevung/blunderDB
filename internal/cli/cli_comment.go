@@ -7,6 +7,8 @@ import (
 	"sort"
 	"strings"
 	"text/tabwriter"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // runComment is `blunderdb comment`: the comments of one position, each signed
@@ -118,7 +120,7 @@ func (cli *CLI) runCommentList(args []string) error {
 		"blunderdb comment list --db database.db --position 412",
 		"blunderdb comment list --db database.db --author Alice --format json")
 	position := fs.Int64("position", 0, "Only the comments of this position id (0: every position)")
-	author := fs.String("author", "", "Only the comments signed by this author")
+	author := fs.String("author", "", "Only the comments signed by this author (whole name, any case)")
 	format := fs.String("format", "text", "Output format: text or json")
 	if err := fs.Parse(args); err != nil {
 		return err
@@ -145,9 +147,13 @@ func (cli *CLI) runCommentList(args []string) error {
 	if err != nil {
 		return fmt.Errorf("list comments: %w", err)
 	}
+	// The whole name, any case — Unicode case — as the search's au"…" token
+	// and --comment-author compare it, so the two never disagree on who
+	// signed what.
+	want := storage.NormalizeCommentAuthor(*author)
 	entries := all[:0:0]
 	for _, e := range all {
-		if *author == "" || e.Author == *author {
+		if want == "" || strings.EqualFold(e.Author, want) {
 			entries = append(entries, e)
 		}
 	}
