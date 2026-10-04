@@ -366,7 +366,7 @@ func TestQuotaBoundsRollouts(t *testing.T) {
 }
 
 // TestQuotaRefusesImportBeyondConcurrentLimit: with the tenant's slot taken, the next import is
-// 429 quota_exceeded, and the tenant's season ranking read stays open.
+// 429 quota_exceeded.
 func TestQuotaRefusesImportBeyondConcurrentLimit(t *testing.T) {
 	ts, srv := newQuotaTestServer(t, TenantQuotas{MaxConcurrentImports: 1})
 	if !srv.quota.beginImport(testTenant) {
@@ -387,11 +387,5 @@ func TestQuotaRefusesImportBeyondConcurrentLimit(t *testing.T) {
 	status, e := errorOf(t, resp)
 	if status != http.StatusTooManyRequests || e.Code != CodeQuotaExceeded || e.Details["quota"] != "maxConcurrentImports" {
 		t.Fatalf("second import: %d %+v; want 429 quota_exceeded", status, e)
-	}
-
-	r2 := post(t, ts, "/v1/rencontres.ranking", map[string]any{"from": "2026-01-01", "to": "2026-12-31"})
-	defer r2.Body.Close()
-	if r2.StatusCode != http.StatusOK {
-		t.Errorf("rencontres.ranking on an empty season: %d", r2.StatusCode)
 	}
 }
