@@ -387,6 +387,12 @@ func gnuBGInitPreCrawfordMET() {
 //   - fWhoWins: which player wins (0 or 1)
 //   - fCrawford: whether the current game is Crawford
 func GnuBGGetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins int, fCrawford bool) float64 {
+	return (*MET)(nil).GetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins, fCrawford)
+}
+
+// GetME is GnuBGGetME read through the table m; a nil m is the built-in
+// Kazaross-XG2, so every caller that has no table of its own is unchanged.
+func (m *MET) GetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins int, fCrawford bool) float64 {
 	// Compute post-game "away" scores (0-indexed: n=0 means 1-away)
 	notWhoWins := 0
 	if fWhoWins == 0 {
@@ -421,21 +427,21 @@ func GnuBGGetME(score0, score1, matchTo, fPlayer, nPoints, fWhoWins int, fCrawfo
 		if n0 == 0 {
 			// Player 0 at 1-away after game
 			if fPlayer != 0 {
-				return metPost(n1)
+				return m.postAt(n1)
 			}
-			return 1.0 - metPost(n1)
+			return 1.0 - m.postAt(n1)
 		}
 		// Player 1 must be at or near match point
 		if fPlayer != 0 {
-			return 1.0 - metPost(n0)
+			return 1.0 - m.postAt(n0)
 		}
-		return metPost(n0)
+		return m.postAt(n0)
 	}
 
 	if fPlayer != 0 {
-		return 1.0 - metPre(n0, n1)
+		return 1.0 - m.preAt(n0, n1)
 	}
-	return metPre(n0, n1)
+	return m.preAt(n0, n1)
 }
 
 // ConvertEMGLossToMWCLoss converts a loss expressed in EMG millipoints (the

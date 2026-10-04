@@ -245,6 +245,10 @@ type MatchState struct {
 	AwayOpponent int  // points the opponent still needs; >= 1
 	Cube         int  // cube value: 1, 2, 4, 8, ...
 	Crawford     bool // true iff the game being evaluated IS the Crawford game
+	// MET is the match equity table the state is valued with; nil is the
+	// built-in Kazaross-XG2 (ADR-0068). The evaluation cache holds network
+	// outputs only, so a searcher reused across tables never mixes them.
+	MET *engine.MET
 }
 
 // IsValid reports whether the state can be evaluated at all: positive away
@@ -290,7 +294,7 @@ func metAfter(state MatchState, points int, onRollWins bool) (float64, bool) {
 	if !onRollWins {
 		fWhoWins = 1
 	}
-	return engine.GnuBGGetME(score0, score1, matchTo, 0, points, fWhoWins, state.Crawford), true
+	return state.MET.GetME(score0, score1, matchTo, 0, points, fWhoWins, state.Crawford), true
 }
 
 // matchWinningChance is the on-roll player's MWC if the cube never moves
