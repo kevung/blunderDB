@@ -163,7 +163,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		return Summary{}, err
 	}
 
-	carrier := mets.NewCarrier(tx.MatchEquityTables(), scope, srcTables)
+	carrier := mets.NewCarrier("import", tx.MatchEquityTables(), scope, srcTables)
 	var sum Summary
 	for _, s := range saved {
 		if err := ctx.Err(); err != nil {

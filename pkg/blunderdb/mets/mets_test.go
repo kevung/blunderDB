@@ -136,7 +136,7 @@ func TestCarrierMergesByDigestAndMapsTheBuiltInToZero(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	c := NewCarrier(dst.MatchEquityTables(), "", []*domain.MatchEquityTable{
+	c := NewCarrier("import", dst.MatchEquityTables(), "", []*domain.MatchEquityTable{
 		{ID: 7, Name: "Club", Digest: "declared", Source: string(rk)},
 		{ID: 8, Name: "New", Digest: "new", Source: string(other)},
 		{ID: 9, Name: "Kazaross copy", Digest: "copy", Source: string(kxg)},
@@ -164,8 +164,9 @@ func TestCarrierMergesByDigestAndMapsTheBuiltInToZero(t *testing.T) {
 	if cur, err := dst.MatchEquityTables().Current(ctx, ""); err != nil || cur != nil {
 		t.Errorf("carried tables made current: %+v, %v", cur, err)
 	}
-	if _, err := c.Target(ctx, 12); !errors.Is(err, storage.ErrInvalid) {
-		t.Errorf("Target(unparseable) = %v, want ErrInvalid", err)
+	if _, err := c.Target(ctx, 12); !errors.Is(err, storage.ErrInvalid) ||
+		!strings.Contains(err.Error(), "import") || !strings.Contains(err.Error(), `"Garbage"`) {
+		t.Errorf("Target(unparseable) = %v, want ErrInvalid naming the operation and the table", err)
 	}
 	if _, err := c.Target(ctx, 99); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("Target(unknown) = %v, want ErrNotFound", err)

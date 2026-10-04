@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
@@ -18,8 +19,22 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/trash"
 )
 
+// clubSource is a small explicit gnubg table: a carried table is named by the
+// digest of its source, so the source must parse.
+const clubSource = `<met><info><name>Club</name><length>2</length></info>
+<pre-crawford-table type="explicit"><row><me>0.5</me><me>0.7</me></row><row><me>0.3</me><me>0.5</me></row></pre-crawford-table>
+<post-crawford-table player="both" type="explicit"><row><me>0.5</me><me>0.48</me></row></post-crawford-table></met>`
+
 // clubMET is a table of a club, told apart from the built-in one by its digest.
-var clubMET = domain.MatchEquityTable{Name: "Club", Digest: "club-digest", Source: "<met>club</met>"}
+var clubMET = domain.MatchEquityTable{Name: "Club", Digest: clubDigest(), Source: clubSource}
+
+func clubDigest() string {
+	m, err := engine.ParseGnubgMET([]byte(clubSource))
+	if err != nil {
+		panic(err)
+	}
+	return m.Digest()
+}
 
 // verdictBy is a checker analysis whose verdict comes from engineLabel.
 func verdictBy(engineLabel string, created time.Time) *domain.PositionAnalysis {

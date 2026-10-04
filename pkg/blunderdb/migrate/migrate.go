@@ -191,10 +191,10 @@ func (m *mover) copyTables() error {
 	if err != nil {
 		return fmt.Errorf("migrate: read match equity tables: %w", err)
 	}
-	m.tables = mets.NewCarrier(m.dst.MatchEquityTables(), m.scope, tables)
+	m.tables = mets.NewCarrier("migration", m.dst.MatchEquityTables(), m.scope, tables)
 	for _, t := range tables {
 		if _, err := m.tables.Target(m.ctx, t.ID); err != nil {
-			return fmt.Errorf("migrate: write match equity table %q: %w", t.Name, err)
+			return fmt.Errorf("migrate: %w", err)
 		}
 	}
 	cur, err := m.src.MatchEquityTables().Current(m.ctx, "")
