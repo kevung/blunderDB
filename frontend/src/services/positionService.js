@@ -499,6 +499,7 @@ export async function loadPositionsByFilters({
     gameTypeFilter = '',
     encounterFilter = '',
     commentOriginFilter = '',
+    commentAuthorFilter = '',
     tagFilter = '',
     // The board a saved filter was stored with: its structure or `like`
     // target, used whatever the mode. Otherwise the board on screen, a
@@ -641,6 +642,7 @@ export async function loadPositionsByFilters({
             gameTypeFilter,
             encounterFilter,
             commentOriginFilter,
+            commentAuthorFilter,
             tagFilter,
             movePatternFilter,
             dateFilter,

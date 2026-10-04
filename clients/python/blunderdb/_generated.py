@@ -670,6 +670,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/librarySettings.save — JSON."
         return self._call("/v1/librarySettings.save", payload)
 
+    def maintenance_reencode(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/maintenance.reencode — hand-written handler — see openapi.yaml."
+        return self._call("/v1/maintenance.reencode", payload)
+
     def matches_count(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/matches.count — JSON."
         return self._call("/v1/matches.count", payload)
@@ -1113,6 +1117,10 @@ class GeneratedAPI(BaseClient):
     def tournaments_update_comment(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/tournaments.updateComment — JSON."
         return self._call("/v1/tournaments.updateComment", payload)
+
+    def training_missed(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/training.missed — JSON."
+        return self._call("/v1/training.missed", payload)
 
     def training_number_stats(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/training.numberStats — JSON."

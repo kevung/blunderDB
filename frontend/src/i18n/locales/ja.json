@@ -173,6 +173,8 @@
         "likeLimit": "並べ替えごとの近い局面の数",
         "likeMaxDistance": "最大距離（チェッカーピップ）",
         "likeNote": "ゼロ：上限なし。トークン like<12 は検索ごとに独自の上限を指定します。",
+        "commentAuthor": "あなたの名前",
+        "commentAuthorNote": "あなたが書くコメントに署名します。空欄：署名なし。",
         "assistantTitle": "アシスタントと MCP",
         "corpusTitle": "コーパス"
     },
@@ -654,6 +656,7 @@
         "newTournamentPlaceholder": "新規トーナメント…",
         "noMatches": "マッチがありません",
         "noTournaments": "トーナメントがありません",
+        "openHint": "ダブルクリックまたは Enter で開く",
         "notesPlaceholder": "メモ…",
         "player1": "プレイヤー 1",
         "player2": "プレイヤー 2",
@@ -889,6 +892,7 @@
         "promptPlaceholder": "現在のポジションにコメント…",
         "searchPlaceholder": "コメントを検索…",
         "originXG": "XG",
+        "you": "あなた",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "インポート",
@@ -1847,6 +1851,10 @@
         "medianTime": "中央値 {n} 秒",
         "trend": "傾向 {value} pt",
         "lastPr": "前回の PR {value}",
+        "missedRetake": "間違えた問題をやり直す",
+        "missedDeck": "間違いのAnkiデッキ",
+        "missedCollection": "間違いのコレクション",
+        "missedStudyName": "判断の間違い — {date}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "不明なエクササイズ: {exercise}。",
         "noQuestion": "問題を出せません: このデータベースまたはこのソースには出題できるものがありません。",
@@ -2419,6 +2427,7 @@
             "prize": "賞金",
             "wins": "勝",
             "losses_column": "敗",
+            "section_column": "区分",
             "opponents": "対戦した相手",
             "waiting": "待機",
             "state": "状態",
@@ -2526,7 +2535,11 @@
             "noChange": "なし：テーブルはすでにイベントのものです。",
             "confirm": "追加",
             "wall": {
-                "rounds": "{n} ラウンド発表済み"
+                "rounds": "{n} ラウンド発表済み",
+                "status": "出場しますか？",
+                "bye": "不戦 — 第{round}回戦から参加",
+                "eliminated": "敗退",
+                "qualified": "進出 — {phase}"
             },
             "trashConfirm": "イベント「{name}」を削除しますか？各種目は切り離されて残ります。"
         },

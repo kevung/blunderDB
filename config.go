@@ -14,6 +14,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // The config is JSON under both names; legacyConfigFilePath is read only
@@ -168,18 +169,24 @@ var (
 type Config struct {
 	// ConfigVersion is currentConfigVersion once loaded or saved; 0 on a
 	// file that predates the field.
-	ConfigVersion    int                  `json:"config_version"`
-	WindowWidth      int                  `json:"window_width"`
-	WindowHeight     int                  `json:"window_height"`
-	LastDatabasePath string               `json:"last_database_path"`
-	StatsFilter      StatsFilterPersisted `json:"stats_filter,omitempty"`
-	Language         string               `json:"language,omitempty"`
-	BoardColors      BoardColors          `json:"board_colors,omitempty"`
-	UIScale          int                  `json:"ui_scale,omitempty"`
+	ConfigVersion int `json:"config_version"`
+	// applyCommentAuthor forwards « Votre nom » to the database wrapper; not
+	// bound, not persisted.
+	applyCommentAuthor func(string)
+	WindowWidth        int                  `json:"window_width"`
+	WindowHeight       int                  `json:"window_height"`
+	LastDatabasePath   string               `json:"last_database_path"`
+	StatsFilter        StatsFilterPersisted `json:"stats_filter,omitempty"`
+	Language           string               `json:"language,omitempty"`
+	BoardColors        BoardColors          `json:"board_colors,omitempty"`
+	UIScale            int                  `json:"ui_scale,omitempty"`
 	// LikeLimit is how many neighbours a `like` ranking returns;
 	// LikeMaxDistance the checker-pip ceiling, 0 = none. No default ceiling:
 	// its scale depends on the phase and is unmeasured (ADR-0043 rule 4).
-	LikeLimit       int    `json:"like_limit,omitempty"`
+	LikeLimit int `json:"like_limit,omitempty"`
+	// CommentAuthor is « Votre nom »: it signs the comments written from the
+	// desktop. Empty leaves them unsigned.
+	CommentAuthor   string `json:"comment_author,omitempty"`
 	LikeMaxDistance int    `json:"like_max_distance,omitempty"`
 	PanelPosition   string `json:"panel_position,omitempty"`
 	PanelHeight     int    `json:"panel_height,omitempty"`
@@ -467,6 +474,8 @@ func (c *Config) LoadConfig() (*Config, error) {
 	config.GammonNetCandidates = c.GammonNetCandidates
 	c.GammonNetAutoAnalyze = config.GammonNetAutoAnalyze
 	c.CheckForUpdates = config.CheckForUpdates
+	c.CommentAuthor = storage.NormalizeCommentAuthor(config.CommentAuthor)
+	config.CommentAuthor = c.CommentAuthor
 	c.MCPHost, c.MCPPort, c.MCPWrite = config.MCPHost, config.MCPPort, config.MCPWrite
 	c.Assistant, c.AssistantPreset, c.AssistantBaseURL = config.Assistant, config.AssistantPreset, config.AssistantBaseURL
 	c.AssistantModel, c.AssistantRemoteAck = config.AssistantModel, config.AssistantRemoteAck
@@ -601,6 +610,21 @@ func (c *Config) SaveLikeLimit(n int) error {
 		n = MaxLikeLimit
 	}
 	c.LikeLimit = n
+	return c.SaveConfig(c)
+}
+
+// GetCommentAuthor reports the name that signs the comments written here.
+func (c *Config) GetCommentAuthor() string {
+	return c.CommentAuthor
+}
+
+// SaveCommentAuthor persists « Votre nom » and hands it to the open database
+// wrapper through the hook main wires, so the next comment is signed at once.
+func (c *Config) SaveCommentAuthor(name string) error {
+	c.CommentAuthor = storage.NormalizeCommentAuthor(name)
+	if c.applyCommentAuthor != nil {
+		c.applyCommentAuthor(c.CommentAuthor)
+	}
 	return c.SaveConfig(c)
 }
 

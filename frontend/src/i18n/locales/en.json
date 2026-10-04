@@ -173,6 +173,8 @@
         "likeLimit": "Neighbours per ranking",
         "likeMaxDistance": "Maximum distance (checker-pips)",
         "likeNote": "Zero: no ceiling. The token like<12 sets its own for one search.",
+        "commentAuthor": "Your name",
+        "commentAuthorNote": "Signs the comments you write. Empty: unsigned.",
         "assistantTitle": "Assistant and MCP",
         "corpusTitle": "Corpus"
     },
@@ -654,6 +656,7 @@
         "newTournamentPlaceholder": "New tournament…",
         "noMatches": "No matches",
         "noTournaments": "No tournaments",
+        "openHint": "Double-click or press Enter to open",
         "notesPlaceholder": "Notes…",
         "player1": "Player 1",
         "player2": "Player 2",
@@ -889,6 +892,7 @@
         "promptPlaceholder": "Comment on current position…",
         "searchPlaceholder": "Search comments…",
         "originXG": "XG",
+        "you": "you",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "imported",
@@ -1847,6 +1851,10 @@
         "medianTime": "Median {n} s",
         "trend": "Trend {value} pt",
         "lastPr": "Last PR {value}",
+        "missedRetake": "Retake my misses",
+        "missedDeck": "Anki deck of misses",
+        "missedCollection": "Collection of misses",
+        "missedStudyName": "Decision misses — {date}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "Unknown exercise: {exercise}.",
         "noQuestion": "No question can be asked: this library or this source provides none.",
@@ -2419,6 +2427,7 @@
             "prize": "Prize",
             "wins": "W",
             "losses_column": "L",
+            "section_column": "Section",
             "opponents": "Opponents met",
             "waiting": "Waiting",
             "state": "State",
@@ -2526,7 +2535,11 @@
             "noChange": "Nothing: its tables are already the event's.",
             "confirm": "Attach",
             "wall": {
-                "rounds": "{n} rounds announced"
+                "rounds": "{n} rounds announced",
+                "status": "Am I playing?",
+                "bye": "bye — enters at round {round}",
+                "eliminated": "eliminated",
+                "qualified": "qualified — {phase}"
             },
             "trashConfirm": "Delete the event “{name}”? Its competitions remain, detached."
         },

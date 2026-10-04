@@ -190,6 +190,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/librarySettings.save                 JSON
    maintenance
      POST /ops/maintenance.vacuum                  custom
+     POST /v1/maintenance.reencode                 custom
    matches
      POST /v1/matches.count                        JSON
      POST /v1/matches.createGame                   JSON
@@ -317,6 +318,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/tournaments.update                   JSON
      POST /v1/tournaments.updateComment            JSON
    training
+     POST /v1/training.missed                      JSON
      POST /v1/training.numberStats                 JSON
      POST /v1/training.save                        JSON  (Idempotency-Key)
      POST /v1/training.sessions                    JSON

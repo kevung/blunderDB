@@ -48,6 +48,7 @@ var corpusField = map[string]string{
 	"encounterFilter":               "EncounterFilter",
 	"tagFilter":                     "TagFilter",
 	"commentOriginFilter":           "CommentOriginFilter",
+	"commentAuthorFilter":           "CommentAuthorFilter",
 	"diceRollFilter":                "DiceRollFilter",
 	"diceRollMode":                  "DiceRollMode",
 	"exceptDiceFilter":              "ExceptDiceFilter",

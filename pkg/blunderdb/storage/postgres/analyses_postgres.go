@@ -14,6 +14,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 type analysisStore struct{ db execer }
@@ -555,4 +556,9 @@ func (s *analysisStore) engineBatch(ctx context.Context, scope string, last int6
 		ids = append(ids, id)
 	}
 	return raw, ids, rows.Err()
+}
+
+// ReencodeAnalyses — see storage.AnalysisStore.
+func (s *analysisStore) ReencodeAnalyses(ctx context.Context, scope string, after int64, limit int) (int64, int, error) {
+	return sqlshared.ReencodeAnalyses(ctx, binder{s.db}.shared(), scope, after, limit)
 }

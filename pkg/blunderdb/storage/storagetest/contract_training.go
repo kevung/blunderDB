@@ -146,3 +146,87 @@ func testTrainingDeviationStaysOutOfTheMeanWhenAbsent(t *testing.T, s storage.St
 		t.Errorf("epc.bottom MeanDeviation = %v, want 3 (the mean of |2| and |-4|, the unanswered number excluded)", got.MeanDeviation)
 	}
 }
+
+// A decision question keeps its position, its answer and its cost; Missed
+// returns each position answered wrong once, the latest miss first, and
+// forgets a position deleted since.
+func testTrainingMissedPositions(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	tr := s.Training()
+	var pos []int64
+	for n := 1; n <= 4; n++ {
+		p := provenancePos(n)
+		id, err := s.Positions().Save(ctx, "", &p)
+		if err != nil {
+			t.Fatalf("Save position %d: %v", n, err)
+		}
+		pos = append(pos, id)
+	}
+	mp := func(v int) *int { return &v }
+	item := func(id int64, wrong bool, answer string, cost *int) storage.TrainingItem {
+		return storage.TrainingItem{NumberType: "decision.checker", Wrong: wrong, PositionID: &id, Answer: answer, ErrorMp: cost}
+	}
+	first, err := tr.Save(ctx, "", storage.TrainingSession{Exercise: "decision", NumbersAsked: 3, Faults: 2,
+		Items: []storage.TrainingItem{
+			item(pos[0], true, "13/7 8/7", mp(120)),
+			item(pos[1], false, "24/18", mp(0)),
+			item(pos[2], true, "", nil), // out of time: wrong, nothing judged
+		}})
+	if err != nil {
+		t.Fatalf("Save first: %v", err)
+	}
+	second, err := tr.Save(ctx, "", storage.TrainingSession{Exercise: "decision", NumbersAsked: 2, Faults: 2,
+		Items: []storage.TrainingItem{
+			item(pos[3], true, "Double/Take", mp(40)),
+			item(pos[0], true, "13/7 6/5", mp(80)),
+		}})
+	if err != nil {
+		t.Fatalf("Save second: %v", err)
+	}
+	// A number exercise has no position: it never enters the list.
+	if _, err := tr.Save(ctx, "", storage.TrainingSession{Exercise: "pips", NumbersAsked: 1, Faults: 1,
+		Items: []storage.TrainingItem{{NumberType: "pips.bottom", Wrong: true}}}); err != nil {
+		t.Fatalf("Save pips: %v", err)
+	}
+
+	equal := func(name string, got, want []int64) {
+		t.Helper()
+		if len(got) != len(want) {
+			t.Fatalf("%s = %v, want %v", name, got, want)
+		}
+		for i := range want {
+			if got[i] != want[i] {
+				t.Fatalf("%s = %v, want %v", name, got, want)
+			}
+		}
+	}
+	all, err := tr.Missed(ctx, "", storage.TrainingMissedFilter{})
+	if err != nil {
+		t.Fatalf("Missed: %v", err)
+	}
+	equal("Missed(all)", all, []int64{pos[0], pos[3], pos[2]})
+	one, err := tr.Missed(ctx, "", storage.TrainingMissedFilter{SessionID: first})
+	if err != nil {
+		t.Fatalf("Missed(first): %v", err)
+	}
+	equal("Missed(first)", one, []int64{pos[2], pos[0]})
+	limited, err := tr.Missed(ctx, "", storage.TrainingMissedFilter{Exercise: "decision", Limit: 1})
+	if err != nil {
+		t.Fatalf("Missed(limit): %v", err)
+	}
+	equal("Missed(limit 1)", limited, []int64{pos[0]})
+	none, err := tr.Missed(ctx, "", storage.TrainingMissedFilter{Exercise: "pips"})
+	if err != nil {
+		t.Fatalf("Missed(pips): %v", err)
+	}
+	equal("Missed(pips)", none, nil)
+
+	if err := s.Positions().Delete(ctx, "", pos[3]); err != nil {
+		t.Fatalf("Delete position: %v", err)
+	}
+	after, err := tr.Missed(ctx, "", storage.TrainingMissedFilter{SessionID: second})
+	if err != nil {
+		t.Fatalf("Missed(after delete): %v", err)
+	}
+	equal("Missed(after delete)", after, []int64{pos[0]})
+}

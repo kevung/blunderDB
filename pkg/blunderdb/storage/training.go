@@ -26,6 +26,15 @@ type TrainingItem struct {
 	Wrong        bool    `json:"wrong"`
 	HasDeviation bool    `json:"hasDeviation"`
 	Deviation    float64 `json:"deviation"`
+	// PositionID is the library position a decision question was asked on,
+	// nil for the number exercises and for a position the question did not
+	// come from. Answer is what was played or chosen, as the quiz renders it
+	// ('' when nothing was), and ErrorMp its cost in millipoints of
+	// normalised equity — nil when nothing was judged (out of time), which is
+	// not the same as a correct answer's 0.
+	PositionID *int64 `json:"positionId,omitempty"`
+	Answer     string `json:"answer,omitempty"`
+	ErrorMp    *int   `json:"errorMp,omitempty"`
 }
 
 // TrainingSession is one row of the journal, with its items on the way in and
@@ -73,4 +82,17 @@ type TrainingStore interface {
 	// NumberStats aggregates the items of one exercise by number type,
 	// most-asked first.
 	NumberStats(ctx context.Context, scope, exercise string) ([]TrainingNumberStat, error)
+	// Missed returns the positions of the items answered wrong, each once,
+	// the most recently missed first: of one session when sessionID is above
+	// zero, of every session of the exercise otherwise (an empty exercise
+	// means every exercise). A limit of zero means no bound. A position since
+	// deleted is not returned.
+	Missed(ctx context.Context, scope string, filter TrainingMissedFilter) ([]int64, error)
+}
+
+// TrainingMissedFilter selects the missed questions Missed returns.
+type TrainingMissedFilter struct {
+	Exercise  string `json:"exercise"`
+	SessionID int64  `json:"sessionId"`
+	Limit     int    `json:"limit"`
 }

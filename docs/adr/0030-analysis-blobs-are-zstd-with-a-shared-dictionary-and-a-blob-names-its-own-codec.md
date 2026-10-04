@@ -1,6 +1,6 @@
 # Analysis blobs are zstd with a shared dictionary, and a blob names its own codec
 
-Status: accepted.
+Status: accepted. Amended by ADR-0070: blobs are now written in a versioned binary format (header `0xBA`, its own dictionary); the JSON formats below are read only.
 
 ## Context
 `analysis.data` holds the compressed JSON `PositionAnalysis` of one position (2–20 KB of

@@ -103,6 +103,7 @@ const SHORT_TO_LONG = {
     ph: 'gamePhaseFilter',
     gt: 'gameTypeFilter',
     coOrigin: 'commentOriginFilter',
+    coAuthor: 'commentAuthorFilter',
     tags: 'tagFilter',
     encounterFilter: 'encounterFilter'
 };

@@ -173,6 +173,8 @@
         "likeLimit": "Vicine per classifica",
         "likeMaxDistance": "Distanza massima (pip di pedina)",
         "likeNote": "Zero: nessun limite. Il token like<12 impone il proprio per una ricerca.",
+        "commentAuthor": "Il tuo nome",
+        "commentAuthorNote": "Firma i commenti che scrivi. Vuoto: senza firma.",
         "assistantTitle": "Assistente e MCP",
         "corpusTitle": "Corpus"
     },
@@ -654,6 +656,7 @@
         "newTournamentPlaceholder": "Nuovo torneo…",
         "noMatches": "Nessun match",
         "noTournaments": "Nessun torneo",
+        "openHint": "Doppio clic o Invio per aprire",
         "notesPlaceholder": "Note…",
         "player1": "Giocatore 1",
         "player2": "Giocatore 2",
@@ -889,6 +892,7 @@
         "promptPlaceholder": "Commenta la posizione corrente…",
         "searchPlaceholder": "Cerca commenti…",
         "originXG": "XG",
+        "you": "tu",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "importato",
@@ -1847,6 +1851,10 @@
         "medianTime": "Mediana {n} s",
         "trend": "Tendenza {value} pt",
         "lastPr": "Ultimo PR {value}",
+        "missedRetake": "Riprendi i miei errori",
+        "missedDeck": "Mazzo Anki degli errori",
+        "missedCollection": "Collezione degli errori",
+        "missedStudyName": "Errori in Decisione — {date}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "Esercizio sconosciuto: {exercise}.",
         "noQuestion": "Nessuna domanda può essere posta: questa base o questa fonte non ne fornisce.",
@@ -2419,6 +2427,7 @@
             "prize": "Premio",
             "wins": "V",
             "losses_column": "S",
+            "section_column": "Sezione",
             "opponents": "Avversari incontrati",
             "waiting": "Attesa",
             "state": "Stato",
@@ -2526,7 +2535,11 @@
             "noChange": "Niente: i suoi tavoli sono già quelli dell'evento.",
             "confirm": "Collega",
             "wall": {
-                "rounds": "{n} turni annunciati"
+                "rounds": "{n} turni annunciati",
+                "status": "Gioco io?",
+                "bye": "esentato/a — entra al turno {round}",
+                "eliminated": "eliminato/a",
+                "qualified": "qualificato/a — {phase}"
             },
             "trashConfirm": "Eliminare l’evento «{name}»? Le sue prove restano, staccate."
         },

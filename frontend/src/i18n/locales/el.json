@@ -173,6 +173,8 @@
         "likeLimit": "Γείτονες ανά κατάταξη",
         "likeMaxDistance": "Μέγιστη απόσταση (pip πουλιών)",
         "likeNote": "Μηδέν: χωρίς όριο. Το διακριτικό like<12 ορίζει το δικό του για μία αναζήτηση.",
+        "commentAuthor": "Το όνομά σας",
+        "commentAuthorNote": "Υπογράφει τα σχόλια που γράφετε. Κενό: χωρίς υπογραφή.",
         "assistantTitle": "Βοηθός και MCP",
         "corpusTitle": "Σώμα αγώνων"
     },
@@ -654,6 +656,7 @@
         "newTournamentPlaceholder": "Νέο τουρνουά…",
         "noMatches": "Δεν υπάρχουν αγώνες",
         "noTournaments": "Δεν υπάρχουν τουρνουά",
+        "openHint": "Διπλό κλικ ή Enter για άνοιγμα",
         "notesPlaceholder": "Σημειώσεις…",
         "player1": "Παίκτης 1",
         "player2": "Παίκτης 2",
@@ -889,6 +892,7 @@
         "promptPlaceholder": "Σχόλιο για την τρέχουσα θέση…",
         "searchPlaceholder": "Αναζήτηση σχολίων…",
         "originXG": "XG",
+        "you": "εσείς",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "εισηγμένο",
@@ -1847,6 +1851,10 @@
         "medianTime": "Διάμεσος {n} s",
         "trend": "Τάση {value} pt",
         "lastPr": "Τελευταίο PR {value}",
+        "missedRetake": "Επανάληψη των λαθών μου",
+        "missedDeck": "Τράπουλα Anki των λαθών",
+        "missedCollection": "Συλλογή των λαθών",
+        "missedStudyName": "Λάθη στην Απόφαση — {date}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "Άγνωστη άσκηση: {exercise}.",
         "noQuestion": "Καμία ερώτηση δεν μπορεί να τεθεί: αυτή η βάση ή αυτή η πηγή δεν παρέχει καμία.",
@@ -2419,6 +2427,7 @@
             "prize": "Έπαθλο",
             "wins": "Ν",
             "losses_column": "Η",
+            "section_column": "Ενότητα",
             "opponents": "Αντίπαλοι που συνάντησε",
             "waiting": "Αναμονή",
             "state": "Κατάσταση",
@@ -2526,7 +2535,11 @@
             "noChange": "Τίποτα: τα τραπέζια του είναι ήδη της διοργάνωσης.",
             "confirm": "Σύνδεση",
             "wall": {
-                "rounds": "{n} ανακοινωμένοι γύροι"
+                "rounds": "{n} ανακοινωμένοι γύροι",
+                "status": "Παίζω;",
+                "bye": "απαλλαγή — μπαίνει στον γύρο {round}",
+                "eliminated": "αποκλείστηκε",
+                "qualified": "προκρίθηκε — {phase}"
             },
             "trashConfirm": "Διαγραφή της διοργάνωσης «{name}»; Τα αγωνίσματά της μένουν, αποσυνδεδεμένα."
         },

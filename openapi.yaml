@@ -3856,6 +3856,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/storage_LibrarySettings"
+  /v1/maintenance.reencode:
+    post:
+      operationId: maintenance.reencode
+      tags: [maintenance]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/matches.count:
     post:
       operationId: matches.count
@@ -6094,6 +6107,26 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/training.missed:
+    post:
+      operationId: training.missed
+      tags: [training]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/storage_TrainingMissedFilter"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  format: int64
   /v1/training.numberStats:
     post:
       operationId: training.numberStats
@@ -7033,6 +7066,9 @@ components:
           format: int64
         text:
           type: string
+        author:
+          type: string
+          nullable: true
     commentIDReq:
       type: object
       properties:
@@ -8367,6 +8403,9 @@ components:
     storage_TournamentBadge:
       type: object
       description: "Opaque: see the Go type storage.TournamentBadge (defined outside internal/server, not expanded here)."
+    storage_TrainingMissedFilter:
+      type: object
+      description: "Opaque: see the Go type storage.TrainingMissedFilter (defined outside internal/server, not expanded here)."
     storage_TrainingNumberStat:
       type: object
       description: "Opaque: see the Go type storage.TrainingNumberStat (defined outside internal/server, not expanded here)."

@@ -50,6 +50,7 @@ type searchFlags struct {
 	phase             *string
 	gameType          *string
 	commentOrigin     *string
+	commentAuthor     *string
 	player            *string
 	seatOnly          *bool
 	opponent          *string
@@ -102,6 +103,7 @@ func defineSearchFlags(fs *flag.FlagSet) *searchFlags {
 		noComment:         fs.Bool("no-comment", false, "Only positions carrying no comment"),
 		phase:             fs.String("phase", "", "Only positions in these game phases, comma-separated: opening, middlegame, race, bearoff (derived label, see `blunderdb repair`)"),
 		gameType:          fs.String("game-type", "", "Only positions in these plans of play, comma-separated: race, bearin, crunch, backgame, acepoint, blitz, primevprime, mutualholding, holding, contact (derived label, see `blunderdb repair`)"),
+		commentAuthor:     fs.String("comment-author", "", "Only positions carrying a comment signed by this author (whole name, any case)"),
 		commentOrigin:     fs.String("comment-origin", "", "Only positions carrying a comment from these origins, comma-separated: user, xg, gnubg, bgf, unknown"),
 		player:            fs.String("player", "", "Only matches this player sat in (case-insensitive, '*' as a wildcard); same as the pl\"…\" token"),
 		seatOnly:          fs.Bool("seat-only", false, "With --player: only the decisions that player took (pl!\"…\")"),
@@ -364,6 +366,7 @@ func (f *searchFlags) toFilters() (SearchFilters, error) {
 		GamePhaseFilter:          phaseFilter,
 		GameTypeFilter:           typeFilter,
 		CommentOriginFilter:      originFilter,
+		CommentAuthorFilter:      quotedToken("au", *f.commentAuthor),
 		IncludeCube:              includeCube,
 		IncludeScore:             includeScore,
 		PipCountFilter:           pipCountFilter,

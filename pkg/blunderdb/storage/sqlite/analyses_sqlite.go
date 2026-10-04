@@ -533,3 +533,8 @@ func (s *analysisStore) engineBatch(ctx context.Context, last int64, enginePrefi
 	}
 	return raw, ids, rows.Err()
 }
+
+// ReencodeAnalyses — see storage.AnalysisStore.
+func (s *analysisStore) ReencodeAnalyses(ctx context.Context, scope string, after int64, limit int) (int64, int, error) {
+	return sqlshared.ReencodeAnalyses(ctx, binder{s.db}.shared(), scope, after, limit)
+}

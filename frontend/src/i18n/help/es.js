@@ -203,7 +203,8 @@ export default {
 <p>El resultado se <strong>guarda junto al análisis, nunca en su lugar</strong>: un análisis importado no se modifica. Cada rollout forma un bloque con, por candidata, la equidad, el intervalo de confianza del 95 %, la <strong>JSD</strong> (la distancia a la mejor jugada en desviaciones típicas de la diferencia: a partir del límite, la jugada está decidida y deja de jugarse) y el número de partidas. El rollout se detiene en cuanto las jugadas quedan desempatadas. La <strong>Configuración</strong> — el motor y la firma completa de los parámetros — se despliega bajo la tabla: dos rollouts con la misma firma dan los mismos números. Un rollout juega el cubo dentro de sus partidas: la clasificación es fiable, la equidad absoluta algo menos, lo que el bloque recuerda. Una posición que no está en la base se puede rodar, pero no se guarda.</p>
 <p>El botón <strong>Sobre la lista mostrada…</strong> (o <code>ro search</code>) rueda, una tras otra, las posiciones de la lista mostrada — resultados de búsqueda, partido o colección — que aún no llevan este rollout; una confirmación da el total antes de empezar. Cada posición se escribe en cuanto termina: cancelar conserva lo hecho, y volver a lanzar continúa donde se detuvo. El avance sobrevive al cierre del panel.</p>
 <h3>Panel de Comentarios</h3>
-<p>El panel <strong>Comentarios</strong> (<em>CTRL-P</em>) muestra, añade y edita los comentarios asociados a la posición actual. Una posición puede llevar varios: se muestran todos, del más reciente al más antiguo. Los comentarios importados de archivos XG se asocian automáticamente a las posiciones correspondientes. Pulse <em>CTRL-P</em> o ejecute el comando <code>comment</code> para mostrar u ocultar el panel.</p>
+<p>El panel <strong>Comentarios</strong> (<em>CTRL-P</em>) muestra, añade y modifica los comentarios asociados a la posición actual. Una posición puede llevar varios, escritos por personas distintas: todos se muestran en hilo, del más reciente al más antiguo, cada uno con el nombre de su autor, y los suyos van primero. Los comentarios importados desde archivos XG se asocian automáticamente a las posiciones correspondientes. Pulse <em>CTRL-P</em> o ejecute el comando <code>comment</code> para mostrar u ocultar el panel.</p>
+<p>El nombre que firma sus comentarios se configura en las preferencias, pestaña <em>Interfaz</em>, campo <strong>Su nombre</strong>; si está vacío, sus comentarios no se firman. Los comentarios de una importación XG se firman <code>XG</code>, los de un archivo de partida con el nombre de su transcriptor. Reescribir un comentario lo firma con su nombre. La búsqueda <code>au"Alice"</code> retiene las posiciones que Alice ha comentado; fuera de la interfaz, <code>blunderdb comment add --author</code> escribe un comentario firmado y <code>blunderdb comment list</code> los vuelve a leer (véase Interfaz de línea de comandos (CLI)).</p>
 <p>Cada comentario procedente de un archivo lleva una <strong>etiqueta de procedencia</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, o <em>importado</em> cuando la procedencia nunca se registró). Los comentarios que usted escribió no llevan ninguna: es el caso corriente, y señalarlo en cada línea sería ruido. Modificar un comentario importado se lo atribuye: tras la modificación, la frase es suya.</p>
 <p>Esta distinción se nota en otro sitio: borrar una partida ya no destruye una posición sobre la que <strong>usted</strong> había escrito. Una nota tomada del archivo de origen sí desaparece con la partida que la trajo.</p>
 <h4>Las etiquetas</h4>
@@ -447,6 +448,7 @@ export default {
 <p>La <strong>hoja de emparejamientos</strong> se deja en la mesa de recepción: un clic en <em>Imprimir la hoja</em> abre el diálogo de impresión del sistema. Una línea por partido — los dos jugadores, la longitud, la mesa, dos casillas vacías para el marcador — y una ronda de treinta y dos jugadores cabe en una página A4.</p>
 <p>Un evento tiene su propia carpeta de salida, elegida una vez en su panel de Ajustes con el mismo botón <em>Elegir carpeta</em>: blunderDB escribe allí <code>index.html</code>, la <strong>página mural</strong> del evento — una línea por mesa, sea cual sea la prueba que la ocupa, con las rondas anunciadas de cada prueba y un enlace a su propia página — y cada prueba vinculada escribe la suya en una subcarpeta. Un gesto en cualquier prueba del evento regenera la página mural; la carpeta propia de una prueba vinculada se conserva pero se ignora mientras siga en el evento.</p>
 <p>Cuando una prueba está en fase de cuadro y este ya se ha sorteado, su página mural y la del evento muestran el árbol en grande, legible de lejos: una columna por ronda, con los perdedores que bajan a la consolación en línea discontinua. La página va alternando sola, sin script, entre su contenido habitual (las mesas, en el evento) y el árbol de cada prueba en cuadro, doce segundos cada uno; se recarga siempre cada treinta segundos y retoma la rotación donde estaba. Una prueba sin cuadro — una fase suiza, por ejemplo — no tiene árbol y la página queda como antes.</p>
+<p>Bajo el epígrafe «¿Juego yo?», la página de una prueba y la página mural del evento nombran a los jugadores cuya suerte está decidida: «eliminado/a» en cuanto no les queda ningún partido por jugar, «clasificado/a» con el nombre de la fase siguiente cuando una fase ha terminado, y «exento/a — entra en la ronda N» para un jugador sorteado sin rival en el cuadro, mientras no haya jugado. La clasificación toma el relevo una vez terminado el torneo.</p>
 <p>Fuera de la interfaz, el subcomando <code>blunderdb tournament</code> lee un torneo dirigido sin interfaz gráfica: <code>list</code>, <code>verify</code>, <code>standings</code>, <code>page</code> y <code>export</code>; <code>ranking --season</code> acumula los torneos cerrados de un evento o de un período en una clasificación de temporada, mediante un baremo de puntos por puesto y, a elección, un Elo de club (dos inscritos con el mismo nombre en una misma prueba cerrada hacen que la clasificación se rechace, pues conoce a una persona por su nombre); <code>page --rencontre</code> escribe la página mural de un evento en lugar de la página de una sola prueba. Véase Interfaz de línea de comandos (CLI).</p>
 <h3>Panel Stats</h3>
 <h4>Introducción</h4>
@@ -871,6 +873,13 @@ export default {
 <p>Las sesiones terminadas se conservan en la propia base — así que siguen al archivo — y sin límite. En reposo, el panel muestra una línea por ejercicio: el número de sesiones, la tasa de fallos, el tiempo mediano y, a partir de diez sesiones, la <strong>tendencia</strong>, es decir la diferencia entre la tasa de fallos de las diez últimas sesiones y la de todas — negativa, usted progresa.</p>
 <p>Para <em>Décision</em>, la línea da además el <strong>PR</strong> de la última sesión, calculado con la fórmula que las estadísticas aplican al juego real: 500 × error medio en equidad normalizada, sobre las decisiones juzgadas. Un PR de entrenamiento de 6 y un PR de partido de 6 miden lo mismo en la misma escala.</p>
 <p>Al hacer clic en el nombre del ejercicio se despliega el detalle <strong>por tipo de número</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». Ese detalle es lo que da valor al diario, y cuenta por tipo y no por cara: la misma casilla de la misma tabla, vista de un lado o del otro, es una sola debilidad.</p>
+<p>Una pregunta de <em>Decisión</em> conserva en el diario su posición, la respuesta dada y su coste en milipuntos. El detalle de <em>Decisión</em> incluye por tanto tres botones que actúan sobre todas las posiciones falladas, cada una una vez, la fallada más recientemente primero — una pregunta fuera de plazo cuenta como fallada:</p>
+<ul>
+<li><strong>Repetir mis fallos</strong> — las posiciones falladas pasan a ser la lista recorrida y una sesión de <em>Decisión</em> se reinicia sobre ellas;</li>
+<li><strong>Mazo Anki de los fallos</strong> — un mazo Anki con estas posiciones;</li>
+<li><strong>Colección de los fallos</strong> — una colección con estas posiciones.</li>
+</ul>
+<p>El mazo y la colección se llaman «Fallos en Decisión» seguido de la fecha del día. En la línea de comandos, <code>training missed</code> devuelve la misma lista y crea con ella un mazo (<code>--deck</code>) o una colección (<code>--collection</code>), y <code>training sessions</code> relee el diario (véase training — El diario de entrenamiento).</p>
 <h3>Panel de Metadatos</h3>
 <p>El panel <strong>Metadatos</strong> muestra la información general de la base de datos actual: nombre, descripción, número de posiciones, número de partidas y juegos, versión del esquema. Accesible mediante el comando <code>meta</code>.</p>
 <p>También muestra, <strong>cuando existe</strong>, el origen de la base de datos — véase Distribuir una base de datos: origen y contraseña. Una base de datos corriente no muestra esa sección.</p>
@@ -1206,6 +1215,10 @@ export default {
 <td>Retomar la última decisión de un torneo dirigido (fuera de un campo de entrada, donde deshace la pulsación).</td>
 </tr>
 <tr>
+<td>TAB (foco perdido)</td>
+<td>Bajo la página de un torneo dirigido, cuando el foco ha caído en la página: devolverlo al primer elemento de la página, sin abrir la búsqueda.</td>
+</tr>
+<tr>
 <td>RE PÁG / AV PÁG, INICIO / FIN</td>
 <td>Bajo la página de un torneo dirigido: desplazar la página, sin recorrer el tablero que oculta.</td>
 </tr>
@@ -1477,8 +1490,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Doble clic</td>
-<td>Seleccionar un torneo (mostrar su detalle).</td>
+<td>Doble clic, INTRO (fila con foco)</td>
+<td>Seleccionar un torneo (mostrar su detalle). TAB llega a las filas; un clic simple solo resalta.</td>
 </tr>
 <tr>
 <td>ARRIBA, k</td>
@@ -2486,6 +2499,11 @@ export default {
 <td>co:user</td>
 <td>La posición lleva un comentario de un origen dado: <code>user</code> (escrito por usted), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (traído por la importación de una partida) o <code>unknown</code>. Repetible (<code>co:xg co:gnubg</code>).</td>
 <td><code>--comment-origin</code></td>
+</tr>
+<tr>
+<td><code>au'Alice'</code></td>
+<td>La posición lleva un comentario firmado por este autor (nombre completo, sin distinguir mayúsculas de minúsculas).</td>
+<td><code>--comment-author</code></td>
 </tr>
 <tr>
 <td><code>m'patrón1,patrón2,...'</code></td>

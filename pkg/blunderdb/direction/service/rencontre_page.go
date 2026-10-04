@@ -154,6 +154,7 @@ func (d *Service) RencontrePageHTML(ctx context.Context, id int64) (string, erro
 	room := direction.Room{Tables: r.Tables}
 	roomRead := false
 	members := d.openMembers(ctx, r, 0)
+	now := time.Now()
 	events := make([]direction.WallEvent, 0, len(members))
 	var brackets []direction.WallBracket
 	for _, m := range members {
@@ -166,7 +167,7 @@ func (d *Service) RencontrePageHTML(ctx context.Context, id int64) (string, erro
 			room.Tables = r.Tables
 			roomRead = true
 		}
-		events = append(events, direction.WallEvent{Name: m.name, Slug: slugs[m.tid], Rounds: m.dir.Rounds()})
+		events = append(events, direction.WallEvent{Name: m.name, Slug: slugs[m.tid], Rounds: m.dir.Rounds(), Statuses: m.dir.Statuses(now)})
 		if br := d.wallBracket(ctx, m.dir, m.name); br != nil {
 			brackets = append(brackets, *br)
 		}
@@ -196,7 +197,7 @@ func (d *Service) RencontrePageHTML(ctx context.Context, id int64) (string, erro
 		tables = append(tables, w)
 	}
 	cat, lang := d.directionStrings(ctx)
-	return direction.WallPage(direction.WallPageInput{Name: r.Name, Tables: tables, Events: events, Brackets: brackets, Now: time.Now()}, cat, lang), nil
+	return direction.WallPage(direction.WallPageInput{Name: r.Name, Tables: tables, Events: events, Brackets: brackets, Now: now}, cat, lang), nil
 }
 
 // WriteRencontrePage rewrites the wall page and returns the file written. It writes nothing, and

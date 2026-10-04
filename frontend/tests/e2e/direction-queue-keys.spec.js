@@ -20,7 +20,7 @@ async function openDirection(page) {
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
     await expect(page.locator('#tournamentPanel')).toBeVisible();
-    await page.locator('#tournamentPanel tbody tr').first().click();
+    await page.locator('#tournamentPanel tbody tr').first().dblclick();
     await page.locator('#tournamentPanel .direction-btn').click();
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.locator('[data-testid="direction-tab-direction"]').click();
@@ -68,7 +68,7 @@ test('ouvrir la direction depuis le panneau lui donne le clavier', async ({ page
     await installDirectionEngine(page);
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
-    await page.locator('#tournamentPanel tbody tr').first().click();
+    await page.locator('#tournamentPanel tbody tr').first().dblclick();
     // Le bouton est dans le panneau : si la page ne prenait pas le focus en s'ouvrant, il y
     // resterait, et J / K iraient au panneau. Une direction en cours s'ouvre directement sur
     // la file (DirectionView), sans autre clic pour déplacer le focus.
@@ -79,4 +79,28 @@ test('ouvrir la direction depuis le panneau lui donne le clavier', async ({ page
     // Et la prise de focus différée du panneau ne la reprend pas.
     await page.waitForTimeout(300);
     expect(await page.evaluate(() => !!document.activeElement?.closest('#tournamentPanel'))).toBe(false);
+});
+
+test('Tab après « Lancer » : le focus reste dans la Direction, la Recherche ne s’ouvre pas', async ({ page }) => {
+    await openDirection(page);
+    await page.locator(`${proposal} .go`).first().click();
+    await page.waitForTimeout(300);
+    await expect.poll(() => page.evaluate(() => !!document.activeElement?.closest('.direction-view'))).toBe(true);
+
+    await page.keyboard.press('Tab');
+    await expect(page.locator('.direction-view')).toBeVisible();
+    await expect(page.locator('[data-testid="tab-tournaments"]')).toHaveClass(/active/);
+    expect(await page.evaluate(() => !!document.activeElement?.closest('.direction-view'))).toBe(true);
+});
+
+test('un tournoi s’ouvre au clavier : Tab jusqu’à la ligne, Entrée', async ({ page }) => {
+    await installWailsMock(page, openLibraryMock());
+    await installDirectionEngine(page);
+    await page.goto('/');
+    await page.locator('[data-testid="tab-tournaments"]').click();
+    await expect(page.locator('#tournamentPanel')).toBeVisible();
+    const row = page.locator('#tournamentPanel tbody tr').first();
+    await row.focus();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('#tournamentPanel .direction-btn')).toBeVisible();
 });

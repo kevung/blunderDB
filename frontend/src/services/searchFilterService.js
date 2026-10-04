@@ -104,7 +104,7 @@ export function buildSearchCommand(tokens) {
 // the whole quoted region before splitting (both quote styles).
 /** @param {string} str */
 export function stripQuotedTokens(str) {
-    return str.replace(/(?:pl!?|op|tn|m|t)["'][^"']*["']/g, ' ');
+    return str.replace(/(?:pl!?|op|tn|au|m|t)["'][^"']*["']/g, ' ');
 }
 
 // A tag whose quote characters are plain apostrophes: no double quote.
@@ -289,10 +289,12 @@ export function parseSearchTokens(filtersOrCommand, command) {
     let playerFilter = '';
     let opponentFilter = '';
     let tournamentNameFilter = '';
-    for (const [q] of cmd.matchAll(/(?:pl!?|op|tn|m|t)["'][^"']*["']/g)) {
+    let commentAuthorFilter = '';
+    for (const [q] of cmd.matchAll(/(?:pl!?|op|tn|au|m|t)["'][^"']*["']/g)) {
         if (q.startsWith('pl')) playerFilter ||= q;
         else if (q.startsWith('op')) opponentFilter ||= q;
         else if (q.startsWith('tn')) tournamentNameFilter ||= q;
+        else if (q.startsWith('au')) commentAuthorFilter ||= q;
         else if (q.startsWith('m')) movePatternFilter ||= q;
         else searchText ||= q;
     }
@@ -363,6 +365,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
         searchText,
         commentFilter,
         commentOriginFilter,
+        commentAuthorFilter,
         gamePhaseFilter,
         gameTypeFilter,
         tagFilter,
@@ -434,6 +437,7 @@ export function parseFilterTokens(tokens) {
         phFilter: p.gamePhaseFilter,
         gtFilter: p.gameTypeFilter,
         coOriginFilter: p.commentOriginFilter,
+        coAuthorFilter: p.commentAuthorFilter,
         tagFilter: p.tagFilter,
         encounterFilter: p.encounterFilter,
         dtFilter: p.decisionTypeFilter,
@@ -517,6 +521,7 @@ export function parseSearchCommand(command) {
         ph: p.gamePhaseFilter,
         gt: p.gameTypeFilter,
         coOrigin: p.commentOriginFilter,
+        coAuthor: p.commentAuthorFilter,
         tags: p.tagFilter,
         // Nom entier, comme `like`.
         encounterFilter: p.encounterFilter,
@@ -598,6 +603,7 @@ export function replaySearchArgs(command) {
         tagFilter: f.tags,
         encounterFilter: f.encounterFilter,
         commentOriginFilter: f.coOrigin,
+        commentAuthorFilter: f.coAuthor,
         // Le classement (ADR-0043), pour la même raison.
         likeFilter: f.likeFilter,
         likeTargetId: f.likeTargetId,
@@ -671,6 +677,7 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         searchText: pf.searchText || '',
         commentFilter: pf.commentFilter || '',
         commentOriginFilter: pf.commentOriginFilter || '',
+        commentAuthorFilter: pf.commentAuthorFilter || '',
         gamePhaseFilter: pf.gamePhaseFilter || '',
         gameTypeFilter: pf.gameTypeFilter || '',
         encounterFilter: pf.encounterFilter || '',

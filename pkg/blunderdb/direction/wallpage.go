@@ -34,6 +34,8 @@ type WallEvent struct {
 	Name   string
 	Slug   string
 	Rounds int
+	// Statuses answer "am I playing?" for the event's players (Direction.Statuses).
+	Statuses []PlayerStatus
 }
 
 // WallPageInput is everything the wall page needs. The caller — the database layer, which knows
@@ -92,6 +94,9 @@ func WallPage(in WallPageInput, cat *Catalog, lang string) string {
 				wallEsc(ev.Slug), PageName, wallEsc(ev.Name), wallEsc(rounds))
 		}
 		b.WriteString(`</ul>`)
+	}
+	for _, ev := range in.Events {
+		b.WriteString(StatusBlock(ev.Statuses, ev.Name, cat))
 	}
 
 	style := render.DefaultStyle

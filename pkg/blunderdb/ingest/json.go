@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -19,6 +20,18 @@ type positionBundle struct {
 	Position *domain.Position         `json:"position"`
 	Analysis *domain.PositionAnalysis `json:"analysis,omitempty"`
 	Comments []string                 `json:"comments,omitempty"`
+	// CommentAuthors[i] signs Comments[i]; absent, or shorter than Comments,
+	// for comments nobody signed. A separate list keeps every older record
+	// readable, and an import never signs in the importer's name.
+	CommentAuthors []string `json:"commentAuthors,omitempty"`
+}
+
+// commentAuthor is the author of the bundle's i-th comment, "" when unsigned.
+func (b *positionBundle) commentAuthor(i int) string {
+	if i < len(b.CommentAuthors) {
+		return b.CommentAuthors[i]
+	}
+	return ""
 }
 
 // flusher is implemented by streaming writers (e.g. http.ResponseWriter) so
@@ -67,6 +80,10 @@ func (e JSONExporter) Export(ctx context.Context, scope string, w io.Writer, _ E
 				return err
 			}
 			b.Comments = append(b.Comments, c.Text)
+			b.CommentAuthors = append(b.CommentAuthors, c.Author)
+		}
+		if !slices.ContainsFunc(b.CommentAuthors, func(a string) bool { return a != "" }) {
+			b.CommentAuthors = nil
 		}
 		if err := enc.Encode(b); err != nil {
 			return err
@@ -128,8 +145,8 @@ func (im JSONImporter) Import(ctx context.Context, scope string, src Source, pro
 				return sum, err
 			}
 		}
-		for _, txt := range b.Comments {
-			if _, err := tx.Comments().Add(ctx, scope, id, txt); err != nil {
+		for i, txt := range b.Comments {
+			if _, err := tx.Comments().Add(storage.WithCommentAuthor(ctx, b.commentAuthor(i)), scope, id, txt); err != nil {
 				return sum, err
 			}
 		}

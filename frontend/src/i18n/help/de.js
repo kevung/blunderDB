@@ -203,7 +203,8 @@ export default {
 <p>Das Ergebnis wird <strong>neben der Analyse gespeichert, nie an ihrer Stelle</strong>: eine importierte Analyse wird nicht verändert. Jedes Rollout bildet einen Block mit, je Kandidat, Equity, 95-%-Konfidenzintervall, <strong>JSD</strong> (dem Abstand zum besten Zug in Standardabweichungen der Differenz: ab der Grenze ist der Zug entschieden und wird nicht mehr gespielt) und Partienzahl. Das Rollout endet, sobald die Züge unterschieden sind. Die <strong>Konfiguration</strong> — die Engine und die vollständige Signatur der Parameter — klappt unter der Tabelle auf: zwei Rollouts mit derselben Signatur liefern dieselben Zahlen. Ein Rollout spielt den Würfel in seinen Partien mit: die Rangfolge ist verlässlich, die absolute Equity etwas weniger, woran der Block erinnert. Eine Stellung, die nicht in der Datenbank ist, kann gerollt, aber nicht gespeichert werden.</p>
 <p>Die Schaltfläche <strong>Auf die angezeigte Liste…</strong> (oder <code>ro search</code>) rollt nacheinander die Stellungen der angezeigten Liste — Suchergebnisse, Match oder Sammlung —, die dieses Rollout noch nicht tragen; eine Bestätigung nennt vor dem Start die Gesamtzahl. Jede Stellung wird geschrieben, sobald sie fertig ist: Abbrechen behält das Erledigte, ein neuer Start macht dort weiter, wo er aufgehört hat. Der Fortschritt überlebt das Schließen des Panels.</p>
 <h3>Kommentare-Panel</h3>
-<p>Das Panel <strong>Kommentare</strong> (<em>STRG-P</em>) zeigt, ergänzt und bearbeitet die Kommentare zur aktuellen Stellung. Eine Stellung kann mehrere tragen: alle werden angezeigt, die neuesten zuerst. Aus XG-Dateien importierte Kommentare werden den passenden Stellungen automatisch zugeordnet. <em>STRG-P</em> drücken oder den Befehl <code>comment</code> ausführen, um das Panel ein- oder auszublenden.</p>
+<p>Das Panel <strong>Kommentare</strong> (<em>CTRL-P</em>) zeigt die der aktuellen Position zugeordneten Kommentare an, fügt welche hinzu und bearbeitet sie. Eine Position kann mehrere tragen, von verschiedenen Personen verfasst: Alle werden als Verlauf angezeigt, vom neuesten zum ältesten, jeweils mit dem Namen ihres Autors, und Ihre eigenen stehen an erster Stelle. Aus XG-Dateien importierte Kommentare werden automatisch den entsprechenden Positionen zugeordnet. Drücken Sie <em>CTRL-P</em> oder führen Sie den Befehl <code>comment</code> aus, um das Panel ein- oder auszublenden.</p>
+<p>Der Name, der Ihre Kommentare signiert, wird in den Einstellungen, Reiter <em>Oberfläche</em>, im Feld <strong>Ihr Name</strong> festgelegt; ist er leer, sind Ihre Kommentare nicht signiert. Kommentare eines XG-Imports sind mit <code>XG</code> signiert, die einer Match-Datei mit dem Namen ihres Transkribenten. Wird ein Kommentar neu geschrieben, trägt er Ihren Namen. Die Suche <code>au"Alice"</code> liefert die Positionen, die Alice kommentiert hat; außerhalb der Oberfläche schreibt <code>blunderdb comment add --author</code> einen signierten Kommentar und <code>blunderdb comment list</code> liest sie wieder aus (siehe Befehlszeilenschnittstelle (CLI)).</p>
 <p>Jeder Kommentar aus einer Datei trägt eine <strong>Herkunftsmarkierung</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, oder <em>importiert</em>, wenn die Herkunft nie festgehalten wurde). Von Ihnen geschriebene Kommentare tragen keine: das ist der Normalfall, und jede Zeile zu kennzeichnen wäre nur Lärm. Einen importierten Kommentar zu bearbeiten macht ihn zu Ihrem: nach der Änderung ist der Satz Ihrer.</p>
 <p>Diese Unterscheidung wirkt sich anderswo aus: das Löschen einer Partie zerstört keine Stellung mehr, auf die <strong>Sie</strong> etwas geschrieben hatten. Eine aus der Quelldatei übernommene Notiz verschwindet dagegen weiterhin mit der Partie, die sie mitgebracht hat.</p>
 <h4>Tags</h4>
@@ -447,6 +448,7 @@ export default {
 <p>Das <strong>Paarungsblatt</strong> liegt auf dem Empfangstisch: Ein Klick auf <em>Blatt drucken</em> öffnet den Druckdialog des Systems. Eine Zeile je Match — die beiden Spieler, die Länge, der Tisch, zwei leere Kästchen für das Ergebnis — und eine Runde mit zweiunddreißig Spielern passt auf eine A4-Seite.</p>
 <p>Eine Veranstaltung hat ihren eigenen Ausgabeordner, einmal gewählt in ihrem Einstellungsfeld mit derselben Schaltfläche <em>Ordner wählen</em>: blunderDB schreibt dort <code>index.html</code>, die <strong>Wandseite</strong> der Veranstaltung — eine Zeile pro Tisch, gleich welcher Wettbewerb ihn belegt, mit den angekündigten Runden jedes Wettbewerbs und einem Link zu dessen eigener Seite — und jeder zugeordnete Wettbewerb schreibt seine eigene in einen Unterordner. Eine Handlung in einem beliebigen Wettbewerb der Veranstaltung erzeugt die Wandseite neu; der eigene Ordner eines zugeordneten Wettbewerbs bleibt erhalten, wird aber ignoriert, solange er in der Veranstaltung bleibt.</p>
 <p>Befindet sich ein Wettbewerb in einer Tableau-Phase und ist das Tableau ausgelost, zeigen seine Wandseite und die der Veranstaltung den Baum groß und aus der Ferne lesbar: eine Spalte pro Runde, die Verlierer, die in die Trostrunde wechseln, gestrichelt. Die Seite wechselt von selbst und ohne Skript zwischen ihrem üblichen Inhalt (bei der Veranstaltung die Tische) und dem Baum jedes Wettbewerbs im Tableau, jeweils zwölf Sekunden lang; sie lädt immer alle dreißig Sekunden neu und setzt den Wechsel dort fort, wo er war. Ein Wettbewerb ohne Tableau – etwa eine Schweizer Phase – hat keinen Baum, und die Seite bleibt wie zuvor.</p>
+<p>Unter der Überschrift „Spiele ich?“ nennen die Seite eines Wettbewerbs und die Wandseite der Veranstaltung die Spieler, deren Schicksal entschieden ist: „ausgeschieden“, sobald kein Match mehr zu spielen ist, „qualifiziert“ mit dem Namen der nächsten Phase, wenn eine Phase beendet ist, und „Freilos — steigt in Runde N ein“ für einen Spieler, der im Tableau ohne Gegner gelost wurde, solange er noch nicht gespielt hat. Nach Ende des Turniers übernimmt die Rangliste.</p>
 <p>Außerhalb der Oberfläche liest der Unterbefehl <code>blunderdb tournament</code> ein geleitetes Turnier ohne grafische Oberfläche: <code>list</code>, <code>verify</code>, <code>standings</code>, <code>page</code> und <code>export</code>; <code>ranking --season</code> summiert die abgeschlossenen Turniere einer Veranstaltung oder eines Zeitraums zu einer Saisonwertung, mit einer Punkteskala pro Platz und, nach Wahl, einem Club-Elo (zwei Teilnehmer gleichen Namens in einem abgeschlossenen Wettbewerb lassen die Wertung scheitern, da sie eine Person am Namen erkennt); <code>page --rencontre</code> schreibt die Wandseite einer Veranstaltung statt der Seite eines einzelnen Wettbewerbs. Siehe Befehlszeilenschnittstelle (CLI).</p>
 <h3>Stats-Panel</h3>
 <h4>Einführung</h4>
@@ -871,6 +873,13 @@ export default {
 <p>Beendete Sitzungen bleiben in der Datenbank selbst erhalten — sie folgen also der Datei — und ohne Obergrenze. In Ruhe zeigt das Panel eine Zeile je Übung: die Zahl der Sitzungen, die Fehlerquote, die mittlere Zeit und, ab zehn Sitzungen, die <strong>Tendenz</strong>, also den Abstand zwischen der Fehlerquote der letzten zehn Sitzungen und der aller — negativ, Sie werden besser.</p>
 <p>Für <em>Décision</em> nennt die Zeile außerdem den <strong>PR</strong> der letzten Sitzung, berechnet mit der Formel, die die Statistiken auf das reale Spiel anwenden — 500 × mittlerer Fehler in normalisierter Equity, über die bewerteten Entscheidungen. Ein Trainings-PR von 6 und ein Match-PR von 6 messen dasselbe auf derselben Skala.</p>
 <p>Ein Klick auf den Namen der Übung klappt das Detail <strong>je Zahlentyp</strong> auf: « Point de prise 4 · dernier lancer, 6 / 9 ». Dieses Detail macht den Wert des Journals aus, und es zählt nach Typ und nicht nach Seite: dasselbe Feld derselben Tabelle, von der einen oder der anderen Seite gesehen, ist eine einzige Schwäche.</p>
+<p>Eine Frage von <em>Entscheidung</em> behält im Protokoll ihre Stellung, die gegebene Antwort und ihre Kosten in Millipunkten. Die Details von <em>Entscheidung</em> enthalten daher drei Schaltflächen, die auf alle verfehlten Stellungen wirken, jede einmal, die zuletzt verfehlte zuerst — eine Frage, bei der die Zeit ablief, zählt als verfehlt:</p>
+<ul>
+<li><strong>Meine Fehler wiederholen</strong> — die verfehlten Stellungen werden zur durchblätterten Liste, und eine <em>Entscheidung</em>-Sitzung startet darauf neu;</li>
+<li><strong>Anki-Stapel der Fehler</strong> — ein Anki-Stapel aus diesen Stellungen;</li>
+<li><strong>Sammlung der Fehler</strong> — eine Sammlung aus diesen Stellungen.</li>
+</ul>
+<p>Der Stapel und die Sammlung heißen „Fehler bei Entscheidung“, gefolgt vom heutigen Datum. Auf der Kommandozeile liefert <code>training missed</code> dieselbe Liste und macht daraus einen Stapel (<code>--deck</code>) oder eine Sammlung (<code>--collection</code>), und <code>training sessions</code> liest das Protokoll wieder ein (siehe training — Das Trainingsprotokoll).</p>
 <h3>Metadaten-Panel</h3>
 <p>Das Panel <strong>Metadaten</strong> zeigt die allgemeinen Informationen der aktuellen Datenbank an: Name, Beschreibung, Anzahl der Stellungen, Anzahl der Matches und Partien, Schemaversion. Erreichbar über den Befehl <code>meta</code>.</p>
 <p>Es zeigt außerdem, <strong>sofern vorhanden</strong>, die Herkunft der Datenbank an — siehe Eine Datenbank weitergeben: Herkunft und Passwort. Bei einer gewöhnlichen Datenbank erscheint dieser Abschnitt nicht.</p>
@@ -1206,6 +1215,10 @@ export default {
 <td>Die letzte Entscheidung eines geleiteten Turniers zurücknehmen (außerhalb eines Eingabefelds, wo es den Tastendruck rückgängig macht).</td>
 </tr>
 <tr>
+<td>TAB (Fokus verloren)</td>
+<td>Unter der Seite eines geleiteten Turniers, wenn der Fokus auf die Seite gefallen ist: ihn auf das erste Element der Seite zurückbringen, ohne die Suche zu öffnen.</td>
+</tr>
+<tr>
 <td>BILD AUF / BILD AB, POS1 / ENDE</td>
 <td>Unterhalb der Seite eines geleiteten Turniers: die Seite scrollen, ohne das Brett zu durchlaufen, das sie verdeckt.</td>
 </tr>
@@ -1477,8 +1490,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Doppelklick</td>
-<td>Ein Turnier auswählen (Details anzeigen).</td>
+<td>Doppelklick, EINGABE (Zeile mit Fokus)</td>
+<td>Ein Turnier auswählen (Details anzeigen). TAB erreicht die Zeilen; ein einfacher Klick hebt nur hervor.</td>
 </tr>
 <tr>
 <td>HOCH, k</td>
@@ -2486,6 +2499,11 @@ export default {
 <td>co:user</td>
 <td>Die Stellung trägt einen Kommentar einer bestimmten Herkunft: <code>user</code> (von Ihnen geschrieben), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (durch einen Partie-Import mitgebracht) oder <code>unknown</code>. Wiederholbar (<code>co:xg co:gnubg</code>).</td>
 <td><code>--comment-origin</code></td>
+</tr>
+<tr>
+<td><code>au'Alice'</code></td>
+<td>Die Position trägt einen von diesem Autor signierten Kommentar (vollständiger Name, ohne Beachtung der Groß-/Kleinschreibung).</td>
+<td><code>--comment-author</code></td>
 </tr>
 <tr>
 <td><code>m'muster1,muster2,...'</code></td>

@@ -134,6 +134,23 @@ msgstr ""
 "…）です。認証済みアカウントをこの整数に対応付けるのはリバースプロキシの役目です。名前（\\ ``alice``\\ ）は ``400 "
 "invalid`` で拒否され、決して変換されません。"
 
+#: ../../source/mode_headless.rst:78
+msgid ""
+"L'en-tête facultatif ``X-User-Name`` nomme la personne derrière la "
+"requête : il signe les commentaires qu'elle écrit (``comments.add``, "
+"l'outil MCP ``comment_position``), et le démon le croit sans le vérifier,"
+" comme ``X-Tenant-ID``. Sans lui, le commentaire n'a pas d'auteur — "
+"jamais le tenant, qui partirait avec un export. Un import ne signe pas au"
+" nom de qui importe : les notes d'un fichier XG sont signées « XG », "
+"celles d'un autre fichier de son transcripteur, celles d'une base ``.db``"
+" de leur auteur d'origine."
+msgstr ""
+"任意のヘッダー ``X-User-Name`` はリクエストの背後にいる人物を示します。この人物が書くコメント（\\ "
+"``comments.add``\\ 、MCP ツール ``comment_position``\\ ）に署名し、デーモンは ``X"
+"-Tenant-ID`` "
+"と同様に検証せずにそれを信頼します。ヘッダーがなければコメントに作成者はいません。テナントが作成者になることは決してありません（エクスポートとともに外へ出てしまうためです）。インポートはインポートする人の名前では署名しません。XG"
+" ファイルのメモは「XG」、その他のファイルのメモはその転記者、\\ ``.db``\\ データベースのメモは元の作成者の署名になります。"
+
 #: ../../source/mode_headless.rst:78 ../../source/mode_headless.rst:1799
 msgid "**Options:**"
 msgstr "**オプション：**"
@@ -1874,21 +1891,27 @@ msgstr ""
 "を呼び出し、受け取る側のテナントがそのファイルを ``imports.db`` に送ります。各リクエストはそれぞれの ``X-Tenant-ID`` "
 "を持ち、どちらを行う権利があるかはプロキシが決めます。インポート時、コレクションは受け取り側の同名のコレクションに統合されるか、新たに作成されます。その局面は重複なく末尾に追加されます。受け取り側のライブコレクションには局面は追加されません。その内容はクエリが決めます。デスクトップアプリでのデータベースのインポートも同じ規則に従います。"
 
-#: ../../source/mode_headless.rst:952
+#: ../../source/mode_headless.rst:960
 msgid ""
 "La famille ``training`` tient le journal de l'onglet Entraînement : "
-"``training.save`` ajoute une séance (``exercise``, ``seedSource``, comptes, "
-"``items``) et rend son ``id`` (``Idempotency-Key`` accepté) ; "
+"``training.save`` ajoute une séance (``exercise``, ``seedSource``, "
+"comptes, ``items``) et rend son ``id`` (``Idempotency-Key`` accepté) ; "
 "``training.sessions`` relit les séances, la plus récente d'abord "
-"(``exercise`` et ``limit`` facultatifs) ; ``training.numberStats`` agrège "
-"les items d'un exercice par type de nombre. Les questions, elles, sont "
-"tirées par le client."
+"(``exercise`` et ``limit`` facultatifs) ; ``training.numberStats`` agrège"
+" les items d'un exercice par type de nombre ; ``training.missed`` rend "
+"les positions ratées, chacune une fois, la plus récemment ratée d'abord "
+"(``exercise``, ``sessionId`` et ``limit`` facultatifs). Un item de "
+"Décision porte sa position (``positionId``), la réponse donnée "
+"(``answer``) et son coût en millipoints (``errorMp``, absent hors délai)."
+" Les questions, elles, sont tirées par le client."
 msgstr ""
-"``training`` ファミリーは「トレーニング」タブの記録を保持します。``training.save`` "
-"はセッション（``exercise``、``seedSource``、件数、``items``）を追加してその ``id`` "
-"を返し（``Idempotency-Key`` を受け付けます）、``training.sessions`` "
-"はセッションを新しいものから順に読み直し（``exercise`` と ``limit`` "
-"は省略可能）、``training.numberStats`` は練習のアイテムを数の種類ごとに集計します。出題そのものはクライアントが行います。"
+"``training`` ファミリーは「トレーニング」タブのジャーナルを管理します。``training.save`` "
+"はセッションを追加し(``exercise``、``seedSource``、件数、``items``)、その ``id`` を返します"
+"(``Idempotency-Key`` に対応)。``training.sessions`` "
+"はセッションを新しい順に読み直します(``exercise`` と ``limit`` は任意)。``training.numberStats``"
+" は演習の項目を数の種類ごとに集計します。``training.missed`` は間違えたポジションを、それぞれ 1 "
+"回ずつ、最近間違えたものから順に返します(``exercise``、``sessionId``、``limit`` "
+"は任意)。「判断」の項目は、ポジション(``positionId``)、与えた答え(``answer``)、そのコスト(ミリポイント、``errorMp``、時間切れの場合は省略)を持ちます。問題自体はクライアントが出題します。"
 
 #: ../../source/mode_headless.rst:959
 msgid ""
@@ -3486,13 +3509,15 @@ msgid ""
 " dans l'outil), avec sa forme canonique"
 msgstr "コマンドバーの文法による検索で見つかったポジションとその正規形（文法はツールの説明に記載）"
 
-#: ../../source/mode_headless.rst:1872
-msgid "``search_comments``, ``saved_searches``"
-msgstr "``search_comments``, ``saved_searches``"
+#: ../../source/mode_headless.rst:1885
+msgid "``search_comments``, ``position_comments``, ``saved_searches``"
+msgstr "``search_comments``, ``position_comments``, ``saved_searches``"
 
-#: ../../source/mode_headless.rst:1873
-msgid "commentaires contenant des mots ; recherches enregistrées"
-msgstr "指定した語を含むコメント、保存済みの検索"
+#: ../../source/mode_headless.rst:1886
+msgid ""
+"commentaires contenant des mots ; tous les commentaires d'une position, "
+"chacun avec son auteur ; recherches enregistrées"
+msgstr "指定した語を含むコメント、ポジションのすべてのコメント(それぞれ著者付き)、保存済みの検索"
 
 #: ../../source/mode_headless.rst:1874
 msgid "``get_position``"
@@ -3522,22 +3547,20 @@ msgstr ""
 msgid "positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course"
 msgstr "近いポジション、XGID の読み取り、合法手、レースの EPC"
 
-#: ../../source/mode_headless.rst:1882
+#: ../../source/mode_headless.rst:1896
 msgid ""
 "``list_players``, ``player_aliases``, ``player_stats``, "
-"``recurring_errors``, ``training_stats``"
-msgstr ""
-"``list_players``, ``player_aliases``, ``player_stats``, "
-"``recurring_errors``, ``training_stats``"
+"``recurring_errors``, ``training_stats``, ``training_missed``"
+msgstr "``list_players``、``player_aliases``、``player_stats``、``recurring_errors``、``training_stats``、``training_missed``"
 
-#: ../../source/mode_headless.rst:1884
+#: ../../source/mode_headless.rst:1898
 msgid ""
-"joueurs ; leurs alias et les graphies proposées ; PR global, pions, videau, "
-"par phase ; erreurs qui reviennent ; PR du quiz et rétention Anki contre le "
-"PR réel"
+"joueurs ; leurs alias et les graphies proposées ; PR global, pions, "
+"videau, par phase ; erreurs qui reviennent ; PR du quiz et rétention Anki"
+" contre le PR réel ; positions ratées au quiz"
 msgstr ""
-"プレイヤー、その別名と提案された表記、全体の PR、チェッカー、キューブ、フェーズ別、繰り返される誤り、実際の PR に対するクイズの PR と "
-"Anki の定着率"
+"プレイヤー、その別名と推奨表記、全体の PR・チェッカー・キューブ・フェーズ別、繰り返されるミス、クイズの PR と実際の PR に対する "
+"Anki の定着率、クイズで間違えたポジション"
 
 #: ../../source/mode_headless.rst:1887
 msgid "``head_to_head``, ``pr_by_window``, ``player_ranking``"
@@ -3643,20 +3666,23 @@ msgstr ""
 "プロキシが列挙するテナントをまたぐ読み取り（:ref:`headless_tenants_lus`）：生徒のマッチ、ハッシュ付きのマッチのポジション、これらの盤面に書かれたコメント、共有ライブラリ、クラブランキング。``X-Read-"
 "Tenants`` がない場合は、このテナントのみ。"
 
-#: ../../source/mode_headless.rst:1918
+#: ../../source/mode_headless.rst:1932
 msgid ""
-"Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
-"``create_collection``, ``add_to_collection`` et ``anki_review``, qui note "
-"une carte tirée par ``anki_next`` — et ils ne sont offerts que sur demande :"
-" ``--write`` en local, ``--mcp-write`` sur le démon. Tous les autres ne font"
-" que lire ; ``rollout`` gagne cependant, quand l'écriture est offerte, "
-"l'argument ``store``, qui enregistre le rollout à côté de l'analyse de la "
-"position. Aucun outil n'efface."
+"Seuls cinq outils écrivent — ``save_position``, ``comment_position`` (qui"
+" signe de l'argument ``author``, sinon de l'en-tête ``X-User-Name``), "
+"``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
+" une carte tirée par ``anki_next`` — et ils ne sont offerts que sur "
+"demande : ``--write`` en local, ``--mcp-write`` sur le démon. Tous les "
+"autres ne font que lire ; ``rollout`` gagne cependant, quand l'écriture "
+"est offerte, l'argument ``store``, qui enregistre le rollout à côté de "
+"l'analyse de la position. Aucun outil n'efface."
 msgstr ""
-"書き込むツールは五つだけです——``save_position``、``comment_position``、``create_collection``、``add_to_collection``、そして"
-" ``anki_next`` が出したカードを採点する ``anki_review``——で、要求があったときだけ提供されます。ローカルでは "
-"``--write``、デーモンでは ``--mcp-write`` です。ほかのツールはすべて読み取りのみですが、書き込みが提供されているときは "
-"``rollout`` に引数 ``store`` が加わり、ポジションの分析の隣にロールアウトを記録します。どのツールも削除はしません。"
+"書き込みを行うツールは五つだけです。``save_position``、``comment_position``\\ (``author`` "
+"引数で署名し、なければ ``X-User-Name`` "
+"ヘッダーで署名)、``create_collection``、``add_to_collection``、そして ``anki_next`` "
+"が引いたカードを採点する ``anki_review`` で、要求があったときだけ提供されます(ローカルでは ``--write``、デーモンでは"
+" ``--mcp-write``)。それ以外はすべて読み取り専用です。ただし書き込みが提供されている場合、``rollout`` には "
+"``store`` 引数が加わり、ポジションの解析の隣にロールアウトを記録します。何も削除するツールはありません。"
 
 #: ../../source/mode_headless.rst:1926
 msgid ""
@@ -3709,3 +3735,4 @@ msgstr ""
 #~ "通知は、ローカルのメッセージと同様に、データベースへの書き込みの後に送られます。この 2 "
 #~ "つの間でインスタンスが突然停止した場合、その操作は他のインスタンスに通知されず、それらのクライアントは次の ``resync`` "
 #~ "で初めて知ることになります。"
+

@@ -600,3 +600,27 @@ func TestMCPHostAndAssistantSurviveReload(t *testing.T) {
 		t.Fatalf("the assistant's write switch must not follow the MCP server's (err %v)", err)
 	}
 }
+
+// TestCommentAuthorSettingSignsAndSurvivesReload: « Votre nom » reaches the
+// database wrapper at once, is persisted, and comes back on the next launch.
+func TestCommentAuthorSettingSignsAndSurvivesReload(t *testing.T) {
+	isolateXDGConfig(t)
+
+	var applied string
+	saver := NewConfig()
+	saver.applyCommentAuthor = func(n string) { applied = n }
+	if err := saver.SaveCommentAuthor("  Alice  "); err != nil {
+		t.Fatalf("SaveCommentAuthor: %v", err)
+	}
+	if applied != "Alice" {
+		t.Errorf("hook got %q, want the trimmed name", applied)
+	}
+
+	loader := &Config{}
+	if _, err := loader.LoadConfig(); err != nil {
+		t.Fatalf("LoadConfig: %v", err)
+	}
+	if got := loader.GetCommentAuthor(); got != "Alice" {
+		t.Errorf("reloaded author = %q, want Alice", got)
+	}
+}

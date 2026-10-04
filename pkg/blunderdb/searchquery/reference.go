@@ -44,6 +44,7 @@ Values:
   ma1 tn2 id7  match / tournament / position ids (repeatable)
   ph:race      game phase: opening, middlegame, race, bearoff (repeatable)
   co:user      comment origin: user, xg, gnubg, bgf, unknown (repeatable)
+  au"Alice"    comments signed by this author
 
 
 `

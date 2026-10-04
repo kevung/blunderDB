@@ -16,6 +16,8 @@ export function GetBoardColors():Promise<main.BoardColors>;
 
 export function GetCheckForUpdates():Promise<boolean>;
 
+export function GetCommentAuthor():Promise<string>;
+
 export function GetEpcChallenge():Promise<boolean>;
 
 export function GetGammonNetAnalysisPly():Promise<number>;
@@ -75,6 +77,8 @@ export function SaveBearoffTSPath(arg1:string):Promise<void>;
 export function SaveBoardColors(arg1:main.BoardColors):Promise<void>;
 
 export function SaveCheckForUpdates(arg1:boolean):Promise<void>;
+
+export function SaveCommentAuthor(arg1:string):Promise<void>;
 
 export function SaveConfig(arg1:main.Config):Promise<void>;
 

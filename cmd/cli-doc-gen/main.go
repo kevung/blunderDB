@@ -41,6 +41,8 @@ func composite(name string) []string {
 	switch name {
 	case "collection":
 		return cli.NewCLI().CollectionSubcommands()
+	case "comment":
+		return cli.NewCLI().CommentSubcommands()
 	case "anki":
 		return cli.NewCLI().AnkiSubcommands()
 	case "lesson":
@@ -51,6 +53,8 @@ func composite(name string) []string {
 		return cli.NewCLI().TournamentSubcommands()
 	case "stats":
 		return cli.NewCLI().StatsSubcommands()
+	case "training":
+		return cli.NewCLI().TrainingSubcommands()
 	default:
 		return nil
 	}

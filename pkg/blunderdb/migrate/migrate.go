@@ -216,7 +216,7 @@ func (m *mover) copyPositions(rep *Report) error {
 			if err != nil {
 				return fmt.Errorf("migrate: read comments for position %d: %w", oldID, err)
 			}
-			if _, err := m.dst.Comments().Add(m.ctx, m.scope, newID, c.Text); err != nil {
+			if _, err := m.dst.Comments().AddFrom(storage.WithCommentAuthor(m.ctx, c.Author), m.scope, newID, c.Text, c.Origin); err != nil {
 				return fmt.Errorf("migrate: add comment for position %d: %w", oldID, err)
 			}
 			rep.Comments++

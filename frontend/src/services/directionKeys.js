@@ -84,6 +84,29 @@ export function directionLeavesToPage(event) {
     return bare && SCROLL_KEYS.includes(event.key) && directionPageShown();
 }
 
+/**
+ * Tab nu avec le focus tombé sur `body` pendant que la page Direction est affichée : il ne doit pas
+ * ouvrir la Recherche (le plateau est caché) mais ramener le focus sur le premier élément de la page.
+ * Avec le focus sur un vrai élément, Tab reste la navigation native.
+ *
+ * @param {KeyboardEvent} event
+ * @returns {boolean} vrai si l'appui a été pris en charge (à ne pas laisser au répartiteur)
+ */
+export function directionTabKey(event) {
+    if (event.code !== 'Tab' || event.ctrlKey || event.metaKey || event.altKey || !directionPageShown()) return false;
+    const active = document.activeElement;
+    if (active && active !== document.body) return false;
+    const view = document.querySelector('.direction-view');
+    const first = [...(view?.querySelectorAll(FOCUSABLE) ?? [])].find((el) => !el.closest('[hidden]')) ?? view;
+    if (!first) return false;
+    event.preventDefault();
+    /** @type {HTMLElement} */ (first).focus();
+    return true;
+}
+
+/** Les éléments que Tab atteint, hors volets masqués. */
+const FOCUSABLE = 'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 /** Ce qui est ouvert par-dessus la page garde ses touches : une modale, une surcouche. */
 export function somethingOpenAbove() {
     return hasOpenOverlay() || document.querySelector('[aria-modal="true"], .context-menu') !== null;
