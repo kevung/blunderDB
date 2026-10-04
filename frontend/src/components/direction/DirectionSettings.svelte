@@ -562,7 +562,7 @@
             </div>
         </details>
 
-        <div class="actions">
+        <div class="actions apply-bar">
             <button type="button" class="primary" data-testid="direction-settings-apply" onclick={askApply}>
                 {$t('direction.settings.apply')}
             </button>
@@ -751,10 +751,20 @@
         color: var(--color-text-muted);
     }
 
+    /* Collé au bas de l'onglet : Enregistrer reste sous le doigt quel que soit le défilement,
+       au lieu de disparaître sous la barre d'onglets du dock. */
     .actions {
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
+    }
+
+    .apply-bar {
+        position: sticky;
+        bottom: 0;
+        padding: 0.4rem 0;
+        background: var(--color-surface);
+        z-index: 1;
     }
 
     button.primary,
