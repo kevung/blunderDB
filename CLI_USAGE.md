@@ -58,6 +58,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `verify` - Verify database integrity
 - `vacuum` - Compact the database file, reclaiming freed space
 - `repair` - Recompute the analysis columns from the analyses themselves
+- `reencode` - Rewrite analyses stored by older releases in the compact format
 - `delete` - Delete data from the database
 - `trash` - What was deleted through the trash, and how to put it back
 - `completion` - Print a shell completion script (bash, zsh, fish)
@@ -1532,7 +1533,9 @@ honest, then checks that the volume has roughly twice the current file size
 free (SQLite rebuilds the whole database before swapping it in — it refuses
 with a clear error rather than run out of room partway through), runs
 `VACUUM`, and finishes with `ANALYZE` so the query planner's statistics match
-the rebuilt file.
+the rebuilt file. Before the `VACUUM`, every analysis is rewritten in the
+compact binary format at the strongest compression, including those an older
+release stored as JSON (see `reencode`).
 
 **Example:**
 ```bash
@@ -1545,6 +1548,34 @@ Compacting database...
   Before: 128.4 MiB
   After:  41.2 MiB
   Reclaimed: 87.2 MiB
+```
+
+## Reencode Command
+
+Rewrite the analyses an older release stored as JSON in the compact binary
+format (about half the size, several times faster to read). Old analyses stay
+readable without it; `vacuum` performs the same conversion while it compacts.
+`reencode` converts without compacting: useful on a large database, where
+`vacuum` needs twice the file size in free space, or on a PostgreSQL server,
+which has no `vacuum`. The daemon exposes the same pass as
+`maintenance.reencode`, limited to the caller's tenant.
+
+```bash
+./blunderDB reencode --db database.db
+```
+
+**Options:**
+- `--db` - Path to the database file (required)
+- `--format` - Output format: `text` (default) or `json` (`{"rewritten"}`, the number of analyses rewritten)
+
+It works in batches of 2,000 analyses, each in its own transaction.
+Interrupted, it resumes on the next run where it stopped: analyses already
+converted are skipped without being read. An analysis that does not decode is
+left as it is and logged. It never runs automatically.
+
+**Example output:**
+```
+  Analyses rewritten: 15623468
 ```
 
 ## Healthcheck Command
@@ -3163,6 +3194,28 @@ Examples:
 
 Also: `players merge --db FILE --into CANONICAL NAME...` and
 `players swap --db FILE MATCH_ID` (see their --help).
+```
+
+### `blunderdb reencode`
+
+```
+Usage: blunderdb reencode [options]
+
+Rewrite the analyses an older release stored as JSON in the compact
+binary format, which is about half the size and reads several times
+faster. Old analyses stay readable without it; vacuum does the same
+conversion. It works in batches: interrupted, it resumes where it
+stopped on the next run. It never runs automatically.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb reencode --db database.db
+  blunderdb reencode --db database.db --format json
 ```
 
 ### `blunderdb repair`

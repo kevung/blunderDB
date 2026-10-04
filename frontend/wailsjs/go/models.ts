@@ -1051,6 +1051,18 @@ export namespace database {
 	        this.action_count = source["action_count"];
 	    }
 	}
+	export class ReencodeResult {
+	    Rewritten: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ReencodeResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Rewritten = source["Rewritten"];
+	    }
+	}
 	export class VacuumResult {
 	    SizeBefore: number;
 	    SizeAfter: number;

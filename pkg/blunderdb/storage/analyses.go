@@ -90,4 +90,46 @@ type AnalysisStore interface {
 	// yields, so the caller may take as long as it likes per record and holds
 	// no list of ids in memory.
 	WithEngine(ctx context.Context, scope, enginePrefix string) iter.Seq2[AnalysisRecord, error]
+
+	// ReencodeAnalyses rewrites in the current binary format (ADR-0070) at
+	// most limit analyses past the position id after whose blob is still in a
+	// legacy format, in id order, and returns the position id of the last row
+	// it examined (0 when none is left) and how many it rewrote. A blob that
+	// does not decode is left as it is. It is the resumable pass that
+	// re-encodes a library older than the format: the caller loops from 0 on
+	// the id it gets back, and a pass interrupted and restarted skips, in
+	// SQL, what it already rewrote.
+	//
+	// An explicit operation, NOT a schema migration: the format is told by
+	// the blob's header, so a legacy row reads as well as a binary one.
+	ReencodeAnalyses(ctx context.Context, scope string, after int64, limit int) (next int64, rewritten int, err error)
+}
+
+// ReencodeBatchSize bounds the rows one ReencodeAnalyses call rewrites, in
+// one transaction, as compaction's batches do.
+const ReencodeBatchSize = 2000
+
+// ReencodeAllAnalyses runs the AnalysisStore.ReencodeAnalyses pass over the
+// whole scope and returns how many blobs it rewrote. before, when non-nil,
+// runs around each batch (the GUI's wrapper takes its lock there); it returns
+// the function that ends the batch.
+func ReencodeAllAnalyses(ctx context.Context, store AnalysisStore, scope string, before func() func()) (int, error) {
+	var next int64
+	total := 0
+	for {
+		done := func() {}
+		if before != nil {
+			done = before()
+		}
+		n, k, err := store.ReencodeAnalyses(ctx, scope, next, ReencodeBatchSize)
+		done()
+		if err != nil {
+			return total, err
+		}
+		total += k
+		if n == 0 {
+			return total, nil
+		}
+		next = n
+	}
 }
