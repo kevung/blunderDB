@@ -268,8 +268,15 @@
     async function createTournament() {
         if (!newTournamentName.trim()) return;
         try {
+            const knownIds = new Set(sortedTournaments.map((x) => x.id));
             await CreateTournament(newTournamentName.trim(), newTournamentDate, newTournamentLocation.trim());
             await loadTournaments();
+            // The creation field is about to vanish: the new row takes the focus, not <body>.
+            const created = sortedTournaments.find((x) => !knownIds.has(x.id));
+            if (created) {
+                highlightedId = created.id;
+                listTable?.focusRow(created);
+            }
             statusBarTextStore.set(tMsg('tournament.created', { name: newTournamentName.trim() }));
             newTournamentName = '';
             newTournamentDate = '';
@@ -618,6 +625,10 @@
                         {/if}
                     {/snippet}
                 </PanelTable>
+                <!-- Always laid out: showing it on the first click must not move the row under the second one. -->
+                <p class="open-hint" class:concealed={highlightedId === null || creating} aria-hidden={highlightedId === null || creating} data-testid="tournament-open-hint">
+                    {$t('tournament.openHint')}
+                </p>
                 {#if creating}
                     <div class="add-area">
                         <input
@@ -888,6 +899,17 @@
         height: 100%;
         display: flex;
         overflow: hidden;
+    }
+
+    .open-hint.concealed {
+        visibility: hidden;
+    }
+
+    .open-hint {
+        margin: 0;
+        padding: 2px 8px;
+        color: var(--text-secondary, inherit);
+        font-size: var(--font-size-small);
     }
 
     .tournament-list-pane {

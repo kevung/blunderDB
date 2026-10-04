@@ -1215,6 +1215,10 @@ export default {
 <td>Reprendre la dernière décision d'un tournoi dirigé (hors d'un champ de saisie, où il annule la frappe).</td>
 </tr>
 <tr>
+<td>TAB (focus perdu)</td>
+<td>Sous la page d'un tournoi dirigé, quand le focus est tombé sur la page : le ramener sur le premier élément de la page, sans ouvrir la recherche.</td>
+</tr>
+<tr>
 <td>PAGE PRÉC. / PAGE SUIV., DÉBUT / FIN</td>
 <td>Sous la page d'un tournoi dirigé : faire défiler la page, sans parcourir le plateau qu'elle cache.</td>
 </tr>
@@ -1486,8 +1490,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Double-clic</td>
-<td>Sélectionner un tournoi (afficher son détail).</td>
+<td>Double-clic, ENTRÉE (ligne au focus)</td>
+<td>Sélectionner un tournoi (afficher son détail). TAB atteint les lignes ; un clic simple ne fait que surligner.</td>
 </tr>
 <tr>
 <td>HAUT, k</td>

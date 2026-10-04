@@ -1215,6 +1215,10 @@ export default {
 <td>Take back the last decision of a directed tournament (outside an input field, where it undoes the keystroke).</td>
 </tr>
 <tr>
+<td>TAB (focus lost)</td>
+<td>Under a directed tournament's page, when the focus has fallen to the page: bring it back to the first element of the page, without opening the search.</td>
+</tr>
+<tr>
 <td>PAGEUP / PAGEDOWN, HOME / END</td>
 <td>Below the page of a directed tournament: scroll the page, without stepping through the board it hides.</td>
 </tr>
@@ -1486,8 +1490,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Double-click</td>
-<td>Select a tournament (show its detail).</td>
+<td>Double-click, ENTER (focused row)</td>
+<td>Select a tournament (show its detail). TAB reaches the rows; a single click only highlights.</td>
 </tr>
 <tr>
 <td>UP, k</td>

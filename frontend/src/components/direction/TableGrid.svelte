@@ -15,6 +15,7 @@
     import { gridKeyAction, TABLE_DIGIT_DELAY_MS } from '../../services/directionGridKeys.js';
     import { pastThreshold, canGrab, dropAction } from '../../services/directionDrag.js';
     import { closeOnEscape } from '../../services/escapeService.js';
+    import { keepFocus } from '../../utils/keepFocus.js';
     import { confirmAction } from '../../services/confirmService.js';
     import { registerKeys } from '../../services/keyDispatch.js';
 
@@ -314,7 +315,7 @@
     }
 </script>
 
-<section class="grid-wrap">
+<section class="grid-wrap" use:keepFocus={() => gridEl?.querySelector('.cell[tabindex="0"]')}>
     <header>
         <h3>{$t('direction.table.title', { n: tableCount })}</h3>
         {#if actions}{@render actions()}{/if}

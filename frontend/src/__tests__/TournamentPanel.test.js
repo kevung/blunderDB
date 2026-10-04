@@ -177,6 +177,30 @@ describe('TournamentPanel — list view', () => {
         expect(await screen.findByText('Alice')).toBeTruthy();
     });
 
+    test('a tournament row is reachable by Tab and Enter opens it; Enter on the rename button still renames', async () => {
+        renderOpen();
+        const row = (await screen.findByText('Blunder Cup')).closest('tr');
+        expect(row.getAttribute('tabindex')).toBe('0');
+
+        await fireEvent.keyDown(row.querySelector('button[title]'), { key: 'Enter' });
+        expect(get(selectedTournamentStore)).toBeNull();
+
+        await fireEvent.keyDown(row, { key: 'Enter' });
+        await vi.waitFor(() => expect(get(selectedTournamentStore)).toMatchObject({ id: 1 }));
+    });
+
+    test('a single click selects the row and shows the open hint', async () => {
+        renderOpen();
+        const row = (await screen.findByText('Blunder Cup')).closest('tr');
+        expect(screen.getByTestId('tournament-open-hint').classList.contains('concealed')).toBe(true);
+
+        await fireEvent.click(row);
+
+        expect(screen.getByTestId('tournament-open-hint').classList.contains('concealed')).toBe(false);
+        expect(screen.getByTestId('tournament-open-hint').textContent).toMatch(/Enter/);
+        expect(get(selectedTournamentStore)).toBeNull();
+    });
+
     test('double-clicking a tournament, then the back button, returns to the list with the selection cleared', async () => {
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
@@ -306,5 +330,22 @@ describe('TournamentPanel — deferred focus', () => {
         await pastFocusTimer();
 
         expect(document.activeElement?.id).toBe('tournamentPanel');
+    });
+});
+
+describe('TournamentPanel — focus after creation', () => {
+    test('creating a tournament puts the focus on its new row, not on body', async () => {
+        CreateTournament.mockImplementation(async () => {
+            GetAllTournaments.mockResolvedValue([...SAMPLE_TOURNAMENTS, { id: 3, name: 'Zeta Trophy', matchCount: 0, date: '', location: '', pr: 0, mwc_loss: 0 }]);
+        });
+        renderOpen();
+        await screen.findByText('Blunder Cup');
+        // Past the panel's deferred own focus (100 ms), as a person typing would be.
+        await new Promise((r) => setTimeout(r, 150));
+        const nameInput = await openCreation();
+        await fireEvent.input(nameInput, { target: { value: 'Zeta Trophy' } });
+        await fireEvent.keyDown(nameInput, { key: 'Enter' });
+
+        await vi.waitFor(() => expect(document.activeElement?.closest('tr')?.textContent).toContain('Zeta Trophy'));
     });
 });
