@@ -59,7 +59,7 @@ Navigation
 
    "CTRL-R", "Recharger toutes les positions de la base de données."
    "Début, h", "Première position / Partie précédente (navigation match)."
-   "Page préc.", "Recule d'une page (cent positions par défaut, réglable dans les Paramètres > Interface, jusqu'à 10 % de la liste ; au début de la liste, s'y arrête) ; dans un match, partie précédente."
+   "Page préc.", "Recule d'une page (cent positions par défaut, réglable dans les Paramètres > Interface : 10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste ; au début de la liste, s'y arrête) ; dans un match, partie précédente."
    "GAUCHE, k", "Position précédente."
    "DROITE, j", "Position suivante."
    "HAUT, k", "Coup précédent (lorsqu'un coup est sélectionné dans l'analyse)."

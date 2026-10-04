@@ -1042,7 +1042,7 @@ export default {
 </tr>
 <tr>
 <td>PageUp</td>
-<td>Goes back one page (a hundred positions by default, adjustable in Settings &gt; Interface, up to 10% of the list; stops at the start of the list); in a match, previous game.</td>
+<td>Goes back one page (a hundred positions by default, adjustable in Settings &gt; Interface: 10, 50, 100, 500 or 1,000 positions, or 10% of the list; stops at the start of the list); in a match, previous game.</td>
 </tr>
 <tr>
 <td>LEFT, k</td>

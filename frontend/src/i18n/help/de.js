@@ -1042,7 +1042,7 @@ export default {
 </tr>
 <tr>
 <td>Bild auf</td>
-<td>Geht eine Seite zurück (standardmäßig hundert Positionen, einstellbar unter Einstellungen &gt; Oberfläche, bis zu 10 % der Liste; hält am Anfang der Liste an); in einem Match vorheriges Spiel.</td>
+<td>Geht eine Seite zurück (standardmäßig hundert Positionen, einstellbar unter Einstellungen &gt; Oberfläche: 10, 50, 100, 500 oder 1 000 Positionen oder 10 % der Liste; hält am Anfang der Liste an); in einem Match vorheriges Spiel.</td>
 </tr>
 <tr>
 <td>LINKS, k</td>

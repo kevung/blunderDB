@@ -1042,7 +1042,7 @@ export default {
 </tr>
 <tr>
 <td>Re Pág</td>
-<td>Retrocede una página (cien posiciones por defecto, ajustable en Configuración &gt; Interfaz, hasta el 10 % de la lista; se detiene al principio de la lista); en un match, partida anterior.</td>
+<td>Retrocede una página (cien posiciones por defecto, ajustable en Configuración &gt; Interfaz: 10, 50, 100, 500 o 1 000 posiciones, o el 10 % de la lista; se detiene al principio de la lista); en un match, partida anterior.</td>
 </tr>
 <tr>
 <td>IZQUIERDA, k</td>
