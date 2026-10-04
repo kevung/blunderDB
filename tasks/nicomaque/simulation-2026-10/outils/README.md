@@ -20,9 +20,10 @@ pour un autre). Un seul worker : chaque spec tient son shim, sur son port, et sa
 
 | Fichier | Rôle |
 |---|---|
-| `shim/main.go` | `//go:build simulation` (hors CI). `POST /call/<Méthode>` par réflexion, `GET /methods`, `GET /warnings` (avertissements de page murale que le GUI met en barre d'état), `GET /stats` (appels par méthode), `POST /savecsv` |
+| `_shim/main.go` | `//go:build simulation`, dossier en `_` : hors `./...`, donc hors `go vet` et CI ; `buildTool(nom)` le construit par son chemin. `POST /call/<Méthode>` par réflexion, `GET /methods`, `GET /warnings` (avertissements de page murale que le GUI met en barre d'état), `GET /stats` (appels par méthode), `POST /savecsv` |
 | `e2e/realBackend.js` | `installRealBackend(page, {shimUrl, dbPath, outDir})` ; `shimCall(url, Méthode, …args)` pour l'oracle ; `shimPageWarnings(url)` |
-| `e2e/shimProcess.js` | `new Shim({name, port, fresh})` : `start()`, `kill()` (SIGKILL), `restart()`, `dispose({keep})` |
+| `_t2-verify/main.go` | `//go:build simulation` : la CLI (`internal/cli`) sans GUI, pour `tournament verify` après la fermeture brutale de T2 |
+| `e2e/shimProcess.js` | `new Shim({name, port, fresh})` : `start()`, `kill()` (SIGKILL), `restart()`, `dispose({keep})` ; `buildTool(nom)` construit `_<nom>` dans `SIM_DIR` |
 | `e2e/meter.js` | `new Meter(page, {persona, tournament, viewport, input, file})`, `meter.act(meta, g => …)`, `summarize(jsonl)`, `VIEWPORTS`, `zoomViewport` |
 | `playwright.config.js`, `package.json`, `run.sh` | configuration jetable, ESM |
 
@@ -103,11 +104,16 @@ Une ligne JSONL par action ; champs documentés en tête de `meter.js`. Ce qu'il
 
 ## Constats faits en route (à reprendre par les specs, pas corrigés)
 
-- **C-H1** Toutes les cibles de l'entrée sont sous 24 px de haut à 1920×1080 : onglet Tournois
-  40×14, « + Nouveau tournoi » 56×14, « Diriger » 52×12, « Ouvrir la direction » 56×12, onglets
-  de la Direction 34×22, champ nom de l'inscription 120×13, « Lancer » 32×13. Suspects :
-  `TournamentPanel.svelte` (`.direction-btn`), `NewButton.svelte`, `DirectionView.svelte`
-  (onglets), `PlayersView.svelte`, `ProposalList.svelte` (`.go`).
+- **C-H1** *(mesuré à 50 % : invalide, refait à 100 %)*. La première mesure (onglet Tournois
+  40×14, « Lancer » 32×13, etc.) a été prise avec l'interface à 50 % (voir « Piège UIScale »).
+  À l'échelle réelle (T1, T2, T3 refaits), onglets, « Lancer », vainqueur, cases de table et
+  champ d'inscription passent (44 px, 24 px pour le champ). **Restent sous 24 px** : « Diriger »
+  103×20 et « Ouvrir la direction » 106×20 (`TournamentPanel.svelte`, `.direction-btn`), « ← »
+  de la liste 20×12, « Corriger » d'une ligne d'Historique 65×23 (`HistoryView.svelte`), et les
+  six contrôles du panneau Rencontre, 22 px (`RencontrePanel.svelte`). Hors écran à 100 % : le
+  panneau Rencontre aux deux viewports (10 à 28 crans) ; « Enregistrer » des Réglages à
+  1366×768, et masqué au centre par `input.input[tab-content]` à 1920×1080. Aucune cible
+  masquée par le dock dans les passages à 100 % (T1-E11, vu à 150 %, reste à rejouer).
 - **C-H2** Focus perdu (sur `body`) après « Lancer » et après la saisie d'un vainqueur : le
   clavier repart du début de la page. Suspects : `ProposalList.svelte`, `ResultCard.svelte`.
 - **C-H3** « Diriger » ouvre la Direction ; le bouton voisin « Ouvrir la direction » la
@@ -120,3 +126,14 @@ Une ligne JSONL par action ; champs documentés en tête de `meter.js`. Ce qu'il
   confirmer à 16 joueurs (T1) ; suspects : `directionStore.js` (préréglage, `target`), moteur.
 - **C-H6** L'inscription d'un joueur ne donne aucun retour hors la ligne ajoutée (pas de statut
   ni d'annonce `aria-live`).
+
+## Piège UIScale (défaut de harnais corrigé)
+
+`realBackend.js` rendait `UIScale: 1`, alors que `main.Config.GetUIScale` renvoie un
+**pourcentage** : `uiScaleStore` le bornait à 50 et toute l'interface tournait à `--ui-scale:
+0.5`. Toutes les tailles de cibles, les cibles hors écran et les masques mesurés avant la
+correction (C-H1, premières versions de T2 et T3) étaient faux. Corrigé : `UIScale: 100`. T1
+l'avait contourné dans sa spec (ses mesures sont valides) ; T2 et T3 ont été rejoués.
+Toute nouvelle préférence figée dans `realBackend.js` se vérifie contre le type que le front
+attend (`frontend/src/stores/`), pas contre son nom.
+

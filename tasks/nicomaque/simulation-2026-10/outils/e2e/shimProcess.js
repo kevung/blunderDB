@@ -16,19 +16,27 @@ export const REPO = path.resolve(here, '../../../../..');
 export const SIM_DIR = process.env.SIM_DIR || path.join(os.tmpdir(), 'blunderdb-sim');
 const BIN = path.join(SIM_DIR, 'shim');
 
-export function buildShim() {
+/**
+ * Construit un outil `//go:build simulation` de `outils/_<nom>` vers SIM_DIR/<nom>. Le préfixe `_`
+ * sort ces paquets de `./...` : `go vet` et la CI ne les voient pas, `go build` sur leur chemin
+ * explicite les construit.
+ */
+export function buildTool(name) {
     fs.mkdirSync(path.join(SIM_DIR, 'gotmp'), { recursive: true });
-    const src = path.join(here, '..', 'shim');
-    const stale = !fs.existsSync(BIN) || fs.statSync(path.join(src, 'main.go')).mtimeMs > fs.statSync(BIN).mtimeMs;
+    const bin = path.join(SIM_DIR, name);
+    const src = path.join(here, '..', '_' + name);
+    const stale = !fs.existsSync(bin) || fs.statSync(path.join(src, 'main.go')).mtimeMs > fs.statSync(bin).mtimeMs;
     if (stale) {
-        execFileSync('go', ['build', '-tags', 'simulation', '-o', BIN, './' + path.relative(REPO, src)], {
+        execFileSync('go', ['build', '-tags', 'simulation', '-o', bin, './' + path.relative(REPO, src)], {
             cwd: REPO,
             env: { ...process.env, GOTMPDIR: path.join(SIM_DIR, 'gotmp') },
             stdio: 'inherit'
         });
     }
-    return BIN;
+    return bin;
 }
+
+export const buildShim = () => buildTool('shim');
 
 export class Shim {
     /**

@@ -13,9 +13,9 @@
  */
 import { test, expect } from '@playwright/test';
 import { installRealBackend, shimCall, shimPageWarnings } from './realBackend.js';
-import { Shim, SIM_DIR, REPO } from './shimProcess.js';
+import { Shim, SIM_DIR, buildTool } from './shimProcess.js';
 import { Meter, VIEWPORTS } from './meter.js';
-import { execFileSync, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -513,7 +513,7 @@ test('T2 : Yanis dirige 32 joueurs, avec incidents et fermeture brutale', async 
                 firstDiff[k] = { before: a.slice(Math.max(0, i - 80), i + 120), after: b.slice(Math.max(0, i - 80), i + 120) };
             }
             const pageWarn = await shimPageWarnings(shim.url);
-            const verify = spawnSync(path.join(SIM_DIR, 't2-verify'), ['tournament', 'verify', '--db', shim.dbPath, '--id', String(tid)], { encoding: 'utf8', timeout: 60000 });
+            const verify = spawnSync(buildTool('t2-verify'), ['tournament', 'verify', '--db', shim.dbPath, '--id', String(tid)], { encoding: 'utf8', timeout: 60000 });
             // La page murale juste après la reprise : chaque match en cours y est-il, à sa table ?
             v = await view();
             const html = pageHtml();
@@ -636,7 +636,7 @@ test('T2 : Yanis dirige 32 joueurs, avec incidents et fermeture brutale', async 
         console.log('ORACLE', JSON.stringify(OUT.oracle).slice(0, 2500));
         // Vérification CLI finale, processus arrêté proprement après le dernier geste.
         await shim.kill();
-        const vf = spawnSync(path.join(SIM_DIR, 't2-verify'), ['tournament', 'verify', '--db', shim.dbPath, '--id', String(tid)], { encoding: 'utf8', timeout: 60000 });
+        const vf = spawnSync(buildTool('t2-verify'), ['tournament', 'verify', '--db', shim.dbPath, '--id', String(tid)], { encoding: 'utf8', timeout: 60000 });
         OUT.verifyFinal = { status: vf.status, out: (vf.stdout || '').slice(-500), err: (vf.stderr || '').slice(-500) };
     } finally {
         fs.writeFileSync(path.join(SIM_DIR, 't2-result.json'), JSON.stringify(OUT, null, 1));

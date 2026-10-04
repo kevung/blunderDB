@@ -5,7 +5,7 @@ simulés tiennent lieu du tournoi de club). Le produit n'est pas modifié ; un d
 devient une ligne d'écart dans [rapport/ecarts.md](rapport/ecarts.md).
 
 Tout se joue sur **la vraie Direction** : le front Svelte réel, servi par Vite, branché par
-HTTP sur un vrai `*database.Database` (shim `outils/shim/`, vrai Nicomaque, vraie SQLite).
+HTTP sur un vrai `*database.Database` (shim `outils/_shim/`, vrai Nicomaque, vraie SQLite).
 Aucun `installWailsMock` : les liaisons `main.Config`, `gui.App` et `runtime` sont écrites à
 neuf dans `outils/e2e/realBackend.js`.
 
