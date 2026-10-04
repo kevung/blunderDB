@@ -68,6 +68,9 @@
 			header_up X-Tenant-ID ""
 			header_up X-Tenant-ID {tenant_id}
 			header_up -X-Auth-Request-Email
+			# X-Read-Tenants widens a read to other tenants (ADR-0063): this
+			# recipe knows no such relation, so it drops what the client sent.
+			header_up -X-Read-Tenants
 		}
 	}
 }
