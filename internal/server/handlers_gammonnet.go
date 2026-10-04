@@ -12,7 +12,9 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/rollouts"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -144,6 +146,14 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 	}
 	total := len(positions)
 
+	// The sweep is valued with the tenant's table current at its start, and
+	// each analysis records it (ADR-0068).
+	metID, met, err := mets.Current(ctx, s.opts.Storage, scope)
+	if err != nil {
+		emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
+		return
+	}
+
 	// The positions of a sweep are independent, so they are evaluated on
 	// NumCPU goroutines, each owning one reused Searcher. Nothing is
 	// exposed in the request body: the daemon owns its machine, and a
@@ -197,7 +207,7 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 				}
 				pos := positions[i]
 				start := time.Now()
-				analysis, err := gammonnetEvaluateOne(searcher, pos, req.Ply, req.PruneK, req.Candidates)
+				analysis, err := gammonnetEvaluateOne(searcher, pos, met, req.Ply, req.PruneK, req.Candidates)
 				if !spend(time.Since(start)) {
 					quotaSpent.Store(true)
 				}
@@ -228,6 +238,8 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 			if err := rollouts.SaveAnalysis(ctx, s.opts.Storage, scope, res.pos.ID, res.analysis); err != nil {
 				oc = outcomeFailed
 				slog.Warn("gammonnet sweep: saving the computed analysis failed", "position_id", res.pos.ID, "error", err)
+			} else if err := s.opts.Storage.MatchEquityTables().TagAnalyses(ctx, scope, metID, []int64{res.pos.ID}); err != nil {
+				slog.Warn("gammonnet sweep: recording the analysis's match equity table failed", "position_id", res.pos.ID, "error", err)
 			}
 		}
 		switch oc {
@@ -350,8 +362,8 @@ func drainPositions(ctx context.Context, s storage.Storage, scope string) ([]dom
 // position"). A nil analysis with a nil error means "nothing to write, and
 // that is not a failure": a dance (no legal move) or gammonnet.ErrNotEvaluable
 // (a match score beyond the MET's horizon, a cube state the model declines).
-func gammonnetEvaluateOne(searcher *gammonnet.Searcher, pos domain.Position, ply, pruneK, candidates int) (*domain.PositionAnalysis, error) {
-	result, err := gammonnet.EvaluatePositionWith(searcher, pos, ply, pruneK, candidates)
+func gammonnetEvaluateOne(searcher *gammonnet.Searcher, pos domain.Position, met *engine.MET, ply, pruneK, candidates int) (*domain.PositionAnalysis, error) {
+	result, err := gammonnet.EvaluatePositionWithMET(searcher, pos, met, ply, pruneK, candidates)
 	if err != nil {
 		if errors.Is(err, gammonnet.ErrNotEvaluable) {
 			return nil, nil

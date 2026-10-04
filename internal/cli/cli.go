@@ -121,6 +121,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"vacuum":      cli.runVacuum,
 		"repair":      cli.runRepair,
 		"reencode":    cli.runReencode,
+		"met":         cli.runMET,
 		"analyze":     cli.runAnalyze,
 		"transcribe":  cli.runTranscribe,
 		"collection":  cli.runCollection,

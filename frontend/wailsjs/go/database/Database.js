@@ -42,6 +42,10 @@ export function AddPositionsToCollection(arg1, arg2) {
   return window['go']['database']['Database']['AddPositionsToCollection'](arg1, arg2);
 }
 
+export function AnalysisMETStatus(arg1) {
+  return window['go']['database']['Database']['AnalysisMETStatus'](arg1);
+}
+
 export function AnalyzeImportDatabase(arg1) {
   return window['go']['database']['Database']['AnalyzeImportDatabase'](arg1);
 }
@@ -694,6 +698,10 @@ export function ImportJournal(arg1) {
   return window['go']['database']['Database']['ImportJournal'](arg1);
 }
 
+export function ImportMET(arg1) {
+  return window['go']['database']['Database']['ImportMET'](arg1);
+}
+
 export function ImportOGXMMatch(arg1) {
   return window['go']['database']['Database']['ImportOGXMMatch'](arg1);
 }
@@ -764,6 +772,10 @@ export function ListImportBatches(arg1, arg2) {
 
 export function ListLessons() {
   return window['go']['database']['Database']['ListLessons']();
+}
+
+export function ListMETs() {
+  return window['go']['database']['Database']['ListMETs']();
 }
 
 export function ListMatches(arg1) {
@@ -1196,6 +1208,10 @@ export function SetCollectionFilter(arg1, arg2) {
 
 export function SetCommentAuthor(arg1) {
   return window['go']['database']['Database']['SetCommentAuthor'](arg1);
+}
+
+export function SetCurrentMET(arg1) {
+  return window['go']['database']['Database']['SetCurrentMET'](arg1);
 }
 
 export function SetDirectionConfig(arg1, arg2) {

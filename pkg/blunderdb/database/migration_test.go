@@ -3628,6 +3628,7 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	}
 	for _, stmt := range []string{
 		`ALTER TABLE move DROP COLUMN error_mp`,
+		`DROP INDEX idx_analysis_met`,
 		`ALTER TABLE analysis DROP COLUMN met_id`,
 		`DROP TABLE lesson_progress`,
 		`DROP TABLE match_equity_table`,

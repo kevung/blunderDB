@@ -96,6 +96,8 @@ export function OpenImportDatabaseDialog():Promise<string>;
 
 export function OpenLogsFolder():Promise<void>;
 
+export function OpenMETDialog():Promise<string>;
+
 export function OpenPositionFilesDialog():Promise<Array<string>>;
 
 export function OpenPositionFolderDialog():Promise<string>;

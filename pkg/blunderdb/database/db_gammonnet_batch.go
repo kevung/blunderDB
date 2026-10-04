@@ -9,7 +9,9 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 )
 
 // The gammonNet batch (ADR-0013): "an evaluation only ever fills a gap." A
@@ -182,6 +184,13 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 		positionsByID[loaded[i].ID] = &loaded[i]
 	}
 
+	// The whole batch is valued with the table current at its start, and
+	// each analysis records it (ADR-0068).
+	metID, met, err := mets.Current(ctx, d.store, "")
+	if err != nil {
+		return GammonNetBatchSummary{}, err
+	}
+
 	if jobs <= 0 {
 		jobs = runtime.NumCPU()
 	}
@@ -224,7 +233,7 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 				}
 				id := ids[i]
 
-				analysis, err := evaluateOnePositionWithGammonNet(positionsByID[id], id, searcher, ply, pruneK, candidates)
+				analysis, err := evaluateOnePositionWithGammonNet(positionsByID[id], id, searcher, met, ply, pruneK, candidates)
 				outcome := gnEvaluated
 				switch {
 				case err != nil:
@@ -253,6 +262,8 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 			if err := d.saveAnalysisAt(gen, res.id, *res.analysis); err != nil {
 				outcome = gnFailed
 				slog.Warn("gammonnet batch: saving the computed analysis failed", "position_id", res.id, "error", err)
+			} else if err := d.store.MatchEquityTables().TagAnalyses(ctx, "", metID, []int64{res.id}); err != nil {
+				slog.Warn("gammonnet batch: recording the analysis's match equity table failed", "position_id", res.id, "error", err)
 			}
 		}
 
@@ -280,12 +291,12 @@ func (d *Database) analyzeIDsWithGammonNet(ctx context.Context, gen uint64, ids 
 // does not write. A nil pos (deleted since the snapshot) returns
 // sql.ErrNoRows. A nil analysis with a nil error means "nothing to write, not
 // a failure": a dance or gammonnet.ErrNotEvaluable.
-func evaluateOnePositionWithGammonNet(pos *Position, id int64, searcher *gammonnet.Searcher, ply, pruneK, candidates int) (*PositionAnalysis, error) {
+func evaluateOnePositionWithGammonNet(pos *Position, id int64, searcher *gammonnet.Searcher, met *engine.MET, ply, pruneK, candidates int) (*PositionAnalysis, error) {
 	if pos == nil {
 		return nil, sql.ErrNoRows
 	}
 
-	result, err := gammonnet.EvaluatePositionWith(searcher, *pos, ply, pruneK, candidates)
+	result, err := gammonnet.EvaluatePositionWithMET(searcher, *pos, met, ply, pruneK, candidates)
 	if err != nil {
 		if errors.Is(err, gammonnet.ErrNotEvaluable) {
 			return nil, nil

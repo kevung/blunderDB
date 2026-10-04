@@ -11,6 +11,7 @@
     import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
     import { trainingAnalysisHiddenStore } from '../stores/trainingTabStore.js';
     import ExplanationLine from './ExplanationLine.svelte';
+    import METBadge from './METBadge.svelte';
     import { canLeaveSubSearchResults } from '../services/positionService.js';
 
     // Le même remplaçant que le panneau Eval en mode Défi (ADR-0018 règle 6).
@@ -381,6 +382,7 @@
                 {beaver}
                 {maxCube}
             />
+            <METBadge positionId={$positionStore?.id ?? 0} analysis={analysisData} />
             <!-- Une ligne, et seulement quand une règle est confiante. -->
             <ExplanationLine analysis={analysisData} />
             <RolloutSection />
