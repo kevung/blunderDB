@@ -229,3 +229,35 @@ Gestes = clics + frappes + crans de défilement (dont imposés), toutes actions 
   à l'autre).
 - **H7 — MCP** : `realBackend.js` fige `ConfigureMCPHost` ; le front logue « Error starting the
   MCP server » au démarrage, sans effet sur la Direction.
+
+## Issues
+
+| Écart | Issue | Classe | Label |
+|---|---|---|---|
+| E1 | #542 | bloquant | frontend |
+| E2 | #543 | bloquant | frontend |
+| E3 | #544 | bloquant | backend |
+| E4 | #545 | bloquant | backend |
+| E5 | #546 | bloquant | backend |
+| E6 | #548 | ergonomie | frontend |
+| E7 | #547 | bloquant | backend |
+| E8 | #549 | ergonomie | frontend |
+| E9 | #550 | ergonomie | backend |
+| E10 | #551 | ergonomie | frontend |
+| E11 | #552 | ergonomie | frontend |
+| E12 | #553 | ergonomie | frontend |
+| E13 | #554 | ergonomie | frontend |
+| E14 | #555 | ergonomie | frontend |
+| E15 | #556 | ergonomie | frontend |
+| E16 | #557 | ergonomie | frontend |
+| E17 | #558 | ergonomie | frontend |
+| E18 | #559 | ergonomie | frontend |
+| E19 | #560 | ergonomie | frontend |
+| E20 | #562 | confort | frontend |
+| E21 | #563 | confort | backend |
+| E22 | #564 | confort | frontend |
+| E23 | #565 | confort | frontend |
+| E24 | #566 | confort | backend |
+| E25 | #561 | ergonomie | frontend |
+
+E5 relève du moteur `backgammon-tournoi` : l'issue est tenue dans blunderDB, et le dit. Le `null` de `tournament verify` (H3) est réglé par `buildTool` : pas d'issue.
