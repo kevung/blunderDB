@@ -510,7 +510,12 @@ export async function loadPositionsByFilters({
     // The generation moves before the await below: a window of the replaced search that lands
     // while CancelSearch is pending must already find itself stale.
     const generation = ++searchGeneration;
-    const stale = () => generation !== searchGeneration;
+    // The first window belongs to the view that launched the search: it is dropped when another
+    // view is shown by the time it arrives. The count is not: it settles the source whichever
+    // view is shown (viewStore.settle).
+    let originView = get(viewStore.activeViewId);
+    const replaced = () => generation !== searchGeneration;
+    const stale = () => replaced() || get(viewStore.activeViewId) !== originView;
     // A settling left without the status line still holds a scan: it goes too.
     const replacing = activeSearch !== null || settlings.size > 0;
     if (replacing) {
@@ -518,7 +523,7 @@ export async function loadPositionsByFilters({
         cancelSettlings();
         // Awaited: the stale scan must be stopped before the new one is asked for.
         await CancelSearch()?.catch?.(() => {});
-        if (stale()) return;
+        if (replaced()) return;
     } else {
         statusBeforeSearch = get(statusBarTextStore);
     }
@@ -720,6 +725,7 @@ export async function loadPositionsByFilters({
         if (source ? total > 0 : ids && ids.length > 0) {
             if (openInNewTab) {
                 viewStore.addView();
+                originView = get(viewStore.activeViewId);
             }
 
             // Before any store moves: a sub-search run from a collection or a
@@ -770,7 +776,7 @@ export async function loadPositionsByFilters({
 
             if (source && countPending) {
                 const found = await source.count();
-                if (stale()) return;
+                if (replaced()) return;
                 positionsStore.resolveLength(source, found);
                 search.shown = 0;
                 const seconds = Math.round((Date.now() - startedAt) / 1000);
@@ -792,8 +798,8 @@ export async function loadPositionsByFilters({
             statusBarModeStore.set('EDIT');
         }
     } finally {
-        // A stale search leaves the status line and the cursor to the one that replaced it.
-        if (!stale()) {
+        // A replaced search leaves the status line and the cursor to the one that replaced it.
+        if (!replaced()) {
             endSearchUI();
             // A view shown while this search held the backend was left unsettled.
             viewStore.settleActive();

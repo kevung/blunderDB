@@ -272,6 +272,7 @@ export default {
 <p>Nei pannelli Collezioni, Tornei, Anki e Trascrizione, il pulsante <strong>+ Nuovo…</strong> dell'intestazione è l'unico gesto di creazione: apre il campo di inserimento, che <em>Esc</em> o <strong>Annulla</strong> chiude nei pannelli Collezioni e Tornei. Nell'elenco dei match, l'icona ⌨ apre la trascrizione del match e l'icona ✎ ne corregge i metadati.</p>
 <p>Il pannello <strong>Collezioni</strong> (<em>CTRL-B</em>) consente di gestire collezioni di posizioni. Le collezioni possono essere create, rinominate ed eliminate. Vi si possono aggiungere o togliere posizioni (tasto <em>Canc</em>, viene chiesta conferma). Fare doppio clic su una collezione per scorrerne le posizioni con i tasti <em>SINISTRA</em> e <em>DESTRA</em>. Il comando <code>ss</code> cerca tra le posizioni della collezione aperta; <em>Esc</em> riporta poi alla collezione (vedere Pannello Ricerca). L'ordine delle collezioni e delle posizioni all'interno di una collezione può essere modificato per trascinamento. Premere <em>CTRL-B</em> o eseguire il comando <code>collection</code> per mostrare o nascondere il pannello.</p>
 <p>Una raccolta può essere <strong>viva</strong>: il suo contenuto non è più una lista fatta a mano ma il risultato di una <strong>ricerca</strong>, rivalutato ogni volta che la si apre. Il pulsante ◇ in testa alla raccolta la rende viva con l'ultima ricerca lanciata; ◈ segnala che lo è già, e lo stesso pulsante le restituisce la lista. Nulla viene distrutto: le posizioni che conteneva sono ancora lì quando si torna indietro.</p>
+<p>Il pulsante ❄, visibile su una raccolta viva, la <strong>congela</strong>: le posizioni che la ricerca seleziona in quel momento diventano il contenuto di una raccolta ordinaria, nell'ordine della ricerca, e la query viene cancellata. Le posizioni che conteneva prima di essere viva vengono sostituite.</p>
 <p>Una raccolta viva la cui interrogazione porta un token che questa versione non conosce più <strong>rifiuta di aprirsi</strong> e lo dice, invece di restituire l'intera base. È l'unico guasto che un filtro salvato non deve avere: allargarsi in silenzio.</p>
 <h4>Lezioni</h4>
 <p>Una <strong>lezione</strong> è una sequenza di passi che un coach scrive una sola volta per un allievo e gli consegna in un file di database (vedi il comando <code>lesson export</code> in cli). Ogni passo ha un titolo, un testo e può mostrare una collezione, una posizione, entrambe o nessuna. Il comando <code>le</code> elenca le lezioni del database nella barra di stato; <code>le 2</code> apre la lezione 2.</p>
@@ -1043,7 +1044,7 @@ export default {
 </tr>
 <tr>
 <td>Pag su</td>
-<td>Torna indietro di una pagina (cento posizioni per impostazione predefinita, regolabile in Impostazioni &gt; Interfaccia, fino al 10 % dell'elenco; si ferma all'inizio dell'elenco); in un match, partita precedente.</td>
+<td>Torna indietro di una pagina (cento posizioni per impostazione predefinita, regolabile in Impostazioni &gt; Interfaccia: 10, 50, 100, 500 o 1 000 posizioni, oppure il 10 % dell'elenco; si ferma all'inizio dell'elenco); in un match, partita precedente.</td>
 </tr>
 <tr>
 <td>SINISTRA, k</td>

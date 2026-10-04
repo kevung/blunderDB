@@ -24,6 +24,7 @@
         ListCollectionPositionIDs,
         LoadPositionsByIDs,
         SetCollectionFilter,
+        FreezeCollection,
         ReorderCollectionPositions,
         ReorderCollections,
         UpdateCollection,
@@ -35,6 +36,7 @@
     import { confirmAction } from '../services/confirmService.js';
     import PanelTable from './panels/PanelTable.svelte';
     import { panelKeyGuard } from '../services/keyboardService.js';
+    import { registerKeys } from '../services/keyDispatch.js';
 
     let { onOpenCollection } = $props();
 
@@ -141,6 +143,19 @@
             statusBarTextStore.set(query ? tMsg('collection.livingSet', { query }) : tMsg('collection.livingCleared'));
         } catch (error) {
             logger.error('Error setting the collection filter:', error);
+        }
+    }
+
+    async function freezeLiving() {
+        if (!activeCollection?.filterQuery) return;
+        try {
+            const count = await FreezeCollection(activeCollection.id);
+            activeCollectionStore.set({ ...activeCollection, filterQuery: '' });
+            await loadCollections();
+            await refreshRows(activeCollection.id);
+            statusBarTextStore.set(tMsg('collection.frozen', { count }));
+        } catch (error) {
+            logger.error('Error freezing the collection:', error);
         }
     }
 
@@ -529,10 +544,9 @@
         // No in-panel list navigation: browsing keys also go to the global handler (panelKeyGuard).
         if (panelKeyGuard(event, { allowNavKeys: true })) return;
 
-        // Stop other keyboard events from propagating to global handlers
-        event.stopPropagation();
-
+        // Only the keys this panel owns are claimed (shortcutMap.js, collectionPanel).
         if (event.key === 'Escape') {
+            event.stopPropagation();
             if (view === 'detail' && mode !== 'COLLECTION') {
                 view = 'list';
             } else if (selectedCollection) {
@@ -543,6 +557,9 @@
             }
             return;
         }
+
+        // Claimed in any mode: a Delete here never reaches the board's position.
+        if (event.key === 'Delete') event.stopPropagation();
 
         if (mode === 'COLLECTION' && activeCollection && event.key === 'Delete') {
             if (selectedPositionIndices.size > 0) {
@@ -558,6 +575,9 @@
         }
     }
 
+    /** @type {(() => void) | null} */
+    let unregisterKeys = null;
+
     async function removeFromCollectionSingle(positionId) {
         if (!activeCollection) return;
         if (!(await confirmAction($t('collection.confirmRemove', { count: 1 }), { confirmLabel: $t('common.delete') }))) return;
@@ -572,7 +592,7 @@
     }
 
     onMount(async () => {
-        document.addEventListener('keydown', handleKeyDown);
+        unregisterKeys = registerKeys('collectionPanel', handleKeyDown);
         if (mode === 'COLLECTION' && activeCollection && activeCollection.id) {
             view = 'detail';
             try {
@@ -584,7 +604,7 @@
     });
 
     onDestroy(() => {
-        document.removeEventListener('keydown', handleKeyDown);
+        unregisterKeys?.();
     });
 </script>
 
@@ -732,6 +752,9 @@
                     <button class="icon-btn" onclick={toggleLiving} title={livingTitle}>
                         {activeCollection.filterQuery ? '◈' : '◇'}
                     </button>
+                    {#if activeCollection.filterQuery}
+                        <button class="icon-btn" onclick={freezeLiving} title={$t('collection.freezeTitle')}>❄</button>
+                    {/if}
                 {/snippet}
                 {#snippet subheader()}
                     {#if collectionEdit.isEditing(activeCollection.id)}

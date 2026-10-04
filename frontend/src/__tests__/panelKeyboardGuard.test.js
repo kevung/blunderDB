@@ -65,21 +65,24 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 import MatchPanel from '../components/MatchPanel.svelte';
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import CollectionPanel from '../components/CollectionPanel.svelte';
+import { registerKeys } from '../services/keyDispatch.js';
 import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore } from '../stores/positionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
 
 let windowSpy;
+let unregisterSpy;
 
 beforeEach(() => {
     windowSpy = vi.fn();
-    window.addEventListener('keydown', windowSpy);
+    // The global scope is what a swallowed key must not reach.
+    unregisterSpy = registerKeys('global', windowSpy);
 });
 
 afterEach(() => {
     cleanup();
-    window.removeEventListener('keydown', windowSpy);
+    unregisterSpy();
     openPanels.set(new Set());
     databasePathStore.set('');
     tournamentsStore.set([]);
@@ -109,6 +112,14 @@ describe('MatchPanel keyboard guard', () => {
         await new Promise((resolve) => setTimeout(resolve, 0)); // the list loads before the key handler is installed
         windowSpy.mockClear(); // ignore any keydown noise from mounting
     });
+
+    test.each([{ key: 'h' }, { key: 'l' }, { key: 'r' }, { key: 'p' }, { key: 'PageUp' }, { key: 'ArrowLeft' }, { key: 'ArrowRight' }])(
+        '$key is not the panel\u2019s: it reaches the global handler',
+        (opts) => {
+            keyOnDocument(opts);
+            expect(windowSpy).toHaveBeenCalled();
+        }
+    );
 
     test('Ctrl combos traverse to the rest of the app', () => {
         keyOnDocument({ key: 'x', ctrlKey: true });
@@ -152,6 +163,14 @@ describe('TournamentPanel keyboard guard', () => {
         windowSpy.mockClear();
     });
 
+    test.each([{ key: 'h' }, { key: 'l' }, { key: 'r' }, { key: 'p' }, { key: 'PageUp' }, { key: 'ArrowLeft' }, { key: 'ArrowRight' }])(
+        '$key is not the panel\u2019s: it reaches the global handler',
+        (opts) => {
+            keyOnDocument(opts);
+            expect(windowSpy).toHaveBeenCalled();
+        }
+    );
+
     test('Ctrl combos traverse to the rest of the app', () => {
         keyOnDocument({ key: 'y', ctrlKey: true });
         expect(windowSpy).toHaveBeenCalled();
@@ -193,6 +212,14 @@ describe('CollectionPanel keyboard guard', () => {
         await tick();
         windowSpy.mockClear();
     });
+
+    test.each([{ key: 'h' }, { key: 'l' }, { key: 'r' }, { key: 'p' }, { key: 'PageUp' }, { key: 'ArrowLeft' }, { key: 'ArrowRight' }])(
+        '$key is not the panel\u2019s: it reaches the global handler',
+        (opts) => {
+            keyOnDocument(opts);
+            expect(windowSpy).toHaveBeenCalled();
+        }
+    );
 
     test('Ctrl combos traverse to the rest of the app', () => {
         keyOnDocument({ key: 'b', ctrlKey: true });

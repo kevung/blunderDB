@@ -435,6 +435,7 @@ var databaseParity = map[string]parityEntry{
 	"UpdateFilter":                      {Server: "/v1/filters.update", Why: whyGUIState},
 	"SetFilterPinned":                   {Server: "/v1/filters.setPinned", Why: whyGUIState},
 	"SetCollectionFilter":               {CLI: "collection filter", Server: "/v1/collections.setFilter"},
+	"FreezeCollection":                  {CLI: "collection freeze", Server: "/v1/collections.freeze"},
 	"StudyImpact":                       {CLI: "list --type study", Why: whyStudyImpact},
 	"SimilarPositions":                  {CLI: "search --query 's like42'", Server: "/v1/positions.similar"},
 	"RankPositionsByFilters":            {CLI: "search --query 's like42'", Server: "/v1/positions.similar"},
