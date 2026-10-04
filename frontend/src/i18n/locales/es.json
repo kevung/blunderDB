@@ -2198,7 +2198,9 @@
             "apply": "Aplicar",
             "forfeitWins": "Incomparecencia de {loser} → gana {winner}",
             "forfeitConfirm": "{loser} no se presenta: {winner} gana esta partida. ¿Confirmar?",
-            "cancelConfirm": "¿Anular la partida {a} – {b}? Sale de las mesas; el registro la conserva."
+            "cancelConfirm": "¿Anular la partida {a} – {b}? Sale de las mesas; el registro la conserva.",
+            "forfeitDo": "Declarar abandono",
+            "forfeitWithdraw": "Declarar abandono y retirar a {loser}"
         },
         "last": {
             "result": "{winner} gana a {loser}",
@@ -2258,7 +2260,8 @@
             "pairRating": "Valoración de la pareja",
             "pairRatingHint": "Por defecto la media de ambas valoraciones; un valor escrito la sustituye.",
             "withdrawNowConfirm": "¿Retirar a {name} del torneo ahora? Ya no será emparejado (se puede reincorporar).",
-            "withdrawLaterConfirm": "¿Retirar a {name} al final de su partida? Después no será emparejado (se puede reincorporar)."
+            "withdrawLaterConfirm": "¿Retirar a {name} al final de su partida? Después no será emparejado (se puede reincorporar).",
+            "withdrawDo": "Retirar"
         },
         "bracket": {
             "correct": "Corregir el resultado",
@@ -2459,7 +2462,10 @@
             "changeFolder": "Cambiar de carpeta",
             "open": "Abrir en el navegador",
             "forget": "Dejar de escribir",
-            "error": "No se ha podido escribir la página de la pantalla."
+            "error": "No se ha podido escribir la página de la pantalla.",
+            "page": "Página mural",
+            "openHint": "Abre la página mural (pantalla de mesas) en el navegador; se reescribe en cada evento.",
+            "written": "Página mural escrita: {path}"
         },
         "season": {
             "title": "Clasificación de temporada",
@@ -2621,7 +2627,17 @@
             "title": "Salas donde juega esta prueba",
             "hint": "Ninguna marcada: todas las mesas."
         },
-        "closeView": "Salir de la dirección"
+        "closeView": "Salir de la dirección",
+        "feedback": {
+            "registered": "{name} inscrito — {count} inscritos",
+            "registeredLate": "{name} añadido durante el torneo — {count} inscritos",
+            "finished": "Torneo cerrado — clasificación final",
+            "nextPhase": "Fase siguiente iniciada",
+            "draw": "Sorteo realizado",
+            "matchLaunched": "Partida {a} – {b} iniciada",
+            "allLaunched": "Toda la cola está iniciada",
+            "launched": "Propuesta iniciada"
+        }
     },
     "palette": {
         "title": "Paleta de comandos",

@@ -2198,7 +2198,9 @@
             "apply": "Anwenden",
             "forfeitWins": "Nichtantritt von {loser} → {winner} gewinnt",
             "forfeitConfirm": "{loser} tritt nicht an: {winner} gewinnt dieses Match. Bestätigen?",
-            "cancelConfirm": "Match {a} – {b} annullieren? Es verschwindet von den Tischen; das Protokoll behält es."
+            "cancelConfirm": "Match {a} – {b} annullieren? Es verschwindet von den Tischen; das Protokoll behält es.",
+            "forfeitDo": "Aufgabe erklären",
+            "forfeitWithdraw": "Aufgabe erklären und {loser} zurückziehen"
         },
         "last": {
             "result": "{winner} schlägt {loser}",
@@ -2258,7 +2260,8 @@
             "pairRating": "Wertung des Paars",
             "pairRatingHint": "Standardmäßig der Mittelwert beider Wertungen; ein eingegebener Wert ersetzt ihn.",
             "withdrawNowConfirm": "{name} jetzt aus dem Turnier nehmen? Keine weiteren Paarungen (Wiederaufnahme möglich).",
-            "withdrawLaterConfirm": "{name} nach dem Match aus dem Turnier nehmen? Danach keine Paarungen mehr (Wiederaufnahme möglich)."
+            "withdrawLaterConfirm": "{name} nach dem Match aus dem Turnier nehmen? Danach keine Paarungen mehr (Wiederaufnahme möglich).",
+            "withdrawDo": "Zurückziehen"
         },
         "bracket": {
             "correct": "Ergebnis korrigieren",
@@ -2459,7 +2462,10 @@
             "changeFolder": "Ordner wechseln",
             "open": "Im Browser öffnen",
             "forget": "Nicht mehr schreiben",
-            "error": "Die Anzeigeseite konnte nicht geschrieben werden."
+            "error": "Die Anzeigeseite konnte nicht geschrieben werden.",
+            "page": "Wandseite",
+            "openHint": "Öffnet die Wandseite (Tischanzeige) im Browser; sie wird bei jedem Ereignis neu geschrieben.",
+            "written": "Wandseite geschrieben: {path}"
         },
         "season": {
             "title": "Saisonwertung",
@@ -2621,7 +2627,17 @@
             "title": "Säle, in denen dieser Wettbewerb gespielt wird",
             "hint": "Keine Auswahl: alle Tische."
         },
-        "closeView": "Direktion verlassen"
+        "closeView": "Direktion verlassen",
+        "feedback": {
+            "registered": "{name} angemeldet — {count} Teilnehmer",
+            "registeredLate": "{name} im laufenden Turnier hinzugefügt — {count} Teilnehmer",
+            "finished": "Turnier beendet — Endstand",
+            "nextPhase": "Nächste Phase gestartet",
+            "draw": "Auslosung erfolgt",
+            "matchLaunched": "Match {a} – {b} gestartet",
+            "allLaunched": "Die ganze Warteschlange ist gestartet",
+            "launched": "Vorschlag gestartet"
+        }
     },
     "palette": {
         "title": "Befehlspalette",

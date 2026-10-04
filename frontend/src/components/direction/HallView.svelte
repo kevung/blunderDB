@@ -21,7 +21,7 @@
      *     hall?: Hall | null,
      *     error?: string,
      *     busy?: boolean,
-     *     act: (fn: () => Promise<unknown>, key: string | ((e: any) => import('../../i18n').StatusMessage)) => Promise<boolean>,
+     *     act: (fn: () => Promise<unknown>, key: string | ((e: any) => import('../../i18n').StatusMessage), done?: () => import('../../i18n').StatusMessage | null) => Promise<boolean>,
      *     onHistory?: (name: string, tournamentId: number) => void,
      *     onOutOfService?: (table: number, out: boolean) => void
      * }}
@@ -45,7 +45,12 @@
     const onCancel = (m, c) => act(() => hallCancelMatch(tidOf(c), m), 'direction.result.error');
 
     /** @param {number} tid @param {ProposalAction} a */
-    const launch = (tid, a) => act(() => hallConfirmProposal(tid, a), 'direction.proposals.errorConfirm');
+    const launch = (tid, a) =>
+        act(
+            () => hallConfirmProposal(tid, a),
+            'direction.proposals.errorConfirm',
+            () => tMsg(a.kind === 'next_phase' ? 'direction.feedback.nextPhase' : a.kind === 'draw' ? 'direction.feedback.draw' : 'direction.feedback.launched')
+        );
 
     /*
      * Une seule file, toutes épreuves mêlées : l'ordre est celui de RencontreTableGrid (les

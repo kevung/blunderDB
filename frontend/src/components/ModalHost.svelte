@@ -87,6 +87,7 @@
     confirmLabel={$confirmModalStore?.confirmLabel || ''}
     cancelLabel={$confirmModalStore?.cancelLabel || ''}
     choices={$confirmModalStore?.choices || []}
+    tone={$confirmModalStore?.tone || 'danger'}
     onChoose={(v) => resolveConfirm(v)}
     onClose={() => resolveConfirm(false)}
     onConfirm={() => resolveConfirm(true)}

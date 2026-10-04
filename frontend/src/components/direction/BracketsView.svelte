@@ -20,7 +20,7 @@
      *     phases?: any[], cells?: any[], busy?: boolean,
      *     onHistory?: (name: string) => void,
      *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => void,
-     *     onForfeit?: (matchId: string, winner: string, note: string) => void,
+     *     onForfeit?: (matchId: string, winner: string, note: string, cell?: undefined, withdrawLoser?: string) => void,
      *     onMove?: (matchId: string, table: number) => void,
      *     onCancel?: (matchId: string) => void,
      *     onCorrect?: (matchId: string, winner: string, scoreA: number, scoreB: number) => void
@@ -164,7 +164,17 @@
 {#snippet card(/** @type {BracketMatch} */ m)}
     <div class="card-layer" data-testid="bracket-card">
         {#if m.running}
-            <ResultCard cell={runningCell(m)} {busy} moveRequest={moveFor.key === openKey ? moveFor.seq : 0} onClose={() => (openKey = '')} {onResult} {onForfeit} {onMove} {onCancel} />
+            <ResultCard
+                cell={runningCell(m)}
+                {busy}
+                moveRequest={moveFor.key === openKey ? moveFor.seq : 0}
+                onClose={() => (openKey = '')}
+                {onResult}
+                onForfeit={(m, w, n, wd) => onForfeit(m, w, n, undefined, wd)}
+                canWithdraw
+                {onMove}
+                {onCancel}
+            />
         {:else if m.done && m.a && m.b}
             <div class="correction">
                 <div class="correction-head">

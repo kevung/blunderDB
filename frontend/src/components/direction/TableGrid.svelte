@@ -31,7 +31,8 @@
      *     cells?: TableCell[],
      *     busy?: boolean,
      *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string, cell?: TableCell) => any,
-     *     onForfeit?: (matchId: string, winner: string, note: string, cell?: TableCell) => any,
+     *     onForfeit?: (matchId: string, winner: string, note: string, cell?: TableCell, withdrawLoser?: string) => any,
+     *     canWithdraw?: boolean,
      *     onMove?: (matchId: string, table: number, cell?: TableCell) => any,
      *     onCancel?: (matchId: string, cell?: TableCell) => any,
      *     onHistory?: (name: string, cell?: TableCell) => void,
@@ -41,7 +42,20 @@
      *     actions?: import('svelte').Snippet
      * }}
      */
-    let { cells = [], busy = false, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, onHistory, onOutOfService, onLaunchHere, reveal = null, actions } = $props();
+    let {
+        cells = [],
+        busy = false,
+        onResult = () => {},
+        onForfeit = () => {},
+        onMove = () => {},
+        onCancel = () => {},
+        onHistory,
+        onOutOfService,
+        onLaunchHere,
+        canWithdraw = false,
+        reveal = null,
+        actions
+    } = $props();
 
     let openKey = $state('');
     /** La fiche s'ouvre (ou, déjà ouverte, passe) sur le champ de table quand M, X ou le menu le demandent. */
@@ -399,7 +413,8 @@
                             moveRequest={moveFor.key === key(c) ? moveFor.seq : 0}
                             onClose={() => (openKey = '')}
                             onResult={(m, w, a, b, note) => onResult(m, w, a, b, note, c)}
-                            onForfeit={(m, w, note) => onForfeit(m, w, note, c)}
+                            {canWithdraw}
+                            onForfeit={(m, w, note, wd) => onForfeit(m, w, note, c, wd)}
                             onMove={(m, table) => onMove(m, table, c)}
                             onCancel={(m) => onCancel(m, c)}
                         />

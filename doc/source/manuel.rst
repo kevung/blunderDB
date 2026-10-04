@@ -1815,8 +1815,11 @@ retrouve la position où on l'avait laissé. Les boutons et les champs font au
 moins 40 pixels de haut, pour se viser sans précision au comptoir ; le nombre de
 colonnes de la grille suit la largeur de la zone, non celle de la fenêtre. Dans
 les **Réglages**, chaque section se replie sur son titre, et le bouton **Ouvrir
-dans le navigateur** de l'en-tête ouvre la page murale en un clic dès qu'un
-dossier de sortie est choisi.
+dans le navigateur** des Réglages et le bouton **Page murale** de l'en-tête
+ouvrent la page murale en un clic dès qu'un dossier de sortie est choisi ; la
+barre d'état donne le chemin du fichier écrit. Inscription, retardataire, phase
+suivante, tirage, lancement d'un match et clôture y laissent aussi un retour
+(« Sophie Martin inscrit — 16 inscrits »).
 
 Une ronde proposée s'annonce avant d'être lancée : **Ronde à venir…**, à côté de
 *Imprimer la feuille*, demande la date et l'heure à imprimer (« lundi 21/09,
@@ -1875,7 +1878,9 @@ message.
 Le bouton **⋯** de la fiche déplie ce qui sert rarement : le forfait — chaque
 bouton nomme l'absent et celui qui gagne —, une remarque libre (« tombé au
 temps », « abandonné pour raison de… »), le déplacement du match sur une autre
-table, et son annulation. Le forfait et l'annulation se confirment. Déplacé sur
+table, et son annulation. Le forfait et l'annulation se confirment ; le forfait
+par un bouton **Déclarer forfait**, qui propose aussi de retirer le perdant dans
+la même fiche. Déplacé sur
 une table occupée, le match échange sa table avec celui qui l'occupe : deux
 matchs ne partagent jamais une table, et le même geste les remet en place. Si un
 ancien journal en a laissé deux sur une table, la grille montre les deux cases,
@@ -2001,7 +2006,8 @@ qu'on valide. Sans place libre, il est inscrit quand même et la vue dit dans
 quelle phase il entrera. Aucun tirage déjà fait n'est refait.
 
 Un retrait se fait *maintenant* ou *après son match en cours*, selon que le
-joueur part tout de suite ou finit ce qu'il joue ; il se confirme.
+joueur part tout de suite ou finit ce qu'il joue ; il se confirme par un bouton
+**Retirer**, non rouge puisque rien n'est supprimé.
 
 Un joueur qui manque une ronde n'a pas besoin d'être retiré : **Marquer absent**, sur
 sa ligne, ouvre un petit formulaire sous son nom — *jusqu'à* une heure

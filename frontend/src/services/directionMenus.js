@@ -26,7 +26,7 @@ import { confirmAction } from './confirmService.js';
  * chemin plus court que les boutons, que `busy` désactive déjà.
  * @typedef {{
  *     busy?: boolean,
- *     confirm?: (message: string) => boolean | Promise<boolean>,
+ *     confirm?: (message: string, options?: { confirmLabel: string, tone: 'primary' }) => boolean | Promise<boolean>,
  *     openResult?: () => void,
  *     openMove?: () => void,
  *     onForfeit?: (matchId: string, winner: string, note: string) => unknown,
@@ -41,10 +41,16 @@ import { confirmAction } from './confirmService.js';
  * }} MatchActions
  */
 
-/** @param {MatchActions} h @param {string} message */
-function ask(h, message) {
-    return (h.confirm ?? ((m) => confirmAction(m)))(message);
+/** @param {MatchActions} h @param {string} message @param {{confirmLabel: string, tone: 'primary'}} [options] */
+function ask(h, message, options) {
+    return (h.confirm ?? ((m, o) => confirmAction(m, o)))(message, options);
 }
+
+/* Le forfait et le retrait ne suppriment rien : un bouton à leur nom, non rouge. */
+/** @param {(k: string) => string} t */
+const forfeitOptions = (t) => /** @type {const} */ ({ confirmLabel: t('direction.result.forfeitDo'), tone: 'primary' });
+/** @param {(k: string) => string} t */
+const withdrawOptions = (t) => /** @type {const} */ ({ confirmLabel: t('direction.players.withdrawDo'), tone: 'primary' });
 
 /**
  * Un match, où qu'il s'affiche (case de table, place de l'arbre, emplacement).
@@ -68,14 +74,14 @@ export function matchMenu(t, m, h) {
                 label: t('direction.menu.forfeitOf', { name: aName }),
                 disabled: !!h.busy,
                 onClick: async () => {
-                    if (await ask(h, t('direction.result.forfeitConfirm', { loser: aName, winner: bName }))) forfeit(id, m.b || '', '');
+                    if (await ask(h, t('direction.result.forfeitConfirm', { loser: aName, winner: bName }), forfeitOptions(t))) forfeit(id, m.b || '', '');
                 }
             });
             items.push({
                 label: t('direction.menu.forfeitOf', { name: bName }),
                 disabled: !!h.busy,
                 onClick: async () => {
-                    if (await ask(h, t('direction.result.forfeitConfirm', { loser: bName, winner: aName }))) forfeit(id, m.a || '', '');
+                    if (await ask(h, t('direction.result.forfeitConfirm', { loser: bName, winner: aName }), forfeitOptions(t))) forfeit(id, m.a || '', '');
                 }
             });
         }
@@ -141,7 +147,7 @@ export function cellMenu(t, c, h) {
  *     busy?: boolean,
  *     onManual?: (id: string) => void,
  *     onGoElsewhere?: (event: string) => void,
- *     confirm?: (message: string) => boolean | Promise<boolean>,
+ *     confirm?: (message: string, options?: { confirmLabel: string, tone: 'primary' }) => boolean | Promise<boolean>,
  *     onGoTable?: (table: number, open: boolean) => void,
  *     onHistory?: (name: string) => void,
  *     onAbsent?: (id: string) => void,
@@ -175,7 +181,7 @@ export function playerMenu(t, p, h) {
             label: t('direction.menu.withdrawNow'),
             disabled: !!h.busy,
             onClick: async () => {
-                if (await ask(h, t('direction.players.withdrawNowConfirm', { name: p.name }))) withdraw(p.id, false);
+                if (await ask(h, t('direction.players.withdrawNowConfirm', { name: p.name }), withdrawOptions(t))) withdraw(p.id, false);
             }
         });
         if (p.state === 'playing') {
@@ -183,7 +189,7 @@ export function playerMenu(t, p, h) {
                 label: t('direction.menu.withdrawLater'),
                 disabled: !!h.busy,
                 onClick: async () => {
-                    if (await ask(h, t('direction.players.withdrawLaterConfirm', { name: p.name }))) withdraw(p.id, true);
+                    if (await ask(h, t('direction.players.withdrawLaterConfirm', { name: p.name }), withdrawOptions(t))) withdraw(p.id, true);
                 }
             });
         }
@@ -221,7 +227,7 @@ export function proposalMenu(t, a, h) {
  * @param {{ correctable?: boolean, cancellable?: boolean, matchId?: string, aName?: string, bName?: string, a?: string, b?: string }} e
  * @param {{
  *     busy?: boolean,
- *     confirm?: (message: string) => boolean | Promise<boolean>,
+ *     confirm?: (message: string, options?: { confirmLabel: string, tone: 'primary' }) => boolean | Promise<boolean>,
  *     onCorrect?: () => void,
  *     onCancel?: (matchId: string) => unknown,
  *     onNote?: () => void,

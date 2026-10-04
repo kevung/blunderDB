@@ -2198,7 +2198,9 @@
             "apply": "Apply",
             "forfeitWins": "Forfeit by {loser} → {winner} wins",
             "forfeitConfirm": "{loser} forfeits: {winner} wins this match. Confirm?",
-            "cancelConfirm": "Cancel the match {a} – {b}? It leaves the tables; the log keeps it."
+            "cancelConfirm": "Cancel the match {a} – {b}? It leaves the tables; the log keeps it.",
+            "forfeitDo": "Declare forfeit",
+            "forfeitWithdraw": "Declare forfeit and withdraw {loser}"
         },
         "last": {
             "result": "{winner} beat {loser}",
@@ -2258,7 +2260,8 @@
             "pairRating": "Pair rating",
             "pairRatingHint": "The mean of the two ratings by default; a value typed here replaces it.",
             "withdrawNowConfirm": "Withdraw {name} from the tournament now? They will no longer be paired (can be reinstated).",
-            "withdrawLaterConfirm": "Withdraw {name} after their match? They will not be paired afterwards (can be reinstated)."
+            "withdrawLaterConfirm": "Withdraw {name} after their match? They will not be paired afterwards (can be reinstated).",
+            "withdrawDo": "Withdraw"
         },
         "bracket": {
             "correct": "Correct the result",
@@ -2459,7 +2462,10 @@
             "changeFolder": "Change folder",
             "open": "Open in the browser",
             "forget": "Stop writing",
-            "error": "The display page could not be written."
+            "error": "The display page could not be written.",
+            "page": "Wall page",
+            "openHint": "Opens the wall page (table display) in the browser; it is rewritten at every event.",
+            "written": "Wall page written: {path}"
         },
         "season": {
             "title": "Season ranking",
@@ -2621,7 +2627,17 @@
             "title": "Rooms this competition plays in",
             "hint": "None ticked: every table."
         },
-        "closeView": "Leave the Direction"
+        "closeView": "Leave the Direction",
+        "feedback": {
+            "registered": "{name} registered — {count} entrants",
+            "registeredLate": "{name} added mid-tournament — {count} entrants",
+            "finished": "Tournament closed — final standings",
+            "nextPhase": "Next phase started",
+            "draw": "Draw done",
+            "matchLaunched": "Match {a} – {b} started",
+            "allLaunched": "The whole queue is started",
+            "launched": "Proposal started"
+        }
     },
     "palette": {
         "title": "Command palette",
