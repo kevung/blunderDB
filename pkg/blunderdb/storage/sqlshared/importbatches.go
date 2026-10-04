@@ -384,26 +384,10 @@ func (s *ImportBatchStore) StudyBacklog(ctx context.Context, scope string, playe
 	if err != nil {
 		return nil, fmt.Errorf("study backlog settings: %w", err)
 	}
-	// A position played in several matches would take several rows; ask for
-	// extra and keep the first of each.
-	rows, err := s.queueRows(ctx, scope, 0, players, limit*4, domain.StudyBacklog,
+	// queueRows keeps one row per position for this reason (a position met
+	// in several matches is studied once), so the limit counts positions.
+	return s.queueRows(ctx, scope, 0, players, limit, domain.StudyBacklog,
 		` AND COALESCE(`+statsErrExpr+`, 0) >= ?`+unhandledSQL, []any{settings.ErrorThresholdMP}, queueCostOrder)
-	if err != nil {
-		return nil, err
-	}
-	var out []domain.StudyQueueEntry
-	seen := map[int64]bool{}
-	for _, e := range rows {
-		if len(out) >= limit {
-			break
-		}
-		if seen[e.PositionID] {
-			continue
-		}
-		seen[e.PositionID] = true
-		out = append(out, e)
-	}
-	return out, nil
 }
 
 func (s *ImportBatchStore) SetStudied(ctx context.Context, scope string, positionID int64, studied bool) error {
@@ -456,13 +440,29 @@ func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID 
 	limitSQL, largs := s.DB.LimitOffset(limit, 0)
 	args = append(args, largs...)
 
-	rows, err := s.DB.Query(ctx,
-		`SELECT DISTINCT p.id, m.id,
+	query := `SELECT DISTINCT p.id, m.id,
 		        COALESCE(m.player1_name,''), COALESCE(m.player2_name,''), COALESCE(m.match_length, 0),
-		        COALESCE(`+statsErrExpr+`, 0), p.decision_type
-		 `+statsBaseJoin+`
-		 WHERE `+tenant+batchClause+playerClause+`
-		   AND `+countedExpr(s.DB)+extraWhere+orderBy+limitSQL, args...)
+		        COALESCE(` + statsErrExpr + `, 0), p.decision_type
+		 ` + statsBaseJoin + `
+		 WHERE ` + tenant + batchClause + playerClause + `
+		   AND ` + countedExpr(s.DB) + extraWhere + orderBy + limitSQL
+	if reason == domain.StudyBacklog {
+		// Across the whole library a position met in several matches joins
+		// once per match; the window keeps its first match in SQL, so LIMIT
+		// counts positions. The cost is the position's own, the same on
+		// every row it keeps.
+		query = `SELECT pid, mid, p1, p2, len, cost, dt FROM (
+		   SELECT p.id AS pid, m.id AS mid,
+		          COALESCE(m.player1_name,'') AS p1, COALESCE(m.player2_name,'') AS p2,
+		          COALESCE(m.match_length, 0) AS len,
+		          COALESCE(` + statsErrExpr + `, 0) AS cost, p.decision_type AS dt,
+		          ROW_NUMBER() OVER (PARTITION BY p.id ORDER BY m.id) AS rn
+		   ` + statsBaseJoin + `
+		   WHERE ` + tenant + batchClause + playerClause + `
+		     AND ` + countedExpr(s.DB) + extraWhere + `
+		 ) q WHERE rn = 1 ORDER BY cost DESC, pid ASC` + limitSQL
+	}
+	rows, err := s.DB.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}

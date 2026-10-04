@@ -480,4 +480,35 @@ func testStudyBacklog(t *testing.T, s storage.Storage) {
 	if err := batches.SetStudied(ctx, "", 1<<40, true); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("marking an unknown position: %v, want ErrNotFound", err)
 	}
+	// The same boards played again in another match: each position joins
+	// twice, and a limit still counts positions, not rows.
+	again, err := batches.Begin(ctx, "", "again.xg", "xg")
+	if err != nil {
+		t.Fatalf("Begin: %v", err)
+	}
+	_, replayed := statsFixtureMatchInBatch(t, s, 0, "Alice", "Eve", again)
+	full, err := batches.StudyBacklog(ctx, "", nil, 0)
+	if err != nil {
+		t.Fatalf("StudyBacklog: %v", err)
+	}
+	shared := false
+	for _, e := range full {
+		if e.PositionID == replayed[0] || e.PositionID == replayed[1] {
+			shared = true
+		}
+	}
+	if !shared {
+		t.Fatalf("the replayed boards %v are not in the backlog %v", replayed, full)
+	}
+	for n := 1; n <= len(full); n++ {
+		got, err := batches.StudyBacklog(ctx, "", nil, n)
+		if err != nil || len(got) != n {
+			t.Fatalf("limit %d gave %d entries (err %v) out of %d positions", n, len(got), err, len(full))
+		}
+		for i := range got {
+			if got[i].PositionID != full[i].PositionID {
+				t.Fatalf("limit %d: entry %d is %d, want %d", n, i, got[i].PositionID, full[i].PositionID)
+			}
+		}
+	}
 }
