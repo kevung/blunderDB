@@ -173,6 +173,8 @@
         "likeLimit": "Naapureita järjestystä kohden",
         "likeMaxDistance": "Enimmäisetäisyys (nappulapip)",
         "likeNote": "Nolla: ei kattoa. Merkintä like<12 asettaa omansa yhtä hakua varten.",
+        "commentAuthor": "Nimesi",
+        "commentAuthorNote": "Allekirjoittaa kirjoittamasi kommentit. Tyhjä: ei allekirjoitusta.",
         "assistantTitle": "Avustaja ja MCP",
         "corpusTitle": "Korpus"
     },
@@ -887,6 +889,7 @@
         "promptPlaceholder": "Kommentoi nykyistä asemaa…",
         "searchPlaceholder": "Hae kommentteja…",
         "originXG": "XG",
+        "you": "sinä",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "tuotu",

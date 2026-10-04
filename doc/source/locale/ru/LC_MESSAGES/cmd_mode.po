@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 18:11+0200\n"
+"POT-Creation-Date: 2026-10-04 04:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1465,6 +1465,22 @@ msgid "``--comment-origin``"
 msgstr "``--comment-origin``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "``au'Alice'``"
+msgstr "``au'Alice'``"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position porte un commentaire signé de cet auteur (nom entier, sans "
+"distinction de casse)."
+msgstr ""
+"К позиции прикреплён комментарий, подписанный этим автором (полное имя, "
+"без учёта регистра)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--comment-author``"
+msgstr "``--comment-author``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "``m'motif1,motif2,...'``"
 msgstr "``m'паттерн1,паттерн2,...'``"
 
@@ -1773,7 +1789,7 @@ msgstr ""
 "шашко-пипсов, ``like42*`` расширяет класс цели на все типы решений и на "
 "оба режима, на деньги и матч. См. :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:241
+#: ../../source/cmd_mode.rst:242
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1791,11 +1807,11 @@ msgstr ""
 "разделяет списки идентификаторов и тегов: она не встречается ни в одном "
 "значении, а ``ma1;2`` не является токеном (пишите ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:246
+#: ../../source/cmd_mode.rst:247
 msgid "Transcrire depuis un terminal"
 msgstr "Запись из терминала"
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:249
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1815,7 +1831,7 @@ msgstr ""
 "отдельная сессия, без ``sessionId`` и без отмены от одного вызова к "
 "другому."
 
-#: ../../source/cmd_mode.rst:259
+#: ../../source/cmd_mode.rst:260
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 

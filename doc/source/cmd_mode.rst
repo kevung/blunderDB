@@ -216,6 +216,7 @@ Deux recherches complètes :
    "co", "La position porte un commentaire, quel qu'en soit le contenu.", "``--has-comment``"
    "xco", "La position ne porte aucun commentaire.", "``--no-comment``"
    "co:user", "La position porte un commentaire d'une provenance donnée : ``user`` (écrit par vous), ``xg``, ``gnubg``, ``bgf`` (apporté par l'import d'un match) ou ``unknown``. Répétable (``co:xg co:gnubg``).", "``--comment-origin``"
+   "``au'Alice'``", "La position porte un commentaire signé de cet auteur (nom entier, sans distinction de casse).", "``--comment-author``"
    "``m'motif1,motif2,...'``", "Les meilleurs coups de pions contenant au moins un des motifs.", "—"
    "``m'ND,DT,DP,...'``", "Les meilleures décisions de videau de No Double/Take, Double Take, Double Pass.", "—"
    "T>x", "Date d'ajout de la position à la base après x (AAAA/MM/JJ). Ce n'est pas la date du match (``md``) : l'ajout la fixe et la fusion de deux bases la conserve.", "—"

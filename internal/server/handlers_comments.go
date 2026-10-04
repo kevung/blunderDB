@@ -11,6 +11,9 @@ import (
 type commentAddReq struct {
 	PositionID int64  `json:"positionId"`
 	Text       string `json:"text"`
+	// Author signs this comment instead of the request's X-User-Name; empty
+	// keeps the header's.
+	Author string `json:"author,omitempty"`
 }
 
 type commentUpdateReq struct {
@@ -41,6 +44,9 @@ func (s *Server) commentRoutes() []route {
 	cs := func() storage.CommentStore { return s.opts.Storage.Comments() }
 	return []route{
 		{http.MethodPost, "/v1/comments.add", rpc(func(ctx context.Context, scope string, req commentAddReq) (idResp, error) {
+			if a := storage.NormalizeCommentAuthor(req.Author); a != "" {
+				ctx = storage.WithCommentAuthor(ctx, a)
+			}
 			id, err := cs().Add(ctx, scope, req.PositionID, req.Text)
 			return idResp{ID: id}, err
 		})},

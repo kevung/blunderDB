@@ -60,6 +60,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `vacuum` - Compact the database file, reclaiming freed space
 - `repair` - Recompute the analysis columns from the analyses themselves
 - `delete` - Delete data from the database
+- `comment` - Comments on a position, signed by their author (add, list)
 - `trash` - What was deleted through the trash, and how to put it back
 - `completion` - Print a shell completion script (bash, zsh, fish)
 - `help` - Show this help message
@@ -2322,6 +2323,49 @@ Examples:
   blunderdb collection show --db database.db --id 3 --format json
 ```
 
+### `blunderdb comment add`
+
+```
+Usage: blunderdb comment add [options]
+
+Add a comment to a position.
+
+Options:
+  -author string
+    	Who signs the comment (empty: unsigned)
+  -db string
+    	Path to the database file (required)
+  -position int
+    	Position id (required)
+  -text string
+    	Comment text (required)
+
+Examples:
+  blunderdb comment add --db database.db --position 412 --text "Cube too early" --author Alice
+```
+
+### `blunderdb comment list`
+
+```
+Usage: blunderdb comment list [options]
+
+List the comments of a position, or of the whole database.
+
+Options:
+  -author string
+    	Only the comments signed by this author
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -position int
+    	Only the comments of this position id (0: every position)
+
+Examples:
+  blunderdb comment list --db database.db --position 412
+  blunderdb comment list --db database.db --author Alice --format json
+```
+
 ### `blunderdb completion`
 
 ```
@@ -3279,6 +3323,8 @@ Search for positions in the database using filters.
 Options:
   -analysis string
     	Engines and depths of the stored verdict, comma-separated: xg, gnubg, bgblitz, hedgehog, gammonnet, 3ply, 3ply+, book, rollout (ad:)
+  -comment-author string
+    	Only positions carrying a comment signed by this author (whole name, any case)
   -comment-origin string
     	Only positions carrying a comment from these origins, comma-separated: user, xg, gnubg, bgf, unknown
   -cube int

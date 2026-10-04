@@ -173,6 +173,8 @@
         "likeLimit": "Γείτονες ανά κατάταξη",
         "likeMaxDistance": "Μέγιστη απόσταση (pip πουλιών)",
         "likeNote": "Μηδέν: χωρίς όριο. Το διακριτικό like<12 ορίζει το δικό του για μία αναζήτηση.",
+        "commentAuthor": "Το όνομά σας",
+        "commentAuthorNote": "Υπογράφει τα σχόλια που γράφετε. Κενό: χωρίς υπογραφή.",
         "assistantTitle": "Βοηθός και MCP",
         "corpusTitle": "Σώμα αγώνων"
     },
@@ -887,6 +889,7 @@
         "promptPlaceholder": "Σχόλιο για την τρέχουσα θέση…",
         "searchPlaceholder": "Αναζήτηση σχολίων…",
         "originXG": "XG",
+        "you": "εσείς",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "εισηγμένο",

@@ -1874,8 +1874,9 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
    * - ``search_positions``
      - positions d'une recherche dans la grammaire de la barre de commande
        (décrite dans l'outil), avec sa forme canonique
-   * - ``search_comments``, ``saved_searches``
-     - commentaires contenant des mots ; recherches enregistrées
+   * - ``search_comments``, ``position_comments``, ``saved_searches``
+     - commentaires contenant des mots ; tous les commentaires d'une position,
+       chacun avec son auteur ; recherches enregistrées
    * - ``get_position``
      - une position, son analyse (meilleurs coups ou videau), le coup joué et
        le commentaire
@@ -1920,7 +1921,8 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
        avec leur hachage, commentaires écrits sur ces plateaux, bibliothèque
        partagée, classement de club ; sans ``X-Read-Tenants``, ce tenant seul
 
-Seuls cinq outils écrivent — ``save_position``, ``comment_position``,
+Seuls cinq outils écrivent — ``save_position``, ``comment_position`` (qui
+signe de l'argument ``author``, sinon de l'en-tête ``X-User-Name``),
 ``create_collection``, ``add_to_collection`` et ``anki_review``, qui note une
 carte tirée par ``anki_next`` — et ils ne sont offerts que sur demande :
 ``--write`` en local, ``--mcp-write`` sur le démon. Tous les autres ne font que

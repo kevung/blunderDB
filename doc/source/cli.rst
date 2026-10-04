@@ -1929,6 +1929,34 @@ l'ouverture d'une base.
    # Ne garder que ce qui a moins de trente jours
    ./blunderdb trash empty --db base.db --older-than 30
 
+comment — Les commentaires d'une position
+------------------------------------------
+
+Une position porte autant de commentaires qu'on veut, chacun signé de son
+auteur.
+
+.. code-block:: bash
+
+   ./blunderdb comment <sous-commande> --db <chemin> [options]
+
+**Sous-commandes:**
+
+* ``add --position N --text T [--author A]`` — Ajoute un commentaire à la
+  position N, signé de A (sans ``--author``, il n'est pas signé).
+* ``list [--position N] [--author A]`` — Liste les commentaires d'une position,
+  ou de toute la base, éventuellement ceux d'un seul auteur.
+
+**Options communes:** ``--db`` (obligatoire) ; ``list`` accepte ``--format``
+(``text`` ou ``json``).
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb comment add --db base.db --position 412 --text "Videau trop tôt" --author Alice
+   ./blunderdb comment list --db base.db --position 412
+   ./blunderdb comment list --db base.db --author Alice --format json
+
 info — Métadonnées de la base
 ------------------------------
 

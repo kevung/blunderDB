@@ -173,6 +173,8 @@
         "likeLimit": "Соседей на одно ранжирование",
         "likeMaxDistance": "Максимальное расстояние (шашко-пипсы)",
         "likeNote": "Ноль: без предела. Токен like<12 задаёт свой на один поиск.",
+        "commentAuthor": "Ваше имя",
+        "commentAuthorNote": "Подписывает написанные вами комментарии. Пусто: без подписи.",
         "assistantTitle": "Ассистент и MCP",
         "corpusTitle": "Корпус"
     },
@@ -887,6 +889,7 @@
         "promptPlaceholder": "Комментарий к текущей позиции…",
         "searchPlaceholder": "Поиск комментариев…",
         "originXG": "XG",
+        "you": "вы",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "импортировано",

@@ -203,7 +203,8 @@ export default {
 <p>El resultado se <strong>guarda junto al análisis, nunca en su lugar</strong>: un análisis importado no se modifica. Cada rollout forma un bloque con, por candidata, la equidad, el intervalo de confianza del 95 %, la <strong>JSD</strong> (la distancia a la mejor jugada en desviaciones típicas de la diferencia: a partir del límite, la jugada está decidida y deja de jugarse) y el número de partidas. El rollout se detiene en cuanto las jugadas quedan desempatadas. La <strong>Configuración</strong> — el motor y la firma completa de los parámetros — se despliega bajo la tabla: dos rollouts con la misma firma dan los mismos números. Un rollout juega el cubo dentro de sus partidas: la clasificación es fiable, la equidad absoluta algo menos, lo que el bloque recuerda. Una posición que no está en la base se puede rodar, pero no se guarda.</p>
 <p>El botón <strong>Sobre la lista mostrada…</strong> (o <code>ro search</code>) rueda, una tras otra, las posiciones de la lista mostrada — resultados de búsqueda, partido o colección — que aún no llevan este rollout; una confirmación da el total antes de empezar. Cada posición se escribe en cuanto termina: cancelar conserva lo hecho, y volver a lanzar continúa donde se detuvo. El avance sobrevive al cierre del panel.</p>
 <h3>Panel de Comentarios</h3>
-<p>El panel <strong>Comentarios</strong> (<em>CTRL-P</em>) muestra, añade y edita los comentarios asociados a la posición actual. Una posición puede llevar varios: se muestran todos, del más reciente al más antiguo. Los comentarios importados de archivos XG se asocian automáticamente a las posiciones correspondientes. Pulse <em>CTRL-P</em> o ejecute el comando <code>comment</code> para mostrar u ocultar el panel.</p>
+<p>El panel <strong>Comentarios</strong> (<em>CTRL-P</em>) muestra, añade y modifica los comentarios asociados a la posición actual. Una posición puede llevar varios, escritos por personas distintas: todos se muestran en hilo, del más reciente al más antiguo, cada uno con el nombre de su autor, y los suyos van primero. Los comentarios importados desde archivos XG se asocian automáticamente a las posiciones correspondientes. Pulse <em>CTRL-P</em> o ejecute el comando <code>comment</code> para mostrar u ocultar el panel.</p>
+<p>El nombre que firma sus comentarios se configura en las preferencias, pestaña <em>Interfaz</em>, campo <strong>Su nombre</strong>; si está vacío, sus comentarios no se firman. Los comentarios de una importación XG se firman <code>XG</code>, los de un archivo de partida con el nombre de su transcriptor. Reescribir un comentario lo firma con su nombre. La búsqueda <code>au"Alice"</code> retiene las posiciones que Alice ha comentado; fuera de la interfaz, <code>blunderdb comment add --author</code> escribe un comentario firmado y <code>blunderdb comment list</code> los vuelve a leer (véase Interfaz de línea de comandos (CLI)).</p>
 <p>Cada comentario procedente de un archivo lleva una <strong>etiqueta de procedencia</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, o <em>importado</em> cuando la procedencia nunca se registró). Los comentarios que usted escribió no llevan ninguna: es el caso corriente, y señalarlo en cada línea sería ruido. Modificar un comentario importado se lo atribuye: tras la modificación, la frase es suya.</p>
 <p>Esta distinción se nota en otro sitio: borrar una partida ya no destruye una posición sobre la que <strong>usted</strong> había escrito. Una nota tomada del archivo de origen sí desaparece con la partida que la trajo.</p>
 <h4>Las etiquetas</h4>
@@ -2486,6 +2487,11 @@ export default {
 <td>co:user</td>
 <td>La posición lleva un comentario de un origen dado: <code>user</code> (escrito por usted), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (traído por la importación de una partida) o <code>unknown</code>. Repetible (<code>co:xg co:gnubg</code>).</td>
 <td><code>--comment-origin</code></td>
+</tr>
+<tr>
+<td><code>au'Alice'</code></td>
+<td>La posición lleva un comentario firmado por este autor (nombre completo, sin distinguir mayúsculas de minúsculas).</td>
+<td><code>--comment-author</code></td>
 </tr>
 <tr>
 <td><code>m'patrón1,patrón2,...'</code></td>

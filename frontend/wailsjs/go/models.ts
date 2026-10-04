@@ -3542,6 +3542,7 @@ export namespace main {
 	    board_colors?: BoardColors;
 	    ui_scale?: number;
 	    like_limit?: number;
+	    comment_author?: string;
 	    like_max_distance?: number;
 	    panel_position?: string;
 	    panel_height?: number;
@@ -3590,6 +3591,7 @@ export namespace main {
 	        this.board_colors = this.convertValues(source["board_colors"], BoardColors);
 	        this.ui_scale = source["ui_scale"];
 	        this.like_limit = source["like_limit"];
+	        this.comment_author = source["comment_author"];
 	        this.like_max_distance = source["like_max_distance"];
 	        this.panel_position = source["panel_position"];
 	        this.panel_height = source["panel_height"];

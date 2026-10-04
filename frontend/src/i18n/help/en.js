@@ -203,7 +203,8 @@ export default {
 <p>The result is <strong>stored beside the analysis, never in its place</strong>: an imported analysis is not modified. Each rollout forms a block with, for every candidate, the equity, the 95 % confidence interval, the <strong>JSD</strong> (the gap to the best play in standard deviations of the difference: from the limit on, the play is decided and is no longer played) and the number of games. The rollout stops as soon as the plays are told apart. The <strong>Configuration</strong> — the engine and the full signature of the parameters — unfolds under the table: two rollouts with the same signature are the same numbers. A rollout plays the cube inside its games: the ranking is reliable, the absolute equity a little less so, which the block recalls. A position that is not in the database can be rolled out but is not stored.</p>
 <p>The <strong>On the displayed list…</strong> button (or <code>ro search</code>) rolls out, one after the other, the positions of the displayed list — search results, match or collection — that do not carry this rollout yet; a confirmation gives the total before starting. Each position is written as soon as it is finished: cancelling keeps what is done, and running again resumes where it stopped. Progress survives closing the panel.</p>
 <h3>Comments Panel</h3>
-<p>The <strong>Comments</strong> panel (<em>CTRL-P</em>) shows, adds and edits the comments attached to the current position. A position may carry several: all of them are shown, most recent first. Comments imported from XG files are automatically attached to the matching positions. Press <em>CTRL-P</em> or run the <code>comment</code> command to show or hide the panel.</p>
+<p>The <strong>Comments</strong> panel (<em>CTRL-P</em>) shows, adds and edits the comments attached to the current position. A position may carry several, written by different people: all of them are shown as a thread, most recent first, each with its author's name, and yours come first. Comments imported from XG files are automatically attached to the matching positions. Press <em>CTRL-P</em> or run the <code>comment</code> command to show or hide the panel.</p>
+<p>The name that signs your comments is set in the preferences, <em>Interface</em> tab, <strong>Your name</strong> field; when empty, your comments are unsigned. Comments from an XG import are signed <code>XG</code>, those from a match file with the name of its transcriber. Rewriting a comment signs it with your name. The <code>au"Alice"</code> search keeps the positions Alice has commented on; outside the interface, <code>blunderdb comment add --author</code> writes a signed comment and <code>blunderdb comment list</code> reads them back (see Command Line Interface (CLI)).</p>
 <p>Every comment that came out of a file carries a <strong>provenance badge</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, or <em>imported</em> when the provenance was never recorded). Comments you wrote carry none: that is the ordinary case, and marking every line would be noise. Editing an imported comment makes it yours: after the edit, the sentence is yours.</p>
 <p>That distinction shows elsewhere: deleting a match no longer destroys a position <strong>you</strong> had written on. A note lifted from the source file does still go with the match that brought it in.</p>
 <h4>Tags</h4>
@@ -2486,6 +2487,11 @@ export default {
 <td>co:user</td>
 <td>The position carries a comment of a given origin: <code>user</code> (written by you), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (brought in by a match import) or <code>unknown</code>. Repeatable (<code>co:xg co:gnubg</code>).</td>
 <td><code>--comment-origin</code></td>
+</tr>
+<tr>
+<td><code>au'Alice'</code></td>
+<td>The position carries a comment signed by this author (full name, case-insensitive).</td>
+<td><code>--comment-author</code></td>
 </tr>
 <tr>
 <td><code>m'pattern1,pattern2,...'</code></td>

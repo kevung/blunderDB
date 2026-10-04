@@ -256,6 +256,18 @@ func registerSearch(tb *Toolbox) {
 			return obj{"comments": rows}, nil
 		})
 
+	Add(tb, Reads, &sdk.Tool{Name: "position_comments", Title: "Comments of a position",
+		Description: "Every comment written on one position, each with its author, origin and dates: the thread, newest first."},
+		func(ctx context.Context, req *sdk.CallToolRequest, a struct {
+			PositionID int64 `json:"positionId" jsonschema:"the position id"`
+		}) (any, error) {
+			rows, err := Stream[obj](ctx, tb.Engine, req, "comments.byPosition", obj{"positionId": a.PositionID}, maxLimit)
+			if err != nil {
+				return nil, err
+			}
+			return obj{"comments": rows}, nil
+		})
+
 	Add(tb, Reads, &sdk.Tool{Name: "saved_searches", Title: "Saved searches",
 		Description: "The searches the user saved in the application, each with its name and query: a ready vocabulary for search_positions."},
 		func(ctx context.Context, req *sdk.CallToolRequest, _ noInput) (any, error) {
@@ -792,13 +804,14 @@ func registerWrites(tb *Toolbox) {
 		})
 
 	Add(tb, Writes, &sdk.Tool{Name: "comment_position", Title: "Comment a position",
-		Description: "Add a comment to a position, beside those it already carries. Tags are words starting with #."},
+		Description: "Add a comment to a position, beside those it already carries, signed by its author. Tags are words starting with #."},
 		func(ctx context.Context, req *sdk.CallToolRequest, a struct {
 			PositionID int64  `json:"positionId" jsonschema:"the position id"`
 			Text       string `json:"text" jsonschema:"the comment"`
+			Author     string `json:"author,omitempty" jsonschema:"who signs it (default: the person the connection names, else the tenant)"`
 		}) (any, error) {
 			var res obj
-			if err := tb.Engine.Call(ctx, req, "comments.add", obj{"positionId": a.PositionID, "text": a.Text}, &res); err != nil {
+			if err := tb.Engine.Call(ctx, req, "comments.add", obj{"positionId": a.PositionID, "text": a.Text, "author": a.Author}, &res); err != nil {
 				return nil, err
 			}
 			return res, nil

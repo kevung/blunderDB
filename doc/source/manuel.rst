@@ -792,10 +792,20 @@ Panneau Commentaires
 
 Le panneau **Commentaires** (*CTRL-P*) affiche, ajoute et modifie les
 commentaires associés à la position courante. Une position peut en porter
-plusieurs : ils sont tous affichés, du plus récent au plus ancien. Les
+plusieurs, écrites par des personnes différentes : ils sont tous affichés en fil,
+du plus récent au plus ancien, chacun avec le nom de son auteur, et les vôtres
+passent en tête. Les
 commentaires importés depuis les fichiers XG sont automatiquement associés aux
 positions correspondantes. Appuyer sur *CTRL-P* ou exécuter la commande
 ``comment`` pour afficher ou masquer le panneau.
+
+Le nom qui signe vos commentaires se règle dans les préférences, onglet
+*Interface*, champ **Votre nom** ; vide, vos commentaires ne sont pas signés.
+Les commentaires d'un import XG sont signés ``XG``, ceux d'un fichier de match
+du nom de son transcripteur. Réécrire un commentaire le signe de votre nom. La
+recherche ``au"Alice"`` retient les positions qu'Alice a commentées ; hors de
+l'interface, ``blunderdb comment add --author`` écrit un commentaire signé et
+``blunderdb comment list`` les relit (voir :ref:`cli`).
 
 Chaque commentaire venu d'un fichier porte une **étiquette de provenance**
 (``XG``, ``GNU BG``, ``BGF``, ou *importé* lorsque la provenance n'a pas été

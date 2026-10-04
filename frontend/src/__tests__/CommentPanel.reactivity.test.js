@@ -21,9 +21,18 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     LoadPosition: vi.fn(() => Promise.resolve(null)),
     AddComment: vi.fn(() => Promise.resolve()),
     UpdateCommentEntry: vi.fn(() => Promise.resolve()),
-    DeleteCommentEntry: vi.fn(() => Promise.resolve())
+    DeleteCommentEntry: vi.fn(() => Promise.resolve()),
+    TrashCommentEntry: vi.fn(() => Promise.resolve()),
+    Tags: vi.fn(() => Promise.resolve([])),
+    RecommendedTags: vi.fn(() => Promise.resolve([]))
 }));
 
+vi.mock('../../wailsjs/go/main/Config.js', () => ({
+    GetCommentAuthor: vi.fn(() => Promise.resolve('Alice'))
+}));
+
+import { GetCommentsByPosition } from '../../wailsjs/go/database/Database.js';
+import { positionStore } from '../stores/positionStore';
 import CommentPanel from '../components/CommentPanel.svelte';
 
 afterEach(cleanup);
@@ -43,5 +52,22 @@ describe('CommentPanel — no infinite effect loop on mount', () => {
         const logged = spy.mock.calls.map((c) => c.join(' '));
         const loopErr = logged.find((e) => /effect_update_depth_exceeded|update depth/.test(e));
         expect(loopErr, `console errors: ${logged.join('\n')}`).toBeUndefined();
+    });
+});
+
+describe('CommentPanel — thread of a position', () => {
+    test('lists every author, the user own comments first', async () => {
+        GetCommentsByPosition.mockResolvedValue([
+            { id: 1, positionId: 7, text: 'from Bob', author: 'Bob', origin: 'user', createdAt: '2026-01-01 10:00:00' },
+            { id: 2, positionId: 7, text: 'from Alice', author: 'Alice', origin: 'user', createdAt: '2026-01-02 10:00:00' }
+        ]);
+        positionStore.set({ id: 7 });
+        const { container } = render(CommentPanel, { props: { visible: true, onClose: () => {} } });
+        await new Promise((r) => setTimeout(r, 50));
+        const texts = [...container.querySelectorAll('.msg-text')].map((e) => e.textContent);
+        expect(texts).toEqual(['from Alice', 'from Bob']);
+        const authors = [...container.querySelectorAll('.msg-author')].map((e) => e.textContent);
+        expect(authors[0]).toContain('Alice');
+        expect(authors[1]).toBe('Bob');
     });
 });

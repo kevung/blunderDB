@@ -322,6 +322,17 @@ func TestWriteTools(t *testing.T) {
 	if c := call(t, cs, "get_position", obj{"positionId": pid})["comment"]; !strings.Contains(c.(string), "#mcp") {
 		t.Errorf("comment not stored: %v", c)
 	}
+	call(t, cs, "comment_position", obj{"positionId": pid, "text": "deuxième avis", "author": "Alice"})
+	thread := list(t, call(t, cs, "position_comments", obj{"positionId": pid}), "comments")
+	signed := false
+	for _, c := range thread {
+		if c.(obj)["author"] == "Alice" {
+			signed = true
+		}
+	}
+	if len(thread) != 2 || !signed {
+		t.Errorf("thread = %v, want two comments, one signed Alice", thread)
+	}
 	coll := call(t, cs, "create_collection", obj{"name": "Depuis MCP"})
 	cid := coll["id"]
 	call(t, cs, "add_to_collection", obj{"collectionId": cid, "positionIds": []any{pid}})

@@ -1230,6 +1230,17 @@ func (s *SearchStore) appendClosedListClauses(scope string, f domain.SearchFilte
 		}
 	}
 
+	// Comment author: a third EXISTS, independent of presence and origin.
+	// The whole name, any case: an equality on LOWER, so a "%" or "_" typed in
+	// a name is a character and never a wildcard.
+	if author := strings.TrimSpace(searchfilter.QuotedName(f.CommentAuthorFilter, "au")); author != "" {
+		cTenant, cArgs := s.DB.TenantFilter("c", scope)
+		where.WriteString(" AND EXISTS (SELECT 1 FROM comment c WHERE " + cTenant +
+			" AND c.position_id = p.id AND COALESCE(c.text, '') <> '' AND LOWER(c.author) = ?)")
+		*args = append(*args, cArgs...)
+		*args = append(*args, strings.ToLower(author))
+	}
+
 	// Derived phase (ADR-0035): one indexed column, never reclassified at
 	// query time. An unrecognised name is dropped rather than refused here —
 	// the CLI and the command bar are where a typo is named; a filter whose

@@ -173,6 +173,8 @@
         "likeLimit": "Nachbarn pro Rangliste",
         "likeMaxDistance": "Maximale Distanz (Stein-Pips)",
         "likeNote": "Null: keine Obergrenze. Das Token like<12 setzt seine eigene für eine Suche.",
+        "commentAuthor": "Ihr Name",
+        "commentAuthorNote": "Signiert die Kommentare, die Sie schreiben. Leer: unsigniert.",
         "assistantTitle": "Assistent und MCP",
         "corpusTitle": "Korpus"
     },
@@ -887,6 +889,7 @@
         "promptPlaceholder": "Kommentar zur aktuellen Position…",
         "searchPlaceholder": "Kommentare durchsuchen…",
         "originXG": "XG",
+        "you": "Sie",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "importiert",

@@ -173,6 +173,8 @@
         "likeLimit": "Vecinas por clasificación",
         "likeMaxDistance": "Distancia máxima (pips de ficha)",
         "likeNote": "Cero: sin límite. El token like<12 impone el suyo para una búsqueda.",
+        "commentAuthor": "Su nombre",
+        "commentAuthorNote": "Firma los comentarios que escribe. Vacío: sin firma.",
         "assistantTitle": "Asistente y MCP",
         "corpusTitle": "Corpus"
     },
@@ -887,6 +889,7 @@
         "promptPlaceholder": "Comenta la posición actual…",
         "searchPlaceholder": "Buscar comentarios…",
         "originXG": "XG",
+        "you": "usted",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "importado",

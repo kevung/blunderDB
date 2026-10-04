@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 04:15+0200\n"
+"POT-Creation-Date: 2026-10-04 04:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -3557,46 +3557,48 @@ msgid ""
 msgstr "コマンドバーの文法による検索で見つかったポジションとその正規形（文法はツールの説明に記載）"
 
 #: ../../source/mode_headless.rst:1877
-msgid "``search_comments``, ``saved_searches``"
-msgstr "``search_comments``, ``saved_searches``"
+msgid "``search_comments``, ``position_comments``, ``saved_searches``"
+msgstr "``search_comments``, ``position_comments``, ``saved_searches``"
 
 #: ../../source/mode_headless.rst:1878
-msgid "commentaires contenant des mots ; recherches enregistrées"
-msgstr "指定した語を含むコメント、保存済みの検索"
+msgid ""
+"commentaires contenant des mots ; tous les commentaires d'une position, "
+"chacun avec son auteur ; recherches enregistrées"
+msgstr "指定した語を含むコメント、ポジションのすべてのコメント(それぞれ著者付き)、保存済みの検索"
 
-#: ../../source/mode_headless.rst:1879
+#: ../../source/mode_headless.rst:1880
 msgid "``get_position``"
 msgstr "``get_position``"
 
-#: ../../source/mode_headless.rst:1880
+#: ../../source/mode_headless.rst:1881
 msgid ""
 "une position, son analyse (meilleurs coups ou videau), le coup joué et le"
 " commentaire"
 msgstr "ポジション、その解析（ベストムーブまたはキューブ）、指した手、コメント"
 
-#: ../../source/mode_headless.rst:1882
+#: ../../source/mode_headless.rst:1883
 msgid "``explain_error``"
 msgstr "``explain_error``"
 
-#: ../../source/mode_headless.rst:1883
+#: ../../source/mode_headless.rst:1884
 msgid "le thème de l'erreur, son coût en millipoints et la meilleure décision"
 msgstr "ミスのテーマ、ミリポイントでのコスト、最善の判断"
 
-#: ../../source/mode_headless.rst:1884
+#: ../../source/mode_headless.rst:1885
 msgid "``similar_positions``, ``decode_position``, ``legal_moves``, ``race_epc``"
 msgstr "``similar_positions``, ``decode_position``, ``legal_moves``, ``race_epc``"
 
-#: ../../source/mode_headless.rst:1886
+#: ../../source/mode_headless.rst:1887
 msgid "positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course"
 msgstr "近いポジション、XGID の読み取り、合法手、レースの EPC"
 
-#: ../../source/mode_headless.rst:1887
+#: ../../source/mode_headless.rst:1888
 msgid ""
 "``list_players``, ``player_aliases``, ``player_stats``, "
 "``recurring_errors``, ``training_stats``, ``training_missed``"
 msgstr "``list_players``、``player_aliases``、``player_stats``、``recurring_errors``、``training_stats``、``training_missed``"
 
-#: ../../source/mode_headless.rst:1889
+#: ../../source/mode_headless.rst:1890
 msgid ""
 "joueurs ; leurs alias et les graphies proposées ; PR global, pions, "
 "videau, par phase ; erreurs qui reviennent ; PR du quiz et rétention Anki"
@@ -3605,100 +3607,100 @@ msgstr ""
 "プレイヤー、その別名と推奨表記、全体の PR・チェッカー・キューブ・フェーズ別、繰り返されるミス、クイズの PR と実際の PR に対する "
 "Anki の定着率、クイズで間違えたポジション"
 
-#: ../../source/mode_headless.rst:1892
+#: ../../source/mode_headless.rst:1893
 msgid "``head_to_head``, ``pr_by_window``, ``player_ranking``"
 msgstr "``head_to_head``, ``pr_by_window``, ``player_ranking``"
 
-#: ../../source/mode_headless.rst:1893
+#: ../../source/mode_headless.rst:1894
 msgid ""
 "face-à-face de deux joueurs ; PR par fenêtre calendaire ; classement par "
 "PR"
 msgstr "二人の対戦成績、暦期間ごとの PR、PR によるランキング"
 
-#: ../../source/mode_headless.rst:1895
+#: ../../source/mode_headless.rst:1896
 msgid "``list_matches``, ``get_match``, ``list_tournaments``"
 msgstr "``list_matches``, ``get_match``, ``list_tournaments``"
 
-#: ../../source/mode_headless.rst:1896
+#: ../../source/mode_headless.rst:1897
 msgid "matchs, détail d'un match, tournois"
 msgstr "マッチ、マッチの詳細、トーナメント"
 
-#: ../../source/mode_headless.rst:1897
+#: ../../source/mode_headless.rst:1898
 msgid "``list_collections``, ``collection_positions``, ``study_decks``"
 msgstr "``list_collections``, ``collection_positions``, ``study_decks``"
 
-#: ../../source/mode_headless.rst:1898
+#: ../../source/mode_headless.rst:1899
 msgid "collections et leurs positions ; paquets de révision"
 msgstr "コレクションとそのポジション、学習デッキ"
 
-#: ../../source/mode_headless.rst:1899
+#: ../../source/mode_headless.rst:1900
 msgid "``list_lessons``, ``lesson``"
 msgstr "``list_lessons``, ``lesson``"
 
-#: ../../source/mode_headless.rst:1900
+#: ../../source/mode_headless.rst:1901
 msgid "leçons ; les étapes d'une leçon, dans l'ordre"
 msgstr "レッスン。レッスンのステップを順に返す"
 
-#: ../../source/mode_headless.rst:1901
+#: ../../source/mode_headless.rst:1902
 msgid "``quiz_draw``, ``quiz_grade``"
 msgstr "``quiz_draw``, ``quiz_grade``"
 
-#: ../../source/mode_headless.rst:1902
+#: ../../source/mode_headless.rst:1903
 msgid "tire une position sans sa réponse, puis note la réponse donnée"
 msgstr "答えを伏せたポジションを出題し、返された答えを採点する"
 
-#: ../../source/mode_headless.rst:1903
+#: ../../source/mode_headless.rst:1904
 msgid "``evaluate``"
 msgstr "``evaluate``"
 
-#: ../../source/mode_headless.rst:1904
+#: ../../source/mode_headless.rst:1905
 msgid ""
 "évaluation gammonNet d'une position donnée en texte, sans l'enregistrer :"
 " meilleurs coups ou décision de videau"
 msgstr "テキストで与えられたポジションの gammonNet 評価（保存はしません）：最善手またはキューブの判断"
 
-#: ../../source/mode_headless.rst:1906
+#: ../../source/mode_headless.rst:1907
 msgid "``anki_next``"
 msgstr "``anki_next``"
 
-#: ../../source/mode_headless.rst:1907
+#: ../../source/mode_headless.rst:1908
 msgid "la prochaine carte due d'un paquet de révision"
 msgstr "復習デッキの次の期限が来たカード"
 
-#: ../../source/mode_headless.rst:1908
+#: ../../source/mode_headless.rst:1909
 msgid "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 msgstr "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 
-#: ../../source/mode_headless.rst:1909
+#: ../../source/mode_headless.rst:1910
 msgid "transcriptions de matchs ; détail d'une transcription ; son texte ``.mat``"
 msgstr "マッチの文字起こし、文字起こしの詳細、その ``.mat`` テキスト"
 
-#: ../../source/mode_headless.rst:1911
+#: ../../source/mode_headless.rst:1912
 msgid "``direction_list``, ``direction_standings``, ``direction_season``"
 msgstr "``direction_list``, ``direction_standings``, ``direction_season``"
 
-#: ../../source/mode_headless.rst:1912
+#: ../../source/mode_headless.rst:1913
 msgid "tournois dirigés ; classement d'un tournoi ; classement de saison"
 msgstr "運営済みの大会、大会の順位表、シーズンランキング"
 
-#: ../../source/mode_headless.rst:1913
+#: ../../source/mode_headless.rst:1914
 msgid "``rollout``"
 msgstr "``rollout``"
 
-#: ../../source/mode_headless.rst:1914
+#: ../../source/mode_headless.rst:1915
 #, no-python-format
 msgid ""
 "rollout d'une position de la base : équité, intervalle à 95 % et JSD par "
 "candidat"
 msgstr "ライブラリの局面のロールアウト：候補ごとのエクイティ、95 % 区間、JSD"
 
-#: ../../source/mode_headless.rst:1916
+#: ../../source/mode_headless.rst:1917
 msgid ""
 "``club_matches``, ``club_match_positions``, ``club_comments``, "
 "``club_library``, ``club_library_positions``, ``club_ranking``"
 msgstr "``club_matches``、``club_match_positions``、``club_comments``、``club_library``、``club_library_positions``、``club_ranking``"
 
-#: ../../source/mode_headless.rst:1918
+#: ../../source/mode_headless.rst:1919
 msgid ""
 "lectures à travers les tenants que liste le proxy "
 "(:ref:`headless_tenants_lus`) : matchs des élèves, positions d'un match "
@@ -3708,9 +3710,10 @@ msgstr ""
 "プロキシが列挙するテナントをまたぐ読み取り（:ref:`headless_tenants_lus`）：生徒のマッチ、ハッシュ付きのマッチのポジション、これらの盤面に書かれたコメント、共有ライブラリ、クラブランキング。``X"
 "-Read-Tenants`` がない場合は、このテナントのみ。"
 
-#: ../../source/mode_headless.rst:1923
+#: ../../source/mode_headless.rst:1924
 msgid ""
-"Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
+"Seuls cinq outils écrivent — ``save_position``, ``comment_position`` (qui"
+" signe de l'argument ``author``, sinon de l'en-tête ``X-User-Name``), "
 "``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
 " une carte tirée par ``anki_next`` — et ils ne sont offerts que sur "
 "demande : ``--write`` en local, ``--mcp-write`` sur le démon. Tous les "
@@ -3718,12 +3721,14 @@ msgid ""
 "est offerte, l'argument ``store``, qui enregistre le rollout à côté de "
 "l'analyse de la position. Aucun outil n'efface."
 msgstr ""
-"書き込むツールは五つだけです——``save_position``、``comment_position``、``create_collection``、``add_to_collection``、そして"
-" ``anki_next`` が出したカードを採点する ``anki_review``——で、要求があったときだけ提供されます。ローカルでは "
-"``--write``、デーモンでは ``--mcp-write`` です。ほかのツールはすべて読み取りのみですが、書き込みが提供されているときは"
-" ``rollout`` に引数 ``store`` が加わり、ポジションの分析の隣にロールアウトを記録します。どのツールも削除はしません。"
+"書き込みを行うツールは五つだけです。``save_position``、``comment_position``\\ (``author`` "
+"引数で署名し、なければ ``X-User-Name`` "
+"ヘッダーで署名)、``create_collection``、``add_to_collection``、そして ``anki_next`` "
+"が引いたカードを採点する ``anki_review`` で、要求があったときだけ提供されます(ローカルでは ``--write``、デーモンでは"
+" ``--mcp-write``)。それ以外はすべて読み取り専用です。ただし書き込みが提供されている場合、``rollout`` には "
+"``store`` 引数が加わり、ポジションの解析の隣にロールアウトを記録します。何も削除するツールはありません。"
 
-#: ../../source/mode_headless.rst:1931
+#: ../../source/mode_headless.rst:1933
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -3731,7 +3736,7 @@ msgstr ""
 "**ローカル**\\ では、アシスタントがファイルに対して ``blunderdb mcp`` を起動します（:ref:`cli` "
 "を参照）。Claude Code の場合："
 
-#: ../../source/mode_headless.rst:1938
+#: ../../source/mode_headless.rst:1940
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -3753,7 +3758,7 @@ msgstr ""
 "呼び出しはデーモンのチェーン全体をもう一度通ります。ログに記録され、メトリクスに数えられ、テナントのレート制限に計上されます。それを運ぶ "
 "``/mcp`` リクエストとは別にです。したがってツール呼び出し 1 回は複数のリクエスト分のコストになり、免除されるものはありません。"
 
-#: ../../source/mode_headless.rst:1949
+#: ../../source/mode_headless.rst:1951
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

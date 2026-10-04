@@ -173,6 +173,8 @@
         "likeLimit": "Neighbours per ranking",
         "likeMaxDistance": "Maximum distance (checker-pips)",
         "likeNote": "Zero: no ceiling. The token like<12 sets its own for one search.",
+        "commentAuthor": "Your name",
+        "commentAuthorNote": "Signs the comments you write. Empty: unsigned.",
         "assistantTitle": "Assistant and MCP",
         "corpusTitle": "Corpus"
     },
@@ -887,6 +889,7 @@
         "promptPlaceholder": "Comment on current position…",
         "searchPlaceholder": "Search comments…",
         "originXG": "XG",
+        "you": "you",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "imported",

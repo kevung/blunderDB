@@ -203,7 +203,8 @@ export default {
 <p>Le résultat est <strong>stocké à côté de l'analyse, jamais à sa place</strong> : une analyse importée n'est pas modifiée. Chaque rollout forme un bloc avec, par candidat, l'équité, l'intervalle de confiance à 95 %, la <strong>JSD</strong> (l'écart au meilleur coup en écarts-types de la différence : à partir de la limite, le coup est tranché et cesse d'être joué) et le nombre de parties. Le rollout s'arrête dès que les coups sont départagés. La <strong>Configuration</strong> — le moteur et la signature complète des paramètres — se déplie sous le tableau : deux rollouts de même signature sont les mêmes nombres. Un rollout joue le videau dans ses parties : le classement est fiable, l'équité absolue un peu moins, ce que le bloc rappelle. Une position qui n'est pas dans la base se roule, mais ne se stocke pas.</p>
 <p>Le bouton <strong>Sur la liste affichée…</strong> (ou <code>ro search</code>) roule, l'une après l'autre, les positions de la liste affichée — résultats de recherche, match ou collection — qui n'ont pas encore ce rollout ; une confirmation donne le total avant de commencer. Chaque position est écrite dès qu'elle est finie : annuler garde ce qui est fait, et relancer reprend où l'on s'est arrêté. L'avancement survit à la fermeture du panneau.</p>
 <h3>Panneau Commentaires</h3>
-<p>Le panneau <strong>Commentaires</strong> (<em>CTRL-P</em>) affiche, ajoute et modifie les commentaires associés à la position courante. Une position peut en porter plusieurs : ils sont tous affichés, du plus récent au plus ancien. Les commentaires importés depuis les fichiers XG sont automatiquement associés aux positions correspondantes. Appuyer sur <em>CTRL-P</em> ou exécuter la commande <code>comment</code> pour afficher ou masquer le panneau.</p>
+<p>Le panneau <strong>Commentaires</strong> (<em>CTRL-P</em>) affiche, ajoute et modifie les commentaires associés à la position courante. Une position peut en porter plusieurs, écrites par des personnes différentes : ils sont tous affichés en fil, du plus récent au plus ancien, chacun avec le nom de son auteur, et les vôtres passent en tête. Les commentaires importés depuis les fichiers XG sont automatiquement associés aux positions correspondantes. Appuyer sur <em>CTRL-P</em> ou exécuter la commande <code>comment</code> pour afficher ou masquer le panneau.</p>
+<p>Le nom qui signe vos commentaires se règle dans les préférences, onglet <em>Interface</em>, champ <strong>Votre nom</strong> ; vide, vos commentaires ne sont pas signés. Les commentaires d'un import XG sont signés <code>XG</code>, ceux d'un fichier de match du nom de son transcripteur. Réécrire un commentaire le signe de votre nom. La recherche <code>au"Alice"</code> retient les positions qu'Alice a commentées ; hors de l'interface, <code>blunderdb comment add --author</code> écrit un commentaire signé et <code>blunderdb comment list</code> les relit (voir Interface en ligne de commande (CLI)).</p>
 <p>Chaque commentaire venu d'un fichier porte une <strong>étiquette de provenance</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, ou <em>importé</em> lorsque la provenance n'a pas été enregistrée). Les commentaires que vous avez écrits n'en portent pas : c'est le cas courant, et le signaler à chaque ligne serait du bruit. Modifier un commentaire importé vous l'attribue : après la modification, la phrase est la vôtre.</p>
 <p>Cette distinction a une conséquence visible ailleurs : supprimer un match n'efface plus une position sur laquelle <strong>vous</strong> aviez écrit. Une note reprise du fichier source, elle, disparaît avec le match qui l'a apportée.</p>
 <h4>Les tags</h4>
@@ -2486,6 +2487,11 @@ export default {
 <td>co:user</td>
 <td>La position porte un commentaire d'une provenance donnée : <code>user</code> (écrit par vous), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (apporté par l'import d'un match) ou <code>unknown</code>. Répétable (<code>co:xg co:gnubg</code>).</td>
 <td><code>--comment-origin</code></td>
+</tr>
+<tr>
+<td><code>au'Alice'</code></td>
+<td>La position porte un commentaire signé de cet auteur (nom entier, sans distinction de casse).</td>
+<td><code>--comment-author</code></td>
 </tr>
 <tr>
 <td><code>m'motif1,motif2,...'</code></td>

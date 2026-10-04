@@ -117,6 +117,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"rollout":     cli.runRollout,
 		"search":      cli.runSearch,
 		"trash":       cli.runTrash,
+		"comment":     cli.runComment,
 		"vacuum":      cli.runVacuum,
 		"repair":      cli.runRepair,
 		"analyze":     cli.runAnalyze,
@@ -195,6 +196,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  vacuum    Compact the database file, reclaiming freed space")
 	fmt.Println("  repair    Recompute the analysis columns from the analyses themselves")
 	fmt.Println("  delete    Delete data from the database")
+	fmt.Println("  comment   Comments on a position, signed by their author (add, list)")
 	fmt.Println("  trash     What was deleted through the trash, and how to put it back")
 	fmt.Println("  completion  Print a shell completion script (bash, zsh, fish)")
 	fmt.Println("  help      Show this help message")

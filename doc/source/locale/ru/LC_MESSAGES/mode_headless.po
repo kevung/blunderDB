@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 04:15+0200\n"
+"POT-Creation-Date: 2026-10-04 04:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -3980,40 +3980,44 @@ msgstr ""
 " канонической формой"
 
 #: ../../source/mode_headless.rst:1877
-msgid "``search_comments``, ``saved_searches``"
-msgstr "``search_comments``, ``saved_searches``"
+msgid "``search_comments``, ``position_comments``, ``saved_searches``"
+msgstr "``search_comments``, ``position_comments``, ``saved_searches``"
 
 #: ../../source/mode_headless.rst:1878
-msgid "commentaires contenant des mots ; recherches enregistrées"
-msgstr "комментарии, содержащие слова; сохранённые поиски"
+msgid ""
+"commentaires contenant des mots ; tous les commentaires d'une position, "
+"chacun avec son auteur ; recherches enregistrées"
+msgstr ""
+"комментарии, содержащие слова; все комментарии позиции, каждый с его "
+"автором; сохранённые поиски"
 
-#: ../../source/mode_headless.rst:1879
+#: ../../source/mode_headless.rst:1880
 msgid "``get_position``"
 msgstr "``get_position``"
 
-#: ../../source/mode_headless.rst:1880
+#: ../../source/mode_headless.rst:1881
 msgid ""
 "une position, son analyse (meilleurs coups ou videau), le coup joué et le"
 " commentaire"
 msgstr "позиция, её анализ (лучшие ходы или куб), сыгранный ход и комментарий"
 
-#: ../../source/mode_headless.rst:1882
+#: ../../source/mode_headless.rst:1883
 msgid "``explain_error``"
 msgstr "``explain_error``"
 
-#: ../../source/mode_headless.rst:1883
+#: ../../source/mode_headless.rst:1884
 msgid "le thème de l'erreur, son coût en millipoints et la meilleure décision"
 msgstr "тема ошибки, её стоимость в миллипунктах и лучшее решение"
 
-#: ../../source/mode_headless.rst:1884
+#: ../../source/mode_headless.rst:1885
 msgid "``similar_positions``, ``decode_position``, ``legal_moves``, ``race_epc``"
 msgstr "``similar_positions``, ``decode_position``, ``legal_moves``, ``race_epc``"
 
-#: ../../source/mode_headless.rst:1886
+#: ../../source/mode_headless.rst:1887
 msgid "positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course"
 msgstr "близкие позиции; чтение XGID; допустимые ходы; EPC гонки"
 
-#: ../../source/mode_headless.rst:1887
+#: ../../source/mode_headless.rst:1888
 msgid ""
 "``list_players``, ``player_aliases``, ``player_stats``, "
 "``recurring_errors``, ``training_stats``, ``training_missed``"
@@ -4021,7 +4025,7 @@ msgstr ""
 "``list_players``, ``player_aliases``, ``player_stats``, "
 "``recurring_errors``, ``training_stats``, ``training_missed``"
 
-#: ../../source/mode_headless.rst:1889
+#: ../../source/mode_headless.rst:1890
 msgid ""
 "joueurs ; leurs alias et les graphies proposées ; PR global, pions, "
 "videau, par phase ; erreurs qui reviennent ; PR du quiz et rétention Anki"
@@ -4031,53 +4035,53 @@ msgstr ""
 "фазам; повторяющиеся ошибки; PR викторины и удержание Anki в сравнении с "
 "реальным PR; позиции, пропущенные в викторине"
 
-#: ../../source/mode_headless.rst:1892
+#: ../../source/mode_headless.rst:1893
 msgid "``head_to_head``, ``pr_by_window``, ``player_ranking``"
 msgstr "``head_to_head``, ``pr_by_window``, ``player_ranking``"
 
-#: ../../source/mode_headless.rst:1893
+#: ../../source/mode_headless.rst:1894
 msgid ""
 "face-à-face de deux joueurs ; PR par fenêtre calendaire ; classement par "
 "PR"
 msgstr "личные встречи двух игроков; PR по календарным окнам; рейтинг по PR"
 
-#: ../../source/mode_headless.rst:1895
+#: ../../source/mode_headless.rst:1896
 msgid "``list_matches``, ``get_match``, ``list_tournaments``"
 msgstr "``list_matches``, ``get_match``, ``list_tournaments``"
 
-#: ../../source/mode_headless.rst:1896
+#: ../../source/mode_headless.rst:1897
 msgid "matchs, détail d'un match, tournois"
 msgstr "матчи, подробности матча, турниры"
 
-#: ../../source/mode_headless.rst:1897
+#: ../../source/mode_headless.rst:1898
 msgid "``list_collections``, ``collection_positions``, ``study_decks``"
 msgstr "``list_collections``, ``collection_positions``, ``study_decks``"
 
-#: ../../source/mode_headless.rst:1898
+#: ../../source/mode_headless.rst:1899
 msgid "collections et leurs positions ; paquets de révision"
 msgstr "коллекции и их позиции; колоды для повторения"
 
-#: ../../source/mode_headless.rst:1899
+#: ../../source/mode_headless.rst:1900
 msgid "``list_lessons``, ``lesson``"
 msgstr "``list_lessons``, ``lesson``"
 
-#: ../../source/mode_headless.rst:1900
+#: ../../source/mode_headless.rst:1901
 msgid "leçons ; les étapes d'une leçon, dans l'ordre"
 msgstr "уроки; шаги урока по порядку"
 
-#: ../../source/mode_headless.rst:1901
+#: ../../source/mode_headless.rst:1902
 msgid "``quiz_draw``, ``quiz_grade``"
 msgstr "``quiz_draw``, ``quiz_grade``"
 
-#: ../../source/mode_headless.rst:1902
+#: ../../source/mode_headless.rst:1903
 msgid "tire une position sans sa réponse, puis note la réponse donnée"
 msgstr "выбирает позицию без ответа, затем оценивает данный ответ"
 
-#: ../../source/mode_headless.rst:1903
+#: ../../source/mode_headless.rst:1904
 msgid "``evaluate``"
 msgstr "``evaluate``"
 
-#: ../../source/mode_headless.rst:1904
+#: ../../source/mode_headless.rst:1905
 msgid ""
 "évaluation gammonNet d'une position donnée en texte, sans l'enregistrer :"
 " meilleurs coups ou décision de videau"
@@ -4085,35 +4089,35 @@ msgstr ""
 "оценка gammonNet позиции, заданной текстом, без её сохранения: лучшие "
 "ходы или решение по кубу"
 
-#: ../../source/mode_headless.rst:1906
+#: ../../source/mode_headless.rst:1907
 msgid "``anki_next``"
 msgstr "``anki_next``"
 
-#: ../../source/mode_headless.rst:1907
+#: ../../source/mode_headless.rst:1908
 msgid "la prochaine carte due d'un paquet de révision"
 msgstr "следующая карточка колоды повторения, срок которой подошёл"
 
-#: ../../source/mode_headless.rst:1908
+#: ../../source/mode_headless.rst:1909
 msgid "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 msgstr "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 
-#: ../../source/mode_headless.rst:1909
+#: ../../source/mode_headless.rst:1910
 msgid "transcriptions de matchs ; détail d'une transcription ; son texte ``.mat``"
 msgstr "расшифровки матчей; подробности расшифровки; её текст ``.mat``"
 
-#: ../../source/mode_headless.rst:1911
+#: ../../source/mode_headless.rst:1912
 msgid "``direction_list``, ``direction_standings``, ``direction_season``"
 msgstr "``direction_list``, ``direction_standings``, ``direction_season``"
 
-#: ../../source/mode_headless.rst:1912
+#: ../../source/mode_headless.rst:1913
 msgid "tournois dirigés ; classement d'un tournoi ; classement de saison"
 msgstr "проведённые турниры; итоги турнира; сезонный рейтинг"
 
-#: ../../source/mode_headless.rst:1913
+#: ../../source/mode_headless.rst:1914
 msgid "``rollout``"
 msgstr "``rollout``"
 
-#: ../../source/mode_headless.rst:1914
+#: ../../source/mode_headless.rst:1915
 #, no-python-format
 msgid ""
 "rollout d'une position de la base : équité, intervalle à 95 % et JSD par "
@@ -4122,7 +4126,7 @@ msgstr ""
 "rollout позиции базы: эквити, 95-процентный интервал и JSD для каждого "
 "кандидата"
 
-#: ../../source/mode_headless.rst:1916
+#: ../../source/mode_headless.rst:1917
 msgid ""
 "``club_matches``, ``club_match_positions``, ``club_comments``, "
 "``club_library``, ``club_library_positions``, ``club_ranking``"
@@ -4130,7 +4134,7 @@ msgstr ""
 "``club_matches``, ``club_match_positions``, ``club_comments``, "
 "``club_library``, ``club_library_positions``, ``club_ranking``"
 
-#: ../../source/mode_headless.rst:1918
+#: ../../source/mode_headless.rst:1919
 msgid ""
 "lectures à travers les tenants que liste le proxy "
 "(:ref:`headless_tenants_lus`) : matchs des élèves, positions d'un match "
@@ -4142,9 +4146,10 @@ msgstr ""
 "комментарии, написанные к этим доскам, общая библиотека, рейтинг клуба; "
 "без ``X-Read-Tenants`` — только этот тенант"
 
-#: ../../source/mode_headless.rst:1923
+#: ../../source/mode_headless.rst:1924
 msgid ""
-"Seuls cinq outils écrivent — ``save_position``, ``comment_position``, "
+"Seuls cinq outils écrivent — ``save_position``, ``comment_position`` (qui"
+" signe de l'argument ``author``, sinon de l'en-tête ``X-User-Name``), "
 "``create_collection``, ``add_to_collection`` et ``anki_review``, qui note"
 " une carte tirée par ``anki_next`` — et ils ne sont offerts que sur "
 "demande : ``--write`` en local, ``--mcp-write`` sur le démon. Tous les "
@@ -4152,15 +4157,16 @@ msgid ""
 "est offerte, l'argument ``store``, qui enregistre le rollout à côté de "
 "l'analyse de la position. Aucun outil n'efface."
 msgstr ""
-"Пишут только пять инструментов — ``save_position``, ``comment_position``,"
-" ``create_collection``, ``add_to_collection`` и ``anki_review``, который "
-"оценивает карточку, выбранную ``anki_next``, — и предлагаются только по "
-"запросу: ``--write`` локально, ``--mcp-write`` на демоне. Все остальные "
-"только читают; ``rollout`` же получает, когда запись предложена, аргумент"
-" ``store``, который записывает rollout рядом с анализом позиции. Ни один "
-"инструмент ничего не удаляет."
+"Пишут только пять инструментов — ``save_position``, ``comment_position`` "
+"(который подписывает аргументом ``author``, а иначе заголовком ``X-User-"
+"Name``), ``create_collection``, ``add_to_collection`` и ``anki_review``, "
+"оценивающий карточку, выданную ``anki_next``, — и они предлагаются только"
+" по запросу: ``--write`` локально, ``--mcp-write`` на демоне. Все "
+"остальные только читают; ``rollout`` при этом получает, когда запись "
+"предложена, аргумент ``store``, сохраняющий rollout рядом с анализом "
+"позиции. Ни один инструмент ничего не удаляет."
 
-#: ../../source/mode_headless.rst:1931
+#: ../../source/mode_headless.rst:1933
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -4168,7 +4174,7 @@ msgstr ""
 "**Локально** ассистент запускает ``blunderdb mcp`` на файле (см. "
 ":ref:`cli`). Для Claude Code:"
 
-#: ../../source/mode_headless.rst:1938
+#: ../../source/mode_headless.rst:1940
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -4193,7 +4199,7 @@ msgstr ""
 "его несёт. Поэтому вызов инструмента стоит нескольких запросов; ни один "
 "не освобождается."
 
-#: ../../source/mode_headless.rst:1949
+#: ../../source/mode_headless.rst:1951
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

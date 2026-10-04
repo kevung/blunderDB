@@ -203,7 +203,8 @@ export default {
 <p>Tulos <strong>tallennetaan analyysin viereen, ei koskaan sen tilalle</strong>: tuotua analyysia ei muuteta. Jokainen rollout muodostaa lohkon, jossa on kullekin ehdokkaalle equity, 95 %:n luottamusväli, <strong>JSD</strong> (ero parhaaseen siirtoon eron keskihajontoina: rajasta alkaen siirto on ratkaistu eikä sitä enää pelata) ja pelien määrä. Rollout päättyy heti, kun siirrot on erotettu. <strong>Konfiguraatio</strong> — moottori ja parametrien täydellinen allekirjoitus — aukeaa taulukon alle: kaksi samalla allekirjoituksella tehtyä rolloutia antaa samat luvut. Rollout pelaa tuplauskuution peleissään: järjestys on luotettava, absoluuttinen equity hieman vähemmän, minkä lohko muistuttaa. Asema, joka ei ole tietokannassa, voidaan rollata mutta sitä ei tallenneta.</p>
 <p>Painike <strong>Näytettyyn luetteloon…</strong> (tai <code>ro search</code>) rollaa peräkkäin näytetyn luettelon — hakutulokset, ottelu tai kokoelma — asemat, joilla ei vielä ole tätä rolloutia; vahvistus kertoo kokonaismäärän ennen aloitusta. Jokainen asema kirjoitetaan heti valmistuttuaan: peruutus säilyttää tehdyn, ja uusi käynnistys jatkaa siitä, mihin jäätiin. Eteneminen säilyy paneelin sulkemisen yli.</p>
 <h3>Kommenttipaneeli</h3>
-<p><strong>Kommentit</strong>-paneeli (<em>CTRL-P</em>) näyttää, lisää ja muokkaa nykyiseen asemaan liitettyjä kommentteja. Asemalla voi olla useita: kaikki näytetään, uusimmasta vanhimpaan. XG-tiedostoista tuodut kommentit liitetään automaattisesti vastaaviin asemiin. Paina <em>CTRL-P</em> tai suorita komento <code>comment</code> näyttääksesi tai piilottaaksesi paneelin.</p>
+<p><strong>Kommentit</strong>-paneeli (<em>CTRL-P</em>) näyttää, lisää ja muokkaa nykyiseen positioon liittyviä kommentteja. Positiolla voi olla useita eri henkilöiden kirjoittamia kommentteja: kaikki näytetään ketjuna uusimmasta vanhimpaan, kunkin tekijän nimen kanssa, ja omat kommenttisi ovat ensimmäisinä. XG-tiedostoista tuodut kommentit liitetään automaattisesti vastaaviin positioihin. Paina <em>CTRL-P</em> tai suorita komento <code>comment</code> näyttääksesi tai piilottaaksesi paneelin.</p>
+<p>Kommenttisi allekirjoittava nimi asetetaan asetuksissa, <em>Käyttöliittymä</em>-välilehden <strong>Nimesi</strong>-kentässä; jos se on tyhjä, kommenttisi eivät ole allekirjoitettuja. XG-tuonnin kommentit allekirjoitetaan nimellä <code>XG</code>, ottelutiedoston kommentit sen kirjaajan nimellä. Kommentin uudelleenkirjoittaminen allekirjoittaa sen sinun nimelläsi. Haku <code>au"Alice"</code> poimii positiot, joita Alice on kommentoinut; käyttöliittymän ulkopuolella <code>blunderdb comment add --author</code> kirjoittaa allekirjoitetun kommentin ja <code>blunderdb comment list</code> lukee ne takaisin (katso Komentoriviliittymä (CLI)).</p>
 <p>Jokainen tiedostosta tullut kommentti kantaa <strong>alkuperämerkintää</strong> (<code>XG</code>, <code>GNU BG</code>, <code>BGF</code>, tai <em>tuotu</em>, kun alkuperää ei koskaan tallennettu). Itse kirjoittamasi kommentit eivät kanna sellaista: se on tavallinen tapaus, ja jokaisen rivin merkitseminen olisi vain kohinaa. Tuodun kommentin muokkaaminen tekee siitä sinun: muokkauksen jälkeen lause on sinun.</p>
 <p>Ero näkyy muuallakin: ottelun poistaminen ei enää tuhoa asemaa, johon <strong>sinä</strong> olit kirjoittanut. Lähdetiedostosta poimittu muistiinpano sen sijaan katoaa yhä sen ottelun mukana, joka sen toi.</p>
 <h4>Tunnisteet</h4>
@@ -2486,6 +2487,11 @@ export default {
 <td>co:user</td>
 <td>Asemaan liittyy tietystä lähteestä peräisin oleva kommentti: <code>user</code> (sinun kirjoittamasi), <code>xg</code>, <code>gnubg</code>, <code>bgf</code> (ottelun tuonnin mukana tullut) tai <code>unknown</code>. Toistettavissa (<code>co:xg co:gnubg</code>).</td>
 <td><code>--comment-origin</code></td>
+</tr>
+<tr>
+<td><code>au'Alice'</code></td>
+<td>Positiolla on tämän tekijän allekirjoittama kommentti (koko nimi, isoja ja pieniä kirjaimia erottamatta).</td>
+<td><code>--comment-author</code></td>
 </tr>
 <tr>
 <td><code>m'kuvio1,kuvio2,...'</code></td>

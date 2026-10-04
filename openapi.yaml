@@ -7035,6 +7035,9 @@ components:
           format: int64
         text:
           type: string
+        author:
+          type: string
+          nullable: true
     commentIDReq:
       type: object
       properties:

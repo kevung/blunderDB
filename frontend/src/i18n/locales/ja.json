@@ -173,6 +173,8 @@
         "likeLimit": "並べ替えごとの近い局面の数",
         "likeMaxDistance": "最大距離（チェッカーピップ）",
         "likeNote": "ゼロ：上限なし。トークン like<12 は検索ごとに独自の上限を指定します。",
+        "commentAuthor": "あなたの名前",
+        "commentAuthorNote": "あなたが書くコメントに署名します。空欄：署名なし。",
         "assistantTitle": "アシスタントと MCP",
         "corpusTitle": "コーパス"
     },
@@ -887,6 +889,7 @@
         "promptPlaceholder": "現在のポジションにコメント…",
         "searchPlaceholder": "コメントを検索…",
         "originXG": "XG",
+        "you": "あなた",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "インポート",

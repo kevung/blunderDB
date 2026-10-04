@@ -354,6 +354,13 @@ type SearchFilters struct {
 	// so `xco co:user` returns nothing.
 	CommentOriginFilter string `json:"commentOriginFilter"`
 
+	// CommentAuthorFilter is the `au"…"` token whole (or a bare name from the
+	// CLI): keeps only positions carrying a comment signed by that author,
+	// compared whole and without regard to case. Empty applies no filter. It
+	// implies presence and is independent of CommentFilter, like
+	// CommentOriginFilter.
+	CommentAuthorFilter string `json:"commentAuthorFilter"`
+
 	// TagFilter keeps only positions whose comments carry EVERY tag named: a
 	// ";"-separated list, e.g. "#prime" or "#prime;#backgame" (the #prime
 	// token). Empty applies no tag filter.
