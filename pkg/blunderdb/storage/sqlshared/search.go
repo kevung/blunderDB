@@ -67,6 +67,19 @@ type searchWhereClause struct {
 	likeTarget *domain.Position
 }
 
+// appendRowFlagClauses adds the filters on properties of the row, not of the
+// board: provenance (individually imported) and the source-tool study mark.
+// Mirroring a position cannot change them, so they stay in SQL even in mirror
+// search, where every board filter falls back to the Go phase.
+func (s *SearchStore) appendRowFlagClauses(f domain.SearchFilters, where *strings.Builder) {
+	if f.IndividuallyImportedFilter {
+		where.WriteString(" AND " + s.DB.Bool("p.individually_imported", true))
+	}
+	if f.FlaggedFilter {
+		where.WriteString(" AND " + s.DB.Bool("p.flagged", true))
+	}
+}
+
 // buildWhere translates f into the WHERE clause of the search query: cheap
 // predicates that can be pushed to SQL become clause text and bound
 // arguments; the rest are left to applyGoFilters (matchesGoFilters below),
@@ -95,18 +108,7 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	tenant, args := s.DB.TenantFilter("p", scope)
 	where.WriteString(tenant)
 
-	// Provenance is a property of the row, not of the board, so mirroring a
-	// position cannot change it: this one filter stays in SQL even in mirror
-	// search, where every board filter falls back to the Go phase.
-	if f.IndividuallyImportedFilter {
-		where.WriteString(" AND " + s.DB.Bool("p.individually_imported", true))
-	}
-
-	// The source-tool study mark is likewise a property of the row, so it too
-	// stays in SQL even in mirror search.
-	if f.FlaggedFilter {
-		where.WriteString(" AND " + s.DB.Bool("p.flagged", true))
-	}
+	s.appendRowFlagClauses(f, &where)
 
 	// Comment presence, origin, tags and phase are row properties too, so they
 	// stay in SQL even in mirror search (and in SQL for cost: a presence filter

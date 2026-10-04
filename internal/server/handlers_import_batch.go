@@ -376,7 +376,7 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 
 	var size int64
 	for _, p := range paths {
-		if fi, err := os.Stat(p); err == nil {
+		if fi, err := os.Stat(p); err == nil { //nolint:gosec // G703: p comes from the batch journal under the handler's own temp dir
 			size += fi.Size()
 		}
 	}

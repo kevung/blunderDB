@@ -588,15 +588,15 @@ func spoolToTemp(r io.Reader, ext string) (string, func(), error) {
 	}
 	if _, err := io.Copy(f, r); err != nil {
 		f.Close()
-		os.Remove(f.Name())
+		os.Remove(f.Name()) //nolint:gosec // G703: the temp file this function just created
 		return "", func() {}, fmt.Errorf("server: spool upload: %w", err)
 	}
 	if err := f.Close(); err != nil {
-		os.Remove(f.Name())
+		os.Remove(f.Name()) //nolint:gosec // G703: the temp file this function just created
 		return "", func() {}, fmt.Errorf("server: spool close: %w", err)
 	}
 	path := f.Name()
-	return path, func() { os.Remove(path) }, nil
+	return path, func() { os.Remove(path) }, nil //nolint:gosec // G703: the temp file this function created
 }
 
 // sourceLabel is what an import batch shows as its source: the name of the
