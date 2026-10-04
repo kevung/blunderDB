@@ -2006,6 +2006,9 @@ nom, sans séparateur quand les autres lignes en ont, cote qui n'est pas un
 nombre — et les doublons, dans le collage ou avec un joueur déjà inscrit. Un
 doublon n'est pas inscrit, sauf si on coche sa case.
 
+Le champ de filtre de la liste garde son texte quand on change d'épreuve : tant
+qu'il est actif, une puce **filtre : …** s'affiche à côté, et sa croix l'efface.
+
 Un **retardataire** arrivé après le tirage prend une place d'exemption libre si
 le tableau en offre une, et l'interface écrit à côté du champ où il entrera avant
 qu'on valide. Sans place libre, il est inscrit quand même et la vue dit dans
@@ -2110,6 +2113,11 @@ tant que celui de la section *Consolante* est vide, les Réglages le rappellent.
 Une phase en **Poules** se règle par la taille des poules (4 par défaut) et le
 nombre de qualifiés par poule (2 par défaut).
 
+La **bascule** d'une phase suisse est la somme des vies restantes à partir de
+laquelle on passe au tableau. Si la somme des vies de départ (joueurs × vies) est
+déjà inférieure ou égale à la bascule, la suisse serait sautée : les Réglages le
+signalent avant le premier lancement.
+
 Les réglages restent accessibles **en cours de tournoi** : baisser la bascule à
 22 h pour finir plus tôt, ajouter une consolante le samedi soir, tant que le
 tirage du tableau n'est pas fait. Ce qui est alors figé est grisé avec sa
@@ -2135,7 +2143,9 @@ Les épreuves d'un événement
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Plusieurs épreuves jouées sur les mêmes tables — un principal, un speed, des
-doubles — se regroupent dans un **Événement**, en bas des Réglages : **Créer et
+doubles — se regroupent dans un **Événement**, en tête des Réglages (replié sur son
+titre quand l'épreuve y est rattachée ; le bouton **Réglages de l'événement** de
+l'onglet *Toutes les tables* y mène) : **Créer et
 rattacher…** crée l'événement avec son nombre de tables, **Rattacher…** y ajoute
 une épreuve dirigée. Rattacher montre d'abord ce qui va changer : les tables de
 l'épreuve deviennent celles de l'événement. **Détacher de l'événement** rend

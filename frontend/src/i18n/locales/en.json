@@ -1975,7 +1975,7 @@
             "lives": "Lives",
             "livesHint": "Number of losses before elimination.",
             "target": "Switch",
-            "targetHint": "Move to the bracket when the sum of lives reaches this number. 0: no switch.",
+            "targetHint": "Move to the bracket when the sum of remaining lives (players × lives) falls to this number. 0: no switch.",
             "finalLength": "Final",
             "finalLengthHint": "Length of the final. 0: same as the other matches.",
             "tables": "Tables",
@@ -2047,7 +2047,8 @@
             "qualifiers": "Qualifiers",
             "qualifiersHint": "Players per pool who go through to the next phase. Empty: 2.",
             "minPerPoint": "Pace (min/pt)",
-            "minPerPointHint": "Planned duration of a point, in minutes: the clock strip compares the observed pace with it, and the estimated end starts from it. Empty: 8."
+            "minPerPointHint": "Planned duration of a point, in minutes: the clock strip compares the observed pace with it, and the estimated end starts from it. Empty: 8.",
+            "swissSkipped": "The Swiss phase would be skipped: {lives} lives at the start, for a switch at {target}. Lower the switch or add lives."
         },
         "tabs": {
             "direction": "Direction",
@@ -2261,7 +2262,9 @@
             "pairRatingHint": "The mean of the two ratings by default; a value typed here replaces it.",
             "withdrawNowConfirm": "Withdraw {name} from the tournament now? They will no longer be paired (can be reinstated).",
             "withdrawLaterConfirm": "Withdraw {name} after their match? They will not be paired afterwards (can be reinstated).",
-            "withdrawDo": "Withdraw"
+            "withdrawDo": "Withdraw",
+            "filterActive": "filter: {text}",
+            "filterClear": "Clear the filter"
         },
         "bracket": {
             "correct": "Correct the result",
@@ -2564,7 +2567,8 @@
             "loading": "Loading the tables…",
             "error": "The tables could not be read: {reason}",
             "eventError": "{event} does not replay; its tables are missing: {reason}",
-            "swapConfirm": "Table {from} ({a}) ↔ Table {to} ({b})?"
+            "swapConfirm": "Table {from} ({a}) ↔ Table {to} ({b})?",
+            "rencontreSettings": "Event settings"
         },
         "epreuves": {
             "pending": "{n} pending",

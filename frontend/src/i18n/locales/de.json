@@ -1975,7 +1975,7 @@
             "lives": "Leben",
             "livesHint": "Anzahl der Niederlagen bis zum Ausscheiden.",
             "target": "Umstieg",
-            "targetHint": "Zur K.-o.-Runde wechseln, wenn die Summe der Leben diese Zahl erreicht. 0: kein Umstieg.",
+            "targetHint": "Zum Turnierbaum wechseln, wenn die Summe der verbleibenden Leben (Spieler × Leben) auf diese Zahl fällt. 0: kein Wechsel.",
             "finalLength": "Finale",
             "finalLengthHint": "Länge des Finales. 0: wie die anderen Partien.",
             "tables": "Tische",
@@ -2047,7 +2047,8 @@
             "qualifiers": "Qualifizierte",
             "qualifiersHint": "Spieler pro Gruppe, die in die nächste Phase kommen. Leer: 2.",
             "minPerPoint": "Tempo (Min./Pkt.)",
-            "minPerPointHint": "Geplante Dauer eines Punkts in Minuten: Die Uhrleiste vergleicht das beobachtete Tempo damit, und das voraussichtliche Ende geht davon aus. Leer: 8."
+            "minPerPointHint": "Geplante Dauer eines Punkts in Minuten: Die Uhrleiste vergleicht das beobachtete Tempo damit, und das voraussichtliche Ende geht davon aus. Leer: 8.",
+            "swissSkipped": "Die Schweizer Phase würde übersprungen: {lives} Leben zu Beginn, Wechsel bei {target}. Wechsel senken oder Leben erhöhen."
         },
         "tabs": {
             "direction": "Leitung",
@@ -2261,7 +2262,9 @@
             "pairRatingHint": "Standardmäßig der Mittelwert beider Wertungen; ein eingegebener Wert ersetzt ihn.",
             "withdrawNowConfirm": "{name} jetzt aus dem Turnier nehmen? Keine weiteren Paarungen (Wiederaufnahme möglich).",
             "withdrawLaterConfirm": "{name} nach dem Match aus dem Turnier nehmen? Danach keine Paarungen mehr (Wiederaufnahme möglich).",
-            "withdrawDo": "Zurückziehen"
+            "withdrawDo": "Zurückziehen",
+            "filterActive": "Filter: {text}",
+            "filterClear": "Filter löschen"
         },
         "bracket": {
             "correct": "Ergebnis korrigieren",
@@ -2564,7 +2567,8 @@
             "loading": "Tische werden geladen…",
             "error": "Die Tische konnten nicht gelesen werden: {reason}",
             "eventError": "{event} lässt sich nicht nachspielen; seine Tische fehlen: {reason}",
-            "swapConfirm": "Tisch {from} ({a}) ↔ Tisch {to} ({b})?"
+            "swapConfirm": "Tisch {from} ({a}) ↔ Tisch {to} ({b})?",
+            "rencontreSettings": "Einstellungen der Begegnung"
         },
         "epreuves": {
             "pending": "{n} ausstehend",

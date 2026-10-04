@@ -1975,7 +1975,7 @@
             "lives": "Elämät",
             "livesHint": "Tappioiden määrä ennen putoamista.",
             "target": "Vaihto",
-            "targetHint": "Siirry kaavioon, kun elämien summa saavuttaa tämän luvun. 0: ei vaihtoa.",
+            "targetHint": "Siirry kaavioon, kun jäljellä olevien elämien summa (pelaajat × elämät) laskee tähän lukuun. 0: ei vaihtoa.",
             "finalLength": "Finaali",
             "finalLengthHint": "Finaalin pituus. 0: sama kuin muissa otteluissa.",
             "tables": "Pöydät",
@@ -2047,7 +2047,8 @@
             "qualifiers": "Jatkoon",
             "qualifiersHint": "Pelaajat lohkoa kohden, jotka jatkavat seuraavaan vaiheeseen. Tyhjä: 2.",
             "minPerPoint": "Tahti (min/piste)",
-            "minPerPointHint": "Pisteen suunniteltu kesto minuutteina: kellopalkki vertaa havaittua tahtia siihen, ja arvioitu loppu lähtee siitä. Tyhjä: 8."
+            "minPerPointHint": "Pisteen suunniteltu kesto minuutteina: kellopalkki vertaa havaittua tahtia siihen, ja arvioitu loppu lähtee siitä. Tyhjä: 8.",
+            "swissSkipped": "Sveitsiläinen vaihe ohitettaisiin: {lives} elämää alussa, vaihto kohdassa {target}. Laske vaihtoa tai lisää elämiä."
         },
         "tabs": {
             "direction": "Johtaminen",
@@ -2261,7 +2262,9 @@
             "pairRatingHint": "Oletuksena kahden luokituksen keskiarvo; syötetty arvo korvaa sen.",
             "withdrawNowConfirm": "Poistetaanko {name} turnauksesta nyt? Häntä ei enää paritella (palautus mahdollinen).",
             "withdrawLaterConfirm": "Poistetaanko {name} ottelunsa jälkeen? Häntä ei sen jälkeen paritella (palautus mahdollinen).",
-            "withdrawDo": "Poista"
+            "withdrawDo": "Poista",
+            "filterActive": "suodatin: {text}",
+            "filterClear": "Tyhjennä suodatin"
         },
         "bracket": {
             "correct": "Korjaa tulos",
@@ -2564,7 +2567,8 @@
             "loading": "Ladataan pöytiä…",
             "error": "Pöytiä ei voitu lukea: {reason}",
             "eventError": "Kilpailua {event} ei voi toistaa; sen pöydät puuttuvat: {reason}",
-            "swapConfirm": "Pöytä {from} ({a}) ↔ Pöytä {to} ({b})?"
+            "swapConfirm": "Pöytä {from} ({a}) ↔ Pöytä {to} ({b})?",
+            "rencontreSettings": "Kohtaamisen asetukset"
         },
         "epreuves": {
             "pending": "{n} odottaa",
