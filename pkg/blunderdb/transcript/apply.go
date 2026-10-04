@@ -680,7 +680,7 @@ func reroll(doc *Document) {
 	// 8/2 6/5 lands where a 6-1 lands, yet is no 5-4).
 	steps := played.Steps
 	if _, reached := resolveSteps(pos.Board, e.Side, steps); findPlay(legal, reached) != nil &&
-		diceCoherent(steps, e.Dice, e.Side) {
+		diceCoherent(pos.Board, steps, e.Dice, e.Side) {
 		e.Steps = append([]domain.CheckerStep(nil), steps...)
 		e.Selected = true
 		return

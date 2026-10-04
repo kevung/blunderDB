@@ -615,7 +615,7 @@ func (s *state) step(i int, a Action) ActionInfo {
 				info.add(IllegalMove, "the roll allows a play, so no dance is possible")
 			}
 		} else {
-			if !diceCoherent(a.Steps, a.Dice, a.Side) {
+			if !diceCoherent(s.board, a.Steps, a.Dice, a.Side) {
 				info.add(InconsistentDice, fmt.Sprintf("the play does not use the roll %d%d", a.Dice[0], a.Dice[1]))
 			}
 			resolved, reached := resolveSteps(s.board, a.Side, a.Steps)
@@ -898,10 +898,11 @@ func applyStep(b domain.Board, mover int, s domain.CheckerStep) domain.Board {
 	return b
 }
 
-// diceCoherent reports whether every step can be charged to a distinct die of the
-// roll. A play that fails it was produced by correcting a roll under a kept play, and
-// §1.4 requalifies it as illegal.
-func diceCoherent(steps []domain.CheckerStep, dice [2]int, mover int) bool {
+// diceCoherent reports whether every step can be charged to distinct dice of the
+// roll. A step is one die, or several played through intermediate points the mover
+// may land on in b ("24/14" on 6-4 is 24/18/14). A play that fails it was produced
+// by correcting a roll under a kept play, and §1.4 requalifies it as illegal.
+func diceCoherent(b domain.Board, steps []domain.CheckerStep, dice [2]int, mover int) bool {
 	if len(steps) == 0 {
 		return true
 	}
@@ -916,13 +917,48 @@ func diceCoherent(steps []domain.CheckerStep, dice [2]int, mover int) bool {
 		return false
 	}
 	used := make([]bool, len(avail))
+	dir := 1
+	if mover == domain.Black {
+		dir = -1
+	}
+	open := func(pt int) bool {
+		c := b.Points[pt]
+		return !(c.Color == opponent(mover) && c.Checkers >= 2)
+	}
+	// chain tries to cover the step by dice from the current point to its target.
+	var chain func(s domain.CheckerStep, at int, k int, next func() bool) bool
 	var assign func(k int) bool
+	chain = func(s domain.CheckerStep, at int, k int, next func() bool) bool {
+		for j := range avail {
+			if used[j] {
+				continue
+			}
+			to := at + dir*avail[j]
+			if dir*(s.To-to) < 0 {
+				continue
+			}
+			used[j] = true
+			if to == s.To {
+				if next() {
+					return true
+				}
+			} else if to >= 1 && to <= 24 && open(to) && chain(s, to, k, next) {
+				return true
+			}
+			used[j] = false
+		}
+		return false
+	}
 	assign = func(k int) bool {
 		if k == len(steps) {
 			return true
 		}
+		s := steps[k]
+		if s.From >= 1 && s.From <= 24 && s.To >= 1 && s.To <= 24 {
+			return chain(s, s.From, k, func() bool { return assign(k + 1) })
+		}
 		for j := range avail {
-			if used[j] || !domain.StepUsesDie(steps[k], mover, avail[j]) {
+			if used[j] || !domain.StepUsesDie(s, mover, avail[j]) {
 				continue
 			}
 			used[j] = true
