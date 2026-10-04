@@ -112,9 +112,10 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	// returns, and a merge decision needs that id to look up what the target
 	// already holds. Two source positions never land on the same target id
 	// within one import (the source database is itself deduplicated), so a
-	// snapshot of the target's existing analyses/comments taken once, before
-	// any of this batch's merges run, is equivalent to querying it fresh for
-	// each one.
+	// snapshot of the target's existing comments taken once, before any of
+	// this batch's merges run, is equivalent to querying it fresh for each
+	// one. Analyses are not snapshotted: each is merged under its row lock,
+	// since a rollout may be written concurrently.
 	type savedRecord struct {
 		rec *srcRecord
 		id  int64
@@ -138,10 +139,6 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		targetOf[rec.pos.ID] = id
 	}
 
-	targetAnalyses, err := tx.Analyses().LoadMany(ctx, scope, targetIDs)
-	if err != nil {
-		return Summary{}, err
-	}
 	targetComments, err := tx.Comments().ByPositions(ctx, scope, targetIDs)
 	if err != nil {
 		return Summary{}, err
@@ -153,7 +150,7 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 			return sum, err
 		}
 		if s.rec.analysis != nil {
-			if err := mergeDBAnalysisPreloaded(ctx, tx, scope, s.id, targetAnalyses[s.id], s.rec.analysis); err != nil {
+			if err := mergeDBAnalysis(ctx, tx, scope, s.id, s.rec.analysis); err != nil {
 				return sum, err
 			}
 		}
@@ -297,15 +294,20 @@ func MergeCollections(ctx context.Context, tx storage.Stores, scope string, src 
 	return res, nil
 }
 
-// mergeDBAnalysisPreloaded writes an imported analysis for positionID as
-// domain.MergeImportedAnalysis decides. existing is the target's current
-// analysis, already loaded in Import's batched pass.
-func mergeDBAnalysisPreloaded(ctx context.Context, tx storage.Tx, scope string, positionID int64, existing, imported *domain.PositionAnalysis) error {
-	merged, changed := domain.MergeImportedAnalysis(existing, imported)
-	if !changed {
-		return nil
-	}
-	return tx.Analyses().Save(ctx, scope, positionID, merged)
+// mergeDBAnalysis writes an imported analysis for positionID as
+// domain.MergeImportedAnalysis decides. The read goes through Merge, which
+// locks the row (or takes the analysis guard when there is none) until the
+// write: a rollout committed between a plain read and the write would be
+// overwritten.
+func mergeDBAnalysis(ctx context.Context, tx storage.Tx, scope string, positionID int64, imported *domain.PositionAnalysis) error {
+	_, err := tx.Analyses().Merge(ctx, scope, positionID, nil, func(existing *domain.PositionAnalysis) *domain.PositionAnalysis {
+		merged, changed := domain.MergeImportedAnalysis(existing, imported)
+		if !changed {
+			return nil
+		}
+		return merged
+	})
+	return err
 }
 
 // mergeDBCommentsPreloaded appends each imported comment to positionID unless

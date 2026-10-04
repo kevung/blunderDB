@@ -687,18 +687,38 @@ func repointTrashPayload(kind domain.TrashKind, payload string, keepID, dupID in
 // mergeAnalysisInto hands the duplicate's analysis to the kept position when
 // that one has none. The blob names its position INSIDE the JSON as well as in
 // the row, so it is re-encoded rather than merely re-pointed.
+//
+// Both analyses are read under the locks a rollout's writer takes — the
+// analysis guard of each position, then the row: a rollout committed on the
+// duplicate between a plain read and the cascade that deletes it would be
+// lost, and one committed on the kept row would be overwritten.
 func mergeAnalysisInto(ctx context.Context, tx Execer, scope string, keepID, dupID int64) error {
+	keys := []string{storage.AnalysisGuardKey(scope, keepID), storage.AnalysisGuardKey(scope, dupID)}
+	// Sorted as BeginGuarded sorts them, so two guarded writers never wait on
+	// each other.
+	slices.Sort(keys)
+	for _, k := range keys {
+		if q, args := tx.Guard(k); q != "" {
+			if _, err := tx.Exec(ctx, q, args...); err != nil {
+				return fmt.Errorf("guard analysis: %w", err)
+			}
+		}
+	}
 	tenant, targs := tx.TenantFilter("", scope)
-	var keepHas int
-	if err := tx.QueryRow(ctx,
-		`SELECT COUNT(*) FROM analysis WHERE `+tenant+` AND position_id = ?`,
-		append(append([]any{}, targs...), keepID)...).Scan(&keepHas); err != nil {
+	var one int
+	keepHas := true
+	switch err := tx.QueryRow(ctx,
+		`SELECT 1 FROM analysis WHERE `+tenant+` AND position_id = ?`+tx.ForUpdate(),
+		append(append([]any{}, targs...), keepID)...).Scan(&one); {
+	case errors.Is(err, ErrNoRows):
+		keepHas = false
+	case err != nil:
 		return err
 	}
 	dtenant, dargs := tx.TenantFilter("", scope)
 	var data []byte
 	err := tx.QueryRow(ctx,
-		`SELECT data FROM analysis WHERE `+dtenant+` AND position_id = ?`,
+		`SELECT data FROM analysis WHERE `+dtenant+` AND position_id = ?`+tx.ForUpdate(),
 		append(append([]any{}, dargs...), dupID)...).Scan(&data)
 	if errors.Is(err, ErrNoRows) {
 		return nil
@@ -710,7 +730,7 @@ func mergeAnalysisInto(ctx context.Context, tx Execer, scope string, keepID, dup
 	if err != nil {
 		return fmt.Errorf("decode analysis: %w", err)
 	}
-	if keepHas > 0 {
+	if keepHas {
 		// The kept row's own analysis wins and the duplicate's cascades away,
 		// but a rollout is an analysis of its own (ADR-0060 §8): it moves over.
 		return mergeRolloutsInto(ctx, tx, scope, keepID, analysis.Rollouts)

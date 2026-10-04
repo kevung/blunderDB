@@ -40,6 +40,10 @@ func (shared) BoolArg(v bool) any {
 }
 func (shared) Bigint(expr string) string { return expr }
 func (shared) ILike() string             { return "LIKE" }
+func (shared) ForUpdate() string         { return "" }
+func (shared) Guard(string) (string, []any) {
+	return "", nil
+}
 func (shared) LimitOffset(limit, offset int) (string, []any) {
 	switch {
 	case limit <= 0 && offset <= 0:

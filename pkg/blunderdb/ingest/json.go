@@ -124,17 +124,8 @@ func (im JSONImporter) Import(ctx context.Context, scope string, src Source, pro
 			return sum, err
 		}
 		if b.Analysis != nil {
-			existing, err := tx.Analyses().Load(ctx, scope, id)
-			switch {
-			case errors.Is(err, storage.ErrNotFound):
-				existing = nil
-			case err != nil:
+			if err := mergeDBAnalysis(ctx, tx, scope, id, b.Analysis); err != nil {
 				return sum, err
-			}
-			if merged, changed := domain.MergeImportedAnalysis(existing, b.Analysis); changed {
-				if err := tx.Analyses().Save(ctx, scope, id, merged); err != nil {
-					return sum, err
-				}
 			}
 		}
 		for _, txt := range b.Comments {

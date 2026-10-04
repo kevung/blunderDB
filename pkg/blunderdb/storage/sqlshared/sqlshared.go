@@ -130,6 +130,18 @@ type Dialect interface {
 	// case-insensitive for ASCII), ILIKE in PostgreSQL.
 	ILike() string
 
+	// ForUpdate is the suffix of a SELECT whose rows the transaction is about
+	// to rewrite: " FOR UPDATE" on PostgreSQL, so a concurrent writer waits
+	// instead of being overwritten; "" on SQLite, whose single writer already
+	// serialises every write transaction.
+	ForUpdate() string
+
+	// Guard renders the statement taking, until the enclosing transaction
+	// ends, the guard named key — the lock storage.BeginGuarded takes for the
+	// same key: pg_advisory_xact_lock on PostgreSQL; "" on SQLite, for the
+	// same reason as ForUpdate.
+	Guard(key string) (query string, args []any)
+
 	// LimitOffset renders a ListOpts as the trailing clause of a SELECT
 	// already carrying its ORDER BY, and the placeholder arguments it needs —
 	// "", nil when both are zero (no bound, today's behaviour). PostgreSQL
