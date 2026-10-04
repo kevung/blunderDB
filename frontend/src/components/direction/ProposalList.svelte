@@ -80,7 +80,14 @@
     const shown = $derived(actionable.filter((a) => !ignored.has(actionKey(a))));
     /* Ce que « Tout lancer » lance : un match sans table reste dans la file, comme le fait
        ConfirmAllProposals. */
-    const launchable = $derived(shown.filter((a) => !(a.kind === 'start_match' && !a.table && a.reason)));
+    const launchable = $derived.by(() => {
+        /* Un repêchage entre ex æquo attend le choix du directeur, et le passage qu'il changerait
+           avec lui ; un repêchage unique part, et le moteur repropose la suite. */
+        const held = shown.some((a) => a.kind === 'repechage' && (a.label?.players ?? 0) > 1);
+        return shown.filter(
+            (a) => !(a.kind === 'start_match' && !a.table && a.reason) && !(a.kind === 'repechage' && (a.label?.players ?? 0) > 1) && !(held && (a.kind === 'next_phase' || a.kind === 'draw'))
+        );
+    });
 
     $effect(() => {
         if (selected >= shown.length) selected = Math.max(0, shown.length - 1);

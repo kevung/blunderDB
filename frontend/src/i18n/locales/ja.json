@@ -2088,6 +2088,8 @@
             "draw_barrage": "プレーオフ {section}：{players}人で{spots}枠",
             "draw_bracket": "{n}枠のトーナメント表",
             "draw_block": "ブロック{n}：{players}グループ",
+            "repechage": "{section}の繰り上げ",
+            "repechage_tied": "{section}の繰り上げ（同率{players}名から選択）",
             "phase": "{text}"
         },
         "section": {
@@ -2151,6 +2153,7 @@
             "bye": "不戦勝：{player}",
             "draw": "抽選：{where}",
             "nextPhase": "次のフェーズ：{where}",
+            "repechage": "{b} が {a} に代わる — {where}",
             "finish": "大会を終了",
             "errorConfirm": "この提案を開始できませんでした。",
             "errorManual": "この試合を開始できませんでした。",
@@ -2308,6 +2311,7 @@
             "bye": "不戦勝：{player}",
             "draw": "抽選：{where}",
             "nextPhase": "次のフェーズ",
+            "repechage": "{b} が {a} に代わり繰り上げ（{section}）",
             "configChanged": "設定を変更",
             "tableChanged": "卓{n}へ移動",
             "lengthChanged": "マッチ長を{n}に変更",
@@ -2539,7 +2543,11 @@
                 "status": "出場しますか？",
                 "bye": "不戦 — 第{round}回戦から参加",
                 "eliminated": "敗退",
-                "qualified": "進出 — {phase}"
+                "qualified": "進出 — {phase}",
+                "winner": "優勝",
+                "byeRound": "不戦 — 第{round}ラウンドで再出場",
+                "undecided": "未確定 — {phase}",
+                "withdrawn": "棄権"
             },
             "trashConfirm": "イベント「{name}」を削除しますか？各種目は切り離されて残ります。"
         },

@@ -7,7 +7,7 @@
      */
     import { t } from '../../i18n';
     import { closeOnEscape } from '../../services/escapeService.js';
-    import { renderLabel } from './labels.js';
+    import { renderLabel, renderSectionName } from './labels.js';
     import CorrectionPanel from './CorrectionPanel.svelte';
     import ContextMenu from '../ContextMenu.svelte';
     import { historyMenu } from '../../services/directionMenus.js';
@@ -135,6 +135,8 @@
                 return $t('direction.history.draw', { where: renderLabel($t, e.label) });
             case 'next_phase':
                 return $t('direction.history.nextPhase');
+            case 'repechage':
+                return $t('direction.history.repechage', { a: e.aName || e.a, b: e.bName || e.b, section: renderSectionName($t, e.section) });
             case 'config_changed':
                 return $t('direction.history.configChanged');
             case 'table_changed':

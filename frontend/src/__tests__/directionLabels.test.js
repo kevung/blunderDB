@@ -125,6 +125,13 @@ describe('une proposition se lit avant de cliquer', () => {
         expect(proposalLabel(t, { kind: 'finish', label: {} }, name)).toBe('Clore le tournoi');
         expect(proposalLabel(t, { kind: 'draw', label: { kind: 'draw_pools', n: 4 } }, name)).toContain('4 poules');
     });
+
+    test('un repêchage dit qui remplace qui, et quand le directeur choisit entre ex æquo', () => {
+        const one = { kind: 'repechage', a: 'alice', b: 'bob', label: { kind: 'repechage', section: 'poule:A', players: 1 } };
+        expect(proposalLabel(t, one, name)).toBe('Bob remplace Alice — Repêchage poule A');
+        expect(renderLabel(t, { kind: 'repechage', section: 'poule:A', players: 2 })).toBe('Repêchage poule A (2 ex æquo, au choix)');
+        expect(renderLabel(tEn, { kind: 'repechage', section: 'poule:A', players: 2 })).not.toContain('repechage_tied');
+    });
 });
 
 describe('la clé d’une proposition est stable', () => {

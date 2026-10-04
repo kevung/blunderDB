@@ -2088,6 +2088,8 @@
             "draw_barrage": "Стыковой матч {section}: игроков {players} на мест: {spots}",
             "draw_bracket": "Сетка на {n} мест",
             "draw_block": "Блок {n}: групп — {players}",
+            "repechage": "Замена {section}",
+            "repechage_tied": "Замена {section} ({players} с равным результатом, на выбор)",
             "phase": "{text}"
         },
         "section": {
@@ -2151,6 +2153,7 @@
             "bye": "Освобождение: {player}",
             "draw": "Жеребьёвка: {where}",
             "nextPhase": "Следующий этап: {where}",
+            "repechage": "{b} заменяет {a} — {where}",
             "finish": "Завершить турнир",
             "errorConfirm": "Не удалось запустить это предложение.",
             "errorManual": "Не удалось запустить этот матч.",
@@ -2308,6 +2311,7 @@
             "bye": "Освобождение: {player}",
             "draw": "Жеребьёвка: {where}",
             "nextPhase": "Следующий этап",
+            "repechage": "{b} включён(а) вместо {a} ({section})",
             "configChanged": "Настройки изменены",
             "tableChanged": "Перенесён на стол {n}",
             "lengthChanged": "Длина изменена на {n}",
@@ -2539,7 +2543,11 @@
                 "status": "Играю ли я?",
                 "bye": "без игры — вступает в раунде {round}",
                 "eliminated": "выбыл(а)",
-                "qualified": "прошёл(ла) — {phase}"
+                "qualified": "прошёл(ла) — {phase}",
+                "winner": "победитель",
+                "byeRound": "без игры — снова играет в туре {round}",
+                "undecided": "ещё не решено — {phase}",
+                "withdrawn": "снялся(лась)"
             },
             "trashConfirm": "Удалить мероприятие «{name}»? Его состязания останутся, отсоединённые."
         },

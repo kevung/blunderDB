@@ -2088,6 +2088,8 @@
             "draw_barrage": "Spareggio {section}: {players} giocatori per {spots} posto/i",
             "draw_bracket": "Tabellone da {n} posti",
             "draw_block": "Blocco {n}: {players} gruppi",
+            "repechage": "Ripescaggio {section}",
+            "repechage_tied": "Ripescaggio {section} ({players} a pari merito, a scelta)",
             "phase": "{text}"
         },
         "section": {
@@ -2151,6 +2153,7 @@
             "bye": "Esenzione: {player}",
             "draw": "Sorteggio: {where}",
             "nextPhase": "Fase successiva: {where}",
+            "repechage": "{b} sostituisce {a} — {where}",
             "finish": "Chiudi il torneo",
             "errorConfirm": "Impossibile avviare questa proposta.",
             "errorManual": "Impossibile avviare questa partita.",
@@ -2308,6 +2311,7 @@
             "bye": "Esenzione: {player}",
             "draw": "Sorteggio: {where}",
             "nextPhase": "Fase successiva",
+            "repechage": "{b} ripescato/a al posto di {a} ({section})",
             "configChanged": "Configurazione modificata",
             "tableChanged": "Spostata al tavolo {n}",
             "lengthChanged": "Lunghezza portata a {n}",
@@ -2539,7 +2543,11 @@
                 "status": "Gioco io?",
                 "bye": "esentato/a — entra al turno {round}",
                 "eliminated": "eliminato/a",
-                "qualified": "qualificato/a — {phase}"
+                "qualified": "qualificato/a — {phase}",
+                "winner": "vincitore/vincitrice",
+                "byeRound": "esentato/a — rigioca al turno {round}",
+                "undecided": "non ancora deciso — {phase}",
+                "withdrawn": "ritirato/a"
             },
             "trashConfirm": "Eliminare l’evento «{name}»? Le sue prove restano, staccate."
         },

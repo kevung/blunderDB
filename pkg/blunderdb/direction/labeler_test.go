@@ -160,3 +160,40 @@ func TestLabeler_TermTakesItsCount(t *testing.T) {
 		t.Errorf("the table heading should not carry a count: %q", got)
 	}
 }
+
+// A repechage reads as the engine's own French says it, and says so when the director chooses
+// between tied candidates.
+func TestLabeler_RepechageReadsAsTheEngine(t *testing.T) {
+	l := direction.NewLabeler(catalog(t, "fr"), nil)
+	fr := render.French()
+	for _, x := range []tournoi.Label{
+		{Kind: tournoi.LabelRepechage, Section: "poule:A", Players: 1},
+		{Kind: tournoi.LabelRepechage, Section: "poule:B", Players: 2},
+	} {
+		if got, want := l.Label(x), fr.Label(x); got != want {
+			t.Errorf("%+v reads %q, the engine %q", x, got, want)
+		}
+	}
+}
+
+// Every status the wall may show has its own line; the withdrawn and the winner too.
+func TestStatusLine_EveryKind(t *testing.T) {
+	cat := catalog(t, "fr")
+	tableau := tournoi.PhaseConfig{Kind: tournoi.KindBracket, Name: "Tableau"}
+	for _, c := range []struct {
+		s    direction.PlayerStatus
+		want string
+	}{
+		{direction.PlayerStatus{PlayerStatus: tournoi.PlayerStatus{Kind: tournoi.StatusUndecided, Phase: 1}, PhaseCfg: tableau}, "pas encore fixé — Tableau"},
+		{direction.PlayerStatus{PlayerStatus: tournoi.PlayerStatus{Kind: tournoi.StatusQualified, Phase: 1}, PhaseCfg: tableau}, "qualifié(e) — Tableau"},
+		{direction.PlayerStatus{PlayerStatus: tournoi.PlayerStatus{Kind: tournoi.StatusBye, Round: 2, Label: tournoi.Label{Kind: "quarter_final"}}}, "exempté(e) — entre au tour 2"},
+		{direction.PlayerStatus{PlayerStatus: tournoi.PlayerStatus{Kind: tournoi.StatusBye, Round: 3, Label: tournoi.Label{Kind: tournoi.LabelRound, N: 3}}}, "exempté(e) — rejoue à la ronde 3"},
+		{direction.PlayerStatus{PlayerStatus: tournoi.PlayerStatus{Kind: tournoi.StatusWinner}}, "vainqueur"},
+		{direction.PlayerStatus{PlayerStatus: tournoi.PlayerStatus{Kind: tournoi.StatusWithdrawn}}, "retiré(e)"},
+		{direction.PlayerStatus{PlayerStatus: tournoi.PlayerStatus{Kind: tournoi.StatusEliminated}}, "éliminé(e)"},
+	} {
+		if got := direction.StatusLine(c.s, cat); got != c.want {
+			t.Errorf("%s reads %q, want %q", c.s.Kind, got, c.want)
+		}
+	}
+}
