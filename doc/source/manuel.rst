@@ -2159,8 +2159,13 @@ les menus contextuels, le clavier et le glisser-déposer y fonctionnent comme
 dans la grille d'une épreuve, et chaque geste s'adresse à l'épreuve de la case.
 Glisser un match sur une table occupée par une autre épreuve échange les deux
 matchs après une confirmation qui nomme les deux épreuves. Sous la grille, les
-propositions de toutes les épreuves sont groupées par épreuve, chacune avec son
-bouton *Lancer*. Cliquer sur une épreuve ou sur un onglet de vue quitte *Toutes les tables*.
+propositions de toutes les épreuves forment une seule file, chacune marquée de
+son épreuve et munie de son bouton *Lancer* : les joueurs qui attendent depuis le
+plus longtemps passent d'abord, si bien qu'une épreuve n'attend pas la fin de la
+ronde d'une autre. Un match sans table — toutes les tables prises, ou un joueur
+retenu par un match d'une autre épreuve — suit la file avec sa raison, sans
+bouton *Lancer*, jusqu'à ce qu'une table ou le joueur se libère. Cliquer sur une
+épreuve ou sur un onglet de vue quitte *Toutes les tables*.
 
 Quand l'événement a plusieurs salles, la grille se groupe par salle, sous le nom de chacune. Le nom
 d'une table s'affiche à côté de son numéro, avec un drapeau pour une table réservée et une étoile suivie des
@@ -2170,7 +2175,8 @@ Une même personne peut jouer plusieurs épreuves de l'événement : deux
 Participants du même nom sont la même personne, et pour une paire de doubles
 chacun des deux membres compte. Tant qu'elle joue dans une épreuve, les autres ne
 la proposent pas, et leur liste *En attente* dit où elle joue : « joue au
-principal, table 4 ». L'appariement à la main reste permis : le match démarre, et
+principal, table 4 ». Un match de tableau qui l'attend reste dans la file, et le
+lancer est refusé tant qu'elle joue. L'appariement à la main reste permis : le match démarre, et
 sa case de la grille porte la même mention.
 
 L'affichage du tournoi

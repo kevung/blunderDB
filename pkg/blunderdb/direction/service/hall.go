@@ -1,7 +1,9 @@
 package service
 
 import (
+	"cmp"
 	"context"
+	"slices"
 	"time"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
@@ -25,13 +27,12 @@ type HallCell struct {
 	EventIndex int `json:"eventIndex"`
 }
 
-// HallEvent is one event of the Rencontre as the Hall shows it: its name, its proposals, and
-// the names those proposals need.
+// HallEvent is one event of the Rencontre as the Hall shows it: its name and the names its
+// proposals need. Its proposals are in the Hall's Queue and Held, mixed with the other events'.
 type HallEvent struct {
-	TournamentID int64            `json:"tournamentId"`
-	Name         string           `json:"name"`
-	Index        int              `json:"index"`
-	Proposals    []tournoi.Action `json:"proposals"`
+	TournamentID int64  `json:"tournamentId"`
+	Name         string `json:"name"`
+	Index        int    `json:"index"`
 	// Names gives each Participant's name by id: a proposal names players by id.
 	Names map[string]string `json:"names"`
 	// Error says why the event's log did not replay: its tables are missing from the Hall, the
@@ -48,6 +49,26 @@ type HallView struct {
 	// Rooms are the Rencontre's rooms in the order of their first table, what the grid groups
 	// its cells by; empty when no table carries a room (ADR-0058 §12).
 	Rooms []string `json:"rooms"`
+	// Queue is what the director can launch from the Hall, every event mixed: the proposal whose
+	// players have waited longest first, so that one event's queue does not hold the next one's
+	// back. Waits are not in it.
+	Queue []HallProposal `json:"queue"`
+	// Held are the matches proposed without a table to play on — every table taken, a player
+	// unavailable or at a match of a sister event. They stay in line with their reason and are
+	// never launched from the Hall: launched, they would be nowhere on the grid nor on the wall
+	// page, or seat one person at two matches.
+	Held []HallProposal `json:"held"`
+}
+
+// HallProposal is one proposal of the Hall, with the event it belongs to.
+type HallProposal struct {
+	TournamentID int64          `json:"tournamentId"`
+	EventIndex   int            `json:"eventIndex"`
+	Action       tournoi.Action `json:"action"`
+	// since is when its players last finished a match in their event, what the Queue is
+	// ordered by; rank is its place in its own event's queue, which breaks ties.
+	since time.Time
+	rank  int
 }
 
 // RencontreTableGrid merges the table grids of the Rencontre's events into the Hall's: one cell
@@ -65,7 +86,8 @@ func (d *Service) RencontreTableGrid(ctx context.Context, rencontreID int64) (*H
 // hallOf builds the Hall from members replayed once; without proposals when only the tables are
 // wanted (the wall page), which spares asking the engine for them.
 func (d *Service) hallOf(ctx context.Context, r *domain.Rencontre, members []member, proposals bool) *HallView {
-	v := &HallView{RencontreID: r.ID, Name: r.Name, Events: []HallEvent{}, Cells: []HallCell{}, Rooms: direction.RoomNames(r.TableSettings)}
+	v := &HallView{RencontreID: r.ID, Name: r.Name, Events: []HallEvent{}, Cells: []HallCell{}, Rooms: direction.RoomNames(r.TableSettings),
+		Queue: []HallProposal{}, Held: []HallProposal{}}
 	if v.Rooms == nil {
 		v.Rooms = []string{}
 	}
@@ -78,7 +100,7 @@ func (d *Service) hallOf(ctx context.Context, r *domain.Rencontre, members []mem
 	highest := r.Tables
 	now := time.Now()
 	for i, m := range members {
-		ev := HallEvent{TournamentID: m.tid, Name: m.name, Index: i, Proposals: []tournoi.Action{}, Names: map[string]string{}}
+		ev := HallEvent{TournamentID: m.tid, Name: m.name, Index: i, Names: map[string]string{}}
 		if m.dir == nil {
 			ev.Error = m.err.Error()
 			v.Events = append(v.Events, ev)
@@ -87,8 +109,16 @@ func (d *Service) hallOf(ctx context.Context, r *domain.Rencontre, members []mem
 		room := d.roomFrom(ctx, r, m.tid, m.dir, members)
 		cells := gridOf(m.dir, room, now)
 		if st := m.dir.State(); proposals && st != nil {
-			if p := room.propose(m.dir, now); p != nil {
-				ev.Proposals = p
+			for rank, a := range room.propose(m.dir, now) {
+				if a.Kind == tournoi.ActWait {
+					continue
+				}
+				p := HallProposal{TournamentID: m.tid, EventIndex: i, Action: a, since: lastPlayed(st, a), rank: rank}
+				if heldForTable(a) {
+					v.Held = append(v.Held, p)
+				} else {
+					v.Queue = append(v.Queue, p)
+				}
 			}
 			for id, p := range st.Players {
 				ev.Names[string(id)] = p.Name
@@ -168,5 +198,31 @@ func (d *Service) hallOf(ctx context.Context, r *domain.Rencontre, members []mem
 	}
 	v.Cells = append(v.Cells, extra...)
 	v.Cells = append(v.Cells, tableless...)
+	byWait := func(a, b HallProposal) int {
+		if c := a.since.Compare(b.since); c != 0 {
+			return c
+		}
+		if c := cmp.Compare(a.rank, b.rank); c != 0 {
+			return c
+		}
+		return cmp.Compare(a.EventIndex, b.EventIndex)
+	}
+	slices.SortStableFunc(v.Queue, byWait)
+	slices.SortStableFunc(v.Held, byWait)
 	return v
+}
+
+// lastPlayed is when the players of a proposal last finished a match of their event: the later
+// of the two, zero for players who have not played yet — they have waited since the start.
+func lastPlayed(st *tournoi.State, a tournoi.Action) time.Time {
+	var last time.Time
+	for _, m := range st.Matches {
+		if m.End.IsZero() || !(m.Has(a.A) || (a.B != "" && m.Has(a.B))) {
+			continue
+		}
+		if m.End.After(last) {
+			last = m.End
+		}
+	}
+	return last
 }

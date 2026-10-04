@@ -46,18 +46,14 @@ const hall = {
     rencontreId: 1,
     name: 'Festival',
     events: [
-        { tournamentId: 3, name: 'Principal', index: 0, proposals: [], names: {} },
-        {
-            tournamentId: 4,
-            name: 'Speed',
-            index: 1,
-            proposals: [
-                { kind: 'start_match', a: 'c', b: 'd', length: 3, table: 3, key: 'k1' },
-                { kind: 'wait', reason: 'matches_running' }
-            ],
-            names: { c: 'Chloé', d: 'David' }
-        }
+        { tournamentId: 3, name: 'Principal', index: 0, names: { e: 'Emma', f: 'Fanny' } },
+        { tournamentId: 4, name: 'Speed', index: 1, names: { c: 'Chloé', d: 'David', g: 'Gaspard', h: 'Hugo' } }
     ],
+    queue: [
+        { tournamentId: 4, eventIndex: 1, action: { kind: 'start_match', a: 'c', b: 'd', length: 3, table: 3, key: 'k1' } },
+        { tournamentId: 3, eventIndex: 0, action: { kind: 'start_match', a: 'e', b: 'f', length: 7, table: 4, key: 'k2' } }
+    ],
+    held: [{ tournamentId: 4, eventIndex: 1, action: { kind: 'start_match', a: 'g', b: 'h', length: 3, reason: 'player_busy', key: 'k3' } }],
     cells: [
         match(1, 3, 'Principal', 0, 'm1'),
         match(2, 4, 'Speed', 1, 'm1'),
@@ -80,15 +76,24 @@ describe('la Salle', () => {
         expect(getAllByTestId('hall-event-chip')).toHaveLength(4);
     });
 
-    test('les propositions sont groupées par épreuve, et « Lancer » vise la bonne', async () => {
+    test("une seule file, dans l'ordre reçu, et « Lancer » vise la bonne épreuve", async () => {
         const act = vi.fn(async (fn) => (await fn(), true));
-        const { getByTestId, queryByTestId } = render(HallView, { props: { hall, act } });
-        expect(queryByTestId('hall-proposals-3')).toBeNull();
-        const group = getByTestId('hall-proposals-4');
-        expect(group.textContent).toContain('Chloé');
-        expect(group.querySelectorAll('li')).toHaveLength(1);
-        await fireEvent.click(/** @type {HTMLElement} */ (group.querySelector('button.go')));
-        expect(hallConfirmProposal).toHaveBeenCalledWith(4, hall.events[1].proposals[0]);
+        const { getByTestId } = render(HallView, { props: { hall, act } });
+        const rows = getByTestId('hall-queue').querySelectorAll('li');
+        expect(rows).toHaveLength(2);
+        expect(rows[0].textContent).toContain('Speed');
+        expect(rows[0].textContent).toContain('Chloé');
+        expect(rows[1].textContent).toContain('Principal');
+        await fireEvent.click(/** @type {HTMLElement} */ (rows[0].querySelector('button.go')));
+        expect(hallConfirmProposal).toHaveBeenCalledWith(4, hall.queue[0].action);
+    });
+
+    test('un match retenu sans table reste dans la file, sans bouton « Lancer »', () => {
+        const act = vi.fn();
+        const { getByTestId } = render(HallView, { props: { hall, act } });
+        const row = getByTestId('hall-held-4');
+        expect(row.textContent).toContain('Hugo');
+        expect(row.querySelector('button')).toBeNull();
     });
 });
 

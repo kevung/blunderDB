@@ -1804,7 +1804,10 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
   chaque match en cours.
 * ``hall --rencontre N [--format text|json]`` — Toutes les tables d'un événement : une
   ligne par table, quelle que soit l'épreuve qui l'occupe (épreuve, match,
-  joueurs), puis les propositions de chaque épreuve. C'est la grille que la vue
+  joueurs), puis les propositions de toutes les épreuves en une seule file
+  (``proposal``), les joueurs qui attendent depuis le plus longtemps d'abord, et
+  enfin les matchs retenus faute de table ou de joueur libre (``held``, avec leur
+  raison). C'est la grille que la vue
   *Toutes les tables* de la Direction affiche ; les tables sont groupées par
   salle quand l'événement en a, et nommées quand elles ont un nom.
 * ``tables --rencontre N|--tournament N [--format text|json]`` — Les propriétés

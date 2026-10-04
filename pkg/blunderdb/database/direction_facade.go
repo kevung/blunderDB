@@ -38,6 +38,7 @@ type (
 	HallCell            = service.HallCell
 	HallEvent           = service.HallEvent
 	HallView            = service.HallView
+	HallProposal        = service.HallProposal
 	SlotRow             = service.SlotRow
 	SlotSuggestion      = service.SlotSuggestion
 	MatchSlot           = service.MatchSlot
