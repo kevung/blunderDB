@@ -97,14 +97,14 @@ func LoadTargetPosition(ctx context.Context, db Execer, scope string, id int64) 
 	}
 	var (
 		pid            int64
-		state          string
+		state          []byte
 		onRoll, kind   *int64
 		score1, score2 *int64
 	)
 	if err := rows.Scan(&pid, &state, &onRoll, &kind, &score1, &score2); err != nil {
 		return nil, errf(db, "load the position to rank against", err)
 	}
-	p, ok := positionOfState(state)
+	p, ok := positionOfState(string(state))
 	if !ok {
 		return nil, storage.ErrNotFound
 	}

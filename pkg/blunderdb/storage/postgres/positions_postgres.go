@@ -80,7 +80,7 @@ func qualifiedPositionCols(alias string) string {
 // scan into pointers; has_jacoby/has_beaver are BOOLEAN.
 func scanPosition(sc scanner) (domain.Position, error) {
 	var id int64
-	var state string
+	var state []byte // BYTEA: pgx scans it into bytes only
 	var dt, por, d1, d2, cv, co, s1, s2 *int64
 	var hj, hb *bool
 	var individual, flagged *bool
@@ -88,7 +88,7 @@ func scanPosition(sc scanner) (domain.Position, error) {
 	if err := sc.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &individual, &flagged, &mc); err != nil {
 		return domain.Position{}, err
 	}
-	p := engine.ReconstructPosition(id, state,
+	p := engine.ReconstructPosition(id, string(state),
 		derefInt(dt), derefInt(por), derefInt(d1), derefInt(d2),
 		derefInt(cv), derefInt(co), derefInt(s1), derefInt(s2),
 		boolToIntPtr(hj), boolToIntPtr(hb))
@@ -163,7 +163,7 @@ func (s *positionStore) SaveCreated(ctx context.Context, scope string, p *domain
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
 		cols.BackCheckers1, cols.BackCheckers2, cols.NoContact, int(cols.GamePhase), int(cols.GameType),
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		engine.EncodeBoardCompact(norm.Board), norm.IndividuallyImported, norm.Flagged,
+		engine.EncodeBoardState(norm.Board), norm.IndividuallyImported, norm.Flagged,
 		cols.MaxCube).Scan(&id)
 	created := err == nil
 	switch {
@@ -210,7 +210,7 @@ const positionUpdateSQL = `UPDATE position SET state = $1,
 func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Position) error {
 	cols := engine.PopulatePositionColumns(p)
 	_, err := s.db.Exec(ctx, positionUpdateSQL,
-		engine.EncodeBoardCompact(p.Board),
+		engine.EncodeBoardState(p.Board),
 		int64(cols.ZobristHash), cols.DecisionType, p.PlayerOnRoll, cols.Dice1, cols.Dice2,
 		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
 		cols.HasJacoby != 0, cols.HasBeaver != 0, cols.MaxCube,

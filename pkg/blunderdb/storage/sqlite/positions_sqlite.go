@@ -133,7 +133,7 @@ func (s *positionStore) saveOnce(ctx context.Context, scope string, p *domain.Po
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
 		cols.BackCheckers1, cols.BackCheckers2, boolToInt(cols.NoContact), int(cols.GamePhase), int(cols.GameType),
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		engine.EncodeBoardCompact(norm.Board), boolToInt(norm.IndividuallyImported), boolToInt(norm.Flagged),
+		engine.EncodeBoardState(norm.Board), boolToInt(norm.IndividuallyImported), boolToInt(norm.Flagged),
 		cols.MaxCube)
 	if err != nil {
 		return 0, false, fmt.Errorf("sqlite: save position: %w", err)
@@ -198,7 +198,7 @@ const positionUpdateSQL = `UPDATE position SET state = ?,
 func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Position) error {
 	cols := engine.PopulatePositionColumns(p)
 	_, err := s.db.ExecContext(ctx, positionUpdateSQL,
-		engine.EncodeBoardCompact(p.Board),
+		engine.EncodeBoardState(p.Board),
 		int64(cols.ZobristHash), cols.DecisionType, p.PlayerOnRoll, cols.Dice1, cols.Dice2,
 		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
 		cols.HasJacoby, cols.HasBeaver, cols.MaxCube,

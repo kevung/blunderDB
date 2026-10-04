@@ -53,7 +53,8 @@ func (s *StatsStore) RecurringErrors(ctx context.Context, scope string, filter s
 	var classified []storage.RecurringErrorRow
 	for rows.Next() {
 		var id, errMP int64
-		var state, checkerMove, cubeAction, bestCube string
+		var checkerMove, cubeAction, bestCube string
+		var state []byte
 		var onRoll, dice1, dice2, gameType, decisionType int
 		var data []byte
 		if err := rows.Scan(&id, &state, &onRoll, &dice1, &dice2, &gameType, &decisionType, &errMP,
@@ -78,7 +79,7 @@ func (s *StatsStore) RecurringErrors(ctx context.Context, scope string, filter s
 				}
 				decoded[id] = ana // nil too: an undecodable blob is not retried
 			}
-			if pos, ok := positionOfState(state); ok && ana != nil {
+			if pos, ok := positionOfState(string(state)); ok && ana != nil {
 				pos.ID = id
 				pos.PlayerOnRoll = onRoll
 				pos.Dice = [2]int{dice1, dice2}

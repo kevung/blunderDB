@@ -3613,6 +3613,13 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 	// The values the 2.31.0 representation must read back: Unix seconds.
 	wantMatchDate := unixColumn(t, d.db, "position", "match_date")
 	wantCreation := unixColumn(t, d.db, "analysis", "creation_date")
+	wantBoards := boardsByID(t, d.db)
+	// 2.30.0 stored the board as the compact JSON array.
+	for id, b := range wantBoards {
+		if _, err := d.db.Exec(`UPDATE position SET state = ? WHERE id = ?`, engine.EncodeBoardCompact(b), id); err != nil {
+			t.Fatal(err)
+		}
+	}
 	if len(wantMatchDate) == 0 || len(wantCreation) == 0 {
 		t.Fatalf("fixture dates: %d positions, %d analyses; want some of each", len(wantMatchDate), len(wantCreation))
 	}
@@ -3661,6 +3668,13 @@ func TestMigrate_2_30_0_to_2_31_0(t *testing.T) {
 		if got := unixColumn(t, d.db, c.table, c.column); !maps.Equal(got, c.want) {
 			t.Errorf("%s.%s after migration = %v, want %v", c.table, c.column, got, c.want)
 		}
+	}
+	var textStates int
+	if err := d.db.QueryRow(`SELECT COUNT(*) FROM position WHERE typeof(state) <> 'blob'`).Scan(&textStates); err != nil || textStates != 0 {
+		t.Errorf("positions whose state is not binary after migration = %d, %v", textStates, err)
+	}
+	if got := boardsByID(t, d.db); !maps.Equal(got, wantBoards) {
+		t.Errorf("boards after migration differ from the boards before (%d vs %d positions)", len(got), len(wantBoards))
 	}
 	for name, want := range map[string]bool{
 		"idx_analysis_engine": false, "idx_analysis_depth": false,
@@ -3764,6 +3778,29 @@ func unixColumn(t *testing.T, db *sql.DB, table, column string) map[int64]int64 
 			t.Fatal(err)
 		}
 		out[id] = v
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+	return out
+}
+
+// boardsByID decodes every stored position.state by position id.
+func boardsByID(t *testing.T, db *sql.DB) map[int64]domain.Board {
+	t.Helper()
+	rows, err := db.Query(`SELECT id, state FROM position`)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	out := map[int64]domain.Board{}
+	for rows.Next() {
+		var id int64
+		var state []byte
+		if err := rows.Scan(&id, &state); err != nil {
+			t.Fatal(err)
+		}
+		out[id] = engine.DecodeBoardCompact(string(state))
 	}
 	if err := rows.Err(); err != nil {
 		t.Fatal(err)

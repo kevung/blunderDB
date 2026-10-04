@@ -120,10 +120,48 @@ func EncodeBoardCompact(b domain.Board) string {
 	return string(data)
 }
 
-// DecodeBoardCompact decodes a compact JSON array back into a Board.
+// BoardStateLen is the length of the binary state: one signed byte per value
+// of the compact array (ADR-0070).
+const BoardStateLen = 28
+
+// EncodeBoardState encodes a Board as the binary state position.state holds
+// since 2.31.0: the 28 values of EncodeBoardCompact, one int8 each. A value
+// is a checker count in [-15, 15], so no byte is '[' or '{' and the three
+// formats stay apart on their first byte.
+func EncodeBoardState(b domain.Board) []byte {
+	out := make([]byte, BoardStateLen)
+	for i := 0; i < domain.NumPoints+2; i++ {
+		p := b.Points[i]
+		if p.Checkers > 0 {
+			v := p.Checkers
+			if p.Color != domain.White {
+				v = -v
+			}
+			out[i] = byte(int8(v))
+		}
+	}
+	out[26] = byte(int8(b.Bearoff[0]))
+	out[27] = byte(int8(b.Bearoff[1]))
+	return out
+}
+
+// isBinaryState reports whether s is the binary state of EncodeBoardState.
+func isBinaryState(s string) bool {
+	return len(s) == BoardStateLen && s[0] != '[' && s[0] != '{'
+}
+
+// DecodeBoardCompact decodes a stored board state — the binary form of
+// EncodeBoardState or the compact JSON array older rows hold — back into a
+// Board.
 func DecodeBoardCompact(s string) domain.Board {
 	var vals [28]int
-	_ = json.Unmarshal([]byte(s), &vals)
+	if isBinaryState(s) {
+		for i := range BoardStateLen {
+			vals[i] = int(int8(s[i]))
+		}
+	} else {
+		_ = json.Unmarshal([]byte(s), &vals)
+	}
 	var b domain.Board
 	for i := 0; i < domain.NumPoints+2; i++ {
 		v := vals[i]
@@ -138,9 +176,10 @@ func DecodeBoardCompact(s string) domain.Board {
 	return b
 }
 
-// IsCompactState returns true if the state string uses the compact array format.
+// IsCompactState reports whether a stored state holds the board alone — the
+// binary form or the compact array — rather than a legacy full Position.
 func IsCompactState(s string) bool {
-	return len(s) > 0 && s[0] == '['
+	return isBinaryState(s) || (len(s) > 0 && s[0] == '[')
 }
 
 // ReconstructPosition rebuilds a full Position from the compact state string

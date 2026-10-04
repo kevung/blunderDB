@@ -24,3 +24,22 @@ CREATE INDEX IF NOT EXISTS idx_analysis_provenance_pending ON analysis (id) WHER
 -- Who signs match.comment: a comment an XG file carries is signed by its
 -- transcriber, a comment written in blunderDB by its author.
 ALTER TABLE match ADD COLUMN IF NOT EXISTS comment_author TEXT NOT NULL DEFAULT '';
+
+-- position.state becomes the 28 signed bytes of engine.EncodeBoardState in
+-- place of the compact JSON array; a legacy full-Position JSON state keeps its
+-- text as bytes, which the decoder still reads. ALTER ... USING admits no
+-- subquery, hence the column swap. Skipped once the column is BYTEA.
+DO $$ BEGIN
+    IF (SELECT data_type FROM information_schema.columns
+         WHERE table_schema = current_schema() AND table_name = 'position' AND column_name = 'state') = 'text' THEN
+        ALTER TABLE position ADD COLUMN state_bin BYTEA;
+        UPDATE position SET state_bin = CASE
+            WHEN left(state, 1) = '[' AND jsonb_array_length(state::jsonb) = 28 THEN
+                (SELECT decode(string_agg(lpad(to_hex((v::int + 256) % 256), 2, '0'), '' ORDER BY o), 'hex')
+                   FROM jsonb_array_elements_text(state::jsonb) WITH ORDINALITY AS t(v, o))
+            ELSE convert_to(state, 'UTF8') END;
+        ALTER TABLE position DROP COLUMN state;
+        ALTER TABLE position RENAME COLUMN state_bin TO state;
+        ALTER TABLE position ALTER COLUMN state SET NOT NULL;
+    END IF;
+END $$;

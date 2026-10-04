@@ -69,6 +69,11 @@ var schemaStatements = []string{
 		occupancy_2       INTEGER,
 		point_mask_1      INTEGER,
 		point_mask_2      INTEGER,
+		-- The board, 28 signed bytes (engine.EncodeBoardState, ADR-0070).
+		-- Declared TEXT so that a migrated library and a fresh one share one
+		-- declaration: TEXT affinity stores a BLOB as it is. Rows older than
+		-- 2.31.0 the migration could not read keep their text;
+		-- engine.DecodeBoardCompact reads every form.
 		state             TEXT    NOT NULL,
 		is_cube_response  INTEGER NOT NULL DEFAULT 0,
 		-- Provenance: set when the position entered the database on its own

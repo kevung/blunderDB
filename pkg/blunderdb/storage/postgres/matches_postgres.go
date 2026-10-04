@@ -1122,7 +1122,8 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 		for rows.Next() {
 			var moveID, gameID, positionID int64
 			var gameNumber, moveNumber, player int32
-			var moveType, state, checkerMove, cubeAction string
+			var moveType, checkerMove, cubeAction string
+			var state []byte
 			var dt, por, d1, d2, cv, co, s1, s2 *int64
 			var hj, hb *bool
 			var mc *int64
@@ -1133,7 +1134,7 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 				yield(nil, fmt.Errorf("postgres: move positions for match %d: %w", matchID, err))
 				return
 			}
-			position := engine.ReconstructPosition(positionID, state,
+			position := engine.ReconstructPosition(positionID, string(state),
 				derefInt(dt), derefInt(por), derefInt(d1), derefInt(d2),
 				derefInt(cv), derefInt(co), derefInt(s1), derefInt(s2),
 				boolToIntPtr(hj), boolToIntPtr(hb))

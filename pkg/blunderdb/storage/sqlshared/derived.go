@@ -38,7 +38,7 @@ func ReclassifyDerived(ctx context.Context, db Execer, scope string) (int, error
 		defer rows.Close()
 		for rows.Next() {
 			var id int64
-			var state string
+			var state []byte
 			var onRoll, storedPhase, storedType *int64
 			if err := rows.Scan(&id, &state, &onRoll, &storedPhase, &storedType); err != nil {
 				return err
@@ -47,8 +47,8 @@ func ReclassifyDerived(ctx context.Context, db Execer, scope string) (int, error
 			if onRoll != nil {
 				side = int(*onRoll)
 			}
-			phase := PhaseOfState(state)
-			gameType := TypeOfState(state, side)
+			phase := PhaseOfState(string(state))
+			gameType := TypeOfState(string(state), side)
 			if int(phase) != derefInt64(storedPhase) || int(gameType) != derefInt64(storedType) {
 				todo = append(todo, todoRow{id, phase, gameType})
 			}
