@@ -25,10 +25,11 @@ import (
 //  5. A second `wal_checkpoint(TRUNCATE)`: under WAL, VACUUM's output goes
 //     through the WAL and the file only shrinks once checkpointed.
 //
-// Before that, compactAnalyses rewrites every analysis blob not yet in the
-// binary format at zstd level 19 (engine.CompactAnalysisData, ADR-0070):
-// legacy JSON rows (raw, zlib, zstd) and the level-7 binary blobs the import
-// path writes. Vacuum already rewrites the whole file. Its errors are logged, not returned: an unreadable row stays in its
+// Before that, compactAnalyses rewrites every analysis blob still in a legacy
+// format (raw JSON, zlib, JSON in zstd) as binary at zstd level 7, across all
+// cores (engine.RecompressAnalysesConcurrently). Binary blobs are left alone:
+// level 19 would save under 2% of their size for hours of CPU on a large
+// library. Its errors are logged, not returned: an unreadable row stays in its
 // old format, which is better than refusing the compaction.
 //
 // Returns the file size in bytes before and after; 0 and 0 on ":memory:",
@@ -187,8 +188,8 @@ func fetchAnalysisBatch(ctx context.Context, db execer, afterID int64, limit int
 }
 
 // compactAnalyses walks analysis.data in id order and rewrites any row not
-// already binary at zstd level 19. engine.NeedsCompaction is a cheap header check, so
-// an already-compacted database costs one full-table SELECT and no writes.
+// already binary. engine.NeedsRecompression is a cheap header check, so a
+// database with nothing legacy costs one full-table SELECT and no writes.
 func (s *Storage) compactAnalyses(ctx context.Context) error {
 	var lastID int64
 	var scanned, upgraded int
@@ -203,12 +204,22 @@ func (s *Storage) compactAnalyses(ctx context.Context) error {
 		lastID = batch[len(batch)-1].id
 		scanned += len(batch)
 
+		var todo []analysisRow
+		var blobs [][]byte
+		for _, r := range batch {
+			if engine.NeedsRecompression(r.data) {
+				todo = append(todo, r)
+				blobs = append(blobs, r.data)
+			}
+		}
+		if len(todo) == 0 {
+			continue
+		}
+		freshBlobs, encErrs := engine.RecompressAnalysesConcurrently(blobs)
+
 		err = withTx(ctx, s.sqlDB, func(tx execer) error {
-			for _, r := range batch {
-				if !engine.NeedsCompaction(r.data) {
-					continue
-				}
-				fresh, err := engine.CompactAnalysisData(r.data)
+			for i, r := range todo {
+				fresh, err := freshBlobs[i], encErrs[i]
 				if err != nil {
 					// A row this pass cannot read is left exactly as it was:
 					// still readable by DecompressAnalysisData's fallback
@@ -229,7 +240,7 @@ func (s *Storage) compactAnalyses(ctx context.Context) error {
 		}
 	}
 	if upgraded > 0 {
-		slog.Info("vacuum: recompressed analysis blobs", "scanned", scanned, "upgraded", upgraded)
+		slog.Info("vacuum: re-encoded analysis blobs", "scanned", scanned, "upgraded", upgraded)
 	}
 	return nil
 }

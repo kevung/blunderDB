@@ -159,13 +159,17 @@ func isCompactBinaryBlob(data []byte) bool {
 
 // decodeBinaryBlob restores the zstd magic, decompresses and decodes.
 func decodeBinaryBlob(data []byte) (domain.PositionAnalysis, error) {
+	return decodeBinaryBlobWith(zstdDecoder, data)
+}
+
+func decodeBinaryBlobWith(dec *zstd.Decoder, data []byte) (domain.PositionAnalysis, error) {
 	if data[1] != binFormatVersion {
 		return domain.PositionAnalysis{}, fmt.Errorf("%w: version %d", ErrUnknownAnalysisFormat, data[1])
 	}
 	frame := make([]byte, 0, len(zstdMagic)+len(data)-binHeaderLen)
 	frame = append(frame, zstdMagic...)
 	frame = append(frame, data[binHeaderLen:]...)
-	payload, err := zstdDecoder.DecodeAll(frame, nil)
+	payload, err := dec.DecodeAll(frame, nil)
 	if err != nil {
 		if errors.Is(err, zstd.ErrDecoderSizeExceeded) {
 			return domain.PositionAnalysis{}, ErrAnalysisTooLarge
@@ -218,6 +222,10 @@ func DecompressAnalysisData(data []byte) ([]byte, error) {
 // inflateLegacyAnalysis inflates a legacy blob (raw JSON, zlib, JSON in zstd)
 // to its JSON text.
 func inflateLegacyAnalysis(data []byte) ([]byte, error) {
+	return inflateLegacyAnalysisWith(zstdDecoder, data)
+}
+
+func inflateLegacyAnalysisWith(dec *zstd.Decoder, data []byte) ([]byte, error) {
 	if len(data) == 0 {
 		return data, nil
 	}
@@ -225,7 +233,7 @@ func inflateLegacyAnalysis(data []byte) ([]byte, error) {
 		return data, nil
 	}
 	if isZstdFrame(data) {
-		out, err := zstdDecoder.DecodeAll(data, nil)
+		out, err := dec.DecodeAll(data, nil)
 		if err != nil {
 			if errors.Is(err, zstd.ErrDecoderSizeExceeded) {
 				return nil, ErrAnalysisTooLarge
@@ -272,6 +280,74 @@ func RecompressAnalysisData(data []byte) ([]byte, error) {
 	return EncodeAnalysisForStorage(&a)
 }
 
+// bulkCodecs are the codec instances of RecompressAnalysesConcurrently: same
+// dictionary and settings as the shared pair, but with one slot per core. The
+// shared pair is pinned to a single slot, which serialises every call: fine
+// for a request, a wall for a pass over millions of blobs. Built on first use
+// so a process that never re-encodes in bulk pays nothing.
+var bulkCodecs = sync.OnceValues(func() (*zstd.Encoder, *zstd.Decoder) {
+	enc, err := zstd.NewWriter(nil,
+		zstd.WithEncoderLevel(zstd.SpeedBetterCompression),
+		zstd.WithEncoderDict(analysisBinDict),
+		zstd.WithEncoderConcurrency(runtime.NumCPU()),
+		zstd.WithEncoderCRC(false),
+	)
+	if err != nil {
+		panic(fmt.Sprintf("engine: zstd bulk encoder init: %v", err))
+	}
+	dec, err := zstd.NewReader(nil,
+		zstd.WithDecoderDicts(analysisZstdDict, analysisBinDict),
+		zstd.WithDecoderMaxMemory(MaxAnalysisBytes),
+		zstd.WithDecoderConcurrency(runtime.NumCPU()),
+		zstd.WithDecoderLowmem(true),
+	)
+	if err != nil {
+		panic(fmt.Sprintf("engine: zstd bulk decoder init: %v", err))
+	}
+	return enc, dec
+})
+
+// RecompressAnalysesConcurrently applies RecompressAnalysisData to every blob
+// across all cores. Entry i of the results answers blobs[i]: the rewritten
+// blob (the input itself when already binary), or nil with its error when it
+// does not decode. Decoding and encoding are pure computation and dominate a
+// full-table re-encoding pass.
+func RecompressAnalysesConcurrently(blobs [][]byte) (fresh [][]byte, errs []error) {
+	fresh = make([][]byte, len(blobs))
+	errs = make([]error, len(blobs))
+	if len(blobs) == 0 {
+		return fresh, errs
+	}
+	enc, dec := bulkCodecs()
+	workers := min(runtime.NumCPU(), len(blobs))
+	var wg sync.WaitGroup
+	var next atomic.Int64
+	for w := 0; w < workers; w++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for {
+				i := int(next.Add(1)) - 1
+				if i >= len(blobs) {
+					return
+				}
+				if !NeedsRecompression(blobs[i]) {
+					fresh[i] = blobs[i]
+					continue
+				}
+				a, err := decodeAnalysisWith(dec, blobs[i])
+				if err != nil {
+					errs[i] = err
+					continue
+				}
+				fresh[i] = encodeBinaryBlob(enc, MarshalAnalysisBinary(&a))
+			}
+		}()
+	}
+	wg.Wait()
+	return fresh, errs
+}
+
 // NeedsCompaction reports whether data is not yet in the compaction format
 // (binary, level 19): a legacy blob or a level-7 binary blob from the write
 // path. Allocation-free, so a full-table pass skips compacted rows cheaply.
@@ -310,11 +386,15 @@ func AnalysisContentKey(a *domain.PositionAnalysis) ([]byte, error) {
 
 // DecodeAnalysisFromStorage decodes a stored blob of any format.
 func DecodeAnalysisFromStorage(data []byte) (domain.PositionAnalysis, error) {
+	return decodeAnalysisWith(zstdDecoder, data)
+}
+
+func decodeAnalysisWith(dec *zstd.Decoder, data []byte) (domain.PositionAnalysis, error) {
 	if isBinaryBlob(data) {
-		return decodeBinaryBlob(data)
+		return decodeBinaryBlobWith(dec, data)
 	}
 	var a domain.PositionAnalysis
-	jsonData, err := inflateLegacyAnalysis(data)
+	jsonData, err := inflateLegacyAnalysisWith(dec, data)
 	if err != nil {
 		return a, err
 	}

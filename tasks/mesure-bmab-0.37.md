@@ -236,6 +236,29 @@ produit). Charge binaire brute : **180,7 o**.
 | 11 | `pr`, `w/W`, `pl!` | 6-13 s | à examiner sur plans de requêtes | quelques s | — |
 | 12 | Dictionnaire réentraîné | −1,5 à −2,3 % des blobs | **ne pas faire** | 36-58 Mo | — |
 
+### 7.1 Points #1 et #7 traités (branche `perf/vacuum-rapide`)
+
+Mesuré sur l'échantillon à 2 % en blobs JSON (312 544 analyses, 16 cœurs, machine partagée
+donc bruitée), binaire de la branche contre le binaire de la mesure :
+
+| | Avant | Après |
+|---|---:|---:|
+| `vacuum` (JSON → binaire niveau 7, VACUUM, ANALYZE) | **744 s** | **13,7 s** (269,1 → 218,0 Mo) |
+| `vacuum`, blobs déjà binaires (niveau 7) | 730-741 s | pas de réécriture : VACUUM + ANALYZE seuls (≈ 3,5 s) |
+| `reencode` | 24,1 s | **11,5 s** |
+
+- `vacuum` ne recompresse plus au niveau 19 : il ne réécrit que les blobs hérités, au niveau 7
+  (le chemin de `reencode`). Le niveau 19 ne rendait que 1,6 % de la taille d'un blob.
+  Taille finale de l'échantillon : 218,0 Mo, contre 227,8 Mo avec le niveau 19 (+4 %, la
+  charge de `analysis` seule). Sur BMAB : ≈ 10 h de recompression en moins.
+- La recompression se fait sur tous les cœurs (`engine.RecompressAnalysesConcurrently`),
+  par lots de 2 000 comme avant, pour `vacuum` et pour `reencode` (les deux backends).
+- Piège trouvé : `zstdEncoder` et `zstdDecoder` sont à concurrence 1, ce qui sérialise
+  tout appel. Une première version parallèle, sur ces instances partagées, n'allait pas plus
+  vite que la boucle séquentielle (31 s contre 24 s). Le passage en masse a ses propres
+  instances, une place par cœur. `DecodeAnalysesConcurrently` (lecture) souffre du même
+  verrou : suivi possible.
+
 Pour la release : #1 et #2 décident si un utilisateur de BMAB peut réellement récupérer les
 30 % promis par la 2.31 ; #3 et #5 sont les seules attentes de plusieurs minutes dans un
 usage courant ; #4 est payé une fois par base.

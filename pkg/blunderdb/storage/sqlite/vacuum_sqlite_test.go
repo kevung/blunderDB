@@ -132,13 +132,13 @@ func TestVacuum_RecompressesLegacyAnalysisBlobs(t *testing.T) {
 
 	rawID := insertLegacyAnalysis(t, st, pos1ID, rawJSON)
 	zlibID := insertLegacyAnalysis(t, st, pos2ID, zlibBuf.Bytes())
-	// The import path writes zstd level 7; compaction rewrites it at 19.
+	// A write-path blob is already binary: Vacuum must leave it byte for byte.
 	fast, err := engine.CompressAnalysisData([]byte(`{"xgid":"zstd-write-path"}`))
 	if err != nil {
 		t.Fatalf("compress: %v", err)
 	}
-	if !engine.NeedsCompaction(fast) {
-		t.Fatal("a write-path blob already counts as compacted")
+	if engine.NeedsRecompression(fast) {
+		t.Fatal("a write-path blob counts as legacy")
 	}
 	fastID := insertLegacyAnalysis(t, st, pos3ID, fast)
 
@@ -153,14 +153,14 @@ func TestVacuum_RecompressesLegacyAnalysisBlobs(t *testing.T) {
 	}{
 		{"raw JSON row", rawID, "raw-json-legacy"},
 		{"zlib row", zlibID, "zlib-legacy"},
-		{"zstd level-7 row", fastID, "zstd-write-path"},
+		{"binary level-7 row", fastID, "zstd-write-path"},
 	} {
 		var data []byte
 		if err := st.sqlDB.QueryRow(`SELECT data FROM analysis WHERE id = ?`, tc.id).Scan(&data); err != nil {
 			t.Fatalf("%s: select: %v", tc.name, err)
 		}
-		if engine.NeedsCompaction(data) {
-			t.Errorf("%s: not compacted after Vacuum: %q", tc.name, data[:min(5, len(data))])
+		if engine.NeedsRecompression(data) {
+			t.Errorf("%s: not re-encoded after Vacuum: %q", tc.name, data[:min(5, len(data))])
 		}
 		a, err := engine.DecodeAnalysisFromStorage(data)
 		if err != nil {
@@ -169,6 +169,14 @@ func TestVacuum_RecompressesLegacyAnalysisBlobs(t *testing.T) {
 		if a.XGID != tc.want {
 			t.Errorf("%s: XGID = %q, want %q", tc.name, a.XGID, tc.want)
 		}
+	}
+
+	var fastAfter []byte
+	if err := st.sqlDB.QueryRow(`SELECT data FROM analysis WHERE id = ?`, fastID).Scan(&fastAfter); err != nil {
+		t.Fatalf("select binary row: %v", err)
+	}
+	if !bytes.Equal(fast, fastAfter) {
+		t.Errorf("Vacuum rewrote a binary blob")
 	}
 
 	// A second Vacuum must not touch already-current rows (nothing to

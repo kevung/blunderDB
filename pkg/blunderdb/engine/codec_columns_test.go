@@ -3,6 +3,7 @@ package engine
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"math"
 	"testing"
 
@@ -502,5 +503,51 @@ func TestCompactAnalysisData(t *testing.T) {
 	direct, err := CompactAnalysisData(raw)
 	if err != nil || NeedsCompaction(direct) {
 		t.Errorf("JSON brut non compacté: %v", err)
+	}
+}
+
+// TestRecompressAnalysesConcurrently : le passage en masse rend, à l'indice
+// de chaque blob, ce que RecompressAnalysisData rend seul : un blob hérité
+// devient binaire avec le même contenu, un blob binaire reste identique, un
+// blob illisible est signalé sans gêner les autres.
+func TestRecompressAnalysesConcurrently(t *testing.T) {
+	var blobs [][]byte
+	var want []string
+	for i := 0; i < 40; i++ {
+		xgid := fmt.Sprintf("XGID=bulk-%d", i)
+		raw, err := json.Marshal(&domain.PositionAnalysis{XGID: xgid})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if i%3 == 0 {
+			bin, err := CompressAnalysisData(raw)
+			if err != nil {
+				t.Fatal(err)
+			}
+			raw = bin
+		}
+		blobs = append(blobs, raw)
+		want = append(want, xgid)
+	}
+	blobs = append(blobs, []byte(`{"xgid": truncated`))
+
+	fresh, errs := RecompressAnalysesConcurrently(blobs)
+	for i, w := range want {
+		if errs[i] != nil {
+			t.Fatalf("blob %d: %v", i, errs[i])
+		}
+		if NeedsRecompression(fresh[i]) {
+			t.Errorf("blob %d: still legacy", i)
+		}
+		a, err := DecodeAnalysisFromStorage(fresh[i])
+		if err != nil || a.XGID != w {
+			t.Errorf("blob %d: %+v, %v; want %s", i, a, err, w)
+		}
+		if i%3 == 0 && !bytes.Equal(fresh[i], blobs[i]) {
+			t.Errorf("blob %d: a binary blob was rewritten", i)
+		}
+	}
+	if last := len(blobs) - 1; errs[last] == nil || fresh[last] != nil {
+		t.Errorf("unreadable blob: fresh=%v err=%v", fresh[last], errs[last])
 	}
 }
