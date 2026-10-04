@@ -113,6 +113,14 @@ describe('MatchPanel keyboard guard', () => {
         windowSpy.mockClear(); // ignore any keydown noise from mounting
     });
 
+    test.each([{ key: 'h' }, { key: 'l' }, { key: 'r' }, { key: 'p' }, { key: 'PageUp' }, { key: 'ArrowLeft' }, { key: 'ArrowRight' }])(
+        '$key is not the panel\u2019s: it reaches the global handler',
+        (opts) => {
+            keyOnDocument(opts);
+            expect(windowSpy).toHaveBeenCalled();
+        }
+    );
+
     test('Ctrl combos traverse to the rest of the app', () => {
         keyOnDocument({ key: 'x', ctrlKey: true });
         expect(windowSpy).toHaveBeenCalled();
@@ -155,6 +163,14 @@ describe('TournamentPanel keyboard guard', () => {
         windowSpy.mockClear();
     });
 
+    test.each([{ key: 'h' }, { key: 'l' }, { key: 'r' }, { key: 'p' }, { key: 'PageUp' }, { key: 'ArrowLeft' }, { key: 'ArrowRight' }])(
+        '$key is not the panel\u2019s: it reaches the global handler',
+        (opts) => {
+            keyOnDocument(opts);
+            expect(windowSpy).toHaveBeenCalled();
+        }
+    );
+
     test('Ctrl combos traverse to the rest of the app', () => {
         keyOnDocument({ key: 'y', ctrlKey: true });
         expect(windowSpy).toHaveBeenCalled();
@@ -196,6 +212,14 @@ describe('CollectionPanel keyboard guard', () => {
         await tick();
         windowSpy.mockClear();
     });
+
+    test.each([{ key: 'h' }, { key: 'l' }, { key: 'r' }, { key: 'p' }, { key: 'PageUp' }, { key: 'ArrowLeft' }, { key: 'ArrowRight' }])(
+        '$key is not the panel\u2019s: it reaches the global handler',
+        (opts) => {
+            keyOnDocument(opts);
+            expect(windowSpy).toHaveBeenCalled();
+        }
+    );
 
     test('Ctrl combos traverse to the rest of the app', () => {
         keyOnDocument({ key: 'b', ctrlKey: true });

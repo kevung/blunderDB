@@ -510,8 +510,9 @@ export async function loadPositionsByFilters({
     // The generation moves before the await below: a window of the replaced search that lands
     // while CancelSearch is pending must already find itself stale.
     const generation = ++searchGeneration;
-    // A search belongs to the view that launched it: its answer is dropped when another view is
-    // shown by the time it arrives, as the counts are (viewStore.settle).
+    // The first window belongs to the view that launched the search: it is dropped when another
+    // view is shown by the time it arrives. The count is not: it settles the source whichever
+    // view is shown (viewStore.settle).
     let originView = get(viewStore.activeViewId);
     const replaced = () => generation !== searchGeneration;
     const stale = () => replaced() || get(viewStore.activeViewId) !== originView;
@@ -522,7 +523,7 @@ export async function loadPositionsByFilters({
         cancelSettlings();
         // Awaited: the stale scan must be stopped before the new one is asked for.
         await CancelSearch()?.catch?.(() => {});
-        if (stale()) return;
+        if (replaced()) return;
     } else {
         statusBeforeSearch = get(statusBarTextStore);
     }
@@ -775,7 +776,7 @@ export async function loadPositionsByFilters({
 
             if (source && countPending) {
                 const found = await source.count();
-                if (stale()) return;
+                if (replaced()) return;
                 positionsStore.resolveLength(source, found);
                 search.shown = 0;
                 const seconds = Math.round((Date.now() - startedAt) / 1000);

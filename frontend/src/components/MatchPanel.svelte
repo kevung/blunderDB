@@ -648,10 +648,10 @@
         // through to the global handler — see keyboardService.panelKeyGuard.
         if (panelKeyGuard(event)) return;
 
-        // Stop all keyboard events from propagating to global handlers
-        event.stopPropagation();
-
+        // Only the keys this panel owns are claimed (shortcutMap.js, matchPanel): the others
+        // browse the board through the global handler.
         if (event.key === 'Escape') {
+            event.stopPropagation();
             if (matchEdit.editingId !== null) {
                 matchEdit.cancel();
                 event.preventDefault();
@@ -674,6 +674,7 @@
 
         // `/` goes to the filter field.
         if (event.key === '/' && !event.altKey) {
+            event.stopPropagation();
             event.preventDefault();
             filterInput?.focus();
             return;
@@ -681,11 +682,17 @@
 
         // j/k walk the list; with no selection, j lands on the first row.
         const delta = navigationDelta(event);
-        if (delta !== 0 && sortedMatches.length > 0) {
-            event.preventDefault();
-            table?.navigate(delta);
+        if (delta !== 0) {
+            event.stopPropagation();
+            if (sortedMatches.length > 0) {
+                event.preventDefault();
+                table?.navigate(delta);
+            }
             return;
         }
+
+        // Claimed with or without a selection: a Delete here never reaches the board's position.
+        if (event.key === 'Enter' || event.key === 'Delete') event.stopPropagation();
 
         if (selectedMatch && sortedMatches.length > 0) {
             if (event.key === 'Enter') {

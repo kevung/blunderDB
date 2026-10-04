@@ -100,7 +100,7 @@ export const SHORTCUTS = {
             'Ctrl+Enter',
             'Escape'
         ],
-        shadows: ['h', 'l', 'ArrowLeft', 'ArrowRight', 'j', 'k', 'p', 'r', 'Backspace', 'Delete', 'Escape']
+        shadows: [...digits('', 1, 4), 'h', 'l', 'ArrowLeft', 'ArrowRight', 'j', 'k', 'p', 'r', 'Backspace', 'Delete', 'Escape']
     },
 
     // Always mounted beside the board.
@@ -110,14 +110,14 @@ export const SHORTCUTS = {
     directionUndo: { tier: TIER.LOCAL, group: 'direction', keys: ['Ctrl+z'], shadows: ['Ctrl+z'] },
 
     // The Anki review keys (1-4, Space, Escape, p) are handled inside the global dispatcher
-    // (keyboardService.handleKeyDown), which leaves every other key to the review: no scope of
-    // their own, they are bound under `global`.
+    // (keyboardService.handleKeyDown): no scope of their own, 1-4 are bound under `global`.
 
     // keyboardService.handleKeyDown.
     global: {
         tier: TIER.GLOBAL,
         keys: [
             'Escape',
+            ...digits('', 1, 4),
             ...digits('Alt+', 1, 9),
             'Ctrl+n',
             'Ctrl+o',

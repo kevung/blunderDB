@@ -120,6 +120,15 @@ describe('keyDispatch', () => {
         expect(panel).toHaveBeenCalledTimes(1);
     });
 
+    test('registeredScopes lists the scopes in dispatch order', () => {
+        reg('global');
+        reg('matchPanel');
+        reg('overlay');
+        const scopes = registeredScopes();
+        expect(scopes.indexOf('overlay')).toBeLessThan(scopes.indexOf('matchPanel'));
+        expect(scopes.indexOf('matchPanel')).toBeLessThan(scopes.indexOf('global'));
+    });
+
     test('an unregistered scope no longer sees the keys', () => {
         const spy = vi.fn();
         const off = registerKeys('global', spy);

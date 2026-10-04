@@ -530,10 +530,9 @@
         // No in-panel list navigation: browsing keys also go to the global handler (panelKeyGuard).
         if (panelKeyGuard(event, { allowNavKeys: true })) return;
 
-        // Stop other keyboard events from propagating to global handlers
-        event.stopPropagation();
-
+        // Only the keys this panel owns are claimed (shortcutMap.js, collectionPanel).
         if (event.key === 'Escape') {
+            event.stopPropagation();
             if (view === 'detail' && mode !== 'COLLECTION') {
                 view = 'list';
             } else if (selectedCollection) {
@@ -544,6 +543,9 @@
             }
             return;
         }
+
+        // Claimed in any mode: a Delete here never reaches the board's position.
+        if (event.key === 'Delete') event.stopPropagation();
 
         if (mode === 'COLLECTION' && activeCollection && event.key === 'Delete') {
             if (selectedPositionIndices.size > 0) {

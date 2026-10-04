@@ -29,6 +29,7 @@ import { loadPositionsByFilters, cancelSearch, isSearching } from '../services/p
 import { positionsStore } from '../stores/positionStore.js';
 import { statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
+import { isSettled } from '../stores/positionList.js';
 import { viewStore } from '../stores/viewStore.js';
 
 /** @returns {{ promise: Promise<any>, resolve: (v: any) => void, reject: (e: any) => void }} */
@@ -45,6 +46,7 @@ function deferred() {
 const flush = async () => {
     for (let i = 0; i < 5; i++) await new Promise((resolve) => setTimeout(resolve, 0));
 };
+const key = () => /** @type {any} */ (get(statusBarTextStore))?.i18nKey;
 const page = () => Array.from({ length: positionsStore.firstPageSize() }, (_, i) => i + 1);
 
 beforeEach(() => {
@@ -86,5 +88,40 @@ describe('une recherche reste attachée à sa vue', () => {
         bindings.SearchPositionIDs.mockResolvedValue([7, 8]);
         await loadPositionsByFilters({});
         expect(get(positionsStore).length).toBe(2);
+    });
+
+    test('le compte d’une liste déjà montrée s’enregistre même si la vue change', async () => {
+        const count = deferred();
+        bindings.SearchPositionIDs.mockResolvedValue(page());
+        bindings.CountPositionsByFilters.mockReturnValue(count.promise);
+
+        const search = loadPositionsByFilters({});
+        await flush();
+        const shown = positionsStore.snapshotList();
+        expect(isSettled(shown)).toBe(false);
+        viewStore.addView();
+
+        count.resolve(5000);
+        await search;
+        expect(isSettled(shown)).toBe(true);
+    });
+
+    test('un changement de vue pendant l’annulation d’une recherche relancée rend la ligne d’état', async () => {
+        const first = deferred();
+        const cancel = deferred();
+        bindings.SearchPositionIDs.mockReturnValueOnce(first.promise).mockResolvedValue(page());
+        bindings.CancelSearch.mockReturnValueOnce(cancel.promise);
+
+        const one = loadPositionsByFilters({});
+        await flush();
+        const two = loadPositionsByFilters({});
+        await flush();
+        viewStore.addView();
+
+        cancel.resolve(undefined);
+        first.resolve(page());
+        await Promise.all([one, two]);
+        expect(isSearching()).toBe(false);
+        expect(key()).not.toBe('status.searching');
     });
 });
