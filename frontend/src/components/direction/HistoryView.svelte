@@ -293,6 +293,7 @@
     }
 
     button {
+        min-height: 24px;
         padding: 0.05rem 0.4rem;
         border: 1px solid var(--color-border);
         border-radius: var(--radius);

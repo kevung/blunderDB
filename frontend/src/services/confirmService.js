@@ -16,16 +16,17 @@ let pendingResolve = null;
  * confirmation never fires.
  *
  * @param {string} message
- * @param {{confirmLabel?: string, cancelLabel?: string}} [options]
+ * @param {{confirmLabel?: string, cancelLabel?: string, choices?: {value: string, label: string, primary?: boolean}[], tone?: 'danger' | 'primary'}} [options]
+ *   `tone: 'primary'` for a gesture that deletes nothing (the confirm button is not red).
  * @returns {Promise<boolean>}
  */
-export function confirmAction(message, { confirmLabel = '', cancelLabel = '', choices = [] } = {}) {
+export function confirmAction(message, { confirmLabel = '', cancelLabel = '', choices = [], tone = 'danger' } = {}) {
     if (pendingResolve) {
         const resolvePrevious = pendingResolve;
         pendingResolve = null;
         resolvePrevious(false);
     }
-    confirmModalStore.set({ message, confirmLabel, cancelLabel, choices });
+    confirmModalStore.set({ message, confirmLabel, cancelLabel, choices, tone });
     return new Promise((resolve) => {
         pendingResolve = resolve;
     });

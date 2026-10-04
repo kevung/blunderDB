@@ -2198,7 +2198,9 @@
             "apply": "Appliquer",
             "forfeitWins": "Forfait de {loser} → {winner} gagne",
             "forfeitConfirm": "Forfait de {loser} : {winner} gagne ce match. Confirmer ?",
-            "cancelConfirm": "Annuler le match {a} – {b} ? Il disparaît des tables ; le journal le garde."
+            "cancelConfirm": "Annuler le match {a} – {b} ? Il disparaît des tables ; le journal le garde.",
+            "forfeitDo": "Déclarer forfait",
+            "forfeitWithdraw": "Déclarer forfait et retirer {loser}"
         },
         "last": {
             "result": "{winner} bat {loser}",
@@ -2258,7 +2260,8 @@
             "pairRating": "Cote de la paire",
             "pairRatingHint": "Par défaut la moyenne des deux cotes ; une valeur saisie la remplace.",
             "withdrawNowConfirm": "Retirer {name} du tournoi maintenant ? Il ne sera plus apparié (réintégration possible).",
-            "withdrawLaterConfirm": "Retirer {name} à la fin de son match ? Il ne sera plus apparié ensuite (réintégration possible)."
+            "withdrawLaterConfirm": "Retirer {name} à la fin de son match ? Il ne sera plus apparié ensuite (réintégration possible).",
+            "withdrawDo": "Retirer"
         },
         "bracket": {
             "correct": "Corriger le résultat",
@@ -2459,7 +2462,10 @@
             "changeFolder": "Changer de dossier",
             "open": "Ouvrir dans le navigateur",
             "forget": "Ne plus écrire",
-            "error": "Impossible d'écrire la page d'affichage."
+            "error": "Impossible d'écrire la page d'affichage.",
+            "page": "Page murale",
+            "openHint": "Ouvre la page murale (affichage des tables) dans le navigateur ; elle est réécrite à chaque événement.",
+            "written": "Page murale écrite : {path}"
         },
         "season": {
             "title": "Classement de saison",
@@ -2621,7 +2627,18 @@
             "title": "Salles où joue cette épreuve",
             "hint": "Aucune coche : toutes les tables."
         },
-        "closeView": "Quitter la direction"
+        "closeView": "Quitter la direction",
+        "feedback": {
+            "registered": "{name} inscrit — {count} inscrits",
+            "registeredLate": "{name} ajouté en cours de tournoi — {count} inscrits",
+            "finished": "Tournoi clos — classement final",
+            "nextPhase": "Phase suivante lancée",
+            "draw": "Tirage effectué",
+            "matchLaunched": "Match {a} – {b} lancé",
+            "allLaunched": "Toute la file est lancée",
+            "launched": "Proposition lancée",
+            "forfeitWithdrawFailed": "Forfait enregistré, mais le retrait du joueur a échoué."
+        }
     },
     "palette": {
         "title": "Palette de commandes",

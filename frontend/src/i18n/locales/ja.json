@@ -2198,7 +2198,9 @@
             "apply": "適用",
             "forfeitWins": "{loser} の不戦敗 → {winner} の勝ち",
             "forfeitConfirm": "{loser} の不戦敗：{winner} がこの試合に勝ちます。確定しますか？",
-            "cancelConfirm": "試合 {a} – {b} を取り消しますか？テーブルからは消えますが、記録には残ります。"
+            "cancelConfirm": "試合 {a} – {b} を取り消しますか？テーブルからは消えますが、記録には残ります。",
+            "forfeitDo": "棄権を宣言",
+            "forfeitWithdraw": "棄権を宣言し {loser} を退会させる"
         },
         "last": {
             "result": "{winner} が {loser} に勝利",
@@ -2258,7 +2260,8 @@
             "pairRating": "ペアのレーティング",
             "pairRatingHint": "既定では2人のレーティングの平均。入力した値で置き換わります。",
             "withdrawNowConfirm": "{name} を今すぐ大会から棄権させますか？以後の組み合わせから外れます（復帰可能）。",
-            "withdrawLaterConfirm": "{name} を試合終了後に棄権させますか？以後の組み合わせから外れます（復帰可能）。"
+            "withdrawLaterConfirm": "{name} を試合終了後に棄権させますか？以後の組み合わせから外れます（復帰可能）。",
+            "withdrawDo": "退会させる"
         },
         "bracket": {
             "correct": "結果を訂正",
@@ -2459,7 +2462,10 @@
             "changeFolder": "フォルダーを変更",
             "open": "ブラウザーで開く",
             "forget": "書き出しをやめる",
-            "error": "ディスプレイ用ページを書き出せませんでした。"
+            "error": "ディスプレイ用ページを書き出せませんでした。",
+            "page": "壁掲示ページ",
+            "openHint": "壁掲示ページ（テーブル表示）をブラウザで開きます。イベントのたびに書き直されます。",
+            "written": "壁掲示ページを書き出しました: {path}"
         },
         "season": {
             "title": "シーズン順位",
@@ -2621,7 +2627,18 @@
             "title": "この種目を行う会場",
             "hint": "未選択：すべてのテーブル。"
         },
-        "closeView": "進行管理を終了する"
+        "closeView": "進行管理を終了する",
+        "feedback": {
+            "registered": "{name} を登録しました — 参加者 {count} 名",
+            "registeredLate": "{name} を開催中に追加しました — 参加者 {count} 名",
+            "finished": "大会を終了しました — 最終順位",
+            "nextPhase": "次のフェーズを開始しました",
+            "draw": "抽選を行いました",
+            "matchLaunched": "マッチ {a} – {b} を開始しました",
+            "allLaunched": "待ち行列をすべて開始しました",
+            "launched": "提案を開始しました",
+            "forfeitWithdrawFailed": "棄権は記録されましたが、選手の退会に失敗しました。"
+        }
     },
     "palette": {
         "title": "コマンドパレット",

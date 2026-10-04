@@ -2198,7 +2198,9 @@
             "apply": "Käytä",
             "forfeitWins": "Luovutus: {loser} → voittaja: {winner}",
             "forfeitConfirm": "{loser} luovuttaa: {winner} voittaa tämän ottelun. Vahvistetaanko?",
-            "cancelConfirm": "Perutaanko ottelu {a} – {b}? Se poistuu pöydiltä; loki säilyttää sen."
+            "cancelConfirm": "Perutaanko ottelu {a} – {b}? Se poistuu pöydiltä; loki säilyttää sen.",
+            "forfeitDo": "Ilmoita luovutus",
+            "forfeitWithdraw": "Ilmoita luovutus ja poista {loser}"
         },
         "last": {
             "result": "{winner} voitti pelaajan {loser}",
@@ -2258,7 +2260,8 @@
             "pairRating": "Parin luokitus",
             "pairRatingHint": "Oletuksena kahden luokituksen keskiarvo; syötetty arvo korvaa sen.",
             "withdrawNowConfirm": "Poistetaanko {name} turnauksesta nyt? Häntä ei enää paritella (palautus mahdollinen).",
-            "withdrawLaterConfirm": "Poistetaanko {name} ottelunsa jälkeen? Häntä ei sen jälkeen paritella (palautus mahdollinen)."
+            "withdrawLaterConfirm": "Poistetaanko {name} ottelunsa jälkeen? Häntä ei sen jälkeen paritella (palautus mahdollinen).",
+            "withdrawDo": "Poista"
         },
         "bracket": {
             "correct": "Korjaa tulos",
@@ -2459,7 +2462,10 @@
             "changeFolder": "Vaihda kansiota",
             "open": "Avaa selaimessa",
             "forget": "Lopeta kirjoittaminen",
-            "error": "Näyttösivun kirjoittaminen epäonnistui."
+            "error": "Näyttösivun kirjoittaminen epäonnistui.",
+            "page": "Seinäsivu",
+            "openHint": "Avaa seinäsivun (pöytänäyttö) selaimessa; se kirjoitetaan uudelleen jokaisen tapahtuman jälkeen.",
+            "written": "Seinäsivu kirjoitettu: {path}"
         },
         "season": {
             "title": "Kauden sijoitukset",
@@ -2621,7 +2627,18 @@
             "title": "Salit, joissa tämä kilpailu pelataan",
             "hint": "Ei valintaa: kaikki pöydät."
         },
-        "closeView": "Poistu johdosta"
+        "closeView": "Poistu johdosta",
+        "feedback": {
+            "registered": "{name} ilmoitettu — {count} osallistujaa",
+            "registeredLate": "{name} lisätty kesken turnauksen — {count} osallistujaa",
+            "finished": "Turnaus päätetty — lopputulokset",
+            "nextPhase": "Seuraava vaihe aloitettu",
+            "draw": "Arvonta tehty",
+            "matchLaunched": "Ottelu {a} – {b} aloitettu",
+            "allLaunched": "Koko jono on aloitettu",
+            "launched": "Ehdotus aloitettu",
+            "forfeitWithdrawFailed": "Luovutus kirjattu, mutta pelaajan poistaminen epäonnistui."
+        }
     },
     "palette": {
         "title": "Komentopaletti",

@@ -29,7 +29,16 @@
     } from '../../wailsjs/go/database/Database.js';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
     import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
-    import { directionSummariesStore, openDirectionIdStore, refreshDirectionSummaries, createDirection, openDirection, closeDirection, defaultConfig } from '../stores/directionStore';
+    import {
+        directionSummariesStore,
+        openDirectionIdStore,
+        refreshDirectionSummaries,
+        createDirection,
+        openDirection,
+        closeDirection,
+        directionIsLoading,
+        defaultConfig
+    } from '../stores/directionStore';
     import { directionOwnsKey, directionPageShown, directionSearchKey } from '../services/directionKeys.js';
     import { directionFullscreenKey } from '../services/directionFullscreen.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
@@ -65,6 +74,7 @@
 
     async function toggleDirection(tournament) {
         if ($openDirectionIdStore === tournament.id) {
+            if (directionIsLoading()) return;
             closeDirection();
             return;
         }
@@ -875,6 +885,7 @@
     .direction-btn {
         font-size: var(--font-size-small);
         padding: 0.1rem 0.5rem;
+        min-height: 24px;
         border: 1px solid var(--color-primary);
         border-radius: var(--radius);
         background: var(--color-surface);
@@ -941,6 +952,8 @@
         padding: 0 4px;
         line-height: 1;
         flex-shrink: 0;
+        min-width: 24px;
+        min-height: 24px;
     }
     .back-btn:hover {
         color: var(--color-text);

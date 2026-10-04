@@ -7,9 +7,11 @@
      * clavier, même glisser-déposer.
      */
     import { t, tMsg } from '../../i18n';
+    import { statusBarTextStore } from '../../stores/uiStore';
+    import { logger } from '../../utils/logger.js';
     import TableGrid from './TableGrid.svelte';
     import { proposalLabel, actionKey, isRepair, tableTitle } from './labels.js';
-    import { hallEnterResult, hallEnterForfeit, hallMoveMatch, hallCancelMatch, hallConfirmProposal } from '../../stores/directionStore';
+    import { hallEnterResult, hallEnterForfeit, hallMoveMatch, hallCancelMatch, hallConfirmProposal, hallWithdrawParticipant } from '../../stores/directionStore';
 
     /** @typedef {import('../../../wailsjs/go/models').service.HallView} Hall */
     /** @typedef {import('../../../wailsjs/go/models').service.HallEvent} HallEvent */
@@ -21,7 +23,7 @@
      *     hall?: Hall | null,
      *     error?: string,
      *     busy?: boolean,
-     *     act: (fn: () => Promise<unknown>, key: string | ((e: any) => import('../../i18n').StatusMessage)) => Promise<boolean>,
+     *     act: (fn: () => Promise<unknown>, key: string | ((e: any) => import('../../i18n').StatusMessage), done?: () => import('../../i18n').StatusMessage | null) => Promise<boolean>,
      *     onHistory?: (name: string, tournamentId: number) => void,
      *     onOutOfService?: (table: number, out: boolean) => void
      * }}
@@ -33,8 +35,19 @@
 
     /** @type {(m: string, w: string, a: number, b: number, note: string, c?: HallCellLike) => Promise<boolean>} */
     const onResult = (m, w, a, b, note, c) => act(() => hallEnterResult(tidOf(c), m, w, a, b, note), 'direction.result.error');
-    /** @type {(m: string, w: string, note: string, c?: HallCellLike) => Promise<boolean>} */
-    const onForfeit = (m, w, note, c) => act(() => hallEnterForfeit(tidOf(c), m, w, note), 'direction.result.error');
+    /** @type {(m: string, w: string, note: string, c?: HallCellLike, withdrawLoser?: string) => Promise<boolean>} */
+    const onForfeit = (m, w, note, c, withdrawLoser) =>
+        act(async () => {
+            await hallEnterForfeit(tidOf(c), m, w, note);
+            if (!withdrawLoser) return;
+            // Le forfait est acquis : un retrait refusé se dit à part, sans le défaire.
+            try {
+                await hallWithdrawParticipant(tidOf(c), withdrawLoser, false);
+            } catch (e) {
+                logger.error('direction: hall withdraw after forfeit failed', e);
+                statusBarTextStore.set(tMsg('direction.feedback.forfeitWithdrawFailed'));
+            }
+        }, 'direction.result.error');
     /** @type {(m: string, table: number, c?: HallCellLike) => Promise<boolean>} */
     const onMove = (m, table, c) =>
         act(
@@ -45,7 +58,20 @@
     const onCancel = (m, c) => act(() => hallCancelMatch(tidOf(c), m), 'direction.result.error');
 
     /** @param {number} tid @param {ProposalAction} a */
-    const launch = (tid, a) => act(() => hallConfirmProposal(tid, a), 'direction.proposals.errorConfirm');
+    const launch = (tid, a) =>
+        act(
+            () => hallConfirmProposal(tid, a),
+            'direction.proposals.errorConfirm',
+            () => {
+                if (a.kind === 'next_phase') return tMsg('direction.feedback.nextPhase');
+                if (a.kind === 'draw') return tMsg('direction.feedback.draw');
+                if (a.kind === 'start_match') {
+                    const name = namesOf(eventOf[tid] ?? {});
+                    return tMsg('direction.feedback.matchLaunched', { a: name(a.a), b: name(a.b) });
+                }
+                return tMsg('direction.feedback.launched');
+            }
+        );
 
     /*
      * Une seule file, toutes épreuves mêlées : l'ordre est celui de RencontreTableGrid (les
@@ -78,7 +104,7 @@
                 <li class="chip" style={evColor(ev.index)}>{ev.name}</li>
             {/each}
         </ul>
-        <TableGrid cells={hall.cells || []} {busy} {onResult} {onForfeit} {onMove} {onCancel} onHistory={onHistory ? (name, c) => onHistory(name, tidOf(c)) : undefined} {onOutOfService} />
+        <TableGrid cells={hall.cells || []} {busy} canWithdraw {onResult} {onForfeit} {onMove} {onCancel} onHistory={onHistory ? (name, c) => onHistory(name, tidOf(c)) : undefined} {onOutOfService} />
         <section class="proposals" data-testid="hall-proposals">
             <h3>{$t('direction.hall.proposals', { n: queue.length })}</h3>
             {#if queue.length}

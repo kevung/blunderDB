@@ -8,7 +8,7 @@
      * onConfirm/onClose are required. With `choices`, Enter activates the focused
      * button, the primary one on open.
      */
-    let { message = '', visible = false, onClose = () => {}, mode = 'info', onConfirm = () => {}, confirmLabel = '', cancelLabel = '', choices = [], onChoose = () => {} } = $props();
+    let { message = '', visible = false, onClose = () => {}, mode = 'info', onConfirm = () => {}, confirmLabel = '', cancelLabel = '', choices = [], onChoose = () => {}, tone = 'danger' } = $props();
 
     function handleKeyDown(event) {
         if (mode === 'confirm' && event.key === 'Enter') {
@@ -41,7 +41,7 @@
             {/if}
         {/each}
     {:else}
-        <button class="danger" onclick={onConfirm}>{confirmLabel || $t('common.delete')}</button>
+        <button class={tone === 'primary' ? 'primary' : 'danger'} data-testid="confirm-ok" onclick={onConfirm}>{confirmLabel || $t('common.delete')}</button>
     {/if}
 {/snippet}
 
