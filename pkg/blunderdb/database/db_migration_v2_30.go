@@ -11,6 +11,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
@@ -148,6 +149,11 @@ func (d *Database) finishLargeLibraryWave(ctx context.Context) error {
 // later opens the few a blob-only writer left. The probe is one step of
 // idx_analysis_provenance_pending, so an open with nothing to do pays nothing. Resumable
 // by construction: a written row is no longer NULL.
+//
+// Reading, decoding and writing run as a pipeline: decoding 15 M blobs is the
+// cost, it takes every core, and the next batch is read and decoded while the
+// previous one is written. The reader only reads ids past the batch being
+// written, so it never sees a row half-way through.
 func (d *Database) backfillAnalysisProvenance(ctx context.Context) error {
 	var probe int
 	err := d.db.QueryRowContext(ctx, `SELECT 1 FROM analysis WHERE analysis_engine IS NULL LIMIT 1`).Scan(&probe)
@@ -165,20 +171,49 @@ func (d *Database) backfillAnalysisProvenance(ctx context.Context) error {
 	// crossing itself the table is still empty and nothing needs dropping.
 	var statsProbe int
 	haveStats := d.db.QueryRowContext(ctx, `SELECT 1 FROM match_stats LIMIT 1`).Scan(&statsProbe) == nil
+
+	type batch struct {
+		ids     []int64
+		decoded map[int64]*domain.PositionAnalysis
+		failed  map[int64]error
+		err     error
+	}
+	pctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+	batches := make(chan batch, 1)
+	go func() {
+		defer close(batches)
+		var last int64
+		for {
+			raw, ids, err := d.nullProvenanceBatch(pctx, last)
+			b := batch{ids: ids, err: err}
+			if err == nil && len(ids) > 0 {
+				b.decoded, b.failed = engine.DecodeAnalysesConcurrently(raw)
+			}
+			select {
+			case batches <- b:
+			case <-pctx.Done():
+				return
+			}
+			if err != nil || len(ids) == 0 {
+				return
+			}
+			last = ids[len(ids)-1]
+		}
+	}()
+
 	done := 0
-	var last int64
-	for {
+	for b := range batches {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
-		raw, ids, err := d.nullProvenanceBatch(ctx, last)
-		if err != nil {
-			return err
+		if b.err != nil {
+			return b.err
 		}
-		if len(ids) == 0 {
+		if len(b.ids) == 0 {
 			break
 		}
-		decoded, failed := engine.DecodeAnalysesConcurrently(raw)
+		ids, decoded, failed := b.ids, b.decoded, b.failed
 		err = d.inTx(ctx, func(tx *sql.Tx) error {
 			stmt, err := tx.PrepareContext(ctx,
 				`UPDATE analysis SET analysis_engine = ?, analysis_depth = ?, creation_date = ? WHERE id = ?`)
@@ -219,12 +254,12 @@ func (d *Database) backfillAnalysisProvenance(ctx context.Context) error {
 		if err != nil {
 			return err
 		}
-		last = ids[len(ids)-1]
 		done += len(ids)
 		d.emitMigrationProgress("analysis_provenance", done, total)
 	}
 	if done > 0 {
 		slog.Info("derived the provenance of the stored analyses", "analyses", done)
+		return checkpointWAL(ctx, d.db)
 	}
 	return nil
 }
