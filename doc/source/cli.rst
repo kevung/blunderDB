@@ -1280,6 +1280,57 @@ graphique emploie la palette du plateau choisie à l'écran.
    ./blunderdb stats report --db base.db --html --output rapport.html
    ./blunderdb stats report --db base.db --html --player "Alice" --lang fr
 
+.. _cli_training:
+
+training — Le journal d'entraînement
+------------------------------------
+
+Relit le journal de l'onglet Entraînement (voir :ref:`panneau_entrainement`) et
+fait des questions ratées de quoi réviser. Le journal est écrit par
+l'application graphique, ou par un client du démon à la route
+``training.save`` ; la ligne de commande ne pose pas de questions.
+
+**training sessions** — Les séances, la plus récente d'abord, avec leur
+identifiant ; le PR n'existe que pour *Décision*.
+
+.. code-block:: bash
+
+   ./blunderdb training sessions --db <fichier> [options]
+
+**Options:**
+
+* ``--exercise <nom>`` — Un seul exercice : ``scores``, ``pips``, ``bearoff``,
+  ``evaluation`` ou ``decision``.
+* ``--limit <n>`` — Nombre de séances (défaut 20 ; 0 = toutes).
+* ``--format text|json`` — Format de sortie.
+
+**training missed** — Les positions ratées, chacune une fois, la plus récemment
+ratée d'abord ; une question hors délai compte comme ratée. Seules les
+questions de *Décision* gardent leur position.
+
+.. code-block:: bash
+
+   ./blunderdb training missed --db <fichier> [options]
+
+**Options:**
+
+* ``--exercise <nom>`` — Les séances d'un seul exercice.
+* ``--session <id>`` — Une seule séance (un identifiant de ``training
+  sessions``).
+* ``--limit <n>`` — Nombre de positions (défaut 0 = toutes).
+* ``--deck <nom>`` — Crée un paquet Anki de ces positions.
+* ``--collection <nom>`` — Crée une collection de ces positions.
+* ``--format text|json`` — Format de sortie ; en JSON, ``PositionIDs``, et
+  ``DeckID`` ou ``CollectionID`` quand ils sont créés.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb training sessions --db base.db --exercise decision
+   ./blunderdb training missed --db base.db --session 12 --deck "Ratés de lundi"
+   ./blunderdb training missed --db base.db --collection "Mes ratés" --format json
+
 .. _cli_cubematrix:
 
 cubematrix — Matrice du videau

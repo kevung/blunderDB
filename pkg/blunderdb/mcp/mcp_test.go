@@ -4,6 +4,7 @@ import (
 	"compress/gzip"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -581,5 +582,30 @@ func TestAcrossTools(t *testing.T) {
 		if !across && len(sent) != 0 {
 			t.Errorf("%s received X-Read-Tenants %v; only across.* calls carry it", path, sent)
 		}
+	}
+}
+
+// A missed Decision question keeps its position: training_missed hands it
+// back for another drill, and a correct answer stays out.
+func TestTrainingMissedTool(t *testing.T) {
+	srv := demoServer(t, internalserver.Options{})
+	engine := srv.Handler()
+	cs := connect(t, engine, mcp.Options{Tenant: "1"})
+	pid := int64(id(t, list(t, call(t, cs, "search_positions", obj{"query": "s E>100", "limit": 2}), "positions")[0], "id"))
+	other := pid + 1
+	body := fmt.Sprintf(`{"exercise":"decision","numbersAsked":2,"faults":1,"items":[
+		{"numberType":"decision.checker","wrong":true,"positionId":%d,"answer":"13/7 8/7","errorMp":120},
+		{"numberType":"decision.checker","wrong":false,"positionId":%d,"answer":"24/18","errorMp":0}]}`, pid, other)
+	req := httptest.NewRequest(http.MethodPost, "/v1/training.save", strings.NewReader(body))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("X-Tenant-ID", "1")
+	rec := httptest.NewRecorder()
+	engine.ServeHTTP(rec, req)
+	if rec.Code != http.StatusOK {
+		t.Fatalf("training.save: %d %s", rec.Code, rec.Body.String())
+	}
+	got := list(t, call(t, cs, "training_missed", nil), "PositionIDs")
+	if len(got) != 1 || got[0].(float64) != float64(pid) {
+		t.Fatalf("training_missed = %v, want [%d]", got, pid)
 	}
 }

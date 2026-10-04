@@ -5948,6 +5948,9 @@ export namespace storage {
 	    wrong: boolean;
 	    hasDeviation: boolean;
 	    deviation: number;
+	    positionId?: number;
+	    answer?: string;
+	    errorMp?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new TrainingItem(source);
@@ -5959,6 +5962,25 @@ export namespace storage {
 	        this.wrong = source["wrong"];
 	        this.hasDeviation = source["hasDeviation"];
 	        this.deviation = source["deviation"];
+	        this.positionId = source["positionId"];
+	        this.answer = source["answer"];
+	        this.errorMp = source["errorMp"];
+	    }
+	}
+	export class TrainingMissedFilter {
+	    exercise: string;
+	    sessionId: number;
+	    limit: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TrainingMissedFilter(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.exercise = source["exercise"];
+	        this.sessionId = source["sessionId"];
+	        this.limit = source["limit"];
 	    }
 	}
 	export class TrainingNumberStat {

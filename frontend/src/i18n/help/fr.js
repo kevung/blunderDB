@@ -868,6 +868,13 @@ export default {
 <p>Les sessions terminées sont conservées dans la base elle-même — elles suivent donc le fichier — et sans plafond. Au repos, le panneau affiche une ligne par exercice : le nombre de sessions, le taux de fautes, le temps médian et, à partir de dix sessions, la <strong>tendance</strong>, c'est-à-dire l'écart entre le taux de fautes des dix dernières sessions et celui de toutes — négatif, vous progressez.</p>
 <p>Pour <em>Décision</em>, la ligne donne aussi le <strong>PR</strong> de la dernière session, calculé par la formule que les statistiques appliquent au jeu réel — 500 × erreur moyenne en équité normalisée, sur les décisions jugées. Un PR de 6 à l'entraînement et un PR de 6 en match mesurent la même chose sur la même échelle.</p>
 <p>Cliquer le nom de l'exercice déplie le détail <strong>par type de nombre</strong> : « Point de prise 4 · dernier lancer, 6 / 9 ». C'est ce détail qui fait l'intérêt du journal, et il compte par type et non par face : la même case de la même table, vue d'un côté ou de l'autre, est une seule faiblesse.</p>
+<p>Une question de <em>Décision</em> garde au journal sa position, la réponse donnée et son coût en millipoints. Le détail de <em>Décision</em> porte donc trois boutons qui agissent sur toutes les positions ratées, chacune une fois, la plus récemment ratée d'abord — une question hors délai compte comme ratée :</p>
+<ul>
+<li><strong>Reprendre mes ratés</strong> — les positions ratées deviennent la liste parcourue et une session <em>Décision</em> repart dessus ;</li>
+<li><strong>Paquet Anki des ratés</strong> — un paquet Anki de ces positions ;</li>
+<li><strong>Collection des ratés</strong> — une collection de ces positions.</li>
+</ul>
+<p>Le paquet et la collection sont nommés « Ratés à Décision » suivis de la date du jour. En ligne de commande, <code>training missed</code> rend la même liste et en fait un paquet (<code>--deck</code>) ou une collection (<code>--collection</code>), et <code>training sessions</code> relit le journal (voir training — Le journal d'entraînement).</p>
 <h3>Panneau Métadonnées</h3>
 <p>Le panneau <strong>Métadonnées</strong> affiche les informations générales de la base de données courante : nom, description, nombre de positions, nombre de matchs et de parties, version du schéma. Accessible via la commande <code>meta</code>.</p>
 <p>Il affiche également, <strong>lorsqu'elle existe</strong>, l'origine de la base — voir Diffuser une base : origine et mot de passe. Une base ordinaire n'affiche pas cette section.</p>

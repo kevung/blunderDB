@@ -551,6 +551,29 @@ func registerPlayers(tb *Toolbox) {
 			}
 			return res, nil
 		})
+
+	type missedIn struct {
+		Exercise  string `json:"exercise,omitempty" jsonschema:"one exercise (default decision, the only one whose questions keep their position)"`
+		SessionID int64  `json:"sessionId,omitempty" jsonschema:"only this session (an id from the training journal)"`
+		Limit     int    `json:"limit,omitempty" jsonschema:"positions to return (default 20, at most 200)"`
+	}
+	Add(tb, Reads, &sdk.Tool{Name: "training_missed", Title: "Missed quiz positions",
+		Description: "The positions the user answered wrong in the Training journal's Decision quiz, each once, the most recently missed first (a question that ran out of time counts as missed). Pass them to quiz_grade to drill them again, or to add_to_collection."},
+		func(ctx context.Context, req *sdk.CallToolRequest, a missedIn) (any, error) {
+			exercise := a.Exercise
+			if exercise == "" {
+				exercise = "decision"
+			}
+			var ids []int64
+			if err := tb.Engine.Call(ctx, req, "training.missed",
+				obj{"exercise": exercise, "sessionId": a.SessionID, "limit": clampLimit(a.Limit)}, &ids); err != nil {
+				return nil, err
+			}
+			if ids == nil {
+				ids = []int64{}
+			}
+			return obj{"PositionIDs": ids}, nil
+		})
 }
 
 func registerMatches(tb *Toolbox) {

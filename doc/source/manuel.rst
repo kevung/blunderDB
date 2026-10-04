@@ -3665,6 +3665,21 @@ Cliquer le nom de l'exercice déplie le détail **par type de nombre** :
 l'intérêt du journal, et il compte par type et non par face : la même case de
 la même table, vue d'un côté ou de l'autre, est une seule faiblesse.
 
+Une question de *Décision* garde au journal sa position, la réponse donnée et
+son coût en millipoints. Le détail de *Décision* porte donc trois boutons qui
+agissent sur toutes les positions ratées, chacune une fois, la plus récemment
+ratée d'abord — une question hors délai compte comme ratée :
+
+* **Reprendre mes ratés** — les positions ratées deviennent la liste parcourue
+  et une session *Décision* repart dessus ;
+* **Paquet Anki des ratés** — un paquet Anki de ces positions ;
+* **Collection des ratés** — une collection de ces positions.
+
+Le paquet et la collection sont nommés « Ratés à Décision » suivis de la date
+du jour. En ligne de commande, ``training missed`` rend la même liste et en
+fait un paquet (``--deck``) ou une collection (``--collection``), et
+``training sessions`` relit le journal (voir :ref:`cli_training`).
+
 .. _panneau_metadata:
 
 Panneau Métadonnées

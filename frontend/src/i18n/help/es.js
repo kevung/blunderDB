@@ -868,6 +868,13 @@ export default {
 <p>Las sesiones terminadas se conservan en la propia base — así que siguen al archivo — y sin límite. En reposo, el panel muestra una línea por ejercicio: el número de sesiones, la tasa de fallos, el tiempo mediano y, a partir de diez sesiones, la <strong>tendencia</strong>, es decir la diferencia entre la tasa de fallos de las diez últimas sesiones y la de todas — negativa, usted progresa.</p>
 <p>Para <em>Décision</em>, la línea da además el <strong>PR</strong> de la última sesión, calculado con la fórmula que las estadísticas aplican al juego real: 500 × error medio en equidad normalizada, sobre las decisiones juzgadas. Un PR de entrenamiento de 6 y un PR de partido de 6 miden lo mismo en la misma escala.</p>
 <p>Al hacer clic en el nombre del ejercicio se despliega el detalle <strong>por tipo de número</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». Ese detalle es lo que da valor al diario, y cuenta por tipo y no por cara: la misma casilla de la misma tabla, vista de un lado o del otro, es una sola debilidad.</p>
+<p>Una pregunta de <em>Decisión</em> conserva en el diario su posición, la respuesta dada y su coste en milipuntos. El detalle de <em>Decisión</em> incluye por tanto tres botones que actúan sobre todas las posiciones falladas, cada una una vez, la fallada más recientemente primero — una pregunta fuera de plazo cuenta como fallada:</p>
+<ul>
+<li><strong>Repetir mis fallos</strong> — las posiciones falladas pasan a ser la lista recorrida y una sesión de <em>Decisión</em> se reinicia sobre ellas;</li>
+<li><strong>Mazo Anki de los fallos</strong> — un mazo Anki con estas posiciones;</li>
+<li><strong>Colección de los fallos</strong> — una colección con estas posiciones.</li>
+</ul>
+<p>El mazo y la colección se llaman «Fallos en Decisión» seguido de la fecha del día. En la línea de comandos, <code>training missed</code> devuelve la misma lista y crea con ella un mazo (<code>--deck</code>) o una colección (<code>--collection</code>), y <code>training sessions</code> relee el diario (véase training — El diario de entrenamiento).</p>
 <h3>Panel de Metadatos</h3>
 <p>El panel <strong>Metadatos</strong> muestra la información general de la base de datos actual: nombre, descripción, número de posiciones, número de partidas y juegos, versión del esquema. Accesible mediante el comando <code>meta</code>.</p>
 <p>También muestra, <strong>cuando existe</strong>, el origen de la base de datos — véase Distribuir una base de datos: origen y contraseña. Una base de datos corriente no muestra esa sección.</p>

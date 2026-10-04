@@ -390,7 +390,8 @@ var databaseParity = map[string]parityEntry{
 	"SetDirectionConfig":                {Server: "/v1/directions.setConfig", Why: whyDirectionGesture},
 	"SetDirectionOutputDir":             {Why: whyDirection},
 	"LoadTrainingNumberStats":           {Server: "/v1/training.numberStats", Why: whyTrainingJournal},
-	"LoadTrainingSessions":              {Server: "/v1/training.sessions", Why: whyTrainingJournal},
+	"LoadTrainingSessions":              {CLI: "training sessions", Server: "/v1/training.sessions"},
+	"LoadTrainingMissed":                {CLI: "training missed", Server: "/v1/training.missed"},
 	"MergePlayers":                      {CLI: "players merge", Server: "/v1/matches.mergePlayers"},
 	"MovePositionBetweenCollections":    {Server: "/v1/collections.movePosition", Why: whyGUIEdit},
 	"OpenDatabase":                      {Why: whyLifecycle},
@@ -528,6 +529,7 @@ func TestDatabaseParity(t *testing.T) {
 		"anki":       c.ankiHandlers(),
 		"lesson":     c.lessonHandlers(),
 		"stats":      c.statsHandlers(),
+		"training":   c.trainingHandlers(),
 	}
 	paths := serverPaths(t)
 

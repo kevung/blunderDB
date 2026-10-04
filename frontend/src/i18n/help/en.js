@@ -868,6 +868,13 @@ export default {
 <p>Finished sessions are kept in the library itself — so they travel with the file — and without any cap. At rest, the panel shows one line per exercise: the number of sessions, the fault rate, the median time and, from ten sessions on, the <strong>trend</strong>, that is the gap between the fault rate of the last ten sessions and that of all of them — negative, you are improving.</p>
 <p>For <em>Décision</em>, the line also gives the <strong>PR</strong> of the last session, computed by the formula the statistics apply to real play — 500 × mean error in normalised equity, over the graded decisions. A training PR of 6 and a match PR of 6 measure the same thing on the same scale.</p>
 <p>Clicking the exercise's name unfolds the detail <strong>by number type</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». That detail is what makes the journal worth keeping, and it counts by type and not by face: the same cell of the same table, seen from either side, is one single weakness.</p>
+<p>A <em>Decision</em> question keeps in the log its position, the answer given and its cost in millipoints. The <em>Decision</em> detail therefore carries three buttons that act on all the missed positions, each once, most recently missed first — a question that timed out counts as missed:</p>
+<ul>
+<li><strong>Retake my misses</strong> — the missed positions become the list browsed and a <em>Decision</em> session restarts on them;</li>
+<li><strong>Anki deck of misses</strong> — an Anki deck of these positions;</li>
+<li><strong>Collection of misses</strong> — a collection of these positions.</li>
+</ul>
+<p>The deck and the collection are named "Decision misses" followed by today's date. On the command line, <code>training missed</code> returns the same list and makes a deck (<code>--deck</code>) or a collection (<code>--collection</code>) of it, and <code>training sessions</code> reads the log back (see training — The training log).</p>
 <h3>Metadata Panel</h3>
 <p>The <strong>Metadata</strong> panel displays general information about the current database: name, description, number of positions, matches and games, schema version. Accessible via the <code>meta</code> command.</p>
 <p>It also shows the database's origin <strong>when there is one</strong> — see Handing out a database: origin and password. An ordinary database does not show that section.</p>

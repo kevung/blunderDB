@@ -125,6 +125,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"lesson":      cli.runLesson,
 		"anki":        cli.runAnki,
 		"stats":       cli.runStats,
+		"training":    cli.runTraining,
 		"tournament":  cli.runTournament,
 		"players":     cli.runPlayers,
 		"events":      cli.runEvents,
@@ -178,6 +179,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  collection  Manage collections (list, show, create, rename, delete, export)")
 	fmt.Println("  anki      Spaced-repetition decks (decks, stats, forecast, sync)")
 	fmt.Println("  stats     Statistics computed apart from list --type stats (recurring)")
+	fmt.Println("  training  The Training journal (sessions, missed positions)")
 	fmt.Println("  cubematrix  Cube verdict at every score of a match, for one position")
 	fmt.Println("  epc       EPC, win probability and money cube verdict (bearoff)")
 	fmt.Println("  rollout   Roll out a position's plays or cube decision (gammonNet)")

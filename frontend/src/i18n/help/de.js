@@ -868,6 +868,13 @@ export default {
 <p>Beendete Sitzungen bleiben in der Datenbank selbst erhalten — sie folgen also der Datei — und ohne Obergrenze. In Ruhe zeigt das Panel eine Zeile je Übung: die Zahl der Sitzungen, die Fehlerquote, die mittlere Zeit und, ab zehn Sitzungen, die <strong>Tendenz</strong>, also den Abstand zwischen der Fehlerquote der letzten zehn Sitzungen und der aller — negativ, Sie werden besser.</p>
 <p>Für <em>Décision</em> nennt die Zeile außerdem den <strong>PR</strong> der letzten Sitzung, berechnet mit der Formel, die die Statistiken auf das reale Spiel anwenden — 500 × mittlerer Fehler in normalisierter Equity, über die bewerteten Entscheidungen. Ein Trainings-PR von 6 und ein Match-PR von 6 messen dasselbe auf derselben Skala.</p>
 <p>Ein Klick auf den Namen der Übung klappt das Detail <strong>je Zahlentyp</strong> auf: « Point de prise 4 · dernier lancer, 6 / 9 ». Dieses Detail macht den Wert des Journals aus, und es zählt nach Typ und nicht nach Seite: dasselbe Feld derselben Tabelle, von der einen oder der anderen Seite gesehen, ist eine einzige Schwäche.</p>
+<p>Eine Frage von <em>Entscheidung</em> behält im Protokoll ihre Stellung, die gegebene Antwort und ihre Kosten in Millipunkten. Die Details von <em>Entscheidung</em> enthalten daher drei Schaltflächen, die auf alle verfehlten Stellungen wirken, jede einmal, die zuletzt verfehlte zuerst — eine Frage, bei der die Zeit ablief, zählt als verfehlt:</p>
+<ul>
+<li><strong>Meine Fehler wiederholen</strong> — die verfehlten Stellungen werden zur durchblätterten Liste, und eine <em>Entscheidung</em>-Sitzung startet darauf neu;</li>
+<li><strong>Anki-Stapel der Fehler</strong> — ein Anki-Stapel aus diesen Stellungen;</li>
+<li><strong>Sammlung der Fehler</strong> — eine Sammlung aus diesen Stellungen.</li>
+</ul>
+<p>Der Stapel und die Sammlung heißen „Fehler bei Entscheidung“, gefolgt vom heutigen Datum. Auf der Kommandozeile liefert <code>training missed</code> dieselbe Liste und macht daraus einen Stapel (<code>--deck</code>) oder eine Sammlung (<code>--collection</code>), und <code>training sessions</code> liest das Protokoll wieder ein (siehe training — Das Trainingsprotokoll).</p>
 <h3>Metadaten-Panel</h3>
 <p>Das Panel <strong>Metadaten</strong> zeigt die allgemeinen Informationen der aktuellen Datenbank an: Name, Beschreibung, Anzahl der Stellungen, Anzahl der Matches und Partien, Schemaversion. Erreichbar über den Befehl <code>meta</code>.</p>
 <p>Es zeigt außerdem, <strong>sofern vorhanden</strong>, die Herkunft der Datenbank an — siehe Eine Datenbank weitergeben: Herkunft und Passwort. Bei einer gewöhnlichen Datenbank erscheint dieser Abschnitt nicht.</p>

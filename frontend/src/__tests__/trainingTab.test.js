@@ -405,6 +405,26 @@ describe('le geste choisi (Décision)', () => {
         expect(s.faults).toEqual([true]);
     });
 
+    test('une question jugée garde au journal sa position, la réponse jouée et son coût', () => {
+        let s = askQuestion(newSession({ exercise: 'decision' }), decisionQuestion('checker', 9), 0);
+        s = recordQuestion(answerChosen(s, verdict({ errorMp: 42, notation: '24/18 13/11' }), 1000));
+        expect(s.items).toEqual([{ numberType: 'decision.checker', wrong: true, hasDeviation: false, deviation: 0, positionId: 9, answer: '24/18 13/11', errorMp: 42 }]);
+    });
+
+    test('hors délai, la position reste mais ni réponse ni coût : rien n’a été jugé', () => {
+        let s = askQuestion(newSession({ exercise: 'decision', limitSeconds: 15 }), decisionQuestion('cube', 4), 0);
+        s = reveal(s, 15000, { outOfTime: true });
+        s = attachCorrection(s, '4', verdict({ legal: false, matched: false, notation: '', best: 'nd' }));
+        s = recordQuestion(s);
+        expect(s.items[0]).toMatchObject({ wrong: true, positionId: 4, answer: '', errorMp: null });
+    });
+
+    test('un exercice de nombres ne laisse aucune position au journal', () => {
+        let s = askQuestion(newSession({ exercise: 'pips' }), { kind: 'pips', key: '3', positionId: 3, numbers: [{ type: 'pips.bottom', value: 120 }] }, 0);
+        s = recordQuestion(reveal(s, 1000));
+        expect(s.items[0]).not.toHaveProperty('positionId');
+    });
+
     test('la question suivante efface le verdict', () => {
         let s = askQuestion(newSession({ exercise: 'decision' }), decisionQuestion(), 0);
         s = recordQuestion(answerChosen(s, verdict({ errorMp: 42 }), 1000));

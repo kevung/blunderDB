@@ -868,6 +868,13 @@ export default {
 <p>Le sessioni terminate sono conservate nella base stessa — seguono quindi il file — e senza limite. A riposo, il pannello mostra una riga per esercizio: il numero di sessioni, il tasso di errori, il tempo mediano e, a partire da dieci sessioni, la <strong>tendenza</strong>, cioè lo scarto tra il tasso di errori delle ultime dieci sessioni e quello di tutte — negativo, lei sta migliorando.</p>
 <p>Per <em>Décision</em>, la riga dà anche il <strong>PR</strong> dell'ultima sessione, calcolato con la formula che le statistiche applicano al gioco reale — 500 × errore medio in equità normalizzata, sulle decisioni giudicate. Un PR di allenamento di 6 e un PR di incontro di 6 misurano la stessa cosa sulla stessa scala.</p>
 <p>Facendo clic sul nome dell'esercizio si apre il dettaglio <strong>per tipo di numero</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». È questo dettaglio a dare valore al diario, e conta per tipo e non per faccia: la stessa casella della stessa tabella, vista da un lato o dall'altro, è una sola debolezza.</p>
+<p>Una domanda di <em>Decisione</em> conserva nel registro la sua posizione, la risposta data e il suo costo in millipunti. Il dettaglio di <em>Decisione</em> include quindi tre pulsanti che agiscono su tutte le posizioni sbagliate, ciascuna una volta, la sbagliata più di recente per prima — una domanda scaduta conta come sbagliata:</p>
+<ul>
+<li><strong>Riprendi i miei errori</strong> — le posizioni sbagliate diventano la lista scorsa e una sessione <em>Decisione</em> riparte su di esse;</li>
+<li><strong>Mazzo Anki degli errori</strong> — un mazzo Anki con queste posizioni;</li>
+<li><strong>Collezione degli errori</strong> — una collezione con queste posizioni.</li>
+</ul>
+<p>Il mazzo e la collezione si chiamano «Errori in Decisione» seguito dalla data odierna. Da riga di comando, <code>training missed</code> restituisce la stessa lista e ne fa un mazzo (<code>--deck</code>) o una collezione (<code>--collection</code>), e <code>training sessions</code> rilegge il registro (vedi training — Il registro di allenamento).</p>
 <h3>Pannello Metadati</h3>
 <p>Il pannello <strong>Metadati</strong> visualizza le informazioni generali del database corrente: nome, descrizione, numero di posizioni, numero di match e di partite, versione dello schema. Accessibile tramite il comando <code>meta</code>.</p>
 <p>Mostra inoltre, <strong>quando esiste</strong>, l'origine del database — vedere Distribuire un database: origine e password. Un database ordinario non mostra questa sezione.</p>

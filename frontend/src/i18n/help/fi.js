@@ -868,6 +868,13 @@ export default {
 <p>Päättyneet istunnot säilyvät itse tietokannassa — ne siis seuraavat tiedostoa — eikä niillä ole ylärajaa. Levossa paneeli näyttää yhden rivin harjoitusta kohti: istuntojen määrän, virheprosentin, mediaaniajan ja, kymmenestä istunnosta alkaen, <strong>suuntauksen</strong>, eli eron kymmenen viimeisen istunnon virheprosentin ja kaikkien istuntojen virheprosentin välillä — negatiivisena edistyt.</p>
 <p><em>Décision</em>-harjoituksessa rivi antaa myös viimeisen istunnon <strong>PR:n</strong>, joka lasketaan samalla kaavalla kuin tilastot laskevat oikealle pelille — 500 × keskimääräinen virhe normalisoituna ekviteettinä arvioiduista päätöksistä. Harjoittelun PR 6 ja ottelun PR 6 mittaavat samaa asiaa samalla asteikolla.</p>
 <p>Harjoituksen nimeä napsauttamalla avautuu erittely <strong>lukutyypeittäin</strong>: « Point de prise 4 · dernier lancer, 6 / 9 ». Juuri tämä erittely tekee päiväkirjasta hyödyllisen, ja se laskee tyypin eikä puolen mukaan: saman taulukon sama ruutu, kummalta puolelta tahansa katsottuna, on yksi ja sama heikkous.</p>
+<p><em>Päätös</em>-kysymys säilyttää päiväkirjassa asemansa, annetun vastauksen ja sen hinnan millipisteinä. <em>Päätös</em>-harjoituksen tiedot sisältävät siksi kolme painiketta, jotka toimivat kaikilla epäonnistuneilla asemilla, kukin kerran, viimeksi epäonnistunut ensin — aikarajan ylittänyt kysymys lasketaan epäonnistuneeksi:</p>
+<ul>
+<li><strong>Kertaa virheeni</strong> — epäonnistuneista asemista tulee selattava lista, ja <em>Päätös</em>-istunto alkaa uudelleen niillä;</li>
+<li><strong>Virheiden Anki-pakka</strong> — Anki-pakka näistä asemista;</li>
+<li><strong>Virheiden kokoelma</strong> — kokoelma näistä asemista.</li>
+</ul>
+<p>Pakan ja kokoelman nimi on ”Päätöksen virheet” ja perässä päivän päivämäärä. Komentorivillä <code>training missed</code> antaa saman listan ja tekee siitä pakan (<code>--deck</code>) tai kokoelman (<code>--collection</code>), ja <code>training sessions</code> lukee päiväkirjan uudelleen (katso training — Harjoituspäiväkirja).</p>
 <h3>Metatietopaneeli</h3>
 <p><strong>Metatietopaneeli</strong> näyttää nykyisen tietokannan yleiset tiedot: nimi, kuvaus, asemien määrä, otteluiden ja pelien määrä, skeeman versio. Käytettävissä komennolla <code>meta</code>.</p>
 <p>Se näyttää myös tietokannan alkuperän, <strong>jos sellainen on</strong> — ks. Tietokannan jakaminen: alkuperä ja salasana. Tavallisessa tietokannassa tätä osiota ei näy.</p>

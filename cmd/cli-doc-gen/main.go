@@ -51,6 +51,8 @@ func composite(name string) []string {
 		return cli.NewCLI().TournamentSubcommands()
 	case "stats":
 		return cli.NewCLI().StatsSubcommands()
+	case "training":
+		return cli.NewCLI().TrainingSubcommands()
 	default:
 		return nil
 	}

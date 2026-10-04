@@ -180,7 +180,7 @@ export const TREND_WINDOW = 10;
  * @property {QuizVerdict|null} verdict en mode CHOISI, le jugement de la question à l'écran — ou, hors délai, sa seule correction
  * @property {number} decisions en mode CHOISI, les décisions jugées et enregistrées — le dénominateur du PR
  * @property {number} sumErrorMp leur coût cumulé, en millipoints d'équité normalisée
- * @property {{numberType: string, wrong: boolean, hasDeviation: boolean, deviation: number}[]} items
+ * @property {{numberType: string, wrong: boolean, hasDeviation: boolean, deviation: number, positionId?: number|null, answer?: string, errorMp?: number|null}[]} items
  */
 
 /**
@@ -365,6 +365,10 @@ export function toggleFault(session, index) {
  */
 export function recordQuestion(session) {
     if (!session.question || !session.revealed) return session;
+    // Le PR ne compte que les décisions jugées : hors délai, ni coût ni
+    // décision. Un coup illégal a été joué : il compte, sans coût.
+    const judged = isChosenExercise(session.exercise) && !session.outOfTime && !!session.verdict;
+    const decision = session.question.kind === 'decision' ? decisionTrace(session.question, judged ? session.verdict : null) : {};
     const items = session.question.numbers.map((number, i) => {
         // Mode déclaré : pas d'écart. `false` garde la moyenne vide plutôt que
         // nulle — zéro dirait « sans erreur », pas « sans mesure ».
@@ -373,12 +377,10 @@ export function recordQuestion(session) {
             numberType: number.type,
             wrong: session.faults[i] === true,
             hasDeviation: deviation !== null && deviation !== undefined,
-            deviation: deviation ?? 0
+            deviation: deviation ?? 0,
+            ...decision
         };
     });
-    // Le PR ne compte que les décisions jugées : hors délai, ni coût ni
-    // décision. Un coup illégal a été joué : il compte, sans coût.
-    const judged = isChosenExercise(session.exercise) && !session.outOfTime && !!session.verdict;
     return {
         ...session,
         question: null,
@@ -394,6 +396,20 @@ export function recordQuestion(session) {
         askedQuestions: session.askedQuestions + 1,
         times: session.outOfTime ? session.times : [...session.times, session.elapsedMs],
         items: [...session.items, ...items]
+    };
+}
+
+/**
+ * Ce qu'une question de Décision laisse au journal pour qu'on y revienne : sa
+ * position, la réponse jouée et son coût. Hors délai rien n'a été jugé — ni
+ * réponse ni coût, ce qui n'est pas un coût nul.
+ * @param {TrainingQuestion} question @param {QuizVerdict|null} verdict
+ */
+function decisionTrace(question, verdict) {
+    return {
+        positionId: question.positionId ?? null,
+        answer: verdict?.notation ?? '',
+        errorMp: verdict ? (verdict.errorMp ?? 0) : null
     };
 }
 

@@ -48,6 +48,16 @@ func (s *Server) trainingRoutes() []route {
 			}
 			return out, err
 		})},
+		{http.MethodPost, "/v1/training.missed", rpc(func(ctx context.Context, scope string, req storage.TrainingMissedFilter) ([]int64, error) {
+			if req.Limit < 0 || req.SessionID < 0 {
+				return nil, fmt.Errorf("%w: limit and sessionId must be 0 (no bound) or more", storage.ErrInvalid)
+			}
+			out, err := ts().Missed(ctx, scope, req)
+			if out == nil {
+				out = []int64{}
+			}
+			return out, err
+		})},
 		{http.MethodPost, "/v1/training.save", s.withIdempotency(rpc(func(ctx context.Context, scope string, req storage.TrainingSession) (trainingSaveResp, error) {
 			if req.Exercise == "" {
 				return trainingSaveResp{}, fmt.Errorf("%w: a session names its exercise", storage.ErrInvalid)

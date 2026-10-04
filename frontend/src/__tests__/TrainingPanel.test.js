@@ -21,6 +21,11 @@ vi.mock('../services/explainService.js', () => ({
     explainDecision: vi.fn(() => Promise.resolve({ theme: 'passive', costMp: 42, best: '24/18 13/11' })),
     playedFromAnalysis: () => ''
 }));
+vi.mock('../services/trainingMissed.js', () => ({
+    retakeMissed: vi.fn(),
+    missedToDeck: vi.fn(),
+    missedToCollection: vi.fn()
+}));
 vi.mock('../services/trainingTabService.js', () => ({
     startTrainingSession: vi.fn(),
     revealQuestion: vi.fn(),
@@ -48,6 +53,7 @@ import * as serviceModule from '../services/trainingTabService.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { newPlay, playHop } from '../services/quizPlay.js';
 import en from '../i18n/locales/en.json';
+import * as missedModule from '../services/trainingMissed.js';
 
 const service = vi.mocked(serviceModule);
 
@@ -476,5 +482,20 @@ describe('une question d’Évaluation (#322)', () => {
         const panel = render(TrainingPanel);
         await fireEvent.click(panel.getByTestId('training-exercise-evaluation'));
         for (const source of ['pool', 'board', 'library']) expect(panel.getByTestId(`training-source-${source}`)).toBeTruthy();
+    });
+
+    test('le détail de Décision offre de reprendre les ratés, d’en faire un paquet ou une collection', async () => {
+        trainingJournalStore.set({ decision: { sessions: [{ exercise: 'decision', numbersAsked: 5, faults: 2, deviations: 0, meanDeviation: 0, medianMs: 3000, pr: 6.5 }], numbers: [] } });
+        const panel = render(TrainingPanel);
+        expect(panel.queryByTestId('training-missed')).toBeNull();
+        await fireEvent.click(panel.getByTestId('training-summary-decision').querySelector('button.disclose'));
+        await fireEvent.click(panel.getByTestId('training-missed-retake'));
+        await fireEvent.click(panel.getByTestId('training-missed-deck'));
+        await fireEvent.click(panel.getByTestId('training-missed-collection'));
+        const missed = vi.mocked(missedModule);
+        expect(missed.retakeMissed).toHaveBeenCalledTimes(1);
+        expect(missed.missedToDeck).toHaveBeenCalledTimes(1);
+        expect(missed.missedToCollection).toHaveBeenCalledTimes(1);
+        expect(panel.getByTestId('training-missed-retake').textContent).toBe(en.training.missedRetake);
     });
 });

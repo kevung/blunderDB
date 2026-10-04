@@ -316,6 +316,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/tournaments.update                   JSON
      POST /v1/tournaments.updateComment            JSON
    training
+     POST /v1/training.missed                      JSON
      POST /v1/training.numberStats                 JSON
      POST /v1/training.save                        JSON  (Idempotency-Key)
      POST /v1/training.sessions                    JSON

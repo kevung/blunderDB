@@ -45,3 +45,15 @@ func (d *Database) LoadTrainingNumberStats(exercise string) ([]storage.TrainingN
 	}
 	return d.store.Training().NumberStats(context.Background(), "", exercise)
 }
+
+// LoadTrainingMissed returns the positions answered wrong in the journal,
+// each once, the most recently missed first — « reprendre mes ratés ». They
+// feed the browsed list, a study deck (CreateStudyDeck) or a collection.
+func (d *Database) LoadTrainingMissed(filter storage.TrainingMissedFilter) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.db == nil {
+		return nil, errNotOpened
+	}
+	return d.store.Training().Missed(context.Background(), "", filter)
+}

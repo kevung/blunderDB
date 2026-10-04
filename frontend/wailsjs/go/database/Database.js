@@ -850,6 +850,10 @@ export function LoadSessionState() {
   return window['go']['database']['Database']['LoadSessionState']();
 }
 
+export function LoadTrainingMissed(arg1) {
+  return window['go']['database']['Database']['LoadTrainingMissed'](arg1);
+}
+
 export function LoadTrainingNumberStats(arg1) {
   return window['go']['database']['Database']['LoadTrainingNumberStats'](arg1);
 }

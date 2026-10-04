@@ -441,6 +441,8 @@ export function LoadSearchHistory():Promise<Array<database.SearchHistory>>;
 
 export function LoadSessionState():Promise<database.SessionState>;
 
+export function LoadTrainingMissed(arg1:storage.TrainingMissedFilter):Promise<Array<number>>;
+
 export function LoadTrainingNumberStats(arg1:string):Promise<Array<storage.TrainingNumberStat>>;
 
 export function LoadTrainingSessions(arg1:string,arg2:number):Promise<Array<storage.TrainingSession>>;

@@ -954,7 +954,12 @@ La famille ``training`` tient le journal de l'onglet Entraînement :
 ``items``) et rend son ``id`` (``Idempotency-Key`` accepté) ;
 ``training.sessions`` relit les séances, la plus récente d'abord (``exercise``
 et ``limit`` facultatifs) ; ``training.numberStats`` agrège les items d'un
-exercice par type de nombre. Les questions, elles, sont tirées par le client.
+exercice par type de nombre ; ``training.missed`` rend les positions ratées,
+chacune une fois, la plus récemment ratée d'abord (``exercise``, ``sessionId``
+et ``limit`` facultatifs). Un item de Décision porte sa position
+(``positionId``), la réponse donnée (``answer``) et son coût en millipoints
+(``errorMp``, absent hors délai). Les questions, elles, sont tirées par le
+client.
 
 ``gammonnet.evaluate`` évalue une position nue (``position`` ou ``xgid``), sans
 rien lire ni écrire dans le tenant : avec dés, les meilleurs coups
@@ -1880,10 +1885,10 @@ Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :
        ``race_epc``
      - positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course
    * - ``list_players``, ``player_aliases``, ``player_stats``,
-       ``recurring_errors``, ``training_stats``
+       ``recurring_errors``, ``training_stats``, ``training_missed``
      - joueurs ; leurs alias et les graphies proposées ; PR global, pions,
        videau, par phase ; erreurs qui reviennent ; PR du quiz et rétention
-       Anki contre le PR réel
+       Anki contre le PR réel ; positions ratées au quiz
    * - ``head_to_head``, ``pr_by_window``, ``player_ranking``
      - face-à-face de deux joueurs ; PR par fenêtre calendaire ; classement
        par PR
