@@ -43,6 +43,8 @@ func TestCommitImportDatabase_Collections(t *testing.T) {
 	if err := d.SetupDatabase(filepath.Join(dir, "mine.db")); err != nil {
 		t.Fatal(err)
 	}
+	// Windows cannot remove a database file still open when TempDir cleans up.
+	t.Cleanup(func() { _ = d.Close() })
 	tOwn, _ := d.SavePosition(&own)
 	tReply, _ := d.SavePosition(&reply)
 	tColl, _ := d.CreateCollection("Ouvertures", "")

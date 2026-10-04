@@ -269,12 +269,14 @@ func TestQuotaCutComparisonSaysSo(t *testing.T) {
 
 // TestQuotaChargesCubeMatrixInCPUSeconds: a cube matrix spread over several
 // workers costs its wall time once per worker, the unit a sweep's workers
-// charge in, so it costs more than the request's own wall time.
+// charge in, so it costs more than the request's own wall time. The grid is
+// large enough for the search to dwarf the HTTP round trip the test's clock
+// also counts.
 func TestQuotaChargesCubeMatrixInCPUSeconds(t *testing.T) {
 	ts, srv := newQuotaTestServer(t, TenantQuotas{AnalysisSecondsPerDay: 3600})
 	srv.engineWorkers = 4
 	start := time.Now()
-	resp := post(t, ts, "/v1/gammonnet.cubeMatrix", cubeMatrixReq{XGID: "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10", MatchLength: 3, Ply: 0})
+	resp := post(t, ts, "/v1/gammonnet.cubeMatrix", cubeMatrixReq{XGID: "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10", MatchLength: 9, Ply: 0})
 	resp.Body.Close()
 	wall := time.Since(start)
 	if resp.StatusCode != http.StatusOK {

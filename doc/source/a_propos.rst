@@ -86,7 +86,7 @@ L'essentiel :
   <https://github.com/PileOfCells/backgammon-tournoi>`__) : il tient le format,
   les appariements, les tableaux et le classement d'un tournoi dirigé depuis
   blunderDB. Sa `documentation
-  <https://pileofcells.github.io/backgammon-tournoi/>`__ est publiée à part ;
+  <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ est publiée à part ;
 
 * la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross* ;
 
