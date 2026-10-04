@@ -147,3 +147,39 @@ func TestWallSaysWhoPlays(t *testing.T) {
 		}
 	}
 }
+
+// A Swiss by rounds gives an odd player out a bye: the wall says who sits the round out and
+// when they play again.
+func TestWallSaysWhoSitsASwissRoundOut(t *testing.T) {
+	ctx, svc, raw := openService(t)
+	tid, err := raw.Tournaments().Create(ctx, "", "Club", "2026-10-04", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := `{"name":"Club","tables":{"count":4},"phases":[` +
+		`{"kind":"swiss_lives","length":5,"lives":2,"mode":"rounds","name":"Suisse"}]}`
+	if err := svc.CreateDirection(ctx, tid, cfg, 5); err != nil {
+		t.Fatal(err)
+	}
+	for i, p := range names("P", 5) {
+		if _, err := svc.AddParticipant(ctx, tid, p, "", float64(1600-10*i)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if _, err := svc.ConfirmAllProposals(ctx, tid); err != nil {
+		t.Fatal(err)
+	}
+	page, err := svc.DirectionPageHTML(ctx, tid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	byes := 0
+	for _, n := range names("P", 5) {
+		if statusOf(page, n) == "exempté(e) — rejoue à la ronde 2" {
+			byes++
+		}
+	}
+	if byes != 1 {
+		t.Errorf("%d players read as sitting round 1 out, want 1\n%s", byes, page)
+	}
+}

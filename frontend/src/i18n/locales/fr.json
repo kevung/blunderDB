@@ -2088,6 +2088,8 @@
             "draw_barrage": "Barrage {section} : {players} joueurs pour {spots} place(s)",
             "draw_bracket": "Tableau de {n} places",
             "draw_block": "Bloc {n} : {players} groupes",
+            "repechage": "Repêchage {section}",
+            "repechage_tied": "Repêchage {section} ({players} ex æquo, au choix)",
             "phase": "{text}"
         },
         "section": {
@@ -2151,6 +2153,7 @@
             "bye": "Exemption : {player}",
             "draw": "Tirage : {where}",
             "nextPhase": "Phase suivante : {where}",
+            "repechage": "{b} remplace {a} — {where}",
             "finish": "Clore le tournoi",
             "errorConfirm": "Impossible de lancer cette proposition.",
             "errorManual": "Impossible de lancer ce match.",
@@ -2308,6 +2311,7 @@
             "bye": "Exemption : {player}",
             "draw": "Tirage : {where}",
             "nextPhase": "Phase suivante",
+            "repechage": "{b} repêché(e) à la place de {a} ({section})",
             "configChanged": "Configuration modifiée",
             "tableChanged": "Déplacé table {n}",
             "lengthChanged": "Longueur portée à {n}",
@@ -2539,7 +2543,11 @@
                 "status": "Est-ce que je joue ?",
                 "bye": "exempté(e) — entre au tour {round}",
                 "eliminated": "éliminé(e)",
-                "qualified": "qualifié(e) — {phase}"
+                "qualified": "qualifié(e) — {phase}",
+                "winner": "vainqueur",
+                "byeRound": "exempté(e) — rejoue à la ronde {round}",
+                "undecided": "pas encore fixé — {phase}",
+                "withdrawn": "retiré(e)"
             },
             "trashConfirm": "Supprimer l'événement « {name} » ? Ses épreuves restent, détachées."
         },

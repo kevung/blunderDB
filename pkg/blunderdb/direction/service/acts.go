@@ -109,8 +109,32 @@ func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) (
 	if err != nil {
 		return err
 	}
-	for _, a := range room.propose(dir, now) {
+	proposals := room.propose(dir, now)
+	// held: a repechage between tied candidates waits for the director's choice, and so does
+	// the passage it would change — confirming it now would turn the place into a bye.
+	held := false
+	for i, again := 0, 0; i < len(proposals); i++ {
+		a := proposals[i]
 		if a.Kind == tournoi.ActWait {
+			continue
+		}
+		if a.Kind == tournoi.ActRepechage {
+			if a.Label.Players > 1 {
+				held = true
+				continue
+			}
+			if err := confirmAt(ctx, dir, a, now); err != nil {
+				return err
+			}
+			// The repechage changes who enters the next phase: the rest of the queue is
+			// proposed again over the new state.
+			if again++; again > len(dir.State().Order) {
+				return fmt.Errorf("direction: repechage proposed again without end")
+			}
+			proposals, i = room.propose(dir, now), -1
+			continue
+		}
+		if held && (a.Kind == tournoi.ActNextPhase || a.Kind == tournoi.ActDraw) {
 			continue
 		}
 		if a.Kind == tournoi.ActFinish {

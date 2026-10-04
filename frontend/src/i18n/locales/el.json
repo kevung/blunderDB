@@ -2088,6 +2088,8 @@
             "draw_barrage": "Μπαράζ {section}: {players} παίκτες για {spots} θέση(εις)",
             "draw_bracket": "Πίνακας {n} θέσεων",
             "draw_block": "Μπλοκ {n}: {players} όμιλοι",
+            "repechage": "Επαναφορά {section}",
+            "repechage_tied": "Επαναφορά {section} ({players} ισόβαθμοι, κατ' επιλογή)",
             "phase": "{text}"
         },
         "section": {
@@ -2151,6 +2153,7 @@
             "bye": "Απαλλαγή: {player}",
             "draw": "Κλήρωση: {where}",
             "nextPhase": "Επόμενη φάση: {where}",
+            "repechage": "{b} στη θέση του/της {a} — {where}",
             "finish": "Κλείσιμο τουρνουά",
             "errorConfirm": "Αδύνατη η έναρξη αυτής της πρότασης.",
             "errorManual": "Αδύνατη η έναρξη αυτού του αγώνα.",
@@ -2308,6 +2311,7 @@
             "bye": "Απαλλαγή: {player}",
             "draw": "Κλήρωση: {where}",
             "nextPhase": "Επόμενη φάση",
+            "repechage": "{b} επανήλθε στη θέση του/της {a} ({section})",
             "configChanged": "Η διαμόρφωση άλλαξε",
             "tableChanged": "Μεταφέρθηκε στο τραπέζι {n}",
             "lengthChanged": "Μήκος σε {n}",
@@ -2539,7 +2543,11 @@
                 "status": "Παίζω;",
                 "bye": "απαλλαγή — μπαίνει στον γύρο {round}",
                 "eliminated": "αποκλείστηκε",
-                "qualified": "προκρίθηκε — {phase}"
+                "qualified": "προκρίθηκε — {phase}",
+                "winner": "νικητής/τρια",
+                "byeRound": "απαλλαγή — παίζει ξανά στον γύρο {round}",
+                "undecided": "δεν έχει κριθεί ακόμη — {phase}",
+                "withdrawn": "αποσύρθηκε"
             },
             "trashConfirm": "Διαγραφή της διοργάνωσης «{name}»; Τα αγωνίσματά της μένουν, αποσυνδεδεμένα."
         },

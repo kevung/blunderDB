@@ -24,7 +24,7 @@ export function renderLabel(t, label) {
     if (!label || !label.kind) return '';
     /** @type {string} */
     const sub = label.sub ? renderLabel(t, label.sub) : '';
-    const key = `direction.label.${label.kind}`;
+    const key = `direction.label.${labelKey(label)}`;
     /** @type {string} */
     const out = t(key, {
         n: label.n ?? 0,
@@ -37,6 +37,15 @@ export function renderLabel(t, label) {
         sub
     });
     return out === key ? label.kind : out;
+}
+
+/**
+ * La clé d'un libellé : un repêchage entre ex æquo se dit autrement, puisque le directeur choisit.
+ *
+ * @param {DirectionLabel} label
+ */
+function labelKey(label) {
+    return label.kind === 'repechage' && (label.players ?? 0) > 1 ? 'repechage_tied' : label.kind;
 }
 
 /**
@@ -131,6 +140,9 @@ export function proposalLabel(t, a, playerName = (id) => id) {
             return t('direction.proposals.draw', { where });
         case 'next_phase':
             return t('direction.proposals.nextPhase', { where });
+        case 'repechage':
+            // A est le qualifié retiré, B celui qui prendrait sa place.
+            return t('direction.proposals.repechage', { a: playerName(a.a), b: playerName(a.b), where });
         case 'finish':
             return t('direction.proposals.finish');
         case 'cancel_match':

@@ -2088,6 +2088,8 @@
             "draw_barrage": "Playoff {section}: {players} players for {spots} place(s)",
             "draw_bracket": "Bracket of {n} places",
             "draw_block": "Block {n}: {players} groups",
+            "repechage": "Repechage {section}",
+            "repechage_tied": "Repechage {section} ({players} tied, director's choice)",
             "phase": "{text}"
         },
         "section": {
@@ -2151,6 +2153,7 @@
             "bye": "Bye: {player}",
             "draw": "Draw: {where}",
             "nextPhase": "Next phase: {where}",
+            "repechage": "{b} replaces {a} — {where}",
             "finish": "Close the tournament",
             "errorConfirm": "Could not launch this proposal.",
             "errorManual": "Could not launch this match.",
@@ -2308,6 +2311,7 @@
             "bye": "Bye: {player}",
             "draw": "Draw: {where}",
             "nextPhase": "Next phase",
+            "repechage": "{b} brought back in place of {a} ({section})",
             "configChanged": "Configuration changed",
             "tableChanged": "Moved to table {n}",
             "lengthChanged": "Length set to {n}",
@@ -2539,7 +2543,11 @@
                 "status": "Am I playing?",
                 "bye": "bye — enters at round {round}",
                 "eliminated": "eliminated",
-                "qualified": "qualified — {phase}"
+                "qualified": "qualified — {phase}",
+                "winner": "winner",
+                "byeRound": "bye — plays again in round {round}",
+                "undecided": "not decided yet — {phase}",
+                "withdrawn": "withdrawn"
             },
             "trashConfirm": "Delete the event “{name}”? Its competitions remain, detached."
         },

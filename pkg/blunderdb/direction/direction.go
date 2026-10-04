@@ -13,7 +13,7 @@ import (
 // EngineVersion is the Nicomaque tag this build embeds. It is stored with every Direction and
 // shown by the credit button, so a replay problem can be traced to the engine that wrote it.
 // Keep it in step with the require line in go.mod.
-const EngineVersion = "v0.4.1"
+const EngineVersion = "v0.5.0"
 
 // State is where a Direction stands in its life.
 type State string

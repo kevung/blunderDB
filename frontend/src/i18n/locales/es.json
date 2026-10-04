@@ -2088,6 +2088,8 @@
             "draw_barrage": "Desempate {section}: {players} jugadores para {spots} plaza(s)",
             "draw_bracket": "Cuadro de {n} plazas",
             "draw_block": "Bloque {n}: {players} grupos",
+            "repechage": "Repesca {section}",
+            "repechage_tied": "Repesca {section} ({players} empatados, a elegir)",
             "phase": "{text}"
         },
         "section": {
@@ -2151,6 +2153,7 @@
             "bye": "Exención: {player}",
             "draw": "Sorteo: {where}",
             "nextPhase": "Fase siguiente: {where}",
+            "repechage": "{b} sustituye a {a} — {where}",
             "finish": "Cerrar el torneo",
             "errorConfirm": "No se ha podido lanzar esta propuesta.",
             "errorManual": "No se ha podido lanzar esta partida.",
@@ -2308,6 +2311,7 @@
             "bye": "Exención: {player}",
             "draw": "Sorteo: {where}",
             "nextPhase": "Fase siguiente",
+            "repechage": "{b} repescado/a en lugar de {a} ({section})",
             "configChanged": "Configuración modificada",
             "tableChanged": "Trasladada a la mesa {n}",
             "lengthChanged": "Longitud fijada en {n}",
@@ -2539,7 +2543,11 @@
                 "status": "¿Juego yo?",
                 "bye": "exento/a — entra en la ronda {round}",
                 "eliminated": "eliminado/a",
-                "qualified": "clasificado/a — {phase}"
+                "qualified": "clasificado/a — {phase}",
+                "winner": "ganador/a",
+                "byeRound": "exento/a — vuelve a jugar en la ronda {round}",
+                "undecided": "aún sin decidir — {phase}",
+                "withdrawn": "retirado/a"
             },
             "trashConfirm": "¿Eliminar el evento «{name}»? Sus pruebas se mantienen, desvinculadas."
         },

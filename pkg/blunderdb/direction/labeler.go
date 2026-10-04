@@ -129,7 +129,12 @@ func (l *CatalogLabeler) Label(x tournoi.Label) string {
 	if x.Sub != nil {
 		sub = l.Label(*x.Sub)
 	}
-	out, ok := l.C.t("label."+string(x.Kind), map[string]any{
+	key := string(x.Kind)
+	if x.Kind == tournoi.LabelRepechage && x.Players > 1 {
+		// Between tied candidates the director chooses: the label says so.
+		key = "repechage_tied"
+	}
+	out, ok := l.C.t("label."+key, map[string]any{
 		"n": x.N, "losses": x.Losses, "match": x.Match, "players": x.Players,
 		"spots": x.Spots, "section": l.SectionName(x.Section), "text": x.Text, "sub": sub,
 	})

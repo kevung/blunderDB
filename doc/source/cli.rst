@@ -1807,8 +1807,8 @@ tournament — Lire un tournoi dirigé
 
 Lit un tournoi dirigé sans interface graphique. Diriger un tournoi de façon
 interactive est le rôle de la console du moteur Nicomaque ; ces
-sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
-écrit.
+sous-commandes **lisent**, aucune n'attend de saisie, et seules ``move`` et
+``confirm`` écrivent.
 
 .. code-block:: bash
 
@@ -1861,6 +1861,12 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
   raison). C'est la grille que la vue
   *Toutes les tables* de la Direction affiche ; les tables sont groupées par
   salle quand l'événement en a, et nommées quand elles ont un nom.
+* ``proposals --id N [--format text|json]`` — La file des propositions du
+  moteur, numérotée : matchs, tirages, passage de phase, repêchage d'un qualifié
+  de poule retiré.
+* ``confirm --id N --n K [--format text|json]`` — Confirme la proposition numéro
+  K de ``proposals``, comme *Lancer* dans le panneau, puis affiche la file qui
+  suit.
 * ``tables --rencontre N|--tournament N [--format text|json]`` — Les propriétés
   des tables (nom, salle, réservée, attitrée à) et les salles où joue chaque
   épreuve d'un événement (``--rencontre``), ou les propriétés d'une épreuve qui
@@ -1885,6 +1891,8 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seule ``move``
    ./blunderdb tournament move --db base.db --id 3 --match m4 --table 7
    ./blunderdb tournament hall --db base.db --rencontre 1
    ./blunderdb tournament tables --db base.db --rencontre 1
+   ./blunderdb tournament proposals --db base.db --id 3
+   ./blunderdb tournament confirm --db base.db --id 3 --n 1
 
 trash — La corbeille
 ---------------------

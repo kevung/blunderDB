@@ -2088,6 +2088,8 @@
             "draw_barrage": "Karsinta {section}: {players} pelaajaa {spots} paikalle",
             "draw_bracket": "{n} paikan pudotuspelikaavio",
             "draw_block": "Lohko {n}: {players} ryhmää",
+            "repechage": "Varasija {section}",
+            "repechage_tied": "Varasija {section} ({players} tasoissa, valittavissa)",
             "phase": "{text}"
         },
         "section": {
@@ -2151,6 +2153,7 @@
             "bye": "Vapaakierros: {player}",
             "draw": "Arvonta: {where}",
             "nextPhase": "Seuraava vaihe: {where}",
+            "repechage": "{b} korvaa pelaajan {a} — {where}",
             "finish": "Päätä turnaus",
             "errorConfirm": "Ehdotuksen aloitus epäonnistui.",
             "errorManual": "Ottelun aloitus epäonnistui.",
@@ -2308,6 +2311,7 @@
             "bye": "Vapaakierros: {player}",
             "draw": "Arvonta: {where}",
             "nextPhase": "Seuraava vaihe",
+            "repechage": "{b} nostettu pelaajan {a} tilalle ({section})",
             "configChanged": "Asetuksia muutettu",
             "tableChanged": "Siirretty pöytään {n}",
             "lengthChanged": "Pituudeksi {n}",
@@ -2539,7 +2543,11 @@
                 "status": "Pelaanko?",
                 "bye": "vapaakierros — tulee mukaan kierroksella {round}",
                 "eliminated": "pudonnut",
-                "qualified": "jatkoon — {phase}"
+                "qualified": "jatkoon — {phase}",
+                "winner": "voittaja",
+                "byeRound": "vapaakierros — pelaa taas kierroksella {round}",
+                "undecided": "ei vielä ratkennut — {phase}",
+                "withdrawn": "vetäytynyt"
             },
             "trashConfirm": "Poistetaanko tapahtuma ”{name}”? Sen kilpailut jäävät, irrotettuina."
         },

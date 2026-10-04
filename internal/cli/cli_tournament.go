@@ -57,6 +57,8 @@ func (cli *CLI) tournamentHandlers() map[string]func([]string) error {
 		"move":      cli.runTournamentMove,
 		"hall":      cli.runTournamentHall,
 		"tables":    cli.runTournamentTables,
+		"proposals": cli.runTournamentProposals,
+		"confirm":   cli.runTournamentConfirm,
 	}
 }
 
@@ -77,7 +79,8 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println()
 	fmt.Println("Read a directed tournament without a graphical interface. Directing one")
 	fmt.Println("interactively is the engine's own console; these sub-commands read, except")
-	fmt.Println("`move`, which changes the table of a running match.")
+	fmt.Println("`move`, which changes the table of a running match, and `confirm`, which")
+	fmt.Println("records one proposal of the queue.")
 	fmt.Println()
 	fmt.Println("Sub-commands:")
 	fmt.Println("  list       List the directed tournaments of the database")
@@ -89,6 +92,8 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  move       Move a running match to another table, swapping with its occupant")
 	fmt.Println("  hall       Print a Rencontre's tables, every event together, and its proposals")
 	fmt.Println("  tables     Print the table properties (name, room, reserved, kept for) and rooms")
+	fmt.Println("  proposals  Print the engine's proposals, numbered")
+	fmt.Println("  confirm    Confirm one proposal by its number (a match, a draw, a repechage...)")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb tournament list --db base.db")
@@ -101,6 +106,8 @@ func (cli *CLI) printTournamentUsage() {
 	fmt.Println("  blunderdb tournament move --db base.db --id 3 --match m4 --table 7")
 	fmt.Println("  blunderdb tournament hall --db base.db --rencontre 1")
 	fmt.Println("  blunderdb tournament tables --db base.db --rencontre 1")
+	fmt.Println("  blunderdb tournament proposals --db base.db --id 3")
+	fmt.Println("  blunderdb tournament confirm --db base.db --id 3 --n 1")
 }
 
 func tournamentFlagSet(sub, summary string, examples ...string) (*flag.FlagSet, *string) {

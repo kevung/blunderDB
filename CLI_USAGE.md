@@ -3841,6 +3841,27 @@ Examples:
   blunderdb stats windows --db database.db --player "Alice" --window quarter --format json
 ```
 
+### `blunderdb tournament confirm`
+
+```
+Usage: blunderdb tournament confirm [options]
+
+Confirm one proposal, by its number in `tournament proposals`, and print the queue that follows.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Tournament ID (required)
+  -n int
+    	Number of the proposal, as printed by the proposals sub-command (required)
+
+Examples:
+  blunderdb tournament confirm --db base.db --id 3 --n 1
+```
+
 ### `blunderdb tournament export`
 
 ```
@@ -3941,6 +3962,26 @@ Examples:
   blunderdb tournament page --db base.db --id 3 > affichage.html
   blunderdb tournament page --db base.db --id 3 --out /tmp/affichage
   blunderdb tournament page --db base.db --rencontre 1 --out /tmp/salle
+```
+
+### `blunderdb tournament proposals`
+
+```
+Usage: blunderdb tournament proposals [options]
+
+Print the engine's proposals for a tournament, numbered for `tournament confirm`.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Tournament ID (required)
+
+Examples:
+  blunderdb tournament proposals --db base.db --id 3
+  blunderdb tournament proposals --db base.db --id 3 --format json
 ```
 
 ### `blunderdb tournament ranking`

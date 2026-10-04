@@ -2088,6 +2088,8 @@
             "draw_barrage": "Entscheidung {section}: {players} Spieler für {spots} Platz/Plätze",
             "draw_bracket": "Tableau mit {n} Plätzen",
             "draw_block": "Block {n}: {players} Gruppen",
+            "repechage": "Nachrücken {section}",
+            "repechage_tied": "Nachrücken {section} ({players} gleichauf, nach Wahl)",
             "phase": "{text}"
         },
         "section": {
@@ -2151,6 +2153,7 @@
             "bye": "Freilos: {player}",
             "draw": "Auslosung: {where}",
             "nextPhase": "Nächste Phase: {where}",
+            "repechage": "{b} ersetzt {a} — {where}",
             "finish": "Turnier abschließen",
             "errorConfirm": "Dieser Vorschlag konnte nicht gestartet werden.",
             "errorManual": "Diese Partie konnte nicht gestartet werden.",
@@ -2308,6 +2311,7 @@
             "bye": "Freilos: {player}",
             "draw": "Auslosung: {where}",
             "nextPhase": "Nächste Phase",
+            "repechage": "{b} rückt für {a} nach ({section})",
             "configChanged": "Konfiguration geändert",
             "tableChanged": "An Tisch {n} verlegt",
             "lengthChanged": "Länge auf {n} gesetzt",
@@ -2539,7 +2543,11 @@
                 "status": "Spiele ich?",
                 "bye": "Freilos — steigt in Runde {round} ein",
                 "eliminated": "ausgeschieden",
-                "qualified": "qualifiziert — {phase}"
+                "qualified": "qualifiziert — {phase}",
+                "winner": "Sieger",
+                "byeRound": "Freilos — spielt wieder in Runde {round}",
+                "undecided": "noch nicht entschieden — {phase}",
+                "withdrawn": "zurückgezogen"
             },
             "trashConfirm": "Veranstaltung „{name}“ löschen? Ihre Wettbewerbe bleiben, abgelöst."
         },

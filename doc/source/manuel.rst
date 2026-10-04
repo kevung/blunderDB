@@ -1844,7 +1844,8 @@ Une proposition se confirme d'**un clic** sur *Lancer*. **Tout lancer** confirme
 en deux clics les propositions qui ont une table, après en avoir montré la
 liste ; *Confirmer* est en tête de cette liste. Les appariements sans table
 restent dans la file, marqués « aucune table libre » : en mode rondes, une ronde
-reste ouverte tant que tous ses joueurs n'y sont pas engagés. « Ignorer pour
+reste ouverte tant que tous ses joueurs n'y sont pas engagés. Un repêchage entre
+ex æquo attend aussi le choix du directeur, et le passage de phase avec lui. « Ignorer pour
 l'instant » n'écrit rien : le moteur est déterministe, et la proposition revient
 identique au prochain appel. *Apparier à la main* reste offert en permanence — le
 moteur propose, le directeur décide.
@@ -2014,6 +2015,13 @@ Corriger la fiche d'un joueur retiré — son nom, son club, sa cote — le lais
 retiré. Son retour est un geste à part : **Réinscrire**, sur sa ligne. Il est de
 nouveau apparié, avec les résultats et les vies qu'il avait en partant ; les
 matchs perdus par forfait à son retrait le restent.
+
+Un qualifié de poule qui se retire avant le tirage de la phase suivante laisse
+une place. La file propose alors un **repêchage** : le suivant de sa poule, ni
+qualifié ni retiré, au plus grand nombre de victoires de poule, prend sa place.
+Entre ex æquo, la file propose chacun d'eux et le directeur choisit ; « Phase
+suivante » sans repêchage laisse la place en exemption. Une fois le tableau tiré,
+le retiré perd son match par forfait.
 
 Arbres, emplacements, classement, historique
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -2230,15 +2238,19 @@ en était. Une
 reste celle d'avant.
 
 Sous la rubrique « Est-ce que je joue ? », la page d'une épreuve et la page
-murale de l'événement nomment les joueurs dont le sort est réglé : « éliminé(e) »
-dès qu'il ne reste plus de match à jouer, « qualifié(e) » avec le nom de la phase
-suivante quand une phase est terminée, et « exempté(e) — entre au tour N » pour
-un joueur tiré sans adversaire dans le tableau, tant qu'il n'a pas joué. Le
-classement prend le relais une fois le tournoi terminé.
+murale de l'événement nomment les joueurs qui ne jouent pas en ce moment, tels que
+le moteur les situe : « éliminé(e) » dès qu'il ne reste plus de match à jouer,
+« qualifié(e) » avec le nom de la phase où le joueur entre, « pas encore fixé »
+quand son sort dépend de la fin de la phase ou d'un repêchage que le directeur n'a
+pas tranché, « exempté(e) — entre au tour N » pour un joueur tiré sans adversaire
+dans le tableau, tant qu'il n'a pas joué, « exempté(e) — rejoue à la ronde N »
+pour l'exempt d'une ronde suisse, et « vainqueur ». Le classement prend le relais
+une fois le tournoi terminé.
 
 Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``
-et ``export`` ; ``ranking --season`` cumule les tournois clos d'un événement ou
+et ``export`` ; ``proposals`` affiche la file du moteur, numérotée, et ``confirm``
+en confirme une, repêchage compris ; ``ranking --season`` cumule les tournois clos d'un événement ou
 d'une période en un classement de saison, par un barème de points par place et,
 au choix, un Elo de club (deux inscrits de même nom dans une même épreuve
 close font refuser le classement, qui connaît une personne par son nom) ; ``page --rencontre`` écrit la page murale d'un événement au lieu
