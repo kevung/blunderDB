@@ -214,6 +214,26 @@ func (d *Database) SetCollectionFilter(collectionID int64, query string) error {
 	return cs.SetFilterQuery(context.Background(), "", collectionID, query)
 }
 
+// FreezeCollection turns a LIVING collection into a hand-made one holding the
+// positions its query selects now. A collection that is not living is an error:
+// there is nothing to freeze, and answering 0 would read as "frozen empty".
+func (d *Database) FreezeCollection(collectionID int64) (int, error) {
+	filters, living, err := d.livingFilters(collectionID)
+	if err != nil {
+		return 0, err
+	}
+	if !living {
+		return 0, fmt.Errorf("collection %d is not living: nothing to freeze", collectionID)
+	}
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return 0, fmt.Errorf("no database is currently open")
+	}
+	return storage.FreezeCollection(context.Background(), d.store, "", collectionID, filters)
+}
+
 // livingFilters resolves the query of a LIVING collection through the SAME
 // parser the command bar runs, so a saved filter can never mean something a
 // typed query would not. living is false for a hand-made list.

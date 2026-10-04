@@ -635,6 +635,8 @@
         "livingNeedsSearch": "Run a search first: it is what the collection will keep.",
         "livingSet": "Living collection: {query}",
         "livingCleared": "Collection given back its hand-made list.",
+        "freezeTitle": "Freeze: keep today's result as an ordinary collection.",
+        "frozen": "Collection frozen on {count} position(s).",
         "newButton": "New collection"
     },
     "tournament": {

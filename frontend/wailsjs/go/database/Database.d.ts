@@ -247,6 +247,8 @@ export function FinishedMatches(arg1:number,arg2:number):Promise<Array<service.T
 
 export function FreeParticipants(arg1:number):Promise<Array<tournoi.Player>>;
 
+export function FreezeCollection(arg1:number):Promise<number>;
+
 export function GetAllAnkiDecks():Promise<Array<domain.AnkiDeck>>;
 
 export function GetAllCollections():Promise<Array<database.Collection>>;
