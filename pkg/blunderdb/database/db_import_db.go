@@ -272,8 +272,9 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 			continue
 		}
 
-		importPositionJSON, err := positionIdentityJSON(importPosition)
-		if err != nil {
+		// Assigned, not declared: the rollback defer reads this very err.
+		var importPositionJSON string
+		if importPositionJSON, err = positionIdentityJSON(importPosition); err != nil {
 			return nil, err
 		}
 
@@ -643,8 +644,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			continue
 		}
 
-		importPositionJSON, err := positionIdentityJSON(importPosition)
-		if err != nil {
+		// Assigned, not declared: the rollback defer reads this very err.
+		var importPositionJSON string
+		if importPositionJSON, err = positionIdentityJSON(importPosition); err != nil {
 			return nil, err
 		}
 
@@ -661,20 +663,18 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		}
 
 		if existsInCurrent {
-			merged, mergeErr := run.mergeExisting(id, existingPositionID, sourceIndividual)
-			if mergeErr != nil {
-				err = mergeErr
+			var changed bool
+			if changed, err = run.mergeExisting(id, existingPositionID, sourceIndividual); err != nil {
 				return nil, err
 			}
-			if merged {
+			if changed {
 				positionsMerged++
 			} else {
 				positionsSkipped++
 			}
 		} else {
-			added, addErr := run.addNew(id, &importPosition, sourceIndividual)
-			if addErr != nil {
-				err = addErr
+			var added bool
+			if added, err = run.addNew(id, &importPosition, sourceIndividual); err != nil {
 				return nil, err
 			}
 			if added {
