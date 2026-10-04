@@ -96,6 +96,8 @@ export function processCommand(command) {
         openModal(MODAL.TOUR);
     } else if (command === 'trash') {
         openModal(MODAL.TRASH);
+    } else if (command === 'resume') {
+        openModal(MODAL.RESUME_BATCH);
     } else if (command === 'demo') {
         callbacks.onLoadDemo?.();
     } else if (command === 'e') {

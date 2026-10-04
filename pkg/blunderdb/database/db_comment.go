@@ -2,6 +2,8 @@ package database
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"iter"
 
@@ -171,4 +173,27 @@ func (d *Database) SearchComments(query string) ([]CommentEntry, error) {
 		return nil, err
 	}
 	return collectComments(cs.Search(context.Background(), "", query))
+}
+
+// PositionView is what the board needs to display one position: its analysis
+// (nil when it has none) and its comment, in a single binding call.
+type PositionView struct {
+	Analysis *PositionAnalysis `json:"analysis"`
+	Comment  string            `json:"comment"`
+}
+
+// LoadPositionView fuses LoadAnalysis and LoadComment: one IPC round trip per
+// displayed position. The comment is exactly what LoadComment returns, so the
+// two follow the same format; a position without analysis yields a nil
+// Analysis rather than an error.
+func (d *Database) LoadPositionView(positionID int64) (*PositionView, error) {
+	analysis, err := d.LoadAnalysis(positionID)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, err
+	}
+	comment, err := d.LoadComment(positionID)
+	if err != nil {
+		return nil, err
+	}
+	return &PositionView{Analysis: analysis, Comment: comment}, nil
 }

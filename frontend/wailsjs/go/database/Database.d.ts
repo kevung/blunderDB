@@ -429,6 +429,8 @@ export function LoadPosition(arg1:number):Promise<domain.Position>;
 
 export function LoadPositionIDsByFilters(arg1:domain.SearchFilters):Promise<Array<number>>;
 
+export function LoadPositionView(arg1:number):Promise<database.PositionView>;
+
 export function LoadPositionsByFilters(arg1:domain.SearchFilters):Promise<Array<domain.Position>>;
 
 export function LoadPositionsByFiltersCore(arg1:domain.SearchFilters,arg2:storage.ListOpts):Promise<Array<domain.Position>>;

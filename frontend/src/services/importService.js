@@ -849,6 +849,35 @@ async function importThroughPipeline(paths, remaining) {
     }
 }
 
+// The files of an unfinished batch are chosen again, as `--dir` does on the
+// command line; the batch's journal decides which of them are read. Both
+// pickers return null when the user cancels or nothing importable is found.
+export async function pickFilesToResumeFromFolder() {
+    try {
+        const dirPath = await OpenPositionFolderDialog();
+        if (!dirPath) return null;
+        const files = await CollectImportableFiles(dirPath);
+        if (!files || files.length === 0) {
+            setStatusBarMessage(tMsg('status.noImportableFolder'));
+            return null;
+        }
+        return files;
+    } catch (error) {
+        logger.error('could not choose the folder to resume from:', error);
+        return null;
+    }
+}
+
+export async function pickFilesToResume() {
+    try {
+        const files = await OpenPositionFilesDialog();
+        return files && files.length > 0 ? files : null;
+    } catch (error) {
+        logger.error('could not choose the files to resume from:', error);
+        return null;
+    }
+}
+
 // resumeImportBatch continues a batch an earlier run left unfinished: the
 // files its journal already decided (same path, size and modification time,
 // or same content) are not read again.

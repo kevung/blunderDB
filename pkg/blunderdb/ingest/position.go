@@ -29,7 +29,7 @@ func MapXGPPosition(path string) ([]PositionGraph, error) {
 	}
 	match, err := xgparser.ParseXGFromFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("ingest: parse xgp file: %w", err)
+		return nil, xgParseError(path, "parse xgp file", err)
 	}
 	if len(match.Games) == 0 || len(match.Games[0].Moves) == 0 {
 		return nil, fmt.Errorf("ingest: xgp file contains no position data")

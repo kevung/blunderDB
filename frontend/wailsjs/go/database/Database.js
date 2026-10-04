@@ -826,6 +826,10 @@ export function LoadPositionIDsByFilters(arg1) {
   return window['go']['database']['Database']['LoadPositionIDsByFilters'](arg1);
 }
 
+export function LoadPositionView(arg1) {
+  return window['go']['database']['Database']['LoadPositionView'](arg1);
+}
+
 export function LoadPositionsByFilters(arg1) {
   return window['go']['database']['Database']['LoadPositionsByFilters'](arg1);
 }
