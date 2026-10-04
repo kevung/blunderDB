@@ -2527,7 +2527,11 @@
             "noChange": "Nichts: seine Tische sind bereits die der Veranstaltung.",
             "confirm": "Zuordnen",
             "wall": {
-                "rounds": "{n} Runden angekündigt"
+                "rounds": "{n} Runden angekündigt",
+                "status": "Spiele ich?",
+                "bye": "Freilos — steigt in Runde {round} ein",
+                "eliminated": "ausgeschieden",
+                "qualified": "qualifiziert — {phase}"
             },
             "trashConfirm": "Veranstaltung „{name}“ löschen? Ihre Wettbewerbe bleiben, abgelöst."
         },

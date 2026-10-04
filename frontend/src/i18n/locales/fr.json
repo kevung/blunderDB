@@ -2527,7 +2527,11 @@
             "noChange": "Rien : ses tables sont déjà celles de l'événement.",
             "confirm": "Rattacher",
             "wall": {
-                "rounds": "{n} rondes annoncées"
+                "rounds": "{n} rondes annoncées",
+                "status": "Est-ce que je joue ?",
+                "bye": "exempté(e) — entre au tour {round}",
+                "eliminated": "éliminé(e)",
+                "qualified": "qualifié(e) — {phase}"
             },
             "trashConfirm": "Supprimer l'événement « {name} » ? Ses épreuves restent, détachées."
         },

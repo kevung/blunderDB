@@ -2206,6 +2206,13 @@ en était. Une
 épreuve sans tableau — une phase suisse, par exemple — n'a pas d'arbre et la page
 reste celle d'avant.
 
+Sous la rubrique « Est-ce que je joue ? », la page d'une épreuve et la page
+murale de l'événement nomment les joueurs dont le sort est réglé : « éliminé(e) »
+dès qu'il ne reste plus de match à jouer, « qualifié(e) » avec le nom de la phase
+suivante quand une phase est terminée, et « exempté(e) — entre au tour N » pour
+un joueur tiré sans adversaire dans le tableau, tant qu'il n'a pas joué. Le
+classement prend le relais une fois le tournoi terminé.
+
 Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``
 et ``export`` ; ``ranking --season`` cumule les tournois clos d'un événement ou

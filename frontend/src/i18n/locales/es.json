@@ -2527,7 +2527,11 @@
             "noChange": "Nada: sus mesas ya son las del evento.",
             "confirm": "Vincular",
             "wall": {
-                "rounds": "{n} rondas anunciadas"
+                "rounds": "{n} rondas anunciadas",
+                "status": "¿Juego yo?",
+                "bye": "exento/a — entra en la ronda {round}",
+                "eliminated": "eliminado/a",
+                "qualified": "clasificado/a — {phase}"
             },
             "trashConfirm": "¿Eliminar el evento «{name}»? Sus pruebas se mantienen, desvinculadas."
         },

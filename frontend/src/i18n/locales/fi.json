@@ -2527,7 +2527,11 @@
             "noChange": "Ei mitään: sen pöydät ovat jo tapahtuman pöydät.",
             "confirm": "Liitä",
             "wall": {
-                "rounds": "{n} kierrosta ilmoitettu"
+                "rounds": "{n} kierrosta ilmoitettu",
+                "status": "Pelaanko?",
+                "bye": "vapaakierros — tulee mukaan kierroksella {round}",
+                "eliminated": "pudonnut",
+                "qualified": "jatkoon — {phase}"
             },
             "trashConfirm": "Poistetaanko tapahtuma ”{name}”? Sen kilpailut jäävät, irrotettuina."
         },

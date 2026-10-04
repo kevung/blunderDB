@@ -2527,7 +2527,11 @@
             "noChange": "なし：テーブルはすでにイベントのものです。",
             "confirm": "追加",
             "wall": {
-                "rounds": "{n} ラウンド発表済み"
+                "rounds": "{n} ラウンド発表済み",
+                "status": "出場しますか？",
+                "bye": "不戦 — 第{round}回戦から参加",
+                "eliminated": "敗退",
+                "qualified": "進出 — {phase}"
             },
             "trashConfirm": "イベント「{name}」を削除しますか？各種目は切り離されて残ります。"
         },

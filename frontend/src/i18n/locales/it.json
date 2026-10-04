@@ -2527,7 +2527,11 @@
             "noChange": "Niente: i suoi tavoli sono già quelli dell'evento.",
             "confirm": "Collega",
             "wall": {
-                "rounds": "{n} turni annunciati"
+                "rounds": "{n} turni annunciati",
+                "status": "Gioco io?",
+                "bye": "esentato/a — entra al turno {round}",
+                "eliminated": "eliminato/a",
+                "qualified": "qualificato/a — {phase}"
             },
             "trashConfirm": "Eliminare l’evento «{name}»? Le sue prove restano, staccate."
         },

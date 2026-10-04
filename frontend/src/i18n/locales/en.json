@@ -2527,7 +2527,11 @@
             "noChange": "Nothing: its tables are already the event's.",
             "confirm": "Attach",
             "wall": {
-                "rounds": "{n} rounds announced"
+                "rounds": "{n} rounds announced",
+                "status": "Am I playing?",
+                "bye": "bye — enters at round {round}",
+                "eliminated": "eliminated",
+                "qualified": "qualified — {phase}"
             },
             "trashConfirm": "Delete the event “{name}”? Its competitions remain, detached."
         },
