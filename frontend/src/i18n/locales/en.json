@@ -1643,6 +1643,7 @@
         "gameType_holding": "Holding",
         "gameType_contact": "Contact",
         "gameType_over": "Over",
+        "gameType_unknown": "Unknown",
         "recurringTitle": "Recurring errors",
         "recurringHint": "Your errors in the current filter, grouped by plan of play and theme, costliest first. The cost is the share of the PR a group accounts for. Click a group to open its positions.",
         "recurringQuiz": "Quiz this group",

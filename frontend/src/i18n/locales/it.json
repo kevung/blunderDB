@@ -1643,6 +1643,7 @@
         "gameType_holding": "Ancora",
         "gameType_contact": "Contatto",
         "gameType_over": "Terminata",
+        "gameType_unknown": "Sconosciuto",
         "recurringTitle": "Errori ricorrenti",
         "recurringHint": "I vostri errori nel filtro corrente, raggruppati per piano di gioco e tema, i più costosi per primi. Il costo è la quota del PR che un gruppo rappresenta. Un clic apre le sue posizioni.",
         "recurringQuiz": "Quiz su questo gruppo",

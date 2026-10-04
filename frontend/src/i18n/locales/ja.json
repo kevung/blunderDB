@@ -1643,6 +1643,7 @@
         "gameType_holding": "ホールディング",
         "gameType_contact": "接触",
         "gameType_over": "終局",
+        "gameType_unknown": "不明",
         "recurringTitle": "繰り返す誤り",
         "recurringHint": "現在のフィルターの誤りを、ゲームプランとテーマごとにまとめ、損失の大きい順に表示します。コストはそのグループが PR に占める分です。クリックするとその局面を開きます。",
         "recurringQuiz": "このグループのクイズ",

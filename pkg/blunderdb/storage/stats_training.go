@@ -38,7 +38,8 @@ type TrainingPeriod struct {
 	// week, the 1st for a month).
 	Start string `json:"Start"`
 	// QuizSessions and QuizDecisions are the Decision sessions of the window
-	// and the decisions they judged; QuizPR is their PR weighted by decisions.
+	// and the decisions they judged (an out-of-time question is not judged, as
+	// in the session's own PR); QuizPR is their PR weighted by decisions.
 	QuizSessions  int     `json:"QuizSessions"`
 	QuizDecisions int     `json:"QuizDecisions"`
 	QuizPR        float64 `json:"QuizPR"`
@@ -188,17 +189,17 @@ func BuildTrainingStats(window string, sessions []TrainingSession, matches []Mat
 	}
 	var quizSum, matchSum = map[string]float64{}, map[string]float64{}
 	for _, s := range sessions {
-		if s.Exercise != "decision" || s.NumbersAsked == 0 {
+		if s.Exercise != "decision" || s.Deviations == 0 {
 			continue
 		}
 		p := at(s.CreatedAt)
 		if p == nil {
 			continue
 		}
-		out.Sessions = append(out.Sessions, TrainingQuizSession{ID: s.ID, CreatedAt: s.CreatedAt, Decisions: s.NumbersAsked, PR: s.PR})
+		out.Sessions = append(out.Sessions, TrainingQuizSession{ID: s.ID, CreatedAt: s.CreatedAt, Decisions: s.Deviations, PR: s.PR})
 		p.QuizSessions++
-		p.QuizDecisions += s.NumbersAsked
-		quizSum[p.Start] += s.PR * float64(s.NumbersAsked)
+		p.QuizDecisions += s.Deviations
+		quizSum[p.Start] += s.PR * float64(s.Deviations)
 	}
 	for _, m := range matches {
 		if m.NumDecisions == 0 {

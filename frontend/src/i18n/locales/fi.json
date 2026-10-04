@@ -1643,6 +1643,7 @@
         "gameType_holding": "Ankkuri",
         "gameType_contact": "Kontakti",
         "gameType_over": "Päättynyt",
+        "gameType_unknown": "Tuntematon",
         "recurringTitle": "Toistuvat virheet",
         "recurringHint": "Nykyisen suodattimen virheesi ryhmiteltyinä pelisuunnitelman ja teeman mukaan, kalleimmat ensin. Kustannus on ryhmän osuus PR:stä. Napsautus avaa sen asemat.",
         "recurringQuiz": "Tietovisa tästä ryhmästä",

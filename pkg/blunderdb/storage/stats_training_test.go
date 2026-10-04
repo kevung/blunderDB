@@ -9,10 +9,10 @@ import (
 
 func TestBuildTrainingStats_WeeksAlignQuizMatchesAndAnki(t *testing.T) {
 	sessions := []TrainingSession{
-		{ID: 1, Exercise: "decision", CreatedAt: "2026-10-05 09:00:00", NumbersAsked: 10, PR: 8},
-		{ID: 2, Exercise: "decision", CreatedAt: "2026-10-11 20:00:00", NumbersAsked: 30, PR: 4},
+		{ID: 1, Exercise: "decision", CreatedAt: "2026-10-05 09:00:00", NumbersAsked: 10, Deviations: 10, PR: 8},
+		{ID: 2, Exercise: "decision", CreatedAt: "2026-10-11 20:00:00", NumbersAsked: 40, Deviations: 30, PR: 4},
 		{ID: 3, Exercise: "pips", CreatedAt: "2026-10-06 09:00:00", NumbersAsked: 5, PR: 0},
-		{ID: 4, Exercise: "decision", CreatedAt: "2026-10-12 09:00:00", NumbersAsked: 10, PR: 2},
+		{ID: 4, Exercise: "decision", CreatedAt: "2026-10-12 09:00:00", NumbersAsked: 10, Deviations: 10, PR: 2},
 	}
 	matches := []MatchStats{
 		{Date: "2026-10-07", PR: 6, NumDecisions: 100},
@@ -46,7 +46,7 @@ func TestBuildTrainingStats_WeeksAlignQuizMatchesAndAnki(t *testing.T) {
 
 func TestBuildTrainingStats_MonthAndUnreadableDates(t *testing.T) {
 	got := BuildTrainingStats(TrainingWindowMonth,
-		[]TrainingSession{{ID: 1, Exercise: "decision", CreatedAt: "bad", NumbersAsked: 3, PR: 1}, {ID: 2, Exercise: "decision", CreatedAt: "2026-10-31 23:59:59", NumbersAsked: 3, PR: 1}},
+		[]TrainingSession{{ID: 1, Exercise: "decision", CreatedAt: "bad", NumbersAsked: 3, Deviations: 3, PR: 1}, {ID: 2, Exercise: "decision", CreatedAt: "2026-10-31 23:59:59", NumbersAsked: 3, Deviations: 3, PR: 1}},
 		nil, nil)
 	if len(got.Periods) != 1 || got.Periods[0].Start != "2026-10-01" || len(got.Sessions) != 1 {
 		t.Fatalf("got %+v", got)
@@ -78,5 +78,19 @@ func TestBuildTrainingThemes_FoldsByPlanOfPlayWorstFirst(t *testing.T) {
 	}
 	if BuildTrainingThemes(TrainingWindowWeek, nil) == nil {
 		t.Error("no decision must marshal as [], not null")
+	}
+}
+
+func TestBuildTrainingStats_QuizPRWeighsJudgedDecisionsNotQuestionsAsked(t *testing.T) {
+	// 10 asked, 4 judged (6 ran out of time): the window PR is the session's
+	// own, 8, over 4 decisions, and the other session pulls it by its 4 only.
+	got := BuildTrainingStats(TrainingWindowWeek, []TrainingSession{
+		{ID: 1, Exercise: "decision", CreatedAt: "2026-10-05 09:00:00", NumbersAsked: 10, Deviations: 4, PR: 8},
+		{ID: 2, Exercise: "decision", CreatedAt: "2026-10-06 09:00:00", NumbersAsked: 4, Deviations: 4, PR: 4},
+		{ID: 3, Exercise: "decision", CreatedAt: "2026-10-07 09:00:00", NumbersAsked: 5, Deviations: 0, PR: 0},
+	}, nil, nil)
+	p := got.Periods[0]
+	if p.QuizDecisions != 8 || math.Abs(p.QuizPR-6) > 1e-9 || len(got.Sessions) != 2 {
+		t.Fatalf("period = %+v sessions = %d, want 8 judged decisions, PR 6, a session with nothing judged left out", p, len(got.Sessions))
 	}
 }
