@@ -45,6 +45,8 @@ func (cli *CLI) lessonHandlers() map[string]func([]string) error {
 		"edit-step":   cli.runLessonEditStep,
 		"remove-step": cli.runLessonRemoveStep,
 		"reorder":     cli.runLessonReorder,
+		"done":        cli.runLessonDone,
+		"progress":    cli.runLessonProgress,
 		"export":      cli.runLessonExport,
 	}
 }
@@ -77,6 +79,8 @@ func (cli *CLI) printLessonUsage() {
 	fmt.Println("  remove-step  Remove a step")
 	fmt.Println("  reorder      Set the order of a lesson's steps")
 	fmt.Println("  export       Export lessons, with what their steps show, to a new database file")
+	fmt.Println("  done         Mark a step done (or --undo the mark) in this database")
+	fmt.Println("  progress     Show which steps of a lesson are marked done, and when")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb lesson create --db database.db --name \"Playing against a prime\"")
@@ -445,5 +449,74 @@ func (cli *CLI) runLessonExport(args []string) error {
 		return fmt.Errorf("failed to export lessons: %w", err)
 	}
 	fmt.Printf("Successfully exported %d lesson(s) to %s\n", len(lessonIDs), *out)
+	return nil
+}
+
+func (cli *CLI) runLessonDone(args []string) error {
+	fs, dbPath := lessonFlagSet("done",
+		"Mark a step done, the reader's own progress (ADR-0069). It is written only by this gesture, in this database; no export carries it.",
+		"blunderdb lesson done --db database.db --step 7",
+		"blunderdb lesson done --db database.db --step 7 --undo")
+	stepID := fs.Int64("step", 0, "Step ID (required)")
+	undo := fs.Bool("undo", false, "Withdraw the mark instead of setting it")
+	if err := cli.lessonOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if err := requireID(fs, "step", *stepID); err != nil {
+		return err
+	}
+	if err := cli.db.SetLessonStepDone(*stepID, !*undo); err != nil {
+		return fmt.Errorf("failed to mark step %d: %w", *stepID, err)
+	}
+	if *undo {
+		fmt.Printf("Step %d is no longer marked done\n", *stepID)
+	} else {
+		fmt.Printf("Step %d marked done\n", *stepID)
+	}
+	return nil
+}
+
+func (cli *CLI) runLessonProgress(args []string) error {
+	fs, dbPath := lessonFlagSet("progress", "Show which steps of a lesson are marked done, and the date of the gesture.",
+		"blunderdb lesson progress --db database.db --id 1",
+		"blunderdb lesson progress --db database.db --id 1 --format json")
+	id := fs.Int64("id", 0, "Lesson ID (required)")
+	format := fs.String("format", "text", "Output format: text or json")
+	if err := cli.lessonOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if err := requireID(fs, "id", *id); err != nil {
+		return err
+	}
+	l, err := cli.db.GetLesson(*id)
+	if err != nil {
+		return fmt.Errorf("failed to read lesson %d: %w", *id, err)
+	}
+	done, err := cli.db.LessonDoneSteps(*id)
+	if err != nil {
+		return fmt.Errorf("failed to read the progress of lesson %d: %w", *id, err)
+	}
+	if strings.EqualFold(*format, "json") {
+		type stepProgress struct {
+			StepID int64  `json:"stepId"`
+			Title  string `json:"title"`
+			Done   bool   `json:"done"`
+			DoneAt string `json:"doneAt,omitempty"`
+		}
+		rows := make([]stepProgress, 0, len(l.Steps))
+		for _, st := range l.Steps {
+			at, ok := done[st.ID]
+			rows = append(rows, stepProgress{StepID: st.ID, Title: st.Title, Done: ok, DoneAt: at})
+		}
+		return printJSON(rows)
+	}
+	fmt.Printf("Lesson %d: %s — %d / %d steps done\n", l.ID, l.Name, len(done), len(l.Steps))
+	for i, st := range l.Steps {
+		mark := "[ ]"
+		if at, ok := done[st.ID]; ok {
+			mark = "[x] " + at
+		}
+		fmt.Printf("%d. [step %d] %s  %s\n", i+1, st.ID, st.Title, mark)
+	}
 	return nil
 }

@@ -1091,7 +1091,10 @@
         "descProtected": "un mot de passe",
         "tournamentsNeedMatches": "Un tournoi n'est relié à ses matchs que si les matchs sont exportés aussi — cochez d'abord « inclure les matchs ».",
         "filterLibraryHint": "Vos propres recherches enregistrées, pas du contenu : elles n'ont aucune utilité dans la base de quelqu'un d'autre.",
-        "metadataTitle": "Métadonnées du fichier exporté"
+        "metadataTitle": "Métadonnées du fichier exporté",
+        "includeLessons": "Inclure les leçons ({count})",
+        "selectLessons": "Sélectionner les leçons à exporter",
+        "descLessons": "{count} leçon(s)"
     },
     "import": {
         "minimize": "Réduire",
@@ -1767,7 +1770,13 @@
         "empty": "Cet import n'a rien qui mérite un second regard.",
         "failed": "La file d'étude n'a pas pu être construite.",
         "finished": "File d'étude terminée : {n} positions parcourues.",
-        "stopped": "File d'étude quittée."
+        "stopped": "File d'étude quittée.",
+        "reasonBacklog": "blunder non traité",
+        "markStudied": "Marquer vu",
+        "unmark": "Démarquer",
+        "backlogEmpty": "Aucun blunder en attente : tout est commenté, rangé, en carte ou marqué vu.",
+        "markFailed": "La marque n'a pas pu être écrite.",
+        "unmarked": "Marque retirée : la position revient dans la file."
     },
     "home": {
         "title": "blunderDB",
@@ -2703,7 +2712,8 @@
             "history": "Historique de recherche",
             "match": "Panneau des matchs",
             "collection": "Panneau des collections",
-            "lesson": "Leçons (le N ouvre la leçon N)",
+            "lesson": "Leçons (le N ouvre la leçon N, le edit ouvre l'éditeur)",
+            "study": "File d'étude : vos blunders non traités",
             "eval": "Panneau Eval",
             "rollout": "Rouler la position (rollout fast|standard, search, stop)",
             "transcribe": "Transcription de matchs",
@@ -2802,7 +2812,11 @@
         "empty": "Cette leçon n'a encore aucune étape.",
         "notFound": "Aucune leçon n° {id}.",
         "failed": "Impossible de lire les leçons.",
-        "stepMissing": "Ce que montre cette étape n'est plus dans la base."
+        "stepMissing": "Ce que montre cette étape n'est plus dans la base.",
+        "edit": "Modifier",
+        "stepDone": "Étape faite",
+        "stepDoneHint": "Marque l'étape faite dans cette base ; un second clic retire la marque. Rien d'autre n'est enregistré de la lecture.",
+        "doneCount": "{done} / {n} faites"
     },
     "corpus": {
         "intro": "Doublons et graphies : ce qu'un import reconnaît comme déjà en base, et les autres noms d'un même joueur ou d'un même événement.",
@@ -2830,5 +2844,32 @@
         "applyPairing": "Créer ces alias",
         "pairingApplied": "Alias créés",
         "suspectLonger": "#{match} prolonge #{other} ({players})"
+    },
+    "lessonEditor": {
+        "title": "Leçons",
+        "failed": "Échec : {error}",
+        "confirmDelete": "Supprimer la leçon « {name} » ? Ses collections et ses positions restent.",
+        "newStepTitle": "Étape {n}",
+        "confirmRemoveStep": "Retirer l'étape « {title} » ?",
+        "noCurrentPosition": "Aucune position sur le plateau.",
+        "newLessonName": "Nom de la nouvelle leçon",
+        "create": "Créer",
+        "name": "Nom",
+        "description": "Description",
+        "save": "Enregistrer",
+        "read": "Lire",
+        "delete": "Supprimer",
+        "stepTitle": "Titre de l'étape",
+        "up": "Monter",
+        "down": "Descendre",
+        "stepText": "Texte de l'étape",
+        "collection": "Collection montrée",
+        "noCollection": "Aucune collection",
+        "position": "Position {id}",
+        "useCurrentPosition": "Position courante",
+        "detachPosition": "Détacher la position",
+        "saveStep": "Enregistrer l'étape",
+        "removeStep": "Retirer l'étape",
+        "addStep": "Ajouter une étape"
     }
 }

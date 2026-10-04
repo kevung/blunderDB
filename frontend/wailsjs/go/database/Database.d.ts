@@ -392,6 +392,8 @@ export function IsReadOnly():Promise<boolean>;
 
 export function LastDecision(arg1:number):Promise<service.LastDecision>;
 
+export function LessonDoneSteps(arg1:number):Promise<Record<number, string>>;
+
 export function ListAliases(arg1:string):Promise<Array<storage.Alias>>;
 
 export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
@@ -642,9 +644,13 @@ export function SetEventRooms(arg1:number,arg2:number,arg3:Array<string>):Promis
 
 export function SetFilterPinned(arg1:number,arg2:boolean):Promise<void>;
 
+export function SetLessonStepDone(arg1:number,arg2:boolean):Promise<void>;
+
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 
 export function SetMigrationProgress(arg1:any):Promise<void>;
+
+export function SetPositionStudied(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetRencontreBreaks(arg1:number,arg2:string):Promise<service.RencontreView>;
 
@@ -677,6 +683,8 @@ export function StartTranscriptionFromSlot(arg1:number,arg2:string):Promise<data
 export function StatsReportHTML(arg1:database.StatsFilter,arg2:string,arg3:Record<number, string>):Promise<string>;
 
 export function StatsReportHTMLCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string,arg4:Record<number, string>):Promise<string>;
+
+export function StudyBacklog(arg1:number):Promise<Array<domain.StudyQueueEntry>>;
 
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
 

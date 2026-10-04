@@ -262,6 +262,15 @@ func (s *Server) ingestRoutes() []route {
 		route{http.MethodPost, "/v1/imports.studyQueue", rpc(func(ctx context.Context, scope string, req importStudyQueueReq) ([]domain.StudyQueueEntry, error) {
 			return s.opts.Storage.ImportBatches().StudyQueue(ctx, scope, req.BatchID, req.Players, req.Limit)
 		})},
+		// The library-wide backlog of unhandled blunders, and the user's
+		// "studied" mark that takes a position out of it. The mark is written
+		// only by this call (ADR-0007) and is never exported.
+		route{http.MethodPost, "/v1/study.backlog", rpc(func(ctx context.Context, scope string, req importStudyQueueReq) ([]domain.StudyQueueEntry, error) {
+			return s.opts.Storage.ImportBatches().StudyBacklog(ctx, scope, req.Players, req.Limit)
+		})},
+		route{http.MethodPost, "/v1/study.setStudied", rpcVoid(func(ctx context.Context, scope string, req studySetStudiedReq) error {
+			return s.opts.Storage.ImportBatches().SetStudied(ctx, scope, req.PositionID, req.Studied)
+		})},
 		// The batch's per-file journal: which file gave which match.
 		route{http.MethodPost, "/v1/imports.files", rpc(func(ctx context.Context, scope string, req importReportReq) ([]domain.ImportFileEntry, error) {
 			return s.opts.Storage.ImportBatches().Files(ctx, scope, req.BatchID)
@@ -617,4 +626,11 @@ type importStudyQueueReq struct {
 	BatchID int64    `json:"batchId"`
 	Players []string `json:"players,omitempty"`
 	Limit   int      `json:"limit,omitempty"`
+}
+
+// studySetStudiedReq writes (Studied true) or withdraws the "studied" mark of
+// one position.
+type studySetStudiedReq struct {
+	PositionID int64 `json:"positionId"`
+	Studied    bool  `json:"studied"`
 }

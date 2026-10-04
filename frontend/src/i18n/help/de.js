@@ -48,6 +48,7 @@ export default {
 <li>Stellungen durch verteiltes Wiederholen zu studieren (Anki-Panel),</li>
 <li>die Metadaten der Datenbank anzuzeigen (Metadaten-Panel).</li>
 </ul>
+<p>Die Höhe des Bereichs wird über seinen Griff eingestellt; jeder Reiter merkt sich seine eigene.</p>
 <p>Es können modale Fenster angezeigt werden, um:</p>
 <ul>
 <li>die Hilfe von blunderDB anzuzeigen,</li>
@@ -278,10 +279,11 @@ export default {
 <p>Die Schaltfläche ❄, sichtbar bei einer lebendigen Sammlung, <strong>friert</strong> sie <strong>ein</strong>: Die Positionen, die die Suche in diesem Moment auswählt, werden in der Reihenfolge der Suche der Inhalt einer gewöhnlichen Sammlung, und die Abfrage wird gelöscht. Die Positionen, die sie vor dem Lebendigwerden enthielt, werden ersetzt.</p>
 <p>Eine lebendige Sammlung, deren Abfrage ein Token trägt, das diese Version nicht mehr kennt, <strong>weigert sich zu öffnen</strong> und sagt es, statt die ganze Datenbank zurückzugeben. Das ist der eine Fehler, den ein gespeicherter Filter nicht haben darf: sich im Stillen zu weiten.</p>
 <h4>Lektionen</h4>
-<p>Eine <strong>Lektion</strong> ist eine Folge von Schritten, die ein Coach einmal für einen Schüler schreibt und ihm in einer Datenbankdatei übergibt (siehe den Befehl <code>lesson export</code> in cli). Jeder Schritt hat einen Titel, einen Text und kann eine Sammlung, eine Stellung, beides oder nichts zeigen. Der Befehl <code>le</code> listet die Lektionen der Datenbank in der Statusleiste auf; <code>le 2</code> öffnet Lektion 2.</p>
+<p>Eine <strong>Lektion</strong> ist eine Folge von Schritten, die ein Coach einmal für einen Schüler schreibt und ihm in einer Datenbankdatei übergibt (siehe den Befehl <code>lesson export</code> in cli). Jeder Schritt hat einen Titel, einen Text und kann eine Sammlung, eine Stellung, beides oder nichts zeigen. Der Befehl <code>le</code> listet die Lektionen der Datenbank in der Statusleiste auf; <code>le 2</code> öffnet Lektion 2; <code>le edit</code> öffnet den Lektionseditor.</p>
 <p>Über dem Brett erscheint dann eine <strong>Lesezeile</strong>: Name der Lektion, Schrittnummer, Titel, dann der Text. <em>Zurück</em> und <em>Weiter</em> wechseln den Schritt; der Schritt bringt die Sammlung oder Stellung, die er zeigt, auf das Brett, die man dann mit den üblichen Gesten durchsieht. <em>Schließen</em> verlässt die Lektion. Ein Schritt, dessen Sammlung oder Stellung gelöscht wurde, behält seinen Text.</p>
-<p>Das Lesen einer Lektion hinterlässt keine Spur: Die Datenbank des Schülers speichert weder den erreichten Schritt noch das Öffnen. Der Import einer Datei, die eine Lektion enthält, legt sie an; eine bereits vorhandene Lektion gleichen Namens bleibt unberührt. Lektionen werden über die Kommandozeile oder die API erstellt und bearbeitet (Lektionen).</p>
-<p>Eine Sicherung — der Export der gesamten Bibliothek über das Exportfenster oder die Kommandozeile — nimmt alle Lektionen mit; ein Teilexport (eine Auswahl von Stellungen, Sammlungen oder Matches) nimmt sie nicht mit.</p>
+<p>Das Kästchen <em>Schritt erledigt</em> in der Leiste markiert den aktuellen Schritt als erledigt; ein zweiter Klick entfernt die Markierung, und die Leiste zählt die erledigten Schritte. Es ist die einzige Geste, die etwas schreibt: Das Lesen einer Lektion, der Wechsel des Schritts oder das Öffnen speichert nichts, weder den erreichten Schritt noch das Öffnen. Die Markierung wird in die geöffnete Datenbank geschrieben, die des Schülers, und kein Export nimmt sie mit. Der Import einer Datei, die eine Lektion enthält, legt sie an; eine bereits vorhandene Lektion desselben Namens bleibt unberührt.</p>
+<p><strong>Der Lektionseditor</strong> öffnet sich mit <code>le edit</code> (<code>le edit 2</code> für Lektion 2) oder über die Schaltfläche <em>Bearbeiten</em> der Leseleiste. Links stehen die Liste der Lektionen und ein Feld zum Anlegen einer neuen; rechts der Name und die Beschreibung der gewählten Lektion, dann ihre Schritte. Jeder Schritt hat einen Titel, einen Text, eine aus der Liste gewählte Sammlung und eine Stellung: <em>Aktuelle Position</em> hängt die auf dem Brett angezeigte Stellung an, <em>Position lösen</em> entfernt sie wieder. <em>Schritt speichern</em> schreibt seine Änderungen; die Pfeile verschieben ihn um eine Stelle; <em>Schritt hinzufügen</em> fügt am Ende einen hinzu. <em>Lesen</em> schließt den Editor und öffnet die Lektion bei ihrem ersten Schritt; <em>Löschen</em> entfernt die Lektion und ihre Schritte, ohne die Sammlungen oder Stellungen anzutasten, die sie zeigten. Lektionen lassen sich auch über die Kommandozeile oder die API anlegen und ändern (Lektionen).</p>
+<p>Eine Sicherung — der Export der gesamten Bibliothek über das Exportfenster oder die Kommandozeile — nimmt alle Lektionen mit. Im Exportfenster wählt das Kästchen <em>Lektionen einschließen</em> sie einzeln aus: Jede angekreuzte Lektion wird mit den Sammlungen und Stellungen exportiert, die ihre Schritte zeigen, und die Datei kann wie jeder Export mit einem Wasserzeichen versehen oder passwortgeschützt (<code>.dbx</code>) werden. Ohne dieses Kästchen nimmt ein Teilexport (eine Auswahl von Stellungen, Sammlungen oder Matches) die Lektionen nicht mit.</p>
 <h3>Import: was geschrieben wird, was es niemals ist</h3>
 <p>Das Importieren eines Matches, einer Stellung oder einer anderen Datenbank fügt hinzu, was fehlt; es ersetzt nicht, was bereits da ist.</p>
 <ul>
@@ -2041,8 +2043,12 @@ export default {
 <td>Sammlungs-Panel anzeigen/ausblenden.</td>
 </tr>
 <tr>
-<td>lesson, le [N]</td>
-<td>Ohne Argument werden die Lektionen der Datenbank in der Statusleiste aufgelistet; <code>le N</code> öffnet die Lektion N bei ihrem ersten Schritt (siehe Lektionen).</td>
+<td>lesson, le [N | edit [N]]</td>
+<td>Ohne Argument werden die Lektionen der Datenbank in der Statusleiste aufgelistet; <code>le N</code> öffnet die Lektion N bei ihrem ersten Schritt; <code>le edit</code> öffnet den Lektionseditor, <code>le edit N</code> bei Lektion N (siehe Lektionen).</td>
+</tr>
+<tr>
+<td>study, sq</td>
+<td>Öffnet die übergreifende Studien-Warteschlange: Ihre Blunder, die noch nichts bearbeitet hat, vom kostspieligsten bis zum am wenigsten kostspieligen (siehe Blunder, die noch nichts bearbeitet hat).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>

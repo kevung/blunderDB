@@ -1,13 +1,17 @@
 <script>
     // La barre de lecture d'une Leçon (ADR-0066) : le texte de l'étape au-dessus du plateau,
     // l'étape précédente et la suivante. Ce que l'étape montre s'ouvre par les gestes existants.
+    // « Étape faite » est le seul geste qui écrive quelque chose (ADR-0069).
     import { t } from '../i18n';
-    import { lessonStore, lessonStepIndexStore, lessonStepStore } from '../stores/lessonStore.js';
-    import { nextStep, previousStep, closeLesson } from '../services/lessonService.js';
+    import { lessonStore, lessonStepIndexStore, lessonStepStore, lessonDoneStore } from '../stores/lessonStore.js';
+    import { nextStep, previousStep, closeLesson, toggleStepDone } from '../services/lessonService.js';
+    import { openLessonEditor } from '../services/lessonService.js';
 
     let total = $derived($lessonStore?.steps?.length ?? 0);
     let index = $derived($lessonStepIndexStore);
     let step = $derived($lessonStepStore);
+    let doneCount = $derived(Object.keys($lessonDoneStore).length);
+    let stepDone = $derived(step ? !!$lessonDoneStore[step.id] : false);
 </script>
 
 {#if $lessonStore && step}
@@ -15,10 +19,16 @@
         <div class="head">
             <span class="name">{$lessonStore.name}</span>
             <span class="progress">{$t('lesson.progress', { i: index + 1, n: total })}</span>
+            <span class="done-count">{$t('lesson.doneCount', { done: doneCount, n: total })}</span>
             {#if step.title}<span class="step-title">{step.title}</span>{/if}
             <span class="actions">
+                <label class="done" title={$t('lesson.stepDoneHint')}>
+                    <input type="checkbox" checked={stepDone} onchange={() => toggleStepDone(step.id)} />
+                    {$t('lesson.stepDone')}
+                </label>
                 <button type="button" onclick={previousStep} disabled={index === 0}>{$t('lesson.previous')}</button>
                 <button type="button" onclick={nextStep} disabled={index + 1 >= total}>{$t('lesson.next')}</button>
+                <button type="button" onclick={() => openLessonEditor($lessonStore.id)}>{$t('lesson.edit')}</button>
                 <button type="button" onclick={closeLesson}>{$t('lesson.close')}</button>
             </span>
         </div>
@@ -43,6 +53,18 @@
     .name,
     .progress {
         font-weight: 600;
+    }
+
+    .done-count {
+        color: var(--color-text-muted);
+        font-size: var(--font-size-small);
+    }
+
+    .done {
+        display: flex;
+        align-items: center;
+        gap: 0.25em;
+        cursor: pointer;
     }
 
     .step-title {

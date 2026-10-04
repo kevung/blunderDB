@@ -3,6 +3,7 @@ package service_test
 import (
 	"context"
 	"encoding/json"
+	"slices"
 	"strings"
 	"testing"
 
@@ -181,5 +182,61 @@ func TestWallSaysWhoSitsASwissRoundOut(t *testing.T) {
 	}
 	if byes != 1 {
 		t.Errorf("%d players read as sitting round 1 out, want 1\n%s", byes, page)
+	}
+}
+
+// Between a pool qualifier's withdrawal and the director's choice of a tied repechage, the wall
+// must not tell the withdrawn player's room that he goes through, nor send a candidate home.
+func TestWallDuringATiedRepechage(t *testing.T) {
+	ctx, svc, raw := openService(t)
+	tid, err := raw.Tournaments().Create(ctx, "", "Poule", "2026-10-04", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := `{"name":"Poule","tables":{"count":4},"phases":[` +
+		`{"kind":"round_robin","length":5,"group_size":4,"qualifiers":2,"entry":"survivors"},` +
+		`{"kind":"bracket","length":5,"entry":"survivors"}]}`
+	if err := svc.CreateDirection(ctx, tid, cfg, 5); err != nil {
+		t.Fatal(err)
+	}
+	for i, p := range names("P", 4) {
+		if _, err := svc.AddParticipant(ctx, tid, p, "", float64(1600-10*i)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	v, err := svc.GetDirection(ctx, tid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	var ids []tournoi.PlayerID
+	for _, p := range v.Players {
+		ids = append(ids, p.ID)
+	}
+	slices.Sort(ids)
+	// 2-2-1-1: the first two go through, the last two tie on one win each.
+	beats := map[[2]tournoi.PlayerID]bool{
+		{ids[0], ids[1]}: true, {ids[0], ids[2]}: true, {ids[1], ids[2]}: true,
+		{ids[1], ids[3]}: true, {ids[2], ids[3]}: true, {ids[3], ids[0]}: true,
+	}
+	playWith(t, ctx, svc, tid, tournoi.ActNextPhase, func(a, b tournoi.PlayerID) tournoi.PlayerID {
+		if beats[[2]tournoi.PlayerID{a, b}] {
+			return a
+		}
+		return b
+	})
+	if _, err := svc.WithdrawParticipant(ctx, tid, string(ids[0]), false); err != nil {
+		t.Fatal(err)
+	}
+	page, err := svc.DirectionPageHTML(ctx, tid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if s := statusOf(page, playerName(v.Players, ids[0])); strings.HasPrefix(s, "qualifié") {
+		t.Errorf("the wall reads %q for the withdrawn qualifier", s)
+	}
+	for _, c := range ids[2:] {
+		if s := statusOf(page, playerName(v.Players, c)); !strings.HasPrefix(s, "pas encore fixé") {
+			t.Errorf("the wall reads %q for the tied candidate %s, want it undecided", s, c)
+		}
 	}
 }

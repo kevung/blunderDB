@@ -70,6 +70,17 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 - **Étapes de migration 1.0.0→1.6.0** : la bizarrerie « table déjà présente ⇒ chaîne arrêtée » (`errStepNotApplicable`, registre `migrationSteps`) est conservée par fidélité ; rendre ces étapes inconditionnelles (leur DDL est `IF NOT EXISTS`). Effort S, test de migration à ajouter. → fiche B.9 (#177).
 - **Drapeau `python-format` faux positif dans les `.po`** : Babel marque les msgid contenant « 12 % de » ; `msgfmt -c` échoue sur 2 à 4 entrées par langue, Sphinx s'en moque. Remède côté extraction (`no-python-format`) ou reformulation. Effort S. → fiche H.13 (#255).
 
+- **File d'étude transversale — la requête de la grammaire qui la reproduit.** → #528
+  (étape 4). La file (`StudyBacklog`, `sqlshared/importbatches.go`) n'a pas de jeton
+  équivalent, pour trois raisons : elle compte les décisions comme Stats (`countedExpr` :
+  coups forcés exclus, conventions du pas-de-double), ce que la grammaire n'exprime pas ;
+  son coût est celui de l'analyse (`statsErrExpr`), alors que `E` filtre l'erreur du coup
+  joué, coup par coup ; l'absence de carte, de collection et de marque « vu » n'a pas de
+  jeton (`xco` couvre seulement le commentaire). Un jeton `nt` (« non traité ») couvrirait
+  le dernier point ; l'égalité exacte demande en plus de choisir lequel des deux sens du
+  coût et du décompte fait foi, puis de redéfinir la file sur la grammaire. Cette décision
+  passe par Opus, avec un test d'égalité jeton ↔ `StudyBacklog` sur les deux backends.
+
 ## Ouvert — Moteur (dettes nommées dans les ADR)
 
 - **Renommage `race.Money` → `race.CubeVerdict`** et libellé de la colonne

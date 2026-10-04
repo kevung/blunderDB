@@ -1091,7 +1091,10 @@
         "descProtected": "einem Passwort",
         "tournamentsNeedMatches": "Ein Turnier wird nur mit seinen Matches verknüpft, wenn diese ebenfalls exportiert werden — aktivieren Sie zuerst „Matches einschließen“.",
         "filterLibraryHint": "Ihre eigenen gespeicherten Suchen, kein Inhalt: in der Datenbank eines anderen nutzlos.",
-        "metadataTitle": "Metadaten der exportierten Datei"
+        "metadataTitle": "Metadaten der exportierten Datei",
+        "includeLessons": "Lektionen einschließen ({count})",
+        "selectLessons": "Zu exportierende Lektionen auswählen",
+        "descLessons": "{count} Lektion(en)"
     },
     "import": {
         "minimize": "Minimieren",
@@ -1767,7 +1770,13 @@
         "empty": "Dieser Import enthält nichts, was einen zweiten Blick lohnt.",
         "failed": "Die Studienliste konnte nicht erstellt werden.",
         "finished": "Studienliste beendet: {n} Stellungen durchgegangen.",
-        "stopped": "Studienliste verlassen."
+        "stopped": "Studienliste verlassen.",
+        "reasonBacklog": "unbearbeiteter Fehler",
+        "markStudied": "Als gesehen markieren",
+        "unmark": "Markierung entfernen",
+        "backlogEmpty": "Kein Fehler wartet: alles ist kommentiert, einsortiert, als Karte angelegt oder als gesehen markiert.",
+        "markFailed": "Die Markierung konnte nicht geschrieben werden.",
+        "unmarked": "Markierung entfernt: die Stellung ist wieder in der Warteschlange."
     },
     "home": {
         "title": "blunderDB",
@@ -2703,7 +2712,8 @@
             "history": "Suchverlauf",
             "match": "Match-Bereich",
             "collection": "Sammlungs-Bereich",
-            "lesson": "Lektionen (le N öffnet Lektion N)",
+            "lesson": "Lektionen (le N öffnet Lektion N, le edit öffnet den Editor)",
+            "study": "Lernliste: Ihre unbearbeiteten Patzer",
             "eval": "Eval-Bereich",
             "rollout": "Stellung rollen (rollout fast|standard, search, stop)",
             "transcribe": "Match-Transkription",
@@ -2802,7 +2812,11 @@
         "empty": "Diese Lektion hat noch keinen Schritt.",
         "notFound": "Keine Lektion Nr. {id}.",
         "failed": "Die Lektionen konnten nicht gelesen werden.",
-        "stepMissing": "Was dieser Schritt zeigt, ist nicht mehr in der Datenbank."
+        "stepMissing": "Was dieser Schritt zeigt, ist nicht mehr in der Datenbank.",
+        "edit": "Bearbeiten",
+        "stepDone": "Schritt erledigt",
+        "stepDoneHint": "Markiert den Schritt in dieser Datenbank als erledigt; ein zweiter Klick entfernt die Markierung. Sonst wird vom Lesen nichts gespeichert.",
+        "doneCount": "{done} / {n} erledigt"
     },
     "corpus": {
         "intro": "Duplikate und Schreibweisen: was ein Import als bereits vorhanden erkennt, und die anderen Namen eines Spielers oder einer Veranstaltung.",
@@ -2830,5 +2844,32 @@
         "applyPairing": "Diese Aliasse anlegen",
         "pairingApplied": "Aliasse angelegt",
         "suspectLonger": "#{match} setzt #{other} fort ({players})"
+    },
+    "lessonEditor": {
+        "title": "Lektionen",
+        "failed": "Fehlgeschlagen: {error}",
+        "confirmDelete": "Lektion „{name}“ löschen? Ihre Sammlungen und Positionen bleiben erhalten.",
+        "newStepTitle": "Schritt {n}",
+        "confirmRemoveStep": "Schritt „{title}“ entfernen?",
+        "noCurrentPosition": "Keine Position auf dem Brett.",
+        "newLessonName": "Name der neuen Lektion",
+        "create": "Erstellen",
+        "name": "Name",
+        "description": "Beschreibung",
+        "save": "Speichern",
+        "read": "Lesen",
+        "delete": "Löschen",
+        "stepTitle": "Titel des Schritts",
+        "up": "Nach oben",
+        "down": "Nach unten",
+        "stepText": "Text des Schritts",
+        "collection": "Gezeigte Sammlung",
+        "noCollection": "Keine Sammlung",
+        "position": "Position {id}",
+        "useCurrentPosition": "Aktuelle Position",
+        "detachPosition": "Position lösen",
+        "saveStep": "Schritt speichern",
+        "removeStep": "Schritt entfernen",
+        "addStep": "Schritt hinzufügen"
     }
 }

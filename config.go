@@ -191,8 +191,11 @@ type Config struct {
 	PanelPosition   string `json:"panel_position,omitempty"`
 	PanelHeight     int    `json:"panel_height,omitempty"`
 	PanelWidth      int    `json:"panel_width,omitempty"`
-	PageStep        string `json:"page_step,omitempty"`
-	TourSeen        bool   `json:"tour_seen,omitempty"`
+	// PanelHeights is the bottom-mode height each tab last had, by tab id; a tab
+	// absent from it uses the default height.
+	PanelHeights map[string]int `json:"panel_heights,omitempty"`
+	PageStep     string         `json:"page_step,omitempty"`
+	TourSeen     bool           `json:"tour_seen,omitempty"`
 	// TabOrder is the user's order of TabbedPanel.svelte's tab ids; empty
 	// means the built-in order, which the frontend owns.
 	TabOrder []string `json:"tab_order,omitempty"`
@@ -457,6 +460,8 @@ func (c *Config) LoadConfig() (*Config, error) {
 	config.PanelHeight = c.PanelHeight
 	c.PanelWidth = clampPanelWidth(config.PanelWidth)
 	config.PanelWidth = c.PanelWidth
+	c.PanelHeights = clampPanelHeights(config.PanelHeights)
+	config.PanelHeights = c.PanelHeights
 	c.PageStep = sanitizePageStep(config.PageStep)
 	config.PageStep = c.PageStep
 	c.TourSeen = config.TourSeen
@@ -688,6 +693,47 @@ func (c *Config) GetPanelHeight() int {
 // supported range.
 func (c *Config) SavePanelHeight(height int) error {
 	c.PanelHeight = clampPanelHeight(height)
+	return c.SaveConfig(c)
+}
+
+// clampPanelHeights clamps every remembered height and drops entries with no tab id or no height.
+func clampPanelHeights(heights map[string]int) map[string]int {
+	if len(heights) == 0 {
+		return nil
+	}
+	out := make(map[string]int, len(heights))
+	for tab, h := range heights {
+		if tab != "" && h > 0 {
+			out[tab] = clampPanelHeight(h)
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
+}
+
+// GetTabPanelHeights returns the bottom-mode panel height remembered per tab id.
+func (c *Config) GetTabPanelHeights() map[string]int {
+	out := clampPanelHeights(c.PanelHeights)
+	if out == nil {
+		return map[string]int{}
+	}
+	return out
+}
+
+// SaveTabPanelHeight remembers the bottom-mode panel height of one tab, clamped to the
+// supported range.
+func (c *Config) SaveTabPanelHeight(tab string, height int) error {
+	if tab == "" {
+		return nil
+	}
+	heights := clampPanelHeights(c.PanelHeights)
+	if heights == nil {
+		heights = map[string]int{}
+	}
+	heights[tab] = clampPanelHeight(height)
+	c.PanelHeights = heights
 	return c.SaveConfig(c)
 }
 

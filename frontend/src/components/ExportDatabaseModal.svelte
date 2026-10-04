@@ -5,6 +5,8 @@
     import { collectionsStore } from '../stores/collectionStore';
     import { tournamentsStore } from '../stores/tournamentStore';
     import { exportCollectionCoverageStore } from '../stores/exportModalStore.js';
+    import { ListLessons } from '../../wailsjs/go/database/Database.js';
+    import { logger } from '../utils/logger.js';
     import { t } from '../i18n';
 
     let {
@@ -28,7 +30,9 @@
             includeTournaments: false,
             includeTournamentIDs: [],
             includeCollections: false,
-            collectionIDs: []
+            collectionIDs: [],
+            includeLessons: false,
+            lessonIDs: []
         },
         matches = []
     } = $props();
@@ -54,6 +58,44 @@
     let passwordVisible = $state(false);
 
     let collections = $derived($collectionsStore || []);
+
+    // Lessons have no store of their own: the list is read each time the dialog opens.
+    /** @type {{id: number, name: string, stepCount: number}[]} */
+    let lessons = $state([]);
+    $effect(() => {
+        if (!visible) return;
+        // Through a promise: without a backend the binding throws synchronously.
+        Promise.resolve()
+            .then(() => ListLessons())
+            .then((list) => {
+                lessons = list || [];
+            })
+            .catch((error) => {
+                logger.error('could not list the lessons:', error);
+                lessons = [];
+            });
+    });
+
+    // Ticking the box selects every Lesson, as for collections; an emptied selection
+    // exports none.
+    let lessonsManuallyModified = $state(false);
+    $effect(() => {
+        if (exportOptions.includeLessons && lessons.length > 0 && (exportOptions.lessonIDs ?? []).length === 0 && !lessonsManuallyModified) {
+            exportOptions.lessonIDs = lessons.map((l) => l.id);
+        }
+    });
+    $effect(() => {
+        if (!exportOptions.includeLessons) {
+            exportOptions.lessonIDs = [];
+            lessonsManuallyModified = false;
+        }
+    });
+
+    function toggleLessonSelection(lessonId) {
+        lessonsManuallyModified = true;
+        const ids = exportOptions.lessonIDs ?? [];
+        exportOptions.lessonIDs = ids.includes(lessonId) ? ids.filter((id) => id !== lessonId) : [...ids, lessonId];
+    }
 
     // A ticked mechanism with an empty field blocks the export rather than silently doing nothing.
     let missingOrigin = $derived(exportOptions.watermarkEnabled && !(exportOptions.watermark || '').trim());
@@ -154,6 +196,7 @@
                     ? tr('export.descCollectionsPlural', { count: exportOptions.collectionIDs.length })
                     : tr('export.descCollection', { count: exportOptions.collectionIDs.length })
             );
+        if (exportOptions.includeLessons && (exportOptions.lessonIDs ?? []).length > 0) parts.push(tr('export.descLessons', { count: exportOptions.lessonIDs.length }));
 
         if (parts.length === 0) {
             return tr('export.descPositionsOnly');
@@ -284,6 +327,10 @@
                 <input type="checkbox" id="export-collections" bind:checked={exportOptions.includeCollections} disabled={collections.length === 0} />
                 <label for="export-collections">{$t('export.includeCollections', { count: collections.length })}</label>
             </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="export-lessons" bind:checked={exportOptions.includeLessons} disabled={lessons.length === 0} />
+                <label for="export-lessons">{$t('export.includeLessons', { count: lessons.length })}</label>
+            </div>
         </div>
 
         <!-- The producer's saved searches: working preferences, off by default. -->
@@ -395,6 +442,25 @@
                 selectAll={selectAllCollections}
                 selectNone={selectNoCollections}
                 describe={(collection) => ({ name: collection.name, count: `(${covered(collection)}/${collection.positionCount})`, partial: isPartial(collection) })}
+            />
+        {/if}
+
+        {#if exportOptions.includeLessons && lessons.length > 0}
+            <!-- A Lesson carries the positions and collections its steps show. -->
+            <PickList
+                header={$t('export.selectLessons')}
+                items={lessons}
+                isChecked={(id) => (exportOptions.lessonIDs ?? []).includes(id)}
+                toggle={toggleLessonSelection}
+                selectAll={() => {
+                    lessonsManuallyModified = true;
+                    exportOptions.lessonIDs = lessons.map((l) => l.id);
+                }}
+                selectNone={() => {
+                    lessonsManuallyModified = true;
+                    exportOptions.lessonIDs = [];
+                }}
+                describe={(lesson) => ({ name: lesson.name, count: `(${lesson.stepCount})` })}
             />
         {/if}
     {/if}

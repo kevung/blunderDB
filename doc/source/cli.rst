@@ -975,6 +975,33 @@ tout de même avec le code 0.
    ./blunderdb collection export --db base.db --id 3,4 --out ouvertures.db \
        --watermark "Cours de Jean Dupont - 12 mars 2026"
 
+study — La file d'étude transversale
+------------------------------------
+
+Liste les blunders du joueur de référence de la base, tous imports confondus,
+que rien n'a encore traités : sans commentaire, sans carte Anki, hors de toute
+collection et sans marque « vu » (voir :ref:`file_etude_transversale`). Chaque
+sous-commande prend ``--db``.
+
+.. code-block:: bash
+
+   ./blunderdb study <subcommand> [options]
+
+**Sous-commandes:**
+
+* ``queue [--limit <n>] [--format text|json]`` — La file, du plus coûteux au
+  moins coûteux ; cinquante positions au plus.
+* ``mark --id <id>`` — Marque la position vue : elle sort de la file. La marque
+  est une donnée de la base, jamais exportée.
+* ``unmark --id <id>`` — Retire la marque : la position revient dans la file.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb study queue --db base.db --limit 20
+   ./blunderdb study mark --db base.db --id 1234
+
 lesson — Gérer les leçons
 -------------------------
 
@@ -1016,11 +1043,16 @@ acceptent ``--format text`` (défaut) ou ``json``.
   collections et les positions que leurs étapes montrent, vers un nouveau
   fichier de base ; avec ``--password``, le fichier est un ``.dbx`` protégé
   (voir la commande ``export`` pour le filigrane).
+* ``done --step <id> [--undo]`` — Marque une étape comme faite dans cette base,
+  ou retire la marque avec ``--undo`` : c'est la progression de celui qui lit
+  la leçon, et aucun export ne l'emporte.
+* ``progress --id <id> [--format text|json]`` — Montre les étapes de la leçon
+  marquées faites, avec la date du geste.
 
 Importer un fichier qui contient une leçon crée celle-ci avec ses étapes ; une
 leçon dont le nom existe déjà dans la base n'est pas touchée, si bien que
 réimporter le même fichier ne change rien. Lire une leçon n'enregistre rien chez
-celui qui la lit.
+celui qui la lit ; seul ``done`` écrit sa progression.
 
 L'export de toute la bibliothèque (``export --type database``) emporte toutes
 les leçons avec ce que leurs étapes montrent ; un export partiel ne les emporte

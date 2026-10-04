@@ -1,7 +1,7 @@
 # ADR-0047 — Diriger un tournoi, c'est créer ses Matchs avant qu'ils soient joués
 
 Statut : acceptée ; §1 amendé par ADR-0056 (la Rencontre) ; exposition au démon amendée par
-ADR-0057.
+ADR-0057 ; l'écran des joueurs tranché après mesure (amendement du 2026-10-04, ci-dessous).
 Voir aussi : ADR-0037, ADR-0039, ADR-0044, ADR-0045, ADR-0005, ADR-0057.
 
 ## Contexte
@@ -24,9 +24,17 @@ Participants, une longueur, une table, un résultat) que remplit une Transcripti
 3. **L'état n'est jamais stocké** : classement, arbres, appariements et proposition suivante
    sont rejoués depuis la Direction à chaque ouverture.
 
-Hors périmètre : l'écran des joueurs. blunderDB écrit une page HTML autonome à projeter ou
-imprimer ; rien dans le front web embarqué (ADR-0039 règle 1). Les routes `/v1/` servent un
-client externe (ADR-0057).
+**L'écran des joueurs est la page murale.** blunderDB écrit une page HTML autonome par
+Direction ou par Rencontre (ADR-0056), à projeter ou imprimer ; aucun écran personnel
+(téléphone, compte de joueur, route du démon dédiée) et rien dans le front web embarqué
+(ADR-0039 règle 1). Les routes `/v1/` servent un client externe (ADR-0057). La page suffit à
+répondre aux deux questions d'un joueur sans aller voir le directeur :
+
+1. **« Je joue où ? »** Chaque match en cours y figure avec sa table. Un match sans table ne
+   se lance pas : il attend une table.
+2. **« Est-ce que je joue ? »** Exempté (avec le tour d'entrée), éliminé, qualifié, pas
+   encore fixé y sont écrits en toutes lettres, sous ce titre ; le retiré, qui a quitté la
+   salle, n'y figure pas.
 
 Les renvois « ADR-0047 §N » du code désignent les sections de la spécification
 `tasks/nicomaque/fonctionnel.md`.
@@ -47,6 +55,15 @@ Les renvois « ADR-0047 §N » du code désignent les sections de la spécificat
 - Le crédit « Nicomaque, moteur de tournoi créé par Nicolas Harmand », avec les liens vers le
   dépôt et sa documentation, figure dans l'aide intégrée, À propos, la page tournoi du manuel,
   un bouton info de la gestion de tournoi et en pied des pages produites.
+- Écarté après mesure : un écran personnel des joueurs. Trois tournois simulés sur la vraie
+  Direction (`tasks/nicomaque/simulation-2026-10/`) comptent les interruptions d'un joueur qui
+  doit demander au directeur : 335 sans page murale, 58 avec la page de la première mesure,
+  toutes dues à trois défauts de la page (match sans table, page introuvable, statuts absents),
+  qu'un écran personnel aurait eus aussi. Ces défauts corrigés, la contre-épreuve en compte 17
+  sur 337 : 16 avant que le directeur ait ouvert la page, 1 du retiré lui-même
+  (`rapport/contre-epreuve.md`). On ne
+  rouvre la question que si un tournoi réel compte des interruptions que le mur ne peut pas
+  éviter : l'annonce sans attendre le rafraîchissement (30 s au plus), le joueur hors de la salle.
 - Écartés : un exécutable séparé ou gammonGo (le tournoi produit des Matchs, qui n'ont de
   valeur qu'analysés ici) ; deux entités (deux « Open » à réconcilier) ; une fiche personne
   réutilisable (`CONTEXT.md` refuse l'identité ; l'annuaire est une vue dérivée) ; un résultat
@@ -55,4 +72,6 @@ Les renvois « ADR-0047 §N » du code désignent les sections de la spécificat
 
 ## Garde
 
-`pkg/blunderdb/direction/direction_test.go`.
+`pkg/blunderdb/direction/direction_test.go` ; la page murale :
+`TestWallSaysWhoPlays`, `TestWallDuringATiedRepechage` (`service/status_test.go`) et `TestHallHoldsMatchesWithNoTable`
+(`service/hall_test.go`).

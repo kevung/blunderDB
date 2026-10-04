@@ -48,6 +48,7 @@ export default {
 <li>opiskella asemia välitoistolla (Anki-paneeli),</li>
 <li>näyttävät tietokannan metatiedot (Metatiedot-paneeli).</li>
 </ul>
+<p>Paneelin korkeutta säädetään vetämällä sen kahvaa; jokainen välilehti muistaa omansa.</p>
 <p>Modaali-ikkunoita voidaan näyttää seuraaviin tarkoituksiin:</p>
 <ul>
 <li>näyttää blunderDB:n ohje,</li>
@@ -278,10 +279,11 @@ export default {
 <p>Elävässä kokoelmassa näkyvä painike ❄ <strong>jäädyttää</strong> sen: haun sillä hetkellä valitsemista asemista tulee tavallisen kokoelman sisältö haun järjestyksessä, ja kysely tyhjennetään. Asemat, jotka kokoelmassa oli ennen sen muuttumista eläväksi, korvataan.</p>
 <p>Elävä kokoelma, jonka kysely sisältää tunnuksen jota tämä versio ei enää tunne, <strong>kieltäytyy avautumasta</strong> ja sanoo sen sen sijaan että palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla suodattimella ei saa olla: laajeta hiljaisuudessa.</p>
 <h4>Oppitunnit</h4>
-<p><strong>Oppitunti</strong> on vaiheiden sarja, jonka valmentaja kirjoittaa kerran oppilasta varten ja luovuttaa tälle tietokantatiedostossa (katso komento <code>lesson export</code> sivulla cli). Jokaisella vaiheella on otsikko ja teksti, ja se voi näyttää kokoelman, aseman, molemmat tai ei kumpaakaan. Komento <code>le</code> luettelee tietokannan oppitunnit tilarivillä; <code>le 2</code> avaa oppitunnin 2.</p>
+<p><strong>Oppitunti</strong> on vaiheiden sarja, jonka valmentaja kirjoittaa kerran oppilasta varten ja luovuttaa tälle tietokantatiedostossa (katso komento <code>lesson export</code> sivulla cli). Jokaisella vaiheella on otsikko ja teksti, ja se voi näyttää kokoelman, aseman, molemmat tai ei kumpaakaan. Komento <code>le</code> luettelee tietokannan oppitunnit tilarivillä; <code>le 2</code> avaa oppitunnin 2; <code>le edit</code> avaa oppituntieditorin.</p>
 <p>Laudan yläpuolelle ilmestyy silloin <strong>lukupalkki</strong>: oppitunnin nimi, vaiheen numero, otsikko ja sitten teksti. <em>Edellinen</em> ja <em>Seuraava</em> vaihtavat vaihetta; vaihe tuo laudalle kokoelman tai aseman, jonka se näyttää, ja sitä selataan tavallisin elein. <em>Sulje</em> poistuu oppitunnilta. Vaihe, jonka kokoelma tai asema on poistettu, säilyttää tekstinsä.</p>
-<p>Oppitunnin lukeminen ei jätä jälkeä: oppilaan tietokanta ei tallenna saavutettua vaihetta eikä avaamista. Oppitunnin sisältävän tiedoston tuonti luo oppitunnin; samanniminen jo olemassa oleva oppitunti jätetään koskematta. Oppitunteja luodaan ja muokataan komentorivillä tai API:n kautta (Oppitunnit).</p>
-<p>Varmuuskopio — koko kirjaston vienti vientiikkunasta tai komentoriviltä — sisältää kaikki oppitunnit; osittainen vienti (valinta asemista, kokoelmista tai otteluista) ei sisällä niitä.</p>
+<p>Palkin <em>Vaihe tehty</em> -valintaruutu merkitsee nykyisen vaiheen tehdyksi; toinen napsautus poistaa merkin, ja palkki laskee tehdyt vaiheet. Se on ainoa ele, joka kirjoittaa jotakin: oppitunnin lukeminen, vaiheen vaihtaminen tai oppitunnin avaaminen ei tallenna mitään, ei saavutettua vaihetta eikä avaamista. Merkki kirjoitetaan avattuun tietokantaan, oppilaan omaan, eikä mikään vienti vie sitä mukanaan. Oppitunnin sisältävän tiedoston tuonti luo oppitunnin; samanniminen jo olemassa oleva oppitunti jää koskematta.</p>
+<p><strong>Oppituntieditori</strong> avautuu komennolla <code>le edit</code> (<code>le edit 2</code> oppitunnille 2) tai lukupalkin <em>Muokkaa</em>-painikkeella. Vasemmalla ovat oppituntien luettelo ja kenttä uuden luomiseen; oikealla valitun oppitunnin nimi ja kuvaus, sitten sen vaiheet. Jokaisella vaiheella on otsikko, teksti, luettelosta valittu kokoelma ja asema: <em>Nykyinen asema</em> liittää siihen laudalla näkyvän aseman, <em>Irrota asema</em> poistaa sen. <em>Tallenna vaihe</em> kirjoittaa sen muutokset; nuolet siirtävät sitä yhden askeleen; <em>Lisää vaihe</em> lisää uuden loppuun. <em>Lue</em> sulkee editorin ja avaa oppitunnin sen ensimmäisestä vaiheesta; <em>Poista</em> poistaa oppitunnin ja sen vaiheet koskematta kokoelmiin tai asemiin, joita ne näyttivät. Oppitunteja voi luoda ja muokata myös komentoriviltä tai API:n kautta (Oppitunnit).</p>
+<p>Varmuuskopio — koko kirjaston vienti vientiikkunasta tai komentoriviltä — sisältää kaikki oppitunnit. Vientiikkunassa <em>Sisällytä oppitunnit</em> -valintaruutu valitsee ne yksitellen: jokainen valittu oppitunti lähtee mukaan niiden kokoelmien ja asemien kanssa, joita sen vaiheet näyttävät, ja tiedostoon voi lisätä alkuperämerkinnän tai suojata sen salasanalla (<code>.dbx</code>) kuten minkä tahansa viennin. Ilman tätä ruutua osittainen vienti (valinta asemista, kokoelmista tai otteluista) ei sisällä oppitunteja.</p>
 <h3>Tuonti: mitä kirjoitetaan ja mitä ei koskaan</h3>
 <p>Ottelun, aseman tai toisen tietokannan tuonti lisää sen, mikä puuttuu; se ei korvaa sitä, mikä on jo olemassa.</p>
 <ul>
@@ -2041,8 +2043,12 @@ export default {
 <td>Näytä/piilota kokoelmien paneeli.</td>
 </tr>
 <tr>
-<td>lesson, le [N]</td>
-<td>Ilman argumenttia luettelee tietokannan oppitunnit tilarivillä; <code>le N</code> avaa oppitunnin N sen ensimmäisestä vaiheesta (katso Oppitunnit).</td>
+<td>lesson, le [N | edit [N]]</td>
+<td>Ilman argumenttia luettelee tietokannan oppitunnit tilarivillä; <code>le N</code> avaa oppitunnin N sen ensimmäisestä vaiheesta; <code>le edit</code> avaa oppituntieditorin, <code>le edit N</code> oppitunnille N (katso Oppitunnit).</td>
+</tr>
+<tr>
+<td>study, sq</td>
+<td>Avaa tuonnit ylittävän opiskelujonon: blunderisi, joita mikään ei ole vielä käsitellyt, kalleimmasta halvimpaan (ks. Blunderit, joita mikään ei ole vielä käsitellyt).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>

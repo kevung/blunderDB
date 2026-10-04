@@ -251,7 +251,7 @@ test('T1 : Sophie dirige 16 joueurs, Hélène rejoue au clavier', async ({ page 
                     .filter((x) => (x.a === 'BYE') !== (x.b === 'BYE'))
                     .map((x) => {
                         const name = nameOf[x.a === 'BYE' ? x.b : x.a];
-                        return { name, ...wallHasSeat(html, name, 0) };
+                        return { name, ...wallSaysExempt(html, name) };
                     });
                 await m.act({ action: 'revenir à la Direction' }, async (g) => g.click('[data-testid="direction-tab-direction"]'));
             }
@@ -317,15 +317,14 @@ async function helene(page, m, shim, trace, saveTrace) {
         await g.press('Enter');
     });
     const row = page.locator('#tournamentPanel tbody tr', { hasText: 'T1 rejoué clavier' });
-    await m.act({ action: 'P4 ouvrir le tournoi (ligne) : essai clavier' }, async (g) => {
-        // La ligne n'a ni tabindex ni touche : Tab atteint au mieux son bouton ✎ (renommer).
-        const reached = await g.tabTo(row.locator('td').first());
-        if (!reached) g.problem('ligne de tournoi injoignable au clavier (ni tabindex ni Entrée) : repli double-clic souris');
-        await page.keyboard.press('Escape');
-    });
-    await m.act({ action: 'P4 ouvrir le tournoi (repli : double-clic souris)' }, async (g) => {
-        g.problem('repli souris imposé : PanelTable n’active une ligne qu’au double-clic');
-        await g.dblclick(row);
+    await m.act({ action: 'P4 ouvrir le tournoi (ligne) au clavier' }, async (g) => {
+        // La ligne porte le focus (tabindex) et s'ouvre à Entrée ; le double-clic n'est qu'un repli.
+        const reached = await g.tabTo(row);
+        if (reached) await g.press('Enter');
+        else {
+            g.problem('ligne de tournoi injoignable au clavier : repli double-clic souris');
+            await g.dblclick(row);
+        }
     });
     await m.act({ action: 'P4 diriger' }, async (g) => g.click('[data-testid="tournament-direct"]'));
     await page.waitForTimeout(2500);
@@ -539,6 +538,15 @@ function wallHasSeat(html, name, table) {
     const block = html.slice(start, end > 0 ? end : hit + 400).replace(/<[^>]+>/g, ' ');
     const ok = new RegExp(`(^|\\D)${table}(\\D|$)`).test(block);
     return { written: true, nameFound: true, ok, block: block.replace(/\s+/g, ' ').trim().slice(0, 160) };
+}
+
+/** « Est-ce que je joue ? » : le nom de l'exempté suivi du mot « exempt » sur la même ligne. */
+function wallSaysExempt(html, name) {
+    if (!html) return { written: false, ok: false };
+    const text = html.replace(/<[^>]+>/g, ' ').replace(/&#39;/g, "'").replace(/&amp;/g, '&').replace(/\s+/g, ' ');
+    if (!text.includes(name)) return { written: true, nameFound: false, ok: false };
+    const ok = new RegExp(`${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*—\\s*exempt`, 'i').test(text);
+    return { written: true, nameFound: true, ok };
 }
 
 function findKey(o, key) {

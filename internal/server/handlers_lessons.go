@@ -30,6 +30,12 @@ type lessonStepReq struct {
 	PositionID   int64  `json:"positionId"`
 }
 
+// lessonStepDoneReq marks the step ID done, or withdraws the mark.
+type lessonStepDoneReq struct {
+	ID   int64 `json:"id"`
+	Done bool  `json:"done"`
+}
+
 type lessonReorderReq struct {
 	LessonID int64   `json:"lessonId"`
 	StepIDs  []int64 `json:"stepIds"`
@@ -76,6 +82,14 @@ func (s *Server) lessonRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/lessons.reorderSteps", rpcVoid(func(ctx context.Context, scope string, req lessonReorderReq) error {
 			return ls().ReorderSteps(ctx, scope, req.LessonID, req.StepIDs)
+		})},
+		// The reader's progress (ADR-0069): written only by this explicit
+		// gesture, in the reader's own tenant; get and list write nothing.
+		{http.MethodPost, "/v1/lessons.setStepDone", rpcVoid(func(ctx context.Context, scope string, req lessonStepDoneReq) error {
+			return ls().SetStepDone(ctx, scope, req.ID, req.Done)
+		})},
+		{http.MethodPost, "/v1/lessons.doneSteps", rpc(func(ctx context.Context, scope string, req idReq) (map[int64]string, error) {
+			return ls().DoneSteps(ctx, scope, req.ID)
 		})},
 	}
 }

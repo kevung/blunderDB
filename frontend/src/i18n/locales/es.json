@@ -1091,7 +1091,10 @@
         "descProtected": "una contraseña",
         "tournamentsNeedMatches": "Un torneo solo se vincula a sus partidos si estos también se exportan: marque antes «incluir partidos».",
         "filterLibraryHint": "Sus propias búsquedas guardadas, no contenido: no sirven de nada en la base de otra persona.",
-        "metadataTitle": "Metadatos del archivo exportado"
+        "metadataTitle": "Metadatos del archivo exportado",
+        "includeLessons": "Incluir lecciones ({count})",
+        "selectLessons": "Seleccionar las lecciones a exportar",
+        "descLessons": "{count} lección(es)"
     },
     "import": {
         "minimize": "Minimizar",
@@ -1767,7 +1770,13 @@
         "empty": "Esta importación no tiene nada que merezca una segunda mirada.",
         "failed": "No se ha podido construir la cola de estudio.",
         "finished": "Cola de estudio terminada: {n} posiciones recorridas.",
-        "stopped": "Cola de estudio abandonada."
+        "stopped": "Cola de estudio abandonada.",
+        "reasonBacklog": "error sin tratar",
+        "markStudied": "Marcar como visto",
+        "unmark": "Quitar la marca",
+        "backlogEmpty": "Ningún error pendiente: todo está comentado, archivado, en tarjeta o marcado como visto.",
+        "markFailed": "No se pudo escribir la marca.",
+        "unmarked": "Marca retirada: la posición vuelve a la cola."
     },
     "home": {
         "title": "blunderDB",
@@ -2703,7 +2712,8 @@
             "history": "Historial de búsqueda",
             "match": "Panel de matches",
             "collection": "Panel de colecciones",
-            "lesson": "Lecciones (le N abre la lección N)",
+            "lesson": "Lecciones (le N abre la lección N, le edit abre el editor)",
+            "study": "Cola de estudio: sus errores graves sin tratar",
             "eval": "Panel Eval",
             "rollout": "Rodar la posición (rollout fast|standard, search, stop)",
             "transcribe": "Transcripción de matches",
@@ -2802,7 +2812,11 @@
         "empty": "Esta lección aún no tiene pasos.",
         "notFound": "No existe la lección n.º {id}.",
         "failed": "No se pudieron leer las lecciones.",
-        "stepMissing": "Lo que muestra este paso ya no está en la base."
+        "stepMissing": "Lo que muestra este paso ya no está en la base.",
+        "edit": "Editar",
+        "stepDone": "Paso hecho",
+        "stepDoneHint": "Marca el paso como hecho en esta base; un segundo clic quita la marca. No se registra nada más de la lectura.",
+        "doneCount": "{done} / {n} hechos"
     },
     "corpus": {
         "intro": "Duplicados y grafías: lo que una importación reconoce como ya guardado, y los otros nombres de un mismo jugador o evento.",
@@ -2830,5 +2844,32 @@
         "applyPairing": "Crear estos alias",
         "pairingApplied": "Alias creados",
         "suspectLonger": "#{match} prolonga #{other} ({players})"
+    },
+    "lessonEditor": {
+        "title": "Lecciones",
+        "failed": "Error: {error}",
+        "confirmDelete": "¿Eliminar la lección «{name}»? Sus colecciones y posiciones se conservan.",
+        "newStepTitle": "Paso {n}",
+        "confirmRemoveStep": "¿Quitar el paso «{title}»?",
+        "noCurrentPosition": "No hay ninguna posición en el tablero.",
+        "newLessonName": "Nombre de la nueva lección",
+        "create": "Crear",
+        "name": "Nombre",
+        "description": "Descripción",
+        "save": "Guardar",
+        "read": "Leer",
+        "delete": "Eliminar",
+        "stepTitle": "Título del paso",
+        "up": "Subir",
+        "down": "Bajar",
+        "stepText": "Texto del paso",
+        "collection": "Colección mostrada",
+        "noCollection": "Ninguna colección",
+        "position": "Posición {id}",
+        "useCurrentPosition": "Posición actual",
+        "detachPosition": "Quitar la posición",
+        "saveStep": "Guardar el paso",
+        "removeStep": "Quitar el paso",
+        "addStep": "Añadir un paso"
     }
 }

@@ -155,6 +155,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"ImportBatch/ReportIsMeasuredNotStored", testImportBatchReportIsMeasured},
 		{"ImportBatch/ReportIsAboutOneImport", testImportBatchReportIgnoresOtherBatches},
 		{"ImportBatch/StudyQueue", testImportStudyQueue},
+		{"ImportBatch/StudyBacklog", testStudyBacklog},
 		{"Positions/SimilarIsExactAndOrdered", testSimilarIsExactAndOrdered},
 		{"Positions/SimilarRanksInsideTheClass", testSimilarRanksInsideTheClass},
 		{"Positions/SimilarExcludesTheTargetsMatches", testSimilarExcludesTheTargetsMatches},

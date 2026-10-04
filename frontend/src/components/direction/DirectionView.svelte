@@ -925,6 +925,7 @@
                     <ProposalList
                         proposals={view?.proposals || []}
                         players={free}
+                        entrants={view?.players || []}
                         elsewhere={view?.elsewhere || {}}
                         {tableNames}
                         {busy}

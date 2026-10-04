@@ -13,6 +13,13 @@ export const studyQueueStore = writable([]);
 /** Position courante dans la file, 0-indexée. */
 export const studyQueueIndexStore = writable(0);
 
+/** La file en cours est-elle la file transversale (« backlog ») plutôt que celle d'un lot ?
+ *  Seule celle-là offre « marquer vu » : la marque est une donnée de l'utilisateur. */
+export const studyQueueBacklogStore = writable(false);
+
+/** La dernière position marquée vue, pour pouvoir démarquer d'un clic (0 = aucune). */
+export const studyQueueLastMarkedStore = writable(0);
+
 /** La file est-elle en cours de parcours ? */
 export const studyQueueActiveStore = writable(false);
 
