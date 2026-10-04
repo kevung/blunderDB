@@ -364,3 +364,34 @@ func TestQuotaBoundsRollouts(t *testing.T) {
 		}
 	}
 }
+
+// TestQuotaRefusesImportBeyondConcurrentLimit: with the tenant's slot taken, the next import is
+// 429 quota_exceeded, and the tenant's season ranking read stays open.
+func TestQuotaRefusesImportBeyondConcurrentLimit(t *testing.T) {
+	ts, srv := newQuotaTestServer(t, TenantQuotas{MaxConcurrentImports: 1})
+	if !srv.quota.beginImport(testTenant) {
+		t.Fatal("the first import takes the slot")
+	}
+	var body bytes.Buffer
+	mw := multipart.NewWriter(&body)
+	fw, _ := mw.CreateFormFile("file", "data.ndjson")
+	_, _ = fw.Write([]byte("{}\n"))
+	mw.Close()
+	req, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/imports.json", &body)
+	req.Header.Set(middleware.TenantHeader, testTenant)
+	req.Header.Set("Content-Type", mw.FormDataContentType())
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	status, e := errorOf(t, resp)
+	if status != http.StatusTooManyRequests || e.Code != CodeQuotaExceeded || e.Details["quota"] != "maxConcurrentImports" {
+		t.Fatalf("second import: %d %+v; want 429 quota_exceeded", status, e)
+	}
+
+	r2 := post(t, ts, "/v1/rencontres.ranking", map[string]any{"from": "2026-01-01", "to": "2026-12-31"})
+	defer r2.Body.Close()
+	if r2.StatusCode != http.StatusOK {
+		t.Errorf("rencontres.ranking on an empty season: %d", r2.StatusCode)
+	}
+}

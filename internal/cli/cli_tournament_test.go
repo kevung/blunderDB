@@ -520,3 +520,29 @@ func TestCLI_TournamentTables(t *testing.T) {
 		t.Errorf("hall not grouped by room:\n%s", hall)
 	}
 }
+
+func TestCLI_TournamentRankingNeedsSeasonAndReadsAPeriod(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	_ = directedTournamentCLI(t, cli, 4) // still running: not part of a season
+	if err := cli.Run([]string{"tournament", "ranking", "--db", dbPath}); err == nil {
+		t.Error("ranking without --season must say it is `standings` that ranks one tournament")
+	}
+	if err := cli.Run([]string{"tournament", "ranking", "--db", dbPath, "--season", "--format", "xml"}); err == nil {
+		t.Error("an unknown format is refused")
+	}
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"tournament", "ranking", "--db", dbPath, "--season", "--from", "2026-01-01", "--to", "2026-12-31", "--points", "10,6,4", "--elo", "--format", "json"}); err != nil {
+			t.Fatalf("ranking --season: %v", err)
+		}
+	})
+	var v struct {
+		Rows   []any
+		Events []any
+	}
+	if err := json.Unmarshal([]byte(out), &v); err != nil {
+		t.Fatalf("json: %v\n%s", err, out)
+	}
+	if len(v.Rows) != 0 {
+		t.Errorf("an unfinished tournament scores nothing: %v", v.Rows)
+	}
+}
