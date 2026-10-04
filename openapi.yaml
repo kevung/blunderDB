@@ -4154,6 +4154,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idResp"
+  /v1/matches.scoreMoves:
+    post:
+      operationId: matches.scoreMoves
+      tags: [matches]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/scoreMovesResp"
   /v1/matches.setLastVisitedPosition:
     post:
       operationId: matches.setLastVisitedPosition
@@ -8135,6 +8152,12 @@ components:
             $ref: "#/components/schemas/domain_RolloutAnalysis"
     scopeReq:
       type: object
+    scoreMovesResp:
+      type: object
+      properties:
+        scored:
+          type: integer
+          format: int32
     searchFindReq:
       type: object
       properties:

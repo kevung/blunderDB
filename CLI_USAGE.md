@@ -3333,6 +3333,8 @@ Options:
     	Only list the pairs of matches whose dice say they are one: same dice under other player names, or a truncated match and its longer version (nothing is merged)
   -format string
     	Output format: text or json (default "text")
+  -move-errors
+    	Also write the equity error of every played move (stored in the move table) from its position's analysis; resumable, long on a large library
   -stats
     	Also recompute the per-match statistics (PR, decisions, blunders, luck of each seat) from scratch
 
@@ -3340,6 +3342,7 @@ Examples:
   blunderdb repair --db database.db
   blunderdb repair --db database.db --format json
   blunderdb repair --db database.db --stats
+  blunderdb repair --db database.db --move-errors
   blunderdb repair --db database.db --duplicates
 ```
 

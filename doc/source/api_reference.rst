@@ -208,6 +208,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/matches.moves                        NDJSON
      POST /v1/matches.movesByMatch                 NDJSON
      POST /v1/matches.save                         JSON
+     POST /v1/matches.scoreMoves                   JSON
      POST /v1/matches.setLastVisitedPosition       JSON
      POST /v1/matches.swapPlayers                  JSON
      POST /v1/matches.update                       JSON

@@ -453,6 +453,7 @@ var databaseParity = map[string]parityEntry{
 	"RepairGamePhases":                  {CLI: "repair", Server: "/v1/positions.reclassifyPhases"},
 	"RepairCrawfordSentinel":            {CLI: "repair", Server: "/v1/positions.repairCrawford"},
 	"RebuildMatchStats":                 {CLI: "repair", Server: "/v1/stats.rebuildMatchStats"},
+	"ScoreMoves":                        {CLI: "repair", Server: "/v1/matches.scoreMoves"},
 	"FindDuplicateMatches":              {CLI: "repair --duplicates", Server: "/v1/matches.duplicates"},
 	"ListAliases":                       {CLI: "players alias list", Server: "/v1/players.alias.list"},
 	"SetAlias":                          {CLI: "players alias add", Server: "/v1/players.alias.set"},
