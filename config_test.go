@@ -219,13 +219,15 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		GammonNetAutoAnalyze: true,
 		CheckForUpdates:      true,
 		StatsFilter: StatsFilterPersisted{
-			PlayerName:    "Kévin Unger",
-			TournamentIDs: []int64{3, 7, 11},
-			DateFrom:      "2026-01-01",
-			DateTo:        "2026-12-31",
-			DecisionType:  intPtr(1),
-			MatchLength:   []int{5, 7},
-			Metric:        "mwc",
+			PlayerName:       "Kévin Unger",
+			TournamentIDs:    []int64{3, 7, 11},
+			DateFrom:         "2026-01-01",
+			DateTo:           "2026-12-31",
+			DecisionType:     intPtr(1),
+			MatchLength:      []int{5, 7},
+			Metric:           "mwc",
+			AnalysisEngine:   "XG",
+			MinAnalysisDepth: 3,
 		},
 	}
 

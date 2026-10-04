@@ -456,10 +456,10 @@ type StatsStore interface {
 	// MatchSeries is Compute's PerMatch (ID, Date, PR, NumDecisions; MWC
 	// left zero) read from match_stats: the PR of the filter's players in
 	// each match, oldest first, matches without a counted decision absent.
-	// It honours the filter's players (and aliases), tournaments, dates,
-	// match lengths and decision type; a provenance filter is refused with
-	// ErrInvalid — the table keeps one provenance per seat, not per
-	// decision, so the caller falls back to Compute.
+	// It honours every field of the filter, like Compute: a provenance
+	// filter, which the table cannot apply (it keeps one provenance per seat,
+	// not per decision), and a connection that refuses writes are answered
+	// by Compute's direct per-match pass over the decisions.
 	MatchSeries(ctx context.Context, scope string, filter StatsFilter) ([]MatchStats, error)
 
 	// HeadToHead is the record of two players against each other: the
@@ -467,14 +467,16 @@ type StatsStore interface {
 	// folded), each player's PR in each of them and over all of them, and
 	// the outcomes (MatchOutcome). The filter's player fields are ignored;
 	// its tournaments, dates, match lengths and decision type apply. A
-	// provenance filter is refused with ErrInvalid, as for MatchSeries.
+	// provenance filter is refused with ErrInvalid. A connection that refuses
+	// writes computes the seat rows from the decisions instead of the table.
 	HeadToHead(ctx context.Context, scope, playerA, playerB string, filter StatsFilter) (*HeadToHead, error)
 
 	// PRByWindow is the PR of the filter's players over a sliding calendar
 	// window of `months` months (1 a month, 3 a quarter), one point per
 	// month from the first month with a counted decision to the last, each
 	// point covering that month and the months-1 before it. Read from
-	// match_stats; a provenance filter is refused with ErrInvalid.
+	// match_stats (or, read-only, from the decisions as HeadToHead does); a
+	// provenance filter is refused with ErrInvalid.
 	PRByWindow(ctx context.Context, scope string, filter StatsFilter, months int) ([]WindowStats, error)
 
 	// RefreshMatchStats recomputes the rows of matchIDs now — what an import

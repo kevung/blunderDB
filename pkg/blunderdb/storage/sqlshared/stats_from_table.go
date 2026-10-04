@@ -46,6 +46,41 @@ func (s *StatsStore) matchStatsWhere(scope string, filter storage.StatsFilter, s
 
 const matchStatsJoin = ` FROM match_stats ms JOIN match m ON m.id = ms.match_id`
 
+// matchStatsSource is the FROM clause of a read of match_stats: the table,
+// filled first, or — on a connection that refuses writes and so cannot fill
+// it — the same seat rows (both seats of every match, zero when nothing is
+// counted) computed from the decisions within the query, so a read-only
+// reader gets the figures a writer would and the table is never trusted
+// while incomplete. Only the columns the readers here use are derived.
+func (s *StatsStore) matchStatsSource(ctx context.Context, scope string) (string, []any, error) {
+	if !RefusesWrites(ctx, s.DB) {
+		if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
+			return "", nil, err
+		}
+		return matchStatsJoin, nil, nil
+	}
+	d := s.DB
+	pTenant, pArgs := d.TenantFilter("p", scope)
+	mTenant, mArgs := d.TenantFilter("m0", scope)
+	errE := `(` + statsErrExpr + `)`
+	isCube := `p.decision_type = 1`
+	from := ` FROM (SELECT m0.id AS match_id, s.seat AS seat,
+		COALESCE(x.decisions, 0) AS decisions, COALESCE(x.error_mp, 0) AS error_mp,
+		COALESCE(x.checker_decisions, 0) AS checker_decisions, COALESCE(x.checker_error_mp, 0) AS checker_error_mp,
+		COALESCE(x.cube_decisions, 0) AS cube_decisions, COALESCE(x.cube_error_mp, 0) AS cube_error_mp
+		FROM match m0 CROSS JOIN (SELECT 1 AS seat UNION ALL SELECT 2 AS seat) s
+		LEFT JOIN (SELECT g.match_id AS match_id, ` + seatExpr + ` AS seat,
+			COUNT(*) AS decisions, SUM(` + errE + `) AS error_mp,
+			SUM(CASE WHEN ` + isCube + ` THEN 0 ELSE 1 END) AS checker_decisions,
+			SUM(CASE WHEN ` + isCube + ` THEN 0 ELSE ` + errE + ` END) AS checker_error_mp,
+			SUM(CASE WHEN ` + isCube + ` THEN 1 ELSE 0 END) AS cube_decisions,
+			SUM(CASE WHEN ` + isCube + ` THEN ` + errE + ` ELSE 0 END) AS cube_error_mp
+			` + statsBaseJoin + ` WHERE ` + pTenant + ` AND a.position_id IS NOT NULL AND ` + errE + ` IS NOT NULL AND ` + countedExpr(d) + `
+			GROUP BY g.match_id, ` + seatExpr + `) x ON x.match_id = m0.id AND x.seat = s.seat
+		WHERE ` + mTenant + `) ms JOIN match m ON m.id = ms.match_id`
+	return from, append(append([]any{}, pArgs...), mArgs...), nil
+}
+
 // tableErrDecisions renders the error sum and decision count of the rows for
 // the filter's decision type.
 func tableErrDecisions(d Dialect, decisionType int) (sumErr, count string) {
@@ -219,7 +254,8 @@ func (s *StatsStore) HeadToHead(ctx context.Context, scope, playerA, playerB str
 	for _, n := range groupA {
 		isA[n] = true
 	}
-	if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
+	from, fromArgs, err := s.matchStatsSource(ctx, scope)
+	if err != nil {
 		return nil, err
 	}
 	d := s.DB
@@ -243,8 +279,8 @@ func (s *StatsStore) HeadToHead(ctx context.Context, scope, playerA, playerB str
 		`SELECT m.id, `+d.DateText("m.match_date")+`, COALESCE(m.match_length, 0), m.player1_name, ms.seat, `+sumErr+`, `+count+`,
 		        `+d.Bigint(`COALESCE((SELECT SUM(g.points_won) FROM game g WHERE g.match_id = m.id AND g.winner = 1), 0)`)+`,
 		        `+d.Bigint(`COALESCE((SELECT SUM(g.points_won) FROM game g WHERE g.match_id = m.id AND g.winner = -1), 0)`)+
-			matchStatsJoin+where+` GROUP BY m.id, m.match_date, m.match_length, m.player1_name, ms.seat ORDER BY m.match_date, m.id, ms.seat`,
-		args, func(r Rows) error {
+			from+where+` GROUP BY m.id, m.match_date, m.match_length, m.player1_name, ms.seat ORDER BY m.match_date, m.id, ms.seat`,
+		append(fromArgs, args...), func(r Rows) error {
 			var id, sum, n, pts1, pts2 int64
 			var date *string
 			var length, seat int
@@ -307,7 +343,8 @@ func (s *StatsStore) PRByWindow(ctx context.Context, scope string, filter storag
 	if err != nil {
 		return nil, err
 	}
-	if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
+	from, fromArgs, err := s.matchStatsSource(ctx, scope)
+	if err != nil {
 		return nil, err
 	}
 	d := s.DB
@@ -319,8 +356,8 @@ func (s *StatsStore) PRByWindow(ctx context.Context, scope string, filter storag
 	var first, last string
 	err = scanEach(ctx, d,
 		`SELECT `+month+` AS mon, `+sumErr+`, `+count+`, COUNT(DISTINCT CASE WHEN ms.decisions > 0 THEN m.id END)`+
-			matchStatsJoin+where+` AND m.match_date IS NOT NULL GROUP BY mon HAVING `+count+` > 0 ORDER BY mon`,
-		args, func(r Rows) error {
+			from+where+` AND m.match_date IS NOT NULL GROUP BY mon HAVING `+count+` > 0 ORDER BY mon`,
+		append(fromArgs, args...), func(r Rows) error {
 			var mon string
 			var b bucket
 			if err := r.Scan(&mon, &b.sum, &b.n, &b.matches); err != nil {

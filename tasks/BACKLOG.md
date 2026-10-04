@@ -123,6 +123,10 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   passant ».
 ## Ouvert — Produit / docs
 
+- **Elo de performance dans les stats de corpus** (reste de GB5.6, #541) — reporté après la
+  0.37.0 par décision produit du 2026-10-04. Demande d'abord une ADR qui fixe la formule (Elo
+  des adversaires lus dans les métadonnées de match, longueur de match, matchs sans Elo) ;
+  puis une vue de corpus exposée en GUI, CLI et serveur comme le face-à-face.
 - **Export fédéral du classement de club** (#529) — reporté par décision produit du
   2026-10-03 : le CSV/JSON générique par épreuve et par saison suffit. À reprendre seulement
   sur un besoin réel, avec un fichier modèle de la fédération visée (FFBG ou autre), testé
