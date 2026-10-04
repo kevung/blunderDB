@@ -72,6 +72,14 @@ type Selection struct {
 	// LessonContents adds what the selected lessons' steps show: their
 	// collections, with their members, and their positions (ADR-0066).
 	LessonContents bool
+
+	// DeckIDs exports these Anki decks even when ExportOptions.AnkiDecks is
+	// off — a deck handed to someone else, without the sender's other decks.
+	// Like every deck, it travels without its review history.
+	DeckIDs []int64
+	// DeckPositions adds the members of the decks in DeckIDs to the positions
+	// exported.
+	DeckPositions bool
 }
 
 // ExportReport counts what an export wrote. Skipped counts rows dropped along
@@ -307,6 +315,7 @@ type exporter struct {
 	// Resolved selection, in the order rows are written.
 	collectionIDs, tournamentIDs, matchIDs []int64
 	lessonIDs                              []int64
+	deckIDs                                []int64
 	lessonCollIDs                          []int64 // collections the lessons' steps show
 	lessonPosIDs                           []int64 // positions the lessons' steps show
 	extraPositionIDs                       []int64 // closure of collections/matches, beyond the explicit positions
@@ -445,6 +454,7 @@ func (e *exporter) resolveSelection() error {
 	if err := e.resolveLessons(); err != nil {
 		return err
 	}
+	e.deckIDs, _ = e.resolveIDs(false, sel.DeckIDs, nil)
 
 	// Positions reached by the closure, minus the ones the caller listed;
 	// sorted so the file is the same whatever order the closure found them.
@@ -470,6 +480,20 @@ func (e *exporter) resolveSelection() error {
 			for p, err := range e.src.Collections().Positions(e.ctx, e.scope, cid, storage.ListOpts{}) {
 				if err != nil {
 					return fmt.Errorf("ingest: list positions of collection %d: %w", cid, err)
+				}
+				if !explicit[p.ID] {
+					extra[p.ID] = true
+				}
+			}
+		}
+	}
+	if sel.DeckPositions {
+		// DeckPositions reads the scope's own decks only: an id another
+		// tenant owns lists nothing.
+		for _, did := range e.deckIDs {
+			for p, err := range e.src.Anki().DeckPositions(e.ctx, e.scope, did) {
+				if err != nil {
+					return fmt.Errorf("ingest: list positions of deck %d: %w", did, err)
 				}
 				if !explicit[p.ID] {
 					extra[p.ID] = true
@@ -1088,9 +1112,10 @@ func (e *exporter) writeTranscriptions() error {
 // review history is intentionally left behind: an export is a fresh study
 // copy, not a scheduler snapshot.
 func (e *exporter) writeAnkiDecks() error {
-	if !e.opts.AnkiDecks {
+	if !e.opts.AnkiDecks && len(e.deckIDs) == 0 {
 		return nil
 	}
+	picked := toSet(e.deckIDs)
 	type srcDeck struct {
 		d      domain.AnkiDeck
 		posIDs []int64
@@ -1100,7 +1125,9 @@ func (e *exporter) writeAnkiDecks() error {
 		if err != nil {
 			return fmt.Errorf("ingest: list decks: %w", err)
 		}
-		decks = append(decks, srcDeck{d: *d})
+		if e.opts.AnkiDecks || picked[d.ID] {
+			decks = append(decks, srcDeck{d: *d})
+		}
 	}
 	for i := range decks {
 		for p, err := range e.src.Anki().DeckPositions(e.ctx, e.scope, decks[i].d.ID) {

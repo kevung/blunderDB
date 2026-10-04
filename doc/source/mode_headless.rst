@@ -890,7 +890,9 @@ l'identité propre du démon (``--identity-dir``) — sans ces champs, l'export 
 porte aucun filigrane ; les demander sans identité configurée échoue avec le
 code ``invalid``. ``collectionIds`` restreint l'export à ces collections et à
 leurs positions, avec analyses, commentaires et coups joués, sans la
-bibliothèque de filtres ni les paquets Anki.
+bibliothèque de filtres ni les autres paquets Anki. ``deckIds`` fait de même
+pour des paquets Anki : chacun voyage avec ses positions, sans l'historique de
+révision de celui qui l'envoie. Les deux champs se combinent.
 
 **Importer un dossier ou un corpus** se fait par ``imports.batch``, qui passe
 par le même pipeline que ``blunderdb import --type batch`` : mêmes matchs,
@@ -951,8 +953,12 @@ receveur sache d'où vient le fichier), le tenant qui reçoit envoie le fichier
 décide qui a le droit de faire l'une et l'autre. À l'import, une collection
 rejoint celle du même nom chez le receveur, ou est créée ; ses positions s'y
 ajoutent à la suite, sans doublon. Une collection vivante du receveur ne
-reçoit aucune position : sa requête fait son contenu. L'import d'une base
-dans l'application de bureau suit la même règle.
+reçoit aucune position : sa requête fait son contenu. Un paquet Anki se
+partage de même, avec ``deckIds`` : le receveur l'étudie à neuf, ses cartes
+toutes nouvelles ; un paquet dont il tient déjà le nom est laissé tel quel,
+cartes et calendrier compris, si bien qu'importer deux fois le même fichier ne
+change rien. L'import d'une base dans l'application de bureau suit les mêmes
+règles.
 
 .. code-block:: bash
 

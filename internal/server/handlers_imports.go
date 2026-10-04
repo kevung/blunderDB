@@ -291,6 +291,10 @@ type exportSQLiteReq struct {
 	// show, on the same terms as CollectionIDs (ADR-0066); given with
 	// CollectionIDs, both travel.
 	LessonIDs []int64 `json:"lessonIds,omitempty"`
+	// DeckIDs narrows the export to these Anki decks and their positions, on
+	// the same terms: the recipient studies them afresh, without the
+	// sender's review history. Given with the others, all travel.
+	DeckIDs []int64 `json:"deckIds,omitempty"`
 }
 
 // sealExportWatermark seals a watermark for origin/note with this daemon's own
@@ -351,10 +355,11 @@ func (s *Server) handleExportSQLite() http.HandlerFunc {
 		defer os.Remove(tmpPath)
 
 		opts := ingest.WholeTenant(ingest.FormatSQLite)
-		if len(req.CollectionIDs) > 0 || len(req.LessonIDs) > 0 {
+		if len(req.CollectionIDs) > 0 || len(req.LessonIDs) > 0 || len(req.DeckIDs) > 0 {
 			opts.Selection = ingest.Selection{
 				CollectionIDs: req.CollectionIDs, CollectionPositions: true,
 				LessonIDs: req.LessonIDs, LessonContents: true,
+				DeckIDs: req.DeckIDs, DeckPositions: true,
 			}
 			opts.FilterLibrary, opts.AnkiDecks = false, false
 		}

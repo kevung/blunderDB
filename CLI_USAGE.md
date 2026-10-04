@@ -2686,6 +2686,8 @@ Options:
     	Include comments in database export (default: true) (default true)
   -db string
     	Path to the database file (required)
+  -deck-ids string
+    	Comma-separated list of Anki deck IDs to export with their positions, without their review history
   -dir string
     	Output directory for .mat batch export (type=mat, multiple matches)
   -file string

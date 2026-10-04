@@ -83,6 +83,13 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		}
 	}
 
+	var srcDecks []SourceDeck
+	if source.HasTable(ctx, "anki_deck") {
+		if srcDecks, err = ReadSourceDecks(ctx, source, scope); err != nil {
+			return Summary{}, err
+		}
+	}
+
 	// The tables the source's analyses cite travel with them (ADR-0068); a
 	// source from before them (schema < 2.31.0) cites none.
 	var srcTables []*domain.MatchEquityTable
@@ -187,6 +194,9 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 	sum.Collections = merged.Changed
 	sum.LivingCollectionsSkipped = merged.LivingSkipped
 	if sum.Lessons, err = MergeLessons(ctx, tx, scope, srcLessons, srcCollections, targetOf); err != nil {
+		return sum, err
+	}
+	if sum.Decks, err = MergeDecks(ctx, tx, scope, srcDecks, srcCollections, targetOf); err != nil {
 		return sum, err
 	}
 
