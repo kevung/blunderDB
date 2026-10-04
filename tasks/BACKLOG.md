@@ -72,6 +72,17 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 - **Décompte des gaffes d'`info` à la demande ou en cache** (revue de la branche `perf/migration-2-31`, point 9) : `GetDatabaseStats` lit `Counts` d'un coup, et `blunderCount` parcourt toute `analysis` — des secondes à des dizaines de secondes sur une base BMAB. Le calculer seulement sur demande (`info --blunders`) ou le garder en cache dans `metadata`, invalidé par import/suppression/changement de seuil. Effort M.
 - **Course Stat/Rename du vacuum par remplacement** (`database/db_vacuum.go`, `vacuumBySwap`) : l'absence de `-wal` est constatée par `os.Stat` puis le fichier remplacé par `os.Rename` ; un autre processus qui ouvre la base entre les deux lit l'ancien inode et y écrit à perte. Fenêtre de quelques microsecondes, sans verrou de fichier pour la fermer. Prendre un verrou exclusif SQLite (`BEGIN EXCLUSIVE` sur une connexion tenue jusqu'au rename) ou un verrou consultatif. Effort S-M.
 
+- **File d'étude transversale — la requête de la grammaire qui la reproduit.** → #528
+  (étape 4). La file (`StudyBacklog`, `sqlshared/importbatches.go`) n'a pas de jeton
+  équivalent, pour trois raisons : elle compte les décisions comme Stats (`countedExpr` :
+  coups forcés exclus, conventions du pas-de-double), ce que la grammaire n'exprime pas ;
+  son coût est celui de l'analyse (`statsErrExpr`), alors que `E` filtre l'erreur du coup
+  joué, coup par coup ; l'absence de carte, de collection et de marque « vu » n'a pas de
+  jeton (`xco` couvre seulement le commentaire). Un jeton `nt` (« non traité ») couvrirait
+  le dernier point ; l'égalité exacte demande en plus de choisir lequel des deux sens du
+  coût et du décompte fait foi, puis de redéfinir la file sur la grammaire. Cette décision
+  passe par Opus, avec un test d'égalité jeton ↔ `StudyBacklog` sur les deux backends.
+
 ## Ouvert — Moteur (dettes nommées dans les ADR)
 
 - **Renommage `race.Money` → `race.CubeVerdict`** et libellé de la colonne

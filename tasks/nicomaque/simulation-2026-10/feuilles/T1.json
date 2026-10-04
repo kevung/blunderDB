@@ -98,71 +98,29 @@
     {
       "type": "match",
       "phase": 0,
-      "a": "ombeline-royer",
-      "b": "prosper-galimard",
-      "winner": "prosper-galimard"
+      "a": "elvire-castagnac",
+      "b": "ingrid-vallespir",
+      "winner": "elvire-castagnac"
     },
     {
       "type": "match",
       "phase": 0,
-      "a": "aurore-delcambre",
+      "a": "ombeline-royer",
       "b": "désiré-oudinot",
       "winner": "désiré-oudinot"
     },
     {
       "type": "match",
       "phase": 0,
-      "a": "elvire-castagnac",
-      "b": "basile-fontanet",
-      "winner": "basile-fontanet"
-    },
-    {
-      "type": "match",
-      "phase": 0,
-      "a": "hippolyte-marsault",
-      "b": "capucine-lemarrec",
-      "winner": "capucine-lemarrec"
-    },
-    {
-      "type": "match",
-      "phase": 0,
-      "a": "mahaut-signoret",
-      "b": "fulbert-arsonval",
-      "winner": "fulbert-arsonval"
+      "a": "fulbert-arsonval",
+      "b": "prosper-galimard",
+      "winner": "prosper-galimard"
     },
     {
       "type": "match",
       "phase": 0,
       "a": "lazare-quintrec",
-      "b": "joachim-turpault",
-      "winner": "lazare-quintrec"
-    },
-    {
-      "type": "match",
-      "phase": 0,
-      "a": "gaëlle-picquenot",
-      "b": "katell-brasseur",
-      "winner": "katell-brasseur"
-    },
-    {
-      "type": "match",
-      "phase": 0,
-      "a": "nestor-bellefond",
-      "b": "ingrid-vallespir",
-      "winner": "nestor-bellefond"
-    },
-    {
-      "type": "match",
-      "phase": 0,
-      "a": "basile-fontanet",
-      "b": "katell-brasseur",
-      "winner": "katell-brasseur"
-    },
-    {
-      "type": "match",
-      "phase": 0,
-      "a": "prosper-galimard",
-      "b": "lazare-quintrec",
+      "b": "gaëlle-picquenot",
       "winner": "lazare-quintrec"
     },
     {
@@ -175,37 +133,79 @@
     {
       "type": "match",
       "phase": 0,
-      "a": "fulbert-arsonval",
-      "b": "désiré-oudinot",
-      "winner": "fulbert-arsonval"
-    },
-    {
-      "type": "match",
-      "phase": 0,
-      "a": "elvire-castagnac",
-      "b": "ombeline-royer",
-      "winner": "elvire-castagnac"
-    },
-    {
-      "type": "match",
-      "phase": 0,
-      "a": "hippolyte-marsault",
+      "a": "aurore-delcambre",
       "b": "mahaut-signoret",
       "winner": "mahaut-signoret"
     },
     {
       "type": "match",
       "phase": 0,
-      "a": "joachim-turpault",
-      "b": "aurore-delcambre",
-      "winner": "aurore-delcambre"
+      "a": "katell-brasseur",
+      "b": "hippolyte-marsault",
+      "winner": "hippolyte-marsault"
     },
     {
       "type": "match",
       "phase": 0,
-      "a": "gaëlle-picquenot",
-      "b": "ingrid-vallespir",
+      "a": "joachim-turpault",
+      "b": "basile-fontanet",
+      "winner": "basile-fontanet"
+    },
+    {
+      "type": "match",
+      "phase": 0,
+      "a": "nestor-bellefond",
+      "b": "lazare-quintrec",
+      "winner": "lazare-quintrec"
+    },
+    {
+      "type": "match",
+      "phase": 0,
+      "a": "elvire-castagnac",
+      "b": "hippolyte-marsault",
+      "winner": "hippolyte-marsault"
+    },
+    {
+      "type": "match",
+      "phase": 0,
+      "a": "mahaut-signoret",
+      "b": "basile-fontanet",
+      "winner": "mahaut-signoret"
+    },
+    {
+      "type": "match",
+      "phase": 0,
+      "a": "désiré-oudinot",
+      "b": "prosper-galimard",
+      "winner": "désiré-oudinot"
+    },
+    {
+      "type": "match",
+      "phase": 0,
+      "a": "aurore-delcambre",
+      "b": "capucine-lemarrec",
+      "winner": "capucine-lemarrec"
+    },
+    {
+      "type": "match",
+      "phase": 0,
+      "a": "joachim-turpault",
+      "b": "gaëlle-picquenot",
       "winner": "gaëlle-picquenot"
+    },
+    {
+      "type": "match",
+      "phase": 0,
+      "a": "ombeline-royer",
+      "b": "fulbert-arsonval",
+      "winner": "fulbert-arsonval"
+    },
+    {
+      "type": "match",
+      "phase": 0,
+      "a": "ingrid-vallespir",
+      "b": "katell-brasseur",
+      "winner": "katell-brasseur"
     },
     {
       "type": "next_phase"
@@ -214,42 +214,56 @@
       "type": "draw",
       "phase": 1,
       "slots": [
+        "hippolyte-marsault",
+        null,
+        "nestor-bellefond",
+        "capucine-lemarrec",
+        "mahaut-signoret",
+        null,
+        "basile-fontanet",
+        "gaëlle-picquenot",
+        "désiré-oudinot",
+        null,
+        "fulbert-arsonval",
+        "elvire-castagnac",
         "lazare-quintrec",
         null,
-        "désiré-oudinot",
-        "prosper-galimard",
-        "fulbert-arsonval",
-        null,
-        "gaëlle-picquenot",
-        "basile-fontanet",
         "katell-brasseur",
-        null,
-        "elvire-castagnac",
-        "capucine-lemarrec",
-        "nestor-bellefond",
-        null,
-        "mahaut-signoret",
-        "aurore-delcambre"
+        "prosper-galimard"
       ]
     },
     {
       "type": "match",
       "phase": 1,
-      "a": "désiré-oudinot",
+      "a": "nestor-bellefond",
+      "b": "capucine-lemarrec",
+      "winner": "capucine-lemarrec"
+    },
+    {
+      "type": "match",
+      "phase": 1,
+      "a": "basile-fontanet",
+      "b": "gaëlle-picquenot",
+      "winner": "basile-fontanet"
+    },
+    {
+      "type": "match",
+      "phase": 1,
+      "a": "fulbert-arsonval",
+      "b": "elvire-castagnac",
+      "winner": "elvire-castagnac"
+    },
+    {
+      "type": "match",
+      "phase": 1,
+      "a": "katell-brasseur",
       "b": "prosper-galimard",
       "winner": "prosper-galimard"
     },
     {
       "type": "match",
       "phase": 1,
-      "a": "gaëlle-picquenot",
-      "b": "basile-fontanet",
-      "winner": "gaëlle-picquenot"
-    },
-    {
-      "type": "match",
-      "phase": 1,
-      "a": "elvire-castagnac",
+      "a": "hippolyte-marsault",
       "b": "capucine-lemarrec",
       "winner": "capucine-lemarrec"
     },
@@ -257,8 +271,15 @@
       "type": "match",
       "phase": 1,
       "a": "mahaut-signoret",
-      "b": "aurore-delcambre",
-      "winner": "aurore-delcambre"
+      "b": "basile-fontanet",
+      "winner": "basile-fontanet"
+    },
+    {
+      "type": "match",
+      "phase": 1,
+      "a": "désiré-oudinot",
+      "b": "elvire-castagnac",
+      "winner": "elvire-castagnac"
     },
     {
       "type": "match",
@@ -270,44 +291,23 @@
     {
       "type": "match",
       "phase": 1,
-      "a": "fulbert-arsonval",
-      "b": "gaëlle-picquenot",
-      "winner": "gaëlle-picquenot"
-    },
-    {
-      "type": "match",
-      "phase": 1,
-      "a": "katell-brasseur",
-      "b": "capucine-lemarrec",
-      "winner": "capucine-lemarrec"
-    },
-    {
-      "type": "match",
-      "phase": 1,
-      "a": "nestor-bellefond",
-      "b": "aurore-delcambre",
-      "winner": "nestor-bellefond"
-    },
-    {
-      "type": "match",
-      "phase": 1,
-      "a": "prosper-galimard",
-      "b": "gaëlle-picquenot",
-      "winner": "gaëlle-picquenot"
-    },
-    {
-      "type": "match",
-      "phase": 1,
       "a": "capucine-lemarrec",
-      "b": "nestor-bellefond",
-      "winner": "capucine-lemarrec"
+      "b": "basile-fontanet",
+      "winner": "basile-fontanet"
     },
     {
       "type": "match",
       "phase": 1,
-      "a": "gaëlle-picquenot",
-      "b": "capucine-lemarrec",
-      "winner": "gaëlle-picquenot"
+      "a": "elvire-castagnac",
+      "b": "prosper-galimard",
+      "winner": "prosper-galimard"
+    },
+    {
+      "type": "match",
+      "phase": 1,
+      "a": "basile-fontanet",
+      "b": "prosper-galimard",
+      "winner": "prosper-galimard"
     }
   ]
 }

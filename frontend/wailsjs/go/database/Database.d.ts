@@ -392,6 +392,8 @@ export function IsReadOnly():Promise<boolean>;
 
 export function LastDecision(arg1:number):Promise<service.LastDecision>;
 
+export function LessonDoneSteps(arg1:number):Promise<Record<number, string>>;
+
 export function ListAliases(arg1:string):Promise<Array<storage.Alias>>;
 
 export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
@@ -497,6 +499,10 @@ export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAna
 export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<database.RolloutPlan>;
 
 export function PlanRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<database.RolloutPlan>;
+
+export function PlayerContrast(arg1:string,arg2:string,arg3:database.StatsFilter):Promise<storage.PlayerContrast>;
+
+export function PlayerContrastCtx(arg1:context.Context,arg2:string,arg3:string,arg4:database.StatsFilter):Promise<storage.PlayerContrast>;
 
 export function PlayerRanking(arg1:database.StatsFilter,arg2:number):Promise<Array<storage.RankedPlayer>>;
 
@@ -604,6 +610,8 @@ export function SaveSessionState(arg1:database.SessionState):Promise<void>;
 
 export function SaveTrainingSession(arg1:storage.TrainingSession):Promise<number>;
 
+export function ScoreMoves():Promise<number>;
+
 export function SearchComments(arg1:string):Promise<Array<domain.CommentEntry>>;
 
 export function SearchPositionIDs(arg1:domain.SearchFilters,arg2:number,arg3:number):Promise<Array<number>>;
@@ -636,9 +644,13 @@ export function SetEventRooms(arg1:number,arg2:number,arg3:Array<string>):Promis
 
 export function SetFilterPinned(arg1:number,arg2:boolean):Promise<void>;
 
+export function SetLessonStepDone(arg1:number,arg2:boolean):Promise<void>;
+
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 
 export function SetMigrationProgress(arg1:any):Promise<void>;
+
+export function SetPositionStudied(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetRencontreBreaks(arg1:number,arg2:string):Promise<service.RencontreView>;
 
@@ -671,6 +683,8 @@ export function StartTranscriptionFromSlot(arg1:number,arg2:string):Promise<data
 export function StatsReportHTML(arg1:database.StatsFilter,arg2:string,arg3:Record<number, string>):Promise<string>;
 
 export function StatsReportHTMLCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string,arg4:Record<number, string>):Promise<string>;
+
+export function StudyBacklog(arg1:number):Promise<Array<domain.StudyQueueEntry>>;
 
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
 

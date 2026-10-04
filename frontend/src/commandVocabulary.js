@@ -29,6 +29,7 @@ export const COMMANDS = [
     { name: 'match', aliases: ['ma'] },
     { name: 'collection', aliases: ['coll'] },
     { name: 'lesson', aliases: ['le'] },
+    { name: 'study', aliases: ['sq'] },
     { name: 'eval', aliases: ['epc'] },
     { name: 'rollout', aliases: ['ro'] },
     { name: 'transcribe', aliases: ['tr'] },

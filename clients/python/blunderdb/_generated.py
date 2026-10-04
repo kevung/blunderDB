@@ -638,6 +638,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/lessons.delete — JSON."
         return self._call("/v1/lessons.delete", payload)
 
+    def lessons_done_steps(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.doneSteps — JSON."
+        return self._call("/v1/lessons.doneSteps", payload)
+
     def lessons_get(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/lessons.get — JSON."
         return self._call("/v1/lessons.get", payload)
@@ -653,6 +657,10 @@ class GeneratedAPI(BaseClient):
     def lessons_reorder_steps(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/lessons.reorderSteps — JSON."
         return self._call("/v1/lessons.reorderSteps", payload)
+
+    def lessons_set_step_done(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.setStepDone — JSON."
+        return self._call("/v1/lessons.setStepDone", payload)
 
     def lessons_update(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/lessons.update — JSON."
@@ -1034,6 +1042,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.matchMoveGrades — JSON."
         return self._call("/v1/stats.matchMoveGrades", payload)
 
+    def stats_player_contrast(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.playerContrast — JSON."
+        return self._call("/v1/stats.playerContrast", payload)
+
     def stats_player_names(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.playerNames — JSON."
         return self._call("/v1/stats.playerNames", payload)
@@ -1085,6 +1097,14 @@ class GeneratedAPI(BaseClient):
     def stats_training(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.training — JSON."
         return self._call("/v1/stats.training", payload)
+
+    def study_backlog(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/study.backlog — JSON."
+        return self._call("/v1/study.backlog", payload)
+
+    def study_set_studied(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/study.setStudied — JSON."
+        return self._call("/v1/study.setStudied", payload)
 
     def tenants_quota(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/tenants.quota — JSON."

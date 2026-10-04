@@ -265,7 +265,51 @@ Pour la release : #1 et #2 décident si un utilisateur de BMAB peut réellement 
 30 % promis par la 2.31 ; #3 et #5 sont les seules attentes de plusieurs minutes dans un
 usage courant ; #4 est payé une fois par base.
 
-### 7.2 Points #4, #10, #2, #9 traités (branche `perf/migration-2-31`)
+### 7.2 Point #3 traité (branche `perf/stats-globales`)
+
+Copie `run/bmab-europe.db` (2.31, `match_stats` rempli, 9 852 942 décisions comptées), même
+poste, binaire de `main` (`f275853da`) contre celui de la branche, enchaînés à charge égale
+(charge 3 à 5, sessions parallèles) ; `list --type stats --format json`, journal des passes
+par `BLUNDERDB_DEBUG=1`.
+
+| | Avant | Après |
+|---|---:|---:|
+| `list --type stats` (toute la base) | 621 s, 5,46 Go | **323 s, 3,75 Go** |
+| `list --type stats --engine XG` | > 900 s (arrêté à 31 min, § 3) | **464 s, 3,74 Go** |
+| copie de la sélection | ≈ 175 s (3 tables + 3 index) | ≈ 150 s (1 table plate) |
+| une passe par décision (histogramme, phases, etc.) | 21-59 s (MWC : 72 s) | 6-18 s (MWC : 43 s) |
+| PR, Snowie, par tournoi, par match (`match_stats`) | < 0,5 s | < 0,5 s |
+
+- **Ce que `match_stats` donne déjà** : PR global, contrôle/cube, Snowie, par tournoi et par
+  match passaient déjà par la table (moins d'une demi-seconde). Le reste (totaux, histogramme,
+  cube, phases, types de jeu, scores, étiquettes, MWC, PR glissant, pires erreurs) est par
+  décision et n'est pas dans la table : chaque passe refaisait la jointure position × analyse
+  × coup × partie sur les copies de session, 1 à 2,5 min chacune. La copie est désormais
+  **une seule table plate** (la jointure faite une fois) que chaque passe parcourt, jointe
+  seulement à `match` et `tournament` ; le SQL des passes est inchangé, réécrit
+  (`p.x` → `d.p_x`) par `selectionExecer`.
+- **Filtre moteur** : le plan ne finissait pas parce que les copies n'avaient pas de
+  statistiques d'optimiseur : la passe par match parcourait chaque match puis, pour chacun,
+  toutes les analyses copiées (index automatique sur `analysis_engine`, qui ne filtre rien
+  quand tout est XG) — quadratique. Sans jointure entre copies, ce plan n'existe plus.
+- **Mémoire** : la passe MWC gardait la perte de chaque décision dans une table de hachage
+  pour en relire dix ; la passe par étiquette chargeait toutes les décisions pour en garder
+  celles des 7 833 positions commentées. Les deux ne lisent plus que ce qui sert.
+- **Mêmes chiffres** : sorties JSON identiques à l'octet sur l'échantillon à 2 % (global,
+  joueur, cube seul). Sur BMAB, 19 champs sur 21 identiques ; `PerTournament` et `PerMatch`
+  diffèrent sur le seul MWC de 110 tournois et 593 matchs, au dernier bit (écart relatif
+  ≤ 4,5 × 10⁻¹⁶) : somme de flottants dans l'ordre d'un `ORDER BY match_date, move_number`
+  qui n'est pas total, donc qui suit l'ordre de lecture. Le filtre moteur (tout est XG) rend
+  les mêmes chiffres que le global. Tests : `TestComputeSelectionMatchesDirectReadAndReadOnlyWritesNothing`
+  (sélection contre lecture directe des tables, octet pour octet, neuf filtres), parité avec
+  l'oracle figé, suite de contrat sur SQLite et PostgreSQL.
+- **Reste ouvert** : passer sous la minute demande de ne plus copier les décisions du tout,
+  donc de tenir par match les ventilations (histogramme, cube, phases, types, scores, MWC)
+  dans une table dérivée à côté de `match_stats` — changement de schéma (version, migration
+  des deux moteurs). La copie (≈ 150 s) et la passe MWC (tri complet pour le MWC glissant,
+  43 s) sont les deux postes restants.
+
+### 7.3 Points #4, #10, #2, #9 traités (branche `perf/migration-2-31`)
 
 **Banc.** L'original 2.30 n'existe plus : la seule copie, `run/bmab-europe.db`, est déjà migrée
 en 2.31. Chaque mesure part d'une copie de celle-ci (`~/src/bench-scale/mig231/`, jamais

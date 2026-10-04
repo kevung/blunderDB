@@ -57,5 +57,6 @@ ni suite de plusieurs ensembles.
 ## Conséquences
 
 - Schéma 2.29.0 : tables `lesson` et `lesson_step`, migration `031_lesson.sql` côté PostgreSQL.
-- L'éditeur graphique et l'export de Leçons depuis le dialogue d'export du bureau ne sont pas
-  livrés : l'écriture passe par la CLI et les routes, l'export par `lesson export`.
+- Le bureau écrit les Leçons par son éditeur (`:le edit`), sur les mêmes méthodes de
+  `Database` que la CLI et les routes ; son dialogue d'export les choisit une à une (case
+  *Inclure les leçons*), comme `lesson export`.

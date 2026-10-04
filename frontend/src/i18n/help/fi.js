@@ -48,6 +48,7 @@ export default {
 <li>opiskella asemia välitoistolla (Anki-paneeli),</li>
 <li>näyttävät tietokannan metatiedot (Metatiedot-paneeli).</li>
 </ul>
+<p>Paneelin korkeutta säädetään vetämällä sen kahvaa; jokainen välilehti muistaa omansa.</p>
 <p>Modaali-ikkunoita voidaan näyttää seuraaviin tarkoituksiin:</p>
 <ul>
 <li>näyttää blunderDB:n ohje,</li>
@@ -237,7 +238,7 @@ export default {
 <p>Naapuri on sama <strong>ongelma</strong>, ei sama kuvio: järjestys otetaan kohteen luokan sisältä — sama päätöksen tyyppi, sama pelimuoto (raha tai ottelu) kuutiopäätöksessä, ja eri ottelu kuin sen oma, sillä asemat, jotka ympäröivät sitä sen omassa pelissä, ovat sen lähimmät rakenteet olematta koskaan sen naapureita. Nopat, tulos ja kuutio jäävät luokan ulkopuolelle; tavalliset tunnukset rajaavat niillä silloin kun halutaan. <code>like42*</code> laajentaa luokan kaikkiin päätöstyyppeihin ja molempiin pelimuotoihin, ei koskaan kohteen otteluun; <code>like&lt;12</code> hylkää kaiken yli kahdentoista nappulapipin päässä olevan. Järjestys, joka ei löydä mitään, palauttaa tyhjän listan ja sanoo sen, eikä kymmentä asiaankuulumatonta asemaa.</p>
 <p><strong>Muokkaustilassa</strong> <code>s like</code> ottaa kohteekseen <strong>piirretyn</strong> laudan: piirretään suunnilleen se asema, jonka muistaa, käynnistetään, ja kirjasto vastaa — siinä missä rakenteen mukainen haku vaatii tarkan piirroksen. Lauta luetaan silloin asemana eikä kuviona: tyhjäksi jätetty piste lasketaan ulos kannetuiksi nappuloiksi, mikä on oikein todelliselle asemalle ja vääristää laskennan puolittain jätetylle piirrokselle.</p>
 <p>Jokainen naapuri kantaa etäisyytensä analyysitaulukoiden alla, yhdessä sen aseman kanssa, jota se on lähellä. Juuri se tekee mahdolliseksi arvioida, katsooko naapuria vai sattumaa, ja siinä on katon tarkoitus. Järjestyksen voi käynnistää myös ilman komentoriviä: <em>CTRL-SHIFT-L</em> tai laudan pikavalikon kohta <strong>Naapuriasemat</strong>.</p>
-<p>Tunnus <code>n</code> laskee <strong>kohtaamisia</strong>: <code>n&gt;3</code> säilyttää asemat, joihin johtaa yli kolme siirtoa, kaikissa otteluissa. Se on eri kysymys kuin ”missä menin vikaan” — kaksikymmentä kertaa kohdattu ja yhdeksäntoista kertaa oikein pelattu asema on yhä se, joka pitää osata ulkoa. Lasketaan siirrot, ei otteluita: sama asema kahdesti yhdessä ottelussa on kaksi, koska ne olivat kaksi päätöstä.</p>
+<p>Merkki <code>n</code> laskee <strong>kohtaamiset</strong>: <code>n&gt;3</code> säilyttää paikat, jotka on kohdattu tietokannassa vähintään kolme kertaa, kaikki ottelut ja kaikki pelaajat yhteensä. Se on eri kysymys kuin ”mitä missasin” — paikka, joka on kohdattu kaksikymmentä kertaa ja pelattu hyvin yhdeksäntoista, on yhä sellainen, joka kannattaa osata ulkoa. Lasketaan päätökset, ei otteluita: sama paikka kahdesti samassa ottelussa lasketaan kahdeksi, koska päätöksiä oli kaksi. Pelaajasuodattimen kanssa lasketaan vain kyseisen pelaajan esiintymät: <code>n&gt;3 pl!"Alice"</code> säilyttää paikat, jotka Alice joutui pelaamaan vähintään kolme kertaa, ja <code>pl"Alice"</code> ne, jotka olivat hänen pelaamissaan otteluissa; <code>op"Bob"</code> rajaa laskennan vastaavasti Bobia vastaan pelattuihin otteluihin.</p>
 <p><strong>Pelisuunnitelma</strong> on toinen johdettu merkintä vaiheen rinnalla, ja se vastaa kysymykseen, jota nippu tallennettuja suodattimia ei osaa esittää: ”näytä virheeni holding gamessa”. Tunnus <code>gt:</code>, toistettavissa (<code>gt:holding gt:mutualholding</code>), vuorossa olevan <strong>pelaajan</strong> näkökulmasta — sen suunnitelman, jossa päätös tehtiin.</p>
 <p>Kymmenen tunnistettua suunnitelmaa, siinä järjestyksessä kuin säännöt ne käyvät läpi, tarkimmasta yleisimpään:</p>
 <ul>
@@ -278,10 +279,11 @@ export default {
 <p>Elävässä kokoelmassa näkyvä painike ❄ <strong>jäädyttää</strong> sen: haun sillä hetkellä valitsemista asemista tulee tavallisen kokoelman sisältö haun järjestyksessä, ja kysely tyhjennetään. Asemat, jotka kokoelmassa oli ennen sen muuttumista eläväksi, korvataan.</p>
 <p>Elävä kokoelma, jonka kysely sisältää tunnuksen jota tämä versio ei enää tunne, <strong>kieltäytyy avautumasta</strong> ja sanoo sen sen sijaan että palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla suodattimella ei saa olla: laajeta hiljaisuudessa.</p>
 <h4>Oppitunnit</h4>
-<p><strong>Oppitunti</strong> on vaiheiden sarja, jonka valmentaja kirjoittaa kerran oppilasta varten ja luovuttaa tälle tietokantatiedostossa (katso komento <code>lesson export</code> sivulla cli). Jokaisella vaiheella on otsikko ja teksti, ja se voi näyttää kokoelman, aseman, molemmat tai ei kumpaakaan. Komento <code>le</code> luettelee tietokannan oppitunnit tilarivillä; <code>le 2</code> avaa oppitunnin 2.</p>
+<p><strong>Oppitunti</strong> on vaiheiden sarja, jonka valmentaja kirjoittaa kerran oppilasta varten ja luovuttaa tälle tietokantatiedostossa (katso komento <code>lesson export</code> sivulla cli). Jokaisella vaiheella on otsikko ja teksti, ja se voi näyttää kokoelman, aseman, molemmat tai ei kumpaakaan. Komento <code>le</code> luettelee tietokannan oppitunnit tilarivillä; <code>le 2</code> avaa oppitunnin 2; <code>le edit</code> avaa oppituntieditorin.</p>
 <p>Laudan yläpuolelle ilmestyy silloin <strong>lukupalkki</strong>: oppitunnin nimi, vaiheen numero, otsikko ja sitten teksti. <em>Edellinen</em> ja <em>Seuraava</em> vaihtavat vaihetta; vaihe tuo laudalle kokoelman tai aseman, jonka se näyttää, ja sitä selataan tavallisin elein. <em>Sulje</em> poistuu oppitunnilta. Vaihe, jonka kokoelma tai asema on poistettu, säilyttää tekstinsä.</p>
-<p>Oppitunnin lukeminen ei jätä jälkeä: oppilaan tietokanta ei tallenna saavutettua vaihetta eikä avaamista. Oppitunnin sisältävän tiedoston tuonti luo oppitunnin; samanniminen jo olemassa oleva oppitunti jätetään koskematta. Oppitunteja luodaan ja muokataan komentorivillä tai API:n kautta (Oppitunnit).</p>
-<p>Varmuuskopio — koko kirjaston vienti vientiikkunasta tai komentoriviltä — sisältää kaikki oppitunnit; osittainen vienti (valinta asemista, kokoelmista tai otteluista) ei sisällä niitä.</p>
+<p>Palkin <em>Vaihe tehty</em> -valintaruutu merkitsee nykyisen vaiheen tehdyksi; toinen napsautus poistaa merkin, ja palkki laskee tehdyt vaiheet. Se on ainoa ele, joka kirjoittaa jotakin: oppitunnin lukeminen, vaiheen vaihtaminen tai oppitunnin avaaminen ei tallenna mitään, ei saavutettua vaihetta eikä avaamista. Merkki kirjoitetaan avattuun tietokantaan, oppilaan omaan, eikä mikään vienti vie sitä mukanaan. Oppitunnin sisältävän tiedoston tuonti luo oppitunnin; samanniminen jo olemassa oleva oppitunti jää koskematta.</p>
+<p><strong>Oppituntieditori</strong> avautuu komennolla <code>le edit</code> (<code>le edit 2</code> oppitunnille 2) tai lukupalkin <em>Muokkaa</em>-painikkeella. Vasemmalla ovat oppituntien luettelo ja kenttä uuden luomiseen; oikealla valitun oppitunnin nimi ja kuvaus, sitten sen vaiheet. Jokaisella vaiheella on otsikko, teksti, luettelosta valittu kokoelma ja asema: <em>Nykyinen asema</em> liittää siihen laudalla näkyvän aseman, <em>Irrota asema</em> poistaa sen. <em>Tallenna vaihe</em> kirjoittaa sen muutokset; nuolet siirtävät sitä yhden askeleen; <em>Lisää vaihe</em> lisää uuden loppuun. <em>Lue</em> sulkee editorin ja avaa oppitunnin sen ensimmäisestä vaiheesta; <em>Poista</em> poistaa oppitunnin ja sen vaiheet koskematta kokoelmiin tai asemiin, joita ne näyttivät. Oppitunteja voi luoda ja muokata myös komentoriviltä tai API:n kautta (Oppitunnit).</p>
+<p>Varmuuskopio — koko kirjaston vienti vientiikkunasta tai komentoriviltä — sisältää kaikki oppitunnit. Vientiikkunassa <em>Sisällytä oppitunnit</em> -valintaruutu valitsee ne yksitellen: jokainen valittu oppitunti lähtee mukaan niiden kokoelmien ja asemien kanssa, joita sen vaiheet näyttävät, ja tiedostoon voi lisätä alkuperämerkinnän tai suojata sen salasanalla (<code>.dbx</code>) kuten minkä tahansa viennin. Ilman tätä ruutua osittainen vienti (valinta asemista, kokoelmista tai otteluista) ei sisällä oppitunteja.</p>
 <h3>Tuonti: mitä kirjoitetaan ja mitä ei koskaan</h3>
 <p>Ottelun, aseman tai toisen tietokannan tuonti lisää sen, mikä puuttuu; se ei korvaa sitä, mikä on jo olemassa.</p>
 <ul>
@@ -696,6 +698,8 @@ export default {
 <li><strong>Avaa pelaajan tiedot</strong> — napsauta riviä. Pelaaja valitaan suodatinpalkissa ja näkymä vaihtuu Yleiskatsaus-välilehdelle.</li>
 <li><strong>Rajaa ajanjaksoa</strong> — päivämäärä-, turnaus- ja ottelupituussuodattimet toimivat tavalliseen tapaan, joten taulukon voi rajata yhden kilpailun päiviin.</li>
 <li><strong>Vertaa kahta pelaajaa</strong> — rastita ensimmäisen sarakkeen ruutu kahdella rivillä. Taulukon yläpuolelle ilmestyy lohko, joka asettaa heidän lukunsa vastakkain; kolmannen pelaajan rastittaminen korvaa vanhemman kahdesta. Ruutu ei valitse riviä: rastitus vertaa, napsautus avaa tiedot.</li>
+<li><strong>Katso paikat, joissa toinen pelasi paremmin</strong> — vertailulohkon painike listaa paikat, jotka molemmat pelaajat joutuivat pelaamaan ja joissa toinen pelasi hyvin (kirjaston Virhe-kynnyksen alapuolella) ja toinen ei, suurin ero ensin; pelaaja arvioidaan paikan huonoimman siirtonsa mukaan. <em>Avaa nämä paikat</em> lataa ne analyysinäkymään. Komentorivi ja palvelin antavat saman listan (<code>stats contrast</code>).</li>
+<li><strong>Pisteytä siirrot ensin</strong> — luettelo vertaa vain siirtoja, joiden virhe on pisteytetty, eikä mikään tuonti pisteytä niitä: pisteytys tehdään pyynnöstä. Niin kauan kuin pisteytettäviä on jäljellä, lohko näyttää niiden määrän ja painikkeen <em>Pisteytä siirrot</em>; komentorivi tekee saman komennolla <code>repair --move-errors</code>.</li>
 </ul>
 <p>Lohkossa <strong>vain suhdeluvut saavat tuomion</strong>, ja parempi kahdesta lihavoidaan. Kolme lukua ei saa sitä koskaan, ja syy kannattaa sanoa. <strong>Onni</strong> ei ole ansio: onnekkaampi pelaaja ei ole parempi. <strong>Ottelut, tulos ja päätökset</strong> kertovat mitä suhdeluvut ovat arvoltaan, mutta niiden kilpailuttaminen antaisi voiton sille, joka vain pelasi enemmän. <strong>Blundereiden määrää</strong> ei verrata raakana — kaksitoista tuhannesta päätöksestä on parempi kuin kymmenen sadasta —, joten lohko lisää rivin <em>Blunderit / 100 päät.</em>, joka on vertailukelpoinen, ja jättää määrän viereen taustaksi.</p>
 <p>Tasatulos ei ole voitto: sitä ei lihavoida kummallakaan puolella. Suhdeluku, jonka takana ei ole mitään, näkyy merkkinä ”—” eikä ratkaise mitään.</p>
@@ -2039,8 +2043,12 @@ export default {
 <td>Näytä/piilota kokoelmien paneeli.</td>
 </tr>
 <tr>
-<td>lesson, le [N]</td>
-<td>Ilman argumenttia luettelee tietokannan oppitunnit tilarivillä; <code>le N</code> avaa oppitunnin N sen ensimmäisestä vaiheesta (katso Oppitunnit).</td>
+<td>lesson, le [N | edit [N]]</td>
+<td>Ilman argumenttia luettelee tietokannan oppitunnit tilarivillä; <code>le N</code> avaa oppitunnin N sen ensimmäisestä vaiheesta; <code>le edit</code> avaa oppituntieditorin, <code>le edit N</code> oppitunnille N (katso Oppitunnit).</td>
+</tr>
+<tr>
+<td>study, sq</td>
+<td>Avaa tuonnit ylittävän opiskelujonon: blunderisi, joita mikään ei ole vielä käsitellyt, kalleimmasta halvimpaan (ks. Blunderit, joita mikään ei ole vielä käsitellyt).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>
@@ -2168,7 +2176,7 @@ export default {
 </tr>
 <tr>
 <td>n&gt;x</td>
-<td>Asema kohdattiin tietokannassa yli x kertaa — niiden siirtojen määrä, jotka johtavat siihen, kaikissa otteluissa. Muodot <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> ja <code>n4</code> (täsmälleen neljä).</td>
+<td>Paikka on kohdattu tietokannassa vähintään x kertaa — siinä tehtyjen päätösten määrä, kaikki ottelut ja kaikki pelaajat yhteensä; <code>pl</code>-, <code>pl!</code>- tai <code>op</code>-suodattimen kanssa lasketaan vain kyseisen pelaajan esiintymät. Muodot <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> ja <code>n4</code> (tasan neljä).</td>
 <td>—</td>
 </tr>
 <tr>

@@ -48,6 +48,7 @@ export default {
 <li>studiare le posizioni tramite ripetizione dilazionata (pannello Anki),</li>
 <li>visualizzare i metadati del database (pannello Metadati).</li>
 </ul>
+<p>L'altezza del pannello si regola trascinandone la maniglia; ogni scheda ricorda la propria.</p>
 <p>Possono comparire finestre modali per:</p>
 <ul>
 <li>visualizzare la guida di blunderDB,</li>
@@ -237,7 +238,7 @@ export default {
 <p>Una vicina è lo stesso <strong>problema</strong>, non lo stesso disegno: l'ordinamento si prende dentro la classe del bersaglio — stesso tipo di decisione, stesso regime (soldi o incontro) per una decisione di cubo, e un incontro diverso dal suo, perché le posizioni che la circondano nella sua stessa partita sono le sue strutture più vicine senza esserne mai le vicine. Dadi, punteggio e cubo restano fuori classe; i token ordinari li filtrano quando lo si vuole. <code>like42*</code> allarga la classe a tutti i tipi di decisione e a entrambi i regimi, mai all'incontro del bersaglio; <code>like&lt;12</code> scarta ciò che dista più di dodici pip di pedina. Un ordinamento che non trova nulla rende una lista vuota e lo dice, invece di dieci posizioni senza rapporto.</p>
 <p>In modo <strong>modifica</strong>, <code>s like</code> prende per bersaglio la dama <strong>disegnata</strong>: si disegna all'incirca la posizione di cui ci si ricorda, si lancia, e la biblioteca risponde — là dove la ricerca per struttura esige il disegno esatto. La dama è allora letta come una posizione e non come un motivo: un punto lasciato vuoto conta come pedine fuori, il che è esatto per una posizione reale e falsa il calcolo per un disegno lasciato a metà.</p>
 <p>Ogni vicina porta la sua distanza sotto le tabelle di analisi, insieme alla posizione di cui è vicina. È questo che permette di giudicare se si guarda una vicina o una coincidenza, ed è la ragion d'essere del limite. L'ordinamento si lancia anche senza passare dalla riga di comando: <em>CTRL-MAIUSC-L</em>, oppure la voce <strong>Posizioni vicine</strong> del menu contestuale della dama.</p>
-<p>Il token <code>n</code> conta gli <strong>incontri</strong>: <code>n&gt;3</code> tiene le posizioni a cui arrivano più di tre mosse, in tutti gli incontri. È un'altra domanda rispetto a «cosa ho sbagliato» — una posizione incontrata venti volte e giocata bene diciannove resta quella da sapere a memoria. Si contano le mosse, non gli incontri: la stessa posizione due volte in un incontro conta due, perché erano due decisioni.</p>
+<p>Il token <code>n</code> conta gli <strong>incontri</strong>: <code>n&gt;3</code> mantiene le posizioni incontrate almeno tre volte nella base, tutte le partite e tutti i giocatori insieme. È una domanda diversa da «cosa ho sbagliato» — una posizione incontrata venti volte e ben giocata diciannove resta quella da sapere a memoria. Si contano decisioni, non partite: la stessa posizione due volte in una partita vale per due, perché erano due decisioni. Combinato con un filtro giocatore, conta solo le occorrenze di quel giocatore: <code>n&gt;3 pl!"Alice"</code> mantiene le posizioni che Alice ha dovuto giocare almeno tre volte, e <code>pl"Alice"</code> quelle delle partite che ha disputato; <code>op"Bob"</code> limita allo stesso modo il conteggio alle partite contro Bob.</p>
 <p>Il <strong>piano di gioco</strong> è una seconda etichetta derivata, accanto alla fase, e risponde alla domanda che un pacchetto di filtri salvati non sa porre: «mostrami i miei errori in holding game». Token <code>gt:</code>, ripetibile (<code>gt:holding gt:mutualholding</code>), dal punto di vista del <strong>giocatore di turno</strong> — il piano in cui la decisione veniva presa.</p>
 <p>I dieci piani riconosciuti, nell'ordine in cui le regole li esauriscono, dal più specifico al più generale:</p>
 <ul>
@@ -278,10 +279,11 @@ export default {
 <p>Il pulsante ❄, visibile su una raccolta viva, la <strong>congela</strong>: le posizioni che la ricerca seleziona in quel momento diventano il contenuto di una raccolta ordinaria, nell'ordine della ricerca, e la query viene cancellata. Le posizioni che conteneva prima di essere viva vengono sostituite.</p>
 <p>Una raccolta viva la cui interrogazione porta un token che questa versione non conosce più <strong>rifiuta di aprirsi</strong> e lo dice, invece di restituire l'intera base. È l'unico guasto che un filtro salvato non deve avere: allargarsi in silenzio.</p>
 <h4>Lezioni</h4>
-<p>Una <strong>lezione</strong> è una sequenza di passi che un coach scrive una sola volta per un allievo e gli consegna in un file di database (vedi il comando <code>lesson export</code> in cli). Ogni passo ha un titolo, un testo e può mostrare una collezione, una posizione, entrambe o nessuna. Il comando <code>le</code> elenca le lezioni del database nella barra di stato; <code>le 2</code> apre la lezione 2.</p>
+<p>Una <strong>lezione</strong> è una sequenza di passi che un coach scrive una sola volta per un allievo e gli consegna in un file di database (vedi il comando <code>lesson export</code> in cli). Ogni passo ha un titolo, un testo e può mostrare una collezione, una posizione, entrambe o nessuna. Il comando <code>le</code> elenca le lezioni del database nella barra di stato; <code>le 2</code> apre la lezione 2; <code>le edit</code> apre l'editor delle lezioni.</p>
 <p>Compare allora una <strong>barra di lettura</strong> sopra la scacchiera: nome della lezione, numero del passo, titolo, poi il testo. <em>Precedente</em> e <em>Successivo</em> cambiano passo; il passo porta sulla scacchiera la collezione o la posizione che mostra, che si scorre poi con i gesti consueti. <em>Chiudi</em> esce dalla lezione. Un passo la cui collezione o posizione è stata eliminata conserva il suo testo.</p>
-<p>Leggere una lezione non lascia alcuna traccia: il database dell'allievo non registra né il passo raggiunto né l'apertura. Importare un file che contiene una lezione la crea; una lezione con lo stesso nome già presente non viene toccata. Le lezioni si creano e si modificano dalla riga di comando o dall'API (Le lezioni).</p>
-<p>Un backup — l'esportazione dell'intera libreria dalla finestra di esportazione o dalla riga di comando — include tutte le lezioni; un'esportazione parziale (una selezione di posizioni, collezioni o partite) non le include.</p>
+<p>La casella <em>Passo fatto</em> della barra segna il passo corrente come fatto; un secondo clic toglie il segno, e la barra conta i passi fatti. È l'unico gesto che scrive qualcosa: leggere una lezione, cambiare passo o aprirla non registra nulla, né il passo raggiunto né l'apertura. Il segno viene scritto nel database aperto, quello dell'allievo, e nessuna esportazione lo porta con sé. Importare un file che contiene una lezione la crea; una lezione con lo stesso nome già presente non viene toccata.</p>
+<p><strong>L'editor delle lezioni</strong> si apre con <code>le edit</code> (<code>le edit 2</code> sulla lezione 2) o con il pulsante <em>Modifica</em> della barra di lettura. A sinistra, l'elenco delle lezioni e un campo per crearne una; a destra, il nome e la descrizione della lezione scelta, poi i suoi passi. Ogni passo ha un titolo, un testo, una collezione scelta dall'elenco e una posizione: <em>Posizione corrente</em> vi allega la posizione mostrata sulla scacchiera, <em>Stacca la posizione</em> la toglie. <em>Salva il passo</em> scrive le sue modifiche; le frecce lo spostano di un posto; <em>Aggiungi un passo</em> ne aggiunge uno in fondo. <em>Leggi</em> chiude l'editor e apre la lezione al suo primo passo; <em>Elimina</em> cancella la lezione e i suoi passi, senza toccare le collezioni né le posizioni che mostravano. Le lezioni si creano e si modificano anche da riga di comando o tramite l'API (Le lezioni).</p>
+<p>Un backup — l'esportazione dell'intera libreria dalla finestra di esportazione o dalla riga di comando — include tutte le lezioni. Nella finestra di esportazione, la casella <em>Includi le lezioni</em> le sceglie una per una: ogni lezione spuntata parte con le collezioni e le posizioni che i suoi passi mostrano, e il file può portare un contrassegno di origine o essere protetto da password (<code>.dbx</code>) come ogni esportazione. Senza questa casella, un'esportazione parziale (una selezione di posizioni, collezioni o partite) non include le lezioni.</p>
 <h3>Importazione: cosa viene scritto, cosa non lo è mai</h3>
 <p>Importare un match, una posizione o un altro database aggiunge ciò che manca; non sostituisce ciò che è già presente.</p>
 <ul>
@@ -696,6 +698,8 @@ export default {
 <li><strong>Aprire il dettaglio di un giocatore</strong> — fare clic su una riga. Il giocatore viene selezionato nella barra dei filtri e la visualizzazione passa alla scheda Cruscotto.</li>
 <li><strong>Restringere il periodo</strong> — i filtri di date, tornei e lunghezza dei match si applicano normalmente, il che consente di delimitare la tabella alle date di una competizione.</li>
 <li><strong>Confrontare due giocatori</strong> — spuntate la casella della prima colonna su due righe. Sopra la tabella compare un blocco che mette i loro indicatori a confronto; spuntare un terzo giocatore sostituisce il più vecchio dei due. La casella non seleziona la riga: spuntare confronta, cliccare apre il dettaglio.</li>
+<li><strong>Vedere le posizioni in cui uno ha giocato meglio</strong> — il pulsante del blocco di confronto elenca le posizioni che entrambi i giocatori hanno dovuto giocare e in cui uno ha giocato bene (sotto la soglia di Errore della biblioteca) e l'altro no, la differenza maggiore per prima; un giocatore è giudicato sulla sua peggiore giocata della posizione. <em>Apri queste posizioni</em> le carica nella vista di analisi. La riga di comando e il server danno lo stesso elenco (<code>stats contrast</code>).</li>
+<li><strong>Valutare prima le mosse</strong> — l'elenco confronta solo le mosse il cui errore è valutato, e nessuna importazione le valuta: la valutazione si fa su richiesta. Finché ne restano da valutare, il blocco ne indica il numero con un pulsante <em>Valuta le mosse</em>; la riga di comando fa lo stesso con <code>repair --move-errors</code>.</li>
 </ul>
 <p>In quel blocco <strong>solo i tassi ricevono un verdetto</strong>, e il migliore dei due è in grassetto. Tre indicatori non ne ricevono mai, e vale la pena dire perché. La <strong>fortuna</strong> non è una qualità: un giocatore più fortunato non è migliore. <strong>Partite, bilancio e decisioni</strong> dicono quanto valgono i tassi, ma metterli in competizione farebbe vincere chi ha semplicemente giocato di più. Il <strong>numero di blunder</strong> non si confronta grezzo — dodici su mille decisioni valgono più di dieci su cento —, perciò il blocco aggiunge una riga <em>Blunder / 100 dec.</em> che invece si confronta, e lascia il conteggio accanto come contesto.</p>
 <p>Un pari non è una vittoria: non è messo in grassetto da nessuna parte. Un tasso senza nulla dietro si mostra come «—» e non decide nulla.</p>
@@ -2039,8 +2043,12 @@ export default {
 <td>Mostra/nascondi il pannello delle collezioni.</td>
 </tr>
 <tr>
-<td>lesson, le [N]</td>
-<td>Senza argomento, elenca le lezioni del database nella barra di stato; <code>le N</code> apre la lezione N al suo primo passo (vedi Lezioni).</td>
+<td>lesson, le [N | edit [N]]</td>
+<td>Senza argomento, elenca le lezioni del database nella barra di stato; <code>le N</code> apre la lezione N al suo primo passo; <code>le edit</code> apre l'editor delle lezioni, <code>le edit N</code> sulla lezione N (vedi Lezioni).</td>
+</tr>
+<tr>
+<td>study, sq</td>
+<td>Apre la coda di studio trasversale: i suoi blunder che nulla ha ancora trattato, dal più costoso al meno costoso (vedi I blunder che nulla ha ancora trattato).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>
@@ -2168,7 +2176,7 @@ export default {
 </tr>
 <tr>
 <td>n&gt;x</td>
-<td>La posizione è stata incontrata più di x volte nella base — il numero di mosse che vi arrivano, in tutti gli incontri. Forme <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> e <code>n4</code> (esattamente quattro).</td>
+<td>La posizione è stata incontrata almeno x volte nella base — il numero di decisioni prese su di essa, tutte le partite e tutti i giocatori insieme; con <code>pl</code>, <code>pl!</code> o <code>op</code>, contano solo le occorrenze di quel giocatore. Forme <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> e <code>n4</code> (esattamente quattro).</td>
 <td>—</td>
 </tr>
 <tr>

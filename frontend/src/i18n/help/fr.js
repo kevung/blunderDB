@@ -48,6 +48,7 @@ export default {
 <li>étudier les positions par répétition espacée (panneau Anki),</li>
 <li>afficher les métadonnées de la base de données (panneau métadonnées).</li>
 </ul>
+<p>La hauteur du panneau se règle en tirant sa poignée ; chaque onglet retient la sienne.</p>
 <p>Des fenêtres modales peuvent s'afficher pour:</p>
 <ul>
 <li>afficher l'aide de blunderDB,</li>
@@ -237,7 +238,7 @@ export default {
 <p>Une voisine est le même <strong>problème</strong>, pas le même dessin : le classement se prend dans la classe de la cible — même type de décision, même régime (argent ou match) pour une décision de videau, et un match différent du sien, car les positions qui l'entourent dans sa propre partie sont ses structures les plus proches sans jamais être ses voisines. Les dés, le score et le videau restent hors classe ; les jetons ordinaires les filtrent quand on le veut. <code>like42*</code> élargit la classe à tous les types de décision et aux deux régimes, jamais au match de la cible ; <code>like&lt;12</code> écarte ce qui est à plus de douze pions-pas. Un classement qui ne trouve rien rend une liste vide et le dit, plutôt que dix positions sans rapport.</p>
 <p>En mode <strong>édition</strong>, <code>s like</code> prend pour cible le plateau <strong>dessiné</strong> : on dessine à peu près la position dont on se souvient, on lance, et la bibliothèque répond — là où la recherche par structure exige le dessin juste. Le plateau est alors lu comme une position et non comme un motif : un point laissé vide compte comme des pions sortis, ce qui est exact pour une position réelle et fausse le calcul pour un dessin laissé à moitié.</p>
 <p>Chaque voisine porte sa distance sous les tableaux d'analyse, avec la position dont elle est proche. C'est ce qui permet de juger si l'on regarde une voisine ou une coïncidence, et c'est la raison d'être du plafond. Le classement se lance aussi sans passer par la ligne de commande : <em>CTRL-MAJ-L</em>, ou l'entrée <strong>Positions voisines</strong> du menu contextuel du plateau.</p>
-<p>Le jeton <code>n</code> compte les <strong>rencontres</strong> : <code>n&gt;3</code> retient les positions auxquelles plus de trois coups aboutissent, tous matchs confondus. C'est une autre question que « qu'ai-je raté » — une position rencontrée vingt fois et bien jouée dix-neuf reste celle qu'il faut savoir par cœur. Le compte porte sur les coups, pas sur les matchs : la même position deux fois dans un match compte pour deux, parce que c'étaient deux décisions.</p>
+<p>Le jeton <code>n</code> compte les <strong>rencontres</strong> : <code>n&gt;3</code> retient les positions rencontrées au moins trois fois dans la base, tous matchs et tous joueurs confondus. C'est une autre question que « qu'ai-je raté » — une position rencontrée vingt fois et bien jouée dix-neuf reste celle qu'il faut savoir par cœur. Le compte porte sur les décisions, pas sur les matchs : la même position deux fois dans un match compte pour deux, parce que c'étaient deux décisions. Combiné à un filtre de joueur, il ne compte plus que les occurrences de ce joueur : <code>n&gt;3 pl!"Alice"</code> retient les positions qu'Alice a eu à jouer au moins trois fois, et <code>pl"Alice"</code> celles des matchs qu'elle a disputés ; <code>op"Bob"</code> restreint de même le compte aux matchs contre Bob.</p>
 <p>Le <strong>plan de jeu</strong> est une seconde étiquette dérivée, à côté de la phase, et elle répond à la question qu'un paquet de filtres sauvegardés ne sait pas poser : « montre-moi mes erreurs en holding game ». Jeton <code>gt:</code>, répétable (<code>gt:holding gt:mutualholding</code>), du point de vue du <strong>joueur au trait</strong> — le plan dans lequel se prenait la décision.</p>
 <p>Les dix plans reconnus, dans l'ordre où les règles les épuisent, du plus spécifique au plus général :</p>
 <ul>
@@ -278,10 +279,11 @@ export default {
 <p>Le bouton ❄, visible sur une collection vivante, la <strong>fige</strong> : les positions que la recherche sélectionne à cet instant deviennent la composition d'une collection ordinaire, dans l'ordre de la recherche, et la requête s'efface. Les positions qu'elle contenait avant d'être vivante sont remplacées.</p>
 <p>Une collection vivante dont la requête porte un jeton que cette version ne connaît plus <strong>refuse de s'ouvrir</strong> en le disant, plutôt que de renvoyer toute la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir : s'élargir en silence.</p>
 <h4>Leçons</h4>
-<p>Une <strong>leçon</strong> est une suite d'étapes qu'un coach écrit une fois pour un élève et lui remet dans un fichier de base (voir la commande <code>lesson export</code> de cli). Chaque étape a un titre, un texte et peut montrer une collection, une position, les deux ou aucune. La commande <code>le</code> liste les leçons de la base dans la barre d'état ; <code>le 2</code> ouvre la leçon 2.</p>
+<p>Une <strong>leçon</strong> est une suite d'étapes qu'un coach écrit une fois pour un élève et lui remet dans un fichier de base (voir la commande <code>lesson export</code> de cli). Chaque étape a un titre, un texte et peut montrer une collection, une position, les deux ou aucune. La commande <code>le</code> liste les leçons de la base dans la barre d'état ; <code>le 2</code> ouvre la leçon 2 ; <code>le edit</code> ouvre l'éditeur de leçons.</p>
 <p>Une <strong>barre de lecture</strong> apparaît alors au-dessus du plateau : nom de la leçon, numéro de l'étape, titre, puis le texte. <em>Précédente</em> et <em>Suivante</em> changent d'étape ; l'étape amène sur le plateau la collection ou la position qu'elle montre, que l'on parcourt ensuite par les gestes habituels. <em>Fermer</em> quitte la leçon. Une étape dont la collection ou la position a été supprimée garde son texte.</p>
-<p>Lire une leçon ne laisse aucune trace : la base de l'élève n'enregistre ni l'étape atteinte ni l'ouverture. Importer un fichier qui contient une leçon la crée ; une leçon de même nom déjà présente n'est pas touchée. Les leçons se créent et se modifient par la ligne de commande ou par l'API (Les leçons).</p>
-<p>Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre d'export ou par la ligne de commande — emporte toutes les leçons ; un export partiel (une sélection de positions, de collections ou de matchs) ne les emporte pas.</p>
+<p>La case <em>Étape faite</em> de la barre marque l'étape courante comme faite ; un second clic retire la marque, et la barre compte les étapes faites. C'est le seul geste qui écrive quelque chose : lire une leçon, changer d'étape ou l'ouvrir n'enregistre rien, ni l'étape atteinte ni l'ouverture. La marque s'écrit dans la base ouverte, celle de l'élève, et aucun export ne l'emporte. Importer un fichier qui contient une leçon la crée ; une leçon de même nom déjà présente n'est pas touchée.</p>
+<p><strong>L'éditeur de leçons</strong> s'ouvre par <code>le edit</code> (<code>le edit 2</code> sur la leçon 2) ou par le bouton <em>Modifier</em> de la barre de lecture. À gauche, la liste des leçons et un champ pour en créer une ; à droite, le nom et la description de la leçon choisie, puis ses étapes. Chaque étape a un titre, un texte, une collection choisie dans la liste et une position : <em>Position courante</em> y attache la position affichée sur le plateau, <em>Détacher la position</em> l'en retire. <em>Enregistrer l'étape</em> écrit ses changements ; les flèches la déplacent d'un cran ; <em>Ajouter une étape</em> en ajoute une à la fin. <em>Lire</em> ferme l'éditeur et ouvre la leçon à sa première étape ; <em>Supprimer</em> efface la leçon et ses étapes, sans toucher aux collections ni aux positions qu'elles montraient. Les leçons se créent et se modifient aussi par la ligne de commande ou par l'API (Les leçons).</p>
+<p>Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre d'export ou par la ligne de commande — emporte toutes les leçons. Dans la fenêtre d'export, la case <em>Inclure les leçons</em> les choisit une à une : chaque leçon cochée part avec les collections et les positions que ses étapes montrent, et le fichier peut être filigrané ou protégé par mot de passe (<code>.dbx</code>) comme tout export. Sans cette case, un export partiel (une sélection de positions, de collections ou de matchs) n'emporte pas les leçons.</p>
 <h3>Import : ce qui est écrit, ce qui ne l'est jamais</h3>
 <p>Importer un match, une position ou une autre base ajoute ce qui manque ; cela ne remplace pas ce qui est déjà là.</p>
 <ul>
@@ -696,6 +698,8 @@ export default {
 <li><strong>Ouvrir le détail d'un joueur</strong> — cliquez sur une ligne. Le joueur est sélectionné dans la barre de filtres et l'affichage bascule sur l'onglet Tableau de bord.</li>
 <li><strong>Restreindre la période</strong> — les filtres de dates, de tournois et de longueur de match s'appliquent normalement, ce qui permet de borner le tableau aux dates d'une compétition.</li>
 <li><strong>Comparer deux joueurs</strong> — cochez la case de la première colonne sur deux lignes. Un bloc apparaît au-dessus du tableau et met leurs indicateurs face à face ; cocher un troisième joueur remplace le plus ancien des deux. La case ne sélectionne pas la ligne : cocher compare, cliquer ouvre le détail.</li>
+<li><strong>Voir les positions où l'un a mieux joué</strong> — le bouton du bloc de comparaison liste les positions que les deux joueurs ont eu à jouer et où l'un a bien joué (en dessous du seuil Erreur de la bibliothèque) et l'autre non, l'écart le plus large d'abord ; le joueur est jugé sur son pire coup de la position. <em>Ouvrir ces positions</em> les charge dans la vue analyse. La ligne de commande et le serveur donnent la même liste (<code>stats contrast</code>).</li>
+<li><strong>Noter les coups d'abord</strong> — la liste ne compare que les coups dont l'erreur est notée, et aucun import ne les note : la notation se fait sur demande. Tant qu'il en reste à noter, le bloc en donne le nombre avec un bouton <em>Noter les coups</em> ; la ligne de commande fait la même chose avec <code>repair --move-errors</code>.</li>
 </ul>
 <p>Dans ce bloc, <strong>seuls les taux reçoivent un verdict</strong>, et le meilleur des deux est mis en gras. Trois indicateurs n'en reçoivent jamais, et il vaut de dire pourquoi. La <strong>chance</strong> n'est pas une qualité : un joueur plus chanceux n'est pas meilleur. Les <strong>matchs, le bilan et les décisions</strong> situent ce que les taux valent, mais les mettre en compétition ferait gagner celui qui a simplement joué davantage. Le <strong>nombre de blunders</strong> ne se compare pas brut — douze sur mille décisions valent mieux que dix sur cent —, aussi le bloc ajoute-t-il une ligne <em>Blunders / 100 déc.</em> qui, elle, se compare, et laisse le compte à côté comme contexte.</p>
 <p>Une égalité n'est pas une victoire : elle n'est mise en gras d'aucun côté. Un taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.</p>
@@ -2039,8 +2043,12 @@ export default {
 <td>Afficher/cacher le panneau des collections.</td>
 </tr>
 <tr>
-<td>lesson, le [N]</td>
-<td>Sans argument, liste les leçons de la base dans la barre d'état ; <code>le N</code> ouvre la leçon N à sa première étape (voir Leçons).</td>
+<td>lesson, le [N | edit [N]]</td>
+<td>Sans argument, liste les leçons de la base dans la barre d'état ; <code>le N</code> ouvre la leçon N à sa première étape ; <code>le edit</code> ouvre l'éditeur de leçons, <code>le edit N</code> sur la leçon N (voir Leçons).</td>
+</tr>
+<tr>
+<td>study, sq</td>
+<td>Ouvre la file d'étude transversale : vos blunders que rien n'a encore traités, du plus coûteux au moins coûteux (voir Les blunders que rien n'a encore traités).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>
@@ -2168,7 +2176,7 @@ export default {
 </tr>
 <tr>
 <td>n&gt;x</td>
-<td>La position a été rencontrée plus de x fois dans la base — le nombre de coups qui y aboutissent, tous matchs confondus. Formes <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> et <code>n4</code> (exactement quatre).</td>
+<td>La position a été rencontrée au moins x fois dans la base — le nombre de décisions prises sur elle, tous matchs et tous joueurs confondus ; avec <code>pl</code>, <code>pl!</code> ou <code>op</code>, seules les occurrences de ce joueur comptent. Formes <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> et <code>n4</code> (exactement quatre).</td>
 <td>—</td>
 </tr>
 <tr>

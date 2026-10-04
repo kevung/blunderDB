@@ -164,6 +164,10 @@ test('T2 : Yanis dirige 32 joueurs, avec incidents et fermeture brutale', async 
             const f = path.join(shim.outDir, 'tournoi.html');
             return fs.existsSync(f) ? fs.readFileSync(f, 'utf8') : '';
         };
+        const statusOnPage = (html, name) => {
+            const block = html.match(/<section class="statuts">([\s\S]*?)<\/section>/)?.[1] || '';
+            return [...block.matchAll(/<li[^>]*>([^<]*)<\/li>/g)].some((li) => li[1].startsWith(`${name} — `));
+        };
         const seatedOnPage = (html, name, table) => {
             const re = new RegExp(`<span class="num">Table ${table}</span>([^<]*)`, 'g');
             let mm;
@@ -189,9 +193,8 @@ test('T2 : Yanis dirige 32 joueurs, avec incidents et fermeture brutale', async 
             OUT.interruptions.askPlay.V0 += 1;
             const html = wallOn ? pageHtml() : '';
             const name = nameOf(id);
-            const i = html.indexOf(name);
-            const ctx = i >= 0 ? html.slice(Math.max(0, i - 120), i + 160) : '';
-            const told = wallOn && /exempt|élimin|retir|0 vie|bye/i.test(ctx);
+            // La réponse est la ligne « Nom — statut » du bloc « Est-ce que je joue ? » de la page.
+            const told = wallOn && statusOnPage(html, name);
             if (!told) OUT.interruptions.askPlay.V1 += 1;
             OUT.interruptions.askPlay.events.push(`${what} ${name}${told ? ' (lu sur la page)' : ''}`);
         };
@@ -422,26 +425,24 @@ test('T2 : Yanis dirige 32 joueurs, avec incidents et fermeture brutale', async 
                 const btnA = (await page.locator('[data-testid="direction-result-winner-a"]').textContent()).trim();
                 const side = btnA === nameOf(leaver) ? 'a' : 'b';
                 await g.click(`[data-testid="direction-result-forfeit-${side}"]`);
-                await page.waitForTimeout(250);
-                if (await confirmModal().isVisible().catch(() => false)) {
-                    g.problem('forfait confirmé par un bouton « Supprimer »');
-                    await g.click(confirmModal());
+                // La fiche propose forfait seul ou forfait et retrait du perdant, nommés.
+                const both = page.getByRole('button', { name: `Déclarer forfait et retirer ${nameOf(leaver)}`, exact: true });
+                await both.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+                if (await both.isVisible()) await g.click(both);
+                else {
+                    g.problem('forfait et retrait non proposés ensemble : repli Joueurs → Retirer');
+                    if (await confirmModal().isVisible().catch(() => false)) await g.click(confirmModal());
+                    await g.click('[data-testid="direction-tab-players"]');
+                    await g.click('[data-testid="direction-player-filter"]');
+                    await g.type(nameOf(leaver).split(' ')[0]);
+                    await g.click(`[data-testid="direction-player-${leaver}"] [data-testid="direction-player-withdraw-now"]`);
+                    await page.waitForTimeout(250);
+                    if (await confirmModal().isVisible().catch(() => false)) await g.click(confirmModal());
+                    await g.click('[data-testid="direction-player-filter"]');
+                    await g.press('ControlOrMeta+a');
+                    await g.press('Backspace');
                 }
                 await page.waitForTimeout(300);
-                // Puis il faut qu'il ne soit plus apparié : Joueurs → Retirer.
-                await g.click('[data-testid="direction-tab-players"]');
-                await g.click('[data-testid="direction-player-filter"]');
-                await g.type(nameOf(leaver).split(' ')[0]);
-                await g.click(`[data-testid="direction-player-${leaver}"] [data-testid="direction-player-withdraw-now"]`);
-                await page.waitForTimeout(250);
-                if (await confirmModal().isVisible().catch(() => false)) {
-                    g.problem('retrait confirmé par un bouton « Supprimer »');
-                    await g.click(confirmModal());
-                }
-                await page.waitForTimeout(300);
-                await g.click('[data-testid="direction-player-filter"]');
-                await g.press('ControlOrMeta+a');
-                await g.press('Backspace');
                 await g.click('[data-testid="direction-tab-direction"]');
             });
             results += 1;
@@ -487,7 +488,10 @@ test('T2 : Yanis dirige 32 joueurs, avec incidents et fermeture brutale', async 
             await page.reload();
             await act('reprise', 'retrouver la direction après relance', async (g) => {
                 const tab = page.locator('[data-testid="direction-tab-direction"]');
-                const auto = await tab.isVisible({ timeout: 6000 }).catch(() => false);
+                // isVisible n'attend pas : la Direction rouverte par la session arrive après le
+                // rechargement, et un clic sur « Ouvrir la direction » pendant ce temps la refermerait.
+                const auto = await tab.waitFor({ state: 'visible', timeout: 20000 }).then(() => true, () => false);
+                OUT.notes.push(`reprise : Direction ${auto ? 'rouverte seule par la session' : 'à rouvrir à la main'}`);
                 if (!auto) {
                     await g.click('[data-testid="tab-tournaments"]');
                     const row = page.locator('#tournamentPanel tbody tr').first();

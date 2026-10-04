@@ -136,6 +136,10 @@ func (s *Server) statsRoutes() []route {
 			return ss().PlayerTable(ctx, scope, req.Filter)
 		})},
 		// Deux joueurs l'un contre l'autre : matchs communs, PR de chacun, bilan.
+		// Les positions décidées par les deux joueurs que l'un a bien jouées et pas l'autre.
+		{http.MethodPost, "/v1/stats.playerContrast", rpc(func(ctx context.Context, scope string, req statsHeadToHeadReq) (*storage.PlayerContrast, error) {
+			return ss().PlayerContrast(ctx, scope, req.PlayerA, req.PlayerB, req.Filter)
+		})},
 		{http.MethodPost, "/v1/stats.headToHead", rpc(func(ctx context.Context, scope string, req statsHeadToHeadReq) (*storage.HeadToHead, error) {
 			return ss().HeadToHead(ctx, scope, req.PlayerA, req.PlayerB, req.Filter)
 		})},

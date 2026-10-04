@@ -343,12 +343,14 @@ Les leçons
 ~~~~~~~~~~
 
 Les leçons (:ref:`lecons`) se lisent et s'écrivent sous le tenant de l'appelant
-par neuf routes : ``/v1/lessons.list``, ``lessons.get`` (la leçon et ses
+par onze routes : ``/v1/lessons.list``, ``lessons.get`` (la leçon et ses
 étapes, dans l'ordre), ``lessons.create``, ``lessons.update``,
 ``lessons.delete``, ``lessons.addStep``, ``lessons.updateStep``,
-``lessons.removeStep`` et ``lessons.reorderSteps``. La suppression d'une leçon
-est définitive et laisse les collections et les positions que ses étapes
-montraient. Les outils MCP ``list_lessons`` et ``lesson`` les lisent.
+``lessons.removeStep``, ``lessons.reorderSteps``, ``lessons.setStepDone``
+(``{"id": <étape>, "done": true|false}``, le geste « étape faite » du lecteur,
+écrit sous son propre tenant) et ``lessons.doneSteps`` (la date de ce geste par
+étape). La suppression d'une leçon est définitive et laisse les collections et
+les positions que ses étapes montraient. Les outils MCP ``list_lessons`` et ``lesson`` les lisent.
 
 .. _headless_transcription:
 

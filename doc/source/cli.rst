@@ -973,6 +973,33 @@ tout de même avec le code 0.
    ./blunderdb collection export --db base.db --id 3,4 --out ouvertures.db \
        --watermark "Cours de Jean Dupont - 12 mars 2026"
 
+study — La file d'étude transversale
+------------------------------------
+
+Liste les blunders du joueur de référence de la base, tous imports confondus,
+que rien n'a encore traités : sans commentaire, sans carte Anki, hors de toute
+collection et sans marque « vu » (voir :ref:`file_etude_transversale`). Chaque
+sous-commande prend ``--db``.
+
+.. code-block:: bash
+
+   ./blunderdb study <subcommand> [options]
+
+**Sous-commandes:**
+
+* ``queue [--limit <n>] [--format text|json]`` — La file, du plus coûteux au
+  moins coûteux ; cinquante positions au plus.
+* ``mark --id <id>`` — Marque la position vue : elle sort de la file. La marque
+  est une donnée de la base, jamais exportée.
+* ``unmark --id <id>`` — Retire la marque : la position revient dans la file.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb study queue --db base.db --limit 20
+   ./blunderdb study mark --db base.db --id 1234
+
 lesson — Gérer les leçons
 -------------------------
 
@@ -1014,11 +1041,16 @@ acceptent ``--format text`` (défaut) ou ``json``.
   collections et les positions que leurs étapes montrent, vers un nouveau
   fichier de base ; avec ``--password``, le fichier est un ``.dbx`` protégé
   (voir la commande ``export`` pour le filigrane).
+* ``done --step <id> [--undo]`` — Marque une étape comme faite dans cette base,
+  ou retire la marque avec ``--undo`` : c'est la progression de celui qui lit
+  la leçon, et aucun export ne l'emporte.
+* ``progress --id <id> [--format text|json]`` — Montre les étapes de la leçon
+  marquées faites, avec la date du geste.
 
 Importer un fichier qui contient une leçon crée celle-ci avec ses étapes ; une
 leçon dont le nom existe déjà dans la base n'est pas touchée, si bien que
 réimporter le même fichier ne change rien. Lire une leçon n'enregistre rien chez
-celui qui la lit.
+celui qui la lit ; seul ``done`` écrit sa progression.
 
 L'export de toute la bibliothèque (``export --type database``) emporte toutes
 les leçons avec ce que leurs étapes montrent ; un export partiel ne les emporte
@@ -1187,6 +1219,16 @@ bilan des matchs menés à terme.
 
    ./blunderdb stats h2h --db <fichier> --player <nom> --opponent <nom> [options]
 
+**stats contrast** — Les positions que deux joueurs ont tous deux eu à jouer et
+où l'un a bien joué (sous le seuil Erreur) et l'autre non, l'écart le plus large
+d'abord ; un joueur est jugé sur son pire coup de la position. ``--limit N``
+garde les N premières lignes du texte ; le JSON donne tout, avec les
+``position_id``.
+
+.. code-block:: bash
+
+   ./blunderdb stats contrast --db <fichier> --player <nom> --opponent <nom> [options]
+
 **stats windows** — Le PR sur une fenêtre calendaire glissante : une ligne par
 mois, chacune couvrant ce mois et les précédents de la fenêtre
 (``--window month``, ``quarter`` ou un nombre de mois).
@@ -1216,6 +1258,7 @@ filtre de provenance, qui porte sur chaque décision.
 .. code-block:: bash
 
    ./blunderdb stats h2h --db base.db --player "Alice" --opponent "Bob"
+   ./blunderdb stats contrast --db base.db --player "Alice" --opponent "Bob"
    ./blunderdb stats windows --db base.db --player "Alice" --window quarter --format json
    ./blunderdb stats ranking --db base.db --min-decisions 1000 --limit 20
    ./blunderdb list --type stats --db base.db --player "Alice" --min-depth 3

@@ -48,6 +48,7 @@ export default {
 <li>study positions with spaced repetition (Anki panel),</li>
 <li>display the database metadata (metadata panel).</li>
 </ul>
+<p>The panel height is set by dragging its handle; each tab remembers its own.</p>
 <p>Modal windows can be displayed to:</p>
 <ul>
 <li>display the blunderDB help,</li>
@@ -237,7 +238,7 @@ export default {
 <p>A neighbour is the same <strong>problem</strong>, not the same drawing: the ranking is taken inside the target's class — the same kind of decision, the same regime (money or match) for a cube decision, and a match other than its own, since the positions surrounding it in its own game are its closest structures without ever being its neighbours. Dice, score and cube value stay outside the class; the ordinary tokens narrow on them when wanted. <code>like42*</code> widens the class to every kind of decision and to both regimes, never to the target's match; <code>like&lt;12</code> drops anything beyond twelve checker-pips. A ranking that finds nothing returns an empty list and says so, rather than ten unrelated positions.</p>
 <p>In <strong>edit</strong> mode, <code>s like</code> takes the <strong>drawn</strong> board as its target: you draw roughly the position you remember, you launch, and the library answers — where the search by structure demands the exact drawing. The board is then read as a position and not as a pattern: a point left empty counts as checkers borne off, which is exact for a real position and skews the computation for a drawing left half done.</p>
 <p>Every neighbour carries its distance under the analysis tables, together with the position it is close to. That is what makes it possible to judge whether one is looking at a neighbour or at a coincidence, and it is the reason the ceiling exists. The ranking is also launched without going through the command line: <em>CTRL-SHIFT-L</em>, or the <strong>Neighbouring positions</strong> entry of the board's context menu.</p>
-<p>The <code>n</code> token counts <strong>encounters</strong>: <code>n&gt;3</code> keeps the positions more than three moves reach, across every match. That is a different question from “what did I get wrong” — a position met twenty times and played correctly nineteen is still the one to know cold. The count is of moves, not matches: the same position twice in one match counts twice, because those were two decisions.</p>
+<p>The <code>n</code> token counts <strong>encounters</strong>: <code>n&gt;3</code> keeps the positions met at least three times in the database, all matches and all players together. It is a different question from "what did I miss" — a position met twenty times and played well nineteen of them is still the one to know by heart. The count is of decisions, not matches: the same position twice in one match counts for two, because they were two decisions. Combined with a player filter, it counts only that player's occurrences: <code>n&gt;3 pl!"Alice"</code> keeps the positions Alice had to play at least three times, and <code>pl"Alice"</code> those of the matches she played; <code>op"Bob"</code> likewise restricts the count to matches against Bob.</p>
 <p>The <strong>plan of play</strong> is a second derived label, beside the phase, and it answers the question a bundle of saved filters cannot ask: “show me my errors in a holding game”. Token <code>gt:</code>, repeatable (<code>gt:holding gt:mutualholding</code>), from the point of view of the <strong>player on roll</strong> — the plan the decision was being made in.</p>
 <p>The ten recognised plans, in the order the rules exhaust them, from the most specific to the most general:</p>
 <ul>
@@ -278,10 +279,11 @@ export default {
 <p>The ❄ button, shown on a living collection, <strong>freezes</strong> it: the positions the search selects at that moment become the content of an ordinary collection, in the order of the search, and the query is cleared. The positions it held before becoming living are replaced.</p>
 <p>A living collection whose query carries a token this version no longer knows <strong>refuses to open</strong>, and says so, rather than returning the whole database. That is the one failure a saved filter must not have: widening in silence.</p>
 <h4>Lessons</h4>
-<p>A <strong>lesson</strong> is a sequence of steps that a coach writes once for a student and hands over in a database file (see the <code>lesson export</code> command in cli). Each step has a title, a text and can show a collection, a position, both or neither. The <code>le</code> command lists the database's lessons in the status bar; <code>le 2</code> opens lesson 2.</p>
+<p>A <strong>lesson</strong> is a sequence of steps that a coach writes once for a student and hands over in a database file (see the <code>lesson export</code> command in cli). Each step has a title, a text and can show a collection, a position, both or neither. The <code>le</code> command lists the database's lessons in the status bar; <code>le 2</code> opens lesson 2; <code>le edit</code> opens the lesson editor.</p>
 <p>A <strong>reading bar</strong> then appears above the board: lesson name, step number, title, then the text. <em>Previous</em> and <em>Next</em> change step; the step brings onto the board the collection or position it shows, which you then browse with the usual gestures. <em>Close</em> leaves the lesson. A step whose collection or position has been deleted keeps its text.</p>
-<p>Reading a lesson leaves no trace: the student's database records neither the step reached nor the opening. Importing a file that contains a lesson creates it; a lesson of the same name already present is left untouched. Lessons are created and edited through the command line or the API (Lessons).</p>
-<p>A backup — exporting the whole library from the export window or by the command line — carries all the lessons; a partial export (a selection of positions, collections or matches) does not.</p>
+<p>The <em>Step done</em> box in the bar marks the current step as done; a second click removes the mark, and the bar counts the steps done. It is the only gesture that writes anything: reading a lesson, changing step or opening it records nothing, neither the step reached nor the opening. The mark is written into the open database, the student's, and no export carries it. Importing a file that contains a lesson creates it; a lesson of the same name already present is left untouched.</p>
+<p><strong>The lesson editor</strong> opens with <code>le edit</code> (<code>le edit 2</code> on lesson 2) or with the <em>Edit</em> button of the reading bar. On the left, the list of lessons and a field to create one; on the right, the name and description of the chosen lesson, then its steps. Each step has a title, a text, a collection chosen from the list and a position: <em>Current position</em> attaches the position shown on the board, <em>Detach the position</em> removes it. <em>Save the step</em> writes its changes; the arrows move it one place; <em>Add a step</em> adds one at the end. <em>Read</em> closes the editor and opens the lesson at its first step; <em>Delete</em> erases the lesson and its steps, without touching the collections or positions they showed. Lessons can also be created and edited from the command line or through the API (Lessons).</p>
+<p>A backup — exporting the whole library from the export window or by the command line — carries all the lessons. In the export window, the <em>Include lessons</em> box chooses them one by one: each ticked lesson goes with the collections and positions its steps show, and the file can be watermarked or password-protected (<code>.dbx</code>) like any export. Without that box, a partial export (a selection of positions, collections or matches) does not carry the lessons.</p>
 <h3>Import: what is written, what never is</h3>
 <p>Importing a match, a position or another database adds what is missing; it does not replace what is already there.</p>
 <ul>
@@ -696,6 +698,8 @@ export default {
 <li><strong>Open a player's detail</strong> — click a row. The player is selected in the filter bar and the display switches to the Dashboard tab.</li>
 <li><strong>Narrow the period</strong> — the date, tournament and match-length filters apply as usual, which makes it possible to bound the table to the dates of a competition.</li>
 <li><strong>Compare two players</strong> — tick the box in the first column on two rows. A block appears above the table and sets their figures face to face; ticking a third player replaces the older of the two. The box does not select the row: ticking compares, clicking opens the detail.</li>
+<li><strong>See the positions where one played better</strong> — the button of the comparison block lists the positions both players had to play and where one played well (below the library's Error threshold) and the other did not, widest gap first; a player is judged on their worst play of the position. <em>Open these positions</em> loads them into the analysis view. The command line and the server give the same list (<code>stats contrast</code>).</li>
+<li><strong>Score the plays first</strong> — the list only compares plays whose error is scored, and no import scores them: scoring is done on request. While some remain to be scored, the block gives their number with a <em>Score the plays</em> button; the command line does the same with <code>repair --move-errors</code>.</li>
 </ul>
 <p>In that block, <strong>only the rates get a verdict</strong>, and the better of the two is set in bold. Three figures never get one, and it is worth saying why. <strong>Luck</strong> is not a quality: a luckier player is not a better one. <strong>Matches, record and decisions</strong> say what the rates are worth, but putting them in competition would let whoever simply played more win. The <strong>blunder count</strong> does not compare raw — twelve out of a thousand decisions beat ten out of a hundred — so the block adds a <em>Blunders / 100 dec.</em> line, which does compare, and leaves the count beside it as context.</p>
 <p>A tie is not a win: it is set in bold on neither side. A rate with nothing behind it shows as “—” and decides nothing.</p>
@@ -2039,8 +2043,12 @@ export default {
 <td>Show/hide the collections panel.</td>
 </tr>
 <tr>
-<td>lesson, le [N]</td>
-<td>Without an argument, lists the database's lessons in the status bar; <code>le N</code> opens lesson N at its first step (see Lessons).</td>
+<td>lesson, le [N | edit [N]]</td>
+<td>Without an argument, lists the database's lessons in the status bar; <code>le N</code> opens lesson N at its first step; <code>le edit</code> opens the lesson editor, <code>le edit N</code> on lesson N (see Lessons).</td>
+</tr>
+<tr>
+<td>study, sq</td>
+<td>Opens the cross-import study queue: your blunders that nothing has handled yet, from the most costly to the least costly (see Blunders nothing has handled yet).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>
@@ -2168,7 +2176,7 @@ export default {
 </tr>
 <tr>
 <td>n&gt;x</td>
-<td>The position was met more than x times in the database — the number of moves that reach it, across every match. Forms <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> and <code>n4</code> (exactly four).</td>
+<td>The position was met at least x times in the database — the number of decisions taken on it, all matches and all players together; with <code>pl</code>, <code>pl!</code> or <code>op</code>, only that player's occurrences count. Forms <code>n&gt;3</code>, <code>n&lt;2</code>, <code>n3,10</code> and <code>n4</code> (exactly four).</td>
 <td>—</td>
 </tr>
 <tr>

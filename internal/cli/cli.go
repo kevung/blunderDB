@@ -126,6 +126,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"transcribe":  cli.runTranscribe,
 		"collection":  cli.runCollection,
 		"lesson":      cli.runLesson,
+		"study":       cli.runStudy,
 		"anki":        cli.runAnki,
 		"stats":       cli.runStats,
 		"training":    cli.runTraining,
@@ -179,6 +180,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  search    Search positions with filters")
 	fmt.Println("  match     Display match positions and analysis")
 	fmt.Println("  lesson      Manage lessons (ordered steps showing collections and positions; export them)")
+	fmt.Println("  study       The study backlog: your unhandled blunders across every import, and the \"studied\" mark")
 	fmt.Println("  collection  Manage collections (list, show, create, rename, delete, export)")
 	fmt.Println("  anki      Spaced-repetition decks (decks, stats, forecast, sync)")
 	fmt.Println("  stats     Statistics computed apart from list --type stats (recurring)")

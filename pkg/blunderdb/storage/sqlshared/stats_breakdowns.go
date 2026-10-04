@@ -132,8 +132,13 @@ func (s *StatsStore) computePerTag(ctx context.Context, q statsQuery, result *st
 	var decisions []decision
 	positions := map[int64]bool{}
 
+	// Only a commented position can carry a tag: reading the others would
+	// hold every decision of the selection in memory for nothing.
+	commented, cArgs := s.DB.TenantFilter("c", q.scope)
 	rows, err := s.DB.Query(ctx,
-		`SELECT p.id, COALESCE(`+statsErrExpr+`, 0) `+q.join+q.whereSQL, q.baseArgs...)
+		`SELECT p.id, COALESCE(`+statsErrExpr+`, 0) `+q.join+q.whereSQL+
+			` AND p.id IN (SELECT c.position_id FROM comment c WHERE `+commented+` AND c.text != '')`,
+		append(append([]any{}, q.baseArgs...), cArgs...)...)
 	if err != nil {
 		return fmt.Errorf("per-tag decisions query: %w", err)
 	}

@@ -30,7 +30,8 @@ var prunedIndexes2_31 = []string{
 // migrate_2_30_0_to_2_31_0 is the weight wave of the large-library plan
 // (ADR-0071), plus additions EnsureSchema creates from the one schema after
 // the chain: match_equity_table and analysis.met_id (ADR-0068),
-// lesson_progress (ADR-0069) and move.error_mp, all added NULL. Scoring the
+// lesson_progress (ADR-0069), study_mark (the study queue's explicit "seen"
+// gesture) and move.error_mp, all added NULL or empty. Scoring the
 // existing moves is not part of it: that is the resumable
 // MatchStore.ScoreMoves pass, run outside the open.
 //

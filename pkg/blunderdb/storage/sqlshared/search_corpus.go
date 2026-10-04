@@ -77,64 +77,15 @@ func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilter
 		return
 	}
 
-	like := s.DB.ILike()
 	var cond strings.Builder
 	var condArgs []any
+	who, whoArgs := s.playerSeatCond(player, opponent, seatOnly, aliases)
+	cond.WriteString(who)
+	condArgs = append(condArgs, whoArgs...)
+
+	like := s.DB.ILike()
 	name := func(col string) string { return col + " " + like + " ?" + likeEscape }
 	pat := searchfilter.NameLikePattern
-
-	// person writes "col matches one of who's spellings": an aliased player is
-	// every name the alias table gives them.
-	person := func(col, who string) (string, []any) {
-		group := aliases.Group(who)
-		if len(group) == 0 {
-			group = []string{who}
-		}
-		parts := make([]string, len(group))
-		vals := make([]any, len(group))
-		for i, n := range group {
-			parts[i] = name(col)
-			vals[i] = pat(n)
-		}
-		return "(" + strings.Join(parts, " OR ") + ")", vals
-	}
-
-	// Who sat where. a is the named player, b the opponent; the seat of the
-	// player who took the decision is move.player (1 = player1, -1 = player2).
-	switch {
-	case player != "" && opponent != "":
-		p1, a1 := person("mt.player1_name", player)
-		o2, b2 := person("mt.player2_name", opponent)
-		p2, a2 := person("mt.player2_name", player)
-		o1, b1 := person("mt.player1_name", opponent)
-		seat1 := "(" + p1 + " AND " + o2 + ")"
-		seat2 := "(" + p2 + " AND " + o1 + ")"
-		if seatOnly {
-			seat1 = "(mv.player = 1 AND " + seat1 + ")"
-			seat2 = "(mv.player = -1 AND " + seat2 + ")"
-		}
-		cond.WriteString(" AND (" + seat1 + " OR " + seat2 + ")")
-		condArgs = append(condArgs, a1...)
-		condArgs = append(condArgs, b2...)
-		condArgs = append(condArgs, a2...)
-		condArgs = append(condArgs, b1...)
-	case player != "" && seatOnly:
-		p1, a1 := person("mt.player1_name", player)
-		p2, a2 := person("mt.player2_name", player)
-		cond.WriteString(" AND ((mv.player = 1 AND " + p1 + ") OR (mv.player = -1 AND " + p2 + "))")
-		condArgs = append(condArgs, a1...)
-		condArgs = append(condArgs, a2...)
-	case player != "" || opponent != "":
-		who := player
-		if who == "" {
-			who = opponent
-		}
-		p1, a1 := person("mt.player1_name", who)
-		p2, a2 := person("mt.player2_name", who)
-		cond.WriteString(" AND (" + p1 + " OR " + p2 + ")")
-		condArgs = append(condArgs, a1...)
-		condArgs = append(condArgs, a2...)
-	}
 
 	if tournament != "" {
 		tTenant, tArgs := s.DB.TenantFilter("t", scope)
@@ -213,6 +164,94 @@ func (s *SearchStore) appendMatchLevelClause(scope string, f domain.SearchFilter
 		" WHERE " + mtTenant + cond.String() + ")")
 	*args = append(*args, mtArgs...)
 	*args = append(*args, condArgs...)
+}
+
+// playerSeatCond writes the " AND (...)" condition on the two players of the
+// match a move belongs to (mt) and, with a seat, on who took the decision (mv).
+// It is shared by the match-level clause and by the encounter count, so that
+// `n>3 pl"A"` counts the occasions A met the position, not everyone's.
+func (s *SearchStore) playerSeatCond(player, opponent string, seatOnly bool, aliases storage.AliasMap) (string, []any) {
+	if player == "" && opponent == "" {
+		return "", nil
+	}
+	like := s.DB.ILike()
+	name := func(col string) string { return col + " " + like + " ?" + likeEscape }
+	pat := searchfilter.NameLikePattern
+	var cond strings.Builder
+	var condArgs []any
+
+	// person writes "col matches one of who's spellings": an aliased player is
+	// every name the alias table gives them.
+	person := func(col, who string) (string, []any) {
+		group := aliases.Group(who)
+		if len(group) == 0 {
+			group = []string{who}
+		}
+		parts := make([]string, len(group))
+		vals := make([]any, len(group))
+		for i, n := range group {
+			parts[i] = name(col)
+			vals[i] = pat(n)
+		}
+		return "(" + strings.Join(parts, " OR ") + ")", vals
+	}
+
+	// Who sat where. a is the named player, b the opponent; the seat of the
+	// player who took the decision is move.player (1 = player1, -1 = player2).
+	switch {
+	case player != "" && opponent != "":
+		p1, a1 := person("mt.player1_name", player)
+		o2, b2 := person("mt.player2_name", opponent)
+		p2, a2 := person("mt.player2_name", player)
+		o1, b1 := person("mt.player1_name", opponent)
+		seat1 := "(" + p1 + " AND " + o2 + ")"
+		seat2 := "(" + p2 + " AND " + o1 + ")"
+		if seatOnly {
+			seat1 = "(mv.player = 1 AND " + seat1 + ")"
+			seat2 = "(mv.player = -1 AND " + seat2 + ")"
+		}
+		cond.WriteString(" AND (" + seat1 + " OR " + seat2 + ")")
+		condArgs = append(condArgs, a1...)
+		condArgs = append(condArgs, b2...)
+		condArgs = append(condArgs, a2...)
+		condArgs = append(condArgs, b1...)
+	case player != "" && seatOnly:
+		p1, a1 := person("mt.player1_name", player)
+		p2, a2 := person("mt.player2_name", player)
+		cond.WriteString(" AND ((mv.player = 1 AND " + p1 + ") OR (mv.player = -1 AND " + p2 + "))")
+		condArgs = append(condArgs, a1...)
+		condArgs = append(condArgs, a2...)
+	case player != "" || opponent != "":
+		who := player
+		if who == "" {
+			who = opponent
+		}
+		p1, a1 := person("mt.player1_name", who)
+		p2, a2 := person("mt.player2_name", who)
+		cond.WriteString(" AND (" + p1 + " OR " + p2 + ")")
+		condArgs = append(condArgs, a1...)
+		condArgs = append(condArgs, a2...)
+	}
+	return cond.String(), condArgs
+}
+
+// EncounterCountSQL returns the expression counting how many times the
+// position p was met: the move rows that reach it, each one an occurrence.
+// With a player or opponent filter only the occasions that player decided (or
+// met that opponent) count.
+func (s *SearchStore) encounterCountSQL(scope string, f domain.SearchFilters, aliases storage.AliasMap) (string, []any) {
+	player, seatOnly := searchfilter.PlayerSpec(f.PlayerFilter)
+	opponent := ""
+	if f.OpponentFilter != "" {
+		opponent = searchfilter.QuotedName(f.OpponentFilter, "op")
+	}
+	who, whoArgs := s.playerSeatCond(player, opponent, seatOnly, aliases)
+	if who == "" {
+		return "(SELECT COUNT(*) FROM move mv WHERE mv.position_id = p.id)", nil
+	}
+	mtTenant, mtArgs := s.DB.TenantFilter("mt", scope)
+	return "(SELECT COUNT(*) FROM move mv JOIN game g ON mv.game_id = g.id JOIN match mt ON g.match_id = mt.id" +
+		" WHERE mv.position_id = p.id AND " + mtTenant + who + ")", append(mtArgs, whoArgs...)
 }
 
 // appendProvenanceClause writes the `ad:` filter on the analysis row's

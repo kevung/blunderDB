@@ -23,6 +23,7 @@
      * @type {{
      *     proposals?: ProposalAction[],
      *     players?: { id: string, name: string }[],
+     *     entrants?: { id: string, name: string }[],
      *     elsewhere?: Record<string, { event: string, table: number }>,
      *     tableNames?: Record<number, string>,
      *     busy?: boolean,
@@ -36,6 +37,7 @@
     let {
         proposals = [],
         players = [],
+        entrants = [],
         elsewhere = {},
         tableNames = {},
         busy = false,
@@ -149,7 +151,9 @@
 
     /** @param {string | undefined} id */
     function playerName(id) {
-        const p = players.find((x) => x.id === id);
+        // `players` ne tient que les libres (l'appariement à la main) ; un retiré qu'un
+        // repêchage remplace n'y est plus, son nom vient des inscrits.
+        const p = players.find((x) => x.id === id) || entrants.find((x) => x.id === id);
         return p ? p.name : id;
     }
 
