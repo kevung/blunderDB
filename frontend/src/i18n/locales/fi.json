@@ -2141,6 +2141,8 @@
             "player_busy": "pelaa toisessa kilpailussa"
         },
         "proposals": {
+            "keys": "J / K tai ↑ ↓: valitse ehdotus · Enter: käynnistä · ← →: pöydästä toiseen",
+            "skip": "Siirry jonoon",
             "title": "Ehdotukset ({n})",
             "all": "Aloita kaikki",
             "allHint": "Aloita koko lista kerralla.",
@@ -2301,6 +2303,7 @@
             "reopenConfirm": "Avataanko turnaus uudelleen? Loppusijoitus lakkaa olemasta lopullinen, ja uudelleenavaus jää lokiin.",
             "save": "Tallenna…",
             "saveHint": "Tallentaa sijoitukset CSV-tiedostoon, samana kuin kopion.",
+            "historyHint": "Pelaajan historia, tuloksen korjaamiseen",
             "saved": "Sijoitukset tallennettu: {path}",
             "saveFailed": "Sijoituksia ei voitu tallentaa.",
             "fileWord": "sijoitukset"
@@ -2316,10 +2319,10 @@
             "withdrawn": "{player} poistui",
             "updated": "Pelaajan {player} tiedot korjattu",
             "started": "{a} – {b} aloitettu · {where}",
-            "result": "{winner} voittaa {scoreA}–{scoreB}",
-            "resultNoScore": "{winner} voittaa",
-            "forfeit": "{winner} voittaa luovutuksella",
-            "corrected": "Tulos korjattu: {winner} voittaa",
+            "result": "{winner} voittaa, vastustaja {loser} {scoreA}–{scoreB}",
+            "resultNoScore": "{winner} voittaa, vastustaja {loser}",
+            "forfeit": "{winner} voittaa luovutuksella, vastustaja {loser}",
+            "corrected": "Tulos korjattu: {winner} voittaa, vastustaja {loser}",
             "cancelled": "Ottelu {match} peruttu",
             "bye": "Vapaakierros: {player}",
             "draw": "Arvonta: {where}",

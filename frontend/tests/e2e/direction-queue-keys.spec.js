@@ -104,3 +104,15 @@ test('un tournoi s’ouvre au clavier : Tab jusqu’à la ligne, Entrée', async
     await page.keyboard.press('Enter');
     await expect(page.locator('#tournamentPanel .direction-btn')).toBeVisible();
 });
+
+test('la file est à un Tab de l’onglet Direction, et ses raccourcis sont affichés', async ({ page }) => {
+    await openDirection(page);
+    await expect(page.locator('[data-testid="direction-proposals-keys"]')).toContainText('J / K');
+    await page.locator('[data-testid="direction-tab-direction"]').focus();
+    // Le premier arrêt dans la page est le lien vers la file, avant la grille des tables.
+    await page.locator('[data-testid="direction-pane-direction"]').focus();
+    await page.keyboard.press('Tab');
+    await expect(page.locator('[data-testid="direction-skip-queue"]')).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page.locator('[data-testid="direction-queue"]')).toBeFocused();
+});

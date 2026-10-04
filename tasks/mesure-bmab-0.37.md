@@ -273,3 +273,30 @@ Scripts dans `~/src/bench-scale/mesure-0.37/` : `mesure.py` (temps, CPU, RSS), `
 (échantillon à 2 % et vacuum), `phases.py` ; résultats bruts `*.jsonl` et `*.out`. Le
 harnais Go (`cmd/zz-mesure`, modes `open`, `scoremoves`, `dictsample`, `dictmeasure`) n'est
 pas committé.
+
+## 9. Paquet recherche (#5, #6, #8) : avant / après
+
+Copie de `bmab-europe.db` (2.31, blobs JSON), `search --format json --limit 1000`, cache
+chaud, même poste ; sorties identiques (mêmes `id`) avant et après.
+
+| Requête | Avant | Après | Cause |
+|---|---:|---:|---|
+| `t"illegal"` (86 résultats) | 124-169 s | **0,65-1,3 s** | `p.id IN (SELECT position_id FROM comment WHERE text != '')` ajouté au WHERE : le parcours ne lit plus que les positions commentées, le filtre Go décide toujours |
+| `E>100` | 29 s (57 s à froid) | **7,5 s** | l'ensemble `multiPlayedPlayer1Positions` (25 s, auto-jointure sur 8,3 M de coups) n'est plus listé avant la première page : test corrélé par ligne (`multiPlayedSQL`) |
+| `E>200` | 30 s | 12 s | idem |
+| `pl!"…" E>100 ph:race` | 40 s | 9,5 s | idem |
+| `E>200` sans limite (résultat complet) | 105 s | 118 s | le test corrélé coûte par ligne parcourue : une recherche qui lit tout est légèrement plus lente (+12 %) |
+
+- **#6 sans `error_mp`** : une SQL qui s'appuierait sur `move.error_mp` n'est exacte que si la
+  colonne est à jour. Rien ne la tient (ni l'import ni l'analyse n'appellent
+  `RescorePositionMoves`) et un NULL ne distingue pas « pas encore noté » de « coup que
+  l'analyse ne note pas » : le filtre `E` reste donc exact sans elle. Le gain vient du
+  retrait de la liste préalable, pas de la colonne.
+- **#8** : `ScoreMoves` est branché sur `repair --move-errors` (CLI), `Database.ScoreMoves`
+  (verrou par lot) et `POST /v1/matches.scoreMoves` (serveur). Opt-in : la passe est longue
+  et rien ne lit encore la colonne. Mesuré sur la copie : 15 526 622 coups notés en 17 min (poste chargé par des suites en parallèle ; 10 min à vide, § 5).
+
+**Restent ouverts sur cet axe** : #6 (faire reposer `E` sur `move.error_mp`) et #8 (rendre
+`error_mp` utile : un lecteur de la colonne, un appel automatique à l'import et à
+l'analyse, qui tienne la colonne à jour). Le paquet ne livre que le retrait de la liste
+préalable et la passe opt-in ; voir `tasks/BACKLOG.md`.

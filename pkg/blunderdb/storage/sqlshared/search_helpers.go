@@ -106,6 +106,10 @@ func loadCommentTexts(ctx context.Context, db Execer, positionIDs []int64) (map[
 type player1Moves struct {
 	checkerMoves []string
 	cubeActions  []string
+	// plays counts the distinct (checker move, cube action) pairs as stored,
+	// before normalisation: exactly what multiPlayedSQL tells apart, so a row
+	// the SQL let through as multi-played is one the Go phase re-scores.
+	plays int
 }
 
 // loadPlayer1Moves returns, for every id in positionIDs, player-1's distinct
@@ -115,6 +119,7 @@ type player1Moves struct {
 func loadPlayer1Moves(ctx context.Context, db Execer, positionIDs []int64) (map[int64]player1Moves, error) {
 	checkerSets := make(map[int64]map[string]bool)
 	cubeSets := make(map[int64]map[string]bool)
+	playSets := make(map[int64]map[string]bool)
 	err := forEachIDBatch(ctx, db, positionIDs,
 		`SELECT position_id, checker_move, `+ActionLabelFor(db, "move.cube_action")+` FROM move WHERE player = 1 AND position_id IN `,
 		``,
@@ -124,6 +129,10 @@ func loadPlayer1Moves(ctx context.Context, db Execer, positionIDs []int64) (map[
 			if err := rows.Scan(&id, &cm, &ca); err != nil {
 				return err
 			}
+			if playSets[id] == nil {
+				playSets[id] = make(map[string]bool)
+			}
+			playSets[id][derefOrEmpty(cm)+"\x00"+derefOrEmpty(ca)] = true
 			if cm != nil && *cm != "" {
 				if checkerSets[id] == nil {
 					checkerSets[id] = make(map[string]bool)
@@ -141,7 +150,10 @@ func loadPlayer1Moves(ctx context.Context, db Execer, positionIDs []int64) (map[
 	if err != nil {
 		return nil, err
 	}
-	out := make(map[int64]player1Moves, len(checkerSets)+len(cubeSets))
+	out := make(map[int64]player1Moves, len(playSets))
+	for id, set := range playSets {
+		out[id] = player1Moves{plays: len(set)}
+	}
 	for id, set := range checkerSets {
 		m := out[id]
 		m.checkerMoves = sortedKeys(set)
@@ -153,6 +165,13 @@ func loadPlayer1Moves(ctx context.Context, db Execer, positionIDs []int64) (map[
 		out[id] = m
 	}
 	return out, nil
+}
+
+func derefOrEmpty(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }
 
 func sortedKeys(set map[string]bool) []string {
@@ -167,16 +186,27 @@ func sortedKeys(set map[string]bool) []string {
 	return keys
 }
 
-// multiPlayedPlayer1Positions lists the positions on which player 1 recorded
-// more than one distinct play (checker move or cube action) in the move
-// table — positions deduplicated across matches and played differently each
-// time. On those the denormalised error column, which scores a single play,
-// cannot answer a move-error filter; SearchStore.find lets them through to
-// matchesMoveErrorFilter. The set is small (openings, early replies), so it
-// is listed once rather than tested per row. A self-join rather than GROUP BY
-// … HAVING COUNT(DISTINCT …), which needs a temporary B-tree. A move written
-// two ways counts twice here; the Go re-check normalises, so the cost is one
-// needless decode, never a wrong answer.
+// multiPlayedSQL is true for a position on which player 1 recorded more than
+// one distinct play (checker move or cube action) in the move table —
+// positions deduplicated across matches and played differently each time. On
+// those the denormalised error column, which scores a single play, cannot
+// answer a move-error filter; the search lets them through to
+// matchesMoveErrorFilter. Written per row, correlated on p.id, rather than as
+// a set listed up front: listing it reads every move of the library before the
+// first page can come back, where this reads the moves of the rows the scan
+// reaches. A move written two ways counts twice here; the Go re-check
+// normalises, so the cost is one needless decode, never a wrong answer.
+func multiPlayedSQL(db Execer, scope string) (string, []any) {
+	tenant, args := db.TenantFilter("m1", scope)
+	return `EXISTS (SELECT 1 FROM move m1
+		JOIN move m2 ON m2.position_id = m1.position_id AND m2.id > m1.id AND m2.player = 1
+		WHERE m1.position_id = p.id AND ` + tenant + ` AND m1.player = 1
+		  AND (COALESCE(m1.checker_move, '') <> COALESCE(m2.checker_move, '')
+		    OR ` + ActionCodeOrEmptySQL("m1.cube_action") + ` <> ` + ActionCodeOrEmptySQL("m2.cube_action") + `))`, args
+}
+
+// multiPlayedPlayer1Positions lists the positions multiPlayedSQL selects, as a
+// set: the status bar's blunder count needs the whole set, not a per-row test.
 func multiPlayedPlayer1Positions(ctx context.Context, db Execer, scope string) (map[int64]bool, error) {
 	tenant, args := db.TenantFilter("m1", scope)
 	rows, err := db.Query(ctx,

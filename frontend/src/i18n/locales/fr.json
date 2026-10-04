@@ -2141,6 +2141,8 @@
             "player_busy": "joue dans une autre épreuve"
         },
         "proposals": {
+            "keys": "J / K ou ↑ ↓ : choisir une proposition · Entrée : la lancer · ← → : de table en table",
+            "skip": "Aller à la file",
             "title": "Propositions ({n})",
             "all": "Tout lancer",
             "allHint": "Lancer toute la file en une fois.",
@@ -2301,6 +2303,7 @@
             "reopenConfirm": "Rouvrir ce tournoi ? Le classement final cesse d'être final, et la réouverture reste dans le journal.",
             "save": "Enregistrer…",
             "saveHint": "Enregistre le classement dans un fichier CSV, le même que la copie.",
+            "historyHint": "Historique de ce joueur, pour corriger un résultat",
             "saved": "Classement enregistré : {path}",
             "saveFailed": "Impossible d'enregistrer le classement.",
             "fileWord": "classement"
@@ -2316,10 +2319,10 @@
             "withdrawn": "{player} retiré",
             "updated": "Fiche de {player} corrigée",
             "started": "{a} – {b} lancé · {where}",
-            "result": "{winner} gagne {scoreA}–{scoreB}",
-            "resultNoScore": "{winner} gagne",
-            "forfeit": "{winner} gagne par forfait",
-            "corrected": "Résultat corrigé : {winner} gagne",
+            "result": "{winner} gagne contre {loser} {scoreA}–{scoreB}",
+            "resultNoScore": "{winner} gagne contre {loser}",
+            "forfeit": "{winner} gagne par forfait contre {loser}",
+            "corrected": "Résultat corrigé : {winner} gagne contre {loser}",
             "cancelled": "Match {match} annulé",
             "bye": "Exemption : {player}",
             "draw": "Tirage : {where}",

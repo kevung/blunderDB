@@ -2141,6 +2141,8 @@
             "player_busy": "playing in another competition"
         },
         "proposals": {
+            "keys": "J / K or ↑ ↓: pick a proposal · Enter: launch it · ← →: move between tables",
+            "skip": "Go to the queue",
             "title": "Proposals ({n})",
             "all": "Launch all",
             "allHint": "Launch the whole queue at once.",
@@ -2301,6 +2303,7 @@
             "reopenConfirm": "Reopen this tournament? The final standings stop being final, and the reopening stays in the log.",
             "save": "Save…",
             "saveHint": "Saves the standings to a CSV file, the same as the copy.",
+            "historyHint": "This player's history, to correct a result",
             "saved": "Standings saved: {path}",
             "saveFailed": "Could not save the standings.",
             "fileWord": "standings"
@@ -2316,10 +2319,10 @@
             "withdrawn": "{player} withdrawn",
             "updated": "{player}'s entry corrected",
             "started": "{a} – {b} launched · {where}",
-            "result": "{winner} wins {scoreA}–{scoreB}",
-            "resultNoScore": "{winner} wins",
-            "forfeit": "{winner} wins by forfeit",
-            "corrected": "Result corrected: {winner} wins",
+            "result": "{winner} wins against {loser} {scoreA}–{scoreB}",
+            "resultNoScore": "{winner} wins against {loser}",
+            "forfeit": "{winner} wins by forfeit against {loser}",
+            "corrected": "Result corrected: {winner} wins against {loser}",
             "cancelled": "Match {match} cancelled",
             "bye": "Bye: {player}",
             "draw": "Draw: {where}",

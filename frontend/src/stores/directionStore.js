@@ -497,6 +497,12 @@ function scheduleSessionSave() {
     }, 300);
 }
 
+/**
+ * La Salle était-elle l'onglet de la Rencontre au moment où la page a été quittée ? La page
+ * Direction se démonte quand on change d'onglet de l'app ; cet état doit lui survivre.
+ */
+export const hallOpenStore = writable(false);
+
 /** @param {number | null} id */
 function rememberDirectionOpen(id) {
     memory.openId = id;
@@ -523,6 +529,7 @@ export function forgetDirection() {
     if (saveTimer) clearTimeout(saveTimer);
     saveTimer = null;
     memory = { openId: null, tabs: {} };
+    hallOpenStore.set(false);
     clearDirection();
 }
 

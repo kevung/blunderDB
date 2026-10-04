@@ -590,6 +590,7 @@ func testSearchPagination(t *testing.T, s storage.Storage) {
 func testSearchWindowsAgree(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
 	kept := map[int64]bool{}
+	analysed := map[int64]bool{}
 	for n := 1; n <= 9; n++ {
 		p := provenancePos(n)
 		id, err := s.Positions().Save(ctx, "", &p)
@@ -609,6 +610,7 @@ func testSearchWindowsAgree(t *testing.T, s storage.Storage) {
 			if err := s.Analyses().Save(ctx, "", id, &a); err != nil {
 				t.Fatalf("Save analysis %d: %v", n, err)
 			}
+			analysed[id] = true
 		}
 		if n%2 == 1 {
 			if _, err := s.Comments().Add(ctx, "", id, "keep this one"); err != nil {
@@ -632,6 +634,8 @@ func testSearchWindowsAgree(t *testing.T, s storage.Storage) {
 		cases["sql only"+by] = searchCase{f: domain.SearchFilters{Sort: order}}
 		cases["go phase"+by] = searchCase{f: domain.SearchFilters{SearchText: "keep", Sort: order}}
 		cases["go phase in chunks"+by] = searchCase{f: domain.SearchFilters{SearchText: "keep", Sort: order}, chunk: 2}
+		cases["move error"+by] = searchCase{f: domain.SearchFilters{MoveErrorFilter: "E>10", Sort: order}}
+		cases["move error in chunks"+by] = searchCase{f: domain.SearchFilters{MoveErrorFilter: "E>10", Sort: order}, chunk: 2}
 	}
 	for name, tc := range cases {
 		t.Run(name, func(t *testing.T) {
@@ -643,6 +647,15 @@ func testSearchWindowsAgree(t *testing.T, s storage.Storage) {
 				var survivors []int64
 				for _, id := range want {
 					if kept[id] {
+						survivors = append(survivors, id)
+					}
+				}
+				want = survivors
+			}
+			if f.MoveErrorFilter != "" {
+				var survivors []int64
+				for _, id := range want {
+					if analysed[id] {
 						survivors = append(survivors, id)
 					}
 				}
@@ -699,5 +712,45 @@ func testSearchWindowsAgree(t *testing.T, s storage.Storage) {
 				}
 			}
 		})
+	}
+}
+
+// testCommentRestrictionLosesNothing: a position with no comment that
+// satisfies every other filter is left out by a text or a tag filter and kept
+// without one, and the commented position that matches is found either way.
+func testCommentRestrictionLosesNothing(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	bare, commented := provenancePos(1), provenancePos(2)
+	bareID, err := s.Positions().Save(ctx, "", &bare)
+	if err != nil {
+		t.Fatal(err)
+	}
+	commentedID, err := s.Positions().Save(ctx, "", &commented)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Comments().Add(ctx, "", commentedID, "an Illegal move #prime"); err != nil {
+		t.Fatal(err)
+	}
+	for name, f := range map[string]domain.SearchFilters{
+		"text": {SearchText: `t"illegal"`},
+		"tag":  {TagFilter: "#prime"},
+	} {
+		got := searchIDs(t, s, f)
+		if len(got) != 1 || got[0] != commentedID {
+			t.Errorf("%s filter returned %v, want only the commented position %d", name, got, commentedID)
+		}
+		if n, err := s.Search().Count(ctx, "", f); err != nil || n != 1 {
+			t.Errorf("%s Count = %d, %v; want 1", name, n, err)
+		}
+		if at, ok, err := s.Search().IndexOf(ctx, "", f, commentedID); err != nil || !ok || at != 0 {
+			t.Errorf("%s IndexOf = %d, %v, %v; want 0", name, at, ok, err)
+		}
+		if _, ok, err := s.Search().IndexOf(ctx, "", f, bareID); err != nil || ok {
+			t.Errorf("%s IndexOf(bare) found %v, %v; want not found", name, ok, err)
+		}
+	}
+	if got := searchIDs(t, s, domain.SearchFilters{}); len(got) != 2 {
+		t.Errorf("unfiltered search returned %v, want both positions", got)
 	}
 }

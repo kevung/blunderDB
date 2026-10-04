@@ -2141,6 +2141,8 @@
             "player_busy": "gioca in un'altra prova"
         },
         "proposals": {
+            "keys": "J / K o ↑ ↓: scegli una proposta · Invio: avviarla · ← →: da tavolo a tavolo",
+            "skip": "Vai alla coda",
             "title": "Proposte ({n})",
             "all": "Avvia tutto",
             "allHint": "Avviare tutta la lista in una volta.",
@@ -2301,6 +2303,7 @@
             "reopenConfirm": "Riaprire questo torneo? La classifica finale cessa di essere definitiva, e la riapertura resta nel registro.",
             "save": "Salva…",
             "saveHint": "Salva la classifica in un file CSV, identico alla copia.",
+            "historyHint": "Cronologia di questo giocatore, per correggere un risultato",
             "saved": "Classifica salvata: {path}",
             "saveFailed": "Impossibile salvare la classifica.",
             "fileWord": "classifica"
@@ -2316,10 +2319,10 @@
             "withdrawn": "{player} ritirato",
             "updated": "Scheda di {player} corretta",
             "started": "{a} – {b} avviata · {where}",
-            "result": "{winner} vince {scoreA}–{scoreB}",
-            "resultNoScore": "{winner} vince",
-            "forfeit": "{winner} vince per forfait",
-            "corrected": "Risultato corretto: vince {winner}",
+            "result": "{winner} vince contro {loser} {scoreA}–{scoreB}",
+            "resultNoScore": "{winner} vince contro {loser}",
+            "forfeit": "{winner} vince per forfait contro {loser}",
+            "corrected": "Risultato corretto: vince {winner} contro {loser}",
             "cancelled": "Partita {match} annullata",
             "bye": "Esenzione: {player}",
             "draw": "Sorteggio: {where}",

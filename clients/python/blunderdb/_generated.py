@@ -738,6 +738,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/matches.save — JSON."
         return self._call("/v1/matches.save", payload)
 
+    def matches_score_moves(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/matches.scoreMoves — JSON."
+        return self._call("/v1/matches.scoreMoves", payload)
+
     def matches_set_last_visited_position(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/matches.setLastVisitedPosition — JSON."
         return self._call("/v1/matches.setLastVisitedPosition", payload)

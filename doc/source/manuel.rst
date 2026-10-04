@@ -475,6 +475,14 @@ calculée avec une autre table que la table courante est marquée
 ne l'est jamais. Changer de table ne réécrit aucune analyse : seul change ce
 que les comparaisons retiennent.
 
+L'évaluation en direct du panneau et la grille de videau sont valorisées avec
+la table de la base, comme les analyses qu'elle enregistre. Une table voyage
+avec les analyses qui la citent : l'export d'une base l'emporte, et l'import
+d'une base l'ajoute à la base qui reçoit, sans doublon (une table déjà présente
+est reconnue à ses valeurs) et sans la rendre courante. Une analyse gammonNet
+remplacée par celle d'un autre moteur (XG, GNUbg) redevient réputée calculée
+avec Kazaross-XG2.
+
 **Un match importé sans analyse obtient ainsi un PR.** C'est le cas d'un match
 joué en ligne, ou d'un fichier Jellyfish ``.mat``, que personne n'a fait
 passer par XG : blunderDB en connaissait les positions et les coups joués,
@@ -1826,7 +1834,10 @@ bas : les **avertissements** du moteur, qui restent visibles et ne bloquent
 jamais rien ; la **grille des tables**, dont l'en-tête porte le bouton
 **Imprimer la feuille** d'appariements ; la **dernière décision** ; la **file
 des propositions** ; et les joueurs libres. La grille précède la file : une file
-longue ne la pousse jamais hors de l'écran.
+longue ne la pousse jamais hors de l'écran. Au clavier, le premier arrêt de
+*TAB* dans la page est « Aller à la file », qui pose le focus sur la file sans
+traverser la grille ; la file rappelle sous son titre ses raccourcis (*J* et
+*K*, *ENTRÉE*, *GAUCHE* et *DROITE*).
 
 La vue occupe toute la largeur de la zone principale, et chaque onglet défile
 seul : quitter un onglet puis y revenir, ou passer d'une épreuve à l'autre,
@@ -2090,7 +2101,8 @@ CSV, dans la langue de l'interface, ou s'enregistre dans un fichier :
 **Enregistrer…** ouvre le dialogue du système sur un nom proposé, le tournoi
 suivi du mot « classement » et de la date du jour, et le fichier contient
 exactement le CSV copié. En ligne de commande, ``blunderdb tournament
-standings`` écrit le même CSV.
+standings`` écrit le même CSV. Le nom d'un joueur est un lien : il ouvre
+l'Historique filtré sur lui, où chacun de ses résultats se corrige.
 
 Clore sans match en cours est un clic. Avec des matchs en cours, le Classement
 dit combien et attend un second clic sur place : clore fige le classement sans
@@ -2103,6 +2115,7 @@ dans le journal.
 L'onglet **Historique** est le journal en clair : une ligne par décision, dans
 l'ordre, filtrable par joueur ou par match. C'est ce qu'un directeur relit après
 une contestation, et c'est là qu'une décision ancienne se corrige ou s'annote.
+Une ligne de résultat nomme les deux joueurs : le vainqueur, puis son adversaire.
 
 **Corriger**, sur la ligne d'un résultat, ouvre sous elle la même reprise que la
 dernière décision : cliquer le bon vainqueur, avec le score s'il faut. Le
@@ -2216,7 +2229,9 @@ onglet par épreuve apparaît en haut de la Direction, chacun avec son résumé 
 propositions en attente, matchs en cours, une alerte s'il y en a. Changer
 d'épreuve est un clic sur son onglet, sans confirmation ; l'épreuve quittée ne
 se ferme pas et ne rejoue rien, elle reste telle qu'on l'a laissée. Un tournoi
-hors de tout événement n'a qu'une épreuve : pas d'onglet à montrer.
+hors de tout événement n'a qu'une épreuve : pas d'onglet à montrer. Changer
+d'onglet de l'application puis revenir à Tournois rend la Direction telle qu'on
+l'a quittée : la même épreuve ou la Salle, et le même onglet de la vue.
 
 L'onglet **Toutes les tables**, à gauche des épreuves, montre toutes les tables
 de l'événement en une seule grille : une case par table, quelle que soit l'épreuve qui

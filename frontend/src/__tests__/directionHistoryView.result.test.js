@@ -16,11 +16,19 @@ afterEach(cleanup);
 
 /** @param {Record<string, any>} fields */
 function renderResult(fields) {
-    const entries = [{ kind: 'result', winnerName: 'Alice', matchId: 'M1', ...fields }];
+    const entries = [{ kind: 'result', a: 'pa', b: 'pb', aName: 'Alice', bName: 'Bob', winner: 'pa', winnerName: 'Alice', matchId: 'M1', ...fields }];
     return render(HistoryView, { props: { entries } }).container.textContent || '';
 }
 
 describe("le résultat d'un match dans l'historique", () => {
+    test('la ligne nomme les deux joueurs, le perdant que le vainqueur soit A ou B', () => {
+        expect(renderResult({})).toContain('Bob');
+        const text = renderResult({ winner: 'pb', winnerName: 'Bob' });
+        expect(text).toContain('Bob wins against Alice');
+        expect(renderResult({ forfeit: true })).toContain('against Bob');
+        expect(renderResult({ kind: 'result_corrected' })).toContain('against Bob');
+    });
+
     test('un côté absent est un zéro omis : 7–0', () => {
         const text = renderResult({ scoreA: 7 });
         expect(text).not.toContain('undefined');

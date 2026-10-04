@@ -54,10 +54,10 @@ type searchWhereClause struct {
 	needAnalysis  bool
 	useSQLFilters bool
 	bitboardTight bool
-	// multiPlayed lists the positions player 1 played more than one way;
-	// only filled by a plain move-error search, where those rows escape the
-	// SQL column and are scored in Go.
-	multiPlayed map[int64]bool
+	// moveErrorInGo is set by a move-error search: the rows player 1 played
+	// more than one way escape the SQL column (multiPlayedSQL lets them
+	// through) and are scored in Go.
+	moveErrorInGo bool
 	// effInclude is f.Filter with the points shared with ExcludeFilter
 	// cleared, so "Except" wins over "At least" on those points.
 	effInclude domain.Position
@@ -70,17 +70,17 @@ type searchWhereClause struct {
 // buildWhere translates f into the WHERE clause of the search query: cheap
 // predicates that can be pushed to SQL become clause text and bound
 // arguments; the rest are left to applyGoFilters (matchesGoFilters below),
-// which is what needAnalysis/useSQLFilters/bitboardTight/multiPlayed/
+// which is what needAnalysis/useSQLFilters/bitboardTight/moveErrorInGo/
 // effInclude in the returned searchWhereClause are for.
 func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.SearchFilters) (searchWhereClause, error) {
 	useSQLFilters := !f.MirrorFilter
-	var multiPlayed map[int64]bool
+	moveErrorInGo := false
 
 	// Decode the compressed analysis blob per row only when a Go-side filter
 	// reads it: move pattern, mirror re-checks, date, equity. The rate, cube
 	// and move-error filters run on denormalised SQL columns. MoveErrorFilter
 	// is deliberately NOT a trigger: its Go re-check runs on the mirror path
-	// (already covered) or on the few multiPlayed positions, loaded one by one
+	// (already covered) or on the multi-played positions, loaded one by one
 	// after the scan; triggering here decodes every row for nothing.
 	needAnalysis := f.MovePatternFilter != "" || f.MirrorFilter ||
 		f.DateFilter != "" || f.EquityFilter != ""
@@ -291,13 +291,10 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		// The denormalised error column scores ONE play (the first of
 		// PlayedMoves, see AnalysisStore.Save). A position played several ways
 		// is let through and settled in Go by matchesMoveErrorFilter on the
-		// largest error: the column can only under-state it. The set is listed
-		// once before the scan; a correlated subquery here doubled query time.
+		// largest error: the column can only under-state it. The test is
+		// correlated per row, so the first page does not wait for a pass over
+		// every move of the library.
 		if f.MoveErrorFilter != "" {
-			var err error
-			if multiPlayed, err = multiPlayedPlayer1Positions(ctx, s.DB, scope); err != nil {
-				return searchWhereClause{}, err
-			}
 			eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
 			eqMin := int(math.Round(eMin))
 			eqMax := int(math.Round(eMax))
@@ -313,13 +310,10 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 				args = append(args, eqMax)
 			}
 			if cond != "" {
-				if len(multiPlayed) > 0 {
-					placeholders := strings.Repeat("?,", len(multiPlayed))
-					cond = "(" + cond + " OR p.id IN (" + placeholders[:len(placeholders)-1] + "))"
-					for id := range multiPlayed {
-						args = append(args, id)
-					}
-				}
+				multi, multiArgs := multiPlayedSQL(s.DB, scope)
+				cond = "(" + cond + " OR " + multi + ")"
+				args = append(args, multiArgs...)
+				moveErrorInGo = true
 				where.WriteString(" AND " + cond)
 			}
 		}
@@ -348,13 +342,23 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		}
 	}
 
+	// A text or tag filter can only match a position that carries comment
+	// text, and that is a few thousand rows however large the library: say so
+	// in SQL, so the scan reads those positions instead of every one and
+	// decodes none of the others. The Go predicate still decides the match.
+	if f.SearchText != "" || len(domain.ParseTagFilter(f.TagFilter)) > 0 {
+		cTenant, cArgs := s.DB.TenantFilter("", scope)
+		where.WriteString(" AND p.id IN (SELECT position_id FROM comment WHERE " + cTenant + " AND text != '')")
+		args = append(args, cArgs...)
+	}
+
 	return searchWhereClause{
 		where:         where.String(),
 		args:          args,
 		needAnalysis:  needAnalysis,
 		useSQLFilters: useSQLFilters,
 		bitboardTight: bitboardTight,
-		multiPlayed:   multiPlayed,
+		moveErrorInGo: moveErrorInGo,
 		effInclude:    effInclude,
 		likeTarget:    likeTarget,
 	}, nil
@@ -470,7 +474,7 @@ func (wc searchWhereClause) goPhase(f domain.SearchFilters) bool {
 	return !wc.useSQLFilters ||
 		(wc.bitboardTight && searchfilter.HasBoardFilter(wc.effInclude.Board)) ||
 		searchfilter.HasBoardFilter(f.ExcludeFilter.Board) ||
-		(f.MoveErrorFilter != "" && len(wc.multiPlayed) > 0) ||
+		wc.moveErrorInGo ||
 		f.Player1CheckerInZoneFilter != "" || f.Player2CheckerInZoneFilter != "" ||
 		f.Player1OutfieldBlotFilter != "" || f.Player2OutfieldBlotFilter != "" ||
 		f.Player1JanBlotFilter != "" || f.Player2JanBlotFilter != "" ||
@@ -927,7 +931,7 @@ func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters
 						return false, nil
 					}
 				}
-			} else if f.MoveErrorFilter != "" && wc.multiPlayed[pos.ID] {
+			} else if f.MoveErrorFilter != "" && player1MovesByID[pos.ID].plays > 1 {
 				// A multi-played position is scored by its largest error; its
 				// blob may not have been fetched with the scan, so load it now.
 				if ana == nil {

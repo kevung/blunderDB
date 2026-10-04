@@ -2428,8 +2428,13 @@ avait tirées qui sont refaites.
   par passe : ``repaired`` (colonnes d'analyse), ``phases`` (positions
   reclassées) et ``crawford`` (positions réhachées). Chacun dit le nombre de
   lignes réellement changées. Avec ``--stats``, s'y ajoute ``match_stats``
-  (matchs recalculés).
+  (matchs recalculés) ; avec ``--move-errors``, ``move_errors`` (coups notés).
 * ``--stats`` — Recalcule aussi, de zéro, les statistiques par match.
+* ``--move-errors`` — Écrit aussi, pour chaque coup joué, l'équité qu'il a
+  cédée face au meilleur coup, lue dans l'analyse de sa position (colonne
+  ``error_mp`` de la table des coups). La passe est reprenable : interrompue,
+  elle reprend où elle s'était arrêtée ; sur une très grande base elle dure
+  plusieurs minutes. Côté serveur : ``matches.scoreMoves``.
 * ``--duplicates`` — Ne lance aucune des passes : liste les paires de matchs
   que les dés disent identiques, sans rien fusionner (voir ci-dessous).
 

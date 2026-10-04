@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 19:14+0200\n"
+"POT-Creation-Date: 2026-10-04 19:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -418,8 +418,8 @@ msgstr "Crea un nuevo archivo de base de datos con metadatos opcionales."
 #: ../../source/cli.rst:2062 ../../source/cli.rst:2096
 #: ../../source/cli.rst:2230 ../../source/cli.rst:2273
 #: ../../source/cli.rst:2313 ../../source/cli.rst:2424
-#: ../../source/cli.rst:2518 ../../source/cli.rst:2548
-#: ../../source/cli.rst:2591
+#: ../../source/cli.rst:2523 ../../source/cli.rst:2553
+#: ../../source/cli.rst:2596
 msgid "**Options:**"
 msgstr "**Opciones:**"
 
@@ -457,8 +457,8 @@ msgstr ""
 
 #: ../../source/cli.rst:126 ../../source/cli.rst:1641 ../../source/cli.rst:1795
 #: ../../source/cli.rst:2248 ../../source/cli.rst:2288
-#: ../../source/cli.rst:2326 ../../source/cli.rst:2499
-#: ../../source/cli.rst:2560
+#: ../../source/cli.rst:2326 ../../source/cli.rst:2504
+#: ../../source/cli.rst:2565
 msgid "**Exemple:**"
 msgstr "**Ejemplo:**"
 
@@ -898,7 +898,7 @@ msgstr ""
 #: ../../source/cli.rst:1880 ../../source/cli.rst:1937
 #: ../../source/cli.rst:1971 ../../source/cli.rst:1998
 #: ../../source/cli.rst:2078 ../../source/cli.rst:2151
-#: ../../source/cli.rst:2527 ../../source/cli.rst:2619
+#: ../../source/cli.rst:2532 ../../source/cli.rst:2624
 msgid "**Exemples:**"
 msgstr "**Ejemplos:**"
 
@@ -1045,7 +1045,7 @@ msgstr "**Opciones principales:**"
 #: ../../source/cli.rst:1990 ../../source/cli.rst:2064
 #: ../../source/cli.rst:2098 ../../source/cli.rst:2232
 #: ../../source/cli.rst:2275 ../../source/cli.rst:2315
-#: ../../source/cli.rst:2426 ../../source/cli.rst:2520
+#: ../../source/cli.rst:2426 ../../source/cli.rst:2525
 msgid "``--db`` — Base de données (obligatoire)."
 msgstr "``--db`` — Base de datos (obligatorio)."
 
@@ -4350,19 +4350,35 @@ msgid ""
 "compteur par passe : ``repaired`` (colonnes d'analyse), ``phases`` "
 "(positions reclassées) et ``crawford`` (positions réhachées). Chacun dit "
 "le nombre de lignes réellement changées. Avec ``--stats``, s'y ajoute "
-"``match_stats`` (matchs recalculés)."
+"``match_stats`` (matchs recalculés) ; avec ``--move-errors``, "
+"``move_errors`` (coups notés)."
 msgstr ""
 "``--format`` — Formato de salida: ``text`` (por defecto) o ``json`` — un "
 "contador por pasada: ``repaired`` (columnas de análisis), ``phases`` "
 "(posiciones reclasificadas) y ``crawford`` (posiciones con hash "
 "recalculado). Cada uno indica el número de filas realmente modificadas. "
-"Con ``--stats`` se añade ``match_stats`` (partidos recalculados)."
+"Con ``--stats`` se añade ``match_stats`` (partidos recalculados). Con "
+"``--move-errors`` se añade ``move_errors`` (jugadas puntuadas)."
 
 #: ../../source/cli.rst:2432
 msgid "``--stats`` — Recalcule aussi, de zéro, les statistiques par match."
 msgstr "``--stats`` — Recalcula además, desde cero, las estadísticas por partido."
 
 #: ../../source/cli.rst:2433
+msgid ""
+"``--move-errors`` — Écrit aussi, pour chaque coup joué, l'équité qu'il a "
+"cédée face au meilleur coup, lue dans l'analyse de sa position (colonne "
+"``error_mp`` de la table des coups). La passe est reprenable : "
+"interrompue, elle reprend où elle s'était arrêtée ; sur une très grande "
+"base elle dure plusieurs minutes. Côté serveur : ``matches.scoreMoves``."
+msgstr ""
+"``--move-errors`` — Escribe además, para cada jugada realizada, el equity"
+" que cedió frente a la mejor jugada, leído del análisis de su posición "
+"(columna ``error_mp`` de la tabla de jugadas). El paso es reanudable: si "
+"se interrumpe, continúa donde se detuvo; en una biblioteca muy grande "
+"tarda varios minutos. En el servidor: ``matches.scoreMoves``."
+
+#: ../../source/cli.rst:2438
 msgid ""
 "``--duplicates`` — Ne lance aucune des passes : liste les paires de "
 "matchs que les dés disent identiques, sans rien fusionner (voir ci-"
@@ -4372,7 +4388,7 @@ msgstr ""
 "partidos que los dados señalan como idénticos, sin fusionar nada (véase "
 "más abajo)."
 
-#: ../../source/cli.rst:2436
+#: ../../source/cli.rst:2441
 msgid ""
 "Les statistiques par match sont, pour chaque joueur de chaque match, ses "
 "décisions, son erreur cumulée, son PR, ses blunders, sa chance et la "
@@ -4396,7 +4412,7 @@ msgstr ""
 "una vez, en su primera apertura. ``--stats`` las rehace todas: el recurso"
 " si esta contabilidad llegara a fallar."
 
-#: ../../source/cli.rst:2446
+#: ../../source/cli.rst:2451
 #, no-python-brace-format
 msgid ""
 "**Doublons probables.** ``repair --duplicates`` compare les matchs par "
@@ -4436,7 +4452,7 @@ msgstr ""
 "la huella de los dados la recibe de paso; es la única escritura de este "
 "modo."
 
-#: ../../source/cli.rst:2462
+#: ../../source/cli.rst:2467
 msgid ""
 "Utile après une correction de la façon dont une analyse importée est lue."
 " Le cas s'est déjà produit deux fois. L'importeur XG écrit un « pas de "
@@ -4458,7 +4474,7 @@ msgstr ""
 "ahora a partir de las jugadas del partido. Corregir la lectura no cambia "
 "nada en las filas ya escritas; este comando las rehace."
 
-#: ../../source/cli.rst:2472
+#: ../../source/cli.rst:2477
 msgid ""
 "La passe Crawford, elle, touche les positions elles-mêmes. Un score à "
 "``1`` signifie « un point à faire, et cette partie EST la Crawford » ; "
@@ -4508,7 +4524,7 @@ msgstr ""
 "marcador guardado y no prueba nada. Cualquier otra posición sin partida "
 "se deja tal cual: nada contradice lo que su marcador anuncia."
 
-#: ../../source/cli.rst:2494
+#: ../../source/cli.rst:2499
 msgid ""
 "Rien ne la déclenche automatiquement, et c'est voulu : réécrire les "
 "colonnes d'analyse de tout le monde, ou réhacher des positions, à la "
@@ -4520,11 +4536,11 @@ msgstr ""
 "mero hecho de abrir una base no es algo que una herramienta deba hacer a "
 "espaldas de su usuario."
 
-#: ../../source/cli.rst:2510
+#: ../../source/cli.rst:2515
 msgid "delete — Supprimer des données"
 msgstr "delete — Eliminar datos"
 
-#: ../../source/cli.rst:2512
+#: ../../source/cli.rst:2517
 msgid ""
 "Supprime un match et toutes les données associées (parties, coups, "
 "analyses)."
@@ -4532,19 +4548,19 @@ msgstr ""
 "Elimina una partida y todos los datos asociados (juegos, jugadas, "
 "análisis)."
 
-#: ../../source/cli.rst:2521
+#: ../../source/cli.rst:2526
 msgid "``--type`` — Type de suppression: ``match`` (obligatoire)."
 msgstr "``--type`` — Tipo de eliminación: ``match`` (obligatorio)."
 
-#: ../../source/cli.rst:2522
+#: ../../source/cli.rst:2527
 msgid "``--id`` — ID de l'élément à supprimer (obligatoire)."
 msgstr "``--id`` — ID del elemento a eliminar (obligatorio)."
 
-#: ../../source/cli.rst:2523
+#: ../../source/cli.rst:2528
 msgid "``--confirm`` — Supprimer sans demander de confirmation."
 msgstr "``--confirm`` — Eliminar sin pedir confirmación."
 
-#: ../../source/cli.rst:2524
+#: ../../source/cli.rst:2529
 #, no-python-brace-format
 msgid ""
 "``--format`` — Format de sortie: ``text`` (défaut) ou ``json`` "
@@ -4553,11 +4569,11 @@ msgstr ""
 "``--format`` — Formato de salida: ``text`` (por defecto) o ``json`` "
 "(``{\"match_id\": N, \"deleted\": true}``)."
 
-#: ../../source/cli.rst:2536
+#: ../../source/cli.rst:2541
 msgid "healthcheck — Sonder un démon"
 msgstr "healthcheck — Sondear un demonio"
 
-#: ../../source/cli.rst:2538
+#: ../../source/cli.rst:2543
 msgid ""
 "Demande à un démon ``serve`` en marche (voir :doc:`mode_headless`) s'il "
 "est disponible : une requête ``GET /readyz``, code de retour ``0`` si le "
@@ -4572,7 +4588,7 @@ msgstr ""
 "esquema obsoleto o nada escucha en la dirección. No se abre ningún "
 "archivo de base de datos."
 
-#: ../../source/cli.rst:2550
+#: ../../source/cli.rst:2555
 msgid ""
 "``--addr`` — Adresse d'écoute du démon (par défaut ``BLUNDERDB_ADDR``, "
 "sinon ``:8080``). Une adresse sans hôte (``:8080``) ou avec un hôte "
@@ -4583,7 +4599,7 @@ msgstr ""
 "o con un host genérico (``0.0.0.0``, ``[::]``) se sondea en la interfaz "
 "de bucle local."
 
-#: ../../source/cli.rst:2553
+#: ../../source/cli.rst:2558
 msgid ""
 "``--timeout`` — Délai au-delà duquel la sonde abandonne (``2s`` par "
 "défaut)."
@@ -4591,7 +4607,7 @@ msgstr ""
 "``--timeout`` — Tiempo tras el cual la sonda abandona (``2s`` por "
 "defecto)."
 
-#: ../../source/cli.rst:2555
+#: ../../source/cli.rst:2560
 msgid ""
 "C'est la commande que lance le ``HEALTHCHECK`` de l'image conteneur (une "
 "image *distroless*, sans ``curl``) ; le binaire ``serve`` construit "
@@ -4603,7 +4619,7 @@ msgstr ""
 "desde ``cmd/serve`` también lo entiende. Sirve igualmente en un script o "
 "en una unidad systemd."
 
-#: ../../source/cli.rst:2569
+#: ../../source/cli.rst:2574
 msgid ""
 "En cas d'échec la raison est affichée, ce que ``docker inspect`` "
 "reproduit pour un conteneur ``unhealthy`` :"
@@ -4611,11 +4627,11 @@ msgstr ""
 "En caso de fallo se muestra el motivo, que ``docker inspect`` reproduce "
 "para un contenedor ``unhealthy``:"
 
-#: ../../source/cli.rst:2577
+#: ../../source/cli.rst:2582
 msgid "mcp — Offrir la base à un assistant IA"
 msgstr "mcp — Ofrecer la base a un asistente de IA"
 
-#: ../../source/cli.rst:2579
+#: ../../source/cli.rst:2584
 msgid ""
 "Sert les outils de la base à un assistant IA par le *Model Context "
 "Protocol*, sur l'entrée et la sortie standard : c'est l'assistant qui "
@@ -4635,11 +4651,11 @@ msgstr ""
 " ``--write``. La lista completa y el equivalente HTTP del demonio: "
 ":ref:`headless_mcp`."
 
-#: ../../source/cli.rst:2593
+#: ../../source/cli.rst:2598
 msgid "``--db`` — Fichier de base de données (obligatoire)."
 msgstr "``--db`` — Archivo de base de datos (obligatorio)."
 
-#: ../../source/cli.rst:2594
+#: ../../source/cli.rst:2599
 msgid ""
 "``--write`` — Offre aussi les outils qui écrivent : enregistrer une "
 "position, la commenter, créer et remplir une collection. Rien n'efface."
@@ -4647,7 +4663,7 @@ msgstr ""
 "``--write`` — Ofrece también las herramientas que escriben: guardar una "
 "posición, comentarla, crear y llenar una colección. Nada se borra."
 
-#: ../../source/cli.rst:2597
+#: ../../source/cli.rst:2602
 msgid ""
 "Comme ``call``, la commande migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."
@@ -4655,15 +4671,15 @@ msgstr ""
 "Como ``call``, el comando migra el esquema de una base antigua al "
 "abrirla, incluso sin ``--write``."
 
-#: ../../source/cli.rst:2600
+#: ../../source/cli.rst:2605
 msgid "**Exemple:** déclarer la base à Claude Code."
 msgstr "**Ejemplo:** declarar la base en Claude Code."
 
-#: ../../source/cli.rst:2607
+#: ../../source/cli.rst:2612
 msgid "completion — Complétion shell"
 msgstr "completion — Autocompletado de shell"
 
-#: ../../source/cli.rst:2609
+#: ../../source/cli.rst:2614
 msgid ""
 "Affiche sur la sortie standard un script de complétion pour les noms de "
 "sous-commandes. La liste des commandes intégrée à chaque script est "
@@ -4679,7 +4695,7 @@ msgstr ""
 "por tanto en el autocompletado en cuanto se conecta, sin nada que "
 "mantener a mano."
 
-#: ../../source/cli.rst:2633
+#: ../../source/cli.rst:2638
 msgid ""
 "Les paquets installent cela automatiquement : le ``.deb``/``.rpm`` (nfpm)"
 " et le paquet AUR génèrent les trois scripts depuis le binaire empaqueté "
@@ -4697,11 +4713,11 @@ msgstr ""
 "repositorio, así que el autocompletado nunca puede desviarse de la tabla "
 "de subcomandos."
 
-#: ../../source/cli.rst:2641
+#: ../../source/cli.rst:2646
 msgid "version — Afficher la version"
 msgstr "version — Mostrar la versión"
 
-#: ../../source/cli.rst:2643
+#: ../../source/cli.rst:2648
 msgid ""
 "Affiche la version de blunderDB et celle du schéma de base de données que"
 " ce binaire écrit ; c'est la première chose à joindre à un rapport de "
@@ -4711,35 +4727,35 @@ msgstr ""
 "escribe este binario; es lo primero que hay que adjuntar a un informe de "
 "error."
 
-#: ../../source/cli.rst:2652
+#: ../../source/cli.rst:2657
 msgid "Exemples de flux de travail"
 msgstr "Ejemplos de flujos de trabajo"
 
-#: ../../source/cli.rst:2655
+#: ../../source/cli.rst:2660
 msgid "Import d'un répertoire de tournoi"
 msgstr "Importar un directorio de torneo"
 
-#: ../../source/cli.rst:2664
+#: ../../source/cli.rst:2669
 msgid "Sauvegarde régulière"
 msgstr "Copia de seguridad periódica"
 
-#: ../../source/cli.rst:2671
+#: ../../source/cli.rst:2676
 msgid "Analyse des erreurs"
 msgstr "Análisis de errores"
 
-#: ../../source/cli.rst:2683
+#: ../../source/cli.rst:2688
 msgid "Codes de retour"
 msgstr "Códigos de salida"
 
-#: ../../source/cli.rst:2685
+#: ../../source/cli.rst:2690
 msgid "``0`` — Succès."
 msgstr "``0`` — Éxito."
 
-#: ../../source/cli.rst:2686
+#: ../../source/cli.rst:2691
 msgid "``1`` — Erreur."
 msgstr "``1`` — Error."
 
-#: ../../source/cli.rst:2688
+#: ../../source/cli.rst:2693
 msgid "Cela permet d'utiliser la CLI dans des scripts avec gestion d'erreurs:"
 msgstr "Esto permite usar la CLI en scripts con gestión de errores:"
 
