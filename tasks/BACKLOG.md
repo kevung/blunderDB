@@ -83,6 +83,17 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   coût et du décompte fait foi, puis de redéfinir la file sur la grammaire. Cette décision
   passe par Opus, avec un test d'égalité jeton ↔ `StudyBacklog` sur les deux backends.
 
+- **`MatchEquityTableStore.Save` croit le `Digest` fourni** (`sqlshared/met.go`). Le
+  digest est la clé de dédoublonnage et le nom de la table pour `analysis.met_id` ; il est
+  calculé par `engine.MET.Digest()` sur les valeurs parsées, pas sur les octets de `Source`.
+  `mets.Import` le calcule bien, mais `mets/carry.go` recopie le digest d'une base importée :
+  une base étrangère au digest incohérent avec sa source est crue, et peut usurper une table
+  déjà tenue (ou la table intégrée Kazaross-XG2). Remède : `Save` parse `Source`
+  (`engine.ParseGnubgMET`), recalcule et refuse `ErrInvalid` sur écart. Pas une retouche :
+  les ~15 fixtures des contrats (`storagetest/contract_schema_2_31.go`, `contract_met_*.go`)
+  passent des sources factices (`<met/>`, digest `"aaa"`) à réécrire en tables gnubg
+  valides, sur les deux backends. Effort S-M, test de contrat « digest incohérent refusé ».
+
 ## Ouvert — Moteur (dettes nommées dans les ADR)
 
 - **Renommage `race.Money` → `race.CubeVerdict`** et libellé de la colonne
