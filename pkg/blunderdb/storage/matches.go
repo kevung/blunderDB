@@ -248,3 +248,34 @@ func (f *DiceFolder) Flush() (MatchDice, bool) {
 	f.cur = nil
 	return done, true
 }
+
+// ScoreBatchSize bounds the moves one ScoreMoves call examines.
+const ScoreBatchSize = 5000
+
+// ScoreAllMoves runs the MatchStore.ScoreMoves pass over the whole scope and
+// returns how many moves it scored. before, when non-nil, runs around each
+// batch (the GUI's wrapper takes its lock there); it returns the function that
+// ends the batch. progress, when non-nil, receives the running total.
+func ScoreAllMoves(ctx context.Context, store MatchStore, scope string, before func() func(), progress func(scored int)) (int, error) {
+	var next int64
+	total := 0
+	for {
+		done := func() {}
+		if before != nil {
+			done = before()
+		}
+		n, k, err := store.ScoreMoves(ctx, scope, next, ScoreBatchSize)
+		done()
+		if err != nil {
+			return total, err
+		}
+		total += k
+		if progress != nil {
+			progress(total)
+		}
+		if n == 0 {
+			return total, nil
+		}
+		next = n
+	}
+}
