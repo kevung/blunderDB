@@ -360,11 +360,12 @@ export async function getWailsCalls(page, methodName) {
  * intercepte les clics sur les onglets ; une spec qui travaille sur le
  * plateau brouillon (Eval) fait ici le geste d'écartement plutôt que
  * d'ouvrir une base dont elle n'a pas besoin. Sans effet quand une base est
- * montée (openLibraryMock) : l'accueil n'est alors pas rendu.
+ * montée (openLibraryMock) : l'accueil s'y efface de lui-même.
  *
  * @param {import('@playwright/test').Page} page
  */
 export async function dismissHomeScreen(page) {
-    const dismiss = page.locator('[data-testid="home-dismiss"]');
-    if (await dismiss.count()) await dismiss.click();
+    // Constat et clic en un seul tour de page : sous openLibraryMock, l'accueil peut s'effacer
+    // entre un count() et un click(), qui attendrait alors un bouton disparu.
+    await page.evaluate(() => /** @type {HTMLElement | null} */ (document.querySelector('[data-testid="home-dismiss"]'))?.click());
 }
