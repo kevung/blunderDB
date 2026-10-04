@@ -637,6 +637,8 @@
         "livingNeedsSearch": "先に検索してください。それがコレクションに残るものです。",
         "livingSet": "生きたコレクション：{query}",
         "livingCleared": "コレクションを手作りのリストに戻しました。",
+        "freezeTitle": "固定: 現在の結果を通常のコレクションとして保持します。",
+        "frozen": "{count} 件のポジションでコレクションを固定しました。",
         "newButton": "新しいコレクション"
     },
     "tournament": {
@@ -1126,6 +1128,7 @@
         "reportDecisions": "{n} 件の判断（{who}）",
         "reportBothPlayers": "両プレイヤー",
         "reportNoAnalysis": "評価する解析がない",
+        "reportDroppedAnalyses": "解析なしでインポートされた判断 {n} 件（有限でない値）",
         "reportUnanalysed": "解析のない局面 {n} 件",
         "reportAnalyzeNow": "今すぐ解析",
         "reportWorst": "最悪の判断",

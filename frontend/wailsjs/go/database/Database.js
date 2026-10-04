@@ -462,6 +462,10 @@ export function FreeParticipants(arg1) {
   return window['go']['database']['Database']['FreeParticipants'](arg1);
 }
 
+export function FreezeCollection(arg1) {
+  return window['go']['database']['Database']['FreezeCollection'](arg1);
+}
+
 export function GetAllAnkiDecks() {
   return window['go']['database']['Database']['GetAllAnkiDecks']();
 }

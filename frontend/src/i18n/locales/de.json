@@ -637,6 +637,8 @@
         "livingNeedsSearch": "Führen Sie zuerst eine Suche aus: Sie ist es, was die Sammlung behält.",
         "livingSet": "Lebendige Sammlung: {query}",
         "livingCleared": "Die Sammlung hat ihre handgemachte Liste zurück.",
+        "freezeTitle": "Einfrieren: das heutige Ergebnis als gewöhnliche Sammlung behalten.",
+        "frozen": "Sammlung auf {count} Position(en) eingefroren.",
         "newButton": "Neue Sammlung"
     },
     "tournament": {
@@ -1126,6 +1128,7 @@
         "reportDecisions": "über {n} Entscheidungen ({who})",
         "reportBothPlayers": "beide Spieler",
         "reportNoAnalysis": "keine Analyse zu bewerten",
+        "reportDroppedAnalyses": "{n} Entscheidung(en) ohne ihre Analyse importiert (Wert keine endliche Zahl)",
         "reportUnanalysed": "{n} Stellung(en) ohne Analyse",
         "reportAnalyzeNow": "Jetzt analysieren",
         "reportWorst": "Schlechteste Entscheidungen",

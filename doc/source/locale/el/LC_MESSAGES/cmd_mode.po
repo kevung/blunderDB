@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 04:55+0200\n"
+"POT-Creation-Date: 2026-10-03 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -1478,22 +1478,6 @@ msgid "``--comment-origin``"
 msgstr "``--comment-origin``"
 
 #: ../../source/cmd_mode.rst:1
-msgid "``au'Alice'``"
-msgstr "``au'Alice'``"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"La position porte un commentaire signé de cet auteur (nom entier, sans "
-"distinction de casse)."
-msgstr ""
-"Η θέση φέρει ένα σχόλιο υπογεγραμμένο από αυτόν τον συγγραφέα (πλήρες "
-"όνομα, χωρίς διάκριση πεζών-κεφαλαίων)."
-
-#: ../../source/cmd_mode.rst:1
-msgid "``--comment-author``"
-msgstr "``--comment-author``"
-
-#: ../../source/cmd_mode.rst:1
 msgid "``m'motif1,motif2,...'``"
 msgstr "``m'μοτίβο1,μοτίβο2,...'``"
 
@@ -1809,7 +1793,7 @@ msgstr ""
 "τύπους απόφασης και στα δύο καθεστώτα, χρήματα και αγώνας. Δείτε "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:241
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1828,11 +1812,11 @@ msgstr ""
 "ετικετών: δεν εμφανίζεται σε καμία τιμή, και το ``ma1;2`` δεν είναι "
 "διακριτικό (γράψτε ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:246
 msgid "Transcrire depuis un terminal"
 msgstr "Μεταγραφή από τερματικό"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:248
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1852,7 +1836,7 @@ msgstr ""
 "είναι δική της συνεδρία, χωρίς ``sessionId`` και χωρίς αναίρεση από τη "
 "μία κλήση στην άλλη."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:259
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 

@@ -37,6 +37,7 @@
     import { commentTextStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { panelKeyGuard } from '../services/keyboardService.js';
+    import { registerKeys } from '../services/keyDispatch.js';
     import { t, tMsg } from '../i18n';
     import { get } from 'svelte/store';
 
@@ -490,10 +491,9 @@
         // F11 toggles the Direction's full screen, also handled by the global dispatcher.
         if (directionFullscreenKey(event)) return;
 
-        // Block all other non-Ctrl keys from propagating (prevents position browsing)
-        event.stopPropagation();
-
+        // Only the keys this panel owns are claimed (shortcutMap.js, tournamentPanel).
         if (event.key === 'Escape') {
+            event.stopPropagation();
             event.preventDefault();
             if (tournamentEdit.editingId !== null) {
                 tournamentEdit.cancel();
@@ -511,7 +511,9 @@
         // j/k walk the tournament list, also from the detail view (where the
         // list table is not mounted, hence the module-level helper).
         const delta = navigationDelta(event);
-        if (delta !== 0 && sortedTournaments.length > 0) {
+        if (delta !== 0) {
+            event.stopPropagation();
+            if (sortedTournaments.length === 0) return;
             event.preventDefault();
             const next = stepSelection(sortedTournaments, (t) => t.id, selectedTournament?.id, delta);
             if (next) {
@@ -520,6 +522,9 @@
             }
         }
     }
+
+    /** @type {(() => void) | null} */
+    let unregisterKeys = null;
 
     // Deferred focus, its timer cleared on re-run and teardown, or it fires into a
     // torn-down document (vitest fails on it) or focuses a closed panel.
@@ -534,12 +539,12 @@
         return () => clearTimeout(timer);
     });
     onMount(() => {
-        document.addEventListener('keydown', handleKeyDown);
+        unregisterKeys = registerKeys('tournamentPanel', handleKeyDown);
         refreshDirectionSummaries();
     });
 
     onDestroy(() => {
-        document.removeEventListener('keydown', handleKeyDown);
+        unregisterKeys?.();
     });
 </script>
 

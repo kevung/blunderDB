@@ -194,6 +194,34 @@ func testConcurrentRolloutsAllKept(t *testing.T, s storage.Storage) {
 // row's rollouts move over beside it (ADR-0060 §8).
 func testRepairCrawfordMergeKeepsRollouts(t *testing.T, s storage.Storage) {
 	ctx := context.Background()
+	twinID, staleID := crawfordTwins(t, s)
+	fast := rollout.Fast()
+	if err := rollouts.Store(ctx, s, "", staleID, movesRollout(fast, "8/5 6/5", 0.5)); err != nil {
+		t.Fatalf("Store rollout: %v", err)
+	}
+
+	if _, err := s.Positions().RepairCrawfordSentinel(ctx, ""); err != nil {
+		t.Fatalf("RepairCrawfordSentinel: %v", err)
+	}
+	a, err := s.Analyses().Load(ctx, "", twinID)
+	if err != nil {
+		t.Fatalf("Load twin analysis: %v", err)
+	}
+	if len(a.Rollouts) != 1 || a.Rollouts[0].Signature != fast.Signature() {
+		t.Errorf("twin's rollouts after the merge: %+v", a.Rollouts)
+	}
+	if a.CheckerAnalysis == nil || len(a.CheckerAnalysis.Moves) != 1 || a.CheckerAnalysis.Moves[0].AnalysisEngine != "XG" {
+		t.Errorf("twin's own analysis did not win: %+v", a.CheckerAnalysis)
+	}
+}
+
+// crawfordTwins stores a position at the post-Crawford score with an imported
+// analysis (the twin) and the same position stored at the stale Crawford
+// sentinel (the stale row), played in a post-Crawford game: the repair folds
+// the stale row into the twin.
+func crawfordTwins(t *testing.T, s storage.Storage) (twinID, staleID int64) {
+	t.Helper()
+	ctx := context.Background()
 	ps, ms := s.Positions(), s.Matches()
 
 	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7, MatchHash: "crawford-rollouts"}
@@ -210,13 +238,13 @@ func testRepairCrawfordMergeKeepsRollouts(t *testing.T, s storage.Storage) {
 	}
 	twin := statsDecisionPos(t, 0)
 	twin.Score = [2]int{domain.PostCrawford, 4}
-	twinID, err := ps.Save(ctx, "", &twin)
+	twinID, err = ps.Save(ctx, "", &twin)
 	if err != nil {
 		t.Fatalf("Save twin: %v", err)
 	}
 	stale := statsDecisionPos(t, 0)
 	stale.Score = [2]int{domain.Crawford, 4}
-	staleID, err := ps.Save(ctx, "", &stale)
+	staleID, err = ps.Save(ctx, "", &stale)
 	if err != nil || staleID == twinID {
 		t.Fatalf("Save stale: %d, %v", staleID, err)
 	}
@@ -231,24 +259,7 @@ func testRepairCrawfordMergeKeepsRollouts(t *testing.T, s storage.Storage) {
 	if err := s.Analyses().Save(ctx, "", twinID, &imported); err != nil {
 		t.Fatalf("Save twin analysis: %v", err)
 	}
-	fast := rollout.Fast()
-	if err := rollouts.Store(ctx, s, "", staleID, movesRollout(fast, "8/5 6/5", 0.5)); err != nil {
-		t.Fatalf("Store rollout: %v", err)
-	}
-
-	if _, err := ps.RepairCrawfordSentinel(ctx, ""); err != nil {
-		t.Fatalf("RepairCrawfordSentinel: %v", err)
-	}
-	a, err := s.Analyses().Load(ctx, "", twinID)
-	if err != nil {
-		t.Fatalf("Load twin analysis: %v", err)
-	}
-	if len(a.Rollouts) != 1 || a.Rollouts[0].Signature != fast.Signature() {
-		t.Errorf("twin's rollouts after the merge: %+v", a.Rollouts)
-	}
-	if a.CheckerAnalysis == nil || len(a.CheckerAnalysis.Moves) != 1 || a.CheckerAnalysis.Moves[0].AnalysisEngine != "XG" {
-		t.Errorf("twin's own analysis did not win: %+v", a.CheckerAnalysis)
-	}
+	return twinID, staleID
 }
 
 // testImportMergeAndRolloutsAllKept: an import folding fragments into an

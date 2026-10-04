@@ -10,7 +10,7 @@
     let { engineVersion = '', onClose = () => {} } = $props();
 
     const REPO = 'https://github.com/PileOfCells/backgammon-tournoi';
-    const DOCS = 'https://pileofcells.github.io/backgammon-tournoi/';
+    const DOCS = 'https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs';
 
     /** @param {string} url */
     function open(url) {

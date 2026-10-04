@@ -71,6 +71,9 @@ func printImportReport(b *domain.ImportBatch) {
 	if r.MatchesDeepened > 0 {
 		fmt.Fprintf(w, "  of which brought deeper analyses\t%d (%d positions)\n", r.MatchesDeepened, r.AnalysesDeepened)
 	}
+	if r.AnalysesDropped > 0 {
+		fmt.Fprintf(w, "Decisions imported without their analysis (non-finite value)\t%d\n", r.AnalysesDropped)
+	}
 	if r.FilesFailed > 0 {
 		fmt.Fprintf(w, "Files that could not be read\t%d\n", r.FilesFailed)
 	}

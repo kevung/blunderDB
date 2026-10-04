@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 04:55+0200\n"
+"POT-Creation-Date: 2026-10-03 18:11+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -1464,22 +1464,6 @@ msgid "``--comment-origin``"
 msgstr "``--comment-origin``"
 
 #: ../../source/cmd_mode.rst:1
-msgid "``au'Alice'``"
-msgstr "``au'Alice'``"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"La position porte un commentaire signé de cet auteur (nom entier, sans "
-"distinction de casse)."
-msgstr ""
-"The position carries a comment signed by this author (full name, case-"
-"insensitive)."
-
-#: ../../source/cmd_mode.rst:1
-msgid "``--comment-author``"
-msgstr "``--comment-author``"
-
-#: ../../source/cmd_mode.rst:1
 msgid "``m'motif1,motif2,...'``"
 msgstr "``m'pattern1,pattern2,...'``"
 
@@ -1789,7 +1773,7 @@ msgstr ""
 "``like42*`` widens the target's class to every kind of decision and to "
 "both regimes, money and match. See :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:241
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1807,11 +1791,11 @@ msgstr ""
 "of identifier and tag lists: it appears in no value, and ``ma1;2`` is not"
 " a token (write ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:246
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribing from a terminal"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:248
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1830,7 +1814,7 @@ msgstr ""
 "the revision returned by the previous call; every call is its own "
 "session, with no ``sessionId`` and no undo from one call to the next."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:259
 msgid "Commandes diverses"
 msgstr "Various commands"
 

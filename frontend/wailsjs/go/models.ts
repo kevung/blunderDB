@@ -1790,6 +1790,7 @@ export namespace domain {
 	    matchesEnriched: number;
 	    matchesDeepened?: number;
 	    analysesDeepened?: number;
+	    analysesDropped?: number;
 	    probableDuplicates?: DuplicateSuspect[];
 	    filesFailed: number;
 	    failures?: ImportFailure[];
@@ -1812,6 +1813,7 @@ export namespace domain {
 	        this.matchesEnriched = source["matchesEnriched"];
 	        this.matchesDeepened = source["matchesDeepened"];
 	        this.analysesDeepened = source["analysesDeepened"];
+	        this.analysesDropped = source["analysesDropped"];
 	        this.probableDuplicates = this.convertValues(source["probableDuplicates"], DuplicateSuspect);
 	        this.filesFailed = source["filesFailed"];
 	        this.failures = this.convertValues(source["failures"], ImportFailure);
@@ -3403,6 +3405,7 @@ export namespace ingest {
 	    positions: number;
 	    flags_applied?: number;
 	    deepened?: number;
+	    dropped_analyses?: number;
 	    probable_duplicate?: domain.DuplicateSuspect;
 	    player1?: string;
 	    player2?: string;
@@ -3427,6 +3430,7 @@ export namespace ingest {
 	        this.positions = source["positions"];
 	        this.flags_applied = source["flags_applied"];
 	        this.deepened = source["deepened"];
+	        this.dropped_analyses = source["dropped_analyses"];
 	        this.probable_duplicate = this.convertValues(source["probable_duplicate"], domain.DuplicateSuspect);
 	        this.player1 = source["player1"];
 	        this.player2 = source["player2"];

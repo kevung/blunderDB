@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 04:55+0200\n"
+"POT-Creation-Date: 2026-10-03 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1461,22 +1461,6 @@ msgid "``--comment-origin``"
 msgstr "``--comment-origin``"
 
 #: ../../source/cmd_mode.rst:1
-msgid "``au'Alice'``"
-msgstr "``au'Alice'``"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"La position porte un commentaire signé de cet auteur (nom entier, sans "
-"distinction de casse)."
-msgstr ""
-"Positiolla on tämän tekijän allekirjoittama kommentti (koko nimi, isoja "
-"ja pieniä kirjaimia erottamatta)."
-
-#: ../../source/cmd_mode.rst:1
-msgid "``--comment-author``"
-msgstr "``--comment-author``"
-
-#: ../../source/cmd_mode.rst:1
 msgid "``m'motif1,motif2,...'``"
 msgstr "``m'kuvio1,kuvio2,...'``"
 
@@ -1788,7 +1772,7 @@ msgstr ""
 "päätöstyyppeihin ja molempiin pelimuotoihin, rahapeliin ja otteluun. Ks. "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:241
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1807,11 +1791,11 @@ msgstr ""
 "esiinny missään arvossa, eikä ``ma1;2`` ole tunniste (kirjoita ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:246
 msgid "Transcrire depuis un terminal"
 msgstr "Litterointi päätteestä"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:248
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1830,7 +1814,7 @@ msgstr ""
 " edellisen kutsun palauttaman revision; jokainen kutsu on oma istuntonsa,"
 " ilman ``sessionId``-tunnistetta ja ilman kumoamista kutsusta toiseen."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:259
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 

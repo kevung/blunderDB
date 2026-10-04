@@ -1136,6 +1136,11 @@ dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bout
 la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions
 qu'elle contenait sont toujours là quand on revient en arrière.
 
+Le bouton ❄, visible sur une collection vivante, la **fige** : les positions
+que la recherche sélectionne à cet instant deviennent la composition d'une
+collection ordinaire, dans l'ordre de la recherche, et la requête s'efface.
+Les positions qu'elle contenait avant d'être vivante sont remplacées.
+
 Une collection vivante dont la requête porte un jeton que cette version ne
 connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
@@ -1205,6 +1210,12 @@ ne remplace pas ce qui est déjà là.
   commande, ``--skip-duplicates`` ignore un doublon sans rien en reprendre
   d'autre que les marques. Un match tronqué puis complété (plus de parties)
   n'est pas le même match : il est importé comme un second match.
+
+* **Une analyse illisible n'empêche pas l'import du match.** Une décision dont
+  l'analyse contient une valeur qui n'est pas un nombre fini (NaN ou infini,
+  que portent certains fichiers XG) est importée sans cette analyse ; le reste
+  du match entre normalement, et le rapport d'import compte les décisions
+  concernées.
 
 * **Un match déjà présent sous d'autres noms est signalé, jamais fusionné.**
   Les deux empreintes de match portent les noms des joueurs : « Martin A. » et

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 04:55+0200\n"
+"POT-Creation-Date: 2026-10-03 18:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1485,22 +1485,6 @@ msgid "``--comment-origin``"
 msgstr "``--comment-origin``"
 
 #: ../../source/cmd_mode.rst:1
-msgid "``au'Alice'``"
-msgstr "``au'Alice'``"
-
-#: ../../source/cmd_mode.rst:1
-msgid ""
-"La position porte un commentaire signé de cet auteur (nom entier, sans "
-"distinction de casse)."
-msgstr ""
-"Die Position trägt einen von diesem Autor signierten Kommentar "
-"(vollständiger Name, ohne Beachtung der Groß-/Kleinschreibung)."
-
-#: ../../source/cmd_mode.rst:1
-msgid "``--comment-author``"
-msgstr "``--comment-author``"
-
-#: ../../source/cmd_mode.rst:1
 msgid "``m'motif1,motif2,...'``"
 msgstr "``m'muster1,muster2,...'``"
 
@@ -1820,7 +1804,7 @@ msgstr ""
 "Entscheidungsarten und auf beide Spielformen, Geldspiel und Match. Siehe "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:241
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1839,11 +1823,11 @@ msgstr ""
 "Listen von Kennungen und Tags: Es kommt in keinem Wert vor, und ``ma1;2``"
 " ist kein Token (``ma1 ma2`` schreiben)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:246
 msgid "Transcrire depuis un terminal"
 msgstr "Von einem Terminal aus transkribieren"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:248
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1863,7 +1847,7 @@ msgstr ""
 "eine eigene Sitzung, ohne ``sessionId`` und ohne Rückgängigmachen von "
 "einem Aufruf zum nächsten."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:259
 msgid "Commandes diverses"
 msgstr "Verschiedene Befehle"
 

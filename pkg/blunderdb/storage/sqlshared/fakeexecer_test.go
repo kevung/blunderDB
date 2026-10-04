@@ -38,6 +38,10 @@ func (fakeDialect) BoolArg(v bool) any {
 }
 func (fakeDialect) Bigint(expr string) string { return expr }
 func (fakeDialect) ILike() string             { return "LIKE" }
+func (fakeDialect) ForUpdate() string         { return "" }
+func (fakeDialect) Guard(string) (string, []any) {
+	return "", nil
+}
 func (fakeDialect) LimitOffset(limit, offset int) (string, []any) {
 	if limit <= 0 && offset <= 0 {
 		return "", nil

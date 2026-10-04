@@ -67,6 +67,9 @@ type WriteResult struct {
 	Enriched       bool // true when a cross-format (canonical) duplicate was enriched in place
 	Replaced       bool // true when an existing match was rewritten in place (MatchGraph.ReplaceMatchID)
 	SavedPositions int
+	// DroppedAnalyses counts the decisions whose analysis was left out
+	// because it held a value that is not a finite number.
+	DroppedAnalyses int
 	// Tournament is the event name the match was filed under, empty when the
 	// file named none or when the match already existed.
 	Tournament string
@@ -103,6 +106,7 @@ type WriteResult struct {
 // Positions dedup independently by Zobrist hash inside PositionStore.Save.
 func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph, prog func(Progress)) (WriteResult, error) {
 	var res WriteResult
+	res.DroppedAnalyses = dropNonFiniteAnalyses(g)
 
 	// Replacement: drop the old games first — their moves are what still names
 	// the outgoing positions, and the purge at the end needs that list. The

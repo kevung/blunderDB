@@ -164,6 +164,11 @@ Importe des fichiers de matchs ou de positions dans la base de données.
   est strictement plus profonde, et la ligne l'indique : ``DUPLICATE (N
   analyses deepened)``.
 
+Une décision dont l'analyse contient une valeur qui n'est pas un nombre fini
+(NaN ou infini) est importée sans cette analyse, et le reste du match entre
+normalement ; le compte rendu du lot en donne le nombre (``Decisions imported
+without their analysis``).
+
 Le code de retour obéit à quatre règles :
 
 * **rien n'a été reconnu** — chaque fichier a échoué — : erreur, que
@@ -921,6 +926,9 @@ ou ``csv``, comme ``list``.
   qu'elle est ouverte. La requête s'écrit dans la grammaire de recherche de
   l'application (voir :ref:`cmd_filter`). ``--clear`` la rend à sa liste faite
   à la main, en gardant les positions qu'elle contenait.
+* ``freeze --id <id>`` — Fige une collection vivante : les positions que sa
+  requête sélectionne maintenant deviennent sa composition, la requête
+  s'efface. Refusé sur une collection qui n'est pas vivante.
 * ``rename --id <id> --name <nom> [--description <texte>]`` — Renomme une
   collection (la description est conservée si elle n'est pas donnée).
 * ``delete --id <id> [--confirm]`` — Supprime une collection ; ses positions

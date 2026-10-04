@@ -1214,3 +1214,13 @@ func (s *matchStore) DiceSequences(ctx context.Context, scope string) iter.Seq2[
 		}
 	}
 }
+
+// ScoreMoves — see storage.MatchStore.
+func (s *matchStore) ScoreMoves(ctx context.Context, scope string, after int64, limit int) (int64, int, error) {
+	return sqlshared.ScoreMoves(ctx, binder{s.db}.shared(), scope, after, limit)
+}
+
+// RescorePositionMoves — see storage.MatchStore.
+func (s *matchStore) RescorePositionMoves(ctx context.Context, scope string, positionID int64) error {
+	return sqlshared.RescorePositionMoves(ctx, binder{s.db}.shared(), scope, positionID)
+}

@@ -702,5 +702,6 @@ func (im XGImporter) Import(ctx context.Context, scope string, src Source, prog 
 		sum.Enriched = 1
 	}
 	sum.BatchID = src.BatchID
+	sum.DroppedAnalyses = res.DroppedAnalyses
 	return sum, nil
 }

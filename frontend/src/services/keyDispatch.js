@@ -10,9 +10,9 @@
  *     OVERLAY  — Escape closes the last opened overlay (escapeService.js);
  *     CAPTURE  — the Direction page's queue and grid digits;
  *   bubble phase (after the focused element and the panels bound on their own nodes)
- *     PANEL    — docked panels that own keys while focused (search, transcription);
+ *     PANEL    — docked panels that own keys while focused (search, transcription, matches,
+ *                collections, tournaments);
  *     LOCAL    — the board, the view tabs, an open context menu, the Direction page's undo;
- *     MODE     — a mode that captures keys inside the global dispatcher (Anki review);
  *     GLOBAL   — keyboardService.handleKeyDown, the application shortcuts.
  *
  * Two native listeners, one per phase, both installed here: capture is needed for what must
@@ -57,6 +57,9 @@ function byOrder(a, b) {
  * @param {(tier: number) => boolean} inPhase
  */
 function run(event, inPhase) {
+    // A key pressed while an input method composes text (Enter confirming a conversion, in
+    // Japanese) belongs to the composition, not to a shortcut.
+    if (event.isComposing) return;
     const bubble = !inPhase(TIER.OVERLAY);
     if (bubble && get(isAnyModalOpen)) return;
     // A snapshot: a handler that closes something may unregister an entry mid-dispatch.

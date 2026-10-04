@@ -45,6 +45,9 @@ type ImportReport struct {
 	// MatchesSkipped - MatchesDeepened.
 	MatchesDeepened  int `json:"matchesDeepened,omitempty"`
 	AnalysesDeepened int `json:"analysesDeepened,omitempty"`
+	// AnalysesDropped counts the decisions the files analysed with a value
+	// that is not a finite number: imported, but without that analysis.
+	AnalysesDropped int `json:"analysesDropped,omitempty"`
 	// ProbableDuplicates lists the matches this batch wrote whose dice are
 	// those of a match already stored under other player names: signalled,
 	// never merged (DuplicateSuspect).

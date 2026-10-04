@@ -29,4 +29,14 @@ type LessonStore interface {
 	// ReorderSteps sets the order of the Lesson's Steps. stepIDs must name
 	// every Step of the Lesson exactly once, or it is ErrInvalid.
 	ReorderSteps(ctx context.Context, scope string, lessonID int64, stepIDs []int64) error
+
+	// SetStepDone records (done) or withdraws the student's "step done"
+	// gesture on a Step, or ErrNotFound. It is the only writer of the
+	// progress (ADR-0069): reading, opening or importing a Lesson writes
+	// nothing (ADR-0007), and no export carries it. Marking a Step done twice
+	// keeps the first date.
+	SetStepDone(ctx context.Context, scope string, stepID int64, done bool) error
+	// DoneSteps returns, for the Lesson's Steps marked done, the date of the
+	// gesture keyed by Step id; ErrNotFound for an unknown Lesson.
+	DoneSteps(ctx context.Context, scope string, lessonID int64) (map[int64]string, error)
 }

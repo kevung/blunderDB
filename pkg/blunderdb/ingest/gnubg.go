@@ -401,6 +401,7 @@ func (im GnuBGImporter) Import(ctx context.Context, scope string, src Source, pr
 		sum.Enriched = 1
 	}
 	sum.BatchID = src.BatchID
+	sum.DroppedAnalyses = res.DroppedAnalyses
 	return sum, nil
 }
 
