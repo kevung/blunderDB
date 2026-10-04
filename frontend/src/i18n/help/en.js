@@ -279,10 +279,11 @@ export default {
 <p>The ❄ button, shown on a living collection, <strong>freezes</strong> it: the positions the search selects at that moment become the content of an ordinary collection, in the order of the search, and the query is cleared. The positions it held before becoming living are replaced.</p>
 <p>A living collection whose query carries a token this version no longer knows <strong>refuses to open</strong>, and says so, rather than returning the whole database. That is the one failure a saved filter must not have: widening in silence.</p>
 <h4>Lessons</h4>
-<p>A <strong>lesson</strong> is a sequence of steps that a coach writes once for a student and hands over in a database file (see the <code>lesson export</code> command in cli). Each step has a title, a text and can show a collection, a position, both or neither. The <code>le</code> command lists the database's lessons in the status bar; <code>le 2</code> opens lesson 2.</p>
+<p>A <strong>lesson</strong> is a sequence of steps that a coach writes once for a student and hands over in a database file (see the <code>lesson export</code> command in cli). Each step has a title, a text and can show a collection, a position, both or neither. The <code>le</code> command lists the database's lessons in the status bar; <code>le 2</code> opens lesson 2; <code>le edit</code> opens the lesson editor.</p>
 <p>A <strong>reading bar</strong> then appears above the board: lesson name, step number, title, then the text. <em>Previous</em> and <em>Next</em> change step; the step brings onto the board the collection or position it shows, which you then browse with the usual gestures. <em>Close</em> leaves the lesson. A step whose collection or position has been deleted keeps its text.</p>
-<p>Reading a lesson leaves no trace: the student's database records neither the step reached nor the opening. Importing a file that contains a lesson creates it; a lesson of the same name already present is left untouched. Lessons are created and edited through the command line or the API (Lessons).</p>
-<p>A backup — exporting the whole library from the export window or by the command line — carries all the lessons; a partial export (a selection of positions, collections or matches) does not.</p>
+<p>The <em>Step done</em> box in the bar marks the current step as done; a second click removes the mark, and the bar counts the steps done. It is the only gesture that writes anything: reading a lesson, changing step or opening it records nothing, neither the step reached nor the opening. The mark is written into the open database, the student's, and no export carries it. Importing a file that contains a lesson creates it; a lesson of the same name already present is left untouched.</p>
+<p><strong>The lesson editor</strong> opens with <code>le edit</code> (<code>le edit 2</code> on lesson 2) or with the <em>Edit</em> button of the reading bar. On the left, the list of lessons and a field to create one; on the right, the name and description of the chosen lesson, then its steps. Each step has a title, a text, a collection chosen from the list and a position: <em>Current position</em> attaches the position shown on the board, <em>Detach the position</em> removes it. <em>Save the step</em> writes its changes; the arrows move it one place; <em>Add a step</em> adds one at the end. <em>Read</em> closes the editor and opens the lesson at its first step; <em>Delete</em> erases the lesson and its steps, without touching the collections or positions they showed. Lessons can also be created and edited from the command line or through the API (Lessons).</p>
+<p>A backup — exporting the whole library from the export window or by the command line — carries all the lessons. In the export window, the <em>Include lessons</em> box chooses them one by one: each ticked lesson goes with the collections and positions its steps show, and the file can be watermarked or password-protected (<code>.dbx</code>) like any export. Without that box, a partial export (a selection of positions, collections or matches) does not carry the lessons.</p>
 <h3>Import: what is written, what never is</h3>
 <p>Importing a match, a position or another database adds what is missing; it does not replace what is already there.</p>
 <ul>
@@ -2042,8 +2043,12 @@ export default {
 <td>Show/hide the collections panel.</td>
 </tr>
 <tr>
-<td>lesson, le [N]</td>
-<td>Without an argument, lists the database's lessons in the status bar; <code>le N</code> opens lesson N at its first step (see Lessons).</td>
+<td>lesson, le [N | edit [N]]</td>
+<td>Without an argument, lists the database's lessons in the status bar; <code>le N</code> opens lesson N at its first step; <code>le edit</code> opens the lesson editor, <code>le edit N</code> on lesson N (see Lessons).</td>
+</tr>
+<tr>
+<td>study, sq</td>
+<td>Opens the cross-import study queue: your blunders that nothing has handled yet, from the most costly to the least costly (see Blunders nothing has handled yet).</td>
 </tr>
 <tr>
 <td>#tag1 tag2 ...</td>

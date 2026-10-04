@@ -1189,7 +1189,8 @@ Une **leçon** est une suite d'étapes qu'un coach écrit une fois pour un élè
 et lui remet dans un fichier de base (voir la commande ``lesson export`` de
 :doc:`cli`). Chaque étape a un titre, un texte et peut montrer une collection,
 une position, les deux ou aucune. La commande ``le`` liste les leçons de la
-base dans la barre d'état ; ``le 2`` ouvre la leçon 2.
+base dans la barre d'état ; ``le 2`` ouvre la leçon 2 ; ``le edit`` ouvre
+l'éditeur de leçons.
 
 Une **barre de lecture** apparaît alors au-dessus du plateau : nom de la
 leçon, numéro de l'étape, titre, puis le texte. *Précédente* et *Suivante*
@@ -1198,15 +1199,34 @@ qu'elle montre, que l'on parcourt ensuite par les gestes habituels. *Fermer*
 quitte la leçon. Une étape dont la collection ou la position a été supprimée
 garde son texte.
 
-Lire une leçon ne laisse aucune trace : la base de l'élève n'enregistre ni
-l'étape atteinte ni l'ouverture. Importer un fichier qui contient une leçon la
-crée ; une leçon de même nom déjà présente n'est pas touchée. Les leçons se
-créent et se modifient par la ligne de commande ou par l'API
+La case *Étape faite* de la barre marque l'étape courante comme faite ; un
+second clic retire la marque, et la barre compte les étapes faites. C'est le
+seul geste qui écrive quelque chose : lire une leçon, changer d'étape ou
+l'ouvrir n'enregistre rien, ni l'étape atteinte ni l'ouverture. La marque
+s'écrit dans la base ouverte, celle de l'élève, et aucun export ne l'emporte.
+Importer un fichier qui contient une leçon la crée ; une leçon de même nom déjà
+présente n'est pas touchée.
+
+**L'éditeur de leçons** s'ouvre par ``le edit`` (``le edit 2`` sur la leçon 2)
+ou par le bouton *Modifier* de la barre de lecture. À gauche, la liste des
+leçons et un champ pour en créer une ; à droite, le nom et la description de la
+leçon choisie, puis ses étapes. Chaque étape a un titre, un texte, une
+collection choisie dans la liste et une position : *Position courante* y
+attache la position affichée sur le plateau, *Détacher la position* l'en
+retire. *Enregistrer l'étape* écrit ses changements ; les flèches la déplacent
+d'un cran ; *Ajouter une étape* en ajoute une à la fin. *Lire* ferme l'éditeur
+et ouvre la leçon à sa première étape ; *Supprimer* efface la leçon et ses
+étapes, sans toucher aux collections ni aux positions qu'elles montraient. Les
+leçons se créent et se modifient aussi par la ligne de commande ou par l'API
 (:ref:`headless_lecons`).
 
 Une sauvegarde — l'export de toute la bibliothèque depuis la fenêtre d'export
-ou par la ligne de commande — emporte toutes les leçons ; un export partiel
-(une sélection de positions, de collections ou de matchs) ne les emporte pas.
+ou par la ligne de commande — emporte toutes les leçons. Dans la fenêtre
+d'export, la case *Inclure les leçons* les choisit une à une : chaque leçon
+cochée part avec les collections et les positions que ses étapes montrent, et
+le fichier peut être filigrané ou protégé par mot de passe (``.dbx``) comme tout
+export. Sans cette case, un export partiel (une sélection de positions, de
+collections ou de matchs) n'emporte pas les leçons.
 
 .. _import_regles:
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 20:00+0200\n"
+"POT-Creation-Date: 2026-10-04 22:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -470,16 +470,32 @@ msgid "Afficher/cacher le panneau des collections."
 msgstr "Mostra/nascondi il pannello delle collezioni."
 
 #: ../../source/cmd_mode.rst:1
-msgid "lesson, le [N]"
-msgstr "lesson, le [N]"
+msgid "lesson, le [N | edit [N]]"
+msgstr "lesson, le [N | edit [N]]"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Sans argument, liste les leçons de la base dans la barre d'état ; ``le "
-"N`` ouvre la leçon N à sa première étape (voir :ref:`lecons`)."
+"N`` ouvre la leçon N à sa première étape ; ``le edit`` ouvre l'éditeur de"
+" leçons, ``le edit N`` sur la leçon N (voir :ref:`lecons`)."
 msgstr ""
 "Senza argomento, elenca le lezioni del database nella barra di stato; "
-"``le N`` apre la lezione N al suo primo passo (vedi :ref:`lecons`)."
+"``le N`` apre la lezione N al suo primo passo; ``le edit`` apre l'editor "
+"delle lezioni, ``le edit N`` sulla lezione N (vedi :ref:`lecons`)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "study, sq"
+msgstr "study, sq"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la file d'étude transversale : vos blunders que rien n'a encore "
+"traités, du plus coûteux au moins coûteux (voir "
+":ref:`file_etude_transversale`)."
+msgstr ""
+"Apre la coda di studio trasversale: i suoi blunder che nulla ha ancora "
+"trattato, dal più costoso al meno costoso (vedi "
+":ref:`file_etude_transversale`)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "#tag1 tag2 ..."
@@ -519,7 +535,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Naviga nell'ultima partita visitata."
 
-#: ../../source/cmd_mode.rst:83
+#: ../../source/cmd_mode.rst:84
 msgid "Édition et recherche"
 msgstr "Modifica e ricerca"
 
@@ -559,11 +575,11 @@ msgstr ""
 "Cercare tra le posizioni visualizzate: risultati correnti, collezione "
 "aperta o match in revisione."
 
-#: ../../source/cmd_mode.rst:99
+#: ../../source/cmd_mode.rst:100
 msgid "Filtres de recherche"
 msgstr "Filtri di ricerca"
 
-#: ../../source/cmd_mode.rst:101
+#: ../../source/cmd_mode.rst:102
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -579,7 +595,7 @@ msgstr ""
 ":ref:`cli`); un trattino segnala un filtro che solo la grammatica "
 "esprime."
 
-#: ../../source/cmd_mode.rst:108
+#: ../../source/cmd_mode.rst:109
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -599,7 +615,7 @@ msgstr ""
 "questi token si confrontano con un tavoliere vuoto; sono le opzioni della"
 " terza colonna che occorre impiegare al loro posto."
 
-#: ../../source/cmd_mode.rst:117
+#: ../../source/cmd_mode.rst:118
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -609,7 +625,7 @@ msgstr ""
 "risultato per distanza crescente da una posizione bersaglio, e tutti gli "
 "altri token restringono l'insieme così ordinato."
 
-#: ../../source/cmd_mode.rst:121
+#: ../../source/cmd_mode.rst:122
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -619,11 +635,11 @@ msgstr ""
 "*millipoints* della tabella qui sotto: ``E>100`` mantiene le mosse che "
 "sono costate almeno un decimo di punto, un punto valendo 1000 millesimi."
 
-#: ../../source/cmd_mode.rst:125
+#: ../../source/cmd_mode.rst:126
 msgid "Deux recherches complètes :"
 msgstr "Due ricerche complete:"
 
-#: ../../source/cmd_mode.rst:127
+#: ../../source/cmd_mode.rst:128
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -632,7 +648,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — più di 30 pip di ritardo, tra il 40 % e il 60 % "
 "di probabilità di vittoria, nessun commento."
 
-#: ../../source/cmd_mode.rst:129
+#: ../../source/cmd_mode.rst:130
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1825,7 +1841,7 @@ msgstr ""
 "decisione e a entrambi i regimi, soldi e incontro. Vedere "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:243
+#: ../../source/cmd_mode.rst:244
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1844,11 +1860,11 @@ msgstr ""
 "compare in nessun valore, e ``ma1;2`` non è un token (scrivere ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:249
 msgid "Transcrire depuis un terminal"
 msgstr "Trascrivere da un terminale"
 
-#: ../../source/cmd_mode.rst:250
+#: ../../source/cmd_mode.rst:251
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1868,7 +1884,7 @@ msgstr ""
 "sessione a sé, senza ``sessionId`` né annullamento da una chiamata "
 "all'altra."
 
-#: ../../source/cmd_mode.rst:261
+#: ../../source/cmd_mode.rst:262
 msgid "Commandes diverses"
 msgstr "Comandi vari"
 

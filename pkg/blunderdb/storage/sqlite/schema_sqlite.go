@@ -560,6 +560,14 @@ var schemaStatements = []string{
 		lesson_step_id INTEGER PRIMARY KEY REFERENCES lesson_step(id) ON DELETE CASCADE,
 		done_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 	)`,
+	// The positions the user marked "studied" in the library-wide study
+	// backlog: written only by that gesture, reversible, never exported (a
+	// table of its own so that no exporter carries it). Not a retention
+	// reason: marking a position studied keeps nothing alive.
+	`CREATE TABLE IF NOT EXISTS study_mark (
+		position_id INTEGER PRIMARY KEY REFERENCES position(id) ON DELETE CASCADE,
+		marked_at INTEGER NOT NULL
+	)`,
 	// The action labels the fixed list of domain.ActionCode lacks, each under
 	// a code from domain.FirstRegisteredActionCode up (ADR-0071).
 	`CREATE TABLE IF NOT EXISTS action_label (

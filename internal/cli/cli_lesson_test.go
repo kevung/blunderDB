@@ -78,3 +78,47 @@ func TestCLI_DatabaseExportCarriesLessons(t *testing.T) {
 		t.Fatalf("lessons in the exported file = %d, %v; want 1", n, err)
 	}
 }
+
+// The reader's progress is written by `done` alone, withdrawn by `--undo`,
+// and read back by `progress`; showing the lesson writes nothing.
+func TestCLI_LessonProgress(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	run := func(args ...string) string {
+		t.Helper()
+		return captureStdout(t, func() {
+			if err := cli.Run(append([]string{"lesson"}, append(args, "--db", dbPath)...)); err != nil {
+				t.Fatalf("lesson %v: %v", args, err)
+			}
+		})
+	}
+	type row struct {
+		StepID int64 `json:"stepId"`
+		Done   bool  `json:"done"`
+	}
+	progress := func() []row {
+		t.Helper()
+		var rows []row
+		if err := json.Unmarshal([]byte(run("progress", "--id", "1", "--format", "json")), &rows); err != nil {
+			t.Fatal(err)
+		}
+		return rows
+	}
+	run("create", "--name", "Parcours")
+	run("add-step", "--lesson", "1", "--title", "Un", "--text", "a")
+	run("add-step", "--lesson", "1", "--title", "Deux", "--text", "b")
+	run("show", "--id", "1")
+	if rows := progress(); len(rows) != 2 || rows[0].Done || rows[1].Done {
+		t.Fatalf("progress before any gesture = %+v", rows)
+	}
+	run("done", "--step", "2")
+	if rows := progress(); rows[0].Done || !rows[1].Done {
+		t.Fatalf("progress after done = %+v", rows)
+	}
+	if out := run("progress", "--id", "1"); !strings.Contains(out, "1 / 2 steps done") {
+		t.Fatalf("progress text:\n%s", out)
+	}
+	run("done", "--step", "2", "--undo")
+	if rows := progress(); rows[1].Done {
+		t.Fatalf("progress after undo = %+v", rows)
+	}
+}

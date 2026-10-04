@@ -179,10 +179,12 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/lessons.addStep                      JSON  (Idempotency-Key)
      POST /v1/lessons.create                       JSON  (Idempotency-Key)
      POST /v1/lessons.delete                       JSON
+     POST /v1/lessons.doneSteps                    JSON
      POST /v1/lessons.get                          JSON
      POST /v1/lessons.list                         JSON
      POST /v1/lessons.removeStep                   JSON
      POST /v1/lessons.reorderSteps                 JSON
+     POST /v1/lessons.setStepDone                  JSON
      POST /v1/lessons.update                       JSON
      POST /v1/lessons.updateStep                   JSON
    librarySettings
@@ -307,6 +309,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.studyIds                       JSON
      POST /v1/stats.tournamentBadges               JSON
      POST /v1/stats.training                       JSON
+   study
+     POST /v1/study.backlog                        JSON
+     POST /v1/study.setStudied                     JSON
    tenant
      POST /ops/tenant.purge                        custom
    tenants

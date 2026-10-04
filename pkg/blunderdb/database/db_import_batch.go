@@ -160,6 +160,39 @@ func (d *Database) ImportStudyQueue(batchID int64, limit int) ([]domain.StudyQue
 	return d.store.ImportBatches().StudyQueue(ctx, "", batchID, players, limit)
 }
 
+// StudyBacklog returns, across the whole library, the reference player's
+// blunders nothing has dealt with yet (no comment, card, collection or
+// "studied" mark), costliest first. Same reference-player convention as
+// ImportReport.
+func (d *Database) StudyBacklog(limit int) ([]domain.StudyQueueEntry, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	ctx := context.Background()
+	var players []string
+	if meta, err := d.store.Metadata().Load(ctx, ""); err == nil {
+		if user := meta["user"]; user != "" {
+			players = append(players, user)
+		}
+	}
+	return d.store.ImportBatches().StudyBacklog(ctx, "", players, limit)
+}
+
+// SetPositionStudied writes or withdraws the user's "studied" mark on a
+// position: the one explicit record of the study backlog, never exported.
+func (d *Database) SetPositionStudied(positionID int64, studied bool) error {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+	return d.store.ImportBatches().SetStudied(context.Background(), "", positionID, studied)
+}
+
 // ListImportBatches returns the recorded batches, most recent first, with the
 // counts stored at the end of each import (not the measured half — that is
 // ImportReport, one batch at a time).

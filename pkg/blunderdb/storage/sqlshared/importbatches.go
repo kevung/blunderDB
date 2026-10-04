@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -294,6 +295,11 @@ func matchLabel(player1, player2 string, length int) string {
 // two dialects order NULLs differently. Each query is bounded by the same
 // limit, so the worst case reads three pages and not the batch.
 func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID int64, players []string, limit int) ([]domain.StudyQueueEntry, error) {
+	if batchID <= 0 {
+		// queueRows reads a zero batch as "every batch", which is StudyBacklog's
+		// question, not this one's.
+		return nil, nil
+	}
 	if limit <= 0 || limit > domain.MaxStudyQueue {
 		limit = domain.MaxStudyQueue
 	}
@@ -326,7 +332,7 @@ func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID
 	// revisiting" is precisely what an Error is.
 	blunders, err := s.queueRows(ctx, scope, batchID, players, limit, domain.StudyBlunder,
 		` AND COALESCE(`+statsErrExpr+`, 0) >= ?`, []any{settings.ErrorThresholdMP},
-		` ORDER BY COALESCE(`+statsErrExpr+`, 0) DESC, p.id ASC`)
+		queueCostOrder)
 	if err != nil {
 		return nil, err
 	}
@@ -356,6 +362,62 @@ func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID
 	return out, nil
 }
 
+// queueCostOrder is the order of the passes that rank by cost, worst first.
+const queueCostOrder = ` ORDER BY COALESCE(` + statsErrExpr + `, 0) DESC, p.id ASC`
+
+// unhandledSQL keeps the positions nothing has dealt with: no comment, no
+// Anki card, in no collection, not marked studied. Correlated on p.id, whose
+// values already belong to the tenant being read.
+const unhandledSQL = ` AND NOT EXISTS (SELECT 1 FROM comment c WHERE c.position_id = p.id)` +
+	` AND NOT EXISTS (SELECT 1 FROM anki_card k WHERE k.position_id = p.id)` +
+	` AND NOT EXISTS (SELECT 1 FROM collection_position cp WHERE cp.position_id = p.id)` +
+	` AND NOT EXISTS (SELECT 1 FROM study_mark sm WHERE sm.position_id = p.id)`
+
+// StudyBacklog is the cost pass of StudyQueue over the whole library, kept to
+// what is still unhandled. It is the same query as the batch queue's first
+// pass with the batch filter dropped and unhandledSQL added.
+func (s *ImportBatchStore) StudyBacklog(ctx context.Context, scope string, players []string, limit int) ([]domain.StudyQueueEntry, error) {
+	if limit <= 0 || limit > domain.MaxStudyQueue {
+		limit = domain.MaxStudyQueue
+	}
+	settings, err := librarySettings(ctx, s.DB, scope)
+	if err != nil {
+		return nil, fmt.Errorf("study backlog settings: %w", err)
+	}
+	// queueRows keeps one row per position for this reason (a position met
+	// in several matches is studied once), so the limit counts positions.
+	return s.queueRows(ctx, scope, 0, players, limit, domain.StudyBacklog,
+		` AND COALESCE(`+statsErrExpr+`, 0) >= ?`+unhandledSQL, []any{settings.ErrorThresholdMP}, queueCostOrder)
+}
+
+func (s *ImportBatchStore) SetStudied(ctx context.Context, scope string, positionID int64, studied bool) error {
+	ok, err := rowExists(ctx, s.DB, scope, "position", positionID)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		return fmt.Errorf("%s: position %d: %w", s.DB.Name(), positionID, storage.ErrNotFound)
+	}
+	return s.DB.Transact(ctx, func(tx Execer) error {
+		if !studied {
+			tenant, targs := tx.TenantFilter("", scope)
+			if _, err := tx.Exec(ctx, `DELETE FROM study_mark WHERE position_id = ? AND `+tenant,
+				append([]any{positionID}, targs...)...); err != nil {
+				return errf(tx, "withdraw study mark", err)
+			}
+			return nil
+		}
+		cols, args := tx.TenantColumns(scope)
+		cols = append(cols, "position_id", "marked_at")
+		args = append(args, positionID, time.Now().Unix())
+		if _, err := tx.Exec(ctx, `INSERT INTO study_mark (`+strings.Join(cols, ", ")+`) VALUES (`+
+			Placeholders(len(cols))+`) ON CONFLICT DO NOTHING`, args...); err != nil {
+			return errf(tx, "mark position studied", err)
+		}
+		return nil
+	})
+}
+
 // queueRows runs one of the queue's three passes. extraWhere and extraArgs are
 // what makes a pass its own; everything else — the batch, the player filter,
 // the counted-decision predicate, the label — is shared, so the three passes
@@ -367,19 +429,40 @@ func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID 
 	if perr != nil {
 		return nil, perr
 	}
-	args := append(append([]any{}, targs...), batchID)
+	batchClause := ""
+	args := append([]any{}, targs...)
+	if batchID > 0 {
+		batchClause = " AND m.import_batch_id = ?"
+		args = append(args, batchID)
+	}
 	args = append(args, playerArgs...)
 	args = append(args, extraArgs...)
 	limitSQL, largs := s.DB.LimitOffset(limit, 0)
 	args = append(args, largs...)
 
-	rows, err := s.DB.Query(ctx,
-		`SELECT DISTINCT p.id, m.id,
+	query := `SELECT DISTINCT p.id, m.id,
 		        COALESCE(m.player1_name,''), COALESCE(m.player2_name,''), COALESCE(m.match_length, 0),
-		        COALESCE(`+statsErrExpr+`, 0), p.decision_type
-		 `+statsBaseJoin+`
-		 WHERE `+tenant+` AND m.import_batch_id = ?`+playerClause+`
-		   AND `+countedExpr(s.DB)+extraWhere+orderBy+limitSQL, args...)
+		        COALESCE(` + statsErrExpr + `, 0), p.decision_type
+		 ` + statsBaseJoin + `
+		 WHERE ` + tenant + batchClause + playerClause + `
+		   AND ` + countedExpr(s.DB) + extraWhere + orderBy + limitSQL
+	if reason == domain.StudyBacklog {
+		// Across the whole library a position met in several matches joins
+		// once per match; the window keeps its first match in SQL, so LIMIT
+		// counts positions. The cost is the position's own, the same on
+		// every row it keeps.
+		query = `SELECT pid, mid, p1, p2, len, cost, dt FROM (
+		   SELECT p.id AS pid, m.id AS mid,
+		          COALESCE(m.player1_name,'') AS p1, COALESCE(m.player2_name,'') AS p2,
+		          COALESCE(m.match_length, 0) AS len,
+		          COALESCE(` + statsErrExpr + `, 0) AS cost, p.decision_type AS dt,
+		          ROW_NUMBER() OVER (PARTITION BY p.id ORDER BY m.id) AS rn
+		   ` + statsBaseJoin + `
+		   WHERE ` + tenant + batchClause + playerClause + `
+		     AND ` + countedExpr(s.DB) + extraWhere + `
+		 ) q WHERE rn = 1 ORDER BY cost DESC, pid ASC` + limitSQL
+	}
+	rows, err := s.DB.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
@@ -399,7 +482,7 @@ func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID 
 		// Only a blunder's cost means anything: a flagged position may have
 		// been played perfectly, and showing it a "0" beside a cost would read
 		// as a measurement rather than as an absence.
-		if reason != domain.StudyBlunder {
+		if reason != domain.StudyBlunder && reason != domain.StudyBacklog {
 			e.ErrorMP = 0
 		}
 		out = append(out, e)
