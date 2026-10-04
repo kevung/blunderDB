@@ -54,7 +54,7 @@ func TestCorrectionInPlace(t *testing.T) {
 		if !doc.Entry.Review {
 			t.Error("a play the new roll cannot make must be marked for review")
 		}
-		if !diceCoherent(doc.Entry.Steps, [2]int{2, 1}, doc.Entry.Side) {
+		if !diceCoherent(domain.Board{}, doc.Entry.Steps, [2]int{2, 1}, doc.Entry.Side) {
 			t.Errorf("the preselected play %v is not a play of 21", doc.Entry.Steps)
 		}
 		// Nothing is written until validation: the Action still says what it said.

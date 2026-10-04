@@ -30,7 +30,7 @@ func TestFirstPlayRetypedChangesCamp(t *testing.T) {
 			t.Errorf("the same roll retyped = %+v, want the play untouched", same)
 		}
 		if a := retype(t, doc, 2, 5).Actions[0]; a.Side != domain.White || a.Dice != [2]int{2, 5} ||
-			!diceCoherent(a.Steps, a.Dice, a.Side) {
+			!diceCoherent(domain.Board{}, a.Steps, a.Dice, a.Side) {
 			t.Errorf("first play = %+v, want a play of player 2's 52", a)
 		}
 	})

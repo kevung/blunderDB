@@ -615,7 +615,7 @@ func (s *state) step(i int, a Action) ActionInfo {
 				info.add(IllegalMove, "the roll allows a play, so no dance is possible")
 			}
 		} else {
-			if !diceCoherent(a.Steps, a.Dice, a.Side) {
+			if !diceCoherent(s.board, a.Steps, a.Dice, a.Side) {
 				info.add(InconsistentDice, fmt.Sprintf("the play does not use the roll %d%d", a.Dice[0], a.Dice[1]))
 			}
 			resolved, reached := resolveSteps(s.board, a.Side, a.Steps)
@@ -898,10 +898,11 @@ func applyStep(b domain.Board, mover int, s domain.CheckerStep) domain.Board {
 	return b
 }
 
-// diceCoherent reports whether every step can be charged to a distinct die of the
-// roll. A play that fails it was produced by correcting a roll under a kept play, and
-// §1.4 requalifies it as illegal.
-func diceCoherent(steps []domain.CheckerStep, dice [2]int, mover int) bool {
+// diceCoherent reports whether every step can be charged to distinct dice of the
+// roll. A step is one die, or several played through intermediate points the mover
+// may land on in b ("24/14" on 6-4 is 24/18/14). A play that fails it was produced
+// by correcting a roll under a kept play, and §1.4 requalifies it as illegal.
+func diceCoherent(b domain.Board, steps []domain.CheckerStep, dice [2]int, mover int) bool {
 	if len(steps) == 0 {
 		return true
 	}
@@ -916,20 +917,61 @@ func diceCoherent(steps []domain.CheckerStep, dice [2]int, mover int) bool {
 		return false
 	}
 	used := make([]bool, len(avail))
+	dir := 1
+	if mover == domain.Black {
+		dir = -1
+	}
+	open := func(pt int) bool {
+		c := b.Points[pt]
+		return !(c.Color == opponent(mover) && c.Checkers >= 2)
+	}
+	// need is the pip distance from a point to bearing off.
+	need := func(at int) int {
+		if mover == domain.Black {
+			return at
+		}
+		return 25 - at
+	}
+	onBoard := func(pt int) bool { return pt >= 1 && pt <= 24 }
+	// chain covers the step from at to its target with unused dice, each non-final
+	// die landing on a point the mover may use. A bar start is at the bar's index, so
+	// the first die enters; a bear-off ends on the die that exactly or over-covers.
+	var chain func(s domain.CheckerStep, at int, next func() bool) bool
+	chain = func(s domain.CheckerStep, at int, next func() bool) bool {
+		for j := range avail {
+			if used[j] {
+				continue
+			}
+			to := at + dir*avail[j]
+			used[j] = true
+			switch {
+			case s.To == domain.Off:
+				if avail[j] >= need(at) {
+					if next() {
+						return true
+					}
+				} else if open(to) && chain(s, to, next) {
+					return true
+				}
+			case to == s.To:
+				if next() {
+					return true
+				}
+			case dir*(s.To-to) > 0 && onBoard(to) && open(to) && chain(s, to, next):
+				return true
+			}
+			used[j] = false
+		}
+		return false
+	}
 	var assign func(k int) bool
 	assign = func(k int) bool {
 		if k == len(steps) {
 			return true
 		}
-		for j := range avail {
-			if used[j] || !domain.StepUsesDie(steps[k], mover, avail[j]) {
-				continue
-			}
-			used[j] = true
-			if assign(k + 1) {
-				return true
-			}
-			used[j] = false
+		s := steps[k]
+		if (onBoard(s.From) || s.From == barOf(mover)) && (onBoard(s.To) || s.To == domain.Off) {
+			return chain(s, s.From, func() bool { return assign(k + 1) })
 		}
 		return false
 	}
