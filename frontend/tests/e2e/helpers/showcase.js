@@ -290,7 +290,7 @@ export function showcaseMock() {
         // suffisante pour les neuf coups sans défilement. Sans valeur, le
         // panneau prend la hauteur de son contenu et le plateau, ajusté avant
         // que la table n'arrive, déborde dessous.
-        config: { GetLanguage: 'en', GetPanelPosition: 'bottom', GetPanelHeight: 280, GetPanelWidth: 520 },
+        config: { GetLanguage: 'en', GetPanelPosition: 'bottom', GetTabPanelHeights: { '*': 280 }, GetPanelWidth: 520 },
         database: {
             // The library loads by id window (ListPositionIDs +
             // LoadPositionsByIDs); LoadAllPositions is dead code on the

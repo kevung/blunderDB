@@ -17,8 +17,6 @@ import { fileURLToPath } from 'node:url';
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetPanelPosition: vi.fn(),
     SavePanelPosition: vi.fn(),
-    GetPanelHeight: vi.fn(),
-    SavePanelHeight: vi.fn(),
     GetPanelWidth: vi.fn(),
     SavePanelWidth: vi.fn()
 }));

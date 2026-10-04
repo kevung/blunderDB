@@ -1,5 +1,5 @@
 import { writable, derived } from 'svelte/store';
-import { GetPanelPosition, SavePanelPosition, GetPanelHeight, SavePanelHeight, GetPanelWidth, SavePanelWidth } from '../../wailsjs/go/main/Config.js';
+import { GetPanelPosition, SavePanelPosition, GetPanelWidth, SavePanelWidth } from '../../wailsjs/go/main/Config.js';
 import { logger } from '../utils/logger.js';
 
 // Where the tabbed panel lives: `bottom` (full-width band), `side` (column right of the board,
@@ -65,23 +65,17 @@ export function setPanelPosition(pos) {
     SavePanelPosition(next).catch((err) => logger.error('Failed to save panel position:', err));
 }
 
-// Panel size in px: height in bottom mode, width in side mode. Must equal config.go's
+// Panel size in px: height in bottom mode (remembered per tab, tabHeights.js), width in side mode. Must equal config.go's
 // DefaultPanelHeight/Width, or the panel jumps on first launch (panelDefaults.sync.test.js).
 export const DEFAULT_PANEL_HEIGHT = 250;
 export const DEFAULT_PANEL_WIDTH = 420;
 
-export const panelHeightStore = writable(DEFAULT_PANEL_HEIGHT);
 export const panelWidthStore = writable(DEFAULT_PANEL_WIDTH);
 
-// Load the persisted panel size at startup. App.svelte owns the size as local
+// Load the persisted panel width at startup. App.svelte owns the size as local
 // $state during an active drag (continuous mousemove updates would be wasted
 // churn on a store); this only seeds that local state once, at launch.
 export async function initPanelSize() {
-    try {
-        panelHeightStore.set(await GetPanelHeight());
-    } catch (err) {
-        logger.error('Failed to load panel height, using default:', err);
-    }
     try {
         panelWidthStore.set(await GetPanelWidth());
     } catch (err) {
@@ -89,13 +83,8 @@ export async function initPanelSize() {
     }
 }
 
-// Persist the panel size reached at the end of a resize-handle drag (called
-// on mouseup, not on every intermediate pixel — see App.svelte).
-export function savePanelHeight(height) {
-    panelHeightStore.set(height);
-    SavePanelHeight(height).catch((err) => logger.error('Failed to save panel height:', err));
-}
-
+// Persist the panel width reached at the end of a resize-handle drag (called
+// on mouseup, not on every intermediate pixel — see App.svelte). Heights are per tab: tabHeights.js.
 export function savePanelWidth(width) {
     panelWidthStore.set(width);
     SavePanelWidth(width).catch((err) => logger.error('Failed to save panel width:', err));

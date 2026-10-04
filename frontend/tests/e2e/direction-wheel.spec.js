@@ -17,7 +17,7 @@ test.use({ viewport: { width: 1024, height: 768 } });
 async function openDirection(page) {
     // Le dock à sa hauteur par défaut : sans elle, le mock rend null et le dock prend toute
     // la hauteur de son contenu.
-    await installWailsMock(page, openLibraryMock({ config: { GetPanelHeight: 250, GetPanelPosition: 'bottom' } }));
+    await installWailsMock(page, openLibraryMock({ config: { GetPanelPosition: 'bottom' } }));
     await installDirectionEngine(page);
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();

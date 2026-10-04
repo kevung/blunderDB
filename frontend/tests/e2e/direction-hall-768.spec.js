@@ -19,7 +19,7 @@ import { installDirectionEngine, S2_HALL } from './helpers/directionEngine.js';
 const VIEWPORT = { width: 1024, height: 768 };
 // Le dock bas à sa hauteur par défaut. Sans ces deux valeurs, le mock rend null et le dock
 // prend une hauteur automatique qui écrase la page : ce n'est pas ce qu'un directeur voit.
-const DOCK = { GetPanelHeight: 250, GetPanelPosition: 'bottom' };
+const DOCK = { GetPanelPosition: 'bottom' };
 
 async function openHall(page) {
     await page.setViewportSize(VIEWPORT);

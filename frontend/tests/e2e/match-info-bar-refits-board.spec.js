@@ -30,7 +30,7 @@ test.beforeEach(async ({ page }) => {
             // Une hauteur de panneau fixe, comme en production : sans réponse le
             // panneau prend la hauteur de son contenu, et la zone du plateau
             // bougerait à chaque changement d'onglet — ici seule la barre compte.
-            config: { GetPanelHeight: 250, GetPanelWidth: 420 }
+            config: { GetPanelWidth: 420 }
         })
     );
     await page.goto('/');

@@ -19,7 +19,7 @@ test.beforeEach(async ({ page }) => {
         page,
         openLibraryMock({
             database: { GetAllMatches: [matchSample], GetMatchMovePositions: matchMovePositions, GetGamesByMatch: matchGames },
-            config: { GetPanelHeight: 250, GetPanelWidth: 420 }
+            config: { GetPanelWidth: 420 }
         })
     );
     await page.goto('/');

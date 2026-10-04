@@ -205,7 +205,7 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		},
 		UIScale:              150,
 		PanelPosition:        PanelPositionSide,
-		PanelHeight:          520,
+		PanelHeights:         map[string]int{"stats": 520},
 		PanelWidth:           640,
 		TourSeen:             true,
 		TabOrder:             []string{"search", "matches", "analysis"},
@@ -253,7 +253,7 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		{"BoardColors", loaded.GetBoardColors(), original.BoardColors},
 		{"UIScale", loaded.GetUIScale(), original.UIScale},
 		{"PanelPosition", loaded.GetPanelPosition(), original.PanelPosition},
-		{"PanelHeight", loaded.GetPanelHeight(), original.PanelHeight},
+		{"PanelHeights", loaded.GetTabPanelHeights()["stats"], 520},
 		{"PanelWidth", loaded.GetPanelWidth(), original.PanelWidth},
 		{"TourSeen", loaded.GetTourSeen(), original.TourSeen},
 		{"TabOrder", loaded.GetTabOrder(), original.TabOrder},
@@ -304,8 +304,8 @@ func TestConfigRoundTripEmptyFieldsKeepDefaults(t *testing.T) {
 	if got := loaded.GetPanelPosition(); got != DefaultPanelPosition {
 		t.Errorf("GetPanelPosition() = %q, want default %q", got, DefaultPanelPosition)
 	}
-	if got := loaded.GetPanelHeight(); got != DefaultPanelHeight {
-		t.Errorf("GetPanelHeight() = %d, want default %d", got, DefaultPanelHeight)
+	if got := loaded.GetTabPanelHeights(); len(got) != 0 {
+		t.Errorf("GetTabPanelHeights() = %v, want none", got)
 	}
 	if got := loaded.GetPanelWidth(); got != DefaultPanelWidth {
 		t.Errorf("GetPanelWidth() = %d, want default %d", got, DefaultPanelWidth)
@@ -658,5 +658,35 @@ func TestTabPanelHeights(t *testing.T) {
 		if got[tab] != h {
 			t.Errorf("height of %q = %d, want %d", tab, got[tab], h)
 		}
+	}
+}
+
+// A config written before heights were per tab carries one panel_height: it seeds the height of
+// every tab without its own, and is not written back.
+func TestLoadConfigSeedsTabHeightsFromLegacyPanelHeight(t *testing.T) {
+	isolateXDGConfig(t)
+
+	legacy := NewConfig()
+	legacy.PanelHeight = 520
+	if err := legacy.SaveConfig(legacy); err != nil {
+		t.Fatal(err)
+	}
+	loaded := &Config{}
+	if _, err := loaded.LoadConfig(); err != nil {
+		t.Fatal(err)
+	}
+	if got := loaded.GetTabPanelHeights()[AnyTabPanelHeight]; got != 520 {
+		t.Fatalf("seed = %d, want 520", got)
+	}
+	if err := loaded.SaveTabPanelHeight("stats", 300); err != nil {
+		t.Fatal(err)
+	}
+	again := &Config{}
+	if _, err := again.LoadConfig(); err != nil {
+		t.Fatal(err)
+	}
+	got := again.GetTabPanelHeights()
+	if got["stats"] != 300 || got[AnyTabPanelHeight] != 520 || again.PanelHeight != 0 {
+		t.Fatalf("reloaded %v, legacy %d", got, again.PanelHeight)
 	}
 }

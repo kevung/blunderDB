@@ -12,7 +12,7 @@ import { installTranscriptionEngine } from './helpers/transcriptionDraft.js';
 test.use({ viewport: { width: 1024, height: 700 } });
 
 test('le plateau entier est visible avec le panneau Transcription ouvert', async ({ page }) => {
-    await installWailsMock(page, openLibraryMock({ config: { GetPanelPosition: 'bottom', GetPanelHeight: 250 } }));
+    await installWailsMock(page, openLibraryMock({ config: { GetPanelPosition: 'bottom' } }));
     await installTranscriptionEngine(page);
     await page.goto('/');
     await page.locator('[data-testid="tab-transcription"]').click();

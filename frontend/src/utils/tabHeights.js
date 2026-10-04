@@ -5,6 +5,10 @@ import { GetTabPanelHeights, SaveTabPanelHeight } from '../../wailsjs/go/main/Co
 import { DEFAULT_PANEL_HEIGHT } from '../stores/panelLayoutStore.js';
 import { logger } from './logger.js';
 
+// Key under which Config carries the single height of a config written before heights were per
+// tab: it stands in for every tab that has none of its own.
+const FALLBACK_TAB = '*';
+
 /** @type {Record<string, number>} */
 let heights = {};
 
@@ -19,7 +23,7 @@ export async function initTabHeights() {
 
 /** @param {string} tab @returns {number} */
 export function tabPanelHeight(tab) {
-    const h = heights[tab];
+    const h = heights[tab] ?? heights[FALLBACK_TAB];
     return Number.isFinite(h) && h > 0 ? h : DEFAULT_PANEL_HEIGHT;
 }
 

@@ -23,6 +23,12 @@ describe('tabHeights', () => {
         expect(tabPanelHeight('search')).toBe(DEFAULT_PANEL_HEIGHT);
         await vi.waitFor(() => expect(saved).toHaveBeenCalledWith('stats', 460));
     });
+    test("la hauteur d'une ancienne config vaut pour l'onglet sans hauteur propre", async () => {
+        stored = { '*': 520, eval: 300 };
+        await initTabHeights();
+        expect(tabPanelHeight('stats')).toBe(520);
+        expect(tabPanelHeight('eval')).toBe(300);
+    });
     test('les hauteurs persistées sont relues au démarrage', async () => {
         stored = { eval: 300 };
         await initTabHeights();

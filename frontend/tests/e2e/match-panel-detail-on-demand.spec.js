@@ -23,7 +23,7 @@ test.beforeEach(async ({ page }) => {
             // Une hauteur de panneau fixe, comme en production : sans réponse le
             // panneau prend la hauteur de son contenu et monterait quand la
             // transcription remplit le volet — ici seule la liste compte.
-            config: { GetPanelHeight: 250, GetPanelWidth: 420 }
+            config: { GetPanelWidth: 420 }
         })
     );
     await page.goto('/');
