@@ -39,18 +39,29 @@ func (d *Service) confirmProposal(ctx context.Context, tournamentID int64, a tou
 		return err
 	}
 	defer release(&err)
-	if shared && a.Kind == tournoi.ActStartMatch && a.Table > 0 {
-		room, err := d.roomAround(ctx, tournamentID, nil)
-		if err != nil {
-			return err
-		}
-		if _, taken := room.tables[a.Table]; taken {
-			return direction.Refusef("direction: table %d is taken", a.Table)
-		}
-	}
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return err
+	}
+	if shared && a.Kind == tournoi.ActStartMatch {
+		room, err := d.roomAround(ctx, tournamentID, dir)
+		if err != nil {
+			return err
+		}
+		if _, taken := room.tables[a.Table]; a.Table > 0 && taken {
+			return direction.Refusef("direction: table %d is taken", a.Table)
+		}
+		// One person cannot sit at two matches: a proposal shown before its player sat down
+		// next door, or held for that very reason, is not launched.
+		for _, p := range []tournoi.PlayerID{a.A, a.B} {
+			if seat, busy := room.players[p]; busy && p != "" {
+				name := string(p)
+				if pl := dir.State().Players[p]; pl != nil && pl.Name != "" {
+					name = pl.Name
+				}
+				return direction.Refusef("direction: %s plays in %s, table %d", name, seat.Event, seat.Table)
+			}
+		}
 	}
 	if a.Kind == tournoi.ActStartMatch && a.Table > 0 {
 		if err := d.tableBeyond(ctx, dir, tournamentID, a.Table); err != nil {
@@ -132,8 +143,7 @@ func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) (
 			// (found by the standings test, which closed the tournament without meaning to).
 			continue
 		}
-		if a.Reason == tournoi.ReasonWaitingTable || a.Reason == tournoi.ReasonPlayerUnavailable ||
-			a.Reason == tournoi.ReasonPlayerBusy {
+		if heldForTable(a) {
 			// A proposal with no table stays in the queue: launching it here would put two
 			// matches on one table, or none, without the director ever choosing. In rounds
 			// mode the round stays open until all its players are engaged, so the rest of it
@@ -145,6 +155,14 @@ func (d *Service) confirmAllProposals(ctx context.Context, tournamentID int64) (
 		}
 	}
 	return nil
+}
+
+// heldForTable tells a match the engine proposes without a table to play on: every table taken,
+// or a player unavailable or at a match of a sister event. It stays in the queue until its
+// table, or its player, frees up.
+func heldForTable(a tournoi.Action) bool {
+	return a.Reason == tournoi.ReasonWaitingTable || a.Reason == tournoi.ReasonPlayerUnavailable ||
+		a.Reason == tournoi.ReasonPlayerBusy
 }
 
 // confirm turns one action into its event and records it.

@@ -425,7 +425,7 @@ func (cli *CLI) runTournamentMove(args []string) error {
 // runTournamentHall prints the Hall of a Rencontre, the grid the GUI shows: one line per table
 // of the room whatever the event, then the proposals of each event. The merge is the service's.
 func (cli *CLI) runTournamentHall(args []string) error {
-	fs, dbPath := tournamentFlagSet("hall", "Print a Rencontre's tables, every event together, and the proposals of each event.",
+	fs, dbPath := tournamentFlagSet("hall", "Print a Rencontre's tables, every event together, then the proposals of every event in one queue and the matches held for want of a table.",
 		"blunderdb tournament hall --db base.db --rencontre 1",
 		"blunderdb tournament hall --db base.db --rencontre 1 --format json")
 	rencontre := fs.Int64("rencontre", 0, "Rencontre ID (required)")
@@ -472,23 +472,35 @@ func (cli *CLI) runTournamentHall(args []string) error {
 			fmt.Printf("%s\tfree\n", table)
 		}
 	}
+	events := map[int64]database.HallEvent{}
 	for _, ev := range h.Events {
-		for _, a := range ev.Proposals {
-			if a.Kind == tournoi.ActWait {
-				continue
+		events[ev.TournamentID] = ev
+	}
+	// The queue in the Hall's order, every event mixed, then the matches held for want of a
+	// table or of a free player, which the Hall does not launch.
+	printProposal := func(tag string, p database.HallProposal) {
+		ev, a := events[p.TournamentID], p.Action
+		name := func(id tournoi.PlayerID) string {
+			if n := ev.Names[string(id)]; n != "" {
+				return n
 			}
-			name := func(id tournoi.PlayerID) string {
-				if n := ev.Names[string(id)]; n != "" {
-					return n
-				}
-				return string(id)
-			}
-			if a.A == "" {
-				fmt.Printf("proposal\t%s\t%s\n", ev.Name, a.Kind)
-				continue
-			}
-			fmt.Printf("proposal\t%s\t%s\t%s - %s\ttable %d\n", ev.Name, a.Kind, name(a.A), name(a.B), a.Table)
+			return string(id)
 		}
+		if a.A == "" {
+			fmt.Printf("%s\t%s\t%s\n", tag, ev.Name, a.Kind)
+			return
+		}
+		where := fmt.Sprintf("table %d", a.Table)
+		if tag == "held" {
+			where = string(a.Reason)
+		}
+		fmt.Printf("%s\t%s\t%s\t%s - %s\t%s\n", tag, ev.Name, a.Kind, name(a.A), name(a.B), where)
+	}
+	for _, p := range h.Queue {
+		printProposal("proposal", p)
+	}
+	for _, p := range h.Held {
+		printProposal("held", p)
 	}
 	return nil
 }

@@ -3884,7 +3884,7 @@ Examples:
 ```
 Usage: blunderdb tournament hall [options]
 
-Print a Rencontre's tables, every event together, and the proposals of each event.
+Print a Rencontre's tables, every event together, then the proposals of every event in one queue and the matches held for want of a table.
 
 Options:
   -db string

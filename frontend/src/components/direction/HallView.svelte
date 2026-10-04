@@ -47,14 +47,15 @@
     /** @param {number} tid @param {ProposalAction} a */
     const launch = (tid, a) => act(() => hallConfirmProposal(tid, a), 'direction.proposals.errorConfirm');
 
-    /** Les propositions qu'on peut lancer, épreuve par épreuve ; « attendre » n'en est pas une. */
-    const groups = $derived(
-        (hall?.events || []).map((ev) => ({
-            ev,
-            actions: /** @type {ProposalAction[]} */ ((ev.proposals || []).filter((a) => a.kind !== 'wait'))
-        }))
-    );
-    const pendingTotal = $derived(groups.reduce((n, g) => n + g.actions.length, 0));
+    /*
+     * Une seule file, toutes épreuves mêlées : l'ordre est celui de RencontreTableGrid (les
+     * joueurs qui attendent depuis le plus longtemps d'abord). Les matchs retenus faute de table
+     * ou de joueur libre suivent, sans bouton : lancés, ils ne seraient sur aucune table.
+     */
+    const queue = $derived(hall?.queue || []);
+    const held = $derived(hall?.held || []);
+    /** @type {Record<number, HallEvent>} */
+    const eventOf = $derived(Object.fromEntries((hall?.events || []).map((ev) => [ev.tournamentId, ev])));
 
     /** @param {HallEvent} ev @returns {(id: string | undefined) => string} */
     const namesOf = (ev) => (id) => (id && ev.names?.[id]) || id || '';
@@ -79,28 +80,38 @@
         </ul>
         <TableGrid cells={hall.cells || []} {busy} {onResult} {onForfeit} {onMove} {onCancel} onHistory={onHistory ? (name, c) => onHistory(name, tidOf(c)) : undefined} {onOutOfService} />
         <section class="proposals" data-testid="hall-proposals">
-            <h3>{$t('direction.hall.proposals', { n: pendingTotal })}</h3>
-            {#each groups as g (g.ev.tournamentId)}
-                {#if g.actions.length}
-                    <div class="group" style={evColor(g.ev.index)} data-testid="hall-proposals-{g.ev.tournamentId}">
-                        <h4><span class="chip">{g.ev.name}</span></h4>
-                        <ul>
-                            {#each g.actions as a (actionKey(a))}
-                                <li>
-                                    <span class="what">{proposalLabel($t, a, namesOf(g.ev))}</span>
-                                    {#if a.length}<span class="meta">{$t('direction.proposals.points', { n: a.length })}</span>{/if}
-                                    {#if a.table}<span class="meta">{$t('direction.proposals.table', { n: tableTitle(a.table, tableNames[a.table]) })}</span>{/if}
-                                    <span class="grow"></span>
-                                    <button type="button" class="go" disabled={busy} onclick={() => launch(g.ev.tournamentId, a)}>
-                                        {isRepair(a) ? $t('direction.proposals.cancelMatch') : $t('direction.proposals.launch')}
-                                    </button>
-                                </li>
-                            {/each}
-                        </ul>
-                    </div>
-                {/if}
-            {/each}
-            {#if pendingTotal === 0}
+            <h3>{$t('direction.hall.proposals', { n: queue.length })}</h3>
+            {#if queue.length}
+                <ul data-testid="hall-queue">
+                    {#each queue as p (p.tournamentId + ':' + actionKey(p.action))}
+                        {@const a = p.action}
+                        <li style={evColor(p.eventIndex)} data-testid="hall-proposal-{p.tournamentId}">
+                            <span class="chip">{eventOf[p.tournamentId]?.name ?? ''}</span>
+                            <span class="what">{proposalLabel($t, a, namesOf(eventOf[p.tournamentId]))}</span>
+                            {#if a.length}<span class="meta">{$t('direction.proposals.points', { n: a.length })}</span>{/if}
+                            {#if a.table}<span class="meta">{$t('direction.proposals.table', { n: tableTitle(a.table, tableNames[a.table]) })}</span>{/if}
+                            <span class="grow"></span>
+                            <button type="button" class="go" disabled={busy} onclick={() => launch(p.tournamentId, a)}>
+                                {isRepair(a) ? $t('direction.proposals.cancelMatch') : $t('direction.proposals.launch')}
+                            </button>
+                        </li>
+                    {/each}
+                </ul>
+            {/if}
+            {#if held.length}
+                <ul class="held" data-testid="hall-held">
+                    {#each held as p (p.tournamentId + ':' + actionKey(p.action))}
+                        {@const a = p.action}
+                        <li style={evColor(p.eventIndex)} data-testid="hall-held-{p.tournamentId}">
+                            <span class="chip">{eventOf[p.tournamentId]?.name ?? ''}</span>
+                            <span class="what">{proposalLabel($t, a, namesOf(eventOf[p.tournamentId]))}</span>
+                            {#if a.length}<span class="meta">{$t('direction.proposals.points', { n: a.length })}</span>{/if}
+                            <span class="meta warn">{$t(`direction.reason.${a.reason}`)}</span>
+                        </li>
+                    {/each}
+                </ul>
+            {/if}
+            {#if queue.length === 0 && held.length === 0}
                 <p class="empty">{$t('direction.proposals.none')}</p>
             {/if}
         </section>
@@ -147,19 +158,13 @@
         color: var(--color-text);
     }
 
-    h4 {
-        margin: var(--space-2) 0 var(--space-1);
-        font-size: var(--font-size-base);
-        font-weight: 600;
-    }
-
     ul {
         margin: 0;
         padding: 0;
         list-style: none;
     }
 
-    .group li {
+    .proposals li {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
@@ -173,6 +178,14 @@
     .meta {
         color: var(--color-text-muted);
         font-size: var(--font-size-small);
+    }
+
+    .meta.warn {
+        color: var(--color-danger);
+    }
+
+    .held {
+        margin-top: var(--space-2);
     }
 
     .grow {

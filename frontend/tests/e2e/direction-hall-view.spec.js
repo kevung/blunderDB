@@ -46,13 +46,20 @@ async function installHall(page) {
                 return { ...c, eventIndex: -1 };
             });
             const view = await db.GetDirection(1);
+            // RencontreTableGrid splits the proposals: those with a table to launch, those held
+            // for want of a table or of a free player.
+            const starts = view.proposals.filter((a) => a.kind !== 'wait');
+            const isHeld = (a) => ['waiting_table', 'player_unavailable', 'player_busy'].includes(a.reason);
+            const wrap = (a) => ({ tournamentId: 1, eventIndex: 1, action: a });
             return {
                 rencontreId: rid,
                 name: 'Festival de Lyon',
                 events: [
-                    { tournamentId: 2, name: 'Principal', index: 0, proposals: [], names: {} },
-                    { tournamentId: 1, name: 'Speed', index: 1, proposals: view.proposals, names: Object.fromEntries(view.players.map((p) => [p.id, p.name])) }
+                    { tournamentId: 2, name: 'Principal', index: 0, names: {} },
+                    { tournamentId: 1, name: 'Speed', index: 1, names: Object.fromEntries(view.players.map((p) => [p.id, p.name])) }
                 ],
+                queue: starts.filter((a) => !isHeld(a)).map(wrap),
+                held: starts.filter(isHeld).map(wrap),
                 cells
             };
         };
@@ -89,7 +96,7 @@ test('la Salle : un onglet avant les épreuves, chaque case marquée de son épr
     await expect(tabs.first()).toHaveAttribute('data-testid', 'epreuve-tab-hall');
     await expect(page.locator(cell(1))).toContainText('Speed');
     await expect(page.locator(cell(3))).toContainText('Principal');
-    await expect(page.locator(`${HALL} [data-testid="hall-proposals-1"]`)).toBeVisible();
+    await expect(page.locator(`${HALL} [data-testid="hall-proposal-1"]`).first()).toBeVisible();
     // Les volets de l'épreuve restent montés, mais cachés.
     await expect(page.locator('[data-testid="direction-pane-direction"]')).toBeHidden();
     // Une épreuve choisie quitte la Salle.
@@ -127,6 +134,6 @@ test('les cases de la Salle gardent la cible de 44 px', async ({ page }) => {
     await openRoom(page);
     const box = await page.locator(cell(1)).boundingBox();
     expect(box.height).toBeGreaterThanOrEqual(44);
-    const go = await page.locator(`${HALL} [data-testid="hall-proposals-1"] button.go`).first().boundingBox();
+    const go = await page.locator(`${HALL} [data-testid="hall-proposal-1"] button.go`).first().boundingBox();
     expect(go.height).toBeGreaterThanOrEqual(44);
 });
