@@ -1091,7 +1091,10 @@
         "descProtected": "salasana",
         "tournamentsNeedMatches": "Turnaus liitetään otteluihinsa vain jos ottelutkin viedään — valitse ensin ”sisällytä ottelut”.",
         "filterLibraryHint": "Omat tallennetut hakusi, ei sisältöä: toisen tietokannassa niistä ei ole hyötyä.",
-        "metadataTitle": "Vietävän tiedoston metatiedot"
+        "metadataTitle": "Vietävän tiedoston metatiedot",
+        "includeLessons": "Sisällytä oppitunnit ({count})",
+        "selectLessons": "Valitse vietävät oppitunnit",
+        "descLessons": "{count} oppituntia"
     },
     "import": {
         "minimize": "Pienennä",
@@ -2703,7 +2706,7 @@
             "history": "Hakuhistoria",
             "match": "Otteluiden paneeli",
             "collection": "Kokoelmien paneeli",
-            "lesson": "Oppitunnit (le N avaa oppitunnin N)",
+            "lesson": "Oppitunnit (le N avaa oppitunnin N, le edit avaa muokkaimen)",
             "eval": "Eval-paneeli",
             "rollout": "Rollaa asema (rollout fast|standard, search, stop)",
             "transcribe": "Ottelujen litterointi",
@@ -2802,7 +2805,11 @@
         "empty": "Oppitunnilla ei ole vielä vaiheita.",
         "notFound": "Oppituntia nro {id} ei ole.",
         "failed": "Oppitunteja ei voitu lukea.",
-        "stepMissing": "Tämän vaiheen sisältöä ei enää ole tietokannassa."
+        "stepMissing": "Tämän vaiheen sisältöä ei enää ole tietokannassa.",
+        "edit": "Muokkaa",
+        "stepDone": "Vaihe tehty",
+        "stepDoneHint": "Merkitsee vaiheen tehdyksi tähän tietokantaan; toinen napsautus poistaa merkinnän. Lukemisesta ei tallenneta muuta.",
+        "doneCount": "{done} / {n} tehty"
     },
     "corpus": {
         "intro": "Kaksoiskappaleet ja kirjoitusasut: mitä tuonti tunnistaa jo tallennetuksi, ja saman pelaajan tai tapahtuman muut nimet.",
@@ -2830,5 +2837,32 @@
         "applyPairing": "Luo nämä aliakset",
         "pairingApplied": "Aliakset luotu",
         "suspectLonger": "#{match} jatkaa ottelua #{other} ({players})"
+    },
+    "lessonEditor": {
+        "title": "Oppitunnit",
+        "failed": "Epäonnistui: {error}",
+        "confirmDelete": "Poistetaanko oppitunti ”{name}”? Sen kokoelmat ja asemat säilyvät.",
+        "newStepTitle": "Vaihe {n}",
+        "confirmRemoveStep": "Poistetaanko vaihe ”{title}”?",
+        "noCurrentPosition": "Laudalla ei ole asemaa.",
+        "newLessonName": "Uuden oppitunnin nimi",
+        "create": "Luo",
+        "name": "Nimi",
+        "description": "Kuvaus",
+        "save": "Tallenna",
+        "read": "Lue",
+        "delete": "Poista",
+        "stepTitle": "Vaiheen otsikko",
+        "up": "Ylös",
+        "down": "Alas",
+        "stepText": "Vaiheen teksti",
+        "collection": "Näytettävä kokoelma",
+        "noCollection": "Ei kokoelmaa",
+        "position": "Asema {id}",
+        "useCurrentPosition": "Nykyinen asema",
+        "detachPosition": "Irrota asema",
+        "saveStep": "Tallenna vaihe",
+        "removeStep": "Poista vaihe",
+        "addStep": "Lisää vaihe"
     }
 }

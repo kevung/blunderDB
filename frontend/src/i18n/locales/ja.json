@@ -1091,7 +1091,10 @@
         "descProtected": "パスワード",
         "tournamentsNeedMatches": "大会はマッチも一緒にエクスポートした場合にのみ紐付きます。先に「マッチを含める」を選んでください。",
         "filterLibraryHint": "内容ではなく、あなた自身の保存済み検索です。他人のデータベースでは役に立ちません。",
-        "metadataTitle": "エクスポートするファイルのメタデータ"
+        "metadataTitle": "エクスポートするファイルのメタデータ",
+        "includeLessons": "レッスンを含める ({count})",
+        "selectLessons": "エクスポートするレッスンを選択",
+        "descLessons": "レッスン {count} 件"
     },
     "import": {
         "minimize": "最小化",
@@ -2703,7 +2706,7 @@
             "history": "検索履歴",
             "match": "マッチパネル",
             "collection": "コレクションパネル",
-            "lesson": "レッスン (le N でレッスン N を開く)",
+            "lesson": "レッスン (le N でレッスン N を開く、le edit でエディタを開く)",
             "eval": "Eval パネル",
             "rollout": "局面をロールアウト(rollout fast|standard, search, stop)",
             "transcribe": "マッチの書き起こし",
@@ -2802,7 +2805,11 @@
         "empty": "このレッスンにはまだステップがありません。",
         "notFound": "レッスン {id} はありません。",
         "failed": "レッスンを読み込めませんでした。",
-        "stepMissing": "このステップが示す内容はもうデータベースにありません。"
+        "stepMissing": "このステップが示す内容はもうデータベースにありません。",
+        "edit": "編集",
+        "stepDone": "ステップ完了",
+        "stepDoneHint": "このデータベースでステップを完了として記録します。もう一度クリックすると記録を取り消します。読んだこと自体は何も記録されません。",
+        "doneCount": "{done} / {n} 完了"
     },
     "corpus": {
         "intro": "重複と表記ゆれ：インポートが保存済みと認識するもの、同じプレイヤーやイベントの別名。",
@@ -2830,5 +2837,32 @@
         "applyPairing": "これらの別名を作成",
         "pairingApplied": "別名を作成しました",
         "suspectLonger": "#{match} は #{other} の続き（{players}）"
+    },
+    "lessonEditor": {
+        "title": "レッスン",
+        "failed": "失敗しました: {error}",
+        "confirmDelete": "レッスン「{name}」を削除しますか？コレクションとポジションは残ります。",
+        "newStepTitle": "ステップ {n}",
+        "confirmRemoveStep": "ステップ「{title}」を削除しますか？",
+        "noCurrentPosition": "盤面にポジションがありません。",
+        "newLessonName": "新しいレッスンの名前",
+        "create": "作成",
+        "name": "名前",
+        "description": "説明",
+        "save": "保存",
+        "read": "読む",
+        "delete": "削除",
+        "stepTitle": "ステップのタイトル",
+        "up": "上へ",
+        "down": "下へ",
+        "stepText": "ステップのテキスト",
+        "collection": "表示するコレクション",
+        "noCollection": "コレクションなし",
+        "position": "ポジション {id}",
+        "useCurrentPosition": "現在のポジション",
+        "detachPosition": "ポジションを外す",
+        "saveStep": "ステップを保存",
+        "removeStep": "ステップを削除",
+        "addStep": "ステップを追加"
     }
 }

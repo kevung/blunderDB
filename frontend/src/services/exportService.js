@@ -170,6 +170,10 @@ export async function handleExportCommit() {
             includeMatches: exportOptions.includeMatches && (exportOptions.matchIDs || []).length > 0,
             includeCollections: exportOptions.includeCollections,
             collectionIDs: exportOptions.collectionIDs || [],
+            // An empty lessonIDs means every Lesson to the backend: a selection emptied
+            // by hand must export none, so it turns the inclusion off.
+            includeLessons: !!exportOptions.includeLessons && (exportOptions.lessonIDs || []).length > 0,
+            lessonIDs: exportOptions.lessonIDs || [],
             matchIDs: exportOptions.matchIDs || [],
             tournamentIDs: exportOptions.includeTournamentIDs || []
         };

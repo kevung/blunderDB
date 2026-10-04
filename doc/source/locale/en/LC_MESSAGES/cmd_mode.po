@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 20:00+0200\n"
+"POT-Creation-Date: 2026-10-04 21:58+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -463,16 +463,18 @@ msgid "Afficher/cacher le panneau des collections."
 msgstr "Show/hide the collections panel."
 
 #: ../../source/cmd_mode.rst:1
-msgid "lesson, le [N]"
-msgstr "lesson, le [N]"
+msgid "lesson, le [N | edit [N]]"
+msgstr "lesson, le [N | edit [N]]"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
 "Sans argument, liste les leçons de la base dans la barre d'état ; ``le "
-"N`` ouvre la leçon N à sa première étape (voir :ref:`lecons`)."
+"N`` ouvre la leçon N à sa première étape ; ``le edit`` ouvre l'éditeur de"
+" leçons, ``le edit N`` sur la leçon N (voir :ref:`lecons`)."
 msgstr ""
 "Without an argument, lists the database's lessons in the status bar; ``le"
-" N`` opens lesson N at its first step (see :ref:`lecons`)."
+" N`` opens lesson N at its first step; ``le edit`` opens the lesson "
+"editor, ``le edit N`` on lesson N (see :ref:`lecons`)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "#tag1 tag2 ..."

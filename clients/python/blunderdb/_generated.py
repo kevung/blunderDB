@@ -638,6 +638,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/lessons.delete — JSON."
         return self._call("/v1/lessons.delete", payload)
 
+    def lessons_done_steps(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.doneSteps — JSON."
+        return self._call("/v1/lessons.doneSteps", payload)
+
     def lessons_get(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/lessons.get — JSON."
         return self._call("/v1/lessons.get", payload)
@@ -653,6 +657,10 @@ class GeneratedAPI(BaseClient):
     def lessons_reorder_steps(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/lessons.reorderSteps — JSON."
         return self._call("/v1/lessons.reorderSteps", payload)
+
+    def lessons_set_step_done(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/lessons.setStepDone — JSON."
+        return self._call("/v1/lessons.setStepDone", payload)
 
     def lessons_update(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/lessons.update — JSON."

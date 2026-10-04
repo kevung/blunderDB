@@ -22,6 +22,8 @@ export const exportOptionsStore = writable({
     includeTournamentIDs: [],
     includeCollections: false,
     collectionIDs: [],
+    includeLessons: false,
+    lessonIDs: [],
     // Two optional, independent mechanisms, both off by default so an ordinary export
     // stays exactly what it was: mark where the file comes from, and protect it with a
     // password. See ADR-0007.
@@ -49,6 +51,8 @@ export function resetExportState() {
         includeTournamentIDs: [],
         includeCollections: false,
         collectionIDs: [],
+        includeLessons: false,
+        lessonIDs: [],
         watermarkEnabled: false,
         watermark: '',
         watermarkNote: '',

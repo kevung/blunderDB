@@ -186,6 +186,8 @@ var databaseParity = map[string]parityEntry{
 	"UpdateLessonStep":                  {CLI: "lesson edit-step", Server: "/v1/lessons.updateStep"},
 	"RemoveLessonStep":                  {CLI: "lesson remove-step", Server: "/v1/lessons.removeStep"},
 	"ReorderLessonSteps":                {CLI: "lesson reorder", Server: "/v1/lessons.reorderSteps"},
+	"SetLessonStepDone":                 {CLI: "lesson done", Server: "/v1/lessons.setStepDone"},
+	"LessonDoneSteps":                   {CLI: "lesson progress", Server: "/v1/lessons.doneSteps"},
 	"CreateTournament":                  {Server: "/v1/tournaments.create", Why: whyGUIEdit},
 	"DeleteAnalysis":                    {Server: "/v1/analyses.delete", Why: whyGUIEdit},
 	"DeleteAnkiDeck":                    {Server: "/v1/anki.deleteDeck", Why: "deleting a deck discards its review history: kept behind the GUI's confirmation"},

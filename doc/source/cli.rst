@@ -1014,11 +1014,16 @@ acceptent ``--format text`` (défaut) ou ``json``.
   collections et les positions que leurs étapes montrent, vers un nouveau
   fichier de base ; avec ``--password``, le fichier est un ``.dbx`` protégé
   (voir la commande ``export`` pour le filigrane).
+* ``done --step <id> [--undo]`` — Marque une étape comme faite dans cette base,
+  ou retire la marque avec ``--undo`` : c'est la progression de celui qui lit
+  la leçon, et aucun export ne l'emporte.
+* ``progress --id <id> [--format text|json]`` — Montre les étapes de la leçon
+  marquées faites, avec la date du geste.
 
 Importer un fichier qui contient une leçon crée celle-ci avec ses étapes ; une
 leçon dont le nom existe déjà dans la base n'est pas touchée, si bien que
 réimporter le même fichier ne change rien. Lire une leçon n'enregistre rien chez
-celui qui la lit.
+celui qui la lit ; seul ``done`` écrit sa progression.
 
 L'export de toute la bibliothèque (``export --type database``) emporte toutes
 les leçons avec ce que leurs étapes montrent ; un export partiel ne les emporte

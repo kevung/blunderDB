@@ -71,7 +71,7 @@ Positions et navigation
    "stats, st", "Afficher/masquer le panneau de statistiques."
    "match, ma", "Afficher/cacher le panneau des matchs."
    "collection, coll", "Afficher/cacher le panneau des collections."
-   "lesson, le [N]", "Sans argument, liste les leçons de la base dans la barre d'état ; ``le N`` ouvre la leçon N à sa première étape (voir :ref:`lecons`)."
+   "lesson, le [N | edit [N]]", "Sans argument, liste les leçons de la base dans la barre d'état ; ``le N`` ouvre la leçon N à sa première étape ; ``le edit`` ouvre l'éditeur de leçons, ``le edit N`` sur la leçon N (voir :ref:`lecons`)."
    "#tag1 tag2 ...", "Etiqueter la position courante."
    "e", "Charger toutes les positions de la base de données."
    "blunders, bl [n]", "Charger les pires erreurs (équité/MWC) dans la vue d'analyse, selon le filtre courant des statistiques. Un nombre optionnel choisit combien en charger (``bl 50``) ; par défaut 10."

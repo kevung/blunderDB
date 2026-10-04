@@ -750,6 +750,10 @@ export function LastDecision(arg1) {
   return window['go']['database']['Database']['LastDecision'](arg1);
 }
 
+export function LessonDoneSteps(arg1) {
+  return window['go']['database']['Database']['LessonDoneSteps'](arg1);
+}
+
 export function ListAliases(arg1) {
   return window['go']['database']['Database']['ListAliases'](arg1);
 }
@@ -1248,6 +1252,10 @@ export function SetEventRooms(arg1, arg2, arg3) {
 
 export function SetFilterPinned(arg1, arg2) {
   return window['go']['database']['Database']['SetFilterPinned'](arg1, arg2);
+}
+
+export function SetLessonStepDone(arg1, arg2) {
+  return window['go']['database']['Database']['SetLessonStepDone'](arg1, arg2);
 }
 
 export function SetMatchTournamentByName(arg1, arg2) {

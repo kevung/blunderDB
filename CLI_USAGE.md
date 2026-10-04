@@ -2966,6 +2966,26 @@ Examples:
   blunderdb lesson delete --db database.db --id 1 --confirm
 ```
 
+### `blunderdb lesson done`
+
+```
+Usage: blunderdb lesson done [options]
+
+Mark a step done, the reader's own progress (ADR-0069). It is written only by this gesture, in this database; no export carries it.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -step int
+    	Step ID (required)
+  -undo
+    	Withdraw the mark instead of setting it
+
+Examples:
+  blunderdb lesson done --db database.db --step 7
+  blunderdb lesson done --db database.db --step 7 --undo
+```
+
 ### `blunderdb lesson edit`
 
 ```
@@ -3062,6 +3082,26 @@ Options:
 
 Examples:
   blunderdb lesson list --db database.db --format json
+```
+
+### `blunderdb lesson progress`
+
+```
+Usage: blunderdb lesson progress [options]
+
+Show which steps of a lesson are marked done, and the date of the gesture.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Lesson ID (required)
+
+Examples:
+  blunderdb lesson progress --db database.db --id 1
+  blunderdb lesson progress --db database.db --id 1 --format json
 ```
 
 ### `blunderdb lesson remove-step`

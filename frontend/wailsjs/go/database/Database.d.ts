@@ -392,6 +392,8 @@ export function IsReadOnly():Promise<boolean>;
 
 export function LastDecision(arg1:number):Promise<service.LastDecision>;
 
+export function LessonDoneSteps(arg1:number):Promise<Record<number, string>>;
+
 export function ListAliases(arg1:string):Promise<Array<storage.Alias>>;
 
 export function ListAnkiDeckPositionIDs(arg1:number,arg2:number,arg3:number):Promise<Array<number>>;
@@ -641,6 +643,8 @@ export function SetDirectionTables(arg1:number,arg2:Array<domain.TableSetting>):
 export function SetEventRooms(arg1:number,arg2:number,arg3:Array<string>):Promise<service.RencontreView>;
 
 export function SetFilterPinned(arg1:number,arg2:boolean):Promise<void>;
+
+export function SetLessonStepDone(arg1:number,arg2:boolean):Promise<void>;
 
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 
