@@ -5,6 +5,8 @@ package domain
 // Matches point back at their batch, so the report speaks about *this import*
 // rather than about the database.
 
+import "strings"
+
 // ImportBatch is one import the user launched.
 type ImportBatch struct {
 	ID int64 `json:"id"`
@@ -179,6 +181,81 @@ type DuplicateSuspect struct {
 	OtherID      int64  `json:"otherId"`
 	Players      string `json:"players"`
 	OtherPlayers string `json:"otherPlayers"`
+	// Pairings, for a same-dice suspect, are the ways of reading MatchID's
+	// players as OtherID's: each one the aliases that would make the two
+	// matches name the same players (SameDicePairings).
+	Pairings []AliasPairing `json:"pairings,omitempty"`
+}
+
+// PlayerAlias is one spelling to record as a player's other one.
+type PlayerAlias struct {
+	Alias     string `json:"alias"`
+	Canonical string `json:"canonical"`
+}
+
+// AliasPairing is one reading of which player of a match is which of the
+// other's: the aliases to record for it, one or two.
+type AliasPairing struct {
+	Aliases []PlayerAlias `json:"aliases"`
+}
+
+// NewSameDiceSuspect is the same-dice suspect of match (players p1, p2)
+// against other (o1, o2), with its alias pairings.
+func NewSameDiceSuspect(matchID, otherID int64, p1, p2, o1, o2 string) DuplicateSuspect {
+	return DuplicateSuspect{Kind: DuplicateSameDice, MatchID: matchID, OtherID: otherID,
+		Players: p1 + " – " + p2, OtherPlayers: o1 + " – " + o2,
+		Pairings: SameDicePairings(p1, p2, o1, o2)}
+}
+
+// SameDicePairings lists the readings of p1, p2 (the suspect's spellings,
+// the aliases) as o1, o2 (the other match's, the canonical names): seat for
+// seat, then crosswise. A reading in which a name already appears on both
+// sides is anchored by it — the other name can only be the other player —
+// so when one reading is anchored, only the anchored ones are proposed; a
+// player paired with his own spelling needs no alias and is left out.
+func SameDicePairings(p1, p2, o1, o2 string) []AliasPairing {
+	same := func(a, b string) bool {
+		return strings.EqualFold(strings.TrimSpace(a), strings.TrimSpace(b))
+	}
+	type reading struct {
+		pairs    [2][2]string
+		anchored bool
+	}
+	readings := []reading{
+		{pairs: [2][2]string{{p1, o1}, {p2, o2}}},
+		{pairs: [2][2]string{{p1, o2}, {p2, o1}}},
+	}
+	anyAnchored := false
+	for i := range readings {
+		for _, pr := range readings[i].pairs {
+			if same(pr[0], pr[1]) {
+				readings[i].anchored = true
+			}
+		}
+		anyAnchored = anyAnchored || readings[i].anchored
+	}
+	var out []AliasPairing
+	seen := map[string]bool{}
+	for _, r := range readings {
+		if anyAnchored && !r.anchored {
+			continue
+		}
+		var p AliasPairing
+		key := ""
+		for _, pr := range r.pairs {
+			if same(pr[0], pr[1]) || strings.TrimSpace(pr[0]) == "" || strings.TrimSpace(pr[1]) == "" {
+				continue
+			}
+			p.Aliases = append(p.Aliases, PlayerAlias{Alias: pr[0], Canonical: pr[1]})
+			key += pr[0] + "\x00" + pr[1] + "\x00"
+		}
+		if len(p.Aliases) == 0 || seen[key] {
+			continue
+		}
+		seen[key] = true
+		out = append(out, p)
+	}
+	return out
 }
 
 // Journal outcomes: what one file of a batch became.

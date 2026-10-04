@@ -656,6 +656,7 @@
         "newTournamentPlaceholder": "New tournament…",
         "noMatches": "No matches",
         "noTournaments": "No tournaments",
+        "openHint": "Double-click or press Enter to open",
         "notesPlaceholder": "Notes…",
         "player1": "Player 1",
         "player2": "Player 2",
@@ -2780,6 +2781,9 @@
         "findDuplicates": "Search",
         "noDuplicates": "No probable duplicate.",
         "suspectSameDice": "#{other} and #{match}: same dice ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Create these aliases",
+        "pairingApplied": "Aliases created",
         "suspectLonger": "#{match} extends #{other} ({players})"
     }
 }

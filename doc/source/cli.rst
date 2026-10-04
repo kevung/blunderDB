@@ -2233,6 +2233,10 @@ entièrement la base avant de basculer dessus), effectue le ``VACUUM`` puis un
 requêtes. Si l'espace disque manque, la commande refuse de démarrer avec un
 message explicite plutôt que de risquer un compactage interrompu.
 
+Avant le ``VACUUM``, chaque analyse est réécrite au format binaire compact,
+compressé au plus fort : y compris celles qu'une version antérieure avait
+rangées en JSON (voir ``reencode``).
+
 **Exemple:**
 
 .. code-block:: bash
@@ -2243,6 +2247,43 @@ message explicite plutôt que de risquer un compactage interrompu.
    #   Before: 128.4 MiB
    #   After:  41.2 MiB
    #   Reclaimed: 87.2 MiB
+
+reencode — Réécrire les analyses au format compact
+--------------------------------------------------
+
+Les analyses sont rangées dans un format binaire compact, environ deux fois
+plus petit que le JSON compressé des versions antérieures et plusieurs fois
+plus rapide à relire. Une base créée avant ce format reste lisible telle
+quelle : ses anciennes analyses sont converties quand elles sont réécrites (un
+import qui les enrichit, un ``vacuum``). ``reencode`` les convertit toutes,
+sans compacter le fichier : utile sur une grosse base, où un ``vacuum`` demande
+le double de l'espace disque, ou sur un serveur PostgreSQL, qui n'a pas de
+``vacuum``.
+
+.. code-block:: bash
+
+   ./blunderdb reencode --db <path>
+
+**Options:**
+
+* ``--db`` — Base de données (obligatoire).
+* ``--format`` — Format de sortie: ``text`` (défaut) ou ``json``
+  (``{"rewritten"}``, le nombre d'analyses réécrites).
+
+La conversion avance par lots de 2 000 analyses, chacun dans sa propre
+transaction. Interrompue, elle reprend au lancement suivant là où elle s'était
+arrêtée : les analyses déjà converties sont sautées sans être relues. Une
+analyse illisible est laissée telle quelle et signalée dans le journal. Elle
+ne se lance jamais d'elle-même. Le démon expose la même opération sur la route
+``maintenance.reencode``, limitée au tenant de l'appelant.
+
+**Exemple:**
+
+.. code-block:: bash
+
+   ./blunderdb reencode --db base.db
+
+   #   Analyses rewritten: 15623468
 
 .. _cli_repair:
 
@@ -2360,9 +2401,16 @@ cette tenue de comptes se trompait un jour.
 dés, jamais par leurs noms. Deux cas sont signalés : la même longueur, le même
 score initial et les mêmes dés dans chaque partie sous d'autres noms de
 joueurs, et un match dont les dés prolongent ceux d'un autre — un match tronqué
-puis complété. ``--format json`` rend ``{"suspects": [...]}``, chaque paire
-avec ``kind`` (``same_dice`` ou ``longer``), ``matchId``, ``otherId``,
-``players`` et ``otherPlayers``. Un match importé avant que l'empreinte des dés
+puis complété. Sous une paire aux mêmes dés, la sortie texte donne les
+commandes ``players alias add`` qui feraient nommer aux deux matchs les mêmes
+joueurs : une seule lecture quand un nom est commun aux deux (l'autre nom ne
+peut être que l'autre joueur), sinon deux — siège pour siège, puis croisée —
+numérotées, dont une seule est à lancer. La graphie du match le plus récent
+devient l'alias, celle du plus ancien le nom canonique. ``--format json`` rend
+``{"suspects": [...]}``, chaque paire avec ``kind`` (``same_dice`` ou
+``longer``), ``matchId``, ``otherId``, ``players``, ``otherPlayers`` et, pour
+une paire aux mêmes dés, ``pairings`` : la liste des lectures, chacune avec ses
+``aliases`` (``alias``, ``canonical``). Un match importé avant que l'empreinte des dés
 existe la reçoit au passage ; c'est la seule écriture de ce mode.
 
 Utile après une correction de la façon dont une analyse importée est lue. Le

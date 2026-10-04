@@ -249,3 +249,55 @@ func TestHeadToHeadAndWindowsFollowPlayerAliases(t *testing.T) {
 		t.Errorf("alias against its canonical: err = %v, want ErrInvalid", err)
 	}
 }
+
+// The head-to-head, the sliding windows and the per-match series read
+// match_stats; a read-only reader whose table is empty computes the same
+// seat rows from the decisions instead of refusing, and writes nothing.
+func TestHeadToHeadWindowsAndSeriesReadOnlyMatchWritable(t *testing.T) {
+	ctx := context.Background()
+	path := demoCopy(t)
+	w, err := Open(ctx, path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+	ro := openQueryOnly(t, path)
+
+	filters := []storage.StatsFilter{
+		{DecisionType: -1},
+		{DecisionType: 0},
+		{DecisionType: 1, PlayerName: "Ada Fairweather"},
+	}
+	read := func(st *Storage) []string {
+		var out []string
+		for _, f := range filters {
+			h2h, err := st.Stats().HeadToHead(ctx, "", "Ada Fairweather", "Bram Vesterholt", f)
+			if err != nil {
+				t.Fatalf("HeadToHead %+v: %v", f, err)
+			}
+			win, err := st.Stats().PRByWindow(ctx, "", f, 3)
+			if err != nil {
+				t.Fatalf("PRByWindow %+v: %v", f, err)
+			}
+			series, err := st.Stats().MatchSeries(ctx, "", f)
+			if err != nil {
+				t.Fatalf("MatchSeries %+v: %v", f, err)
+			}
+			out = append(out, asJSON(t, h2h), asJSON(t, win), asJSON(t, series))
+		}
+		return out
+	}
+	want := read(w)
+	if err := sqlshared.InvalidateAllMatchStats(ctx, w.binder.shared(), ""); err != nil {
+		t.Fatal(err)
+	}
+	got := read(ro)
+	for i := range want {
+		if got[i] != want[i] {
+			t.Errorf("read %d:\n read-only %s\n writable  %s", i, got[i], want[i])
+		}
+	}
+	if n := matchStatsRows(t, w); n != 0 {
+		t.Errorf("read-only reads wrote %d match_stats rows", n)
+	}
+}

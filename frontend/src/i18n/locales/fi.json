@@ -656,6 +656,7 @@
         "newTournamentPlaceholder": "Uusi turnaus…",
         "noMatches": "Ei otteluita",
         "noTournaments": "Ei turnauksia",
+        "openHint": "Avaa kaksoisnapsautuksella tai Enterillä",
         "notesPlaceholder": "Muistiinpanot…",
         "player1": "Pelaaja 1",
         "player2": "Pelaaja 2",
@@ -2780,6 +2781,9 @@
         "findDuplicates": "Etsi",
         "noDuplicates": "Ei todennäköisiä kaksoiskappaleita.",
         "suspectSameDice": "#{other} ja #{match}: samat nopat ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Luo nämä aliakset",
+        "pairingApplied": "Aliakset luotu",
         "suspectLonger": "#{match} jatkaa ottelua #{other} ({players})"
     }
 }

@@ -6,7 +6,7 @@ import { ankiViewModeStore, ankiReviewActionStore, showAnkiAnswer } from '../sto
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { isLetter, isShiftLetter, isBareLetter } from '../utils/keys.js';
-import { directionOwnsKey, directionLeavesToPage, directionSearchKey } from './directionKeys.js';
+import { directionOwnsKey, directionTabKey, directionLeavesToPage, directionSearchKey } from './directionKeys.js';
 import { directionFullscreenKey, toggleDirectionFullscreen } from './directionFullscreen.js';
 import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
 
@@ -206,6 +206,8 @@ export function handleKeyDown(event) {
     if (directionOwnsKey(event)) return;
     // The scrolling keys scroll the Direction page natively, without browsing the hidden board.
     if (directionLeavesToPage(event)) return;
+    // Tab with focus fallen on <body> returns to the Direction page instead of opening Search.
+    if (directionTabKey(event)) return;
 
     // F11 on the Direction page toggles its dedicated full screen (services/directionFullscreen.js).
     if (directionFullscreenKey(event)) {

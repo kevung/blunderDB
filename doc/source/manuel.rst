@@ -1243,7 +1243,11 @@ sans un clic sur **Appliquer**. Le même onglet porte la case **Ignorer les
 doublons à l'import** (l'équivalent de ``--skip-duplicates``, pour la session)
 et la recherche des **doublons probables** d'une base existante, celle de
 ``blunderdb repair --duplicates`` : chaque paire est donnée par ses numéros de
-match, rien n'est fusionné. En ligne de commande : ``blunderdb players alias``
+match, rien n'est fusionné. Sous une paire aux mêmes dés, **Créer ces alias**
+enregistre en un clic les alias de joueur qui feraient nommer aux deux matchs
+les mêmes joueurs, la graphie du match le plus récent devenant l'alias : une
+seule proposition quand un nom est commun aux deux, sinon deux — siège pour
+siège, puis croisée — dont on choisit celle qui dit qui est qui. En ligne de commande : ``blunderdb players alias``
 et ``blunderdb events alias``.
 
 * **Un dossier s'importe en parallèle.** Les fichiers sont lus sur plusieurs
@@ -2754,7 +2758,8 @@ décisions comptées. L'onglet Corpus calcule chaque vue à la demande, sous le
 filtre courant. Un **filtre de provenance** (champs *Moteur* et *Profondeur
 min.* de la barre de filtres) restreint les statistiques aux décisions analysées ainsi ; il porte
 sur chaque décision, et les chiffres qu'il touche sont alors recalculés depuis
-les décisions.
+les décisions. Comme le reste de la barre, il est conservé d'une session à
+l'autre.
 
 .. important::
    Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas confondre

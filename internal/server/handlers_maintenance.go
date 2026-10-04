@@ -14,7 +14,7 @@ type vacuumer interface {
 	Vacuum(ctx context.Context) (storage.VacuumResult, error)
 }
 
-// maintenanceRoutes returns the maintenance route family: currently just
+// maintenanceRoutes returns the operator's maintenance routes: currently just
 // maintenance.vacuum, the daemon's side of the GUI button and the CLI's
 // `vacuum`. The three run one implementation on the backend.
 func (s *Server) maintenanceRoutes() []route {
@@ -33,6 +33,22 @@ func (s *Server) maintenanceRoutes() []route {
 				return
 			}
 			writeJSONResp(w, res)
+		}},
+	}
+}
+
+// reencodeRoutes returns maintenance.reencode, the daemon's side of the CLI's
+// `reencode` (ADR-0070). The pass is expensive but stops at the caller's
+// tenant, so it stays outside /ops/ like gammonnet.sweepStale.
+func (s *Server) reencodeRoutes() []route {
+	return []route{
+		{http.MethodPost, "/v1/maintenance.reencode", func(w http.ResponseWriter, r *http.Request) {
+			n, err := storage.ReencodeAllAnalyses(r.Context(), s.opts.Storage.Analyses(), scopeOf(r), nil)
+			if err != nil {
+				writeStorageError(w, fmt.Errorf("reencode: %w", err))
+				return
+			}
+			writeJSONResp(w, map[string]int{"rewritten": n})
 		}},
 	}
 }

@@ -36,6 +36,10 @@ type StatsFilterPersisted struct {
 	DecisionType  *int    `json:"decision_type"` // nil = all (-1), 0 = checker only, 1 = cube only
 	MatchLength   []int   `json:"match_length"`
 	Metric        string  `json:"metric"` // "pr" | "mwc"
+	// The provenance filter: the engine the decisions were analysed with
+	// ("" = any) and the minimum analysis depth (0 = any).
+	AnalysisEngine   string `json:"analysis_engine"`
+	MinAnalysisDepth int    `json:"min_analysis_depth"`
 }
 
 // BoardColors holds the user-customisable board palette; empty fields fall

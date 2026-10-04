@@ -461,11 +461,8 @@ func probableDuplicate(ctx context.Context, tx storage.Tx, scope string, m *doma
 		if samePlayers(players.Canonical(o.Player1Name), players.Canonical(o.Player2Name), m.Player1Name, m.Player2Name) {
 			return nil, o.ID, nil
 		}
-		return &domain.DuplicateSuspect{
-			Kind: domain.DuplicateSameDice, OtherID: o.ID,
-			Players:      m.Player1Name + " – " + m.Player2Name,
-			OtherPlayers: o.Player1Name + " – " + o.Player2Name,
-		}, 0, nil
+		suspect := domain.NewSameDiceSuspect(0, o.ID, m.Player1Name, m.Player2Name, o.Player1Name, o.Player2Name)
+		return &suspect, 0, nil
 	}
 	return nil, 0, nil
 }

@@ -1,5 +1,8 @@
 // train-analysis-dict regenerates the zstd dictionary embedded at
-// pkg/blunderdb/engine/analysis_dict.bin (ADR-0030); a dev-time tool.
+// pkg/blunderdb/engine/analysis_bin_dict.bin (ADR-0030, ADR-0070); a dev-time
+// tool. It trains on the binary payloads the codec writes
+// (engine.MarshalAnalysisBinary); analysis_dict.bin, the dictionary of the
+// legacy JSON blobs, is frozen and only read.
 //
 // The corpus is the repository's own fixtures under testdata/ plus the demo
 // database. It is split 80/20 deterministically; the dictionary is trained on
@@ -8,7 +11,7 @@
 //
 // Usage:
 //
-//	go run ./cmd/train-analysis-dict [--dict-size 32768] [--out pkg/blunderdb/engine/analysis_dict.bin]
+//	go run ./cmd/train-analysis-dict [--dict-size 32768] [--out pkg/blunderdb/engine/analysis_bin_dict.bin]
 //
 // Requires the `zstd` CLI on PATH. Regenerate only when the corpus changes
 // meaningfully (new large fixtures, a PositionAnalysis field change).
@@ -20,6 +23,7 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/binary"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -30,6 +34,7 @@ import (
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/klauspost/compress/zstd"
 	_ "modernc.org/sqlite"
@@ -44,7 +49,7 @@ func main() {
 
 func run() error {
 	dictSize := flag.Int("dict-size", 32768, "trained dictionary size in bytes (zstd --maxdict)")
-	out := flag.String("out", "pkg/blunderdb/engine/analysis_dict.bin", "where to write the trained dictionary")
+	out := flag.String("out", "pkg/blunderdb/engine/analysis_bin_dict.bin", "where to write the trained dictionary")
 	testdataDir := flag.String("testdata", "testdata", "directory of match/position fixtures to import for the corpus")
 	demoGz := flag.String("demo", "internal/gui/demo.db.gz", "gzip-compressed demo database to fold into the corpus")
 	level := flag.Int("level", 19, "zstd level to measure the resulting dictionary at (informational only)")
@@ -212,10 +217,11 @@ func extractAnalysisBlobs(path string) ([][]byte, error) {
 		if err != nil {
 			continue // corrupt/oversized row: not useful training data anyway
 		}
-		if len(raw) == 0 {
+		var a domain.PositionAnalysis
+		if len(raw) == 0 || json.Unmarshal(raw, &a) != nil {
 			continue
 		}
-		out = append(out, raw)
+		out = append(out, engine.MarshalAnalysisBinary(&a))
 	}
 	return out, rows.Err()
 }

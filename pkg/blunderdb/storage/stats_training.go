@@ -72,19 +72,11 @@ func ComputeTrainingStats(ctx context.Context, st Stores, scope string, filter S
 	if err != nil {
 		return nil, err
 	}
-	// The match side needs only each match's PR: match_stats answers it
-	// without the full Compute, unless the filter splits by decision type.
-	var perMatch []MatchStats
-	if filter.DecisionType < 0 {
-		if perMatch, err = st.Stats().MatchSeries(ctx, scope, filter); err != nil {
-			return nil, err
-		}
-	} else {
-		res, err := st.Stats().Compute(ctx, scope, filter)
-		if err != nil {
-			return nil, err
-		}
-		perMatch = res.PerMatch
+	// The match side needs only each match's PR: MatchSeries answers it
+	// without the other passes of Compute.
+	perMatch, err := st.Stats().MatchSeries(ctx, scope, filter)
+	if err != nil {
+		return nil, err
 	}
 	var reviews []domain.AnkiReviewLog
 	for l, err := range st.Anki().ReviewLog(ctx, scope, 0, 0) {

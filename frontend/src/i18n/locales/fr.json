@@ -656,6 +656,7 @@
         "newTournamentPlaceholder": "Nouveau tournoi…",
         "noMatches": "Aucun match",
         "noTournaments": "Aucun tournoi",
+        "openHint": "Double-clic ou Entrée pour ouvrir",
         "notesPlaceholder": "Notes…",
         "player1": "Joueur 1",
         "player2": "Joueur 2",
@@ -2780,6 +2781,9 @@
         "findDuplicates": "Chercher",
         "noDuplicates": "Aucun doublon probable.",
         "suspectSameDice": "#{other} et #{match} : mêmes dés ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Créer ces alias",
+        "pairingApplied": "Alias créés",
         "suspectLonger": "#{match} prolonge #{other} ({players})"
     }
 }

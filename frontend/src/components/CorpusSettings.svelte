@@ -88,6 +88,23 @@
             busy = false;
         }
     }
+
+    // Suspect pairs whose aliases were recorded, keyed like the list.
+    let paired = $state({});
+
+    /** Record every player alias of one reading of a same-dice pair. */
+    async function applyPairing(suspect, pairing) {
+        error = '';
+        try {
+            for (const a of pairing.aliases) {
+                await SetAlias('player', a.alias, a.canonical);
+            }
+            paired = { ...paired, [suspect.matchId + '-' + suspect.otherId]: true };
+            if (kind === 'player') await loadAliases();
+        } catch (e) {
+            error = String(e);
+        }
+    }
 </script>
 
 <div class="corpus-settings">
@@ -160,6 +177,16 @@
                         {d.kind === 'longer'
                             ? $t('corpus.suspectLonger', { match: d.matchId, other: d.otherId, players: d.players })
                             : $t('corpus.suspectSameDice', { match: d.matchId, other: d.otherId, players: d.players, otherPlayers: d.otherPlayers })}
+                        {#if paired[d.matchId + '-' + d.otherId]}
+                            <span class="setting-note" data-testid="pairing-applied">{$t('corpus.pairingApplied')}</span>
+                        {:else}
+                            {#each d.pairings ?? [] as p, i (i)}
+                                <div class="pairing">
+                                    <span>{p.aliases.map((a) => $t('corpus.pairingAlias', { alias: a.alias, canonical: a.canonical })).join(', ')}</span>
+                                    <button type="button" class="secondary-button" data-testid="apply-pairing" onclick={() => applyPairing(d, p)}>{$t('corpus.applyPairing')}</button>
+                                </div>
+                            {/each}
+                        {/if}
                     </li>
                 {/each}
             </ul>
@@ -199,7 +226,8 @@
         margin: 4px 0;
         padding-left: 18px;
     }
-    .suggestions li {
+    .suggestions li,
+    .pairing {
         display: flex;
         gap: 8px;
         align-items: center;

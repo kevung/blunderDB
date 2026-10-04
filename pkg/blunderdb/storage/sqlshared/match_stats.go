@@ -470,14 +470,25 @@ func (s *StatsStore) MatchStats(ctx context.Context, scope string, matchIDs []in
 
 // MatchSeries — see storage.StatsStore.
 func (s *StatsStore) MatchSeries(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.MatchStats, error) {
-	if !fromMatchStats(filter) {
-		return nil, fmt.Errorf("match series with a provenance filter: %w", storage.ErrInvalid)
-	}
-	if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
-		return nil, err
+	filter, err := s.withPlayerAliases(ctx, scope, filter)
+	if err != nil {
+		return nil, fmt.Errorf("match series aliases: %w", err)
 	}
 	var res storage.StatsResult
-	if err := s.perMatchFromTable(ctx, statsQuery{scope: scope, filter: filter}, &res); err != nil {
+	if fromMatchStats(filter) && !RefusesWrites(ctx, s.DB) {
+		if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
+			return nil, err
+		}
+		if err := s.perMatchFromTable(ctx, statsQuery{scope: scope, filter: filter}, &res); err != nil {
+			return nil, errf(s.DB, "match series", err)
+		}
+		return res.PerMatch, nil
+	}
+	// A provenance filter, or a reader that cannot fill the table: Compute's
+	// direct per-match pass alone, over the decisions.
+	whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
+	q := statsQuery{scope: scope, filter: filter, whereSQL: whereSQL, baseArgs: baseArgs, join: statsBaseJoin}
+	if err := s.computePerMatch(ctx, q, &res); err != nil {
 		return nil, errf(s.DB, "match series", err)
 	}
 	return res.PerMatch, nil

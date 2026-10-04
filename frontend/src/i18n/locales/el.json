@@ -656,6 +656,7 @@
         "newTournamentPlaceholder": "Νέο τουρνουά…",
         "noMatches": "Δεν υπάρχουν αγώνες",
         "noTournaments": "Δεν υπάρχουν τουρνουά",
+        "openHint": "Διπλό κλικ ή Enter για άνοιγμα",
         "notesPlaceholder": "Σημειώσεις…",
         "player1": "Παίκτης 1",
         "player2": "Παίκτης 2",
@@ -2780,6 +2781,9 @@
         "findDuplicates": "Αναζήτηση",
         "noDuplicates": "Κανένα πιθανό διπλότυπο.",
         "suspectSameDice": "#{other} και #{match}: ίδια ζάρια ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Δημιουργία αυτών των ψευδωνύμων",
+        "pairingApplied": "Τα ψευδώνυμα δημιουργήθηκαν",
         "suspectLonger": "Το #{match} συνεχίζει το #{other} ({players})"
     }
 }

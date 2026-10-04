@@ -1021,7 +1021,9 @@ indique si un match donné est déjà présent, à partir des deux empreintes de
 détection de doublon — de quoi éviter un import redondant avant de l'engager.
 ``matches.duplicates`` liste les paires de matchs que les dés disent
 identiques — mêmes dés sous d'autres noms, ou version tronquée puis complétée —
-comme ``repair --duplicates``, sans rien fusionner.
+comme ``repair --duplicates``, sans rien fusionner ; une paire aux mêmes dés
+porte ses ``pairings``, les alias à passer à ``players.alias.set`` pour chaque
+lecture de qui est qui.
 
 Les autres graphies d'un joueur ou d'un événement se gèrent par
 ``players.alias.list``, ``players.alias.set`` (``{"alias": …, "canonical": …}``),
