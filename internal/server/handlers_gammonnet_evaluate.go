@@ -65,8 +65,13 @@ func (s *Server) handleGammonNetEvaluate(w http.ResponseWriter, r *http.Request)
 		writeStorageError(w, err)
 		return
 	}
-	res, err := metered(s, scope, 1, func() (gammonnet.EvalResult, error) {
-		return gammonnet.EvaluatePositionWithMET(nil, pos, met, ply, 0, req.Candidates)
+	// One position, queued on the shared workers like a sweep's: it waits its
+	// tenant's turn, never more than a position's time per tenant ahead.
+	var res gammonnet.EvalResult
+	s.analysis.run(scope, func(searcherFor) {
+		res, err = metered(s, scope, 1, func() (gammonnet.EvalResult, error) {
+			return gammonnet.EvaluatePositionWithMET(nil, pos, met, ply, 0, req.Candidates)
+		})
 	})
 	if err != nil {
 		writeErrorCode(w, CodeInvalid, fmt.Sprintf("not evaluable: %v", err))

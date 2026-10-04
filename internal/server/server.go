@@ -8,6 +8,7 @@
 package server
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -70,6 +71,8 @@ type Server struct {
 	// engineWorkers is how many searches one engine computation runs at once
 	// (a comparison, a cube matrix, a rollout): what cpuTime multiplies by.
 	engineWorkers int
+	// analysis is the engine worker set every tenant's work queues on.
+	analysis *analysisPool
 	// idempotency backs withIdempotency: at most one cached response per
 	// (tenant, route, Idempotency-Key) triple, for the handful of routes with
 	// no natural dedup key — see idempotency.go.
@@ -106,6 +109,7 @@ func New(opts Options) (*Server, error) {
 		gammonnetJobs: newImportRegistry(),
 		quota:         newQuotaLedger(opts.Quotas, opts.now),
 		engineWorkers: runtime.NumCPU(),
+		analysis:      newAnalysisPool(cmp.Or(opts.AnalysisWorkers, runtime.NumCPU()), opts.AnalysisWeights),
 		spool:         newSpoolQuota(opts.MaxSpoolBytes),
 		idempotency:   newIdempotencyStore(opts.now),
 		direction:     &service.Memory{},
@@ -392,6 +396,7 @@ func (s *Server) sweepBusinessMetrics(ctx context.Context) {
 // its way out; a Server served without Run (a test's httptest server) calls it itself.
 // Idempotent.
 func (s *Server) Close() {
+	s.analysis.close()
 	s.events.Close()
 	if s.notify != nil {
 		s.notify.Close()

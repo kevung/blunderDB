@@ -164,6 +164,14 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
      - ``0``
      - imports d'un même tenant en cours à la fois (429, ``quota_exceeded``) ;
        0 = illimité
+   * - ``--analysis-workers <n>``
+     - ``0``
+     - travailleurs du moteur que partagent les balayages et les évaluations
+       de tous les tenants ; 0 = un par cœur
+   * - ``--analysis-weights <liste>``
+     - (vide)
+     - ``tenant=poids,…`` : positions servies à un tenant à chaque tour des
+       travailleurs partagés ; un tenant absent de la liste pèse 1
    * - ``--rls``
      - ``false``
      - PostgreSQL : active la Row-Level Security par tenant (défense en
@@ -1553,6 +1561,18 @@ usage : positions stockées, octets occupés (``storedBytes``), secondes de calc
 
 Les quotas sont une comptabilité du démon, pas une frontière : ils
 s'appliquent au tenant que le proxy a posé dans ``X-Tenant-ID``.
+
+Les balayages (``gammonnet.analyzeMissing``, ``gammonnet.sweepStale``) et les
+évaluations (``gammonnet.evaluate``) passent par une seule file d'analyse : un
+jeu de travailleurs du moteur (``--analysis-workers``), chacun avec son
+chercheur réutilisé, qui prennent les positions une à une en faisant le tour
+des tenants qui ont du travail. Deux tenants qui balaient en même temps se
+partagent les cœurs au lieu de les réclamer chacun ; une évaluation demandée
+pendant le balayage d'un autre tenant attend une position, pas tout le
+balayage. Avec ``--analysis-weights club=3``, le tenant ``club`` reçoit trois
+positions par tour quand un autre en reçoit une. Les travaux d'un même tenant
+passent dans l'ordre où ils sont arrivés. Les comparaisons, les matrices de
+videau et les rollouts gardent leurs propres travailleurs.
 
 **Scénario complet, de zéro à un démon qui répond :**
 

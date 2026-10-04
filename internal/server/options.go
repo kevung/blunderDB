@@ -181,6 +181,15 @@ type Options struct {
 	// imports. The zero value is unlimited.
 	Quotas TenantQuotas
 
+	// AnalysisWorkers is the size of the engine worker set every tenant's
+	// sweeps and evaluations share (analysisPool); 0 is one per core.
+	AnalysisWorkers int
+	// AnalysisWeights gives a tenant more positions per turn of that set
+	// than the others: a weight of 3 is served three positions while an
+	// unlisted tenant (weight 1) is served one. Like the quotas, it applies to
+	// the tenant the proxy named (ADR-0005).
+	AnalysisWeights map[string]int
+
 	// ImportDir is the one directory of this host from which imports.batch
 	// reads match files by path. Empty (the default) refuses every path: a
 	// batch then arrives only as an uploaded archive. The daemon authenticates

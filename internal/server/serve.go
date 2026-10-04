@@ -57,28 +57,30 @@ Flags:
 // NArg rejection, the BLUNDERDB_* fallbacks — is unit-testable without
 // starting a real daemon.
 type serveConfig struct {
-	quotas         TenantQuotas
-	backend        string
-	dsn            string
-	dbPath         string
-	addr           string
-	opsAddr        string
-	logLevel       string
-	enableMetrics  bool
-	enableWebUI    bool
-	enableDir      bool
-	mcpWrite       bool
-	transcription  bool
-	transcriptTTL  time.Duration
-	corsOrigin     string
-	rateLimitRPS   float64
-	rateLimitBurst int
-	enableRLS      bool
-	readTenants    bool
-	tsPath         string
-	identityDir    string
-	importDir      string
-	pprofAddr      string
+	quotas          TenantQuotas
+	analysisWorkers int
+	analysisWeights map[string]int
+	backend         string
+	dsn             string
+	dbPath          string
+	addr            string
+	opsAddr         string
+	logLevel        string
+	enableMetrics   bool
+	enableWebUI     bool
+	enableDir       bool
+	mcpWrite        bool
+	transcription   bool
+	transcriptTTL   time.Duration
+	corsOrigin      string
+	rateLimitRPS    float64
+	rateLimitBurst  int
+	enableRLS       bool
+	readTenants     bool
+	tsPath          string
+	identityDir     string
+	importDir       string
+	pprofAddr       string
 }
 
 // parseServeArgs parses the `serve` subcommand's flags.
@@ -121,17 +123,19 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 			fmt.Sprintf("per-tenant sustained requests/second (0 = disabled; default %d, generous headroom for real traffic)", defaultRateLimitRPS))
 		rateLimitBurst = fs.Int("rate-limit-burst", envIntOr("BLUNDERDB_RATE_LIMIT_BURST", defaultRateLimitBurst),
 			fmt.Sprintf("per-tenant token-bucket burst (default %d)", defaultRateLimitBurst))
-		quotaPositions = fs.Int64("quota-positions", int64(envIntOr("BLUNDERDB_QUOTA_POSITIONS", 0)), quotaPositionsHelp)
-		quotaBytes     = fs.Int64("quota-bytes", int64(envIntOr("BLUNDERDB_QUOTA_BYTES", 0)), "per-tenant bound on disk space held (tables and indexes, shared out by row count on PostgreSQL), checked when an import starts like --quota-positions: refused (413) past it (0 = unlimited)")
-		quotaAnalysis  = fs.Int64("quota-analysis-seconds", int64(envIntOr("BLUNDERDB_QUOTA_ANALYSIS_SECONDS", 0)), "per-tenant engine CPU seconds per UTC day (wall time × workers), over sweeps, comparisons, cube matrices, evaluations and rollouts (0 = unlimited)")
-		quotaImports   = fs.Int("quota-imports", envIntOr("BLUNDERDB_QUOTA_IMPORTS", 0), "per-tenant imports running at once (0 = unlimited)")
-		enableRLS      = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
-		readTenants    = fs.Bool("read-tenants", envBoolOr("BLUNDERDB_READ_TENANTS", false), "honour X-Read-Tenants on the across.* reads (ADR-0063); off by default, and off REFUSES the header (400). Enable only once the proxy strips any client-supplied value and sets it itself: this daemon authenticates nobody (ADR-0005)")
-		tsPath         = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the embedded TS-06-06; the daemon never downloads one")
-		identityDir    = fs.String("identity-dir", os.Getenv("BLUNDERDB_IDENTITY_DIR"), "directory holding this daemon's watermark signing identity (created on first use); a watermarked export is refused when unset")
-		importDir      = fs.String("import-dir", os.Getenv("BLUNDERDB_IMPORT_DIR"), "directory on this host from which imports.batch may read match files by path (off by default: without it a batch comes only as an uploaded archive); a path outside it is refused")
-		opsAddr        = fs.String("ops-addr", envOr("BLUNDERDB_OPS_ADDR", ""), "optional listener for the /ops/ family (maintenance.vacuum, tenant.purge) on a SEPARATE address, e.g. \"127.0.0.1:8081\"; empty (the default) serves /ops/ on --addr, where the reverse proxy in front is expected to refuse the prefix (#233)")
-		pprofAddr      = fs.String("pprof-addr", envOr("BLUNDERDB_PPROF_ADDR", ""), "optional net/http/pprof listener on a SEPARATE address, e.g. \"127.0.0.1:6060\" (debug only; never expose this on the same address as --addr or to the public internet); empty (the default) exposes no pprof endpoint at all (#238)")
+		quotaPositions  = fs.Int64("quota-positions", int64(envIntOr("BLUNDERDB_QUOTA_POSITIONS", 0)), quotaPositionsHelp)
+		quotaBytes      = fs.Int64("quota-bytes", int64(envIntOr("BLUNDERDB_QUOTA_BYTES", 0)), "per-tenant bound on disk space held (tables and indexes, shared out by row count on PostgreSQL), checked when an import starts like --quota-positions: refused (413) past it (0 = unlimited)")
+		quotaAnalysis   = fs.Int64("quota-analysis-seconds", int64(envIntOr("BLUNDERDB_QUOTA_ANALYSIS_SECONDS", 0)), "per-tenant engine CPU seconds per UTC day (wall time × workers), over sweeps, comparisons, cube matrices, evaluations and rollouts (0 = unlimited)")
+		analysisWorkers = fs.Int("analysis-workers", envIntOr("BLUNDERDB_ANALYSIS_WORKERS", 0), "engine workers every tenant's sweeps and evaluations share, taking the tenants in turn (0 = one per core)")
+		analysisWeights = fs.String("analysis-weights", os.Getenv("BLUNDERDB_ANALYSIS_WEIGHTS"), "tenant=weight,… : positions a tenant is served per turn of the shared engine workers (unlisted = 1)")
+		quotaImports    = fs.Int("quota-imports", envIntOr("BLUNDERDB_QUOTA_IMPORTS", 0), "per-tenant imports running at once (0 = unlimited)")
+		enableRLS       = fs.Bool("rls", envOr("BLUNDERDB_RLS", "") == "true", "PostgreSQL Row-Level Security: install tenant policies and set app.tenant_id per connection (opt-in defence-in-depth; off by default)")
+		readTenants     = fs.Bool("read-tenants", envBoolOr("BLUNDERDB_READ_TENANTS", false), "honour X-Read-Tenants on the across.* reads (ADR-0063); off by default, and off REFUSES the header (400). Enable only once the proxy strips any client-supplied value and sets it itself: this daemon authenticates nobody (ADR-0005)")
+		tsPath          = fs.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"), "optional two-sided bearoff database (.bd) widening the embedded TS-06-06; the daemon never downloads one")
+		identityDir     = fs.String("identity-dir", os.Getenv("BLUNDERDB_IDENTITY_DIR"), "directory holding this daemon's watermark signing identity (created on first use); a watermarked export is refused when unset")
+		importDir       = fs.String("import-dir", os.Getenv("BLUNDERDB_IMPORT_DIR"), "directory on this host from which imports.batch may read match files by path (off by default: without it a batch comes only as an uploaded archive); a path outside it is refused")
+		opsAddr         = fs.String("ops-addr", envOr("BLUNDERDB_OPS_ADDR", ""), "optional listener for the /ops/ family (maintenance.vacuum, tenant.purge) on a SEPARATE address, e.g. \"127.0.0.1:8081\"; empty (the default) serves /ops/ on --addr, where the reverse proxy in front is expected to refuse the prefix (#233)")
+		pprofAddr       = fs.String("pprof-addr", envOr("BLUNDERDB_PPROF_ADDR", ""), "optional net/http/pprof listener on a SEPARATE address, e.g. \"127.0.0.1:6060\" (debug only; never expose this on the same address as --addr or to the public internet); empty (the default) exposes no pprof endpoint at all (#238)")
 	)
 	if err := fs.Parse(args); err != nil {
 		return nil, err
@@ -143,29 +147,38 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 	if *quotaPositions < 0 || *quotaBytes < 0 || *quotaAnalysis < 0 || *quotaImports < 0 {
 		return nil, fmt.Errorf("serve: a quota is a bound, 0 or more (0 = unlimited)")
 	}
+	if *analysisWorkers < 0 {
+		return nil, fmt.Errorf("serve: --analysis-workers is 0 (one per core) or more")
+	}
+	weights, err := parseAnalysisWeights(*analysisWeights)
+	if err != nil {
+		return nil, err
+	}
 	cfg := &serveConfig{
-		quotas:         TenantQuotas{MaxPositions: *quotaPositions, MaxStoredBytes: *quotaBytes, AnalysisSecondsPerDay: *quotaAnalysis, MaxConcurrentImports: *quotaImports},
-		backend:        *backend,
-		dsn:            *dsn,
-		dbPath:         *dbPath,
-		addr:           *addr,
-		opsAddr:        *opsAddr,
-		logLevel:       *logLevel,
-		enableMetrics:  *enableMetrics,
-		enableWebUI:    *enableWebUI,
-		enableDir:      *enableDir,
-		mcpWrite:       *mcpWrite,
-		transcription:  *transcribe,
-		transcriptTTL:  *transcriptTTL,
-		corsOrigin:     *corsOrigin,
-		rateLimitRPS:   *rateLimitRPS,
-		rateLimitBurst: *rateLimitBurst,
-		enableRLS:      *enableRLS,
-		readTenants:    *readTenants,
-		tsPath:         *tsPath,
-		identityDir:    *identityDir,
-		importDir:      *importDir,
-		pprofAddr:      *pprofAddr,
+		analysisWorkers: *analysisWorkers,
+		analysisWeights: weights,
+		quotas:          TenantQuotas{MaxPositions: *quotaPositions, MaxStoredBytes: *quotaBytes, AnalysisSecondsPerDay: *quotaAnalysis, MaxConcurrentImports: *quotaImports},
+		backend:         *backend,
+		dsn:             *dsn,
+		dbPath:          *dbPath,
+		addr:            *addr,
+		opsAddr:         *opsAddr,
+		logLevel:        *logLevel,
+		enableMetrics:   *enableMetrics,
+		enableWebUI:     *enableWebUI,
+		enableDir:       *enableDir,
+		mcpWrite:        *mcpWrite,
+		transcription:   *transcribe,
+		transcriptTTL:   *transcriptTTL,
+		corsOrigin:      *corsOrigin,
+		rateLimitRPS:    *rateLimitRPS,
+		rateLimitBurst:  *rateLimitBurst,
+		enableRLS:       *enableRLS,
+		readTenants:     *readTenants,
+		tsPath:          *tsPath,
+		identityDir:     *identityDir,
+		importDir:       *importDir,
+		pprofAddr:       *pprofAddr,
 	}
 	if cfg.dbPath != "" {
 		cfg.backend = "sqlite"
@@ -250,6 +263,8 @@ func RunServe(args []string) error {
 		RateLimitRPS:     cfg.rateLimitRPS,
 		RateLimitBurst:   cfg.rateLimitBurst,
 		Quotas:           cfg.quotas,
+		AnalysisWorkers:  cfg.analysisWorkers,
+		AnalysisWeights:  cfg.analysisWeights,
 		Identity:         identity,
 		ImportDir:        cfg.importDir,
 	})
@@ -411,4 +426,21 @@ func envIntOr(key string, fallback int) int {
 		return fallback
 	}
 	return n
+}
+
+// parseAnalysisWeights reads --analysis-weights: "club=3,alice=2".
+func parseAnalysisWeights(spec string) (map[string]int, error) {
+	if strings.TrimSpace(spec) == "" {
+		return nil, nil
+	}
+	out := map[string]int{}
+	for _, part := range strings.Split(spec, ",") {
+		tenant, w, ok := strings.Cut(strings.TrimSpace(part), "=")
+		n, err := strconv.Atoi(strings.TrimSpace(w))
+		if !ok || strings.TrimSpace(tenant) == "" || err != nil || n < 1 {
+			return nil, fmt.Errorf("serve: --analysis-weights wants tenant=weight pairs, a weight of 1 or more: %q", part)
+		}
+		out[strings.TrimSpace(tenant)] = n
+	}
+	return out, nil
 }
