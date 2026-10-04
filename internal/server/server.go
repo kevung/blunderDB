@@ -68,9 +68,6 @@ type Server struct {
 	spool *spoolQuota
 	// quota holds each tenant's use against opts.Quotas.
 	quota *quotaLedger
-	// engineWorkers is how many searches one engine computation runs at once
-	// (a comparison, a cube matrix, a rollout): what cpuTime multiplies by.
-	engineWorkers int
 	// analysis is the engine worker set every tenant's work queues on.
 	analysis *analysisPool
 	// idempotency backs withIdempotency: at most one cached response per
@@ -108,7 +105,6 @@ func New(opts Options) (*Server, error) {
 		batches:       newBatchRegistry(),
 		gammonnetJobs: newImportRegistry(),
 		quota:         newQuotaLedger(opts.Quotas, opts.now),
-		engineWorkers: runtime.NumCPU(),
 		analysis:      newAnalysisPool(cmp.Or(opts.AnalysisWorkers, runtime.NumCPU()), opts.AnalysisWeights),
 		spool:         newSpoolQuota(opts.MaxSpoolBytes),
 		idempotency:   newIdempotencyStore(opts.now),

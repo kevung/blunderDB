@@ -52,8 +52,10 @@ type table struct {
 	jacoby   bool // money only
 	// withoutLuck keeps the luck out of the result (Options.withoutLuck).
 	withoutLuck bool
-	settings    Settings
-	bearoff     *race.TwoSided
+	// exec runs a batch's games; nil plays them on the rollout's own goroutines.
+	exec     Exec
+	settings Settings
+	bearoff  *race.TwoSided
 }
 
 // outcome is one game of one branch.

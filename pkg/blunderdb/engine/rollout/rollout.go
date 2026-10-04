@@ -117,6 +117,14 @@ type Progress struct {
 	Candidates []Candidate `json:"candidates"`
 }
 
+// Exec runs the n games of a batch: it calls task(i) once for every i in
+// [0, n), on any goroutines and in any order, and returns once every call
+// it made has returned. A game is a pure function of its index, so who plays
+// it changes nothing in the result. It may leave tasks uncalled only when
+// the rollout's ctx has ended or by returning an error; a batch missing a
+// game otherwise is refused rather than summed short.
+type Exec func(n int, task func(i int)) error
+
 // Options are what a caller adds to the position and the settings.
 type Options struct {
 	// Moves names the plays to roll out, in blunderDB notation; empty rolls
@@ -128,6 +136,10 @@ type Options struct {
 	// NoBearoffTable turns the exact bearoff off, for a rollout that must
 	// not depend on what this machine has generated.
 	NoBearoffTable bool
+	// Exec, when set, plays each batch's games in place of the rollout's
+	// own goroutines, so that a caller sharing its cores between several
+	// computations can interleave one long rollout with other work.
+	Exec Exec
 	// withoutLuck turns the variance reduction off, for the test that
 	// shows it leaves the mean where it was.
 	withoutLuck bool
@@ -193,6 +205,7 @@ func Run(ctx context.Context, pos domain.Position, s Settings, opt Options) (*Re
 		t.crawford = state.Crawford
 	}
 	t.withoutLuck = opt.withoutLuck
+	t.exec = opt.Exec
 	if !opt.NoBearoffTable {
 		t.bearoff = race.Resolve()
 	}
@@ -325,18 +338,25 @@ func moveBranches(pos *domain.Position, s Settings, named []string, cube cubeSta
 // whole.
 func (t *table) rollAll(ctx context.Context, branches []branch, kind Kind, progress func(Progress), names []string, scale gammonnet.EquityScale) ([]accumulator, Stop, error) {
 	s := t.settings
-	nWorkers := s.Workers
-	if nWorkers == 0 {
-		nWorkers = runtime.NumCPU()
-	}
-	nWorkers = min(nWorkers, batchGames*len(branches))
-	workers := make([]*worker, nWorkers)
-	for i := range workers {
-		w, err := newWorker(t)
-		if err != nil {
-			return nil, StopMaxGames, err
+	tasks := batchGames * len(branches)
+	exec := t.exec
+	var crew crew
+	if exec == nil {
+		nWorkers := s.Workers
+		if nWorkers == 0 {
+			nWorkers = runtime.NumCPU()
 		}
-		workers[i] = w
+		nWorkers = min(nWorkers, tasks)
+		// Made up front, so that an engine that cannot load fails before a
+		// game is played.
+		for range nWorkers {
+			w, err := newWorker(t)
+			if err != nil {
+				return nil, StopMaxGames, err
+			}
+			crew.free = append(crew.free, w)
+		}
+		exec = goroutineExec(nWorkers)
 	}
 
 	accs := make([]accumulator, len(branches))
@@ -351,41 +371,46 @@ func (t *table) rollAll(ctx context.Context, branches []branch, kind Kind, progr
 
 	for done := 0; done < s.MaxGames; {
 		size := min(batchGames, s.MaxGames-done)
-		var next atomic.Int64
 		var firstErr error
+		var failed atomic.Bool
 		var errOnce sync.Once
-		var wg sync.WaitGroup
-		for _, w := range workers {
-			wg.Add(1)
-			go func(w *worker) {
-				defer wg.Done()
-				for {
-					if ctx.Err() != nil {
-						return
-					}
-					task := int(next.Add(1)) - 1
-					if task >= size*len(branches) {
-						return
-					}
-					g, b := task/len(branches), task%len(branches)
-					if !active[b] {
-						continue
-					}
-					o, err := w.play(&branches[b], newGameDice(s.Seed, done+g))
-					if err != nil {
-						errOnce.Do(func() { firstErr = err })
-						return
-					}
-					results[g][b] = o
-				}
-			}(w)
+		var played atomic.Int64
+		fail := func(err error) {
+			errOnce.Do(func() { firstErr = err })
+			failed.Store(true)
 		}
-		wg.Wait()
+		execErr := exec(size*len(branches), func(task int) {
+			if ctx.Err() != nil || failed.Load() {
+				return
+			}
+			g, b := task/len(branches), task%len(branches)
+			if active[b] {
+				w, err := crew.take(t)
+				if err != nil {
+					fail(err)
+					return
+				}
+				o, err := w.play(&branches[b], newGameDice(s.Seed, done+g))
+				crew.give(w)
+				if err != nil {
+					fail(err)
+					return
+				}
+				results[g][b] = o
+			}
+			played.Add(1)
+		})
 		if firstErr != nil {
 			return accs, StopMaxGames, firstErr
 		}
 		if err := ctx.Err(); err != nil {
 			return accs, StopCancelled, err
+		}
+		if execErr != nil {
+			return accs, StopMaxGames, execErr
+		}
+		if played.Load() != int64(size*len(branches)) {
+			return accs, StopMaxGames, fmt.Errorf("rollout: %d of %d games of a batch were played", played.Load(), size*len(branches))
 		}
 		for g := 0; g < size; g++ {
 			for b := range branches {
@@ -406,6 +431,56 @@ func (t *table) rollAll(ctx context.Context, branches []branch, kind Kind, progr
 		}
 	}
 	return accs, StopMaxGames, nil
+}
+
+// crew holds the workers no game is using. A game borrows one and gives it
+// back, so a rollout makes as many workers as it ever plays games at once,
+// whoever runs them.
+type crew struct {
+	mu   sync.Mutex
+	free []*worker
+}
+
+func (c *crew) take(t *table) (*worker, error) {
+	c.mu.Lock()
+	if n := len(c.free); n > 0 {
+		w := c.free[n-1]
+		c.free = c.free[:n-1]
+		c.mu.Unlock()
+		return w, nil
+	}
+	c.mu.Unlock()
+	return newWorker(t)
+}
+
+func (c *crew) give(w *worker) {
+	c.mu.Lock()
+	c.free = append(c.free, w)
+	c.mu.Unlock()
+}
+
+// goroutineExec is the Exec of a rollout that owns its cores: workers
+// goroutines taking the games in turn.
+func goroutineExec(workers int) Exec {
+	return func(n int, task func(i int)) error {
+		var next atomic.Int64
+		var wg sync.WaitGroup
+		for range min(workers, n) {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				for {
+					i := int(next.Add(1)) - 1
+					if i >= n {
+						return
+					}
+					task(i)
+				}
+			}()
+		}
+		wg.Wait()
+		return nil
+	}
 }
 
 // stopByJSD applies the stopping rule. A checker play whose gap to the best

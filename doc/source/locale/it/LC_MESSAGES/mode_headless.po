@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 23:15+0200\n"
+"POT-Creation-Date: 2026-10-05 00:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -169,49 +169,49 @@ msgstr ""
 "un altro file dal suo trascrittore, quelle di un database ``.db`` dal "
 "loro autore originale."
 
-#: ../../source/mode_headless.rst:86 ../../source/mode_headless.rst:1854
+#: ../../source/mode_headless.rst:86 ../../source/mode_headless.rst:1860
 msgid "**Options:**"
 msgstr "**Opzioni:**"
 
-#: ../../source/mode_headless.rst:92 ../../source/mode_headless.rst:1797
-#: ../../source/mode_headless.rst:1860
+#: ../../source/mode_headless.rst:92 ../../source/mode_headless.rst:1803
+#: ../../source/mode_headless.rst:1866
 msgid "Option"
 msgstr "Opzione"
 
-#: ../../source/mode_headless.rst:93 ../../source/mode_headless.rst:1798
-#: ../../source/mode_headless.rst:1861
+#: ../../source/mode_headless.rst:93 ../../source/mode_headless.rst:1804
+#: ../../source/mode_headless.rst:1867
 msgid "Défaut"
 msgstr "Predefinito"
 
-#: ../../source/mode_headless.rst:94 ../../source/mode_headless.rst:1799
-#: ../../source/mode_headless.rst:1862
+#: ../../source/mode_headless.rst:94 ../../source/mode_headless.rst:1805
+#: ../../source/mode_headless.rst:1868
 msgid "Signification"
 msgstr "Significato"
 
-#: ../../source/mode_headless.rst:95 ../../source/mode_headless.rst:1863
+#: ../../source/mode_headless.rst:95 ../../source/mode_headless.rst:1869
 msgid "``--db <chemin>``"
 msgstr "``--db <percorso>``"
 
 #: ../../source/mode_headless.rst:96 ../../source/mode_headless.rst:134
 #: ../../source/mode_headless.rst:184 ../../source/mode_headless.rst:189
 #: ../../source/mode_headless.rst:194 ../../source/mode_headless.rst:199
-#: ../../source/mode_headless.rst:205 ../../source/mode_headless.rst:1801
-#: ../../source/mode_headless.rst:1804 ../../source/mode_headless.rst:1807
-#: ../../source/mode_headless.rst:1811 ../../source/mode_headless.rst:1864
-#: ../../source/mode_headless.rst:1880 ../../source/mode_headless.rst:1883
-#: ../../source/mode_headless.rst:1886
+#: ../../source/mode_headless.rst:205 ../../source/mode_headless.rst:1807
+#: ../../source/mode_headless.rst:1810 ../../source/mode_headless.rst:1813
+#: ../../source/mode_headless.rst:1817 ../../source/mode_headless.rst:1870
+#: ../../source/mode_headless.rst:1886 ../../source/mode_headless.rst:1889
+#: ../../source/mode_headless.rst:1892
 msgid "–"
 msgstr "–"
 
-#: ../../source/mode_headless.rst:97 ../../source/mode_headless.rst:1865
+#: ../../source/mode_headless.rst:97 ../../source/mode_headless.rst:1871
 msgid "fichier SQLite (raccourci pour ``--backend sqlite --dsn <chemin>``)"
 msgstr "file SQLite (scorciatoia per ``--backend sqlite --dsn <percorso>``)"
 
-#: ../../source/mode_headless.rst:98 ../../source/mode_headless.rst:1866
+#: ../../source/mode_headless.rst:98 ../../source/mode_headless.rst:1872
 msgid "``--backend <type>``"
 msgstr "``--backend <tipo>``"
 
-#: ../../source/mode_headless.rst:99 ../../source/mode_headless.rst:1867
+#: ../../source/mode_headless.rst:99 ../../source/mode_headless.rst:1873
 msgid "``sqlite``"
 msgstr "``sqlite``"
 
@@ -219,15 +219,15 @@ msgstr "``sqlite``"
 msgid "backend de stockage : ``sqlite`` ou ``postgres``"
 msgstr "backend di archiviazione: ``sqlite`` o ``postgres``"
 
-#: ../../source/mode_headless.rst:101 ../../source/mode_headless.rst:1869
+#: ../../source/mode_headless.rst:101 ../../source/mode_headless.rst:1875
 msgid "``--dsn <chaîne>``"
 msgstr "``--dsn <stringa>``"
 
-#: ../../source/mode_headless.rst:102 ../../source/mode_headless.rst:1870
+#: ../../source/mode_headless.rst:102 ../../source/mode_headless.rst:1876
 msgid "``$BLUNDERDB_DSN``"
 msgstr "``$BLUNDERDB_DSN``"
 
-#: ../../source/mode_headless.rst:103 ../../source/mode_headless.rst:1871
+#: ../../source/mode_headless.rst:103 ../../source/mode_headless.rst:1877
 msgid "chaîne de connexion du backend"
 msgstr "stringa di connessione del backend"
 
@@ -3499,37 +3499,49 @@ msgstr ""
 
 #: ../../source/mode_headless.rst:1567
 msgid ""
-"Les balayages (``gammonnet.analyzeMissing``, ``gammonnet.sweepStale``) et"
-" les évaluations (``gammonnet.evaluate``) passent par une seule file "
-"d'analyse : un jeu de travailleurs du moteur (``--analysis-workers``), "
-"chacun avec son chercheur réutilisé, qui prennent les positions une à une"
-" en faisant le tour des tenants qui ont du travail. Deux tenants qui "
-"balaient en même temps se partagent les cœurs au lieu de les réclamer "
-"chacun ; une évaluation demandée pendant le balayage d'un autre tenant "
-"attend une position, pas tout le balayage. Avec ``--analysis-weights "
-"club=3``, le tenant ``club`` reçoit trois positions par tour quand un "
-"autre en reçoit une. Les travaux d'un même tenant passent dans l'ordre où"
-" ils sont arrivés. Les comparaisons, les matrices de videau et les "
-"rollouts gardent leurs propres travailleurs."
+"Tous les calculs du moteur passent par une seule file d'analyse : "
+"balayages (``gammonnet.analyzeMissing``, ``gammonnet.sweepStale``), "
+"évaluations (``gammonnet.evaluate``), comparaisons "
+"(``gammonnet.compare``), matrices de videau (``gammonnet.cubeMatrix``) et"
+" rollouts (``rollout.position``, ``rollout.filter``). C'est un jeu de "
+"travailleurs du moteur (``--analysis-workers``), chacun avec son "
+"chercheur réutilisé, qui prennent les positions une à une en faisant le "
+"tour des tenants qui ont du travail. Deux tenants qui balaient en même "
+"temps se partagent les cœurs au lieu de les réclamer chacun ; une "
+"évaluation demandée pendant le balayage d'un autre tenant attend une "
+"position, pas tout le balayage. Avec ``--analysis-weights club=3``, le "
+"tenant ``club`` reçoit trois positions par tour quand un autre en reçoit "
+"une. Les travaux d'un même tenant passent dans l'ordre où ils sont "
+"arrivés. Un rollout prend son tour partie par partie : un rollout long "
+"d'un tenant n'empêche pas la requête courte d'un autre d'être servie "
+"avant sa fin, et ses résultats ne changent pas (ils ne dépendent que des "
+"réglages et de la graine). Chaque position, case ou partie calculée est "
+"imputée au quota de secondes de calcul de son tenant."
 msgstr ""
-"Le scansioni (``gammonnet.analyzeMissing``, ``gammonnet.sweepStale``) e "
-"le valutazioni (``gammonnet.evaluate``) passano da un'unica coda di "
-"analisi: un insieme di lavoratori del motore (``--analysis-workers``), "
-"ciascuno con il proprio ricercatore riutilizzato, che prendono le "
-"posizioni una a una facendo il giro dei tenant che hanno lavoro. Due "
-"tenant che scansionano contemporaneamente si dividono i core invece di "
-"rivendicarli ciascuno; una valutazione richiesta durante la scansione di "
-"un altro tenant attende una posizione, non l'intera scansione. Con "
-"``--analysis-weights club=3``, il tenant ``club`` riceve tre posizioni "
-"per giro quando un altro ne riceve una. I lavori di uno stesso tenant "
-"passano nell'ordine in cui sono arrivati. I confronti, le matrici del "
-"cubo e i rollout mantengono i propri lavoratori."
+"Tutti i calcoli del motore passano da un'unica coda di analisi: scansioni"
+" (``gammonnet.analyzeMissing``, ``gammonnet.sweepStale``), valutazioni "
+"(``gammonnet.evaluate``), confronti (``gammonnet.compare``), matrici del "
+"cubo (``gammonnet.cubeMatrix``) e rollout (``rollout.position``, "
+"``rollout.filter``). È un insieme di lavoratori del motore (``--analysis-"
+"workers``), ciascuno con il proprio cercatore riutilizzato, che prendono "
+"le posizioni una alla volta facendo il giro dei tenant che hanno lavoro. "
+"Due tenant che eseguono scansioni nello stesso momento si dividono i core"
+" invece di reclamarli ciascuno; una valutazione richiesta durante la "
+"scansione di un altro tenant attende una posizione, non l'intera "
+"scansione. Con ``--analysis-weights club=3``, il tenant ``club`` riceve "
+"tre posizioni per turno quando un altro ne riceve una. I lavori di uno "
+"stesso tenant passano nell'ordine in cui sono arrivati. Un rollout prende"
+" il suo turno partita per partita: il rollout lungo di un tenant non "
+"impedisce alla richiesta breve di un altro di essere servita prima della "
+"sua fine, e i suoi risultati non cambiano (dipendono solo dalle "
+"impostazioni e dal seme). Ogni posizione, cella o partita calcolata è "
+"imputata alla quota di secondi di calcolo del suo tenant."
 
-#: ../../source/mode_headless.rst:1579
+#: ../../source/mode_headless.rst:1585
 msgid "**Scénario complet, de zéro à un démon qui répond :**"
 msgstr "**Scenario completo, da zero a un demone che risponde:**"
 
-#: ../../source/mode_headless.rst:1599
+#: ../../source/mode_headless.rst:1605
 #, no-python-brace-format
 msgid ""
 "La première requête est rejetée par Caddy, avant même d'atteindre le "
@@ -3548,7 +3560,7 @@ msgstr ""
 " non è sopravvissuto alla guardia del ``Caddyfile``. Questo scenario è "
 "stato rigiocato così com'è."
 
-#: ../../source/mode_headless.rst:1606
+#: ../../source/mode_headless.rst:1612
 msgid ""
 "Pour tirer l'image publiée plutôt que de la construire, remplacer dans "
 "``docker-compose.yml`` les trois lignes ``build:`` du service "
@@ -3560,7 +3572,7 @@ msgstr ""
 "serve`` con una riga ``image:``, poi lanciare ``docker compose up -d`` "
 "senza ``--build``:"
 
-#: ../../source/mode_headless.rst:1617
+#: ../../source/mode_headless.rst:1623
 msgid ""
 "Le fichier Compose publie le port de Caddy sur toutes les interfaces "
 "(``8080:80``) : c'est ce qu'on attend d'un proxy, qui est là pour être "
@@ -3572,11 +3584,11 @@ msgstr ""
 "raggiunto. Ciò che non va mai pubblicato è il demone — e infatti non lo "
 "è, non ha alcun ``ports:``."
 
-#: ../../source/mode_headless.rst:1625
+#: ../../source/mode_headless.rst:1631
 msgid "Mettre à jour un déploiement"
 msgstr "Aggiornare un deployment"
 
-#: ../../source/mode_headless.rst:1627
+#: ../../source/mode_headless.rst:1633
 msgid ""
 "Le schéma est migré automatiquement au démarrage, et cette migration est "
 "**à sens unique** : une base migrée vers un schéma récent n'est plus "
@@ -3588,7 +3600,7 @@ msgstr ""
 " leggibile da una versione precedente di blunderDB (vedere "
 ":ref:`annexe_db_migration`). L'ordine dei gesti conta quindi."
 
-#: ../../source/mode_headless.rst:1632
+#: ../../source/mode_headless.rst:1638
 msgid ""
 "**Sauvegarder d'abord**, avant tout le reste : c'est la seule marche "
 "arrière (voir :ref:`headless_sauvegarde`)."
@@ -3596,7 +3608,7 @@ msgstr ""
 "**Salvare prima di tutto**, prima di ogni altra cosa: è l'unica marcia "
 "indietro (vedere :ref:`headless_sauvegarde`)."
 
-#: ../../source/mode_headless.rst:1634
+#: ../../source/mode_headless.rst:1640
 msgid ""
 "**Tirer l'étiquette de la version voulue**, jamais ``latest`` en "
 "production. ``latest`` suit la dernière version publiée : le déploiement "
@@ -3608,7 +3620,7 @@ msgstr ""
 " cambia versione a ogni riavvio, senza che lo si sia deciso né che il "
 "backup della fase 1 sia necessariamente recente."
 
-#: ../../source/mode_headless.rst:1638
+#: ../../source/mode_headless.rst:1644
 msgid ""
 "**Redémarrer le démon** sur la nouvelle image. Il migre le schéma avant "
 "de servir la moindre requête ; si la migration échoue, il s'arrête sur "
@@ -3618,7 +3630,7 @@ msgstr ""
 "servire la minima richiesta; se la migrazione fallisce, si arresta "
 "sull'errore invece di servire un database migrato a metà."
 
-#: ../../source/mode_headless.rst:1641
+#: ../../source/mode_headless.rst:1647
 #, no-python-brace-format
 msgid ""
 "**Vérifier la sonde de disponibilité.** ``GET /readyz`` répond ``200`` et"
@@ -3640,7 +3652,7 @@ msgstr ""
 "database e quello che il binario si aspetta. ``blunderdb healthcheck`` "
 "restituisce lo stesso verdetto come codice di uscita."
 
-#: ../../source/mode_headless.rst:1649
+#: ../../source/mode_headless.rst:1655
 msgid ""
 "Un ``version_mismatch`` qui persiste après le redémarrage, c'est le "
 "retour en arrière : un binaire plus ancien devant une base déjà migrée. "
@@ -3652,7 +3664,7 @@ msgstr ""
 "esiste una migrazione discendente; è il backup della fase 1 che va "
 "ripristinato."
 
-#: ../../source/mode_headless.rst:1655
+#: ../../source/mode_headless.rst:1661
 msgid ""
 "**Avant d'activer** ``--read-tenants`` **sur un déploiement existant**, "
 "mettre à jour le proxy : un proxy configuré avant cet en-tête ne retire "
@@ -3668,11 +3680,11 @@ msgstr ""
 "il demone rifiuta questo header: un proxy che lo lascia passare si "
 "riconosce dalle risposte ``400``."
 
-#: ../../source/mode_headless.rst:1664
+#: ../../source/mode_headless.rst:1670
 msgid "Backend PostgreSQL et multi-utilisateurs"
 msgstr "Backend PostgreSQL e multiutente"
 
-#: ../../source/mode_headless.rst:1666
+#: ../../source/mode_headless.rst:1672
 msgid ""
 "Pour un déploiement partagé, blunderDB peut stocker les données dans "
 "**PostgreSQL** plutôt que dans un fichier SQLite. Le backend est "
@@ -3684,7 +3696,7 @@ msgstr ""
 "tramite ``--backend postgres`` e la stringa di connessione ``--dsn``. Lo "
 "schema viene creato e migrato automaticamente all'avvio."
 
-#: ../../source/mode_headless.rst:1671
+#: ../../source/mode_headless.rst:1677
 msgid ""
 "Les données sont **cloisonnées par tenant** (locataire) : chaque requête "
 "porte l'identifiant de son tenant (en-tête ``X-Tenant-ID``, un entier "
@@ -3704,11 +3716,11 @@ msgstr ""
 "reverse-proxy ad associare un account al suo intero, il demone non "
 "indovina mai."
 
-#: ../../source/mode_headless.rst:1680
+#: ../../source/mode_headless.rst:1686
 msgid "Row-Level Security"
 msgstr "Row-Level Security"
 
-#: ../../source/mode_headless.rst:1682
+#: ../../source/mode_headless.rst:1688
 msgid ""
 "L'option ``--rls`` active en complément la **Row-Level Security** de "
 "PostgreSQL. À chaque démarrage, le démon installe sur chaque table "
@@ -3733,7 +3745,7 @@ msgstr ""
 " impostazione predefinita: il filtraggio per tenant del codice "
 "applicativo resta comunque in vigore in entrambi i casi."
 
-#: ../../source/mode_headless.rst:1693
+#: ../../source/mode_headless.rst:1699
 msgid ""
 "**Le rôle de connexion doit être ordinaire** : ni superutilisateur, ni "
 "``BYPASSRLS``. PostgreSQL laisse ces deux-là traverser toutes les "
@@ -3747,7 +3759,7 @@ msgstr ""
 " codice applicativo. Questo stesso ruolo deve però possedere le tabelle, "
 "poiché è lui a eseguire gli ``ALTER TABLE`` e i ``CREATE POLICY``."
 
-#: ../../source/mode_headless.rst:1698
+#: ../../source/mode_headless.rst:1704
 msgid ""
 "**Sur une base déjà peuplée, il n'y a rien à migrer** : la pose des "
 "politiques est du DDL idempotent, rejoué à chaque démarrage après la "
@@ -3759,7 +3771,7 @@ msgstr ""
 "avvio dopo la migrazione dello schema. Nessun dato viene spostato, "
 "nessuna riga riscritta; attivare o rimuovere ``--rls`` è solo un riavvio."
 
-#: ../../source/mode_headless.rst:1702
+#: ../../source/mode_headless.rst:1708
 msgid ""
 "**Le coût est mesuré** : sur la lecture d'une position, 101,8 µs sans, "
 "177,0 µs avec, soit **+73,8 %** — même conteneur, mêmes lignes, deux "
@@ -3774,11 +3786,11 @@ msgstr ""
 "connessione dal pool (impostazione e poi azzeramento del parametro) e sul"
 " predicato in più che ogni richiesta attraversa, mai sul volume di dati."
 
-#: ../../source/mode_headless.rst:1709
+#: ../../source/mode_headless.rst:1715
 msgid "Ouvrir et fermer un tenant"
 msgstr "Aprire e chiudere un tenant"
 
-#: ../../source/mode_headless.rst:1711
+#: ../../source/mode_headless.rst:1717
 msgid ""
 "Il n'y a **rien à créer** côté serveur : un tenant n'est pas un "
 "enregistrement, c'est l'entier que portent ses lignes. La base n'a pas de"
@@ -3792,7 +3804,7 @@ msgstr ""
 "significa aggiungere una voce alla tabella di corrispondenza del proxy, "
 "ed è la prima scrittura del membro a far esistere il suo tenant."
 
-#: ../../source/mode_headless.rst:1717
+#: ../../source/mode_headless.rst:1723
 msgid ""
 "Un tenant vide répond comme une base vide, sans erreur : "
 "``metadata.counts`` renvoie des zéros et les listes ne renvoient rien."
@@ -3801,7 +3813,7 @@ msgstr ""
 "``metadata.counts`` restituisce zeri e gli elenchi non restituiscono "
 "nulla."
 
-#: ../../source/mode_headless.rst:1720
+#: ../../source/mode_headless.rst:1726
 msgid ""
 "Quand un tenant est décommissionné, ``POST /ops/tenant.purge`` supprime "
 "définitivement toutes ses données (positions, matchs, collections, "
@@ -3835,11 +3847,11 @@ msgstr ""
 "con il backend PostgreSQL — restituisce un errore ``invalid`` su un "
 "backend SQLite, che non ha alcuna nozione di tenant."
 
-#: ../../source/mode_headless.rst:1735
+#: ../../source/mode_headless.rst:1741
 msgid "Compactage et pool de connexions"
 msgstr "Compattazione e pool di connessioni"
 
-#: ../../source/mode_headless.rst:1737
+#: ../../source/mode_headless.rst:1743
 msgid ""
 "``POST /ops/maintenance.vacuum`` compacte le fichier SQLite du daemon — "
 "le pendant du bouton « Compacter la base » de l'interface graphique et de"
@@ -3857,7 +3869,7 @@ msgstr ""
 " con il backend SQLite; su PostgreSQL, che non ha un file da compattare, "
 "restituisce un errore ``invalid``."
 
-#: ../../source/mode_headless.rst:1745
+#: ../../source/mode_headless.rst:1751
 msgid ""
 "Le pool de connexions PostgreSQL se règle par variable d'environnement : "
 "``BLUNDERDB_POSTGRES_MAX_CONNS`` (50 par défaut), "
@@ -3894,11 +3906,11 @@ msgstr ""
 "configurato) e ``_wait_count`` (il numero cumulativo di chiamate "
 "``Acquire`` che hanno dovuto attendere una connessione libera)."
 
-#: ../../source/mode_headless.rst:1764
+#: ../../source/mode_headless.rst:1770
 msgid "Migrer une base SQLite vers PostgreSQL"
 msgstr "Migrare un database SQLite verso PostgreSQL"
 
-#: ../../source/mode_headless.rst:1766
+#: ../../source/mode_headless.rst:1772
 msgid ""
 "``blunderdb migrate`` copie une base SQLite mono-utilisateur vers un "
 "backend PostgreSQL, sous un tenant choisi — l'entier que le reverse-proxy"
@@ -3910,7 +3922,7 @@ msgstr ""
 "invierà in ``X-Tenant-ID`` per quell'utente — è la via per « caricare » "
 "una libreria desktop in un'installazione server."
 
-#: ../../source/mode_headless.rst:1782
+#: ../../source/mode_headless.rst:1788
 msgid ""
 "La migration copie les **positions, leurs analyses et commentaires, les "
 "matchs (parties + coups), les tournois (avec leurs liens de match) et les"
@@ -3935,29 +3947,29 @@ msgstr ""
 "eseguito per primo ed emette i propri eventi ``\"schema-migration\"`` "
 "(fase/fatto/totale) prima che inizi la copia riga per riga."
 
-#: ../../source/mode_headless.rst:1800
+#: ../../source/mode_headless.rst:1806
 msgid "``--from <uri>``"
 msgstr "``--from <uri>``"
 
-#: ../../source/mode_headless.rst:1802
+#: ../../source/mode_headless.rst:1808
 msgid "base SQLite source (``sqlite:///<chemin>`` ou un simple chemin)"
 msgstr ""
 "database SQLite di origine (``sqlite:///<percorso>`` o un semplice "
 "percorso)"
 
-#: ../../source/mode_headless.rst:1803
+#: ../../source/mode_headless.rst:1809
 msgid "``--to <dsn>``"
 msgstr "``--to <dsn>``"
 
-#: ../../source/mode_headless.rst:1805
+#: ../../source/mode_headless.rst:1811
 msgid "DSN PostgreSQL de destination (``postgres://…``)"
 msgstr "DSN PostgreSQL di destinazione (``postgres://…``)"
 
-#: ../../source/mode_headless.rst:1806
+#: ../../source/mode_headless.rst:1812
 msgid "``--tenant-id <n>``"
 msgstr "``--tenant-id <n>``"
 
-#: ../../source/mode_headless.rst:1808
+#: ../../source/mode_headless.rst:1814
 msgid ""
 "tenant de destination, un entier décimal positif (obligatoire sauf en "
 "``--dry-run`` ; un nom comme ``mon-tenant`` est refusé)"
@@ -3965,23 +3977,23 @@ msgstr ""
 "tenant di destinazione, un intero decimale positivo (obbligatorio salvo "
 "in ``--dry-run``; un nome come ``mon-tenant`` viene rifiutato)"
 
-#: ../../source/mode_headless.rst:1810
+#: ../../source/mode_headless.rst:1816
 msgid "``--dry-run``"
 msgstr "``--dry-run``"
 
-#: ../../source/mode_headless.rst:1812
+#: ../../source/mode_headless.rst:1818
 msgid "compte ce qui serait copié sans rien écrire"
 msgstr "conta ciò che verrebbe copiato senza scrivere nulla"
 
-#: ../../source/mode_headless.rst:1813
+#: ../../source/mode_headless.rst:1819
 msgid "``--on-conflict <politique>``"
 msgstr "``--on-conflict <politica>``"
 
-#: ../../source/mode_headless.rst:1814
+#: ../../source/mode_headless.rst:1820
 msgid "``\"\"``"
 msgstr "``\"\"``"
 
-#: ../../source/mode_headless.rst:1815
+#: ../../source/mode_headless.rst:1821
 msgid ""
 "``\"\"`` interrompt si le tenant a déjà des données ; ``skip`` fusionne "
 "(déduplication des positions par hash Zobrist)"
@@ -3989,7 +4001,7 @@ msgstr ""
 "``\"\"`` interrompe se il tenant ha già dei dati; ``skip`` unisce "
 "(deduplicazione delle posizioni tramite hash Zobrist)"
 
-#: ../../source/mode_headless.rst:1820
+#: ../../source/mode_headless.rst:1826
 msgid ""
 "Ne sont pas (encore) migrés les états applicatifs : decks/cartes Anki, "
 "bibliothèque de filtres, historique de recherche et de commandes, et "
@@ -4001,11 +4013,11 @@ msgstr ""
 "sessione. La priorità è la migrazione della libreria di posizioni e della"
 " cronologia dei match."
 
-#: ../../source/mode_headless.rst:1828
+#: ../../source/mode_headless.rst:1834
 msgid "Le dispatcher générique ``call``"
 msgstr "Il dispatcher generico ``call``"
 
-#: ../../source/mode_headless.rst:1830
+#: ../../source/mode_headless.rst:1836
 msgid ""
 "En complément des sous-commandes historiques (:ref:`cli`), ``blunderdb "
 "call`` expose **toutes** les opérations de stockage directement, en "
@@ -4019,19 +4031,19 @@ msgstr ""
 "quindi identico a ``POST /v1/<famiglia>.<metodo>``. È utile per lo "
 "scripting e i test di integrazione."
 
-#: ../../source/mode_headless.rst:1868
+#: ../../source/mode_headless.rst:1874
 msgid "``sqlite`` ou ``postgres``"
 msgstr "``sqlite`` o ``postgres``"
 
-#: ../../source/mode_headless.rst:1872
+#: ../../source/mode_headless.rst:1878
 msgid "``--scope <n>``"
 msgstr "``--scope <n>``"
 
-#: ../../source/mode_headless.rst:1873
+#: ../../source/mode_headless.rst:1879
 msgid "``1``"
 msgstr "``1``"
 
-#: ../../source/mode_headless.rst:1874
+#: ../../source/mode_headless.rst:1880
 msgid ""
 "tenant, un entier décimal positif (envoyé comme ``X-Tenant-ID`` ; un nom "
 "comme ``alice`` est refusé)"
@@ -4039,40 +4051,40 @@ msgstr ""
 "tenant, un intero decimale positivo (inviato come ``X-Tenant-ID``; un "
 "nome come ``alice`` viene rifiutato)"
 
-#: ../../source/mode_headless.rst:1876
+#: ../../source/mode_headless.rst:1882
 msgid "``--json <chaîne>``"
 msgstr "``--json <stringa>``"
 
-#: ../../source/mode_headless.rst:1877
+#: ../../source/mode_headless.rst:1883
 #, no-python-brace-format
 msgid "``{}``"
 msgstr "``{}``"
 
-#: ../../source/mode_headless.rst:1878
+#: ../../source/mode_headless.rst:1884
 msgid "corps de la requête au format JSON"
 msgstr "corpo della richiesta in formato JSON"
 
-#: ../../source/mode_headless.rst:1879
+#: ../../source/mode_headless.rst:1885
 msgid "``--json-file <chemin>``"
 msgstr "``--json-file <percorso>``"
 
-#: ../../source/mode_headless.rst:1881
+#: ../../source/mode_headless.rst:1887
 msgid "lit le corps de la requête depuis un fichier"
 msgstr "legge il corpo della richiesta da un file"
 
-#: ../../source/mode_headless.rst:1882
+#: ../../source/mode_headless.rst:1888
 msgid "``--list``"
 msgstr "``--list``"
 
-#: ../../source/mode_headless.rst:1884
+#: ../../source/mode_headless.rst:1890
 msgid "affiche toutes les méthodes ``<famille>.<méthode>`` et quitte"
 msgstr "mostra tutti i metodi ``<famiglia>.<metodo>`` ed esce"
 
-#: ../../source/mode_headless.rst:1885
+#: ../../source/mode_headless.rst:1891
 msgid "``--if-match <version>``"
 msgstr "``--if-match <version>``"
 
-#: ../../source/mode_headless.rst:1887
+#: ../../source/mode_headless.rst:1893
 msgid ""
 "version envoyée en ``If-Match``, exigée par les gestes de direction "
 "(:ref:`headless_direction_gestures`) et de transcription "
@@ -4082,7 +4094,7 @@ msgstr ""
 "(:ref:`headless_direction_gestures`) e di trascrizione "
 "(:ref:`headless_transcription`)"
 
-#: ../../source/mode_headless.rst:1891
+#: ../../source/mode_headless.rst:1897
 msgid ""
 "``call`` sert les gestes de transcription sans drapeau : il travaille sur"
 " un fichier local, comme la CLI. Chaque appel est un processus neuf, donc"
@@ -4094,7 +4106,7 @@ msgstr ""
 "sessione propria: il ``sessionId`` può essere omesso e non c'è "
 "annullamento da una chiamata all'altra."
 
-#: ../../source/mode_headless.rst:1896
+#: ../../source/mode_headless.rst:1902
 #, no-python-brace-format
 msgid ""
 "La réponse JSON (ou le flux NDJSON pour les endpoints ``*.list``) est "
@@ -4115,11 +4127,11 @@ msgstr ""
 "``--if-match``. ``call`` serve i gesti di direzione senza opzione, come "
 "la CLI, perché viene eseguito in locale."
 
-#: ../../source/mode_headless.rst:1907
+#: ../../source/mode_headless.rst:1913
 msgid "Outils pour un assistant IA (MCP)"
 msgstr "Strumenti per un assistente IA (MCP)"
 
-#: ../../source/mode_headless.rst:1909
+#: ../../source/mode_headless.rst:1915
 msgid ""
 "blunderDB n'embarque aucun modèle de langage : il offre ses outils à "
 "l'assistant que vous utilisez déjà (Claude Code, Claude Desktop, un "
@@ -4131,33 +4143,33 @@ msgstr ""
 "locale), tramite il *Model Context Protocol*. L'assistente cerca, legge e"
 " spiega; blunderDB risponde con le proprie cifre."
 
-#: ../../source/mode_headless.rst:1914
+#: ../../source/mode_headless.rst:1920
 msgid "Les outils passent par les mêmes gestionnaires que ``/v1`` et ``call`` :"
 msgstr "Gli strumenti passano per gli stessi gestori di ``/v1`` e ``call``:"
 
-#: ../../source/mode_headless.rst:1920
+#: ../../source/mode_headless.rst:1926
 msgid "Outil"
 msgstr "Strumento"
 
-#: ../../source/mode_headless.rst:1921
+#: ../../source/mode_headless.rst:1927
 msgid "Ce qu'il rend"
 msgstr "Cosa restituisce"
 
-#: ../../source/mode_headless.rst:1922
+#: ../../source/mode_headless.rst:1928
 msgid "``database_overview``"
 msgstr "``database_overview``"
 
-#: ../../source/mode_headless.rst:1923
+#: ../../source/mode_headless.rst:1929
 msgid "comptes, période des matchs, version du schéma, joueurs fréquents"
 msgstr ""
 "conteggi, periodo delle partite, versione dello schema, giocatori "
 "frequenti"
 
-#: ../../source/mode_headless.rst:1924
+#: ../../source/mode_headless.rst:1930
 msgid "``search_positions``"
 msgstr "``search_positions``"
 
-#: ../../source/mode_headless.rst:1925
+#: ../../source/mode_headless.rst:1931
 msgid ""
 "positions d'une recherche dans la grammaire de la barre de commande "
 "(décrite dans l'outil), avec sa forme canonique"
@@ -4165,11 +4177,11 @@ msgstr ""
 "posizioni di una ricerca nella grammatica della barra dei comandi "
 "(descritta nello strumento), con la sua forma canonica"
 
-#: ../../source/mode_headless.rst:1927
+#: ../../source/mode_headless.rst:1933
 msgid "``search_comments``, ``position_comments``, ``saved_searches``"
 msgstr "``search_comments``, ``position_comments``, ``saved_searches``"
 
-#: ../../source/mode_headless.rst:1928
+#: ../../source/mode_headless.rst:1934
 msgid ""
 "commentaires contenant des mots ; tous les commentaires d'une position, "
 "chacun avec son auteur ; recherches enregistrées"
@@ -4177,11 +4189,11 @@ msgstr ""
 "commenti contenenti parole; tutti i commenti di una posizione, ciascuno "
 "con il suo autore; ricerche salvate"
 
-#: ../../source/mode_headless.rst:1930
+#: ../../source/mode_headless.rst:1936
 msgid "``get_position``"
 msgstr "``get_position``"
 
-#: ../../source/mode_headless.rst:1931
+#: ../../source/mode_headless.rst:1937
 msgid ""
 "une position, son analyse (meilleurs coups ou videau), le coup joué et le"
 " commentaire"
@@ -4189,23 +4201,23 @@ msgstr ""
 "una posizione, la sua analisi (mosse migliori o cubo), la mossa giocata e"
 " il commento"
 
-#: ../../source/mode_headless.rst:1933
+#: ../../source/mode_headless.rst:1939
 msgid "``explain_error``"
 msgstr "``explain_error``"
 
-#: ../../source/mode_headless.rst:1934
+#: ../../source/mode_headless.rst:1940
 msgid "le thème de l'erreur, son coût en millipoints et la meilleure décision"
 msgstr "il tema dell'errore, il suo costo in millipunti e la decisione migliore"
 
-#: ../../source/mode_headless.rst:1935
+#: ../../source/mode_headless.rst:1941
 msgid "``similar_positions``, ``decode_position``, ``legal_moves``, ``race_epc``"
 msgstr "``similar_positions``, ``decode_position``, ``legal_moves``, ``race_epc``"
 
-#: ../../source/mode_headless.rst:1937
+#: ../../source/mode_headless.rst:1943
 msgid "positions voisines ; lecture d'un XGID ; coups légaux ; EPC de course"
 msgstr "posizioni vicine; lettura di un XGID; mosse legali; EPC di corsa"
 
-#: ../../source/mode_headless.rst:1938
+#: ../../source/mode_headless.rst:1944
 msgid ""
 "``list_players``, ``player_aliases``, ``player_stats``, "
 "``recurring_errors``, ``training_stats``, ``training_missed``"
@@ -4213,7 +4225,7 @@ msgstr ""
 "``list_players``, ``player_aliases``, ``player_stats``, "
 "``recurring_errors``, ``training_stats``, ``training_missed``"
 
-#: ../../source/mode_headless.rst:1940
+#: ../../source/mode_headless.rst:1946
 msgid ""
 "joueurs ; leurs alias et les graphies proposées ; PR global, pions, "
 "videau, par phase ; erreurs qui reviennent ; PR du quiz et rétention Anki"
@@ -4223,11 +4235,11 @@ msgstr ""
 "per fase; errori ricorrenti; PR del quiz e ritenzione Anki rispetto al PR"
 " reale; posizioni sbagliate nel quiz"
 
-#: ../../source/mode_headless.rst:1943
+#: ../../source/mode_headless.rst:1949
 msgid "``head_to_head``, ``pr_by_window``, ``player_ranking``"
 msgstr "``head_to_head``, ``pr_by_window``, ``player_ranking``"
 
-#: ../../source/mode_headless.rst:1944
+#: ../../source/mode_headless.rst:1950
 msgid ""
 "face-à-face de deux joueurs ; PR par fenêtre calendaire ; classement par "
 "PR"
@@ -4235,43 +4247,43 @@ msgstr ""
 "testa a testa di due giocatori; PR per finestra di calendario; classifica"
 " per PR"
 
-#: ../../source/mode_headless.rst:1946
+#: ../../source/mode_headless.rst:1952
 msgid "``list_matches``, ``get_match``, ``list_tournaments``"
 msgstr "``list_matches``, ``get_match``, ``list_tournaments``"
 
-#: ../../source/mode_headless.rst:1947
+#: ../../source/mode_headless.rst:1953
 msgid "matchs, détail d'un match, tournois"
 msgstr "partite, dettaglio di una partita, tornei"
 
-#: ../../source/mode_headless.rst:1948
+#: ../../source/mode_headless.rst:1954
 msgid "``list_collections``, ``collection_positions``, ``study_decks``"
 msgstr "``list_collections``, ``collection_positions``, ``study_decks``"
 
-#: ../../source/mode_headless.rst:1949
+#: ../../source/mode_headless.rst:1955
 msgid "collections et leurs positions ; paquets de révision"
 msgstr "raccolte e le loro posizioni; mazzi di ripasso"
 
-#: ../../source/mode_headless.rst:1950
+#: ../../source/mode_headless.rst:1956
 msgid "``list_lessons``, ``lesson``"
 msgstr "``list_lessons``, ``lesson``"
 
-#: ../../source/mode_headless.rst:1951
+#: ../../source/mode_headless.rst:1957
 msgid "leçons ; les étapes d'une leçon, dans l'ordre"
 msgstr "lezioni; i passi di una lezione, in ordine"
 
-#: ../../source/mode_headless.rst:1952
+#: ../../source/mode_headless.rst:1958
 msgid "``quiz_draw``, ``quiz_grade``"
 msgstr "``quiz_draw``, ``quiz_grade``"
 
-#: ../../source/mode_headless.rst:1953
+#: ../../source/mode_headless.rst:1959
 msgid "tire une position sans sa réponse, puis note la réponse donnée"
 msgstr "estrae una posizione senza la sua risposta, poi valuta la risposta data"
 
-#: ../../source/mode_headless.rst:1954
+#: ../../source/mode_headless.rst:1960
 msgid "``evaluate``"
 msgstr "``evaluate``"
 
-#: ../../source/mode_headless.rst:1955
+#: ../../source/mode_headless.rst:1961
 msgid ""
 "évaluation gammonNet d'une position donnée en texte, sans l'enregistrer :"
 " meilleurs coups ou décision de videau"
@@ -4279,37 +4291,37 @@ msgstr ""
 "valutazione gammonNet di una posizione data come testo, senza salvarla: "
 "mosse migliori o decisione di cubo"
 
-#: ../../source/mode_headless.rst:1957
+#: ../../source/mode_headless.rst:1963
 msgid "``anki_next``"
 msgstr "``anki_next``"
 
-#: ../../source/mode_headless.rst:1958
+#: ../../source/mode_headless.rst:1964
 msgid "la prochaine carte due d'un paquet de révision"
 msgstr "la prossima carta in scadenza di un mazzo di ripasso"
 
-#: ../../source/mode_headless.rst:1959
+#: ../../source/mode_headless.rst:1965
 msgid "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 msgstr "``transcribe_list``, ``transcribe_get``, ``transcribe_mat``"
 
-#: ../../source/mode_headless.rst:1960
+#: ../../source/mode_headless.rst:1966
 msgid "transcriptions de matchs ; détail d'une transcription ; son texte ``.mat``"
 msgstr ""
 "trascrizioni di partite; dettaglio di una trascrizione; il suo testo "
 "``.mat``"
 
-#: ../../source/mode_headless.rst:1962
+#: ../../source/mode_headless.rst:1968
 msgid "``direction_list``, ``direction_standings``, ``direction_season``"
 msgstr "``direction_list``, ``direction_standings``, ``direction_season``"
 
-#: ../../source/mode_headless.rst:1963
+#: ../../source/mode_headless.rst:1969
 msgid "tournois dirigés ; classement d'un tournoi ; classement de saison"
 msgstr "tornei diretti; classifica di un torneo; classifica di stagione"
 
-#: ../../source/mode_headless.rst:1964
+#: ../../source/mode_headless.rst:1970
 msgid "``rollout``"
 msgstr "``rollout``"
 
-#: ../../source/mode_headless.rst:1965
+#: ../../source/mode_headless.rst:1971
 #, no-python-format
 msgid ""
 "rollout d'une position de la base : équité, intervalle à 95 % et JSD par "
@@ -4318,7 +4330,7 @@ msgstr ""
 "rollout di una posizione del database: equity, intervallo al 95 % e JSD "
 "per candidato"
 
-#: ../../source/mode_headless.rst:1967
+#: ../../source/mode_headless.rst:1973
 msgid ""
 "``club_matches``, ``club_match_positions``, ``club_comments``, "
 "``club_library``, ``club_library_positions``, ``club_ranking``"
@@ -4326,7 +4338,7 @@ msgstr ""
 "``club_matches``, ``club_match_positions``, ``club_comments``, "
 "``club_library``, ``club_library_positions``, ``club_ranking``"
 
-#: ../../source/mode_headless.rst:1969
+#: ../../source/mode_headless.rst:1975
 msgid ""
 "lectures à travers les tenants que liste le proxy "
 "(:ref:`headless_tenants_lus`) : matchs des élèves, positions d'un match "
@@ -4339,7 +4351,7 @@ msgstr ""
 "condivisa, classifica del club; senza ``X-Read-Tenants``, solo questo "
 "tenant"
 
-#: ../../source/mode_headless.rst:1974
+#: ../../source/mode_headless.rst:1980
 msgid ""
 "Seuls ces outils écrivent — ``save_position``, ``comment_position`` (qui "
 "signe de l'argument ``author``, sinon de l'en-tête ``X-User-Name``), "
@@ -4370,7 +4382,7 @@ msgstr ""
 "offerta, l'argomento ``store``, che registra il rollout accanto "
 "all'analisi della posizione. Nessuno strumento cancella nulla."
 
-#: ../../source/mode_headless.rst:1989
+#: ../../source/mode_headless.rst:1995
 msgid ""
 "**En local**, l'assistant lance ``blunderdb mcp`` sur un fichier (voir "
 ":ref:`cli`). Pour Claude Code :"
@@ -4378,7 +4390,7 @@ msgstr ""
 "**In locale**, l'assistente lancia ``blunderdb mcp`` su un file (vedi "
 ":ref:`cli`). Per Claude Code:"
 
-#: ../../source/mode_headless.rst:1996
+#: ../../source/mode_headless.rst:2002
 msgid ""
 "**Sur le démon**, les mêmes outils répondent en HTTP sur ``POST /mcp`` "
 "(transport *streamable HTTP*, sans session). Comme ``/v1``, ``/mcp`` "
@@ -4403,7 +4415,7 @@ msgstr ""
 "Una chiamata di strumento costa quindi più richieste; nessuna ne è "
 "esentata."
 
-#: ../../source/mode_headless.rst:2007
+#: ../../source/mode_headless.rst:2013
 msgid ""
 "Comme ``call``, ``blunderdb mcp`` migre le schéma d'une base ancienne à "
 "l'ouverture, même sans ``--write``."

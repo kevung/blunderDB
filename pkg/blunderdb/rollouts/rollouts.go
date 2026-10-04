@@ -220,9 +220,10 @@ type Summary struct {
 type Write func(positionID int64, res *rollout.Result) error
 
 // Batch rolls positions out one after the other — each rollout already plays
-// its games on every core — writing each as it finishes. Cancelling ctx drops
-// the position in hand whole and returns what was written before it.
-func Batch(ctx context.Context, positions []domain.Position, s rollout.Settings, progress func(Progress), write Write) (Summary, error) {
+// its games on every core, or through exec when set — writing each as it
+// finishes. Cancelling ctx drops the position in hand whole and returns what
+// was written before it.
+func Batch(ctx context.Context, positions []domain.Position, s rollout.Settings, exec rollout.Exec, progress func(Progress), write Write) (Summary, error) {
 	sum := Summary{Total: len(positions)}
 	if err := s.Validate(); err != nil {
 		return sum, err
@@ -237,7 +238,7 @@ func Batch(ctx context.Context, positions []domain.Position, s rollout.Settings,
 			sum.Cancelled = true
 			return sum, nil
 		}
-		opt := rollout.Options{Progress: func(p rollout.Progress) {
+		opt := rollout.Options{Exec: exec, Progress: func(p rollout.Progress) {
 			report(Progress{Done: i, Total: sum.Total, PositionID: pos.ID, Games: p.Games, MaxGames: p.MaxGames})
 		}}
 		res, err := rollout.Run(ctx, pos, s, opt)
@@ -272,13 +273,14 @@ var ErrLoad = errors.New("rollouts: cannot load position")
 
 // Position loads positionID and rolls it out, writing nothing: the caller
 // stores the result with Store when asked to. Cancelled, it returns the games
-// finished so far (Stop = cancelled) with ctx's error.
-func Position(ctx context.Context, st storage.Storage, scope string, positionID int64, s rollout.Settings, moves []string, progress func(rollout.Progress)) (*rollout.Result, error) {
+// finished so far (Stop = cancelled) with ctx's error. exec, when set, plays
+// the games (rollout.Options.Exec).
+func Position(ctx context.Context, st storage.Storage, scope string, positionID int64, s rollout.Settings, moves []string, exec rollout.Exec, progress func(rollout.Progress)) (*rollout.Result, error) {
 	pos, err := Load(ctx, st, scope, positionID)
 	if err != nil {
 		return nil, err
 	}
-	return Run(ctx, pos, s, moves, progress)
+	return rollout.Run(ctx, *pos, s, rollout.Options{Moves: moves, Exec: exec, Progress: progress})
 }
 
 // Load reads the position a rollout is asked on, a failure wrapped in

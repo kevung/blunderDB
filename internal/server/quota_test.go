@@ -278,7 +278,7 @@ func saveOpeningRolls(t *testing.T, srv *Server, n int) []int64 {
 // answers what it folded, flagged, never as the whole library.
 func TestQuotaCutComparisonSaysSo(t *testing.T) {
 	ts, srv := newQuotaTestServer(t, TenantQuotas{AnalysisSecondsPerDay: 1})
-	srv.engineWorkers = 1
+	srv.analysis = newAnalysisPool(1, nil)
 	saveOpeningRolls(t, srv, 6)
 	srv.quota.charge(testTenant, time.Second-time.Nanosecond)
 
@@ -298,15 +298,15 @@ func TestQuotaCutComparisonSaysSo(t *testing.T) {
 }
 
 // TestQuotaChargesCubeMatrixInCPUSeconds: a cube matrix spread over several
-// workers costs its wall time once per worker, the unit a sweep's workers
+// workers costs the time each spent on its cells, the unit a sweep's workers
 // charge in, so it costs more than the request's own wall time. The grid is
 // large enough for the search to dwarf the HTTP round trip the test's clock
 // also counts.
 func TestQuotaChargesCubeMatrixInCPUSeconds(t *testing.T) {
 	ts, srv := newQuotaTestServer(t, TenantQuotas{AnalysisSecondsPerDay: 3600})
-	srv.engineWorkers = 4
+	srv.analysis = newAnalysisPool(4, nil)
 	start := time.Now()
-	resp := post(t, ts, "/v1/gammonnet.cubeMatrix", cubeMatrixReq{XGID: "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10", MatchLength: 9, Ply: 0})
+	resp := post(t, ts, "/v1/gammonnet.cubeMatrix", cubeMatrixReq{XGID: "XGID=-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:0:10", MatchLength: 9, Ply: 1})
 	resp.Body.Close()
 	wall := time.Since(start)
 	if resp.StatusCode != http.StatusOK {

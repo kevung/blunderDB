@@ -143,7 +143,7 @@ func (d *Database) RolloutPositions(ctx context.Context, positions []Position, s
 }
 
 func (d *Database) rolloutPositionsAt(ctx context.Context, gen uint64, positions []Position, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
-	return rollouts.Batch(ctx, positions, s, progress, func(positionID int64, res *rollout.Result) error {
+	return rollouts.Batch(ctx, positions, s, nil, progress, func(positionID int64, res *rollout.Result) error {
 		return d.storeRollout(gen, positionID, res)
 	})
 }
