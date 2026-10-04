@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 18:11+0200\n"
+"POT-Creation-Date: 2026-10-04 05:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -354,6 +354,20 @@ msgstr ""
 "restaurarlo."
 
 #: ../../source/cmd_mode.rst:1
+msgid "resume"
+msgstr "resume"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Liste les imports que rien n'a terminé (arrêt de l'application, import "
+"annulé) et reprend celui qu'on choisit, en désignant à nouveau le dossier"
+" ou les fichiers."
+msgstr ""
+"Lista las importaciones que nada ha terminado (aplicación detenida, "
+"importación cancelada) y reanuda la elegida, indicando de nuevo la "
+"carpeta o los archivos."
+
+#: ../../source/cmd_mode.rst:1
 msgid "[number]"
 msgstr "[number]"
 
@@ -505,7 +519,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navegar por el último match visitado."
 
-#: ../../source/cmd_mode.rst:82
+#: ../../source/cmd_mode.rst:83
 msgid "Édition et recherche"
 msgstr "Edición y búsqueda"
 
@@ -545,11 +559,11 @@ msgstr ""
 "Buscar entre las posiciones mostradas: resultados actuales, colección "
 "abierta o partida en revisión."
 
-#: ../../source/cmd_mode.rst:98
+#: ../../source/cmd_mode.rst:99
 msgid "Filtres de recherche"
 msgstr "Filtros de búsqueda"
 
-#: ../../source/cmd_mode.rst:100
+#: ../../source/cmd_mode.rst:101
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -564,7 +578,7 @@ msgstr ""
 "cuando existe, la opción de ``search`` que hace lo mismo (ver "
 ":ref:`cli`); un guion señala un filtro que solo la gramática expresa."
 
-#: ../../source/cmd_mode.rst:107
+#: ../../source/cmd_mode.rst:108
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -584,7 +598,7 @@ msgstr ""
 "se comparan con un tablero vacío; son las opciones de la tercera columna "
 "las que hay que emplear ahí."
 
-#: ../../source/cmd_mode.rst:116
+#: ../../source/cmd_mode.rst:117
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -594,7 +608,7 @@ msgstr ""
 "resultado por distancia creciente a una posición objetivo, y todos los "
 "demás tokens restringen el conjunto así ordenado."
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -604,11 +618,11 @@ msgstr ""
 "*milipuntos* de la tabla siguiente: ``E>100`` conserva las jugadas que "
 "costaron al menos una décima de punto, valiendo un punto 1000 milésimas."
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid "Deux recherches complètes :"
 msgstr "Dos búsquedas completas:"
 
-#: ../../source/cmd_mode.rst:126
+#: ../../source/cmd_mode.rst:127
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -617,7 +631,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — más de 30 pips de retraso, entre 40 % y 60 % de "
 "probabilidad de victoria, sin comentario."
 
-#: ../../source/cmd_mode.rst:128
+#: ../../source/cmd_mode.rst:129
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1795,7 +1809,7 @@ msgstr ""
 "``like42*`` amplía la clase del objetivo a todos los tipos de decisión y "
 "a ambos regímenes, dinero y partido. Ver :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:241
+#: ../../source/cmd_mode.rst:242
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1813,11 +1827,11 @@ msgstr ""
 "separador de las listas de identificadores y de etiquetas: no figura en "
 "ningún valor, y ``ma1;2`` no es un token (escribir ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:246
+#: ../../source/cmd_mode.rst:247
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribir desde un terminal"
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:249
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1836,7 +1850,7 @@ msgstr ""
 " la revisión devuelta por la llamada anterior; cada llamada es su propia "
 "sesión, sin ``sessionId`` ni deshacer de una llamada a otra."
 
-#: ../../source/cmd_mode.rst:259
+#: ../../source/cmd_mode.rst:260
 msgid "Commandes diverses"
 msgstr "Comandos diversos"
 

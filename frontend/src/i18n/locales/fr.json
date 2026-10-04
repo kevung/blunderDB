@@ -1698,6 +1698,13 @@
             "prCube": "PR videau"
         }
     },
+    "resumeBatch": {
+        "title": "Reprendre un import",
+        "empty": "Aucun import n'attend d'être repris.",
+        "hint": "Ces imports se sont arrêtés avant la fin. Désignez à nouveau les fichiers : ce que le journal a déjà tranché n'est pas relu.",
+        "chooseFolder": "Choisir le dossier…",
+        "chooseFiles": "Choisir les fichiers…"
+    },
     "trash": {
         "title": "Corbeille",
         "empty": "La corbeille est vide.",
@@ -2624,6 +2631,7 @@
             "help": "Aide",
             "tutorial": "Visites guidées",
             "trash": "Corbeille",
+            "resume": "Reprendre un import interrompu",
             "demo": "Charger la base d'exemple",
             "e": "Charger toutes les positions",
             "s": "Chercher des positions",

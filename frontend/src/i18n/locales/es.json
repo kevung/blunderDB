@@ -1698,6 +1698,13 @@
             "prCube": "PR cubo"
         }
     },
+    "resumeBatch": {
+        "title": "Reanudar una importación",
+        "empty": "Ninguna importación espera ser reanudada.",
+        "hint": "Estas importaciones se detuvieron antes del final. Indique de nuevo los archivos: lo que el diario ya ha decidido no se vuelve a leer.",
+        "chooseFolder": "Elegir la carpeta…",
+        "chooseFiles": "Elegir los archivos…"
+    },
     "trash": {
         "title": "Papelera",
         "empty": "La papelera está vacía.",
@@ -2624,6 +2631,7 @@
             "help": "Ayuda",
             "tutorial": "Visitas guiadas",
             "trash": "Papelera",
+            "resume": "Reanudar una importación interrumpida",
             "demo": "Cargar la base de ejemplo",
             "e": "Cargar todas las posiciones",
             "s": "Buscar posiciones",

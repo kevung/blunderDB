@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 18:11+0200\n"
+"POT-Creation-Date: 2026-10-04 05:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -350,6 +350,20 @@ msgid "Ouvre la corbeille : ce qui a été supprimé, avec de quoi le restaurer.
 msgstr "Avaa roskakorin: mitä on poistettu ja millä se palautetaan."
 
 #: ../../source/cmd_mode.rst:1
+msgid "resume"
+msgstr "resume"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Liste les imports que rien n'a terminé (arrêt de l'application, import "
+"annulé) et reprend celui qu'on choisit, en désignant à nouveau le dossier"
+" ou les fichiers."
+msgstr ""
+"Luettelee tuonnit, joita mikään ei ole päättänyt (sovellus pysäytettiin, "
+"tuonti peruttiin) ja jatkaa valittua, kun kansio tai tiedostot on "
+"osoitettu uudelleen."
+
+#: ../../source/cmd_mode.rst:1
 msgid "[number]"
 msgstr "[number]"
 
@@ -500,7 +514,7 @@ msgstr "m"
 msgid "Naviguer dans le dernier match visité."
 msgstr "Navigoi viimeksi käytyyn otteluun."
 
-#: ../../source/cmd_mode.rst:82
+#: ../../source/cmd_mode.rst:83
 msgid "Édition et recherche"
 msgstr "Muokkaus ja haku"
 
@@ -540,11 +554,11 @@ msgstr ""
 "Hae näytetyistä asemista: nykyiset tulokset, avoin kokoelma tai "
 "läpikäytävä ottelu."
 
-#: ../../source/cmd_mode.rst:98
+#: ../../source/cmd_mode.rst:99
 msgid "Filtres de recherche"
 msgstr "Hakusuodattimet"
 
-#: ../../source/cmd_mode.rst:100
+#: ../../source/cmd_mode.rst:101
 msgid ""
 "Cette table est la référence de la grammaire de recherche : la ligne de "
 "commande, la bibliothèque de filtres et le drapeau ``--query`` de "
@@ -559,7 +573,7 @@ msgstr ""
 "olemassa, saman asian tekevän ``search``-valitsimen (ks. :ref:`cli`); "
 "viiva merkitsee suodatinta, jonka vain kielioppi osaa ilmaista."
 
-#: ../../source/cmd_mode.rst:107
+#: ../../source/cmd_mode.rst:108
 msgid ""
 "Cinq jetons ne portent pas leur valeur : ils la lisent sur le plateau de "
 "recherche. ``cube`` et ``score`` reprennent le videau et le score qui y "
@@ -579,7 +593,7 @@ msgstr ""
 "vertautuvat tyhjään lautaan; siellä on käytettävä kolmannen sarakkeen "
 "valitsimia."
 
-#: ../../source/cmd_mode.rst:116
+#: ../../source/cmd_mode.rst:117
 msgid ""
 "Un seul jeton **classe** au lieu de restreindre : ``like`` ordonne le "
 "résultat par distance croissante à une position cible, et tous les autres"
@@ -589,7 +603,7 @@ msgstr ""
 "järjestää tuloksen kasvavan etäisyyden mukaan kohdeasemasta, ja kaikki "
 "muut tunnukset rajaavat näin järjestettyä joukkoa."
 
-#: ../../source/cmd_mode.rst:120
+#: ../../source/cmd_mode.rst:121
 msgid ""
 "Les erreurs et les équités se comptent en **millièmes d'équité** — les "
 "*millipoints* de la table ci-dessous : ``E>100`` retient les coups qui "
@@ -599,11 +613,11 @@ msgstr ""
 "taulukon *millipisteinä*: ``E>100`` poimii siirrot, jotka ovat maksaneet "
 "vähintään kymmenesosan pisteestä, sillä yksi piste on 1000 tuhannesosaa."
 
-#: ../../source/cmd_mode.rst:124
+#: ../../source/cmd_mode.rst:125
 msgid "Deux recherches complètes :"
 msgstr "Kaksi täydellistä hakua:"
 
-#: ../../source/cmd_mode.rst:126
+#: ../../source/cmd_mode.rst:127
 #, no-python-format
 msgid ""
 "``s p>30 w40,60 xco`` — plus de 30 pips de retard, entre 40 % et 60 % de "
@@ -612,7 +626,7 @@ msgstr ""
 "``s p>30 w40,60 xco`` — yli 30 pipiä jäljessä, voittomahdollisuus 40–60 "
 "%, ei yhtään kommenttia."
 
-#: ../../source/cmd_mode.rst:128
+#: ../../source/cmd_mode.rst:129
 msgid ""
 "``s ph:race E>50 co:xg`` — en course, un coup ayant coûté au moins 50 "
 "millièmes, et un commentaire venu d'eXtreme Gammon."
@@ -1772,7 +1786,7 @@ msgstr ""
 "päätöstyyppeihin ja molempiin pelimuotoihin, rahapeliin ja otteluun. Ks. "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:241
+#: ../../source/cmd_mode.rst:242
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1791,11 +1805,11 @@ msgstr ""
 "esiinny missään arvossa, eikä ``ma1;2`` ole tunniste (kirjoita ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:246
+#: ../../source/cmd_mode.rst:247
 msgid "Transcrire depuis un terminal"
 msgstr "Litterointi päätteestä"
 
-#: ../../source/cmd_mode.rst:248
+#: ../../source/cmd_mode.rst:249
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1814,7 +1828,7 @@ msgstr ""
 " edellisen kutsun palauttaman revision; jokainen kutsu on oma istuntonsa,"
 " ilman ``sessionId``-tunnistetta ja ilman kumoamista kutsusta toiseen."
 
-#: ../../source/cmd_mode.rst:259
+#: ../../source/cmd_mode.rst:260
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 

@@ -1698,6 +1698,13 @@
             "prCube": "Cube PR"
         }
     },
+    "resumeBatch": {
+        "title": "Resume an import",
+        "empty": "No import is waiting to be resumed.",
+        "hint": "These imports were stopped before the end. Point at the files again: what the journal has already decided is not read again.",
+        "chooseFolder": "Choose the folder…",
+        "chooseFiles": "Choose the files…"
+    },
     "trash": {
         "title": "Trash",
         "empty": "The trash is empty.",
@@ -2624,6 +2631,7 @@
             "help": "Help",
             "tutorial": "Guided tours",
             "trash": "Trash",
+            "resume": "Resume an interrupted import",
             "demo": "Load the demo database",
             "e": "Load all positions",
             "s": "Search positions",

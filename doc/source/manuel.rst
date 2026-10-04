@@ -1260,6 +1260,12 @@ et ``blunderdb events alias``.
   ``imports.batch`` et rend le journal par ``imports.files``. Le journal est
   une donnée de l'import : ouvrir ou lire une base n'y écrit rien.
 
+* **Un import coupé par l'arrêt de l'application se reprend depuis la
+  fenêtre.** La commande ``:resume`` liste les imports que rien n'a terminé ;
+  on choisit celui à continuer, puis on désigne à nouveau le dossier ou les
+  fichiers, comme ``--dir`` en ligne de commande. Le journal du lot décide
+  de ce qui n'est pas relu.
+
 * **Un gros dossier s'importe en mode masse.** À partir de 200 fichiers,
   blunderDB écrit avec un cache plus grand et moins de points de contrôle. Si
   la base ne contient encore aucune position, il va plus loin : les index de

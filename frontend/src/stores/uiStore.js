@@ -84,6 +84,7 @@ export const MODAL = {
     CONFIG: 'config',
     TOUR: 'tour',
     TRASH: 'trash',
+    RESUME_BATCH: 'resumeBatch',
     LOG: 'log',
     CONTACT_SHEET: 'contactSheet'
 };

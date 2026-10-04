@@ -1698,6 +1698,13 @@
             "prCube": "Kuution PR"
         }
     },
+    "resumeBatch": {
+        "title": "Jatka tuontia",
+        "empty": "Mikään tuonti ei odota jatkamista.",
+        "hint": "Nämä tuonnit keskeytyivät ennen loppua. Valitse tiedostot uudelleen: sitä, minkä loki on jo ratkaissut, ei lueta uudelleen.",
+        "chooseFolder": "Valitse kansio…",
+        "chooseFiles": "Valitse tiedostot…"
+    },
     "trash": {
         "title": "Roskakori",
         "empty": "Roskakori on tyhjä.",
@@ -2624,6 +2631,7 @@
             "help": "Ohje",
             "tutorial": "Opastetut kierrokset",
             "trash": "Roskakori",
+            "resume": "Jatka keskeytynyttä tuontia",
             "demo": "Lataa esimerkkitietokanta",
             "e": "Lataa kaikki asemat",
             "s": "Hae asemia",

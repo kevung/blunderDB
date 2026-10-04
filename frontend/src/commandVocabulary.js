@@ -18,6 +18,7 @@ export const COMMANDS = [
     { name: 'help', aliases: ['he', 'h'] },
     { name: 'tutorial', aliases: ['tour'] },
     { name: 'trash', aliases: [] },
+    { name: 'resume', aliases: [] },
     { name: 'demo', aliases: [] },
     { name: 'e', aliases: [] },
     { name: 's', aliases: [] },

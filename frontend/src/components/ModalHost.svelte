@@ -58,12 +58,14 @@
     import FileImportProgressModal from './FileImportProgressModal.svelte';
     import ExportDatabaseModal from './ExportDatabaseModal.svelte';
     import TrashModal from './TrashModal.svelte';
+    import ResumeBatchModal from './ResumeBatchModal.svelte';
     import { beginStudyQueueFromReport } from '../services/studyQueueService.js';
 </script>
 
 <GoToPositionModal visible={$activeModal === MODAL.GO_TO_POSITION} onClose={() => closeModal()} />
 
 <TrashModal visible={$activeModal === MODAL.TRASH} onClose={() => closeModal()} />
+<ResumeBatchModal visible={$activeModal === MODAL.RESUME_BATCH} onClose={() => closeModal()} />
 
 <MetModal visible={$activeModal === MODAL.MET} onClose={() => closeModal()} />
 

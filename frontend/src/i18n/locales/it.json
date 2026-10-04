@@ -1698,6 +1698,13 @@
             "prCube": "PR cubo"
         }
     },
+    "resumeBatch": {
+        "title": "Riprendi un'importazione",
+        "empty": "Nessuna importazione attende di essere ripresa.",
+        "hint": "Queste importazioni si sono fermate prima della fine. Indica di nuovo i file: ciò che il registro ha già deciso non viene riletto.",
+        "chooseFolder": "Scegli la cartella…",
+        "chooseFiles": "Scegli i file…"
+    },
     "trash": {
         "title": "Cestino",
         "empty": "Il cestino è vuoto.",
@@ -2624,6 +2631,7 @@
             "help": "Aiuto",
             "tutorial": "Visite guidate",
             "trash": "Cestino",
+            "resume": "Riprendi un'importazione interrotta",
             "demo": "Carica il database di esempio",
             "e": "Carica tutte le posizioni",
             "s": "Cerca posizioni",

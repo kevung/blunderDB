@@ -1698,6 +1698,13 @@
             "prCube": "PR Doppler"
         }
     },
+    "resumeBatch": {
+        "title": "Import fortsetzen",
+        "empty": "Es wartet kein Import auf eine Fortsetzung.",
+        "hint": "Diese Importe wurden vor dem Ende abgebrochen. Wählen Sie die Dateien erneut aus: Was das Journal schon entschieden hat, wird nicht noch einmal gelesen.",
+        "chooseFolder": "Ordner wählen…",
+        "chooseFiles": "Dateien wählen…"
+    },
     "trash": {
         "title": "Papierkorb",
         "empty": "Der Papierkorb ist leer.",
@@ -2624,6 +2631,7 @@
             "help": "Hilfe",
             "tutorial": "Geführte Touren",
             "trash": "Papierkorb",
+            "resume": "Unterbrochenen Import fortsetzen",
             "demo": "Beispieldatenbank laden",
             "e": "Alle Positionen laden",
             "s": "Positionen suchen",
