@@ -1770,7 +1770,13 @@
         "empty": "Dieser Import enthält nichts, was einen zweiten Blick lohnt.",
         "failed": "Die Studienliste konnte nicht erstellt werden.",
         "finished": "Studienliste beendet: {n} Stellungen durchgegangen.",
-        "stopped": "Studienliste verlassen."
+        "stopped": "Studienliste verlassen.",
+        "reasonBacklog": "unbearbeiteter Fehler",
+        "markStudied": "Als gesehen markieren",
+        "unmark": "Markierung entfernen",
+        "backlogEmpty": "Kein Fehler wartet: alles ist kommentiert, einsortiert, als Karte angelegt oder als gesehen markiert.",
+        "markFailed": "Die Markierung konnte nicht geschrieben werden.",
+        "unmarked": "Markierung entfernt: die Stellung ist wieder in der Warteschlange."
     },
     "home": {
         "title": "blunderDB",
@@ -2707,6 +2713,7 @@
             "match": "Match-Bereich",
             "collection": "Sammlungs-Bereich",
             "lesson": "Lektionen (le N öffnet Lektion N, le edit öffnet den Editor)",
+            "study": "Lernliste: Ihre unbearbeiteten Patzer",
             "eval": "Eval-Bereich",
             "rollout": "Stellung rollen (rollout fast|standard, search, stop)",
             "transcribe": "Match-Transkription",

@@ -41,6 +41,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `search` - Search positions with filters
 - `match` - Display match positions and analysis
 - `lesson` - Manage lessons (ordered steps showing collections and positions; export them)
+- `study` - The study backlog: your unhandled blunders across every import, and the "studied" mark
 - `collection` - Manage collections (list, show, create, rename, delete, export)
 - `anki` - Spaced-repetition decks (decks, stats, forecast, sync)
 - `stats` - Statistics computed apart from list --type stats (recurring)
@@ -761,6 +762,28 @@ ID  Index  Score  Type  XGID
 --  -----  -----  ----  ----
 12  12     7-7    cube  -a-B-aD-C---cD---cbeB-----:0:0:1:00:0:0:0:7:0
 40  40     7-7    cube  --BEBBB----a--b--cbbBbba--:0:0:1:00:0:0:0:7:0
+```
+
+## Study Command
+
+The study backlog: the reference player's blunders, across every import, that
+nothing has dealt with yet — no comment, no Anki card, in no collection, no
+"studied" mark. Every sub-command takes `--db`.
+
+```bash
+./blunderDB study <sub-command> [options]
+```
+
+**Sub-commands:**
+- `queue [--limit <n>] [--format text|json]` - The backlog, costliest first,
+  at most 50 positions
+- `mark --id <id>` - Mark a position studied: it leaves the backlog. The mark is
+  the user's own data and is never exported
+- `unmark --id <id>` - Withdraw the mark: the position returns to the backlog
+
+```bash
+./blunderDB study queue --db database.db --limit 20
+./blunderDB study mark --db database.db --id 1234
 ```
 
 ## Lesson Command
@@ -3986,6 +4009,61 @@ Options:
 Examples:
   blunderdb stats windows --db database.db --player "Alice"
   blunderdb stats windows --db database.db --player "Alice" --window quarter --format json
+```
+
+### `blunderdb study mark`
+
+```
+Usage: blunderdb study mark [options]
+
+Mark a position studied: it leaves the study backlog.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Position ID (required)
+
+Examples:
+  blunderdb study mark --db database.db --id 1234
+```
+
+### `blunderdb study queue`
+
+```
+Usage: blunderdb study queue [options]
+
+List your unhandled blunders across the whole library, costliest first.
+Your name is the database's reference player (see `blunderdb players`).
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -limit int
+    	Maximum number of positions (default and ceiling: 50)
+
+Examples:
+  blunderdb study queue --db database.db
+  blunderdb study queue --db database.db --limit 10 --format json
+```
+
+### `blunderdb study unmark`
+
+```
+Usage: blunderdb study unmark [options]
+
+Withdraw a position's studied mark: it returns to the study backlog.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Position ID (required)
+
+Examples:
+  blunderdb study unmark --db database.db --id 1234
 ```
 
 ### `blunderdb tournament confirm`

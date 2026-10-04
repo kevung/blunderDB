@@ -1098,6 +1098,14 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.training — JSON."
         return self._call("/v1/stats.training", payload)
 
+    def study_backlog(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/study.backlog — JSON."
+        return self._call("/v1/study.backlog", payload)
+
+    def study_set_studied(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/study.setStudied — JSON."
+        return self._call("/v1/study.setStudied", payload)
+
     def tenants_quota(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/tenants.quota — JSON."
         return self._call("/v1/tenants.quota", payload)

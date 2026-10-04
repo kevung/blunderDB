@@ -23,7 +23,7 @@ import (
 var purgeOrder = []string{
 	"move_analysis", "match_stats", "anki_review_log", "collection_position", "training_item",
 	"training_session", "direction_event", "direction", "direction_pair_member",
-	"table_setting", "lesson_progress", "lesson_step", "import_batch_file", "player_alias", "event_alias",
+	"table_setting", "study_mark", "lesson_progress", "lesson_step", "import_batch_file", "player_alias", "event_alias",
 	"comment", "analysis", "move", "anki_card", "game",
 	"collection", "lesson", "anki_deck", "transcription", "match", "import_batch",
 	"tournament", "rencontre", "position",

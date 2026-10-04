@@ -2046,6 +2046,10 @@ export default {
 <td>Sin argumento, lista las lecciones de la base en la barra de estado; <code>le N</code> abre la lección N en su primer paso; <code>le edit</code> abre el editor de lecciones, <code>le edit N</code> sobre la lección N (véase Lecciones).</td>
 </tr>
 <tr>
+<td>study, sq</td>
+<td>Abre la cola de estudio transversal: sus blunders que nada ha tratado todavía, del más costoso al menos costoso (véase Los blunders que nada ha tratado todavía).</td>
+</tr>
+<tr>
 <td>#tag1 tag2 ...</td>
 <td>Etiquetar la posición actual.</td>
 </tr>

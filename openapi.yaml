@@ -6013,6 +6013,42 @@ paths:
               schema:
                 $ref: "#/components/schemas/storage_TrainingStats"
                 nullable: true
+  /v1/study.backlog:
+    post:
+      operationId: study.backlog
+      tags: [study]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/importStudyQueueReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/domain_StudyQueueEntry"
+  /v1/study.setStudied:
+    post:
+      operationId: study.setStudied
+      tags: [study]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studySetStudiedReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/okResp"
   /v1/tenants.quota:
     post:
       operationId: tenants.quota
@@ -8615,6 +8651,14 @@ components:
         size:
           type: integer
           format: int32
+    studySetStudiedReq:
+      type: object
+      properties:
+        positionId:
+          type: integer
+          format: int64
+        studied:
+          type: boolean
     suspendCardReq:
       type: object
       properties:

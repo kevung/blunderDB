@@ -1770,7 +1770,13 @@
         "empty": "Cet import n'a rien qui mérite un second regard.",
         "failed": "La file d'étude n'a pas pu être construite.",
         "finished": "File d'étude terminée : {n} positions parcourues.",
-        "stopped": "File d'étude quittée."
+        "stopped": "File d'étude quittée.",
+        "reasonBacklog": "blunder non traité",
+        "markStudied": "Marquer vu",
+        "unmark": "Démarquer",
+        "backlogEmpty": "Aucun blunder en attente : tout est commenté, rangé, en carte ou marqué vu.",
+        "markFailed": "La marque n'a pas pu être écrite.",
+        "unmarked": "Marque retirée : la position revient dans la file."
     },
     "home": {
         "title": "blunderDB",
@@ -2707,6 +2713,7 @@
             "match": "Panneau des matchs",
             "collection": "Panneau des collections",
             "lesson": "Leçons (le N ouvre la leçon N, le edit ouvre l'éditeur)",
+            "study": "File d'étude : vos blunders non traités",
             "eval": "Panneau Eval",
             "rollout": "Rouler la position (rollout fast|standard, search, stop)",
             "transcribe": "Transcription de matchs",

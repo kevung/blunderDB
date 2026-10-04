@@ -124,7 +124,8 @@ const MaxImportFailures = 10
 // a second look, walked through once. It is not a saved object and nothing
 // records that a position was seen — what the user does with it (a comment, a
 // collection, an Anki card) is the record, the restraint ADR-0006 states about
-// flags.
+// flags. The one explicit record is the "studied" mark of the library-wide
+// backlog (StudyBacklog), written only by the user's own gesture.
 
 // StudyQueueReason says why a position is in the queue. Three reasons, in the
 // order they are offered.
@@ -139,6 +140,9 @@ const (
 	// StudyClose is a cube decision the engine judged close — one where the
 	// right answer was not obvious even though nothing was lost.
 	StudyClose StudyQueueReason = "close"
+	// StudyBacklog is a blunder nobody has dealt with yet, found across the
+	// whole library: no comment, no card, no collection, no "studied" mark.
+	StudyBacklog StudyQueueReason = "backlog"
 )
 
 // StudyQueueEntry is one position of the queue.

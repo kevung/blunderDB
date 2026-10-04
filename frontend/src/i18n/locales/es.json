@@ -1770,7 +1770,13 @@
         "empty": "Esta importación no tiene nada que merezca una segunda mirada.",
         "failed": "No se ha podido construir la cola de estudio.",
         "finished": "Cola de estudio terminada: {n} posiciones recorridas.",
-        "stopped": "Cola de estudio abandonada."
+        "stopped": "Cola de estudio abandonada.",
+        "reasonBacklog": "error sin tratar",
+        "markStudied": "Marcar como visto",
+        "unmark": "Quitar la marca",
+        "backlogEmpty": "Ningún error pendiente: todo está comentado, archivado, en tarjeta o marcado como visto.",
+        "markFailed": "No se pudo escribir la marca.",
+        "unmarked": "Marca retirada: la posición vuelve a la cola."
     },
     "home": {
         "title": "blunderDB",
@@ -2707,6 +2713,7 @@
             "match": "Panel de matches",
             "collection": "Panel de colecciones",
             "lesson": "Lecciones (le N abre la lección N, le edit abre el editor)",
+            "study": "Cola de estudio: sus errores graves sin tratar",
             "eval": "Panel Eval",
             "rollout": "Rodar la posición (rollout fast|standard, search, stop)",
             "transcribe": "Transcripción de matches",

@@ -2046,6 +2046,10 @@ export default {
 <td>Ilman argumenttia luettelee tietokannan oppitunnit tilarivillä; <code>le N</code> avaa oppitunnin N sen ensimmäisestä vaiheesta; <code>le edit</code> avaa oppituntieditorin, <code>le edit N</code> oppitunnille N (katso Oppitunnit).</td>
 </tr>
 <tr>
+<td>study, sq</td>
+<td>Avaa tuonnit ylittävän opiskelujonon: blunderisi, joita mikään ei ole vielä käsitellyt, kalleimmasta halvimpaan (ks. Blunderit, joita mikään ei ole vielä käsitellyt).</td>
+</tr>
+<tr>
 <td>#tag1 tag2 ...</td>
 <td>Merkitse nykyinen asema tunnisteilla.</td>
 </tr>

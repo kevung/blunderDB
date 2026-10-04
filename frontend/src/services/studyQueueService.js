@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
-import { ImportStudyQueue } from '../../wailsjs/go/database/Database.js';
-import { studyQueueStore, studyQueueIndexStore, studyQueueActiveStore, studyQueueCurrentStore } from '../stores/studyQueueStore.js';
+import { ImportStudyQueue, StudyBacklog, SetPositionStudied } from '../../wailsjs/go/database/Database.js';
+import { studyQueueStore, studyQueueIndexStore, studyQueueActiveStore, studyQueueCurrentStore, studyQueueBacklogStore, studyQueueLastMarkedStore } from '../stores/studyQueueStore.js';
 import { showImportedPosition } from './importService.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { activeTabStore } from '../stores/uiStore';
@@ -24,6 +24,7 @@ export async function startStudyQueue(batchId) {
             setStatusBarMessage(tMsg('studyQueue.empty'));
             return false;
         }
+        studyQueueBacklogStore.set(false);
         studyQueueStore.set(entries);
         studyQueueIndexStore.set(0);
         studyQueueActiveStore.set(true);
@@ -33,6 +34,61 @@ export async function startStudyQueue(batchId) {
         logger.error('could not build the study queue:', error);
         setStatusBarMessage(tMsg('studyQueue.failed'));
         return false;
+    }
+}
+
+/**
+ * Démarre la file transversale : les blunders du joueur de référence, tous lots
+ * confondus, que rien n'a encore traités (ni commentaire, ni carte, ni collection,
+ * ni marque « vu »), du plus coûteux au moins coûteux.
+ */
+export async function startStudyBacklog() {
+    try {
+        const entries = (await StudyBacklog(0)) || [];
+        if (entries.length === 0) {
+            setStatusBarMessage(tMsg('studyQueue.backlogEmpty'));
+            return false;
+        }
+        studyQueueBacklogStore.set(true);
+        studyQueueLastMarkedStore.set(0);
+        studyQueueStore.set(entries);
+        studyQueueIndexStore.set(0);
+        studyQueueActiveStore.set(true);
+        await showCurrent();
+        return true;
+    } catch (error) {
+        logger.error('could not build the study backlog:', error);
+        setStatusBarMessage(tMsg('studyQueue.failed'));
+        return false;
+    }
+}
+
+/** Marque la position courante « vue » (geste explicite, réversible), puis passe à la suivante. */
+export async function markCurrentStudied() {
+    const entry = get(studyQueueCurrentStore);
+    if (!entry) return;
+    try {
+        await SetPositionStudied(entry.positionId, true);
+        studyQueueLastMarkedStore.set(entry.positionId);
+    } catch (error) {
+        logger.error('could not mark the position studied:', error);
+        setStatusBarMessage(tMsg('studyQueue.markFailed'));
+        return;
+    }
+    await nextInQueue();
+}
+
+/** Retire la dernière marque posée : la position revient dans la file transversale. */
+export async function unmarkLastStudied() {
+    const id = get(studyQueueLastMarkedStore);
+    if (!id) return;
+    try {
+        await SetPositionStudied(id, false);
+        studyQueueLastMarkedStore.set(0);
+        setStatusBarMessage(tMsg('studyQueue.unmarked'));
+    } catch (error) {
+        logger.error('could not withdraw the studied mark:', error);
+        setStatusBarMessage(tMsg('studyQueue.markFailed'));
     }
 }
 
@@ -61,6 +117,7 @@ export async function previousInQueue() {
 export function stopStudyQueue({ finished = false } = {}) {
     const total = get(studyQueueStore).length;
     studyQueueActiveStore.set(false);
+    studyQueueBacklogStore.set(false);
     studyQueueStore.set([]);
     studyQueueIndexStore.set(0);
     setStatusBarMessage(finished ? tMsg('studyQueue.finished', { n: total }) : tMsg('studyQueue.stopped'));

@@ -1770,7 +1770,13 @@
         "empty": "この取り込みには、見直す価値のあるものがありません。",
         "failed": "学習キューを作成できませんでした。",
         "finished": "学習キューを終えました：{n} 局面。",
-        "stopped": "学習キューをやめました。"
+        "stopped": "学習キューをやめました。",
+        "reasonBacklog": "未処理のブランダー",
+        "markStudied": "確認済みにする",
+        "unmark": "確認済みを解除",
+        "backlogEmpty": "待機中のブランダーはありません。すべてコメント済み、整理済み、カード化済み、または確認済みです。",
+        "markFailed": "マークを書き込めませんでした。",
+        "unmarked": "マークを解除しました。局面はキューに戻ります。"
     },
     "home": {
         "title": "blunderDB",
@@ -2707,6 +2713,7 @@
             "match": "マッチパネル",
             "collection": "コレクションパネル",
             "lesson": "レッスン (le N でレッスン N を開く、le edit でエディタを開く)",
+            "study": "学習キュー: 未処理の大きなミス",
             "eval": "Eval パネル",
             "rollout": "局面をロールアウト(rollout fast|standard, search, stop)",
             "transcribe": "マッチの書き起こし",

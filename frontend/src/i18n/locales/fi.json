@@ -1770,7 +1770,13 @@
         "empty": "Tässä tuonnissa ei ole mitään toisen katseen arvoista.",
         "failed": "Opiskelujonoa ei voitu rakentaa.",
         "finished": "Opiskelujono valmis: {n} asemaa käyty läpi.",
-        "stopped": "Opiskelujonosta poistuttiin."
+        "stopped": "Opiskelujonosta poistuttiin.",
+        "reasonBacklog": "käsittelemätön virhe",
+        "markStudied": "Merkitse nähdyksi",
+        "unmark": "Poista merkintä",
+        "backlogEmpty": "Ei odottavia virheitä: kaikki on kommentoitu, lajiteltu, kortilla tai merkitty nähdyksi.",
+        "markFailed": "Merkintää ei voitu tallentaa.",
+        "unmarked": "Merkintä poistettu: asema palaa jonoon."
     },
     "home": {
         "title": "blunderDB",
@@ -2707,6 +2713,7 @@
             "match": "Otteluiden paneeli",
             "collection": "Kokoelmien paneeli",
             "lesson": "Oppitunnit (le N avaa oppitunnin N, le edit avaa muokkaimen)",
+            "study": "Opiskelujono: käsittelemättömät pahat virheesi",
             "eval": "Eval-paneeli",
             "rollout": "Rollaa asema (rollout fast|standard, search, stop)",
             "transcribe": "Ottelujen litterointi",

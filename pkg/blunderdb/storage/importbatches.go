@@ -52,6 +52,21 @@ type ImportBatchStore interface {
 	// players is read as it is by Report: empty scores both seats.
 	StudyQueue(ctx context.Context, scope string, batchID int64, players []string, limit int) ([]domain.StudyQueueEntry, error)
 
+	// StudyBacklog returns, across every batch and every match, the
+	// positions of players whose played decision cost at least the library's
+	// error threshold and that nothing has dealt with yet: no comment, no
+	// Anki card, no collection, no study mark. Costliest first, at most limit
+	// (0 means domain.MaxStudyQueue), each position once.
+	//
+	// players is read as it is by Report: empty scores both seats.
+	StudyBacklog(ctx context.Context, scope string, players []string, limit int) ([]domain.StudyQueueEntry, error)
+
+	// SetStudied writes (studied true) or withdraws the user's "studied" mark
+	// on a position, which removes it from StudyBacklog. Idempotent; ErrNotFound
+	// when the position does not exist. The mark is the user's own data: it is
+	// never exported and nothing but this call writes it (ADR-0007).
+	SetStudied(ctx context.Context, scope string, positionID int64, studied bool) error
+
 	// RecordFiles appends lines to the batch's journal: one per file the
 	// import decided. Called after the file's transaction committed, so a
 	// journaled file is a decided file.
