@@ -36,6 +36,8 @@
         openDirectionIdStore,
         directionJumpStore,
         epreuveTabsStore,
+        rememberDirectionTab,
+        recalledDirectionTab,
         switchEpreuve,
         saveDirectionConfig,
         deleteDirection,
@@ -215,13 +217,23 @@
             focusPanelUnlessTyping(el);
         });
     });
-    let tabChosen = false;
+    /* L'onglet se choisit pour chaque tournoi à son arrivée : celui où il fut laissé, sinon Réglages
+       en préparation et Direction en cours. Il ne se hérite jamais d'un autre tournoi ; seul le
+       passage d'une épreuve à l'autre d'une même Rencontre garde l'onglet courant. */
+    let shownTournamentId = /** @type {number | null} */ (null);
     $effect(() => {
         // Tant que la Direction n'est pas chargée, son état n'est pas « brouillon » : il est
         // inconnu, et choisir sur lui ouvrirait les Réglages d'un tournoi en cours.
-        if (tabChosen || !view) return;
-        if (directionState !== 'draft') tab = 'direction';
-        tabChosen = true;
+        if (!view) return;
+        const id = view.tournamentId;
+        if (id === shownTournamentId) return;
+        const sameRencontre = shownTournamentId !== null && $epreuveTabsStore.some((e) => e.tournamentId === shownTournamentId) && $epreuveTabsStore.some((e) => e.tournamentId === id);
+        shownTournamentId = id;
+        if (sameRencontre) return;
+        tab = recalledDirectionTab(id) ?? (directionState !== 'draft' ? 'direction' : 'settings');
+    });
+    $effect(() => {
+        if (shownTournamentId !== null && shownTournamentId === view?.tournamentId) rememberDirectionTab(shownTournamentId, tab);
     });
 
     /* Les menus contextuels mènent d'un écran à l'autre : la table d'un joueur, l'historique

@@ -61,6 +61,7 @@ import {
 import { OpenDirectionOutputDialog, SaveCSV } from '../../wailsjs/go/gui/App.js';
 import { language, messageBlock, tMsg } from '../i18n';
 import { statusBarTextStore, activeTabStore } from './uiStore.js';
+import { databasePathStore } from './databaseStore.js';
 import { logger } from '../utils/logger.js';
 
 /*
@@ -448,9 +449,88 @@ function announceNewProposals(before, after) {
  */
 export async function openDirection(tournamentId) {
     openDirectionIdStore.set(tournamentId);
-    await publishDirectionStrings();
-    return refreshDirection();
+    rememberDirectionOpen(tournamentId);
+    opening++;
+    try {
+        await publishDirectionStrings();
+        return await refreshDirection();
+    } finally {
+        opening--;
+    }
 }
+
+/** Nombre d'ouvertures en cours : tant qu'il n'est pas nul, la vue n'est pas encore là. */
+let opening = 0;
+
+/**
+ * Dit si la Direction ouverte est encore en train d'arriver (rejeu, ou chargement du morceau de
+ * la vue). Un second geste « ouvrir / fermer » pendant ce temps est un double clic, pas une
+ * intention de refermer.
+ */
+export function directionIsLoading() {
+    if (get(openDirectionIdStore) === null) return false;
+    return opening > 0 || (get(directionStore) !== null && !get(directionViewLoadedStore));
+}
+
+/*
+ * Ce que le directeur a laissé : quelle Direction était ouverte, et sur quel onglet chacune.
+ * Gardé par base (les identifiants de tournoi n'ont de sens que dans la leur), dans le stockage
+ * du navigateur : un rechargement ou une relance rouvre la salle là où elle était. Rien n'est
+ * écrit dans la base elle-même, et un stockage indisponible ne gêne rien.
+ */
+const MEMORY_KEY = 'blunderdb.direction';
+
+/** @returns {{ openId: number | null, tabs: Record<string, string> }} */
+function readMemory() {
+    try {
+        const m = JSON.parse(localStorage.getItem(MEMORY_KEY) || 'null');
+        if (m && m.dbPath === get(databasePathStore)) return { openId: m.openId ?? null, tabs: m.tabs || {} };
+    } catch {
+        /* stockage absent ou illisible : on repart de rien */
+    }
+    return { openId: null, tabs: {} };
+}
+
+/** @param {{ openId: number | null, tabs: Record<string, string> }} m */
+function writeMemory(m) {
+    try {
+        localStorage.setItem(MEMORY_KEY, JSON.stringify({ dbPath: get(databasePathStore), ...m }));
+    } catch {
+        /* idem */
+    }
+}
+
+/** @param {number | null} id */
+function rememberDirectionOpen(id) {
+    writeMemory({ ...readMemory(), openId: id });
+}
+
+/** @param {number} tournamentId @param {string} tab */
+export function rememberDirectionTab(tournamentId, tab) {
+    const m = readMemory();
+    m.tabs[tournamentId] = tab;
+    writeMemory(m);
+}
+
+/** L'onglet où ce tournoi a été laissé, ou undefined s'il n'a jamais été ouvert. @param {number} tournamentId */
+export function recalledDirectionTab(tournamentId) {
+    return readMemory().tabs[tournamentId];
+}
+
+/** Rouvre la Direction laissée ouverte sur la base courante, si elle existe encore. */
+export async function restoreDirection() {
+    if (get(openDirectionIdStore) !== null) return;
+    const { openId } = readMemory();
+    if (openId === null) return;
+    await refreshDirectionSummaries();
+    if (!get(directionSummariesStore).some((d) => d.tournamentId === openId)) return;
+    activeTabStore.set('tournaments');
+    await openDirection(openId);
+}
+
+databasePathStore.subscribe((path) => {
+    if (path) void restoreDirection();
+});
 
 /**
  * Change d'épreuve dans la Rencontre ouverte (ADR-0056 §5) : un clic, sans confirmation, sans
@@ -463,6 +543,7 @@ export async function switchEpreuve(tournamentId) {
     const cached = get(rencontreEpreuveViewsStore)[tournamentId];
     if (cached) directionStore.set(cached);
     openDirectionIdStore.set(tournamentId);
+    rememberDirectionOpen(tournamentId);
     await publishDirectionStrings();
     return refreshDirection();
 }
@@ -656,6 +737,7 @@ export async function forgetDirectionOutputDir() {
 /** Referme la Direction ouverte. Le plateau revient. */
 export function closeDirection() {
     openDirectionIdStore.set(null);
+    rememberDirectionOpen(null);
     directionStore.set(null);
     rencontreEpreuveOrderStore.set([]);
     rencontreEpreuveViewsStore.set({});
