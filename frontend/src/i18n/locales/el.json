@@ -2568,7 +2568,7 @@
             "error": "Δεν ήταν δυνατή η ανάγνωση των τραπεζιών: {reason}",
             "eventError": "Το αγώνισμα {event} δεν αναπαράγεται· λείπουν τα τραπέζια του: {reason}",
             "swapConfirm": "Τραπέζι {from} ({a}) ↔ Τραπέζι {to} ({b});",
-            "rencontreSettings": "Ρυθμίσεις της Συνάντησης"
+            "rencontreSettings": "Ρυθμίσεις της Διοργάνωσης"
         },
         "epreuves": {
             "pending": "{n} σε αναμονή",

@@ -2568,7 +2568,7 @@
             "error": "Impossibile leggere i tavoli: {reason}",
             "eventError": "{event} non si ricostruisce; mancano i suoi tavoli: {reason}",
             "swapConfirm": "Tavolo {from} ({a}) ↔ Tavolo {to} ({b})?",
-            "rencontreSettings": "Impostazioni dell'Incontro"
+            "rencontreSettings": "Impostazioni dell'Evento"
         },
         "epreuves": {
             "pending": "{n} in attesa",

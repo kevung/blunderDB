@@ -2568,7 +2568,7 @@
             "error": "テーブルを読み込めませんでした：{reason}",
             "eventError": "{event} を再生できません。そのテーブルは表示されません：{reason}",
             "swapConfirm": "テーブル {from}（{a}）↔ テーブル {to}（{b}）？",
-            "rencontreSettings": "ランコントルの設定"
+            "rencontreSettings": "イベントの設定"
         },
         "epreuves": {
             "pending": "{n}件 保留中",

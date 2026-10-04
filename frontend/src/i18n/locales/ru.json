@@ -2568,7 +2568,7 @@
             "error": "Не удалось прочитать столы: {reason}",
             "eventError": "Состязание {event} не воспроизводится; его столы не показаны: {reason}",
             "swapConfirm": "Стол {from} ({a}) ↔ Стол {to} ({b})?",
-            "rencontreSettings": "Настройки встречи"
+            "rencontreSettings": "Настройки мероприятия"
         },
         "epreuves": {
             "pending": "{n} в ожидании",

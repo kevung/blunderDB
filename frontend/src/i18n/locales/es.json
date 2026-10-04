@@ -2568,7 +2568,7 @@
             "error": "No se pudieron leer las mesas: {reason}",
             "eventError": "{event} no se puede reproducir; faltan sus mesas: {reason}",
             "swapConfirm": "¿Mesa {from} ({a}) ↔ Mesa {to} ({b})?",
-            "rencontreSettings": "Ajustes del Encuentro"
+            "rencontreSettings": "Ajustes del Evento"
         },
         "epreuves": {
             "pending": "{n} pendientes",

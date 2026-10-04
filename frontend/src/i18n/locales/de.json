@@ -2568,7 +2568,7 @@
             "error": "Die Tische konnten nicht gelesen werden: {reason}",
             "eventError": "{event} lässt sich nicht nachspielen; seine Tische fehlen: {reason}",
             "swapConfirm": "Tisch {from} ({a}) ↔ Tisch {to} ({b})?",
-            "rencontreSettings": "Einstellungen der Begegnung"
+            "rencontreSettings": "Einstellungen der Veranstaltung"
         },
         "epreuves": {
             "pending": "{n} ausstehend",

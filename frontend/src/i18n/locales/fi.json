@@ -2568,7 +2568,7 @@
             "error": "Pöytiä ei voitu lukea: {reason}",
             "eventError": "Kilpailua {event} ei voi toistaa; sen pöydät puuttuvat: {reason}",
             "swapConfirm": "Pöytä {from} ({a}) ↔ Pöytä {to} ({b})?",
-            "rencontreSettings": "Kohtaamisen asetukset"
+            "rencontreSettings": "Tapahtuman asetukset"
         },
         "epreuves": {
             "pending": "{n} odottaa",
