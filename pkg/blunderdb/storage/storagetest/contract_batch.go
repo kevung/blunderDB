@@ -224,3 +224,54 @@ func testMatchHashesReadBack(t *testing.T, s storage.Storage) {
 		}
 	}
 }
+
+// A comment is signed by the author its context names; several authors share
+// one position, and rewriting a note signs it with the new hand, as it makes
+// it the user's.
+func testCommentAuthorFromContext(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	p := provenancePos(7)
+	id, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	coach := storage.WithCommentAuthor(ctx, "  Coach  ")
+	student := storage.WithCommentAuthor(ctx, "Élève")
+	imported, err := s.Comments().AddFrom(storage.WithCommentAuthor(ctx, "XG"), "", id, "XG says", domain.CommentOriginXG)
+	if err != nil {
+		t.Fatalf("AddFrom: %v", err)
+	}
+	if _, err := s.Comments().Add(coach, "", id, "hit here"); err != nil {
+		t.Fatalf("Add coach: %v", err)
+	}
+	if _, err := s.Comments().Add(student, "", id, "why?"); err != nil {
+		t.Fatalf("Add student: %v", err)
+	}
+	if _, err := s.Comments().Add(ctx, "", id, "unsigned"); err != nil {
+		t.Fatalf("Add unsigned: %v", err)
+	}
+	authors := func() map[string]string {
+		t.Helper()
+		out := map[string]string{}
+		for e, err := range s.Comments().ByPosition(ctx, "", id) {
+			if err != nil {
+				t.Fatalf("ByPosition: %v", err)
+			}
+			out[e.Text] = e.Author
+		}
+		return out
+	}
+	got := authors()
+	want := map[string]string{"XG says": "XG", "hit here": "Coach", "why?": "Élève", "unsigned": ""}
+	for text, author := range want {
+		if got[text] != author {
+			t.Errorf("author of %q = %q, want %q", text, got[text], author)
+		}
+	}
+	if err := s.Comments().Update(coach, "", imported, "XG says, and I agree"); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+	if a := authors()["XG says, and I agree"]; a != "Coach" {
+		t.Errorf("rewritten note signed %q, want Coach", a)
+	}
+}

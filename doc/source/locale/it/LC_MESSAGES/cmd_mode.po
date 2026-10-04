@@ -1492,6 +1492,22 @@ msgid "``--comment-origin``"
 msgstr "``--comment-origin``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "``au'Alice'``"
+msgstr "``au'Alice'``"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position porte un commentaire signé de cet auteur (nom entier, sans "
+"distinction de casse)."
+msgstr ""
+"La posizione ha un commento firmato da questo autore (nome intero, senza "
+"distinzione tra maiuscole e minuscole)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--comment-author``"
+msgstr "``--comment-author``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "``m'motif1,motif2,...'``"
 msgstr "``m'schema1,schema2,...'``"
 
@@ -1957,3 +1973,4 @@ msgstr "Cancella la cronologia dei comandi."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Data di aggiunta della posizione dopo x (AAAA/MM/GG)."
+

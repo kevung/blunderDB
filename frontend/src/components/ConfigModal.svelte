@@ -52,6 +52,8 @@
         GetCheckForUpdates,
         SaveCheckForUpdates,
         GetLikeLimit,
+        GetCommentAuthor,
+        SaveCommentAuthor,
         SaveLikeLimit,
         GetLikeMaxDistance,
         SaveLikeMaxDistance
@@ -169,6 +171,14 @@
     // Réglages de `like` (ADR-0043). Plafond à zéro par défaut : l'échelle dépend
     // de la phase et n'a pas été mesurée.
     const MAX_LIKE_LIMIT = 500;
+    let commentAuthor = $state('');
+
+    async function onCommentAuthorChange(event) {
+        commentAuthor = event.currentTarget.value;
+        await SaveCommentAuthor(commentAuthor);
+        commentAuthor = await GetCommentAuthor();
+    }
+
     let likeLimit = $state(30);
     let likeMaxDistance = $state(0);
 
@@ -357,6 +367,7 @@
 
     async function refreshLikeSettings() {
         try {
+            commentAuthor = await GetCommentAuthor();
             likeLimit = await GetLikeLimit();
             likeMaxDistance = await GetLikeMaxDistance();
         } catch (error) {
@@ -755,6 +766,11 @@
                     <input id="config-check-for-updates" type="checkbox" checked={checkForUpdates} onchange={onCheckForUpdatesChange} />
                 </div>
                 <p class="setting-note">{$t('config.checkForUpdatesNote')}</p>
+                <div class="setting-row">
+                    <label for="config-comment-author">{$t('config.commentAuthor')}</label>
+                    <input id="config-comment-author" type="text" maxlength="120" value={commentAuthor} onchange={onCommentAuthorChange} />
+                </div>
+                <p class="setting-note">{$t('config.commentAuthorNote')}</p>
                 <div class="setting-row">
                     <label for="config-like-limit">{$t('config.likeLimit')}</label>
                     <input id="config-like-limit" type="number" class="setting-number" min="1" max={MAX_LIKE_LIMIT} value={likeLimit} onchange={onLikeLimitChange} />

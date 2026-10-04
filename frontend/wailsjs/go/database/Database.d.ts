@@ -445,6 +445,8 @@ export function LoadSearchHistory():Promise<Array<database.SearchHistory>>;
 
 export function LoadSessionState():Promise<database.SessionState>;
 
+export function LoadTrainingMissed(arg1:storage.TrainingMissedFilter):Promise<Array<number>>;
+
 export function LoadTrainingNumberStats(arg1:string):Promise<Array<storage.TrainingNumberStat>>;
 
 export function LoadTrainingSessions(arg1:string,arg2:number):Promise<Array<storage.TrainingSession>>;
@@ -608,6 +610,8 @@ export function SetAnkiCardSuspended(arg1:number,arg2:boolean):Promise<void>;
 export function SetBeforeSwitch(arg1:any):Promise<void>;
 
 export function SetCollectionFilter(arg1:number,arg2:string):Promise<void>;
+
+export function SetCommentAuthor(arg1:string):Promise<void>;
 
 export function SetDirectionConfig(arg1:number,arg2:string):Promise<void>;
 

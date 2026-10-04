@@ -1114,6 +1114,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/tournaments.updateComment — JSON."
         return self._call("/v1/tournaments.updateComment", payload)
 
+    def training_missed(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/training.missed — JSON."
+        return self._call("/v1/training.missed", payload)
+
     def training_number_stats(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/training.numberStats — JSON."
         return self._call("/v1/training.numberStats", payload)

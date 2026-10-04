@@ -1499,6 +1499,22 @@ msgid "``--comment-origin``"
 msgstr "``--comment-origin``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "``au'Alice'``"
+msgstr "``au'Alice'``"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position porte un commentaire signé de cet auteur (nom entier, sans "
+"distinction de casse)."
+msgstr ""
+"Die Position trägt einen von diesem Autor signierten Kommentar "
+"(vollständiger Name, ohne Beachtung der Groß-/Kleinschreibung)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "``--comment-author``"
+msgstr "``--comment-author``"
+
+#: ../../source/cmd_mode.rst:1
 msgid "``m'motif1,motif2,...'``"
 msgstr "``m'muster1,muster2,...'``"
 
@@ -1969,3 +1985,4 @@ msgstr "Löscht den Befehlsverlauf."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Datum des Hinzufügens der Position nach x (JJJJ/MM/TT)."
+

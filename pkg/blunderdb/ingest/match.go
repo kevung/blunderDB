@@ -242,6 +242,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 	res.Replaced = replace
 
 	counter := Progress{Matches: 1}
+	commentCtx := storage.WithCommentAuthor(ctx, importedCommentAuthor(g))
 	for gi := range g.Games {
 		gg := &g.Games[gi]
 		var gameID int64
@@ -259,7 +260,7 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 			mg := &gg.Moves[mi]
 			if mg.Position != nil {
 				played := &storage.PlayedActions{CheckerMove: mg.Move.CheckerMove, CubeAction: mg.Move.CubeAction}
-				posID, err := savePositionWithAnalyses(ctx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin)
+				posID, err := savePositionWithAnalyses(commentCtx, tx, scope, mg.Position, played, mg.Analyses, mg.Comments, g.CommentOrigin)
 				if err != nil {
 					return res, err
 				}
@@ -565,4 +566,14 @@ func writeDuplicate(ctx context.Context, tx storage.Tx, scope string, g *MatchGr
 		}
 	}
 	return res, nil
+}
+
+// importedCommentAuthor signs the notes a match file carries: "XG" for an
+// eXtreme Gammon file, whose notes are XG's own; otherwise the transcriber the
+// file names, or nobody.
+func importedCommentAuthor(g *MatchGraph) string {
+	if g.CommentOrigin == domain.CommentOriginXG {
+		return "XG"
+	}
+	return g.Match.Transcriber
 }

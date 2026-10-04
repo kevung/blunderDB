@@ -792,10 +792,20 @@ Panneau Commentaires
 
 Le panneau **Commentaires** (*CTRL-P*) affiche, ajoute et modifie les
 commentaires associés à la position courante. Une position peut en porter
-plusieurs : ils sont tous affichés, du plus récent au plus ancien. Les
+plusieurs, écrites par des personnes différentes : ils sont tous affichés en fil,
+du plus récent au plus ancien, chacun avec le nom de son auteur, et les vôtres
+passent en tête. Les
 commentaires importés depuis les fichiers XG sont automatiquement associés aux
 positions correspondantes. Appuyer sur *CTRL-P* ou exécuter la commande
 ``comment`` pour afficher ou masquer le panneau.
+
+Le nom qui signe vos commentaires se règle dans les préférences, onglet
+*Interface*, champ **Votre nom** ; vide, vos commentaires ne sont pas signés.
+Les commentaires d'un import XG sont signés ``XG``, ceux d'un fichier de match
+du nom de son transcripteur. Réécrire un commentaire le signe de votre nom. La
+recherche ``au"Alice"`` retient les positions qu'Alice a commentées ; hors de
+l'interface, ``blunderdb comment add --author`` écrit un commentaire signé et
+``blunderdb comment list`` les relit (voir :ref:`cli`).
 
 Chaque commentaire venu d'un fichier porte une **étiquette de provenance**
 (``XG``, ``GNU BG``, ``BGF``, ou *importé* lorsque la provenance n'a pas été
@@ -2211,6 +2221,13 @@ se recharge toujours toutes les trente secondes et reprend la rotation là où e
 en était. Une
 épreuve sans tableau — une phase suisse, par exemple — n'a pas d'arbre et la page
 reste celle d'avant.
+
+Sous la rubrique « Est-ce que je joue ? », la page d'une épreuve et la page
+murale de l'événement nomment les joueurs dont le sort est réglé : « éliminé(e) »
+dès qu'il ne reste plus de match à jouer, « qualifié(e) » avec le nom de la phase
+suivante quand une phase est terminée, et « exempté(e) — entre au tour N » pour
+un joueur tiré sans adversaire dans le tableau, tant qu'il n'a pas joué. Le
+classement prend le relais une fois le tournoi terminé.
 
 Hors de l'interface, la sous-commande ``blunderdb tournament`` relit un tournoi
 dirigé sans interface graphique : ``list``, ``verify``, ``standings``, ``page``
@@ -3687,6 +3704,21 @@ Cliquer le nom de l'exercice déplie le détail **par type de nombre** :
 « Point de prise 4 · dernier lancer, 6 / 9 ». C'est ce détail qui fait
 l'intérêt du journal, et il compte par type et non par face : la même case de
 la même table, vue d'un côté ou de l'autre, est une seule faiblesse.
+
+Une question de *Décision* garde au journal sa position, la réponse donnée et
+son coût en millipoints. Le détail de *Décision* porte donc trois boutons qui
+agissent sur toutes les positions ratées, chacune une fois, la plus récemment
+ratée d'abord — une question hors délai compte comme ratée :
+
+* **Reprendre mes ratés** — les positions ratées deviennent la liste parcourue
+  et une session *Décision* repart dessus ;
+* **Paquet Anki des ratés** — un paquet Anki de ces positions ;
+* **Collection des ratés** — une collection de ces positions.
+
+Le paquet et la collection sont nommés « Ratés à Décision » suivis de la date
+du jour. En ligne de commande, ``training missed`` rend la même liste et en
+fait un paquet (``--deck``) ou une collection (``--collection``), et
+``training sessions`` relit le journal (voir :ref:`cli_training`).
 
 .. _panneau_metadata:
 

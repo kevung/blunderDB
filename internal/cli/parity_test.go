@@ -132,7 +132,8 @@ var serverOnly = map[string]string{
 
 // databaseParity is the allow-list. Keep it sorted by method name.
 var databaseParity = map[string]parityEntry{
-	"AddComment":                        {Server: "/v1/comments.add", Why: whyGUIEdit},
+	"AddComment":                        {CLI: "comment add", Server: "/v1/comments.add"},
+	"SetCommentAuthor":                  {Why: "the signature of the comments this process writes: the desktop sets it from « Votre nom », the CLI from --author; the daemon reads X-User-Name per request instead"},
 	"AddMatchToTournament":              {Server: "/v1/tournaments.addMatch", Why: whyGUIEdit},
 	"BuryAnkiCard":                      {CLI: "anki card", Server: "/v1/anki.buryCard"},
 	"AddPositionToCollection":           {Server: "/v1/collections.addPosition", Why: whyGUIEdit},
@@ -205,7 +206,7 @@ var databaseParity = map[string]parityEntry{
 	"ExportTournaments":                 {CLI: "export --tournament-ids", Why: whySubsetExp},
 	"GetAllAnkiDecks":                   {CLI: "anki decks", Server: "/v1/anki.listDecks"},
 	"GetAllCollections":                 {CLI: "collection list", Server: "/v1/collections.list"},
-	"GetAllComments":                    {Server: "/v1/comments.listAll", Why: "the CLI reaches comments through `search --has-comment`; the comment browser is a GUI panel"},
+	"GetAllComments":                    {CLI: "comment list", Server: "/v1/comments.listAll"},
 	"GetAllMatches":                     {CLI: "list --type matches", Server: "/v1/matches.list"},
 	"ListMatches":                       {CLI: "list --type matches", Server: "/v1/matches.list"},
 	"CountMatches":                      {CLI: "list --type matches", Server: "/v1/matches.count"},
@@ -224,7 +225,7 @@ var databaseParity = map[string]parityEntry{
 	"GetAnkiReviewLog":                  {CLI: "anki log", Server: "/v1/anki.reviewLog"},
 	"GetCollectionByID":                 {CLI: "collection show", Server: "/v1/collections.get"},
 	"GetCollectionPositions":            {CLI: "collection show", Server: "/v1/collections.positions"},
-	"GetCommentsByPosition":             {Server: "/v1/comments.byPosition", Why: "the CLI prints a position's comment with `search --format json`; per-entry history is a GUI panel"},
+	"GetCommentsByPosition":             {CLI: "comment list", Server: "/v1/comments.byPosition"},
 	"GetDatabaseStats":                  {CLI: "info", Server: "/v1/metadata.counts"},
 	"GetDatabaseStatsEstimate":          {CLI: "info", Server: "/v1/metadata.countsEstimate"},
 	"GetLibrarySettings":                {CLI: "info", Server: "/v1/librarySettings.load"},
@@ -391,7 +392,8 @@ var databaseParity = map[string]parityEntry{
 	"SetDirectionConfig":                {Server: "/v1/directions.setConfig", Why: whyDirectionGesture},
 	"SetDirectionOutputDir":             {Why: whyDirection},
 	"LoadTrainingNumberStats":           {Server: "/v1/training.numberStats", Why: whyTrainingJournal},
-	"LoadTrainingSessions":              {Server: "/v1/training.sessions", Why: whyTrainingJournal},
+	"LoadTrainingSessions":              {CLI: "training sessions", Server: "/v1/training.sessions"},
+	"LoadTrainingMissed":                {CLI: "training missed", Server: "/v1/training.missed"},
 	"MergePlayers":                      {CLI: "players merge", Server: "/v1/matches.mergePlayers"},
 	"MovePositionBetweenCollections":    {Server: "/v1/collections.movePosition", Why: whyGUIEdit},
 	"OpenDatabase":                      {Why: whyLifecycle},
@@ -530,6 +532,8 @@ func TestDatabaseParity(t *testing.T) {
 		"anki":       c.ankiHandlers(),
 		"lesson":     c.lessonHandlers(),
 		"stats":      c.statsHandlers(),
+		"training":   c.trainingHandlers(),
+		"comment":    c.commentHandlers(),
 	}
 	paths := serverPaths(t)
 

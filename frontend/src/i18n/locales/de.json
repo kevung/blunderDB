@@ -173,6 +173,8 @@
         "likeLimit": "Nachbarn pro Rangliste",
         "likeMaxDistance": "Maximale Distanz (Stein-Pips)",
         "likeNote": "Null: keine Obergrenze. Das Token like<12 setzt seine eigene für eine Suche.",
+        "commentAuthor": "Ihr Name",
+        "commentAuthorNote": "Signiert die Kommentare, die Sie schreiben. Leer: unsigniert.",
         "assistantTitle": "Assistent und MCP",
         "corpusTitle": "Korpus"
     },
@@ -889,6 +891,7 @@
         "promptPlaceholder": "Kommentar zur aktuellen Position…",
         "searchPlaceholder": "Kommentare durchsuchen…",
         "originXG": "XG",
+        "you": "Sie",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "importiert",
@@ -1847,6 +1850,10 @@
         "medianTime": "Median {n} s",
         "trend": "Tendenz {value} Pkt",
         "lastPr": "Letzter PR {value}",
+        "missedRetake": "Meine Fehler wiederholen",
+        "missedDeck": "Anki-Stapel der Fehler",
+        "missedCollection": "Sammlung der Fehler",
+        "missedStudyName": "Fehler bei Entscheidung — {date}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "Unbekannte Übung: {exercise}.",
         "noQuestion": "Es kann keine Frage gestellt werden: diese Datenbank oder diese Quelle liefert keine.",
@@ -2419,6 +2426,7 @@
             "prize": "Preis",
             "wins": "S",
             "losses_column": "N",
+            "section_column": "Abschnitt",
             "opponents": "Bisherige Gegner",
             "waiting": "Wartend",
             "state": "Status",
@@ -2526,7 +2534,11 @@
             "noChange": "Nichts: seine Tische sind bereits die der Veranstaltung.",
             "confirm": "Zuordnen",
             "wall": {
-                "rounds": "{n} Runden angekündigt"
+                "rounds": "{n} Runden angekündigt",
+                "status": "Spiele ich?",
+                "bye": "Freilos — steigt in Runde {round} ein",
+                "eliminated": "ausgeschieden",
+                "qualified": "qualifiziert — {phase}"
             },
             "trashConfirm": "Veranstaltung „{name}“ löschen? Ihre Wettbewerbe bleiben, abgelöst."
         },

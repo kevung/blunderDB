@@ -156,6 +156,41 @@ func loadJoinedCommentText(db queryer, positionID int64) (string, error) {
 	return strings.Join(parts, "\n\n"), nil
 }
 
+// importedComment is one comment row of a database being imported.
+type importedComment struct{ text, author string }
+
+// sourceCommentsSigned reports whether the database being imported records who
+// wrote each comment; one written before comments were signed does not.
+func sourceCommentsSigned(db *sql.DB) bool {
+	var n int
+	err := db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('comment') WHERE name = 'author'`).Scan(&n)
+	return err == nil && n > 0
+}
+
+// loadImportedComments returns a source position's non-empty comment rows in
+// id order, each with the author the source records: an import copies the
+// producer's signature and never signs in the importer's name (ADR-0007).
+func loadImportedComments(db queryer, positionID int64, signed bool) ([]importedComment, error) {
+	author := `''`
+	if signed {
+		author = `COALESCE(author, '')`
+	}
+	rows, err := db.Query(`SELECT text, `+author+` FROM comment WHERE position_id = ? AND text != '' ORDER BY id ASC`, positionID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var out []importedComment
+	for rows.Next() {
+		var c importedComment
+		if err := rows.Scan(&c.text, &c.author); err != nil {
+			return nil, err
+		}
+		out = append(out, c)
+	}
+	return out, rows.Err()
+}
+
 // AnalyzeImportDatabase analyzes what would be imported without making changes
 func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interface{}, error) {
 	d.mu.RLock()
@@ -363,6 +398,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		return nil, err
 	}
 	defer importDB.Close()
+	signed := sourceCommentsSigned(importDB)
 
 	// Check the import database version
 	var importDBVersion string
@@ -504,21 +540,32 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				}
 			}
 
-			// Merge comments, joining every row on both sides. The imported
-			// text is appended as a new row when not already contained, as
-			// ingest.DBImporter does: existing rows are never rewritten.
-			importComment, err := loadJoinedCommentText(importDB, id)
+			// Merge comments: each imported row is appended, with its
+			// author, when the target's joined text does not already contain
+			// it, as ingest.DBImporter does: existing rows are never
+			// rewritten.
+			importComments, err := loadImportedComments(importDB, id, signed)
 			if err != nil {
 				slog.Warn("reading import comment", "positionID", id, "err", err)
-			} else if trimmedImport := strings.TrimSpace(importComment); trimmedImport != "" {
+			} else if len(importComments) > 0 {
 				existingComment, err := loadJoinedCommentText(tx, existingPositionID)
 				if err != nil {
 					slog.Warn("reading existing comment", "positionID", existingPositionID, "err", err)
-				} else if !strings.Contains(existingComment, trimmedImport) {
-					if _, err := tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, existingPositionID, trimmedImport); err != nil {
-						slog.Warn("inserting comment for position", "positionID", existingPositionID, "err", err)
+				}
+				for _, c := range importComments {
+					trimmed := strings.TrimSpace(c.text)
+					if err != nil || trimmed == "" || strings.Contains(existingComment, trimmed) {
+						continue
+					}
+					if _, ierr := tx.Exec(`INSERT INTO comment (position_id, text, author) VALUES (?, ?, ?)`, existingPositionID, trimmed, c.author); ierr != nil {
+						slog.Warn("inserting comment for position", "positionID", existingPositionID, "err", ierr)
+						continue
+					}
+					hasMerged = true
+					if existingComment == "" {
+						existingComment = trimmed
 					} else {
-						hasMerged = true
+						existingComment += "\n\n" + trimmed
 					}
 				}
 			}
@@ -560,12 +607,13 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				}
 			}
 
-			// Copy comment if it exists
-			var importComment string
-			err = importDB.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, id).Scan(&importComment)
-			if err == nil && importComment != "" {
-				_, err = tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, newPositionID, importComment)
-				if err != nil {
+			// Copy every comment row, each with its author.
+			importComments, err := loadImportedComments(importDB, id, signed)
+			if err != nil {
+				slog.Warn("reading import comment", "positionID", id, "err", err)
+			}
+			for _, c := range importComments {
+				if _, err := tx.Exec(`INSERT INTO comment (position_id, text, author) VALUES (?, ?, ?)`, newPositionID, c.text, c.author); err != nil {
 					slog.Warn("inserting comment for new position", "positionID", newPositionID, "err", err)
 				}
 			}

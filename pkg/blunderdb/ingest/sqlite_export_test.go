@@ -29,7 +29,9 @@ func TestSQLiteExportRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := src.Comments().Add(ctx, "", pid, "study this"); err != nil {
+	// Signed by its author, who travels with it (issuance.CarriedCommentColumns);
+	// the origin, the producer's import history, does not.
+	if _, err := src.Comments().AddFrom(storage.WithCommentAuthor(ctx, "Coach"), "", pid, "study this", domain.CommentOriginXG); err != nil {
 		t.Fatal(err)
 	}
 
@@ -92,6 +94,12 @@ func TestSQLiteExportRoundTrip(t *testing.T) {
 		}
 		if c.Text == "study this" {
 			sawComment = true
+			if c.Author != "Coach" {
+				t.Errorf("exported comment author = %q, want Coach", c.Author)
+			}
+			if c.Origin == domain.CommentOriginXG {
+				t.Error("exported comment kept its origin: only the allow-listed columns travel")
+			}
 		}
 	}
 	if !sawComment {

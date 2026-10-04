@@ -30,6 +30,10 @@ export function GetCheckForUpdates() {
   return window['go']['main']['Config']['GetCheckForUpdates']();
 }
 
+export function GetCommentAuthor() {
+  return window['go']['main']['Config']['GetCommentAuthor']();
+}
+
 export function GetEpcChallenge() {
   return window['go']['main']['Config']['GetEpcChallenge']();
 }
@@ -148,6 +152,10 @@ export function SaveBoardColors(arg1) {
 
 export function SaveCheckForUpdates(arg1) {
   return window['go']['main']['Config']['SaveCheckForUpdates'](arg1);
+}
+
+export function SaveCommentAuthor(arg1) {
+  return window['go']['main']['Config']['SaveCommentAuthor'](arg1);
 }
 
 export function SaveConfig(arg1) {

@@ -79,7 +79,7 @@ func (d Diag) String() string { return fmt.Sprintf("%s: %s", d.Token, d.Message)
 // loose `win"` is then read as a win-rate filter: the query silently returns
 // the wrong rows. Both quote styles are accepted, as in the JS.
 var (
-	quotedRe   = regexp.MustCompile(`(?:pl!?|op|tn|m|t)["'][^"']*["']`)
+	quotedRe   = regexp.MustCompile(`(?:pl!?|op|tn|au|m|t)["'][^"']*["']`)
 	exceptDice = regexp.MustCompile(`^xD[1-6][1-6]$`)
 	maRe       = regexp.MustCompile(`^ma\d[^;]*$`)
 	tnRe       = regexp.MustCompile(`^tn\d[^;]*$`)
@@ -390,6 +390,10 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 			if f.TournamentNameFilter == "" {
 				f.TournamentNameFilter = q
 			}
+		case strings.HasPrefix(q, "au"):
+			if f.CommentAuthorFilter == "" {
+				f.CommentAuthorFilter = q
+			}
 		case strings.HasPrefix(q, "m"):
 			if f.MovePatternFilter == "" {
 				f.MovePatternFilter = q
@@ -541,6 +545,7 @@ func Format(f domain.SearchFilters) string {
 	add(f.PlayerFilter)
 	add(f.OpponentFilter)
 	add(f.TournamentNameFilter)
+	add(f.CommentAuthorFilter)
 
 	addList(&parts, "ma", f.MatchIDsFilter)
 	addList(&parts, "tn", f.TournamentIDsFilter)
@@ -620,6 +625,7 @@ var FieldTokens = map[string]string{
 	"PlayerFilter":                  `pl"…"`,
 	"OpponentFilter":                `op"…"`,
 	"TournamentNameFilter":          `tn"…"`,
+	"CommentAuthorFilter":           `au"…"`,
 	"RoundFilter":                   "rd:",
 	"MatchLengthFilter":             "ml",
 	"MatchDateFilter":               "md",

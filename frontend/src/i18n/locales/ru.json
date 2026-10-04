@@ -173,6 +173,8 @@
         "likeLimit": "Соседей на одно ранжирование",
         "likeMaxDistance": "Максимальное расстояние (шашко-пипсы)",
         "likeNote": "Ноль: без предела. Токен like<12 задаёт свой на один поиск.",
+        "commentAuthor": "Ваше имя",
+        "commentAuthorNote": "Подписывает написанные вами комментарии. Пусто: без подписи.",
         "assistantTitle": "Ассистент и MCP",
         "corpusTitle": "Корпус"
     },
@@ -889,6 +891,7 @@
         "promptPlaceholder": "Комментарий к текущей позиции…",
         "searchPlaceholder": "Поиск комментариев…",
         "originXG": "XG",
+        "you": "вы",
         "originGnuBG": "GNU BG",
         "originBGF": "BGF",
         "originUnknown": "импортировано",
@@ -1847,6 +1850,10 @@
         "medianTime": "Медиана {n} с",
         "trend": "Тенденция {value} pt",
         "lastPr": "Последний PR {value}",
+        "missedRetake": "Повторить мои ошибки",
+        "missedDeck": "Колода Anki из ошибок",
+        "missedCollection": "Коллекция ошибок",
+        "missedStudyName": "Ошибки в «Решении» — {date}",
         "detailFaults": "{faults} / {asked}",
         "unknownExercise": "Неизвестное упражнение: {exercise}.",
         "noQuestion": "Вопрос задать нельзя: эта база или этот источник его не даёт.",
@@ -2419,6 +2426,7 @@
             "prize": "Приз",
             "wins": "П",
             "losses_column": "Пр",
+            "section_column": "Раздел",
             "opponents": "Сыгранные соперники",
             "waiting": "Ожидание",
             "state": "Статус",
@@ -2526,7 +2534,11 @@
             "noChange": "Ничего: его столы уже совпадают со столами мероприятия.",
             "confirm": "Присоединить",
             "wall": {
-                "rounds": "{n} объявленных туров"
+                "rounds": "{n} объявленных туров",
+                "status": "Играю ли я?",
+                "bye": "без игры — вступает в раунде {round}",
+                "eliminated": "выбыл(а)",
+                "qualified": "прошёл(ла) — {phase}"
             },
             "trashConfirm": "Удалить мероприятие «{name}»? Его состязания останутся, отсоединённые."
         },

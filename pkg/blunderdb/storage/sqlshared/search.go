@@ -112,6 +112,9 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 	// stay in SQL even in mirror search (and in SQL for cost: a presence filter
 	// is often the only thing narrowing the scan).
 	s.appendClosedListClauses(scope, f, &where, &args)
+	if err := s.appendCommentAuthorClause(ctx, scope, f, &where, &args); err != nil {
+		return searchWhereClause{}, err
+	}
 
 	if err := s.appendIdentityClauses(ctx, scope, f, &where, &args); err != nil {
 		return searchWhereClause{}, err
@@ -1183,6 +1186,50 @@ func (s *SearchStore) appendIdentityClauses(ctx context.Context, scope string, f
 // shape: a ";"-separated list against a fixed vocabulary, unknown values
 // dropped, one IN. (Also keeps buildWhere under .golangci.yml's statement
 // ceiling.)
+// appendCommentAuthorClause keeps positions carrying a comment signed by the
+// `au"…"` name: a third EXISTS, independent of presence and origin. The whole
+// name, any case — Unicode case, which neither backend's LOWER gives alike
+// (SQLite folds ASCII only), so the names are resolved in Go first and SQL
+// sees an exact IN list. A "%" or "_" typed in a name is a character, never a
+// wildcard.
+func (s *SearchStore) appendCommentAuthorClause(ctx context.Context, scope string, f domain.SearchFilters, where *strings.Builder, args *[]any) error {
+	name := strings.TrimSpace(searchfilter.QuotedName(f.CommentAuthorFilter, "au"))
+	if name == "" {
+		return nil
+	}
+	cTenant, cArgs := s.DB.TenantFilter("c", scope)
+	rows, err := s.DB.Query(ctx, `SELECT DISTINCT c.author FROM comment c WHERE `+cTenant+
+		` AND COALESCE(c.author, '') <> ''`, cArgs...)
+	if err != nil {
+		return errf(s.DB, "comment authors", err)
+	}
+	var authors []any
+	for rows.Next() {
+		var a string
+		if err := rows.Scan(&a); err != nil {
+			rows.Close()
+			return errf(s.DB, "comment authors", err)
+		}
+		if strings.EqualFold(a, name) {
+			authors = append(authors, a)
+		}
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return errf(s.DB, "comment authors", err)
+	}
+	if len(authors) == 0 {
+		where.WriteString(" AND 1 = 0")
+		return nil
+	}
+	where.WriteString(" AND EXISTS (SELECT 1 FROM comment c WHERE " + cTenant +
+		" AND c.position_id = p.id AND COALESCE(c.text, '') <> '' AND c.author IN (" +
+		Placeholders(len(authors)) + "))")
+	*args = append(*args, cArgs...)
+	*args = append(*args, authors...)
+	return nil
+}
+
 func (s *SearchStore) appendClosedListClauses(scope string, f domain.SearchFilters, where *strings.Builder, args *[]any) {
 	// Comment presence: `co` (has one) / `xco` (has none). Asking for both is
 	// contradictory rather than ambiguous; "none" wins and the search comes

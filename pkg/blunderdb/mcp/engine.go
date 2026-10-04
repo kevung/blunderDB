@@ -19,6 +19,10 @@ import (
 // stays free of internal/server, which mounts it.
 const TenantHeader = "X-Tenant-ID"
 
+// UserHeader names the person behind a request; it signs the comments written
+// through it. Forwarded as received, like TenantHeader.
+const UserHeader = "X-User-Name"
+
 // ReadTenantsHeader lists the tenants an across.* read spans besides
 // TenantHeader (ADR-0063). The engine forwards the value the MCP request
 // carries, and only on across.* calls: the read set is the proxy's, never a
@@ -90,6 +94,12 @@ func (e *Engine) send(ctx context.Context, req *sdk.CallToolRequest, method, con
 	}
 	r.Header.Set("Content-Type", contentType)
 	r.Header.Set(TenantHeader, tenant)
+	if req != nil && req.Extra != nil && req.Extra.Header != nil {
+		// The person the proxy names signs what is written, as on a direct call.
+		if u := req.Extra.Header.Get(UserHeader); u != "" {
+			r.Header.Set(UserHeader, u)
+		}
+	}
 	if strings.HasPrefix(method, "across.") && req != nil && req.Extra != nil {
 		// Every line is forwarded as received, so the /v1 gate refuses a
 		// repeated header here as it does on a direct call.

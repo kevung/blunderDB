@@ -30,7 +30,7 @@ func (d *Direction) Page(cat *Catalog, lang string, now time.Time) (string, erro
 		return "", ErrNoDirection
 	}
 	r := d.renderer(cat, lang)
-	return r.Page(d.st, d.ProposeAt(now), now), nil
+	return WithStatuses(r.Page(d.st, d.ProposeAt(now), now), StatusBlock(d.Statuses(now), "", cat)), nil
 }
 
 // PageIn is Page under the table properties: the proposals it lists are those the panel shows
@@ -42,6 +42,7 @@ func (d *Direction) PageIn(cat *Catalog, lang string, now time.Time, ext tournoi
 	}
 	r := d.renderer(cat, lang)
 	page := r.Page(d.st, d.ProposeIn(now, ext, p, members), now)
+	page = WithStatuses(page, StatusBlock(d.Statuses(now), "", cat))
 	return NameTables(page, r.L.Term(render.TermTable, 0), p.Settings), nil
 }
 
