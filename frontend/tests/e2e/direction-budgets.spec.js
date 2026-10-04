@@ -38,7 +38,7 @@ async function openTournaments(page, opts = {}) {
 /** Le décor des flux de direction : un tournoi dirigé, ouvert, la page Direction devant soi. */
 async function openDirection(page, opts = {}) {
     await openTournaments(page, opts);
-    await page.locator('#tournamentPanel tbody tr').first().click();
+    await page.locator('#tournamentPanel tbody tr').first().dblclick();
     await page.locator('#tournamentPanel .direction-btn').click();
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.locator('[data-testid="direction-tab-direction"]').click();
@@ -48,7 +48,7 @@ async function openDirection(page, opts = {}) {
 const proposal = '.proposals .queue li';
 
 /** Le bouton de confirmation de la modale thémée (confirmAction). */
-const confirmButton = (page) => page.locator('[aria-modal="true"] button.danger');
+const confirmButton = (page) => page.getByTestId('confirm-ok');
 
 test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
     // « confirmer une proposition | 1 clic ». Le bouton est sur la ligne : pas de sélection
@@ -321,7 +321,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
         budget('reprendre les inscrits d’un tournoi précédent', counted, 4);
     });
 
-    // « de "nouveau tournoi" à la première ronde lancée | ≤ 8 clics hors saisie des noms ».
+    // « de "nouveau tournoi" à la première ronde lancée | ≤ 9 clics hors saisie des noms ».
     // C'est LE coût d'entrée, mesuré de bout en bout depuis rien : pas de tournoi, pas de
     // direction, pas d'inscrit.
     test('le coût d’entrée, de rien à la première ronde lancée', async ({ page }) => {
@@ -341,7 +341,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
             await expect(page.locator('#tournamentPanel tbody tr')).toHaveCount(1);
 
             // Ouvrir le tournoi, le diriger : la direction s'ouvre au même clic.
-            await g.click(page.locator('#tournamentPanel tbody tr').first());
+            await g.dblclick(page.locator('#tournamentPanel tbody tr').first());
             await g.click(page.locator('#tournamentPanel .direction-btn'));
             await expect(page.locator('.direction-view')).toBeVisible();
 
@@ -361,7 +361,8 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
             await g.click(page.locator('.proposals .confirm .primary'));
             await expect(page.locator('.grid .cell.busy').first()).toBeVisible();
         });
-        budget('de « nouveau tournoi » à la première ronde', counted, 8);
+        // Ouvrir un tournoi est un double-clic (la ligne se déplie), donc deux clics.
+        budget('de « nouveau tournoi » à la première ronde', counted, 9);
     });
 
     // Le même coût d'entrée, mais AVEC l'annuaire : plus un seul nom à taper. C'est la mesure
@@ -377,7 +378,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
             await g.click(add);
             await add.fill('Open de Lyon, avril');
             await g.press('Enter');
-            await g.click(page.locator('#tournamentPanel tbody tr').first());
+            await g.dblclick(page.locator('#tournamentPanel tbody tr').first());
             await g.click(page.locator('#tournamentPanel .direction-btn'));
 
             await g.click(page.locator('[data-testid="direction-tab-players"]'));
@@ -390,6 +391,7 @@ test.describe('ux.md §4 — les budgets de gestes du directeur', () => {
             await g.click(page.locator('.proposals .confirm .primary'));
             await expect(page.locator('.grid .cell.busy').first()).toBeVisible();
         });
-        budget('coût d’entrée avec l’annuaire', counted, 10);
+        // Ouvrir un tournoi est un double-clic : deux clics.
+        budget('coût d’entrée avec l’annuaire', counted, 11);
     });
 });

@@ -21,7 +21,7 @@ async function openDirection(page) {
     await installDirectionEngine(page);
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
-    await page.locator('#tournamentPanel tbody tr').first().click();
+    await page.locator('#tournamentPanel tbody tr').first().dblclick();
     await page.locator('#tournamentPanel .direction-btn').click();
     await expect(page.locator('.direction-view')).toBeVisible();
 }

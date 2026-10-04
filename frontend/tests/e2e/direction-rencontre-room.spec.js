@@ -16,7 +16,7 @@ test('S3 20 h : le speed ne propose aucune table du principal', async ({ page })
     await installDirectionEngine(page, S3_SATURDAY_20H);
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
-    await page.locator('#tournamentPanel tbody tr').first().click();
+    await page.locator('#tournamentPanel tbody tr').first().dblclick();
     await page.locator('#tournamentPanel .direction-btn').click();
     await page.locator('[data-testid="direction-tab-direction"]').click();
 
@@ -41,6 +41,8 @@ test('S3 20 h : le speed ne propose aucune table du principal', async ({ page })
 
     // Une table cassée : un seul geste, pour toute la salle.
     await page.locator('[data-testid="direction-tab-settings"]').click();
+    // Le panneau d'une Rencontre déjà rattachée est replié : on le déplie avant de cocher.
+    await page.locator('[data-testid="rencontre-summary"]').click();
     await expect(page.locator('[data-testid="rencontre-current"]')).toContainText('Festival de Lyon');
     await page.locator('[data-testid="rencontre-out-12"]').check();
     await expect(page.locator('[data-testid="rencontre-out-12"]')).toBeChecked();

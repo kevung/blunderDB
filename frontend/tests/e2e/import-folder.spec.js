@@ -23,16 +23,19 @@ test('un dossier s’importe fichier par fichier, doublon compté à part', asyn
     await page.goto('/');
     await expect(statusBar(page)).toContainText('3 / 3');
 
+    // Le pipeline du backend prend tout le dossier en un appel et rend la progression par
+    // événement ; il reste suspendu sur le deuxième fichier jusqu'à ce qu'on le relâche.
     await page.evaluate(() => {
-        let release;
-        window.__releaseSecond = new Promise((r) => (release = r));
-        window.__release = release;
-        window.go.database.Database.ImportXGMatch = async (path) => {
-            if (path.endsWith('b.xg')) {
-                await window.__releaseSecond;
-                throw new Error('duplicate match: already been imported');
-            }
-            return 7;
+        window.__progress = null;
+        window.runtime.EventsOnMultiple = (name, cb) => {
+            if (name === 'import-files:progress') window.__progress = cb;
+            return () => {};
+        };
+        window.__releaseSecond = new Promise((r) => (window.__release = r));
+        window.go.gui.App.ImportFiles = async () => {
+            window.__progress?.({ filesDone: 2, currentFile: '/tmp/club/b.xg' });
+            await window.__releaseSecond;
+            return { succeeded: 2, skipped: 1, failed: 0, errors: [], hadMatches: true, lastPositionID: 0, cancelled: false };
         };
     });
 
@@ -50,9 +53,6 @@ test('un dossier s’importe fichier par fichier, doublon compté à part', asyn
     await expect(stat('Imported')).toHaveText('2');
     await expect(stat('Duplicates skipped')).toHaveText('1');
     await expect(stat('Failed')).toHaveText('0');
-
-    const imported = await getWailsCalls(page, 'ImportXGMatch');
-    expect(imported.map((c) => c.args[0])).toEqual(FILES);
 });
 
 test('un dossier sans fichier importable le dit, sans ouvrir la progression', async ({ page }) => {
@@ -69,5 +69,5 @@ test('un dossier sans fichier importable le dit, sans ouvrir la progression', as
 
     await expect(page.getByTestId('status-bar-message')).toHaveText('No importable files found in folder');
     await expect(page.getByText('Importing file')).toHaveCount(0);
-    expect(await getWailsCalls(page, 'ImportXGMatch')).toHaveLength(0);
+    expect(await getWailsCalls(page, 'ImportFiles')).toHaveLength(0);
 });

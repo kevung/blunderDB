@@ -45,7 +45,7 @@ test('coller un XGID enregistre la position et l’affiche dans la bibliothèque
     expect(writes[0].args[0].board.points).toEqual(pastedPosition.board.points);
     expect(writes[0].args[0].dice).toEqual([3, 1]);
     // La position affichée est bien la nouvelle (son analyse a été demandée)
-    const analysed = (await getWailsCalls(page, 'LoadAnalysis')).map((c) => c.args[0]);
+    const analysed = (await getWailsCalls(page, 'LoadPositionView')).map((c) => c.args[0]);
     expect(analysed.at(-1)).toBe(1004);
 });
 
@@ -65,7 +65,7 @@ test('importer un fichier de position via le dialogue', async ({ page }) => {
 
     const calls = await getWailsCalls(page, 'ImportXGPPosition');
     expect(calls.map((c) => c.args[0])).toEqual(['/tmp/pos.xgp']);
-    const analysed = (await getWailsCalls(page, 'LoadAnalysis')).map((c) => c.args[0]);
+    const analysed = (await getWailsCalls(page, 'LoadPositionView')).map((c) => c.args[0]);
     expect(analysed.at(-1)).toBe(1005);
 });
 

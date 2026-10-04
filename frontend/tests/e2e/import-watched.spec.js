@@ -14,7 +14,13 @@ import { openLibraryMock } from './helpers/fixtures.js';
 const statusBar = (page) => page.getByTestId('status-bar');
 
 test('un import surveillé laisse la position et l’onglet en place', async ({ page }) => {
-    await installWailsMock(page, openLibraryMock());
+    // Les .xg passent par le pipeline du backend, en un seul appel pour toute la liste.
+    await installWailsMock(
+        page,
+        openLibraryMock({
+            app: { ImportFiles: { succeeded: 1, skipped: 1, failed: 0, errors: [], hadMatches: true, lastPositionID: 0, cancelled: false } }
+        })
+    );
     await page.addInitScript(() => {
         /** @type {Record<string, Function>} */
         window.__events = {};
@@ -25,13 +31,6 @@ test('un import surveillé laisse la position et l’onglet en place', async ({ 
     });
     await page.goto('/');
     await expect(statusBar(page)).toContainText('3 / 3');
-
-    await page.evaluate(() => {
-        window.go.database.Database.ImportXGMatch = async (path) => {
-            if (path.endsWith('dup.xg')) throw new Error('duplicate match');
-            return 9;
-        };
-    });
 
     // L'utilisateur étudie la première position, onglet Analyse.
     await page.keyboard.press('Escape');
@@ -49,6 +48,6 @@ test('un import surveillé laisse la position et l’onglet en place', async ({ 
     await expect(page.getByText('Import Completed')).toHaveCount(0);
     await expect(page.getByText('Importing file')).toHaveCount(0);
 
-    const imported = await getWailsCalls(page, 'ImportXGMatch');
-    expect(imported.map((c) => c.args[0])).toEqual(['/tmp/watch/new.xg', '/tmp/watch/dup.xg']);
+    const imported = await getWailsCalls(page, 'ImportFiles');
+    expect(imported.map((c) => c.args[0])).toEqual([['/tmp/watch/new.xg', '/tmp/watch/dup.xg']]);
 });

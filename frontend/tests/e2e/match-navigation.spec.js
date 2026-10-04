@@ -23,7 +23,7 @@ async function expectMove(page, move, game, expectsId = null) {
     await expect(statusBar(page)).toContainText(`move ${move}/6`);
     await expect(statusBar(page)).toContainText(`game ${game}/2`);
     if (expectsId !== null) {
-        await expect.poll(async () => (await getWailsCalls(page, 'LoadAnalysis')).map((c) => c.args[0]).at(-1)).toBe(expectsId);
+        await expect.poll(async () => (await getWailsCalls(page, 'LoadPositionView')).map((c) => c.args[0]).at(-1)).toBe(expectsId);
     }
 }
 
@@ -67,7 +67,7 @@ test('ouvrir un match depuis le panneau et parcourir ses coups (j/k, flèches)',
     await expectMove(page, 4, 2, 2021);
 
     // Chaque coup affiché a chargé son analyse
-    const analysed = (await getWailsCalls(page, 'LoadAnalysis')).map((c) => c.args[0]);
+    const analysed = (await getWailsCalls(page, 'LoadPositionView')).map((c) => c.args[0]);
     expect(analysed).toEqual(expect.arrayContaining([2011, 2012, 2013, 2021]));
 });
 

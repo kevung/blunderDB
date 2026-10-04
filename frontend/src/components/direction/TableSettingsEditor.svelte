@@ -18,7 +18,9 @@
      *     testid?: string
      * }}
      */
-    let { tables, settings = [], participants = [], onSave, testid = 'table-settings' } = $props();
+    let { tables, settings = [], participants: participantNames = [], onSave, testid = 'table-settings' } = $props();
+    // Assignments are by name, and two entrants may share one: a keyed list needs each name once.
+    const participants = $derived([...new Set(participantNames)]);
 
     /** @typedef {{ number: number, name: string, room: string, reserved: boolean, assignedTo: string[] }} Row */
 

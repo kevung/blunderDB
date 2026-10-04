@@ -297,7 +297,13 @@ export async function overrideDbMethod(page, methodName, returnValue) {
 export async function overrideDbMethodByArg(page, methodName, table, fallback = null) {
     await page.evaluate(
         ({ method, table, fallback }) => {
-            window.go.database.Database[method] = (arg) => Promise.resolve(Object.hasOwn(table, String(arg)) ? table[String(arg)] : fallback);
+            const answer = (arg) => (Object.hasOwn(table, String(arg)) ? table[String(arg)] : fallback);
+            window.go.database.Database[method] = (arg) => Promise.resolve(answer(arg));
+            // Displaying a position reads its analysis through LoadPositionView, which carries
+            // the comment too: an analysis table must answer there as well.
+            if (method === 'LoadAnalysis') {
+                window.go.database.Database.LoadPositionView = (arg) => Promise.resolve({ analysis: answer(arg), comment: '' });
+            }
         },
         { method: methodName, table, fallback }
     );

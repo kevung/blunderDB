@@ -28,7 +28,7 @@ async function openHall(page) {
     await page.goto('/');
     await page.locator('[data-testid="tab-tournaments"]').click();
     await expect(page.locator('#tournamentPanel')).toBeVisible();
-    await page.locator('#tournamentPanel tbody tr').first().click();
+    await page.locator('#tournamentPanel tbody tr').first().dblclick();
     await page.locator('#tournamentPanel .direction-btn').click();
     await expect(page.locator('.direction-view')).toBeVisible();
     await page.locator('[data-testid="direction-tab-direction"]').click();

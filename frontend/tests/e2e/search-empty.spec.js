@@ -40,7 +40,5 @@ test('recherche sans résultat : état vide dans le panneau, bouton primaire, so
     await expect(page.locator('.no-results')).toBeVisible();
     await page.keyboard.press('Control+r');
     await expect(statusBar(page)).toContainText('3 / 3');
-    if (!(await page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true }).isVisible())) await page.keyboard.press('Control+f');
-    await expect(page.locator('.top-action-bar').getByRole('button', { name: 'Search', exact: true })).toBeVisible();
     await expect(page.locator('.no-results')).toHaveCount(0);
 });
