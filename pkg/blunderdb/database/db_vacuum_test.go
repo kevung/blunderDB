@@ -224,6 +224,33 @@ func TestVacuum_ReplacesTheFile(t *testing.T) {
 	}
 }
 
+// TestVacuum_KeepsTheFileMode: the copy that replaces the library is created
+// under the umask; it must come out with the library's own mode.
+func TestVacuum_KeepsTheFileMode(t *testing.T) {
+	t.Parallel()
+	d, path := vacuumFixture(t)
+	if err := os.Chmod(path, 0o600); err != nil {
+		t.Fatal(err)
+	}
+	before, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := d.Vacuum(); err != nil {
+		t.Fatalf("Vacuum: %v", err)
+	}
+	after, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if os.SameFile(before, after) {
+		t.Fatal("the file was not replaced; the test proves nothing")
+	}
+	if got := after.Mode().Perm(); got != 0o600 {
+		t.Fatalf("mode after the vacuum %v, want -rw-------", after.Mode().Perm())
+	}
+}
+
 // TestVacuum_InPlaceWhileAnotherConnectionHoldsTheFile: a connection of
 // another process would keep reading the replaced inode, so the file is not
 // replaced while one exists; the vacuum runs in place instead.

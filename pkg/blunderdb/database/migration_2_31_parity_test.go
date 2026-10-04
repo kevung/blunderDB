@@ -3,6 +3,8 @@ package database
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"maps"
@@ -12,6 +14,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
@@ -20,8 +23,11 @@ import (
 // write2_30Library writes at path a library in the 2.30.0 shape a BMAB-sized
 // one has: text dates and action labels, compact-array boards, no
 // action_label table, provenance never derived, half its blobs legacy JSON,
-// the match-date backfill half done and match_stats empty.
-func write2_30Library(t *testing.T, path string) {
+// the match-date backfill half done and match_stats empty, one board still
+// in the legacy full-Position JSON form. With swap, the action columns are
+// declared `TEXT DEFAULT NULL`, a declaration retypeColumnsInteger declines,
+// so the step converts them through its ADD/DROP/RENAME path.
+func write2_30Library(t *testing.T, path string, swap bool) {
 	t.Helper()
 	d := NewDatabase()
 	if err := d.SetupDatabase(path); err != nil {
@@ -30,9 +36,17 @@ func write2_30Library(t *testing.T, path string) {
 	if _, err := d.ImportXGMatch(filepath.Join("testdata", "test.xg")); err != nil {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
-	for id, b := range boardsByID(t, d.db) {
+	boards := boardsByID(t, d.db)
+	legacyBoard := slices.Min(slices.Collect(maps.Keys(boards)))
+	for id, b := range boards {
 		state := engine.EncodeBoardCompact(b)
-		if id%3 == 0 {
+		if id == legacyBoard {
+			js, err := json.Marshal(domain.Position{Board: b})
+			if err != nil {
+				t.Fatal(err)
+			}
+			state = string(js)
+		} else if id%3 == 0 {
 			// The same board with JSON whitespace: still a compact array.
 			state = strings.ReplaceAll(state, ",", ", ")
 		}
@@ -78,9 +92,13 @@ func write2_30Library(t *testing.T, path string) {
 		`CREATE INDEX idx_analysis_depth ON analysis(analysis_depth)`,
 		`UPDATE metadata SET value = '2.30.0' WHERE key = 'database_version'`,
 	}
+	textDecl := `TEXT`
+	if swap {
+		textDecl = `TEXT DEFAULT NULL`
+	}
 	for _, c := range actionColumns2_31 {
 		stmts = append(stmts,
-			`ALTER TABLE `+c.table+` ADD COLUMN `+c.column+`_text TEXT`,
+			`ALTER TABLE `+c.table+` ADD COLUMN `+c.column+`_text `+textDecl,
 			`UPDATE `+c.table+` SET `+c.column+`_text = `+sqlshared.ActionLabelSQL(c.column),
 			`ALTER TABLE `+c.table+` DROP COLUMN `+c.column,
 			`ALTER TABLE `+c.table+` RENAME COLUMN `+c.column+`_text TO `+c.column)
@@ -223,13 +241,22 @@ func libraryContent(t *testing.T, path string) map[string]string {
 }
 
 // TestMigrate_2_31_MatchesReference holds the single-pass, retype-in-place
-// step and the pipelined provenance backfill to the step as first written:
-// the same library must come out cell for cell.
+// step, its ADD/DROP/RENAME fallback, and the pipelined provenance backfill to
+// the step as first written: the same library must come out cell for cell.
 func TestMigrate_2_31_MatchesReference(t *testing.T) {
 	t.Parallel()
+	for _, swap := range []bool{false, true} {
+		t.Run(fmt.Sprintf("swap=%v", swap), func(t *testing.T) {
+			t.Parallel()
+			matchesReference(t, swap)
+		})
+	}
+}
+
+func matchesReference(t *testing.T, swap bool) {
 	dir := tempDir(t)
 	source := filepath.Join(dir, "v2300.db")
-	write2_30Library(t, source)
+	write2_30Library(t, source, swap)
 	ref, cur := filepath.Join(dir, "reference.db"), filepath.Join(dir, "current.db")
 	copyFile(t, source, ref)
 	copyFile(t, source, cur)
@@ -368,21 +395,34 @@ func TestBoardStateBlob(t *testing.T) {
 
 // TestMigrate_2_31_ResumesAfterCancel cancels the open inside each phase of
 // the crossing, several transactions into its table pass, then opens again:
-// the library must come out as if the first open had never been cut.
+// the library must come out as if the first open had never been cut. On the
+// ADD/DROP/RENAME path it also cuts between a DROP and its RENAME.
 func TestMigrate_2_31_ResumesAfterCancel(t *testing.T) {
 	t.Parallel()
+	for _, swap := range []bool{false, true} {
+		t.Run(fmt.Sprintf("swap=%v", swap), func(t *testing.T) {
+			t.Parallel()
+			resumesAfterCancel(t, swap)
+		})
+	}
+}
+
+func resumesAfterCancel(t *testing.T, swap bool) {
 	dir := tempDir(t)
 	source := filepath.Join(dir, "v2300.db")
-	write2_30Library(t, source)
+	write2_30Library(t, source, swap)
 	ref := filepath.Join(dir, "reference.db")
 	copyFile(t, source, ref)
 	migrateByReference(t, ref)
 	want := libraryContent(t, ref)
 
 	// The table passes are cut on their second batch; the backfills, one
-	// batch on this library, on their first.
+	// batch on this library, on their first; the swap on its first DROP.
 	cuts := map[string]int{"position_2_31": 2, "analysis_2_31": 2, "move_2_31": 2,
 		"position_match_date": 1, "analysis_provenance": 1, "match_stats": 1}
+	if swap {
+		cuts[swapCut] = 1
+	}
 	for _, cut := range slices.Sorted(maps.Keys(cuts)) {
 		t.Run(cut, func(t *testing.T) {
 			path := filepath.Join(dir, cut+".db")
@@ -390,6 +430,12 @@ func TestMigrate_2_31_ResumesAfterCancel(t *testing.T) {
 			d := NewDatabase()
 			d.convertBatchSize = 7
 			seen := 0
+			if cut == swapCut {
+				d.afterActionColumnDrop = func() error {
+					seen++
+					return errSwapCut
+				}
+			}
 			d.SetMigrationProgress(func(phase string, done, total int) {
 				if phase == cut {
 					if seen++; seen == cuts[cut] {
@@ -425,6 +471,12 @@ func TestMigrate_2_31_ResumesAfterCancel(t *testing.T) {
 		})
 	}
 }
+
+// swapCut names the cut between the DROP and the RENAME of an action-column
+// swap, which no progress phase reports.
+const swapCut = "action_swap"
+
+var errSwapCut = errors.New("cut between DROP and RENAME")
 
 func eachRow(t *testing.T, db *sql.DB, q string, each func(*sql.Rows)) {
 	t.Helper()

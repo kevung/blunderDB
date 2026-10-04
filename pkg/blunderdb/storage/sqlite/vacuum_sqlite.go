@@ -362,6 +362,16 @@ func (s *Storage) VacuumInto(ctx context.Context, target string) (int64, error) 
 		_ = os.Remove(target)
 		return sizeBefore, fmt.Errorf("vacuum into: %w", err)
 	}
+	// The copy is created under the umask; it replaces the library, so it
+	// takes the library's permissions (a 0600 file must not come back 0644).
+	fi, err := os.Stat(path)
+	if err == nil {
+		err = os.Chmod(target, fi.Mode().Perm())
+	}
+	if err != nil {
+		_ = os.Remove(target)
+		return sizeBefore, fmt.Errorf("vacuum into: keeping the file mode: %w", err)
+	}
 	return sizeBefore, nil
 }
 

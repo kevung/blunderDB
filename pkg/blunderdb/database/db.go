@@ -35,7 +35,10 @@ type Database struct {
 	// convertBatchSize overrides convertBatch, so that a test library of a
 	// few hundred rows still spans several transactions of a table pass.
 	convertBatchSize int64
-	store            *sqlite.Storage // SQLite Storage backend, wraps db (P2)
+	// afterActionColumnDrop, nil outside tests, runs between the DROP and
+	// the RENAME of a 2.31 action-column swap, so a test can cut there.
+	afterActionColumnDrop func() error
+	store                 *sqlite.Storage // SQLite Storage backend, wraps db (P2)
 	// importBatchID stamps every match the in-flight import writes, 0 when none
 	// runs. One at a time, like importCancel.
 	importBatchID int64

@@ -2,6 +2,7 @@ package database
 
 import (
 	"math"
+	"path/filepath"
 	"testing"
 )
 
@@ -753,5 +754,39 @@ func TestGetAllPlayerNames_AlphabeticTiebreak(t *testing.T) {
 		if names[i] != w {
 			t.Errorf("names[%d]: want %q, got %q", i, w, names[i])
 		}
+	}
+}
+
+// TestGetDatabaseStats_SurvivesAFailedCount: when the store cannot count at
+// once (here a table it reads is gone), `info` still reports every table,
+// the blunders at 0, instead of failing whole.
+func TestGetDatabaseStats_SurvivesAFailedCount(t *testing.T) {
+	t.Parallel()
+	d := NewDatabase()
+	if err := d.SetupDatabase(filepath.Join(tempDir(t), "stats.db")); err != nil {
+		t.Fatal(err)
+	}
+	closeOnCleanup(t, d)
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "test.xg")); err != nil {
+		t.Fatal(err)
+	}
+	want, err := d.GetDatabaseStats()
+	if err != nil {
+		t.Fatalf("GetDatabaseStats: %v", err)
+	}
+	if _, err := d.db.Exec(`DROP TABLE anki_card`); err != nil {
+		t.Fatal(err)
+	}
+	got, err := d.GetDatabaseStats()
+	if err != nil {
+		t.Fatalf("GetDatabaseStats after the count broke: %v", err)
+	}
+	for _, k := range []string{"position_count", "analysis_count", "match_count", "game_count", "move_count"} {
+		if got[k] != want[k] {
+			t.Errorf("%s = %v, want %v", k, got[k], want[k])
+		}
+	}
+	if got["blunder_count"] != int64(0) {
+		t.Errorf("blunder_count = %v, want 0", got["blunder_count"])
 	}
 }

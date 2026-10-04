@@ -489,17 +489,38 @@ func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
 	// so it cannot drift. It counts POSITIONS, not PR decisions: "how much
 	// to look at".
 	c, err := d.store.Metadata().Counts(context.Background(), "")
-	if err != nil {
-		return nil, err
+	if err == nil {
+		return map[string]interface{}{
+			"position_count": int64(c.Positions),
+			"analysis_count": int64(c.Analyses),
+			"match_count":    int64(c.Matches),
+			"game_count":     int64(c.Games),
+			"move_count":     int64(c.Moves),
+			"blunder_count":  int64(c.Blunders),
+		}, nil
 	}
-	return map[string]interface{}{
-		"position_count": int64(c.Positions),
-		"analysis_count": int64(c.Analyses),
-		"match_count":    int64(c.Matches),
-		"game_count":     int64(c.Games),
-		"move_count":     int64(c.Moves),
-		"blunder_count":  int64(c.Blunders),
-	}, nil
+	// The blunder count is the fragile part (it reads every analysis): its
+	// failure must not take the whole of `info` down. The tables are counted
+	// one by one and the blunders reported as 0.
+	slog.Warn("database stats: counting at once failed; counting table by table, blunders at 0", "err", err)
+	stats := map[string]interface{}{"blunder_count": int64(0)}
+	for _, t := range []struct {
+		table, key string
+		required   bool
+	}{
+		{"position", "position_count", true}, {"analysis", "analysis_count", true},
+		{"match", "match_count", false}, {"game", "game_count", false}, {"move", "move_count", false},
+	} {
+		var n int64
+		if err := d.db.QueryRow(`SELECT COUNT(*) FROM ` + t.table).Scan(&n); err != nil {
+			if t.required {
+				return nil, err
+			}
+			slog.Warn("database stats: counting a table", "table", t.table, "err", err)
+		}
+		stats[t.key] = n
+	}
+	return stats, nil
 }
 
 // EstimateExactBelow is the highest table id up to which the library counter

@@ -108,7 +108,7 @@ func (d *Database) migrate_2_30_0_to_2_31_0(ctx context.Context) error {
 		if err := d.convertTable(ctx, conn, a.table, convs, a.table+"_2_31"); err != nil {
 			return fmt.Errorf("converting %s: %w", a.table, err)
 		}
-		if err := finishActionColumns(ctx, conn, a.table, todo[a.table]); err != nil {
+		if err := finishActionColumns(ctx, conn, a.table, todo[a.table], d.afterActionColumnDrop); err != nil {
 			return fmt.Errorf("converting %s action labels to codes: %w", a.table, err)
 		}
 	}
@@ -362,29 +362,48 @@ func prepareActionColumns(ctx context.Context, conn *sql.Conn, table string, col
 
 // finishActionColumns closes the conversion of table's action columns once
 // the table pass is over: the in-place ones lose their marker, the
-// <col>_code columns prepareActionColumns had to add are swapped in.
-func finishActionColumns(ctx context.Context, conn *sql.Conn, table string, columns []string) error {
+// <col>_code columns prepareActionColumns had to add are swapped in. The
+// DROP and the RENAME of a swap share one transaction: committed apart, a
+// cut between them would leave the codes under <col>_code with nothing left
+// to say the column still has to be renamed. afterDrop, nil outside tests,
+// runs between the two.
+func finishActionColumns(ctx context.Context, conn *sql.Conn, table string, columns []string, afterDrop func() error) error {
 	for _, col := range columns {
 		if _, err := conn.ExecContext(ctx, `DELETE FROM metadata WHERE key = ?`, retypedMarker(table, col)); err != nil {
 			return err
 		}
 		ok, err := hasColumn(ctx, conn, table, col+"_code")
-		if err != nil || !ok {
-			if err != nil {
-				return err
-			}
+		if err != nil {
+			return err
+		}
+		if !ok {
 			continue
 		}
-		for _, stmt := range []string{
-			`ALTER TABLE ` + table + ` DROP COLUMN ` + col,
-			`ALTER TABLE ` + table + ` RENAME COLUMN ` + col + `_code TO ` + col,
-		} {
-			if _, err := conn.ExecContext(ctx, stmt); err != nil {
-				return err
-			}
+		if err := swapActionColumn(ctx, conn, table, col, afterDrop); err != nil {
+			return err
 		}
 	}
 	return nil
+}
+
+func swapActionColumn(ctx context.Context, conn *sql.Conn, table, col string, afterDrop func() error) error {
+	tx, err := conn.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = tx.Rollback() }()
+	if _, err := tx.ExecContext(ctx, `ALTER TABLE `+table+` DROP COLUMN `+col); err != nil {
+		return err
+	}
+	if afterDrop != nil {
+		if err := afterDrop(); err != nil {
+			return err
+		}
+	}
+	if _, err := tx.ExecContext(ctx, `ALTER TABLE `+table+` RENAME COLUMN `+col+`_code TO `+col); err != nil {
+		return err
+	}
+	return tx.Commit()
 }
 
 // retypeColumnsInteger changes the declared type of table.columns from TEXT
