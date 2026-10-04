@@ -172,3 +172,37 @@ func (s *TrainingStore) Missed(ctx context.Context, scope string, filter storage
 	}
 	return out, nil
 }
+
+// DecisionErrors returns the judged questions of the Decision exercise that
+// still reach a position, oldest first. A question that ran out of time has no
+// cost (NULL) and is left out, as the session PR leaves it out of its mean.
+func (s *TrainingStore) DecisionErrors(ctx context.Context, scope string) ([]storage.TrainingDecisionError, error) {
+	itemTenant, itemArgs := s.DB.TenantFilter("i", scope)
+	sessionTenant, sessionArgs := s.DB.TenantFilter("s", scope)
+	positionTenant, positionArgs := s.DB.TenantFilter("p", scope)
+	args := append(append(append([]any{}, itemArgs...), sessionArgs...), positionArgs...)
+	rows, err := s.DB.Query(ctx,
+		`SELECT `+s.DB.TimestampText("s.created_at")+`, COALESCE(p.game_type, 0), i.error_mp
+		 FROM training_item i
+		 JOIN training_session s ON s.id = i.session_id
+		 JOIN position p ON p.id = i.position_id
+		 WHERE `+itemTenant+` AND `+sessionTenant+` AND `+positionTenant+`
+		   AND s.exercise = 'decision' AND i.error_mp IS NOT NULL
+		 ORDER BY i.id`, args...)
+	if err != nil {
+		return nil, errf(s.DB, "list the decision errors", err)
+	}
+	defer rows.Close()
+	var out []storage.TrainingDecisionError
+	for rows.Next() {
+		var v storage.TrainingDecisionError
+		if err := rows.Scan(&v.CreatedAt, &v.GameType, &v.ErrorMp); err != nil {
+			return nil, errf(s.DB, "list the decision errors", err)
+		}
+		out = append(out, v)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, errf(s.DB, "list the decision errors", err)
+	}
+	return out, nil
+}

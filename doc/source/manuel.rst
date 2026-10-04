@@ -2662,6 +2662,10 @@ mesurent la progression par trois chemins :
 * la **rétention Anki** : la part des révisions de cartes déjà apprises
   notées *Difficile* ou mieux, lue sur l'axe de droite (en %).
 
+Sous le graphique, le **PR du quiz par plan de jeu** range les décisions du
+quiz tirées de positions de la bibliothèque, les pires plans d'abord, avec le
+PR de la dernière fenêtre où le plan a été joué.
+
 Entre parenthèses, le nombre de décisions ou de révisions derrière chaque
 valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas un
 zéro. Le filtre ne restreint que les matchs ; le journal du quiz et celui

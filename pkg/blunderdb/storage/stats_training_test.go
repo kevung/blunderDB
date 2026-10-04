@@ -56,3 +56,27 @@ func TestBuildTrainingStats_MonthAndUnreadableDates(t *testing.T) {
 		t.Error("empty slices must marshal as [], not null")
 	}
 }
+
+func TestBuildTrainingThemes_FoldsByPlanOfPlayWorstFirst(t *testing.T) {
+	race, blitz := int(domain.TypeRace), int(domain.TypeBlitz)
+	got := BuildTrainingThemes(TrainingWindowWeek, []TrainingDecisionError{
+		{CreatedAt: "2026-10-05 09:00:00", GameType: race, ErrorMp: 100},
+		{CreatedAt: "2026-10-12 09:00:00", GameType: race, ErrorMp: 300},
+		{CreatedAt: "2026-10-12 09:00:00", GameType: blitz, ErrorMp: 800},
+		{CreatedAt: "bad", GameType: blitz, ErrorMp: 0},
+	})
+	if len(got) != 2 || got[0].Theme != "blitz" || got[1].Theme != "race" {
+		t.Fatalf("themes = %+v, want blitz (PR 100) before race (PR 50)", got)
+	}
+	if got[0].Decisions != 2 || math.Abs(got[0].PR-200) > 1e-9 || len(got[0].Periods) != 1 {
+		t.Errorf("blitz = %+v: an unreadable date counts in the total, in no window", got[0])
+	}
+	r := got[1]
+	if r.Decisions != 2 || math.Abs(r.PR-100) > 1e-9 || len(r.Periods) != 2 ||
+		r.Periods[0].Start != "2026-10-05" || math.Abs(r.Periods[0].PR-50) > 1e-9 || math.Abs(r.Periods[1].PR-150) > 1e-9 {
+		t.Errorf("race = %+v", r)
+	}
+	if BuildTrainingThemes(TrainingWindowWeek, nil) == nil {
+		t.Error("no decision must marshal as [], not null")
+	}
+}

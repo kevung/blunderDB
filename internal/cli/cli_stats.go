@@ -366,6 +366,16 @@ func printTrainingStats(res *storage.TrainingStats) {
 			optional(p.AnkiReviews, fmt.Sprintf("%.1f%%", 100*p.AnkiRetention)), p.AnkiReviews)
 	}
 	w.Flush()
+	if len(res.Themes) == 0 {
+		return
+	}
+	fmt.Println()
+	w = tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(w, "THEME\tQUIZ PR\tDECISIONS")
+	for _, th := range res.Themes {
+		fmt.Fprintf(w, "%s\t%.2f\t%d\n", th.Theme, th.PR, th.Decisions)
+	}
+	w.Flush()
 }
 
 // optional shows a series value only when it has a sample behind it.

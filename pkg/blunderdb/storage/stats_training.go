@@ -59,6 +59,26 @@ type TrainingStats struct {
 	Window   string                `json:"Window"`
 	Sessions []TrainingQuizSession `json:"Sessions"`
 	Periods  []TrainingPeriod      `json:"Periods"`
+	// Themes is the quiz PR by plan of play, worst first: only the questions
+	// whose position is known (a library position the session was drawn from).
+	Themes []TrainingTheme `json:"Themes"`
+}
+
+// TrainingTheme is the quiz PR of one plan of play (a domain.GameTypeNames
+// token), over every window and window by window.
+type TrainingTheme struct {
+	Theme     string               `json:"Theme"`
+	Decisions int                  `json:"Decisions"`
+	PR        float64              `json:"PR"`
+	Periods   []TrainingThemePoint `json:"Periods"`
+}
+
+// TrainingThemePoint is one window of a theme; it exists only when the window
+// holds a judged decision of that theme.
+type TrainingThemePoint struct {
+	Start     string  `json:"Start"`
+	Decisions int     `json:"Decisions"`
+	PR        float64 `json:"PR"`
 }
 
 // ComputeTrainingStats reads the three journals and folds them by window. The
@@ -85,14 +105,73 @@ func ComputeTrainingStats(ctx context.Context, st Stores, scope string, filter S
 		}
 		reviews = append(reviews, *l)
 	}
-	return BuildTrainingStats(window, sessions, perMatch, reviews), nil
+	errs, err := st.Training().DecisionErrors(ctx, scope)
+	if err != nil {
+		return nil, err
+	}
+	out := BuildTrainingStats(window, sessions, perMatch, reviews)
+	out.Themes = BuildTrainingThemes(window, errs)
+	return out, nil
+}
+
+// BuildTrainingThemes folds the judged decisions by plan of play, on the PR
+// scale of the real matches (500 x mean error), worst theme first. A row whose
+// date cannot be read counts in the theme's total but in no window.
+func BuildTrainingThemes(window string, errs []TrainingDecisionError) []TrainingTheme {
+	type acc struct{ n, mp int }
+	type key struct {
+		theme int
+		start string
+	}
+	total := map[int]*acc{}
+	byWindow := map[key]*acc{}
+	for _, e := range errs {
+		a := total[e.GameType]
+		if a == nil {
+			a = &acc{}
+			total[e.GameType] = a
+		}
+		a.n++
+		a.mp += e.ErrorMp
+		day, ok := isoDay(e.CreatedAt)
+		if !ok {
+			continue
+		}
+		k := key{e.GameType, windowStart(day, window).Format("2006-01-02")}
+		w := byWindow[k]
+		if w == nil {
+			w = &acc{}
+			byWindow[k] = w
+		}
+		w.n++
+		w.mp += e.ErrorMp
+	}
+	pr := func(a *acc) float64 { return 500 * float64(a.mp) / 1000 / float64(a.n) }
+	out := []TrainingTheme{}
+	for g, a := range total {
+		th := TrainingTheme{Theme: domain.GameType(g).String(), Decisions: a.n, PR: pr(a), Periods: []TrainingThemePoint{}}
+		for k, w := range byWindow {
+			if k.theme == g {
+				th.Periods = append(th.Periods, TrainingThemePoint{Start: k.start, Decisions: w.n, PR: pr(w)})
+			}
+		}
+		sort.Slice(th.Periods, func(i, j int) bool { return th.Periods[i].Start < th.Periods[j].Start })
+		out = append(out, th)
+	}
+	sort.Slice(out, func(i, j int) bool {
+		if out[i].PR != out[j].PR {
+			return out[i].PR > out[j].PR
+		}
+		return out[i].Theme < out[j].Theme
+	})
+	return out
 }
 
 // BuildTrainingStats is the pure fold: sessions of the Decision exercise,
 // matches and review events in, windows out, oldest first. A row whose date
 // cannot be read is left out rather than put in a window it does not belong to.
 func BuildTrainingStats(window string, sessions []TrainingSession, matches []MatchStats, reviews []domain.AnkiReviewLog) *TrainingStats {
-	out := &TrainingStats{Window: window, Sessions: []TrainingQuizSession{}, Periods: []TrainingPeriod{}}
+	out := &TrainingStats{Window: window, Sessions: []TrainingQuizSession{}, Periods: []TrainingPeriod{}, Themes: []TrainingTheme{}}
 	periods := map[string]*TrainingPeriod{}
 	at := func(date string) *TrainingPeriod {
 		day, ok := isoDay(date)
