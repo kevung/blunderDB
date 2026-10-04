@@ -6,6 +6,7 @@ import (
 	"context"
 	"os"
 	"slices"
+	"strings"
 	"testing"
 
 	"github.com/jackc/pgx/v5"
@@ -168,4 +169,71 @@ func diffLines(a, b []string) []string {
 		out = []string{}
 	}
 	return out
+}
+
+// TestMigrationChain_DatabaseCreatedBefore016Upgrades starts from the shape a
+// production database actually has when it was bootstrapped before 016 shipped
+// composite: the 001 baseline as it stood at 011 (testdata, frozen — the live
+// 001 has since been rewritten to already carry every UNIQUE (tenant_id, id)),
+// with 002..011 recorded. The real migrator must then carry it to the current
+// version and to the same constraints as a fresh bootstrap. 016's composite
+// foreign keys need anki_deck/position UNIQUE (tenant_id, id), which only 017
+// used to create: without 016 creating them first, this fails with 42830.
+func TestMigrationChain_DatabaseCreatedBefore016Upgrades(t *testing.T) {
+	ctx := context.Background()
+	dsn := startPostgres(t)
+
+	resetPublicSchema(t, dsn)
+	baseline, err := os.ReadFile("testdata/001_baseline_at_011.sql")
+	if err != nil {
+		t.Fatalf("read frozen baseline: %v", err)
+	}
+	conn, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatalf("connect: %v", err)
+	}
+	if _, err := conn.Exec(ctx, string(baseline)); err != nil {
+		t.Fatalf("apply frozen baseline: %v", err)
+	}
+	if _, err := conn.Exec(ctx, `CREATE TABLE schema_migrations (
+			version TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now());
+		INSERT INTO schema_migrations (version) VALUES
+			('002_is_cube_response'), ('003_anki_review_log'), ('004_anki_card_suspend'),
+			('005_individually_imported'), ('006_comment_position_index'), ('007_flagged'),
+			('008_win_gammon_covering_index'), ('009_luck_mp'), ('010_search_range_indexes'),
+			('011_exclude_position')`); err != nil {
+		t.Fatalf("record 002..011: %v", err)
+	}
+	conn.Close(ctx)
+
+	upgraded, err := pg.Open(ctx, dsn, nil)
+	if err != nil {
+		t.Fatalf("Open (pre-016 database): %v", err)
+	}
+	if err := upgraded.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate (pre-016 database): %v", err)
+	}
+	if v, err := upgraded.Version(ctx); err != nil || v != domain.DatabaseVersion {
+		t.Fatalf("upgraded version = %q, %v; want %q, nil", v, err, domain.DatabaseVersion)
+	}
+	upgradedSchema := snapshotSchema(t, dsn)
+	upgraded.Close()
+
+	resetPublicSchema(t, dsn)
+	fresh, err := pg.Open(ctx, dsn, nil)
+	if err != nil {
+		t.Fatalf("Open (fresh bootstrap): %v", err)
+	}
+	freshSchema := snapshotSchema(t, dsn)
+	fresh.Close()
+
+	// An upgraded database adds its constraints NOT VALID on purpose (existing
+	// rows are not rescanned); only the definition itself must match.
+	upgradedConstraints := make([]string, len(upgradedSchema.constraints))
+	for i, c := range upgradedSchema.constraints {
+		upgradedConstraints[i] = strings.TrimSuffix(c, " NOT VALID")
+	}
+	if !slices.Equal(upgradedConstraints, freshSchema.constraints) {
+		t.Errorf("constraints differ:\n upgraded-only %v\n fresh-only    %v", diffLines(upgradedConstraints, freshSchema.constraints), diffLines(freshSchema.constraints, upgradedConstraints))
+	}
 }
