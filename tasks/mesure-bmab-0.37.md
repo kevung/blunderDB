@@ -265,6 +265,68 @@ Pour la release : #1 et #2 décident si un utilisateur de BMAB peut réellement 
 30 % promis par la 2.31 ; #3 et #5 sont les seules attentes de plusieurs minutes dans un
 usage courant ; #4 est payé une fois par base.
 
+### 7.2 Points #4, #10, #2, #9 traités (branche `perf/migration-2-31`)
+
+**Banc.** L'original 2.30 n'existe plus : la seule copie, `run/bmab-europe.db`, est déjà migrée
+en 2.31. Chaque mesure part d'une copie de celle-ci (`~/src/bench-scale/mig231/`, jamais
+l'original ni `run/` lui-même), **ramenée à la forme 2.30** par un harnais (`cmd/zz-mig231`,
+non committé) : plateaux en tableau JSON, dates en texte, colonnes d'action retypées TEXT et
+remplies d'étiquettes, provenance remise à NULL, `match_stats` vidé, remplissage `match_date`
+à 11 320 000, `idx_analysis_engine`/`depth` recréés. Même copie reconstruite pour l'ancien
+binaire (`main` à `f275853da`) et le nouveau, une répétition chacun, poste partagé (charge
+7-12 pour l'ancien, 1-2 pour le nouveau : l'écart est en partie flatté).
+
+| Ouverture migrante 2.30 → 2.31 | Avant | Après |
+|---|---:|---:|
+| **Total** | **2 306 s** | **749 s (−68 %)** |
+| CPU | 1 798 s | 2 024 s (16 cœurs) |
+| **WAL maximal / disque libre consommé** | **6,17 Go / 7,35 Go** | **0,20 Go / 0,20 Go** |
+| RSS maximal | 1 316 Mo | 1 352 Mo |
+| Dates, plateau (`position`) | 191 + 348 s | 65 s (une passe) |
+| Dates, code d'action (`analysis`) | 100 + 376 s | 82 s (une passe) |
+| Codes d'action (`move`) + index | 180 s | 71 s |
+| Provenance des analyses | 690 s | 228 s |
+| Enregistrement des étiquettes (avant les passes) | — | 40 s |
+| `match_dates` 2.30, `match_stats` + `ANALYZE` | 54 + 360 s | 44 + 219 s |
+
+- **Une passe par table** : toutes les conversions d'une table dans le même `UPDATE` par
+  tranches de 50 000 ids ; une ligne déjà convertie n'est pas réécrite. Le plateau est lu par
+  une fonction Go enregistrée dans SQLite ; l'expression à 28 `json_extract` ne sert plus
+  qu'aux formes qu'elle décline (JSON5, valeurs < −256…).
+- **Plus de `DROP COLUMN`** : les colonnes d'action sont retypées INTEGER par édition du
+  `CREATE TABLE` (`writable_schema`, procédure documentée par SQLite, cookie de schéma
+  incrémenté), puis converties sur place. Repli sur l'ancien ADD/DROP/RENAME si la
+  déclaration n'est pas la forme simple `col TEXT`. Un marqueur dans `metadata`, écrit dans
+  la transaction de l'édition, dit qu'une colonne INTEGER a encore des étiquettes : une
+  reprise les finit, une colonne INTEGER sans marqueur n'est pas touchée.
+- **Provenance** : décodeur zstd par cœur (le décodeur partagé n'a qu'une place et
+  sérialisait `DecodeAnalysesConcurrently`, cf. § 7.1) et pipeline lecture/décodage/écriture.
+- **WAL** : `wal_checkpoint(TRUNCATE)` après chaque passe et après la provenance ; le pic
+  restant est la plus grosse transaction (une tranche, un `CREATE INDEX`).
+- **Identité** : `TestMigrate_2_31_MatchesReference` garde l'étape d'origine comme oracle et
+  compare chaque cellule de chaque table, les types déclarés et les index ;
+  `TestMigrate_2_31_ResumesAfterCancel` coupe l'ouverture dans chacune des six phases puis
+  rouvre : même contenu. Sur BMAB, les agrégats (codes d'action, moteurs et profondeurs,
+  `action_label`, plateaux, dates, `match_stats`) sont identiques entre la copie migrée par
+  l'ancien binaire (`run/`) et celle migrée par le nouveau.
+
+**#2 `vacuum`** : le bureau et la CLI écrivent la base compactée par `VACUUM INTO` à côté du
+fichier puis la renomment par-dessus ; il faut la taille du fichier en libre, au lieu de deux
+fois plus un fichier temporaire de la même taille. Si une autre connexion tient le fichier
+(son `-wal` survit à la fermeture des nôtres), il n'est pas remplacé et le `VACUUM` sur place
+reste le chemin, comme pour le démon. Sur la copie migrée (blobs JSON),
+où le `VACUUM` sur place était impossible (§ 4) : **14,45 → 9,79 Go (−32 %)** en 3 622 s sous
+une charge de 45 à 55 (recompression des 15,6 M blobs 46 min, `VACUUM INTO` + remplacement +
+`ANALYZE` 15 min). Le pic de disque, relevé sur tout le volume que d'autres sessions
+écrivaient, est de 14,95 Go et n'est pas attribuable ; le minimum théorique est la copie
+(9,79 Go) plus le WAL d'une tranche.
+
+**#9 `info`** : `GetDatabaseStats` comptait chaque table deux fois (ses cinq `COUNT`, puis
+ceux de `Counts`) ; il lit désormais `Counts` une fois. Le gain n'a pas pu être chronométré
+proprement (poste à une charge de 25 à 55 pendant la mesure, 70 à 800 s par appel selon le
+cache). Le décompte des gaffes reste l'essentiel du temps : **#9 reste ouvert** pour un
+décompte à la demande ou mis en cache.
+
 ## 8. Reproduire
 
 Scripts dans `~/src/bench-scale/mesure-0.37/` : `mesure.py` (temps, CPU, RSS), `rep.sh`
