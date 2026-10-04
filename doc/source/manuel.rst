@@ -1376,8 +1376,9 @@ d'une partie libre, et le programme qui a écrit le fichier. Ces informations
 sont exportées avec le match. Réimporter un fichier déjà présent les donne au
 match qui ne les avait pas, sans rien remplacer de ce qu'il porte déjà. La
 commande ``match`` de la ligne de commande les affiche aussi. Les commentaires
-d'en-tête et de pied de match, l'horloge et la table d'équité d'un fichier
-eXtreme Gammon ne sont pas importés.
+d'en-tête et de pied de match d'un fichier eXtreme Gammon deviennent le
+commentaire du match, signé du nom de son transcripteur, ou ``XG`` si le fichier
+n'en nomme pas ; l'horloge et la table d'équité ne sont pas importées.
 
 Le bouton **Fusionner les joueurs** de la barre d'outils du panneau ouvre une
 fenêtre listant tous les noms de joueurs de la base avec leur nombre de

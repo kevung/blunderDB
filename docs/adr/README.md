@@ -84,3 +84,4 @@ that come out of them.
 | [0067](0067-les-metadonnees-source-d-un-match-voyagent-avec-lui-et-ses-regles-de-session-font-foi.md) | Les métadonnées source d'un match voyagent avec lui, et ses règles de session font foi | `match.player1_elo`…`engine_version`, `exportedMatchColumns`, `FillSourceMetadata`, `copySessionRules` |
 | [0068](0068-la-table-d-equite-de-match-est-une-propriete-de-la-base.md) | La table d'équité de match est une propriété de la base | `match_equity_table`, `analysis.met_digest`, « MET différente », amende ADR-0016 |
 | [0069](0069-la-progression-d-une-lecon-ne-s-ecrit-que-sur-le-geste-etape-faite.md) | La progression d'une Leçon ne s'écrit que sur le geste « étape faite » | `lesson_progress`, `SetStepDone`, `DoneSteps`, amende ADR-0066 |
+| [0070](0070-les-dates-et-le-plateau-se-stockent-en-entiers.md) | Les dates et le plateau se stockent en entiers | secondes Unix UTC, `EncodeBoardState`, `met_id`, `comment_author`, index engine/depth retirés |
