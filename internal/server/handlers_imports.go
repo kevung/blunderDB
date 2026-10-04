@@ -316,9 +316,9 @@ func (s *Server) sealExportWatermark(origin, note string) (string, error) {
 // collection, match and tournament, with analyses, comments, played moves,
 // the filter library and Anki decks — into a blunderDB SQLite file and
 // returns it as a binary download. An optional JSON body asks for a
-// watermark (see exportSQLiteReq); everything else about the export is
-// WholeTenant, matching the GUI/CLI's "export everything" preset — a
-// selective server-side export is not offered yet.
+// watermark and narrows it to collections, lessons or decks (see
+// exportSQLiteReq); with none given the export is WholeTenant, matching the
+// GUI/CLI's "export everything" preset.
 //
 // ingest.SQLiteExporter already materializes the whole file into its own temp
 // path before copying it to the writer it is given, but this handler must not
