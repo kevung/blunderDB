@@ -2045,6 +2045,10 @@ export default {
 <td>Senza argomento, elenca le lezioni del database nella barra di stato; <code>le N</code> apre la lezione N al suo primo passo (vedi Lezioni).</td>
 </tr>
 <tr>
+<td>study, sq</td>
+<td>Apre la coda di studio trasversale: i suoi blunder che nulla ha ancora trattato, dal più costoso al meno costoso (vedi I blunder che nulla ha ancora trattato).</td>
+</tr>
+<tr>
 <td>#tag1 tag2 ...</td>
 <td>Etichetta la posizione corrente.</td>
 </tr>

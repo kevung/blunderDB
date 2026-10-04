@@ -63,7 +63,7 @@ var wantTables = []string{
 	"filter_library", "game", "import_batch", "import_batch_file",
 	"lesson", "lesson_progress", "lesson_step", "library_settings", "match", "match_equity_table", "match_stats",
 	"metadata", "move", "move_analysis",
-	"player_alias", "position", "rencontre", "schema_migrations", "search_history", "session_state",
+	"player_alias", "position", "rencontre", "schema_migrations", "search_history", "session_state", "study_mark",
 	"table_setting", "tournament", "training_item", "training_session", "transcription",
 	"trash",
 }

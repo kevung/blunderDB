@@ -357,3 +357,127 @@ func testImportBatchJournal(t *testing.T, s storage.Storage) {
 		t.Errorf("Files of an unknown batch: got %v, want ErrNotFound", err)
 	}
 }
+
+// testStudyBacklog pins the library-wide queue: it spans batches, ranks by
+// cost, drops what a comment, a collection or the user's own "studied" mark
+// has dealt with, gives the position back when the mark is withdrawn, and
+// refuses to mark a position that does not exist.
+func testStudyBacklog(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	batches := s.ImportBatches()
+
+	var matches []int64
+	for i, names := range [][2]string{{"Alice", "Bob"}, {"Carol", "Dave"}} {
+		id, err := batches.Begin(ctx, "", "corpus.xg", "xg")
+		if err != nil {
+			t.Fatalf("Begin: %v", err)
+		}
+		m, _ := statsFixtureMatchInBatch(t, s, 10*i, names[0], names[1], id)
+		matches = append(matches, m)
+		if err := batches.Finish(ctx, "", id, domain.ImportReport{MatchesImported: 1}); err != nil {
+			t.Fatalf("Finish: %v", err)
+		}
+	}
+
+	backlog, err := batches.StudyBacklog(ctx, "", nil, 0)
+	if err != nil {
+		if errors.Is(err, storage.ErrInternal) {
+			t.Skip("ImportBatches not implemented on this backend")
+		}
+		t.Fatalf("StudyBacklog: %v", err)
+	}
+	if len(backlog) < 3 {
+		t.Fatalf("the backlog holds %d entries; the fixtures carry at least three blunders", len(backlog))
+	}
+	inMatch := map[int64]bool{}
+	seen := map[int64]bool{}
+	last := 1 << 30
+	for _, e := range backlog {
+		if e.Reason != domain.StudyBacklog {
+			t.Errorf("entry %d has reason %q", e.PositionID, e.Reason)
+		}
+		if seen[e.PositionID] {
+			t.Errorf("position %d appears twice", e.PositionID)
+		}
+		seen[e.PositionID] = true
+		if e.ErrorMP <= 0 || e.ErrorMP > last {
+			t.Errorf("cost %d after %d: the backlog is ranked by cost, worst first", e.ErrorMP, last)
+		}
+		last = e.ErrorMP
+		inMatch[e.MatchID] = true
+	}
+	if !inMatch[matches[0]] || !inMatch[matches[1]] {
+		t.Errorf("the backlog spans matches %v; it must cross batches", inMatch)
+	}
+
+	// Narrowed to one player (seat-aware), only that player's decisions.
+	mine, err := batches.StudyBacklog(ctx, "", []string{"Alice"}, 0)
+	if err != nil {
+		t.Fatalf("StudyBacklog (Alice): %v", err)
+	}
+	for _, e := range mine {
+		if e.MatchID != matches[0] {
+			t.Errorf("Alice's backlog carries match %d", e.MatchID)
+		}
+	}
+
+	// A limit is honoured and still gives the worst.
+	one, err := batches.StudyBacklog(ctx, "", nil, 1)
+	if err != nil || len(one) != 1 || one[0].PositionID != backlog[0].PositionID {
+		t.Fatalf("limit 1 gave %v (err %v), want position %d", one, err, backlog[0].PositionID)
+	}
+
+	gone := func(id int64) bool {
+		got, err := batches.StudyBacklog(ctx, "", nil, 0)
+		if err != nil {
+			t.Fatalf("StudyBacklog: %v", err)
+		}
+		for _, e := range got {
+			if e.PositionID == id {
+				return false
+			}
+		}
+		return true
+	}
+
+	// The mark removes a position and is reversible and idempotent.
+	first := backlog[0].PositionID
+	for range 2 {
+		if err := batches.SetStudied(ctx, "", first, true); err != nil {
+			t.Fatalf("SetStudied: %v", err)
+		}
+	}
+	if !gone(first) {
+		t.Error("a position marked studied is still in the backlog")
+	}
+	if err := batches.SetStudied(ctx, "", first, false); err != nil {
+		t.Fatalf("SetStudied (withdraw): %v", err)
+	}
+	if gone(first) {
+		t.Error("withdrawing the mark did not give the position back")
+	}
+
+	// A comment and a collection each handle a position.
+	second := backlog[1].PositionID
+	if _, err := s.Comments().Add(ctx, "", second, "revisited"); err != nil {
+		t.Fatalf("Comments.Add: %v", err)
+	}
+	if !gone(second) {
+		t.Error("a commented position is still in the backlog")
+	}
+	third := backlog[2].PositionID
+	col, err := s.Collections().Create(ctx, "", "study", "")
+	if err != nil {
+		t.Fatalf("Collections.Create: %v", err)
+	}
+	if err := s.Collections().AddPosition(ctx, "", col, third); err != nil {
+		t.Fatalf("AddPosition: %v", err)
+	}
+	if !gone(third) {
+		t.Error("a position in a collection is still in the backlog")
+	}
+
+	if err := batches.SetStudied(ctx, "", 1<<40, true); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("marking an unknown position: %v, want ErrNotFound", err)
+	}
+}

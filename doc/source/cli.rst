@@ -973,6 +973,33 @@ tout de même avec le code 0.
    ./blunderdb collection export --db base.db --id 3,4 --out ouvertures.db \
        --watermark "Cours de Jean Dupont - 12 mars 2026"
 
+study — La file d'étude transversale
+------------------------------------
+
+Liste les blunders du joueur de référence de la base, tous imports confondus,
+que rien n'a encore traités : sans commentaire, sans carte Anki, hors de toute
+collection et sans marque « vu » (voir :ref:`file_etude_transversale`). Chaque
+sous-commande prend ``--db``.
+
+.. code-block:: bash
+
+   ./blunderdb study <subcommand> [options]
+
+**Sous-commandes:**
+
+* ``queue [--limit <n>] [--format text|json]`` — La file, du plus coûteux au
+  moins coûteux ; cinquante positions au plus.
+* ``mark --id <id>`` — Marque la position vue : elle sort de la file. La marque
+  est une donnée de la base, jamais exportée.
+* ``unmark --id <id>`` — Retire la marque : la position revient dans la file.
+
+**Exemples:**
+
+.. code-block:: bash
+
+   ./blunderdb study queue --db base.db --limit 20
+   ./blunderdb study mark --db base.db --id 1234
+
 lesson — Gérer les leçons
 -------------------------
 

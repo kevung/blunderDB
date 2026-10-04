@@ -2045,6 +2045,10 @@ export default {
 <td>Ohne Argument werden die Lektionen der Datenbank in der Statusleiste aufgelistet; <code>le N</code> öffnet die Lektion N bei ihrem ersten Schritt (siehe Lektionen).</td>
 </tr>
 <tr>
+<td>study, sq</td>
+<td>Öffnet die übergreifende Studien-Warteschlange: Ihre Blunder, die noch nichts bearbeitet hat, vom kostspieligsten bis zum am wenigsten kostspieligen (siehe Blunder, die noch nichts bearbeitet hat).</td>
+</tr>
+<tr>
 <td>#tag1 tag2 ...</td>
 <td>Versieht die aktuelle Position mit Tags.</td>
 </tr>

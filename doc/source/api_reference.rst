@@ -307,6 +307,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.studyIds                       JSON
      POST /v1/stats.tournamentBadges               JSON
      POST /v1/stats.training                       JSON
+   study
+     POST /v1/study.backlog                        JSON
+     POST /v1/study.setStudied                     JSON
    tenant
      POST /ops/tenant.purge                        custom
    tenants

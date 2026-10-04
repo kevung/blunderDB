@@ -1767,7 +1767,13 @@
         "empty": "Questa importazione non ha nulla che meriti un secondo sguardo.",
         "failed": "La coda di studio non ha potuto essere costruita.",
         "finished": "Coda di studio terminata: {n} posizioni percorse.",
-        "stopped": "Coda di studio abbandonata."
+        "stopped": "Coda di studio abbandonata.",
+        "reasonBacklog": "errore non trattato",
+        "markStudied": "Segna come visto",
+        "unmark": "Togli il segno",
+        "backlogEmpty": "Nessun errore in attesa: tutto è commentato, archiviato, in scheda o segnato come visto.",
+        "markFailed": "Non è stato possibile scrivere il segno.",
+        "unmarked": "Segno tolto: la posizione torna nella coda."
     },
     "home": {
         "title": "blunderDB",

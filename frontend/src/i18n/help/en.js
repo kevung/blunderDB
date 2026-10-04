@@ -2045,6 +2045,10 @@ export default {
 <td>Without an argument, lists the database's lessons in the status bar; <code>le N</code> opens lesson N at its first step (see Lessons).</td>
 </tr>
 <tr>
+<td>study, sq</td>
+<td>Opens the cross-import study queue: your blunders that nothing has handled yet, from the most costly to the least costly (see Blunders nothing has handled yet).</td>
+</tr>
+<tr>
 <td>#tag1 tag2 ...</td>
 <td>Tag the current position.</td>
 </tr>

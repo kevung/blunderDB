@@ -2045,6 +2045,10 @@ export default {
 <td>Sans argument, liste les leçons de la base dans la barre d'état ; <code>le N</code> ouvre la leçon N à sa première étape (voir Leçons).</td>
 </tr>
 <tr>
+<td>study, sq</td>
+<td>Ouvre la file d'étude transversale : vos blunders que rien n'a encore traités, du plus coûteux au moins coûteux (voir Les blunders que rien n'a encore traités).</td>
+</tr>
+<tr>
 <td>#tag1 tag2 ...</td>
 <td>Etiqueter la position courante.</td>
 </tr>

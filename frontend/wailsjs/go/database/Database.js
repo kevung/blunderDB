@@ -1258,6 +1258,10 @@ export function SetMigrationProgress(arg1) {
   return window['go']['database']['Database']['SetMigrationProgress'](arg1);
 }
 
+export function SetPositionStudied(arg1, arg2) {
+  return window['go']['database']['Database']['SetPositionStudied'](arg1, arg2);
+}
+
 export function SetRencontreBreaks(arg1, arg2) {
   return window['go']['database']['Database']['SetRencontreBreaks'](arg1, arg2);
 }
@@ -1320,6 +1324,10 @@ export function StatsReportHTML(arg1, arg2, arg3) {
 
 export function StatsReportHTMLCtx(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['StatsReportHTMLCtx'](arg1, arg2, arg3, arg4);
+}
+
+export function StudyBacklog(arg1) {
+  return window['go']['database']['Database']['StudyBacklog'](arg1);
 }
 
 export function StudyImpact(arg1) {

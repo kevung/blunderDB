@@ -15,6 +15,7 @@ import { withDisplayedPositionIDs, searchQueryBoard } from './services/positionS
 import { openContactSheet } from './services/contactSheet.js';
 import { runRolloutCommand } from './services/rolloutService.js';
 import { listLessons, openLesson } from './services/lessonService.js';
+import { startStudyBacklog } from './services/studyQueueService.js';
 // The search-token grammar lives in searchFilterService.js (shared with the "retour" replay);
 // re-exported so existing importers keep their path.
 import { parseSearchTokens, stripQuotedTokens } from './services/searchFilterService.js';
@@ -122,6 +123,10 @@ export function processCommand(command) {
         if (!databaseLoaded) statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
         else if (arg && /^\d+$/.test(arg)) openLesson(Number(arg));
         else listLessons();
+    } else if (command === 'study' || command === 'sq') {
+        // La file transversale : mes blunders que rien n'a encore traités.
+        if (!databaseLoaded) statusBarTextStore.set(tMsg('commands.noDatabaseLoaded'));
+        else startStudyBacklog();
     } else if (command === 'collection' || command === 'coll') {
         callbacks.toggleCollectionPanel?.();
     } else if (command === 'eval' || command === 'epc') {

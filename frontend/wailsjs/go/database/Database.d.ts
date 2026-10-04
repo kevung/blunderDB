@@ -646,6 +646,8 @@ export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 
 export function SetMigrationProgress(arg1:any):Promise<void>;
 
+export function SetPositionStudied(arg1:number,arg2:boolean):Promise<void>;
+
 export function SetRencontreBreaks(arg1:number,arg2:string):Promise<service.RencontreView>;
 
 export function SetRencontreOutputDir(arg1:number,arg2:string):Promise<service.RencontreView>;
@@ -677,6 +679,8 @@ export function StartTranscriptionFromSlot(arg1:number,arg2:string):Promise<data
 export function StatsReportHTML(arg1:database.StatsFilter,arg2:string,arg3:Record<number, string>):Promise<string>;
 
 export function StatsReportHTMLCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string,arg4:Record<number, string>):Promise<string>;
+
+export function StudyBacklog(arg1:number):Promise<Array<domain.StudyQueueEntry>>;
 
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
 

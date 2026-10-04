@@ -1767,7 +1767,13 @@
         "empty": "This import has nothing worth a second look.",
         "failed": "The study queue could not be built.",
         "finished": "Study queue finished: {n} positions walked.",
-        "stopped": "Study queue left."
+        "stopped": "Study queue left.",
+        "reasonBacklog": "unhandled blunder",
+        "markStudied": "Mark studied",
+        "unmark": "Unmark",
+        "backlogEmpty": "No blunder waiting: everything is commented, filed, carded or marked studied.",
+        "markFailed": "The mark could not be written.",
+        "unmarked": "Mark withdrawn: the position is back in the queue."
     },
     "home": {
         "title": "blunderDB",

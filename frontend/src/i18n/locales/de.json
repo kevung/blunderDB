@@ -1767,7 +1767,13 @@
         "empty": "Dieser Import enthält nichts, was einen zweiten Blick lohnt.",
         "failed": "Die Studienliste konnte nicht erstellt werden.",
         "finished": "Studienliste beendet: {n} Stellungen durchgegangen.",
-        "stopped": "Studienliste verlassen."
+        "stopped": "Studienliste verlassen.",
+        "reasonBacklog": "unbearbeiteter Fehler",
+        "markStudied": "Als gesehen markieren",
+        "unmark": "Markierung entfernen",
+        "backlogEmpty": "Kein Fehler wartet: alles ist kommentiert, einsortiert, als Karte angelegt oder als gesehen markiert.",
+        "markFailed": "Die Markierung konnte nicht geschrieben werden.",
+        "unmarked": "Markierung entfernt: die Stellung ist wieder in der Warteschlange."
     },
     "home": {
         "title": "blunderDB",
