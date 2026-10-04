@@ -2768,6 +2768,9 @@
         "findDuplicates": "Suchen",
         "noDuplicates": "Kein wahrscheinliches Duplikat.",
         "suspectSameDice": "#{other} und #{match}: gleiche Würfe ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Diese Aliasse anlegen",
+        "pairingApplied": "Aliasse angelegt",
         "suspectLonger": "#{match} setzt #{other} fort ({players})"
     }
 }

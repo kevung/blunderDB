@@ -2768,6 +2768,9 @@
         "findDuplicates": "Buscar",
         "noDuplicates": "Ningún duplicado probable.",
         "suspectSameDice": "#{other} y #{match}: mismos dados ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Crear estos alias",
+        "pairingApplied": "Alias creados",
         "suspectLonger": "#{match} prolonga #{other} ({players})"
     }
 }

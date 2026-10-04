@@ -2768,6 +2768,9 @@
         "findDuplicates": "Search",
         "noDuplicates": "No probable duplicate.",
         "suspectSameDice": "#{other} and #{match}: same dice ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Create these aliases",
+        "pairingApplied": "Aliases created",
         "suspectLonger": "#{match} extends #{other} ({players})"
     }
 }

@@ -2768,6 +2768,9 @@
         "findDuplicates": "検索",
         "noDuplicates": "重複の可能性はありません。",
         "suspectSameDice": "#{other} と #{match}：同じダイス（{otherPlayers} / {players}）",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "これらの別名を作成",
+        "pairingApplied": "別名を作成しました",
         "suspectLonger": "#{match} は #{other} の続き（{players}）"
     }
 }

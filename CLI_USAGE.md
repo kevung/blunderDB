@@ -1292,8 +1292,15 @@ it lists the pairs of matches whose dice say they are one match, and merges
 nothing. Two kinds: the same length, initial score and dice in every game
 under other player names (`#12 (…) has the dice of #7 (…)`), and a match whose
 dice continue another's, a truncated match later completed (`#31 (…) is a
-longer version of #30 (…)`). `--format json` returns `{"suspects": [{"kind":
-"same_dice"|"longer", "matchId", "otherId", "players", "otherPlayers"}]}`. A
+longer version of #30 (…)`). Under a same-dice pair, the text output gives the
+`players alias add` commands that would make the two matches name the same
+players: one reading when a name is common to both (the other name can only be
+the other player), else two — seat for seat, then crosswise — numbered, of which
+only one is to be run. The spelling of the later match is the alias, that of the
+earlier one the canonical name. `--format json` returns `{"suspects": [{"kind":
+"same_dice"|"longer", "matchId", "otherId", "players", "otherPlayers",
+"pairings": [{"aliases": [{"alias", "canonical"}]}]}]}`, `pairings` on a
+same-dice pair only. A
 match imported before the dice hash existed gets it on the way, which is the
 only thing this mode writes. An import also signals a match whose dice are
 already stored under other names: `probable duplicate of #N under other

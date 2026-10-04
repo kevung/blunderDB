@@ -2278,9 +2278,16 @@ cette tenue de comptes se trompait un jour.
 dés, jamais par leurs noms. Deux cas sont signalés : la même longueur, le même
 score initial et les mêmes dés dans chaque partie sous d'autres noms de
 joueurs, et un match dont les dés prolongent ceux d'un autre — un match tronqué
-puis complété. ``--format json`` rend ``{"suspects": [...]}``, chaque paire
-avec ``kind`` (``same_dice`` ou ``longer``), ``matchId``, ``otherId``,
-``players`` et ``otherPlayers``. Un match importé avant que l'empreinte des dés
+puis complété. Sous une paire aux mêmes dés, la sortie texte donne les
+commandes ``players alias add`` qui feraient nommer aux deux matchs les mêmes
+joueurs : une seule lecture quand un nom est commun aux deux (l'autre nom ne
+peut être que l'autre joueur), sinon deux — siège pour siège, puis croisée —
+numérotées, dont une seule est à lancer. La graphie du match le plus récent
+devient l'alias, celle du plus ancien le nom canonique. ``--format json`` rend
+``{"suspects": [...]}``, chaque paire avec ``kind`` (``same_dice`` ou
+``longer``), ``matchId``, ``otherId``, ``players``, ``otherPlayers`` et, pour
+une paire aux mêmes dés, ``pairings`` : la liste des lectures, chacune avec ses
+``aliases`` (``alias``, ``canonical``). Un match importé avant que l'empreinte des dés
 existe la reçoit au passage ; c'est la seule écriture de ce mode.
 
 Utile après une correction de la façon dont une analyse importée est lue. Le

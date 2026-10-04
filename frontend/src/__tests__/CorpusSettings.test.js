@@ -17,7 +17,27 @@ const calls = {
     SuggestAliases: vi.fn(() => Promise.resolve([{ canonical: 'Alice', aliases: ['alice'] }])),
     FindDuplicateMatches: vi.fn(() =>
         Promise.resolve([
-            { kind: 'same_dice', matchId: 7, otherId: 3, players: 'Durand B. – Martin A.', otherPlayers: 'Alice Martin – Bob Durand' },
+            {
+                kind: 'same_dice',
+                matchId: 7,
+                otherId: 3,
+                players: 'Durand B. – Martin A.',
+                otherPlayers: 'Alice Martin – Bob Durand',
+                pairings: [
+                    {
+                        aliases: [
+                            { alias: 'Durand B.', canonical: 'Alice Martin' },
+                            { alias: 'Martin A.', canonical: 'Bob Durand' }
+                        ]
+                    },
+                    {
+                        aliases: [
+                            { alias: 'Durand B.', canonical: 'Bob Durand' },
+                            { alias: 'Martin A.', canonical: 'Alice Martin' }
+                        ]
+                    }
+                ]
+            },
             { kind: 'longer', matchId: 9, otherId: 4, players: 'Carol – Dave', otherPlayers: 'Carol – Dave' }
         ])
     )
@@ -100,5 +120,21 @@ describe('CorpusSettings', () => {
         expect(items[0].textContent).toContain('#3');
         expect(items[0].textContent).toContain('#7');
         expect(items[1].textContent).toContain('#9');
+    });
+
+    test('records the aliases of the reading chosen, in one click', async () => {
+        const { getByTestId, getAllByTestId, queryAllByTestId } = render(CorpusSettings);
+        await settle();
+        await fireEvent.click(getByTestId('find-duplicates'));
+        await settle();
+        const buttons = getAllByTestId('apply-pairing');
+        expect(buttons).toHaveLength(2);
+        await fireEvent.click(buttons[1]);
+        await settle();
+        expect(calls.SetAlias).toHaveBeenCalledTimes(2);
+        expect(calls.SetAlias).toHaveBeenNthCalledWith(1, 'player', 'Durand B.', 'Bob Durand');
+        expect(calls.SetAlias).toHaveBeenNthCalledWith(2, 'player', 'Martin A.', 'Alice Martin');
+        expect(queryAllByTestId('apply-pairing')).toHaveLength(0);
+        expect(getByTestId('pairing-applied')).toBeTruthy();
     });
 });

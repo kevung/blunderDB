@@ -2768,6 +2768,9 @@
         "findDuplicates": "Αναζήτηση",
         "noDuplicates": "Κανένα πιθανό διπλότυπο.",
         "suspectSameDice": "#{other} και #{match}: ίδια ζάρια ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Δημιουργία αυτών των ψευδωνύμων",
+        "pairingApplied": "Τα ψευδώνυμα δημιουργήθηκαν",
         "suspectLonger": "Το #{match} συνεχίζει το #{other} ({players})"
     }
 }

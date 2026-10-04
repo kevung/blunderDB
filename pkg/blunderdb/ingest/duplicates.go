@@ -106,8 +106,7 @@ func diceSuspects(all []diceMatch) []domain.DuplicateSuspect {
 				switch {
 				case x.hash == y.hash:
 					if !samePlayers(x.p1, x.p2, y.p1, y.p2) {
-						out = append(out, domain.DuplicateSuspect{Kind: domain.DuplicateSameDice,
-							MatchID: y.id, OtherID: x.id, Players: y.players, OtherPlayers: x.players})
+						out = append(out, domain.NewSameDiceSuspect(y.id, x.id, y.p1, y.p2, x.p1, x.p2))
 					}
 				case dicePrefix(x.games, y.games):
 					out = append(out, domain.DuplicateSuspect{Kind: domain.DuplicateLonger,

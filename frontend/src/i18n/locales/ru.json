@@ -2768,6 +2768,9 @@
         "findDuplicates": "Искать",
         "noDuplicates": "Нет вероятных дубликатов.",
         "suspectSameDice": "#{other} и #{match}: одинаковые броски ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Создать эти псевдонимы",
+        "pairingApplied": "Псевдонимы созданы",
         "suspectLonger": "#{match} продолжает #{other} ({players})"
     }
 }

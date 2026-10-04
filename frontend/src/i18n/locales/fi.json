@@ -2768,6 +2768,9 @@
         "findDuplicates": "Etsi",
         "noDuplicates": "Ei todennäköisiä kaksoiskappaleita.",
         "suspectSameDice": "#{other} ja #{match}: samat nopat ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Luo nämä aliakset",
+        "pairingApplied": "Aliakset luotu",
         "suspectLonger": "#{match} jatkaa ottelua #{other} ({players})"
     }
 }

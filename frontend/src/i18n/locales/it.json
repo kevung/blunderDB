@@ -2768,6 +2768,9 @@
         "findDuplicates": "Cerca",
         "noDuplicates": "Nessun duplicato probabile.",
         "suspectSameDice": "#{other} e #{match}: stessi dadi ({otherPlayers} / {players})",
+        "pairingAlias": "{alias} → {canonical}",
+        "applyPairing": "Crea questi alias",
+        "pairingApplied": "Alias creati",
         "suspectLonger": "#{match} prolunga #{other} ({players})"
     }
 }
