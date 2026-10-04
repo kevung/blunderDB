@@ -486,6 +486,8 @@ var databaseParity = map[string]parityEntry{
 	"ComputeTrainingStats":              {CLI: "stats training", Server: "/v1/stats.training"},
 	"ComputeTrainingStatsCtx":           {CLI: "stats training", Server: "/v1/stats.training"},
 	"HeadToHead":                        {CLI: "stats h2h", Server: "/v1/stats.headToHead"},
+	"PlayerContrast":                    {CLI: "stats contrast", Server: "/v1/stats.playerContrast"},
+	"PlayerContrastCtx":                 {CLI: "stats contrast", Server: "/v1/stats.playerContrast"},
 	"PRByWindow":                        {CLI: "stats windows", Server: "/v1/stats.prByWindow"},
 	"PlayerRanking":                     {CLI: "stats ranking", Server: "/v1/stats.ranking"},
 	"HeadToHeadCtx":                     {CLI: "stats h2h", Server: "/v1/stats.headToHead"},

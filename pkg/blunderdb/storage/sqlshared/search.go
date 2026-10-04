@@ -245,8 +245,16 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 		// import would have to keep true; idx_move_position answers it.
 		if f.EncounterFilter != "" {
 			nMin, nMax, nHasMin, nHasMax := searchfilter.ParseIntFilterExpr(f.EncounterFilter, "n")
-			searchfilter.AppendIntRangeSQL("(SELECT COUNT(*) FROM move mv WHERE mv.position_id = p.id)",
-				nMin, nMax, nHasMin, nHasMax, &where, &args)
+			countSQL, countArgs := s.encounterCountSQL(scope, f, aliases)
+			// The placeholders of the count come before the bounds' in the text.
+			var rng strings.Builder
+			var rngArgs []any
+			searchfilter.AppendIntRangeSQL(countSQL, nMin, nMax, nHasMin, nHasMax, &rng, &rngArgs)
+			if rng.Len() > 0 {
+				where.WriteString(rng.String())
+				args = append(args, countArgs...)
+				args = append(args, rngArgs...)
+			}
 		}
 
 		// Win/gammon rate as `p.id IN (SELECT position_id FROM analysis …)`,

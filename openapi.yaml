@@ -5656,6 +5656,24 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/storage_MoveGrade"
+  /v1/stats.playerContrast:
+    post:
+      operationId: stats.playerContrast
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsHeadToHeadReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_PlayerContrast"
+                nullable: true
   /v1/stats.playerNames:
     post:
       operationId: stats.playerNames
@@ -8390,6 +8408,9 @@ components:
     storage_MoveGrade:
       type: object
       description: "Opaque: see the Go type storage.MoveGrade (defined outside internal/server, not expanded here)."
+    storage_PlayerContrast:
+      type: object
+      description: "Opaque: see the Go type storage.PlayerContrast (defined outside internal/server, not expanded here)."
     storage_PlayerFrequency:
       type: object
       description: "Opaque: see the Go type storage.PlayerFrequency (defined outside internal/server, not expanded here)."

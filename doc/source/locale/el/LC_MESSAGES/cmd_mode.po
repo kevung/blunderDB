@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 05:30+0200\n"
+"POT-Creation-Date: 2026-10-04 20:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -847,13 +847,15 @@ msgstr "n>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position a été rencontrée plus de x fois dans la base — le nombre de "
-"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
-"``n3,10`` et ``n4`` (exactement quatre)."
+"La position a été rencontrée au moins x fois dans la base — le nombre de "
+"décisions prises sur elle, tous matchs et tous joueurs confondus ; avec "
+"``pl``, ``pl!`` ou ``op``, seules les occurrences de ce joueur comptent. "
+"Formes ``n>3``, ``n<2``, ``n3,10`` et ``n4`` (exactement quatre)."
 msgstr ""
-"Η θέση συναντήθηκε περισσότερες από x φορές στη βάση — ο αριθμός των "
-"κινήσεων που καταλήγουν σε αυτήν, σε όλους τους αγώνες. Μορφές ``n>3``, "
-"``n<2``, ``n3,10`` και ``n4`` (ακριβώς τέσσερις)."
+"Η θέση έχει συναντηθεί τουλάχιστον x φορές στη βάση — ο αριθμός των "
+"αποφάσεων που ελήφθησαν σε αυτήν, όλοι οι αγώνες και όλοι οι παίκτες "
+"μαζί· με ``pl``, ``pl!`` ή ``op``, μετρούν μόνο οι εμφανίσεις αυτού του "
+"παίκτη. Μορφές ``n>3``, ``n<2``, ``n3,10`` και ``n4`` (ακριβώς τέσσερις)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1823,7 +1825,7 @@ msgstr ""
 "τύπους απόφασης και στα δύο καθεστώτα, χρήματα και αγώνας. Δείτε "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:243
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1842,11 +1844,11 @@ msgstr ""
 "ετικετών: δεν εμφανίζεται σε καμία τιμή, και το ``ma1;2`` δεν είναι "
 "διακριτικό (γράψτε ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:248
 msgid "Transcrire depuis un terminal"
 msgstr "Μεταγραφή από τερματικό"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:250
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1866,7 +1868,7 @@ msgstr ""
 "είναι δική της συνεδρία, χωρίς ``sessionId`` και χωρίς αναίρεση από τη "
 "μία κλήση στην άλλη."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:261
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 
@@ -1973,4 +1975,3 @@ msgstr "Διαγράφει το ιστορικό εντολών."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Ημερομηνία προσθήκης της θέσης μετά το x (ΕΕΕΕ/ΜΜ/ΗΗ)."
-

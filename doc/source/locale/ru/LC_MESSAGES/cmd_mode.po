@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 05:30+0200\n"
+"POT-Creation-Date: 2026-10-04 20:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -837,13 +837,15 @@ msgstr "n>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position a été rencontrée plus de x fois dans la base — le nombre de "
-"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
-"``n3,10`` et ``n4`` (exactement quatre)."
+"La position a été rencontrée au moins x fois dans la base — le nombre de "
+"décisions prises sur elle, tous matchs et tous joueurs confondus ; avec "
+"``pl``, ``pl!`` ou ``op``, seules les occurrences de ce joueur comptent. "
+"Formes ``n>3``, ``n<2``, ``n3,10`` et ``n4`` (exactement quatre)."
 msgstr ""
-"Позиция встречалась в базе более x раз — число ходов, приводящих к ней, "
-"по всем матчам. Формы ``n>3``, ``n<2``, ``n3,10`` и ``n4`` (ровно "
-"четыре)."
+"Позиция встречалась в базе не менее x раз — число принятых в ней решений,"
+" по всем матчам и всем игрокам вместе; с ``pl``, ``pl!`` или ``op`` "
+"считаются только вхождения этого игрока. Формы ``n>3``, ``n<2``, "
+"``n3,10`` и ``n4`` (ровно четыре)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1802,7 +1804,7 @@ msgstr ""
 "шашко-пипсов, ``like42*`` расширяет класс цели на все типы решений и на "
 "оба режима, на деньги и матч. См. :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:243
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1820,11 +1822,11 @@ msgstr ""
 "разделяет списки идентификаторов и тегов: она не встречается ни в одном "
 "значении, а ``ma1;2`` не является токеном (пишите ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:248
 msgid "Transcrire depuis un terminal"
 msgstr "Запись из терминала"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:250
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1844,7 +1846,7 @@ msgstr ""
 "отдельная сессия, без ``sessionId`` и без отмены от одного вызова к "
 "другому."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:261
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 
@@ -1949,4 +1951,3 @@ msgstr "Очищает историю команд."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Дата добавления позиции после x (ГГГГ/ММ/ДД)."
-

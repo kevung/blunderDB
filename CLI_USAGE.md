@@ -3587,6 +3587,45 @@ Examples:
   blunderdb stats breakdown --db database.db --format json
 ```
 
+### `blunderdb stats contrast`
+
+```
+Usage: blunderdb stats contrast --db <file> --player <name> --opponent <name> [options]
+
+The positions both players decided, whoever they played against, where one
+played well and the other did not: the widest gap first. A player's error on
+a position is their worst play of it; "well" means below the library's Error
+threshold. Open the positions with --format json (position_id).
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -engine string
+    	Only the decisions analysed by this engine (exact name, as stored)
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD (matches)
+  -limit int
+    	Maximum number of positions shown (text only; 0 = all) (default 20)
+  -min-depth int
+    	Only the decisions analysed at least this deep (plies)
+  -opponent string
+    	Second player (required)
+  -player string
+    	First player (required)
+  -to string
+    	End date filter YYYY-MM-DD (matches)
+  -tournament string
+    	Filter the matches by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats contrast --db database.db --player "Alice" --opponent "Bob"
+  blunderdb stats contrast --db database.db --player "Alice" --opponent "Bob" --format json
+```
+
 ### `blunderdb stats h2h`
 
 ```

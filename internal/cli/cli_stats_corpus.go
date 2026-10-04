@@ -127,6 +127,71 @@ func (cli *CLI) runStatsH2H(args []string) error {
 	return w.Flush()
 }
 
+func (cli *CLI) runStatsContrast(args []string) error {
+	fs := flag.NewFlagSet("stats contrast", flag.ContinueOnError)
+	player := fs.String("player", "", "First player (required)")
+	opponent := fs.String("opponent", "", "Second player (required)")
+	limit := fs.Int("limit", 20, "Maximum number of positions shown (text only; 0 = all)")
+	c := newCorpusStatsFlags(fs)
+	fs.Usage = func() {
+		fmt.Println("Usage: blunderdb stats contrast --db <file> --player <name> --opponent <name> [options]")
+		fmt.Println()
+		fmt.Println("The positions both players decided, whoever they played against, where one")
+		fmt.Println("played well and the other did not: the widest gap first. A player's error on")
+		fmt.Println("a position is their worst play of it; \"well\" means below the library's Error")
+		fmt.Println("threshold. Open the positions with --format json (position_id).")
+		fmt.Println()
+		fmt.Println("Options:")
+		fs.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  blunderdb stats contrast --db database.db --player \"Alice\" --opponent \"Bob\"")
+		fmt.Println("  blunderdb stats contrast --db database.db --player \"Alice\" --opponent \"Bob\" --format json")
+	}
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	if *player == "" || *opponent == "" {
+		fs.Usage()
+		return fmt.Errorf("missing required flags: --player and --opponent")
+	}
+	filter, err := c.open(cli, fs, "")
+	if err != nil {
+		return err
+	}
+	var res *storage.PlayerContrast
+	err = withInterruptibleContext(func() {}, func(ctx context.Context) error {
+		var err error
+		res, err = cli.db.PlayerContrastCtx(ctx, *player, *opponent, filter)
+		return err
+	})
+	if err != nil {
+		return statsErr("player contrast", err)
+	}
+	if c.json() {
+		return printJSON(res)
+	}
+	fmt.Printf("%s / %s — %d common positions, %d where one played well and the other did not (error threshold %d mp)\n\n",
+		res.PlayerA, res.PlayerB, res.CommonPositions, len(res.Positions), res.ThresholdMP)
+	if len(res.Positions) == 0 {
+		return nil
+	}
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintf(w, "POSITION\tERR %s (mp)\tERR %s (mp)\tWELL PLAYED BY\n", res.PlayerA, res.PlayerB)
+	shown := res.Positions
+	if *limit > 0 && len(shown) > *limit {
+		shown = shown[:*limit]
+	}
+	for _, p := range shown {
+		who := res.PlayerA
+		if p.WellPlayed == "b" {
+			who = res.PlayerB
+		}
+		fmt.Fprintf(w, "%d\t%d\t%d\t%s\n", p.PositionID, p.ErrorMPA, p.ErrorMPB, who)
+	}
+	return w.Flush()
+}
+
 func (cli *CLI) runStatsWindows(args []string) error {
 	fs := flag.NewFlagSet("stats windows", flag.ContinueOnError)
 	player := fs.String("player", "", "Only this player's decisions")

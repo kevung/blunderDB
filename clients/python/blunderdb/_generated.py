@@ -1018,6 +1018,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.matchMoveGrades — JSON."
         return self._call("/v1/stats.matchMoveGrades", payload)
 
+    def stats_player_contrast(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.playerContrast — JSON."
+        return self._call("/v1/stats.playerContrast", payload)
+
     def stats_player_names(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.playerNames — JSON."
         return self._call("/v1/stats.playerNames", payload)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 05:30+0200\n"
+"POT-Creation-Date: 2026-10-04 20:00+0200\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -834,13 +834,15 @@ msgstr "n>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position a été rencontrée plus de x fois dans la base — le nombre de "
-"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
-"``n3,10`` et ``n4`` (exactement quatre)."
+"La position a été rencontrée au moins x fois dans la base — le nombre de "
+"décisions prises sur elle, tous matchs et tous joueurs confondus ; avec "
+"``pl``, ``pl!`` ou ``op``, seules les occurrences de ce joueur comptent. "
+"Formes ``n>3``, ``n<2``, ``n3,10`` et ``n4`` (exactement quatre)."
 msgstr ""
-"The position was met more than x times in the database — the number of "
-"moves that reach it, across every match. Forms ``n>3``, ``n<2``, "
-"``n3,10`` and ``n4`` (exactly four)."
+"The position was met at least x times in the database — the number of "
+"decisions taken on it, all matches and all players together; with ``pl``,"
+" ``pl!`` or ``op``, only that player's occurrences count. Forms ``n>3``, "
+"``n<2``, ``n3,10`` and ``n4`` (exactly four)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1802,7 +1804,7 @@ msgstr ""
 "``like42*`` widens the target's class to every kind of decision and to "
 "both regimes, money and match. See :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:243
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1820,11 +1822,11 @@ msgstr ""
 "of identifier and tag lists: it appears in no value, and ``ma1;2`` is not"
 " a token (write ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:248
 msgid "Transcrire depuis un terminal"
 msgstr "Transcribing from a terminal"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:250
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1843,7 +1845,7 @@ msgstr ""
 "the revision returned by the previous call; every call is its own "
 "session, with no ``sessionId`` and no undo from one call to the next."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:261
 msgid "Commandes diverses"
 msgstr "Various commands"
 
@@ -1950,4 +1952,3 @@ msgstr "Clear the command history."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Date of position addition after x (YYYY/MM/DD)."
-

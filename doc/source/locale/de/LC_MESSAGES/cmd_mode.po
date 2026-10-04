@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 05:30+0200\n"
+"POT-Creation-Date: 2026-10-04 20:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -852,13 +852,15 @@ msgstr "n>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position a été rencontrée plus de x fois dans la base — le nombre de "
-"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
-"``n3,10`` et ``n4`` (exactement quatre)."
+"La position a été rencontrée au moins x fois dans la base — le nombre de "
+"décisions prises sur elle, tous matchs et tous joueurs confondus ; avec "
+"``pl``, ``pl!`` ou ``op``, seules les occurrences de ce joueur comptent. "
+"Formes ``n>3``, ``n<2``, ``n3,10`` et ``n4`` (exactement quatre)."
 msgstr ""
-"Die Stellung kam in der Datenbank mehr als x-mal vor — die Zahl der Züge,"
-" die zu ihr führen, über alle Matches hinweg. Formen ``n>3``, ``n<2``, "
-"``n3,10`` und ``n4`` (genau vier)."
+"Die Stellung wurde mindestens x-mal in der Datenbank angetroffen — die "
+"Anzahl der darin getroffenen Entscheidungen, über alle Matches und alle "
+"Spieler; mit ``pl``, ``pl!`` oder ``op`` zählen nur die Vorkommen dieses "
+"Spielers. Formen ``n>3``, ``n<2``, ``n3,10`` und ``n4`` (genau vier)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1834,7 +1836,7 @@ msgstr ""
 "Entscheidungsarten und auf beide Spielformen, Geldspiel und Match. Siehe "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:243
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1853,11 +1855,11 @@ msgstr ""
 "Listen von Kennungen und Tags: Es kommt in keinem Wert vor, und ``ma1;2``"
 " ist kein Token (``ma1 ma2`` schreiben)."
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:248
 msgid "Transcrire depuis un terminal"
 msgstr "Von einem Terminal aus transkribieren"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:250
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1877,7 +1879,7 @@ msgstr ""
 "eine eigene Sitzung, ohne ``sessionId`` und ohne Rückgängigmachen von "
 "einem Aufruf zum nächsten."
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:261
 msgid "Commandes diverses"
 msgstr "Verschiedene Befehle"
 
@@ -1985,4 +1987,3 @@ msgstr "Löscht den Befehlsverlauf."
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "Datum des Hinzufügens der Position nach x (JJJJ/MM/TT)."
-

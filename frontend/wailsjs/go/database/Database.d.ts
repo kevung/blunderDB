@@ -491,6 +491,10 @@ export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:
 
 export function PlanRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<database.RolloutPlan>;
 
+export function PlayerContrast(arg1:string,arg2:string,arg3:database.StatsFilter):Promise<storage.PlayerContrast>;
+
+export function PlayerContrastCtx(arg1:context.Context,arg2:string,arg3:string,arg4:database.StatsFilter):Promise<storage.PlayerContrast>;
+
 export function PlayerRanking(arg1:database.StatsFilter,arg2:number):Promise<Array<storage.RankedPlayer>>;
 
 export function PlayerRankingCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:number):Promise<Array<storage.RankedPlayer>>;

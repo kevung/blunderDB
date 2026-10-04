@@ -5826,6 +5826,66 @@ export namespace storage {
 	        this.pr_b = source["pr_b"];
 	    }
 	}
+	export class ContrastPosition {
+	    position_id: number;
+	    error_mp_a: number;
+	    error_mp_b: number;
+	    times_a: number;
+	    times_b: number;
+	    well_played: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ContrastPosition(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.position_id = source["position_id"];
+	        this.error_mp_a = source["error_mp_a"];
+	        this.error_mp_b = source["error_mp_b"];
+	        this.times_a = source["times_a"];
+	        this.times_b = source["times_b"];
+	        this.well_played = source["well_played"];
+	    }
+	}
+	export class PlayerContrast {
+	    player_a: string;
+	    player_b: string;
+	    threshold_mp: number;
+	    common_positions: number;
+	    positions: ContrastPosition[];
+	
+	    static createFrom(source: any = {}) {
+	        return new PlayerContrast(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.player_a = source["player_a"];
+	        this.player_b = source["player_b"];
+	        this.threshold_mp = source["threshold_mp"];
+	        this.common_positions = source["common_positions"];
+	        this.positions = this.convertValues(source["positions"], ContrastPosition);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class HeadToHead {
 	    player_a: string;
 	    player_b: string;

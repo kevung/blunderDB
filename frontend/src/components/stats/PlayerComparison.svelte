@@ -5,7 +5,11 @@
     // compare, et lui seul. Ici il n'y a que la mise en page et le repère
     // visuel du meilleur des deux — jamais sur une ligne de contexte.
     import { t } from '../../i18n/index.js';
+    import { get } from 'svelte/store';
     import { compareRows } from '../../services/playerComparison.js';
+    import { PlayerContrast } from '../../../wailsjs/go/database/Database.js';
+    import { statsFilterStore } from '../../stores/statsStore.js';
+    import { loadPositionsFromSelection } from '../../services/positionLoader.js';
 
     /**
      * @type {{ a: any, b: any, onClear?: () => void }}
@@ -13,6 +17,43 @@
     let { a, b, onClear = undefined } = $props();
 
     let lines = $derived(compareRows(a, b));
+
+    // Les positions communes où l'un a bien joué et l'autre non : calculées
+    // côté base (même réponse que `stats contrast` et le serveur), à la demande
+    // seulement — elles rejouent chaque coup des deux joueurs.
+    /** @type {any} */
+    let contrast = $state(null);
+    let contrastLoading = $state(false);
+    let contrastError = $state('');
+
+    // Une autre paire rend le résultat périmé.
+    $effect(() => {
+        void a?.name;
+        void b?.name;
+        contrast = null;
+        contrastError = '';
+    });
+
+    async function loadContrast() {
+        contrastLoading = true;
+        contrastError = '';
+        try {
+            contrast = await PlayerContrast(a.name, b.name, get(statsFilterStore));
+        } catch (err) {
+            contrast = null;
+            contrastError = /** @type {any} */ (err)?.message ?? String(err);
+        } finally {
+            contrastLoading = false;
+        }
+    }
+
+    let contrastPositions = $derived(contrast?.positions ?? []);
+    let wellByA = $derived(contrastPositions.filter((p) => p.well_played === 'a').length);
+    let wellByB = $derived(contrastPositions.length - wellByA);
+
+    function openContrast() {
+        loadPositionsFromSelection(contrastPositions.map((p) => p.position_id));
+    }
 </script>
 
 <section class="comparison" aria-label={$t('stats.compareTitle', { a: a?.name ?? '', b: b?.name ?? '' })}>
@@ -31,6 +72,26 @@
             {/each}
         </tbody>
     </table>
+    <div class="contrast" data-testid="player-contrast">
+        {#if !contrast}
+            <button type="button" disabled={contrastLoading} onclick={loadContrast}>{$t('stats.contrastButton')}</button>
+            {#if contrastError}<p class="note">{contrastError}</p>{/if}
+        {:else if contrastPositions.length === 0}
+            <p class="note">{$t('stats.contrastEmpty', { total: contrast.common_positions })}</p>
+        {:else}
+            <p class="note">
+                {$t('stats.contrastSummary', {
+                    n: contrastPositions.length,
+                    total: contrast.common_positions,
+                    a: a.name,
+                    na: wellByA,
+                    b: b.name,
+                    nb: wellByB
+                })}
+            </p>
+            <button type="button" onclick={openContrast}>{$t('stats.contrastOpen')}</button>
+        {/if}
+    </div>
 </section>
 
 <style>
@@ -83,6 +144,15 @@
        même chose (ADR-0031). */
     td.better {
         font-weight: 700;
+    }
+
+    .contrast {
+        margin-top: 0.4rem;
+    }
+
+    .note {
+        margin: 0 0 0.3rem;
+        opacity: 0.85;
     }
 
     /* Une ligne de contexte situe les taux au-dessus ; elle ne se lit pas

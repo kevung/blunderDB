@@ -1187,6 +1187,16 @@ bilan des matchs menés à terme.
 
    ./blunderdb stats h2h --db <fichier> --player <nom> --opponent <nom> [options]
 
+**stats contrast** — Les positions que deux joueurs ont tous deux eu à jouer et
+où l'un a bien joué (sous le seuil Erreur) et l'autre non, l'écart le plus large
+d'abord ; un joueur est jugé sur son pire coup de la position. ``--limit N``
+garde les N premières lignes du texte ; le JSON donne tout, avec les
+``position_id``.
+
+.. code-block:: bash
+
+   ./blunderdb stats contrast --db <fichier> --player <nom> --opponent <nom> [options]
+
 **stats windows** — Le PR sur une fenêtre calendaire glissante : une ligne par
 mois, chacune couvrant ce mois et les précédents de la fenêtre
 (``--window month``, ``quarter`` ou un nombre de mois).
@@ -1216,6 +1226,7 @@ filtre de provenance, qui porte sur chaque décision.
 .. code-block:: bash
 
    ./blunderdb stats h2h --db base.db --player "Alice" --opponent "Bob"
+   ./blunderdb stats contrast --db base.db --player "Alice" --opponent "Bob"
    ./blunderdb stats windows --db base.db --player "Alice" --window quarter --format json
    ./blunderdb stats ranking --db base.db --min-decisions 1000 --limit 20
    ./blunderdb list --type stats --db base.db --player "Alice" --min-depth 3

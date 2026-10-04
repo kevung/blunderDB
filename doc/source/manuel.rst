@@ -986,11 +986,16 @@ lance aussi sans passer par la ligne de commande : *CTRL-MAJ-L*, ou l'entrée
 **Positions voisines** du menu contextuel du plateau.
 
 Le jeton ``n`` compte les **rencontres** : ``n>3`` retient les positions
-auxquelles plus de trois coups aboutissent, tous matchs confondus. C'est une
+rencontrées au moins trois fois dans la base, tous matchs et tous joueurs
+confondus. C'est une
 autre question que « qu'ai-je raté » — une position rencontrée vingt fois et
 bien jouée dix-neuf reste celle qu'il faut savoir par cœur. Le compte porte
-sur les coups, pas sur les matchs : la même position deux fois dans un match
-compte pour deux, parce que c'étaient deux décisions.
+sur les décisions, pas sur les matchs : la même position deux fois dans un
+match compte pour deux, parce que c'étaient deux décisions. Combiné à un
+filtre de joueur, il ne compte plus que les occurrences de ce joueur : ``n>3
+pl!"Alice"`` retient les positions qu'Alice a eu à jouer au moins trois fois,
+et ``pl"Alice"`` celles des matchs qu'elle a disputés ; ``op"Bob"`` restreint
+de même le compte aux matchs contre Bob.
 
 Le **plan de jeu** est une seconde étiquette dérivée, à côté de la phase, et
 elle répond à la question qu'un paquet de filtres sauvegardés ne sait pas
@@ -2769,6 +2774,12 @@ Utilisation :
   lignes. Un bloc apparaît au-dessus du tableau et met leurs indicateurs face à
   face ; cocher un troisième joueur remplace le plus ancien des deux. La case ne
   sélectionne pas la ligne : cocher compare, cliquer ouvre le détail.
+* **Voir les positions où l'un a mieux joué** — le bouton du bloc de comparaison
+  liste les positions que les deux joueurs ont eu à jouer et où l'un a bien joué
+  (en dessous du seuil Erreur de la bibliothèque) et l'autre non, l'écart le plus
+  large d'abord ; le joueur est jugé sur son pire coup de la position. *Ouvrir
+  ces positions* les charge dans la vue analyse. La ligne de commande et le
+  serveur donnent la même liste (``stats contrast``).
 
 Dans ce bloc, **seuls les taux reçoivent un verdict**, et le meilleur des deux
 est mis en gras. Trois indicateurs n'en reçoivent jamais, et il vaut de dire

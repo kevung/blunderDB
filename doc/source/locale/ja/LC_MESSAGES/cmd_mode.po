@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 05:30+0200\n"
+"POT-Creation-Date: 2026-10-04 20:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -782,12 +782,14 @@ msgstr "n>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"La position a été rencontrée plus de x fois dans la base — le nombre de "
-"coups qui y aboutissent, tous matchs confondus. Formes ``n>3``, ``n<2``, "
-"``n3,10`` et ``n4`` (exactement quatre)."
+"La position a été rencontrée au moins x fois dans la base — le nombre de "
+"décisions prises sur elle, tous matchs et tous joueurs confondus ; avec "
+"``pl``, ``pl!`` ou ``op``, seules les occurrences de ce joueur comptent. "
+"Formes ``n>3``, ``n<2``, ``n3,10`` et ``n4`` (exactement quatre)."
 msgstr ""
-"その局面がデータベース中で x 回より多く現れた——全マッチを通じて、そこへ至る着手の数です。書式は "
-"``n>3``、``n<2``、``n3,10``、``n4``\\ （ちょうど四回）。"
+"その局面がデータベースで少なくともx回出現したこと — その局面で下された判断の数（すべての対局とすべてのプレイヤーの合計）。\\ "
+"``pl``、``pl!``\\ または\\ ``op``\\ を併用すると、そのプレイヤーの出現のみを数えます。形式は\\ "
+"``n>3``、``n<2``、``n3,10``\\ と\\ ``n4``\\ （ちょうど4回）です。"
 
 #: ../../source/cmd_mode.rst:1
 msgid "M"
@@ -1730,7 +1732,7 @@ msgstr ""
 "は番号42の局面を取り、\\ ``like<12`` は十二チェッカーピップを超えるものを除き、\\ ``like42*`` "
 "は目標のクラスをすべての決定の種類と、マネーとマッチの両方の形式に広げます。\\ :ref:`panneau_recherche`\\ を参照。"
 
-#: ../../source/cmd_mode.rst:242
+#: ../../source/cmd_mode.rst:243
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1746,11 +1748,11 @@ msgstr ""
 "``#l'ouverture``\\ ）が、二重引用符は含められません。セミコロンは ID とタグのリストの区切りです。どの値にも現れず、\\ "
 "``ma1;2`` はトークンではありません（\\ ``ma1 ma2`` と書きます）。"
 
-#: ../../source/cmd_mode.rst:247
+#: ../../source/cmd_mode.rst:248
 msgid "Transcrire depuis un terminal"
 msgstr "ターミナルから転記する"
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:250
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1768,7 +1770,7 @@ msgstr ""
 "は直前の呼び出しが返したリビジョンを指定します。呼び出しごとに独自のセッションとなり、\\ ``sessionId`` "
 "はなく、呼び出しをまたいだ取り消しもできません。"
 
-#: ../../source/cmd_mode.rst:260
+#: ../../source/cmd_mode.rst:261
 msgid "Commandes diverses"
 msgstr "その他のコマンド"
 
@@ -1857,4 +1859,3 @@ msgstr "コマンド履歴を消去します。"
 
 #~ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 #~ msgstr "局面の追加日が x より後（YYYY/MM/DD）。"
-

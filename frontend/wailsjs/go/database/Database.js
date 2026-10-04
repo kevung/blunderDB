@@ -950,6 +950,14 @@ export function PlanRolloutIDs(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PlanRolloutIDs'](arg1, arg2, arg3);
 }
 
+export function PlayerContrast(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PlayerContrast'](arg1, arg2, arg3);
+}
+
+export function PlayerContrastCtx(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['PlayerContrastCtx'](arg1, arg2, arg3, arg4);
+}
+
 export function PlayerRanking(arg1, arg2) {
   return window['go']['database']['Database']['PlayerRanking'](arg1, arg2);
 }
