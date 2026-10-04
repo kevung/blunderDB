@@ -259,5 +259,6 @@ Gestes = clics + frappes + crans de défilement (dont imposés), toutes actions 
 | E23 | #565 | confort | frontend |
 | E24 | #566 | confort | backend |
 | E25 | #561 | ergonomie | frontend |
+| E26 | — (corrigé dans la branche de la contre-épreuve, voir [contre-epreuve.md](contre-epreuve.md)) | ergonomie | frontend |
 
 E5 relève du moteur `backgammon-tournoi` : l'issue est tenue dans blunderDB, et le dit. Le `null` de `tournament verify` (H3) est réglé par `buildTool` : pas d'issue.
