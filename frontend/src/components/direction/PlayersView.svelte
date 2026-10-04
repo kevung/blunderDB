@@ -154,7 +154,9 @@
      * @param {boolean} after
      */
     async function withdraw(r, after) {
-        if (!(await confirmAction($t(after ? 'direction.players.withdrawLaterConfirm' : 'direction.players.withdrawNowConfirm', { name: r.name })))) return;
+        // Réversible, rien n'est supprimé : un bouton à son nom, pas le « Supprimer » rouge.
+        const message = $t(after ? 'direction.players.withdrawLaterConfirm' : 'direction.players.withdrawNowConfirm', { name: r.name });
+        if (!(await confirmAction(message, { confirmLabel: $t('direction.players.withdrawDo'), tone: 'primary' }))) return;
         onWithdraw(r.id, after);
     }
 

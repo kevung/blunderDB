@@ -1,5 +1,5 @@
 <script>
-    import { confirmAction } from '../../services/confirmService.js';
+    import { confirmAction, chooseAction } from '../../services/confirmService.js';
     /*
      * La fiche de résultat : deux clics, la case puis le nom du
      * vainqueur, qui valide. Score facultatif (les deux ou aucun) ; forfait, remarque, table
@@ -29,13 +29,14 @@
      *     busy?: boolean,
      *     onClose?: () => void,
      *     onResult?: (matchId: string, winner: string, scoreA: number, scoreB: number, note: string) => Outcome,
-     *     onForfeit?: (matchId: string, winner: string, note: string) => Outcome,
+     *     onForfeit?: (matchId: string, winner: string, note: string, withdrawLoser?: string) => Outcome,
+     *     canWithdraw?: boolean,
      *     onMove?: (matchId: string, table: number) => Outcome,
      *     onCancel?: (matchId: string) => Outcome,
      *     moveRequest?: number
      * }}
      */
-    let { cell, busy = false, onClose = () => {}, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, moveRequest = 0 } = $props();
+    let { cell, busy = false, onClose = () => {}, onResult = () => {}, onForfeit = () => {}, onMove = () => {}, onCancel = () => {}, canWithdraw = false, moveRequest = 0 } = $props();
 
     let scoreA = $state('');
     let scoreB = $state('');
@@ -89,8 +90,20 @@
      * @param {string} winnerName
      */
     async function forfeit(winner, loserName, winnerName) {
-        if (!(await confirmAction($t('direction.result.forfeitConfirm', { loser: loserName, winner: winnerName })))) return;
-        submit(() => onForfeit(cell.matchId, winner, note.trim()));
+        const message = $t('direction.result.forfeitConfirm', { loser: loserName, winner: winnerName });
+        if (!canWithdraw) {
+            if (!(await confirmAction(message, { confirmLabel: $t('direction.result.forfeitDo'), tone: 'primary' }))) return;
+            submit(() => onForfeit(cell.matchId, winner, note.trim()));
+            return;
+        }
+        // Le forfait ne retire personne ; le retrait du perdant se décide dans la même fiche.
+        const answer = await chooseAction(message, [
+            { value: 'forfeit', label: $t('direction.result.forfeitDo'), primary: true },
+            { value: 'forfeitWithdraw', label: $t('direction.result.forfeitWithdraw', { loser: loserName }) }
+        ]);
+        if (!answer) return;
+        const loserId = winner === cell.a ? cell.b : cell.a;
+        submit(() => onForfeit(cell.matchId, winner, note.trim(), answer === 'forfeitWithdraw' ? loserId : undefined));
     }
 
     function move() {

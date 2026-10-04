@@ -2198,7 +2198,9 @@
             "apply": "Applica",
             "forfeitWins": "Forfait di {loser} → vince {winner}",
             "forfeitConfirm": "Forfait di {loser}: {winner} vince questa partita. Confermare?",
-            "cancelConfirm": "Annullare la partita {a} – {b}? Esce dai tavoli; il registro la conserva."
+            "cancelConfirm": "Annullare la partita {a} – {b}? Esce dai tavoli; il registro la conserva.",
+            "forfeitDo": "Dichiara forfait",
+            "forfeitWithdraw": "Dichiara forfait e ritira {loser}"
         },
         "last": {
             "result": "{winner} batte {loser}",
@@ -2258,7 +2260,8 @@
             "pairRating": "Valutazione della coppia",
             "pairRatingHint": "Per impostazione predefinita la media delle due valutazioni; un valore inserito la sostituisce.",
             "withdrawNowConfirm": "Ritirare {name} dal torneo adesso? Non sarà più abbinato (reintegro possibile).",
-            "withdrawLaterConfirm": "Ritirare {name} a fine partita? Dopo non sarà più abbinato (reintegro possibile)."
+            "withdrawLaterConfirm": "Ritirare {name} a fine partita? Dopo non sarà più abbinato (reintegro possibile).",
+            "withdrawDo": "Ritira"
         },
         "bracket": {
             "correct": "Correggere il risultato",
@@ -2459,7 +2462,10 @@
             "changeFolder": "Cambia cartella",
             "open": "Apri nel browser",
             "forget": "Non scrivere più",
-            "error": "Impossibile scrivere la pagina del display."
+            "error": "Impossibile scrivere la pagina del display.",
+            "page": "Pagina murale",
+            "openHint": "Apre la pagina murale (schermo dei tavoli) nel browser; viene riscritta a ogni evento.",
+            "written": "Pagina murale scritta: {path}"
         },
         "season": {
             "title": "Classifica stagionale",
@@ -2621,7 +2627,18 @@
             "title": "Sale in cui gioca questa prova",
             "hint": "Nessuna spunta: tutti i tavoli."
         },
-        "closeView": "Esci dalla direzione"
+        "closeView": "Esci dalla direzione",
+        "feedback": {
+            "registered": "{name} iscritto — {count} iscritti",
+            "registeredLate": "{name} aggiunto a torneo iniziato — {count} iscritti",
+            "finished": "Torneo chiuso — classifica finale",
+            "nextPhase": "Fase successiva avviata",
+            "draw": "Sorteggio effettuato",
+            "matchLaunched": "Partita {a} – {b} avviata",
+            "allLaunched": "Tutta la coda è avviata",
+            "launched": "Proposta avviata",
+            "forfeitWithdrawFailed": "Forfait registrato, ma il ritiro del giocatore non è riuscito."
+        }
     },
     "palette": {
         "title": "Tavolozza dei comandi",

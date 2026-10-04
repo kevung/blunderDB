@@ -885,6 +885,7 @@
     .direction-btn {
         font-size: var(--font-size-small);
         padding: 0.1rem 0.5rem;
+        min-height: 24px;
         border: 1px solid var(--color-primary);
         border-radius: var(--radius);
         background: var(--color-surface);
@@ -951,6 +952,8 @@
         padding: 0 4px;
         line-height: 1;
         flex-shrink: 0;
+        min-width: 24px;
+        min-height: 24px;
     }
     .back-btn:hover {
         color: var(--color-text);

@@ -458,12 +458,16 @@
      *
      * @param {() => Promise<unknown>} fn
      * @param {string | ((e: any) => import('../../i18n').StatusMessage)} key
+     * @param {() => import('../../i18n').StatusMessage | null} [done] le retour d'un succès, lu
+     *     une fois la vue rejouée : le geste dit ce qu'il a fait, sans qu'on aille le vérifier.
      * @returns {Promise<boolean>}
      */
-    async function act(fn, key) {
+    async function act(fn, key, done) {
         busy = true;
         try {
             await fn();
+            const message = done?.();
+            if (message) statusBarTextStore.set(message);
             return true;
         } catch (e) {
             logger.error('direction: ' + (typeof key === 'string' ? key : 'failed'), e);
@@ -477,7 +481,18 @@
     /** @type {(m: string, w: string, a: number, b: number, note: string) => Promise<boolean>} */
     const onResult = (m, w, a, b, note) => act(() => enterResult(m, w, a, b, note), 'direction.result.error');
     /** @type {(m: string, w: string, note: string) => Promise<boolean>} */
-    const onForfeit = (m, w, note) => act(() => enterForfeit(m, w, note), 'direction.result.error');
+    const onForfeit = async (/** @type {string} */ m, /** @type {string} */ w, /** @type {string} */ note, /** @type {unknown} */ _cell, /** @type {string | undefined} */ withdrawLoser) =>
+        act(async () => {
+            await enterForfeit(m, w, note);
+            if (!withdrawLoser) return;
+            // Le forfait est acquis : un retrait refusé se dit à part, sans le défaire.
+            try {
+                await withdrawParticipant(withdrawLoser, false);
+            } catch (e) {
+                logger.error('direction: withdraw after forfeit failed', e);
+                statusBarTextStore.set(tMsg('direction.feedback.forfeitWithdrawFailed'));
+            }
+        }, 'direction.result.error');
     /** @type {(m: string, table: number) => Promise<boolean>} */
     const onMove = (m, table) =>
         act(
@@ -489,14 +504,39 @@
     const onCancel = (m) => act(() => cancelMatch(m), 'direction.result.error');
     /** @type {(m: string, w: string, a: number, b: number) => Promise<boolean>} */
     const onCorrect = (m, w, a, b) => act(() => correctResult(m, w, a, b, ''), 'direction.result.error');
+    /**
+     * Le retour d'une inscription : le nom et le nombre d'inscrits, dit autrement d'un
+     * retardataire arrivé quand le tournoi est lancé.
+     *
+     * @param {string} name
+     */
+    function registered(name) {
+        const count = view?.players?.length || 0;
+        return tMsg(directionState === 'draft' ? 'direction.feedback.registered' : 'direction.feedback.registeredLate', { name: name.trim(), count });
+    }
     /** @type {(n: string, c: string, r: number) => Promise<boolean>} */
-    const onAdd = (n, c, r) => act(() => addParticipant(n, c, r), 'direction.players.error');
+    const onAdd = (n, c, r) =>
+        act(
+            () => addParticipant(n, c, r),
+            'direction.players.error',
+            () => registered(n)
+        );
     /** @type {(n: string, c: string, r: number, section: string, key: string) => Promise<boolean>} */
-    const onAddAtSlot = (n, c, r, section, key) => act(() => addParticipantAtSlot(n, c, r, section, key), 'direction.players.error');
+    const onAddAtSlot = (n, c, r, section, key) =>
+        act(
+            () => addParticipantAtSlot(n, c, r, section, key),
+            'direction.players.error',
+            () => registered(n)
+        );
     /** @type {(i: string, n: string, c: string, r: number) => Promise<boolean>} */
     const onUpdate = (i, n, c, r) => act(() => updateParticipant(i, n, c, r), 'direction.players.error');
     /** @type {(m: {name: string, club: string, rating: number}[], r: number) => Promise<boolean>} */
-    const onAddPair = (m, r) => act(() => addPair(m, r), 'direction.players.error');
+    const onAddPair = (m, r) =>
+        act(
+            () => addPair(m, r),
+            'direction.players.error',
+            () => registered(m.map((x) => x.name).join(' / '))
+        );
     /** @type {(i: string, m: {name: string, club: string, rating: number}[], r: number) => Promise<boolean>} */
     const onUpdatePair = (i, m, r) => act(() => updatePair(i, m, r), 'direction.players.error');
     /** @type {(i: string, after: boolean) => Promise<boolean>} */
@@ -508,7 +548,12 @@
     /** @type {(i: string) => Promise<boolean>} */
     const onReturn = (i) => act(() => makeParticipantAvailable(i), 'direction.players.error');
 
-    const onClose = () => act(() => finishTournament(), 'direction.standings.error');
+    const onClose = () =>
+        act(
+            () => finishTournament(),
+            'direction.standings.error',
+            () => tMsg('direction.feedback.finished')
+        );
     /* Rouvrir est explicite (le classement cesse d'être final), confirmé dans le Classement. */
     const onReopen = () => act(() => reopenTournament(), 'direction.standings.error');
     const onNote = (/** @type {string} */ text) => act(() => addNote(text), 'direction.history.error');
@@ -573,6 +618,7 @@
             statusBarTextStore.set(tMsg('direction.display.error'));
             return;
         }
+        statusBarTextStore.set(tMsg('direction.display.written', { path }));
         BrowserOpenURL('file://' + path);
     }
     /** @type {(slot: string, matchId: number) => Promise<boolean>} */
@@ -633,11 +679,21 @@
         return p ? p.name : id;
     }
 
+    /** Ce que le directeur vient de déclencher, dit par son nom : phase, tirage ou match. */
+    /** @param {ProposalAction} action */
+    function proposalFeedback(action) {
+        if (action.kind === 'next_phase') return tMsg('direction.feedback.nextPhase');
+        if (action.kind === 'draw') return tMsg('direction.feedback.draw');
+        if (action.kind === 'start_match') return tMsg('direction.feedback.matchLaunched', { a: playerName(action.a), b: playerName(action.b) });
+        return tMsg('direction.feedback.launched');
+    }
+
     /** @param {ProposalAction} action */
     async function confirm(action) {
         busy = true;
         try {
             await confirmProposal(action);
+            statusBarTextStore.set(proposalFeedback(action));
         } catch (e) {
             logger.error('direction: confirm failed', e);
             statusBarTextStore.set(tMsg('direction.proposals.errorConfirm'));
@@ -650,6 +706,7 @@
         busy = true;
         try {
             await confirmAllProposals();
+            statusBarTextStore.set(tMsg('direction.feedback.allLaunched'));
         } catch (e) {
             logger.error('direction: confirm all failed', e);
             statusBarTextStore.set(tMsg('direction.proposals.errorConfirm'));
@@ -734,7 +791,7 @@
             {/each}
         </nav>
         <span class="spacer"></span>
-        <button type="button" class="page-btn" data-testid="direction-open-page" onclick={openPageFromHeader}>{$t('direction.display.open')}</button>
+        <button type="button" class="page-btn" data-testid="direction-open-page" title={$t('direction.display.openHint')} onclick={openPageFromHeader}>{$t('direction.display.page')}</button>
         <button type="button" class="credit-btn" data-testid="direction-credit" title={$t('direction.credit.open')} aria-label={$t('direction.credit.open')} onclick={() => (creditOpen = !creditOpen)}
             >ⓘ</button
         >
@@ -799,7 +856,7 @@
                     {/if}
                     <!-- La grille avant la file, qui grandit avec les inscrits : les tables
                      restent à l'écran. -->
-                    <TableGrid {cells} {busy} {onResult} {onForfeit} {onMove} {onCancel} onHistory={showHistory} {onOutOfService} {onLaunchHere} {reveal}>
+                    <TableGrid {cells} {busy} canWithdraw {onResult} {onForfeit} {onMove} {onCancel} onHistory={showHistory} {onOutOfService} {onLaunchHere} {reveal}>
                         {#snippet actions()}
                             {#if rounds > 0 || upcoming > 0}
                                 <div class="sheet">
