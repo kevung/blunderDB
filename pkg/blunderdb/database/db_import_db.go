@@ -780,7 +780,7 @@ func readImportMETs(ctx context.Context, importDB *sql.DB, dst storage.Stores) (
 			return nil, nil, err
 		}
 	}
-	return mets.NewCarrier(dst.MatchEquityTables(), "", tables), ofPosition, nil
+	return mets.NewCarrier("import", dst.MatchEquityTables(), "", tables), ofPosition, nil
 }
 
 // readImportLessons reads the source's Lessons like readImportCollections; a

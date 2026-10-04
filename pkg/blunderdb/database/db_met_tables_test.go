@@ -1,11 +1,16 @@
 package database
 
 import (
+	"bytes"
 	"context"
+	"database/sql"
+	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 )
 
 // A batch values a match score with the library's current table and records
@@ -143,5 +148,79 @@ func TestImportDatabaseCarriesTheMET(t *testing.T) {
 		if st.Name != rk.Name || st.Different {
 			t.Errorf("position %d: %+v, want valued with the receiver's %q", id, st, rk.Name)
 		}
+	}
+}
+
+// A source database that declares the built-in table's digest for another
+// table cannot pass its analyses off as valued with Kazaross-XG2: the
+// receiver names a carried table by the digest of its source, and the
+// source file is left as it was (ADR-0007).
+func TestImportDatabaseRecomputesAForgedMETDigest(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "forged.db")
+	src := NewDatabase()
+	if err := src.SetupDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	srcRK, err := src.ImportMET("pkg/blunderdb/engine/testdata/met/Rockwell-Kazaross.xml")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := src.SetCurrentMET(srcRK.ID); err != nil {
+		t.Fatal(err)
+	}
+	pos := racePosition(8, 17, domain.White)
+	pos.Dice = [2]int{0, 0}
+	pos.Score = [2]int{3, 5}
+	if _, err := src.SavePosition(&pos); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := src.AnalyzeMissingWithGammonNet(context.Background(), 0, 0, 0, 1, nil, nil); err != nil {
+		t.Fatal(err)
+	}
+	if err := src.Close(); err != nil {
+		t.Fatal(err)
+	}
+	raw, err := sql.Open("sqlite", path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := raw.Exec(`UPDATE match_equity_table SET digest = ?, name = ?`, engine.KazarossXG2Digest(), mets.BuiltInName); err != nil {
+		t.Fatal(err)
+	}
+	if err := raw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	before, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	d := newBatchTestDB(t)
+	if _, err := d.ImportDatabase(path); err != nil {
+		t.Fatalf("ImportDatabase: %v", err)
+	}
+	after, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(before, after) {
+		t.Error("importing wrote into the source database")
+	}
+
+	tables, err := d.ListMETs()
+	if err != nil || len(tables) != 2 {
+		t.Fatalf("ListMETs = %v, %v; want the built-in and the carried table", tables, err)
+	}
+	carried := tables[1]
+	if carried.Digest == engine.KazarossXG2Digest() {
+		t.Fatalf("carried table kept the forged digest: %+v", carried)
+	}
+	id, err := d.SavePosition(&pos)
+	if err != nil {
+		t.Fatal(err)
+	}
+	met, err := d.store.MatchEquityTables().OfAnalysis(context.Background(), "", id)
+	if err != nil || met != carried.ID {
+		t.Errorf("imported analysis names table %d, %v; want the carried table %d, never the built-in one", met, err, carried.ID)
 	}
 }
