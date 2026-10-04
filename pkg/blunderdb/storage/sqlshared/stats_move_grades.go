@@ -29,8 +29,8 @@ func (s *StatsStore) MatchMoveGrades(ctx context.Context, scope string, matchID 
 	}
 	tenant, args := s.DB.TenantFilter("p", scope)
 	rows, err := s.DB.Query(ctx,
-		`SELECT mv.id, mv.position_id, `+ActionLabelOrEmptySQL("mv.move_type")+`,
-			COALESCE(mv.checker_move, ''), `+ActionLabelOrEmptySQL("mv.cube_action")+`, a.data
+		`SELECT mv.id, mv.position_id, `+ActionLabelOrEmptyFor(s.DB, "mv.move_type")+`,
+			COALESCE(mv.checker_move, ''), `+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+`, a.data
 		 FROM move mv
 		 JOIN game g ON g.id = mv.game_id
 		 JOIN position p ON p.id = mv.position_id

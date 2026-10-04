@@ -8,8 +8,10 @@ import (
 
 // scoredMoveCols reads what PlayScorer needs from a move and its position's
 // analysis, joined as mv and a.
-var scoredMoveCols = `mv.id, COALESCE(mv.position_id, 0), ` + ActionLabelOrEmptySQL("mv.move_type") + `,
-	COALESCE(mv.checker_move, ''), ` + ActionLabelOrEmptySQL("mv.cube_action") + `, a.data`
+func scoredMoveCols(d Dialect) string {
+	return `mv.id, COALESCE(mv.position_id, 0), ` + ActionLabelOrEmptyFor(d, "mv.move_type") + `,
+	COALESCE(mv.checker_move, ''), ` + ActionLabelOrEmptyFor(d, "mv.cube_action") + `, a.data`
+}
 
 type moveScore struct {
 	id  int64
@@ -60,7 +62,7 @@ func ScoreMoves(ctx context.Context, db Execer, scope string, after int64, limit
 	}
 	tenant, targs := db.TenantFilter("mv", scope)
 	args := append(targs, after, limit)
-	rows, err := db.Query(ctx, `SELECT `+scoredMoveCols+`
+	rows, err := db.Query(ctx, `SELECT `+scoredMoveCols(db)+`
 		FROM move mv JOIN analysis a ON a.position_id = mv.position_id
 		WHERE `+tenant+` AND mv.error_mp IS NULL AND mv.id > ?
 		ORDER BY mv.id LIMIT ?`, args...)
@@ -91,7 +93,7 @@ func ScoreMoves(ctx context.Context, db Execer, scope string, after int64, limit
 func RescorePositionMoves(ctx context.Context, db Execer, scope string, positionID int64) error {
 	tenant, targs := db.TenantFilter("mv", scope)
 	args := append(targs, positionID)
-	rows, err := db.Query(ctx, `SELECT `+scoredMoveCols+`
+	rows, err := db.Query(ctx, `SELECT `+scoredMoveCols(db)+`
 		FROM move mv LEFT JOIN analysis a ON a.position_id = mv.position_id
 		WHERE `+tenant+` AND mv.position_id = ?`, args...)
 	if err != nil {

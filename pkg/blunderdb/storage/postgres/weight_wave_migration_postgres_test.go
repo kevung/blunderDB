@@ -76,8 +76,7 @@ func TestMigrate_034_WeightWaveOnAPopulatedLibrary(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	type column struct{ table, column string }
-	columns := []column{{"analysis", "best_cube_action"}, {"move", "move_type"}, {"move", "cube_action"}}
+	columns := weightWaveColumns
 	readLabels := func(read func(string) string) map[string]string {
 		t.Helper()
 		out := map[string]string{}
@@ -110,25 +109,7 @@ func TestMigrate_034_WeightWaveOnAPopulatedLibrary(t *testing.T) {
 		t.Fatalf("read %d labels, want %d", len(want), 3*len(labels))
 	}
 
-	// Back to the shape 033 left: text labels, the compact JSON board.
-	var rollback []string
-	for _, c := range columns {
-		rollback = append(rollback,
-			`ALTER TABLE `+c.table+` ADD COLUMN `+c.column+`_text TEXT`,
-			`UPDATE `+c.table+` SET `+c.column+`_text = `+sqlshared.ActionLabelSQL(c.column),
-			`ALTER TABLE `+c.table+` DROP COLUMN `+c.column,
-			`ALTER TABLE `+c.table+` RENAME COLUMN `+c.column+`_text TO `+c.column)
-	}
-	rollback = append(rollback,
-		`DROP TABLE action_label`,
-		`ALTER TABLE position ADD COLUMN state_text TEXT`,
-		`UPDATE position SET state_text = '[' || (SELECT string_agg((CASE WHEN get_byte(state, i) > 127
-		     THEN get_byte(state, i) - 256 ELSE get_byte(state, i) END)::text, ',' ORDER BY i)
-		   FROM generate_series(0, 27) AS i) || ']'`,
-		`ALTER TABLE position DROP COLUMN state`,
-		`ALTER TABLE position RENAME COLUMN state_text TO state`,
-		`ALTER TABLE position ALTER COLUMN state SET NOT NULL`,
-		`DELETE FROM schema_migrations WHERE version = '034_weight_wave'`)
+	rollback := weightWaveRollback()
 	for _, stmt := range rollback {
 		if _, err := conn.Exec(ctx, stmt); err != nil {
 			t.Fatalf("roll back to 033 (%s): %v", stmt, err)
@@ -174,4 +155,34 @@ func TestMigrate_034_WeightWaveOnAPopulatedLibrary(t *testing.T) {
 	if err := s.Migrate(ctx); err != nil {
 		t.Fatalf("second Migrate: %v", err)
 	}
+}
+
+type labelColumn struct{ table, column string }
+
+// weightWaveColumns are the action-label columns 034 turns into codes.
+var weightWaveColumns = []labelColumn{{"analysis", "best_cube_action"}, {"move", "move_type"}, {"move", "cube_action"}}
+
+// weightWaveRollback returns the statements that put a 2.31.0 library back in
+// the shape 033 left: text labels, the compact JSON board, no action_label
+// table and 034 unrecorded.
+func weightWaveRollback() []string {
+	var rollback []string
+	for _, c := range weightWaveColumns {
+		rollback = append(rollback,
+			`ALTER TABLE `+c.table+` ADD COLUMN `+c.column+`_text TEXT`,
+			`UPDATE `+c.table+` SET `+c.column+`_text = `+sqlshared.ActionLabelSQL(c.column),
+			`ALTER TABLE `+c.table+` DROP COLUMN `+c.column,
+			`ALTER TABLE `+c.table+` RENAME COLUMN `+c.column+`_text TO `+c.column)
+	}
+	rollback = append(rollback,
+		`DROP TABLE action_label`,
+		`ALTER TABLE position ADD COLUMN state_text TEXT`,
+		`UPDATE position SET state_text = '[' || (SELECT string_agg((CASE WHEN get_byte(state, i) > 127
+		     THEN get_byte(state, i) - 256 ELSE get_byte(state, i) END)::text, ',' ORDER BY i)
+		   FROM generate_series(0, 27) AS i) || ']'`,
+		`ALTER TABLE position DROP COLUMN state`,
+		`ALTER TABLE position RENAME COLUMN state_text TO state`,
+		`ALTER TABLE position ALTER COLUMN state SET NOT NULL`,
+		`DELETE FROM schema_migrations WHERE version = '034_weight_wave'`)
+	return rollback
 }

@@ -16,8 +16,37 @@ import (
 
 // ActionLabelSQL renders the expression that reads the label stored in the
 // action-code column col. A fixed code resolves in the CASE; a registered one
-// in action_label, which COALESCE only reaches when the CASE gives NULL.
+// in action_label, which COALESCE only reaches when the CASE gives NULL. It is
+// the SQLite form: action_label there belongs to the one library of the file.
 func ActionLabelSQL(col string) string {
+	return actionLabelSQL(col, "")
+}
+
+// TenantActionLabelSQL is ActionLabelSQL for PostgreSQL, where action_label
+// holds every tenant's registered labels: the lookup is confined to the tenant
+// of the row col belongs to, so a code that crossed tenants (a restored dump,
+// a hand edit, a read that bypasses row-level security) reads as no label
+// rather than as another tenant's text. col must be qualified (alias.column):
+// its qualifier names the row's tenant_id, which an unqualified name inside
+// the subquery would resolve to action_label's own.
+func TenantActionLabelSQL(col string) string {
+	dot := strings.LastIndexByte(col, '.')
+	if dot <= 0 {
+		panic("sqlshared: TenantActionLabelSQL needs a qualified column, got " + col)
+	}
+	return actionLabelSQL(col, col[:dot]+".tenant_id")
+}
+
+// ActionLabelFor is the label read for dialect d: TenantActionLabelSQL where
+// action_label is tenant-scoped, ActionLabelSQL otherwise.
+func ActionLabelFor(d Dialect, col string) string {
+	if d.ScopeColumn() == "tenant_id" {
+		return TenantActionLabelSQL(col)
+	}
+	return ActionLabelSQL(col)
+}
+
+func actionLabelSQL(col, tenantCol string) string {
 	var b strings.Builder
 	b.WriteString("COALESCE(CASE ")
 	b.WriteString(col)
@@ -26,6 +55,10 @@ func ActionLabelSQL(col string) string {
 	}
 	b.WriteString(" END, (SELECT al.label FROM action_label al WHERE al.code = ")
 	b.WriteString(col)
+	if tenantCol != "" {
+		b.WriteString(" AND al.tenant_id = ")
+		b.WriteString(tenantCol)
+	}
 	b.WriteString("))")
 	return b.String()
 }
@@ -33,8 +66,20 @@ func ActionLabelSQL(col string) string {
 // ActionLabelOrEmptySQL is ActionLabelSQL with NULL read as "", the
 // COALESCE(col, ”) the text columns were read with.
 func ActionLabelOrEmptySQL(col string) string {
-	return "COALESCE(" + ActionLabelSQL(col) + ", '')"
+	return orEmpty(ActionLabelSQL(col))
 }
+
+// TenantActionLabelOrEmptySQL is TenantActionLabelSQL with NULL read as "".
+func TenantActionLabelOrEmptySQL(col string) string {
+	return orEmpty(TenantActionLabelSQL(col))
+}
+
+// ActionLabelOrEmptyFor is ActionLabelFor with NULL read as "".
+func ActionLabelOrEmptyFor(d Dialect, col string) string {
+	return orEmpty(ActionLabelFor(d, col))
+}
+
+func orEmpty(expr string) string { return "COALESCE(" + expr + ", '')" }
 
 // ActionNotEmptySQL renders the predicate COALESCE(col, ”) <> ” of a text
 // label column on the action-code column col: "" is code 0.

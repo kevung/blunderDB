@@ -309,10 +309,12 @@ func (s *StatsStore) computeCubeActionBreakdown(ctx context.Context, q statsQuer
 	d := s.DB
 	cubeWhere := q.whereSQL + " AND p.decision_type = 1"
 	rows, err := s.DB.Query(ctx,
-		`SELECT `+ActionLabelOrEmptySQL("a.best_cube_action")+`, `+d.Bigint(`SUM(a.cube_error)`)+`, COUNT(*),`+
+		`SELECT `+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+`, `+d.Bigint(`SUM(a.cube_error)`)+`, COUNT(*),`+
 			` `+d.Bigint(`SUM(CASE WHEN a.cube_error >= ? THEN 1 ELSE 0 END)`)+` `+
 			q.join+cubeWhere+
-			` GROUP BY a.best_cube_action`,
+			// The label (column 1) is grouped as well as the code: its
+			// registered-label lookup reads the row's tenant.
+			` GROUP BY a.best_cube_action, 1`,
 		append([]any{q.settings.BlunderThresholdMP}, q.baseArgs...)...,
 	)
 	if err != nil {
@@ -350,10 +352,10 @@ func (s *StatsStore) computeCubeDirections(ctx context.Context, q statsQuery, re
 	{
 		cubeWhere := q.whereSQL + " AND p.decision_type = 1"
 		rows, err := s.DB.Query(ctx,
-			`SELECT `+ActionLabelOrEmptySQL("a.best_cube_action")+`, `+ActionLabelOrEmptySQL("mv.cube_action")+`, COUNT(*),`+
+			`SELECT `+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+`, `+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+`, COUNT(*),`+
 				` `+d.Bigint(`COALESCE(SUM(a.cube_error),0)`)+` `+
 				q.join+cubeWhere+
-				` GROUP BY a.best_cube_action, mv.cube_action`,
+				` GROUP BY a.best_cube_action, mv.cube_action, 1, 2`,
 			q.baseArgs...,
 		)
 		if err != nil {
@@ -526,7 +528,7 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 			` COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,` +
 			` ` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0),` +
 			` COALESCE(m.tournament_id, 0), m.id,` +
-			` ` + ActionLabelOrEmptySQL("a.best_cube_action") + `, p.decision_type, p.id ` +
+			` ` + ActionLabelOrEmptyFor(s.DB, "a.best_cube_action") + `, p.decision_type, p.id ` +
 			q.join + q.whereSQL +
 			` ORDER BY m.match_date DESC, mv.move_number DESC`
 

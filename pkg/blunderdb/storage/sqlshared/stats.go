@@ -200,7 +200,7 @@ func (s *StatsStore) buildStatsWhereClause(scope string, filter storage.StatsFil
 
 // buildSelectionWhereClause produces the extra WHERE fragment and optional
 // ORDER BY / LIMIT fragment for a given SelectionSpec.
-func buildSelectionWhereClause(sel storage.SelectionSpec) (whereAdd string, orderLimit string, args []any) {
+func buildSelectionWhereClause(d Dialect, sel storage.SelectionSpec) (whereAdd string, orderLimit string, args []any) {
 	switch sel.Kind {
 	case "checker":
 		whereAdd = " AND p.decision_type = 0"
@@ -213,7 +213,7 @@ func buildSelectionWhereClause(sel storage.SelectionSpec) (whereAdd string, orde
 			whereAdd += " AND (" + statsErrExpr + ") > 0"
 		}
 	case "cube_action":
-		whereAdd = " AND p.decision_type = 1 AND " + ActionLabelSQL("a.best_cube_action") + " = ?"
+		whereAdd = " AND p.decision_type = 1 AND " + ActionLabelFor(d, "a.best_cube_action") + " = ?"
 		args = append(args, sel.CubeAction)
 		if sel.OnlyWithError {
 			whereAdd += " AND (" + statsErrExpr + ") > 0"
@@ -296,7 +296,7 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 	// once in Go (storage.ClassifyCubeDirection), so it is filtered here.
 	if sel.Kind == "cube_direction" {
 		rows, err := s.DB.Query(ctx,
-			"SELECT DISTINCT p.id, "+ActionLabelOrEmptySQL("a.best_cube_action")+", "+ActionLabelOrEmptySQL("mv.cube_action")+" "+
+			"SELECT DISTINCT p.id, "+ActionLabelOrEmptyFor(s.DB, "a.best_cube_action")+", "+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+" "+
 				statsBaseJoin+whereSQL+" AND p.decision_type = 1", baseArgs...)
 		if err != nil {
 			return nil, fmt.Errorf("PositionIDsBySelection (cube_direction): %w", err)
@@ -304,7 +304,7 @@ func (s *StatsStore) PositionIDsBySelection(ctx context.Context, scope string, f
 		return scanCubeDirectionIDs(rows, sel.CubeCell)
 	}
 
-	whereAdd, orderLimit, selArgs := buildSelectionWhereClause(sel)
+	whereAdd, orderLimit, selArgs := buildSelectionWhereClause(s.DB, sel)
 
 	query := "SELECT DISTINCT p.id " + statsBaseJoin + whereSQL + whereAdd
 	if orderLimit != "" {
@@ -436,7 +436,7 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		return nil, fmt.Errorf("MatchDetail settings: %w", err)
 	}
 	tenant, targs := s.DB.TenantFilter("p", scope)
-	query := `SELECT mv.player, p.decision_type, ` + ActionLabelOrEmptySQL("mv.cube_action") + `,
+	query := `SELECT mv.player, p.decision_type, ` + ActionLabelOrEmptyFor(s.DB, "mv.cube_action") + `,
 		(` + statsErrExpr + `) as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
 		` + cubeMultiplierExpr + `,

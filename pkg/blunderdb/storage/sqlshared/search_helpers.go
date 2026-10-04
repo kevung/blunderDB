@@ -116,7 +116,7 @@ func loadPlayer1Moves(ctx context.Context, db Execer, positionIDs []int64) (map[
 	checkerSets := make(map[int64]map[string]bool)
 	cubeSets := make(map[int64]map[string]bool)
 	err := forEachIDBatch(ctx, db, positionIDs,
-		`SELECT position_id, checker_move, `+ActionLabelSQL("cube_action")+` FROM move WHERE player = 1 AND position_id IN `,
+		`SELECT position_id, checker_move, `+ActionLabelFor(db, "move.cube_action")+` FROM move WHERE player = 1 AND position_id IN `,
 		``,
 		func(rows Rows) error {
 			var id int64

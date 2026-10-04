@@ -13,9 +13,42 @@
 --   * The dates (position.match_date, analysis.creation_date) stay
 --     TIMESTAMPTZ: PostgreSQL already stores that type as an 8-byte integer
 --     in UTC, the representation SQLite now uses in Unix seconds.
+--
+-- Row-Level Security, once applied, is FORCEd on position, move and analysis:
+-- the migrating connection carries no tenant and would see no row, so the
+-- state swap would leave every state NULL and the label swap would drop every
+-- label. FORCE is lifted for the data-moving statements and put back at the
+-- end; the batch runs as one transaction.
 
+CREATE TEMP TABLE weight_wave_forced (name TEXT) ON COMMIT DROP;
+
+DO $$
+DECLARE t TEXT;
+BEGIN
+    FOREACH t IN ARRAY ARRAY['position', 'move', 'analysis'] LOOP
+        IF EXISTS (SELECT 1 FROM pg_class WHERE oid = to_regclass(t) AND relforcerowsecurity) THEN
+            EXECUTE format('ALTER TABLE %I NO FORCE ROW LEVEL SECURITY', t);
+            INSERT INTO weight_wave_forced VALUES (t);
+        END IF;
+    END LOOP;
+END $$;
+
+-- met_id names a row of the analysis's own tenant: the foreign key is
+-- composite, like every other tenant-scoped reference (014), and deleting the
+-- table falls back to the built-in one by nulling met_id alone.
 ALTER TABLE analysis DROP COLUMN IF EXISTS met_digest;
-ALTER TABLE analysis ADD COLUMN IF NOT EXISTS met_id BIGINT REFERENCES match_equity_table (id);
+ALTER TABLE analysis ADD COLUMN IF NOT EXISTS met_id BIGINT;
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'match_equity_table_tenant_id_key') THEN
+        ALTER TABLE match_equity_table ADD CONSTRAINT match_equity_table_tenant_id_key UNIQUE (tenant_id, id);
+    END IF;
+    ALTER TABLE analysis DROP CONSTRAINT IF EXISTS analysis_met_id_fkey;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'analysis_met_tenant_fkey') THEN
+        ALTER TABLE analysis ADD CONSTRAINT analysis_met_tenant_fkey
+            FOREIGN KEY (tenant_id, met_id)
+            REFERENCES match_equity_table (tenant_id, id) ON DELETE SET NULL (met_id);
+    END IF;
+END $$;
 
 DROP INDEX IF EXISTS idx_analysis_engine;
 DROP INDEX IF EXISTS idx_analysis_depth;
@@ -92,6 +125,14 @@ BEGIN
         END IF;
     END LOOP;
     DROP TABLE action_label_fixed;
+END $$;
+
+DO $$
+DECLARE t TEXT;
+BEGIN
+    FOR t IN SELECT name FROM weight_wave_forced LOOP
+        EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', t);
+    END LOOP;
 END $$;
 
 -- Row-level security on action_label, when the library already uses it.

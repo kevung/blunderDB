@@ -52,10 +52,14 @@ func prefixed(alias, cols string) string {
 // transaction): the tables are temporary, visible to that session only.
 func (s *StatsStore) materializeSelection(ctx context.Context, scope string, filter storage.StatsFilter) (string, error) {
 	posCols := selPositionCols
+	moveCols, analysisCols := selMoveCols, selAnalysisCols
 	// The tenant predicate every pass opens with names p's tenant column when
-	// the backend has one; the copy must carry it.
+	// the backend has one, and the action-label reads name mv's and a's
+	// (ActionLabelFor); the copies must carry them.
 	if _, tenantArgs := s.DB.TenantFilter("p", scope); len(tenantArgs) > 0 {
 		posCols += ", tenant_id"
+		moveCols += ", tenant_id"
+		analysisCols += ", tenant_id"
 	}
 
 	s.dropSelection(ctx)
@@ -70,12 +74,12 @@ func (s *StatsStore) materializeSelection(ctx context.Context, scope string, fil
 		// Created empty from the source tables so each column keeps its type
 		// on both backends; filled by INSERT, which takes parameters where
 		// CREATE TABLE AS does not on PostgreSQL.
-		{`CREATE TEMP TABLE stats_sel_mv AS SELECT ` + prefixed("mv", selMoveCols) + ` FROM move mv WHERE 1 = 0`, nil},
+		{`CREATE TEMP TABLE stats_sel_mv AS SELECT ` + prefixed("mv", moveCols) + ` FROM move mv WHERE 1 = 0`, nil},
 		{`CREATE TEMP TABLE stats_sel_p AS SELECT ` + prefixed("p", posCols) + ` FROM position p WHERE 1 = 0`, nil},
-		{`CREATE TEMP TABLE stats_sel_a AS SELECT ` + prefixed("a", selAnalysisCols) + ` FROM analysis a WHERE 1 = 0`, nil},
-		{`INSERT INTO stats_sel_mv SELECT DISTINCT ` + prefixed("mv", selMoveCols) + ` ` + statsBaseJoin + where, args},
+		{`CREATE TEMP TABLE stats_sel_a AS SELECT ` + prefixed("a", analysisCols) + ` FROM analysis a WHERE 1 = 0`, nil},
+		{`INSERT INTO stats_sel_mv SELECT DISTINCT ` + prefixed("mv", moveCols) + ` ` + statsBaseJoin + where, args},
 		{`INSERT INTO stats_sel_p SELECT ` + prefixed("p", posCols) + ` FROM position p WHERE p.id IN (SELECT position_id FROM stats_sel_mv)`, nil},
-		{`INSERT INTO stats_sel_a SELECT ` + prefixed("a", selAnalysisCols) + ` FROM analysis a WHERE a.position_id IN (SELECT id FROM stats_sel_p)`, nil},
+		{`INSERT INTO stats_sel_a SELECT ` + prefixed("a", analysisCols) + ` FROM analysis a WHERE a.position_id IN (SELECT id FROM stats_sel_p)`, nil},
 		{`CREATE INDEX stats_sel_p_id ON stats_sel_p (id)`, nil},
 		{`CREATE INDEX stats_sel_a_pos ON stats_sel_a (position_id)`, nil},
 		{`CREATE INDEX stats_sel_mv_pos ON stats_sel_mv (position_id)`, nil},

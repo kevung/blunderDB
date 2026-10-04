@@ -26,6 +26,23 @@ ALTER TABLE analysis ADD COLUMN IF NOT EXISTS analysis_depth  INTEGER;
 ALTER TABLE analysis ADD COLUMN IF NOT EXISTS creation_date   TIMESTAMPTZ;
 ALTER TABLE position ADD COLUMN IF NOT EXISTS match_date      TIMESTAMPTZ;
 
+-- Row-Level Security, once applied, is FORCEd on the tables the backfill
+-- reads and writes: the migrating connection carries no tenant and would see
+-- no row, so the UPDATE would date nothing and say nothing. FORCE is lifted
+-- for the statement and put back; the batch runs as one transaction.
+CREATE TEMP TABLE match_date_forced (name TEXT) ON COMMIT DROP;
+
+DO $$
+DECLARE t TEXT;
+BEGIN
+    FOREACH t IN ARRAY ARRAY['position', 'move', 'game', 'match'] LOOP
+        IF EXISTS (SELECT 1 FROM pg_class WHERE oid = to_regclass(t) AND relforcerowsecurity) THEN
+            EXECUTE format('ALTER TABLE %I NO FORCE ROW LEVEL SECURITY', t);
+            INSERT INTO match_date_forced VALUES (t);
+        END IF;
+    END LOOP;
+END $$;
+
 UPDATE position p SET match_date = t.md
 FROM (SELECT mv.tenant_id, mv.position_id, MIN(m.match_date) AS md
         FROM move mv
@@ -34,6 +51,14 @@ FROM (SELECT mv.tenant_id, mv.position_id, MIN(m.match_date) AS md
        WHERE mv.position_id IS NOT NULL
        GROUP BY mv.tenant_id, mv.position_id) t
 WHERE p.tenant_id = t.tenant_id AND p.id = t.position_id AND p.match_date IS NULL;
+
+DO $$
+DECLARE t TEXT;
+BEGIN
+    FOR t IN SELECT name FROM match_date_forced LOOP
+        EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', t);
+    END LOOP;
+END $$;
 
 DROP INDEX IF EXISTS idx_position_decision_dice;
 DROP INDEX IF EXISTS idx_position_decision_pip;

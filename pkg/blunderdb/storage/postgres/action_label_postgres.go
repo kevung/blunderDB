@@ -9,9 +9,10 @@ import (
 )
 
 // action_label is tenant-scoped here: a registered label is text a tenant's
-// import brought. Its code comes from a sequence, unique across tenants, so
-// the shared read expression (sqlshared.ActionLabelSQL) needs no tenant filter;
-// registration and lookup by label are filtered by tenant.
+// import brought. Its code comes from a sequence, unique across tenants, and
+// the read expression (sqlshared.TenantActionLabelSQL) still confines the
+// lookup to the row's tenant; registration and lookup by label are filtered by
+// tenant.
 const (
 	registerActionLabelSQL = `INSERT INTO action_label (tenant_id, label) VALUES ($1, $2)
 ON CONFLICT (tenant_id, label) DO NOTHING`

@@ -98,7 +98,7 @@ func (s *analysisStore) merge(ctx context.Context, scope string, positionID int6
 	)
 	load := func() error {
 		return s.db.QueryRow(ctx,
-			`SELECT data, `+sqlshared.ActionLabelOrEmptySQL("best_cube_action")+`, COALESCE(cube_error,0), COALESCE(best_move_equity_error,0),
+			`SELECT data, `+sqlshared.TenantActionLabelOrEmptySQL("analysis.best_cube_action")+`, COALESCE(cube_error,0), COALESCE(best_move_equity_error,0),
 			        COALESCE(is_forced,FALSE), COALESCE(is_close_cube,FALSE)
 			 FROM analysis WHERE position_id = $1 AND tenant_id = $2
 			 FOR UPDATE`, positionID, tenant).
@@ -309,7 +309,7 @@ func (s *analysisStore) playedActionsFromMatch(ctx context.Context, tenant int64
 // different rows.
 var playedActionsSQL = `SELECT
 	(SELECT mv.checker_move FROM move mv WHERE mv.position_id = $1 AND mv.tenant_id = $2 AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
-	(SELECT ` + sqlshared.ActionLabelSQL("mv.cube_action") + ` FROM move mv WHERE mv.position_id = $1 AND mv.tenant_id = $2 AND ` + sqlshared.ActionNotEmptySQL("mv.cube_action") + ` ORDER BY mv.id LIMIT 1)`
+	(SELECT ` + sqlshared.TenantActionLabelSQL("mv.cube_action") + ` FROM move mv WHERE mv.position_id = $1 AND mv.tenant_id = $2 AND ` + sqlshared.ActionNotEmptySQL("mv.cube_action") + ` ORDER BY mv.id LIMIT 1)`
 
 func deref(s *string) string {
 	if s == nil {
@@ -383,10 +383,10 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 		var page []row
 		if err := func() error {
 			rows, err := s.db.Query(ctx,
-				`SELECT a.id, a.data, `+sqlshared.ActionLabelOrEmptySQL("a.best_cube_action")+`, COALESCE(a.cube_error,0),
+				`SELECT a.id, a.data, `+sqlshared.TenantActionLabelOrEmptySQL("a.best_cube_action")+`, COALESCE(a.cube_error,0),
 				        COALESCE(a.best_move_equity_error,0), a.is_forced, a.is_close_cube,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
-				        (SELECT `+sqlshared.ActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1)
+				        (SELECT `+sqlshared.TenantActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1)
 				 FROM analysis a WHERE a.tenant_id = $1 AND a.id > $2 ORDER BY a.id LIMIT $3`,
 				tid, lastID, repairPageSize)
 			if err != nil {
