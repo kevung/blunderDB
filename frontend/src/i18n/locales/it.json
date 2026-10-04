@@ -635,6 +635,8 @@
         "livingNeedsSearch": "Lancia prima una ricerca: è quella che la raccolta conserverà.",
         "livingSet": "Raccolta viva: {query}",
         "livingCleared": "Raccolta restituita alla sua lista fatta a mano.",
+        "freezeTitle": "Congela: tenere il risultato di oggi come raccolta ordinaria.",
+        "frozen": "Raccolta congelata su {count} posizione/i.",
         "newButton": "Nuova raccolta"
     },
     "tournament": {

@@ -285,4 +285,24 @@ func TestLivingCollectionRoutesResolveTheQuery(t *testing.T) {
 	if lines != 2 {
 		t.Errorf("positions streamed %d rows, want 2", lines)
 	}
+
+	// Figer : l'appartenance devient les lignes, la requête s'efface.
+	resp = post(t, ts, "/v1/collections.freeze", idReq{ID: col.ID})
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("freeze status = %d", resp.StatusCode)
+	}
+	resp.Body.Close()
+	resp = post(t, ts, "/v1/collections.countPositions", req)
+	if err := json.NewDecoder(resp.Body).Decode(&n); err != nil {
+		t.Fatal(err)
+	}
+	resp.Body.Close()
+	if n != 2 {
+		t.Errorf("frozen count = %d, want 2", n)
+	}
+	resp = post(t, ts, "/v1/collections.freeze", idReq{ID: col.ID})
+	if resp.StatusCode == http.StatusOK {
+		t.Error("freezing a hand-made collection must be refused")
+	}
+	resp.Body.Close()
 }

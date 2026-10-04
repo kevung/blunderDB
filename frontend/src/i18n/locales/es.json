@@ -635,6 +635,8 @@
         "livingNeedsSearch": "Lance primero una búsqueda: es lo que la colección guardará.",
         "livingSet": "Colección viva: {query}",
         "livingCleared": "Colección devuelta a su lista hecha a mano.",
+        "freezeTitle": "Congelar: conservar el resultado de hoy como colección ordinaria.",
+        "frozen": "Colección congelada en {count} posición(es).",
         "newButton": "Nueva colección"
     },
     "tournament": {

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -95,6 +96,18 @@ func (s *Server) collectionRoutes() []route {
 		// à chaque ouverture.
 		{http.MethodPost, "/v1/collections.setFilter", rpcVoid(func(ctx context.Context, scope string, req collectionFilterReq) error {
 			return cs().SetFilterQuery(ctx, scope, req.ID, req.Query)
+		})},
+		// Figer : la requête cesse de commander, ses positions d'aujourd'hui
+		// deviennent l'appartenance.
+		{http.MethodPost, "/v1/collections.freeze", rpc(func(ctx context.Context, scope string, req idReq) (int, error) {
+			filters, living, err := s.livingFilters(ctx, scope, req.ID)
+			if err != nil {
+				return 0, err
+			}
+			if !living {
+				return 0, fmt.Errorf("collection %d is not living: nothing to freeze", req.ID)
+			}
+			return storage.FreezeCollection(ctx, s.opts.Storage, scope, req.ID, filters)
 		})},
 		{http.MethodPost, "/v1/collections.delete", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return cs().Delete(ctx, scope, req.ID)

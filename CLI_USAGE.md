@@ -2239,6 +2239,23 @@ Examples:
   blunderdb collection filter --db database.db --id 3 --query "E>80 gt:holding"
 ```
 
+### `blunderdb collection freeze`
+
+```
+Usage: blunderdb collection freeze [options]
+
+Freeze a living collection: the positions its query selects now become its content, and the query is cleared.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -id int
+    	Collection ID (required)
+
+Examples:
+  blunderdb collection freeze --db database.db --id 3
+```
+
 ### `blunderdb collection list`
 
 ```

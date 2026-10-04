@@ -50,6 +50,7 @@ func (cli *CLI) collectionHandlers() map[string]func([]string) error {
 		"show":   cli.runCollectionShow,
 		"create": cli.runCollectionCreate,
 		"filter": cli.runCollectionFilter,
+		"freeze": cli.runCollectionFreeze,
 		"rename": cli.runCollectionRename,
 		"delete": cli.runCollectionDelete,
 		"export": cli.runCollectionExport,
@@ -350,6 +351,27 @@ func (cli *CLI) runCollectionFilter(args []string) error {
 	} else {
 		fmt.Printf("Collection %d is now living: %s\n", *id, q)
 	}
+	return nil
+}
+
+// runCollectionFreeze turns a living collection into a hand-made one holding
+// the positions its query selects now.
+func (cli *CLI) runCollectionFreeze(args []string) error {
+	fs, dbPath := collectionFlagSet("freeze", "Freeze a living collection: the positions its query selects now become its content, and the query is cleared.",
+		"blunderdb collection freeze --db database.db --id 3")
+	id := fs.Int64("id", 0, "Collection ID (required)")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if *id == 0 {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --id")
+	}
+	n, err := cli.db.FreezeCollection(*id)
+	if err != nil {
+		return fmt.Errorf("failed to freeze the collection: %w", err)
+	}
+	fmt.Printf("Collection %d is a hand-made list again, frozen on %d position(s).\n", *id, n)
 	return nil
 }
 
