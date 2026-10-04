@@ -86,6 +86,10 @@ export function GetPageStep() {
   return window['go']['main']['Config']['GetPageStep']();
 }
 
+export function GetTabPanelHeights() {
+  return window['go']['main']['Config']['GetTabPanelHeights']();
+}
+
 export function GetPanelHeight() {
   return window['go']['main']['Config']['GetPanelHeight']();
 }
@@ -212,6 +216,10 @@ export function SaveMCPHost(arg1) {
 
 export function SavePageStep(arg1) {
   return window['go']['main']['Config']['SavePageStep'](arg1);
+}
+
+export function SaveTabPanelHeight(arg1, arg2) {
+  return window['go']['main']['Config']['SaveTabPanelHeight'](arg1, arg2);
 }
 
 export function SavePanelHeight(arg1) {

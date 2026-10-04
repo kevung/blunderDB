@@ -48,6 +48,7 @@ export default {
 <li>studiare le posizioni tramite ripetizione dilazionata (pannello Anki),</li>
 <li>visualizzare i metadati del database (pannello Metadati).</li>
 </ul>
+<p>L'altezza del pannello si regola trascinandone la maniglia; ogni scheda ricorda la propria.</p>
 <p>Possono comparire finestre modali per:</p>
 <ul>
 <li>visualizzare la guida di blunderDB,</li>
