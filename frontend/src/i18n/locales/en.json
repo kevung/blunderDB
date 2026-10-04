@@ -2419,6 +2419,7 @@
             "prize": "Prize",
             "wins": "W",
             "losses_column": "L",
+            "section_column": "Section",
             "opponents": "Opponents met",
             "waiting": "Waiting",
             "state": "State",

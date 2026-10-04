@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/csv"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -25,8 +26,11 @@ type StandingRow struct {
 	Note tournoi.Note `json:"note"`
 	// Wins and Losses count the player's matches over the whole tournament, every phase
 	// together: the state says where a player stands, the record says how they got there.
-	Wins   int     `json:"wins"`
-	Losses int     `json:"losses"`
+	Wins   int `json:"wins"`
+	Losses int `json:"losses"`
+	// Phase is the index of the last phase the player entered: the qualified reach the next
+	// one, the others stop where they were eliminated.
+	Phase  int     `json:"phase"`
 	Prize  float64 `json:"prize,omitempty"`
 	Shared bool    `json:"shared,omitempty"`
 }
@@ -52,14 +56,24 @@ type StandingsView struct {
 
 // Standings replays the tournament and returns its rankings with the prizes attached.
 func (d *Service) Standings(ctx context.Context, tournamentID int64) (*StandingsView, error) {
+	st, err := d.replayed(ctx, tournamentID)
+	if err != nil || st == nil {
+		return nil, err
+	}
+	return standingsOf(st), nil
+}
+
+// replayed is the tournament's state, or nil while it is a draft.
+func (d *Service) replayed(ctx context.Context, tournamentID int64) (*tournoi.State, error) {
 	dir, err := direction.Open(ctx, d.dirStore(), tournamentID)
 	if err != nil {
 		return nil, err
 	}
-	st := dir.State()
-	if st == nil {
-		return nil, nil
-	}
+	return dir.State(), nil
+}
+
+// standingsOf ranks a replayed tournament and attaches the prizes.
+func standingsOf(st *tournoi.State) *StandingsView {
 	v := &StandingsView{
 		Finished: st.Finished,
 		Pool:     st.Pool(),
@@ -90,7 +104,7 @@ func (d *Service) Standings(ctx context.Context, tournamentID int64) (*Standings
 			})
 		}
 	}
-	return v, nil
+	return v
 }
 
 // rowsFor turns a ranking into rows, sharing the prizes of the places a tie occupies.
@@ -117,6 +131,9 @@ func rowsFor(st *tournoi.State, ranking []tournoi.Rank, amounts []float64) []Sta
 		for _, ph := range st.Phases {
 			row.Wins += ph.Wins[r.Player]
 			row.Losses += ph.Losses[r.Player]
+			if slices.Contains(ph.Entrants, r.Player) {
+				row.Phase = ph.Index
+			}
 		}
 		out = append(out, row)
 	}
@@ -136,25 +153,38 @@ func lossesHead(l render.Labeler) string {
 	return "D"
 }
 
+// termSectionColumn heads the column naming the ranking a row belongs to; the engine has no
+// such term.
+const termSectionColumn render.Term = "section_column"
+
+func sectionHead(l render.Labeler) string {
+	if h := l.Term(termSectionColumn, 0); h != string(termSectionColumn) {
+		return h
+	}
+	return "Section"
+}
+
 // StandingsCSV exports the standings in the USER'S LANGUAGE.
 //
 // The engine's own CSV is in French; this one uses the display page's catalogue and labeler.
 // The separator is a semicolon, which a French spreadsheet opens as is.
 func (d *Service) StandingsCSV(ctx context.Context, tournamentID int64) (string, error) {
-	v, err := d.Standings(ctx, tournamentID)
+	st, err := d.replayed(ctx, tournamentID)
 	if err != nil {
 		return "", err
 	}
-	if v == nil {
+	if st == nil {
 		return "", direction.ErrNoDirection
 	}
+	v := standingsOf(st)
 	cat, _ := d.directionStrings(ctx)
 	l := direction.NewLabeler(cat, nil)
 	var b strings.Builder
 	w := csv.NewWriter(&b)
 	w.Comma = ';'
+	// The first column says which ranking a row belongs to, the second how far the player went.
 	head := []string{
-		l.Term(render.TermPhase, 0), l.Term(render.TermRank, 0), "id",
+		sectionHead(l), l.Term(render.TermPhase, 0), l.Term(render.TermRank, 0), "id",
 		l.Term(render.TermPlayer, 0), l.Term(render.TermClub, 0),
 		l.Term(render.TermWins, 0), lossesHead(l),
 		l.Term(render.TermState, 0), l.Term(render.TermPrize, 0),
@@ -164,12 +194,19 @@ func (d *Service) StandingsCSV(ctx context.Context, tournamentID int64) (string,
 	}
 	for _, sec := range v.Sections {
 		name := l.SectionName(sec.Name)
+		if sec.Name == "" {
+			name = l.Term(render.TermStandings, 0)
+		}
 		for _, r := range sec.Rows {
 			prize := ""
 			if r.Prize != 0 {
 				prize = strconv.FormatFloat(r.Prize, 'f', 2, 64)
 			}
-			row := []string{name, strconv.Itoa(r.Rank), r.ID, r.Name, r.Club,
+			phase := ""
+			if r.Phase < len(st.Phases) {
+				phase = l.PhaseName(st.Phases[r.Phase].Cfg)
+			}
+			row := []string{name, phase, strconv.Itoa(r.Rank), r.ID, r.Name, r.Club,
 				strconv.Itoa(r.Wins), strconv.Itoa(r.Losses), l.Note(r.Note), prize}
 			if err := w.Write(row); err != nil {
 				return "", err

@@ -2419,6 +2419,7 @@
             "prize": "Preis",
             "wins": "S",
             "losses_column": "N",
+            "section_column": "Abschnitt",
             "opponents": "Bisherige Gegner",
             "waiting": "Wartend",
             "state": "Status",

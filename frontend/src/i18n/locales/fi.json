@@ -2419,6 +2419,7 @@
             "prize": "Palkinto",
             "wins": "V",
             "losses_column": "T",
+            "section_column": "Osio",
             "opponents": "Kohdatut vastustajat",
             "waiting": "Odottaa",
             "state": "Tila",

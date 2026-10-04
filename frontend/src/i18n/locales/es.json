@@ -2419,6 +2419,7 @@
             "prize": "Premio",
             "wins": "V",
             "losses_column": "D",
+            "section_column": "Sección",
             "opponents": "Rivales enfrentados",
             "waiting": "Espera",
             "state": "Estado",

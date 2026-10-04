@@ -3,6 +3,7 @@ package service_test
 import (
 	"context"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	tournoi "github.com/PileOfCells/backgammon-tournoi"
@@ -109,4 +110,49 @@ func TestClosingFromTheQueueStoresFinished(t *testing.T) {
 
 	confirmFinish(t, ctx, svc, tid)
 	assertState(t, ctx, svc, tid, "finished")
+}
+
+// The CSV names the phase each player reached: the qualified reach the bracket, the others stop
+// in the Swiss, and a spreadsheet filters on that column.
+func TestStandingsCSVNamesThePhaseReached(t *testing.T) {
+	ctx, svc, raw := openService(t)
+	tid, err := raw.Tournaments().Create(ctx, "", "Club", "2026-09-12", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cfg := `{"name":"Club","tables":{"count":4},"phases":[` +
+		`{"kind":"swiss_lives","length":5,"lives":2,"mode":"continuous","name":"Suisse"},` +
+		`{"kind":"bracket","length":5,"entry":"top:4","name":"Tableau"}]}`
+	if err := svc.CreateDirection(ctx, tid, cfg, 5); err != nil {
+		t.Fatal(err)
+	}
+	for i, p := range names("P", 8) {
+		if _, err := svc.AddParticipant(ctx, tid, p, "", float64(1600-10*i)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	playOut(t, ctx, svc, tid)
+
+	out, err := svc.StandingsCSV(ctx, tid)
+	if err != nil {
+		t.Fatal(err)
+	}
+	lines := strings.Split(strings.TrimSpace(out), "\n")
+	head := strings.Split(lines[0], ";")
+	col := -1
+	for i, h := range head {
+		if h == "Phase" {
+			col = i
+		}
+	}
+	if col < 0 {
+		t.Fatalf("no Phase column in %q", lines[0])
+	}
+	reached := map[string]int{}
+	for _, l := range lines[1:9] {
+		reached[strings.Split(l, ";")[col]]++
+	}
+	if reached["Tableau"] != 4 || reached["Suisse"] != 4 {
+		t.Errorf("phase reached by the 8 players: %v, want 4 in the bracket and 4 in the Swiss\n%s", reached, out)
+	}
 }
