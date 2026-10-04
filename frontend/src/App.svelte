@@ -72,6 +72,7 @@
     import { initPageStep } from './services/pageStepSetting.js';
     import { applyTabPanels } from './services/tabHandler.js';
     import { resizable } from './utils/resizeHandle.js';
+    import { rememberedTabHeight, rememberTabHeight } from './utils/tabHeights.js';
     import { fileDrop } from './utils/fileDrop.js';
     import { loadWorstBlunders } from './services/positionLoader.js';
 
@@ -234,6 +235,8 @@
                 // Transcription is a scratch mode too: the board belongs to the draft's Cursor (ADR-0045).
                 if (tab === 'transcription' && $statusBarModeStore !== 'TRANSCRIBE') enterTranscribeMode();
                 else if (!isFirstRun && prevTab === 'transcription' && tab !== 'transcription' && $statusBarModeStore === 'TRANSCRIBE') exitTranscribeMode();
+                const remembered = rememberedTabHeight(tab);
+                if (remembered) panelHeight = remembered;
                 applyTabPanels(tab);
             });
         });
@@ -248,7 +251,10 @@
     }
     function savePanelSize(size, side) {
         if (side) savePanelWidth(size);
-        else savePanelHeight(size);
+        else {
+            savePanelHeight(size);
+            rememberTabHeight($activeTabStore, size);
+        }
     }
 
     // A trackpad fires many wheel events per gesture, each a Wails round trip; 60 ms between
@@ -387,7 +393,7 @@
 
         // One-shot seed of the local $state: the resize-handle drag owns it afterwards.
         initPanelSize().then(() => {
-            panelHeight = get(panelHeightStore);
+            panelHeight = rememberedTabHeight(get(activeTabStore)) ?? get(panelHeightStore);
             panelWidth = get(panelWidthStore);
         });
 

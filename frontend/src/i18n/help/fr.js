@@ -48,6 +48,7 @@ export default {
 <li>étudier les positions par répétition espacée (panneau Anki),</li>
 <li>afficher les métadonnées de la base de données (panneau métadonnées).</li>
 </ul>
+<p>La hauteur du panneau se règle en tirant sa poignée ; chaque onglet retient la sienne.</p>
 <p>Des fenêtres modales peuvent s'afficher pour:</p>
 <ul>
 <li>afficher l'aide de blunderDB,</li>

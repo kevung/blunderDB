@@ -48,6 +48,7 @@ export default {
 <li>study positions with spaced repetition (Anki panel),</li>
 <li>display the database metadata (metadata panel).</li>
 </ul>
+<p>The panel height is set by dragging its handle; each tab remembers its own.</p>
 <p>Modal windows can be displayed to:</p>
 <ul>
 <li>display the blunderDB help,</li>
