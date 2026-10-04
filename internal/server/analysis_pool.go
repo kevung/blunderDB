@@ -37,6 +37,8 @@ type analysisPool struct {
 	turn   int
 	credit int
 	closed bool
+	// served counts the units handed out per tenant since the pool started.
+	served map[string]int64
 }
 
 // searcherFor hands a unit the worker's own Searcher for a ply and pruning
@@ -61,7 +63,7 @@ type poolJob struct {
 func (j *poolJob) wait() { <-j.done }
 
 func newAnalysisPool(workers int, weights map[string]int) *analysisPool {
-	p := &analysisPool{workers: max(workers, 1), weights: weights, queues: map[string][]*poolJob{}}
+	p := &analysisPool{workers: max(workers, 1), weights: weights, queues: map[string][]*poolJob{}, served: map[string]int64{}}
 	p.cond = sync.NewCond(&p.mu)
 	return p
 }
@@ -174,6 +176,13 @@ func (p *analysisPool) close() {
 	p.cond.Broadcast()
 }
 
+// servedTo is how many units scope has been handed so far.
+func (p *analysisPool) servedTo(scope string) int64 {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return p.served[scope]
+}
+
 func (p *analysisPool) weight(scope string) int {
 	if w := p.weights[scope]; w > 0 {
 		return w
@@ -209,6 +218,7 @@ func (p *analysisPool) takeLocked() (*poolJob, func(searcherFor), bool) {
 			j := jobs[0]
 			if unit, ok := j.next(); ok {
 				j.inflight++
+				p.served[scope]++
 				p.queues[scope] = jobs
 				if p.credit--; p.credit <= 0 {
 					p.turn++

@@ -137,7 +137,7 @@ type Options struct {
 	// not depend on what this machine has generated.
 	NoBearoffTable bool
 	// Exec, when set, plays each batch's games in place of the rollout's
-	// own goroutines, so that a caller sharing its cores between several
+	// own goroutines (Settings.Workers is then ignored), so that a caller sharing its cores between several
 	// computations can interleave one long rollout with other work.
 	Exec Exec
 	// withoutLuck turns the variance reduction off, for the test that

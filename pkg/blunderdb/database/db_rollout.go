@@ -32,7 +32,7 @@ func (d *Database) RolloutPosition(ctx context.Context, positionID int64, s roll
 	if err != nil {
 		return nil, err
 	}
-	res, err := rollouts.Run(ctx, pos, s, moves, progress)
+	res, err := rollouts.Run(ctx, pos, s, moves, nil, progress)
 	if err != nil {
 		return res, err
 	}

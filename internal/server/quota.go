@@ -31,6 +31,9 @@ type TenantQuotas struct {
 	// sweeps, comparisons, a cube matrix, a bare evaluation, rollouts. Past
 	// it, a request is refused (429), a running sweep or rollout stops at its
 	// next step and a comparison answers what it had, flagged quotaExceeded.
+	// Every computation runs on the shared workers (analysisPool) and each
+	// unit (a position, a cell, a game) charges the time its worker spent on
+	// it, so the sum is CPU time whatever the workers it spread over.
 	AnalysisSecondsPerDay int64 `json:"analysisSecondsPerDay"`
 
 	// MaxConcurrentImports: imports of one tenant running at once; one more is
@@ -84,12 +87,7 @@ func (q *quotaLedger) charge(scope string, d time.Duration) {
 	q.spent[scope] += d
 }
 
-// Engine time is charged unit by unit: every computation runs on the shared
-// workers (analysisPool), and each unit (a position, a cell, a game) charges
-// the time its worker spent on it. The sum is CPU time, whatever the number
-// of workers a computation happened to spread over.
-
-// spender charges the engine time of one search, run by one worker, to scope
+// spender charges the engine time of one unit, run by one worker, to scope
 // and reports whether some is left: a worker stops picking positions on false.
 func (q *quotaLedger) spender(scope string) func(time.Duration) bool {
 	return func(d time.Duration) bool {

@@ -273,14 +273,13 @@ var ErrLoad = errors.New("rollouts: cannot load position")
 
 // Position loads positionID and rolls it out, writing nothing: the caller
 // stores the result with Store when asked to. Cancelled, it returns the games
-// finished so far (Stop = cancelled) with ctx's error. exec, when set, plays
-// the games (rollout.Options.Exec).
+// finished so far (Stop = cancelled) with ctx's error. exec is Run's.
 func Position(ctx context.Context, st storage.Storage, scope string, positionID int64, s rollout.Settings, moves []string, exec rollout.Exec, progress func(rollout.Progress)) (*rollout.Result, error) {
 	pos, err := Load(ctx, st, scope, positionID)
 	if err != nil {
 		return nil, err
 	}
-	return rollout.Run(ctx, *pos, s, rollout.Options{Moves: moves, Exec: exec, Progress: progress})
+	return Run(ctx, pos, s, moves, exec, progress)
 }
 
 // Load reads the position a rollout is asked on, a failure wrapped in
@@ -295,9 +294,9 @@ func Load(ctx context.Context, st storage.Storage, scope string, positionID int6
 }
 
 // Run rolls pos out: its plays, moves naming them when set, or its cube
-// decision.
-func Run(ctx context.Context, pos *domain.Position, s rollout.Settings, moves []string, progress func(rollout.Progress)) (*rollout.Result, error) {
-	return rollout.Run(ctx, *pos, s, rollout.Options{Moves: moves, Progress: progress})
+// decision. exec, when set, plays the games (rollout.Options.Exec).
+func Run(ctx context.Context, pos *domain.Position, s rollout.Settings, moves []string, exec rollout.Exec, progress func(rollout.Progress)) (*rollout.Result, error) {
+	return rollout.Run(ctx, *pos, s, rollout.Options{Moves: moves, Exec: exec, Progress: progress})
 }
 
 // ParseQuery reads query as the search bar does, refusing a token it does not

@@ -144,7 +144,8 @@ func TestRolloutOnPoolMatchesItsOwnWorkers(t *testing.T) {
 
 // TestLongRolloutLetsAnotherTenantThrough: with one engine worker, a tenant's
 // long rollout yields it between games, so another tenant's evaluation is
-// answered while the rollout still runs, not after it.
+// answered while the rollout still runs, after fewer of its games than one
+// batch holds: the rollout's unit is a game, not a batch.
 func TestLongRolloutLetsAnotherTenantThrough(t *testing.T) {
 	ts, srv := newQuotaTestServer(t, TenantQuotas{})
 	srv.analysis = newAnalysisPool(1, nil)
@@ -154,8 +155,9 @@ func TestLongRolloutLetsAnotherTenantThrough(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	client := &http.Client{Timeout: 30 * time.Second}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 	var body bytes.Buffer
 	if err := json.NewEncoder(&body).Encode(rolloutPositionReq{PositionID: id, Rollout: "fast,games=746496,min-games=746496,truncation=2,candidates=2"}); err != nil {
@@ -171,16 +173,20 @@ func TestLongRolloutLetsAnotherTenantThrough(t *testing.T) {
 			resp.Body.Close()
 		}
 	}()
-
-	// The rollout holds the worker once its job is queued.
-	deadline := time.Now().Add(10 * time.Second)
-	for {
-		srv.analysis.mu.Lock()
-		queued := len(srv.analysis.queues[testTenant]) > 0
-		srv.analysis.mu.Unlock()
-		if queued {
-			break
+	// However the test ends, the rollout is cancelled and its handler gone
+	// before the server closes.
+	defer func() {
+		cancel()
+		select {
+		case <-long:
+		case <-time.After(30 * time.Second):
+			t.Error("the cancelled rollout did not end")
 		}
+	}()
+
+	// The rollout is playing once the pool has handed it a game.
+	deadline := time.Now().Add(10 * time.Second)
+	for srv.analysis.servedTo(testTenant) == 0 {
 		if time.Now().After(deadline) {
 			t.Fatal("the rollout never reached the pool")
 		}
@@ -194,11 +200,13 @@ func TestLongRolloutLetsAnotherTenantThrough(t *testing.T) {
 	evalReq, _ := http.NewRequest(http.MethodPost, ts.URL+"/v1/gammonnet.evaluate", &buf)
 	evalReq.Header.Set(middleware.TenantHeader, "2")
 	evalReq.Header.Set("Content-Type", "application/json")
-	resp, err := http.DefaultClient.Do(evalReq)
+	before := srv.analysis.servedTo(testTenant)
+	resp, err := client.Do(evalReq)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("evaluate beside a long rollout: %v", err)
 	}
 	resp.Body.Close()
+	gamesMeanwhile := srv.analysis.servedTo(testTenant) - before
 	if resp.StatusCode != http.StatusOK {
 		t.Fatalf("evaluate beside a long rollout: %d", resp.StatusCode)
 	}
@@ -207,6 +215,8 @@ func TestLongRolloutLetsAnotherTenantThrough(t *testing.T) {
 		t.Fatal("the evaluation was answered only once the rollout had ended")
 	default:
 	}
-	cancel()
-	<-long
+	// A batch is 36 games of each of the 2 candidates.
+	if gamesMeanwhile >= 72 {
+		t.Fatalf("the rollout played %d games while the evaluation waited; want fewer than a batch", gamesMeanwhile)
+	}
 }
