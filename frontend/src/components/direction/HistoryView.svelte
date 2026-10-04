@@ -101,6 +101,7 @@
        l'utilisateur : le moteur, lui, n'en écrit aucune. */
     /** @param {import('../../../wailsjs/go/models').service.HistoryEntry} e */
     function what(e) {
+        const loser = e.winner && e.winner === e.a ? e.bName || e.b : e.aName || e.a;
         switch (e.kind) {
             case 'created':
                 return $t('direction.history.created');
@@ -117,16 +118,17 @@
                     where: renderLabel($t, e.label)
                 });
             case 'result':
-                if (e.forfeit) return $t('direction.history.forfeit', { winner: e.winnerName });
+                if (e.forfeit) return $t('direction.history.forfeit', { winner: e.winnerName, loser });
                 /* `omitempty` : un côté absent vaut zéro ; les deux absents = aucun score saisi. */
-                if (e.scoreA == null && e.scoreB == null) return $t('direction.history.resultNoScore', { winner: e.winnerName });
+                if (e.scoreA == null && e.scoreB == null) return $t('direction.history.resultNoScore', { winner: e.winnerName, loser });
                 return $t('direction.history.result', {
                     winner: e.winnerName,
+                    loser,
                     scoreA: e.scoreA ?? 0,
                     scoreB: e.scoreB ?? 0
                 });
             case 'result_corrected':
-                return $t('direction.history.corrected', { winner: e.winnerName });
+                return $t('direction.history.corrected', { winner: e.winnerName, loser });
             case 'match_cancelled':
                 return $t('direction.history.cancelled', { match: e.matchId });
             case 'bye':

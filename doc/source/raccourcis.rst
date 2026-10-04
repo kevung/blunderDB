@@ -129,6 +129,7 @@ Outils
    "CTRL-MAJ-T", "Afficher/cacher le panneau Transcription (brouillons de matchs)."
    "J / K", "Dans la file des propositions d'un tournoi dirigé : descendre, monter."
    "ENTRÉE", "Dans la file des propositions : confirmer la proposition choisie."
+   "TAB (page du tournoi)", "Premier arrêt dans l'onglet Direction : « Aller à la file » ; ENTRÉE pose le focus sur la file des propositions."
    "GAUCHE / DROITE", "Dans la fiche de résultat, hors d'un champ : choisir le joueur de gauche ou celui de droite ; ENTRÉE enregistre sa victoire."
    "CTRL-Z", "Reprendre la dernière décision d'un tournoi dirigé (hors d'un champ de saisie, où il annule la frappe)."
    "TAB (focus perdu)", "Sous la page d'un tournoi dirigé, quand le focus est tombé sur la page : le ramener sur le premier élément de la page, sans ouvrir la recherche."

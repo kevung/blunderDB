@@ -14,10 +14,11 @@
      *     onClose?: () => void,
      *     onReopen?: () => void,
      *     onCSV?: () => void,
-     *     onSave?: () => void
+     *     onSave?: () => void,
+     *     onHistory?: (name: string) => void
      * }}
      */
-    let { view = null, busy = false, running = 0, onClose = () => {}, onReopen = () => {}, onCSV = () => {}, onSave = () => {} } = $props();
+    let { view = null, busy = false, running = 0, onClose = () => {}, onReopen = () => {}, onCSV = () => {}, onSave = () => {}, onHistory = undefined } = $props();
 
     /* Clore et rouvrir se confirment SUR PLACE, comme « Tout lancer » : clore avec des
        matchs en cours fige le classement sans eux, et rouvrir fait cesser un classement final.
@@ -99,7 +100,15 @@
                                 <td class="rank">
                                     {r.rank}{#if r.shared}<span class="tied" title={$t('direction.standings.tiedHint')}>=</span>{/if}
                                 </td>
-                                <td class="name">{r.name}</td>
+                                <td class="name">
+                                    {#if onHistory}
+                                        <button type="button" class="link" data-testid="direction-standings-history" title={$t('direction.standings.historyHint')} onclick={() => onHistory(r.name)}
+                                            >{r.name}</button
+                                        >
+                                    {:else}
+                                        {r.name}
+                                    {/if}
+                                </td>
                                 <td class="muted">{r.club || ''}</td>
                                 <td class="record">{r.wins ?? 0}–{r.losses ?? 0}</td>
                                 <td class="muted">{renderNote($t, r.note)}</td>
@@ -167,6 +176,14 @@
         border-bottom: 1px solid var(--color-surface-alt);
     }
 
+    button.link {
+        background: none;
+        border: none;
+        padding: 0;
+        color: inherit;
+        cursor: pointer;
+        text-decoration: underline dotted;
+    }
     td.name {
         font-weight: 600;
     }

@@ -224,6 +224,7 @@
             >
         {/if}
     </header>
+    <p class="keys" data-testid="direction-proposals-keys">{$t('direction.proposals.keys')}</p>
 
     {#if confirming}
         <!-- « Confirmer » en tête, pour rester à l'écran au-dessus d'une longue liste. -->
@@ -250,7 +251,7 @@
 
     <!-- Focalisable par le script seul (J / K) : c'est là qu'ENTRÉE confirme la proposition
          choisie. Pas de listbox / option — chaque ligne porte ses propres boutons. -->
-    <ul class="queue" tabindex="-1" aria-label={$t('direction.proposals.title', { n: shown.length })} bind:this={queueEl}>
+    <ul class="queue" data-testid="direction-queue" tabindex="-1" aria-label={$t('direction.proposals.title', { n: shown.length })} bind:this={queueEl}>
         {#each shown as a, i (actionKey(a))}
             <!-- svelte-ignore a11y_no_noninteractive_tabindex, a11y_no_noninteractive_element_interactions -->
             <li
@@ -332,6 +333,12 @@
 {/if}
 
 <style>
+    .keys {
+        margin: 0 0 0.3rem;
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted, inherit);
+        opacity: 0.8;
+    }
     .proposals {
         display: flex;
         flex-direction: column;
