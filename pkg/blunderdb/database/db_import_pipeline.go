@@ -141,6 +141,7 @@ func (d *Database) ImportFiles(paths []string, opts ImportFilesOptions) ([]inges
 // countImported adds one committed file to the open batch's counts, as
 // writeImportedMatch does for a single file. Callers hold d.mu.
 func (d *Database) countImported(o ingest.FileOutcome) {
+	d.importBatchCounts.AnalysesDropped += o.DroppedAnalyses
 	switch o.Status {
 	case ingest.FileImported:
 		d.importBatchCounts.MatchesImported++

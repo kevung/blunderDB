@@ -1123,6 +1123,7 @@
         "reportDecisions": "{n} 件の判断（{who}）",
         "reportBothPlayers": "両プレイヤー",
         "reportNoAnalysis": "評価する解析がない",
+        "reportDroppedAnalyses": "解析なしでインポートされた判断 {n} 件（有限でない値）",
         "reportUnanalysed": "解析のない局面 {n} 件",
         "reportAnalyzeNow": "今すぐ解析",
         "reportWorst": "最悪の判断",

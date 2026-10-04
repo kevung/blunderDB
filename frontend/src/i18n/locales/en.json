@@ -1123,6 +1123,7 @@
         "reportDecisions": "over {n} decisions ({who})",
         "reportBothPlayers": "both players",
         "reportNoAnalysis": "no analysis to score",
+        "reportDroppedAnalyses": "{n} decision(s) imported without their analysis (value not a finite number)",
         "reportUnanalysed": "{n} position(s) with no analysis",
         "reportAnalyzeNow": "Analyse now",
         "reportWorst": "Worst decisions",

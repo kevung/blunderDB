@@ -1123,6 +1123,7 @@
         "reportDecisions": "σε {n} αποφάσεις ({who})",
         "reportBothPlayers": "και οι δύο παίκτες",
         "reportNoAnalysis": "καμία ανάλυση για βαθμολόγηση",
+        "reportDroppedAnalyses": "{n} απόφαση/αποφάσεις εισήχθη/εισήχθησαν χωρίς την ανάλυσή τους (μη πεπερασμένη τιμή)",
         "reportUnanalysed": "{n} θέση/θέσεις χωρίς ανάλυση",
         "reportAnalyzeNow": "Ανάλυση τώρα",
         "reportWorst": "Χειρότερες αποφάσεις",

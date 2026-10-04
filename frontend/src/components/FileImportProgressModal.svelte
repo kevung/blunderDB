@@ -127,6 +127,11 @@
                         {/if}
                     </span>
                 </div>
+                {#if report.analysesDropped > 0}
+                    <div class="report-line">
+                        <span class="report-label">{$t('import.reportDroppedAnalyses', { n: report.analysesDropped })}</span>
+                    </div>
+                {/if}
                 {#if report.positionsWithoutAnalysis > 0}
                     <div class="report-line">
                         <span class="report-label">{$t('import.reportUnanalysed', { n: report.positionsWithoutAnalysis })}</span>
