@@ -1975,7 +1975,7 @@
             "lives": "ライフ",
             "livesHint": "敗退までの敗戦数。",
             "target": "移行",
-            "targetHint": "ライフの合計がこの数に達したらトーナメント表へ移ります。0：移行しません。",
+            "targetHint": "残りライフの合計(プレイヤー数×ライフ)がこの数まで下がったらトーナメント表へ移ります。0: 切替なし。",
             "finalLength": "決勝",
             "finalLengthHint": "決勝のマッチ長。0：他の試合と同じ。",
             "tables": "卓",
@@ -2047,7 +2047,8 @@
             "qualifiers": "通過者",
             "qualifiersHint": "各グループから次のフェーズへ進む人数。空欄：2。",
             "minPerPoint": "ペース（分/ポイント）",
-            "minPerPointHint": "1ポイントの予定所要時間（分）。時計バーは実測ペースをこれと比べ、終了予想もこれを基にします。空欄：8。"
+            "minPerPointHint": "1ポイントの予定所要時間（分）。時計バーは実測ペースをこれと比べ、終了予想もこれを基にします。空欄：8。",
+            "swissSkipped": "スイス式は省略されます。開始時のライフ {lives}、切替は {target}。切替を下げるかライフを増やしてください。"
         },
         "tabs": {
             "direction": "進行",
@@ -2263,7 +2264,9 @@
             "pairRatingHint": "既定では2人のレーティングの平均。入力した値で置き換わります。",
             "withdrawNowConfirm": "{name} を今すぐ大会から棄権させますか？以後の組み合わせから外れます（復帰可能）。",
             "withdrawLaterConfirm": "{name} を試合終了後に棄権させますか？以後の組み合わせから外れます（復帰可能）。",
-            "withdrawDo": "退会させる"
+            "withdrawDo": "退会させる",
+            "filterActive": "フィルター: {text}",
+            "filterClear": "フィルターを解除"
         },
         "bracket": {
             "correct": "結果を訂正",
@@ -2567,7 +2570,8 @@
             "loading": "テーブルを読み込み中…",
             "error": "テーブルを読み込めませんでした：{reason}",
             "eventError": "{event} を再生できません。そのテーブルは表示されません：{reason}",
-            "swapConfirm": "テーブル {from}（{a}）↔ テーブル {to}（{b}）？"
+            "swapConfirm": "テーブル {from}（{a}）↔ テーブル {to}（{b}）？",
+            "rencontreSettings": "イベントの設定"
         },
         "epreuves": {
             "pending": "{n}件 保留中",

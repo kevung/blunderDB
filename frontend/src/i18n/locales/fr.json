@@ -1975,7 +1975,7 @@
             "lives": "Vies",
             "livesHint": "Nombre de défaites avant l'élimination.",
             "target": "Bascule",
-            "targetHint": "Passer au tableau quand la somme des vies atteint ce nombre. 0 : pas de bascule.",
+            "targetHint": "Passer au tableau quand la somme des vies restantes (joueurs × vies) descend à ce nombre. 0 : pas de bascule.",
             "finalLength": "Finale",
             "finalLengthHint": "Longueur de la finale. 0 : la même que les autres matchs.",
             "tables": "Tables",
@@ -2047,7 +2047,8 @@
             "qualifiers": "Qualifiés",
             "qualifiersHint": "Nombre de qualifiés par poule pour la phase suivante. Vide : 2.",
             "minPerPoint": "Rythme (min/pt)",
-            "minPerPointHint": "Durée prévue d'un point, en minutes : la bande d'horloge compare le rythme observé à celui-ci, et la fin estimée en part. Vide : 8."
+            "minPerPointHint": "Durée prévue d'un point, en minutes : la bande d'horloge compare le rythme observé à celui-ci, et la fin estimée en part. Vide : 8.",
+            "swissSkipped": "La suisse serait sautée : {lives} vies au départ, pour une bascule à {target}. Baissez la bascule ou ajoutez des vies."
         },
         "tabs": {
             "direction": "Direction",
@@ -2263,7 +2264,9 @@
             "pairRatingHint": "Par défaut la moyenne des deux cotes ; une valeur saisie la remplace.",
             "withdrawNowConfirm": "Retirer {name} du tournoi maintenant ? Il ne sera plus apparié (réintégration possible).",
             "withdrawLaterConfirm": "Retirer {name} à la fin de son match ? Il ne sera plus apparié ensuite (réintégration possible).",
-            "withdrawDo": "Retirer"
+            "withdrawDo": "Retirer",
+            "filterActive": "filtre : {text}",
+            "filterClear": "Effacer le filtre"
         },
         "bracket": {
             "correct": "Corriger le résultat",
@@ -2567,7 +2570,8 @@
             "loading": "Chargement des tables…",
             "error": "Les tables n'ont pas pu être lues : {reason}",
             "eventError": "{event} ne se rejoue pas ; ses tables manquent : {reason}",
-            "swapConfirm": "Table {from} ({a}) ↔ Table {to} ({b}) ?"
+            "swapConfirm": "Table {from} ({a}) ↔ Table {to} ({b}) ?",
+            "rencontreSettings": "Réglages de l'événement"
         },
         "epreuves": {
             "pending": "{n} en attente",

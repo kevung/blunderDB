@@ -350,6 +350,12 @@
 
     <div class="head">
         <input bind:value={filter} type="text" placeholder={$t('direction.players.filter')} class="filter" data-testid="direction-player-filter" />
+        {#if filter.trim()}
+            <!-- Le filtre survit au changement d'épreuve : sans puce, des joueurs inscrits paraissent absents. -->
+            <button type="button" class="chip" data-testid="direction-player-filter-chip" title={$t('direction.players.filterClear')} onclick={() => (filter = '')}>
+                {$t('direction.players.filterActive', { text: filter.trim() })} &times;
+            </button>
+        {/if}
         <span class="count">{$t('direction.players.count', { n: rows.length })}</span>
     </div>
 
@@ -503,6 +509,12 @@
 
     .filter {
         min-width: 10rem;
+    }
+
+    .chip {
+        border-radius: 999px;
+        padding: 0 0.7em;
+        min-height: 24px;
     }
 
     .count {

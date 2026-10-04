@@ -6,6 +6,7 @@
      * pour toutes les épreuves — et choisir les salles où joue cette épreuve. Rattacher montre
      * d'abord ce qui va changer : les tables de l'épreuve deviennent celles de l'Événement.
      */
+    import { untrack } from 'svelte';
     import { t } from '../../i18n';
     import { renderConfigChange } from './labels.js';
     import TableSettingsEditor from './TableSettingsEditor.svelte';
@@ -43,6 +44,8 @@
     /** @type {ConfigPreview | null} */
     let preview = $state(null);
     let error = $state('');
+    // Replié à l'arrivée sur une épreuve déjà rattachée ; rattacher ne le referme pas sous la main.
+    let expanded = $state(untrack(() => rencontreId === 0));
 
     const current = $derived(rencontres.find((r) => r.id === rencontreId) || null);
     const others = $derived(rencontres.filter((r) => r.id !== rencontreId));
@@ -182,8 +185,12 @@
     const tableNumbers = $derived(current ? Array.from({ length: current.room?.tables || current.tables }, (_, i) => i + 1) : []);
 </script>
 
-<section class="rencontre" data-testid="rencontre-panel">
-    <h3>{$t('direction.rencontre.title')}</h3>
+<!-- Replié sur son titre une fois l'épreuve rattachée : en tête des Réglages, il reste visible sans défilement. -->
+<details class="rencontre" data-testid="rencontre-panel" bind:open={expanded}>
+    <summary data-testid="rencontre-summary">
+        <h3>{$t('direction.rencontre.title')}</h3>
+        {#if current}<span class="facts">&middot; {current.name}</span>{/if}
+    </summary>
     <p class="facts">{$t('direction.rencontre.hint')}</p>
     {#if current}
         <p data-testid="rencontre-current">
@@ -271,13 +278,44 @@
         </div>
     {/if}
     {#if error}<p class="error">{error}</p>{/if}
-</section>
+</details>
 
 <style>
     .rencontre {
+        padding: 0 0.75rem;
+    }
+    .rencontre[open] {
         display: flex;
         flex-direction: column;
         gap: 0.4em;
+    }
+    .rencontre > summary {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        min-height: 24px;
+    }
+    .rencontre > summary h3 {
+        display: inline;
+        margin: 0;
+    }
+    /* Cibles d'au moins 24 px, y compris celles des éditeurs enfants. */
+    .rencontre :global(button),
+    .rencontre :global(select),
+    .rencontre :global(input:not([type='checkbox'])) {
+        min-height: 24px;
+        box-sizing: border-box;
+    }
+    .rencontre :global(input[type='checkbox']) {
+        width: 24px;
+        height: 24px;
+    }
+    .rencontre :global(label) {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3em;
+        min-height: 24px;
     }
     .row {
         display: flex;

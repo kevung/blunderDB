@@ -60,6 +60,13 @@
     /* Identifiants du moteur ; libellés via direction.format.<kind>. */
     const phaseKinds = ['swiss_lives', 'lives_bracket', 'gsl', 'bracket', 'round_robin'];
 
+    /* La suisse bascule quand la somme des vies restantes tombe à la cible : si elle l'est déjà au départ, elle est sautée. */
+    /** @param {PhaseConfig} phase */
+    function swissSkipped(phase) {
+        const target = phase.target || 0;
+        return entrantCount > 0 && target > 0 && entrantCount * (phase.lives || 0) <= target;
+    }
+
     /** @param {number} i */
     function lockOf(i) {
         return locks.find((l) => l.phase === i + 1) || null;
@@ -341,8 +348,14 @@
                             </label>
                             <label title={$t('direction.settings.targetHint')}>
                                 {$t('direction.settings.target')}
-                                <input type="number" min="0" step="8" bind:value={phase.target} />
+                                <input type="number" min="0" step="8" bind:value={phase.target} data-testid="direction-settings-target-{i + 1}" />
                             </label>
+                            {#if swissSkipped(phase)}
+                                <!-- Sans cette alerte, la file propose « Phase suivante » d'emblée et la suisse paraît cassée. -->
+                                <p class="facts warn wide" role="status" data-testid="direction-settings-swiss-skipped-{i + 1}">
+                                    {$t('direction.settings.swissSkipped', { lives: entrantCount * (phase.lives || 0), target: phase.target })}
+                                </p>
+                            {/if}
                             <label title={$t('direction.settings.batchHint')}>
                                 {$t('direction.settings.batch')}
                                 <input type="number" min="0" max="120" bind:value={phase.batch_minutes} />

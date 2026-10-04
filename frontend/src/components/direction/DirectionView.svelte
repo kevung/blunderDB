@@ -814,11 +814,23 @@
     <div class="body">
         {#if hallOpen || hall || hallError}
             <div class="pane" hidden={!hallOpen} tabindex="-1" data-testid="direction-pane-hall" use:registerPane={'hall'} onscroll={() => onPaneScroll('hall')}>
+                <button
+                    type="button"
+                    class="link rencontre-settings"
+                    data-testid="hall-rencontre-settings"
+                    onclick={() => {
+                        hallOpen = false;
+                        tab = 'settings';
+                    }}>{$t('direction.hall.rencontreSettings')}</button
+                >
                 <HallView {hall} error={hallError} {busy} {act} onHistory={hallHistory} {onOutOfService} />
             </div>
         {/if}
         {#if visited.settings}
             <div class="pane" hidden={hallOpen || tab !== 'settings'} tabindex="-1" data-testid="direction-pane-settings" use:registerPane={'settings'} onscroll={() => onPaneScroll('settings')}>
+                {#if view}
+                    <RencontrePanel tournamentId={view.tournamentId} rencontreId={view.rencontreId || 0} />
+                {/if}
                 <DirectionSettings
                     bind:config
                     {directionState}
@@ -835,7 +847,6 @@
                     {onOpenPage}
                 />
                 {#if view}
-                    <RencontrePanel tournamentId={view.tournamentId} rencontreId={view.rencontreId || 0} />
                     {#if !view.rencontreId}
                         <TableSettingsEditor
                             testid="direction-tables-editor"

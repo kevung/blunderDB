@@ -1975,7 +1975,7 @@
             "lives": "Vite",
             "livesHint": "Numero di sconfitte prima dell'eliminazione.",
             "target": "Passaggio",
-            "targetHint": "Passare al tabellone quando la somma delle vite raggiunge questo numero. 0: nessun passaggio.",
+            "targetHint": "Passare al tabellone quando la somma delle vite rimanenti (giocatori × vite) scende a questo numero. 0: nessun passaggio.",
             "finalLength": "Finale",
             "finalLengthHint": "Lunghezza della finale. 0: come le altre partite.",
             "tables": "Tavoli",
@@ -2047,7 +2047,8 @@
             "qualifiers": "Qualificati",
             "qualifiersHint": "Giocatori per girone che passano alla fase successiva. Vuoto: 2.",
             "minPerPoint": "Ritmo (min/pt)",
-            "minPerPointHint": "Durata prevista di un punto, in minuti: la barra dell'orologio vi confronta il ritmo osservato, e la fine stimata parte da essa. Vuoto: 8."
+            "minPerPointHint": "Durata prevista di un punto, in minuti: la barra dell'orologio vi confronta il ritmo osservato, e la fine stimata parte da essa. Vuoto: 8.",
+            "swissSkipped": "La fase svizzera verrebbe saltata: {lives} vite all'inizio, con passaggio a {target}. Abbassi il passaggio o aggiunga vite."
         },
         "tabs": {
             "direction": "Direzione",
@@ -2263,7 +2264,9 @@
             "pairRatingHint": "Per impostazione predefinita la media delle due valutazioni; un valore inserito la sostituisce.",
             "withdrawNowConfirm": "Ritirare {name} dal torneo adesso? Non sarà più abbinato (reintegro possibile).",
             "withdrawLaterConfirm": "Ritirare {name} a fine partita? Dopo non sarà più abbinato (reintegro possibile).",
-            "withdrawDo": "Ritira"
+            "withdrawDo": "Ritira",
+            "filterActive": "filtro: {text}",
+            "filterClear": "Cancella il filtro"
         },
         "bracket": {
             "correct": "Correggere il risultato",
@@ -2567,7 +2570,8 @@
             "loading": "Caricamento dei tavoli…",
             "error": "Impossibile leggere i tavoli: {reason}",
             "eventError": "{event} non si ricostruisce; mancano i suoi tavoli: {reason}",
-            "swapConfirm": "Tavolo {from} ({a}) ↔ Tavolo {to} ({b})?"
+            "swapConfirm": "Tavolo {from} ({a}) ↔ Tavolo {to} ({b})?",
+            "rencontreSettings": "Impostazioni dell'Evento"
         },
         "epreuves": {
             "pending": "{n} in attesa",
