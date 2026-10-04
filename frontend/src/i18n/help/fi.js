@@ -1042,7 +1042,7 @@ export default {
 </tr>
 <tr>
 <td>Page Up</td>
-<td>Siirtyy sivun taaksepäin (oletuksena sata asemaa, säädettävissä kohdassa Asetukset &gt; Käyttöliittymä, enintään 10 % luettelosta; pysähtyy luettelon alkuun); ottelussa edellinen peli.</td>
+<td>Siirtyy sivun taaksepäin (oletuksena sata asemaa, säädettävissä kohdassa Asetukset &gt; Käyttöliittymä: 10, 50, 100, 500 tai 1 000 asemaa tai 10 % luettelosta; pysähtyy luettelon alkuun); ottelussa edellinen peli.</td>
 </tr>
 <tr>
 <td>VASEN, k</td>

@@ -35,6 +35,7 @@
     import { confirmAction } from '../services/confirmService.js';
     import PanelTable from './panels/PanelTable.svelte';
     import { panelKeyGuard } from '../services/keyboardService.js';
+    import { registerKeys } from '../services/keyDispatch.js';
 
     let { onOpenCollection } = $props();
 
@@ -558,6 +559,9 @@
         }
     }
 
+    /** @type {(() => void) | null} */
+    let unregisterKeys = null;
+
     async function removeFromCollectionSingle(positionId) {
         if (!activeCollection) return;
         if (!(await confirmAction($t('collection.confirmRemove', { count: 1 }), { confirmLabel: $t('common.delete') }))) return;
@@ -572,7 +576,7 @@
     }
 
     onMount(async () => {
-        document.addEventListener('keydown', handleKeyDown);
+        unregisterKeys = registerKeys('collectionPanel', handleKeyDown);
         if (mode === 'COLLECTION' && activeCollection && activeCollection.id) {
             view = 'detail';
             try {
@@ -584,7 +588,7 @@
     });
 
     onDestroy(() => {
-        document.removeEventListener('keydown', handleKeyDown);
+        unregisterKeys?.();
     });
 </script>
 

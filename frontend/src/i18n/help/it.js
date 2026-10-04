@@ -1042,7 +1042,7 @@ export default {
 </tr>
 <tr>
 <td>Pag su</td>
-<td>Torna indietro di una pagina (cento posizioni per impostazione predefinita, regolabile in Impostazioni &gt; Interfaccia, fino al 10 % dell'elenco; si ferma all'inizio dell'elenco); in un match, partita precedente.</td>
+<td>Torna indietro di una pagina (cento posizioni per impostazione predefinita, regolabile in Impostazioni &gt; Interfaccia: 10, 50, 100, 500 o 1 000 posizioni, oppure il 10 % dell'elenco; si ferma all'inizio dell'elenco); in un match, partita precedente.</td>
 </tr>
 <tr>
 <td>SINISTRA, k</td>

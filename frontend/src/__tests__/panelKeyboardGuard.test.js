@@ -65,21 +65,24 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 import MatchPanel from '../components/MatchPanel.svelte';
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import CollectionPanel from '../components/CollectionPanel.svelte';
+import { registerKeys } from '../services/keyDispatch.js';
 import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore } from '../stores/positionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
 
 let windowSpy;
+let unregisterSpy;
 
 beforeEach(() => {
     windowSpy = vi.fn();
-    window.addEventListener('keydown', windowSpy);
+    // The global scope is what a swallowed key must not reach.
+    unregisterSpy = registerKeys('global', windowSpy);
 });
 
 afterEach(() => {
     cleanup();
-    window.removeEventListener('keydown', windowSpy);
+    unregisterSpy();
     openPanels.set(new Set());
     databasePathStore.set('');
     tournamentsStore.set([]);

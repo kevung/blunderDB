@@ -1042,7 +1042,7 @@ export default {
 </tr>
 <tr>
 <td>Page préc.</td>
-<td>Recule d'une page (cent positions par défaut, réglable dans les Paramètres &gt; Interface, jusqu'à 10 % de la liste ; au début de la liste, s'y arrête) ; dans un match, partie précédente.</td>
+<td>Recule d'une page (cent positions par défaut, réglable dans les Paramètres &gt; Interface : 10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste ; au début de la liste, s'y arrête) ; dans un match, partie précédente.</td>
 </tr>
 <tr>
 <td>GAUCHE, k</td>

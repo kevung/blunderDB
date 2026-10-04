@@ -22,8 +22,7 @@ export const TIER = Object.freeze({
     MENU: 2,
     PANEL: 3,
     LOCAL: 4,
-    MODE: 5,
-    GLOBAL: 6
+    GLOBAL: 5
 });
 
 /** The tiers dispatched in the capture phase, before any element handler. */
@@ -49,15 +48,30 @@ export const SHORTCUTS = {
     },
     directionGrid: { tier: TIER.CAPTURE, group: 'direction', keys: digits('', 0, 9), shadows: digits('', 1, 6) },
 
-    // An open context menu owns its arrows and traps Tab.
+    // An open context menu owns its arrows and traps Tab; it runs before the docked panels, which
+    // therefore never see a key the menu claims.
     contextMenu: {
         tier: TIER.MENU,
         keys: ['ArrowDown', 'ArrowUp', 'Home', 'End', 'Tab', 'Shift+Tab'],
         shadows: ['ArrowDown', 'ArrowUp', 'Home', 'End', 'Tab']
     },
 
-    // Docked panels, each mounted while its tab is the active one.
+    // Docked panels, each mounted while its tab is the active one. Each swallows the keys it does
+    // not leave to the global handler (keyboardService.panelKeyGuard).
     search: { tier: TIER.PANEL, group: 'tab', keys: ['Enter', 'Tab'], shadows: ['Tab'] },
+    matchPanel: {
+        tier: TIER.PANEL,
+        group: 'tab',
+        keys: ['Escape', '/', 'j', 'k', 'ArrowDown', 'ArrowUp', 'Enter', 'Delete'],
+        shadows: ['Escape', '/', 'j', 'k', 'Delete']
+    },
+    collectionPanel: { tier: TIER.PANEL, group: 'tab', keys: ['Escape', 'Delete'], shadows: ['Escape', 'Delete'] },
+    tournamentPanel: {
+        tier: TIER.PANEL,
+        group: 'tab',
+        keys: ['Escape', 'j', 'k', 'ArrowDown', 'ArrowUp'],
+        shadows: ['Escape', 'j', 'k']
+    },
     transcription: {
         tier: TIER.PANEL,
         group: 'tab',
@@ -95,8 +109,9 @@ export const SHORTCUTS = {
     viewTabs: { tier: TIER.LOCAL, keys: digits('Ctrl+', 1, 9) },
     directionUndo: { tier: TIER.LOCAL, group: 'direction', keys: ['Ctrl+z'], shadows: ['Ctrl+z'] },
 
-    // Anki review on the Anki tab: handled inside the global dispatcher, which then stops.
-    ankiReview: { tier: TIER.MODE, group: 'tab', keys: [...digits('', 1, 4), 'Space', 'Escape', 'p'], shadows: ['Space', 'Escape', 'p'] },
+    // The Anki review keys (1-4, Space, Escape, p) are handled inside the global dispatcher
+    // (keyboardService.handleKeyDown), which leaves every other key to the review: no scope of
+    // their own, they are bound under `global`.
 
     // keyboardService.handleKeyDown.
     global: {

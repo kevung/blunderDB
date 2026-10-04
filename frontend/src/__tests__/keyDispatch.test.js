@@ -99,6 +99,27 @@ describe('keyDispatch', () => {
         expect(overlay).toHaveBeenCalledTimes(1);
     });
 
+    test('a key pressed during an input-method composition reaches no scope', () => {
+        const capture = reg('overlay');
+        const panel = reg('search');
+        press({ key: 'Enter', isComposing: true });
+        expect(capture).not.toHaveBeenCalled();
+        expect(panel).not.toHaveBeenCalled();
+        press({ key: 'Enter' });
+        expect(panel).toHaveBeenCalledTimes(1);
+    });
+
+    test('an open context menu claims its arrows before a docked panel sees them', () => {
+        reg('contextMenu', (e) => e.preventDefault());
+        const panel = reg('matchPanel', (e) => {
+            if (e.defaultPrevented) return;
+            e.stopPropagation();
+        });
+        const event = press({ key: 'ArrowDown' });
+        expect(event.defaultPrevented).toBe(true);
+        expect(panel).toHaveBeenCalledTimes(1);
+    });
+
     test('an unregistered scope no longer sees the keys', () => {
         const spy = vi.fn();
         const off = registerKeys('global', spy);

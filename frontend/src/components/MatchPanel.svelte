@@ -30,6 +30,7 @@
     import { editMatchTranscription } from '../services/transcriptionSave.js';
     import { enrichMatchFromFile } from '../services/importService.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
+    import { registerKeys } from '../services/keyDispatch.js';
     import { t, tMsg } from '../i18n';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import {
@@ -729,15 +730,18 @@
         }
     });
 
+    /** @type {(() => void) | null} */
+    let unregisterKeys = null;
+
     onMount(async () => {
         if (visible) await loadMatches();
         document.addEventListener('click', handleClickOutside);
-        document.addEventListener('keydown', handleKeyDown);
+        unregisterKeys = registerKeys('matchPanel', handleKeyDown);
     });
 
     onDestroy(() => {
         document.removeEventListener('click', handleClickOutside);
-        document.removeEventListener('keydown', handleKeyDown);
+        unregisterKeys?.();
     });
 </script>
 

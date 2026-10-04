@@ -37,6 +37,7 @@
     import { commentTextStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { panelKeyGuard } from '../services/keyboardService.js';
+    import { registerKeys } from '../services/keyDispatch.js';
     import { t, tMsg } from '../i18n';
     import { get } from 'svelte/store';
 
@@ -521,6 +522,9 @@
         }
     }
 
+    /** @type {(() => void) | null} */
+    let unregisterKeys = null;
+
     // Deferred focus, its timer cleared on re-run and teardown, or it fires into a
     // torn-down document (vitest fails on it) or focuses a closed panel.
     $effect(() => {
@@ -534,12 +538,12 @@
         return () => clearTimeout(timer);
     });
     onMount(() => {
-        document.addEventListener('keydown', handleKeyDown);
+        unregisterKeys = registerKeys('tournamentPanel', handleKeyDown);
         refreshDirectionSummaries();
     });
 
     onDestroy(() => {
-        document.removeEventListener('keydown', handleKeyDown);
+        unregisterKeys?.();
     });
 </script>
 
