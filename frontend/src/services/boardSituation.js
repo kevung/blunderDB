@@ -6,6 +6,7 @@ import { derived } from 'svelte/store';
 import { statusBarModeStore } from '../stores/uiStore.js';
 
 /** Mode du plateau brouillon → clé i18n de son bandeau. */
+/** @type {Record<string, string>} */
 const SCRATCH_BANNER = { EDIT: 'board.situation.search', EVAL: 'board.situation.eval' };
 
 /** La clé du bandeau à afficher, ou null quand le plateau montre la position courante. */

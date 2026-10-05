@@ -12,6 +12,7 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { writable, get } from 'svelte/store';
 import { boardMetrics } from '../utils/boardGeometry.js';
+import { defaultBoardConfig } from '../utils/boardConfig.js';
 import { EXCLUDE_EMPTY, stackSlotCenter, cubeBox, sideLayout } from '../utils/boardScene.js';
 import { attachBoardInteractions, hitTestSideControls, applyCheckerEdit, applyCubeClick, applyScoreClick } from '../utils/boardInteractions.js';
 import { newPlay } from '../services/quizPlay.js';
@@ -21,10 +22,16 @@ const W = 1000;
 const H = 720;
 const RECT = { left: 37, top: 11 };
 
+/** @typedef {import('../utils/boardGeometry.js').BoardMetrics} BoardMetrics */
+/** @typedef {import('../utils/boardConfig.js').BoardConfig} BoardConfig */
+/** @typedef {import('../utils/boardGeometry.js').BoardPosition} BoardPosition */
+
 function makeCfg(orientation = 'right') {
-    return { widthFactor: 0.75, orientation, checker: { sizeFactor: 0.97 } };
+    const base = defaultBoardConfig();
+    return { ...base, widthFactor: 0.75, orientation, checker: { ...base.checker, sizeFactor: 0.97 } };
 }
 
+/** @returns {BoardPosition & { id: number }} */
 function emptyPos() {
     return {
         id: 1,
@@ -41,7 +48,7 @@ function emptyPos() {
 function mount({ mode = 'EDIT', orientation = 'right', scale = 1, position = emptyPos(), mirrored = false } = {}) {
     const canvas = document.createElement('div');
     document.body.appendChild(canvas);
-    canvas.getBoundingClientRect = () => ({ left: RECT.left, top: RECT.top, width: W * scale, height: H * scale });
+    canvas.getBoundingClientRect = () => new DOMRect(RECT.left, RECT.top, W * scale, H * scale);
     const cfg = makeCfg(orientation);
     const geom = boardMetrics(W, H, cfg.widthFactor);
     const stores = {
@@ -65,7 +72,7 @@ function mount({ mode = 'EDIT', orientation = 'right', scale = 1, position = emp
         getCubeBox: () => state.cubeBox,
         stores,
         getPreviousDice: () => state.previousDice,
-        setPreviousDice: (d) => (state.previousDice = d),
+        setPreviousDice: (/** @type {number[]} */ d) => (state.previousDice = d),
         reset: vi.fn(),
         openContextMenu: vi.fn(),
         resetQuizPlay: vi.fn(),
@@ -74,21 +81,21 @@ function mount({ mode = 'EDIT', orientation = 'right', scale = 1, position = emp
     const detach = attachBoardInteractions(canvas, deps);
 
     // Drawing-space → client pixels, the inverse of boardMouseToDrawing().
-    const client = ({ x, y }) => ({ clientX: RECT.left + x * scale, clientY: RECT.top + y * scale });
-    const fire = (type, at, button = 0) => {
+    const client = (/** @type {{ x: number, y: number }} */ { x, y }) => ({ clientX: RECT.left + x * scale, clientY: RECT.top + y * scale });
+    const fire = (/** @type {string} */ type, /** @type {{ x: number, y: number }} */ at, button = 0) => {
         const event = new MouseEvent(type, { bubbles: true, cancelable: true, button, ...client(at) });
         canvas.dispatchEvent(event);
         return event;
     };
-    const click = (at, button = 0) => {
+    const click = (/** @type {{ x: number, y: number }} */ at, button = 0) => {
         fire('mousedown', at, button);
         fire('mouseup', at, button);
     };
-    const drag = (from, to, button = 0) => {
+    const drag = (/** @type {{ x: number, y: number }} */ from, /** @type {{ x: number, y: number }} */ to, button = 0) => {
         fire('mousedown', from, button);
         fire('mouseup', to, button);
     };
-    const slot = (point, index) => stackSlotCenter(geom, cfg, point, index);
+    const slot = (/** @type {number} */ point, /** @type {number} */ index) => /** @type {{ x: number, y: number }} */ (stackSlotCenter(geom, cfg, point, index));
     const pos = () => get(stores.position);
     return { canvas, cfg, geom, stores, state, deps, detach, fire, click, drag, slot, pos };
 }
@@ -291,12 +298,20 @@ describe('cube clicks', () => {
 
 // ── Dice, player rectangles, scores ─────────────────────────────────────────
 
+/**
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {number} playerOnRoll
+ */
 function sideTargets(geom, cfg, playerOnRoll) {
     const side = sideLayout(geom, cfg, playerOnRoll);
     return {
-        die: (i) => ({ x: side.diceX + i * (side.diceSize + side.diceGap), y: side.diceY }),
-        rect: (player) => ({ x: side.scoreX, y: (player === 0 ? side.bearoff1Y + side.score1Y : side.bearoff2Y + side.score2Y) / 2 - (player === 0 ? 0.3 : -0.3) * geom.checkerSize }),
-        score: (player) => ({ x: side.scoreX, y: player === 0 ? side.score1Y : side.score2Y })
+        die: (/** @type {number} */ i) => ({ x: side.diceX + i * (side.diceSize + side.diceGap), y: side.diceY }),
+        rect: (/** @type {number} */ player) => ({
+            x: side.scoreX,
+            y: (player === 0 ? side.bearoff1Y + side.score1Y : side.bearoff2Y + side.score2Y) / 2 - (player === 0 ? 0.3 : -0.3) * geom.checkerSize
+        }),
+        score: (/** @type {number} */ player) => ({ x: side.scoreX, y: player === 0 ? side.score1Y : side.score2Y })
     };
 }
 
@@ -404,9 +419,9 @@ describe('score clicks', () => {
     });
 
     test('money is symmetric: reaching -1 on one side sets the other; leaving it copies the score', () => {
-        expect(applyScoreClick({ score: [0, 5] }, 0, 0).score).toEqual([-1, -1]);
-        expect(applyScoreClick({ score: [-1, -1] }, 1, 2).score).toEqual([0, 0]);
-        expect(applyScoreClick({ score: [99, 4] }, 0, 2).score).toEqual([99, 4]);
+        expect(applyScoreClick({ ...emptyPos(), score: [0, 5] }, 0, 0).score).toEqual([-1, -1]);
+        expect(applyScoreClick({ ...emptyPos(), score: [-1, -1] }, 1, 2).score).toEqual([0, 0]);
+        expect(applyScoreClick({ ...emptyPos(), score: [99, 4] }, 0, 2).score).toEqual([99, 4]);
     });
 });
 
@@ -566,8 +581,8 @@ describe('le coup joué au plateau d’une transcription (T2.3, ADR-0052)', () =
         return p;
     }
 
-    const step = (from, to) => ({ from, to, hit: false });
-    const play = (...steps) => ({ steps, notation: '', result: {} });
+    const step = (/** @type {number} */ from, /** @type {number} */ to) => ({ from, to, hit: false });
+    const play = (/** @type {{ from: number, to: number, hit: boolean }[]} */ ...steps) => ({ steps, notation: '', result: {} });
     const POSITION = posWith({ 13: [5, 0], 8: [3, 0], 6: [5, 0] });
     const BY_ROLL = [
         { dice: [6, 1], plays: [play(step(13, 7), step(8, 7))] },
@@ -706,7 +721,7 @@ describe('le coup joué au plateau d’une transcription (T2.3, ADR-0052)', () =
 // mode TRANSCRIBE, au bouton gauche, et rien d'autre.
 
 describe('le clic sur le videau, en transcription', () => {
-    const cubeOf = (b) => get(b.stores.transcriptionCube);
+    const cubeOf = (/** @type {{ stores: { transcriptionCube: import('svelte/store').Readable<string|null> } }} */ b) => get(b.stores.transcriptionCube);
 
     test('un clic gauche sur le videau demande un double', () => {
         const b = mount({ mode: 'TRANSCRIBE' });

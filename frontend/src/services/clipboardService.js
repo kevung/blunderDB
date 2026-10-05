@@ -16,10 +16,13 @@ import { cubeRows, cubeInfoRows, cubeFactRows, checkerRows } from '../utils/anal
 import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
 import { STRIP, INK, splitWidth, paintTable } from '../utils/canvasTable.js';
 
+/** @typedef {{ xgid: string, analysisType: string, analysisEngineVersion: string, doublingCubeAnalysis: import('../../wailsjs/go/models.js').domain.DoublingCubeAnalysis, checkerAnalysis: { moves: import('../../wailsjs/go/models.js').domain.CheckerMove[] } }} PanelAnalysis */
+
 // Write a canvas PNG to the clipboard down the ADR-0004 fallback ladder: the
 // WebView clipboard first (no external tool), then the Go backend (xclip /
 // wl-copy, else a file). Returns { method: 'clipboard' } or { method: 'file',
 // path }; throws only if every rung fails.
+/** @param {HTMLCanvasElement} canvas */
 async function writeCanvasToClipboard(canvas) {
     // Rung 1: native WebView clipboard.
     try {
@@ -46,7 +49,7 @@ async function writeCanvasToClipboard(canvas) {
 export function copyPosition() {
     logger.log('copyPosition');
     const position = get(positionStore);
-    const analysis = get(analysisStore);
+    const analysis = /** @type {PanelAnalysis} */ (get(analysisStore));
     const comment = get(commentTextStore);
     const mode = get(statusBarModeStore);
 
@@ -160,6 +163,7 @@ export function copyPosition() {
 // needs user activation, which a Ctrl keydown does not grant in the WebView
 // (so Ctrl-C failed where the toolbar click worked). The WebView call stays as
 // a fallback.
+/** @param {string} text */
 export async function writeTextToClipboard(text) {
     try {
         if (await ClipboardSetText(text)) return;
@@ -234,8 +238,8 @@ export async function copyBoardWithAnalysisImage({ moves: only = [] } = {}) {
             return;
         }
 
-        const svgWidth = parseInt(svgEl.getAttribute('width')) || svgEl.clientWidth;
-        const svgHeight = parseInt(svgEl.getAttribute('height')) || svgEl.clientHeight;
+        const svgWidth = parseInt(svgEl.getAttribute('width') ?? '') || svgEl.clientWidth;
+        const svgHeight = parseInt(svgEl.getAttribute('height') ?? '') || svgEl.clientHeight;
 
         const clonedSvg = /** @type {SVGSVGElement} */ (svgEl.cloneNode(true));
         clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
@@ -285,6 +289,7 @@ export async function copyBoardWithAnalysisImage({ moves: only = [] } = {}) {
             canvas.width = svgWidth * scale;
             canvas.height = totalHeight * scale;
             const ctx = canvas.getContext('2d');
+            if (!ctx) throw new Error('2D canvas context unavailable');
             ctx.scale(scale, scale);
 
             ctx.fillStyle = '#f7f0e6';
@@ -348,6 +353,10 @@ export function stripMoves(analysis, only = []) {
 // analysisStrip says which block the image gets — a cube record, or the top
 // of a checker list (the `only` plays when named) — and how many rows it
 // takes. Null when there is nothing to paint.
+/**
+ * @param {any} analysis
+ * @param {string[]} [only]
+ */
 export function analysisStrip(analysis, only = []) {
     const cube = analysis?.doublingCubeAnalysis;
     const moves = analysis?.checkerAnalysis?.moves ?? [];
@@ -362,6 +371,10 @@ export function analysisStrip(analysis, only = []) {
 
 // paintAnalysisStrip paints the strip at y. Exported for the parity test:
 // what it hands fillText is what the DOM tables show.
+/**
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {{ analysis: any, position: any, isMatchMode?: boolean, y: number, width: number, only?: string[] }} params
+ */
 export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = false, y, width, only = [] }) {
     const strip = analysisStrip(analysis, only);
     if (!strip) return;
@@ -374,7 +387,7 @@ export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = fals
     if (strip.kind === 'cube') {
         const cube = analysis.doublingCubeAnalysis;
         // A live evaluation brings the panel's own decision (race regime included).
-        const decision = analysis.decision ?? cubeDecision({ cubeAnalysis: cube, turnability: cubeTurnability(position), stored: true });
+        const decision = analysis.decision ?? cubeDecision({ cubeAnalysis: cube, turnability: cubeTurnability(position) ?? undefined, stored: true });
         const block = cubeRows(decision, { t, cubeValue: position?.cube?.value ?? 0, isPlayedCubeAction: playedCubeActionPredicate(analysis, { matchMode: isMatchMode }), isMoney });
         const third = Math.floor(width / 3);
 

@@ -16,11 +16,20 @@ const EXCEPT_DOUBLE_CLICK_MS = 450;
 
 const MAX_CUBE_VALUE = 6; // log2 exponent: 64
 
+/** @typedef {import('./boardGeometry.js').BoardMetrics} BoardMetrics */
+/** @typedef {import('./boardGeometry.js').BoardPosition} BoardPosition */
+/** @typedef {import('./boardConfig.js').BoardConfig} BoardConfig */
+/** @typedef {{ x: number, y: number, button: number }} PressPoint */
+
+/** @param {string} mode */
 function isEditable(mode) {
     return mode === 'EDIT' || mode === 'EVAL';
 }
 
-/** A real roll: both dice on a face. Anything else is "no dice" (a cube decision). */
+/**
+ * A real roll: both dice on a face. Anything else is "no dice" (a cube decision).
+ * @param {number[]} dice
+ */
 function hasRoll(dice) {
     return dice[0] >= 1 && dice[0] <= 6 && dice[1] >= 1 && dice[1] <= 6;
 }
@@ -31,8 +40,8 @@ function hasRoll(dice) {
  *
  * @param {number} x
  * @param {number} y
- * @param {any} geom
- * @param {any} cfg
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
  * @param {number} playerOnRoll
  * @param {number} player
  */
@@ -46,6 +55,12 @@ export function hitTestBearoffTray(x, y, geom, cfg, playerOnRoll, player) {
 /**
  * Which side control a drawing-space point falls on: { die, playerRect, score }, each 0|1|null
  * (0 = bottom player). A die wins over its rectangle; a score box is carved out of it.
+ * @param {number} x
+ * @param {number} y
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {number} playerOnRoll
+ * @returns {{ die: number|null, playerRect: number|null, score: number|null }}
  */
 export function hitTestSideControls(x, y, geom, cfg, playerOnRoll) {
     const side = sideLayout(geom, cfg, playerOnRoll);
@@ -54,6 +69,7 @@ export function hitTestSideControls(x, y, geom, cfg, playerOnRoll) {
     const halfH = side.scoreHeight / 2;
     const inColumn = x >= side.scoreX - halfW && x <= side.scoreX + halfW;
 
+    /** @type {number|null} */
     let die = null;
     for (let index = 0; index < 2; index++) {
         const dieX = side.diceX + index * (side.diceSize + side.diceGap);
@@ -61,7 +77,9 @@ export function hitTestSideControls(x, y, geom, cfg, playerOnRoll) {
         if (x >= dieX - half && x <= dieX + half && y >= side.diceY - half && y <= side.diceY + half) die = index;
     }
 
+    /** @type {number|null} */
     let score = null;
+    /** @type {number|null} */
     let playerRect = null;
     const rows = [
         [side.score1Y, side.bearoff1Y],
@@ -78,7 +96,12 @@ export function hitTestSideControls(x, y, geom, cfg, playerOnRoll) {
     return { die, playerRect, score };
 }
 
-/** True when (x, y) lies outside the board proper (triangles and bar). */
+/**
+ * True when (x, y) lies outside the board proper (triangles and bar).
+ * @param {number} x
+ * @param {number} y
+ * @param {BoardMetrics} geom
+ */
 export function isOutsideBoard(x, y, geom) {
     const { originX, originY, boardWidth, boardHeight } = geom;
     return x < originX - boardWidth / 2 || x > originX + boardWidth / 2 || y < originY - boardHeight / 2 || y > originY + boardHeight / 2;
@@ -88,6 +111,11 @@ export function isOutsideBoard(x, y, geom) {
  * Put `count` checkers of the clicking button's colour on `point` (left → colour 0, right →
  * colour 1; bars are colour-fixed). Clicking the fifth checker of a stack of five or more adds
  * one. A blocked Except point is unblocked. `isSearchStructure` lifts the 15-per-colour cap.
+ * @param {BoardPosition} pos
+ * @param {number} point
+ * @param {number} count
+ * @param {number} button
+ * @param {boolean} isSearchStructure
  */
 export function applyCheckerEdit(pos, point, count, button, isSearchStructure) {
     if (pos.board.points[point]?.color === EXCLUDE_EMPTY) {
@@ -120,9 +148,12 @@ export function applyCheckerEdit(pos, point, count, button, isSearchStructure) {
  * centred → bottom → top owns (right-click backwards). Offered cube (take/pass search): edit the
  * value, centred, at least a double. EDIT: a centred cube is taken by the clicking side; the
  * owner's button raises it, the other lowers it, back to centred at 1.
+ * @param {BoardPosition} pos
+ * @param {number} button
+ * @param {{ evalMode?: boolean, offeredTakePass?: boolean }} [options]
  */
 export function applyCubeClick(pos, button, { evalMode = false, offeredTakePass = false } = {}) {
-    const up = (v) => Math.min(v + 1, MAX_CUBE_VALUE);
+    const up = (/** @type {number} */ v) => Math.min(v + 1, MAX_CUBE_VALUE);
     if (evalMode) {
         const cycle = [-1, 0, 1];
         const dir = button === 2 ? -1 : 1;
@@ -156,6 +187,9 @@ export function applyCubeClick(pos, button, { evalMode = false, offeredTakePass 
  * Score click: left lowers the away count (down to money, -1), right raises it (up to 99).
  * Money is symmetric: an away score facing a lone -1 is not a valid match state, so reaching or
  * leaving money on one side copies it to the other.
+ * @param {BoardPosition} pos
+ * @param {number} player
+ * @param {number} button
  */
 export function applyScoreClick(pos, player, button) {
     const other = 1 - player;
@@ -169,6 +203,8 @@ export function applyScoreClick(pos, player, button) {
 /**
  * Roll a die: left up (6 → 1), right down (1 → 6). A cleared die (0) steps down to 6, not into
  * negatives that would read as "no dice" forever.
+ * @param {number} value
+ * @param {number} button
  */
 function stepDie(value, button) {
     const v = value >= 1 && value <= 6 ? value : 0;
@@ -192,13 +228,19 @@ function stepDie(value, button) {
  *   reset()              blank the board (double-click outside, mode-specific)
  *   openContextMenu(at)  { x, y } client coordinates, NORMAL-like modes only
  *   logger               optional, `.log(...)`
+ *
+ * @param {HTMLElement} canvas
+ * @param {any} deps
  */
 export function attachBoardInteractions(canvas, deps) {
     const { cfg, stores } = deps;
-    const log = (...args) => deps.logger?.log(...args);
+    const log = (/** @type {unknown[]} */ ...args) => deps.logger?.log(...args);
+    /** @type {PressPoint|null} */
     let startMousePos = null;
+    /** @type {{ point: number, time: number }|null} */
     let lastExceptClick = null;
     // Le point d'où un glissé est parti, quand la pression a choisi une source.
+    /** @type {number|null} */
     let boardPress = null;
 
     const editable = () => isEditable(deps.getMode());
@@ -206,29 +248,41 @@ export function attachBoardInteractions(canvas, deps) {
         const { width, height } = deps.getSize();
         return boardMetrics(width, height, cfg.widthFactor);
     };
-    const toDrawing = (event) => {
+    const toDrawing = (/** @type {MouseEvent} */ event) => {
         const { width, height } = deps.getSize();
         return boardMouseToDrawing(event.clientX, event.clientY, canvas.getBoundingClientRect(), width, height);
     };
-    const checkerAt = (x, y) => {
+    const checkerAt = (/** @type {number} */ x, /** @type {number} */ y) => {
         const { width, height } = deps.getSize();
         return checkerPointAndCountAt(x, y, width, height, cfg.widthFactor, cfg.orientation);
     };
 
+    /**
+     * @param {MouseEvent} event
+     * @param {number} x
+     * @param {number} y
+     */
     function cubeClick(event, x, y) {
         const box = deps.getCubeBox();
         if (!box || Math.abs(x - box.x) > box.size / 2 || Math.abs(y - box.y) > box.size / 2) return;
         const mode = deps.getMode();
-        stores.position.update((pos) => applyCubeClick(pos, event.button, { evalMode: mode === 'EVAL', offeredTakePass: get(stores.offeredCube) && pos.decision_type === 1 }));
+        stores.position.update((/** @type {BoardPosition} */ pos) =>
+            applyCubeClick(pos, event.button, { evalMode: mode === 'EVAL', offeredTakePass: get(stores.offeredCube) && pos.decision_type === 1 })
+        );
     }
 
     // EVAL shares this flow with EDIT: the Eval panel needs real dice for candidate moves and
     // none for a cube verdict, which is exactly EDIT's rectangle/die toggle.
+    /**
+     * @param {MouseEvent} event
+     * @param {number} x
+     * @param {number} y
+     */
     function sideControlsClick(event, x, y) {
         const hit = hitTestSideControls(x, y, metrics(), cfg, get(stores.position).player_on_roll);
         if (hit.die === null && hit.playerRect === null && hit.score === null) return;
         log('side control clicked', hit);
-        stores.position.update((pos) => {
+        stores.position.update((/** @type {BoardPosition} */ pos) => {
             if (hit.die !== null) {
                 pos.decision_type = 0;
                 // Restore the cleared dice ONLY when they are cleared: with a roll on the board a
@@ -245,7 +299,7 @@ export function attachBoardInteractions(canvas, deps) {
                 pos.decision_type = 1; // doubling cube decision
                 deps.setPreviousDice([pos.dice[0], pos.dice[1]]);
                 pos.dice = [0, 0];
-            } else {
+            } else if (hit.score !== null) {
                 applyScoreClick(pos, hit.score, event.button);
             }
             return pos;
@@ -349,6 +403,7 @@ export function attachBoardInteractions(canvas, deps) {
         return true;
     }
 
+    /** @param {MouseEvent} event */
     function onMouseDown(event) {
         event.preventDefault(); // no text or element selection
         if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
@@ -368,10 +423,12 @@ export function attachBoardInteractions(canvas, deps) {
         sideControlsClick(event, x, y);
     }
 
+    /** @param {MouseEvent} event */
     function onMouseMove(event) {
         event.preventDefault();
     }
 
+    /** @param {MouseEvent} event */
     function onMouseUp(event) {
         event.preventDefault();
         // Avant la garde d'édition : le coup joué au plateau vit dans des modes qui n'éditent pas
@@ -388,8 +445,10 @@ export function attachBoardInteractions(canvas, deps) {
                 const now = Date.now();
                 if (!isMarker && lastExceptClick && lastExceptClick.point === checkerPoint && now - lastExceptClick.time < EXCEPT_DOUBLE_CLICK_MS) {
                     lastExceptClick = null;
-                    stores.position.update((pos) => {
-                        pos.board.points = pos.board.points.map((p, i) => (i === checkerPoint ? { checkers: 1, color: EXCLUDE_EMPTY } : p));
+                    stores.position.update((/** @type {BoardPosition} */ pos) => {
+                        pos.board.points = pos.board.points.map((/** @type {{ checkers: number, color: number }} */ p, /** @type {number} */ i) =>
+                            i === checkerPoint ? { checkers: 1, color: EXCLUDE_EMPTY } : p
+                        );
                         return pos;
                     });
                     return;
@@ -405,6 +464,10 @@ export function attachBoardInteractions(canvas, deps) {
     }
 
     // A press-and-release across several points fills them with the taller clicked count.
+    /**
+     * @param {PressPoint} startPos
+     * @param {PressPoint} endPos
+     */
     function fillCheckersBetween(startPos, endPos) {
         const start = checkerAt(startPos.x, startPos.y);
         const end = checkerAt(endPos.x, endPos.y);
@@ -414,10 +477,11 @@ export function attachBoardInteractions(canvas, deps) {
         const to = Math.max(start.checkerPoint, end.checkerPoint);
         const isSearchStructure = get(stores.activeTab) === 'search';
         for (let point = from; point <= to; point++) {
-            stores.position.update((pos) => applyCheckerEdit(pos, point, count, startPos.button, isSearchStructure));
+            stores.position.update((/** @type {BoardPosition} */ pos) => applyCheckerEdit(pos, point, count, startPos.button, isSearchStructure));
         }
     }
 
+    /** @param {MouseEvent} event */
     function onDoubleClick(event) {
         const { x, y } = toDrawing(event);
         if (stores.quizPlay && get(stores.quizPlay)) {
@@ -431,6 +495,7 @@ export function attachBoardInteractions(canvas, deps) {
 
     // Right-click menu only where the right button is otherwise idle: in EDIT and EVAL it
     // places the other colour's checker.
+    /** @param {MouseEvent} event */
     function onContextMenu(event) {
         event.preventDefault(); // no native menu, in every mode
         if (editable()) return;

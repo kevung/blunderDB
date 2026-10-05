@@ -171,7 +171,7 @@ export function cubeInfoRows(cubeAnalysis, { t, engineFallback = '' }) {
 // The position facts of a stored cube record, in the compact P/O grid the copied image paints
 // beside the decision (the DOM uses PositionFactsTable, ADR-0018), through the same two rules.
 /**
- * @param {CubeAnalysis | null | undefined} cube
+ * @param {Partial<CubeAnalysis> | null | undefined} cube
  * @returns {FactRows}
  */
 export function cubeFactRows(cube) {

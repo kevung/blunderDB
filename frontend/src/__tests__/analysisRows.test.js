@@ -26,7 +26,7 @@ import { cubeDecision, DECISION_STATE } from '../utils/cubeDecision.js';
 
 // Labels come back as their key: the tests read the key, the app reads the
 // translation, and both go through the same parameter.
-const t = (key) => key;
+const t = (/** @type {string} */ key) => key;
 
 describe('formatEquity — the single equity rule', () => {
     test.each([

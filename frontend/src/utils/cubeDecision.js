@@ -8,6 +8,7 @@ import { normalizeCubeAction } from './cubeAction.js';
 
 // The three options, in canonical order, never sorted (ADR-0020 rule 1): they are named, and
 // sorting by equity would permute rows across the 0-ply → display-depth escalation.
+/** @type {('no_double' | 'double_take' | 'double_pass')[]} */
 export const CUBE_OPTIONS = ['no_double', 'double_take', 'double_pass'];
 
 // The block's state, exactly one at a time (ADR-0020 rule 4); an empty cell means "still
@@ -122,8 +123,8 @@ function bestFromLabel(label) {
  * `equity`/`error` null until a value lands (ADR-0017 rule 3).
  * @param {object}  args
  * @param {object=} args.race         race.Eval currently on display (displayRace), when the position is a race
- * @param {boolean} args.isRace       whether the position is a pure bearoff at all
- * @param {object=} args.cubeAnalysis domain.DoublingCubeAnalysis from the live evaluation
+ * @param {boolean=} args.isRace      whether the position is a pure bearoff at all
+ * @param {Partial<import('../../wailsjs/go/models').domain.DoublingCubeAnalysis> | null=} args.cubeAnalysis domain.DoublingCubeAnalysis from the live evaluation
  * @param {string=} args.verdictKey   the live evaluation's typed verdict (ADR-0020 rule 3)
  * @param {boolean=} args.refused     the engine declined this position
  * @param {string=} args.turnability  cubeTurnability(position)

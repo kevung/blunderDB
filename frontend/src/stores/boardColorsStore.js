@@ -16,11 +16,15 @@ export const DEFAULT_BOARD_COLORS = {
     cube: '#ffffff'
 };
 
-export const BOARD_COLOR_KEYS = Object.keys(DEFAULT_BOARD_COLORS);
+/** @typedef {keyof typeof DEFAULT_BOARD_COLORS} BoardColorKey */
+/** @typedef {Partial<Record<BoardColorKey, string>>} BoardColorsInput */
+
+export const BOARD_COLOR_KEYS = /** @type {BoardColorKey[]} */ (Object.keys(DEFAULT_BOARD_COLORS));
 
 export const boardColorsStore = writable({ ...DEFAULT_BOARD_COLORS });
 
 // Keep only known keys and fall back to defaults for missing/empty values.
+/** @param {BoardColorsInput | null | undefined} colors */
 function sanitize(colors) {
     const out = { ...DEFAULT_BOARD_COLORS };
     if (colors && typeof colors === 'object') {
@@ -45,8 +49,12 @@ export async function initBoardColors() {
 }
 
 // Update a single colour and persist the whole palette.
+/**
+ * @param {string} key
+ * @param {string} value
+ */
 export function setBoardColor(key, value) {
-    if (!BOARD_COLOR_KEYS.includes(key)) return;
+    if (!(/** @type {string[]} */ (BOARD_COLOR_KEYS).includes(key))) return;
     boardColorsStore.update((current) => {
         const next = { ...current, [key]: value };
         SaveBoardColors(next).catch((err) => logger.error('Failed to save board colors:', err));
@@ -62,6 +70,7 @@ export function resetBoardColors() {
 }
 
 // Applique et persiste la palette d'un thème ; l'onglet Couleurs garde le dernier mot (ADR-0038).
+/** @param {BoardColorsInput} colors */
 export function applyBoardPalette(colors) {
     const next = sanitize(colors);
     boardColorsStore.set(next);

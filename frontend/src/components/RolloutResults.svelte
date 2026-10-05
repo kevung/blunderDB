@@ -7,6 +7,7 @@
     /** @type {{ rollouts?: any[], live?: any[], liveGames?: number, liveMaxGames?: number, unsaved?: any, isMoney?: boolean }} */
     let { rollouts = [], live = [], liveGames = 0, liveMaxGames = 0, unsaved = null, isMoney = undefined } = $props();
 
+    /** @type {Record<string, string>} */
     const CUBE_KEYS = { 'No double': 'analysis.noDouble', 'Double/Take': 'analysis.doubleTake', 'Double/Pass': 'analysis.doublePass' };
 
     /** @param {string} move */

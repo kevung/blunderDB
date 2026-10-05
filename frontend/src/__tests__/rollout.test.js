@@ -12,42 +12,43 @@ import { get } from 'svelte/store';
 const FAST = { truncation: 7, min_games: 108, max_games: 216, jsd_limit: 3, ply: 0, candidates: 5, seed: 1, workers: 0 };
 const STANDARD = { truncation: 11, min_games: 324, max_games: 1296, jsd_limit: 3, ply: 0, candidates: 5, seed: 1, workers: 0 };
 
+/** @type {Record<string, (e?: any) => void>} */
 const handlers = {};
-const startRollout = vi.fn(() => Promise.resolve());
-const startIDs = vi.fn(() => Promise.resolve());
-const cancelRollout = vi.fn();
-const countIDs = vi.fn(() => Promise.resolve(42));
-const rolloutStatus = vi.fn(() => Promise.resolve({ running: false }));
-const loadRollouts = vi.fn(() => Promise.resolve([]));
-const confirmAction = vi.fn(() => Promise.resolve(true));
+const startRollout = vi.fn((/** @type {any[]} */ ..._args) => Promise.resolve());
+const startIDs = vi.fn((/** @type {any[]} */ ..._args) => Promise.resolve());
+const cancelRollout = vi.fn((/** @type {any[]} */ ..._args) => {});
+const countIDs = vi.fn((/** @type {any[]} */ ..._args) => Promise.resolve(42));
+const rolloutStatus = vi.fn((/** @type {any[]} */ ..._args) => Promise.resolve(/** @type {Record<string, any>} */ ({ running: false })));
+const loadRollouts = vi.fn((/** @type {any[]} */ ..._args) => Promise.resolve(/** @type {object[]} */ ([])));
+const confirmAction = vi.fn((/** @type {any[]} */ ..._args) => Promise.resolve(true));
 
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
-    StartRollout: (...a) => startRollout(...a),
-    StartRolloutIDs: (...a) => startIDs(...a),
-    CancelRollout: (...a) => cancelRollout(...a),
-    CountRolloutIDs: (...a) => countIDs(...a),
-    RolloutStatus: (...a) => rolloutStatus(...a),
+    StartRollout: (/** @type {any[]} */ ...a) => startRollout(...a),
+    StartRolloutIDs: (/** @type {any[]} */ ...a) => startIDs(...a),
+    CancelRollout: (/** @type {any[]} */ ...a) => cancelRollout(...a),
+    CountRolloutIDs: (/** @type {any[]} */ ...a) => countIDs(...a),
+    RolloutStatus: (/** @type {any[]} */ ...a) => rolloutStatus(...a),
     RolloutPresets: () =>
         Promise.resolve([
             { name: 'fast', settings: FAST },
             { name: 'standard', settings: STANDARD }
         ])
 }));
-vi.mock('../../wailsjs/go/database/Database.js', () => ({ LoadRollouts: (...a) => loadRollouts(...a) }));
-const saveChoice = vi.fn(() => Promise.resolve());
-const getChoice = vi.fn(() => Promise.resolve({ preset: '', custom: null }));
-vi.mock('../../wailsjs/go/main/Config.js', () => ({ GetRolloutChoice: (...a) => getChoice(...a), SaveRolloutChoice: (...a) => saveChoice(...a) }));
+vi.mock('../../wailsjs/go/database/Database.js', () => ({ LoadRollouts: (/** @type {any[]} */ ...a) => loadRollouts(...a) }));
+const saveChoice = vi.fn((/** @type {any[]} */ ..._args) => Promise.resolve());
+const getChoice = vi.fn((/** @type {any[]} */ ..._args) => Promise.resolve({ preset: '', custom: null }));
+vi.mock('../../wailsjs/go/main/Config.js', () => ({ GetRolloutChoice: (/** @type {any[]} */ ...a) => getChoice(...a), SaveRolloutChoice: (/** @type {any[]} */ ...a) => saveChoice(...a) }));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({
     EventsOn: vi.fn((name, cb) => {
         handlers[name] = cb;
         return () => {};
     })
 }));
-const displayedIDs = vi.fn(() => [3, 5, 8]);
-vi.mock('../services/modeMachine.js', async (importOriginal) => ({ ...(await importOriginal()), withDisplayedPositionIDs: (run) => run(displayedIDs()) }));
-const copyImage = vi.fn();
-vi.mock('../services/clipboardService.js', async (importOriginal) => ({ ...(await importOriginal()), copyBoardWithAnalysisImage: (...a) => copyImage(...a) }));
-vi.mock('../services/confirmService.js', async (importOriginal) => ({ ...(await importOriginal()), confirmAction: (...a) => confirmAction(...a) }));
+const displayedIDs = vi.fn((/** @type {any[]} */ ..._args) => [3, 5, 8]);
+vi.mock('../services/modeMachine.js', async (importOriginal) => ({ ...(await importOriginal()), withDisplayedPositionIDs: (/** @type {(ids: number[]) => unknown} */ run) => run(displayedIDs()) }));
+const copyImage = vi.fn((/** @type {any[]} */ ..._args) => {});
+vi.mock('../services/clipboardService.js', async (importOriginal) => ({ ...(await importOriginal()), copyBoardWithAnalysisImage: (/** @type {any[]} */ ...a) => copyImage(...a) }));
+vi.mock('../services/confirmService.js', async (importOriginal) => ({ ...(await importOriginal()), confirmAction: (/** @type {any[]} */ ...a) => confirmAction(...a) }));
 
 const { positionStore } = await import('../stores/positionStore.js');
 const { databasePathStore } = await import('../stores/databaseStore.js');
@@ -103,7 +104,7 @@ function withCheckerAnalysis() {
 }
 
 /** The row of a play in the candidate moves table. */
-const row = (move) => /** @type {HTMLElement} */ (document.querySelector(`tr[data-move="${move}"]`));
+const row = (/** @type {string} */ move) => /** @type {HTMLElement} */ (document.querySelector(`tr[data-move="${move}"]`));
 
 async function renderPanel() {
     const view = render(AnalysisPanel, { props: { onClose: vi.fn() } });
@@ -163,7 +164,7 @@ describe('RolloutSettings', () => {
             expect(screen.getByTestId('rollout-' + key)).toBeTruthy();
         }
         await fireEvent.change(screen.getByTestId('rollout-max_games'), { target: { value: '720' } });
-        const last = saveChoice.mock.calls.at(-1)[0];
+        const last = saveChoice.mock.calls[saveChoice.mock.calls.length - 1][0];
         expect(last.preset).toBe('custom');
         expect(last.custom.max_games).toBe(720);
         expect(last.custom.seed).toBe(1);

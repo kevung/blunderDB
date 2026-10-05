@@ -30,7 +30,11 @@ export function rolloutsByMove({ stored = [], unsaved = null, live = [] } = {}) 
     return out;
 }
 
-/** The rollouts of the cube decision among them, newest first. */
+/**
+ * The rollouts of the cube decision among them, newest first.
+ * @param {any[]} [stored]
+ * @param {any} [unsaved]
+ */
 export function cubeRollouts(stored = [], unsaved = null) {
     return [...(unsaved ? [unsaved] : []), ...(stored ?? [])].filter((r) => r?.kind === 'cube');
 }

@@ -24,9 +24,18 @@
     /** @param {string} key @param {Event} event */
     function edit(key, event) {
         const value = /** @type {HTMLInputElement} */ (event.currentTarget).value;
-        setRolloutChoice({ preset: 'custom', custom: { ...choice.custom, [key]: value === '' ? '' : Number(value) } });
+        setRolloutChoice({
+            preset: 'custom',
+            custom: /** @type {import('../../wailsjs/go/models.js').rollout.Settings} */ (/** @type {unknown} */ ({ ...choice.custom, [key]: value === '' ? '' : Number(value) }))
+        });
     }
 
+    /** @param {string} key */
+    function fieldValue(key) {
+        return /** @type {Record<string, number> | null} */ (settings)?.[key];
+    }
+
+    /** @type {[string, string, string, number][]} */
     const FIELDS = [
         ['truncation', 'rollout.truncation', 'rollout.truncationHint', 1],
         ['min_games', 'rollout.minGames', 'rollout.minGamesHint', 36],
@@ -59,7 +68,7 @@
                 {#each FIELDS as [key, label, hint, step] (key)}
                     <label title={$t(hint)}>
                         <span>{$t(label)}</span>
-                        <input type="number" min="0" {step} value={settings[key]} onchange={(e) => edit(key, e)} data-testid={'rollout-' + key} />
+                        <input type="number" min="0" {step} value={fieldValue(key)} onchange={(e) => edit(key, e)} data-testid={'rollout-' + key} />
                     </label>
                 {/each}
             </div>
