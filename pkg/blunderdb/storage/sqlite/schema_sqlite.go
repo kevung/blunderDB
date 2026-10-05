@@ -433,9 +433,10 @@ var schemaStatements = []string{
 	)`,
 	// The origin of a Match played here (ADR-0072 rule 10): its Start (an
 	// XGID, '' for the opening position), the revealed dice seed, and whether
-	// it was stopped before its end or lost on time. A Match without a row was
-	// not played here. A table of its own so that the match row, which every
-	// importer writes, stays as it is.
+	// it was stopped before its end or lost on time, and, when a Bot played,
+	// its level and the gammonNet tag whose policy it played (bot_engine). A
+	// Match without a row was not played here. A table of its own so that the
+	// match row, which every importer writes, stays as it is.
 	`CREATE TABLE IF NOT EXISTS match_origin (
 		match_id INTEGER PRIMARY KEY REFERENCES match(id) ON DELETE CASCADE,
 		start TEXT NOT NULL DEFAULT '',
@@ -443,7 +444,8 @@ var schemaStatements = []string{
 		stopped_early INTEGER NOT NULL DEFAULT 0,
 		over_time INTEGER NOT NULL DEFAULT 0,
 		bot_level TEXT NOT NULL DEFAULT '',
-		cadence TEXT NOT NULL DEFAULT ''
+		cadence TEXT NOT NULL DEFAULT '',
+		bot_engine TEXT NOT NULL DEFAULT ''
 	)`,
 	`CREATE TABLE IF NOT EXISTS move_analysis (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -150,13 +150,14 @@ func (s *DuelStore) SetOrigin(ctx context.Context, scope string, o *storage.Matc
 			return errf(tx, what, storage.ErrNotFound)
 		}
 		cols, args := tx.TenantColumns(scope)
-		cols = append(cols, "match_id", "start", "dice_seed", "stopped_early", "over_time", "bot_level", "cadence")
-		args = append(args, o.MatchID, o.Start, o.DiceSeed, boolInt(o.StoppedEarly), o.OverTime, o.BotLevel, o.Cadence)
+		cols = append(cols, "match_id", "start", "dice_seed", "stopped_early", "over_time", "bot_level", "cadence", "bot_engine")
+		args = append(args, o.MatchID, o.Start, o.DiceSeed, boolInt(o.StoppedEarly), o.OverTime, o.BotLevel, o.Cadence, o.BotEngine)
 		if _, err := tx.Exec(ctx, `INSERT INTO match_origin (`+strings.Join(cols, ", ")+`) VALUES (`+
 			Placeholders(len(cols))+`) ON CONFLICT (match_id) DO UPDATE SET
 			 start = excluded.start, dice_seed = excluded.dice_seed,
 			 stopped_early = excluded.stopped_early, over_time = excluded.over_time,
-			 bot_level = excluded.bot_level, cadence = excluded.cadence`, args...); err != nil {
+			 bot_level = excluded.bot_level, cadence = excluded.cadence,
+			 bot_engine = excluded.bot_engine`, args...); err != nil {
 			return errf(tx, what, err)
 		}
 		return nil
@@ -169,9 +170,9 @@ func (s *DuelStore) Origin(ctx context.Context, scope string, matchID int64) (*s
 	o := storage.MatchOrigin{MatchID: matchID}
 	var stopped int
 	err := s.DB.QueryRow(ctx,
-		`SELECT start, dice_seed, stopped_early, over_time, bot_level, cadence
+		`SELECT start, dice_seed, stopped_early, over_time, bot_level, cadence, bot_engine
 		 FROM match_origin WHERE match_id = ? AND `+tenant, append([]any{matchID}, targs...)...).
-		Scan(&o.Start, &o.DiceSeed, &stopped, &o.OverTime, &o.BotLevel, &o.Cadence)
+		Scan(&o.Start, &o.DiceSeed, &stopped, &o.OverTime, &o.BotLevel, &o.Cadence, &o.BotEngine)
 	if errors.Is(err, ErrNoRows) {
 		return nil, errf(s.DB, what, storage.ErrNotFound)
 	}

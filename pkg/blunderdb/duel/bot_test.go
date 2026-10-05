@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
@@ -39,6 +40,10 @@ func TestTwoBotsPlayAMatchInOneCall(t *testing.T) {
 	if err != nil || m.Player1Name != "gammonNet instant" || m.Player2Name != "gammonNet instant" {
 		t.Fatalf("match = %+v, %v", m, err)
 	}
+	o, err := st.Duels().Origin(ctx, "", s.Ended.MatchID)
+	if err != nil || o.BotLevel != "instant" || o.BotEngine != gammonnet.PolicyEngineVersion {
+		t.Fatalf("origin = %+v, %v; want the Bots' level and policy version", o, err)
+	}
 }
 
 // TestBotAgainstAnExternalSide: the Bot plays in the same operation as the
@@ -67,6 +72,29 @@ func TestBotAgainstAnExternalSide(t *testing.T) {
 	m, err := st.Matches().Get(ctx, "", s.Ended.MatchID)
 	if err != nil || m.Player1Name != "Alice" || m.Player2Name != "gammonNet instant" {
 		t.Fatalf("match = %+v, %v", m, err)
+	}
+	o, err := st.Duels().Origin(ctx, "", s.Ended.MatchID)
+	if err != nil || o.BotLevel != "instant" || o.BotEngine != gammonnet.PolicyEngineVersion {
+		t.Fatalf("origin = %+v, %v; want the Bot's level and policy version", o, err)
+	}
+}
+
+// TestBotOrigin: the origin names a Bot's level and policy only when a Bot
+// played, and keeps both levels of two Bots that differ.
+func TestBotOrigin(t *testing.T) {
+	bot := func(l string) SideSpec { return SideSpec{Kind: SideBot, Level: l} }
+	for _, c := range []struct {
+		sides         [2]SideSpec
+		level, engine string
+	}{
+		{[2]SideSpec{external("A"), external("B")}, "", ""},
+		{[2]SideSpec{bot("normal"), external("B")}, "normal", gammonnet.PolicyEngineVersion},
+		{[2]SideSpec{bot("thorough"), bot("thorough")}, "thorough", gammonnet.PolicyEngineVersion},
+		{[2]SideSpec{bot("instant"), bot("normal")}, "instant/normal", gammonnet.PolicyEngineVersion},
+	} {
+		if l, e := botOrigin(c.sides); l != c.level || e != c.engine {
+			t.Errorf("botOrigin(%+v) = %q, %q; want %q, %q", c.sides, l, e, c.level, c.engine)
+		}
 	}
 }
 

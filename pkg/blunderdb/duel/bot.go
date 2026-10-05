@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -25,6 +26,26 @@ var BotLevels = []string{"instant", "normal", "thorough"}
 // BotName is the name a Bot's Side carries in the Match: the Configuration
 // it plays with, the one that will analyse the match.
 func BotName(level string) string { return "gammonNet " + level }
+
+// botOrigin is what the Match's origin says of its Bots: their level, and the
+// gammonNet tag whose policy they played; both empty when no Bot played. Two
+// Bots at different levels read "p1level/p2level", in player order, so that
+// neither level is lost.
+func botOrigin(sides [2]SideSpec) (level, engine string) {
+	var levels []string
+	for _, s := range sides {
+		if s.Kind == SideBot {
+			levels = append(levels, s.Level)
+		}
+	}
+	if len(levels) == 0 {
+		return "", ""
+	}
+	if len(levels) == 2 && levels[0] == levels[1] {
+		levels = levels[:1]
+	}
+	return strings.Join(levels, "/"), gammonnet.PolicyEngineVersion
+}
 
 // Bot is a delegated Side: gammonNet's stateless playing policy at a named
 // level (ADR-0072 rule 6). It answers every Decision at once, so the Arbiter

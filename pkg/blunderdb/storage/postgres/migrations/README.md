@@ -256,3 +256,7 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   `move.cube_decision_ms`, the time a Duel measured for the decision, NULL for
   unknown; `match_origin.lost_on_time` renamed `over_time`, the player whose
   reserve ran out. Schema-visible: bumped `domain.DatabaseVersion` to 2.33.0.
+- `039_bot_engine.sql` — the 2.34.0 wave (ADR-0072 rule 10):
+  `match_origin.bot_engine`, the gammonNet tag whose policy a Bot played, ''
+  when none did or for an origin stored before. Schema-visible: bumped
+  `domain.DatabaseVersion` to 2.34.0.

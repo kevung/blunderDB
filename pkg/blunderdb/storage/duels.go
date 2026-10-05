@@ -52,6 +52,10 @@ type MatchOrigin struct {
 	OverTime int    `json:"over_time"`
 	BotLevel string `json:"bot_level"`
 	Cadence  string `json:"cadence"`
+	// BotEngine names the gammonNet tag whose policy the Bot played
+	// (gammonnet.PolicyEngineVersion), empty when no Bot played. It is not
+	// the analysis's engine: a policy and a network are published apart.
+	BotEngine string `json:"bot_engine"`
 }
 
 // DuelStore persists the drafts of Duels and the origin of the Matches they

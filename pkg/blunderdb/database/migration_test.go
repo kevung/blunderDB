@@ -4165,3 +4165,51 @@ func TestMigrate_2_32_0_to_2_33_0_DecisionTime(t *testing.T) {
 		t.Errorf("origin after migration: %+v, %v", o, err)
 	}
 }
+
+// TestMigrate_2_33_0_to_2_34_0_BotEngine opens a 2.33.0 library — a Match
+// with its origin — and checks the origin gains bot_engine, empty, with its
+// row kept.
+func TestMigrate_2_33_0_to_2_34_0_BotEngine(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2330.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	ctx := context.Background()
+	matchID, err := d.store.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "gammonNet normal", MatchLength: 3, MatchHash: "bot-engine"})
+	if err != nil {
+		t.Fatalf("save match: %v", err)
+	}
+	if err := d.store.Duels().SetOrigin(ctx, "", &storage.MatchOrigin{MatchID: matchID, DiceSeed: "seed", BotLevel: "normal"}); err != nil {
+		t.Fatalf("set origin: %v", err)
+	}
+	// Back to the 2.33.0 shape.
+	for _, stmt := range []string{
+		`ALTER TABLE match_origin DROP COLUMN bot_engine`,
+		`UPDATE metadata SET value = '2.33.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.33.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if !columnExists(t, d.db, "match_origin", "bot_engine") {
+		t.Fatal("match_origin.bot_engine should be added")
+	}
+	if o, err := d.store.Duels().Origin(ctx, "", matchID); err != nil || o.BotLevel != "normal" || o.BotEngine != "" {
+		t.Errorf("origin after migration: %+v, %v", o, err)
+	}
+}

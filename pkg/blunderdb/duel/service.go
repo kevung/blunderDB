@@ -416,6 +416,7 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 		StoppedEarly: g.doc.Header.MatchLength > 0 && !g.finished(),
 		OverTime:     g.doc.Clock.OverTime,
 	}
+	origin.BotLevel, origin.BotEngine = botOrigin(g.doc.Sides)
 	if g.doc.Cadence != nil {
 		origin.Cadence = g.doc.Cadence.String()
 	}

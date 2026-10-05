@@ -13,10 +13,11 @@ import (
 // upstream's docs/specs/politique-spec.md; its section numbers are cited
 // below. The game, the dice, the clock stay with the caller (ADR-0072 rule 6).
 
-// PolicyEngineVersion names the gammonNet that publishes the policy this file
-// ports. No gammonNet tag carries it yet: it names the upstream commit, and
-// becomes a tag name the day one is published.
-const PolicyEngineVersion = "gammonNet policy @dfccb28"
+// PolicyEngineVersion names the gammonNet tag that publishes the policy this
+// file ports, the one its reference corpus comes from. It is not
+// EngineVersion: the policy can move upstream while the network, and so the
+// analyses EngineVersion dates, stays the same.
+const PolicyEngineVersion = "gammonNet v1.5.0"
 
 // PolicyResignHorizon is H of spec §5.5: how many rolls ahead the certain
 // loss is read. Widening it is a measured choice, made upstream.
