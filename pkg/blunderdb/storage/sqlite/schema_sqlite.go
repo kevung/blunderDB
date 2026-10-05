@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"slices"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -321,9 +322,11 @@ var schemaStatements = []string{
 	// (match_id, seat). The rows are clustered (WITHOUT ROWID) by kind, then
 	// by the dimension's values: the stats read one kind at a time and sum it
 	// by those values, so the read takes only that kind's rows and groups
-	// them in key order without sorting. A key led by the match read every
-	// cell of every match for each kind, plus a table seek per cell through
-	// a rowid (derivedClusteredTables).
+	// them in key order without sorting. A key led by the match would make
+	// each kind's read go over every cell of every match, and a rowid table
+	// would add a table seek per cell. The DDL text of this table and of
+	// match_stats_position is compared at every open (ddlShape): any edit of
+	// it, even cosmetic, drops both tables and recomputes every match once.
 	`CREATE TABLE IF NOT EXISTS match_stats_cell (
 		match_id INTEGER NOT NULL,
 		seat INTEGER NOT NULL,
@@ -864,8 +867,11 @@ func isFreshDB(ctx context.Context, db *sql.DB) (bool, error) {
 }
 
 // EnsureSchema adds to an existing database the tables, columns and indexes
-// it lacks; nothing is dropped, renamed or retyped. Idempotent; the Database
-// wrapper runs it on every open, after the migration chain.
+// it lacks; nothing is renamed or retyped, and nothing is dropped but the
+// derived breakdown tables of match_stats when their layout differs from the
+// schema's, which are recreated and recomputed (reclusterDerivedTables).
+// Idempotent; the Database wrapper runs it on every open, after the
+// migration chain.
 //
 // What is missing is found against a reference database built in memory
 // from schemaStatements, so there is no second column list to keep in step.
@@ -931,6 +937,14 @@ var derivedClusteredTables = []string{"match_stats_cell", "match_stats_position"
 // data being derived, recomputing it is the simplest rebuild, and the check
 // costs two catalogue reads once the layout is right.
 func reclusterDerivedTables(ctx context.Context, db *sql.DB, ref *reference) error {
+	// A library a newer build wrote is opened as it is: its layout may be
+	// that build's, and rebuilding it would make each build recompute the
+	// other's tables at every alternation.
+	var version string
+	if err := db.QueryRowContext(ctx, `SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&version); err == nil &&
+		newerThanBuild(version) {
+		return nil
+	}
 	stale := false
 	for _, name := range derivedClusteredTables {
 		var ddl string
@@ -966,6 +980,19 @@ func reclusterDerivedTables(ctx context.Context, db *sql.DB, ref *reference) err
 		}
 	}
 	return tx.Commit()
+}
+
+// newerThanBuild reports whether the schema version v is past
+// domain.DatabaseVersion; a version that does not parse is not.
+func newerThanBuild(v string) bool {
+	var a, b [3]int
+	if _, err := fmt.Sscanf(v, "%d.%d.%d", &a[0], &a[1], &a[2]); err != nil {
+		return false
+	}
+	if _, err := fmt.Sscanf(domain.DatabaseVersion, "%d.%d.%d", &b[0], &b[1], &b[2]); err != nil {
+		return false
+	}
+	return slices.Compare(a[:], b[:]) > 0
 }
 
 // ddlShape is a CREATE TABLE statement up to case, spacing and IF NOT

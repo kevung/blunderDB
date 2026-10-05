@@ -856,6 +856,12 @@ func (s *StatsStore) matchClauses(scope string, filter storage.StatsFilter) (cla
 // and how rows are ordered; the arithmetic that turns these queries into rows
 // lives in storage.BuildPlayerRows.
 func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.PlayerRow, error) {
+	return inReadSnapshot(ctx, s, func(s *StatsStore) ([]storage.PlayerRow, error) {
+		return s.playerTable(ctx, scope, filter)
+	})
+}
+
+func (s *StatsStore) playerTable(ctx context.Context, scope string, filter storage.StatsFilter) ([]storage.PlayerRow, error) {
 	d := s.DB
 	settings, err := librarySettings(ctx, s.DB, scope)
 	if err != nil {

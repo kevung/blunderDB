@@ -46,12 +46,14 @@ func (s *StatsStore) matchStatsWhere(scope string, filter storage.StatsFilter, s
 
 const matchStatsJoin = ` FROM match_stats ms JOIN match m ON m.id = ms.match_id`
 
-// matchStatsSource is the FROM clause of a read of match_stats: the table,
-// filled first or already complete, or — on a connection that refuses
-// writes and finds it incomplete — the same seat rows (both seats of every match, zero when nothing is
-// counted) computed from the decisions within the query, so a read-only
-// reader gets the figures a writer would and the table is never trusted
-// while incomplete. Only the columns the readers here use are derived.
+// matchStatsSource is the FROM clause of a read of match_stats, for a
+// caller inside inReadSnapshot: the table, filled first or already
+// complete, or — on a connection that refuses writes and finds it
+// incomplete — the same seat rows (both seats of every match, zero when
+// nothing is counted) computed from the decisions within the query, so a
+// read-only reader gets the figures a writer would and the table is never
+// trusted while incomplete. Only the columns the readers here use are
+// derived.
 func (s *StatsStore) matchStatsSource(ctx context.Context, scope string) (string, []any, error) {
 	readable, err := s.matchStatsReadable(ctx, scope)
 	if err != nil {
@@ -236,6 +238,12 @@ func (s *StatsStore) playerSumsFromTable(ctx context.Context, scope string, f st
 
 // HeadToHead — see storage.StatsStore.
 func (s *StatsStore) HeadToHead(ctx context.Context, scope, playerA, playerB string, filter storage.StatsFilter) (*storage.HeadToHead, error) {
+	return inReadSnapshot(ctx, s, func(s *StatsStore) (*storage.HeadToHead, error) {
+		return s.headToHead(ctx, scope, playerA, playerB, filter)
+	})
+}
+
+func (s *StatsStore) headToHead(ctx context.Context, scope, playerA, playerB string, filter storage.StatsFilter) (*storage.HeadToHead, error) {
 	if !fromMatchStats(filter) {
 		return nil, fmt.Errorf("head to head with a provenance filter: %w", storage.ErrInvalid)
 	}
@@ -334,6 +342,12 @@ func (s *StatsStore) HeadToHead(ctx context.Context, scope, playerA, playerB str
 
 // PRByWindow — see storage.StatsStore.
 func (s *StatsStore) PRByWindow(ctx context.Context, scope string, filter storage.StatsFilter, months int) ([]storage.WindowStats, error) {
+	return inReadSnapshot(ctx, s, func(s *StatsStore) ([]storage.WindowStats, error) {
+		return s.prByWindow(ctx, scope, filter, months)
+	})
+}
+
+func (s *StatsStore) prByWindow(ctx context.Context, scope string, filter storage.StatsFilter, months int) ([]storage.WindowStats, error) {
 	if !fromMatchStats(filter) {
 		return nil, fmt.Errorf("PR by window with a provenance filter: %w", storage.ErrInvalid)
 	}

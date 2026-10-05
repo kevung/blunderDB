@@ -459,7 +459,10 @@ func (s *StatsStore) FillMatchStats(ctx context.Context, scope string, progress 
 // would. A writer fills what is missing and answers yes. A reader that
 // cannot write answers yes only when nothing is missing and no row is of an
 // older shape, which the open would have repaired: a library filled once by
-// a writer is then read from the table, read-only or not.
+// a writer is then read from the table, read-only or not. That answer holds
+// for the snapshot it was read in, so a reader asks it inside the
+// transaction that then reads the table (withReadSnapshot): a writer
+// invalidating a match between the two would otherwise drop it from the sums.
 func (s *StatsStore) matchStatsReadable(ctx context.Context, scope string) (bool, error) {
 	if !RefusesWrites(ctx, s.DB) {
 		_, err := s.FillMatchStats(ctx, scope, nil)
@@ -473,7 +476,34 @@ func (s *StatsStore) matchStatsReadable(ctx context.Context, scope string) (bool
 	if err := s.DB.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM match_stats WHERE `+OlderShapeMatchStatsPredicate+`)`).Scan(&olderShape); err != nil {
 		return false, errf(s.DB, "match stats shape", err)
 	}
+	afterMatchStatsProbe()
 	return !olderShape, nil
+}
+
+// afterMatchStatsProbe runs between a reader's completeness probe and its
+// read; a test slips a writer's invalidation in there.
+var afterMatchStatsProbe = func() {}
+
+// withReadSnapshot runs fn on a store whose reads share one snapshot when
+// the connection refuses writes, so matchStatsReadable's answer covers the
+// reads that follow it. A writer runs fn as is: it fills the table first,
+// which a read transaction could not hold.
+func (s *StatsStore) withReadSnapshot(ctx context.Context, fn func(*StatsStore) error) error {
+	if !RefusesWrites(ctx, s.DB) {
+		return fn(s)
+	}
+	return s.DB.Transact(ctx, func(tx Execer) error { return fn(&StatsStore{DB: tx}) })
+}
+
+// inReadSnapshot is withReadSnapshot for a reader returning a value.
+func inReadSnapshot[T any](ctx context.Context, s *StatsStore, fn func(*StatsStore) (T, error)) (T, error) {
+	var out T
+	err := s.withReadSnapshot(ctx, func(s *StatsStore) error {
+		var err error
+		out, err = fn(s)
+		return err
+	})
+	return out, err
 }
 
 // RebuildMatchStats — see storage.StatsStore.
@@ -530,24 +560,31 @@ func (s *StatsStore) MatchSeries(ctx context.Context, scope string, filter stora
 		return nil, fmt.Errorf("match series aliases: %w", err)
 	}
 	var res storage.StatsResult
-	readable := false
-	if fromMatchStats(filter) {
-		if readable, err = s.matchStatsReadable(ctx, scope); err != nil {
-			return nil, err
+	err = s.withReadSnapshot(ctx, func(s *StatsStore) error {
+		readable := false
+		if fromMatchStats(filter) {
+			var err error
+			if readable, err = s.matchStatsReadable(ctx, scope); err != nil {
+				return err
+			}
 		}
-	}
-	if readable {
-		if err := s.perMatchFromTable(ctx, statsQuery{scope: scope, filter: filter}, &res); err != nil {
-			return nil, errf(s.DB, "match series", err)
+		if readable {
+			if err := s.perMatchFromTable(ctx, statsQuery{scope: scope, filter: filter}, &res); err != nil {
+				return errf(s.DB, "match series", err)
+			}
+			return nil
 		}
-		return res.PerMatch, nil
-	}
-	// A provenance filter, or a reader that cannot fill the table: Compute's
-	// direct per-match pass alone, over the decisions.
-	whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
-	q := statsQuery{scope: scope, filter: filter, whereSQL: whereSQL, baseArgs: baseArgs, join: statsBaseJoin}
-	if err := s.computePerMatch(ctx, q, &res); err != nil {
-		return nil, errf(s.DB, "match series", err)
+		// A provenance filter, or a reader that cannot fill the table:
+		// Compute's direct per-match pass alone, over the decisions.
+		whereSQL, baseArgs := s.buildStatsWhereClause(scope, filter)
+		q := statsQuery{scope: scope, filter: filter, whereSQL: whereSQL, baseArgs: baseArgs, join: statsBaseJoin}
+		if err := s.computePerMatch(ctx, q, &res); err != nil {
+			return errf(s.DB, "match series", err)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
 	}
 	return res.PerMatch, nil
 }

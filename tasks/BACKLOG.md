@@ -17,6 +17,16 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 ## Ouvert — Backend
 
+- **Statistiques : le filtre `--engine` par les cellules.** Il lit encore les décisions
+  (copie de la sélection) ; passer par `match_stats_cell` demande le moteur dans la clé des
+  cellules, autant de cellules en plus que de moteurs par match. Mesure de départ :
+  `tasks/mesure-bmab-0.37.md` § 7.2 ter.
+- **Embarqueurs sans blank-import de `database` (gammonGo, `pkg/blunderdb/server/embed.go`).**
+  `st.Migrate` ne passe pas par l'ouverture du wrapper `Database` : une base SQLite 2.31 dont
+  les tables de cellules ont l'ancienne forme n'y est pas reclusterisée (`reclusterDerivedTables`
+  ne tourne qu'avec `EnsureSchema`), et ses statistiques restent lentes jusqu'à une ouverture
+  par blunderDB.
+
 - **gammonNet — grouper la valuation du videau sur les candidats.** Le seul levier
   qui reste sur le videau, et il faut le cadrer en amont (`gn_cube.c`) avant de le
   porter. Mesuré le 2026-09-02 en écrivant puis en annulant l'optimisation

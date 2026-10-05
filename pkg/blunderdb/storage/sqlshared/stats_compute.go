@@ -62,7 +62,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 	// copy reads every decision directly, to the same figures.
 	readOnly := RefusesWrites(ctx, s.DB)
 	useTable := false
-	if fromMatchStats(filter) {
+	if fromMatchStats(filter) && !readOnly {
 		if useTable, err = s.matchStatsReadable(ctx, scope); err != nil {
 			return nil, err
 		}
@@ -73,6 +73,13 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 	err = s.DB.Transact(ctx, func(tx Execer) error {
 		ts := &StatsStore{DB: tx}
 		q.join = statsBaseJoin
+		// A reader asks within the snapshot it then reads.
+		if fromMatchStats(filter) && readOnly {
+			var err error
+			if useTable, err = ts.matchStatsReadable(ctx, scope); err != nil {
+				return err
+			}
+		}
 		if useTable {
 			return ts.computeFromCells(ctx, q, result)
 		}

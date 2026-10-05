@@ -205,3 +205,37 @@ func TestEnsureSchemaReclustersDerivedTables(t *testing.T) {
 		t.Errorf("schema drift after reclustering: %+v", drift)
 	}
 }
+
+// TestEnsureSchemaLeavesANewerLibrarysLayout: a library a newer build wrote
+// keeps its breakdown tables and match_stats as they are.
+func TestEnsureSchemaLeavesANewerLibrarysLayout(t *testing.T) {
+	ctx := context.Background()
+	db := openMemory(t)
+	if err := Bootstrap(ctx, db); err != nil {
+		t.Fatal(err)
+	}
+	for _, q := range []string{
+		`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', '99.0.0')`,
+		`INSERT INTO match_stats (match_id, seat) VALUES (1, 1)`,
+		`DROP TABLE match_stats_cell`,
+		`CREATE TABLE match_stats_cell (match_id INTEGER NOT NULL, seat INTEGER NOT NULL, kind INTEGER NOT NULL, PRIMARY KEY (match_id, seat, kind))`,
+	} {
+		if _, err := db.ExecContext(ctx, q); err != nil {
+			t.Fatalf("%s: %v", q, err)
+		}
+	}
+	if err := EnsureSchema(ctx, db); err != nil {
+		t.Fatal(err)
+	}
+	var n int
+	if err := db.QueryRowContext(ctx, `SELECT COUNT(*) FROM match_stats`).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	var ddl string
+	if err := db.QueryRowContext(ctx, `SELECT sql FROM sqlite_master WHERE name = 'match_stats_cell'`).Scan(&ddl); err != nil {
+		t.Fatal(err)
+	}
+	if n != 1 || strings.Contains(ddl, "WITHOUT ROWID") {
+		t.Errorf("a newer library was reclustered: %d match_stats rows, %s", n, ddl)
+	}
+}
