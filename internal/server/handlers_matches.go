@@ -206,7 +206,7 @@ func (s *Server) exportMatchMATHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Header().Set("Content-Disposition", `attachment; filename="match.mat"`)
-	_, _ = io.WriteString(w, ingest.RenderMAT(m, games, moves))
+	_, _ = io.WriteString(w, ingest.RenderMAT(m, games, moves)) //nolint:gosec // G705: served as an attachment in text/plain, never rendered as HTML
 }
 
 // duplicatesResp lists the suspected duplicate pairs of /v1/matches.duplicates.

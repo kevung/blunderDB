@@ -273,8 +273,9 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 			continue
 		}
 
-		importPositionJSON, err := positionIdentityJSON(importPosition)
-		if err != nil {
+		// Assigned, not declared: the rollback defer reads this very err.
+		var importPositionJSON string
+		if importPositionJSON, err = positionIdentityJSON(importPosition); err != nil {
 			return nil, err
 		}
 
@@ -356,6 +357,168 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 
 	slog.Info("import analysis", "toAdd", positionsToAdd, "toMerge", positionsToMerge, "toSkip", positionsToSkip, "total", totalPositions)
 	return result, nil
+}
+
+// importRun is the state CommitImportDatabase shares with the per-position
+// steps it delegates: one transaction on the target, the read-only source, and
+// the maps that tie source ids to target ids.
+type importRun struct {
+	ctx      context.Context
+	tx       *sql.Tx
+	stx      storage.Tx
+	importDB *sql.DB
+	carrier  *mets.Carrier
+	srcMET   map[int64]int64
+	signed   bool
+	targetOf map[int64]int64
+}
+
+// mergeExisting folds a source position the target already holds into it:
+// provenance flag, analysis, then comments. It reports whether anything changed.
+func (r *importRun) mergeExisting(id, existingPositionID int64, sourceIndividual bool) (bool, error) {
+	ctx, tx, stx, importDB, carrier, srcMET, signed := r.ctx, r.tx, r.stx, r.importDB, r.carrier, r.srcMET, r.signed
+	r.targetOf[id] = existingPositionID
+	var err error
+	hasMerged := false
+
+	// Provenance is sticky (ADR-0001): an individually-imported source
+	// position raises the flag on the position we already hold, and a
+	// source position that was not individually imported never lowers it.
+	if sourceIndividual {
+		if _, err := tx.Exec(
+			`UPDATE position SET individually_imported = 1
+			 WHERE id = ? AND individually_imported = 0`, existingPositionID); err != nil {
+			slog.Warn("marking position individually imported", "positionID", existingPositionID, "err", err)
+		}
+	}
+
+	// Merge analysis if it exists
+	var importAnalysisData []byte
+	err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
+
+	if err == nil {
+		// Load existing analysis from current database (using transaction)
+		var existingAnalysisData []byte
+		existingErr := tx.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisData)
+
+		if existingErr == sql.ErrNoRows {
+			// No existing analysis, insert the imported one (re-compress for current format)
+			recompressed, compErr := recompressAnalysisData(importAnalysisData)
+			if compErr != nil {
+				recompressed = importAnalysisData
+			}
+			_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, existingPositionID, recompressed)
+			if err != nil {
+				slog.Warn("inserting analysis for position", "positionID", existingPositionID, "err", err)
+			} else {
+				hasMerged = true
+				if err := carryTable(ctx, stx, carrier, srcMET[id], existingPositionID); err != nil {
+					_ = tx.Rollback()
+					return false, err
+				}
+			}
+		} else if existingErr == nil {
+			existingAnalysis, _ := decodeAnalysisFromStorage(existingAnalysisData)
+			importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
+			existingSide, importedSide, metErr := mergeSides(ctx, stx, carrier, srcMET[id], existingPositionID, &existingAnalysis, &importAnalysis)
+			if metErr != nil {
+				_ = tx.Rollback()
+				return false, metErr
+			}
+			if merged, changed := domain.MergeImportedAnalysis(&existingAnalysis, &importAnalysis); changed {
+				var metID any
+				if met := mets.AfterMerge(merged, existingSide, importedSide); met != 0 {
+					metID = met
+				}
+				written, err := saveMergedAnalysis(tx, existingPositionID, merged, metID)
+				if err != nil {
+					return false, err
+				}
+				if written {
+					hasMerged = true
+				}
+			}
+		}
+	}
+
+	// Merge comments: each imported row is appended, with its
+	// author, when the target's joined text does not already contain
+	// it, as ingest.DBImporter does: existing rows are never
+	// rewritten.
+	importComments, err := loadImportedComments(importDB, id, signed)
+	if err != nil {
+		slog.Warn("reading import comment", "positionID", id, "err", err)
+	} else if len(importComments) > 0 {
+		existingComment, err := loadJoinedCommentText(tx, existingPositionID)
+		if err != nil {
+			slog.Warn("reading existing comment", "positionID", existingPositionID, "err", err)
+		}
+		for _, c := range importComments {
+			trimmed := strings.TrimSpace(c.text)
+			if err != nil || trimmed == "" || strings.Contains(existingComment, trimmed) {
+				continue
+			}
+			if _, ierr := tx.Exec(`INSERT INTO comment (position_id, text, author) VALUES (?, ?, ?)`, existingPositionID, trimmed, c.author); ierr != nil {
+				slog.Warn("inserting comment for position", "positionID", existingPositionID, "err", ierr)
+				continue
+			}
+			hasMerged = true
+			if existingComment == "" {
+				existingComment = trimmed
+			} else {
+				existingComment += "\n\n" + trimmed
+			}
+		}
+	}
+	return hasMerged, nil
+}
+
+// addNew writes a source position the target does not hold, with its analysis
+// and comments. It reports false (and no error) when the position row itself
+// could not be inserted.
+func (r *importRun) addNew(id int64, importPosition *Position, sourceIndividual bool) (bool, error) {
+	ctx, tx, stx, importDB, carrier, srcMET, signed := r.ctx, r.tx, r.stx, r.importDB, r.carrier, r.srcMET, r.signed
+	importPosition.IndividuallyImported = sourceIndividual
+	newPositionID, err := stx.Positions().Save(ctx, "", importPosition)
+	if err != nil {
+		slog.Warn("inserting position", "err", err)
+		return false, nil
+	}
+	r.targetOf[id] = newPositionID
+
+	// Copy analysis if it exists
+	var importAnalysisData []byte
+	err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
+	if err == nil {
+		// Update position_id in the analysis JSON
+		analysis, _ := decodeAnalysisFromStorage(importAnalysisData)
+		analysis.PositionID = int(newPositionID)
+		updatedAnalysisData, err := encodeAnalysisForStorage(&analysis)
+		if err != nil {
+			return false, fmt.Errorf("failed to marshal analysis: %w", err)
+		}
+
+		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, updatedAnalysisData)
+		if err != nil {
+			slog.Warn("inserting analysis for new position", "positionID", newPositionID, "err", err)
+		} else if err := carryTable(ctx, stx, carrier, srcMET[id], newPositionID); err != nil {
+			_ = tx.Rollback()
+			return false, err
+		}
+	}
+
+	// Copy every comment row, each with its author.
+	importComments, err := loadImportedComments(importDB, id, signed)
+	if err != nil {
+		slog.Warn("reading import comment", "positionID", id, "err", err)
+	}
+	for _, c := range importComments {
+		if _, err := tx.Exec(`INSERT INTO comment (position_id, text, author) VALUES (?, ?, ?)`, newPositionID, c.text, c.author); err != nil {
+			slog.Warn("inserting comment for new position", "positionID", newPositionID, "err", err)
+		}
+	}
+
+	return true, nil
 }
 
 // CommitImportDatabase performs the actual import within a transaction (ACID)
@@ -457,6 +620,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	// targetOf maps each source position id to the id it holds here, for the
 	// collections merged after the positions.
 	targetOf := map[int64]int64{}
+	run := &importRun{ctx: ctx, tx: tx, stx: stx, importDB: importDB, carrier: carrier, srcMET: srcMET, signed: signed, targetOf: targetOf}
 
 	for rows.Next() {
 		// Check for cancellation
@@ -480,8 +644,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			continue
 		}
 
-		importPositionJSON, err := positionIdentityJSON(importPosition)
-		if err != nil {
+		// Assigned, not declared: the rollback defer reads this very err.
+		var importPositionJSON string
+		if importPositionJSON, err = positionIdentityJSON(importPosition); err != nil {
 			return nil, err
 		}
 
@@ -498,151 +663,25 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		}
 
 		if existsInCurrent {
-			targetOf[id] = existingPositionID
-			// Track if we actually merge anything
-			hasMerged := false
-
-			// Provenance is sticky (ADR-0001): an individually-imported source
-			// position raises the flag on the position we already hold, and a
-			// source position that was not individually imported never lowers it.
-			if sourceIndividual {
-				if _, err := tx.Exec(
-					`UPDATE position SET individually_imported = 1
-					 WHERE id = ? AND individually_imported = 0`, existingPositionID); err != nil {
-					slog.Warn("marking position individually imported", "positionID", existingPositionID, "err", err)
-				}
+			var changed bool
+			if changed, err = run.mergeExisting(id, existingPositionID, sourceIndividual); err != nil {
+				return nil, err
 			}
-
-			// Merge analysis if it exists
-			var importAnalysisData []byte
-			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
-
-			if err == nil {
-				// Load existing analysis from current database (using transaction)
-				var existingAnalysisData []byte
-				existingErr := tx.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisData)
-
-				if existingErr == sql.ErrNoRows {
-					// No existing analysis, insert the imported one (re-compress for current format)
-					recompressed, compErr := recompressAnalysisData(importAnalysisData)
-					if compErr != nil {
-						recompressed = importAnalysisData
-					}
-					_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, existingPositionID, recompressed)
-					if err != nil {
-						slog.Warn("inserting analysis for position", "positionID", existingPositionID, "err", err)
-					} else {
-						hasMerged = true
-						if err := carryTable(ctx, stx, carrier, srcMET[id], existingPositionID); err != nil {
-							_ = tx.Rollback()
-							return nil, err
-						}
-					}
-				} else if existingErr == nil {
-					existingAnalysis, _ := decodeAnalysisFromStorage(existingAnalysisData)
-					importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
-					existingSide, importedSide, metErr := mergeSides(ctx, stx, carrier, srcMET[id], existingPositionID, &existingAnalysis, &importAnalysis)
-					if metErr != nil {
-						_ = tx.Rollback()
-						return nil, metErr
-					}
-					if merged, changed := domain.MergeImportedAnalysis(&existingAnalysis, &importAnalysis); changed {
-						var metID any
-						if met := mets.AfterMerge(merged, existingSide, importedSide); met != 0 {
-							metID = met
-						}
-						written, err := saveMergedAnalysis(tx, existingPositionID, merged, metID)
-						if err != nil {
-							_ = tx.Rollback()
-							return nil, err
-						}
-						hasMerged = hasMerged || written
-					}
-				}
-			}
-
-			// Merge comments: each imported row is appended, with its
-			// author, when the target's joined text does not already contain
-			// it, as ingest.DBImporter does: existing rows are never
-			// rewritten.
-			importComments, err := loadImportedComments(importDB, id, signed)
-			if err != nil {
-				slog.Warn("reading import comment", "positionID", id, "err", err)
-			} else if len(importComments) > 0 {
-				existingComment, err := loadJoinedCommentText(tx, existingPositionID)
-				if err != nil {
-					slog.Warn("reading existing comment", "positionID", existingPositionID, "err", err)
-				}
-				for _, c := range importComments {
-					trimmed := strings.TrimSpace(c.text)
-					if err != nil || trimmed == "" || strings.Contains(existingComment, trimmed) {
-						continue
-					}
-					if _, ierr := tx.Exec(`INSERT INTO comment (position_id, text, author) VALUES (?, ?, ?)`, existingPositionID, trimmed, c.author); ierr != nil {
-						slog.Warn("inserting comment for position", "positionID", existingPositionID, "err", ierr)
-						continue
-					}
-					hasMerged = true
-					if existingComment == "" {
-						existingComment = trimmed
-					} else {
-						existingComment += "\n\n" + trimmed
-					}
-				}
-			}
-
-			if hasMerged {
+			if changed {
 				positionsMerged++
 			} else {
 				positionsSkipped++
 			}
 		} else {
-			// New position: write through Save, which computes the Zobrist
-			// hash and scalar search columns — a raw INSERT leaves them NULL,
-			// hiding the row from filters and from its own next import. Save
-			// ORs IndividuallyImported into the stored flag (ADR-0001).
-			importPosition.IndividuallyImported = sourceIndividual
-			newPositionID, err := stx.Positions().Save(ctx, "", &importPosition)
-			if err != nil {
-				slog.Warn("inserting position", "err", err)
+			var added bool
+			if added, err = run.addNew(id, &importPosition, sourceIndividual); err != nil {
+				return nil, err
+			}
+			if added {
+				positionsAdded++
+			} else {
 				positionsSkipped++
-				continue
 			}
-			targetOf[id] = newPositionID
-
-			// Copy analysis if it exists
-			var importAnalysisData []byte
-			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
-			if err == nil {
-				// Update position_id in the analysis JSON
-				analysis, _ := decodeAnalysisFromStorage(importAnalysisData)
-				analysis.PositionID = int(newPositionID)
-				updatedAnalysisData, err := encodeAnalysisForStorage(&analysis)
-				if err != nil {
-					return nil, fmt.Errorf("failed to marshal analysis: %w", err)
-				}
-
-				_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, updatedAnalysisData)
-				if err != nil {
-					slog.Warn("inserting analysis for new position", "positionID", newPositionID, "err", err)
-				} else if err := carryTable(ctx, stx, carrier, srcMET[id], newPositionID); err != nil {
-					_ = tx.Rollback()
-					return nil, err
-				}
-			}
-
-			// Copy every comment row, each with its author.
-			importComments, err := loadImportedComments(importDB, id, signed)
-			if err != nil {
-				slog.Warn("reading import comment", "positionID", id, "err", err)
-			}
-			for _, c := range importComments {
-				if _, err := tx.Exec(`INSERT INTO comment (position_id, text, author) VALUES (?, ?, ?)`, newPositionID, c.text, c.author); err != nil {
-					slog.Warn("inserting comment for new position", "positionID", newPositionID, "err", err)
-				}
-			}
-
-			positionsAdded++
 		}
 	}
 	if err := rows.Err(); err != nil {

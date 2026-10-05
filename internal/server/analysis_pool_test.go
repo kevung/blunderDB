@@ -150,6 +150,7 @@ func TestEvaluateOnStoppedPoolIs503(t *testing.T) {
 	ts, srv := newQuotaTestServer(t, TenantQuotas{})
 	srv.analysis.close()
 	resp := post(t, ts, "/v1/gammonnet.evaluate", gammonnetEvaluateReq{XGID: evalXGID})
+	defer resp.Body.Close()
 	status, e := errorOf(t, resp)
 	if status != http.StatusServiceUnavailable || e.Code != CodeUnavailable {
 		t.Fatalf("evaluate on a stopped pool: %d %+v; want 503 unavailable", status, e)

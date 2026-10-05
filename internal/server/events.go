@@ -157,7 +157,7 @@ func (s *Server) handleEvents(w http.ResponseWriter, r *http.Request) {
 
 	write := func(b []byte) bool {
 		_ = rc.SetWriteDeadline(time.Now().Add(eventsWriteTimeout))
-		if _, err := w.Write(b); err != nil {
+		if _, err := w.Write(b); err != nil { //nolint:gosec // G705: b is a JSON-encoded event frame (text/event-stream), not HTML
 			return false
 		}
 		return rc.Flush() == nil
