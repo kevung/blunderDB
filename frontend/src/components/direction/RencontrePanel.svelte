@@ -11,7 +11,7 @@
     import { renderConfigChange } from './labels.js';
     import TableSettingsEditor from './TableSettingsEditor.svelte';
     import SeasonRanking from './SeasonRanking.svelte';
-    import { rencontreParticipantsStore } from '../../stores/directionStore.js';
+    import { rencontreParticipantsStore, openLocalPage } from '../../stores/directionStore.js';
     import {
         listRencontres,
         createRencontre,
@@ -26,7 +26,6 @@
         setRencontreTables,
         setEventRooms
     } from '../../stores/rencontreStore.js';
-    import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
 
     /** @typedef {import('../../../wailsjs/go/models').service.RencontreView} RencontreView */
     /** @typedef {import('../../../wailsjs/go/models').service.ConfigPreview} ConfigPreview */
@@ -154,7 +153,7 @@
         if (!current) return;
         try {
             const path = await writeRencontrePage(current.id);
-            if (path) BrowserOpenURL('file://' + path);
+            if (path) openLocalPage(path);
         } catch (e) {
             fail(e);
         }

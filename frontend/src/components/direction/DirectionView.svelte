@@ -11,7 +11,6 @@
     import { tMsg } from '../../i18n';
     import { logger } from '../../utils/logger.js';
     import { focusPanelUnlessTyping } from '../../utils/panelFocus.js';
-    import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
     import DirectionSettings from './DirectionSettings.svelte';
     import RencontrePanel from './RencontrePanel.svelte';
     import TableSettingsEditor from './TableSettingsEditor.svelte';
@@ -80,6 +79,7 @@
         transcribeFromSlot,
         previewDirectionConfig,
         writeDirectionPage,
+        openLocalPage,
         chooseDirectionOutputDir,
         forgetDirectionOutputDir,
         writePairingSheet,
@@ -573,7 +573,7 @@
             statusBarTextStore.set(tMsg('direction.sheet.error'));
             return;
         }
-        BrowserOpenURL('file://' + path);
+        openLocalPage(path);
     }
     async function onPrintUpcoming() {
         const path = await writeUpcomingSheet(announced);
@@ -582,7 +582,7 @@
             return;
         }
         announcing = false;
-        BrowserOpenURL('file://' + path);
+        openLocalPage(path);
     }
 
     /* L'annuaire : reprendre les inscrits d'un tournoi précédent en un clic. */
@@ -624,7 +624,7 @@
             return;
         }
         statusBarTextStore.set(tMsg('direction.display.written', { path }));
-        BrowserOpenURL('file://' + path);
+        openLocalPage(path);
     }
     /** @type {(slot: string, matchId: number) => Promise<boolean>} */
     const onAttach = (slot, matchId) =>

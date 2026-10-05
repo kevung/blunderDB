@@ -420,6 +420,40 @@ func openFolder(dir string) error {
 	return cmd.Run()
 }
 
+// openFile opens path with the platform's default handler, passing it as an
+// argument, never through a shell.
+func openFile(path string) error {
+	var cmd *exec.Cmd
+	switch goruntime.GOOS {
+	case "darwin":
+		cmd = exec.Command("open", path)
+	case "windows":
+		cmd = exec.Command("rundll32", "url.dll,FileProtocolHandler", path)
+	default:
+		cmd = exec.Command("xdg-open", path)
+	}
+	return cmd.Start()
+}
+
+// OpenLocalPage opens a generated display page (an .html file written by the
+// Direction) in the default browser. The runtime's BrowserOpenURL refuses the
+// file scheme, so this is the only way the wall page reaches the screen; it
+// accepts nothing but an existing .html file, so the webview cannot make it
+// launch an arbitrary document.
+func (a *App) OpenLocalPage(path string) error {
+	ext := strings.ToLower(filepath.Ext(path))
+	if ext != ".html" && ext != ".htm" {
+		return newGUIError(CodeInvalid, "not an HTML page: "+path)
+	}
+	if info, err := os.Stat(path); err != nil || info.IsDir() {
+		return newGUIError(CodeNotFound, "page not found: "+path)
+	}
+	if err := openFile(path); err != nil {
+		return newGUIError(CodeInternal, err.Error())
+	}
+	return nil
+}
+
 // CopyImageToClipboard copies a base64 PNG to the clipboard, the fallback
 // after the WebView's own write (ADR-0004). If no clipboard works it saves the
 // PNG and returns its path ("" = clipboard reached); it errors only when even

@@ -58,7 +58,7 @@ import {
     AddParticipantAtSlot,
     GetRencontre
 } from '../../wailsjs/go/database/Database.js';
-import { OpenDirectionOutputDialog, SaveCSV } from '../../wailsjs/go/gui/App.js';
+import { OpenDirectionOutputDialog, OpenLocalPage, SaveCSV } from '../../wailsjs/go/gui/App.js';
 import { language, messageBlock, tMsg } from '../i18n';
 import { statusBarTextStore, activeTabStore } from './uiStore.js';
 import { logger } from '../utils/logger.js';
@@ -596,6 +596,19 @@ export async function writeDirectionPage() {
     } catch (e) {
         logger.error('direction: writing the display page failed', e);
         return null;
+    }
+}
+
+/**
+ * Ouvre dans le navigateur une page écrite sur le disque. Le runtime Wails refuse le schéma
+ * file:// dans BrowserOpenURL ; seule la liaison Go sait lancer le navigateur par défaut.
+ * @param {string} path
+ */
+export async function openLocalPage(path) {
+    try {
+        await OpenLocalPage(path);
+    } catch (e) {
+        logger.error('direction: opening the page failed', e);
     }
 }
 

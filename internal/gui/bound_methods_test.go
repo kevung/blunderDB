@@ -61,6 +61,7 @@ var boundAppMethods = []string{
 	"OpenExportMatDialog",
 	"OpenImportDatabaseDialog",
 	"OpenMETDialog",
+	"OpenLocalPage",
 	"OpenLogsFolder",
 	"OpenPositionFilesDialog",
 	"OpenPositionFolderDialog",

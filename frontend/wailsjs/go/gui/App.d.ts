@@ -94,6 +94,8 @@ export function OpenExportMatDialog(arg1:string):Promise<string>;
 
 export function OpenImportDatabaseDialog():Promise<string>;
 
+export function OpenLocalPage(arg1:string):Promise<void>;
+
 export function OpenLogsFolder():Promise<void>;
 
 export function OpenMETDialog():Promise<string>;
