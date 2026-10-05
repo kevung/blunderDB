@@ -238,11 +238,11 @@ func NameLikePattern(name string) string {
 	return b.String()
 }
 
-// ParseMatchDate reads a `md` token (`md:2024-01..2024-12`, `md:2024`,
-// `md>2024-06`, `md<2024-06`) into the half-open interval [from, until) of
+// ParseMatchDate reads a `md` token (`md:YYYY-MM..YYYY-MM`, `md:YYYY`,
+// `md>YYYY-MM`, `md<YYYY-MM`) into the half-open interval [from, until) of
 // "2006-01-02" days it denotes; an empty bound is open. A bound is a year, a
-// month or a day and covers its whole span, so `md:2024-01..2024-12` runs from
-// 2024-01-01 to the end of December. ok is false for an unreadable token.
+// month or a day and covers its whole span, so `md:YYYY-01..YYYY-12` runs from
+// the first of January to the end of December. ok is false for an unreadable token.
 func ParseMatchDate(token string) (from, until string, ok bool) {
 	rest, found := strings.CutPrefix(token, "md")
 	if !found || rest == "" {

@@ -478,8 +478,8 @@ type SearchFilters struct {
 	// inclusive. Read on the match, as position.match_length is never written.
 	MatchLengthFilter string `json:"matchLengthFilter"`
 
-	// MatchDateFilter is the `md:` token whole (`md:2024-01..2024-12`,
-	// `md:2024`, `md>2024-06`, `md<2024-06`): the DATE OF THE MATCH, from
+	// MatchDateFilter is the `md:` token whole (`md:YYYY-MM..YYYY-MM`,
+	// `md:YYYY`, `md>YYYY-MM`, `md<YYYY-MM`): the DATE OF THE MATCH, from
 	// position.match_date, bounds inclusive and a month or a year covering its
 	// whole span. DateFilter (`T`) is another date: when the analysis was made.
 	MatchDateFilter string `json:"matchDateFilter"`

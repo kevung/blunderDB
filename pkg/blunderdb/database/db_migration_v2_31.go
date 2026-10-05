@@ -16,8 +16,7 @@ import (
 )
 
 // prunedIndexes2_31 are the indexes the 2.31.0 schema no longer declares:
-// no query plan reads them (tasks/plan-grosses-bases-2026-10/SCHEMA-2-31.md),
-// and the provenance backfill reads idx_analysis_provenance_pending instead.
+// no query plan of a large library reads them, and the provenance backfill reads idx_analysis_provenance_pending instead.
 // The two date indexes are dropped too, so that rewriting their column does
 // not update them row by row; EnsureSchema rebuilds them after the chain.
 var prunedIndexes2_31 = []string{

@@ -104,7 +104,7 @@ var (
 	tagRe     = regexp.MustCompile(`^#[^\s#;]+$`)
 	moveErrRe = regexp.MustCompile(`^E\d`)
 	// Match-level tokens. `ml:7`, `ml:5,9`, `ml>5`, `ml<9`: the length of the
-	// match. `md:2024-01..2024-12`, `md:2024`, `md>2024-06`, `md<2024-06`: its
+	// match. `md:YYYY-MM..YYYY-MM`, `md:YYYY`, `md>YYYY-MM`, `md<YYYY-MM`: its
 	// date, each bound a year, a month or a day. `pr>8`, `pr<5`, `pr4,9`: the
 	// PR of the match for the player who took the decision. `rd:3`: the round.
 	// All matched by shape: `md`, `ml`, `pr` and `rd` start like tokens that
@@ -118,7 +118,7 @@ var (
 	provenanceRe = regexp.MustCompile(`^(?i:ad:(?:[a-z][a-z0-9]*|\d+ply\+?))$`)
 )
 
-// dateBound is a year, a month or a day: 2024, 2024-06, 2024-06-15 (`/` as the
+// dateBound is a year, a month or a day: YYYY, YYYY-MM, YYYY-MM-DD (`/` as the
 // separator is read too).
 const dateBound = `\d{4}(?:[-/]\d{2}(?:[-/]\d{2})?)?`
 

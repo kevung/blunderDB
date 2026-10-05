@@ -6,6 +6,7 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -178,6 +179,20 @@ func vacuumFixture(t *testing.T) (*Database, string) {
 	return d, path
 }
 
+// statIdentity stats path and pins the file's identity now: on Windows
+// os.Stat records only the path and os.SameFile reads the file ID through it
+// on first use, so a FileInfo taken before a rename would resolve to the file
+// that replaced it.
+func statIdentity(t *testing.T, path string) os.FileInfo {
+	t.Helper()
+	fi, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	_ = os.SameFile(fi, fi)
+	return fi
+}
+
 func withoutStats(m map[string]string) map[string]string {
 	out := map[string]string{}
 	for k, v := range m {
@@ -195,10 +210,7 @@ func TestVacuum_ReplacesTheFile(t *testing.T) {
 	t.Parallel()
 	d, path := vacuumFixture(t)
 	want := withoutStats(libraryContent(t, path))
-	before, err := os.Stat(path)
-	if err != nil {
-		t.Fatal(err)
-	}
+	before := statIdentity(t, path)
 	res, err := d.Vacuum()
 	if err != nil {
 		t.Fatalf("Vacuum: %v", err)
@@ -232,10 +244,7 @@ func TestVacuum_KeepsTheFileMode(t *testing.T) {
 	if err := os.Chmod(path, 0o600); err != nil {
 		t.Fatal(err)
 	}
-	before, err := os.Stat(path)
-	if err != nil {
-		t.Fatal(err)
-	}
+	before := statIdentity(t, path)
 	if _, err := d.Vacuum(); err != nil {
 		t.Fatalf("Vacuum: %v", err)
 	}
@@ -256,6 +265,12 @@ func TestVacuum_KeepsTheFileMode(t *testing.T) {
 // replaced while one exists; the vacuum runs in place instead.
 func TestVacuum_InPlaceWhileAnotherConnectionHoldsTheFile(t *testing.T) {
 	t.Parallel()
+	if runtime.GOOS == "windows" {
+		// The other connection maps the file (mmap_size), and Windows refuses
+		// to truncate a mapped file: the in-place VACUUM rewrites the pages
+		// but the file keeps its size until that connection closes.
+		t.Skip("windows: a file mapped by another connection cannot shrink")
+	}
 	d, path := vacuumFixture(t)
 	other, err := sql.Open("sqlite", sqlite.DSN(path))
 	if err != nil {
@@ -266,10 +281,7 @@ func TestVacuum_InPlaceWhileAnotherConnectionHoldsTheFile(t *testing.T) {
 	if err := other.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&n); err != nil {
 		t.Fatal(err)
 	}
-	before, err := os.Stat(path)
-	if err != nil {
-		t.Fatal(err)
-	}
+	before := statIdentity(t, path)
 	res, err := d.Vacuum()
 	if err != nil {
 		t.Fatalf("Vacuum: %v", err)

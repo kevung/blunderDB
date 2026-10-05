@@ -28,7 +28,7 @@ export function formatDate(value, options) {
 }
 
 /**
- * Format the calendar day of an ISO string ("2025-03-02", "2025-03-02T00:00:00Z") in the active
+ * Format the calendar day of an ISO string ("YYYY-MM-DD", "YYYY-MM-DDT00:00:00Z") in the active
  * language. The day is read from the first ten characters and built as a local date, so a UTC
  * midnight does not slide to the day before west of Greenwich. Anything else comes back as is.
  */
@@ -40,7 +40,7 @@ export function formatIsoDay(value) {
 }
 
 /**
- * Format the UTC calendar day of a timestamp: the counterpart of reading "2025-03-02" with
+ * Format the UTC calendar day of a timestamp: the counterpart of reading "YYYY-MM-DD" with
  * `new Date(...)`, which is UTC midnight. Formatting that instant in local time would show the
  * day before west of Greenwich.
  */

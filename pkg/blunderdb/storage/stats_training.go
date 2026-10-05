@@ -243,8 +243,8 @@ func BuildTrainingStats(window string, sessions []TrainingSession, matches []Mat
 	return out
 }
 
-// isoDay reads the date part of a stored timestamp ("2026-10-03",
-// "2026-10-03 07:00:00" or RFC 3339): both backends write one of them. The day
+// isoDay reads the date part of a stored timestamp ("YYYY-MM-DD",
+// "YYYY-MM-DD hh:mm:ss" or RFC 3339): both backends write one of them. The day
 // is the one written, in UTC, never shifted into a local zone.
 func isoDay(s string) (time.Time, bool) {
 	if len(s) < 10 {

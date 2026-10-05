@@ -767,7 +767,7 @@ var schemaStatements = []string{
 	`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist        ON position(zobrist_hash)`,
 	// No index leads with decision_type: it splits the library in
 	// two, and a filter on it ran slower through such an index than through
-	// the table (tasks/search-query-plans.txt). Only the take/pass side of
+	// the table on a 15.6 M-position library. Only the take/pass side of
 	// is_cube_response is selective.
 	`CREATE        INDEX IF NOT EXISTS idx_position_cube_take      ON position(is_cube_response) WHERE is_cube_response = 1`,
 	`CREATE        INDEX IF NOT EXISTS idx_position_individual     ON position(individually_imported) WHERE individually_imported = 1`,
