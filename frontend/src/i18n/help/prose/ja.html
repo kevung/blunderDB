@@ -45,10 +45,11 @@
     <li>Kazaross-XG2 マッチエクイティテーブル（MET）は <strong>Neil Kazaross</strong> の著作物です。</li>
     <li>テイクポイントとギャモン値の表は <strong>Dirk Schiemann</strong> の著書 <em>The Theory of Backgammon</em> から引用しています。</li>
     <li>
-        片側ベアオフデータベース（6 ポイント、15 駒、EPC 用）と両側ベアオフデータベース（6 ポイント、6 駒、レースでのキューブ判定用）は <strong>GNU Backgammon</strong>（GNUbg）で生成されました。GNUbg
-        は GPL の下で提供されるフリーソフトウェアであり、これらの表はそれが生成したデータとしてクレジットされています。
+        片側ベアオフデータベース（6 ポイント、15 駒、EPC 用）と両側ベアオフデータベース（6 ポイント、6 駒、レースでのキューブ判定用）は、<strong>GNU Backgammon</strong>（GNUbg）の
+        <em>makebearoff</em> ツールを移植したものにより、blunderDB 自身が計算します。結果は gnubg のものとバイト単位で一致し、その SHA-256 ハッシュが基準となります。GNUbg は GPL
+        の下で提供されるフリーソフトウェアです。
     </li>
-    <li>マッチファイルは <em>xgparser</em>、<em>gnubgparser</em>、<em>bgfparser</em>（MIT）で読み込まれます。</li>
+    <li>マッチファイルは <em>xgparser</em>、<em>gnubgparser</em>、<em>bgfparser</em>、<em>ogxmparser</em>（MIT）で読み込まれます。</li>
     <li>Go 側: <em>modernc.org/sqlite</em>（BSD-3-Clause）、<em>pgx</em>、<em>Wails</em>、<em>go-fsrs</em>（MIT）。</li>
     <li>インターフェース側: <em>Svelte</em>、<em>two.js</em>、<em>Chart.js</em>、<em>driver.js</em>（MIT）。</li>
     <li>フォント <em>Nunito</em> と <em>Noto Sans JP</em>（SIL Open Font License 1.1）。</li>

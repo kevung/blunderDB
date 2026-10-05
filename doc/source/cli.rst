@@ -81,16 +81,29 @@ Commandes disponibles
    "search", "Recherche des positions avec filtres."
    "list", "Affiche le contenu de la base."
    "match", "Affiche les positions et analyses d'un match."
+   "transcribe", "Rejoue une transcription et rend compte de ce que le rejeu trouve."
    "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."
+   "study", "La file d'étude : les blunders non traités du joueur de référence, et la marque « vu »."
+   "lesson", "Gère les leçons (étapes ordonnées montrant collections et positions) et les exporte."
    "anki", "Paquets de répétition espacée (liste, statistiques, prévision, synchronisation)."
+   "stats", "Statistiques calculées à part de ``list --type stats`` (erreurs récurrentes, classement, rapport…)."
+   "training", "Le journal d'entraînement (séances, positions manquées)."
+   "comment", "Lit et ajoute les commentaires signés d'une position."
+   "cubematrix", "Verdict de videau d'une position à chaque score d'un match."
    "rollout", "Joue une position jusqu'au bout pour départager ses coups ou sa décision de videau (XGID ou OGID)."
    "epc", "Calcule l'Effective Pip Count et le verdict de videau d'une position de sortie (XGID ou OGID)."
    "bearoff", "Fabrique, liste, vérifie et supprime les bases de sortie."
    "analyze", "Écrit une analyse gammonNet pour chaque position qui n'en a aucune."
+   "tournament", "Lit un tournoi dirigé (classement, tableaux, pages) et confirme ses propositions."
+   "players", "Les graphies d'un joueur (alias), la fusion et l'inversion des joueurs."
+   "events", "Les graphies d'un événement (alias)."
+   "trash", "La corbeille : liste, restauration, suppression annulable."
    "info", "Affiche les métadonnées de la base."
    "edit", "Modifie les métadonnées et les seuils de la base."
    "verify", "Vérifie l'intégrité de la base."
    "vacuum", "Compacte le fichier de base de données, récupère l'espace libéré."
+   "met", "Liste, importe et choisit la table d'équité de match de la base."
+   "reencode", "Réécrit les analyses au format compact."
    "repair", "Recalcule ce que la base dérive de ce qu'elle stocke."
    "delete", "Supprime des données."
    "healthcheck", "Interroge un démon ``serve`` en marche : code 0 s'il est disponible."
@@ -516,6 +529,19 @@ Recherche des positions dans la base selon des critères combinables.
   match ou de tournoi ne sont pas consultés.
 * ``--no-comment`` — Uniquement les positions sans commentaire. Mutuellement
   exclusif avec ``--has-comment``.
+* ``--comment-origin <o1,o2>`` — Uniquement les positions portant un
+  commentaire de ces provenances : ``user``, ``xg``, ``gnubg``, ``bgf``,
+  ``unknown`` (``co:``).
+* ``--comment-author <nom>`` — Uniquement les positions portant un commentaire
+  signé de ce nom (nom entier, casse ignorée).
+* ``--phase <p1,p2>`` — Uniquement les positions de ces phases de jeu :
+  ``opening``, ``middlegame``, ``race``, ``bearoff`` (``ph:``).
+* ``--game-type <t1,t2>`` — Uniquement les positions de ces plans de jeu :
+  ``race``, ``bearin``, ``crunch``, ``backgame``, ``acepoint``, ``blitz``,
+  ``primevprime``, ``mutualholding``, ``holding``, ``contact`` (``gt:``).
+  Phase et plan sont des étiquettes dérivées du plateau, que
+  ``blunderdb repair`` recalcule ; une valeur inconnue fait échouer la
+  commande.
 
 Les filtres de corpus portent sur le match où la position a été rencontrée ;
 chacun équivaut à un jeton du langage de requête (:ref:`cmd_filter`) :
@@ -731,6 +757,12 @@ Affiche le contenu de la base de données.
   au moins utilisé. Sur une base sans aucun tag, affiche le vocabulaire
   recommandé plutôt qu'une liste vide (voir :ref:`tags`). Accepte
   ``--format json`` et ``--format csv``.
+* ``study`` — Par plan de jeu, les positions distinctes révisées dans les
+  paquets Anki sur les ``--days`` derniers jours (défaut : 30) et le PR des
+  matchs joués avant et depuis, chacun avec son nombre de décisions ; un PR
+  appuyé sur moins de dix décisions s'affiche « — ». Trois nombres côte à
+  côte, non un effet : rien n'y tient compte des adversaires, du format ou
+  des dés. Accepte ``--format json`` et ``--format csv``.
 
 .. _export_tabulaire:
 
@@ -784,6 +816,9 @@ notebook qui a cessé de fonctionner sans que personne le sache.
 * ``--decision-type`` — Type de décision: ``all``, ``checker`` ou ``cube``
   (défaut: ``all``).
 * ``--top-blunders`` — Nombre de pires erreurs listées (défaut: 10).
+* ``--engine`` / ``--min-depth`` — Ne compte que les décisions analysées par ce
+  moteur (nom exact, tel qu'enregistré) ou à cette profondeur au moins (en
+  plis) ; acceptés aussi par le type ``players``.
 * ``--format`` — Format de sortie: ``text`` ou ``json`` (défaut: ``text``).
 
 **Options** (type ``matches`` uniquement) :
@@ -1921,7 +1956,7 @@ sous-commandes **lisent**, aucune n'attend de saisie, et seules ``move`` et
   ``directions.setTables``).
 
 **Options communes:** ``--db`` (obligatoire), ``--id`` (obligatoire sauf pour
-``list``, ``page --rencontre``, ``hall`` et ``tables``), ``--format``.
+``list``, ``ranking``, ``page --rencontre``, ``hall`` et ``tables``), ``--format``.
 
 **Exemples:**
 
@@ -2052,7 +2087,7 @@ Affiche les métadonnées et les statistiques d'une base de données.
    # Path: /home/jean/bg/base.db
    #
    # Metadata:
-   #   Version: 2.20.0
+   #   Version: 2.31.0
    #   User: Jean
    #   Description: Matchs de tournoi 2025
    #   Date of Creation: 2026-09-06 02:43:51
@@ -2063,6 +2098,11 @@ Affiche les métadonnées et les statistiques d'une base de données.
    #   Matches: 11
    #   Games: 61
    #   Moves: 3766
+   #   Blunders: 142
+   #
+   # Thresholds (millipoints):
+   #   Error: 50
+   #   Blunder: 100
 
 ``--format json`` ajoute l'origine du fichier — ``issuance`` porte le
 filigrane s'il y en a un, et l'identité d'émetteur de cette machine :
@@ -2079,8 +2119,12 @@ filigrane s'il y en a un, et l'identité d'émetteur de cette machine :
        "issuerFingerprint": "1186-57FA-060C-9378",
        "issuerName": "unger"
      },
+     "library_settings": {
+       "errorThresholdMP": 50,
+       "blunderThresholdMP": 100
+     },
      "metadata": {
-       "database_version": "2.20.0",
+       "database_version": "2.31.0",
        "dateOfCreation": "2026-09-06 02:43:51",
        "description": "Matchs de tournoi 2025",
        "user": "Jean"
@@ -2088,6 +2132,7 @@ filigrane s'il y en a un, et l'identité d'émetteur de cette machine :
      "path": "/home/jean/bg/base.db",
      "stats": {
        "analysis_count": 3855,
+       "blunder_count": 142,
        "game_count": 61,
        "match_count": 11,
        "move_count": 3766,
@@ -2155,7 +2200,7 @@ avec le fichier source original.
 Chaque exécution contrôle aussi l'intégrité référentielle : elle compte les
 lignes orphelines — parties sans match, coups sans partie, analyses de coup
 sans coup, analyses sans position, entrées du journal de révision sans paquet
-ou sans position — et affiche une ligne ``WARNING`` avec le total s'il y en a. Une base saine répond ``Orphaned rows: none``. Des orphelins
+ou sans position, questions d'entraînement sans séance — et affiche une ligne ``WARNING`` avec le total s'il y en a. Une base saine répond ``Orphaned rows: none``. Des orphelins
 peuvent subsister dans une base écrite par une version qui n'appliquait pas les
 clés étrangères sur toutes les connexions, ou avant que le journal de révision
 ait les siennes ; ils ne sont rattachés à aucun match ni à aucun paquet et
@@ -2211,6 +2256,7 @@ lire les compteurs lui-même.
    {
      "stats": {
        "analysis_count": 3855,
+       "blunder_count": 142,
        "game_count": 61,
        "match_count": 11,
        "move_count": 3766,
@@ -2222,7 +2268,8 @@ lire les compteurs lui-même.
        "move_analyses_without_move": 0,
        "analyses_without_position": 0,
        "reviews_without_deck": 0,
-       "reviews_without_position": 0
+       "reviews_without_position": 0,
+       "training_items_without_session": 0
      },
      "orphan_total": 0,
      "schema_drift": {
@@ -2379,8 +2426,6 @@ ne se lance jamais d'elle-même. Le démon expose la même opération sur la rou
 
    #   Analyses rewritten: 15623468
 
-.. _cli_repair:
-
 players — Les graphies d'un joueur
 ----------------------------------
 
@@ -2454,6 +2499,8 @@ dans le tournoi du nom canonique.
 
    ./blunderdb events alias add --db base.db "Open 2025" "Open d'automne 2025"
    ./blunderdb events alias list --db base.db
+
+.. _cli_repair:
 
 repair — Recalculer ce qui est dérivé
 --------------------------------------
@@ -2699,7 +2746,7 @@ binaire écrit ; c'est la première chose à joindre à un rapport de bug.
 .. code-block:: bash
 
    ./blunderdb version
-   # blunderDB version 0.36.0 (database schema 2.20.0)
+   # blunderDB version 0.36.0 (database schema 2.31.0)
 
 Exemples de flux de travail
 -----------------------------

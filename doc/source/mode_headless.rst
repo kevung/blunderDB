@@ -209,11 +209,17 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
        mémoire ou CPU du processus entier, jamais à exposer publiquement ni
        sur la même adresse que ``/v1``
 
-La plupart des options peuvent aussi être fournies par variable
-d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``, ``BLUNDERDB_ADDR``,
-``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_METRICS``, ``BLUNDERDB_CORS_ALLOW_ORIGIN``,
-``BLUNDERDB_RATE_LIMIT_RPS``, ``BLUNDERDB_RATE_LIMIT_BURST``, ``BLUNDERDB_RLS``,
-``BLUNDERDB_READ_TENANTS``, ``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``, ``BLUNDERDB_IMPORT_DIR``, ``BLUNDERDB_OPS_ADDR``, ``BLUNDERDB_PPROF_ADDR``) :
+Toutes les options sauf ``--db`` et ``--transcription-ttl`` peuvent aussi être
+fournies par variable d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``,
+``BLUNDERDB_ADDR``, ``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_METRICS``,
+``BLUNDERDB_WEB``, ``BLUNDERDB_DIRECTION``, ``BLUNDERDB_MCP_WRITE``,
+``BLUNDERDB_TRANSCRIPTION``, ``BLUNDERDB_CORS_ALLOW_ORIGIN``,
+``BLUNDERDB_RATE_LIMIT_RPS``, ``BLUNDERDB_RATE_LIMIT_BURST``,
+``BLUNDERDB_QUOTA_POSITIONS``, ``BLUNDERDB_QUOTA_BYTES``,
+``BLUNDERDB_QUOTA_ANALYSIS_SECONDS``, ``BLUNDERDB_QUOTA_IMPORTS``,
+``BLUNDERDB_ANALYSIS_WORKERS``, ``BLUNDERDB_ANALYSIS_WEIGHTS``, ``BLUNDERDB_RLS``,
+``BLUNDERDB_READ_TENANTS``, ``BLUNDERDB_TS_PATH``, ``BLUNDERDB_IDENTITY_DIR``,
+``BLUNDERDB_IMPORT_DIR``, ``BLUNDERDB_OPS_ADDR``, ``BLUNDERDB_PPROF_ADDR``) :
 un drapeau explicite reste prioritaire sur la variable correspondante.
 
 Le démon n'a **pas** d'option de répertoire de données : il écrit ses tables de
@@ -911,9 +917,9 @@ rend aussitôt ``{"importId": …, "files": N}`` et l'import continue en tâche 
 fond, le temps qu'il faut. Le lot arrive sous l'une de ces deux formes :
 
 * une **archive** ``.zip`` ou ``.tar`` envoyée en multipart (champ ``file``) ; seuls les
-  fichiers importables en sont extraits, et la taille de l'archive comme celle
-  de son contenu décompressé sont bornées par ``ImportMaxBodyBytes`` (512 Mio
-  par défaut) ;
+  fichiers importables en sont extraits ; l'archive est bornée par
+  ``ImportMaxBodyBytes`` (512 Mio par défaut), son contenu décompressé au
+  double ;
 * un **chemin local au démon**, ``{"path": "corpus", "recursive": true}``, lu
   dans le répertoire que l'opérateur a ouvert avec ``--import-dir``. Sans cette
   option, tout chemin est refusé (code ``invalid``) ; avec elle, un chemin qui
@@ -950,13 +956,14 @@ sont sautés sans être lus, ceux de même contenu sont lus mais pas analysés.
 .. code-block:: bash
 
    curl -X POST http://127.0.0.1:8080/v1/imports.batch \
-        -H 'X-Tenant-ID: club-lyon' -F file=@corpus.zip
+        -H 'X-Tenant-ID: 7' -F file=@corpus.zip
    curl -X POST http://127.0.0.1:8080/v1/imports.batch.status \
-        -H 'X-Tenant-ID: club-lyon' -H 'Content-Type: application/json' \
+        -H 'X-Tenant-ID: 7' -H 'Content-Type: application/json' \
         -d '{"importId":"3f9c…"}'
 
-**Partager une collection entre tenants** passe par le client, jamais par une
-lecture d'un tenant dans l'autre : le tenant qui donne appelle
+**Copier une collection d'un tenant à l'autre** passe par le client (la lire
+sur place, sans copie, est l'affaire de ``across.collectionsList``,
+:ref:`headless_tenants_lus`) : le tenant qui donne appelle
 ``exports.sqlite`` avec ``collectionIds`` (et un filigrane, pour que le
 receveur sache d'où vient le fichier), le tenant qui reçoit envoie le fichier
 à ``imports.db``. Chaque requête porte son propre ``X-Tenant-ID`` ; le proxy
@@ -973,10 +980,10 @@ règles.
 .. code-block:: bash
 
    curl -X POST http://127.0.0.1:8080/v1/exports.sqlite \
-        -H 'X-Tenant-ID: club-lyon' -H 'Content-Type: application/json' \
+        -H 'X-Tenant-ID: 7' -H 'Content-Type: application/json' \
         -d '{"collectionIds":[4],"watermarkOrigin":"Club de Lyon"}' -o ouvertures.db
    curl -X POST http://127.0.0.1:8080/v1/imports.db \
-        -H 'X-Tenant-ID: alice' -F file=@ouvertures.db
+        -H 'X-Tenant-ID: 2' -F file=@ouvertures.db
 
 La famille ``training`` tient le journal de l'onglet Entraînement :
 ``training.save`` ajoute une séance (``exercise``, ``seedSource``, comptes,
@@ -1024,6 +1031,10 @@ le tableau porte sur tous les joueurs et ventile déjà pions et videau en
 colonnes distinctes. Le champ ``luck_known`` indique si la chance a été mesurée
 pour ce joueur ; ``luck_rate_mp`` ne doit pas être lu quand il vaut ``false``,
 une chance inconnue n'étant pas une chance nulle.
+
+``stats.report`` rend dans le champ ``html`` le rapport HTML autonome du filtre
+transmis (``filter``), celui de l'interface graphique et de ``blunderdb stats
+report`` ; ``language`` choisit sa langue (anglais par défaut).
 
 Le filtre transmis aux méthodes ``stats`` accepte, à côté de ``PlayerName``, un
 champ ``PlayerAliases`` : les autres orthographes sous lesquelles la même
@@ -1073,6 +1084,26 @@ Une analyse illisible est laissée telle quelle plutôt que remise à zéro. Le 
 d'usage connu : les non-doubles étiquetés « Double No » par gnuBG, dont la
 lecture était fautive avant la version 0.33.0 et qui portaient l'erreur d'un
 double qui n'a jamais eu lieu.
+
+La famille ``met`` gère les tables d'équité de match du tenant :
+``met.list`` les liste ; ``met.import`` en enregistre une depuis le texte d'un
+fichier XML de gnuBG (``source`` ; ``name`` quand le fichier n'en nomme
+aucune) ; ``met.setCurrent`` (``{"id": N}``) en fait la table courante, ``0``
+rendant la table intégrée Kazaross-XG2 ; ``met.ofAnalysis``
+(``{"position_id": N}``) rend la table dont l'analyse de la position a été
+valorisée, la table courante et ``different``, vrai quand une analyse de match
+a été valorisée avec une autre table que la courante — elle est alors écartée
+des comparaisons.
+
+La :ref:`corbeille <corbeille>` a sa famille ``trash``.
+``trash.deletePosition``, ``trash.deleteCollection`` et ``trash.deleteComment``
+suppriment en gardant de quoi restaurer, et rendent l'``id`` de l'entrée de
+corbeille ; ``positions.delete`` et les autres suppressions restent
+définitives. ``trash.list`` (``kind``, ``limit``, ``offset``) et
+``trash.count`` la lisent, ``trash.restore`` (``{"id": N}``) remet une entrée
+en place et rend l'id de ce qui revient, ``trash.discard`` en efface une, et
+``trash.empty`` efface les entrées plus anciennes que ``olderThanDays`` jours
+(``0`` vide tout) et rend leur nombre (``purged``).
 
 ``gammonnet.analyzeMissing`` déclenche le rattrapage gammonNet du tenant
 courant : écrire une analyse pour chaque position qui n'en a aucune
@@ -1359,12 +1390,14 @@ gestes symétriques :
 * **du poste vers le serveur** — ``blunderdb migrate`` recopie un ``.db`` sous
   le tenant voulu (voir :ref:`headless_migrate`).
 
-Il n'existe **aucune lecture inter-tenant**. Le cloisonnement est total : rien
-de ce qu'un tenant stocke n'est visible à un autre, par aucune route, et aucun
-appel ne prend un tenant en paramètre — chaque requête ne connaît que celui que
-le proxy lui a posé. Un entraîneur qui veut voir les matchs de ses élèves a donc
-deux chemins, tous deux explicites :
+Rien de ce qu'un tenant stocke n'est visible à un autre, sauf par les lectures
+``across.*``, et seulement sur les tenants que le proxy liste dans
+``X-Read-Tenants`` sous ``serve --read-tenants`` (:ref:`headless_tenants_lus`).
+Toute autre requête ne connaît que le tenant que le proxy lui a posé. Un
+entraîneur qui veut voir les matchs de ses élèves a donc trois chemins, tous
+explicites :
 
+* lire leurs matchs par ``across.*``, le proxy listant les tenants des élèves ;
 * lui ouvrir dans le proxy un compte supplémentaire, associé au tenant de
   l'élève : c'est la table de correspondance du proxy, jamais le démon, qui
   décide du tenant qu'une session voit ;
@@ -1574,13 +1607,16 @@ chercheur réutilisé, qui prennent les positions une à une en faisant le tour
 des tenants qui ont du travail. Deux tenants qui balaient en même temps se
 partagent les cœurs au lieu de les réclamer chacun ; une évaluation demandée
 pendant le balayage d'un autre tenant attend une position, pas tout le
-balayage. Avec ``--analysis-weights club=3``, le tenant ``club`` reçoit trois
+balayage. Avec ``--analysis-weights 7=3``, le tenant ``7`` reçoit trois
 positions par tour quand un autre en reçoit une. Les travaux d'un même tenant
 passent dans l'ordre où ils sont arrivés. Un rollout prend son tour partie
 par partie : un rollout long d'un tenant n'empêche pas la requête courte d'un
 autre d'être servie avant sa fin, et ses résultats ne changent pas (ils ne
 dépendent que des réglages et de la graine). Chaque position, case ou partie
-calculée est imputée au quota de secondes de calcul de son tenant.
+calculée est imputée au quota de secondes de calcul de son tenant. Pendant
+l'arrêt du démon, une évaluation, une matrice de videau ou un rollout
+``rollout.position`` encore dans la file répond ``503`` (code ``unavailable``),
+sans rien enregistrer.
 
 **Scénario complet, de zéro à un démon qui répond :**
 
@@ -1787,7 +1823,9 @@ bibliothèque de bureau vers un déploiement serveur.
 
 La migration copie les **positions, leurs analyses et commentaires, les matchs
 (parties + coups), les tournois (avec leurs liens de match) et les collections
-(avec leur composition)**, en réattribuant les clés primaires et étrangères, le
+(avec leur composition)**, ainsi que les tables d'équité de match (la courante
+et celle dont chaque analyse a été valorisée), en réattribuant les clés
+primaires et étrangères, le
 tout dans une **seule transaction** côté destination : l'opération est atomique
 (un échec laisse la destination intacte, il suffit de relancer). La progression
 et le bilan final sont émis en NDJSON sur la sortie standard. Si la base source
@@ -1823,10 +1861,11 @@ ne commence.
 
 .. note::
 
-   Ne sont pas (encore) migrés les états applicatifs : decks/cartes Anki,
+   Ne sont pas migrés les états applicatifs : decks/cartes Anki,
    bibliothèque de filtres, historique de recherche et de commandes, et
-   métadonnées de session. La priorité est la migration de la bibliothèque de
-   positions et de l'historique de matchs.
+   métadonnées de session ; ``migrate`` en annonce le compte en fin de course.
+   Les seuils d'erreur et de blunder, eux, sont copiés (voir
+   :ref:`headless_sauvegarde`).
 
 .. _headless_call:
 

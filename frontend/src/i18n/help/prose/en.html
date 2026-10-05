@@ -46,10 +46,11 @@
     <li>The Kazaross-XG2 Match Equity Table (MET) is the work of <strong>Neil Kazaross</strong>.</li>
     <li>The take point and gammon value tables are taken from <strong>Dirk Schiemann</strong>'s book <em>The Theory of Backgammon</em>.</li>
     <li>
-        The one-sided (6 points, 15 checkers, for EPC) and two-sided (6 points, 6 checkers, for cube verdicts in races) bearoff databases were generated with <strong>GNU Backgammon</strong> (GNUbg).
-        GNUbg is free software under the GPL; these tables are data it produced, credited as such.
+        The one-sided (6 points, 15 checkers, for EPC) and two-sided (6 points, 6 checkers, for cube verdicts in races) bearoff databases are computed by blunderDB itself, through a port of the
+        <em>makebearoff</em> tool of <strong>GNU Backgammon</strong> (GNUbg); the result is byte-for-byte identical to gnubg's, whose SHA-256 fingerprint serves as the reference. GNUbg is free
+        software under the GPL.
     </li>
-    <li>Match files are read by <em>xgparser</em>, <em>gnubgparser</em> and <em>bgfparser</em> (MIT).</li>
+    <li>Match files are read by <em>xgparser</em>, <em>gnubgparser</em>, <em>bgfparser</em> and <em>ogxmparser</em> (MIT).</li>
     <li>On the Go side: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> and <em>go-fsrs</em> (MIT).</li>
     <li>On the interface side: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> and <em>driver.js</em> (MIT).</li>
     <li>The <em>Nunito</em> and <em>Noto Sans JP</em> fonts (SIL Open Font License 1.1).</li>

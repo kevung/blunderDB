@@ -10,8 +10,9 @@ réétudier ces positions en les filtrant selon différents filtres combinables
 arbitrairement. blunderDB peut également être utilisé pour constituer des
 catalogues de positions de référence.
 
-Nouveau venu ? Le **guide utilisateur** propose quatre tutoriels de bout en
-bout (premier import, étude d'un match, session Anki, mode serveur) et une
+Nouveau venu ? Le **guide utilisateur** propose cinq tutoriels de bout en
+bout (premier import, étude d'un match, session Anki, direction d'un tournoi,
+mode serveur) et une
 page « comment progresser » — la lecture la plus rentable avant de se lancer.
 
 Ce qui a changé d'une version à l'autre est dans l':ref:`historique`.

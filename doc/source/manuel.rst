@@ -34,7 +34,7 @@ Les principales interactions possibles avec blunderDB sont:
 
 * rechercher une ou plusieurs positions,
 
-* importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, Jellyfish), y compris les commentaires depuis les fichiers XG,
+* importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, Jellyfish, HedgeHog), y compris les commentaires depuis les fichiers XG,
 
 * naviguer dans les coups d'un match importé,
 
@@ -78,7 +78,11 @@ Des panneaux peuvent être affichés pour:
 
 * calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau Eval),
 
+* s'entraîner sur des exercices de calcul (panneau Entraînement),
+
 * étudier les positions par répétition espacée (panneau Anki),
+
+* transcrire un match à la main (panneau Transcription),
 
 * afficher les métadonnées de la base de données (panneau métadonnées).
 
@@ -86,7 +90,10 @@ La hauteur du panneau se règle en tirant sa poignée ; chaque onglet retient la
 
 Des fenêtres modales peuvent s'afficher pour:
 
-* afficher l'aide de blunderDB,
+* afficher l'aide de blunderDB, dont le champ de recherche (*/* y place le
+  curseur) sélectionne les occurrences du texte saisi, sans égard aux
+  majuscules ni aux accents (*ENTREE* passe à la suivante, *MAJ-ENTREE* à la
+  précédente),
 
 * afficher le catalogue des visites guidées (voir :ref:`visites_guidees`),
 
@@ -200,8 +207,8 @@ actif, le commentaire en cours ainsi que le contexte de navigation dans un
 match. Il est ainsi possible, par exemple, de garder une recherche ouverte
 dans une vue tout en parcourant un match dans une autre.
 
-* **Créer une vue** : cliquer sur le bouton *+* de la barre d'onglets ou
-  appuyer sur *CTRL-T*. La nouvelle vue démarre comme une copie de la vue
+* **Créer une vue** : cliquer sur le bouton *+* de la barre d'onglets (nommé
+  *+ Nouvelle vue* tant qu'il n'y a qu'une vue) ou appuyer sur *CTRL-T*. La nouvelle vue démarre comme une copie de la vue
   courante.
 
 * **Fermer une vue** : cliquer sur la croix de l'onglet ou appuyer sur
@@ -226,8 +233,9 @@ Le bouton de configuration (icône en forme de rouage) situé dans la barre
 d'outils, à gauche du bouton d'aide, ouvre la fenêtre de configuration de
 blunderDB. Elle est organisée en neuf onglets :
 
-* **Interface** — langue, échelle d'affichage, position du panneau, pas de
-  PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste) ;
+* **Interface** — thème, langue, échelle d'affichage, position du panneau, pas de
+  PageUp / PageDown (10, 50, 100, 500 ou 1 000 positions, ou 10 % de la liste),
+  journaux, vérification des mises à jour, votre nom et positions voisines ;
 * **Couleurs** — les couleurs du plateau ;
 * **Bibliothèque** — ce qui appartient à la base ouverte : les seuils
   d'erreur et de blunder, le compactage et la réparation, décrits ci-dessous ;
@@ -313,13 +321,13 @@ Une confirmation est demandée avant de lancer l'opération. Le résultat — l'
 ensuite dans la barre d'état. La même opération est disponible en ligne de
 commande via ``blunderdb vacuum`` (voir :ref:`cli`).
 
-Le bouton **Ouvrir le dossier des journaux**, juste en dessous, ouvre le
+Le bouton **Ouvrir le dossier des journaux**, dans l'onglet *Interface*, ouvre le
 dossier contenant le journal de l'application — utile pour joindre des
 détails à un signalement de problème, en particulier quand blunderDB est
 lancé depuis un raccourci ou un double-clic, sans terminal attaché pour
 afficher quoi que ce soit.
 
-La case **Vérifier les mises à jour au démarrage**, désactivée par défaut,
+La case **Vérifier les mises à jour au démarrage**, du même onglet, désactivée par défaut,
 interroge une fois la page des dernières versions du dépôt GitHub à chaque
 lancement et affiche, dans la barre d'état, un message si une version plus
 récente est disponible — jamais une fenêtre qui bloque l'utilisation.
@@ -328,7 +336,7 @@ passée par un gestionnaire de paquets (Flatpak, Homebrew, un paquet de
 distribution…) : c'est ce canal-là qui gère alors les mises à jour, pas
 blunderDB lui-même.
 
-Deux réglages gouvernent le classement des **positions voisines** (jeton
+Deux réglages de l'onglet *Interface* gouvernent le classement des **positions voisines** (jeton
 ``like``, voir :ref:`panneau_recherche`) : le nombre de voisines rendues, et la
 distance maximale au-delà de laquelle une position cesse d'en être une. Cette
 distance vaut zéro par défaut, c'est-à-dire aucun plafond : l'échelle dépend de
@@ -575,7 +583,8 @@ l'adresse ``http://127.0.0.1:<port>/mcp`` (port 8765 par défaut), et refuse une
 requête venue d'une page web. Il ajoute deux outils d'affichage : ouvrir une
 vue sur une recherche et montrer une position. Les outils ne font que lire,
 sauf si **Autoriser l'écriture** est cochée : ils peuvent alors enregistrer une
-position, la commenter, créer et remplir une collection ; rien n'efface. Sans
+position, la commenter, créer et remplir une collection, noter une carte Anki
+et enregistrer un rollout à côté de l'analyse d'une position ; rien n'efface. Sans
 fenêtre ouverte, ``blunderdb mcp`` sert les mêmes outils (voir :ref:`cli`).
 
 L'**assistant interne** est un client de ces mêmes outils. Aucun modèle n'est
@@ -616,7 +625,7 @@ Visites guidées et base d'exemple
 
 Pour faciliter la prise en main, blunderDB propose des **visites guidées** de
 l'interface. Le catalogue des visites s'ouvre depuis la barre d'outils ou avec
-la commande ``tour`` (alias ``tutorial``). Sept visites sont disponibles : un
+la commande ``tutorial`` (alias ``tour``). Sept visites sont disponibles : un
 tour général de l'interface, et des visites dédiées à la recherche de positions,
 à la revue des matchs, à la revue des tournois, au panneau Eval, à la révision
 Anki et aux statistiques. Chaque visite met en évidence les éléments concernés
@@ -894,10 +903,11 @@ tags`` (voir :ref:`cli`).
 La corbeille
 ------------
 
-Supprimer une position, une collection ou un commentaire passe par une
+Supprimer une position, une collection, un commentaire ou une carte Anki passe par une
 **corbeille** : la suppression a bien lieu, mais une copie de ce qui
 disparaît est gardée trente jours. La commande ``trash`` ouvre la fenêtre qui
-les liste, avec pour chacune *Restaurer* et *Supprimer*.
+les liste, avec pour chacune *Restaurer* et *Supprimer*, et un bouton
+*Vider la corbeille*.
 
 Une position restaurée revient avec **son analyse et ses commentaires** — la
 rendre nue serait une restauration de nom seulement. Elle ne revient pas sous
@@ -942,7 +952,9 @@ suivie de filtres (ex: ``ss nc``, ``ss E>40``). ``ss`` cherche dans la liste à
 l'écran : les résultats de la recherche précédente, la collection ouverte ou
 les positions du match en cours de revue, que la commande soit tapée
 directement ou depuis le panneau de recherche (*TAB*). La case à cocher
-*Rechercher dans les résultats actuels* du panneau suit la même règle. En
+*Rechercher dans les résultats actuels* du panneau suit la même règle ; la
+case *Ouvrir dans un nouvel onglet* affiche les résultats dans une nouvelle
+vue (voir :ref:`onglets_vues`) plutôt que dans la vue courante. En
 collection et en match, ``s`` est refusé : il chercherait dans toute la
 bibliothèque et remplacerait la liste affichée.
 
@@ -1111,7 +1123,8 @@ dans la liste des matchs, rendant visible le fait qu'un tournoi équivaut à
 l'ensemble de ses matchs.
 
 Le panneau de recherche comporte trois onglets sur son bord gauche :
-*Recherche* (les filtres), *Historique* et *Enregistrés*. L'onglet
+*Critères* (les filtres), *Historique* et *Enregistrés* — et un quatrième,
+*Assistant*, quand l'assistant interne est activé. L'onglet
 **Historique** liste les recherches passées avec leur date et leur commande :
 un clic sélectionne une recherche et affiche la position associée sur le
 plateau, un double-clic la ré-exécute. Chaque entrée peut être enregistrée
@@ -1152,7 +1165,9 @@ Panneau Collections
    dernière modification.
 
 Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton
-**+ Nouveau…** de l'en-tête est l'unique geste de création : il ouvre le champ
+**+** de l'en-tête, suivi du nom de ce qu'il crée (**+ Nouvelle collection**,
+**+ Nouveau tournoi**, **+ Nouveau paquet**, **+ Nouvelle transcription**), est
+l'unique geste de création : il ouvre le champ
 de saisie, que *Échap* ou **Annuler** referme dans les panneaux Collections et
 Tournois. Dans la liste des matchs, l'icône ⌨ ouvre la transcription du match
 et l'icône ✎ en corrige les métadonnées.
@@ -1787,7 +1802,7 @@ Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la
 liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet
 Transcription.
 
-Pour corriger un match de la bibliothèque, le bouton ✎ de la liste des matchs
+Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des matchs
 ou « **Éditer la transcription** » de sa fiche ouvre un brouillon depuis ce
 match — ou rouvre celui qui y est déjà ouvert : un seul brouillon par match.
 Terminer ce brouillon remplace le match sous le même identifiant ; les
@@ -1816,6 +1831,13 @@ peuvent être créés, renommés et supprimés ; les matchs peuvent leur être
 assignés. Les statistiques du panneau Stats peuvent être filtrées par tournoi.
 Appuyer sur *CTRL-Y* pour afficher ou masquer le panneau.
 
+**Nouveau tournoi** ouvre le champ de création, qui prend le focus ; *ÉCHAP* ou
+**Annuler** le referme. Un clic surligne une ligne, un double-clic ou *ENTRÉE*
+ouvre le tournoi : ses notes, puis ses matchs, un par ligne, qu'un double-clic
+ouvre, que ▲ et ▼ réordonnent, que ⇄ échange de joueurs et que × retire du
+tournoi. Le champ **Ajouter un match…** y range un match de la base, et ←
+ramène à la liste des tournois.
+
 Les tournois se remplissent d'eux-mêmes à l'import. Les fichiers XG, GnuBG et
 BGF nomment leur événement ; à l'import d'un match nouveau, blunderDB le classe
 dans le tournoi de ce nom et crée celui-ci s'il n'existe pas encore. La date et
@@ -1823,7 +1845,8 @@ le lieu du tournoi restent vides — c'est ici qu'on les renseigne. Un match dé
 présent dans la base n'est jamais reclassé : réimporter son fichier ne défait
 pas le rangement fait à la main.
 
-La colonne **PR** de chaque tournoi affiche le PR du **joueur de référence** —
+Les colonnes **PR** et **MWC** de chaque tournoi affichent le PR et la perte de
+MWC du **joueur de référence** —
 c'est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi
 (en cas d'égalité, celui ayant pris le plus de décisions). Le PR ne mélange donc
 pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
@@ -1838,18 +1861,21 @@ Diriger un tournoi
 blunderDB sait **diriger** un tournoi, et pas seulement le ranger. La direction
 est portée par le moteur **Nicomaque**, de Nicolas Harmand : c'est lui qui tient
 le format, les appariements, les tableaux et le classement ; blunderDB lui donne
-son interface et garde ses matchs. Le bouton **ⓘ** de la barre du panneau
+son interface et garde ses matchs. Le bouton **ⓘ** de l'en-tête de la Direction
 rappelle ce crédit et mène au dépôt et à la documentation du moteur.
 
 Un tournoi dirigé se choisit dans le panneau :ref:`panneau_tournois`
 (*CTRL-Y*, commande ``direct``) : ouvrir un tournoi, puis **Diriger ce
 tournoi**. Un tournoi déjà dirigé porte son état à côté de son nom et le bouton
-devient **Ouvrir**. Tant qu'une direction est ouverte, la zone principale montre
+devient **Ouvrir la direction**. Tant qu'une direction est ouverte, la zone principale montre
 le tournoi **à la place du plateau** — c'est la seule exception de blunderDB à
 cette règle ; passer sur n'importe quel autre onglet ramène le plateau.
+**Quitter la direction**, dans l'en-tête de la vue, ou **Fermer la direction**,
+dans le panneau, la ferment.
 
 Une direction a trois états : **en préparation** tant qu'aucun match n'a été
-lancé, **en cours** ensuite, **clos** une fois le classement figé. Rouvrir un
+lancé, **en cours** ensuite, **terminé** une fois le tournoi clos et le
+classement figé. Rouvrir un
 tournoi clos est possible, et demande une confirmation : le classement final
 cesse d'être final.
 
@@ -1874,7 +1900,7 @@ traverser la grille ; la file rappelle sous son titre ses raccourcis (*J* et
 La vue occupe toute la largeur de la zone principale, et chaque onglet défile
 seul : quitter un onglet puis y revenir, ou passer d'une épreuve à l'autre,
 retrouve la position où on l'avait laissé. Les boutons et les champs font au
-moins 40 pixels de haut, pour se viser sans précision au comptoir ; le nombre de
+moins 44 pixels de haut, pour se viser sans précision au comptoir ; le nombre de
 colonnes de la grille suit la largeur de la zone, non celle de la fenêtre. Dans
 les **Réglages**, chaque section se replie sur son titre, et le bouton **Ouvrir
 dans le navigateur** des Réglages et le bouton **Page murale** de l'en-tête
@@ -2116,7 +2142,7 @@ deux clics, et un match terminé se corrige en cliquant le nom du vrai vainqueur
 
 .. _direction_emplacements:
 
-L'onglet **Emplacements** relie le tournoi à la bibliothèque. Chaque match du
+L'onglet **Matchs** (titré « Emplacements ») relie le tournoi à la bibliothèque. Chaque match du
 tournoi est un emplacement, que l'on peut remplir de deux façons : transcrire le
 match sur-le-champ (:ref:`panneau_transcription`), ou y rattacher un match déjà
 importé. **Rien n'est rattaché par déduction** : une coïncidence de noms est une
@@ -2129,14 +2155,16 @@ le bilan de chacun (victoires–défaites) et les prix lorsqu'une dotation est
 réglée. Deux ex æquo partagent la place et le prix. Un joueur retiré garde le
 rang que son parcours lui vaut, noté « retiré » avec son bilan ou l'endroit du
 tableau où il s'est arrêté. **Clore le tournoi** fige le classement final. Le classement se copie en
-CSV, dans la langue de l'interface, ou s'enregistre dans un fichier :
+CSV, dans la langue de l'interface, avec la section et la dernière phase où
+chacun est entré, ou s'enregistre dans un fichier :
 **Enregistrer…** ouvre le dialogue du système sur un nom proposé, le tournoi
 suivi du mot « classement » et de la date du jour, et le fichier contient
 exactement le CSV copié. En ligne de commande, ``blunderdb tournament
 standings`` écrit le même CSV. Le nom d'un joueur est un lien : il ouvre
 l'Historique filtré sur lui, où chacun de ses résultats se corrige.
 
-Clore sans match en cours est un clic. Avec des matchs en cours, le Classement
+Clore sans match en cours est un clic ; quand tout est joué, la file propose
+aussi **Clore le tournoi**, qui se lance comme une autre proposition. Avec des matchs en cours, le Classement
 dit combien et attend un second clic sur place : clore fige le classement sans
 eux, et leur résultat ne se saisit plus. **Rouvrir** se confirme de la même
 façon ; le classement final cesse alors d'être final, et la réouverture reste
@@ -2161,8 +2189,12 @@ L'onglet **Réglages** s'ouvre sur des **formats nommés** : six tournois de clu
 prêts à l'emploi, dont le premier est recommandé. En choisir un suffit à
 commencer ; les champs restent modifiables ensuite.
 
-Se règlent ici : les phases et leur longueur de match, les longueurs tour par
-tour d'un tableau (« 15, 13, 11 » se lit du dernier tour vers le premier), le
+Se règlent ici : les phases (**Ajouter une phase** l'ajoute après les autres ;
+une phase déjà ouverte ne se retire pas) et leur longueur de match, celle de la
+finale, les longueurs tour par tour d'un tableau (« 15, 13, 11 » se lit du
+dernier tour vers le premier), la **longueur de fin** (des matchs plus longs à
+partir d'un nombre de joueurs encore en vie), les **micro-rondes** (apparier
+par lots toutes les N minutes), le
 nombre de tables, le rythme prévu en minutes par point (8 par défaut ; la bande
 d'horloge et la fin estimée en partent), les pauses de la journée, la dotation
 (droit d'entrée, retenue du club, barème par section) et le dossier d'affichage.
@@ -2263,7 +2295,7 @@ d'épreuve est un clic sur son onglet, sans confirmation ; l'épreuve quittée n
 se ferme pas et ne rejoue rien, elle reste telle qu'on l'a laissée. Un tournoi
 hors de tout événement n'a qu'une épreuve : pas d'onglet à montrer. Changer
 d'onglet de l'application puis revenir à Tournois rend la Direction telle qu'on
-l'a quittée : la même épreuve ou la Salle, et le même onglet de la vue.
+l'a quittée : la même épreuve ou *Toutes les tables*, et le même onglet de la vue.
 
 L'onglet **Toutes les tables**, à gauche des épreuves, montre toutes les tables
 de l'événement en une seule grille : une case par table, quelle que soit l'épreuve qui
@@ -2307,7 +2339,7 @@ match — les deux joueurs, la longueur, la table, deux cases vides pour le scor
 et une ronde de trente-deux joueurs tient sur une page A4.
 
 Un événement a son propre dossier de sortie, choisi une fois dans son panneau de
-Réglages avec le même bouton *Choisir le dossier* : blunderDB y écrit
+Réglages avec le même bouton *Choisir un dossier* : blunderDB y écrit
 ``index.html``, la **page murale** de l'événement — une ligne par table, quelle que
 soit l'épreuve qui l'occupe, avec les rondes annoncées de chaque épreuve et un
 lien vers sa propre page — et chaque épreuve rattachée écrit la sienne dans un
@@ -2342,7 +2374,9 @@ en confirme une, repêchage compris ; ``ranking --season`` cumule les tournois c
 d'une période en un classement de saison, par un barème de points par place et,
 au choix, un Elo de club (deux inscrits de même nom dans une même épreuve
 close font refuser le classement, qui connaît une personne par son nom) ; ``page --rencontre`` écrit la page murale d'un événement au lieu
-de la page d'une seule épreuve. Voir :ref:`cli`.
+de la page d'une seule épreuve ; ``hall`` imprime la grille *Toutes les tables*
+d'un événement et sa file, ``tables`` les propriétés des tables et les salles
+des épreuves. Voir :ref:`cli`.
 
 .. _stats:
 
@@ -2420,7 +2454,10 @@ Filtres disponibles
 * **Longueur de match** — restriction à des longueurs de match précises (1, 3,
   5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être combinées.
 
-Un bouton **Reset** remet tous les filtres à zéro (sauf le joueur
+* **Moteur** et **Profondeur min.** — ne garder que les décisions analysées par
+  un moteur donné (gnubg, xg…), ou au moins à une profondeur donnée, en plis.
+
+Un bouton **↺ Réinitialiser** remet tous les filtres à zéro (sauf le joueur
 auto-détecté).
 
 .. note::
@@ -2461,8 +2498,10 @@ tous les onglets.
 **MWC cost (Match Winning Chance cost)**
 
   Probabilité cumulée de victoire de match perdue à cause des erreurs, sur
-  l'ensemble du jeu de données filtré. Calculé à partir de la MET
-  Kazaross-XG2 embarquée dans blunderDB.
+  l'ensemble du jeu de données filtré. Calculé à partir de la MET courante de
+  la base, par défaut la Kazaross-XG2 embarquée dans blunderDB. Une analyse au
+  score de match calculée avec une autre table est « MET différente » et reste
+  hors des statistiques.
 
   .. caution::
      Le MWC cost **n'est pas applicable** aux positions *money-game* (sans
@@ -2648,33 +2687,6 @@ tire vingt positions au hasard parmi celles des trois groupes les plus
 coûteux. En ligne de commande, ``stats recurring --quiz`` tire ces
 positions et ``--deck`` crée le paquet.
 
-.. _stats_entrainement:
-
-Entraînement dans le temps
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-L'onglet **Entraînement** met côte à côte, sur les mêmes fenêtres
-calendaires — la **semaine** ou le **mois**, au choix — trois séries qui
-mesurent la progression par trois chemins :
-
-* le **PR du quiz** : celui des sessions de l'exercice Décision du panneau
-  Entraînement, pondéré par le nombre de décisions jugées. Il est calculé sur
-  l'échelle du PR réel, donc comparable à lui ;
-* le **PR des matchs** du filtre courant, pondéré par le nombre de décisions ;
-* la **rétention Anki** : la part des révisions de cartes déjà apprises
-  notées *Difficile* ou mieux, lue sur l'axe de droite (en %).
-
-Sous le graphique, le **PR du quiz par plan de jeu** range les décisions du
-quiz tirées de positions de la bibliothèque, les pires plans d'abord, avec le
-PR de la dernière fenêtre où le plan a été joué.
-
-Entre parenthèses, le nombre de décisions ou de révisions derrière chaque
-valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas un
-zéro. Le filtre ne restreint que les matchs ; le journal du quiz et celui
-d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est enregistré en
-plus : les trois séries sont relues dans les journaux existants. En ligne de
-commande : ``blunderdb stats training`` (voir :ref:`cli_stats`).
-
 Répartition par action de videau
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -2728,6 +2740,33 @@ Histogramme des magnitudes d'erreur
 Un histogramme distribue les erreurs selon leur magnitude en millipoints
 (mpt, tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur
 une barre charge les positions de la tranche.
+
+.. _stats_entrainement:
+
+Entraînement dans le temps
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+L'onglet **Entraînement** met côte à côte, sur les mêmes fenêtres
+calendaires — la **semaine** ou le **mois**, au choix — trois séries qui
+mesurent la progression par trois chemins :
+
+* le **PR du quiz** : celui des sessions de l'exercice Décision du panneau
+  Entraînement, pondéré par le nombre de décisions jugées. Il est calculé sur
+  l'échelle du PR réel, donc comparable à lui ;
+* le **PR des matchs** du filtre courant, pondéré par le nombre de décisions ;
+* la **rétention Anki** : la part des révisions de cartes déjà apprises
+  notées *Difficile* ou mieux, lue sur l'axe de droite (en %).
+
+Sous le graphique, le **PR du quiz par plan de jeu** range les décisions du
+quiz tirées de positions de la bibliothèque, les pires plans d'abord, avec le
+PR de la dernière fenêtre où le plan a été joué.
+
+Entre parenthèses, le nombre de décisions ou de révisions derrière chaque
+valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas un
+zéro. Le filtre ne restreint que les matchs ; le journal du quiz et celui
+d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est enregistré en
+plus : les trois séries sont relues dans les journaux existants. En ligne de
+commande : ``blunderdb stats training`` (voir :ref:`cli_stats`).
 
 Onglet Ventilations
 ~~~~~~~~~~~~~~~~~~~
@@ -2788,7 +2827,7 @@ côté.
 Onglet Joueurs
 ~~~~~~~~~~~~~~
 
-Les quatre onglets précédents décrivent **un** joueur ; l'onglet **Joueurs** les
+Les cinq onglets précédents décrivent **un** joueur ; l'onglet **Joueurs** les
 compare tous. Il affiche une ligne par joueur de la base, ce qui répond au
 besoin d'un organisateur suivant une compétition entière plutôt qu'un joueur en
 particulier.
@@ -2806,7 +2845,7 @@ Colonnes, dans l'ordre :
    :header: "Colonne", "Signification"
    :widths: 22, 78
 
-   "Joueur", "Le nom **tel qu'il figure dans les matchs**. Un joueur enregistré sous deux orthographes apparaît sur deux lignes, sauf si l'une est un alias de l'autre (fusion de joueurs, onglet Corpus) : la ligne porte alors le nom canonique."
+   "Joueur", "Le nom **tel qu'il figure dans les matchs**. Un joueur enregistré sous deux orthographes apparaît sur deux lignes, sauf si l'une est un alias de l'autre (section Corpus des paramètres) : la ligne porte alors le nom canonique."
    "Matchs", "Nombre de matchs disputés dans la période retenue."
    "V–D", "Victoires et défaites. Un match inachevé (journal tronqué, abandon) ne compte ni l'une ni l'autre : V + D peut donc être inférieur au nombre de matchs."
    "Décisions", "Nombre de décisions comptées — le dénominateur du PR. C'est la colonne qui dit ce que valent les taux voisins : un PR calculé sur douze décisions ne signifie rien."
@@ -2861,22 +2900,18 @@ taux qui n'a rien derrière lui s'affiche « — » et ne départage rien.
    désactivés : le tableau montre tous les joueurs, et il ventile déjà les
    décisions de pions et de videau en colonnes distinctes.
 
-Les chiffres par match de ce tableau, de l'onglet Progression et des PR par
-tournoi et par match viennent d'une table tenue à l'import (``match_stats`` :
-par match et par siège, les décisions comptées, l'erreur séparée pions/videau,
-les erreurs, les blunders, les deux termes du Snowie et la chance) plutôt que
-d'un nouveau parcours de chaque décision : sur une bibliothèque de plusieurs
-millions de positions, c'est ce qui garde le panneau rapide. Trois vues de
-corpus en sont tirées, dans l'onglet **Corpus** du panneau, en ligne de
+Trois vues de
+corpus figurent dans l'onglet **Corpus** du panneau, en ligne de
 commande et par l'API du démon (voir :ref:`cli_stats`) : le **face-à-face** de deux joueurs (matchs communs, PR de
-chacun, bilan), le **PR par fenêtre calendaire** glissante (mois, trimestre)
+chacun, bilan), le **PR par fenêtre calendaire** glissante (1, 3, 6 ou 12 mois)
 et le **classement** par PR des joueurs qui ont au moins un nombre donné de
 décisions comptées. L'onglet Corpus calcule chaque vue à la demande, sous le
 filtre courant. Un **filtre de provenance** (champs *Moteur* et *Profondeur
 min.* de la barre de filtres) restreint les statistiques aux décisions analysées ainsi ; il porte
 sur chaque décision, et les chiffres qu'il touche sont alors recalculés depuis
-les décisions. Comme le reste de la barre, il est conservé d'une session à
-l'autre.
+les décisions. Le face-à-face et le PR par fenêtre ne l'acceptent pas : tant
+qu'il est actif, ils refusent de se calculer. Comme le reste de la barre, il
+est conservé d'une session à l'autre.
 
 .. important::
    Un tiret (« — ») signale une valeur **jamais mesurée**, à ne pas confondre
@@ -2917,7 +2952,7 @@ Règle d'agrégation
 MWC : limitations
 ~~~~~~~~~~~~~~~~~
 
-* Le MWC cost est calculé à partir de la **MET Kazaross-XG2**, table de
+* Par défaut, le MWC cost est calculé à partir de la **MET Kazaross-XG2**, table de
   référence de facto dans le backgammon compétitif. Les résultats ne sont
   pas directement comparables avec des logiciels utilisant d'autres METs.
   C'est la même table, lue par le même point d'entrée, que celle dont
@@ -3097,15 +3132,6 @@ badge est là : un videau plafonné est la seule raison visible pour laquelle
 blunderDB et eXtreme Gammon peuvent annoncer deux verdicts différents sur la
 même position.
 
-Sous le verdict, une ligne **MET différente** signale une analyse à un score
-de match calculée avec une autre table d'équité de match que celle de la base,
-et nomme cette table ; une telle analyse est sortie des statistiques (voir
-l'onglet *gammonNet* de la configuration).
-
-Le badge de régime, la profondeur d'évaluation, le lien vers le moteur et la
-case *Défi* forment une bande à part, alignée à droite au-dessus des
-tableaux.
-
 Le **joueur au trait** et la **position du videau** s'éditent
 directement sur le plateau, comme en mode édition : cliquer le rectangle
 bearoff/score d'un joueur lui donne le trait ; cliquer le videau fait
@@ -3198,11 +3224,12 @@ Amener une position dans le panneau Eval
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Le panneau s'ouvre par défaut sur une position de bearoff, mais l'étude part
-le plus souvent d'une position déjà en main. Deux gestes l'y amènent :
+le plus souvent d'une position déjà en main. Trois gestes l'y amènent :
 
 * **Clic droit sur le plateau**, dans un panneau d'analyse ou pendant la
   navigation d'un match, puis *Évaluer cette position* : le panneau Eval
-  s'ouvre directement sur cette position, telle qu'elle est affichée. Le
+  s'ouvre directement sur cette position, telle qu'elle est affichée ;
+  *Évaluer le miroir de cette position* l'y ouvre vue de l'autre camp. Le
   menu contextuel n'apparaît pas dans le panneau Eval ni dans le panneau
   Recherche, où le bouton droit sert déjà à poser les pions de l'autre
   couleur.
@@ -3398,8 +3425,8 @@ règle de GNUbg, validée trait pour trait contre son analyse.
    affichée, elle, coïncide avec celle des moteurs.
 
 **Probabilité de gain et verdict, régime évalué.** Hors du domaine exact, la
-probabilité de gain provient de la sortie brute de gammonNet (recherche 0- ou
-2-plis selon le geste, jamais lue dans une table), et le verdict d'un
+probabilité de gain provient de la sortie brute de gammonNet (recherche 0-ply,
+puis à la profondeur configurée, jamais lue dans une table), et le verdict d'un
 « Decide » Janowski appliqué à cette sortie — la recherche *joue* la
 trajectoire au lieu d'en résumer un instantané, ce qui est précisément ce que
 le régime estimé ne pouvait pas faire (voir plus bas) et permet, seul des
@@ -3431,7 +3458,8 @@ d'équité normalisée : deux ordres de grandeur sous 0,020, le seuil à partir
 duquel eXtreme Gammon parle d'erreur. Par décision, tous cas confondus, le gain
 est de 0,0000.
 
-Le réglage n'est donc pas proposé. Il ne s'agit pas de dire que 3 plis ne vaut
+Les 2 plis restent donc le défaut ; 3 et 4 plis se choisissent dans l'onglet
+*gammonNet* de la configuration. Il ne s'agit pas de dire que 3 plis ne vaut
 rien en général, mais que sur *ce* réseau, avec le filtre canonique, il ne paie
 pas l'attente de quelqu'un devant un panneau. La mesure est reproductible
 (``TestThreePlyMeasure``) et la conclusion se rejugera si le réseau change.
@@ -3464,7 +3492,7 @@ utilisant l'algorithme FSRS. Une carte pose une question : le plus souvent une
 position, tirée d'une collection ou d'une recherche ; ce peut aussi être un
 score.
 
-**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à partir
+**Création de paquets :** Cliquez sur **+ Nouveau paquet** pour créer un paquet à partir
 d'une collection ou des résultats de recherche courants. Les paquets basés sur
 une recherche se synchronisent automatiquement à l'activation de l'onglet Anki.
 
@@ -3482,16 +3510,16 @@ fait **tenir dans le temps** et n'en mesure rien. Les deux histoires restent
 séparées : le journal de l'Entraînement ignore les révisions Anki, et les
 statistiques d'Anki ignorent les sessions d'Entraînement.
 
-**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou double-cliquez
+**Révision :** Sélectionnez un paquet puis cliquez sur *Étudier* (ou double-cliquez
 sur un paquet) pour commencer la révision des cartes dues. Une carte de position
 affiche la position sur le plateau ; une carte de score annonce le score et
 laisse le plateau tel qu'il est. Évaluez votre rappel avec les touches
-*1* (À revoir), *2* (Difficile), *3* (Bien), ou *4* (Facile). Appuyez sur *Esc*
+*1* (À revoir), *2* (Difficile), *3* (Correct), ou *4* (Facile). Appuyez sur *Esc*
 pour arrêter et revenir à la liste des paquets.
 
 Deux comptes portent des noms distincts : la colonne **Échues** de la liste
 compte toutes les cartes dont l'échéance est passée, y compris les cartes
-suspendues ou enterrées ; le chiffre du bouton *Study* ne compte que celles qui
+suspendues ou enterrées ; le chiffre du bouton *Étudier* ne compte que celles qui
 sont disponibles maintenant, et peut donc être plus petit.
 
 **Les décisions de videau font deux cartes, enchaînées.** Une décision de
@@ -3519,7 +3547,7 @@ sur le plateau.
 Rien ne vous oblige à dévoiler la réponse pour évaluer : si vous êtes sûr de
 vous, les touches *1* à *4* restent actives. La réponse se remasque à la carte
 suivante, mais pas si vous changez simplement d'onglet — allez consulter le
-panneau Éval ou le commentaire de la position, elle vous attendra au retour.
+panneau Eval ou le commentaire de la position, elle vous attendra au retour.
 
 Une position dépourvue d'analyse enregistrée l'indique directement, sans zone
 masquée.
@@ -3529,7 +3557,7 @@ Paramètres d'un paquet de positions, cochez *Répondre au damier* : pour une
 carte de pions, vous jouez alors le coup sur le damier, comme dans l'exercice
 Décision, puis *Valider*. Le moteur juge le coup contre l'analyse enregistrée,
 dévoile la réponse et **propose une note** : *Facile* pour une bonne réponse
-rapide, *Bien* pour une bonne réponse plus lente, *Difficile* pour une erreur
+rapide, *Correct* pour une bonne réponse plus lente, *Difficile* pour une erreur
 sous le seuil du blunder, *À revoir* pour un blunder ou un coup illégal. La note
 proposée est en surbrillance ; vous gardez la main et notez ce que vous voulez
 avec *1* à *4*. Un coup légal que l'analyse ne classe pas ne propose rien. Les
@@ -3546,7 +3574,7 @@ sert d'autres positions sans rien modifier au planning.
 
 Une limite de **0** ne sert aucune carte : c'est un état à part entière, utile
 pour geler un paquet le temps de préparer un tournoi, et ce n'est pas la même
-chose que « pas de limite ». Le bouton *Study* est alors inactif.
+chose que « pas de limite ». Le bouton *Étudier* est alors inactif.
 
 La limite porte sur la **séance**, pas sur la journée. Un paquet blunderDB est
 bâti sur une collection ou une recherche : c'est un corpus fini, introduit en
@@ -3554,12 +3582,12 @@ quelques séances, dont le volume quotidien est déjà borné par sa taille. Un
 plafond par jour n'y mordrait jamais, ou bien créerait un retard sur un paquet
 qui tenait en une séance.
 
-**Entraînement libre (cram) :** Le bouton *Cram*, à côté de *Study*, lance une
+**Entraînement libre (cram) :** Le bouton *Entraînement*, à côté de *Étudier*, lance une
 session d'entraînement libre : des positions aléatoires du paquet vous sont
 présentées sans tenir compte de l'échéancier FSRS. Ce mode **ne modifie jamais
 le planning de révision espacée** — idéal pour s'échauffer avant un tournoi ou
 réviser intensément un paquet thématique sans perturber son ordonnancement. Une
-pastille *Cram* remplace l'état de la carte et un bouton *Suivant* (touches *1*
+pastille *Libre* remplace l'état de la carte et un bouton *Suivant* (touches *1*
 à *4*) fait défiler les positions. *Esc* revient à la liste sans enregistrer de
 session interrompue.
 
@@ -3592,7 +3620,7 @@ le journal utile — on ne peut pas réécrire le passé, mais on peut savoir ce
 qu'il a été.
 
 **Arrêt/Reprise :** Vous pouvez interrompre une session de révision à tout moment
-avec *Esc*. Le bouton change en *Resume* et affiche votre progression.
+avec *Esc*. Le bouton change en *Reprendre* et affiche votre progression.
 Cliquez dessus pour reprendre là où vous vous êtes arrêté.
 
 **Gestion des paquets :** Utilisez les boutons d'action pour renommer,
@@ -3638,7 +3666,7 @@ Le lanceur
 
 Trois choix, puis « Démarrer » :
 
-* l'**exercice** — *Scores*, *Pions*, *Bearoff*, *Évaluation* ou *Décision* ;
+* l'**exercice** — *Scores*, *Comptage des pips*, *Bearoff*, *Évaluation* ou *Décision* ;
 * la **source** de la question, quand l'exercice en a plusieurs — *Vivier*
   (des formes canoniques de l'exercice), *Plateau* (la position telle qu'elle
   est) ou *Base* (une position de la liste parcourue) ;
@@ -3678,7 +3706,7 @@ videau au score a besoin des deux : le point de prise corrigé combine les
 valeurs de gammon des deux joueurs, et c'est le point de prise de l'adversaire
 qui dit si votre double passe.
 
-**Pions** demande le compte de pions des **deux** camps. Le pipcount du
+**Comptage des pips** demande le compte de pions des **deux** camps. Le pipcount du
 plateau est masqué tant que la question est ouverte ; « Révéler » l'affiche —
 **même si vous aviez masqué le pipcount** avec ``p``, sans quoi la réponse
 resterait invisible et l'exercice invérifiable. C'est un masque et non un
@@ -3752,7 +3780,7 @@ Le mode de réponse est une propriété de l'exercice, jamais un réglage : ce q
 se **compte ou se récite** se déclare, ce qui s'**estime** se saisit — parce
 que là, la taille de l'erreur est la leçon.
 
-*Scores* et *Pions* se **déclarent** : vous calculez de tête, vous cliquez
+*Scores* et *Comptage des pips* se **déclarent** : vous calculez de tête, vous cliquez
 « Révéler », et la vérité s'affiche. Chaque nombre est alors **juste par
 défaut** — vous cliquez celui que vous avez raté pour le marquer **faute**
 (*Tab* puis *Espace* fait le même geste au clavier), et un second clic annule
@@ -3823,8 +3851,8 @@ Le journal et le bilan
 
 Les sessions terminées sont conservées dans la base elle-même — elles suivent
 donc le fichier — et sans plafond. Au repos, le panneau affiche une ligne par
-exercice : le nombre de sessions, le taux de fautes, le temps médian et, à
-partir de dix sessions, la **tendance**, c'est-à-dire l'écart entre le taux de
+exercice : le nombre de sessions, le taux de fautes, le temps médian et,
+au-delà de dix sessions, la **tendance**, c'est-à-dire l'écart entre le taux de
 fautes des dix dernières sessions et celui de toutes — négatif, vous
 progressez.
 
@@ -3859,9 +3887,11 @@ fait un paquet (``--deck``) ou une collection (``--collection``), et
 Panneau Métadonnées
 -------------------
 
-Le panneau **Métadonnées** affiche les informations générales de la base de
-données courante : nom, description, nombre de positions, nombre de matchs et
-de parties, version du schéma. Accessible via la commande ``meta``.
+Le panneau **Métadonnées** (*CTRL-M*) affiche les informations générales de
+la base de données courante : *Utilisateur*, date de création (*Créé*),
+*Version* du schéma et *Description*. L'utilisateur, la date et la description
+se modifient sur place et s'enregistrent en quittant le champ ; la version est
+en lecture seule. Accessible aussi via la commande ``meta``.
 
 Il affiche également, **lorsqu'elle existe**, l'origine de la base — voir
 :ref:`diffusion_controlee`. Une base ordinaire n'affiche pas cette section.
@@ -3902,7 +3932,7 @@ Trois points méritent l'attention :
   lien tournoi–match n'existe pas et le tournoi arriverait vide. La case est
   désactivée tant que « inclure les matchs » ne l'est pas.
 
-Les champs *Utilisateur*, *Description* et *Date* décrivent le **fichier
+Les champs *Utilisateur*, *Description* et *Date de création* décrivent le **fichier
 produit** ; ils sont préremplis depuis la base source. La case *Mes filtres
 enregistrés* est à part des autres : elle n'exporte pas du contenu mais vos
 propres recherches enregistrées, sans utilité dans la base de quelqu'un
@@ -4002,7 +4032,7 @@ Dans l'application, ouvrez le fichier et affichez le panneau **Métadonnées**
 lecture seule, indiquant ce qui a été inscrit, par qui, quand, et l'état de la
 signature :
 
-* « ✓ signature vérifiée — marquée par vous » : le fichier porte votre marque,
+* « ✓ marquée par vous » : le fichier porte votre marque,
   intacte ;
 * « ✓ signature vérifiée » : la marque est intacte et vient d'une autre clé —
   comparez son empreinte à celle que le producteur vous a communiquée ;

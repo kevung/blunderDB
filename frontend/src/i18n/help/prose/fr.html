@@ -51,10 +51,11 @@
     <li>La table d'équité de match Kazaross-XG2 (MET) est l'œuvre de <strong>Neil Kazaross</strong>.</li>
     <li>Les tables de take points et de valeurs de gammon sont tirées du livre <em>The Theory of Backgammon</em> de <strong>Dirk Schiemann</strong>.</li>
     <li>
-        Les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et bilatérale (6 points, 6 pions, pour les verdicts de videau en course) ont été générées avec
-        <strong>GNU Backgammon</strong> (GNUbg). GNUbg est un logiciel libre sous licence GPL ; ces tables sont des données qu'il a produites, créditées comme telles.
+        Les bases de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et bilatérale (6 points, 6 pions, pour les verdicts de videau en course) sont calculées par blunderDB lui-même, par un portage
+        de l'outil <em>makebearoff</em> de <strong>GNU Backgammon</strong> (GNUbg) ; le résultat est identique octet pour octet à celui de gnubg, dont l'empreinte SHA-256 sert de référence. GNUbg est
+        un logiciel libre sous licence GPL.
     </li>
-    <li>Les fichiers de match sont lus par <em>xgparser</em>, <em>gnubgparser</em> et <em>bgfparser</em> (MIT).</li>
+    <li>Les fichiers de match sont lus par <em>xgparser</em>, <em>gnubgparser</em>, <em>bgfparser</em> et <em>ogxmparser</em> (MIT).</li>
     <li>Côté Go : <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> et <em>go-fsrs</em> (MIT).</li>
     <li>Côté interface : <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> et <em>driver.js</em> (MIT).</li>
     <li>Les polices <em>Nunito</em> et <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>

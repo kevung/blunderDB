@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 18:24+0200\n"
+"POT-Creation-Date: 2026-10-05 04:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -184,8 +184,12 @@ msgid "RETOUR ARRIERE"
 msgstr "RÜCKTASTE"
 
 #: ../../source/raccourcis.rst:1
-msgid "Réinitialiser le board, le cube, le score et les dés."
-msgstr "Board, Dopplerwürfel, Spielstand und Würfel zurücksetzen."
+msgid ""
+"En mode édition ou Eval : réinitialiser le board, le cube, le score et "
+"les dés."
+msgstr ""
+"Im Bearbeitungs- oder Eval-Modus: Brett, Dopplerwürfel, Spielstand und "
+"Würfel zurücksetzen."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-G"
@@ -742,8 +746,14 @@ msgid "Esc"
 msgstr "Esc"
 
 #: ../../source/raccourcis.rst:1
-msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
-msgstr "Den Zug abwählen. Wenn kein Zug ausgewählt ist, das Fenster schließen."
+msgid ""
+"Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau, "
+"sauf devant les résultats d'une recherche ``ss`` : y revenir à la "
+"collection ou au match."
+msgstr ""
+"Den Zug abwählen. Wenn kein Zug ausgewählt ist, das Panel schließen, "
+"außer vor den Ergebnissen einer ``ss``-Suche: dort zur Sammlung oder zum "
+"Match zurückkehren."
 
 #: ../../source/raccourcis.rst:219
 msgid "Panneau Eval"

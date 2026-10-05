@@ -160,7 +160,8 @@ Ces seuils sont propres à chaque bibliothèque, et les valeurs par défaut sont
 propres à blunderDB : gnuBG classe les coups en trois crans (``0.03`` douteux,
 ``0.06`` mauvais, ``0.12`` très mauvais — ``gnubg/gnubg.c:281–286``) plutôt
 qu'en une catégorie unique, et eXtreme Gammon trace les siennes à 0,020 et
-0,080. Les deux sont proposés comme préréglages.
+0,080. La configuration propose trois préréglages : blunderDB (0,050 et
+0,100), XG (0,020 et 0,080) et GNUbg (0,040 et 0,080).
 
 
 Décisions comptées au dénominateur du PR
@@ -181,14 +182,21 @@ Seuls les **coups non-forcés** sont comptés :
 Décisions de cube — décisions comptées
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Seules les **décisions de cube proches** sont comptées :
+Une décision de cube est comptée si elle est **proche**, ou si le joueur a
+pris une action autre que « No Double » (double, prise, abandon) :
 
 - Une décision cube est **proche** si elle se situe dans la fenêtre d'équité
   ``[-0.16, +0.16]`` autour du point de redoublement (prédicat
   ``isCloseCubedecision`` dans ``gnubg/eval.c:5088–5100``).
+- Un double prématuré, même hors de cette fenêtre, est compté : le joueur a
+  pris une décision, et elle a un coût.
 - Un « No Double » trivial (équité très négative ou très positive) n'est pas
   une vraie décision stratégique ; l'inclure gonflerait le dénominateur et
   dépresserait le PR.
+- Comme dans XG, un « No Double » proche mais correctement joué, videau
+  centré, n'est pas compté quand le joueur au trait est à 2 points ou moins
+  du gain : les équités EMG y sont amplifiées et le seuil de 0,16 les
+  classerait à tort comme proches.
 
 Résumé du filtre
 ~~~~~~~~~~~~~~~~~
@@ -201,6 +209,8 @@ Résumé du filtre
 | Coup forcé         | Non                                         |
 +--------------------+---------------------------------------------+
 | Cube proche        | Oui                                         |
++--------------------+---------------------------------------------+
+| Double non proche  | Oui                                         |
 +--------------------+---------------------------------------------+
 | No Double trivial  | Non                                         |
 +--------------------+---------------------------------------------+

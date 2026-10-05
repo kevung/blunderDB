@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 18:24+0200\n"
+"POT-Creation-Date: 2026-10-05 04:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -183,8 +183,10 @@ msgid "RETOUR ARRIERE"
 msgstr "BACKSPACE"
 
 #: ../../source/raccourcis.rst:1
-msgid "Réinitialiser le board, le cube, le score et les dés."
-msgstr "Сбросить доску, куб, счёт и кости."
+msgid ""
+"En mode édition ou Eval : réinitialiser le board, le cube, le score et "
+"les dés."
+msgstr "В режиме правки или Eval: сбросить доску, куб, счёт и кости."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-G"
@@ -738,8 +740,13 @@ msgid "Esc"
 msgstr "Esc"
 
 #: ../../source/raccourcis.rst:1
-msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
-msgstr "Отменить выбор хода. Если ход не выбран, закрыть панель."
+msgid ""
+"Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau, "
+"sauf devant les résultats d'une recherche ``ss`` : y revenir à la "
+"collection ou au match."
+msgstr ""
+"Снять выбор хода. Если ход не выбран, закрыть панель, кроме случая "
+"результатов поиска ``ss``: вернуться оттуда к коллекции или матчу."
 
 #: ../../source/raccourcis.rst:219
 msgid "Panneau Eval"

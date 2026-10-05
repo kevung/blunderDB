@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:37+0200\n"
+"POT-Creation-Date: 2026-10-05 04:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -19,15 +19,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: ../../source/index.rst:19
+#: ../../source/index.rst:20
 msgid "Prise en main"
 msgstr "Начало работы"
 
-#: ../../source/index.rst:26
+#: ../../source/index.rst:27
 msgid "Référence"
 msgstr "Справочник"
 
-#: ../../source/index.rst:39
+#: ../../source/index.rst:40
 msgid "Annexes"
 msgstr "Приложения"
 
@@ -53,16 +53,16 @@ msgstr ""
 
 #: ../../source/index.rst:13
 msgid ""
-"Nouveau venu ? Le **guide utilisateur** propose quatre tutoriels de bout "
-"en bout (premier import, étude d'un match, session Anki, mode serveur) et"
-" une page « comment progresser » — la lecture la plus rentable avant de "
-"se lancer."
+"Nouveau venu ? Le **guide utilisateur** propose cinq tutoriels de bout en"
+" bout (premier import, étude d'un match, session Anki, direction d'un "
+"tournoi, mode serveur) et une page « comment progresser » — la lecture la"
+" plus rentable avant de se lancer."
 msgstr ""
-"Впервые здесь? **Руководство пользователя** предлагает четыре сквозных "
-"руководства (первый импорт, изучение матча, сессия Anki, серверный режим)"
-" и страницу «как прогрессировать» — самое полезное чтение перед началом "
-"работы."
+"Впервые здесь? **Руководство пользователя** предлагает пять сквозных "
+"руководств (первый импорт, изучение матча, сессия Anki, проведение "
+"турнира, серверный режим) и страницу «как прогрессировать» — самое "
+"полезное чтение перед началом работы."
 
-#: ../../source/index.rst:17
+#: ../../source/index.rst:18
 msgid "Ce qui a changé d'une version à l'autre est dans l':ref:`historique`."
 msgstr "Что изменилось от версии к версии, описано в :ref:`historique`."

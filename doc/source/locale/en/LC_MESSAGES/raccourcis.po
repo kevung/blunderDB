@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 18:24+0200\n"
+"POT-Creation-Date: 2026-10-05 04:23+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -181,8 +181,10 @@ msgid "RETOUR ARRIERE"
 msgstr "BACKSPACE"
 
 #: ../../source/raccourcis.rst:1
-msgid "Réinitialiser le board, le cube, le score et les dés."
-msgstr "Reset board, cube, score, and dice."
+msgid ""
+"En mode édition ou Eval : réinitialiser le board, le cube, le score et "
+"les dés."
+msgstr "In edit or Eval mode: reset the board, the cube, the score and the dice."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-G"
@@ -735,8 +737,14 @@ msgid "Esc"
 msgstr "Esc"
 
 #: ../../source/raccourcis.rst:1
-msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
-msgstr "Deselect move. If no move selected, close the panel."
+msgid ""
+"Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau, "
+"sauf devant les résultats d'une recherche ``ss`` : y revenir à la "
+"collection ou au match."
+msgstr ""
+"Deselect the move. If no move is selected, close the panel, except in "
+"front of the results of an ``ss`` search: go back from there to the "
+"collection or the match."
 
 #: ../../source/raccourcis.rst:219
 msgid "Panneau Eval"
