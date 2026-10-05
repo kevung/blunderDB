@@ -151,9 +151,11 @@ export function boardPress(ctx, hit) {
     if (kind === 'cube') {
         // The Arbiter asks for a cube decision only when doubling is open: rolls without one
         // are its own (ADR-0072 rule 9).
-        if (hit.kind === 'die') return { type: 'roll' };
+        // Any click on the board rolls, the cube excepted (it proposes the double); the frame's
+        // outside keeps the Pile gesture.
         if (hit.kind === 'cube') return { type: 'offerDouble' };
-        return null;
+        if (hit.kind === 'outside') return null;
+        return { type: 'roll' };
     }
     if (kind !== 'move' || !ctx.play) return null;
     if (hit.kind === 'die') {
@@ -166,6 +168,14 @@ export function boardPress(ctx, hit) {
         return next === ctx.play ? null : { type: 'play', play: next };
     }
     return null;
+}
+
+/**
+ * Space: validates the move once every playable die is played; nothing else, nowhere else.
+ * @param {DuelBoardContext} ctx
+ */
+export function canValidateMove(ctx) {
+    return isMine(ctx) && !ctx.prompt && ctx.awaiting.kind === 'move' && !!ctx.play && !!completedPlay(ctx.play);
 }
 
 /**

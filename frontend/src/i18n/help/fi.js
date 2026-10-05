@@ -917,11 +917,11 @@ export default {
 <p>«Jatka peliä» avaa keskeytetyn Kaksintaistelun uudelleen samasta kohdasta, samoilla tulevilla nopilla; sen kellot olivat pysähdyksissä.</p>
 <p>Kaksintaistelu pelataan laudalla. Paneeli näyttää ottelulomakkeen kahdessa sarakkeessa kuten Transkriptio, kellot aikataulun ollessa käynnissä, rivin, joka kertoo mitä odotetaan, sekä ”Keskeytä”, ”Lopeta ja säilytä”, ”Lopeta ja hylkää”. Tulos ja kuutio ovat laudan; tulos ja kellot pysyvät tilarivillä, kun välilehti on suljettu. Noppien siemenen SHA-256-sormenjälki, jonka Erotuomari julkaisee heti luonnissa, luetaan paneelin kehoterivin työkaluvihjeestä ja siemenen kanssa päättyneen Ottelun alkuperästä. Lauta siirtyy <strong>KAKSINTAISTELU</strong>-tilaan: kirjastoa ei voi selata, muokkaus, Eval-paneeli ja muut välilehdet eivät avaudu, ja moottori vaikenee — ei arviointia, ei ehdokkaita. Jäljelle jäävät vain Pino (<code>B</code>), pipcount (<code>P</code>) ja ohje.</p>
 <ul>
-<li>Ennen heittoa noppiin napsauttaminen heittää ne; kuutioon napsauttaminen ehdottaa tuplausta, ja lauta kysyy ”Tuplaa” tai ”Peruuta”. Kun kuutio ei ole käytettävissä, heitto tapahtuu automaattisesti.</li>
+<li>Ennen heittoa lautaan, noppiin tai nappulaan napsauttaminen heittää ne; vain kuutioon napsauttaminen ehdottaa tuplausta, ja lauta kysyy ”Tuplaa” tai ”Peruuta”. Kun kuutio ei ole käytettävissä, heitto tapahtuu automaattisesti.</li>
 <li>Botin tuplauksen edessä lauta kysyy ”Ota vastaan” tai ”Luovuta”.</li>
 <li>Napsautus nappulaan pelaa sen vasemmalla vielä vapaalla nopalla tai toisella, kun vasen ei voi pelata sitä; tuplaheitto pelataan neljällä napsautuksella. Nappulan voi myös vetää kohteeseensa. Pelattu noppa harmaantuu. Vain laillisen siirron askeleet menevät läpi.</li>
 <li>Ennen pelaamista noppiin napsauttaminen tai oikea napsautus laudalla vaihtaa niiden järjestyksen. Siirron aikana oikea napsautus laudalla ottaa takaisin kaikki pelatut nappulat (myös <code>BACKSPACE</code>).</li>
-<li>Täysi siirto vahvistetaan napsauttamalla noppia, painikkeella ”Vahvista” laudalla tai näppäimellä <code>ENTER</code>. Sen jälkeen mitään ei voi ottaa takaisin.</li>
+<li>Täysi siirto vahvistetaan napsauttamalla noppia, painikkeella ”Vahvista” laudalla tai näppäimellä <code>ENTER</code> tai <code>VÄLILYÖNTI</code>. Sen jälkeen mitään ei voi ottaa takaisin.</li>
 <li>Botti vastaa heti; sen siirrot toistetaan laudalla hitaasti.</li>
 <li>Oikea napsautus laudan ulkopuolella tai laudalla siirron ulkopuolella avaa Kaksintaistelun valikon: aseman lisääminen pinoon tai poistaminen sieltä, pelin luovuttaminen yksinkertaisena, gammonina tai backgammonina (omalla vuorolla, vahvistuksen jälkeen), keskeytys, lopetus. Valikko ei tarjoa arviointia eikä muokkausta.</li>
 <li>«Keskeytä» asettaa Kaksintaistelun tauolle kellot pysäytettyinä. «Lopeta ja säilytä» kirjoittaa Ottelun sellaisenaan; «Lopeta ja hylkää» ei kirjoita mitään. Lopettaminen ei ole koskaan pelin luovuttamista.</li>
@@ -1240,6 +1240,10 @@ export default {
 <td>Vahvista laudalle asetettu siirto; sen jälkeen mitään ei voi perua.</td>
 </tr>
 <tr>
+<td>VÄLILYÖNTI (Kaksintaistelu)</td>
+<td>Vahvista laudalle asetettu siirto, kun kaikki nopat on pelattu; ei vaikutusta keskeneräiseen siirtoon tai oman vuorosi ulkopuolella.</td>
+</tr>
+<tr>
 <td>BACKSPACE (Kaksintaistelu)</td>
 <td>Palauta nappulat paikoilleen ennen vahvistusta.</td>
 </tr>
@@ -1323,8 +1327,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Napsautus noppiin (ennen heittoa)</td>
-<td>Noppien heitto.</td>
+<td>Napsautus lautaan tai noppiin (ennen heittoa)</td>
+<td>Noppien heitto. Kuutio säilyttää oman merkityksensä: se ehdottaa tuplausta.</td>
 </tr>
 <tr>
 <td>Napsautus kuutioon (ennen heittoa)</td>

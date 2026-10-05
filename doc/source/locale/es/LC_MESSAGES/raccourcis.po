@@ -498,6 +498,14 @@ msgstr ""
 "deshacer nada."
 
 #: ../../source/raccourcis.rst:1
+msgid "ESPACE (Duel)"
+msgstr "ESPACIO (Duelo)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "Validar la jugada dispuesta en el tablero, una vez jugados todos los dados; sin efecto en una jugada parcial o fuera de su turno."
+
+#: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"
 msgstr "RETROCESO (Duelo)"
 
@@ -667,12 +675,12 @@ msgid "Geste"
 msgstr "Gesto"
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic sur les dés (avant le lancer)"
-msgstr "Clic en los dados (antes de la tirada)"
+msgid "Clic sur le plateau ou sur les dés (avant le lancer)"
+msgstr "Clic en el tablero o en los dados (antes de la tirada)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Lancer les dés."
-msgstr "Lanzar los dados."
+msgid "Lancer les dés. Le videau garde son sens : il propose de doubler."
+msgstr "Lanzar los dados. El cubo conserva su sentido: propone doblar."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic sur le videau (avant le lancer)"

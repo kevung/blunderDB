@@ -9031,14 +9031,8 @@ msgstr ""
 "help remain."
 
 #: ../../source/manuel.rst:4038
-msgid ""
-"Avant le lancer, un clic sur les dés les lance ; un clic sur le videau "
-"propose de doubler, et le plateau demande « Doubler » ou « Annuler ». "
-"Quand le videau n'est pas disponible, le lancer est automatique."
-msgstr ""
-"Before the roll, a click on the dice rolls them; a click on the cube "
-"offers to double, and the board asks “Double” or “Cancel”. When the cube "
-"is not available, the roll is automatic."
+msgid "Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique."
+msgstr "Before the roll, a click on the board, on the dice or on a checker rolls them; only a click on the cube offers to double, and the board asks “Double” or “Cancel”. When the cube is not available, the roll is automatic."
 
 #: ../../source/manuel.rst:4041
 msgid "Face à un double du Bot, le plateau demande « Prendre » ou « Passer »."
@@ -9067,12 +9061,8 @@ msgstr ""
 "the checkers played (``BACKSPACE`` too)."
 
 #: ../../source/manuel.rst:4049
-msgid ""
-"Le coup complet se valide par un clic sur les dés, par « Valider » sur le"
-" plateau, ou par ``ENTRÉE``. Rien ne se reprend après."
-msgstr ""
-"The complete move is validated by a click on the dice, by “Validate” on "
-"the board, or by ``ENTER``. Nothing can be taken back afterwards."
+msgid "Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après."
+msgstr "The complete move is validated by a click on the dice, by “Validate” on the board, or by ``ENTER`` or ``SPACE``. Nothing can be taken back afterwards."
 
 #: ../../source/manuel.rst:4034
 msgid "Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement."

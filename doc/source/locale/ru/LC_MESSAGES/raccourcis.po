@@ -492,6 +492,14 @@ msgstr ""
 "вернуть."
 
 #: ../../source/raccourcis.rst:1
+msgid "ESPACE (Duel)"
+msgstr "ПРОБЕЛ (Дуэль)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "Подтвердить ход, собранный на доске, когда сыграны все кости; без действия при неполном ходе или вне вашей очереди."
+
+#: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"
 msgstr "BACKSPACE (Дуэль)"
 
@@ -660,12 +668,12 @@ msgid "Geste"
 msgstr "Жест"
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic sur les dés (avant le lancer)"
-msgstr "Щелчок по костям (перед броском)"
+msgid "Clic sur le plateau ou sur les dés (avant le lancer)"
+msgstr "Щелчок по доске или по костям (перед броском)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Lancer les dés."
-msgstr "Бросить кости."
+msgid "Lancer les dés. Le videau garde son sens : il propose de doubler."
+msgstr "Бросить кости. Куб сохраняет свой смысл: он предлагает удвоить."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic sur le videau (avant le lancer)"

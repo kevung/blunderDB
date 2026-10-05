@@ -9109,14 +9109,8 @@ msgstr ""
 "Pino (``B``), pipcount (``P``) ja ohje."
 
 #: ../../source/manuel.rst:4038
-msgid ""
-"Avant le lancer, un clic sur les dés les lance ; un clic sur le videau "
-"propose de doubler, et le plateau demande « Doubler » ou « Annuler ». "
-"Quand le videau n'est pas disponible, le lancer est automatique."
-msgstr ""
-"Ennen heittoa noppiin napsauttaminen heittää ne; kuutioon napsauttaminen "
-"ehdottaa tuplausta, ja lauta kysyy ”Tuplaa” tai ”Peruuta”. Kun kuutio ei "
-"ole käytettävissä, heitto tapahtuu automaattisesti."
+msgid "Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique."
+msgstr "Ennen heittoa lautaan, noppiin tai nappulaan napsauttaminen heittää ne; vain kuutioon napsauttaminen ehdottaa tuplausta, ja lauta kysyy ”Tuplaa” tai ”Peruuta”. Kun kuutio ei ole käytettävissä, heitto tapahtuu automaattisesti."
 
 #: ../../source/manuel.rst:4041
 msgid "Face à un double du Bot, le plateau demande « Prendre » ou « Passer »."
@@ -9145,13 +9139,8 @@ msgstr ""
 "ottaa takaisin kaikki pelatut nappulat (myös ``BACKSPACE``)."
 
 #: ../../source/manuel.rst:4049
-msgid ""
-"Le coup complet se valide par un clic sur les dés, par « Valider » sur le"
-" plateau, ou par ``ENTRÉE``. Rien ne se reprend après."
-msgstr ""
-"Täysi siirto vahvistetaan napsauttamalla noppia, painikkeella ”Vahvista” "
-"laudalla tai näppäimellä ``ENTER``. Sen jälkeen mitään ei voi ottaa "
-"takaisin."
+msgid "Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après."
+msgstr "Täysi siirto vahvistetaan napsauttamalla noppia, painikkeella ”Vahvista” laudalla tai näppäimellä ``ENTER`` tai ``VÄLILYÖNTI``. Sen jälkeen mitään ei voi ottaa takaisin."
 
 #: ../../source/manuel.rst:4034
 msgid "Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement."

@@ -9278,14 +9278,8 @@ msgstr ""
 "solo la Pila (``B``), il pipcount (``P``) e la guida."
 
 #: ../../source/manuel.rst:4038
-msgid ""
-"Avant le lancer, un clic sur les dés les lance ; un clic sur le videau "
-"propose de doubler, et le plateau demande « Doubler » ou « Annuler ». "
-"Quand le videau n'est pas disponible, le lancer est automatique."
-msgstr ""
-"Prima del lancio, un clic sui dadi li lancia; un clic sul cubo propone di"
-" raddoppiare, e la scacchiera chiede «Raddoppia» o «Annulla». Quando il "
-"cubo non è disponibile, il lancio è automatico."
+msgid "Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique."
+msgstr "Prima del lancio, un clic sulla scacchiera, sui dadi o su una pedina li lancia; solo un clic sul cubo propone di raddoppiare, e la scacchiera chiede «Raddoppia» o «Annulla». Quando il cubo non è disponibile, il lancio è automatico."
 
 #: ../../source/manuel.rst:4041
 msgid "Face à un double du Bot, le plateau demande « Prendre » ou « Passer »."
@@ -9317,12 +9311,8 @@ msgstr ""
 "riprende tutte le pedine giocate (anche ``BACKSPACE``)."
 
 #: ../../source/manuel.rst:4049
-msgid ""
-"Le coup complet se valide par un clic sur les dés, par « Valider » sur le"
-" plateau, ou par ``ENTRÉE``. Rien ne se reprend après."
-msgstr ""
-"La mossa completa si convalida con un clic sui dadi, con «Convalida» "
-"sulla scacchiera, o con ``INVIO``. Dopo non si riprende nulla."
+msgid "Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après."
+msgstr "La mossa completa si convalida con un clic sui dadi, con «Convalida» sulla scacchiera, o con ``INVIO`` o ``SPAZIO``. Dopo non si riprende nulla."
 
 #: ../../source/manuel.rst:4034
 msgid "Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement."

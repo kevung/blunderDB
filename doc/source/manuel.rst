@@ -4041,8 +4041,8 @@ panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait —
 aucune évaluation, aucun candidat. Seules restent la Pile (``B``), le
 pipcount (``P``) et l'aide.
 
-* Avant le lancer, un clic sur les dés les lance ; un clic sur le videau
-  propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand
+* Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les
+  lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand
   le videau n'est pas disponible, le lancer est automatique.
 * Face à un double du Bot, le plateau demande « Prendre » ou « Passer ».
 * Un clic sur un pion le joue avec le dé de gauche encore libre, ou avec
@@ -4053,7 +4053,7 @@ pipcount (``P``) et l'aide.
   intervertit leur ordre. Pendant le coup, le clic droit sur le plateau
   reprend tous les pions joués (``RETOUR ARRIÈRE`` aussi).
 * Le coup complet se valide par un clic sur les dés, par « Valider » sur le
-  plateau, ou par ``ENTRÉE``. Rien ne se reprend après.
+  plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après.
 * Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement.
 * Le clic droit hors du plateau, ou sur le plateau hors de son coup, ouvre le
   menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la

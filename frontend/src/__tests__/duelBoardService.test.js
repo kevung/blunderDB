@@ -23,7 +23,7 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({ GetGammonNetAnalysisPly: vi.
 import { PlayDuel } from '../../wailsjs/go/database/Database.js';
 import { duelStore, duelBoardStore, duelAnimatingStore } from '../stores/duelStore.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
-import { duelBoardPress, duelBoardContextMenu, duelBoardDrop, confirmDouble, cancelDouble } from '../services/duelService.js';
+import { duelBoardPress, duelBoardContextMenu, duelBoardDrop, duelKeyGuard, confirmDouble, cancelDouble } from '../services/duelService.js';
 import { newPlay } from '../services/quizPlay.js';
 import { scoreStart } from '../services/duel.js';
 import DuelBoardPrompt from '../components/DuelBoardPrompt.svelte';
@@ -73,6 +73,17 @@ describe('the board’s gestures reach the Arbiter', () => {
         expect(PlayDuel).toHaveBeenCalledWith(4, 7, { side: 0, kind: 'roll' });
     });
 
+    test('a click anywhere on the board rolls, the cube still proposes the double', async () => {
+        open({ side: 0, kind: 'cube', position: opening });
+        duelBoardPress({ kind: 'none' });
+        await tick();
+        expect(PlayDuel).toHaveBeenCalledWith(4, 7, { side: 0, kind: 'roll' });
+        vi.clearAllMocks();
+        duelBoardPress({ kind: 'cube' });
+        expect(PlayDuel).not.toHaveBeenCalled();
+        expect(get(duelBoardStore).prompt).toBe('double');
+    });
+
     test('the cube asks first; the double leaves only once confirmed, and cancel sends nothing', async () => {
         open({ side: 0, kind: 'cube', position: opening });
         duelBoardPress({ kind: 'cube' });
@@ -106,6 +117,47 @@ describe('the board’s gestures reach the Arbiter', () => {
         expect(/** @type {any} */ (get(quizPlayStore)).steps).toHaveLength(0);
         duelBoardDrop(13, 10);
         expect(/** @type {any} */ (get(quizPlayStore)).steps).toEqual([{ from: 13, to: 10 }]);
+    });
+});
+
+describe('Space during a Duel', () => {
+    const space = (/** @type {any} */ target) => {
+        const event = new KeyboardEvent('keydown', { code: 'Space', key: ' ', cancelable: true });
+        Object.defineProperty(event, 'target', { value: target });
+        return event;
+    };
+    const finished = () => {
+        open({ side: 0, kind: 'move', position: opening });
+        quizPlayStore.set(newPlay(opening, plays));
+        quizPlayStore.set(/** @type {any} */ ({ ...get(quizPlayStore), steps: plays[0].steps }));
+    };
+
+    test('validates a finished move and stops the page from scrolling', async () => {
+        finished();
+        const event = space(document.body);
+        expect(duelKeyGuard(event)).toBe(true);
+        expect(event.defaultPrevented).toBe(true);
+        await tick();
+        expect(PlayDuel).toHaveBeenCalledWith(4, 7, expect.objectContaining({ side: 0, kind: 'move' }));
+    });
+
+    test('does nothing on a partial move, but still does not press a focused button', async () => {
+        open({ side: 0, kind: 'move', position: opening });
+        quizPlayStore.set(newPlay(opening, plays));
+        const button = document.createElement('button');
+        const event = space(button);
+        expect(duelKeyGuard(event)).toBe(true);
+        expect(event.defaultPrevented).toBe(true);
+        await tick();
+        expect(PlayDuel).not.toHaveBeenCalled();
+    });
+
+    test('keeps its meaning in a field', () => {
+        finished();
+        const event = space(document.createElement('input'));
+        expect(duelKeyGuard(event)).toBe(true);
+        expect(event.defaultPrevented).toBe(false);
+        expect(PlayDuel).not.toHaveBeenCalled();
     });
 });
 

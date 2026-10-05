@@ -489,6 +489,14 @@ msgid "Valider le coup arrangé au plateau ; rien ne se reprend après."
 msgstr "Vahvista laudalle asetettu siirto; sen jälkeen mitään ei voi perua."
 
 #: ../../source/raccourcis.rst:1
+msgid "ESPACE (Duel)"
+msgstr "VÄLILYÖNTI (Kaksintaistelu)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "Vahvista laudalle asetettu siirto, kun kaikki nopat on pelattu; ei vaikutusta keskeneräiseen siirtoon tai oman vuorosi ulkopuolella."
+
+#: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"
 msgstr "BACKSPACE (Kaksintaistelu)"
 
@@ -657,12 +665,12 @@ msgid "Geste"
 msgstr "Ele"
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic sur les dés (avant le lancer)"
-msgstr "Napsautus noppiin (ennen heittoa)"
+msgid "Clic sur le plateau ou sur les dés (avant le lancer)"
+msgstr "Napsautus lautaan tai noppiin (ennen heittoa)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Lancer les dés."
-msgstr "Noppien heitto."
+msgid "Lancer les dés. Le videau garde son sens : il propose de doubler."
+msgstr "Noppien heitto. Kuutio säilyttää oman merkityksensä: se ehdottaa tuplausta."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic sur le videau (avant le lancer)"

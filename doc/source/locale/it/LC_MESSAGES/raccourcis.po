@@ -492,6 +492,14 @@ msgstr ""
 "nulla."
 
 #: ../../source/raccourcis.rst:1
+msgid "ESPACE (Duel)"
+msgstr "SPAZIO (Duello)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "Convalidare la mossa disposta sulla scacchiera, una volta giocati tutti i dadi; nessun effetto su una mossa parziale o fuori dal vostro turno."
+
+#: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"
 msgstr "BACKSPACE (Duello)"
 
@@ -661,12 +669,12 @@ msgid "Geste"
 msgstr "Gesto"
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic sur les dés (avant le lancer)"
-msgstr "Clic sui dadi (prima del lancio)"
+msgid "Clic sur le plateau ou sur les dés (avant le lancer)"
+msgstr "Clic sulla scacchiera o sui dadi (prima del lancio)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Lancer les dés."
-msgstr "Lanciare i dadi."
+msgid "Lancer les dés. Le videau garde son sens : il propose de doubler."
+msgstr "Lanciare i dadi. Il cubo conserva il suo significato: propone di raddoppiare."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic sur le videau (avant le lancer)"
