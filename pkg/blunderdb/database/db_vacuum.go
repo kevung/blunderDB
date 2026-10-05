@@ -151,7 +151,27 @@ func (d *Database) reopenAfterSwap(path string) error {
 	}
 	d.db = db
 	d.rebuildStore()
+	d.rebindServices()
 	return nil
+}
+
+// rebindServices moves the cached services onto the new store. The swapped
+// file holds the same rows under the same ids and revisions, so the drafts
+// being typed keep their undo stacks and an open Duel stays open; the d.mu
+// the caller holds for writing excludes every call reading their store.
+func (d *Database) rebindServices() {
+	d.transcriptMu.Lock()
+	if d.transcriptSvc != nil {
+		d.transcriptSvc.Rebind(d.store)
+		d.transcriptOn = d.store
+	}
+	d.transcriptMu.Unlock()
+	d.duelMu.Lock()
+	if d.duelSvc != nil {
+		d.duelSvc.Rebind(d.store)
+		d.duelOn = d.store
+	}
+	d.duelMu.Unlock()
 }
 
 func syncFile(path string) error {

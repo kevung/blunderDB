@@ -36,11 +36,19 @@ type DuelOffer struct {
 // duelService returns the Arbiter over the open library, made on first use.
 // Caller holds d.mu; lock ORDER mu -> duelMu, and forgetDuels takes duelMu
 // alone before mu.
+//
+// A Service made between forgetDuels and the replacement of the library is
+// on the replaced store: it is recognised by its store and dropped, its open
+// Duel naming a row of that library.
 func (d *Database) duelService() *duel.Service {
 	d.duelMu.Lock()
 	defer d.duelMu.Unlock()
+	if d.duelSvc != nil && d.duelOn != d.store {
+		d.duelSvc = nil
+	}
 	if d.duelSvc == nil {
 		d.duelSvc = duel.New(d.store, duel.Options{})
+		d.duelOn = d.store
 	}
 	return d.duelSvc
 }
@@ -173,6 +181,7 @@ func (d *Database) forgetDuels() {
 	d.duelMu.Lock()
 	svc := d.duelSvc
 	d.duelSvc = nil
+	d.duelOn = nil
 	d.duelMu.Unlock()
 	if svc == nil {
 		return
