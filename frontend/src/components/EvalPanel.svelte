@@ -19,6 +19,14 @@
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import CubeVerdictTable from './CubeVerdictTable.svelte';
     import PositionFactsTable from './PositionFactsTable.svelte';
+    import RolloutStrip from './RolloutStrip.svelte';
+    import RolloutResults from './RolloutResults.svelte';
+    import ContextMenu from './ContextMenu.svelte';
+    import { rolloutStore } from '../stores/rolloutStore.js';
+    import { toggleRollout, cancelRollout, ensureRolloutEvents, syncRolloutStatus, rolloutOnBoard } from '../services/rolloutService.js';
+    import { analysisMenuItems } from '../services/analysisMenu.js';
+    import { rolloutsByMove, cubeRollouts } from '../utils/rolloutRows.js';
+    import { clickSelection, contextSelection, selectedPlays } from '../utils/moveSelection.js';
 
     let isActive = $derived($statusBarModeStore === 'EVAL');
 
@@ -127,6 +135,8 @@
         // Clear the arrow before the new result lands: the old list belongs to
         // the position just left (ADR-0017 rule 3).
         selectedMoveStore.set(null);
+        pickedMoves = [];
+        anchor = null;
         evalSettled = false;
         evalFailed = false;
         evalFailedMessage = '';
@@ -205,6 +215,9 @@
 
     let unsubEval = [];
     onMount(() => {
+        // A rollout outlives the panel: ask what runs, then listen.
+        ensureRolloutEvents();
+        syncRolloutStatus();
         GetEpcChallenge()
             .then((v) => epcChallengeStore.set(!!v))
             .catch(() => {});
@@ -253,12 +266,63 @@
     /** @type {HTMLElement | undefined} */
     let panelEl;
 
-    function handleMoveRowClick(move) {
-        if ($selectedMoveStore === move.move) {
-            selectedMoveStore.set(null);
-        } else {
-            selectedMoveStore.set(move.move);
-        }
+    // Rollouts of the scratch board (ADR-0060): it is never stored, so its rollout is run in
+    // memory — no database, no write access needed — and shown while that board is on screen.
+    // The selection and the menu are the Analysis panel's (utils/moveSelection.js, analysisMenu.js).
+    let pickedMoves = $state(/** @type {string[]} */ ([]));
+    let anchor = $state(/** @type {string | null} */ (null));
+    let panelMenu = $state(/** @type {{ x: number, y: number, items: any[] } | null} */ (null));
+    let rollout = $derived($rolloutStore);
+    let onBoard = $derived(rolloutOnBoard(rollout, $positionStore, { unsaved: true }));
+    let rolloutRows = $derived(rolloutsByMove({ unsaved: onBoard.unsaved, live: onBoard.live }));
+    let cubeRolled = $derived(cubeRollouts([], onBoard.unsaved));
+    const UNSAVED = { unsaved: true };
+
+    function currentSelection() {
+        return { picked: pickedMoves, anchor, selected: $selectedMoveStore };
+    }
+
+    /** @param {import('../utils/moveSelection.js').MoveSelection} sel */
+    function applySelection(sel) {
+        pickedMoves = sel.picked;
+        anchor = sel.anchor;
+        selectedMoveStore.set(sel.selected);
+    }
+
+    /** The plays a rollout started now would roll out; none is the whole position (its cube decision without dice). */
+    function rolloutSelection() {
+        return hasDiceSet ? selectedPlays(currentSelection()) : [];
+    }
+
+    /** @param {MouseEvent} event */
+    function openPanelMenu(event) {
+        event.preventDefault();
+        panelMenu = { x: event.clientX, y: event.clientY, items: analysisMenuItems(rolloutSelection(), UNSAVED) };
+    }
+
+    /** @param {{ move: string }} move @param {MouseEvent} event */
+    function handleRowContextMenu(move, event) {
+        applySelection(contextSelection(currentSelection(), move.move));
+        openPanelMenu(event);
+    }
+
+    /** Right-click elsewhere in the panel: the selection, or the whole position. Défi keeps its answer hidden. */
+    /** @param {MouseEvent} event */
+    function handleContentContextMenu(event) {
+        if (event.defaultPrevented || maskedDecision) return;
+        openPanelMenu(event);
+    }
+
+    /** @param {{ move: string }} move @param {MouseEvent} [event] */
+    function handleMoveRowClick(move, event) {
+        applySelection(
+            clickSelection(
+                currentSelection(),
+                move.move,
+                event,
+                evalMoves.map((m) => m.move)
+            )
+        );
         // Rows are plain <tr>s: focus the panel explicitly (WebKit and Chromium
         // differ on walking up to a focusable ancestor).
         panelEl?.focus({ preventScroll: true });
@@ -268,8 +332,24 @@
     // analysis panel. Required: keyboardService withholds these keys app-wide
     // while selectedMoveStore is set.
     function handleKeyDown(event) {
+        if (event.target?.matches?.('input, select, textarea')) return;
         if (event.key === 'Escape') {
-            if ($selectedMoveStore) selectedMoveStore.set(null);
+            // A running rollout is stopped first, then the selection cleared.
+            if (rollout.running) {
+                event.preventDefault();
+                cancelRollout();
+            } else if ($selectedMoveStore || pickedMoves.length) {
+                event.preventDefault();
+                pickedMoves = [];
+                selectedMoveStore.set(null);
+            }
+            return;
+        }
+
+        // `r` rolls out the selected plays (the position when none is), or stops the rollout running.
+        if (isBareLetter(event, 'r') && isActive) {
+            event.preventDefault();
+            toggleRollout(rolloutSelection(), UNSAVED);
             return;
         }
 
@@ -279,11 +359,13 @@
         if (isBareLetter(event, 'j') || event.key === 'ArrowDown') {
             event.preventDefault();
             if (currentIndex >= 0 && currentIndex < evalMoves.length - 1) {
+                pickedMoves = [];
                 selectedMoveStore.set(evalMoves[currentIndex + 1].move);
             }
         } else if (isBareLetter(event, 'k') || event.key === 'ArrowUp') {
             event.preventDefault();
             if (currentIndex > 0) {
+                pickedMoves = [];
                 selectedMoveStore.set(evalMoves[currentIndex - 1].move);
             }
         }
@@ -438,7 +520,8 @@
             </div>
         </div>
     {:else}
-        <div class="eval-content">
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div class="eval-content" oncontextmenu={handleContentContextMenu}>
             <!-- The strip, a full-width line on top (ADR-0020 rule 8): a badge qualifies the numbers below. -->
             <div class="badges-strip">
                 {@render addPositionButton()}
@@ -505,6 +588,11 @@
                 {/if}
             </div>
 
+            {#if showDecision && !maskedDecision && (cubeRolled.length || onBoard.live.length)}
+                <!-- The cube decision has no play row: its rollout is read below it. -->
+                <RolloutResults rollouts={cubeRolled} live={onBoard.live} liveGames={rollout.games} liveMaxGames={rollout.maxGames} {isMoney} />
+            {/if}
+
             <!-- The only scrolling region (ADR-0017). The Baseline row lives in this
                  table, so Défi masks it with the ranking (ADR-0018 rules 2, 6). -->
             {#if hasDiceSet}
@@ -521,14 +609,28 @@
                     >
                 {:else}
                     <div class="moves-scroll">
-                        <CandidateMovesTable moves={evalMoves} selectedMove={$selectedMoveStore} onRowClick={handleMoveRowClick} showProvenance={false} baseline={baselineFacts} {isMoney} />
+                        <CandidateMovesTable
+                            moves={evalMoves}
+                            selectedMove={$selectedMoveStore}
+                            selectedMoves={pickedMoves}
+                            rollouts={rolloutRows}
+                            onRowClick={handleMoveRowClick}
+                            onRowContextMenu={handleRowContextMenu}
+                            showProvenance={false}
+                            baseline={baselineFacts}
+                            {isMoney}
+                        />
                         {#if evalMoves.length === 0}
                             <div class="eval-placeholder">{evalRefused ? $t('cube.refused') : $t('eval.pending')}</div>
                         {/if}
                     </div>
                 {/if}
             {/if}
+            <RolloutStrip here={onBoard.here} />
         </div>
+    {/if}
+    {#if panelMenu}
+        <ContextMenu x={panelMenu.x} y={panelMenu.y} items={panelMenu.items} onClose={() => (panelMenu = null)} />
     {/if}
 </section>
 

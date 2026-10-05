@@ -272,15 +272,37 @@ export function boardKey(position) {
 }
 
 /**
- * Rolls out the position on the board: the plays moves names, or its candidates (its cube
- * decision without dice) when none is named. Resolves to an error message, or '' once started.
+ * What of the rollout in hand describes this board: whether it runs here, its candidates as they
+ * stand, and its result when the board is not stored. A board that is not stored is recognised by
+ * its content, so a rollout of a board since edited shows nothing on the new one. unsaved treats
+ * the board as not stored whatever id it carries (the EVAL scratch board).
+ * @param {any} state rolloutStore's value
+ * @param {any} position
+ * @param {{ unsaved?: boolean }} [options]
  */
-export async function startRolloutOfCurrent(settings, moves = []) {
+export function rolloutOnBoard(state, position, { unsaved = false } = {}) {
+    const id = unsaved ? 0 : (position?.id ?? 0);
+    const key = id ? '' : boardKey(position);
+    const here = state.running && state.kind === 'position' && (id ? state.positionId === id : !state.positionId && state.pendingKey === key);
+    return {
+        here,
+        live: here ? state.candidates : [],
+        unsaved: !id && !state.running && state.result && state.resultKey === key ? state.result : null
+    };
+}
+
+/**
+ * Rolls out the position on the board: the plays moves names, or its candidates (its cube
+ * decision without dice) when none is named. A board that is not stored — or any board, with
+ * unsaved — is rolled out in memory: nothing is written, so neither a database nor write access
+ * is needed. Resolves to an error message, or '' once started.
+ */
+export async function startRolloutOfCurrent(settings, moves = [], { unsaved = false } = {}) {
     ensureRolloutEvents();
     const problem = settingsProblem(settings);
     if (problem) return refuse(problem);
     const pos = get(positionStore);
-    const id = pos?.id ?? 0;
+    const id = unsaved ? 0 : (pos?.id ?? 0);
     try {
         rolloutStore.update((s) => ({ ...s, error: '', pendingKey: id ? '' : boardKey(pos) }));
         await startJob(() => StartRollout({ positionId: id, position: id ? undefined : pos, settings: settingsForWire(settings), moves: [...moves], store: id !== 0 }));
@@ -336,9 +358,10 @@ export function cancelRollout() {
 
 /**
  * The panel's `r` and its menu: start with the chosen setting — of the plays moves names, or of the
- * position — or stop the rollout running. Resolves to an error message, or ''.
+ * position — or stop the rollout running. options as startRolloutOfCurrent's. Resolves to an error
+ * message, or ''.
  */
-export async function toggleRollout(moves = []) {
+export async function toggleRollout(moves = [], options = {}) {
     const now = get(rolloutStore);
     if (now.running) {
         cancelRollout();
@@ -347,7 +370,7 @@ export async function toggleRollout(moves = []) {
     const available = await loadRolloutPresets();
     const settings = chosenSettings(get(rolloutChoiceStore), available);
     if (!settings) return '';
-    const err = await startRolloutOfCurrent(settings, moves);
+    const err = await startRolloutOfCurrent(settings, moves, options);
     if (err) say('rollout.error', { message: err });
     return err;
 }

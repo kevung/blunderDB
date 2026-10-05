@@ -490,7 +490,8 @@ export function handleKeyDown(event) {
         viewStore.selectNextView();
     } else if (!event.ctrlKey && letter('p')) {
         togglePipcount();
-    } else if (!event.ctrlKey && letter('r')) {
+    } else if (!event.ctrlKey && letter('r') && !event.defaultPrevented) {
+        // A panel that claimed `r` (a rollout from the Eval panel) keeps it.
         loadRandomPosition();
     }
 }

@@ -166,4 +166,13 @@ func TestStartRollout_RefusedOnReadOnlyDatabase(t *testing.T) {
 	if st := a.RolloutStatus(); st.Running {
 		t.Errorf("a rollout started: %+v", st)
 	}
+
+	// A board rolled out in memory (the EVAL scratch board) writes nothing: read-only is no bar.
+	pos := domain.InitializePosition()
+	if _, err := a.StartRollout(RolloutRequest{Position: &pos, Settings: rollout.Fast()}); err != nil {
+		t.Errorf("unsaved board on a read-only database: %v", err)
+	}
+	if done := a.cancelRollout(); done != nil {
+		<-done
+	}
 }

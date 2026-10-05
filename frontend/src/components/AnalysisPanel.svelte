@@ -21,10 +21,11 @@
     import RolloutStrip from './RolloutStrip.svelte';
     import RolloutResults from './RolloutResults.svelte';
     import ContextMenu from './ContextMenu.svelte';
-    import { copyBoardWithAnalysisImage } from '../services/clipboardService.js';
-    import { rolloutStore, rolloutChoiceStore } from '../stores/rolloutStore.js';
-    import { toggleRollout, cancelRollout, ensureRolloutEvents, syncRolloutStatus, boardKey } from '../services/rolloutService.js';
+    import { analysisMenuItems } from '../services/analysisMenu.js';
+    import { rolloutStore } from '../stores/rolloutStore.js';
+    import { toggleRollout, cancelRollout, ensureRolloutEvents, syncRolloutStatus, rolloutOnBoard } from '../services/rolloutService.js';
     import { rolloutsByMove, cubeRollouts } from '../utils/rolloutRows.js';
+    import { clickSelection, contextSelection, selectedPlays } from '../utils/moveSelection.js';
     let { onClose } = $props();
 
     // Read-only mirrors of stores
@@ -109,47 +110,39 @@
         };
     });
 
-    let liveCandidates = $derived(rollout.running && rollout.kind === 'position' && rollout.positionId === positionId ? rollout.candidates : []);
     // A rollout of a board that is not saved describes that board, in that database: it goes with them.
-    let unsavedRollout = $derived(!positionId && !rollout.running && rollout.result && rollout.resultKey === boardKey($positionStore) ? rollout.result : null);
+    let onBoard = $derived(rolloutOnBoard(rollout, $positionStore));
+    let liveCandidates = $derived(onBoard.live);
+    let unsavedRollout = $derived(onBoard.unsaved);
     let rolloutRows = $derived(rolloutsByMove({ stored: storedRollouts, unsaved: unsavedRollout, live: liveCandidates }));
 
     /** The plays a rollout started now would roll out; none is the whole position. */
     function rolloutSelection() {
         if (viewKind !== 'checker') return [];
-        if (pickedMoves.length) return pickedMoves;
-        return $selectedMoveStore ? [$selectedMoveStore] : [];
+        return selectedPlays(currentSelection());
+    }
+
+    function currentSelection() {
+        return { picked: pickedMoves, anchor, selected: $selectedMoveStore };
+    }
+
+    /** @param {import('../utils/moveSelection.js').MoveSelection} sel */
+    function applySelection(sel) {
+        pickedMoves = sel.picked;
+        anchor = sel.anchor;
+        selectedMoveStore.set(sel.selected);
     }
 
     /** @param {MouseEvent} event @param {string[]} moves */
     function openPanelMenu(event, moves) {
         event.preventDefault();
-        const preset = $t(`rollout.${$rolloutChoiceStore.preset === 'custom' ? 'custom' : $rolloutChoiceStore.preset === 'fast' ? 'fast' : 'standard'}`);
-        const items = rollout.running
-            ? [{ label: $t('rollout.menuCancel'), shortcut: 'R', onClick: cancelRollout }]
-            : [
-                  {
-                      label: moves.length > 1 ? $t('rollout.menuStartMoves', { preset, n: moves.length }) : $t('rollout.menuStart', { preset }),
-                      shortcut: 'R',
-                      onClick: () => toggleRollout(moves)
-                  }
-              ];
-        // The same image as C-X C-X; a selection narrows it to the picked plays.
-        items.push({
-            label: moves.length ? $t('analysis.menuCopySelected') : $t('analysis.menuCopy'),
-            shortcut: 'C-X C-X',
-            onClick: () => copyBoardWithAnalysisImage({ moves })
-        });
-        panelMenu = { x: event.clientX, y: event.clientY, items };
+        panelMenu = { x: event.clientX, y: event.clientY, items: analysisMenuItems(moves) };
     }
 
     /** Right-click on a row: a row outside the selection becomes the selection. */
+    /** @param {{ move: string }} move @param {MouseEvent} event */
     function handleRowContextMenu(move, event) {
-        if (!rolloutSelection().includes(move.move)) {
-            pickedMoves = [];
-            anchor = move.move;
-            selectedMoveStore.set(move.move);
-        }
+        applySelection(contextSelection(currentSelection(), move.move));
         openPanelMenu(event, rolloutSelection());
     }
 
@@ -310,36 +303,17 @@
         });
     });
 
+    // What a rollout from the menu or `r` rolls out (utils/moveSelection.js).
+    /** @param {{ move: string }} move @param {MouseEvent} [event] */
     function handleMoveRowClick(move, event) {
-        // Ctrl+click adds or removes a play from the selection, Shift+click extends it from the
-        // last play clicked, in the order on screen: what a rollout from the menu or `r` rolls out.
-        if (event?.ctrlKey || event?.metaKey) {
-            const base = rolloutSelection();
-            const next = base.includes(move.move) ? base.filter((m) => m !== move.move) : [...base, move.move];
-            pickedMoves = next;
-            anchor = move.move;
-            selectedMoveStore.set(next.includes(move.move) ? move.move : (next.at(-1) ?? null));
-            return;
-        }
-        const from = anchor ?? $selectedMoveStore;
-        if (event?.shiftKey && from) {
-            const order = sortedMoves.map((m) => m.move);
-            const a = order.indexOf(from);
-            const b = order.indexOf(move.move);
-            if (a >= 0 && b >= 0) {
-                pickedMoves = order.slice(Math.min(a, b), Math.max(a, b) + 1);
-                selectedMoveStore.set(move.move);
-                return;
-            }
-        }
-        pickedMoves = [];
-        anchor = move.move;
-        // Toggle selection: if clicking the same move, deselect it
-        if ($selectedMoveStore === move.move) {
-            selectedMoveStore.set(null);
-        } else {
-            selectedMoveStore.set(move.move);
-        }
+        applySelection(
+            clickSelection(
+                currentSelection(),
+                move.move,
+                event,
+                sortedMoves.map((m) => m.move)
+            )
+        );
     }
 
     // Shared with the Anki review (utils/playedMarks.js, ADR-0025 rule 6).
@@ -512,7 +486,7 @@
                 {beaver}
                 {maxCube}
             />
-            <RolloutStrip {positionId} />
+            <RolloutStrip here={onBoard.here} />
             <METBadge positionId={$positionStore?.id ?? 0} analysis={analysisData} />
             <!-- Une ligne, et seulement quand une règle est confiante. -->
             <ExplanationLine analysis={analysisData} />

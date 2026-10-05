@@ -5,12 +5,13 @@
     import { rolloutStore } from '../stores/rolloutStore.js';
     import { cancelRollout } from '../services/rolloutService.js';
 
-    /** @type {{ positionId?: number, errorMs?: number }} */
-    let { positionId = 0, errorMs = 6000 } = $props();
+    // here: the rollout running is of the board on screen (rolloutService.rolloutOnBoard).
+    /** @type {{ here?: boolean, errorMs?: number }} */
+    let { here = true, errorMs = 6000 } = $props();
 
     let rollout = $derived($rolloutStore);
     let percent = $derived(rollout.maxGames > 0 ? Math.min(100, Math.round((100 * rollout.games) / rollout.maxGames)) : 0);
-    let elsewhere = $derived(rollout.running && rollout.kind === 'position' && rollout.positionId !== positionId);
+    let elsewhere = $derived(rollout.running && rollout.kind === 'position' && !here);
     let failed = $derived(rollout.running ? '' : rollout.error || (rollout.outcome?.type === 'error' || rollout.outcome?.type === 'batch-error' ? rollout.outcome.message || ' ' : ''));
 
     // A failure is read, then goes: the store forgets it, so it does not come back on remount.

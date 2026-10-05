@@ -188,7 +188,7 @@ describe('RolloutSettings', () => {
 
 describe('RolloutStrip', () => {
     test('is there only while a rollout runs, with its games and Cancel', async () => {
-        render(RolloutStrip, { props: { positionId: 7 } });
+        render(RolloutStrip, { props: { here: true } });
         expect(screen.queryByTestId('rollout-progress')).toBeNull();
         const { ensureRolloutEvents } = await import('../services/rolloutService.js');
         ensureRolloutEvents();
@@ -203,7 +203,7 @@ describe('RolloutStrip', () => {
     });
 
     test('a batch shows its position count; its end is said in the status bar', async () => {
-        render(RolloutStrip, { props: { positionId: 7 } });
+        render(RolloutStrip, { props: { here: true } });
         handlers['rollout-batch:started']({ job: 1, total: 5 });
         handlers['rollout-batch:progress']({ job: 1, done: 2, total: 5, positionId: 9, games: 36, maxGames: 216 });
         await tick();
@@ -216,7 +216,7 @@ describe('RolloutStrip', () => {
 
     test('an error is shown, then goes', async () => {
         rolloutStore.set({ ...idleRollout(), error: 'boom' });
-        render(RolloutStrip, { props: { positionId: 7, errorMs: 20 } });
+        render(RolloutStrip, { props: { here: true, errorMs: 20 } });
         expect(screen.getByTestId('rollout-error').textContent).toContain('boom');
         await waitFor(() => expect(screen.queryByTestId('rollout-error')).toBeNull());
     });
@@ -288,9 +288,29 @@ describe('the candidate moves table', () => {
         await fireEvent.click(row('13/7* 8/7'));
         await fireEvent.click(row('13/11 13/7'), { ctrlKey: true });
         await fireEvent.contextMenu(row('13/11 13/7'), { clientX: 10, clientY: 10 });
-        expect(screen.queryByText('Copy position and analysis')).toBeNull();
+        expect(screen.getByText('Copy position and analysis').closest('button')?.textContent).toContain('C-X C-X');
         await fireEvent.click(await screen.findByText('Copy position and selected moves'));
         expect(copyImage).toHaveBeenCalledWith({ moves: ['13/7* 8/7', '13/11 13/7'] });
+    });
+
+    test('a single play clicked offers both copies: the whole analysis, and that play', async () => {
+        withCheckerAnalysis();
+        await renderPanel();
+        await fireEvent.click(row('24/18 13/11'));
+        await fireEvent.contextMenu(row('24/18 13/11'), { clientX: 10, clientY: 10 });
+        await fireEvent.click(await screen.findByText('Copy position and analysis'));
+        expect(copyImage).toHaveBeenCalledWith({ moves: [] });
+        await fireEvent.contextMenu(row('24/18 13/11'), { clientX: 10, clientY: 10 });
+        await fireEvent.click(await screen.findByText('Copy position and selected moves'));
+        expect(copyImage).toHaveBeenLastCalledWith({ moves: ['24/18 13/11'] });
+    });
+
+    test('a cube decision offers only the whole analysis', async () => {
+        analysisStore.set(/** @type {any} */ ({ analysisType: 'DoublingCube', checkerAnalysis: null, doublingCubeAnalysis: { bestCubeAction: 'No double' } }));
+        const { container } = await renderPanel();
+        await fireEvent.contextMenu(/** @type {HTMLElement} */ (container.querySelector('.analysis-content')), { clientX: 10, clientY: 10 });
+        expect(await screen.findByText('Copy position and analysis')).toBeTruthy();
+        expect(screen.queryByText('Copy position and selected moves')).toBeNull();
     });
 
     test('Shift+press on a row does not extend the text selection', async () => {
