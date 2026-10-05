@@ -873,12 +873,15 @@ func (s *StatsStore) PlayerTable(ctx context.Context, scope string, filter stora
 		                  JOIN position p2 ON p2.id = mv2.position_id
 		                  JOIN game g2 ON g2.id = mv2.game_id
 		                  WHERE g2.match_id = m.id AND p2.decision_type = 0), 0)`
-	// A reader that cannot write takes the direct path, as Compute does: the
-	// table may lack matches it is not allowed to fill.
-	if fromMatchStats(f) && !RefusesWrites(ctx, s.DB) {
-		if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
+	// A reader that cannot write takes the direct path, as Compute does,
+	// unless the table already holds every match.
+	readable := false
+	if fromMatchStats(f) {
+		if readable, err = s.matchStatsReadable(ctx, scope); err != nil {
 			return nil, err
 		}
+	}
+	if readable {
 		decisions, snowieErr, luck, err = s.playerSumsFromTable(ctx, scope, f)
 		checkerMoves = `COALESCE((SELECT SUM(ms.checker_moves) FROM match_stats ms WHERE ms.match_id = m.id), 0)`
 	} else {

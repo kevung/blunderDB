@@ -3669,6 +3669,104 @@ func TestOpen_2_31_0_AddsMatchStatsCells(t *testing.T) {
 	}
 }
 
+// A library an earlier 2.31.0 build wrote keeps its breakdown cells in a
+// rowid table keyed by match first. The open rebuilds both breakdown tables
+// clustered by kind and recomputes them to the same rows, and the next open
+// keeps them.
+func TestOpen_2_31_0_ReclustersMatchStatsCells(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2310_recluster.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "test.xg")); err != nil {
+		t.Fatalf("ImportXGMatch: %v", err)
+	}
+	snapshot := func(d *Database, query string) []string {
+		t.Helper()
+		rows, err := d.db.Query(query)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer rows.Close()
+		cols, _ := rows.Columns()
+		var out []string
+		for rows.Next() {
+			vals := make([]sql.NullString, len(cols))
+			ptrs := make([]any, len(cols))
+			for i := range vals {
+				ptrs[i] = &vals[i]
+			}
+			if err := rows.Scan(ptrs...); err != nil {
+				t.Fatal(err)
+			}
+			out = append(out, fmt.Sprint(vals))
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
+		return out
+	}
+	const cells = `SELECT * FROM match_stats_cell ORDER BY match_id, seat, decision_type, met_id, kind, k1, k2`
+	const positions = `SELECT * FROM match_stats_position ORDER BY match_id, seat, position_id, met_id`
+	wantCells, wantPositions := snapshot(d, cells), snapshot(d, positions)
+	if len(wantCells) == 0 {
+		t.Fatal("the import computed no cell")
+	}
+	for _, q := range []string{
+		`CREATE TABLE old_cell AS SELECT * FROM match_stats_cell`,
+		`CREATE TABLE old_position AS SELECT * FROM match_stats_position`,
+		`DROP TABLE match_stats_cell`,
+		`DROP TABLE match_stats_position`,
+		`CREATE TABLE match_stats_cell (match_id INTEGER NOT NULL, seat INTEGER NOT NULL, decision_type INTEGER NOT NULL,
+			met_id INTEGER NOT NULL, kind INTEGER NOT NULL, k1 INTEGER NOT NULL, k2 INTEGER NOT NULL, decisions INTEGER NOT NULL,
+			error_mp INTEGER NOT NULL, max_error_mp INTEGER NOT NULL, blunders INTEGER NOT NULL, mwc_loss REAL NOT NULL,
+			mwc_decisions INTEGER NOT NULL, positions INTEGER NOT NULL,
+			PRIMARY KEY (match_id, seat, decision_type, met_id, kind, k1, k2),
+			FOREIGN KEY (match_id, seat) REFERENCES match_stats(match_id, seat) ON DELETE CASCADE)`,
+		`CREATE TABLE match_stats_position (match_id INTEGER NOT NULL, seat INTEGER NOT NULL, position_id INTEGER NOT NULL,
+			decision_type INTEGER NOT NULL, met_id INTEGER NOT NULL, PRIMARY KEY (match_id, seat, position_id, met_id),
+			FOREIGN KEY (match_id, seat) REFERENCES match_stats(match_id, seat) ON DELETE CASCADE)`,
+		`INSERT INTO match_stats_cell SELECT * FROM old_cell`,
+		`INSERT INTO match_stats_position SELECT * FROM old_position`,
+		`DROP TABLE old_cell`,
+		`DROP TABLE old_position`,
+	} {
+		if _, err := d.db.Exec(q); err != nil {
+			t.Fatalf("%s: %v", q, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	for open := 1; open <= 2; open++ {
+		d = NewDatabase()
+		if err := d.OpenDatabase(dbPath); err != nil {
+			t.Fatalf("open %d: %v", open, err)
+		}
+		for _, table := range []string{"match_stats_cell", "match_stats_position"} {
+			var ddl string
+			if err := d.db.QueryRow(`SELECT sql FROM sqlite_master WHERE name = ?`, table).Scan(&ddl); err != nil {
+				t.Fatal(err)
+			}
+			if !strings.Contains(ddl, "WITHOUT ROWID") {
+				t.Errorf("open %d: %s keeps its rowid layout", open, table)
+			}
+		}
+		if got := snapshot(d, cells); !slices.Equal(got, wantCells) {
+			t.Errorf("open %d: %d cells, want the %d the import wrote", open, len(got), len(wantCells))
+		}
+		if got := snapshot(d, positions); !slices.Equal(got, wantPositions) {
+			t.Errorf("open %d: %d shared positions, want %d", open, len(got), len(wantPositions))
+		}
+		if err := d.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
 // TestMigrate_2_30_0_to_2_31_0 rolls an imported library back to its 2.30.0
 // shape and opens it: the MET, progress and error columns and tables come
 // back, the open writes no move error (the pass is not part of the

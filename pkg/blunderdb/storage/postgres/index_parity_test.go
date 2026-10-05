@@ -36,9 +36,13 @@ const sqliteSchemaSource = "../sqlite/schema_sqlite.go"
 // The *_scope indexes serve the SQLite `scope` column that partitions
 // history/filter rows per database file; PostgreSQL has no such column —
 // tenant_id plays that role, and those tables are tiny.
+// idx_match_stats_cell_match serves the cascade from match_stats on SQLite,
+// whose cell key leads with the kind; the PostgreSQL key leads with
+// (tenant_id, match_id, seat) and serves it already.
 var sqliteOnlyIndexes = []string{
 	"idx_command_history_scope",
 	"idx_filter_library_scope_name",
+	"idx_match_stats_cell_match",
 	"idx_search_history_scope",
 }
 

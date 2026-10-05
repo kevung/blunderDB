@@ -152,3 +152,56 @@ func TestAnalysisMETFallsBackOnDelete(t *testing.T) {
 		}
 	}
 }
+
+// TestEnsureSchemaReclustersDerivedTables: a breakdown table created with a
+// rowid is rebuilt clustered, and match_stats emptied with it so the next
+// fill recomputes the cells it dropped; a clustered one is left alone.
+func TestEnsureSchemaReclustersDerivedTables(t *testing.T) {
+	ctx := context.Background()
+	db := openMemory(t)
+	if err := Bootstrap(ctx, db); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.ExecContext(ctx, `INSERT INTO match_stats (match_id, seat) VALUES (1, 1)`); err != nil {
+		t.Fatal(err)
+	}
+	countStats := func() int {
+		var n int
+		if err := db.QueryRowContext(ctx, `SELECT COUNT(*) FROM match_stats`).Scan(&n); err != nil {
+			t.Fatal(err)
+		}
+		return n
+	}
+	if err := EnsureSchema(ctx, db); err != nil {
+		t.Fatal(err)
+	}
+	if countStats() != 1 {
+		t.Fatal("EnsureSchema emptied match_stats over clustered breakdowns")
+	}
+	if _, err := db.ExecContext(ctx, `DROP TABLE match_stats_cell`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.ExecContext(ctx, `CREATE TABLE match_stats_cell (match_id INTEGER NOT NULL, seat INTEGER NOT NULL, kind INTEGER NOT NULL, PRIMARY KEY (match_id, seat, kind))`); err != nil {
+		t.Fatal(err)
+	}
+	if err := EnsureSchema(ctx, db); err != nil {
+		t.Fatal(err)
+	}
+	if countStats() != 0 {
+		t.Error("match_stats kept rows whose cells were dropped")
+	}
+	for _, name := range derivedClusteredTables {
+		var ddl string
+		if err := db.QueryRowContext(ctx, `SELECT sql FROM sqlite_master WHERE name = ?`, name).Scan(&ddl); err != nil {
+			t.Fatal(err)
+		}
+		if !strings.Contains(ddl, "WITHOUT ROWID") {
+			t.Errorf("%s not clustered after EnsureSchema: %s", name, ddl)
+		}
+	}
+	if drift, err := CheckSchema(ctx, db); err != nil {
+		t.Fatal(err)
+	} else if !reflect.DeepEqual(drift, SchemaDrift{}) {
+		t.Errorf("schema drift after reclustering: %+v", drift)
+	}
+}

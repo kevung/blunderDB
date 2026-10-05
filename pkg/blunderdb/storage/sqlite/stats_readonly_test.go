@@ -316,3 +316,46 @@ func TestHeadToHeadWindowsAndSeriesReadOnlyMatchWritable(t *testing.T) {
 		t.Errorf("read-only reads wrote %d match_stats rows", n)
 	}
 }
+
+// TestComputeReadOnlyReadsCompleteCells: once a writer has filled match_stats
+// for every match, a read-only reader sums its cells instead of reading
+// every decision; a cell altered behind the table's back shows through.
+func TestComputeReadOnlyReadsCompleteCells(t *testing.T) {
+	ctx := context.Background()
+	path := demoCopy(t)
+	w, err := Open(ctx, path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+	f := storage.StatsFilter{DecisionType: -1}
+	want, err := w.Stats().Compute(ctx, "", f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ro := openQueryOnly(t, path)
+	got, err := ro.Stats().Compute(ctx, "", f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !sameStatsJSON(t, asJSON(t, want), asJSON(t, got)) {
+		t.Fatal("read-only Compute over complete cells differs from the writer's")
+	}
+	raw, err := sql.Open("sqlite", DSN(path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer raw.Close()
+	if _, err := raw.ExecContext(ctx, `UPDATE match_stats_cell SET decisions = decisions + 1000
+		WHERE (match_id, seat, decision_type, met_id, kind, k1, k2) =
+		      (SELECT match_id, seat, decision_type, met_id, kind, k1, k2 FROM match_stats_cell WHERE kind = 1 LIMIT 1)`); err != nil {
+		t.Fatal(err)
+	}
+	got, err = ro.Stats().Compute(ctx, "", f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got.Totals.NumDecisions != want.Totals.NumDecisions+1000 {
+		t.Errorf("read-only Compute did not read the cells: %d decisions, writer %d", got.Totals.NumDecisions, want.Totals.NumDecisions)
+	}
+}

@@ -338,6 +338,45 @@ chacun ; les durées absolues sont donc flattées en défaveur des deux.
 - **Restent sur l'ancien chemin** : le filtre moteur (`--engine`) et une connexion en lecture
   seule, qui lisent les décisions directement.
 
+### 7.2 ter Cellules relues une fois par sorte (branche `perf/stats-cellules`)
+
+Copie de `run/bmab-europe.db` (2.31, 33 319 matchs, 3,39 M cellules : phase 0,43 M, type de
+jeu 0,80 M, score 1,03 M, cube 0,51 M, seaux 0,62 M ; 0,64 M positions partagées), harnais
+appelant `Stats().Compute` sans filtre (non committé), profil pprof. Poste partagé, charge
+de 1 à 22 selon les suites lancées en parallèle : régime établi, la meilleure de deux ou
+trois mesures ; premier passage, une seule.
+
+| | Durée, régime établi | Premier passage (remplissage) |
+|---|---:|---:|
+| `main` (47437d3ff) | 21,1 s | 8 min 55 s |
+| clé (kind, match_id, …) WITHOUT ROWID, passes inchangées | 8,6 s | n. m. |
+| + une lecture par sorte | 6,1 s | 8 min 34 s |
+| + clé (kind, k1, k2, match_id, …), retenue | **4,6 s** | 9 min 54 s (charge 20) |
+
+- **Le profil de `main`** : 17 s sur 21 dans les parcours de cellules. Le plan menait par
+  `match` puis lisait les cellules par l'index automatique de la clé (match_id, …), plus une
+  recherche dans la table par rowid pour chaque cellule (`BtreeTableMoveto` 12 %), et chacune
+  des onze requêtes relisait les 3,4 M cellules pour n'en garder qu'une sorte. Le reste :
+  le tri des `GROUP BY` (`vdbeSorter` 14 %). La jointure à `match` n'était pas le coût.
+- **Clé menée par la sorte, sans rowid** : une requête ne lit plus que les lignes de sa sorte
+  (6,5 M lignes lues au lieu de 41 M). Puis **une lecture par sorte** : les cellules de phase
+  sont lues brutes une fois et servent les totaux, la borne des pires erreurs, les sommes MWC
+  et les lignes par phase ; celles du cube une fois, groupées par (meilleure, jouée). Enfin
+  **k1, k2 dans la clé** : chaque somme par valeur se fait dans l'ordre de la clé, sans tri.
+- **Mêmes chiffres** : `statsequal.JSON` vrai entre `main` et chaque étape.
+- **Le reste des 4,6 s** : type de jeu et score (1,8 M lignes, ≈ 1,4 s CPU), phase brute
+  (0,9 s), étiquettes (0,6 s, lues depuis les décisions), `match_stats` (0,5 s).
+- **Une base 2.31 de l'ancienne forme** (bases de développement, la 2.31 n'est pas publiée)
+  est reconnue à l'ouverture : les deux tables de cellules sont recréées et `match_stats`
+  vidée, que le remplissage suivant recalcule (un premier passage). PostgreSQL ne change
+  pas (tas, clé menée par tenant_id, match_id).
+- **Lecture seule** : une connexion qui refuse l'écriture lit désormais `match_stats` et ses
+  cellules quand un écrivain les a remplies pour tous les matchs (aucun manquant, aucune
+  ligne d'une forme antérieure) ; sinon elle lit les décisions, comme avant.
+- **Reste sur l'ancien chemin** : le filtre moteur (`--engine`) et la profondeur minimale.
+  Les cellules agrègent toutes les analyses d'un siège ; filtrer par moteur demanderait le
+  moteur dans la clé des cellules, autant de cellules en plus que de moteurs par match.
+
 ### 7.3 Points #4, #10, #2, #9 traités (branche `perf/migration-2-31`)
 
 **Banc.** L'original 2.30 n'existe plus : la seule copie, `run/bmab-europe.db`, est déjà migrée

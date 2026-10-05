@@ -47,16 +47,17 @@ func (s *StatsStore) matchStatsWhere(scope string, filter storage.StatsFilter, s
 const matchStatsJoin = ` FROM match_stats ms JOIN match m ON m.id = ms.match_id`
 
 // matchStatsSource is the FROM clause of a read of match_stats: the table,
-// filled first, or — on a connection that refuses writes and so cannot fill
-// it — the same seat rows (both seats of every match, zero when nothing is
+// filled first or already complete, or — on a connection that refuses
+// writes and finds it incomplete — the same seat rows (both seats of every match, zero when nothing is
 // counted) computed from the decisions within the query, so a read-only
 // reader gets the figures a writer would and the table is never trusted
 // while incomplete. Only the columns the readers here use are derived.
 func (s *StatsStore) matchStatsSource(ctx context.Context, scope string) (string, []any, error) {
-	if !RefusesWrites(ctx, s.DB) {
-		if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
-			return "", nil, err
-		}
+	readable, err := s.matchStatsReadable(ctx, scope)
+	if err != nil {
+		return "", nil, err
+	}
+	if readable {
 		return matchStatsJoin, nil, nil
 	}
 	d := s.DB
