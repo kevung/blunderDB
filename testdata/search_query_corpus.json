@@ -547,6 +547,19 @@
       }
     },
     {
+      "command": "s tm>30",
+      "expected": {
+        "decisionTimeFilter": "tm>30"
+      }
+    },
+    {
+      "command": "s tm5,20 E>50",
+      "expected": {
+        "decisionTimeFilter": "tm5,20",
+        "moveErrorFilter": "E>50"
+      }
+    },
+    {
       "command": "s pr>8",
       "expected": {
         "playerPRFilter": "pr>8"

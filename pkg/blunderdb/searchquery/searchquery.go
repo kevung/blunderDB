@@ -103,6 +103,10 @@ var (
 	// neither whitespace nor another '#', nor the ';' a list is joined with.
 	tagRe     = regexp.MustCompile(`^#[^\s#;]+$`)
 	moveErrRe = regexp.MustCompile(`^E\d`)
+	// `tm>30`, `tm<5`, `tm5,20`: the time the player took over the decision, in
+	// seconds, in the grammar of `E`. Matched by shape: `tm` starts like `tn`
+	// and `t"…"`, and a typo must not become a silent filter.
+	decisionTimeRe = regexp.MustCompile(`^tm(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?(?:,\d+(?:\.\d+)?)?)$`)
 	// Match-level tokens. `ml:7`, `ml:5,9`, `ml>5`, `ml<9`: the length of the
 	// match. `md:YYYY-MM..YYYY-MM`, `md:YYYY`, `md>YYYY-MM`, `md<YYYY-MM`: its
 	// date, each bound a year, a month or a day. `pr>8`, `pr<5`, `pr4,9`: the
@@ -365,6 +369,8 @@ func Parse(command string) (domain.SearchFilters, []Diag) {
 		return strings.HasPrefix(s, "E>") || strings.HasPrefix(s, "E<") || moveErrRe.MatchString(s)
 	})
 
+	f.DecisionTimeFilter = first(func(s string) bool { return decisionTimeRe.MatchString(s) })
+
 	// Repeatable id lists, joined the way the storage layer expects.
 	f.MatchIDsFilter = joinValues(all(func(s string) bool { return maRe.MatchString(s) }), 2)
 	f.TournamentIDsFilter = joinValues(all(func(s string) bool { return tnRe.MatchString(s) }), 2)
@@ -534,6 +540,7 @@ func Format(f domain.SearchFilters) string {
 	add(f.Player2JanBlotFilter)
 	add(f.EquityFilter)
 	add(f.MoveErrorFilter)
+	add(f.DecisionTimeFilter)
 	add(f.DateFilter)
 	add(f.PlayerPRFilter)
 	add(f.MatchLengthFilter)
@@ -619,6 +626,7 @@ var FieldTokens = map[string]string{
 	"Player2JanBlotFilter":          "BJ",
 	"EquityFilter":                  "e",
 	"MoveErrorFilter":               "E",
+	"DecisionTimeFilter":            "tm",
 	"DateFilter":                    "T",
 	"SearchText":                    `t"…"`,
 	"MovePatternFilter":             `m"…"`,

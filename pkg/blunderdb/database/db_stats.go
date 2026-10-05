@@ -459,6 +459,15 @@ func (d *Database) GetMatchMoveGrades(matchID int64) ([]storage.MoveGrade, error
 	return d.store.Stats().MatchMoveGrades(context.Background(), "", matchID)
 }
 
+// GetMatchTimeSummary adds up the decision times of a match per player and
+// counts the turns played past the reserve of the Cadence it was played under,
+// for the Match panel's time summary.
+func (d *Database) GetMatchTimeSummary(matchID int64) (storage.MatchTimeSummary, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().MatchTimeSummary(context.Background(), "", matchID)
+}
+
 // GetMatchDetailStats computes per-player statistics for the given match.
 // legacyGetMatchDetailStats is the parity-test reference, pinned against
 // eXtreme Gammon values in TestStatsParity.

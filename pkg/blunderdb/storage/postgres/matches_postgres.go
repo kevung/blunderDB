@@ -1121,7 +1121,8 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 			        p.state, p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
 			        p.cube_value, p.cube_owner, p.score_1, p.score_2,
 			        p.has_jacoby, p.has_beaver, p.max_cube,
-			        COALESCE(mv.checker_move,''), `+sqlshared.TenantActionLabelOrEmptySQL("mv.cube_action")+`
+			        COALESCE(mv.checker_move,''), `+sqlshared.TenantActionLabelOrEmptySQL("mv.cube_action")+`,
+			        mv.decision_ms, mv.cube_decision_ms
 			 FROM move mv
 			 INNER JOIN game g ON mv.game_id = g.id
 			 INNER JOIN position p ON mv.position_id = p.id
@@ -1140,11 +1141,11 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 			var state []byte
 			var dt, por, d1, d2, cv, co, s1, s2 *int64
 			var hj, hb *bool
-			var mc *int64
+			var mc, decisionMS, cubeDecisionMS *int64
 			if err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber,
 				&moveType, &player, &positionID,
 				&state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb, &mc,
-				&checkerMove, &cubeAction); err != nil {
+				&checkerMove, &cubeAction, &decisionMS, &cubeDecisionMS); err != nil {
 				yield(nil, fmt.Errorf("postgres: move positions for match %d: %w", matchID, err))
 				return
 			}
@@ -1165,6 +1166,9 @@ func (s *matchStore) MovePositions(ctx context.Context, scope string, matchID in
 				Player2Name:  player2Name,
 				CheckerMove:  checkerMove,
 				CubeAction:   cubeAction,
+
+				DecisionMS:     decisionMS,
+				CubeDecisionMS: cubeDecisionMS,
 			}
 			if !yield(&mp, nil) {
 				return

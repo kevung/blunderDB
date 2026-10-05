@@ -2639,6 +2639,7 @@ export namespace domain {
 	    matchLengthFilter: string;
 	    matchDateFilter: string;
 	    playerPRFilter: string;
+	    decisionTimeFilter: string;
 	    analysisProvenanceFilter: string;
 	    positionIDsFilter: string;
 	    restrictToPositionIDs: string;
@@ -2707,6 +2708,7 @@ export namespace domain {
 	        this.matchLengthFilter = source["matchLengthFilter"];
 	        this.matchDateFilter = source["matchDateFilter"];
 	        this.playerPRFilter = source["playerPRFilter"];
+	        this.decisionTimeFilter = source["decisionTimeFilter"];
 	        this.analysisProvenanceFilter = source["analysisProvenanceFilter"];
 	        this.positionIDsFilter = source["positionIDsFilter"];
 	        this.restrictToPositionIDs = source["restrictToPositionIDs"];

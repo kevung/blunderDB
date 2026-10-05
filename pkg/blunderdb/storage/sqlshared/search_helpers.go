@@ -205,6 +205,42 @@ func multiPlayedSQL(db Execer, scope string) (string, []any) {
 		    OR ` + ActionCodeOrEmptySQL("m1.cube_action") + ` <> ` + ActionCodeOrEmptySQL("m2.cube_action") + `))`, args
 }
 
+// decisionTimeSQL is the `tm` filter as a per-row test: player 1 has a
+// recorded play on the position whose decision took a time inside the bounds
+// (seconds in the filter, milliseconds in the move table). A play whose time
+// is unknown compares as NULL and so never matches, whatever the bound. Empty
+// when the filter carries no readable bound.
+func decisionTimeSQL(db Execer, scope, filter string) (string, []any) {
+	lo, hi, hasLo, hasHi := searchfilter.ParseFloatFilterExpr(filter, "tm")
+	if !hasLo && !hasHi {
+		return "", nil
+	}
+	tenant, args := db.TenantFilter("mt", scope)
+	var bounds []string
+	for _, col := range []string{"mt.decision_ms", "mt.cube_decision_ms"} {
+		if hasLo {
+			bounds = append(bounds, col+" >= ?")
+		}
+		if hasHi {
+			bounds = append(bounds, col+" <= ?")
+		}
+	}
+	// One parenthesised range per column, either of which may hold.
+	per := len(bounds) / 2
+	rangeOf := func(parts []string) string { return "(" + strings.Join(parts, " AND ") + ")" }
+	cond := rangeOf(bounds[:per]) + " OR " + rangeOf(bounds[per:])
+	for i := 0; i < 2; i++ {
+		if hasLo {
+			args = append(args, int64(math.Round(lo*1000)))
+		}
+		if hasHi {
+			args = append(args, int64(math.Round(hi*1000)))
+		}
+	}
+	return `EXISTS (SELECT 1 FROM move mt WHERE mt.position_id = p.id AND ` + tenant +
+		` AND mt.player = 1 AND (` + cond + `))`, args
+}
+
 // multiPlayedPlayer1Positions lists the positions multiPlayedSQL selects, as a
 // set: the status bar's blunder count needs the whole set, not a per-row test.
 func multiPlayedPlayer1Positions(ctx context.Context, db Execer, scope string) (map[int64]bool, error) {

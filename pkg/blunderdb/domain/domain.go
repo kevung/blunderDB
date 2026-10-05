@@ -450,7 +450,12 @@ type SearchFilters struct {
 	// than of the board, so mirror search does not re-evaluate it.
 	FlaggedFilter bool `json:"flaggedFilter"`
 
-	MoveErrorFilter     string `json:"moveErrorFilter"`
+	MoveErrorFilter string `json:"moveErrorFilter"`
+	// DecisionTimeFilter is the `tm` token whole (`tm>30`, `tm<5`, `tm5,20`):
+	// how long the player on roll took over the decision, in seconds. It keeps
+	// the positions where a recorded play took that long, checker or cube
+	// decision alike; a play whose duration is unknown never matches.
+	DecisionTimeFilter  string `json:"decisionTimeFilter"`
 	MatchIDsFilter      string `json:"matchIDsFilter"`
 	TournamentIDsFilter string `json:"tournamentIDsFilter"`
 	// PlayerFilter is the `pl"…"` token whole (or a bare name from the CLI and
@@ -1005,6 +1010,10 @@ type MatchMovePosition struct {
 	Player2Name  string   `json:"player2_name"`   // Player 2 name for reference
 	CheckerMove  string   `json:"checker_move"`   // The checker move played in this specific position
 	CubeAction   string   `json:"cube_action"`    // The cube action taken in this specific position
+	// DecisionMS and CubeDecisionMS are the Move's decision times in
+	// milliseconds, nil when unknown (see Move).
+	DecisionMS     *int64 `json:"decision_ms,omitempty"`
+	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
 }
 
 // IssuerIdentityInfo describes this machine's signing identity, as displayed in the

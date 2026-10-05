@@ -68,6 +68,7 @@ var corpusField = map[string]string{
 	"player2CheckerInZoneFilter":    "Player2CheckerInZoneFilter",
 	"player1AbsolutePipCountFilter": "Player1AbsolutePipCountFilter",
 	"equityFilter":                  "EquityFilter",
+	"decisionTimeFilter":            "DecisionTimeFilter",
 	"likeFilter":                    "LikeFilter",
 	"likeTargetId":                  "LikeTargetID",
 	"likeMaxDistance":               "LikeMaxDistance",

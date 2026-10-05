@@ -22,6 +22,8 @@ Ranges — each takes x>n, x<n or xa,b (lower-case: you; upper-case: the opponen
   z Z          checkers in the zone      bo BO  outfield blots
   bj BJ        blots in the jan          e      equity
   E            error of the played move, in millipoints
+  tm           time taken over the played decision, in seconds, tm>30, tm<5, tm5,20
+               (plays with no recorded time are left out)
   T            date the analysis was made (not the match's date), T>2026/01/01
   ml           match length: ml:7, ml:5,9, ml>5, ml<9
   md           DATE OF THE MATCH: md:2024-01..2024-12, md:2024, md>2024-06, md<2024-06

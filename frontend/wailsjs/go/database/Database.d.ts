@@ -304,6 +304,8 @@ export function GetMatchByID(arg1:number):Promise<domain.Match>;
 
 export function GetMatchDetailStats(arg1:number):Promise<database.MatchDetailStats>;
 
+export function GetMatchTimeSummary(arg1:number):Promise<storage.MatchTimeSummary>;
+
 export function GetMatchMoveGrades(arg1:number):Promise<Array<storage.MoveGrade>>;
 
 export function GetMatchMovePositions(arg1:number):Promise<Array<domain.MatchMovePosition>>;

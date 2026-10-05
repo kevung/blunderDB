@@ -315,6 +315,35 @@ type MoveGrade struct {
 	Grade   string `json:"grade"` // "", MoveGradeError or MoveGradeBlunder
 }
 
+// PlayerTimeSummary is what one player's recorded decision times add up to
+// (ADR-0073). Durations are milliseconds; a Move whose duration is unknown is
+// counted in Unknown and in no total or mean, so an unknown is never a zero:
+// a mean is meaningful only when its count is not zero.
+type PlayerTimeSummary struct {
+	TotalMS int64 `json:"total_ms"`
+	// CheckerCount and CheckerTotalMS are the checker plays with a known time;
+	// CubeCount and CubeTotalMS the cube decisions with one, whether taken
+	// before a roll (the Move carries it) or as a double, a take or a pass.
+	CheckerCount   int   `json:"checker_count"`
+	CheckerTotalMS int64 `json:"checker_total_ms"`
+	CubeCount      int   `json:"cube_count"`
+	CubeTotalMS    int64 `json:"cube_total_ms"`
+	Unknown        int   `json:"unknown"`
+	// OverrunTurns is the number of turns of the clock played after the
+	// player's reserve had run out, OverrunMS the time those turns took beyond
+	// what the reserve could pay. Both zero without a Cadence.
+	OverrunTurns int   `json:"overrun_turns"`
+	OverrunMS    int64 `json:"overrun_ms"`
+}
+
+// MatchTimeSummary is a Match's decision times, per player (index 0 is
+// player 1). HasCadence says the Match was played here under a Cadence, so a
+// zero overrun means "within the reserve" and not "not measured".
+type MatchTimeSummary struct {
+	HasCadence bool                 `json:"has_cadence"`
+	Players    [2]PlayerTimeSummary `json:"players"`
+}
+
 // MatchBadge is the per-player PR/MWC summary shown on each match-list row.
 // PR/MWCLoss are player 1's, PR2/MWCLoss2 player 2's. It is the list-row
 // projection of MatchDetailStats (badge.PR == detail.Player1.PR for a match).
@@ -428,6 +457,11 @@ type StatsStore interface {
 	// colours its rows with. Moves come back in Transcript order; a
 	// Move the analysis does not score is absent.
 	MatchMoveGrades(ctx context.Context, scope string, matchID int64) ([]MoveGrade, error)
+
+	// MatchTimeSummary adds up the decision times of a Match per player, and
+	// counts what overran the Cadence it was played under (match_origin). A
+	// Match with no recorded time gives a summary of unknowns.
+	MatchTimeSummary(ctx context.Context, scope string, matchID int64) (MatchTimeSummary, error)
 
 	// MatchBadges returns the per-player PR/MWC badge for the given matches,
 	// keyed by match id. A nil/empty matchIDs computes badges for every match in

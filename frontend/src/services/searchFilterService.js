@@ -231,6 +231,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
     const matchLengthFilter = filters.find((f) => typeof f === 'string' && /^ml(?::\d+(?:,\d+)?|[<>]\d+)$/.test(f)) || '';
     const matchDateRe = new RegExp(`^md(?::${dateBound}(?:\\.\\.${dateBound})?|[<>]${dateBound})$`);
     const matchDateFilter = filters.find((f) => typeof f === 'string' && matchDateRe.test(f)) || '';
+    const decisionTimeFilter = filters.find((f) => typeof f === 'string' && /^tm(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?(?:,\d+(?:\.\d+)?)?)$/.test(f)) || '';
     const playerPRFilter = filters.find((f) => typeof f === 'string' && /^pr(?:[<>]\d+(?:\.\d+)?|\d+(?:\.\d+)?,\d+(?:\.\d+)?)$/.test(f)) || '';
     const roundFilter = filters
         .filter((f) => typeof f === 'string' && /^rd:[^\s"';]+$/.test(f))
@@ -384,6 +385,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
         matchLengthFilter,
         matchDateFilter,
         playerPRFilter,
+        decisionTimeFilter,
         analysisProvenanceFilter,
         positionIDsFilter
     };
@@ -505,6 +507,7 @@ export function parseSearchCommand(command) {
         mlf: p.matchLengthFilter,
         mdf: p.matchDateFilter,
         prf: p.playerPRFilter,
+        dtf: p.decisionTimeFilter,
         adf: p.analysisProvenanceFilter,
         crf: p.cubeResponseFilter,
         p1ob: p.player1OutfieldBlotFilter,
@@ -591,6 +594,7 @@ export function replaySearchArgs(command) {
         matchLengthFilter: f.mlf,
         matchDateFilter: f.mdf,
         playerPRFilter: f.prf,
+        decisionTimeFilter: f.dtf,
         analysisProvenanceFilter: f.adf,
         // Command-line-only tokens: positionService does not re-derive them
         // from `filters`, so a replay would otherwise lose them.
@@ -718,6 +722,7 @@ export function buildSearchFilterPayload(position, pf = {}, filters = []) {
         matchLengthFilter: pf.matchLengthFilter || '',
         matchDateFilter: pf.matchDateFilter || '',
         playerPRFilter: pf.playerPRFilter || '',
+        decisionTimeFilter: pf.decisionTimeFilter || '',
         analysisProvenanceFilter: pf.analysisProvenanceFilter || '',
         positionIDsFilter: pf.positionIDsFilter || '',
         restrictToPositionIDs: ''

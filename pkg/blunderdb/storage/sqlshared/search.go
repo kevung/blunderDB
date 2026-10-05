@@ -328,6 +328,13 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 			}
 		}
 
+		if f.DecisionTimeFilter != "" {
+			if cond, condArgs := decisionTimeSQL(s.DB, scope, f.DecisionTimeFilter); cond != "" {
+				where.WriteString(" AND " + cond)
+				args = append(args, condArgs...)
+			}
+		}
+
 		if searchfilter.HasBoardFilter(effInclude.Board) {
 			occ1Req, pt1Req, occ2Req, pt2Req, tight := engine.CheckerStructureMasks(effInclude)
 			bitboardTight = tight

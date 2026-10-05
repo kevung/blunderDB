@@ -146,6 +146,7 @@ func randomFilters(rng *rand.Rand) domain.SearchFilters {
 	if maybe() {
 		f.MoveErrorFilter = "E>" + strconv.Itoa(rng.Intn(200))
 	}
+	f.DecisionTimeFilter = bound("tm")
 	if maybe() {
 		f.DateFilter = "T>2026/0" + strconv.Itoa(rng.Intn(9)+1) + "/01"
 	}

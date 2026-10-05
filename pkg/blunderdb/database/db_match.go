@@ -418,7 +418,8 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			p.cube_value, p.cube_owner, p.score_1, p.score_2,
 			p.has_jacoby, p.has_beaver,
 			COALESCE(m.checker_move, '') as checker_move,
-			`+sqlshared.ActionLabelOrEmptySQL("m.cube_action")+` as cube_action
+			`+sqlshared.ActionLabelOrEmptySQL("m.cube_action")+` as cube_action,
+			m.decision_ms, m.cube_decision_ms
 		FROM move m
 		INNER JOIN game g ON m.game_id = g.id
 		INNER JOIN position p ON m.position_id = p.id
@@ -436,10 +437,11 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 		var gameNumber, moveNumber, player int32
 		var moveType, positionState, checkerMove, cubeAction string
 		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2, pHJ, pHB sql.NullInt64
+		var decisionMS, cubeDecisionMS sql.NullInt64
 
 		err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber, &moveType, &player, &positionID, &positionState,
 			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB,
-			&checkerMove, &cubeAction)
+			&checkerMove, &cubeAction, &decisionMS, &cubeDecisionMS)
 		if err != nil {
 			slog.Warn("scanning move", "err", err)
 			continue
@@ -466,6 +468,9 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			Player2Name:  player2Name,
 			CheckerMove:  checkerMove,
 			CubeAction:   cubeAction,
+
+			DecisionMS:     sqlshared.NullableMS(decisionMS),
+			CubeDecisionMS: sqlshared.NullableMS(cubeDecisionMS),
 		}
 
 		movePositions = append(movePositions, movePos)
