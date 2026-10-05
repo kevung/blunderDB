@@ -823,8 +823,6 @@
         "summary": "{games} games (at least {min}), truncated at {truncation} half-moves, stop at JSD {jsd}, {ply}-ply",
         "start": "Roll out",
         "cancel": "Cancel",
-        "batch": "On the displayed list…",
-        "shortcut": "R: roll out the position (again to stop it)",
         "elsewhere": "A rollout of another position is running.",
         "notStored": "not stored",
         "live": "In progress",
@@ -872,7 +870,17 @@
         "invalidSeed": "The seed must be a whole number from 0 to 9007199254740991.",
         "replaceConfirm": "A rollout is running. Cancel it and start this one?",
         "replace": "Replace",
-        "batchRunning": "A batch is running: use its Cancel button."
+        "readOnly": "the database is open read-only (another blunderDB instance holds it): the rollout could not be stored.",
+        "menuStart": "Rollout ({preset})",
+        "menuStartMoves": "Rollout ({preset}) of the {n} moves",
+        "menuCancel": "Cancel the rollout",
+        "column": "Rollout",
+        "columnMoney": "Rollout (money)",
+        "columnMatch": "Rollout (match)",
+        "columnHint": "Rollout equity ± half-width of the 95% confidence interval; hover a cell for the detail",
+        "gamesCount": "{games}/{max} games",
+        "cancelHint": "Escape or R also cancel",
+        "settingNote": "Setting of the rollout started from the right-click menu of the moves table, the R key and the rollout command."
     },
     "cube": {
         "verdicts": {

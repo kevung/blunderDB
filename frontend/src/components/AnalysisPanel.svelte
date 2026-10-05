@@ -18,8 +18,12 @@
     const HIDDEN = '···';
     import AnalysisView from './AnalysisView.svelte';
     import EngineComparison from './EngineComparison.svelte';
-    import RolloutSection from './RolloutSection.svelte';
-    import { toggleRollout } from '../services/rolloutService.js';
+    import RolloutStrip from './RolloutStrip.svelte';
+    import RolloutResults from './RolloutResults.svelte';
+    import ContextMenu from './ContextMenu.svelte';
+    import { rolloutStore, rolloutChoiceStore } from '../stores/rolloutStore.js';
+    import { toggleRollout, cancelRollout, ensureRolloutEvents, syncRolloutStatus, boardKey } from '../services/rolloutService.js';
+    import { rolloutsByMove, cubeRollouts } from '../utils/rolloutRows.js';
     let { onClose } = $props();
 
     // Read-only mirrors of stores
@@ -64,8 +68,95 @@
         }
     });
 
+    // The plays picked for a rollout by Ctrl+click and Shift+click; empty, the selection is the one
+    // move selectedMoveStore holds. anchor is where a Shift+click range starts.
+    let pickedMoves = $state(/** @type {string[]} */ ([]));
+    let anchor = $state(/** @type {string | null} */ (null));
+    let rolloutMenu = $state(/** @type {{ x: number, y: number, items: any[] } | null} */ (null));
+    let storedRollouts = $state(/** @type {any[]} */ ([]));
+    let rollout = $derived($rolloutStore);
+    let positionId = $derived($positionStore?.id ?? 0);
+
+    // Another position, another analysis: the picked plays were of the previous one.
+    $effect(() => {
+        void positionId;
+        void analysisData;
+        pickedMoves = [];
+        anchor = null;
+    });
+
+    // What is stored for the position on the board, again whenever a rollout ended.
+    $effect(() => {
+        const id = positionId;
+        void rollout.revision;
+        let current = true;
+        if (!id) {
+            storedRollouts = [];
+            return;
+        }
+        import('../../wailsjs/go/database/Database.js')
+            .then(({ LoadRollouts }) => LoadRollouts(id))
+            .then((list) => {
+                if (current) storedRollouts = list ?? [];
+            })
+            .catch((err) => {
+                logger.error('Error loading rollouts:', err);
+                if (current) storedRollouts = [];
+            });
+        return () => {
+            current = false;
+        };
+    });
+
+    let liveCandidates = $derived(rollout.running && rollout.kind === 'position' && rollout.positionId === positionId ? rollout.candidates : []);
+    // A rollout of a board that is not saved describes that board, in that database: it goes with them.
+    let unsavedRollout = $derived(!positionId && !rollout.running && rollout.result && rollout.resultKey === boardKey($positionStore) ? rollout.result : null);
+    let rolloutRows = $derived(rolloutsByMove({ stored: storedRollouts, unsaved: unsavedRollout, live: liveCandidates }));
+
+    /** The plays a rollout started now would roll out; none is the whole position. */
+    function rolloutSelection() {
+        if (viewKind !== 'checker') return [];
+        if (pickedMoves.length) return pickedMoves;
+        return $selectedMoveStore ? [$selectedMoveStore] : [];
+    }
+
+    /** @param {MouseEvent} event @param {string[]} moves */
+    function openRolloutMenu(event, moves) {
+        event.preventDefault();
+        const preset = $t(`rollout.${$rolloutChoiceStore.preset === 'custom' ? 'custom' : $rolloutChoiceStore.preset === 'fast' ? 'fast' : 'standard'}`);
+        const items = rollout.running
+            ? [{ label: $t('rollout.menuCancel'), shortcut: 'R', onClick: cancelRollout }]
+            : [
+                  {
+                      label: moves.length > 1 ? $t('rollout.menuStartMoves', { preset, n: moves.length }) : $t('rollout.menuStart', { preset }),
+                      shortcut: 'R',
+                      onClick: () => toggleRollout(moves)
+                  }
+              ];
+        rolloutMenu = { x: event.clientX, y: event.clientY, items };
+    }
+
+    /** Right-click on a row: a row outside the selection becomes the selection. */
+    function handleRowContextMenu(move, event) {
+        if (!rolloutSelection().includes(move.move)) {
+            pickedMoves = [];
+            anchor = move.move;
+            selectedMoveStore.set(move.move);
+        }
+        openRolloutMenu(event, rolloutSelection());
+    }
+
+    /** Right-click elsewhere in the panel: the selection, or the whole position (its cube decision). */
+    function handleContentContextMenu(event) {
+        if (event.defaultPrevented || $trainingAnalysisHiddenStore) return;
+        openRolloutMenu(event, rolloutSelection());
+    }
+
     // TabbedPanel mounts/destroys this per tab switch: onMount/onDestroy are open/close.
     onMount(() => {
+        // Mounted mid-way, a rollout is still there: ask, then listen.
+        ensureRolloutEvents();
+        syncRolloutStatus();
         const ctx = matchCtx;
         if (ctx.isMatchMode) {
             const currentMovePos = ctx.movePositions[ctx.currentIndex];
@@ -104,10 +195,14 @@
         // and its own Escape, which only leaves the field.
         if (event.target?.matches?.('input, select, textarea')) return;
         if (event.key === 'Escape') {
-            // Clear selection first if a move is selected. What the panel closes
-            // itself, it claims (preventDefault), so the global dispatcher leaves it be.
-            if ($selectedMoveStore) {
+            // A running rollout is stopped first, then the selection cleared. What the panel
+            // closes itself, it claims (preventDefault), so the global dispatcher leaves it be.
+            if (rollout.running) {
                 event.preventDefault();
+                cancelRollout();
+            } else if ($selectedMoveStore || pickedMoves.length) {
+                event.preventDefault();
+                pickedMoves = [];
                 selectedMoveStore.set(null);
             } else if (canLeaveSubSearchResults()) {
                 // Nothing to close and `ss` results on screen: let Escape return to the list.
@@ -118,11 +213,11 @@
             return;
         }
 
-        // `r` starts a rollout of the position, or stops the one running; a refusal is shown with
-        // the buttons' (the store carries it).
+        // `r` rolls out the selected plays (the position when none is), or stops the rollout
+        // running; a refusal is shown under the table (the store carries it).
         if (isBareLetter(event, 'r')) {
             event.preventDefault();
-            toggleRollout();
+            toggleRollout(rolloutSelection());
             return;
         }
 
@@ -147,12 +242,14 @@
             if (isBareLetter(event, 'j') || event.key === 'ArrowDown') {
                 event.preventDefault();
                 if (currentIndex >= 0 && currentIndex < sortedMoves.length - 1) {
+                    pickedMoves = [];
                     selectedMoveStore.set(sortedMoves[currentIndex + 1].move);
                 }
                 return;
             } else if (isBareLetter(event, 'k') || event.key === 'ArrowUp') {
                 event.preventDefault();
                 if (currentIndex > 0) {
+                    pickedMoves = [];
                     selectedMoveStore.set(sortedMoves[currentIndex - 1].move);
                 }
                 return;
@@ -206,7 +303,30 @@
         });
     });
 
-    function handleMoveRowClick(move) {
+    function handleMoveRowClick(move, event) {
+        // Ctrl+click adds or removes a play from the selection, Shift+click extends it from the
+        // last play clicked, in the order on screen: what a rollout from the menu or `r` rolls out.
+        if (event?.ctrlKey || event?.metaKey) {
+            const base = rolloutSelection();
+            const next = base.includes(move.move) ? base.filter((m) => m !== move.move) : [...base, move.move];
+            pickedMoves = next;
+            anchor = move.move;
+            selectedMoveStore.set(next.includes(move.move) ? move.move : (next.at(-1) ?? null));
+            return;
+        }
+        const from = anchor ?? $selectedMoveStore;
+        if (event?.shiftKey && from) {
+            const order = sortedMoves.map((m) => m.move);
+            const a = order.indexOf(from);
+            const b = order.indexOf(move.move);
+            if (a >= 0 && b >= 0) {
+                pickedMoves = order.slice(Math.min(a, b), Math.max(a, b) + 1);
+                selectedMoveStore.set(move.move);
+                return;
+            }
+        }
+        pickedMoves = [];
+        anchor = move.move;
         // Toggle selection: if clicking the same move, deselect it
         if ($selectedMoveStore === move.move) {
             selectedMoveStore.set(null);
@@ -356,7 +476,7 @@
 <!-- Keyboard delegation on a focus container; no ARIA role fits, hence the ignore. -->
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <section class="analysis-panel" aria-label={$t('analysis.panelLabel')} id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
-    <div class="analysis-content" onclick={handleContentClick} onkeydown={() => {}} role="button" tabindex="-1">
+    <div class="analysis-content" onclick={handleContentClick} oncontextmenu={handleContentContextMenu} onkeydown={() => {}} role="button" tabindex="-1">
         <!-- Comparaison inter-moteurs ici, pas dans Eval (ADR-0017) ; seulement s'il y en a plusieurs. -->
         {#if $trainingAnalysisHiddenStore}
             <!-- Question de Décision ouverte : la réponse est masquée (ADR-0018 règle 6). -->
@@ -377,17 +497,33 @@
                 {isPlayedCubeAction}
                 onSort={handleSort}
                 onRowClick={handleMoveRowClick}
+                onRowContextMenu={handleRowContextMenu}
+                selectedMoves={pickedMoves}
+                rollouts={rolloutRows}
                 {isMoney}
                 {jacoby}
                 {beaver}
                 {maxCube}
             />
+            <RolloutStrip {positionId} />
             <METBadge positionId={$positionStore?.id ?? 0} analysis={analysisData} />
             <!-- Une ligne, et seulement quand une règle est confiante. -->
             <ExplanationLine analysis={analysisData} />
-            <RolloutSection />
+            <!-- Un rollout sans ligne de coup où s'écrire : la décision de videau, ou une position sans analyse. -->
+            {#if viewKind === 'cube' || !hasCheckerAnalysis}
+                <RolloutResults
+                    rollouts={viewKind === 'cube' ? cubeRollouts(storedRollouts, unsavedRollout) : [...(unsavedRollout ? [unsavedRollout] : []), ...storedRollouts]}
+                    live={liveCandidates}
+                    liveGames={rollout.games}
+                    liveMaxGames={rollout.maxGames}
+                    {isMoney}
+                />
+            {/if}
         {/if}
     </div>
+    {#if rolloutMenu}
+        <ContextMenu x={rolloutMenu.x} y={rolloutMenu.y} items={rolloutMenu.items} onClose={() => (rolloutMenu = null)} />
+    {/if}
 </section>
 
 <style>

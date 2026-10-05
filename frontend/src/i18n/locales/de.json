@@ -823,8 +823,6 @@
         "summary": "{games} Partien (mindestens {min}), nach {truncation} Halbzügen abgebrochen, Stopp bei JSD {jsd}, {ply}-Ply",
         "start": "Rollout starten",
         "cancel": "Abbrechen",
-        "batch": "Auf die angezeigte Liste…",
-        "shortcut": "R: Rollout der Stellung starten (nochmal zum Stoppen)",
         "elsewhere": "Das Rollout einer anderen Stellung läuft.",
         "notStored": "nicht gespeichert",
         "live": "Läuft",
@@ -872,7 +870,17 @@
         "invalidSeed": "Der Seed muss eine ganze Zahl von 0 bis 9007199254740991 sein.",
         "replaceConfirm": "Ein Rollout läuft. Abbrechen und dieses starten?",
         "replace": "Ersetzen",
-        "batchRunning": "Ein Stapel läuft: dessen Abbrechen-Schaltfläche verwenden."
+        "readOnly": "die Datenbank ist schreibgeschützt geöffnet (eine andere blunderDB-Instanz hält sie): der Rollout könnte nicht gespeichert werden.",
+        "menuStart": "Rollout ({preset})",
+        "menuStartMoves": "Rollout ({preset}) der {n} Züge",
+        "menuCancel": "Rollout abbrechen",
+        "column": "Rollout",
+        "columnMoney": "Rollout (Money)",
+        "columnMatch": "Rollout (Match)",
+        "columnHint": "Rollout-Equity ± halbe Breite des 95-%-Konfidenzintervalls; für Details über eine Zelle fahren",
+        "gamesCount": "{games}/{max} Partien",
+        "cancelHint": "Escape oder R brechen ebenfalls ab",
+        "settingNote": "Einstellung des Rollouts, der über das Kontextmenü der Zugtabelle, die Taste R und den Befehl rollout gestartet wird."
     },
     "cube": {
         "verdicts": {

@@ -823,8 +823,6 @@
         "summary": "{games} partidas (al menos {min}), truncadas a {truncation} medias jugadas, parada en JSD {jsd}, {ply}-ply",
         "start": "Lanzar el rollout",
         "cancel": "Cancelar",
-        "batch": "Sobre la lista mostrada…",
-        "shortcut": "R: lanzar el rollout de la posición (otra vez para detenerlo)",
         "elsewhere": "Se está ejecutando el rollout de otra posición.",
         "notStored": "no guardado",
         "live": "En curso",
@@ -872,7 +870,17 @@
         "invalidSeed": "La semilla debe ser un entero de 0 a 9007199254740991.",
         "replaceConfirm": "Hay un rollout en curso. ¿Cancelarlo y lanzar este?",
         "replace": "Reemplazar",
-        "batchRunning": "Hay un lote en curso: use su botón Cancelar."
+        "readOnly": "la base está abierta en solo lectura (otra instancia de blunderDB la tiene): el rollout no podría guardarse.",
+        "menuStart": "Rollout ({preset})",
+        "menuStartMoves": "Rollout ({preset}) de las {n} jugadas",
+        "menuCancel": "Cancelar el rollout",
+        "column": "Rollout",
+        "columnMoney": "Rollout (money)",
+        "columnMatch": "Rollout (match)",
+        "columnHint": "Equity del rollout ± semiamplitud del intervalo de confianza del 95 %; pase sobre una celda para el detalle",
+        "gamesCount": "{games}/{max} partidas",
+        "cancelHint": "Escape o R también cancelan",
+        "settingNote": "Ajuste del rollout lanzado desde el clic derecho en la tabla de jugadas, la tecla R y el comando rollout."
     },
     "cube": {
         "verdicts": {

@@ -823,8 +823,6 @@
         "summary": "{games} ゲーム(最低 {min})、{truncation} ハーフムーブで打ち切り、JSD {jsd} で停止、{ply}-ply",
         "start": "ロールアウトを開始",
         "cancel": "キャンセル",
-        "batch": "表示中の一覧に対して…",
-        "shortcut": "R: この局面のロールアウトを開始(もう一度押すと停止)",
         "elsewhere": "別の局面のロールアウトが実行中です。",
         "notStored": "未保存",
         "live": "実行中",
@@ -872,7 +870,17 @@
         "invalidSeed": "シードは 0 から 9007199254740991 までの整数でなければなりません。",
         "replaceConfirm": "ロールアウトが実行中です。キャンセルしてこれを開始しますか?",
         "replace": "置き換える",
-        "batchRunning": "バッチが実行中です。そのキャンセルボタンを使ってください。"
+        "readOnly": "データベースは読み取り専用で開かれています（別の blunderDB インスタンスが保持しています）。ロールアウトを保存できません。",
+        "menuStart": "ロールアウト（{preset}）",
+        "menuStartMoves": "ロールアウト（{preset}）：{n} 手",
+        "menuCancel": "ロールアウトをキャンセル",
+        "column": "ロールアウト",
+        "columnMoney": "ロールアウト（マネー）",
+        "columnMatch": "ロールアウト（マッチ）",
+        "columnHint": "ロールアウトのエクイティ ± 95% 信頼区間の半幅。セルにカーソルを合わせると詳細を表示",
+        "gamesCount": "{games}/{max} ゲーム",
+        "cancelHint": "Esc または R でもキャンセル",
+        "settingNote": "手の表の右クリックメニュー、R キー、rollout コマンドで開始するロールアウトの設定。"
     },
     "cube": {
         "verdicts": {

@@ -823,8 +823,6 @@
         "summary": "{games} parties (au moins {min}), tronquées à {truncation} demi-coups, arrêt à JSD {jsd}, {ply}-ply",
         "start": "Lancer le rollout",
         "cancel": "Annuler",
-        "batch": "Sur la liste affichée…",
-        "shortcut": "R : lancer le rollout de la position (encore pour l'arrêter)",
         "elsewhere": "Le rollout d'une autre position est en cours.",
         "notStored": "non stocké",
         "live": "En cours",
@@ -872,7 +870,17 @@
         "invalidSeed": "La graine doit être un entier de 0 à 9007199254740991.",
         "replaceConfirm": "Un rollout est en cours. L'annuler et lancer celui-ci ?",
         "replace": "Remplacer",
-        "batchRunning": "Un lot est en cours : utilisez son bouton Annuler."
+        "readOnly": "la base est ouverte en lecture seule (une autre instance de blunderDB la tient) : le rollout ne pourrait pas être stocké.",
+        "menuStart": "Rollout ({preset})",
+        "menuStartMoves": "Rollout ({preset}) des {n} coups",
+        "menuCancel": "Annuler le rollout",
+        "column": "Rollout",
+        "columnMoney": "Rollout (money)",
+        "columnMatch": "Rollout (match)",
+        "columnHint": "Équité du rollout ± demi-largeur de l'intervalle de confiance à 95 % ; survolez une cellule pour le détail",
+        "gamesCount": "{games}/{max} parties",
+        "cancelHint": "Échap ou R annulent aussi",
+        "settingNote": "Réglage du rollout lancé par le clic droit sur la table des coups, la touche R et la commande rollout."
     },
     "cube": {
         "verdicts": {

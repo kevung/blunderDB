@@ -59,6 +59,7 @@
     import { handleKeyDown, toggleHelpModal, focusSearchTab } from './services/keyboardService.js';
     import { registerKeys } from './services/keyDispatch.js';
     import { initPageStep } from './services/pageStepSetting.js';
+    import { initRolloutChoice } from './services/rolloutService.js';
     import { applyTabPanels } from './services/tabHandler.js';
     import { resizable } from './utils/resizeHandle.js';
     import { initTabHeights, tabPanelHeight, rememberTabHeight } from './utils/tabHeights.js';
@@ -375,6 +376,7 @@
 
         initPanelPosition();
         initPageStep();
+        initRolloutChoice();
 
         // One-shot seed of the local $state: the resize-handle drag owns it afterwards.
         Promise.all([initPanelSize(), initTabHeights()]).then(() => {

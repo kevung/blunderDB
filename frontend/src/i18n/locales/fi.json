@@ -823,8 +823,6 @@
         "summary": "{games} peliä (vähintään {min}), katkaistu {truncation} puolisiirtoon, pysäytys JSD {jsd}, {ply}-ply",
         "start": "Käynnistä rollout",
         "cancel": "Peruuta",
-        "batch": "Näytettyyn luetteloon…",
-        "shortcut": "R: käynnistä aseman rollout (uudelleen pysäyttää sen)",
         "elsewhere": "Toisen aseman rollout on käynnissä.",
         "notStored": "ei tallennettu",
         "live": "Käynnissä",
@@ -872,7 +870,17 @@
         "invalidSeed": "Siemenen on oltava kokonaisluku väliltä 0–9007199254740991.",
         "replaceConfirm": "Rollout on käynnissä. Peruutetaanko se ja käynnistetään tämä?",
         "replace": "Korvaa",
-        "batchRunning": "Erä on käynnissä: käytä sen Peruuta-painiketta."
+        "readOnly": "tietokanta on avattu vain luku -tilaan (toinen blunderDB-instanssi pitää sitä): rolloutia ei voisi tallentaa.",
+        "menuStart": "Rollout ({preset})",
+        "menuStartMoves": "Rollout ({preset}): {n} siirtoa",
+        "menuCancel": "Peruuta rollout",
+        "column": "Rollout",
+        "columnMoney": "Rollout (money)",
+        "columnMatch": "Rollout (ottelu)",
+        "columnHint": "Rolloutin equity ± 95 %:n luottamusvälin puolileveys; vie osoitin solun päälle nähdäksesi tiedot",
+        "gamesCount": "{games}/{max} peliä",
+        "cancelHint": "Myös Esc tai R peruuttaa",
+        "settingNote": "Rolloutin asetus, kun se käynnistetään siirtotaulukon hiiren oikealla painikkeella, R-näppäimellä tai rollout-komennolla."
     },
     "cube": {
         "verdicts": {

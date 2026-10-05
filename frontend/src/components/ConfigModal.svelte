@@ -2,6 +2,7 @@
     import AssistantSettings from './AssistantSettings.svelte';
     import CorpusSettings from './CorpusSettings.svelte';
     import METSettings from './METSettings.svelte';
+    import RolloutSettings from './RolloutSettings.svelte';
     import { get } from 'svelte/store';
     import { configInitialTabStore, statusBarTextStore, pageStepStore, PAGE_STEPS } from '../stores/uiStore';
     import { setPageStep } from '../services/pageStepSetting.js';
@@ -1028,6 +1029,7 @@
                 </div>
                 <p class="setting-note">{$t('config.gammonnetStaleNote')}</p>
                 <METSettings />
+                <RolloutSettings />
             {:else if activeTab === 'watch'}
                 <p class="setting-note">{$t('config.watchIntro')}</p>
                 <div class="setting-row">

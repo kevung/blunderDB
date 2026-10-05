@@ -823,8 +823,6 @@
         "summary": "{games} παρτίδες (τουλάχιστον {min}), περικομμένες στα {truncation} μισά-ζάρια, διακοπή στο JSD {jsd}, {ply}-ply",
         "start": "Εκκίνηση rollout",
         "cancel": "Ακύρωση",
-        "batch": "Στην εμφανιζόμενη λίστα…",
-        "shortcut": "R: εκκίνηση rollout της θέσης (ξανά για διακοπή)",
         "elsewhere": "Εκτελείται το rollout άλλης θέσης.",
         "notStored": "δεν αποθηκεύτηκε",
         "live": "Σε εξέλιξη",
@@ -872,7 +870,17 @@
         "invalidSeed": "Ο σπόρος πρέπει να είναι ακέραιος από 0 έως 9007199254740991.",
         "replaceConfirm": "Εκτελείται ένα rollout. Να ακυρωθεί και να ξεκινήσει αυτό;",
         "replace": "Αντικατάσταση",
-        "batchRunning": "Εκτελείται μια δέσμη: χρησιμοποιήστε το κουμπί Ακύρωση της."
+        "readOnly": "η βάση είναι ανοιχτή μόνο για ανάγνωση (την κρατά άλλη παρουσία του blunderDB): το rollout δεν θα μπορούσε να αποθηκευτεί.",
+        "menuStart": "Rollout ({preset})",
+        "menuStartMoves": "Rollout ({preset}) των {n} κινήσεων",
+        "menuCancel": "Ακύρωση του rollout",
+        "column": "Rollout",
+        "columnMoney": "Rollout (money)",
+        "columnMatch": "Rollout (match)",
+        "columnHint": "Equity του rollout ± ημιεύρος του διαστήματος εμπιστοσύνης 95 %· περάστε πάνω από ένα κελί για λεπτομέρειες",
+        "gamesCount": "{games}/{max} παρτίδες",
+        "cancelHint": "Και το Escape ή το R ακυρώνουν",
+        "settingNote": "Ρύθμιση του rollout που ξεκινά από το δεξί κλικ στον πίνακα κινήσεων, το πλήκτρο R και την εντολή rollout."
     },
     "cube": {
         "verdicts": {
