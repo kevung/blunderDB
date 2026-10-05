@@ -252,3 +252,7 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   played here (an opaque document, and the dice seed in a column written once),
   and `match_origin`, how a Match played here came to be, cascading with its
   Match. Schema-visible: bumped `domain.DatabaseVersion` to 2.32.0.
+- `038_decision_time.sql` — the 2.33.0 wave (ADR-0073): `move.decision_ms` and
+  `move.cube_decision_ms`, the time a Duel measured for the decision, NULL for
+  unknown; `match_origin.lost_on_time` renamed `over_time`, the player whose
+  reserve ran out. Schema-visible: bumped `domain.DatabaseVersion` to 2.33.0.

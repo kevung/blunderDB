@@ -126,6 +126,15 @@ type Action struct {
 	// from it; a mismatch with the derived score is marked (ScoreMismatch), never
 	// corrected.
 	Score *[2]int `json:"score,omitempty"`
+
+	// DecisionMS is how long the Side took over the decision this Action
+	// records, in milliseconds, from the moment it had the trait, delay
+	// included (ADR-0073). CubeDecisionMS, on a checker play or a dance only,
+	// is the cube decision taken before its roll — from the trait to the roll
+	// — when the cube was offered. Only an Arbiter measures them; nil is
+	// unknown, never zero: a record typed or imported carries none.
+	DecisionMS     *int64 `json:"decision_ms,omitempty"`
+	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
 }
 
 // Header is the head of the document (fonctionnel.md §1.1). Only MatchLength is asked

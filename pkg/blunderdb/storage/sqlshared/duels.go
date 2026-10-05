@@ -150,12 +150,12 @@ func (s *DuelStore) SetOrigin(ctx context.Context, scope string, o *storage.Matc
 			return errf(tx, what, storage.ErrNotFound)
 		}
 		cols, args := tx.TenantColumns(scope)
-		cols = append(cols, "match_id", "start", "dice_seed", "stopped_early", "lost_on_time", "bot_level", "cadence")
-		args = append(args, o.MatchID, o.Start, o.DiceSeed, boolInt(o.StoppedEarly), boolInt(o.LostOnTime), o.BotLevel, o.Cadence)
+		cols = append(cols, "match_id", "start", "dice_seed", "stopped_early", "over_time", "bot_level", "cadence")
+		args = append(args, o.MatchID, o.Start, o.DiceSeed, boolInt(o.StoppedEarly), o.OverTime, o.BotLevel, o.Cadence)
 		if _, err := tx.Exec(ctx, `INSERT INTO match_origin (`+strings.Join(cols, ", ")+`) VALUES (`+
 			Placeholders(len(cols))+`) ON CONFLICT (match_id) DO UPDATE SET
 			 start = excluded.start, dice_seed = excluded.dice_seed,
-			 stopped_early = excluded.stopped_early, lost_on_time = excluded.lost_on_time,
+			 stopped_early = excluded.stopped_early, over_time = excluded.over_time,
 			 bot_level = excluded.bot_level, cadence = excluded.cadence`, args...); err != nil {
 			return errf(tx, what, err)
 		}
@@ -167,18 +167,18 @@ func (s *DuelStore) Origin(ctx context.Context, scope string, matchID int64) (*s
 	what := fmt.Sprintf("origin of match %d", matchID)
 	tenant, targs := s.DB.TenantFilter("", scope)
 	o := storage.MatchOrigin{MatchID: matchID}
-	var stopped, lost int
+	var stopped int
 	err := s.DB.QueryRow(ctx,
-		`SELECT start, dice_seed, stopped_early, lost_on_time, bot_level, cadence
+		`SELECT start, dice_seed, stopped_early, over_time, bot_level, cadence
 		 FROM match_origin WHERE match_id = ? AND `+tenant, append([]any{matchID}, targs...)...).
-		Scan(&o.Start, &o.DiceSeed, &stopped, &lost, &o.BotLevel, &o.Cadence)
+		Scan(&o.Start, &o.DiceSeed, &stopped, &o.OverTime, &o.BotLevel, &o.Cadence)
 	if errors.Is(err, ErrNoRows) {
 		return nil, errf(s.DB, what, storage.ErrNotFound)
 	}
 	if err != nil {
 		return nil, errf(s.DB, what, err)
 	}
-	o.StoppedEarly, o.LostOnTime = stopped != 0, lost != 0
+	o.StoppedEarly = stopped != 0
 	return &o, nil
 }
 

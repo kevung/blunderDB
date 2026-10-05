@@ -25,9 +25,15 @@
 //   - the end: the Match written through ingest.WriteMatch, as a Transcription
 //     writes it, with its origin (storage.MatchOrigin) — or the draft thrown
 //     away. Stopping and keeping writes the games as they stand; nothing
-//     invents a result.
+//     invents a result;
+//   - time (cadence.go, ADR-0073): the Arbiter stamps when it hands a
+//     Decision out and when it receives the Play, never the client. Every
+//     Decision a Side takes is timed, with or without a Cadence, and the
+//     duration goes on its Action, then on the Move; what the Arbiter plays
+//     alone has none. A Cadence adds a reserve and a delay per Side; running
+//     out is noted, and loses the match only if the Duel was set so. A Duel
+//     in suspense stops the clocks.
 //
-// A Bot (a delegated Side) and a Cadence are not here yet: a Bot is one more
-// Side the SideResolver gives, and the Arbiter already asks every Side the
-// same way; a Cadence will time the Decisions settle asks for.
+// A Bot (a delegated Side) is not here yet: it is one more Side the
+// SideResolver gives, and the Arbiter already asks every Side the same way.
 package duel

@@ -215,15 +215,16 @@ func TestDuelResumesWithTheSameDice(t *testing.T) {
 		r.Awaiting.Position.Dice != before.Position.Dice || r.Awaiting.Position.Board != before.Position.Board {
 		t.Fatalf("resumed at %+v, want %+v", r.Awaiting, before)
 	}
-	if r.Revision != s.Revision || len(r.Actions) != len(s.Actions) {
-		t.Errorf("resumed revision %d with %d actions, want %d with %d", r.Revision, len(r.Actions), s.Revision, len(s.Actions))
+	// Resuming restarts the clocks, which is a write.
+	if r.Revision != s.Revision+1 || len(r.Actions) != len(s.Actions) {
+		t.Errorf("resumed revision %d with %d actions, want %d with %d", r.Revision, len(r.Actions), s.Revision+1, len(s.Actions))
 	}
 	// Both services play on identically: the dice to come are the seed's.
-	a, err := svc.Play(ctx, "", s.ID, s.Revision, answer(before))
+	a, err := svc.Play(ctx, "", s.ID, r.Revision, answer(before))
 	if err != nil {
 		t.Fatalf("Play: %v", err)
 	}
-	if _, err := again.Play(ctx, "", s.ID, s.Revision, answer(before)); !errors.Is(err, storage.ErrConflict) {
+	if _, err := again.Play(ctx, "", s.ID, r.Revision, answer(before)); !errors.Is(err, storage.ErrConflict) {
 		t.Errorf("a Play under a revision moved on: got %v, want ErrConflict", err)
 	}
 	b, err := again.Open(ctx, "", s.ID)
@@ -271,10 +272,11 @@ func TestDuelRefusesPlays(t *testing.T) {
 	if err != nil || len(list) != 2 || !list[0].Open || list[0].ID != other.ID || list[1].Open {
 		t.Errorf("List = %+v, %v; one open, the newest", list, err)
 	}
-	if _, err := svc.Open(ctx, "", s.ID); err != nil {
+	reopened, err := svc.Open(ctx, "", s.ID)
+	if err != nil {
 		t.Fatalf("Open: %v", err)
 	}
-	if err := play(svc, s, answer(d)); err != nil {
+	if err := play(svc, reopened, answer(d)); err != nil {
 		t.Errorf("Play once reopened: %v", err)
 	}
 }

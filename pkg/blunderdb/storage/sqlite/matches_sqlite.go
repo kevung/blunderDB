@@ -761,7 +761,8 @@ var moveSelectCols = moveColsOf("")
 func moveColsOf(p string) string {
 	return p + `id, COALESCE(` + p + `game_id,0), COALESCE(` + p + `move_number,0), ` + sqlshared.ActionLabelOrEmptySQL(p+"move_type") + `,
 	` + p + `position_id, COALESCE(` + p + `player,0), COALESCE(` + p + `dice_1,0), COALESCE(` + p + `dice_2,0),
-	COALESCE(` + p + `checker_move,''), ` + sqlshared.ActionLabelOrEmptySQL(p+"cube_action") + `, ` + p + `luck_mp`
+	COALESCE(` + p + `checker_move,''), ` + sqlshared.ActionLabelOrEmptySQL(p+"cube_action") + `, ` + p + `luck_mp,
+	` + p + `decision_ms, ` + p + `cube_decision_ms`
 }
 
 func scanMove(sc interface{ Scan(...any) error }) (domain.Move, error) {
@@ -769,10 +770,13 @@ func scanMove(sc interface{ Scan(...any) error }) (domain.Move, error) {
 	var d1, d2 int32
 	var positionID sql.NullInt64
 	var luckMP sql.NullInt32
+	var decision, cube sql.NullInt64
 	if err := sc.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-		&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
+		&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP,
+		&decision, &cube); err != nil {
 		return domain.Move{}, err
 	}
+	mv.DecisionMS, mv.CubeDecisionMS = sqlshared.NullableMS(decision), sqlshared.NullableMS(cube)
 	mv.Dice = [2]int32{d1, d2}
 	if positionID.Valid {
 		mv.PositionID = positionID.Int64
@@ -792,10 +796,13 @@ func scanScoredMove(rows *sql.Rows, scorer sqlshared.PlayScorer) (domain.Move, e
 	var positionID sql.NullInt64
 	var luckMP sql.NullInt32
 	var data []byte
+	var decision, cube sql.NullInt64
 	if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-		&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP, &data); err != nil {
+		&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP,
+		&decision, &cube, &data); err != nil {
 		return domain.Move{}, err
 	}
+	mv.DecisionMS, mv.CubeDecisionMS = sqlshared.NullableMS(decision), sqlshared.NullableMS(cube)
 	mv.Dice = [2]int32{d1, d2}
 	if positionID.Valid {
 		mv.PositionID = positionID.Int64
@@ -810,8 +817,9 @@ func scanScoredMove(rows *sql.Rows, scorer sqlshared.PlayScorer) (domain.Move, e
 
 const moveInsertSQL = `INSERT INTO move (
 	game_id, move_number, move_type, position_id, player,
-	dice_1, dice_2, checker_move, cube_action, luck_mp
-) VALUES (?,?,?,?,?,?,?,?,?,?)`
+	dice_1, dice_2, checker_move, cube_action, luck_mp,
+	decision_ms, cube_decision_ms
+) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`
 
 // CreateMove stores a new move and returns its id, updating mv.ID in place. A
 // zero PositionID is stored as NULL (no associated position).
@@ -834,7 +842,8 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	}
 	res, err := s.db.ExecContext(ctx, moveInsertSQL,
 		mv.GameID, mv.MoveNumber, moveType, positionID, mv.Player,
-		mv.Dice[0], mv.Dice[1], mv.CheckerMove, cubeAction, luckMP)
+		mv.Dice[0], mv.Dice[1], mv.CheckerMove, cubeAction, luckMP,
+		sqlshared.MSArg(mv.DecisionMS), sqlshared.MSArg(mv.CubeDecisionMS))
 	if err != nil {
 		return 0, fmt.Errorf("sqlite: create move: %w", err)
 	}

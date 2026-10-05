@@ -450,3 +450,62 @@ func testMoveLuckRoundTrip(t *testing.T, s storage.Storage) {
 		}
 	}
 }
+
+// testMoveDecisionTimeRoundTrip: a decision's duration survives the trip on
+// both backends, through both move reads, and an unknown one stays unknown —
+// a NULL read back as 0 would say "decided at once" (ADR-0073). Zero is a
+// duration like any other.
+func testMoveDecisionTimeRoundTrip(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	matchID, err := s.Matches().Save(ctx, "",
+		&domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7})
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	gameID, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+	long, short, zero := int64(9_000_000_000), int64(2_350), int64(0)
+	cases := []struct {
+		name           string
+		decision, cube *int64
+	}{
+		{"timed with its cube decision", &short, &long},
+		{"timed, no cube decision", &zero, nil},
+		{"unknown", nil, nil},
+	}
+	for i, c := range cases {
+		mv := domain.Move{GameID: gameID, MoveNumber: int32(i), MoveType: "checker", Player: 1,
+			Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5", DecisionMS: c.decision, CubeDecisionMS: c.cube}
+		if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatalf("CreateMove(%s): %v", c.name, err)
+		}
+	}
+	same := func(a, b *int64) bool { return (a == nil) == (b == nil) && (a == nil || *a == *b) }
+	check := func(read string, moves []*domain.Move) {
+		if len(moves) != len(cases) {
+			t.Fatalf("%s: %d moves, want %d", read, len(moves), len(cases))
+		}
+		for i, c := range cases {
+			if !same(moves[i].DecisionMS, c.decision) || !same(moves[i].CubeDecisionMS, c.cube) {
+				t.Errorf("%s, %s: got %v/%v", read, c.name, moves[i].DecisionMS, moves[i].CubeDecisionMS)
+			}
+		}
+	}
+	var byGame, byMatch []*domain.Move
+	for mv, err := range s.Matches().Moves(ctx, "", gameID) {
+		if err != nil {
+			t.Fatalf("Moves: %v", err)
+		}
+		byGame = append(byGame, mv)
+	}
+	for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("MovesByMatch: %v", err)
+		}
+		byMatch = append(byMatch, mv)
+	}
+	check("Moves", byGame)
+	check("MovesByMatch", byMatch)
+}

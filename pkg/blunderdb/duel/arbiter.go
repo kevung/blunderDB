@@ -12,8 +12,9 @@ import (
 
 // FormatVersion versions the draft's document, as transcript.FormatVersion
 // versions a Transcription's: a change to its shape is a version of the
-// document, never a DatabaseVersion migration.
-const FormatVersion = 1
+// document, never a DatabaseVersion migration. Version 2 adds the Cadence and
+// the clock; a version 1 draft reads as one without them.
+const FormatVersion = 2
 
 // The Duel refuses, by name, a Start whose decision the rules do not leave to
 // the side on roll. The rule machine reads no DecisionType; the Duel does.
@@ -50,6 +51,10 @@ type document struct {
 	// none is. An opening roll keeps its drawing order: player 1's die first.
 	Dice     [2]int `json:"dice,omitempty"`
 	DiceSide int    `json:"dice_side,omitempty"`
+	// Cadence is the Duel's clock, nil for none; Clock what it, and the
+	// durations, keep between two calls (cadence.go).
+	Cadence *Cadence `json:"cadence,omitempty"`
+	Clock   clock    `json:"clock,omitzero"`
 }
 
 // game is a Duel in memory: its document, its seed, and the rule machine the
@@ -136,7 +141,7 @@ func (g *game) finished() bool {
 // awaiting is the Decision a Side owes, or nil when the Arbiter acts next —
 // a roll to draw — or the match is over.
 func (g *game) awaiting() *Decision {
-	if g.finished() {
+	if g.finished() || g.timeLost() {
 		return nil
 	}
 	n := g.m.Next()
@@ -184,8 +189,30 @@ func (g *game) roll() error {
 	}
 }
 
-// play applies a Side's Play to the Decision it answers.
-func (g *game) play(p Play) error {
+// receive takes a Side's Play at the instant the Arbiter stamped on it: the
+// Decision's duration, the reserve's charge, then the Play. A Side out of
+// time under TimeLoseMatch has lost the match before its Play counts.
+func (g *game) receive(p Play) error {
+	d := g.awaiting()
+	ms, known := g.elapsed(p.At)
+	if d != nil && p.Side == d.Side && g.overTime(d.Side, ms) && g.doc.Cadence.TimeOut == TimeLoseMatch {
+		g.noteOverTime(d.Side)
+		return nil
+	}
+	var dur *int64
+	if known {
+		dur = &ms
+	}
+	if err := g.play(p, dur); err != nil {
+		return err
+	}
+	g.account(p.Side, ms, p.Kind)
+	return nil
+}
+
+// play applies a Side's Play to the Decision it answers; ms is the time the
+// Decision took, nil when unknown or when the Arbiter played it alone.
+func (g *game) play(p Play, ms *int64) error {
 	d := g.awaiting()
 	if d == nil {
 		return &transcript.Refusal{Kind: RefusedNotAwaited, Detail: "no decision is awaited"}
@@ -198,9 +225,10 @@ func (g *game) play(p Play) error {
 	}
 	switch p.Kind {
 	case PlayResign:
-		if err := g.apply(transcript.Action{Side: p.Side, Kind: transcript.KindResign, Level: p.Level}); err != nil {
+		if err := g.apply(transcript.Action{Side: p.Side, Kind: transcript.KindResign, Level: p.Level, DecisionMS: ms}); err != nil {
 			return err
 		}
+		g.doc.Clock.Cube = nil
 		// The game is over: a roll left on the board belongs to it.
 		g.doc.Dice, g.doc.DiceSide = [2]int{}, 0
 		return nil
@@ -208,12 +236,16 @@ func (g *game) play(p Play) error {
 		if d.Kind != DecideCube {
 			return wrong()
 		}
-		return g.roll()
+		if err := g.roll(); err != nil {
+			return err
+		}
+		g.doc.Clock.Cube = ms
+		return nil
 	case PlayDouble:
 		if d.Kind != DecideCube {
 			return wrong()
 		}
-		return g.apply(transcript.Action{Side: p.Side, Kind: transcript.KindDouble})
+		return g.apply(transcript.Action{Side: p.Side, Kind: transcript.KindDouble, DecisionMS: ms})
 	case PlayTake, PlayPass:
 		if d.Kind != DecideAnswer {
 			return wrong()
@@ -222,7 +254,7 @@ func (g *game) play(p Play) error {
 		if p.Kind == PlayPass {
 			kind = transcript.KindPass
 		}
-		return g.apply(transcript.Action{Side: p.Side, Kind: kind})
+		return g.apply(transcript.Action{Side: p.Side, Kind: kind, DecisionMS: ms})
 	case PlayMove:
 		if d.Kind != DecideMove {
 			return wrong()
@@ -231,10 +263,12 @@ func (g *game) play(p Play) error {
 		if len(p.Steps) == 0 {
 			kind = transcript.KindDance
 		}
-		if err := g.apply(transcript.Action{Side: p.Side, Kind: kind, Dice: g.doc.Dice, Steps: p.Steps}); err != nil {
+		if err := g.apply(transcript.Action{Side: p.Side, Kind: kind, Dice: g.doc.Dice, Steps: p.Steps,
+			DecisionMS: ms, CubeDecisionMS: g.doc.Clock.Cube}); err != nil {
 			return err
 		}
 		g.doc.Dice, g.doc.DiceSide = [2]int{}, 0
+		g.doc.Clock.Cube = nil
 		return nil
 	}
 	return &transcript.Refusal{Kind: RefusedNotAwaited, Detail: fmt.Sprintf("%q is no play", p.Kind)}
@@ -244,7 +278,7 @@ func (g *game) play(p Play) error {
 // available, the dance, the only play — and asks each Side for its Decision
 // until one decides outside the Arbiter or the match is over (ADR-0072 rule 9).
 func (g *game) settle(ctx context.Context, sides [2]Side) error {
-	for !g.finished() {
+	for !g.finished() && !g.timeLost() {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
@@ -256,26 +290,31 @@ func (g *game) settle(ctx context.Context, sides [2]Side) error {
 			continue
 		}
 		if d.Kind == DecideMove {
+			var forced *Play
 			switch plays := domain.LegalMoves(&d.Position); len(plays) {
 			case 0:
-				if err := g.play(Play{Side: d.Side, Kind: PlayMove}); err != nil {
-					return err
-				}
-				continue
+				forced = &Play{Side: d.Side, Kind: PlayMove}
 			case 1:
-				if err := g.play(Play{Side: d.Side, Kind: PlayMove, Steps: plays[0].Steps}); err != nil {
+				forced = &Play{Side: d.Side, Kind: PlayMove, Steps: plays[0].Steps}
+			}
+			if forced != nil {
+				// No decision: no duration, and the play ends the clock's
+				// turn as a played one would.
+				if err := g.play(*forced, nil); err != nil {
 					return err
 				}
+				g.doc.Clock.Turn = 0
 				continue
 			}
 		}
-		d.Since = g.clock()
+		g.startDecision()
+		d.Since = g.doc.Clock.Since
 		p, ok, err := sides[d.Side].Decide(ctx, *d)
 		if err != nil || !ok {
 			return err
 		}
 		p.At = g.clock()
-		if err := g.play(p); err != nil {
+		if err := g.receive(p); err != nil {
 			return fmt.Errorf("player %d's side: %w", d.Side+1, err)
 		}
 	}

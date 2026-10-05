@@ -208,7 +208,8 @@ func bearsTurn(k Kind) bool {
 
 // step replays one Action against the state and returns what it derives about it.
 func (s *state) step(i int, a Action) ActionInfo {
-	info := ActionInfo{Index: i, Side: a.Side, Kind: a.Kind, MoveNumber: -1, GameIndex: -1}
+	info := ActionInfo{Index: i, Side: a.Side, Kind: a.Kind, MoveNumber: -1, GameIndex: -1,
+		DecisionMS: a.DecisionMS, CubeDecisionMS: a.CubeDecisionMS}
 
 	if s.matchOver() {
 		info.add(PastEnd, "the match is already won")
