@@ -46,10 +46,11 @@
     <li>Kazaross-XG2-otteluekvivalenssitaulukko (MET) on <strong>Neil Kazarossin</strong> työtä.</li>
     <li>Take point- ja gammon-arvotaulukot on otettu <strong>Dirk Schiemannin</strong> kirjasta <em>The Theory of Backgammon</em>.</li>
     <li>
-        Yksipuolinen (6 pistettä, 15 nappulaa, EPC:tä varten) ja kaksipuolinen (6 pistettä, 6 nappulaa, kilpajuoksujen kuutiopäätöksiä varten) bearoff-tietokanta on luotu
-        <strong>GNU Backgammonilla</strong> (GNUbg). GNUbg on GPL-lisensoitu vapaa ohjelmisto; nämä taulukot ovat sen tuottamaa dataa ja ne mainitaan sellaisina.
+        Yksipuolinen (6 pistettä, 15 nappulaa, EPC:tä varten) ja kaksipuolinen (6 pistettä, 6 nappulaa, kilpajuoksujen kuutiopäätöksiä varten) bearoff-tietokanta lasketaan blunderDB:ssä itsessään
+        <strong>GNU Backgammonin</strong> (GNUbg) <em>makebearoff</em>-työkalun porttauksella; tulos on tavu tavulta identtinen gnubgin tuloksen kanssa, jonka SHA-256-tiiviste toimii viitteenä. GNUbg
+        on GPL-lisensoitu vapaa ohjelmisto.
     </li>
-    <li>Ottelutiedostot luetaan kirjastoilla <em>xgparser</em>, <em>gnubgparser</em> ja <em>bgfparser</em> (MIT).</li>
+    <li>Ottelutiedostot luetaan kirjastoilla <em>xgparser</em>, <em>gnubgparser</em>, <em>bgfparser</em> ja <em>ogxmparser</em> (MIT).</li>
     <li>Go-puolella: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> ja <em>go-fsrs</em> (MIT).</li>
     <li>Käyttöliittymän puolella: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> ja <em>driver.js</em> (MIT).</li>
     <li>Fontit <em>Nunito</em> ja <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>

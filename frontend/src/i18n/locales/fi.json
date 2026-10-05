@@ -1832,7 +1832,7 @@
         "doublePass": "Tuplaus, luovuta",
         "illegal": "Sääntöjenvastainen siirto",
         "unranked": "Laillinen siirto, ei arvioitu",
-        "cost": "Maksaa {mp} mMWC",
+        "cost": "Maksaa {mp} mp",
         "best": "paras: {move}",
         "gradeFailed": "Vastausta ei voitu arvioida.",
         "finishedDecision": "Päätös valmis: {correct}/{n}, istunnon PR {pr}.",
@@ -1920,14 +1920,14 @@
         "scoresInstruction": "Arvioi jokainen luku päässäsi ja napsauta sitten Paljasta. Napsauta sen jälkeen jokaista lukua, jonka arvasit väärin."
     },
     "explain": {
-        "blots": "Menetät {cost} mMWC: pelattu siirto jättää {blots} yksinäistä nappulaa, kun {best} jättää vain {bestBlots}.",
-        "point": "Menetät {cost} mMWC: {best} tekee kotialueellesi pisteen, jota pelattu siirto ei tee.",
-        "gammon": "Menetät {cost} mMWC: pelattu siirto luopuu {gammon} pisteestä gammon-mahdollisuuksia, jotka {best} säilyttää.",
-        "passive": "Menetät {cost} mMWC: pelattu siirto on turvallisempi, mutta {best} voittaa useammin — turvallisuus maksaa tässä enemmän kuin tuottaa.",
-        "doubletoolate": "Menetät {cost} mMWC: tämä oli tuplaus, etkä tarjonnut sitä ({best}).",
-        "doubletooearly": "Menetät {cost} mMWC: tuplaus on ennenaikainen, {best}.",
-        "taketooloose": "Menetät {cost} mMWC: hyväksyntä on liian löysä, {best}.",
-        "passtootight": "Menetät {cost} mMWC: luovutus on liian tiukka, {best}."
+        "blots": "Menetät {cost} mp: pelattu siirto jättää {blots} yksinäistä nappulaa, kun {best} jättää vain {bestBlots}.",
+        "point": "Menetät {cost} mp: {best} tekee kotialueellesi pisteen, jota pelattu siirto ei tee.",
+        "gammon": "Menetät {cost} mp: pelattu siirto luopuu {gammon} pisteestä gammon-mahdollisuuksia, jotka {best} säilyttää.",
+        "passive": "Menetät {cost} mp: pelattu siirto on turvallisempi, mutta {best} voittaa useammin — turvallisuus maksaa tässä enemmän kuin tuottaa.",
+        "doubletoolate": "Menetät {cost} mp: tämä oli tuplaus, etkä tarjonnut sitä ({best}).",
+        "doubletooearly": "Menetät {cost} mp: tuplaus on ennenaikainen, {best}.",
+        "taketooloose": "Menetät {cost} mp: hyväksyntä on liian löysä, {best}.",
+        "passtootight": "Menetät {cost} mp: luovutus on liian tiukka, {best}."
     },
     "similar": {
         "noPosition": "Ei nykyistä asemaa, jolle etsiä naapureita.",

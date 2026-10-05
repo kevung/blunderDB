@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:02+0200\n"
+"POT-Creation-Date: 2026-10-05 04:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -191,10 +191,27 @@ msgstr ""
 "<https://github.com/kevung/gammonNet>`__ (MIT);"
 
 #: ../../source/a_propos.rst:84
+msgid ""
+"le moteur de tournoi **Nicomaque** est l'œuvre de *Nicolas Harmand* "
+"(`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells"
+"/backgammon-tournoi>`__) : il tient le format, les appariements, les "
+"tableaux et le classement d'un tournoi dirigé depuis blunderDB. Sa "
+"`documentation <https://github.com/PileOfCells/backgammon-"
+"tournoi/tree/main/docs>`__ se trouve dans le dossier ``docs`` de son "
+"dépôt ;"
+msgstr ""
+"il motore di tornei **Nicomaque** è opera di *Nicolas Harmand* "
+"(`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells"
+"/backgammon-tournoi>`__): regge il formato, gli abbinamenti, i tabelloni "
+"e la classifica di un torneo diretto da blunderDB. La sua `documentazione"
+" <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ si"
+" trova nella cartella ``docs`` del suo repository;"
+
+#: ../../source/a_propos.rst:91
 msgid "la table d'équité de match Kazaross-XG2 est l'œuvre de *Neil Kazaross* ;"
 msgstr "la tabella di match equity Kazaross-XG2 è opera di *Neil Kazaross*;"
 
-#: ../../source/a_propos.rst:86
+#: ../../source/a_propos.rst:93
 msgid ""
 "les tables de take points et de valeurs de gammon sont tirées de *The "
 "Theory of Backgammon* de *Dirk Schiemann* ;"
@@ -202,7 +219,7 @@ msgstr ""
 "le tabelle dei take point e dei valori di gammon sono tratte da *The "
 "Theory of Backgammon* di *Dirk Schiemann*;"
 
-#: ../../source/a_propos.rst:89
+#: ../../source/a_propos.rst:96
 msgid ""
 "les tables de bearoff unilatérale (6 points, 15 pions, pour l'EPC) et "
 "bilatérale (6 points, 6 pions, pour les verdicts de videau en course) "
@@ -217,22 +234,24 @@ msgstr ""
 "calcolate da blunderDB stesso, tramite un porting dello strumento "
 "``makebearoff`` di `GNU Backgammon "
 "<https://www.gnu.org/software/gnubg/>`__; il risultato è identico byte "
-"per byte a quello di gnubg, la cui impronta SHA-256 serve da riferimento. "
-"GNUbg è software libero sotto licenza GPL;"
+"per byte a quello di gnubg, la cui impronta SHA-256 serve da riferimento."
+" GNUbg è software libero sotto licenza GPL;"
 
-#: ../../source/a_propos.rst:96
+#: ../../source/a_propos.rst:103
 msgid ""
 "les fichiers de match sont lus par `xgparser "
 "<https://github.com/kevung/xgparser>`__, `gnubgparser "
-"<https://github.com/kevung/gnubgparser>`__ et `bgfparser "
-"<https://github.com/kevung/bgfparser>`__ (MIT) ;"
+"<https://github.com/kevung/gnubgparser>`__, `bgfparser "
+"<https://github.com/kevung/bgfparser>`__ et `ogxmparser "
+"<https://github.com/kevung/ogxmparser>`__ (MIT) ;"
 msgstr ""
 "i file di match sono letti da `xgparser "
 "<https://github.com/kevung/xgparser>`__, `gnubgparser "
-"<https://github.com/kevung/gnubgparser>`__ e `bgfparser "
-"<https://github.com/kevung/bgfparser>`__ (MIT);"
+"<https://github.com/kevung/gnubgparser>`__, `bgfparser "
+"<https://github.com/kevung/bgfparser>`__ e `ogxmparser "
+"<https://github.com/kevung/ogxmparser>`__ (MIT);"
 
-#: ../../source/a_propos.rst:101
+#: ../../source/a_propos.rst:109
 msgid ""
 "côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__ "
 "(BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails "
@@ -244,7 +263,7 @@ msgstr ""
 "<https://wails.io>`__ e `go-fsrs <https://github.com/open-spaced-"
 "repetition/go-fsrs>`__ (MIT);"
 
-#: ../../source/a_propos.rst:106
+#: ../../source/a_propos.rst:114
 msgid ""
 "côté interface : `Svelte <https://svelte.dev>`__, `two.js "
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ et "
@@ -254,7 +273,7 @@ msgstr ""
 "<https://two.js.org>`__, `Chart.js <https://www.chartjs.org>`__ e "
 "`driver.js <https://driverjs.com>`__ (MIT);"
 
-#: ../../source/a_propos.rst:110
+#: ../../source/a_propos.rst:118
 msgid ""
 "les polices `Nunito <https://github.com/googlefonts/nunito>`__ et `Noto "
 "Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "
@@ -263,8 +282,3 @@ msgstr ""
 "i caratteri `Nunito <https://github.com/googlefonts/nunito>`__ e `Noto "
 "Sans JP <https://fonts.google.com/noto/specimen/Noto+Sans+JP>`__ (SIL "
 "Open Font License 1.1)."
-
-msgid ""
-"le moteur de tournoi **Nicomaque** est l'œuvre de *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__) : il tient le format, les appariements, les tableaux et le classement d'un tournoi dirigé depuis blunderDB. Sa `documentation <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ se trouve dans le dossier ``docs`` de son dépôt ;"
-msgstr ""
-"il motore di tornei **Nicomaque** è opera di *Nicolas Harmand* (`PileOfCells/backgammon-tournoi <https://github.com/PileOfCells/backgammon-tournoi>`__): regge il formato, gli abbinamenti, i tabelloni e la classifica di un torneo diretto da blunderDB. La sua `documentazione <https://github.com/PileOfCells/backgammon-tournoi/tree/main/docs>`__ si trova nella cartella ``docs`` del suo repository;"

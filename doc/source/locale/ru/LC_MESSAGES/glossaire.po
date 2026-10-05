@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 01:42+0200\n"
+"POT-Creation-Date: 2026-10-05 04:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -246,15 +246,15 @@ msgid ""
 "Une table de réponses de course two-sided (le verdict de videau) ou one-"
 "sided (l'EPC). blunderDB en génère elle-même une partie au premier "
 "lancement (jusqu'à 6 pions par joueur) ; les domaines plus larges se "
-"génèrent depuis le panneau *Bearoff* ou la CLI. Une base générée est dite"
-" *vérifiée* quand son empreinte correspond exactement à celle produite "
-"par GNUbg."
+"génèrent depuis l'onglet *Bearoff* de la configuration ou la CLI. Une "
+"base générée est dite *vérifiée* quand son empreinte correspond "
+"exactement à celle produite par GNUbg."
 msgstr ""
 "Таблица ответов гонки, двусторонняя (вердикт по кубу) или односторонняя "
 "(EPC). blunderDB сама генерирует часть этого при первом запуске (до 6 "
 "шашек на игрока); более широкие домены генерируются со вкладки *Bearoff* "
-"или из CLI. Сгенерированная база называется *проверенной*, когда её "
-"отпечаток точно совпадает с тем, что производит GNUbg."
+"настроек или из CLI. Сгенерированная база называется *проверенной*, когда"
+" её отпечаток точно совпадает с тем, что производит GNUbg."
 
 #: ../../source/glossaire.rst:96
 msgid "EPC (Effective Pip Count)"
@@ -371,17 +371,18 @@ msgstr "Бландер"
 msgid ""
 "Un coup ou une décision de videau dont l'erreur (l'écart d'équité avec le"
 " meilleur choix) dépasse un seuil ; la commande ``bl`` (ou ``blunders``) "
-"charge directement les pires erreurs d'une recherche."
+"charge directement les pires erreurs retenues par le filtre des "
+"statistiques."
 msgstr ""
 "Ход или решение по кубу, ошибка которого (разрыв эквити с лучшим выбором)"
-" превышает порог; команда ``bl`` (или ``blunders``) загружает худшие "
-"ошибки поиска напрямую."
+" превышает порог; команда ``bl`` (или ``blunders``) напрямую загружает "
+"худшие ошибки, отобранные фильтром статистики."
 
-#: ../../source/glossaire.rst:141
+#: ../../source/glossaire.rst:142
 msgid "Millipoint (mpt)"
 msgstr "Миллипункт (mpt)"
 
-#: ../../source/glossaire.rst:142
+#: ../../source/glossaire.rst:143
 msgid ""
 "Un millième de point d'équité : une erreur de 0,100 d'équité vaut 100 "
 "mpt. C'est l'unité dans laquelle se lisent les grandeurs d'une position —"
@@ -397,11 +398,11 @@ msgstr ""
 "1000, так что PR, равный 5,0, соответствует средней ошибке в 10 mpt на "
 "решение."
 
-#: ../../source/glossaire.rst:150
+#: ../../source/glossaire.rst:151
 msgid "PR (*Performance Rating*)"
 msgstr "PR (*Performance Rating*)"
 
-#: ../../source/glossaire.rst:151
+#: ../../source/glossaire.rst:152
 msgid ""
 "Le coût moyen des erreurs d'un joueur, coups et videau confondus : "
 "l'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
@@ -415,11 +416,11 @@ msgstr ""
 "0,010 эквити на решение. См. :ref:`stats_parity` для точных правил "
 "подсчёта (паритет с eXtreme Gammon и GNUbg)."
 
-#: ../../source/glossaire.rst:157
+#: ../../source/glossaire.rst:158
 msgid "Snowie Error Rate"
 msgstr "Snowie Error Rate"
 
-#: ../../source/glossaire.rst:158
+#: ../../source/glossaire.rst:159
 msgid ""
 "Le même numérateur que le PR (la somme des erreurs), mais rapporté au "
 "nombre de coups joués plutôt qu'au nombre de décisions comptées — plus "
@@ -429,11 +430,11 @@ msgstr ""
 "сыгранных ходов, а не на число учтённых решений — более стабильный от "
 "инструмента к инструменту. См. :ref:`stats_parity`."
 
-#: ../../source/glossaire.rst:162
+#: ../../source/glossaire.rst:163
 msgid "Coût MWC (*MWC cost*)"
 msgstr "Стоимость MWC (*MWC cost*)"
 
-#: ../../source/glossaire.rst:163
+#: ../../source/glossaire.rst:164
 msgid ""
 "Une erreur de videau exprimée en points de pourcentage de chances de "
 "gagner le match (*Match Winning Chance*), plutôt qu'en équité — la "
@@ -444,11 +445,11 @@ msgstr ""
 "не в эквити — естественная величина для сравнения одного и того же игрока"
 " при разных матчевых счётах."
 
-#: ../../source/glossaire.rst:168
+#: ../../source/glossaire.rst:169
 msgid "Collection"
 msgstr "Коллекция"
 
-#: ../../source/glossaire.rst:169
+#: ../../source/glossaire.rst:170
 msgid ""
 "Un ensemble nommé et ordonné de positions que l'utilisateur assemble à la"
 " main, glisser-déposer compris. L'appartenance à une collection est un "
@@ -460,11 +461,11 @@ msgstr ""
 "действие, в отличие от индивидуально импортированной позиции (см. "
 ":ref:`panneau_collections`)."
 
-#: ../../source/glossaire.rst:174
+#: ../../source/glossaire.rst:175
 msgid "Paquet Anki (*Anki deck*)"
 msgstr "Колода Anki (*Anki deck*)"
 
-#: ../../source/glossaire.rst:175
+#: ../../source/glossaire.rst:176
 msgid ""
 "Un ensemble de positions transformées en cartes à réviser par répétition "
 "espacée (algorithme FSRS). Voir :ref:`panneau_anki`."
@@ -472,11 +473,11 @@ msgstr ""
 "Набор позиций, превращённых в карточки для повторения по методу "
 "интервального повторения (алгоритм FSRS). См. :ref:`panneau_anki`."
 
-#: ../../source/glossaire.rst:178
+#: ../../source/glossaire.rst:179
 msgid "Carte de révision (*review card*)"
 msgstr "Карточка повторения (*review card*)"
 
-#: ../../source/glossaire.rst:179
+#: ../../source/glossaire.rst:180
 msgid ""
 "Une position d'un paquet Anki, présentée comme une question : le plateau "
 "est la question, l'analyse enregistrée est la réponse, masquée jusqu'au "
@@ -485,27 +486,30 @@ msgstr ""
 "Позиция из колоды Anki, представленная как вопрос: доска — это вопрос, "
 "сохранённый анализ — ответ, скрытый до жеста, который его раскрывает."
 
-#: ../../source/glossaire.rst:183
+#: ../../source/glossaire.rst:184
 msgid "Commentaire (*comment*)"
 msgstr "Комментарий (*comment*)"
 
-#: ../../source/glossaire.rst:184
+#: ../../source/glossaire.rst:185
 msgid ""
-"Un texte libre attaché à une position, qu'il ait été tapé par "
-"l'utilisateur ou repris tel quel d'un fichier importé — les deux sont "
-"indiscernables. Un `#mot-clé` dans un commentaire est une étiquette, "
-"cherchable comme n'importe quel autre texte."
+"Un texte libre attaché à une position, tapé par l'utilisateur ou repris "
+"d'un fichier importé. Une position peut en porter plusieurs, chacun signé"
+" de son auteur ; un commentaire importé garde sa provenance (``XG``, "
+"``GNU BG``, ``BGF``). Un ``#mot`` dans un commentaire est un tag, que le "
+"filtre ``#mot`` retrouve (voir :ref:`panneau_commentaires`)."
 msgstr ""
-"Свободный текст, прикреплённый к позиции, будь то набранный пользователем"
-" или дословно взятый из импортированного файла — оба неразличимы. "
-"``#ключевое-слово`` внутри комментария — это тег, доступный для поиска, "
-"как любой другой текст."
+"Свободный текст, прикреплённый к позиции, набранный пользователем или "
+"взятый из импортированного файла. К позиции можно прикрепить несколько "
+"комментариев, каждый подписан своим автором; импортированный комментарий "
+"сохраняет своё происхождение (``XG``, ``GNU BG``, ``BGF``). ``#слово`` в "
+"комментарии — это тег, который находит фильтр ``#слово`` (см. "
+":ref:`panneau_commentaires`)."
 
-#: ../../source/glossaire.rst:189
+#: ../../source/glossaire.rst:191
 msgid "Joueur (*player*)"
 msgstr "Игрок (*player*)"
 
-#: ../../source/glossaire.rst:190
+#: ../../source/glossaire.rst:192
 msgid ""
 "Un nom exactement tel qu'il apparaît dans un match importé. blunderDB ne "
 "devine pas la personne derrière le nom : la même personne signant sous "
@@ -517,11 +521,11 @@ msgstr ""
 "подписывающийся двумя разными написаниями, — это два разных игрока, пока "
 "не выполнено явное слияние («Объединить игроков»)."
 
-#: ../../source/glossaire.rst:195
+#: ../../source/glossaire.rst:197
 msgid "Filigrane (*watermark*)"
 msgstr "Водяной знак (*watermark*)"
 
-#: ../../source/glossaire.rst:196
+#: ../../source/glossaire.rst:198
 msgid ""
 "La déclaration signée, apposée par qui exporte une base, de ce qu'elle "
 "est et d'où elle vient. Infalsifiable mais pas inamovible, elle ne "
@@ -533,11 +537,11 @@ msgstr ""
 "никогда ничего не записывает на стороне получателя. См. "
 ":ref:`diffusion_controlee`."
 
-#: ../../source/glossaire.rst:201
+#: ../../source/glossaire.rst:203
 msgid "Identité d'émetteur (*issuer identity*)"
 msgstr "Идентичность издателя (*issuer identity*)"
 
-#: ../../source/glossaire.rst:202
+#: ../../source/glossaire.rst:204
 msgid ""
 "La clé qui signe les filigranes d'une personne — créée d'elle-même au "
 "premier filigrane apposé, et déplaçable d'une machine à l'autre par un "
@@ -547,11 +551,11 @@ msgstr ""
 " при первом наложенном водяном знаке и переносится с одной машины на "
 "другую в виде одного файла."
 
-#: ../../source/glossaire.rst:206
+#: ../../source/glossaire.rst:208
 msgid "Fichier protégé (.dbx)"
 msgstr "Защищённый файл (.dbx)"
 
-#: ../../source/glossaire.rst:207
+#: ../../source/glossaire.rst:209
 msgid ""
 "Une base exportée et chiffrée par mot de passe, ouverte une fois puis "
 "ordinaire. Elle protège le fichier en transit, pas son contenu : qui "
@@ -561,11 +565,11 @@ msgstr ""
 "затем обычная. Она защищает файл в пути, а не его содержимое: кто получит"
 " пароль, тот сможет её открыть."
 
-#: ../../source/glossaire.rst:211
+#: ../../source/glossaire.rst:213
 msgid "Tenant"
 msgstr "Тенант"
 
-#: ../../source/glossaire.rst:212
+#: ../../source/glossaire.rst:214
 msgid ""
 "En mode serveur, le propriétaire d'un ensemble de positions, matchs et "
 "collections. Rien de ce qu'un tenant stocke n'est jamais visible à un "
@@ -576,3 +580,19 @@ msgstr ""
 "из того, что хранит один тенант, никогда не видно другому. На рабочем "
 "столе есть только один, неявный: человек, чей это файл. См. "
 ":ref:`headless`."
+
+#~ msgid ""
+#~ "Un texte libre attaché à une "
+#~ "position, qu'il ait été tapé par "
+#~ "l'utilisateur ou repris tel quel d'un"
+#~ " fichier importé — les deux sont "
+#~ "indiscernables. Un `#mot-clé` dans un"
+#~ " commentaire est une étiquette, cherchable"
+#~ " comme n'importe quel autre texte."
+#~ msgstr ""
+#~ "Свободный текст, прикреплённый к позиции, "
+#~ "будь то набранный пользователем или "
+#~ "дословно взятый из импортированного файла "
+#~ "— оба неразличимы. ``#ключевое-слово`` внутри"
+#~ " комментария — это тег, доступный для"
+#~ " поиска, как любой другой текст."

@@ -155,10 +155,11 @@ triviales, et cela décide de la réponse :
 Ai-je besoin d'eXtreme Gammon pour utiliser blunderDB?
 -------------------------------------------------------
 
-Non. blunderDB lit également les fichiers de GNUbg, BGBlitz et Jellyfish, et
+Non. blunderDB lit également les fichiers de GNUbg, BGBlitz, Jellyfish et
+HedgeHog, et
 son évaluateur embarqué (gammonNet) analyse n'importe quelle position sans
-dépendre d'un logiciel tiers — voir « Que vaut l'évaluateur intégré ? »
-ci-dessous. Un import XG apporte cependant l'analyse la plus complète
+dépendre d'un logiciel tiers — voir « Qu'a-t-on mesuré de l'évaluateur
+intégré ? » ci-dessous. Un import XG apporte cependant l'analyse la plus complète
 (coups, décisions de videau, marques, chance du lancer) : c'est le format le
 plus richement exploité par les statistiques.
 
@@ -186,13 +187,16 @@ ne les recalcule jamais (voir :ref:`import_regles`).
 Les rollouts XG sont-ils importés ? blunderDB fait-il des rollouts ?
 ----------------------------------------------------------------------
 
-Non, dans les deux sens. D'une analyse XG, l'import conserve l'étiquette de
-niveau (« 3-ply », « XG Roller++ », « Book »), les équités, les erreurs et les
-probabilités ; il n'ouvre pas les données de rollout du fichier ``.xg`` et n'en
-retient donc ni le nombre d'essais ni l'écart type. Une analyse XG collée en
-texte garde en revanche littéralement son étiquette, « Rollout » comprise.
-L'évaluateur embarqué, lui, ne fait pas de rollout : il répond par une
-recherche à 0 ou 2 lancers d'avance.
+D'une analyse XG, l'import conserve l'étiquette de niveau (« 3-ply »,
+« XG Roller++ », « Book »), les équités, les erreurs et les probabilités ; il
+n'ouvre pas les données de rollout du fichier ``.xg`` et n'en retient donc ni
+le nombre d'essais ni l'écart type. Une analyse XG collée en texte garde en
+revanche littéralement son étiquette, « Rollout » comprise.
+
+blunderDB fait en revanche ses propres rollouts, avec l'évaluateur embarqué :
+le panneau Analyse roule la position affichée ou toute la liste affichée, et
+le résultat est stocké à côté de l'analyse, jamais à sa place (voir
+:ref:`rollouts`).
 
 
 Qu'a-t-on mesuré de l'évaluateur intégré, et que n'a-t-on pas mesuré ?
@@ -242,9 +246,9 @@ Que vaut l'évaluateur intégré (gammonNet) ?
 gammonNet est un réseau de neurones entraîné par un tiers (voir Crédits),
 porté en Go et compilé dans blunderDB : aucun logiciel externe, aucune
 connexion réseau. Il joue le rôle d'XG ou de GNUbg pour les positions non
-importées — recherche à 0 ou 2 lancers d'avance, décision de videau selon
-Janowski et la table d'équité de match de blunderDB, honorant le score du
-match. Ce n'est ni le seul ni forcément le meilleur moteur du marché : c'est
+importées — recherche de 0 à 4 plis d'avance (2 par défaut), décision de videau selon
+Janowski et la table d'équité de match de la base (Kazaross-XG2 intégrée,
+ou une table importée de GNUbg), honorant le score du match. Ce n'est ni le seul ni forcément le meilleur moteur du marché : c'est
 celui qui fonctionne hors ligne, sans compte ni abonnement, sur la position
 que vous regardez. Rien n'empêche par ailleurs d'importer les analyses d'XG
 ou de GNUbg quand elles existent — les deux sources cohabitent, une colonne
@@ -295,8 +299,9 @@ Oui, un mode « headless » facultatif : le même binaire, lancé avec
 reverse-proxy authentifiant (blunderDB lui-même ne fait aucune
 authentification). Il peut s'appuyer sur SQLite ou sur PostgreSQL en
 multi-tenant, et sert à piloter blunderDB depuis vos propres scripts ou une
-application maison, en HTTP + JSON — il n'y a pas d'interface web —, ou à
-mutualiser une base entre plusieurs joueurs. L'usage normal reste l'application de bureau ;
+application maison, en HTTP + JSON, ou à mutualiser une base entre
+plusieurs joueurs. Avec ``--web``, il sert aussi une page de consultation
+volontairement limitée (voir :ref:`page_web`). L'usage normal reste l'application de bureau ;
 voir :ref:`headless` pour le détail (y compris l'image Docker prête à
 l'emploi) et le tutoriel « Déployer le mode serveur derrière un proxy » du
 guide utilisateur.
@@ -314,7 +319,7 @@ Où sont stockées mes données?
 Sur votre disque, dans le fichier ``.db`` que vous avez choisi en créant la
 base : aucun compte, aucun serveur, aucune synchronisation par défaut.
 L'application de bureau ouvre ce fichier directement ; seul le mode serveur
-facultatif (voir ci-dessous) fait tourner blunderDB à distance, et c'est
+facultatif (voir ci-dessus) fait tourner blunderDB à distance, et c'est
 alors vous qui hébergez ce serveur.
 
 
@@ -386,7 +391,7 @@ Quelle est l'architecture logicielle de blunderDB?
 * L'évaluateur embarqué (`gammonNet <https://github.com/kevung/gammonNet>`_,
   MIT) est un réseau de neurones porté en Go et compilé dans blunderDB : il
   évalue n'importe quelle position hors ligne, sans XG ni GNUbg. Voir « Que
-  vaut l'évaluateur intégré ? » ci-dessous.
+  vaut l'évaluateur intégré ? » ci-dessus.
 
 Pour plus d'informations, voir le `dépôt Github de blunderDB <https://github.com/kevung/blunderDB>`_.
 

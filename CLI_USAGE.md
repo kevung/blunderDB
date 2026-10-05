@@ -1302,7 +1302,7 @@ retention rule reads it.
 
 **Options:**
 - `--db` - Path to the database file (required)
-- `--kind` - `position`, `collection` or `comment` (for `delete`; also narrows `list`)
+- `--kind` - `position`, `collection` or `comment` for `delete`; narrows `list`, which also takes `anki_card`
 - `--id` - Trash entry (`restore`, `discard`) or object (`delete`) id
 - `--limit` - Rows to list (default 50)
 - `--older-than` - `empty` only: keep entries newer than this many days
@@ -2649,7 +2649,7 @@ ever shown when exact.
 
 Options:
   -bearoff-ts string
-    	Optional two-sided bearoff database (.bd) widening the embedded TS-06-06
+    	Optional two-sided bearoff database (.bd) widening the TS-06-06 computed on this machine
   -format string
     	Output format: text, json (default "text")
 
@@ -4463,7 +4463,7 @@ Subcommands:
 
 Options:
   --db string          Path to the database file (required)
-  --kind string        position, collection, comment (delete); also narrows list
+  --kind string        position, collection, comment (delete); narrows list, which also takes anki_card
   --limit int          Maximum entries listed (default 50)
   --format string      text (default) or json
 

@@ -102,8 +102,9 @@ L'essentiel :
 
 * les fichiers de match sont lus par `xgparser
   <https://github.com/kevung/xgparser>`__, `gnubgparser
-  <https://github.com/kevung/gnubgparser>`__ et `bgfparser
-  <https://github.com/kevung/bgfparser>`__ (MIT) ;
+  <https://github.com/kevung/gnubgparser>`__, `bgfparser
+  <https://github.com/kevung/bgfparser>`__ et `ogxmparser
+  <https://github.com/kevung/ogxmparser>`__ (MIT) ;
 
 * côté Go : `modernc.org/sqlite <https://gitlab.com/cznic/sqlite>`__
   (BSD-3-Clause), `pgx <https://github.com/jackc/pgx>`__, `Wails

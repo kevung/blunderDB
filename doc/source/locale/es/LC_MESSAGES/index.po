@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 02:37+0200\n"
+"POT-Creation-Date: 2026-10-05 04:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -18,15 +18,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: ../../source/index.rst:19
+#: ../../source/index.rst:20
 msgid "Prise en main"
 msgstr "Primeros pasos"
 
-#: ../../source/index.rst:26
+#: ../../source/index.rst:27
 msgid "Référence"
 msgstr "Referencia"
 
-#: ../../source/index.rst:39
+#: ../../source/index.rst:40
 msgid "Annexes"
 msgstr "Anexos"
 
@@ -52,16 +52,16 @@ msgstr ""
 
 #: ../../source/index.rst:13
 msgid ""
-"Nouveau venu ? Le **guide utilisateur** propose quatre tutoriels de bout "
-"en bout (premier import, étude d'un match, session Anki, mode serveur) et"
-" une page « comment progresser » — la lecture la plus rentable avant de "
-"se lancer."
+"Nouveau venu ? Le **guide utilisateur** propose cinq tutoriels de bout en"
+" bout (premier import, étude d'un match, session Anki, direction d'un "
+"tournoi, mode serveur) et une page « comment progresser » — la lecture la"
+" plus rentable avant de se lancer."
 msgstr ""
-"¿Nuevo por aquí? La **guía del usuario** ofrece cuatro tutoriales de "
-"principio a fin (primer import, estudiar una partida, una sesión Anki, "
-"modo servidor) y una página «cómo progresar» — la lectura más rentable "
-"antes de empezar."
+"¿Nuevo por aquí? La **guía del usuario** ofrece cinco tutoriales de "
+"principio a fin (primera importación, estudio de un partido, sesión Anki,"
+" dirección de un torneo, modo servidor) y una página «cómo progresar» — "
+"la lectura más rentable antes de empezar."
 
-#: ../../source/index.rst:17
+#: ../../source/index.rst:18
 msgid "Ce qui a changé d'une version à l'autre est dans l':ref:`historique`."
 msgstr "Lo que ha cambiado de una versión a otra está en el :ref:`historique`."

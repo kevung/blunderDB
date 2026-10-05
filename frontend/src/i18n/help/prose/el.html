@@ -53,10 +53,11 @@
     <li>Ο πίνακας Kazaross-XG2 Match Equity Table (MET) είναι έργο του <strong>Neil Kazaross</strong>.</li>
     <li>Οι πίνακες take point και gammon values προέρχονται από το βιβλίο <em>The Theory of Backgammon</em> του <strong>Dirk Schiemann</strong>.</li>
     <li>
-        Η μονόπλευρη (6 σημεία, 15 πούλια, για το EPC) και η αμφίπλευρη (6 σημεία, 6 πούλια, για τις αποφάσεις βιδωτού στις κούρσες) βάση δεδομένων bearoff δημιουργήθηκαν με το
-        <strong>GNU Backgammon</strong> (GNUbg). Το GNUbg είναι ελεύθερο λογισμικό υπό την GPL· οι πίνακες αυτοί είναι δεδομένα που παρήγαγε και πιστώνονται ως τέτοια.
+        Η μονόπλευρη (6 σημεία, 15 πούλια, για το EPC) και η αμφίπλευρη (6 σημεία, 6 πούλια, για τις αποφάσεις βιδωτού στις κούρσες) βάση δεδομένων bearoff υπολογίζονται από το ίδιο το blunderDB, μέσω
+        μεταφοράς του εργαλείου <em>makebearoff</em> του <strong>GNU Backgammon</strong> (GNUbg)· το αποτέλεσμα είναι πανομοιότυπο byte προς byte με εκείνο του gnubg, του οποίου το αποτύπωμα SHA-256
+        χρησιμεύει ως αναφορά. Το GNUbg είναι ελεύθερο λογισμικό υπό την GPL.
     </li>
-    <li>Τα αρχεία αγώνων διαβάζονται από τα <em>xgparser</em>, <em>gnubgparser</em> και <em>bgfparser</em> (MIT).</li>
+    <li>Τα αρχεία αγώνων διαβάζονται από τα <em>xgparser</em>, <em>gnubgparser</em>, <em>bgfparser</em> και <em>ogxmparser</em> (MIT).</li>
     <li>Από την πλευρά της Go: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> και <em>go-fsrs</em> (MIT).</li>
     <li>Από την πλευρά της διεπαφής: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> και <em>driver.js</em> (MIT).</li>
     <li>Οι γραμματοσειρές <em>Nunito</em> και <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>

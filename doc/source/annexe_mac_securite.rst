@@ -18,8 +18,8 @@ passer outre les réticences de Mac.
 Installation de blunderDB
 -------------------------
 
-Après avoir téléchargé blunderDB, glissez le fichier téléchargé dans la section
-Applications de votre Finder. Si vous avez déjà essayé d'exécuter blunderDB et
+Après avoir téléchargé ``blunderDB-macos-x.y.z.zip``, décompressez-le, puis
+glissez ``blunderDB.app`` dans la section Applications de votre Finder. Si vous avez déjà essayé d'exécuter blunderDB et
 que Mac vous avertit d'un potentiel danger, suivez les étapes suivantes.
 
 Autorisation de l'exécution de blunderDB
@@ -30,6 +30,13 @@ Autorisation de l'exécution de blunderDB
 3. Sélectionnez Ouvrir.
 4. Une fenêtre d'avertissement s'ouvre. Cliquez sur Ouvrir.
 5. blunderDB s'ouvre et vous pouvez l'utiliser.
+
+Depuis macOS 15 (Sequoia), le clic droit ne propose plus de passer outre :
+
+1. Lancez blunderDB une première fois, puis fermez l'avertissement.
+2. Ouvrez *Réglages Système*, section *Confidentialité et sécurité*.
+3. Dans la rubrique *Sécurité*, cliquez sur *Ouvrir quand même* en face de
+   blunderDB, puis confirmez.
 
 .. note:: Vous n'avez à réaliser cette opération qu'une seule fois. Par la
    suite, vous pourrez ouvrir blunderDB sans avoir à passer par ces étapes.

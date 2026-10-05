@@ -89,7 +89,7 @@ Base bearoff (*bearoff database*)
     Une table de réponses de course two-sided (le verdict de videau) ou
     one-sided (l'EPC). blunderDB en génère elle-même une partie au premier
     lancement (jusqu'à 6 pions par joueur) ; les domaines plus larges se
-    génèrent depuis le panneau *Bearoff* ou la CLI. Une base générée est dite
+    génèrent depuis l'onglet *Bearoff* de la configuration ou la CLI. Une base générée est dite
     *vérifiée* quand son empreinte correspond exactement à celle produite
     par GNUbg.
 
@@ -136,7 +136,8 @@ Chance (*luck*)
 Blunder
     Un coup ou une décision de videau dont l'erreur (l'écart d'équité avec
     le meilleur choix) dépasse un seuil ; la commande ``bl`` (ou
-    ``blunders``) charge directement les pires erreurs d'une recherche.
+    ``blunders``) charge directement les pires erreurs retenues par le
+    filtre des statistiques.
 
 Millipoint (mpt)
     Un millième de point d'équité : une erreur de 0,100 d'équité vaut
@@ -181,10 +182,11 @@ Carte de révision (*review card*)
     jusqu'au geste qui la révèle.
 
 Commentaire (*comment*)
-    Un texte libre attaché à une position, qu'il ait été tapé par
-    l'utilisateur ou repris tel quel d'un fichier importé — les deux sont
-    indiscernables. Un `#mot-clé` dans un commentaire est une étiquette,
-    cherchable comme n'importe quel autre texte.
+    Un texte libre attaché à une position, tapé par l'utilisateur ou repris
+    d'un fichier importé. Une position peut en porter plusieurs, chacun signé
+    de son auteur ; un commentaire importé garde sa provenance (``XG``,
+    ``GNU BG``, ``BGF``). Un ``#mot`` dans un commentaire est un tag, que le
+    filtre ``#mot`` retrouve (voir :ref:`panneau_commentaires`).
 
 Joueur (*player*)
     Un nom exactement tel qu'il apparaît dans un match importé. blunderDB ne

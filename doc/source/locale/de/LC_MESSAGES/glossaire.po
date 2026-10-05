@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 01:42+0200\n"
+"POT-Creation-Date: 2026-10-05 04:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -252,16 +252,16 @@ msgid ""
 "Une table de réponses de course two-sided (le verdict de videau) ou one-"
 "sided (l'EPC). blunderDB en génère elle-même une partie au premier "
 "lancement (jusqu'à 6 pions par joueur) ; les domaines plus larges se "
-"génèrent depuis le panneau *Bearoff* ou la CLI. Une base générée est dite"
-" *vérifiée* quand son empreinte correspond exactement à celle produite "
-"par GNUbg."
+"génèrent depuis l'onglet *Bearoff* de la configuration ou la CLI. Une "
+"base générée est dite *vérifiée* quand son empreinte correspond "
+"exactement à celle produite par GNUbg."
 msgstr ""
 "Eine Tabelle von Rennantworten, zweiseitig (das Doppler-Urteil) oder "
 "einseitig (das EPC). blunderDB erzeugt einen Teil davon selbst beim "
 "ersten Start (bis zu 6 Steine pro Spieler); breitere Domänen werden über "
-"den Reiter *Bearoff* oder die CLI erzeugt. Eine erzeugte Datenbank gilt "
-"als *verifiziert*, wenn ihr Fingerabdruck genau dem entspricht, den GNUbg"
-" erzeugt."
+"den Reiter *Bearoff* der Konfiguration oder die CLI erzeugt. Eine "
+"erzeugte Datenbank gilt als *verifiziert*, wenn ihr Fingerabdruck genau "
+"dem entspricht, den GNUbg erzeugt."
 
 #: ../../source/glossaire.rst:96
 msgid "EPC (Effective Pip Count)"
@@ -379,17 +379,19 @@ msgstr "Blunder"
 msgid ""
 "Un coup ou une décision de videau dont l'erreur (l'écart d'équité avec le"
 " meilleur choix) dépasse un seuil ; la commande ``bl`` (ou ``blunders``) "
-"charge directement les pires erreurs d'une recherche."
+"charge directement les pires erreurs retenues par le filtre des "
+"statistiques."
 msgstr ""
 "Ein Zug oder eine Doppler-Entscheidung, dessen Fehler (der Equity-Abstand"
 " zur besten Wahl) einen Schwellenwert überschreitet; der Befehl ``bl`` "
-"(oder ``blunders``) lädt direkt die schlimmsten Fehler einer Suche."
+"(oder ``blunders``) lädt direkt die schlimmsten Fehler, die der "
+"Statistikfilter erfasst."
 
-#: ../../source/glossaire.rst:141
+#: ../../source/glossaire.rst:142
 msgid "Millipoint (mpt)"
 msgstr "Millipunkt (mpt)"
 
-#: ../../source/glossaire.rst:142
+#: ../../source/glossaire.rst:143
 msgid ""
 "Un millième de point d'équité : une erreur de 0,100 d'équité vaut 100 "
 "mpt. C'est l'unité dans laquelle se lisent les grandeurs d'une position —"
@@ -406,11 +408,11 @@ msgstr ""
 "1000, sodass ein PR von 5,0 einem durchschnittlichen Fehler von 10 mpt "
 "pro Entscheidung entspricht."
 
-#: ../../source/glossaire.rst:150
+#: ../../source/glossaire.rst:151
 msgid "PR (*Performance Rating*)"
 msgstr "PR (Performance Rating)"
 
-#: ../../source/glossaire.rst:151
+#: ../../source/glossaire.rst:152
 msgid ""
 "Le coût moyen des erreurs d'un joueur, coups et videau confondus : "
 "l'erreur moyenne d'équité par décision comptée, multipliée par 500 comme "
@@ -425,11 +427,11 @@ msgstr ""
 "Entscheidung. Siehe :ref:`stats_parity` für die genauen Zählregeln "
 "(Parität mit eXtreme Gammon und GNUbg)."
 
-#: ../../source/glossaire.rst:157
+#: ../../source/glossaire.rst:158
 msgid "Snowie Error Rate"
 msgstr "Snowie Error Rate"
 
-#: ../../source/glossaire.rst:158
+#: ../../source/glossaire.rst:159
 msgid ""
 "Le même numérateur que le PR (la somme des erreurs), mais rapporté au "
 "nombre de coups joués plutôt qu'au nombre de décisions comptées — plus "
@@ -439,11 +441,11 @@ msgstr ""
 "die Anzahl der gespielten Züge statt der Anzahl der gezählten "
 "Entscheidungen — stabiler von Tool zu Tool. Siehe :ref:`stats_parity`."
 
-#: ../../source/glossaire.rst:162
+#: ../../source/glossaire.rst:163
 msgid "Coût MWC (*MWC cost*)"
 msgstr "MWC-Kosten"
 
-#: ../../source/glossaire.rst:163
+#: ../../source/glossaire.rst:164
 msgid ""
 "Une erreur de videau exprimée en points de pourcentage de chances de "
 "gagner le match (*Match Winning Chance*), plutôt qu'en équité — la "
@@ -454,11 +456,11 @@ msgstr ""
 "Chance statt in Equity — die natürliche Größe, um denselben Spieler bei "
 "unterschiedlichen Spielständen zu vergleichen."
 
-#: ../../source/glossaire.rst:168
+#: ../../source/glossaire.rst:169
 msgid "Collection"
 msgstr "Sammlung"
 
-#: ../../source/glossaire.rst:169
+#: ../../source/glossaire.rst:170
 msgid ""
 "Un ensemble nommé et ordonné de positions que l'utilisateur assemble à la"
 " main, glisser-déposer compris. L'appartenance à une collection est un "
@@ -470,11 +472,11 @@ msgstr ""
 "Sammlung ist eine ausdrückliche Geste, anders als bei einer einzeln "
 "importierten Stellung (siehe :ref:`panneau_collections`)."
 
-#: ../../source/glossaire.rst:174
+#: ../../source/glossaire.rst:175
 msgid "Paquet Anki (*Anki deck*)"
 msgstr "Anki-Deck"
 
-#: ../../source/glossaire.rst:175
+#: ../../source/glossaire.rst:176
 msgid ""
 "Un ensemble de positions transformées en cartes à réviser par répétition "
 "espacée (algorithme FSRS). Voir :ref:`panneau_anki`."
@@ -483,11 +485,11 @@ msgstr ""
 "verteilter Wiederholung (FSRS-Algorithmus) wiederholt werden. Siehe "
 ":ref:`panneau_anki`."
 
-#: ../../source/glossaire.rst:178
+#: ../../source/glossaire.rst:179
 msgid "Carte de révision (*review card*)"
 msgstr "Wiederholungskarte"
 
-#: ../../source/glossaire.rst:179
+#: ../../source/glossaire.rst:180
 msgid ""
 "Une position d'un paquet Anki, présentée comme une question : le plateau "
 "est la question, l'analyse enregistrée est la réponse, masquée jusqu'au "
@@ -497,27 +499,30 @@ msgstr ""
 "die Frage, die gespeicherte Analyse ist die Antwort, verborgen bis zur "
 "Geste, die sie enthüllt."
 
-#: ../../source/glossaire.rst:183
+#: ../../source/glossaire.rst:184
 msgid "Commentaire (*comment*)"
 msgstr "Kommentar"
 
-#: ../../source/glossaire.rst:184
+#: ../../source/glossaire.rst:185
 msgid ""
-"Un texte libre attaché à une position, qu'il ait été tapé par "
-"l'utilisateur ou repris tel quel d'un fichier importé — les deux sont "
-"indiscernables. Un `#mot-clé` dans un commentaire est une étiquette, "
-"cherchable comme n'importe quel autre texte."
+"Un texte libre attaché à une position, tapé par l'utilisateur ou repris "
+"d'un fichier importé. Une position peut en porter plusieurs, chacun signé"
+" de son auteur ; un commentaire importé garde sa provenance (``XG``, "
+"``GNU BG``, ``BGF``). Un ``#mot`` dans un commentaire est un tag, que le "
+"filtre ``#mot`` retrouve (voir :ref:`panneau_commentaires`)."
 msgstr ""
-"Freier Text, der an eine Stellung angehängt ist, sei er vom Nutzer "
-"getippt oder wörtlich aus einer importierten Datei übernommen — die "
-"beiden sind nicht zu unterscheiden. Ein ``#Stichwort`` in einem Kommentar"
-" ist ein Tag, durchsuchbar wie jeder andere Text."
+"Ein freier Text, der an eine Stellung angehängt ist, vom Benutzer getippt"
+" oder aus einer importierten Datei übernommen. Eine Stellung kann mehrere"
+" tragen, jeder mit seinem Autor signiert; ein importierter Kommentar "
+"behält seine Herkunft (``XG``, ``GNU BG``, ``BGF``). Ein ``#wort`` in "
+"einem Kommentar ist ein Tag, den der Filter ``#wort`` wiederfindet (siehe"
+" :ref:`panneau_commentaires`)."
 
-#: ../../source/glossaire.rst:189
+#: ../../source/glossaire.rst:191
 msgid "Joueur (*player*)"
 msgstr "Spieler"
 
-#: ../../source/glossaire.rst:190
+#: ../../source/glossaire.rst:192
 msgid ""
 "Un nom exactement tel qu'il apparaît dans un match importé. blunderDB ne "
 "devine pas la personne derrière le nom : la même personne signant sous "
@@ -529,11 +534,11 @@ msgstr ""
 "unter zwei Schreibweisen unterschreibt, ist zwei verschiedene Spieler, "
 "bis zu einer ausdrücklichen Zusammenführung („Spieler zusammenführen“)."
 
-#: ../../source/glossaire.rst:195
+#: ../../source/glossaire.rst:197
 msgid "Filigrane (*watermark*)"
 msgstr "Wasserzeichen"
 
-#: ../../source/glossaire.rst:196
+#: ../../source/glossaire.rst:198
 msgid ""
 "La déclaration signée, apposée par qui exporte une base, de ce qu'elle "
 "est et d'où elle vient. Infalsifiable mais pas inamovible, elle ne "
@@ -545,11 +550,11 @@ msgstr ""
 "aber nicht unentfernbar, zeichnet sie niemals etwas auf der "
 "Empfängerseite auf. Siehe :ref:`diffusion_controlee`."
 
-#: ../../source/glossaire.rst:201
+#: ../../source/glossaire.rst:203
 msgid "Identité d'émetteur (*issuer identity*)"
 msgstr "Aussteller-Identität"
 
-#: ../../source/glossaire.rst:202
+#: ../../source/glossaire.rst:204
 msgid ""
 "La clé qui signe les filigranes d'une personne — créée d'elle-même au "
 "premier filigrane apposé, et déplaçable d'une machine à l'autre par un "
@@ -559,11 +564,11 @@ msgstr ""
 "beim ersten angebrachten Wasserzeichen erzeugt, und von einer Maschine "
 "zur anderen als einzelne Datei übertragbar."
 
-#: ../../source/glossaire.rst:206
+#: ../../source/glossaire.rst:208
 msgid "Fichier protégé (.dbx)"
 msgstr "Geschützte Datei (.dbx)"
 
-#: ../../source/glossaire.rst:207
+#: ../../source/glossaire.rst:209
 msgid ""
 "Une base exportée et chiffrée par mot de passe, ouverte une fois puis "
 "ordinaire. Elle protège le fichier en transit, pas son contenu : qui "
@@ -573,11 +578,11 @@ msgstr ""
 "und danach gewöhnlich. Sie schützt die Datei beim Transport, nicht ihren "
 "Inhalt: Wer das Passwort erhält, kann sie öffnen."
 
-#: ../../source/glossaire.rst:211
+#: ../../source/glossaire.rst:213
 msgid "Tenant"
 msgstr "Tenant"
 
-#: ../../source/glossaire.rst:212
+#: ../../source/glossaire.rst:214
 msgid ""
 "En mode serveur, le propriétaire d'un ensemble de positions, matchs et "
 "collections. Rien de ce qu'un tenant stocke n'est jamais visible à un "
@@ -588,3 +593,21 @@ msgstr ""
 "Sammlungen. Nichts, was ein Tenant speichert, ist jemals für einen "
 "anderen sichtbar. Auf dem Desktop gibt es nur einen einzigen, impliziten:"
 " die Person, deren Datei es ist. Siehe :ref:`headless`."
+
+#~ msgid ""
+#~ "Un texte libre attaché à une "
+#~ "position, qu'il ait été tapé par "
+#~ "l'utilisateur ou repris tel quel d'un"
+#~ " fichier importé — les deux sont "
+#~ "indiscernables. Un `#mot-clé` dans un"
+#~ " commentaire est une étiquette, cherchable"
+#~ " comme n'importe quel autre texte."
+#~ msgstr ""
+#~ "Freier Text, der an eine Stellung "
+#~ "angehängt ist, sei er vom Nutzer "
+#~ "getippt oder wörtlich aus einer "
+#~ "importierten Datei übernommen — die "
+#~ "beiden sind nicht zu unterscheiden. Ein"
+#~ " ``#Stichwort`` in einem Kommentar ist "
+#~ "ein Tag, durchsuchbar wie jeder andere"
+#~ " Text."

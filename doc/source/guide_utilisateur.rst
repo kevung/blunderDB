@@ -4,7 +4,7 @@ Guide utilisateur
 =================
 
 Ce guide est une introduction pratique à blunderDB pour une prise en main
-rapide. Quatre tutoriels de bout en bout couvrent les usages les plus
+rapide. Cinq tutoriels de bout en bout couvrent les usages les plus
 courants ; la suite du guide reste un catalogue de référence, geste par
 geste, à consulter au besoin.
 
@@ -18,7 +18,7 @@ qu'un plateau vide :
 
 * **Importer mes matchs** — le chemin principal. Il enchaîne tout seul : une
   base neuve, le choix de vos fichiers (XG, GNU Backgammon, Jellyfish,
-  BGBlitz), puis le :ref:`compte rendu d'import <compte_rendu_import>` —
+  BGBlitz, HedgeHog), puis le :ref:`compte rendu d'import <compte_rendu_import>` —
   « voici votre PR et vos pires décisions » — et, si vous le voulez, la
   :ref:`file d'étude <file_etude>`. C'est la promesse de l'outil tenue en
   deux minutes, plutôt qu'expliquée.
@@ -365,11 +365,11 @@ Pour présenter blunderDB sans base personnelle, la commande ``demo``
 charge une base d'exemple (positions et matchs fictifs). Le scénario
 suivant se déroule en trois minutes :
 
-#. *0:00* — ``demo`` en ligne de commande (ou le bouton correspondant de la
-   barre d'outils) charge la base d'exemple. Le panneau des matchs
-   s'affiche.
+#. *0:00* — ``demo`` en ligne de commande (ou le bouton *Ouvrir la base
+   d'exemple* de l'écran d'accueil) charge la base d'exemple.
 
-#. *0:30* — Ouvrir un match (double-clic), parcourir quelques coups aux
+#. *0:30* — Ouvrir le panneau des matchs (*CTRL-Tab*), ouvrir un match
+   (double-clic), parcourir quelques coups aux
    flèches, montrer le panneau Analyse (*CTRL-L*) sur un coup joué avec une
    erreur visible.
 
@@ -377,7 +377,7 @@ suivant se déroule en trois minutes :
    erreurs de la base, toutes positions confondues.
 
 #. *2:15* — Panneau Anki (*CTRL-K*) : créer un paquet à partir de ces
-   positions, lancer une carte en *Study* pour montrer le cycle
+   positions, lancer une carte en *Étudier* pour montrer le cycle
    question/réponse/notation.
 
 #. *2:45* — Retour au panneau Stats (*CTRL-D*), onglet Tableau de bord, pour
@@ -472,7 +472,7 @@ Editer la position à la souris:
 * pour indiquer le joueur qui a le trait, cliquer à l'emplacement prévu des dés.
 
 * pour éditer les dés, clic gauche pour augmenter la valeur d'un dé, clic droit
-  pour augmenter la valeur d'un dé. Si la face des dés est vide, cela signifie
+  pour la diminuer. Si la face des dés est vide, cela signifie
   que la position est une décision de cube.
 
 * pour éditer le score des joueurs, clic gauche pour augmenter le score, clic
@@ -574,6 +574,10 @@ dossier et ses sous-dossiers:
 
 #. blunderDB collecte et importe automatiquement tous les fichiers reconnus
    (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*, *.ogxm*).
+
+Un import annulé se reprend par le bouton **Reprendre** de sa fenêtre ; un
+import coupé par l'arrêt de l'application, par la commande ``resume``. Les
+fichiers déjà traités ne sont pas relus (voir :ref:`import_regles`).
 
 .. _compte_rendu_import:
 
@@ -729,11 +733,16 @@ Le panneau des matchs (*CTRL-Tab*) permet de:
 * trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du match,
   tournoi),
 
-* modifier les noms des joueurs ou la date en double-cliquant sur les champs,
+* filtrer la liste par un fragment de joueur, d'événement, de tournoi ou de
+  date (champ *Filtrer* en tête du panneau, touche */* pour y aller),
+
+* modifier les noms des joueurs ou la date à l'aide de l'icône ✎ de la ligne,
+
+* éditer la transcription d'un match à l'aide de l'icône ⌨ de la ligne,
 
 * permuter les joueurs 1 et 2 à l'aide du bouton de permutation,
 
-* assigner un match à un tournoi,
+* assigner un match à un tournoi en cliquant sur sa cellule de tournoi,
 
 * supprimer un match à l'aide de la touche *Del*.
 
@@ -782,8 +791,8 @@ Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*.
 
 **Assigner un match à un tournoi:**
 
-* Depuis le panneau des matchs (*CTRL-Tab*), utiliser le menu déroulant
-  de la colonne tournoi pour assigner un match.
+* Depuis le panneau des matchs (*CTRL-Tab*), cliquer sur la cellule de la
+  colonne tournoi et choisir le tournoi dans la liste proposée.
 
 Afficher les statistiques de performance
 -----------------------------------------
@@ -848,8 +857,8 @@ Afficher l'analyse d'une position importée depuis XG
 Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans
 blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*.
 
-Si la position correspond à une décision de pions, les cinq meilleurs coups
-sont affichés sur des lignes distinctes. Pour chaque ligne, les informations
+Si la position correspond à une décision de pions, chaque coup candidat
+enregistré est affiché sur sa propre ligne. Pour chaque ligne, les informations
 fournies sont dans cet ordre, le coup de pion associé, l'équité normalisée,
 l'erreur en équité du coup, les chances de gain, gammon et backgammon du
 joueur, les chances de gain, gammon et backgammon de l'adversaire, le niveau
@@ -954,6 +963,22 @@ fonctionnalités supplémentaires, détaillées dans le manuel :
   collection ou une recherche en paquet de cartes à réviser selon
   l'algorithme FSRS, avec un mode d'entraînement libre (*cram*) qui ne
   perturbe pas l'échéancier. Voir :ref:`panneau_anki`.
+
+* **Transcription** — le panneau Transcription (*CTRL-MAJ-T*) tape un match
+  qu'on a sous les yeux (feuille de match, vidéo) pour en faire un match de la
+  bibliothèque. Voir :ref:`panneau_transcription`.
+
+* **Entraînement** — le panneau Entraînement (*CTRL-J*) fait travailler sous
+  la pendule ce qui se calcule. Voir :ref:`panneau_entrainement`.
+
+* **Rollouts** — le panneau Analyse roule une position pour départager deux
+  choix que l'évaluation directe sépare à peine. Voir :ref:`rollouts`.
+
+* **Leçons** — un coach écrit une suite d'étapes et la remet à son élève dans
+  un fichier de base ; la commande ``le`` les ouvre. Voir :ref:`lecons`.
+
+* **Palette de commandes** — *CTRL-MAJ-P* retrouve par un nom approché une
+  commande, un onglet, un filtre ou un match. Voir :ref:`palette_commandes`.
 
 * **Vues multiples** — une barre d'onglets sous la barre d'outils permet de
   garder plusieurs espaces de travail indépendants ouverts en parallèle (par

@@ -44,7 +44,7 @@ Position
    "CTRL-S", "Enregistrer une position."
    "CTRL-U", "Mettre à jour une position."
    "Del", "Supprimer la position courante (confirmation demandée)."
-   "RETOUR ARRIERE", "Réinitialiser le board, le cube, le score et les dés."
+   "RETOUR ARRIERE", "En mode édition ou Eval : réinitialiser le board, le cube, le score et les dés."
    "CTRL-G", "Afficher les métadonnées de la position."
 
 .. _raccourcis_navigation:
@@ -211,7 +211,7 @@ Panneau d'analyse
    "BAS, j", "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
    "d", "Basculer entre l'analyse des coups et du cube (navigation match uniquement)."
    "r", "Lancer le rollout de la position avec le réglage choisi ; une seconde pression l'arrête."
-   "Esc", "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
+   "Esc", "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau, sauf devant les résultats d'une recherche ``ss`` : y revenir à la collection ou au match."
 
 .. _raccourcis_eval_panel:
 

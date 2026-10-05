@@ -21,7 +21,7 @@ func (cli *CLI) runEpc(args []string) error {
 
 	format := epcCmd.String("format", "text", "Output format: text, json")
 	tsPath := epcCmd.String("bearoff-ts", os.Getenv("BLUNDERDB_TS_PATH"),
-		"Optional two-sided bearoff database (.bd) widening the embedded TS-06-06")
+		"Optional two-sided bearoff database (.bd) widening the TS-06-06 computed on this machine")
 
 	epcCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb epc [options] <XGID|OGID>")

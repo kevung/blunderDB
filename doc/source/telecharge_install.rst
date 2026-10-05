@@ -242,7 +242,7 @@ Manifestes winget et Homebrew
 
 Chaque release fournit un manifeste `winget
 <https://learn.microsoft.com/windows/package-manager/>`__
-(``blunderDB-winget-manifests-x.y.z.zip``) et une formule `Homebrew
+(``blunderDB-winget-manifests-x.y.z.zip``) et un cask `Homebrew
 <https://brew.sh/>`__ (``blunderdb-x.y.z.rb``) sur la page des releases, pour
 qui souhaite installer blunderDB par ces gestionnaires depuis un fichier
 local. Aucun des deux ne figure dans les dépôts publics de winget ou de

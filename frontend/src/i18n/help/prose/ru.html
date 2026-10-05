@@ -45,10 +45,11 @@
     <li>Таблица match equity Kazaross-XG2 (MET) — работа <strong>Neil Kazaross</strong>.</li>
     <li>Таблицы take point и значений gammon взяты из книги <strong>Dirk Schiemann</strong> <em>The Theory of Backgammon</em>.</li>
     <li>
-        Односторонняя (6 пунктов, 15 шашек, для EPC) и двусторонняя (6 пунктов, 6 шашек, для решений по кубу в гонках) базы данных вывода были сгенерированы с помощью
-        <strong>GNU Backgammon</strong> (GNUbg). GNUbg — свободная программа под лицензией GPL; эти таблицы — созданные ею данные и указаны как таковые.
+        Односторонняя (6 пунктов, 15 шашек, для EPC) и двусторонняя (6 пунктов, 6 шашек, для решений по кубу в гонках) базы данных вывода вычисляются самим blunderDB с помощью порта утилиты
+        <em>makebearoff</em> из <strong>GNU Backgammon</strong> (GNUbg); результат побайтно идентичен результату gnubg, чей отпечаток SHA-256 служит эталоном. GNUbg — свободная программа под лицензией
+        GPL.
     </li>
-    <li>Файлы матчей читаются библиотеками <em>xgparser</em>, <em>gnubgparser</em> и <em>bgfparser</em> (MIT).</li>
+    <li>Файлы матчей читаются библиотеками <em>xgparser</em>, <em>gnubgparser</em>, <em>bgfparser</em> и <em>ogxmparser</em> (MIT).</li>
     <li>Со стороны Go: <em>modernc.org/sqlite</em> (BSD-3-Clause), <em>pgx</em>, <em>Wails</em> и <em>go-fsrs</em> (MIT).</li>
     <li>Со стороны интерфейса: <em>Svelte</em>, <em>two.js</em>, <em>Chart.js</em> и <em>driver.js</em> (MIT).</li>
     <li>Шрифты <em>Nunito</em> и <em>Noto Sans JP</em> (SIL Open Font License 1.1).</li>
