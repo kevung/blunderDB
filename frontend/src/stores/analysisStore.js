@@ -46,3 +46,8 @@ export const analysisStore = writable(emptyAnalysis());
 
 // Store for tracking the selected move in the analysis panel
 export const selectedMoveStore = writable(null);
+
+// The Eval panel's live gammonNet result, in analysisStore's shape plus the panel's
+// own cube `decision`, for the image copy: in EVAL mode analysisStore describes
+// another position. Null when the panel shows nothing to copy.
+export const evalAnalysisStore = writable(null);

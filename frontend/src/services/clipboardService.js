@@ -6,7 +6,7 @@ import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, clipboardPositionStore } from '../stores/positionStore.js';
-import { analysisStore } from '../stores/analysisStore.js';
+import { analysisStore, evalAnalysisStore } from '../stores/analysisStore.js';
 import { commentTextStore, statusBarModeStore } from '../stores/uiStore.js';
 import { matchContextStore } from '../stores/positionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
@@ -228,7 +228,10 @@ export async function copyBoardWithAnalysisImage() {
             return;
         }
 
-        const analysis = get(analysisStore);
+        // On a scratch board analysisStore describes another position: EVAL copies
+        // the panel's live evaluation, EDIT has none.
+        const mode = get(statusBarModeStore);
+        const analysis = mode === 'EVAL' ? get(evalAnalysisStore) : mode === 'EDIT' ? null : get(analysisStore);
         const position = get(positionStore);
         const strip = analysisStrip(analysis);
         if (!strip) {
@@ -337,7 +340,9 @@ const CUBE_STRIP_ROWS = 6;
 export function analysisStrip(analysis) {
     const cube = analysis?.doublingCubeAnalysis;
     const moves = analysis?.checkerAnalysis?.moves ?? [];
-    const isCube = analysis?.analysisType === 'DoublingCube' || (!moves.length && !!cube);
+    // emptyAnalysis() always carries a zeroed cube block: an untyped record is a
+    // cube only when it names a best action.
+    const isCube = analysis?.analysisType === 'DoublingCube' || (!analysis?.analysisType && !moves.length && !!cube?.bestCubeAction);
     if (isCube && cube) return { kind: 'cube', rows: CUBE_STRIP_ROWS };
     if (moves.length) return { kind: 'checker', rows: Math.min(moves.length, MAX_IMAGE_MOVES) + 1 };
     return null;
@@ -356,7 +361,8 @@ export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = fals
 
     if (strip.kind === 'cube') {
         const cube = analysis.doublingCubeAnalysis;
-        const decision = cubeDecision({ cubeAnalysis: cube, turnability: cubeTurnability(position), stored: true });
+        // A live evaluation brings the panel's own decision (race regime included).
+        const decision = analysis.decision ?? cubeDecision({ cubeAnalysis: cube, turnability: cubeTurnability(position), stored: true });
         const block = cubeRows(decision, { t, cubeValue: position?.cube?.value ?? 0, isPlayedCubeAction: playedCubeActionPredicate(analysis, { matchMode: isMatchMode }), isMoney });
         const third = Math.floor(width / 3);
 

@@ -3,7 +3,7 @@
     import { statusBarModeStore, MODAL, openModal, configInitialTabStore } from '../stores/uiStore';
     import { epcDataStore, epcChallengeStore, epcRevealedStore, resetEpcReveal } from '../stores/epcStore';
     import { positionStore } from '../stores/positionStore';
-    import { selectedMoveStore } from '../stores/analysisStore';
+    import { selectedMoveStore, evalAnalysisStore } from '../stores/analysisStore';
     import { databasePathStore } from '../stores/databaseStore';
     import { positionRefusal } from '../services/positionRefusal.js';
     import { saveScratchBoard } from '../services/scratchBoard.js';
@@ -15,7 +15,7 @@
     import { onChange } from '../utils/onChange.js';
     import { t } from '../i18n';
     import { moverFactsToSides } from '../utils/positionFacts.js';
-    import { cubeDecision, cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
+    import { cubeDecision, cubeTurnability, isMoneyPosition, DECISION_STATE } from '../utils/cubeDecision.js';
     import CandidateMovesTable from './CandidateMovesTable.svelte';
     import CubeVerdictTable from './CubeVerdictTable.svelte';
     import PositionFactsTable from './PositionFactsTable.svelte';
@@ -224,6 +224,7 @@
         if (evalRestTimer) clearTimeout(evalRestTimer);
         CancelEvaluationAtRest().catch(() => {});
         selectedMoveStore.set(null);
+        evalAnalysisStore.set(null);
         unsubEval.forEach((off) => off && off());
     });
 
@@ -356,6 +357,40 @@
 
     // PositionFactsTable (ADR-0018 rule 1) would be empty with dice off a race: not mounted.
     let showFactsTable = $derived(!!data.race || !hasDiceSet);
+
+    // What the panel shows, handed to the image copy (C-X C-X). The facts come from
+    // the pre-roll payload (fractions) when the cube record has none, as on a race.
+    $effect(() => {
+        evalAnalysisStore.set(isActive ? evalAnalysisSnapshot() : null);
+    });
+
+    function evalAnalysisSnapshot() {
+        if (evalRefused) return null;
+        if (hasDiceSet) {
+            return evalMoves.length ? { analysisType: 'CheckerMove', analysisEngineVersion: 'gammonNet', checkerAnalysis: { moves: evalMoves } } : null;
+        }
+        if (decision.state === DECISION_STATE.PENDING) return null;
+        const f = baselineFacts;
+        const pctOf = (x) => (x == null ? undefined : 100 * x);
+        const fromFacts = f
+            ? {
+                  playerWinChances: pctOf(f.playerWinChance),
+                  playerGammonChances: pctOf(f.playerGammonChance),
+                  playerBackgammonChances: pctOf(f.playerBackgammonChance),
+                  opponentWinChances: pctOf(f.opponentWinChance),
+                  opponentGammonChances: pctOf(f.opponentGammonChance),
+                  opponentBackgammonChances: pctOf(f.opponentBackgammonChance),
+                  cubelessNoDoubleEquity: f.cubelessEquity ?? undefined
+              }
+            : {};
+        return {
+            analysisType: 'DoublingCube',
+            analysisEngineVersion: 'gammonNet',
+            checkerAnalysis: { moves: [] },
+            doublingCubeAnalysis: { ...fromFacts, ...(evalCubeAnalysis ?? {}) },
+            decision
+        };
+    }
 
     // Off a race, depth is named once in the strip (ADR-0018 rule 4).
     let genericDepthLabel = $derived(data.race ? null : hasDiceSet ? (evalMoves[0]?.analysisDepth ?? null) : (evalCubeAnalysis?.analysisDepth ?? null));

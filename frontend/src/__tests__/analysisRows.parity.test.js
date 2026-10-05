@@ -32,6 +32,7 @@ const { default: CandidateMovesTable } = await import('../components/CandidateMo
 const { cubeDecision, cubeTurnability } = await import('../utils/cubeDecision.js');
 const { playedMovePredicate, playedCubeActionPredicate } = await import('../utils/playedMarks.js');
 const { language } = await import('../i18n');
+const { emptyAnalysis } = await import('../stores/analysisStore.js');
 
 const PLAYED_BG = '#fff3cd';
 
@@ -248,5 +249,7 @@ describe('the copied image paints exactly what the tables show', () => {
         expect(analysisStrip({ checkerAnalysis: { moves: new Array(10).fill({ move: 'x' }) } })).toEqual({ kind: 'checker', rows: 7 });
         expect(analysisStrip({})).toBeNull();
         expect(analysisStrip(null)).toBeNull();
+        // A position with no analysis: emptyAnalysis() carries a zeroed cube block.
+        expect(analysisStrip(emptyAnalysis())).toBeNull();
     });
 });
