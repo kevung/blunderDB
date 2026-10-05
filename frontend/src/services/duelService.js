@@ -5,16 +5,18 @@ import { get } from 'svelte/store';
 import { CreateDuel, OpenDuel, SuspendDuel, PlayDuel, FlagDuel, StopDuel, ListDuels, DuelOffer } from '../../wailsjs/go/database/Database.js';
 import { LegalMoves, StartGammonNetMatchBatch } from '../../wailsjs/go/gui/App.js';
 import { GetGammonNetAnalysisPly, GetGammonNetPruneK, GetDuelForm, SaveDuelForm } from '../../wailsjs/go/main/Config.js';
-import { duelStore, duelListStore, duelNowStore, duelAnimatingStore, duelHoldsBoardStore } from '../stores/duelStore.js';
+import { duelStore, duelListStore, duelNowStore, duelAnimatingStore, duelHoldsBoardStore, duelBoardStore } from '../stores/duelStore.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { positionStore } from '../stores/positionStore.js';
 import { statusBarTextStore, activeTabStore, matchOpenRequestStore, matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore.js';
-import { newPlay, completedPlay, resetPlay } from './quizPlay.js';
+import { newPlay, completedPlay, resetPlay, playHop } from './quizPlay.js';
 import { humanSide, framesBetween, clockView, normalizeForm, settingsFromForm } from './duel.js';
+import { boardPress, boardContext, isMine } from './duelBoard.js';
+import { confirmAction } from './confirmService.js';
 import { enterDuelMode, exitDuelMode } from './modeMachine.js';
 import { isLetter, isBareLetter } from '../utils/keys.js';
 import { logger } from '../utils/logger.js';
-import { tMsg } from '../i18n';
+import { tMsg, translate } from '../i18n';
 
 /** One frame of a Bot's move on the board, in ms. */
 const FRAME_MS = 450;
@@ -138,6 +140,103 @@ export function resetMove() {
     quizPlayStore.update((state) => (state ? resetPlay(state, awaiting.position) : state));
 }
 
+// ── The board's gestures (ADR-0072: the Duel is played on the board) ──────────
+
+/** The Duel as `duelBoard.js` reads it. */
+export function duelBoardContext() {
+    const state = get(duelStore)?.state;
+    const board = get(duelBoardStore);
+    return {
+        awaiting: state && !state.ended ? (state.awaiting ?? null) : null,
+        human: humanSide(state),
+        animating: get(duelAnimatingStore) || busy,
+        play: get(quizPlayStore),
+        swapped: board.swapped,
+        prompt: board.prompt
+    };
+}
+
+/**
+ * A left click on the board while a Duel holds it. Rend `true` when the Duel took it — always,
+ * so that no other gesture of the board sees a click during a Duel.
+ * @param {import('./duelBoard.js').BoardHit} hit
+ */
+export function duelBoardPress(hit) {
+    if (!get(duelHoldsBoardStore)) return false;
+    const action = boardPress(duelBoardContext(), hit);
+    if (!action) return true;
+    if (action.type === 'roll') decide('roll');
+    else if (action.type === 'offerDouble') duelBoardStore.update((b) => ({ ...b, prompt: 'double' }));
+    else if (action.type === 'swap') swapDuelDice();
+    else if (action.type === 'validate') validateMove();
+    else if (action.type === 'play') quizPlayStore.set(action.play);
+    return true;
+}
+
+/**
+ * A checker dragged from `from` to `to`: one step, if a legal play offers it.
+ * @param {number} from
+ * @param {number} to
+ */
+export function duelBoardDrop(from, to) {
+    const ctx = duelBoardContext();
+    if (!isMine(ctx) || ctx.prompt || ctx.awaiting.kind !== 'move' || !ctx.play) return;
+    quizPlayStore.set(playHop({ ...ctx.play, selected: null }, from, to));
+}
+
+/**
+ * A right click while a Duel holds the board. Rend `true` when the Duel's menu should open.
+ * @param {import('./duelBoard.js').BoardHit} hit
+ */
+export function duelBoardContextMenu(hit) {
+    const action = boardContext(duelBoardContext(), hit);
+    if (action.type === 'reset') resetMove();
+    else if (action.type === 'swap') swapDuelDice();
+    return action.type === 'menu';
+}
+
+/** The dice change places, before any of them is played. */
+export function swapDuelDice() {
+    const play = get(quizPlayStore);
+    if (play && play.steps.length > 0) return;
+    duelBoardStore.update((b) => ({ ...b, swapped: !b.swapped }));
+}
+
+/** The on-board confirmation of a double: offered, or put back. */
+export function confirmDouble() {
+    duelBoardStore.update((b) => ({ ...b, prompt: null }));
+    decide('double');
+}
+
+export function cancelDouble() {
+    duelBoardStore.update((b) => ({ ...b, prompt: null }));
+}
+
+/**
+ * Céder la partie, à 1, 2 ou 3 fois le videau, après confirmation. Une Action du jeu : seulement
+ * à son tour.
+ * @param {1|2|3} level
+ */
+export async function resignDuel(level) {
+    const state = get(duelStore)?.state;
+    if (!state?.awaiting || state.awaiting.side !== humanSide(state)) return;
+    const points = level * (state.awaiting.position?.cube?.value || 1);
+    const go = await confirmAction(translate('duel.resignConfirm', { n: points }), { confirmLabel: translate('duel.resign') });
+    if (go) await decide('resign', level);
+}
+
+/**
+ * Arrêter le Duel, après confirmation : gardé ou jeté.
+ * @param {boolean} keep
+ */
+export async function confirmStopDuel(keep) {
+    const go = await confirmAction(translate(keep ? 'duel.stopKeepConfirm' : 'duel.stopDiscardConfirm'), {
+        confirmLabel: translate(keep ? 'duel.stopKeep' : 'duel.stopDiscard'),
+        tone: keep ? 'primary' : 'danger'
+    });
+    if (go) await stopDuel(keep);
+}
+
 // ── The Arbiter's answers ────────────────────────────────────────────────────
 
 /**
@@ -170,6 +269,7 @@ async function draw(before, result) {
     if (!state) return;
     if (!before) await enterDuelMode();
     quizPlayStore.set(null);
+    duelBoardStore.set({ swapped: false, prompt: null });
 
     const human = humanSide(state);
     const frames = before ? framesBetween(before.sheet, result.sheet, human) : [];

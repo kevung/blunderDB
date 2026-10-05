@@ -207,6 +207,20 @@ msgstr ""
 "Lisää näytetty asema Pinoon (kokoelma ”palaa tähän myöhemmin”) tai poista"
 " se sieltä."
 
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic hors du plateau"
+msgstr "Kaksoisnapsautus laudan ulkopuolella"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
+"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
+"double-clic remet à zéro."
+msgstr ""
+"Näytetyn aseman lisääminen pinoon tai poistaminen sieltä — paitsi "
+"muokkauksessa ja Evalissa sekä Kaksintaistelun ulkopuolella laudalla "
+"pelatun siirron aikana, jolloin tämä kaksoisnapsautus nollaa."
+
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"
 msgstr "Navigointi"
@@ -611,6 +625,80 @@ msgstr "?"
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher l'aide."
 msgstr "Näytä/piilota ohje."
+
+#: ../../source/raccourcis.rst:148
+msgid "Duel au plateau"
+msgstr "Kaksintaistelu laudalla"
+
+#: ../../source/raccourcis.rst:1
+msgid "Geste"
+msgstr "Ele"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (avant le lancer)"
+msgstr "Napsautus noppiin (ennen heittoa)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Lancer les dés."
+msgstr "Noppien heitto."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur le videau (avant le lancer)"
+msgstr "Napsautus kuutioon (ennen heittoa)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Proposer de doubler ; « Doubler » ou « Annuler » confirme sur le plateau."
+msgstr "Tuplauksen ehdottaminen; ”Tuplaa” tai ”Peruuta” vahvistaa laudalla."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur un pion"
+msgstr "Napsautus nappulaan"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
+"ne peut pas le jouer. Un dé joué est grisé."
+msgstr ""
+"Sen pelaaminen vasemmalla vielä vapaalla nopalla tai toisella, jos vasen "
+"ei voi pelata sitä. Pelattu noppa harmaantuu."
+
+#: ../../source/raccourcis.rst:1
+msgid "Glisser un pion"
+msgstr "Nappulan vetäminen"
+
+#: ../../source/raccourcis.rst:1
+msgid "Le jouer vers le point où il est lâché, si un coup légal le permet."
+msgstr ""
+"Sen pelaaminen pisteeseen, johon se pudotetaan, jos laillinen siirto sen "
+"sallii."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (coup en cours)"
+msgstr "Napsautus noppiin (siirto kesken)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+msgstr ""
+"Yhtään noppaa ei pelattu: niiden järjestyksen vaihto. Täysi siirto: sen "
+"vahvistus."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup en cours)"
+msgstr "Oikea napsautus laudalla (siirto kesken)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+msgstr ""
+"Kaikkien pelattujen nappuloiden takaisinotto; jos nappuloita ei ole "
+"pelattu, noppien vaihto."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau, ou hors de son coup"
+msgstr "Oikea napsautus laudan ulkopuolella tai siirron ulkopuolella"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt."
+msgstr "Kaksintaistelun valikon avaaminen: Pino, luovutus, keskeytys, lopetus."
 
 #: ../../source/raccourcis.rst:147
 msgid "Onglets de vues"

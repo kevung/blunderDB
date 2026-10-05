@@ -281,7 +281,7 @@ export default {
 <h3>Sammlungen-Panel</h3>
 <p>In den Panels Sammlungen, Turniere, Anki und Transkription ist die Schaltfläche <strong>+</strong> in der Kopfzeile, gefolgt vom Namen dessen, was sie anlegt (<strong>+ Neue Sammlung</strong>, <strong>+ Neues Turnier</strong>, <strong>+ Neues Paket</strong>, <strong>+ Neue Transkription</strong>), die einzige Anlegegeste: Sie öffnet das Eingabefeld, das <em>Esc</em> oder <strong>Abbrechen</strong> in den Panels Sammlungen und Turniere schließt. In der Matchliste öffnet das Symbol ⌨ die Transkription des Matches und das Symbol ✎ korrigiert seine Metadaten.</p>
 <p>Das Fenster <strong>Sammlungen</strong> (<em>CTRL-B</em>) verwaltet Stellungssammlungen. Sammlungen können angelegt, umbenannt und gelöscht werden. Stellungen können hinzugefügt oder entfernt werden (Taste <em>Entf</em>, Bestätigung wird verlangt). Ein Doppelklick auf eine Sammlung durchblättert ihre Stellungen mit den Tasten <em>LINKS</em> und <em>RECHTS</em>. Der Befehl <code>ss</code> sucht unter den Stellungen der geöffneten Sammlung; <em>Esc</em> kehrt danach zur Sammlung zurück (siehe Such-Panel). Die Reihenfolge der Sammlungen und der Stellungen innerhalb einer Sammlung lässt sich per Ziehen und Ablegen ändern. <em>CTRL-B</em> drücken oder den Befehl <code>collection</code> ausführen, um das Fenster ein- oder auszublenden.</p>
-<p>Der <strong>Stapel</strong> ist die Sammlung der Geste „später wieder ansehen“: Die Taste <em>b</em> oder die Lesezeichen-Schaltfläche der Werkzeugleiste legt die angezeigte Position auf den Stapel, dieselbe Geste nimmt sie wieder herunter. Ein Lesezeichen in der Ecke des Bretts zeigt, dass die Position darauf liegt. Die Geste gilt überall, wo eine Position angezeigt wird: Durchsicht, Suche, Transkription. Der Stapel ist eine gewöhnliche Sammlung — umbenannt, umsortiert, exportiert, geleert wie jede andere; er wird bei der ersten Benutzung angelegt und neu angelegt, wenn er gelöscht wurde. Eine Position, die noch nicht in der Bibliothek ist (ein Entwurf des Such- oder Auswertungsbretts), wird sofort als einzeln eingebrachte Position hineingeschrieben und dann auf den Stapel gelegt. Die Befehlszeile führt dieselbe Geste mit <code>collection pile</code> aus.</p>
+<p>Der <strong>Stapel</strong> ist die Sammlung für die Geste „später ansehen“: Ein Doppelklick außerhalb des Bretts, die Taste <em>b</em> oder die Lesezeichen-Schaltfläche der Werkzeugleiste legt die angezeigte Stellung auf den Stapel, und dieselbe Geste nimmt sie wieder herunter. Ein kurzes Banner auf dem Brett bestätigt jeden Wechsel, und ein Lesezeichen in der Ecke des Bretts zeigt, dass die Stellung darauf liegt. Die Geste gilt überall, wo eine Stellung angezeigt wird: Review, Suche, Transkription, Duell. Im Bearbeitungsmodus und in Eval sowie während eines außerhalb eines Duells auf dem Brett gespielten Zugs behält der Doppelklick außerhalb des Bretts seine ursprüngliche Bedeutung — Zurücksetzen —, und dort gelten nur <em>b</em> und die Schaltfläche. Der Stapel ist eine gewöhnliche Sammlung — umbenannt, neu geordnet, exportiert, geleert wie jede andere; er wird bei der ersten Verwendung angelegt und neu angelegt, wenn er gelöscht wurde. Eine Stellung, die noch nicht in der Bibliothek ist (ein Entwurf des Such- oder Auswertungsbretts), wird dort sofort angelegt, wie eine einzeln hinzugebrachte Stellung, und dann auf den Stapel gelegt. Die Befehlszeile macht dieselbe Geste mit <code>collection pile</code>.</p>
 <p>Eine Sammlung kann <strong>lebendig</strong> sein: Ihr Inhalt ist keine handgemachte Liste mehr, sondern das Ergebnis einer <strong>Suche</strong>, bei jedem Öffnen neu ausgewertet. Die Schaltfläche ◇ am Kopf der Sammlung macht sie mit der zuletzt ausgeführten Suche lebendig; ◈ sagt, dass sie es schon ist, und dieselbe Schaltfläche gibt ihr die Liste zurück. Nichts wird zerstört: Die Stellungen, die sie enthielt, sind beim Zurückgehen noch da.</p>
 <p>Die Schaltfläche ❄, sichtbar bei einer lebendigen Sammlung, <strong>friert</strong> sie <strong>ein</strong>: Die Positionen, die die Suche in diesem Moment auswählt, werden in der Reihenfolge der Suche der Inhalt einer gewöhnlichen Sammlung, und die Abfrage wird gelöscht. Die Positionen, die sie vor dem Lebendigwerden enthielt, werden ersetzt.</p>
 <p>Eine lebendige Sammlung, deren Abfrage ein Token trägt, das diese Version nicht mehr kennt, <strong>weigert sich zu öffnen</strong> und sagt es, statt die ganze Datenbank zurückzugeben. Das ist der eine Fehler, den ein gespeicherter Filter nicht haben darf: sich im Stillen zu weiten.</p>
@@ -915,13 +915,17 @@ export default {
 <li><strong>Ihr Name</strong> und <strong>Match speichern</strong>: Ist das Häkchen entfernt, wird das beendete Duell verworfen, statt zu einem Match zu werden.</li>
 </ul>
 <p>„Fortsetzen“ öffnet ein unterbrochenes Duell am selben Punkt wieder, mit denselben kommenden Würfen; seine Uhren waren angehalten.</p>
-<p>Während des Duells zeigt das Panel Spielstand, Doppler, Uhren und das Matchblatt in zwei Spalten, wie die Transkription. Es zeigt außerdem ab der Erstellung den SHA-256-Fingerabdruck des Würfel-Seeds: Der Seed bleibt bis zum Ende geheim, und sein SHA-256, mit dem Match gelesen, muss diesen Fingerabdruck ergeben. Spielstand und Uhren bleiben in der Statusleiste, wenn der Tab eingeklappt ist. Das Brett wechselt in den Modus <strong>DUELL</strong>: Die Bibliothek lässt sich nicht mehr durchsuchen, Bearbeitung, Eval-Panel und die anderen Tabs öffnen sich nicht, und die Engine schweigt: keine Auswertung, keine Kandidaten. Es bleiben nur der Stapel (<code>B</code>), der Pipcount (<code>P</code>) und die Hilfe.</p>
+<p>Das Duell wird auf dem Brett gespielt. Das Panel zeigt das Matchblatt in zwei Spalten, wie die Transkription, die Uhren, wenn eine Bedenkzeit läuft, eine Zeile, die sagt, was erwartet wird, sowie „Unterbrechen“, „Beenden und behalten“, „Beenden und verwerfen“. Spielstand und Doppler sind die des Bretts; Spielstand und Uhren bleiben in der Statusleiste, wenn der Tab eingeklappt ist. Der SHA-256-Fingerabdruck des Würfel-Seeds, den der Schiedsrichter bei der Erstellung veröffentlicht, ist zusammen mit dem Seed in der Herkunft des beendeten Matchs zu lesen. Das Brett wechselt in den Modus <strong>DUELL</strong>: Die Bibliothek lässt sich nicht mehr durchblättern, Bearbeitung, Eval-Panel und die anderen Tabs öffnen sich nicht, und die Engine schweigt — keine Auswertung, kein Kandidat. Nur der Stapel (<code>B</code>), der Pipcount (<code>P</code>) und die Hilfe bleiben.</p>
 <ul>
-<li>Vor dem Wurf „Würfeln“ oder „Doppeln“; bei einem Doppel „Annehmen“ oder „Aufgeben“. Wenn der Doppler nicht verfügbar ist, wird automatisch gewürfelt.</li>
-<li>Der Zug wird auf dem Brett wie eine Entscheidungsfrage gespielt, dann „Bestätigen“ (<code>EINGABE</code>); „Zurücksetzen“ (<code>RÜCKTASTE</code>) stellt die Steine vor der Bestätigung zurück. Danach lässt sich nichts mehr zurücknehmen.</li>
+<li>Vor dem Wurf würfelt ein Klick auf die Würfel; ein Klick auf den Doppler schlägt ein Doppeln vor, und das Brett fragt „Doppeln“ oder „Abbrechen“. Wenn der Doppler nicht verfügbar ist, erfolgt der Wurf automatisch.</li>
+<li>Bei einem Doppeln des Bots fragt das Brett „Annehmen“ oder „Aufgeben“.</li>
+<li>Ein Klick auf einen Stein spielt ihn mit dem linken noch freien Würfel oder mit dem anderen, wenn der linke ihn nicht spielen kann; ein Pasch wird mit vier Klicks gespielt. Ein Stein kann auch an sein Ziel gezogen werden. Ein gespielter Würfel wird ausgegraut. Nur die Schritte eines legalen Zugs gehen durch.</li>
+<li>Vor dem Spielen vertauscht ein Klick auf die Würfel oder ein Rechtsklick auf das Brett ihre Reihenfolge. Während des Zugs nimmt der Rechtsklick auf das Brett alle gespielten Steine zurück (<code>RÜCKTASTE</code> ebenso).</li>
+<li>Der vollständige Zug wird durch einen Klick auf die Würfel, durch „Bestätigen“ auf dem Brett oder durch <code>EINGABE</code> bestätigt. Danach lässt sich nichts mehr zurücknehmen.</li>
 <li>Der Bot antwortet sofort; seine Züge werden auf dem Brett langsam nachgespielt.</li>
-<li>„Partie aufgeben“ gibt die laufende Partie als Einfach, Gammon oder Backgammon ab.</li>
+<li>Der Rechtsklick außerhalb des Bretts oder auf dem Brett außerhalb seines Zugs öffnet das Duell-Menü: die Stellung auf den Stapel legen oder davon nehmen, das Spiel als einfaches Spiel, Gammon oder Backgammon aufgeben (am Zug, nach Bestätigung), unterbrechen, beenden. Dieses Menü bietet weder Auswertung noch Bearbeitung.</li>
 <li>„Unterbrechen“ setzt das Duell mit angehaltenen Uhren aus. „Beenden und behalten“ schreibt das Match, wie es steht; „Beenden und verwerfen“ schreibt nichts. Beenden heißt nie, die Partie aufzugeben.</li>
+<li>Ein Doppelklick außerhalb des Bretts legt die Stellung auf den Stapel oder nimmt sie davon herunter, wie <code>B</code>; ein kurzes Banner bestätigt es auf dem Brett.</li>
 </ul>
 <p>Jede Entscheidung trägt ihre Dauer, mit oder ohne Bedenkzeit. Eine Aufgabe hat keine im Match gespeicherte Dauer.</p>
 <p>Am Ende wird das Match geschrieben, seine Analyse startet und der Tab Partien öffnet sich darauf. In der Kommandozeile steuert <code>blunderdb duel</code> dasselbe Duell (siehe duel — Ein Duell spielen).</p>
@@ -1081,6 +1085,10 @@ export default {
 <tr>
 <td>b</td>
 <td>Die angezeigte Position auf den Stapel legen (die Sammlung „später wieder ansehen“) oder wieder herunternehmen.</td>
+</tr>
+<tr>
+<td>Doppelklick außerhalb des Bretts</td>
+<td>Die angezeigte Stellung auf den Stapel legen oder davon nehmen — außer im Bearbeitungsmodus und in Eval sowie während eines außerhalb eines Duells auf dem Brett gespielten Zugs, wo dieser Doppelklick zurücksetzt.</td>
 </tr>
 </tbody>
 </table>
@@ -1294,6 +1302,45 @@ export default {
 <tr>
 <td>?</td>
 <td>Die Hilfe ein-/ausblenden.</td>
+</tr>
+</tbody>
+</table>
+<h3>Duell auf dem Brett</h3>
+<table>
+<thead>
+<tr>
+<th>Geste</th>
+<th>Aktion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Klick auf die Würfel (vor dem Wurf)</td>
+<td>Die Würfel werfen.</td>
+</tr>
+<tr>
+<td>Klick auf den Doppler (vor dem Wurf)</td>
+<td>Ein Doppeln vorschlagen; „Doppeln“ oder „Abbrechen“ bestätigt auf dem Brett.</td>
+</tr>
+<tr>
+<td>Klick auf einen Stein</td>
+<td>Ihn mit dem linken noch freien Würfel spielen oder mit dem anderen, wenn der linke ihn nicht spielen kann. Ein gespielter Würfel wird ausgegraut.</td>
+</tr>
+<tr>
+<td>Einen Stein ziehen</td>
+<td>Ihn auf den Punkt spielen, auf dem er losgelassen wird, wenn ein legaler Zug es erlaubt.</td>
+</tr>
+<tr>
+<td>Klick auf die Würfel (Zug läuft)</td>
+<td>Kein Würfel gespielt: ihre Reihenfolge vertauschen. Vollständiger Zug: ihn bestätigen.</td>
+</tr>
+<tr>
+<td>Rechtsklick auf das Brett (Zug läuft)</td>
+<td>Alle gespielten Steine zurücknehmen; ohne gespielten Stein die Würfel vertauschen.</td>
+</tr>
+<tr>
+<td>Rechtsklick außerhalb des Bretts oder außerhalb seines Zugs</td>
+<td>Das Duell-Menü öffnen: Stapel, Aufgabe, Unterbrechung, Ende.</td>
 </tr>
 </tbody>
 </table>

@@ -1219,11 +1219,14 @@ positions au sein des collections peut être modifié par glisser-déposer.
 Appuyer sur *CTRL-B* ou exécuter la commande ``collection`` pour afficher ou
 masquer le panneau.
 
-La **Pile** est la collection du geste « à revoir plus tard » : la touche *b*
-ou le bouton marque-page de la barre d'outils met la position affichée sur la
-Pile, et le même geste l'en retire. Un marque-page au coin du plateau dit que
-la position y est. Le geste vaut partout où une position est affichée : revue,
-recherche, Transcription. La Pile est une collection ordinaire — renommée,
+La **Pile** est la collection du geste « à revoir plus tard » : un double-clic
+hors du plateau, la touche *b* ou le bouton marque-page de la barre d'outils
+met la position affichée sur la Pile, et le même geste l'en retire. Un court
+bandeau sur le plateau confirme chaque bascule, et un marque-page au coin du
+plateau dit que la position y est. Le geste vaut partout où une position est
+affichée : revue, recherche, Transcription, Duel. En édition et en Eval, et
+pendant un coup joué au plateau hors Duel, le double-clic hors du plateau garde
+son sens premier — remettre à zéro — et seuls *b* et le bouton y valent. La Pile est une collection ordinaire — renommée,
 réordonnée, exportée, vidée comme une autre ; elle est créée au premier usage,
 et recréée si elle a été supprimée. Une position qui n'est pas encore dans la
 bibliothèque (un brouillon du plateau de recherche ou d'évaluation) y est
@@ -4020,29 +4023,42 @@ l'autre, et la liste des Duels en suspens :
 « Reprendre » rouvre un Duel en suspens au même point, avec les mêmes dés à
 venir ; ses horloges étaient arrêtées.
 
-Pendant le Duel, le panneau montre le score, le videau, les horloges et la
-feuille de match en deux colonnes, comme la Transcription. Il montre aussi,
-dès la création, l'empreinte SHA-256 du germe des dés : le germe reste secret
-jusqu'à la fin, et son SHA-256, lu avec le Match, doit redonner cette
-empreinte. Le score et les
-horloges restent dans la barre d'état quand l'onglet est replié. Le plateau
+Le Duel se joue au plateau. Le panneau montre la feuille de match en deux
+colonnes, comme la Transcription, les horloges quand une cadence court, une
+ligne qui dit ce qui est attendu, et « Suspendre », « Arrêter et garder »,
+« Arrêter et jeter ». Le score et le videau sont ceux du plateau ; le score et
+les horloges restent dans la barre d'état quand l'onglet est replié.
+L'empreinte SHA-256 du germe des dés, publiée par l'Arbitre dès la création,
+se lit avec le germe dans l'origine du Match terminé. Le plateau
 passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
 panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait —
 aucune évaluation, aucun candidat. Seules restent la Pile (``B``), le
 pipcount (``P``) et l'aide.
 
-* Avant le lancer, « Lancer » ou « Doubler » ; face à un double, « Prendre »
-  ou « Passer ». Quand le videau n'est pas disponible, le lancer est
-  automatique.
-* Le coup se joue au plateau comme une question de Décision, puis
-  « Valider » (``ENTRÉE``) ; « Replacer » (``RETOUR ARRIÈRE``) remet les pions
-  avant la validation. Rien ne se reprend après.
+* Avant le lancer, un clic sur les dés les lance ; un clic sur le videau
+  propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand
+  le videau n'est pas disponible, le lancer est automatique.
+* Face à un double du Bot, le plateau demande « Prendre » ou « Passer ».
+* Un clic sur un pion le joue avec le dé de gauche encore libre, ou avec
+  l'autre quand celui-ci ne peut pas le jouer ; un double se joue en quatre
+  clics. Un pion peut aussi se glisser vers sa destination. Un dé joué est
+  grisé. Seuls passent les pas d'un coup légal.
+* Avant de jouer, un clic sur les dés, ou un clic droit sur le plateau,
+  intervertit leur ordre. Pendant le coup, le clic droit sur le plateau
+  reprend tous les pions joués (``RETOUR ARRIÈRE`` aussi).
+* Le coup complet se valide par un clic sur les dés, par « Valider » sur le
+  plateau, ou par ``ENTRÉE``. Rien ne se reprend après.
 * Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement.
-* « Abandonner la partie » cède la partie en cours pour un simple, un gammon ou
-  un backgammon.
+* Le clic droit hors du plateau, ou sur le plateau hors de son coup, ouvre le
+  menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la
+  partie pour un simple, un gammon ou un backgammon (à son tour, après
+  confirmation), suspendre, arrêter. Ce menu n'offre ni évaluation ni
+  édition.
 * « Suspendre » met le Duel en suspens, horloges arrêtées. « Arrêter et
   garder » écrit le Match tel qu'il est ; « Arrêter et jeter » n'en écrit
   rien. Arrêter n'est jamais céder la partie.
+* Un double-clic hors du plateau met la position sur la Pile, ou l'en retire,
+  comme ``B`` ; un court bandeau le confirme sur le plateau.
 
 Chaque décision porte sa durée, avec ou sans cadence. Un abandon n'a pas de
 durée enregistrée dans le Match.

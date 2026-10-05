@@ -281,7 +281,7 @@ export default {
 <h3>Panneau Collections</h3>
 <p>Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton <strong>+</strong> de l'en-tête, suivi du nom de ce qu'il crée (<strong>+ Nouvelle collection</strong>, <strong>+ Nouveau tournoi</strong>, <strong>+ Nouveau paquet</strong>, <strong>+ Nouvelle transcription</strong>), est l'unique geste de création : il ouvre le champ de saisie, que <em>Échap</em> ou <strong>Annuler</strong> referme dans les panneaux Collections et Tournois. Dans la liste des matchs, l'icône ⌨ ouvre la transcription du match et l'icône ✎ en corrige les métadonnées.</p>
 <p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de positions. Les collections peuvent être créées, renommées et supprimées. Des positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation demandée). Double-cliquer sur une collection pour parcourir ses positions avec les touches <em>GAUCHE</em> et <em>DROITE</em>. La commande <code>ss</code> cherche parmi les positions de la collection ouverte ; <em>Esc</em> ramène ensuite à la collection (voir Panneau Recherche). L'ordre des collections et des positions au sein des collections peut être modifié par glisser-déposer. Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code>collection</code> pour afficher ou masquer le panneau.</p>
-<p>La <strong>Pile</strong> est la collection du geste « à revoir plus tard » : la touche <em>b</em> ou le bouton marque-page de la barre d'outils met la position affichée sur la Pile, et le même geste l'en retire. Un marque-page au coin du plateau dit que la position y est. Le geste vaut partout où une position est affichée : revue, recherche, Transcription. La Pile est une collection ordinaire — renommée, réordonnée, exportée, vidée comme une autre ; elle est créée au premier usage, et recréée si elle a été supprimée. Une position qui n'est pas encore dans la bibliothèque (un brouillon du plateau de recherche ou d'évaluation) y est écrite sur-le-champ, comme une position apportée seule, puis mise sur la Pile. La ligne de commande fait le même geste par <code>collection pile</code>.</p>
+<p>La <strong>Pile</strong> est la collection du geste « à revoir plus tard » : un double-clic hors du plateau, la touche <em>b</em> ou le bouton marque-page de la barre d'outils met la position affichée sur la Pile, et le même geste l'en retire. Un court bandeau sur le plateau confirme chaque bascule, et un marque-page au coin du plateau dit que la position y est. Le geste vaut partout où une position est affichée : revue, recherche, Transcription, Duel. En édition et en Eval, et pendant un coup joué au plateau hors Duel, le double-clic hors du plateau garde son sens premier — remettre à zéro — et seuls <em>b</em> et le bouton y valent. La Pile est une collection ordinaire — renommée, réordonnée, exportée, vidée comme une autre ; elle est créée au premier usage, et recréée si elle a été supprimée. Une position qui n'est pas encore dans la bibliothèque (un brouillon du plateau de recherche ou d'évaluation) y est écrite sur-le-champ, comme une position apportée seule, puis mise sur la Pile. La ligne de commande fait le même geste par <code>collection pile</code>.</p>
 <p>Une collection peut être <strong>vivante</strong> : sa composition n'est plus une liste faite à la main mais le résultat d'une <strong>recherche</strong>, réévalué chaque fois qu'on l'ouvre. Le bouton ◇ en tête de la collection la rend vivante avec la dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bouton la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions qu'elle contenait sont toujours là quand on revient en arrière.</p>
 <p>Le bouton ❄, visible sur une collection vivante, la <strong>fige</strong> : les positions que la recherche sélectionne à cet instant deviennent la composition d'une collection ordinaire, dans l'ordre de la recherche, et la requête s'efface. Les positions qu'elle contenait avant d'être vivante sont remplacées.</p>
 <p>Une collection vivante dont la requête porte un jeton que cette version ne connaît plus <strong>refuse de s'ouvrir</strong> en le disant, plutôt que de renvoyer toute la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir : s'élargir en silence.</p>
@@ -915,13 +915,17 @@ export default {
 <li><strong>Votre nom</strong> et <strong>Enregistrer le match</strong> : décoché, le Duel terminé est jeté au lieu de devenir un Match.</li>
 </ul>
 <p>« Reprendre » rouvre un Duel en suspens au même point, avec les mêmes dés à venir ; ses horloges étaient arrêtées.</p>
-<p>Pendant le Duel, le panneau montre le score, le videau, les horloges et la feuille de match en deux colonnes, comme la Transcription. Il montre aussi, dès la création, l'empreinte SHA-256 du germe des dés : le germe reste secret jusqu'à la fin, et son SHA-256, lu avec le Match, doit redonner cette empreinte. Le score et les horloges restent dans la barre d'état quand l'onglet est replié. Le plateau passe en mode <strong>DUEL</strong> : la bibliothèque ne se parcourt plus, l'édition, le panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait — aucune évaluation, aucun candidat. Seules restent la Pile (<code>B</code>), le pipcount (<code>P</code>) et l'aide.</p>
+<p>Le Duel se joue au plateau. Le panneau montre la feuille de match en deux colonnes, comme la Transcription, les horloges quand une cadence court, une ligne qui dit ce qui est attendu, et « Suspendre », « Arrêter et garder », « Arrêter et jeter ». Le score et le videau sont ceux du plateau ; le score et les horloges restent dans la barre d'état quand l'onglet est replié. L'empreinte SHA-256 du germe des dés, publiée par l'Arbitre dès la création, se lit avec le germe dans l'origine du Match terminé. Le plateau passe en mode <strong>DUEL</strong> : la bibliothèque ne se parcourt plus, l'édition, le panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait — aucune évaluation, aucun candidat. Seules restent la Pile (<code>B</code>), le pipcount (<code>P</code>) et l'aide.</p>
 <ul>
-<li>Avant le lancer, « Lancer » ou « Doubler » ; face à un double, « Prendre » ou « Passer ». Quand le videau n'est pas disponible, le lancer est automatique.</li>
-<li>Le coup se joue au plateau comme une question de Décision, puis « Valider » (<code>ENTRÉE</code>) ; « Replacer » (<code>RETOUR ARRIÈRE</code>) remet les pions avant la validation. Rien ne se reprend après.</li>
+<li>Avant le lancer, un clic sur les dés les lance ; un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique.</li>
+<li>Face à un double du Bot, le plateau demande « Prendre » ou « Passer ».</li>
+<li>Un clic sur un pion le joue avec le dé de gauche encore libre, ou avec l'autre quand celui-ci ne peut pas le jouer ; un double se joue en quatre clics. Un pion peut aussi se glisser vers sa destination. Un dé joué est grisé. Seuls passent les pas d'un coup légal.</li>
+<li>Avant de jouer, un clic sur les dés, ou un clic droit sur le plateau, intervertit leur ordre. Pendant le coup, le clic droit sur le plateau reprend tous les pions joués (<code>RETOUR ARRIÈRE</code> aussi).</li>
+<li>Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par <code>ENTRÉE</code>. Rien ne se reprend après.</li>
 <li>Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement.</li>
-<li>« Abandonner la partie » cède la partie en cours pour un simple, un gammon ou un backgammon.</li>
+<li>Le clic droit hors du plateau, ou sur le plateau hors de son coup, ouvre le menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la partie pour un simple, un gammon ou un backgammon (à son tour, après confirmation), suspendre, arrêter. Ce menu n'offre ni évaluation ni édition.</li>
 <li>« Suspendre » met le Duel en suspens, horloges arrêtées. « Arrêter et garder » écrit le Match tel qu'il est ; « Arrêter et jeter » n'en écrit rien. Arrêter n'est jamais céder la partie.</li>
+<li>Un double-clic hors du plateau met la position sur la Pile, ou l'en retire, comme <code>B</code> ; un court bandeau le confirme sur le plateau.</li>
 </ul>
 <p>Chaque décision porte sa durée, avec ou sans cadence. Un abandon n'a pas de durée enregistrée dans le Match.</p>
 <p>À la fin, le Match est écrit, son analyse se lance et l'onglet Matchs s'ouvre sur lui. En ligne de commande, <code>blunderdb duel</code> pilote le même Duel (voir duel — Jouer un Duel).</p>
@@ -1081,6 +1085,10 @@ export default {
 <tr>
 <td>b</td>
 <td>Mettre la position affichée sur la Pile (collection « à revoir plus tard »), ou l'en retirer.</td>
+</tr>
+<tr>
+<td>Double-clic hors du plateau</td>
+<td>Mettre la position affichée sur la Pile, ou l'en retirer — sauf en édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce double-clic remet à zéro.</td>
 </tr>
 </tbody>
 </table>
@@ -1294,6 +1302,45 @@ export default {
 <tr>
 <td>?</td>
 <td>Afficher/cacher l'aide.</td>
+</tr>
+</tbody>
+</table>
+<h3>Duel au plateau</h3>
+<table>
+<thead>
+<tr>
+<th>Geste</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic sur les dés (avant le lancer)</td>
+<td>Lancer les dés.</td>
+</tr>
+<tr>
+<td>Clic sur le videau (avant le lancer)</td>
+<td>Proposer de doubler ; « Doubler » ou « Annuler » confirme sur le plateau.</td>
+</tr>
+<tr>
+<td>Clic sur un pion</td>
+<td>Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci ne peut pas le jouer. Un dé joué est grisé.</td>
+</tr>
+<tr>
+<td>Glisser un pion</td>
+<td>Le jouer vers le point où il est lâché, si un coup légal le permet.</td>
+</tr>
+<tr>
+<td>Clic sur les dés (coup en cours)</td>
+<td>Aucun dé joué : intervertir leur ordre. Coup complet : le valider.</td>
+</tr>
+<tr>
+<td>Clic droit sur le plateau (coup en cours)</td>
+<td>Reprendre tous les pions joués ; sans pion joué, intervertir les dés.</td>
+</tr>
+<tr>
+<td>Clic droit hors du plateau, ou hors de son coup</td>
+<td>Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt.</td>
 </tr>
 </tbody>
 </table>

@@ -206,6 +206,20 @@ msgstr ""
 "Put the displayed position on the Pile (the \"come back to this\" "
 "collection), or take it off."
 
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic hors du plateau"
+msgstr "Double-click outside the board"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
+"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
+"double-clic remet à zéro."
+msgstr ""
+"Put the displayed position on the Pile, or take it off — except in edit "
+"mode and in Eval, and during a move played on the board outside a Duel, "
+"where this double-click resets."
+
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"
 msgstr "Navigation"
@@ -613,6 +627,74 @@ msgstr "?"
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher l'aide."
 msgstr "Show/hide the help."
+
+#: ../../source/raccourcis.rst:148
+msgid "Duel au plateau"
+msgstr "Duel on the board"
+
+#: ../../source/raccourcis.rst:1
+msgid "Geste"
+msgstr "Gesture"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (avant le lancer)"
+msgstr "Click on the dice (before the roll)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Lancer les dés."
+msgstr "Roll the dice."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur le videau (avant le lancer)"
+msgstr "Click on the cube (before the roll)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Proposer de doubler ; « Doubler » ou « Annuler » confirme sur le plateau."
+msgstr "Offer to double; “Double” or “Cancel” confirms on the board."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur un pion"
+msgstr "Click on a checker"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
+"ne peut pas le jouer. Un dé joué est grisé."
+msgstr ""
+"Play it with the left die that is still free, or with the other one if "
+"the left die cannot play it. A played die is greyed out."
+
+#: ../../source/raccourcis.rst:1
+msgid "Glisser un pion"
+msgstr "Drag a checker"
+
+#: ../../source/raccourcis.rst:1
+msgid "Le jouer vers le point où il est lâché, si un coup légal le permet."
+msgstr "Play it to the point where it is dropped, if a legal move allows it."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (coup en cours)"
+msgstr "Click on the dice (move in progress)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+msgstr "No die played: swap their order. Complete move: validate it."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup en cours)"
+msgstr "Right-click on the board (move in progress)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+msgstr "Take back all the checkers played; with no checker played, swap the dice."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau, ou hors de son coup"
+msgstr "Right-click outside the board, or outside its move"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt."
+msgstr "Open the Duel menu: Pile, resignation, suspension, stop."
 
 #: ../../source/raccourcis.rst:147
 msgid "Onglets de vues"

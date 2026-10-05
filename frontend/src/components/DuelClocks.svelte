@@ -12,7 +12,9 @@
         /** A `duel.State`. */
         duel = null,
         /** Compact: no player names (status bar). */
-        compact = false
+        compact = false,
+        /** The clocks alone: the score and the cube are on the board (Duel tab). */
+        clocksOnly = false
     } = $props();
 
     let line = $derived(scoreline(duel));
@@ -27,15 +29,15 @@
         {#each [0, 1] as side (side)}
             <span class="side" class:running={clocks?.running === side} class:you={human === side}>
                 {#if !compact}<span class="name">{names[side]}</span>{/if}
-                <span class="points">{line.score[side]}</span>
+                {#if !clocksOnly}<span class="points">{line.score[side]}</span>{/if}
                 {#if clocks}
                     <span class="clock" class:out={clocks.reserve[side] <= 0}>{formatClock(clocks.reserve[side])}</span>
                 {/if}
             </span>
             {#if side === 0}<span class="sep">·</span>{/if}
         {/each}
-        <span class="length">{line.length ? $t('duel.lengthPoints', { n: line.length }) : $t('duel.moneySession')}</span>
-        {#if cube > 1}<span class="cube">{$t('duel.cubeValue', { n: cube })}</span>{/if}
+        {#if !clocksOnly}<span class="length">{line.length ? $t('duel.lengthPoints', { n: line.length }) : $t('duel.moneySession')}</span>{/if}
+        {#if !clocksOnly && cube > 1}<span class="cube">{$t('duel.cubeValue', { n: cube })}</span>{/if}
         {#if clocks && clocks.running >= 0 && clocks.delayLeft > 0}
             <span class="delay">{$t('duel.delayLeft', { s: Math.ceil(clocks.delayLeft / 1000) })}</span>
         {/if}

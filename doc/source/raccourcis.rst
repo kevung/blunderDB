@@ -47,6 +47,7 @@ Position
    "RETOUR ARRIERE", "En mode édition ou Eval : réinitialiser le board, le cube, le score et les dés."
    "CTRL-G", "Afficher les métadonnées de la position."
    "b", "Mettre la position affichée sur la Pile (collection « à revoir plus tard »), ou l'en retirer."
+   "Double-clic hors du plateau", "Mettre la position affichée sur la Pile, ou l'en retirer — sauf en édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce double-clic remet à zéro."
 
 .. _raccourcis_navigation:
 
@@ -140,6 +141,24 @@ Outils
    "PAGE PRÉC. / PAGE SUIV., DÉBUT / FIN", "Sous la page d'un tournoi dirigé : faire défiler la page, sans parcourir le plateau qu'elle cache."
    "ÉCHAP", "Fermer la fiche de résultat ou la reprise en cours."
    "?", "Afficher/cacher l'aide."
+
+.. _raccourcis_duel:
+
+Duel au plateau
+---------------
+
+.. csv-table::
+   :header: "Geste", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic sur les dés (avant le lancer)", "Lancer les dés."
+   "Clic sur le videau (avant le lancer)", "Proposer de doubler ; « Doubler » ou « Annuler » confirme sur le plateau."
+   "Clic sur un pion", "Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci ne peut pas le jouer. Un dé joué est grisé."
+   "Glisser un pion", "Le jouer vers le point où il est lâché, si un coup légal le permet."
+   "Clic sur les dés (coup en cours)", "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+   "Clic droit sur le plateau (coup en cours)", "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+   "Clic droit hors du plateau, ou hors de son coup", "Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt."
 
 .. _raccourcis_vues:
 

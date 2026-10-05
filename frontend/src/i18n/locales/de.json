@@ -1010,7 +1010,9 @@
             "search": "Suchbrett: Steine so setzen, wie sie gefunden werden sollen",
             "eval": "Auswertungsbrett"
         },
-        "onPile": "Auf dem Stapel"
+        "onPile": "Auf dem Stapel",
+        "pileFlashOn": "Auf den Stapel gelegt",
+        "pileFlashOff": "Vom Stapel genommen"
     },
     "epc": {
         "avgRolls": "Ø Würfe",
@@ -2944,19 +2946,11 @@
         "delayLeft": "Verzögerung {s} s",
         "gestures": "Duell-Aktionen",
         "botPlaying": "Der Bot spielt…",
-        "awaitCube": "Würfeln oder doppeln?",
-        "roll": "Würfeln",
         "double": "Doppeln",
         "awaitAnswer": "Der Bot doppelt: annehmen oder aufgeben?",
         "take": "Annehmen",
         "pass": "Aufgeben",
-        "awaitMove": "Spielen Sie Ihren Zug auf dem Brett und bestätigen Sie.",
         "validate": "Bestätigen",
-        "reset": "Zurücksetzen",
-        "resignLevel": "Punkte der Aufgabe",
-        "resignSingle": "Einfach",
-        "resignGammon": "Gammon",
-        "resignBackgammon": "Backgammon",
         "resign": "Partie aufgeben",
         "resignConfirm": "Partie für {n} Punkt(e) aufgeben?",
         "suspend": "Unterbrechen",
@@ -2992,7 +2986,22 @@
         "ended": "Duell beendet: Match {id} gespeichert, Analyse gestartet.",
         "endedOnTime": "Duell auf Zeit verloren: Match {id} gespeichert, Analyse gestartet.",
         "locked": "Ein Duell läuft: zuerst unterbrechen oder beenden.",
-        "fingerprint": "Fingerabdruck des Seeds (SHA-256)",
-        "fingerprintHint": "Vor dem ersten Wurf veröffentlicht; der Seed wird mit dem Match offengelegt, und sein SHA-256 muss diesen Fingerabdruck ergeben"
+        "menu": {
+            "pileOn": "Auf den Stapel legen",
+            "pileOff": "Vom Stapel nehmen",
+            "resignSingle": "Einfaches Spiel aufgeben ({n} Pkt.)",
+            "resignGammon": "Gammon aufgeben ({n} Pkt.)",
+            "resignBackgammon": "Backgammon aufgeben ({n} Pkt.)"
+        },
+        "board": {
+            "doubleQuestion": "Doppeln?",
+            "cancel": "Abbrechen",
+            "validateHint": "Zug bestätigen (Eingabe oder Klick auf die Würfel)"
+        },
+        "hint": {
+            "cube": "Sie sind dran: Klicken Sie auf die Würfel zum Würfeln oder auf den Doppler zum Doppeln.",
+            "answer": "Der Bot doppelt: auf dem Brett annehmen oder aufgeben.",
+            "move": "Klicken Sie auf einen Stein, um den linken Würfel zu ziehen; Rechtsklick nimmt den Zug zurück, dann bestätigt ein Klick auf die Würfel oder die Eingabetaste."
+        }
     }
 }

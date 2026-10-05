@@ -208,6 +208,20 @@ msgstr ""
 "Положить показанную позицию в Стопку (коллекцию «вернуться позже») или "
 "убрать её оттуда."
 
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic hors du plateau"
+msgstr "Двойной щелчок вне доски"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
+"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
+"double-clic remet à zéro."
+msgstr ""
+"Положить показанную позицию в Стопку или убрать её оттуда — кроме "
+"редактирования и Eval, а также хода, сыгранного на доске вне Дуэли, где "
+"этот двойной щелчок выполняет сброс."
+
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"
 msgstr "Навигация"
@@ -614,6 +628,78 @@ msgstr "?"
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher l'aide."
 msgstr "Показать/скрыть справку."
+
+#: ../../source/raccourcis.rst:148
+msgid "Duel au plateau"
+msgstr "Дуэль на доске"
+
+#: ../../source/raccourcis.rst:1
+msgid "Geste"
+msgstr "Жест"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (avant le lancer)"
+msgstr "Щелчок по костям (перед броском)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Lancer les dés."
+msgstr "Бросить кости."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur le videau (avant le lancer)"
+msgstr "Щелчок по кубу (перед броском)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Proposer de doubler ; « Doubler » ou « Annuler » confirme sur le plateau."
+msgstr "Предложить удвоить; «Удвоить» или «Отмена» подтверждает на доске."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur un pion"
+msgstr "Щелчок по шашке"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
+"ne peut pas le jouer. Un dé joué est grisé."
+msgstr ""
+"Сыграть её левой ещё свободной костью или другой, если левая не может её "
+"сыграть. Сыгранная кость затемняется."
+
+#: ../../source/raccourcis.rst:1
+msgid "Glisser un pion"
+msgstr "Перетащить шашку"
+
+#: ../../source/raccourcis.rst:1
+msgid "Le jouer vers le point où il est lâché, si un coup légal le permet."
+msgstr "Сыграть её на пункт, где её отпустили, если это позволяет легальный ход."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (coup en cours)"
+msgstr "Щелчок по костям (ход в процессе)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+msgstr ""
+"Ни одна кость не сыграна: поменять их порядок. Полный ход: подтвердить "
+"его."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup en cours)"
+msgstr "Щелчок правой кнопкой по доске (ход в процессе)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+msgstr ""
+"Вернуть все сыгранные шашки; если ни одной не сыграно, поменять кости "
+"местами."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau, ou hors de son coup"
+msgstr "Щелчок правой кнопкой вне доски или вне её хода"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt."
+msgstr "Открыть меню Дуэли: Стопка, сдача, приостановка, остановка."
 
 #: ../../source/raccourcis.rst:147
 msgid "Onglets de vues"

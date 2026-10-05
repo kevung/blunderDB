@@ -14,17 +14,14 @@ vi.mock('../services/duelService.js', () => ({
     startDuel: vi.fn(),
     resumeDuel: vi.fn(),
     suspendDuel: vi.fn(),
-    stopDuel: vi.fn(),
-    decide: vi.fn(),
-    validateMove: vi.fn(),
-    resetMove: vi.fn()
+    confirmStopDuel: vi.fn()
 }));
 
 import DuelPanel from '../components/DuelPanel.svelte';
 import DuelClocks from '../components/DuelClocks.svelte';
 import { duelStore, duelListStore } from '../stores/duelStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { startDuel, decide, resumeDuel } from '../services/duelService.js';
+import { startDuel, resumeDuel, suspendDuel, confirmStopDuel } from '../services/duelService.js';
 
 const sheet = { document: { header: { match_length: 7 }, actions: [] }, actions: [], games: [], next: {}, cursor: 0 };
 
@@ -75,38 +72,34 @@ describe('DuelPanel', () => {
         expect(resumeDuel).toHaveBeenCalledWith(9);
     });
 
-    test('a cube decision offers roll and double, and no engine figure', async () => {
+    test('with a Duel: the history, pause and stop; the gestures of the game are on the board', async () => {
         openDuel({ side: 0, kind: 'cube', position: { cube: { value: 1 } } });
-        const { getByText, container } = render(DuelPanel);
+        const { getByText, queryByText, container } = render(DuelPanel);
         await tick();
-        expect(container.textContent).toContain('Kévin');
-        await fireEvent.click(getByText('Double'));
-        expect(decide).toHaveBeenCalledWith('double');
+        expect(getByText('Your turn: click the dice to roll, or the cube to double.')).toBeTruthy();
+        expect(queryByText('Double')).toBeNull();
+        expect(queryByText('Validate')).toBeNull();
+        await fireEvent.click(getByText('Suspend'));
+        expect(suspendDuel).toHaveBeenCalled();
+        await fireEvent.click(getByText('Stop and discard'));
+        expect(confirmStopDuel).toHaveBeenCalledWith(false);
         expect(container.textContent).not.toMatch(/équité|equity|%/i);
     });
 
-    test('the Bot’s turn shows no gesture of the player', async () => {
+    test('the Bot’s turn says so', async () => {
         openDuel({ side: 1, kind: 'move', position: {} });
-        const { queryByText, getByText } = render(DuelPanel);
-        await tick();
-        expect(getByText('The Bot is playing…')).toBeTruthy();
-        expect(queryByText('Validate')).toBeNull();
-    });
-
-    test('the fingerprint of the seed is shown from the creation on', async () => {
-        openDuel({ side: 0, kind: 'cube', position: { cube: { value: 1 } } });
-        const { getByTestId } = render(DuelPanel);
-        await tick();
-        const line = getByTestId('duel-fingerprint');
-        expect(line.querySelector('code')?.textContent).toBe('ab12cd34');
-        expect(line.textContent).toContain('Seed fingerprint (SHA-256)');
-    });
-
-    test('a move waits for the board before it can be validated', async () => {
-        openDuel({ side: 0, kind: 'move', position: { dice: [3, 1] } });
         const { getByText } = render(DuelPanel);
         await tick();
-        expect(/** @type {HTMLButtonElement} */ (getByText('Validate')).disabled).toBe(true);
+        expect(getByText('The Bot is playing…')).toBeTruthy();
+    });
+
+    test('neither the seed’s fingerprint nor the score is repeated in the panel', async () => {
+        openDuel({ side: 0, kind: 'cube', position: { cube: { value: 1 } } });
+        const { container, queryByTestId } = render(DuelPanel);
+        await tick();
+        expect(container.textContent).not.toContain('ab12cd34');
+        // Without a Cadence there is no clock line, so no score either.
+        expect(queryByTestId('duel-clocks')).toBeNull();
     });
 });
 
@@ -127,5 +120,10 @@ describe('DuelClocks', () => {
         const bare = render(DuelClocks, { props: { duel: { ...duel, clock: null }, compact: true } });
         await tick();
         expect(bare.container.textContent).toContain('3');
+        cleanup();
+        const only = render(DuelClocks, { props: { duel, clocksOnly: true } });
+        await tick();
+        expect(only.container.textContent).toContain('1:30');
+        expect(only.container.querySelector('.points')).toBeNull();
     });
 });

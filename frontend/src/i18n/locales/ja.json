@@ -1010,7 +1010,9 @@
             "search": "検索ボード：探したいチェッカーを置いてください",
             "eval": "評価ボード"
         },
-        "onPile": "パイルにあります"
+        "onPile": "パイルにあります",
+        "pileFlashOn": "パイルに追加しました",
+        "pileFlashOff": "パイルから外しました"
     },
     "epc": {
         "avgRolls": "平均ロール",
@@ -2944,19 +2946,11 @@
         "delayLeft": "遅延 {s} 秒",
         "gestures": "デュエルの操作",
         "botPlaying": "ボットが打っています…",
-        "awaitCube": "振る、またはダブル？",
-        "roll": "振る",
         "double": "ダブル",
         "awaitAnswer": "ボットがダブル：テイクかパスか？",
         "take": "テイク",
         "pass": "パス",
-        "awaitMove": "盤上で手を指し、確定してください。",
         "validate": "確定",
-        "reset": "戻す",
-        "resignLevel": "投了のポイント",
-        "resignSingle": "シングル",
-        "resignGammon": "ギャモン",
-        "resignBackgammon": "バックギャモン",
         "resign": "ゲームを投了",
         "resignConfirm": "{n}ポイントでゲームを投了しますか？",
         "suspend": "中断",
@@ -2992,7 +2986,22 @@
         "ended": "デュエル終了：マッチ {id} を保存し、解析を開始しました。",
         "endedOnTime": "時間切れ負け：マッチ {id} を保存し、解析を開始しました。",
         "locked": "デュエル進行中です：先に中断または終了してください。",
-        "fingerprint": "シードのフィンガープリント (SHA-256)",
-        "fingerprintHint": "最初の出目の前に公開されます。シードはマッチとともに公開され、その SHA-256 はこのフィンガープリントと一致するはずです"
+        "menu": {
+            "pileOn": "パイルに追加",
+            "pileOff": "パイルから外す",
+            "resignSingle": "シングルで投了（{n} 点）",
+            "resignGammon": "ギャモンで投了（{n} 点）",
+            "resignBackgammon": "バックギャモンで投了（{n} 点）"
+        },
+        "board": {
+            "doubleQuestion": "ダブルしますか？",
+            "cancel": "キャンセル",
+            "validateHint": "手を確定（Enter またはダイスをクリック）"
+        },
+        "hint": {
+            "cube": "あなたの番です：ダイスをクリックして振る、またはキューブをクリックしてダブル。",
+            "answer": "Bot がダブルしました：盤上でテイクまたはパス。",
+            "move": "駒をクリックすると左のダイスで動きます。右クリックで手を戻し、ダイスのクリックか Enter で確定します。"
+        }
     }
 }

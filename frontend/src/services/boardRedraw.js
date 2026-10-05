@@ -12,6 +12,7 @@ import { searchOfferedCubeStore } from '../stores/searchExcludePositionStore.js'
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { pipcountVisibleStore } from '../stores/uiStore.js';
 import { transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
+import { duelBoardStore } from '../stores/duelStore.js';
 
 /**
  * Les stores dont tout changement rend le plateau sale. Nommés, parce qu'un
@@ -33,7 +34,9 @@ export const BOARD_REDRAW_TRIGGERS = Object.freeze([
     // Le sens du plateau pendant une transcription : le joueur 1 en bas, ou le
     // joueur 2. Rien d'autre ne change quand on la bascule — pas même la
     // position — donc rien d'autre ne demanderait le repaint.
-    Object.freeze({ name: 'transcriptionBoardSwap', store: transcriptionBoardSwapStore })
+    Object.freeze({ name: 'transcriptionBoardSwap', store: transcriptionBoardSwapStore }),
+    // L'ordre des dés d'un Duel, que le joueur intervertit.
+    Object.freeze({ name: 'duelBoard', store: duelBoardStore })
 ]);
 
 /**

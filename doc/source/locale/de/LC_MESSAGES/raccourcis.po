@@ -211,6 +211,20 @@ msgstr ""
 "Die angezeigte Position auf den Stapel legen (die Sammlung „später wieder"
 " ansehen“) oder wieder herunternehmen."
 
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic hors du plateau"
+msgstr "Doppelklick außerhalb des Bretts"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
+"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
+"double-clic remet à zéro."
+msgstr ""
+"Die angezeigte Stellung auf den Stapel legen oder davon nehmen — außer im"
+" Bearbeitungsmodus und in Eval sowie während eines außerhalb eines Duells"
+" auf dem Brett gespielten Zugs, wo dieser Doppelklick zurücksetzt."
+
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"
 msgstr "Navigation"
@@ -620,6 +634,82 @@ msgstr "?"
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher l'aide."
 msgstr "Die Hilfe ein-/ausblenden."
+
+#: ../../source/raccourcis.rst:148
+msgid "Duel au plateau"
+msgstr "Duell auf dem Brett"
+
+#: ../../source/raccourcis.rst:1
+msgid "Geste"
+msgstr "Geste"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (avant le lancer)"
+msgstr "Klick auf die Würfel (vor dem Wurf)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Lancer les dés."
+msgstr "Die Würfel werfen."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur le videau (avant le lancer)"
+msgstr "Klick auf den Doppler (vor dem Wurf)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Proposer de doubler ; « Doubler » ou « Annuler » confirme sur le plateau."
+msgstr ""
+"Ein Doppeln vorschlagen; „Doppeln“ oder „Abbrechen“ bestätigt auf dem "
+"Brett."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur un pion"
+msgstr "Klick auf einen Stein"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
+"ne peut pas le jouer. Un dé joué est grisé."
+msgstr ""
+"Ihn mit dem linken noch freien Würfel spielen oder mit dem anderen, wenn "
+"der linke ihn nicht spielen kann. Ein gespielter Würfel wird ausgegraut."
+
+#: ../../source/raccourcis.rst:1
+msgid "Glisser un pion"
+msgstr "Einen Stein ziehen"
+
+#: ../../source/raccourcis.rst:1
+msgid "Le jouer vers le point où il est lâché, si un coup légal le permet."
+msgstr ""
+"Ihn auf den Punkt spielen, auf dem er losgelassen wird, wenn ein legaler "
+"Zug es erlaubt."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (coup en cours)"
+msgstr "Klick auf die Würfel (Zug läuft)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+msgstr ""
+"Kein Würfel gespielt: ihre Reihenfolge vertauschen. Vollständiger Zug: "
+"ihn bestätigen."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup en cours)"
+msgstr "Rechtsklick auf das Brett (Zug läuft)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+msgstr ""
+"Alle gespielten Steine zurücknehmen; ohne gespielten Stein die Würfel "
+"vertauschen."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau, ou hors de son coup"
+msgstr "Rechtsklick außerhalb des Bretts oder außerhalb seines Zugs"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt."
+msgstr "Das Duell-Menü öffnen: Stapel, Aufgabe, Unterbrechung, Ende."
 
 #: ../../source/raccourcis.rst:147
 msgid "Onglets de vues"

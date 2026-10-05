@@ -27,7 +27,11 @@
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
-    import { onPileStore, refreshPileState } from '../services/pileService.js';
+    import { onPileStore, refreshPileState, togglePile, pileChangedStore } from '../services/pileService.js';
+    import { duelHoldsBoardStore, duelBoardStore, duelStore } from '../stores/duelStore.js';
+    import { duelBoardPress, duelBoardDrop, duelBoardContextMenu, duelBoardContext, suspendDuel, confirmStopDuel, resignDuel } from '../services/duelService.js';
+    import { orderedDice, usedDice, isMine } from '../services/duelBoard.js';
+    import DuelBoardPrompt from './DuelBoardPrompt.svelte';
     import { registerKeys } from '../services/keyDispatch.js';
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
@@ -63,6 +67,7 @@
     /** @type {(() => void) | null} */
     let detachInteractions = null;
     let cubePosition = { x: 0, y: 0, size: 0 }; // where the cube was last drawn (hit-testing)
+    const PILE_FLASH_MS = 1200;
     let previousDice = get(positionStore).dice; // Save previous dice values
 
     // enterEvalMode() starts with dice [0, 0]; reset so the first die click
@@ -239,11 +244,11 @@
     onMount(() => {
         const element = /** @type {HTMLElement} */ (document.getElementById('backgammon-board'));
         canvas = element;
+        const container = /** @type {HTMLElement} */ (element.parentElement);
         const params = { width: window.innerWidth, height: window.innerHeight };
         const surface = new Two(params).appendTo(element);
         two = surface;
 
-        const container = /** @type {HTMLElement} */ (element.parentElement);
         const containerWidth = container.clientWidth;
         const containerHeight = container.clientHeight;
         const heightFromWidth = containerWidth * canvasCfg.aspectFactor;
@@ -284,6 +289,16 @@
             setPreviousDice: (/** @type {number[]} */ dice) => (previousDice = dice),
             reset: () => (mode === 'EVAL' ? resetEvalBoard() : resetBoard()),
             openContextMenu,
+            displayRoller: () => getDisplayPosition().player_on_roll,
+            togglePile,
+            container,
+            // Un Duel tient le plateau : chaque clic est le sien (services/duelBoard.js).
+            duel: {
+                holds: () => get(duelHoldsBoardStore),
+                press: duelBoardPress,
+                drop: duelBoardDrop,
+                context: duelBoardContextMenu
+            },
             logger
         });
         // No direct drawBoard(): the subscriptions fire synchronously and
@@ -313,6 +328,10 @@
 
     /** @param {{ x: number, y: number }} at client coordinates */
     function openContextMenu({ x, y }) {
+        if (get(duelHoldsBoardStore)) {
+            boardMenu = { x, y, items: duelMenuItems() };
+            return;
+        }
         /** @type {MenuItem[]} */
         const items = [
             {
@@ -369,6 +388,27 @@
         }
     }
 
+    // Le menu d'un Duel : rien qui évalue, analyse ou édite la position — le moteur se tait et le
+    // Duel tient le plateau (ADR-0072 règle 9). Céder est une Action du jeu, à son tour seulement.
+    /** @returns {MenuItem[]} */
+    function duelMenuItems() {
+        const mine = isMine(duelBoardContext());
+        const cube = get(duelStore)?.state?.awaiting?.position?.cube?.value || 1;
+        /** @type {MenuItem[]} */
+        const resign = [1, 2, 3].map((level) => ({
+            label: $t(level === 1 ? 'duel.menu.resignSingle' : level === 2 ? 'duel.menu.resignGammon' : 'duel.menu.resignBackgammon', { n: level * cube }),
+            disabled: !mine,
+            onClick: () => resignDuel(/** @type {1|2|3} */ (level))
+        }));
+        return [
+            { label: $t(get(onPileStore) ? 'duel.menu.pileOff' : 'duel.menu.pileOn'), onClick: () => togglePile() },
+            ...resign,
+            { label: $t('duel.suspend'), onClick: () => suspendDuel() },
+            { label: $t('duel.stopKeep'), onClick: () => confirmStopDuel(true) },
+            { label: $t('duel.stopDiscard'), onClick: () => confirmStopDuel(false) }
+        ];
+    }
+
     /** @param {number} positionId */
     function ankiDeckMenuItems(positionId) {
         return get(ankiDecksStore).map((deck) => ({
@@ -408,7 +448,9 @@
         const stored = get(positionStore);
         // Quiz : seul le damier suit le coup en cours ; le reste vient de la position.
         const play = get(quizPlayStore);
-        const position = play ? { ...stored, board: play.board } : stored;
+        let position = play ? { ...stored, board: play.board } : stored;
+        // Duel : les dés dans l'ordre où le joueur les a rangés (le premier est celui qu'un clic joue).
+        if (get(duelHoldsBoardStore) && get(duelBoardStore).swapped) position = { ...position, dice: orderedDice(position.dice, true) };
         return displayIsMirrored(position) ? mirrorPosition(position) : position;
     }
 
@@ -523,11 +565,30 @@
             offeredCube: isOfferedCube(position),
             showPipcount,
             play: playHighlights(mirrored),
-            moves: selectedMoveArrows(flip)
+            moves: selectedMoveArrows(flip),
+            // Duel : un dé joué est grisé.
+            diceUsed: get(duelHoldsBoardStore) ? usedDice(get(quizPlayStore), position.dice) : null
         });
 
         two.update();
     }
+
+    // Une bascule de la Pile se voit sur le plateau, quel que soit le geste : un court bandeau.
+    /** @type {'on' | 'off' | null} */
+    let pileFlash = $state(null);
+    /** @type {ReturnType<typeof setTimeout> | null} */
+    let pileFlashTimer = null;
+    let pileTicks = 0;
+    const unsubscribePileFlash = pileChangedStore.subscribe(() => {
+        if (pileTicks++ === 0) return;
+        pileFlash = get(onPileStore) ? 'on' : 'off';
+        if (pileFlashTimer) clearTimeout(pileFlashTimer);
+        pileFlashTimer = setTimeout(() => (pileFlash = null), PILE_FLASH_MS);
+    });
+    onDestroy(() => {
+        unsubscribePileFlash();
+        if (pileFlashTimer) clearTimeout(pileFlashTimer);
+    });
 
     // The Pile marker follows the position on the board, edits of a draft included.
     $effect(() => {
@@ -545,12 +606,41 @@
             </svg>
         </span>
     {/if}
+    {#if pileFlash}
+        <span class="pile-flash" role="status" data-testid="pile-flash">{$t(pileFlash === 'on' ? 'board.pileFlashOn' : 'board.pileFlashOff')}</span>
+    {/if}
+    {#if $duelHoldsBoardStore}
+        <DuelBoardPrompt />
+    {/if}
     {#if boardMenu}
         <ContextMenu x={boardMenu.x} y={boardMenu.y} items={boardMenu.items} onClose={() => (boardMenu = null)} />
     {/if}
 </div>
 
 <style>
+    .pile-flash {
+        position: absolute;
+        top: 6px;
+        right: 32px;
+        padding: 0.15em 0.6em;
+        border-radius: 3px;
+        background: var(--color-primary);
+        color: var(--color-surface);
+        font-size: var(--font-size-small);
+        pointer-events: none;
+        animation: pile-flash 1.2s ease-out forwards;
+    }
+
+    @keyframes pile-flash {
+        0%,
+        70% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
     .pile-badge {
         position: absolute;
         top: 6px;

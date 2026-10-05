@@ -1010,7 +1010,9 @@
             "search": "Plateau de recherche : posez les pions à trouver",
             "eval": "Plateau d’évaluation"
         },
-        "onPile": "Sur la Pile"
+        "onPile": "Sur la Pile",
+        "pileFlashOn": "Mise sur la Pile",
+        "pileFlashOff": "Retirée de la Pile"
     },
     "epc": {
         "avgRolls": "Jets moy.",
@@ -2944,19 +2946,11 @@
         "delayLeft": "Délai {s} s",
         "gestures": "Gestes du Duel",
         "botPlaying": "Le Bot joue…",
-        "awaitCube": "Lancer ou doubler ?",
-        "roll": "Lancer",
         "double": "Doubler",
         "awaitAnswer": "Le Bot double : prendre ou passer ?",
         "take": "Prendre",
         "pass": "Passer",
-        "awaitMove": "Jouez votre coup au plateau, puis validez.",
         "validate": "Valider",
-        "reset": "Replacer",
-        "resignLevel": "Points de l'abandon",
-        "resignSingle": "Simple",
-        "resignGammon": "Gammon",
-        "resignBackgammon": "Backgammon",
         "resign": "Abandonner la partie",
         "resignConfirm": "Abandonner la partie pour {n} point(s) ?",
         "suspend": "Suspendre",
@@ -2992,7 +2986,22 @@
         "ended": "Duel terminé : match {id} écrit, analyse lancée.",
         "endedOnTime": "Duel perdu au temps : match {id} écrit, analyse lancée.",
         "locked": "Un Duel est en cours : suspendez-le ou arrêtez-le d'abord.",
-        "fingerprint": "Empreinte du germe (SHA-256)",
-        "fingerprintHint": "Publiée avant le premier lancer ; le germe sera révélé avec le Match, et son SHA-256 devra redonner cette empreinte"
+        "menu": {
+            "pileOn": "Mettre sur la Pile",
+            "pileOff": "Retirer de la Pile",
+            "resignSingle": "Abandonner une partie simple ({n} pt)",
+            "resignGammon": "Abandonner un gammon ({n} pts)",
+            "resignBackgammon": "Abandonner un backgammon ({n} pts)"
+        },
+        "board": {
+            "doubleQuestion": "Doubler ?",
+            "cancel": "Annuler",
+            "validateHint": "Valider le coup (Entrée, ou clic sur les dés)"
+        },
+        "hint": {
+            "cube": "À vous : cliquez sur les dés pour lancer, sur le videau pour doubler.",
+            "answer": "Le Bot double : prenez ou passez sur le plateau.",
+            "move": "Cliquez sur un pion pour jouer le dé de gauche ; le clic droit reprend le coup, puis un clic sur les dés ou Entrée le valide."
+        }
     }
 }

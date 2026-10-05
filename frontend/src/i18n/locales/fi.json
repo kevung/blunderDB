@@ -1010,7 +1010,9 @@
             "search": "Hakulauta: aseta etsittävät nappulat",
             "eval": "Arviointilauta"
         },
-        "onPile": "Pinossa"
+        "onPile": "Pinossa",
+        "pileFlashOn": "Lisätty pinoon",
+        "pileFlashOff": "Poistettu pinosta"
     },
     "epc": {
         "avgRolls": "Keskim. heitot",
@@ -2944,19 +2946,11 @@
         "delayLeft": "Viive {s} s",
         "gestures": "Kaksintaistelun toiminnot",
         "botPlaying": "Botti pelaa…",
-        "awaitCube": "Heitä vai tuplaa?",
-        "roll": "Heitä",
         "double": "Tuplaa",
         "awaitAnswer": "Botti tuplaa: ota vastaan vai luovuta?",
         "take": "Ota vastaan",
         "pass": "Luovuta",
-        "awaitMove": "Pelaa siirtosi laudalla ja vahvista.",
         "validate": "Vahvista",
-        "reset": "Palauta",
-        "resignLevel": "Luovutuksen pisteet",
-        "resignSingle": "Yksinkertainen",
-        "resignGammon": "Gammon",
-        "resignBackgammon": "Backgammon",
         "resign": "Luovuta peli",
         "resignConfirm": "Luovutetaanko peli {n} pisteellä?",
         "suspend": "Keskeytä",
@@ -2992,7 +2986,22 @@
         "ended": "Kaksintaistelu päättyi: ottelu {id} tallennettu, analyysi käynnistetty.",
         "endedOnTime": "Kaksintaistelu hävitty ajalla: ottelu {id} tallennettu, analyysi käynnistetty.",
         "locked": "Kaksintaistelu on käynnissä: keskeytä tai lopeta se ensin.",
-        "fingerprint": "Siemenen sormenjälki (SHA-256)",
-        "fingerprintHint": "Julkaistu ennen ensimmäistä heittoa; siemen paljastetaan ottelun mukana, ja sen SHA-256:n on annettava tämä sormenjälki"
+        "menu": {
+            "pileOn": "Lisää pinoon",
+            "pileOff": "Poista pinosta",
+            "resignSingle": "Luovuta yksinkertainen peli ({n} p)",
+            "resignGammon": "Luovuta gammon ({n} p)",
+            "resignBackgammon": "Luovuta backgammon ({n} p)"
+        },
+        "board": {
+            "doubleQuestion": "Tuplataanko?",
+            "cancel": "Peruuta",
+            "validateHint": "Vahvista siirto (Enter tai napsautus nopista)"
+        },
+        "hint": {
+            "cube": "Sinun vuorosi: heitä napsauttamalla noppia tai tuplaa napsauttamalla tuplauskuutiota.",
+            "answer": "Botti tuplaa: ota vastaan tai luovuta laudalla.",
+            "move": "Napsauta nappulaa pelataksesi vasemman nopan; oikea napsautus peruu siirron, ja napsautus nopista tai Enter vahvistaa sen."
+        }
     }
 }

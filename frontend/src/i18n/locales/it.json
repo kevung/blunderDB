@@ -1010,7 +1010,9 @@
             "search": "Scacchiera di ricerca: disponi le pedine da trovare",
             "eval": "Scacchiera di valutazione"
         },
-        "onPile": "Nella Pila"
+        "onPile": "Nella Pila",
+        "pileFlashOn": "Messa nella Pila",
+        "pileFlashOff": "Tolta dalla Pila"
     },
     "epc": {
         "avgRolls": "Tiri medi",
@@ -2944,19 +2946,11 @@
         "delayLeft": "Ritardo {s} s",
         "gestures": "Azioni del duello",
         "botPlaying": "Il Bot gioca…",
-        "awaitCube": "Tirare o raddoppiare?",
-        "roll": "Tira",
         "double": "Raddoppia",
         "awaitAnswer": "Il Bot raddoppia: accettare o rifiutare?",
         "take": "Accetta",
         "pass": "Rifiuta",
-        "awaitMove": "Gioca la mossa sul tavoliere, poi convalida.",
         "validate": "Convalida",
-        "reset": "Ripristina",
-        "resignLevel": "Punti dell'abbandono",
-        "resignSingle": "Semplice",
-        "resignGammon": "Gammon",
-        "resignBackgammon": "Backgammon",
         "resign": "Abbandona la partita",
         "resignConfirm": "Abbandonare la partita per {n} punto/i?",
         "suspend": "Sospendi",
@@ -2992,7 +2986,22 @@
         "ended": "Duello finito: match {id} salvato, analisi avviata.",
         "endedOnTime": "Duello perso per tempo: match {id} salvato, analisi avviata.",
         "locked": "Un duello è in corso: sospendilo o fermalo prima.",
-        "fingerprint": "Impronta del seme (SHA-256)",
-        "fingerprintHint": "Pubblicata prima del primo lancio; il seme è rivelato con il match, e il suo SHA-256 deve ridare questa impronta"
+        "menu": {
+            "pileOn": "Metti nella Pila",
+            "pileOff": "Togli dalla Pila",
+            "resignSingle": "Abbandona una partita semplice ({n} pt)",
+            "resignGammon": "Abbandona un gammon ({n} pt)",
+            "resignBackgammon": "Abbandona un backgammon ({n} pt)"
+        },
+        "board": {
+            "doubleQuestion": "Raddoppiare?",
+            "cancel": "Annulla",
+            "validateHint": "Convalida la mossa (Invio, o clic sui dadi)"
+        },
+        "hint": {
+            "cube": "Tocca a te: clicca sui dadi per tirare, o sul cubo per raddoppiare.",
+            "answer": "Il Bot raddoppia: accetta o rifiuta sulla tavola.",
+            "move": "Clicca su una pedina per giocare il dado di sinistra; il clic destro annulla la mossa, poi un clic sui dadi o Invio la convalida."
+        }
     }
 }

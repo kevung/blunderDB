@@ -538,6 +538,9 @@ const DIE_DOTS = [
     ]
 ];
 
+/** A played die stays readable, but steps back. */
+const USED_DIE_OPACITY = 0.35;
+
 /**
  * Two dice on the roller's side; blank faces for a cube decision.
  *
@@ -545,20 +548,24 @@ const DIE_DOTS = [
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
+ * @param {boolean[] | null} [used] a die already played is drawn faded (a Duel's move)
  */
-export function drawDice(two, geom, cfg, position) {
+export function drawDice(two, geom, cfg, position, used = null) {
     const side = sideLayout(geom, cfg, position.player_on_roll);
     const { diceSize, diceGap, diceY } = side;
     position.dice.forEach((die, index) => {
         const dieX = side.diceX + index * (diceSize + diceGap);
+        const opacity = used?.[index] ? USED_DIE_OPACITY : 1;
         const face = two.makeRectangle(dieX, diceY, diceSize, diceSize);
         face.fill = cfg.dice.fill;
         face.stroke = cfg.stroke; // follows the board border colour
         face.linewidth = 2.5;
+        face.opacity = opacity;
         if (position.decision_type !== 0) return;
         (DIE_DOTS[die] || []).forEach(([dx, dy]) => {
             const dot = two.makeCircle(dieX + (dx * diceSize) / 3, diceY + (dy * diceSize) / 3, diceSize / 12);
             dot.fill = cfg.dice.dot;
+            dot.opacity = opacity;
         });
     });
 }
@@ -703,7 +710,7 @@ export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
- * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, moves?: StepMove[] | null, play?: { sources?: Iterable<number>, targets?: Iterable<number>, selected?: number | null } }} [opts]
+ * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, diceUsed?: boolean[] | null, moves?: StepMove[] | null, play?: { sources?: Iterable<number>, targets?: Iterable<number>, selected?: number | null } }} [opts]
  * @returns {CubeBox}
  */
 export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
@@ -711,7 +718,7 @@ export function drawDynamicScene(two, geom, cfg, position, opts = {}) {
     drawCheckers(two, geom, cfg, position);
     drawBearoff(two, geom, cfg, position, opts.text);
     if (opts.showPipcount) drawPipCounts(two, geom, position, opts.text);
-    drawDice(two, geom, cfg, position);
+    drawDice(two, geom, cfg, position, opts.diceUsed ?? null);
     drawScores(two, geom, cfg, position, opts.text);
     drawPlayHighlights(two, geom, cfg, position, opts.play ?? {});
     drawMoveArrows(two, geom, cfg, position, opts.moves);

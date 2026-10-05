@@ -1,24 +1,22 @@
 <!--
   DuelPanel — l'onglet Duel (ADR-0072, ADR-0073), sur le patron de l'Entraînement : sans Duel
-  ouvert, le formulaire et les Duels en suspens ; avec un Duel, le score, les horloges, la
-  feuille de match (la vue de la Transcription) et les gestes. Le moteur se tait : aucune
+  ouvert, le formulaire et les Duels en suspens ; avec un Duel, les horloges d'une Cadence, la
+  feuille de match (la vue de la Transcription), la pause et l'arrêt. Les gestes du jeu sont au
+  plateau, et le score y est déjà ; l'empreinte du germe se lit avec l'origine du Match. Le moteur se tait : aucune
   évaluation n'est montrée tant que le Duel court (règle 9).
 -->
 <script>
     import { onMount } from 'svelte';
     import { t } from '../i18n';
     import { duelStore, duelListStore, duelAnimatingStore } from '../stores/duelStore.js';
-    import { quizPlayCompleteStore } from '../stores/quizPlayStore.js';
     import { databasePathStore } from '../stores/databaseStore.js';
     import { BOT_LEVELS, MAX_MATCH_LENGTH, START, humanSide, normalizeForm } from '../services/duel.js';
-    import { loadDuelForm, duelOffer, refreshDuels, startDuel, resumeDuel, suspendDuel, stopDuel, decide, validateMove, resetMove } from '../services/duelService.js';
-    import { confirmAction } from '../services/confirmService.js';
+    import { loadDuelForm, duelOffer, refreshDuels, startDuel, resumeDuel, suspendDuel, confirmStopDuel } from '../services/duelService.js';
     import TranscriptView from './TranscriptView.svelte';
     import DuelClocks from './DuelClocks.svelte';
 
     let form = $state(normalizeForm(null));
     let cadences = $state(/** @type {any[]} */ ([]));
-    let resignLevel = $state(1);
 
     let open = $derived($duelStore);
     let duel = $derived(open?.state ?? null);
@@ -38,69 +36,36 @@
         form = normalizeForm(form);
         startDuel(form, cadences);
     }
-
-    /** @param {boolean} keep */
-    async function stop(keep) {
-        const go = await confirmAction(/** @type {string} */ ($t(keep ? 'duel.stopKeepConfirm' : 'duel.stopDiscardConfirm')), {
-            confirmLabel: /** @type {string} */ ($t(keep ? 'duel.stopKeep' : 'duel.stopDiscard')),
-            tone: keep ? 'primary' : 'danger'
-        });
-        if (go) stopDuel(keep);
-    }
-
-    async function resign() {
-        const go = await confirmAction(/** @type {string} */ ($t('duel.resignConfirm', { n: resignLevel * (duel?.awaiting?.position?.cube?.value || 1) })), {
-            confirmLabel: /** @type {string} */ ($t('duel.resign'))
-        });
-        if (go) decide('resign', resignLevel);
-    }
 </script>
 
 <div class="duel-panel" data-testid="duel-panel">
     {#if duel}
-        <div class="head">
-            <DuelClocks {duel} />
-        </div>
-        {#if duel.fingerprint}
-            <!-- Published before the first roll (ADR-0072 rule 8): the seed revealed with the Match must hash back to it. -->
-            <div class="fingerprint" title={$t('duel.fingerprintHint')} data-testid="duel-fingerprint">
-                {$t('duel.fingerprint')} <code>{duel.fingerprint}</code>
+        {#if duel.clock}
+            <div class="head">
+                <DuelClocks {duel} clocksOnly />
             </div>
         {/if}
 
-        <div class="gestures" role="group" aria-label={$t('duel.gestures')}>
+        <!-- Les gestes du jeu sont au plateau ; ici, ce qui est attendu, en une ligne. -->
+        <p class="prompt" data-testid="duel-hint">
             {#if $duelAnimatingStore || (awaiting && !mine)}
-                <span class="prompt">{$t('duel.botPlaying')}</span>
+                {$t('duel.botPlaying')}
             {:else if awaiting?.kind === 'cube'}
-                <span class="prompt">{$t('duel.awaitCube')}</span>
-                <button type="button" class="primary" onclick={() => decide('roll')}>{$t('duel.roll')}</button>
-                <button type="button" onclick={() => decide('double')}>{$t('duel.double')}</button>
+                {$t('duel.hint.cube')}
             {:else if awaiting?.kind === 'answer'}
-                <span class="prompt">{$t('duel.awaitAnswer')}</span>
-                <button type="button" class="primary" onclick={() => decide('take')}>{$t('duel.take')}</button>
-                <button type="button" onclick={() => decide('pass')}>{$t('duel.pass')}</button>
+                {$t('duel.hint.answer')}
             {:else if awaiting?.kind === 'move'}
-                <span class="prompt">{$t('duel.awaitMove')}</span>
-                <button type="button" class="primary" disabled={!$quizPlayCompleteStore} onclick={validateMove}>{$t('duel.validate')}</button>
-                <button type="button" onclick={resetMove}>{$t('duel.reset')}</button>
+                {$t('duel.hint.move')}
             {/if}
-        </div>
+        </p>
 
         <TranscriptView annotated={open.sheet} {players} />
 
         <div class="gestures secondary">
-            <label class="field">
-                <select bind:value={resignLevel} disabled={!mine} aria-label={$t('duel.resignLevel')}>
-                    <option value={1}>{$t('duel.resignSingle')}</option>
-                    <option value={2}>{$t('duel.resignGammon')}</option>
-                    <option value={3}>{$t('duel.resignBackgammon')}</option>
-                </select>
-            </label>
-            <button type="button" disabled={!mine} onclick={resign}>{$t('duel.resign')}</button>
             <span class="spacer"></span>
             <button type="button" onclick={suspendDuel}>{$t('duel.suspend')}</button>
-            <button type="button" onclick={() => stop(true)}>{$t('duel.stopKeep')}</button>
-            <button type="button" class="danger" onclick={() => stop(false)}>{$t('duel.stopDiscard')}</button>
+            <button type="button" onclick={() => confirmStopDuel(true)}>{$t('duel.stopKeep')}</button>
+            <button type="button" class="danger" onclick={() => confirmStopDuel(false)}>{$t('duel.stopDiscard')}</button>
         </div>
     {:else}
         <form
@@ -190,14 +155,6 @@
 </div>
 
 <style>
-    .fingerprint {
-        font-size: var(--font-size-small);
-        color: var(--text-muted, inherit);
-    }
-    .fingerprint code {
-        user-select: all;
-        overflow-wrap: anywhere;
-    }
     .duel-panel {
         display: flex;
         flex-direction: column;
@@ -230,6 +187,10 @@
     .hint,
     .prompt {
         color: var(--color-text-muted);
+    }
+
+    p.prompt {
+        margin: 0;
     }
 
     input[type='number'] {

@@ -1010,7 +1010,9 @@
             "search": "Search board: place the checkers to find",
             "eval": "Evaluation board"
         },
-        "onPile": "On the Pile"
+        "onPile": "On the Pile",
+        "pileFlashOn": "Put on the Pile",
+        "pileFlashOff": "Taken off the Pile"
     },
     "epc": {
         "avgRolls": "Avg Rolls",
@@ -2944,19 +2946,11 @@
         "delayLeft": "Delay {s} s",
         "gestures": "Duel gestures",
         "botPlaying": "The Bot is playing…",
-        "awaitCube": "Roll or double?",
-        "roll": "Roll",
         "double": "Double",
         "awaitAnswer": "The Bot doubles: take or pass?",
         "take": "Take",
         "pass": "Pass",
-        "awaitMove": "Play your move on the board, then validate.",
         "validate": "Validate",
-        "reset": "Put back",
-        "resignLevel": "Points resigned",
-        "resignSingle": "Single",
-        "resignGammon": "Gammon",
-        "resignBackgammon": "Backgammon",
         "resign": "Resign the game",
         "resignConfirm": "Resign the game for {n} point(s)?",
         "suspend": "Suspend",
@@ -2992,7 +2986,22 @@
         "ended": "Duel over: match {id} written, analysis started.",
         "endedOnTime": "Duel lost on time: match {id} written, analysis started.",
         "locked": "A Duel is in progress: suspend or stop it first.",
-        "fingerprint": "Seed fingerprint (SHA-256)",
-        "fingerprintHint": "Published before the first roll; the seed is revealed with the Match, and its SHA-256 must give back this fingerprint"
+        "menu": {
+            "pileOn": "Put on the Pile",
+            "pileOff": "Take off the Pile",
+            "resignSingle": "Resign a single game ({n} pt)",
+            "resignGammon": "Resign a gammon ({n} pts)",
+            "resignBackgammon": "Resign a backgammon ({n} pts)"
+        },
+        "board": {
+            "doubleQuestion": "Double?",
+            "cancel": "Cancel",
+            "validateHint": "Validate the move (Enter, or click the dice)"
+        },
+        "hint": {
+            "cube": "Your turn: click the dice to roll, or the cube to double.",
+            "answer": "The Bot doubles: take or pass on the board.",
+            "move": "Click a checker to play the left die; right-click takes the move back, then click the dice or press Enter to validate."
+        }
     }
 }

@@ -281,7 +281,7 @@ export default {
 <h3>Collections Panel</h3>
 <p>In the Collections, Tournaments, Anki and Transcription panels, the <strong>+</strong> button in the header, followed by the name of what it creates (<strong>+ New collection</strong>, <strong>+ New tournament</strong>, <strong>+ New deck</strong>, <strong>+ New transcription</strong>), is the single creation gesture: it opens the input field, which <em>Esc</em> or <strong>Cancel</strong> closes in the Collections and Tournaments panels. In the match list, the ⌨ icon opens the match's transcription and the ✎ icon corrects its metadata.</p>
 <p>The <strong>Collections</strong> panel (<em>CTRL-B</em>) manages collections of positions. Collections can be created, renamed and deleted. Positions can be added to them or removed (<em>Del</em> key, confirmation asked). Double-click a collection to browse its positions with the <em>LEFT</em> and <em>RIGHT</em> keys. The <code>ss</code> command searches among the positions of the open collection; <em>Esc</em> then returns to the collection (see Search Panel). The order of the collections, and of the positions within a collection, can be changed by drag and drop. Press <em>CTRL-B</em> or run the <code>collection</code> command to show or hide the panel.</p>
-<p>The <strong>Pile</strong> is the collection of the "come back to this" gesture: the <em>b</em> key or the bookmark button of the toolbar puts the displayed position on the Pile, and the same gesture takes it off. A bookmark in the corner of the board says the position is on it. The gesture works wherever a position is shown: review, search, Transcription. The Pile is an ordinary collection — renamed, reordered, exported, emptied like any other; it is created on first use, and created again if it was deleted. A position that is not yet in the library (a draft of the search or evaluation board) is written to it at once, as a position brought in on its own, then put on the Pile. The command line does the same gesture with <code>collection pile</code>.</p>
+<p>The <strong>Pile</strong> is the collection for the “review later” gesture: a double-click outside the board, the <em>b</em> key or the bookmark button of the toolbar puts the displayed position on the Pile, and the same gesture takes it off. A short banner on the board confirms each toggle, and a bookmark in the corner of the board shows that the position is on it. The gesture works wherever a position is displayed: review, search, Transcription, Duel. In edit mode and in Eval, and during a move played on the board outside a Duel, the double-click outside the board keeps its primary meaning — reset — and only <em>b</em> and the button apply there. The Pile is an ordinary collection — renamed, reordered, exported, emptied like any other; it is created on first use, and created again if it was deleted. A position that is not yet in the library (a draft of the search or evaluation board) is written there on the spot, like a position brought on its own, then put on the Pile. The command line makes the same gesture with <code>collection pile</code>.</p>
 <p>A collection can be <strong>living</strong>: its content is no longer a hand-made list but the result of a <strong>search</strong>, re-evaluated every time it is opened. The ◇ button at the head of the collection makes it living with the last search run; ◈ says it already is, and the same button gives it back its list. Nothing is destroyed by making it living: the positions it held are still there when you go back.</p>
 <p>The ❄ button, shown on a living collection, <strong>freezes</strong> it: the positions the search selects at that moment become the content of an ordinary collection, in the order of the search, and the query is cleared. The positions it held before becoming living are replaced.</p>
 <p>A living collection whose query carries a token this version no longer knows <strong>refuses to open</strong>, and says so, rather than returning the whole database. That is the one failure a saved filter must not have: widening in silence.</p>
@@ -915,13 +915,17 @@ export default {
 <li><strong>Your name</strong> and <strong>Record the match</strong>: when unchecked, the finished Duel is discarded instead of becoming a Match.</li>
 </ul>
 <p>"Resume" reopens a suspended Duel at the same point, with the same upcoming dice; its clocks were stopped.</p>
-<p>During the Duel, the panel shows the score, the cube, the clocks and the match sheet in two columns, like the Transcription. It also shows, from the creation on, the SHA-256 fingerprint of the dice seed: the seed stays secret until the end, and its SHA-256, read with the Match, must give back this fingerprint. The score and the clocks stay in the status bar when the tab is collapsed. The board switches to <strong>DUEL</strong> mode: the library can no longer be browsed, editing, the Eval panel and the other tabs do not open, and the engine stays silent: no evaluation, no candidates. Only the Pile (<code>B</code>), the pipcount (<code>P</code>) and the help remain.</p>
+<p>The Duel is played on the board. The panel shows the match sheet in two columns, like the Transcription, the clocks when a time control is running, a line saying what is expected, and “Suspend”, “Stop and keep”, “Stop and discard”. The score and the cube are those of the board; the score and the clocks stay in the status bar when the tab is collapsed. The SHA-256 fingerprint of the dice seed, published by the Referee at creation, can be read with the seed in the origin of the finished Match. The board switches to <strong>DUEL</strong> mode: the library can no longer be browsed, editing, the Eval panel and the other tabs do not open, and the engine falls silent — no evaluation, no candidate. Only the Pile (<code>B</code>), the pipcount (<code>P</code>) and help remain.</p>
 <ul>
-<li>Before the roll, "Roll" or "Double"; facing a double, "Take" or "Pass". When the cube is not available, the roll is automatic.</li>
-<li>The move is played on the board like a Decision question, then "Validate" (<code>ENTER</code>); "Put back" (<code>BACKSPACE</code>) puts the checkers back before validation. Nothing can be taken back afterwards.</li>
+<li>Before the roll, a click on the dice rolls them; a click on the cube offers to double, and the board asks “Double” or “Cancel”. When the cube is not available, the roll is automatic.</li>
+<li>Facing a double from the Bot, the board asks “Take” or “Pass”.</li>
+<li>A click on a checker plays it with the left die that is still free, or with the other one when the left die cannot play it; a double is played in four clicks. A checker can also be dragged to its destination. A played die is greyed out. Only the steps of a legal move go through.</li>
+<li>Before playing, a click on the dice, or a right-click on the board, swaps their order. During the move, a right-click on the board takes back all the checkers played (<code>BACKSPACE</code> too).</li>
+<li>The complete move is validated by a click on the dice, by “Validate” on the board, or by <code>ENTER</code>. Nothing can be taken back afterwards.</li>
 <li>The Bot answers immediately; its moves are replayed on the board, slowly.</li>
-<li>"Resign the game" concedes the current game for a single, a gammon or a backgammon.</li>
+<li>A right-click outside the board, or on the board outside its move, opens the Duel menu: put the position on the Pile or take it off, resign the game for a single game, a gammon or a backgammon (on one's turn, after confirmation), suspend, stop. This menu offers neither evaluation nor editing.</li>
 <li>"Suspend" puts the Duel on hold, clocks stopped. "Stop and keep" writes the Match as it stands; "Stop and discard" writes nothing. Stopping is never conceding the game.</li>
+<li>A double-click outside the board puts the position on the Pile, or takes it off, like <code>B</code>; a short banner confirms it on the board.</li>
 </ul>
 <p>Each decision carries its duration, with or without a time control. A resignation has no duration recorded in the Match.</p>
 <p>At the end, the Match is written, its analysis starts and the Matches tab opens on it. On the command line, <code>blunderdb duel</code> drives the same Duel (see duel — Play a Duel).</p>
@@ -1081,6 +1085,10 @@ export default {
 <tr>
 <td>b</td>
 <td>Put the displayed position on the Pile (the "come back to this" collection), or take it off.</td>
+</tr>
+<tr>
+<td>Double-click outside the board</td>
+<td>Put the displayed position on the Pile, or take it off — except in edit mode and in Eval, and during a move played on the board outside a Duel, where this double-click resets.</td>
 </tr>
 </tbody>
 </table>
@@ -1294,6 +1302,45 @@ export default {
 <tr>
 <td>?</td>
 <td>Show/hide the help.</td>
+</tr>
+</tbody>
+</table>
+<h3>Duel on the board</h3>
+<table>
+<thead>
+<tr>
+<th>Gesture</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Click on the dice (before the roll)</td>
+<td>Roll the dice.</td>
+</tr>
+<tr>
+<td>Click on the cube (before the roll)</td>
+<td>Offer to double; “Double” or “Cancel” confirms on the board.</td>
+</tr>
+<tr>
+<td>Click on a checker</td>
+<td>Play it with the left die that is still free, or with the other one if the left die cannot play it. A played die is greyed out.</td>
+</tr>
+<tr>
+<td>Drag a checker</td>
+<td>Play it to the point where it is dropped, if a legal move allows it.</td>
+</tr>
+<tr>
+<td>Click on the dice (move in progress)</td>
+<td>No die played: swap their order. Complete move: validate it.</td>
+</tr>
+<tr>
+<td>Right-click on the board (move in progress)</td>
+<td>Take back all the checkers played; with no checker played, swap the dice.</td>
+</tr>
+<tr>
+<td>Right-click outside the board, or outside its move</td>
+<td>Open the Duel menu: Pile, resignation, suspension, stop.</td>
 </tr>
 </tbody>
 </table>

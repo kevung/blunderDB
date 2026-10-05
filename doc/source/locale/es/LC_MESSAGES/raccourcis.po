@@ -211,6 +211,20 @@ msgstr ""
 "Poner la posición mostrada en la Pila (la colección «para revisar más "
 "tarde») o quitarla de ella."
 
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic hors du plateau"
+msgstr "Doble clic fuera del tablero"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
+"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
+"double-clic remet à zéro."
+msgstr ""
+"Poner la posición mostrada en la Pila, o retirarla — salvo en edición y "
+"en Eval, y durante una jugada hecha en el tablero fuera de un Duelo, "
+"donde este doble clic vuelve a cero."
+
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"
 msgstr "Navegación"
@@ -621,6 +635,74 @@ msgstr "?"
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher l'aide."
 msgstr "Mostrar/ocultar la ayuda."
+
+#: ../../source/raccourcis.rst:148
+msgid "Duel au plateau"
+msgstr "Duelo en el tablero"
+
+#: ../../source/raccourcis.rst:1
+msgid "Geste"
+msgstr "Gesto"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (avant le lancer)"
+msgstr "Clic en los dados (antes de la tirada)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Lancer les dés."
+msgstr "Lanzar los dados."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur le videau (avant le lancer)"
+msgstr "Clic en el cubo (antes de la tirada)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Proposer de doubler ; « Doubler » ou « Annuler » confirme sur le plateau."
+msgstr "Proponer doblar; «Doblar» o «Cancelar» confirma en el tablero."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur un pion"
+msgstr "Clic en una ficha"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
+"ne peut pas le jouer. Un dé joué est grisé."
+msgstr ""
+"Jugarla con el dado izquierdo aún libre, o con el otro si el izquierdo no"
+" puede jugarla. Un dado jugado se atenúa."
+
+#: ../../source/raccourcis.rst:1
+msgid "Glisser un pion"
+msgstr "Arrastrar una ficha"
+
+#: ../../source/raccourcis.rst:1
+msgid "Le jouer vers le point où il est lâché, si un coup légal le permet."
+msgstr "Jugarla hasta el punto donde se suelta, si una jugada legal lo permite."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (coup en cours)"
+msgstr "Clic en los dados (jugada en curso)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+msgstr "Ningún dado jugado: invertir su orden. Jugada completa: validarla."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup en cours)"
+msgstr "Clic derecho en el tablero (jugada en curso)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+msgstr "Recuperar todas las fichas jugadas; sin ficha jugada, invertir los dados."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau, ou hors de son coup"
+msgstr "Clic derecho fuera del tablero, o fuera de su jugada"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt."
+msgstr "Abrir el menú del Duelo: Pila, abandono, suspensión, parada."
 
 #: ../../source/raccourcis.rst:147
 msgid "Onglets de vues"

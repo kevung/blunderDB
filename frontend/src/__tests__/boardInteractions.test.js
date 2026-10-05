@@ -45,7 +45,7 @@ function emptyPos() {
 }
 
 /** A mounted board: canvas + stores + deps, with the click helpers. */
-function mount({ mode = 'EDIT', orientation = 'right', scale = 1, position = emptyPos(), mirrored = false } = {}) {
+function mount({ mode = 'EDIT', orientation = 'right', scale = 1, position = emptyPos(), mirrored = false, extra = /** @type {any} */ ({}) } = {}) {
     const canvas = document.createElement('div');
     document.body.appendChild(canvas);
     canvas.getBoundingClientRect = () => new DOMRect(RECT.left, RECT.top, W * scale, H * scale);
@@ -76,7 +76,8 @@ function mount({ mode = 'EDIT', orientation = 'right', scale = 1, position = emp
         reset: vi.fn(),
         openContextMenu: vi.fn(),
         resetQuizPlay: vi.fn(),
-        quizDisplayMirrored: () => mirrored
+        quizDisplayMirrored: () => mirrored,
+        ...extra
     };
     const detach = attachBoardInteractions(canvas, deps);
 
@@ -334,6 +335,95 @@ describe('hitTestSideControls', () => {
         const top = sideTargets(geom, cfg, 1).die(0);
         expect(hitTestSideControls(top.x, top.y, geom, cfg, 1).die).toBe(0);
         expect(hitTestSideControls(top.x, top.y, geom, cfg, 0).die).toBeNull();
+    });
+});
+
+describe('the Pile on a double click outside the frame', () => {
+    test('toggles the Pile where the double click has no other meaning', () => {
+        const togglePile = vi.fn();
+        const b = mount({ mode: 'NORMAL', extra: { togglePile } });
+        b.fire('dblclick', b.slot(7, 0));
+        expect(togglePile).not.toHaveBeenCalled();
+        b.fire('dblclick', { x: 5, y: 5 });
+        expect(togglePile).toHaveBeenCalledTimes(1);
+        // On the dice, it is not outside: two clicks there are their own gesture.
+        b.fire('dblclick', sideTargets(b.geom, b.cfg, 0).die(0));
+        expect(togglePile).toHaveBeenCalledTimes(1);
+    });
+
+    test('EDIT/EVAL keep the reset, a move in progress keeps its own reset', () => {
+        const togglePile = vi.fn();
+        const b = mount({ mode: 'EDIT', extra: { togglePile } });
+        b.fire('dblclick', { x: 5, y: 5 });
+        expect(b.deps.reset).toHaveBeenCalledTimes(1);
+        b.state.mode = 'NORMAL';
+        b.stores.quizPlay.set(newPlay(emptyPos(), []));
+        b.fire('dblclick', { x: 5, y: 5 });
+        expect(b.deps.resetQuizPlay).toHaveBeenCalledTimes(1);
+        expect(togglePile).not.toHaveBeenCalled();
+    });
+
+    test('the margins around the drawing count as outside', () => {
+        const togglePile = vi.fn();
+        const container = document.createElement('div');
+        document.body.appendChild(container);
+        const b = mount({ mode: 'NORMAL', extra: { togglePile, container } });
+        container.appendChild(b.canvas);
+        container.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+        expect(togglePile).toHaveBeenCalledTimes(1);
+        b.detach();
+        container.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+        expect(togglePile).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe('a Duel holds the board', () => {
+    function duelBoard(contextAnswer = true) {
+        const duel = { holds: () => true, press: vi.fn(), drop: vi.fn(), context: vi.fn(() => contextAnswer) };
+        const togglePile = vi.fn();
+        const b = mount({ mode: 'DUEL', extra: { duel, togglePile, displayRoller: () => 0 } });
+        b.stores.quizPlay.set(newPlay(emptyPos(), []));
+        return { b, duel, togglePile };
+    }
+
+    test('a die is pressed at once, a checker on release; a drag drops', () => {
+        const { b, duel } = duelBoard();
+        b.fire('mousedown', sideTargets(b.geom, b.cfg, 0).die(1));
+        expect(duel.press).toHaveBeenCalledWith({ kind: 'die', index: 1 });
+        b.fire('mouseup', sideTargets(b.geom, b.cfg, 0).die(1));
+        b.click(b.slot(8, 0));
+        expect(duel.press).toHaveBeenLastCalledWith({ kind: 'point', point: 8 });
+        b.drag(b.slot(8, 0), b.slot(5, 0));
+        expect(duel.drop).toHaveBeenCalledWith(8, 5);
+        // The right button presses nothing: the context menu event decides.
+        duel.press.mockClear();
+        b.click(b.slot(8, 0), 2);
+        expect(duel.press).not.toHaveBeenCalled();
+    });
+
+    test('the cube is pressed as the cube', () => {
+        const { b, duel } = duelBoard();
+        const box = b.state.cubeBox;
+        b.fire('mousedown', { x: box.x, y: box.y });
+        expect(duel.press).toHaveBeenCalledWith({ kind: 'cube' });
+    });
+
+    test('a right click asks the Duel, which opens its menu or takes the gesture', () => {
+        const opening = duelBoard(true);
+        opening.b.fire('contextmenu', { x: 5, y: 5 }, 2);
+        expect(opening.duel.context).toHaveBeenCalledWith({ kind: 'outside' });
+        expect(opening.b.deps.openContextMenu).toHaveBeenCalledTimes(1);
+        const taking = duelBoard(false);
+        taking.b.fire('contextmenu', taking.b.slot(13, 0), 2);
+        expect(taking.duel.context).toHaveBeenCalledWith({ kind: 'point', point: 13 });
+        expect(taking.b.deps.openContextMenu).not.toHaveBeenCalled();
+    });
+
+    test('a double click outside toggles the Pile, never resets the move', () => {
+        const { b, togglePile } = duelBoard();
+        b.fire('dblclick', { x: 5, y: 5 });
+        expect(togglePile).toHaveBeenCalledTimes(1);
+        expect(b.deps.resetQuizPlay).not.toHaveBeenCalled();
     });
 });
 

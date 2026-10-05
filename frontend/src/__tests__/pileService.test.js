@@ -59,8 +59,8 @@ describe('pileService', () => {
     it('reloads the collections after a toggle, the Pile created on first use included', async () => {
         collectionsStore.set([]);
         const pile = { id: 3, name: 'Pile' };
-        GetAllCollections.mockResolvedValue([pile]);
-        TogglePile.mockResolvedValue({ onPile: true, brought: false });
+        vi.mocked(GetAllCollections).mockResolvedValue(/** @type {any} */ ([pile]));
+        vi.mocked(TogglePile).mockResolvedValue(/** @type {any} */ ({ onPile: true, brought: false }));
         const before = get(pileChangedStore);
         await togglePile();
         expect(GetAllCollections).toHaveBeenCalled();

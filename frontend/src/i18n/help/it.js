@@ -281,7 +281,7 @@ export default {
 <h3>Pannello Raccolte</h3>
 <p>Nei pannelli Collezioni, Tornei, Anki e Trascrizione, il pulsante <strong>+</strong> dell'intestazione, seguito dal nome di ciò che crea (<strong>+ Nuova collezione</strong>, <strong>+ Nuovo torneo</strong>, <strong>+ Nuovo mazzo</strong>, <strong>+ Nuova trascrizione</strong>), è l'unico gesto di creazione: apre il campo di inserimento, che <em>Esc</em> o <strong>Annulla</strong> chiude nei pannelli Collezioni e Tornei. Nell'elenco dei match, l'icona ⌨ apre la trascrizione del match e l'icona ✎ ne corregge i metadati.</p>
 <p>Il pannello <strong>Collezioni</strong> (<em>CTRL-B</em>) consente di gestire collezioni di posizioni. Le collezioni possono essere create, rinominate ed eliminate. Vi si possono aggiungere o togliere posizioni (tasto <em>Canc</em>, viene chiesta conferma). Fare doppio clic su una collezione per scorrerne le posizioni con i tasti <em>SINISTRA</em> e <em>DESTRA</em>. Il comando <code>ss</code> cerca tra le posizioni della collezione aperta; <em>Esc</em> riporta poi alla collezione (vedere Pannello Ricerca). L'ordine delle collezioni e delle posizioni all'interno di una collezione può essere modificato per trascinamento. Premere <em>CTRL-B</em> o eseguire il comando <code>collection</code> per mostrare o nascondere il pannello.</p>
-<p>La <strong>Pila</strong> è la raccolta del gesto «da rivedere più tardi»: il tasto <em>b</em> o il pulsante segnalibro della barra degli strumenti mette la posizione mostrata nella Pila, e lo stesso gesto la toglie. Un segnalibro nell'angolo del tavoliere indica che la posizione vi si trova. Il gesto vale ovunque sia mostrata una posizione: revisione, ricerca, Trascrizione. La Pila è una raccolta ordinaria — rinominata, riordinata, esportata, svuotata come ogni altra; viene creata al primo uso e ricreata se è stata eliminata. Una posizione che non è ancora nella libreria (una bozza del tavoliere di ricerca o di valutazione) vi viene scritta subito, come posizione portata da sola, poi messa nella Pila. La riga di comando fa lo stesso gesto con <code>collection pile</code>.</p>
+<p>La <strong>Pila</strong> è la raccolta del gesto «rivedere più tardi»: un doppio clic fuori dalla scacchiera, il tasto <em>b</em> o il pulsante segnalibro della barra degli strumenti mette la posizione mostrata sulla Pila, e lo stesso gesto la toglie. Un breve banner sulla scacchiera conferma ogni cambio, e un segnalibro all'angolo della scacchiera indica che la posizione vi si trova. Il gesto vale ovunque sia mostrata una posizione: revisione, ricerca, Trascrizione, Duello. In modifica e in Eval, e durante una mossa giocata sulla scacchiera fuori da un Duello, il doppio clic fuori dalla scacchiera mantiene il suo senso primo — azzerare — e valgono solo <em>b</em> e il pulsante. La Pila è una raccolta ordinaria — rinominata, riordinata, esportata, svuotata come le altre; è creata al primo uso e ricreata se è stata eliminata. Una posizione che non è ancora nella libreria (una bozza della scacchiera di ricerca o di valutazione) vi è scritta all'istante, come una posizione portata da sola, poi messa sulla Pila. La riga di comando fa lo stesso gesto con <code>collection pile</code>.</p>
 <p>Una raccolta può essere <strong>viva</strong>: il suo contenuto non è più una lista fatta a mano ma il risultato di una <strong>ricerca</strong>, rivalutato ogni volta che la si apre. Il pulsante ◇ in testa alla raccolta la rende viva con l'ultima ricerca lanciata; ◈ segnala che lo è già, e lo stesso pulsante le restituisce la lista. Nulla viene distrutto: le posizioni che conteneva sono ancora lì quando si torna indietro.</p>
 <p>Il pulsante ❄, visibile su una raccolta viva, la <strong>congela</strong>: le posizioni che la ricerca seleziona in quel momento diventano il contenuto di una raccolta ordinaria, nell'ordine della ricerca, e la query viene cancellata. Le posizioni che conteneva prima di essere viva vengono sostituite.</p>
 <p>Una raccolta viva la cui interrogazione porta un token che questa versione non conosce più <strong>rifiuta di aprirsi</strong> e lo dice, invece di restituire l'intera base. È l'unico guasto che un filtro salvato non deve avere: allargarsi in silenzio.</p>
@@ -915,13 +915,17 @@ export default {
 <li><strong>Il tuo nome</strong> e <strong>Salva il match</strong>: se deselezionato, il Duello terminato viene scartato invece di diventare un Match.</li>
 </ul>
 <p>«Riprendi» riapre un Duello sospeso nello stesso punto, con gli stessi dadi a venire; i suoi orologi erano fermi.</p>
-<p>Durante il Duello, il pannello mostra il punteggio, il cubo, gli orologi e il foglio del match su due colonne, come la Trascrizione. Mostra anche, fin dalla creazione, l'impronta SHA-256 del seme dei dadi: il seme resta segreto fino alla fine, e il suo SHA-256, letto con il match, deve ridare questa impronta. Il punteggio e gli orologi restano nella barra di stato quando la scheda è ripiegata. Il tavoliere passa alla modalità <strong>DUELLO</strong>: la libreria non si sfoglia più, la modifica, il pannello Eval e le altre schede non si aprono, e il motore tace: nessuna valutazione, nessun candidato. Restano solo la Pila (<code>B</code>), il pipcount (<code>P</code>) e l'aiuto.</p>
+<p>Il Duello si gioca sulla scacchiera. Il pannello mostra il foglio del match in due colonne, come la Trascrizione, gli orologi quando corre una cadenza, una riga che dice ciò che è atteso, e «Sospendi», «Ferma e conserva», «Ferma e scarta». Il punteggio e il cubo sono quelli della scacchiera; il punteggio e gli orologi restano nella barra di stato quando la scheda è ripiegata. L'impronta SHA-256 del seme dei dadi, pubblicata dall'Arbitro alla creazione, si legge con il seme nell'origine del Match terminato. La scacchiera passa in modalità <strong>DUELLO</strong>: la libreria non si sfoglia più, la modifica, il pannello Eval e le altre schede non si aprono, e il motore tace — nessuna valutazione, nessun candidato. Restano solo la Pila (<code>B</code>), il pipcount (<code>P</code>) e la guida.</p>
 <ul>
-<li>Prima del tiro, «Tira» o «Raddoppia»; di fronte a un raddoppio, «Accetta» o «Rifiuta». Quando il cubo non è disponibile, il tiro è automatico.</li>
-<li>La mossa si gioca sul tavoliere come una domanda di Decisione, poi «Convalida» (<code>INVIO</code>); «Ripristina» (<code>BACKSPACE</code>) rimette le pedine a posto prima della convalida. Dopo non si può più annullare nulla.</li>
+<li>Prima del lancio, un clic sui dadi li lancia; un clic sul cubo propone di raddoppiare, e la scacchiera chiede «Raddoppia» o «Annulla». Quando il cubo non è disponibile, il lancio è automatico.</li>
+<li>Di fronte a un raddoppio del Bot, la scacchiera chiede «Accetta» o «Rifiuta».</li>
+<li>Un clic su una pedina la gioca con il dado di sinistra ancora libero, o con l'altro quando quello di sinistra non può giocarla; un doppio si gioca con quattro clic. Una pedina può anche essere trascinata verso la sua destinazione. Un dado giocato è attenuato. Passano solo i passi di una mossa legale.</li>
+<li>Prima di giocare, un clic sui dadi, o un clic destro sulla scacchiera, ne inverte l'ordine. Durante la mossa, il clic destro sulla scacchiera riprende tutte le pedine giocate (anche <code>BACKSPACE</code>).</li>
+<li>La mossa completa si convalida con un clic sui dadi, con «Convalida» sulla scacchiera, o con <code>INVIO</code>. Dopo non si riprende nulla.</li>
 <li>Il Bot risponde subito; le sue mosse vengono rigiocate sul tavoliere, lentamente.</li>
-<li>«Abbandona la partita» cede la partita in corso per un semplice, un gammon o un backgammon.</li>
+<li>Il clic destro fuori dalla scacchiera, o sulla scacchiera fuori dalla sua mossa, apre il menu del Duello: mettere la posizione sulla Pila o toglierla, abbandonare la partita per un semplice, un gammon o un backgammon (al proprio turno, dopo conferma), sospendere, fermare. Questo menu non offre né valutazione né modifica.</li>
 <li>«Sospendi» mette il Duello in sospeso, con gli orologi fermi. «Ferma e conserva» scrive il Match così com'è; «Ferma e scarta» non scrive nulla. Fermare non è mai cedere la partita.</li>
+<li>Un doppio clic fuori dalla scacchiera mette la posizione sulla Pila, o la toglie, come <code>B</code>; un breve banner lo conferma sulla scacchiera.</li>
 </ul>
 <p>Ogni decisione porta la sua durata, con o senza cadenza. Un abbandono non ha una durata registrata nel Match.</p>
 <p>Alla fine il Match viene scritto, la sua analisi parte e la scheda Partite si apre su di esso. Da riga di comando, <code>blunderdb duel</code> pilota lo stesso Duello (vedi duel — Giocare un Duello).</p>
@@ -1081,6 +1085,10 @@ export default {
 <tr>
 <td>b</td>
 <td>Mettere la posizione mostrata nella Pila (la raccolta «da rivedere più tardi») o toglierla.</td>
+</tr>
+<tr>
+<td>Doppio clic fuori dalla scacchiera</td>
+<td>Mettere la posizione mostrata sulla Pila, o toglierla — tranne in modifica e in Eval, e durante una mossa giocata sulla scacchiera fuori da un Duello, dove questo doppio clic azzera.</td>
 </tr>
 </tbody>
 </table>
@@ -1294,6 +1302,45 @@ export default {
 <tr>
 <td>?</td>
 <td>Mostra/nascondi l'aiuto.</td>
+</tr>
+</tbody>
+</table>
+<h3>Duello sulla scacchiera</h3>
+<table>
+<thead>
+<tr>
+<th>Gesto</th>
+<th>Azione</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic sui dadi (prima del lancio)</td>
+<td>Lanciare i dadi.</td>
+</tr>
+<tr>
+<td>Clic sul cubo (prima del lancio)</td>
+<td>Proporre di raddoppiare; «Raddoppia» o «Annulla» conferma sulla scacchiera.</td>
+</tr>
+<tr>
+<td>Clic su una pedina</td>
+<td>Giocarla con il dado di sinistra ancora libero, o con l'altro se quello di sinistra non può giocarla. Un dado giocato è attenuato.</td>
+</tr>
+<tr>
+<td>Trascinare una pedina</td>
+<td>Giocarla verso il punto in cui viene rilasciata, se una mossa legale lo permette.</td>
+</tr>
+<tr>
+<td>Clic sui dadi (mossa in corso)</td>
+<td>Nessun dado giocato: invertirne l'ordine. Mossa completa: convalidarla.</td>
+</tr>
+<tr>
+<td>Clic destro sulla scacchiera (mossa in corso)</td>
+<td>Riprendere tutte le pedine giocate; senza pedine giocate, invertire i dadi.</td>
+</tr>
+<tr>
+<td>Clic destro fuori dalla scacchiera, o fuori dalla sua mossa</td>
+<td>Aprire il menu del Duello: Pila, abbandono, sospensione, arresto.</td>
 </tr>
 </tbody>
 </table>

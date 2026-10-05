@@ -207,6 +207,20 @@ msgstr ""
 "Mettere la posizione mostrata nella Pila (la raccolta «da rivedere più "
 "tardi») o toglierla."
 
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic hors du plateau"
+msgstr "Doppio clic fuori dalla scacchiera"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
+"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
+"double-clic remet à zéro."
+msgstr ""
+"Mettere la posizione mostrata sulla Pila, o toglierla — tranne in "
+"modifica e in Eval, e durante una mossa giocata sulla scacchiera fuori da"
+" un Duello, dove questo doppio clic azzera."
+
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"
 msgstr "Navigazione"
@@ -615,6 +629,80 @@ msgstr "?"
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher l'aide."
 msgstr "Mostra/nascondi l'aiuto."
+
+#: ../../source/raccourcis.rst:148
+msgid "Duel au plateau"
+msgstr "Duello sulla scacchiera"
+
+#: ../../source/raccourcis.rst:1
+msgid "Geste"
+msgstr "Gesto"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (avant le lancer)"
+msgstr "Clic sui dadi (prima del lancio)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Lancer les dés."
+msgstr "Lanciare i dadi."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur le videau (avant le lancer)"
+msgstr "Clic sul cubo (prima del lancio)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Proposer de doubler ; « Doubler » ou « Annuler » confirme sur le plateau."
+msgstr ""
+"Proporre di raddoppiare; «Raddoppia» o «Annulla» conferma sulla "
+"scacchiera."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur un pion"
+msgstr "Clic su una pedina"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci "
+"ne peut pas le jouer. Un dé joué est grisé."
+msgstr ""
+"Giocarla con il dado di sinistra ancora libero, o con l'altro se quello "
+"di sinistra non può giocarla. Un dado giocato è attenuato."
+
+#: ../../source/raccourcis.rst:1
+msgid "Glisser un pion"
+msgstr "Trascinare una pedina"
+
+#: ../../source/raccourcis.rst:1
+msgid "Le jouer vers le point où il est lâché, si un coup légal le permet."
+msgstr ""
+"Giocarla verso il punto in cui viene rilasciata, se una mossa legale lo "
+"permette."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic sur les dés (coup en cours)"
+msgstr "Clic sui dadi (mossa in corso)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Aucun dé joué : intervertir leur ordre. Coup complet : le valider."
+msgstr "Nessun dado giocato: invertirne l'ordine. Mossa completa: convalidarla."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup en cours)"
+msgstr "Clic destro sulla scacchiera (mossa in corso)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reprendre tous les pions joués ; sans pion joué, intervertir les dés."
+msgstr ""
+"Riprendere tutte le pedine giocate; senza pedine giocate, invertire i "
+"dadi."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau, ou hors de son coup"
+msgstr "Clic destro fuori dalla scacchiera, o fuori dalla sua mossa"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le menu du Duel : Pile, abandon, suspension, arrêt."
+msgstr "Aprire il menu del Duello: Pila, abbandono, sospensione, arresto."
 
 #: ../../source/raccourcis.rst:147
 msgid "Onglets de vues"

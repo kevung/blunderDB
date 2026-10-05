@@ -281,7 +281,7 @@ export default {
 <h3>Kokoelmapaneeli</h3>
 <p>Kokoelmat-, Turnaukset-, Anki- ja Litterointi-paneeleissa otsikon <strong>+</strong>-painike, jota seuraa luotavan nimi (<strong>+ Uusi kokoelma</strong>, <strong>+ Uusi turnaus</strong>, <strong>+ Uusi pakka</strong>, <strong>+ Uusi litterointi</strong>), on ainoa luontitapa: se avaa syöttökentän, jonka <em>Esc</em> tai <strong>Peruuta</strong> sulkee Kokoelmat- ja Turnaukset-paneeleissa. Otteluluettelossa ⌨-kuvake avaa ottelun litteroinnin ja ✎-kuvake korjaa sen metatiedot.</p>
 <p><strong>Kokoelmat</strong>-paneeli (<em>CTRL-B</em>) hallinnoi asemakokoelmia. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Niihin voi lisätä asemia tai poistaa niitä (<em>Del</em>-näppäin, vahvistus pyydetään). Kaksoisnapsauta kokoelmaa selataksesi sen asemia <em>VASEN</em>- ja <em>OIKEA</em>-näppäimillä. Komento <code>ss</code> hakee avoimen kokoelman asemista; <em>Esc</em> palaa sen jälkeen kokoelmaan (katso Hakupaneeli). Kokoelmien ja kokoelman sisäisten asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Paina <em>CTRL-B</em> tai suorita komento <code>collection</code> näyttääksesi tai piilottaaksesi paneelin.</p>
-<p><strong>Pino</strong> on ”palaa tähän myöhemmin” -eleen kokoelma: <em>b</em>-näppäin tai työkalupalkin kirjanmerkkipainike lisää näytetyn aseman Pinoon, ja sama ele poistaa sen sieltä. Laudan kulmassa oleva kirjanmerkki kertoo, että asema on Pinossa. Ele toimii kaikkialla, missä asema näytetään: läpikäynnissä, haussa ja Litteroinnissa. Pino on tavallinen kokoelma — se nimetään uudelleen, järjestetään uudelleen, viedään ja tyhjennetään kuten muutkin; se luodaan ensimmäisellä käyttökerralla ja luodaan uudelleen, jos se poistettiin. Asema, jota ei vielä ole kirjastossa (haku- tai arviointilaudan luonnos), kirjoitetaan siihen heti yksin tuotuna asemana ja lisätään sitten Pinoon. Komentorivi tekee saman eleen komennolla <code>collection pile</code>.</p>
+<p><strong>Pino</strong> on ”katso myöhemmin” -eleen kokoelma: kaksoisnapsautus laudan ulkopuolella, näppäin <em>b</em> tai työkalupalkin kirjanmerkkipainike lisää näytetyn aseman pinoon, ja sama ele poistaa sen sieltä. Lyhyt banneri laudalla vahvistaa jokaisen vaihdon, ja laudan kulmassa oleva kirjanmerkki kertoo, että asema on pinossa. Ele toimii kaikkialla, missä asema on näkyvissä: tarkastelussa, haussa, Transkriptiossa, Kaksintaistelussa. Muokkauksessa ja Evalissa sekä Kaksintaistelun ulkopuolella laudalla pelatun siirron aikana kaksoisnapsautus laudan ulkopuolella säilyttää alkuperäisen merkityksensä — nollauksen — ja vain <em>b</em> ja painike toimivat. Pino on tavallinen kokoelma — se nimetään uudelleen, järjestetään uudelleen, viedään ja tyhjennetään kuten muutkin; se luodaan ensimmäisellä käyttökerralla ja luodaan uudelleen, jos se on poistettu. Asema, jota ei vielä ole kirjastossa (haku- tai arviointilaudan luonnos), kirjoitetaan sinne heti kuten yksinään tuotu asema ja lisätään sitten pinoon. Komentorivi tekee saman eleen komennolla <code>collection pile</code>.</p>
 <p>Kokoelma voi olla <strong>elävä</strong>: sen sisältö ei ole enää käsin tehty lista vaan <strong>haun</strong> tulos, joka lasketaan uudelleen joka avauksella. Kokoelman otsikon ◇-painike tekee siitä elävän viimeisimmällä haulla; ◈ kertoo sen jo olevan, ja sama painike palauttaa listan. Mitään ei tuhota: sen sisältämät asemat ovat yhä tallella, kun palaat.</p>
 <p>Elävässä kokoelmassa näkyvä painike ❄ <strong>jäädyttää</strong> sen: haun sillä hetkellä valitsemista asemista tulee tavallisen kokoelman sisältö haun järjestyksessä, ja kysely tyhjennetään. Asemat, jotka kokoelmassa oli ennen sen muuttumista eläväksi, korvataan.</p>
 <p>Elävä kokoelma, jonka kysely sisältää tunnuksen jota tämä versio ei enää tunne, <strong>kieltäytyy avautumasta</strong> ja sanoo sen sen sijaan että palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla suodattimella ei saa olla: laajeta hiljaisuudessa.</p>
@@ -915,13 +915,17 @@ export default {
 <li><strong>Nimesi</strong> ja <strong>Tallenna ottelu</strong>: kun valinta on poistettu, päättynyt Kaksintaistelu hylätään sen sijaan, että siitä tulisi Ottelu.</li>
 </ul>
 <p>«Jatka peliä» avaa keskeytetyn Kaksintaistelun uudelleen samasta kohdasta, samoilla tulevilla nopilla; sen kellot olivat pysähdyksissä.</p>
-<p>Kaksintaistelun aikana paneeli näyttää tilanteen, kuution, kellot ja ottelulomakkeen kahdessa sarakkeessa, kuten Litterointi. Se näyttää myös luonnista lähtien noppien siemenen SHA-256-sormenjäljen: siemen pysyy salaisena loppuun asti, ja sen ottelun mukana luetun SHA-256:n on annettava tämä sormenjälki. Tilanne ja kellot pysyvät tilarivillä, kun välilehti on suljettu. Lauta siirtyy <strong>KAKSINTAISTELU</strong>-tilaan: kirjastoa ei voi selata, muokkaus, Eval-paneeli ja muut välilehdet eivät avaudu, ja moottori on vaiti: ei arviointia, ei ehdokkaita. Jäljellä ovat vain Pino (<code>B</code>), pipcount (<code>P</code>) ja ohje.</p>
+<p>Kaksintaistelu pelataan laudalla. Paneeli näyttää ottelulomakkeen kahdessa sarakkeessa kuten Transkriptio, kellot aikataulun ollessa käynnissä, rivin, joka kertoo mitä odotetaan, sekä ”Keskeytä”, ”Lopeta ja säilytä”, ”Lopeta ja hylkää”. Tulos ja kuutio ovat laudan; tulos ja kellot pysyvät tilarivillä, kun välilehti on suljettu. Noppien siemenen SHA-256-sormenjälki, jonka Erotuomari julkaisee heti luonnissa, luetaan siemenen kanssa päättyneen Ottelun alkuperästä. Lauta siirtyy <strong>KAKSINTAISTELU</strong>-tilaan: kirjastoa ei voi selata, muokkaus, Eval-paneeli ja muut välilehdet eivät avaudu, ja moottori vaikenee — ei arviointia, ei ehdokkaita. Jäljelle jäävät vain Pino (<code>B</code>), pipcount (<code>P</code>) ja ohje.</p>
 <ul>
-<li>Ennen heittoa «Heitä» tai «Tuplaa»; tuplauksen edessä «Ota vastaan» tai «Luovuta». Kun kuutio ei ole käytettävissä, heitto tehdään automaattisesti.</li>
-<li>Siirto pelataan laudalla kuin Päätös-kysymys, sitten «Vahvista» (<code>ENTER</code>); «Palauta» (<code>BACKSPACE</code>) palauttaa nappulat paikoilleen ennen vahvistusta. Sen jälkeen mitään ei voi perua.</li>
+<li>Ennen heittoa noppiin napsauttaminen heittää ne; kuutioon napsauttaminen ehdottaa tuplausta, ja lauta kysyy ”Tuplaa” tai ”Peruuta”. Kun kuutio ei ole käytettävissä, heitto tapahtuu automaattisesti.</li>
+<li>Botin tuplauksen edessä lauta kysyy ”Ota vastaan” tai ”Luovuta”.</li>
+<li>Napsautus nappulaan pelaa sen vasemmalla vielä vapaalla nopalla tai toisella, kun vasen ei voi pelata sitä; tuplaheitto pelataan neljällä napsautuksella. Nappulan voi myös vetää kohteeseensa. Pelattu noppa harmaantuu. Vain laillisen siirron askeleet menevät läpi.</li>
+<li>Ennen pelaamista noppiin napsauttaminen tai oikea napsautus laudalla vaihtaa niiden järjestyksen. Siirron aikana oikea napsautus laudalla ottaa takaisin kaikki pelatut nappulat (myös <code>BACKSPACE</code>).</li>
+<li>Täysi siirto vahvistetaan napsauttamalla noppia, painikkeella ”Vahvista” laudalla tai näppäimellä <code>ENTER</code>. Sen jälkeen mitään ei voi ottaa takaisin.</li>
 <li>Botti vastaa heti; sen siirrot toistetaan laudalla hitaasti.</li>
-<li>«Luovuta peli» luovuttaa käynnissä olevan pelin yksinkertaisena, gammonina tai backgammonina.</li>
+<li>Oikea napsautus laudan ulkopuolella tai laudalla siirron ulkopuolella avaa Kaksintaistelun valikon: aseman lisääminen pinoon tai poistaminen sieltä, pelin luovuttaminen yksinkertaisena, gammonina tai backgammonina (omalla vuorolla, vahvistuksen jälkeen), keskeytys, lopetus. Valikko ei tarjoa arviointia eikä muokkausta.</li>
 <li>«Keskeytä» asettaa Kaksintaistelun tauolle kellot pysäytettyinä. «Lopeta ja säilytä» kirjoittaa Ottelun sellaisenaan; «Lopeta ja hylkää» ei kirjoita mitään. Lopettaminen ei ole koskaan pelin luovuttamista.</li>
+<li>Kaksoisnapsautus laudan ulkopuolella lisää aseman pinoon tai poistaa sen sieltä kuten <code>B</code>; lyhyt banneri vahvistaa sen laudalla.</li>
 </ul>
 <p>Jokaisella päätöksellä on kestonsa, ajankäytöllä tai ilman. Luovutuksella ei ole Otteluun tallennettua kestoa.</p>
 <p>Lopuksi Ottelu kirjoitetaan, sen analyysi käynnistyy ja Ottelut-välilehti avautuu siihen. Komentoriviltä <code>blunderdb duel</code> ohjaa samaa Kaksintaistelua (katso duel — Pelaa Kaksintaistelu).</p>
@@ -1081,6 +1085,10 @@ export default {
 <tr>
 <td>b</td>
 <td>Lisää näytetty asema Pinoon (kokoelma ”palaa tähän myöhemmin”) tai poista se sieltä.</td>
+</tr>
+<tr>
+<td>Kaksoisnapsautus laudan ulkopuolella</td>
+<td>Näytetyn aseman lisääminen pinoon tai poistaminen sieltä — paitsi muokkauksessa ja Evalissa sekä Kaksintaistelun ulkopuolella laudalla pelatun siirron aikana, jolloin tämä kaksoisnapsautus nollaa.</td>
 </tr>
 </tbody>
 </table>
@@ -1294,6 +1302,45 @@ export default {
 <tr>
 <td>?</td>
 <td>Näytä/piilota ohje.</td>
+</tr>
+</tbody>
+</table>
+<h3>Kaksintaistelu laudalla</h3>
+<table>
+<thead>
+<tr>
+<th>Ele</th>
+<th>Toiminto</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Napsautus noppiin (ennen heittoa)</td>
+<td>Noppien heitto.</td>
+</tr>
+<tr>
+<td>Napsautus kuutioon (ennen heittoa)</td>
+<td>Tuplauksen ehdottaminen; ”Tuplaa” tai ”Peruuta” vahvistaa laudalla.</td>
+</tr>
+<tr>
+<td>Napsautus nappulaan</td>
+<td>Sen pelaaminen vasemmalla vielä vapaalla nopalla tai toisella, jos vasen ei voi pelata sitä. Pelattu noppa harmaantuu.</td>
+</tr>
+<tr>
+<td>Nappulan vetäminen</td>
+<td>Sen pelaaminen pisteeseen, johon se pudotetaan, jos laillinen siirto sen sallii.</td>
+</tr>
+<tr>
+<td>Napsautus noppiin (siirto kesken)</td>
+<td>Yhtään noppaa ei pelattu: niiden järjestyksen vaihto. Täysi siirto: sen vahvistus.</td>
+</tr>
+<tr>
+<td>Oikea napsautus laudalla (siirto kesken)</td>
+<td>Kaikkien pelattujen nappuloiden takaisinotto; jos nappuloita ei ole pelattu, noppien vaihto.</td>
+</tr>
+<tr>
+<td>Oikea napsautus laudan ulkopuolella tai siirron ulkopuolella</td>
+<td>Kaksintaistelun valikon avaaminen: Pino, luovutus, keskeytys, lopetus.</td>
 </tr>
 </tbody>
 </table>

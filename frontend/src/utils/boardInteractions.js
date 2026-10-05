@@ -227,6 +227,11 @@ function stepDie(value, button) {
  *   setPreviousDice(d)
  *   reset()              blank the board (double-click outside, mode-specific)
  *   openContextMenu(at)  { x, y } client coordinates, NORMAL-like modes only
+ *   displayRoller()      the player on roll as drawn: the side the dice are drawn on
+ *   togglePile()         the Pile gesture, on a double click outside the frame
+ *   container            optional element around the canvas: its margins are outside the frame
+ *   duel                 optional { holds(), press(hit), drop(from, to), context(hit) }: while
+ *                        a Duel holds the board, every click is its own (services/duelBoard.js)
  *   logger               optional, `.log(...)`
  *
  * @param {HTMLElement} canvas
@@ -403,11 +408,63 @@ export function attachBoardInteractions(canvas, deps) {
         return true;
     }
 
+    /**
+     * What a drawing-space point falls on, for the Duel and the Pile gesture: a die (as drawn,
+     * on the roller's side), the cube, a point of the model, the frame's outside, or nothing.
+     * @param {number} x
+     * @param {number} y
+     * @returns {import('../services/duelBoard.js').BoardHit}
+     */
+    function hitAt(x, y) {
+        const roller = deps.displayRoller?.() ?? get(stores.position).player_on_roll;
+        const { die } = hitTestSideControls(x, y, metrics(), cfg, roller);
+        if (die !== null) return { kind: 'die', index: die };
+        const box = deps.getCubeBox();
+        if (box && Math.abs(x - box.x) <= box.size / 2 && Math.abs(y - box.y) <= box.size / 2) return { kind: 'cube' };
+        const point = pointAt(x, y);
+        if (point !== null) return { kind: 'point', point };
+        return isOutsideBoard(x, y, metrics()) ? { kind: 'outside' } : { kind: 'none' };
+    }
+
+    // Le pion pressé pendant un Duel : relâché sur place, c'est un clic (le dé de gauche) ;
+    // relâché ailleurs, un glissé vers ce point.
+    /** @type {number|null} */
+    let duelPress = null;
+
+    /**
+     * @param {MouseEvent} event
+     * @param {number} x
+     * @param {number} y
+     */
+    function duelMouseDown(event, x, y) {
+        duelPress = null;
+        if (event.button !== 0) return;
+        const hit = hitAt(x, y);
+        if (hit.kind === 'point') duelPress = hit.point;
+        else deps.duel.press(hit);
+    }
+
+    /** @param {MouseEvent} event */
+    function duelMouseUp(event) {
+        const from = duelPress;
+        duelPress = null;
+        if (from === null) return;
+        const { x, y } = toDrawing(event);
+        const target = quizTargetAt(x, y);
+        if (target === null || target === from) deps.duel.press({ kind: 'point', point: from });
+        else deps.duel.drop(from, target);
+    }
+
     /** @param {MouseEvent} event */
     function onMouseDown(event) {
         event.preventDefault(); // no text or element selection
         if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
             /** @type {HTMLElement} */ (document.activeElement).blur();
+        }
+        if (deps.duel?.holds()) {
+            const { x, y } = toDrawing(event);
+            duelMouseDown(event, x, y);
+            return;
         }
         {
             const { x, y } = toDrawing(event);
@@ -431,6 +488,10 @@ export function attachBoardInteractions(canvas, deps) {
     /** @param {MouseEvent} event */
     function onMouseUp(event) {
         event.preventDefault();
+        if (deps.duel?.holds()) {
+            duelMouseUp(event);
+            return;
+        }
         // Avant la garde d'édition : le coup joué au plateau vit dans des modes qui n'éditent pas
         // la position (TRANSCRIBE, quiz).
         if (boardPlayDrop(event)) return;
@@ -484,6 +545,15 @@ export function attachBoardInteractions(canvas, deps) {
     /** @param {MouseEvent} event */
     function onDoubleClick(event) {
         const { x, y } = toDrawing(event);
+        const hit = hitAt(x, y);
+        // Hors du cadre, le double-clic met la position sur la Pile, ou l'en retire. En EDIT/EVAL
+        // et pendant un coup joué hors Duel, il garde son sens premier : remettre à zéro.
+        const outside = hit.kind === 'outside';
+        if (outside && !get(stores.anyModalOpen) && (deps.duel?.holds() || (!editable() && !(stores.quizPlay && get(stores.quizPlay))))) {
+            deps.togglePile?.();
+            return;
+        }
+        if (deps.duel?.holds()) return;
         if (stores.quizPlay && get(stores.quizPlay)) {
             // Double-clic hors damier : remet le coup à zéro, pas la position.
             if (isOutsideBoard(x, y, metrics())) deps.resetQuizPlay?.();
@@ -500,7 +570,28 @@ export function attachBoardInteractions(canvas, deps) {
         event.preventDefault(); // no native menu, in every mode
         if (editable()) return;
         if (get(stores.anyModalOpen)) return;
+        if (deps.duel?.holds()) {
+            const { x, y } = toDrawing(event);
+            if (!deps.duel.context(hitAt(x, y))) return;
+        }
         deps.openContextMenu({ x: event.clientX, y: event.clientY });
+    }
+
+    // Les marges autour du dessin sont hors du cadre, elles aussi.
+    const container = deps.container;
+    const inMargin = (/** @type {Event} */ event) => !!container && !canvas.contains(/** @type {Node} */ (event.target));
+
+    /** @param {MouseEvent} event */
+    function onMarginDoubleClick(event) {
+        if (!inMargin(event) || get(stores.anyModalOpen)) return;
+        if (deps.duel?.holds() || (!editable() && !(stores.quizPlay && get(stores.quizPlay)))) deps.togglePile?.();
+    }
+
+    /** @param {MouseEvent} event */
+    function onMarginContextMenu(event) {
+        if (!inMargin(event) || !deps.duel?.holds() || get(stores.anyModalOpen)) return;
+        event.preventDefault();
+        if (deps.duel.context({ kind: 'outside' })) deps.openContextMenu({ x: event.clientX, y: event.clientY });
     }
 
     canvas.addEventListener('mousedown', onMouseDown);
@@ -508,8 +599,12 @@ export function attachBoardInteractions(canvas, deps) {
     canvas.addEventListener('mouseup', onMouseUp);
     canvas.addEventListener('dblclick', onDoubleClick);
     canvas.addEventListener('contextmenu', onContextMenu);
+    container?.addEventListener('dblclick', onMarginDoubleClick);
+    container?.addEventListener('contextmenu', onMarginContextMenu);
 
     return function detach() {
+        container?.removeEventListener('dblclick', onMarginDoubleClick);
+        container?.removeEventListener('contextmenu', onMarginContextMenu);
         canvas.removeEventListener('mousedown', onMouseDown);
         canvas.removeEventListener('mousemove', onMouseMove);
         canvas.removeEventListener('mouseup', onMouseUp);

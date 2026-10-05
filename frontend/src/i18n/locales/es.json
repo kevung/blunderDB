@@ -1010,7 +1010,9 @@
             "search": "Tablero de búsqueda: coloca las fichas que quieres encontrar",
             "eval": "Tablero de evaluación"
         },
-        "onPile": "En la Pila"
+        "onPile": "En la Pila",
+        "pileFlashOn": "Puesta en la Pila",
+        "pileFlashOff": "Retirada de la Pila"
     },
     "epc": {
         "avgRolls": "Tiradas medias",
@@ -2944,19 +2946,11 @@
         "delayLeft": "Demora {s} s",
         "gestures": "Gestos del duelo",
         "botPlaying": "El Bot juega…",
-        "awaitCube": "¿Tirar o doblar?",
-        "roll": "Tirar",
         "double": "Doblar",
         "awaitAnswer": "El Bot dobla: ¿aceptar o rechazar?",
         "take": "Aceptar",
         "pass": "Rechazar",
-        "awaitMove": "Juegue su jugada en el tablero y valide.",
         "validate": "Validar",
-        "reset": "Recolocar",
-        "resignLevel": "Puntos del abandono",
-        "resignSingle": "Simple",
-        "resignGammon": "Gammon",
-        "resignBackgammon": "Backgammon",
         "resign": "Abandonar la partida",
         "resignConfirm": "¿Abandonar la partida por {n} punto(s)?",
         "suspend": "Suspender",
@@ -2992,7 +2986,22 @@
         "ended": "Duelo terminado: match {id} guardado, análisis iniciado.",
         "endedOnTime": "Duelo perdido por tiempo: match {id} guardado, análisis iniciado.",
         "locked": "Hay un duelo en curso: suspéndalo o deténgalo primero.",
-        "fingerprint": "Huella de la semilla (SHA-256)",
-        "fingerprintHint": "Publicada antes de la primera tirada; la semilla se revela con el match, y su SHA-256 debe devolver esta huella"
+        "menu": {
+            "pileOn": "Poner en la Pila",
+            "pileOff": "Retirar de la Pila",
+            "resignSingle": "Abandonar una partida simple ({n} pt)",
+            "resignGammon": "Abandonar un gammon ({n} pts)",
+            "resignBackgammon": "Abandonar un backgammon ({n} pts)"
+        },
+        "board": {
+            "doubleQuestion": "¿Doblar?",
+            "cancel": "Cancelar",
+            "validateHint": "Validar la jugada (Intro, o clic en los dados)"
+        },
+        "hint": {
+            "cube": "Su turno: haga clic en los dados para tirar, o en el cubo para doblar.",
+            "answer": "El Bot dobla: acepte o rechace en el tablero.",
+            "move": "Haga clic en una ficha para jugar el dado de la izquierda; el clic derecho deshace la jugada, y un clic en los dados o Intro la valida."
+        }
     }
 }

@@ -281,7 +281,7 @@ export default {
 <h3>Panel de Colecciones</h3>
 <p>En los paneles Colecciones, Torneos, Anki y Transcripción, el botón <strong>+</strong> de la cabecera, seguido del nombre de lo que crea (<strong>+ Nueva colección</strong>, <strong>+ Nuevo torneo</strong>, <strong>+ Nuevo mazo</strong>, <strong>+ Nueva transcripción</strong>), es el único gesto de creación: abre el campo de entrada, que <em>Esc</em> o <strong>Cancelar</strong> cierra en los paneles Colecciones y Torneos. En la lista de partidos, el icono ⌨ abre la transcripción del partido y el icono ✎ corrige sus metadatos.</p>
 <p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Se les pueden añadir o quitar posiciones (tecla <em>Supr</em>, se pide confirmación). Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El comando <code>ss</code> busca entre las posiciones de la colección abierta; <em>Esc</em> vuelve después a la colección (véase Panel de Búsqueda). El orden de las colecciones y de las posiciones dentro de una colección puede cambiarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code>collection</code> para mostrar u ocultar el panel.</p>
-<p>La <strong>Pila</strong> es la colección del gesto «para revisar más tarde»: la tecla <em>b</em> o el botón de marcapáginas de la barra de herramientas pone la posición mostrada en la Pila, y el mismo gesto la quita. Un marcapáginas en la esquina del tablero indica que la posición está en ella. El gesto vale dondequiera que se muestre una posición: revisión, búsqueda, Transcripción. La Pila es una colección ordinaria — se renombra, se reordena, se exporta, se vacía como cualquier otra; se crea en el primer uso y se vuelve a crear si se eliminó. Una posición que aún no está en la biblioteca (un borrador del tablero de búsqueda o de evaluación) se escribe en ella de inmediato, como posición aportada por sí sola, y luego se pone en la Pila. La línea de comandos hace el mismo gesto con <code>collection pile</code>.</p>
+<p>La <strong>Pila</strong> es la colección del gesto «revisar más tarde»: un doble clic fuera del tablero, la tecla <em>b</em> o el botón de marcador de la barra de herramientas pone la posición mostrada en la Pila, y el mismo gesto la retira. Un breve aviso sobre el tablero confirma cada cambio, y un marcador en la esquina del tablero indica que la posición está en ella. El gesto vale en todas partes donde se muestra una posición: revisión, búsqueda, Transcripción, Duelo. En edición y en Eval, y durante una jugada hecha en el tablero fuera de un Duelo, el doble clic fuera del tablero conserva su sentido primero — volver a cero — y solo valen <em>b</em> y el botón. La Pila es una colección ordinaria — renombrada, reordenada, exportada, vaciada como cualquier otra; se crea en el primer uso y se vuelve a crear si se ha eliminado. Una posición que aún no está en la biblioteca (un borrador del tablero de búsqueda o de evaluación) se escribe allí al instante, como una posición aportada sola, y luego se pone en la Pila. La línea de comandos hace el mismo gesto con <code>collection pile</code>.</p>
 <p>Una colección puede estar <strong>viva</strong>: su contenido ya no es una lista hecha a mano sino el resultado de una <strong>búsqueda</strong>, reevaluado cada vez que se abre. El botón ◇ en la cabecera de la colección la hace viva con la última búsqueda lanzada; ◈ indica que ya lo está, y el mismo botón le devuelve su lista. Nada se destruye al hacerla viva: las posiciones que contenía siguen ahí al volver atrás.</p>
 <p>El botón ❄, visible en una colección viva, la <strong>congela</strong>: las posiciones que la búsqueda selecciona en ese instante pasan a ser el contenido de una colección ordinaria, en el orden de la búsqueda, y la consulta se borra. Las posiciones que contenía antes de ser viva se sustituyen.</p>
 <p>Una colección viva cuya consulta lleva un token que esta versión ya no conoce <strong>se niega a abrirse</strong> y lo dice, en vez de devolver toda la base. Es el único fallo que un filtro guardado no debe tener: ensancharse en silencio.</p>
@@ -915,13 +915,17 @@ export default {
 <li><strong>Su nombre</strong> y <strong>Guardar el match</strong>: sin marcar, el Duelo terminado se descarta en lugar de convertirse en un Match.</li>
 </ul>
 <p>«Reanudar» reabre un Duelo suspendido en el mismo punto, con los mismos dados por venir; sus relojes estaban detenidos.</p>
-<p>Durante el Duelo, el panel muestra el marcador, el cubo, los relojes y la hoja del match en dos columnas, como la Transcripción. También muestra, desde la creación, la huella SHA-256 de la semilla de los dados: la semilla permanece secreta hasta el final, y su SHA-256, leído con el match, debe devolver esta huella. El marcador y los relojes permanecen en la barra de estado cuando la pestaña está plegada. El tablero pasa al modo <strong>DUELO</strong>: la biblioteca ya no se recorre, la edición, el panel Eval y las demás pestañas no se abren, y el motor calla: ninguna evaluación, ningún candidato. Solo quedan la Pila (<code>B</code>), el pipcount (<code>P</code>) y la ayuda.</p>
+<p>El Duelo se juega en el tablero. El panel muestra la hoja de match en dos columnas, como la Transcripción, los relojes cuando corre una cadencia, una línea que dice lo que se espera, y «Suspender», «Detener y guardar», «Detener y descartar». El marcador y el cubo son los del tablero; el marcador y los relojes permanecen en la barra de estado cuando la pestaña está plegada. La huella SHA-256 de la semilla de los dados, publicada por el Árbitro desde la creación, se lee con la semilla en el origen del Match terminado. El tablero pasa al modo <strong>DUELO</strong>: la biblioteca ya no se recorre, la edición, el panel Eval y las demás pestañas no se abren, y el motor calla — ninguna evaluación, ningún candidato. Solo quedan la Pila (<code>B</code>), el pipcount (<code>P</code>) y la ayuda.</p>
 <ul>
-<li>Antes de tirar, «Tirar» o «Doblar»; ante un doble, «Aceptar» o «Rechazar». Cuando el cubo no está disponible, la tirada es automática.</li>
-<li>La jugada se hace en el tablero como una pregunta de Decisión, y luego «Validar» (<code>INTRO</code>); «Recolocar» (<code>RETROCESO</code>) devuelve las fichas a su sitio antes de validar. Después ya no se puede deshacer nada.</li>
+<li>Antes de la tirada, un clic en los dados los lanza; un clic en el cubo propone doblar, y el tablero pregunta «Doblar» o «Cancelar». Cuando el cubo no está disponible, la tirada es automática.</li>
+<li>Ante un doble del Bot, el tablero pregunta «Aceptar» o «Rechazar».</li>
+<li>Un clic en una ficha la juega con el dado izquierdo aún libre, o con el otro cuando el izquierdo no puede jugarla; un doble se juega en cuatro clics. Una ficha también puede arrastrarse hasta su destino. Un dado jugado se atenúa. Solo pasan los pasos de una jugada legal.</li>
+<li>Antes de jugar, un clic en los dados, o un clic derecho en el tablero, invierte su orden. Durante la jugada, el clic derecho en el tablero recupera todas las fichas jugadas (<code>RETROCESO</code> también).</li>
+<li>La jugada completa se valida con un clic en los dados, con «Validar» en el tablero, o con <code>INTRO</code>. Después no se puede retroceder.</li>
 <li>El Bot responde enseguida; sus jugadas se reproducen en el tablero, despacio.</li>
-<li>«Abandonar la partida» cede la partida en curso por un simple, un gammon o un backgammon.</li>
+<li>El clic derecho fuera del tablero, o en el tablero fuera de su jugada, abre el menú del Duelo: poner la posición en la Pila o retirarla, abandonar la partida por una simple, un gammon o un backgammon (en su turno, tras confirmación), suspender, detener. Este menú no ofrece ni evaluación ni edición.</li>
 <li>«Suspender» pone el Duelo en suspenso, con los relojes detenidos. «Detener y guardar» escribe el Match tal como está; «Detener y descartar» no escribe nada. Detener nunca es ceder la partida.</li>
+<li>Un doble clic fuera del tablero pone la posición en la Pila, o la retira, como <code>B</code>; un breve aviso lo confirma en el tablero.</li>
 </ul>
 <p>Cada decisión lleva su duración, con o sin control de tiempo. Un abandono no tiene duración registrada en el Match.</p>
 <p>Al final, el Match se escribe, su análisis se lanza y la pestaña Partidas se abre sobre él. En la línea de comandos, <code>blunderdb duel</code> maneja el mismo Duelo (véase duel — Jugar un Duelo).</p>
@@ -1081,6 +1085,10 @@ export default {
 <tr>
 <td>b</td>
 <td>Poner la posición mostrada en la Pila (la colección «para revisar más tarde») o quitarla de ella.</td>
+</tr>
+<tr>
+<td>Doble clic fuera del tablero</td>
+<td>Poner la posición mostrada en la Pila, o retirarla — salvo en edición y en Eval, y durante una jugada hecha en el tablero fuera de un Duelo, donde este doble clic vuelve a cero.</td>
 </tr>
 </tbody>
 </table>
@@ -1294,6 +1302,45 @@ export default {
 <tr>
 <td>?</td>
 <td>Mostrar/ocultar la ayuda.</td>
+</tr>
+</tbody>
+</table>
+<h3>Duelo en el tablero</h3>
+<table>
+<thead>
+<tr>
+<th>Gesto</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clic en los dados (antes de la tirada)</td>
+<td>Lanzar los dados.</td>
+</tr>
+<tr>
+<td>Clic en el cubo (antes de la tirada)</td>
+<td>Proponer doblar; «Doblar» o «Cancelar» confirma en el tablero.</td>
+</tr>
+<tr>
+<td>Clic en una ficha</td>
+<td>Jugarla con el dado izquierdo aún libre, o con el otro si el izquierdo no puede jugarla. Un dado jugado se atenúa.</td>
+</tr>
+<tr>
+<td>Arrastrar una ficha</td>
+<td>Jugarla hasta el punto donde se suelta, si una jugada legal lo permite.</td>
+</tr>
+<tr>
+<td>Clic en los dados (jugada en curso)</td>
+<td>Ningún dado jugado: invertir su orden. Jugada completa: validarla.</td>
+</tr>
+<tr>
+<td>Clic derecho en el tablero (jugada en curso)</td>
+<td>Recuperar todas las fichas jugadas; sin ficha jugada, invertir los dados.</td>
+</tr>
+<tr>
+<td>Clic derecho fuera del tablero, o fuera de su jugada</td>
+<td>Abrir el menú del Duelo: Pila, abandono, suspensión, parada.</td>
 </tr>
 </tbody>
 </table>
