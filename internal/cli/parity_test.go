@@ -283,6 +283,7 @@ var databaseParity = map[string]parityEntry{
 	"ImportXGPPosition":                 {CLI: "import --type position", Server: "/v1/positions.fromXGP"},
 	"IsProtectedCopyPath":               {CLI: "open", Why: whyIssuance},
 	"IsReadOnly":                        {Why: whyLifecycle + " (ADR-0004: the second desktop instance opens read-only; a CLI run is one process, the daemon owns its store)"},
+	"RefuseReadOnly":                    {Why: whyLifecycle + " (the read-only guard the rollout methods run themselves; the GUI asks it to refuse before a job starts)"},
 	"ListPositionIDs":                   {CLI: "list --type positions --offset", Server: "/v1/positions.listIds", Why: "the id windows the GUI browses a library with (positions are fetched by LoadPositionsByIDs); `list --type positions` prints the positions themselves, which is what a script wants"},
 	"CountPositions":                    {CLI: "list --type positions", Server: "/v1/positions.count"},
 	"IndexOfPosition":                   {Server: "/v1/positions.indexOf", Why: "the rank of a position in the browsed library, so the GUI lands on it without holding the id list; a script addresses positions by id"},
