@@ -484,12 +484,13 @@ func (s *analysisStore) WithoutAnalysis(ctx context.Context, scope string, opts 
 // those rows summarise (or the position had no analysis). An unchanged
 // rewrite costs one indexed read and invalidates nothing.
 func invalidateMatchStatsOnAnalysis(ctx context.Context, tx execer, tenant, positionID int64, c engine.AnalysisColumns) error {
-	var cubeErr, moveErr, depth *int64
+	var cubeErr, moveErr, depth, metID *int64
 	var forced, closeCube *bool
-	var eng *string
-	err := tx.QueryRow(ctx, `SELECT cube_error, best_move_equity_error, is_forced, is_close_cube,
-		analysis_engine, analysis_depth FROM analysis WHERE position_id = $1 AND tenant_id = $2`, positionID, tenant).
-		Scan(&cubeErr, &moveErr, &forced, &closeCube, &eng, &depth)
+	var eng, bestCube *string
+	err := tx.QueryRow(ctx, `SELECT a.cube_error, a.best_move_equity_error, a.is_forced, a.is_close_cube,
+		a.analysis_engine, a.analysis_depth, `+sqlshared.TenantActionLabelSQL("a.best_cube_action")+`, a.met_id
+		FROM analysis a WHERE a.position_id = $1 AND a.tenant_id = $2`, positionID, tenant).
+		Scan(&cubeErr, &moveErr, &forced, &closeCube, &eng, &depth, &bestCube, &metID)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		return fmt.Errorf("postgres: read analysis columns: %w", err)
 	}
@@ -499,9 +500,16 @@ func invalidateMatchStatsOnAnalysis(ctx context.Context, tx execer, tenant, posi
 		}
 		return *p
 	}
+	derefS := func(p *string) string {
+		if p == nil {
+			return ""
+		}
+		return *p
+	}
 	if err == nil && cubeErr != nil && *cubeErr == c.CubeError && moveErr != nil && *moveErr == c.BestMoveEquityError &&
 		forced != nil && *forced == (c.IsForced != 0) && closeCube != nil && *closeCube == (c.IsCloseCube != 0) &&
-		eng != nil && *eng == c.AnalysisEngine && deref(depth) == c.AnalysisDepth {
+		eng != nil && *eng == c.AnalysisEngine && deref(depth) == c.AnalysisDepth &&
+		derefS(bestCube) == c.BestCubeAction && !sqlshared.UpsertDropsMET(metID != nil, c.AnalysisEngine) {
 		return nil
 	}
 	if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1 AND match_id IN

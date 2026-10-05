@@ -111,6 +111,8 @@ func TestComputeSelectionMatchesDirectReadAndReadOnlyWritesNothing(t *testing.T)
 		{DecisionType: 0, PlayerName: "Iris Okonkwo", MinAnalysisDepth: 2},
 		{DecisionType: -1, MatchLength: []int{5, 7}},
 		{DecisionType: 1, DateFrom: "2000-01-01", DateTo: "2100-01-01", AnalysisEngine: "XG"},
+		{DecisionType: -1, TournamentIDs: []int64{3}},
+		{DecisionType: -1, DateFrom: "2025-05-18", DateTo: "2025-12-31"},
 	}
 	want := make([]string, len(filters))
 	for i, f := range filters {

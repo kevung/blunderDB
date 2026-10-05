@@ -131,3 +131,42 @@ func TestRollingWindowFromCellsMatchesDirectRead(t *testing.T) {
 		}
 	}
 }
+
+// Reclassifying the phase and game type rewrites two dimensions of the
+// match_stats cells: the cells filled from the old values must go with them.
+func TestReclassifyDerivedInvalidatesMatchStats(t *testing.T) {
+	ctx := context.Background()
+	path := demoCopy(t)
+	w, err := Open(ctx, path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+	if _, err := w.sqlDB.Exec(`UPDATE position SET
+		game_phase = CASE WHEN game_phase = 1 THEN 2 ELSE 1 END,
+		game_type = CASE WHEN game_type = 1 THEN 2 ELSE 1 END`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := w.Stats().RebuildMatchStats(ctx, "", nil); err != nil {
+		t.Fatal(err)
+	}
+	n, err := w.Positions().ReclassifyDerived(ctx, "")
+	if err != nil || n == 0 {
+		t.Fatalf("ReclassifyDerived = %d, %v; want a repair", n, err)
+	}
+	f := storage.StatsFilter{DecisionType: -1}
+	got, err := w.Stats().Compute(ctx, "", f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := w.Stats().RebuildMatchStats(ctx, "", nil); err != nil {
+		t.Fatal(err)
+	}
+	want, err := w.Stats().Compute(ctx, "", f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if g, d := asJSON(t, got), asJSON(t, want); !sameStatsJSON(t, g, d) {
+		t.Errorf("stale cells after the reclassification:\n kept    %s\n rebuilt %s", g, d)
+	}
+}

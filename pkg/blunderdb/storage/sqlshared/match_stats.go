@@ -11,15 +11,23 @@ package sqlshared
 // patch path would be a second implementation of the arithmetic that could
 // drift from Compute without a test noticing.
 //
-// What a row depends on, and the write that must invalidate it:
+// What a row and its cells (match_stats_cells.go) depend on, and the write
+// that must invalidate them:
 //   - the match's moves (player, cube action, luck) and games: import,
 //     replacement of the games, seat swap, deletion;
+//   - the match's length (a cell's MWC when the position states none): set
+//     at import and never edited; its date and tournament are joined at query time, not
+//     stored, so they invalidate nothing;
 //   - the analysis columns of every position the match reaches (cube_error,
-//     best_move_equity_error, is_forced, is_close_cube, engine, depth): any
-//     analysis write that changes one of them, for every match reaching the
-//     position (InvalidateMatchStatsOfPositionsSQL);
-//   - the position columns countedExpr reads (decision_type, cube_value,
-//     scores): repairs, which wipe the table;
+//     best_move_equity_error, is_forced, is_close_cube, analysis_engine,
+//     analysis_depth, best_cube_action, met_id): any analysis write that
+//     changes one of them, for every match reaching the position
+//     (InvalidateMatchStatsOfPositionsSQL) — the upsert clears met_id for a
+//     verdict not gammonNet's (UpsertDropsMET), the MET assignment sets it;
+//   - the position columns the rows and cells count by (decision_type,
+//     cube_value, score_1, score_2, match_length, game_phase, game_type):
+//     PositionStore.Update invalidates the matches reaching the position;
+//     the phase reclassification and the Crawford repair wipe the table;
 //   - the library's blunder threshold: LibrarySettingsStore.Save wipes it.
 // Player names are not in the table: a rename or an alias changes no row.
 
@@ -65,6 +73,13 @@ const DropOlderShapeMatchStatsSQL = `DELETE FROM match_stats WHERE ` + OlderShap
 const OlderShapeMatchStatsPredicate = `checker_moves IS NULL
 	OR (decisions > 0 AND NOT EXISTS (SELECT 1 FROM match_stats_cell c
 		WHERE c.match_id = match_stats.match_id AND c.seat = match_stats.seat AND c.kind = 1))`
+
+// UpsertDropsMET reports whether the analysis upsert clears a stored met_id:
+// it keeps the column only for a gammonNet verdict, and met_id is a
+// dimension of the match_stats cells.
+func UpsertDropsMET(storedMET bool, newEngine string) bool {
+	return storedMET && !strings.HasPrefix(newEngine, "gammonNet")
+}
 
 // InvalidateMatchStats drops the rows of matchIDs, in batches.
 func InvalidateMatchStats(ctx context.Context, db Execer, matchIDs []int64) error {
