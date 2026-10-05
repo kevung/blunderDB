@@ -280,6 +280,7 @@ export default {
 <h3>Pannello Raccolte</h3>
 <p>Nei pannelli Collezioni, Tornei, Anki e Trascrizione, il pulsante <strong>+</strong> dell'intestazione, seguito dal nome di ciò che crea (<strong>+ Nuova collezione</strong>, <strong>+ Nuovo torneo</strong>, <strong>+ Nuovo mazzo</strong>, <strong>+ Nuova trascrizione</strong>), è l'unico gesto di creazione: apre il campo di inserimento, che <em>Esc</em> o <strong>Annulla</strong> chiude nei pannelli Collezioni e Tornei. Nell'elenco dei match, l'icona ⌨ apre la trascrizione del match e l'icona ✎ ne corregge i metadati.</p>
 <p>Il pannello <strong>Collezioni</strong> (<em>CTRL-B</em>) consente di gestire collezioni di posizioni. Le collezioni possono essere create, rinominate ed eliminate. Vi si possono aggiungere o togliere posizioni (tasto <em>Canc</em>, viene chiesta conferma). Fare doppio clic su una collezione per scorrerne le posizioni con i tasti <em>SINISTRA</em> e <em>DESTRA</em>. Il comando <code>ss</code> cerca tra le posizioni della collezione aperta; <em>Esc</em> riporta poi alla collezione (vedere Pannello Ricerca). L'ordine delle collezioni e delle posizioni all'interno di una collezione può essere modificato per trascinamento. Premere <em>CTRL-B</em> o eseguire il comando <code>collection</code> per mostrare o nascondere il pannello.</p>
+<p>La <strong>Pila</strong> è la raccolta del gesto «da rivedere più tardi»: il tasto <em>b</em> o il pulsante segnalibro della barra degli strumenti mette la posizione mostrata nella Pila, e lo stesso gesto la toglie. Un segnalibro nell'angolo del tavoliere indica che la posizione vi si trova. Il gesto vale ovunque sia mostrata una posizione: revisione, ricerca, Trascrizione. La Pila è una raccolta ordinaria — rinominata, riordinata, esportata, svuotata come ogni altra; viene creata al primo uso e ricreata se è stata eliminata. Una posizione che non è ancora nella libreria (una bozza del tavoliere di ricerca o di valutazione) vi viene scritta subito, come posizione portata da sola, poi messa nella Pila. La riga di comando fa lo stesso gesto con <code>collection pile</code>.</p>
 <p>Una raccolta può essere <strong>viva</strong>: il suo contenuto non è più una lista fatta a mano ma il risultato di una <strong>ricerca</strong>, rivalutato ogni volta che la si apre. Il pulsante ◇ in testa alla raccolta la rende viva con l'ultima ricerca lanciata; ◈ segnala che lo è già, e lo stesso pulsante le restituisce la lista. Nulla viene distrutto: le posizioni che conteneva sono ancora lì quando si torna indietro.</p>
 <p>Il pulsante ❄, visibile su una raccolta viva, la <strong>congela</strong>: le posizioni che la ricerca seleziona in quel momento diventano il contenuto di una raccolta ordinaria, nell'ordine della ricerca, e la query viene cancellata. Le posizioni che conteneva prima di essere viva vengono sostituite.</p>
 <p>Una raccolta viva la cui interrogazione porta un token che questa versione non conosce più <strong>rifiuta di aprirsi</strong> e lo dice, invece di restituire l'intera base. È l'unico guasto che un filtro salvato non deve avere: allargarsi in silenzio.</p>
@@ -1052,6 +1053,10 @@ export default {
 <tr>
 <td>CTRL-G</td>
 <td>Mostra i metadati della posizione.</td>
+</tr>
+<tr>
+<td>b</td>
+<td>Mettere la posizione mostrata nella Pila (la raccolta «da rivedere più tardi») o toglierla.</td>
 </tr>
 </tbody>
 </table>

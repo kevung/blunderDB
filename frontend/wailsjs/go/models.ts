@@ -6058,6 +6058,24 @@ export namespace storage {
 	        this.rating = source["rating"];
 	    }
 	}
+	export class PileToggle {
+	    onPile: boolean;
+	    positionId: number;
+	    collectionId: number;
+	    brought: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new PileToggle(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.onPile = source["onPile"];
+	        this.positionId = source["positionId"];
+	        this.collectionId = source["collectionId"];
+	        this.brought = source["brought"];
+	    }
+	}
 	export class PlayerContrast {
 	    player_a: string;
 	    player_b: string;

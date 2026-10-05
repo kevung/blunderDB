@@ -215,7 +215,8 @@
         "updatePosition": "Mettre à jour la position",
         "tour": "Visites guidées",
         "importDatabaseTip": "Fusionner une autre base dans celle-ci : les positions communes ne sont pas dupliquées, leurs analyses et commentaires sont combinés",
-        "training": "Entraînement"
+        "training": "Entraînement",
+        "pile": "Mettre sur la Pile / l'en retirer"
     },
     "tour": {
         "next": "Suivant",
@@ -981,7 +982,8 @@
         "situation": {
             "search": "Plateau de recherche : posez les pions à trouver",
             "eval": "Plateau d’évaluation"
-        }
+        },
+        "onPile": "Sur la Pile"
     },
     "epc": {
         "avgRolls": "Jets moy.",
@@ -1518,7 +1520,11 @@
         "importIdentifierOnBoard": "Position posée sur le plateau depuis l'identifiant.",
         "importIdentifierFailed": "L'identifiant n'a pas pu être lu : {error}",
         "boardImageSaved": "Image enregistrée : {path}",
-        "boardImageSaveFailed": "L'image n'a pas pu être enregistrée : {err}"
+        "boardImageSaveFailed": "L'image n'a pas pu être enregistrée : {err}",
+        "pileOn": "Mise sur la Pile",
+        "pileOff": "Retirée de la Pile",
+        "pileBrought": "Mise sur la Pile (écrite dans la bibliothèque)",
+        "pileError": "Pile : erreur"
     },
     "stats": {
         "title": "Stats",

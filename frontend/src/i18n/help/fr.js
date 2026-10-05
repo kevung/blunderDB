@@ -280,6 +280,7 @@ export default {
 <h3>Panneau Collections</h3>
 <p>Dans les panneaux Collections, Tournois, Anki et Transcription, le bouton <strong>+</strong> de l'en-tête, suivi du nom de ce qu'il crée (<strong>+ Nouvelle collection</strong>, <strong>+ Nouveau tournoi</strong>, <strong>+ Nouveau paquet</strong>, <strong>+ Nouvelle transcription</strong>), est l'unique geste de création : il ouvre le champ de saisie, que <em>Échap</em> ou <strong>Annuler</strong> referme dans les panneaux Collections et Tournois. Dans la liste des matchs, l'icône ⌨ ouvre la transcription du match et l'icône ✎ en corrige les métadonnées.</p>
 <p>Le panneau <strong>Collections</strong> (<em>CTRL-B</em>) permet de gérer des collections de positions. Les collections peuvent être créées, renommées et supprimées. Des positions peuvent y être ajoutées ou retirées (touche <em>Suppr</em>, confirmation demandée). Double-cliquer sur une collection pour parcourir ses positions avec les touches <em>GAUCHE</em> et <em>DROITE</em>. La commande <code>ss</code> cherche parmi les positions de la collection ouverte ; <em>Esc</em> ramène ensuite à la collection (voir Panneau Recherche). L'ordre des collections et des positions au sein des collections peut être modifié par glisser-déposer. Appuyer sur <em>CTRL-B</em> ou exécuter la commande <code>collection</code> pour afficher ou masquer le panneau.</p>
+<p>La <strong>Pile</strong> est la collection du geste « à revoir plus tard » : la touche <em>b</em> ou le bouton marque-page de la barre d'outils met la position affichée sur la Pile, et le même geste l'en retire. Un marque-page au coin du plateau dit que la position y est. Le geste vaut partout où une position est affichée : revue, recherche, Transcription. La Pile est une collection ordinaire — renommée, réordonnée, exportée, vidée comme une autre ; elle est créée au premier usage, et recréée si elle a été supprimée. Une position qui n'est pas encore dans la bibliothèque (un brouillon du plateau de recherche ou d'évaluation) y est écrite sur-le-champ, comme une position apportée seule, puis mise sur la Pile. La ligne de commande fait le même geste par <code>collection pile</code>.</p>
 <p>Une collection peut être <strong>vivante</strong> : sa composition n'est plus une liste faite à la main mais le résultat d'une <strong>recherche</strong>, réévalué chaque fois qu'on l'ouvre. Le bouton ◇ en tête de la collection la rend vivante avec la dernière recherche lancée ; ◈ signale qu'elle l'est déjà, et le même bouton la rend à sa liste. Rien n'est détruit en la rendant vivante : les positions qu'elle contenait sont toujours là quand on revient en arrière.</p>
 <p>Le bouton ❄, visible sur une collection vivante, la <strong>fige</strong> : les positions que la recherche sélectionne à cet instant deviennent la composition d'une collection ordinaire, dans l'ordre de la recherche, et la requête s'efface. Les positions qu'elle contenait avant d'être vivante sont remplacées.</p>
 <p>Une collection vivante dont la requête porte un jeton que cette version ne connaît plus <strong>refuse de s'ouvrir</strong> en le disant, plutôt que de renvoyer toute la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir : s'élargir en silence.</p>
@@ -1052,6 +1053,10 @@ export default {
 <tr>
 <td>CTRL-G</td>
 <td>Afficher les métadonnées de la position.</td>
+</tr>
+<tr>
+<td>b</td>
+<td>Mettre la position affichée sur la Pile (collection « à revoir plus tard »), ou l'en retirer.</td>
 </tr>
 </tbody>
 </table>

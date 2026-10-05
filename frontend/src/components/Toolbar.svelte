@@ -6,6 +6,7 @@
     import { newDatabase, openDatabase, exitApp } from '../services/databaseService.js';
     import { importDatabase, importPosition, importFolder, pastePosition } from '../services/importService.js';
     import { exportDatabase } from '../services/exportService.js';
+    import { togglePile, onPileStore } from '../services/pileService.js';
     import { copyPosition, copyBoardImage } from '../services/clipboardService.js';
     import {
         saveCurrentPosition,
@@ -227,6 +228,26 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+            />
+        </svg>
+    </button>
+
+    <button
+        class:active={$onPileStore}
+        onclick={(e) => {
+            e.stopPropagation();
+            togglePile();
+        }}
+        aria-label={$t('toolbar.pile')}
+        aria-pressed={$onPileStore}
+        title="{$t('toolbar.pile')} {toolbarHint('togglePile', $t)}"
+        disabled={!databasePath}
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" fill={$onPileStore ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
             />
         </svg>
     </button>
@@ -482,6 +503,10 @@
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    .toolbar button.active {
+        color: var(--color-primary);
     }
 
     .toolbar button:first-child {

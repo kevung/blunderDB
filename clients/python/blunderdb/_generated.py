@@ -794,6 +794,14 @@ class GeneratedAPI(BaseClient):
         "POST /v1/metadata.version — JSON."
         return self._call("/v1/metadata.version", payload)
 
+    def pile_state(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/pile.state — JSON."
+        return self._call("/v1/pile.state", payload)
+
+    def pile_toggle(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/pile.toggle — JSON."
+        return self._call("/v1/pile.toggle", payload)
+
     def players_alias_list(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/players.alias.list — JSON."
         return self._call("/v1/players.alias.list", payload)

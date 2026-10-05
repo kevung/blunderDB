@@ -966,6 +966,10 @@ ou ``csv``, comme ``list``.
 * ``freeze --id <id>`` — Fige une collection vivante : les positions que sa
   requête sélectionne maintenant deviennent sa composition, la requête
   s'efface. Refusé sur une collection qui n'est pas vivante.
+* ``pile [--position-id <id> | --xgid <XGID>]`` — Met une position sur la
+  Pile (la collection « à revoir plus tard »), ou l'en retire quand elle y est ;
+  une position donnée par XGID qui n'est pas dans la base y est d'abord écrite,
+  comme une position apportée seule. Sans position, affiche la Pile.
 * ``rename --id <id> --name <nom> [--description <texte>]`` — Renomme une
   collection (la description est conservée si elle n'est pas donnée).
 * ``delete --id <id> [--confirm]`` — Supprime une collection ; ses positions

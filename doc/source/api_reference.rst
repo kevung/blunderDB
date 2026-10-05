@@ -224,6 +224,9 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/metadata.counts                      JSON
      POST /v1/metadata.countsEstimate              JSON
      POST /v1/metadata.version                     JSON
+   pile
+     POST /v1/pile.state                           JSON
+     POST /v1/pile.toggle                          JSON
    players
      POST /v1/players.alias.list                   JSON
      POST /v1/players.alias.remove                 JSON

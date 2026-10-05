@@ -738,6 +738,10 @@ export function IndexOfPositionByFilters(arg1, arg2) {
   return window['go']['database']['Database']['IndexOfPositionByFilters'](arg1, arg2);
 }
 
+export function IsPositionOnPile(arg1) {
+  return window['go']['database']['Database']['IsPositionOnPile'](arg1);
+}
+
 export function IsProtectedCopyPath(arg1) {
   return window['go']['database']['Database']['IsProtectedCopyPath'](arg1);
 }
@@ -956,6 +960,10 @@ export function PendingImportFiles(arg1) {
 
 export function PendingTranscriptionAnalysis() {
   return window['go']['database']['Database']['PendingTranscriptionAnalysis']();
+}
+
+export function PileCollectionID() {
+  return window['go']['database']['Database']['PileCollectionID']();
 }
 
 export function PlanRollout(arg1, arg2, arg3) {
@@ -1384,6 +1392,10 @@ export function TablePlan(arg1) {
 
 export function Tags() {
   return window['go']['database']['Database']['Tags']();
+}
+
+export function TogglePile(arg1) {
+  return window['go']['database']['Database']['TogglePile'](arg1);
 }
 
 export function TranscriptionMAT(arg1) {

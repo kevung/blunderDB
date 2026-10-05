@@ -215,7 +215,8 @@
         "updatePosition": "Actualizar posición",
         "tour": "Visitas guiadas",
         "importDatabaseTip": "Fusionar otra base en esta: las posiciones comunes no se duplican, sus análisis y comentarios se combinan",
-        "training": "Entrenamiento"
+        "training": "Entrenamiento",
+        "pile": "Poner en la Pila / quitar de la Pila"
     },
     "tour": {
         "next": "Siguiente",
@@ -981,7 +982,8 @@
         "situation": {
             "search": "Tablero de búsqueda: coloca las fichas que quieres encontrar",
             "eval": "Tablero de evaluación"
-        }
+        },
+        "onPile": "En la Pila"
     },
     "epc": {
         "avgRolls": "Tiradas medias",
@@ -1518,7 +1520,11 @@
         "importIdentifierOnBoard": "Posición colocada en el tablero desde el identificador.",
         "importIdentifierFailed": "No se ha podido leer el identificador: {error}",
         "boardImageSaved": "Imagen guardada: {path}",
-        "boardImageSaveFailed": "No se ha podido guardar la imagen: {err}"
+        "boardImageSaveFailed": "No se ha podido guardar la imagen: {err}",
+        "pileOn": "Puesta en la Pila",
+        "pileOff": "Quitada de la Pila",
+        "pileBrought": "Puesta en la Pila (escrita en la biblioteca)",
+        "pileError": "Pila: error"
     },
     "stats": {
         "title": "Stats",

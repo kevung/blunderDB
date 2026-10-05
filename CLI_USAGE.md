@@ -2404,6 +2404,27 @@ Examples:
   blunderdb collection list --db database.db --format csv
 ```
 
+### `blunderdb collection pile`
+
+```
+Usage: blunderdb collection pile [options]
+
+Put a position on the Pile (the collection of positions to come back to), or take it off when it is there. A position given by XGID that is not in the library is written first, as a position brought in on its own. Without a position, print the Pile.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -position-id int
+    	ID of a stored position
+  -xgid string
+    	XGID of the position (written to the library if absent)
+
+Examples:
+  blunderdb collection pile --db database.db --position-id 42
+  blunderdb collection pile --db database.db --xgid "XGID=-b----E-C---eE---c-e----B-:0:0:1:21:0:0:0:0:10"
+  blunderdb collection pile --db database.db
+```
+
 ### `blunderdb collection rename`
 
 ```

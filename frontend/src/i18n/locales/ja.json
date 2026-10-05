@@ -215,7 +215,8 @@
         "updatePosition": "ポジションを更新",
         "tour": "ガイドツアー",
         "importDatabaseTip": "別のデータベースをこれに統合する：共通する局面は重複せず、その解析とコメントは結合される",
-        "training": "トレーニング"
+        "training": "トレーニング",
+        "pile": "パイルに載せる／外す"
     },
     "tour": {
         "next": "次へ",
@@ -981,7 +982,8 @@
         "situation": {
             "search": "検索ボード：探したいチェッカーを置いてください",
             "eval": "評価ボード"
-        }
+        },
+        "onPile": "パイルにあります"
     },
     "epc": {
         "avgRolls": "平均ロール",
@@ -1518,7 +1520,11 @@
         "importIdentifierOnBoard": "識別子からポジションを盤面に配置しました。",
         "importIdentifierFailed": "識別子を読み取れませんでした：{error}",
         "boardImageSaved": "画像を保存しました：{path}",
-        "boardImageSaveFailed": "画像を保存できませんでした：{err}"
+        "boardImageSaveFailed": "画像を保存できませんでした：{err}",
+        "pileOn": "パイルに載せました",
+        "pileOff": "パイルから外しました",
+        "pileBrought": "パイルに載せました（ライブラリに書き込み）",
+        "pileError": "パイル：エラー"
     },
     "stats": {
         "title": "統計",

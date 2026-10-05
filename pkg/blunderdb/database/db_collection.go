@@ -454,3 +454,40 @@ func (d *Database) CollectionCoverage(positionIDs []int64) (map[int64]int, error
 	}
 	return cs.Coverage(context.Background(), "", positionIDs)
 }
+
+// TogglePile is the Pile gesture: it puts the position on the Pile, or takes
+// it off when it is there. A position that is not in the library yet (ID 0 —
+// a draft board) is written first, as a position brought in on its own.
+func (d *Database) TogglePile(position *Position) (storage.PileToggle, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return storage.PileToggle{}, fmt.Errorf("no database is currently open")
+	}
+	return storage.TogglePile(context.Background(), d.store, "", position)
+}
+
+// IsPositionOnPile reports whether the position is on the Pile — a draft whose
+// hash is already stored included. No Pile is created by asking.
+func (d *Database) IsPositionOnPile(position *Position) (bool, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return false, fmt.Errorf("no database is currently open")
+	}
+	return storage.PositionOnPile(context.Background(), d.store, "", position)
+}
+
+// PileCollectionID returns the id of the Pile collection, or 0 when none
+// exists yet.
+func (d *Database) PileCollectionID() (int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return 0, fmt.Errorf("no database is currently open")
+	}
+	return storage.PileCollectionID(context.Background(), d.store, "")
+}

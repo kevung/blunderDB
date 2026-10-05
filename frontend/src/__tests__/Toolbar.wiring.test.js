@@ -31,6 +31,10 @@ vi.mock('../services/positionService.js', () =>
     ])
 );
 vi.mock('../services/keyboardService.js', () => stub(['toggleHelpModal']));
+vi.mock('../services/pileService.js', async () => {
+    const { writable } = await import('svelte/store');
+    return { togglePile: vi.fn(), onPileStore: writable(false) };
+});
 
 import Toolbar from '../components/Toolbar.svelte';
 import { databasePathStore } from '../stores/databaseStore.js';
@@ -41,6 +45,7 @@ import * as exportService from '../services/exportService.js';
 import * as clipboardService from '../services/clipboardService.js';
 import * as positionService from '../services/positionService.js';
 import * as keyboardService from '../services/keyboardService.js';
+import * as pileService from '../services/pileService.js';
 
 // One entry per toolbar button, in DOM order.
 const EXPECTED = [
@@ -55,6 +60,7 @@ const EXPECTED = [
     importService.pastePosition,
     positionService.saveCurrentPosition,
     positionService.updatePosition,
+    pileService.togglePile,
     positionService.deletePosition,
     positionService.reloadAllPositions,
     positionService.firstPosition,
