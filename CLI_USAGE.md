@@ -1282,6 +1282,40 @@ blunderdb events alias add --db base.db "Open 2025" "Autumn Open 2025"
 blunderdb events alias list --db base.db
 ```
 
+## Duel Command
+
+Plays a Duel without an interface, one Action per call. Each call is its own
+process: it reloads the Duel from the database, plays one Action and writes it
+back. A Duel played this way has no Cadence and no decision time (move times
+are unknown, never zero).
+
+```bash
+./blunderDB duel create --db database.db (--length <n> | --money [--jacoby]) [--side1 <side>] [--side2 <side>]
+./blunderDB duel show --db database.db --id <id>
+./blunderDB duel list --db database.db
+./blunderDB duel move --db database.db --id <id> --play "24/18 13/11"
+./blunderDB duel roll|double|take|pass|resign --db database.db --id <id>
+./blunderDB duel stop|discard --db database.db --id <id>
+```
+
+**Subcommands:**
+- `create`: starts a Duel and plays up to the first decision of an external
+  side. `--length` (1 to 25 points) or `--money`; `--start` (XGID);
+  `--name1`, `--name2`; `--side1`, `--side2` (`external`, or `bot:<level>` with
+  `instant`, `normal` or `thorough`); `--discard-at-end` drops the draft
+  instead of writing the Match. Two bots play the whole match in one call; a
+  money session between two bots is refused, since it would never end.
+- `show`: score, what the Duel waits for and, for a move, the legal plays. The
+  dice seed is never shown before the end.
+- `list`: the Duels in progress.
+- `roll`, `move`, `double`, `take`, `pass`, `resign`: one Action by the side
+  the Duel waits for (`--side 1|2` names it); `--level` (1 to 3) is the value
+  of a resignation; `--revision` refuses the Action if the Duel moved.
+- `stop`: stops the Duel and writes the Match as it stands.
+- `discard`: drops the Duel; nothing is written.
+
+All take `--db` and `--format` (`text` or `json`).
+
 ## Trash Command
 
 What was deleted through the trash, and how to put it back. A delete is still a
