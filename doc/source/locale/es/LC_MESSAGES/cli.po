@@ -242,8 +242,11 @@ msgid "duel"
 msgstr "duel"
 
 #: ../../source/cli.rst:1
-msgid "Joue un Duel une Action par appel (création, coup, videau, arrêt)."
-msgstr "Juega un Duelo una Acción por llamada (creación, jugada, cubo, parada)."
+msgid ""
+"Joue un Duel une Action par appel (création, coup, videau, abandon, arrêt)."
+msgstr ""
+"Juega un Duelo, una Acción por llamada (creación, jugada, cubo, abandono, "
+"detención)."
 
 #: ../../source/cli.rst:1
 msgid "collection"
@@ -3883,8 +3886,24 @@ msgstr ""
 "Acción si el Duelo ha avanzado."
 
 #: ../../source/cli.rst:1952
-msgid "``stop`` — Arrête le Duel et écrit le Match tel qu'il est."
-msgstr "``stop`` — Detiene el Duelo y escribe el Partido tal como está."
+msgid ""
+"``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en "
+"cours va à l'autre Côté pour les points qui le portent à la longueur (en "
+"argent, un backgammon à la valeur du videau), et le Match s'écrit gagné par "
+"lui."
+msgstr ""
+"``forfeit`` — El Lado ``--side`` (obligatorio) abandona el match: la "
+"partida en curso va al otro Lado por los puntos que lo llevan a la longitud "
+"(en dinero, un backgammon al valor del cubo), y el Match se guarda como "
+"ganado por él."
+
+#: ../../source/cli.rst:1952
+msgid ""
+"``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur. "
+"Arrêter n'est pas abandonner."
+msgstr ""
+"``stop`` — Detiene el Duelo y guarda el Match tal como está, sin ganador. "
+"Detener no es abandonar."
 
 #: ../../source/cli.rst:1953
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."

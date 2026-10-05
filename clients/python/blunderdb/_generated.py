@@ -486,6 +486,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/duels.flag — hand-written handler — see openapi.yaml."
         return self._call("/v1/duels.flag", payload)
 
+    def duels_forfeit(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.forfeit — hand-written handler — see openapi.yaml."
+        return self._call("/v1/duels.forfeit", payload)
+
     def duels_get(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/duels.get — hand-written handler — see openapi.yaml."
         return self._call("/v1/duels.get", payload)

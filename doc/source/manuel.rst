@@ -4063,11 +4063,16 @@ pipcount (``P``) et l'aide.
 * Le clic droit hors du plateau, ou sur le plateau hors de son coup, ouvre le
   menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la
   partie pour un simple, un gammon ou un backgammon (à son tour, après
-  confirmation), suspendre, arrêter. Ce menu n'offre ni évaluation ni
-  édition.
-* « Suspendre » met le Duel en suspens, horloges arrêtées. « Arrêter et
-  garder » écrit le Match tel qu'il est ; « Arrêter et jeter » n'en écrit
-  rien. Arrêter n'est jamais céder la partie.
+  confirmation), abandonner le match, le mettre en pause, l'annuler. Ce menu
+  n'offre ni évaluation ni édition.
+* « Abandonner le match » cède le match entier, à tout moment et après
+  confirmation : la partie en cours va à l'adversaire pour les points qui le
+  portent à la longueur, et le Match s'écrit gagné par lui. En argent, la
+  partie en cours est perdue au backgammon (une simple sous la règle Jacoby,
+  videau au centre) et la session se clôt.
+* « Mettre en pause » met le Duel en suspens, horloges arrêtées ; il se
+  reprend au même point. « Annuler le match » le jette, après confirmation :
+  rien n'en est écrit.
 * Un double-clic hors du plateau met la position sur la Pile, ou l'en retire,
   comme ``B`` ; seul le marque-page au coin du plateau le montre.
 

@@ -169,3 +169,23 @@ func TestCLI_MatchOriginEndings(t *testing.T) {
 		}
 	}
 }
+
+// A forfeit names its Side, ends the Duel and writes the Match won by the
+// other Side.
+func TestCLI_DuelForfeit(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "3"}); err != nil {
+		t.Fatal(err)
+	}
+	if err := cli.Run([]string{"duel", "forfeit", "--db", dbPath, "--id", "1"}); err == nil {
+		t.Error("a forfeit without --side was accepted")
+	}
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"duel", "forfeit", "--db", dbPath, "--id", "1", "--side", "1"}); err != nil {
+			t.Fatalf("forfeit: %v", err)
+		}
+	})
+	if !strings.Contains(out, "forfeited by Side 1") || !strings.Contains(out, "Score: 0-3") || strings.Contains(out, "stopped early") {
+		t.Errorf("forfeit:\n%s", out)
+	}
+}

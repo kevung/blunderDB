@@ -76,7 +76,8 @@ import ne fournit complètement : la durée de chaque décision.
     il est soit *gardé* (un Match incomplet, dont les décisions comptent), soit *jeté* (rien
     du Duel n'est écrit ; une Position mise sur la Pile pendant le jeu y reste, parce que ce
     geste l'a écrite sur-le-champ, comme une position apportée seule) : arrêter le Duel
-    n'est jamais céder la partie, qui reste une Action du jeu.
+    n'est jamais céder la partie, qui reste une Action du jeu. Céder le match entier en est
+    une aussi, l'abandon du match (ADR-0074) : le Match s'écrit gagné par l'adversaire.
     Le Match porte son origine — joué ici, niveau du Bot, Cadence, germe révélé, et le cas
     échéant perdu au temps ou arrêté avant la fin — et le Côté délégué y porte le nom de sa
     Configuration. Son Performance Rating compte comme celui d'un autre Match (règle 1).
@@ -103,7 +104,7 @@ import ne fournit complètement : la durée de chaque décision.
     format ne sait pas commencer une partie ailleurs qu'à la position initiale. À la
     création se règlent aussi la longueur (1 à 25 points, la table d'équité n'allant pas
     au-delà) ou une session en argent — Jacoby au choix, pas de beaver, videau plafonné à
-    64, close par « arrêter et garder » —, le niveau du Bot, la Cadence (ADR-0073), le Côté joué et
+    64, close par l'abandon du match ou, hors de l'interface graphique, par « arrêter et garder » —, le niveau du Bot, la Cadence (ADR-0073), le Côté joué et
     le nom du joueur.
 
 ## Conséquences

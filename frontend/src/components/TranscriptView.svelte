@@ -394,6 +394,8 @@
                 return $t('transcript.drops');
             case 'resign':
                 return $t('transcript.resigns', { level: $t(RESIGN_KEY[action.level] ?? RESIGN_KEY[1]) });
+            case 'forfeit':
+                return $t('transcript.forfeits');
             default:
                 return info.notation ?? '';
         }

@@ -240,10 +240,11 @@ msgid "duel"
 msgstr "duel"
 
 #: ../../source/cli.rst:1
-msgid "Joue un Duel une Action par appel (création, coup, videau, arrêt)."
+msgid ""
+"Joue un Duel une Action par appel (création, coup, videau, abandon, arrêt)."
 msgstr ""
-"Παίζει μια Μονομαχία μία Ενέργεια ανά κλήση (δημιουργία, κίνηση, κύβος, "
-"διακοπή)."
+"Παίζει μια Μονομαχία, μία Ενέργεια ανά κλήση (δημιουργία, κίνηση, κύβος, "
+"εγκατάλειψη, διακοπή)."
 
 #: ../../source/cli.rst:1
 msgid "collection"
@@ -3908,8 +3909,24 @@ msgstr ""
 "``--revision`` απορρίπτει την Ενέργεια αν η Μονομαχία έχει προχωρήσει."
 
 #: ../../source/cli.rst:1952
-msgid "``stop`` — Arrête le Duel et écrit le Match tel qu'il est."
-msgstr "``stop`` — Σταματά τη Μονομαχία και γράφει τον Αγώνα όπως έχει."
+msgid ""
+"``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en "
+"cours va à l'autre Côté pour les points qui le portent à la longueur (en "
+"argent, un backgammon à la valeur du videau), et le Match s'écrit gagné par "
+"lui."
+msgstr ""
+"``forfeit`` — Η Πλευρά ``--side`` (υποχρεωτική) εγκαταλείπει το ματς: η "
+"τρέχουσα παρτίδα πηγαίνει στην άλλη Πλευρά με τους πόντους που τη φέρνουν "
+"στο μήκος (στο παιχνίδι με χρήματα, ένα μπάκγκάμον στην αξία του κύβου), "
+"και το Ματς εγγράφεται ως κερδισμένο από αυτήν."
+
+#: ../../source/cli.rst:1952
+msgid ""
+"``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur. "
+"Arrêter n'est pas abandonner."
+msgstr ""
+"``stop`` — Διακόπτει τη Μονομαχία και εγγράφει το Ματς όπως είναι, χωρίς "
+"νικητή. Η διακοπή δεν είναι εγκατάλειψη."
 
 #: ../../source/cli.rst:1953
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."

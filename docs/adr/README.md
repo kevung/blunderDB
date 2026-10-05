@@ -88,3 +88,4 @@ that come out of them.
 | [0071](0071-les-dates-et-le-plateau-se-stockent-en-entiers.md) | Les dates et le plateau se stockent en entiers | secondes Unix UTC, `EncodeBoardState`, `met_id`, `comment_author`, pas d'index engine/depth |
 | [0072](0072-un-duel-est-un-match-joue-ici-sous-l-arbitrage-de-blunderdb.md) | Un Duel est un match joué ici, sous l'arbitrage de blunderDB | le Duel, ses deux Côtés, le Bot, l'Arbitre ; le noyau de règles partagé avec la Transcription |
 | [0073](0073-le-temps-d-un-duel-une-cadence-tenue-par-l-arbitre-une-duree-par-decision.md) | Le temps d'un Duel : une Cadence tenue par l'Arbitre, une durée par décision | la Cadence, le temps écoulé, la durée de décision sur le coup, le filtre de recherche sur la durée |
+| [0074](0074-abandonner-le-match-le-cede-a-l-adversaire.md) | Abandonner le match le cède à l'adversaire | `KindForfeit`, `Service.Forfeit`, `/v1/duels.forfeit`, `duel forfeit` ; pause et annulation dans l'interface |

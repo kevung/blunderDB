@@ -217,8 +217,9 @@ msgid "duel"
 msgstr "duel"
 
 #: ../../source/cli.rst:1
-msgid "Joue un Duel une Action par appel (création, coup, videau, arrêt)."
-msgstr "デュエルを 1 回の呼び出しにつき 1 アクションずつ進めます(作成、ムーブ、キューブ、停止)。"
+msgid ""
+"Joue un Duel une Action par appel (création, coup, videau, abandon, arrêt)."
+msgstr "デュエルを 1 回の呼び出しにつき 1 アクションずつ進めます（作成、手、キューブ、放棄、終了）。"
 
 #: ../../source/cli.rst:1
 msgid "collection"
@@ -3461,8 +3462,20 @@ msgstr ""
 "``--revision``\\ はデュエルが進んでいる場合にアクションを拒否します。"
 
 #: ../../source/cli.rst:1952
-msgid "``stop`` — Arrête le Duel et écrit le Match tel qu'il est."
-msgstr "``stop``\\ — デュエルを停止し、マッチをその時点のまま書き込みます。"
+msgid ""
+"``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en "
+"cours va à l'autre Côté pour les points qui le portent à la longueur (en "
+"argent, un backgammon à la valeur du videau), et le Match s'écrit gagné par "
+"lui."
+msgstr ""
+"``forfeit`` — ``--side`` "
+"のサイド（必須）がマッチを放棄します。進行中のゲームは、相手サイドをマッチの長さに届かせるポイントで相手のものとなり（マネーゲームではキューブの値でのバックギャモン）、マッチは相手の勝ちとして保存されます。"
+
+#: ../../source/cli.rst:1952
+msgid ""
+"``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur. "
+"Arrêter n'est pas abandonner."
+msgstr "``stop`` — デュエルを終了し、マッチを現状のまま勝者なしで保存します。終了は放棄ではありません。"
 
 #: ../../source/cli.rst:1953
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."

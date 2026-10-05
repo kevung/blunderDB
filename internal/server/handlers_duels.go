@@ -40,6 +40,13 @@ type duelActReq struct {
 	Play duelPlayReq `json:"play"`
 }
 
+// duelForfeitReq names the Side giving the match up, 0 player 1 or 1 player
+// 2; required, since a forfeit answers no Decision that would name it.
+type duelForfeitReq struct {
+	ID   int64 `json:"id"`
+	Side *int  `json:"side"`
+}
+
 type duelStopReq struct {
 	ID int64 `json:"id"`
 	// Keep writes the Match as it stands; false throws the draft away.
@@ -155,6 +162,14 @@ func (s *Server) duelRoutes() []route {
 		{http.MethodPost, "/v1/duels.stop", gesture(rpc(func(ctx context.Context, scope string, req duelStopReq) (*duel.State, error) {
 			return s.duelGesture(ctx, scope, req.ID, func(rev int64) (*duel.State, error) {
 				return s.duels().Stop(ctx, scope, req.ID, rev, req.Keep)
+			})
+		}))},
+		{http.MethodPost, "/v1/duels.forfeit", gesture(rpc(func(ctx context.Context, scope string, req duelForfeitReq) (*duel.State, error) {
+			if req.Side == nil || (*req.Side != 0 && *req.Side != 1) {
+				return nil, fmt.Errorf("side is required, 0 for player 1 or 1 for player 2: %w", storage.ErrInvalid)
+			}
+			return s.duelGesture(ctx, scope, req.ID, func(rev int64) (*duel.State, error) {
+				return s.duels().Forfeit(ctx, scope, req.ID, rev, *req.Side)
 			})
 		}))},
 		{http.MethodPost, "/v1/duels.discard", gesture(rpc(func(ctx context.Context, scope string, req duelIDReq) (*duel.State, error) {

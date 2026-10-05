@@ -57,6 +57,7 @@ func (cli *CLI) duelHandlers() map[string]func([]string) error {
 		"resign":  act(duel.PlayResign),
 		"stop":    cli.runDuelStop,
 		"discard": cli.runDuelDiscard,
+		"forfeit": cli.runDuelForfeit,
 	}
 }
 
@@ -91,6 +92,7 @@ func (cli *CLI) printDuelUsage() {
 	fmt.Println("  resign    Resign the game (single, gammon or backgammon)")
 	fmt.Println("  stop      Stop the Duel and keep the Match as it stands")
 	fmt.Println("  discard   Throw the Duel away: nothing of it is written")
+	fmt.Println("  forfeit   Give the match up (--side): the Match is written won by the other Side")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob")
@@ -322,6 +324,36 @@ func stepsOf(d *duel.Decision, notation string) ([]domain.CheckerStep, error) {
 	return nil, fmt.Errorf("%q is not a legal play of this roll: `duel show` lists them", notation)
 }
 
+// runDuelForfeit has a Side give the match up: the Duel ends, won by the
+// other Side, and its Match is written as a match won.
+func (cli *CLI) runDuelForfeit(args []string) error {
+	fs, dbPath, format := duelFlagSet("forfeit", "Give the match up: the game in progress goes to the other Side for the points that bring it to the length (at money play, a backgammon at the cube's value), and the Match is written won by the other Side.",
+		"blunderdb duel forfeit --db database.db --id 1 --side 1")
+	id := fs.Int64("id", 0, "Duel id (required)")
+	side := fs.Int("side", 0, "The Side that gives the match up, 1 or 2 (required)")
+	revision := fs.Int64("revision", 0, "Refuse unless the Duel is at this revision (default: no check)")
+	svc, err := cli.duelOpen(fs, dbPath, format, args)
+	if err != nil {
+		return err
+	}
+	if *id == 0 {
+		return fmt.Errorf("missing required flag: --id")
+	}
+	if *side != 1 && *side != 2 {
+		return fmt.Errorf("--side is required, 1 or 2")
+	}
+	ctx := context.Background()
+	rev, err := svc.Ensure(ctx, "", *id, *revision)
+	if err != nil {
+		return fmt.Errorf("duel %d: %w", *id, err)
+	}
+	st, err := svc.Forfeit(ctx, "", *id, rev, *side-1)
+	if err != nil {
+		return fmt.Errorf("duel %d: %w", *id, err)
+	}
+	return printDuel(st, *format)
+}
+
 func (cli *CLI) runDuelStop(args []string) error { return cli.runDuelEnd("stop", true, args) }
 
 func (cli *CLI) runDuelDiscard(args []string) error { return cli.runDuelEnd("discard", false, args) }
@@ -371,6 +403,9 @@ func printDuel(st *duel.State, format string) error {
 			fmt.Println("Ended: thrown away, nothing written.")
 		default:
 			fmt.Printf("Ended: Match %d written (seed %s)", e.MatchID, e.DiceSeed)
+			if e.Forfeited != 0 {
+				fmt.Printf(", forfeited by Side %d", e.Forfeited)
+			}
 			if e.StoppedEarly {
 				fmt.Print(", stopped early")
 			}
