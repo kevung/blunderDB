@@ -901,6 +901,27 @@ export default {
 <li><strong>Collection of misses</strong> — a collection of these positions.</li>
 </ul>
 <p>The deck and the collection are named "Decision misses" followed by today's date. On the command line, <code>training missed</code> returns the same list and makes a deck (<code>--deck</code>) or a collection (<code>--collection</code>) of it, and <code>training sessions</code> reads the log back (see training — The training log).</p>
+<h3>Duel panel</h3>
+<p>The <strong>Duel</strong> panel plays a whole match against the Bot, with blunderDB as Arbiter: it rolls the dice, enforces the rules, and keeps the score and the clocks. It opens with <code>CTRL-H</code>, with the "Play" button of the toolbar, or with the <code>duel</code> command. A database must be open: the Duel is written to it after each decision.</p>
+<p>With no Duel open, the panel shows the form, remembered from one Duel to the next, and the list of suspended Duels:</p>
+<ul>
+<li><strong>Match</strong> of 1 to 25 points, or <strong>money session</strong> (Jacoby optional).</li>
+<li><strong>Start</strong>: the starting position, the position on the board, or the starting position at a chosen score.</li>
+<li><strong>Side played</strong> (player 1 or 2) and <strong>Bot level</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, those of the analysis).</li>
+<li><strong>Time control</strong>: no time control, or a named time control (a reserve per player and a free delay at each turn), and what happens when time runs out: carry on and note it, or lose the match.</li>
+<li><strong>Your name</strong> and <strong>Record the match</strong>: when unchecked, the finished Duel is discarded instead of becoming a Match.</li>
+</ul>
+<p>"Resume" reopens a suspended Duel at the same point, with the same upcoming dice; its clocks were stopped.</p>
+<p>During the Duel, the panel shows the score, the cube, the clocks and the match sheet in two columns, like the Transcription. The score and the clocks stay in the status bar when the tab is collapsed. The board switches to <strong>DUEL</strong> mode: the library can no longer be browsed, editing, the Eval panel and the other tabs do not open, and the engine stays silent: no evaluation, no candidates. Only the Pile (<code>B</code>), the pipcount (<code>P</code>) and the help remain.</p>
+<ul>
+<li>Before the roll, "Roll" or "Double"; facing a double, "Take" or "Pass". When the cube is not available, the roll is automatic.</li>
+<li>The move is played on the board like a Decision question, then "Validate" (<code>ENTER</code>); "Put back" (<code>BACKSPACE</code>) puts the checkers back before validation. Nothing can be taken back afterwards.</li>
+<li>The Bot answers immediately; its moves are replayed on the board, slowly.</li>
+<li>"Resign the game" concedes the current game for a single, a gammon or a backgammon.</li>
+<li>"Suspend" puts the Duel on hold, clocks stopped. "Stop and keep" writes the Match as it stands; "Stop and discard" writes nothing. Stopping is never conceding the game.</li>
+</ul>
+<p>Each decision carries its duration, with or without a time control. A resignation has no duration recorded in the Match.</p>
+<p>At the end, the Match is written, its analysis starts and the Matches tab opens on it. On the command line, <code>blunderdb duel</code> drives the same Duel (see duel — Play a Duel).</p>
 <h3>Metadata Panel</h3>
 <p>The <strong>Metadata</strong> panel (<em>CTRL-M</em>) displays the general information of the current database: <em>User</em>, creation date (<em>Created</em>), schema <em>Version</em> and <em>Description</em>. The user, the date and the description are edited in place and saved when leaving the field; the version is read-only. Also accessible via the <code>meta</code> command.</p>
 <p>It also shows the database's origin <strong>when there is one</strong> — see Handing out a database: origin and password. An ordinary database does not show that section.</p>
@@ -1190,6 +1211,18 @@ export default {
 <tr>
 <td>CTRL-J</td>
 <td>Show/hide the Training panel.</td>
+</tr>
+<tr>
+<td>CTRL-H</td>
+<td>Show/hide the Duel panel (a match against the Bot).</td>
+</tr>
+<tr>
+<td>ENTER (Duel)</td>
+<td>Validate the move arranged on the board; nothing can be taken back afterwards.</td>
+</tr>
+<tr>
+<td>BACKSPACE (Duel)</td>
+<td>Put the checkers back before validation.</td>
 </tr>
 <tr>
 <td>CTRL-K</td>
@@ -1980,6 +2013,10 @@ export default {
 <tr>
 <td>train</td>
 <td>Opens the Training panel. With an argument, it opens and starts: <code>train scores</code> (the score card of a randomly drawn score; <code>train tp</code> and <code>train takepoint</code> are synonyms), <code>train pips</code> (the pip count of both sides), <code>train bearoff</code> (the EPC of both sides on a generated position; <code>train epc</code> is a synonym), <code>train evaluation</code> (the win chance and the cube action of a generated position, in money play), <code>train decision</code> (an analysed decision from the browsed list: the move is played on the board, the cube action is chosen in the panel; <code>train quiz</code> is a synonym).</td>
+</tr>
+<tr>
+<td>duel</td>
+<td>Opens the Duel panel: a match against the Bot, with blunderDB as Arbiter (see Duel panel).</td>
 </tr>
 <tr>
 <td>tp2</td>

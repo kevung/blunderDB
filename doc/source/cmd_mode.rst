@@ -37,6 +37,7 @@ Opérations globales
    "tags", "Ouvre le vocabulaire de tags : les tags utilisés dans cette base, avec le nombre de positions, cliquables pour lancer la recherche."
    "log", "Ouvre le journal d'activité : les deux cents dernières lignes du fichier de journal, avec de quoi les copier pour les joindre à un rapport, ou ouvrir le dossier qui les contient."
    "train", "Ouvre le panneau Entraînement. Avec un argument, ouvre et démarre : ``train scores`` (la fiche de score d'un score tiré au sort ; ``train tp`` et ``train takepoint`` sont des synonymes), ``train pips`` (le compte de pions des deux camps), ``train bearoff`` (l'EPC des deux camps sur une position engendrée ; ``train epc`` est un synonyme), ``train evaluation`` (les chances de gain et l'action de videau d'une position engendrée, en partie d'argent), ``train decision`` (une décision analysée de la liste parcourue : le coup se joue sur le plateau, l'action de videau se choisit dans le panneau ; ``train quiz`` est un synonyme)."
+   "duel", "Ouvre le panneau Duel : un match contre le Bot, arbitré par blunderDB (voir :ref:`panneau_duel`)."
    "tp2", "Ouvre la table des takepoints avec videau à 2."
    "tp2_live", "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
    "tp2_last", "Ouvre la table des takepoints avec videau à 2 mort."

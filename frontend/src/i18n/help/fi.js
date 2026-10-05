@@ -901,6 +901,27 @@ export default {
 <li><strong>Virheiden kokoelma</strong> — kokoelma näistä asemista.</li>
 </ul>
 <p>Pakan ja kokoelman nimi on ”Päätöksen virheet” ja perässä päivän päivämäärä. Komentorivillä <code>training missed</code> antaa saman listan ja tekee siitä pakan (<code>--deck</code>) tai kokoelman (<code>--collection</code>), ja <code>training sessions</code> lukee päiväkirjan uudelleen (katso training — Harjoituspäiväkirja).</p>
+<h3>Kaksintaistelu-paneeli</h3>
+<p><strong>Kaksintaistelu</strong>-paneeli pelaa kokonaisen ottelun Bottia vastaan, blunderDB:n toimiessa Tuomarina: se heittää nopat, valvoo sääntöjä sekä pitää kirjaa tilanteesta ja kelloista. Se avautuu näppäimillä <code>CTRL-H</code>, työkalupalkin «Pelaa»-painikkeella tai <code>duel</code>-komennolla. Tietokannan on oltava auki: Kaksintaistelu kirjoitetaan siihen jokaisen päätöksen jälkeen.</p>
+<p>Kun Kaksintaistelua ei ole auki, paneeli näyttää lomakkeen, joka muistetaan kaksintaistelusta toiseen, ja keskeytettyjen Kaksintaistelujen luettelon:</p>
+<ul>
+<li><strong>Ottelu</strong> 1–25 pisteeseen tai <strong>rahapeli</strong> (Jacoby valinnan mukaan).</li>
+<li><strong>Lähtö</strong>: alkuasema, laudan asema tai alkuasema valitulla tilanteella.</li>
+<li><strong>Pelattava puoli</strong> (pelaaja 1 tai 2) ja <strong>Botin taso</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, samat kuin analyysissä).</li>
+<li><strong>Ajankäyttö</strong>: ei ajankäyttöä tai nimetty ajankäyttö (pelaajakohtainen varaaika ja ilmainen viive joka vuorolla) sekä se, mitä ajan loppuessa tapahtuu: jatketaan ja merkitään se muistiin, tai ottelu hävitään.</li>
+<li><strong>Nimesi</strong> ja <strong>Tallenna ottelu</strong>: kun valinta on poistettu, päättynyt Kaksintaistelu hylätään sen sijaan, että siitä tulisi Ottelu.</li>
+</ul>
+<p>«Jatka peliä» avaa keskeytetyn Kaksintaistelun uudelleen samasta kohdasta, samoilla tulevilla nopilla; sen kellot olivat pysähdyksissä.</p>
+<p>Kaksintaistelun aikana paneeli näyttää tilanteen, kuution, kellot ja ottelulomakkeen kahdessa sarakkeessa, kuten Litterointi. Tilanne ja kellot pysyvät tilarivillä, kun välilehti on suljettu. Lauta siirtyy <strong>KAKSINTAISTELU</strong>-tilaan: kirjastoa ei voi selata, muokkaus, Eval-paneeli ja muut välilehdet eivät avaudu, ja moottori on vaiti: ei arviointia, ei ehdokkaita. Jäljellä ovat vain Pino (<code>B</code>), pipcount (<code>P</code>) ja ohje.</p>
+<ul>
+<li>Ennen heittoa «Heitä» tai «Tuplaa»; tuplauksen edessä «Ota vastaan» tai «Luovuta». Kun kuutio ei ole käytettävissä, heitto tehdään automaattisesti.</li>
+<li>Siirto pelataan laudalla kuin Päätös-kysymys, sitten «Vahvista» (<code>ENTER</code>); «Palauta» (<code>BACKSPACE</code>) palauttaa nappulat paikoilleen ennen vahvistusta. Sen jälkeen mitään ei voi perua.</li>
+<li>Botti vastaa heti; sen siirrot toistetaan laudalla hitaasti.</li>
+<li>«Luovuta peli» luovuttaa käynnissä olevan pelin yksinkertaisena, gammonina tai backgammonina.</li>
+<li>«Keskeytä» asettaa Kaksintaistelun tauolle kellot pysäytettyinä. «Lopeta ja säilytä» kirjoittaa Ottelun sellaisenaan; «Lopeta ja hylkää» ei kirjoita mitään. Lopettaminen ei ole koskaan pelin luovuttamista.</li>
+</ul>
+<p>Jokaisella päätöksellä on kestonsa, ajankäytöllä tai ilman. Luovutuksella ei ole Otteluun tallennettua kestoa.</p>
+<p>Lopuksi Ottelu kirjoitetaan, sen analyysi käynnistyy ja Ottelut-välilehti avautuu siihen. Komentoriviltä <code>blunderdb duel</code> ohjaa samaa Kaksintaistelua (katso duel — Pelaa Kaksintaistelu).</p>
 <h3>Metatietopaneeli</h3>
 <p><strong>Metatiedot</strong>-paneeli (<em>CTRL-M</em>) näyttää nykyisen tietokannan yleistiedot: <em>Käyttäjä</em>, luontipäivä (<em>Luotu</em>), skeeman <em>Versio</em> ja <em>Kuvaus</em>. Käyttäjä, päivämäärä ja kuvaus muokataan paikan päällä ja tallennetaan kentästä poistuttaessa; versio on vain luettavissa. Saatavilla myös komennolla <code>meta</code>.</p>
 <p>Se näyttää myös tietokannan alkuperän, <strong>jos sellainen on</strong> — ks. Tietokannan jakaminen: alkuperä ja salasana. Tavallisessa tietokannassa tätä osiota ei näy.</p>
@@ -1190,6 +1211,18 @@ export default {
 <tr>
 <td>CTRL-J</td>
 <td>Näytä/piilota Harjoittelu-paneeli.</td>
+</tr>
+<tr>
+<td>CTRL-H</td>
+<td>Näytä/piilota Kaksintaistelu-paneeli (ottelu Bottia vastaan).</td>
+</tr>
+<tr>
+<td>ENTER (Kaksintaistelu)</td>
+<td>Vahvista laudalle asetettu siirto; sen jälkeen mitään ei voi perua.</td>
+</tr>
+<tr>
+<td>BACKSPACE (Kaksintaistelu)</td>
+<td>Palauta nappulat paikoilleen ennen vahvistusta.</td>
 </tr>
 <tr>
 <td>CTRL-K</td>
@@ -1980,6 +2013,10 @@ export default {
 <tr>
 <td>train</td>
 <td>Avaa Harjoittelu-paneelin. Argumentin kanssa se avaa ja aloittaa: <code>train scores</code> (arvotun tilanteen pistekortti; <code>train tp</code> ja <code>train takepoint</code> ovat synonyymejä), <code>train pips</code> (molempien osapuolten pip-laskenta), <code>train bearoff</code> (molempien osapuolten EPC luodussa asemassa; <code>train epc</code> on synonyymi), <code>train evaluation</code> (luodun aseman voittomahdollisuus ja kuutiopäätös, rahapelissä), <code>train decision</code> (analysoitu päätös selattavasta luettelosta: siirto pelataan laudalla, kuutiopäätös valitaan paneelissa; <code>train quiz</code> on synonyymi).</td>
+</tr>
+<tr>
+<td>duel</td>
+<td>Avaa Kaksintaistelu-paneelin: ottelu Bottia vastaan, blunderDB Tuomarina (katso Kaksintaistelu-paneeli).</td>
 </tr>
 <tr>
 <td>tp2</td>

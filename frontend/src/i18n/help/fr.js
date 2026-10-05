@@ -901,6 +901,27 @@ export default {
 <li><strong>Collection des ratés</strong> — une collection de ces positions.</li>
 </ul>
 <p>Le paquet et la collection sont nommés « Ratés à Décision » suivis de la date du jour. En ligne de commande, <code>training missed</code> rend la même liste et en fait un paquet (<code>--deck</code>) ou une collection (<code>--collection</code>), et <code>training sessions</code> relit le journal (voir training — Le journal d'entraînement).</p>
+<h3>Panneau Duel</h3>
+<p>Le panneau <strong>Duel</strong> fait jouer un match entier contre le Bot, sous l'arbitrage de blunderDB : il lance les dés, impose les règles, tient le score et les horloges. Il s'ouvre par <code>CTRL-H</code>, par le bouton « Jouer » de la barre d'outils, ou par la commande <code>duel</code>. Une base doit être ouverte : le Duel s'y écrit après chaque décision.</p>
+<p>Sans Duel ouvert, le panneau montre le formulaire, mémorisé d'un Duel à l'autre, et la liste des Duels en suspens :</p>
+<ul>
+<li><strong>Match</strong> de 1 à 25 points, ou <strong>session en argent</strong> (Jacoby au choix).</li>
+<li><strong>Départ</strong> : la position initiale, la position au plateau, ou la position initiale à un score choisi.</li>
+<li><strong>Côté joué</strong> (joueur 1 ou 2) et <strong>niveau du Bot</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, ceux de l'analyse).</li>
+<li><strong>Cadence</strong> : sans cadence, ou une cadence nommée (une réserve par joueur et un délai gratuit à chaque tour), et ce que fait le temps écoulé : continuer en le notant, ou perdre le match.</li>
+<li><strong>Votre nom</strong> et <strong>Enregistrer le match</strong> : décoché, le Duel terminé est jeté au lieu de devenir un Match.</li>
+</ul>
+<p>« Reprendre » rouvre un Duel en suspens au même point, avec les mêmes dés à venir ; ses horloges étaient arrêtées.</p>
+<p>Pendant le Duel, le panneau montre le score, le videau, les horloges et la feuille de match en deux colonnes, comme la Transcription. Le score et les horloges restent dans la barre d'état quand l'onglet est replié. Le plateau passe en mode <strong>DUEL</strong> : la bibliothèque ne se parcourt plus, l'édition, le panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait — aucune évaluation, aucun candidat. Seules restent la Pile (<code>B</code>), le pipcount (<code>P</code>) et l'aide.</p>
+<ul>
+<li>Avant le lancer, « Lancer » ou « Doubler » ; face à un double, « Prendre » ou « Passer ». Quand le videau n'est pas disponible, le lancer est automatique.</li>
+<li>Le coup se joue au plateau comme une question de Décision, puis « Valider » (<code>ENTRÉE</code>) ; « Replacer » (<code>RETOUR ARRIÈRE</code>) remet les pions avant la validation. Rien ne se reprend après.</li>
+<li>Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement.</li>
+<li>« Abandonner la partie » cède la partie en cours pour un simple, un gammon ou un backgammon.</li>
+<li>« Suspendre » met le Duel en suspens, horloges arrêtées. « Arrêter et garder » écrit le Match tel qu'il est ; « Arrêter et jeter » n'en écrit rien. Arrêter n'est jamais céder la partie.</li>
+</ul>
+<p>Chaque décision porte sa durée, avec ou sans cadence. Un abandon n'a pas de durée enregistrée dans le Match.</p>
+<p>À la fin, le Match est écrit, son analyse se lance et l'onglet Matchs s'ouvre sur lui. En ligne de commande, <code>blunderdb duel</code> pilote le même Duel (voir duel — Jouer un Duel).</p>
 <h3>Panneau Métadonnées</h3>
 <p>Le panneau <strong>Métadonnées</strong> (<em>CTRL-M</em>) affiche les informations générales de la base de données courante : <em>Utilisateur</em>, date de création (<em>Créé</em>), <em>Version</em> du schéma et <em>Description</em>. L'utilisateur, la date et la description se modifient sur place et s'enregistrent en quittant le champ ; la version est en lecture seule. Accessible aussi via la commande <code>meta</code>.</p>
 <p>Il affiche également, <strong>lorsqu'elle existe</strong>, l'origine de la base — voir Diffuser une base : origine et mot de passe. Une base ordinaire n'affiche pas cette section.</p>
@@ -1190,6 +1211,18 @@ export default {
 <tr>
 <td>CTRL-J</td>
 <td>Afficher/cacher le panneau Entraînement.</td>
+</tr>
+<tr>
+<td>CTRL-H</td>
+<td>Afficher/cacher le panneau Duel (un match contre le Bot).</td>
+</tr>
+<tr>
+<td>ENTRÉE (Duel)</td>
+<td>Valider le coup arrangé au plateau ; rien ne se reprend après.</td>
+</tr>
+<tr>
+<td>RETOUR ARRIÈRE (Duel)</td>
+<td>Replacer les pions avant la validation.</td>
 </tr>
 <tr>
 <td>CTRL-K</td>
@@ -1980,6 +2013,10 @@ export default {
 <tr>
 <td>train</td>
 <td>Ouvre le panneau Entraînement. Avec un argument, ouvre et démarre : <code>train scores</code> (la fiche de score d'un score tiré au sort ; <code>train tp</code> et <code>train takepoint</code> sont des synonymes), <code>train pips</code> (le compte de pions des deux camps), <code>train bearoff</code> (l'EPC des deux camps sur une position engendrée ; <code>train epc</code> est un synonyme), <code>train evaluation</code> (les chances de gain et l'action de videau d'une position engendrée, en partie d'argent), <code>train decision</code> (une décision analysée de la liste parcourue : le coup se joue sur le plateau, l'action de videau se choisit dans le panneau ; <code>train quiz</code> est un synonyme).</td>
+</tr>
+<tr>
+<td>duel</td>
+<td>Ouvre le panneau Duel : un match contre le Bot, arbitré par blunderDB (voir Panneau Duel).</td>
 </tr>
 <tr>
 <td>tp2</td>
