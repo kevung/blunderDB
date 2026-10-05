@@ -15,6 +15,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // ErrImportCancelled is returned by CommitImportDatabase when the user cancels
@@ -555,6 +556,10 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 							slog.Warn("encoding merged analysis for position", "positionID", existingPositionID, "err", encErr)
 						} else if _, err = tx.Exec(`UPDATE analysis SET data = ?, analysis_engine = NULL, met_id = ? WHERE position_id = ?`, encoded, metID, existingPositionID); err != nil {
 							slog.Warn("updating analysis for position", "positionID", existingPositionID, "err", err)
+						} else if _, err = tx.Exec(sqlshared.InvalidateMatchStatsOfPositionsSQL+"(?)"+sqlshared.InvalidateMatchStatsOfPositionsSuffix, existingPositionID); err != nil {
+							// Provenance and table changed: the per-match figures of
+							// every match reaching the position are stale.
+							slog.Warn("invalidating match statistics of position", "positionID", existingPositionID, "err", err)
 						} else {
 							hasMerged = true
 						}

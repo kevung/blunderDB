@@ -52,11 +52,19 @@ const InvalidateMatchStatsOfPositionsSQL = `DELETE FROM match_stats WHERE match_
 const InvalidateMatchStatsOfPositionsSuffix = `)`
 
 // DropOlderShapeMatchStatsSQL deletes the rows an earlier build of the same
-// schema version wrote, before the error split and the Snowie parts were
-// columns: they are NULL there and nowhere else. Run at every open, after
+// schema version wrote: before the error split and the Snowie parts were
+// columns (they are NULL there and nowhere else), or before the breakdown
+// cells were written beside them (a seat with a counted decision and no
+// phase cell, see match_stats_cells.go). Run at every open, after
 // the columns exist; the fill that follows recomputes those matches, so the
 // repair is idempotent and costs one scan of the table once done.
-const DropOlderShapeMatchStatsSQL = `DELETE FROM match_stats WHERE checker_moves IS NULL`
+const DropOlderShapeMatchStatsSQL = `DELETE FROM match_stats WHERE ` + OlderShapeMatchStatsPredicate
+
+// OlderShapeMatchStatsPredicate selects those rows, for a probe that writes
+// nothing when there is nothing to repair. Kind 1 is cellPhase.
+const OlderShapeMatchStatsPredicate = `checker_moves IS NULL
+	OR (decisions > 0 AND NOT EXISTS (SELECT 1 FROM match_stats_cell c
+		WHERE c.match_id = match_stats.match_id AND c.seat = match_stats.seat AND c.kind = 1))`
 
 // InvalidateMatchStats drops the rows of matchIDs, in batches.
 func InvalidateMatchStats(ctx context.Context, db Execer, matchIDs []int64) error {
@@ -331,7 +339,7 @@ func (s *StatsStore) refreshMatchStatsBatch(ctx context.Context, scope string, m
 				return fmt.Errorf("match stats insert: %w", err)
 			}
 		}
-		return nil
+		return writeMatchStatsCells(ctx, tx, scope, Placeholders(len(matchIDs)), int64Args(matchIDs), settings)
 	})
 }
 
@@ -406,19 +414,29 @@ func (s *StatsStore) FillMatchStats(ctx context.Context, scope string, progress 
 	if err != nil {
 		return 0, fmt.Errorf("match stats settings: %w", err)
 	}
-	for start := 0; start < len(ids); start += matchStatsBatch {
-		if err := ctx.Err(); err != nil {
-			return start, err
+	// A batch can drop the rows of a match filled earlier whose private
+	// position it reaches (sharePositions); the next round recomputes those
+	// with the position shared, which drops nothing more, so the loop ends.
+	filled := 0
+	for len(ids) > 0 {
+		for start := 0; start < len(ids); start += matchStatsBatch {
+			if err := ctx.Err(); err != nil {
+				return filled + start, err
+			}
+			end := min(start+matchStatsBatch, len(ids))
+			if err := s.refreshMatchStatsBatch(ctx, scope, ids[start:end], settings); err != nil {
+				return filled + start, err
+			}
+			if progress != nil {
+				progress(end, len(ids))
+			}
 		}
-		end := min(start+matchStatsBatch, len(ids))
-		if err := s.refreshMatchStatsBatch(ctx, scope, ids[start:end], settings); err != nil {
-			return start, err
-		}
-		if progress != nil {
-			progress(end, len(ids))
+		filled += len(ids)
+		if ids, err = s.missingMatchStats(ctx, scope); err != nil {
+			return filled, err
 		}
 	}
-	return len(ids), nil
+	return filled, nil
 }
 
 // RebuildMatchStats — see storage.StatsStore.

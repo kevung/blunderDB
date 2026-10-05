@@ -16,8 +16,6 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -54,11 +52,13 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 
 	result := &storage.StatsResult{PRRolling: make(map[int]float64)}
 
-	// The match-level figures come from match_stats when the filter allows
-	// it: a pass over the table instead of one over every decision row. The
-	// table is repaired before the read transaction opens, since that is a write.
-	// A read-only connection can neither repair the table nor create the
-	// selection tables: it reads every decision directly, to the same figures.
+	// Every figure comes from match_stats and its cells when the filter
+	// allows it (stats_from_cells.go): sums over a few rows per match instead
+	// of passes over every decision. The tables are filled before the read
+	// transaction opens, since that is a write. A provenance filter copies
+	// its selection and runs the direct passes over it; a read-only
+	// connection can neither fill the tables nor create the copy: it reads
+	// every decision directly, to the same figures.
 	readOnly := RefusesWrites(ctx, s.DB)
 	useTable := fromMatchStats(filter) && !readOnly
 	if useTable {
@@ -72,6 +72,9 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 	err = s.DB.Transact(ctx, func(tx Execer) error {
 		ts := &StatsStore{DB: tx}
 		q.join = statsBaseJoin
+		if useTable {
+			return ts.computeFromCells(ctx, q, result)
+		}
 		if !readOnly {
 			join, err := ts.materializeSelection(ctx, scope, filter)
 			if err != nil {
@@ -82,17 +85,12 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 			ts = &StatsStore{DB: selectionExecer{tx}}
 		}
 
-		prPass, snowiePass, tournamentPass, matchPass := ts.computePRByDecisionType, ts.computeSnowieGlobal, ts.computePerTournament, ts.computePerMatch
-		if useTable {
-			prPass, snowiePass, tournamentPass, matchPass = ts.prByDecisionTypeFromTable, ts.snowieGlobalFromTable, ts.perTournamentFromTable, ts.perMatchFromTable
-		}
-
 		for _, pass := range []func(context.Context, statsQuery, *storage.StatsResult) error{
 			ts.computeTotals,
-			prPass,
-			snowiePass,
-			tournamentPass,
-			matchPass,
+			ts.computePRByDecisionType,
+			ts.computeSnowieGlobal,
+			ts.computePerTournament,
+			ts.computePerMatch,
 			ts.computeCubeActionBreakdown,
 			ts.computeCubeDirections,
 			ts.computeErrorHistogram,
@@ -573,21 +571,7 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 
 				rowIdx++
 
-				// XG encodes player 0 (bottom) as 1 and player 1 (top) as -1;
-				// gnuBG fMove is 0 or 1.
-				fMove := 0
-				if rawPlayer == -1 {
-					fMove = 1
-				}
-				// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss
-				// expects current scores (games already won). domain.PointsAway
-				// decodes the Crawford sentinel first: a stored 0 is one point
-				// away, post-Crawford, and subtracting it raw says "has already
-				// won" — a score the MET refuses, silently dropping the row.
-				currentScore0 := matchLength - domain.PointsAway(awayScore0)
-				currentScore1 := matchLength - domain.PointsAway(awayScore1)
-
-				mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
+				mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, rawPlayer, cubeValue, matchLength)
 
 				if !math.IsNaN(mwcLoss) {
 					mwcAvailable = true

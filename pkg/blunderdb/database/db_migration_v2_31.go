@@ -31,7 +31,9 @@ var prunedIndexes2_31 = []string{
 // (ADR-0071), plus additions EnsureSchema creates from the one schema after
 // the chain: match_equity_table and analysis.met_id (ADR-0068),
 // lesson_progress (ADR-0069), study_mark (the study queue's explicit "seen"
-// gesture) and move.error_mp, all added NULL or empty. Scoring the
+// gesture), move.error_mp and the per-match breakdowns beside match_stats
+// (match_stats_cell, match_stats_position), all added NULL or empty; the
+// open fills the breakdowns with match_stats (DropOlderShapeMatchStatsSQL). Scoring the
 // existing moves is not part of it: that is the resumable
 // MatchStore.ScoreMoves pass, run outside the open.
 //

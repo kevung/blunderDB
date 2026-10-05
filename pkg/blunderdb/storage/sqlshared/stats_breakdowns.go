@@ -107,14 +107,20 @@ func (s *StatsStore) computePerScore(ctx context.Context, q statsQuery, result *
 	if err := rows.Err(); err != nil {
 		return err
 	}
-	sort.Slice(result.PerScore, func(i, j int) bool {
-		a, b := result.PerScore[i], result.PerScore[j]
+	sortScoreCells(result.PerScore)
+	return nil
+}
+
+// sortScoreCells orders the away × away matrix by mover's away, then
+// opponent's.
+func sortScoreCells(cells []storage.ScoreCellStats) {
+	sort.SliceStable(cells, func(i, j int) bool {
+		a, b := cells[i], cells[j]
 		if a.MoverAway != b.MoverAway {
 			return a.MoverAway < b.MoverAway
 		}
 		return a.OpponentAway < b.OpponentAway
 	})
-	return nil
 }
 
 // computePerTag splits the selection by the tags in the positions' comments.

@@ -115,6 +115,11 @@ func purgeSeedRows(t *testing.T, pool *pgxpool.Pool, tenantID int64) {
 	exec(`INSERT INTO player_alias (tenant_id, alias, canonical) VALUES ($1, 'p', 'p1')`, tenantID)
 	exec(`INSERT INTO event_alias (tenant_id, alias, canonical) VALUES ($1, 'e', 'e1')`, tenantID)
 	exec(`INSERT INTO match_stats (tenant_id, match_id, seat) VALUES ($1, $2, 1)`, tenantID, matchID)
+	exec(`INSERT INTO match_stats_cell (tenant_id, match_id, seat, decision_type, met_id, kind, k1, k2,
+		decisions, error_mp, max_error_mp, blunders, mwc_loss, mwc_decisions, positions)
+		VALUES ($1, $2, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1)`, tenantID, matchID)
+	exec(`INSERT INTO match_stats_position (tenant_id, match_id, seat, position_id, decision_type, met_id)
+		VALUES ($1, $2, 1, $3, 0, 0)`, tenantID, matchID, positionID)
 
 	collectionID := scalar(`INSERT INTO collection (tenant_id, name) VALUES ($1, 'coll') RETURNING id`, tenantID)
 	lessonID := scalar(`INSERT INTO lesson (tenant_id, name) VALUES ($1, 'l') RETURNING id`, tenantID)

@@ -20,6 +20,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/statsequal"
 )
 
 // frozenOracleGaps names the StatsResult fields the legacy oracle does not
@@ -33,6 +34,23 @@ var frozenOracleGaps = map[string]string{
 	"PerTag":      "#266, added after the migration the oracle guards",
 	"PerScore":    "#266, added after the migration the oracle guards",
 	"PerGameType": "#291, added after the migration the oracle guards",
+}
+
+// statsEqual is jsonEqual for a statistics result, whose MWC sums may part
+// at the last bit (statsequal.JSON).
+func statsEqual(t *testing.T, label string, legacy, got any) {
+	t.Helper()
+	jl, err := marshalWithoutGaps(legacy)
+	if err != nil {
+		t.Fatalf("%s: marshal legacy: %v", label, err)
+	}
+	jg, err := marshalWithoutGaps(got)
+	if err != nil {
+		t.Fatalf("%s: marshal storage: %v", label, err)
+	}
+	if ok, err := statsequal.JSON(jl, jg); err != nil || !ok {
+		t.Errorf("%s mismatch (%v):\n legacy = %s\n storage = %s", label, err, jl, jg)
+	}
 }
 
 func jsonEqual(t *testing.T, label string, legacy, got any) {
@@ -196,8 +214,8 @@ func TestStatsStorageParity(t *testing.T) {
 
 			// 4. Compare.
 			jsonEqual(t, "DateRange", legacyDR, gotDR)
-			jsonEqual(t, "Compute(all)", legacyAll, gotAll)
-			jsonEqual(t, "Compute(checker)", legacyChecker, gotChecker)
+			statsEqual(t, "Compute(all)", legacyAll, gotAll)
+			statsEqual(t, "Compute(checker)", legacyChecker, gotChecker)
 			jsonEqual(t, "PlayerNames", legacyPlayers, gotPlayers)
 			jsonEqual(t, "PositionIDsByMatch", legacyMatchIDs, gotMatchIDs)
 			jsonEqual(t, "PositionIDsBySelection", legacySel, gotSel)

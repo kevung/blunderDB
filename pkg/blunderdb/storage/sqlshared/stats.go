@@ -816,8 +816,19 @@ const moverNameExpr = "CASE WHEN mv.player = 1 THEN m.player1_name ELSE m.player
 // tournaments, match length) against the match table alone, scoped to the
 // tenant, for the queries that count matches and games rather than decisions.
 func (s *StatsStore) buildMatchWhereClause(scope string, filter storage.StatsFilter) (whereSQL string, args []any) {
-	tenant, args := s.DB.TenantFilter("m", scope)
-	clauses := []string{tenant}
+	clauses, args := s.matchClauses(scope, filter)
+	metClause, metArgs := metComparableMatch(s.DB, scope)
+	clauses = append(clauses, metClause)
+	args = append(args, metArgs...)
+	return " WHERE " + strings.Join(clauses, " AND "), args
+}
+
+// matchClauses are the match-level predicates of filter on alias m — tenant,
+// tournaments, dates, lengths — without the MET predicate, which each reader
+// states at its own grain.
+func (s *StatsStore) matchClauses(scope string, filter storage.StatsFilter) (clauses []string, args []any) {
+	tenant, targs := s.DB.TenantFilter("m", scope)
+	clauses, args = []string{tenant}, targs
 
 	if len(filter.TournamentIDs) > 0 {
 		ph := strings.TrimSuffix(strings.Repeat("?,", len(filter.TournamentIDs)), ",")
@@ -837,11 +848,7 @@ func (s *StatsStore) buildMatchWhereClause(scope string, filter storage.StatsFil
 		}
 	}
 
-	metClause, metArgs := metComparableMatch(s.DB, scope)
-	clauses = append(clauses, metClause)
-	args = append(args, metArgs...)
-
-	return " WHERE " + strings.Join(clauses, " AND "), args
+	return clauses, args
 }
 
 // PlayerTable computes one row per player over the matches the filter retains,

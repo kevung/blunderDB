@@ -177,6 +177,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Lesson/Progress", testLessonProgress},
 		{"MatchEquityTable/Lifecycle", testMETLifecycle},
 		{"MatchEquityTable/DifferentLeftOut", testMETDifferentLeftOut},
+		{"MatchStats/SharedPositionsCountOnce", testMatchStatsSharedPositions},
 		{"MatchEquityTable/DroppedOnReplacement", testMETDroppedOnReplacement},
 		{"MatchEquityTable/TravelsWithImport", testMETTravelsWithImport},
 		{"MatchEquityTable/TravelsWithExport", testMETTravelsWithExport},

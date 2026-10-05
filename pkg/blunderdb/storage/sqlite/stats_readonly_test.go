@@ -15,6 +15,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/statsequal"
 )
 
 // demoCopy writes the demo library (three analysed matches) to a temporary file.
@@ -57,6 +58,16 @@ func openQueryOnly(t *testing.T, path string) *Storage {
 	}
 	t.Cleanup(func() { db.Close() })
 	return New(db)
+}
+
+// sameStatsJSON is statsequal.JSON for a test.
+func sameStatsJSON(t *testing.T, a, b string) bool {
+	t.Helper()
+	ok, err := statsequal.JSON(a, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return ok
 }
 
 func asJSON(t *testing.T, v any) string {
@@ -123,7 +134,7 @@ func TestComputeSelectionMatchesDirectReadAndReadOnlyWritesNothing(t *testing.T)
 		if err != nil {
 			t.Fatalf("read-only Compute %+v: %v", f, err)
 		}
-		if got := asJSON(t, res); got != want[i] {
+		if got := asJSON(t, res); !sameStatsJSON(t, got, want[i]) {
 			t.Errorf("filter %+v:\n read-only %s\n writable  %s", f, got, want[i])
 		}
 	}

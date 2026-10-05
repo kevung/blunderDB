@@ -252,7 +252,7 @@ func (s *MetadataStore) blunderCount(ctx context.Context, scope string) (int, er
 // their rows would only lengthen the probe.
 var storedBytesTables = []string{
 	"position", "analysis", "match", "game", "move", "move_analysis",
-	"match_stats", "comment", "transcription", "collection_position",
+	"match_stats", "match_stats_cell", "match_stats_position", "comment", "transcription", "collection_position",
 	"anki_card", "anki_review_log", "training_item",
 }
 
