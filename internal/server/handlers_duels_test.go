@@ -210,8 +210,24 @@ func TestMatchOriginIsServed(t *testing.T) {
 		t.Errorf("bot level %q, want instant", o.BotLevel)
 	}
 
-	status, body = gesture(t, ts, testTenant, "/v1/matches.origin", 0, map[string]any{"matchId": s.Ended.MatchID + 100})
+	// A read: served without --duel too, null for a match not played here,
+	// 404 for no match at all.
+	reads := duelServerOn(t, st, false)
+	if status, body = gesture(t, reads, testTenant, "/v1/matches.origin", 0, map[string]any{"matchId": s.Ended.MatchID}); status != http.StatusOK {
+		t.Errorf("matches.origin without --duel: status %d (%s)", status, body)
+	}
+	status, body = gesture(t, reads, testTenant, "/v1/matches.save", 0, map[string]any{"match": map[string]any{"player1_name": "A", "player2_name": "B", "match_length": 3}})
+	var saved struct {
+		ID int64 `json:"id"`
+	}
+	if status != http.StatusOK || json.Unmarshal(body, &saved) != nil || saved.ID == 0 {
+		t.Fatalf("matches.save: status %d (%s)", status, body)
+	}
+	status, body = gesture(t, reads, testTenant, "/v1/matches.origin", 0, map[string]any{"matchId": saved.ID})
 	if status != http.StatusOK || strings.TrimSpace(string(body)) != "null" {
 		t.Errorf("origin of a match not played here: status %d (%s), want null", status, body)
+	}
+	if status, body = gesture(t, reads, testTenant, "/v1/matches.origin", 0, map[string]any{"matchId": saved.ID + 100}); status != http.StatusNotFound {
+		t.Errorf("origin of no match: status %d (%s), want 404", status, body)
 	}
 }

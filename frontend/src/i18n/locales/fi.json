@@ -537,6 +537,7 @@
         "timesChart": "Kunkin päätöksen kesto ottelun aikana",
         "originPlayedHere": "Pelattu täällä",
         "originStopped": "Keskeytetty ennen loppua",
+        "originLostOnTime": "Hävitty ajalla ({name})",
         "originCadence": "Aikataulu: {cadence}",
         "originReserve": "varaus {s} s",
         "originReservePerPoint": "varaus {s} s pisteeltä",
@@ -546,7 +547,8 @@
         "originStart": "Lähtö",
         "originOpening": "Alkuasema",
         "originSeed": "Noppien siemen",
-        "originFingerprint": "Siemenen sormenjälki (SHA-256)",
+        "originFingerprint": "Siemenen SHA-256",
+        "originFingerprintHint": "verrattavaksi Kaksintaistelun luonnissa julkaistuun sormenjälkeen",
         "gradeError": "Virhe: {cost}",
         "gradeBlunder": "Blunder: {cost}",
         "gameErrorCount": "Virheet blunderin rajan alla: {n}",
@@ -2989,6 +2991,8 @@
         "discarded": "Kaksintaistelu hylätty: mitään ei tallenneta.",
         "ended": "Kaksintaistelu päättyi: ottelu {id} tallennettu, analyysi käynnistetty.",
         "endedOnTime": "Kaksintaistelu hävitty ajalla: ottelu {id} tallennettu, analyysi käynnistetty.",
-        "locked": "Kaksintaistelu on käynnissä: keskeytä tai lopeta se ensin."
+        "locked": "Kaksintaistelu on käynnissä: keskeytä tai lopeta se ensin.",
+        "fingerprint": "Siemenen sormenjälki (SHA-256)",
+        "fingerprintHint": "Julkaistu ennen ensimmäistä heittoa; siemen paljastetaan ottelun mukana, ja sen SHA-256:n on annettava tämä sormenjälki"
     }
 }

@@ -154,7 +154,7 @@ func writeSourceMetadata(sb *strings.Builder, m *Match) {
 // trusting the Arbiter (ADR-0072 rule 8), and the rest of its origin.
 func writeOrigin(sb *strings.Builder, m *Match, o *duel.Origin) {
 	if o == nil {
-		sb.WriteString("Origin: imported or transcribed\n")
+		sb.WriteString("Origin: not played here\n")
 		return
 	}
 	sb.WriteString("Origin: played here\n")
@@ -164,13 +164,24 @@ func writeOrigin(sb *strings.Builder, m *Match, o *duel.Origin) {
 		fmt.Fprintf(sb, "  Start: %s\n", o.Start)
 	}
 	fmt.Fprintf(sb, "  Dice seed: %s\n", o.DiceSeed)
-	fmt.Fprintf(sb, "  Seed fingerprint (SHA-256): %s\n", o.Fingerprint)
-	fmt.Fprintf(sb, "  Stopped before the end: %s\n", map[bool]string{true: "yes", false: "no"}[o.StoppedEarly])
+	fmt.Fprintf(sb, "  SHA-256 of the seed: %s (compare with the fingerprint published when the Duel was created)\n", o.Fingerprint)
+	var overTime string
+	if o.OverTime == 1 || o.OverTime == 2 {
+		overTime = [2]string{m.Player1Name, m.Player2Name}[o.OverTime-1]
+	}
+	switch {
+	case o.LostOnTime:
+		fmt.Fprintf(sb, "  Ended: lost on time (%s)\n", overTime)
+	case o.StoppedEarly:
+		sb.WriteString("  Ended: stopped before the end\n")
+	default:
+		sb.WriteString("  Ended: played to the end\n")
+	}
 	if c := o.CadenceSettings; c != nil {
 		fmt.Fprintf(sb, "  Cadence: %s\n", describeCadence(*c))
 	}
-	if o.OverTime == 1 || o.OverTime == 2 {
-		fmt.Fprintf(sb, "  Reserve ran out first: %s\n", [2]string{m.Player1Name, m.Player2Name}[o.OverTime-1])
+	if overTime != "" && !o.LostOnTime {
+		fmt.Fprintf(sb, "  Reserve ran out first: %s\n", overTime)
 	}
 	if o.BotLevel != "" {
 		fmt.Fprintf(sb, "  Bot: level %s", o.BotLevel)

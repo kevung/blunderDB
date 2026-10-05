@@ -1,7 +1,8 @@
 <script>
     // The origin of a Match played here: one line, opened onto the revealed
-    // seed and its fingerprint so anyone can recompute the rolls without
-    // trusting the Arbiter. Nothing is drawn for a Match imported or transcribed.
+    // seed and its SHA-256, to compare with the fingerprint the Duel published
+    // at its creation: anyone can then recompute the rolls without trusting
+    // the Arbiter. Nothing is drawn for a Match not played here.
     import { t } from '../i18n';
 
     /** @type {{ origin: any, player1: string, player2: string }} */
@@ -20,9 +21,10 @@
     <details class="match-origin" data-testid="match-origin">
         <summary>
             <span class="origin-played">{$t('match.originPlayedHere')}</span>
-            {#if origin.stopped_early}<span data-testid="origin-stopped"> · {$t('match.originStopped')}</span>{/if}
+            {#if origin.lost_on_time}<span data-testid="origin-lost-on-time"> · {$t('match.originLostOnTime', { name: overTime })}</span>
+            {:else if origin.stopped_early}<span data-testid="origin-stopped"> · {$t('match.originStopped')}</span>{/if}
             {#if cadence}<span> · {$t('match.originCadence', { cadence })}</span>{/if}
-            {#if overTime}<span> · {$t('match.originOverTime', { name: overTime })}</span>{/if}
+            {#if overTime && !origin.lost_on_time}<span> · {$t('match.originOverTime', { name: overTime })}</span>{/if}
             {#if origin.bot_level}<span data-testid="origin-bot">
                     · {$t('match.originBot', { level: origin.bot_level })}{#if origin.bot_engine}
                         ({origin.bot_engine}){/if}</span
@@ -36,7 +38,7 @@
             <dt>{$t('match.originSeed')}</dt>
             <dd><code data-testid="origin-seed">{origin.dice_seed}</code></dd>
             <dt>{$t('match.originFingerprint')}</dt>
-            <dd><code data-testid="origin-fingerprint">{origin.fingerprint}</code></dd>
+            <dd><code data-testid="origin-fingerprint">{origin.fingerprint}</code> <span class="hint">{$t('match.originFingerprintHint')}</span></dd>
         </dl>
     </details>
 {/if}
@@ -62,6 +64,9 @@
     dd {
         margin: 0;
         min-width: 0;
+    }
+    .hint {
+        font-style: italic;
     }
     code {
         user-select: all;

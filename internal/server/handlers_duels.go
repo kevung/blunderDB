@@ -98,7 +98,7 @@ func (s *Server) duelRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/duels.get", s.duelGetHandler},
 		// The origin of a Match played here, its seed revealed; null for a
-		// Match imported or transcribed. A read: served without --duel.
+		// Match not played here, 404 for no Match. A read: served without --duel.
 		{http.MethodPost, "/v1/matches.origin", rpc(func(ctx context.Context, scope string, req matchIDReq) (*duel.Origin, error) {
 			return duel.ReadOrigin(ctx, s.opts.Storage, scope, req.MatchID)
 		})},

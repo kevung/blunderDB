@@ -1508,14 +1508,16 @@ l'erreur moyenne et la part de blunders. Une décision dont l'erreur n'est pas
 enregistrée est comptée sans entrer dans la moyenne.
 
 Un match joué ici, issu d'un Duel, porte son origine en tête de la
-transcription, sur une ligne : « Joué ici », puis, s'il y a lieu, « Arrêté
-avant la fin », la cadence, le joueur dont la réserve s'est épuisée en premier
-et le niveau du Bot avec la version de gammonNet dont il a joué la politique.
-Un clic déplie le départ (la position initiale ou le XGID choisi), le germe des
-dés révélé et son empreinte SHA-256 : c'est l'empreinte publiée à la création
-du Duel, et le germe permet de recalculer chaque lancer sans faire confiance à
-blunderDB. Un match importé ou transcrit n'a pas d'origine et n'affiche pas
-cette ligne.
+transcription, sur une ligne, même s'il n'a aucun coup : « Joué ici », puis,
+s'il y a lieu, « Perdu au temps » avec le joueur dont la réserve s'est épuisée
+sous une cadence qui fait perdre le match, ou « Arrêté avant la fin » pour un
+Duel arrêté, la cadence, le joueur dont la réserve s'est épuisée en premier et
+le niveau du Bot avec la version de gammonNet dont il a joué la politique. Un
+clic déplie le départ (la position initiale ou le XGID choisi), le germe des
+dés révélé et son SHA-256, à comparer avec l'empreinte publiée à la création
+du Duel : s'ils concordent, le germe permet de recalculer chaque lancer sans
+faire confiance à blunderDB. Un match qui n'a pas été joué ici n'a pas
+d'origine et n'affiche pas cette ligne.
 
 L'onglet **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
 le fichier source dit des joueurs et de la session, quand il le dit — un
@@ -4013,7 +4015,10 @@ l'autre, et la liste des Duels en suspens :
 venir ; ses horloges étaient arrêtées.
 
 Pendant le Duel, le panneau montre le score, le videau, les horloges et la
-feuille de match en deux colonnes, comme la Transcription. Le score et les
+feuille de match en deux colonnes, comme la Transcription. Il montre aussi,
+dès la création, l'empreinte SHA-256 du germe des dés : le germe reste secret
+jusqu'à la fin, et son SHA-256, lu avec le Match, doit redonner cette
+empreinte. Le score et les
 horloges restent dans la barre d'état quand l'onglet est replié. Le plateau
 passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
 panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait —

@@ -1,10 +1,13 @@
 package database
 
 import (
+	"context"
+	"errors"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 func TestDuelFacade_CreateConflictStop(t *testing.T) {
@@ -111,7 +114,14 @@ func TestDuelFacade_MatchOrigin(t *testing.T) {
 		t.Errorf("a match kept when stopped says so: %+v", o.MatchOrigin)
 	}
 
-	if o, err := db.GetMatchOrigin(ended.State.Ended.MatchID + 100); err != nil || o != nil {
+	imported, err := db.store.Matches().Save(context.Background(), "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3})
+	if err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	if o, err := db.GetMatchOrigin(imported); err != nil || o != nil {
 		t.Errorf("a match not played here = %+v, %v; want no origin, no error", o, err)
+	}
+	if _, err := db.GetMatchOrigin(imported + 100); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("no such match: %v, want ErrNotFound", err)
 	}
 }

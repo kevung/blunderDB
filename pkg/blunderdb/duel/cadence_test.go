@@ -267,6 +267,9 @@ func TestLoseOnTime(t *testing.T) {
 	if err := json.Unmarshal([]byte(o.Cadence), &back); err != nil || back != cad {
 		t.Errorf("origin cadence %q, want %+v", o.Cadence, cad)
 	}
+	if read, err := ReadOrigin(ctx, st, "", end.Ended.MatchID); err != nil || !read.LostOnTime {
+		t.Errorf("read back %+v, %v: a match lost on time says so", read, err)
+	}
 	games, err := gamesOf(st, end.Ended.MatchID)
 	if err != nil || len(games) != 1 || games[0].Winner != domain.WinnerUnfinished || games[0].PointsWon != 0 {
 		t.Errorf("games %+v, %v: one, unfinished, no points", games, err)
@@ -300,6 +303,9 @@ func TestPlayOnAfterTime(t *testing.T) {
 	}
 	if o, err := st.Duels().Origin(ctx, "", end.Ended.MatchID); err != nil || o.OverTime != first+1 {
 		t.Errorf("origin %+v, %v: the overrun is a fact of the Match", o, err)
+	}
+	if read, err := ReadOrigin(ctx, st, "", end.Ended.MatchID); err != nil || read.LostOnTime || !read.StoppedEarly {
+		t.Errorf("read back %+v, %v: played on past the reserve then stopped is not lost on time", read, err)
 	}
 
 	lose := Cadence{Reserve: 5, TimeOut: TimeLoseMatch}

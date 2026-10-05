@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // Each call is its own process: a Duel is created by one, played by the next,
@@ -136,10 +137,35 @@ func TestCLI_MatchShowsItsOrigin(t *testing.T) {
 				t.Fatalf("match %s: %v", format, err)
 			}
 		})
-		for _, want := range []string{"Origin: played here", "Dice seed: " + st.Ended.DiceSeed, "Seed fingerprint (SHA-256): " + st.Fingerprint, "Bot: level instant"} {
+		for _, want := range []string{"Origin: played here", "Dice seed: " + st.Ended.DiceSeed, "SHA-256 of the seed: " + st.Fingerprint, "Bot: level instant"} {
 			if !strings.Contains(out, want) {
 				t.Errorf("match --format %s lacks %q:\n%s", format, want, out)
 			}
+		}
+	}
+}
+
+// A match lost on time is told apart from one stopped by hand, and a match
+// not played here says so.
+func TestCLI_MatchOriginEndings(t *testing.T) {
+	m := &Match{Player1Name: "Alice", Player2Name: "Bob"}
+	lose := &duel.Cadence{Reserve: 60, TimeOut: duel.TimeLoseMatch}
+	cases := []struct {
+		origin *duel.Origin
+		want   string
+		absent string
+	}{
+		{nil, "Origin: not played here", "Ended:"},
+		{&duel.Origin{MatchOrigin: storage.MatchOrigin{StoppedEarly: true, OverTime: 2}, CadenceSettings: lose, LostOnTime: true},
+			"Ended: lost on time (Bob)", "stopped before the end"},
+		{&duel.Origin{MatchOrigin: storage.MatchOrigin{StoppedEarly: true, OverTime: 1}},
+			"Ended: stopped before the end", "lost on time"},
+	}
+	for _, c := range cases {
+		var sb strings.Builder
+		writeOrigin(&sb, m, c.origin)
+		if out := sb.String(); !strings.Contains(out, c.want) || strings.Contains(out, c.absent) {
+			t.Errorf("origin %+v: got\n%s\nwant %q, not %q", c.origin, out, c.want, c.absent)
 		}
 	}
 }

@@ -537,6 +537,7 @@
         "timesChart": "Time taken over each decision, over the match",
         "originPlayedHere": "Played here",
         "originStopped": "Stopped before the end",
+        "originLostOnTime": "Lost on time ({name})",
         "originCadence": "Cadence: {cadence}",
         "originReserve": "reserve {s} s",
         "originReservePerPoint": "reserve {s} s per point",
@@ -546,7 +547,8 @@
         "originStart": "Start",
         "originOpening": "Opening position",
         "originSeed": "Dice seed",
-        "originFingerprint": "Seed fingerprint (SHA-256)",
+        "originFingerprint": "SHA-256 of the seed",
+        "originFingerprintHint": "to compare with the fingerprint published when the Duel was created",
         "gradeError": "Error: {cost}",
         "gradeBlunder": "Blunder: {cost}",
         "gameErrorCount": "Errors below the blunder threshold: {n}",
@@ -2989,6 +2991,8 @@
         "discarded": "Duel discarded: nothing of it is written.",
         "ended": "Duel over: match {id} written, analysis started.",
         "endedOnTime": "Duel lost on time: match {id} written, analysis started.",
-        "locked": "A Duel is in progress: suspend or stop it first."
+        "locked": "A Duel is in progress: suspend or stop it first.",
+        "fingerprint": "Seed fingerprint (SHA-256)",
+        "fingerprintHint": "Published before the first roll; the seed is revealed with the Match, and its SHA-256 must give back this fingerprint"
     }
 }

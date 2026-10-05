@@ -537,6 +537,7 @@
         "timesChart": "Durée de chaque décision au fil du match",
         "originPlayedHere": "Joué ici",
         "originStopped": "Arrêté avant la fin",
+        "originLostOnTime": "Perdu au temps ({name})",
         "originCadence": "Cadence : {cadence}",
         "originReserve": "réserve {s} s",
         "originReservePerPoint": "réserve {s} s par point",
@@ -546,7 +547,8 @@
         "originStart": "Départ",
         "originOpening": "Position initiale",
         "originSeed": "Germe des dés",
-        "originFingerprint": "Empreinte du germe (SHA-256)",
+        "originFingerprint": "SHA-256 du germe",
+        "originFingerprintHint": "à comparer avec l'empreinte publiée à la création du Duel",
         "gradeError": "Erreur : {cost}",
         "gradeBlunder": "Blunder : {cost}",
         "gameErrorCount": "Erreurs sous le seuil de blunder : {n}",
@@ -2989,6 +2991,8 @@
         "discarded": "Duel jeté : rien n'en est écrit.",
         "ended": "Duel terminé : match {id} écrit, analyse lancée.",
         "endedOnTime": "Duel perdu au temps : match {id} écrit, analyse lancée.",
-        "locked": "Un Duel est en cours : suspendez-le ou arrêtez-le d'abord."
+        "locked": "Un Duel est en cours : suspendez-le ou arrêtez-le d'abord.",
+        "fingerprint": "Empreinte du germe (SHA-256)",
+        "fingerprintHint": "Publiée avant le premier lancer ; le germe sera révélé avec le Match, et son SHA-256 devra redonner cette empreinte"
     }
 }

@@ -537,6 +537,7 @@
         "timesChart": "Durata di ogni decisione nel corso della partita",
         "originPlayedHere": "Giocato qui",
         "originStopped": "Interrotto prima della fine",
+        "originLostOnTime": "Perso per tempo ({name})",
         "originCadence": "Cadenza: {cadence}",
         "originReserve": "riserva {s} s",
         "originReservePerPoint": "riserva {s} s per punto",
@@ -546,7 +547,8 @@
         "originStart": "Partenza",
         "originOpening": "Posizione iniziale",
         "originSeed": "Seme dei dadi",
-        "originFingerprint": "Impronta del seme (SHA-256)",
+        "originFingerprint": "SHA-256 del seme",
+        "originFingerprintHint": "da confrontare con l'impronta pubblicata alla creazione del Duello",
         "gradeError": "Errore: {cost}",
         "gradeBlunder": "Blunder: {cost}",
         "gameErrorCount": "Errori sotto la soglia di blunder: {n}",
@@ -2989,6 +2991,8 @@
         "discarded": "Duello scartato: non viene salvato nulla.",
         "ended": "Duello finito: match {id} salvato, analisi avviata.",
         "endedOnTime": "Duello perso per tempo: match {id} salvato, analisi avviata.",
-        "locked": "Un duello è in corso: sospendilo o fermalo prima."
+        "locked": "Un duello è in corso: sospendilo o fermalo prima.",
+        "fingerprint": "Impronta del seme (SHA-256)",
+        "fingerprintHint": "Pubblicata prima del primo lancio; il seme è rivelato con il match, e il suo SHA-256 deve ridare questa impronta"
     }
 }

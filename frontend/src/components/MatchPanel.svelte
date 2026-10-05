@@ -1024,12 +1024,14 @@
                 <!-- Transcript view -->
                 {#if detailView === 'transcript'}
                     <div class="transcript-container">
+                        {#if !loadingDetail}
+                            <MatchOrigin origin={detailOrigin} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
+                        {/if}
                         {#if loadingDetail}
                             <div class="loading-state">{$t('common.loading')}</div>
                         {:else if transcriptGames.length === 0}
                             <div class="empty-state">{$t('match.noMovesRecorded')}</div>
                         {:else}
-                            <MatchOrigin origin={detailOrigin} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
                             {#if detailTimes}
                                 <MatchTimes summary={detailTimes} movePositions={detailMovePositions} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
                             {/if}

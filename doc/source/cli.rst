@@ -932,12 +932,15 @@ de décisions, l'erreur moyenne et la part de blunders ; ``--format json`` en
 livre les lignes.
 
 Pour un match joué ici par un Duel, les sorties ``text`` et ``summary``
-ajoutent son origine : le départ, le germe des dés révélé et son empreinte
-SHA-256 (celle que le Duel a publiée à sa création), l'arrêt avant la fin, la
+ajoutent son origine : le départ, le germe des dés révélé et son SHA-256, à
+comparer avec l'empreinte publiée à la création du Duel, la fin du match
+(joué jusqu'au bout, arrêté avant la fin, ou perdu au temps et par qui), la
 cadence, le joueur dont la réserve s'est épuisée en premier et le Bot (niveau,
-version de gammonNet) ; la sortie ``json`` la porte sous ``origin``, ``null``
-pour un match importé ou transcrit. Le serveur la sert par
-``/v1/matches.origin``.
+version de gammonNet). Pour un match qui n'a pas été joué ici, elles écrivent
+``Origin: not played here``. La sortie ``json`` porte l'origine sous
+``origin`` (dont ``lost_on_time``), ``null`` pour un match qui n'a pas été joué
+ici. Le serveur la sert par ``/v1/matches.origin`` : ``null`` pour un match
+sans origine, 404 pour un match qui n'existe pas.
 
 .. code-block:: bash
 
@@ -1939,8 +1942,8 @@ sont inconnues, jamais nulles).
   d'écrire le Match. Avec deux Bots, le match se joue en entier dans cet appel
   (``--side1 bot:instant --side2 bot:instant``) ; une session en argent entre
   deux Bots est refusée, car elle ne finirait jamais.
-* ``show`` — Score, ce que le Duel attend et, pour un coup, les jeux légaux. La
-  graine des dés n'est jamais affichée avant la fin : l'empreinte la représente.
+* ``show`` — Score, ce que le Duel attend et, pour un coup, les jeux légaux. Le
+  germe des dés n'est jamais affiché avant la fin : l'empreinte le représente.
 * ``list`` — Les Duels en suspens.
 * ``roll``, ``move``, ``double``, ``take``, ``pass``, ``resign`` — Une Action du
   Côté que le Duel attend (``--side 1|2`` pour le nommer) ; ``--play`` donne le

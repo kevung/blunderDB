@@ -145,7 +145,7 @@ func (d *Database) StopDuel(id, revision int64, keep bool) (*DuelState, error) {
 
 // GetMatchOrigin returns the origin of a Match played here — Start, revealed
 // seed and its fingerprint, stop before the end, Cadence and overrun, Bot —
-// or nil when it was imported or transcribed.
+// nil when the Match was not played here, ErrNotFound when there is none.
 func (d *Database) GetMatchOrigin(matchID int64) (*duel.Origin, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()

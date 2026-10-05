@@ -40,6 +40,7 @@ function openDuel(awaiting) {
                 { kind: 'bot', level: 'normal' }
             ],
             score: [2, 1],
+            fingerprint: 'ab12cd34',
             awaiting
         },
         sheet
@@ -90,6 +91,15 @@ describe('DuelPanel', () => {
         await tick();
         expect(getByText('The Bot is playing…')).toBeTruthy();
         expect(queryByText('Validate')).toBeNull();
+    });
+
+    test('the fingerprint of the seed is shown from the creation on', async () => {
+        openDuel({ side: 0, kind: 'cube', position: { cube: { value: 1 } } });
+        const { getByTestId } = render(DuelPanel);
+        await tick();
+        const line = getByTestId('duel-fingerprint');
+        expect(line.querySelector('code')?.textContent).toBe('ab12cd34');
+        expect(line.textContent).toContain('Seed fingerprint (SHA-256)');
     });
 
     test('a move waits for the board before it can be validated', async () => {

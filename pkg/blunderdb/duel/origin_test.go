@@ -2,7 +2,11 @@ package duel
 
 import (
 	"context"
+	"errors"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // TestReadOriginRevealsTheSeedOfTheFingerprint: the seed read back from a
@@ -47,10 +51,19 @@ func TestReadOriginRevealsTheSeedOfTheFingerprint(t *testing.T) {
 	}
 }
 
-// TestReadOriginOfAMatchNotPlayedHere: no origin is an answer, not an error.
+// TestReadOriginOfAMatchNotPlayedHere: a match without origin is answered
+// with none, not an error; a match that does not exist is ErrNotFound.
 func TestReadOriginOfAMatchNotPlayedHere(t *testing.T) {
-	o, err := ReadOrigin(context.Background(), newStore(t), "", 4242)
-	if err != nil || o != nil {
+	ctx := context.Background()
+	st := newStore(t)
+	id, err := st.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3})
+	if err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	if o, err := ReadOrigin(ctx, st, "", id); err != nil || o != nil {
 		t.Errorf("ReadOrigin of an imported match = %+v, %v; want nil, nil", o, err)
+	}
+	if _, err := ReadOrigin(ctx, st, "", id+100); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("ReadOrigin of no match: %v, want ErrNotFound", err)
 	}
 }

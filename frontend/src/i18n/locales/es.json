@@ -537,6 +537,7 @@
         "timesChart": "Duración de cada decisión a lo largo de la partida",
         "originPlayedHere": "Jugado aquí",
         "originStopped": "Detenido antes del final",
+        "originLostOnTime": "Perdido por tiempo ({name})",
         "originCadence": "Cadencia: {cadence}",
         "originReserve": "reserva {s} s",
         "originReservePerPoint": "reserva {s} s por punto",
@@ -546,7 +547,8 @@
         "originStart": "Inicio",
         "originOpening": "Posición inicial",
         "originSeed": "Semilla de los dados",
-        "originFingerprint": "Huella de la semilla (SHA-256)",
+        "originFingerprint": "SHA-256 de la semilla",
+        "originFingerprintHint": "para comparar con la huella publicada al crear el Duelo",
         "gradeError": "Error: {cost}",
         "gradeBlunder": "Blunder: {cost}",
         "gameErrorCount": "Errores por debajo del umbral de blunder: {n}",
@@ -2989,6 +2991,8 @@
         "discarded": "Duelo descartado: no se guarda nada.",
         "ended": "Duelo terminado: match {id} guardado, análisis iniciado.",
         "endedOnTime": "Duelo perdido por tiempo: match {id} guardado, análisis iniciado.",
-        "locked": "Hay un duelo en curso: suspéndalo o deténgalo primero."
+        "locked": "Hay un duelo en curso: suspéndalo o deténgalo primero.",
+        "fingerprint": "Huella de la semilla (SHA-256)",
+        "fingerprintHint": "Publicada antes de la primera tirada; la semilla se revela con el match, y su SHA-256 debe devolver esta huella"
     }
 }

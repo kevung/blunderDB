@@ -461,8 +461,8 @@ alors sa révision avancer, et le client qui la tenait reçoit **409**, relit
 redémarrage du démon, le brouillon étant tout ce qu'il y a du Duel. ``get`` rend
 la révision en ``ETag`` et répond 304 à un ``If-None-Match`` qui la nomme.
 
-La graine des dés ne sort par aucune route avant la fin : l'état en porte
-l'empreinte, et la graine n'est révélée qu'avec le Match que la fin du Duel
+Le germe des dés ne sort par aucune route avant la fin : l'état en porte
+l'empreinte, et le germe n'est révélé qu'avec le Match que la fin du Duel
 écrit (``ended.diceSeed``). ``stop`` arrête le Duel en gardant le Match tel
 qu'il est, ``discard`` le jette. Les gestes sont annoncés sur ``/v1/events``
 (filtre ``duel``). Sous ``blunderdb call``, un Duel n'a ni Cadence ni durée de

@@ -537,6 +537,7 @@
         "timesChart": "Dauer jeder Entscheidung im Spielverlauf",
         "originPlayedHere": "Hier gespielt",
         "originStopped": "Vor dem Ende abgebrochen",
+        "originLostOnTime": "Auf Zeit verloren ({name})",
         "originCadence": "Bedenkzeit: {cadence}",
         "originReserve": "Reserve {s} s",
         "originReservePerPoint": "Reserve {s} s pro Punkt",
@@ -546,7 +547,8 @@
         "originStart": "Start",
         "originOpening": "Ausgangsstellung",
         "originSeed": "Würfel-Seed",
-        "originFingerprint": "Fingerabdruck des Seeds (SHA-256)",
+        "originFingerprint": "SHA-256 des Seeds",
+        "originFingerprintHint": "zu vergleichen mit dem bei der Erstellung des Duells veröffentlichten Fingerabdruck",
         "gradeError": "Fehler: {cost}",
         "gradeBlunder": "Blunder: {cost}",
         "gameErrorCount": "Fehler unter der Blunder-Schwelle: {n}",
@@ -2989,6 +2991,8 @@
         "discarded": "Duell verworfen: nichts davon wird gespeichert.",
         "ended": "Duell beendet: Match {id} gespeichert, Analyse gestartet.",
         "endedOnTime": "Duell auf Zeit verloren: Match {id} gespeichert, Analyse gestartet.",
-        "locked": "Ein Duell läuft: zuerst unterbrechen oder beenden."
+        "locked": "Ein Duell läuft: zuerst unterbrechen oder beenden.",
+        "fingerprint": "Fingerabdruck des Seeds (SHA-256)",
+        "fingerprintHint": "Vor dem ersten Wurf veröffentlicht; der Seed wird mit dem Match offengelegt, und sein SHA-256 muss diesen Fingerabdruck ergeben"
     }
 }

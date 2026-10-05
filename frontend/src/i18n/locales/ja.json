@@ -537,6 +537,7 @@
         "timesChart": "マッチ中の各判断の所要時間",
         "originPlayedHere": "ここで対局",
         "originStopped": "終了前に中断",
+        "originLostOnTime": "時間切れ負け（{name}）",
         "originCadence": "持ち時間: {cadence}",
         "originReserve": "持ち時間 {s} 秒",
         "originReservePerPoint": "1ポイントあたり持ち時間 {s} 秒",
@@ -546,7 +547,8 @@
         "originStart": "開始局面",
         "originOpening": "初期配置",
         "originSeed": "ダイスのシード",
-        "originFingerprint": "シードのフィンガープリント (SHA-256)",
+        "originFingerprint": "シードの SHA-256",
+        "originFingerprintHint": "デュエル作成時に公開されたフィンガープリントと照合してください",
         "gradeError": "エラー: {cost}",
         "gradeBlunder": "ブランダー: {cost}",
         "gameErrorCount": "ブランダーのしきい値未満のエラー: {n}",
@@ -2989,6 +2991,8 @@
         "discarded": "デュエルを破棄しました：何も保存されません。",
         "ended": "デュエル終了：マッチ {id} を保存し、解析を開始しました。",
         "endedOnTime": "時間切れ負け：マッチ {id} を保存し、解析を開始しました。",
-        "locked": "デュエル進行中です：先に中断または終了してください。"
+        "locked": "デュエル進行中です：先に中断または終了してください。",
+        "fingerprint": "シードのフィンガープリント (SHA-256)",
+        "fingerprintHint": "最初の出目の前に公開されます。シードはマッチとともに公開され、その SHA-256 はこのフィンガープリントと一致するはずです"
     }
 }

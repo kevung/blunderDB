@@ -61,6 +61,12 @@
         <div class="head">
             <DuelClocks {duel} />
         </div>
+        {#if duel.fingerprint}
+            <!-- Published before the first roll (ADR-0072 rule 8): the seed revealed with the Match must hash back to it. -->
+            <div class="fingerprint" title={$t('duel.fingerprintHint')} data-testid="duel-fingerprint">
+                {$t('duel.fingerprint')} <code>{duel.fingerprint}</code>
+            </div>
+        {/if}
 
         <div class="gestures" role="group" aria-label={$t('duel.gestures')}>
             {#if $duelAnimatingStore || (awaiting && !mine)}
@@ -184,6 +190,14 @@
 </div>
 
 <style>
+    .fingerprint {
+        font-size: var(--font-size-small);
+        color: var(--text-muted, inherit);
+    }
+    .fingerprint code {
+        user-select: all;
+        overflow-wrap: anywhere;
+    }
     .duel-panel {
         display: flex;
         flex-direction: column;
