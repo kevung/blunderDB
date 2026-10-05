@@ -3,14 +3,16 @@ import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     IsPositionOnPile: vi.fn(),
-    TogglePile: vi.fn()
+    TogglePile: vi.fn(),
+    GetAllCollections: vi.fn()
 }));
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() }));
 
-import { IsPositionOnPile, TogglePile } from '../../wailsjs/go/database/Database.js';
+import { IsPositionOnPile, TogglePile, GetAllCollections } from '../../wailsjs/go/database/Database.js';
+import { collectionsStore } from '../stores/collectionStore.js';
 import { positionStore, emptyPosition } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { onPileStore, refreshPileState, togglePile } from '../services/pileService.js';
+import { onPileStore, refreshPileState, togglePile, pileChangedStore } from '../services/pileService.js';
 
 describe('pileService', () => {
     beforeEach(() => {
@@ -52,5 +54,18 @@ describe('pileService', () => {
         databasePathStore.set('');
         await togglePile();
         expect(TogglePile).not.toHaveBeenCalled();
+    });
+
+    it('reloads the collections after a toggle, the Pile created on first use included', async () => {
+        collectionsStore.set([]);
+        const pile = { id: 3, name: 'Pile' };
+        GetAllCollections.mockResolvedValue([pile]);
+        TogglePile.mockResolvedValue({ onPile: true, brought: false });
+        const before = get(pileChangedStore);
+        await togglePile();
+        expect(GetAllCollections).toHaveBeenCalled();
+        expect(get(collectionsStore)).toEqual([pile]);
+        // The Collections panel listens to this signal to reload the Pile's rows when shown.
+        expect(get(pileChangedStore)).toBe(before + 1);
     });
 });

@@ -3,7 +3,8 @@
 // scratch board, and later a Duel's — through the one backend call, which writes a draft to the
 // library first, as a position brought in on its own.
 import { writable, get } from 'svelte/store';
-import { IsPositionOnPile, TogglePile } from '../../wailsjs/go/database/Database.js';
+import { IsPositionOnPile, TogglePile, GetAllCollections } from '../../wailsjs/go/database/Database.js';
+import { collectionsStore } from '../stores/collectionStore.js';
 import { positionStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { setStatusBarMessage } from './databaseService.js';
@@ -12,6 +13,10 @@ import { logger } from '../utils/logger.js';
 
 // Whether the position on the board is on the Pile: the board's marker and the toolbar button.
 export const onPileStore = writable(false);
+
+// Ticks once per toggle, whatever started it (key, button, menu, double click): the Collections
+// panel reloads the Pile's rows on it, and the board flashes its marker.
+export const pileChangedStore = writable(0);
 
 let sequence = 0;
 
@@ -45,6 +50,9 @@ export async function togglePile() {
         sequence++;
         onPileStore.set(result.onPile);
         setStatusBarMessage(tMsg(result.onPile ? (result.brought ? 'status.pileBrought' : 'status.pileOn') : 'status.pileOff'));
+        pileChangedStore.update((n) => n + 1);
+        // The Pile's count changed, and the first toggle creates the Pile itself.
+        collectionsStore.set((await GetAllCollections()) || []);
     } catch (error) {
         logger.error('Error toggling the Pile:', error);
         setStatusBarMessage(tMsg('status.pileError'));

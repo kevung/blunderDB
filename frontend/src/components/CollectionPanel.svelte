@@ -30,8 +30,10 @@
         UpdateCollection,
         GetPositionCollections,
         IndexOfPosition,
-        LoadAnalysis
+        LoadAnalysis,
+        PileCollectionID
     } from '../../wailsjs/go/database/Database.js';
+    import { pileChangedStore, refreshPileState } from '../services/pileService.js';
     import { t, tMsg } from '../i18n';
     import { confirmAction } from '../services/confirmService.js';
     import PanelTable from './panels/PanelTable.svelte';
@@ -242,6 +244,8 @@
         try {
             const loaded = await GetAllCollections();
             collectionsStore.set(loaded || []);
+            // A membership change here may have taken the board's position off the Pile.
+            refreshPileState();
         } catch (error) {
             logger.error('Error loading collections:', error);
             statusBarTextStore.set(tMsg('collection.errorLoading'));
@@ -656,8 +660,28 @@
         }
     });
 
+    // The Pile changed from elsewhere (key b, toolbar, board): its rows, when shown, and the
+    // membership of the board's position follow. The first tick is the subscription's own.
+    let pileTicks = 0;
+    const unsubscribePile = pileChangedStore.subscribe(() => {
+        if (pileTicks++ === 0) return;
+        onPileChanged();
+    });
+
+    async function onPileChanged() {
+        try {
+            const active = get(activeCollectionStore);
+            if (active?.id && (await PileCollectionID()) === active.id) await refreshRows(active.id, collectionPositions.length);
+            const position = get(positionStore);
+            if (position?.id) await loadPositionCollections(position.id);
+        } catch (error) {
+            logger.error('Error following the Pile:', error);
+        }
+    }
+
     onDestroy(() => {
         unregisterKeys?.();
+        unsubscribePile();
     });
 </script>
 
