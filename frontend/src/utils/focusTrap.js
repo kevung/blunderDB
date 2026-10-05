@@ -39,9 +39,11 @@ export function trapFocus(node) {
     // Nothing focusable inside (a table, a plain message): the node itself takes the
     // focus when it can, so the keys pressed on the dialog still bubble through it
     // rather than landing on <body>.
+    // A first control that refuses the focus (not laid out yet) must not leave it on <body>,
+    // where the keys would reach the global shortcuts behind the dialog.
     const first = focusableIn(node)[0];
     if (first) first.focus();
-    else if (node.hasAttribute('tabindex')) node.focus();
+    if (!node.contains(document.activeElement) && node.hasAttribute('tabindex')) node.focus();
 
     return {
         destroy() {

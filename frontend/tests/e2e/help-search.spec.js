@@ -20,7 +20,7 @@ test('« / » cherche dans l’aide, Entrée passe à l’occurrence suivante', 
     await expect(page.getByTestId('help-loading')).toHaveCount(0);
 
     await page.keyboard.press('/');
-    await expect(search).toBeFocused();
+    await expect(search, `focus is on ${await page.evaluate(() => document.activeElement?.outerHTML.slice(0, 160))}`).toBeFocused();
     await search.pressSequentially('position');
     await expect(search).toHaveValue('position');
     await expect(page.getByTestId('help-search-count')).toHaveText(/^0 \/ \d+$/);
