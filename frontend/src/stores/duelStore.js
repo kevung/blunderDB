@@ -24,3 +24,11 @@ export const duelAnimatingStore = writable(false);
  * @type {import('svelte/store').Readable<boolean>}
  */
 export const duelHoldsBoardStore = derived(duelStore, ($duel) => !!$duel?.state && !$duel.state.ended);
+
+/** L'onglet Duel est replié (Ctrl+H) : horloges et score restent dans la barre d'état. */
+export const duelFoldedStore = writable(false);
+
+// Un Duel qui ne tient plus le plateau rend l'onglet déplié au suivant.
+duelHoldsBoardStore.subscribe((holds) => {
+    if (!holds) duelFoldedStore.set(false);
+});

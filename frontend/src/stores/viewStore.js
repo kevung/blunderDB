@@ -1,4 +1,5 @@
 import { writable, get } from 'svelte/store';
+import { duelHoldsBoardStore } from './duelStore.js';
 import { positionStore, positionsStore, matchContextStore, emptyPosition } from './positionStore';
 import { indexInList, listLength, isSettled } from './positionList.js';
 import { analysisStore, selectedMoveStore } from './analysisStore';
@@ -153,7 +154,11 @@ function createViewStore() {
         currentPositionIndexStore.set(view.positionIndex || 0);
     }
 
+    // A Duel holds the board: a view restore would put a library position under it.
+    const viewsLocked = () => get(duelHoldsBoardStore);
+
     function switchTo(viewId) {
+        if (viewsLocked()) return;
         const currentId = get(activeViewId);
         if (viewId === currentId) return;
         saveCurrentViewState();
@@ -167,6 +172,7 @@ function createViewStore() {
     }
 
     function addView() {
+        if (viewsLocked()) return;
         saveCurrentViewState();
         const id = nextViewId++;
         const currentId = get(activeViewId);
@@ -185,6 +191,7 @@ function createViewStore() {
     }
 
     function closeView(viewId) {
+        if (viewsLocked()) return;
         const vs = get(views);
         if (vs.length <= 1) return;
         const remaining = vs.filter((v) => v.id !== viewId);

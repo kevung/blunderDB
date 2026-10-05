@@ -12,6 +12,7 @@
     import { ankiDueStore, refreshAnkiDue } from '../stores/ankiDueStore.js';
     import { pendingProposalsStore } from '../stores/directionStore.js';
     import { t } from '../i18n';
+    import { duelFoldedStore } from '../stores/duelStore.js';
     import { GetTabOrder, SaveTabOrder, GetHiddenTabs, SaveHiddenTabs } from '../../wailsjs/go/main/Config.js';
     import { logger } from '../utils/logger.js';
     import { applyTabOrder, normalizeTabId } from '../services/tabOrder.js';
@@ -354,7 +355,7 @@
         <ContextMenu x={hiddenMenu.x} y={hiddenMenu.y} items={hiddenMenu.items} onClose={() => (hiddenMenu = null)} />
     {/if}
 
-    <div class="tab-content" data-testid="tab-content" role="tabpanel">
+    <div class="tab-content" class:folded={$duelFoldedStore} data-testid="tab-content" role="tabpanel">
         {#if $activeTabStore === 'analysis'}
             <AnalysisPanel onClose={onCloseAnalysis} />
         {:else if $activeTabStore === 'comments'}
@@ -491,6 +492,10 @@
 
     .tab-label {
         font-size: var(--font-size-small);
+    }
+
+    .tab-content.folded {
+        display: none;
     }
 
     .tab-content {

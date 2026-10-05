@@ -86,7 +86,7 @@
     import { startTrainingSession } from './services/trainingTabService.js';
     import { TRAINING_EXERCISES, exerciseForCommand } from './services/trainingTab.js';
     import { showTab, showTrainingPanel, showDuelPanel } from './services/tabToggles.js';
-    import { duelHoldsBoardStore } from './stores/duelStore.js';
+    import { duelHoldsBoardStore, duelFoldedStore } from './stores/duelStore.js';
     import HomeScreen from './components/HomeScreen.svelte';
     import { initFolderWatch } from './services/watchService.js';
     import { initMCPHost } from './services/mcpHostService.js';
@@ -507,7 +507,12 @@
             use:resizable={{ side: isSidePanel, size: isSidePanel ? panelWidth : appliedPanelHeight, onResize: setPanelSize, onCommit: savePanelSize }}
         ></div>
 
-        <div class="panel-wrapper" class:side={isSidePanel} data-tour="panels" style={isSidePanel ? `width: ${panelWidth}px;` : `height: ${appliedPanelHeight}px;`}>
+        <div
+            class="panel-wrapper"
+            class:side={isSidePanel}
+            data-tour="panels"
+            style={isSidePanel ? `width: ${panelWidth}px;` : $duelFoldedStore ? 'height: auto;' : `height: ${appliedPanelHeight}px;`}
+        >
             <TabbedPanel
                 onLoadPositionsByFilters={loadPositionsByFilters}
                 onCloseAnalysis={toggleAnalysisPanel}

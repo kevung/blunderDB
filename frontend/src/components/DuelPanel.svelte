@@ -16,7 +16,7 @@
     import TranscriptView from './TranscriptView.svelte';
     import DuelClocks from './DuelClocks.svelte';
 
-    let form = $state(loadDuelForm());
+    let form = $state(normalizeForm(null));
     let cadences = $state(/** @type {any[]} */ ([]));
     let resignLevel = $state(1);
 
@@ -30,6 +30,7 @@
 
     onMount(async () => {
         refreshDuels();
+        form = await loadDuelForm();
         cadences = (await duelOffer())?.cadences ?? [];
     });
 

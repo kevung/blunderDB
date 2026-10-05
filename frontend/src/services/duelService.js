@@ -4,7 +4,7 @@
 import { get } from 'svelte/store';
 import { CreateDuel, OpenDuel, SuspendDuel, PlayDuel, FlagDuel, StopDuel, ListDuels, DuelOffer } from '../../wailsjs/go/database/Database.js';
 import { LegalMoves, StartGammonNetMatchBatch } from '../../wailsjs/go/gui/App.js';
-import { GetGammonNetAnalysisPly, GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
+import { GetGammonNetAnalysisPly, GetGammonNetPruneK, GetDuelForm, SaveDuelForm } from '../../wailsjs/go/main/Config.js';
 import { duelStore, duelListStore, duelNowStore, duelAnimatingStore, duelHoldsBoardStore } from '../stores/duelStore.js';
 import { quizPlayStore } from '../stores/quizPlayStore.js';
 import { positionStore } from '../stores/positionStore.js';
@@ -16,7 +16,6 @@ import { isLetter, isBareLetter } from '../utils/keys.js';
 import { logger } from '../utils/logger.js';
 import { tMsg } from '../i18n';
 
-const FORM_KEY = 'blunderdb.duel.form';
 /** One frame of a Bot's move on the board, in ms. */
 const FRAME_MS = 450;
 const TICK_MS = 250;
@@ -30,10 +29,11 @@ let busy = false;
 
 // ── The form, remembered from one Duel to the next ───────────────────────────
 
-/** The remembered form; the default one when nothing is stored or storage is unavailable. */
-export function loadDuelForm() {
+/** The remembered form; the default one when nothing is stored or Config is unreachable. */
+export async function loadDuelForm() {
     try {
-        return normalizeForm(JSON.parse(localStorage.getItem(FORM_KEY) ?? 'null'));
+        const saved = await GetDuelForm();
+        return normalizeForm(saved ? JSON.parse(saved) : null);
     } catch {
         return normalizeForm(null);
     }
@@ -41,11 +41,9 @@ export function loadDuelForm() {
 
 /** @param {any} form */
 export function saveDuelForm(form) {
-    try {
-        localStorage.setItem(FORM_KEY, JSON.stringify(normalizeForm(form)));
-    } catch {
-        // A convenience: the next Duel starts from the defaults.
-    }
+    Promise.resolve()
+        .then(() => SaveDuelForm(JSON.stringify(normalizeForm(form))))
+        .catch((error) => logger.error('could not remember the Duel form:', error));
 }
 
 /** The named Cadences and the Bot's levels. */

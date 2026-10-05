@@ -7,7 +7,7 @@ import { positionsStore, positionStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore, statusBarModeStore, activeTabStore, showPipcountStore } from '../stores/uiStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
-import { duelHoldsBoardStore } from '../stores/duelStore.js';
+import { duelHoldsBoardStore, duelFoldedStore } from '../stores/duelStore.js';
 import { tMsg } from '../i18n';
 
 // ── Tab toggles ──────────────────────────────────────────────────────────────
@@ -66,9 +66,11 @@ export function toggleTab(id) {
     // A Duel holds the board: the library is not browsed, the engine is silent
     // (ADR-0072 rule 9). Its own tab only.
     const current = get(activeTabStore);
-    if (get(duelHoldsBoardStore) && (entry.tab !== 'duel' || current === 'duel')) {
+    if (get(duelHoldsBoardStore)) {
         if (entry.tab !== 'duel') setStatusBarMessage(tMsg('duel.locked'));
-        return;
+        else if (current === 'duel') duelFoldedStore.update((folded) => !folded);
+        else duelFoldedStore.set(false);
+        if (entry.tab !== 'duel' || current === 'duel') return;
     }
 
     if (current === entry.tab) {
@@ -97,6 +99,7 @@ export function toggleTab(id) {
 export function showTab(id) {
     const entry = TAB_TOGGLES[id];
     if (!entry) throw new Error(`showTab: unknown tab '${id}'`);
+    if (entry.tab === 'duel') duelFoldedStore.set(false);
     if (get(activeTabStore) === entry.tab) return true;
     toggleTab(id);
     return get(activeTabStore) === entry.tab;

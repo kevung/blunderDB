@@ -33,6 +33,15 @@
     import { activeTabStore, MODAL, toggleModal } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';
     let databasePath = $derived($databasePathStore);
+    // Un Duel tient le plateau : le focus clavier ne doit pas atteindre ce que la souris ne peut pas.
+    /** @type {HTMLElement | undefined} */
+    let toolbarEl = $state();
+    $effect(() => {
+        const locked = $duelHoldsBoardStore;
+        for (const button of toolbarEl?.querySelectorAll('button:not(.duel-keep)') ?? []) {
+            /** @type {HTMLButtonElement} */ (button).inert = locked;
+        }
+    });
     let isSearchTab = $derived($activeTabStore === 'search');
     // Both scratch boards can be saved — Search's and Eval's; a Ctrl-U
     // rewrite stays Search's alone. A paste lands on a scratch board without
@@ -42,7 +51,7 @@
 
 <!--// https://heroicons.com/-->
 <!-- Un Duel tient le plateau : seuls Jouer, la Pile et l'aide restent (ADR-0072 règle 9). -->
-<div class="toolbar" class:duel-locked={$duelHoldsBoardStore} data-tour="toolbar">
+<div class="toolbar" bind:this={toolbarEl} class:duel-locked={$duelHoldsBoardStore} data-tour="toolbar">
     <button
         onclick={(e) => {
             e.stopPropagation();
