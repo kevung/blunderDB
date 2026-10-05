@@ -79,8 +79,15 @@ func (q *quotaLedger) analysisExhausted(scope string) bool {
 	return q.spent[scope] >= time.Duration(q.limits.AnalysisSecondsPerDay)*time.Second
 }
 
-// charge adds engine time to scope's account for today.
+// minCharge is the least an executed engine run costs: a coarse clock
+// (Windows ticks in about half a millisecond) measures a 0-ply evaluation as
+// zero, and a run that happened must still show on the tenant's account.
+const minCharge = time.Microsecond
+
+// charge adds engine time to scope's account for today. Every caller charges
+// a run that took place, so the time is never less than minCharge.
 func (q *quotaLedger) charge(scope string, d time.Duration) {
+	d = max(d, minCharge)
 	q.mu.Lock()
 	defer q.mu.Unlock()
 	q.rollLocked()
