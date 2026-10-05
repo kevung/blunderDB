@@ -104,6 +104,50 @@ msgstr ""
 " posiciones que no tienen ningún análisis, sin sobrescribir nunca un "
 "análisis importado."
 
+#: ../../source/historique.rst:35
+msgid "0.38.0 (2026-10-06)"
+msgstr "0.38.0 (2026-10-06)"
+
+#: ../../source/historique.rst:38
+msgid "**Le Duel** : un match entier se joue contre le Bot, qui joue la politique de gammonNet, sous l'arbitrage de blunderDB — dés tirés d'un germe dont l'empreinte SHA-256 est publiée à la création, règles, score et horloges tenus par l'application. Un onglet Duel, le bouton « Jouer » de la barre d'outils et le mode DUEL ; match de 1 à 25 points ou session en argent, départ de la position initiale, de la position au plateau ou d'un score choisi, Duel suspendu puis repris. ``blunderdb duel`` et les routes ``duels.*`` du serveur en sont les deux autres formes."
+msgstr "**El Duelo**: se juega un match entero contra el Bot, que juega la política de gammonNet, bajo el arbitraje de blunderDB — dados sacados de una semilla cuya huella SHA-256 se publica en la creación, reglas, marcador y relojes llevados por la aplicación. Una pestaña Duelo, el botón « Jouer » de la barra de herramientas y el modo DUEL; un match de 1 a 25 puntos o una sesión por dinero, salida desde la posición inicial, la posición en el tablero o un marcador elegido, un Duelo suspendido y luego reanudado. ``blunderdb duel`` y las rutas ``duels.*`` del servidor son las otras dos formas."
+
+#: ../../source/historique.rst:39
+msgid "**Le Duel se joue au plateau** : un clic sur les dés les lance, intervertit leur ordre ou valide le coup, un clic sur le videau propose de doubler, un clic sur un pion le joue, et le clic droit reprend le coup en cours ou ouvre le menu du Duel (Pile, abandon, suspension, arrêt)."
+msgstr "**El Duelo se juega en el tablero**: un clic en los dados los tira, invierte su orden o valida la jugada, un clic en el cubo propone doblar, un clic en una ficha la juega, y el clic derecho deshace la jugada en curso o abre el menú del Duelo (Pila, abandono, suspensión, parada)."
+
+#: ../../source/historique.rst:40
+msgid "**La Cadence et la durée de décision** : une réserve par joueur et un délai gratuit à chaque tour, le temps écoulé étant noté ou faisant perdre le match. Chaque décision d'un Duel porte sa durée, que la revue affiche (colonne *Durée*, résumé par joueur, graphique), que la recherche filtre avec ``tm>x``, combinable avec ``E>x``, et que l'onglet Statistiques croise avec l'erreur."
+msgstr "**La Cadencia y la duración de decisión**: una reserva por jugador y un plazo gratuito en cada turno, el tiempo agotado anotado o haciendo perder el match. Cada decisión de un Duelo lleva su duración, que la revisión muestra (columna *Durée*, resumen por jugador, gráfico), que la búsqueda filtra con ``tm>x``, combinable con ``E>x``, y que la pestaña Estadísticas cruza con el error."
+
+#: ../../source/historique.rst:41
+msgid "**L'origine d'un Match joué ici** se relit en tête de sa transcription : départ, cadence, perte au temps ou arrêt, niveau du Bot et version de gammonNet dont il a joué la politique, germe révélé et son SHA-256, de quoi recalculer chaque lancer sans faire confiance à blunderDB."
+msgstr "**El origen de un Match jugado aquí** se lee al principio de su transcripción: salida, cadencia, pérdida por tiempo o parada, nivel del Bot y versión de gammonNet cuya política jugó, semilla revelada y su SHA-256, lo suficiente para recalcular cada tirada sin fiarse de blunderDB."
+
+#: ../../source/historique.rst:42
+msgid "**La Pile** : la touche *b*, le marque-page de la barre d'outils ou un double-clic hors du plateau met la position affichée de côté, dans tous les modes, et le même geste l'en retire ; un marque-page au coin du plateau le montre. ``blunderdb collection pile`` fait le même geste."
+msgstr "**La Pila**: la tecla *b*, el marcapáginas de la barra de herramientas o un doble clic fuera del tablero aparta la posición mostrada, en todos los modos, y el mismo gesto la retira; un marcapáginas en la esquina del tablero lo indica. ``blunderdb collection pile`` hace el mismo gesto."
+
+#: ../../source/historique.rst:43
+msgid "**Les rollouts se lancent d'un clic droit**, depuis la table des coups du panneau Analyse comme depuis le panneau Eval, sur une sélection de coups (*Ctrl+clic*, *Maj+clic*) ou sur la décision de videau, avec un réglage — Rapide, Standard ou Libre — conservé d'une session à l'autre. Le même menu copie la position avec son analyse, ou avec les coups sélectionnés."
+msgstr "**Los rollouts se lanzan con un clic derecho**, desde la tabla de jugadas del panel Análisis como desde el panel Eval, sobre una selección de jugadas (*Ctrl+clic*, *Mayús+clic*) o sobre la decisión de cubo, con un ajuste — Rápido, Estándar o Libre — conservado de una sesión a otra. El mismo menú copia la posición con su análisis, o con las jugadas seleccionadas."
+
+#: ../../source/historique.rst:44
+msgid "**Sans base ouverte**, le panneau Eval pose, colle, évalue, roule et copie une position, l'onglet Entraînement offre *Scores*, *Pions*, *Bearoff* et *Évaluation*, et ``import XGID=…`` pose la position sur le plateau brouillon."
+msgstr "**Sin base abierta**, el panel Eval coloca, pega, evalúa, hace el rollout y copia una posición, la pestaña Entrenamiento ofrece *Puntuaciones*, *Fichas*, *Bearoff* y *Evaluación*, y ``import XGID=…`` coloca la posición en el tablero borrador."
+
+#: ../../source/historique.rst:45
+msgid "**Le clic droit hors du plateau** propose *Effacer la position* et *Position de départ* en édition et en Eval ; sur un coup joué au plateau (quiz, Transcription), son menu commence par *Recommencer*."
+msgstr "**El clic derecho fuera del tablero** propone *Effacer la position* y *Position de départ* en edición y en Eval; en una jugada hecha en el tablero (quiz, Transcripción), su menú empieza por *Recommencer*."
+
+#: ../../source/historique.rst:46
+msgid "**Schéma 2.34.0** : les tables du Duel et la durée de chaque décision. La migration depuis 2.31.0 est automatique à l'ouverture et sans retour possible (:ref:`annexe_db_migration`)."
+msgstr "**Esquema 2.34.0**: las tablas del Duelo y la duración de cada decisión. La migración desde 2.31.0 es automática al abrir y sin vuelta atrás (:ref:`annexe_db_migration`)."
+
+#: ../../source/historique.rst:47
+msgid "Corrections notables : un fichier d'import illisible est refusé avec le code ``invalid``, ``internal`` restant réservé aux pannes ; sous Windows, un compactage rétrécit bien le fichier, ou dit pourquoi il n'a pas pu ; *CTRL-C* n'est plus disputé par la copie du navigateur intégré, et *CTRL-X CTRL-X* copie l'évaluation gammonNet en mode EVAL."
+msgstr "Correcciones notables: un archivo de importación ilegible se rechaza con el código ``invalid``, quedando ``internal`` reservado a las averías; en Windows, una compactación reduce de verdad el archivo, o dice por qué no pudo; *CTRL-C* ya no lo disputa la copia del navegador integrado, y *CTRL-X CTRL-X* copia la evaluación de gammonNet en modo EVAL."
+
 #: ../../source/historique.rst:36
 msgid "0.37.0 (2026-10-05)"
 msgstr "0.37.0 (05/10/2026)"

@@ -32,6 +32,21 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
   ``blunderdb analyze`` ou en mode serveur : il comble les positions qui n'ont
   aucune analyse, sans jamais écraser une analyse importée.
 
+0.38.0 (2026-10-06)
+-------------------
+
+- **Le Duel** : un match entier se joue contre le Bot, qui joue la politique de gammonNet, sous l'arbitrage de blunderDB — dés tirés d'un germe dont l'empreinte SHA-256 est publiée à la création, règles, score et horloges tenus par l'application. Un onglet Duel, le bouton « Jouer » de la barre d'outils et le mode DUEL ; match de 1 à 25 points ou session en argent, départ de la position initiale, de la position au plateau ou d'un score choisi, Duel suspendu puis repris. ``blunderdb duel`` et les routes ``duels.*`` du serveur en sont les deux autres formes.
+- **Le Duel se joue au plateau** : un clic sur les dés les lance, intervertit leur ordre ou valide le coup, un clic sur le videau propose de doubler, un clic sur un pion le joue, et le clic droit reprend le coup en cours ou ouvre le menu du Duel (Pile, abandon, suspension, arrêt).
+- **La Cadence et la durée de décision** : une réserve par joueur et un délai gratuit à chaque tour, le temps écoulé étant noté ou faisant perdre le match. Chaque décision d'un Duel porte sa durée, que la revue affiche (colonne *Durée*, résumé par joueur, graphique), que la recherche filtre avec ``tm>x``, combinable avec ``E>x``, et que l'onglet Statistiques croise avec l'erreur.
+- **L'origine d'un Match joué ici** se relit en tête de sa transcription : départ, cadence, perte au temps ou arrêt, niveau du Bot et version de gammonNet dont il a joué la politique, germe révélé et son SHA-256, de quoi recalculer chaque lancer sans faire confiance à blunderDB.
+- **La Pile** : la touche *b*, le marque-page de la barre d'outils ou un double-clic hors du plateau met la position affichée de côté, dans tous les modes, et le même geste l'en retire ; un marque-page au coin du plateau le montre. ``blunderdb collection pile`` fait le même geste.
+- **Les rollouts se lancent d'un clic droit**, depuis la table des coups du panneau Analyse comme depuis le panneau Eval, sur une sélection de coups (*Ctrl+clic*, *Maj+clic*) ou sur la décision de videau, avec un réglage — Rapide, Standard ou Libre — conservé d'une session à l'autre. Le même menu copie la position avec son analyse, ou avec les coups sélectionnés.
+- **Sans base ouverte**, le panneau Eval pose, colle, évalue, roule et copie une position, l'onglet Entraînement offre *Scores*, *Pions*, *Bearoff* et *Évaluation*, et ``import XGID=…`` pose la position sur le plateau brouillon.
+- **Le clic droit hors du plateau** propose *Effacer la position* et *Position de départ* en édition et en Eval ; sur un coup joué au plateau (quiz, Transcription), son menu commence par *Recommencer*.
+- **Schéma 2.34.0** : les tables du Duel et la durée de chaque décision. La migration depuis 2.31.0 est automatique à l'ouverture et sans retour possible (:ref:`annexe_db_migration`).
+- Corrections notables : un fichier d'import illisible est refusé avec le code ``invalid``, ``internal`` restant réservé aux pannes ; sous Windows, un compactage rétrécit bien le fichier, ou dit pourquoi il n'a pas pu ; *CTRL-C* n'est plus disputé par la copie du navigateur intégré, et *CTRL-X CTRL-X* copie l'évaluation gammonNet en mode EVAL.
+- Voir :ref:`manuel`, :ref:`cli` et :ref:`headless`.
+
 0.37.0 (2026-10-05)
 -------------------
 

@@ -92,6 +92,50 @@ msgstr ""
 "analyze``\\ "
 "で、あるいはサーバーモードで実行します。分析がまったくないポジションを埋めるだけで、インポートされた分析を上書きすることは決してありません。"
 
+#: ../../source/historique.rst:35
+msgid "0.38.0 (2026-10-06)"
+msgstr "0.38.0 (2026-10-06)"
+
+#: ../../source/historique.rst:38
+msgid "**Le Duel** : un match entier se joue contre le Bot, qui joue la politique de gammonNet, sous l'arbitrage de blunderDB — dés tirés d'un germe dont l'empreinte SHA-256 est publiée à la création, règles, score et horloges tenus par l'application. Un onglet Duel, le bouton « Jouer » de la barre d'outils et le mode DUEL ; match de 1 à 25 points ou session en argent, départ de la position initiale, de la position au plateau ou d'un score choisi, Duel suspendu puis repris. ``blunderdb duel`` et les routes ``duels.*`` du serveur en sont les deux autres formes."
+msgstr "\\ **デュエル**\\ ：blunderDB の審判のもと、gammonNet の方策で打つボットを相手にマッチ全体を対局します。サイコロは作成時に SHA-256 の指紋が公開されるシードから引かれ、ルール、スコア、時計はアプリケーションが管理します。デュエルタブ、ツールバーの « Jouer » ボタン、DUEL モードを備え、1〜25 ポイントのマッチまたはマネーセッション、初期局面・盤上の局面・選んだスコアからの開始、中断と再開に対応します。\\ ``blunderdb duel``\\ とサーバーの ``duels.*`` ルートが、他の二つの形態です。"
+
+#: ../../source/historique.rst:39
+msgid "**Le Duel se joue au plateau** : un clic sur les dés les lance, intervertit leur ordre ou valide le coup, un clic sur le videau propose de doubler, un clic sur un pion le joue, et le clic droit reprend le coup en cours ou ouvre le menu du Duel (Pile, abandon, suspension, arrêt)."
+msgstr "\\ **デュエルは盤上で打ちます**\\ ：サイコロのクリックで振る・順序を入れ替える・手を確定する、キューブのクリックでダブルを提案する、チェッカーのクリックでそれを動かす、右クリックで進行中の手を取り消すかデュエルのメニュー（パイル、投了、中断、終了）を開く、という操作です。"
+
+#: ../../source/historique.rst:40
+msgid "**La Cadence et la durée de décision** : une réserve par joueur et un délai gratuit à chaque tour, le temps écoulé étant noté ou faisant perdre le match. Chaque décision d'un Duel porte sa durée, que la revue affiche (colonne *Durée*, résumé par joueur, graphique), que la recherche filtre avec ``tm>x``, combinable avec ``E>x``, et que l'onglet Statistiques croise avec l'erreur."
+msgstr "\\ **持ち時間と判断時間**\\ ：プレイヤーごとの持ち時間と毎手の無料猶予があり、時間切れは記録されるか、マッチの負けになります。デュエルの各判断にはその所要時間が付き、レビューで表示され（\\ *Durée*\\ 列、プレイヤー別の要約、グラフ）、検索では ``tm>x``\\ （\\ ``E>x``\\ と組み合わせ可能）で絞り込め、統計タブではエラーと突き合わせられます。"
+
+#: ../../source/historique.rst:41
+msgid "**L'origine d'un Match joué ici** se relit en tête de sa transcription : départ, cadence, perte au temps ou arrêt, niveau du Bot et version de gammonNet dont il a joué la politique, germe révélé et son SHA-256, de quoi recalculer chaque lancer sans faire confiance à blunderDB."
+msgstr "\\ **ここで対局したマッチの出自**\\ は、そのトランスクリプトの先頭で読めます。開始、持ち時間、時間切れ負けまたは終了、ボットのレベルと方策を打った gammonNet のバージョン、公開されたシードとその SHA-256 で、blunderDB を信用しなくてもすべての出目を再計算できます。"
+
+#: ../../source/historique.rst:42
+msgid "**La Pile** : la touche *b*, le marque-page de la barre d'outils ou un double-clic hors du plateau met la position affichée de côté, dans tous les modes, et le même geste l'en retire ; un marque-page au coin du plateau le montre. ``blunderdb collection pile`` fait le même geste."
+msgstr "\\ **パイル**\\ ：\\ *b*\\ キー、ツールバーのブックマーク、または盤の外でのダブルクリックで、表示中の局面をすべてのモードで脇に置き、同じ操作で外します。盤の隅のブックマークがその状態を示します。\\ ``blunderdb collection pile``\\ も同じ操作を行います。"
+
+#: ../../source/historique.rst:43
+msgid "**Les rollouts se lancent d'un clic droit**, depuis la table des coups du panneau Analyse comme depuis le panneau Eval, sur une sélection de coups (*Ctrl+clic*, *Maj+clic*) ou sur la décision de videau, avec un réglage — Rapide, Standard ou Libre — conservé d'une session à l'autre. Le même menu copie la position avec son analyse, ou avec les coups sélectionnés."
+msgstr "\\ **ロールアウトは右クリックから始まります**\\ 。分析パネルの手の表からも Eval パネルからも、選んだ手（\\ *Ctrl+クリック*\\ 、\\ *Shift+クリック*\\ ）またはキューブ判断に対して、セッションをまたいで保持される設定（高速、標準、自由）で実行します。同じメニューで、局面を分析付きで、または選んだ手と一緒にコピーできます。"
+
+#: ../../source/historique.rst:44
+msgid "**Sans base ouverte**, le panneau Eval pose, colle, évalue, roule et copie une position, l'onglet Entraînement offre *Scores*, *Pions*, *Bearoff* et *Évaluation*, et ``import XGID=…`` pose la position sur le plateau brouillon."
+msgstr "\\ **データベースを開いていなくても**\\ 、Eval パネルで局面の配置、貼り付け、評価、ロールアウト、コピーができ、トレーニングタブでは\\ *スコア*\\ 、\\ *チェッカー*\\ 、\\ *ベアオフ*\\ 、\\ *評価*\\ が使え、\\ ``import XGID=…``\\ で局面を下書き盤に置けます。"
+
+#: ../../source/historique.rst:45
+msgid "**Le clic droit hors du plateau** propose *Effacer la position* et *Position de départ* en édition et en Eval ; sur un coup joué au plateau (quiz, Transcription), son menu commence par *Recommencer*."
+msgstr "\\ **盤の外での右クリック**\\ は、編集モードと Eval で *Effacer la position* と *Position de départ* を提示します。盤上で打つ手（クイズ、トランスクリプション）では、そのメニューは *Recommencer* から始まります。"
+
+#: ../../source/historique.rst:46
+msgid "**Schéma 2.34.0** : les tables du Duel et la durée de chaque décision. La migration depuis 2.31.0 est automatique à l'ouverture et sans retour possible (:ref:`annexe_db_migration`)."
+msgstr "\\ **スキーマ 2.34.0**\\ ：デュエルのテーブルと各判断の所要時間。2.31.0 からの移行は開いたときに自動で行われ、元に戻せません（\\ :ref:`annexe_db_migration`\\ ）。"
+
+#: ../../source/historique.rst:47
+msgid "Corrections notables : un fichier d'import illisible est refusé avec le code ``invalid``, ``internal`` restant réservé aux pannes ; sous Windows, un compactage rétrécit bien le fichier, ou dit pourquoi il n'a pas pu ; *CTRL-C* n'est plus disputé par la copie du navigateur intégré, et *CTRL-X CTRL-X* copie l'évaluation gammonNet en mode EVAL."
+msgstr "主な修正：読めないインポートファイルはコード ``invalid`` で拒否され、\\ ``internal``\\ は障害専用のままです。Windows では、圧縮がファイルを実際に縮めるか、縮められなかった理由を伝えます。\\ *CTRL-C*\\ が組み込みブラウザーのコピーと競合しなくなり、\\ *CTRL-X CTRL-X*\\ は EVAL モードで gammonNet の評価をコピーします。"
+
 #: ../../source/historique.rst:36
 msgid "0.37.0 (2026-10-05)"
 msgstr "0.37.0（2026-10-05）"
