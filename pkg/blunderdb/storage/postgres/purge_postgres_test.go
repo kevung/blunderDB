@@ -128,6 +128,7 @@ func purgeSeedRows(t *testing.T, pool *pgxpool.Pool, tenantID int64) {
 	exec(`INSERT INTO match_equity_table (tenant_id, name, digest, source) VALUES ($1, 'm', 'd', '<met/>')`, tenantID)
 	exec(`INSERT INTO action_label (tenant_id, label) VALUES ($1, 'Doppel')`, tenantID)
 	exec(`INSERT INTO collection_position (tenant_id, collection_id, position_id) VALUES ($1, $2, $3)`, tenantID, collectionID, positionID)
+	exec(`INSERT INTO study_mark (tenant_id, position_id, marked_at) VALUES ($1, $2, 0)`, tenantID, positionID)
 
 	sessionID := scalar(`INSERT INTO training_session (tenant_id, exercise) VALUES ($1, 'scores') RETURNING id`, tenantID)
 	exec(`INSERT INTO training_item (tenant_id, session_id, number_type) VALUES ($1, $2, 'tp4.last')`, tenantID, sessionID)
