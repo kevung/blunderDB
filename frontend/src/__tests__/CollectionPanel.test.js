@@ -52,13 +52,13 @@ const pageOf =
         ids.slice(offset, limit > 0 ? offset + limit : undefined);
 /** The collection the backend answers with, from now on. @param {number[]} ids */
 function serve(ids) {
-    CountCollectionPositions.mockResolvedValue(ids.length);
-    ListCollectionPositionIDs.mockImplementation(pageOf(ids));
+    vi.mocked(CountCollectionPositions).mockResolvedValue(ids.length);
+    vi.mocked(ListCollectionPositionIDs).mockImplementation(pageOf(ids));
 }
 /** The collection the backend answers with, once. @param {number[]} ids */
 function serveOnce(ids) {
-    CountCollectionPositions.mockResolvedValueOnce(ids.length);
-    ListCollectionPositionIDs.mockImplementationOnce(pageOf(ids));
+    vi.mocked(CountCollectionPositions).mockResolvedValueOnce(ids.length);
+    vi.mocked(ListCollectionPositionIDs).mockImplementationOnce(pageOf(ids));
 }
 
 import CollectionPanel from '../components/CollectionPanel.svelte';
@@ -82,15 +82,18 @@ function resetStores() {
     positionStore.set(null);
 }
 
+/** @param {Partial<import('../../wailsjs/go/models').database.Collection>} fields */
+const aCollection = (fields) => ({ id: 0, name: '', description: '', sortOrder: 0, createdAt: '', updatedAt: '', positionCount: 0, filterQuery: '', ...fields });
+
 const SAMPLE_COLLECTIONS = [
-    { id: 1, name: 'Backgames', description: 'Deep back games', positionCount: 3, updatedAt: '2026-01-01 10:00:00' },
-    { id: 2, name: 'Bear-offs', description: '', positionCount: 0, updatedAt: '2026-01-02 10:00:00' }
+    aCollection({ id: 1, name: 'Backgames', description: 'Deep back games', positionCount: 3, updatedAt: '2026-01-01 10:00:00' }),
+    aCollection({ id: 2, name: 'Bear-offs', description: '', positionCount: 0, updatedAt: '2026-01-02 10:00:00' })
 ];
 
 beforeEach(() => {
     vi.clearAllMocks();
     resetStores();
-    GetAllCollections.mockResolvedValue(SAMPLE_COLLECTIONS);
+    vi.mocked(GetAllCollections).mockResolvedValue(SAMPLE_COLLECTIONS);
 });
 
 afterEach(cleanup);
@@ -113,7 +116,7 @@ describe('CollectionPanel — list view', () => {
     });
 
     test('empty database: shows the empty-collections message', async () => {
-        GetAllCollections.mockResolvedValue([]);
+        vi.mocked(GetAllCollections).mockResolvedValue([]);
         render(CollectionPanel, { props: {} });
         await vi.waitFor(() => expect(GetAllCollections).toHaveBeenCalled());
 
@@ -194,7 +197,7 @@ describe('CollectionPanel — list view', () => {
         render(CollectionPanel, { props: {} });
         const row = (await screen.findByText('Backgames')).closest('tr');
         const deleteBtn = within(row).getByTitle(/delete/i);
-        GetAllCollections.mockResolvedValue([SAMPLE_COLLECTIONS[1]]);
+        vi.mocked(GetAllCollections).mockResolvedValue([SAMPLE_COLLECTIONS[1]]);
 
         await fireEvent.click(deleteBtn);
         await vi.waitFor(() => expect(GetAllCollections).toHaveBeenCalledTimes(2)); // initial load + post-delete reload
@@ -299,9 +302,9 @@ describe('CollectionPanel — detail view', () => {
 describe('CollectionPanel — a partly loaded collection', () => {
     test('the last loaded row cannot move down: its neighbour is not loaded', async () => {
         const all = Array.from({ length: 700 }, (_, i) => i + 1);
-        CountCollectionPositions.mockResolvedValue(all.length);
+        vi.mocked(CountCollectionPositions).mockResolvedValue(all.length);
         // The next page never arrives: the detail stays at its first 500 rows.
-        ListCollectionPositionIDs.mockImplementation((_collection, offset) => (offset === 0 ? Promise.resolve(all.slice(0, 500)) : new Promise(() => {})));
+        vi.mocked(ListCollectionPositionIDs).mockImplementation((_collection, offset) => (offset === 0 ? Promise.resolve(all.slice(0, 500)) : new Promise(() => {})));
         render(CollectionPanel, { props: {} });
         await fireEvent.dblClick(await screen.findByText('Backgames'));
         await vi.waitFor(() => expect(get(collectionPositionsStore).length).toBe(500));

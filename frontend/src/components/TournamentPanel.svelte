@@ -50,6 +50,9 @@
     import { t, tMsg } from '../i18n';
     import { get } from 'svelte/store';
 
+    /** @typedef {import('../../wailsjs/go/models').domain.Tournament} Tournament */
+    /** @typedef {import('../../wailsjs/go/models').domain.Match} Match */
+
     // Read-only mirrors of stores
     let tournaments = $derived($tournamentsStore || []);
     let selectedTournament = $derived($selectedTournamentStore);
@@ -62,6 +65,7 @@
 
     /* Diriger un tournoi : part de la configuration recommandée, modifiable tant que rien
        n'est lancé. */
+    /** @param {Tournament} tournament */
     async function startDirecting(tournament) {
         try {
             await createDirection(tournament.id, defaultConfig(tournament.name));
@@ -72,6 +76,7 @@
         }
     }
 
+    /** @param {Tournament} tournament */
     async function toggleDirection(tournament) {
         if ($openDirectionIdStore === tournament.id) {
             if (directionIsLoading()) return;
@@ -82,9 +87,9 @@
     }
 
     // Sorting state, cycled by the table header (asc → desc → unsorted)
-    let sort = $state({ column: null, direction: 'asc' });
-    let highlightedId = $state(null); // a single click only highlights; opening is the double-click
-    let listTable = $state(null); // PanelTable of the tournament list, mounted while none is selected
+    let sort = $state(/** @type {{ column: string | null, direction: string }} */ ({ column: null, direction: 'asc' }));
+    let highlightedId = $state(/** @type {number | null} */ (null)); // a single click only highlights; opening is the double-click
+    let listTable = $state(/** @type {{ scrollToRow: (row: Tournament) => Promise<void>, focusRow: (row: Tournament) => Promise<void> } | null} */ (null)); // PanelTable of the tournament list, mounted while none is selected
     const sortedTournaments = $derived(sortTournaments(tournaments, sort));
 
     const tournamentColumns = $derived([
@@ -140,7 +145,7 @@
     let addMatchSearch = $state('');
     // The matches that can still join a tournament: one bounded page from the
     // database, narrowed by what is typed (never the whole library).
-    let availableMatches = $state.raw([]);
+    let availableMatches = $state.raw(/** @type {Match[]} */ ([]));
 
     // The database already filtered on the typed text.
     const matchMatchesQuery = () => true;
@@ -174,7 +179,7 @@
     $effect(
         onChange(
             () => $openPanels.has(PANEL.TOURNAMENT),
-            (v) => {
+            (/** @type {boolean} */ v) => {
                 if (v) {
                     if ($databaseLoadedStore) loadTournaments();
                     selectedTournamentStore.set(null);
@@ -199,6 +204,7 @@
         }
     }
 
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
     let addMatchTimer;
     $effect(
         onChange(
@@ -220,6 +226,10 @@
         }
     }
 
+    /**
+     * @param {Tournament[]} list
+     * @param {{ column: string | null, direction: string }} sort
+     */
     function sortTournaments(list, { column: sortBy, direction: sortOrder }) {
         if (!sortBy) return list;
         return [...list].sort((a, b) => {
@@ -250,6 +260,7 @@
         });
     }
 
+    /** @param {Tournament} tournament */
     async function selectTournament(tournament) {
         if (selectedTournament && selectedTournament.id === tournament.id) {
             selectedTournamentStore.set(null);
@@ -298,6 +309,10 @@
         }
     }
 
+    /**
+     * @param {Tournament} tournament
+     * @param {Event} event
+     */
     async function deleteTournamentEntry(tournament, event) {
         event.stopPropagation();
         if (!(await confirmAction(get(t)('tournament.confirmDelete', { name: tournament.name }), { confirmLabel: get(t)('common.delete') }))) return;
@@ -314,11 +329,16 @@
         }
     }
 
+    /**
+     * @param {Tournament} tournament
+     * @param {Event} event
+     */
     function startEdit(tournament, event) {
         event.stopPropagation();
         tournamentEdit.start(tournament.id, { name: tournament.name, date: tournament.date || '', location: tournament.location || '' });
     }
 
+    /** @param {number} matchId */
     async function addMatchToTournament(matchId) {
         if (!selectedTournament) return;
         try {
@@ -332,6 +352,7 @@
         }
     }
 
+    /** @param {number} matchId */
     async function removeMatch(matchId) {
         if (!selectedTournament) return;
         try {
@@ -356,6 +377,7 @@
         label: 'matches'
     });
 
+    /** @param {Match} match */
     async function swapMatchPlayersInTournament(match) {
         try {
             await SwapMatchPlayers(match.id);
@@ -390,6 +412,7 @@
         }
     }
 
+    /** @param {Match} match */
     async function openMatch(match) {
         try {
             const movePositions = await GetMatchMovePositions(match.id);
@@ -491,6 +514,7 @@
         closePanel(PANEL.TOURNAMENT);
     }
 
+    /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
         if (!visible) return;
         // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
