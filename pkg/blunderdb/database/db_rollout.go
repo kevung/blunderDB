@@ -25,6 +25,11 @@ import (
 // rollout returns the games finished so far with ctx's error, unstored. A
 // position that cannot be read fails with rollouts.ErrLoad.
 func (d *Database) RolloutPosition(ctx context.Context, positionID int64, s rollout.Settings, moves []string, store bool, progress func(rollout.Progress)) (*rollout.Result, error) {
+	if store {
+		if err := d.RefuseReadOnly(); err != nil {
+			return nil, err
+		}
+	}
 	d.mu.RLock()
 	gen := d.generation
 	pos, err := rollouts.Load(ctx, d.store, "", positionID)
@@ -42,6 +47,19 @@ func (d *Database) RolloutPosition(ctx context.Context, positionID int64, s roll
 		}
 	}
 	return res, nil
+}
+
+// ErrReadOnly refuses a write on a database opened read-only because another
+// instance holds it. A rollout that would store checks it before the engine
+// runs: minutes of games would otherwise end on a failed write.
+var ErrReadOnly = errors.New("database is read-only: another blunderDB instance holds it")
+
+// RefuseReadOnly returns ErrReadOnly when the open database is read-only.
+func (d *Database) RefuseReadOnly() error {
+	if d.IsReadOnly() {
+		return ErrReadOnly
+	}
+	return nil
 }
 
 // storeRollout writes a finished rollout on positionID (ADR-0060 §8): a
@@ -102,12 +120,18 @@ type RolloutPlan struct {
 
 // PlanRollout is PositionsToRollout, kept for RunRolloutPlan.
 func (d *Database) PlanRollout(ctx context.Context, f SearchFilters, s rollout.Settings) (*RolloutPlan, error) {
+	if err := d.RefuseReadOnly(); err != nil {
+		return nil, err
+	}
 	positions, gen, err := d.positionsToRollout(ctx, f, s)
 	return &RolloutPlan{Positions: positions, gen: gen}, err
 }
 
 // PlanRolloutIDs is PositionsToRolloutIDs, kept for RunRolloutPlan.
 func (d *Database) PlanRolloutIDs(ctx context.Context, ids []int64, s rollout.Settings) (*RolloutPlan, error) {
+	if err := d.RefuseReadOnly(); err != nil {
+		return nil, err
+	}
 	positions, gen, err := d.positionsToRolloutIDs(ctx, ids, s)
 	return &RolloutPlan{Positions: positions, gen: gen}, err
 }
@@ -124,6 +148,9 @@ func (d *Database) RunRolloutPlan(ctx context.Context, plan *RolloutPlan, s roll
 // Cancelling ctx keeps what was written; running again resumes.
 func (d *Database) RolloutFiltered(ctx context.Context, f SearchFilters, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
 	if err := s.Validate(); err != nil {
+		return rollouts.Summary{}, err
+	}
+	if err := d.RefuseReadOnly(); err != nil {
 		return rollouts.Summary{}, err
 	}
 	positions, gen, err := d.positionsToRollout(ctx, f, s)
@@ -143,6 +170,9 @@ func (d *Database) RolloutPositions(ctx context.Context, positions []Position, s
 }
 
 func (d *Database) rolloutPositionsAt(ctx context.Context, gen uint64, positions []Position, s rollout.Settings, progress func(rollouts.Progress)) (rollouts.Summary, error) {
+	if err := d.RefuseReadOnly(); err != nil {
+		return rollouts.Summary{}, err
+	}
 	return rollouts.Batch(ctx, positions, s, nil, progress, func(positionID int64, res *rollout.Result) error {
 		return d.storeRollout(gen, positionID, res)
 	})

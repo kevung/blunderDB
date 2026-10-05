@@ -1,6 +1,8 @@
 package gui
 
 import (
+	"errors"
+	"path/filepath"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
@@ -133,5 +135,35 @@ func TestOpeningAnotherDatabaseStopsTheRollout(t *testing.T) {
 	case <-stopped:
 	default:
 		t.Error("the rollout still runs after the database changed")
+	}
+}
+
+// On a library another instance holds, a rollout that would store is refused
+// when asked, with database.ErrReadOnly, and nothing starts.
+func TestStartRollout_RefusedOnReadOnlyDatabase(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "shared.db")
+	writer := database.NewDatabase()
+	if err := writer.SetupDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = writer.Close() })
+	reader := database.NewDatabase()
+	if err := reader.OpenDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = reader.Close() })
+	a := NewApp(reader)
+
+	if _, err := a.StartRollout(RolloutRequest{PositionID: 1, Settings: rollout.Fast(), Store: true}); !errors.Is(err, database.ErrReadOnly) {
+		t.Errorf("StartRollout: err = %v, want ErrReadOnly", err)
+	}
+	if _, err := a.StartRolloutFiltered("", rollout.Fast()); !errors.Is(err, database.ErrReadOnly) {
+		t.Errorf("StartRolloutFiltered: err = %v, want ErrReadOnly", err)
+	}
+	if _, err := a.StartRolloutIDs([]int64{1}, rollout.Fast()); !errors.Is(err, database.ErrReadOnly) {
+		t.Errorf("StartRolloutIDs: err = %v, want ErrReadOnly", err)
+	}
+	if st := a.RolloutStatus(); st.Running {
+		t.Errorf("a rollout started: %+v", st)
 	}
 }

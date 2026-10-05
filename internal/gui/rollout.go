@@ -82,6 +82,10 @@ func (a *App) StartRollout(req RolloutRequest) (int64, error) {
 		return 0, errors.New("rollout: only a saved position can store its rollout")
 	case req.PositionID != 0 && a.db == nil:
 		return 0, errors.New("rollout: no database is open")
+	case req.Store:
+		if err := a.db.RefuseReadOnly(); err != nil {
+			return 0, err
+		}
 	}
 
 	ctx, stopped, job := a.beginRollout(RolloutStatus{Running: true, Kind: "position", PositionID: req.PositionID, MaxGames: req.Settings.MaxGames})
@@ -142,6 +146,9 @@ func (a *App) StartRolloutFiltered(query string, settings rollout.Settings) (int
 	if a.db == nil {
 		return 0, errors.New("rollout: no database is open")
 	}
+	if err := a.db.RefuseReadOnly(); err != nil {
+		return 0, err
+	}
 	filters, err := rollouts.ParseQuery(query)
 	if err != nil {
 		return 0, err
@@ -160,6 +167,9 @@ func (a *App) StartRolloutIDs(ids []int64, settings rollout.Settings) (int64, er
 	}
 	if a.db == nil {
 		return 0, errors.New("rollout: no database is open")
+	}
+	if err := a.db.RefuseReadOnly(); err != nil {
+		return 0, err
 	}
 	return a.startRolloutBatch(settings, func(ctx context.Context) (*database.RolloutPlan, error) {
 		return a.db.PlanRolloutIDs(ctx, ids, settings)

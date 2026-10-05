@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"errors"
+	"path/filepath"
 	"reflect"
 	"testing"
 
@@ -249,5 +250,63 @@ func TestPositionsToRolloutIDsFollowsTheList(t *testing.T) {
 	got, err = d.PositionsToRolloutIDs(ctx, []int64{ids[1], ids[0]}, s)
 	if err != nil || len(got) != 1 || got[0].ID != ids[0] {
 		t.Fatalf("after one rollout: %v, %v", got, err)
+	}
+}
+
+// openReadOnlyPair opens path twice: the first instance holds the write lock,
+// the second falls back to read-only, as when two blunderDB windows share a
+// library. It returns the second, with a saved position of the first.
+func openReadOnlyPair(t *testing.T) (*Database, int64) {
+	t.Helper()
+	path := filepath.Join(t.TempDir(), "shared.db")
+	writer := NewDatabase()
+	if err := writer.SetupDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = writer.Close() })
+	p := domain.InitializePosition()
+	id, err := writer.SavePosition(&p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reader := NewDatabase()
+	if err := reader.OpenDatabase(path); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = reader.Close() })
+	if !reader.IsReadOnly() {
+		t.Fatal("second instance should be read-only")
+	}
+	return reader, id
+}
+
+// A rollout that would store is refused on a read-only database before the
+// engine runs, not after its games on a failed write; one that stores
+// nothing still runs.
+func TestRolloutRefusedOnReadOnlyDatabase(t *testing.T) {
+	d, id := openReadOnlyPair(t)
+	s := tinySettings()
+	ctx := context.Background()
+	progressed := false
+	if _, err := d.RolloutPosition(ctx, id, s, nil, true, func(rollout.Progress) { progressed = true }); !errors.Is(err, ErrReadOnly) {
+		t.Errorf("RolloutPosition store: err = %v, want ErrReadOnly", err)
+	}
+	if progressed {
+		t.Error("the engine ran before the refusal")
+	}
+	if _, err := d.PlanRollout(ctx, SearchFilters{}, s); !errors.Is(err, ErrReadOnly) {
+		t.Errorf("PlanRollout: err = %v, want ErrReadOnly", err)
+	}
+	if _, err := d.PlanRolloutIDs(ctx, []int64{id}, s); !errors.Is(err, ErrReadOnly) {
+		t.Errorf("PlanRolloutIDs: err = %v, want ErrReadOnly", err)
+	}
+	if _, err := d.RolloutFiltered(ctx, SearchFilters{}, s, nil); !errors.Is(err, ErrReadOnly) {
+		t.Errorf("RolloutFiltered: err = %v, want ErrReadOnly", err)
+	}
+	if _, err := d.RolloutPositions(ctx, []Position{{ID: id}}, s, nil); !errors.Is(err, ErrReadOnly) {
+		t.Errorf("RolloutPositions: err = %v, want ErrReadOnly", err)
+	}
+	if _, err := d.RolloutPosition(ctx, id, s, nil, false, nil); err != nil {
+		t.Errorf("RolloutPosition without store: %v", err)
 	}
 }
