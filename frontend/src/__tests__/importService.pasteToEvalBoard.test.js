@@ -54,7 +54,7 @@ const setStatusBarMessage = vi.fn();
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage }));
 vi.mock('../services/positionService.js', () => ({ loadAllPositions: vi.fn() }));
 
-const { pastePosition } = await import('../services/importService.js');
+const { pastePosition, importIdentifier } = await import('../services/importService.js');
 const { positionStore, clipboardPositionStore } = await import('../stores/positionStore.js');
 const { databasePathStore } = await import('../stores/databaseStore.js');
 const { statusBarModeStore } = await import('../stores/uiStore.js');
@@ -162,5 +162,34 @@ describe('pastePosition with no database open', () => {
         expect(ClipboardGetText).not.toHaveBeenCalled();
         expect(SaveIndividualPosition).not.toHaveBeenCalled();
         expect(CountPositionsWithoutAnalysis).not.toHaveBeenCalled();
+    });
+});
+
+describe('import <XGID> on a scratch board', () => {
+    test.each([
+        ['EVAL', ''],
+        ['EDIT', ''],
+        ['EVAL', '/tmp/test.db']
+    ])('%s (database %o): the position lands on the board, nothing is written', async (mode, path) => {
+        databasePathStore.set(path);
+        statusBarModeStore.set(mode);
+
+        const id = await importIdentifier('XGID=-b----E-C---eE---c-e----B-:0:0:1:65:0:0:0:0:10');
+
+        expect(id).toBeNull();
+        expect(get(positionStore).dice).toEqual([6, 5]);
+        expect(setStatusBarMessage).toHaveBeenCalledWith(tMsg('status.importIdentifierOnBoard'));
+        expect(SaveIndividualPosition).not.toHaveBeenCalled();
+        expect(CountPositionsWithoutAnalysis).not.toHaveBeenCalled();
+    });
+
+    test('NORMAL without a database: still refused, as before', async () => {
+        databasePathStore.set('');
+        statusBarModeStore.set('NORMAL');
+
+        expect(await importIdentifier('XGID=-b----E-C---eE---c-e----B-:0:0:1:65:0:0:0:0:10')).toBeNull();
+
+        expect(setStatusBarMessage).toHaveBeenCalledWith(tMsg('status.noDatabaseOpened'));
+        expect(ParsePositionText).not.toHaveBeenCalled();
     });
 });

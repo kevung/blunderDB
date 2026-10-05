@@ -1515,6 +1515,7 @@
         "importIdentifierEmpty": "Anna tunniste: import XGID=…",
         "importIdentifierUnknown": "Tuntematon tunniste. Toistaiseksi luetaan vain XGID.",
         "importIdentifierSaved": "Asema tuotu tunnisteesta.",
+        "importIdentifierOnBoard": "Asema asetettu laudalle tunnisteesta.",
         "importIdentifierFailed": "Tunnistetta ei voitu lukea: {error}",
         "boardImageSaved": "Kuva tallennettu: {path}",
         "boardImageSaveFailed": "Kuvaa ei voitu tallentaa: {err}"
@@ -1894,6 +1895,8 @@
         "unknownExercise": "Tuntematon harjoitus: {exercise}.",
         "noQuestion": "Kysymystä ei voi esittää: tämä tietokanta tai tämä lähde ei tarjoa yhtään.",
         "journalFailed": "Istuntoa ei voitu tallentaa päiväkirjaan.",
+        "notRecorded": "Harjoitus päättyi: {faults} virhettä / {n}. Ei tallennettu: tietokantaa ei ole avattu.",
+        "journalNoDatabase": "Harjoituspäiväkirja pidetään avoimessa tietokannassa: ilman sitä harjoituksia voi tehdä, mutta niitä ei tallenneta.",
         "numbers": {
             "tp2Live": "Hyväksymispiste 2 · pitkä kilpajuoksu",
             "tp2Last": "Hyväksymispiste 2 · viimeinen heitto",

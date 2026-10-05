@@ -1515,6 +1515,7 @@
         "importIdentifierEmpty": "Give an identifier: import XGID=…",
         "importIdentifierUnknown": "Unrecognised identifier. Only XGID is read for now.",
         "importIdentifierSaved": "Position imported from the identifier.",
+        "importIdentifierOnBoard": "Position placed on the board from the identifier.",
         "importIdentifierFailed": "The identifier could not be read: {error}",
         "boardImageSaved": "Image saved: {path}",
         "boardImageSaveFailed": "The image could not be saved: {err}"
@@ -1894,6 +1895,8 @@
         "unknownExercise": "Unknown exercise: {exercise}.",
         "noQuestion": "No question can be asked: this library or this source provides none.",
         "journalFailed": "The session could not be written to the journal.",
+        "notRecorded": "Session finished: {faults} fault(s) out of {n}. Not recorded: no database open.",
+        "journalNoDatabase": "The session journal is kept in the open database: without one, sessions can be played but are not recorded.",
         "numbers": {
             "tp2Live": "Take point 2 · long race",
             "tp2Last": "Take point 2 · last roll",

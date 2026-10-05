@@ -75,9 +75,8 @@ test('the Eval panel works end to end without a database', async ({ page }) => {
     await expect(page.locator('[data-testid="tab-eval"]')).toHaveClass(/active/);
 
     // Paste an XGID onto the scratch board: the engine evaluates it.
-    // (The paste's own notice is at once replaced by the EPC refresh of the new board.)
     await page.keyboard.press('Control+v');
-    await expect.poll(async () => (await getWailsCalls(page, 'ParsePositionText')).length).toBe(1);
+    await expect(status(page)).toHaveText(en.status.positionPastedClipboard);
     await expect(row(page, '8/5 6/5')).toBeVisible({ timeout: 4000 });
 
     // Pick two plays and roll them out from the menu: in memory, nothing stored.
@@ -127,6 +126,26 @@ test('the Eval panel works end to end without a database', async ({ page }) => {
     await expect(row(page, '8/5 6/5')).toBeVisible({ timeout: 4000 });
 
     // Nothing reached the database backend but pure computations, which read no file.
+    const dbCalls = await page.evaluate(() => window.__wailsCalls.filter((c) => c.ns === 'database').map((c) => c.method));
+    expect(dbCalls.filter((m) => !PURE_DATABASE_CALLS.includes(m))).toEqual([]);
+});
+
+test('a training session runs without a database, and is told, not recorded', async ({ page }) => {
+    await installWailsMock(page);
+    await page.goto('/');
+    await expect(page.locator('[data-testid="status-bar"]')).toBeVisible({ timeout: 8000 });
+    await dismissHomeScreen(page);
+    await page.keyboard.press('Control+j');
+    await expect(page.locator('[data-testid="tab-training"]')).toHaveClass(/active/);
+    await expect(page.locator('[data-testid="training-journal-no-database"]')).toHaveText(en.training.journalNoDatabase);
+
+    await page.click('[data-testid="training-exercise-scores"]');
+    await page.click('[data-testid="training-start"]');
+    await page.click('[data-testid="training-reveal"]');
+    await page.click('[data-testid="training-finish"]');
+    await expect(status(page)).toContainText(en.training.notRecorded.split(':')[0]);
+    expect(await getWailsCalls(page, 'SaveTrainingSession')).toEqual([]);
+
     const dbCalls = await page.evaluate(() => window.__wailsCalls.filter((c) => c.ns === 'database').map((c) => c.method));
     expect(dbCalls.filter((m) => !PURE_DATABASE_CALLS.includes(m))).toEqual([]);
 });

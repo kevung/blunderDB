@@ -18,7 +18,8 @@ import { tMsg } from '../i18n';
 //   silent      no "no database" message (metadata: the tab just stays where
 //               it is)
 //   withoutDb   opens with no database: the tab works on the board alone
-//               (search's query board is a scratch board, like Eval's)
+//               (search's query board is a scratch board, like Eval's), or
+//               on generated questions (training, which then records nothing)
 const TAB_TOGGLES = Object.freeze({
     analysis: { tab: 'analysis' },
     comments: {
@@ -27,7 +28,7 @@ const TAB_TOGGLES = Object.freeze({
     },
     metadata: { tab: 'metadata', silent: true, guard: () => (get(statusBarModeStore) === 'EDIT' ? 'status.cannotShowMetadataEdit' : null) },
     anki: { tab: 'anki' },
-    training: { tab: 'training' },
+    training: { tab: 'training', withoutDb: true },
     matches: { tab: 'matches' },
     collections: { tab: 'collections' },
     tournaments: { tab: 'tournaments' },

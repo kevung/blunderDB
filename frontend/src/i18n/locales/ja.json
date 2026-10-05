@@ -1515,6 +1515,7 @@
         "importIdentifierEmpty": "識別子を指定してください：import XGID=…",
         "importIdentifierUnknown": "識別子を認識できません。いまのところ XGID のみ読み取ります。",
         "importIdentifierSaved": "識別子から局面を取り込みました。",
+        "importIdentifierOnBoard": "識別子からポジションを盤面に配置しました。",
         "importIdentifierFailed": "識別子を読み取れませんでした：{error}",
         "boardImageSaved": "画像を保存しました：{path}",
         "boardImageSaveFailed": "画像を保存できませんでした：{err}"
@@ -1894,6 +1895,8 @@
         "unknownExercise": "不明なエクササイズ: {exercise}。",
         "noQuestion": "問題を出せません: このデータベースまたはこのソースには出題できるものがありません。",
         "journalFailed": "セッションをジャーナルに記録できませんでした。",
+        "notRecorded": "セッション終了：{n} 問中 {faults} 問の誤り。記録されません：データベースが開かれていません。",
+        "journalNoDatabase": "セッションの記録は開いているデータベースに保存されます。データベースがない場合、セッションは行えますが記録されません。",
         "numbers": {
             "tp2Live": "テイクポイント 2 · ロングレース",
             "tp2Last": "テイクポイント 2 · ラストロール",

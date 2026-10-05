@@ -44,6 +44,8 @@
     let chosen = $derived(TRAINING_EXERCISES.find((e) => e.id === exercise) ?? TRAINING_EXERCISES[0]);
     // « base » sans bibliothèque ouverte : désactivée d'emblée (ADR-0041 règle 2).
     let hasLibrary = $derived(!!$databasePathStore);
+    // An exercise drawn only from the library (Décision) cannot start without one.
+    let libraryMissing = $derived(!hasLibrary && chosen.sources.length > 0 && chosen.sources.every((source) => source === 'library'));
     let remembered = $derived(rememberedSources[exercise]);
     let seedSource = $derived(chosen.sources.includes(remembered) && !(remembered === 'library' && !hasLibrary) ? remembered : usableDefault(chosen, hasLibrary));
 
@@ -469,10 +471,13 @@
             </div>
 
             <div class="row">
-                <button type="button" class="start" data-testid="training-start" onclick={start}>{$t('training.start')}</button>
+                <button type="button" class="start" data-testid="training-start" disabled={libraryMissing} onclick={start}>{$t('training.start')}</button>
             </div>
 
-            {#if $trainingRefusalStore}
+            {#if libraryMissing}
+                <!-- Décision ne tire que de la bibliothèque : la raison est dite avant le clic (ADR-0041 règle 2). -->
+                <p class="refusal" role="status" data-testid="training-refusal">{$t(refusalMessageKey('noLibrary'))}</p>
+            {:else if $trainingRefusalStore}
                 <!-- Refus affiché au lieu du clic, nommant le domaine (ADR-0041 règle 3). -->
                 <p class="refusal" role="status" data-testid="training-refusal">{$t(refusalMessageKey($trainingRefusalStore))}</p>
             {/if}
@@ -480,7 +485,10 @@
 
         <div class="journal">
             <h3>{$t('training.summary')}</h3>
-            {#each TRAINING_EXERCISES as item (item.id)}
+            {#if !hasLibrary}
+                <p class="muted" data-testid="training-journal-no-database">{$t('training.journalNoDatabase')}</p>
+            {/if}
+            {#each hasLibrary ? TRAINING_EXERCISES : [] as item (item.id)}
                 {@const summary = summaryOf(item.id)}
                 <div class="summary-line" data-testid="training-summary-{item.id}">
                     <button type="button" class="disclose" aria-expanded={unfolded === item.id} disabled={summary.sessions === 0} onclick={() => (unfolded = unfolded === item.id ? '' : item.id)}>

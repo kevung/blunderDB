@@ -1339,7 +1339,11 @@ export async function analyzeRemainingAfterImport() {
  * @param {string} text
  */
 export async function importIdentifier(text) {
-    if (!get(databasePathStore)) {
+    // On a scratch board (EDIT, EVAL) the identifier lands on the board, as a
+    // paste does: nothing is written, so no database is needed.
+    const mode = get(statusBarModeStore);
+    const scratch = mode === 'EDIT' || mode === 'EVAL';
+    if (!scratch && !get(databasePathStore)) {
         setStatusBarMessage(tMsg('status.noDatabaseOpened'));
         return null;
     }
@@ -1350,6 +1354,17 @@ export async function importIdentifier(text) {
     }
     if (!trimmed.includes('XGID=') && !(await LooksLikeOGID(trimmed))) {
         setStatusBarMessage(tMsg('status.importIdentifierUnknown'));
+        return null;
+    }
+    if (scratch) {
+        try {
+            const { positionData } = await parsePositionOnly(trimmed);
+            applyPositionToBoard(positionData);
+            setStatusBarMessage(tMsg('status.importIdentifierOnBoard'));
+        } catch (error) {
+            logger.error('could not read the identifier onto the board:', error);
+            setStatusBarMessage(tMsg('status.importIdentifierFailed', { error }));
+        }
         return null;
     }
     try {

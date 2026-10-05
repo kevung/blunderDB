@@ -48,6 +48,7 @@ import { playHop } from '../services/quizPlay.js';
 import fr from '../i18n/locales/fr.json';
 import { positionStore, positionsStore, searchSource } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
+import { tMsg } from '../i18n';
 import { trainingSessionStore, trainingRefusalStore, trainingAnalysisHiddenStore } from '../stores/trainingTabStore.js';
 import { pipcountVisibleStore, activeTabStore, currentPositionIndexStore } from '../stores/uiStore.js';
 import { subscribeBoardRedrawTriggers } from '../services/boardRedraw.js';
@@ -175,6 +176,17 @@ describe('une session de Scores', () => {
         expect(row.items.filter((/** @type {any} */ i) => i.wrong)).toHaveLength(1);
         // Aucun écart en mode déclaré : la moyenne des écarts reste vide.
         expect(row.deviations).toBe(0);
+        expect(get(trainingSessionStore)).toBeNull();
+    });
+
+    test('sans base ouverte, « Terminer » dit le bilan et n’écrit rien', async () => {
+        databasePathStore.set('');
+        expect(await startTrainingSession({ exercise: 'scores', limitSeconds: 0 })).toBe(true);
+        revealQuestion();
+        markFault(0);
+        const row = await finishTrainingSession();
+        expect(db.SaveTrainingSession).not.toHaveBeenCalled();
+        expect(statusBar.setStatusBarMessage).toHaveBeenLastCalledWith(tMsg('training.notRecorded', { faults: 1, n: row?.numbersAsked }));
         expect(get(trainingSessionStore)).toBeNull();
     });
 

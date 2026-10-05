@@ -1515,6 +1515,7 @@
         "importIdentifierEmpty": "Indique un identificador: import XGID=…",
         "importIdentifierUnknown": "Identificador no reconocido. Por ahora solo se lee XGID.",
         "importIdentifierSaved": "Posición importada desde el identificador.",
+        "importIdentifierOnBoard": "Posición colocada en el tablero desde el identificador.",
         "importIdentifierFailed": "No se ha podido leer el identificador: {error}",
         "boardImageSaved": "Imagen guardada: {path}",
         "boardImageSaveFailed": "No se ha podido guardar la imagen: {err}"
@@ -1894,6 +1895,8 @@
         "unknownExercise": "Ejercicio desconocido: {exercise}.",
         "noQuestion": "No se puede plantear ninguna pregunta: esta base o esta fuente no proporciona ninguna.",
         "journalFailed": "La sesión no se ha podido registrar en el diario.",
+        "notRecorded": "Sesión terminada: {faults} fallo(s) de {n}. No registrada: ninguna base abierta.",
+        "journalNoDatabase": "El diario de sesiones se guarda en la base abierta: sin ella, las sesiones se juegan pero no se registran.",
         "numbers": {
             "tp2Live": "Punto de aceptación 2 · carrera larga",
             "tp2Last": "Punto de aceptación 2 · última tirada",

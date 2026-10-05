@@ -829,6 +829,11 @@ export async function finishTrainingSession() {
     trainingElapsedStore.set(0);
     const row = finishedSession(closed);
     if (row.numbersAsked === 0) return row;
+    // The journal lives in the database: with none open, the result is told, not recorded.
+    if (!get(databasePathStore)) {
+        setStatusBarMessage(tMsg('training.notRecorded', { faults: row.faults, n: row.numbersAsked }));
+        return row;
+    }
     try {
         await SaveTrainingSession(/** @type {any} */ (row));
     } catch (error) {

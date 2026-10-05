@@ -952,6 +952,13 @@ export async function saveCurrentPosition() {
     await saveScratchBoard();
 }
 
+// A refresh takes back only its own error: the message the edit that triggered
+// it has just posted (a paste, a copy) must stay up.
+function clearEpcError() {
+    const current = get(statusBarTextStore);
+    if (current && typeof current === 'object' && current.i18nKey === 'commands.epcErrorComputing') statusBarTextStore.set('');
+}
+
 export async function updateEPC(position) {
     try {
         // Typed contract from engine/race (ADR-0009):
@@ -980,12 +987,12 @@ export async function updateEPC(position) {
             // Deliberately NO values in the status bar: the panel displays
             // everything, and the challenge (défi) mode masks the panel — a
             // status-bar copy would leak the answers.
-            statusBarTextStore.set('');
+            clearEpcError();
         } else {
             // No race data is the ordinary case in the Eval panel: the race
             // block stays hidden, no status message.
             epcDataStore.set({ bottomEPC: null, topEPC: null, bottomPoints: 0, topPoints: 0, race: null, error: null });
-            statusBarTextStore.set('');
+            clearEpcError();
         }
     } catch (error) {
         logger.error('Error computing EPC:', error);

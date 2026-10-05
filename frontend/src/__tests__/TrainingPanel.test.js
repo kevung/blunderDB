@@ -79,6 +79,7 @@ function sessionWithAFailedNextQuestion() {
 beforeEach(() => {
     trainingSessionStore.set(null);
     trainingJournalStore.set({});
+    databasePathStore.set('/tmp/some.db');
 });
 
 afterEach(() => {
@@ -148,6 +149,25 @@ describe('la source « base » (ADR-0041 règle 2)', () => {
         open.getByTestId('training-exercise-bearoff').click();
         await Promise.resolve();
         expect(/** @type {HTMLButtonElement} */ (open.getByTestId('training-source-library')).disabled).toBe(false);
+    });
+});
+
+describe('sans base ouverte', () => {
+    beforeEach(() => databasePathStore.set(''));
+
+    test('le bilan explique qu’aucune session n’est enregistrée, sans lignes vides', () => {
+        const panel = render(TrainingPanel);
+        expect(panel.getByTestId('training-journal-no-database').textContent).toBe(en.training.journalNoDatabase);
+        expect(panel.queryByTestId('training-summary-scores')).toBeNull();
+    });
+
+    test('Scores se lance ; Décision dit pourquoi elle ne le peut pas', async () => {
+        const panel = render(TrainingPanel);
+        expect(/** @type {HTMLButtonElement} */ (panel.getByTestId('training-start')).disabled).toBe(false);
+        panel.getByTestId('training-exercise-decision').click();
+        await tick();
+        expect(/** @type {HTMLButtonElement} */ (panel.getByTestId('training-start')).disabled).toBe(true);
+        expect(panel.getByTestId('training-refusal').textContent).toBe(en.training.refusal.noLibrary);
     });
 });
 

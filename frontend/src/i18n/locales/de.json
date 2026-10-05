@@ -1515,6 +1515,7 @@
         "importIdentifierEmpty": "Geben Sie eine Kennung an: import XGID=…",
         "importIdentifierUnknown": "Kennung nicht erkannt. Vorerst wird nur XGID gelesen.",
         "importIdentifierSaved": "Stellung aus der Kennung importiert.",
+        "importIdentifierOnBoard": "Position aus der Kennung auf das Brett gesetzt.",
         "importIdentifierFailed": "Die Kennung konnte nicht gelesen werden: {error}",
         "boardImageSaved": "Bild gespeichert: {path}",
         "boardImageSaveFailed": "Das Bild konnte nicht gespeichert werden: {err}"
@@ -1894,6 +1895,8 @@
         "unknownExercise": "Unbekannte Übung: {exercise}.",
         "noQuestion": "Es kann keine Frage gestellt werden: diese Datenbank oder diese Quelle liefert keine.",
         "journalFailed": "Die Sitzung konnte nicht ins Journal geschrieben werden.",
+        "notRecorded": "Sitzung beendet: {faults} Fehler von {n}. Nicht gespeichert: keine Datenbank geöffnet.",
+        "journalNoDatabase": "Das Sitzungsjournal wird in der geöffneten Datenbank geführt: ohne Datenbank lassen sich Sitzungen spielen, werden aber nicht gespeichert.",
         "numbers": {
             "tp2Live": "Annahmepunkt 2 · langes Rennen",
             "tp2Last": "Annahmepunkt 2 · letzter Wurf",
