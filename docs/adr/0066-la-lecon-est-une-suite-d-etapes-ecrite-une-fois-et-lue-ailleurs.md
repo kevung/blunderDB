@@ -25,7 +25,7 @@ ni suite de plusieurs ensembles.
    (`Selection.LessonIDs` / `AllLessons`) et, sous `LessonContents`, ajoute ce que leurs
    Étapes montrent (les Collections et les Positions) : un fichier qui contient une Leçon
    contient de quoi la lire. Les métadonnées de la base passent toujours par
-   `issuance.Carried` (liste d'autorisation, jamais d'exclusion). Un export de toute la
+   `issuance.Carried` sur `CarriedMetadataKeys` (liste d'autorisation, jamais d'exclusion). Un export de toute la
    bibliothèque (toutes les positions : l'export complet du démon, de la CLI `export --type
    database` et du bureau) emporte toutes les Leçons, sans qu'on les demande : une sauvegarde
    ne perd pas en silence ce qu'un coach a écrit. Un export partiel (une sélection de

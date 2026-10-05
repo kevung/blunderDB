@@ -1,7 +1,7 @@
 # ADR-0068 — La table d'équité de match est une propriété de la base
 
 Statut : acceptée.
-Voir aussi : ADR-0007 (le receveur n'écrit rien, liste blanche `issuance.Carried`), ADR-0013
+Voir aussi : ADR-0007 (le receveur n'écrit rien, liste blanche `issuance.CarriedMetadataKeys`), ADR-0013
 (les analyses importées sont intouchables), ADR-0016 règle 6 (le référentiel est une propriété de la
 position), ADR-0019 (une seule échelle d'équité sort du moteur) ; fiche I.15.
 
@@ -43,7 +43,7 @@ nombre dise avec quelle table il a été calculé.
 5. **Une table voyage avec les analyses qui la citent.** Un export qui emporte une analyse
    d'empreinte non nulle emporte la ligne `match_equity_table` correspondante, sans son
    drapeau courant : à l'import, les tables sont fusionnées par empreinte et arrivent non
-   courantes. La table courante n'est pas une métadonnée portée (`issuance.Carried`) :
+   courantes. La table courante n'est pas une métadonnée portée (`issuance.CarriedMetadataKeys`) :
    ouvrir ou importer un fichier ne change pas la table du receveur (ADR-0007).
 6. **Ce qui reste d'ADR-0016, règle 6** : il n'y a toujours pas d'interrupteur global ni de
    réglage au moment du lot. La table d'un calcul est celle de la base qui le reçoit, et

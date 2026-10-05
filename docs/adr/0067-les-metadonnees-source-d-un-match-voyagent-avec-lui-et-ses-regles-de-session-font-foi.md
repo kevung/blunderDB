@@ -1,7 +1,7 @@
 # ADR-0067 — Les métadonnées source d'un match voyagent avec lui, et ses règles de session font foi
 
 Statut : acceptée.
-Voir aussi : ADR-0007 (le receveur n'écrit rien, liste blanche `issuance.Carried`), ADR-0028
+Voir aussi : ADR-0007 (le receveur n'écrit rien, liste blanche `issuance.CarriedMetadataKeys`), ADR-0028
 (Jacoby et Beaver hors du hachage), ADR-0045 (la transcription réécrit un match) ;
 `tasks/plan-grosses-bases-2026-10/`.
 

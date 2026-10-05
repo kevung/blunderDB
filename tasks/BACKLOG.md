@@ -118,6 +118,10 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
 
 ## Ouvert — Frontend
 
+- **`openPanels` dérivé d'`activeTabStore`** : deux sources de vérité pour le panneau visible
+  (`openPanels` est un `writable` séparé dans `stores/uiStore.js`, tenu par
+  `services/tabHandler.js`) ; un état incohérent est atteignable (onglet surligné, panneau
+  vide). Dériver `openPanels` d'`activeTabStore` et supprimer `tabHandler.js`.
 - **`MatchPanel.svelte` (1 772 lignes)** : en extraire le volet de détail d'un match.
 - **Rollout GUI** : un job instantané peut perdre son bandeau de fin
   (`startRolloutOfCurrent`, `services/rolloutService.js`, remet `outcome: null` après le
@@ -185,7 +189,7 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   dictionnaire (ADR-0070) ; `analysis.creation_date` est une colonne indexée ; les étapes de
   migration conditionnelles (`errStepNotApplicable`) ne sont plus ; le drapeau
   `python-format` est neutralisé par `scripts/doc-po-update.sh` ; un seul parseur de recherche
-  JS (`parseSearchTokens`) ; `tabHandler.js` supprimé ; listes virtualisées
+  JS (`parseSearchTokens`) ; listes virtualisées
   (`panels/PanelTable.svelte`) ; `generateXGID` (`services/xgid.js`) encode le drapeau Crawford ;
   `AnalysisPanel` importe `utils/playedMarks.js` ; `DEFAULT_PANEL_HEIGHT` vaut 250 comme
   `config.go` ; `PickList.svelte` partagé ; `race.CubeVerdict` ; ADR-0004 ne cite plus la

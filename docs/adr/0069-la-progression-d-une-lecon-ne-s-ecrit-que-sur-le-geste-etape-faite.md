@@ -1,7 +1,7 @@
 # ADR-0069 — La progression d'une Leçon ne s'écrit que sur le geste « étape faite »
 
 Statut : acceptée.
-Voir aussi : ADR-0007 (le receveur n'écrit rien, liste blanche `issuance.Carried`), ADR-0065
+Voir aussi : ADR-0007 (le receveur n'écrit rien, liste blanche `issuance.CarriedMetadataKeys`), ADR-0065
 (le coach lit à travers les tenants et n'écrit que chez lui), ADR-0066 règle 5 (la Leçon) ;
 fiche I.21.
 
@@ -26,7 +26,7 @@ l'élève qui reprend une Leçon de trente étapes une semaine plus tard doit sa
    la première date.
 3. **La progression ne voyage jamais.** Elle vit dans une table qu'aucun exporteur ne lit
    (l'export copie `lesson` et `lesson_step`) et n'est pas une métadonnée portée
-   (`issuance.Carried`) : un `.dbx` remis à quelqu'un d'autre ne dit pas où en est son
+   (`issuance.CarriedMetadataKeys`) : un `.dbx` remis à quelqu'un d'autre ne dit pas où en est son
    auteur. Un export complet ne l'emporte pas non plus ; la sauvegarde d'une base est la
    copie de son fichier.
 4. **Elle suit les Étapes, pas leur ordre.** Supprimer une Étape supprime sa progression ;
