@@ -46,12 +46,21 @@
     // Partagée avec les diagrammes du rapport (utils/boardConfig.js) : une seule palette.
     let boardCfg = defaultBoardConfig();
 
-    let two;
-    let canvas;
-    let width;
-    let height;
-    let unsubscribeBoardRedrawTriggers;
-    let detachInteractions;
+    /** @typedef {import('../utils/boardGeometry.js').BoardPosition} BoardPosition */
+    /** @typedef {{ label: string, onClick: () => void }} MenuItem */
+    /** @typedef {import('../utils/boardGeometry.js').BoardMetrics} BoardMetrics */
+    /** @typedef {import('two.js').default['scene']} Group */
+
+    /** @type {Two | null} */
+    let two = null;
+    /** @type {HTMLElement | null} */
+    let canvas = null;
+    let width = 0;
+    let height = 0;
+    /** @type {(() => void) | null} */
+    let unsubscribeBoardRedrawTriggers = null;
+    /** @type {(() => void) | null} */
+    let detachInteractions = null;
     let cubePosition = { x: 0, y: 0, size: 0 }; // where the cube was last drawn (hit-testing)
     let previousDice = get(positionStore).dice; // Save previous dice values
 
@@ -71,6 +80,7 @@
     // every store has settled, and drawBoard() (which re-reads them all)
     // paints once per frame.
     let redrawScheduled = false;
+    /** @type {number | null} */
     let redrawFrameId = null;
     function scheduleRedraw() {
         if (redrawScheduled) return;
@@ -88,6 +98,7 @@
     // real navigation (id change) BEFORE the redraw; synchronous .subscribe()
     // makes that ordering unambiguous, an $effect's would not be.
     function subscribeBoardRedrawTriggers() {
+        /** @type {number | null} */
         let previousPositionId = null;
         const unsubPosition = positionStore.subscribe(() => {
             const position = get(positionStore);
@@ -134,7 +145,8 @@
         return $t('board.description', { pip1, pip2, roller });
     });
     function resizeBoard() {
-        const container = canvas.parentElement;
+        if (!canvas || !two) return;
+        const container = /** @type {HTMLElement} */ (canvas.parentElement);
         const containerWidth = container.clientWidth;
         const containerHeight = container.clientHeight;
         const heightFromWidth = containerWidth * canvasCfg.aspectFactor;
@@ -184,12 +196,14 @@
     }
 
     function logCanvasSize() {
+        if (!canvas || !two) return;
         const actualWidth = canvas.clientWidth;
         const actualHeight = canvas.clientHeight;
         logger.log('Actual canvas width: ', actualWidth, 'Actual canvas height: ', actualHeight);
         logger.log('Two.js width: ', two.width, 'Two.js height: ', two.height);
     }
 
+    /** @param {'left' | 'right'} orientation */
     function setBoardOrientation(orientation) {
         boardCfg.orientation = orientation;
         invalidateStaticLayer(); // labels and bearoff side move
@@ -199,6 +213,7 @@
     /** @type {(() => void)[]} */
     let unregisterKeys = [];
 
+    /** @param {KeyboardEvent} event */
     function handleOrientationChange(event) {
         const isAnyModalOpenVal = get(isAnyModalOpen);
         if (isAnyModalOpenVal || showComment) return; // Disable orientation change when any modal or comment panel is open
@@ -209,10 +224,11 @@
         }
     }
 
+    /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
         if ((mode !== 'EDIT' && mode !== 'EVAL') || showTakePoint2Modal || showTakePoint4Modal) return; // Disable shortcuts when TakePoint2Modal or TakePoint4Modal is open
 
-        if (event.key === 'Backspace' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        if (event.key === 'Backspace' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
             event.preventDefault();
             if (mode === 'EVAL') resetEvalBoard();
             else resetBoard();
@@ -220,11 +236,13 @@
     }
 
     onMount(() => {
-        canvas = document.getElementById('backgammon-board');
+        const element = /** @type {HTMLElement} */ (document.getElementById('backgammon-board'));
+        canvas = element;
         const params = { width: window.innerWidth, height: window.innerHeight };
-        two = new Two(params).appendTo(canvas);
+        const surface = new Two(params).appendTo(element);
+        two = surface;
 
-        const container = canvas.parentElement;
+        const container = /** @type {HTMLElement} */ (element.parentElement);
         const containerWidth = container.clientWidth;
         const containerHeight = container.clientHeight;
         const heightFromWidth = containerWidth * canvasCfg.aspectFactor;
@@ -235,12 +253,12 @@
             height = containerHeight;
             width = containerHeight / canvasCfg.aspectFactor;
         }
-        two.width = width;
-        two.height = height;
-        two.renderer.setSize(width, height);
+        surface.width = width;
+        surface.height = height;
+        surface.renderer.setSize(width, height);
 
         // boardInteractions.js reads live state through getters: no re-attach on redraw.
-        detachInteractions = attachBoardInteractions(canvas, {
+        detachInteractions = attachBoardInteractions(element, {
             getMode: () => mode,
             getSize: () => ({ width, height }),
             cfg: boardCfg,
@@ -262,7 +280,7 @@
             quizBearoffSide: () => getDisplayPosition().player_on_roll,
             resetQuizPlay: () => quizPlayStore.update((s) => (s ? resetBoardPlay(s, get(positionStore)) : s)),
             getPreviousDice: () => previousDice,
-            setPreviousDice: (dice) => (previousDice = dice),
+            setPreviousDice: (/** @type {number[]} */ dice) => (previousDice = dice),
             reset: () => (mode === 'EVAL' ? resetEvalBoard() : resetBoard()),
             openContextMenu,
             logger
@@ -289,9 +307,12 @@
     });
 
     // Board context menu; gating (not in EDIT/EVAL, not over a modal) is boardInteractions.js's.
+    /** @type {{ x: number, y: number, items: MenuItem[] } | null} */
     let boardMenu = $state(null);
 
+    /** @param {{ x: number, y: number }} at client coordinates */
     function openContextMenu({ x, y }) {
+        /** @type {MenuItem[]} */
         const items = [
             {
                 label: $t('board.menu.evaluate'),
@@ -347,6 +368,7 @@
         }
     }
 
+    /** @param {number} positionId */
     function ankiDeckMenuItems(positionId) {
         return get(ankiDecksStore).map((deck) => ({
             label: $t('board.menu.addToAnkiDeck', { deck: deck.name }),
@@ -354,6 +376,10 @@
         }));
     }
 
+    /**
+     * @param {{ id: number, name: string }} deck
+     * @param {number} positionId
+     */
     async function addPositionToAnkiDeck(deck, positionId) {
         try {
             await anki.addPositionToDeck(deck.id, positionId);
@@ -366,6 +392,7 @@
 
     // Le sens du plateau est décidé une fois (services/boardOrientation.js) pour
     // les pions, les clics et les flèches.
+    /** @param {BoardPosition} position */
     function displayIsMirrored(position) {
         return boardIsMirrored({
             mode,
@@ -391,6 +418,7 @@
 
     // Points numérotés depuis le camp du joueur 2 ? Distinct du miroir : en
     // transcription le joueur 1 reste en bas, on renumérote sans retourner.
+    /** @param {BoardPosition} displayPosition */
     function isPlayer2Perspective(displayPosition) {
         return labelsFlipped(displayPosition);
     }
@@ -398,25 +426,28 @@
     // Take/pass decision: the offered cube is drawn mid-board. Signalled by the
     // played cube action (match move, else analysis); in EDIT only for an
     // explicit take/pass search, never from stale analysis.
+    /** @param {BoardPosition} position */
     function isOfferedCube(position) {
         if (position.decision_type !== 1) return false;
         if (mode === 'EDIT') return get(searchOfferedCubeStore) === true;
         const matchCtx = get(matchContextStore);
         if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
-            const mp = matchCtx.movePositions[matchCtx.currentIndex];
+            const mp = /** @type {{ cube_action?: string } | undefined} */ (matchCtx.movePositions[matchCtx.currentIndex]);
             return !!mp && isResponseCubeAction(mp.cube_action);
         }
         const ana = get(analysisStore);
+        /** @type {string[]} */
         const acts = (ana && ana.playedCubeActions) || [];
         return acts.some(isResponseCubeAction);
     }
 
     // Points offerts par le coup en cours, en numéros affichés : les pas de
     // `LegalMoves` sont absolus, convertis par le même `mirrored` que le clic.
+    /** @param {boolean} mirrored */
     function playHighlights(mirrored) {
         const play = get(quizPlayStore);
         if (!play) return {};
-        const shown = (point) => screenOfModelPoint(point, mirrored);
+        const shown = (/** @type {number} */ point) => screenOfModelPoint(point, mirrored);
         // Le point choisi est toujours marqué, même hors des règles (ADR-0052).
         const picked = play.selected === null || play.selected === undefined ? [] : [play.selected];
         // Départs allumés seulement coup engagé : sinon presque tous le sont (21 jets).
@@ -430,6 +461,7 @@
 
     // Flèches : la notation est dans la numérotation du camp au trait, donc
     // `flip` (joueur dessiné en haut), pas `mirrored` — ils divergent en transcription.
+    /** @param {boolean} flipped */
     function selectedMoveArrows(flipped) {
         const moves = parseMoveNotation(selectedMove);
         if (moves.length === 0 || !flipped) return moves;
@@ -440,24 +472,37 @@
     // orientation, palette or numbering change; scheduleRedraw() refills only
     // the dynamic group. Board.redraw.test.js counts two.clear() as a static
     // rebuild and two.update() as a paint.
+    /** @type {Group | null} */
     let staticLayer = null; // triangles, labels, bar — null = must be rebuilt
+    /** @type {Group | null} */
     let dynamicLayer = null; // emptied and refilled on every redraw
+    /** @type {boolean | null} */
     let staticFlip = null; // the label side staticLayer was built for
 
     function invalidateStaticLayer() {
         staticLayer = null;
     }
 
-    function rebuildStaticLayers(geom, flip) {
-        two.clear();
-        staticLayer = two.makeGroup();
-        dynamicLayer = two.makeGroup();
-        const frameLayer = two.makeGroup(); // above the checkers so the outline keeps its linewidth
-        drawStaticScene(layerOf(two, staticLayer), geom, boardCfg, flip);
-        drawFrame(layerOf(two, frameLayer), geom, boardCfg);
+    /**
+     * @param {Two} surface
+     * @param {BoardMetrics} geom
+     * @param {boolean} flip
+     * @returns {Group}
+     */
+    function rebuildStaticLayers(surface, geom, flip) {
+        surface.clear();
+        const fixed = surface.makeGroup();
+        const dynamic = surface.makeGroup();
+        const frameLayer = surface.makeGroup(); // above the checkers so the outline keeps its linewidth
+        drawStaticScene(layerOf(surface, fixed), geom, boardCfg, flip);
+        drawFrame(layerOf(surface, frameLayer), geom, boardCfg);
+        staticLayer = fixed;
+        dynamicLayer = dynamic;
         staticFlip = flip;
+        return dynamic;
     }
 
+    /** @type {import('../utils/boardScene.js').SceneText} */
     const sceneText = (key, params) => translate(`board.scene.${key}`, params);
 
     export function drawBoard() {
@@ -470,9 +515,9 @@
         const mirrored = displayMirrored();
         logger.log('drawBoard', width, height, 'decision_type:', position.decision_type);
 
-        if (!staticLayer || staticFlip !== flip) rebuildStaticLayers(geom, flip);
-        dynamicLayer.remove(dynamicLayer.children);
-        cubePosition = drawDynamicScene(layerOf(two, dynamicLayer), geom, boardCfg, position, {
+        const dynamic = !staticLayer || !dynamicLayer || staticFlip !== flip ? rebuildStaticLayers(two, geom, flip) : dynamicLayer;
+        dynamic.remove(dynamic.children);
+        cubePosition = drawDynamicScene(layerOf(two, dynamic), geom, boardCfg, position, {
             text: sceneText,
             offeredCube: isOfferedCube(position),
             showPipcount,
