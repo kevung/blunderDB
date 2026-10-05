@@ -345,23 +345,28 @@
             </button>
             <span class="count-sep">·</span>
             {#if $listBlunderCountStore != null && $libraryCountsStore.blunders != null}
+                <!-- La phrase traduite place les deux nombres où la langue les veut : on la découpe aux repères. -->
                 <span data-testid="count-blunders">
-                    {$t('statusBar.countBlundersPrefix')}<button
-                        type="button"
-                        class="count-link"
-                        data-testid="count-blunders-list"
-                        onclick={() => showLibrary('blunders-list')}
-                        title={$t('statusBar.countBlundersListOnlyTitle', { n: $listBlunderCountStore, mp: $libraryCountsStore.blunderThresholdMP })}>{$listBlunderCountStore}</button
-                    >
-                    /
-                    <button
-                        type="button"
-                        class="count-link"
-                        data-testid="count-blunders-total"
-                        onclick={() => showLibrary('blunders')}
-                        title={$t('statusBar.countBlundersTotalTitle', { total: $libraryCountsStore.blunders, mp: $libraryCountsStore.blunderThresholdMP })}
-                        >{formatCount($libraryCountsStore.blunders)}</button
-                    >{$t('statusBar.countBlundersSuffix')}
+                    {#each $t('statusBar.countBlundersOfList', { n: '\uE000n', total: '\uE000t' }).split(/(\uE000[nt])/) as part, i (i)}
+                        {#if part === '\uE000n'}
+                            <button
+                                type="button"
+                                class="count-link"
+                                data-testid="count-blunders-list"
+                                onclick={() => showLibrary('blunders-list')}
+                                title={$t('statusBar.countBlundersListOnlyTitle', { n: $listBlunderCountStore, mp: $libraryCountsStore.blunderThresholdMP })}>{$listBlunderCountStore}</button
+                            >
+                        {:else if part === '\uE000t'}
+                            <button
+                                type="button"
+                                class="count-link"
+                                data-testid="count-blunders-total"
+                                onclick={() => showLibrary('blunders')}
+                                title={$t('statusBar.countBlundersTotalTitle', { total: $libraryCountsStore.blunders, mp: $libraryCountsStore.blunderThresholdMP })}
+                                >{formatCount($libraryCountsStore.blunders)}</button
+                            >
+                        {:else}{part}{/if}
+                    {/each}
                 </span>
             {:else}
                 <button

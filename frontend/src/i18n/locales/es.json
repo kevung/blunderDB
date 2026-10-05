@@ -1080,8 +1080,7 @@
         "countPositionsTitle": "Ver todas las posiciones",
         "countBlundersTitle": "Buscar errores de al menos {mp} milipuntos",
         "countBlundersUncounted": "No se cuenta en una biblioteca grande: haga clic para buscarlos",
-        "countBlundersPrefix": "",
-        "countBlundersSuffix": " blunders",
+        "countBlundersOfList": "{n} / {total} blunders",
         "countBlundersListOnlyTitle": "{n} blunders en la lista en pantalla (errores de al menos {mp} milipuntos). Haga clic para buscarlos en esta lista",
         "countBlundersTotalTitle": "{total} blunders en la biblioteca (errores de al menos {mp} milipuntos). Haga clic para buscarlos en toda la biblioteca",
         "countMatchesTitle": "Abrir la lista de partidos"

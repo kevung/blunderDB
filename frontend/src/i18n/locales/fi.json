@@ -1080,8 +1080,7 @@
         "countPositionsTitle": "Näytä kaikki asemat",
         "countBlundersTitle": "Hae vähintään {mp} millipisteen virheet",
         "countBlundersUncounted": "Ei lasketa suuressa kirjastossa: etsi napsauttamalla",
-        "countBlundersPrefix": "",
-        "countBlundersSuffix": " blunderia",
+        "countBlundersOfList": "{n} / {total} blunderia",
         "countBlundersListOnlyTitle": "{n} blunderia näkyvässä luettelossa (virheet vähintään {mp} millipistettä). Napsauta hakeaksesi ne tästä luettelosta",
         "countBlundersTotalTitle": "{total} blunderia kirjastossa (virheet vähintään {mp} millipistettä). Napsauta hakeaksesi ne koko kirjastosta",
         "countMatchesTitle": "Avaa otteluluettelo"

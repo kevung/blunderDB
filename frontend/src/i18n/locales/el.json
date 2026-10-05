@@ -1080,8 +1080,7 @@
         "countPositionsTitle": "Εμφάνιση όλων των θέσεων",
         "countBlundersTitle": "Αναζήτηση σφαλμάτων τουλάχιστον {mp} χιλιοστών",
         "countBlundersUncounted": "Δεν μετράται σε μεγάλη βιβλιοθήκη: κάντε κλικ για αναζήτηση",
-        "countBlundersPrefix": "",
-        "countBlundersSuffix": " blunders",
+        "countBlundersOfList": "{n} / {total} blunders",
         "countBlundersListOnlyTitle": "{n} blunders στη λίστα στην οθόνη (σφάλματα τουλάχιστον {mp} χιλιοστών). Κάντε κλικ για αναζήτηση σε αυτή τη λίστα",
         "countBlundersTotalTitle": "{total} blunders στη βιβλιοθήκη (σφάλματα τουλάχιστον {mp} χιλιοστών). Κάντε κλικ για αναζήτηση σε ολόκληρη τη βιβλιοθήκη",
         "countMatchesTitle": "Άνοιγμα λίστας αγώνων"
