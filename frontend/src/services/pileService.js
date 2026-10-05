@@ -49,7 +49,6 @@ export async function togglePile() {
         const result = await TogglePile(position);
         sequence++;
         onPileStore.set(result.onPile);
-        setStatusBarMessage(tMsg(result.onPile ? (result.brought ? 'status.pileBrought' : 'status.pileOn') : 'status.pileOff'));
         pileChangedStore.update((n) => n + 1);
         // The Pile's count changed, and the first toggle creates the Pile itself.
         collectionsStore.set((await GetAllCollections()) || []);

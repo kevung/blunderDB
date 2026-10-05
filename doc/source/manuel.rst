@@ -1221,9 +1221,8 @@ masquer le panneau.
 
 La **Pile** est la collection du geste « à revoir plus tard » : un double-clic
 hors du plateau, la touche *b* ou le bouton marque-page de la barre d'outils
-met la position affichée sur la Pile, et le même geste l'en retire. Un court
-bandeau sur le plateau confirme chaque bascule, et un marque-page au coin du
-plateau dit que la position y est. Le geste vaut partout où une position est
+met la position affichée sur la Pile, et le même geste l'en retire. Un
+marque-page au coin du plateau dit que la position y est, sans autre message. Le geste vaut partout où une position est
 affichée : revue, recherche, Transcription, Duel. En édition et en Eval, et
 pendant un coup joué au plateau hors Duel, le double-clic hors du plateau garde
 son sens premier — remettre à zéro — et seuls *b* et le bouton y valent. La Pile est une collection ordinaire — renommée,
@@ -4058,7 +4057,7 @@ pipcount (``P``) et l'aide.
   garder » écrit le Match tel qu'il est ; « Arrêter et jeter » n'en écrit
   rien. Arrêter n'est jamais céder la partie.
 * Un double-clic hors du plateau met la position sur la Pile, ou l'en retire,
-  comme ``B`` ; un court bandeau le confirme sur le plateau.
+  comme ``B`` ; seul le marque-page au coin du plateau le montre.
 
 Chaque décision porte sa durée, avec ou sans cadence. Un abandon n'a pas de
 durée enregistrée dans le Match.

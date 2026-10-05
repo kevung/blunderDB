@@ -1010,9 +1010,7 @@
             "search": "検索ボード：探したいチェッカーを置いてください",
             "eval": "評価ボード"
         },
-        "onPile": "パイルにあります",
-        "pileFlashOn": "パイルに追加しました",
-        "pileFlashOff": "パイルから外しました"
+        "onPile": "パイルにあります"
     },
     "epc": {
         "avgRolls": "平均ロール",
@@ -1551,9 +1549,6 @@
         "importIdentifierFailed": "識別子を読み取れませんでした：{error}",
         "boardImageSaved": "画像を保存しました：{path}",
         "boardImageSaveFailed": "画像を保存できませんでした：{err}",
-        "pileOn": "パイルに載せました",
-        "pileOff": "パイルから外しました",
-        "pileBrought": "パイルに載せました（ライブラリに書き込み）",
         "pileError": "パイル：エラー"
     },
     "stats": {

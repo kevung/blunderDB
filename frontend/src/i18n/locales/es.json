@@ -1010,9 +1010,7 @@
             "search": "Tablero de búsqueda: coloca las fichas que quieres encontrar",
             "eval": "Tablero de evaluación"
         },
-        "onPile": "En la Pila",
-        "pileFlashOn": "Puesta en la Pila",
-        "pileFlashOff": "Retirada de la Pila"
+        "onPile": "En la Pila"
     },
     "epc": {
         "avgRolls": "Tiradas medias",
@@ -1551,9 +1549,6 @@
         "importIdentifierFailed": "No se ha podido leer el identificador: {error}",
         "boardImageSaved": "Imagen guardada: {path}",
         "boardImageSaveFailed": "No se ha podido guardar la imagen: {err}",
-        "pileOn": "Puesta en la Pila",
-        "pileOff": "Quitada de la Pila",
-        "pileBrought": "Puesta en la Pila (escrita en la biblioteca)",
         "pileError": "Pila: error"
     },
     "stats": {

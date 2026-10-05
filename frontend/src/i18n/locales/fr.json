@@ -1010,9 +1010,7 @@
             "search": "Plateau de recherche : posez les pions à trouver",
             "eval": "Plateau d’évaluation"
         },
-        "onPile": "Sur la Pile",
-        "pileFlashOn": "Mise sur la Pile",
-        "pileFlashOff": "Retirée de la Pile"
+        "onPile": "Sur la Pile"
     },
     "epc": {
         "avgRolls": "Jets moy.",
@@ -1551,9 +1549,6 @@
         "importIdentifierFailed": "L'identifiant n'a pas pu être lu : {error}",
         "boardImageSaved": "Image enregistrée : {path}",
         "boardImageSaveFailed": "L'image n'a pas pu être enregistrée : {err}",
-        "pileOn": "Mise sur la Pile",
-        "pileOff": "Retirée de la Pile",
-        "pileBrought": "Mise sur la Pile (écrite dans la bibliothèque)",
         "pileError": "Pile : erreur"
     },
     "stats": {

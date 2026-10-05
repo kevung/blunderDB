@@ -1010,9 +1010,7 @@
             "search": "Hakulauta: aseta etsittävät nappulat",
             "eval": "Arviointilauta"
         },
-        "onPile": "Pinossa",
-        "pileFlashOn": "Lisätty pinoon",
-        "pileFlashOff": "Poistettu pinosta"
+        "onPile": "Pinossa"
     },
     "epc": {
         "avgRolls": "Keskim. heitot",
@@ -1551,9 +1549,6 @@
         "importIdentifierFailed": "Tunnistetta ei voitu lukea: {error}",
         "boardImageSaved": "Kuva tallennettu: {path}",
         "boardImageSaveFailed": "Kuvaa ei voitu tallentaa: {err}",
-        "pileOn": "Lisätty pinoon",
-        "pileOff": "Poistettu pinosta",
-        "pileBrought": "Lisätty pinoon (kirjoitettu kirjastoon)",
         "pileError": "Pino: virhe"
     },
     "stats": {

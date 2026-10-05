@@ -1010,9 +1010,7 @@
             "search": "Suchbrett: Steine so setzen, wie sie gefunden werden sollen",
             "eval": "Auswertungsbrett"
         },
-        "onPile": "Auf dem Stapel",
-        "pileFlashOn": "Auf den Stapel gelegt",
-        "pileFlashOff": "Vom Stapel genommen"
+        "onPile": "Auf dem Stapel"
     },
     "epc": {
         "avgRolls": "Ø Würfe",
@@ -1551,9 +1549,6 @@
         "importIdentifierFailed": "Die Kennung konnte nicht gelesen werden: {error}",
         "boardImageSaved": "Bild gespeichert: {path}",
         "boardImageSaveFailed": "Das Bild konnte nicht gespeichert werden: {err}",
-        "pileOn": "Auf den Stapel gelegt",
-        "pileOff": "Vom Stapel genommen",
-        "pileBrought": "Auf den Stapel gelegt (in die Bibliothek geschrieben)",
         "pileError": "Stapel: Fehler"
     },
     "stats": {

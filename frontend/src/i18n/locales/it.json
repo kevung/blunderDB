@@ -1010,9 +1010,7 @@
             "search": "Scacchiera di ricerca: disponi le pedine da trovare",
             "eval": "Scacchiera di valutazione"
         },
-        "onPile": "Nella Pila",
-        "pileFlashOn": "Messa nella Pila",
-        "pileFlashOff": "Tolta dalla Pila"
+        "onPile": "Nella Pila"
     },
     "epc": {
         "avgRolls": "Tiri medi",
@@ -1551,9 +1549,6 @@
         "importIdentifierFailed": "L'identificatore non ha potuto essere letto: {error}",
         "boardImageSaved": "Immagine salvata: {path}",
         "boardImageSaveFailed": "L'immagine non ha potuto essere salvata: {err}",
-        "pileOn": "Messa nella Pila",
-        "pileOff": "Tolta dalla Pila",
-        "pileBrought": "Messa nella Pila (scritta nella libreria)",
         "pileError": "Pila: errore"
     },
     "stats": {

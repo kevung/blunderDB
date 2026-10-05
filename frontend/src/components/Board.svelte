@@ -27,7 +27,7 @@
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
-    import { onPileStore, refreshPileState, togglePile, pileChangedStore } from '../services/pileService.js';
+    import { onPileStore, refreshPileState, togglePile } from '../services/pileService.js';
     import { duelHoldsBoardStore, duelBoardStore, duelStore } from '../stores/duelStore.js';
     import { duelBoardPress, duelBoardDrop, duelBoardContextMenu, duelBoardContext, suspendDuel, confirmStopDuel, resignDuel } from '../services/duelService.js';
     import { orderedDice, usedDice, isMine } from '../services/duelBoard.js';
@@ -67,7 +67,6 @@
     /** @type {(() => void) | null} */
     let detachInteractions = null;
     let cubePosition = { x: 0, y: 0, size: 0 }; // where the cube was last drawn (hit-testing)
-    const PILE_FLASH_MS = 1200;
     let previousDice = get(positionStore).dice; // Save previous dice values
 
     // enterEvalMode() starts with dice [0, 0]; reset so the first die click
@@ -573,23 +572,6 @@
         two.update();
     }
 
-    // Une bascule de la Pile se voit sur le plateau, quel que soit le geste : un court bandeau.
-    /** @type {'on' | 'off' | null} */
-    let pileFlash = $state(null);
-    /** @type {ReturnType<typeof setTimeout> | null} */
-    let pileFlashTimer = null;
-    let pileTicks = 0;
-    const unsubscribePileFlash = pileChangedStore.subscribe(() => {
-        if (pileTicks++ === 0) return;
-        pileFlash = get(onPileStore) ? 'on' : 'off';
-        if (pileFlashTimer) clearTimeout(pileFlashTimer);
-        pileFlashTimer = setTimeout(() => (pileFlash = null), PILE_FLASH_MS);
-    });
-    onDestroy(() => {
-        unsubscribePileFlash();
-        if (pileFlashTimer) clearTimeout(pileFlashTimer);
-    });
-
     // The Pile marker follows the position on the board, edits of a draft included.
     $effect(() => {
         void $positionStore;
@@ -606,9 +588,6 @@
             </svg>
         </span>
     {/if}
-    {#if pileFlash}
-        <span class="pile-flash" role="status" data-testid="pile-flash">{$t(pileFlash === 'on' ? 'board.pileFlashOn' : 'board.pileFlashOff')}</span>
-    {/if}
     {#if $duelHoldsBoardStore}
         <DuelBoardPrompt />
     {/if}
@@ -618,29 +597,6 @@
 </div>
 
 <style>
-    .pile-flash {
-        position: absolute;
-        top: 6px;
-        right: 32px;
-        padding: 0.15em 0.6em;
-        border-radius: 3px;
-        background: var(--color-primary);
-        color: var(--color-surface);
-        font-size: var(--font-size-small);
-        pointer-events: none;
-        animation: pile-flash 1.2s ease-out forwards;
-    }
-
-    @keyframes pile-flash {
-        0%,
-        70% {
-            opacity: 1;
-        }
-        100% {
-            opacity: 0;
-        }
-    }
-
     .pile-badge {
         position: absolute;
         top: 6px;

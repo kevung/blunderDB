@@ -1010,9 +1010,7 @@
             "search": "Search board: place the checkers to find",
             "eval": "Evaluation board"
         },
-        "onPile": "On the Pile",
-        "pileFlashOn": "Put on the Pile",
-        "pileFlashOff": "Taken off the Pile"
+        "onPile": "On the Pile"
     },
     "epc": {
         "avgRolls": "Avg Rolls",
@@ -1551,9 +1549,6 @@
         "importIdentifierFailed": "The identifier could not be read: {error}",
         "boardImageSaved": "Image saved: {path}",
         "boardImageSaveFailed": "The image could not be saved: {err}",
-        "pileOn": "Put on the Pile",
-        "pileOff": "Taken off the Pile",
-        "pileBrought": "Put on the Pile (written to the library)",
         "pileError": "Pile: error"
     },
     "stats": {
