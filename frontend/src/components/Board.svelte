@@ -23,7 +23,7 @@
     import { viewStore } from '../stores/viewStore.js';
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
-    import { quizPlayStore, quizPlaySourcesStore, quizPlayTargetsStore } from '../stores/quizPlayStore.js';
+    import { quizPlayStore, quizPlayTargetsStore } from '../stores/quizPlayStore.js';
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
@@ -516,12 +516,7 @@
         const play = get(quizPlayStore);
         if (!play) return {};
         const shown = (/** @type {number} */ point) => screenOfModelPoint(point, mirrored);
-        // Le point choisi est toujours marqué, même hors des règles (ADR-0052).
-        const picked = play.selected === null || play.selected === undefined ? [] : [play.selected];
-        // Départs allumés seulement coup engagé : sinon presque tous le sont (21 jets).
-        const engaged = play.steps.length > 0 || picked.length > 0;
         return {
-            sources: engaged ? [...new Set([...$quizPlaySourcesStore, ...picked])].map(shown) : [],
             targets: [...$quizPlayTargetsStore].map(shown),
             selected: play.selected === null || play.selected === undefined ? null : shown(play.selected)
         };
