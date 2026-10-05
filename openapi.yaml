@@ -4314,6 +4314,24 @@ paths:
                 description: One JSON object per line (NDJSON), each shaped as below.
                 $ref: "#/components/schemas/domain_Move"
                 nullable: true
+  /v1/matches.origin:
+    post:
+      operationId: matches.origin
+      tags: [matches]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/duel_Origin"
+                nullable: true
   /v1/matches.save:
     post:
       operationId: matches.save
@@ -7933,6 +7951,9 @@ components:
     domain_TrashEntry:
       type: object
       description: "Opaque: see the Go type domain.TrashEntry (defined outside internal/server, not expanded here)."
+    duel_Origin:
+      type: object
+      description: "Opaque: see the Go type duel.Origin (defined outside internal/server, not expanded here)."
     duel_Settings:
       type: object
       description: "Opaque: see the Go type duel.Settings (defined outside internal/server, not expanded here)."

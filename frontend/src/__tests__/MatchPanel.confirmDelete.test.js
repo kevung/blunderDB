@@ -34,6 +34,7 @@ vi.mock('../../wailsjs/go/database/Database.js', async (importOriginal) => ({
     GetMatchDetailStats: vi.fn(() => Promise.resolve(null)),
     GetMatchMoveGrades: vi.fn(() => Promise.resolve([])),
     GetMatchTimeSummary: vi.fn(() => Promise.resolve(null)),
+    GetMatchOrigin: vi.fn(() => Promise.resolve(null)),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
     SetMatchTournamentByName: vi.fn(() => Promise.resolve()),
     SwapMatchPlayers: vi.fn(() => Promise.resolve()),

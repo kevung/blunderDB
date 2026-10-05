@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 )
 
 // runMatch handles the match command
@@ -69,15 +71,20 @@ func (cli *CLI) runMatch(args []string) error {
 		return fmt.Errorf("failed to get match positions: %w", err)
 	}
 
+	origin, err := cli.db.GetMatchOrigin(*matchID)
+	if err != nil {
+		return fmt.Errorf("failed to get match origin: %w", err)
+	}
+
 	// Format output based on requested format
 	var outputData string
 	switch strings.ToLower(*format) {
 	case "json":
-		outputData, err = cli.formatMatchJSON(match, positions)
+		outputData, err = cli.formatMatchJSON(match, positions, origin)
 	case "text":
-		outputData, err = cli.formatMatchText(match, positions)
+		outputData, err = cli.formatMatchText(match, positions, origin)
 	case "summary":
-		outputData, err = cli.formatMatchSummary(match, positions)
+		outputData, err = cli.formatMatchSummary(match, positions, origin)
 	default:
 		return fmt.Errorf("unknown format: %s (must be 'json', 'text', or 'summary')", *format)
 	}
@@ -101,9 +108,11 @@ func (cli *CLI) runMatch(args []string) error {
 }
 
 // formatMatchJSON formats match data as JSON
-func (cli *CLI) formatMatchJSON(match *Match, positions []MatchMovePosition) (string, error) {
+// origin is null for a match not played here.
+func (cli *CLI) formatMatchJSON(match *Match, positions []MatchMovePosition, origin *duel.Origin) (string, error) {
 	output := map[string]interface{}{
 		"match":          match,
+		"origin":         origin,
 		"positions":      positions,
 		"position_count": len(positions),
 	}
@@ -140,6 +149,56 @@ func writeSourceMetadata(sb *strings.Builder, m *Match) {
 	}
 }
 
+// writeOrigin writes how the match came to be when it was played here: the
+// revealed seed with its fingerprint, so the rolls can be recomputed without
+// trusting the Arbiter (ADR-0072 rule 8), and the rest of its origin.
+func writeOrigin(sb *strings.Builder, m *Match, o *duel.Origin) {
+	if o == nil {
+		sb.WriteString("Origin: imported or transcribed\n")
+		return
+	}
+	sb.WriteString("Origin: played here\n")
+	if o.Start == "" {
+		sb.WriteString("  Start: opening position\n")
+	} else {
+		fmt.Fprintf(sb, "  Start: %s\n", o.Start)
+	}
+	fmt.Fprintf(sb, "  Dice seed: %s\n", o.DiceSeed)
+	fmt.Fprintf(sb, "  Seed fingerprint (SHA-256): %s\n", o.Fingerprint)
+	fmt.Fprintf(sb, "  Stopped before the end: %s\n", map[bool]string{true: "yes", false: "no"}[o.StoppedEarly])
+	if c := o.CadenceSettings; c != nil {
+		fmt.Fprintf(sb, "  Cadence: %s\n", describeCadence(*c))
+	}
+	if o.OverTime == 1 || o.OverTime == 2 {
+		fmt.Fprintf(sb, "  Reserve ran out first: %s\n", [2]string{m.Player1Name, m.Player2Name}[o.OverTime-1])
+	}
+	if o.BotLevel != "" {
+		fmt.Fprintf(sb, "  Bot: level %s", o.BotLevel)
+		if o.BotEngine != "" {
+			fmt.Fprintf(sb, ", policy of gammonNet %s", o.BotEngine)
+		}
+		sb.WriteString("\n")
+	}
+}
+
+// describeCadence renders a Cadence as its name, then its reserve and delay.
+func describeCadence(c duel.Cadence) string {
+	var parts []string
+	if c.Name != "" {
+		parts = append(parts, c.Name)
+	}
+	if c.ReservePerPoint > 0 {
+		parts = append(parts, fmt.Sprintf("reserve %d s per point", c.ReservePerPoint))
+	} else {
+		parts = append(parts, fmt.Sprintf("reserve %d s", c.Reserve))
+	}
+	parts = append(parts, fmt.Sprintf("delay %d s", c.Delay))
+	if c.TimeOut != "" {
+		parts = append(parts, fmt.Sprintf("time out: %s", c.TimeOut))
+	}
+	return strings.Join(parts, ", ")
+}
+
 func yesNo(b *bool) string {
 	switch {
 	case b == nil:
@@ -152,7 +211,7 @@ func yesNo(b *bool) string {
 }
 
 // formatMatchText formats match data as text
-func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition) (string, error) {
+func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, origin *duel.Origin) (string, error) {
 	var sb strings.Builder
 
 	sb.WriteString(fmt.Sprintf("Match ID: %d\n", match.ID))
@@ -165,6 +224,7 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition) (st
 	}
 	sb.WriteString(fmt.Sprintf("Match Length: %d\n", match.MatchLength))
 	writeSourceMetadata(&sb, match)
+	writeOrigin(&sb, match, origin)
 	sb.WriteString(fmt.Sprintf("Total Positions: %d\n\n", len(positions)))
 
 	for i, movePos := range positions {
@@ -200,7 +260,7 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition) (st
 }
 
 // formatMatchSummary formats match data as a summary
-func (cli *CLI) formatMatchSummary(match *Match, positions []MatchMovePosition) (string, error) {
+func (cli *CLI) formatMatchSummary(match *Match, positions []MatchMovePosition, origin *duel.Origin) (string, error) {
 	var sb strings.Builder
 
 	sb.WriteString(fmt.Sprintf("Match: %s vs %s\n", match.Player1Name, match.Player2Name))
@@ -210,6 +270,7 @@ func (cli *CLI) formatMatchSummary(match *Match, positions []MatchMovePosition) 
 	sb.WriteString(fmt.Sprintf("Match Length: %d points\n", match.MatchLength))
 	sb.WriteString(fmt.Sprintf("Games: %d\n", match.GameCount))
 	writeSourceMetadata(&sb, match)
+	writeOrigin(&sb, match, origin)
 	sb.WriteString(fmt.Sprintf("Total Positions: %d\n\n", len(positions)))
 
 	// Count positions by game

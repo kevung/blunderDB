@@ -2,6 +2,7 @@ package cli
 
 import (
 	"encoding/json"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -96,5 +97,49 @@ func TestCLI_DuelStaleRevisionIsRefused(t *testing.T) {
 	err := cli.Run([]string{"duel", "discard", "--db", dbPath, "--id", "1", "--revision", "99"})
 	if err == nil || !strings.Contains(err.Error(), "revision") {
 		t.Errorf("discard on a stale revision: %v", err)
+	}
+}
+
+// `match --id` reads back the origin of a Match a Duel became: its seed gives
+// the fingerprint published at creation, in every format.
+func TestCLI_MatchShowsItsOrigin(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	var st duel.State
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "1", "--side1", "bot:instant", "--side2", "bot:instant", "--format", "json"}); err != nil {
+			t.Fatalf("duel create: %v", err)
+		}
+	})
+	if err := json.Unmarshal([]byte(out), &st); err != nil || st.Ended == nil {
+		t.Fatalf("duel create: %v, %+v", err, st.Ended)
+	}
+	id := strconv.FormatInt(st.Ended.MatchID, 10)
+
+	var got struct {
+		Origin *duel.Origin `json:"origin"`
+	}
+	out = captureStdout(t, func() {
+		if err := cli.Run([]string{"match", "--db", dbPath, "--id", id, "--format", "json"}); err != nil {
+			t.Fatalf("match json: %v", err)
+		}
+	})
+	if err := json.Unmarshal([]byte(out), &got); err != nil || got.Origin == nil {
+		t.Fatalf("match json origin: %v, %+v", err, got.Origin)
+	}
+	if fp, _ := duel.Fingerprint(got.Origin.DiceSeed); fp != st.Fingerprint || got.Origin.Fingerprint != st.Fingerprint {
+		t.Errorf("seed read back gives %q, origin says %q, published %q", fp, got.Origin.Fingerprint, st.Fingerprint)
+	}
+
+	for _, format := range []string{"text", "summary"} {
+		out = captureStdout(t, func() {
+			if err := cli.Run([]string{"match", "--db", dbPath, "--id", id, "--format", format}); err != nil {
+				t.Fatalf("match %s: %v", format, err)
+			}
+		})
+		for _, want := range []string{"Origin: played here", "Dice seed: " + st.Ended.DiceSeed, "Seed fingerprint (SHA-256): " + st.Fingerprint, "Bot: level instant"} {
+			if !strings.Contains(out, want) {
+				t.Errorf("match --format %s lacks %q:\n%s", format, want, out)
+			}
+		}
 	}
 }

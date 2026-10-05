@@ -143,6 +143,18 @@ func (d *Database) StopDuel(id, revision int64, keep bool) (*DuelState, error) {
 	})
 }
 
+// GetMatchOrigin returns the origin of a Match played here — Start, revealed
+// seed and its fingerprint, stop before the end, Cadence and overrun, Bot —
+// or nil when it was imported or transcribed.
+func (d *Database) GetMatchOrigin(matchID int64) (*duel.Origin, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.db == nil || d.store == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+	return duel.ReadOrigin(context.Background(), d.store, "", matchID)
+}
+
 // forgetDuels puts the open Duel in suspense and drops the Service when the
 // handle is replaced or closed, BEFORE d.mu is taken for writing: the clocks
 // stop with the library, and a Duel id of the previous library must not

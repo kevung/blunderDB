@@ -2394,6 +2394,8 @@ export namespace domain {
 	    player2_name: string;
 	    checker_move: string;
 	    cube_action: string;
+	    decision_ms?: number;
+	    cube_decision_ms?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new MatchMovePosition(source);
@@ -2412,6 +2414,8 @@ export namespace domain {
 	        this.player2_name = source["player2_name"];
 	        this.checker_move = source["checker_move"];
 	        this.cube_action = source["cube_action"];
+	        this.decision_ms = source["decision_ms"];
+	        this.cube_decision_ms = source["cube_decision_ms"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -2700,6 +2704,7 @@ export namespace domain {
 	    individuallyImportedFilter: boolean;
 	    flaggedFilter: boolean;
 	    moveErrorFilter: string;
+	    decisionTimeFilter: string;
 	    matchIDsFilter: string;
 	    tournamentIDsFilter: string;
 	    playerFilter: string;
@@ -2709,7 +2714,6 @@ export namespace domain {
 	    matchLengthFilter: string;
 	    matchDateFilter: string;
 	    playerPRFilter: string;
-	    decisionTimeFilter: string;
 	    analysisProvenanceFilter: string;
 	    positionIDsFilter: string;
 	    restrictToPositionIDs: string;
@@ -2769,6 +2773,7 @@ export namespace domain {
 	        this.individuallyImportedFilter = source["individuallyImportedFilter"];
 	        this.flaggedFilter = source["flaggedFilter"];
 	        this.moveErrorFilter = source["moveErrorFilter"];
+	        this.decisionTimeFilter = source["decisionTimeFilter"];
 	        this.matchIDsFilter = source["matchIDsFilter"];
 	        this.tournamentIDsFilter = source["tournamentIDsFilter"];
 	        this.playerFilter = source["playerFilter"];
@@ -2778,7 +2783,6 @@ export namespace domain {
 	        this.matchLengthFilter = source["matchLengthFilter"];
 	        this.matchDateFilter = source["matchDateFilter"];
 	        this.playerPRFilter = source["playerPRFilter"];
-	        this.decisionTimeFilter = source["decisionTimeFilter"];
 	        this.analysisProvenanceFilter = source["analysisProvenanceFilter"];
 	        this.positionIDsFilter = source["positionIDsFilter"];
 	        this.restrictToPositionIDs = source["restrictToPositionIDs"];
@@ -3032,6 +3036,54 @@ export namespace duel {
 	        this.discarded = source["discarded"];
 	        this.overTime = source["overTime"];
 	    }
+	}
+	export class Origin {
+	    match_id: number;
+	    start: string;
+	    dice_seed: string;
+	    stopped_early: boolean;
+	    over_time: number;
+	    bot_level: string;
+	    cadence: string;
+	    bot_engine: string;
+	    fingerprint: string;
+	    cadence_settings?: Cadence;
+	
+	    static createFrom(source: any = {}) {
+	        return new Origin(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.match_id = source["match_id"];
+	        this.start = source["start"];
+	        this.dice_seed = source["dice_seed"];
+	        this.stopped_early = source["stopped_early"];
+	        this.over_time = source["over_time"];
+	        this.bot_level = source["bot_level"];
+	        this.cadence = source["cadence"];
+	        this.bot_engine = source["bot_engine"];
+	        this.fingerprint = source["fingerprint"];
+	        this.cadence_settings = this.convertValues(source["cadence_settings"], Cadence);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class Play {
 	    side: number;
@@ -4086,6 +4138,7 @@ export namespace main {
 	    page_step?: string;
 	    tour_seen?: boolean;
 	    tab_order?: string[];
+	    duel_form?: string;
 	    hidden_tabs?: string[];
 	    bearoff_ts_path?: string;
 	    bearoff_rate?: number;
@@ -4137,6 +4190,7 @@ export namespace main {
 	        this.page_step = source["page_step"];
 	        this.tour_seen = source["tour_seen"];
 	        this.tab_order = source["tab_order"];
+	        this.duel_form = source["duel_form"];
 	        this.hidden_tabs = source["hidden_tabs"];
 	        this.bearoff_ts_path = source["bearoff_ts_path"];
 	        this.bearoff_rate = source["bearoff_rate"];
@@ -6439,28 +6493,6 @@ export namespace storage {
 		    return a;
 		}
 	}
-	export class TimeErrorRow {
-	    player: string;
-	    bucket: number;
-	    decisions: number;
-	    scored: number;
-	    mean_error_mp: number;
-	    blunders: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new TimeErrorRow(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.player = source["player"];
-	        this.bucket = source["bucket"];
-	        this.decisions = source["decisions"];
-	        this.scored = source["scored"];
-	        this.mean_error_mp = source["mean_error_mp"];
-	        this.blunders = source["blunders"];
-	    }
-	}
 	export class MoveGrade {
 	    move_id: number;
 	    error_mp: number;
@@ -6551,6 +6583,7 @@ export namespace storage {
 		    return a;
 		}
 	}
+	
 	export class RankedPlayer {
 	    rank: number;
 	    name: string;
@@ -6684,6 +6717,28 @@ export namespace storage {
 		    }
 		    return a;
 		}
+	}
+	export class TimeErrorRow {
+	    player: string;
+	    bucket: number;
+	    decisions: number;
+	    scored: number;
+	    mean_error_mp: number;
+	    blunders: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TimeErrorRow(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.player = source["player"];
+	        this.bucket = source["bucket"];
+	        this.decisions = source["decisions"];
+	        this.scored = source["scored"];
+	        this.mean_error_mp = source["mean_error_mp"];
+	        this.blunders = source["blunders"];
+	    }
 	}
 	export class TrainingItem {
 	    numberType: string;

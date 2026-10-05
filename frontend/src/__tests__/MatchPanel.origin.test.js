@@ -1,10 +1,8 @@
 /**
- * MatchPanel.transcriptGrades.test.js
+ * MatchPanel.origin.test.js
  *
- * #287 — the Transcript is coloured by gravity: each Move the backend grades
- * (GetMatchMoveGrades, at the library's thresholds) carries its mark in its
- * row, and each game's header counts its marks, so a collapsed game still says
- * where the blunders are.
+ * A match played here carries its origin above the Transcript: one line, and
+ * the revealed seed with its fingerprint; an imported match carries none.
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -14,19 +12,35 @@ import { tick } from 'svelte';
 const MATCH = { id: 7, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, match_date: '2026-01-15', game_count: 2 };
 
 const MOVES = [
-    { move_id: 101, game_number: 1, move_number: 1, move_type: 'checker', player_on_roll: 0, position: { dice: [3, 1] }, checker_move: '8/5 6/5' },
+    { move_id: 101, game_number: 1, move_number: 1, move_type: 'checker', player_on_roll: 0, position: { dice: [3, 1] }, checker_move: '8/5 6/5', decision_ms: 5200, cube_decision_ms: 1000 },
     { move_id: 102, game_number: 1, move_number: 2, move_type: 'checker', player_on_roll: 1, position: { dice: [6, 5] }, checker_move: '24/13' },
-    { move_id: 103, game_number: 1, move_number: 3, move_type: 'cube', player_on_roll: 0, position: { dice: [0, 0] }, cube_action: 'Double' },
+    { move_id: 103, game_number: 1, move_number: 3, move_type: 'cube', player_on_roll: 0, position: { dice: [0, 0] }, cube_action: 'Double', decision_ms: 12000 },
     { move_id: 201, game_number: 2, move_number: 1, move_type: 'checker', player_on_roll: 0, position: { dice: [5, 2] }, checker_move: '13/8 13/11' },
     { move_id: 202, game_number: 2, move_number: 2, move_type: 'checker', player_on_roll: 1, position: { dice: [4, 4] }, checker_move: '24/20(2)' }
 ];
 
-const GRADES = [
-    { move_id: 101, error_mp: 0, grade: '' },
-    { move_id: 102, error_mp: 152, grade: 'blunder' },
-    { move_id: 103, error_mp: 61, grade: 'error' },
-    { move_id: 202, error_mp: 230, grade: 'blunder' }
-];
+const SEED = '00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff';
+const FINGERPRINT = 'f0e1d2c3b4a5968778695a4b3c2d1e0ff0e1d2c3b4a5968778695a4b3c2d1e0f';
+const ORIGIN = {
+    match_id: 7,
+    start: '',
+    dice_seed: SEED,
+    fingerprint: FINGERPRINT,
+    stopped_early: true,
+    over_time: 2,
+    bot_level: 'expert',
+    bot_engine: 'v0.9.0',
+    cadence: '{"name":"rapid-3+12","reserve":180,"delay":12}',
+    cadence_settings: { name: 'rapid-3+12', reserve: 180, delay: 12 }
+};
+
+const SUMMARY = {
+    has_cadence: true,
+    players: [
+        { total_ms: 18200, checker_count: 1, checker_total_ms: 5200, cube_count: 2, cube_total_ms: 13000, unknown: 0, over_time: true },
+        { total_ms: 0, checker_count: 0, checker_total_ms: 0, cube_count: 0, cube_total_ms: 0, unknown: 2, over_time: false }
+    ]
+};
 
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ListMatches: vi.fn(() => Promise.resolve([MATCH])),
@@ -45,9 +59,9 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
         ])
     ),
     GetMatchDetailStats: vi.fn(() => Promise.resolve(null)),
-    GetMatchMoveGrades: vi.fn(() => Promise.resolve(GRADES)),
-    GetMatchTimeSummary: vi.fn(() => Promise.resolve(null)),
-    GetMatchOrigin: vi.fn(() => Promise.resolve(null)),
+    GetMatchMoveGrades: vi.fn(() => Promise.resolve([])),
+    GetMatchTimeSummary: vi.fn(() => Promise.resolve(SUMMARY)),
+    GetMatchOrigin: vi.fn(() => Promise.resolve(ORIGIN)),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
     SetMatchTournamentByName: vi.fn(() => Promise.resolve()),
     SwapMatchPlayers: vi.fn(() => Promise.resolve()),
@@ -59,8 +73,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
-import { libraryCountsStore } from '../stores/libraryCountsStore.js';
-import { ListMatches, GetMatchMoveGrades } from '../../wailsjs/go/database/Database.js';
+import { ListMatches, GetMatchOrigin } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
 
 async function openTranscript() {
@@ -78,7 +91,7 @@ async function openTranscript() {
     return container;
 }
 
-describe('MatchPanel — the Transcript carries the grade of every Move (#287)', () => {
+describe('MatchPanel — the origin of a match played here', () => {
     beforeEach(() => {
         vi.clearAllMocks();
         databasePathStore.set('/tmp/test.db');
@@ -92,38 +105,24 @@ describe('MatchPanel — the Transcript carries the grade of every Move (#287)',
         openPanels.set(new Set());
     });
 
-    test('rows are marked by their grade, and only the graded ones', async () => {
+    test('one line says it was played here, opened onto the revealed seed and its fingerprint', async () => {
         const container = await openTranscript();
-        const rows = [...container.querySelectorAll('details.game-section')[0].querySelectorAll('tr.transcript-row')];
-        expect(rows).toHaveLength(3);
-
-        expect(rows[0].classList.contains('graded-error') || rows[0].classList.contains('graded-blunder'), 'a best play is unmarked').toBe(false);
-        expect(rows[0].querySelector('.grade-mark')).toBeNull();
-
-        expect(rows[1].classList.contains('graded-blunder')).toBe(true);
-        expect(rows[1].querySelector('.grade-mark').textContent).toBe('??');
-        expect(rows[1].querySelector('.grade-mark').getAttribute('title')).toContain('0.152');
-
-        // A cube Move is graded like a checker Move.
-        expect(rows[2].classList.contains('graded-error')).toBe(true);
-        expect(rows[2].querySelector('.grade-mark').textContent).toBe('?');
+        expect(GetMatchOrigin).toHaveBeenCalledWith(7);
+        const line = container.querySelector('[data-testid="match-origin"]');
+        expect(line).not.toBeNull();
+        const summary = line.querySelector('summary').textContent;
+        expect(summary).toContain('rapid-3+12');
+        expect(summary).toContain('Bob');
+        expect(summary).toContain('v0.9.0');
+        expect(line.querySelector('[data-testid="origin-stopped"]')).not.toBeNull();
+        expect(line.querySelector('[data-testid="origin-seed"]').textContent).toBe(SEED);
+        expect(line.querySelector('[data-testid="origin-fingerprint"]').textContent).toBe(FINGERPRINT);
     });
 
-    test('each game header counts its marks, a collapsed game included', async () => {
+    test('a match not played here draws no origin', async () => {
+        GetMatchOrigin.mockImplementation(() => Promise.resolve(null));
         const container = await openTranscript();
-        const sections = [...container.querySelectorAll('details.game-section')];
-        expect(sections[1].open, 'game 2 is collapsed').toBe(false);
-
-        const marks = (section) => [...section.querySelectorAll('summary .game-marks')].map((m) => m.textContent.trim());
-        expect(marks(sections[0])).toEqual(['1 ??', '1 ?']);
-        expect(marks(sections[1])).toEqual(['1 ??']);
-    });
-
-    test('a change of the library counter (thresholds moved, import landed) re-reads the grades', async () => {
-        await openTranscript();
-        const before = GetMatchMoveGrades.mock.calls.length;
-        libraryCountsStore.set({ positions: 1, blunders: 2, matches: 1 });
-        await vi.waitFor(() => expect(GetMatchMoveGrades.mock.calls.length).toBeGreaterThan(before));
-        expect(GetMatchMoveGrades).toHaveBeenLastCalledWith(7);
+        expect(GetMatchOrigin).toHaveBeenCalledWith(7);
+        expect(container.querySelector('[data-testid="match-origin"]')).toBeNull();
     });
 });

@@ -311,13 +311,13 @@ export function GetMatchByID(arg1:number):Promise<domain.Match>;
 
 export function GetMatchDetailStats(arg1:number):Promise<database.MatchDetailStats>;
 
-export function GetTimeErrors():Promise<Array<storage.TimeErrorRow>>;
-
-export function GetMatchTimeSummary(arg1:number):Promise<storage.MatchTimeSummary>;
-
 export function GetMatchMoveGrades(arg1:number):Promise<Array<storage.MoveGrade>>;
 
 export function GetMatchMovePositions(arg1:number):Promise<Array<domain.MatchMovePosition>>;
+
+export function GetMatchOrigin(arg1:number):Promise<duel.Origin>;
+
+export function GetMatchTimeSummary(arg1:number):Promise<storage.MatchTimeSummary>;
 
 export function GetMatchTournament(arg1:number):Promise<domain.Tournament>;
 
@@ -344,6 +344,8 @@ export function GetRandomAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiRe
 export function GetRencontre(arg1:number):Promise<service.RencontreView>;
 
 export function GetStatsDateRange():Promise<database.StatsDateRange>;
+
+export function GetTimeErrors():Promise<Array<storage.TimeErrorRow>>;
 
 export function GetTournamentMatches(arg1:number):Promise<Array<domain.Match>>;
 

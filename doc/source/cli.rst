@@ -931,6 +931,14 @@ tranche de durée (moins de 5 s, 5 à 15 s, 15 à 30 s, plus de 30 s), le nombre
 de décisions, l'erreur moyenne et la part de blunders ; ``--format json`` en
 livre les lignes.
 
+Pour un match joué ici par un Duel, les sorties ``text`` et ``summary``
+ajoutent son origine : le départ, le germe des dés révélé et son empreinte
+SHA-256 (celle que le Duel a publiée à sa création), l'arrêt avant la fin, la
+cadence, le joueur dont la réserve s'est épuisée en premier et le Bot (niveau,
+version de gammonNet) ; la sortie ``json`` la porte sous ``origin``, ``null``
+pour un match importé ou transcrit. Le serveur la sert par
+``/v1/matches.origin``.
+
 .. code-block:: bash
 
    ./blunderdb match --db <path> --id <id> [--format <format>] [--output <file>]

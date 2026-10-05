@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -178,5 +179,39 @@ func TestDuelCreateOfTwoBotsEnds(t *testing.T) {
 	}
 	if status, _ := gesture(t, ts, testTenant, "/v1/duels.create", 0, map[string]any{"matchLength": 0, "sides": []any{bot, bot}}); status != http.StatusBadRequest {
 		t.Errorf("a money session of two bots: status %d, want 400", status)
+	}
+}
+
+// matches.origin reads back the origin of a Match a Duel became, its revealed
+// seed giving the fingerprint published at creation; null for any other Match.
+func TestMatchOriginIsServed(t *testing.T) {
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { st.Close() })
+	ts := duelServerOn(t, st, true)
+	bot := map[string]any{"kind": "bot", "level": "instant"}
+	status, body := gesture(t, ts, testTenant, "/v1/duels.create", 0, map[string]any{"matchLength": 1, "sides": []any{bot, bot}})
+	s := duelState(t, status, body)
+	if s.Ended == nil || s.Ended.MatchID == 0 {
+		t.Fatalf("ended %+v", s.Ended)
+	}
+
+	status, body = gesture(t, ts, testTenant, "/v1/matches.origin", 0, map[string]any{"matchId": s.Ended.MatchID})
+	var o duel.Origin
+	if status != http.StatusOK || json.Unmarshal(body, &o) != nil {
+		t.Fatalf("matches.origin: status %d (%s)", status, body)
+	}
+	if fp, _ := duel.Fingerprint(o.DiceSeed); fp != s.Fingerprint || o.Fingerprint != s.Fingerprint {
+		t.Errorf("seed read back gives %q, origin says %q, published %q", fp, o.Fingerprint, s.Fingerprint)
+	}
+	if o.BotLevel != "instant" {
+		t.Errorf("bot level %q, want instant", o.BotLevel)
+	}
+
+	status, body = gesture(t, ts, testTenant, "/v1/matches.origin", 0, map[string]any{"matchId": s.Ended.MatchID + 100})
+	if status != http.StatusOK || strings.TrimSpace(string(body)) != "null" {
+		t.Errorf("origin of a match not played here: status %d (%s), want null", status, body)
 	}
 }

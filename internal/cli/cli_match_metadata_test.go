@@ -11,7 +11,7 @@ func TestFormatMatchShowsSourceMetadata(t *testing.T) {
 	m.Player1Elo, m.Player1Experience = &elo, &exp
 	m.Transcriber, m.HasJacoby, m.HasBeaver = "Carol", &yes, &no
 	m.EngineVersion = "eXtreme Gammon, file format 30"
-	out, err := (&CLI{}).formatMatchSummary(m, nil)
+	out, err := (&CLI{}).formatMatchSummary(m, nil, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -33,7 +33,7 @@ func TestFormatMatchTextLeavesAnUnknownDecisionTimeOut(t *testing.T) {
 	m := &Match{Player1Name: "Alice", Player2Name: "Bob"}
 	known := MatchMovePosition{GameNumber: 1, MoveNumber: 1, DecisionMS: &d}
 	unknown := MatchMovePosition{GameNumber: 1, MoveNumber: 2}
-	out, err := (&CLI{}).formatMatchText(m, []MatchMovePosition{known, unknown})
+	out, err := (&CLI{}).formatMatchText(m, []MatchMovePosition{known, unknown}, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

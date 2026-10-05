@@ -1507,6 +1507,16 @@ le temps et l'erreur : pour chaque joueur et chaque tranche de durée connue
 l'erreur moyenne et la part de blunders. Une décision dont l'erreur n'est pas
 enregistrée est comptée sans entrer dans la moyenne.
 
+Un match joué ici, issu d'un Duel, porte son origine en tête de la
+transcription, sur une ligne : « Joué ici », puis, s'il y a lieu, « Arrêté
+avant la fin », la cadence, le joueur dont la réserve s'est épuisée en premier
+et le niveau du Bot avec la version de gammonNet dont il a joué la politique.
+Un clic déplie le départ (la position initiale ou le XGID choisi), le germe des
+dés révélé et son empreinte SHA-256 : c'est l'empreinte publiée à la création
+du Duel, et le germe permet de recalculer chaque lancer sans faire confiance à
+blunderDB. Un match importé ou transcrit n'a pas d'origine et n'affiche pas
+cette ligne.
+
 L'onglet **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
 le fichier source dit des joueurs et de la session, quand il le dit — un
 fichier eXtreme Gammon le dit toujours : le classement Elo de chaque joueur et

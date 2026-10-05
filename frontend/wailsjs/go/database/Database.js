@@ -586,20 +586,20 @@ export function GetMatchDetailStats(arg1) {
   return window['go']['database']['Database']['GetMatchDetailStats'](arg1);
 }
 
-export function GetTimeErrors() {
-  return window['go']['database']['Database']['GetTimeErrors']();
-}
-
-export function GetMatchTimeSummary(arg1) {
-  return window['go']['database']['Database']['GetMatchTimeSummary'](arg1);
-}
-
 export function GetMatchMoveGrades(arg1) {
   return window['go']['database']['Database']['GetMatchMoveGrades'](arg1);
 }
 
 export function GetMatchMovePositions(arg1) {
   return window['go']['database']['Database']['GetMatchMovePositions'](arg1);
+}
+
+export function GetMatchOrigin(arg1) {
+  return window['go']['database']['Database']['GetMatchOrigin'](arg1);
+}
+
+export function GetMatchTimeSummary(arg1) {
+  return window['go']['database']['Database']['GetMatchTimeSummary'](arg1);
 }
 
 export function GetMatchTournament(arg1) {
@@ -652,6 +652,10 @@ export function GetRencontre(arg1) {
 
 export function GetStatsDateRange() {
   return window['go']['database']['Database']['GetStatsDateRange']();
+}
+
+export function GetTimeErrors() {
+  return window['go']['database']['Database']['GetTimeErrors']();
 }
 
 export function GetTournamentMatches(arg1) {

@@ -22,13 +22,15 @@
         SaveLastVisitedPosition,
         GetMatchDetailStats,
         GetMatchMoveGrades,
-        GetMatchTimeSummary
+        GetMatchTimeSummary,
+        GetMatchOrigin
     } from '../../wailsjs/go/database/Database.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import PanelTable, { navigationDelta } from './panels/PanelTable.svelte';
     import { exportMatchMat } from '../services/exportService.js';
     import MatchTimes from './MatchTimes.svelte';
+    import MatchOrigin from './MatchOrigin.svelte';
     import { fmtDuration, hasAnyDuration, sortByDuration } from '../utils/decisionTime.js';
     import { editMatchTranscription } from '../services/transcriptionSave.js';
     import { enrichMatchFromFile } from '../services/importService.js';
@@ -83,6 +85,7 @@
     /** @type {any[]} */
     let detailGrades = $state([]); // MoveGrade[] for the detail match
     let detailTimes = $state(null); // MatchTimeSummary for the detail match
+    let detailOrigin = $state(null); // duel.Origin of the detail match, null when not played here
     let timeSort = $state(''); // '' | 'desc' | 'asc': the transcript's order by decision time
     let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
@@ -302,6 +305,7 @@
             detailGames = [];
             detailGrades = [];
             detailTimes = null;
+            detailOrigin = null;
             detailStats = null;
         } else {
             selectedMatch = match;
@@ -315,17 +319,25 @@
         detailMatch = match;
         detailStats = null; // reset stats when switching match
         try {
-            const [movePositions, games, grades, times] = await Promise.all([GetMatchMovePositions(match.id), GetGamesByMatch(match.id), loadMoveGrades(match.id), loadTimeSummary(match.id)]);
+            const [movePositions, games, grades, times, origin] = await Promise.all([
+                GetMatchMovePositions(match.id),
+                GetGamesByMatch(match.id),
+                loadMoveGrades(match.id),
+                loadTimeSummary(match.id),
+                loadOrigin(match.id)
+            ]);
             detailMovePositions = movePositions || [];
             detailGames = games || [];
             detailGrades = grades;
             detailTimes = times;
+            detailOrigin = origin;
         } catch (error) {
             logger.error('Error loading match detail:', error);
             detailMovePositions = [];
             detailGames = [];
             detailGrades = [];
             detailTimes = null;
+            detailOrigin = null;
         }
         loadingDetail = false;
     }
@@ -348,6 +360,17 @@
             return (await GetMatchTimeSummary(matchID)) || null;
         } catch (error) {
             logger.error('Error loading time summary:', error);
+            return null;
+        }
+    }
+
+    // The origin is optional too: a match not played here has none.
+    /** @param {number} matchID */
+    async function loadOrigin(matchID) {
+        try {
+            return (await GetMatchOrigin(matchID)) || null;
+        } catch (error) {
+            logger.error('Error loading match origin:', error);
             return null;
         }
     }
@@ -1006,6 +1029,7 @@
                         {:else if transcriptGames.length === 0}
                             <div class="empty-state">{$t('match.noMovesRecorded')}</div>
                         {:else}
+                            <MatchOrigin origin={detailOrigin} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
                             {#if detailTimes}
                                 <MatchTimes summary={detailTimes} movePositions={detailMovePositions} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
                             {/if}

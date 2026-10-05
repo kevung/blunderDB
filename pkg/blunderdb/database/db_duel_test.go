@@ -71,3 +71,47 @@ func TestDuelFacade_StartAtScore(t *testing.T) {
 		t.Fatalf("score %v, awaiting %+v; want 3-0 and a decision", st.State.Score, st.State.Awaiting)
 	}
 }
+
+// The origin of a Match played here is read back with its revealed seed, which
+// gives the fingerprint published at creation; an imported Match has none.
+func TestDuelFacade_MatchOrigin(t *testing.T) {
+	db := newTestDB(t)
+
+	sides := [2]duel.SideSpec{{Kind: duel.SideExternal, Name: "Kévin"}, {Kind: duel.SideExternal, Name: "Alice"}}
+	st, err := db.CreateDuel(duel.Settings{MatchLength: 1, Sides: sides})
+	if err != nil {
+		t.Fatalf("CreateDuel: %v", err)
+	}
+	published := st.State.Fingerprint
+	for range 3 {
+		a := st.State.Awaiting
+		p := duel.Play{Side: a.Side, Kind: duel.PlayRoll}
+		if a.Kind == duel.DecideAnswer {
+			p.Kind = duel.PlayTake
+		} else if a.Kind != duel.DecideCube {
+			p = duel.Play{Side: a.Side, Kind: duel.PlayMove, Steps: domain.LegalMoves(&a.Position)[0].Steps}
+		}
+		if st, err = db.PlayDuel(st.State.ID, st.State.Revision, p); err != nil || st.Conflict {
+			t.Fatalf("PlayDuel: %+v, %v", st, err)
+		}
+	}
+	ended, err := db.StopDuel(st.State.ID, st.State.Revision, true)
+	if err != nil || ended.State.Ended == nil || ended.State.Ended.MatchID == 0 {
+		t.Fatalf("stopping and keeping the match = %+v, %v", ended, err)
+	}
+
+	o, err := db.GetMatchOrigin(ended.State.Ended.MatchID)
+	if err != nil || o == nil {
+		t.Fatalf("GetMatchOrigin = %+v, %v", o, err)
+	}
+	if fp, _ := duel.Fingerprint(o.DiceSeed); fp != published || o.Fingerprint != published {
+		t.Errorf("seed read back gives %q, origin says %q, published %q", fp, o.Fingerprint, published)
+	}
+	if !o.StoppedEarly {
+		t.Errorf("a match kept when stopped says so: %+v", o.MatchOrigin)
+	}
+
+	if o, err := db.GetMatchOrigin(ended.State.Ended.MatchID + 100); err != nil || o != nil {
+		t.Errorf("a match not played here = %+v, %v; want no origin, no error", o, err)
+	}
+}
