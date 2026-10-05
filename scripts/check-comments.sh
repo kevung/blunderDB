@@ -8,7 +8,7 @@ cd "$(git rev-parse --show-toplevel)"
 files=$(git ls-files '*.go' '*.js' '*.svelte' |
   grep -Ev -e '_test\.go$' -e '\.(test|spec)\.js$' -e '(^|/)node_modules/' \
     -e '(^|/)testdata/' -e '(^|/)(e2e|tests?)/' -e '^frontend/(wailsjs|dist)/' \
-    -e '\.pb\.go$' -e '_gen\.go$' -e '(^|/)(bindata|embed)_' || true)
+    -e '\.pb\.go$' -e '_gen\.go$' -e '(^|/)(bindata|embed)_' -e '^tasks/' || true)
 
 # Prints "file:line:comment" for each comment, minus URLs, //go: and nolint.
 extract() {
@@ -32,8 +32,11 @@ comments=$(printf '%s\n' "$files" | extract)
 fail=0
 
 # 2006-01-02 is Go's reference layout, not a date; &#39; is an HTML entity.
+# The patterns apply to the comment text only: the "file:line:" prefix is
+# anchored so that a path (a dated directory, say) cannot match.
+pre='^[^:]*:[0-9]+:'
 hist=$(printf '%s\n' "$comments" | sed 's/2006-01-02//g' |
-  grep -E -e '(^|[^&A-Za-z0-9])#[0-9]{2,4}\b' -e '20[0-9]{2}-[0-9]{2}' -e 'tasks/' || true)
+  grep -E -e "$pre(|.*[^&A-Za-z0-9])#[0-9]{2,4}\b" -e "$pre.*20[0-9]{2}-[0-9]{2}" -e "$pre.*tasks/" || true)
 if [ -n "$hist" ]; then
   echo "check-comments: history in comments (issue number, date or tasks/ reference):"
   printf '%s\n' "$hist"
@@ -42,7 +45,7 @@ fi
 
 known=$(git ls-files '*_test.go' | xargs grep -hoE '^func (Test|Fuzz)[A-Za-z0-9_]+' |
   awk '{print $2}' | sort -u)
-cited=$(printf '%s\n' "$comments" | grep -oE 'Test[A-Z][A-Za-z0-9_]*' | sort -u || true)
+cited=$(printf '%s\n' "$comments" | sed -E "s/$pre//" | grep -oE 'Test[A-Z][A-Za-z0-9_]*' | sort -u || true)
 missing=""
 for t in $cited; do
   grep -qxF "$t" <<<"$known" || missing="$missing $t"

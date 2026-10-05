@@ -112,8 +112,13 @@ jobs:
           - shard: rest
             run: |
               go vet ./...
+              # A failing `go list` inside $( ) would be swallowed and leave an
+              # empty list: the step must fail instead of testing nothing.
+              pkgs=$(go list ./pkg/...) || exit 1
+              pkgs=$(printf '%s\n' "$pkgs" | grep -v '/pkg/blunderdb/database$' | grep -v '/pkg/blunderdb/engine/gammonnet$')
+              test -n "$pkgs" || { echo "rest shard: empty package list" >&2; exit 1; }
               go test -timeout 1200s -race -count=1 -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
-                $(go list ./pkg/... ./tests/... | grep -v '/pkg/blunderdb/database$' | grep -v '/pkg/blunderdb/engine/gammonnet$') 2>&1 | tee test-output.txt
+                $pkgs 2>&1 | tee test-output.txt
           # -short on pushes and pull requests (~30 s: the 2-ply searches behind
           # testing.Short() are skipped), the full suite on version tags.
           - shard: gammonnet

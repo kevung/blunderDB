@@ -75,6 +75,15 @@ func TestQuotaLedger_DayAndImports(t *testing.T) {
 	}
 }
 
+// A coarse clock can measure a fast evaluation as zero; the run still costs.
+func TestQuotaChargesARunAtLeastMinCharge(t *testing.T) {
+	q := newQuotaLedger(TenantQuotas{AnalysisSecondsPerDay: 60}, nil)
+	q.charge("a", 0)
+	if spent, _ := q.usage("a"); spent != minCharge {
+		t.Fatalf("a run measured as zero is charged %v; want %v", spent, minCharge)
+	}
+}
+
 func TestQuotaUnlimitedByDefault(t *testing.T) {
 	q := newQuotaLedger(TenantQuotas{}, nil)
 	q.charge("a", 24*time.Hour)

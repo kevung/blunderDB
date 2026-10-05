@@ -224,7 +224,7 @@ export function parseSearchTokens(filtersOrCommand, command) {
     if (encounterFilter && !/[,<>]/.test(encounterFilter)) {
         encounterFilter = `${encounterFilter},${encounterFilter.slice(1)}`;
     }
-    // Match-level tokens, recognised by shape: `ml:7` (match length), `md:2024-01..2024-12`
+    // Match-level tokens, recognised by shape: `ml:7` (match length), `md:YYYY-MM..YYYY-MM`
     // (match date), `pr>8` (PR of the match for the player who decided), `rd:3`
     // (round, repeatable) and `ad:xg` (engine/depth, repeatable, lower-cased).
     const dateBound = '\\d{4}(?:[-/]\\d{2}(?:[-/]\\d{2})?)?';

@@ -159,7 +159,7 @@ func TestReplayLatency(t *testing.T) {
 		}
 	}
 	t.Logf("Replay of %d Actions: %v of %s (%v per Action)", actions, best, unit, best/actions)
-	if best > ceiling {
+	if best > ceiling && !raceEnabled {
 		t.Errorf("Replay of %d Actions took %v, over the %v guard", actions, best, ceiling)
 	}
 }

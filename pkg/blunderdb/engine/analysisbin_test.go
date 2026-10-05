@@ -240,6 +240,11 @@ func TestBinaryRoundTripOnEdgeValues(t *testing.T) {
 	// Times as encoding/json leaves them: Local when the offset is the local
 	// zone's, UTC at offset 0.
 	local := time.Date(2025, 1, 2, 3, 4, 5, 6, time.Local)
+	if _, off := local.Zone(); off == 0 {
+		// A local zone at offset 0 (CI runs in UTC) is indistinguishable
+		// from UTC on the wire; encoding/json hands back UTC as well.
+		local = local.UTC()
+	}
 	b := domain.PositionAnalysis{CreationDate: local, LastModifiedDate: local.Add(time.Hour)}
 	requireExactRoundTrip(t, "local", b)
 	requireExactRoundTrip(t, "zero", domain.PositionAnalysis{})
