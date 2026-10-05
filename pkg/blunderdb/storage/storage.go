@@ -68,6 +68,7 @@ type Stores interface {
 	Trash() TrashStore
 	LibrarySettings() LibrarySettingsStore
 	Transcriptions() TranscriptionStore
+	Duels() DuelStore
 	Training() TrainingStore
 	Aliases() AliasStore
 }

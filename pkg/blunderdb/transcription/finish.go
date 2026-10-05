@@ -51,12 +51,12 @@ func (s *Service) Finish(ctx context.Context, scope string, id int64, exp Expect
 	if len(parts.Games) == 0 {
 		return nil, fmt.Errorf("transcription %d: nothing to finish yet: %w", id, storage.ErrInvalid)
 	}
-	graph := transcriptGraph(parts)
+	graph := MatchGraph(parts)
 	if m := ss.ed.Doc.Header.MatchID; m != nil && *m != 0 {
 		graph.ReplaceMatchID = *m
 	}
 	header := *parts.Match
-	header.MatchHash, header.CanonicalHash = transcriptMatchHashes(parts)
+	header.MatchHash, header.CanonicalHash = MatchHashes(parts)
 
 	res, err := s.writeMatch(ctx, scope, id, ss.rev, graph, header)
 	if errors.Is(err, storage.ErrConflict) {
@@ -246,6 +246,14 @@ func (s *Service) EditMatch(ctx context.Context, scope string, matchID int64) (*
 	s.editMu.Lock()
 	defer s.editMu.Unlock()
 
+	// A Match played in a Duel is not reopened as a Transcription: its
+	// Actions were arbitrated, there is nothing to correct (ADR-0072 rule 5).
+	if _, err := s.store.Duels().Origin(ctx, scope, matchID); err == nil {
+		return nil, nil, fmt.Errorf("match %d was played here, under arbitration: %w", matchID, storage.ErrInvalid)
+	} else if !errors.Is(err, storage.ErrNotFound) {
+		return nil, nil, err
+	}
+
 	losses, err := s.MatchLosses(ctx, scope, matchID)
 	if err != nil {
 		return nil, nil, err
@@ -273,12 +281,12 @@ func (s *Service) EditMatch(ctx context.Context, scope string, matchID int64) (*
 	return st, losses, err
 }
 
-// transcriptGraph turns what the transcript package returns into the graph
+// MatchGraph turns what the transcript package returns into the graph
 // ingest.WriteMatch writes. It carries no analysis and no comment: the
 // analysis is the batch's job afterwards (ADR-0045 §8), and a transcription
 // has no notes to attach. The transcript's own ids are not database ids and
 // are dropped; so are the hashes (see writeMatch).
-func transcriptGraph(parts transcript.Parts) *ingest.MatchGraph {
+func MatchGraph(parts transcript.Parts) *ingest.MatchGraph {
 	g := &ingest.MatchGraph{Match: *parts.Match}
 	g.Match.MatchHash, g.Match.CanonicalHash = "", ""
 
@@ -303,12 +311,13 @@ func transcriptGraph(parts transcript.Parts) *ingest.MatchGraph {
 	return g
 }
 
-// transcriptMatchHashes are the two content hashes of a transcribed match.
+// MatchHashes are the two content hashes of a match the transcript package built —
+// transcribed, or played in a Duel.
 //
 // The canonical one is the importers' own ([ingest.CanonicalMatchHash]), so a
 // later XG/GnuBG import of the same match enriches instead of duplicating. The format-specific one
 // hashes the plays as typed and changes whenever the document does.
-func transcriptMatchHashes(parts transcript.Parts) (matchHash, canonicalHash string) {
+func MatchHashes(parts transcript.Parts) (matchHash, canonicalHash string) {
 	m := parts.Match
 
 	var b strings.Builder

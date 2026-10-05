@@ -62,7 +62,7 @@ var rlsTables = []string{
 	"direction", "direction_event", "direction_pair_member", "rencontre",
 	"table_setting", "lesson", "lesson_step",
 	"import_batch_file", "player_alias", "event_alias", "match_stats", "match_stats_cell", "match_stats_position",
-	"lesson_progress", "match_equity_table", "action_label", "study_mark",
+	"lesson_progress", "match_equity_table", "action_label", "study_mark", "duel", "match_origin",
 }
 
 // ApplyRLS installs (idempotently) Row-Level Security on every tenant-scoped

@@ -248,3 +248,7 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   the per-match breakdowns beside `match_stats` (kinds and arithmetic in
   `sqlshared/match_stats_cells.go`), cascading with their seat's
   `match_stats` row. Part of the 2.31.0 schema.
+- `037_duel.sql` — the 2.32.0 wave (ADR-0072): `duel`, the draft of a match
+  played here (an opaque document, and the dice seed in a column written once),
+  and `match_origin`, how a Match played here came to be, cascading with its
+  Match. Schema-visible: bumped `domain.DatabaseVersion` to 2.32.0.

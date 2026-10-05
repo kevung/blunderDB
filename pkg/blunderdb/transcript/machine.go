@@ -384,3 +384,32 @@ func (m Machine) Finished() (bool, int) {
 
 // Header is the session the Machine plays under, its money ceiling filled in.
 func (m Machine) Header() Header { return m.s.header }
+
+// CubeAvailable reports whether the side the Machine awaits a roll from may double
+// first — whether its turn begins with a decision. It is false when no roll is
+// awaited (no game running, a double waiting for its answer, the Start's roll already
+// on the board), in the Crawford game, when the opponent owns the cube, at the money
+// ceiling, and when the cube is dead at the score: the doubler already wins the match
+// with the cube as it stands, so doubling can only give the opponent the cube.
+func (m Machine) CubeAvailable() bool {
+	s := &m.s
+	if !s.gameActive || s.matchOver() || s.pendingDouble >= 0 || m.roll != [2]int{} {
+		return false
+	}
+	if s.turn != domain.Black && s.turn != domain.White {
+		return false
+	}
+	if n := len(s.games); n > 0 && s.games[n-1].Crawford {
+		return false
+	}
+	if s.cube.Owner != domain.None && s.cube.Owner != s.turn {
+		return false
+	}
+	if s.header.MaxCube > 0 && s.cube.Value >= s.header.MaxCube {
+		return false
+	}
+	if L := s.header.MatchLength; L > 0 && s.points[s.turn]+cubeValue(s.cube) >= L {
+		return false
+	}
+	return true
+}

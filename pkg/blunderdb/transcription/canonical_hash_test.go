@@ -81,7 +81,7 @@ func TestTranscriptCanonicalHashMatchesImport(t *testing.T) {
 			if err != nil {
 				t.Fatalf("FromMAT: %v", err)
 			}
-			_, got := transcriptMatchHashes(transcript.Build(doc))
+			_, got := MatchHashes(transcript.Build(doc))
 			if got != want {
 				t.Errorf("canonical hash: transcription %s, import %s", got, want)
 			}

@@ -2,6 +2,7 @@ package ingest
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -21,10 +22,22 @@ import (
 // ReadMatchForMAT reconstructs a stored match into the shape RenderMAT wants:
 // the match header, its games in order, and each game's moves keyed by game id.
 // It is the read-side counterpart WriteMatch never had.
+//
+// A Match played from a Start other than the opening position is refused
+// (ErrInvalid): a .mat begins every game at the opening position, and would
+// write a first game that was never played (ADR-0072 rule 12).
 func ReadMatchForMAT(ctx context.Context, s storage.Storage, scope string, matchID int64) (*domain.Match, []*domain.Game, map[int64][]*domain.Move, error) {
 	m, err := s.Matches().Get(ctx, scope, matchID)
 	if err != nil {
 		return nil, nil, nil, err
+	}
+	origin, err := s.Duels().Origin(ctx, scope, matchID)
+	if err != nil && !errors.Is(err, storage.ErrNotFound) {
+		return nil, nil, nil, err
+	}
+	if origin != nil && origin.Start != "" {
+		return nil, nil, nil, fmt.Errorf("match %d began at a Start (%s), which a .mat cannot write: %w",
+			matchID, origin.Start, storage.ErrInvalid)
 	}
 	var games []*domain.Game
 	for g, err := range s.Matches().Games(ctx, scope, matchID) {

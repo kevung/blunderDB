@@ -4067,3 +4067,35 @@ func readColumn(t *testing.T, db *sql.DB, query string, scan func(*sql.Rows)) {
 		t.Fatal(err)
 	}
 }
+
+// TestMigrate_2_31_0_to_2_32_0_Duel opens a 2.31.0 library and checks that the
+// Duel's two tables exist and take a draft and a Match's origin.
+func TestMigrate_2_31_0_to_2_32_0_Duel(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2310.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.31.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if !tableExists(d.db, "duel") || !tableExists(d.db, "match_origin") {
+		t.Fatal("duel and match_origin should exist after migration")
+	}
+	ctx := context.Background()
+	id, err := d.store.Duels().Save(ctx, "", &storage.Duel{FormatVersion: "1", Document: "{}", DiceSeed: "seed"})
+	if err != nil || id == 0 {
+		t.Fatalf("save a duel on a migrated library: %d, %v", id, err)
+	}
+	matchID, err := d.store.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3, MatchHash: "duel-migration"})
+	if err != nil {
+		t.Fatalf("save match: %v", err)
+	}
+	if err := d.store.Duels().SetOrigin(ctx, "", &storage.MatchOrigin{MatchID: matchID, DiceSeed: "seed"}); err != nil {
+		t.Fatalf("set an origin on a migrated library: %v", err)
+	}
+}

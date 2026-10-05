@@ -37,8 +37,13 @@ func MatchParts(doc Document) (*domain.Match, []*domain.Game, map[int64][]*domai
 // Build derives everything a save and an export need from the document, in one Replay.
 func Build(doc Document) Parts {
 	ann := Replay(doc, 0)
-	h := doc.Header
+	return BuildPlayed(doc.Header, ann.Games, ann.Actions, ann.Inconsistent())
+}
 
+// BuildPlayed derives the same Parts from what a walk of the Actions derived — a
+// Replay's, or the ActionInfos a [Machine] returned one Apply at a time, whose
+// first game may begin at a Start no Document can hold.
+func BuildPlayed(h Header, played []GameInfo, actions []ActionInfo, inconsistent bool) Parts {
 	m := &domain.Match{
 		Player1Name:  h.Player1,
 		Player2Name:  h.Player2,
@@ -47,7 +52,7 @@ func Build(doc Document) Parts {
 		Round:        h.Round,
 		MatchLength:  int32(max(h.MatchLength, 0)),
 		MatchDate:    h.Date,
-		GameCount:    len(ann.Games),
+		GameCount:    len(played),
 		TournamentID: h.TournamentID,
 		// Who typed the match in. It is the one field of domain.Match that has no
 		// column: it exists to be written as the .mat's [Transcriber] header
@@ -58,8 +63,8 @@ func Build(doc Document) Parts {
 		m.ID = *h.MatchID
 	}
 
-	games := make([]*domain.Game, 0, len(ann.Games))
-	for i, g := range ann.Games {
+	games := make([]*domain.Game, 0, len(played))
+	for i, g := range played {
 		games = append(games, &domain.Game{
 			ID:           int64(i + 1),
 			MatchID:      m.ID,
@@ -72,7 +77,7 @@ func Build(doc Document) Parts {
 
 	moves := map[int64][]*domain.Move{}
 	positions := map[int64][]domain.Position{}
-	for _, info := range ann.Actions {
+	for _, info := range actions {
 		if info.MoveNumber < 0 || info.GameIndex < 0 || info.GameIndex >= len(games) {
 			continue
 		}
@@ -107,7 +112,7 @@ func Build(doc Document) Parts {
 		g.MoveCount = len(moves[g.ID])
 	}
 
-	return Parts{Match: m, Games: games, Moves: moves, Positions: positions, Inconsistent: ann.Inconsistent()}
+	return Parts{Match: m, Games: games, Moves: moves, Positions: positions, Inconsistent: inconsistent}
 }
 
 // sideToXG converts a Transcription's side (0 = player 1) into the encoding
