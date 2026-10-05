@@ -143,6 +143,14 @@ func (d *Database) StopDuel(id, revision int64, keep bool) (*DuelState, error) {
 	})
 }
 
+// ForfeitDuel has side (0 player 1, 1 player 2) give the match up: the Duel
+// ends, its Match written won by the other side.
+func (d *Database) ForfeitDuel(id, revision int64, side int) (*DuelState, error) {
+	return d.duelState(id, func(ctx context.Context, svc *duel.Service) (*duel.State, error) {
+		return svc.Forfeit(ctx, "", id, revision, side)
+	})
+}
+
 // GetMatchOrigin returns the origin of a Match played here — Start, revealed
 // seed and its fingerprint, stop before the end, Cadence and overrun, Bot —
 // nil when the Match was not played here, ErrNotFound when there is none.

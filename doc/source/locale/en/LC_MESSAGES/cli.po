@@ -232,8 +232,10 @@ msgid "duel"
 msgstr "duel"
 
 #: ../../source/cli.rst:1
-msgid "Joue un Duel une Action par appel (création, coup, videau, arrêt)."
-msgstr "Plays a Duel one Action per call (creation, move, cube, stop)."
+msgid ""
+"Joue un Duel une Action par appel (création, coup, videau, abandon, arrêt)."
+msgstr ""
+"Plays a Duel one Action per call (creation, move, cube, forfeit, stop)."
 
 #: ../../source/cli.rst:1
 msgid "collection"
@@ -3789,8 +3791,24 @@ msgstr ""
 "Duel has moved on."
 
 #: ../../source/cli.rst:1952
-msgid "``stop`` — Arrête le Duel et écrit le Match tel qu'il est."
-msgstr "``stop`` — Stops the Duel and writes the Match as it stands."
+msgid ""
+"``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en "
+"cours va à l'autre Côté pour les points qui le portent à la longueur (en "
+"argent, un backgammon à la valeur du videau), et le Match s'écrit gagné par "
+"lui."
+msgstr ""
+"``forfeit`` — The Side ``--side`` (required) forfeits the match: the game "
+"in progress goes to the other Side for the points that bring it to the "
+"length (in money play, a backgammon at the cube's value), and the Match is "
+"written as won by it."
+
+#: ../../source/cli.rst:1952
+msgid ""
+"``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur. "
+"Arrêter n'est pas abandonner."
+msgstr ""
+"``stop`` — Stops the Duel and writes the Match as it stands, with no "
+"winner. Stopping is not forfeiting."
 
 #: ../../source/cli.rst:1953
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."

@@ -474,6 +474,10 @@ export function FlagDuel(arg1) {
   return window['go']['database']['Database']['FlagDuel'](arg1);
 }
 
+export function ForfeitDuel(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['ForfeitDuel'](arg1, arg2, arg3);
+}
+
 export function FreeParticipants(arg1) {
   return window['go']['database']['Database']['FreeParticipants'](arg1);
 }

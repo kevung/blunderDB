@@ -11,7 +11,7 @@
     import { duelStore, duelListStore, duelAnimatingStore } from '../stores/duelStore.js';
     import { databasePathStore } from '../stores/databaseStore.js';
     import { BOT_LEVELS, MAX_MATCH_LENGTH, START, humanSide, normalizeForm } from '../services/duel.js';
-    import { loadDuelForm, duelOffer, refreshDuels, startDuel, resumeDuel, suspendDuel, confirmStopDuel } from '../services/duelService.js';
+    import { loadDuelForm, duelOffer, refreshDuels, startDuel, resumeDuel, suspendDuel, confirmForfeitDuel, confirmCancelDuel } from '../services/duelService.js';
     import TranscriptView from './TranscriptView.svelte';
     import DuelClocks from './DuelClocks.svelte';
 
@@ -64,9 +64,9 @@
 
         <div class="gestures secondary">
             <span class="spacer"></span>
-            <button type="button" onclick={suspendDuel}>{$t('duel.suspend')}</button>
-            <button type="button" onclick={() => confirmStopDuel(true)}>{$t('duel.stopKeep')}</button>
-            <button type="button" class="danger" onclick={() => confirmStopDuel(false)}>{$t('duel.stopDiscard')}</button>
+            <button type="button" class="danger" onclick={confirmForfeitDuel}>{$t('duel.forfeit')}</button>
+            <button type="button" onclick={suspendDuel}>{$t('duel.pause')}</button>
+            <button type="button" class="danger" onclick={confirmCancelDuel}>{$t('duel.cancel')}</button>
         </div>
     {:else}
         <form

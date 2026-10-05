@@ -923,8 +923,9 @@ export default {
 <li>Ennen pelaamista noppiin napsauttaminen tai oikea napsautus laudalla vaihtaa niiden järjestyksen. Siirron aikana oikea napsautus laudalla ottaa takaisin kaikki pelatut nappulat (myös <code>BACKSPACE</code>).</li>
 <li>Täysi siirto vahvistetaan napsauttamalla noppia, painikkeella ”Vahvista” laudalla tai näppäimellä <code>ENTER</code>. Sen jälkeen mitään ei voi ottaa takaisin.</li>
 <li>Botti vastaa heti; sen siirrot toistetaan laudalla hitaasti.</li>
-<li>Oikea napsautus laudan ulkopuolella tai laudalla siirron ulkopuolella avaa Kaksintaistelun valikon: aseman lisääminen pinoon tai poistaminen sieltä, pelin luovuttaminen yksinkertaisena, gammonina tai backgammonina (omalla vuorolla, vahvistuksen jälkeen), keskeytys, lopetus. Valikko ei tarjoa arviointia eikä muokkausta.</li>
-<li>«Keskeytä» asettaa Kaksintaistelun tauolle kellot pysäytettyinä. «Lopeta ja säilytä» kirjoittaa Ottelun sellaisenaan; «Lopeta ja hylkää» ei kirjoita mitään. Lopettaminen ei ole koskaan pelin luovuttamista.</li>
+<li>Oikea napsautus laudan ulkopuolella tai laudalla siirron ulkopuolella avaa Kaksintaistelun valikon: aseman lisääminen pinoon tai poistaminen sieltä, pelin luovuttaminen yksinkertaisena, gammonina tai backgammonina (omalla vuorolla, vahvistuksen jälkeen), ottelun luovuttaminen, tauotus, peruminen. Valikko ei tarjoa arviointia eikä muokkausta.</li>
+<li>”Luovuta ottelu” luovuttaa koko ottelun milloin tahansa vahvistuksen jälkeen: käynnissä oleva peli menee vastustajalle niillä pisteillä, jotka vievät hänet ottelun pituuteen, ja ottelu tallennetaan hänen voittamakseen. Rahapelissä käynnissä oleva peli hävitään backgammonina (yksinkertaisena Jacoby-säännöllä, kuution ollessa keskellä) ja sessio päättyy.</li>
+<li>”Tauota ottelu” keskeyttää kaksintaistelun kellot pysäytettyinä; se jatkuu samasta kohdasta. ”Peru ottelu” hylkää sen vahvistuksen jälkeen: mitään ei tallenneta.</li>
 <li>Kaksoisnapsautus laudan ulkopuolella lisää aseman pinoon tai poistaa sen sieltä kuten <code>B</code>; vain laudan kulmassa oleva kirjanmerkki näyttää sen.</li>
 </ul>
 <p>Jokaisella päätöksellä on kestonsa, ajankäytöllä tai ilman. Luovutuksella ei ole Otteluun tallennettua kestoa.</p>

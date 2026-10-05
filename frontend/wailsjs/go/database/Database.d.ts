@@ -255,6 +255,8 @@ export function FinishedMatches(arg1:number,arg2:number):Promise<Array<service.T
 
 export function FlagDuel(arg1:number):Promise<database.DuelState>;
 
+export function ForfeitDuel(arg1:number,arg2:number,arg3:number):Promise<database.DuelState>;
+
 export function FreeParticipants(arg1:number):Promise<Array<tournoi.Player>>;
 
 export function FreezeCollection(arg1:number):Promise<number>;

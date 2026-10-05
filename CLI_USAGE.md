@@ -2733,6 +2733,29 @@ Examples:
   blunderdb duel double --db database.db --id 1
 ```
 
+### `blunderdb duel forfeit`
+
+```
+Usage: blunderdb duel forfeit [options]
+
+Give the match up: the game in progress goes to the other Side for the points that bring it to the length (at money play, a backgammon at the cube's value), and the Match is written won by the other Side.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -revision int
+    	Refuse unless the Duel is at this revision (default: no check)
+  -side int
+    	The Side that gives the match up, 1 or 2 (required)
+
+Examples:
+  blunderdb duel forfeit --db database.db --id 1 --side 1
+```
+
 ### `blunderdb duel list`
 
 ```

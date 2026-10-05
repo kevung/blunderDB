@@ -82,7 +82,7 @@ Commandes disponibles
    "list", "Affiche le contenu de la base."
    "match", "Affiche les positions et analyses d'un match."
    "transcribe", "Rejoue une transcription et rend compte de ce que le rejeu trouve."
-   "duel", "Joue un Duel une Action par appel (création, coup, videau, arrêt)."
+   "duel", "Joue un Duel une Action par appel (création, coup, videau, abandon, arrêt)."
    "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."
    "study", "La file d'étude : les blunders non traités du joueur de référence, et la marque « vu »."
    "lesson", "Gère les leçons (étapes ordonnées montrant collections et positions) et les exporte."
@@ -1930,6 +1930,7 @@ sont inconnues, jamais nulles).
    ./blunderdb duel list --db <path>
    ./blunderdb duel move --db <path> --id <id> --play "24/18 13/11"
    ./blunderdb duel roll|double|take|pass|resign --db <path> --id <id>
+   ./blunderdb duel forfeit --db <path> --id <id> --side 1|2
    ./blunderdb duel stop|discard --db <path> --id <id>
 
 **Sous-commandes :**
@@ -1949,7 +1950,12 @@ sont inconnues, jamais nulles).
   Côté que le Duel attend (``--side 1|2`` pour le nommer) ; ``--play`` donne le
   coup en notation, dans l'ordre qu'on veut ; ``--level`` (1 à 3) la valeur d'un
   abandon ; ``--revision`` refuse l'Action si le Duel a bougé.
-* ``stop`` — Arrête le Duel et écrit le Match tel qu'il est.
+* ``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en
+  cours va à l'autre Côté pour les points qui le portent à la longueur (en
+  argent, un backgammon à la valeur du videau), et le Match s'écrit gagné par
+  lui.
+* ``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur.
+  Arrêter n'est pas abandonner.
 * ``discard`` — Jette le Duel : rien n'en est écrit.
 
 Toutes prennent ``--db`` et ``--format`` (``text`` ou ``json``).

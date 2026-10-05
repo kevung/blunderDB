@@ -8823,22 +8823,31 @@ msgstr "ボットはすぐに応答し、その手は盤上でゆっくり再生
 
 #: ../../source/manuel.rst:4052
 msgid ""
-"Le clic droit hors du plateau, ou sur le plateau hors de son coup, ouvre "
-"le menu du Duel : mettre la position sur la Pile ou l'en retirer, "
-"abandonner la partie pour un simple, un gammon ou un backgammon (à son "
-"tour, après confirmation), suspendre, arrêter. Ce menu n'offre ni "
-"évaluation ni édition."
-msgstr "盤面の外、または自分の手の外の盤面を右クリックすると、デュエルのメニューが開きます。局面をパイルに載せる／外す、シングル、ギャモン、バックギャモンでの投了（自分の手番で、確認のあと）、中断、終了です。このメニューには評価も編集もありません。"
+"Le clic droit hors du plateau, ou sur le plateau hors de son coup, ouvre le "
+"menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner "
+"la partie pour un simple, un gammon ou un backgammon (à son tour, après "
+"confirmation), abandonner le match, le mettre en pause, l'annuler. Ce menu "
+"n'offre ni évaluation ni édition."
+msgstr ""
+"盤面の外、または自分の手の外の盤面を右クリックすると、デュエルのメニューが開きます。局面をパイルに載せる／外す、シングル、ギャモン、バックギャモンでの投了（自分の手番で、確認のあと）、マッチの放棄、一時停止、取り消しです。このメニューには評価も編集もありません。"
 
 #: ../../source/manuel.rst:4037
 msgid ""
-"« Suspendre » met le Duel en suspens, horloges arrêtées. « Arrêter et "
-"garder » écrit le Match tel qu'il est ; « Arrêter et jeter » n'en écrit "
-"rien. Arrêter n'est jamais céder la partie."
+"« Abandonner le match » cède le match entier, à tout moment et après "
+"confirmation : la partie en cours va à l'adversaire pour les points qui le "
+"portent à la longueur, et le Match s'écrit gagné par lui. En argent, la "
+"partie en cours est perdue au backgammon (une simple sous la règle Jacoby, "
+"videau au centre) et la session se clôt."
 msgstr ""
-"「中断」は時計を止めてデュエルを保留にします。「終了して保存」は現時点のマッ"
-"チを書き込み、「終了して破棄」は何も書き込みません。終了はゲームを譲ることで"
-"はありません。"
+"「マッチを放棄」は、確認のあと、いつでもマッチ全体を放棄します。進行中のゲームは、相手をマッチの長さに届かせるポイントで相手のものとなり、マッチは相手の勝ちとして保存されます。マネーゲームでは、進行中のゲームはバックギャモン負け（ジャコビールールでキューブが中央にあるときはシングル）となり、セッションが終わります。"
+
+#: ../../source/manuel.rst:4037
+msgid ""
+"« Mettre en pause » met le Duel en suspens, horloges arrêtées ; il se "
+"reprend au même point. « Annuler le match » le jette, après confirmation : "
+"rien n'en est écrit."
+msgstr ""
+"「マッチを一時停止」はデュエルを保留にし、時計を止めます。同じところから再開できます。「マッチを取り消す」は確認のあとデュエルを破棄し、何も保存しません。"
 
 #: ../../source/manuel.rst:4060
 msgid ""

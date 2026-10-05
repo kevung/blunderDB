@@ -923,8 +923,9 @@ export default {
 <li>Vor dem Spielen vertauscht ein Klick auf die Würfel oder ein Rechtsklick auf das Brett ihre Reihenfolge. Während des Zugs nimmt der Rechtsklick auf das Brett alle gespielten Steine zurück (<code>RÜCKTASTE</code> ebenso).</li>
 <li>Der vollständige Zug wird durch einen Klick auf die Würfel, durch „Bestätigen“ auf dem Brett oder durch <code>EINGABE</code> bestätigt. Danach lässt sich nichts mehr zurücknehmen.</li>
 <li>Der Bot antwortet sofort; seine Züge werden auf dem Brett langsam nachgespielt.</li>
-<li>Der Rechtsklick außerhalb des Bretts oder auf dem Brett außerhalb seines Zugs öffnet das Duell-Menü: die Stellung auf den Stapel legen oder davon nehmen, das Spiel als einfaches Spiel, Gammon oder Backgammon aufgeben (am Zug, nach Bestätigung), unterbrechen, beenden. Dieses Menü bietet weder Auswertung noch Bearbeitung.</li>
-<li>„Unterbrechen“ setzt das Duell mit angehaltenen Uhren aus. „Beenden und behalten“ schreibt das Match, wie es steht; „Beenden und verwerfen“ schreibt nichts. Beenden heißt nie, die Partie aufzugeben.</li>
+<li>Der Rechtsklick außerhalb des Bretts oder auf dem Brett außerhalb seines Zugs öffnet das Duell-Menü: die Stellung auf den Stapel legen oder davon nehmen, das Spiel als einfaches Spiel, Gammon oder Backgammon aufgeben (am Zug, nach Bestätigung), das Match aufgeben, es pausieren, es abbrechen. Dieses Menü bietet weder Auswertung noch Bearbeitung.</li>
+<li>„Match aufgeben“ gibt das ganze Match auf, jederzeit und nach Bestätigung: Das laufende Spiel geht an den Gegner, mit den Punkten, die ihn auf die Matchlänge bringen, und das Match wird als von ihm gewonnen gespeichert. Im Geldspiel ist das laufende Spiel als Backgammon verloren (ein einfaches Spiel unter der Jacoby-Regel bei zentriertem Doppler), und die Session endet.</li>
+<li>„Match pausieren“ unterbricht das Duell, die Uhren stehen; es wird an derselben Stelle fortgesetzt. „Match abbrechen“ verwirft es nach Bestätigung: Nichts davon wird gespeichert.</li>
 <li>Ein Doppelklick außerhalb des Bretts legt die Stellung auf den Stapel oder nimmt sie davon herunter, wie <code>B</code>; nur das Lesezeichen in der Ecke des Bretts zeigt es.</li>
 </ul>
 <p>Jede Entscheidung trägt ihre Dauer, mit oder ohne Bedenkzeit. Eine Aufgabe hat keine im Match gespeicherte Dauer.</p>

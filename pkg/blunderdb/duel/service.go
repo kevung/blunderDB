@@ -111,6 +111,8 @@ type Ending struct {
 	DiceSeed     string `json:"diceSeed,omitempty"`
 	StoppedEarly bool   `json:"stoppedEarly,omitempty"`
 	Discarded    bool   `json:"discarded,omitempty"`
+	// Forfeited is the player (1 or 2) who gave the match up, 0 none.
+	Forfeited int `json:"forfeited,omitempty"`
 	// OverTime is the player (1 or 2) whose reserve ran out first, 0 none.
 	OverTime int `json:"overTime,omitempty"`
 }
@@ -385,6 +387,30 @@ func (s *Service) Stop(ctx context.Context, scope string, id, revision int64, ke
 	return s.end(ctx, scope, row, g, keep)
 }
 
+// Forfeit has side give the open Duel's match up: the game in progress ends
+// won by the other side, for the points that bring them to the length — at
+// money play, a backgammon at the cube's value (transcript.KindForfeit). The
+// Duel then ends as a match won does: its Match is written, or the draft
+// thrown away if it was created so. Unlike Stop, the Match has a winner.
+func (s *Service) Forfeit(ctx context.Context, scope string, id, revision int64, side int) (*State, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.open[scope] != id {
+		return nil, fmt.Errorf("duel %d: %w", id, ErrNotOpen)
+	}
+	row, g, err := s.load(ctx, scope, id)
+	if err != nil {
+		return nil, err
+	}
+	if revision != 0 && revision != row.Revision {
+		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
+	}
+	if err := g.forfeit(side); err != nil {
+		return nil, err
+	}
+	return s.end(ctx, scope, row, g, !g.doc.DiscardAtEnd)
+}
+
 // end writes the Match and its origin and deletes the draft in one
 // transaction whose first write checks the revision, or deletes the draft
 // alone.
@@ -400,7 +426,7 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 		}
 		delete(s.open, scope)
 		st := state(row, g)
-		st.Ended, st.Awaiting = &Ending{Discarded: true, OverTime: g.doc.Clock.OverTime}, nil
+		st.Ended, st.Awaiting = &Ending{Discarded: true, OverTime: g.doc.Clock.OverTime, Forfeited: g.forfeitedBy()}, nil
 		return st, nil
 	}
 
@@ -463,7 +489,7 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 	delete(s.open, scope)
 	st := state(row, g)
 	st.Awaiting = nil
-	st.Ended = &Ending{MatchID: res.MatchID, DiceSeed: g.seed, StoppedEarly: origin.StoppedEarly, OverTime: origin.OverTime}
+	st.Ended = &Ending{MatchID: res.MatchID, DiceSeed: g.seed, StoppedEarly: origin.StoppedEarly, OverTime: origin.OverTime, Forfeited: g.forfeitedBy()}
 	return st, nil
 }
 

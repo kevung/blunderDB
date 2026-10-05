@@ -3022,6 +3022,7 @@ export namespace duel {
 	    diceSeed?: string;
 	    stoppedEarly?: boolean;
 	    discarded?: boolean;
+	    forfeited?: number;
 	    overTime?: number;
 	
 	    static createFrom(source: any = {}) {
@@ -3034,6 +3035,7 @@ export namespace duel {
 	        this.diceSeed = source["diceSeed"];
 	        this.stoppedEarly = source["stoppedEarly"];
 	        this.discarded = source["discarded"];
+	        this.forfeited = source["forfeited"];
 	        this.overTime = source["overTime"];
 	    }
 	}

@@ -29,7 +29,7 @@
     import ContextMenu from './ContextMenu.svelte';
     import { onPileStore, refreshPileState, togglePile } from '../services/pileService.js';
     import { duelHoldsBoardStore, duelBoardStore, duelStore } from '../stores/duelStore.js';
-    import { duelBoardPress, duelBoardDrop, duelBoardContextMenu, duelBoardContext, suspendDuel, confirmStopDuel, resignDuel } from '../services/duelService.js';
+    import { duelBoardPress, duelBoardDrop, duelBoardContextMenu, duelBoardContext, suspendDuel, confirmForfeitDuel, confirmCancelDuel, resignDuel } from '../services/duelService.js';
     import { orderedDice, usedDice, isMine } from '../services/duelBoard.js';
     import DuelBoardPrompt from './DuelBoardPrompt.svelte';
     import { registerKeys } from '../services/keyDispatch.js';
@@ -428,9 +428,9 @@
         return [
             { label: $t(get(onPileStore) ? 'duel.menu.pileOff' : 'duel.menu.pileOn'), onClick: () => togglePile() },
             ...resign,
-            { label: $t('duel.suspend'), onClick: () => suspendDuel() },
-            { label: $t('duel.stopKeep'), onClick: () => confirmStopDuel(true) },
-            { label: $t('duel.stopDiscard'), onClick: () => confirmStopDuel(false) }
+            { label: $t('duel.forfeit'), onClick: () => confirmForfeitDuel() },
+            { label: $t('duel.pause'), onClick: () => suspendDuel() },
+            { label: $t('duel.cancel'), onClick: () => confirmCancelDuel() }
         ];
     }
 

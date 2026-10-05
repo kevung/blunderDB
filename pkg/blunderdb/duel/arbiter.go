@@ -132,10 +132,33 @@ func (g *game) apply(a transcript.Action) error {
 	return nil
 }
 
-// finished reports whether the match is won. A money session never is.
+// finished reports whether the match is won. A money session is only once
+// forfeited.
 func (g *game) finished() bool {
 	over, _ := g.m.Finished()
 	return over
+}
+
+// forfeitedBy is the player (1 or 2) whose forfeit ended the match, 0 none.
+func (g *game) forfeitedBy() int {
+	if n := len(g.doc.Actions); n > 0 && g.doc.Actions[n-1].Kind == transcript.KindForfeit {
+		return g.doc.Actions[n-1].Side + 1
+	}
+	return 0
+}
+
+// forfeit has side give the match up (transcript.KindForfeit): at any moment,
+// the Decision awaited or not, since it answers none. The roll on the board,
+// if any, is never played.
+func (g *game) forfeit(side int) error {
+	if side != domain.Black && side != domain.White {
+		return &transcript.Refusal{Kind: RefusedNotAwaited, Detail: fmt.Sprintf("the side is %d, not player 1 or 2", side)}
+	}
+	if err := g.apply(transcript.Action{Side: side, Kind: transcript.KindForfeit}); err != nil {
+		return err
+	}
+	g.doc.Dice, g.doc.DiceSide = [2]int{}, 0
+	return nil
 }
 
 // awaiting is the Decision a Side owes, or nil when the Arbiter acts next —

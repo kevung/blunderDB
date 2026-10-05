@@ -239,8 +239,11 @@ msgid "duel"
 msgstr "duel"
 
 #: ../../source/cli.rst:1
-msgid "Joue un Duel une Action par appel (création, coup, videau, arrêt)."
-msgstr "Играет Дуэль по одному Действию за вызов (создание, ход, куб, остановка)."
+msgid ""
+"Joue un Duel une Action par appel (création, coup, videau, abandon, arrêt)."
+msgstr ""
+"Играет Дуэль по одному Действию за вызов (создание, ход, куб, сдача, "
+"остановка)."
 
 #: ../../source/cli.rst:1
 msgid "collection"
@@ -3838,8 +3841,24 @@ msgstr ""
 "продвинулась."
 
 #: ../../source/cli.rst:1952
-msgid "``stop`` — Arrête le Duel et écrit le Match tel qu'il est."
-msgstr "``stop`` — Останавливает Дуэль и записывает Матч как есть."
+msgid ""
+"``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en "
+"cours va à l'autre Côté pour les points qui le portent à la longueur (en "
+"argent, un backgammon à la valeur du videau), et le Match s'écrit gagné par "
+"lui."
+msgstr ""
+"``forfeit`` — Сторона ``--side`` (обязательно) сдаёт матч: текущая партия "
+"достаётся другой Стороне с очками, доводящими её до длины матча (в игре на "
+"деньги — бэкгаммон по стоимости куба), и Матч записывается как выигранный "
+"ею."
+
+#: ../../source/cli.rst:1952
+msgid ""
+"``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur. "
+"Arrêter n'est pas abandonner."
+msgstr ""
+"``stop`` — Останавливает Дуэль и записывает Матч как есть, без победителя. "
+"Остановить — не значит сдать."
 
 #: ../../source/cli.rst:1953
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."

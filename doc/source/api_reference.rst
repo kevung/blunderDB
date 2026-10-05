@@ -135,6 +135,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/duels.create                         JSON  (Idempotency-Key)
      POST /v1/duels.discard                        custom
      POST /v1/duels.flag                           custom
+     POST /v1/duels.forfeit                        custom
      POST /v1/duels.get                            custom
      POST /v1/duels.list                           JSON
      POST /v1/duels.open                           custom
