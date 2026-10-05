@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.37.0" date="2026-10-05">
+      <description>
+        <ul>
+          <li>Transcription: type a paper match move by move, with a durable draft</li>
+          <li>Tournament direction: pairings, table grid, results, standings, prizes and wall display for a club tournament</li>
+          <li>Training tab, quiz mode, lessons, and engine rollouts on the gammonNet v1.4.0 evaluator</li>
+          <li>Corpus search and statistics: player, tournament and date tokens, head-to-head, recurring errors, HTML report</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.36.0" date="2026-09-05">
       <description>
         <ul>

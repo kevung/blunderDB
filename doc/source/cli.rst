@@ -1670,6 +1670,10 @@ trois logiques distinctes (voir :ref:`headless`).
   signifie toute la bibliothèque).
 * ``--compare`` — **N'écrit rien** : compare gammonNet aux analyses importées
   au lieu de combler des trous (voir plus bas).
+* ``--stale`` — Réanalyse les positions dont l'analyse gammonNet est périmée —
+  écrite par une version antérieure du moteur, ou à une autre profondeur que
+  ``--ply`` — au lieu de combler des trous. Une position qui porte aussi une
+  analyse XG, GNUbg ou BGBlitz n'est jamais touchée.
 * ``--limit`` — Avec ``--compare``, s'arrête après ce nombre de positions
   (0 = toutes).
 * ``--format`` — Format de sortie: ``text`` (défaut, avec la progression) ou

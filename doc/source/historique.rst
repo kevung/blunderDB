@@ -17,6 +17,10 @@ retour** : une base migrée n'est plus lisible par une version antérieure de
 blunderDB, d'où la sauvegarde préalable (:ref:`annexe_db_migration`). Le reste
 ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 
+- **Réanalyser les positions périmées** (0.37.0). Une analyse gammonNet écrite
+  avant la version 0.37.0 l'a été par un moteur antérieur (gammonNet v1.4.0
+  depuis) : ``blunderdb analyze --stale``, ou le bouton *Ré-analyser les
+  positions périmées*, la récrit. Une analyse importée n'est jamais touchée.
 - **Réimporter les fichiers source pour obtenir la chance** (0.33.0). Les matchs
   importés avant portent un tiret dans la colonne *Chance*, et un tiret n'est
   pas un zéro. Les formats qui ne transportent pas la chance (BGF, Jellyfish
@@ -27,6 +31,24 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 - **Lancer le rattrapage d'analyse gammonNet** (0.34.0), depuis l'interface, par
   ``blunderdb analyze`` ou en mode serveur : il comble les positions qui n'ont
   aucune analyse, sans jamais écraser une analyse importée.
+
+0.37.0 (2026-10-05)
+-------------------
+
+- **La transcription** d'un match papier : un onglet et un mode TRANSCRIBE où le match se saisit coup par coup — dés, triangle des 21 jets, coup joué au plateau ou tapé en notation, videau, correction en place, brouillon durable repris après un plantage. ``blunderdb transcribe`` et les routes ``transcriptions.*`` du serveur en sont les deux autres formes.
+- **La Direction de tournoi** : un tournoi de club se mène depuis le panneau Tournoi — annuaire des joueurs, propositions d'appariements confirmées d'un geste, grille des tables et fiches de résultat, arbres et tableau des vies, classement, prix et dotation, page murale de la salle, feuilles imprimables, Rencontres à plusieurs épreuves dans une salle partagée. ``blunderdb tournament`` et ``serve --direction`` en sont les deux autres formes.
+- **L'entraînement** : un onglet Entraînement (Scores, Pions, Bearoff, Évaluation, Décision) et son journal, un mode quiz dont le PR est sur l'échelle du jeu réel, les questions ratées reprises en paquet ou en collection, une file d'étude des blunders non traités, l'explication de l'erreur au dos de la carte Anki, des cartes de score et des décisions de videau en deux cartes.
+- **Les Leçons** : un parcours rédigé au bureau, lu depuis l'application, la ligne de commande (``blunderdb lesson``) ou le serveur, exporté avec la base ; la progression ne s'écrit que sur un geste explicite de l'élève.
+- **La recherche interroge un corpus** : jetons de joueur, d'adversaire, de tournoi, de ronde, de longueur, de date et de PR, ``like`` qui classe les positions semblables, plan de jeu ``gt:``, vocabulaire de tags, phrase en toutes lettres traduite en jetons, filtres favoris épinglés, palette de commandes floue (CTRL-MAJ-P), planche-contact en mini-plateaux et collections vivantes.
+- **Le panneau Stats** gagne l'onglet Corpus (face-à-face, PR par fenêtre, classement, alias de joueurs et d'événements, doublons probables), deux joueurs côte à côte, les erreurs récurrentes par plan de jeu, le découpage par phase, étiquette et score, un objectif de progression, un rapport HTML autonome et l'export CSV ; un match importé sans analyse obtient un PR.
+- **L'évaluateur passe à gammonNet v1.4.0** — filtre de coups en triplet, *beaver* et *raccoon* en money game seulement — et gagne des **rollouts** tronqués, cubeful et reproductibles, stockés comme seconde analyse, les moteurs côte à côte, la matrice du videau à tous les scores d'un match, et une table d'équité de match importée d'un ``.xml`` gnubg, propre à chaque base.
+- **L'import** devient parallèle, avec un mode masse pour les gros lots, un journal et la reprise d'un lot interrompu, un dossier surveillé, les matchs HedgeHog ``.ogxm``, l'OGID d'OpenGammon et les métadonnées d'en-tête XG (Elo, transcripteur, commentaires) ; un doublon exact apporte ses analyses plus profondes.
+- **Les commentaires sont signés** : le réglage « Votre nom » (``--author`` en ligne de commande) nomme leur auteur, qui voyage à l'export.
+- Dans l'interface : un écran d'accueil, quatre thèmes nommés, l'image du plateau en SVG, une aide où l'on cherche, une suppression annulable, des seuils d'erreur réglables par bibliothèque, et une bibliothèque, une recherche et une liste de matchs parcourues par fenêtres, sans tout charger.
+- **Un assistant par MCP** : l'application et le serveur offrent leurs outils à un assistant (Model Context Protocol). Côté serveur : une file d'analyse partagée entre tenants, des quotas (dont un quota d'octets stockés), le flux d'événements ``/v1/events``, une page web de consultation, le partage de paquets Anki et de collections entre tenants, et un client Python engendré.
+- **Schéma 2.31.0** : dates en entiers, position et analyse en binaire, libellés d'action codés — une base plus légère. La migration depuis 2.18.0 est automatique à l'ouverture et sans retour possible (:ref:`annexe_db_migration`).
+- Corrections notables : un ``.mat`` tronqué ou un ``.txt`` BGBlitz sans position est refusé au lieu d'entrer à moitié, les marques XG d'un doublon sont gardées, un verdict gammonNet garde les coups joués, et sous PostgreSQL un refus d'écriture ne révèle plus ce qu'un autre tenant détient.
+- Voir :ref:`manuel`, :ref:`cli` et :ref:`headless`.
 
 0.36.0 (2026-09-05)
 -------------------

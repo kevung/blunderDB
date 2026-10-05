@@ -139,6 +139,12 @@ une machine arm64 ne les a pas débloqués ; le registre des décisions amont et
   leçons ou paquets Anki (`collectionIds`, `lessonIds`, `deckIds`), le dialogue d'export de la
   GUI n'offre pas ce choix.
 
+- **Restes de GB-C14 (libellés, vocabulaire, gestes)** : pas de bouton « Élargir » ;
+  libellés de groupes de la barre d'outils non faits ; en-tête de panneau non factorisé dans
+  `PanelTable` ; noms de touches en prose non vérifiés dans les huit langues (« SHIFT-Enter »
+  en fi, ja, ru dans l'aide engendrée) ; j/k ne déplacent pas le surlignage du panneau
+  Tournois ; vérifier qu'un « Too good to double » importé n'est plus lu comme *no double*.
+
 ## Ouvert — Tests / CI
 
 - **Smoke test GUI sur une vraie base de production migrée** : parcourir chaque filtre de la
