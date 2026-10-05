@@ -43,6 +43,15 @@ describe('focusPanelUnlessTyping', () => {
         expect(document.activeElement).toBe(input);
     });
 
+    test('keeps a non-typing element already focused inside the panel (a row just created)', () => {
+        mount('<section id="panel" tabindex="-1"><table><tr id="row" tabindex="0"><td>x</td></tr></table></section>');
+        const row = el('#row');
+        row.focus();
+
+        expect(focusPanelUnlessTyping(el('#panel'))).toBe(false);
+        expect(document.activeElement).toBe(row);
+    });
+
     test('leaves the caret in a field outside the panel (the command line)', () => {
         mount('<input class="command-input" /><section id="panel" tabindex="-1"></section>');
         const commandLine = el('.command-input');

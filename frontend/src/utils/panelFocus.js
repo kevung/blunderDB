@@ -2,7 +2,9 @@
 // after showing, so j/k work without a click) must never take the keyboard away from a field
 // the user has focused in the meantime: Enter would reach the panel instead of a form, and the
 // command line, which closes on blur, would vanish. So it yields to a text-entry field, the same
-// "typing" test keyboardService applies; anything else is still replaced.
+// "typing" test keyboardService applies. It also yields to a focus already inside the panel (a row
+// just created and focused): the panel receives that row's keys by bubbling anyway. Anything
+// outside the panel is still replaced.
 
 const TYPING_TARGET = 'input, textarea, select, [contenteditable]';
 
@@ -24,7 +26,9 @@ export function isTypingTarget(el) {
  */
 export function focusPanelUnlessTyping(panel) {
     if (!panel) return false;
-    if (isTypingTarget(document.activeElement)) return false;
+    const active = document.activeElement;
+    if (isTypingTarget(active)) return false;
+    if (active && active !== panel && panel.contains(active)) return false;
     panel.focus();
     return true;
 }
