@@ -174,6 +174,10 @@ export function OpenImportDatabaseDialog() {
   return window['go']['gui']['App']['OpenImportDatabaseDialog']();
 }
 
+export function OpenLocalPage(arg1) {
+  return window['go']['gui']['App']['OpenLocalPage'](arg1);
+}
+
 export function OpenLogsFolder() {
   return window['go']['gui']['App']['OpenLogsFolder']();
 }

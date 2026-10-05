@@ -2497,7 +2497,8 @@
             "error": "No se ha podido escribir la página de la pantalla.",
             "page": "Página mural",
             "openHint": "Abre la página mural (pantalla de mesas) en el navegador; se reescribe en cada evento.",
-            "written": "Página mural escrita: {path}"
+            "written": "Página mural escrita: {path}",
+            "openFailed": "Página escrita, pero no se pudo abrir: {path}"
         },
         "season": {
             "title": "Clasificación de temporada",

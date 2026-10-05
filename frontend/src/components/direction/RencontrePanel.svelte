@@ -7,11 +7,12 @@
      * d'abord ce qui va changer : les tables de l'épreuve deviennent celles de l'Événement.
      */
     import { untrack } from 'svelte';
-    import { t } from '../../i18n';
+    import { t, tMsg } from '../../i18n';
+    import { statusBarTextStore } from '../../stores/uiStore';
     import { renderConfigChange } from './labels.js';
     import TableSettingsEditor from './TableSettingsEditor.svelte';
     import SeasonRanking from './SeasonRanking.svelte';
-    import { rencontreParticipantsStore } from '../../stores/directionStore.js';
+    import { rencontreParticipantsStore, openLocalPage } from '../../stores/directionStore.js';
     import {
         listRencontres,
         createRencontre,
@@ -26,7 +27,6 @@
         setRencontreTables,
         setEventRooms
     } from '../../stores/rencontreStore.js';
-    import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
 
     /** @typedef {import('../../../wailsjs/go/models').service.RencontreView} RencontreView */
     /** @typedef {import('../../../wailsjs/go/models').service.ConfigPreview} ConfigPreview */
@@ -154,7 +154,7 @@
         if (!current) return;
         try {
             const path = await writeRencontrePage(current.id);
-            if (path) BrowserOpenURL('file://' + path);
+            if (path && !(await openLocalPage(path))) statusBarTextStore.set(tMsg('direction.display.openFailed', { path }));
         } catch (e) {
             fail(e);
         }

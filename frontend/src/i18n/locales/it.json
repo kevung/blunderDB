@@ -2497,7 +2497,8 @@
             "error": "Impossibile scrivere la pagina del display.",
             "page": "Pagina murale",
             "openHint": "Apre la pagina murale (schermo dei tavoli) nel browser; viene riscritta a ogni evento.",
-            "written": "Pagina murale scritta: {path}"
+            "written": "Pagina murale scritta: {path}",
+            "openFailed": "Pagina scritta, ma non è stato possibile aprirla: {path}"
         },
         "season": {
             "title": "Classifica stagionale",

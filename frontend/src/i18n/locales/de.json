@@ -2497,7 +2497,8 @@
             "error": "Die Anzeigeseite konnte nicht geschrieben werden.",
             "page": "Wandseite",
             "openHint": "Öffnet die Wandseite (Tischanzeige) im Browser; sie wird bei jedem Ereignis neu geschrieben.",
-            "written": "Wandseite geschrieben: {path}"
+            "written": "Wandseite geschrieben: {path}",
+            "openFailed": "Seite geschrieben, konnte aber nicht geöffnet werden: {path}"
         },
         "season": {
             "title": "Saisonwertung",

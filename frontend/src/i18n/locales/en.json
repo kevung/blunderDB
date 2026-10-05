@@ -2497,7 +2497,8 @@
             "error": "The display page could not be written.",
             "page": "Wall page",
             "openHint": "Opens the wall page (table display) in the browser; it is rewritten at every event.",
-            "written": "Wall page written: {path}"
+            "written": "Wall page written: {path}",
+            "openFailed": "Page written, but it could not be opened: {path}"
         },
         "season": {
             "title": "Season ranking",

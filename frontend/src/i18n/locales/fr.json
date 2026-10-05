@@ -2497,7 +2497,8 @@
             "error": "Impossible d'écrire la page d'affichage.",
             "page": "Page murale",
             "openHint": "Ouvre la page murale (affichage des tables) dans le navigateur ; elle est réécrite à chaque événement.",
-            "written": "Page murale écrite : {path}"
+            "written": "Page murale écrite : {path}",
+            "openFailed": "Page écrite, mais impossible de l’ouvrir : {path}"
         },
         "season": {
             "title": "Classement de saison",

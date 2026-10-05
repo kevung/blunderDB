@@ -12,6 +12,7 @@ vi.mock('../../wailsjs/go/database/Database.js', async (importOriginal) => {
     const orig = await importOriginal();
     return Object.fromEntries(Object.keys(/** @type {object} */ (orig)).map((k) => [k, vi.fn().mockResolvedValue(null)]));
 });
+vi.mock('../../wailsjs/go/gui/App.js', async (importOriginal) => ({ ...(await importOriginal()), OpenLocalPage: vi.fn().mockResolvedValue(undefined) }));
 vi.mock('../../wailsjs/runtime/runtime.js', async (importOriginal) => ({ ...(await importOriginal()), BrowserOpenURL: vi.fn() }));
 
 import DirectionView from '../components/direction/DirectionView.svelte';
@@ -21,6 +22,7 @@ import { directionStore, openDirectionIdStore } from '../stores/directionStore.j
 import { confirmModalStore, resolveConfirm } from '../services/confirmService.js';
 import { statusBarTextStore } from '../stores/uiStore.js';
 import { AddParticipant, WriteDirectionPage, CloseDirection, Standings } from '../../wailsjs/go/database/Database.js';
+import { OpenLocalPage } from '../../wailsjs/go/gui/App.js';
 import { t } from '../i18n';
 
 const tr = (/** @type {string} */ k, /** @type {any} */ p) => get(t)(k, p);
@@ -70,6 +72,8 @@ test('l’en-tête nomme la page murale et l’écriture donne le chemin', async
     expect(btn.textContent?.trim()).toBe(tr('direction.display.page'));
     await fireEvent.click(btn);
     await vi.waitFor(() => expect(get(statusBarTextStore)).toEqual({ i18nKey: 'direction.display.written', i18nParams: { path: '/tmp/out/index.html' } }));
+    // Wails refuse le schéma file:// dans BrowserOpenURL : la page s'ouvre par le binding Go.
+    expect(OpenLocalPage).toHaveBeenCalledWith('/tmp/out/index.html');
 });
 
 test('clore le tournoi donne un retour', async () => {
@@ -110,4 +114,12 @@ test('le forfait seul se confirme par « Déclarer forfait », non rouge', async
     await vi.waitFor(() => expect(get(confirmModalStore)).not.toBeNull());
     expect(get(confirmModalStore)).toMatchObject({ confirmLabel: tr('direction.result.forfeitDo'), tone: 'primary' });
     await answerConfirm(false);
+});
+
+test('une page écrite mais non ouverte ne se dit pas « écrite »', async () => {
+    await mountView(baseView);
+    vi.mocked(WriteDirectionPage).mockResolvedValue('/tmp/out/index.html');
+    vi.mocked(OpenLocalPage).mockRejectedValueOnce(new Error('xdg-open introuvable'));
+    await fireEvent.click(screen.getByTestId('direction-open-page'));
+    await vi.waitFor(() => expect(get(statusBarTextStore)).toEqual({ i18nKey: 'direction.display.openFailed', i18nParams: { path: '/tmp/out/index.html' } }));
 });

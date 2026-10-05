@@ -11,7 +11,6 @@
     import { tMsg } from '../../i18n';
     import { logger } from '../../utils/logger.js';
     import { focusPanelUnlessTyping } from '../../utils/panelFocus.js';
-    import { BrowserOpenURL } from '../../../wailsjs/runtime/runtime.js';
     import DirectionSettings from './DirectionSettings.svelte';
     import RencontrePanel from './RencontrePanel.svelte';
     import TableSettingsEditor from './TableSettingsEditor.svelte';
@@ -80,6 +79,7 @@
         transcribeFromSlot,
         previewDirectionConfig,
         writeDirectionPage,
+        openLocalPage,
         chooseDirectionOutputDir,
         forgetDirectionOutputDir,
         writePairingSheet,
@@ -567,13 +567,17 @@
     const onChooseOutput = () => act(() => chooseDirectionOutputDir(), 'direction.display.error');
     const onForgetOutput = () => act(() => forgetDirectionOutputDir(), 'direction.display.error');
     /* Feuille d'appariements : un clic ouvre le dialogue d'impression. */
+    /** @param {string} path */
+    async function openOrSay(path) {
+        if (!(await openLocalPage(path))) statusBarTextStore.set(tMsg('direction.display.openFailed', { path }));
+    }
     async function onPrintSheet() {
         const path = await writePairingSheet(sheetRound);
         if (!path) {
             statusBarTextStore.set(tMsg('direction.sheet.error'));
             return;
         }
-        BrowserOpenURL('file://' + path);
+        await openOrSay(path);
     }
     async function onPrintUpcoming() {
         const path = await writeUpcomingSheet(announced);
@@ -582,7 +586,7 @@
             return;
         }
         announcing = false;
-        BrowserOpenURL('file://' + path);
+        await openOrSay(path);
     }
 
     /* L'annuaire : reprendre les inscrits d'un tournoi précédent en un clic. */
@@ -623,8 +627,8 @@
             statusBarTextStore.set(tMsg('direction.display.error'));
             return;
         }
-        statusBarTextStore.set(tMsg('direction.display.written', { path }));
-        BrowserOpenURL('file://' + path);
+        if (await openLocalPage(path)) statusBarTextStore.set(tMsg('direction.display.written', { path }));
+        else statusBarTextStore.set(tMsg('direction.display.openFailed', { path }));
     }
     /** @type {(slot: string, matchId: number) => Promise<boolean>} */
     const onAttach = (slot, matchId) =>

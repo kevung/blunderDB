@@ -2497,7 +2497,8 @@
             "error": "Näyttösivun kirjoittaminen epäonnistui.",
             "page": "Seinäsivu",
             "openHint": "Avaa seinäsivun (pöytänäyttö) selaimessa; se kirjoitetaan uudelleen jokaisen tapahtuman jälkeen.",
-            "written": "Seinäsivu kirjoitettu: {path}"
+            "written": "Seinäsivu kirjoitettu: {path}",
+            "openFailed": "Sivu kirjoitettu, mutta sitä ei voitu avata: {path}"
         },
         "season": {
             "title": "Kauden sijoitukset",
