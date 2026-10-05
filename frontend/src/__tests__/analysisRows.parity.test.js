@@ -39,7 +39,9 @@ const PLAYED_BG = '#fff3cd';
 // A 2D context that keeps what it is asked to write, and the ground each
 // string was written on.
 function fakeContext() {
+    /** @type {{ text: string, bg: string | null }[]} */
     const painted = [];
+    /** @type {string | null} */
     let lastFill = null;
     const ctx = {
         fillStyle: '#000',
@@ -51,7 +53,7 @@ function fakeContext() {
         fillRect() {
             lastFill = this.fillStyle;
         },
-        fillText(text) {
+        fillText(/** @type {unknown} */ text) {
             painted.push({ text: String(text), bg: lastFill });
         },
         strokeRect() {},
@@ -62,15 +64,15 @@ function fakeContext() {
         scale() {},
         drawImage() {}
     };
-    return { ctx, painted };
+    return { ctx: /** @type {CanvasRenderingContext2D} */ (/** @type {unknown} */ (ctx)), painted };
 }
 
-function domTexts(container) {
-    return [...container.querySelectorAll('th, td')].map((el) => el.textContent.trim());
+function domTexts(/** @type {ParentNode} */ container) {
+    return [...container.querySelectorAll('th, td')].map((el) => (el.textContent ?? '').trim());
 }
 
 // The DOM sequence must occur, contiguous and in order, in the painted one.
-function indexOfRun(haystack, needle) {
+function indexOfRun(/** @type {unknown[]} */ haystack, /** @type {unknown[]} */ needle) {
     outer: for (let i = 0; i + needle.length <= haystack.length; i++) {
         for (let j = 0; j < needle.length; j++) if (haystack[i + j] !== needle[j]) continue outer;
         return i;
@@ -156,7 +158,7 @@ const checkerAnalysis = {
     }
 };
 
-function paint(analysis, extra = {}) {
+function paint(/** @type {unknown} */ analysis, extra = {}) {
     const { ctx, painted } = fakeContext();
     paintAnalysisStrip(ctx, { analysis, position, isMatchMode: false, y: 0, width: 900, ...extra });
     return painted;

@@ -1,10 +1,17 @@
 // canvasTable.js — a generic {header?, rows} table rasterizer for a 2D canvas (widths, borders,
 // zebra, section rules); knows nothing of backgammon. Caller: clipboardService's paintAnalysisStrip.
+/** @typedef {{ label: string, cells: (string | null)[], highlight?: boolean, bold?: boolean }} PaintRow */
+/** @typedef {{ bg?: string, bold?: boolean, align?: CanvasTextAlign }} CellStyle */
+
 const STRIP = { rowHeight: 18, padding: 10, cellPad: 4, font: '12px monospace', headerFont: 'bold 12px monospace' };
 const INK = { border: '#ddd', section: '#ccc', header: '#f2f2f2', white: '#ffffff', even: '#fdfdfd', played: '#fff3cd' };
 
 // splitWidth cuts a width into columns by fraction; the last column absorbs
 // the rounding so the table ends exactly on its right edge.
+/**
+ * @param {number} width
+ * @param {number[]} fractions
+ */
 function splitWidth(width, fractions) {
     const total = fractions.reduce((a, b) => a + b, 0);
     const widths = fractions.map((f) => Math.floor((width * f) / total));
@@ -12,6 +19,14 @@ function splitWidth(width, fractions) {
     return widths;
 }
 
+/**
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number} x
+ * @param {number} y
+ * @param {number} w
+ * @param {string | null} text
+ * @param {CellStyle} [style]
+ */
 function paintCell(ctx, x, y, w, text, { bg = INK.white, bold = false, align = 'center' } = {}) {
     const h = STRIP.rowHeight;
     ctx.fillStyle = bg;
@@ -23,16 +38,25 @@ function paintCell(ctx, x, y, w, text, { bg = INK.white, bold = false, align = '
     ctx.font = bold ? STRIP.headerFont : STRIP.font;
     ctx.textBaseline = 'middle';
     ctx.textAlign = align;
-    ctx.fillText(text, align === 'left' ? x + STRIP.cellPad : x + w / 2, y + h / 2);
+    ctx.fillText(String(text), align === 'left' ? x + STRIP.cellPad : x + w / 2, y + h / 2);
 }
 
 // A row whose cells stop short of the last column spans it with its last cell. `sections` names
 // the columns followed by a heavier rule, as in the DOM table.
+/**
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {number} x0
+ * @param {number} y0
+ * @param {number[]} widths
+ * @param {{ header?: string[] | null, rows: PaintRow[] }} table
+ * @param {{ boldLabels?: boolean, leftLabels?: boolean, labelBg?: string, zebra?: boolean, sections?: number[] }} [options]
+ */
 function paintTable(ctx, x0, y0, widths, { header = null, rows }, { boldLabels = false, leftLabels = false, labelBg = INK.white, zebra = false, sections = [] } = {}) {
     const h = STRIP.rowHeight;
     const edges = widths.reduce((acc, w) => [...acc, acc[acc.length - 1] + w], [x0]);
     let y = y0;
 
+    /** @param {({ text: string | null } & CellStyle)[]} cells */
     function paintRow(cells) {
         cells.forEach((cell, i) => {
             const w = i === cells.length - 1 ? edges[widths.length] - edges[i] : widths[i];

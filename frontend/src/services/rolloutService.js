@@ -15,10 +15,18 @@ import { StartRollout, StartRolloutIDs, CancelRollout, RolloutPresets, RolloutSt
 import { GetRolloutChoice, SaveRolloutChoice } from '../../wailsjs/go/main/Config.js';
 
 let listening = false;
-/** @type {{fast: any, standard: any} | null} */
+/** @typedef {import('../../wailsjs/go/models.js').rollout.Settings} RolloutSettingsWire */
+/** @typedef {import('../stores/rolloutStore.js').RolloutState} RolloutState */
+/** @typedef {import('../stores/rolloutStore.js').RolloutChoiceState} RolloutChoiceState */
+/** @typedef {(s: RolloutState, e: any, job: number) => RolloutState} JobChange */
+
+/** @type {{fast: RolloutSettingsWire, standard: RolloutSettingsWire} | null} */
 let presets = null;
 
-/** A stored-candidate shape for a candidate the engine reports (snake_case on the wire). */
+/**
+ * A stored-candidate shape for a candidate the engine reports (snake_case on the wire).
+ * @param {any} c
+ */
 function normalizeCandidate(c) {
     return {
         move: c.move,
@@ -34,7 +42,10 @@ function normalizeCandidate(c) {
 // (database.ErrReadOnly); it is said in the reader's language.
 const READ_ONLY = 'database is read-only';
 
-/** A refusal or a failure as the reader is told it. */
+/**
+ * A refusal or a failure as the reader is told it.
+ * @param {any} err
+ */
 export function failure(err) {
     const message = err?.message ?? String(err ?? '');
     return message.includes(READ_ONLY) ? get(t)('rollout.readOnly') : message;
@@ -45,6 +56,10 @@ let starting = false;
 /** @type {Array<() => void>} */
 let held = [];
 
+/**
+ * @param {JobChange} change
+ * @param {any} e
+ */
 function applyJob(change, e) {
     rolloutStore.update((s) => {
         const job = e?.job ?? 0;
@@ -57,9 +72,10 @@ function applyJob(change, e) {
  * Applies an event to the state unless it belongs to a job that was replaced since: a cancelled job
  * still reports its end after the next one has begun. While a start is in flight the new job's
  * number is not known, so the events wait for it and are then filtered against it.
+ * @param {JobChange} change
  */
 function onJob(change) {
-    return (e) => {
+    return (/** @type {any} */ e) => {
         if (starting) held.push(() => applyJob(change, e));
         else applyJob(change, e);
     };
@@ -68,6 +84,7 @@ function onJob(change) {
 /**
  * Runs a start call: events wait while it is in flight, then the job it returns is posted before
  * any of them is applied. Rethrows what the call raised, after releasing the events.
+ * @param {() => Promise<number>} call
  */
 async function startJob(call) {
     starting = true;
@@ -213,11 +230,16 @@ export async function loadRolloutPresets() {
     return presets;
 }
 
-/** The settings the panel's choice stands for. */
+/**
+ * The settings the panel's choice stands for.
+ * @param {RolloutChoiceState} choice
+ * @param {{fast: RolloutSettingsWire, standard: RolloutSettingsWire} | null} available
+ * @returns {RolloutSettingsWire | null}
+ */
 export function chosenSettings(choice, available) {
     if (!available) return null;
     if (choice.preset === 'custom') return choice.custom ?? { ...available.standard };
-    return available[choice.preset] ?? available.standard;
+    return /** @type {Record<string, RolloutSettingsWire>} */ (available)[choice.preset] ?? available.standard;
 }
 
 const FIELDS = ['truncation', 'min_games', 'max_games', 'jsd_limit', 'ply', 'candidates', 'seed', 'workers'];
@@ -226,6 +248,7 @@ const FIELDS = ['truncation', 'min_games', 'max_games', 'jsd_limit', 'ply', 'can
  * Why a form cannot be sent ('' when it can): every field a number, and a seed JavaScript holds
  * exactly — a larger one would be rounded on the way, and a rollout would no longer be the one
  * its signature names.
+ * @param {any} s
  */
 export function settingsProblem(s) {
     for (const key of FIELDS) {
@@ -236,7 +259,11 @@ export function settingsProblem(s) {
     return '';
 }
 
-/** A form value as Go reads it: numbers only. */
+/**
+ * A form value as Go reads it: numbers only.
+ * @param {any} s
+ * @returns {RolloutSettingsWire}
+ */
 export function settingsForWire(s) {
     return {
         truncation: Number(s.truncation),
@@ -250,23 +277,37 @@ export function settingsForWire(s) {
     };
 }
 
+/**
+ * @param {string} key
+ * @param {Record<string, any>} [params]
+ */
 function say(key, params) {
     statusBarTextStore.set(tMsg(key, params));
 }
 
-/** Says how a job ended in the status bar; spreads to nothing, so it sits inside an update. */
+/**
+ * Says how a job ended in the status bar; spreads to nothing, so it sits inside an update.
+ * @param {string} key
+ * @param {Record<string, any>} [params]
+ */
 function told(key, params) {
     say(key, params);
     return {};
 }
 
-/** Records why a start was refused, and returns it. */
+/**
+ * Records why a start was refused, and returns it.
+ * @param {string} message
+ */
 function refuse(message) {
     rolloutStore.update((s) => ({ ...s, error: message }));
     return message;
 }
 
-/** The board a result describes: a rollout of an unsaved board is shown only while it is on screen. */
+/**
+ * The board a result describes: a rollout of an unsaved board is shown only while it is on screen.
+ * @param {any} position
+ */
 export function boardKey(position) {
     return JSON.stringify([get(databasePathStore), position]);
 }
@@ -296,6 +337,9 @@ export function rolloutOnBoard(state, position, { unsaved = false } = {}) {
  * decision without dice) when none is named. A board that is not stored — or any board, with
  * unsaved — is rolled out in memory: nothing is written, so neither a database nor write access
  * is needed. Resolves to an error message, or '' once started.
+ * @param {any} settings
+ * @param {string[]} [moves]
+ * @param {{ unsaved?: boolean }} [options]
  */
 export async function startRolloutOfCurrent(settings, moves = [], { unsaved = false } = {}) {
     ensureRolloutEvents();
@@ -305,7 +349,10 @@ export async function startRolloutOfCurrent(settings, moves = [], { unsaved = fa
     const id = unsaved ? 0 : (pos?.id ?? 0);
     try {
         rolloutStore.update((s) => ({ ...s, error: '', pendingKey: id ? '' : boardKey(pos) }));
-        await startJob(() => StartRollout({ positionId: id, position: id ? undefined : pos, settings: settingsForWire(settings), moves: [...moves], store: id !== 0 }));
+        const request = /** @type {import('../../wailsjs/go/models.js').gui.RolloutRequest} */ (
+            /** @type {unknown} */ ({ positionId: id, position: id ? undefined : pos, settings: settingsForWire(settings), moves: [...moves], store: id !== 0 })
+        );
+        await startJob(() => StartRollout(request));
         rolloutStore.update((s) => ({ ...s, outcome: null, running: true, kind: 'position', positionId: id, games: 0, maxGames: Number(settings.max_games), candidates: [] }));
         await syncRolloutStatus();
         return '';
@@ -317,6 +364,7 @@ export async function startRolloutOfCurrent(settings, moves = [], { unsaved = fa
 /**
  * Rolls out the positions of the list on screen — the search results, a match, a collection — after
  * saying how many that is. Resolves to an error message, or '' (started, declined, or nothing to do).
+ * @param {any} settings
  */
 export async function startRolloutOfSearch(settings) {
     ensureRolloutEvents();
@@ -360,6 +408,8 @@ export function cancelRollout() {
  * The panel's `r` and its menu: start with the chosen setting — of the plays moves names, or of the
  * position — or stop the rollout running. options as startRolloutOfCurrent's. Resolves to an error
  * message, or ''.
+ * @param {string[]} [moves]
+ * @param {{ unsaved?: boolean }} [options]
  */
 export async function toggleRollout(moves = [], options = {}) {
     const now = get(rolloutStore);
@@ -387,12 +437,16 @@ export async function initRolloutChoice() {
     }
 }
 
-/** Chooses the setting: applies it at once and persists it once every field is a number. */
+/**
+ * Chooses the setting: applies it at once and persists it once every field is a number.
+ * @param {RolloutChoiceState} choice
+ */
 export function setRolloutChoice(choice) {
     rolloutChoiceStore.set(choice);
     const custom = choice.custom && !settingsProblem(choice.custom) ? settingsForWire(choice.custom) : null;
     if (choice.preset === 'custom' && !custom) return;
-    SaveRolloutChoice({ preset: choice.preset, custom }).catch((err) => logger.error('could not save the rollout setting:', err));
+    const wire = /** @type {import('../../wailsjs/go/models.js').main.RolloutChoice} */ (/** @type {unknown} */ ({ preset: choice.preset, custom }));
+    SaveRolloutChoice(wire).catch((err) => logger.error('could not save the rollout setting:', err));
 }
 
 /** Whether a job in progress may give way to the new one: the person decides. */
@@ -404,9 +458,11 @@ async function mayReplaceRunning() {
 /**
  * The command `rollout [fast|standard|stop|search [fast|standard]]` (alias `ro`): the same actions
  * as the panel, with the stored choice when no preset is named.
+ * @param {string} args
  */
 export async function runRolloutCommand(args) {
     const words = args.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    /** @type {Record<string, string>} */
     const aliases = { fast: 'fast', rapide: 'fast', standard: 'standard' };
     if (words[0] === 'stop') {
         cancelRollout();
