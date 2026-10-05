@@ -38,16 +38,25 @@
     import { panelKeyGuard } from '../services/keyboardService.js';
     import { registerKeys } from '../services/keyDispatch.js';
 
+    /** @typedef {import('../../wailsjs/go/models').database.Collection} Collection */
+    /** @typedef {{ id: number }} PositionRow */
+
+    /** @type {{ onOpenCollection?: (collection: Collection, source: ReturnType<typeof collectionSource>) => (void | Promise<void>) }} */
     let { onOpenCollection } = $props();
 
     // The detail lists the collection by id pages, never its whole membership: `collectionPositions`
     // holds the loaded prefix as `{ id }` rows, `collectionTotal` the real length.
     const ROW_PAGE = 500;
     let loadedTotal = $state(0);
+    let collectionPositions = $derived($collectionPositionsStore || []);
     let collectionTotal = $derived(Math.max(loadedTotal, collectionPositions.length));
     let loadingRows = false;
 
-    /** Reload the rows from the start, keeping at least as many as were loaded; returns the total. */
+    /**
+     * Reload the rows from the start, keeping at least as many as were loaded; returns the total.
+     * @param {number} collectionId
+     * @param {number} [keep]
+     */
     async function refreshRows(collectionId, keep = 0) {
         const total = (await CountCollectionPositions(collectionId)) || 0;
         const want = Math.min(total, Math.max(keep, ROW_PAGE));
@@ -80,13 +89,13 @@
     // Read-only mirrors of stores
     let collections = $derived($collectionsStore || []);
     let selectedCollection = $derived($selectedCollectionStore);
-    let collectionPositions = $derived($collectionPositionsStore || []);
     let activeCollection = $derived($activeCollectionStore);
     let visible = $derived($openPanels.has(PANEL.COLLECTION));
     let currentPosition = $derived($positionStore);
 
     let mode = 'NORMAL';
 
+    /** @type {number[]} */
     let positionCollectionIds = $state([]);
 
     // View: 'list' (all collections) or 'detail' (positions in active collection)
@@ -130,7 +139,7 @@
 
     async function toggleLiving() {
         if (!activeCollection) return;
-        const query = activeCollection.filterQuery ? '' : (get(lastSearchStore)?.command || '').trim();
+        const query = activeCollection.filterQuery ? '' : /** @type {{ command?: string } | null} */ (get(lastSearchStore)?.command || '').trim();
         if (!activeCollection.filterQuery && !query) {
             statusBarTextStore.set(tMsg('collection.livingNeedsSearch'));
             return;
@@ -165,6 +174,7 @@
     // Position index map (position_id -> 1-based index in DB)
     // Rang en bibliothèque des seules lignes affichées, demandé une à une : une carte de toute la
     // base serait chargée pour trente lignes visibles.
+    /** @type {Record<number, number>} */
     let positionIndexMap = $state.raw({});
     let indexGeneration = 0;
 
@@ -243,7 +253,11 @@
         positionIndexMap = {};
     }
 
-    /** Action : demande le rang de la position quand sa ligne est montée. */
+    /**
+     * Action : demande le rang de la position quand sa ligne est montée.
+     * @param {HTMLElement} node
+     * @param {number} id
+     */
     function wantIndex(node, id) {
         const generation = indexGeneration;
         if (positionIndexMap[id] === undefined) {
@@ -255,6 +269,7 @@
         }
     }
 
+    /** @param {number} positionId */
     async function loadPositionCollections(positionId) {
         try {
             const colls = await GetPositionCollections(positionId);
@@ -264,11 +279,16 @@
         }
     }
 
+    /**
+     * @param {string} name
+     * @param {number | null} [excludeId]
+     */
     function isDuplicateName(name, excludeId = null) {
         const lower = name.trim().toLowerCase();
         return collections.some((c) => c.name.toLowerCase() === lower && c.id !== excludeId);
     }
 
+    /** @param {string} [dateStr] */
     function formatDate(dateStr) {
         if (!dateStr) return '';
         // Handle multiple date formats: "YYYY-MM-DD HH:MM:SS", "YYYY-MM-DDTHH:MM:SSZ", or Go time.Time string format
@@ -280,6 +300,10 @@
         return formatDateTime(normalized);
     }
 
+    /**
+     * @param {number} collectionId
+     * @param {Event} [event]
+     */
     async function togglePositionInCollection(collectionId, event) {
         if (event) event.stopPropagation();
         if (!currentPosition || !currentPosition.id || currentPosition.id === 0) {
@@ -339,6 +363,7 @@
         }
     }
 
+    /** @param {Collection} collection */
     async function openCollection(collection) {
         if (collectionEdit.isEditing(collection.id)) return;
         try {
@@ -364,6 +389,10 @@
         view = 'list';
     }
 
+    /**
+     * @param {Collection} collection
+     * @param {Event} event
+     */
     async function deleteCollection(collection, event) {
         event.stopPropagation();
         try {
@@ -386,6 +415,10 @@
         }
     }
 
+    /**
+     * @param {Collection} collection
+     * @param {Event} [event]
+     */
     function startEditing(collection, event) {
         if (event) event.stopPropagation();
         collectionEdit.start(collection.id, { name: collection.name, description: collection.description || '' });
@@ -409,15 +442,21 @@
                 selectedPositionIndices.add(to);
             }
         },
-        persist: (next) =>
-            ReorderCollectionPositions(
+        persist: (next) => {
+            if (!activeCollection) return Promise.resolve();
+            return ReorderCollectionPositions(
                 activeCollection.id,
                 next.map((p) => p.id)
-            ),
+            );
+        },
         label: 'positions'
     });
 
     // Select a position and display it
+    /**
+     * @param {number} index
+     * @param {MouseEvent} event
+     */
     async function selectAndDisplayPosition(index, event) {
         event.stopPropagation();
         const isMultiSelectClick = event.shiftKey || event.ctrlKey || event.metaKey;
@@ -468,6 +507,10 @@
         }
     }
 
+    /**
+     * @param {number} index
+     * @param {Event} event
+     */
     async function removePositionFromRow(index, event) {
         event.stopPropagation();
         if (!activeCollection) return;
@@ -486,6 +529,10 @@
         }
     }
 
+    /**
+     * @param {PositionRow} row
+     * @param {number} index
+     */
     async function navigateToPosition(row, index) {
         currentPositionIndexStore.set(index);
         try {
@@ -502,6 +549,10 @@
 
     // Pointer-based drag reorder for positions within a collection. A
     // multi-selection moves as a block; anything else is a single-item move.
+    /**
+     * @param {number} fromIndex
+     * @param {number} toIndex
+     */
     async function handlePositionReorder(fromIndex, toIndex) {
         if (!activeCollection) return;
 
@@ -536,6 +587,7 @@
         closePanel(PANEL.COLLECTION);
     }
 
+    /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
         if (!visible) return;
         // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
@@ -578,6 +630,7 @@
     /** @type {(() => void) | null} */
     let unregisterKeys = null;
 
+    /** @param {number} positionId */
     async function removeFromCollectionSingle(positionId) {
         if (!activeCollection) return;
         if (!(await confirmAction($t('collection.confirmRemove', { count: 1 }), { confirmLabel: $t('common.delete') }))) return;

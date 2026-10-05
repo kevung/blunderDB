@@ -56,7 +56,7 @@ even when a later import brings the same Position in unflagged.
 A flagged cube decision marks *both* Positions blunderDB derives from it — the double and
 the take/pass — because the source records one decision and blunderDB splits it in two.
 _Avoid_: bookmark, starred, favourite — a Flagged Position is durable and read-only; a
-transient "come back to this" list is a Collection.
+transient "come back to this" list is a Collection — the Pile.
 
 **Game phase**:
 Which part of the game a Position stands in: *opening*, *middlegame*, *race* or *bearoff*.
@@ -333,6 +333,16 @@ fact, ADR-0020 for the shape of a cube Decision.
 A named, ordered set of Positions the user assembles by hand. Membership is a user
 gesture, unlike the individually-imported property.
 
+**Pile** (interface: *pile*):
+The Collection the quick "come back to this" gesture aims at: one key puts the Position on
+the board onto the Pile, the same key takes it off. An ordinary Collection in every other
+respect — renamed, reordered, exported, emptied like any other — created on first use and
+again if it was deleted. The gesture works wherever a Position is shown, a Duel included:
+there the Position is not yet in the library, so the gesture brings it in on its own, at
+once, and it stays on the Pile whatever becomes of the Duel.
+_Avoid_: bookmark, stack, to-study list, study queue (computed from the error threshold),
+flag (a Flagged Position is a fact of the source file)
+
 **Anki deck**:
 A set of Positions — or the 36 Score cards — turned into spaced-repetition cards. A deck of
 scores is created on request and filled by the application; the user never enters a score.
@@ -490,9 +500,9 @@ from the Match it produces: it lives in the library as one document, survives a 
 the application, and stays the source of truth for as long as it is open — saving it
 materialises a Match, saving it again *replaces* that Match on the same id. Until saved,
 a Transcription is in no statistic, no search and no export of positions. It is not a
-game being played (ADR-0044: nobody decides, the rules check and never enforce), not an
+Duel (ADR-0044: nobody decides, the rules check and never enforce), not an
 Evaluation (though it shows one at every Action), not a Collection.
-_Avoid_: recording, live match, play mode, transcript (see below)
+_Avoid_: recording, live match, play mode (a Duel), transcript (see below)
 
 **Transcript**:
 The *rendering* of a Match or of a Transcription as two columns — player 1 left, player 2
@@ -501,7 +511,7 @@ acted — which is the layout of the `.mat` file and of every score sheet. The M
 move list and the `.mat` text are two Transcripts of one Match.
 _Avoid_: transcription (the draft), move list
 
-**Action** (of a Transcription):
+**Action** (of a Transcription or a Duel):
 One player's act at one moment of the match: a roll and the checker play it was used for
 (or the dance it forced, or the mark that says the play was never written down), a double
 or redouble, a take, a pass, a resignation. A double and
@@ -543,6 +553,79 @@ a `.mat` is exported as played, with a warning that gnubg and XG will flag it an
 from there.
 _Avoid_: error (the analysed blunder), fault (Training), invalid move (what gnubg
 refuses — a Transcription refuses nothing)
+
+### Playing a match
+
+**Duel** (interface: *match*, under the gesture *Jouer*):
+A match being played *inside* blunderDB, under its arbitration: the dice are rolled here,
+the rules are enforced, the score advances, and each of the two Sides decides for itself.
+A **draft**, like a Transcription: it survives a crash of the application and is resumed
+where it stopped; finishing it materialises an ordinary Match, and nothing about that Match
+is special once saved. It is the opposite of a Transcription on two of the three counts of
+ADR-0044 — somebody decides, and the rules refuse — and the same on the third. A finished
+Duel is never reopened as a Transcription: its Actions were arbitrated, there is nothing
+to correct (ADR-0072).
+_Avoid_: played match (every Match was played), play (a checker play), game, partie (one
+Game of a match), live match, play mode, sparring (true of one configuration only)
+
+**Side** (of a Duel):
+One of the two players of a Duel. A Side is *external* — its decisions arrive through an
+interface (the board, the CLI, the API), from a human or from a program blunderDB knows
+nothing about — or *delegated* to a Bot. Human against engine is one of each; two external
+Sides is two people playing through a client such as gammonGo; two delegated Sides is the
+engine playing itself. The Arbiter treats the three alike.
+_Avoid_: seat (the per-seat columns of a Match), player (a name in a Match), opponent
+
+**Bot**:
+What a Side of a Duel is delegated to: a Configuration of the engine plus a *playing
+policy* — everything a player does that an evaluator does not: answering a double,
+offering or accepting a resignation, playing weaker than it can, taking its time.
+_Avoid_: engine (the evaluator), AI, computer, gammonNet (the Network and its search)
+
+**Arbiter**:
+blunderDB's role in a Duel: it rolls the dice, enforces the rules, keeps the score and the
+clock, and *refuses* an Action the rules do not allow — where a Replay keeps it and marks
+it. Who may sit on an external Side, pairing two people, knowing they are present: none of
+that is the Arbiter's business; it belongs to the client.
+_Avoid_: referee, server, game master
+
+**Dice seed** (of a Duel):
+The secret every roll of a Duel is computed from, drawn when the Duel is created. Its
+fingerprint is published before the first roll and the seed itself is revealed with the
+finished Match, so that anyone can recompute the rolls and see they were never fitted to
+the position. Resuming a Duel or taking a move back never changes a roll. Unrelated to the
+Seed of a Training Question, and to a Match's dice fingerprint, which identifies the rolls
+of a match to recognise the same match twice.
+_Avoid_: seed (Training), dice hash (the Match's fingerprint)
+
+**Start** (of a Duel; interface: *départ*):
+Where a Duel begins: a Position — its board, its cube, who has the trait, its score, and
+a roll if it carries one. By default the opening position at the start of the match; it
+may be the Position on the board, or the opening position at a chosen score. Only the
+first game begins at the Start: the games after it begin at the opening position, at the
+score reached. A Start the rules do not allow is refused by name, never adjusted. A Match
+played from a Start other than the default carries it as part of its origin, and cannot
+be written as a `.mat`, which has no way to begin a game elsewhere.
+_Avoid_: seed (a Training Question's), setup, starting position
+
+**Cadence** (of a Duel):
+The clock a Duel is played under: a *reserve* per Side for the whole match, and a *delay*
+at each turn that runs first and costs nothing — the reserve only goes down once the delay
+is spent. The clock that runs is that of the Side a decision is awaited from, and it is the
+Arbiter that keeps it. A Duel may have no Cadence. A Side whose reserve is spent is *over
+time*: a fact the Arbiter reports, whose consequence is a setting of the Duel — the Duel
+goes on and the overrun is noted, or the match is lost.
+_Avoid_: time control, out of time (a Training Question), increment (a Cadence has none)
+
+**Decision time** (interface: *durée*):
+How long a Side took over one Decision of a Duel, counted by the Arbiter from the moment
+the Side has the trait until it acts. A turn holds up to two: from the trait to the roll —
+the cube Decision, taken even by rolling — and from the roll to the play. A double, a take,
+a pass, a resignation each have their own. It does not depend on the Cadence: the delay is
+part of it, and a Duel with no Cadence measures it all the same. It becomes a property of
+the play in the saved Match; a Match that was not played here has none — unknown, never
+zero.
+_Avoid_: thinking time, time per move (a turn is two Decisions), clock time (the Cadence)
 
 ### Directing a tournament
 

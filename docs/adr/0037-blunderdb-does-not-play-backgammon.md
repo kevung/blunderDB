@@ -1,6 +1,7 @@
 # blunderDB does not play backgammon
 
-Status: accepted.
+Status: superseded by ADR-0072 — blunderDB now plays, as a Duel. Kept for the reasoning
+ADR-0072 answers; nothing below is in force.
 See also: ADR-0041 (engine plies behind a training position), ADR-0044 (transcription),
 ADR-0047 (tournament direction).
 
