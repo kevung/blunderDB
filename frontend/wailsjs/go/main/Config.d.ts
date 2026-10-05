@@ -18,6 +18,8 @@ export function GetCheckForUpdates():Promise<boolean>;
 
 export function GetCommentAuthor():Promise<string>;
 
+export function GetDuelForm():Promise<string>;
+
 export function GetEpcChallenge():Promise<boolean>;
 
 export function GetGammonNetAnalysisPly():Promise<number>;
@@ -52,10 +54,6 @@ export function GetRolloutChoice():Promise<main.RolloutChoice>;
 
 export function GetStatsFilter():Promise<main.StatsFilterPersisted>;
 
-export function GetDuelForm():Promise<string>;
-
-export function SaveDuelForm(arg1:string):Promise<void>;
-
 export function GetTabOrder():Promise<Array<string>>;
 
 export function GetTabPanelHeights():Promise<Record<string, number>>;
@@ -87,6 +85,8 @@ export function SaveCheckForUpdates(arg1:boolean):Promise<void>;
 export function SaveCommentAuthor(arg1:string):Promise<void>;
 
 export function SaveConfig(arg1:main.Config):Promise<void>;
+
+export function SaveDuelForm(arg1:string):Promise<void>;
 
 export function SaveEpcChallenge(arg1:boolean):Promise<void>;
 
