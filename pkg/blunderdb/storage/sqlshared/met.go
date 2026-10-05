@@ -138,6 +138,11 @@ func (s *MatchEquityTableStore) TagAnalyses(ctx context.Context, scope string, m
 				` AND position_id IN (`+Placeholders(len(chunk))+`)`, args...); err != nil {
 				return errf(tx, "tag analyses with their match equity table", err)
 			}
+			// The table of an analysis is a dimension of the per-match cells
+			// (match_stats_cells.go): the matches reaching it are stale.
+			if err := InvalidateMatchStatsOfPositions(ctx, tx, chunk); err != nil {
+				return err
+			}
 		}
 		return nil
 	})

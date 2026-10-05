@@ -309,6 +309,47 @@ var schemaStatements = []string{
 		PRIMARY KEY (match_id, seat)
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_stats_pr ON match_stats(pr) WHERE pr IS NOT NULL`,
+	// The breakdowns of a seat's counted decisions (sqlshared/match_stats_cells.go
+	// states the kinds and the arithmetic): one row per decision type, table
+	// of the analysis (met_id, 0 for the built-in one), kind and value(s) of
+	// its dimension (-1 for NULL), with the decisions, their error sum and
+	// largest error, the blunders at the library's threshold and the sum of
+	// their MWC losses over the mwc_decisions the table values; positions
+	// counts a phase cell's private positions. Written and
+	// dropped with the seat's match_stats row; the cascade reads the key by
+	// its prefix.
+	`CREATE TABLE IF NOT EXISTS match_stats_cell (
+		match_id INTEGER NOT NULL,
+		seat INTEGER NOT NULL,
+		decision_type INTEGER NOT NULL,
+		met_id INTEGER NOT NULL,
+		kind INTEGER NOT NULL,
+		k1 INTEGER NOT NULL,
+		k2 INTEGER NOT NULL,
+		decisions INTEGER NOT NULL,
+		error_mp INTEGER NOT NULL,
+		max_error_mp INTEGER NOT NULL,
+		blunders INTEGER NOT NULL,
+		mwc_loss REAL NOT NULL,
+		mwc_decisions INTEGER NOT NULL,
+		positions INTEGER NOT NULL,
+		PRIMARY KEY (match_id, seat, decision_type, met_id, kind, k1, k2),
+		FOREIGN KEY (match_id, seat) REFERENCES match_stats(match_id, seat) ON DELETE CASCADE
+	)`,
+	// The shared positions a seat's counted decisions reach — those a move of
+	// another seat or match reaches too — for the one figure no sum of cells
+	// gives: how many distinct positions a selection holds. The fill reads it
+	// by position to tell which seats hold a position private.
+	`CREATE TABLE IF NOT EXISTS match_stats_position (
+		match_id INTEGER NOT NULL,
+		seat INTEGER NOT NULL,
+		position_id INTEGER NOT NULL,
+		decision_type INTEGER NOT NULL,
+		met_id INTEGER NOT NULL,
+		PRIMARY KEY (match_id, seat, position_id, met_id),
+		FOREIGN KEY (match_id, seat) REFERENCES match_stats(match_id, seat) ON DELETE CASCADE
+	)`,
+	`CREATE INDEX IF NOT EXISTS idx_match_stats_position_position ON match_stats_position(position_id)`,
 	`CREATE TABLE IF NOT EXISTS game (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		match_id INTEGER,

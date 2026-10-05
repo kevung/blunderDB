@@ -72,7 +72,8 @@ func ReclassifyDerived(ctx context.Context, db Execer, scope string) (int, error
 				return fmt.Errorf("position %d: %w", r.id, err)
 			}
 		}
-		return nil
+		// Phase and game type are dimensions of the match_stats cells.
+		return InvalidateAllMatchStats(ctx, tx, scope)
 	})
 	if err != nil {
 		return 0, errf(db, "classify the stored positions", err)

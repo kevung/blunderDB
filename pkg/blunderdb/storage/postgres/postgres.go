@@ -251,7 +251,8 @@ var matchStatsLateColumns = []string{
 }
 
 // repairMatchStatsShape adds matchStatsLateColumns where they are missing and
-// drops the rows written without them, which readers then recompute. Both
+// drops the rows written without them or without their cells (036), which
+// readers then recompute. Both
 // steps are no-ops once done, so it runs at every Migrate. It only writes
 // when there is something to repair: a role that does not own the table (a
 // tenant role under RLS) runs Migrate too, and ALTER TABLE needs ownership
@@ -274,7 +275,7 @@ func repairMatchStatsShape(ctx context.Context, db execer) error {
 		}
 	}
 	var stale bool
-	if err := db.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM match_stats WHERE checker_moves IS NULL)`).Scan(&stale); err != nil {
+	if err := db.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM match_stats WHERE `+sqlshared.OlderShapeMatchStatsPredicate+`)`).Scan(&stale); err != nil {
 		return fmt.Errorf("postgres: probe match_stats older rows: %w", err)
 	}
 	if !stale {

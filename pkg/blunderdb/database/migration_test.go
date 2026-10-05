@@ -3598,6 +3598,77 @@ func TestOpen_2_30_0_RepairsMatchStatsShape(t *testing.T) {
 	}
 }
 
+// A library an earlier 2.31.0 build wrote has match_stats rows and no
+// breakdown cells beside them. The version does not move, so the open
+// itself must create the tables and recompute the rows, leave match_stats
+// as it was, and do nothing more on the next open.
+func TestOpen_2_31_0_AddsMatchStatsCells(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2310_cells.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "test.xg")); err != nil {
+		t.Fatalf("ImportXGMatch: %v", err)
+	}
+	snapshot := func(d *Database, query string) []string {
+		t.Helper()
+		rows, err := d.db.Query(query)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer rows.Close()
+		cols, _ := rows.Columns()
+		var out []string
+		for rows.Next() {
+			vals := make([]sql.NullString, len(cols))
+			ptrs := make([]any, len(cols))
+			for i := range vals {
+				ptrs[i] = &vals[i]
+			}
+			if err := rows.Scan(ptrs...); err != nil {
+				t.Fatal(err)
+			}
+			out = append(out, fmt.Sprint(vals))
+		}
+		if err := rows.Err(); err != nil {
+			t.Fatal(err)
+		}
+		return out
+	}
+	const stats = `SELECT match_id, seat, decisions, error_mp, blunders, snowie_moves, checker_moves FROM match_stats ORDER BY match_id, seat`
+	const cells = `SELECT * FROM match_stats_cell ORDER BY match_id, seat, decision_type, met_id, kind, k1, k2`
+	wantStats, wantCells := snapshot(d, stats), snapshot(d, cells)
+	if len(wantCells) == 0 {
+		t.Fatal("the import computed no cell")
+	}
+	for _, q := range []string{`DROP TABLE match_stats_cell`, `DROP TABLE match_stats_position`} {
+		if _, err := d.db.Exec(q); err != nil {
+			t.Fatalf("%s: %v", q, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	for open := 1; open <= 2; open++ {
+		d = NewDatabase()
+		if err := d.OpenDatabase(dbPath); err != nil {
+			t.Fatalf("open %d: %v", open, err)
+		}
+		if got := snapshot(d, stats); !slices.Equal(got, wantStats) {
+			t.Errorf("open %d: match_stats %v, want %v", open, got, wantStats)
+		}
+		if got := snapshot(d, cells); !slices.Equal(got, wantCells) {
+			t.Errorf("open %d: %d cells, want the %d the import wrote", open, len(got), len(wantCells))
+		}
+		if err := d.Close(); err != nil {
+			t.Fatal(err)
+		}
+	}
+}
+
 // TestMigrate_2_30_0_to_2_31_0 rolls an imported library back to its 2.30.0
 // shape and opens it: the MET, progress and error columns and tables come
 // back, the open writes no move error (the pass is not part of the

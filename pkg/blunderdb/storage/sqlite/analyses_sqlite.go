@@ -68,7 +68,7 @@ func (s *analysisStore) Save(ctx context.Context, scope string, positionID int64
 }
 
 var analysisMergeSelectSQL = `SELECT data, ` + sqlshared.ActionLabelSQL("best_cube_action") + `, cube_error, best_move_equity_error, is_forced, is_close_cube,
-	analysis_engine, analysis_depth
+	analysis_engine, analysis_depth, met_id
 	FROM analysis WHERE position_id = ?`
 
 const cubeResponseSQL = `UPDATE position SET is_cube_response = 1 WHERE id = ?`
@@ -80,9 +80,10 @@ func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int6
 		stored    storedPlayedColumns
 		storedEng sql.NullString
 		storedDep sql.NullInt64
+		storedMET sql.NullInt64
 	)
 	err := s.db.QueryRowContext(ctx, analysisMergeSelectSQL, positionID).
-		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube, &storedEng, &storedDep)
+		Scan(&data, &stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube, &storedEng, &storedDep, &storedMET)
 	found := err == nil
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return false, fmt.Errorf("sqlite: load analysis for position %d: %w", positionID, err)
@@ -120,10 +121,7 @@ func (s *analysisStore) Merge(ctx context.Context, scope string, positionID int6
 	}
 	// The columns just read decide the match_stats invalidation: the import
 	// path pays no second read for it.
-	statsChanged := !found || !stored.cubeErr.Valid || !stored.bestMoveErr.Valid ||
-		stored.cubeErr.Int64 != c.CubeError || stored.bestMoveErr.Int64 != c.BestMoveEquityError ||
-		stored.forced.Int64 != c.IsForced || stored.closeCube.Int64 != c.IsCloseCube ||
-		storedEng.String != c.AnalysisEngine || storedDep.Int64 != c.AnalysisDepth
+	statsChanged := !found || statsColumnsDiffer(stored, storedEng, storedDep, storedMET, c)
 	return true, s.write(ctx, positionID, merged, c, &statsChanged)
 }
 
@@ -477,20 +475,29 @@ const invalidateMatchStatsOfPositionSQL = sqlshared.InvalidateMatchStatsOfPositi
 // analysisStatsColumnsChange reports whether writing c over positionID's
 // stored analysis changes a column match_stats summarises.
 func analysisStatsColumnsChange(ctx context.Context, tx execer, positionID int64, c engine.AnalysisColumns) (bool, error) {
-	var cubeErr, moveErr, forced, closeCube, depth sql.NullInt64
+	var stored storedPlayedColumns
+	var depth, met sql.NullInt64
 	var eng sql.NullString
-	err := tx.QueryRowContext(ctx, `SELECT cube_error, best_move_equity_error, is_forced, is_close_cube,
-		analysis_engine, analysis_depth FROM analysis WHERE position_id = ?`, positionID).
-		Scan(&cubeErr, &moveErr, &forced, &closeCube, &eng, &depth)
+	err := tx.QueryRowContext(ctx, `SELECT `+sqlshared.ActionLabelSQL("best_cube_action")+`, cube_error, best_move_equity_error,
+		is_forced, is_close_cube, analysis_engine, analysis_depth, met_id FROM analysis WHERE position_id = ?`, positionID).
+		Scan(&stored.bestCube, &stored.cubeErr, &stored.bestMoveErr, &stored.forced, &stored.closeCube, &eng, &depth, &met)
 	if errors.Is(err, sql.ErrNoRows) {
 		return true, nil
 	}
 	if err != nil {
 		return false, fmt.Errorf("sqlite: read analysis columns: %w", err)
 	}
-	return !cubeErr.Valid || !moveErr.Valid || cubeErr.Int64 != c.CubeError || moveErr.Int64 != c.BestMoveEquityError ||
-		forced.Int64 != c.IsForced || closeCube.Int64 != c.IsCloseCube ||
-		eng.String != c.AnalysisEngine || depth.Int64 != c.AnalysisDepth, nil
+	return statsColumnsDiffer(stored, eng, depth, met, c), nil
+}
+
+// statsColumnsDiffer reports whether writing c over a stored analysis changes
+// a column the match_stats rows or their cells summarise: the error columns,
+// the counted flags, engine and depth, the best cube action (a cube cell's
+// key) and met_id, which the upsert clears for a verdict not gammonNet's.
+func statsColumnsDiffer(stored storedPlayedColumns, eng sql.NullString, depth, met sql.NullInt64, c engine.AnalysisColumns) bool {
+	return !stored.cubeErr.Valid || !stored.bestMoveErr.Valid || !stored.equal(c) ||
+		eng.String != c.AnalysisEngine || depth.Int64 != c.AnalysisDepth ||
+		sqlshared.UpsertDropsMET(met.Valid, c.AnalysisEngine)
 }
 
 // withEngineBatch is how many candidate rows WithEngine reads and decodes per

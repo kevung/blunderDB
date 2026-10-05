@@ -197,15 +197,24 @@ const positionUpdateSQL = `UPDATE position SET state = ?,
 // Update overwrites the stored position with the same id as p.
 func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Position) error {
 	cols := engine.PopulatePositionColumns(p)
-	_, err := s.db.ExecContext(ctx, positionUpdateSQL,
-		engine.EncodeBoardState(p.Board),
-		int64(cols.ZobristHash), cols.DecisionType, p.PlayerOnRoll, cols.Dice1, cols.Dice2,
-		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
-		cols.HasJacoby, cols.HasBeaver, cols.MaxCube,
-		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
-		cols.BackCheckers1, cols.BackCheckers2, boolToInt(cols.NoContact), int(cols.GamePhase), int(cols.GameType),
-		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		p.ID)
+	// The rewritten columns (decision type, cube, scores, phase, game type)
+	// are what match_stats and its cells count by: the matches reaching the
+	// position lose their rows in the same transaction.
+	err := withTx(ctx, s.db, func(tx execer) error {
+		if _, err := tx.ExecContext(ctx, positionUpdateSQL,
+			engine.EncodeBoardState(p.Board),
+			int64(cols.ZobristHash), cols.DecisionType, p.PlayerOnRoll, cols.Dice1, cols.Dice2,
+			cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+			cols.HasJacoby, cols.HasBeaver, cols.MaxCube,
+			cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+			cols.BackCheckers1, cols.BackCheckers2, boolToInt(cols.NoContact), int(cols.GamePhase), int(cols.GameType),
+			int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+			p.ID); err != nil {
+			return err
+		}
+		_, err := tx.ExecContext(ctx, invalidateMatchStatsOfPositionSQL, p.ID)
+		return err
+	})
 	if isUniqueViolation(err) {
 		// The edit turned this position into one that is already stored:
 		// the UNIQUE index on zobrist_hash refused it. Say which one.

@@ -15,6 +15,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/mets"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // ErrImportCancelled is returned by CommitImportDatabase when the user cancels
@@ -429,12 +430,11 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, sourceIndividual
 				if met := mets.AfterMerge(merged, existingSide, importedSide); met != 0 {
 					metID = met
 				}
-				encoded, encErr := encodeAnalysisForStorage(merged)
-				if encErr != nil {
-					slog.Warn("encoding merged analysis for position", "positionID", existingPositionID, "err", encErr)
-				} else if _, err = tx.Exec(`UPDATE analysis SET data = ?, analysis_engine = NULL, met_id = ? WHERE position_id = ?`, encoded, metID, existingPositionID); err != nil {
-					slog.Warn("updating analysis for position", "positionID", existingPositionID, "err", err)
-				} else {
+				written, err := saveMergedAnalysis(tx, existingPositionID, merged, metID)
+				if err != nil {
+					return false, err
+				}
+				if written {
 					hasMerged = true
 				}
 			}
@@ -888,4 +888,25 @@ func positionIdentityIndex(q rowQuerier) (map[string]int64, error) {
 		return nil, err
 	}
 	return index, nil
+}
+
+// saveMergedAnalysis writes an imported analysis merged into the stored one.
+// An analysis that cannot be encoded or written is skipped (false, nil), as
+// the rest of the import does; once it is written, the per-match figures of
+// every match reaching the position are stale, and failing to drop them is
+// an error: committing would leave them silently wrong.
+func saveMergedAnalysis(tx *sql.Tx, positionID int64, merged *domain.PositionAnalysis, metID any) (bool, error) {
+	encoded, err := encodeAnalysisForStorage(merged)
+	if err != nil {
+		slog.Warn("encoding merged analysis for position", "positionID", positionID, "err", err)
+		return false, nil
+	}
+	if _, err := tx.Exec(`UPDATE analysis SET data = ?, analysis_engine = NULL, met_id = ? WHERE position_id = ?`, encoded, metID, positionID); err != nil {
+		slog.Warn("updating analysis for position", "positionID", positionID, "err", err)
+		return false, nil
+	}
+	if _, err := tx.Exec(sqlshared.InvalidateMatchStatsOfPositionsSQL+"(?)"+sqlshared.InvalidateMatchStatsOfPositionsSuffix, positionID); err != nil {
+		return false, fmt.Errorf("invalidating match statistics of position %d: %w", positionID, err)
+	}
+	return true, nil
 }

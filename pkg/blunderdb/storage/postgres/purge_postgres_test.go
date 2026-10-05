@@ -115,6 +115,11 @@ func purgeSeedRows(t *testing.T, pool *pgxpool.Pool, tenantID int64) {
 	exec(`INSERT INTO player_alias (tenant_id, alias, canonical) VALUES ($1, 'p', 'p1')`, tenantID)
 	exec(`INSERT INTO event_alias (tenant_id, alias, canonical) VALUES ($1, 'e', 'e1')`, tenantID)
 	exec(`INSERT INTO match_stats (tenant_id, match_id, seat) VALUES ($1, $2, 1)`, tenantID, matchID)
+	exec(`INSERT INTO match_stats_cell (tenant_id, match_id, seat, decision_type, met_id, kind, k1, k2,
+		decisions, error_mp, max_error_mp, blunders, mwc_loss, mwc_decisions, positions)
+		VALUES ($1, $2, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1)`, tenantID, matchID)
+	exec(`INSERT INTO match_stats_position (tenant_id, match_id, seat, position_id, decision_type, met_id)
+		VALUES ($1, $2, 1, $3, 0, 0)`, tenantID, matchID, positionID)
 
 	collectionID := scalar(`INSERT INTO collection (tenant_id, name) VALUES ($1, 'coll') RETURNING id`, tenantID)
 	lessonID := scalar(`INSERT INTO lesson (tenant_id, name) VALUES ($1, 'l') RETURNING id`, tenantID)
@@ -123,6 +128,7 @@ func purgeSeedRows(t *testing.T, pool *pgxpool.Pool, tenantID int64) {
 	exec(`INSERT INTO match_equity_table (tenant_id, name, digest, source) VALUES ($1, 'm', 'd', '<met/>')`, tenantID)
 	exec(`INSERT INTO action_label (tenant_id, label) VALUES ($1, 'Doppel')`, tenantID)
 	exec(`INSERT INTO collection_position (tenant_id, collection_id, position_id) VALUES ($1, $2, $3)`, tenantID, collectionID, positionID)
+	exec(`INSERT INTO study_mark (tenant_id, position_id, marked_at) VALUES ($1, $2, 0)`, tenantID, positionID)
 
 	sessionID := scalar(`INSERT INTO training_session (tenant_id, exercise) VALUES ($1, 'scores') RETURNING id`, tenantID)
 	exec(`INSERT INTO training_item (tenant_id, session_id, number_type) VALUES ($1, $2, 'tp4.last')`, tenantID, sessionID)

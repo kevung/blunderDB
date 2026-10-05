@@ -15,6 +15,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/statsequal"
 )
 
 // demoCopy writes the demo library (three analysed matches) to a temporary file.
@@ -59,6 +60,16 @@ func openQueryOnly(t *testing.T, path string) *Storage {
 	return New(db)
 }
 
+// sameStatsJSON is statsequal.JSON for a test.
+func sameStatsJSON(t *testing.T, a, b string) bool {
+	t.Helper()
+	ok, err := statsequal.JSON(a, b)
+	if err != nil {
+		t.Fatal(err)
+	}
+	return ok
+}
+
 func asJSON(t *testing.T, v any) string {
 	t.Helper()
 	b, err := json.Marshal(v)
@@ -100,6 +111,8 @@ func TestComputeSelectionMatchesDirectReadAndReadOnlyWritesNothing(t *testing.T)
 		{DecisionType: 0, PlayerName: "Iris Okonkwo", MinAnalysisDepth: 2},
 		{DecisionType: -1, MatchLength: []int{5, 7}},
 		{DecisionType: 1, DateFrom: "2000-01-01", DateTo: "2100-01-01", AnalysisEngine: "XG"},
+		{DecisionType: -1, TournamentIDs: []int64{3}},
+		{DecisionType: -1, DateFrom: "2025-05-18", DateTo: "2025-12-31"},
 	}
 	want := make([]string, len(filters))
 	for i, f := range filters {
@@ -123,7 +136,7 @@ func TestComputeSelectionMatchesDirectReadAndReadOnlyWritesNothing(t *testing.T)
 		if err != nil {
 			t.Fatalf("read-only Compute %+v: %v", f, err)
 		}
-		if got := asJSON(t, res); got != want[i] {
+		if got := asJSON(t, res); !sameStatsJSON(t, got, want[i]) {
 			t.Errorf("filter %+v:\n read-only %s\n writable  %s", f, got, want[i])
 		}
 	}

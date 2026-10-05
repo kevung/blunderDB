@@ -206,8 +206,15 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	// match_stats last: it reads the provenance just derived. Missing rows
 	// are the to-do list, so an interrupted fill resumes on the next open,
 	// and an open with every match computed pays one anti-join.
-	if _, err := d.db.ExecContext(ctx, sqlshared.DropOlderShapeMatchStatsSQL); err != nil {
-		return fmt.Errorf("dropping per-match statistics of an older shape: %w", err)
+	// Probed first: an open with nothing to repair writes nothing.
+	var olderShape bool
+	if err := d.db.QueryRowContext(ctx, `SELECT EXISTS (SELECT 1 FROM match_stats WHERE `+sqlshared.OlderShapeMatchStatsPredicate+`)`).Scan(&olderShape); err != nil {
+		return fmt.Errorf("probing per-match statistics of an older shape: %w", err)
+	}
+	if olderShape {
+		if _, err := d.db.ExecContext(ctx, sqlshared.DropOlderShapeMatchStatsSQL); err != nil {
+			return fmt.Errorf("dropping per-match statistics of an older shape: %w", err)
+		}
 	}
 	if _, err := sqlite.New(d.db).Stats().FillMatchStats(ctx, "", func(done, total int) {
 		d.emitMigrationProgress("match_stats", done, total)
