@@ -309,6 +309,35 @@ par `BLUNDERDB_DEBUG=1`.
   des deux moteurs). La copie (≈ 150 s) et la passe MWC (tri complet pour le MWC glissant,
   43 s) sont les deux postes restants.
 
+### 7.2 bis Statistiques globales depuis une table dérivée (branche `feat/stats-derivee`)
+
+Copie `bmab-europe.db` (2.31, 33 319 matchs, 9 852 942 décisions comptées), binaire de `main`
+(`dd8a561d7`) contre celui de la branche ; `list --type stats --format json`, toute la base.
+Poste partagé (charge 7 à 19 : des suites PostgreSQL tournaient en parallèle), une mesure
+chacun ; les durées absolues sont donc flattées en défaveur des deux.
+
+| | Durée | RSS maximal |
+|---|---:|---:|
+| `main` | 728 s | n. m. |
+| branche, passage 1 (remplit `match_stats` et ses cellules) | 744 s | 543 Mo |
+| branche, passage 2 (régime établi) | **29,3 s** | 345 Mo |
+| branche, passage 3 (régime établi) | **28,6 s** | 351 Mo |
+
+- **Mêmes chiffres** : `statsequal.JSON` rend vrai entre `main` et le passage 2, et entre les
+  passages 1 et 3.
+- **Le premier passage** paie le remplissage des 66 638 lignes de `match_stats` et de 3,4 M
+  cellules (phase 0,43 M, type de jeu 0,80 M, score 1,03 M, cube 0,51 M, étiquettes 0,62 M),
+  une fois ; une base importée par la branche les remplit à l'import.
+- **Cible non atteinte** (quelques secondes) : le régime établi reste à ≈ 29 s. Des
+  échantillons de piles le placent dans les parcours de cellules (`cubeFromCells`,
+  `histogramFromCells`, `mwcFromCells`, puis `breakdownsFromCells` pour un tiers du temps) :
+  3,4 M lignes lues à ≈ 120 000 lignes/s, jointes à `match` et `tournament` à chaque passe.
+  Hypothèse à vérifier : le coût est la jointure par cellule (et le `GROUP BY` qui suit), pas
+  le volume ; des cellules pré-agrégées par base ou un parcours unique des cellules partagé par
+  les passes le ramèneraient sous les 10 s.
+- **Restent sur l'ancien chemin** : le filtre moteur (`--engine`) et une connexion en lecture
+  seule, qui lisent les décisions directement.
+
 ### 7.3 Points #4, #10, #2, #9 traités (branche `perf/migration-2-31`)
 
 **Banc.** L'original 2.30 n'existe plus : la seule copie, `run/bmab-europe.db`, est déjà migrée
