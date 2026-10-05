@@ -16,8 +16,8 @@ import (
 )
 
 // prunedIndexes2_30 are the indexes the 2.30.0 schema no longer declares,
-// chosen on the query plans of a real 15.6 M-position library
-// (tasks/search-query-plans.txt). EnsureSchema builds indexes by name and
+// chosen on the query plans of a real 15.6 M-position library, where the
+// planner preferred the table to each of them. EnsureSchema builds indexes by name and
 // never drops one, so the step drops them itself.
 var prunedIndexes2_30 = []string{
 	// decision_type splits the library in two: a filter on it alone ran
