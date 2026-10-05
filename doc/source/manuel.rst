@@ -823,11 +823,11 @@ l'arrêtent sans rien écrire. Le réglage — **Rapide**, **Standard** ou
 
 Le même menu propose **Copier la position et l'analyse**, l'image que copie
 *CTRL-X CTRL-X* : le plateau et le haut de la liste des coups, ou l'analyse de
-videau entière. Dès qu'un coup est sélectionné, l'entrée devient **Copier la
-position et les coups sélectionnés** : l'image ne garde que ces coups, dans
-l'ordre du classement, chacun précédé de son rang parmi tous les candidats et
-avec son écart au meilleur coup de la position, non au meilleur de la
-sélection. Les cellules des tables d'analyse ne se sélectionnent pas comme du
+videau entière. Dès qu'un coup est sélectionné, une seconde entrée, **Copier
+la position et les coups sélectionnés**, s'y ajoute : l'image ne garde que ces
+coups, dans l'ordre du classement, chacun précédé de son rang parmi tous les
+candidats et avec son écart au meilleur coup de la position, non au meilleur
+de la sélection. Sur une décision de videau, seule la première figure. Les cellules des tables d'analyse ne se sélectionnent pas comme du
 texte : les clics de sélection n'y laissent pas de surlignage.
 
 Le résultat est **stocké à côté de l'analyse, jamais à sa place** : une
@@ -3077,6 +3077,18 @@ badges, mène au dépôt du moteur
 `gammonNet <https://github.com/kevung/gammonNet>`_ ; l'attribution complète
 (réseau Strehl, configuration gammonNet) figure dans les Remerciements de
 l'aide.
+
+Le panneau **roule** la position comme le panneau Analyse (voir
+:ref:`rollouts`) : *Ctrl+clic* et *Maj+clic* sélectionnent des coups, le
+clic droit ouvre le même menu — rollout, copie de la position et de
+l'évaluation, ou de la position et des coups sélectionnés —, *r* lance ou
+arrête le rollout et *Échap* l'annule ; une barre fine suit les parties
+jouées, et chaque coup roulé porte son résultat dans la colonne **Rollout**
+(sans dés, sous la décision de videau). Le plateau étant un brouillon, le
+rollout n'est jamais enregistré : il se joue en mémoire, sans base ouverte
+comme sur une base en lecture seule, et son résultat ne s'affiche que tant
+que le plateau reste le même. Un rollout lancé avant une modification du
+plateau ne s'affiche pas sur la nouvelle position.
 
 Le bouton **Ajouter à la base**, en tête de la bande de badges, enregistre
 dans la base la position posée sur le plateau ; *CTRL-S*, la commande ``w``
