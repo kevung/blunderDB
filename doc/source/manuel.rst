@@ -157,8 +157,13 @@ suivantes:
 
 * le **compteur de bibliothèque** — « 412 positions · 38 blunders · 5 matchs »
   — où chaque nombre **ouvre ce qu'il compte** : les positions, la recherche
-  ``E>`` préparée dans la ligne de commande au seuil de la bibliothèque, ou la
-  liste des matchs. Un chiffre qu'on ne peut pas suivre est une décoration. Le
+  ``E>`` au seuil de la bibliothèque (lancée aussitôt, comme si on l'avait
+  saisie, et rangée dans l'historique des recherches), ou la liste des matchs.
+  Quand la liste à l'écran n'est pas la bibliothèque entière (recherche,
+  collection, match), le nombre de blunders s'écrit « 12 / 340 blunders » : les
+  blunders de cette liste, puis ceux de la bibliothèque, au même seuil ; une
+  liste de plus de 20 000 positions n'est pas comptée et garde le seul total.
+  Un chiffre qu'on ne peut pas suivre est une décoration. Le
   seuil des blunders est celui de la bibliothèque, réglé dans l'onglet
   *Bibliothèque* de la configuration et partagé avec les statistiques : deux
   seuils feraient dire deux choses au même mot. Le compteur promet exactement
