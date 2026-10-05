@@ -6170,6 +6170,25 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idsResp"
+  /v1/stats.timeErrors:
+    post:
+      operationId: stats.timeErrors
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/storage_TimeErrorRow"
   /v1/stats.tournamentBadges:
     post:
       operationId: stats.tournamentBadges
@@ -8846,6 +8865,9 @@ components:
     storage_StatsResult:
       type: object
       description: "Opaque: see the Go type storage.StatsResult (defined outside internal/server, not expanded here)."
+    storage_TimeErrorRow:
+      type: object
+      description: "Opaque: see the Go type storage.TimeErrorRow (defined outside internal/server, not expanded here)."
     storage_TournamentBadge:
       type: object
       description: "Opaque: see the Go type storage.TournamentBadge (defined outside internal/server, not expanded here)."

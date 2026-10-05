@@ -256,8 +256,8 @@ func (cli *CLI) writeTimeSummary(sb *strings.Builder, match *Match) {
 		}
 		fmt.Fprintf(sb, "  %s: total %.1f s, checker mean %s, cube mean %s", names[i],
 			float64(p.TotalMS)/1000, mean(p.CheckerTotalMS, p.CheckerCount), mean(p.CubeTotalMS, p.CubeCount))
-		if sum.HasCadence {
-			fmt.Fprintf(sb, ", %d turns over the reserve (%.1f s)", p.OverrunTurns, float64(p.OverrunMS)/1000)
+		if p.OverTime {
+			sb.WriteString(", reserve ran out first")
 		}
 		sb.WriteString("\n")
 	}

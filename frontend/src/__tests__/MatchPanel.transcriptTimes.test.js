@@ -23,8 +23,8 @@ const MOVES = [
 const SUMMARY = {
     has_cadence: true,
     players: [
-        { total_ms: 18200, checker_count: 1, checker_total_ms: 5200, cube_count: 2, cube_total_ms: 13000, unknown: 0, overrun_turns: 2, overrun_ms: 3000 },
-        { total_ms: 0, checker_count: 0, checker_total_ms: 0, cube_count: 0, cube_total_ms: 0, unknown: 2, overrun_turns: 0, overrun_ms: 0 }
+        { total_ms: 18200, checker_count: 1, checker_total_ms: 5200, cube_count: 2, cube_total_ms: 13000, unknown: 0, over_time: true },
+        { total_ms: 0, checker_count: 0, checker_total_ms: 0, cube_count: 0, cube_total_ms: 0, unknown: 2, over_time: false }
     ]
 };
 
@@ -108,11 +108,11 @@ describe('MatchPanel — the Transcript carries the time of every decision', () 
         expect(cells(container)).toEqual(['◇ 1.0 s 5.2 s', '', '12.0 s']);
     });
 
-    test('the summary counts the turns past the reserve, and leaves an unknown mean empty', async () => {
+    test('the summary marks the player whose reserve ran out, and leaves an unknown mean empty', async () => {
         const container = await openTranscript();
         const summary = container.querySelector('[data-testid="match-times"]');
         expect(summary).not.toBeNull();
-        expect(summary.querySelector('[data-testid="overrun-0"]').textContent).toBe('2 (3.0 s)');
+        expect(summary.querySelector('[data-testid="overrun-0"]').textContent).toBe('●');
         const bob = [...summary.querySelectorAll('tbody tr')][1];
         expect([...bob.querySelectorAll('td')].slice(1, 4).map((c) => c.textContent)).toEqual(['', '', '']);
     });

@@ -468,6 +468,14 @@ func (d *Database) GetMatchTimeSummary(matchID int64) (storage.MatchTimeSummary,
 	return d.store.Stats().MatchTimeSummary(context.Background(), "", matchID)
 }
 
+// GetTimeErrors crosses the time taken over decisions with the error they
+// cost, per player and duration band, for the Statistics tab.
+func (d *Database) GetTimeErrors() ([]storage.TimeErrorRow, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().TimeErrors(context.Background(), "")
+}
+
 // GetMatchDetailStats computes per-player statistics for the given match.
 // legacyGetMatchDetailStats is the parity-test reference, pinned against
 // eXtreme Gammon values in TestStatsParity.

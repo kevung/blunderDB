@@ -856,7 +856,9 @@ func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters
 			}
 		}
 		if f.MoveErrorFilter != "" {
-			player1MovesByID, err = loadPlayer1Moves(ctx, s.DB, ids)
+			// With a time filter beside it, the error is that of the plays the
+			// time keeps, not of any play the position was ever given.
+			player1MovesByID, err = loadPlayer1MovesWhere(ctx, s.DB, ids, decisionTimeBounds(f.DecisionTimeFilter, "move"))
 			if err != nil {
 				return nil, errf(s.DB, "search preload player-1 moves", err)
 			}
@@ -948,8 +950,9 @@ func (s *SearchStore) applyGoFilters(ctx context.Context, f domain.SearchFilters
 						return false, nil
 					}
 				}
-			} else if f.MoveErrorFilter != "" && player1MovesByID[pos.ID].plays > 1 {
-				// A multi-played position is scored by its largest error; its
+			} else if f.MoveErrorFilter != "" && (player1MovesByID[pos.ID].plays > 1 || f.DecisionTimeFilter != "") {
+				// A multi-played position is scored by its largest error, and one
+				// beside a time filter by that of the plays the time keeps; its
 				// blob may not have been fetched with the scan, so load it now.
 				if ana == nil {
 					ana = loadAnalysis(ctx, s.DB, pos.ID)

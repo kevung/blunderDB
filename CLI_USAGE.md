@@ -3510,7 +3510,7 @@ Options:
   -tournament string
     	Filter by tournament IDs, comma-separated (stats only)
   -type string
-    	List type: matches, tournaments, positions, moves, analyses, imports, stats, players, tags, study (required)
+    	List type: matches, tournaments, positions, moves, analyses, imports, stats, players, timeerrors, tags, study (required)
 
 Examples:
   # List all matches

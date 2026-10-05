@@ -41,7 +41,7 @@
                             <td>{fmtMean(p.checker_total_ms, p.checker_count)}</td>
                             <td>{fmtMean(p.cube_total_ms, p.cube_count)}</td>
                             {#if summary.has_cadence}
-                                <td data-testid="overrun-{i}">{p.overrun_turns > 0 ? `${p.overrun_turns} (${fmtDuration(p.overrun_ms)})` : '0'}</td>
+                                <td data-testid="overrun-{i}">{p.over_time ? '●' : ''}</td>
                             {/if}
                         </tr>
                     {/if}

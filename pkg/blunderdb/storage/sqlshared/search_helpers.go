@@ -2,6 +2,7 @@ package sqlshared
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"sort"
 	"strings"
@@ -117,12 +118,23 @@ type player1Moves struct {
 // query. A position deduplicated across matches can carry several plays; each
 // list is sorted so results do not depend on map iteration order.
 func loadPlayer1Moves(ctx context.Context, db Execer, positionIDs []int64) (map[int64]player1Moves, error) {
+	return loadPlayer1MovesWhere(ctx, db, positionIDs, "")
+}
+
+// loadPlayer1MovesWhere is loadPlayer1Moves restricted to the moves satisfying
+// cond, a condition on the columns of move: the plays of the rows a time
+// filter keeps, so that an error filter beside it judges those very plays.
+func loadPlayer1MovesWhere(ctx context.Context, db Execer, positionIDs []int64, cond string) (map[int64]player1Moves, error) {
+	suffix := ""
+	if cond != "" {
+		suffix = " AND (" + cond + ")"
+	}
 	checkerSets := make(map[int64]map[string]bool)
 	cubeSets := make(map[int64]map[string]bool)
 	playSets := make(map[int64]map[string]bool)
 	err := forEachIDBatch(ctx, db, positionIDs,
 		`SELECT position_id, checker_move, `+ActionLabelFor(db, "move.cube_action")+` FROM move WHERE player = 1 AND position_id IN `,
-		``,
+		suffix,
 		func(rows Rows) error {
 			var id int64
 			var cm, ca *string
@@ -205,38 +217,38 @@ func multiPlayedSQL(db Execer, scope string) (string, []any) {
 		    OR ` + ActionCodeOrEmptySQL("m1.cube_action") + ` <> ` + ActionCodeOrEmptySQL("m2.cube_action") + `))`, args
 }
 
-// decisionTimeSQL is the `tm` filter as a per-row test: player 1 has a
-// recorded play on the position whose decision took a time inside the bounds
-// (seconds in the filter, milliseconds in the move table). A play whose time
-// is unknown compares as NULL and so never matches, whatever the bound. Empty
-// when the filter carries no readable bound.
-func decisionTimeSQL(db Execer, scope, filter string) (string, []any) {
+// decisionTimeBounds is the `tm` filter as a condition on the duration columns
+// of the move table under alias (seconds in the filter, milliseconds in the
+// table), "" when the filter carries no readable bound. Either duration may
+// satisfy it; a NULL one compares as NULL and never does. The bounds are
+// numbers computed here, so they are written into the text.
+func decisionTimeBounds(filter, alias string) string {
 	lo, hi, hasLo, hasHi := searchfilter.ParseFloatFilterExpr(filter, "tm")
 	if !hasLo && !hasHi {
+		return ""
+	}
+	var ranges []string
+	for _, col := range []string{alias + ".decision_ms", alias + ".cube_decision_ms"} {
+		var parts []string
+		if hasLo {
+			parts = append(parts, fmt.Sprintf("%s >= %d", col, int64(math.Round(lo*1000))))
+		}
+		if hasHi {
+			parts = append(parts, fmt.Sprintf("%s <= %d", col, int64(math.Round(hi*1000))))
+		}
+		ranges = append(ranges, "("+strings.Join(parts, " AND ")+")")
+	}
+	return strings.Join(ranges, " OR ")
+}
+
+// decisionTimeSQL is the `tm` filter as a per-row test: player 1 has a
+// recorded play on the position whose decision took a time inside the bounds.
+func decisionTimeSQL(db Execer, scope, filter string) (string, []any) {
+	cond := decisionTimeBounds(filter, "mt")
+	if cond == "" {
 		return "", nil
 	}
 	tenant, args := db.TenantFilter("mt", scope)
-	var bounds []string
-	for _, col := range []string{"mt.decision_ms", "mt.cube_decision_ms"} {
-		if hasLo {
-			bounds = append(bounds, col+" >= ?")
-		}
-		if hasHi {
-			bounds = append(bounds, col+" <= ?")
-		}
-	}
-	// One parenthesised range per column, either of which may hold.
-	per := len(bounds) / 2
-	rangeOf := func(parts []string) string { return "(" + strings.Join(parts, " AND ") + ")" }
-	cond := rangeOf(bounds[:per]) + " OR " + rangeOf(bounds[per:])
-	for i := 0; i < 2; i++ {
-		if hasLo {
-			args = append(args, int64(math.Round(lo*1000)))
-		}
-		if hasHi {
-			args = append(args, int64(math.Round(hi*1000)))
-		}
-	}
 	return `EXISTS (SELECT 1 FROM move mt WHERE mt.position_id = p.id AND ` + tenant +
 		` AND mt.player = 1 AND (` + cond + `))`, args
 }

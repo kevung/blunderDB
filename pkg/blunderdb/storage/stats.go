@@ -329,19 +329,38 @@ type PlayerTimeSummary struct {
 	CubeCount      int   `json:"cube_count"`
 	CubeTotalMS    int64 `json:"cube_total_ms"`
 	Unknown        int   `json:"unknown"`
-	// OverrunTurns is the number of turns of the clock played after the
-	// player's reserve had run out, OverrunMS the time those turns took beyond
-	// what the reserve could pay. Both zero without a Cadence.
-	OverrunTurns int   `json:"overrun_turns"`
-	OverrunMS    int64 `json:"overrun_ms"`
+	// OverTime is true for the player whose reserve ran out, as the Duel
+	// recorded it in the Match's origin. Only the first to run out is
+	// recorded: the other reads false even if its reserve ran out later.
+	OverTime bool `json:"over_time"`
 }
 
 // MatchTimeSummary is a Match's decision times, per player (index 0 is
 // player 1). HasCadence says the Match was played here under a Cadence, so a
-// zero overrun means "within the reserve" and not "not measured".
+// false OverTime means "did not run out first" and not "not measured".
 type MatchTimeSummary struct {
 	HasCadence bool                 `json:"has_cadence"`
 	Players    [2]PlayerTimeSummary `json:"players"`
+}
+
+// TimeBucketBounds are the upper bounds, in milliseconds, of the first three
+// duration bands of TimeErrorRow.Bucket: under 5 s, 5-15 s, 15-30 s; the
+// fourth is everything longer.
+var TimeBucketBounds = [3]int64{5000, 15000, 30000}
+
+// TimeErrorRow is one player's decisions of one duration band: how many, how
+// many of them the analysis scores, the mean equity they gave up and how many
+// were blunders at the library's threshold. Only decisions with a known
+// duration are counted: an unknown one belongs to no band. A decision without
+// a stored error (unanalysed, or not yet scored by MatchStore.ScoreMoves) is
+// in Decisions and in neither Scored, MeanErrorMP nor Blunders.
+type TimeErrorRow struct {
+	Player      string  `json:"player"`
+	Bucket      int     `json:"bucket"`
+	Decisions   int     `json:"decisions"`
+	Scored      int     `json:"scored"`
+	MeanErrorMP float64 `json:"mean_error_mp"`
+	Blunders    int     `json:"blunders"`
 }
 
 // MatchBadge is the per-player PR/MWC summary shown on each match-list row.
@@ -462,6 +481,11 @@ type StatsStore interface {
 	// counts what overran the Cadence it was played under (match_origin). A
 	// Match with no recorded time gives a summary of unknowns.
 	MatchTimeSummary(ctx context.Context, scope string, matchID int64) (MatchTimeSummary, error)
+
+	// TimeErrors crosses the time a player took over a decision with the error
+	// it cost: one row per player and duration band that holds a decision, the
+	// players named as the Matches name them, the bands in order.
+	TimeErrors(ctx context.Context, scope string) ([]TimeErrorRow, error)
 
 	// MatchBadges returns the per-player PR/MWC badge for the given matches,
 	// keyed by match id. A nil/empty matchIDs computes badges for every match in

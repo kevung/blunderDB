@@ -1494,12 +1494,18 @@ Un clic sur l'en-tête de la colonne trie les coups de chaque partie du plus lon
 au plus court, puis du plus court au plus long, puis rend l'ordre du match ; une
 durée inconnue reste vide et passe en dernier. Au-dessus des parties, un résumé
 donne pour chaque joueur le total, la moyenne par coup de pions et par décision
-de videau, et, si le match a une cadence, le nombre de tours joués après
-l'épuisement de la réserve avec le temps au-delà ; un graphique place la durée
+de videau, et, si le match a une cadence, une marque pour le joueur dont la
+réserve s'est épuisée en premier (le Duel n'enregistre que celui-là) ; un
+graphique place la durée
 de chaque décision au fil du match. En revue, la durée de la décision jouée se
 lit discrètement sous l'analyse. La recherche la filtre avec ``tm>30`` (en
 secondes), qui se combine avec ``E>x`` : ``s tm>30 E>80`` retient les coups
-longuement réfléchis et pourtant faux.
+longuement réfléchis et pourtant faux, la durée et l'erreur étant celles du
+même coup joué. L'onglet Statistiques, sous les erreurs récurrentes, croise
+le temps et l'erreur : pour chaque joueur et chaque tranche de durée connue
+(moins de 5 s, 5 à 15 s, 15 à 30 s, plus de 30 s), le nombre de décisions,
+l'erreur moyenne et la part de blunders. Une décision dont l'erreur n'est pas
+enregistrée est comptée sans entrer dans la moyenne.
 
 L'onglet **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
 le fichier source dit des joueurs et de la session, quand il le dit — un

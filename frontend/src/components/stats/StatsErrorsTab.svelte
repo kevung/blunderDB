@@ -7,6 +7,7 @@
     import Histogram from './charts/Histogram.svelte';
     import { PRIMARY } from './charts/palette.js';
     import StatsRecurringErrors from './StatsRecurringErrors.svelte';
+    import StatsTimeErrors from './StatsTimeErrors.svelte';
 
     /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string }} */
     let { result = null, metric = 'pr', recurring = null, recurringLoading = false, recurringError = null } = $props();
@@ -195,6 +196,7 @@
     <p class="empty-state">{$t('stats.noDecisionsEmpty')}</p>
 {:else}
     <StatsRecurringErrors data={recurring} loading={recurringLoading} error={recurringError} />
+    <StatsTimeErrors />
 
     <!-- ── 1. Cube action breakdown ────────────────────────────────────────── -->
     <section class="chart-section">

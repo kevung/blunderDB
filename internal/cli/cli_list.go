@@ -21,7 +21,7 @@ func (cli *CLI) runList(args []string) error {
 
 	// Define flags
 	dbPath := listCmd.String("db", "", "Path to the database file (required)")
-	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, moves, analyses, imports, stats, players, tags, study (required)")
+	listType := listCmd.String("type", "", "List type: matches, tournaments, positions, moves, analyses, imports, stats, players, timeerrors, tags, study (required)")
 	limit := listCmd.Int("limit", 10, "Maximum number of items to list")
 	offset := listCmd.Int("offset", 0, "Number of positions to skip before listing (positions only)")
 
@@ -187,8 +187,10 @@ func (cli *CLI) runList(args []string) error {
 		}
 		statsProvenance(&filter)
 		return cli.showPlayerTable(filter, *statsFormat)
+	case "timeerrors":
+		return cli.showTimeErrors(strings.ToLower(*statsFormat))
 	default:
-		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', 'moves', 'analyses', 'imports', 'stats', 'players', or 'tags')", *listType)
+		return fmt.Errorf("unknown list type: %s (must be 'matches', 'tournaments', 'positions', 'moves', 'analyses', 'imports', 'stats', 'players', 'timeerrors', or 'tags')", *listType)
 	}
 }
 
@@ -690,4 +692,38 @@ func flagSet(fs *flag.FlagSet, name string) bool {
 		}
 	})
 	return set
+}
+
+// timeBandLabels names the duration bands of storage.TimeErrorRow.Bucket.
+var timeBandLabels = [4]string{"<5 s", "5-15 s", "15-30 s", ">30 s"}
+
+// showTimeErrors prints, per player and duration band, the decisions, the mean
+// error and the blunder rate: the figures of the Statistics tab's time table.
+func (cli *CLI) showTimeErrors(format string) error {
+	rows, err := cli.db.GetTimeErrors()
+	if err != nil {
+		return fmt.Errorf("failed to compute time/error table: %w", err)
+	}
+	if format == "json" {
+		data, err := json.MarshalIndent(rows, "", "  ")
+		if err != nil {
+			return fmt.Errorf("marshal time/error table: %w", err)
+		}
+		fmt.Println(string(data))
+		return nil
+	}
+	if len(rows) == 0 {
+		fmt.Println("No decision with a recorded time.")
+		return nil
+	}
+	fmt.Printf("%-24s %-8s %10s %14s %10s\n", "Player", "Time", "Decisions", "Mean error mp", "Blunders")
+	for _, r := range rows {
+		mean, blunders := "", ""
+		if r.Scored > 0 {
+			mean = fmt.Sprintf("%.1f", r.MeanErrorMP)
+			blunders = fmt.Sprintf("%.1f%%", 100*float64(r.Blunders)/float64(r.Scored))
+		}
+		fmt.Printf("%-24s %-8s %10d %14s %10s\n", r.Player, timeBandLabels[r.Bucket], r.Decisions, mean, blunders)
+	}
+	return nil
 }

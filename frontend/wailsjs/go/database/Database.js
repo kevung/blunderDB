@@ -574,6 +574,10 @@ export function GetMatchDetailStats(arg1) {
   return window['go']['database']['Database']['GetMatchDetailStats'](arg1);
 }
 
+export function GetTimeErrors() {
+  return window['go']['database']['Database']['GetTimeErrors']();
+}
+
 export function GetMatchTimeSummary(arg1) {
   return window['go']['database']['Database']['GetMatchTimeSummary'](arg1);
 }

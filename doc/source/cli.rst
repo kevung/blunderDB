@@ -924,8 +924,12 @@ sortie ``json`` les porte dans l'objet ``match``.
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot,
 voir le Duel), la sortie ``text`` donne la durée de chaque décision, celle du
 videau à part, et la sortie ``summary`` le total et la moyenne de chaque
-joueur ; la sortie ``json`` porte ``decision_ms`` et ``cube_decision_ms``. Une
-durée inconnue n'est pas écrite.
+joueur, avec la marque du joueur dont la réserve s'est épuisée en premier ; la
+sortie ``json`` porte ``decision_ms`` et ``cube_decision_ms``. Une durée
+inconnue n'est pas écrite. ``list --type timeerrors`` donne, par joueur et par
+tranche de durée (moins de 5 s, 5 à 15 s, 15 à 30 s, plus de 30 s), le nombre
+de décisions, l'erreur moyenne et la part de blunders ; ``--format json`` en
+livre les lignes.
 
 .. code-block:: bash
 
