@@ -42,3 +42,15 @@ décision (un gain ou une garde). Rien d'autre.
   application non.
 - **Décision** : aucune règle nouvelle ; un travail éditorial (commentaires, ADR, doc) part sur
   Opus.
+
+### Lot final 0.37.0 — 04/10 → 05/10
+
+- **Relevé** : 1,01 G tokens (147 M pondérés), 96 % de relecture de cache. Huit sessions
+  principales = 10 % du coût, contexte moyen 132k (pire 147k) ; 212 sous-agents = 90 %.
+  Cinq ouvriers au-delà de 150 appels = 12 % ; `Agent()` sans modèle 0 ; contexte fixe 31k ;
+  commentaires 22 % des octets du code.
+- **Écart** : le contexte moyen, le modèle explicite et le contexte fixe tiennent leur cible.
+  `sleep` 57 au lieu de 0, le plafond d'appels 12 % au lieu de 10 %, les commentaires 22 % au
+  lieu de 20 % : le hook ne tient pas tout.
+- **Décision** : aucune règle nouvelle ; à la prochaine passe, chercher d'où viennent les
+  `sleep` (ouvriers de mesure longue, attentes de CI) avant de durcir `budget.py`.
