@@ -3,6 +3,7 @@ package duel
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
@@ -26,6 +27,10 @@ type Decision struct {
 	Side     int             `json:"side"`
 	Kind     DecisionKind    `json:"kind"`
 	Position domain.Position `json:"position"`
+	// Since is when the Arbiter handed the Decision to the Side: the instant
+	// a Cadence starts the Side's clock from (ADR-0073). On a resumed Duel it
+	// is the instant of the resumption, the clocks having stood still.
+	Since time.Time `json:"since"`
 }
 
 // PlayKind is what a Side does.
@@ -48,6 +53,10 @@ type Play struct {
 	Kind  PlayKind             `json:"kind"`
 	Steps []domain.CheckerStep `json:"steps,omitempty"`
 	Level int                  `json:"level,omitempty"`
+	// At is when the Arbiter received the Play — the instant a Cadence
+	// stops the Side's clock at. The Arbiter stamps it; a Side's own value
+	// is overwritten.
+	At time.Time `json:"-"`
 }
 
 // Side is one of the two players of a Duel, as the Arbiter sees it: something

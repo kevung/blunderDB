@@ -149,6 +149,7 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 	if err != nil {
 		return nil, err
 	}
+	g.now = s.opts.Now
 	sides, err := s.sides(g.doc.Sides)
 	if err != nil {
 		return nil, err
@@ -219,6 +220,7 @@ func (s *Service) Play(ctx context.Context, scope string, id, revision int64, p 
 	if revision != 0 && revision != row.Revision {
 		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
 	}
+	p.At = s.opts.Now()
 	if err := g.play(p); err != nil {
 		return nil, err
 	}
@@ -276,11 +278,9 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 	}
 
 	parts := g.parts()
-	moves := 0
-	for _, mv := range parts.Moves {
-		moves += len(mv)
-	}
-	if moves == 0 {
+	// A game counts once an Action was played in it, a resignation included,
+	// which writes no Move.
+	if len(parts.Games) == 0 {
 		return nil, fmt.Errorf("duel %d: nothing played to keep: %w", row.ID, storage.ErrInvalid)
 	}
 	header := *parts.Match
@@ -354,6 +354,7 @@ func (s *Service) load(ctx context.Context, scope string, id int64) (*storage.Du
 	if err != nil {
 		return nil, nil, fmt.Errorf("duel %d: %w", id, err)
 	}
+	g.now = s.opts.Now
 	return row, g, nil
 }
 
@@ -388,6 +389,10 @@ func label(h transcript.Header) string {
 }
 
 func state(row *storage.Duel, g *game) *State {
+	awaiting := g.awaiting()
+	if awaiting != nil {
+		awaiting.Since = g.clock()
+	}
 	return &State{
 		ID:          row.ID,
 		Revision:    row.Revision,
@@ -398,6 +403,6 @@ func state(row *storage.Duel, g *game) *State {
 		Actions:     append([]transcript.Action(nil), g.doc.Actions...),
 		Games:       g.m.Games(),
 		Score:       g.m.Score(),
-		Awaiting:    g.awaiting(),
+		Awaiting:    awaiting,
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
@@ -54,6 +55,8 @@ type document struct {
 // game is a Duel in memory: its document, its seed, and the rule machine the
 // document's Actions lead to, with what each Action derived.
 type game struct {
+	// now stamps the Decisions handed out and the Plays received.
+	now   func() time.Time
 	doc   document
 	seed  string
 	m     transcript.Machine
@@ -266,15 +269,25 @@ func (g *game) settle(ctx context.Context, sides [2]Side) error {
 				continue
 			}
 		}
+		d.Since = g.clock()
 		p, ok, err := sides[d.Side].Decide(ctx, *d)
 		if err != nil || !ok {
 			return err
 		}
+		p.At = g.clock()
 		if err := g.play(p); err != nil {
 			return fmt.Errorf("player %d's side: %w", d.Side+1, err)
 		}
 	}
 	return nil
+}
+
+// clock is the game's now, the zero time when it has none.
+func (g *game) clock() time.Time {
+	if g.now == nil {
+		return time.Time{}
+	}
+	return g.now()
 }
 
 // parts is the Match the Duel has become so far. A game begun but not played

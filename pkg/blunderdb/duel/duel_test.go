@@ -422,3 +422,30 @@ func TestDuelMatchStaysClosed(t *testing.T) {
 		t.Errorf("reopening a Duel's Match as a Transcription: got %v, want ErrInvalid", err)
 	}
 }
+
+// TestDuelResignationBeforeAnyMove: at double match point, player 1 resigns
+// before any checker is moved; the match is won, and its Match is written
+// with the one game and its winner, though the game holds no Move.
+func TestDuelResignationBeforeAnyMove(t *testing.T) {
+	ctx := context.Background()
+	st := newStore(t)
+	svc := newService(t, st, 6)
+	start := &domain.Position{Board: transcript.InitialBoard(), Cube: domain.Cube{Owner: domain.None},
+		Score: [2]int{0, 0}, PlayerOnRoll: domain.Black}
+	start.Board.Points[24].Checkers, start.Board.Points[23].Checkers = 1, 1
+	start.Board.Points[23].Color = domain.Black
+	s, err := svc.Create(ctx, "", Settings{MatchLength: 5, Start: start, Sides: [2]SideSpec{external("A"), external("B")}})
+	if err != nil || s.Awaiting == nil {
+		t.Fatalf("Create at DMP: %+v, %v", s, err)
+	}
+	if s, err = svc.Play(ctx, "", s.ID, s.Revision, Play{Side: s.Awaiting.Side, Kind: PlayResign, Level: 1}); err != nil {
+		t.Fatalf("resign: %v", err)
+	}
+	if s.Ended == nil || s.Ended.MatchID == 0 || s.Ended.StoppedEarly {
+		t.Fatalf("a resigned match point ends into a Match: %+v", s.Ended)
+	}
+	games, err := gamesOf(st, s.Ended.MatchID)
+	if err != nil || len(games) != 1 || games[0].Winner != domain.WinnerPlayer2 || games[0].PointsWon != 1 {
+		t.Errorf("games = %+v, %v; player 2 wins the resigned game", games, err)
+	}
+}
