@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/kevung/blunderdb/internal/cputime"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
@@ -92,9 +93,9 @@ func TestTranscriptionRollLatencyPerKeystroke(t *testing.T) {
 	best := time.Duration(1<<63 - 1)
 	plays := 0
 	for i := 0; i < 5; i++ {
-		start := time.Now()
+		clock := cputime.Start()
 		plays = rankRoll(t, app, pos, [2]int{3, 1})
-		if e := time.Since(start); e < best {
+		if e := clock.Elapsed(); e < best {
 			best = e
 		}
 	}
@@ -106,8 +107,9 @@ func TestTranscriptionRollLatencyPerKeystroke(t *testing.T) {
 
 // TestTranscriptionBoardPlayLatency guards a play made at the board with no
 // dice typed: `loadBoardPlay` asks domain.LegalMoves for all 21 rolls, with no
-// ranking. Ceiling: twice ux.md §7's 30 ms, as ~5 ms of work reached 19 ms
-// under load.
+// ranking. Ceiling: twice ux.md §7's 30 ms. Measured in process CPU time, the
+// best of several tries: a shared runner's scheduler stalls land in a wall
+// clock, not in the work.
 func TestTranscriptionBoardPlayLatency(t *testing.T) {
 	const ceiling = 60 * time.Millisecond
 
@@ -117,14 +119,14 @@ func TestTranscriptionBoardPlayLatency(t *testing.T) {
 	best := time.Duration(1<<63 - 1)
 	plays := 0
 	for i := 0; i < 5; i++ {
-		start := time.Now()
+		clock := cputime.Start()
 		plays = 0
 		for _, roll := range rolls {
 			p := pos
 			p.Dice = roll
 			plays += len(domain.LegalMoves(&p))
 		}
-		if e := time.Since(start); e < best {
+		if e := clock.Elapsed(); e < best {
 			best = e
 		}
 	}
