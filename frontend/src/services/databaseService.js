@@ -19,6 +19,7 @@ import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, cl
 import { searchEmptyStore } from '../stores/searchParamsStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, hideAnkiAnswer } from '../stores/ankiStore.js';
 import { clearTranscription, bumpTranscriptionLibrary } from '../stores/transcriptionStore.js';
+import { forgetDuel } from './duelService.js';
 import { resetLessonStores } from '../stores/lessonStore.js';
 import { logger } from '../utils/logger.js';
 // NOTE: these UI messages are translated at emission time via the non-reactive
@@ -65,6 +66,8 @@ function resetTranscriptionStores() {
     clearTranscription();
     // The same goes for a Lesson being read: its step ids belong to one file.
     resetLessonStores();
+    // And for a Duel: the backend has put it in suspense with the library it belongs to.
+    forgetDuel();
 }
 
 function resetAnalysisAndCommentStores() {

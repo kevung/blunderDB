@@ -20,8 +20,10 @@
         togglePipcount,
         loadRandomPosition,
         reloadAllPositions,
-        showTrainingPanel
+        showTrainingPanel,
+        showDuelPanel
     } from '../services/positionService.js';
+    import { duelHoldsBoardStore } from '../stores/duelStore.js';
     import { toggleHelpModal } from '../services/keyboardService.js';
 
     const toggleConfig = () => toggleModal(MODAL.CONFIG);
@@ -39,7 +41,8 @@
 </script>
 
 <!--// https://heroicons.com/-->
-<div class="toolbar" data-tour="toolbar">
+<!-- Un Duel tient le plateau : seuls Jouer, la Pile et l'aide restent (ADR-0072 règle 9). -->
+<div class="toolbar" class:duel-locked={$duelHoldsBoardStore} data-tour="toolbar">
     <button
         onclick={(e) => {
             e.stopPropagation();
@@ -233,6 +236,7 @@
     </button>
 
     <button
+        class="duel-keep"
         class:active={$onPileStore}
         onclick={(e) => {
             e.stopPropagation();
@@ -409,6 +413,21 @@
     </button>
 
     <button
+        class="duel-keep"
+        onclick={(e) => {
+            e.stopPropagation();
+            showDuelPanel();
+        }}
+        aria-label={$t('toolbar.duel')}
+        title="{$t('toolbar.duel')} {toolbarHint('duel', $t)}"
+        data-testid="toolbar-duel"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+        </svg>
+    </button>
+
+    <button
         onclick={(e) => {
             e.stopPropagation();
             copyBoardImage(e);
@@ -464,6 +483,7 @@
     </button>
 
     <button
+        class="duel-keep"
         data-tour="help"
         onclick={(e) => {
             e.stopPropagation();
@@ -525,6 +545,11 @@
 
     .toolbar button:hover {
         background-color: color-mix(in srgb, var(--color-text) 10%, var(--color-surface-alt));
+    }
+
+    .toolbar.duel-locked button:not(.duel-keep) {
+        pointer-events: none;
+        opacity: 0.5;
     }
 
     .toolbar button:disabled {

@@ -69,7 +69,10 @@ export const MODE = Object.freeze({
     // The Transcription tab (ADR-0045). A scratch mode like EDIT and EVAL: the
     // board shows the Action the Cursor is on, which belongs to a draft and
     // not to the library.
-    TRANSCRIBE: 'TRANSCRIBE'
+    TRANSCRIBE: 'TRANSCRIBE',
+    // A Duel is being played (ADR-0072): the board belongs to the Arbiter, the
+    // library is not browsed, nothing is edited, the engine is silent.
+    DUEL: 'DUEL'
 });
 
 const NO_MATCH_CONTEXT = Object.freeze({
@@ -108,10 +111,11 @@ const NO_MATCH_CONTEXT = Object.freeze({
 /**
  * Annotated because every slot starts `null`, which the checker would infer.
  *
- * @type {{beforeTranscribe: any, beforeEval: any, beforeEdit: any, beforeSubSearch: any, evalSeed: any, lastEvalBoard: any}}
+ * @type {{beforeTranscribe: any, beforeDuel: any, beforeEval: any, beforeEdit: any, beforeSubSearch: any, evalSeed: any, lastEvalBoard: any}}
  */
 const savedContext = {
     beforeTranscribe: null,
+    beforeDuel: null,
     beforeSubSearch: null,
     beforeEval: null,
     beforeEdit: null,
@@ -667,6 +671,49 @@ export async function exitTranscribeMode() {
         currentPositionIndexStore.set(saved.positionIndex);
         // Through showPosition, not a bare set: the analysis panel is
         // repopulated on the way back, as it is on the way out of EVAL.
+        await showPosition(saved.position);
+    }
+}
+
+// ── DUEL (a Duel is open) ────────────────────────────────────────────────────
+
+/**
+ * Any mode → DUEL. Tied to the open Duel, not to a tab: a Duel is played with
+ * its tab folded. Photographs what was studied, as Transcribe does.
+ */
+export async function enterDuelMode() {
+    if (currentMode() === MODE.DUEL) return;
+    if (currentMode() === MODE.EDIT) await exitEditMode();
+    if (currentMode() === MODE.EVAL) await exitEvalMode();
+    if (currentMode() === MODE.TRANSCRIBE) await exitTranscribeMode();
+
+    savedContext.beforeDuel = {
+        ...photographStudiedMode(),
+        position: get(positionStore) ? { ...get(positionStore) } : null,
+        positionIndex: get(currentPositionIndexStore),
+        list: positionsStore.snapshotList()
+    };
+    statusBarModeStore.set(MODE.DUEL);
+}
+
+/**
+ * DUEL → the mode it was entered from. `restoreBoard` false leaves the board
+ * to whoever opens next (the Matchs tab on the Match the Duel became).
+ * @param {{restoreBoard?: boolean}} [options]
+ */
+export async function exitDuelMode({ restoreBoard = true } = {}) {
+    if (currentMode() !== MODE.DUEL) return;
+    const saved = savedContext.beforeDuel;
+    savedContext.beforeDuel = null;
+    returnToStudiedMode(saved);
+    if (!restoreBoard) return;
+    if (!saved?.list) {
+        loadAllPositions({ focusId: saved?.position?.id ?? null });
+        return;
+    }
+    positionsStore.restoreList(saved.list);
+    if (saved.position) {
+        currentPositionIndexStore.set(saved.positionIndex);
         await showPosition(saved.position);
     }
 }

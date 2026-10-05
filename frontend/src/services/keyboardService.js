@@ -7,6 +7,7 @@ import { selectedMoveStore } from '../stores/analysisStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { isLetter, isShiftLetter, isBareLetter } from '../utils/keys.js';
 import { togglePile } from './pileService.js';
+import { duelKeyGuard } from './duelService.js';
 import { directionOwnsKey, directionTabKey, directionLeavesToPage, directionSearchKey } from './directionKeys.js';
 import { directionFullscreenKey, toggleDirectionFullscreen } from './directionFullscreen.js';
 import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
@@ -25,6 +26,7 @@ import {
     toggleMetadataPanel,
     toggleAnkiPanel,
     toggleTrainingPanel,
+    toggleDuelPanel,
     toggleCollectionPanelAction,
     toggleMatchPanel,
     toggleTournamentPanel,
@@ -196,6 +198,10 @@ export function handleKeyDown(event) {
     const letter = (ch) => isLetter(event, ch);
 
     if (get(isAnyModalOpen)) return;
+
+    // A Duel holds the keyboard as it holds the board (ADR-0072 rule 9): the Pile, the pipcount,
+    // help and its own tab pass, Enter validates the move, everything else stops here.
+    if (duelKeyGuard(event)) return;
 
     // An open context menu owns the arrows (its own handler moves between items): they must
     // never browse the board behind it, on the Direction page or off it.
@@ -475,6 +481,9 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('y')) {
         event.preventDefault();
         toggleTournamentPanel();
+    } else if (event.ctrlKey && !event.shiftKey && letter('h')) {
+        event.preventDefault();
+        toggleDuelPanel();
     } else if (event.ctrlKey && !event.shiftKey && letter('d')) {
         // Sans MAJ seulement : CTRL-MAJ-D ne doit pas retomber sur Stats.
         event.preventDefault();

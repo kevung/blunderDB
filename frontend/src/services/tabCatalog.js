@@ -18,6 +18,8 @@ export const TABS = Object.freeze([
     // l'Entraînement fait travailler ce qui se CALCULE.
     { id: 'training', labelKey: 'tabbedPanel.training', icon: 'training', shortcut: 'Ctrl+J' },
     { id: 'anki', labelKey: 'tabbedPanel.anki', icon: 'anki', shortcut: 'Ctrl+K' },
+    // Duel après Anki : jouer un match entier contre le Bot (ADR-0072).
+    { id: 'duel', labelKey: 'tabbedPanel.duel', icon: 'duel', shortcut: 'Ctrl+H' },
     { id: 'stats', labelKey: 'tabbedPanel.stats', icon: 'stats', shortcut: 'Ctrl+D' },
     { id: 'transcription', labelKey: 'tabbedPanel.transcription', icon: 'transcription', shortcut: 'Ctrl+Maj+T' },
     { id: 'metadata', labelKey: 'tabbedPanel.metadata', icon: 'metadata', shortcut: 'Ctrl+M' }

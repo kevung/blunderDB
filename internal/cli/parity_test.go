@@ -60,6 +60,8 @@ const (
 	// `export --type mat` renders the other object; a script reads it from
 	// `call transcriptions.exportMat`.
 	whyTranscriptionMAT = whyTranscription
+	whyDuelGated        = "the daemon's Duel routes are served only under --duel (ADR-0072 rule 11), outside Paths()"
+	whyDuelClock        = "a Duel driven by the CLI has neither Cadence nor clock: each call is its own process (ADR-0072 rule 11), so suspending, resuming and flagging are the daemon's, whose process holds the open Duel"
 	whyResumeOffer      = "the offer the desktop makes when a library is opened: a transcribed match whose targeted batch was cut short (ADR-0045 §8). Nothing is stored for it, so the fact exists only at the moment someone opens the library, which is a question only an interactive session asks. The other two modes have the DEED without the offer — `analyze --match` finishes exactly that batch, and a client of the daemon reads `toAnalyze` from transcriptions.finish"
 	whyPureDomain       = "a pure function of the domain, no storage behind it: the GUI and the CLI import the package and call it in Go, only an HTTP client needs it as a route"
 	whyTransport        = "a shape that exists because the transport is HTTP: a streamed JSON exchange, or cancelling a job that has no process to signal"
@@ -129,8 +131,7 @@ var serverOnly = map[string]string{
 
 	// The Duel is the duel.Service's over the storage contract, not a Database
 	// method; the CLI reaches it through `duel list` and `duel show`.
-	"/v1/duels.get":  whyDuelService,
-	"/v1/duels.list": whyDuelService,
+	"/v1/duels.get": whyDuelService,
 
 	// Backend-specific, and the wrapper is SQLite-only.
 	"/ops/tenant.purge": whyPostgresOnly,
@@ -261,6 +262,14 @@ var databaseParity = map[string]parityEntry{
 	"GetTournamentMatches":              {CLI: "list --type tournaments", Server: "/v1/tournaments.matches"},
 	"ExplainDecision":                   {Server: "/v1/positions.explain", Why: whyExplain},
 	"ListTranscriptions":                {Server: "/v1/transcriptions.list", Why: whyTranscription},
+	"ListDuels":                         {CLI: "duel list", Server: "/v1/duels.list"},
+	"CreateDuel":                        {CLI: "duel create", Why: whyDuelGated},
+	"OpenDuel":                          {Why: whyDuelClock + "; " + whyDuelGated},
+	"SuspendDuel":                       {Why: whyDuelClock + "; " + whyDuelGated},
+	"FlagDuel":                          {Why: whyDuelClock + "; " + whyDuelGated},
+	"PlayDuel":                          {CLI: "duel move", Why: whyDuelGated},
+	"StopDuel":                          {CLI: "duel stop", Why: whyDuelGated},
+	"DuelOffer":                         {Why: "the creation form's choices; the CLI's and the daemon's create refuse an unknown level or Cadence with the list, and `duel create --help` states them"},
 	"CreateTranscription":               {Server: "/v1/transcriptions.create", Why: whyTranscription},
 	"OpenTranscription":                 {Server: "/v1/transcriptions.open", CLI: "transcribe --draft", Why: whyTranscription},
 	"CloseTranscription":                {Server: "/v1/transcriptions.close", Why: whyTranscription},

@@ -160,6 +160,8 @@ export function processCommand(command) {
         callbacks.onTraining?.(command.slice('train '.length).trim());
     } else if (command === 'train') {
         callbacks.onTraining?.('');
+    } else if (command === 'duel') {
+        callbacks.onDuel?.();
     } else if (command === 'tp2_last') {
         openModal(MODAL.TAKE_POINT_2_LAST);
     } else if (command === 'tp2_live') {

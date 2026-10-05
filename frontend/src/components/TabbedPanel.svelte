@@ -29,6 +29,7 @@
     import EvalPanel from './EvalPanel.svelte';
     import AnkiPanel from './AnkiPanel.svelte';
     import TrainingPanel from './TrainingPanel.svelte';
+    import DuelPanel from './DuelPanel.svelte';
     import TranscriptionPanel from './TranscriptionPanel.svelte';
 
     // Props passed through to panels
@@ -300,6 +301,12 @@
                         />
                     {:else if tab.icon === 'training'}
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    {:else if tab.icon === 'duel'}
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z"
+                        />
                     {:else if tab.icon === 'anki'}
                         <path
                             stroke-linecap="round"
@@ -360,6 +367,8 @@
             <AnkiPanel />
         {:else if $activeTabStore === 'training'}
             <TrainingPanel />
+        {:else if $activeTabStore === 'duel'}
+            <DuelPanel />
         {:else if $activeTabStore === 'matches'}
             <MatchPanel />
         {:else if $activeTabStore === 'tournaments'}

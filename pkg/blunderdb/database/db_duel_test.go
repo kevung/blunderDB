@@ -3,6 +3,7 @@ package database
 import (
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 )
 
@@ -52,5 +53,21 @@ func TestDuelFacade_CloseSuspends(t *testing.T) {
 	list, err := db.ListDuels()
 	if err != nil || len(list) != 1 || list[0].Open {
 		t.Fatalf("after forgetDuels: %+v, %v; want the Duel in suspense", list, err)
+	}
+}
+
+// The form's « score seul » Start: the opening position at a chosen away score, no roll on it.
+func TestDuelFacade_StartAtScore(t *testing.T) {
+	db := newTestDB(t)
+	start := domain.InitializePosition()
+	start.Dice = [2]int{}
+	start.Score = [2]int{2, 5}
+	sides := [2]duel.SideSpec{{Kind: duel.SideExternal, Name: "A"}, {Kind: duel.SideExternal, Name: "B"}}
+	st, err := db.CreateDuel(duel.Settings{MatchLength: 5, Start: &start, Sides: sides})
+	if err != nil {
+		t.Fatalf("CreateDuel at a score: %v", err)
+	}
+	if st.State.Score != [2]int{3, 0} || st.State.Awaiting == nil {
+		t.Fatalf("score %v, awaiting %+v; want 3-0 and a decision", st.State.Score, st.State.Awaiting)
 	}
 }

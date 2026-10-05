@@ -3,6 +3,8 @@
     import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore, dbMutationCounterStore, activeTabStore } from '../stores/uiStore';
     import { libraryCountsStore, refreshLibraryCounts, formatCount } from '../stores/libraryCountsStore.js';
     import { databasePathStore } from '../stores/databaseStore';
+    import { duelHoldsBoardStore, duelStore } from '../stores/duelStore.js';
+    import DuelClocks from './DuelClocks.svelte';
     import { loadAllPositions } from '../services/positionService.js';
     import { watchImportNoticeStore } from '../stores/watchStore.js';
     import { transcriptionResumeStore, refreshTranscriptionResume, resumeTranscriptionAnalysis, dismissTranscriptionResume } from '../services/transcriptionSave.js';
@@ -302,6 +304,10 @@
             <button type="button" class="transcription-resume-action" onclick={resumeTranscriptionAnalysis}>{$t('transcription.resumeAnalysisFinish')}</button>
             <button type="button" class="transcription-resume-action" onclick={dismissTranscriptionResume}>{$t('common.close')}</button>
         </span>
+    {/if}
+    <!-- Score et horloges du Duel, visibles l'onglet replié (ADR-0073). -->
+    {#if $duelHoldsBoardStore}
+        <span class="duel-chip"><DuelClocks duel={$duelStore.state} compact /></span>
     {/if}
     {#if gammonNetBatch}
         <span class="gammonnet-batch-chip" title={$t('eval.batchProgress', { done: gammonNetBatch.done, total: gammonNetBatch.total })}>
