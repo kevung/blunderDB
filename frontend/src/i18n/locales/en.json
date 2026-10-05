@@ -2941,6 +2941,7 @@
         "delayLeft": "Delay {s} s",
         "gestures": "Duel gestures",
         "botPlaying": "The Bot is playing…",
+        "fingerprintTitle": "Seed fingerprint: {fingerprint} — the seed revealed at the end of the Match must hash back to it",
         "double": "Double",
         "awaitAnswer": "The Bot doubles: take or pass?",
         "take": "Take",

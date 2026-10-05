@@ -2941,6 +2941,7 @@
         "delayLeft": "Viive {s} s",
         "gestures": "Kaksintaistelun toiminnot",
         "botPlaying": "Botti pelaa…",
+        "fingerprintTitle": "Siemenen sormenjälki: {fingerprint} — Matchin lopussa paljastettavan siemenen on tiivistyttävä tähän",
         "double": "Tuplaa",
         "awaitAnswer": "Botti tuplaa: ota vastaan vai luovuta?",
         "take": "Ota vastaan",

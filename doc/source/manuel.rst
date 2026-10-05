@@ -4028,7 +4028,7 @@ ligne qui dit ce qui est attendu, et « Suspendre », « Arrêter et garder »,
 « Arrêter et jeter ». Le score et le videau sont ceux du plateau ; le score et
 les horloges restent dans la barre d'état quand l'onglet est replié.
 L'empreinte SHA-256 du germe des dés, publiée par l'Arbitre dès la création,
-se lit avec le germe dans l'origine du Match terminé. Le plateau
+se lit dans l'infobulle de la ligne d'invite du panneau, puis avec le germe dans l'origine du Match terminé. Le plateau
 passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
 panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait —
 aucune évaluation, aucun candidat. Seules restent la Pile (``B``), le

@@ -47,7 +47,8 @@
         {/if}
 
         <!-- Les gestes du jeu sont au plateau ; ici, ce qui est attendu, en une ligne. -->
-        <p class="prompt" data-testid="duel-hint">
+        <!-- Published before the first roll (ADR-0072 rule 8): the seed revealed with the Match must hash back to it; shown as a tooltip only. -->
+        <p class="prompt" data-testid="duel-hint" title={duel.fingerprint ? $t('duel.fingerprintTitle', { fingerprint: duel.fingerprint }) : undefined}>
             {#if $duelAnimatingStore || (awaiting && !mine)}
                 {$t('duel.botPlaying')}
             {:else if awaiting?.kind === 'cube'}

@@ -93,11 +93,12 @@ describe('DuelPanel', () => {
         expect(getByText('The Bot is playing…')).toBeTruthy();
     });
 
-    test('neither the seed’s fingerprint nor the score is repeated in the panel', async () => {
+    test('the seed’s fingerprint is a tooltip, not text, and the score is not repeated', async () => {
         openDuel({ side: 0, kind: 'cube', position: { cube: { value: 1 } } });
         const { container, queryByTestId } = render(DuelPanel);
         await tick();
         expect(container.textContent).not.toContain('ab12cd34');
+        expect(queryByTestId('duel-hint').getAttribute('title')).toContain('ab12cd34');
         // Without a Cadence there is no clock line, so no score either.
         expect(queryByTestId('duel-clocks')).toBeNull();
     });
