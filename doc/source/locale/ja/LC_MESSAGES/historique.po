@@ -101,8 +101,8 @@ msgid "**Le Duel** : un match entier se joue contre le Bot, qui joue la politiqu
 msgstr "\\ **デュエル**\\ ：blunderDB の審判のもと、gammonNet の方策で打つボットを相手にマッチ全体を対局します。サイコロは作成時に SHA-256 の指紋が公開されるシードから引かれ、ルール、スコア、時計はアプリケーションが管理します。デュエルタブ、ツールバーの « Jouer » ボタン、DUEL モードを備え、1〜25 ポイントのマッチまたはマネーセッション、初期局面・盤上の局面・選んだスコアからの開始、中断と再開に対応します。\\ ``blunderdb duel``\\ とサーバーの ``duels.*`` ルートが、他の二つの形態です。"
 
 #: ../../source/historique.rst:39
-msgid "**Le Duel se joue au plateau** : un clic sur les dés les lance, intervertit leur ordre ou valide le coup, un clic sur le videau propose de doubler, un clic sur un pion le joue, et le clic droit reprend le coup en cours ou ouvre le menu du Duel (Pile, abandon, suspension, arrêt)."
-msgstr "\\ **デュエルは盤上で打ちます**\\ ：サイコロのクリックで振る・順序を入れ替える・手を確定する、キューブのクリックでダブルを提案する、チェッカーのクリックでそれを動かす、右クリックで進行中の手を取り消すかデュエルのメニュー（パイル、投了、中断、終了）を開く、という操作です。"
+msgid "**Le Duel se joue au plateau** : avant le lancer, un clic sur le plateau ou sur les dés les lance et un clic sur le videau propose de doubler ; un clic sur un pion le joue, un clic sur les dés intervertit leur ordre ou valide le coup, comme *ENTRÉE* ou *ESPACE*, et le clic droit reprend le coup en cours ou ouvre le menu du Duel (Pile, abandon, suspension, arrêt)."
+msgstr "\\ **デュエルは盤上で打ちます**\\ ：振る前は、盤かサイコロのクリックで振り、キューブのクリックでダブルを提案します。チェッカーのクリックでそれを動かし、サイコロのクリックで順序を入れ替えるか、\\ *ENTER*\\ や\\ *SPACE*\\ と同じく手を確定します。右クリックは進行中の手を取り消すか、デュエルのメニュー（パイル、投了、中断、終了）を開きます。"
 
 #: ../../source/historique.rst:40
 msgid "**La Cadence et la durée de décision** : une réserve par joueur et un délai gratuit à chaque tour, le temps écoulé étant noté ou faisant perdre le match. Chaque décision d'un Duel porte sa durée, que la revue affiche (colonne *Durée*, résumé par joueur, graphique), que la recherche filtre avec ``tm>x``, combinable avec ``E>x``, et que l'onglet Statistiques croise avec l'erreur."
