@@ -2,6 +2,8 @@
     import { onDestroy, tick } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore, dbMutationCounterStore, activeTabStore } from '../stores/uiStore';
     import { libraryCountsStore, refreshLibraryCounts, formatCount } from '../stores/libraryCountsStore.js';
+    import { listBlunderCountStore, refreshListBlunderCount } from '../stores/listBlunderCountStore.js';
+    import { processCommand } from '../commandProcessor.js';
     import { databasePathStore } from '../stores/databaseStore';
     import { duelHoldsBoardStore, duelStore } from '../stores/duelStore.js';
     import DuelClocks from './DuelClocks.svelte';
@@ -97,8 +99,8 @@
     });
 
     /**
-     * Chaque nombre ouvre ce qu'il compte ; « Blunders » passe par la ligne de
-     * commande (`E>` au seuil de la bibliothèque), visible de l'utilisateur.
+     * Chaque nombre ouvre ce qu'il compte ; « Blunders » lance la recherche `E>` au seuil
+     * de la bibliothèque par le même chemin que la ligne de commande (historique compris).
      * @param {'positions'|'blunders'|'matches'} what
      */
     async function showLibrary(what) {
@@ -107,14 +109,21 @@
             return;
         }
         if (what === 'blunders') {
-            commandTextStore.set(`s E>${$libraryCountsStore?.blunderThresholdMP ?? 100}`);
-            showCommandInputStore.set(true);
-            await tick();
-            inputEl?.focus();
+            processCommand(`s E>${$libraryCountsStore?.blunderThresholdMP ?? 100}`);
             return;
         }
         await loadAllPositions();
     }
+
+    // Les blunders de la liste à l'écran suivent la liste, le mode et le seuil.
+    $effect(() => {
+        void $positionsStore.length;
+        void $matchContextStore.movePositions;
+        void $matchContextStore.isMatchMode;
+        void $libraryCountsStore;
+        void $dbMutationCounterStore;
+        refreshListBlunderCount();
+    });
 
     $effect(() => {
         if ($showCommandInputStore) {
@@ -334,10 +343,19 @@
             <button
                 type="button"
                 class="count-link"
+                data-testid="count-blunders"
                 onclick={() => showLibrary('blunders')}
-                title={$libraryCountsStore.blunders == null ? $t('statusBar.countBlundersUncounted') : $t('statusBar.countBlundersTitle', { mp: $libraryCountsStore.blunderThresholdMP })}
+                title={$libraryCountsStore.blunders == null
+                    ? $t('statusBar.countBlundersUncounted')
+                    : $listBlunderCountStore != null
+                      ? $t('statusBar.countBlundersListTitle', { n: $listBlunderCountStore, total: $libraryCountsStore.blunders, mp: $libraryCountsStore.blunderThresholdMP })
+                      : $t('statusBar.countBlundersTitle', { mp: $libraryCountsStore.blunderThresholdMP })}
             >
-                {$t('statusBar.countBlunders', { n: formatCount($libraryCountsStore.blunders) })}
+                {#if $listBlunderCountStore != null && $libraryCountsStore.blunders != null}
+                    {$t('statusBar.countBlundersOfList', { n: $listBlunderCountStore, total: formatCount($libraryCountsStore.blunders) })}
+                {:else}
+                    {$t('statusBar.countBlunders', { n: formatCount($libraryCountsStore.blunders) })}
+                {/if}
             </button>
             <span class="count-sep">·</span>
             <button type="button" class="count-link" onclick={() => showLibrary('matches')} title={$t('statusBar.countMatchesTitle')}>

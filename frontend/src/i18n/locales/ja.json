@@ -1080,6 +1080,8 @@
         "countPositionsTitle": "すべての局面を表示",
         "countBlundersTitle": "{mp} ミリポイント以上の誤りを検索",
         "countBlundersUncounted": "大きなライブラリでは数えません。クリックして検索",
+        "countBlundersOfList": "ブランダー {n} / {total}",
+        "countBlundersListTitle": "表示中のリストにブランダー {n} 件、ライブラリ全体で {total} 件({mp} ミリポイント以上の誤り)。クリックしてライブラリから検索",
         "countMatchesTitle": "マッチ一覧を開く"
     },
     "viewTabs": {

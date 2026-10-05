@@ -1080,6 +1080,8 @@
         "countPositionsTitle": "Показать все позиции",
         "countBlundersTitle": "Найти ошибки от {mp} миллипунктов",
         "countBlundersUncounted": "В большой библиотеке не подсчитывается: нажмите, чтобы найти",
+        "countBlundersOfList": "бландеров: {n} / {total}",
+        "countBlundersListTitle": "Бландеров в показанном списке: {n}, в библиотеке: {total} (ошибки от {mp} миллипунктов). Нажмите, чтобы найти их в библиотеке",
         "countMatchesTitle": "Открыть список матчей"
     },
     "viewTabs": {
