@@ -71,6 +71,7 @@ type serveConfig struct {
 	enableDir       bool
 	mcpWrite        bool
 	transcription   bool
+	duel            bool
 	transcriptTTL   time.Duration
 	corsOrigin      string
 	rateLimitRPS    float64
@@ -117,6 +118,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		mcpWrite      = fs.Bool("mcp-write", envBoolOr("BLUNDERDB_MCP_WRITE", false), "offer the write tools of /mcp — save a position, comment it, fill a collection (off by default, for the reason --direction is)")
 		enableDir     = fs.Bool("direction", envBoolOr("BLUNDERDB_DIRECTION", false), "serve the gestures of a tournament Direction and of a Rencontre — results, pairings, rooms (off by default: this daemon authenticates nobody, so put a proxy that does in front — see ADR-0005, ADR-0057)")
 		transcribe    = fs.Bool("transcription", envBoolOr("BLUNDERDB_TRANSCRIPTION", false), "serve the transcription gestures (off by default: this daemon authenticates nobody — see ADR-0005, ADR-0057)")
+		enableDuel    = fs.Bool("duel", envBoolOr("BLUNDERDB_DUEL", false), "serve the gestures of a Duel — create, play, double, take, pass, resign, stop (off by default: this daemon authenticates nobody, and whoever reaches it plays for either side — see ADR-0005, ADR-0072)")
 		transcriptTTL = fs.Duration("transcription-ttl", defaultTranscriptionTTL, "close a transcription session idle for longer (its undo stack goes, nothing typed does)")
 		corsOrigin    = fs.String("cors-allow-origin", envOr("BLUNDERDB_CORS_ALLOW_ORIGIN", ""), "enable CORS for this origin, a comma-separated list of origins, or \"*\" (off by default)")
 		rateLimitRPS  = fs.Float64("rate-limit-rps", envFloatOr("BLUNDERDB_RATE_LIMIT_RPS", defaultRateLimitRPS),
@@ -169,6 +171,7 @@ func parseServeArgs(args []string) (*serveConfig, error) {
 		enableDir:       *enableDir,
 		mcpWrite:        *mcpWrite,
 		transcription:   *transcribe,
+		duel:            *enableDuel,
 		transcriptTTL:   *transcriptTTL,
 		corsOrigin:      *corsOrigin,
 		rateLimitRPS:    *rateLimitRPS,
@@ -257,6 +260,7 @@ func RunServe(args []string) error {
 		EnableDirection:  cfg.enableDir,
 		MCPWrite:         cfg.mcpWrite,
 		Transcription:    cfg.transcription,
+		Duel:             cfg.duel,
 		TranscriptionTTL: cfg.transcriptTTL,
 		EventsDSN:        eventsDSN(cfg.backend, cfg.dsn),
 		CORSAllowOrigin:  cfg.corsOrigin,
@@ -280,6 +284,9 @@ func RunServe(args []string) error {
 	logger.Warn("authentication is delegated to the reverse-proxy; do not expose this daemon to the public internet")
 	if cfg.enableDir {
 		logger.Warn("--direction: the gestures of a Direction are served — anyone the proxy lets through can enter results; restrict /v1/directions.* and /v1/rencontres.* at the proxy")
+	}
+	if cfg.duel {
+		logger.Warn("--duel: the gestures of a Duel are served — anyone the proxy lets through can play for either side; restrict /v1/duels.* at the proxy")
 	}
 	if cfg.mcpWrite {
 		logger.Warn("--mcp-write: the write tools of /mcp are served — anyone the proxy lets through can add positions, comments and collections")

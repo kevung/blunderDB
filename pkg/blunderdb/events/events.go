@@ -41,6 +41,9 @@ const (
 	KindRencontre Kind = "rencontre"
 	// KindTranscription: a draft moved. TranscriptionID names it, Revision is its new one.
 	KindTranscription Kind = "transcription"
+	// KindDuel: a Duel moved — an Action played, a Duel opened, suspended, ended or thrown
+	// away. DuelID names it, Revision is its new one; Removed and MatchID say how it ended.
+	KindDuel Kind = "duel"
 	// KindResync tells a client it may have missed events and should read everything again.
 	// Publish never carries it: the serve daemon sends it to a client that (re)connects, and
 	// Bus.Resync to the subscribers of a scope whose events a transport may have lost.
@@ -58,6 +61,7 @@ type Event struct {
 	TournamentIDs   []int64 `json:"tournamentIds,omitempty"`
 	RencontreID     int64   `json:"rencontreId,omitempty"`
 	TranscriptionID int64   `json:"transcriptionId,omitempty"`
+	DuelID          int64   `json:"duelId,omitempty"`
 	// Version is the Direction-Version of what the event names after the change, as a read
 	// would carry it; empty when it could not be read back (Removed, or a concurrent writer).
 	Version string `json:"version,omitempty"`
@@ -81,16 +85,17 @@ type Publisher interface {
 }
 
 // Filter narrows a subscription. An empty Filter receives every event of its scope; otherwise
-// an event is delivered when it names any of the listed Directions, Rencontres or drafts.
+// an event is delivered when it names any of the listed Directions, Rencontres, drafts or Duels.
 type Filter struct {
 	Tournaments    []int64
 	Rencontres     []int64
 	Transcriptions []int64
+	Duels          []int64
 }
 
 // Empty reports whether the filter lets every event through.
 func (f Filter) Empty() bool {
-	return len(f.Tournaments) == 0 && len(f.Rencontres) == 0 && len(f.Transcriptions) == 0
+	return len(f.Tournaments) == 0 && len(f.Rencontres) == 0 && len(f.Transcriptions) == 0 && len(f.Duels) == 0
 }
 
 // Match reports whether ev passes the filter.
@@ -107,6 +112,9 @@ func (f Filter) Match(ev Event) bool {
 		}
 	}
 	if ev.RencontreID != 0 && slices.Contains(f.Rencontres, ev.RencontreID) {
+		return true
+	}
+	if ev.DuelID != 0 && slices.Contains(f.Duels, ev.DuelID) {
 		return true
 	}
 	return ev.TranscriptionID != 0 && slices.Contains(f.Transcriptions, ev.TranscriptionID)

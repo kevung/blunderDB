@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/kevung/blunderdb/internal/server/metrics"
+	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 	"github.com/kevung/blunderdb/pkg/blunderdb/issuance"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -79,6 +80,14 @@ type Options struct {
 	// authenticates nobody is the operator's decision. The reads are served
 	// either way.
 	Transcription bool
+	// Duel serves the gestures of a Duel (create, open, act, suspend, stop,
+	// discard; ADR-0072 rule 11). OFF by default for the reason EnableWebUI is:
+	// a daemon that authenticates nobody lets whoever reaches it play for either
+	// Side. The reads are served either way.
+	Duel bool
+	// DuelSides resolves the kinds of Side a Duel is created with beyond the
+	// external one; nil, only external Sides are offered.
+	DuelSides duel.SideResolver
 	// MCPWrite offers the write tools of /mcp (save a position, comment it,
 	// fill a collection). OFF by default for the reason EnableDirection is;
 	// the read tools are served either way.

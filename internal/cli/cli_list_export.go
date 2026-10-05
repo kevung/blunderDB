@@ -47,6 +47,7 @@ var moveColumns = []string{
 	"player1", "player2", "match_length",
 	"move_number", "move_type", "position_id", "player",
 	"dice_1", "dice_2", "checker_move", "cube_action", "luck_mp",
+	"decision_ms", "cube_decision_ms",
 }
 
 // analysisColumns is the header of `list --type analyses --format csv`.
@@ -148,6 +149,7 @@ func (cli *CLI) exportMovesCSV(limit int) error {
 					strconv.FormatInt(int64(mv.Player), 10),
 					strconv.FormatInt(int64(mv.Dice[0]), 10), strconv.FormatInt(int64(mv.Dice[1]), 10),
 					mv.CheckerMove, mv.CubeAction, luck,
+					optionalMS(mv.DecisionMS), optionalMS(mv.CubeDecisionMS),
 				}); err != nil {
 					return err
 				}
@@ -156,6 +158,15 @@ func (cli *CLI) exportMovesCSV(limit int) error {
 		}
 	}
 	return nil
+}
+
+// optionalMS spells a duration in milliseconds, empty when it is unknown: a
+// blank cell and a zero are different facts.
+func optionalMS(ms *int64) string {
+	if ms == nil {
+		return ""
+	}
+	return strconv.FormatInt(*ms, 10)
 }
 
 // exportAnalysesCSV writes one row per stored analysis.

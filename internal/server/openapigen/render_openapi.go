@@ -54,9 +54,9 @@ const eventsPathItem = `  /v1/events:
       x-streaming: true
       description: >-
         Server-Sent Events: one message per committed gesture of the caller's
-        tenant (Direction, Rencontre, transcription), naming what moved and its
+        tenant (Direction, Rencontre, transcription, Duel), naming what moved and its
         new version or revision — never the state; read it again with
-        If-None-Match. Served only under serve --direction or --transcription.
+        If-None-Match. Served only under serve --direction, --transcription or --duel.
         No history is kept: every stream opens with event resync (reason
         "reconnected" under Last-Event-ID, "subscribed" otherwise), and a
         subscriber dropped for falling behind receives one too; the client then
@@ -83,6 +83,12 @@ const eventsPathItem = `  /v1/events:
           description: Draft ids, comma-separated.
           schema:
             type: string
+        - name: duel
+          in: query
+          required: false
+          description: Duel ids, comma-separated.
+          schema:
+            type: string
         - name: Last-Event-ID
           in: header
           required: false
@@ -96,13 +102,13 @@ const eventsPathItem = `  /v1/events:
             text/event-stream:
               schema:
                 description: >-
-                  Frames "id", "event" (direction, rencontre, transcription,
+                  Frames "id", "event" (direction, rencontre, transcription, duel,
                   resync) and "data", one JSON object shaped as below.
                 type: object
                 properties:
                   kind:
                     type: string
-                    enum: [direction, rencontre, transcription, resync]
+                    enum: [direction, rencontre, transcription, duel, resync]
                   tournamentId:
                     type: integer
                     format: int64
@@ -115,6 +121,9 @@ const eventsPathItem = `  /v1/events:
                     type: integer
                     format: int64
                   transcriptionId:
+                    type: integer
+                    format: int64
+                  duelId:
                     type: integer
                     format: int64
                   version:
@@ -132,7 +141,7 @@ const eventsPathItem = `  /v1/events:
         "400":
           description: An unknown parameter or an invalid id, or no X-Tenant-ID.
         "404":
-          description: Neither --direction nor --transcription — nothing this daemon writes would be announced, and the route is absent.
+          description: None of --direction, --transcription, --duel — nothing this daemon writes would be announced, and the route is absent.
         "429":
           description: The tenant already holds its maximum of open streams (16).
         "503":

@@ -98,7 +98,7 @@ func RunCall(args []string) error {
 	// The gestures of a Direction are served too.
 	// On a PostgreSQL database that daemons share, the gesture is announced to their
 	// subscribers like one of theirs; Close sends it before the process ends.
-	o := Options{Storage: st, EnableDirection: true, Transcription: true, SessionPerCall: true}
+	o := Options{Storage: st, EnableDirection: true, Transcription: true, Duel: true, SessionPerCall: true}
 	if !*list {
 		o.EventsDSN, o.EventsSendOnly = eventsDSN(*backend, effDSN), true
 	}

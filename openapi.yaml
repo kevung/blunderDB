@@ -3042,6 +3042,142 @@ paths:
               schema:
                 $ref: "#/components/schemas/service_DirectionView"
                 nullable: true
+  /v1/duels.act:
+    post:
+      operationId: duels.act
+      tags: [duels]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/duels.create:
+    post:
+      operationId: duels.create
+      tags: [duels]
+      x-kind: json
+      x-idempotency-key: true
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/duel_Settings"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/duel_State"
+                nullable: true
+  /v1/duels.discard:
+    post:
+      operationId: duels.discard
+      tags: [duels]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/duels.flag:
+    post:
+      operationId: duels.flag
+      tags: [duels]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/duels.get:
+    post:
+      operationId: duels.get
+      tags: [duels]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/duels.list:
+    post:
+      operationId: duels.list
+      tags: [duels]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/duel_Summary"
+  /v1/duels.open:
+    post:
+      operationId: duels.open
+      tags: [duels]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/duels.stop:
+    post:
+      operationId: duels.stop
+      tags: [duels]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
+  /v1/duels.suspend:
+    post:
+      operationId: duels.suspend
+      tags: [duels]
+      x-kind: custom
+      responses:
+        "200":
+          description: OK
+          description: >-
+            Custom, hand-written handler; response shape not derived from this
+            generator's source analysis (a file upload/download, or a route
+            registered from a runtime table) — see internal/server for the actual
+            implementation.
   /v1/events.alias.list:
     post:
       operationId: events.alias.list
@@ -6856,9 +6992,9 @@ paths:
       x-streaming: true
       description: >-
         Server-Sent Events: one message per committed gesture of the caller's
-        tenant (Direction, Rencontre, transcription), naming what moved and its
+        tenant (Direction, Rencontre, transcription, Duel), naming what moved and its
         new version or revision — never the state; read it again with
-        If-None-Match. Served only under serve --direction or --transcription.
+        If-None-Match. Served only under serve --direction, --transcription or --duel.
         No history is kept: every stream opens with event resync (reason
         "reconnected" under Last-Event-ID, "subscribed" otherwise), and a
         subscriber dropped for falling behind receives one too; the client then
@@ -6885,6 +7021,12 @@ paths:
           description: Draft ids, comma-separated.
           schema:
             type: string
+        - name: duel
+          in: query
+          required: false
+          description: Duel ids, comma-separated.
+          schema:
+            type: string
         - name: Last-Event-ID
           in: header
           required: false
@@ -6898,13 +7040,13 @@ paths:
             text/event-stream:
               schema:
                 description: >-
-                  Frames "id", "event" (direction, rencontre, transcription,
+                  Frames "id", "event" (direction, rencontre, transcription, duel,
                   resync) and "data", one JSON object shaped as below.
                 type: object
                 properties:
                   kind:
                     type: string
-                    enum: [direction, rencontre, transcription, resync]
+                    enum: [direction, rencontre, transcription, duel, resync]
                   tournamentId:
                     type: integer
                     format: int64
@@ -6917,6 +7059,9 @@ paths:
                     type: integer
                     format: int64
                   transcriptionId:
+                    type: integer
+                    format: int64
+                  duelId:
                     type: integer
                     format: int64
                   version:
@@ -6934,7 +7079,7 @@ paths:
         "400":
           description: An unknown parameter or an invalid id, or no X-Tenant-ID.
         "404":
-          description: Neither --direction nor --transcription — nothing this daemon writes would be announced, and the route is absent.
+          description: None of --direction, --transcription, --duel — nothing this daemon writes would be announced, and the route is absent.
         "429":
           description: The tenant already holds its maximum of open streams (16).
         "503":
@@ -7752,6 +7897,15 @@ components:
     domain_TrashEntry:
       type: object
       description: "Opaque: see the Go type domain.TrashEntry (defined outside internal/server, not expanded here)."
+    duel_Settings:
+      type: object
+      description: "Opaque: see the Go type duel.Settings (defined outside internal/server, not expanded here)."
+    duel_State:
+      type: object
+      description: "Opaque: see the Go type duel.State (defined outside internal/server, not expanded here)."
+    duel_Summary:
+      type: object
+      description: "Opaque: see the Go type duel.Summary (defined outside internal/server, not expanded here)."
     duplicatesResp:
       type: object
       properties:

@@ -54,6 +54,7 @@ const (
 	whyStudyImpact      = "a composition of two routes the daemon already serves — /v1/stats.compute over each of the two date windows, and /v1/anki.reviewsByGameType — so a client assembles it without a route of its own, and the desktop assembles it here (#275)"
 	whyQuiz             = "a quiz answer is a move played ON A BOARD (or a cube action clicked): the CLI has no board, and typing the notation would be a second way of naming a move to keep in step with the generator's. The daemon carries it for the web front J.5 will need (#294)"
 	whyIdentifierDecode = "decoding a position identifier: pure, no storage. The GUI and the CLI read an OGID through parser.ParsePosition, like any other pasted position; only an HTTP client needs the identifier alone as a route, symmetrically with /v1/positions.fromXGID (#260)"
+	whyDuelService      = "the Duel lives in pkg/blunderdb/duel over storage.DuelStore, not on the Database wrapper; the CLI's `duel` reads it through the same service (ADR-0072 rule 11)"
 	whyTranscription    = "a transcription is typed IN FRONT OF A BOARD, gesture by gesture: the CLI's `transcribe` REPLAYS a transcription rather than typing one — it reads a document and never writes a gesture into one; it finishes, abandons or opens one on a match through the panel's own methods. A script types gestures through `call transcriptions.*`, the daemon's routes (ADR-0057), so no write sub-command is added"
 	// whyTranscriptionMAT: the .mat text of a DRAFT, not of a saved Match —
 	// `export --type mat` renders the other object; a script reads it from
@@ -125,6 +126,11 @@ var serverOnly = map[string]string{
 	"/v1/transcriptions.get":  whyTransport,
 	"/v1/transcriptions.redo": whyTransport,
 	"/v1/transcriptions.undo": whyTransport,
+
+	// The Duel is the duel.Service's over the storage contract, not a Database
+	// method; the CLI reaches it through `duel list` and `duel show`.
+	"/v1/duels.get":  whyDuelService,
+	"/v1/duels.list": whyDuelService,
 
 	// Backend-specific, and the wrapper is SQLite-only.
 	"/ops/tenant.purge": whyPostgresOnly,

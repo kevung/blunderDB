@@ -273,7 +273,7 @@ func (t *Transport) receive(ctx context.Context, conn *pgx.Conn) error {
 
 // deliveredKinds are the kinds a notification may carry to the local bus; a resync travels as a
 // payload without an event.
-var deliveredKinds = []events.Kind{events.KindDirection, events.KindRencontre, events.KindTranscription, events.KindResync}
+var deliveredKinds = []events.Kind{events.KindDirection, events.KindRencontre, events.KindTranscription, events.KindDuel, events.KindResync}
 
 // deliver hands one notification to the local bus. Any role allowed to connect may NOTIFY on
 // the channel, so a payload is checked before it is believed: an unreadable one, a scope that is

@@ -86,7 +86,7 @@ func newEventsEpoch() string {
 
 // eventsEnabled reports whether the daemon serves /v1/events and publishes its gestures.
 func (s *Server) eventsEnabled() bool {
-	return s.opts.EnableDirection || s.opts.Transcription
+	return s.opts.EnableDirection || s.opts.Transcription || s.opts.Duel
 }
 
 func (s *Server) eventRoutes() []route {
@@ -98,7 +98,7 @@ func (s *Server) eventRoutes() []route {
 
 // eventFilterParams are the query parameters a subscription accepts, each a list of ids
 // (repeated, or comma-separated).
-var eventFilterParams = []string{"tournament", "rencontre", "transcription"}
+var eventFilterParams = []string{"tournament", "rencontre", "transcription", "duel"}
 
 func parseEventFilter(q url.Values) (events.Filter, error) {
 	var f events.Filter
@@ -112,7 +112,7 @@ func parseEventFilter(q url.Values) (events.Filter, error) {
 				storage.ErrInvalid, k, strings.Join(eventFilterParams, ", "))
 		}
 	}
-	lists := []*[]int64{&f.Tournaments, &f.Rencontres, &f.Transcriptions}
+	lists := []*[]int64{&f.Tournaments, &f.Rencontres, &f.Transcriptions, &f.Duels}
 	for i, p := range eventFilterParams {
 		for _, v := range q[p] {
 			for _, part := range strings.Split(v, ",") {

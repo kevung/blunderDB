@@ -118,3 +118,16 @@ func assertHeader(t *testing.T, rows [][]string, want []string) {
 		t.Errorf("header drifted:\n got %v\nwant %v", rows[0], want)
 	}
 }
+
+// A decision duration unknown is an empty cell, never a zero.
+func TestOptionalMS(t *testing.T) {
+	zero, some := int64(0), int64(1500)
+	for _, c := range []struct {
+		in   *int64
+		want string
+	}{{nil, ""}, {&zero, "0"}, {&some, "1500"}} {
+		if got := optionalMS(c.in); got != c.want {
+			t.Errorf("optionalMS(%v) = %q, want %q", c.in, got, c.want)
+		}
+	}
+}

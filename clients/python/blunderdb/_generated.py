@@ -470,6 +470,42 @@ class GeneratedAPI(BaseClient):
         "POST /v1/directions.withdraw — JSON. Requires If-Match: the Direction-Version of your last read. Accepts an Idempotency-Key."
         return self._call("/v1/directions.withdraw", payload, if_match=if_match, idempotency_key=idempotency_key)
 
+    def duels_act(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.act — hand-written handler — see openapi.yaml."
+        return self._call("/v1/duels.act", payload)
+
+    def duels_create(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/duels.create — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/duels.create", payload, idempotency_key=idempotency_key)
+
+    def duels_discard(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.discard — hand-written handler — see openapi.yaml."
+        return self._call("/v1/duels.discard", payload)
+
+    def duels_flag(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.flag — hand-written handler — see openapi.yaml."
+        return self._call("/v1/duels.flag", payload)
+
+    def duels_get(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.get — hand-written handler — see openapi.yaml."
+        return self._call("/v1/duels.get", payload)
+
+    def duels_list(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.list — JSON."
+        return self._call("/v1/duels.list", payload)
+
+    def duels_open(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.open — hand-written handler — see openapi.yaml."
+        return self._call("/v1/duels.open", payload)
+
+    def duels_stop(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.stop — hand-written handler — see openapi.yaml."
+        return self._call("/v1/duels.stop", payload)
+
+    def duels_suspend(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.suspend — hand-written handler — see openapi.yaml."
+        return self._call("/v1/duels.suspend", payload)
+
     def events_alias_list(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/events.alias.list — JSON."
         return self._call("/v1/events.alias.list", payload)

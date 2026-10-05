@@ -170,6 +170,7 @@ func (s *Server) domainRoutes() []route {
 	rs = append(rs, s.directionGestureRoutes()...)
 	rs = append(rs, s.rencontreGestureRoutes()...)
 	rs = append(rs, s.transcriptionRoutes()...)
+	rs = append(rs, s.duelRoutes()...)
 	rs = append(rs, s.trainingRoutes()...)
 	rs = append(rs, s.tenantQuotaRoutes()...)
 	return rs

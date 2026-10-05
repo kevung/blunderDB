@@ -124,6 +124,7 @@ func (cli *CLI) handlers() map[string]func([]string) error {
 		"met":         cli.runMET,
 		"analyze":     cli.runAnalyze,
 		"transcribe":  cli.runTranscribe,
+		"duel":        cli.runDuel,
 		"collection":  cli.runCollection,
 		"lesson":      cli.runLesson,
 		"study":       cli.runStudy,
@@ -190,6 +191,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  rollout   Roll out a position's plays or cube decision (gammonNet)")
 	fmt.Println("  bearoff   Generate, list, verify and delete the bearoff tables")
 	fmt.Println("  analyze   Write a gammonNet analysis for every position missing one")
+	fmt.Println("  duel      Play a Duel one Action per call (create, show, move, double, take, pass, stop)")
 	fmt.Println("  transcribe  Replay a .mat, a match or a draft and report its inconsistencies")
 	fmt.Println("  tournament  Read a directed tournament (list, verify, standings, page, export)")
 	fmt.Println("  players   Other spellings of a player (alias add, list, remove, suggest)")

@@ -107,7 +107,7 @@ func TogglePile(ctx context.Context, st Storage, scope string, pos *domain.Posit
 	if err != nil {
 		return PileToggle{}, err
 	}
-	defer tx.Rollback()
+	defer func() { _ = tx.Rollback() }()
 	out, err := togglePile(ctx, tx, scope, pos)
 	if err != nil {
 		return PileToggle{}, err

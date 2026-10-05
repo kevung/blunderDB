@@ -132,6 +132,7 @@ var customContentTypes = map[string][]string{
 	"/v1/transcriptions.redo":    {"application/json"},
 	"/v1/transcriptions.finish":  {"application/json"},
 	"/v1/transcriptions.abandon": {"application/json"},
+	"/v1/duels.get":              {"application/json"},
 }
 
 // smokeServer builds the Server (not just the httptest wrapper) so the test

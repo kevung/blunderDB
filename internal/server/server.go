@@ -26,6 +26,7 @@ import (
 	"github.com/kevung/blunderdb/internal/server/handlers"
 	"github.com/kevung/blunderdb/internal/server/middleware"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 	"github.com/kevung/blunderdb/pkg/blunderdb/events"
 	"github.com/kevung/blunderdb/pkg/blunderdb/events/pgnotify"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
@@ -57,6 +58,9 @@ type Server struct {
 	// transcriptSvc holds the transcription sessions (handlers_transcriptions.go).
 	transcriptsOnce sync.Once
 	transcriptSvc   *transcription.Service
+	// duelOnce makes the Duel service (handlers_duels.go), which holds the open Duel of each tenant.
+	duelOnce sync.Once
+	duelSvc  *duel.Service
 	// gammonnetJobs tracks in-flight gammonNet catch-up sweeps, kept separate
 	// from imports so cancelling one can never be confused with the other —
 	// reuses importRegistry's scope-keyed cancel bookkeeping under its own
