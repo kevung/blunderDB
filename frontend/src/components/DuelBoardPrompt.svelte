@@ -93,13 +93,13 @@
     .centred .question {
         flex-basis: 100%;
         text-align: center;
-        font-size: 1.15em;
+        font-size: var(--font-size-title);
     }
 
     .centred button {
         min-width: 6em;
         padding: 0.45em 1.4em;
-        font-size: 1.1em;
+        font-size: var(--font-size-base);
     }
 
     .question {
