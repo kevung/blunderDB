@@ -133,6 +133,7 @@ type mover struct {
 
 	posID  map[int64]int64
 	tourID map[int64]int64
+	collID map[int64]int64
 	tables *mets.Carrier
 }
 
@@ -145,6 +146,7 @@ func (m *mover) progress(rep *Report) {
 func (m *mover) run(rep *Report) error {
 	m.posID = make(map[int64]int64)
 	m.tourID = make(map[int64]int64)
+	m.collID = make(map[int64]int64)
 
 	if err := m.copyTables(); err != nil {
 		return err
@@ -167,19 +169,29 @@ func (m *mover) run(rep *Report) error {
 	return nil
 }
 
-// copyLibrarySettings carries the library's own thresholds across (ADR-0046).
-// Two integers, not a family, so the Report does not count them. Defaults are
-// not written.
+// copyLibrarySettings carries the library's own settings across (ADR-0046): the
+// two thresholds, and the Pile's designation, translated to the destination's
+// collection id so the first gesture there finds the Pile instead of creating a
+// second one. Two integers and a pointer, not a family, so the Report does not
+// count them. Defaults are not written.
 func (m *mover) copyLibrarySettings() error {
 	settings, err := m.src.LibrarySettings().Load(m.ctx, "")
 	if err != nil {
 		return fmt.Errorf("read library settings: %w", err)
 	}
-	if settings == storage.DefaultLibrarySettings() {
-		return nil
+	if settings != storage.DefaultLibrarySettings() {
+		if err := m.dst.LibrarySettings().Save(m.ctx, m.scope, settings); err != nil {
+			return fmt.Errorf("write library settings: %w", err)
+		}
 	}
-	if err := m.dst.LibrarySettings().Save(m.ctx, m.scope, settings); err != nil {
-		return fmt.Errorf("write library settings: %w", err)
+	pile, err := m.src.LibrarySettings().PileCollection(m.ctx, "")
+	if err != nil {
+		return fmt.Errorf("read pile collection: %w", err)
+	}
+	if newID, ok := m.collID[pile]; ok {
+		if err := m.dst.LibrarySettings().SetPileCollection(m.ctx, m.scope, newID); err != nil {
+			return fmt.Errorf("write pile collection: %w", err)
+		}
 	}
 	return nil
 }
@@ -418,6 +430,7 @@ func (m *mover) copyCollections(rep *Report) error {
 			return fmt.Errorf("migrate: create collection %q: %w", c.name, err)
 		}
 		rep.Collections++
+		m.collID[c.id] = newID
 
 		// Drain the membership before mapping ids (avoid nested source reads).
 		var posIDs []int64

@@ -484,9 +484,9 @@
         two.update();
     }
 
-    // The Pile marker follows the position on the board.
+    // The Pile marker follows the position on the board, edits of a draft included.
     $effect(() => {
-        void $positionStore.id;
+        void $positionStore;
         refreshPileState();
     });
 </script>

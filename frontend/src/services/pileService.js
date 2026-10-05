@@ -15,17 +15,18 @@ export const onPileStore = writable(false);
 
 let sequence = 0;
 
-// Reads the marker for the position now on the board. A draft (id 0) is not on the Pile, and
-// asking creates nothing. An answer for a position since left behind is dropped.
+// Reads the marker for the position now on the board, by what the library holds: a stored
+// position by its id, a draft by its hash — so a draft already put on the Pile keeps its marker
+// when the board re-emits it. Asking creates nothing. An answer for a position since left behind
+// is dropped.
 export async function refreshPileState() {
     const mine = ++sequence;
-    const id = get(positionStore)?.id ?? 0;
-    if (!id || !get(databasePathStore)) {
+    if (!get(databasePathStore)) {
         onPileStore.set(false);
         return;
     }
     try {
-        const on = await IsPositionOnPile(id);
+        const on = await IsPositionOnPile(get(positionStore));
         if (mine === sequence) onPileStore.set(!!on);
     } catch (error) {
         logger.error('Pile state:', error);
@@ -41,8 +42,6 @@ export async function togglePile() {
     const position = get(positionStore);
     try {
         const result = await TogglePile(position);
-        // A draft has just been written: the board now shows a stored position's marker, and the
-        // position keeps its id 0 until the user saves or reloads — the marker is the answer.
         sequence++;
         onPileStore.set(result.onPile);
         setStatusBarMessage(tMsg(result.onPile ? (result.brought ? 'status.pileBrought' : 'status.pileOn') : 'status.pileOff'));

@@ -468,16 +468,16 @@ func (d *Database) TogglePile(position *Position) (storage.PileToggle, error) {
 	return storage.TogglePile(context.Background(), d.store, "", position)
 }
 
-// IsPositionOnPile reports whether a stored position is on the Pile. A draft
-// (ID 0) is not, and no Pile is created by asking.
-func (d *Database) IsPositionOnPile(positionID int64) (bool, error) {
+// IsPositionOnPile reports whether the position is on the Pile — a draft whose
+// hash is already stored included. No Pile is created by asking.
+func (d *Database) IsPositionOnPile(position *Position) (bool, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return false, fmt.Errorf("no database is currently open")
 	}
-	return storage.PositionOnPile(context.Background(), d.store, "", positionID)
+	return storage.PositionOnPile(context.Background(), d.store, "", position)
 }
 
 // PileCollectionID returns the id of the Pile collection, or 0 when none

@@ -4412,7 +4412,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/positionIDReq"
+              $ref: "#/components/schemas/positionReq"
       responses:
         "200":
           description: OK

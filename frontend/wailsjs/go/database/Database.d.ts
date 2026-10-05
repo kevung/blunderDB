@@ -296,12 +296,6 @@ export function GetLastVisitedMatch():Promise<domain.Match>;
 
 export function GetLesson(arg1:number):Promise<domain.Lesson>;
 
-export function IsPositionOnPile(arg1:number):Promise<boolean>;
-
-export function PileCollectionID():Promise<number>;
-
-export function TogglePile(arg1:domain.Position):Promise<storage.PileToggle>;
-
 export function GetLibrarySettings():Promise<storage.LibrarySettings>;
 
 export function GetLinkedAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;
@@ -391,6 +385,8 @@ export function IndexOfCollectionPosition(arg1:number,arg2:number):Promise<numbe
 export function IndexOfPosition(arg1:number):Promise<number>;
 
 export function IndexOfPositionByFilters(arg1:domain.SearchFilters,arg2:number):Promise<number>;
+
+export function IsPositionOnPile(arg1:domain.Position):Promise<boolean>;
 
 export function IsProtectedCopyPath(arg1:string):Promise<boolean>;
 
@@ -501,6 +497,8 @@ export function Participants(arg1:number):Promise<Array<service.ParticipantRow>>
 export function PendingImportFiles(arg1:Array<string>):Promise<Array<string>>;
 
 export function PendingTranscriptionAnalysis():Promise<database.TranscriptionAnalysisResume>;
+
+export function PileCollectionID():Promise<number>;
 
 export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<database.RolloutPlan>;
 
@@ -715,6 +713,8 @@ export function TableGrid(arg1:number):Promise<Array<service.TableCell>>;
 export function TablePlan(arg1:number):Promise<direction.TablePlan>;
 
 export function Tags():Promise<Array<domain.TagCount>>;
+
+export function TogglePile(arg1:domain.Position):Promise<storage.PileToggle>;
 
 export function TranscriptionMAT(arg1:number):Promise<string>;
 
