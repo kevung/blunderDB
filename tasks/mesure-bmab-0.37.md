@@ -312,7 +312,7 @@ par `BLUNDERDB_DEBUG=1`.
 ### 7.2 bis Statistiques globales depuis une table dérivée (branche `feat/stats-derivee`)
 
 Copie `bmab-europe.db` (2.31, 33 319 matchs, 9 852 942 décisions comptées), binaire de `main`
-(`dd8a561d7`) contre celui de la branche ; `list --type stats --format json`, toute la base.
+(construit juste avant la branche) contre celui de la branche ; `list --type stats --format json`, toute la base.
 Poste partagé (charge 7 à 19 : des suites PostgreSQL tournaient en parallèle), une mesure
 chacun ; les durées absolues sont donc flattées en défaveur des deux.
 
