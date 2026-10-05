@@ -46,6 +46,13 @@ describe('en transcription, le joueur 1 reste en bas', () => {
     });
 });
 
+describe('Duel : le joueur 1 reste en bas', () => {
+    test('le trait du joueur 2 ne retourne pas le plateau', () => {
+        expect(boardIsMirrored({ mode: 'DUEL', position: pos(1) })).toBe(false);
+        expect(boardIsMirrored({ mode: 'DUEL', position: pos(0) })).toBe(false);
+    });
+});
+
 describe('les autres modes ne bougent pas', () => {
     test('EDIT et EVAL montrent la position telle quelle', () => {
         for (const mode of ['EDIT', 'EVAL']) {
