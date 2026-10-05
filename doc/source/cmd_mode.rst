@@ -66,7 +66,7 @@ Positions et navigation
    "grid, gr", "Ouvre la planche-contact : la liste parcourue en grille de mini-plateaux, une page de vingt-quatre à la fois ; choisir une vignette ouvre sa position."
    "list, l", "Afficher l'analyse de la position courante."
    "comment, co", "Afficher/écrire des commentaires."
-   "rollout, ro [fast|standard]", "Lance le rollout de la position courante (réglage choisi dans le panneau Analyse, ou le préréglage nommé) et ouvre le panneau Analyse. ``ro search [fast|standard]`` le lance sur la liste affichée, après confirmation avec le total ; ``ro stop`` arrête le rollout en cours."
+   "rollout, ro [fast|standard]", "Lance le rollout de la position courante (réglage choisi dans l'onglet gammonNet de la configuration, ou le préréglage nommé) et ouvre le panneau Analyse. ``ro search [fast|standard]`` le lance sur la liste affichée, après confirmation avec le total ; ``ro stop`` arrête le rollout en cours."
    "history, hi", "Ouvrir le panneau de recherche (l'historique de recherche se trouve dans son onglet *Historique*)."
    "stats, st", "Afficher/masquer le panneau de statistiques."
    "match, ma", "Afficher/cacher le panneau des matchs."

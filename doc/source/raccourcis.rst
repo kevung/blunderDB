@@ -207,11 +207,14 @@ Panneau d'analyse
    :align: center
 
    "Clic", "Sélectionner/désélectionner un coup (afficher/cacher les flèches)."
+   "Ctrl+Clic", "Ajouter ou retirer un coup de la sélection à rouler."
+   "Maj+Clic", "Étendre la sélection jusqu'au coup cliqué."
+   "Clic droit", "Menu du rollout : rouler les coups sélectionnés avec le réglage choisi, ou annuler le rollout en cours."
    "HAUT, k", "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."
    "BAS, j", "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
    "d", "Basculer entre l'analyse des coups et du cube (navigation match uniquement)."
-   "r", "Lancer le rollout de la position avec le réglage choisi ; une seconde pression l'arrête."
-   "Esc", "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau, sauf devant les résultats d'une recherche ``ss`` : y revenir à la collection ou au match."
+   "r", "Lancer le rollout des coups sélectionnés (sans sélection, de la position) avec le réglage choisi ; une seconde pression l'arrête."
+   "Esc", "Arrêter le rollout en cours, sinon désélectionner le coup. Si aucun coup sélectionné, fermer le panneau, sauf devant les résultats d'une recherche ``ss`` : y revenir à la collection ou au match."
 
 .. _raccourcis_eval_panel:
 

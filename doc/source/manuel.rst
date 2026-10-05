@@ -469,6 +469,15 @@ Fermer l'application pendant l'un ou l'autre ne perd rien : chaque position
 analysée est écrite au fil de l'eau, et un prochain lancement reprend
 exactement là où l'analyse s'était arrêtée, sans aucun journal à tenir.
 
+.. _rollout_reglage:
+
+Le même onglet porte le **réglage des rollouts** lancés depuis le panneau
+Analyse (voir :ref:`rollouts`), conservé d'une session à l'autre : **Rapide**
+(216 parties, tronquées à 7 demi-coups), **Standard** (1296 parties, tronquées
+à 11 demi-coups) ou **Libre**, où tous les paramètres s'éditent — troncature,
+parties minimum et maximum (multiples de 36), limite de JSD, profondeur (ply),
+nombre de candidats, graine et nombre de processus.
+
 **Table d'équité de match de la base.** Au bas de l'onglet, la liste
 **Table d'équité de match (MET) de la base** choisit la table avec laquelle
 gammonNet valorise les scores de match : Kazaross-XG2, intégrée, par défaut,
@@ -795,38 +804,50 @@ videau.
 Rollouts
 ~~~~~~~~
 
-Sous l'analyse, le panneau **Analyse** propose de **rouler** la position :
-jouer des centaines de parties à partir de chaque coup candidat, ou de chaque
-action de videau, pour départager deux choix que l'évaluation directe sépare à
-peine. Trois réglages : **Rapide** (216 parties, tronquées à 7 demi-coups),
-**Standard** (1296 parties, tronquées à 11 demi-coups) et **Libre**, où tous les
-paramètres s'éditent — troncature, parties minimum et maximum (multiples de 36),
-limite de JSD, profondeur (ply), nombre de candidats, graine et nombre de
-processus. Le bouton **Lancer le rollout**, la touche *r* du panneau ou la
-commande ``rollout`` (alias ``ro``) le démarrent ; une barre de progression
-suit les parties jouées et **Annuler** (ou *r* de nouveau) l'arrête sans rien
-écrire.
+Le panneau **Analyse** sait **rouler** une position : jouer des centaines de
+parties à partir de chaque coup choisi, ou de chaque action de videau, pour
+départager deux choix que l'évaluation directe sépare à peine. Dans la table
+des coups candidats, *Ctrl+clic* ajoute ou retire un coup de la sélection et
+*Maj+clic* l'étend jusqu'au coup cliqué ; le clic simple sélectionne un seul
+coup, comme d'ordinaire. Un **clic droit** sur la sélection — ou sur un autre
+coup, qui devient la sélection — ouvre un menu dont l'entrée **Rollout
+(Standard)** lance aussitôt le rollout des coups sélectionnés avec le réglage
+choisi. Sur une décision de videau, le clic droit roule la décision entière. La
+touche *r* du panneau fait de même (sans sélection, elle roule les meilleurs
+candidats de la position), comme la commande ``rollout`` (alias ``ro``).
+Pendant le rollout, une barre fine sous la table suit les parties jouées ;
+**Annuler**, l'entrée **Annuler le rollout** du menu, *Échap* ou *r* de nouveau
+l'arrêtent sans rien écrire. Le réglage — **Rapide**, **Standard** ou
+**Libre** — se choisit dans l'onglet **gammonNet** de la configuration
+(voir :ref:`configuration <rollout_reglage>`).
 
 Le résultat est **stocké à côté de l'analyse, jamais à sa place** : une
-analyse importée n'est pas modifiée. Chaque rollout forme un bloc avec, par
-candidat, l'équité, l'intervalle de confiance à 95 %, la **JSD** (l'écart au
-meilleur coup en écarts-types de la différence : à partir de la limite, le coup
-est tranché et cesse d'être joué) et le nombre de parties. Le rollout s'arrête
-dès que les coups sont départagés. La **Configuration** — le moteur et la
-signature complète des paramètres — se déplie sous le tableau : deux rollouts
-de même signature sont les mêmes nombres. Un rollout joue le videau dans ses
+analyse importée n'est pas modifiée. Chaque coup roulé porte son résultat dans
+sa propre ligne de la table, dans une colonne **Rollout** qui n'apparaît que
+lorsque la position a un rollout : l'équité et la demi-largeur de son
+intervalle de confiance à 95 %, sur l'échelle de la colonne d'équité. Survoler
+la cellule donne le détail : l'écart-type, la **JSD** (l'écart au meilleur coup
+en écarts-types de la différence : à partir de la limite, le coup est tranché
+et cesse d'être joué), le nombre de parties et la **Configuration** — le moteur
+et la signature complète des paramètres : deux rollouts de même signature sont
+les mêmes nombres. Le rollout s'arrête dès que les coups sont départagés. Le
+rollout d'une décision de videau, qui n'a pas de ligne de coup, s'affiche en
+tableau sous la décision. Un rollout joue le videau dans ses
 parties : le classement est fiable, l'équité absolue un peu moins, ce que le
 bloc rappelle. Il ne joue pas le beaver : sa ligne *double, prend* est celle
 d'une simple prise, même sur une position en money sous la règle Beaver, là où
 l'analyse directe compte le beaver. Une position qui n'est pas dans la base se roule, mais ne se
 stocke pas.
 
-Le bouton **Sur la liste affichée…** (ou ``ro search``) roule, l'une après
-l'autre, les positions de la liste affichée — résultats de recherche, match ou
+La commande ``ro search`` roule, l'une après l'autre, les positions de la liste affichée — résultats de recherche, match ou
 collection — qui n'ont pas encore ce rollout ; une confirmation donne le total
 avant de commencer. Chaque position est écrite
 dès qu'elle est finie : annuler garde ce qui est fait, et relancer reprend où
 l'on s'est arrêté. L'avancement survit à la fermeture du panneau.
+
+Une base ouverte **en lecture seule**, parce qu'une autre instance de
+blunderDB la tient, refuse d'emblée un rollout qui serait stocké : un message
+le dit avant que la première partie ne soit jouée.
 
 .. _panneau_commentaires:
 
