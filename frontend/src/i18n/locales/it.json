@@ -1081,7 +1081,8 @@
         "countBlundersTitle": "Cerca gli errori di almeno {mp} millipunti",
         "countBlundersUncounted": "Non contati in una libreria grande: fare clic per cercarli",
         "countBlundersOfList": "{n} / {total} blunder",
-        "countBlundersListTitle": "{n} blunder nella lista a schermo, {total} nella biblioteca (errori di almeno {mp} millipunti). Clic per cercarli nella biblioteca",
+        "countBlundersListOnlyTitle": "{n} blunder nella lista a schermo (errori di almeno {mp} millipunti). Clic per cercarli in questa lista",
+        "countBlundersTotalTitle": "{total} blunder nella biblioteca (errori di almeno {mp} millipunti). Clic per cercarli in tutta la biblioteca",
         "countMatchesTitle": "Apri l'elenco degli incontri"
     },
     "viewTabs": {

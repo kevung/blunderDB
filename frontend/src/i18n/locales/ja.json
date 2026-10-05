@@ -1081,7 +1081,8 @@
         "countBlundersTitle": "{mp} ミリポイント以上の誤りを検索",
         "countBlundersUncounted": "大きなライブラリでは数えません。クリックして検索",
         "countBlundersOfList": "ブランダー {n} / {total}",
-        "countBlundersListTitle": "表示中のリストにブランダー {n} 件、ライブラリ全体で {total} 件({mp} ミリポイント以上の誤り)。クリックしてライブラリから検索",
+        "countBlundersListOnlyTitle": "表示中のリストにブランダー {n} 件({mp} ミリポイント以上の誤り)。クリックしてこのリスト内を検索",
+        "countBlundersTotalTitle": "ライブラリ全体にブランダー {total} 件({mp} ミリポイント以上の誤り)。クリックしてライブラリ全体を検索",
         "countMatchesTitle": "マッチ一覧を開く"
     },
     "viewTabs": {

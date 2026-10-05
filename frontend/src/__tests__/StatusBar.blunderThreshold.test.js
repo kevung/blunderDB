@@ -34,7 +34,8 @@ describe('StatusBar — lien des blunders', () => {
     test('le clic lance la recherche au seuil de la bibliothèque', async () => {
         databasePathStore.set('/tmp/x.db');
         render(StatusBar);
-        const link = await waitFor(() => screen.getByTitle(/175/));
+        await waitFor(() => screen.getByTitle(/175/));
+        const link = screen.getByTestId('count-blunders-total');
         await fireEvent.click(link);
         expect(processCommand).toHaveBeenCalledWith('s E>175');
     });
@@ -47,7 +48,21 @@ describe('StatusBar — lien des blunders', () => {
         const link = await waitFor(() => screen.getByTestId('count-blunders'));
         await waitFor(() => expect(link.textContent).toContain('12 / 340'));
         expect(countPositions).toHaveBeenCalledWith({ moveErrorFilter: 'E>175', restrictToPositionIDs: '3,4,5' });
-        expect(link.getAttribute('title')).toMatch(/12.*340.*175/);
+        expect(screen.getByTestId('count-blunders-list').getAttribute('title')).toMatch(/12.*175/);
+        expect(screen.getByTestId('count-blunders-total').getAttribute('title')).toMatch(/340.*175/);
+    });
+
+    test('les deux chiffres lancent deux recherches distinctes', async () => {
+        databasePathStore.set('/tmp/x.db');
+        positionsStore.setIds([3, 4, 5]);
+        await refreshLibraryCounts();
+        render(StatusBar);
+        const list = await waitFor(() => screen.getByTestId('count-blunders-list'));
+        await fireEvent.click(list);
+        expect(processCommand).toHaveBeenLastCalledWith('ss E>175');
+        await fireEvent.click(screen.getByTestId('count-blunders-total'));
+        expect(processCommand).toHaveBeenLastCalledWith('s E>175');
+        expect(processCommand).toHaveBeenCalledTimes(2);
     });
 
     test('la bibliothèque entière ne montre que le total', async () => {
@@ -56,8 +71,8 @@ describe('StatusBar — lien des blunders', () => {
         await openLibrary();
         await refreshLibraryCounts();
         render(StatusBar);
-        const link = await waitFor(() => screen.getByTestId('count-blunders'));
+        const link = await waitFor(() => screen.getByTestId('count-blunders-total'));
         expect(link.textContent).toContain('340');
-        expect(link.textContent).not.toContain('/ 340');
+        expect(screen.queryByTestId('count-blunders-list')).toBeNull();
     });
 });
