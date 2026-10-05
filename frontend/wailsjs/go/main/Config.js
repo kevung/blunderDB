@@ -86,10 +86,6 @@ export function GetPageStep() {
   return window['go']['main']['Config']['GetPageStep']();
 }
 
-export function GetTabPanelHeights() {
-  return window['go']['main']['Config']['GetTabPanelHeights']();
-}
-
 export function GetPanelPosition() {
   return window['go']['main']['Config']['GetPanelPosition']();
 }
@@ -98,12 +94,20 @@ export function GetPanelWidth() {
   return window['go']['main']['Config']['GetPanelWidth']();
 }
 
+export function GetRolloutChoice() {
+  return window['go']['main']['Config']['GetRolloutChoice']();
+}
+
 export function GetStatsFilter() {
   return window['go']['main']['Config']['GetStatsFilter']();
 }
 
 export function GetTabOrder() {
   return window['go']['main']['Config']['GetTabOrder']();
+}
+
+export function GetTabPanelHeights() {
+  return window['go']['main']['Config']['GetTabPanelHeights']();
 }
 
 export function GetTheme() {
@@ -214,10 +218,6 @@ export function SavePageStep(arg1) {
   return window['go']['main']['Config']['SavePageStep'](arg1);
 }
 
-export function SaveTabPanelHeight(arg1, arg2) {
-  return window['go']['main']['Config']['SaveTabPanelHeight'](arg1, arg2);
-}
-
 export function SavePanelPosition(arg1) {
   return window['go']['main']['Config']['SavePanelPosition'](arg1);
 }
@@ -226,12 +226,20 @@ export function SavePanelWidth(arg1) {
   return window['go']['main']['Config']['SavePanelWidth'](arg1);
 }
 
+export function SaveRolloutChoice(arg1) {
+  return window['go']['main']['Config']['SaveRolloutChoice'](arg1);
+}
+
 export function SaveStatsFilter(arg1) {
   return window['go']['main']['Config']['SaveStatsFilter'](arg1);
 }
 
 export function SaveTabOrder(arg1) {
   return window['go']['main']['Config']['SaveTabOrder'](arg1);
+}
+
+export function SaveTabPanelHeight(arg1, arg2) {
+  return window['go']['main']['Config']['SaveTabPanelHeight'](arg1, arg2);
 }
 
 export function SaveTheme(arg1) {

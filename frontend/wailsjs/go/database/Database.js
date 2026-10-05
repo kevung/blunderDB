@@ -1022,6 +1022,10 @@ export function RefreshSearchStatistics() {
   return window['go']['database']['Database']['RefreshSearchStatistics']();
 }
 
+export function RefuseReadOnly() {
+  return window['go']['database']['Database']['RefuseReadOnly']();
+}
+
 export function ReinstateParticipant(arg1, arg2) {
   return window['go']['database']['Database']['ReinstateParticipant'](arg1, arg2);
 }

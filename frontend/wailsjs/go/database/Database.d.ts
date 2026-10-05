@@ -528,6 +528,8 @@ export function ReencodeAnalyses():Promise<database.ReencodeResult>;
 
 export function RefreshSearchStatistics():Promise<void>;
 
+export function RefuseReadOnly():Promise<void>;
+
 export function ReinstateParticipant(arg1:number,arg2:string):Promise<service.DirectionView>;
 
 export function RemoveAlias(arg1:string,arg2:string):Promise<boolean>;

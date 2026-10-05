@@ -9,6 +9,8 @@ import (
 	"testing"
 
 	"github.com/adrg/xdg"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 )
 
 // isolateXDGConfig points XDG_CONFIG_HOME at a throwaway directory so a test
@@ -187,6 +189,8 @@ func TestClampPanelWidth(t *testing.T) {
 func TestConfigRoundTripLoadSave(t *testing.T) {
 	isolateXDGConfig(t)
 
+	rolloutCustom := rollout.Standard()
+	rolloutCustom.MaxGames = 2592
 	original := &Config{
 		WindowWidth:      1600,
 		WindowHeight:     900,
@@ -218,6 +222,7 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		GammonNetCandidates:  15,
 		GammonNetAutoAnalyze: true,
 		CheckForUpdates:      true,
+		RolloutChoice:        RolloutChoice{Preset: "custom", Custom: &rolloutCustom},
 		StatsFilter: StatsFilterPersisted{
 			PlayerName:       "Kévin Unger",
 			TournamentIDs:    []int64{3, 7, 11},
@@ -267,6 +272,7 @@ func TestConfigRoundTripLoadSave(t *testing.T) {
 		{"GammonNetAutoAnalyze", loaded.GetGammonNetAutoAnalyze(), original.GammonNetAutoAnalyze},
 		{"CheckForUpdates", loaded.GetCheckForUpdates(), original.CheckForUpdates},
 		{"StatsFilter", loaded.GetStatsFilter(), original.StatsFilter},
+		{"RolloutChoice", loaded.GetRolloutChoice(), original.RolloutChoice},
 	}
 	for _, c := range checks {
 		t.Run(c.name, func(t *testing.T) {

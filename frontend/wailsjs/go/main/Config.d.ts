@@ -44,15 +44,17 @@ export function GetMCPHost():Promise<main.MCPHostSettings>;
 
 export function GetPageStep():Promise<string>;
 
-export function GetTabPanelHeights():Promise<Record<string, number>>;
-
 export function GetPanelPosition():Promise<string>;
 
 export function GetPanelWidth():Promise<number>;
 
+export function GetRolloutChoice():Promise<main.RolloutChoice>;
+
 export function GetStatsFilter():Promise<main.StatsFilterPersisted>;
 
 export function GetTabOrder():Promise<Array<string>>;
+
+export function GetTabPanelHeights():Promise<Record<string, number>>;
 
 export function GetTheme():Promise<string>;
 
@@ -108,15 +110,17 @@ export function SaveMCPHost(arg1:main.MCPHostSettings):Promise<void>;
 
 export function SavePageStep(arg1:string):Promise<void>;
 
-export function SaveTabPanelHeight(arg1:string,arg2:number):Promise<void>;
-
 export function SavePanelPosition(arg1:string):Promise<void>;
 
 export function SavePanelWidth(arg1:number):Promise<void>;
 
+export function SaveRolloutChoice(arg1:main.RolloutChoice):Promise<void>;
+
 export function SaveStatsFilter(arg1:main.StatsFilterPersisted):Promise<void>;
 
 export function SaveTabOrder(arg1:Array<string>):Promise<void>;
+
+export function SaveTabPanelHeight(arg1:string,arg2:number):Promise<void>;
 
 export function SaveTheme(arg1:string):Promise<void>;
 

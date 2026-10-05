@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strings"
 	"testing"
 
@@ -340,5 +341,21 @@ func TestMatchMoveRollout(t *testing.T) {
 		if math.Abs(c.Equity-searched[c.Move]) > 0.15 {
 			t.Fatalf("%s: rollout %+.4f, search %+.4f — not the same scale", c.Move, c.Equity, searched[c.Move])
 		}
+	}
+}
+
+// A play named in another engine's dialect — a chained hop, steps in another
+// order — is rolled out under the name it was given.
+func TestNamedMovesInAnotherDialect(t *testing.T) {
+	s := small()
+	s.MaxGames, s.MinGames = 36, 36
+	r, err := Run(context.Background(), decode(t, opening31), s, Options{Moves: []string{"13/9", "6/5 8/5"}, NoBearoffTable: true})
+	if err != nil {
+		t.Fatal(err)
+	}
+	names := []string{r.Candidates[0].Move, r.Candidates[1].Move}
+	slices.Sort(names)
+	if names[0] != "13/9" || names[1] != "6/5 8/5" {
+		t.Fatalf("candidates %v, want the names given", names)
 	}
 }

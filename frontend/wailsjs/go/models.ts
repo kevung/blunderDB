@@ -1769,6 +1769,7 @@ export namespace domain {
 	    tournamentIDs: number[];
 	    includeLessons: boolean;
 	    lessonIDs: number[];
+	    deckIDs: number[];
 	    watermark: string;
 	    watermarkNote: string;
 	    password: string;
@@ -1795,6 +1796,7 @@ export namespace domain {
 	        this.tournamentIDs = source["tournamentIDs"];
 	        this.includeLessons = source["includeLessons"];
 	        this.lessonIDs = source["lessonIDs"];
+	        this.deckIDs = source["deckIDs"];
 	        this.watermark = source["watermark"];
 	        this.watermarkNote = source["watermarkNote"];
 	        this.password = source["password"];
@@ -3647,6 +3649,38 @@ export namespace main {
 	        this.cube = source["cube"];
 	    }
 	}
+	export class RolloutChoice {
+	    preset: string;
+	    custom?: rollout.Settings;
+	
+	    static createFrom(source: any = {}) {
+	        return new RolloutChoice(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.preset = source["preset"];
+	        this.custom = this.convertValues(source["custom"], rollout.Settings);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class StatsFilterPersisted {
 	    player_name: string;
 	    tournament_ids: number[];
@@ -3681,6 +3715,7 @@ export namespace main {
 	    window_height: number;
 	    last_database_path: string;
 	    stats_filter?: StatsFilterPersisted;
+	    rollout_choice?: RolloutChoice;
 	    language?: string;
 	    board_colors?: BoardColors;
 	    ui_scale?: number;
@@ -3690,6 +3725,7 @@ export namespace main {
 	    panel_position?: string;
 	    panel_height?: number;
 	    panel_width?: number;
+	    panel_heights?: Record<string, number>;
 	    page_step?: string;
 	    tour_seen?: boolean;
 	    tab_order?: string[];
@@ -3730,6 +3766,7 @@ export namespace main {
 	        this.window_height = source["window_height"];
 	        this.last_database_path = source["last_database_path"];
 	        this.stats_filter = this.convertValues(source["stats_filter"], StatsFilterPersisted);
+	        this.rollout_choice = this.convertValues(source["rollout_choice"], RolloutChoice);
 	        this.language = source["language"];
 	        this.board_colors = this.convertValues(source["board_colors"], BoardColors);
 	        this.ui_scale = source["ui_scale"];
@@ -3739,6 +3776,7 @@ export namespace main {
 	        this.panel_position = source["panel_position"];
 	        this.panel_height = source["panel_height"];
 	        this.panel_width = source["panel_width"];
+	        this.panel_heights = source["panel_heights"];
 	        this.page_step = source["page_step"];
 	        this.tour_seen = source["tour_seen"];
 	        this.tab_order = source["tab_order"];
@@ -3803,6 +3841,7 @@ export namespace main {
 	        this.write = source["write"];
 	    }
 	}
+	
 	
 	export class WatchFolderSettings {
 	    on: boolean;
@@ -5830,6 +5869,28 @@ export namespace storage {
 	        this.aliases = source["aliases"];
 	    }
 	}
+	export class ContrastPosition {
+	    position_id: number;
+	    error_mp_a: number;
+	    error_mp_b: number;
+	    times_a: number;
+	    times_b: number;
+	    well_played: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ContrastPosition(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.position_id = source["position_id"];
+	        this.error_mp_a = source["error_mp_a"];
+	        this.error_mp_b = source["error_mp_b"];
+	        this.times_a = source["times_a"];
+	        this.times_b = source["times_b"];
+	        this.well_played = source["well_played"];
+	    }
+	}
 	export class HeadToHeadMatch {
 	    id: number;
 	    date: string;
@@ -5855,68 +5916,6 @@ export namespace storage {
 	        this.pr_a = source["pr_a"];
 	        this.pr_b = source["pr_b"];
 	    }
-	}
-	export class ContrastPosition {
-	    position_id: number;
-	    error_mp_a: number;
-	    error_mp_b: number;
-	    times_a: number;
-	    times_b: number;
-	    well_played: string;
-	
-	    static createFrom(source: any = {}) {
-	        return new ContrastPosition(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.position_id = source["position_id"];
-	        this.error_mp_a = source["error_mp_a"];
-	        this.error_mp_b = source["error_mp_b"];
-	        this.times_a = source["times_a"];
-	        this.times_b = source["times_b"];
-	        this.well_played = source["well_played"];
-	    }
-	}
-	export class PlayerContrast {
-	    player_a: string;
-	    player_b: string;
-	    threshold_mp: number;
-	    common_positions: number;
-	    positions: ContrastPosition[];
-	    unscored_moves: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new PlayerContrast(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.player_a = source["player_a"];
-	        this.player_b = source["player_b"];
-	        this.threshold_mp = source["threshold_mp"];
-	        this.common_positions = source["common_positions"];
-	        this.positions = this.convertValues(source["positions"], ContrastPosition);
-	        this.unscored_moves = source["unscored_moves"];
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
 	}
 	export class HeadToHead {
 	    player_a: string;
@@ -6058,6 +6057,46 @@ export namespace storage {
 	        this.club = source["club"];
 	        this.rating = source["rating"];
 	    }
+	}
+	export class PlayerContrast {
+	    player_a: string;
+	    player_b: string;
+	    threshold_mp: number;
+	    common_positions: number;
+	    positions: ContrastPosition[];
+	    unscored_moves: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PlayerContrast(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.player_a = source["player_a"];
+	        this.player_b = source["player_b"];
+	        this.threshold_mp = source["threshold_mp"];
+	        this.common_positions = source["common_positions"];
+	        this.positions = this.convertValues(source["positions"], ContrastPosition);
+	        this.unscored_moves = source["unscored_moves"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class RankedPlayer {
 	    rank: number;
@@ -6349,42 +6388,6 @@ export namespace storage {
 		    return a;
 		}
 	}
-	export class TrainingStats {
-	    Window: string;
-	    Sessions: TrainingQuizSession[];
-	    Periods: TrainingPeriod[];
-	    Themes: TrainingTheme[];
-	
-	    static createFrom(source: any = {}) {
-	        return new TrainingStats(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.Window = source["Window"];
-	        this.Sessions = this.convertValues(source["Sessions"], TrainingQuizSession);
-	        this.Periods = this.convertValues(source["Periods"], TrainingPeriod);
-	        this.Themes = this.convertValues(source["Themes"], TrainingTheme);
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
 	export class TrainingThemePoint {
 	    Start: string;
 	    Decisions: number;
@@ -6437,6 +6440,44 @@ export namespace storage {
 		    return a;
 		}
 	}
+	export class TrainingStats {
+	    Window: string;
+	    Sessions: TrainingQuizSession[];
+	    Periods: TrainingPeriod[];
+	    Themes: TrainingTheme[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TrainingStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Window = source["Window"];
+	        this.Sessions = this.convertValues(source["Sessions"], TrainingQuizSession);
+	        this.Periods = this.convertValues(source["Periods"], TrainingPeriod);
+	        this.Themes = this.convertValues(source["Themes"], TrainingTheme);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	
 	export class WindowStats {
 	    from: string;
 	    to: string;

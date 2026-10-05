@@ -14,6 +14,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -179,9 +180,11 @@ type Config struct {
 	WindowHeight       int                  `json:"window_height"`
 	LastDatabasePath   string               `json:"last_database_path"`
 	StatsFilter        StatsFilterPersisted `json:"stats_filter,omitempty"`
-	Language           string               `json:"language,omitempty"`
-	BoardColors        BoardColors          `json:"board_colors,omitempty"`
-	UIScale            int                  `json:"ui_scale,omitempty"`
+	// RolloutChoice is the rollout setting the Analysis panel starts with.
+	RolloutChoice RolloutChoice `json:"rollout_choice,omitempty"`
+	Language      string        `json:"language,omitempty"`
+	BoardColors   BoardColors   `json:"board_colors,omitempty"`
+	UIScale       int           `json:"ui_scale,omitempty"`
 	// LikeLimit is how many neighbours a `like` ranking returns;
 	// LikeMaxDistance the checker-pip ceiling, 0 = none. No default ceiling:
 	// its scale depends on the phase and is unmeasured (ADR-0043 rule 4).
@@ -449,6 +452,7 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.WindowHeight = config.WindowHeight
 	c.LastDatabasePath = config.LastDatabasePath
 	c.StatsFilter = config.StatsFilter
+	c.RolloutChoice = config.RolloutChoice
 	c.Language = config.Language
 	if c.Language == "" {
 		c.Language = "en"
@@ -975,6 +979,25 @@ func (c *Config) GetStatsFilter() StatsFilterPersisted {
 // SaveStatsFilter persists the given stats filter to disk.
 func (c *Config) SaveStatsFilter(filter StatsFilterPersisted) error {
 	c.StatsFilter = filter
+	return c.SaveConfig(c)
+}
+
+// RolloutChoice is the rollout setting chosen in Settings > Analysis: a preset
+// ("fast", "standard") or "custom" with its own settings. An empty Preset is
+// the standard one.
+type RolloutChoice struct {
+	Preset string            `json:"preset"`
+	Custom *rollout.Settings `json:"custom,omitempty"`
+}
+
+// GetRolloutChoice returns the persisted rollout setting.
+func (c *Config) GetRolloutChoice() RolloutChoice {
+	return c.RolloutChoice
+}
+
+// SaveRolloutChoice persists the rollout setting.
+func (c *Config) SaveRolloutChoice(choice RolloutChoice) error {
+	c.RolloutChoice = choice
 	return c.SaveConfig(c)
 }
 

@@ -11,6 +11,7 @@ import (
 	"sync/atomic"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/race"
 )
@@ -278,8 +279,12 @@ func moveBranches(pos *domain.Position, s Settings, named []string, cube cubeSta
 		return nil, nil, fmt.Errorf("rollout: no legal play for %d-%d", pos.Dice[0], pos.Dice[1])
 	}
 	byNotation := make(map[string]domain.Position, len(legal))
+	// An imported analysis names a play in its engine's dialect ("13/7*",
+	// "6/4(2)"): the canonical form finds the legal play it stands for.
+	byCanonical := make(map[string]domain.Position, len(legal))
 	for _, p := range legal {
 		byNotation[p.Notation] = p.Result
+		byCanonical[engine.CanonicalMove(p.Notation)] = p.Result
 	}
 
 	if len(named) == 0 {
@@ -307,6 +312,9 @@ func moveBranches(pos *domain.Position, s Settings, named []string, cube cubeSta
 	for _, n := range named {
 		n = strings.TrimSpace(n)
 		res, ok := byNotation[n]
+		if !ok {
+			res, ok = byCanonical[engine.CanonicalMove(n)]
+		}
 		if !ok {
 			options := make([]string, 0, len(byNotation))
 			for k := range byNotation {
