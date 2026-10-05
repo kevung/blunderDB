@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 11:56+0200\n"
+"POT-Creation-Date: 2026-10-05 17:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -41,17 +41,17 @@ msgstr ""
 "参照)、レスポンスの形式(JSON、またはストリーミングリストの場合は NDJSON)と、存在する場合は任意の ``Idempotency-"
 "Key`` ヘッダーへの言及を含みます。"
 
-#: ../../source/api_reference.rst:330
+#: ../../source/api_reference.rst:378
 msgid "Idempotence"
 msgstr "冪等性"
 
-#: ../../source/api_reference.rst:332
+#: ../../source/api_reference.rst:380
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 46 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 47 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -61,17 +61,17 @@ msgid ""
 "besoin ou n'accepte cet en-tête."
 msgstr ""
 "ほとんどのメソッドには特別な仕組みは不要です。読み取りに副作用はなく、``positions.*`` の書き込みは内容の Zobrist "
-"ハッシュのおかげで効果が冪等です。同じポジションを 2 回保存しても同じ行が返り、重複は生じません。46 個のメソッドは任意の "
+"ハッシュのおかげで効果が冪等です。同じポジションを 2 回保存しても同じ行が返り、重複は生じません。47 個のメソッドは任意の "
 "``Idempotency-Key`` ヘッダーを受け付けます。これは、2 回の呼び出しが 2 "
 "つの別個の効果になるメソッドと、応答が呼び出しによってポジションが作成されたか(``created``)を示すため、応答が失われた後に再送されると誤った内容を返してしまう"
 " ``positions.save`` です。同じキーで再送された呼び出しは、効果を繰り返さず最初の試行の結果を返します。上の表の"
 "「(Idempotency-Key)」の印を参照してください。それ以外のメソッドはこのヘッダーを必要とせず、受け付けません。"
 
-#: ../../source/api_reference.rst:344
+#: ../../source/api_reference.rst:392
 msgid "Lectures conditionnelles"
 msgstr "条件付き読み取り"
 
-#: ../../source/api_reference.rst:346
+#: ../../source/api_reference.rst:394
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "

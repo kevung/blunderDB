@@ -82,6 +82,7 @@ Commandes disponibles
    "list", "Affiche le contenu de la base."
    "match", "Affiche les positions et analyses d'un match."
    "transcribe", "Rejoue une transcription et rend compte de ce que le rejeu trouve."
+   "duel", "Joue un Duel une Action par appel (création, coup, videau, arrêt)."
    "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."
    "study", "La file d'étude : les blunders non traités du joueur de référence, et la marque « vu »."
    "lesson", "Gère les leçons (étapes ordonnées montrant collections et positions) et les exporte."
@@ -1890,6 +1891,44 @@ en donne le compte au plus et refuse sans ``--accept-losses``.
    # match.mat: 7 point match, 4 game(s), 203 action(s)
    #   Final score: 9-2
    # Inconsistencies: none
+
+.. _cli_duel:
+
+duel — Jouer un Duel
+--------------------
+
+Joue un Duel sans interface, une Action par appel. Chaque appel est son propre
+processus : il reprend le Duel dans la base, joue une Action et la réécrit. Un
+Duel joué ainsi n'a ni Cadence ni durée de décision (les durées de ses coups
+sont inconnues, jamais nulles).
+
+.. code-block:: bash
+
+   ./blunderdb duel create --db <path> (--length <n> | --money [--jacoby]) [--side1 <côté>] [--side2 <côté>]
+   ./blunderdb duel show --db <path> --id <id>
+   ./blunderdb duel list --db <path>
+   ./blunderdb duel move --db <path> --id <id> --play "24/18 13/11"
+   ./blunderdb duel roll|double|take|pass|resign --db <path> --id <id>
+   ./blunderdb duel stop|discard --db <path> --id <id>
+
+**Sous-commandes :**
+
+* ``create`` — Démarre un Duel et joue jusqu'à la première décision d'un Côté
+  externe. ``--length`` (1 à 25 points) ou ``--money`` ; ``--start`` (XGID du
+  Départ) ; ``--name1`` et ``--name2`` ; ``--side1`` et ``--side2``
+  (``external``, ou ``bot:<niveau>``) ; ``--discard-at-end`` jette le brouillon
+  à la fin au lieu d'écrire le Match.
+* ``show`` — Score, ce que le Duel attend et, pour un coup, les jeux légaux. La
+  graine des dés n'est jamais affichée avant la fin : l'empreinte la représente.
+* ``list`` — Les Duels en suspens.
+* ``roll``, ``move``, ``double``, ``take``, ``pass``, ``resign`` — Une Action du
+  Côté que le Duel attend (``--side 1|2`` pour le nommer) ; ``--play`` donne le
+  coup en notation, dans l'ordre qu'on veut ; ``--level`` (1 à 3) la valeur d'un
+  abandon ; ``--revision`` refuse l'Action si le Duel a bougé.
+* ``stop`` — Arrête le Duel et écrit le Match tel qu'il est.
+* ``discard`` — Jette le Duel : rien n'en est écrit.
+
+Toutes prennent ``--db`` et ``--format`` (``text`` ou ``json``).
 
 tournament — Lire un tournoi dirigé
 ------------------------------------

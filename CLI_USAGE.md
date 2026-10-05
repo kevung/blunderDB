@@ -51,6 +51,7 @@ When you provide a CLI command as the first argument, it automatically runs in h
 - `rollout` - Roll out a position's plays or cube decision (gammonNet)
 - `bearoff` - Generate, list, verify and delete the bearoff tables
 - `analyze` - Write a gammonNet analysis for every position missing one
+- `duel` - Play a Duel one Action per call (create, show, move, double, take, pass, stop)
 - `transcribe` - Replay a .mat, a match or a draft and report its inconsistencies
 - `tournament` - Read a directed tournament (list, verify, standings, page, export)
 - `players` - Other spellings of a player (alias add, list, remove, suggest)
@@ -2614,6 +2615,263 @@ Options:
 Examples:
   # Delete match with ID 1
   blunderdb delete --db database.db --type match --id 1 --confirm
+```
+
+### `blunderdb duel create`
+
+```
+Usage: blunderdb duel create [options]
+
+Start a Duel and play on to the first Decision of an external Side.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -discard-at-end
+    	Throw the draft away when the match is won instead of writing the Match
+  -format string
+    	Output format: text or json (default "text")
+  -jacoby
+    	With --money: play the Jacoby rule
+  -length int
+    	Match length in points, 1 to 25
+  -money
+    	A money session instead of a match
+  -name1 string
+    	Player 1's name
+  -name2 string
+    	Player 2's name
+  -side1 string
+    	Player 1's Side: external, or bot:<level> (default "external")
+  -side2 string
+    	Player 2's Side: external, or bot:<level> (default "external")
+  -start string
+    	XGID of the Position the first game begins at (default: the opening position)
+
+Examples:
+  blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob
+  blunderdb duel create --db database.db --money --jacoby
+  blunderdb duel create --db database.db --length 7 --side2 bot:2-ply
+```
+
+### `blunderdb duel discard`
+
+```
+Usage: blunderdb duel discard [options]
+
+Throw the Duel away: nothing of it is written, and the Match is not made.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -revision int
+    	Refuse unless the Duel is at this revision (default: no check)
+
+Examples:
+  blunderdb duel discard --db database.db --id 1
+```
+
+### `blunderdb duel double`
+
+```
+Usage: blunderdb duel double [options]
+
+Play one Action, then play on to the next Decision of an external Side. The Side defaults to the one the Duel awaits.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -revision int
+    	Refuse the Action unless the Duel is at this revision (default: no check)
+  -side int
+    	The Side that plays, 1 or 2 (default: the one the Duel awaits)
+
+Examples:
+  blunderdb duel double --db database.db --id 1
+```
+
+### `blunderdb duel list`
+
+```
+Usage: blunderdb duel list [options]
+
+List the Duels in suspense, the most recently played first.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+
+Examples:
+  blunderdb duel list --db database.db
+```
+
+### `blunderdb duel move`
+
+```
+Usage: blunderdb duel move [options]
+
+Play one Action, then play on to the next Decision of an external Side. The Side defaults to the one the Duel awaits.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -play string
+    	The play in notation, as show lists them (required)
+  -revision int
+    	Refuse the Action unless the Duel is at this revision (default: no check)
+  -side int
+    	The Side that plays, 1 or 2 (default: the one the Duel awaits)
+
+Examples:
+  blunderdb duel move --db database.db --id 1
+```
+
+### `blunderdb duel pass`
+
+```
+Usage: blunderdb duel pass [options]
+
+Play one Action, then play on to the next Decision of an external Side. The Side defaults to the one the Duel awaits.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -revision int
+    	Refuse the Action unless the Duel is at this revision (default: no check)
+  -side int
+    	The Side that plays, 1 or 2 (default: the one the Duel awaits)
+
+Examples:
+  blunderdb duel pass --db database.db --id 1
+```
+
+### `blunderdb duel resign`
+
+```
+Usage: blunderdb duel resign [options]
+
+Play one Action, then play on to the next Decision of an external Side. The Side defaults to the one the Duel awaits.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -level int
+    	1 single, 2 gammon, 3 backgammon (default 1)
+  -revision int
+    	Refuse the Action unless the Duel is at this revision (default: no check)
+  -side int
+    	The Side that plays, 1 or 2 (default: the one the Duel awaits)
+
+Examples:
+  blunderdb duel resign --db database.db --id 1
+```
+
+### `blunderdb duel roll`
+
+```
+Usage: blunderdb duel roll [options]
+
+Play one Action, then play on to the next Decision of an external Side. The Side defaults to the one the Duel awaits.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -revision int
+    	Refuse the Action unless the Duel is at this revision (default: no check)
+  -side int
+    	The Side that plays, 1 or 2 (default: the one the Duel awaits)
+
+Examples:
+  blunderdb duel roll --db database.db --id 1
+```
+
+### `blunderdb duel show`
+
+```
+Usage: blunderdb duel show [options]
+
+Show a Duel in suspense: its score, what it awaits and, when it awaits a play, the legal ones.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+
+Examples:
+  blunderdb duel show --db database.db --id 1
+```
+
+### `blunderdb duel stop`
+
+```
+Usage: blunderdb duel stop [options]
+
+Stop the Duel and write the Match as it stands: an unfinished game keeps no winner, and a match short of its length is marked stopped early.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -revision int
+    	Refuse unless the Duel is at this revision (default: no check)
+
+Examples:
+  blunderdb duel stop --db database.db --id 1
+```
+
+### `blunderdb duel take`
+
+```
+Usage: blunderdb duel take [options]
+
+Play one Action, then play on to the next Decision of an external Side. The Side defaults to the one the Duel awaits.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -revision int
+    	Refuse the Action unless the Duel is at this revision (default: no check)
+  -side int
+    	The Side that plays, 1 or 2 (default: the one the Duel awaits)
+
+Examples:
+  blunderdb duel take --db database.db --id 1
 ```
 
 ### `blunderdb edit`

@@ -127,6 +127,10 @@ transcripteur, celles d'une base ``.db`` de leur auteur d'origine.
      - sert les gestes de transcription (``transcriptions.create``,
        ``apply``, ``finish``…) ; **éteints par défaut**, voir
        :ref:`headless_transcription`
+   * - ``--duel``
+     - ``false``
+     - sert les gestes d'un Duel (``duels.create``, ``act``, ``stop``…) ;
+       **éteints par défaut**, voir :ref:`headless_duel`
    * - ``--transcription-ttl <durée>``
      - ``30m``
      - ferme une session de transcription inactive depuis plus longtemps
@@ -213,7 +217,7 @@ Toutes les options sauf ``--db`` et ``--transcription-ttl`` peuvent aussi être
 fournies par variable d'environnement (``BLUNDERDB_BACKEND``, ``BLUNDERDB_DSN``,
 ``BLUNDERDB_ADDR``, ``BLUNDERDB_LOG_LEVEL``, ``BLUNDERDB_METRICS``,
 ``BLUNDERDB_WEB``, ``BLUNDERDB_DIRECTION``, ``BLUNDERDB_MCP_WRITE``,
-``BLUNDERDB_TRANSCRIPTION``, ``BLUNDERDB_CORS_ALLOW_ORIGIN``,
+``BLUNDERDB_TRANSCRIPTION``, ``BLUNDERDB_DUEL``, ``BLUNDERDB_CORS_ALLOW_ORIGIN``,
 ``BLUNDERDB_RATE_LIMIT_RPS``, ``BLUNDERDB_RATE_LIMIT_BURST``,
 ``BLUNDERDB_QUOTA_POSITIONS``, ``BLUNDERDB_QUOTA_BYTES``,
 ``BLUNDERDB_QUOTA_ANALYSIS_SECONDS``, ``BLUNDERDB_QUOTA_IMPORTS``,
@@ -422,6 +426,47 @@ des analyses et commentaires que la transcription ne garde pas
    Le démon n'authentifie personne : ouvrir l'écriture, c'est la confier au
    proxy (:ref:`headless_proxy_deployment`). Un rôle « transcripteur » est une règle du
    proxy sur le préfixe ``/v1/transcriptions.``, pas une notion du démon.
+
+.. _headless_duel:
+
+Jouer un Duel par l'API
+~~~~~~~~~~~~~~~~~~~~~~~
+
+La famille ``duels.*`` pilote un Duel une Action à la fois, avec la même
+logique que le bureau. Les lectures (``list``, ``get``) sont toujours servies.
+Les gestes (``create``, ``open``, ``act``, ``flag``, ``suspend``, ``stop``,
+``discard``) ne le sont qu'avec ``serve --duel`` : sans ce drapeau, ces routes
+répondent 404.
+
+``create`` reçoit la longueur du match (ou une session en argent), le Départ,
+les deux Côtés (``external``, ou ``bot:<niveau>`` quand le démon sait faire
+jouer un Bot ; un Côté inconnu est refusé en **400**), la Cadence et les noms.
+``act`` joue une Action — ``roll``, ``double``, ``take``, ``pass``, ``move``
+ou ``resign`` — et la nomme son Côté (``side``, 0 ou 1) : le démon n'authentifie
+personne, c'est le client qui répond de qui joue pour qui. La réponse rend l'état
+du Duel au prochain point où un Côté externe décide, avec les Actions
+survenues entre-temps (lancers, coups forcés, Actions d'un Bot). Une Action
+que les règles refusent est un **400** et n'écrit rien.
+
+Tout geste sur un Duel existant porte la révision vue en dernier dans
+``If-Match`` : absent → **428**, périmée → **409**. Seul le Duel ouvert d'un
+tenant se joue ; un geste sur un Duel en suspens l'ouvre d'abord, et met en
+suspens celui qui l'était — c'est ce qui permet de reprendre après un
+redémarrage du démon, le brouillon étant tout ce qu'il y a du Duel. ``get``
+rend la révision en ``ETag`` et répond 304 à un ``If-None-Match`` qui la nomme.
+
+La graine des dés ne sort par aucune route avant la fin : l'état en porte
+l'empreinte, et la graine n'est révélée qu'avec le Match que la fin du Duel
+écrit (``ended.diceSeed``). ``stop`` arrête le Duel en gardant le Match tel
+qu'il est, ``discard`` le jette. Les gestes sont annoncés sur ``/v1/events``
+(filtre ``duel``). Sous ``blunderdb call``, un Duel n'a ni Cadence ni durée de
+décision : chaque appel est son propre processus.
+
+.. warning::
+
+   Le démon n'authentifie personne : qui atteint ces routes joue pour l'un
+   ou l'autre Côté. Une règle du proxy sur le préfixe ``/v1/duels.`` décide
+   qui le peut (:ref:`headless_proxy_deployment`).
 
 .. _headless_client_python:
 
@@ -669,14 +714,14 @@ version, pas l'état : le client relit ce qu'il affiche, avec
   Terminer).
 
 ``removed: true`` signale ce qui n'existe plus. La route n'est servie qu'avec
-``--direction`` ou ``--transcription`` : sans eux, le démon n'écrit rien qu'il
+``--direction``, ``--transcription`` ou ``--duel`` : sans eux, le démon n'écrit rien qu'il
 aurait à annoncer, et ``/v1/events`` répond ``404``. Comme toute route
 ``/v1/``, elle exige ``X-Tenant-ID`` : un abonné n'entend que son tenant. Un
 tenant tient au plus 16 flux ouverts à la fois ; au-delà, ``429``. Le poste de
 travail emprunte le même service mais n'y branche aucun bus : ses gestes ne
 sont pas annoncés.
 
-Les paramètres ``tournament``, ``rencontre`` et ``transcription`` (identifiants
+Les paramètres ``tournament``, ``rencontre``, ``transcription`` et ``duel`` (identifiants
 séparés par des virgules, ou répétés) restreignent l'abonnement : un message
 passe s'il nomme l'un d'eux. Un tournoi d'un événement reçoit les messages de
 son événement. Un paramètre inconnu ou un identifiant invalide rend ``400``.
