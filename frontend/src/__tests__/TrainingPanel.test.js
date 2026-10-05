@@ -321,11 +321,15 @@ describe('les trois issues restent distinguées', () => {
         return text;
     }
 
-    test('illégal, non évalué, coût en mMWC — et juste', () => {
+    test("illégal, non évalué, coût en millipoints d'équité normalisée — et juste", () => {
         expect(verdictText(verdict({ legal: false, matched: false }))).toContain(en.training.illegal);
         expect(verdictText(verdict({ matched: false }))).toContain(en.training.unranked);
         const cost = verdictText(verdict({ errorMp: 42, best: '24/18 13/11' }));
         expect(cost).toContain(en.training.cost.replace('{mp}', '42'));
+        // The cost is normalised equity, not match winning chances: the unit
+        // must be the millipoint every other error in the app is charged in.
+        expect(cost).toContain('42 mp');
+        expect(cost).not.toContain('MWC');
         expect(cost).toContain('24/18 13/11');
         expect(verdictText(verdict())).toContain(en.training.right);
     });

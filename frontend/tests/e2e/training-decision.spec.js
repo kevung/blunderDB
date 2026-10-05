@@ -107,7 +107,7 @@ test('train decision : le coup se joue sur le plateau, se valide dans le panneau
     await validate.click();
 
     const verdict = panel.getByTestId('training-verdict');
-    await expect(verdict).toContainText('42 mMWC');
+    await expect(verdict).toContainText('42 mp');
     await expect(verdict).toContainText('8/5 6/5');
     await expect(panel.getByTestId('training-next'), 'le focus va au geste suivant').toBeFocused();
 

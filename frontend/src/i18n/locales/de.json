@@ -1832,7 +1832,7 @@
         "doublePass": "Doppel, Aufgabe",
         "illegal": "Unerlaubter Zug",
         "unranked": "Erlaubter Zug, nicht bewertet",
-        "cost": "Kostet {mp} mMWC",
+        "cost": "Kostet {mp} mp",
         "best": "bester: {move}",
         "gradeFailed": "Die Antwort konnte nicht bewertet werden.",
         "finishedDecision": "Entscheidung beendet: {correct}/{n}, Sitzungs-PR {pr}.",
@@ -1920,14 +1920,14 @@
         "scoresInstruction": "Schätzen Sie jede Zahl im Kopf und klicken Sie dann auf Aufdecken. Klicken Sie danach jede Zahl an, die Sie falsch hatten."
     },
     "explain": {
-        "blots": "Sie verlieren {cost} mMWC: Der gespielte Zug lässt {blots} Blots stehen, {best} nur {bestBlots}.",
-        "point": "Sie verlieren {cost} mMWC: {best} macht einen Punkt in Ihrem Heimfeld, den der gespielte Zug nicht macht.",
-        "gammon": "Sie verlieren {cost} mMWC: Der gespielte Zug gibt {gammon} Punkte Gammon-Chancen auf, die {best} behält.",
-        "passive": "Sie verlieren {cost} mMWC: Der gespielte Zug ist sicherer, aber {best} gewinnt häufiger — Sicherheit kostet hier mehr, als sie bringt.",
-        "doubletoolate": "Sie verlieren {cost} mMWC: Das war ein Doppel, und Sie haben es nicht angeboten ({best}).",
-        "doubletooearly": "Sie verlieren {cost} mMWC: Das Doppel ist verfrüht, {best}.",
-        "taketooloose": "Sie verlieren {cost} mMWC: Die Annahme ist zu locker, {best}.",
-        "passtootight": "Sie verlieren {cost} mMWC: Die Aufgabe ist zu eng, {best}."
+        "blots": "Sie verlieren {cost} mp: Der gespielte Zug lässt {blots} Blots stehen, {best} nur {bestBlots}.",
+        "point": "Sie verlieren {cost} mp: {best} macht einen Punkt in Ihrem Heimfeld, den der gespielte Zug nicht macht.",
+        "gammon": "Sie verlieren {cost} mp: Der gespielte Zug gibt {gammon} Punkte Gammon-Chancen auf, die {best} behält.",
+        "passive": "Sie verlieren {cost} mp: Der gespielte Zug ist sicherer, aber {best} gewinnt häufiger — Sicherheit kostet hier mehr, als sie bringt.",
+        "doubletoolate": "Sie verlieren {cost} mp: Das war ein Doppel, und Sie haben es nicht angeboten ({best}).",
+        "doubletooearly": "Sie verlieren {cost} mp: Das Doppel ist verfrüht, {best}.",
+        "taketooloose": "Sie verlieren {cost} mp: Die Annahme ist zu locker, {best}.",
+        "passtootight": "Sie verlieren {cost} mp: Die Aufgabe ist zu eng, {best}."
     },
     "similar": {
         "noPosition": "Keine aktuelle Stellung, zu der Nachbarn gesucht werden könnten.",

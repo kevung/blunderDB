@@ -1832,7 +1832,7 @@
         "doublePass": "ダブル、パス",
         "illegal": "不正な手",
         "unranked": "合法手ですが未評価",
-        "cost": "{mp} mMWC の損",
+        "cost": "{mp} mp の損",
         "best": "最善：{move}",
         "gradeFailed": "回答を採点できませんでした。",
         "finishedDecision": "判断終了：{correct}/{n}、セッション PR {pr}。",
@@ -1920,14 +1920,14 @@
         "scoresInstruction": "各マスの数値を頭の中で見積もってから「公開」を押し、その後、間違えた数値をクリックしてください。"
     },
     "explain": {
-        "blots": "{cost} mMWC の損：着手はブロットを {blots} 個残しますが、{best} なら {bestBlots} 個です。",
-        "point": "{cost} mMWC の損：{best} は自陣にポイントを作りますが、着手は作りません。",
-        "gammon": "{cost} mMWC の損：着手はギャモン率を {gammon} ポイント手放しますが、{best} は保ちます。",
-        "passive": "{cost} mMWC の損：着手は安全ですが、{best} のほうが勝率が高くなります。ここでは安全が得より高くつきます。",
-        "doubletoolate": "{cost} mMWC の損：ダブルすべき局面で、出していません（{best}）。",
-        "doubletooearly": "{cost} mMWC の損：ダブルが早すぎます。{best}。",
-        "taketooloose": "{cost} mMWC の損：テイクが甘すぎます。{best}。",
-        "passtootight": "{cost} mMWC の損：パスが固すぎます。{best}。"
+        "blots": "{cost} mp の損：着手はブロットを {blots} 個残しますが、{best} なら {bestBlots} 個です。",
+        "point": "{cost} mp の損：{best} は自陣にポイントを作りますが、着手は作りません。",
+        "gammon": "{cost} mp の損：着手はギャモン率を {gammon} ポイント手放しますが、{best} は保ちます。",
+        "passive": "{cost} mp の損：着手は安全ですが、{best} のほうが勝率が高くなります。ここでは安全が得より高くつきます。",
+        "doubletoolate": "{cost} mp の損：ダブルすべき局面で、出していません（{best}）。",
+        "doubletooearly": "{cost} mp の損：ダブルが早すぎます。{best}。",
+        "taketooloose": "{cost} mp の損：テイクが甘すぎます。{best}。",
+        "passtootight": "{cost} mp の損：パスが固すぎます。{best}。"
     },
     "similar": {
         "noPosition": "近い局面を探す対象の局面がありません。",

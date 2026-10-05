@@ -174,7 +174,7 @@ func printTrashUsage() {
 	fmt.Println()
 	fmt.Println("Options:")
 	fmt.Println("  --db string          Path to the database file (required)")
-	fmt.Println("  --kind string        position, collection, comment (delete); also narrows list")
+	fmt.Println("  --kind string        position, collection, comment (delete); narrows list, which also takes anki_card")
 	fmt.Println("  --limit int          Maximum entries listed (default 50)")
 	fmt.Println("  --format string      text (default) or json")
 	fmt.Println()

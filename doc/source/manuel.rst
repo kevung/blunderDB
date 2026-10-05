@@ -739,7 +739,7 @@ alternatives. Appuyer sur *CTRL-L* ou exécuter la commande ``list`` pour
 afficher ou masquer le panneau.
 
 Sous les tableaux, une **phrase** dit parfois ce que la décision jouée a
-coûté et pourquoi : « Vous perdez 120 mMWC : le coup joué laisse trois blots
+coûté et pourquoi : « Vous perdez 120 mp : le coup joué laisse trois blots
 là où 13/7 8/7 n'en laisse qu'un. » Elle est produite par six règles
 mesurables — l'exposition, un point du jan fait ou manqué, les chances de
 gammon abandonnées, une sécurité qui coûte plus qu'elle ne rapporte, et les
@@ -755,7 +755,7 @@ quelque chose d'inexact.
 
 La même phrase accompagne l'erreur là où vous venez de la commettre : au dos
 d'une **carte Anki**, sous l'analyse dévoilée, et dans le **verdict du quiz**
-de l'exercice Décision, sous le coût en mMWC. Les mêmes règles de silence y
+de l'exercice Décision, sous le coût en mp. Les mêmes règles de silence y
 valent : un coup juste, ou une erreur qu'aucune règle n'explique, n'ajoute
 rien.
 

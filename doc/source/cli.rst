@@ -2000,7 +2000,9 @@ recherche, aucune statistique, aucune règle de rétention.
   ``comment``.
 
 **Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit``
-(défaut 50), ``--format`` (``text`` ou ``json``).
+(défaut 50), ``--format`` (``text`` ou ``json``). Pour ``list``, ``--kind``
+restreint la liste à un type d'objet : ``position``, ``collection``,
+``comment`` ou ``anki_card``.
 
 .. note:: ``blunderdb delete`` supprime toujours **sans** filet : un script qui
    supprime une position s'attend à ce qu'elle disparaisse, et laisser un

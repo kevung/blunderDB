@@ -39,15 +39,21 @@ directory of each one).
 
 | Module | Version | Licence | Copyright | Used for |
 |---|---|---|---|---|
-| [github.com/kevung/xgparser](https://github.com/kevung/xgparser) | v1.4.0 | MIT | (c) 2025 Kévin Unger; the `.xg` format was first documented publicly by Michael Petch in `xgdatatools` | eXtreme Gammon `.xg` / `.xgp` import |
-| [github.com/kevung/gnubgparser](https://github.com/kevung/gnubgparser) | v1.6.0 | MIT | (c) 2025 Kévin Unger | GNU Backgammon `.sgf` and Jellyfish `.mat` import |
+| [github.com/kevung/xgparser](https://github.com/kevung/xgparser) | v1.5.0 | MIT | (c) 2025 Kévin Unger; the `.xg` format was first documented publicly by Michael Petch in `xgdatatools` | eXtreme Gammon `.xg` / `.xgp` import |
+| [github.com/kevung/gnubgparser](https://github.com/kevung/gnubgparser) | v1.7.1 | MIT | (c) 2025 Kévin Unger | GNU Backgammon `.sgf` and Jellyfish `.mat` import |
 | [github.com/kevung/bgfparser](https://github.com/kevung/bgfparser) | v1.2.0 | MIT | (c) 2025 bgfparser contributors | BGBlitz `.bgf` import |
-| [modernc.org/sqlite](https://gitlab.com/cznic/sqlite) | v1.58.0 | BSD-3-Clause | (c) 2017 The Sqlite Authors | Pure-Go SQLite driver (desktop, CLI, `serve` with the SQLite backend); pulls in `modernc.org/libc`, `mathutil`, `memory` (BSD-3-Clause) |
+| [github.com/kevung/ogxmparser](https://github.com/kevung/ogxmparser) | v0.1.0 | MIT | (c) 2026 Kévin Unger | HedgeHog `.ogxm` import |
+| [modernc.org/sqlite](https://gitlab.com/cznic/sqlite) | v1.59.0 | BSD-3-Clause | (c) 2017 The Sqlite Authors | Pure-Go SQLite driver (desktop, CLI, `serve` with the SQLite backend); pulls in `modernc.org/libc`, `mathutil`, `memory` (BSD-3-Clause) |
 | [github.com/jackc/pgx/v5](https://github.com/jackc/pgx) | v5.11.0 | MIT | (c) 2013-2021 Jack Christensen | PostgreSQL driver of the `serve` daemon (with `pgpassfile`, `pgservicefile`, `puddle`, MIT) |
-| [github.com/wailsapp/wails/v2](https://github.com/wailsapp/wails) | v2.10.2 | MIT | (c) 2018-Present Lea Anthony | Desktop window and Go↔JS bridge (not linked into `cmd/serve`) |
+| [github.com/wailsapp/wails/v2](https://github.com/wailsapp/wails) | v2.15.0 | MIT | (c) 2018-Present Lea Anthony | Desktop window and Go↔JS bridge (not linked into `cmd/serve`) |
 | [github.com/open-spaced-repetition/go-fsrs/v3](https://github.com/open-spaced-repetition/go-fsrs) | v3.3.1 | MIT | (c) 2022 open-spaced-repetition | FSRS scheduling of the Anki-style cards |
 | [github.com/adrg/xdg](https://github.com/adrg/xdg) | v0.5.3 | MIT | (c) 2014 Adrian-George Bostan | XDG config paths |
-| [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto), `x/sys`, `x/text` | see `go.mod` | BSD-3-Clause | The Go Authors | Signed watermarks and encrypted export containers, OS calls, text collation |
+| [github.com/klauspost/compress](https://github.com/klauspost/compress) | v1.20.0 | BSD-3-Clause | (c) 2012 The Go Authors, (c) 2019 Klaus Post | Compression of stored analyses |
+| [github.com/modelcontextprotocol/go-sdk](https://github.com/modelcontextprotocol/go-sdk) | v1.8.0 | MIT, new code Apache-2.0 (licensing transition stated in its `LICENSE`) | The Go MCP SDK authors | MCP servers of the desktop app, the CLI and `serve` |
+| [github.com/shirou/gopsutil/v4](https://github.com/shirou/gopsutil) | v4.26.8 | BSD-3-Clause | (c) 2014 WAKAYAMA Shirou | Available memory before computing a bearoff table (desktop) |
+| [github.com/zalando/go-keyring](https://github.com/zalando/go-keyring) | v0.2.8 | MIT | (c) 2016 Zalando SE | Assistant API key in the system keyring (desktop) |
+| [github.com/PileOfCells/backgammon-tournoi](https://github.com/PileOfCells/backgammon-tournoi) | v0.5.0 | no licence file in the module | PileOfCells | Tournament direction rules |
+| [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto), `x/net`, `x/sys`, `x/text` | see `go.mod` | BSD-3-Clause | The Go Authors | Signed watermarks and encrypted export containers, OS calls, text collation |
 | Go standard library | 1.27 | BSD-3-Clause | The Go Authors | — |
 
 `github.com/testcontainers/testcontainers-go` is a test dependency; it is not
@@ -63,7 +69,7 @@ From `frontend/package.json`; the built bundle is embedded in the binary.
 | [two.js](https://two.js.org) | 0.8 | MIT | (c) 2012-2025 @jonobr1 | Board rendering |
 | [Chart.js](https://www.chartjs.org) | 4 | MIT | (c) 2014-2024 Chart.js Contributors | Statistics charts |
 | [driver.js](https://driverjs.com) | 1.8 | MIT (`license` field of its `package.json`; text in [its repository](https://github.com/kamranahmedse/driver.js)) | Kamran Ahmed | Guided tour |
-| [Vite](https://vite.dev) | 7 | MIT | VoidZero Inc. and Vite contributors | Build tool only; nothing of it ships |
+| [Vite](https://vite.dev) | 8 | MIT | VoidZero Inc. and Vite contributors | Build tool only; nothing of it ships |
 
 ## 4. Fonts
 
@@ -104,10 +110,11 @@ Both are subsets, embedded as WOFF2 (`frontend/src/assets/fonts/`, see its
 The same permission notice above applies, under the copyright of each holder
 named in §§1-3: Kévin Unger (gammonNet, blunderDB), bgfparser contributors,
 Jack Christensen (pgx), Lea Anthony (Wails), open-spaced-repetition (go-fsrs),
-Adrian-George Bostan (xdg), Svelte Contributors, @jonobr1 (two.js), Chart.js
-Contributors, Kamran Ahmed (driver.js).
+Adrian-George Bostan (xdg), Zalando SE (go-keyring), the Go MCP SDK authors
+(go-sdk, for its MIT-licensed code), Svelte Contributors, @jonobr1 (two.js),
+Chart.js Contributors, Kamran Ahmed (driver.js).
 
-### BSD-3-Clause — The Go Authors, The Sqlite Authors, The Libc Authors
+### BSD-3-Clause — The Go Authors, The Sqlite Authors, The Libc Authors, Klaus Post, WAKAYAMA Shirou
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions are met:
