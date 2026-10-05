@@ -351,9 +351,10 @@ var TimeBucketBounds = [3]int64{5000, 15000, 30000}
 // TimeErrorRow is one player's decisions of one duration band: how many, how
 // many of them the analysis scores, the mean equity they gave up and how many
 // were blunders at the library's threshold. Only decisions with a known
-// duration are counted: an unknown one belongs to no band. A decision without
-// a stored error (unanalysed, or not yet scored by MatchStore.ScoreMoves) is
-// in Decisions and in neither Scored, MeanErrorMP nor Blunders.
+// duration are counted: an unknown one belongs to no band. The error is scored
+// from the Position's current analysis, not read from move.error_mp; a
+// decision it cannot score (unanalysed, or a play absent from the candidates)
+// is in Decisions and in neither Scored, MeanErrorMP nor Blunders.
 type TimeErrorRow struct {
 	Player      string  `json:"player"`
 	Bucket      int     `json:"bucket"`
