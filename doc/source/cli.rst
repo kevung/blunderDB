@@ -1952,7 +1952,7 @@ sont inconnues, jamais nulles).
   abandon ; ``--revision`` refuse l'Action si le Duel a bougé.
 * ``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en
   cours va à l'autre Côté pour les points qui le portent à la longueur (en
-  argent, un backgammon à la valeur du videau), et le Match s'écrit gagné par
+  argent, une simple à la valeur du videau), et le Match s'écrit gagné par
   lui.
 * ``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur.
   Arrêter n'est pas abandonner.

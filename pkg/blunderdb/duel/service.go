@@ -389,7 +389,7 @@ func (s *Service) Stop(ctx context.Context, scope string, id, revision int64, ke
 
 // Forfeit has side give the open Duel's match up: the game in progress ends
 // won by the other side, for the points that bring them to the length — at
-// money play, a backgammon at the cube's value (transcript.KindForfeit). The
+// money play, a single at the cube's value (transcript.KindForfeit). The
 // Duel then ends as a match won does: its Match is written, or the draft
 // thrown away if it was created so. Unlike Stop, the Match has a winner.
 func (s *Service) Forfeit(ctx context.Context, scope string, id, revision int64, side int) (*State, error) {

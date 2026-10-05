@@ -502,14 +502,13 @@ func TestDuelForfeit(t *testing.T) {
 }
 
 // TestDuelForfeitMoney: a money session forfeited ends, its game in progress
-// lost by a backgammon at the cube's value, a single under the Jacoby rule
-// with the cube centred.
+// lost by a single at the cube's value, Jacoby rule or not.
 func TestDuelForfeitMoney(t *testing.T) {
 	ctx := context.Background()
 	for _, tc := range []struct {
 		jacoby bool
 		want   int
-	}{{false, 3}, {true, 1}} {
+	}{{false, 1}, {true, 1}} {
 		st := newStore(t)
 		svc := newService(t, st, 4)
 		s, err := svc.Create(ctx, "", Settings{Jacoby: tc.jacoby, Sides: [2]SideSpec{external("A"), external("B")}})

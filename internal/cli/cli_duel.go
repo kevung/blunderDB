@@ -327,7 +327,7 @@ func stepsOf(d *duel.Decision, notation string) ([]domain.CheckerStep, error) {
 // runDuelForfeit has a Side give the match up: the Duel ends, won by the
 // other Side, and its Match is written as a match won.
 func (cli *CLI) runDuelForfeit(args []string) error {
-	fs, dbPath, format := duelFlagSet("forfeit", "Give the match up: the game in progress goes to the other Side for the points that bring it to the length (at money play, a backgammon at the cube's value), and the Match is written won by the other Side.",
+	fs, dbPath, format := duelFlagSet("forfeit", "Give the match up: the game in progress goes to the other Side for the points that bring it to the length (at money play, a single at the cube's value), and the Match is written won by the other Side.",
 		"blunderdb duel forfeit --db database.db --id 1 --side 1")
 	id := fs.Int64("id", 0, "Duel id (required)")
 	side := fs.Int("side", 0, "The Side that gives the match up, 1 or 2 (required)")

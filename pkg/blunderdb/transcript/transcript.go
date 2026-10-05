@@ -91,8 +91,8 @@ const (
 	// KindForfeit gives the whole match up: the game in progress — a new one
 	// when none is running — ends won by the other side, and nothing follows.
 	// At a match score it is worth the points that bring the other side to the
-	// length; at money play, the most a resignation can give (a backgammon at
-	// the cube's value, a single under the Jacoby rule). Like a resignation it
+	// length; at money play, a single at the cube's value, Jacoby rule or not.
+	// Like a resignation it
 	// produces no Move.
 	KindForfeit Kind = "forfeit"
 )

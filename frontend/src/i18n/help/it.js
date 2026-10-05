@@ -924,7 +924,7 @@ export default {
 <li>La mossa completa si convalida con un clic sui dadi, con «Convalida» sulla scacchiera, o con <code>INVIO</code> o <code>SPAZIO</code>. Dopo non si riprende nulla.</li>
 <li>Il Bot risponde subito; le sue mosse vengono rigiocate sul tavoliere, lentamente.</li>
 <li>Il clic destro fuori dalla scacchiera, o sulla scacchiera fuori dalla sua mossa, apre il menu del Duello: mettere la posizione sulla Pila o toglierla, abbandonare la partita per un semplice, un gammon o un backgammon (al proprio turno, dopo conferma), abbandonare il match, metterlo in pausa, annullarlo. Questo menu non offre né valutazione né modifica.</li>
-<li>«Abbandona il match» cede l'intero match, in qualsiasi momento e dopo conferma: la partita in corso va all'avversario per i punti che lo portano alla lunghezza, e il Match viene salvato come vinto da lui. In money, la partita in corso è persa come backgammon (un semplice con la regola Jacoby, cubo al centro) e la sessione si chiude.</li>
+<li>«Abbandona il match» cede l'intero match, in qualsiasi momento e dopo conferma: la partita in corso va all'avversario per i punti che lo portano alla lunghezza, e il Match viene salvato come vinto da lui. In money, la partita in corso è persa come semplice, al valore del cubo (con o senza regola Jacoby), e la sessione si chiude.</li>
 <li>«Metti in pausa» sospende il Duello, orologi fermi; riprende dallo stesso punto. «Annulla il match» lo scarta, dopo conferma: non viene salvato nulla.</li>
 <li>Un doppio clic fuori dalla scacchiera mette la posizione sulla Pila, o la toglie, come <code>B</code>; solo il segnalibro all'angolo della scacchiera lo mostra.</li>
 </ul>

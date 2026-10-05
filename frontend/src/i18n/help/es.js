@@ -924,7 +924,7 @@ export default {
 <li>La jugada completa se valida con un clic en los dados, con «Validar» en el tablero, o con <code>INTRO</code> o <code>ESPACIO</code>. Después no se puede retroceder.</li>
 <li>El Bot responde enseguida; sus jugadas se reproducen en el tablero, despacio.</li>
 <li>El clic derecho fuera del tablero, o en el tablero fuera de su jugada, abre el menú del Duelo: poner la posición en la Pila o retirarla, abandonar la partida por una simple, un gammon o un backgammon (en su turno, tras confirmación), abandonar el match, ponerlo en pausa, anularlo. Este menú no ofrece ni evaluación ni edición.</li>
-<li>«Abandonar el match» cede el match entero, en cualquier momento y tras confirmación: la partida en curso va al adversario por los puntos que lo llevan a la longitud, y el Match se guarda como ganado por él. En dinero, la partida en curso se pierde como backgammon (una simple bajo la regla Jacoby, con el cubo en el centro) y la sesión se cierra.</li>
+<li>«Abandonar el match» cede el match entero, en cualquier momento y tras confirmación: la partida en curso va al adversario por los puntos que lo llevan a la longitud, y el Match se guarda como ganado por él. En dinero, la partida en curso se pierde como simple, al valor del cubo (con o sin regla Jacoby), y la sesión se cierra.</li>
 <li>«Pausar el match» deja el Duelo en suspenso, con los relojes parados; se reanuda en el mismo punto. «Anular el match» lo descarta, tras confirmación: no se guarda nada.</li>
 <li>Un doble clic fuera del tablero pone la posición en la Pila, o la retira, como <code>B</code>; solo el marcador en la esquina del tablero lo muestra.</li>
 </ul>

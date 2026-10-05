@@ -2738,7 +2738,7 @@ Examples:
 ```
 Usage: blunderdb duel forfeit [options]
 
-Give the match up: the game in progress goes to the other Side for the points that bring it to the length (at money play, a backgammon at the cube's value), and the Match is written won by the other Side.
+Give the match up: the game in progress goes to the other Side for the points that bring it to the length (at money play, a single at the cube's value), and the Match is written won by the other Side.
 
 Options:
   -db string

@@ -387,10 +387,7 @@ func (s *state) step(i int, a Action) ActionInfo {
 		info.Before = s.position(a.Side, [2]int{}, domain.CubeAction, s.cube)
 		info.After = s.board
 		winner := opponent(a.Side)
-		points := 3 * cubeValue(s.cube)
-		if s.jacobyOnly() {
-			points = cubeValue(s.cube)
-		}
+		points := cubeValue(s.cube)
 		if L := s.header.MatchLength; L > 0 {
 			points = max(L-s.points[winner], 1)
 		}

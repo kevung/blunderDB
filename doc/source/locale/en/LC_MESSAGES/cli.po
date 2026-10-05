@@ -3792,15 +3792,9 @@ msgstr ""
 
 #: ../../source/cli.rst:1952
 msgid ""
-"``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en "
-"cours va à l'autre Côté pour les points qui le portent à la longueur (en "
-"argent, un backgammon à la valeur du videau), et le Match s'écrit gagné par "
-"lui."
+"``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en cours va à l'autre Côté pour les points qui le portent à la longueur (en argent, une simple à la valeur du videau), et le Match s'écrit gagné par lui."
 msgstr ""
-"``forfeit`` — The Side ``--side`` (required) forfeits the match: the game "
-"in progress goes to the other Side for the points that bring it to the "
-"length (in money play, a backgammon at the cube's value), and the Match is "
-"written as won by it."
+"``forfeit`` — The Side ``--side`` (required) forfeits the match: the game in progress goes to the other Side for the points that bring it to the length (in money play, a single game at the cube's value), and the Match is written as won by it."
 
 #: ../../source/cli.rst:1952
 msgid ""

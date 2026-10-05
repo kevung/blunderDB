@@ -21,10 +21,11 @@ précisément le contraire : arrêter n'est jamais céder.
    lancer d'ouverture laissé de côté), gagnée par l'autre Côté, et rien ne la suit.
 2. **Ce qu'elle vaut.** À un score de match, les points qui portent l'adversaire à la longueur :
    le match est *gagné*, avec un score final cohérent, et non arrêté avant la fin. En money, il
-   n'y a pas de match à donner : l'abandon clôt la session, et la partie en cours est perdue au
-   plus qu'un abandon puisse donner — un backgammon à la valeur du videau, une simple sous la
-   règle Jacoby videau au centre (les règles de `KindResign`). Abandonner ne coûte ainsi jamais
-   moins que jouer la partie jusqu'au bout.
+   n'y a pas de match à donner : l'abandon clôt la session, et la partie en cours est perdue en
+   simple à la valeur du videau, avec ou sans règle Jacoby. C'est un choix de l'utilisateur :
+   abandonner est un geste de concession, qui vaut ce que vaut une partie cédée au niveau le plus
+   bas, et non la pire issue possible. Un abandon peut donc coûter moins que jouer la partie
+   jusqu'au bout.
 3. **Le Duel se termine comme un match gagné** : son Match s'écrit (ou le brouillon est jeté s'il
    a été créé sans enregistrement), le germe est révélé, et l'origine ne le marque pas « arrêté
    avant la fin ». La fin du Duel nomme le Côté qui a abandonné (`Ending.Forfeited`) ; le Match,
@@ -47,5 +48,6 @@ précisément le contraire : arrêter n'est jamais céder.
   lit à son vainqueur et à ses points.
 - Rejeté : l'écrire dans l'origine du Match (`abandoned_by`) en laissant le score tel quel — un
   changement de schéma pour un Match dont le score ne dirait pas qui l'a gagné ; un abandon de
-  partie au niveau qui atteint la longueur — trois fois le videau n'y suffit pas toujours ; en
-  money, céder une simple — l'abandon y aurait été une issue moins chère qu'un gammon à venir.
+  partie au niveau qui atteint la longueur — trois fois le videau n'y suffit pas toujours . En
+  money, le barème du backgammon au videau (ou d'une simple sous Jacoby), retenu d'abord pour que
+  l'abandon ne coûte jamais moins que jouer, a été remplacé par la simple au videau.

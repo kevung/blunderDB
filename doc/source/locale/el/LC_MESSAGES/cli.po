@@ -3910,15 +3910,9 @@ msgstr ""
 
 #: ../../source/cli.rst:1952
 msgid ""
-"``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en "
-"cours va à l'autre Côté pour les points qui le portent à la longueur (en "
-"argent, un backgammon à la valeur du videau), et le Match s'écrit gagné par "
-"lui."
+"``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en cours va à l'autre Côté pour les points qui le portent à la longueur (en argent, une simple à la valeur du videau), et le Match s'écrit gagné par lui."
 msgstr ""
-"``forfeit`` — Η Πλευρά ``--side`` (υποχρεωτική) εγκαταλείπει το ματς: η "
-"τρέχουσα παρτίδα πηγαίνει στην άλλη Πλευρά με τους πόντους που τη φέρνουν "
-"στο μήκος (στο παιχνίδι με χρήματα, ένα μπάκγκάμον στην αξία του κύβου), "
-"και το Ματς εγγράφεται ως κερδισμένο από αυτήν."
+"``forfeit`` — Η Πλευρά ``--side`` (υποχρεωτική) εγκαταλείπει το ματς: η τρέχουσα παρτίδα πηγαίνει στην άλλη Πλευρά με τους πόντους που τη φέρνουν στο μήκος (στο παιχνίδι με χρήματα, μια απλή στην αξία του κύβου), και το Ματς εγγράφεται ως κερδισμένο από αυτήν."
 
 #: ../../source/cli.rst:1952
 msgid ""
