@@ -62,9 +62,39 @@ func TestCLI_DuelOneActionPerCall(t *testing.T) {
 	}
 }
 
-func TestCLI_DuelBotSideNotOfferedYet(t *testing.T) {
+// Two Bots play the whole match in the call that creates the Duel; a money
+// session between them would never end and is refused.
+func TestCLI_DuelOfTwoBots(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
-	if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "1", "--side2", "bot:2-ply"}); err == nil {
-		t.Error("a bot side was created though nothing resolves it")
+	var st duel.State
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "1", "--side1", "bot:instant", "--side2", "bot:instant", "--format", "json"}); err != nil {
+			t.Fatalf("duel create: %v", err)
+		}
+	})
+	if err := json.Unmarshal([]byte(out), &st); err != nil {
+		t.Fatal(err)
+	}
+	if st.Ended == nil || st.Ended.MatchID == 0 || st.Ended.DiceSeed == "" {
+		t.Fatalf("a Duel of two Bots ends in the call that creates it: %+v", st.Ended)
+	}
+	err := cli.Run([]string{"duel", "create", "--db", dbPath, "--money", "--side1", "bot:instant", "--side2", "bot:instant"})
+	if err == nil || !strings.Contains(err.Error(), "never ends") {
+		t.Errorf("a money session between two Bots: %v", err)
+	}
+	if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "1", "--side1", "bot:bogus"}); err == nil {
+		t.Error("an unknown bot level was accepted")
+	}
+}
+
+// --revision refuses an Action on a Duel that moved since it was read.
+func TestCLI_DuelStaleRevisionIsRefused(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "3"}); err != nil {
+		t.Fatal(err)
+	}
+	err := cli.Run([]string{"duel", "discard", "--db", dbPath, "--id", "1", "--revision", "99"})
+	if err == nil || !strings.Contains(err.Error(), "revision") {
+		t.Errorf("discard on a stale revision: %v", err)
 	}
 }

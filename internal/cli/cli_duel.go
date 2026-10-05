@@ -21,7 +21,7 @@ import (
 // is recorded as unknown, never as short.
 //
 // A Side is "external" (the CLI plays it) or "bot:<level>" (the engine plays
-// it, within the call that gave it the trait), as /v1/duels.create names them.
+// it, within the call that gave it the trait).
 func (cli *CLI) runDuel(args []string) error {
 	if len(args) < 1 {
 		cli.printDuelUsage()
@@ -147,12 +147,13 @@ func (cli *CLI) runDuelCreate(args []string) error {
 	fs, dbPath, format := duelFlagSet("create", "Start a Duel and play on to the first Decision of an external Side.",
 		"blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob",
 		"blunderdb duel create --db database.db --money --jacoby",
-		"blunderdb duel create --db database.db --length 7 --side2 bot:2-ply")
+		"blunderdb duel create --db database.db --length 7 --side2 bot:normal",
+		"blunderdb duel create --db database.db --length 3 --side1 bot:instant --side2 bot:instant")
 	length := fs.Int("length", 0, "Match length in points, 1 to 25")
 	money := fs.Bool("money", false, "A money session instead of a match")
 	jacoby := fs.Bool("jacoby", false, "With --money: play the Jacoby rule")
-	side1 := fs.String("side1", "external", "Player 1's Side: external, or bot:<level>")
-	side2 := fs.String("side2", "external", "Player 2's Side: external, or bot:<level>")
+	side1 := fs.String("side1", "external", "Player 1's Side: external, or bot:<level> (instant, normal, thorough)")
+	side2 := fs.String("side2", "external", "Player 2's Side: external, or bot:<level>; two Bots play the whole match in this call")
 	name1 := fs.String("name1", "", "Player 1's name")
 	name2 := fs.String("name2", "", "Player 2's name")
 	start := fs.String("start", "", "XGID of the Position the first game begins at (default: the opening position)")
@@ -166,7 +167,11 @@ func (cli *CLI) runDuelCreate(args []string) error {
 	}
 	set := duel.Settings{
 		MatchLength: *length, Jacoby: *jacoby, DiscardAtEnd: *discard,
-		Sides: [2]duel.SideSpec{{Kind: duel.SideKind(*side1), Name: *name1}, {Kind: duel.SideKind(*side2), Name: *name2}},
+	}
+	for i, v := range []struct{ spec, name string }{{*side1, *name1}, {*side2, *name2}} {
+		if set.Sides[i], err = parseSide(v.spec, v.name); err != nil {
+			return err
+		}
 	}
 	if *start != "" {
 		pos, err := domain.DecodeXGID(*start)
@@ -180,6 +185,17 @@ func (cli *CLI) runDuelCreate(args []string) error {
 		return fmt.Errorf("creating the duel: %w", err)
 	}
 	return printDuel(st, *format)
+}
+
+// parseSide reads "external" or "bot:<level>" into the Side a Duel records.
+func parseSide(v, name string) (duel.SideSpec, error) {
+	switch level, isBot := strings.CutPrefix(v, "bot:"); {
+	case v == "external" || v == "":
+		return duel.SideSpec{Kind: duel.SideExternal, Name: name}, nil
+	case isBot:
+		return duel.SideSpec{Kind: duel.SideBot, Level: level}, nil
+	}
+	return duel.SideSpec{}, fmt.Errorf("side %q: external, or bot:<level> (%s)", v, strings.Join(duel.BotLevels, ", "))
 }
 
 func (cli *CLI) runDuelShow(args []string) error {

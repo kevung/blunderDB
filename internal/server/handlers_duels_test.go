@@ -122,3 +122,61 @@ func TestDuelCreateUnknownSideIsInvalid(t *testing.T) {
 		t.Errorf("create with a bot side nothing resolves: status %d, want 400 (%s)", status, body)
 	}
 }
+
+// Two clients that read the same revision: the first plays, the second is
+// refused though the Duel was already open when its request came — the check
+// sits with the Action, not with the opening.
+func TestDuelSecondClientOnTheSameRevisionIsRefused(t *testing.T) {
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { st.Close() })
+	ts := duelServerOn(t, st, true)
+	status, body := gesture(t, ts, testTenant, "/v1/duels.create", 0, map[string]any{"matchLength": 3})
+	c := duelState(t, status, body)
+	plays := domain.LegalMoves(&c.Awaiting.Position)
+	act := map[string]any{"id": c.ID, "play": map[string]any{"side": c.Awaiting.Side, "kind": "move", "steps": plays[0].Steps}}
+	if status, body := gesture(t, ts, testTenant, "/v1/duels.act", c.Revision, act); status != http.StatusOK {
+		t.Fatalf("first client: %d %s", status, body)
+	}
+	for _, path := range []string{"/v1/duels.act", "/v1/duels.open", "/v1/duels.discard", "/v1/duels.stop"} {
+		if status, _ := gesture(t, ts, testTenant, path, c.Revision, act); status != http.StatusConflict {
+			t.Errorf("%s on a stale revision: status %d, want 409", path, status)
+		}
+	}
+}
+
+// An Action names its Side: one left out is not player 1.
+func TestDuelActWithoutASideIsInvalid(t *testing.T) {
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { st.Close() })
+	ts := duelServerOn(t, st, true)
+	status, body := gesture(t, ts, testTenant, "/v1/duels.create", 0, map[string]any{"matchLength": 3})
+	c := duelState(t, status, body)
+	plays := domain.LegalMoves(&c.Awaiting.Position)
+	if status, _ := gesture(t, ts, testTenant, "/v1/duels.act", c.Revision, map[string]any{"id": c.ID, "play": map[string]any{"kind": "move", "steps": plays[0].Steps}}); status != http.StatusBadRequest {
+		t.Errorf("act without a side: status %d, want 400", status)
+	}
+}
+
+// A Duel of two Bots is played to its end by the call that creates it.
+func TestDuelCreateOfTwoBotsEnds(t *testing.T) {
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { st.Close() })
+	ts := duelServerOn(t, st, true)
+	bot := map[string]any{"kind": "bot", "level": "instant"}
+	status, body := gesture(t, ts, testTenant, "/v1/duels.create", 0, map[string]any{"matchLength": 1, "sides": []any{bot, bot}})
+	if s := duelState(t, status, body); s.Ended == nil || s.Ended.MatchID == 0 {
+		t.Errorf("ended %+v", s.Ended)
+	}
+	if status, _ := gesture(t, ts, testTenant, "/v1/duels.create", 0, map[string]any{"matchLength": 0, "sides": []any{bot, bot}}); status != http.StatusBadRequest {
+		t.Errorf("a money session of two bots: status %d, want 400", status)
+	}
+}

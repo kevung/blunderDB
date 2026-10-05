@@ -2642,16 +2642,17 @@ Options:
   -name2 string
     	Player 2's name
   -side1 string
-    	Player 1's Side: external, or bot:<level> (default "external")
+    	Player 1's Side: external, or bot:<level> (instant, normal, thorough) (default "external")
   -side2 string
-    	Player 2's Side: external, or bot:<level> (default "external")
+    	Player 2's Side: external, or bot:<level>; two Bots play the whole match in this call (default "external")
   -start string
     	XGID of the Position the first game begins at (default: the opening position)
 
 Examples:
   blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob
   blunderdb duel create --db database.db --money --jacoby
-  blunderdb duel create --db database.db --length 7 --side2 bot:2-ply
+  blunderdb duel create --db database.db --length 7 --side2 bot:normal
+  blunderdb duel create --db database.db --length 3 --side1 bot:instant --side2 bot:instant
 ```
 
 ### `blunderdb duel discard`

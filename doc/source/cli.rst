@@ -1916,8 +1916,11 @@ sont inconnues, jamais nulles).
 * ``create`` — Démarre un Duel et joue jusqu'à la première décision d'un Côté
   externe. ``--length`` (1 à 25 points) ou ``--money`` ; ``--start`` (XGID du
   Départ) ; ``--name1`` et ``--name2`` ; ``--side1`` et ``--side2``
-  (``external``, ou ``bot:<niveau>``) ; ``--discard-at-end`` jette le brouillon
-  à la fin au lieu d'écrire le Match.
+  (``external``, ou ``bot:<niveau>`` avec ``instant``, ``normal`` ou
+  ``thorough``) ; ``--discard-at-end`` jette le brouillon à la fin au lieu
+  d'écrire le Match. Avec deux Bots, le match se joue en entier dans cet appel
+  (``--side1 bot:instant --side2 bot:instant``) ; une session en argent entre
+  deux Bots est refusée, car elle ne finirait jamais.
 * ``show`` — Score, ce que le Duel attend et, pour un coup, les jeux légaux. La
   graine des dés n'est jamais affichée avant la fin : l'empreinte la représente.
 * ``list`` — Les Duels en suspens.

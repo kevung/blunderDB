@@ -85,8 +85,8 @@ type Options struct {
 	// a daemon that authenticates nobody lets whoever reaches it play for either
 	// Side. The reads are served either way.
 	Duel bool
-	// DuelSides resolves the kinds of Side a Duel is created with beyond the
-	// external one; nil, only external Sides are offered.
+	// DuelSides resolves the kinds of Side a Duel is created with; nil is
+	// duel.Resolve: the external Side and the Bot.
 	DuelSides duel.SideResolver
 	// MCPWrite offers the write tools of /mcp (save a position, comment it,
 	// fill a collection). OFF by default for the reason EnableDirection is;

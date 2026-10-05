@@ -439,21 +439,27 @@ Les gestes (``create``, ``open``, ``act``, ``flag``, ``suspend``, ``stop``,
 répondent 404.
 
 ``create`` reçoit la longueur du match (ou une session en argent), le Départ,
-les deux Côtés (``external``, ou ``bot:<niveau>`` quand le démon sait faire
-jouer un Bot ; un Côté inconnu est refusé en **400**), la Cadence et les noms.
-``act`` joue une Action — ``roll``, ``double``, ``take``, ``pass``, ``move``
-ou ``resign`` — et la nomme son Côté (``side``, 0 ou 1) : le démon n'authentifie
-personne, c'est le client qui répond de qui joue pour qui. La réponse rend l'état
-du Duel au prochain point où un Côté externe décide, avec les Actions
-survenues entre-temps (lancers, coups forcés, Actions d'un Bot). Une Action
-que les règles refusent est un **400** et n'écrit rien.
+les deux Côtés (``{"kind": "external"}``, ou ``{"kind": "bot", "level":
+"instant"}`` — ``normal`` et ``thorough`` existent aussi ; un Côté ou un niveau
+inconnu est refusé en **400**), la Cadence et les noms. Deux Bots jouent le
+match entier dans l'appel qui crée le Duel ; une session en argent entre deux
+Bots, qui ne finirait jamais, est refusée en **400**. ``act`` joue une Action —
+``roll``, ``double``, ``take``, ``pass``, ``move`` ou ``resign`` — et nomme son
+Côté (``play.side``, 0 ou 1, obligatoire : absent → **400**) : le démon
+n'authentifie personne, c'est le client qui répond de qui joue pour qui. La
+réponse rend l'état du Duel au prochain point où un Côté externe décide, avec
+les Actions survenues entre-temps (lancers, coups forcés, Actions d'un Bot).
+Une Action que les règles refusent est un **400** et n'écrit rien.
 
 Tout geste sur un Duel existant porte la révision vue en dernier dans
-``If-Match`` : absent → **428**, périmée → **409**. Seul le Duel ouvert d'un
-tenant se joue ; un geste sur un Duel en suspens l'ouvre d'abord, et met en
-suspens celui qui l'était — c'est ce qui permet de reprendre après un
-redémarrage du démon, le brouillon étant tout ce qu'il y a du Duel. ``get``
-rend la révision en ``ETag`` et répond 304 à un ``If-None-Match`` qui la nomme.
+``If-Match`` : absent → **428**, périmée → **409**, y compris pour un second
+client qui a lu la même révision qu'un premier déjà passé. Un tenant n'a qu'**un
+seul Duel ouvert** à la fois, et c'est lui seul qui se joue. Un geste sur un Duel
+en suspens l'ouvre d'abord, et met en suspens celui qui l'était : ce dernier voit
+alors sa révision avancer, et le client qui la tenait reçoit **409**, relit
+(``get``) et rejoue. C'est aussi ce qui permet de reprendre après un
+redémarrage du démon, le brouillon étant tout ce qu'il y a du Duel. ``get`` rend
+la révision en ``ETag`` et répond 304 à un ``If-None-Match`` qui la nomme.
 
 La graine des dés ne sort par aucune route avant la fin : l'état en porte
 l'empreinte, et la graine n'est révélée qu'avec le Match que la fin du Duel

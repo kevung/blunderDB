@@ -225,9 +225,18 @@ func (s *Service) List(ctx context.Context, scope string) ([]Summary, error) {
 func (s *Service) Open(ctx context.Context, scope string, id int64) (*State, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	return s.openLocked(ctx, scope, id, 0)
+}
+
+// openLocked is Open under s.mu, refusing with storage.ErrConflict a draft
+// that is no longer at the revision the caller saw (0: none).
+func (s *Service) openLocked(ctx context.Context, scope string, id, revision int64) (*State, error) {
 	row, g, err := s.load(ctx, scope, id)
 	if err != nil {
 		return nil, err
+	}
+	if revision != 0 && revision != row.Revision {
+		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
 	}
 	if s.open[scope] == id {
 		return state(row, g), nil

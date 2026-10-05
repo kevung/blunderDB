@@ -1,40 +1,33 @@
 package duel
 
-import (
-	"context"
-	"fmt"
-
-	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
-)
+import "context"
 
 // Ensure makes the Duel the open one when it is not, so a caller that holds no
 // memory of its own — a CLI whose every call is a process, a daemon that
 // restarted — can act on a Duel in suspense. The revision the caller saw
-// (0: none) is checked against the draft as it stands before opening, since
-// opening a Duel stamps its clocks and moves the revision; the returned
-// revision is the one the action that follows must name.
+// (0: none) is checked under the Service's lock, against the draft as it
+// stands before opening, since opening moves it; the returned revision is the
+// one the action that follows must name. A Duel already open is left as it
+// is: the action that follows checks the revision itself.
 func (s *Service) Ensure(ctx context.Context, scope string, id, revision int64) (int64, error) {
 	s.mu.Lock()
-	open := s.open[scope] == id
-	s.mu.Unlock()
-	if open {
+	defer s.mu.Unlock()
+	if s.open[scope] == id {
 		return revision, nil
 	}
-	row, err := s.store.Duels().Get(ctx, scope, id)
-	if err != nil {
+	st, err := s.openLocked(ctx, scope, id, revision)
+	if err != nil || revision == 0 {
 		return 0, err
-	}
-	if revision != 0 && revision != row.Revision {
-		return 0, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
-	}
-	st, err := s.Open(ctx, scope, id)
-	if err != nil {
-		return 0, err
-	}
-	if revision == 0 {
-		return 0, nil
 	}
 	return st.Revision, nil
+}
+
+// OpenAt is Open refusing a draft that is no longer at the revision the
+// caller saw (0: none), the check and the opening being one step.
+func (s *Service) OpenAt(ctx context.Context, scope string, id, revision int64) (*State, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.openLocked(ctx, scope, id, revision)
 }
 
 // Get reads a Duel in suspense as a State, without opening it or touching its

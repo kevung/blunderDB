@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 	"github.com/kevung/blunderdb/pkg/blunderdb/events"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -25,9 +26,18 @@ type duelIDReq struct {
 	ID int64 `json:"id"`
 }
 
+// duelPlayReq is a Play as a client names it. The Side is a pointer so that
+// one left out is told from player 1: an Action names its Side.
+type duelPlayReq struct {
+	Side  *int                 `json:"side"`
+	Kind  duel.PlayKind        `json:"kind"`
+	Steps []domain.CheckerStep `json:"steps,omitempty"`
+	Level int                  `json:"level,omitempty"`
+}
+
 type duelActReq struct {
-	ID   int64     `json:"id"`
-	Play duel.Play `json:"play"`
+	ID   int64       `json:"id"`
+	Play duelPlayReq `json:"play"`
 }
 
 type duelStopReq struct {
@@ -39,7 +49,11 @@ type duelStopReq struct {
 // duels is the server's Duel service, made on first use.
 func (s *Server) duels() *duel.Service {
 	s.duelOnce.Do(func() {
-		s.duelSvc = duel.New(s.opts.Storage, duel.Options{Sides: s.opts.DuelSides})
+		sides := s.opts.DuelSides
+		if sides == nil {
+			sides = duel.Resolve
+		}
+		s.duelSvc = duel.New(s.opts.Storage, duel.Options{Sides: sides})
 	})
 	return s.duelSvc
 }
@@ -48,7 +62,7 @@ func (s *Server) duels() *duel.Service {
 // rules refuse, a side or a Cadence this build does not offer.
 func isDuelRefusal(err error) bool {
 	var r *transcript.Refusal
-	return errors.As(err, &r) || errors.Is(err, duel.ErrUnknownSide) || errors.Is(err, duel.ErrInvalidCadence)
+	return errors.As(err, &r) || errors.Is(err, duel.ErrUnknownSide) || errors.Is(err, duel.ErrUnknownLevel) || errors.Is(err, duel.ErrInvalidCadence)
 }
 
 // announce tells the subscribers of the tenant that a Duel moved.
@@ -102,16 +116,17 @@ func (s *Server) duelRoutes() []route {
 		}))},
 		{http.MethodPost, "/v1/duels.open", gesture(rpc(func(ctx context.Context, scope string, req duelIDReq) (*duel.State, error) {
 			rev, _ := ctx.Value(ifMatchKey{}).(int64)
-			if _, err := s.duels().Ensure(ctx, scope, req.ID, rev); err != nil {
-				return nil, err
-			}
-			st, err := s.duels().Open(ctx, scope, req.ID)
+			st, err := s.duels().OpenAt(ctx, scope, req.ID, rev)
 			s.announce(scope, req.ID, st, err)
 			return st, err
 		}))},
 		{http.MethodPost, "/v1/duels.act", gesture(rpc(func(ctx context.Context, scope string, req duelActReq) (*duel.State, error) {
+			if req.Play.Side == nil || (*req.Play.Side != 0 && *req.Play.Side != 1) {
+				return nil, fmt.Errorf("play.side is required, 0 for player 1 or 1 for player 2: %w", storage.ErrInvalid)
+			}
+			p := duel.Play{Side: *req.Play.Side, Kind: req.Play.Kind, Steps: req.Play.Steps, Level: req.Play.Level}
 			return s.duelGesture(ctx, scope, req.ID, func(rev int64) (*duel.State, error) {
-				return s.duels().Play(ctx, scope, req.ID, rev, req.Play)
+				return s.duels().Play(ctx, scope, req.ID, rev, p)
 			})
 		}))},
 		{http.MethodPost, "/v1/duels.flag", gesture(rpc(func(ctx context.Context, scope string, req duelIDReq) (*duel.State, error) {
