@@ -4071,8 +4071,8 @@ pipcount (``P``) et l'aide.
 * « Abandonner le match » cède le match entier, à tout moment et après
   confirmation : la partie en cours va à l'adversaire pour les points qui le
   portent à la longueur, et le Match s'écrit gagné par lui. En argent, la
-  partie en cours est perdue au backgammon (une simple sous la règle Jacoby,
-  videau au centre) et la session se clôt.
+  partie en cours est perdue en simple, à la valeur du videau (avec ou sans
+  règle Jacoby), et la session se clôt.
 * « Mettre en pause » met le Duel en suspens, horloges arrêtées ; il se
   reprend au même point. « Annuler le match » le jette, après confirmation :
   rien n'en est écrit.

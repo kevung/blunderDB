@@ -924,7 +924,7 @@ export default {
 <li>The complete move is validated by a click on the dice, by “Validate” on the board, or by <code>ENTER</code> or <code>SPACE</code>. Nothing can be taken back afterwards.</li>
 <li>The Bot answers immediately; its moves are replayed on the board, slowly.</li>
 <li>A right-click outside the board, or on the board outside its move, opens the Duel menu: put the position on the Pile or take it off, resign the game for a single game, a gammon or a backgammon (on one's turn, after confirmation), forfeit the match, pause it, cancel it. This menu offers neither evaluation nor editing.</li>
-<li>"Forfeit match" gives the whole match up, at any moment and after confirmation: the game in progress goes to the opponent for the points that bring them to the length, and the Match is written as won by them. In money play, the game in progress is lost as a backgammon (a single game under the Jacoby rule, cube centred) and the session ends.</li>
+<li>"Forfeit match" gives the whole match up, at any moment and after confirmation: the game in progress goes to the opponent for the points that bring them to the length, and the Match is written as won by them. In money play, the game in progress is lost as a single game at the cube's value (Jacoby rule or not) and the session ends.</li>
 <li>"Pause match" puts the Duel on hold, clocks stopped; it resumes where it stopped. "Cancel match" discards it, after confirmation: nothing of it is written.</li>
 <li>A double-click outside the board puts the position on the Pile, or takes it off, like <code>B</code>; only the bookmark in the corner of the board shows it.</li>
 </ul>

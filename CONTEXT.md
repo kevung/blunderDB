@@ -572,7 +572,7 @@ Game of a match), live match, play mode, sparring (true of one configuration onl
 **Forfeit** (interface: *abandonner le match*):
 The Action by which a Side gives the whole match up, at any moment: the game in progress
 ends won by the other Side, for the points that bring it to the length — at money play, a
-backgammon at the cube's value — and the Duel ends as a match won. Not a resignation, which
+single at the cube's value — and the Duel ends as a match won. Not a resignation, which
 gives one game up, and not a stop, which never gives anything (ADR-0074).
 _Avoid_: resign the match, concede, stop and keep (writes an unfinished Match, no winner)
 

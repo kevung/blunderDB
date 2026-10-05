@@ -9266,17 +9266,9 @@ msgstr ""
 
 #: ../../source/manuel.rst:4037
 msgid ""
-"« Abandonner le match » cède le match entier, à tout moment et après "
-"confirmation : la partie en cours va à l'adversaire pour les points qui le "
-"portent à la longueur, et le Match s'écrit gagné par lui. En argent, la "
-"partie en cours est perdue au backgammon (une simple sous la règle Jacoby, "
-"videau au centre) et la session se clôt."
+"« Abandonner le match » cède le match entier, à tout moment et après confirmation : la partie en cours va à l'adversaire pour les points qui le portent à la longueur, et le Match s'écrit gagné par lui. En argent, la partie en cours est perdue en simple, à la valeur du videau (avec ou sans règle Jacoby), et la session se clôt."
 msgstr ""
-"«Abandonar el match» cede el match entero, en cualquier momento y tras "
-"confirmación: la partida en curso va al adversario por los puntos que lo "
-"llevan a la longitud, y el Match se guarda como ganado por él. En dinero, "
-"la partida en curso se pierde como backgammon (una simple bajo la regla "
-"Jacoby, con el cubo en el centro) y la sesión se cierra."
+"«Abandonar el match» cede el match entero, en cualquier momento y tras confirmación: la partida en curso va al adversario por los puntos que lo llevan a la longitud, y el Match se guarda como ganado por él. En dinero, la partida en curso se pierde como simple, al valor del cubo (con o sin regla Jacoby), y la sesión se cierra."
 
 #: ../../source/manuel.rst:4037
 msgid ""
