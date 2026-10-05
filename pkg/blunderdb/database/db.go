@@ -19,6 +19,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction/service"
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
@@ -70,6 +71,10 @@ type Database struct {
 	// guards the pointer.
 	transcriptMu  sync.Mutex
 	transcriptSvc *transcription.Service
+	// duelSvc is the Arbiter over this handle's store (db_duel.go), holding
+	// which Duel is open; duelMu guards the pointer.
+	duelMu  sync.Mutex
+	duelSvc *duel.Service
 	// directionMem is what the direction service keeps between calls: the clock forecasts and
 	// the page catalogue. Per Database, so two open databases never share one language.
 	directionMem service.Memory
@@ -295,6 +300,7 @@ func (d *Database) Checkpoint() error {
 func (d *Database) Close() error {
 	d.switchFile()
 	d.forgetTranscriptSessions()
+	d.forgetDuels()
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.bumpGeneration()
@@ -318,6 +324,7 @@ func (d *Database) Close() error {
 func (d *Database) SetupDatabase(path string) (err error) {
 	d.switchFile()
 	d.forgetTranscriptSessions()
+	d.forgetDuels()
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.bumpGeneration()
@@ -397,6 +404,7 @@ func (d *Database) SetupDatabase(path string) (err error) {
 func (d *Database) OpenDatabase(path string) (err error) {
 	d.switchFile()
 	d.forgetTranscriptSessions()
+	d.forgetDuels()
 	d.mu.Lock()
 	defer d.mu.Unlock()
 	d.bumpGeneration()

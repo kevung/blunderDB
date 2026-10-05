@@ -10,6 +10,7 @@ import {gammonnet} from '../models';
 import {domain} from '../models';
 import {race} from '../models';
 import {storage} from '../models';
+import {duel} from '../models';
 import {direction} from '../models';
 import {engine} from '../models';
 import {tournoi} from '../models';
@@ -148,6 +149,8 @@ export function CreateCollection(arg1:string,arg2:string):Promise<number>;
 
 export function CreateDirection(arg1:number,arg2:string,arg3:number):Promise<void>;
 
+export function CreateDuel(arg1:duel.Settings):Promise<database.DuelState>;
+
 export function CreateLesson(arg1:string,arg2:string):Promise<number>;
 
 export function CreateRencontre(arg1:string,arg2:string,arg3:string,arg4:number):Promise<service.RencontreView>;
@@ -214,6 +217,8 @@ export function DirectorySources():Promise<Array<service.DirectorySource>>;
 
 export function DiscardFromTrash(arg1:number):Promise<void>;
 
+export function DuelOffer():Promise<database.DuelOffer>;
+
 export function EditMatchTranscription(arg1:number):Promise<database.TranscriptionState>;
 
 export function EmptyTrash(arg1:number):Promise<number>;
@@ -247,6 +252,8 @@ export function FinishImportBatch(arg1:number,arg2:domain.ImportReport):Promise<
 export function FinishTranscription(arg1:number):Promise<database.TranscriptionSaveResult>;
 
 export function FinishedMatches(arg1:number,arg2:number):Promise<Array<service.TableCell>>;
+
+export function FlagDuel(arg1:number):Promise<database.DuelState>;
 
 export function FreeParticipants(arg1:number):Promise<Array<tournoi.Player>>;
 
@@ -404,6 +411,8 @@ export function ListCollectionPositionIDs(arg1:number,arg2:number,arg3:number):P
 
 export function ListDirections():Promise<Array<service.DirectionSummary>>;
 
+export function ListDuels():Promise<Array<duel.Summary>>;
+
 export function ListImportBatches(arg1:number,arg2:number):Promise<Array<domain.ImportBatch>>;
 
 export function ListLessons():Promise<Array<domain.Lesson>>;
@@ -478,6 +487,8 @@ export function MovePositionBetweenCollections(arg1:number,arg2:number,arg3:numb
 
 export function OpenDatabase(arg1:string):Promise<void>;
 
+export function OpenDuel(arg1:number):Promise<database.DuelState>;
+
 export function OpenProtectedCopyPath(arg1:string,arg2:string):Promise<string>;
 
 export function OpenTranscription(arg1:number):Promise<database.TranscriptionState>;
@@ -503,6 +514,8 @@ export function PileCollectionID():Promise<number>;
 export function PlanRollout(arg1:context.Context,arg2:domain.SearchFilters,arg3:rollout.Settings):Promise<database.RolloutPlan>;
 
 export function PlanRolloutIDs(arg1:context.Context,arg2:Array<number>,arg3:rollout.Settings):Promise<database.RolloutPlan>;
+
+export function PlayDuel(arg1:number,arg2:number,arg3:duel.Play):Promise<database.DuelState>;
 
 export function PlayerContrast(arg1:string,arg2:string,arg3:database.StatsFilter):Promise<storage.PlayerContrast>;
 
@@ -690,6 +703,8 @@ export function StatsReportHTML(arg1:database.StatsFilter,arg2:string,arg3:Recor
 
 export function StatsReportHTMLCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:string,arg4:Record<number, string>):Promise<string>;
 
+export function StopDuel(arg1:number,arg2:number,arg3:boolean):Promise<database.DuelState>;
+
 export function StudyBacklog(arg1:number):Promise<Array<domain.StudyQueueEntry>>;
 
 export function StudyImpact(arg1:number):Promise<Array<database.StudyImpactRow>>;
@@ -701,6 +716,8 @@ export function SuggestAliases(arg1:string):Promise<Array<storage.AliasSuggestio
 export function SuggestMatFilename(arg1:number):Promise<string>;
 
 export function SuggestTranscriptionMatFilename(arg1:number):Promise<string>;
+
+export function SuspendDuel(arg1:number):Promise<void>;
 
 export function SwapMatchPlayers(arg1:number):Promise<void>;
 

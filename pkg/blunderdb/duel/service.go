@@ -96,6 +96,10 @@ type State struct {
 	Clock *ClockState `json:"clock,omitempty"`
 	// Ended is set by the call that ended the Duel.
 	Ended *Ending `json:"ended,omitempty"`
+	// Sheet is the match sheet the desktop draws with the Transcription's
+	// view: the Actions with what each derived. Left out of the wire, where a
+	// client derives its own from Actions and Games.
+	Sheet transcript.Annotated `json:"-"`
 }
 
 // Ending is how a Duel ended: the Match it became, with its seed revealed, or
@@ -538,5 +542,24 @@ func state(row *storage.Duel, g *game) *State {
 		Score:       g.m.Score(),
 		Awaiting:    awaiting,
 		Clock:       clk,
+		Sheet:       g.sheet(),
+	}
+}
+
+// sheet is the draft as a transcript.Annotated, the Cursor past its last
+// Action: nothing is being typed in a Duel.
+func (g *game) sheet() transcript.Annotated {
+	over, winner := g.m.Finished()
+	n := len(g.doc.Actions)
+	return transcript.Annotated{
+		Document: transcript.Document{FormatVersion: transcript.FormatVersion, Header: g.m.Header(),
+			Actions: append([]transcript.Action(nil), g.doc.Actions...), Cursor: n},
+		Actions:  append([]transcript.ActionInfo(nil), g.infos...),
+		Games:    g.m.Games(),
+		Next:     g.m.Next(),
+		Finished: over,
+		Winner:   winner,
+		Score:    g.m.Score(),
+		Cursor:   n,
 	}
 }
