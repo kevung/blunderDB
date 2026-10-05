@@ -372,3 +372,46 @@ func TestMachineNextGameAtOpening(t *testing.T) {
 		t.Fatalf("games %+v", m.Games())
 	}
 }
+
+// TestMachineCubeAvailable pins when a turn begins with a decision: the cube is
+// offered to the side on roll unless no roll is awaited, the game is the Crawford
+// game, the opponent owns it, the ceiling is reached or the cube is dead at the score.
+func TestMachineCubeAvailable(t *testing.T) {
+	at := func(away [2]int, cube domain.Cube) *domain.Position {
+		p := matchStart(away, cube)
+		p.Board = bearOffBoard()
+		return p
+	}
+	cases := []struct {
+		name  string
+		h     Header
+		start *domain.Position
+		want  bool
+	}{
+		{"no game yet", Header{MatchLength: 7}, nil, false},
+		{"centred cube", Header{MatchLength: 7}, at([2]int{5, 5}, domain.Cube{Owner: domain.None}), true},
+		{"own cube", Header{MatchLength: 7}, at([2]int{5, 5}, domain.Cube{Owner: domain.Black, Value: 1}), true},
+		{"opponent's cube", Header{MatchLength: 7}, at([2]int{5, 5}, domain.Cube{Owner: domain.White, Value: 1}), false},
+		{"Crawford game", Header{MatchLength: 7}, at([2]int{1, 5}, domain.Cube{Owner: domain.None}), false},
+		{"post-Crawford", Header{MatchLength: 7}, at([2]int{3, 0}, domain.Cube{Owner: domain.None}), true},
+		{"dead at the score", Header{MatchLength: 7}, at([2]int{2, 5}, domain.Cube{Owner: domain.Black, Value: 1}), false},
+		{"alive below it", Header{MatchLength: 7}, at([2]int{3, 5}, domain.Cube{Owner: domain.Black, Value: 1}), true},
+		{"money ceiling", Header{}, moneyStart(bearOffBoard(), domain.Cube{Owner: domain.Black, Value: 6}, [2]int{}), false},
+		{"money below it", Header{}, moneyStart(bearOffBoard(), domain.Cube{Owner: domain.Black, Value: 5}, [2]int{}), true},
+		{"roll on the board", Header{}, moneyStart(bearOffBoard(), domain.Cube{Owner: domain.None}, [2]int{3, 1}), false},
+	}
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			m := mustMachine(t, c.h, c.start)
+			if got := m.CubeAvailable(); got != c.want {
+				t.Errorf("CubeAvailable = %v, want %v", got, c.want)
+			}
+		})
+	}
+
+	m := mustMachine(t, Header{MatchLength: 7}, at([2]int{5, 5}, domain.Cube{Owner: domain.None}))
+	m = mustApply(t, m, Action{Side: domain.Black, Kind: KindDouble})
+	if m.CubeAvailable() {
+		t.Error("a double waiting for its answer leaves no cube to offer")
+	}
+}

@@ -1,0 +1,190 @@
+package sqlshared
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"iter"
+	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+)
+
+// DuelStore implements storage.DuelStore over the duel and match_origin
+// tables, both confined to the scope's tenant. The document is one TEXT
+// column the store never looks inside; the dice seed is another, written at
+// insert only.
+type DuelStore struct{ DB Execer }
+
+var _ storage.DuelStore = (*DuelStore)(nil)
+
+func (s *DuelStore) selectCols() string {
+	return `id, ` + s.DB.TimestampText("created_at") + `, ` + s.DB.TimestampText("updated_at") +
+		`, format_version, label, document, dice_seed, revision`
+}
+
+func scanDuel(sc interface{ Scan(...any) error }) (*storage.Duel, error) {
+	var d storage.Duel
+	if err := sc.Scan(&d.ID, &d.CreatedAt, &d.UpdatedAt, &d.FormatVersion, &d.Label, &d.Document, &d.DiceSeed, &d.Revision); err != nil {
+		return nil, err
+	}
+	return &d, nil
+}
+
+// List streams the scope's Duels, most recently updated first; the id breaks
+// ties so the order is total.
+func (s *DuelStore) List(ctx context.Context, scope string) iter.Seq2[*storage.Duel, error] {
+	return func(yield func(*storage.Duel, error) bool) {
+		tenant, targs := s.DB.TenantFilter("", scope)
+		rows, err := s.DB.Query(ctx,
+			`SELECT `+s.selectCols()+` FROM duel WHERE `+tenant+` ORDER BY updated_at DESC, id DESC`, targs...)
+		if err != nil {
+			yield(nil, errf(s.DB, "list duels", err))
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			d, err := scanDuel(rows)
+			if err != nil {
+				yield(nil, errf(s.DB, "list duels", err))
+				return
+			}
+			if !yield(d, nil) {
+				return
+			}
+		}
+		if err := rows.Err(); err != nil {
+			yield(nil, errf(s.DB, "list duels", err))
+		}
+	}
+}
+
+func (s *DuelStore) Get(ctx context.Context, scope string, id int64) (*storage.Duel, error) {
+	what := fmt.Sprintf("get duel %d", id)
+	tenant, targs := s.DB.TenantFilter("", scope)
+	d, err := scanDuel(s.DB.QueryRow(ctx,
+		`SELECT `+s.selectCols()+` FROM duel WHERE id = ? AND `+tenant, append([]any{id}, targs...)...))
+	if errors.Is(err, ErrNoRows) {
+		return nil, errf(s.DB, what, storage.ErrNotFound)
+	}
+	if err != nil {
+		return nil, errf(s.DB, what, err)
+	}
+	return d, nil
+}
+
+func (s *DuelStore) Save(ctx context.Context, scope string, d *storage.Duel) (int64, error) {
+	if d == nil {
+		return 0, errf(s.DB, "save duel", storage.ErrInvalid)
+	}
+	if d.ID != 0 {
+		return d.ID, s.update(ctx, scope, d)
+	}
+	if d.DiceSeed == "" {
+		return 0, errf(s.DB, "save duel: no dice seed", storage.ErrInvalid)
+	}
+	cols, args := s.DB.TenantColumns(scope)
+	cols = append(cols, "format_version", "label", "document", "dice_seed", "revision")
+	args = append(args, d.FormatVersion, d.Label, d.Document, d.DiceSeed, 1)
+	id, err := s.DB.Insert(ctx,
+		`INSERT INTO duel (`+strings.Join(cols, ", ")+`) VALUES (`+Placeholders(len(cols))+`)`, args...)
+	if err != nil {
+		return 0, errf(s.DB, "save duel", err)
+	}
+	d.Revision = 1
+	return id, nil
+}
+
+// update rewrites the document and the label, never the seed, and reads the
+// revision this write produced from the statement itself.
+func (s *DuelStore) update(ctx context.Context, scope string, d *storage.Duel) error {
+	what := fmt.Sprintf("save duel %d", d.ID)
+	tenant, targs := s.DB.TenantFilter("", scope)
+	args := append([]any{d.FormatVersion, d.Label, d.Document, d.ID, d.Revision, d.Revision}, targs...)
+	var rev int64
+	err := s.DB.QueryRow(ctx,
+		`UPDATE duel
+		 SET format_version = ?, label = ?, document = ?,
+		     revision = revision + 1, updated_at = CURRENT_TIMESTAMP
+		 WHERE id = ? AND (CAST(? AS BIGINT) = 0 OR revision = ?) AND `+tenant+`
+		 RETURNING revision`, args...).Scan(&rev)
+	if errors.Is(err, ErrNoRows) {
+		if ok, perr := rowExists(ctx, s.DB, scope, "duel", d.ID); perr != nil {
+			return perr
+		} else if !ok {
+			return errf(s.DB, what, storage.ErrNotFound)
+		}
+		return errf(s.DB, what, storage.ErrConflict)
+	}
+	if err != nil {
+		return errf(s.DB, what, err)
+	}
+	d.Revision = rev
+	return nil
+}
+
+func (s *DuelStore) Delete(ctx context.Context, scope string, id int64) error {
+	what := fmt.Sprintf("delete duel %d", id)
+	tenant, targs := s.DB.TenantFilter("", scope)
+	n, err := s.DB.Exec(ctx, `DELETE FROM duel WHERE id = ? AND `+tenant, append([]any{id}, targs...)...)
+	if err != nil {
+		return errf(s.DB, what, err)
+	}
+	if n == 0 {
+		return errf(s.DB, what, storage.ErrNotFound)
+	}
+	return nil
+}
+
+func (s *DuelStore) SetOrigin(ctx context.Context, scope string, o *storage.MatchOrigin) error {
+	if o == nil || o.MatchID == 0 {
+		return errf(s.DB, "set match origin", storage.ErrInvalid)
+	}
+	what := fmt.Sprintf("set origin of match %d", o.MatchID)
+	return s.DB.Transact(ctx, func(tx Execer) error {
+		ok, err := rowExists(ctx, tx, scope, "match", o.MatchID)
+		if err != nil {
+			return err
+		}
+		if !ok {
+			return errf(tx, what, storage.ErrNotFound)
+		}
+		cols, args := tx.TenantColumns(scope)
+		cols = append(cols, "match_id", "start", "dice_seed", "stopped_early", "lost_on_time", "bot_level", "cadence")
+		args = append(args, o.MatchID, o.Start, o.DiceSeed, boolInt(o.StoppedEarly), boolInt(o.LostOnTime), o.BotLevel, o.Cadence)
+		if _, err := tx.Exec(ctx, `INSERT INTO match_origin (`+strings.Join(cols, ", ")+`) VALUES (`+
+			Placeholders(len(cols))+`) ON CONFLICT (match_id) DO UPDATE SET
+			 start = excluded.start, dice_seed = excluded.dice_seed,
+			 stopped_early = excluded.stopped_early, lost_on_time = excluded.lost_on_time,
+			 bot_level = excluded.bot_level, cadence = excluded.cadence`, args...); err != nil {
+			return errf(tx, what, err)
+		}
+		return nil
+	})
+}
+
+func (s *DuelStore) Origin(ctx context.Context, scope string, matchID int64) (*storage.MatchOrigin, error) {
+	what := fmt.Sprintf("origin of match %d", matchID)
+	tenant, targs := s.DB.TenantFilter("", scope)
+	o := storage.MatchOrigin{MatchID: matchID}
+	var stopped, lost int
+	err := s.DB.QueryRow(ctx,
+		`SELECT start, dice_seed, stopped_early, lost_on_time, bot_level, cadence
+		 FROM match_origin WHERE match_id = ? AND `+tenant, append([]any{matchID}, targs...)...).
+		Scan(&o.Start, &o.DiceSeed, &stopped, &lost, &o.BotLevel, &o.Cadence)
+	if errors.Is(err, ErrNoRows) {
+		return nil, errf(s.DB, what, storage.ErrNotFound)
+	}
+	if err != nil {
+		return nil, errf(s.DB, what, err)
+	}
+	o.StoppedEarly, o.LostOnTime = stopped != 0, lost != 0
+	return &o, nil
+}
+
+func boolInt(v bool) int {
+	if v {
+		return 1
+	}
+	return 0
+}

@@ -93,7 +93,7 @@ type ExportReport struct {
 	Positions, Analyses, Comments                int
 	Matches, Games, Moves, MoveAnalyses          int
 	Collections, Tournaments, Filters, AnkiDecks int
-	Transcriptions, Lessons                      int
+	Transcriptions, Lessons, Duels               int
 	Skipped                                      int
 	// TournamentMap gives, for each exported tournament, the id the new file assigned it.
 	// A Direction travels with its tournament (ADR-0047) but its tables live on the desktop
@@ -249,7 +249,9 @@ func writeExport(ctx context.Context, src storage.Storage, scope, path string, o
 		e.writeLessons,
 		e.writeTournaments,
 		e.writeMatches,
+		e.writeMatchOrigins,
 		e.writeTranscriptions,
+		e.writeDuels,
 		e.writeFilters,
 		e.writeAnkiDecks,
 	} {
@@ -1104,6 +1106,51 @@ func (e *exporter) writeTranscriptions() error {
 			continue
 		}
 		e.report.Transcriptions++
+	}
+	return nil
+}
+
+// writeMatchOrigins copies the origin of every exported Match played here,
+// whatever the selection: it is a fact of the Match, and without it the copy
+// would write a Start's Match as a .mat and reopen it as a Transcription.
+func (e *exporter) writeMatchOrigins() error {
+	for oldID, newID := range e.matchMap {
+		o, err := e.src.Duels().Origin(e.ctx, e.scope, oldID)
+		if errors.Is(err, storage.ErrNotFound) {
+			continue
+		}
+		if err != nil {
+			return fmt.Errorf("ingest: origin of match %d: %w", oldID, err)
+		}
+		o.MatchID = newID
+		if err := e.dst.Duels().SetOrigin(e.ctx, "", o); err != nil {
+			return fmt.Errorf("ingest: origin of match %d: %w", oldID, err)
+		}
+	}
+	return nil
+}
+
+// writeDuels copies the Duels in suspense, seed included — they are resumed
+// from the copy as they would be from the source — and, like the
+// transcriptions, only when the export is the whole scope.
+func (e *exporter) writeDuels() error {
+	if !e.wholeScope() {
+		return nil
+	}
+	var drafts []*storage.Duel
+	for d, err := range e.src.Duels().List(e.ctx, e.scope) {
+		if err != nil {
+			return fmt.Errorf("ingest: list duels: %w", err)
+		}
+		drafts = append(drafts, d)
+	}
+	for _, d := range drafts {
+		d.ID = 0
+		if _, err := e.dst.Duels().Save(e.ctx, "", d); err != nil {
+			e.skip("inserting duel", "label", d.Label, "err", err)
+			continue
+		}
+		e.report.Duels++
 	}
 	return nil
 }

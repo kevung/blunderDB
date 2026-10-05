@@ -212,6 +212,8 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Transcription/DeleteInTxRollsBack", testTranscriptionDeleteInTx},
 		{"Transcription/Revision", testTranscriptionRevision},
 		{"Transcription/Annotations", testTranscriptionAnnotations},
+		{"Duel/Draft", testDuelDraft},
+		{"Duel/MatchOrigin", testMatchOrigin},
 		{"Tx/RollbackUndoes", testTxRollbackUndoes},
 		{"Tx/CommitPersists", testTxCommitPersists},
 	}

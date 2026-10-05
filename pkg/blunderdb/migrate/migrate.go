@@ -60,6 +60,7 @@ type Report struct {
 	Games       int `json:"games"`
 	Moves       int `json:"moves"`
 	Collections int `json:"collections"`
+	Duels       int `json:"duels"`
 
 	// NotMigrated is what the source holds and this tool does not copy.
 	NotMigrated NotMigrated `json:"not_migrated"`
@@ -166,6 +167,44 @@ func (m *mover) run(rep *Report) error {
 	if err := m.copyLibrarySettings(); err != nil {
 		return err
 	}
+	return m.copyDuels(rep)
+}
+
+// copyOrigin carries the origin of a Match played here: it is a fact of the
+// Match, which a .mat export and a reopening as a Transcription both read.
+func (m *mover) copyOrigin(oldMatchID, newMatchID int64) error {
+	o, err := m.src.Duels().Origin(m.ctx, "", oldMatchID)
+	if errors.Is(err, storage.ErrNotFound) {
+		return nil
+	}
+	if err != nil {
+		return fmt.Errorf("migrate: origin of match %d: %w", oldMatchID, err)
+	}
+	o.MatchID = newMatchID
+	if err := m.dst.Duels().SetOrigin(m.ctx, m.scope, o); err != nil {
+		return fmt.Errorf("migrate: origin of match %d: %w", oldMatchID, err)
+	}
+	return nil
+}
+
+// copyDuels carries the Duels in suspense, seed included, so that each one
+// resumes on the new backend with the same dice to come.
+func (m *mover) copyDuels(rep *Report) error {
+	var drafts []*storage.Duel
+	for d, err := range m.src.Duels().List(m.ctx, "") {
+		if err != nil {
+			return fmt.Errorf("migrate: list duels: %w", err)
+		}
+		drafts = append(drafts, d)
+	}
+	for _, d := range drafts {
+		d.ID = 0
+		if _, err := m.dst.Duels().Save(m.ctx, m.scope, d); err != nil {
+			return fmt.Errorf("migrate: save duel %q: %w", d.Label, err)
+		}
+		rep.Duels++
+	}
+	m.progress(rep)
 	return nil
 }
 
@@ -339,6 +378,9 @@ func (m *mover) copyMatches(rep *Report) error {
 		rep.Matches++
 
 		if err := m.copyGames(rep, mt.ID, newMatchID); err != nil {
+			return err
+		}
+		if err := m.copyOrigin(mt.ID, newMatchID); err != nil {
 			return err
 		}
 
