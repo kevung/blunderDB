@@ -54,7 +54,7 @@ export async function duelOffer() {
         return await DuelOffer();
     } catch (error) {
         logger.error('could not read the Duel offer:', error);
-        return { cadences: [], botLevels: [] };
+        return { cadences: [], botLevels: [], levels: [] };
     }
 }
 

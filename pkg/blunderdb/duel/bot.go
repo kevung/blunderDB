@@ -23,6 +23,28 @@ var ErrUnknownLevel = errors.New("unknown bot level")
 // the analysis, at full strength (ADR-0072 rule 7). No weakened level.
 var BotLevels = []string{"instant", "normal", "thorough"}
 
+// LevelInfo is a Bot level with the search shape gammonNet attaches to it, so
+// a form can show the depth without keeping its own copy of the table.
+type LevelInfo struct {
+	Name   string `json:"name"`
+	Ply    int    `json:"ply"`
+	PruneK int    `json:"pruneK"`
+}
+
+// LevelInfos lists BotLevels with their search depth, read from gammonNet's
+// canonical table.
+func LevelInfos() []LevelInfo {
+	out := make([]LevelInfo, 0, len(BotLevels))
+	for _, name := range BotLevels {
+		info := LevelInfo{Name: name}
+		if l, ok := gammonnet.Level(name); ok {
+			info.Ply, info.PruneK = l.Ply, l.PruneK
+		}
+		out = append(out, info)
+	}
+	return out
+}
+
 // BotName is the name a Bot's Side carries in the Match: the Configuration
 // it plays with, the one that will analyse the match.
 func BotName(level string) string { return "gammonNet " + level }

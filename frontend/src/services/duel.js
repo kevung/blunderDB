@@ -190,3 +190,14 @@ export function scoreline(state) {
     const length = state?.header?.match_length ?? 0;
     return { score: [score[0] ?? 0, score[1] ?? 0], length };
 }
+
+/**
+ * The key and values of a level's label in the selector: its depth comes from
+ * the offer (the Go side reads gammonNet's table), never from a copy here. A
+ * level the offer does not describe keeps its bare name.
+ */
+export function levelLabelParts(name, levels) {
+    const info = (levels ?? []).find((l) => l.name === name);
+    if (!info) return { key: null, params: { name } };
+    return { key: info.pruneK > 0 ? 'duel.levelPruned' : 'duel.levelPly', params: { name, ply: info.ply } };
+}

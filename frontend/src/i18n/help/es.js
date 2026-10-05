@@ -910,7 +910,7 @@ export default {
 <ul>
 <li><strong>Match</strong> de 1 a 25 puntos, o <strong>sesión de dinero</strong> (Jacoby opcional).</li>
 <li><strong>Inicio</strong>: la posición inicial, la posición del tablero, o la posición inicial con un marcador elegido.</li>
-<li><strong>Lado jugado</strong> (jugador 1 o 2) y <strong>nivel del Bot</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, los del análisis).</li>
+<li><strong>Lado jugado</strong> (jugador 1 o 2) y <strong>nivel del Bot</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, los del análisis). El selector indica la profundidad de cada nivel, por ejemplo «instant (0-ply)» o «normal (2-ply, podado)»; más profundo es más fuerte y más lento.</li>
 <li><strong>Control de tiempo</strong>: sin control de tiempo, o un control de tiempo con nombre (una reserva por jugador y un retraso gratuito en cada turno), y lo que ocurre al agotarse el tiempo: continuar anotándolo, o perder el match.</li>
 <li><strong>Su nombre</strong> y <strong>Guardar el match</strong>: sin marcar, el Duelo terminado se descarta en lugar de convertirse en un Match.</li>
 </ul>

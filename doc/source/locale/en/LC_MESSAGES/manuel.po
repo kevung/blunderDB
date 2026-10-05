@@ -8933,11 +8933,15 @@ msgstr ""
 
 #: ../../source/manuel.rst:4006
 msgid ""
-"**Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, ``normal``, "
-"``thorough``, ceux de l'analyse)."
+"**Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, "
+"``normal``, ``thorough``, ceux de l'analyse). Le sélecteur dit la "
+"profondeur de chaque niveau, par exemple « instant (0 coup) » ou « normal "
+"(2 coups, élagué) » ; plus profond, c'est plus fort et plus lent."
 msgstr ""
 "**Side played** (player 1 or 2) and **Bot level** (``instant``, ``normal``, "
-"``thorough``, those of the analysis)."
+"``thorough``, those of the analysis). The selector states each level's "
+"depth, for example \"instant (0-ply)\" or \"normal (2-ply, pruned)\"; deeper "
+"plays stronger and slower."
 
 #: ../../source/manuel.rst:4008
 msgid ""

@@ -29,6 +29,8 @@ type DuelState struct {
 type DuelOffer struct {
 	Cadences  []duel.Cadence `json:"cadences"`
 	BotLevels []string       `json:"botLevels"`
+	// Levels: the same levels with their search depth, for the form's labels.
+	Levels []duel.LevelInfo `json:"levels"`
 }
 
 // duelService returns the Arbiter over the open library, made on first use.
@@ -84,7 +86,7 @@ var errConflictAnswered = errors.New("duel moved: answered with its fresh state"
 
 // DuelOffer returns the named Cadences and the Bot's levels.
 func (d *Database) DuelOffer() DuelOffer {
-	return DuelOffer{Cadences: duel.NamedCadences(), BotLevels: append([]string(nil), duel.BotLevels...)}
+	return DuelOffer{Cadences: duel.NamedCadences(), BotLevels: append([]string(nil), duel.BotLevels...), Levels: duel.LevelInfos()}
 }
 
 // ListDuels returns the Duels in suspense, most recently played first.

@@ -910,7 +910,7 @@ export default {
 <ul>
 <li><strong>マッチ</strong>（1〜25ポイント）、または<strong>マネーセッション</strong>（ジャコビーは任意）。</li>
 <li><strong>開始</strong>：初期局面、盤上の局面、または選んだスコアでの初期局面。</li>
-<li><strong>担当する側</strong>（プレイヤー1または2）と<strong>ボットのレベル</strong>（<code>instant</code>、<code>normal</code>、<code>thorough</code>。分析と同じもの）。</li>
+<li><strong>手番</strong>(プレイヤー1または2)と<strong>ボットのレベル</strong>(<code>instant</code>、<code>normal</code>、<code>thorough</code>。解析と同じ)。セレクターは各レベルの深さを示します(例:「instant(0手読み)」「normal(2手読み、枝刈りあり)」)。深いほど強く、遅くなります。</li>
 <li><strong>持ち時間</strong>：持ち時間なし、または名前付きの持ち時間（プレイヤーごとの持ち分と毎ターンの無料の猶予）。時間切れのときの動作は、記録して続行するか、マッチを失うかです。</li>
 <li><strong>あなたの名前</strong>と<strong>マッチを保存</strong>：チェックを外すと、終了したデュエルはマッチにならず破棄されます。</li>
 </ul>

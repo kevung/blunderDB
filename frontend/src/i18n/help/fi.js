@@ -910,7 +910,7 @@ export default {
 <ul>
 <li><strong>Ottelu</strong> 1–25 pisteeseen tai <strong>rahapeli</strong> (Jacoby valinnan mukaan).</li>
 <li><strong>Lähtö</strong>: alkuasema, laudan asema tai alkuasema valitulla tilanteella.</li>
-<li><strong>Pelattava puoli</strong> (pelaaja 1 tai 2) ja <strong>Botin taso</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, samat kuin analyysissä).</li>
+<li><strong>Pelattu puoli</strong> (pelaaja 1 tai 2) ja <strong>botin taso</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, samat kuin analyysissä). Valitsin kertoo kunkin tason syvyyden, esimerkiksi "instant (0-ply)" tai "normal (2-ply, karsittu)"; syvempi on vahvempi ja hitaampi.</li>
 <li><strong>Ajankäyttö</strong>: ei ajankäyttöä tai nimetty ajankäyttö (pelaajakohtainen varaaika ja ilmainen viive joka vuorolla) sekä se, mitä ajan loppuessa tapahtuu: jatketaan ja merkitään se muistiin, tai ottelu hävitään.</li>
 <li><strong>Nimesi</strong> ja <strong>Tallenna ottelu</strong>: kun valinta on poistettu, päättynyt Kaksintaistelu hylätään sen sijaan, että siitä tulisi Ottelu.</li>
 </ul>

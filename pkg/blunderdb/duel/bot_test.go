@@ -186,3 +186,19 @@ func TestBotResignsWhereNoDecisionIsPosed(t *testing.T) {
 		}
 	}
 }
+
+func TestLevelInfosFollowGammonNetTable(t *testing.T) {
+	infos := LevelInfos()
+	if len(infos) != len(BotLevels) {
+		t.Fatalf("got %d levels, want %d", len(infos), len(BotLevels))
+	}
+	for i, info := range infos {
+		want, ok := gammonnet.Level(BotLevels[i])
+		if !ok {
+			t.Fatalf("level %q missing from gammonNet's table", BotLevels[i])
+		}
+		if info.Name != BotLevels[i] || info.Ply != want.Ply || info.PruneK != want.PruneK {
+			t.Errorf("%+v does not match %+v", info, want)
+		}
+	}
+}

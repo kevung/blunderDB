@@ -8913,11 +8913,15 @@ msgstr ""
 
 #: ../../source/manuel.rst:4006
 msgid ""
-"**Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, ``normal``, "
-"``thorough``, ceux de l'analyse)."
+"**Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, "
+"``normal``, ``thorough``, ceux de l'analyse). Le sélecteur dit la "
+"profondeur de chaque niveau, par exemple « instant (0 coup) » ou « normal "
+"(2 coups, élagué) » ; plus profond, c'est plus fort et plus lent."
 msgstr ""
-"**Ваша сторона** (игрок 1 или 2) и **уровень бота** (``instant``, "
-"``normal``, ``thorough``, как в анализе)."
+"**Сторона игрока** (игрок 1 или 2) и **уровень бота** (``instant``, "
+"``normal``, ``thorough``, как в анализе). Список показывает глубину каждого "
+"уровня, например «instant (0-ply)» или «normal (2-ply, с отсечением)»; "
+"глубже значит сильнее и медленнее."
 
 #: ../../source/manuel.rst:4008
 msgid ""
