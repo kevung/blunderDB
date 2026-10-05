@@ -581,3 +581,27 @@ func TestImportRegistryTenantScoping(t *testing.T) {
 		t.Fatal("tenant-a should cancel its own import")
 	}
 }
+
+// A file the parser cannot read is the user's fault: the stream's error event
+// says invalid, and keeps internal for an actual fault.
+func TestImportUnreadableFileEmitsInvalid(t *testing.T) {
+	ts := newTestServer(t)
+	for _, tc := range []struct{ route, name string }{
+		{"/v1/imports.xg", "bad.xg"},
+		{"/v1/imports.gnubg", "bad.sgf"},
+		{"/v1/imports.gnubg", "bad.mat"},
+		{"/v1/imports.bgf", "bad.bgf"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			events := uploadImportNamed(t, ts, tc.route, tc.name, []byte("not a game file at all"))
+			last := events[len(events)-1]
+			if last["event"] != "error" {
+				t.Fatalf("last event = %v, want error: %v", last["event"], events)
+			}
+			body, _ := last["error"].(map[string]any)
+			if body["code"] != CodeInvalid {
+				t.Fatalf("code = %v, want %q: %v", body["code"], CodeInvalid, body)
+			}
+		})
+	}
+}

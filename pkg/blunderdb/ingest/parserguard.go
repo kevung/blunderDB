@@ -8,12 +8,13 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/xgparser/xgparser"
 )
 
 // ErrXGHeader is returned when an XG container's header announces sizes its
 // file cannot hold.
-var ErrXGHeader = errors.New("ingest: malformed XG header")
+var ErrXGHeader = fmt.Errorf("%w: ingest: malformed XG header", storage.ErrInvalid)
 
 // xgHeaderPrefix is the part of the Game Data Format header that carries the
 // two sizes xgparser allocates from: magic, version, header size, thumbnail
@@ -51,8 +52,17 @@ func checkXGHeader(path string) error {
 	return nil
 }
 
+// wrapInvalid marks a parser's refusal of its input as storage.ErrInvalid, so
+// a client sees a file it must fix, not a fault to retry.
+func wrapInvalid(err error) error {
+	if err == nil || errors.Is(err, storage.ErrInvalid) {
+		return err
+	}
+	return fmt.Errorf("%w: %w", storage.ErrInvalid, err)
+}
+
 // ErrParserPanic is returned when a third-party parser panicked on its input.
-var ErrParserPanic = errors.New("ingest: parser failed on malformed input")
+var ErrParserPanic = fmt.Errorf("%w: ingest: parser failed on malformed input", storage.ErrInvalid)
 
 // guardParse runs a third-party parser and turns its panic into an error. The
 // parsers read files and pastes from anywhere; bgfparser's text reader shifts
@@ -76,7 +86,7 @@ func guardParse[T any](parse func() (T, error)) (v T, err error) {
 func xgParseError(path, stage string, err error) error {
 	if errors.Is(err, xgparser.ErrDecompressionLimit) {
 		return fmt.Errorf("ingest: %s: fichier trop gros ou corrompu (segment décompressé au-delà de %d Mio): %w",
-			filepath.Base(path), xgparser.MaxDecompressedSize>>20, err)
+			filepath.Base(path), xgparser.MaxDecompressedSize>>20, wrapInvalid(err))
 	}
-	return fmt.Errorf("ingest: %s: %w", stage, err)
+	return fmt.Errorf("ingest: %s: %w", stage, wrapInvalid(err))
 }

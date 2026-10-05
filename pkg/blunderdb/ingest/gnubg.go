@@ -37,7 +37,7 @@ func MapGnuBG(path string) (*MatchGraph, error) {
 		return nil, fmt.Errorf("ingest: unsupported gnubg file format: %s", ext)
 	}
 	if err != nil {
-		return nil, fmt.Errorf("ingest: parse gnubg file: %w", err)
+		return nil, fmt.Errorf("ingest: parse gnubg file: %w", wrapInvalid(err))
 	}
 	if !isSGF {
 		if err := checkMATComplete(match); err != nil {
@@ -55,7 +55,7 @@ func MapGnuBG(path string) (*MatchGraph, error) {
 func MapGnuBGText(content string) (*MatchGraph, error) {
 	match, err := gnubgparser.ParseMAT(strings.NewReader(content))
 	if err != nil {
-		return nil, fmt.Errorf("ingest: parse gnubg text: %w", err)
+		return nil, fmt.Errorf("ingest: parse gnubg text: %w", wrapInvalid(err))
 	}
 	if err := checkMATComplete(match); err != nil {
 		return nil, fmt.Errorf("ingest: clipboard: %w", err)

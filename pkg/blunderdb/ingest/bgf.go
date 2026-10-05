@@ -19,10 +19,10 @@ import (
 func MapBGF(path string) (*MatchGraph, error) {
 	match, err := bgfparser.ParseBGF(path)
 	if err != nil {
-		return nil, fmt.Errorf("ingest: parse bgf file: %w", err)
+		return nil, fmt.Errorf("ingest: parse bgf file: %w", wrapInvalid(err))
 	}
 	if match.Data == nil {
-		return nil, fmt.Errorf("ingest: bgf file contains no match data")
+		return nil, fmt.Errorf("%w: ingest: bgf file contains no match data", storage.ErrInvalid)
 	}
 	data := match.Data
 
