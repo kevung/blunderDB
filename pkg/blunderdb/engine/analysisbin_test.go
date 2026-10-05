@@ -77,6 +77,21 @@ func demoAnalysisBlobs(t testing.TB) map[int64][]byte {
 // requireExactRoundTrip encodes a in the binary format and
 // requires the very same value back: DeepEqual (floats bit for bit, nil and
 // empty slices apart, time zones) and the same JSON.
+// asJSONLeavesIt returns t as encoding/json's time.Parse rebuilds it from
+// RFC 3339 text, which keeps only the offset: UTC at offset 0 (even when the
+// local zone is UTC), Local when the local zone has that offset at that
+// instant, a fixed zone otherwise.
+func asJSONLeavesIt(t time.Time) time.Time {
+	_, off := t.Zone()
+	if off == 0 {
+		return t.UTC()
+	}
+	if _, localOff := t.In(time.Local).Zone(); localOff == off {
+		return t.In(time.Local)
+	}
+	return t
+}
+
 func requireExactRoundTrip(t *testing.T, name string, a domain.PositionAnalysis) {
 	t.Helper()
 	want, err := json.Marshal(&a)
@@ -235,17 +250,16 @@ func TestBinaryRoundTripOnEdgeValues(t *testing.T) {
 	// NaN/Inf case is checked on the payload bits below.
 	a.CheckerAnalysis.Moves[2].Equity = 7
 	a.CheckerAnalysis.Moves[2].PlayerWinChance = 1e308
+	// The fixed zones above are those of no machine running the suite but
+	// one: where the local zone has the same offset, encoding/json hands
+	// back Local, and so must the binary format.
+	a.CreationDate = asJSONLeavesIt(a.CreationDate)
+	a.LastModifiedDate = asJSONLeavesIt(a.LastModifiedDate)
+	a.Rollouts[0].Date = asJSONLeavesIt(a.Rollouts[0].Date)
 	requireExactRoundTrip(t, "edge", a)
 
-	// Times as encoding/json leaves them: Local when the offset is the local
-	// zone's, UTC at offset 0.
-	local := time.Date(2025, 1, 2, 3, 4, 5, 6, time.Local)
-	if _, off := local.Zone(); off == 0 {
-		// A local zone at offset 0 (CI runs in UTC) is indistinguishable
-		// from UTC on the wire; encoding/json hands back UTC as well.
-		local = local.UTC()
-	}
-	b := domain.PositionAnalysis{CreationDate: local, LastModifiedDate: local.Add(time.Hour)}
+	local := asJSONLeavesIt(time.Date(2025, 1, 2, 3, 4, 5, 6, time.Local))
+	b := domain.PositionAnalysis{CreationDate: local, LastModifiedDate: asJSONLeavesIt(local.Add(time.Hour))}
 	requireExactRoundTrip(t, "local", b)
 	requireExactRoundTrip(t, "zero", domain.PositionAnalysis{})
 	requireExactRoundTrip(t, "nil moves", domain.PositionAnalysis{CheckerAnalysis: &domain.CheckerAnalysis{}})
