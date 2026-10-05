@@ -26,6 +26,8 @@ import (
 //  4. `ANALYZE`, so planner statistics reflect the rebuilt file.
 //  5. A second `wal_checkpoint(TRUNCATE)`: under WAL, VACUUM's output goes
 //     through the WAL and the file only shrinks once checkpointed.
+//  6. A check that the file is no larger than page_count*page_size, else
+//     storage.ErrVacuumNotShrunk (see mmapSizeFor for the Windows case).
 //
 // Before that, compactAnalyses rewrites every analysis blob still in a legacy
 // format (raw JSON, zlib, JSON in zstd) as binary at zstd level 7, across all
@@ -58,7 +60,7 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 
 	var sizeBefore int64
 	if path != "" {
-		sizeBefore, err = fileSize(path)
+		sizeBefore, err = s.fileSize(path)
 		if err != nil {
 			return storage.VacuumResult{}, fmt.Errorf("vacuum: %w", err)
 		}
@@ -107,9 +109,21 @@ func (s *Storage) Vacuum(ctx context.Context) (storage.VacuumResult, error) {
 
 	var sizeAfter int64
 	if path != "" {
-		sizeAfter, err = fileSize(path)
+		sizeAfter, err = s.fileSize(path)
 		if err != nil {
 			return storage.VacuumResult{SizeBefore: sizeBefore}, fmt.Errorf("vacuum: %w", err)
+		}
+		// Once checkpointed, the file holds exactly its pages. A larger file
+		// is a truncation the operating system refused and SQLite ignored:
+		// reporting success would claim space that was never given back.
+		pages, err := pagesSize(ctx, s.sqlDB)
+		if err != nil {
+			return storage.VacuumResult{SizeBefore: sizeBefore}, fmt.Errorf("vacuum: %w", err)
+		}
+		if sizeAfter > pages {
+			return storage.VacuumResult{SizeBefore: sizeBefore, SizeAfter: sizeAfter},
+				fmt.Errorf("vacuum: %w (%s on disk for %s of data)",
+					storage.ErrVacuumNotShrunk, humanBytes(sizeAfter), humanBytes(pages))
 		}
 	}
 
@@ -297,6 +311,23 @@ func fileSize(path string) (int64, error) {
 		return 0, fmt.Errorf("stat %s: %w", path, err)
 	}
 	return info.Size(), nil
+}
+
+func (s *Storage) fileSize(path string) (int64, error) {
+	if s.sizeOf != nil {
+		return s.sizeOf(path)
+	}
+	return fileSize(path)
+}
+
+// pagesSize is the size the database's pages take, page_count*page_size: what
+// the main file measures once the WAL is checkpointed and truncated.
+func pagesSize(ctx context.Context, db execer) (int64, error) {
+	var count, size int64
+	if err := db.QueryRowContext(ctx, `SELECT page_count, page_size FROM pragma_page_count(), pragma_page_size()`).Scan(&count, &size); err != nil {
+		return 0, fmt.Errorf("page count: %w", err)
+	}
+	return count * size, nil
 }
 
 // humanBytes formats a byte count for the free-space error message

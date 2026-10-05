@@ -17,6 +17,7 @@ import (
 	"log/slog"
 	"net/url"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -35,6 +36,9 @@ type Storage struct {
 	// (Migrate's signature is fixed by the storage.Storage interface, so it
 	// cannot take one directly) and forwarded to the registered Migrator.
 	migrationProgress func(phase string, done, total int)
+	// sizeOf reads a file's size for Vacuum; nil means fileSize. A test
+	// substitutes it to stand for a truncation the platform refused.
+	sizeOf func(path string) (int64, error)
 }
 
 var _ storage.Storage = (*Storage)(nil)
@@ -119,7 +123,20 @@ var perConnPragmas = [][2]string{
 	{"synchronous", "NORMAL"},
 	{"cache_size", "-65536"},
 	{"temp_store", "MEMORY"},
-	{"mmap_size", "268435456"},
+	{"mmap_size", mmapSizeFor(runtime.GOOS)},
+}
+
+// mmapSizeFor is the mmap_size of every connection on goos. Windows refuses
+// to truncate a file that any connection, of this process or another, has
+// mapped, and SQLite ignores the refusal: an in-place VACUUM would rewrite
+// the pages and leave the file its old size. The daemon's pool alone keeps
+// several connections open, so the mapping is left off there rather than
+// lifted around each VACUUM. Elsewhere truncating a mapped file is allowed.
+func mmapSizeFor(goos string) string {
+	if goos == "windows" {
+		return "0"
+	}
+	return "268435456"
 }
 
 // DSN augments a SQLite path/DSN with the per-connection PRAGMAs (and, for a

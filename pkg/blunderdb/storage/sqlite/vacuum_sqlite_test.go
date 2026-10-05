@@ -5,14 +5,18 @@ import (
 	"compress/zlib"
 	"context"
 	"encoding/json"
+	"errors"
+	"net/url"
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // TestVacuum_ReclaimsSpaceAfterDeletes: a file inflated by deletions shrinks
@@ -293,3 +297,70 @@ func TestVacuum_KeepsPoolTempStoreInMemory(t *testing.T) {
 }
 
 func ptr[T any](v T) *T { return &v }
+
+// TestVacuum_ReportsAFileThatKeptItsSize: when the file on disk is still
+// larger than its pages once the VACUUM is done — what Windows produces when
+// another connection maps the file and SQLite drops the refused truncation —
+// Vacuum says so instead of reporting a success. The refusal cannot be
+// produced off Windows, so the size the check reads is inflated.
+func TestVacuum_ReportsAFileThatKeptItsSize(t *testing.T) {
+	ctx := context.Background()
+	dbPath := filepath.Join(t.TempDir(), "vacuum.db")
+	st, err := Open(ctx, dbPath, nil)
+	if err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	defer st.Close()
+	if _, err := st.sqlDB.Exec(`INSERT INTO position (state) VALUES ('p')`); err != nil {
+		t.Fatal(err)
+	}
+	st.sizeOf = func(path string) (int64, error) {
+		n, err := fileSize(path)
+		return n + 4096, err
+	}
+
+	res, err := st.Vacuum(ctx)
+	if !errors.Is(err, storage.ErrVacuumNotShrunk) {
+		t.Fatalf("Vacuum: err = %v, want storage.ErrVacuumNotShrunk", err)
+	}
+	if res.SizeBefore == 0 || res.SizeAfter == 0 {
+		t.Fatalf("sizes not reported with the error: %+v", res)
+	}
+}
+
+// TestVacuum_FileSizeMatchesItsPages: the check above compares the file with
+// page_count*page_size; on a platform that truncates, the two agree after a
+// vacuum, so the check never fires on a vacuum that did shrink the file.
+func TestVacuum_FileSizeMatchesItsPages(t *testing.T) {
+	ctx := context.Background()
+	dbPath := filepath.Join(t.TempDir(), "vacuum.db")
+	st, err := Open(ctx, dbPath, nil)
+	if err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	defer st.Close()
+	if _, err := st.Vacuum(ctx); err != nil {
+		t.Fatalf("Vacuum: %v", err)
+	}
+	want, err := pagesSize(ctx, st.sqlDB)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got, _ := fileSize(dbPath); got != want {
+		t.Fatalf("file %d bytes, pages %d", got, want)
+	}
+}
+
+// TestMmapSize: no connection maps the file on Windows, where a mapping held
+// by any connection makes the in-place VACUUM unable to shrink the file.
+func TestMmapSize(t *testing.T) {
+	if got := mmapSizeFor("windows"); got != "0" {
+		t.Errorf("mmap_size on windows = %s, want 0", got)
+	}
+	if got := mmapSizeFor("linux"); got != "268435456" {
+		t.Errorf("mmap_size on linux = %s, want 268435456", got)
+	}
+	if want := "mmap_size(" + mmapSizeFor(runtime.GOOS) + ")"; !strings.Contains(DSN("x.db"), url.QueryEscape(want)) {
+		t.Errorf("DSN does not carry %s: %s", want, DSN("x.db"))
+	}
+}

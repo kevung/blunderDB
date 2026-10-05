@@ -321,6 +321,12 @@ Une confirmation est demandée avant de lancer l'opération. Le résultat — l'
 ensuite dans la barre d'état. La même opération est disponible en ligne de
 commande via ``blunderdb vacuum`` (voir :ref:`cli`).
 
+Après un compactage sur place, blunderDB vérifie que le fichier a bien
+rétréci. Sous Windows, le système refuse de raccourcir un fichier qu'un autre
+programme garde ouvert de certaines façons : le compactage se termine alors
+par un message qui le dit — fermez l'autre programme et relancez-le — au lieu
+d'annoncer un gain qui n'a pas eu lieu.
+
 Le bouton **Ouvrir le dossier des journaux**, dans l'onglet *Interface*, ouvre le
 dossier contenant le journal de l'application — utile pour joindre des
 détails à un signalement de problème, en particulier quand blunderDB est

@@ -41,6 +41,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 )
 
@@ -100,6 +101,12 @@ type VacuumResult struct {
 	SizeBefore int64 `json:"sizeBefore"`
 	SizeAfter  int64 `json:"sizeAfter"`
 }
+
+// ErrVacuumNotShrunk is a Vacuum whose pages were compacted but whose file
+// kept its size: the operating system refused the truncation (Windows does
+// while another program maps the file) and SQLite carries on without error.
+// It comes with both sizes filled in, so a caller can still report them.
+var ErrVacuumNotShrunk = errors.New("the database file did not shrink: another program keeps it open; close it and run the compaction again")
 
 // Options configures a backend at open time.
 type Options struct {

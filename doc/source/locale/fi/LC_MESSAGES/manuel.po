@@ -757,6 +757,21 @@ msgstr ""
 
 #: ../../source/manuel.rst:324
 msgid ""
+"Après un compactage sur place, blunderDB vérifie que le fichier a bien "
+"rétréci. Sous Windows, le système refuse de raccourcir un fichier qu'un "
+"autre programme garde ouvert de certaines façons : le compactage se termine"
+" alors par un message qui le dit — fermez l'autre programme et relancez-le "
+"— au lieu d'annoncer un gain qui n'a pas eu lieu."
+msgstr ""
+"Paikallaan tehdyn tiivistyksen jälkeen blunderDB tarkistaa, että tiedosto "
+"todella pieneni. Windowsissa järjestelmä kieltäytyy lyhentämästä tiedostoa,"
+" jota toinen ohjelma pitää auki tietyllä tavalla: tiivistys päättyy silloin"
+" ilmoitukseen, joka kertoo tämän — sulje toinen ohjelma ja käynnistä "
+"tiivistys uudelleen — sen sijaan, että se ilmoittaisi säästöstä, jota ei "
+"syntynyt."
+
+#: ../../source/manuel.rst:324
+msgid ""
 "Le bouton **Ouvrir le dossier des journaux**, dans l'onglet *Interface*, "
 "ouvre le dossier contenant le journal de l'application — utile pour joindre "
 "des détails à un signalement de problème, en particulier quand blunderDB est "
