@@ -8,6 +8,15 @@ propre issue le jour où il est lancé.
 
 ## Ouvert — Backend
 
+- **Statistiques : le filtre `--engine` par les cellules.** Il lit encore les décisions
+  (copie de la sélection) ; passer par `match_stats_cell` demande le moteur dans la clé des
+  cellules, autant de cellules en plus que de moteurs par match. Mesure de départ :
+  `tasks/mesure-bmab-0.37.md` § 7.2 ter.
+- **Embarqueurs sans blank-import de `database` (gammonGo, `pkg/blunderdb/server/embed.go`).**
+  `st.Migrate` ne passe pas par l'ouverture du wrapper `Database` : une base SQLite 2.31 dont
+  les tables de cellules ont l'ancienne forme n'y est pas reclusterisée (`reclusterDerivedTables`
+  ne tourne qu'avec `EnsureSchema`), et ses statistiques restent lentes jusqu'à une ouverture
+  par blunderDB.
 - **`countedExpr` et les libellés de videau dégénérés** (`sqlshared/stats.go`) : une décision
   de videau est comptée comme action *active* dès que `move.cube_action` n'est ni `''`, ni
   `No Double`, ni `NoDouble`. Une valeur `Unknown(D=…,T=…)` écrite par l'importeur XG pour un

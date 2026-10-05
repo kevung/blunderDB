@@ -85,3 +85,7 @@ lise ces index.
   les deux versions, au lieu d'échouer requête par requête sur `action_label` ou `state`.
 - Une base déjà en 2.31.0 (versions de développement) ne rejoue pas l'étape ; elle lit
   toujours ses anciennes valeurs, mais garde leur poids.
+- Les tables dérivées de `match_stats` (`match_stats_cell`, `match_stats_position`) changent
+  de forme dans la 2.31.0 sans nouveau numéro (sans rowid, clé menée par la sorte) : elles ne
+  contiennent que des données recalculables, et une ouverture qui trouve une autre forme les
+  recrée et recalcule `match_stats` (`reclusterDerivedTables`).

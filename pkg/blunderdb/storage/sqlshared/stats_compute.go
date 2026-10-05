@@ -55,14 +55,15 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 	// Every figure comes from match_stats and its cells when the filter
 	// allows it (stats_from_cells.go): sums over a few rows per match instead
 	// of passes over every decision. The tables are filled before the read
-	// transaction opens, since that is a write. A provenance filter copies
-	// its selection and runs the direct passes over it; a read-only
-	// connection can neither fill the tables nor create the copy: it reads
-	// every decision directly, to the same figures.
+	// transaction opens, since that is a write. A read-only connection
+	// reads them when a writer has filled them for every match. A provenance
+	// filter copies its selection and runs the direct passes over it; a
+	// read-only connection that can neither use the tables nor create the
+	// copy reads every decision directly, to the same figures.
 	readOnly := RefusesWrites(ctx, s.DB)
-	useTable := fromMatchStats(filter) && !readOnly
-	if useTable {
-		if _, err := s.FillMatchStats(ctx, scope, nil); err != nil {
+	useTable := false
+	if fromMatchStats(filter) && !readOnly {
+		if useTable, err = s.matchStatsReadable(ctx, scope); err != nil {
 			return nil, err
 		}
 	}
@@ -72,6 +73,13 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 	err = s.DB.Transact(ctx, func(tx Execer) error {
 		ts := &StatsStore{DB: tx}
 		q.join = statsBaseJoin
+		// A reader asks within the snapshot it then reads.
+		if fromMatchStats(filter) && readOnly {
+			var err error
+			if useTable, err = ts.matchStatsReadable(ctx, scope); err != nil {
+				return err
+			}
+		}
 		if useTable {
 			return ts.computeFromCells(ctx, q, result)
 		}

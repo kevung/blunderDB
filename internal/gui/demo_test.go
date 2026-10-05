@@ -82,7 +82,9 @@ func TestDemoDatabaseShowsARoomRunning(t *testing.T) {
 
 // TestDemoDatabaseHasTheCurrentSchema compares the demo, statement by
 // statement, with the bootstrap DDL: a stale file may be stamped current, and
-// EnsureSchema never reshapes an existing index or table.
+// EnsureSchema reshapes no existing index or table but the derived breakdown
+// tables, which it would drop and recompute at every demo open. It holds
+// their layout (WITHOUT ROWID, key order) along with every other statement.
 func TestDemoDatabaseHasTheCurrentSchema(t *testing.T) {
 	demo := schemaStatementsOf(t, openDemoRaw(t))
 

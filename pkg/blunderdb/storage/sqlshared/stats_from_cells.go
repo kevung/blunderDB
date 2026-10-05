@@ -10,9 +10,11 @@ package sqlshared
 // hold them, which the cells name.
 
 import (
+	"cmp"
 	"context"
-	"errors"
 	"fmt"
+	"maps"
+	"slices"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -67,11 +69,26 @@ func unNull(col string) string {
 
 // computeFromCells is Compute's run over match_stats and its cells, inside
 // the read transaction: same passes, same order (the MWC back-fill last
-// among the per-decision figures), same result.
+// among the per-decision figures), same result. Each kind of cell is read
+// once, the phase cells raw: every figure at the grain of a match or of the
+// whole selection is a sum of them, so one read serves the totals, the
+// worst-error bound, the MWC sums and the per-phase rows. A read per figure
+// went over the same cells again each time, and their cost is the rows
+// read, not the arithmetic.
 func (s *StatsStore) computeFromCells(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
 	where, args := s.cellsWhere(q.scope, q.filter)
+	phase, err := s.readPhaseCells(ctx, where, args)
+	if err != nil {
+		return err
+	}
+	cube, err := s.readCubeCells(ctx, where, args)
+	if err != nil {
+		return err
+	}
 	for _, pass := range []func(context.Context, statsQuery, string, []any, *storage.StatsResult) error{
-		s.totalsFromCells,
+		func(ctx context.Context, q statsQuery, where string, args []any, r *storage.StatsResult) error {
+			return s.totalsFromCells(ctx, phase, where, args, r)
+		},
 		func(ctx context.Context, q statsQuery, _ string, _ []any, r *storage.StatsResult) error {
 			for _, p := range []func(context.Context, statsQuery, *storage.StatsResult) error{
 				s.prByDecisionTypeFromTable, s.snowieGlobalFromTable, s.perTournamentFromTable, s.perMatchFromTable,
@@ -82,12 +99,22 @@ func (s *StatsStore) computeFromCells(ctx context.Context, q statsQuery, result 
 			}
 			return nil
 		},
-		s.cubeFromCells,
+		func(_ context.Context, _ statsQuery, _ string, _ []any, r *storage.StatsResult) error {
+			cubeFromCells(cube, r)
+			return nil
+		},
 		s.histogramFromCells,
-		s.topBlundersFromCells,
+		func(ctx context.Context, q statsQuery, _ string, _ []any, r *storage.StatsResult) error {
+			return s.topBlundersFromCells(ctx, q, phase, r)
+		},
 		s.rollingFromCells,
-		s.mwcFromCells,
-		s.breakdownsFromCells,
+		func(_ context.Context, _ statsQuery, _ string, _ []any, r *storage.StatsResult) error {
+			mwcFromCells(phase, cube, r)
+			return nil
+		},
+		func(ctx context.Context, q statsQuery, where string, args []any, r *storage.StatsResult) error {
+			return s.breakdownsFromCells(ctx, phase, where, args, r)
+		},
 		func(ctx context.Context, q statsQuery, _ string, _ []any, r *storage.StatsResult) error {
 			return s.computePerTag(ctx, q, r)
 		},
@@ -99,20 +126,87 @@ func (s *StatsStore) computeFromCells(ctx context.Context, q statsQuery, result 
 	return nil
 }
 
-func (s *StatsStore) totalsFromCells(ctx context.Context, _ statsQuery, where string, args []any, result *storage.StatsResult) error {
+// phaseCell is one phase cell of the selection, with its match's tournament
+// (0 for none).
+type phaseCell struct {
+	match, tournament                 int64
+	decisionType, k1                  int
+	decisions, errorMP, maxErrorMP    int64
+	blunders, mwcDecisions, positions int64
+	mwcLoss                           float64
+}
+
+// readPhaseCells reads the selection's phase cells, in key order: the read
+// sorts nothing.
+func (s *StatsStore) readPhaseCells(ctx context.Context, where string, args []any) ([]phaseCell, error) {
+	var out []phaseCell
+	err := scanEach(ctx, s.DB,
+		`SELECT c.match_id, COALESCE(m.tournament_id, 0), c.decision_type, c.k1, c.decisions, c.error_mp, c.max_error_mp,
+			c.blunders, c.mwc_decisions, c.positions, c.mwc_loss`+cellsJoin+cellKind(where, cellPhase),
+		args, func(r Rows) error {
+			var c phaseCell
+			if err := r.Scan(&c.match, &c.tournament, &c.decisionType, &c.k1, &c.decisions, &c.errorMP, &c.maxErrorMP,
+				&c.blunders, &c.mwcDecisions, &c.positions, &c.mwcLoss); err != nil {
+				return err
+			}
+			out = append(out, c)
+			return nil
+		})
+	if err != nil {
+		return nil, fmt.Errorf("phase cells: %w", err)
+	}
+	return out, nil
+}
+
+// cubeCell is the selection's cube cells of one best and played action.
+type cubeCell struct {
+	k1                           int
+	best, played                 string
+	errorMP, decisions, blunders int64
+	mwcLoss                      float64
+}
+
+// readCubeCells sums the selection's cube cells by best and played action,
+// in the order of the best action's code.
+func (s *StatsStore) readCubeCells(ctx context.Context, where string, args []any) ([]cubeCell, error) {
 	d := s.DB
+	var out []cubeCell
+	err := scanEach(ctx, d,
+		`SELECT c.k1, `+ActionLabelOrEmptyFor(d, "c.k1")+`, `+ActionLabelOrEmptyFor(d, "c.k2")+`, `+d.Bigint(`SUM(c.error_mp)`)+`, `+
+			d.Bigint(`SUM(c.decisions)`)+`, `+d.Bigint(`SUM(c.blunders)`)+`, SUM(c.mwc_loss)`+cellsJoin+cellKind(where, cellCube)+
+			` GROUP BY c.k1, c.k2, 2, 3 ORDER BY c.k1, c.k2`,
+		args, func(r Rows) error {
+			var c cubeCell
+			if err := r.Scan(&c.k1, &c.best, &c.played, &c.errorMP, &c.decisions, &c.blunders, &c.mwcLoss); err != nil {
+				return err
+			}
+			out = append(out, c)
+			return nil
+		})
+	if err != nil {
+		return nil, fmt.Errorf("cube cells: %w", err)
+	}
+	return out, nil
+}
+
+func (s *StatsStore) totalsFromCells(ctx context.Context, phase []phaseCell, where string, args []any, result *storage.StatsResult) error {
 	var decisions, private int64
-	if err := d.QueryRow(ctx,
-		`SELECT `+d.Bigint(`COALESCE(SUM(c.decisions), 0)`)+`, COUNT(DISTINCT c.match_id), COUNT(DISTINCT m.tournament_id), `+
-			d.Bigint(`COALESCE(SUM(c.positions), 0)`)+cellsJoin+cellKind(where, cellPhase), args...,
-	).Scan(&decisions, &result.Totals.NumMatches, &result.Totals.NumTournaments, &private); err != nil {
-		return fmt.Errorf("totals (cells): %w", err)
+	matches, tournaments := map[int64]bool{}, map[int64]bool{}
+	for _, c := range phase {
+		decisions += c.decisions
+		private += c.positions
+		matches[c.match] = true
+		if c.tournament != 0 {
+			tournaments[c.tournament] = true
+		}
 	}
 	result.Totals.NumDecisions = int(decisions)
+	result.Totals.NumMatches = len(matches)
+	result.Totals.NumTournaments = len(tournaments)
 	// A private position is in one seat's phase cell and nowhere else; a
 	// shared one has a row for each seat reaching it (sharePositions).
 	var shared int
-	if err := d.QueryRow(ctx, `SELECT COUNT(DISTINCT c.position_id)`+positionsJoin+where, args...).Scan(&shared); err != nil {
+	if err := s.DB.QueryRow(ctx, `SELECT COUNT(DISTINCT c.position_id)`+positionsJoin+where, args...).Scan(&shared); err != nil {
 		return fmt.Errorf("totals positions (cells): %w", err)
 	}
 	result.Totals.NumPositions = int(private) + shared
@@ -120,43 +214,26 @@ func (s *StatsStore) totalsFromCells(ctx context.Context, _ statsQuery, where st
 }
 
 // cubeFromCells is computeCubeActionBreakdown and computeCubeDirections.
-func (s *StatsStore) cubeFromCells(ctx context.Context, _ statsQuery, where string, args []any, result *storage.StatsResult) error {
-	d := s.DB
-	cube := cellKind(where, cellCube)
-	if err := scanEach(ctx, d,
-		`SELECT `+ActionLabelOrEmptyFor(d, "c.k1")+`, `+d.Bigint(`SUM(c.error_mp)`)+`, `+d.Bigint(`SUM(c.decisions)`)+`, `+
-			d.Bigint(`SUM(c.blunders)`)+cellsJoin+cube+` GROUP BY c.k1, 1 ORDER BY c.k1`,
-		args, func(r Rows) error {
-			var cs storage.CubeActionStats
-			var sumErr, n, blunders int64
-			if err := r.Scan(&cs.Action, &sumErr, &n, &blunders); err != nil {
-				return err
-			}
-			cs.NumDecisions, cs.BlunderCount = int(n), int(blunders)
-			cs.PR = pr(sumErr, cs.NumDecisions)
-			result.CubeActionBreakdown = append(result.CubeActionBreakdown, cs)
-			return nil
-		}); err != nil {
-		return fmt.Errorf("cube action breakdown (cells): %w", err)
-	}
+func cubeFromCells(cube []cubeCell, result *storage.StatsResult) {
 	var cells []storage.CubeDirectionRow
-	if err := scanEach(ctx, d,
-		`SELECT `+ActionLabelOrEmptyFor(d, "c.k1")+`, `+ActionLabelOrEmptyFor(d, "c.k2")+`, `+d.Bigint(`SUM(c.decisions)`)+`, `+
-			d.Bigint(`SUM(c.error_mp)`)+cellsJoin+cube+` GROUP BY c.k1, c.k2, 1, 2`,
-		args, func(r Rows) error {
-			var c storage.CubeDirectionRow
-			var n int64
-			if err := r.Scan(&c.Best, &c.Played, &n, &c.ErrorMP); err != nil {
-				return err
-			}
-			c.Count = int(n)
-			cells = append(cells, c)
-			return nil
-		}); err != nil {
-		return fmt.Errorf("cube directions (cells): %w", err)
+	var sumErr []int64
+	for i, c := range cube {
+		cells = append(cells, storage.CubeDirectionRow{Best: c.best, Played: c.played, Count: int(c.decisions), ErrorMP: c.errorMP})
+		if i == 0 || cube[i-1].k1 != c.k1 {
+			result.CubeActionBreakdown = append(result.CubeActionBreakdown, storage.CubeActionStats{Action: c.best})
+			sumErr = append(sumErr, 0)
+		}
+		last := len(result.CubeActionBreakdown) - 1
+		cs := &result.CubeActionBreakdown[last]
+		cs.NumDecisions += int(c.decisions)
+		cs.BlunderCount += int(c.blunders)
+		sumErr[last] += c.errorMP
+	}
+	for i := range result.CubeActionBreakdown {
+		cs := &result.CubeActionBreakdown[i]
+		cs.PR = pr(sumErr[i], cs.NumDecisions)
 	}
 	result.CubeDirections = storage.TallyCubeDirections(cells)
-	return nil
 }
 
 func (s *StatsStore) histogramFromCells(ctx context.Context, _ statsQuery, where string, args []any, result *storage.StatsResult) error {
@@ -193,41 +270,31 @@ func restrictTo(q statsQuery, matchIDs []int64) statsQuery {
 // every cell's largest error is one decision of the selection, so the tenth
 // largest of them, L, bounds the tenth worst error from below, and every
 // decision at L or above lies in a cell whose largest error is at L or above.
-func (s *StatsStore) topBlunderMatches(ctx context.Context, where string, args []any) ([]int64, error) {
-	d := s.DB
-	phase := cellKind(where, cellPhase)
+func topBlunderMatches(phase []phaseCell) []int64 {
 	var bound int64
-	err := d.QueryRow(ctx, `SELECT c.max_error_mp`+cellsJoin+phase+` ORDER BY c.max_error_mp DESC LIMIT 1 OFFSET 9`, args...).Scan(&bound)
-	switch {
-	case err == nil:
-		phase += " AND c.max_error_mp >= ?"
-		args = append(append([]any{}, args...), bound)
-	case !errors.Is(err, ErrNoRows):
-		return nil, fmt.Errorf("top blunders bound (cells): %w", err)
+	if len(phase) >= 10 {
+		largest := make([]int64, len(phase))
+		for i, c := range phase {
+			largest[i] = c.maxErrorMP
+		}
+		slices.SortFunc(largest, func(a, b int64) int { return cmp.Compare(b, a) })
+		bound = largest[9]
 	}
 	var ids []int64
-	err = scanEach(ctx, d, `SELECT DISTINCT c.match_id`+cellsJoin+phase, args, func(r Rows) error {
-		var id int64
-		if err := r.Scan(&id); err != nil {
-			return err
+	seen := map[int64]bool{}
+	for _, c := range phase {
+		if (len(phase) < 10 || c.maxErrorMP >= bound) && !seen[c.match] {
+			seen[c.match] = true
+			ids = append(ids, c.match)
 		}
-		ids = append(ids, id)
-		return nil
-	})
-	if err != nil {
-		return nil, fmt.Errorf("top blunder matches (cells): %w", err)
 	}
-	return ids, nil
+	return ids
 }
 
 // topBlundersFromCells is computeTopBlunders over the matches that can hold
 // the result, and their MWC losses from computeMWCPass over the same.
-func (s *StatsStore) topBlundersFromCells(ctx context.Context, q statsQuery, where string, args []any, result *storage.StatsResult) error {
-	ids, err := s.topBlunderMatches(ctx, where, args)
-	if err != nil {
-		return err
-	}
-	rq := restrictTo(q, ids)
+func (s *StatsStore) topBlundersFromCells(ctx context.Context, q statsQuery, phase []phaseCell, result *storage.StatsResult) error {
+	rq := restrictTo(q, topBlunderMatches(phase))
 	if err := s.computeTopBlunders(ctx, rq, result); err != nil {
 		return err
 	}
@@ -297,52 +364,57 @@ func (s *StatsStore) rollingFromCells(ctx context.Context, q statsQuery, where s
 }
 
 // mwcFromCells fills the MWC sums and back-fills the per-tournament,
-// per-match and per-cube-action rows, as computeMWCPass does.
-func (s *StatsStore) mwcFromCells(ctx context.Context, _ statsQuery, where string, args []any, result *storage.StatsResult) error {
-	d := s.DB
+// per-match and per-cube-action rows, as computeMWCPass does. A match's
+// losses of one decision type count only when the table values one of its
+// decisions, as the direct pass skips a decision it cannot value.
+func mwcFromCells(phase []phaseCell, cube []cubeCell, result *storage.StatsResult) {
+	type key struct {
+		match int64
+		dt    int
+	}
+	type group struct {
+		tournament int64
+		loss       float64
+		n          int64
+	}
+	groups := map[key]*group{}
+	var keys []key
+	for _, c := range phase {
+		k := key{c.match, c.decisionType}
+		g := groups[k]
+		if g == nil {
+			g = &group{tournament: c.tournament}
+			groups[k] = g
+			keys = append(keys, k)
+		}
+		g.loss += c.mwcLoss
+		g.n += c.mwcDecisions
+	}
+	slices.SortFunc(keys, func(a, b key) int {
+		return cmp.Or(cmp.Compare(a.match, b.match), cmp.Compare(a.dt, b.dt))
+	})
 	byMatch := map[int64]float64{}
 	byTournament := map[int64]float64{}
-	if err := scanEach(ctx, d,
-		`SELECT c.match_id, COALESCE(m.tournament_id, 0), c.decision_type, SUM(c.mwc_loss), `+d.Bigint(`SUM(c.mwc_decisions)`)+
-			cellsJoin+cellKind(where, cellPhase)+` GROUP BY c.match_id, m.tournament_id, c.decision_type ORDER BY c.match_id, c.decision_type`,
-		args, func(r Rows) error {
-			var match, tournament, n int64
-			var dt int
-			var loss float64
-			if err := r.Scan(&match, &tournament, &dt, &loss, &n); err != nil {
-				return err
-			}
-			if n == 0 {
-				return nil
-			}
-			result.MWCAvailable = true
-			result.MWCGlobal += loss
-			if dt == 0 {
-				result.MWCChecker += loss
-			} else {
-				result.MWCCube += loss
-			}
-			byMatch[match] += loss
-			if tournament != 0 {
-				byTournament[tournament] += loss
-			}
-			return nil
-		}); err != nil {
-		return fmt.Errorf("MWC (cells): %w", err)
+	for _, k := range keys {
+		g := groups[k]
+		if g.n == 0 {
+			continue
+		}
+		result.MWCAvailable = true
+		result.MWCGlobal += g.loss
+		if k.dt == 0 {
+			result.MWCChecker += g.loss
+		} else {
+			result.MWCCube += g.loss
+		}
+		byMatch[k.match] += g.loss
+		if g.tournament != 0 {
+			byTournament[g.tournament] += g.loss
+		}
 	}
 	byAction := map[string]float64{}
-	if err := scanEach(ctx, d,
-		`SELECT `+ActionLabelOrEmptyFor(d, "c.k1")+`, SUM(c.mwc_loss)`+cellsJoin+cellKind(where, cellCube)+` GROUP BY 1`,
-		args, func(r Rows) error {
-			var label string
-			var loss float64
-			if err := r.Scan(&label, &loss); err != nil {
-				return err
-			}
-			byAction[label] += loss
-			return nil
-		}); err != nil {
-		return fmt.Errorf("MWC per cube action (cells): %w", err)
+	for _, c := range cube {
+		byAction[c.best] += c.mwcLoss
 	}
 	for i, ts := range result.PerTournament {
 		result.PerTournament[i].MWC = byTournament[ts.ID]
@@ -356,11 +428,10 @@ func (s *StatsStore) mwcFromCells(ctx context.Context, _ statsQuery, where strin
 	if result.MWCRolling == nil {
 		result.MWCRolling = map[int]float64{}
 	}
-	return nil
 }
 
 // breakdownsFromCells is computePerPhase, computePerGameType and computePerScore.
-func (s *StatsStore) breakdownsFromCells(ctx context.Context, _ statsQuery, where string, args []any, result *storage.StatsResult) error {
+func (s *StatsStore) breakdownsFromCells(ctx context.Context, phase []phaseCell, where string, args []any, result *storage.StatsResult) error {
 	d := s.DB
 	sums := d.Bigint(`SUM(c.error_mp)`) + `, ` + d.Bigint(`SUM(c.decisions)`) + `, ` + d.Bigint(`SUM(c.blunders)`)
 	type tally struct{ sumErr, n, blunders int64 }
@@ -380,12 +451,28 @@ func (s *StatsStore) breakdownsFromCells(ctx context.Context, _ statsQuery, wher
 				return nil
 			})
 	}
-	if err := read(cellPhase, unNull("c.k1"), "c.k1", func(k, _ int, t tally) {
+	byPhase := map[int]*tally{}
+	for _, c := range phase {
+		t := byPhase[c.k1]
+		if t == nil {
+			t = &tally{}
+			byPhase[c.k1] = t
+		}
+		t.sumErr += c.errorMP
+		t.n += c.decisions
+		t.blunders += c.blunders
+	}
+	// Grouped by the stored value, NULL (cellNull) apart from 0, and shown
+	// with NULL read as 0, as the direct pass's COALESCE does.
+	for _, k := range slices.Sorted(maps.Keys(byPhase)) {
+		t := byPhase[k]
+		shown := k
+		if k == cellNull {
+			shown = 0
+		}
 		result.PerPhase = append(result.PerPhase, storage.PhaseStats{
-			Phase: domain.GamePhase(k).String(), PR: pr(t.sumErr, int(t.n)), NumDecisions: int(t.n), BlunderCount: int(t.blunders),
+			Phase: domain.GamePhase(shown).String(), PR: pr(t.sumErr, int(t.n)), NumDecisions: int(t.n), BlunderCount: int(t.blunders),
 		})
-	}); err != nil {
-		return fmt.Errorf("per-phase (cells): %w", err)
 	}
 	if err := read(cellGameType, unNull("c.k1"), "c.k1", func(k, _ int, t tally) {
 		result.PerGameType = append(result.PerGameType, storage.GameTypeStats{

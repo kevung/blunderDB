@@ -184,6 +184,7 @@ func libraryContent(t *testing.T, path string) map[string]string {
 	defer db.Close()
 	out := map[string]string{}
 	var tables []string
+	clustered := map[string]bool{}
 	eachRow(t, db, `SELECT type, name, COALESCE(sql, '') FROM sqlite_master ORDER BY name`, func(r *sql.Rows) {
 		var typ, name, ddl string
 		if err := r.Scan(&typ, &name, &ddl); err != nil {
@@ -191,6 +192,7 @@ func libraryContent(t *testing.T, path string) map[string]string {
 		}
 		if typ == "table" {
 			tables = append(tables, name)
+			clustered[name] = strings.Contains(strings.ToUpper(ddl), "WITHOUT ROWID")
 		} else {
 			out["schema "+typ+" "+name] = ddl
 		}
@@ -210,8 +212,9 @@ func libraryContent(t *testing.T, path string) map[string]string {
 		for i, c := range cols {
 			quoted[i] = `quote("` + c + `")`
 		}
+		// A table without a rowid is keyed by its rank in key order.
 		rowid := "rowid"
-		if strings.HasPrefix(table, "sqlite_stat") {
+		if strings.HasPrefix(table, "sqlite_stat") || clustered[table] {
 			rowid = "0"
 		}
 		vals := make([]sql.NullString, len(cols)+1)

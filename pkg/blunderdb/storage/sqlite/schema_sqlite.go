@@ -3,8 +3,10 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log/slog"
+	"slices"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -316,8 +318,15 @@ var schemaStatements = []string{
 	// largest error, the blunders at the library's threshold and the sum of
 	// their MWC losses over the mwc_decisions the table values; positions
 	// counts a phase cell's private positions. Written and
-	// dropped with the seat's match_stats row; the cascade reads the key by
-	// its prefix.
+	// dropped with the seat's match_stats row; the cascade reads the index on
+	// (match_id, seat). The rows are clustered (WITHOUT ROWID) by kind, then
+	// by the dimension's values: the stats read one kind at a time and sum it
+	// by those values, so the read takes only that kind's rows and groups
+	// them in key order without sorting. A key led by the match would make
+	// each kind's read go over every cell of every match, and a rowid table
+	// would add a table seek per cell. The DDL text of this table and of
+	// match_stats_position is compared at every open (ddlShape): any edit of
+	// it, even cosmetic, drops both tables and recomputes every match once.
 	`CREATE TABLE IF NOT EXISTS match_stats_cell (
 		match_id INTEGER NOT NULL,
 		seat INTEGER NOT NULL,
@@ -333,9 +342,10 @@ var schemaStatements = []string{
 		mwc_loss REAL NOT NULL,
 		mwc_decisions INTEGER NOT NULL,
 		positions INTEGER NOT NULL,
-		PRIMARY KEY (match_id, seat, decision_type, met_id, kind, k1, k2),
+		PRIMARY KEY (kind, k1, k2, match_id, seat, decision_type, met_id),
 		FOREIGN KEY (match_id, seat) REFERENCES match_stats(match_id, seat) ON DELETE CASCADE
-	)`,
+	) WITHOUT ROWID`,
+	`CREATE INDEX IF NOT EXISTS idx_match_stats_cell_match ON match_stats_cell(match_id, seat)`,
 	// The shared positions a seat's counted decisions reach — those a move of
 	// another seat or match reaches too — for the one figure no sum of cells
 	// gives: how many distinct positions a selection holds. The fill reads it
@@ -348,7 +358,7 @@ var schemaStatements = []string{
 		met_id INTEGER NOT NULL,
 		PRIMARY KEY (match_id, seat, position_id, met_id),
 		FOREIGN KEY (match_id, seat) REFERENCES match_stats(match_id, seat) ON DELETE CASCADE
-	)`,
+	) WITHOUT ROWID`,
 	`CREATE INDEX IF NOT EXISTS idx_match_stats_position_position ON match_stats_position(position_id)`,
 	`CREATE TABLE IF NOT EXISTS game (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -857,8 +867,11 @@ func isFreshDB(ctx context.Context, db *sql.DB) (bool, error) {
 }
 
 // EnsureSchema adds to an existing database the tables, columns and indexes
-// it lacks; nothing is dropped, renamed or retyped. Idempotent; the Database
-// wrapper runs it on every open, after the migration chain.
+// it lacks; nothing is renamed or retyped, and nothing is dropped but the
+// derived breakdown tables of match_stats when their layout differs from the
+// schema's, which are recreated and recomputed (reclusterDerivedTables).
+// Idempotent; the Database wrapper runs it on every open, after the
+// migration chain.
 //
 // What is missing is found against a reference database built in memory
 // from schemaStatements, so there is no second column list to keep in step.
@@ -869,6 +882,9 @@ func isFreshDB(ctx context.Context, db *sql.DB) (bool, error) {
 func EnsureSchema(ctx context.Context, db *sql.DB) error {
 	ref, err := referenceSchema(ctx)
 	if err != nil {
+		return err
+	}
+	if err := reclusterDerivedTables(ctx, db, ref); err != nil {
 		return err
 	}
 	for _, t := range ref.tables {
@@ -906,6 +922,84 @@ func EnsureSchema(ctx context.Context, db *sql.DB) error {
 		}
 	}
 	return nil
+}
+
+// derivedClusteredTables are match_stats's breakdowns. Their layout is
+// part of how fast the stats read them, and they hold nothing match_stats
+// cannot recompute.
+var derivedClusteredTables = []string{"match_stats_cell", "match_stats_position"}
+
+// reclusterDerivedTables drops the breakdown tables when one was created
+// with another layout than the schema's (a rowid, another key order), and
+// match_stats with them, since a seat row without its cells would be read as
+// complete. The table creation that follows recreates them, and the next
+// fill recomputes every match. A table cannot change its key in place; the
+// data being derived, recomputing it is the simplest rebuild, and the check
+// costs two catalogue reads once the layout is right.
+func reclusterDerivedTables(ctx context.Context, db *sql.DB, ref *reference) error {
+	// A library a newer build wrote is opened as it is: its layout may be
+	// that build's, and rebuilding it would make each build recompute the
+	// other's tables at every alternation.
+	var version string
+	if err := db.QueryRowContext(ctx, `SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&version); err == nil &&
+		newerThanBuild(version) {
+		return nil
+	}
+	stale := false
+	for _, name := range derivedClusteredTables {
+		var ddl string
+		err := db.QueryRowContext(ctx, `SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?`, name).Scan(&ddl)
+		if errors.Is(err, sql.ErrNoRows) {
+			continue
+		}
+		if err != nil {
+			return fmt.Errorf("sqlite: read %s layout: %w", name, err)
+		}
+		for _, t := range ref.tables {
+			if t.name == name && ddlShape(ddl) != ddlShape(t.createSQL) {
+				stale = true
+			}
+		}
+	}
+	if !stale {
+		return nil
+	}
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("sqlite: recluster match stats: %w", err)
+	}
+	defer tx.Rollback() // a no-op after Commit
+	stmts := []string{}
+	for _, name := range derivedClusteredTables {
+		stmts = append(stmts, `DROP TABLE IF EXISTS `+name)
+	}
+	stmts = append(stmts, `DELETE FROM match_stats`)
+	for _, stmt := range stmts {
+		if _, err := tx.ExecContext(ctx, stmt); err != nil {
+			return fmt.Errorf("sqlite: recluster match stats (%s): %w", stmt, err)
+		}
+	}
+	return tx.Commit()
+}
+
+// newerThanBuild reports whether the schema version v is past
+// domain.DatabaseVersion; a version that does not parse is not.
+func newerThanBuild(v string) bool {
+	var a, b [3]int
+	if _, err := fmt.Sscanf(v, "%d.%d.%d", &a[0], &a[1], &a[2]); err != nil {
+		return false
+	}
+	if _, err := fmt.Sscanf(domain.DatabaseVersion, "%d.%d.%d", &b[0], &b[1], &b[2]); err != nil {
+		return false
+	}
+	return slices.Compare(a[:], b[:]) > 0
+}
+
+// ddlShape is a CREATE TABLE statement up to case, spacing and IF NOT
+// EXISTS, which SQLite drops from the text it keeps.
+func ddlShape(ddl string) string {
+	s := strings.ToUpper(strings.Join(strings.Fields(ddl), ""))
+	return strings.Replace(s, "IFNOTEXISTS", "", 1)
 }
 
 // indexNames lists the named indexes db holds.
