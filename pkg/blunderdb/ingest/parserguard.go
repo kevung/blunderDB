@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 
@@ -53,9 +54,12 @@ func checkXGHeader(path string) error {
 }
 
 // wrapInvalid marks a parser's refusal of its input as storage.ErrInvalid, so
-// a client sees a file it must fix, not a fault to retry.
+// a client sees a file it must fix, not a fault to retry. A failure to read the
+// file is not the input's fault and stays a fault: an invalid message reaches
+// the client, and a *fs.PathError would hand it the server's temporary path.
 func wrapInvalid(err error) error {
-	if err == nil || errors.Is(err, storage.ErrInvalid) {
+	var pathErr *fs.PathError
+	if err == nil || errors.Is(err, storage.ErrInvalid) || errors.As(err, &pathErr) {
 		return err
 	}
 	return fmt.Errorf("%w: %w", storage.ErrInvalid, err)
