@@ -62,6 +62,9 @@
     let canvas = null;
     let width = 0;
     let height = 0;
+    // Le milieu de la moitié droite du damier, depuis le centre du conteneur : la confirmation du
+    // videau d'un Duel s'y pose, là où se lancent les dés.
+    let promptAnchor = $state({ dx: 0, dy: 0 });
     /** @type {(() => void) | null} */
     let unsubscribeBoardRedrawTriggers = null;
     /** @type {(() => void) | null} */
@@ -573,6 +576,9 @@
 
         const geom = boardMetrics(width, height, boardCfg.widthFactor);
         const position = getDisplayPosition();
+        const dx = geom.originX + geom.boardWidth / 4 - width / 2;
+        const dy = geom.originY - height / 2;
+        if (dx !== promptAnchor.dx || dy !== promptAnchor.dy) promptAnchor = { dx, dy };
         // `mirrored` convertit un point absolu, `flip` un point de notation (boardOrientation.js).
         const flip = isPlayer2Perspective(position);
         const mirrored = displayMirrored();
@@ -610,7 +616,7 @@
         </span>
     {/if}
     {#if $duelHoldsBoardStore}
-        <DuelBoardPrompt />
+        <DuelBoardPrompt anchor={promptAnchor} />
     {/if}
     {#if boardMenu}
         <ContextMenu x={boardMenu.x} y={boardMenu.y} items={boardMenu.items} onClose={() => (boardMenu = null)} />

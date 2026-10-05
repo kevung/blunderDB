@@ -170,6 +170,25 @@ describe('DuelBoardPrompt', () => {
         expect(PlayDuel).toHaveBeenCalledWith(4, 7, { side: 0, kind: 'take' });
     });
 
+    test('a cube decision is set at the anchor, the validation keeps its corner', async () => {
+        open({ side: 0, kind: 'answer', position: opening });
+        const { getByTestId, component } = render(DuelBoardPrompt, { props: { anchor: { dx: 120, dy: -30 } } });
+        await tick();
+        const box = getByTestId('duel-board-prompt');
+        expect(box.classList.contains('centred')).toBe(true);
+        expect(box.getAttribute('style')).toContain('calc(50% + 120px)');
+        expect(box.getAttribute('style')).toContain('30px');
+        expect(component).toBeDefined();
+        cleanup();
+        open({ side: 0, kind: 'move', position: opening });
+        quizPlayStore.set(newPlay(opening, plays));
+        const second = render(DuelBoardPrompt, { props: { anchor: { dx: 120, dy: -30 } } });
+        duelBoardPress({ kind: 'point', point: 8 });
+        duelBoardPress({ kind: 'point', point: 6 });
+        await tick();
+        expect(second.getByTestId('duel-board-prompt').classList.contains('centred')).toBe(false);
+    });
+
     test('double or cancel once the cube is clicked; nothing before', async () => {
         open({ side: 0, kind: 'cube', position: opening });
         const { queryByTestId, getByTestId } = render(DuelBoardPrompt);
