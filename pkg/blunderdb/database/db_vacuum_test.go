@@ -6,7 +6,6 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 
@@ -244,7 +243,10 @@ func TestVacuum_KeepsTheFileMode(t *testing.T) {
 	if err := os.Chmod(path, 0o600); err != nil {
 		t.Fatal(err)
 	}
+	// Windows keeps only the read-only bit, so 0600 reads back as 0666 there:
+	// the reference is the mode the file system reports before the swap.
 	before := statIdentity(t, path)
+	want := before.Mode().Perm()
 	if _, err := d.Vacuum(); err != nil {
 		t.Fatalf("Vacuum: %v", err)
 	}
@@ -255,8 +257,8 @@ func TestVacuum_KeepsTheFileMode(t *testing.T) {
 	if os.SameFile(before, after) {
 		t.Fatal("the file was not replaced; the test proves nothing")
 	}
-	if got := after.Mode().Perm(); got != 0o600 {
-		t.Fatalf("mode after the vacuum %v, want -rw-------", after.Mode().Perm())
+	if got := after.Mode().Perm(); got != want {
+		t.Fatalf("mode after the vacuum %v, want %v", got, want)
 	}
 }
 
@@ -265,14 +267,12 @@ func TestVacuum_KeepsTheFileMode(t *testing.T) {
 // replaced while one exists; the vacuum runs in place instead.
 func TestVacuum_InPlaceWhileAnotherConnectionHoldsTheFile(t *testing.T) {
 	t.Parallel()
-	if runtime.GOOS == "windows" {
-		// The other connection maps the file (mmap_size), and Windows refuses
-		// to truncate a mapped file: the in-place VACUUM rewrites the pages
-		// but the file keeps its size until that connection closes.
-		t.Skip("windows: a file mapped by another connection cannot shrink")
-	}
 	d, path := vacuumFixture(t)
-	other, err := sql.Open("sqlite", sqlite.DSN(path))
+	// Windows refuses to truncate a file that another process has mapped
+	// (SQLite then keeps the size silently), so the other connection reads
+	// without mmap: what is tested is the decision not to swap, and the
+	// in-place VACUUM shrinking the file, on every platform.
+	other, err := sql.Open("sqlite", sqlite.DSN(path)+"&_pragma=mmap_size(0)")
 	if err != nil {
 		t.Fatal(err)
 	}
