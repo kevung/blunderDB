@@ -9389,14 +9389,8 @@ msgstr ""
 "und die Hilfe bleiben."
 
 #: ../../source/manuel.rst:4038
-msgid ""
-"Avant le lancer, un clic sur les dés les lance ; un clic sur le videau "
-"propose de doubler, et le plateau demande « Doubler » ou « Annuler ». "
-"Quand le videau n'est pas disponible, le lancer est automatique."
-msgstr ""
-"Vor dem Wurf würfelt ein Klick auf die Würfel; ein Klick auf den Doppler "
-"schlägt ein Doppeln vor, und das Brett fragt „Doppeln“ oder „Abbrechen“. "
-"Wenn der Doppler nicht verfügbar ist, erfolgt der Wurf automatisch."
+msgid "Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique."
+msgstr "Vor dem Wurf würfelt ein Klick auf das Brett, auf die Würfel oder auf einen Stein; nur ein Klick auf den Doppler schlägt ein Doppeln vor, und das Brett fragt „Doppeln“ oder „Abbrechen“. Wenn der Doppler nicht verfügbar ist, erfolgt der Wurf automatisch."
 
 #: ../../source/manuel.rst:4041
 msgid "Face à un double du Bot, le plateau demande « Prendre » ou « Passer »."
@@ -9426,13 +9420,8 @@ msgstr ""
 "auf das Brett alle gespielten Steine zurück (``RÜCKTASTE`` ebenso)."
 
 #: ../../source/manuel.rst:4049
-msgid ""
-"Le coup complet se valide par un clic sur les dés, par « Valider » sur le"
-" plateau, ou par ``ENTRÉE``. Rien ne se reprend après."
-msgstr ""
-"Der vollständige Zug wird durch einen Klick auf die Würfel, durch "
-"„Bestätigen“ auf dem Brett oder durch ``EINGABE`` bestätigt. Danach lässt"
-" sich nichts mehr zurücknehmen."
+msgid "Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après."
+msgstr "Der vollständige Zug wird durch einen Klick auf die Würfel, durch „Bestätigen“ auf dem Brett oder durch ``EINGABE`` oder ``LEERTASTE`` bestätigt. Danach lässt sich nichts mehr zurücknehmen."
 
 #: ../../source/manuel.rst:4034
 msgid "Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement."

@@ -8741,11 +8741,8 @@ msgstr ""
 "``P``\\ ）、ヘルプだけです。"
 
 #: ../../source/manuel.rst:4038
-msgid ""
-"Avant le lancer, un clic sur les dés les lance ; un clic sur le videau "
-"propose de doubler, et le plateau demande « Doubler » ou « Annuler ». "
-"Quand le videau n'est pas disponible, le lancer est automatique."
-msgstr "ロールの前は、ダイスをクリックすると振られます。キューブをクリックするとダブルを提案し、盤面が「ダブル」か「キャンセル」かを尋ねます。キューブが使えないときは、ロールは自動です。"
+msgid "Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique."
+msgstr "ロールの前は、盤面、ダイス、またはチェッカーをクリックすると振られます。キューブをクリックしたときだけダブルを提案し、盤面が「ダブル」か「キャンセル」かを尋ねます。キューブが使えないときは、ロールは自動です。"
 
 #: ../../source/manuel.rst:4041
 msgid "Face à un double du Bot, le plateau demande « Prendre » ou « Passer »."
@@ -8769,10 +8766,8 @@ msgstr ""
 " ``BACKSPACE``\\ でも同じです）。"
 
 #: ../../source/manuel.rst:4049
-msgid ""
-"Le coup complet se valide par un clic sur les dés, par « Valider » sur le"
-" plateau, ou par ``ENTRÉE``. Rien ne se reprend après."
-msgstr "完成した手は、ダイスのクリック、盤面の「確定」、または\\ ``ENTER``\\ で確定します。そのあとは何も戻せません。"
+msgid "Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après."
+msgstr "完成した手は、ダイスのクリック、盤面の「確定」、または\\ ``ENTER``\\ か\\ ``SPACE``\\ で確定します。そのあとは何も戻せません。"
 
 #: ../../source/manuel.rst:4034
 msgid "Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement."

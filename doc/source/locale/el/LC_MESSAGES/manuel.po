@@ -9351,14 +9351,8 @@ msgstr ""
 "Στοίβα (``B``), το pipcount (``P``) και η βοήθεια."
 
 #: ../../source/manuel.rst:4038
-msgid ""
-"Avant le lancer, un clic sur les dés les lance ; un clic sur le videau "
-"propose de doubler, et le plateau demande « Doubler » ou « Annuler ». "
-"Quand le videau n'est pas disponible, le lancer est automatique."
-msgstr ""
-"Πριν από τη ρίψη, ένα κλικ στα ζάρια τα ρίχνει· ένα κλικ στον κύβο "
-"προτείνει διπλασιασμό, και η σκακιέρα ρωτά «Διπλασίασε» ή «Άκυρο». Όταν ο"
-" κύβος δεν είναι διαθέσιμος, η ρίψη είναι αυτόματη."
+msgid "Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique."
+msgstr "Πριν από τη ρίψη, ένα κλικ στη σκακιέρα, στα ζάρια ή σε ένα πούλι τα ρίχνει· μόνο ένα κλικ στον κύβο προτείνει διπλασιασμό, και η σκακιέρα ρωτά «Διπλασίασε» ή «Άκυρο». Όταν ο κύβος δεν είναι διαθέσιμος, η ρίψη είναι αυτόματη."
 
 #: ../../source/manuel.rst:4041
 msgid "Face à un double du Bot, le plateau demande « Prendre » ou « Passer »."
@@ -9389,12 +9383,8 @@ msgstr ""
 "``BACKSPACE``)."
 
 #: ../../source/manuel.rst:4049
-msgid ""
-"Le coup complet se valide par un clic sur les dés, par « Valider » sur le"
-" plateau, ou par ``ENTRÉE``. Rien ne se reprend après."
-msgstr ""
-"Η πλήρης κίνηση επικυρώνεται με ένα κλικ στα ζάρια, με «Επικύρωση» στη "
-"σκακιέρα ή με ``ENTER``. Τίποτα δεν παίρνεται πίσω μετά."
+msgid "Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après."
+msgstr "Η πλήρης κίνηση επικυρώνεται με ένα κλικ στα ζάρια, με «Επικύρωση» στη σκακιέρα ή με ``ENTER`` ή ``SPACE``. Τίποτα δεν παίρνεται πίσω μετά."
 
 #: ../../source/manuel.rst:4034
 msgid "Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement."

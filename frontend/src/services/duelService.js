@@ -11,7 +11,7 @@ import { positionStore } from '../stores/positionStore.js';
 import { statusBarTextStore, activeTabStore, matchOpenRequestStore, matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore.js';
 import { newPlay, completedPlay, resetPlay, playHop } from './quizPlay.js';
 import { humanSide, framesBetween, clockView, normalizeForm, settingsFromForm } from './duel.js';
-import { boardPress, boardContext, isMine } from './duelBoard.js';
+import { boardPress, boardContext, canValidateMove, isMine } from './duelBoard.js';
 import { confirmAction } from './confirmService.js';
 import { enterDuelMode, exitDuelMode } from './modeMachine.js';
 import { isLetter, isBareLetter } from '../utils/keys.js';
@@ -385,12 +385,20 @@ function tick() {
 
 /**
  * Le Duel tient le clavier : seules passent la Pile (b), le pipcount (p), l'aide (?), Échap et
- * la bascule de l'onglet (Ctrl+H) ; Entrée valide le coup, Retour arrière le remet en place. Rend `true`
+ * la bascule de l'onglet (Ctrl+H) ; Entrée et Espace valident le coup, Retour arrière le remet en place. Rend `true`
  * quand la touche s'arrête ici.
  * @param {KeyboardEvent} event
  */
 export function duelKeyGuard(event) {
     if (!get(duelHoldsBoardStore)) return false;
+    if (event.code === 'Space' && !event.ctrlKey && !event.altKey && !event.metaKey) {
+        const field = /** @type {HTMLElement|null} */ (event.target);
+        // A field keeps its space; anywhere else it never scrolls the page nor presses a focused button.
+        if (field && (field.tagName === 'INPUT' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA')) return true;
+        event.preventDefault();
+        if (canValidateMove(duelBoardContext())) validateMove();
+        return true;
+    }
     if (isBareLetter(event, 'b') || isBareLetter(event, 'p') || event.key === '?' || event.key === 'Escape') return false;
     if (event.ctrlKey && !event.shiftKey && isLetter(event, 'h')) return false;
     const target = /** @type {HTMLElement|null} */ (event.target);

@@ -917,11 +917,11 @@ export default {
 <p>"Resume" reopens a suspended Duel at the same point, with the same upcoming dice; its clocks were stopped.</p>
 <p>The Duel is played on the board. The panel shows the match sheet in two columns, like the Transcription, the clocks when a time control is running, a line saying what is expected, and “Suspend”, “Stop and keep”, “Stop and discard”. The score and the cube are those of the board; the score and the clocks stay in the status bar when the tab is collapsed. The SHA-256 fingerprint of the dice seed, published by the Referee at creation, can be read in the tooltip of the panel's prompt line, then with the seed in the origin of the finished Match. The board switches to <strong>DUEL</strong> mode: the library can no longer be browsed, editing, the Eval panel and the other tabs do not open, and the engine falls silent — no evaluation, no candidate. Only the Pile (<code>B</code>), the pipcount (<code>P</code>) and help remain.</p>
 <ul>
-<li>Before the roll, a click on the dice rolls them; a click on the cube offers to double, and the board asks “Double” or “Cancel”. When the cube is not available, the roll is automatic.</li>
+<li>Before the roll, a click on the board, on the dice or on a checker rolls them; only a click on the cube offers to double, and the board asks “Double” or “Cancel”. When the cube is not available, the roll is automatic.</li>
 <li>Facing a double from the Bot, the board asks “Take” or “Pass”.</li>
 <li>A click on a checker plays it with the left die that is still free, or with the other one when the left die cannot play it; a double is played in four clicks. A checker can also be dragged to its destination. A played die is greyed out. Only the steps of a legal move go through.</li>
 <li>Before playing, a click on the dice, or a right-click on the board, swaps their order. During the move, a right-click on the board takes back all the checkers played (<code>BACKSPACE</code> too).</li>
-<li>The complete move is validated by a click on the dice, by “Validate” on the board, or by <code>ENTER</code>. Nothing can be taken back afterwards.</li>
+<li>The complete move is validated by a click on the dice, by “Validate” on the board, or by <code>ENTER</code> or <code>SPACE</code>. Nothing can be taken back afterwards.</li>
 <li>The Bot answers immediately; its moves are replayed on the board, slowly.</li>
 <li>A right-click outside the board, or on the board outside its move, opens the Duel menu: put the position on the Pile or take it off, resign the game for a single game, a gammon or a backgammon (on one's turn, after confirmation), suspend, stop. This menu offers neither evaluation nor editing.</li>
 <li>"Suspend" puts the Duel on hold, clocks stopped. "Stop and keep" writes the Match as it stands; "Stop and discard" writes nothing. Stopping is never conceding the game.</li>
@@ -1240,6 +1240,10 @@ export default {
 <td>Validate the move arranged on the board; nothing can be taken back afterwards.</td>
 </tr>
 <tr>
+<td>SPACE (Duel)</td>
+<td>Validate the move arranged on the board, once every die is played; no effect on a partial move or outside your turn.</td>
+</tr>
+<tr>
 <td>BACKSPACE (Duel)</td>
 <td>Put the checkers back before validation.</td>
 </tr>
@@ -1323,8 +1327,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Click on the dice (before the roll)</td>
-<td>Roll the dice.</td>
+<td>Click on the board or on the dice (before the roll)</td>
+<td>Roll the dice. The cube keeps its own meaning: it offers to double.</td>
 </tr>
 <tr>
 <td>Click on the cube (before the roll)</td>

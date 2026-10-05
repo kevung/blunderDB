@@ -6,7 +6,7 @@
 import { describe, test, expect } from 'vitest';
 import { newPlay, OFF } from '../services/quizPlay.js';
 import { scoreStart } from '../services/duel.js';
-import { playClickedChecker, usedDice, spentDice, orderedDice, boardPress, boardContext, boardPrompt, landing } from '../services/duelBoard.js';
+import { playClickedChecker, usedDice, spentDice, orderedDice, boardPress, canValidateMove, boardContext, boardPrompt, landing } from '../services/duelBoard.js';
 
 /** @param {[number, number][]} pairs */
 const steps = (pairs) => pairs.map(([from, to]) => ({ from, to }));
@@ -128,7 +128,10 @@ describe('boardPress', () => {
     test('before the roll: the dice roll, the cube asks the on-board confirmation', () => {
         expect(boardPress(cube, { kind: 'die', index: 0 })).toEqual({ type: 'roll' });
         expect(boardPress(cube, { kind: 'cube' })).toEqual({ type: 'offerDouble' });
-        expect(boardPress(cube, { kind: 'point', point: 8 })).toBeNull();
+        // Anywhere on the board rolls, the cube excepted; the frame's outside keeps the Pile gesture.
+        expect(boardPress(cube, { kind: 'point', point: 8 })).toEqual({ type: 'roll' });
+        expect(boardPress(cube, { kind: 'none' })).toEqual({ type: 'roll' });
+        expect(boardPress(cube, { kind: 'outside' })).toBeNull();
         // The confirmation is showing: the board waits for its answer.
         expect(boardPress({ ...cube, prompt: 'double' }, { kind: 'die', index: 0 })).toBeNull();
     });
@@ -155,6 +158,30 @@ describe('boardPress', () => {
         expect(action.type).toBe('play');
         expect(action.play.steps).toEqual([{ from: 8, to: 7, die: 1 }]);
         expect(boardPress(ctx(play), { kind: 'point', point: 1 })).toBeNull();
+    });
+});
+
+describe('canValidateMove', () => {
+    const move = (/** @type {any} */ play, /** @type {any} */ over = {}) => ({
+        awaiting: { side: 0, kind: 'move', position: opening },
+        human: 0,
+        animating: false,
+        play,
+        swapped: false,
+        prompt: null,
+        ...over
+    });
+    test('only once every die is played, on the human’s own turn', () => {
+        let play = newPlay(opening, plays31);
+        expect(canValidateMove(move(play))).toBe(false);
+        play = playClickedChecker(play, 8, [3, 1]);
+        expect(canValidateMove(move(play))).toBe(false);
+        play = playClickedChecker(play, 6, [3, 1]);
+        expect(canValidateMove(move(play))).toBe(true);
+        expect(canValidateMove(move(play, { human: 1 }))).toBe(false);
+        expect(canValidateMove(move(play, { animating: true }))).toBe(false);
+        expect(canValidateMove(move(play, { awaiting: { side: 0, kind: 'cube', position: opening } }))).toBe(false);
+        expect(canValidateMove(move(null))).toBe(false);
     });
 });
 

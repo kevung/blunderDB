@@ -9197,14 +9197,8 @@ msgstr ""
 "(``B``), el pipcount (``P``) y la ayuda."
 
 #: ../../source/manuel.rst:4038
-msgid ""
-"Avant le lancer, un clic sur les dés les lance ; un clic sur le videau "
-"propose de doubler, et le plateau demande « Doubler » ou « Annuler ». "
-"Quand le videau n'est pas disponible, le lancer est automatique."
-msgstr ""
-"Antes de la tirada, un clic en los dados los lanza; un clic en el cubo "
-"propone doblar, y el tablero pregunta «Doblar» o «Cancelar». Cuando el "
-"cubo no está disponible, la tirada es automática."
+msgid "Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique."
+msgstr "Antes de la tirada, un clic en el tablero, en los dados o en una ficha los lanza; solo un clic en el cubo propone doblar, y el tablero pregunta «Doblar» o «Cancelar». Cuando el cubo no está disponible, la tirada es automática."
 
 #: ../../source/manuel.rst:4041
 msgid "Face à un double du Bot, le plateau demande « Prendre » ou « Passer »."
@@ -9233,12 +9227,8 @@ msgstr ""
 "recupera todas las fichas jugadas (``RETROCESO`` también)."
 
 #: ../../source/manuel.rst:4049
-msgid ""
-"Le coup complet se valide par un clic sur les dés, par « Valider » sur le"
-" plateau, ou par ``ENTRÉE``. Rien ne se reprend après."
-msgstr ""
-"La jugada completa se valida con un clic en los dados, con «Validar» en "
-"el tablero, o con ``INTRO``. Después no se puede retroceder."
+msgid "Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après."
+msgstr "La jugada completa se valida con un clic en los dados, con «Validar» en el tablero, o con ``INTRO`` o ``ESPACIO``. Después no se puede retroceder."
 
 #: ../../source/manuel.rst:4034
 msgid "Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement."

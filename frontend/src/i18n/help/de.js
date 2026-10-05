@@ -917,11 +917,11 @@ export default {
 <p>„Fortsetzen“ öffnet ein unterbrochenes Duell am selben Punkt wieder, mit denselben kommenden Würfen; seine Uhren waren angehalten.</p>
 <p>Das Duell wird auf dem Brett gespielt. Das Panel zeigt das Matchblatt in zwei Spalten, wie die Transkription, die Uhren, wenn eine Bedenkzeit läuft, eine Zeile, die sagt, was erwartet wird, sowie „Unterbrechen“, „Beenden und behalten“, „Beenden und verwerfen“. Spielstand und Doppler sind die des Bretts; Spielstand und Uhren bleiben in der Statusleiste, wenn der Tab eingeklappt ist. Der SHA-256-Fingerabdruck des Würfel-Seeds, den der Schiedsrichter bei der Erstellung veröffentlicht, ist im Tooltip der Hinweiszeile des Panels und zusammen mit dem Seed in der Herkunft des beendeten Matchs zu lesen. Das Brett wechselt in den Modus <strong>DUELL</strong>: Die Bibliothek lässt sich nicht mehr durchblättern, Bearbeitung, Eval-Panel und die anderen Tabs öffnen sich nicht, und die Engine schweigt — keine Auswertung, kein Kandidat. Nur der Stapel (<code>B</code>), der Pipcount (<code>P</code>) und die Hilfe bleiben.</p>
 <ul>
-<li>Vor dem Wurf würfelt ein Klick auf die Würfel; ein Klick auf den Doppler schlägt ein Doppeln vor, und das Brett fragt „Doppeln“ oder „Abbrechen“. Wenn der Doppler nicht verfügbar ist, erfolgt der Wurf automatisch.</li>
+<li>Vor dem Wurf würfelt ein Klick auf das Brett, auf die Würfel oder auf einen Stein; nur ein Klick auf den Doppler schlägt ein Doppeln vor, und das Brett fragt „Doppeln“ oder „Abbrechen“. Wenn der Doppler nicht verfügbar ist, erfolgt der Wurf automatisch.</li>
 <li>Bei einem Doppeln des Bots fragt das Brett „Annehmen“ oder „Aufgeben“.</li>
 <li>Ein Klick auf einen Stein spielt ihn mit dem linken noch freien Würfel oder mit dem anderen, wenn der linke ihn nicht spielen kann; ein Pasch wird mit vier Klicks gespielt. Ein Stein kann auch an sein Ziel gezogen werden. Ein gespielter Würfel wird ausgegraut. Nur die Schritte eines legalen Zugs gehen durch.</li>
 <li>Vor dem Spielen vertauscht ein Klick auf die Würfel oder ein Rechtsklick auf das Brett ihre Reihenfolge. Während des Zugs nimmt der Rechtsklick auf das Brett alle gespielten Steine zurück (<code>RÜCKTASTE</code> ebenso).</li>
-<li>Der vollständige Zug wird durch einen Klick auf die Würfel, durch „Bestätigen“ auf dem Brett oder durch <code>EINGABE</code> bestätigt. Danach lässt sich nichts mehr zurücknehmen.</li>
+<li>Der vollständige Zug wird durch einen Klick auf die Würfel, durch „Bestätigen“ auf dem Brett oder durch <code>EINGABE</code> oder <code>LEERTASTE</code> bestätigt. Danach lässt sich nichts mehr zurücknehmen.</li>
 <li>Der Bot antwortet sofort; seine Züge werden auf dem Brett langsam nachgespielt.</li>
 <li>Der Rechtsklick außerhalb des Bretts oder auf dem Brett außerhalb seines Zugs öffnet das Duell-Menü: die Stellung auf den Stapel legen oder davon nehmen, das Spiel als einfaches Spiel, Gammon oder Backgammon aufgeben (am Zug, nach Bestätigung), unterbrechen, beenden. Dieses Menü bietet weder Auswertung noch Bearbeitung.</li>
 <li>„Unterbrechen“ setzt das Duell mit angehaltenen Uhren aus. „Beenden und behalten“ schreibt das Match, wie es steht; „Beenden und verwerfen“ schreibt nichts. Beenden heißt nie, die Partie aufzugeben.</li>
@@ -1240,6 +1240,10 @@ export default {
 <td>Den auf dem Brett aufgestellten Zug bestätigen; danach lässt sich nichts mehr zurücknehmen.</td>
 </tr>
 <tr>
+<td>LEERTASTE (Duell)</td>
+<td>Den auf dem Brett aufgestellten Zug bestätigen, sobald alle Würfel gespielt sind; ohne Wirkung bei einem unvollständigen Zug oder außerhalb Ihres Zugs.</td>
+</tr>
+<tr>
 <td>RÜCKTASTE (Duell)</td>
 <td>Die Steine vor der Bestätigung zurückstellen.</td>
 </tr>
@@ -1323,8 +1327,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Klick auf die Würfel (vor dem Wurf)</td>
-<td>Die Würfel werfen.</td>
+<td>Klick auf das Brett oder auf die Würfel (vor dem Wurf)</td>
+<td>Die Würfel werfen. Der Doppler behält seine Bedeutung: Er schlägt ein Doppeln vor.</td>
 </tr>
 <tr>
 <td>Klick auf den Doppler (vor dem Wurf)</td>

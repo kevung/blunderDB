@@ -917,11 +917,11 @@ export default {
 <p>«Riprendi» riapre un Duello sospeso nello stesso punto, con gli stessi dadi a venire; i suoi orologi erano fermi.</p>
 <p>Il Duello si gioca sulla scacchiera. Il pannello mostra il foglio del match in due colonne, come la Trascrizione, gli orologi quando corre una cadenza, una riga che dice ciò che è atteso, e «Sospendi», «Ferma e conserva», «Ferma e scarta». Il punteggio e il cubo sono quelli della scacchiera; il punteggio e gli orologi restano nella barra di stato quando la scheda è ripiegata. L'impronta SHA-256 del seme dei dadi, pubblicata dall'Arbitro alla creazione, si legge nel suggerimento a comparsa della riga di indicazione del pannello, e con il seme nell'origine del Match terminato. La scacchiera passa in modalità <strong>DUELLO</strong>: la libreria non si sfoglia più, la modifica, il pannello Eval e le altre schede non si aprono, e il motore tace — nessuna valutazione, nessun candidato. Restano solo la Pila (<code>B</code>), il pipcount (<code>P</code>) e la guida.</p>
 <ul>
-<li>Prima del lancio, un clic sui dadi li lancia; un clic sul cubo propone di raddoppiare, e la scacchiera chiede «Raddoppia» o «Annulla». Quando il cubo non è disponibile, il lancio è automatico.</li>
+<li>Prima del lancio, un clic sulla scacchiera, sui dadi o su una pedina li lancia; solo un clic sul cubo propone di raddoppiare, e la scacchiera chiede «Raddoppia» o «Annulla». Quando il cubo non è disponibile, il lancio è automatico.</li>
 <li>Di fronte a un raddoppio del Bot, la scacchiera chiede «Accetta» o «Rifiuta».</li>
 <li>Un clic su una pedina la gioca con il dado di sinistra ancora libero, o con l'altro quando quello di sinistra non può giocarla; un doppio si gioca con quattro clic. Una pedina può anche essere trascinata verso la sua destinazione. Un dado giocato è attenuato. Passano solo i passi di una mossa legale.</li>
 <li>Prima di giocare, un clic sui dadi, o un clic destro sulla scacchiera, ne inverte l'ordine. Durante la mossa, il clic destro sulla scacchiera riprende tutte le pedine giocate (anche <code>BACKSPACE</code>).</li>
-<li>La mossa completa si convalida con un clic sui dadi, con «Convalida» sulla scacchiera, o con <code>INVIO</code>. Dopo non si riprende nulla.</li>
+<li>La mossa completa si convalida con un clic sui dadi, con «Convalida» sulla scacchiera, o con <code>INVIO</code> o <code>SPAZIO</code>. Dopo non si riprende nulla.</li>
 <li>Il Bot risponde subito; le sue mosse vengono rigiocate sul tavoliere, lentamente.</li>
 <li>Il clic destro fuori dalla scacchiera, o sulla scacchiera fuori dalla sua mossa, apre il menu del Duello: mettere la posizione sulla Pila o toglierla, abbandonare la partita per un semplice, un gammon o un backgammon (al proprio turno, dopo conferma), sospendere, fermare. Questo menu non offre né valutazione né modifica.</li>
 <li>«Sospendi» mette il Duello in sospeso, con gli orologi fermi. «Ferma e conserva» scrive il Match così com'è; «Ferma e scarta» non scrive nulla. Fermare non è mai cedere la partita.</li>
@@ -1240,6 +1240,10 @@ export default {
 <td>Convalida la mossa disposta sul tavoliere; dopo non si può più annullare nulla.</td>
 </tr>
 <tr>
+<td>SPAZIO (Duello)</td>
+<td>Convalidare la mossa disposta sulla scacchiera, una volta giocati tutti i dadi; nessun effetto su una mossa parziale o fuori dal vostro turno.</td>
+</tr>
+<tr>
 <td>BACKSPACE (Duello)</td>
 <td>Rimette le pedine a posto prima della convalida.</td>
 </tr>
@@ -1323,8 +1327,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Clic sui dadi (prima del lancio)</td>
-<td>Lanciare i dadi.</td>
+<td>Clic sulla scacchiera o sui dadi (prima del lancio)</td>
+<td>Lanciare i dadi. Il cubo conserva il suo significato: propone di raddoppiare.</td>
 </tr>
 <tr>
 <td>Clic sul cubo (prima del lancio)</td>

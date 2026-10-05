@@ -497,6 +497,14 @@ msgstr ""
 "mehr zurücknehmen."
 
 #: ../../source/raccourcis.rst:1
+msgid "ESPACE (Duel)"
+msgstr "LEERTASTE (Duell)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "Den auf dem Brett aufgestellten Zug bestätigen, sobald alle Würfel gespielt sind; ohne Wirkung bei einem unvollständigen Zug oder außerhalb Ihres Zugs."
+
+#: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"
 msgstr "RÜCKTASTE (Duell)"
 
@@ -666,12 +674,12 @@ msgid "Geste"
 msgstr "Geste"
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic sur les dés (avant le lancer)"
-msgstr "Klick auf die Würfel (vor dem Wurf)"
+msgid "Clic sur le plateau ou sur les dés (avant le lancer)"
+msgstr "Klick auf das Brett oder auf die Würfel (vor dem Wurf)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Lancer les dés."
-msgstr "Die Würfel werfen."
+msgid "Lancer les dés. Le videau garde son sens : il propose de doubler."
+msgstr "Die Würfel werfen. Der Doppler behält seine Bedeutung: Er schlägt ein Doppeln vor."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic sur le videau (avant le lancer)"

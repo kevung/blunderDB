@@ -917,11 +917,11 @@ export default {
 <p>«Reanudar» reabre un Duelo suspendido en el mismo punto, con los mismos dados por venir; sus relojes estaban detenidos.</p>
 <p>El Duelo se juega en el tablero. El panel muestra la hoja de match en dos columnas, como la Transcripción, los relojes cuando corre una cadencia, una línea que dice lo que se espera, y «Suspender», «Detener y guardar», «Detener y descartar». El marcador y el cubo son los del tablero; el marcador y los relojes permanecen en la barra de estado cuando la pestaña está plegada. La huella SHA-256 de la semilla de los dados, publicada por el Árbitro desde la creación, se lee en la información emergente de la línea de indicación del panel, y con la semilla en el origen del Match terminado. El tablero pasa al modo <strong>DUELO</strong>: la biblioteca ya no se recorre, la edición, el panel Eval y las demás pestañas no se abren, y el motor calla — ninguna evaluación, ningún candidato. Solo quedan la Pila (<code>B</code>), el pipcount (<code>P</code>) y la ayuda.</p>
 <ul>
-<li>Antes de la tirada, un clic en los dados los lanza; un clic en el cubo propone doblar, y el tablero pregunta «Doblar» o «Cancelar». Cuando el cubo no está disponible, la tirada es automática.</li>
+<li>Antes de la tirada, un clic en el tablero, en los dados o en una ficha los lanza; solo un clic en el cubo propone doblar, y el tablero pregunta «Doblar» o «Cancelar». Cuando el cubo no está disponible, la tirada es automática.</li>
 <li>Ante un doble del Bot, el tablero pregunta «Aceptar» o «Rechazar».</li>
 <li>Un clic en una ficha la juega con el dado izquierdo aún libre, o con el otro cuando el izquierdo no puede jugarla; un doble se juega en cuatro clics. Una ficha también puede arrastrarse hasta su destino. Un dado jugado se atenúa. Solo pasan los pasos de una jugada legal.</li>
 <li>Antes de jugar, un clic en los dados, o un clic derecho en el tablero, invierte su orden. Durante la jugada, el clic derecho en el tablero recupera todas las fichas jugadas (<code>RETROCESO</code> también).</li>
-<li>La jugada completa se valida con un clic en los dados, con «Validar» en el tablero, o con <code>INTRO</code>. Después no se puede retroceder.</li>
+<li>La jugada completa se valida con un clic en los dados, con «Validar» en el tablero, o con <code>INTRO</code> o <code>ESPACIO</code>. Después no se puede retroceder.</li>
 <li>El Bot responde enseguida; sus jugadas se reproducen en el tablero, despacio.</li>
 <li>El clic derecho fuera del tablero, o en el tablero fuera de su jugada, abre el menú del Duelo: poner la posición en la Pila o retirarla, abandonar la partida por una simple, un gammon o un backgammon (en su turno, tras confirmación), suspender, detener. Este menú no ofrece ni evaluación ni edición.</li>
 <li>«Suspender» pone el Duelo en suspenso, con los relojes detenidos. «Detener y guardar» escribe el Match tal como está; «Detener y descartar» no escribe nada. Detener nunca es ceder la partida.</li>
@@ -1240,6 +1240,10 @@ export default {
 <td>Validar la jugada dispuesta en el tablero; después ya no se puede deshacer nada.</td>
 </tr>
 <tr>
+<td>ESPACIO (Duelo)</td>
+<td>Validar la jugada dispuesta en el tablero, una vez jugados todos los dados; sin efecto en una jugada parcial o fuera de su turno.</td>
+</tr>
+<tr>
 <td>RETROCESO (Duelo)</td>
 <td>Devolver las fichas a su sitio antes de validar.</td>
 </tr>
@@ -1323,8 +1327,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Clic en los dados (antes de la tirada)</td>
-<td>Lanzar los dados.</td>
+<td>Clic en el tablero o en los dados (antes de la tirada)</td>
+<td>Lanzar los dados. El cubo conserva su sentido: propone doblar.</td>
 </tr>
 <tr>
 <td>Clic en el cubo (antes de la tirada)</td>

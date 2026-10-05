@@ -490,6 +490,14 @@ msgstr ""
 "afterwards."
 
 #: ../../source/raccourcis.rst:1
+msgid "ESPACE (Duel)"
+msgstr "SPACE (Duel)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "Validate the move arranged on the board, once every die is played; no effect on a partial move or outside your turn."
+
+#: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"
 msgstr "BACKSPACE (Duel)"
 
@@ -659,12 +667,12 @@ msgid "Geste"
 msgstr "Gesture"
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic sur les dés (avant le lancer)"
-msgstr "Click on the dice (before the roll)"
+msgid "Clic sur le plateau ou sur les dés (avant le lancer)"
+msgstr "Click on the board or on the dice (before the roll)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Lancer les dés."
-msgstr "Roll the dice."
+msgid "Lancer les dés. Le videau garde son sens : il propose de doubler."
+msgstr "Roll the dice. The cube keeps its own meaning: it offers to double."
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic sur le videau (avant le lancer)"

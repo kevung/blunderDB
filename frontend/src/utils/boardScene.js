@@ -664,20 +664,20 @@ export function drawMoveArrows(two, geom, cfg, position, moves) {
 }
 
 /**
- * Les points qu'offre le coup en cours (quiz, transcription) : un anneau autour du pion d'où un
- * pas peut partir, un disque là où le pion choisi irait — rien d'autre que `quizPlaySourcesStore`
- * et `quizPlayTargetsStore`. Dessiné après les pions (sinon invisible) et avant les flèches.
+ * Les points qu'offre le coup en cours (Duel, transcription) : un anneau autour du pion choisi,
+ * un disque là où il irait — rien d'autre que `quizPlayTargetsStore`. Les pions jouables ne sont
+ * pas marqués : presque tous le sont à chaque jet. Dessiné après les pions (sinon invisible) et avant les flèches.
  *
  * @param {Surface} two
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
- * @param {{sources?: Iterable<number>, targets?: Iterable<number>, selected?: number|null}} opts
+ * @param {{targets?: Iterable<number>, selected?: number|null}} opts
  */
 export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
-    const sources = [...(opts.sources ?? [])];
     const targets = [...(opts.targets ?? [])];
-    if (sources.length === 0 && targets.length === 0) return;
+    const selected = opts.selected ?? null;
+    if (selected === null && targets.length === 0) return;
 
     const cs = geom.checkerSize;
     const radius = cs * 0.42;
@@ -692,13 +692,14 @@ export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
         disc.linewidth = Math.max(cs * 0.06, 1.5);
     }
 
-    for (const point of sources) {
-        const centre = stackSlotCenter(geom, cfg, point, Math.min(Math.max(count(point) - 1, 0), 4));
-        if (!centre) continue;
-        const ring = two.makeCircle(centre.x, centre.y, radius);
-        ring.fill = 'transparent';
-        ring.stroke = point === opts.selected ? 'rgba(255, 107, 107, 0.95)' : 'rgba(255, 214, 102, 0.9)';
-        ring.linewidth = Math.max(cs * (point === opts.selected ? 0.12 : 0.08), 2);
+    if (selected !== null) {
+        const centre = stackSlotCenter(geom, cfg, selected, Math.min(Math.max(count(selected) - 1, 0), 4));
+        if (centre) {
+            const ring = two.makeCircle(centre.x, centre.y, radius);
+            ring.fill = 'transparent';
+            ring.stroke = 'rgba(255, 107, 107, 0.95)';
+            ring.linewidth = Math.max(cs * 0.12, 2);
+        }
     }
 }
 
@@ -710,7 +711,7 @@ export function drawPlayHighlights(two, geom, cfg, position, opts = {}) {
  * @param {BoardMetrics} geom
  * @param {BoardConfig} cfg
  * @param {BoardPosition} position
- * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, diceUsed?: boolean[] | null, moves?: StepMove[] | null, play?: { sources?: Iterable<number>, targets?: Iterable<number>, selected?: number | null } }} [opts]
+ * @param {{ text?: SceneText, offeredCube?: boolean, showPipcount?: boolean, diceUsed?: boolean[] | null, moves?: StepMove[] | null, play?: { targets?: Iterable<number>, selected?: number | null } }} [opts]
  * @returns {CubeBox}
  */
 export function drawDynamicScene(two, geom, cfg, position, opts = {}) {

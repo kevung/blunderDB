@@ -917,11 +917,11 @@ export default {
 <p>« Reprendre » rouvre un Duel en suspens au même point, avec les mêmes dés à venir ; ses horloges étaient arrêtées.</p>
 <p>Le Duel se joue au plateau. Le panneau montre la feuille de match en deux colonnes, comme la Transcription, les horloges quand une cadence court, une ligne qui dit ce qui est attendu, et « Suspendre », « Arrêter et garder », « Arrêter et jeter ». Le score et le videau sont ceux du plateau ; le score et les horloges restent dans la barre d'état quand l'onglet est replié. L'empreinte SHA-256 du germe des dés, publiée par l'Arbitre dès la création, se lit dans l'infobulle de la ligne d'invite du panneau, puis avec le germe dans l'origine du Match terminé. Le plateau passe en mode <strong>DUEL</strong> : la bibliothèque ne se parcourt plus, l'édition, le panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait — aucune évaluation, aucun candidat. Seules restent la Pile (<code>B</code>), le pipcount (<code>P</code>) et l'aide.</p>
 <ul>
-<li>Avant le lancer, un clic sur les dés les lance ; un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique.</li>
+<li>Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique.</li>
 <li>Face à un double du Bot, le plateau demande « Prendre » ou « Passer ».</li>
 <li>Un clic sur un pion le joue avec le dé de gauche encore libre, ou avec l'autre quand celui-ci ne peut pas le jouer ; un double se joue en quatre clics. Un pion peut aussi se glisser vers sa destination. Un dé joué est grisé. Seuls passent les pas d'un coup légal.</li>
 <li>Avant de jouer, un clic sur les dés, ou un clic droit sur le plateau, intervertit leur ordre. Pendant le coup, le clic droit sur le plateau reprend tous les pions joués (<code>RETOUR ARRIÈRE</code> aussi).</li>
-<li>Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par <code>ENTRÉE</code>. Rien ne se reprend après.</li>
+<li>Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par <code>ENTRÉE</code> ou <code>ESPACE</code>. Rien ne se reprend après.</li>
 <li>Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement.</li>
 <li>Le clic droit hors du plateau, ou sur le plateau hors de son coup, ouvre le menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la partie pour un simple, un gammon ou un backgammon (à son tour, après confirmation), suspendre, arrêter. Ce menu n'offre ni évaluation ni édition.</li>
 <li>« Suspendre » met le Duel en suspens, horloges arrêtées. « Arrêter et garder » écrit le Match tel qu'il est ; « Arrêter et jeter » n'en écrit rien. Arrêter n'est jamais céder la partie.</li>
@@ -1240,6 +1240,10 @@ export default {
 <td>Valider le coup arrangé au plateau ; rien ne se reprend après.</td>
 </tr>
 <tr>
+<td>ESPACE (Duel)</td>
+<td>Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour.</td>
+</tr>
+<tr>
 <td>RETOUR ARRIÈRE (Duel)</td>
 <td>Replacer les pions avant la validation.</td>
 </tr>
@@ -1323,8 +1327,8 @@ export default {
 </thead>
 <tbody>
 <tr>
-<td>Clic sur les dés (avant le lancer)</td>
-<td>Lancer les dés.</td>
+<td>Clic sur le plateau ou sur les dés (avant le lancer)</td>
+<td>Lancer les dés. Le videau garde son sens : il propose de doubler.</td>
 </tr>
 <tr>
 <td>Clic sur le videau (avant le lancer)</td>

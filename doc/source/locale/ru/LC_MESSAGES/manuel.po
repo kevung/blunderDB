@@ -8964,14 +8964,8 @@ msgstr ""
 " пип-счёт (``P``) и справка."
 
 #: ../../source/manuel.rst:4038
-msgid ""
-"Avant le lancer, un clic sur les dés les lance ; un clic sur le videau "
-"propose de doubler, et le plateau demande « Doubler » ou « Annuler ». "
-"Quand le videau n'est pas disponible, le lancer est automatique."
-msgstr ""
-"Перед броском щелчок по костям бросает их; щелчок по кубу предлагает "
-"удвоить, и доска спрашивает «Удвоить» или «Отмена». Когда куб недоступен,"
-" бросок выполняется автоматически."
+msgid "Avant le lancer, un clic sur le plateau, sur les dés ou sur un pion les lance ; seul un clic sur le videau propose de doubler, et le plateau demande « Doubler » ou « Annuler ». Quand le videau n'est pas disponible, le lancer est automatique."
+msgstr "Перед броском щелчок по доске, по костям или по шашке бросает их; только щелчок по кубу предлагает удвоить, и доска спрашивает «Удвоить» или «Отмена». Когда куб недоступен, бросок выполняется автоматически."
 
 #: ../../source/manuel.rst:4041
 msgid "Face à un double du Bot, le plateau demande « Prendre » ou « Passer »."
@@ -9000,12 +8994,8 @@ msgstr ""
 "сыгранные шашки (``BACKSPACE`` тоже)."
 
 #: ../../source/manuel.rst:4049
-msgid ""
-"Le coup complet se valide par un clic sur les dés, par « Valider » sur le"
-" plateau, ou par ``ENTRÉE``. Rien ne se reprend après."
-msgstr ""
-"Полный ход подтверждается щелчком по костям, кнопкой «Подтвердить» на "
-"доске или клавишей ``ENTER``. После этого ничего нельзя вернуть."
+msgid "Le coup complet se valide par un clic sur les dés, par « Valider » sur le plateau, ou par ``ENTRÉE`` ou ``ESPACE``. Rien ne se reprend après."
+msgstr "Полный ход подтверждается щелчком по костям, кнопкой «Подтвердить» на доске или клавишей ``ENTER`` либо ``ПРОБЕЛ``. После этого ничего нельзя вернуть."
 
 #: ../../source/manuel.rst:4034
 msgid "Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement."

@@ -26,6 +26,8 @@
  *
  * - `EVAL`, `EDIT` : jamais, pour que la souris parle en coordonnées du
  *   modèle ; le miroir de la recherche s'applique au moment de chercher.
+ * - `DUEL` : jamais. La position y est ABSOLUE et le trait passe d'un camp à l'autre à chaque
+ *   coup, Bot compris : retourner sur le trait ferait osciller le damier. Le joueur 1 reste en bas.
  * - `TRANSCRIBE` : sur demande seulement. La position y est ABSOLUE et le
  *   trait change à chaque demi-coup : retourner sur le trait ferait osciller
  *   le damier. Le joueur 1 reste en bas ; le trait se lit aux dés.
@@ -39,6 +41,7 @@
  */
 export function boardIsMirrored({ mode, position, matchContext, transcriptionSwap }) {
     if (mode === 'EVAL' || mode === 'EDIT') return false;
+    if (mode === 'DUEL') return false;
     if (mode === 'TRANSCRIBE') return transcriptionSwap === true;
     if (matchContext && matchContext.isMatchMode && matchContext.movePositions?.length > 0) {
         const current = matchContext.movePositions[matchContext.currentIndex];

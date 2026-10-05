@@ -468,6 +468,14 @@ msgid "Valider le coup arrangé au plateau ; rien ne se reprend après."
 msgstr "盤上に並べた手を確定します。確定後は取り消せません。"
 
 #: ../../source/raccourcis.rst:1
+msgid "ESPACE (Duel)"
+msgstr "SPACE（デュエル）"
+
+#: ../../source/raccourcis.rst:1
+msgid "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
+msgstr "すべてのダイスを使い終えたら、盤面に作った手を確定する。手が途中のとき、または自分の番でないときは何も起きない。"
+
+#: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIÈRE (Duel)"
 msgstr "BACKSPACE（デュエル）"
 
@@ -626,12 +634,12 @@ msgid "Geste"
 msgstr "操作"
 
 #: ../../source/raccourcis.rst:1
-msgid "Clic sur les dés (avant le lancer)"
-msgstr "ダイスをクリック（ロール前）"
+msgid "Clic sur le plateau ou sur les dés (avant le lancer)"
+msgstr "盤面またはダイスをクリック（ロール前）"
 
 #: ../../source/raccourcis.rst:1
-msgid "Lancer les dés."
-msgstr "ダイスを振る。"
+msgid "Lancer les dés. Le videau garde son sens : il propose de doubler."
+msgstr "ダイスを振る。キューブは従来の意味を保ち、ダブルを提案する。"
 
 #: ../../source/raccourcis.rst:1
 msgid "Clic sur le videau (avant le lancer)"

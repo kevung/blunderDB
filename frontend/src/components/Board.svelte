@@ -23,7 +23,7 @@
     import { viewStore } from '../stores/viewStore.js';
     import * as anki from '../services/ankiService.js';
     import { ankiDecksStore } from '../stores/ankiStore.js';
-    import { quizPlayStore, quizPlaySourcesStore, quizPlayTargetsStore } from '../stores/quizPlayStore.js';
+    import { quizPlayStore, quizPlayTargetsStore } from '../stores/quizPlayStore.js';
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
@@ -62,6 +62,9 @@
     let canvas = null;
     let width = 0;
     let height = 0;
+    // Le milieu de la moitié droite du damier, depuis le centre du conteneur : la confirmation du
+    // videau d'un Duel s'y pose, là où se lancent les dés.
+    let promptAnchor = $state({ dx: 0, dy: 0 });
     /** @type {(() => void) | null} */
     let unsubscribeBoardRedrawTriggers = null;
     /** @type {(() => void) | null} */
@@ -516,12 +519,7 @@
         const play = get(quizPlayStore);
         if (!play) return {};
         const shown = (/** @type {number} */ point) => screenOfModelPoint(point, mirrored);
-        // Le point choisi est toujours marqué, même hors des règles (ADR-0052).
-        const picked = play.selected === null || play.selected === undefined ? [] : [play.selected];
-        // Départs allumés seulement coup engagé : sinon presque tous le sont (21 jets).
-        const engaged = play.steps.length > 0 || picked.length > 0;
         return {
-            sources: engaged ? [...new Set([...$quizPlaySourcesStore, ...picked])].map(shown) : [],
             targets: [...$quizPlayTargetsStore].map(shown),
             selected: play.selected === null || play.selected === undefined ? null : shown(play.selected)
         };
@@ -578,6 +576,9 @@
 
         const geom = boardMetrics(width, height, boardCfg.widthFactor);
         const position = getDisplayPosition();
+        const dx = geom.originX + geom.boardWidth / 4 - width / 2;
+        const dy = geom.originY - height / 2;
+        if (dx !== promptAnchor.dx || dy !== promptAnchor.dy) promptAnchor = { dx, dy };
         // `mirrored` convertit un point absolu, `flip` un point de notation (boardOrientation.js).
         const flip = isPlayer2Perspective(position);
         const mirrored = displayMirrored();
@@ -615,7 +616,7 @@
         </span>
     {/if}
     {#if $duelHoldsBoardStore}
-        <DuelBoardPrompt />
+        <DuelBoardPrompt anchor={promptAnchor} />
     {/if}
     {#if boardMenu}
         <ContextMenu x={boardMenu.x} y={boardMenu.y} items={boardMenu.items} onClose={() => (boardMenu = null)} />

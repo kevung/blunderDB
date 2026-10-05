@@ -125,6 +125,7 @@ Outils
    "CTRL-J", "Afficher/cacher le panneau Entraînement."
    "CTRL-H", "Afficher/cacher le panneau Duel (un match contre le Bot)."
    "ENTRÉE (Duel)", "Valider le coup arrangé au plateau ; rien ne se reprend après."
+   "ESPACE (Duel)", "Valider le coup arrangé au plateau, une fois tous les dés joués ; sans effet sur un coup partiel ou hors de votre tour."
    "RETOUR ARRIÈRE (Duel)", "Replacer les pions avant la validation."
    "CTRL-K", "Afficher/cacher le panneau Anki (répétition espacée)."
    "CTRL-F", "Afficher/cacher le panneau de recherche."
@@ -154,7 +155,7 @@ Duel au plateau
    :widths: 7, 20
    :align: center
 
-   "Clic sur les dés (avant le lancer)", "Lancer les dés."
+   "Clic sur le plateau ou sur les dés (avant le lancer)", "Lancer les dés. Le videau garde son sens : il propose de doubler."
    "Clic sur le videau (avant le lancer)", "Proposer de doubler ; « Doubler » ou « Annuler » confirme sur le plateau."
    "Clic sur un pion", "Le jouer avec le dé de gauche encore libre, ou avec l'autre si celui-ci ne peut pas le jouer. Un dé joué est grisé."
    "Glisser un pion", "Le jouer vers le point où il est lâché, si un coup légal le permet."
