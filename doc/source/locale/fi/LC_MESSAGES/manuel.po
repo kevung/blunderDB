@@ -212,12 +212,8 @@ msgid "afficher les métadonnées de la base de données (panneau métadonnées)
 msgstr "näyttävät tietokannan metatiedot (Metatiedot-paneeli)."
 
 #: ../../source/manuel.rst:89
-msgid ""
-"La hauteur du panneau se règle en tirant sa poignée ; chaque onglet retient "
-"la sienne."
-msgstr ""
-"Paneelin korkeutta säädetään vetämällä sen kahvaa; jokainen välilehti "
-"muistaa omansa."
+msgid "La hauteur du panneau se règle en tirant sa poignée ; elle reste la même d'un onglet à l'autre."
+msgstr "Paneelin korkeutta säädetään vetämällä sen kahvaa; se pysyy samana välilehdeltä toiselle."
 
 #: ../../source/manuel.rst:91
 msgid "Des fenêtres modales peuvent s'afficher pour:"

@@ -7,7 +7,7 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
     SaveTabPanelHeight: (...a) => saved(...a)
 }));
 
-import { initTabHeights, tabPanelHeight, rememberTabHeight } from '../utils/tabHeights.js';
+import { initTabHeights, panelHeightValue, rememberPanelHeight } from '../utils/tabHeights.js';
 import { DEFAULT_PANEL_HEIGHT } from '../stores/panelLayoutStore.js';
 
 beforeEach(() => {
@@ -15,30 +15,27 @@ beforeEach(() => {
     stored = {};
 });
 
-describe('tabHeights', () => {
-    test('un onglet sans hauteur mémorisée prend la hauteur par défaut, pas celle d un autre', async () => {
+describe('panel height', () => {
+    test('sans hauteur mémorisée, la hauteur par défaut', async () => {
         await initTabHeights();
-        rememberTabHeight('stats', 460);
-        expect(tabPanelHeight('stats')).toBe(460);
-        expect(tabPanelHeight('search')).toBe(DEFAULT_PANEL_HEIGHT);
-        await vi.waitFor(() => expect(saved).toHaveBeenCalledWith('stats', 460));
+        expect(panelHeightValue()).toBe(DEFAULT_PANEL_HEIGHT);
     });
-    test("la hauteur d'une ancienne config vaut pour l'onglet sans hauteur propre", async () => {
+    test('une hauteur choisie est la même pour tous les onglets et persistée sous la clé commune', async () => {
+        await initTabHeights();
+        rememberPanelHeight(460);
+        expect(panelHeightValue()).toBe(460);
+        await vi.waitFor(() => expect(saved).toHaveBeenCalledWith('*', 460));
+    });
+    test('la hauteur persistée est relue au démarrage; les entrées par onglet d une ancienne config sont ignorées', async () => {
         stored = { '*': 520, eval: 300 };
         await initTabHeights();
-        expect(tabPanelHeight('stats')).toBe(520);
-        expect(tabPanelHeight('eval')).toBe(300);
-    });
-    test('les hauteurs persistées sont relues au démarrage', async () => {
-        stored = { eval: 300 };
-        await initTabHeights();
-        expect(tabPanelHeight('eval')).toBe(300);
+        expect(panelHeightValue()).toBe(520);
     });
     test('une valeur absurde n est ni retenue ni envoyée', async () => {
         await initTabHeights();
-        rememberTabHeight('stats', NaN);
-        rememberTabHeight('stats', -5);
-        expect(tabPanelHeight('stats')).toBe(DEFAULT_PANEL_HEIGHT);
+        rememberPanelHeight(NaN);
+        rememberPanelHeight(-5);
+        expect(panelHeightValue()).toBe(DEFAULT_PANEL_HEIGHT);
         expect(saved).not.toHaveBeenCalled();
     });
 });

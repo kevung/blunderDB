@@ -209,12 +209,8 @@ msgid "afficher les métadonnées de la base de données (panneau métadonnées)
 msgstr "データベースのメタデータを表示する（メタデータパネル）。"
 
 #: ../../source/manuel.rst:89
-msgid ""
-"La hauteur du panneau se règle en tirant sa poignée ; chaque onglet retient "
-"la sienne."
-msgstr ""
-"パネルの高さはハンドルをドラッグして調整します。タブごとに高さが記憶されま"
-"す。"
+msgid "La hauteur du panneau se règle en tirant sa poignée ; elle reste la même d'un onglet à l'autre."
+msgstr "パネルの高さはハンドルをドラッグして調整します。高さはどのタブでも同じです。"
 
 #: ../../source/manuel.rst:91
 msgid "Des fenêtres modales peuvent s'afficher pour:"

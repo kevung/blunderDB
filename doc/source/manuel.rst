@@ -86,7 +86,7 @@ Des panneaux peuvent être affichés pour:
 
 * afficher les métadonnées de la base de données (panneau métadonnées).
 
-La hauteur du panneau se règle en tirant sa poignée ; chaque onglet retient la sienne.
+La hauteur du panneau se règle en tirant sa poignée ; elle reste la même d'un onglet à l'autre.
 
 Des fenêtres modales peuvent s'afficher pour:
 

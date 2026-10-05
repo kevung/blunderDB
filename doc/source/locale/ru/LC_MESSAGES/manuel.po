@@ -213,12 +213,8 @@ msgid "afficher les métadonnées de la base de données (panneau métadonnées)
 msgstr "просматривать метаданные базы данных (панель «Метаданные»)."
 
 #: ../../source/manuel.rst:89
-msgid ""
-"La hauteur du panneau se règle en tirant sa poignée ; chaque onglet retient "
-"la sienne."
-msgstr ""
-"Высота панели регулируется перетаскиванием её рукоятки; каждая вкладка "
-"запоминает свою."
+msgid "La hauteur du panneau se règle en tirant sa poignée ; elle reste la même d'un onglet à l'autre."
+msgstr "Высота панели регулируется перетаскиванием её рукоятки; она одинакова для всех вкладок."
 
 #: ../../source/manuel.rst:91
 msgid "Des fenêtres modales peuvent s'afficher pour:"

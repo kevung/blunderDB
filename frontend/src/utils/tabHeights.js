@@ -1,38 +1,35 @@
-// Panel height remembered per tab, persisted through Config like every other layout
-// preference (the webview's localStorage is not guaranteed to survive a restart). A tab with
-// no remembered height uses the fallback entry (a config written before heights were per tab),
-// else the default, never the one last dragged on another tab.
+// One bottom-panel height for every tab, persisted through Config like every other layout
+// preference (the webview's localStorage is not guaranteed to survive a restart). Switching
+// tab never resizes the panel: a taller tab scrolls inside it, a shorter one leaves room.
+// Config keeps the height under its shared "*" entry.
 import { GetTabPanelHeights, SaveTabPanelHeight } from '../../wailsjs/go/main/Config.js';
 import { DEFAULT_PANEL_HEIGHT } from '../stores/panelLayoutStore.js';
 import { logger } from './logger.js';
 
-// Key under which Config carries the single height of a config written before heights were per
-// tab: it stands in for every tab that has none of its own.
-const FALLBACK_TAB = '*';
+const SHARED_KEY = '*';
 
-/** @type {Record<string, number>} */
-let heights = {};
+let height = DEFAULT_PANEL_HEIGHT;
 
 export async function initTabHeights() {
     try {
-        heights = (await GetTabPanelHeights()) || {};
+        const h = ((await GetTabPanelHeights()) || {})[SHARED_KEY];
+        height = Number.isFinite(h) && h > 0 ? h : DEFAULT_PANEL_HEIGHT;
     } catch (err) {
-        logger.error('Failed to load per-tab panel heights, using default:', err);
-        heights = {};
+        logger.error('Failed to load the panel height, using default:', err);
+        height = DEFAULT_PANEL_HEIGHT;
     }
 }
 
-/** @param {string} tab @returns {number} */
-export function tabPanelHeight(tab) {
-    const h = heights[tab] ?? heights[FALLBACK_TAB];
-    return Number.isFinite(h) && h > 0 ? h : DEFAULT_PANEL_HEIGHT;
+/** @returns {number} */
+export function panelHeightValue() {
+    return height;
 }
 
-/** @param {string} tab @param {number} height */
-export function rememberTabHeight(tab, height) {
-    if (!tab || !Number.isFinite(height) || height <= 0) return;
-    heights = { ...heights, [tab]: Math.round(height) };
+/** @param {number} h */
+export function rememberPanelHeight(h) {
+    if (!Number.isFinite(h) || h <= 0) return;
+    height = Math.round(h);
     Promise.resolve()
-        .then(() => SaveTabPanelHeight(tab, Math.round(height)))
+        .then(() => SaveTabPanelHeight(SHARED_KEY, height))
         .catch((err) => logger.error('Failed to save panel height:', err));
 }

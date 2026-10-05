@@ -214,12 +214,8 @@ msgid "afficher les métadonnées de la base de données (panneau métadonnées)
 msgstr "visualizzare i metadati del database (pannello Metadati)."
 
 #: ../../source/manuel.rst:89
-msgid ""
-"La hauteur du panneau se règle en tirant sa poignée ; chaque onglet retient "
-"la sienne."
-msgstr ""
-"L'altezza del pannello si regola trascinandone la maniglia; ogni scheda "
-"ricorda la propria."
+msgid "La hauteur du panneau se règle en tirant sa poignée ; elle reste la même d'un onglet à l'autre."
+msgstr "L'altezza del pannello si regola trascinandone la maniglia; resta la stessa da una scheda all'altra."
 
 #: ../../source/manuel.rst:91
 msgid "Des fenêtres modales peuvent s'afficher pour:"

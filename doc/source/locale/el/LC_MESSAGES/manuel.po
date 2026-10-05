@@ -217,12 +217,8 @@ msgstr ""
 "την προβολή των μεταδεδομένων της βάσης δεδομένων (πίνακας Μεταδεδομένα)."
 
 #: ../../source/manuel.rst:89
-msgid ""
-"La hauteur du panneau se règle en tirant sa poignée ; chaque onglet retient "
-"la sienne."
-msgstr ""
-"Το ύψος του πάνελ ρυθμίζεται σύροντας τη λαβή του· κάθε καρτέλα θυμάται το "
-"δικό της."
+msgid "La hauteur du panneau se règle en tirant sa poignée ; elle reste la même d'un onglet à l'autre."
+msgstr "Το ύψος του πάνελ ρυθμίζεται σύροντας τη λαβή του· παραμένει το ίδιο σε όλες τις καρτέλες."
 
 #: ../../source/manuel.rst:91
 msgid "Des fenêtres modales peuvent s'afficher pour:"
