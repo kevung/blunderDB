@@ -100,12 +100,16 @@
 
     /**
      * Chaque nombre ouvre ce qu'il compte ; « Blunders » lance la recherche `E>` au seuil
-     * de la bibliothèque par le même chemin que la ligne de commande (historique compris).
-     * @param {'positions'|'blunders'|'matches'} what
+     * de la bibliothèque (`ss` dans la liste à l'écran pour son propre chiffre) par le même chemin que la ligne de commande (historique compris).
+     * @param {'positions'|'blunders'|'blunders-list'|'matches'} what
      */
     async function showLibrary(what) {
         if (what === 'matches') {
             activeTabStore.set('matches');
+            return;
+        }
+        if (what === 'blunders-list') {
+            processCommand(`ss E>${$libraryCountsStore?.blunderThresholdMP ?? 100}`);
             return;
         }
         if (what === 'blunders') {
@@ -340,23 +344,36 @@
                 {$t('statusBar.countPositions', { n: formatCount($libraryCountsStore.positions, $libraryCountsStore.approximate?.positions) })}
             </button>
             <span class="count-sep">·</span>
-            <button
-                type="button"
-                class="count-link"
-                data-testid="count-blunders"
-                onclick={() => showLibrary('blunders')}
-                title={$libraryCountsStore.blunders == null
-                    ? $t('statusBar.countBlundersUncounted')
-                    : $listBlunderCountStore != null
-                      ? $t('statusBar.countBlundersListTitle', { n: $listBlunderCountStore, total: $libraryCountsStore.blunders, mp: $libraryCountsStore.blunderThresholdMP })
-                      : $t('statusBar.countBlundersTitle', { mp: $libraryCountsStore.blunderThresholdMP })}
-            >
-                {#if $listBlunderCountStore != null && $libraryCountsStore.blunders != null}
-                    {$t('statusBar.countBlundersOfList', { n: $listBlunderCountStore, total: formatCount($libraryCountsStore.blunders) })}
-                {:else}
+            {#if $listBlunderCountStore != null && $libraryCountsStore.blunders != null}
+                <span data-testid="count-blunders">
+                    {$t('statusBar.countBlundersPrefix')}<button
+                        type="button"
+                        class="count-link"
+                        data-testid="count-blunders-list"
+                        onclick={() => showLibrary('blunders-list')}
+                        title={$t('statusBar.countBlundersListOnlyTitle', { n: $listBlunderCountStore, mp: $libraryCountsStore.blunderThresholdMP })}>{$listBlunderCountStore}</button
+                    >
+                    /
+                    <button
+                        type="button"
+                        class="count-link"
+                        data-testid="count-blunders-total"
+                        onclick={() => showLibrary('blunders')}
+                        title={$t('statusBar.countBlundersTotalTitle', { total: $libraryCountsStore.blunders, mp: $libraryCountsStore.blunderThresholdMP })}
+                        >{formatCount($libraryCountsStore.blunders)}</button
+                    >{$t('statusBar.countBlundersSuffix')}
+                </span>
+            {:else}
+                <button
+                    type="button"
+                    class="count-link"
+                    data-testid="count-blunders-total"
+                    onclick={() => showLibrary('blunders')}
+                    title={$libraryCountsStore.blunders == null ? $t('statusBar.countBlundersUncounted') : $t('statusBar.countBlundersTitle', { mp: $libraryCountsStore.blunderThresholdMP })}
+                >
                     {$t('statusBar.countBlunders', { n: formatCount($libraryCountsStore.blunders) })}
-                {/if}
-            </button>
+                </button>
+            {/if}
             <span class="count-sep">·</span>
             <button type="button" class="count-link" onclick={() => showLibrary('matches')} title={$t('statusBar.countMatchesTitle')}>
                 {$t('statusBar.countMatches', { n: formatCount($libraryCountsStore.matches, $libraryCountsStore.approximate?.matches) })}

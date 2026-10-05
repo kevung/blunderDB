@@ -174,6 +174,7 @@ suivantes:
   trous). Si les positions sont estimées, le nombre de blunders, qui n'a pas
   d'estimation honnête, s'affiche « ? » — le lien lance la recherche, qui
   donne le compte exact.
+  Les deux nombres de blunders sont des liens distincts : le premier lance la sous-recherche ``ss E>`` dans la liste à l'écran, le second la recherche dans toute la bibliothèque ; quand seul le total s'affiche, il n'y a qu'un lien.
 
 .. note:: Dans le cas de positions issues d'une recherche par l'utilisateur, le
    nombre de positions indiqué dans la barre d'état correspond au nombre de

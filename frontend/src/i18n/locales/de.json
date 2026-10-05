@@ -1080,8 +1080,10 @@
         "countPositionsTitle": "Alle Stellungen anzeigen",
         "countBlundersTitle": "Fehler ab {mp} Millipunkten suchen",
         "countBlundersUncounted": "Bei einer großen Bibliothek nicht gezählt: klicken, um danach zu suchen",
-        "countBlundersOfList": "{n} / {total} Blunder",
-        "countBlundersListTitle": "{n} Blunder in der angezeigten Liste, {total} in der Bibliothek (Fehler ab {mp} Millipunkten). Klicken, um sie in der Bibliothek zu suchen",
+        "countBlundersPrefix": "",
+        "countBlundersSuffix": " Blunder",
+        "countBlundersListOnlyTitle": "{n} Blunder in der angezeigten Liste (Fehler ab {mp} Millipunkten). Klicken, um sie in dieser Liste zu suchen",
+        "countBlundersTotalTitle": "{total} Blunder in der Bibliothek (Fehler ab {mp} Millipunkten). Klicken, um sie in der ganzen Bibliothek zu suchen",
         "countMatchesTitle": "Matchliste öffnen"
     },
     "viewTabs": {
