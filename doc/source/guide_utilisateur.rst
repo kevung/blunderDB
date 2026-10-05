@@ -463,8 +463,10 @@ Editer la position à la souris:
   relacher sur le point d'arrivée. Cliquer sur la barre pour mettre des
   pions à la barre.
 
-* pour effacer la position, double-clic sur une zone vide en dehors du board ou
-  appuyer sur la touche *RETOUR ARRIERE*.
+* pour effacer la position, clic droit sur une zone vide en dehors du board
+  puis *Effacer la position*, ou appuyer sur la touche *RETOUR ARRIERE*. Le
+  même menu propose *Position de départ*, qui pose les pions d'une partie
+  neuve.
 
 * pour envoyer le cube vers le joueur 1, clic gauche sur le cube. Pour envoyer
   le cube vers le joueur 2, click droit sur le cube.

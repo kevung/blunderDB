@@ -996,7 +996,9 @@
             "addToAnkiDeck": "Lisää Anki-pakkaan: {deck}",
             "saveImageSVG": "Tallenna kuva (SVG)…",
             "saveImagePNG": "Tallenna kuva (PNG)…",
-            "neighbours": "Naapuriasemat"
+            "neighbours": "Naapuriasemat",
+            "clearPosition": "Tyhjennä asema",
+            "startingPosition": "Aloitusasema"
         },
         "scene": {
             "pip": "pip: {n}",

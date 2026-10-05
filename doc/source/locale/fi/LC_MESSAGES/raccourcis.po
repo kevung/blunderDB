@@ -213,13 +213,35 @@ msgstr "Kaksoisnapsautus laudan ulkopuolella"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
-"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
-"double-clic remet à zéro."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
 msgstr ""
-"Näytetyn aseman lisääminen pinoon tai poistaminen sieltä — paitsi "
-"muokkauksessa ja Evalissa sekä Kaksintaistelun ulkopuolella laudalla "
-"pelatun siirron aikana, jolloin tämä kaksoisnapsautus nollaa."
+"Näytetyn aseman lisääminen pinoon tai poistaminen sieltä kaikissa "
+"tiloissa."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau (édition, Eval)"
+msgstr "Oikea napsautus laudan ulkopuolella (muokkaus, Eval)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
+msgstr ""
+"Avaa laudan valikko: *Tyhjennä asema*, kuten ASKELPALAUTIN, tai "
+"*Aloitusasema*."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup joué au plateau)"
+msgstr "Oikea napsautus laudalla (laudalla pelattu siirto)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
+msgstr ""
+"Avaa laudan valikko, joka alkaa kohdalla *Aloita alusta*: siirto "
+"nollataan, ei asemaa."
 
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"

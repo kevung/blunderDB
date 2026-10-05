@@ -127,6 +127,12 @@ CTRL-X*, moins facile à découvrir), **enregistrer l'image dans un fichier**
 en SVG ou en PNG, ouvrir une nouvelle vue sur cette position, et — si la
 position vient déjà de la base — l'ajouter à un paquet Anki (répétition
 espacée) ou classer ses **positions voisines** (voir :ref:`panneau_recherche`).
+Pendant un coup joué au plateau (quiz, Transcription), le menu commence par
+*Recommencer*, qui remet le coup à zéro sans toucher la position. En édition
+et en Eval, où le clic droit sur le plateau pose des pions, le menu s'ouvre
+d'un clic droit hors du plateau — hors des dés, du videau et des scores — et
+propose seulement *Effacer la position* (comme *RETOUR ARRIERE*) et *Position
+de départ*, qui pose les pions d'une partie neuve.
 
 Le presse-papier est le geste courant ; enregistrer est l'autre besoin —
 l'illustration d'un article, d'un message de forum, d'une leçon. Le **SVG** y
@@ -1223,9 +1229,9 @@ La **Pile** est la collection du geste « à revoir plus tard » : un double-cli
 hors du plateau, la touche *b* ou le bouton marque-page de la barre d'outils
 met la position affichée sur la Pile, et le même geste l'en retire. Un
 marque-page au coin du plateau dit que la position y est, sans autre message. Le geste vaut partout où une position est
-affichée : revue, recherche, Transcription, Duel. En édition et en Eval, et
-pendant un coup joué au plateau hors Duel, le double-clic hors du plateau garde
-son sens premier — remettre à zéro — et seuls *b* et le bouton y valent. La Pile est une collection ordinaire — renommée,
+affichée : revue, recherche, édition, Eval, Transcription, quiz, Duel. La
+remise à zéro du plateau passe par le menu du clic droit (voir
+:ref:`menu du plateau <board_menu_contextuel>`). La Pile est une collection ordinaire — renommée,
 réordonnée, exportée, vidée comme une autre ; elle est créée au premier usage,
 et recréée si elle a été supprimée. Une position qui n'est pas encore dans la
 bibliothèque (un brouillon du plateau de recherche ou d'évaluation) y est
@@ -3259,11 +3265,12 @@ un seul dé ne serait ni une décision de pions ni une décision de videau.
 Cliquer le rectangle d'un joueur retire les dés pour poser une question de
 videau, et le clic suivant sur un dé les remet tels qu'ils étaient.
 
-*RETOUR ARRIERE*, ou un double-clic en dehors du plateau, efface la
-position : plateau vide, score money (-1, -1), pas de dés posés — des
-valeurs propres au panneau Eval, différentes de celles utilisées en mode
-édition (7 partout, dés 3-1), pour rester cohérentes avec ce que le panneau
-affiche par défaut.
+*RETOUR ARRIERE*, ou *Effacer la position* dans le menu d'un clic droit en
+dehors du plateau, efface la position : plateau vide, score money (-1, -1),
+pas de dés posés — des valeurs propres au panneau Eval, différentes de
+celles utilisées en mode édition (7 partout, dés 3-1), pour rester
+cohérentes avec ce que le panneau affiche par défaut. *Position de départ*,
+dans le même menu, pose les pions d'une partie neuve sur ces mêmes valeurs.
 
 .. _eval_matrice_videau:
 

@@ -996,7 +996,9 @@
             "addToAnkiDeck": "Добавить в колоду Anki: {deck}",
             "saveImageSVG": "Сохранить изображение (SVG)…",
             "saveImagePNG": "Сохранить изображение (PNG)…",
-            "neighbours": "Соседние позиции"
+            "neighbours": "Соседние позиции",
+            "clearPosition": "Очистить позицию",
+            "startingPosition": "Начальная позиция"
         },
         "scene": {
             "pip": "пип: {n}",

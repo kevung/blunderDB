@@ -214,13 +214,35 @@ msgstr "Двойной щелчок вне доски"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
-"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
-"double-clic remet à zéro."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
 msgstr ""
-"Положить показанную позицию в Стопку или убрать её оттуда — кроме "
-"редактирования и Eval, а также хода, сыгранного на доске вне Дуэли, где "
-"этот двойной щелчок выполняет сброс."
+"Положить показанную позицию в Стопку или убрать её оттуда, во всех "
+"режимах."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau (édition, Eval)"
+msgstr "Щелчок правой кнопкой вне доски (редактирование, Eval)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
+msgstr ""
+"Открыть меню доски: *Очистить позицию*, как BACKSPACE, или *Начальная"
+" позиция*."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup joué au plateau)"
+msgstr "Щелчок правой кнопкой по доске (ход, сыгранный на доске)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
+msgstr ""
+"Открыть меню доски, которое начинается с пункта *Заново*: "
+"сбрасывается ход, а не позиция."
 
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"

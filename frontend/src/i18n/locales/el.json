@@ -996,7 +996,9 @@
             "addToAnkiDeck": "Προσθήκη στην τράπουλα Anki: {deck}",
             "saveImageSVG": "Αποθήκευση εικόνας (SVG)…",
             "saveImagePNG": "Αποθήκευση εικόνας (PNG)…",
-            "neighbours": "Γειτονικές θέσεις"
+            "neighbours": "Γειτονικές θέσεις",
+            "clearPosition": "Εκκαθάριση θέσης",
+            "startingPosition": "Αρχική θέση"
         },
         "scene": {
             "pip": "pip: {n}",

@@ -5,9 +5,9 @@
  * Eval panel on the position the board is showing instead of the panel's
  * default bearoff), plus the small ergonomics batch added for #215: evaluate
  * the mirror, copy the board image with its analysis, open a new view, and —
- * only once the position has a database id — add it to an Anki deck. The
- * menu is deliberately absent in EDIT and EVAL, where the right button
- * already places the other colour's checkers.
+ * only once the position has a database id — add it to an Anki deck. In
+ * EDIT and EVAL the menu holds the two resets (clear, starting position);
+ * during a play in progress it leads with the play's own reset.
  *
  * two.js is mocked exactly as in Board.redraw.test.js — the drawing backend is
  * irrelevant here, only the contextmenu handler and the menu it renders are.
@@ -70,6 +70,10 @@ import { positionStore, emptyPosition } from '../stores/positionStore.js';
 import { statusBarModeStore, statusBarTextStore } from '../stores/uiStore.js';
 import { ankiDecksStore } from '../stores/ankiStore.js';
 import { viewStore } from '../stores/viewStore.js';
+import { quizPlayStore } from '../stores/quizPlayStore.js';
+import { newPlay } from '../services/quizPlay.js';
+import { resetBoardPlay } from '../services/transcriptionPlay.js';
+import { applyStartingCheckers } from '../utils/boardInteractions.js';
 
 /** Mount the board and right-click its canvas. */
 async function rightClickBoard() {
@@ -169,13 +173,65 @@ describe('Board context menu', () => {
         });
     });
 
-    test.each([['EDIT'], ['EVAL']])('stays out of the way in %s mode, where the right button places checkers', async (mode) => {
-        statusBarModeStore.set(mode);
+    test('EDIT: the menu holds the two resets; "clear" blanks the board as Backspace does', async () => {
+        statusBarModeStore.set('EDIT');
+        positionStore.set(applyStartingCheckers(emptyPosition()));
 
         const event = await rightClickBoard();
 
         expect(event.defaultPrevented, 'the native menu is still suppressed').toBe(true);
-        expect(screen.queryByRole('menuitem')).toBeNull();
-        expect(sendPositionToEval).not.toHaveBeenCalled();
+        expect(screen.getAllByRole('menuitem').map((item) => item.textContent?.trim())).toEqual(['Clear the position', 'Starting position']);
+        screen.getByRole('menuitem', { name: 'Clear the position' }).click();
+
+        const pos = get(positionStore);
+        expect(pos.board.points.every((p) => p.checkers === 0)).toBe(true);
+        expect(pos.board.bearoff).toEqual([15, 15]);
+        expect(pos.score).toEqual([7, 7]);
+        expect(pos.dice).toEqual([3, 1]);
+    });
+
+    test('EDIT: "starting position" sets the checkers of a new game over the clear', async () => {
+        statusBarModeStore.set('EDIT');
+
+        await rightClickBoard();
+        screen.getByRole('menuitem', { name: 'Starting position' }).click();
+
+        const pos = get(positionStore);
+        expect(pos.board.points[24]).toEqual({ checkers: 2, color: 0 });
+        expect(pos.board.points[1]).toEqual({ checkers: 2, color: 1 });
+        expect(pos.board.bearoff).toEqual([0, 0]);
+        expect(pos.score).toEqual([7, 7]);
+        expect(pos.dice).toEqual([3, 1]);
+    });
+
+    test("EVAL: the resets keep Eval's money defaults", async () => {
+        statusBarModeStore.set('EVAL');
+
+        await rightClickBoard();
+        screen.getByRole('menuitem', { name: 'Starting position' }).click();
+        let pos = get(positionStore);
+        expect(pos.board.points[13]).toEqual({ checkers: 5, color: 0 });
+        expect(pos.score).toEqual([-1, -1]);
+        expect(pos.dice).toEqual([0, 0]);
+
+        cleanup();
+        await rightClickBoard();
+        screen.getByRole('menuitem', { name: 'Clear the position' }).click();
+        pos = get(positionStore);
+        expect(pos.board.points.every((p) => p.checkers === 0)).toBe(true);
+        expect(pos.score).toEqual([-1, -1]);
+    });
+
+    test('a play in progress: the menu opens with "start over", which resets the play, not the position', async () => {
+        const play = { ...newPlay(get(positionStore), []), selected: 6 };
+        quizPlayStore.set(play);
+
+        await rightClickBoard();
+        screen.getByRole('menuitem', { name: 'Start over' }).click();
+
+        expect(get(quizPlayStore)).toEqual(resetBoardPlay(play, get(positionStore)));
+        expect(get(positionStore).id).toBe(42);
+        expect(screen.queryByRole('menuitem', { name: 'Clear the position' })).toBeNull();
+        quizPlayStore.set(null);
     });
 });

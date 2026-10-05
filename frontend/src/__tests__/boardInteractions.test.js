@@ -14,7 +14,7 @@ import { writable, get } from 'svelte/store';
 import { boardMetrics } from '../utils/boardGeometry.js';
 import { defaultBoardConfig } from '../utils/boardConfig.js';
 import { EXCLUDE_EMPTY, stackSlotCenter, cubeBox, sideLayout } from '../utils/boardScene.js';
-import { attachBoardInteractions, hitTestSideControls, applyCheckerEdit, applyCubeClick, applyScoreClick } from '../utils/boardInteractions.js';
+import { attachBoardInteractions, hitTestSideControls, applyCheckerEdit, applyCubeClick, applyScoreClick, applyStartingCheckers } from '../utils/boardInteractions.js';
 import { newPlay } from '../services/quizPlay.js';
 import { newBoardPlay, deducedDice } from '../services/transcriptionPlay.js';
 
@@ -351,15 +351,23 @@ describe('the Pile on a double click outside the frame', () => {
         expect(togglePile).toHaveBeenCalledTimes(1);
     });
 
-    test('EDIT/EVAL keep the reset, a move in progress keeps its own reset', () => {
+    test.each([['EDIT'], ['EVAL'], ['TRANSCRIBE']])('toggles the Pile in %s too, and in a play in progress: the reset is in the menu', (mode) => {
         const togglePile = vi.fn();
-        const b = mount({ mode: 'EDIT', extra: { togglePile } });
+        const b = mount({ mode, extra: { togglePile } });
         b.fire('dblclick', { x: 5, y: 5 });
-        expect(b.deps.reset).toHaveBeenCalledTimes(1);
-        b.state.mode = 'NORMAL';
+        expect(togglePile).toHaveBeenCalledTimes(1);
         b.stores.quizPlay.set(newPlay(emptyPos(), []));
         b.fire('dblclick', { x: 5, y: 5 });
-        expect(b.deps.resetQuizPlay).toHaveBeenCalledTimes(1);
+        expect(togglePile).toHaveBeenCalledTimes(2);
+        expect(b.deps.reset).not.toHaveBeenCalled();
+        expect(b.deps.resetQuizPlay).not.toHaveBeenCalled();
+    });
+
+    test('never over a modal', () => {
+        const togglePile = vi.fn();
+        const b = mount({ mode: 'EDIT', extra: { togglePile } });
+        b.stores.anyModalOpen.set(true);
+        b.fire('dblclick', { x: 5, y: 5 });
         expect(togglePile).not.toHaveBeenCalled();
     });
 
@@ -374,6 +382,85 @@ describe('the Pile on a double click outside the frame', () => {
         b.detach();
         container.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
         expect(togglePile).toHaveBeenCalledTimes(1);
+    });
+
+    test('in EDIT the margins toggle the Pile as well', () => {
+        const togglePile = vi.fn();
+        const container = document.createElement('div');
+        document.body.appendChild(container);
+        const b = mount({ mode: 'EDIT', extra: { togglePile, container } });
+        container.appendChild(b.canvas);
+        container.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+        expect(togglePile).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe('the right-click menu', () => {
+    test('NORMAL: it opens anywhere on the board', () => {
+        const b = mount({ mode: 'NORMAL' });
+        expect(b.fire('contextmenu', b.slot(7, 0), 2).defaultPrevented).toBe(true);
+        b.fire('contextmenu', { x: 5, y: 5 }, 2);
+        expect(b.deps.openContextMenu).toHaveBeenCalledTimes(2);
+    });
+
+    test.each([['EDIT'], ['EVAL']])('%s: it opens outside the frame only, where the right button edits nothing', (mode) => {
+        const b = mount({ mode });
+        const side = sideTargets(b.geom, b.cfg, 0);
+        for (const at of [b.slot(7, 0), side.die(0), b.state.cubeBox]) {
+            expect(b.fire('contextmenu', at, 2).defaultPrevented, 'no native menu').toBe(true);
+        }
+        expect(b.deps.openContextMenu).not.toHaveBeenCalled();
+        b.fire('contextmenu', { x: 5, y: 5 }, 2);
+        expect(b.deps.openContextMenu).toHaveBeenCalledTimes(1);
+    });
+
+    test('a play in progress: it opens on the board, the right button plays nothing', () => {
+        const b = mount({ mode: 'NORMAL' });
+        b.stores.quizPlay.set(newPlay(emptyPos(), []));
+        b.fire('contextmenu', b.slot(7, 0), 2);
+        expect(b.deps.openContextMenu).toHaveBeenCalledTimes(1);
+    });
+
+    test('never over a modal', () => {
+        const b = mount({ mode: 'EDIT' });
+        b.stores.anyModalOpen.set(true);
+        b.fire('contextmenu', { x: 5, y: 5 }, 2);
+        expect(b.deps.openContextMenu).not.toHaveBeenCalled();
+    });
+
+    test.each([
+        ['EDIT', false, true],
+        ['NORMAL', true, true],
+        ['NORMAL', false, false]
+    ])('margins in %s (play in progress: %s): menu %s', (mode, playing, opens) => {
+        const container = document.createElement('div');
+        document.body.appendChild(container);
+        const b = mount({ mode, extra: { container } });
+        container.appendChild(b.canvas);
+        if (playing) b.stores.quizPlay.set(newPlay(emptyPos(), []));
+        container.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
+        expect(b.deps.openContextMenu).toHaveBeenCalledTimes(opens ? 1 : 0);
+    });
+});
+
+describe('applyStartingCheckers', () => {
+    test('puts the fifteen checkers of each side where a game starts, nothing borne off', () => {
+        const pos = applyStartingCheckers(emptyPos());
+        const of = (/** @type {number} */ color) =>
+            pos.board.points.flatMap((/** @type {{ checkers: number, color: number }} */ p, /** @type {number} */ i) => (p.color === color ? [[i, p.checkers]] : []));
+        expect(of(0)).toEqual([
+            [6, 5],
+            [8, 3],
+            [13, 5],
+            [24, 2]
+        ]);
+        expect(of(1)).toEqual([
+            [1, 2],
+            [12, 5],
+            [17, 3],
+            [19, 5]
+        ]);
+        expect(pos.board.bearoff).toEqual([0, 0]);
     });
 });
 
@@ -518,18 +605,7 @@ describe('score clicks', () => {
 // ── Double-click, context menu, detach ──────────────────────────────────────
 
 describe('double-click and context menu', () => {
-    test('a double-click outside the board resets it, inside does not', () => {
-        const b = mount();
-        b.fire('dblclick', b.slot(7, 0));
-        expect(b.deps.reset).not.toHaveBeenCalled();
-        b.fire('dblclick', { x: 5, y: 5 });
-        expect(b.deps.reset).toHaveBeenCalledTimes(1);
-        b.state.mode = 'NORMAL';
-        b.fire('dblclick', { x: 5, y: 5 });
-        expect(b.deps.reset).toHaveBeenCalledTimes(1);
-    });
-
-    test('right-click opens the menu in NORMAL mode only, never when a modal is open, and always eats the native menu', () => {
+    test('right-click on a point opens the menu in NORMAL mode only, never when a modal is open, and always eats the native menu', () => {
         const b = mount({ mode: 'NORMAL' });
         const at = b.slot(7, 0);
         let event = b.fire('contextmenu', at, 2);

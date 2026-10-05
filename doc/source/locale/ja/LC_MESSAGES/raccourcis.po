@@ -207,10 +207,29 @@ msgstr "盤面外でのダブルクリック"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
-"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
-"double-clic remet à zéro."
-msgstr "表示中の局面をパイルに載せる、または外す。ただし編集とEvalでは、またデュエル以外で盤面上で手を進めている間は、このダブルクリックはリセットになります。"
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
+msgstr "表示中の局面をパイルに載せる、または外す。すべてのモードで使えます。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau (édition, Eval)"
+msgstr "盤面の外で右クリック（編集、Eval）"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
+msgstr "盤面のメニューを開く：\\ *局面を消去*\\ （BACKSPACE と同じ）または\\ *初期配置*\\ 。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup joué au plateau)"
+msgstr "盤面を右クリック（盤上で打った手）"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
+msgstr "盤面のメニューを開く。先頭は\\ *やり直す*\\ で、リセットされるのは手であり、局面ではありません。"
 
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"

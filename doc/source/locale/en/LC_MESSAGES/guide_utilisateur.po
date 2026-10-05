@@ -894,11 +894,15 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:466
 msgid ""
-"pour effacer la position, double-clic sur une zone vide en dehors du "
-"board ou appuyer sur la touche *RETOUR ARRIERE*."
+"pour effacer la position, clic droit sur une zone vide en dehors du "
+"board puis *Effacer la position*, ou appuyer sur la touche *RETOUR "
+"ARRIERE*. Le même menu propose *Position de départ*, qui pose les "
+"pions d'une partie neuve."
 msgstr ""
-"To clear the position, double-click on an empty area outside the board or"
-" press the *BACKSPACE* key."
+"To clear the position, right-click on an empty area outside the board"
+" then *Clear the position*, or press the *BACKSPACE* key. The same "
+"menu offers *Starting position*, which sets up the checkers of a new "
+"game."
 
 #: ../../source/guide_utilisateur.rst:469
 msgid ""

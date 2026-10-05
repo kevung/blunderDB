@@ -1,5 +1,5 @@
 // Mouse handling of the board: hit-testing of the drawn scene and the position edits each click
-// performs in EDIT and EVAL mode, plus double-click reset and the right-click menu gate.
+// performs in EDIT and EVAL mode, plus the double-click Pile gesture and the right-click menu gate.
 // Everything comes through `deps` (no globals), so the flow runs in jsdom on plain stores.
 // Every hit test goes through boardMouseToDrawing(): the canvas may be CSS-scaled (interface
 // zoom, side layout) and raw client pixels drift.
@@ -105,6 +105,27 @@ export function hitTestSideControls(x, y, geom, cfg, playerOnRoll) {
 export function isOutsideBoard(x, y, geom) {
     const { originX, originY, boardWidth, boardHeight } = geom;
     return x < originX - boardWidth / 2 || x > originX + boardWidth / 2 || y < originY - boardHeight / 2 || y > originY + boardHeight / 2;
+}
+
+/**
+ * The checkers of a new game: 2 on the 24-point, 5 on the 13, 3 on the 8, 5 on the 6 for each
+ * side (colour 0 counts from point 1, colour 1 from point 24), nothing borne off. Cube, score
+ * and dice are the caller's.
+ * @param {BoardPosition} pos
+ */
+export function applyStartingCheckers(pos) {
+    pos.board.points = pos.board.points.map(() => ({ checkers: 0, color: -1 }));
+    for (const [point, checkers] of [
+        [24, 2],
+        [13, 5],
+        [8, 3],
+        [6, 5]
+    ]) {
+        pos.board.points[point] = { checkers, color: 0 };
+        pos.board.points[25 - point] = { checkers, color: 1 };
+    }
+    pos.board.bearoff = [0, 0];
+    return pos;
 }
 
 /**
@@ -225,8 +246,8 @@ function stepDie(value, button) {
  *                          quizPlay, transcriptionCube }
  *   getPreviousDice()    dice saved when a player rectangle cleared them
  *   setPreviousDice(d)
- *   reset()              blank the board (double-click outside, mode-specific)
- *   openContextMenu(at)  { x, y } client coordinates, NORMAL-like modes only
+ *   openContextMenu(at)  { x, y } client coordinates; in EDIT/EVAL only outside the frame and
+ *                        its controls, where the right button edits nothing
  *   displayRoller()      the player on roll as drawn: the side the dice are drawn on
  *   togglePile()         the Pile gesture, on a double click outside the frame
  *   container            optional element around the canvas: its margins are outside the frame
@@ -545,35 +566,31 @@ export function attachBoardInteractions(canvas, deps) {
     /** @param {MouseEvent} event */
     function onDoubleClick(event) {
         const { x, y } = toDrawing(event);
-        const hit = hitAt(x, y);
-        // Hors du cadre, le double-clic met la position sur la Pile, ou l'en retire. En EDIT/EVAL
-        // et pendant un coup joué hors Duel, il garde son sens premier : remettre à zéro.
-        const outside = hit.kind === 'outside';
-        if (outside && !get(stores.anyModalOpen) && (deps.duel?.holds() || (!editable() && !(stores.quizPlay && get(stores.quizPlay))))) {
-            deps.togglePile?.();
-            return;
-        }
-        if (deps.duel?.holds()) return;
-        if (stores.quizPlay && get(stores.quizPlay)) {
-            // Double-clic hors damier : remet le coup à zéro, pas la position.
-            if (isOutsideBoard(x, y, metrics())) deps.resetQuizPlay?.();
-            return;
-        }
-        if (!editable()) return;
-        if (isOutsideBoard(x, y, metrics())) deps.reset();
+        // Hors du cadre, dans tous les modes, le double-clic met la position sur la Pile, ou l'en
+        // retire. La remise à zéro est au menu contextuel (Board.svelte).
+        if (hitAt(x, y).kind === 'outside' && !get(stores.anyModalOpen)) deps.togglePile?.();
     }
 
-    // Right-click menu only where the right button is otherwise idle: in EDIT and EVAL it
-    // places the other colour's checker.
+    /**
+     * In EDIT and EVAL the right button edits the board (the other colour's checker, a die, the
+     * cube, a score): the menu opens only where it is idle, outside the frame and its controls.
+     * @param {number} x
+     * @param {number} y
+     */
+    function rightButtonIdle(x, y) {
+        if (hitAt(x, y).kind !== 'outside') return false;
+        const hit = hitTestSideControls(x, y, metrics(), cfg, get(stores.position).player_on_roll);
+        return hit.die === null && hit.playerRect === null && hit.score === null;
+    }
+
     /** @param {MouseEvent} event */
     function onContextMenu(event) {
         event.preventDefault(); // no native menu, in every mode
-        if (editable()) return;
         if (get(stores.anyModalOpen)) return;
+        const { x, y } = toDrawing(event);
         if (deps.duel?.holds()) {
-            const { x, y } = toDrawing(event);
             if (!deps.duel.context(hitAt(x, y))) return;
-        }
+        } else if (editable() && !rightButtonIdle(x, y)) return;
         deps.openContextMenu({ x: event.clientX, y: event.clientY });
     }
 
@@ -584,14 +601,22 @@ export function attachBoardInteractions(canvas, deps) {
     /** @param {MouseEvent} event */
     function onMarginDoubleClick(event) {
         if (!inMargin(event) || get(stores.anyModalOpen)) return;
-        if (deps.duel?.holds() || (!editable() && !(stores.quizPlay && get(stores.quizPlay)))) deps.togglePile?.();
+        deps.togglePile?.();
     }
 
+    // In the margins the menu opens where it carries something of its own: the Duel's menu, and
+    // the reset entries of EDIT, EVAL and a play in progress.
     /** @param {MouseEvent} event */
     function onMarginContextMenu(event) {
-        if (!inMargin(event) || !deps.duel?.holds() || get(stores.anyModalOpen)) return;
+        if (!inMargin(event) || get(stores.anyModalOpen)) return;
+        if (deps.duel?.holds()) {
+            event.preventDefault();
+            if (deps.duel.context({ kind: 'outside' })) deps.openContextMenu({ x: event.clientX, y: event.clientY });
+            return;
+        }
+        if (!editable() && !(stores.quizPlay && get(stores.quizPlay))) return;
         event.preventDefault();
-        if (deps.duel.context({ kind: 'outside' })) deps.openContextMenu({ x: event.clientX, y: event.clientY });
+        deps.openContextMenu({ x: event.clientX, y: event.clientY });
     }
 
     canvas.addEventListener('mousedown', onMouseDown);

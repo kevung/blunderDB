@@ -996,7 +996,9 @@
             "addToAnkiDeck": "Añadir al mazo de Anki: {deck}",
             "saveImageSVG": "Guardar la imagen (SVG)…",
             "saveImagePNG": "Guardar la imagen (PNG)…",
-            "neighbours": "Posiciones vecinas"
+            "neighbours": "Posiciones vecinas",
+            "clearPosition": "Borrar la posición",
+            "startingPosition": "Posición inicial"
         },
         "scene": {
             "pip": "pip: {n}",

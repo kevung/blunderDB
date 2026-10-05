@@ -215,14 +215,35 @@ msgstr "Διπλό κλικ έξω από τη σκακιέρα"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
-"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
-"double-clic remet à zéro."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
 msgstr ""
-"Τοποθέτηση της εμφανιζόμενης θέσης στη Στοίβα ή αφαίρεσή της — εκτός από "
-"την επεξεργασία και το Eval, και κατά τη διάρκεια μιας κίνησης που "
-"παίζεται στη σκακιέρα εκτός Μονομαχίας, όπου αυτό το διπλό κλικ "
-"μηδενίζει."
+"Τοποθέτηση της εμφανιζόμενης θέσης στη Στοίβα ή αφαίρεσή της, σε όλες"
+" τις λειτουργίες."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau (édition, Eval)"
+msgstr "Δεξί κλικ έξω από τη σκακιέρα (επεξεργασία, Eval)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
+msgstr ""
+"Άνοιγμα του μενού της σκακιέρας: *Εκκαθάριση θέσης*, όπως το "
+"BACKSPACE, ή *Αρχική θέση*."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup joué au plateau)"
+msgstr "Δεξί κλικ στη σκακιέρα (κίνηση που παίζεται στη σκακιέρα)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
+msgstr ""
+"Άνοιγμα του μενού της σκακιέρας, που ξεκινά με το *Από την αρχή*: "
+"μηδενίζεται η κίνηση, όχι η θέση."
 
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"
