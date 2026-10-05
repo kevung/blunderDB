@@ -83,6 +83,17 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   coût et du décompte fait foi, puis de redéfinir la file sur la grammaire. Cette décision
   passe par Opus, avec un test d'égalité jeton ↔ `StudyBacklog` sur les deux backends.
 
+- **`MatchEquityTableStore.Save` croit le `Digest` fourni** (`sqlshared/met.go`). Le
+  digest est la clé de dédoublonnage et le nom de la table pour `analysis.met_id` ; il est
+  calculé par `engine.MET.Digest()` sur les valeurs parsées, pas sur les octets de `Source`.
+  Les deux appelants le recalculent depuis la source (`mets.Import`, et `mets.Carrier` pour
+  l'export, l'import, la fusion et la migration de bases), mais le contrat ne le garantit
+  pas : un futur appelant pourrait encore enregistrer un digest incohérent. Remède : `Save`
+  parse `Source` (`engine.ParseGnubgMET`), recalcule et refuse `ErrInvalid` sur écart. Les
+  ~15 fixtures des contrats (`storagetest/contract_schema_2_31.go`, `contract_met_*.go`)
+  passent des sources factices (`<met/>`, digest `"aaa"`) à réécrire en tables gnubg
+  valides, sur les deux backends. Effort S-M, test de contrat « digest incohérent refusé ».
+
 ## Ouvert — Moteur (dettes nommées dans les ADR)
 
 - **Renommage `race.Money` → `race.CubeVerdict`** et libellé de la colonne
@@ -278,6 +289,6 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 - **`move.error_mp` sans lecteur ni tenue** (mesure BMAB #6/#8, `tasks/mesure-bmab-0.37.md` § 9) : seule `repair --move-errors` l'écrit ; ni l'import ni l'analyse n'appellent `RescorePositionMoves`, aucune requête ne la lit. Pour que `E` s'y appuie (SQL exact, sans phase Go), il faut une tenue à jour à chaque écriture d'analyse ou de coup et un moyen de distinguer « pas noté » de « non notable » (NULL ambigu).
 
-- **Serveur : compare, cubeMatrix et rollouts hors de la file partagée** : ces trois routes lancent `NumCPU` goroutines par requête, sans passer par la file bornée des évaluations ; plusieurs requêtes simultanées saturent le processeur au-delà de la borne. À faire : les faire passer par la même file.
 - **Serveur : quota en octets sous PostgreSQL** : la mesure repose sur `pg_total_relation_size` et `reltuples`, globaux à la base et non au locataire, donc un canal auxiliaire faible (un locataire devine la taille des autres) ; et les 13 `COUNT` par appel ont un coût. À faire : compter par locataire, avec un cache ou un compteur tenu à jour.
 - **Export GUI : sélecteur de paquets** : l'export serveur sait se limiter à des collections, leçons ou paquets Anki (`collectionIds`, `lessonIds`, `deckIds`), le dialogue d'export de la GUI n'offre pas ce choix.
+- **Quatre copies des helpers de fusion d'analyse** : la fusion des coups (clé par notation, la profondeur la plus grande gagne, tri par équité), celle du videau (une entrée par moteur) et l'union des coups joués existent dans `database/db_import_common.go` (`enginePriority`, `mergeCheckerMoves`, `mergePlayedMoves`), `database/db_analysis.go` (`mergeCubeAnalyses`), `ingest/merge.go` (mêmes noms, et une fusion du videau différente) et `engine/gammonnet/supersede.go` (pour `SupersedeEntries`). Elles divergent déjà : `ingest` départage une égalité d'équité par la notation (ordre total), les autres non (ordre de map). À faire : une seule implémentation (au niveau `engine`, qui a `NormalizeMove`) appelée par les quatre, avec la règle de départage d'`ingest`.

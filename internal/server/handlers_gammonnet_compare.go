@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -54,7 +52,7 @@ func (s *Server) handleGammonNetCompare(w http.ResponseWriter, r *http.Request) 
 		writeStorageError(w, err)
 		return
 	}
-	writeJSONResp(w, compareGathered(ctx, positions, stored, req.Ply, req.PruneK, req.Candidates, s.engineWorkers, s.quota.spender(scope)))
+	writeJSONResp(w, compareGathered(ctx, s.analysis, scope, positions, stored, req.Ply, req.PruneK, req.Candidates, s.quota.spender(scope)))
 }
 
 // gammonnetCompareResp is the comparison, and whether the tenant's engine
@@ -100,54 +98,29 @@ func gammonnetPositionsWithForeignAnalysis(ctx context.Context, s storage.Storag
 	return positions, analyses, nil
 }
 
-// compareGathered runs the engine over the gathered positions on workers
-// goroutines, each reusing one searcher, and folds the samples. A worker
-// stops once spend says the tenant's engine time is out.
-func compareGathered(ctx context.Context, positions []domain.Position, stored []*domain.PositionAnalysis, ply, pruneK, candidates, workers int, spend func(time.Duration) bool) gammonnetCompareResp {
+// compareGathered runs the engine over the gathered positions, one unit of
+// the shared workers per position, and folds the samples. It stops handing
+// out positions once spend says the tenant's engine time is out.
+func compareGathered(ctx context.Context, pool *analysisPool, scope string, positions []domain.Position, stored []*domain.PositionAnalysis, ply, pruneK, candidates int, spend func(time.Duration) bool) gammonnetCompareResp {
 	total := len(positions)
 	if total == 0 {
 		return gammonnetCompareResp{AnalysisComparison: gammonnet.Aggregate(nil)}
 	}
-	jobs := min(max(workers, 1), total)
-	var spent atomic.Bool
-
-	var next atomic.Int64
-	results := make(chan gammonnet.ComparisonSample, jobs)
-	var wg sync.WaitGroup
-	wg.Add(jobs)
-	for w := 0; w < jobs; w++ {
-		go func() {
-			defer wg.Done()
-			searcher, _ := gammonnet.NewBatchSearcher(ply, pruneK)
-			for {
-				if ctx.Err() != nil {
-					return
-				}
-				i := next.Add(1) - 1
-				if i >= int64(total) {
-					return
-				}
-				start := time.Now()
-				results <- gammonnet.CompareOne(&positions[i], stored[i], positions[i].ID, searcher, ply, pruneK, candidates)
-				if !spend(time.Since(start)) {
-					spent.Store(true)
-					return
-				}
-			}
-		}()
-	}
-	go func() {
-		wg.Wait()
-		close(results)
-	}()
-
+	results := make([]gammonnet.ComparisonSample, total)
+	ran := make([]bool, total)
+	err := pool.each(ctx, scope, total, spend, func(i int, get searcherFor) {
+		results[i] = gammonnet.CompareOne(&positions[i], stored[i], positions[i].ID, get(ply, pruneK), ply, pruneK, candidates)
+		ran[i] = true
+	})
 	samples := make([]gammonnet.ComparisonSample, 0, total)
-	for res := range results {
-		samples = append(samples, res)
+	for i, ok := range ran {
+		if ok {
+			samples = append(samples, results[i])
+		}
 	}
 	return gammonnetCompareResp{
 		AnalysisComparison: gammonnet.Aggregate(samples),
 		Gathered:           total,
-		QuotaExceeded:      spent.Load() && len(samples) < total,
+		QuotaExceeded:      errors.Is(err, errAnalysisSpent) && len(samples) < total,
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"sync/atomic"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/rollout"
@@ -85,9 +86,8 @@ func (s *Server) handleRolloutPosition(w http.ResponseWriter, r *http.Request) {
 	}
 	ctx, cancel := context.WithCancel(r.Context())
 	defer cancel()
-	m, spent := s.rolloutMeter(scope, &settings, cancel)
-	res, err := rollouts.Position(ctx, s.opts.Storage, scope, req.PositionID, settings, req.Moves, func(rollout.Progress) { m.tick() })
-	m.tick()
+	exec, spent := s.rolloutExec(ctx, scope, cancel)
+	res, err := rollouts.Position(ctx, s.opts.Storage, scope, req.PositionID, settings, req.Moves, exec, nil)
 	switch {
 	case spent.Load() && err != nil:
 		s.refuseAnalysis(w, scope) // cut short: nothing is stored
@@ -99,6 +99,9 @@ func (s *Server) handleRolloutPosition(w http.ResponseWriter, r *http.Request) {
 		return
 	case errors.Is(err, rollouts.ErrLoad):
 		writeStorageError(w, err)
+		return
+	case errors.Is(err, errPoolClosed):
+		writeErrorCode(w, CodeUnavailable, err.Error())
 		return
 	case err != nil:
 		// The engine refused the request: a play that is not legal, a
@@ -170,10 +173,9 @@ func (s *Server) handleRolloutFilter(w http.ResponseWriter, r *http.Request) {
 		emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
 		return
 	}
-	m, spent := s.rolloutMeter(scope, &settings, cancel)
+	exec, spent := s.rolloutExec(ctx, scope, cancel)
 	// Progress is emitted from Batch's own goroutine, the only writer.
-	sum, err := rollouts.Batch(ctx, positions, settings, func(p rollouts.Progress) {
-		m.tick()
+	sum, err := rollouts.Batch(ctx, positions, settings, exec, func(p rollouts.Progress) {
 		emit(map[string]any{"event": "progress", "done": p.Done, "total": p.Total,
 			"positionId": p.PositionID, "games": p.Games, "maxGames": p.MaxGames})
 	}, func(id int64, res *rollout.Result) error {
@@ -183,7 +185,6 @@ func (s *Server) handleRolloutFilter(w http.ResponseWriter, r *http.Request) {
 		emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
 		return
 	}
-	m.tick()
 	event := "done"
 	switch {
 	case spent.Load() && sum.Cancelled:
@@ -197,20 +198,23 @@ func (s *Server) handleRolloutFilter(w http.ResponseWriter, r *http.Request) {
 		"refused": sum.Refused, "failed": sum.Failed, "signature": settings.Signature()})
 }
 
-// rolloutMeter charges a rollout's engine time to scope after every batch of
-// games and cancels it once the tenant's time is out, which spent then
-// reports. It pins settings' workers to what the instance runs at once, the
-// count the time is multiplied by: workers asked beyond the cores would only
-// take turns on them.
-func (s *Server) rolloutMeter(scope string, settings *rollout.Settings, cancel context.CancelFunc) (*meter, *atomic.Bool) {
-	if settings.Workers == 0 || settings.Workers > s.engineWorkers {
-		settings.Workers = s.engineWorkers
-	}
+// rolloutExec plays a rollout's games as units of the shared workers
+// (analysisPool), so that a long rollout takes its turn with the other
+// tenants' work game by game instead of holding the cores until it ends. Each
+// game is charged to scope as it finishes; once the tenant's time is out the
+// rollout is cancelled, which spent then reports. Who plays a game changes
+// nothing in the result: a rollout is a function of its settings and seed.
+func (s *Server) rolloutExec(ctx context.Context, scope string, cancel context.CancelFunc) (rollout.Exec, *atomic.Bool) {
 	spent := new(atomic.Bool)
-	m := s.meter(scope, settings.Workers)
-	m.onSpent = func() {
-		spent.Store(true)
-		cancel()
+	spend := s.quota.spender(scope)
+	charge := func(d time.Duration) bool {
+		if !spend(d) {
+			spent.Store(true)
+			cancel()
+		}
+		return true
 	}
-	return m, spent
+	return func(n int, task func(int)) error {
+		return s.analysis.each(ctx, scope, n, charge, func(i int, _ searcherFor) { task(i) })
+	}, spent
 }

@@ -12,6 +12,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -67,6 +68,26 @@ func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysi
 	err := d.db.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return err
+	}
+
+	// A gammonNet verdict is written by the rule the serve daemon writes by
+	// too, with or without a stored row, so both leave the same row
+	// (CLI/GUI/server parity); everything below is the merge of any other
+	// caller.
+	if metID != nil {
+		var existing *PositionAnalysis
+		if existingID > 0 {
+			decoded, err := decodeAnalysisFromStorage(existingAnalysisData)
+			if err != nil {
+				return err
+			}
+			existing = &decoded
+		}
+		analysis = gammonnet.SupersedeEntries(existing, analysis)
+		if analysis.CreationDate.IsZero() {
+			analysis.CreationDate = time.Now()
+		}
+		return d.saveAnalysisTx(positionID, &analysis, *metID)
 	}
 
 	if existingID > 0 {
@@ -187,15 +208,23 @@ func (d *Database) saveAnalysisLocked(positionID int64, analysis PositionAnalysi
 	if metID == nil {
 		return d.store.Analyses().Save(ctx, "", positionID, &analysis)
 	}
+	return d.saveAnalysisTx(positionID, &analysis, *metID)
+}
+
+// saveAnalysisTx writes analysis and tags it with the table metID in one
+// transaction: a verdict stored without its table would be read as
+// Kazaross-XG2 (ADR-0068).
+func (d *Database) saveAnalysisTx(positionID int64, analysis *PositionAnalysis, metID int64) error {
+	ctx := context.Background()
 	tx, err := d.store.BeginTx(ctx)
 	if err != nil {
 		return err
 	}
 	defer func() { _ = tx.Rollback() }()
-	if err := tx.Analyses().Save(ctx, "", positionID, &analysis); err != nil {
+	if err := tx.Analyses().Save(ctx, "", positionID, analysis); err != nil {
 		return err
 	}
-	if err := tx.MatchEquityTables().TagAnalyses(ctx, "", *metID, []int64{positionID}); err != nil {
+	if err := tx.MatchEquityTables().TagAnalyses(ctx, "", metID, []int64{positionID}); err != nil {
 		return err
 	}
 	return tx.Commit()

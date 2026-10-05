@@ -1201,7 +1201,8 @@ Stats (voir :ref:`stats`).
 * ``--player <nom>``, ``--tournament <ids>``, ``--from <AAAA-MM-JJ>``,
   ``--to <AAAA-MM-JJ>``, ``--decision-type all|checker|cube`` — Le filtre des
   matchs ; les journaux du quiz et d'Anki ne portent pas de joueur.
-* ``--format text|json`` — Le JSON porte aussi la liste des sessions de quiz.
+* ``--format text|json`` — Le JSON porte aussi la liste des sessions de quiz ;
+  le texte et le JSON donnent le PR du quiz par plan de jeu.
 
 Chaque série garde son nombre d'échantillons : une fenêtre sans décision y est
 un tiret en texte, un compte nul en JSON, jamais un zéro.

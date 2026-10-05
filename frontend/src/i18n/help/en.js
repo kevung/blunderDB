@@ -608,6 +608,7 @@ export default {
 <li>the <strong>match PR</strong> of the current filter, weighted by the number of decisions;</li>
 <li>the <strong>Anki retention</strong>: the share of reviews of already learned cards graded <em>Hard</em> or better, read on the right axis (in %).</li>
 </ul>
+<p>Below the chart, the <strong>quiz PR by plan of play</strong> lists the quiz decisions drawn from library positions, the worst plans first, with the PR of the last window in which the plan was played.</p>
 <p>In parentheses, the number of decisions or reviews behind each value: a window without samples has no value — a dash, not a zero. The filter restricts the matches only; the quiz and Anki journals are yours and carry no player. Nothing more is recorded: the three series are read back from the existing journals. On the command line: <code>blunderdb stats training</code> (see stats — Recurring errors).</p>
 <h5>Breakdown by cube action</h5>
 <p>A bar chart displays the PR (or MWC) for each type of cube decision: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Each bar also shows the number of decisions and the blunder rate in a tooltip.</p>

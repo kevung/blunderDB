@@ -4,35 +4,21 @@ package postgres_test
 
 import (
 	"context"
+	"strconv"
 	"testing"
 
-	"github.com/jackc/pgx/v5"
-
-	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/storagetest"
 )
 
 // TestMigrate_028_GameWinner replays 028 on a library holding one match per
 // source of storagetest.WinnerMigrationCases, the fixture SQLite's
-// TestMigrate_2_25_0_to_2_26_0_GameWinner runs too, with RLS applied: the
-// migration must convert every tenant's games and leave RLS FORCEd.
+// TestMigrate_2_25_0_to_2_26_0_GameWinner runs too, with RLS applied and
+// FORCEd on an owner that is neither superuser nor BYPASSRLS: a superuser
+// would see every row even if 028 forgot to lift FORCE. The migration must
+// convert every tenant's games and leave RLS FORCEd.
 func TestMigrate_028_GameWinner(t *testing.T) {
 	ctx := context.Background()
-	dsn := startPostgres(t)
-
-	s, err := pg.Open(ctx, dsn, nil)
-	if err != nil {
-		t.Fatalf("Open: %v", err)
-	}
-	defer s.Close()
-	if err := s.ApplyRLS(ctx); err != nil {
-		t.Fatalf("ApplyRLS: %v", err)
-	}
-	conn, err := pgx.Connect(ctx, dsn)
-	if err != nil {
-		t.Fatalf("connect: %v", err)
-	}
-	defer conn.Close(ctx)
+	s, conn, _ := openAsRLSOwner(t)
 
 	cases := storagetest.WinnerMigrationCases()
 	gameIDs := make([][]int64, len(cases))
@@ -62,6 +48,10 @@ func TestMigrate_028_GameWinner(t *testing.T) {
 		}
 	}
 
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatalf("ApplyRLS: %v", err)
+	}
+
 	// 028 is not idempotent, so it commits with its schema_migrations row or
 	// not at all: a failure while recording it must leave every game as it
 	// was, and the next Migrate converts them once.
@@ -84,9 +74,11 @@ func TestMigrate_028_GameWinner(t *testing.T) {
 		for i, c := range cases {
 			for n, g := range c.Games {
 				var got *int32
-				if err := conn.QueryRow(ctx, `SELECT winner FROM game WHERE id = $1`, gameIDs[i][n]).Scan(&got); err != nil {
-					t.Fatalf("%s: read game %d: %v", c.Name, n+1, err)
-				}
+				asTenant(t, conn, strconv.Itoa(i%2), func() {
+					if err := conn.QueryRow(ctx, `SELECT winner FROM game WHERE id = $1`, gameIDs[i][n]).Scan(&got); err != nil {
+						t.Fatalf("%s: read game %d: %v", c.Name, n+1, err)
+					}
+				})
 				switch {
 				case converted && (got == nil || *got != g.Want):
 					t.Errorf("%s, game %d: winner %v, want %d", c.Name, n+1, got, g.Want)
@@ -110,13 +102,5 @@ func TestMigrate_028_GameWinner(t *testing.T) {
 		t.Fatalf("second Migrate: %v", err)
 	}
 	checkWinners(true)
-	for _, table := range []string{"game", "match", "import_batch"} {
-		var forced bool
-		if err := conn.QueryRow(ctx, `SELECT relforcerowsecurity FROM pg_class WHERE oid = to_regclass($1)`, table).Scan(&forced); err != nil {
-			t.Fatalf("inspect %s: %v", table, err)
-		}
-		if !forced {
-			t.Errorf("%s: RLS no longer FORCEd after 028", table)
-		}
-	}
+	assertForced(t, conn, "game", "match", "import_batch")
 }

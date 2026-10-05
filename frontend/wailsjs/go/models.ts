@@ -6353,6 +6353,7 @@ export namespace storage {
 	    Window: string;
 	    Sessions: TrainingQuizSession[];
 	    Periods: TrainingPeriod[];
+	    Themes: TrainingTheme[];
 	
 	    static createFrom(source: any = {}) {
 	        return new TrainingStats(source);
@@ -6363,6 +6364,59 @@ export namespace storage {
 	        this.Window = source["Window"];
 	        this.Sessions = this.convertValues(source["Sessions"], TrainingQuizSession);
 	        this.Periods = this.convertValues(source["Periods"], TrainingPeriod);
+	        this.Themes = this.convertValues(source["Themes"], TrainingTheme);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class TrainingThemePoint {
+	    Start: string;
+	    Decisions: number;
+	    PR: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TrainingThemePoint(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Start = source["Start"];
+	        this.Decisions = source["Decisions"];
+	        this.PR = source["PR"];
+	    }
+	}
+	export class TrainingTheme {
+	    Theme: string;
+	    Decisions: number;
+	    PR: number;
+	    Periods: TrainingThemePoint[];
+	
+	    static createFrom(source: any = {}) {
+	        return new TrainingTheme(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Theme = source["Theme"];
+	        this.Decisions = source["Decisions"];
+	        this.PR = source["PR"];
+	        this.Periods = this.convertValues(source["Periods"], TrainingThemePoint);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

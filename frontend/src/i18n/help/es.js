@@ -608,6 +608,7 @@ export default {
 <li>el <strong>PR de las partidas</strong> del filtro actual, ponderado por el número de decisiones;</li>
 <li>la <strong>retención de Anki</strong>: la parte de las revisiones de tarjetas ya aprendidas calificadas <em>Difícil</em> o mejor, leída en el eje derecho (en %).</li>
 </ul>
+<p>Bajo el gráfico, el <strong>PR del quiz por plan de juego</strong> ordena las decisiones del quiz sacadas de posiciones de la biblioteca, los peores planes primero, con el PR de la última ventana en que se jugó el plan.</p>
 <p>Entre paréntesis, el número de decisiones o de revisiones que hay detrás de cada valor: una ventana sin muestras no tiene valor — un guion, no un cero. El filtro solo restringe las partidas; el diario del quiz y el de Anki son suyos y no llevan jugador. No se registra nada más: las tres series se releen de los diarios existentes. En línea de comandos: <code>blunderdb stats training</code> (véase stats — Errores recurrentes).</p>
 <h5>Reparto por acción de cubo</h5>
 <p>Un diagrama de barras muestra el PR (o MWC) para cada tipo de decisión de cubo: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Cada barra indica también el número de decisiones y la tasa de blunders en una información emergente.</p>

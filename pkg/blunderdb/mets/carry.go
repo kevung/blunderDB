@@ -35,6 +35,7 @@ func ReadTables(ctx context.Context, src storage.MatchEquityTableStore, scope st
 // Carrier maps a source's table ids onto a receiver's, storing each table in
 // the receiver the first time an analysis cites it.
 type Carrier struct {
+	op     string
 	dst    storage.MatchEquityTableStore
 	scope  string
 	tables map[int64]*domain.MatchEquityTable
@@ -43,9 +44,10 @@ type Carrier struct {
 
 // NewCarrier carries the source tables into dst's scope. Save never sets the
 // current flag, so the receiver's choice of table is left as it was
-// (ADR-0007).
-func NewCarrier(dst storage.MatchEquityTableStore, scope string, tables []*domain.MatchEquityTable) *Carrier {
-	c := &Carrier{dst: dst, scope: scope, tables: map[int64]*domain.MatchEquityTable{}, target: map[int64]int64{}}
+// (ADR-0007). op names the operation (import, export, migration) in the
+// errors, for the user who sees one.
+func NewCarrier(op string, dst storage.MatchEquityTableStore, scope string, tables []*domain.MatchEquityTable) *Carrier {
+	c := &Carrier{op: op, dst: dst, scope: scope, tables: map[int64]*domain.MatchEquityTable{}, target: map[int64]int64{}}
 	for _, t := range tables {
 		c.tables[t.ID] = t
 	}
@@ -69,17 +71,35 @@ func (c *Carrier) Target(ctx context.Context, srcID int64) (int64, error) {
 	}
 	t, ok := c.tables[srcID]
 	if !ok {
-		return 0, fmt.Errorf("source match equity table %d: %w", srcID, storage.ErrNotFound)
+		return 0, fmt.Errorf("%s: source match equity table %d: %w", c.op, srcID, storage.ErrNotFound)
+	}
+	digest, err := sourceDigest(t)
+	if err != nil {
+		return 0, fmt.Errorf("%s: match equity table %q of the source: %w", c.op, t.Name, err)
 	}
 	var id int64
-	if t.Digest != engine.KazarossXG2Digest() {
-		var err error
-		if id, err = c.dst.Save(ctx, c.scope, domain.MatchEquityTable{Name: t.Name, Digest: t.Digest, Source: t.Source}); err != nil {
+	if digest != engine.KazarossXG2Digest() {
+		if id, err = c.dst.Save(ctx, c.scope, domain.MatchEquityTable{Name: t.Name, Digest: digest, Source: t.Source}); err != nil {
 			return 0, err
 		}
 	}
 	c.target[srcID] = id
 	return id, nil
+}
+
+// sourceDigest is the digest of the values t's source holds. The digest a
+// source database declares is not believed: it names the table in the
+// receiver, so a forged one would pass another table's analyses off as valued
+// with a table already held, the built-in one included.
+func sourceDigest(t *domain.MatchEquityTable) (string, error) {
+	if len(t.Source) > MaxSourceBytes {
+		return "", fmt.Errorf("%w: its text holds %d bytes, more than a table holds", storage.ErrInvalid, len(t.Source))
+	}
+	m, err := engine.ParseGnubgMET([]byte(t.Source))
+	if err != nil {
+		return "", fmt.Errorf("%w: its text is not a gnubg table: %w", storage.ErrInvalid, err)
+	}
+	return m.Digest(), nil
 }
 
 // Side is one of the two analyses a merge combines, with the table its

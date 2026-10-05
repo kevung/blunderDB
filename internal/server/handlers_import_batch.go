@@ -376,7 +376,7 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 
 	var size int64
 	for _, p := range paths {
-		if fi, err := os.Stat(p); err == nil {
+		if fi, err := os.Stat(p); err == nil { //nolint:gosec // G703: p comes from ingest.CollectFiles, over the archive extracted in the workDir or a directory resolveBatchDir confined to --import-dir; the journal only filters
 			size += fi.Size()
 		}
 	}

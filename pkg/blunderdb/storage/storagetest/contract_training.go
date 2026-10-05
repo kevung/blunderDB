@@ -230,3 +230,39 @@ func testTrainingMissedPositions(t *testing.T, s storage.Storage) {
 	}
 	equal("Missed(after delete)", after, []int64{pos[0]})
 }
+
+// DecisionErrors lists the judged questions of the Decision exercise that still
+// reach a position: out-of-time questions, number exercises and positions
+// deleted since are left out.
+func testTrainingDecisionErrors(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	tr := s.Training()
+	p1, p2 := provenancePos(1), provenancePos(2)
+	id1, err := s.Positions().Save(ctx, "", &p1)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	id2, err := s.Positions().Save(ctx, "", &p2)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	mp := func(v int) *int { return &v }
+	item := func(id int64, cost *int) storage.TrainingItem {
+		return storage.TrainingItem{NumberType: "decision.checker", PositionID: &id, ErrorMp: cost}
+	}
+	if _, err := tr.Save(ctx, "", storage.TrainingSession{Exercise: "decision", NumbersAsked: 3,
+		Items: []storage.TrainingItem{item(id1, mp(120)), item(id1, nil), item(id2, mp(30))}}); err != nil {
+		t.Fatalf("Save: %v", err)
+	}
+	if _, err := tr.Save(ctx, "", storage.TrainingSession{Exercise: "pips", NumbersAsked: 1,
+		Items: []storage.TrainingItem{{NumberType: "pips.bottom"}}}); err != nil {
+		t.Fatalf("Save pips: %v", err)
+	}
+	got, err := tr.DecisionErrors(ctx, "")
+	if err != nil {
+		t.Fatalf("DecisionErrors: %v", err)
+	}
+	if len(got) != 2 || got[0].ErrorMp != 120 || got[1].ErrorMp != 30 || got[0].CreatedAt == "" {
+		t.Fatalf("DecisionErrors = %+v, want the two judged questions, oldest first", got)
+	}
+}

@@ -608,6 +608,7 @@ export default {
 <li>nykyisen suodattimen <strong>otteluiden PR</strong>, painotettuna päätösten määrällä;</li>
 <li><strong>Ankin pysyvyys</strong>: jo opittujen korttien kertausten osuus, jotka on arvioitu <em>Vaikea</em> tai paremmaksi, luettuna oikealta akselilta (%).</li>
 </ul>
+<p>Kaavion alla <strong>visan PR pelisuunnitelman mukaan</strong> listaa kirjaston asemista arvotut visan päätökset, huonoimmat suunnitelmat ensin, sekä viimeisen ikkunan PR:n, jossa suunnitelmaa pelattiin.</p>
 <p>Sulkeissa kunkin arvon takana oleva päätösten tai kertausten määrä: ikkunalla ilman otosta ei ole arvoa — viiva, ei nolla. Suodatin rajaa vain ottelut; visan ja Ankin lokit ovat omiasi eivätkä sisällä pelaajaa. Mitään ei tallenneta lisää: kolme sarjaa luetaan olemassa olevista lokeista. Komentorivillä: <code>blunderdb stats training</code> (katso stats — Toistuvat virheet).</p>
 <h5>Jakauma kuutiotoimen mukaan</h5>
 <p>Pylväskaavio näyttää PR:n (tai MWC:n) jokaiselle kuutiopäätöksen tyypille: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jokainen pylväs näyttää myös päätösten määrän ja blunder-osuuden työkaluvihjeessä.</p>

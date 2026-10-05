@@ -608,6 +608,7 @@ export default {
 <li>le <strong>PR des matchs</strong> du filtre courant, pondéré par le nombre de décisions ;</li>
 <li>la <strong>rétention Anki</strong> : la part des révisions de cartes déjà apprises notées <em>Difficile</em> ou mieux, lue sur l'axe de droite (en %).</li>
 </ul>
+<p>Sous le graphique, le <strong>PR du quiz par plan de jeu</strong> range les décisions du quiz tirées de positions de la bibliothèque, les pires plans d'abord, avec le PR de la dernière fenêtre où le plan a été joué.</p>
 <p>Entre parenthèses, le nombre de décisions ou de révisions derrière chaque valeur : une fenêtre sans échantillon n'a pas de valeur — un tiret, pas un zéro. Le filtre ne restreint que les matchs ; le journal du quiz et celui d'Anki sont les vôtres et ne portent pas de joueur. Rien n'est enregistré en plus : les trois séries sont relues dans les journaux existants. En ligne de commande : <code>blunderdb stats training</code> (voir stats — Erreurs récurrentes).</p>
 <h5>Répartition par action de videau</h5>
 <p>Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision de videau : <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Chaque barre indique également le nombre de décisions et le taux de blunders en infobulle.</p>

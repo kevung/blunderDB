@@ -17,6 +17,13 @@
 
     let periods = $derived(data?.Periods ?? []);
     let sessions = $derived(data?.Sessions ?? []);
+    let themes = $derived(data?.Themes ?? []);
+
+    function themeLabel(theme) {
+        const key = `stats.gameType_${theme}`;
+        const label = $t(key);
+        return label === key ? theme : label;
+    }
 
     const orNull = (count, value) => (count > 0 ? value : null);
 
@@ -101,6 +108,29 @@
             </tbody>
         </table>
         <p class="hint">{$t('stats.trainingSessions', { n: sessions.length })}</p>
+        {#if themes.length > 0}
+            <h3 class="section-title">{$t('stats.trainingThemes')}</h3>
+            <p class="hint">{$t('stats.trainingThemesHint')}</p>
+            <table class="themes">
+                <thead>
+                    <tr>
+                        <th>{$t('stats.trainingTheme')}</th>
+                        <th class="num">{$t('stats.trainingQuizPR')}</th>
+                        <th class="num">{$t('stats.trainingPeriod')}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each themes as th (th.Theme)}
+                        {@const last = th.Periods[th.Periods.length - 1]}
+                        <tr>
+                            <td>{themeLabel(th.Theme)}</td>
+                            <td class="num">{th.PR.toFixed(2)} <span class="count">({th.Decisions})</span></td>
+                            <td class="num">{last ? `${last.PR.toFixed(2)} (${last.Decisions}) · ${last.Start}` : '–'}</td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        {/if}
     {/if}
 </section>
 

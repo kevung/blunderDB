@@ -30,7 +30,7 @@ func testTrainingStatsAndStudy(t *testing.T, s storage.Storage) {
 		t.Fatalf("CreateGame: %v", err)
 	}
 	gammonID := statsCheckerDecision(t, s, gameID, 0, 1, "24/18 13/11", 0.200, 8)
-	if _, err := s.Training().Save(ctx, "", storage.TrainingSession{Exercise: "decision", SeedSource: "library", NumbersAsked: 4}); err != nil {
+	if _, err := s.Training().Save(ctx, "", storage.TrainingSession{Exercise: "decision", SeedSource: "library", NumbersAsked: 4, Deviations: 4}); err != nil {
 		t.Fatalf("Save training session: %v", err)
 	}
 

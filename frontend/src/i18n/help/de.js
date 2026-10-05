@@ -608,6 +608,7 @@ export default {
 <li>die <strong>Match-PR</strong> des aktuellen Filters, gewichtet nach der Zahl der Entscheidungen;</li>
 <li>die <strong>Anki-Retention</strong>: der Anteil der Wiederholungen bereits gelernter Karten, die mit <em>Schwer</em> oder besser bewertet wurden, auf der rechten Achse (in %).</li>
 </ul>
+<p>Unter dem Diagramm listet der <strong>Quiz-PR nach Spielplan</strong> die aus Bibliothekspositionen gezogenen Quiz-Entscheidungen, die schlechtesten Pläne zuerst, mit dem PR des letzten Fensters, in dem der Plan gespielt wurde.</p>
 <p>In Klammern steht die Zahl der Entscheidungen oder Wiederholungen hinter jedem Wert: Ein Fenster ohne Stichprobe hat keinen Wert — einen Strich, keine Null. Der Filter schränkt nur die Matches ein; die Journale von Quiz und Anki gehören Ihnen und tragen keinen Spieler. Es wird nichts zusätzlich gespeichert: Die drei Reihen werden aus den vorhandenen Journalen gelesen. In der Befehlszeile: <code>blunderdb stats training</code> (siehe stats — Wiederkehrende Fehler).</p>
 <h5>Aufteilung nach Doppler-Aktion</h5>
 <p>Ein Balkendiagramm zeigt den PR (oder MWC) für jeden Typ von Doppler-Entscheidung an: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jeder Balken gibt außerdem die Anzahl der Entscheidungen und die Blunder-Rate in einem Tooltip an.</p>

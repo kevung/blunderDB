@@ -520,3 +520,55 @@ func TestCLI_TournamentTables(t *testing.T) {
 		t.Errorf("hall not grouped by room:\n%s", hall)
 	}
 }
+
+func TestCLI_TournamentRankingNeedsSeasonAndReadsAPeriod(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	tID := directedTournamentCLI(t, cli, 4) // dated 2026-09-12
+	if err := cli.Run([]string{"tournament", "ranking", "--db", dbPath}); err == nil {
+		t.Error("ranking without --season must say it is `standings` that ranks one tournament")
+	}
+	if err := cli.Run([]string{"tournament", "ranking", "--db", dbPath, "--season", "--format", "xml"}); err == nil {
+		t.Error("an unknown format is refused")
+	}
+	rank := func(from, to string) (rows []struct {
+		Rank  int
+		Total float64
+		Elo   float64
+	}) {
+		t.Helper()
+		out := captureStdout(t, func() {
+			if err := cli.Run([]string{"tournament", "ranking", "--db", dbPath, "--season", "--from", from, "--to", to, "--points", "10,6,4", "--elo", "--format", "json"}); err != nil {
+				t.Fatalf("ranking --season: %v", err)
+			}
+		})
+		var v struct {
+			Rows []struct {
+				Rank  int
+				Total float64
+				Elo   float64
+			}
+		}
+		if err := json.Unmarshal([]byte(out), &v); err != nil {
+			t.Fatalf("json: %v\n%s", err, out)
+		}
+		return v.Rows
+	}
+	if rows := rank("2026-01-01", "2026-12-31"); len(rows) != 0 {
+		t.Errorf("an unfinished tournament scores nothing: %v", rows)
+	}
+
+	playRoundsCLI(t, cli, tID, 4)
+	if _, err := cli.db.CloseDirection(tID); err != nil {
+		t.Fatalf("CloseDirection: %v", err)
+	}
+	rows := rank("2026-09-01", "2026-09-30")
+	if len(rows) != 4 || rows[0].Rank != 1 || rows[0].Total != 10 || rows[1].Total != 6 || rows[2].Total != 2 || rows[3].Total != 2 {
+		t.Fatalf("the finished tournament scores by --points (places 3 and 4 tie and share (4+0)/2): %+v", rows)
+	}
+	if rows[0].Elo <= 1500 {
+		t.Errorf("the winner gains Elo: %+v", rows[0])
+	}
+	if rows := rank("2026-01-01", "2026-08-31"); len(rows) != 0 {
+		t.Errorf("--from/--to leave the tournament out: %v", rows)
+	}
+}

@@ -157,7 +157,7 @@ func classifyHandler(e ast.Expr, types map[string]typeInfo) (kind, req, resp, it
 		// A hand-written handler's response is opaque, but its JSON request
 		// body is a declared type: s.handleX() is looked up in
 		// customRequestTypes so the contract still documents what it accepts.
-		if call.Args == nil || len(call.Args) == 0 {
+		if len(call.Args) == 0 {
 			if sx, ok := fn.X.(*ast.Ident); ok && sx.Name == "s" {
 				return kindCustom, customRequestTypes[fn.Sel.Name], "", "", false
 			}

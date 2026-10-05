@@ -339,7 +339,7 @@ func (e *exporter) carrier() (*mets.Carrier, error) {
 		if err != nil {
 			return nil, fmt.Errorf("cannot read match equity tables to export: %w", err)
 		}
-		e.tables = mets.NewCarrier(e.dst.MatchEquityTables(), "", tables)
+		e.tables = mets.NewCarrier("export", e.dst.MatchEquityTables(), "", tables)
 	}
 	return e.tables, nil
 }
