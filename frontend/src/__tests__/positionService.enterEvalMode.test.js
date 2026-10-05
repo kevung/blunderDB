@@ -51,6 +51,7 @@ import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, acti
 import { positionStore, positionsStore } from '../stores/positionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
 import { epcDataStore } from '../stores/epcStore.js';
+import { databasePathStore } from '../stores/databaseStore.js';
 import { LoadAnalysis } from '../../wailsjs/go/database/Database.js';
 
 // ── Module testé ──────────────────────────────────────────────────────────────
@@ -80,6 +81,7 @@ function makeRealPosition(id = 99) {
 
 /** Réinitialise les stores à un état cohérent avant chaque test. */
 function resetStores() {
+    databasePathStore.set('/tmp/test.db');
     statusBarModeStore.set('NORMAL');
     statusBarTextStore.set('');
     currentPositionIndexStore.set(0);

@@ -17,8 +17,8 @@ import { tMsg } from '../i18n';
 //               status-bar message key to refuse
 //   silent      no "no database" message (metadata: the tab just stays where
 //               it is)
-//   noDbMessage status-bar message key to use instead of the generic
-//               "no database" one when no database is open
+//   withoutDb   opens with no database: the tab works on the board alone
+//               (search's query board is a scratch board, like Eval's)
 const TAB_TOGGLES = Object.freeze({
     analysis: { tab: 'analysis' },
     comments: {
@@ -32,7 +32,7 @@ const TAB_TOGGLES = Object.freeze({
     collections: { tab: 'collections' },
     tournaments: { tab: 'tournaments' },
     stats: { tab: 'stats' },
-    search: { tab: 'search', noDbMessage: 'status.searchHistoryRequiresDb' },
+    search: { tab: 'search', withoutDb: true },
     transcription: { tab: 'transcription' }
 });
 
@@ -47,15 +47,16 @@ const DEFAULT_TAB = 'matches';
 let previousTab = null;
 
 /**
- * Select the tab of `id` (a TAB_TOGGLES key) if a database is open, or toggle
- * BACK to the previous tab if it is already showing ("Afficher/cacher").
+ * Select the tab of `id` (a TAB_TOGGLES key) if a database is open or the tab
+ * needs none, or toggle BACK to the previous tab if it is already showing
+ * ("Afficher/cacher").
  */
 export function toggleTab(id) {
     const entry = TAB_TOGGLES[id];
     if (!entry) throw new Error(`toggleTab: unknown tab '${id}'`);
     logger.log(`toggleTab ${id}`);
-    if (!get(databasePathStore)) {
-        if (!entry.silent) setStatusBarMessage(tMsg(entry.noDbMessage ?? 'commands.noDatabaseOpened'));
+    if (!entry.withoutDb && !get(databasePathStore)) {
+        if (!entry.silent) setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
         return;
     }
 
@@ -111,12 +112,9 @@ export const toggleSearchPanel = () => toggleTab('search');
 // Bound to the `transcribe`/`tr` command and Ctrl+Maj+T.
 export const toggleTranscriptionPanel = () => toggleTab('transcription');
 
+// A display setting: it needs no database.
 export function togglePipcount() {
     logger.log('togglePipcount');
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('commands.noDatabaseOpened'));
-        return;
-    }
     showPipcountStore.set(!get(showPipcountStore));
     if (get(statusBarModeStore) === 'MATCH') {
         const currentPosition = get(positionStore);

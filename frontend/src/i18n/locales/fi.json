@@ -1460,7 +1460,6 @@
         "positionPasted": "Positio liitetty laudalle",
         "positionCopied": "Positio, analyysi ja kommentti kopioitu leikepöydälle",
         "saveOnlyEdit": "Tallennus on mahdollista vain Haku- ja Eval-paneeleista",
-        "searchHistoryRequiresDb": "Hakuhistoria vaatii avoimen tietokannan",
         "sessionRestoredViews": "Istunto palautettu näkymineen",
         "matchAlreadyImported": "Tämä ottelu on jo tuotu",
         "positionAlreadyExists": "Tämä positio on jo olemassa",

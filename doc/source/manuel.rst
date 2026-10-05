@@ -3387,6 +3387,19 @@ le panneau affiche. On peut ainsi s'entraîner à estimer l'EPC de chaque
 camp, puis à se prononcer sur le videau ou sur le coup à jouer, avant de
 vérifier. Le réglage est mémorisé.
 
+.. _eval_sans_base:
+
+**Sans base ouverte.** Le panneau Eval n'a pas besoin de base : une fois
+l'écran d'accueil écarté, on y pose, colle (*CTRL-V*) et modifie une position,
+on l'évalue, on la roule, on la copie en texte (*CTRL-C*) ou en image
+(*CTRL-X*, et *CTRL-X CTRL-X* avec l'évaluation). Le clic droit dans le
+panneau propose aussi *Enregistrer l'image (SVG)…* et *Enregistrer l'image
+(PNG)…*. Le plateau de l'onglet Recherche est lui aussi un brouillon : il
+s'édite et reçoit un collage sans base, et l'on passe de l'un à l'autre sans
+rien perdre ; lancer la recherche, elle, demande une base. Seuls *Ajouter à la
+base* et *CTRL-S* exigent une base dans le panneau, et la barre d'état le dit.
+Aucune base n'est créée en coulisse.
+
 Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un autre onglet.
 
 .. _epc_methodologie:

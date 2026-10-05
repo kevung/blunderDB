@@ -4,7 +4,6 @@ import { CopyImageToClipboard, SaveBoardImageDialog, SaveBoardSVG, SaveBoardPNG 
 import { snapshotBoardSVG, svgToCanvas, snapshotToPNGBase64, boardImageFilename, logSnapshotFailure } from './boardSnapshot.js';
 import { ClipboardSetText } from '../../wailsjs/runtime/runtime.js';
 
-import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, clipboardPositionStore } from '../stores/positionStore.js';
 import { analysisStore, evalAnalysisStore } from '../stores/analysisStore.js';
 import { commentTextStore, statusBarModeStore } from '../stores/uiStore.js';
@@ -42,11 +41,9 @@ async function writeCanvasToClipboard(canvas) {
     return savedPath ? { method: 'file', path: savedPath } : { method: 'clipboard' };
 }
 
+// The copies read the board and the analysis on screen, never the database:
+// they work with no database open (the Eval panel's scratch board).
 export function copyPosition() {
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('status.noDatabaseOpened'));
-        return;
-    }
     logger.log('copyPosition');
     const position = get(positionStore);
     const analysis = get(analysisStore);
@@ -174,10 +171,6 @@ export async function writeTextToClipboard(text) {
 }
 
 export async function copyBoardImage() {
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('status.noDatabaseOpened'));
-        return;
-    }
     try {
         // Un seul rendu : la copie du plateau vient de snapshotBoardSVG
         // comme l'export en fichier, plutôt que d'un bloc réécrit ici.
@@ -218,10 +211,6 @@ export async function copyBoardImage() {
  *   (by their notation); empty or absent, the strip is the top of the list.
  */
 export async function copyBoardWithAnalysisImage({ moves: only = [] } = {}) {
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('status.noDatabaseOpened'));
-        return;
-    }
     try {
         const boardEl = document.getElementById('backgammon-board');
         if (!boardEl) {

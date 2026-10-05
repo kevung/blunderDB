@@ -99,6 +99,8 @@ async function leaveMatchModeIfStillIn() {
 // the unanalysed backlog to gui.App's batch when the setting is on. No
 // per-import-type case: the batch is a no-op when the count is zero.
 export async function maybeAutoAnalyzeAfterImport() {
+    // Nothing was imported without a database, and the backlog count would query none.
+    if (!get(databasePathStore)) return;
     try {
         const auto = await GetGammonNetAutoAnalyze();
         if (!auto) return;
@@ -1025,17 +1027,18 @@ export async function pastePosition() {
 }
 
 async function pastePositionCore() {
-    if (!get(databasePathStore)) {
-        setStatusBarMessage(tMsg('status.noDatabaseOpened'));
-        return;
-    }
     logger.log('pastePosition');
 
     // In EDIT and EVAL the board is a scratch pad: Ctrl-V drops the position
-    // onto it instead of importing into the database.
+    // onto it instead of importing into the database, so it needs none.
     const mode = get(statusBarModeStore);
     if (mode === 'EDIT' || mode === 'EVAL') {
         await pastePositionToBoard();
+        return;
+    }
+
+    if (!get(databasePathStore)) {
+        setStatusBarMessage(tMsg('status.noDatabaseOpened'));
         return;
     }
 

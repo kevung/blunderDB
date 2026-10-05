@@ -1460,7 +1460,6 @@
         "positionPasted": "Position pasted to board",
         "positionCopied": "Position, analysis, and comment copied to clipboard",
         "saveOnlyEdit": "Saving is only possible from the Search and Eval panels",
-        "searchHistoryRequiresDb": "Search history requires an open database",
         "sessionRestoredViews": "Session restored with views",
         "matchAlreadyImported": "This match has already been imported",
         "positionAlreadyExists": "This position already exists",

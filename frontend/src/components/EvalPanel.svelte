@@ -25,6 +25,7 @@
     import { rolloutStore } from '../stores/rolloutStore.js';
     import { toggleRollout, cancelRollout, ensureRolloutEvents, syncRolloutStatus, rolloutOnBoard } from '../services/rolloutService.js';
     import { analysisMenuItems } from '../services/analysisMenu.js';
+    import { exportBoardImage } from '../services/clipboardService.js';
     import { rolloutsByMove, cubeRollouts } from '../utils/rolloutRows.js';
     import { clickSelection, contextSelection, selectedPlays } from '../utils/moveSelection.js';
 
@@ -297,7 +298,12 @@
     /** @param {MouseEvent} event */
     function openPanelMenu(event) {
         event.preventDefault();
-        panelMenu = { x: event.clientX, y: event.clientY, items: analysisMenuItems(rolloutSelection(), UNSAVED) };
+        // The board's own menu is off in EVAL (its right button edits), so the image files are offered here.
+        const files = [
+            { label: $t('board.menu.saveImageSVG'), onClick: () => exportBoardImage('svg') },
+            { label: $t('board.menu.saveImagePNG'), onClick: () => exportBoardImage('png') }
+        ];
+        panelMenu = { x: event.clientX, y: event.clientY, items: [...analysisMenuItems(rolloutSelection(), UNSAVED), ...files] };
     }
 
     /** @param {{ move: string }} move @param {MouseEvent} event */

@@ -125,6 +125,16 @@ describe('copyPosition on a scratch board', () => {
         expect(text, 'the board itself still travels').toContain('Dice: 6, 5');
     });
 
+    test('copies the Eval board with no database open', async () => {
+        databasePathStore.set('');
+        statusBarModeStore.set('EVAL');
+
+        copyPosition();
+        await vi.waitFor(() => expect(ClipboardSetText).toHaveBeenCalledTimes(1));
+
+        expect(ClipboardSetText.mock.calls[0][0]).toContain('XGID=XGID-STUB');
+    });
+
     test('NORMAL mode still carries the stored record', async () => {
         statusBarModeStore.set('NORMAL');
 

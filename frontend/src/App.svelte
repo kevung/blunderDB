@@ -217,7 +217,7 @@
                 const prevTab = previousTab;
                 previousTab = tab;
                 if (!isFirstRun) {
-                    if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') enterEditMode();
+                    if (tab === 'search' && $statusBarModeStore !== 'EDIT') enterEditMode();
                     else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
                 }
                 if (tab === 'eval' && $statusBarModeStore !== 'EVAL') logger.perf('App:evalSync', () => enterEvalMode());

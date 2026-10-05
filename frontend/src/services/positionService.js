@@ -187,11 +187,14 @@ export async function showPosition(position) {
 
     // Analysis and comment in one IPC round trip. A failure leaves both empty,
     // the same display as a position without either.
+    // Without a database (the Eval scratch board) there is no view to load.
     let view = null;
-    try {
-        view = await LoadPositionView(position.id);
-    } catch (error) {
-        logger.error('Error loading position view:', error);
+    if (get(databasePathStore)) {
+        try {
+            view = await LoadPositionView(position.id);
+        } catch (error) {
+            logger.error('Error loading position view:', error);
+        }
     }
     const analysis = view?.analysis ?? null;
     const comment = view?.comment ?? '';

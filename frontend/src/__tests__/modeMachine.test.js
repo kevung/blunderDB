@@ -208,12 +208,11 @@ describe('NORMAL → EDIT → NORMAL', () => {
         expect(modeState().savedContext.beforeEdit.mode, 'pas de partie à restaurer').toBe(MODE.NORMAL);
     });
 
-    test('enterEditMode sans base ouverte est un no-op', async () => {
+    test('enterEditMode sans base ouverte ouvre le plateau de requête', async () => {
         databasePathStore.set('');
         setLibrary();
         await enterEditMode();
-        expect(get(statusBarModeStore)).toBe(MODE.NORMAL);
-        expect(get(positionStore).board.bearoff).toEqual([3, 3]);
+        expect(get(statusBarModeStore)).toBe(MODE.EDIT);
     });
 
     test('exitEditMode revient en NORMAL et fait repasser l’index par -1 pour forcer le redessin', async () => {

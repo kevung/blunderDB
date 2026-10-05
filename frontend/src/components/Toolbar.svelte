@@ -32,7 +32,8 @@
     let databasePath = $derived($databasePathStore);
     let isSearchTab = $derived($activeTabStore === 'search');
     // Both scratch boards can be saved — Search's and Eval's; a Ctrl-U
-    // rewrite stays Search's alone.
+    // rewrite stays Search's alone. A paste lands on a scratch board without
+    // a database; elsewhere it imports, and needs one.
     let hasScratchBoard = $derived(isSearchTab || $activeTabStore === 'eval');
 </script>
 
@@ -170,7 +171,6 @@
         }}
         aria-label={$t('toolbar.copyPosition')}
         title={isSearchTab ? `${$t('toolbar.copyPositionSearchTip')} ${toolbarHint('copyPosition', $t)}` : `${$t('toolbar.copyPositionTip')} ${toolbarHint('copyPosition', $t)}`}
-        disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
@@ -188,7 +188,7 @@
         }}
         aria-label={$t('toolbar.pastePosition')}
         title={isSearchTab ? `${$t('toolbar.pastePositionSearchTip')} ${toolbarHint('pastePosition', $t)}` : `${$t('toolbar.pastePosition')} ${toolbarHint('pastePosition', $t)}`}
-        disabled={!databasePath}
+        disabled={!hasScratchBoard && !databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
@@ -348,7 +348,6 @@
         }}
         aria-label={$t('toolbar.togglePipcount')}
         title="{$t('toolbar.togglePipcount')} {toolbarHint('togglePipcount', $t)}"
-        disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5" />
@@ -396,7 +395,6 @@
         }}
         aria-label={$t('toolbar.copyBoardImage')}
         title="{$t('toolbar.copyBoardImageTip')} {toolbarHint('copyBoardImage', $t)}, {$t('toolbar.copyBoardImageWithAnalysis')} {toolbarHint('copyBoardImage', $t, 2)}"
-        disabled={!databasePath}
     >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path

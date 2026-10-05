@@ -31,6 +31,7 @@ import { showPosition, loadAnalysisForPosition } from '../services/positionServi
 import { analysisStore } from '../stores/analysisStore.js';
 import { positionStore } from '../stores/positionStore.js';
 import { commentTextStore } from '../stores/uiStore.js';
+import { databasePathStore } from '../stores/databaseStore.js';
 
 const pos = (id) => ({ id, board: { points: [], bearoff: [0, 0] }, cube: { owner: -1, value: 0 }, dice: [1, 2], score: [3, 3], player_on_roll: 0, decision_type: 0 });
 
@@ -43,9 +44,18 @@ function deferred() {
 
 beforeEach(() => {
     vi.clearAllMocks();
+    databasePathStore.set('/tmp/test.db');
 });
 
 describe('showPosition', () => {
+    test('sans base ouverte, le plateau brouillon se montre sans rien demander au backend', async () => {
+        databasePathStore.set('');
+        await showPosition({ id: 0, dice: [3, 1] });
+        expect(bindings.LoadPositionView).not.toHaveBeenCalled();
+        expect(get(positionStore).dice).toEqual([3, 1]);
+        expect(get(commentTextStore)).toBe('');
+    });
+
     test('une analyse périmée, arrivée après la suivante, est ignorée', async () => {
         const replies = { 1: deferred(), 2: deferred() };
         bindings.LoadPositionView.mockImplementation((id) => replies[id].promise);

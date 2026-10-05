@@ -1460,7 +1460,6 @@
         "positionPasted": "Posizione incollata sul board",
         "positionCopied": "Posizione, analisi e commento copiati negli appunti",
         "saveOnlyEdit": "Il salvataggio è possibile solo dai pannelli Ricerca ed Eval",
-        "searchHistoryRequiresDb": "La cronologia delle ricerche richiede un database aperto",
         "sessionRestoredViews": "Sessione ripristinata con le viste",
         "matchAlreadyImported": "Questo match è già stato importato",
         "positionAlreadyExists": "Questa posizione esiste già",

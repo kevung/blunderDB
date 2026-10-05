@@ -1460,7 +1460,6 @@
         "positionPasted": "Posición pegada en el tablero",
         "positionCopied": "Posición, análisis y comentario copiados al portapapeles",
         "saveOnlyEdit": "Guardar solo es posible desde los paneles Búsqueda y Eval",
-        "searchHistoryRequiresDb": "El historial de búsqueda requiere una base de datos abierta",
         "sessionRestoredViews": "Sesión restaurada con vistas",
         "matchAlreadyImported": "Esta partida ya ha sido importada",
         "positionAlreadyExists": "Esta posición ya existe",

@@ -1460,7 +1460,6 @@
         "positionPasted": "Position auf das Brett eingefügt",
         "positionCopied": "Position, Analyse und Kommentar in die Zwischenablage kopiert",
         "saveOnlyEdit": "Speichern ist nur in den Bereichen Suche und Eval möglich",
-        "searchHistoryRequiresDb": "Der Suchverlauf erfordert eine geöffnete Datenbank",
         "sessionRestoredViews": "Sitzung mit Ansichten wiederhergestellt",
         "matchAlreadyImported": "Dieses Match wurde bereits importiert",
         "positionAlreadyExists": "Diese Position existiert bereits",

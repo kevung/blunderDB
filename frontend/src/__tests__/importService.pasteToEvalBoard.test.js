@@ -23,8 +23,12 @@ vi.mock('../../wailsjs/go/gui/App.js', () => ({
     ShowQuestionDialog: vi.fn(),
     IsDirectory: vi.fn()
 }));
+const CountPositionsWithoutAnalysis = vi.fn(() => Promise.resolve(0));
+const GetGammonNetAutoAnalyze = vi.fn(() => Promise.resolve(false));
+
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveIndividualPosition,
+    CountPositionsWithoutAnalysis,
     SaveAnalysis: vi.fn(),
     SaveComment: vi.fn(),
     LoadComment: vi.fn(),
@@ -41,18 +45,20 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ParsePositionText
 }));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
-    GetGammonNetAutoAnalyze: vi.fn(() => Promise.resolve(false)),
+    GetGammonNetAutoAnalyze,
     GetGammonNetAnalysisPly: vi.fn(() => Promise.resolve(2)),
     GetGammonNetPruneK: vi.fn(() => Promise.resolve(12))
 }));
 vi.mock('../../wailsjs/runtime/runtime.js', () => ({ ClipboardGetText }));
-vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() }));
+const setStatusBarMessage = vi.fn();
+vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage }));
 vi.mock('../services/positionService.js', () => ({ loadAllPositions: vi.fn() }));
 
 const { pastePosition } = await import('../services/importService.js');
 const { positionStore, clipboardPositionStore } = await import('../stores/positionStore.js');
 const { databasePathStore } = await import('../stores/databaseStore.js');
 const { statusBarModeStore } = await import('../stores/uiStore.js');
+const { tMsg } = await import('../i18n');
 
 /** A board of all-empty points, the shape every position carries. */
 function emptyBoard() {
@@ -124,5 +130,37 @@ describe('pastePosition in the Eval panel (EVAL mode)', () => {
         await pastePosition();
 
         expect(get(positionStore).dice, 'the board is untouched by an import').toEqual([0, 0]);
+    });
+});
+
+describe('pastePosition with no database open', () => {
+    beforeEach(() => {
+        databasePathStore.set('');
+        // Auto-analyse on: the backlog count would query a database that is not there.
+        GetGammonNetAutoAnalyze.mockResolvedValue(true);
+    });
+
+    test.each([['EVAL'], ['EDIT']])('%s: the XGID lands on the scratch board, and nothing asks the database', async (mode) => {
+        statusBarModeStore.set(mode);
+        ClipboardGetText.mockResolvedValue('XGID=-b----E-C---eE---c-e----B-:0:0:1:65:0:0:0:0:10');
+
+        await pastePosition();
+
+        expect(get(positionStore).dice).toEqual([6, 5]);
+        expect(setStatusBarMessage).toHaveBeenCalledWith(tMsg('status.positionPastedClipboard'));
+        expect(SaveIndividualPosition).not.toHaveBeenCalled();
+        expect(CountPositionsWithoutAnalysis).not.toHaveBeenCalled();
+    });
+
+    test('NORMAL: an import needs a database, and says so', async () => {
+        statusBarModeStore.set('NORMAL');
+        ClipboardGetText.mockResolvedValue('XGID=-b----E-C---eE---c-e----B-:0:0:1:65:0:0:0:0:10');
+
+        await pastePosition();
+
+        expect(setStatusBarMessage).toHaveBeenCalledWith(tMsg('status.noDatabaseOpened'));
+        expect(ClipboardGetText).not.toHaveBeenCalled();
+        expect(SaveIndividualPosition).not.toHaveBeenCalled();
+        expect(CountPositionsWithoutAnalysis).not.toHaveBeenCalled();
     });
 });

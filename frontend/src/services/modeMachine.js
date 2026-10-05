@@ -393,8 +393,9 @@ export async function joinLibraryBehindScratchBoard(id) {
 
 /** NORMAL | MATCH | COLLECTION | EVAL → EDIT. */
 export async function enterEditMode() {
+    // No database guard: the query board is a scratch board, edited and
+    // copied without one; only running the search needs a database.
     logger.log('enterEditMode');
-    if (!get(databasePathStore)) return;
 
     if (currentMode() === MODE.TRANSCRIBE) {
         // Same reason as the Eval branch below: leave the transcription panel

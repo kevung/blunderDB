@@ -35,7 +35,7 @@ vi.mock('../services/databaseService.js', () => ({
 }));
 
 import { setStatusBarMessage } from '../services/databaseService.js';
-import { activeTabStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore.js';
+import { activeTabStore, statusBarModeStore, currentPositionIndexStore, showPipcountStore } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { tMsg } from '../i18n';
@@ -49,7 +49,8 @@ import {
     toggleCollectionPanelAction,
     toggleTournamentPanel,
     toggleStatsPanel,
-    toggleSearchPanel
+    toggleSearchPanel,
+    togglePipcount
 } from '../services/positionService.js';
 
 const NAMED = [
@@ -83,14 +84,28 @@ describe('toggleTab', () => {
     test('sans base ouverte : message et onglet inchangé', () => {
         databasePathStore.set('');
         for (const [fn, tab] of NAMED) {
-            if (tab === 'metadata') continue;
+            if (tab === 'metadata' || tab === 'search') continue;
             setStatusBarMessage.mockClear();
             fn();
             expect(get(activeTabStore), tab).toBe('eval');
-            // search has its own no-database message (status.searchHistoryRequiresDb);
-            // every other entry falls back to the generic one.
-            expect(setStatusBarMessage, tab).toHaveBeenCalledWith(tMsg(tab === 'search' ? 'status.searchHistoryRequiresDb' : 'commands.noDatabaseOpened'));
+            expect(setStatusBarMessage, tab).toHaveBeenCalledWith(tMsg('commands.noDatabaseOpened'));
         }
+    });
+
+    test('recherche sans base ouverte : le plateau de requête s’ouvre', () => {
+        databasePathStore.set('');
+        toggleTab('search');
+        expect(get(activeTabStore)).toBe('search');
+        expect(setStatusBarMessage).not.toHaveBeenCalled();
+    });
+
+    test('compte de pions sans base ouverte : un réglage d’affichage, basculé', () => {
+        databasePathStore.set('');
+        const before = get(showPipcountStore);
+        togglePipcount();
+        expect(get(showPipcountStore)).toBe(!before);
+        expect(setStatusBarMessage).not.toHaveBeenCalled();
+        togglePipcount();
     });
 
     test('métadonnées sans base ouverte : silencieux', () => {
