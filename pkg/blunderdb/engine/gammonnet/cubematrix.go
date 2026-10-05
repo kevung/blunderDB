@@ -194,7 +194,7 @@ func cubeMatrixCell(pos domain.Position, met *engine.MET, awayOnRoll, awayOppone
 		cell.Refused, cell.Reason = true, "the position could not be evaluated"
 		return cell
 	}
-	dec, ok := Decide(&probs, cfg.CubeOwner, state, DefaultEfficiency(cfg.CubeOwner), at.HasJacoby == 1)
+	dec, ok := DecideForSession(&probs, cfg.CubeOwner, state, DefaultEfficiency(cfg.CubeOwner), &at)
 	if !ok {
 		cell.Refused, cell.Reason = true, "cube decision at this score"
 		return cell

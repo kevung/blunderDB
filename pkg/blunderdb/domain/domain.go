@@ -281,9 +281,10 @@ type Position struct {
 	PlayerOnRoll int    `json:"player_on_roll"`
 	DecisionType int    `json:"decision_type"`
 	HasJacoby    int    `json:"has_jacoby"`
-	// HasBeaver is stored beside HasJacoby (neither is hashed, ADR-0028) but
-	// read by nothing in the engine: gammonnet.Decide deliberately has no
-	// beaver parameter — see its doc comment.
+	// HasBeaver is stored beside HasJacoby (neither is hashed, ADR-0028). At
+	// money the cube decision reads it (gammonnet.DecideForSession): the
+	// opponent's answer to a double may then be a beaver, and the doubler's a
+	// raccoon.
 	HasBeaver int `json:"has_beaver"`
 
 	// MaxCube is the session's cube ceiling, as the log2 exponent the XGID's

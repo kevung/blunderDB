@@ -15,13 +15,14 @@ import (
 // of a stored analysis (AnalyzeStaleGammonNet): any change re-runs every
 // stored row as a whole. Depth belongs in AnalysisDepth, never here.
 //
-// v1.2.1 carries the match-aware search (ADR-0016), the cube tails
-// (ADR-0022), the dead cube in the Crawford game and cubeful leaves
-// (ADR-0023). The gold file's pin (v1.3.0) is a different thing: the
-// reference build the gate compares against. v1.3.0 differs only by FMA
-// contractions this port forbids (ADR-0024), so bumping this label would
-// stale every stored row for nothing.
-const EngineVersion = "gammonNet v1.2.1"
+// v1.4.0 adds to the match-aware search (ADR-0016), the cube tails
+// (ADR-0022), the Crawford dead cube and cubeful leaves (ADR-0023): the
+// "normal" level's filter triplet (accept 1, extra 2, threshold 0.04 at the
+// root), the closed-form level inversion (ADR-0032) and the money beaver
+// rule (DecideEx). The first two move stored results, so every row analysed
+// under an earlier label is stale (analyze --stale). The gold files are
+// built from the same tag.
+const EngineVersion = "gammonNet v1.4.0"
 
 // ErrNotEvaluable marks a position this build declines to answer for (a
 // score beyond the MET's horizon, a cube decision the model refuses), as
@@ -392,9 +393,7 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 
 	// owner is the searcher's root cube state: decision and leaves share it.
 	efficiency := DefaultEfficiency(owner)
-	jacoby := pos.HasJacoby == 1
-
-	dec, ok := Decide(&probs, owner, state, efficiency, jacoby)
+	dec, ok := DecideForSession(&probs, owner, state, efficiency, pos)
 	if !ok {
 		return nil, nil, NoDouble, fmt.Errorf("%w: cube decision at this score", ErrNotEvaluable)
 	}
@@ -429,6 +428,19 @@ func evaluateCube(gnPos *Position, pos *domain.Position, searcher *Searcher, dep
 		CubefulDoublePassError:    doublePass - best,
 		BestCubeAction:            cubeActionLabel(dec),
 	}, preRoll, dec.Action, nil
+}
+
+// DecideForSession is the cube decision under the session rules a position
+// carries: Jacoby from HasJacoby, and at money the beaver rule from
+// HasBeaver, its answer folded into the take branch (UnderBeaver). The one
+// place the analysis, the live panel and the batch read those flags from.
+func DecideForSession(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, efficiency float64, pos *domain.Position) (Decision, bool) {
+	beaver := state == nil && pos.HasBeaver == 1
+	dec, ok := DecideEx(probs, owner, state, efficiency, pos.HasJacoby == 1, beaver)
+	if !ok {
+		return dec, false
+	}
+	return dec.UnderBeaver(), true
 }
 
 // cubeActionLabel renders the decision in BestCubeAction's vocabulary: the

@@ -1,7 +1,8 @@
 # Regenerating the search gold file
 
 `../search_gold.bin` is what gammonNet's **C reference** answers for every decision in
-`../search_corpus.bin`, at the canonical configuration: prune `k=12`, filter `(0,1,3)`.
+`../search_corpus.bin`, at the canonical configuration: prune `k=12` and the "normal" level's move
+filter — at depth 2 the triplet (accept 1, extra 2, threshold 0.04), plain counts elsewhere.
 
 It is read verbatim by `TestSearchMatchesTheGoldFile`. Recomputing both sides from a seed
 would establish nothing if the two implementations had drifted apart, so the reference must
@@ -14,7 +15,7 @@ two moving targets.
 ## What you need
 
 - a checkout of [gammonNet](https://github.com/kevung/gammonNet) at the pinned version
-  (currently **v1.3.0**), including `vendor/backgammon-ai-engine` (fetched by its
+  (currently **v1.4.0**), including `vendor/backgammon-ai-engine` (fetched by its
   `tools/fetch_vendor.py`);
 - a C compiler; nothing else. This never runs in CI.
 
@@ -84,8 +85,8 @@ checkout (the vendored `backgammon-ai-engine` is not in the archive; point `V` a
 checkout's copy):
 
 ```sh
-mkdir -p /tmp/gn121 && git -C $GN archive v1.2.1 src | tar -x -C /tmp/gn121
-GN=/tmp/gn121   # then the gcc line above, unchanged
+mkdir -p /tmp/gn140 && git -C $GN archive v1.4.0 src | tar -x -C /tmp/gn140
+GN=/tmp/gn140   # then the gcc line above, unchanged
 ```
 
 **Generated with no shared two-sided table.** `gn_search.c`'s `node_value` reads exact cubeful
@@ -114,6 +115,13 @@ were established before the pin moved, and they are why moving it is safe:
   fusing `y0 + (y1-y0)*t` into an FMA in one form and not the other. Reported upstream
   (`tasks/gammonnet-adr0003/poste-3-zone-egalite-gold.md`). At 2e-16 against a 1e-6 tolerance it
   is ten orders of magnitude below anything this gate can see.
+
+**Regenerated on 2026-10-05 against gammonNet v1.4.0**, whose "normal" level replaces the
+`(0,1,3)` count by the triplet filter; `gold.c` sets it through `gn_search_set_filter`, and the
+Go side reads the same triplet from the embedded `search_levels.json` (`DefaultConfig`).
+Before regenerating, v1.4.0 built with the old `(0,1,3)` configuration reproduced the committed
+money gold byte for byte. Margins unchanged: 7.153e-07 (money, 85) and 3.902e-07
+(match-and-cube, 126), 0 ties.
 
 Note the two extra translation units in the command above: v1.3.0's `gn_infer_reference.c`
 references `gn_int8_model_evaluate`, so `gn_int8_model.c` and `gn_gemm_int8.c` must be linked in
@@ -155,9 +163,20 @@ tolerance first, not assuming it.
 
 # Regenerating the cube gold file
 
-`../cube_gold.bin` is what gammonNet's C reference (`gn_cube_decide`) answers for every
-decision in `../cube_corpus.bin` — money and match-score, every owner, both Jacoby settings,
+`../cube_gold.bin` (magic `GNCH`) is what gammonNet's C reference answers for every decision in
+`../cube_corpus.bin`: the plain fields of `gn_cube_decide`, then the beaver answer of
+`gn_cube_decide_ex` with the flag set (spec §4bis; money only, `enabled` is 0 at a match). The
+harness refuses to write if the flag moved a plain field, and the gate checks the same on the Go
+side (`DecideEx`). It covers money and match-score, every owner, both Jacoby settings,
 and a spread of Crawford states. Read by `TestCubeDecideMatchesTheGoldFile`.
+
+**Regenerated on 2026-10-05 against gammonNet v1.4.0** (closed-form `level_solve`, beaver and
+raccoon). The plain fields stay at max|Δ| = 0 against the port's closed form; the beaver
+answer too. Built straight from the tag's sources rather than `build/*.o`:
+`gcc -O2 -I$GN/src -I$V/c_inference -I$V/c_engine cube_gold.c $GN/src/gn_cube.c
+$GN/src/gn_met.c $GN/src/gn_infer_reference.c $GN/src/gn_encoding.c
+$GN/src/gn_rules_reference.c $GN/src/gn_bearoff.c $GN/src/gn_int8_model.c
+$GN/src/gn_gemm_int8.c $V/c_inference/nn_eval.c $V/c_engine/bg_engine.c -lm`.
 
 **Regenerated on 2026-09-02 (Crawford dead value).** `gn_cube.c` now values the Crawford game
 at the dead cube — `gn_cube_value` and the no-double/double equities of `gn_cube_decide` return

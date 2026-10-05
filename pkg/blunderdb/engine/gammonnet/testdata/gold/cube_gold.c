@@ -1,6 +1,11 @@
 /* Produces the gold file for blunderDB's Go port of gammonNet's cube model
  * (gn_cube.c / gn_met.c). Reads testdata/cube_corpus.bin, writes
  * testdata/cube_gold.bin. See README.md for the build recipe.
+ *
+ * Each case is decided twice: gn_cube_decide (no beaver) and
+ * gn_cube_decide_ex with the beaver flag set. The plain fields of the two
+ * must be identical bit for bit -- the harness refuses to write otherwise --
+ * and the record carries the plain fields followed by the beaver answer.
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,7 +38,7 @@ int main(int argc, char **argv) {
 
     FILE *o = fopen(argv[2], "wb");
     if (!o) { perror("out"); return 1; }
-    fwrite("GNCG",1,4,o); fwrite(&count,4,1,o);
+    fwrite("GNCH",1,4,o); fwrite(&count,4,1,o);
 
     for (int32_t i = 0; i < count; i++) {
         Case c;
@@ -54,8 +59,14 @@ int main(int argc, char **argv) {
             sp = &state;
         }
 
-        GnCubeDecision dec;
+        GnCubeDecision dec, bv;
         int rc = gn_cube_decide(c.probs, (GnCubeOwner)c.owner, sp, c.efficiency, c.jacoby, &dec);
+        int rcb = gn_cube_decide_ex(c.probs, (GnCubeOwner)c.owner, sp, c.efficiency, c.jacoby, 1, &bv);
+        if (rc != rcb || (rc == 0 && (dec.action != bv.action ||
+            memcmp(&dec.equity_no_double, &bv.equity_no_double, 8) ||
+            memcmp(&dec.equity_double, &bv.equity_double, 8) ||
+            memcmp(&dec.take_point, &bv.take_point, 8)))) {
+            fprintf(stderr, "case %d: the beaver flag moved a plain field\n", i); return 1; }
 
         int32_t ok = (rc == 0) ? 1 : 0;
         int32_t action = ok ? (int32_t)dec.action : 0;
@@ -68,6 +79,21 @@ int main(int argc, char **argv) {
         fwrite(&eND,8,1,o);
         fwrite(&eD,8,1,o);
         fwrite(&tp,8,1,o);
+
+        int32_t b_enabled = ok ? bv.beaver.enabled : 0;
+        int32_t b_action = ok ? (int32_t)bv.beaver.action : 0;
+        double b_double = ok ? bv.beaver.equity_double : 0.0;
+        double b_take = ok ? bv.beaver.equity_take : 0.0;
+        double b_beaver = ok ? bv.beaver.equity_beaver : 0.0;
+        int32_t b_bv = ok ? bv.beaver.beaver : 0;
+        int32_t b_rc = ok ? bv.beaver.raccoon : 0;
+        fwrite(&b_enabled,4,1,o);
+        fwrite(&b_action,4,1,o);
+        fwrite(&b_double,8,1,o);
+        fwrite(&b_take,8,1,o);
+        fwrite(&b_beaver,8,1,o);
+        fwrite(&b_bv,4,1,o);
+        fwrite(&b_rc,4,1,o);
     }
     fclose(o); fclose(f);
     fprintf(stderr, "%d cases done\n", count);

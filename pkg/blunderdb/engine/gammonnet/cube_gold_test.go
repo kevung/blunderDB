@@ -20,7 +20,7 @@ import (
 // export, so both engines answer identically up to it.
 const (
 	cubeCorpusMagic = "GNCB"
-	cubeGoldMagic   = "GNCG"
+	cubeGoldMagic   = "GNCH"
 	cubeCorpusPath  = "testdata/cube_corpus.bin"
 	cubeGoldPath    = "testdata/cube_gold.bin"
 	cubeGoldMaxAway = 25
@@ -243,6 +243,15 @@ type cubeGoldEntry struct {
 	equityNoDouble float64
 	equityDouble   float64
 	takePoint      float64
+
+	// The beaver answer, gn_cube_decide_ex with the flag set.
+	beaverEnabled bool
+	beaverAction  int32
+	beaverDouble  float64
+	beaverTake    float64
+	beaverBeaver  float64
+	beaver        bool
+	raccoon       bool
 }
 
 func loadCubeGold(t *testing.T) []cubeGoldEntry {
@@ -255,7 +264,7 @@ func loadCubeGold(t *testing.T) []cubeGoldEntry {
 		t.Fatalf("%s: unexpected magic", cubeGoldPath)
 	}
 	n := int(int32(binary.LittleEndian.Uint32(raw[4:])))
-	const entry = 4 + 4 + 8 + 8 + 8
+	const entry = 4 + 4 + 8 + 8 + 8 + 4 + 4 + 8 + 8 + 8 + 4 + 4
 	if len(raw) != 8+n*entry {
 		t.Fatalf("%s: %d bytes for %d cases", cubeGoldPath, len(raw), n)
 	}
@@ -267,6 +276,13 @@ func loadCubeGold(t *testing.T) []cubeGoldEntry {
 		out[i].equityNoDouble = math.Float64frombits(binary.LittleEndian.Uint64(b[8:]))
 		out[i].equityDouble = math.Float64frombits(binary.LittleEndian.Uint64(b[16:]))
 		out[i].takePoint = math.Float64frombits(binary.LittleEndian.Uint64(b[24:]))
+		out[i].beaverEnabled = int32(binary.LittleEndian.Uint32(b[32:])) != 0
+		out[i].beaverAction = int32(binary.LittleEndian.Uint32(b[36:]))
+		out[i].beaverDouble = math.Float64frombits(binary.LittleEndian.Uint64(b[40:]))
+		out[i].beaverTake = math.Float64frombits(binary.LittleEndian.Uint64(b[48:]))
+		out[i].beaverBeaver = math.Float64frombits(binary.LittleEndian.Uint64(b[56:]))
+		out[i].beaver = int32(binary.LittleEndian.Uint32(b[64:])) != 0
+		out[i].raccoon = int32(binary.LittleEndian.Uint32(b[68:])) != 0
 	}
 	return out
 }
@@ -274,7 +290,8 @@ func loadCubeGold(t *testing.T) []cubeGoldEntry {
 // TestCubeDecideMatchesTheGoldFile is the parity gate: for every corpus case,
 // this port's Decide must agree with gammonNet's C gn_cube_decide on
 // refusal, the action taken, and the reported equities/take point to
-// cubeGoldTolerance.
+// cubeGoldTolerance; DecideEx with the beaver flag must leave those fields
+// bit-identical and agree with gn_cube_decide_ex on the beaver answer.
 func TestCubeDecideMatchesTheGoldFile(t *testing.T) {
 	corpusRaw, err := os.ReadFile(cubeCorpusPath)
 	if err != nil {
@@ -302,6 +319,43 @@ func TestCubeDecideMatchesTheGoldFile(t *testing.T) {
 
 		dec, ok := Decide(&c.probs, c.owner, state, c.efficiency, c.jacoby)
 		want := gold[i]
+		bv, okBV := DecideEx(&c.probs, c.owner, state, c.efficiency, c.jacoby, true)
+		if okBV != ok {
+			t.Errorf("case %d: DecideEx ok = %v, Decide ok = %v", i, okBV, ok)
+			continue
+		}
+		plain := bv
+		plain.Beaver = BeaverDecision{}
+		if ok && plain != dec {
+			t.Errorf("case %d: the beaver flag moved a plain field: %+v, want %+v", i, plain, dec)
+		}
+		if ok && bv.Beaver.Enabled != want.beaverEnabled {
+			t.Errorf("case %d: Beaver.Enabled = %v, want %v", i, bv.Beaver.Enabled, want.beaverEnabled)
+		}
+		if ok && want.beaverEnabled {
+			actionOK := int32(bv.Beaver.Action) == want.beaverAction
+			if !actionOK && math.Abs(bv.EquityNoDouble-bv.Beaver.EquityDouble) <= cubeActionTieTolerance {
+				actionOK = true // the same tie zone as the plain action below
+				ties++
+			}
+			if !actionOK || bv.Beaver.Beaver != want.beaver || bv.Beaver.Raccoon != want.raccoon {
+				t.Errorf("case %d: beaver answer = (%v, beaver %v, raccoon %v), want (%v, %v, %v)",
+					i, bv.Beaver.Action, bv.Beaver.Beaver, bv.Beaver.Raccoon, want.beaverAction, want.beaver, want.raccoon)
+			}
+			for name, d := range map[string][2]float64{
+				"beaver.equity_double": {bv.Beaver.EquityDouble, want.beaverDouble},
+				"beaver.equity_take":   {bv.Beaver.EquityTake, want.beaverTake},
+				"beaver.equity_beaver": {bv.Beaver.EquityBeaver, want.beaverBeaver},
+			} {
+				delta := math.Abs(d[0] - d[1])
+				if delta > cubeGoldTolerance {
+					t.Errorf("case %d: %s = %v, want %v (Δ=%v)", i, name, d[0], d[1], delta)
+				}
+				if delta > maxDelta {
+					maxDelta, worst = delta, name
+				}
+			}
+		}
 
 		if ok != want.ok {
 			t.Errorf("case %d: ok = %v, want %v (owner=%v state=%+v)", i, ok, want.ok, c.owner, state)

@@ -287,14 +287,13 @@ func evaluateRaceRegime(searcher *gammonnet.Searcher, pos *domain.Position, met 
 	// Read back off cfg so they cannot drift from what the search ran with.
 	owner := cfg.CubeOwner
 	efficiency := cfg.CubeX
-	jacoby := pos.HasJacoby == 1
 
 	scale, ok := gammonnet.NewEquityScale(state)
 	if !ok {
 		return nil // no referential to state the equity in (ADR-0019)
 	}
 
-	dec, ok := gammonnet.Decide(&probs, owner, state, efficiency, jacoby)
+	dec, ok := gammonnet.DecideForSession(&probs, owner, state, efficiency, pos)
 	if !ok {
 		return nil
 	}

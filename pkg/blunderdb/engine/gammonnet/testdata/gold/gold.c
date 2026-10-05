@@ -1,6 +1,7 @@
 /* Produces the gold file for blunderDB's Go port of gammonNet's search.
  * Reads testdata/search_corpus.bin, writes search_gold.bin.
- * Canonical configuration: prune k=12, filter {0,1,3,5,5}.
+ * Canonical configuration: prune k=12, the "normal" level's filter triplet
+ * at depth 2 (accept 1, extra 2, threshold 0.04), plain 5 at depths 3-4.
  * Two corpus formats -- see the magic check below. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,7 +56,8 @@ int main(int argc, char **argv) {
         } else {
             cfg = gn_search_config(ply);
         }
-        cfg.filter[0]=0; cfg.filter[1]=1; cfg.filter[2]=3; cfg.filter[3]=5; cfg.filter[4]=5;
+        cfg.filter[0]=0; cfg.filter[1]=1; cfg.filter[3]=5; cfg.filter[4]=5;
+        if (gn_search_set_filter(&cfg, 2, 1, 2, 0.04) != 0) { fprintf(stderr,"filter refused\n"); return 1; }
         gn_search_use_prune(&cfg, prune, 12);
         if (wide && buf[37]) {
             double x; memcpy(&x, buf+40, 8);

@@ -5,6 +5,7 @@ package gammonnet
 import (
 	_ "embed"
 	"fmt"
+	"math"
 	"runtime"
 	"slices"
 	"sync"
@@ -76,14 +77,24 @@ type SearchConfig struct {
 	// position directly; each further ply enumerates one more opponent roll.
 	Ply int
 
-	// Filter[d] is how many candidates survive to be searched deeper at depth
-	// d, 0 meaning no filtering. Filter[0] is never read: a decision at depth k
-	// reads Filter[k].
-	Filter [MaxPly + 1]int
+	// The move filter, one triplet (accept, extra, threshold) per depth d —
+	// gn_search.h's filter/filter_extra/filter_threshold. The best Filter[d]
+	// candidates of the shallow ranking are searched deeper, then up to
+	// FilterExtra[d] more, in ranking order, while their shallow equity stays
+	// within FilterThreshold[d] of the best one's (the first that does not
+	// stops the walk). Filter[d] == FilterExtra[d] == 0 means no filtering.
+	// With FilterExtra[d] == 0 the threshold is never read and the filter is
+	// a plain count. The threshold is in the search's own scale at that node,
+	// the one the shallow ranking sorts on. Index 0 is never read: a decision
+	// at depth k reads index k. SetFilter refuses an incoherent triplet.
+	Filter          [MaxPly + 1]int
+	FilterExtra     [MaxPly + 1]int
+	FilterThreshold [MaxPly + 1]float64
 
 	// PruneK is how many candidates the small network lets through, 0 turning
-	// it off. It is raised to Filter[depth] where that is larger: pruning
-	// below the filter would silently search fewer candidates than asked.
+	// it off. It is raised to Filter[depth]+FilterExtra[depth] where that is
+	// larger: pruning below the filter would silently search fewer candidates
+	// than asked.
 	PruneK int
 
 	// UseMatch and Match select the referential every node is valued in
@@ -102,28 +113,27 @@ type SearchConfig struct {
 	// double/take/pass branches in the tree; terminalValue ignores the cube,
 	// as in the C.
 	//
-	// CubeX is fixed at the root while CubeOwner is mirrored: a known
-	// divergence (ADR-0029). A mirrored leaf is priced with the other
-	// branch's coefficient, exactly as gn_search.c:299/:740 do; correcting it
-	// here would turn the cube gold red. The fix is gammonNet's to write
-	// (spec §4, §8 step 2).
+	// CubeX is fixed at the root while CubeOwner is mirrored: a mirrored leaf
+	// is priced with the root's coefficient, exactly as gn_search.c does, and
+	// "correcting" it here would turn the cube gold red. Per-leaf efficiency
+	// was measured negligible and declared void (ADR-0029, amended).
 	UseCube   bool
 	CubeOwner CubeOwner
 	CubeX     float64
 }
 
-// defaultFilterPrefix is the "normal" level's own filter — (0,1,3), read
-// from the same embedded export as DefaultPruneK, never retyped.
-var defaultFilterPrefix = mustLevel("normal").Filter
+// defaultLevel is the "normal" level, whose filter triplet DefaultConfig
+// copies, read from the same embedded export as DefaultPruneK, never retyped.
+var defaultLevel = mustLevel("normal")
 
 // DefaultConfig returns the canonical configuration for a given depth: pruning
-// at DefaultPruneK and the published move filter (defaultFilterPrefix).
+// at DefaultPruneK and the published move filter (defaultLevel's triplet).
 //
 // The filter is what makes the depth reachable at all: a 2-ply opening
 // decision costs ~13 400 evaluations with it, over 760 000 without.
 //
-// Depths beyond defaultFilterPrefix (3 and 4 ply) get 5 — this repository's
-// own unmeasured extension; upstream only measured the 2-ply shape (0,1,3).
+// Depths beyond the published filter (3 and 4 ply) get a plain count of 5 —
+// this repository's own unmeasured extension; upstream only measured 2-ply.
 func DefaultConfig(ply int) SearchConfig {
 	if ply < 0 {
 		ply = 0
@@ -131,16 +141,56 @@ func DefaultConfig(ply int) SearchConfig {
 	if ply > MaxPly {
 		ply = MaxPly
 	}
-	var filter [MaxPly + 1]int
-	copy(filter[:], defaultFilterPrefix)
-	for d := len(defaultFilterPrefix); d < len(filter); d++ {
-		filter[d] = 5
+	cfg := SearchConfig{Ply: ply, PruneK: DefaultPruneK}
+	copy(cfg.Filter[:], defaultLevel.Filter)
+	copy(cfg.FilterExtra[:], defaultLevel.FilterExtra)
+	copy(cfg.FilterThreshold[:], defaultLevel.FilterThreshold)
+	for d := len(defaultLevel.Filter); d < len(cfg.Filter); d++ {
+		cfg.Filter[d] = 5
 	}
-	return SearchConfig{
-		Ply:    ply,
-		PruneK: DefaultPruneK,
-		Filter: filter,
+	return cfg
+}
+
+// SetFilter sets the move filter at depth to the triplet (accept, extra,
+// threshold), as gn_search_set_filter does: a depth outside [0, MaxPly], a
+// negative count, or a negative or non-finite threshold is refused and the
+// config left untouched — never clamped into something the caller did not ask.
+func (c *SearchConfig) SetFilter(depth, accept, extra int, threshold float64) error {
+	if depth < 0 || depth > MaxPly || accept < 0 || extra < 0 ||
+		math.IsNaN(threshold) || math.IsInf(threshold, 0) || threshold < 0 {
+		return fmt.Errorf("gammonnet: filtre refusé à la profondeur %d : (%d, %d, %v)", depth, accept, extra, threshold)
 	}
+	c.Filter[depth] = accept
+	c.FilterExtra[depth] = extra
+	c.FilterThreshold[depth] = threshold
+	return nil
+}
+
+// filterWidest is the most candidates the move filter can deepen at depth:
+// accept + extra, 0 meaning no ceiling. Negative counts read as zero.
+func (c *SearchConfig) filterWidest(depth int) int {
+	return max(c.Filter[depth], 0) + max(c.FilterExtra[depth], 0)
+}
+
+// filterSurvivors is how many of the n shallow-ranked candidates (best
+// first) the move filter deepens at depth — gn_search.c's filter_survivors,
+// n when the filter is off. With extra == 0 the band loop never runs and the
+// threshold is never read: the plain count, bit for bit.
+func (c *SearchConfig) filterSurvivors(depth int, ranked []Candidate, n int) int {
+	accept := max(c.Filter[depth], 0)
+	extra := max(c.FilterExtra[depth], 0)
+	if accept == 0 && extra == 0 {
+		return n
+	}
+	keep := min(accept, n)
+	if extra > 0 {
+		limit := min(accept+extra, n)
+		floor := ranked[0].Equity - c.FilterThreshold[depth]
+		for keep < limit && ranked[keep].Equity >= floor {
+			keep++
+		}
+	}
+	return keep
 }
 
 // DepthLabel is the exact AnalysisDepth string a search at ply produces,
@@ -328,8 +378,8 @@ func (s *Searcher) pruneKeep(depth int) int {
 		return 0
 	}
 	keep := s.cfg.PruneK
-	if depth >= 0 && depth <= MaxPly && s.cfg.Filter[depth] > keep {
-		keep = s.cfg.Filter[depth]
+	if depth >= 0 && depth <= MaxPly {
+		keep = max(keep, s.cfg.filterWidest(depth))
 	}
 	return keep
 }
@@ -436,10 +486,7 @@ func (s *Searcher) rankPlays(pos *Position, d1, d2, depth, level int, state *Mat
 	}
 	theirs := s.childMatchState(level)
 	theirOwner := owner.Mirror()
-	searched := written
-	if f := s.cfg.Filter[depth]; f > 0 && f < searched {
-		searched = f
-	}
+	searched := s.cfg.filterSurvivors(depth, out, written)
 	// À la racine, tous les candidats partent dans une seule file
 	// (deepenGroups) : une barrière par décision. Ailleurs, la boucle
 	// sérielle, terme pour terme identique.
@@ -911,21 +958,19 @@ func (s *Searcher) WithWorkers(n int) *Searcher {
 
 // maxUsefulWorkers est le nombre de tâches de la plus grosse file de cette
 // configuration : au-delà, un ouvrier n'ajoute que sa table (3,7 Mo). Deux
-// files comptent : un niveau de rankPlays (Filter[depth] × 21) et la racine
-// de probsAt (jusqu'à NumRolls² × Filter[Ply-1]).
+// files comptent : un niveau de rankPlays (filterWidest(depth) × 21) et la
+// racine de probsAt (jusqu'à NumRolls² × filterWidest(Ply-1)).
 func (s *Searcher) maxUsefulWorkers() int {
 	widest := 1
 	for depth := 1; depth <= s.cfg.Ply && depth < len(s.cfg.Filter); depth++ {
-		if f := s.cfg.Filter[depth]; f > widest {
-			widest = f
-		}
+		widest = max(widest, s.cfg.filterWidest(depth))
 	}
 	tasks := NumRolls * widest
 	if s.cfg.Ply >= 1 {
 		rootDepth := s.cfg.Ply - 1
 		rootWidth := 1
-		if rootDepth >= 0 && rootDepth < len(s.cfg.Filter) && s.cfg.Filter[rootDepth] > rootWidth {
-			rootWidth = s.cfg.Filter[rootDepth]
+		if rootDepth >= 0 && rootDepth < len(s.cfg.Filter) {
+			rootWidth = max(rootWidth, s.cfg.filterWidest(rootDepth))
 		}
 		if probeTasks := NumRolls * NumRolls * rootWidth; probeTasks > tasks {
 			tasks = probeTasks

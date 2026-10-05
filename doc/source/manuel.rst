@@ -3080,6 +3080,13 @@ qu'elles changent : le verdict *pas de double* d'une position sous la règle
 Jacoby n'est pas le même calcul que sans elle, et rien d'autre à l'écran ne
 le disait.
 
+Sous la règle **Beaver**, la ligne *double, prend* vaut la meilleure réponse
+de l'adversaire autre que passer : prendre, ou *beaver* — redoubler aussitôt en
+gardant le videau, la partie se jouant à quatre fois l'enjeu —, le doubleur
+répondant alors par un *raccoon* (huit fois l'enjeu, videau chez lui) quand il
+y gagne. Le verdict et les écarts se lisent sur cette ligne, comme sans la
+règle ; au score, la règle ne s'applique pas.
+
 Un troisième badge, **Videau max**, apparaît lorsque l'identifiant d'origine
 plafonne le videau — au score comme en money game. Celui-là ne décrit pas le
 calcul affiché au-dessus : l'évaluateur intégré ne modélise pas de plafond,

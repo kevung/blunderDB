@@ -9,7 +9,7 @@ import (
 )
 
 // The canonical search levels ("instant", "normal", "thorough"): ply,
-// filter, prune_k and the QUALITY pruning costs, attached to the same value.
+// the move filter triplet per depth, prune_k and the QUALITY pruning costs, attached to the same value.
 //
 // gammonNet is the source of truth: `gn_search_level` (src/gn_search.c) is
 // the one table, `data/search_levels.json` its export. The copy here is
@@ -30,6 +30,8 @@ type SearchLevel struct {
 	Name                  string
 	Ply                   int
 	Filter                []int
+	FilterExtra           []int
+	FilterThreshold       []float64
 	PruneK                int
 	PruneEquityLoss       float64
 	PruneEquityLossCILow  float64
@@ -39,6 +41,8 @@ type SearchLevel struct {
 type searchLevelExport struct {
 	Ply               int       `json:"ply"`
 	Filter            []int     `json:"filter"`
+	FilterExtra       []int     `json:"filter_extra"`
+	FilterThreshold   []float64 `json:"filter_threshold"`
 	PruneK            int       `json:"prune_k"`
 	PruneEquityLoss   float64   `json:"prune_equity_loss"`
 	PruneEquityLossCI []float64 `json:"prune_equity_loss_ci"`
@@ -64,6 +68,8 @@ func parseSearchLevels(raw []byte) map[string]SearchLevel {
 			Name:            name,
 			Ply:             entry.Ply,
 			Filter:          entry.Filter,
+			FilterExtra:     entry.FilterExtra,
+			FilterThreshold: entry.FilterThreshold,
 			PruneK:          entry.PruneK,
 			PruneEquityLoss: entry.PruneEquityLoss,
 		}

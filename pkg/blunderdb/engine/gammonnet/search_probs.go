@@ -177,10 +177,7 @@ func (s *Searcher) probsAtRootParallel(pos *Position, depth int, state *MatchSta
 			continue
 		}
 		s.probeDanced[r] = false
-		searched := n
-		if f := s.cfg.Filter[depth-1]; f > 0 && f < searched {
-			searched = f
-		}
+		searched := s.cfg.filterSurvivors(depth-1, scratch, n)
 		if cap(s.probeCands[r]) < searched {
 			s.probeCands[r] = make([]Candidate, searched)
 		}

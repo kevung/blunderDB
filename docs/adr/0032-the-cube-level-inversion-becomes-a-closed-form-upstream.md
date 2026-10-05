@@ -1,6 +1,6 @@
 # The cube's level inversion becomes a closed form, and that is written upstream
 
-Status: accepted.
+Status: accepted. Landed upstream in gammonNet v1.4.0 (`level_solve`, spec §9) and ported.
 See also: ADR-0011, ADR-0022, ADR-0029
 
 ## Context
@@ -53,4 +53,7 @@ user sees moves on 669 real decisions.
 
 `TestClosedFormAgreesWithBisection` in
 `pkg/blunderdb/engine/gammonnet/cube_closedform_measure_test.go` (always on, 1e-9 in p on real
-chains; gap measurement behind `BLUNDERDB_MEASURE_CLOSEDFORM`, plus the benchmarks).
+chains, against the sixty-step bisection kept there as the reference, plus the benchmarks);
+`TestCubeDecideMatchesTheGoldFile` (bit-exact against the v1.4.0 C). The lockstep batch
+experiment and the bisection "lift" measurements were retired with the bisection: upstream's
+batch now calls the scalar per lane.

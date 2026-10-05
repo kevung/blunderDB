@@ -123,9 +123,10 @@ func CubeInputsFromProbs(probs *[NumOutputs]float32) CubeInputs {
 // These are branch coefficients, not a property of the position: a
 // deliberate divergence from gnubg and XG, which index efficiency by position
 // class (ADR-0029; gammonNet spec §3 forbids borrowing their constants).
-// SearchConfig.CubeX at a mirrored leaf and Decide's eDT read one where the
-// model asks for another; both match the C exactly, and the correction
-// belongs upstream (ADR-0029).
+// SearchConfig.CubeX at a mirrored leaf and Decide's eDT read the root's
+// coefficient, exactly as the C does: that is the model, not a pending fix —
+// the mirrored efficiency was measured negligible and declared void
+// (ADR-0029, amended).
 func DefaultEfficiency(owner CubeOwner) float64 {
 	switch owner {
 	case CubeOwned:
@@ -156,7 +157,7 @@ func livePoints(w, l float64) (tpLive, cpLive float64) {
 // (x1, y1). Every piece of every live curve in this file is one of these, so
 // the pieces are named by their endpoints — the spec's own notation — rather
 // than by an expanded slope a sign slip could hide in. A degenerate segment
-// (x1 <= x0, which a bisected breakpoint can produce at the extremes)
+// (x1 <= x0, which a solved breakpoint can produce at the extremes)
 // returns its own endpoint rather than dividing by zero.
 func segment(p, x0, y0, x1, y1 float64) float64 {
 	if x1-x0 <= 0.0 {
@@ -389,8 +390,8 @@ func branchMwc(state MatchState, outcomes [numOutcomes]float64, stake int, onRol
 }
 
 // levelDead is M_dead(p; k), linear between the two gammon-mix anchors, at
-// the queried p. Never cache it at the position's own p: the bisections
-// probe other values.
+// the queried p. Never cache it at the position's own p: levelSolve reads
+// it at the pieces' endpoints.
 func levelDead(lv *matchLevel, p float64) float64 {
 	return (1.0-p)*lv.loseAvg + p*lv.winAvg
 }
@@ -401,7 +402,7 @@ func levelDead(lv *matchLevel, p float64) float64 {
 // dead line.
 //
 // Monotone non-decreasing in p, since loseAvg <= pass <= cash <= winAvg by
-// construction: levelSolve's bisection stands on it.
+// construction: levelSolve's inversion stands on it.
 func levelLive(lv *matchLevel, p float64, owner CubeOwner) float64 {
 	if lv.dead {
 		return levelDead(lv, p)
@@ -435,106 +436,85 @@ func levelBlend(lv *matchLevel, p float64, owner CubeOwner, efficiency float64) 
 	return (1.0-efficiency)*levelDead(lv, p) + efficiency*levelLive(lv, p, owner)
 }
 
-// laneCurve est la courbe vive d'un niveau avec tout ce qui ne dépend pas de
-// p sorti de la bissection : dénominateurs (x1−x0) et numérateurs (y1−y0) des
-// segments, drapeau « mort », choix de possession. Optimisation
-// d'implémentation propre au Go (le compilateur n'inline pas levelLive, gcc
-// si), qui reste ici (gammonNet ADR-0003).
-//
-// Arithmétique inchangée au bit près : mêmes soustractions sur les mêmes
-// valeurs. Précalculer la pente (y1−y0)/(x1−x0) changerait le résultat : ne
-// pas le faire.
-type laneCurve struct {
-	dead    bool
-	loseAvg float64
-	winAvg  float64
-	brk     float64 // cp sous CubeOwned, tp sous CubeOpponent
-	mid     float64 // cash sous CubeOwned, pass sous CubeOpponent
-	dLo     float64 // brk − 0
-	nLo     float64 // mid − loseAvg
-	dHi     float64 // 1 − brk
-	nHi     float64 // winAvg − mid
+// levelSegment is one piece of a level curve, named by its endpoints like
+// segment's.
+type levelSegment struct {
+	x0, y0, x1, y1 float64
 }
 
-// set prépare la courbe vive de lv vue par owner. Rend false pour
-// CubeCentred (trois segments, jamais demandée par resolveLevels, et qui
-// sortirait `at` du budget d'inlining) : l'appelant retombe sur levelLive.
-func (c *laneCurve) set(lv *matchLevel, owner CubeOwner) bool {
+// levelSegments writes the pieces of the fully-live curve in ascending p —
+// gn_cube.c's level_segments, the list levelSolve inverts. levelLive picks
+// among the same pieces with the same breakpoint rule (a breakpoint belongs
+// to the piece on its left). Returns how many were written: 1 on a dead
+// level, 2 or 3 otherwise.
+//
+// The centred order assumes tp <= cp, which holds because owning the cube is
+// worth at least the opponent owning it at the same stake; were it violated,
+// the middle piece is degenerate and levelSolve skips it.
+func levelSegments(lv *matchLevel, owner CubeOwner, segs *[3]levelSegment) int {
+	if lv.dead {
+		segs[0] = levelSegment{0.0, lv.loseAvg, 1.0, lv.winAvg}
+		return 1
+	}
 	switch owner {
 	case CubeOwned:
-		c.brk, c.mid = lv.cp, lv.cash
+		segs[0] = levelSegment{0.0, lv.loseAvg, lv.cp, lv.cash}
+		segs[1] = levelSegment{lv.cp, lv.cash, 1.0, lv.winAvg}
+		return 2
 	case CubeOpponent:
-		c.brk, c.mid = lv.tp, lv.pass
-	default:
-		return false
+		segs[0] = levelSegment{0.0, lv.loseAvg, lv.tp, lv.pass}
+		segs[1] = levelSegment{lv.tp, lv.pass, 1.0, lv.winAvg}
+		return 2
+	default: // CubeCentred
+		segs[0] = levelSegment{0.0, lv.loseAvg, lv.tp, lv.pass}
+		segs[1] = levelSegment{lv.tp, lv.pass, lv.cp, lv.cash}
+		segs[2] = levelSegment{lv.cp, lv.cash, 1.0, lv.winAvg}
+		return 3
 	}
-	c.dead = lv.dead
-	c.loseAvg, c.winAvg = lv.loseAvg, lv.winAvg
-	c.dLo, c.nLo = c.brk-0.0, c.mid-c.loseAvg
-	c.dHi, c.nHi = 1.0-c.brk, c.winAvg-c.mid
-	return true
 }
 
-// at est levelLive sur cette courbe, terme pour terme ; seul le segment
-// choisi est calculé, forme voulue par une bissection sérielle bornée par la
-// latence.
-func (c *laneCurve) at(p float64) float64 {
-	if c.dead {
-		return (1.0-p)*c.loseAvg + p*c.winAvg
-	}
-	if p <= c.brk {
-		if c.dLo <= 0.0 {
-			return c.mid
-		}
-		return c.loseAvg + c.nLo*((p-0.0)/c.dLo)
-	}
-	if c.dHi <= 0.0 {
-		return c.winAvg
-	}
-	return c.mid + c.nHi*((p-c.brk)/c.dHi)
-}
-
-// cubeSolveLifted éteint la levée laneCurve, pour la mesure seulement ; rien
-// dans l'application ne le pose. Global parce que levelSolve n'a aucun chemin
-// vers le Searcher ; écrit seulement entre deux recherches, comme Counters.
-var cubeSolveLifted = true
-
-// levelSolve finds the p where a monotone level curve crosses target, by
-// bisection. blend < 0 bisects the fully-live curve (breakpoint resolution);
-// otherwise the curve blended at that efficiency (the reported take point).
+// levelSolve is the p where a monotone level curve reaches target, in closed
+// form (gn_cube.c's level_solve, spec §9): find the piece whose endpoint
+// values bracket the target and solve that straight line. blend < 0 inverts
+// the fully-live curve (breakpoint resolution); otherwise the curve blended
+// at that efficiency (the reported take point) — exact, since levelDead is
+// affine on [0, 1], so the blended curve is affine on the same pieces.
 //
-// Une forme close (identifier le segment, une division) serait plus rapide,
-// mais c'est un gain conceptuel qui se décide en amont (gn_cube.c, spec §9),
-// et elle n'est pas bit-identique : le gold du videau, aujourd'hui à max|Δ|
-// nul contre le C, passerait à 1,665e-14. Proposition et mesure :
-// cube_closedform_measure_test.go et l'ADR « The cube's level inversion
-// becomes a closed form, and that is written upstream ».
+// The answer is inf{p : f(p) >= target} clamped to [0, 1]: a target at or
+// under f(0) answers 0, one above f(1) answers 1, a flat piece answers its
+// left bound, and a degenerate piece (x1 <= x0) is skipped. A NaN in the
+// target or the curve answers NaN rather than falling through to a plausible
+// 1.0.
 func levelSolve(lv *matchLevel, owner CubeOwner, blend, target float64) float64 {
-	var c laneCurve
-	lifted := cubeSolveLifted && c.set(lv, owner)
-
-	low, high := 0.0, 1.0
-	for i := 0; i < 60; i++ {
-		mid := 0.5 * (low + high)
-		var live float64
-		if lifted {
-			live = c.at(mid)
-		} else {
-			live = levelLive(lv, mid, owner)
+	var segs [3]levelSegment
+	n := levelSegments(lv, owner, &segs)
+	if math.IsNaN(target) {
+		return target
+	}
+	for i := 0; i < n; i++ {
+		s := segs[i]
+		v0, v1 := s.y0, s.y1
+		if s.x1-s.x0 <= 0.0 {
+			continue
 		}
-		value := live
 		if blend >= 0.0 {
-			value = (1.0-blend)*levelDead(lv, mid) + blend*live
+			v0 = (1.0-blend)*levelDead(lv, s.x0) + blend*s.y0
+			v1 = (1.0-blend)*levelDead(lv, s.x1) + blend*s.y1
 		}
-		below := value < target
-		if below {
-			low = mid
+		if math.IsNaN(v0) || math.IsNaN(v1) {
+			return math.NaN()
 		}
-		if !below {
-			high = mid
+		if target <= v0 {
+			return s.x0
+		}
+		if target <= v1 {
+			if v1-v0 <= 0.0 {
+				return s.x0
+			}
+			return s.x0 + (s.x1-s.x0)*((target-v0)/(v1-v0))
 		}
 	}
-	return 0.5 * (low + high)
+	return 1.0
 }
 
 // buildLevels builds the chain: levels[0] at the current cube, each next
@@ -601,7 +581,7 @@ func buildLevelAnchors(state MatchState, outcomes [numOutcomes]float64, levels *
 }
 
 // resolveLevels résout les points de rupture du plus profond au moins
-// profond, si bien que chaque bissection vise un niveau 2k déjà complet.
+// profond, si bien que chaque inversion vise un niveau 2k déjà complet.
 func resolveLevels(levels *[maxCubeLevels]matchLevel, count int) {
 	for i := count - 2; i >= 0; i-- {
 		levels[i].tp = levelSolve(&levels[i+1], CubeOwned, -1.0, levels[i].pass)
@@ -690,6 +670,100 @@ type Decision struct {
 	EquityDoublePass float64
 	// TakePoint is the opponent's take point at this state, for reporting.
 	TakePoint float64
+	// Beaver is the beaver/raccoon answer (DecideEx); Enabled is false unless
+	// asked for at money. The fields above stay the no-beaver answer, bit for
+	// bit, whatever was asked.
+	Beaver BeaverDecision
+}
+
+// BeaverDecision is the cube decision when the opponent may beaver and the
+// doubler may then raccoon — a money-only session rule (gammonNet spec §4bis,
+// gn_cube.h's GnCubeBeaver). Beaver: the taker redoubles at once and keeps
+// the cube, the game is played for 4c. Raccoon: the doubler answers with 8c
+// and keeps the cube in turn. Neither can be declined; one raccoon, no
+// further round. Every equity is per unit of the current cube, from the
+// doubler's side, on Decision's scale.
+type BeaverDecision struct {
+	// Enabled is true when computed: money with the flag set. Otherwise every
+	// other field is zero.
+	Enabled bool
+	// Action is the verdict with beavers on the table. DoubleTake covers both
+	// "taken" and "beavered"; Beaver tells them apart.
+	Action CubeAction
+	// EquityDouble is min(pass, take, beaver): what doubling is worth once
+	// the opponent picks his best answer.
+	EquityDouble float64
+	// EquityTake is 2·E(opponent owns), the plain take branch, repeated so
+	// the three answers sit side by side.
+	EquityTake float64
+	// EquityBeaver is 4·E(opponent owns), or 8·E(I own) when the raccoon
+	// pays.
+	EquityBeaver float64
+	// Beaver: the opponent's best answer is a beaver, strictly better for
+	// him than taking and passing. A tie is a plain take.
+	Beaver bool
+	// Raccoon: once beavered, the doubler should raccoon (8·E(I own)
+	// strictly above 4·E(opponent owns)). Answered whether or not beavering
+	// was right, so an actual beaver can be judged too.
+	Raccoon bool
+}
+
+// UnderBeaver is d with the opponent's answer to a double taken from the
+// beaver decision when one was computed: the take branch becomes his best
+// non-pass answer (take or beaver), EquityDouble and Action follow. Without
+// a beaver decision, d unchanged. For the domain edge, where a session played
+// with beavers is judged by them; the engine's own fields never move.
+func (d Decision) UnderBeaver() Decision {
+	if !d.Beaver.Enabled {
+		return d
+	}
+	d.Action = d.Beaver.Action
+	d.EquityDoubleTake = math.Min(d.Beaver.EquityTake, d.Beaver.EquityBeaver)
+	d.EquityDouble = d.Beaver.EquityDouble
+	return d
+}
+
+// decideBeaver is gn_cube.c's decide_beaver: the opponent's three answers to
+// a double and the doubler's answer to a beaver, each a whole-cube multiple
+// of the same two Janowski curves the plain decision uses — a beaver changes
+// the stake and who holds the cube, never the model.
+func decideBeaver(in CubeInputs, owner CubeOwner, efficiency, eND float64) BeaverDecision {
+	eTheirs := janowskiEquity(in.Win, in.WinPoints, in.LosePoints, CubeOpponent, efficiency)
+	eMine := janowskiEquity(in.Win, in.WinPoints, in.LosePoints, CubeOwned, efficiency)
+	eDP := 1.0
+	eDT := 2.0 * eTheirs
+	eBeavered := 4.0 * eTheirs
+	eRaccooned := 8.0 * eMine
+
+	out := BeaverDecision{Enabled: true}
+	out.Raccoon = eRaccooned > eBeavered
+	eBV := eBeavered
+	if out.Raccoon {
+		eBV = eRaccooned
+	}
+	out.Beaver = eBV < eDT && eBV < eDP
+
+	// The opponent takes or beavers, whichever hurts the doubler more; the
+	// verdict table weighs that against passing as it weighs a plain take.
+	eAnswer := eDT
+	if eBV < eDT {
+		eAnswer = eBV
+	}
+	out.EquityTake = eDT
+	out.EquityBeaver = eBV
+	out.EquityDouble = eDP
+	if eAnswer < eDP {
+		out.EquityDouble = eAnswer
+	}
+	if owner == CubeOpponent {
+		// No double to answer: the replies would describe a move the player
+		// on roll cannot make.
+		out.Action = NoDouble
+		out.Beaver, out.Raccoon = false, false
+	} else {
+		out.Action = Verdict(eND, eAnswer, eDP)
+	}
+	return out
 }
 
 // Decide is the money or match-score cube decision. state == nil is money;
@@ -699,12 +773,16 @@ type Decision struct {
 // jacoby applies to the "don't double" branch only, and only with a centred
 // cube in a money game: in a match the equity table already prices gammons.
 //
-// There is deliberately no beaver parameter: a beaver changes cube owner and
-// value at the instant of the take, which a single-state decision cannot
-// express. Modelling it is a gammonNet spec §2 question first.
-//
 // ok is false when the state is not evaluable.
 func Decide(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, efficiency float64, jacoby bool) (Decision, bool) {
+	return DecideEx(probs, owner, state, efficiency, jacoby, false)
+}
+
+// DecideEx is Decide with the beaver rule (gn_cube_decide_ex): beaver fills
+// Decision.Beaver in a money game; the other fields are Decide's, computed by
+// the same code. In a match the flag has no effect: beavers are a
+// money-session rule.
+func DecideEx(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, efficiency float64, jacoby, beaver bool) (Decision, bool) {
 	in := CubeInputsFromProbs(probs)
 
 	if state == nil {
@@ -713,10 +791,9 @@ func Decide(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, effi
 			wND, lND = 1.0, 1.0
 		}
 
-		// eDT is the opponent's branch but priced at the caller's (current
-		// owner's) efficiency, as gn_cube.c:754 does; this stays until
-		// gammonNet moves (ADR-0029). The match branch below has the same
-		// shape.
+		// eDT is the opponent's branch priced at the caller's (current
+		// owner's) efficiency, as gn_cube.c does (ADR-0029, amended). The
+		// match branch below has the same shape.
 		eND := janowskiEquity(in.Win, wND, lND, owner, efficiency)
 		eDT := 2.0 * janowskiEquity(in.Win, in.WinPoints, in.LosePoints, CubeOpponent, efficiency)
 		eDP := 1.0
@@ -731,14 +808,18 @@ func Decide(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, effi
 			action = Verdict(eND, eDT, eDP)
 		}
 
-		return Decision{
+		dec := Decision{
 			Action:           action,
 			EquityNoDouble:   eND,
 			EquityDouble:     math.Min(eDT, eDP),
 			EquityDoubleTake: eDT,
 			EquityDoublePass: eDP,
 			TakePoint:        tp,
-		}, true
+		}
+		if beaver {
+			dec.Beaver = decideBeaver(in, owner, efficiency, eND)
+		}
+		return dec, true
 	}
 
 	if !state.IsValid() {

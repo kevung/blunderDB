@@ -9,6 +9,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -49,6 +50,18 @@ func TestDefaultsDeriveFromTheEmbeddedNormalLevel(t *testing.T) {
 		if cfg.Filter[i] != want {
 			t.Errorf("DefaultConfig(%d).Filter[%d] = %d, want %d (normal.Filter)",
 				normal.Ply, i, cfg.Filter[i], want)
+		}
+	}
+	for i, want := range normal.FilterExtra {
+		if cfg.FilterExtra[i] != want {
+			t.Errorf("DefaultConfig(%d).FilterExtra[%d] = %d, want %d (normal.FilterExtra)",
+				normal.Ply, i, cfg.FilterExtra[i], want)
+		}
+	}
+	for i, want := range normal.FilterThreshold {
+		if cfg.FilterThreshold[i] != want {
+			t.Errorf("DefaultConfig(%d).FilterThreshold[%d] = %v, want %v (normal.FilterThreshold)",
+				normal.Ply, i, cfg.FilterThreshold[i], want)
 		}
 	}
 }
@@ -112,6 +125,12 @@ func TestCanonicalFormsAgreeWithGammonNet(t *testing.T) {
 					break
 				}
 			}
+		}
+		if !slices.Equal(got.FilterExtra, want.FilterExtra) {
+			t.Errorf("%s: FilterExtra = %v, gammonNet publie %v", name, got.FilterExtra, want.FilterExtra)
+		}
+		if !slices.Equal(got.FilterThreshold, want.FilterThreshold) {
+			t.Errorf("%s: FilterThreshold = %v, gammonNet publie %v", name, got.FilterThreshold, want.FilterThreshold)
 		}
 		if got.PruneK != want.PruneK {
 			t.Errorf("%s: PruneK = %d, gammonNet publie %d", name, got.PruneK, want.PruneK)

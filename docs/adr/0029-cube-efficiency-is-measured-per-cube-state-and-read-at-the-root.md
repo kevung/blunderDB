@@ -1,6 +1,6 @@
 # Cube efficiency is measured per cube state, and read at the root until gammonNet says otherwise
 
-Status: accepted.
+Status: accepted. Amended at gammonNet v1.4.0: decision 4, the mirrored efficiency, is void (see the amendment below).
 See also: ADR-0011, ADR-0022, ADR-0023, ADR-0032
 
 ## Context
@@ -54,3 +54,21 @@ moves.
 
 `pkg/blunderdb/engine/gammonnet/cube_efficiency_measure_test.go` (`BLUNDERDB_MEASURE_CUBEX`,
 and the gate depth replay behind `BLUNDERDB_MEASURE_GATE_DEPTH`); `cube_gold_test.go`.
+
+## Amendment — gammonNet v1.4.0: the mirrored efficiency is void
+
+gammonNet v1.4.0 shipped ADR-0032's closed form **alone**, without the per-owner coefficient
+of decision 4, and blunderDB pins that tag. The mirrored efficiency is therefore declared
+**void**, not pending:
+
+- Decision 4 is withdrawn: no `cube_x[3]`, no per-leaf coefficient, no `e_dt` priced at
+  `x[GN_CUBE_OPPONENT]` is proposed upstream any longer. ADR-0032 rule 4 (one tag for both)
+  no longer binds.
+- Decisions 2 and 3 read differently: reading the root's coefficient at a mirrored leaf, and
+  the current owner's for `eDT`, **is** the model — upstream's and this port's — not a defect
+  awaiting a tag. The measured cost (0.005 normalised equity per leaf, 0 of 604 verdicts,
+  0 of 60 best moves) is what makes it not worth a second model.
+- The comments at `SearchConfig.CubeX`, `DefaultEfficiency` and `Decide`'s `eDT` say so; they
+  still forbid a local "fix", which would turn the cube gold red.
+- Reopening it takes a new upstream measurement showing a verdict or a move that changes,
+  and a gammonNet tag — never a change here first.

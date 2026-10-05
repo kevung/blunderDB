@@ -13,7 +13,7 @@ la décision est celle de gammonNet.
 
 ---
 
-## 1. Forme close de `levelSolve` (C.7) — **MESURÉ, décidé, en attente amont**
+## 1. Forme close de `levelSolve` (C.7) — **PORTÉ (gammonNet v1.4.0)**
 
 `levelSolve` inverse une fonction affine par morceaux et monotone dont les
 deux ou trois segments sont connus d'avance, et il l'inverse par **soixante
@@ -32,9 +32,10 @@ pas de bissection**.
   en amont ». Le gain survit au changement de langage (la forme de
   l'algorithme, pas son écriture) et il n'est **pas** bit-identique — d'où
   l'amont, et d'où la jauge.
-- **Attend** : le portage dans `gn_cube.c` et le nouveau `testdata/cube_gold.bin`.
+- **Porté** : `level_solve` en forme close dans gammonNet v1.4.0, repris dans `cube.go` ;
+  `testdata/cube_gold.bin` régénéré, écart 0.
 
-## 2. Efficacité miroitée / branche DT (C.5) — **MESURÉ, écarté ici**
+## 2. Efficacité miroitée / branche DT (C.5) — **CADUQUE (ADR-0029 amendée)**
 
 `SearchConfig.CubeX` est figé à la racine pendant que `CubeOwner` est miroité,
 et `Decide` price `eDT` au coefficient du propriétaire courant.
@@ -58,7 +59,7 @@ et `Decide` price `eDT` au coefficient du propriétaire courant.
 - **Attend** : l'entraînement et la publication du réseau, en amont, avec sa
   jauge de force. Rien à écrire ici avant.
 
-## 4. Filtres de coups à seuil d'équité (movefilter) — **NON COMMENCÉ**
+## 4. Filtres de coups à seuil d'équité (movefilter) — **PORTÉ (gammonNet v1.4.0)** : le niveau `normal` passe au triplet (1, +2, 0,04)
 
 `SearchConfig.Filter` est un **compte par profondeur** : « garde les n
 meilleurs ». Le movefilter de gnubg est un triplet (accepte, extra, seuil
@@ -73,7 +74,7 @@ meilleur ».
 - **Attend** : la décision de spec en amont. Aucun instrument de mesure n'est
   écrit ici — ce serait mesurer une fonction qui n'existe pas encore.
 
-## 5. Beaver / raccoon dans `Decide` — **DÉCIDÉ, documenté, non implémenté**
+## 5. Beaver / raccoon dans `Decide` — **PORTÉ (gammonNet v1.4.0, spec §4bis)** : `DecideEx`, lu sous `HasBeaver` en money par `DecideForSession`
 
 `domain.Position.HasBeaver` est stocké et transporté ; **rien** dans la
 décision de videau ne le lit, et c'est écrit en toutes lettres dans l'en-tête

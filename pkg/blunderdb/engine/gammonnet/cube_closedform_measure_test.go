@@ -5,7 +5,6 @@ package gammonnet
 import (
 	"fmt"
 	"math"
-	"os"
 	"runtime"
 	"sync"
 	"sync/atomic"
@@ -15,87 +14,30 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/ingest"
 )
 
-// Mesure : la bissection de levelSolve peut-elle devenir une forme close, et
-// à quel prix ?
-//
-// levelSolve (cube.go) inverse par soixante pas de bissection une fonction
-// affine par morceaux et monotone dont les segments sont connus : une forme
-// close, O(nombre de segments), suffit. À 2-ply au score 5-away/5-away,
-// levelSolve pèse ~35 % de la décision. Le gain survit au changement de
-// langage, donc il se décide en amont (gammonNet ADR-0003), et il n'est pas
-// bit-identique — c'est ce que ce fichier mesure.
-//
-// TestClosedFormAgreesWithBisection tourne TOUJOURS : il garantit que la
-// forme close proposée à l'amont est la bonne fonction. Les mesures d'écart
-// et de gain sont derrière BLUNDERDB_MEASURE_CLOSEDFORM.
+// levelSolve (cube.go) inverts a level curve in closed form, as gn_cube.c's
+// level_solve does. TestClosedFormAgreesWithBisection holds it to the sixty
+// bisection steps it replaced, on real levels: the same function, up to a
+// converging bisection's tolerance. The benchmarks below time the decision
+// paths that pay for it.
 
-// levelSegments écrit les segments de la courbe vive d'un niveau, dans
-// l'ordre des p croissants, EXACTEMENT comme levelLive les choisit : mêmes
-// bornes, mêmes ordonnées, même convention de segment dégénéré (`segment`
-// rend y1 quand x1 <= x0).
-//
-// Rend le nombre de segments écrits.
-func levelSegments(lv *matchLevel, owner CubeOwner, segs *[3][4]float64) int {
-	if lv.dead {
-		segs[0] = [4]float64{0.0, lv.loseAvg, 1.0, lv.winAvg}
-		return 1
-	}
-	switch owner {
-	case CubeOwned:
-		segs[0] = [4]float64{0.0, lv.loseAvg, lv.cp, lv.cash}
-		segs[1] = [4]float64{lv.cp, lv.cash, 1.0, lv.winAvg}
-		return 2
-	case CubeOpponent:
-		segs[0] = [4]float64{0.0, lv.loseAvg, lv.tp, lv.pass}
-		segs[1] = [4]float64{lv.tp, lv.pass, 1.0, lv.winAvg}
-		return 2
-	default: // CubeCentred
-		segs[0] = [4]float64{0.0, lv.loseAvg, lv.tp, lv.pass}
-		segs[1] = [4]float64{lv.tp, lv.pass, lv.cp, lv.cash}
-		segs[2] = [4]float64{lv.cp, lv.cash, 1.0, lv.winAvg}
-		return 3
-	}
-}
-
-// levelSolveClosed est levelSolve SANS bissection : le segment qui contient
-// la cible est identifié, puis résolu linéairement. C'est le correctif
-// proposé à l'amont (gn_cube.c `level_solve`), écrit ici pour être mesuré.
-//
-// Même convention que la bissection, qui converge vers
-// inf{ p : f(p) >= target } écrêté à [0, 1] : une cible sous f(0) rend 0, une
-// cible au-dessus de f(1) rend 1, un segment plat rend sa borne gauche.
-//
-// blend < 0 inverse la courbe vive ; sinon la courbe mélangée
-// (1−blend)·M_dead + blend·M_live, qui est affine sur les MÊMES segments
-// parce que M_dead est affine sur [0, 1] tout entier.
-func levelSolveClosed(lv *matchLevel, owner CubeOwner, blend, target float64) float64 {
-	var segs [3][4]float64
-	n := levelSegments(lv, owner, &segs)
-
-	blended := func(x, y float64) float64 {
-		if blend < 0.0 {
-			return y
+// levelSolveBisection is the inversion levelSolve replaced, kept as the
+// reference the closed form is held to: sixty bisection steps converging on
+// inf{p : f(p) >= target}.
+func levelSolveBisection(lv *matchLevel, owner CubeOwner, blend, target float64) float64 {
+	low, high := 0.0, 1.0
+	for i := 0; i < 60; i++ {
+		mid := 0.5 * (low + high)
+		value := levelLive(lv, mid, owner)
+		if blend >= 0.0 {
+			value = (1.0-blend)*levelDead(lv, mid) + blend*value
 		}
-		return (1.0-blend)*levelDead(lv, x) + blend*y
-	}
-
-	for i := 0; i < n; i++ {
-		x0, y0, x1, y1 := segs[i][0], segs[i][1], segs[i][2], segs[i][3]
-		if x1-x0 <= 0.0 {
-			continue // segment dégénéré : `segment` n'y rend que y1
-		}
-		v0, v1 := blended(x0, y0), blended(x1, y1)
-		if target <= v0 {
-			return x0
-		}
-		if target <= v1 {
-			if v1-v0 <= 0.0 {
-				return x0
-			}
-			return x0 + (x1-x0)*((target-v0)/(v1-v0))
+		if value < target {
+			low = mid
+		} else {
+			high = mid
 		}
 	}
-	return 1.0
+	return 0.5 * (low + high)
 }
 
 // closedFormLevels rend un corpus de niveaux réels : la chaîne complète de
@@ -179,8 +121,8 @@ func TestClosedFormAgreesWithBisection(t *testing.T) {
 		for _, owner := range owners {
 			for _, blend := range blends {
 				for _, target := range closedFormTargets(&lv) {
-					got := levelSolveClosed(&lv, owner, blend, target)
-					want := levelSolve(&lv, owner, blend, target)
+					got := levelSolve(&lv, owner, blend, target)
+					want := levelSolveBisection(&lv, owner, blend, target)
 					checked++
 					if d := math.Abs(got - want); d > worst {
 						worst, worstLabel = d, fmt.Sprintf("%s owner=%v blend=%.3f target=%.9f (close %.12f, bissection %.12f)",
@@ -194,122 +136,6 @@ func TestClosedFormAgreesWithBisection(t *testing.T) {
 	if worst > tol {
 		t.Fatalf("la forme close diverge de la bissection: %.3e > %.3e — %s", worst, tol, worstLabel)
 	}
-}
-
-// TestMeasureClosedFormGap — MESURE 1 : de combien de bits la forme close
-// s'écarte-t-elle de la bissection, et qu'est-ce que ça fait à une équité ?
-//
-// Elle décide si le portage peut suivre l'amont sans périmer les bases : écart
-// en p, en ULP, part d'inversions bit-identiques, écart propagé sur Value.
-func TestMeasureClosedFormGap(t *testing.T) {
-	if os.Getenv("BLUNDERDB_MEASURE_CLOSEDFORM") == "" {
-		t.Skip("set BLUNDERDB_MEASURE_CLOSEDFORM to measure the closed-form gap")
-	}
-	corpus := closedFormLevels(t)
-	owners := []CubeOwner{CubeCentred, CubeOwned, CubeOpponent}
-
-	var maxP float64
-	var maxPLabel string
-	var identical, total int
-	var maxULP uint64
-	var maxULPLabel string
-
-	for _, c := range corpus {
-		lv := c.lv
-		for _, owner := range owners {
-			for _, target := range []float64{lv.pass, lv.cash} {
-				got := levelSolveClosed(&lv, owner, -1.0, target)
-				want := levelSolve(&lv, owner, -1.0, target)
-				total++
-				if got == want {
-					identical++
-				}
-				if d := math.Abs(got - want); d > maxP {
-					maxP, maxPLabel = d, fmt.Sprintf("%s owner=%v", c.label, owner)
-				}
-				// Hors des bornes seulement : vers 0 la bissection rend 2^-61,
-				// un écart de 4e18 ULP pour 4e-19 de p.
-				if math.Min(got, want) > 1e-6 && math.Max(got, want) < 1-1e-6 {
-					if u := ulpDistance(got, want); u > maxULP {
-						maxULP, maxULPLabel = u, fmt.Sprintf("%s owner=%v (%.17g vs %.17g)", c.label, owner, got, want)
-					}
-				}
-			}
-		}
-	}
-
-	t.Logf("inversions comparées: %d — bit-identiques: %d (%.2f%%)", total, identical, 100*float64(identical)/float64(total))
-	t.Logf("écart max en p: %.3e (%s)", maxP, maxPLabel)
-	t.Logf("distance ULP max hors bornes: %d (%s)", maxULP, maxULPLabel)
-
-	// Propagation : la même chaîne d'enjeux résolue par bissection puis par
-	// forme close, et l'équité normalisée que Value en tire.
-	var maxV float64
-	var maxVLabel string
-	var vIdentical, vTotal int
-	mixes := [][numOutcomes]float64{
-		{0.40, 0.10, 0.01, 0.35, 0.13, 0.01},
-		{0.20, 0.25, 0.05, 0.30, 0.18, 0.02},
-		{0.62, 0.05, 0.00, 0.30, 0.03, 0.00},
-	}
-	for _, away := range [][2]int{{1, 1}, {2, 2}, {3, 5}, {5, 5}, {7, 4}, {15, 15}} {
-		for _, cube := range []int{1, 2, 4} {
-			st := MatchState{AwayOnRoll: away[0], AwayOpponent: away[1], Cube: cube}
-			if !st.IsValid() {
-				continue
-			}
-			for _, mix := range mixes {
-				var bis, clo [maxCubeLevels]matchLevel
-				count := buildLevelAnchors(st, mix, &bis)
-				if count == 0 {
-					continue
-				}
-				clo = bis
-				resolveLevels(&bis, count)
-				for i := count - 2; i >= 0; i-- {
-					clo[i].tp = levelSolveClosed(&clo[i+1], CubeOwned, -1.0, clo[i].pass)
-					clo[i].cp = levelSolveClosed(&clo[i+1], CubeOpponent, -1.0, clo[i].cash)
-				}
-				for _, owner := range owners {
-					x := DefaultEfficiency(owner)
-					for k := 0; k <= 20; k++ {
-						p := float64(k) / 20.0
-						a := 2.0*levelBlend(&bis[0], p, owner, x) - 1.0
-						b := 2.0*levelBlend(&clo[0], p, owner, x) - 1.0
-						vTotal++
-						if a == b {
-							vIdentical++
-						}
-						if d := math.Abs(a - b); d > maxV {
-							maxV, maxVLabel = d, fmt.Sprintf("%d/%d cube %d p=%.2f %v", away[0], away[1], cube, p, owner)
-						}
-					}
-				}
-			}
-		}
-	}
-	t.Logf("valuations comparées: %d — bit-identiques: %d (%.2f%%)", vTotal, vIdentical, 100*float64(vIdentical)/float64(vTotal))
-	t.Logf("écart max propagé sur Value (équité normalisée): %.3e (%s)", maxV, maxVLabel)
-}
-
-// ulpDistance est le nombre de float64 représentables entre a et b. Zéro
-// signifie bit-identique.
-func ulpDistance(a, b float64) uint64 {
-	if a == b {
-		return 0
-	}
-	ia, ib := math.Float64bits(a), math.Float64bits(b)
-	order := func(u uint64) uint64 {
-		if u&(1<<63) != 0 {
-			return ^u + 1 + (1 << 63)
-		}
-		return u + (1 << 63)
-	}
-	oa, ob := order(ia), order(ib)
-	if oa > ob {
-		return oa - ob
-	}
-	return ob - oa
 }
 
 // ── Repères d'inversion ─────────────────────────────────────────────────────
@@ -337,21 +163,20 @@ func BenchmarkLevelSolveBisection(b *testing.B) {
 	b.ResetTimer()
 	var sink float64
 	for i := 0; i < b.N; i++ {
-		sink += levelSolve(&next, CubeOwned, -1.0, cur.pass)
+		sink += levelSolveBisection(&next, CubeOwned, -1.0, cur.pass)
 	}
 	runtimeSink = sink
 }
 
-// BenchmarkLevelSolveClosed est la même inversion en forme close — le
-// correctif proposé à l'amont, mesuré ici pour que la proposition arrive avec
-// son chiffre.
+// BenchmarkLevelSolveClosed est la même inversion en forme close, celle que
+// levelSolve fait.
 func BenchmarkLevelSolveClosed(b *testing.B) {
 	cur, next := benchLevel(b)
 	b.ReportAllocs()
 	b.ResetTimer()
 	var sink float64
 	for i := 0; i < b.N; i++ {
-		sink += levelSolveClosed(&next, CubeOwned, -1.0, cur.pass)
+		sink += levelSolve(&next, CubeOwned, -1.0, cur.pass)
 	}
 	runtimeSink = sink
 }
@@ -530,4 +355,32 @@ func batchBenchPositions(b *testing.B) []domain.Position {
 		b.Fatal("aucune position exploitable dans la fixture")
 	}
 	return out
+}
+
+// The inversion's conventions, as gammonNet's level_solve_probe: a target at
+// or under f(0) answers 0, one above f(1) answers 1, a flat piece answers its
+// left bound, and a NaN target or curve answers NaN rather than a plausible 1.
+func TestLevelSolveConventions(t *testing.T) {
+	lv := matchLevel{loseAvg: 0.2, winAvg: 0.9, pass: 0.4, cash: 0.7, tp: 0.3, cp: 0.6}
+	if got := levelSolve(&lv, CubeOwned, -1.0, 0.1); got != 0 {
+		t.Errorf("under f(0): %v, want 0", got)
+	}
+	if got := levelSolve(&lv, CubeOwned, -1.0, 0.95); got != 1 {
+		t.Errorf("above f(1): %v, want 1", got)
+	}
+	if got := levelSolve(&lv, CubeOwned, -1.0, 0.7); got != lv.cp {
+		t.Errorf("at the breakpoint: %v, want %v", got, lv.cp)
+	}
+	flat := matchLevel{loseAvg: 0.5, winAvg: 0.9, cash: 0.5, cp: 0.4}
+	if got := levelSolve(&flat, CubeOwned, -1.0, 0.5); got != 0 {
+		t.Errorf("flat piece: %v, want its left bound 0", got)
+	}
+	if got := levelSolve(&lv, CubeOwned, -1.0, math.NaN()); !math.IsNaN(got) {
+		t.Errorf("NaN target: %v, want NaN", got)
+	}
+	bad := lv
+	bad.cash = math.NaN()
+	if got := levelSolve(&bad, CubeOwned, -1.0, 0.5); !math.IsNaN(got) {
+		t.Errorf("NaN curve: %v, want NaN", got)
+	}
 }
