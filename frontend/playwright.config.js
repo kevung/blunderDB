@@ -7,6 +7,7 @@ const PORT = process.env.BLUNDERDB_E2E_PORT || '5173';
 
 export default defineConfig({
     testDir: 'tests/e2e',
+    globalSetup: './tests/e2e/global-setup.js',
     timeout: 10000,
     expect: { timeout: 2000 },
     // CI runners are shared/noisy; retry a flaky run twice there instead of
