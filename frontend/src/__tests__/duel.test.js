@@ -3,7 +3,7 @@
  * l'Arbitre, et ce que le plateau rejoue du Bot.
  */
 import { describe, test, expect } from 'vitest';
-import { normalizeForm, settingsFromForm, scoreStart, clockView, formatClock, framesBetween, humanSide, DEFAULT_FORM, START } from '../services/duel.js';
+import { normalizeForm, settingsFromForm, scoreStart, clockView, formatClock, framesBetween, humanSide, levelLabelParts, DEFAULT_FORM, START } from '../services/duel.js';
 
 const CADENCES = [{ name: 'rapid-3+12', reserve: 180, delay: 12 }];
 
@@ -109,5 +109,20 @@ describe('framesBetween and humanSide', () => {
     test('the player is the external Side', () => {
         expect(humanSide({ sides: [{ kind: 'bot' }, { kind: 'external' }] })).toBe(1);
         expect(humanSide({ sides: [{ kind: 'external' }, { kind: 'bot' }] })).toBe(0);
+    });
+});
+
+describe('levelLabelParts', () => {
+    const levels = [
+        { name: 'instant', ply: 0, pruneK: 0 },
+        { name: 'normal', ply: 2, pruneK: 12 }
+    ];
+    test('takes the depth from the offer and says when the search is pruned', () => {
+        expect(levelLabelParts('instant', levels)).toEqual({ key: 'duel.levelPly', params: { name: 'instant', ply: 0 } });
+        expect(levelLabelParts('normal', levels)).toEqual({ key: 'duel.levelPruned', params: { name: 'normal', ply: 2 } });
+    });
+    test('keeps the bare name when the offer does not describe the level', () => {
+        expect(levelLabelParts('thorough', levels).key).toBeNull();
+        expect(levelLabelParts('thorough', undefined).key).toBeNull();
     });
 });

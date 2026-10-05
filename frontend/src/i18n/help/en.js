@@ -910,7 +910,7 @@ export default {
 <ul>
 <li><strong>Match</strong> of 1 to 25 points, or <strong>money session</strong> (Jacoby optional).</li>
 <li><strong>Start</strong>: the starting position, the position on the board, or the starting position at a chosen score.</li>
-<li><strong>Side played</strong> (player 1 or 2) and <strong>Bot level</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, those of the analysis).</li>
+<li><strong>Side played</strong> (player 1 or 2) and <strong>Bot level</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, those of the analysis). The selector states each level's depth, for example "instant (0-ply)" or "normal (2-ply, pruned)"; deeper plays stronger and slower.</li>
 <li><strong>Time control</strong>: no time control, or a named time control (a reserve per player and a free delay at each turn), and what happens when time runs out: carry on and note it, or lose the match.</li>
 <li><strong>Your name</strong> and <strong>Record the match</strong>: when unchecked, the finished Duel is discarded instead of becoming a Match.</li>
 </ul>

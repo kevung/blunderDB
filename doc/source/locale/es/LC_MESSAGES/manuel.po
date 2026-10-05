@@ -9147,11 +9147,15 @@ msgstr ""
 
 #: ../../source/manuel.rst:4006
 msgid ""
-"**Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, ``normal``, "
-"``thorough``, ceux de l'analyse)."
+"**Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, "
+"``normal``, ``thorough``, ceux de l'analyse). Le sélecteur dit la "
+"profondeur de chaque niveau, par exemple « instant (0 coup) » ou « normal "
+"(2 coups, élagué) » ; plus profond, c'est plus fort et plus lent."
 msgstr ""
 "**Lado jugado** (jugador 1 o 2) y **nivel del Bot** (``instant``, "
-"``normal``, ``thorough``, los del análisis)."
+"``normal``, ``thorough``, los del análisis). El selector indica la "
+"profundidad de cada nivel, por ejemplo «instant (0-ply)» o «normal (2-ply, "
+"podado)»; más profundo es más fuerte y más lento."
 
 #: ../../source/manuel.rst:4008
 msgid ""

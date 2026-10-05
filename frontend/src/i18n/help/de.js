@@ -910,7 +910,7 @@ export default {
 <ul>
 <li><strong>Match</strong> von 1 bis 25 Punkten oder <strong>Geldspiel</strong> (Jacoby nach Wahl).</li>
 <li><strong>Start</strong>: die Grundstellung, die Stellung auf dem Brett oder die Grundstellung bei einem gewählten Spielstand.</li>
-<li><strong>Gespielte Seite</strong> (Spieler 1 oder 2) und <strong>Bot-Stufe</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, wie bei der Analyse).</li>
+<li><strong>Gespielte Seite</strong> (Spieler 1 oder 2) und <strong>Bot-Stufe</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, die der Analyse). Die Auswahl nennt die Tiefe jeder Stufe, zum Beispiel „instant (0-Ply)“ oder „normal (2-Ply, beschnitten)“; tiefer ist stärker und langsamer.</li>
 <li><strong>Bedenkzeit</strong>: ohne Bedenkzeit oder eine benannte Bedenkzeit (eine Reserve pro Spieler und eine freie Verzögerung bei jedem Zug) und was bei abgelaufener Zeit geschieht: weiterspielen und es vermerken oder das Match verlieren.</li>
 <li><strong>Ihr Name</strong> und <strong>Match speichern</strong>: Ist das Häkchen entfernt, wird das beendete Duell verworfen, statt zu einem Match zu werden.</li>
 </ul>

@@ -4025,7 +4025,9 @@ l'autre, et la liste des Duels en suspens :
 * **Départ** : la position initiale, la position au plateau, ou la position
   initiale à un score choisi.
 * **Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, ``normal``,
-  ``thorough``, ceux de l'analyse).
+  ``thorough``, ceux de l'analyse). Le sélecteur dit la profondeur de chaque
+  niveau, par exemple « instant (0 coup) » ou « normal (2 coups, élagué) » ; plus profond, c'est plus
+  fort et plus lent.
 * **Cadence** : sans cadence, ou une cadence nommée (une réserve par joueur et
   un délai gratuit à chaque tour), et ce que fait le temps écoulé : continuer
   en le notant, ou perdre le match.

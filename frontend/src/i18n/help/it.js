@@ -910,7 +910,7 @@ export default {
 <ul>
 <li><strong>Match</strong> da 1 a 25 punti, oppure <strong>sessione money</strong> (Jacoby a scelta).</li>
 <li><strong>Partenza</strong>: la posizione iniziale, la posizione sul tavoliere, oppure la posizione iniziale a un punteggio scelto.</li>
-<li><strong>Lato giocato</strong> (giocatore 1 o 2) e <strong>livello del Bot</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, quelli dell'analisi).</li>
+<li><strong>Lato giocato</strong> (giocatore 1 o 2) e <strong>livello del Bot</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, quelli dell'analisi). Il selettore indica la profondità di ogni livello, per esempio «instant (0-ply)» o «normal (2-ply, potato)»; più profondo è più forte e più lento.</li>
 <li><strong>Cadenza</strong>: senza cadenza, o una cadenza con nome (una riserva per giocatore e un ritardo gratuito a ogni turno), e ciò che avviene allo scadere del tempo: continuare annotandolo, o perdere il match.</li>
 <li><strong>Il tuo nome</strong> e <strong>Salva il match</strong>: se deselezionato, il Duello terminato viene scartato invece di diventare un Match.</li>
 </ul>

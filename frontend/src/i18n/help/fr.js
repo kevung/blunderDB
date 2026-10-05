@@ -910,7 +910,7 @@ export default {
 <ul>
 <li><strong>Match</strong> de 1 à 25 points, ou <strong>session en argent</strong> (Jacoby au choix).</li>
 <li><strong>Départ</strong> : la position initiale, la position au plateau, ou la position initiale à un score choisi.</li>
-<li><strong>Côté joué</strong> (joueur 1 ou 2) et <strong>niveau du Bot</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, ceux de l'analyse).</li>
+<li><strong>Côté joué</strong> (joueur 1 ou 2) et <strong>niveau du Bot</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, ceux de l'analyse). Le sélecteur dit la profondeur de chaque niveau, par exemple « instant (0 coup) » ou « normal (2 coups, élagué) » ; plus profond, c'est plus fort et plus lent.</li>
 <li><strong>Cadence</strong> : sans cadence, ou une cadence nommée (une réserve par joueur et un délai gratuit à chaque tour), et ce que fait le temps écoulé : continuer en le notant, ou perdre le match.</li>
 <li><strong>Votre nom</strong> et <strong>Enregistrer le match</strong> : décoché, le Duel terminé est jeté au lieu de devenir un Match.</li>
 </ul>

@@ -9301,11 +9301,15 @@ msgstr ""
 
 #: ../../source/manuel.rst:4006
 msgid ""
-"**Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, ``normal``, "
-"``thorough``, ceux de l'analyse)."
+"**Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, "
+"``normal``, ``thorough``, ceux de l'analyse). Le sélecteur dit la "
+"profondeur de chaque niveau, par exemple « instant (0 coup) » ou « normal "
+"(2 coups, élagué) » ; plus profond, c'est plus fort et plus lent."
 msgstr ""
-"**Πλευρά** (παίκτης 1 ή 2) και **επίπεδο Bot** (``instant``, ``normal``, "
-"``thorough``, όπως της ανάλυσης)."
+"**Πλευρά που παίζεται** (παίκτης 1 ή 2) και **επίπεδο του Bot** "
+"(``instant``, ``normal``, ``thorough``, όπως στην ανάλυση). Η λίστα δείχνει "
+"το βάθος κάθε επιπέδου, για παράδειγμα «instant (0-ply)» ή «normal (2-ply, "
+"με κλάδεμα)»· βαθύτερα σημαίνει ισχυρότερο και πιο αργό."
 
 #: ../../source/manuel.rst:4008
 msgid ""
