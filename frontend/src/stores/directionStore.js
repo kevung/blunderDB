@@ -602,13 +602,17 @@ export async function writeDirectionPage() {
 /**
  * Ouvre dans le navigateur une page écrite sur le disque. Le runtime Wails refuse le schéma
  * file:// dans BrowserOpenURL ; seule la liaison Go sait lancer le navigateur par défaut.
+ * Rend faux, après l'avoir journalisé, quand l'ouverture échoue : l'appelant le dit.
  * @param {string} path
+ * @returns {Promise<boolean>}
  */
 export async function openLocalPage(path) {
     try {
         await OpenLocalPage(path);
+        return true;
     } catch (e) {
         logger.error('direction: opening the page failed', e);
+        return false;
     }
 }
 

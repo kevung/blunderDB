@@ -7,7 +7,8 @@
      * d'abord ce qui va changer : les tables de l'épreuve deviennent celles de l'Événement.
      */
     import { untrack } from 'svelte';
-    import { t } from '../../i18n';
+    import { t, tMsg } from '../../i18n';
+    import { statusBarTextStore } from '../../stores/uiStore';
     import { renderConfigChange } from './labels.js';
     import TableSettingsEditor from './TableSettingsEditor.svelte';
     import SeasonRanking from './SeasonRanking.svelte';
@@ -153,7 +154,7 @@
         if (!current) return;
         try {
             const path = await writeRencontrePage(current.id);
-            if (path) openLocalPage(path);
+            if (path && !(await openLocalPage(path))) statusBarTextStore.set(tMsg('direction.display.openFailed', { path }));
         } catch (e) {
             fail(e);
         }

@@ -115,3 +115,11 @@ test('le forfait seul se confirme par « Déclarer forfait », non rouge', async
     expect(get(confirmModalStore)).toMatchObject({ confirmLabel: tr('direction.result.forfeitDo'), tone: 'primary' });
     await answerConfirm(false);
 });
+
+test('une page écrite mais non ouverte ne se dit pas « écrite »', async () => {
+    await mountView(baseView);
+    vi.mocked(WriteDirectionPage).mockResolvedValue('/tmp/out/index.html');
+    vi.mocked(OpenLocalPage).mockRejectedValueOnce(new Error('xdg-open introuvable'));
+    await fireEvent.click(screen.getByTestId('direction-open-page'));
+    await vi.waitFor(() => expect(get(statusBarTextStore)).toEqual({ i18nKey: 'direction.display.openFailed', i18nParams: { path: '/tmp/out/index.html' } }));
+});

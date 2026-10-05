@@ -12,6 +12,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -421,18 +422,28 @@ func openFolder(dir string) error {
 }
 
 // openFile opens path with the platform's default handler, passing it as an
-// argument, never through a shell.
-func openFile(path string) error {
+// argument, never through a shell. A variable so tests can observe it.
+var openFile = func(path string) error {
 	var cmd *exec.Cmd
 	switch goruntime.GOOS {
 	case "darwin":
 		cmd = exec.Command("open", path)
 	case "windows":
-		cmd = exec.Command("rundll32", "url.dll,FileProtocolHandler", path)
+		return shellOpen(path)
 	default:
 		cmd = exec.Command("xdg-open", path)
 	}
-	return cmd.Start()
+	if err := cmd.Start(); err != nil {
+		return err
+	}
+	// Reaped in the background so the launcher leaves no zombie; a failing
+	// handler is only visible here, the call has returned by then.
+	go func() {
+		if err := cmd.Wait(); err != nil {
+			log.Printf("open %s: %v", path, err)
+		}
+	}()
+	return nil
 }
 
 // OpenLocalPage opens a generated display page (an .html file written by the
@@ -445,7 +456,11 @@ func (a *App) OpenLocalPage(path string) error {
 	if ext != ".html" && ext != ".htm" {
 		return newGUIError(CodeInvalid, "not an HTML page: "+path)
 	}
-	if info, err := os.Stat(path); err != nil || info.IsDir() {
+	if !filepath.IsAbs(path) {
+		return newGUIError(CodeInvalid, "page path must be absolute: "+path)
+	}
+	// Lstat, not Stat: a link could point the handler at any document.
+	if info, err := os.Lstat(path); err != nil || !info.Mode().IsRegular() {
 		return newGUIError(CodeNotFound, "page not found: "+path)
 	}
 	if err := openFile(path); err != nil {
