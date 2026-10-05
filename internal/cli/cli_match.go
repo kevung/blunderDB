@@ -186,6 +186,13 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition) (st
 		if movePos.Position.Dice[0] != 0 {
 			sb.WriteString(fmt.Sprintf("  Dice: %d-%d\n", movePos.Position.Dice[0], movePos.Position.Dice[1]))
 		}
+		// An unknown time is left out, never printed as zero.
+		if movePos.DecisionMS != nil {
+			sb.WriteString(fmt.Sprintf("  Decision time: %.1f s\n", float64(*movePos.DecisionMS)/1000))
+		}
+		if movePos.CubeDecisionMS != nil {
+			sb.WriteString(fmt.Sprintf("  Cube decision time: %.1f s\n", float64(*movePos.CubeDecisionMS)/1000))
+		}
 		sb.WriteString("\n")
 	}
 
@@ -216,6 +223,42 @@ func (cli *CLI) formatMatchSummary(match *Match, positions []MatchMovePosition) 
 		count := gamePositions[gameNum]
 		sb.WriteString(fmt.Sprintf("  Game %d: %d positions\n", gameNum, count))
 	}
+	cli.writeTimeSummary(&sb, match)
 
 	return sb.String(), nil
+}
+
+// writeTimeSummary adds, per player, the decision times the match recorded:
+// nothing at all when it recorded none.
+func (cli *CLI) writeTimeSummary(sb *strings.Builder, match *Match) {
+	if cli.db == nil {
+		return
+	}
+	sum, err := cli.db.GetMatchTimeSummary(match.ID)
+	if err != nil {
+		return
+	}
+	names := [2]string{match.Player1Name, match.Player2Name}
+	mean := func(total int64, n int) string {
+		if n == 0 {
+			return "-"
+		}
+		return fmt.Sprintf("%.1f s", float64(total)/float64(n)/1000)
+	}
+	header := false
+	for i, p := range sum.Players {
+		if p.CheckerCount+p.CubeCount == 0 {
+			continue
+		}
+		if !header {
+			sb.WriteString("\nDecision times:\n")
+			header = true
+		}
+		fmt.Fprintf(sb, "  %s: total %.1f s, checker mean %s, cube mean %s", names[i],
+			float64(p.TotalMS)/1000, mean(p.CheckerTotalMS, p.CheckerCount), mean(p.CubeTotalMS, p.CubeCount))
+		if sum.HasCadence {
+			fmt.Fprintf(sb, ", %d turns over the reserve (%.1f s)", p.OverrunTurns, float64(p.OverrunMS)/1000)
+		}
+		sb.WriteString("\n")
+	}
 }

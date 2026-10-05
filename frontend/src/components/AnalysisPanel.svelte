@@ -6,6 +6,7 @@
     import { isLetter, isBareLetter } from '../utils/keys.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
+    import { fmtDuration } from '../utils/decisionTime.js';
     import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { t } from '../i18n';
     import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
@@ -43,6 +44,15 @@
     // The cube ceiling applies at any score: read off the position.
     let maxCube = $derived($positionStore?.max_cube ?? 0);
     let matchCtx = $derived($matchContextStore);
+    // How long the player took over the decision played here, in match review:
+    // empty when the match did not record it.
+    let playedTime = $derived.by(() => {
+        if (!matchCtx.isMatchMode) return '';
+        const mp = matchCtx.movePositions?.[matchCtx.currentIndex];
+        const move = fmtDuration(mp?.decision_ms);
+        const cube = fmtDuration(mp?.cube_decision_ms);
+        return [cube && `◇ ${cube}`, move].filter(Boolean).join(' · ');
+    });
 
     let activeTab = $state('checker'); // 'checker' or 'cube'
 
@@ -490,6 +500,9 @@
             <METBadge positionId={$positionStore?.id ?? 0} analysis={analysisData} />
             <!-- Une ligne, et seulement quand une règle est confiante. -->
             <ExplanationLine analysis={analysisData} />
+            {#if playedTime}
+                <div class="played-time" data-testid="played-time" title={$t('analysis.playedTimeTooltip')}>{$t('analysis.playedTime')} {playedTime}</div>
+            {/if}
             <!-- Un rollout sans ligne de coup où s'écrire : la décision de videau, ou une position sans analyse. -->
             {#if viewKind === 'cube' || !hasCheckerAnalysis}
                 <RolloutResults
@@ -516,6 +529,12 @@
         min-height: 6em;
         color: var(--color-text-muted);
         letter-spacing: 0.4em;
+    }
+
+    .played-time {
+        padding: 2px 8px;
+        font-size: var(--font-size-small);
+        color: var(--color-text-muted);
     }
 
     .analysis-panel {

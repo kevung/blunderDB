@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 09:43+0200\n"
+"POT-Creation-Date: 2026-10-05 17:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -1052,6 +1052,36 @@ msgid "``--move-error-min`` ``--move-error-max``"
 msgstr "``--move-error-min`` ``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "tm>x"
+msgstr "tm>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Le joueur 1 a mis plus de x secondes à décider (coup ou videau). Un coup "
+"dont la durée est inconnue ne répond jamais."
+msgstr ""
+"Ο παίκτης 1 έκανε περισσότερα από x δευτερόλεπτα να αποφασίσει (κίνηση ή "
+"κύβος). Μια κίνηση με άγνωστη διάρκεια δεν ταιριάζει ποτέ."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tm<x"
+msgstr "tm<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur 1 a mis moins de x secondes à décider."
+msgstr "Ο παίκτης 1 έκανε λιγότερα από x δευτερόλεπτα να αποφασίσει."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tmx,y"
+msgstr "tmx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur 1 a mis entre x et y secondes à décider, bornes comprises."
+msgstr ""
+"Ο παίκτης 1 έκανε ανάμεσα σε x και y δευτερόλεπτα να αποφασίσει, με τα "
+"όρια συμπεριλαμβανομένα."
+
+#: ../../source/cmd_mode.rst:1
 msgid "w>x"
 msgstr "w>x"
 
@@ -1843,7 +1873,7 @@ msgstr ""
 "τύπους απόφασης και στα δύο καθεστώτα, χρήματα και αγώνας. Δείτε "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:244
+#: ../../source/cmd_mode.rst:247
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1862,11 +1892,11 @@ msgstr ""
 "ετικετών: δεν εμφανίζεται σε καμία τιμή, και το ``ma1;2`` δεν είναι "
 "διακριτικό (γράψτε ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:252
 msgid "Transcrire depuis un terminal"
 msgstr "Μεταγραφή από τερματικό"
 
-#: ../../source/cmd_mode.rst:251
+#: ../../source/cmd_mode.rst:254
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1886,7 +1916,7 @@ msgstr ""
 "είναι δική της συνεδρία, χωρίς ``sessionId`` και χωρίς αναίρεση από τη "
 "μία κλήση στην άλλη."
 
-#: ../../source/cmd_mode.rst:262
+#: ../../source/cmd_mode.rst:265
 msgid "Commandes diverses"
 msgstr "Διάφορες εντολές"
 

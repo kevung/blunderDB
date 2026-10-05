@@ -1487,6 +1487,20 @@ l'analyse ne note pas ne porte aucune marque.
 L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non :
 on voit sans l'ouvrir dans quelle partie se trouvent les blunders.
 
+Quand le match a gardé la durée de ses décisions (un match joué contre un bot),
+l'onglet ajoute une colonne **Durée** : celle du coup de pions, précédée de
+celle du videau (◇) quand le joueur a réfléchi à la question avant de lancer.
+Un clic sur l'en-tête de la colonne trie les coups de chaque partie du plus long
+au plus court, puis du plus court au plus long, puis rend l'ordre du match ; une
+durée inconnue reste vide et passe en dernier. Au-dessus des parties, un résumé
+donne pour chaque joueur le total, la moyenne par coup de pions et par décision
+de videau, et, si le match a une cadence, le nombre de tours joués après
+l'épuisement de la réserve avec le temps au-delà ; un graphique place la durée
+de chaque décision au fil du match. En revue, la durée de la décision jouée se
+lit discrètement sous l'analyse. La recherche la filtre avec ``tm>30`` (en
+secondes), qui se combine avec ``E>x`` : ``s tm>30 E>80`` retient les coups
+longuement réfléchis et pourtant faux.
+
 L'onglet **Infos** de la fiche rappelle l'en-tête du match. Il y ajoute ce que
 le fichier source dit des joueurs et de la session, quand il le dit — un
 fichier eXtreme Gammon le dit toujours : le classement Elo de chaque joueur et

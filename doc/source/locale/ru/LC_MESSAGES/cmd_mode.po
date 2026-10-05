@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 09:43+0200\n"
+"POT-Creation-Date: 2026-10-05 17:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1037,6 +1037,34 @@ msgid "``--move-error-min`` ``--move-error-max``"
 msgstr "``--move-error-min`` ``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "tm>x"
+msgstr "tm>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Le joueur 1 a mis plus de x secondes à décider (coup ou videau). Un coup "
+"dont la durée est inconnue ne répond jamais."
+msgstr ""
+"Игрок 1 думал над решением дольше x секунд (ход или куб). Ход с "
+"неизвестной длительностью никогда не подходит."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tm<x"
+msgstr "tm<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur 1 a mis moins de x secondes à décider."
+msgstr "Игрок 1 думал над решением меньше x секунд."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tmx,y"
+msgstr "tmx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur 1 a mis entre x et y secondes à décider, bornes comprises."
+msgstr "Игрок 1 думал над решением от x до y секунд, границы включены."
+
+#: ../../source/cmd_mode.rst:1
 msgid "w>x"
 msgstr "w>x"
 
@@ -1821,7 +1849,7 @@ msgstr ""
 "шашко-пипсов, ``like42*`` расширяет класс цели на все типы решений и на "
 "оба режима, на деньги и матч. См. :ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:244
+#: ../../source/cmd_mode.rst:247
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1839,11 +1867,11 @@ msgstr ""
 "разделяет списки идентификаторов и тегов: она не встречается ни в одном "
 "значении, а ``ma1;2`` не является токеном (пишите ``ma1 ma2``)."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:252
 msgid "Transcrire depuis un terminal"
 msgstr "Запись из терминала"
 
-#: ../../source/cmd_mode.rst:251
+#: ../../source/cmd_mode.rst:254
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1863,7 +1891,7 @@ msgstr ""
 "отдельная сессия, без ``sessionId`` и без отмены от одного вызова к "
 "другому."
 
-#: ../../source/cmd_mode.rst:262
+#: ../../source/cmd_mode.rst:265
 msgid "Commandes diverses"
 msgstr "Прочие команды"
 

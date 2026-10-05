@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 09:43+0200\n"
+"POT-Creation-Date: 2026-10-05 17:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1033,6 +1033,34 @@ msgid "``--move-error-min`` ``--move-error-max``"
 msgstr "``--move-error-min`` ``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "tm>x"
+msgstr "tm>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Le joueur 1 a mis plus de x secondes à décider (coup ou videau). Un coup "
+"dont la durée est inconnue ne répond jamais."
+msgstr ""
+"Pelaaja 1 käytti päätökseen yli x sekuntia (nappulasiirto tai kuutio). "
+"Siirto, jonka kesto on tuntematon, ei koskaan täsmää."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tm<x"
+msgstr "tm<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur 1 a mis moins de x secondes à décider."
+msgstr "Pelaaja 1 käytti päätökseen alle x sekuntia."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tmx,y"
+msgstr "tmx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur 1 a mis entre x et y secondes à décider, bornes comprises."
+msgstr "Pelaaja 1 käytti päätökseen x–y sekuntia, rajat mukaan lukien."
+
+#: ../../source/cmd_mode.rst:1
 msgid "w>x"
 msgstr "w>x"
 
@@ -1820,7 +1848,7 @@ msgstr ""
 "päätöstyyppeihin ja molempiin pelimuotoihin, rahapeliin ja otteluun. Ks. "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:244
+#: ../../source/cmd_mode.rst:247
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1839,11 +1867,11 @@ msgstr ""
 "esiinny missään arvossa, eikä ``ma1;2`` ole tunniste (kirjoita ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:252
 msgid "Transcrire depuis un terminal"
 msgstr "Litterointi päätteestä"
 
-#: ../../source/cmd_mode.rst:251
+#: ../../source/cmd_mode.rst:254
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1862,7 +1890,7 @@ msgstr ""
 " edellisen kutsun palauttaman revision; jokainen kutsu on oma istuntonsa,"
 " ilman ``sessionId``-tunnistetta ja ilman kumoamista kutsusta toiseen."
 
-#: ../../source/cmd_mode.rst:262
+#: ../../source/cmd_mode.rst:265
 msgid "Commandes diverses"
 msgstr "Sekalaisia komentoja"
 

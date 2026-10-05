@@ -921,6 +921,12 @@ le dit : classement Elo et expérience de chaque joueur, transcripteur, règles
 Jacoby et Beaver d'une partie libre, programme qui a écrit le fichier ; la
 sortie ``json`` les porte dans l'objet ``match``.
 
+Quand le match a gardé la durée de ses décisions (un match joué contre un bot,
+voir le Duel), la sortie ``text`` donne la durée de chaque décision, celle du
+videau à part, et la sortie ``summary`` le total et la moyenne de chaque
+joueur ; la sortie ``json`` porte ``decision_ms`` et ``cube_decision_ms``. Une
+durée inconnue n'est pas écrite.
+
 .. code-block:: bash
 
    ./blunderdb match --db <path> --id <id> [--format <format>] [--output <file>]

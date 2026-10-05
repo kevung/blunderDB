@@ -328,6 +328,7 @@ export default {
 <p>Cada partida puede exportarse en transcripción Jellyfish <code>.mat</code> mediante el botón ⬇ de la lista de partidas o el botón <em>.mat</em> de la ficha de la partida.</p>
 <p>Un clic en un match abre su ficha. Su pestaña <strong>Transcripción</strong> enumera las jugadas partida por partida, y un clic en una jugada lleva allí la revisión. Cada jugada lleva su <strong>gravedad</strong>: <code>?</code> para un error, <code>??</code> para un blunder, un filete de color en el margen de la fila, y el coste de la jugada en equity al pasar el ratón sobre la marca. Los umbrales son los de la base (Configuración), los mismos con los que cuentan las estadísticas. La jugada se juzga tal como se jugó: una misma posición jugada dos veces en el match recibe dos juicios. Una jugada que el análisis no puntúa no lleva ninguna marca.</p>
 <p>La cabecera de cada partida cuenta sus marcas, esté desplegada o no: se ve sin abrirla en qué partida están los blunders.</p>
+<p>Cuando la partida conservó la duración de sus decisiones (una partida jugada contra un bot), la pestaña añade una columna <strong>Duración</strong>: la de la jugada de fichas, precedida por la de la decisión de cubo (◇) cuando el jugador pensó en la pregunta antes de tirar. Un clic en el encabezado de la columna ordena las jugadas de cada juego de la más larga a la más corta, luego de la más corta a la más larga, y después restablece el orden de la partida; una duración desconocida queda vacía y va al final. Encima de los juegos, un resumen da para cada jugador el total, la media por jugada de fichas y por decisión de cubo y, si la partida tiene cadencia, el número de turnos jugados tras agotarse la reserva con el tiempo excedido; un gráfico sitúa la duración de cada decisión a lo largo de la partida. En la revisión, la duración de la decisión jugada se lee discretamente bajo el análisis. La búsqueda la filtra con <code>tm&gt;30</code> (en segundos), que se combina con <code>E&gt;x</code>: <code>s tm&gt;30 E&gt;80</code> conserva las jugadas muy meditadas y aun así erróneas.</p>
 <p>La pestaña <strong>Infos</strong> de la ficha recuerda la cabecera del partido. Añade lo que el archivo de origen dice de los jugadores y de la sesión, cuando lo dice — un archivo de eXtreme Gammon siempre lo dice: la clasificación Elo de cada jugador con su experiencia entre paréntesis, el transcriptor, las reglas Jacoby y Beaver de una partida libre y el programa que escribió el archivo. Esta información se exporta con el partido. Reimportar un archivo ya presente se la da al partido que no la tenía, sin reemplazar nada de lo que ya lleva. El comando <code>match</code> de la línea de comandos también la muestra. Los comentarios de cabecera y de pie de partido de un archivo de eXtreme Gammon pasan a ser el comentario del partido, firmado con el nombre de su transcriptor, o <code>XG</code> si el archivo no lo indica; el reloj y la tabla de equidad no se importan. La ficha muestra este autor junto al comentario, y la exportación lo copia con él; modificar el comentario lo firma con <strong>Su nombre</strong> (ajustes).</p>
 <p>El botón <strong>Fusionar jugadores</strong> de la barra de herramientas del panel abre una ventana que enumera todos los nombres de jugadores de la base con su número de partidas: seleccionar las variantes de ortografía de un mismo jugador, elegir el nombre canónico que se desea conservar y, a continuación, fusionar. La fusión crea un alias por variante: las partidas conservan los nombres de sus archivos, pero las estadísticas, la tabla Jugadores y la búsqueda <code>pl"…"</code> leen todas las variantes como un solo jugador, y las importaciones posteriores registran el nombre canónico. Quitar el alias en la pestaña <strong>Corpus</strong> de los ajustes deshace la fusión.</p>
 <p>Cuando una partida está abierta, aparece una <strong>barra de información</strong> sobre el tablero: recuerda los jugadores presentes (<em>jugador 1</em> contra <em>jugador 2</em>) así como el contexto de la partida (evento, lugar, ronda, fecha y longitud de la partida, cuando esa información está disponible). Esta barra también se muestra fuera del modo partida: cuando una posición estudiada (procedente de una búsqueda, de una colección o de un acceso directo) proviene de una o varias partidas, indica su <strong>procedencia</strong> — la primera partida implicada y, en su caso, una insignia « +N » que enumera las demás al pasar el cursor. Una posición importada por separado, que ninguna partida referencia, no muestra nada.</p>
@@ -2300,6 +2301,21 @@ export default {
 <td>Ex,y</td>
 <td>El error de la jugada realizada por el jugador 1 (en milipuntos) está comprendido entre x e y.</td>
 <td><code>--move-error-min</code> <code>--move-error-max</code></td>
+</tr>
+<tr>
+<td>tm&gt;x</td>
+<td>El jugador 1 tardó más de x segundos en decidir (jugada o cubo). Una jugada de duración desconocida nunca coincide.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>tm&lt;x</td>
+<td>El jugador 1 tardó menos de x segundos en decidir.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>tmx,y</td>
+<td>El jugador 1 tardó entre x e y segundos en decidir, límites incluidos.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>w&gt;x</td>

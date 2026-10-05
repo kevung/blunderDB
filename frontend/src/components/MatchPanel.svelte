@@ -21,12 +21,15 @@
         SwapMatchPlayers,
         SaveLastVisitedPosition,
         GetMatchDetailStats,
-        GetMatchMoveGrades
+        GetMatchMoveGrades,
+        GetMatchTimeSummary
     } from '../../wailsjs/go/database/Database.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
     import PanelTable, { navigationDelta } from './panels/PanelTable.svelte';
     import { exportMatchMat } from '../services/exportService.js';
+    import MatchTimes from './MatchTimes.svelte';
+    import { fmtDuration, hasAnyDuration, sortByDuration } from '../utils/decisionTime.js';
     import { editMatchTranscription } from '../services/transcriptionSave.js';
     import { enrichMatchFromFile } from '../services/importService.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
@@ -79,6 +82,8 @@
     let detailGames = $state([]); // Game[] for the detail match
     /** @type {any[]} */
     let detailGrades = $state([]); // MoveGrade[] for the detail match
+    let detailTimes = $state(null); // MatchTimeSummary for the detail match
+    let timeSort = $state(''); // '' | 'desc' | 'asc': the transcript's order by decision time
     let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
     /** @type {any} */
@@ -296,6 +301,7 @@
             detailMovePositions = [];
             detailGames = [];
             detailGrades = [];
+            detailTimes = null;
             detailStats = null;
         } else {
             selectedMatch = match;
@@ -309,15 +315,17 @@
         detailMatch = match;
         detailStats = null; // reset stats when switching match
         try {
-            const [movePositions, games, grades] = await Promise.all([GetMatchMovePositions(match.id), GetGamesByMatch(match.id), loadMoveGrades(match.id)]);
+            const [movePositions, games, grades, times] = await Promise.all([GetMatchMovePositions(match.id), GetGamesByMatch(match.id), loadMoveGrades(match.id), loadTimeSummary(match.id)]);
             detailMovePositions = movePositions || [];
             detailGames = games || [];
             detailGrades = grades;
+            detailTimes = times;
         } catch (error) {
             logger.error('Error loading match detail:', error);
             detailMovePositions = [];
             detailGames = [];
             detailGrades = [];
+            detailTimes = null;
         }
         loadingDetail = false;
     }
@@ -331,6 +339,21 @@
             logger.error('Error loading move grades:', error);
             return [];
         }
+    }
+
+    // The time summary is optional too: without it the transcript shows no summary.
+    /** @param {number} matchID */
+    async function loadTimeSummary(matchID) {
+        try {
+            return (await GetMatchTimeSummary(matchID)) || null;
+        } catch (error) {
+            logger.error('Error loading time summary:', error);
+            return null;
+        }
+    }
+
+    function cycleTimeSort() {
+        timeSort = timeSort === '' ? 'desc' : timeSort === 'desc' ? 'asc' : '';
     }
 
     // Grades follow the library thresholds: re-read when the library counter changes.
@@ -363,6 +386,9 @@
             loadMatchStats(detailMatch);
         }
     }
+
+    // The Time column appears once the match recorded any duration.
+    let showTimes = $derived(hasAnyDuration(detailMovePositions.map((mp) => ({ mp }))));
 
     // Moves grouped by game, each with its precomputed globalIdx (an indexOf per
     // row would be quadratic).
@@ -980,6 +1006,9 @@
                         {:else if transcriptGames.length === 0}
                             <div class="empty-state">{$t('match.noMovesRecorded')}</div>
                         {:else}
+                            {#if detailTimes}
+                                <MatchTimes summary={detailTimes} movePositions={detailMovePositions} player1={detailMatch.player1_name} player2={detailMatch.player2_name} />
+                            {/if}
                             {#each transcriptGames as game (game.gameNumber)}
                                 {@const isOpen = openGames.has(game.gameNumber)}
                                 <details class="game-section" open={isOpen} ontoggle={(e) => setGameOpen(game.gameNumber, e.currentTarget.open)}>
@@ -1012,10 +1041,17 @@
                                                     <th class="transcript-player">{$t('match.player')}</th>
                                                     <th class="transcript-dice">{$t('match.dice')}</th>
                                                     <th class="transcript-move">{$t('match.move')}</th>
+                                                    {#if showTimes}
+                                                        <th class="transcript-time"
+                                                            ><button class="time-sort" onclick={cycleTimeSort} title={$t('match.timeSortTooltip')}
+                                                                >{$t('match.time')}{timeSort === 'desc' ? ' ▼' : timeSort === 'asc' ? ' ▲' : ''}</button
+                                                            ></th
+                                                        >
+                                                    {/if}
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {#each game.moves as { mp, globalIdx, grade }, mi (globalIdx)}
+                                                {#each sortByDuration(game.moves, timeSort) as { mp, globalIdx, grade }, mi (globalIdx)}
                                                     <tr
                                                         class="transcript-row"
                                                         class:cube-row={mp.move_type === 'cube'}
@@ -1047,6 +1083,13 @@
                                                                 >
                                                             {/if}
                                                         </td>
+                                                        {#if showTimes}
+                                                            <td class="transcript-time" data-testid="move-time">
+                                                                {#if mp.cube_decision_ms != null}<span class="time-cube" title={$t('match.timeCubeTooltip')}>◇ {fmtDuration(mp.cube_decision_ms)}</span
+                                                                    >{/if}
+                                                                {fmtDuration(mp.decision_ms)}
+                                                            </td>
+                                                        {/if}
                                                     </tr>
                                                 {/each}
                                             </tbody>
@@ -1589,6 +1632,23 @@
         background-color: color-mix(in srgb, var(--color-danger) 14%, var(--color-surface));
     }
 
+    .transcript-time {
+        text-align: right;
+        white-space: nowrap;
+        color: var(--text-muted, inherit);
+        font-size: var(--font-size-small);
+    }
+    .time-sort {
+        background: none;
+        border: none;
+        padding: 0;
+        color: inherit;
+        cursor: pointer;
+    }
+    .time-cube {
+        margin-right: 6px;
+        opacity: 0.8;
+    }
     .grade-mark,
     .game-marks {
         font-weight: 700;

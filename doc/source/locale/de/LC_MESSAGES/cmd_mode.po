@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 09:43+0200\n"
+"POT-Creation-Date: 2026-10-05 17:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1058,6 +1058,36 @@ msgid "``--move-error-min`` ``--move-error-max``"
 msgstr "``--move-error-min`` ``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "tm>x"
+msgstr "tm>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Le joueur 1 a mis plus de x secondes à décider (coup ou videau). Un coup "
+"dont la durée est inconnue ne répond jamais."
+msgstr ""
+"Spieler 1 hat mehr als x Sekunden für die Entscheidung gebraucht "
+"(Steinzug oder Doppler). Ein Zug mit unbekannter Dauer trifft nie zu."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tm<x"
+msgstr "tm<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur 1 a mis moins de x secondes à décider."
+msgstr "Spieler 1 hat weniger als x Sekunden für die Entscheidung gebraucht."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tmx,y"
+msgstr "tmx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur 1 a mis entre x et y secondes à décider, bornes comprises."
+msgstr ""
+"Spieler 1 hat zwischen x und y Sekunden für die Entscheidung gebraucht, "
+"Grenzen eingeschlossen."
+
+#: ../../source/cmd_mode.rst:1
 msgid "w>x"
 msgstr "w>x"
 
@@ -1853,7 +1883,7 @@ msgstr ""
 "Entscheidungsarten und auf beide Spielformen, Geldspiel und Match. Siehe "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:244
+#: ../../source/cmd_mode.rst:247
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1872,11 +1902,11 @@ msgstr ""
 "Listen von Kennungen und Tags: Es kommt in keinem Wert vor, und ``ma1;2``"
 " ist kein Token (``ma1 ma2`` schreiben)."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:252
 msgid "Transcrire depuis un terminal"
 msgstr "Von einem Terminal aus transkribieren"
 
-#: ../../source/cmd_mode.rst:251
+#: ../../source/cmd_mode.rst:254
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1896,7 +1926,7 @@ msgstr ""
 "eine eigene Sitzung, ohne ``sessionId`` und ohne Rückgängigmachen von "
 "einem Aufruf zum nächsten."
 
-#: ../../source/cmd_mode.rst:262
+#: ../../source/cmd_mode.rst:265
 msgid "Commandes diverses"
 msgstr "Verschiedene Befehle"
 

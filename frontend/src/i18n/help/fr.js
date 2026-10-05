@@ -328,6 +328,7 @@ export default {
 <p>Chaque match peut être exporté en transcription Jellyfish <code>.mat</code> via le bouton ⬇ de la liste des matchs ou le bouton <em>.mat</em> de la fiche du match.</p>
 <p>Un clic sur un match ouvre sa fiche. Son onglet <strong>Transcription</strong> liste les coups partie par partie, et un clic sur un coup y amène la revue. Chaque coup y porte sa <strong>gravité</strong> : <code>?</code> pour une erreur, <code>??</code> pour un blunder, un filet de couleur en marge de la ligne, et le coût du coup en équité au survol de la marque. Les seuils sont ceux de la base (Configuration), ceux que comptent les statistiques. Le coup est jugé tel qu'il a été joué : une même position jouée deux fois dans le match reçoit deux jugements. Un coup que l'analyse ne note pas ne porte aucune marque.</p>
 <p>L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non : on voit sans l'ouvrir dans quelle partie se trouvent les blunders.</p>
+<p>Quand le match a gardé la durée de ses décisions (un match joué contre un bot), l'onglet ajoute une colonne <strong>Durée</strong> : celle du coup de pions, précédée de celle du videau (◇) quand le joueur a réfléchi à la question avant de lancer. Un clic sur l'en-tête de la colonne trie les coups de chaque partie du plus long au plus court, puis du plus court au plus long, puis rend l'ordre du match ; une durée inconnue reste vide et passe en dernier. Au-dessus des parties, un résumé donne pour chaque joueur le total, la moyenne par coup de pions et par décision de videau, et, si le match a une cadence, le nombre de tours joués après l'épuisement de la réserve avec le temps au-delà ; un graphique place la durée de chaque décision au fil du match. En revue, la durée de la décision jouée se lit discrètement sous l'analyse. La recherche la filtre avec <code>tm&gt;30</code> (en secondes), qui se combine avec <code>E&gt;x</code> : <code>s tm&gt;30 E&gt;80</code> retient les coups longuement réfléchis et pourtant faux.</p>
 <p>L'onglet <strong>Infos</strong> de la fiche rappelle l'en-tête du match. Il y ajoute ce que le fichier source dit des joueurs et de la session, quand il le dit — un fichier eXtreme Gammon le dit toujours : le classement Elo de chaque joueur et son expérience entre parenthèses, le transcripteur, les règles Jacoby et Beaver d'une partie libre, et le programme qui a écrit le fichier. Ces informations sont exportées avec le match. Réimporter un fichier déjà présent les donne au match qui ne les avait pas, sans rien remplacer de ce qu'il porte déjà. La commande <code>match</code> de la ligne de commande les affiche aussi. Les commentaires d'en-tête et de pied de match d'un fichier eXtreme Gammon deviennent le commentaire du match, signé du nom de son transcripteur, ou <code>XG</code> si le fichier n'en nomme pas ; l'horloge et la table d'équité ne sont pas importées. La fiche affiche cet auteur à côté du commentaire, et l'export le copie avec lui ; modifier le commentaire le signe de <strong>Votre nom</strong> (réglages).</p>
 <p>Le bouton <strong>Fusionner les joueurs</strong> de la barre d'outils du panneau ouvre une fenêtre listant tous les noms de joueurs de la base avec leur nombre de matchs : sélectionner les variantes d'orthographe d'un même joueur, choisir le nom canonique à conserver, puis fusionner. La fusion crée un alias par variante : les matchs gardent les noms de leurs fichiers, mais les statistiques, la table Joueurs et la recherche <code>pl"…"</code> lisent toutes les variantes comme un seul joueur, et les imports suivants enregistrent le nom canonique. Retirer l'alias dans l'onglet <strong>Corpus</strong> des paramètres défait la fusion.</p>
 <p>Lorsqu'un match est ouvert, une <strong>barre d'informations</strong> apparaît au-dessus du plateau : elle rappelle les joueurs en présence (<em>joueur 1</em> contre <em>joueur 2</em>) ainsi que le contexte du match (événement, lieu, ronde, date et longueur du match, lorsque ces informations sont disponibles). Cette barre s'affiche aussi en dehors du mode match : lorsqu'une position étudiée (issue d'une recherche, d'une collection ou d'un accès direct) provient d'un ou de plusieurs matchs, elle en indique la <strong>provenance</strong> — le premier match concerné et, le cas échéant, un badge « +N » listant les autres au survol. Une position importée seule, qu'aucun match ne référence, n'affiche rien.</p>
@@ -2300,6 +2301,21 @@ export default {
 <td>Ex,y</td>
 <td>L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x et y.</td>
 <td><code>--move-error-min</code> <code>--move-error-max</code></td>
+</tr>
+<tr>
+<td>tm&gt;x</td>
+<td>Le joueur 1 a mis plus de x secondes à décider (coup ou videau). Un coup dont la durée est inconnue ne répond jamais.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>tm&lt;x</td>
+<td>Le joueur 1 a mis moins de x secondes à décider.</td>
+<td>—</td>
+</tr>
+<tr>
+<td>tmx,y</td>
+<td>Le joueur 1 a mis entre x et y secondes à décider, bornes comprises.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>w&gt;x</td>

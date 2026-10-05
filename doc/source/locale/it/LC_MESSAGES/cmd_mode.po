@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 09:43+0200\n"
+"POT-Creation-Date: 2026-10-05 17:50+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -1053,6 +1053,36 @@ msgid "``--move-error-min`` ``--move-error-max``"
 msgstr "``--move-error-min`` ``--move-error-max``"
 
 #: ../../source/cmd_mode.rst:1
+msgid "tm>x"
+msgstr "tm>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Le joueur 1 a mis plus de x secondes à décider (coup ou videau). Un coup "
+"dont la durée est inconnue ne répond jamais."
+msgstr ""
+"Il giocatore 1 ha impiegato più di x secondi per decidere (mossa o cubo)."
+" Una mossa di durata sconosciuta non corrisponde mai."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tm<x"
+msgstr "tm<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur 1 a mis moins de x secondes à décider."
+msgstr "Il giocatore 1 ha impiegato meno di x secondi per decidere."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tmx,y"
+msgstr "tmx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur 1 a mis entre x et y secondes à décider, bornes comprises."
+msgstr ""
+"Il giocatore 1 ha impiegato tra x e y secondi per decidere, estremi "
+"inclusi."
+
+#: ../../source/cmd_mode.rst:1
 msgid "w>x"
 msgstr "w>x"
 
@@ -1843,7 +1873,7 @@ msgstr ""
 "decisione e a entrambi i regimi, soldi e incontro. Vedere "
 ":ref:`panneau_recherche`."
 
-#: ../../source/cmd_mode.rst:244
+#: ../../source/cmd_mode.rst:247
 msgid ""
 "Les valeurs ``pl``, ``pl!``, ``op``, ``tn``, ``m`` et ``t`` s'ouvrent par"
 " un guillemet ou une apostrophe et se ferment par l'un des deux. Un jeton"
@@ -1862,11 +1892,11 @@ msgstr ""
 "compare in nessun valore, e ``ma1;2`` non è un token (scrivere ``ma1 "
 "ma2``)."
 
-#: ../../source/cmd_mode.rst:249
+#: ../../source/cmd_mode.rst:252
 msgid "Transcrire depuis un terminal"
 msgstr "Trascrivere da un terminale"
 
-#: ../../source/cmd_mode.rst:251
+#: ../../source/cmd_mode.rst:254
 #, no-python-brace-format
 msgid ""
 "La ligne de commande n'a pas de commande de transcription : les gestes se"
@@ -1886,7 +1916,7 @@ msgstr ""
 "sessione a sé, senza ``sessionId`` né annullamento da una chiamata "
 "all'altra."
 
-#: ../../source/cmd_mode.rst:262
+#: ../../source/cmd_mode.rst:265
 msgid "Commandes diverses"
 msgstr "Comandi vari"
 

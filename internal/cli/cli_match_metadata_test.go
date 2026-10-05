@@ -27,3 +27,17 @@ func TestFormatMatchShowsSourceMetadata(t *testing.T) {
 		t.Errorf("a rating the file did not state is shown:\n%s", out)
 	}
 }
+
+func TestFormatMatchTextLeavesAnUnknownDecisionTimeOut(t *testing.T) {
+	d := int64(5200)
+	m := &Match{Player1Name: "Alice", Player2Name: "Bob"}
+	known := MatchMovePosition{GameNumber: 1, MoveNumber: 1, DecisionMS: &d}
+	unknown := MatchMovePosition{GameNumber: 1, MoveNumber: 2}
+	out, err := (&CLI{}).formatMatchText(m, []MatchMovePosition{known, unknown})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := strings.Count(out, "Decision time"); got != 1 || !strings.Contains(out, "Decision time: 5.2 s") {
+		t.Errorf("want one decision time of 5.2 s, none for the unknown:\n%s", out)
+	}
+}
