@@ -1,5 +1,6 @@
 import { confirmModalStore } from '../services/confirmService.js';
-import { writable, derived } from 'svelte/store';
+import { writable, derived, get } from 'svelte/store';
+import { duelHoldsBoardStore } from './duelStore.js';
 
 import { trainingPipOverrideStore } from './trainingTabStore.js';
 
@@ -115,6 +116,7 @@ export const openPanels = writable(new Set());
 // ── Modal helpers ──
 /** @param {string} name */
 export function openModal(name) {
+    if (name === MODAL.GO_TO_POSITION && get(duelHoldsBoardStore)) return;
     activeModal.set(name);
 }
 export function closeModal() {
@@ -122,6 +124,7 @@ export function closeModal() {
 }
 /** @param {string} name */
 export function toggleModal(name) {
+    if (name === MODAL.GO_TO_POSITION && get(duelHoldsBoardStore)) return;
     activeModal.update((current) => (current === name ? null : name));
 }
 

@@ -1031,6 +1031,8 @@ export {
     toggleAnkiPanel,
     toggleTrainingPanel,
     showTrainingPanel,
+    toggleDuelPanel,
+    showDuelPanel,
     toggleMatchPanel,
     toggleCollectionPanelAction,
     toggleTournamentPanel,

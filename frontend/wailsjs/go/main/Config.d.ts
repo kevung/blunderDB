@@ -52,6 +52,10 @@ export function GetRolloutChoice():Promise<main.RolloutChoice>;
 
 export function GetStatsFilter():Promise<main.StatsFilterPersisted>;
 
+export function GetDuelForm():Promise<string>;
+
+export function SaveDuelForm(arg1:string):Promise<void>;
+
 export function GetTabOrder():Promise<Array<string>>;
 
 export function GetTabPanelHeights():Promise<Record<string, number>>;

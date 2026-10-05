@@ -696,3 +696,23 @@ func TestLoadConfigSeedsTabHeightsFromLegacyPanelHeight(t *testing.T) {
 		t.Fatalf("reloaded %v, legacy %d", got, again.PanelHeight)
 	}
 }
+
+func TestDuelFormSurvivesReload(t *testing.T) {
+	isolateXDGConfig(t)
+
+	c := NewConfig()
+	if got := c.GetDuelForm(); got != "" {
+		t.Fatalf("fresh config remembers %q, want nothing", got)
+	}
+	const form = `{"money":false,"matchLength":7}`
+	if err := c.SaveDuelForm(form); err != nil {
+		t.Fatalf("SaveDuelForm: %v", err)
+	}
+	loader := &Config{}
+	if _, err := loader.LoadConfig(); err != nil {
+		t.Fatalf("LoadConfig: %v", err)
+	}
+	if got := loader.GetDuelForm(); got != form {
+		t.Errorf("reloaded form = %q, want %q", got, form)
+	}
+}

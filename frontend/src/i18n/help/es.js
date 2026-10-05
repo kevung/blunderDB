@@ -902,6 +902,27 @@ export default {
 <li><strong>Colección de los fallos</strong> — una colección con estas posiciones.</li>
 </ul>
 <p>El mazo y la colección se llaman «Fallos en Decisión» seguido de la fecha del día. En la línea de comandos, <code>training missed</code> devuelve la misma lista y crea con ella un mazo (<code>--deck</code>) o una colección (<code>--collection</code>), y <code>training sessions</code> relee el diario (véase training — El diario de entrenamiento).</p>
+<h3>Panel Duelo</h3>
+<p>El panel <strong>Duelo</strong> hace jugar un match entero contra el Bot, con blunderDB como Árbitro: lanza los dados, impone las reglas y lleva el marcador y los relojes. Se abre con <code>CTRL-H</code>, con el botón «Jugar» de la barra de herramientas o con el comando <code>duel</code>. Debe haber una base abierta: el Duelo se escribe en ella tras cada decisión.</p>
+<p>Sin Duelo abierto, el panel muestra el formulario, recordado de un Duelo al siguiente, y la lista de los Duelos suspendidos:</p>
+<ul>
+<li><strong>Match</strong> de 1 a 25 puntos, o <strong>sesión de dinero</strong> (Jacoby opcional).</li>
+<li><strong>Inicio</strong>: la posición inicial, la posición del tablero, o la posición inicial con un marcador elegido.</li>
+<li><strong>Lado jugado</strong> (jugador 1 o 2) y <strong>nivel del Bot</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, los del análisis).</li>
+<li><strong>Control de tiempo</strong>: sin control de tiempo, o un control de tiempo con nombre (una reserva por jugador y un retraso gratuito en cada turno), y lo que ocurre al agotarse el tiempo: continuar anotándolo, o perder el match.</li>
+<li><strong>Su nombre</strong> y <strong>Guardar el match</strong>: sin marcar, el Duelo terminado se descarta en lugar de convertirse en un Match.</li>
+</ul>
+<p>«Reanudar» reabre un Duelo suspendido en el mismo punto, con los mismos dados por venir; sus relojes estaban detenidos.</p>
+<p>Durante el Duelo, el panel muestra el marcador, el cubo, los relojes y la hoja del match en dos columnas, como la Transcripción. El marcador y los relojes permanecen en la barra de estado cuando la pestaña está plegada. El tablero pasa al modo <strong>DUELO</strong>: la biblioteca ya no se recorre, la edición, el panel Eval y las demás pestañas no se abren, y el motor calla: ninguna evaluación, ningún candidato. Solo quedan la Pila (<code>B</code>), el pipcount (<code>P</code>) y la ayuda.</p>
+<ul>
+<li>Antes de tirar, «Tirar» o «Doblar»; ante un doble, «Aceptar» o «Rechazar». Cuando el cubo no está disponible, la tirada es automática.</li>
+<li>La jugada se hace en el tablero como una pregunta de Decisión, y luego «Validar» (<code>INTRO</code>); «Recolocar» (<code>RETROCESO</code>) devuelve las fichas a su sitio antes de validar. Después ya no se puede deshacer nada.</li>
+<li>El Bot responde enseguida; sus jugadas se reproducen en el tablero, despacio.</li>
+<li>«Abandonar la partida» cede la partida en curso por un simple, un gammon o un backgammon.</li>
+<li>«Suspender» pone el Duelo en suspenso, con los relojes detenidos. «Detener y guardar» escribe el Match tal como está; «Detener y descartar» no escribe nada. Detener nunca es ceder la partida.</li>
+</ul>
+<p>Cada decisión lleva su duración, con o sin control de tiempo. Un abandono no tiene duración registrada en el Match.</p>
+<p>Al final, el Match se escribe, su análisis se lanza y la pestaña Partidas se abre sobre él. En la línea de comandos, <code>blunderdb duel</code> maneja el mismo Duelo (véase duel — Jugar un Duelo).</p>
 <h3>Panel de Metadatos</h3>
 <p>El panel <strong>Metadatos</strong> (<em>CTRL-M</em>) muestra la información general de la base de datos actual: <em>Usuario</em>, fecha de creación (<em>Creado</em>), <em>Versión</em> del esquema y <em>Descripción</em>. El usuario, la fecha y la descripción se modifican en el sitio y se guardan al salir del campo; la versión es de solo lectura. También accesible mediante el comando <code>meta</code>.</p>
 <p>También muestra, <strong>cuando existe</strong>, el origen de la base de datos — véase Distribuir una base de datos: origen y contraseña. Una base de datos corriente no muestra esa sección.</p>
@@ -1191,6 +1212,18 @@ export default {
 <tr>
 <td>CTRL-J</td>
 <td>Mostrar/ocultar el panel Entrenamiento.</td>
+</tr>
+<tr>
+<td>CTRL-H</td>
+<td>Mostrar/ocultar el panel Duelo (un match contra el Bot).</td>
+</tr>
+<tr>
+<td>INTRO (Duelo)</td>
+<td>Validar la jugada dispuesta en el tablero; después ya no se puede deshacer nada.</td>
+</tr>
+<tr>
+<td>RETROCESO (Duelo)</td>
+<td>Devolver las fichas a su sitio antes de validar.</td>
 </tr>
 <tr>
 <td>CTRL-K</td>
@@ -1981,6 +2014,10 @@ export default {
 <tr>
 <td>train</td>
 <td>Abre el panel Entrenamiento. Con un argumento, abre y arranca: <code>train scores</code> (la ficha de puntuación de un marcador sorteado; <code>train tp</code> y <code>train takepoint</code> son sinónimos), <code>train pips</code> (el recuento de fichas de ambos bandos), <code>train bearoff</code> (el EPC de ambos bandos en una posición generada; <code>train epc</code> es un sinónimo), <code>train evaluation</code> (la probabilidad de ganar y la acción de cubo de una posición generada, en partida por dinero), <code>train decision</code> (una decisión analizada de la lista recorrida: el movimiento se juega en el tablero, la acción de cubo se elige en el panel; <code>train quiz</code> es un sinónimo).</td>
+</tr>
+<tr>
+<td>duel</td>
+<td>Abre el panel Duelo: un match contra el Bot, con blunderDB como Árbitro (véase Panel Duelo).</td>
 </tr>
 <tr>
 <td>tp2</td>

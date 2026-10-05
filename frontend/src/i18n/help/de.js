@@ -902,6 +902,27 @@ export default {
 <li><strong>Sammlung der Fehler</strong> — eine Sammlung aus diesen Stellungen.</li>
 </ul>
 <p>Der Stapel und die Sammlung heißen „Fehler bei Entscheidung“, gefolgt vom heutigen Datum. Auf der Kommandozeile liefert <code>training missed</code> dieselbe Liste und macht daraus einen Stapel (<code>--deck</code>) oder eine Sammlung (<code>--collection</code>), und <code>training sessions</code> liest das Protokoll wieder ein (siehe training — Das Trainingsprotokoll).</p>
+<h3>Duell-Panel</h3>
+<p>Das <strong>Duell</strong>-Panel spielt ein ganzes Match gegen den Bot, mit blunderDB als Schiedsrichter: Es würfelt, erzwingt die Regeln und führt Spielstand und Uhren. Es öffnet sich mit <code>CTRL-H</code>, über die Schaltfläche „Spielen“ der Werkzeugleiste oder mit dem Befehl <code>duel</code>. Eine Datenbank muss geöffnet sein: Das Duell wird nach jeder Entscheidung in sie geschrieben.</p>
+<p>Ohne geöffnetes Duell zeigt das Panel das Formular, das von einem Duell zum nächsten gemerkt wird, und die Liste der unterbrochenen Duelle:</p>
+<ul>
+<li><strong>Match</strong> von 1 bis 25 Punkten oder <strong>Geldspiel</strong> (Jacoby nach Wahl).</li>
+<li><strong>Start</strong>: die Grundstellung, die Stellung auf dem Brett oder die Grundstellung bei einem gewählten Spielstand.</li>
+<li><strong>Gespielte Seite</strong> (Spieler 1 oder 2) und <strong>Bot-Stufe</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, wie bei der Analyse).</li>
+<li><strong>Bedenkzeit</strong>: ohne Bedenkzeit oder eine benannte Bedenkzeit (eine Reserve pro Spieler und eine freie Verzögerung bei jedem Zug) und was bei abgelaufener Zeit geschieht: weiterspielen und es vermerken oder das Match verlieren.</li>
+<li><strong>Ihr Name</strong> und <strong>Match speichern</strong>: Ist das Häkchen entfernt, wird das beendete Duell verworfen, statt zu einem Match zu werden.</li>
+</ul>
+<p>„Fortsetzen“ öffnet ein unterbrochenes Duell am selben Punkt wieder, mit denselben kommenden Würfen; seine Uhren waren angehalten.</p>
+<p>Während des Duells zeigt das Panel Spielstand, Doppler, Uhren und das Matchblatt in zwei Spalten, wie die Transkription. Spielstand und Uhren bleiben in der Statusleiste, wenn der Tab eingeklappt ist. Das Brett wechselt in den Modus <strong>DUELL</strong>: Die Bibliothek lässt sich nicht mehr durchsuchen, Bearbeitung, Eval-Panel und die anderen Tabs öffnen sich nicht, und die Engine schweigt: keine Auswertung, keine Kandidaten. Es bleiben nur der Stapel (<code>B</code>), der Pipcount (<code>P</code>) und die Hilfe.</p>
+<ul>
+<li>Vor dem Wurf „Würfeln“ oder „Doppeln“; bei einem Doppel „Annehmen“ oder „Aufgeben“. Wenn der Doppler nicht verfügbar ist, wird automatisch gewürfelt.</li>
+<li>Der Zug wird auf dem Brett wie eine Entscheidungsfrage gespielt, dann „Bestätigen“ (<code>EINGABE</code>); „Zurücksetzen“ (<code>RÜCKTASTE</code>) stellt die Steine vor der Bestätigung zurück. Danach lässt sich nichts mehr zurücknehmen.</li>
+<li>Der Bot antwortet sofort; seine Züge werden auf dem Brett langsam nachgespielt.</li>
+<li>„Partie aufgeben“ gibt die laufende Partie als Einfach, Gammon oder Backgammon ab.</li>
+<li>„Unterbrechen“ setzt das Duell mit angehaltenen Uhren aus. „Beenden und behalten“ schreibt das Match, wie es steht; „Beenden und verwerfen“ schreibt nichts. Beenden heißt nie, die Partie aufzugeben.</li>
+</ul>
+<p>Jede Entscheidung trägt ihre Dauer, mit oder ohne Bedenkzeit. Eine Aufgabe hat keine im Match gespeicherte Dauer.</p>
+<p>Am Ende wird das Match geschrieben, seine Analyse startet und der Tab Partien öffnet sich darauf. In der Kommandozeile steuert <code>blunderdb duel</code> dasselbe Duell (siehe duel — Ein Duell spielen).</p>
 <h3>Metadaten-Panel</h3>
 <p>Das Panel <strong>Metadaten</strong> (<em>STRG-M</em>) zeigt die allgemeinen Informationen der aktuellen Datenbank an: <em>Benutzer</em>, Erstellungsdatum (<em>Erstellt</em>), <em>Version</em> des Schemas und <em>Beschreibung</em>. Benutzer, Datum und Beschreibung werden an Ort und Stelle bearbeitet und beim Verlassen des Feldes gespeichert; die Version ist schreibgeschützt. Auch über den Befehl <code>meta</code> erreichbar.</p>
 <p>Es zeigt außerdem, <strong>sofern vorhanden</strong>, die Herkunft der Datenbank an — siehe Eine Datenbank weitergeben: Herkunft und Passwort. Bei einer gewöhnlichen Datenbank erscheint dieser Abschnitt nicht.</p>
@@ -1191,6 +1212,18 @@ export default {
 <tr>
 <td>CTRL-J</td>
 <td>Training-Panel anzeigen/verbergen.</td>
+</tr>
+<tr>
+<td>STRG-H</td>
+<td>Duell-Panel ein-/ausblenden (ein Match gegen den Bot).</td>
+</tr>
+<tr>
+<td>EINGABE (Duell)</td>
+<td>Den auf dem Brett aufgestellten Zug bestätigen; danach lässt sich nichts mehr zurücknehmen.</td>
+</tr>
+<tr>
+<td>RÜCKTASTE (Duell)</td>
+<td>Die Steine vor der Bestätigung zurückstellen.</td>
 </tr>
 <tr>
 <td>STRG-K</td>
@@ -1981,6 +2014,10 @@ export default {
 <tr>
 <td>train</td>
 <td>Öffnet das Trainings-Panel. Mit einem Argument öffnet und startet es: <code>train scores</code> (die Score-Karte eines zufällig gezogenen Spielstands; <code>train tp</code> und <code>train takepoint</code> sind Synonyme), <code>train pips</code> (die Punktzahl beider Seiten), <code>train bearoff</code> (der EPC beider Seiten auf einer erzeugten Stellung; <code>train epc</code> ist ein Synonym), <code>train evaluation</code> (die Gewinnchance und die Doppelentscheidung einer erzeugten Stellung, im Geldspiel), <code>train decision</code> (eine analysierte Entscheidung aus der durchsuchten Liste: Der Zug wird auf dem Brett gespielt, die Doppelentscheidung im Panel gewählt; <code>train quiz</code> ist ein Synonym).</td>
+</tr>
+<tr>
+<td>duel</td>
+<td>Öffnet das Duell-Panel: ein Match gegen den Bot, mit blunderDB als Schiedsrichter (siehe Duell-Panel).</td>
 </tr>
 <tr>
 <td>tp2</td>

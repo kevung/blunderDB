@@ -262,6 +262,10 @@ export function CreateDirection(arg1, arg2, arg3) {
   return window['go']['database']['Database']['CreateDirection'](arg1, arg2, arg3);
 }
 
+export function CreateDuel(arg1) {
+  return window['go']['database']['Database']['CreateDuel'](arg1);
+}
+
 export function CreateLesson(arg1, arg2) {
   return window['go']['database']['Database']['CreateLesson'](arg1, arg2);
 }
@@ -394,6 +398,10 @@ export function DiscardFromTrash(arg1) {
   return window['go']['database']['Database']['DiscardFromTrash'](arg1);
 }
 
+export function DuelOffer() {
+  return window['go']['database']['Database']['DuelOffer']();
+}
+
 export function EditMatchTranscription(arg1) {
   return window['go']['database']['Database']['EditMatchTranscription'](arg1);
 }
@@ -460,6 +468,10 @@ export function FinishTranscription(arg1) {
 
 export function FinishedMatches(arg1, arg2) {
   return window['go']['database']['Database']['FinishedMatches'](arg1, arg2);
+}
+
+export function FlagDuel(arg1) {
+  return window['go']['database']['Database']['FlagDuel'](arg1);
 }
 
 export function FreeParticipants(arg1) {
@@ -782,6 +794,10 @@ export function ListDirections() {
   return window['go']['database']['Database']['ListDirections']();
 }
 
+export function ListDuels() {
+  return window['go']['database']['Database']['ListDuels']();
+}
+
 export function ListImportBatches(arg1, arg2) {
   return window['go']['database']['Database']['ListImportBatches'](arg1, arg2);
 }
@@ -930,6 +946,10 @@ export function OpenDatabase(arg1) {
   return window['go']['database']['Database']['OpenDatabase'](arg1);
 }
 
+export function OpenDuel(arg1) {
+  return window['go']['database']['Database']['OpenDuel'](arg1);
+}
+
 export function OpenProtectedCopyPath(arg1, arg2) {
   return window['go']['database']['Database']['OpenProtectedCopyPath'](arg1, arg2);
 }
@@ -980,6 +1000,10 @@ export function PlanRollout(arg1, arg2, arg3) {
 
 export function PlanRolloutIDs(arg1, arg2, arg3) {
   return window['go']['database']['Database']['PlanRolloutIDs'](arg1, arg2, arg3);
+}
+
+export function PlayDuel(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['PlayDuel'](arg1, arg2, arg3);
 }
 
 export function PlayerContrast(arg1, arg2, arg3) {
@@ -1354,6 +1378,10 @@ export function StatsReportHTMLCtx(arg1, arg2, arg3, arg4) {
   return window['go']['database']['Database']['StatsReportHTMLCtx'](arg1, arg2, arg3, arg4);
 }
 
+export function StopDuel(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['StopDuel'](arg1, arg2, arg3);
+}
+
 export function StudyBacklog(arg1) {
   return window['go']['database']['Database']['StudyBacklog'](arg1);
 }
@@ -1376,6 +1404,10 @@ export function SuggestMatFilename(arg1) {
 
 export function SuggestTranscriptionMatFilename(arg1) {
   return window['go']['database']['Database']['SuggestTranscriptionMatFilename'](arg1);
+}
+
+export function SuspendDuel(arg1) {
+  return window['go']['database']['Database']['SuspendDuel'](arg1);
 }
 
 export function SwapMatchPlayers(arg1) {

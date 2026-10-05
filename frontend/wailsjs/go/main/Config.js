@@ -102,6 +102,14 @@ export function GetStatsFilter() {
   return window['go']['main']['Config']['GetStatsFilter']();
 }
 
+export function GetDuelForm() {
+  return window['go']['main']['Config']['GetDuelForm']();
+}
+
+export function SaveDuelForm(arg1) {
+  return window['go']['main']['Config']['SaveDuelForm'](arg1);
+}
+
 export function GetTabOrder() {
   return window['go']['main']['Config']['GetTabOrder']();
 }

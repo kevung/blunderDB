@@ -902,6 +902,27 @@ export default {
 <li><strong>Collezione degli errori</strong> — una collezione con queste posizioni.</li>
 </ul>
 <p>Il mazzo e la collezione si chiamano «Errori in Decisione» seguito dalla data odierna. Da riga di comando, <code>training missed</code> restituisce la stessa lista e ne fa un mazzo (<code>--deck</code>) o una collezione (<code>--collection</code>), e <code>training sessions</code> rilegge il registro (vedi training — Il registro di allenamento).</p>
+<h3>Pannello Duello</h3>
+<p>Il pannello <strong>Duello</strong> fa giocare un intero match contro il Bot, con blunderDB come Arbitro: tira i dadi, impone le regole e tiene il punteggio e gli orologi. Si apre con <code>CTRL-H</code>, con il pulsante «Gioca» della barra degli strumenti o con il comando <code>duel</code>. Deve essere aperta una base di dati: il Duello vi viene scritto dopo ogni decisione.</p>
+<p>Senza un Duello aperto, il pannello mostra il modulo, memorizzato da un Duello all'altro, e l'elenco dei Duelli sospesi:</p>
+<ul>
+<li><strong>Match</strong> da 1 a 25 punti, oppure <strong>sessione money</strong> (Jacoby a scelta).</li>
+<li><strong>Partenza</strong>: la posizione iniziale, la posizione sul tavoliere, oppure la posizione iniziale a un punteggio scelto.</li>
+<li><strong>Lato giocato</strong> (giocatore 1 o 2) e <strong>livello del Bot</strong> (<code>instant</code>, <code>normal</code>, <code>thorough</code>, quelli dell'analisi).</li>
+<li><strong>Cadenza</strong>: senza cadenza, o una cadenza con nome (una riserva per giocatore e un ritardo gratuito a ogni turno), e ciò che avviene allo scadere del tempo: continuare annotandolo, o perdere il match.</li>
+<li><strong>Il tuo nome</strong> e <strong>Salva il match</strong>: se deselezionato, il Duello terminato viene scartato invece di diventare un Match.</li>
+</ul>
+<p>«Riprendi» riapre un Duello sospeso nello stesso punto, con gli stessi dadi a venire; i suoi orologi erano fermi.</p>
+<p>Durante il Duello, il pannello mostra il punteggio, il cubo, gli orologi e il foglio del match su due colonne, come la Trascrizione. Il punteggio e gli orologi restano nella barra di stato quando la scheda è ripiegata. Il tavoliere passa alla modalità <strong>DUELLO</strong>: la libreria non si sfoglia più, la modifica, il pannello Eval e le altre schede non si aprono, e il motore tace: nessuna valutazione, nessun candidato. Restano solo la Pila (<code>B</code>), il pipcount (<code>P</code>) e l'aiuto.</p>
+<ul>
+<li>Prima del tiro, «Tira» o «Raddoppia»; di fronte a un raddoppio, «Accetta» o «Rifiuta». Quando il cubo non è disponibile, il tiro è automatico.</li>
+<li>La mossa si gioca sul tavoliere come una domanda di Decisione, poi «Convalida» (<code>INVIO</code>); «Ripristina» (<code>BACKSPACE</code>) rimette le pedine a posto prima della convalida. Dopo non si può più annullare nulla.</li>
+<li>Il Bot risponde subito; le sue mosse vengono rigiocate sul tavoliere, lentamente.</li>
+<li>«Abbandona la partita» cede la partita in corso per un semplice, un gammon o un backgammon.</li>
+<li>«Sospendi» mette il Duello in sospeso, con gli orologi fermi. «Ferma e conserva» scrive il Match così com'è; «Ferma e scarta» non scrive nulla. Fermare non è mai cedere la partita.</li>
+</ul>
+<p>Ogni decisione porta la sua durata, con o senza cadenza. Un abbandono non ha una durata registrata nel Match.</p>
+<p>Alla fine il Match viene scritto, la sua analisi parte e la scheda Partite si apre su di esso. Da riga di comando, <code>blunderdb duel</code> pilota lo stesso Duello (vedi duel — Giocare un Duello).</p>
 <h3>Pannello Metadati</h3>
 <p>Il pannello <strong>Metadati</strong> (<em>CTRL-M</em>) mostra le informazioni generali del database corrente: <em>Utente</em>, data di creazione (<em>Creato</em>), <em>Versione</em> dello schema e <em>Descrizione</em>. L'utente, la data e la descrizione si modificano sul posto e si salvano uscendo dal campo; la versione è in sola lettura. Accessibile anche tramite il comando <code>meta</code>.</p>
 <p>Mostra inoltre, <strong>quando esiste</strong>, l'origine del database — vedere Distribuire un database: origine e password. Un database ordinario non mostra questa sezione.</p>
@@ -1191,6 +1212,18 @@ export default {
 <tr>
 <td>CTRL-J</td>
 <td>Mostrare/nascondere il pannello Allenamento.</td>
+</tr>
+<tr>
+<td>CTRL-H</td>
+<td>Mostra/nascondi il pannello Duello (un match contro il Bot).</td>
+</tr>
+<tr>
+<td>INVIO (Duello)</td>
+<td>Convalida la mossa disposta sul tavoliere; dopo non si può più annullare nulla.</td>
+</tr>
+<tr>
+<td>BACKSPACE (Duello)</td>
+<td>Rimette le pedine a posto prima della convalida.</td>
 </tr>
 <tr>
 <td>CTRL-K</td>
@@ -1981,6 +2014,10 @@ export default {
 <tr>
 <td>train</td>
 <td>Apre il pannello Allenamento. Con un argomento, apre e avvia: <code>train scores</code> (la scheda di punteggio di un punteggio estratto a sorte; <code>train tp</code> e <code>train takepoint</code> sono sinonimi), <code>train pips</code> (il conteggio delle pedine dei due lati), <code>train bearoff</code> (l'EPC dei due lati su una posizione generata; <code>train epc</code> è un sinonimo), <code>train evaluation</code> (la probabilità di vittoria e l'azione di cubo di una posizione generata, in partita a soldi), <code>train decision</code> (una decisione analizzata della lista sfogliata: la mossa si gioca sulla tavola, l'azione di cubo si sceglie nel pannello; <code>train quiz</code> è un sinonimo).</td>
+</tr>
+<tr>
+<td>duel</td>
+<td>Apre il pannello Duello: un match contro il Bot, con blunderDB come Arbitro (vedi Pannello Duello).</td>
 </tr>
 <tr>
 <td>tp2</td>

@@ -3974,6 +3974,62 @@ du jour. En ligne de commande, ``training missed`` rend la même liste et en
 fait un paquet (``--deck``) ou une collection (``--collection``), et
 ``training sessions`` relit le journal (voir :ref:`cli_training`).
 
+.. _panneau_duel:
+
+Panneau Duel
+------------
+
+Le panneau **Duel** fait jouer un match entier contre le Bot, sous l'arbitrage
+de blunderDB : il lance les dés, impose les règles, tient le score et les
+horloges. Il s'ouvre par ``CTRL-H``, par le bouton « Jouer » de la barre
+d'outils, ou par la commande ``duel``. Une base doit être ouverte : le Duel s'y
+écrit après chaque décision.
+
+Sans Duel ouvert, le panneau montre le formulaire, mémorisé d'un Duel à
+l'autre, et la liste des Duels en suspens :
+
+* **Match** de 1 à 25 points, ou **session en argent** (Jacoby au choix).
+* **Départ** : la position initiale, la position au plateau, ou la position
+  initiale à un score choisi.
+* **Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, ``normal``,
+  ``thorough``, ceux de l'analyse).
+* **Cadence** : sans cadence, ou une cadence nommée (une réserve par joueur et
+  un délai gratuit à chaque tour), et ce que fait le temps écoulé : continuer
+  en le notant, ou perdre le match.
+* **Votre nom** et **Enregistrer le match** : décoché, le Duel terminé est
+  jeté au lieu de devenir un Match.
+
+« Reprendre » rouvre un Duel en suspens au même point, avec les mêmes dés à
+venir ; ses horloges étaient arrêtées.
+
+Pendant le Duel, le panneau montre le score, le videau, les horloges et la
+feuille de match en deux colonnes, comme la Transcription. Le score et les
+horloges restent dans la barre d'état quand l'onglet est replié. Le plateau
+passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
+panneau Eval et les autres onglets ne s'ouvrent pas, et le moteur se tait —
+aucune évaluation, aucun candidat. Seules restent la Pile (``B``), le
+pipcount (``P``) et l'aide.
+
+* Avant le lancer, « Lancer » ou « Doubler » ; face à un double, « Prendre »
+  ou « Passer ». Quand le videau n'est pas disponible, le lancer est
+  automatique.
+* Le coup se joue au plateau comme une question de Décision, puis
+  « Valider » (``ENTRÉE``) ; « Replacer » (``RETOUR ARRIÈRE``) remet les pions
+  avant la validation. Rien ne se reprend après.
+* Le Bot répond aussitôt ; ses coups sont rejoués au plateau, lentement.
+* « Abandonner la partie » cède la partie en cours pour un simple, un gammon ou
+  un backgammon.
+* « Suspendre » met le Duel en suspens, horloges arrêtées. « Arrêter et
+  garder » écrit le Match tel qu'il est ; « Arrêter et jeter » n'en écrit
+  rien. Arrêter n'est jamais céder la partie.
+
+Chaque décision porte sa durée, avec ou sans cadence. Un abandon n'a pas de
+durée enregistrée dans le Match.
+
+À la fin, le Match est écrit, son analyse se lance et l'onglet Matchs s'ouvre
+sur lui. En ligne de commande, ``blunderdb duel`` pilote le même Duel (voir
+:ref:`cli_duel`).
+
 .. _panneau_metadata:
 
 Panneau Métadonnées

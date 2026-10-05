@@ -1,6 +1,7 @@
 import { tMsg, translate } from '../i18n';
 import { chooseAction } from './confirmService.js';
 import { get } from 'svelte/store';
+import { duelHoldsBoardStore } from '../stores/duelStore.js';
 import {
     OpenImportDatabaseDialog,
     OpenPositionFilesDialog,
@@ -1054,6 +1055,8 @@ export function handleFileImportClose() {
 }
 
 export async function pastePosition() {
+    // A Duel holds the board: a paste would overwrite it.
+    if (get(duelHoldsBoardStore)) return;
     try {
         await pastePositionCore();
     } finally {

@@ -80,6 +80,87 @@ func (s *SearchStore) appendRowFlagClauses(f domain.SearchFilters, where *string
 	}
 }
 
+// appendRateClauses adds the win, gammon and backgammon rate filters of both players.
+func (s *SearchStore) appendRateClauses(scope string, f domain.SearchFilters, where *strings.Builder, argsp *[]any) {
+	args := *argsp
+	defer func() { *argsp = args }()
+	// Win/gammon rate as `p.id IN (SELECT position_id FROM analysis …)`,
+	// not a clause on the LEFT JOIN: the join form drives the scan through
+	// idx_analysis_win_gammon in rate order and forces a TEMP B-TREE sort
+	// for the ORDER BY p.id. The IN-subquery keeps the rowid-order scan and
+	// is answered from the covering index (position_id is its third column;
+	// idx_analysis_win_gammon_covering on PostgreSQL, hence the tenant
+	// predicate there).
+	var winGammonWhere strings.Builder
+	var winGammonArgs []any
+	wMin, wMax, wHasMin, wHasMax := searchfilter.ParseFloatFilterExpr(f.WinRateFilter, "w")
+	searchfilter.AppendIntRangeSQL("player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &winGammonWhere, &winGammonArgs)
+	gMin, gMax, gHasMin, gHasMax := searchfilter.ParseFloatFilterExpr(f.GammonRateFilter, "g")
+	searchfilter.AppendIntRangeSQL("player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &winGammonWhere, &winGammonArgs)
+	if winGammonWhere.Len() > 0 {
+		aTenant, aArgs := s.DB.TenantFilter("", scope)
+		where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE " + aTenant + winGammonWhere.String() + ")")
+		args = append(args, aArgs...)
+		args = append(args, winGammonArgs...)
+	}
+	bMin, bMax, bHasMin, bHasMax := searchfilter.ParseFloatFilterExpr(f.BackgammonRateFilter, "b")
+	searchfilter.AppendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, where, &args)
+	// The player-2 rates take the same IN-subquery, answered from
+	// idx_analysis_win_gammon2_covering: through the LEFT JOIN the scan
+	// went by rate order, then looked up and sorted every candidate.
+	var winGammon2Where strings.Builder
+	var winGammon2Args []any
+	WMin, WMax, WHasMin, WHasMax := searchfilter.ParseFloatFilterExpr(f.Player2WinRateFilter, "W")
+	searchfilter.AppendIntRangeSQL("player2_win_rate", int(math.Round(WMin*100)), int(math.Round(WMax*100)), WHasMin, WHasMax, &winGammon2Where, &winGammon2Args)
+	GMin, GMax, GHasMin, GHasMax := searchfilter.ParseFloatFilterExpr(f.Player2GammonRateFilter, "G")
+	searchfilter.AppendIntRangeSQL("player2_gammon_rate", int(math.Round(GMin*100)), int(math.Round(GMax*100)), GHasMin, GHasMax, &winGammon2Where, &winGammon2Args)
+	if winGammon2Where.Len() > 0 {
+		aTenant, aArgs := s.DB.TenantFilter("", scope)
+		where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE " + aTenant + winGammon2Where.String() + ")")
+		args = append(args, aArgs...)
+		args = append(args, winGammon2Args...)
+	}
+	BMin, BMax, BHasMin, BHasMax := searchfilter.ParseFloatFilterExpr(f.Player2BackgammonRateFilter, "B")
+	searchfilter.AppendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, where, &args)
+}
+
+// appendMoveErrorClause adds the move-error filter and reports whether Go
+// must settle it afterwards.
+func (s *SearchStore) appendMoveErrorClause(scope string, f domain.SearchFilters, where *strings.Builder, argsp *[]any) (found bool) {
+	args := *argsp
+	defer func() { *argsp = args }()
+	// The denormalised error column scores ONE play (the first of
+	// PlayedMoves, see AnalysisStore.Save). A position played several ways
+	// is let through and settled in Go by matchesMoveErrorFilter on the
+	// largest error: the column can only under-state it. The test is
+	// correlated per row, so the first page does not wait for a pass over
+	// every move of the library.
+	if f.MoveErrorFilter != "" {
+		eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
+		eqMin := int(math.Round(eMin))
+		eqMax := int(math.Round(eMax))
+		var cond string
+		if eHasMin && eHasMax {
+			cond = statsErrExpr + " BETWEEN ? AND ?"
+			args = append(args, eqMin, eqMax)
+		} else if eHasMin {
+			cond = statsErrExpr + " >= ?"
+			args = append(args, eqMin)
+		} else if eHasMax {
+			cond = statsErrExpr + " <= ?"
+			args = append(args, eqMax)
+		}
+		if cond != "" {
+			multi, multiArgs := multiPlayedSQL(s.DB, scope)
+			cond = "(" + cond + " OR " + multi + ")"
+			args = append(args, multiArgs...)
+			found = true
+			where.WriteString(" AND " + cond)
+		}
+	}
+	return found
+}
+
 // buildWhere translates f into the WHERE clause of the search query: cheap
 // predicates that can be pushed to SQL become clause text and bound
 // arguments; the rest are left to applyGoFilters (matchesGoFilters below),
@@ -259,73 +340,9 @@ func (s *SearchStore) buildWhere(ctx context.Context, scope string, f domain.Sea
 			}
 		}
 
-		// Win/gammon rate as `p.id IN (SELECT position_id FROM analysis …)`,
-		// not a clause on the LEFT JOIN: the join form drives the scan through
-		// idx_analysis_win_gammon in rate order and forces a TEMP B-TREE sort
-		// for the ORDER BY p.id. The IN-subquery keeps the rowid-order scan and
-		// is answered from the covering index (position_id is its third column;
-		// idx_analysis_win_gammon_covering on PostgreSQL, hence the tenant
-		// predicate there).
-		var winGammonWhere strings.Builder
-		var winGammonArgs []any
-		wMin, wMax, wHasMin, wHasMax := searchfilter.ParseFloatFilterExpr(f.WinRateFilter, "w")
-		searchfilter.AppendIntRangeSQL("player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &winGammonWhere, &winGammonArgs)
-		gMin, gMax, gHasMin, gHasMax := searchfilter.ParseFloatFilterExpr(f.GammonRateFilter, "g")
-		searchfilter.AppendIntRangeSQL("player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &winGammonWhere, &winGammonArgs)
-		if winGammonWhere.Len() > 0 {
-			aTenant, aArgs := s.DB.TenantFilter("", scope)
-			where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE " + aTenant + winGammonWhere.String() + ")")
-			args = append(args, aArgs...)
-			args = append(args, winGammonArgs...)
-		}
-		bMin, bMax, bHasMin, bHasMax := searchfilter.ParseFloatFilterExpr(f.BackgammonRateFilter, "b")
-		searchfilter.AppendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, &where, &args)
-		// The player-2 rates take the same IN-subquery, answered from
-		// idx_analysis_win_gammon2_covering: through the LEFT JOIN the scan
-		// went by rate order, then looked up and sorted every candidate.
-		var winGammon2Where strings.Builder
-		var winGammon2Args []any
-		WMin, WMax, WHasMin, WHasMax := searchfilter.ParseFloatFilterExpr(f.Player2WinRateFilter, "W")
-		searchfilter.AppendIntRangeSQL("player2_win_rate", int(math.Round(WMin*100)), int(math.Round(WMax*100)), WHasMin, WHasMax, &winGammon2Where, &winGammon2Args)
-		GMin, GMax, GHasMin, GHasMax := searchfilter.ParseFloatFilterExpr(f.Player2GammonRateFilter, "G")
-		searchfilter.AppendIntRangeSQL("player2_gammon_rate", int(math.Round(GMin*100)), int(math.Round(GMax*100)), GHasMin, GHasMax, &winGammon2Where, &winGammon2Args)
-		if winGammon2Where.Len() > 0 {
-			aTenant, aArgs := s.DB.TenantFilter("", scope)
-			where.WriteString(" AND p.id IN (SELECT position_id FROM analysis WHERE " + aTenant + winGammon2Where.String() + ")")
-			args = append(args, aArgs...)
-			args = append(args, winGammon2Args...)
-		}
-		BMin, BMax, BHasMin, BHasMax := searchfilter.ParseFloatFilterExpr(f.Player2BackgammonRateFilter, "B")
-		searchfilter.AppendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, &where, &args)
-
-		// The denormalised error column scores ONE play (the first of
-		// PlayedMoves, see AnalysisStore.Save). A position played several ways
-		// is let through and settled in Go by matchesMoveErrorFilter on the
-		// largest error: the column can only under-state it. The test is
-		// correlated per row, so the first page does not wait for a pass over
-		// every move of the library.
-		if f.MoveErrorFilter != "" {
-			eMin, eMax, eHasMin, eHasMax := searchfilter.ParseFloatFilterExpr(f.MoveErrorFilter, "E")
-			eqMin := int(math.Round(eMin))
-			eqMax := int(math.Round(eMax))
-			var cond string
-			if eHasMin && eHasMax {
-				cond = statsErrExpr + " BETWEEN ? AND ?"
-				args = append(args, eqMin, eqMax)
-			} else if eHasMin {
-				cond = statsErrExpr + " >= ?"
-				args = append(args, eqMin)
-			} else if eHasMax {
-				cond = statsErrExpr + " <= ?"
-				args = append(args, eqMax)
-			}
-			if cond != "" {
-				multi, multiArgs := multiPlayedSQL(s.DB, scope)
-				cond = "(" + cond + " OR " + multi + ")"
-				args = append(args, multiArgs...)
-				moveErrorInGo = true
-				where.WriteString(" AND " + cond)
-			}
+		s.appendRateClauses(scope, f, &where, &args)
+		if s.appendMoveErrorClause(scope, f, &where, &args) {
+			moveErrorInGo = true
 		}
 
 		if f.DecisionTimeFilter != "" {

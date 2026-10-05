@@ -39,6 +39,7 @@ export const COMMANDS = [
     { name: 'cm', aliases: [] },
     { name: 'tags', aliases: [] },
     { name: 'train', aliases: [] },
+    { name: 'duel', aliases: [] },
     { name: 'log', aliases: [] },
     { name: 'grid', aliases: ['gr'] },
     { name: 'meta', aliases: [] },

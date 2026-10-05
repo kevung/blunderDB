@@ -206,6 +206,9 @@ type Config struct {
 	// TabOrder is the user's order of TabbedPanel.svelte's tab ids; empty
 	// means the built-in order, which the frontend owns.
 	TabOrder []string `json:"tab_order,omitempty"`
+	// DuelForm is the Duel tab's form as the frontend serialised it, remembered from one Duel
+	// to the next; the backend keeps it opaque.
+	DuelForm string `json:"duel_form,omitempty"`
 	// HiddenTabs removes tab buttons only; their shortcuts still work.
 	HiddenTabs []string `json:"hidden_tabs,omitempty"`
 	// BearoffTSPath is an optional user-supplied two-sided bearoff database
@@ -478,6 +481,7 @@ func (c *Config) LoadConfig() (*Config, error) {
 	config.PageStep = c.PageStep
 	c.TourSeen = config.TourSeen
 	c.TabOrder = config.TabOrder
+	c.DuelForm = config.DuelForm
 	c.HiddenTabs = config.HiddenTabs
 	c.BearoffTSPath = config.BearoffTSPath
 	c.BearoffRate = config.BearoffRate
@@ -757,6 +761,17 @@ func (c *Config) GetTourSeen() bool {
 // SaveTourSeen persists whether the first-run guided-tour catalog has been shown.
 func (c *Config) SaveTourSeen(seen bool) error {
 	c.TourSeen = seen
+	return c.SaveConfig(c)
+}
+
+// GetDuelForm returns the remembered Duel form, empty when none was saved.
+func (c *Config) GetDuelForm() string {
+	return c.DuelForm
+}
+
+// SaveDuelForm remembers the Duel form for the next Duel.
+func (c *Config) SaveDuelForm(form string) error {
+	c.DuelForm = form
 	return c.SaveConfig(c)
 }
 

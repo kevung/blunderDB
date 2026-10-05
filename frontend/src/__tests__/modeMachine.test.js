@@ -185,7 +185,7 @@ describe('positionService ré-exporte les transitions', () => {
     test('modeState expose { mode, savedContext } et démarre vide', () => {
         expect(modeState()).toEqual({
             mode: MODE.NORMAL,
-            savedContext: { beforeTranscribe: null, beforeEval: null, beforeEdit: null, beforeSubSearch: null, evalSeed: null, lastEvalBoard: null }
+            savedContext: { beforeTranscribe: null, beforeDuel: null, beforeEval: null, beforeEdit: null, beforeSubSearch: null, evalSeed: null, lastEvalBoard: null }
         });
     });
 });

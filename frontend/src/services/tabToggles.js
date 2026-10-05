@@ -7,6 +7,7 @@ import { positionsStore, positionStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore, statusBarModeStore, activeTabStore, showPipcountStore } from '../stores/uiStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
+import { duelHoldsBoardStore, duelFoldedStore } from '../stores/duelStore.js';
 import { tMsg } from '../i18n';
 
 // ── Tab toggles ──────────────────────────────────────────────────────────────
@@ -29,6 +30,7 @@ const TAB_TOGGLES = Object.freeze({
     metadata: { tab: 'metadata', silent: true, guard: () => (get(statusBarModeStore) === 'EDIT' ? 'status.cannotShowMetadataEdit' : null) },
     anki: { tab: 'anki' },
     training: { tab: 'training', withoutDb: true },
+    duel: { tab: 'duel' },
     matches: { tab: 'matches' },
     collections: { tab: 'collections' },
     tournaments: { tab: 'tournaments' },
@@ -61,7 +63,16 @@ export function toggleTab(id) {
         return;
     }
 
+    // A Duel holds the board: the library is not browsed, the engine is silent
+    // (ADR-0072 rule 9). Its own tab only.
     const current = get(activeTabStore);
+    if (get(duelHoldsBoardStore)) {
+        if (entry.tab !== 'duel') setStatusBarMessage(tMsg('duel.locked'));
+        else if (current === 'duel') duelFoldedStore.update((folded) => !folded);
+        else duelFoldedStore.set(false);
+        if (entry.tab !== 'duel' || current === 'duel') return;
+    }
+
     if (current === entry.tab) {
         activeTabStore.set(previousTab && previousTab !== entry.tab ? previousTab : DEFAULT_TAB);
         return;
@@ -88,6 +99,7 @@ export function toggleTab(id) {
 export function showTab(id) {
     const entry = TAB_TOGGLES[id];
     if (!entry) throw new Error(`showTab: unknown tab '${id}'`);
+    if (entry.tab === 'duel') duelFoldedStore.set(false);
     if (get(activeTabStore) === entry.tab) return true;
     toggleTab(id);
     return get(activeTabStore) === entry.tab;
@@ -102,6 +114,9 @@ export const toggleTrainingPanel = () => toggleTab('training');
 // Ouvrir, non basculer (cmd_mode.rst) : refermer l'onglet sous une session
 // laisserait le chronomètre courir hors écran. Ctrl+J reste la bascule.
 export const showTrainingPanel = () => showTab('training');
+// Ctrl+H bascule l'onglet Duel ; le bouton Jouer et `duel` l'ouvrent sans le refermer.
+export const toggleDuelPanel = () => toggleTab('duel');
+export const showDuelPanel = () => showTab('duel');
 export const toggleMatchPanel = () => toggleTab('matches');
 export const toggleCollectionPanelAction = () => toggleTab('collections');
 // Ctrl+Y and `direct`: the round trip between the room and the board. The

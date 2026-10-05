@@ -85,7 +85,8 @@
     import LessonBar from './components/LessonBar.svelte';
     import { startTrainingSession } from './services/trainingTabService.js';
     import { TRAINING_EXERCISES, exerciseForCommand } from './services/trainingTab.js';
-    import { showTab, showTrainingPanel } from './services/tabToggles.js';
+    import { showTab, showTrainingPanel, showDuelPanel } from './services/tabToggles.js';
+    import { duelHoldsBoardStore, duelFoldedStore } from './stores/duelStore.js';
     import HomeScreen from './components/HomeScreen.svelte';
     import { initFolderWatch } from './services/watchService.js';
     import { initMCPHost } from './services/mcpHostService.js';
@@ -183,7 +184,7 @@
     $effect(() => {
         const value = $currentPositionIndexStore;
         let cancelled = false;
-        if (get(statusBarModeStore) === 'MATCH') return;
+        if (get(statusBarModeStore) === 'MATCH' || get(duelHoldsBoardStore)) return;
         if (positionCount > 0 && value >= 0 && value < positionCount) {
             // Loads the window around `value` on a miss; a stale callback is dropped.
             positionsStore
@@ -215,6 +216,11 @@
         untrack(() => {
             logger.perf('App:activeTabHandler', () => {
                 const prevTab = previousTab;
+                // A Duel holds the board: no other tab opens over it (ADR-0072 rule 9).
+                if ($duelHoldsBoardStore && tab !== 'duel') {
+                    activeTabStore.set('duel');
+                    return;
+                }
                 previousTab = tab;
                 if (!isFirstRun) {
                     if (tab === 'search' && $statusBarModeStore !== 'EDIT') enterEditMode();
@@ -247,7 +253,7 @@
     // navigations keeps one gesture to a handful of steps.
     let lastWheelNavTime = 0;
     function handleWheel(event) {
-        if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EVAL') return;
+        if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EVAL' || $duelHoldsBoardStore) return;
         // La page Direction remplace le plateau dans la même zone : la molette y défile.
         if (!isOnBoard(event.target)) return;
         // En TRANSCRIBE, la molette au-dessus du plateau parcourt les candidats (ADR-0048
@@ -337,6 +343,8 @@
             importPosition,
             onImportIdentifier: importIdentifier,
             onTraining: startTrainingCommand,
+            // Ouvrir, jamais refermer, comme `train`.
+            onDuel: showDuelPanel,
             onSavePosition: saveCurrentPosition,
             onUpdatePosition: updatePosition,
             onDeletePosition: deletePosition,
@@ -499,7 +507,12 @@
             use:resizable={{ side: isSidePanel, size: isSidePanel ? panelWidth : appliedPanelHeight, onResize: setPanelSize, onCommit: savePanelSize }}
         ></div>
 
-        <div class="panel-wrapper" class:side={isSidePanel} data-tour="panels" style={isSidePanel ? `width: ${panelWidth}px;` : `height: ${appliedPanelHeight}px;`}>
+        <div
+            class="panel-wrapper"
+            class:side={isSidePanel}
+            data-tour="panels"
+            style={isSidePanel ? `width: ${panelWidth}px;` : $duelFoldedStore ? 'height: auto;' : `height: ${appliedPanelHeight}px;`}
+        >
             <TabbedPanel
                 onLoadPositionsByFilters={loadPositionsByFilters}
                 onCloseAnalysis={toggleAnalysisPanel}
