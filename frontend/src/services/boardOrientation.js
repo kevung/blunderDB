@@ -58,7 +58,10 @@ export function labelsFlipped(displayPosition) {
     return displayPosition?.player_on_roll === 1;
 }
 
-/** Le symétrique d'un point ; la barre (0/25) et la sortie (-1) comprises. */
+/**
+ * Le symétrique d'un point ; la barre (0/25) et la sortie (-1) comprises.
+ * @param {number} point
+ */
 function opposite(point) {
     return point >= 0 && point <= 25 ? 25 - point : point;
 }

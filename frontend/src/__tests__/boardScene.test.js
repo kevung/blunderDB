@@ -11,12 +11,13 @@
  */
 
 import { describe, test, expect } from 'vitest';
+import { defaultBoardConfig } from '../utils/boardConfig.js';
 import { boardMetrics, mirrorPosition, parseMoveNotation } from '../utils/boardGeometry.js';
 import {
     EXCLUDE_EMPTY,
     BEAROFF_POINT,
     pointColumnX,
-    stackSlotCenter,
+    stackSlotCenter as maybeStackSlotCenter,
     cubeBox,
     drawStaticScene,
     drawDynamicScene,
@@ -37,8 +38,30 @@ import {
 const W = 1000;
 const H = 720;
 
+/** @typedef {import('../utils/boardConfig.js').BoardConfig} BoardConfig */
+/** @typedef {import('../utils/boardGeometry.js').BoardPosition} BoardPosition */
+/** @typedef {import('../utils/boardGeometry.js').BoardMetrics} BoardMetrics */
+/** @typedef {import('../utils/boardScene.js').Surface} Surface */
+/** @typedef {{ kind: string, args: any[], translation: { set: (x: number, y: number) => void }, translated?: number[], [attribute: string]: any }} Shape */
+/** @typedef {Surface & { shapes: Shape[], of: (kind: string) => Shape[] }} Recorder */
+
+/**
+ * The slots asked for here are on the board; a null would be this test's own mistake.
+ * @param {BoardMetrics} geom
+ * @param {BoardConfig} cfg
+ * @param {number} point
+ * @param {number} slot
+ */
+function stackSlotCenter(geom, cfg, point, slot) {
+    const center = maybeStackSlotCenter(geom, cfg, point, slot);
+    if (!center) throw new Error(`no slot ${slot} on point ${point}`);
+    return center;
+}
+
+/** @param {Partial<BoardConfig>} [overrides] */
 function makeCfg(overrides = {}) {
     return {
+        ...defaultBoardConfig(),
         widthFactor: 0.75,
         orientation: 'right',
         fill: '#f0f0f0',
@@ -52,6 +75,7 @@ function makeCfg(overrides = {}) {
     };
 }
 
+/** @returns {BoardPosition} */
 function emptyPos() {
     return {
         board: { points: Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 })), bearoff: [0, 0] },
@@ -66,7 +90,7 @@ function emptyPos() {
 // The opening position, colour 0 at the bottom bearing off towards point 1.
 function startPos() {
     const pos = emptyPos();
-    const put = (p, checkers, color) => (pos.board.points[p] = { checkers, color });
+    const put = (/** @type {number} */ p, /** @type {number} */ checkers, /** @type {number} */ color) => (pos.board.points[p] = { checkers, color });
     put(24, 2, 0);
     put(13, 5, 0);
     put(8, 3, 0);
@@ -79,16 +103,19 @@ function startPos() {
 }
 
 // Stand-in for the Two instance: records each primitive with its arguments.
+/** @returns {Recorder} */
 function recorder() {
+    /** @type {Shape[]} */
     const shapes = [];
     const make =
-        (kind) =>
-        (...args) => {
+        (/** @type {string} */ kind) =>
+        (/** @type {any[]} */ ...args) => {
+            /** @type {Shape} */
             const shape = {
                 kind,
                 args,
                 translation: {
-                    set(x, y) {
+                    set(/** @type {number} */ x, /** @type {number} */ y) {
                         shape.translated = [x, y];
                     }
                 }
@@ -96,20 +123,23 @@ function recorder() {
             shapes.push(shape);
             return shape;
         };
-    return {
-        shapes,
-        of: (kind) => shapes.filter((s) => s.kind === kind),
-        makePath: make('path'),
-        makeText: make('text'),
-        makeCircle: make('circle'),
-        makeRectangle: make('rect'),
-        makeLine: make('line')
-    };
+    // A stand-in for two.js: only the factories the scene calls exist.
+    return /** @type {Recorder} */ (
+        /** @type {unknown} */ ({
+            shapes,
+            of: (/** @type {string} */ kind) => shapes.filter((s) => s.kind === kind),
+            makePath: make('path'),
+            makeText: make('text'),
+            makeCircle: make('circle'),
+            makeRectangle: make('rect'),
+            makeLine: make('line')
+        })
+    );
 }
 
 const geom = boardMetrics(W, H, 0.75);
 const cs = geom.checkerSize;
-const near = (v) => expect.closeTo(v, 6);
+const near = (/** @type {number} */ v) => expect.closeTo(v, 6);
 
 // ── Static scene ────────────────────────────────────────────────────────────
 
@@ -166,7 +196,8 @@ describe('drawStaticScene — triangles, labels, bar', () => {
         drawLabels(flipped, geom, makeCfg(), true);
         // Points p and 25 - p share a column (one below the bar, one above),
         // so a label is found by its column AND its half.
-        const at = (rec, x, bottom) => rec.of('text').find((t) => Math.abs(t.args[1] - x) < 1e-6 && t.args[2] > geom.originY === bottom).args[0];
+        const at = (/** @type {Recorder} */ rec, /** @type {number} */ x, /** @type {boolean} */ bottom) =>
+            rec.of('text').find((t) => Math.abs(t.args[1] - x) < 1e-6 && t.args[2] > geom.originY === bottom)?.args[0];
         for (let p = 1; p <= 24; p++) {
             const x = pointColumnX(geom, 'right', p);
             expect(at(plain, x, p <= 12)).toBe(String(p));
@@ -179,7 +210,7 @@ describe('drawStaticScene — triangles, labels, bar', () => {
         const left = recorder();
         drawStaticScene(right, geom, makeCfg({ orientation: 'right' }), false);
         drawStaticScene(left, geom, makeCfg({ orientation: 'left' }), false);
-        const labelXs = (rec) =>
+        const labelXs = (/** @type {Recorder} */ rec) =>
             rec
                 .of('text')
                 .map((t) => [t.args[0], t.args[1]])
@@ -222,7 +253,7 @@ describe('drawCheckers', () => {
         drawCheckers(two, geom, cfg, startPos());
         const step = cfg.checker.sizeFactor * cs;
         // Same column, different half: filter on y as well as x.
-        const column = (p) => two.of('circle').filter((c) => Math.abs(c.args[0] - pointColumnX(geom, 'right', p)) < 1e-6 && c.args[1] > geom.originY === p <= 12);
+        const column = (/** @type {number} */ p) => two.of('circle').filter((c) => Math.abs(c.args[0] - pointColumnX(geom, 'right', p)) < 1e-6 && c.args[1] > geom.originY === p <= 12);
         const six = column(6)
             .map((c) => c.args[1])
             .sort((a, b) => b - a);
@@ -286,7 +317,7 @@ describe('drawCheckers', () => {
         const mirrored = recorder();
         drawCheckers(plain, geom, cfg, startPos());
         drawCheckers(mirrored, geom, cfg, mirrorPosition(startPos()));
-        const key = (c, flipY, swap) =>
+        const key = (/** @type {Shape} */ c, /** @type {boolean} */ flipY, /** @type {boolean} */ swap) =>
             `${c.args[0].toFixed(3)},${(flipY ? 2 * geom.originY - c.args[1] : c.args[1]).toFixed(3)},${swap ? (c.fill === cfg.checker.colors[0] ? 1 : 0) : c.fill === cfg.checker.colors[0] ? 0 : 1}`;
         const expected = plain
             .of('circle')
@@ -304,7 +335,7 @@ describe('drawCheckers', () => {
         const left = recorder();
         drawCheckers(right, geom, makeCfg({ orientation: 'right' }), startPos());
         drawCheckers(left, geom, makeCfg({ orientation: 'left' }), startPos());
-        const key = (c, flipX) => `${(flipX ? 2 * geom.originX - c.args[0] : c.args[0]).toFixed(3)},${c.args[1].toFixed(3)},${c.fill}`;
+        const key = (/** @type {Shape} */ c, /** @type {boolean} */ flipX) => `${(flipX ? 2 * geom.originX - c.args[0] : c.args[0]).toFixed(3)},${c.args[1].toFixed(3)},${c.fill}`;
         expect(
             left
                 .of('circle')
@@ -349,7 +380,7 @@ describe('drawDoublingCube', () => {
         const [label] = two.of('text');
         expect(face.args).toEqual([near(box.x), near(box.y), near(box.size), near(box.size)]);
         expect(label.args[0]).toBe('8');
-        expect(label.translated[0]).toBeCloseTo(box.x, 6);
+        expect(label.translated?.[0]).toBeCloseTo(box.x, 6);
     });
 });
 
@@ -427,7 +458,7 @@ describe('drawScores / drawBearoff / drawPipCounts', () => {
 
 describe('drawMoveArrows', () => {
     const cfg = makeCfg();
-    const tip = (path) => ({ x: path.args[0], y: path.args[1] });
+    const tip = (/** @type {Shape} */ path) => ({ x: path.args[0], y: path.args[1] });
 
     test('one shaft and one head per checker moved, from the top of the source stack to the next free slot', () => {
         const two = recorder();

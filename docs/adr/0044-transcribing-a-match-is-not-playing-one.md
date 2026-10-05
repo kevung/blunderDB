@@ -1,7 +1,7 @@
 # Transcribing a match is not playing one
 
 Status: accepted.
-See also: ADR-0037 (blunderDB does not play), ADR-0041, ADR-0045, ADR-0028.
+See also: ADR-0072 (the Duel), ADR-0037 (superseded), ADR-0041, ADR-0045, ADR-0028.
 
 ## Context
 
@@ -13,8 +13,9 @@ line between the two must be written down.
 
 ## Decision
 
-blunderDB records matches played elsewhere; it still plays none. The line is three
-properties a transcription has and a play mode cannot:
+A Transcription records a match played elsewhere; a match played here is a Duel
+(ADR-0072), a different object. The line is three properties, of which a Duel reverses the
+first two and keeps the third:
 
 1. **Nobody decides.** Both sides are facts the user reports. The engine proposes candidates
    so the played move is picked faster than typed; it never chooses, rolls or answers a
@@ -37,7 +38,8 @@ for them in `.mat` or `Decide`). Jacoby and beaver stay session rules (ADR-0028)
 
 - `LegalMoves` has a consumer that keeps boards it cannot reach and marks them; no code path
   may turn that mark into a refusal.
-- gammonGo remains where a playing engine belongs.
+- A Duel shares the rules and the Action format with a Transcription, never its gestures
+  (ADR-0072 rule 3).
 - Rejected: refusing transcription under ADR-0037 (it feeds the analysis loop; the detour
   through gnubg or XG needs a program the user may not own); reopening a play mode (the
   shared surface is the cheap half; the three properties stay false for it); typed notation

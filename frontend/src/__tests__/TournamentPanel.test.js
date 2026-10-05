@@ -54,15 +54,18 @@ function resetStores() {
     matchContextStore.set({ isMatchMode: false, matchID: null, movePositions: [], currentIndex: 0, player1Name: '', player2Name: '' });
 }
 
+/** @param {Partial<import('../../wailsjs/go/models').domain.Tournament>} fields */
+const aTournament = (fields) => ({ id: 0, name: '', date: '', location: '', sortOrder: 0, createdAt: '', updatedAt: '', matchCount: 0, comment: '', pr: 0, mwc_loss: 0, ref_player: '', ...fields });
+
 const SAMPLE_TOURNAMENTS = [
-    { id: 1, name: 'Blunder Cup', matchCount: 2, date: '2026-01-01', location: 'Paris', pr: 4.5, mwc_loss: 0.02 },
-    { id: 2, name: 'Amsterdam Open', matchCount: 0, date: '2026-02-01', location: 'Amsterdam', pr: 0, mwc_loss: 0 }
+    aTournament({ id: 1, name: 'Blunder Cup', matchCount: 2, date: '2026-01-01', location: 'Paris', pr: 4.5, mwc_loss: 0.02 }),
+    aTournament({ id: 2, name: 'Amsterdam Open', matchCount: 0, date: '2026-02-01', location: 'Amsterdam', pr: 0, mwc_loss: 0 })
 ];
 
 beforeEach(() => {
     vi.clearAllMocks();
     resetStores();
-    GetAllTournaments.mockResolvedValue(SAMPLE_TOURNAMENTS);
+    vi.mocked(GetAllTournaments).mockResolvedValue(SAMPLE_TOURNAMENTS);
 });
 
 afterEach(() => {
@@ -102,7 +105,7 @@ describe('TournamentPanel — list view', () => {
     });
 
     test('empty tournament list shows the empty-state message', async () => {
-        GetAllTournaments.mockResolvedValue([]);
+        vi.mocked(GetAllTournaments).mockResolvedValue([]);
         renderOpen();
         await vi.waitFor(() => expect(GetAllTournaments).toHaveBeenCalled());
 
@@ -165,7 +168,7 @@ describe('TournamentPanel — list view', () => {
     });
 
     test('double-clicking a tournament row opens its matches (detail view)', async () => {
-        GetTournamentMatches.mockResolvedValue([{ id: 501, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, comment: '' }]);
+        vi.mocked(GetTournamentMatches).mockResolvedValue([{ id: 501, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, comment: '' }]);
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
 
@@ -218,7 +221,7 @@ describe('TournamentPanel — list view', () => {
         renderOpen();
         const row = (await screen.findByText('Amsterdam Open')).closest('tr');
         const deleteBtn = within(row).getByTitle(/delete/i);
-        GetAllTournaments.mockResolvedValue([SAMPLE_TOURNAMENTS[0]]);
+        vi.mocked(GetAllTournaments).mockResolvedValue([SAMPLE_TOURNAMENTS[0]]);
 
         await fireEvent.click(deleteBtn);
         await answerConfirm(true);
@@ -275,7 +278,7 @@ describe('TournamentPanel — list view', () => {
 
 describe('TournamentPanel — keyboard shortcuts', () => {
     test('Escape from the detail view returns to the list', async () => {
-        GetTournamentMatches.mockResolvedValue([]);
+        vi.mocked(GetTournamentMatches).mockResolvedValue([]);
         renderOpen();
         const row = (await screen.findByText('Blunder Cup')).closest('tr');
         await fireEvent.dblClick(row);
@@ -335,8 +338,8 @@ describe('TournamentPanel — deferred focus', () => {
 
 describe('TournamentPanel — focus after creation', () => {
     test('creating a tournament puts the focus on its new row, not on body', async () => {
-        CreateTournament.mockImplementation(async () => {
-            GetAllTournaments.mockResolvedValue([...SAMPLE_TOURNAMENTS, { id: 3, name: 'Zeta Trophy', matchCount: 0, date: '', location: '', pr: 0, mwc_loss: 0 }]);
+        vi.mocked(CreateTournament).mockImplementation(async () => {
+            vi.mocked(GetAllTournaments).mockResolvedValue([...SAMPLE_TOURNAMENTS, aTournament({ id: 3, name: 'Zeta Trophy' })]);
         });
         renderOpen();
         await screen.findByText('Blunder Cup');
