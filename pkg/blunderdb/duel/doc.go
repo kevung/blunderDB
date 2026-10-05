@@ -34,6 +34,12 @@
 //     out is noted, and loses the match only if the Duel was set so. A Duel
 //     in suspense stops the clocks.
 //
-// A Bot (a delegated Side) is not here yet: it is one more Side the
-// SideResolver gives, and the Arbiter already asks every Side the same way.
+// A Bot (bot.go) is a delegated Side: gammonNet's stateless playing policy
+// (engine/gammonnet, policy.go) at a named level, the Configuration that will
+// analyse the match, whose name its player carries in the Match (rules 6, 7).
+// Resolve gives it like any Side; it answers at once, so two Bots play a
+// whole match in the call that creates the Duel — a match, never a money
+// session, which no call would end. Before a roll the Arbiter offers no
+// decision on (the cube not available), a Side that can read its certain
+// loss (a Resigner) is asked whether it resigns; an external Side is not.
 package duel

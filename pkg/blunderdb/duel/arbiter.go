@@ -284,6 +284,12 @@ func (g *game) settle(ctx context.Context, sides [2]Side) error {
 		}
 		d := g.awaiting()
 		if d == nil {
+			if resigned, err := g.resignUnasked(ctx, sides); err != nil || resigned {
+				if err != nil {
+					return err
+				}
+				continue
+			}
 			if err := g.roll(); err != nil {
 				return err
 			}
@@ -319,6 +325,29 @@ func (g *game) settle(ctx context.Context, sides [2]Side) error {
 		}
 	}
 	return nil
+}
+
+// resignUnasked asks the Side on roll, before a roll no Decision is posed on,
+// whether it resigns — only a Resigner, which reads it exactly; an external
+// Side is never asked. No decision was posed, so none is timed.
+func (g *game) resignUnasked(ctx context.Context, sides [2]Side) (bool, error) {
+	n := g.m.Next()
+	if n.GameStart || n.Expects != transcript.KindChecker || n.Position.Dice != [2]int{} {
+		return false, nil
+	}
+	r, ok := sides[n.Side].(Resigner)
+	if !ok {
+		return false, nil
+	}
+	level, err := r.ResignBeforeRoll(ctx, n.Position)
+	if err != nil || level == 0 {
+		return false, err
+	}
+	if err := g.apply(transcript.Action{Side: n.Side, Kind: transcript.KindResign, Level: level}); err != nil {
+		return false, err
+	}
+	g.doc.Clock.Cube, g.doc.Clock.Turn = nil, 0
+	return true, nil
 }
 
 // clock is the game's now, the zero time when it has none.

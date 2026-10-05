@@ -44,7 +44,7 @@ type Settings struct {
 // Options configures a Service.
 type Options struct {
 	// Sides resolves a draft's SideSpec into the Side the Arbiter asks;
-	// ExternalOnly when nil.
+	// Resolve when nil.
 	Sides SideResolver
 	// Rand is where seeds are drawn from; crypto/rand when nil.
 	Rand io.Reader
@@ -67,7 +67,7 @@ type Service struct {
 // New returns a Service over store.
 func New(store storage.Storage, opts Options) *Service {
 	if opts.Sides == nil {
-		opts.Sides = ExternalOnly
+		opts.Sides = Resolve
 	}
 	if opts.Rand == nil {
 		opts.Rand = rand.Reader
@@ -149,6 +149,15 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 		if set.Sides[i].Kind == "" {
 			set.Sides[i].Kind = SideExternal
 		}
+		if set.Sides[i].Kind == SideBot {
+			set.Sides[i].Name = BotName(set.Sides[i].Level)
+		}
+	}
+	if set.MatchLength == 0 && set.Sides[0].Kind != SideExternal && set.Sides[1].Kind != SideExternal {
+		// Nobody would ever be awaited and a money session never ends: the
+		// call would play forever.
+		return nil, &transcript.Refusal{Kind: RefusedEndless,
+			Detail: "a money session between two delegated Sides never ends"}
 	}
 	doc := document{
 		FormatVersion: FormatVersion,
