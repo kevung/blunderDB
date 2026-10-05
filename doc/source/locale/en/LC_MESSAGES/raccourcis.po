@@ -212,13 +212,35 @@ msgstr "Double-click outside the board"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
-"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
-"double-clic remet à zéro."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
 msgstr ""
-"Put the displayed position on the Pile, or take it off — except in edit "
-"mode and in Eval, and during a move played on the board outside a Duel, "
-"where this double-click resets."
+"Put the displayed position on the Pile, or take it off, in every "
+"mode."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau (édition, Eval)"
+msgstr "Right-click outside the board (edit, Eval)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
+msgstr ""
+"Open the board menu: *Clear the position*, like BACKSPACE, or "
+"*Starting position*."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup joué au plateau)"
+msgstr "Right-click on the board (move played on the board)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
+msgstr ""
+"Open the board menu, which starts with *Start over*: the move is "
+"reset, not the position."
 
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"

@@ -217,13 +217,35 @@ msgstr "Doppelklick außerhalb des Bretts"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
-"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
-"double-clic remet à zéro."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
 msgstr ""
-"Die angezeigte Stellung auf den Stapel legen oder davon nehmen — außer im"
-" Bearbeitungsmodus und in Eval sowie während eines außerhalb eines Duells"
-" auf dem Brett gespielten Zugs, wo dieser Doppelklick zurücksetzt."
+"Die angezeigte Stellung auf den Stapel legen oder davon nehmen, in "
+"allen Modi."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau (édition, Eval)"
+msgstr "Rechtsklick außerhalb des Bretts (Bearbeitung, Eval)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
+msgstr ""
+"Das Brettmenü öffnen: *Position löschen*, wie RÜCKTASTE, oder "
+"*Startposition*."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup joué au plateau)"
+msgstr "Rechtsklick auf das Brett (auf dem Brett gespielter Zug)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
+msgstr ""
+"Das Brettmenü öffnen, das mit *Neu beginnen* anfängt: Der Zug wird "
+"zurückgesetzt, nicht die Stellung."
 
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"

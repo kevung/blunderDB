@@ -996,7 +996,9 @@
             "addToAnkiDeck": "Ankiデッキに追加: {deck}",
             "saveImageSVG": "画像を保存（SVG）…",
             "saveImagePNG": "画像を保存（PNG）…",
-            "neighbours": "近い局面"
+            "neighbours": "近い局面",
+            "clearPosition": "局面を消去",
+            "startingPosition": "初期配置"
         },
         "scene": {
             "pip": "pip: {n}",

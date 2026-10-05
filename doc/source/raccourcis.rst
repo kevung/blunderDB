@@ -47,7 +47,9 @@ Position
    "RETOUR ARRIERE", "En mode édition ou Eval : réinitialiser le board, le cube, le score et les dés."
    "CTRL-G", "Afficher les métadonnées de la position."
    "b", "Mettre la position affichée sur la Pile (collection « à revoir plus tard »), ou l'en retirer."
-   "Double-clic hors du plateau", "Mettre la position affichée sur la Pile, ou l'en retirer — sauf en édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce double-clic remet à zéro."
+   "Double-clic hors du plateau", "Mettre la position affichée sur la Pile, ou l'en retirer, dans tous les modes."
+   "Clic droit hors du plateau (édition, Eval)", "Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR ARRIERE, ou *Position de départ*."
+   "Clic droit sur le plateau (coup joué au plateau)", "Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup est remis à zéro, pas la position."
 
 .. _raccourcis_navigation:
 

@@ -926,11 +926,15 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:466
 msgid ""
-"pour effacer la position, double-clic sur une zone vide en dehors du "
-"board ou appuyer sur la touche *RETOUR ARRIERE*."
+"pour effacer la position, clic droit sur une zone vide en dehors du "
+"board puis *Effacer la position*, ou appuyer sur la touche *RETOUR "
+"ARRIERE*. Le même menu propose *Position de départ*, qui pose les "
+"pions d'une partie neuve."
 msgstr ""
-"Um die Position zu löschen, doppelt auf eine leere Fläche außerhalb des "
-"Boards klicken oder die *RÜCKTASTE* drücken."
+"Um die Position zu löschen, rechts auf eine leere Fläche außerhalb "
+"des Boards klicken und *Position löschen* wählen oder die *RÜCKTASTE*"
+" drücken. Dasselbe Menü bietet *Startposition*, die die Steine eines "
+"neuen Spiels setzt."
 
 #: ../../source/guide_utilisateur.rst:469
 msgid ""

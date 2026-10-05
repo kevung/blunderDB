@@ -909,11 +909,15 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:466
 msgid ""
-"pour effacer la position, double-clic sur une zone vide en dehors du "
-"board ou appuyer sur la touche *RETOUR ARRIERE*."
+"pour effacer la position, clic droit sur une zone vide en dehors du "
+"board puis *Effacer la position*, ou appuyer sur la touche *RETOUR "
+"ARRIERE*. Le même menu propose *Position de départ*, qui pose les "
+"pions d'une partie neuve."
 msgstr ""
-"para borrar la posición, haga doble clic en una zona vacía fuera del "
-"tablero o pulse la tecla *RETROCESO*."
+"para borrar la posición, haga clic derecho en una zona vacía fuera "
+"del tablero y luego *Borrar la posición*, o pulse la tecla "
+"*RETROCESO*. El mismo menú propone *Posición inicial*, que coloca las"
+" fichas de una partida nueva."
 
 #: ../../source/guide_utilisateur.rst:469
 msgid ""

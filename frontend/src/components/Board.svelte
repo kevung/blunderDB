@@ -7,7 +7,7 @@
     import { parseMoveNotation, mirrorPosition, boardMetrics } from '../utils/boardGeometry.js';
     import { layerOf, drawStaticScene, drawDynamicScene, drawFrame } from '../utils/boardScene.js';
     import { defaultBoardConfig, applyPalette } from '../utils/boardConfig.js';
-    import { attachBoardInteractions } from '../utils/boardInteractions.js';
+    import { applyStartingCheckers, attachBoardInteractions } from '../utils/boardInteractions.js';
     import { rankNeighboursOfCurrentPosition } from '../services/rankService.js';
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
@@ -200,6 +200,13 @@
         });
     }
 
+    // The clear of the current mode (Backspace's), then the checkers of a new game.
+    function startingBoard() {
+        if (mode === 'EVAL') resetEvalBoard();
+        else resetBoard();
+        positionStore.update((pos) => applyStartingCheckers(pos));
+    }
+
     function logCanvasSize() {
         if (!canvas || !two) return;
         const actualWidth = canvas.clientWidth;
@@ -283,10 +290,8 @@
             // Côté de sortie du camp au trait : 0 en bas, 1 en haut (en
             // transcription le joueur 2 sort par le haut).
             quizBearoffSide: () => getDisplayPosition().player_on_roll,
-            resetQuizPlay: () => quizPlayStore.update((s) => (s ? resetBoardPlay(s, get(positionStore)) : s)),
             getPreviousDice: () => previousDice,
             setPreviousDice: (/** @type {number[]} */ dice) => (previousDice = dice),
-            reset: () => (mode === 'EVAL' ? resetEvalBoard() : resetBoard()),
             openContextMenu,
             displayRoller: () => getDisplayPosition().player_on_roll,
             togglePile,
@@ -321,7 +326,8 @@
         if (redrawFrameId !== null) cancelAnimationFrame(redrawFrameId);
     });
 
-    // Board context menu; gating (not in EDIT/EVAL, not over a modal) is boardInteractions.js's.
+    // Board context menu; gating (EDIT/EVAL only outside the frame, never over a modal) is
+    // boardInteractions.js's.
     /** @type {{ x: number, y: number, items: MenuItem[] } | null} */
     let boardMenu = $state(null);
 
@@ -331,8 +337,28 @@
             boardMenu = { x, y, items: duelMenuItems() };
             return;
         }
+        // EDIT and EVAL: the menu holds the two resets; the right button edits the board elsewhere.
+        if (mode === 'EDIT' || mode === 'EVAL') {
+            boardMenu = {
+                x,
+                y,
+                items: [
+                    { label: $t('board.menu.clearPosition'), onClick: () => (mode === 'EVAL' ? resetEvalBoard() : resetBoard()) },
+                    { label: $t('board.menu.startingPosition'), onClick: () => startingBoard() }
+                ]
+            };
+            return;
+        }
         /** @type {MenuItem[]} */
-        const items = [
+        const items = [];
+        // A play in progress (quiz, Transcription): its reset clears the play, not the position.
+        if (get(quizPlayStore)) {
+            items.push({
+                label: $t('training.resetPlay'),
+                onClick: () => quizPlayStore.update((s) => (s ? resetBoardPlay(s, get(positionStore)) : s))
+            });
+        }
+        items.push(
             {
                 label: $t('board.menu.evaluate'),
                 // The position as displayed (possibly mirrored), not the stored record.
@@ -359,7 +385,7 @@
                 label: $t('board.menu.newView'),
                 onClick: () => viewStore.addView()
             }
-        ];
+        );
 
         // Anki cards are keyed by position id: nothing to add for a scratch board (id 0).
         const position = get(positionStore);

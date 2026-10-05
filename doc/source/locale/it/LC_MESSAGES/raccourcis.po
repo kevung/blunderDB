@@ -213,13 +213,35 @@ msgstr "Doppio clic fuori dalla scacchiera"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Mettre la position affichée sur la Pile, ou l'en retirer — sauf en "
-"édition et en Eval, et pendant un coup joué au plateau hors Duel, où ce "
-"double-clic remet à zéro."
+"Mettre la position affichée sur la Pile, ou l'en retirer, dans tous "
+"les modes."
 msgstr ""
-"Mettere la posizione mostrata sulla Pila, o toglierla — tranne in "
-"modifica e in Eval, e durante una mossa giocata sulla scacchiera fuori da"
-" un Duello, dove questo doppio clic azzera."
+"Mettere la posizione mostrata sulla Pila, o toglierla, in tutte le "
+"modalità."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit hors du plateau (édition, Eval)"
+msgstr "Clic destro fuori dalla scacchiera (modifica, Eval)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau : *Effacer la position*, comme RETOUR "
+"ARRIERE, ou *Position de départ*."
+msgstr ""
+"Aprire il menu della scacchiera: *Cancella la posizione*, come "
+"BACKSPACE, o *Posizione iniziale*."
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic droit sur le plateau (coup joué au plateau)"
+msgstr "Clic destro sulla scacchiera (mossa giocata sulla scacchiera)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Ouvrir le menu du plateau, qui commence par *Recommencer* : le coup "
+"est remis à zéro, pas la position."
+msgstr ""
+"Aprire il menu della scacchiera, che inizia con *Ricomincia*: si "
+"azzera la mossa, non la posizione."
 
 #: ../../source/raccourcis.rst:54
 msgid "Navigation"
