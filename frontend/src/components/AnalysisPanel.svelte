@@ -21,6 +21,7 @@
     import RolloutStrip from './RolloutStrip.svelte';
     import RolloutResults from './RolloutResults.svelte';
     import ContextMenu from './ContextMenu.svelte';
+    import { copyBoardWithAnalysisImage } from '../services/clipboardService.js';
     import { rolloutStore, rolloutChoiceStore } from '../stores/rolloutStore.js';
     import { toggleRollout, cancelRollout, ensureRolloutEvents, syncRolloutStatus, boardKey } from '../services/rolloutService.js';
     import { rolloutsByMove, cubeRollouts } from '../utils/rolloutRows.js';
@@ -72,7 +73,7 @@
     // move selectedMoveStore holds. anchor is where a Shift+click range starts.
     let pickedMoves = $state(/** @type {string[]} */ ([]));
     let anchor = $state(/** @type {string | null} */ (null));
-    let rolloutMenu = $state(/** @type {{ x: number, y: number, items: any[] } | null} */ (null));
+    let panelMenu = $state(/** @type {{ x: number, y: number, items: any[] } | null} */ (null));
     let storedRollouts = $state(/** @type {any[]} */ ([]));
     let rollout = $derived($rolloutStore);
     let positionId = $derived($positionStore?.id ?? 0);
@@ -121,7 +122,7 @@
     }
 
     /** @param {MouseEvent} event @param {string[]} moves */
-    function openRolloutMenu(event, moves) {
+    function openPanelMenu(event, moves) {
         event.preventDefault();
         const preset = $t(`rollout.${$rolloutChoiceStore.preset === 'custom' ? 'custom' : $rolloutChoiceStore.preset === 'fast' ? 'fast' : 'standard'}`);
         const items = rollout.running
@@ -133,7 +134,13 @@
                       onClick: () => toggleRollout(moves)
                   }
               ];
-        rolloutMenu = { x: event.clientX, y: event.clientY, items };
+        // The same image as C-X C-X; a selection narrows it to the picked plays.
+        items.push({
+            label: moves.length ? $t('analysis.menuCopySelected') : $t('analysis.menuCopy'),
+            shortcut: 'C-X C-X',
+            onClick: () => copyBoardWithAnalysisImage({ moves })
+        });
+        panelMenu = { x: event.clientX, y: event.clientY, items };
     }
 
     /** Right-click on a row: a row outside the selection becomes the selection. */
@@ -143,13 +150,13 @@
             anchor = move.move;
             selectedMoveStore.set(move.move);
         }
-        openRolloutMenu(event, rolloutSelection());
+        openPanelMenu(event, rolloutSelection());
     }
 
     /** Right-click elsewhere in the panel: the selection, or the whole position (its cube decision). */
     function handleContentContextMenu(event) {
         if (event.defaultPrevented || $trainingAnalysisHiddenStore) return;
-        openRolloutMenu(event, rolloutSelection());
+        openPanelMenu(event, rolloutSelection());
     }
 
     // TabbedPanel mounts/destroys this per tab switch: onMount/onDestroy are open/close.
@@ -521,8 +528,8 @@
             {/if}
         {/if}
     </div>
-    {#if rolloutMenu}
-        <ContextMenu x={rolloutMenu.x} y={rolloutMenu.y} items={rolloutMenu.items} onClose={() => (rolloutMenu = null)} />
+    {#if panelMenu}
+        <ContextMenu x={panelMenu.x} y={panelMenu.y} items={panelMenu.items} onClose={() => (panelMenu = null)} />
     {/if}
 </section>
 

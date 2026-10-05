@@ -782,6 +782,8 @@
         "sourceCollectionN": "Kokoelma #{id}"
     },
     "analysis": {
+        "menuCopy": "Kopioi asema ja analyysi",
+        "menuCopySelected": "Kopioi asema ja valitut siirrot",
         "analysisDepth": "Analyysin syvyys",
         "metDifferent": "Eri MET: analyysi laskettu taulukolla {name}",
         "metDifferentTitle": "Laskettu taulukolla {name}; tietokanta käyttää taulukkoa {current}. Analyysi on jätetty tilastojen ulkopuolelle.",

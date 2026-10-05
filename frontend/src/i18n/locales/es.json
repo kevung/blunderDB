@@ -782,6 +782,8 @@
         "sourceCollectionN": "Colección n.º {id}"
     },
     "analysis": {
+        "menuCopy": "Copiar la posición y el análisis",
+        "menuCopySelected": "Copiar la posición y las jugadas seleccionadas",
         "analysisDepth": "Profundidad de análisis",
         "metDifferent": "MET distinta: análisis calculado con {name}",
         "metDifferentTitle": "Calculado con {name}; la base usa {current}. Este análisis queda fuera de las estadísticas.",

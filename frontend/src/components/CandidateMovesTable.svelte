@@ -69,6 +69,15 @@
         return lines.filter(Boolean).join('\n');
     }
 
+    /**
+     * Shift+click picks a range of rows; without this the browser also extends
+     * the page's text selection up to the row.
+     * @param {MouseEvent} e
+     */
+    function preventShiftExtend(e) {
+        if (e.shiftKey) e.preventDefault();
+    }
+
     /** @param {string} move */
     const isPicked = (move) => selectedMove === move || selectedMoves.includes(move);
 
@@ -117,6 +126,7 @@
                     class:selected={isPicked(row.move.move)}
                     class:played={row.highlight}
                     data-move={row.move.move}
+                    onmousedown={preventShiftExtend}
                     onclick={(e) => onRowClick(row.move, e)}
                     ondblclick={() => onRowDblClick?.(row.move)}
                     oncontextmenu={onRowContextMenu ? (e) => onRowContextMenu(row.move, e) : undefined}
@@ -139,11 +149,14 @@
         width: 100%;
     }
 
+    /* Rows are picked with Ctrl/Shift+click and right-click: the cells must not
+       be selected as text along the way. */
     .checker-table {
         margin: 0 auto;
         width: 100%;
         font-size: var(--font-size-base);
         border-collapse: collapse;
+        user-select: none;
     }
 
     th,

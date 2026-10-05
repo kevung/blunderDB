@@ -96,10 +96,13 @@
     }
 
     /* ADR-0018 rule 5 idiom (ADR-0020): hairlines, small grey headers, tabular figures. */
+    /* Figures to read and click, not text to select: the panel's right-click
+       and Ctrl/Shift+click would otherwise paint a text selection over them. */
     .cube-table,
     .info-table {
         border-collapse: collapse;
         font-size: var(--font-size-base);
+        user-select: none;
     }
 
     th,

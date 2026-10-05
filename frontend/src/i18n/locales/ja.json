@@ -782,6 +782,8 @@
         "sourceCollectionN": "コレクション #{id}"
     },
     "analysis": {
+        "menuCopy": "局面と解析をコピー",
+        "menuCopySelected": "局面と選択した手をコピー",
         "analysisDepth": "解析の深さ",
         "metDifferent": "異なる MET：{name} で計算された解析",
         "metDifferentTitle": "{name} で計算されました。データベースは {current} を使用しています。この解析は統計から除外されます。",

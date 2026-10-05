@@ -782,6 +782,8 @@
         "sourceCollectionN": "Sammlung Nr. {id}"
     },
     "analysis": {
+        "menuCopy": "Position und Analyse kopieren",
+        "menuCopySelected": "Position und ausgewählte Züge kopieren",
         "analysisDepth": "Analysetiefe",
         "metDifferent": "Andere MET: Analyse mit {name} berechnet",
         "metDifferentTitle": "Mit {name} berechnet; die Datenbank verwendet {current}. Diese Analyse ist aus den Statistiken ausgeschlossen.",

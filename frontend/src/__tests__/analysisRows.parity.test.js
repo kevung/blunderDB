@@ -26,7 +26,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({ ClipboardSetText: vi.fn() }
 vi.mock('../services/databaseService.js', () => ({ setStatusBarMessage: vi.fn() }));
 vi.mock('../services/positionService.js', () => ({ generateXGID: () => 'XGID-STUB' }));
 
-const { paintAnalysisStrip, analysisStrip } = await import('../services/clipboardService.js');
+const { paintAnalysisStrip, analysisStrip, stripMoves } = await import('../services/clipboardService.js');
 const { default: CubeVerdictTable } = await import('../components/CubeVerdictTable.svelte');
 const { default: CandidateMovesTable } = await import('../components/CandidateMovesTable.svelte');
 const { cubeDecision, cubeTurnability } = await import('../utils/cubeDecision.js');
@@ -251,5 +251,45 @@ describe('the copied image paints exactly what the tables show', () => {
         expect(analysisStrip(null)).toBeNull();
         // A position with no analysis: emptyAnalysis() carries a zeroed cube block.
         expect(analysisStrip(emptyAnalysis())).toBeNull();
+    });
+});
+
+describe('the copied image of the selected plays', () => {
+    const ten = {
+        checkerAnalysis: {
+            moves: Array.from({ length: 10 }, (_, i) => ({ move: `m${i}`, equity: 0.5 - i / 10, equityError: -i / 10 }))
+        }
+    };
+
+    test('keeps only the named plays, in ranking order, with their rank among all candidates', () => {
+        // Named out of order and with a play beyond the six the full image keeps.
+        expect(stripMoves(ten, ['m8', 'm2']).map(({ move, rank }) => [move.move, rank])).toEqual([
+            ['m2', 3],
+            ['m8', 9]
+        ]);
+        expect(analysisStrip(ten, ['m8', 'm2'])).toEqual({ kind: 'checker', rows: 3 });
+    });
+
+    test('each row carries its rank and its error from the true best play', () => {
+        language.set('en');
+        const texts = paint(checkerAnalysis, { only: ['24/21 13/12'] }).map((p) => p.text);
+        // Best play +0.201, this one -0.020: the error stays -0.221, not +0.000.
+        expect(texts).toContain('3. 24/21 13/12');
+        expect(texts).toContain('-0.221');
+        expect(texts).not.toContain('+0.000');
+        expect(texts).not.toContain('8/5 6/5');
+    });
+
+    test('no selection paints what C-X C-X always painted', () => {
+        language.set('en');
+        const before = paint(checkerAnalysis);
+        expect(paint(checkerAnalysis, { only: [] })).toEqual(before);
+        expect(before.map((p) => p.text)).toContain('8/5 6/5');
+        expect(before.map((p) => p.text).some((x) => /^\d+\. /.test(x))).toBe(false);
+        expect(stripMoves(ten).map(({ move }) => move.move)).toEqual(['m0', 'm1', 'm2', 'm3', 'm4', 'm5']);
+    });
+
+    test('a cube record ignores a selection', () => {
+        expect(analysisStrip(cubeAnalysis, ['8/5 6/5'])).toEqual({ kind: 'cube', rows: 6 });
     });
 });

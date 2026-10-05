@@ -782,6 +782,8 @@
         "sourceCollectionN": "Коллекция № {id}"
     },
     "analysis": {
+        "menuCopy": "Копировать позицию и анализ",
+        "menuCopySelected": "Копировать позицию и выбранные ходы",
         "analysisDepth": "Глубина анализа",
         "metDifferent": "Другая MET: анализ рассчитан по {name}",
         "metDifferentTitle": "Рассчитан по {name}; база использует {current}. Этот анализ исключён из статистики.",

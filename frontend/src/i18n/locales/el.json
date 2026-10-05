@@ -782,6 +782,8 @@
         "sourceCollectionN": "Συλλογή #{id}"
     },
     "analysis": {
+        "menuCopy": "Αντιγραφή θέσης και ανάλυσης",
+        "menuCopySelected": "Αντιγραφή θέσης και επιλεγμένων κινήσεων",
         "analysisDepth": "Βάθος ανάλυσης",
         "metDifferent": "Διαφορετικός MET: ανάλυση με {name}",
         "metDifferentTitle": "Υπολογίστηκε με {name}· η βάση χρησιμοποιεί {current}. Αυτή η ανάλυση εξαιρείται από τα στατιστικά.",

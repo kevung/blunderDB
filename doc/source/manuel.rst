@@ -821,6 +821,15 @@ l'arrêtent sans rien écrire. Le réglage — **Rapide**, **Standard** ou
 **Libre** — se choisit dans l'onglet **gammonNet** de la configuration
 (voir :ref:`configuration <rollout_reglage>`).
 
+Le même menu propose **Copier la position et l'analyse**, l'image que copie
+*CTRL-X CTRL-X* : le plateau et le haut de la liste des coups, ou l'analyse de
+videau entière. Dès qu'un coup est sélectionné, l'entrée devient **Copier la
+position et les coups sélectionnés** : l'image ne garde que ces coups, dans
+l'ordre du classement, chacun précédé de son rang parmi tous les candidats et
+avec son écart au meilleur coup de la position, non au meilleur de la
+sélection. Les cellules des tables d'analyse ne se sélectionnent pas comme du
+texte : les clics de sélection n'y laissent pas de surlignage.
+
 Le résultat est **stocké à côté de l'analyse, jamais à sa place** : une
 analyse importée n'est pas modifiée. Chaque coup roulé porte son résultat dans
 sa propre ligne de la table, dans une colonne **Rollout** qui n'apparaît que

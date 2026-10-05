@@ -782,6 +782,8 @@
         "sourceCollectionN": "Collection #{id}"
     },
     "analysis": {
+        "menuCopy": "Copy position and analysis",
+        "menuCopySelected": "Copy position and selected moves",
         "analysisDepth": "Analysis Depth",
         "metDifferent": "Different MET: analysis computed with {name}",
         "metDifferentTitle": "Computed with {name}; the library uses {current}. This analysis is left out of the statistics.",

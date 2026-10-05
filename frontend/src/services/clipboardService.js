@@ -211,7 +211,13 @@ export async function copyBoardImage() {
     }
 }
 
-export async function copyBoardWithAnalysisImage() {
+/**
+ * Copies the board with its analysis strip — C-X C-X.
+ *
+ * @param {{ moves?: string[] }} [options] moves: the plays to keep in the strip
+ *   (by their notation); empty or absent, the strip is the top of the list.
+ */
+export async function copyBoardWithAnalysisImage({ moves: only = [] } = {}) {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('status.noDatabaseOpened'));
         return;
@@ -233,7 +239,7 @@ export async function copyBoardWithAnalysisImage() {
         const mode = get(statusBarModeStore);
         const analysis = mode === 'EVAL' ? get(evalAnalysisStore) : mode === 'EDIT' ? null : get(analysisStore);
         const position = get(positionStore);
-        const strip = analysisStrip(analysis);
+        const strip = analysisStrip(analysis, only);
         if (!strip) {
             setStatusBarMessage(tMsg('status.noAnalysisToExport'));
             return;
@@ -297,7 +303,7 @@ export async function copyBoardWithAnalysisImage() {
             ctx.drawImage(img, 0, 0, svgWidth, svgHeight);
             URL.revokeObjectURL(url);
 
-            paintAnalysisStrip(ctx, { analysis, position, isMatchMode: get(matchContextStore).isMatchMode, y: svgHeight + STRIP.padding, width: svgWidth });
+            paintAnalysisStrip(ctx, { analysis, position, isMatchMode: get(matchContextStore).isMatchMode, y: svgHeight + STRIP.padding, width: svgWidth, only });
 
             try {
                 const res = await writeCanvasToClipboard(canvas);
@@ -334,24 +340,41 @@ const MAX_IMAGE_MOVES = 6;
 // and five rows).
 const CUBE_STRIP_ROWS = 6;
 
+/**
+ * stripMoves ranks the candidates by equity and keeps what the image shows:
+ * the top of the list, or — `only` naming plays — exactly those, in ranking
+ * order. Each keeps its rank among all candidates and its stored error, which
+ * is measured from the true best play, not the best one kept.
+ *
+ * @param {any} analysis
+ * @param {string[]} [only]
+ * @returns {{ move: any, rank: number }[]}
+ */
+export function stripMoves(analysis, only = []) {
+    const ranked = [...(analysis?.checkerAnalysis?.moves ?? [])].sort((a, b) => (b.equity || 0) - (a.equity || 0)).map((move, i) => ({ move, rank: i + 1 }));
+    if (!only?.length) return ranked.slice(0, MAX_IMAGE_MOVES);
+    return ranked.filter(({ move }) => only.includes(move.move));
+}
+
 // analysisStrip says which block the image gets — a cube record, or the top
-// of a checker list — and how many rows it takes. Null when there is nothing
-// to paint.
-export function analysisStrip(analysis) {
+// of a checker list (the `only` plays when named) — and how many rows it
+// takes. Null when there is nothing to paint.
+export function analysisStrip(analysis, only = []) {
     const cube = analysis?.doublingCubeAnalysis;
     const moves = analysis?.checkerAnalysis?.moves ?? [];
     // emptyAnalysis() always carries a zeroed cube block: an untyped record is a
     // cube only when it names a best action.
     const isCube = analysis?.analysisType === 'DoublingCube' || (!analysis?.analysisType && !moves.length && !!cube?.bestCubeAction);
     if (isCube && cube) return { kind: 'cube', rows: CUBE_STRIP_ROWS };
-    if (moves.length) return { kind: 'checker', rows: Math.min(moves.length, MAX_IMAGE_MOVES) + 1 };
+    const kept = stripMoves(analysis, only).length;
+    if (kept) return { kind: 'checker', rows: kept + 1 };
     return null;
 }
 
 // paintAnalysisStrip paints the strip at y. Exported for the parity test:
 // what it hands fillText is what the DOM tables show.
-export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = false, y, width }) {
-    const strip = analysisStrip(analysis);
+export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = false, y, width, only = [] }) {
+    const strip = analysisStrip(analysis, only);
     if (!strip) return;
     const t = translate;
     // ADR-0016 point 6: the same referential the DOM tables read
@@ -379,8 +402,13 @@ export function paintAnalysisStrip(ctx, { analysis, position, isMatchMode = fals
         return;
     }
 
-    const moves = [...analysis.checkerAnalysis.moves].sort((a, b) => (b.equity || 0) - (a.equity || 0)).slice(0, MAX_IMAGE_MOVES);
-    const block = checkerRows(moves, { t, isPlayedMove: playedMovePredicate(analysis, { matchMode: isMatchMode }), isMoney });
+    const kept = stripMoves(analysis, only);
+    const block = checkerRows(
+        kept.map((k) => k.move),
+        { t, isPlayedMove: playedMovePredicate(analysis, { matchMode: isMatchMode }), isMoney }
+    );
+    // A chosen subset has gaps in its ranking: each row says where it stands.
+    if (only?.length) block.rows = block.rows.map((row, i) => ({ ...row, label: `${kept[i].rank}. ${row.label}` }));
     const widths = splitWidth(width, [0.18, 0.08, 0.08, 0.07, 0.07, 0.07, 0.07, 0.07, 0.07, 0.1, 0.14]);
     paintTable(ctx, 0, y, widths, block, { leftLabels: true, zebra: true, sections: [0, 2, 5, 8] });
 }

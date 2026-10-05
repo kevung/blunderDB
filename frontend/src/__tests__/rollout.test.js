@@ -45,6 +45,8 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
 }));
 const displayedIDs = vi.fn(() => [3, 5, 8]);
 vi.mock('../services/modeMachine.js', async (importOriginal) => ({ ...(await importOriginal()), withDisplayedPositionIDs: (run) => run(displayedIDs()) }));
+const copyImage = vi.fn();
+vi.mock('../services/clipboardService.js', async (importOriginal) => ({ ...(await importOriginal()), copyBoardWithAnalysisImage: (...a) => copyImage(...a) }));
 vi.mock('../services/confirmService.js', async (importOriginal) => ({ ...(await importOriginal()), confirmAction: (...a) => confirmAction(...a) }));
 
 const { positionStore } = await import('../stores/positionStore.js');
@@ -268,6 +270,34 @@ describe('the candidate moves table', () => {
         await waitFor(() => expect(startRollout).toHaveBeenCalledTimes(1));
         expect(startRollout.mock.calls[0][0].moves).toEqual(['24/18 13/11']);
         expect(startRollout.mock.calls[0][0].settings.max_games).toBe(216);
+    });
+
+    test('with no selection, the menu copies the position and its whole analysis, as C-X C-X', async () => {
+        withCheckerAnalysis();
+        const { container } = await renderPanel();
+        await fireEvent.contextMenu(/** @type {HTMLElement} */ (container.querySelector('.analysis-content')), { clientX: 10, clientY: 10 });
+        const item = await screen.findByText('Copy position and analysis');
+        expect(item.closest('button')?.textContent).toContain('C-X C-X');
+        await fireEvent.click(item);
+        expect(copyImage).toHaveBeenCalledWith({ moves: [] });
+    });
+
+    test('with plays picked, the menu copies the position and those plays only', async () => {
+        withCheckerAnalysis();
+        await renderPanel();
+        await fireEvent.click(row('13/7* 8/7'));
+        await fireEvent.click(row('13/11 13/7'), { ctrlKey: true });
+        await fireEvent.contextMenu(row('13/11 13/7'), { clientX: 10, clientY: 10 });
+        expect(screen.queryByText('Copy position and analysis')).toBeNull();
+        await fireEvent.click(await screen.findByText('Copy position and selected moves'));
+        expect(copyImage).toHaveBeenCalledWith({ moves: ['13/7* 8/7', '13/11 13/7'] });
+    });
+
+    test('Shift+press on a row does not extend the text selection', async () => {
+        withCheckerAnalysis();
+        await renderPanel();
+        expect(await fireEvent.mouseDown(row('24/18 13/11'), { shiftKey: true })).toBe(false);
+        expect(await fireEvent.mouseDown(row('24/18 13/11'))).toBe(true);
     });
 
     test('while a rollout runs, the menu cancels it', async () => {
