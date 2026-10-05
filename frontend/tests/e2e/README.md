@@ -12,7 +12,8 @@ npm run test:e2e           # headless, reporter « list »
 npm run test:e2e:ui        # mode interactif (Playwright UI) — debug local
 ```
 
-Un serveur Vite est démarré automatiquement sur `http://localhost:5173/`, qui
+Un serveur Vite est démarré automatiquement sur `http://localhost:5173/`
+(`BLUNDERDB_E2E_PORT` change ce port, serveur et `baseURL` ensemble), qui
 est aussi le `baseURL` de la configuration : les specs naviguent avec
 `page.goto('/')`, jamais vers une URL absolue. C'est ce qui permet de pointer
 toute la suite ailleurs quand le port 5173 est déjà pris — sinon Playwright
@@ -29,9 +30,13 @@ tests/e2e/
 │   ├── wailsMock.js   – injecte window.go + window.runtime avant le boot
 │   ├── fixtures.js    – positions, matches, stats, résultats EPC factices
 │   ├── showcase.js    – jeu « vitrine » de la capture d'écran (30 positions, match, analyse)
+│   ├── showcasePlayers.js – joueurs du filtre Stats pour la vitrine
+│   ├── screenshotTools.js – optimisation PNG et vérification de taille des captures
+│   ├── directionEngine.js – une Direction ouverte, pour les budgets de gestes
 │   ├── gestureCount.js       – compte les keyboard.press / clics d'un bloc (budgets ux.md §4)
 │   ├── transcriptionDraft.js – un brouillon de transcription ouvert, moteur Go figé
 │   └── transcriptionMonkey.js – deux brouillons, moteur à état, réponses lentes et désordonnées
+├── *.spec.js — un fichier par parcours (63) ; entre autres :
 ├── tab-switch-stats.spec.js          – S2 : transitions d'onglets Stats
 ├── epc-bar-refreshes-on-return.spec.js – S1 étendu : mise à jour EPC
 ├── search-flow.spec.js               – Recherche : filtres + structure, résultats, navigation
@@ -55,7 +60,8 @@ tests/e2e/
 
 À appeler dans `test.beforeEach` **avant** `page.goto()`. Installe via
 `page.addInitScript` un Proxy qui intercepte tous les appels à
-`window.go.main.{Database,Config,App}` et à `window.runtime`.
+`window.go.database.Database`, `window.go.gui.App`, `window.go.main.Config` et
+à `window.runtime`.
 
 Les méthodes non surchargées retournent `Promise.resolve(null)`.
 

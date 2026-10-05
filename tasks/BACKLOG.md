@@ -1,79 +1,70 @@
 # Backlog — suivis ouverts et chantiers de fond
 
-Fusion, le 2026-09-02, de `tasks/FOLLOWUPS.md` (suivis différés de
-l'optimisation v2.0.0 et du ticket #116) et de
-`tasks/plan-amelioration-2026-08/BACKLOG.md` (chantiers de fond identifiés
-par le plan d'août). Les deux anciens fichiers renvoient ici.
-
-Règles : un item **fait** reste dans la section *Historique* avec sa date et
-son commit ; un item **ouvert** est rangé par domaine. Les gros chantiers
-méritent chacun leur propre décision (et éventuellement leur ADR) avant
-lancement — ne pas les commencer « en passant ». Le plan courant qui
-priorise ces items est `tasks/plan-amelioration-2026-09b/README.md` (second
-audit du 2026-09-02) ; le renvoi `→ fiche X.N (#NNN)` sur un item ouvert
-désigne la fiche du plan (et son issue GitHub) qui le porte. Un item sans renvoi
-n'est priorisé par aucune fiche. La bascule dans l'historique des items que le
-plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
+La seule liste des suivis ouverts du dépôt. Un item **ouvert** est rangé par domaine ; un item
+**fait** passe dans la section *Historique* avec sa date et son commit. Les gros chantiers
+méritent chacun leur propre décision (et éventuellement leur ADR) avant lancement — ne pas les
+commencer « en passant ». Aucun plan en cours ne priorise ces items : chacun se reprend par sa
+propre issue le jour où il est lancé.
 
 ## Ouvert — Backend
 
-- **gammonNet — grouper la valuation du videau sur les candidats.** Le seul levier
-  qui reste sur le videau, et il faut le cadrer en amont (`gn_cube.c`) avant de le
-  porter. Mesuré le 2026-09-02 en écrivant puis en annulant l'optimisation
-  annoncée par ADR-0011 : précalculer les `metAfter` **ne vaut rien** (1 % de
-  gain, sous le plancher de bruit de ±15 %), parce que les lookups ne pèsent que
-  11 % de `buildLevels` quand `levelSolve` en pèse 83 %, et que chacune de ses
-  60 bissections est une division sur le chemin critique plus un branchement
-  imprévisible — ~60 cycles irréductibles, les 60 itérations comme la forme des
-  segments étant verrouillées par le gold. **Ne pas rouvrir « précalculer les
-  MET ».** Ce qui marcherait est de valuer le videau *par lot* sur les candidats,
-  exactement comme le noyau groupé a fait pour le réseau (#133). Le poste vaut
-  ~3,9 % du profil au score avant le noyau, donc bien davantage maintenant.
-  Précédé par la **forme close de `levelSolve`** → fiche C.7 (#194), dont le
-  lot est la seconde marche.
-- **gammonNet — `swapMatchState` alloue un `*MatchState` par nœud**, soit ~1 400
-  allocations par décision au score, tout ce qui reste du compteur après #150
-  (7 432 → 82 hors ce poste). Coût CPU négligeable, déchet évitable. Laissé de
-  côté pour ne pas entrer en collision avec #148. → fiche C.10 (#197).
-- **`internal/gui/gammonnet_eval.go` lance jusqu'à trois recherches complètes par
-  position** : `EvaluatePosition`, puis `preRollFacts` qui construit un second
-  `Searcher` et refait un `Probs` quand les dés sont posés (+36 % mesuré,
-  ADR-0017), puis `evaluateRaceRegime` qui en construit un troisième. Chantier
-  d'interface, pas de moteur. → fiche C.9 (#196).
-- **`positionIDsWithStaleGammonNet` décode le JSON compressé de toutes les
-  analyses** pour trouver le moteur, qui est dans le blob et non dans une colonne
-  (`db_gammonnet_batch.go:148-167`). Préambule coûteux d'`AnalyzeStaleGammonNet`.
-  → fiches B.12 (#180, le moteur sort du blob) et C.4 (#191, le lot ne retente
-  plus à l'infini).
-- **`statsCountedExpr` et les libellés de videau dégénérés** (#116 lot 0) :
-  une décision de videau est comptée comme action *active* dès que
-  `move.cube_action` n'est ni `''`, ni `No Double`, ni `NoDouble`. Une valeur
-  `Unknown(D=…,T=…)` écrite par l'importeur XG pour un code non mappé
-  (`convertCubeAction`/`convertRawCubeAction`, `ingest/xgmap.go`) passerait
-  donc pour un vrai Double/Take/Pass et entrerait au dénominateur du PR.
-  Aucune occurrence connue dans les corpus. Correctif si ça mord un jour :
-  tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
-- **`SwapPlayers`/`DeleteCascade` partagés** entre backends via closures SQL
-  dialectales (~90 lignes dupliquées à l'octet près). → fiche B.14 (#182).
-- **Dictionnaire zlib partagé** pour `analysis.data` (−25 à −40 % de la plus
-  grosse table ; nouveau format de blob versionné, fuzz à étendre) ; au
-  passage, fusionner les fragments d'analyse en mémoire avant compression
-  (aujourd'hui recompression niveau 9 par fragment) et réutiliser des
-  prepared statements sur le chemin d'import. → fiche B.12 (#180).
-- **`migrate.Run` par lots avec reprise** (aujourd'hui une transaction unique
-  pour toute la copie SQLite→PG) — attendre un besoin terrain. → fiche G.12
-  (#240).
-- **Colonne `creation_date` promue dans `analysis`** + index (pushdown SQL du
-  filtre de date) : exige bump `DatabaseVersion` + triple synchro schéma +
-  migration. La fiche 05 a réglé le N+1 ; ceci est l'étape structurelle.
-- **Tests par backend redondants** : `comments_*_test.go` / `collections_*_test.go` de `storage/sqlite` et `storage/postgres` doublonnent les cas de contrat ajoutés le 2026-09-02. Effort S. → fiche B.14 (#182).
-- **Étapes de migration 1.0.0→1.6.0** : la bizarrerie « table déjà présente ⇒ chaîne arrêtée » (`errStepNotApplicable`, registre `migrationSteps`) est conservée par fidélité ; rendre ces étapes inconditionnelles (leur DDL est `IF NOT EXISTS`). Effort S, test de migration à ajouter. → fiche B.9 (#177).
-- **Drapeau `python-format` faux positif dans les `.po`** : Babel marque les msgid contenant « 12 % de » ; `msgfmt -c` échoue sur 2 à 4 entrées par langue, Sphinx s'en moque. Remède côté extraction (`no-python-format`) ou reformulation. Effort S. → fiche H.13 (#255).
-- **Décompte des gaffes d'`info` à la demande ou en cache** (revue de la branche `perf/migration-2-31`, point 9) : `GetDatabaseStats` lit `Counts` d'un coup, et `blunderCount` parcourt toute `analysis` — des secondes à des dizaines de secondes sur une base BMAB. Le calculer seulement sur demande (`info --blunders`) ou le garder en cache dans `metadata`, invalidé par import/suppression/changement de seuil. Effort M.
-- **Course Stat/Rename du vacuum par remplacement** (`database/db_vacuum.go`, `vacuumBySwap`) : l'absence de `-wal` est constatée par `os.Stat` puis le fichier remplacé par `os.Rename` ; un autre processus qui ouvre la base entre les deux lit l'ancien inode et y écrit à perte. Fenêtre de quelques microsecondes, sans verrou de fichier pour la fermer. Prendre un verrou exclusif SQLite (`BEGIN EXCLUSIVE` sur une connexion tenue jusqu'au rename) ou un verrou consultatif. Effort S-M.
-
-- **File d'étude transversale — la requête de la grammaire qui la reproduit.** → #528
-  (étape 4). La file (`StudyBacklog`, `sqlshared/importbatches.go`) n'a pas de jeton
+- **`countedExpr` et les libellés de videau dégénérés** (`sqlshared/stats.go`) : une décision
+  de videau est comptée comme action *active* dès que `move.cube_action` n'est ni `''`, ni
+  `No Double`, ni `NoDouble`. Une valeur `Unknown(D=…,T=…)` écrite par l'importeur XG pour un
+  code non mappé (`ingest/xgmap.go`) passerait donc pour un vrai Double/Take/Pass et entrerait
+  au dénominateur du PR. Aucune occurrence connue dans les corpus. Correctif si ça mord un
+  jour : tester `engine.CanonicalCubeAction` plutôt que les graphies littérales.
+- **`SwapPlayers`/`DeleteCascade` dupliqués** entre `storage/sqlite/matches_sqlite.go` et
+  `storage/postgres/matches_postgres.go` ; les partager par des closures SQL dialectales dans
+  `sqlshared`.
+- **Tests par backend redondants** : `comments_*_test.go` / `collections_*_test.go` de
+  `storage/sqlite` et `storage/postgres` doublonnent les cas du contrat
+  (`storagetest/contract_comments.go`, `contract_collections*.go`). Effort S.
+- **`migrate.Run` par lots avec reprise** (aujourd'hui une transaction unique pour toute la
+  copie SQLite→PG, `migrate/migrate.go`) — attendre un besoin terrain.
+- **Décompte des gaffes d'`info` en cache** : sans `--estimate`, `GetDatabaseStats` lit
+  `Counts` d'un coup et `blunderCount` (`sqlshared/metadata.go`) parcourt toute `analysis` —
+  des secondes à des dizaines de secondes sur une base BMAB ; `--estimate` ne fait que sauter
+  les gaffes au-delà de 200 000 lignes. Le garder en cache dans `metadata`, invalidé par
+  import, suppression et changement de seuil. Effort M.
+- **Course Stat/Rename du vacuum par remplacement** (`database/db_vacuum.go`, `vacuumBySwap`) :
+  l'absence de `-wal` est constatée par `os.Stat` puis le fichier remplacé par `os.Rename` ; un
+  autre processus qui ouvre la base entre les deux lit l'ancien inode et y écrit à perte.
+  Fenêtre de quelques microsecondes, sans verrou de fichier pour la fermer. Prendre un verrou
+  exclusif SQLite (`BEGIN EXCLUSIVE` sur une connexion tenue jusqu'au rename) ou un verrou
+  consultatif. Effort S-M.
+- **Journal d'import hors transaction** (`ingest.RecordOutcomes`, `ingest/journal.go`) : le
+  journal est écrit après le commit du groupe de fichiers. Un crash entre les deux laisse un
+  match écrit mais non journalisé ; à la reprise le fichier est relu et le match le couvre
+  comme doublon de lui-même. Le journal ne ment pas sur ce qui est en base, mais l'issue
+  « nouveau » est perdue. À faire : écrire les lignes dans la transaction du groupe (le
+  pipeline les produit déjà avant le commit).
+- **`move.error_mp` sans lecteur ni tenue** (`tasks/mesure-bmab-0.37.md` § 9) : seule
+  `repair --move-errors` l'écrit ; ni l'import ni l'analyse n'appellent
+  `RescorePositionMoves`, aucune requête ne la lit. Pour que `E` s'y appuie (SQL exact, sans
+  phase Go), il faut une tenue à jour à chaque écriture d'analyse ou de coup et un moyen de
+  distinguer « pas noté » de « non notable » (NULL ambigu).
+- **Quatre copies des helpers de fusion d'analyse** : la fusion des coups (clé par notation, la
+  profondeur la plus grande gagne, tri par équité), celle du videau et l'union des coups joués
+  existent dans `database/db_import_common.go` et `database/db_analysis.go`, `ingest/merge.go`
+  et `engine/gammonnet/supersede.go` (`enginePriority`, `mergeCheckerMoves`,
+  `mergeCubeAnalyses`). Elles divergent : `ingest` départage une égalité d'équité par la
+  notation (ordre total), les autres non (ordre de map). À faire : une seule implémentation (au
+  niveau `engine`, qui a `NormalizeMove`) appelée par les quatre, avec la règle de départage
+  d'`ingest`.
+- **PostgreSQL, écriture par tenant** : `positions_postgres.go` enveloppe la `pgconn.PgError`
+  dans `ErrConflict` (texte du pilote vers le client, sans oracle) ; `Tournaments().AddMatch`
+  avec un match étranger ou absent réussit en silence (UPDATE 0 ligne) ; `Analyses.Save` en
+  course avec une suppression rend un autre message (même tenant).
+- **Serveur : quota en octets sous PostgreSQL** : la mesure repose sur
+  `pg_total_relation_size` et `reltuples`, globaux à la base et non au locataire, donc un canal
+  auxiliaire faible (un locataire devine la taille des autres) ; et les 13 `COUNT` par appel
+  ont un coût. À faire : compter par locataire, avec un cache ou un compteur tenu à jour.
+- **Import XG, métadonnées sans colonne** (ADR-0067) : commentaires d'en-tête et de pied de
+  match, horloge, table d'équité (MET) ne sont pas importés ; exigent une colonne (ou
+  `match.metadata`) et, pour les commentaires, que xgparser expose `parseCommentSegment`.
+- **File d'étude transversale — la requête de la grammaire qui la reproduit.**
+  La file (`StudyBacklog`, `sqlshared/importbatches.go`) n'a pas de jeton
   équivalent, pour trois raisons : elle compte les décisions comme Stats (`countedExpr` :
   coups forcés exclus, conventions du pas-de-double), ce que la grammaire n'exprime pas ;
   son coût est celui de l'analyse (`statsErrExpr`), alors que `E` filtre l'erreur du coup
@@ -94,91 +85,75 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   passent des sources factices (`<met/>`, digest `"aaa"`) à réécrire en tables gnubg
   valides, sur les deux backends. Effort S-M, test de contrat « digest incohérent refusé ».
 
-## Ouvert — Moteur (dettes nommées dans les ADR)
+## Ouvert — Moteur
 
+Les trois premiers items ne demandent pas de code dans blunderDB tant que gammonNet (amont) ou
+une machine arm64 ne les a pas débloqués ; le registre des décisions amont et ses mesures est
+`tasks/plan-amelioration-2026-09b/AMONT-GAMMONNET.md`.
+
+- **Réseau distillé (60-100 k MAC)** — priorité amont n° 1 : P4 mesure ×5-9, le seul gain qui
+  survit à la recherche. Décision amont gammonNet ; une nouvelle Configuration, donc une jauge
+  de force avant adoption, et toutes les bases périmées (`analyze --stale` existe pour ça).
+- **Réseau de course dédié** : attend un second réseau, donc un entraînement amont.
+  L'aiguillage existe déjà ici (`engine.ClassifyGameType`, `engine/gametype.go` : `race` et
+  `crunch` aux frontières de gnubg).
+- **Noyau NEON arm64** pour l'inférence groupée : hors périmètre faute de machine arm64. Le
+  juge existe (`engine/gammonnet/kernel_identity_test.go`, égalité bit pour bit) ; manque la
+  mesure sur une machine arm64.
 - **Beaver dans les rollouts** (ADR-0060 règle 4) : le rollout décide par `gammonnet.Decide`
-  sans la règle Beaver, alors que l'analyse directe la lit sous `has_beaver` en money
-  (`DecideForSession`). Sa ligne double/prend est celle d'une simple prise (documenté dans
-  `manuel.rst`). À faire : jouer la séquence beaver → raccoon dans `engine/rollout/game.go`
-  (videau à 4c puis 8c, propriétaire suivi), puis lire `HasBeaver` comme l'évaluateur.
+  sans la règle Beaver (`engine/rollout/game.go`), alors que l'analyse directe la lit sous
+  `has_beaver` en money (`DecideForSession`). Sa ligne double/prend est celle d'une simple
+  prise (documenté dans `manuel.rst`). À faire : jouer la séquence beaver → raccoon dans la
+  boucle de partie du rollout (videau à 4c puis 8c, propriétaire suivi), puis lire
+  `HasBeaver` comme l'évaluateur.
 - **Libellé Beaver dans le verdict** : quand la meilleure réponse est un beaver,
-  `BestCubeAction` dit « Double, Take » (le moteur amont range « pris » et « beavé » sous
-  `DOUBLE_TAKE`) ; seule l'équité de la ligne en tient compte. À faire : un libellé
-  « Double, Beaver » lu par `normalizeCubeAction`, `CanonicalCubeAction`, `BestCubeVerdict`
-  et une clé `cube.verdicts` traduite.
-- **Renommage `race.Money` → `race.CubeVerdict`** et libellé de la colonne
-  Équité (ADR-0016, points 5-6) : différés pour ne pas entrer en collision
-  avec l'ADR-0017, fusionné le 2026-08-31 — **plus rien ne bloque**, le nom
-  ment sur trois régimes (`money.go:36`). → fiche C.3 (#190).
-- **Refuser de démarrer sans drapeau explicite « derrière un proxy »**
-  (ADR-0005, option différée) : friction pour tout déploiement légitime pour
-  attraper une erreur que la doc, `--help` et le Dockerfile signalent déjà.
-  À revisiter si un déploiement nu survient réellement.
+  `cubeActionLabel` (`engine/gammonnet/domaineval.go`) dit « Double, Take » (`DecideForSession`
+  replie le beaver dans la branche double/prend) ; seule l'équité de la ligne en tient compte.
+  À faire : un libellé « Double, Beaver » lu par `normalizeCubeAction` (`frontend/src/utils/cubeAction.js`),
+  `CanonicalCubeAction`, `BestCubeVerdict` et une clé `cube.verdicts` traduite.
+- **Refuser de démarrer sans drapeau explicite « derrière un proxy »** (ADR-0005, option
+  différée) : friction pour tout déploiement légitime pour attraper une erreur que la doc,
+  `--help` et le Dockerfile signalent déjà. À revisiter si un déploiement nu survient
+  réellement.
 
 ## Ouvert — Frontend
 
-- **Parseur de recherche unique** : `commandProcessor.parseFilters` et
-  `searchFilterService.parseSearchCommand` divergent déjà ; converger vers
-  une grammaire unique testée (les deux suites existantes servent de filet
-  croisé). → fiche D.3 (#203).
-- **`openPanels` dérivé d'`activeTabStore`** : deux sources de vérité pour
-  le panneau visible, état incohérent atteignable (onglet surligné, panneau
-  vide) ; supprimer `tabHandler.js`. → fiche D.10 (#210).
-- **`MatchDetailPane.svelte`** : découpage de MatchPanel (1 386 lignes) ; la
-  dédup de l'autocomplétion inline est faite (`EntityAutocomplete`, voir
-  Historique). → fiche D.10 (#210).
-- **Virtualisation des listes** (matchs, transcript ~300-500 coups,
-  collections) et **LIMIT/pagination** de la recherche (aujourd'hui tout le
-  jeu de résultats traverse l'IPC Wails en un message) ; `ListOpts` existe
-  déjà dans le contrat storage, passé vide. → fiches D.8 (#208) et B.10 (#178).
-- **`generateXGID` est avec perte** (`positionService.js`) : longueur de match = plus grand score away, Crawford déduit, Jacoby/cube max émis à 0 ; le corpus `testdata/xgid_corpus.json` fige ce comportement. Encoder depuis `match_length` et le drapeau Crawford réel. Effort S. → fiche D.11 (#211).
-- **`AnalysisPanel.svelte` garde sa copie des prédicats « coup joué »** ; `utils/analysisRows.js` exporte `playedMovePredicate`/`playedCubePredicate`. Effort S. → fiche D.10 (#210).
-- **Escape avalé dans le panneau Recherche** tant qu'un champ a le focus (`SearchPanel.handleKeyDown` stoppe tout) ; **double-clic instable sur une ligne du panneau Match** (le premier clic ouvre le volet transcript qui décale la mise en page) ; **sortie du mode match** : `loadAllPositions` repart sur la dernière position, pas celle quittée. Trois points d'ergonomie relevés par les specs e2e. Effort S chacun. → fiche D.1 (#201).
-- **`enterEPCMode` peut photographier le plateau EDIT vide** quand App enchaîne `exitEditMode` puis `enterEPCMode` avec un index sauvegardé inchangé (0→0, pas de redessin). Préexistant, documenté dans `modeMachine.js`. Effort S. → fiche D.1 (#201).
-- **Plateau et `MatchInfoBar`** : le plateau ne se réajuste pas quand la barre de match apparaît (la capture d'écran force un `resize`) ; `panelLayoutStore.js` dit `DEFAULT_PANEL_HEIGHT = 380 « mirrors config.go »` alors que `config.go` dit 250. Effort S. → fiche D.1 (#201).
-- **`PickList.svelte` partagé** Export/Picker (~110 lignes de CSS dupliquées) et **dialogue de sauvegarde de `SearchPanel`** à migrer sur `Modal.svelte`. Effort S. → fiche D.9 (#209).
-- **ADR-0004** cite encore `NotoSansJP-Regular.ttf` (5,7 Mo) : la police est un sous-ensemble WOFF2 de 178 Ko depuis le 2026-09-02 (constat historique, une note suffit).
+- **`MatchPanel.svelte` (1 772 lignes)** : en extraire le volet de détail d'un match.
+- **Rollout GUI** : un job instantané peut perdre son bandeau de fin
+  (`startRolloutOfCurrent`, `services/rolloutService.js`, remet `outcome: null` après le
+  démarrage).
+- **Export GUI : sélecteur de paquets** : l'export serveur sait se limiter à des collections,
+  leçons ou paquets Anki (`collectionIds`, `lessonIds`, `deckIds`), le dialogue d'export de la
+  GUI n'offre pas ce choix.
 
 ## Ouvert — Tests / CI
 
-- **Smoke test GUI sur une vraie base de production migrée** (v2.0.0,
-  phase 06) : parcourir chaque filtre de la fenêtre de recherche. Priorité
-  basse ; couvert indirectement par `searchFilterService.test.js` (unitaires
-  + round-trip).
-- **Le CLI écrit sur `os.Stdout`, pas sur un `io.Writer`** (constaté par E.3,
-  #219, le 2026-09-04). 765 `fmt.Print*` répartis dans `internal/cli/` et un
-  `captureStdout` de test qui remplace `os.Stdout` : un état global du
-  PROCESSUS, donc 53 des 99 tests du paquet ne peuvent pas prendre
-  `t.Parallel()` — c'est ce qui borne le gain sur ce shard, pas la durée des
-  tests eux-mêmes. Le geste est de donner au `CLI` un `out io.Writer` (défaut
-  `os.Stdout`) et de faire passer les écritures par lui ; il touche beaucoup de
-  fichiers mais aucun comportement, et il débloque aussi les tests de sortie
-  `--format json` qui aujourd'hui sérialisent. Chantier à part, pas « en
-  passant ».
+- **Smoke test GUI sur une vraie base de production migrée** : parcourir chaque filtre de la
+  fenêtre de recherche. Priorité basse ; couvert indirectement par
+  `searchFilterService.test.js` (unitaires + round-trip).
+- **Le CLI écrit sur `os.Stdout`, pas sur un `io.Writer`** : ~1 500 `fmt.Print*` répartis
+  dans `internal/cli/` et un `captureStdout` de test qui remplace `os.Stdout` — un état global
+  du processus, donc la plupart des tests du paquet ne peuvent pas prendre `t.Parallel()`.
+  Le geste est de donner au `CLI` un `out io.Writer` (défaut `os.Stdout`) et de faire passer
+  les écritures par lui ; il touche beaucoup de fichiers mais aucun comportement, et il
+  débloque aussi les tests de sortie `--format json` qui aujourd'hui sérialisent. Chantier à
+  part, pas « en passant ».
+
 ## Ouvert — Produit / docs
 
-- **Elo de performance dans les stats de corpus** (reste de GB5.6, #541) — reporté après la
-  0.37.0 par décision produit du 2026-10-04. Demande d'abord une ADR qui fixe la formule (Elo
-  des adversaires lus dans les métadonnées de match, longueur de match, matchs sans Elo) ;
-  puis une vue de corpus exposée en GUI, CLI et serveur comme le face-à-face.
-- **Export fédéral du classement de club** (#529) — reporté par décision produit du
-  2026-10-03 : le CSV/JSON générique par épreuve et par saison suffit. À reprendre seulement
-  sur un besoin réel, avec un fichier modèle de la fédération visée (FFBG ou autre), testé
-  contre ce modèle ; ne jamais coder un format supposé.
-- **Direction, simulation 2026-09** ([rapport](nicomaque/simulation-2026-09/rapport/README.md)) —
-  cinq lots mesurés, #380 reste ouverte :
-  - D5 l'échelle, bugs compris : #434-#443 ;
-  - D6 la Rencontre (ADR d'abord, #444) : #444-#449 ;
-  - D7 le championnat : #450-#453 ;
-  - D8 les sorties : #454-#456 ;
-  - D9 cadrage de l'écran joueur, bloqué par #380 : #457 ;
-  - moteur : PileOfCells/backgammon-tournoi#15-#22 (N15-N22).
-- **`epc.race` / défi** : vérifier la couverture de l'aide intégrée
-  (`help/*.js`) — le panneau Eval a été redessiné trois fois depuis la fiche
-  10 (ADR-0017/0018/0021). → fiche H.7 (#249).
-- **Soumissions humaines restant après H.3 (#245)** : le tap Homebrew se pousse
-  désormais tout seul sur tag une fois le secret et le dépôt en place (comme
-  `aur.yml`), mais ces deux préalables restent à faire à la main, une fois :
+- **Elo de performance dans les stats de corpus** (reste de GB5.6) — reporté après la 0.37.0
+  par décision produit. Demande d'abord une ADR qui fixe la formule (Elo des adversaires lus
+  dans les métadonnées de match, longueur de match, matchs sans Elo) ; puis une vue de corpus
+  exposée en GUI, CLI et serveur comme le face-à-face.
+- **Export fédéral du classement de club** — reporté par décision produit : le CSV/JSON
+  générique par épreuve et par saison suffit. À reprendre seulement sur un besoin réel, avec
+  un fichier modèle de la fédération visée (FFBG ou autre), testé contre ce modèle ; ne
+  jamais coder un format supposé.
+- **Direction, moteur de tournoi** : `PileOfCells/backgammon-tournoi#26` (N26, un qualifié
+  retiré d'une poule garde sa place en phase suivante) reste ouverte.
+- **Soumissions humaines de distribution** : le tap Homebrew se pousse tout seul sur tag une
+  fois le dépôt et le secret en place (comme `aur.yml`), mais ces deux préalables restent à
+  faire à la main, une fois :
 
   ```bash
   gh repo create kevung/homebrew-tap --public \
@@ -188,22 +163,33 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
   gh secret set HOMEBREW_TAP_TOKEN --body "<token>"
   ```
 
-  Deux canaux restent entièrement manuels, chacun une PR contre un dépôt tiers
-  revue par des humains : **winget** (`wingetcreate submit`, voir
-  `packaging/winget/README.md`) et **Flathub** (build hors-ligne
-  vendorant Go+npm, `docs/recherche/P16-distribution-desktop.md` en donne la
-  recette ; effort de plusieurs semaines, non commencé).
-- **Catalogues `doc/source/locale/fr/`** : ils existent, sont suivis par git, et
-  contiennent 324 entrées **toutes vides** — le français est la langue source,
-  Sphinx le rend depuis les `.rst`. Ils portent en outre des `msgid` dupliqués
-  qui font échouer `msgfmt -c` (sans conséquence : rien ne les compile, et
-  `doc-i18n-check.sh` ne les regarde pas). Ce sont des fichiers inertes qui
-  brouillent toute vérification globale des catalogues. Candidats à la
-  suppression pure et simple ; à trancher avant, la question de savoir si un
-  jour on voudra traduire *depuis* le français vers un français simplifié.
-  Constaté le 2026-09-03 en refermant l'écart de traduction.
+  Deux canaux restent entièrement manuels, chacun une PR contre un dépôt tiers revue par des
+  humains : **winget** (`wingetcreate submit`, voir `packaging/winget/README.md`) et
+  **Flathub** (build hors-ligne vendorant Go+npm, `docs/recherche/P16-distribution-desktop.md`
+  en donne la recette ; effort de plusieurs semaines, non commencé).
+- **Catalogues `doc/source/locale/fr/`** : suivis par git, ils ne contiennent que des entrées
+  vides — le français est la langue source, Sphinx le rend depuis les `.rst`. Rien ne les
+  compile et `doc-i18n-check.sh` ne les regarde pas ; ce sont des fichiers inertes qui
+  brouillent toute vérification globale des catalogues. Candidats à la suppression ; à
+  trancher avant : voudra-t-on un jour traduire *depuis* le français vers un français
+  simplifié.
 
 ## Historique — items faits
+
+- **2026-10-05 — relevé avant 0.37.0, items trouvés faits dans le code** : la valuation du
+  videau par lot (sans objet depuis la forme close de `levelSolve`, gammonNet v1.4.0,
+  `11e9ddbd5`, qui livre aussi le filtre en triplet et le beaver de `DecideForSession`) ;
+  `swapMatchState` disparu ; le panneau Eval ne construit plus qu'un `Searcher` par frappe
+  (`internal/gui/gammonnet_eval.go`) ; le moteur d'une analyse est la colonne
+  `analysis_engine`, lue sans décoder le blob ; le blob d'analyse est un binaire zstd à
+  dictionnaire (ADR-0070) ; `analysis.creation_date` est une colonne indexée ; les étapes de
+  migration conditionnelles (`errStepNotApplicable`) ne sont plus ; le drapeau
+  `python-format` est neutralisé par `scripts/doc-po-update.sh` ; un seul parseur de recherche
+  JS (`parseSearchTokens`) ; `tabHandler.js` supprimé ; listes virtualisées
+  (`panels/PanelTable.svelte`) ; `generateXGID` (`services/xgid.js`) encode le drapeau Crawford ;
+  `AnalysisPanel` importe `utils/playedMarks.js` ; `DEFAULT_PANEL_HEIGHT` vaut 250 comme
+  `config.go` ; `PickList.svelte` partagé ; `race.CubeVerdict` ; ADR-0004 ne cite plus la
+  police non sous-ensemblée ; issues de la simulation de direction 2026-09 (D5-D9) closes.
 
 - **2026-09-06 — suites de la critique de la documentation** (branche
   `chore/critique-reste`, `tasks/critique-doc-2026-09/`) : l'image
@@ -237,8 +223,7 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 - **2026-07-26 — Provenance `individually_imported` depuis la CLI** (ADR-0001) :
   fait autrement, dès le 2026-07-26 (132d3562) : `cli_import.go:211` pose
   `IndividuallyImported = true` sur la position et `PositionStore.Save` fait un
-  OR collant du drapeau (`storage/sqlite/positions_sqlite.go:68-75`) ; un
-  `SaveIndividualPosition` distinct n'a plus d'objet.
+  OR collant du drapeau (`storage/sqlite/positions_sqlite.go:68-75`).
 - **2026-06-13 — Troisième copie des helpers de recherche** : fait le 2026-06-13
   (a9a872bc) : `db_filter_match.go` supprimé, `database/db_search.go` fait 59
   lignes et délègue à `storage` ; l'item avait été écrit après coup.
@@ -290,15 +275,3 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 | 2026-08-11 | `BenchmarkSearch_WinGammonCombo` : requête restructurée en `p.id IN (SELECT position_id FROM analysis WHERE …)`, index couvrant `idx_analysis_win_gammon_covering (player1_win_rate, player1_gammon_rate, position_id)` ; le TEMP B-TREE disparaît (EXPLAIN vérifié). Gain modeste sur la fixture (629 → ~500 ms) : le filtre du bench matche 79 % des lignes, la reconstruction Go des positions est le goulot, pas le tri SQL. Index redondants `idx_position_score`/`idx_analysis_win1` supprimés (E3). | v2.0.0 phase 05, fiche 05 T3 | `4032a70a` |
 | 2026-08-11 | Sous-commande `blunderdb vacuum` + bouton « Compacter la base » (fiche 06) — publiée en 0.33.0. | plan 2026-08 | `67332e9b` |
 | 2026-08-26 | gnubgparser v1.3.0 ne lisait jamais la chance qu'il parsait (`LU[-0.00537]` à un seul champ, `parseLuck` en exigeait deux) : corrigé amont, **gnubgparser v1.4.0** (traite aussi `LU[-inf]` et la chance d'un nœud « set dice ») ; blunderDB dépend de v1.4.0, `TestMapGnuBGCarriesLuck` et `TestLuckAgreesAcrossFormats` pinent le résultat contre l'import XG du même match. | #116 lot 1 | `96e1ca7d` |
-
-- Rollout GUI : un job instantané peut perdre son bandeau de fin (`startRolloutOfCurrent` remet `outcome: null` après le démarrage).
-- PostgreSQL, suites de l'audit d'écriture par tenant : `positions_postgres.go:227` `ErrConflict` enveloppe la `pgconn.PgError` (texte du pilote vers le client, sans oracle) ; `Tournaments().AddMatch` avec un match étranger ou absent réussit en silence (UPDATE 0 ligne) ; `Analyses.Save` en course avec une suppression rend un autre message (même tenant).
-- Import XG, métadonnées sans colonne (ADR-0067) : commentaires d'en-tête et de pied de match, horloge, table d'équité (MET) ne sont pas importés ; exigent une colonne (ou `match.metadata`) et, pour les commentaires, que xgparser expose `parseCommentSegment`.
-
-- **Journal d'import hors transaction** (`ingest.RecordOutcomes`, GB2.4) : le journal est écrit après le commit du groupe de fichiers. Un crash entre les deux laisse un match écrit mais non journalisé ; à la reprise le fichier est relu et le match le couvre comme doublon de lui-même. Le journal ne ment pas sur ce qui est en base, mais l'issue « nouveau » est perdue. À faire : écrire les lignes dans la transaction du groupe (le pipeline les produit déjà avant le commit).
-
-- **`move.error_mp` sans lecteur ni tenue** (mesure BMAB #6/#8, `tasks/mesure-bmab-0.37.md` § 9) : seule `repair --move-errors` l'écrit ; ni l'import ni l'analyse n'appellent `RescorePositionMoves`, aucune requête ne la lit. Pour que `E` s'y appuie (SQL exact, sans phase Go), il faut une tenue à jour à chaque écriture d'analyse ou de coup et un moyen de distinguer « pas noté » de « non notable » (NULL ambigu).
-
-- **Serveur : quota en octets sous PostgreSQL** : la mesure repose sur `pg_total_relation_size` et `reltuples`, globaux à la base et non au locataire, donc un canal auxiliaire faible (un locataire devine la taille des autres) ; et les 13 `COUNT` par appel ont un coût. À faire : compter par locataire, avec un cache ou un compteur tenu à jour.
-- **Export GUI : sélecteur de paquets** : l'export serveur sait se limiter à des collections, leçons ou paquets Anki (`collectionIds`, `lessonIds`, `deckIds`), le dialogue d'export de la GUI n'offre pas ce choix.
-- **Quatre copies des helpers de fusion d'analyse** : la fusion des coups (clé par notation, la profondeur la plus grande gagne, tri par équité), celle du videau (une entrée par moteur) et l'union des coups joués existent dans `database/db_import_common.go` (`enginePriority`, `mergeCheckerMoves`, `mergePlayedMoves`), `database/db_analysis.go` (`mergeCubeAnalyses`), `ingest/merge.go` (mêmes noms, et une fusion du videau différente) et `engine/gammonnet/supersede.go` (pour `SupersedeEntries`). Elles divergent déjà : `ingest` départage une égalité d'équité par la notation (ordre total), les autres non (ordre de map). À faire : une seule implémentation (au niveau `engine`, qui a `NormalizeMove`) appelée par les quatre, avec la règle de départage d'`ingest`.

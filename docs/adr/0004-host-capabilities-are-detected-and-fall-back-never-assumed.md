@@ -26,7 +26,7 @@ essential.
    mechanism (the WebView's clipboard) → an external tool (`xclip`/`wl-copy`) → a non-blocking
    notice saying what is missing and how to restore it. Never jump straight to "install a tool".
 3. **Each capability = a Capability probe + a Fallback policy.** The probe reports raw facts as
-   plain data (`{ HasXclip, HasWlCopy, SessionType }`) and decides nothing. The policy is a pure
+   plain data (`{ HasXclip, HasWlCopy, IsWayland }`) and decides nothing. The policy is a pure
    function, facts in / chosen rung out, no I/O — so all the risk is unit-testable with literal
    fact values.
 4. **Validation:** unit tests of every policy, plus one hostile image (no clipboard tool, no

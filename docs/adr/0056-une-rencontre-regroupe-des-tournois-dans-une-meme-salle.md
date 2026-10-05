@@ -1,9 +1,8 @@
 # ADR-0056 — Une Rencontre regroupe des Tournaments dirigés dans une même salle
 
 Statut : acceptée.
-Amende : ADR-0047 §1 (« une seule entité »).
-Amendée par : ADR-0057 (exposition au démon), ADR-0058 (propriétés des tables, salles).
-Voir aussi : ADR-0044, ADR-0036, ADR-0005, ADR-0057, ADR-0058.
+Voir aussi : ADR-0044, ADR-0047, ADR-0036, ADR-0005, ADR-0057 (exposition au démon), ADR-0058
+(propriétés des tables, salles).
 
 ## Contexte
 
@@ -84,4 +83,5 @@ Plusieurs Directions par Tournament restent écartées.
 
 ## Garde
 
-À écrire avec D6.2 : `pkg/blunderdb/direction/` rejoue S3 sans collision ni joueur à deux tables.
+`TestRencontreS3SansCollision` (`pkg/blunderdb/direction/room_test.go`) rejoue S3 sans collision ni
+joueur à deux tables.

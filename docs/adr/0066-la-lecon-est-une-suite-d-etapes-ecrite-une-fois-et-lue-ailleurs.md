@@ -1,6 +1,6 @@
 # ADR-0066 — La Leçon est une suite d'étapes écrite une fois et lue ailleurs
 
-Statut : acceptée. Règle 5 amendée par ADR-0069 (le geste « étape faite »).
+Statut : acceptée.
 Voir aussi : ADR-0001 (le hachage identifie la position), ADR-0007 (le receveur n'écrit rien),
 ADR-0046 (la file d'étude), ADR-0065 (le coach écrit chez lui) ; `tasks/plan-2026-10b.md`, I.21.
 
@@ -41,8 +41,9 @@ ni suite de plusieurs ensembles.
    venait une position ne purge pas celle qu'une Leçon montre. À l'inverse, supprimer une
    Collection ou une Position que la Leçon montre laisse l'Étape et son texte : le texte du
    coach reste lisible, l'écran dit que l'objet manque.
-5. **Le receveur n'écrit rien.** Lire une Leçon n'enregistre ni la progression, ni l'étape
-   atteinte, ni l'ouverture (ADR-0007). La barre de lecture du bureau tient l'étape courante
+5. **Le receveur n'écrit rien de lui-même.** Lire une Leçon n'enregistre ni l'étape atteinte,
+   ni l'ouverture (ADR-0007) ; la progression ne s'écrit que sur le geste « étape faite » de
+   l'élève, dans sa propre base (ADR-0069). La barre de lecture du bureau tient l'étape courante
    en mémoire de session seulement.
 6. **La suppression est définitive.** Il n'y a pas de corbeille pour les Leçons : `delete`
    retire la Leçon et ses Étapes, jamais les Collections ni les Positions. Une corbeille

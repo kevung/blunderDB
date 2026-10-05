@@ -5,7 +5,7 @@ See also: ADR-0009, ADR-0012.
 
 ## Context
 The two-sided table `gnubg_ts0.bd` (TS-06-06, 6.8 MB) and the one-sided `gnubg_os6.bd` (1.4 MB)
-were the heaviest data in the binary. They are derived data: a Go port of gnubg's `makebearoff`
+would be the heaviest data in the binary. They are derived data: a Go port of gnubg's `makebearoff`
 backward induction reproduces `gnubg_ts0.bd` byte for byte in a few seconds, and TS-06-11 in
 minutes. gammonNet 2-ply cannot replace the table on its domain: it agrees on double/no-double
 only 94.8 % of the time (worst decision 0.446), declining exact double/takes where the cube is

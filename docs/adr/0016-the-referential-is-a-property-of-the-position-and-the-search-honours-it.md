@@ -1,14 +1,14 @@
 # The referential is a property of the position, and the search honours it
 
-Status: accepted. Rule 6 amended by ADR-0068 (the MET is a property of the library).
-See also: ADR-0011, ADR-0013, ADR-0019, ADR-0023
+Status: accepted.
+See also: ADR-0011, ADR-0013, ADR-0019, ADR-0023, ADR-0068
 
 ## Context
 
 A cubeless-money search ranks moves identically at every score: the opening 6-4 came back bit
 for bit the same at money, 2-away/4-away and double match point, although a gammon is worth
-most of the game in the first and nothing in the last. The C reference already implements the
-match-aware search (`use_match`); the gap was a porting gap. blunderDB's MET is the same
+most of the game in the first and nothing in the last. The C reference implements the
+match-aware search (`use_match`), so the gap is a porting gap. blunderDB's built-in MET is the same
 Kazaross-XG2 table as the C's (float32 vs double: ~1e-7 on the MWC), and blunderDB carries
 Crawford inside the away score (`-1` money, `0` 1-away post-Crawford, `1` 1-away Crawford game).
 
@@ -36,8 +36,9 @@ and every number blunderDB computes or stores about that position is in it.**
 6. **The equity column states its referential** (`analysis.equityMoney` /
    `analysis.equityMatch`), decided by one predicate, `isMoneyPosition`
    (`frontend/src/utils/cubeDecision.js`), and documented in `doc/source/manuel.rst`. **No
-   setting**: a global toggle would make two analyses of one position incomparable depending
-   on a checkbox at batch time.
+   application setting**: a global toggle would make two analyses of one position incomparable
+   depending on a checkbox at batch time. Which MET a library uses, and how each analysis names
+   it, is ADR-0068.
 7. **Leaves valued with the cube** — see ADR-0023 rule 1.
 
 ## Consequences

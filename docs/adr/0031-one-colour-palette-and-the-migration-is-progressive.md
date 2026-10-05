@@ -5,15 +5,16 @@ See also: ADR-0008, ADR-0038
 
 ## Context
 
-`style.css` declared a type scale (ADR-0008) and no colour, spacing or radius. Components reached
-for literal hex values: 108 distinct colours, three competing primary blues, secondary text in
-`#888` (3.54:1) and `#999` (2.85:1) — below the 4.5:1 WCAG AA floor at 11 px — three components
-dropping Nunito from a partial copy of the font stack, and no spacing token at all. Hundreds of
+A stylesheet that declares a type scale (ADR-0008) and no colour, spacing or radius leaves
+components reaching for literal hex values: 108 distinct colours, three competing primary
+blues, secondary text in `#888` (3.54:1) and `#999` (2.85:1) — below the 4.5:1 WCAG AA floor
+at 11 px — three components dropping Nunito from a partial copy of the font stack, and no
+spacing token at all. Hundreds of
 literals across dozens of components cannot be migrated in one visually-unchecked pass.
 
 ## Decision
 
-1. **One palette, declared once in `frontend/src/style.css`**, with two font-family tokens and a
+1. **One palette, declared once in `frontend/src/tokens.css`** (imported by `style.css`), with two font-family tokens and a
    spacing/radius scale:
 
    ```css
@@ -44,8 +45,8 @@ literals across dozens of components cannot be migrated in one visually-unchecke
    list with All/None is `PickList.svelte`; a dialog is built on `Modal.svelte`.
 4. **Migration is progressive, held by a ceiling that only moves down.** The count of hex
    literals inside component `<style>` blocks may not exceed `frontend/.color-token-budget`; a
-   change that removes literals lowers the file in the same commit. `style.css` is exempt (the
-   tokens live there); JS chart palettes (`components/stats/charts/palette.js`) and board
+   change that removes literals lowers the file in the same commit. `tokens.css` and `style.css` are exempt
+   (the tokens live there); JS chart palettes (`components/stats/charts/palette.js`) and board
    defaults are out of scope.
 
 ## Consequences

@@ -21,8 +21,8 @@ single row, and needs to be able to find again the positions they brought in del
 ## Consequences
 
 - The flag reads "this position was, at some point, imported on its own" — order-independent.
-- Databases predating the column were backfilled from the `move` heuristic, with its false
-  positives (enrich-created positions) and irrecoverable false negatives.
+- A database predating the column is backfilled at migration (`migrate_2_12_0_to_2_13_0`) from
+  the `move` heuristic, with its false positives (enrich-created positions) and irrecoverable false negatives.
 - The retention predicate is stated in three places (`database/db_match.go`,
   `storage/sqlite/matches_sqlite.go`, `storage/postgres/matches_postgres.go`); they must not drift.
 - Rejected: deriving it from "no `move` row" — inverts under a later match import, wrong for

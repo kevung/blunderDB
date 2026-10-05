@@ -1,18 +1,18 @@
 # ADR-0069 — La progression d'une Leçon ne s'écrit que sur le geste « étape faite »
 
-Statut : acceptée. Amende ADR-0066 (règle 5).
+Statut : acceptée.
 Voir aussi : ADR-0007 (le receveur n'écrit rien, liste blanche `issuance.Carried`), ADR-0065
-(le coach lit à travers les tenants et n'écrit que chez lui), ADR-0066 (la Leçon) ; issue
-#277, fiche I.21.
+(le coach lit à travers les tenants et n'écrit que chez lui), ADR-0066 règle 5 (la Leçon) ;
+fiche I.21.
 
 ## Contexte
 
 La fiche I.21 demande des « parcours pédagogiques » : une suite ordonnée d'étapes, chacune un
 texte puis une Collection ou une Position, remise dans un `.dbx` filigrané. C'est la Leçon
-d'ADR-0066, déjà livrée sous ce nom ; « parcours » reste un mot de l'interface et du
-vocabulaire courant, pas un second objet du domaine. Ce qui manque est la progression :
-ADR-0066 (règle 5) n'enregistre ni l'étape atteinte ni l'ouverture, et l'élève qui reprend une
-Leçon de trente étapes une semaine plus tard ne sait plus où il en était.
+d'ADR-0066 ; « parcours » reste un mot de l'interface et du
+vocabulaire courant, pas un second objet du domaine. Reste la progression :
+la lecture n'enregistre ni l'étape atteinte ni l'ouverture (ADR-0066 règle 5, ADR-0007), et
+l'élève qui reprend une Leçon de trente étapes une semaine plus tard doit savoir où il en est.
 
 ## Décision
 
@@ -39,7 +39,8 @@ Leçon de trente étapes une semaine plus tard ne sait plus où il en était.
 
 - Schéma 2.31.0 : table `lesson_progress` ; côté PostgreSQL, clé `(tenant_id, id)` sur
   `lesson_step` pour la clé étrangère composite, migration `033_met_progress_move_error.sql`.
-- Le glossaire (`CONTEXT.md`) ne dit plus que la Leçon n'est « jamais suivie » : elle est
-  suivie par le seul geste de l'élève.
-- Le bouton « étape faite » de la barre de lecture, la commande CLI et la route restent à
-  livrer.
+- Le glossaire (`CONTEXT.md`, *Step done*) dit que la Leçon est suivie par le seul geste de
+  l'élève.
+- Le geste est le bouton « étape faite » de la barre de lecture (`LessonBar.svelte`), la
+  commande `lesson done` (avec `lesson progress` pour la lire) et la route
+  `/v1/lessons.setStepDone`.

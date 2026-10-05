@@ -1,8 +1,6 @@
 # ADR-0057 — La transcription et la direction s'exposent par l'API à un client externe
 
 Statut : acceptée.
-Amende : ADR-0045 règle 9 (« `serve` exposes nothing »), ADR-0047 (« Le démon ne reçoit
-rien »), ADR-0056 (CLI en lecture seule, démon muet).
 Laisse intacte : ADR-0039 (le front web embarqué reste en consultation).
 Voir aussi : ADR-0005, ADR-0044, ADR-0045, ADR-0047, ADR-0056.
 
@@ -99,7 +97,9 @@ comment deux écritures concurrentes se détectent, et comment un client apprend
 
 ## Garde
 
-À écrire avec les lots H4–H7 de `tasks/plan-headless-transcription-direction-2026-10.md` : un
-test de course (deux gestes concurrents, un 409), un geste sans `If-Match` → 428, une session
-expirée → 410 puis réouverture sans geste perdu, un geste → un message SSE, les routes
-d'écriture absentes sans leur drapeau.
+`internal/server/handlers_transcriptions_test.go` : `TestTranscriptionConcurrentApplyOne409`
+(deux gestes concurrents, un 409), `TestTranscriptionGestureWithoutIfMatchIs428`,
+`TestTranscriptionExpiredSession410ThenReopen`, `TestTranscriptionWritesAbsentWithoutTheFlag`.
+`internal/server/handlers_direction_gestures_test.go` : `TestDirectionGestures_RaceOneConflict`,
+`TestDirectionGestures_RequireIfMatch`, `TestDirectionGestures_AbsentWithoutFlag`. Le flux SSE :
+`internal/server/events_postgres_test.go`, `events_instances_postgres_test.go`.

@@ -275,7 +275,7 @@ how they are read (ADR-0018):
   belongs to one player's home board, so two players' can be set side by side and subtracted.
   They are always read in `bottom` / `top` / `Δ` rows.
 - **The pre-roll vector** — win, gammon and backgammon chances and the cubeless equity. The
-  engine computes it at the trait (`InvertProbs`, `CubelessValue`), and it reads equally well
+  engine computes it at the trait (`invertProbs`, `CubelessValue`), and it reads equally well
   per side; it therefore takes the axis of whatever it is compared against. See Baseline.
 
 _Avoid_: stats, position evaluation, summary
@@ -659,7 +659,7 @@ The storage layer's spelling of Tenant: every persistence call carries a scope,
 and the empty scope denotes the desktop's single implicit Tenant. In server
 mode a scope is the Tenant's positive decimal integer (`1`, `42`), never a
 name — the proxy maps names to integers, the daemon refuses anything else
-(ADR-0005, amendment 2026-09-03). "Scope" and "Tenant" name the same concept;
+(ADR-0005). "Scope" and "Tenant" name the same concept;
 prefer Tenant in prose and design discussion.
 
 **Read tenants**:

@@ -31,7 +31,7 @@ blitz, prime-vs-prime — sits in gnubg's single contact class with no published
 - The `ph` search token and the statistics' per-phase figures read one indexed column.
 - The label is a convention, not a standard, and the user-facing documentation says so.
 - The user cannot correct a position; in exchange a rule change is applied to every row at once.
-- A plan classifier (holding, backgame…) is a separate, larger decision (#291), not this label.
+- A plan classifier (holding, backgame…) is a separate, larger decision, not this label.
 - Rejected: composing a phase from search filters (`nc` + pip range + off count) — wrong at the
   edges and unavailable to the statistics.
 - Rejected: an editable column — two sources of truth, and later rule changes become unappliable.

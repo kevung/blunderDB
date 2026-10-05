@@ -5,10 +5,10 @@ See also: ADR-0012, ADR-0016, ADR-0018, ADR-0020, ADR-0021
 
 ## Context
 
-The Eval panel had grown into two panels stacked in one: a gammonNet cube block and a race block
-computing the same `gammonnet.Decide` on the same probabilities, in two formattings; tables
-unmounted whenever no result was there yet, collapsing the panel at every board edit; and money
-equities shown under an "exact" badge at a match score. What made showing the pre-roll vector
+An Eval panel built per engine path becomes two panels stacked in one: a gammonNet cube block
+and a race block computing the same `gammonnet.Decide` on the same probabilities, in two
+formattings; tables unmounted whenever no result is there yet, collapsing the panel at every
+board edit; and money equities shown under an "exact" badge at a match score. What made showing the pre-roll vector
 always affordable is measured: it costs +36 % of a checker search at 2-ply (1.80 s vs 5.01 s),
 and only on a non-race with dice set — every other case already computes it.
 
@@ -45,7 +45,7 @@ imported XG/gnuBG record.
 ## Consequences
 
 - Only the candidate list scrolls (sticky header); the panel is `overflow: hidden`, so facts,
-  verdict and badge are never scrolled away and the no-scroll property no longer depends on the
+  verdict and badge are never scrolled away and the no-scroll property does not depend on the
   panel's height. Default panel sizes are 250 px (bottom) / 420 px (side).
 - Layout follows the panel's own width (flex-wrap), never `PANEL_SIDE` vs `PANEL_BOTTOM`.
 - The estimated regime's download hint lives in the badge tooltip; the badge links to the

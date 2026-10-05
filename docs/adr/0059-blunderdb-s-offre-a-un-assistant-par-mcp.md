@@ -1,7 +1,7 @@
 # ADR-0059 — blunderDB s'offre à un assistant par MCP
 
 Statut : acceptée.
-Remplace : la piste « grammaire d'intentions » de #283, écartée (`cabdad533`).
+Écarte : une « grammaire d'intentions » propre à blunderDB comme interface d'un assistant.
 Laisse intacte : ADR-0005 (le démon n'authentifie personne).
 Voir aussi : ADR-0005, ADR-0019, ADR-0055, ADR-0057.
 
@@ -13,7 +13,7 @@ couvre pas la phrase qu'on écrit vraiment ; un modèle embarqué pèse des cent
 le chantier taille du binaire a refusé UPX pour quelques-uns. Le Model Context Protocol
 renverse la question : blunderDB n'embarque aucun modèle, il **offre des outils** à
 l'assistant que l'utilisateur a déjà (Claude Code, Claude Desktop, un client local). Le
-présent lot livre le serveur ; l'assistant interne (lot 2) en sera un client.
+serveur est cette offre ; l'assistant interne en est un client (ADR-0064).
 
 ## Décision
 
@@ -51,17 +51,25 @@ présent lot livre le serveur ; l'assistant interne (lot 2) en sera un client.
    | `study_decks` | `anki.listDecks` | ce qui est dû à la révision |
    | `quiz_draw`, `quiz_grade` | `search.query`, `quiz.grade*` | un quiz conversationnel, la réponse cachée jusqu'à la note |
 
-   Hors de la liste, et pourquoi : la Direction et la transcription (un geste à version,
-   ADR-0057, n'est pas un outil de conversation), l'import et l'export (des fichiers, pas des
-   phrases), gammonNet (un calcul de plusieurs minutes, pas un appel d'outil), le rollout
-   (aucune route ne l'expose encore : son outil viendra avec l'étape 2 de J.2, quand le
-   rollout sera stocké).
-4. **Lecture seule par défaut.** Quatre outils écrivent — `save_position`,
-   `comment_position`, `create_collection`, `add_to_collection` — et ne sont offerts que
-   derrière un drapeau : `blunderdb mcp --write`, `serve --mcp-write`, `Config.MCPWrite` pour
-   un embarqueur. Rien n'efface. `save_position` lève la provenance « importée seule »
+   D'autres outils composent de la même façon les routes de l'évaluation (`evaluate`,
+   gammonNet sans rien stocker), du rollout (`rollout`, ADR-0060), de la révision Anki
+   (`anki_next`, `anki_review`), de la transcription (`transcribe_*`), de la direction en
+   lecture (`direction_list`, `direction_standings`, `direction_season`), des Leçons
+   (`list_lessons`, `lesson`) et de la lecture à travers les tenants (`club_*`, ADR-0065) ;
+   `pkg/blunderdb/mcp/tools.go` et `club.go` en tiennent la liste. Hors de la liste, et
+   pourquoi : les gestes de la Direction (un geste à version, ADR-0057, reste au client de
+   direction), l'import et l'export (des fichiers, pas des phrases), l'abandon d'un brouillon
+   de transcription (aucun outil n'efface).
+4. **Lecture seule par défaut.** Les outils qui écrivent — `save_position`,
+   `comment_position`, `create_collection`, `add_to_collection`, `anki_review`, `rollout` avec
+   `store`, et les gestes de transcription (`transcribe_create`, `transcribe_open`,
+   `transcribe_apply`, `transcribe_undo`, `transcribe_redo`, `transcribe_finish`, servis
+   seulement par un démon lancé avec `--transcription`, chacun nommant la révision sur
+   laquelle il a été tapé) — ne sont offerts que derrière un drapeau : `blunderdb mcp
+   --write`, `serve --mcp-write`, `Config.MCPWrite` pour un embarqueur. Aucun outil n'efface :
+   `transcribe_finish` remplace le brouillon par son Match. `save_position` lève la provenance « importée seule »
    (ADR-0001), comme un collage dans l'application.
-5. **Deux transports dans ce lot.**
+5. **Deux transports pour un client extérieur.**
    - **HTTP**, `POST /mcp`, monté par `internal/server` et donc par le démon et par
      `pkg/blunderdb/server` (gammonGo l'hérite). Sans état : chaque requête se suffit, aucune
      session n'attache un client à une instance. `/mcp` n'est pas un chemin public : le
@@ -77,7 +85,8 @@ présent lot livre le serveur ; l'assistant interne (lot 2) en sera un client.
      journaux sur stderr, stdout réservé au protocole. Même sans `--write`, l'ouverture migre
      le schéma d'une base ancienne, comme `call`.
 6. **Le troisième transport s'ajoute sans toucher aux outils.** Le serveur hébergé par la
-   GUI (ouvrir une vue, montrer une position) est le lot D2 : sur localhost, il garde la
+   GUI (`internal/gui/mcphost.go` ; ouvrir une vue, montrer une position, ADR-0064) écoute
+   sur localhost : il garde la
    garde anti-rebinding (`AllowRemoteHost` faux, le défaut) et y ajoute
    `CrossOriginProtection`, car là l'attaquant est une page web que l'utilisateur visite. `Options.Extensions`
    reçoit des fonctions `func(*Toolbox)` qui enregistrent leurs outils par `mcp.Add`, sous le
@@ -93,5 +102,5 @@ présent lot livre le serveur ; l'assistant interne (lot 2) en sera un client.
   deux.
 - Un outil nouveau = une fonction dans `pkg/blunderdb/mcp/tools.go`, appelée par un test
   client en mémoire sur la base de démonstration.
-- Le lot 2 (assistant interne) est un client MCP de ces outils, pas un second accès aux
+- L'assistant interne (ADR-0064) est un client MCP de ces outils, pas un second accès aux
   données.

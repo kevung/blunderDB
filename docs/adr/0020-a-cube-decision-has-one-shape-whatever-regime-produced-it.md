@@ -5,12 +5,12 @@ See also: ADR-0017, ADR-0018, ADR-0019
 
 ## Context
 
-The cube Decision was rendered in two shapes: the race regime put the options in columns with a
-parenthesised "gap" and a translated verdict chip, the non-race path in rows with an "error"
-column and the engine's English verdict string. The gap and the error are the same number; the
-race path never said "redouble"; three states (computing, no decision by construction, engine
-refusal) shared one "evaluation will appear here" promise; and both showed an error for doubling
-a cube the player cannot turn (owned by the opponent, Crawford game) — the engine itself says
+Rendered per regime, the cube Decision takes two shapes: the race regime puts the options in
+columns with a parenthesised "gap" and a translated verdict chip, the non-race path in rows with
+an "error" column and the engine's English verdict string. The gap and the error are the same
+number; the race path never says "redouble"; three states (computing, no decision by
+construction, engine refusal) share one "evaluation will appear here" promise; and both show an
+error for doubling a cube the player cannot turn (owned by the opponent, Crawford game) — the engine itself says
 there is nothing to weigh there.
 
 ## Decision
@@ -53,7 +53,7 @@ orthogonal channels.
 
 ## Consequences
 
-- The panel no longer changes shape between race and non-race cube positions; the badge names
+- The panel keeps one shape between race and non-race cube positions; the badge names
   the regime (ADR-0012).
 - The cubeless equity is a fact only (ADR-0017 rule 1), never in the decision block.
 - Option labels come from `analysis.*` (with the double/redouble switch); verdicts from the

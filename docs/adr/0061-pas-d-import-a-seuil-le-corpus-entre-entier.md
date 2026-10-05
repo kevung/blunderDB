@@ -41,7 +41,7 @@ purge des positions d'un match.
    match : sa relecture, son export et ses stats tombent. La purge qui existe — celle des
    positions orphelines quand un match est supprimé — reste la seule.
 3. **Le volume se traite par le format, pas par l'oubli** : déduplication des fichiers à
-   l'import (empreinte SHA-256, lot 4), codec (lot 1), pipeline (lot 2), GUI paginée (lot 3).
+   l'import (empreinte SHA-256), codec, pipeline, GUI paginée.
    Les ordres de grandeur mesurés tiennent dans SQLite sans filtrer.
 
 ## Conséquences

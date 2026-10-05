@@ -4,8 +4,9 @@
 // back).
 //
 // It is deliberately a flat package of independent files rather than a
-// layered one: nothing here calls anything else here except the two codecs,
-// which read the derived quantities they store.
+// layered one: the codecs read the derived quantities they store, quiz.go and
+// explain.go compare moves through the codec's NormalizeMove, met.go reads
+// met_table.go, and nothing else here calls anything else here.
 //
 //	zobrist.go       the position identity — one 64-bit key per position,
 //	                 per tenant, the key SavePosition dedups on (ADR-0001).
@@ -17,7 +18,6 @@
 //	                 filters on, computed once and stored as columns.
 //	epc.go           effective pip count, from a generated one-sided
 //	                 gnubg table (ADR-0027): the roll
-
 //	                 distribution of a bearoff position, its mean, and the
 //	                 wastage the two imply.
 //	bearoff_export.go the combinatorial indexing every gnubg bearoff
@@ -29,6 +29,8 @@
 //	                 GnuBGGetME is the one entry point, and the cube model
 //	                 of engine/gammonnet branches onto it rather than
 //	                 re-porting gammonNet's gn_met.c.
+//	met_table.go     MET, a table imported from a gnubg .xml file
+//	                 (ADR-0068); a nil *MET reads the built-in one.
 //	positioncodec.go the v2 storage shape of a position: the compact
 //	                 28-integer board plus every derived scalar column, and
 //	                 the reconstruction that reads them back.
@@ -37,6 +39,15 @@
 //	                 scalar columns the statistics and the SQL filters read
 //	                 — rates ×100, equities ×1000, and the one canonical
 //	                 reading of a cube label (CanonicalCubeAction).
+//	analysisbin.go   the binary payload inside that blob (ADR-0070): every
+//	                 field of a PositionAnalysis, floats bit for bit.
+//	gamephase.go     ClassifyGamePhase and ClassifyGameType: labels derived
+//	gametype.go      from the board alone, stored in indexed columns.
+//	movenotation.go  comparing one move written by two engines.
+//	similarity.go    the distance behind "positions like this one".
+//	quiz.go          grading an answer against the stored analysis.
+//	explain.go       the error theme of a blunder, as a code, never a
+//	                 sentence.
 //
 // # The two subpackages are the two evaluators
 //
@@ -44,7 +55,8 @@
 // engine/bearoffgen generates the tables race reads, ADR-0027; engine/training
 // makes the Training questions that need gammonNet — a seed played out by the
 // engine, and its truth — and lives above both evaluators because race may not
-// import gammonnet, ADR-0041.)
+// import gammonnet, ADR-0041; engine/rollout plays positions out on top of
+// gammonnet's Searcher, ADR-0060.)
 //
 //	engine/race/      exact and estimated race analysis: the two-sided
 //	                  bearoff reader, the calibrated win-probability
@@ -52,7 +64,7 @@
 //	                  that are READ or convolved, never estimated
 //	                  (ADR-0009, ADR-0012).
 //	engine/gammonnet/ the neural evaluator — a Go port of gammonNet's
-//	                  encoding, network, search and cube model, about 5 000
+//	                  encoding, network, search and cube model, about 5 500
 //	                  lines, the largest thing in this tree (ADR-0011).
 //	                  It has its own package doc; read it, and cube.go's
 //	                  header, before changing anything there. Its arithmetic

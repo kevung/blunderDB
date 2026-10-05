@@ -1,7 +1,7 @@
 # ADR-0064 — L'assistant interne est un client des outils MCP de la fenêtre
 
 Statut : acceptée.
-Complète : ADR-0059 (le serveur MCP ; son point 6 annonçait ce lot).
+Complète : ADR-0059 (le serveur MCP ; son point 6, le transport hébergé par la GUI).
 Voir aussi : ADR-0005, ADR-0007, ADR-0019, ADR-0055.
 
 ## Contexte
@@ -55,9 +55,8 @@ Code doit pouvoir écrire une phrase dans blunderDB et voir le résultat à l'é
    (`go test -tags assistantbench`) envoient chaque phrase à un vrai modèle par les vrais outils
    sur la base de démonstration, et notent ce qu'il a fait : la vue ouverte et la forme
    canonique de sa requête, ou l'outil appelé. Le modèle du préréglage Ollama, `qwen2.5:7b`,
-   n'est qu'un défaut non mesuré : aucun fournisseur n'était joignable quand ce lot a été
-   livré. La recommandation viendra du score de ce banc, publié avec le modèle mesuré ; d'ici
-   là la documentation n'en nomme aucun.
+   n'est qu'un défaut non mesuré. Un modèle n'est recommandé que sur le score de ce banc,
+   publié avec le modèle mesuré ; sans ce score, la documentation n'en nomme aucun.
 
 ## Conséquences
 

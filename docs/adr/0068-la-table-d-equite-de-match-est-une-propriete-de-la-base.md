@@ -1,9 +1,9 @@
 # ADR-0068 — La table d'équité de match est une propriété de la base
 
-Statut : acceptée. Amende ADR-0016 (règle 6, « pas de réglage »).
+Statut : acceptée.
 Voir aussi : ADR-0007 (le receveur n'écrit rien, liste blanche `issuance.Carried`), ADR-0013
-(les analyses importées sont intouchables), ADR-0016 (le référentiel est une propriété de la
-position), ADR-0019 (une seule échelle d'équité sort du moteur) ; issue #271, fiche I.15.
+(les analyses importées sont intouchables), ADR-0016 règle 6 (le référentiel est une propriété de la
+position), ADR-0019 (une seule échelle d'équité sort du moteur) ; fiche I.15.
 
 ## Contexte
 

@@ -5,7 +5,7 @@ See also: ADR-0007
 
 ## Context
 
-Deletions (position, collection, comment, Anki card) were final on confirmation. A
+Without a trash, a deletion (position, collection, comment, Anki card) is final on confirmation. A
 `deleted_at` column would oblige every read to filter it — some fifty search filters, both
 statistics backends, the three-place retention predicate, the Anki scheduler, the export —
 and one that forgets fails silently. The UNIQUE `idx_position_zobrist` makes it worse: a

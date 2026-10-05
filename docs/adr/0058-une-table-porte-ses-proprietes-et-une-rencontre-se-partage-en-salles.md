@@ -1,8 +1,7 @@
 # ADR-0058 — Une table porte ses propriétés, et une Rencontre se partage en salles
 
 Statut : acceptée.
-Amende : ADR-0056 §1 (« une même salle ») et §5 (la vue « Salle »).
-Voir aussi : ADR-0044, ADR-0047, ADR-0056, ADR-0057.
+Voir aussi : ADR-0044, ADR-0047, ADR-0056 (§1, §5), ADR-0057.
 
 ## Contexte
 
@@ -70,8 +69,8 @@ salle en est une, au même titre que son nom et sa réservation.
     Ajouter une salle, renommer une table, réserver ou attitrer est permis à tout moment.
 12. **Les vues groupent par salle.** La grille de la Rencontre et la page murale restent
     uniques par Rencontre (ADR-0056 §5, §6) et groupent leurs tables par salle quand des
-    salles existent. La vue d'interface qui s'appelait « Salle » devient **Toutes les
-    tables** : « salle » désigne désormais une partie de la Rencontre, et la grille les montre
+    salles existent. La vue d'interface de la grille s'appelle **Toutes les
+    tables** : « salle » désigne une partie de la Rencontre, et la grille les montre
     toutes ; « Événement » désigne déjà le panneau qui la gère.
 13. **L'interface dit « événement ».** La Rencontre s'appelle **Événement** dans l'interface,
     l'aide et la documentation (en : *Event*) : un événement regroupe des épreuves, et les deux

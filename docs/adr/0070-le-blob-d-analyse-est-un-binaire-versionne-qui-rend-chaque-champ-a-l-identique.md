@@ -1,11 +1,12 @@
 # Le blob d'analyse est un binaire versionné qui rend chaque champ à l'identique
 
-Statut : acceptée. Amende ADR-0030 (format écrit, dictionnaire, passe de conversion).
+Statut : acceptée.
+Voir aussi : ADR-0030 (zstd avec dictionnaire, le blob nomme son codec).
 
 ## Contexte
 
-`analysis.data` portait le JSON de `domain.PositionAnalysis` compressé par zstd avec
-dictionnaire (ADR-0030). Sur la base BMAB (15,6 M blobs, `tasks/plan-grosses-bases-2026-10/POIDS.md`
+Le format hérité d'`analysis.data` est le JSON de `domain.PositionAnalysis` compressé par
+zstd avec dictionnaire (ADR-0030). Sur la base BMAB (15,6 M blobs, `tasks/plan-grosses-bases-2026-10/POIDS.md`
 §2-§3), un blob pèse 284 o en moyenne, dont une bonne part redit à chaque ligne les noms de
 champs, le texte décimal des nombres et deux horodatages RFC 3339 à la nanoseconde ; et lire
 une analyse coûte surtout `json.Unmarshal` (80 % du décodage). Les blobs font environ 30 % du
@@ -22,9 +23,10 @@ fichier.
 2. **Compression.** zstd avec un second dictionnaire embarqué,
    `engine/analysis_bin_dict.bin` (64 Ko), entraîné par `cmd/train-analysis-dict` sur les
    charges binaires du corpus du dépôt (fixtures et base de démo), comme le premier. Niveau 7
-   sans somme de contrôle à l'écriture, niveau 19 avec somme de contrôle à la compaction : le
-   drapeau de la trame, au troisième octet du blob, les distingue toujours sans décompresser.
-   Le dictionnaire JSON est gelé et ne sert plus qu'à lire les anciennes lignes ; les deux
+   sans somme de contrôle sur tous les chemins d'écriture, compaction comprise : le niveau 19
+   coûte vingt fois le CPU pour moins de 2 % des octets. Une trame de niveau 19 (avec somme de
+   contrôle) reste lisible ; le drapeau de la trame, au troisième octet du blob, la distingue
+   sans décompresser. Le dictionnaire JSON est gelé et ne sert qu'à lire les lignes héritées ; les deux
    vivent dans le même décodeur (chaque trame nomme son `Dictionary_ID`).
 3. **Contenu : tous les champs, rien de reconstruit des colonnes.** La charge
    (`engine/analysisbin.go`) écrit chaque champ de `PositionAnalysis` et de ce qu'il contient,
@@ -61,8 +63,8 @@ fichier.
    `DatabaseVersion` : la colonne ne change ni de type ni de sens (ADR-0030 §2).
 7. **Conversion explicite et reprenable, jamais à l'ouverture.** Une ligne héritée se lit pour
    toujours et se convertit quand elle est réécrite : fusion d'import, import de `.db` natif
-   (`RecompressAnalysisData`), compaction de `vacuum` (`CompactAnalysisData`, qui passe
-   directement au binaire niveau 19). S'y ajoute `AnalysisStore.ReencodeAnalyses(after, limit)`,
+   (`RecompressAnalysisData`), compaction de `vacuum` (`compactAnalyses` de `sqlite.Storage.Vacuum`, via
+   `engine.RecompressAnalysesConcurrently`, qui laisse un blob déjà binaire tel quel). S'y ajoute `AnalysisStore.ReencodeAnalyses(after, limit)`,
    même forme que `MatchStore.ScoreMoves` : lots en ordre d'id, une transaction par lot, le
    premier octet comparé en SQL (`substr(data, 1, 1) <> x'BA'` sur les deux dialectes) pour
    qu'une reprise ne relise pas ce qui est converti ; un blob illisible est laissé et journalisé.

@@ -1,7 +1,7 @@
 # engine/gammonnet — invariants
 
-A Go port of gammonNet: its arithmetic is a contract. Read `doc.go` and the header of
-`cube.go` first. Each invariant below is a bug if violated, even with every test green.
+A Go port of gammonNet: its arithmetic is a contract. Read the package comment (`position.go`)
+and the header of `cube.go` first. Each invariant below is a bug if violated, even with every test green.
 
 - **The port follows upstream.** A divergence from the C is a bug; a change to the cube model
   lands in gammonNet's `gn_cube.c` and its spec first, then here, then in

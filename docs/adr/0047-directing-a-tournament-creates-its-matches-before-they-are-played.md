@@ -1,8 +1,7 @@
 # ADR-0047 — Diriger un tournoi, c'est créer ses Matchs avant qu'ils soient joués
 
-Statut : acceptée ; §1 amendé par ADR-0056 (la Rencontre) ; exposition au démon amendée par
-ADR-0057 ; l'écran des joueurs tranché après mesure (amendement du 2026-10-04, ci-dessous).
-Voir aussi : ADR-0037, ADR-0039, ADR-0044, ADR-0045, ADR-0005, ADR-0057.
+Statut : acceptée.
+Voir aussi : ADR-0037, ADR-0039, ADR-0044, ADR-0045, ADR-0005, ADR-0056, ADR-0057.
 
 ## Contexte
 
@@ -18,7 +17,9 @@ Un tournoi dirigé est une **source de Matchs**. Chaque match lancé est un **Sl
 Participants, une longueur, une table, un résultat) que remplit une Transcription ou un import.
 
 1. **Une seule entité.** Un `Tournament` porte optionnellement une **Direction** : ce que le
-   directeur a décidé, dans l'ordre, jamais modifié, seulement prolongé.
+   directeur a décidé, dans l'ordre, jamais modifié, seulement prolongé. Plusieurs Tournaments
+   dirigés qui partagent une salle sont regroupés par une Rencontre (ADR-0056), chacun gardant
+   sa Direction.
 2. **Le moteur propose, le directeur décide, la Direction enregistre.** Rien n'est refusé sauf
    l'impossible ; l'incohérent est accepté, tracé, signalé sans bloquer (posture d'ADR-0044).
 3. **L'état n'est jamais stocké** : classement, arbres, appariements et proposition suivante

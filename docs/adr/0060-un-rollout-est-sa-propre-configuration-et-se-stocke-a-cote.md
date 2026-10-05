@@ -1,4 +1,4 @@
-# ADR-0060 — Un rollout est sa propre Configuration, et se stockera à côté de l'Analysis
+# ADR-0060 — Un rollout est sa propre Configuration, et se stocke à côté de l'Analysis
 
 Statut : acceptée.
 Voir aussi : ADR-0011, ADR-0013, ADR-0019, ADR-0024, ADR-0029 ; `docs/recherche/P8-rollouts.md`.
@@ -17,9 +17,10 @@ de videau, et ses intervalles sont optimistes.
 
 1. **Écrit ici, porté ensuite.** `pkg/blunderdb/engine/rollout`, au-dessus du `Searcher`, sans
    toucher à l'arithmétique de `engine/gammonnet`. Le portage dans gammonNet est consigné dans
-   `tasks/plan-amelioration-2026-09b/AMONT-GAMMONNET.md` ; jusque-là ce paquet est la référence.
+   `tasks/plan-amelioration-2026-09b/AMONT-GAMMONNET.md` ; tant qu'il n'y est pas porté, ce paquet est la référence.
 2. **Un rollout est sa propre Configuration** (CONTEXT.md) : `rollout.EngineVersion`
-   (`blunderDB rollout v1 / gammonNet v1.2.1`) plus ses paramètres. Tout changement de procédure
+   (`blunderDB rollout v1 / ` suivi de `gammonnet.EngineVersion`, soit `gammonNet v1.4.0`)
+   plus ses paramètres. Tout changement de procédure
    qui déplace un nombre (dés, réduction de variance, politique de videau, valeur des feuilles)
    incrémente `v1`. Les paramètres sont ceux de `Settings` : troncature (demi-coups, 0 = jusqu'au
    bout), parties min/max (multiples de 36, sans quoi le premier lancer n'est plus stratifié), seuil JSD, ply, nombre de candidats, graine. `Signature()` en donne la
@@ -101,10 +102,10 @@ de videau, et ses intervalles sont optimistes.
    leur `Signature`. Un rollout de videau a sa propre `Signature`, sans nombre de candidats.
    Les colonnes indexées restent celles de l'analyse
    principale ; une position que seul un rollout analyse les tire de son meilleur rollout
-   (`ColumnSource`), et la recherche la trouve. Tout vit dans le blob JSON : **aucune colonne,
+   (`ColumnSource`), et la recherche la trouve. Tout vit dans le blob d'analyse (ADR-0070) : **aucune colonne,
    aucun bump de schéma**. Limite assumée : une version antérieure, qui ignore le champ
    `rollouts`, l'efface à sa première écriture d'analyse sur la position. Un bump n'y changerait
-   rien : depuis 0.35.0, une version ouvre telle quelle une base de `DatabaseVersion` plus
+   rien : une version ouvre telle quelle une base de `DatabaseVersion` plus
    récente (`runMigrationChain`) ; on ne rouvre donc pas avec une version antérieure une base
    qui porte des rollouts. Le rassemblement (positions d'une requête sans rollout de cette
    `Signature`, d'où la reprise), la boucle et l'écriture sont `pkg/blunderdb/rollouts`, sur le

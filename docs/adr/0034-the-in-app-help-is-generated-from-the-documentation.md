@@ -4,12 +4,12 @@ Status: accepted.
 
 ## Context
 
-The in-app help was hand-written HTML in nine languages, 81 % of it a second copy of the
-documentation's shortcut, command and manual pages. Nothing kept the two in step, and the copy
-drifted both ways: whole features and renamed panels missing from the help, sections and filter
-tokens the help never had. The documentation has gettext catalogues and a completeness gate; the
-help had nine files edited by hand, no completeness check, and was excluded from eslint while
-being injected with `{@html}`.
+A hand-written in-app help in nine languages is, at 81 %, a second copy of the documentation's
+shortcut, command and manual pages. Nothing keeps two copies in step, and such a copy drifts
+both ways: whole features and renamed panels missing from the help, sections and filter tokens
+the help never had. The documentation has gettext catalogues and a completeness gate; a
+hand-written help is nine files edited by hand, with no completeness check, injected with
+`{@html}`.
 
 ## Decision
 
@@ -56,8 +56,8 @@ being injected with `{@html}`.
 - Rejected: running Sphinx at frontend build (Python becomes a hard dependency of every build,
   and docutils HTML needs its own reduction pass). Rejected: a table of contents with links to
   the site (useless offline, at a club or a tournament table). Rejected: hand-written help plus a
-  section-title test (catches missing sections; the drift was stale sentences). Rejected: a
-  section manifest for the manual tab (a second list to maintain, which is what drifted).
+  section-title test (catches missing sections; the drift is in stale sentences). Rejected: a
+  section manifest for the manual tab (a second list to maintain, which is what drifts).
   Rejected: generating the `.rst` from the help (gettext works on the `.rst`).
 
 ## Guard

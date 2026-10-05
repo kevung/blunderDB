@@ -35,7 +35,7 @@ language is not a fix. Separately, the Analysis panel spread its slack between i
 ## Consequences
 
 - The cube decision sits beside the facts at the default window in all nine languages, with
-  172–322 px of margin; a translation or a pip count no longer changes the layout. The content
+  172–322 px of margin; a translation or a pip count does not change the layout. The content
   row is 178 px in every language.
 - Side markers (●, ○, Δ) print twice and a header row sits inside the table body — the price of
   two self-contained blocks.

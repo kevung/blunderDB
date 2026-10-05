@@ -8,7 +8,7 @@ saison), ADR-0063 (`X-Read-Tenants`, le socle) ; `tasks/plan-2026-10b.md`, lot E
 
 ADR-0063 donne le socle : une lecture `across.*` porte sur `X-Tenant-ID` et les Tenants que le
 proxy liste, chaque résultat dit son Tenant, et une position lue porte son hachage Zobrist. Il
-reste à servir les quatre usages du lot E — le coach lit ses élèves, commente leurs positions,
+faut servir quatre usages — le coach lit ses élèves, commente leurs positions,
 un club partage une bibliothèque et publie un classement — sans créer de relation entre
 Tenants dans blunderDB, ni de second modèle de commentaire.
 

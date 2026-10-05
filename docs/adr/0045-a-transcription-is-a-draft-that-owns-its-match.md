@@ -1,6 +1,6 @@
 # A transcription is a draft that owns its match
 
-Status: accepted; rule 9 amended by ADR-0057 (API exposure).
+Status: accepted.
 See also: ADR-0044, ADR-0036, ADR-0013, ADR-0001, ADR-0028, ADR-0035.
 
 ## Context

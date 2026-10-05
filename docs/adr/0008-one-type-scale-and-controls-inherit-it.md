@@ -12,7 +12,8 @@ dominated), not a matter of taste.
 
 ## Decision
 
-One scale, declared once in `frontend/src/style.css`:
+One scale, declared once as tokens in `frontend/src/tokens.css`; `frontend/src/style.css`
+imports it and makes form controls inherit:
 
 ```css
 :root {
@@ -44,7 +45,7 @@ Named exceptions, each behind its own token:
 ## Consequences
 
 - Adding an exception means adding it here and to the guard's list, in that order.
-- 9 px and 10 px badges became 11 px and rely on colour — "shrink to demote" is rejected.
+- Badges are at least 11 px and rely on colour — "shrink to demote" is rejected.
 - Rejected: per-component scales (produced 20 sizes and two conflicting bases). Rejected: a
   rem-based scale (the interface already has its own CSS `zoom`; a second scaling knob would
   make "small" mean two things). Rejected: utility classes (the codebase uses scoped CSS, no

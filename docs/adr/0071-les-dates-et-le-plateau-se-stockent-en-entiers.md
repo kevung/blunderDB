@@ -1,6 +1,6 @@
 # ADR-0071 — Les dates et le plateau se stockent en entiers
 
-Statut : acceptée. Complète le schéma 2.31.0 (non publié) sans nouveau numéro.
+Statut : acceptée. Fait partie du schéma 2.31.0.
 Voir aussi : ADR-0001 (identité par Zobrist, inchangée), ADR-0068 (table d'équité de match) ;
 `tasks/plan-grosses-bases-2026-10/POIDS.md` § 3.4 et § 5, fiche `SCHEMA-2-31.md`.
 
@@ -65,7 +65,7 @@ lise ces index.
 8. **`analysis_engine` reste du texte.** C'est un libellé libre (nom et version du moteur,
    « XG Roller++ », « gammonNet 1.4 »…) que la recherche (`ae:`) et les statistiques filtrent
    par préfixe ou `LIKE` : un code ne se compare pas par préfixe sans relire tous les libellés.
-   Sa cardinalité est faible mais ouverte, et sa colonne n'est plus indexée (décision 5) : le
+   Sa cardinalité est faible mais ouverte, et sa colonne n'est pas indexée (décision 5) : le
    gain d'un code y est de quelques octets par analyse, au prix de chaque filtre réécrit.
 
 ## Conséquences

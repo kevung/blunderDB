@@ -5,12 +5,12 @@ See also: ADR-0011, ADR-0033
 
 ## Context
 
-A 2-ply decision cost 5.5 s serially, 97.6 % of it in the forward pass; Go does not
+A 2-ply decision costs 5.5 s serially with a scalar evaluator, 97.6 % of it in the forward pass; Go does not
 auto-vectorise. A stored gammonNet analysis must be reproducible on another machine, otherwise
 "stale" (`AnalyzeStaleGammonNet`) has no definition. The fastest kernels (FMA, tree reductions,
 multiple accumulators, int8) each move the result — by ~3e-9 to 4.8e-7, within the gold
 tolerance, above zero, and differently on every architecture. Vectorising over positions
-instead brought the decision to 0.277 s serial, 0.072 s on all cores, with no equity moved by
+instead brings the decision to 0.277 s serial, 0.072 s on all cores, with no equity moved by
 one bit.
 
 ## Decision
@@ -28,8 +28,8 @@ one bit.
    test on every CI runner. `BLUNDERDB_GAMMONNET_KERNEL=go|avx2|neon` selects one; the default
    is the best available; **a requested-but-unavailable kernel is an error at load**, never a
    silent fallback. No cgo. On arm64 the default is the NEON kernel (hand-written, avo has no
-   arm64 back end, FMUL then FADD): it was opt-in until the full identity sweep, NEON forced,
-   passed on real Apple Silicon (`gammonnet-kernel-identity-arm64`, run 37089499788, Apple M1
+   arm64 back end, FMUL then FADD), a default because the full identity sweep, NEON forced,
+   passes on real Apple Silicon (`gammonnet-kernel-identity-arm64` in `fuzz.yml`, Apple M1
    virtual). On that runner a batch of 8 costs 230 µs against 5.72 ms for the fallback
    (28.8 µs per position against 715 µs, −96 %). Emulation (qemu) is a local check, not that
    proof; a new fast path on any platform passes the same gate before it becomes a default.

@@ -30,7 +30,7 @@ the tournament expands to its member match IDs, unioned into the match-ID list
 
 - A new modal (derived from `ExportDatabaseModal`) with sync logic between its sections;
   the search-filter restore path works on ID sets and must resolve tournament membership.
-- `parseFilterIDList` only became more permissive: no saved search changes meaning.
+- `parseFilterIDList` is only ever widened, never narrowed: no saved search changes meaning.
 - Rejected: fixing only the parser — IDs remain invisible in the panel.
 - Rejected: an inline checkbox list — at thousands of matches it fights the panel's height.
 - Rejected: two modals — hides the tournament→matches expansion.

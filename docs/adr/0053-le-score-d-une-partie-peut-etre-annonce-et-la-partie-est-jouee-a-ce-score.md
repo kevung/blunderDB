@@ -37,7 +37,7 @@ joué.
 7. **Double-clic sur le score d'en-tête de partie** → champ ; « 3-2 », « 3–2 », « 3 2 » lus ;
    Entrée valide, vide = efface, Échap ou perte de focus ferment sans écrire. Un score annoncé
    différent s'affiche marqué, le dérivé en infobulle. Pas de champ en argent. Un clic simple
-   ne plie plus la partie.
+   ne plie pas la partie.
 
 **Format** : `FormatVersion` = 3, sans Action d'ouverture (ADR-0049 règle 6). Tout brouillon
 écrit l'est en v3, qu'un binaire antérieur refuse au lieu de le mal lire. Un document v1 ou

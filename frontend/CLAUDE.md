@@ -3,7 +3,7 @@
 - **Svelte 5 stores**: inside components, `$store` or `$effect(() => { const v = $store; … })`,
   never `.subscribe()` (stale closures invisible to the compiler). A rare exception is justified
   in the commit message.
-- **One type scale**: `--font-size-base/-small/-title` from `src/style.css`, never an absolute
+- **One type scale**: `--font-size-base/-small/-title` from `src/tokens.css`, never an absolute
   `font-size`; form controls carry `font: inherit`. Hierarchy comes from weight and colour;
   exceptions are named in ADR-0008.
 - **Keyboard**: letter shortcuts match `event.key` (`isLetter()` in `src/utils/keys.js`), digit shortcuts

@@ -5,7 +5,7 @@ See also: ADR-0016, ADR-0019, ADR-0022, ADR-0029
 
 ## Context
 
-With `use_match` alone the search took the score fully into account through the MET, exactly
+With `use_match` alone the search takes the score fully into account through the MET, exactly
 as gnubg's cubeless evaluation does — but not the cube. At 4-away/2-away the trailer's right
 opening play depends on the early double they will turn, which a cubeless leaf cannot see.
 Over 15 opening rolls × 15 score contexts against gnubg 2-ply cubeful: cubeless leaves agreed
@@ -39,7 +39,7 @@ on 77 % of best moves with 27 costs above 0.02; gammonNet with `use_cube`, 89 % 
 - Checker-move equities at a score are cubeful normalised equity, the scale of an imported
   XG/gnubg analysis; money equities are cubeful per unit of cube.
 - The integration gate's two red decisions (ADR-0014) are in the Crawford game, where there is
-  no cube: `use_cube` could not move them, and did not.
+  no cube: `use_cube` cannot move them.
 - Rejected: **a cubeless search, documented** (disagrees with XG and gnubg exactly where the cube
   decides the play); **the cube at the root only** (two valuations in one tree, the deep pass
   overruling the cubeful ordering); **a score-specific efficiency first** (a model question for

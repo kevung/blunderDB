@@ -24,8 +24,8 @@ for position in api.positions_list({"limit": 10}):
   header, the error envelope, the NDJSON decode. What changes with the API is
   generated; what changes with judgement is not.
 
-Method names are `family_operation` in snake_case: `/v1/positions.saveIndividual`
-is `positions_save_individual()`. The family is kept because several families
+Method names are `family_operation` in snake_case: `/v1/positions.legalMoves`
+is `positions_legal_moves()`. The family is kept because several families
 share an operation name (`list`, `delete`), and a bare `list()` would collide.
 
 ## Security

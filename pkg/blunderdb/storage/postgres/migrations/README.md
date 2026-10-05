@@ -174,6 +174,10 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   about a score, and a score card points at no position. Every existing card
   is backfilled to `position` with its id as key. Schema-visible: bumped
   `domain.DatabaseVersion` to 2.23.0.
+- `025_direction.sql` — the 2.24.0 wave, the Direction of a Tournament
+  (ADR-0047): `direction` and its append-only `direction_event` log, and
+  `match.direction_match_id`, the Slot a Match fills in its Tournament's
+  Direction (empty when none; at most one Match per Slot).
 - `026_set_null_names_its_column.sql` — `match.import_batch_id` (019) and
   `transcription.match_id` (021) get the `SET NULL (column)` list that `001`
   and `017` already use. Without it a composite `ON DELETE SET NULL` nulls
@@ -229,3 +233,18 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   rewrites nothing, scored afterwards by the resumable
   `MatchStore.ScoreMoves`. Schema-visible: bumped `domain.DatabaseVersion`
   to 2.31.0.
+- `034_weight_wave.sql` — completes the 2.31.0 wave (ADR-0071), with no
+  bump of its own: `analysis.met_digest` gives way to `analysis.met_id`
+  (NULL = the built-in table); `idx_analysis_engine` and `idx_analysis_depth`
+  dropped for the partial `idx_analysis_provenance_pending`;
+  `match.comment_author`; `position.state` becomes the BYTEA of
+  `engine.EncodeBoardState`; `analysis.best_cube_action`, `move.move_type` and
+  `move.cube_action` become integer codes (`domain.ActionLabels`), a label
+  outside them registered per tenant in `action_label` from 1000 up. Row-level security, when FORCEd, is lifted
+  for the data-moving statements and restored at the end.
+- `035_study_mark.sql` — `study_mark`, one row per position the user marked
+  studied; not a retention reason. Part of the 2.31.0 schema.
+- `036_match_stats_cells.sql` — `match_stats_cell` and `match_stats_position`,
+  the per-match breakdowns beside `match_stats` (kinds and arithmetic in
+  `sqlshared/match_stats_cells.go`), cascading with their seat's
+  `match_stats` row. Part of the 2.31.0 schema.
