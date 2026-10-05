@@ -134,9 +134,11 @@ describe('keyboard shortcuts with the board focused', () => {
         document.body.innerHTML = '';
     });
 
-    test('Ctrl-C still copies the position', () => {
-        ctrl('c');
+    test('Ctrl-C still copies the position, and only the position', () => {
+        const { defaultPrevented } = ctrl('c');
         expect(copyPosition).toHaveBeenCalledTimes(1);
+        // The WebView's native copy would race the backend write for the clipboard.
+        expect(defaultPrevented).toBe(true);
     });
 
     test('Ctrl-V still pastes a position', () => {

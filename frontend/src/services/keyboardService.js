@@ -341,6 +341,9 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && letter('i')) {
         importPosition();
     } else if (event.ctrlKey && letter('c')) {
+        // The WebView's own copy runs after this handler and races the backend write: whichever
+        // lands last owns the clipboard, so a paste elsewhere could get the page selection.
+        event.preventDefault();
         copyPosition();
     } else if (event.ctrlKey && letter('x')) {
         event.preventDefault();
