@@ -51,6 +51,7 @@ func (cli *CLI) collectionHandlers() map[string]func([]string) error {
 		"create": cli.runCollectionCreate,
 		"filter": cli.runCollectionFilter,
 		"freeze": cli.runCollectionFreeze,
+		"pile":   cli.runCollectionPile,
 		"rename": cli.runCollectionRename,
 		"delete": cli.runCollectionDelete,
 		"export": cli.runCollectionExport,
@@ -77,6 +78,7 @@ func (cli *CLI) printCollectionUsage() {
 	fmt.Println("Sub-commands:")
 	fmt.Println("  list      List collections (id, name, number of positions)")
 	fmt.Println("  show      List the positions of one collection (id, index, XGID)")
+	fmt.Println("  pile      Put a position on the Pile, or take it off; without one, print the Pile")
 	fmt.Println("  create    Create an empty collection")
 	fmt.Println("  rename    Rename a collection")
 	fmt.Println("  delete    Delete a collection (its positions stay in the database)")
@@ -372,6 +374,74 @@ func (cli *CLI) runCollectionFreeze(args []string) error {
 		return fmt.Errorf("failed to freeze the collection: %w", err)
 	}
 	fmt.Printf("Collection %d is a hand-made list again, frozen on %d position(s).\n", *id, n)
+	return nil
+}
+
+// runCollectionPile is the Pile gesture: with a position it puts it on the
+// Pile or takes it off; without one it says where the Pile stands.
+func (cli *CLI) runCollectionPile(args []string) error {
+	fs, dbPath := collectionFlagSet("pile", "Put a position on the Pile (the collection of positions to come back to), or take it off when it is there. A position given by XGID that is not in the library is written first, as a position brought in on its own. Without a position, print the Pile.",
+		"blunderdb collection pile --db database.db --position-id 42",
+		"blunderdb collection pile --db database.db --xgid \"XGID=-b----E-C---eE---c-e----B-:0:0:1:21:0:0:0:0:10\"",
+		"blunderdb collection pile --db database.db")
+	posID := fs.Int64("position-id", 0, "ID of a stored position")
+	xgid := fs.String("xgid", "", "XGID of the position (written to the library if absent)")
+	if err := cli.collectionOpen(fs, dbPath, args); err != nil {
+		return err
+	}
+	if *posID != 0 && *xgid != "" {
+		return fmt.Errorf("give --position-id or --xgid, not both")
+	}
+	if *posID == 0 && *xgid == "" {
+		return cli.showPile()
+	}
+	var pos Position
+	if *posID != 0 {
+		p, err := cli.db.LoadPosition(int(*posID))
+		if err != nil {
+			return fmt.Errorf("failed to load position %d: %w", *posID, err)
+		}
+		pos = *p
+	} else {
+		p, err := domain.DecodeXGID(*xgid)
+		if err != nil {
+			return fmt.Errorf("invalid XGID: %w", err)
+		}
+		pos = p
+	}
+	r, err := cli.db.TogglePile(&pos)
+	if err != nil {
+		return fmt.Errorf("failed to toggle the Pile: %w", err)
+	}
+	verb := "taken off"
+	if r.OnPile {
+		verb = "put on"
+	}
+	extra := ""
+	if r.Brought {
+		extra = " (written to the library first)"
+	}
+	fmt.Printf("Position %d %s the Pile (collection %d)%s.\n", r.PositionID, verb, r.CollectionID, extra)
+	return nil
+}
+
+// showPile prints the Pile's collection, or says there is none yet.
+func (cli *CLI) showPile() error {
+	colls, err := cli.db.GetAllCollections()
+	if err != nil {
+		return err
+	}
+	id, err := cli.db.PileCollectionID()
+	if err != nil {
+		return err
+	}
+	for _, c := range colls {
+		if c.ID == id {
+			fmt.Printf("Pile: collection %d %q, %d position(s).\n", c.ID, c.Name, c.PositionCount)
+			return nil
+		}
+	}
+	fmt.Println("No Pile yet: it is created the first time a position is put on it.")
 	return nil
 }
 

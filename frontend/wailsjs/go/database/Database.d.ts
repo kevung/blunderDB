@@ -296,6 +296,12 @@ export function GetLastVisitedMatch():Promise<domain.Match>;
 
 export function GetLesson(arg1:number):Promise<domain.Lesson>;
 
+export function IsPositionOnPile(arg1:number):Promise<boolean>;
+
+export function PileCollectionID():Promise<number>;
+
+export function TogglePile(arg1:domain.Position):Promise<storage.PileToggle>;
+
 export function GetLibrarySettings():Promise<storage.LibrarySettings>;
 
 export function GetLinkedAnkiCard(arg1:number,arg2:number):Promise<domain.AnkiReviewCard>;

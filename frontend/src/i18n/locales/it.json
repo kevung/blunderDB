@@ -215,7 +215,8 @@
         "updatePosition": "Aggiorna posizione",
         "tour": "Tour guidati",
         "importDatabaseTip": "Unisci un altro database a questo: le posizioni comuni non vengono duplicate, le loro analisi e i loro commenti sono combinati",
-        "training": "Allenamento"
+        "training": "Allenamento",
+        "pile": "Metti nella Pila / togli dalla Pila"
     },
     "tour": {
         "next": "Avanti",
@@ -981,7 +982,8 @@
         "situation": {
             "search": "Scacchiera di ricerca: disponi le pedine da trovare",
             "eval": "Scacchiera di valutazione"
-        }
+        },
+        "onPile": "Nella Pila"
     },
     "epc": {
         "avgRolls": "Tiri medi",
@@ -1518,7 +1520,11 @@
         "importIdentifierOnBoard": "Posizione messa sulla scacchiera dall'identificativo.",
         "importIdentifierFailed": "L'identificatore non ha potuto essere letto: {error}",
         "boardImageSaved": "Immagine salvata: {path}",
-        "boardImageSaveFailed": "L'immagine non ha potuto essere salvata: {err}"
+        "boardImageSaveFailed": "L'immagine non ha potuto essere salvata: {err}",
+        "pileOn": "Messa nella Pila",
+        "pileOff": "Tolta dalla Pila",
+        "pileBrought": "Messa nella Pila (scritta nella libreria)",
+        "pileError": "Pila: errore"
     },
     "stats": {
         "title": "Stats",

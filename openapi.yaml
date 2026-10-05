@@ -4403,6 +4403,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/versionResp"
+  /v1/pile.state:
+    post:
+      operationId: pile.state
+      tags: [pile]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/positionIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+  /v1/pile.toggle:
+    post:
+      operationId: pile.toggle
+      tags: [pile]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/positionReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_PileToggle"
   /v1/players.alias.list:
     post:
       operationId: players.alias.list
@@ -8599,6 +8633,9 @@ components:
     storage_MoveGrade:
       type: object
       description: "Opaque: see the Go type storage.MoveGrade (defined outside internal/server, not expanded here)."
+    storage_PileToggle:
+      type: object
+      description: "Opaque: see the Go type storage.PileToggle (defined outside internal/server, not expanded here)."
     storage_PlayerContrast:
       type: object
       description: "Opaque: see the Go type storage.PlayerContrast (defined outside internal/server, not expanded here)."

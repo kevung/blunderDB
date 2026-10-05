@@ -46,6 +46,7 @@ Position
    "Del", "Supprimer la position courante (confirmation demandée)."
    "RETOUR ARRIERE", "En mode édition ou Eval : réinitialiser le board, le cube, le score et les dés."
    "CTRL-G", "Afficher les métadonnées de la position."
+   "b", "Mettre la position affichée sur la Pile (collection « à revoir plus tard »), ou l'en retirer."
 
 .. _raccourcis_navigation:
 

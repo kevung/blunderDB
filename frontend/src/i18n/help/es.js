@@ -280,6 +280,7 @@ export default {
 <h3>Panel de Colecciones</h3>
 <p>En los paneles Colecciones, Torneos, Anki y Transcripción, el botón <strong>+</strong> de la cabecera, seguido del nombre de lo que crea (<strong>+ Nueva colección</strong>, <strong>+ Nuevo torneo</strong>, <strong>+ Nuevo mazo</strong>, <strong>+ Nueva transcripción</strong>), es el único gesto de creación: abre el campo de entrada, que <em>Esc</em> o <strong>Cancelar</strong> cierra en los paneles Colecciones y Torneos. En la lista de partidos, el icono ⌨ abre la transcripción del partido y el icono ✎ corrige sus metadatos.</p>
 <p>El panel <strong>Colecciones</strong> (<em>CTRL-B</em>) permite gestionar colecciones de posiciones. Las colecciones pueden crearse, renombrarse y eliminarse. Se les pueden añadir o quitar posiciones (tecla <em>Supr</em>, se pide confirmación). Haga doble clic en una colección para recorrer sus posiciones con las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. El comando <code>ss</code> busca entre las posiciones de la colección abierta; <em>Esc</em> vuelve después a la colección (véase Panel de Búsqueda). El orden de las colecciones y de las posiciones dentro de una colección puede cambiarse arrastrando y soltando. Pulse <em>CTRL-B</em> o ejecute el comando <code>collection</code> para mostrar u ocultar el panel.</p>
+<p>La <strong>Pila</strong> es la colección del gesto «para revisar más tarde»: la tecla <em>b</em> o el botón de marcapáginas de la barra de herramientas pone la posición mostrada en la Pila, y el mismo gesto la quita. Un marcapáginas en la esquina del tablero indica que la posición está en ella. El gesto vale dondequiera que se muestre una posición: revisión, búsqueda, Transcripción. La Pila es una colección ordinaria — se renombra, se reordena, se exporta, se vacía como cualquier otra; se crea en el primer uso y se vuelve a crear si se eliminó. Una posición que aún no está en la biblioteca (un borrador del tablero de búsqueda o de evaluación) se escribe en ella de inmediato, como posición aportada por sí sola, y luego se pone en la Pila. La línea de comandos hace el mismo gesto con <code>collection pile</code>.</p>
 <p>Una colección puede estar <strong>viva</strong>: su contenido ya no es una lista hecha a mano sino el resultado de una <strong>búsqueda</strong>, reevaluado cada vez que se abre. El botón ◇ en la cabecera de la colección la hace viva con la última búsqueda lanzada; ◈ indica que ya lo está, y el mismo botón le devuelve su lista. Nada se destruye al hacerla viva: las posiciones que contenía siguen ahí al volver atrás.</p>
 <p>El botón ❄, visible en una colección viva, la <strong>congela</strong>: las posiciones que la búsqueda selecciona en ese instante pasan a ser el contenido de una colección ordinaria, en el orden de la búsqueda, y la consulta se borra. Las posiciones que contenía antes de ser viva se sustituyen.</p>
 <p>Una colección viva cuya consulta lleva un token que esta versión ya no conoce <strong>se niega a abrirse</strong> y lo dice, en vez de devolver toda la base. Es el único fallo que un filtro guardado no debe tener: ensancharse en silencio.</p>
@@ -1052,6 +1053,10 @@ export default {
 <tr>
 <td>CTRL-G</td>
 <td>Mostrar los metadatos de la posición.</td>
+</tr>
+<tr>
+<td>b</td>
+<td>Poner la posición mostrada en la Pila (la colección «para revisar más tarde») o quitarla de ella.</td>
 </tr>
 </tbody>
 </table>

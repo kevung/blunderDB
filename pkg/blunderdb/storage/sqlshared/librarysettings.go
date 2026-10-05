@@ -2,6 +2,7 @@ package sqlshared
 
 import (
 	"context"
+	"strconv"
 	"strings"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -110,4 +111,57 @@ func (s *LibrarySettingsStore) Save(ctx context.Context, scope string, settings 
 func librarySettings(ctx context.Context, db Execer, scope string) (storage.LibrarySettings, error) {
 	store := &LibrarySettingsStore{DB: db}
 	return store.Load(ctx, scope)
+}
+
+// PileCollection reads the id of the Pile collection; 0 when none was named
+// or the row is unreadable (a comfort row, like the thresholds).
+func (s *LibrarySettingsStore) PileCollection(ctx context.Context, scope string) (int64, error) {
+	table, scoped := s.DB.LibrarySettingsTable()
+	query := `SELECT COALESCE(value,'') FROM ` + table + ` WHERE `
+	args := []any{}
+	if scoped {
+		query += s.DB.ScopeColumn() + ` = ? AND `
+		args = append(args, s.DB.ScopeArg(scope))
+	}
+	query += `key = ?`
+	args = append(args, storage.LibrarySettingPileKey)
+	rows, err := s.DB.Query(ctx, query, args...)
+	if err != nil {
+		return 0, errf(s.DB, "load pile collection", err)
+	}
+	defer rows.Close()
+	var id int64
+	if rows.Next() {
+		var v string
+		if err := rows.Scan(&v); err != nil {
+			return 0, errf(s.DB, "load pile collection", err)
+		}
+		if n, perr := strconv.ParseInt(v, 10, 64); perr == nil && n > 0 {
+			id = n
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return 0, errf(s.DB, "load pile collection", err)
+	}
+	return id, nil
+}
+
+// SetPileCollection records the id of the Pile collection.
+func (s *LibrarySettingsStore) SetPileCollection(ctx context.Context, scope string, collectionID int64) error {
+	table, scoped := s.DB.LibrarySettingsTable()
+	cols, conflict := []string{"key", "value"}, []string{"key"}
+	args := []any{}
+	if scoped {
+		cols = append([]string{s.DB.ScopeColumn()}, cols...)
+		conflict = append([]string{s.DB.ScopeColumn()}, conflict...)
+		args = append(args, s.DB.ScopeArg(scope))
+	}
+	args = append(args, storage.LibrarySettingPileKey, strconv.FormatInt(collectionID, 10))
+	upsert := `INSERT INTO ` + table + ` (` + strings.Join(cols, ", ") + `) VALUES (` +
+		strings.TrimSuffix(strings.Repeat("?,", len(cols)), ",") + `)
+		ON CONFLICT (` + strings.Join(conflict, ", ") + `) DO UPDATE SET value = EXCLUDED.value`
+	if _, err := s.DB.Exec(ctx, upsert, args...); err != nil {
+		return errf(s.DB, "save pile collection", err)
+	}
+	return nil
 }

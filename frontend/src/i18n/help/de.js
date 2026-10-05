@@ -280,6 +280,7 @@ export default {
 <h3>Sammlungen-Panel</h3>
 <p>In den Panels Sammlungen, Turniere, Anki und Transkription ist die Schaltfläche <strong>+</strong> in der Kopfzeile, gefolgt vom Namen dessen, was sie anlegt (<strong>+ Neue Sammlung</strong>, <strong>+ Neues Turnier</strong>, <strong>+ Neues Paket</strong>, <strong>+ Neue Transkription</strong>), die einzige Anlegegeste: Sie öffnet das Eingabefeld, das <em>Esc</em> oder <strong>Abbrechen</strong> in den Panels Sammlungen und Turniere schließt. In der Matchliste öffnet das Symbol ⌨ die Transkription des Matches und das Symbol ✎ korrigiert seine Metadaten.</p>
 <p>Das Fenster <strong>Sammlungen</strong> (<em>CTRL-B</em>) verwaltet Stellungssammlungen. Sammlungen können angelegt, umbenannt und gelöscht werden. Stellungen können hinzugefügt oder entfernt werden (Taste <em>Entf</em>, Bestätigung wird verlangt). Ein Doppelklick auf eine Sammlung durchblättert ihre Stellungen mit den Tasten <em>LINKS</em> und <em>RECHTS</em>. Der Befehl <code>ss</code> sucht unter den Stellungen der geöffneten Sammlung; <em>Esc</em> kehrt danach zur Sammlung zurück (siehe Such-Panel). Die Reihenfolge der Sammlungen und der Stellungen innerhalb einer Sammlung lässt sich per Ziehen und Ablegen ändern. <em>CTRL-B</em> drücken oder den Befehl <code>collection</code> ausführen, um das Fenster ein- oder auszublenden.</p>
+<p>Der <strong>Stapel</strong> ist die Sammlung der Geste „später wieder ansehen“: Die Taste <em>b</em> oder die Lesezeichen-Schaltfläche der Werkzeugleiste legt die angezeigte Position auf den Stapel, dieselbe Geste nimmt sie wieder herunter. Ein Lesezeichen in der Ecke des Bretts zeigt, dass die Position darauf liegt. Die Geste gilt überall, wo eine Position angezeigt wird: Durchsicht, Suche, Transkription. Der Stapel ist eine gewöhnliche Sammlung — umbenannt, umsortiert, exportiert, geleert wie jede andere; er wird bei der ersten Benutzung angelegt und neu angelegt, wenn er gelöscht wurde. Eine Position, die noch nicht in der Bibliothek ist (ein Entwurf des Such- oder Auswertungsbretts), wird sofort als einzeln eingebrachte Position hineingeschrieben und dann auf den Stapel gelegt. Die Befehlszeile führt dieselbe Geste mit <code>collection pile</code> aus.</p>
 <p>Eine Sammlung kann <strong>lebendig</strong> sein: Ihr Inhalt ist keine handgemachte Liste mehr, sondern das Ergebnis einer <strong>Suche</strong>, bei jedem Öffnen neu ausgewertet. Die Schaltfläche ◇ am Kopf der Sammlung macht sie mit der zuletzt ausgeführten Suche lebendig; ◈ sagt, dass sie es schon ist, und dieselbe Schaltfläche gibt ihr die Liste zurück. Nichts wird zerstört: Die Stellungen, die sie enthielt, sind beim Zurückgehen noch da.</p>
 <p>Die Schaltfläche ❄, sichtbar bei einer lebendigen Sammlung, <strong>friert</strong> sie <strong>ein</strong>: Die Positionen, die die Suche in diesem Moment auswählt, werden in der Reihenfolge der Suche der Inhalt einer gewöhnlichen Sammlung, und die Abfrage wird gelöscht. Die Positionen, die sie vor dem Lebendigwerden enthielt, werden ersetzt.</p>
 <p>Eine lebendige Sammlung, deren Abfrage ein Token trägt, das diese Version nicht mehr kennt, <strong>weigert sich zu öffnen</strong> und sagt es, statt die ganze Datenbank zurückzugeben. Das ist der eine Fehler, den ein gespeicherter Filter nicht haben darf: sich im Stillen zu weiten.</p>
@@ -1052,6 +1053,10 @@ export default {
 <tr>
 <td>STRG-G</td>
 <td>Die Metadaten der Position anzeigen.</td>
+</tr>
+<tr>
+<td>b</td>
+<td>Die angezeigte Position auf den Stapel legen (die Sammlung „später wieder ansehen“) oder wieder herunternehmen.</td>
 </tr>
 </tbody>
 </table>

@@ -215,7 +215,8 @@
         "updatePosition": "Position aktualisieren",
         "tour": "Geführte Touren",
         "importDatabaseTip": "Eine andere Datenbank in diese zusammenführen: gemeinsame Stellungen werden nicht dupliziert, ihre Analysen und Kommentare werden vereint",
-        "training": "Training"
+        "training": "Training",
+        "pile": "Auf den Stapel legen / vom Stapel nehmen"
     },
     "tour": {
         "next": "Weiter",
@@ -981,7 +982,8 @@
         "situation": {
             "search": "Suchbrett: Steine so setzen, wie sie gefunden werden sollen",
             "eval": "Auswertungsbrett"
-        }
+        },
+        "onPile": "Auf dem Stapel"
     },
     "epc": {
         "avgRolls": "Ø Würfe",
@@ -1518,7 +1520,11 @@
         "importIdentifierOnBoard": "Position aus der Kennung auf das Brett gesetzt.",
         "importIdentifierFailed": "Die Kennung konnte nicht gelesen werden: {error}",
         "boardImageSaved": "Bild gespeichert: {path}",
-        "boardImageSaveFailed": "Das Bild konnte nicht gespeichert werden: {err}"
+        "boardImageSaveFailed": "Das Bild konnte nicht gespeichert werden: {err}",
+        "pileOn": "Auf den Stapel gelegt",
+        "pileOff": "Vom Stapel genommen",
+        "pileBrought": "Auf den Stapel gelegt (in die Bibliothek geschrieben)",
+        "pileError": "Stapel: Fehler"
     },
     "stats": {
         "title": "Stats",

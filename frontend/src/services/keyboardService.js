@@ -6,6 +6,7 @@ import { ankiViewModeStore, ankiReviewActionStore, showAnkiAnswer } from '../sto
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { isLetter, isShiftLetter, isBareLetter } from '../utils/keys.js';
+import { togglePile } from './pileService.js';
 import { directionOwnsKey, directionTabKey, directionLeavesToPage, directionSearchKey } from './directionKeys.js';
 import { directionFullscreenKey, toggleDirectionFullscreen } from './directionFullscreen.js';
 import { trainingHoldsBoardStore } from '../stores/trainingTabStore.js';
@@ -382,6 +383,8 @@ export function handleKeyDown(event) {
             event.preventDefault();
             previousPosition();
         }
+    } else if (isBareLetter(event, 'b')) {
+        togglePile();
     } else if (isBareLetter(event, 'k')) {
         if (!showComment && !get(selectedMoveStore)) previousPosition();
     } else if (!event.ctrlKey && event.key === 'ArrowRight') {

@@ -1493,3 +1493,15 @@ export function WriteDirectionUpcomingSheet(arg1, arg2) {
 export function WriteRencontrePage(arg1) {
   return window['go']['database']['Database']['WriteRencontrePage'](arg1);
 }
+
+export function IsPositionOnPile(arg1) {
+  return window['go']['database']['Database']['IsPositionOnPile'](arg1);
+}
+
+export function PileCollectionID() {
+  return window['go']['database']['Database']['PileCollectionID']();
+}
+
+export function TogglePile(arg1) {
+  return window['go']['database']['Database']['TogglePile'](arg1);
+}

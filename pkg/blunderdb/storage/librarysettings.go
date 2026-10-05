@@ -47,6 +47,10 @@ const (
 const (
 	LibrarySettingErrorKey   = "error_threshold_mp"
 	LibrarySettingBlunderKey = "blunder_threshold_mp"
+
+	// LibrarySettingPileKey holds the id of the Pile collection. It is read
+	// and written apart from the thresholds (see PileCollection).
+	LibrarySettingPileKey = "pile_collection_id"
 )
 
 // DefaultLibrarySettings is what a library that has never been configured
@@ -123,4 +127,13 @@ type LibrarySettingsStore interface {
 	// Save records the scope's settings. It rejects a pair that fails
 	// Validate rather than storing something no set could match.
 	Save(ctx context.Context, scope string, settings LibrarySettings) error
+
+	// PileCollection returns the id of the Collection the Pile gesture aims
+	// at, or 0 when the library has never named one. It is a row of its own,
+	// outside LibrarySettings: the GUI saves the thresholds as a pair and
+	// must not be able to unname the Pile by doing so.
+	PileCollection(ctx context.Context, scope string) (int64, error)
+
+	// SetPileCollection names the Collection the Pile gesture aims at.
+	SetPileCollection(ctx context.Context, scope string, collectionID int64) error
 }

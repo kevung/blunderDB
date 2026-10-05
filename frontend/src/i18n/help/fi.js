@@ -280,6 +280,7 @@ export default {
 <h3>Kokoelmapaneeli</h3>
 <p>Kokoelmat-, Turnaukset-, Anki- ja Litterointi-paneeleissa otsikon <strong>+</strong>-painike, jota seuraa luotavan nimi (<strong>+ Uusi kokoelma</strong>, <strong>+ Uusi turnaus</strong>, <strong>+ Uusi pakka</strong>, <strong>+ Uusi litterointi</strong>), on ainoa luontitapa: se avaa syöttökentän, jonka <em>Esc</em> tai <strong>Peruuta</strong> sulkee Kokoelmat- ja Turnaukset-paneeleissa. Otteluluettelossa ⌨-kuvake avaa ottelun litteroinnin ja ✎-kuvake korjaa sen metatiedot.</p>
 <p><strong>Kokoelmat</strong>-paneeli (<em>CTRL-B</em>) hallinnoi asemakokoelmia. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Niihin voi lisätä asemia tai poistaa niitä (<em>Del</em>-näppäin, vahvistus pyydetään). Kaksoisnapsauta kokoelmaa selataksesi sen asemia <em>VASEN</em>- ja <em>OIKEA</em>-näppäimillä. Komento <code>ss</code> hakee avoimen kokoelman asemista; <em>Esc</em> palaa sen jälkeen kokoelmaan (katso Hakupaneeli). Kokoelmien ja kokoelman sisäisten asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Paina <em>CTRL-B</em> tai suorita komento <code>collection</code> näyttääksesi tai piilottaaksesi paneelin.</p>
+<p><strong>Pino</strong> on ”palaa tähän myöhemmin” -eleen kokoelma: <em>b</em>-näppäin tai työkalupalkin kirjanmerkkipainike lisää näytetyn aseman Pinoon, ja sama ele poistaa sen sieltä. Laudan kulmassa oleva kirjanmerkki kertoo, että asema on Pinossa. Ele toimii kaikkialla, missä asema näytetään: läpikäynnissä, haussa ja Litteroinnissa. Pino on tavallinen kokoelma — se nimetään uudelleen, järjestetään uudelleen, viedään ja tyhjennetään kuten muutkin; se luodaan ensimmäisellä käyttökerralla ja luodaan uudelleen, jos se poistettiin. Asema, jota ei vielä ole kirjastossa (haku- tai arviointilaudan luonnos), kirjoitetaan siihen heti yksin tuotuna asemana ja lisätään sitten Pinoon. Komentorivi tekee saman eleen komennolla <code>collection pile</code>.</p>
 <p>Kokoelma voi olla <strong>elävä</strong>: sen sisältö ei ole enää käsin tehty lista vaan <strong>haun</strong> tulos, joka lasketaan uudelleen joka avauksella. Kokoelman otsikon ◇-painike tekee siitä elävän viimeisimmällä haulla; ◈ kertoo sen jo olevan, ja sama painike palauttaa listan. Mitään ei tuhota: sen sisältämät asemat ovat yhä tallella, kun palaat.</p>
 <p>Elävässä kokoelmassa näkyvä painike ❄ <strong>jäädyttää</strong> sen: haun sillä hetkellä valitsemista asemista tulee tavallisen kokoelman sisältö haun järjestyksessä, ja kysely tyhjennetään. Asemat, jotka kokoelmassa oli ennen sen muuttumista eläväksi, korvataan.</p>
 <p>Elävä kokoelma, jonka kysely sisältää tunnuksen jota tämä versio ei enää tunne, <strong>kieltäytyy avautumasta</strong> ja sanoo sen sen sijaan että palauttaisi koko tietokannan. Se on ainoa vika, jota tallennetulla suodattimella ei saa olla: laajeta hiljaisuudessa.</p>
@@ -1052,6 +1053,10 @@ export default {
 <tr>
 <td>CTRL-G</td>
 <td>Näytä aseman metatiedot.</td>
+</tr>
+<tr>
+<td>b</td>
+<td>Lisää näytetty asema Pinoon (kokoelma ”palaa tähän myöhemmin”) tai poista se sieltä.</td>
 </tr>
 </tbody>
 </table>

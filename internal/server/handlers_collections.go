@@ -188,6 +188,14 @@ func (s *Server) collectionRoutes() []route {
 		{http.MethodPost, "/v1/collections.collectionsOf", rpcStream(func(ctx context.Context, scope string, req positionIDReq) iterColls {
 			return cs().CollectionsOf(ctx, scope, req.PositionID)
 		})},
+		// La Pile : le geste « à revoir plus tard ». Une position sans ligne
+		// stockée (brouillon) est d'abord écrite comme position apportée seule.
+		{http.MethodPost, "/v1/pile.toggle", rpc(func(ctx context.Context, scope string, req positionReq) (storage.PileToggle, error) {
+			return storage.TogglePile(ctx, s.opts.Storage, scope, req.Position)
+		})},
+		{http.MethodPost, "/v1/pile.state", rpc(func(ctx context.Context, scope string, req positionIDReq) (bool, error) {
+			return storage.PositionOnPile(ctx, s.opts.Storage, scope, req.PositionID)
+		})},
 		{http.MethodPost, "/v1/collections.positionIndexMap", rpc(func(ctx context.Context, scope string, _ struct{}) (map[int64]int, error) {
 			return cs().PositionIndexMap(ctx, scope)
 		})},

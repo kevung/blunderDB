@@ -27,6 +27,7 @@
     import { transcriptionCubeRequestStore, transcriptionBoardSwapStore } from '../stores/transcriptionStore.js';
     import { resetBoardPlay } from '../services/transcriptionPlay.js';
     import ContextMenu from './ContextMenu.svelte';
+    import { onPileStore, refreshPileState } from '../services/pileService.js';
     import { registerKeys } from '../services/keyDispatch.js';
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
@@ -482,17 +483,39 @@
 
         two.update();
     }
+
+    // The Pile marker follows the position on the board.
+    $effect(() => {
+        void $positionStore.id;
+        refreshPileState();
+    });
 </script>
 
 <div class="canvas-container">
     <div id="backgammon-board" class="full-size-board" role="img" aria-label={boardDescription}></div>
+    {#if $onPileStore}
+        <span class="pile-badge" title={$t('board.onPile')} aria-label={$t('board.onPile')}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20" aria-hidden="true">
+                <path d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+            </svg>
+        </span>
+    {/if}
     {#if boardMenu}
         <ContextMenu x={boardMenu.x} y={boardMenu.y} items={boardMenu.items} onClose={() => (boardMenu = null)} />
     {/if}
 </div>
 
 <style>
+    .pile-badge {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        color: var(--color-primary);
+        pointer-events: none;
+    }
+
     .canvas-container {
+        position: relative;
         width: 100%;
         height: 100%;
         display: flex;

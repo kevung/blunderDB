@@ -1213,6 +1213,17 @@ positions au sein des collections peut être modifié par glisser-déposer.
 Appuyer sur *CTRL-B* ou exécuter la commande ``collection`` pour afficher ou
 masquer le panneau.
 
+La **Pile** est la collection du geste « à revoir plus tard » : la touche *b*
+ou le bouton marque-page de la barre d'outils met la position affichée sur la
+Pile, et le même geste l'en retire. Un marque-page au coin du plateau dit que
+la position y est. Le geste vaut partout où une position est affichée : revue,
+recherche, Transcription. La Pile est une collection ordinaire — renommée,
+réordonnée, exportée, vidée comme une autre ; elle est créée au premier usage,
+et recréée si elle a été supprimée. Une position qui n'est pas encore dans la
+bibliothèque (un brouillon du plateau de recherche ou d'évaluation) y est
+écrite sur-le-champ, comme une position apportée seule, puis mise sur la Pile.
+La ligne de commande fait le même geste par ``collection pile``.
+
 Une collection peut être **vivante** : sa composition n'est plus une liste
 faite à la main mais le résultat d'une **recherche**, réévalué chaque fois
 qu'on l'ouvre. Le bouton ◇ en tête de la collection la rend vivante avec la
