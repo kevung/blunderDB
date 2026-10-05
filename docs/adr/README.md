@@ -51,7 +51,7 @@ that come out of them.
 | [0034](0034-the-in-app-help-is-generated-from-the-documentation.md) | The in-app help is generated from the documentation | `cmd/help-gen`: generated in-app help |
 | [0035](0035-the-game-phase-is-derived-never-edited-and-recomputable.md) | The game phase is derived, never edited, and recomputable | `gamephase.go`, `position.game_phase` |
 | [0036](0036-the-trash-is-a-snapshot-table-not-a-deleted-at-column.md) | The trash is a snapshot table, not a deleted_at column | `trash` table, restore, purge |
-| [0037](0037-blunderdb-does-not-play-backgammon.md) | blunderDB does not play backgammon | product scope: no play mode |
+| [0037](0037-blunderdb-does-not-play-backgammon.md) | blunderDB does not play backgammon — **superseded by ADR-0072** | — |
 | [0038](0038-a-named-theme-carries-the-board-palette-and-the-user-still-has-the-last-word.md) | A named theme carries the board palette, and the user still has the last word | named themes, board palette |
 | [0039](0039-the-web-front-is-read-mostly-and-its-perimeter-is-locked.md) | Le front web est en consultation, son périmètre est verrouillé, et il est éteint par défaut | web front `internal/server/webui` |
 | [0040](0040-training-is-a-tab-of-exercises-it-drills-what-is-calculated-anki-keeps-what-is-retained.md) | Training is a tab of exercises: it drills what is calculated, Anki keeps what is retained | Training tab, `training_*` log |
@@ -86,3 +86,5 @@ that come out of them.
 | [0069](0069-la-progression-d-une-lecon-ne-s-ecrit-que-sur-le-geste-etape-faite.md) | La progression d'une Leçon ne s'écrit que sur le geste « étape faite » | `lesson_progress`, `SetStepDone`, `DoneSteps` |
 | [0070](0070-le-blob-d-analyse-est-un-binaire-versionne-qui-rend-chaque-champ-a-l-identique.md) | Le blob d'analyse est un binaire versionné qui rend chaque champ à l'identique | `analysisbin.go`, en-tête `0xBA`+version, `analysis_bin_dict.bin`, `ReencodeAnalyses`, `reencode` |
 | [0071](0071-les-dates-et-le-plateau-se-stockent-en-entiers.md) | Les dates et le plateau se stockent en entiers | secondes Unix UTC, `EncodeBoardState`, `met_id`, `comment_author`, pas d'index engine/depth |
+| [0072](0072-un-duel-est-un-match-joue-ici-sous-l-arbitrage-de-blunderdb.md) | Un Duel est un match joué ici, sous l'arbitrage de blunderDB | le Duel, ses deux Côtés, le Bot, l'Arbitre ; le noyau de règles partagé avec la Transcription |
+| [0073](0073-le-temps-d-un-duel-une-cadence-tenue-par-l-arbitre-une-duree-par-decision.md) | Le temps d'un Duel : une Cadence tenue par l'Arbitre, une durée par décision | la Cadence, le temps écoulé, la durée de décision sur le coup, le filtre de recherche sur la durée |
