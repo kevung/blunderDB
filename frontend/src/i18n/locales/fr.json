@@ -2941,6 +2941,7 @@
         "delayLeft": "Délai {s} s",
         "gestures": "Gestes du Duel",
         "botPlaying": "Le Bot joue…",
+        "fingerprintTitle": "Empreinte du germe : {fingerprint} — le germe révélé à la fin du Match doit s'y hacher",
         "double": "Doubler",
         "awaitAnswer": "Le Bot double : prendre ou passer ?",
         "take": "Prendre",

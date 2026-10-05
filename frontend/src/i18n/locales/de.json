@@ -2941,6 +2941,7 @@
         "delayLeft": "Verzögerung {s} s",
         "gestures": "Duell-Aktionen",
         "botPlaying": "Der Bot spielt…",
+        "fingerprintTitle": "Fingerabdruck des Seeds: {fingerprint} — der am Ende des Matches offengelegte Seed muss darauf abbilden",
         "double": "Doppeln",
         "awaitAnswer": "Der Bot doppelt: annehmen oder aufgeben?",
         "take": "Annehmen",

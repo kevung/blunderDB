@@ -2941,6 +2941,7 @@
         "delayLeft": "Ritardo {s} s",
         "gestures": "Azioni del duello",
         "botPlaying": "Il Bot gioca…",
+        "fingerprintTitle": "Impronta del seme: {fingerprint} — il seme rivelato alla fine del Match deve produrla come hash",
         "double": "Raddoppia",
         "awaitAnswer": "Il Bot raddoppia: accettare o rifiutare?",
         "take": "Accetta",

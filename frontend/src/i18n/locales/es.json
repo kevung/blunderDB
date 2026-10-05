@@ -2941,6 +2941,7 @@
         "delayLeft": "Demora {s} s",
         "gestures": "Gestos del duelo",
         "botPlaying": "El Bot juega…",
+        "fingerprintTitle": "Huella de la semilla: {fingerprint} — la semilla revelada al final del Match debe corresponder a ella",
         "double": "Doblar",
         "awaitAnswer": "El Bot dobla: ¿aceptar o rechazar?",
         "take": "Aceptar",

@@ -2941,6 +2941,7 @@
         "delayLeft": "遅延 {s} 秒",
         "gestures": "デュエルの操作",
         "botPlaying": "ボットが打っています…",
+        "fingerprintTitle": "シードのフィンガープリント: {fingerprint} — マッチ終了時に公開されるシードは、これにハッシュされなければなりません",
         "double": "ダブル",
         "awaitAnswer": "ボットがダブル：テイクかパスか？",
         "take": "テイク",
