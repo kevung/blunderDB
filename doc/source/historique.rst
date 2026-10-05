@@ -47,7 +47,7 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 - Dans l'interface : un écran d'accueil, quatre thèmes nommés, l'image du plateau en SVG, une aide où l'on cherche, une suppression annulable, des seuils d'erreur réglables par bibliothèque, et une bibliothèque, une recherche et une liste de matchs parcourues par fenêtres, sans tout charger.
 - **Un assistant par MCP** : l'application et le serveur offrent leurs outils à un assistant (Model Context Protocol). Côté serveur : une file d'analyse partagée entre tenants, des quotas (dont un quota d'octets stockés), le flux d'événements ``/v1/events``, une page web de consultation, le partage de paquets Anki et de collections entre tenants, et un client Python engendré.
 - **Schéma 2.31.0** : dates en entiers, position et analyse en binaire, libellés d'action codés — une base plus légère. La migration depuis 2.18.0 est automatique à l'ouverture et sans retour possible (:ref:`annexe_db_migration`).
-- Corrections notables : un ``.mat`` tronqué ou un ``.txt`` BGBlitz sans position est refusé au lieu d'entrer à moitié, les marques XG d'un doublon sont gardées, un verdict gammonNet garde les coups joués, et sous PostgreSQL un refus d'écriture ne révèle plus ce qu'un autre tenant détient.
+- Corrections notables : un ``.mat`` tronqué ou un ``.txt`` BGBlitz sans position est refusé au lieu d'entrer à moitié, les marques XG d'un doublon sont gardées, un verdict gammonNet garde les coups joués, sous PostgreSQL un refus d'écriture ne révèle plus ce qu'un autre tenant détient, et le bouton de la page murale de la Direction l'ouvre dans le navigateur du système, un échec étant signalé.
 - Voir :ref:`manuel`, :ref:`cli` et :ref:`headless`.
 
 0.36.0 (2026-09-05)
