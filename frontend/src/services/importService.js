@@ -68,7 +68,19 @@ import {
 import { setStatusBarMessage } from './databaseService.js';
 import { logger } from '../utils/logger.js';
 
+/** @typedef {import('../i18n').StatusMessage} StatusMessage */
+/** @typedef {import('../../wailsjs/go/models').domain.Position} Position */
+/** @typedef {import('../stores/positionList.js').Position} PositionLike */
+/** @typedef {import('../../wailsjs/go/models').domain.PositionAnalysis} PositionAnalysis */
+/** @typedef {import('../../wailsjs/go/models').domain.ImportReport} ImportReport */
+/**
+ * The analysis a text parse yields: the wire shape of PositionAnalysis, with
+ * checkerAnalysis first as a plain move list and the comment alongside.
+ * @typedef {{ xgid: string, analysisType: string, analysisEngineVersion: string, checkerAnalysis: any, doublingCubeAnalysis: Partial<import('../../wailsjs/go/models').domain.DoublingCubeAnalysis>, comment?: string, positionId?: number, creationDate?: string, lastModifiedDate?: string }} ParsedAnalysis
+ */
+
 // Pending import path (module-level)
+/** @type {string | null} */
 let pendingImportPath = null;
 let fileImportCancelled = false;
 
@@ -234,6 +246,7 @@ export function handleImportClose() {
     statusBarModeStore.set('NORMAL');
 }
 
+/** @param {string} importFilePath */
 export async function importDatabaseByPath(importFilePath) {
     if (!get(databasePathStore)) {
         setStatusBarMessage(tMsg('status.noDbOpenedFirst'));
@@ -274,6 +287,7 @@ export async function importDatabaseByPath(importFilePath) {
 // Show a freshly imported position with its analysis tab open (match imports
 // open the match list instead). Must run after every reload, since
 // loadAllPositions() selects the matches tab.
+/** @param {number} positionID */
 export async function showImportedPosition(positionID) {
     if (positionID) {
         let index = await positionsStore.findIndex(positionID);
@@ -303,7 +317,14 @@ export async function showImportedPosition(positionID) {
 // `mergeIntoExisting` (default true) merges analysis and comment into a stored
 // position. A scratch board passes false: its empty analysis would blank the
 // stored players and engine. Provenance is recorded either way.
+/**
+ * @param {PositionLike} positionData
+ * @param {Partial<ParsedAnalysis>} parsedAnalysis
+ * @param {StatusMessage | string | ((outcome: { id: number, existed: boolean }) => StatusMessage | string)} successMessage
+ * @param {{ reload?: boolean, mergeIntoExisting?: boolean }} [options]
+ */
 export async function savePositionAndAnalysis(positionData, parsedAnalysis, successMessage, { reload = true, mergeIntoExisting = true } = {}) {
+    /** @param {number} id @param {boolean} existed @param {StatusMessage | string} fallback */
     const announce = (id, existed, fallback) => (typeof successMessage === 'function' ? successMessage({ id, existed }) : fallback);
 
     if (Array.isArray(parsedAnalysis.checkerAnalysis)) {
@@ -318,7 +339,7 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
     // position (ADR-0002).
     let saveResult;
     try {
-        saveResult = await SaveIndividualPosition(positionData);
+        saveResult = await SaveIndividualPosition(/** @type {Position} */ (/** @type {unknown} */ (positionData)));
     } catch (error) {
         logger.error('Error saving position:', error);
         setStatusBarMessage(tMsg('status.errorSavingPosition'));
@@ -336,7 +357,7 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
         logger.log('Position already exists with ID:', positionID);
         try {
             parsedAnalysis.positionId = positionID;
-            await SaveAnalysis(positionID, parsedAnalysis);
+            await SaveAnalysis(positionID, /** @type {PositionAnalysis} */ (/** @type {unknown} */ (parsedAnalysis)));
 
             let existingComment = await LoadComment(positionID);
             const newComment = parsedAnalysis.comment || '';
@@ -375,12 +396,12 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
 
         positionData.id = positionID;
         parsedAnalysis.positionId = positionID;
-        await SaveAnalysis(positionID, parsedAnalysis);
-        await SaveComment(positionID, parsedAnalysis.comment);
+        await SaveAnalysis(positionID, /** @type {PositionAnalysis} */ (/** @type {unknown} */ (parsedAnalysis)));
+        await SaveComment(positionID, parsedAnalysis.comment ?? '');
         logger.log('Analysis and comment saved for position ID:', positionID);
 
         if (reload) await reloadPositions();
-        setStatusBarMessage(announce(positionID, false, successMessage));
+        setStatusBarMessage(announce(positionID, false, /** @type {StatusMessage | string} */ (successMessage)));
         return positionID;
     } catch (error) {
         logger.error('Error saving position, analysis, and comment:', error);
@@ -448,6 +469,7 @@ export async function importFolder() {
 }
 
 // Returns { type: 'position' | 'match', id } on success, null on failure.
+/** @param {string} filePath */
 export async function importSingleFile(filePath) {
     // A single dropped file gets the end-of-import report only when it
     // produced a MATCH; a lone position just lands on the board.
@@ -472,12 +494,14 @@ export async function importSingleFile(filePath) {
 
 // extensionOf is the import format a batch records for a single file: its
 // extension without the dot, "" when it has none.
+/** @param {string} filePath */
 function extensionOf(filePath) {
-    const base = String(filePath).split('/').pop().split('\\').pop();
+    const base = String(filePath).split('/').pop()?.split('\\').pop() ?? '';
     const dot = base.lastIndexOf('.');
     return dot > 0 ? base.slice(dot + 1).toLowerCase() : '';
 }
 
+/** @param {string} filePath */
 async function importSingleFileCore(filePath) {
     const lowerPath = filePath.toLowerCase();
     const isXGFile = lowerPath.endsWith('.xg');
@@ -592,6 +616,7 @@ async function importSingleFileCore(filePath) {
     return null;
 }
 
+/** @param {string} filePath */
 async function importTxtFile(filePath) {
     const response = await ReadFileContent(filePath);
     if (response.error) {
@@ -692,6 +717,7 @@ async function importTxtFile(filePath) {
     return null;
 }
 
+/** @param {string} filePath @param {{ quiet?: boolean }} [options] */
 async function importSingleFileBatch(filePath, { quiet = false } = {}) {
     const lowerPath = filePath.toLowerCase();
     const isXGFile = lowerPath.endsWith('.xg');
@@ -723,6 +749,7 @@ async function importSingleFileBatch(filePath, { quiet = false } = {}) {
     throw new Error('Unsupported file type');
 }
 
+/** @param {string} filePath @param {{ quiet?: boolean }} [options] */
 async function importTxtFileBatch(filePath, { quiet = false } = {}) {
     const response = await ReadFileContent(filePath);
     if (response.error) throw new Error(response.error);
@@ -752,6 +779,7 @@ async function importTxtFileBatch(filePath, { quiet = false } = {}) {
 
 // Returns { type: 'position', id } when only positions were imported (so the
 // caller can show the last one), null when the batch contained any match.
+/** @param {string[]} files */
 export async function importMultipleFiles(files) {
     try {
         return await importMultipleFilesCore(files);
@@ -780,6 +808,7 @@ export async function importWatchedFiles(files) {
 // beginImportBatch opens the batch the end-of-import report will be about,
 // returning 0 when one cannot be opened. Never fatal: the report is a
 // convenience, and losing it must not cost the user the import.
+/** @param {string} source @param {string} format */
 async function beginImportBatch(source, format) {
     try {
         return await BeginImportBatch(source, format);
@@ -792,6 +821,7 @@ async function beginImportBatch(source, format) {
 // finishImportBatch closes the batch and publishes its report, or clears the
 // report when there is none to publish. Failures are swallowed for the same
 // reason as above.
+/** @param {number} batchID */
 async function finishImportBatch(batchID) {
     if (!batchID) {
         fileImportReportStore.set(null);
@@ -799,7 +829,7 @@ async function finishImportBatch(batchID) {
         return;
     }
     try {
-        await FinishImportBatch(batchID, {});
+        await FinishImportBatch(batchID, /** @type {ImportReport} */ ({}));
         fileImportReportStore.set(await ImportReport(batchID));
         fileImportJournalStore.set(latestJournalEntries(await ImportJournal(batchID)));
     } catch (error) {
@@ -814,6 +844,7 @@ const PIPELINE_EXTENSIONS = ['.xg', '.xgp', '.bgf', '.ogxm', '.sgf', '.mat'];
 
 // appendErrors adds to the list in place: copying it at every failure is
 // quadratic over a folder of thousands of broken files.
+/** @param {any[]} list @param {any[]} more */
 function appendErrors(list, more) {
     for (const e of more) list.push(e);
     return list;
@@ -821,6 +852,7 @@ function appendErrors(list, more) {
 
 // importThroughPipeline sends the files in one call; the backend reports each
 // decided file by event, in file order, which drives the progress.
+/** @param {string[]} paths @param {number} remaining */
 async function importThroughPipeline(paths, remaining) {
     const offProgress = EventsOn('import-files:progress', (p) => {
         fileImportProgressStore.set(p);
@@ -883,10 +915,12 @@ export async function pickFilesToResume() {
 // resumeImportBatch continues a batch an earlier run left unfinished: the
 // files its journal already decided (same path, size and modification time,
 // or same content) are not read again.
+/** @param {number} batchID @param {string[]} files */
 export async function resumeImportBatch(batchID, files) {
     return importMultipleFilesCore(files, { resumeBatchID: batchID });
 }
 
+/** @param {string[]} files @param {{ quiet?: boolean, resumeBatchID?: number }} [options] */
 async function importMultipleFilesCore(files, { quiet = false, resumeBatchID = 0 } = {}) {
     fileImportCancelled = false;
     fileImportTotalFilesStore.set(files.length);
@@ -915,6 +949,7 @@ async function importMultipleFilesCore(files, { quiet = false, resumeBatchID = 0
     if (!batchID) batchID = await beginImportBatch(files.length === 1 ? files[0] : `${files.length} files`, 'mixed');
 
     let hadMatches = false;
+    /** @type {number | null} */
     let lastPositionID = null;
 
     // Every file the backend can read alone goes through its parallel
@@ -942,7 +977,7 @@ async function importMultipleFilesCore(files, { quiet = false, resumeBatchID = 0
             if (result && result.type === 'position' && result.id) lastPositionID = result.id;
         } catch (error) {
             const errorStr = String(error);
-            if (error?.duplicate === true) {
+            if (/** @type {{ duplicate?: boolean } | null} */ (error)?.duplicate === true) {
                 fileImportResultsStore.update((r) => ({ ...r, skipped: r.skipped + 1 }));
             } else {
                 fileImportResultsStore.update((r) => {
@@ -1141,6 +1176,7 @@ async function pastePositionToBoard() {
 
 // Parses text when only the board is wanted. If the backend refuses the
 // analysis block (unknown XG language), the bare XGID line is parsed instead.
+/** @param {string} text */
 async function parsePositionOnly(text) {
     try {
         return await parsePositionText(text);
@@ -1152,6 +1188,7 @@ async function parsePositionOnly(text) {
     }
 }
 
+/** @param {Position} posData */
 function applyPositionToBoard(posData) {
     positionStore.update((pos) => {
         pos.board.points = posData.board.points.map((p) => ({ checkers: p.checkers, color: p.color }));
@@ -1170,17 +1207,22 @@ function applyPositionToBoard(posData) {
 
 // ── Drag & Drop ────────────────────────────────────────────────
 
+/** @param {string[]} paths */
 export async function classifyDroppedFiles(paths) {
+    /** @type {string[]} */
     const dbFiles = [];
+    /** @type {string[]} */
     const importFiles = [];
+    /** @type {string[]} */
     const folders = [];
+    /** @type {string[]} */
     const unsupported = [];
     for (const p of paths) {
         const isDir = await IsDirectory(p);
         if (isDir) {
             folders.push(p);
         } else {
-            const ext = p.toLowerCase().split('.').pop();
+            const ext = p.toLowerCase().split('.').pop() ?? '';
             if (ext === 'db') {
                 dbFiles.push(p);
             } else if (['txt', 'xg', 'xgp', 'sgf', 'mat', 'bgf', 'ogxm'].includes(ext)) {
@@ -1193,12 +1235,13 @@ export async function classifyDroppedFiles(paths) {
     return { dbFiles, importFiles, folders, unsupported };
 }
 
+/** @param {string} dbPath */
 export async function handleDbFileDrop(dbPath) {
     const { openDatabaseByPath } = await import('./databaseService.js');
     if (!get(databasePathStore)) {
         await openDatabaseByPath(dbPath);
     } else {
-        const filename = dbPath.split('/').pop().split('\\').pop();
+        const filename = dbPath.split('/').pop()?.split('\\').pop() ?? '';
         try {
             const answer = await chooseAction(
                 translate('status.droppedDbMessage', { filename }),
@@ -1220,6 +1263,7 @@ export async function handleDbFileDrop(dbPath) {
     }
 }
 
+/** @param {number} x @param {number} y @param {string[]} paths */
 export async function handleFileDrop(x, y, paths) {
     logger.log('Files dropped:', paths);
 
@@ -1275,9 +1319,13 @@ export async function handleFileDrop(x, y, paths) {
 // GUI, CLI and server (testdata/parse_corpus.json). This reshapes the result
 // into the { positionData, parsedAnalysis } shape callers consume
 // (checkerAnalysis as an array, doublingCubeAnalysis as an object).
+/**
+ * @param {string} content
+ * @returns {Promise<{ positionData: Position, parsedAnalysis: ParsedAnalysis }>}
+ */
 export async function parsePositionText(content) {
     const result = await ParsePositionText(content);
-    const a = result.analysis || {};
+    const a = /** @type {Partial<PositionAnalysis>} */ (result.analysis || {});
     const moves = a.checkerAnalysis && Array.isArray(a.checkerAnalysis.moves) ? a.checkerAnalysis.moves : [];
     return {
         positionData: result.position,
@@ -1302,12 +1350,14 @@ export async function resumeInterruptedImport() {
 }
 
 // A journal line that gave a match opens it in the matches panel.
+/** @param {number} matchID */
 export function openJournalMatch(matchID) {
     showFileImportModalStore.set(false);
     fileImportModeStore.set('idle');
     openMatchInPanel(matchID);
 }
 
+/** @param {number} positionID */
 export async function openImportedPosition(positionID) {
     showFileImportModalStore.set(false);
     fileImportModeStore.set('idle');

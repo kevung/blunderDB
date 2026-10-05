@@ -21,17 +21,19 @@ export const fileImportModeStore = writable('idle'); // 'idle', 'importing', 'co
 export const fileImportTotalFilesStore = writable(0);
 export const fileImportCurrentIndexStore = writable(0);
 export const fileImportCurrentFileStore = writable('');
-export const fileImportResultsStore = writable({ succeeded: 0, failed: 0, skipped: 0, errors: [] });
+export const fileImportResultsStore = writable(
+    /** @type {{ succeeded: number, failed: number, skipped: number, errors: { file: string, message: string }[] }} */ ({ succeeded: 0, failed: 0, skipped: 0, errors: [] })
+);
 
 // The end-of-import report (PR, worst decisions, flagged and unjudged counts). null when an import
 // could not record a batch: a convenience whose absence must never look like a failure.
-export const fileImportReportStore = writable(null);
+export const fileImportReportStore = writable(/** @type {import('../../wailsjs/go/models').domain.ImportBatch | null} */ (null));
 
 // The batch's per-file journal, one line per file with its last outcome (new, duplicate, enriched,
 // error). Empty when no batch could be recorded.
-export const fileImportJournalStore = writable([]);
+export const fileImportJournalStore = writable(/** @type {any[]} */ ([]));
 // {batchID, files} of an import the user stopped, what "Resume" needs; null otherwise.
-export const fileImportInterruptedStore = writable(null);
+export const fileImportInterruptedStore = writable(/** @type {{ batchID: number, files: string[] } | null} */ (null));
 
 // The pipeline's progress (files, positions, bytes, rate, ETA), null before the first event.
 export const fileImportProgressStore = writable(null);

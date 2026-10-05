@@ -135,8 +135,8 @@ export const positionIndexBeforeFilterLibraryStore = writable(-1); // Store posi
 // Match context store - stores match move positions and current index
 export const matchContextStore = writable({
     isMatchMode: false, // Whether we're in match mode
-    matchID: null, // Current match ID
-    movePositions: [], // Array of MatchMovePosition objects
+    matchID: /** @type {number | null} */ (null), // Current match ID
+    movePositions: /** @type {import('../../wailsjs/go/models').domain.MatchMovePosition[]} */ ([]), // Array of MatchMovePosition objects
     currentIndex: 0, // Current position index
     player1Name: '', // Player 1 name
     player2Name: '' // Player 2 name

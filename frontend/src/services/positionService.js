@@ -1,3 +1,6 @@
+/** @typedef {import('../stores/positionList.js').Position} Position */
+/** @typedef {import('../../wailsjs/go/models').domain.Position} WirePosition */
+/** @typedef {import('../../wailsjs/go/models').domain.SearchFilters} SearchFilters */
 import { get } from 'svelte/store';
 import {
     TrashPosition,
@@ -87,6 +90,7 @@ function emptyDoublingCubeAnalysis() {
 
 // Session/search tracking state
 let lastSearchCommand = '';
+/** @type {any} */
 let lastSearchPosition = null;
 let hasActiveSearch = false;
 
@@ -94,7 +98,12 @@ export function getSearchState() {
     return { lastSearchCommand, lastSearchPosition, hasActiveSearch };
 }
 
-export function setSearchState(cmdOrObj, pos, active) {
+/**
+ * @param {string | { lastSearchCommand: string, lastSearchPosition: any, hasActiveSearch: boolean }} cmdOrObj
+ * @param {any} [pos]
+ * @param {boolean} [active]
+ */
+export function setSearchState(cmdOrObj, pos, active = false) {
     if (cmdOrObj !== null && typeof cmdOrObj === 'object' && 'lastSearchCommand' in cmdOrObj) {
         lastSearchCommand = cmdOrObj.lastSearchCommand;
         lastSearchPosition = cmdOrObj.lastSearchPosition;
@@ -115,6 +124,7 @@ import { generateXGID } from './xgid.js';
 export { positionRefusal } from './positionRefusal.js';
 import { positionRefusal } from './positionRefusal.js';
 
+/** @param {Position} position */
 export function isValidPosition(position) {
     const refusal = positionRefusal(position);
     if (refusal) {
@@ -145,6 +155,7 @@ export function searchQueryBoard(position = get(positionStore)) {
     return board;
 }
 
+/** @param {Position} pos */
 export function mirrorPositionForSearch(pos) {
     const mirrored = JSON.parse(JSON.stringify(pos));
 
@@ -173,6 +184,7 @@ export function mirrorPositionForSearch(pos) {
 // holding a navigation key lets the analysis of position N-1 land on the board of N.
 let displayGeneration = 0;
 
+/** @param {Position | null | undefined} position */
 export async function showPosition(position) {
     if (!position) {
         logger.error('Invalid position:', position);
@@ -191,7 +203,7 @@ export async function showPosition(position) {
     let view = null;
     if (get(databasePathStore)) {
         try {
-            view = await LoadPositionView(position.id);
+            view = await LoadPositionView(position.id ?? 0);
         } catch (error) {
             logger.error('Error loading position view:', error);
         }
@@ -243,6 +255,7 @@ export async function showPosition(position) {
     commentTextStore.set(comment || '');
 }
 
+/** @param {Position | null | undefined} position */
 export async function loadAnalysisForPosition(position) {
     if (!position || !position.id) return;
     const generation = ++displayGeneration;
@@ -297,8 +310,9 @@ export async function loadAllPositions({ focusId = null } = {}) {
         const total = await openLibrary({ reset: true });
         const focusIdx = total > 0 && focusId != null ? await positionsStore.findIndex(focusId) : -1;
 
-        if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
-            SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex).catch((e) => {
+        const matchCtx = get(matchContextStore);
+        if (get(statusBarModeStore) === 'MATCH' && matchCtx.isMatchMode && matchCtx.matchID) {
+            SaveLastVisitedPosition(matchCtx.matchID, matchCtx.currentIndex).catch((e) => {
                 logger.error('Error persisting last visited position:', e);
             });
         }
@@ -354,6 +368,7 @@ export async function reloadAllPositions() {
 let searchGeneration = 0;
 /** @type {{ generation: number, shown: number, timer: ReturnType<typeof setInterval> | null, settling?: boolean, unregister: () => void } | null} */
 let activeSearch = null;
+/** @type {import('../i18n').StatusMessage | string | null} */
 let statusBeforeSearch = null;
 
 function endSearchUI() {
@@ -442,6 +457,7 @@ viewStore.setListSettler(settleList);
 
 // One options object, not positional arguments: a wrong index would silently
 // shift every later filter and answer a different question.
+/** @param {{ filters?: string[], [option: string]: any }} [options] */
 export async function loadPositionsByFilters({
     filters = [],
     // Le classement par similarité (ADR-0043). `likeFilter` dit que la requête
@@ -695,7 +711,7 @@ export async function loadPositionsByFilters({
                 // plafond enregistré, et l'emporte seulement là (ADR-0043).
                 const [limit, ceiling] = await Promise.all([GetLikeLimit(), GetLikeMaxDistance()]);
                 if (!payload.likeMaxDistance) payload.likeMaxDistance = ceiling || 0;
-                ranked = (await RankPositionIDsByFilters(payload, limit || 0)) || [];
+                ranked = (await RankPositionIDsByFilters(/** @type {SearchFilters} */ (/** @type {unknown} */ (payload)), limit || 0)) || [];
             } catch (error) {
                 if (stale()) return;
                 logger.error('could not rank the neighbours:', error);
@@ -817,7 +833,7 @@ export async function loadPositionsByFilters({
             // already replaced the "searching" placeholder.
             const current = get(statusBarTextStore);
             if (current && typeof current === 'object' && String(current.i18nKey).startsWith('status.searching')) {
-                statusBarTextStore.set(statusBeforeSearch);
+                statusBarTextStore.set(statusBeforeSearch ?? '');
             }
         }
     }
@@ -846,7 +862,7 @@ export async function deletePosition() {
         const positionID = positionsStore.idAt(get(currentPositionIndexStore));
         // Through the trash: the delete really happens, but a snapshot
         // is written first, so `trash` can put it back for thirty days.
-        await TrashPosition(positionID);
+        await TrashPosition(positionID ?? 0);
         logger.log('Position and associated analysis deleted with ID:', positionID);
 
         await loadAllPositions();
@@ -862,6 +878,7 @@ export async function deletePosition() {
 // duplicatePositionId reads the id out of the backend's refusal when an edit
 // turns a position into one that already exists (storage.DuplicatePositionError:
 // "this position already exists (id N)"); null for any other error.
+/** @param {unknown} error */
 export function duplicatePositionId(error) {
     const m = /already exists \(id (\d+)\)/.exec(String(error));
     return m ? Number(m[1]) : null;
@@ -918,14 +935,14 @@ export async function updatePosition() {
         // The position row goes first: if the edit is refused (now a
         // duplicate), the analysis must not have been deleted yet.
         analysis.xgid = generateXGID(position);
-        await UpdatePosition(position);
+        await UpdatePosition(/** @type {WirePosition} */ (/** @type {unknown} */ (position)));
         logger.log('Position updated with ID:', positionID);
 
         if (positionJSON !== originalPositionJSON) {
-            await DeleteAnalysis(positionID);
+            await DeleteAnalysis(positionID ?? 0);
             logger.log('Analysis deleted for position ID:', positionID);
         }
-        await SaveAnalysis(positionID, analysis);
+        await SaveAnalysis(positionID ?? 0, analysis);
         logger.log('Analysis updated for position ID:', positionID);
 
         await loadAllPositions();
@@ -959,12 +976,13 @@ function clearEpcError() {
     if (current && typeof current === 'object' && current.i18nKey === 'commands.epcErrorComputing') statusBarTextStore.set('');
 }
 
+/** @param {Position} position */
 export async function updateEPC(position) {
     try {
         // Typed contract from engine/race (ADR-0009):
         // { bottom: {all_in_home, checker_count, farthest, points, epc?},
         //   top: {…}, race?: {…} }.
-        const result = await ComputeEPCFromPosition(position);
+        const result = await ComputeEPCFromPosition(/** @type {WirePosition} */ (/** @type {unknown} */ (position)));
         const bottomEPC = result?.bottom?.epc || null;
         const topEPC = result?.top?.epc || null;
         const race = result?.race || null;
@@ -1022,6 +1040,7 @@ export {
 
 export { loadRandomPosition } from './positionNavigation.js';
 
+/** @param {string} filterName @param {string} filterCommand @param {string} positionJson @param {string} [excludePositionJson] */
 export async function addSearchToFilterLibrary(filterName, filterCommand, positionJson, excludePositionJson = '') {
     try {
         await SaveFilter(filterName, filterCommand);

@@ -8,7 +8,7 @@ import { trainingPipOverrideStore } from './trainingTabStore.js';
  * chaque changement de langue.
  * @type {import('svelte/store').Writable<string | import('../i18n').StatusMessage>}
  */
-export const statusBarTextStore = writable('');
+export const statusBarTextStore = writable(/** @type {string | import('../i18n').StatusMessage} */ (''));
 export const statusBarModeStore = writable('NORMAL');
 
 export const commandTextStore = writable('');

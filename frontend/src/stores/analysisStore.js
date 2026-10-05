@@ -3,14 +3,14 @@ import { writable } from 'svelte/store';
 /** A fresh, empty analysis record (the shape every consumer expects), new on each call. */
 export function emptyAnalysis() {
     return {
-        positionId: null,
+        positionId: /** @type {number | null} */ (null),
         xgid: '',
         player1: '',
         player2: '',
         analysisType: '',
         analysisEngineVersion: '',
         checkerAnalysis: {
-            moves: []
+            moves: /** @type {import('../../wailsjs/go/models').domain.CheckerMove[]} */ ([])
         },
         doublingCubeAnalysis: {
             analysisDepth: '',
@@ -32,11 +32,11 @@ export function emptyAnalysis() {
             wrongPassPercentage: 0,
             wrongTakePercentage: 0
         },
-        allCubeAnalyses: [],
+        allCubeAnalyses: /** @type {import('../../wailsjs/go/models').domain.DoublingCubeAnalysis[]} */ ([]),
         playedMove: '', // Deprecated: for backward compatibility
         playedCubeAction: '', // Deprecated: for backward compatibility
-        playedMoves: [], // All moves played in this position across different matches
-        playedCubeActions: [], // All cube actions taken in this position across different matches
+        playedMoves: /** @type {string[]} */ ([]), // All moves played in this position across different matches
+        playedCubeActions: /** @type {string[]} */ ([]), // All cube actions taken in this position across different matches
         creationDate: '',
         lastModifiedDate: ''
     };
