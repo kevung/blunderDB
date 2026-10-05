@@ -86,6 +86,16 @@
   </branding>
 
   <releases>
+    <release version="0.38.0" date="2026-10-06">
+      <description>
+        <ul>
+          <li>Duel: play a whole match against a gammonNet bot on the board, with blunderDB as arbiter, a verifiable dice seed and optional clocks</li>
+          <li>Decision times recorded for every Duel move, shown in review, searchable and crossed with errors in the statistics</li>
+          <li>The Pile: set any displayed position aside with one key or a double-click outside the board</li>
+          <li>Rollouts from a right click in the moves table and the Eval panel, and the Eval panel and training without an open database</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.37.0" date="2026-10-05">
       <description>
         <ul>

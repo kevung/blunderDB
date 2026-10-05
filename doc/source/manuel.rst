@@ -1705,8 +1705,8 @@ joue le coup sur le damier, contraint aux coups légaux ; les destinations
 offertes par le pion choisi s'allument. Les deux dés se déduisent des pas :
 jouer 13/7 puis 8/7 dit 6-1 sans qu'un chiffre ait été tapé, et l'action est
 enregistrée dès que le coup est achevé. Retour arrière défait le dernier pas, un
-chiffre abandonne le coup et revient à la saisie par les dés, et un double-clic
-hors du damier le reprend depuis le début. Quand plusieurs jets produisent le
+chiffre abandonne le coup et revient à la saisie par les dés, et *Recommencer*,
+en tête du menu du clic droit, le reprend depuis le début. Quand plusieurs jets produisent le
 même coup — une sortie que plusieurs dés couvrent, un dé qui n'est pas jouable —
 rien n'est enregistré et le triangle ne laisse cliquables que ces jets-là : le
 jet n'est jamais deviné à la place de celui qui regarde la partie.
@@ -3929,7 +3929,7 @@ damier** : cliquez le point de départ puis la destination, ou glissez le pion,
 autant de fois qu'il y a de dés. Le damier n'offre que ce qui est jouable — un
 clic qu'aucun coup légal n'autorise ne déplace rien. Dans le panneau,
 « Annuler le pas » revient d'un dé, « Recommencer » remet la position telle que
-la question la pose (un double-clic hors du damier fait de même), et
+la question la pose (le menu du clic droit propose aussi *Recommencer*), et
 « Valider », actif une fois le coup complet, le fait juger. Le champ de
 notation accepte aussi le coup tapé (``13/7 8/7``, la notation de la
 transcription) : les pas se posent sur le damier à chaque frappe, un champ
