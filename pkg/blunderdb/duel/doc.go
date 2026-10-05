@@ -25,14 +25,21 @@
 //   - the end: the Match written through ingest.WriteMatch, as a Transcription
 //     writes it, with its origin (storage.MatchOrigin) — or the draft thrown
 //     away. Stopping and keeping writes the games as they stand; nothing
-//     invents a result.
+//     invents a result;
+//   - time (cadence.go, ADR-0073): the Arbiter stamps when it hands a
+//     Decision out and when it receives the Play, never the client. Every
+//     Decision a Side takes is timed, with or without a Cadence, and the
+//     duration goes on its Action, then on the Move; what the Arbiter plays
+//     alone has none. A Cadence adds a reserve and a delay per Side; running
+//     out is noted, and loses the match only if the Duel was set so. A Duel
+//     in suspense stops the clocks.
 //
 // A Bot (bot.go) is a delegated Side: gammonNet's stateless playing policy
 // (engine/gammonnet, policy.go) at a named level, the Configuration that will
 // analyse the match, whose name its player carries in the Match (rules 6, 7).
 // Resolve gives it like any Side; it answers at once, so two Bots play a
-// whole match in the call that creates the Duel. The policy resigns only
-// before a roll, and the Arbiter asks for no decision there when the cube is
-// not available: a Bot then plays its certain loss out. A Cadence is not here
-// yet: it will time the Decisions settle asks for.
+// whole match in the call that creates the Duel — a match, never a money
+// session, which no call would end. Before a roll the Arbiter offers no
+// decision on (the cube not available), a Side that can read its certain
+// loss (a Resigner) is asked whether it resigns; an external Side is not.
 package duel

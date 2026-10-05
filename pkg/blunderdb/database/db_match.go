@@ -250,7 +250,8 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 
 	rows, err := d.db.Query(`
 		SELECT id, game_id, move_number, `+sqlshared.ActionLabelSQL("move_type")+`, position_id, player,
-		       dice_1, dice_2, checker_move, `+sqlshared.ActionLabelSQL("cube_action")+`, luck_mp
+		       dice_1, dice_2, checker_move, `+sqlshared.ActionLabelSQL("cube_action")+`, luck_mp,
+		       decision_ms, cube_decision_ms
 		FROM move
 		WHERE game_id = ?
 		ORDER BY move_number ASC
@@ -266,8 +267,9 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 		var dice1, dice2 int32
 		var checkerMove, cubeAction sql.NullString
 		var luckMP sql.NullInt32
+		var decision, cube sql.NullInt64
 		err := rows.Scan(&m.ID, &m.GameID, &m.MoveNumber, &m.MoveType, &m.PositionID,
-			&m.Player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP)
+			&m.Player, &dice1, &dice2, &checkerMove, &cubeAction, &luckMP, &decision, &cube)
 		if err != nil {
 			slog.Warn("scanning move", "err", err)
 			continue
@@ -283,6 +285,7 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 			v := luckMP.Int32
 			m.LuckMP = &v
 		}
+		m.DecisionMS, m.CubeDecisionMS = sqlshared.NullableMS(decision), sqlshared.NullableMS(cube)
 		moves = append(moves, m)
 	}
 	if err := rows.Err(); err != nil {

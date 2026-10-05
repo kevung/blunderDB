@@ -4099,3 +4099,69 @@ func TestMigrate_2_31_0_to_2_32_0_Duel(t *testing.T) {
 		t.Fatalf("set an origin on a migrated library: %v", err)
 	}
 }
+
+// TestMigrate_2_32_0_to_2_33_0_DecisionTime opens a 2.32.0 library — a match
+// with its moves and a Duel's origin — and checks the moves gain their
+// decision durations as unknown, never zero, and the origin's lost_on_time
+// becomes over_time with its row kept.
+func TestMigrate_2_32_0_to_2_33_0_DecisionTime(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2320.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	ctx := context.Background()
+	matchID, err := d.store.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3, MatchHash: "decision-time"})
+	if err != nil {
+		t.Fatalf("save match: %v", err)
+	}
+	gameID, err := d.store.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("create game: %v", err)
+	}
+	if _, err := d.store.Matches().CreateMove(ctx, "", &domain.Move{GameID: gameID, MoveType: "checker", Player: 1, Dice: [2]int32{3, 1}}); err != nil {
+		t.Fatalf("create move: %v", err)
+	}
+	if err := d.store.Duels().SetOrigin(ctx, "", &storage.MatchOrigin{MatchID: matchID, DiceSeed: "seed", Cadence: "{}"}); err != nil {
+		t.Fatalf("set origin: %v", err)
+	}
+	// Back to the 2.32.0 shape.
+	for _, stmt := range []string{
+		`ALTER TABLE move DROP COLUMN decision_ms`,
+		`ALTER TABLE move DROP COLUMN cube_decision_ms`,
+		`ALTER TABLE match_origin RENAME COLUMN over_time TO lost_on_time`,
+		`UPDATE metadata SET value = '2.32.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.32.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if !columnExists(t, d.db, "match_origin", "over_time") || columnExists(t, d.db, "match_origin", "lost_on_time") {
+		t.Error("match_origin.lost_on_time should be renamed over_time")
+	}
+	for mv, err := range d.store.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		if mv.DecisionMS != nil || mv.CubeDecisionMS != nil {
+			t.Errorf("a move stored before 2.33.0 reads %v/%v, want unknown", mv.DecisionMS, mv.CubeDecisionMS)
+		}
+	}
+	if o, err := d.store.Duels().Origin(ctx, "", matchID); err != nil || o.Cadence != "{}" || o.OverTime != 0 {
+		t.Errorf("origin after migration: %+v, %v", o, err)
+	}
+}

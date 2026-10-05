@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.32.0"
+	DatabaseVersion = "2.33.0"
 )
 
 // Anki deck source types
@@ -964,6 +964,17 @@ type Move struct {
 	// is stored in move.error_mp by MatchStore.ScoreMoves and
 	// RescorePositionMoves, for the statistics that read a column.
 	ErrorMP *int32 `json:"error_mp,omitempty"`
+
+	// DecisionMS is how long the player took over this Move's decision, in
+	// milliseconds from the moment they had the trait, delay included: the
+	// checker play from the roll, the double, the take or the pass on its own
+	// (ADR-0073). CubeDecisionMS, on a checker Move only, is the cube decision
+	// before its roll — from the trait to the roll — when the cube was
+	// offered and not turned. Only a Duel measures them. nil is unknown, never
+	// zero: every Match imported or transcribed, and a decision the Arbiter
+	// played alone (a forced roll, a dance, the only play).
+	DecisionMS     *int64 `json:"decision_ms,omitempty"`
+	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
 }
 
 type MoveAnalysis struct {

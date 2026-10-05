@@ -8,7 +8,12 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
+
+// RefusedEndless: a Duel no call would end — a money session between two
+// delegated Sides, where no Decision is ever awaited from outside.
+const RefusedEndless transcript.RefusalKind = "endless"
 
 // ErrUnknownLevel: a Bot is asked to play at a level gammonNet does not name.
 var ErrUnknownLevel = errors.New("unknown bot level")
@@ -110,4 +115,23 @@ func (b *Bot) Decide(ctx context.Context, d Decision) (Play, bool, error) {
 		return Play{}, false, fmt.Errorf("bot: action %d answers no %q decision", action.Kind, d.Kind)
 	}
 	return play, true, nil
+}
+
+// ResignBeforeRoll is the policy's exact certain-loss reading (spec §5.2,
+// first step) on pos, the player on roll before the roll: the Arbiter asks it
+// where the cube is not available and it poses no Decision.
+func (b *Bot) ResignBeforeRoll(ctx context.Context, pos domain.Position) (int, error) {
+	if err := ctx.Err(); err != nil {
+		return 0, err
+	}
+	in, err := gammonnet.PolicyDecisionFromDomain(&pos, gammonnet.PendingCube, 0)
+	if err != nil {
+		return 0, fmt.Errorf("bot: %w", err)
+	}
+	policy, err := borrowPolicy()
+	if err != nil {
+		return 0, err
+	}
+	defer policies.Put(policy)
+	return policy.CertainResignation(&in), nil
 }

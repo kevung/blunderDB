@@ -36,6 +36,9 @@ type Settings struct {
 	// DiscardAtEnd throws the draft away when the match is won, instead of
 	// writing the Match — which is the default.
 	DiscardAtEnd bool `json:"discardAtEnd,omitempty"`
+	// Cadence is the Duel's clock; nil, the default, plays without one. The
+	// durations of the decisions are measured either way.
+	Cadence *Cadence `json:"cadence,omitempty"`
 }
 
 // Options configures a Service.
@@ -89,6 +92,8 @@ type State struct {
 	Score       [2]int                `json:"score"`
 	// Awaiting is the Decision a Side owes; nil once the Duel has ended.
 	Awaiting *Decision `json:"awaiting,omitempty"`
+	// Clock is the Cadence's clock, nil without one.
+	Clock *ClockState `json:"clock,omitempty"`
 	// Ended is set by the call that ended the Duel.
 	Ended *Ending `json:"ended,omitempty"`
 }
@@ -102,6 +107,8 @@ type Ending struct {
 	DiceSeed     string `json:"diceSeed,omitempty"`
 	StoppedEarly bool   `json:"stoppedEarly,omitempty"`
 	Discarded    bool   `json:"discarded,omitempty"`
+	// OverTime is the player (1 or 2) whose reserve ran out first, 0 none.
+	OverTime int `json:"overTime,omitempty"`
 }
 
 // Summary is a Duel in suspense, as a list shows it.
@@ -128,6 +135,16 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 	if err != nil {
 		return nil, err
 	}
+	if set.Cadence != nil {
+		if err := set.Cadence.check(set.MatchLength); err != nil {
+			return nil, err
+		}
+		cad := *set.Cadence
+		if cad.TimeOut == "" {
+			cad.TimeOut = TimeContinue
+		}
+		set.Cadence = &cad
+	}
 	for i := range set.Sides {
 		if set.Sides[i].Kind == "" {
 			set.Sides[i].Kind = SideExternal
@@ -135,6 +152,12 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 		if set.Sides[i].Kind == SideBot {
 			set.Sides[i].Name = BotName(set.Sides[i].Level)
 		}
+	}
+	if set.MatchLength == 0 && set.Sides[0].Kind != SideExternal && set.Sides[1].Kind != SideExternal {
+		// Nobody would ever be awaited and a money session never ends: the
+		// call would play forever.
+		return nil, &transcript.Refusal{Kind: RefusedEndless,
+			Detail: "a money session between two delegated Sides never ends"}
 	}
 	doc := document{
 		FormatVersion: FormatVersion,
@@ -147,12 +170,14 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 		Sides:        set.Sides,
 		DiscardAtEnd: set.DiscardAtEnd,
 		Fingerprint:  fp,
+		Cadence:      set.Cadence,
 	}
 	g, err := newGame(doc, seed)
 	if err != nil {
 		return nil, err
 	}
 	g.now = s.opts.Now
+	g.setReserves()
 	sides, err := s.sides(g.doc.Sides)
 	if err != nil {
 		return nil, err
@@ -164,12 +189,15 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 	if row.Document, err = encode(g.doc); err != nil {
 		return nil, err
 	}
+	if err := s.suspendOpen(ctx, scope); err != nil {
+		return nil, err
+	}
 	row.ID, err = s.store.Duels().Save(ctx, scope, row)
 	if err != nil {
 		return nil, err
 	}
 	s.open[scope] = row.ID
-	if g.finished() {
+	if g.finished() || g.timeLost() {
 		// Two delegated Sides play the whole match in this call.
 		return s.end(ctx, scope, row, g, !g.doc.DiscardAtEnd)
 	}
@@ -192,7 +220,8 @@ func (s *Service) List(ctx context.Context, scope string) ([]Summary, error) {
 }
 
 // Open resumes a Duel where it stopped, with the same dice to come, and makes
-// it the open one: the Duel open before it stays in suspense.
+// it the open one: the Duel open before it goes into suspense. The clocks
+// stand still in suspense and start again now (ADR-0073).
 func (s *Service) Open(ctx context.Context, scope string, id int64) (*State, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -200,7 +229,77 @@ func (s *Service) Open(ctx context.Context, scope string, id int64) (*State, err
 	if err != nil {
 		return nil, err
 	}
+	if s.open[scope] == id {
+		return state(row, g), nil
+	}
+	if err := s.suspendOpen(ctx, scope); err != nil {
+		return nil, err
+	}
+	g.resume(s.opts.Now())
+	if err := s.save(ctx, scope, row, g); err != nil {
+		return nil, err
+	}
 	s.open[scope] = id
+	return state(row, g), nil
+}
+
+// Suspend puts the open Duel in suspense, its clocks stopped, and leaves no
+// Duel open; Open resumes it.
+func (s *Service) Suspend(ctx context.Context, scope string, id int64) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.open[scope] != id {
+		return fmt.Errorf("duel %d: %w", id, ErrNotOpen)
+	}
+	return s.suspendOpen(ctx, scope)
+}
+
+// suspendOpen stops the clocks of the scope's open Duel, if any, and leaves
+// none open. One gone meanwhile has no clock left to stop.
+func (s *Service) suspendOpen(ctx context.Context, scope string) error {
+	id := s.open[scope]
+	if id == 0 {
+		return nil
+	}
+	row, g, err := s.load(ctx, scope, id)
+	if errors.Is(err, storage.ErrNotFound) {
+		delete(s.open, scope)
+		return nil
+	}
+	if err != nil {
+		return err
+	}
+	g.suspend(s.opts.Now())
+	if err := s.save(ctx, scope, row, g); err != nil {
+		return err
+	}
+	delete(s.open, scope)
+	return nil
+}
+
+// Flag has the Arbiter look at the clock of the Side the open Duel awaits:
+// run out, it is noted, and under TimeLoseMatch the Duel ends there (the
+// tournament rules count the time as gone when it is noticed). Without a
+// Cadence, or with time left, nothing changes.
+func (s *Service) Flag(ctx context.Context, scope string, id int64) (*State, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.open[scope] != id {
+		return nil, fmt.Errorf("duel %d: %w", id, ErrNotOpen)
+	}
+	row, g, err := s.load(ctx, scope, id)
+	if err != nil {
+		return nil, err
+	}
+	if !g.flag(s.opts.Now()) {
+		return state(row, g), nil
+	}
+	if g.timeLost() {
+		return s.end(ctx, scope, row, g, !g.doc.DiscardAtEnd)
+	}
+	if err := s.save(ctx, scope, row, g); err != nil {
+		return nil, err
+	}
 	return state(row, g), nil
 }
 
@@ -224,7 +323,7 @@ func (s *Service) Play(ctx context.Context, scope string, id, revision int64, p 
 		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
 	}
 	p.At = s.opts.Now()
-	if err := g.play(p); err != nil {
+	if err := g.receive(p); err != nil {
 		return nil, err
 	}
 	sides, err := s.sides(g.doc.Sides)
@@ -234,16 +333,23 @@ func (s *Service) Play(ctx context.Context, scope string, id, revision int64, p 
 	if err := g.settle(ctx, sides); err != nil {
 		return nil, err
 	}
-	if g.finished() {
+	if g.finished() || g.timeLost() {
 		return s.end(ctx, scope, row, g, !g.doc.DiscardAtEnd)
 	}
-	if row.Document, err = encode(g.doc); err != nil {
-		return nil, err
-	}
-	if _, err := s.store.Duels().Save(ctx, scope, row); err != nil {
+	if err := s.save(ctx, scope, row, g); err != nil {
 		return nil, err
 	}
 	return state(row, g), nil
+}
+
+// save rewrites the draft under the row's revision.
+func (s *Service) save(ctx context.Context, scope string, row *storage.Duel, g *game) error {
+	var err error
+	if row.Document, err = encode(g.doc); err != nil {
+		return err
+	}
+	_, err = s.store.Duels().Save(ctx, scope, row)
+	return err
 }
 
 // Stop ends the open Duel before its end: keep writes the Match as it stands
@@ -270,17 +376,21 @@ func (s *Service) Stop(ctx context.Context, scope string, id, revision int64, ke
 // transaction whose first write checks the revision, or deletes the draft
 // alone.
 func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *game, keep bool) (*State, error) {
+	parts := g.parts()
+	// Over time before anything was played leaves no Match to write.
+	if keep && len(parts.Games) == 0 && g.timeLost() {
+		keep = false
+	}
 	if !keep {
 		if err := s.store.Duels().Delete(ctx, scope, row.ID); err != nil {
 			return nil, err
 		}
 		delete(s.open, scope)
 		st := state(row, g)
-		st.Ended, st.Awaiting = &Ending{Discarded: true}, nil
+		st.Ended, st.Awaiting = &Ending{Discarded: true, OverTime: g.doc.Clock.OverTime}, nil
 		return st, nil
 	}
 
-	parts := g.parts()
 	// A game counts once an Action was played in it, a resignation included,
 	// which writes no Move.
 	if len(parts.Games) == 0 {
@@ -291,6 +401,10 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 	origin := storage.MatchOrigin{
 		DiceSeed:     g.seed,
 		StoppedEarly: g.doc.Header.MatchLength > 0 && !g.finished(),
+		OverTime:     g.doc.Clock.OverTime,
+	}
+	if g.doc.Cadence != nil {
+		origin.Cadence = g.doc.Cadence.String()
 	}
 	if g.doc.Start != nil {
 		origin.Start = domain.EncodeXGID(g.doc.Start)
@@ -335,7 +449,7 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 	delete(s.open, scope)
 	st := state(row, g)
 	st.Awaiting = nil
-	st.Ended = &Ending{MatchID: res.MatchID, DiceSeed: g.seed, StoppedEarly: origin.StoppedEarly}
+	st.Ended = &Ending{MatchID: res.MatchID, DiceSeed: g.seed, StoppedEarly: origin.StoppedEarly, OverTime: origin.OverTime}
 	return st, nil
 }
 
@@ -349,10 +463,12 @@ func (s *Service) load(ctx context.Context, scope string, id int64) (*storage.Du
 	if err := json.Unmarshal([]byte(row.Document), &doc); err != nil {
 		return nil, nil, fmt.Errorf("duel %d: %w", id, err)
 	}
-	if doc.FormatVersion != FormatVersion {
+	if doc.FormatVersion < 1 || doc.FormatVersion > FormatVersion {
 		return nil, nil, fmt.Errorf("duel %d: document format %d, this build reads %d: %w",
 			id, doc.FormatVersion, FormatVersion, storage.ErrInvalid)
 	}
+	// A version 1 draft is a version 2 one without Cadence or clock.
+	doc.FormatVersion = FormatVersion
 	g, err := loadGame(doc, row.DiceSeed)
 	if err != nil {
 		return nil, nil, fmt.Errorf("duel %d: %w", id, err)
@@ -394,7 +510,12 @@ func label(h transcript.Header) string {
 func state(row *storage.Duel, g *game) *State {
 	awaiting := g.awaiting()
 	if awaiting != nil {
-		awaiting.Since = g.clock()
+		awaiting.Since = g.doc.Clock.Since
+	}
+	var clk *ClockState
+	if g.doc.Cadence != nil {
+		c := g.doc.Clock
+		clk = &ClockState{Cadence: *g.doc.Cadence, Reserve: c.Reserve, Turn: c.Turn, Spent: c.Spent, OverTime: c.OverTime}
 	}
 	return &State{
 		ID:          row.ID,
@@ -407,5 +528,6 @@ func state(row *storage.Duel, g *game) *State {
 		Games:       g.m.Games(),
 		Score:       g.m.Score(),
 		Awaiting:    awaiting,
+		Clock:       clk,
 	}
 }

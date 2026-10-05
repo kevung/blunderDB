@@ -43,12 +43,15 @@ type MatchOrigin struct {
 	// DiceSeed is the revealed seed every roll was computed from.
 	DiceSeed     string `json:"dice_seed"`
 	StoppedEarly bool   `json:"stopped_early"`
-	// LostOnTime, BotLevel and Cadence are the parts of the origin a Bot and
+	// OverTime, BotLevel and Cadence are the parts of the origin a Bot and
 	// a Cadence give (ADR-0072 rule 10, ADR-0073); empty when the Duel had
-	// neither.
-	LostOnTime bool   `json:"lost_on_time"`
-	BotLevel   string `json:"bot_level"`
-	Cadence    string `json:"cadence"`
+	// neither. OverTime is the player (1 or 2) whose reserve ran out first,
+	// 0 for none: a fact, whether the Cadence then lost them the match —
+	// StoppedEarly — or let them play on. Cadence is the Cadence as the Duel
+	// was set, in JSON.
+	OverTime int    `json:"over_time"`
+	BotLevel string `json:"bot_level"`
+	Cadence  string `json:"cadence"`
 }
 
 // DuelStore persists the drafts of Duels and the origin of the Matches they

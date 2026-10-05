@@ -10,7 +10,8 @@ import (
 )
 
 // TestRunCarriesTheDuel: a migration moves the origin of a Match played
-// here onto the new Match id, and the Duels in suspense with their seed.
+// here onto the new Match id, its moves with the durations of their
+// decisions, and the Duels in suspense with their seed.
 func TestRunCarriesTheDuel(t *testing.T) {
 	ctx := context.Background()
 	open := func() storage.Storage {
@@ -29,8 +30,23 @@ func TestRunCarriesTheDuel(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := src.Duels().SetOrigin(ctx, "", &storage.MatchOrigin{MatchID: matchID, Start: "xgid", DiceSeed: "ab"}); err != nil {
+	if err := src.Duels().SetOrigin(ctx, "", &storage.MatchOrigin{MatchID: matchID, Start: "xgid", DiceSeed: "ab",
+		OverTime: 1, Cadence: `{"reservePerPoint":120,"delay":12}`}); err != nil {
 		t.Fatal(err)
+	}
+	gameID, err := src.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	decision := int64(7300)
+	for i, mv := range []domain.Move{
+		{MoveType: "cube", Player: 1, CubeAction: "Double", DecisionMS: &decision},
+		{MoveType: "cube", Player: -1, CubeAction: "Take"},
+	} {
+		mv.GameID, mv.MoveNumber = gameID, int32(i)
+		if _, err := src.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatal(err)
+		}
 	}
 	if _, err := src.Duels().Save(ctx, "", &storage.Duel{FormatVersion: "1", Document: "{}", DiceSeed: "cd"}); err != nil {
 		t.Fatal(err)
@@ -52,8 +68,21 @@ func TestRunCarriesTheDuel(t *testing.T) {
 	if newID == 0 {
 		t.Fatal("the match did not migrate")
 	}
-	if o, err := dst.Duels().Origin(ctx, "", newID); err != nil || o.Start != "xgid" || o.DiceSeed != "ab" {
+	if o, err := dst.Duels().Origin(ctx, "", newID); err != nil || o.Start != "xgid" || o.DiceSeed != "ab" ||
+		o.OverTime != 1 || o.Cadence != `{"reservePerPoint":120,"delay":12}` {
 		t.Errorf("origin after migration = %+v, %v", o, err)
+	}
+	// The durations of the decisions travel with the moves; an unknown one
+	// stays unknown.
+	var moves []*domain.Move
+	for mv, err := range dst.Matches().MovesByMatch(ctx, "", newID) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		moves = append(moves, mv)
+	}
+	if len(moves) != 2 || moves[0].DecisionMS == nil || *moves[0].DecisionMS != decision || moves[1].DecisionMS != nil {
+		t.Errorf("migrated moves = %+v", moves)
 	}
 	var seeds []string
 	for d, err := range dst.Duels().List(ctx, "") {

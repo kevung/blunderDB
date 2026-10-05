@@ -118,3 +118,43 @@ func TestBotDecisions(t *testing.T) {
 		t.Fatalf("opening 3-1: %+v, %v, %v", p, ok, err)
 	}
 }
+
+// TestTwoBotsRefuseAMoneySession: no call would end a money session between
+// two delegated Sides, so it is refused at creation, by name.
+func TestTwoBotsRefuseAMoneySession(t *testing.T) {
+	svc := New(newStore(t), Options{Rand: fixedRand(5)})
+	bot := SideSpec{Kind: SideBot, Level: "instant"}
+	_, err := svc.Create(context.Background(), "", Settings{MatchLength: 0, Sides: [2]SideSpec{bot, bot}})
+	if refusalKind(t, err) != RefusedEndless {
+		t.Fatalf("Create = %v, want %s", err, RefusedEndless)
+	}
+}
+
+// TestBotResignsWhereNoDecisionIsPosed: the cube is the opponent's, so the
+// Arbiter poses no cube decision before Black's roll; a Bot is asked anyway
+// and resigns its certain gammon, an external Side is never asked.
+func TestBotResignsWhereNoDecisionIsPosed(t *testing.T) {
+	lost := emptyBoard()
+	lost.Points[8] = domain.Point{Checkers: 15, Color: domain.Black}
+	lost.Points[24] = domain.Point{Checkers: 1, Color: domain.White}
+	lost.Bearoff = [2]int{0, 14}
+	start := &domain.Position{Board: lost, Score: [2]int{7, 7}, PlayerOnRoll: domain.Black,
+		DecisionType: domain.CheckerAction, Cube: domain.Cube{Owner: domain.White, Value: 1}}
+
+	ctx := context.Background()
+	for _, tc := range []struct {
+		black  SideSpec
+		resign bool
+	}{{SideSpec{Kind: SideBot, Level: "instant"}, true}, {external("Alice"), false}} {
+		svc := New(newStore(t), Options{Rand: fixedRand(5)})
+		s, err := svc.Create(ctx, "", Settings{MatchLength: 7, Start: start,
+			Sides: [2]SideSpec{tc.black, external("Bob")}})
+		if err != nil {
+			t.Fatalf("Create: %v", err)
+		}
+		resigned := len(s.Actions) > 0 && s.Actions[0].Kind == transcript.KindResign
+		if resigned != tc.resign || (resigned && (s.Actions[0].Side != domain.Black || s.Actions[0].Level != 2)) {
+			t.Errorf("%s: actions %+v, want a resignation: %v", tc.black.Kind, s.Actions, tc.resign)
+		}
+	}
+}

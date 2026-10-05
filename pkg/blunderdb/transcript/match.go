@@ -86,6 +86,7 @@ func BuildPlayed(h Header, played []GameInfo, actions []ActionInfo, inconsistent
 			GameID:     gameID,
 			MoveNumber: info.MoveNumber,
 			Player:     sideToXG(info.Side),
+			DecisionMS: info.DecisionMS,
 		}
 		switch info.Kind {
 		// A play that was not recorded is a Move like any other: the roll is known,
@@ -96,6 +97,7 @@ func BuildPlayed(h Header, played []GameInfo, actions []ActionInfo, inconsistent
 			mv.MoveType = "checker"
 			mv.Dice = [2]int32{int32(info.Before.Dice[0]), int32(info.Before.Dice[1])}
 			mv.CheckerMove = info.Notation
+			mv.CubeDecisionMS = info.CubeDecisionMS
 		case KindDouble:
 			mv.MoveType, mv.CubeAction = "cube", "Double"
 		case KindTake:

@@ -796,11 +796,13 @@ func (s *matchStore) Games(ctx context.Context, scope string, matchID int64) ite
 // moveSelectColsMV is the same list qualified with the alias mv for joins.
 var moveSelectCols = `id, game_id, COALESCE(move_number,0), ` + sqlshared.TenantActionLabelOrEmptySQL("move.move_type") + `,
 	position_id, COALESCE(player,0), COALESCE(dice_1,0), COALESCE(dice_2,0),
-	COALESCE(checker_move,''), ` + sqlshared.TenantActionLabelOrEmptySQL("move.cube_action") + `, luck_mp`
+	COALESCE(checker_move,''), ` + sqlshared.TenantActionLabelOrEmptySQL("move.cube_action") + `, luck_mp,
+	decision_ms, cube_decision_ms`
 
 var moveSelectColsMV = `mv.id, mv.game_id, COALESCE(mv.move_number,0), ` + sqlshared.TenantActionLabelOrEmptySQL("mv.move_type") + `,
 	mv.position_id, COALESCE(mv.player,0), COALESCE(mv.dice_1,0), COALESCE(mv.dice_2,0),
-	COALESCE(mv.checker_move,''), ` + sqlshared.TenantActionLabelOrEmptySQL("mv.cube_action") + `, mv.luck_mp`
+	COALESCE(mv.checker_move,''), ` + sqlshared.TenantActionLabelOrEmptySQL("mv.cube_action") + `, mv.luck_mp,
+	mv.decision_ms, mv.cube_decision_ms`
 
 func scanMove(sc scanner) (domain.Move, error) {
 	var mv domain.Move
@@ -808,7 +810,8 @@ func scanMove(sc scanner) (domain.Move, error) {
 	var positionID *int64
 	var luckMP *int32
 	if err := sc.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-		&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP); err != nil {
+		&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &luckMP,
+		&mv.DecisionMS, &mv.CubeDecisionMS); err != nil {
 		return domain.Move{}, err
 	}
 	mv.Dice = [2]int32{d1, d2}
@@ -827,7 +830,8 @@ func scanScoredMove(rows pgx.Rows, scorer sqlshared.PlayScorer) (domain.Move, er
 	var positionID *int64
 	var data []byte
 	if err := rows.Scan(&mv.ID, &mv.GameID, &mv.MoveNumber, &mv.MoveType,
-		&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &mv.LuckMP, &data); err != nil {
+		&positionID, &mv.Player, &d1, &d2, &mv.CheckerMove, &mv.CubeAction, &mv.LuckMP,
+		&mv.DecisionMS, &mv.CubeDecisionMS, &data); err != nil {
 		return domain.Move{}, err
 	}
 	mv.Dice = [2]int32{d1, d2}
@@ -927,8 +931,9 @@ func (s *matchStore) MoveAnalysesByMatch(ctx context.Context, scope string, matc
 
 const moveInsertSQL = `INSERT INTO move (
 	tenant_id, game_id, move_number, move_type, position_id, player,
-	dice_1, dice_2, checker_move, cube_action, luck_mp
-) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`
+	dice_1, dice_2, checker_move, cube_action, luck_mp,
+	decision_ms, cube_decision_ms
+) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id`
 
 // CreateMove stores a new move and returns its id, updating mv.ID in place. A
 // zero PositionID is stored as NULL (no associated position).
@@ -952,7 +957,8 @@ func (s *matchStore) CreateMove(ctx context.Context, scope string, mv *domain.Mo
 	var id int64
 	err = s.db.QueryRow(ctx, moveInsertSQL,
 		tenantID(scope), mv.GameID, mv.MoveNumber, moveType, positionID, mv.Player,
-		mv.Dice[0], mv.Dice[1], mv.CheckerMove, cubeAction, luckMP).Scan(&id)
+		mv.Dice[0], mv.Dice[1], mv.CheckerMove, cubeAction, luckMP,
+		sqlshared.MSArg(mv.DecisionMS), sqlshared.MSArg(mv.CubeDecisionMS)).Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("postgres: create move: %w", referenced(err))
 	}

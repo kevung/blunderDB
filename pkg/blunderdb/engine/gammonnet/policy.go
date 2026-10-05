@@ -241,10 +241,7 @@ func (p *Policy) preRollProbs(level *SearchLevel, d *PolicyDecision) ([NumOutput
 func (p *Policy) decideCube(level *SearchLevel, d *PolicyDecision, out *PolicyAction) bool {
 	out.Kind = ActionRoll
 
-	if value := p.certainLoss(&d.Position); value > 0 {
-		if !d.UseMatch && d.Jacoby && d.CubeOwner == CubeCentred {
-			value = 1 // an unturned cube under Jacoby pays a single game
-		}
+	if value := p.CertainResignation(d); value > 0 {
 		out.Kind = ActionResign
 		out.ResignValue = value
 		return true
@@ -282,6 +279,17 @@ func (p *Policy) decideCube(level *SearchLevel, d *PolicyDecision, out *PolicyAc
 		out.Kind = ActionDouble
 	}
 	return true
+}
+
+// CertainResignation is the first step of spec §5.2 alone: the value the
+// player on roll resigns for, 0 when the loss or its value is not certain.
+// An exact reading, never a search: cheap enough to ask before every roll.
+func (p *Policy) CertainResignation(d *PolicyDecision) int {
+	value := p.certainLoss(&d.Position)
+	if value > 0 && !d.UseMatch && d.Jacoby && d.CubeOwner == CubeCentred {
+		value = 1 // an unturned cube under Jacoby pays a single game
+	}
+	return value
 }
 
 // decideTake is spec §5.3: the taker compares both branches with the

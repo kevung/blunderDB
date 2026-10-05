@@ -103,8 +103,8 @@ func testMatchOrigin(t *testing.T, s storage.Storage) {
 	if err := ds.SetOrigin(ctx, "", &want); err != nil {
 		t.Fatalf("SetOrigin: %v", err)
 	}
-	want.Start, want.StoppedEarly, want.LostOnTime, want.BotLevel, want.Cadence =
-		"-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:5:10", false, true, "normal", `{"reserve":600}`
+	want.Start, want.StoppedEarly, want.OverTime, want.BotLevel, want.Cadence =
+		"-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:5:10", false, 2, "normal", `{"reserve":600}`
 	if err := ds.SetOrigin(ctx, "", &want); err != nil {
 		t.Fatalf("SetOrigin again: %v", err)
 	}

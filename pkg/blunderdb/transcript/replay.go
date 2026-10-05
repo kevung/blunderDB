@@ -79,6 +79,11 @@ type ActionInfo struct {
 	// it, and it is the one that carries a declared score.
 	OpensGame bool `json:"opens_game"`
 
+	// DecisionMS and CubeDecisionMS are the Action's own, carried to the Move
+	// it produces: the one thing here a Replay does not derive.
+	DecisionMS     *int64 `json:"decision_ms,omitempty"`
+	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
+
 	Inconsistencies []Inconsistency `json:"inconsistencies,omitempty"`
 }
 

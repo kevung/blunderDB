@@ -392,6 +392,11 @@ var schemaStatements = []string{
 		-- candidates, or a row older than the column that the resumable pass
 		-- (MatchStore.ScoreMoves) has not reached yet.
 		error_mp INTEGER,
+		-- How long the player took over the decision, in milliseconds
+		-- (domain.Move.DecisionMS / CubeDecisionMS, ADR-0073). NULL is
+		-- unknown, never zero: only a Duel measures it.
+		decision_ms INTEGER,
+		cube_decision_ms INTEGER,
 		FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
 		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
 	)`,
@@ -436,7 +441,7 @@ var schemaStatements = []string{
 		start TEXT NOT NULL DEFAULT '',
 		dice_seed TEXT NOT NULL,
 		stopped_early INTEGER NOT NULL DEFAULT 0,
-		lost_on_time INTEGER NOT NULL DEFAULT 0,
+		over_time INTEGER NOT NULL DEFAULT 0,
 		bot_level TEXT NOT NULL DEFAULT '',
 		cadence TEXT NOT NULL DEFAULT ''
 	)`,

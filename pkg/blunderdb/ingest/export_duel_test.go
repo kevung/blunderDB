@@ -27,7 +27,22 @@ func TestSQLiteExportCarriesTheDuel(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	origin := storage.MatchOrigin{MatchID: matchID, Start: "-b----E-C---eE---c-e----B-:1:1:1:00:0:0:0:3:10", DiceSeed: "ab", StoppedEarly: true}
+	origin := storage.MatchOrigin{MatchID: matchID, Start: "-b----E-C---eE---c-e----B-:1:1:1:00:0:0:0:3:10", DiceSeed: "ab",
+		StoppedEarly: true, OverTime: 2, Cadence: `{"reserve":180,"delay":12,"timeOut":"lose_match"}`}
+	gameID, err := src.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
+	if err != nil {
+		t.Fatal(err)
+	}
+	decision, cube := int64(4200), int64(1300)
+	for i, mv := range []domain.Move{
+		{MoveType: "checker", Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5", DecisionMS: &decision, CubeDecisionMS: &cube},
+		{MoveType: "checker", Player: -1, Dice: [2]int32{6, 5}, CheckerMove: "24/13"},
+	} {
+		mv.GameID, mv.MoveNumber = gameID, int32(i)
+		if _, err := src.Matches().CreateMove(ctx, "", &mv); err != nil {
+			t.Fatal(err)
+		}
+	}
 	if err := src.Duels().SetOrigin(ctx, "", &origin); err != nil {
 		t.Fatal(err)
 	}
@@ -92,6 +107,20 @@ func TestSQLiteExportCarriesTheDuel(t *testing.T) {
 		}
 		if d := duels(dst); len(d) != 1 || d[0].DiceSeed != "cd" || d[0].Label != "C — D" {
 			t.Errorf("exported duels = %+v", d)
+		}
+		// The durations of the decisions travel with the moves; an unknown
+		// one stays unknown.
+		var moves []*domain.Move
+		for mv, err := range dst.Matches().MovesByMatch(ctx, "", id) {
+			if err != nil {
+				t.Fatal(err)
+			}
+			moves = append(moves, mv)
+		}
+		if len(moves) != 2 || moves[0].DecisionMS == nil || *moves[0].DecisionMS != decision ||
+			moves[0].CubeDecisionMS == nil || *moves[0].CubeDecisionMS != cube ||
+			moves[1].DecisionMS != nil || moves[1].CubeDecisionMS != nil {
+			t.Errorf("exported moves = %+v", moves)
 		}
 	})
 

@@ -71,6 +71,13 @@ type Side interface {
 	Decide(ctx context.Context, d Decision) (p Play, ok bool, err error)
 }
 
+// Resigner is a Side that can tell, before a roll the cube decision does not
+// precede, whether it resigns and for how much (0: it plays on). The Arbiter
+// asks it there; it asks no other Side, so nothing changes for them.
+type Resigner interface {
+	ResignBeforeRoll(ctx context.Context, pos domain.Position) (level int, err error)
+}
+
 // SideKind names what stands behind a Side, as the draft records it.
 type SideKind string
 
