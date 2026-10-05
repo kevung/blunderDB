@@ -96,6 +96,16 @@ plan a trouvés déjà faits a été opérée le 2026-09-02 (fiche A.14, #168).
 
 ## Ouvert — Moteur (dettes nommées dans les ADR)
 
+- **Beaver dans les rollouts** (ADR-0060 règle 4) : le rollout décide par `gammonnet.Decide`
+  sans la règle Beaver, alors que l'analyse directe la lit sous `has_beaver` en money
+  (`DecideForSession`). Sa ligne double/prend est celle d'une simple prise (documenté dans
+  `manuel.rst`). À faire : jouer la séquence beaver → raccoon dans `engine/rollout/game.go`
+  (videau à 4c puis 8c, propriétaire suivi), puis lire `HasBeaver` comme l'évaluateur.
+- **Libellé Beaver dans le verdict** : quand la meilleure réponse est un beaver,
+  `BestCubeAction` dit « Double, Take » (le moteur amont range « pris » et « beavé » sous
+  `DOUBLE_TAKE`) ; seule l'équité de la ligne en tient compte. À faire : un libellé
+  « Double, Beaver » lu par `normalizeCubeAction`, `CanonicalCubeAction`, `BestCubeVerdict`
+  et une clé `cube.verdicts` traduite.
 - **Renommage `race.Money` → `race.CubeVerdict`** et libellé de la colonne
   Équité (ADR-0016, points 5-6) : différés pour ne pas entrer en collision
   avec l'ADR-0017, fusionné le 2026-08-31 — **plus rien ne bloque**, le nom

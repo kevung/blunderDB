@@ -38,8 +38,10 @@ de videau, et ses intervalles sont optimistes.
    Dans une partie, le videau est offert, pris ou passé par `gammonnet.Decide` à `Ply` ; une
    feuille tronquée vaut la valeur de cette décision. Le résultat porte `CubefulBias` dès que le
    modèle de videau intervient : **le classement est fiable, l'équité absolue moins** (P8 §2, §5).
-   Pas de beaver (Decide n'en a pas) ; Jacoby compte en money tant que le videau est centré —
-   dans la décision de videau, la feuille et l'enjeu final ; `SearchConfig` n'ayant pas de règle
+   Le rollout ne joue pas le beaver : une partie jouée devrait suivre le videau à 4c puis 8c
+   d'une décision à deux réponses, que le moteur de partie ne modélise pas ; sa colonne
+   *Double/Prend* est donc sans beaver, même sous `has_beaver`. Jacoby compte en money tant que
+   le videau est centré — dans la décision de videau, la feuille et l'enjeu final ; `SearchConfig` n'ayant pas de règle
    Jacoby, les feuilles internes d'une recherche l'ignorent, comme dans gammonNet.
 5. **La recette P8, toujours active, sans interrupteur.**
    - *Réduction de variance 1-ply* : avant chaque lancer, la valeur du joueur au trait est la

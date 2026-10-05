@@ -124,9 +124,8 @@ func CubeInputsFromProbs(probs *[NumOutputs]float32) CubeInputs {
 // deliberate divergence from gnubg and XG, which index efficiency by position
 // class (ADR-0029; gammonNet spec §3 forbids borrowing their constants).
 // SearchConfig.CubeX at a mirrored leaf and Decide's eDT read the root's
-// coefficient, exactly as the C does: that is the model, not a pending fix —
-// the mirrored efficiency was measured negligible and declared void
-// (ADR-0029, amended).
+// coefficient, exactly as the C does: a branch-local coefficient was
+// measured negligible, and the model keeps the root's (ADR-0029).
 func DefaultEfficiency(owner CubeOwner) float64 {
 	switch owner {
 	case CubeOwned:
@@ -792,7 +791,7 @@ func DecideEx(probs *[NumOutputs]float32, owner CubeOwner, state *MatchState, ef
 		}
 
 		// eDT is the opponent's branch priced at the caller's (current
-		// owner's) efficiency, as gn_cube.c does (ADR-0029, amended). The
+		// owner's) efficiency, as gn_cube.c does (ADR-0029). The
 		// match branch below has the same shape.
 		eND := janowskiEquity(in.Win, wND, lND, owner, efficiency)
 		eDT := 2.0 * janowskiEquity(in.Win, in.WinPoints, in.LosePoints, CubeOpponent, efficiency)

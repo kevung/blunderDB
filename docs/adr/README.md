@@ -43,7 +43,7 @@ that come out of them.
 | [0026](0026-a-finite-deck-is-paced-by-the-session-not-by-the-day.md) | A finite deck is paced by the session, not by the day | Anki deck pacing, `session_limit` |
 | [0027](0027-bearoff-databases-are-generated-not-shipped-and-verified-against-gnubg.md) | Bearoff databases are generated, not shipped, and verified against gnubg | `engine/bearoffgen`: generation, verification |
 | [0028](0028-jacoby-and-beaver-are-rules-of-the-session-not-of-the-position.md) | Jacoby and beaver are rules of the session, not of the position | Zobrist excludes `has_jacoby`/`has_beaver` |
-| [0029](0029-cube-efficiency-is-measured-per-cube-state-and-read-at-the-root.md) | Cube efficiency is measured per cube state, and read at the root until gammonNet says otherwise | cube efficiency per cube state |
+| [0029](0029-cube-efficiency-is-measured-per-cube-state-and-read-at-the-root.md) | Cube efficiency is measured per cube state, and read at the root | cube efficiency per cube state |
 | [0030](0030-analysis-blobs-are-zstd-with-a-shared-dictionary-and-a-blob-names-its-own-codec.md) | Analysis blobs are zstd with a shared dictionary, and a blob names its own codec | `analysiscodec.go`: zstd + dictionary |
 | [0031](0031-one-colour-palette-and-the-migration-is-progressive.md) | One colour palette, and the migration is progressive | interface colour palette |
 | [0032](0032-the-cube-level-inversion-becomes-a-closed-form-upstream.md) | The cube's level inversion becomes a closed form, and that is written upstream | closed-form `levelSolve`, shipped upstream |

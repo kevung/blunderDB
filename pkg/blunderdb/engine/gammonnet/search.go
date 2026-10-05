@@ -116,7 +116,7 @@ type SearchConfig struct {
 	// CubeX is fixed at the root while CubeOwner is mirrored: a mirrored leaf
 	// is priced with the root's coefficient, exactly as gn_search.c does, and
 	// "correcting" it here would turn the cube gold red. Per-leaf efficiency
-	// was measured negligible and declared void (ADR-0029, amended).
+	// was measured negligible; the model keeps the root's (ADR-0029).
 	UseCube   bool
 	CubeOwner CubeOwner
 	CubeX     float64

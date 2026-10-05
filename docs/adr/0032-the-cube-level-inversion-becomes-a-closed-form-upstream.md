@@ -1,6 +1,6 @@
 # The cube's level inversion becomes a closed form, and that is written upstream
 
-Status: accepted. Landed upstream in gammonNet v1.4.0 (`level_solve`, spec §9) and ported.
+Status: accepted.
 See also: ADR-0011, ADR-0022, ADR-0029
 
 ## Context
@@ -16,18 +16,17 @@ user sees moves on 669 real decisions.
 ## Decision
 
 1. **The inversion becomes a closed form.** Its gain survives a change of language, so it is a
-   conceptual change: written in gammonNet first (ADR-0011 rule 7). By contrast `laneCurve`
-   (hoisting segment constants, needed because Go will not inline `levelLive`) is an
-   implementation win and stays here.
-2. **Nothing in this repository changes before the upstream tag.** The cube gold's exact 0 is a
-   fact about this port that no local optimisation may spend.
+   conceptual change: written in gammonNet first (ADR-0011 rule 7); gammonNet's `level_solve`
+   (spec §9) holds it and the port follows.
+2. **The port changes only with the upstream tag.** The cube gold's exact 0 is a fact about
+   this port that no local optimisation may spend.
 3. **It is a Configuration change** (ADR-0011 rule 8): not bit-identical, so a new
    `EngineVersion` and every stored gammonNet analysis stale — under ADR-0024 a different last
    bit is a different number in a database.
-4. **It ships in one gammonNet tag with the branch-local efficiency** (ADR-0029 rule 4): both
-   touch `gn_cube.c`, both regenerate `cube_gold.bin` and `search_cube_gold.bin`, both make
-   every stored analysis stale. One release, one port, one stale sweep.
-5. **The upstream change**, proposed:
+4. **It ships on its own.** The branch-local efficiency it was once to travel with is void
+   (ADR-0029 rule 4); the closed form regenerates `cube_gold.bin` and `search_cube_gold.bin`
+   and makes every stored analysis stale by itself.
+5. **The upstream form**:
    - `level_solve(level, owner, blend, target)` keeps its signature and loses its loop: it walks
      the level's segments `(x0, y0, x1, y1)` in ascending p — the ones `level_live` selects
      between, dead level included — skips degenerate ones, and returns
@@ -37,12 +36,12 @@ user sees moves on 669 real decisions.
    - Conventions made explicit: `inf{ p : f(p) ≥ target }`, clamped to `[0, 1]`, a flat segment
      answering its left bound.
    - Spec `t34-videau-spec.md` §9 states the closed form instead of a bisection.
-6. **The port's guard is committed now**: when the tag lands the port swaps `levelSolve`'s body,
-   the agreement test says it is the same function, the gold says it is the C's.
+6. **The port's guard**: the agreement test says `levelSolve` is the function the bisection
+   computed, the gold says it is the C's.
 
 ## Consequences
 
-- Until the tag: no behaviour, schema or `EngineVersion` change; the cube gold stays exactly 0.
+- A new `EngineVersion`; the cube gold stays exactly 0 against the C's closed form.
 - Rejected: **the closed form here, gold regenerated** (the gold then measures nothing); **behind
   a flag with the bisection as reference** (a second model with no owner); **fewer bisection
   steps** (neither exact, nor bit-identical, nor upstream's); **skipping early steps
@@ -54,6 +53,4 @@ user sees moves on 669 real decisions.
 `TestClosedFormAgreesWithBisection` in
 `pkg/blunderdb/engine/gammonnet/cube_closedform_measure_test.go` (always on, 1e-9 in p on real
 chains, against the sixty-step bisection kept there as the reference, plus the benchmarks);
-`TestCubeDecideMatchesTheGoldFile` (bit-exact against the v1.4.0 C). The lockstep batch
-experiment and the bisection "lift" measurements were retired with the bisection: upstream's
-batch now calls the scalar per lane.
+`TestCubeDecideMatchesTheGoldFile` (bit-exact against the C).

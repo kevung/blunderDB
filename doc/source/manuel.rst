@@ -807,7 +807,9 @@ dès que les coups sont départagés. La **Configuration** — le moteur et la
 signature complète des paramètres — se déplie sous le tableau : deux rollouts
 de même signature sont les mêmes nombres. Un rollout joue le videau dans ses
 parties : le classement est fiable, l'équité absolue un peu moins, ce que le
-bloc rappelle. Une position qui n'est pas dans la base se roule, mais ne se
+bloc rappelle. Il ne joue pas le beaver : sa ligne *double, prend* est celle
+d'une simple prise, même sur une position en money sous la règle Beaver, là où
+l'analyse directe compte le beaver. Une position qui n'est pas dans la base se roule, mais ne se
 stocke pas.
 
 Le bouton **Sur la liste affichée…** (ou ``ro search``) roule, l'une après

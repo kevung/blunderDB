@@ -17,8 +17,8 @@ import (
 //
 // v1.4.0 adds to the match-aware search (ADR-0016), the cube tails
 // (ADR-0022), the Crawford dead cube and cubeful leaves (ADR-0023): the
-// "normal" level's filter triplet (accept 1, extra 2, threshold 0.04 at the
-// root), the closed-form level inversion (ADR-0032) and the money beaver
+// "normal" level's filter triplet (accept 1, extra 2, threshold 0.04 at
+// depth 2, plain counts at the other depths), the closed-form level inversion (ADR-0032) and the money beaver
 // rule (DecideEx). The first two move stored results, so every row analysed
 // under an earlier label is stale (analyze --stale). The gold files are
 // built from the same tag.

@@ -156,6 +156,10 @@ func (t *table) decide(probs *[gammonnet.NumOutputs]float32, c cubeState, mover 
 	owner := t.ownerView(c, mover)
 	st := t.state(c, mover)
 	eff := gammonnet.DefaultEfficiency(owner)
+	// Plain Decide, never the beaver rule (ADR-0060 rule 4): a beavered game
+	// would have to carry a 4c then 8c cube through a two-answer exchange the
+	// game loop does not model, so a rollout's double/take is without beaver
+	// even under has_beaver.
 	d, ok := gammonnet.Decide(probs, owner, st, eff, t.jacoby && owner == gammonnet.CubeCentred)
 	if !ok {
 		// A cube the model cannot price (beyond its horizon) is held dead.
