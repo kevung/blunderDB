@@ -74,14 +74,20 @@ type Side interface {
 // SideKind names what stands behind a Side, as the draft records it.
 type SideKind string
 
-// SideExternal is a Side whose decisions arrive from outside.
-const SideExternal SideKind = "external"
+const (
+	// SideExternal is a Side whose decisions arrive from outside.
+	SideExternal SideKind = "external"
+	// SideBot is a Side delegated to a Bot, at its Level.
+	SideBot SideKind = "bot"
+)
 
 // SideSpec is a Side as the draft records it: its kind, and the name the
-// Match gives its player.
+// Match gives its player. A Bot's Level is a named level of gammonNet; its
+// name is its Configuration's (BotName), whatever was asked.
 type SideSpec struct {
-	Kind SideKind `json:"kind"`
-	Name string   `json:"name,omitempty"`
+	Kind  SideKind `json:"kind"`
+	Name  string   `json:"name,omitempty"`
+	Level string   `json:"level,omitempty"`
 }
 
 // External is the Side whose decisions come from outside the Arbiter.
@@ -91,6 +97,14 @@ func (External) Decide(context.Context, Decision) (Play, bool, error) { return P
 
 // SideResolver gives the Side a SideSpec stands for.
 type SideResolver func(SideSpec) (Side, error)
+
+// Resolve resolves the external kind and the Bot, and refuses every other.
+func Resolve(spec SideSpec) (Side, error) {
+	if spec.Kind == SideBot {
+		return NewBot(spec.Level)
+	}
+	return ExternalOnly(spec)
+}
 
 // ExternalOnly resolves the external kind and refuses every other.
 func ExternalOnly(spec SideSpec) (Side, error) {

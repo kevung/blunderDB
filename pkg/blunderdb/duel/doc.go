@@ -27,7 +27,12 @@
 //     away. Stopping and keeping writes the games as they stand; nothing
 //     invents a result.
 //
-// A Bot (a delegated Side) and a Cadence are not here yet: a Bot is one more
-// Side the SideResolver gives, and the Arbiter already asks every Side the
-// same way; a Cadence will time the Decisions settle asks for.
+// A Bot (bot.go) is a delegated Side: gammonNet's stateless playing policy
+// (engine/gammonnet, policy.go) at a named level, the Configuration that will
+// analyse the match, whose name its player carries in the Match (rules 6, 7).
+// Resolve gives it like any Side; it answers at once, so two Bots play a
+// whole match in the call that creates the Duel. The policy resigns only
+// before a roll, and the Arbiter asks for no decision there when the cube is
+// not available: a Bot then plays its certain loss out. A Cadence is not here
+// yet: it will time the Decisions settle asks for.
 package duel
