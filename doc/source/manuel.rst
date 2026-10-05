@@ -3398,7 +3398,13 @@ panneau propose aussi *Enregistrer l'image (SVG)…* et *Enregistrer l'image
 s'édite et reçoit un collage sans base, et l'on passe de l'un à l'autre sans
 rien perdre ; lancer la recherche, elle, demande une base. Seuls *Ajouter à la
 base* et *CTRL-S* exigent une base dans le panneau, et la barre d'état le dit.
-Aucune base n'est créée en coulisse.
+Aucune base n'est créée en coulisse. Dans le panneau Eval comme dans l'onglet
+Recherche, la commande ``import XGID=…`` (ou ``import OGID=…``) pose la position
+sur le plateau brouillon, sans base. L'onglet **Entraînement** s'ouvre lui
+aussi sans base : *Scores*, *Pions*, *Bearoff* et *Évaluation* sont
+disponibles, *Décision* est désactivé avec la raison affichée, et la session
+terminée n'est pas enregistrée (le journal l'indique). La Direction de tournoi
+exige une base ouverte.
 
 Pour fermer le panneau Eval, appuyer sur *CTRL-E* ou basculer sur un autre onglet.
 
