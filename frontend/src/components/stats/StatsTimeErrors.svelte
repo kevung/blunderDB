@@ -23,8 +23,9 @@
     });
 
     // An unscored band reads empty: there is no error to average, not a zero one.
-    const mean = (r) => (r.scored > 0 ? r.mean_error_mp.toFixed(1) : '');
-    const rate = (r) => (r.scored > 0 ? ((100 * r.blunders) / r.scored).toFixed(1) + ' %' : '');
+    /** @typedef {(typeof rows)[number]} Row */
+    const mean = (/** @type {Row} */ r) => (r.scored > 0 ? r.mean_error_mp.toFixed(1) : '');
+    const rate = (/** @type {Row} */ r) => (r.scored > 0 ? ((100 * r.blunders) / r.scored).toFixed(1) + ' %' : '');
 </script>
 
 {#if rows.length > 0}

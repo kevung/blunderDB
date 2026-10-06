@@ -94,9 +94,9 @@ async function openTranscript() {
 describe('MatchPanel — the origin of a match played here', () => {
     beforeEach(() => {
         vi.clearAllMocks();
-        GetMatchOrigin.mockImplementation(() => Promise.resolve(ORIGIN));
-        GetMatchMovePositions.mockImplementation(() => Promise.resolve(MOVES));
-        GetGamesByMatch.mockImplementation(() => Promise.resolve([]));
+        vi.mocked(GetMatchOrigin).mockImplementation(() => Promise.resolve(ORIGIN));
+        vi.mocked(GetMatchMovePositions).mockImplementation(() => Promise.resolve(MOVES));
+        vi.mocked(GetGamesByMatch).mockImplementation(() => Promise.resolve([]));
         databasePathStore.set('/tmp/test.db');
         openPanels.set(new Set([PANEL.MATCH]));
         lastVisitedMatchStore.set({ matchID: 7, currentIndex: 0, gameNumber: 1 });
@@ -123,7 +123,7 @@ describe('MatchPanel — the origin of a match played here', () => {
     });
 
     test('a match lost on time says so, not that it was stopped', async () => {
-        GetMatchOrigin.mockImplementation(() => Promise.resolve({ ...ORIGIN, lost_on_time: true, cadence_settings: { ...ORIGIN.cadence_settings, timeOut: 'lose_match' } }));
+        vi.mocked(GetMatchOrigin).mockImplementation(() => Promise.resolve({ ...ORIGIN, lost_on_time: true, cadence_settings: { ...ORIGIN.cadence_settings, timeOut: 'lose_match' } }));
         const container = await openTranscript();
         const line = container.querySelector('[data-testid="match-origin"]');
         expect(line.querySelector('[data-testid="origin-lost-on-time"]').textContent).toContain('Bob');
@@ -131,14 +131,14 @@ describe('MatchPanel — the origin of a match played here', () => {
     });
 
     test('a match played here without a single move still shows its origin', async () => {
-        GetMatchMovePositions.mockImplementation(() => Promise.resolve([]));
-        GetGamesByMatch.mockImplementation(() => Promise.resolve([]));
+        vi.mocked(GetMatchMovePositions).mockImplementation(() => Promise.resolve([]));
+        vi.mocked(GetGamesByMatch).mockImplementation(() => Promise.resolve([]));
         const { container } = render(MatchPanel);
         await vi.waitFor(() => expect(container.querySelector('[data-testid="match-origin"]')).not.toBeNull());
     });
 
     test('a match not played here draws no origin', async () => {
-        GetMatchOrigin.mockImplementation(() => Promise.resolve(null));
+        vi.mocked(GetMatchOrigin).mockImplementation(() => Promise.resolve(null));
         const container = await openTranscript();
         expect(GetMatchOrigin).toHaveBeenCalledWith(7);
         expect(container.querySelector('[data-testid="match-origin"]')).toBeNull();

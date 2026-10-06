@@ -144,7 +144,7 @@ export const matchContextStore = writable({
 
 // Last visited match store - remembers the last match and position viewed
 export const lastVisitedMatchStore = writable({
-    matchID: null, // Last visited match ID
+    matchID: /** @type {number | null} */ (null), // Last visited match ID
     currentIndex: 0, // Last position index in that match
     gameNumber: 1 // Last game number viewed
 });

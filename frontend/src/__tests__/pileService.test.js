@@ -23,7 +23,7 @@ describe('pileService', () => {
     });
 
     it('reads the marker of the position on the board', async () => {
-        IsPositionOnPile.mockResolvedValue(true);
+        vi.mocked(IsPositionOnPile).mockResolvedValue(true);
         await refreshPileState();
         expect(IsPositionOnPile).toHaveBeenCalledWith(get(positionStore));
         expect(get(onPileStore)).toBe(true);
@@ -32,11 +32,11 @@ describe('pileService', () => {
     it('keeps the marker of a draft already on the Pile when the board re-emits it', async () => {
         const draft = emptyPosition();
         positionStore.set(draft);
-        TogglePile.mockResolvedValue({ onPile: true, brought: true });
+        vi.mocked(TogglePile).mockResolvedValue({ onPile: true, brought: true });
         await togglePile();
         expect(get(onPileStore)).toBe(true);
         // The backend finds the draft by its hash, though its id is still 0.
-        IsPositionOnPile.mockResolvedValue(true);
+        vi.mocked(IsPositionOnPile).mockResolvedValue(true);
         positionStore.set({ ...draft });
         await refreshPileState();
         expect(IsPositionOnPile).toHaveBeenCalledWith(expect.objectContaining({ id: 0 }));
@@ -44,7 +44,7 @@ describe('pileService', () => {
     });
 
     it('sends the displayed position to the backend and shows the answer', async () => {
-        TogglePile.mockResolvedValue({ onPile: true, brought: false });
+        vi.mocked(TogglePile).mockResolvedValue({ onPile: true, brought: false });
         await togglePile();
         expect(TogglePile).toHaveBeenCalledWith(get(positionStore));
         expect(get(onPileStore)).toBe(true);
