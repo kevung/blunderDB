@@ -98,9 +98,12 @@ func TestDuelFacade_MatchOrigin(t *testing.T) {
 			t.Fatalf("PlayDuel: %+v, %v", st, err)
 		}
 	}
-	ended, err := db.StopDuel(st.State.ID, st.State.Revision, true)
+	if _, err := db.StopDuel(st.State.ID, st.State.Revision, true); !errors.Is(err, storage.ErrInvalid) {
+		t.Fatalf("keeping an unfinished match in points: %v, want ErrInvalid", err)
+	}
+	ended, err := db.ForfeitDuel(st.State.ID, st.State.Revision, 1)
 	if err != nil || ended.State.Ended == nil || ended.State.Ended.MatchID == 0 {
-		t.Fatalf("stopping and keeping the match = %+v, %v", ended, err)
+		t.Fatalf("forfeiting the match = %+v, %v", ended, err)
 	}
 
 	o, err := db.GetMatchOrigin(ended.State.Ended.MatchID)
@@ -110,8 +113,8 @@ func TestDuelFacade_MatchOrigin(t *testing.T) {
 	if fp, _ := duel.Fingerprint(o.DiceSeed); fp != published || o.Fingerprint != published {
 		t.Errorf("seed read back gives %q, origin says %q, published %q", fp, o.Fingerprint, published)
 	}
-	if !o.StoppedEarly {
-		t.Errorf("a match kept when stopped says so: %+v", o.MatchOrigin)
+	if o.StoppedEarly {
+		t.Errorf("a match forfeited is won, not stopped early: %+v", o.MatchOrigin)
 	}
 
 	imported, err := db.store.Matches().Save(context.Background(), "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3})

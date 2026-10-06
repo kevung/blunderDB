@@ -48,11 +48,11 @@ describe('ending a Duel', () => {
         expect(ForfeitDuel).toHaveBeenCalledWith(4, 7, 1);
     });
 
-    test('in money, the confirmation tells the backgammon at the cube', async () => {
+    test('in money, the confirmation tells the single at the cube', async () => {
         open(0, [{ kind: 'external' }, { kind: 'bot' }]);
         vi.mocked(confirmAction).mockResolvedValue(true);
         await confirmForfeitDuel();
-        expect(vi.mocked(confirmAction).mock.calls[0][0]).toContain('6');
+        expect(vi.mocked(confirmAction).mock.calls[0][0]).toContain('single (2 pt)');
         expect(ForfeitDuel).toHaveBeenCalledWith(4, 7, 0);
     });
 

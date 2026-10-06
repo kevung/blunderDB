@@ -3848,11 +3848,13 @@ msgstr ""
 
 #: ../../source/cli.rst:1952
 msgid ""
-"``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur. "
-"Arrêter n'est pas abandonner."
+"``stop`` — Arrête une session en argent et écrit son Match tel qu'il est, la "
+"partie en cours sans vainqueur. Un match en points est refusé : il ne "
+"s'écrit qu'entier (``forfeit``, ``discard``). Arrêter n'est pas abandonner."
 msgstr ""
-"``stop`` — Останавливает Дуэль и записывает Матч как есть, без победителя. "
-"Остановить — не значит сдать."
+"``stop`` — Останавливает сессию на деньги и записывает её Матч как есть, "
+"текущую партию без победителя. Матч на очки отклоняется: он записывается "
+"только целиком (``forfeit``, ``discard``). Остановить — не значит сдать."
 
 #: ../../source/cli.rst:1953
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."

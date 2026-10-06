@@ -98,9 +98,9 @@ func TestDecisionDurations(t *testing.T) {
 				w.kind, show(w.decision), show(w.cube))
 		}
 	}
-	end, err := svc.Stop(ctx, "", s.ID, s.Revision, true)
+	end, err := svc.Forfeit(ctx, "", s.ID, s.Revision, 0)
 	if err != nil {
-		t.Fatalf("Stop: %v", err)
+		t.Fatalf("Forfeit: %v", err)
 	}
 	var moves []*domain.Move
 	for mv, err := range st.Matches().MovesByMatch(ctx, "", end.Ended.MatchID) {
@@ -236,8 +236,9 @@ func TestNamedCadences(t *testing.T) {
 }
 
 // TestLoseOnTime: under TimeLoseMatch, a Play received after the reserve ran
-// out does not count; the Match stops there, carries who ran out and the
-// Cadence, and no point is invented.
+// out does not count; the player out of time forfeits, so the Match is written
+// won by the other with its final score, and carries who ran out and the
+// Cadence. Nobody gave it up: the Ending names no forfeit.
 func TestLoseOnTime(t *testing.T) {
 	ctx := context.Background()
 	st := newStore(t)
@@ -255,12 +256,15 @@ func TestLoseOnTime(t *testing.T) {
 	late := s.Awaiting.Side
 	played := len(s.Actions)
 	end := playAfter(t, svc, c, s, 13, answer(*s.Awaiting))
-	if end.Ended == nil || end.Ended.OverTime != late+1 || !end.Ended.StoppedEarly || len(end.Actions) != played {
-		t.Fatalf("ended %+v with %d actions; want player %d over time, stopped early, %d actions",
-			end.Ended, len(end.Actions), late+1, played)
+	if end.Ended == nil || end.Ended.OverTime != late+1 || end.Ended.Forfeited != 0 || len(end.Actions) != played+1 {
+		t.Fatalf("ended %+v with %d actions; want player %d over time, no forfeit named, %d actions",
+			end.Ended, len(end.Actions), late+1, played+1)
+	}
+	if last := end.Actions[played]; last.Kind != transcript.KindForfeit || last.Side != late {
+		t.Errorf("last action %+v: want the forfeit of side %d", last, late)
 	}
 	o, err := st.Duels().Origin(ctx, "", end.Ended.MatchID)
-	if err != nil || o.OverTime != late+1 || !o.StoppedEarly {
+	if err != nil || o.OverTime != late+1 || o.StoppedEarly {
 		t.Fatalf("origin %+v, %v", o, err)
 	}
 	var back Cadence
@@ -271,8 +275,33 @@ func TestLoseOnTime(t *testing.T) {
 		t.Errorf("read back %+v, %v: a match lost on time says so", read, err)
 	}
 	games, err := gamesOf(st, end.Ended.MatchID)
-	if err != nil || len(games) != 1 || games[0].Winner != domain.WinnerUnfinished || games[0].PointsWon != 0 {
-		t.Errorf("games %+v, %v: one, unfinished, no points", games, err)
+	if err != nil || len(games) != 1 || games[0].Winner == domain.WinnerUnfinished || games[0].PointsWon != 5 {
+		t.Errorf("games %+v, %v: one, won for the 5 points of the match", games, err)
+	}
+}
+
+// TestLoseOnTimeMoney: a money session has no match to give; lost on time, it
+// ends as it stands, its game in progress without a winner and no forfeit
+// added.
+func TestLoseOnTimeMoney(t *testing.T) {
+	ctx := context.Background()
+	st := newStore(t)
+	c := newClock()
+	svc := clockedService(t, st, c)
+	cad := Cadence{Reserve: 10, Delay: 2, TimeOut: TimeLoseMatch}
+	s, err := svc.Create(ctx, "", Settings{Cadence: &cad, Sides: [2]SideSpec{external("A"), external("B")}})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	s = playAfter(t, svc, c, s, 3, answer(*s.Awaiting))
+	played := len(s.Actions)
+	end := playAfter(t, svc, c, s, 13, answer(*s.Awaiting))
+	if end.Ended == nil || end.Ended.MatchID == 0 || end.Ended.OverTime == 0 || len(end.Actions) != played {
+		t.Fatalf("ended %+v with %d actions; want a Match, over time, %d actions", end.Ended, len(end.Actions), played)
+	}
+	games, err := gamesOf(st, end.Ended.MatchID)
+	if err != nil || len(games) != 1 || games[0].Winner != domain.WinnerUnfinished {
+		t.Errorf("games %+v, %v: one, unfinished", games, err)
 	}
 }
 
@@ -297,15 +326,15 @@ func TestPlayOnAfterTime(t *testing.T) {
 	if len(s.Actions) == 0 || !eqMS(s.Actions[0].DecisionMS, ms(6000)) || s.Clock.Reserve[first] != 0 {
 		t.Errorf("played on: %d actions, reserve %d", len(s.Actions), s.Clock.Reserve[first])
 	}
-	end, err := svc.Stop(ctx, "", s.ID, s.Revision, true)
+	end, err := svc.Forfeit(ctx, "", s.ID, s.Revision, first)
 	if err != nil {
-		t.Fatalf("Stop: %v", err)
+		t.Fatalf("Forfeit: %v", err)
 	}
 	if o, err := st.Duels().Origin(ctx, "", end.Ended.MatchID); err != nil || o.OverTime != first+1 {
 		t.Errorf("origin %+v, %v: the overrun is a fact of the Match", o, err)
 	}
-	if read, err := ReadOrigin(ctx, st, "", end.Ended.MatchID); err != nil || read.LostOnTime || !read.StoppedEarly {
-		t.Errorf("read back %+v, %v: played on past the reserve then stopped is not lost on time", read, err)
+	if read, err := ReadOrigin(ctx, st, "", end.Ended.MatchID); err != nil || read.LostOnTime || read.StoppedEarly {
+		t.Errorf("read back %+v, %v: played on past the reserve then forfeited is not lost on time", read, err)
 	}
 
 	lose := Cadence{Reserve: 5, TimeOut: TimeLoseMatch}

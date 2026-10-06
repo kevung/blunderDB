@@ -49,7 +49,8 @@ type duelForfeitReq struct {
 
 type duelStopReq struct {
 	ID int64 `json:"id"`
-	// Keep writes the Match as it stands; false throws the draft away.
+	// Keep writes a money session's Match as it stands, and is refused for a
+	// match in points (duel.Service.Stop); false throws the draft away.
 	Keep bool `json:"keep"`
 }
 

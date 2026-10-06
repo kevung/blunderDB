@@ -116,9 +116,8 @@ type Ending struct {
 	// MatchID is the Match written, 0 when the draft was thrown away.
 	MatchID int64 `json:"matchId"`
 	// DiceSeed is revealed with the Match; "" when nothing was written.
-	DiceSeed     string `json:"diceSeed,omitempty"`
-	StoppedEarly bool   `json:"stoppedEarly,omitempty"`
-	Discarded    bool   `json:"discarded,omitempty"`
+	DiceSeed  string `json:"diceSeed,omitempty"`
+	Discarded bool   `json:"discarded,omitempty"`
 	// Forfeited is the player (1 or 2) who gave the match up, 0 none.
 	Forfeited int `json:"forfeited,omitempty"`
 	// OverTime is the player (1 or 2) whose reserve ran out first, 0 none.
@@ -375,10 +374,12 @@ func (s *Service) save(ctx context.Context, scope string, row *storage.Duel, g *
 	return err
 }
 
-// Stop ends the open Duel before its end: keep writes the Match as it stands
-// — an unfinished game keeps no winner, and a match short of its length is
-// marked stopped early — and otherwise the draft is thrown away and nothing of
-// the Duel is written. Stopping is never resigning: that is a Play.
+// Stop ends the open Duel before its end: thrown away, nothing of the Duel is
+// written. Kept, a money session's Match is written as it stands — an
+// unfinished game keeps no winner — since a session has no end of its own; a
+// match in points is refused (ErrInvalid), because a Match is written whole or
+// not at all (ADR-0072 rule 10): it is suspended, forfeited or thrown away.
+// Stopping is never resigning: that is a Play.
 func (s *Service) Stop(ctx context.Context, scope string, id, revision int64, keep bool) (*State, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -391,6 +392,9 @@ func (s *Service) Stop(ctx context.Context, scope string, id, revision int64, ke
 	}
 	if revision != 0 && revision != row.Revision {
 		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
+	}
+	if keep && g.doc.Header.MatchLength > 0 {
+		return nil, fmt.Errorf("duel %d: a match in points is kept only once won; suspend it, forfeit it or discard it: %w", id, storage.ErrInvalid)
 	}
 	return s.end(ctx, scope, row, g, keep)
 }
@@ -443,13 +447,19 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 	if len(parts.Games) == 0 {
 		return nil, fmt.Errorf("duel %d: nothing played to keep: %w", row.ID, storage.ErrInvalid)
 	}
+	forfeited := g.forfeitedBy()
+	// Losing on time loses the match: the player out of time gives it up, so
+	// the Match is written won with its final score, never short of its
+	// length. A money session has no match to give and ends as it stands.
+	if g.timeLost() && g.doc.Header.MatchLength > 0 && !g.finished() {
+		if err := g.forfeit(g.doc.Clock.OverTime - 1); err != nil {
+			return nil, err
+		}
+		parts = g.parts()
+	}
 	header := *parts.Match
 	header.MatchHash, header.CanonicalHash = transcription.MatchHashes(parts)
-	origin := storage.MatchOrigin{
-		DiceSeed:     g.seed,
-		StoppedEarly: g.doc.Header.MatchLength > 0 && !g.finished(),
-		OverTime:     g.doc.Clock.OverTime,
-	}
+	origin := storage.MatchOrigin{DiceSeed: g.seed, OverTime: g.doc.Clock.OverTime}
 	origin.BotLevel, origin.BotEngine = botOrigin(g.doc.Sides)
 	if g.doc.Cadence != nil {
 		origin.Cadence = g.doc.Cadence.String()
@@ -497,7 +507,7 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 	delete(s.open, scope)
 	st := state(row, g)
 	st.Awaiting = nil
-	st.Ended = &Ending{MatchID: res.MatchID, DiceSeed: g.seed, StoppedEarly: origin.StoppedEarly, OverTime: origin.OverTime, Forfeited: g.forfeitedBy()}
+	st.Ended = &Ending{MatchID: res.MatchID, DiceSeed: g.seed, OverTime: origin.OverTime, Forfeited: forfeited}
 	return st, nil
 }
 

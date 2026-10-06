@@ -20,8 +20,9 @@ type Origin struct {
 	// CadenceSettings is Cadence decoded, nil when the Duel had none.
 	CadenceSettings *Cadence `json:"cadence_settings,omitempty"`
 	// LostOnTime: the match ended because the reserve of player OverTime ran
-	// out under TimeLoseMatch — the test the Arbiter ends a Duel on. Such a
-	// match is also StoppedEarly, though nobody stopped it.
+	// out under TimeLoseMatch — the test the Arbiter ends a Duel on. In
+	// points, that player forfeits as the Duel ends, so the Match is won by
+	// the other; a Match whose last game has no winner is also StoppedEarly.
 	LostOnTime bool `json:"lost_on_time"`
 	// Clock is the Match's clock replayed from its durations, nil without a
 	// Cadence.

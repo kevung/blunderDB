@@ -3916,11 +3916,14 @@ msgstr ""
 
 #: ../../source/cli.rst:1952
 msgid ""
-"``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur. "
-"Arrêter n'est pas abandonner."
+"``stop`` — Arrête une session en argent et écrit son Match tel qu'il est, la "
+"partie en cours sans vainqueur. Un match en points est refusé : il ne "
+"s'écrit qu'entier (``forfeit``, ``discard``). Arrêter n'est pas abandonner."
 msgstr ""
-"``stop`` — Διακόπτει τη Μονομαχία και εγγράφει το Ματς όπως είναι, χωρίς "
-"νικητή. Η διακοπή δεν είναι εγκατάλειψη."
+"``stop`` — Διακόπτει μια συνεδρία με χρήματα και εγγράφει το Ματς της όπως "
+"είναι, την τρέχουσα παρτίδα χωρίς νικητή. Ένα ματς σε πόντους απορρίπτεται: "
+"εγγράφεται μόνο ολόκληρο (``forfeit``, ``discard``). Η διακοπή δεν είναι "
+"εγκατάλειψη."
 
 #: ../../source/cli.rst:1953
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."
