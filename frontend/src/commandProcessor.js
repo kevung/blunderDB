@@ -21,8 +21,12 @@ import { startStudyBacklog } from './services/studyQueueService.js';
 import { parseSearchTokens, stripQuotedTokens } from './services/searchFilterService.js';
 export { stripQuotedTokens };
 
+// The App wires one handler per command family; any of them may be absent.
+/** @typedef {Record<string, ((...args: any[]) => any) | undefined>} CommandCallbacks */
+/** @type {CommandCallbacks} */
 let callbacks = {};
 
+/** @param {CommandCallbacks} cbs */
 export function initCommandProcessor(cbs) {
     callbacks = cbs;
 }

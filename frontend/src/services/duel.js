@@ -177,6 +177,7 @@ export function formatClock(ms) {
  */
 export function framesBetween(before, after, human) {
     const from = before?.actions?.length ?? 0;
+    /** @type {any[]} */
     const infos = after?.actions ?? [];
     return infos.slice(from).filter((info) => info.side !== human && info.has_position && info.kind === 'checker');
 }
@@ -195,6 +196,9 @@ export function scoreline(state) {
  * The key and values of a level's label in the selector: its depth comes from
  * the offer (the Go side reads gammonNet's table), never from a copy here. A
  * level the offer does not describe keeps its bare name.
+ *
+ * @param {string} name
+ * @param {readonly { name: string, ply: number, pruneK: number }[] | null | undefined} levels
  */
 export function levelLabelParts(name, levels) {
     const info = (levels ?? []).find((l) => l.name === name);

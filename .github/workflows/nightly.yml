@@ -261,7 +261,7 @@ jobs:
 
       - name: Restore the synthetic base
         id: scale-db
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: scale.db
           key: scale-db-${{ env.SCALE_POSITIONS }}-${{ hashFiles('cmd/blunderdb-synthdb/**', 'testdata/*.xg', 'testdata/*/*.xg', 'pkg/blunderdb/database/db_schema.go', 'pkg/blunderdb/storage/sqlite/schema_sqlite.go', 'pkg/blunderdb/engine/analysiscodec.go', 'pkg/blunderdb/ingest/**', 'pkg/blunderdb/domain/**') }}
@@ -275,7 +275,7 @@ jobs:
       # to the base, and the cached copy must stay the generator's output.
       - name: Save the synthetic base
         if: steps.scale-db.outputs.cache-hit != 'true'
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: scale.db
           key: ${{ steps.scale-db.outputs.cache-primary-key }}
@@ -287,7 +287,7 @@ jobs:
         shell: bash
 
       - name: Restore the previous night's results
-        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: scale-bench-previous.txt
           key: scale-bench-results-${{ github.run_id }}
@@ -304,7 +304,7 @@ jobs:
         shell: bash
 
       - name: Save these results as the next reference
-        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: scale-bench-previous.txt
           key: scale-bench-results-${{ github.run_id }}

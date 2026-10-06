@@ -8957,6 +8957,10 @@ msgstr ""
 "«Продолжить игру» заново открывает приостановленную Дуэль с того же места, с "
 "теми же предстоящими бросками; её часы были остановлены."
 
+#: ../../source/manuel.rst:4045
+msgid "Un Duel en suspens ne quitte pas sa base : l'export de la base ne l'emporte pas, parce que ses dés à venir ne doivent sortir par aucune voie avant la fin. Un Duel terminé part comme tout Match."
+msgstr "Приостановленная Дуэль не покидает свою базу: экспорт базы её не переносит, потому что её будущие броски не должны выходить ни по какому пути до конца. Завершённая Дуэль переносится как любой Match."
+
 #: ../../source/manuel.rst:4026
 msgid ""
 "Le Duel se joue au plateau. Le panneau montre la feuille de match en deux "

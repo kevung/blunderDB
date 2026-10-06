@@ -979,17 +979,8 @@ msgid "Jouer un Duel par l'API"
 msgstr "API でデュエルをプレイする"
 
 #: ../../source/mode_headless.rst:435
-msgid ""
-"La famille ``duels.*`` pilote un Duel une Action à la fois, avec la même "
-"logique que le bureau. Les lectures (``list``, ``get``) sont toujours "
-"servies. Les gestes (``create``, ``open``, ``act``, ``flag``, "
-"``suspend``, ``stop``, ``discard``) ne le sont qu'avec ``serve --duel`` :"
-" sans ce drapeau, ces routes répondent 404."
-msgstr ""
-"``duels.*`` ファミリーは、デスクトップと同じロジックでデュエルを 1 アクションずつ進めます。読み取り(``list``\\ 、\\ "
-"``get``)は常に提供されます。操作(``create``\\ 、\\ ``open``\\ 、\\ ``act``\\ 、\\ "
-"``flag``\\ 、\\ ``suspend``\\ 、\\ ``stop``\\ 、\\ ``discard``)は ``serve "
-"--duel`` を付けた場合にのみ提供され、このフラグがないとこれらのルートは 404 を返します。"
+msgid "La famille ``duels.*`` pilote un Duel une Action à la fois, avec la même logique que le bureau. Les lectures (``list``, ``get``) sont toujours servies. Les gestes (``create``, ``open``, ``act``, ``flag``, ``suspend``, ``stop``, ``forfeit``, ``discard``) ne le sont qu'avec ``serve --duel`` : sans ce drapeau, ces routes répondent 404."
+msgstr "``duels.*`` ファミリーは、デスクトップと同じロジックでデュエルを 1 アクションずつ進めます。読み取り(``list``\\\\ 、\\\\ ``get``)は常に提供されます。操作(``create``\\\\ 、\\\\ ``open``\\\\ 、\\\\ ``act``\\\\ 、\\\\ ``flag``\\\\ 、\\\\ ``suspend``\\\\ 、\\\\ ``stop``\\\\ 、\\\\ ``forfeit``\\\\ 、\\\\ ``discard``)は ``serve --duel`` を付けた場合にのみ提供され、このフラグがないとこれらのルートは 404 を返します。"
 
 #: ../../source/mode_headless.rst:441
 #, no-python-brace-format
@@ -1042,18 +1033,16 @@ msgstr ""
 " はリビジョンを ``ETag`` で返し、それを指す ``If-None-Match`` には 304 で応答します。"
 
 #: ../../source/mode_headless.rst:464
-msgid ""
-"Le germe des dés ne sort par aucune route avant la fin : l'état en porte "
-"l'empreinte, et le germe n'est révélé qu'avec le Match que la fin du Duel"
-" écrit (``ended.diceSeed``). ``stop`` arrête le Duel en gardant le Match "
-"tel qu'il est, ``discard`` le jette. Les gestes sont annoncés sur "
-"``/v1/events`` (filtre ``duel``). Sous ``blunderdb call``, un Duel n'a ni"
-" Cadence ni durée de décision : chaque appel est son propre processus."
-msgstr ""
-"サイコロのシードは、終了までどのルートからも出ません。状態にはそのフィンガープリントが含まれ、シードはデュエルの終了時に書き込まれるマッチとともにのみ公開されます(``ended.diceSeed``)。``stop``"
-" はマッチをその時点のまま残してデュエルを停止し、``discard`` はそれを破棄します。操作は ``/v1/events``\\ "
-"(``duel`` フィルター)で通知されます。``blunderdb call`` "
-"では、デュエルに持ち時間も判断時間もありません。呼び出しごとに別プロセスだからです。"
+msgid "Le germe des dés ne sort par aucune route avant la fin : l'état en porte l'empreinte, et le germe n'est révélé qu'avec le Match que la fin du Duel écrit (``ended.diceSeed``). ``discard`` jette le Duel : rien n'en est écrit. Les gestes sont annoncés sur ``/v1/events`` (filtre ``duel``). Sous ``blunderdb call``, un Duel n'a ni Cadence ni durée de décision : chaque appel est son propre processus."
+msgstr "ダイスのシードは、終了前にはどの経路からも出ません。状態はその指紋を持ち、シードはデュエルの終了が書き込むマッチとともにのみ明かされます(``ended.diceSeed``)。\\ ``discard`` はデュエルを破棄します。何も書き込まれません。操作は ``/v1/events``\\ (フィルター ``duel``)で通知されます。\\ ``blunderdb call`` では、デュエルにカデンスも判断時間もありません。呼び出しごとに別のプロセスです。"
+
+#: ../../source/mode_headless.rst:470
+msgid "``forfeit`` abandonne le match pour un Côté (``side``, 0 ou 1, obligatoire) : la partie en cours va à l'autre Côté pour les points qui le portent à la longueur du match — en argent, une simple à la valeur du videau — et le Match s'écrit gagné par lui. ``stop`` avec ``keep`` vrai écrit en argent le Match tel qu'il est, la partie en cours sans vainqueur ; sur un match en points non terminé, il est refusé en **400** et le Duel reste ouvert : le Match ne s'écrit qu'entier, et le Duel se suspend, s'abandonne, ou s'arrête avec ``keep`` faux, qui le jette. Arrêter n'est pas abandonner. Sous une Cadence dont le dépassement fait perdre le match (``timeOut`` à ``lose_match``), la perte au temps vaut abandon du Côté dont le temps est écoulé : en points, le Match s'écrit gagné par l'autre à la longueur."
+msgstr "``forfeit`` は一方のサイド(``side``、0 または 1、必須)のためにマッチを放棄します。進行中のゲームは、もう一方のサイドがマッチ長に達するだけの点数で獲得し(マネーゲームでは、キューブの値のシングル)、マッチはそのサイドの勝ちとして書き込まれます。\\ ``keep`` が真の ``stop`` は、マネーゲームではマッチをそのまま、進行中のゲームは勝者なしで書き込みます。未終了のポイントマッチでは **400** で拒否され、デュエルは開いたままです。マッチは丸ごとでしか書き込まれず、デュエルは中断するか、放棄するか、``keep`` が偽の ``stop`` で破棄します。停止は放棄ではありません。超過でマッチを失うカデンス(``timeOut`` が ``lose_match``)では、時間切れは時間の尽きたサイドの放棄にあたります。ポイントマッチでは、相手がマッチ長で勝ったものとして書き込まれます。"
+
+#: ../../source/mode_headless.rst:471
+msgid "L'export n'y fait pas exception : ``exports.sqlite`` n'emporte aucun Duel en suspens, même quand il porte sur le tenant entier, puisque son germe est chacun des lancers à venir. Le Match d'un Duel terminé part avec son origine, germe révélé. Seul ``migrate`` emporte les Duels en suspens avec leur germe, pour qu'ils se reprennent sur PostgreSQL avec les mêmes dés."
+msgstr "エクスポートも例外ではありません。\\ ``exports.sqlite``\\ は、テナント全体を対象とする場合でも、中断中のデュエルを含みません。そのシードは今後のすべての出目だからです。終了したデュエルの Match は、シードを明かした出自とともに出ていきます。中断中のデュエルをシードごと運ぶのは\\ ``migrate``\\ だけで、PostgreSQL 上で同じダイスのまま再開できるようにするためです。"
 
 #: ../../source/mode_headless.rst:473
 msgid ""

@@ -70,6 +70,7 @@ export function sortByDuration(moves, direction) {
  * @returns {{ index: number, player: 0 | 1, ms: number }[]}
  */
 export function timeBars(movePositions) {
+    /** @type {{ index: number, player: 0 | 1, ms: number }[]} */
     const bars = [];
     movePositions.forEach((mp, index) => {
         const ms = moveTotalMS(mp);

@@ -8708,6 +8708,10 @@ msgstr ""
 "「再開」は、中断中のデュエルを同じ時点、同じ今後のサイコロで開き直します。時"
 "計は止まっていました。"
 
+#: ../../source/manuel.rst:4045
+msgid "Un Duel en suspens ne quitte pas sa base : l'export de la base ne l'emporte pas, parce que ses dés à venir ne doivent sortir par aucune voie avant la fin. Un Duel terminé part comme tout Match."
+msgstr "中断中のデュエルはそのデータベースから出ません。データベースのエクスポートはそれを含みません。今後のダイスは終了前にどの経路からも出てはならないためです。終了したデュエルは他の Match と同じようにエクスポートされます。"
+
 #: ../../source/manuel.rst:4026
 msgid ""
 "Le Duel se joue au plateau. Le panneau montre la feuille de match en deux "

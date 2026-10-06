@@ -24,6 +24,7 @@
     let awaiting = $derived(duel?.awaiting ?? null);
     let mine = $derived(!!awaiting && awaiting.side === human && !$duelAnimatingStore);
     let players = $derived(duel ? [duel.header?.player1 || $t('duel.player1'), duel.header?.player2 || $t('duel.player2')] : null);
+    /** @type {import('../../wailsjs/go/models').duel.LevelInfo[]} */
     let levels = $state([]);
     let lengthChoices = Array.from({ length: MAX_MATCH_LENGTH }, (_, i) => i + 1);
 

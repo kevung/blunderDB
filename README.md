@@ -71,7 +71,7 @@ The full guide, per system and in nine languages: [Download and install](https:/
 Prerequisites: Go 1.27 (`go.mod` requires 1.26.0 at least), Node.js 22, [Wails v2](https://wails.io/) CLI 2.15.
 
 ```bash
-go install github.com/wailsapp/wails/v2/cmd/wails@v2.15.0
+go install github.com/wailsapp/wails/v2/cmd/wails@v2.16.0
 git clone https://github.com/kevung/blunderDB.git
 cd blunderDB
 make build            # wails build -tags webkit2_41 → build/bin/blunderDB

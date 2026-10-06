@@ -113,7 +113,7 @@ describe('MatchPanel — the Transcript carries the time of every decision', () 
     });
 
     test('under a Cadence the clock column shows the reserve left, and the metadata state the cadence and the bank', async () => {
-        GetMatchOrigin.mockResolvedValueOnce({
+        vi.mocked(GetMatchOrigin).mockResolvedValueOnce({
             dice_seed: 'ab',
             cadence_settings: { name: 'rapid-2+12', reserve: 120, delay: 12, timeOut: 'lose_match' },
             clock: { start: [120000, 120000], remaining: [117000, 120000, 100000, 0, 0] }

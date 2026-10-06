@@ -435,7 +435,7 @@ Jouer un Duel par l'API
 La famille ``duels.*`` pilote un Duel une Action à la fois, avec la même
 logique que le bureau. Les lectures (``list``, ``get``) sont toujours servies.
 Les gestes (``create``, ``open``, ``act``, ``flag``, ``suspend``, ``stop``,
-``discard``) ne le sont qu'avec ``serve --duel`` : sans ce drapeau, ces routes
+``forfeit``, ``discard``) ne le sont qu'avec ``serve --duel`` : sans ce drapeau, ces routes
 répondent 404.
 
 ``create`` reçoit la longueur du match (ou une session en argent), le Départ,
@@ -463,10 +463,27 @@ la révision en ``ETag`` et répond 304 à un ``If-None-Match`` qui la nomme.
 
 Le germe des dés ne sort par aucune route avant la fin : l'état en porte
 l'empreinte, et le germe n'est révélé qu'avec le Match que la fin du Duel
-écrit (``ended.diceSeed``). ``stop`` arrête le Duel en gardant le Match tel
-qu'il est, ``discard`` le jette. Les gestes sont annoncés sur ``/v1/events``
+écrit (``ended.diceSeed``). ``discard`` jette le Duel : rien n'en est écrit. Les gestes sont annoncés sur ``/v1/events``
 (filtre ``duel``). Sous ``blunderdb call``, un Duel n'a ni Cadence ni durée de
 décision : chaque appel est son propre processus.
+
+``forfeit`` abandonne le match pour un Côté (``side``, 0 ou 1, obligatoire) :
+la partie en cours va à l'autre Côté pour les points qui le portent à la
+longueur du match — en argent, une simple à la valeur du videau — et le Match
+s'écrit gagné par lui. ``stop`` avec ``keep`` vrai écrit en argent le Match tel
+qu'il est, la partie en cours sans vainqueur ; sur un match en points non
+terminé, il est refusé en **400** et le Duel reste ouvert : le Match ne s'écrit
+qu'entier, et le Duel se suspend, s'abandonne, ou s'arrête avec ``keep`` faux,
+qui le jette. Arrêter n'est pas abandonner. Sous une Cadence dont le
+dépassement fait perdre le match (``timeOut`` à ``lose_match``), la perte au
+temps vaut abandon du Côté dont le temps est écoulé : en points, le Match
+s'écrit gagné par l'autre à la longueur.
+
+L'export n'y fait pas exception : ``exports.sqlite`` n'emporte aucun Duel en
+suspens, même quand il porte sur le tenant entier, puisque son germe est
+chacun des lancers à venir. Le Match d'un Duel terminé part avec son origine,
+germe révélé. Seul ``migrate`` emporte les Duels en suspens avec leur germe,
+pour qu'ils se reprennent sur PostgreSQL avec les mêmes dés.
 
 .. warning::
 

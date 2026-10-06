@@ -9346,6 +9346,10 @@ msgstr ""
 "Το «Συνέχιση» ανοίγει ξανά μια Μονομαχία σε αναστολή από το ίδιο σημείο, με "
 "τα ίδια επόμενα ζάρια· τα ρολόγια της ήταν σταματημένα."
 
+#: ../../source/manuel.rst:4045
+msgid "Un Duel en suspens ne quitte pas sa base : l'export de la base ne l'emporte pas, parce que ses dés à venir ne doivent sortir par aucune voie avant la fin. Un Duel terminé part comme tout Match."
+msgstr "Μια Μονομαχία σε αναστολή δεν φεύγει από τη βάση του: η εξαγωγή της βάσης δεν την παίρνει μαζί, επειδή τα επόμενα ζάρια της δεν πρέπει να βγουν από καμία οδό πριν από το τέλος. Μια ολοκληρωμένη Μονομαχία εξάγεται όπως κάθε Match."
+
 #: ../../source/manuel.rst:4026
 msgid ""
 "Le Duel se joue au plateau. Le panneau montre la feuille de match en deux "

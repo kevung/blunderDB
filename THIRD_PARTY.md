@@ -45,7 +45,7 @@ directory of each one).
 | [github.com/kevung/ogxmparser](https://github.com/kevung/ogxmparser) | v0.1.0 | MIT | (c) 2026 Kévin Unger | HedgeHog `.ogxm` import |
 | [modernc.org/sqlite](https://gitlab.com/cznic/sqlite) | v1.59.0 | BSD-3-Clause | (c) 2017 The Sqlite Authors | Pure-Go SQLite driver (desktop, CLI, `serve` with the SQLite backend); pulls in `modernc.org/libc`, `mathutil`, `memory` (BSD-3-Clause) |
 | [github.com/jackc/pgx/v5](https://github.com/jackc/pgx) | v5.11.0 | MIT | (c) 2013-2021 Jack Christensen | PostgreSQL driver of the `serve` daemon (with `pgpassfile`, `pgservicefile`, `puddle`, MIT) |
-| [github.com/wailsapp/wails/v2](https://github.com/wailsapp/wails) | v2.15.0 | MIT | (c) 2018-Present Lea Anthony | Desktop window and Go↔JS bridge (not linked into `cmd/serve`) |
+| [github.com/wailsapp/wails/v2](https://github.com/wailsapp/wails) | v2.16.0 | MIT | (c) 2018-Present Lea Anthony | Desktop window and Go↔JS bridge (not linked into `cmd/serve`) |
 | [github.com/open-spaced-repetition/go-fsrs/v3](https://github.com/open-spaced-repetition/go-fsrs) | v3.3.1 | MIT | (c) 2022 open-spaced-repetition | FSRS scheduling of the Anki-style cards |
 | [github.com/adrg/xdg](https://github.com/adrg/xdg) | v0.5.3 | MIT | (c) 2014 Adrian-George Bostan | XDG config paths |
 | [github.com/klauspost/compress](https://github.com/klauspost/compress) | v1.20.0 | BSD-3-Clause | (c) 2012 The Go Authors, (c) 2019 Klaus Post | Compression of stored analyses |

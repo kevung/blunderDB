@@ -152,14 +152,13 @@ func (a *App) newMCPServer(write bool, display guiDisplay) *sdk.Server {
 
 // mcpHTTPHandler serves the tools at /mcp. The SDK's anti-rebinding guard
 // stays on (a page the user visits must not reach localhost through a DNS
-// name it controls) and CrossOriginProtection refuses a browser's
-// cross-origin POST: on localhost the attacker is a web page (ADR-0059).
+// name it controls) and the cross-origin protection wrapped around it refuses a
+// browser's cross-origin POST: on localhost the attacker is a web page (ADR-0059).
 func mcpHTTPHandler(srv *sdk.Server) http.Handler {
 	h := sdk.NewStreamableHTTPHandler(func(*http.Request) *sdk.Server { return srv },
-		&sdk.StreamableHTTPOptions{Stateless: true, JSONResponse: true,
-			CrossOriginProtection: http.NewCrossOriginProtection()})
+		&sdk.StreamableHTTPOptions{Stateless: true, JSONResponse: true})
 	mux := http.NewServeMux()
-	mux.Handle("/mcp", h)
+	mux.Handle("/mcp", http.NewCrossOriginProtection().Handler(h))
 	return mux
 }
 
