@@ -59,7 +59,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
-import { ListMatches } from '../../wailsjs/go/database/Database.js';
+import { ListMatches, GetMatchOrigin } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
 
 async function openTranscript() {
@@ -91,22 +91,40 @@ describe('MatchPanel — the Transcript carries the time of every decision', () 
         openPanels.set(new Set());
     });
 
-    const cells = (container) => [...container.querySelectorAll('details.game-section')[0].querySelectorAll('[data-testid="move-time"]')].map((c) => c.textContent.replace(/\s+/g, ' ').trim());
+    const col = (container, name, game = 0) => [...container.querySelectorAll('details.game-section')[game].querySelectorAll(`[data-testid="move-time-${name}"]`)].map((c) => c.textContent.trim());
 
-    test('the cube decision is apart from the checker play, an unknown time is empty', async () => {
+    test('cube, play and clock are three columns, an unknown time is empty', async () => {
         const container = await openTranscript();
-        expect(cells(container)).toEqual(['◇ 1.0 s 5.2 s', '', '12.0 s']);
+        expect(col(container, 'cube')).toEqual(['1.0 s', '', '12.0 s']);
+        expect(col(container, 'play')).toEqual(['5.2 s', '', '']);
+        expect(col(container, 'clock')).toEqual(['0:06', '', '0:18']);
     });
 
-    test('the header orders the rows by time, the unknown ones last', async () => {
+    test('the Play header orders the rows by time, the unknown ones last, the clock keeps the match order', async () => {
         const container = await openTranscript();
         const header = container.querySelector('button.time-sort');
         await fireEvent.click(header);
-        expect(cells(container)).toEqual(['12.0 s', '◇ 1.0 s 5.2 s', '']);
+        expect(col(container, 'cube')).toEqual(['12.0 s', '1.0 s', '']);
+        expect(col(container, 'clock')).toEqual(['0:18', '0:06', '']);
         await fireEvent.click(header);
-        expect(cells(container)).toEqual(['◇ 1.0 s 5.2 s', '12.0 s', '']);
+        expect(col(container, 'cube')).toEqual(['1.0 s', '12.0 s', '']);
         await fireEvent.click(header);
-        expect(cells(container)).toEqual(['◇ 1.0 s 5.2 s', '', '12.0 s']);
+        expect(col(container, 'cube')).toEqual(['1.0 s', '', '12.0 s']);
+    });
+
+    test('under a Cadence the clock column shows the reserve left, and the metadata state the cadence and the bank', async () => {
+        GetMatchOrigin.mockResolvedValueOnce({
+            dice_seed: 'ab',
+            cadence_settings: { name: 'rapid-2+12', reserve: 120, delay: 12, timeOut: 'lose_match' },
+            clock: { start: [120000, 120000], remaining: [117000, 120000, 100000, 0, 0] }
+        });
+        const container = await openTranscript();
+        expect(col(container, 'clock')).toEqual(['1:57', '2:00', '1:40']);
+        expect(container.querySelector('[data-testid="header-cadence"]').textContent).toContain('2:00');
+        await fireEvent.click([...container.querySelectorAll('button')].find((b) => b.classList.contains('detail-tab') && b.textContent.trim() === 'Info'));
+        const row = container.querySelector('[data-testid="meta-cadence"]');
+        expect(row.textContent).toContain('rapid-2+12');
+        expect(container.querySelector('[data-testid="meta-bank"]').textContent).toContain('2:00 each');
     });
 
     test('the summary marks the player whose reserve ran out, and leaves an unknown mean empty', async () => {

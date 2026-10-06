@@ -77,3 +77,36 @@ export function timeBars(movePositions) {
     });
     return bars;
 }
+
+/**
+ * The clock of every Move: the time its player has used since the start of the
+ * match, that Move included. Unknown durations add nothing; a player with no
+ * known duration yet has a null clock. Indexed like `movePositions`, which must
+ * be in match order.
+ *
+ * @param {readonly { player_on_roll: number, decision_ms?: number | null, cube_decision_ms?: number | null }[]} movePositions
+ * @returns {(number | null)[]}
+ */
+export function cumulativeClocks(movePositions) {
+    /** @type {(number | null)[]} */
+    const used = [null, null];
+    return movePositions.map((mp) => {
+        const p = mp.player_on_roll === 1 ? 1 : 0;
+        const ms = moveTotalMS(mp);
+        if (ms !== null) used[p] = (used[p] ?? 0) + ms;
+        return used[p];
+    });
+}
+
+/**
+ * A clock reading in fixed m:ss, h:mm:ss past an hour; empty when unknown.
+ *
+ * @param {number | null | undefined} ms
+ */
+export function fmtClock(ms) {
+    if (ms === null || ms === undefined || !Number.isFinite(ms)) return '';
+    const total = Math.round(ms / 1000);
+    const s = String(total % 60).padStart(2, '0');
+    if (total < 3600) return `${Math.floor(total / 60)}:${s}`;
+    return `${Math.floor(total / 3600)}:${String(Math.floor((total % 3600) / 60)).padStart(2, '0')}:${s}`;
+}

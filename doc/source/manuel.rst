@@ -1508,9 +1508,16 @@ L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non :
 on voit sans l'ouvrir dans quelle partie se trouvent les blunders.
 
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot),
-l'onglet ajoute une colonne **Durée** : celle du coup de pions, précédée de
-celle du videau (◇) quand le joueur a réfléchi à la question avant de lancer.
-Un clic sur l'en-tête de la colonne trie les coups de chaque partie du plus long
+l'onglet ajoute trois colonnes alignées sur les chiffres : **Videau** (la
+décision de videau, prise avant le lancer ou sur la ligne du videau elle-même),
+**Jeu** (le coup de pions) et **Horloge**, le temps que le joueur au trait a
+consommé depuis le début du match, ce coup compris, quel que soit le tri. Sous
+une cadence, la colonne devient **Pendule** et donne le temps qui reste à la
+pendule du joueur après le coup, calculé comme l'arbitre du Duel le compte (délai
+par tour, réserve ramenée à zéro au dépassement). Les informations du match et
+son en-tête rappellent la cadence (préréglage, délai, comportement au
+dépassement) et la banque de temps de chaque joueur, ramenée au score de départ
+quand la réserve est comptée par point restant. Un clic sur l'en-tête **Jeu** trie les coups de chaque partie du plus long
 au plus court, puis du plus court au plus long, puis rend l'ordre du match ; une
 durée inconnue reste vide et passe en dernier. Au-dessus des parties, un résumé
 donne pour chaque joueur le total, la moyenne par coup de pions et par décision

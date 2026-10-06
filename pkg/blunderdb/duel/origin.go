@@ -23,12 +23,16 @@ type Origin struct {
 	// out under TimeLoseMatch — the test the Arbiter ends a Duel on. Such a
 	// match is also StoppedEarly, though nobody stopped it.
 	LostOnTime bool `json:"lost_on_time"`
+	// Clock is the Match's clock replayed from its durations, nil without a
+	// Cadence.
+	Clock *MatchClock `json:"clock,omitempty"`
 }
 
 // OriginReader is the part of a storage the origin is read from.
 type OriginReader interface {
 	Duels() storage.DuelStore
 	Matches() storage.MatchStore
+	Stats() storage.StatsStore
 }
 
 // ReadOrigin returns the origin of a Match, nil and no error when the Match
@@ -55,5 +59,24 @@ func ReadOrigin(ctx context.Context, store OriginReader, scope string, matchID i
 		}
 	}
 	out.LostOnTime = out.CadenceSettings != nil && out.CadenceSettings.TimeOut == TimeLoseMatch && o.OverTime != 0
+	if c := out.CadenceSettings; c != nil {
+		if clock, ok := replayClock(ctx, store, scope, matchID, *c); ok {
+			out.Clock = &clock
+		}
+	}
 	return out, nil
+}
+
+// replayClock replays the Match under its Cadence; false when the Match, its
+// length or its Moves cannot be read, which leaves the origin without a clock.
+func replayClock(ctx context.Context, store OriginReader, scope string, matchID int64, c Cadence) (MatchClock, bool) {
+	m, err := store.Matches().Get(ctx, scope, matchID)
+	if err != nil || m == nil {
+		return MatchClock{}, false
+	}
+	turns, err := store.Stats().MatchTurns(ctx, scope, matchID)
+	if err != nil {
+		return MatchClock{}, false
+	}
+	return c.Replay(int(m.MatchLength), turns), true
 }

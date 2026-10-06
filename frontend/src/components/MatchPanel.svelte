@@ -31,7 +31,7 @@
     import { exportMatchMat } from '../services/exportService.js';
     import MatchTimes from './MatchTimes.svelte';
     import MatchOrigin from './MatchOrigin.svelte';
-    import { fmtDuration, hasAnyDuration, sortByDuration } from '../utils/decisionTime.js';
+    import { cumulativeClocks, fmtClock, fmtDuration, hasAnyDuration, sortByDuration } from '../utils/decisionTime.js';
     import { editMatchTranscription } from '../services/transcriptionSave.js';
     import { enrichMatchFromFile } from '../services/importService.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
@@ -412,6 +412,23 @@
 
     // The Time column appears once the match recorded any duration.
     let showTimes = $derived(hasAnyDuration(detailMovePositions.map((mp) => ({ mp }))));
+    // Computed in match order, whatever the transcript's sort, indexed by globalIdx.
+    let clocks = $derived(cumulativeClocks(detailMovePositions));
+    // Under a Cadence the clock column shows the reserve left, replayed by the backend with the
+    // Arbiter's own arithmetic; without one, the time used so far.
+    let remaining = $derived(detailOrigin?.clock?.remaining ?? null);
+    let cadenceInfo = $derived.by(() => {
+        const c = detailOrigin?.cadence_settings;
+        if (!c) return null;
+        const bankMS = detailOrigin.clock?.start?.[0] ?? (c.reserve ? c.reserve * 1000 : null);
+        return {
+            name: c.name || '',
+            delay: c.delay || 0,
+            perPoint: c.reservePerPoint || 0,
+            bank: bankMS === null ? '' : fmtClock(bankMS),
+            timeOut: c.timeOut === 'lose_match' ? $t('match.timeOutLoseMatch') : $t('match.timeOutContinue')
+        };
+    });
 
     // Moves grouped by game, each with its precomputed globalIdx (an indexOf per
     // row would be quadratic).
@@ -996,6 +1013,9 @@
                         <span class="vs-label">{$t('match.vs')}</span>
                         <span class="player-name">{detailMatch.player2_name}</span>
                         <span class="match-length-badge">{detailMatch.match_length} pt</span>
+                        {#if cadenceInfo}<span class="match-length-badge" data-testid="header-cadence" title={$t('match.cadenceRow')}
+                                >{$t('match.cadenceBadge', { bank: cadenceInfo.bank || '—', s: cadenceInfo.delay })}</span
+                            >{/if}
                     </div>
                     <div class="detail-meta">
                         {#if detailMatch.match_date && formatDate(detailMatch.match_date) !== '-'}
@@ -1068,10 +1088,14 @@
                                                     <th class="transcript-dice">{$t('match.dice')}</th>
                                                     <th class="transcript-move">{$t('match.move')}</th>
                                                     {#if showTimes}
+                                                        <th class="transcript-time" title={$t('match.timeCubeTooltip')}>{$t('match.timeCubeCol')}</th>
                                                         <th class="transcript-time"
                                                             ><button class="time-sort" onclick={cycleTimeSort} title={$t('match.timeSortTooltip')}
-                                                                >{$t('match.time')}{timeSort === 'desc' ? ' ▼' : timeSort === 'asc' ? ' ▲' : ''}</button
+                                                                >{$t('match.timePlayCol')}{timeSort === 'desc' ? ' ▼' : timeSort === 'asc' ? ' ▲' : ''}</button
                                                             ></th
+                                                        >
+                                                        <th class="transcript-time" title={$t(remaining ? 'match.timeRemainTooltip' : 'match.timeClockTooltip')}
+                                                            >{$t(remaining ? 'match.timeRemainCol' : 'match.timeClockCol')}</th
                                                         >
                                                     {/if}
                                                 </tr>
@@ -1110,11 +1134,9 @@
                                                             {/if}
                                                         </td>
                                                         {#if showTimes}
-                                                            <td class="transcript-time" data-testid="move-time">
-                                                                {#if mp.cube_decision_ms != null}<span class="time-cube" title={$t('match.timeCubeTooltip')}>◇ {fmtDuration(mp.cube_decision_ms)}</span
-                                                                    >{/if}
-                                                                {fmtDuration(mp.decision_ms)}
-                                                            </td>
+                                                            <td class="transcript-time" data-testid="move-time-cube">{fmtDuration(mp.move_type === 'cube' ? mp.decision_ms : mp.cube_decision_ms)}</td>
+                                                            <td class="transcript-time" data-testid="move-time-play">{mp.move_type === 'cube' ? '' : fmtDuration(mp.decision_ms)}</td>
+                                                            <td class="transcript-time" data-testid="move-time-clock">{remaining ? fmtClock(remaining[globalIdx]) : fmtClock(clocks[globalIdx])}</td>
                                                         {/if}
                                                     </tr>
                                                 {/each}
@@ -1139,6 +1161,22 @@
                                         >{detailMatch.match_length > 1 ? $t('match.points', { n: detailMatch.match_length }) : $t('match.point', { n: detailMatch.match_length })}</td
                                     ></tr
                                 >
+                                {#if cadenceInfo}
+                                    <tr data-testid="meta-cadence"
+                                        ><td class="meta-label">{$t('match.cadenceRow')}</td><td class="meta-value"
+                                            >{[cadenceInfo.name, $t('match.originDelay', { s: cadenceInfo.delay }), $t('match.timeOutRow', { what: cadenceInfo.timeOut })]
+                                                .filter(Boolean)
+                                                .join(', ')}</td
+                                        ></tr
+                                    >
+                                    <tr data-testid="meta-bank"
+                                        ><td class="meta-label">{$t('match.bankRow')}</td><td class="meta-value"
+                                            >{cadenceInfo.bank ? $t('match.bankEach', { time: cadenceInfo.bank }) : '—'}{cadenceInfo.perPoint
+                                                ? ' (' + $t('match.bankPerPoint', { s: cadenceInfo.perPoint }) + ')'
+                                                : ''}</td
+                                        ></tr
+                                    >
+                                {/if}
                                 <tr><td class="meta-label">{$t('match.games')}</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
                                 <tr><td class="meta-label">{$t('match.date')}</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
                                 <tr>
@@ -1663,6 +1701,7 @@
         white-space: nowrap;
         color: var(--text-muted, inherit);
         font-size: var(--font-size-small);
+        font-variant-numeric: tabular-nums;
     }
     .time-sort {
         background: none;
@@ -1670,10 +1709,6 @@
         padding: 0;
         color: inherit;
         cursor: pointer;
-    }
-    .time-cube {
-        margin-right: 6px;
-        opacity: 0.8;
     }
     .grade-mark,
     .game-marks {

@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { fmtDuration, fmtMean, moveTotalMS, sortByDuration, timeBars } from '../utils/decisionTime.js';
+import { fmtDuration, fmtMean, moveTotalMS, sortByDuration, timeBars, cumulativeClocks, fmtClock } from '../utils/decisionTime.js';
 
 describe('decision times', () => {
     test('an unknown duration is empty, never zero', () => {
@@ -28,5 +28,26 @@ describe('decision times', () => {
             { index: 0, player: 0, ms: 1000 },
             { index: 2, player: 1, ms: 2000 }
         ]);
+    });
+});
+
+describe('match clock', () => {
+    test('cumulates each player over the match, the unknown counting zero', () => {
+        const mps = [
+            { player_on_roll: 0, decision_ms: 5000, cube_decision_ms: 1000 },
+            { player_on_roll: 1 },
+            { player_on_roll: 1, decision_ms: 2000 },
+            { player_on_roll: 0 },
+            { player_on_roll: 0, decision_ms: 4000 }
+        ];
+        expect(cumulativeClocks(mps)).toEqual([6000, null, 2000, 6000, 10000]);
+    });
+
+    test('formats m:ss, h:mm:ss past an hour, empty when unknown', () => {
+        expect(fmtClock(null)).toBe('');
+        expect(fmtClock(0)).toBe('0:00');
+        expect(fmtClock(65000)).toBe('1:05');
+        expect(fmtClock(3600000)).toBe('1:00:00');
+        expect(fmtClock(3725000)).toBe('1:02:05');
     });
 });
