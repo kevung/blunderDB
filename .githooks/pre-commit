@@ -4,6 +4,8 @@
 #   Go:       gofmt, go vet and go test -short on the touched packages
 #   Frontend: eslint and prettier --check on the staged files, plus the
 #             Svelte warnings budget when a .svelte file is staged
+#   Help:     the in-app help bundles are rendered from the docs; a staged
+#             .rst, .po or help prose fragment re-checks they are current
 # Nothing relevant staged, nothing run. The full loop is `make check`.
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
@@ -11,8 +13,11 @@ cd "$(git rev-parse --show-toplevel)"
 mapfile -t staged < <(git diff --cached --name-only --diff-filter=ACMR)
 [ ${#staged[@]} -eq 0 ] && exit 0
 
-go_files=(); front_files=(); svelte=0
+go_files=(); front_files=(); svelte=0; help_src=0
 for f in "${staged[@]}"; do
+  case "$f" in
+    doc/source/*.rst|doc/source/locale/*.po|frontend/src/i18n/help/*) help_src=1 ;;
+  esac
   case "$f" in
     frontend/wailsjs/*|frontend/dist/*) ;;
     *.go) go_files+=("$f") ;;
@@ -54,5 +59,14 @@ if [ ${#front_files[@]} -gt 0 ]; then
     if [ "$svelte" -eq 1 ]; then
       (cd frontend && npm run --silent check:svelte-warnings)
     fi
+  fi
+fi
+
+if [ "$help_src" -eq 1 ]; then
+  if [ ! -e frontend/dist ]; then mkdir -p frontend/dist && touch frontend/dist/.gitkeep; fi
+  echo "pre-commit: help bundles against the docs they render"
+  if ! go test -count=1 -run 'TestHelpBundlesAreCurrent' ./cmd/help-gen >/dev/null 2>&1; then
+    echo "pre-commit: help bundles out of date (run: make help, then stage frontend/src/i18n/help/)" >&2
+    exit 1
   fi
 fi
