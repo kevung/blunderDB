@@ -2846,7 +2846,7 @@ export default {
 <p>blunderDB には他の人々が作成したコード、データ、フォントが含まれています。主なもの:</p>
 <ul>
     <li>
-        ニューラルネットワーク <strong>strehl-prob5-512-512-256-128</strong> は
+        ニューラルネットワーク <strong>strehl-prob5-512-512-256-256</strong> は
         <strong>Alexander Strehl</strong> の著作物です（<em>alexstrehl/backgammon-ai-engine</em>、MIT）。それを取り巻く探索、キューブモデル、マッチエクイティテーブルは
         <strong>gammonNet</strong> 独自の構成です（<a href="https://github.com/kevung/gammonNet" target="_blank" rel="noopener noreferrer">github.com/kevung/gammonNet</a>、MIT）。
     </li>

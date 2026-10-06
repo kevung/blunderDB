@@ -15,14 +15,12 @@ import (
 // of a stored analysis (AnalyzeStaleGammonNet): any change re-runs every
 // stored row as a whole. Depth belongs in AnalysisDepth, never here.
 //
-// v1.4.0 adds to the match-aware search (ADR-0016), the cube tails
-// (ADR-0022), the Crawford dead cube and cubeful leaves (ADR-0023): the
-// "normal" level's filter triplet (accept 1, extra 2, threshold 0.04 at
-// depth 2, plain counts at the other depths), the closed-form level inversion (ADR-0032) and the money beaver
-// rule (DecideEx). The first two move stored results, so every row analysed
-// under an earlier label is stale (analyze --stale). The gold files are
-// built from the same tag.
-const EngineVersion = "gammonNet v1.4.0"
+// The tag fixes the weights (strehl-prob5-512-512-256-256, embedded by
+// network.go) together with the search, the "normal" level's filter triplet,
+// the cube model and the MET this file ports; a change to any of them moves
+// stored results, so every row analysed under an earlier label is stale
+// (analyze --stale). The gold files are built from the same tag.
+const EngineVersion = "gammonNet v1.6.0"
 
 // ErrNotEvaluable marks a position this build declines to answer for (a
 // score beyond the MET's horizon, a cube decision the model refuses), as

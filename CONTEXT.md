@@ -180,7 +180,7 @@ Position, identified by its hash — distance zero within another Match is a nei
 duplicate)
 
 **Network**:
-The weights, and only the weights — `strehl-prob5-512-512-256-128`. A network changes name
+The weights, and only the weights — `strehl-prob5-512-512-256-256`. A network changes name
 only when its weights change: neither the search wrapped around it, nor a quantisation, nor a
 port to another language makes it a new one.
 

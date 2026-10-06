@@ -2846,7 +2846,7 @@ export default {
 <p>blunderDB incorpora codice, dati e caratteri di altre persone. L'essenziale:</p>
 <ul>
     <li>
-        La rete neurale <strong>strehl-prob5-512-512-256-128</strong> è opera di <strong>Alexander Strehl</strong> (<em>alexstrehl/backgammon-ai-engine</em>, MIT). La ricerca, il modello di cubo e la
+        La rete neurale <strong>strehl-prob5-512-512-256-256</strong> è opera di <strong>Alexander Strehl</strong> (<em>alexstrehl/backgammon-ai-engine</em>, MIT). La ricerca, il modello di cubo e la
         tabella di match equity che la circondano costituiscono la configurazione propria di <strong>gammonNet</strong> (<a
             href="https://github.com/kevung/gammonNet"
             target="_blank"
