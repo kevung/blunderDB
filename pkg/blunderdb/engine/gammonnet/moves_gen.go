@@ -261,9 +261,16 @@ func (g *Generator) generateOrders(p *Position, player uint8, hi, lo int, out []
 
 // twoDice collects the plays that use BOTH dice, in either order, deduplicated
 // across the two orders. It returns 0 when neither order reaches depth two.
+//
+// The smaller die goes first. The order of the list is part of the contract:
+// the search sorts its candidates stably, so plays of equal value come out in
+// generation order, and upstream generates depth first starting with the
+// smaller die (gn_legal_plays sorts the dice ascending for the backend).
+// Within one order, the level-by-level expansion keeps each result at its
+// first depth-first occurrence, so the two lists coincide.
 func (g *Generator) twoDice(p *Position, player uint8, hi, lo int, out []Play) int {
 	total := 0
-	for _, order := range [2][2]int{{hi, lo}, {lo, hi}} {
+	for _, order := range [2][2]int{{lo, hi}, {hi, lo}} {
 		g.cur()[0] = levelEntry{pos: *p}
 		n := g.expand(1, order[0], player)
 		if n < 0 {
