@@ -159,8 +159,12 @@ func (g *game) elapsed(at time.Time) (int64, bool) {
 // charge is what a Decision of ms takes from the reserve: the part of the
 // clock's turn beyond the delay that this Decision adds.
 func (g *game) charge(ms int64) int64 {
-	delay := int64(g.doc.Cadence.Delay) * 1000
-	turn := g.doc.Clock.Turn
+	return chargeMS(int64(g.doc.Cadence.Delay)*1000, g.doc.Clock.Turn, ms)
+}
+
+// chargeMS is what a Decision of ms takes from the reserve in a clock's turn
+// that had used turn, under a simple delay.
+func chargeMS(delay, turn, ms int64) int64 {
 	return max(turn+ms-delay, 0) - max(turn-delay, 0)
 }
 

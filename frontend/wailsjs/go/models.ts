@@ -3057,6 +3057,20 @@ export namespace duel {
 	        this.pruneK = source["pruneK"];
 	    }
 	}
+	export class MatchClock {
+	    start: number[];
+	    remaining: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new MatchClock(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.start = source["start"];
+	        this.remaining = source["remaining"];
+	    }
+	}
 	export class Origin {
 	    match_id: number;
 	    start: string;
@@ -3069,6 +3083,7 @@ export namespace duel {
 	    fingerprint: string;
 	    cadence_settings?: Cadence;
 	    lost_on_time: boolean;
+	    clock?: MatchClock;
 	
 	    static createFrom(source: any = {}) {
 	        return new Origin(source);
@@ -3087,6 +3102,7 @@ export namespace duel {
 	        this.fingerprint = source["fingerprint"];
 	        this.cadence_settings = this.convertValues(source["cadence_settings"], Cadence);
 	        this.lost_on_time = source["lost_on_time"];
+	        this.clock = this.convertValues(source["clock"], MatchClock);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

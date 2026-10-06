@@ -343,6 +343,24 @@ type MatchTimeSummary struct {
 	Players    [2]PlayerTimeSummary `json:"players"`
 }
 
+// MatchTurn is one recorded Move of a Match as its clock sees it: the player
+// (index 0 is player 1), and the durations kept, nil when unknown. A cube row
+// (double, take, pass) carries its own decision in PlayMS; a checker row carries
+// the cube decision before the roll in CubeMS and the play in PlayMS.
+type MatchTurn struct {
+	Player int    `json:"player"`
+	Cube   bool   `json:"cube"`
+	CubeMS *int64 `json:"cube_ms"`
+	PlayMS *int64 `json:"play_ms"`
+}
+
+// MatchTurns are a Match's Moves in match order, with the score its first game
+// started from, which is what a clock with a reserve per point counts from.
+type MatchTurns struct {
+	Score [2]int32    `json:"score"`
+	Turns []MatchTurn `json:"turns"`
+}
+
 // TimeBucketBounds are the upper bounds, in milliseconds, of the first three
 // duration bands of TimeErrorRow.Bucket: under 5 s, 5-15 s, 15-30 s; the
 // fourth is everything longer.
@@ -482,6 +500,10 @@ type StatsStore interface {
 	// counts what overran the Cadence it was played under (match_origin). A
 	// Match with no recorded time gives a summary of unknowns.
 	MatchTimeSummary(ctx context.Context, scope string, matchID int64) (MatchTimeSummary, error)
+
+	// MatchTurns returns the Moves of a Match in match order with their
+	// durations, the order GetMatchMovePositions gives them in.
+	MatchTurns(ctx context.Context, scope string, matchID int64) (MatchTurns, error)
 
 	// TimeErrors crosses the time a player took over a decision with the error
 	// it cost: one row per player and duration band that holds a decision, the
