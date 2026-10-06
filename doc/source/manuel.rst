@@ -4042,6 +4042,10 @@ l'autre, et la liste des Duels en suspens :
 « Reprendre » rouvre un Duel en suspens au même point, avec les mêmes dés à
 venir ; ses horloges étaient arrêtées.
 
+Un Duel en suspens ne quitte pas sa base : l'export de la base ne l'emporte
+pas, parce que ses dés à venir ne doivent sortir par aucune voie avant la fin.
+Un Duel terminé part comme tout Match.
+
 Le Duel se joue au plateau. Le panneau montre la feuille de match en deux
 colonnes, comme la Transcription, les horloges quand une cadence court, une
 ligne qui dit ce qui est attendu, et « Abandonner le match », « Mettre en

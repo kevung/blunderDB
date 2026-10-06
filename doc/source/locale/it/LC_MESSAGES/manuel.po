@@ -9224,6 +9224,10 @@ msgstr ""
 "«Riprendi» riapre un Duello sospeso nello stesso punto, con gli stessi dadi "
 "a venire; i suoi orologi erano fermi."
 
+#: ../../source/manuel.rst:4045
+msgid "Un Duel en suspens ne quitte pas sa base : l'export de la base ne l'emporte pas, parce que ses dés à venir ne doivent sortir par aucune voie avant la fin. Un Duel terminé part comme tout Match."
+msgstr "Un Duello sospeso non lascia la sua base: l'esportazione della base non lo porta con sé, perché i suoi dadi a venire non devono uscire per nessuna via prima della fine. Un Duello terminato si esporta come qualsiasi Match."
+
 #: ../../source/manuel.rst:4026
 msgid ""
 "Le Duel se joue au plateau. Le panneau montre la feuille de match en deux "

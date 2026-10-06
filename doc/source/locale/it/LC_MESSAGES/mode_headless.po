@@ -1164,6 +1164,10 @@ msgstr ""
 "``/v1/events`` (filtro ``duel``). Con ``blunderdb call``, un Duello non "
 "ha né Cadenza né tempo di decisione: ogni chiamata è un processo a sé."
 
+#: ../../source/mode_headless.rst:471
+msgid "L'export n'y fait pas exception : ``exports.sqlite`` n'emporte aucun Duel en suspens, même quand il porte sur le tenant entier, puisque son germe est chacun des lancers à venir. Le Match d'un Duel terminé part avec son origine, germe révélé. Seul ``migrate`` emporte les Duels en suspens avec leur germe, pour qu'ils se reprennent sur PostgreSQL avec les mêmes dés."
+msgstr "L'esportazione non fa eccezione: ``exports.sqlite`` non porta alcun Duello sospeso, nemmeno quando riguarda l'intero tenant, poiché il suo seme è ciascuno dei lanci a venire. Il Match di un Duello terminato parte con la sua origine, seme rivelato. Solo ``migrate`` porta i Duelli sospesi con il loro seme, perché riprendano su PostgreSQL con gli stessi dadi."
+
 #: ../../source/mode_headless.rst:473
 msgid ""
 "Le démon n'authentifie personne : qui atteint ces routes joue pour l'un "
