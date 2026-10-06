@@ -311,7 +311,7 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 		}
 		root = filepath.Join(workDir, "files")
 		n, err := ingest.ExtractArchive(archive, root, s.opts.ImportMaxBodyBytes*batchExtractFactor)
-		os.Remove(archive) //nolint:gosec // the spool file this handler wrote under its own temp dir
+		os.Remove(archive)
 		if err != nil {
 			if errors.Is(err, ingest.ErrArchiveTooLarge) || errors.Is(err, ingest.ErrArchiveTooManyEntries) {
 				writeErrorCode(w, CodeInvalid, err.Error())
@@ -376,7 +376,7 @@ func (s *Server) handleImportBatch(w http.ResponseWriter, r *http.Request) {
 
 	var size int64
 	for _, p := range paths {
-		if fi, err := os.Stat(p); err == nil { //nolint:gosec // G703: p comes from ingest.CollectFiles, over the archive extracted in the workDir or a directory resolveBatchDir confined to --import-dir; the journal only filters
+		if fi, err := os.Stat(p); err == nil { // p comes from ingest.CollectFiles, over the archive extracted in the workDir or a directory resolveBatchDir confined to --import-dir; the journal only filters
 			size += fi.Size()
 		}
 	}
@@ -409,7 +409,7 @@ func writeBatchAccepted(w http.ResponseWriter, job *batchJob) {
 }
 
 func copyToFile(path string, r io.Reader) error {
-	f, err := os.OpenFile(path, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600) //nolint:gosec // a path under the handler's own temp dir
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_EXCL|os.O_WRONLY, 0o600)
 	if err != nil {
 		return fmt.Errorf("server: spool archive: %w", err)
 	}
