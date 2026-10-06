@@ -1291,8 +1291,6 @@
         "match": "Match",
         "money": "Money",
         "points": "{n} pts",
-        "draftInProgress": "Draft in progress",
-        "openDraftTooltip": "Open the Transcription tab",
         "unnamed": "Unnamed",
         "metadata": "Metadata",
         "metadataTooltip": "See and edit the draft's header",

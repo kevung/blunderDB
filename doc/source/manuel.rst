@@ -1898,10 +1898,6 @@ avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a é
 joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et
 divergeront ensuite.
 
-Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la
-liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet
-Transcription.
-
 Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des matchs
 ou « **Éditer la transcription** » de sa fiche ouvre un brouillon depuis ce
 match — ou rouvre celui qui y est déjà ouvert : un seul brouillon par match.

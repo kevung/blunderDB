@@ -4174,15 +4174,6 @@ msgstr ""
 "with the warning that gnubg and XG will flag it (\\\"Invalid move\\\") and "
 "diverge afterwards."
 
-#: ../../source/manuel.rst:1874
-msgid ""
-"Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la "
-"liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet "
-"Transcription."
-msgstr ""
-"The **Matches** panel recalls every draft in progress above the list of "
-"matches: the “Draft in progress” line opens the Transcription tab."
-
 #: ../../source/manuel.rst:1878
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "

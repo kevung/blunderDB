@@ -4361,15 +4361,6 @@ msgstr ""
 "παίχτηκε, με την προειδοποίηση ότι το gnubg και το XG θα την επισημάνουν "
 "(«Invalid move») και θα αποκλίνουν στη συνέχεια."
 
-#: ../../source/manuel.rst:1874
-msgid ""
-"Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la "
-"liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet "
-"Transcription."
-msgstr ""
-"Ο πίνακας **Αγώνων** υπενθυμίζει κάθε προσχέδιο σε εξέλιξη πάνω από τη λίστα "
-"των αγώνων: η γραμμή «Προσχέδιο σε εξέλιξη» ανοίγει την καρτέλα Μεταγραφή."
-
 #: ../../source/manuel.rst:1878
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "

@@ -1291,8 +1291,6 @@
         "match": "Match",
         "money": "Geldspiel",
         "points": "{n} Pkt.",
-        "draftInProgress": "Entwurf in Arbeit",
-        "openDraftTooltip": "Registerkarte Transkription öffnen",
         "unnamed": "Ohne Namen",
         "metadata": "Metadaten",
         "metadataTooltip": "Kopfdaten des Entwurfs ansehen und ändern",

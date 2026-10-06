@@ -1291,8 +1291,6 @@
         "match": "Ottelu",
         "money": "Rahapeli",
         "points": "{n} pist.",
-        "draftInProgress": "Luonnos kesken",
-        "openDraftTooltip": "Avaa Litterointi-välilehti",
         "unnamed": "Nimetön",
         "metadata": "Metatiedot",
         "metadataTooltip": "Näytä ja muokkaa luonnoksen otsaketta",

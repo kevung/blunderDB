@@ -4212,16 +4212,6 @@ msgstr ""
 "pelattiin, varoituksella, että gnubg ja XG ilmoittavat siitä (”Invalid "
 "move”) ja poikkeavat sen jälkeen."
 
-#: ../../source/manuel.rst:1874
-msgid ""
-"Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la "
-"liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet "
-"Transcription."
-msgstr ""
-"**Ottelupaneeli** muistuttaa jokaisesta kesken olevasta luonnoksesta "
-"otteluluettelon yläpuolella: rivi ”Luonnos kesken” avaa Litterointi-"
-"välilehden."
-
 #: ../../source/manuel.rst:1878
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "

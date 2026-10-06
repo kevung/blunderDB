@@ -56,8 +56,6 @@
     import { matchListStore } from '../stores/matchListStore.js';
     import { databaseLoadedStore, databasePathStore } from '../stores/databaseStore';
     import { libraryCountsStore } from '../stores/libraryCountsStore.js';
-    import { transcriptionListStore } from '../stores/transcriptionStore.js';
-    import { refreshTranscriptionDrafts, draftLabel, showTranscriptionTab } from '../services/transcriptionService.js';
 
     /** @type {any[]} */
     // The page(s) of the shared match list, filtered and ordered by SQL.
@@ -209,9 +207,6 @@
             } catch (error) {
                 logger.error('Error loading matches:', error);
             }
-            // Drafts refresh with the matches. Not awaited: onMount awaits this
-            // before installing the keyboard handler.
-            void refreshTranscriptionDrafts();
         });
     }
 
@@ -843,17 +838,6 @@
                 {#if matches.length > 0 && matches.length < matchTotal}<span class="match-count">{$t('match.countOfTotal', { shown: matches.length, total: matchTotal })}</span>{/if}
                 <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
-            <!-- Drafts being transcribed, found here again after a crash; a click opens their tab. -->
-            {#if $transcriptionListStore.length > 0}
-                <div class="draft-band">
-                    {#each $transcriptionListStore as draft (draft.id)}
-                        <button class="draft-line" onclick={showTranscriptionTab} title={$t('transcription.openDraftTooltip')}>
-                            <span class="draft-tag">{$t('transcription.draftInProgress')}</span>
-                            <span class="draft-name">{draftLabel(draft, $t('transcription.unnamed'))}</span>
-                        </button>
-                    {/each}
-                </div>
-            {/if}
             <PanelTable
                 bind:this={table}
                 rows={sortedMatches}
@@ -1345,35 +1329,6 @@
         padding: 4px 8px;
         border-bottom: 1px solid var(--color-border);
         background: var(--color-surface-alt);
-    }
-
-    /* Drafts, deliberately quiet: a promise of a match, not one. */
-    .draft-band {
-        flex-shrink: 0;
-        display: flex;
-        flex-direction: column;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .draft-line {
-        display: flex;
-        align-items: baseline;
-        gap: var(--space-2);
-        padding: var(--space-1) var(--space-2);
-        border: none;
-        background: none;
-        color: var(--color-text);
-        text-align: left;
-        cursor: pointer;
-    }
-
-    .draft-line:hover {
-        background: var(--color-surface-alt);
-    }
-
-    .draft-tag {
-        font-size: var(--font-size-small);
-        color: var(--color-text-muted);
     }
 
     .match-filter {

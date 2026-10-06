@@ -1291,8 +1291,6 @@
         "match": "Partita",
         "money": "Money",
         "points": "{n} pti",
-        "draftInProgress": "Bozza in corso",
-        "openDraftTooltip": "Apri la scheda Trascrizione",
         "unnamed": "Senza nome",
         "metadata": "Metadati",
         "metadataTooltip": "Vedere e modificare l'intestazione della bozza",

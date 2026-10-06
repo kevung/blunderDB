@@ -1291,8 +1291,6 @@
         "match": "マッチ",
         "money": "マネー",
         "points": "{n} 点",
-        "draftInProgress": "作成中の下書き",
-        "openDraftTooltip": "「記譜」タブを開く",
         "unnamed": "名称未設定",
         "metadata": "メタデータ",
         "metadataTooltip": "下書きのヘッダーを表示・編集する",

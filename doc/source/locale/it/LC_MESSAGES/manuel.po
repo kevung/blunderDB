@@ -4294,15 +4294,6 @@ msgstr ""
 "giocata, con l'avviso che gnubg e XG la segnaleranno («Invalid move») e "
 "divergeranno in seguito."
 
-#: ../../source/manuel.rst:1874
-msgid ""
-"Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la "
-"liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet "
-"Transcription."
-msgstr ""
-"Il pannello **Match** ricorda ogni bozza in corso sopra l'elenco dei match: "
-"la riga «Bozza in corso» apre la scheda Trascrizione."
-
 #: ../../source/manuel.rst:1878
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "

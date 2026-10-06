@@ -4379,15 +4379,6 @@ msgstr ""
 "exportiert, wie er gespielt wurde, mit dem Hinweis, dass gnubg und XG ihn "
 "melden („Invalid move“) und danach abweichen werden."
 
-#: ../../source/manuel.rst:1874
-msgid ""
-"Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la "
-"liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet "
-"Transcription."
-msgstr ""
-"Das Panel **Matches** erinnert über der Matchliste an jeden laufenden "
-"Entwurf: Die Zeile „Entwurf in Arbeit“ öffnet den Reiter Transkription."
-
 #: ../../source/manuel.rst:1878
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "

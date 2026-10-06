@@ -4289,15 +4289,6 @@ msgstr ""
 "jugó, con la advertencia de que gnubg y XG la señalarán («Invalid move») y "
 "divergirán después."
 
-#: ../../source/manuel.rst:1874
-msgid ""
-"Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la "
-"liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet "
-"Transcription."
-msgstr ""
-"El panel **Partidas** recuerda cada borrador en curso encima de la lista de "
-"partidos: la línea «Borrador en curso» abre la pestaña Transcripción."
-
 #: ../../source/manuel.rst:1878
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "

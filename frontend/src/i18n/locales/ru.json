@@ -1291,8 +1291,6 @@
         "match": "Матч",
         "money": "На деньги",
         "points": "{n} оч.",
-        "draftInProgress": "Черновик в работе",
-        "openDraftTooltip": "Открыть вкладку «Запись»",
         "unnamed": "Без названия",
         "metadata": "Метаданные",
         "metadataTooltip": "Просмотр и изменение заголовка черновика",

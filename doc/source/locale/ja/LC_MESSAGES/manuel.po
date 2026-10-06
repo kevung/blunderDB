@@ -4052,15 +4052,6 @@ msgstr ""
 "は指されたとおりに書き出され、gnubg と XG がそれを指摘し(「Invalid move」)、"
 "以後は食い違うという警告が付きます。"
 
-#: ../../source/manuel.rst:1874
-msgid ""
-"Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la "
-"liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet "
-"Transcription."
-msgstr ""
-"\\ **マッチ**\\ パネルは、マッチ一覧の上で進行中の下書きを一つずつ示します。"
-"「作成中の下書き」の行から記譜タブが開きます。"
-
 #: ../../source/manuel.rst:1878
 msgid ""
 "Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des "
