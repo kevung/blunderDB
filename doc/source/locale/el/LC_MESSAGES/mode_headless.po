@@ -1094,19 +1094,8 @@ msgid "Jouer un Duel par l'API"
 msgstr "Παίζοντας μια Μονομαχία μέσω του API"
 
 #: ../../source/mode_headless.rst:435
-msgid ""
-"La famille ``duels.*`` pilote un Duel une Action à la fois, avec la même "
-"logique que le bureau. Les lectures (``list``, ``get``) sont toujours "
-"servies. Les gestes (``create``, ``open``, ``act``, ``flag``, "
-"``suspend``, ``stop``, ``discard``) ne le sont qu'avec ``serve --duel`` :"
-" sans ce drapeau, ces routes répondent 404."
-msgstr ""
-"Η οικογένεια ``duels.*`` οδηγεί μια Μονομαχία μία Ενέργεια τη φορά, με "
-"την ίδια λογική με την επιφάνεια εργασίας. Οι αναγνώσεις (``list``, "
-"``get``) εξυπηρετούνται πάντα. Οι κινήσεις (``create``, ``open``, "
-"``act``, ``flag``, ``suspend``, ``stop``, ``discard``) εξυπηρετούνται "
-"μόνο με ``serve --duel``: χωρίς αυτό το flag, αυτές οι διαδρομές απαντούν"
-" 404."
+msgid "La famille ``duels.*`` pilote un Duel une Action à la fois, avec la même logique que le bureau. Les lectures (``list``, ``get``) sont toujours servies. Les gestes (``create``, ``open``, ``act``, ``flag``, ``suspend``, ``stop``, ``forfeit``, ``discard``) ne le sont qu'avec ``serve --duel`` : sans ce drapeau, ces routes répondent 404."
+msgstr "Η οικογένεια ``duels.*`` οδηγεί μια Μονομαχία μία Ενέργεια τη φορά, με την ίδια λογική με την επιφάνεια εργασίας. Οι αναγνώσεις (``list``, ``get``) εξυπηρετούνται πάντα. Οι κινήσεις (``create``, ``open``, ``act``, ``flag``, ``suspend``, ``stop``, ``forfeit``, ``discard``) εξυπηρετούνται μόνο με ``serve --duel``: χωρίς αυτό το flag, αυτές οι διαδρομές απαντούν 404."
 
 #: ../../source/mode_headless.rst:441
 #, no-python-brace-format
@@ -1169,21 +1158,12 @@ msgstr ""
 "None-Match`` που την κατονομάζει."
 
 #: ../../source/mode_headless.rst:464
-msgid ""
-"Le germe des dés ne sort par aucune route avant la fin : l'état en porte "
-"l'empreinte, et le germe n'est révélé qu'avec le Match que la fin du Duel"
-" écrit (``ended.diceSeed``). ``stop`` arrête le Duel en gardant le Match "
-"tel qu'il est, ``discard`` le jette. Les gestes sont annoncés sur "
-"``/v1/events`` (filtre ``duel``). Sous ``blunderdb call``, un Duel n'a ni"
-" Cadence ni durée de décision : chaque appel est son propre processus."
-msgstr ""
-"Ο σπόρος των ζαριών δεν βγαίνει από καμία διαδρομή πριν από το τέλος: η "
-"κατάσταση φέρει το αποτύπωμά του και ο σπόρος αποκαλύπτεται μόνο με τον "
-"Αγώνα που γράφει το τέλος της Μονομαχίας (``ended.diceSeed``). Το "
-"``stop`` σταματά τη Μονομαχία κρατώντας τον Αγώνα όπως έχει, το "
-"``discard`` την απορρίπτει. Οι κινήσεις ανακοινώνονται στο ``/v1/events``"
-" (φίλτρο ``duel``). Με το ``blunderdb call``, μια Μονομαχία δεν έχει ούτε"
-" Cadence ούτε χρόνο απόφασης: κάθε κλήση είναι δική της διεργασία."
+msgid "Le germe des dés ne sort par aucune route avant la fin : l'état en porte l'empreinte, et le germe n'est révélé qu'avec le Match que la fin du Duel écrit (``ended.diceSeed``). ``discard`` jette le Duel : rien n'en est écrit. Les gestes sont annoncés sur ``/v1/events`` (filtre ``duel``). Sous ``blunderdb call``, un Duel n'a ni Cadence ni durée de décision : chaque appel est son propre processus."
+msgstr "Ο σπόρος των ζαριών δεν βγαίνει από καμία διαδρομή πριν από το τέλος: η κατάσταση φέρει το αποτύπωμά του και ο σπόρος αποκαλύπτεται μόνο με το Match που γράφει το τέλος του Duel (``ended.diceSeed``). Το ``discard`` πετά το Duel: τίποτα από αυτό δεν γράφεται. Οι κινήσεις ανακοινώνονται στο ``/v1/events`` (φίλτρο ``duel``). Με το ``blunderdb call``, ένα Duel δεν έχει ούτε Cadence ούτε διάρκεια απόφασης: κάθε κλήση είναι δική της διεργασία."
+
+#: ../../source/mode_headless.rst:470
+msgid "``forfeit`` abandonne le match pour un Côté (``side``, 0 ou 1, obligatoire) : la partie en cours va à l'autre Côté pour les points qui le portent à la longueur du match — en argent, une simple à la valeur du videau — et le Match s'écrit gagné par lui. ``stop`` avec ``keep`` vrai écrit en argent le Match tel qu'il est, la partie en cours sans vainqueur ; sur un match en points non terminé, il est refusé en **400** et le Duel reste ouvert : le Match ne s'écrit qu'entier, et le Duel se suspend, s'abandonne, ou s'arrête avec ``keep`` faux, qui le jette. Arrêter n'est pas abandonner. Sous une Cadence dont le dépassement fait perdre le match (``timeOut`` à ``lose_match``), la perte au temps vaut abandon du Côté dont le temps est écoulé : en points, le Match s'écrit gagné par l'autre à la longueur."
+msgstr "Το ``forfeit`` εγκαταλείπει το match για μια Πλευρά (``side``, 0 ή 1, υποχρεωτικό): το παιχνίδι σε εξέλιξη πηγαίνει στην άλλη Πλευρά με τους πόντους που τη φέρνουν στο μήκος του match — στο παιχνίδι με χρήματα, ένα απλό στην αξία του κύβου — και το Match γράφεται κερδισμένο από αυτήν. Το ``stop`` με ``keep`` αληθές γράφει σε παιχνίδι με χρήματα το Match όπως είναι, με το παιχνίδι σε εξέλιξη χωρίς νικητή· σε ημιτελές match με πόντους απορρίπτεται με **400** και το Duel μένει ανοιχτό: το Match γράφεται μόνο ολόκληρο, και το Duel αναστέλλεται, εγκαταλείπεται ή σταματά με ``keep`` ψευδές, που το πετά. Το να σταματήσεις δεν είναι να εγκαταλείψεις. Υπό μια Cadence της οποίας η υπέρβαση χάνει το match (``timeOut`` ίσο με ``lose_match``), η απώλεια λόγω χρόνου ισοδυναμεί με εγκατάλειψη από την Πλευρά της οποίας τελείωσε ο χρόνος: σε πόντους, το Match γράφεται κερδισμένο από την άλλη στο μήκος."
 
 #: ../../source/mode_headless.rst:471
 msgid "L'export n'y fait pas exception : ``exports.sqlite`` n'emporte aucun Duel en suspens, même quand il porte sur le tenant entier, puisque son germe est chacun des lancers à venir. Le Match d'un Duel terminé part avec son origine, germe révélé. Seul ``migrate`` emporte les Duels en suspens avec leur germe, pour qu'ils se reprennent sur PostgreSQL avec les mêmes dés."

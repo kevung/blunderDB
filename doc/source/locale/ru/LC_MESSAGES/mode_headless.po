@@ -1067,18 +1067,8 @@ msgid "Jouer un Duel par l'API"
 msgstr "Игра в Дуэль через API"
 
 #: ../../source/mode_headless.rst:435
-msgid ""
-"La famille ``duels.*`` pilote un Duel une Action à la fois, avec la même "
-"logique que le bureau. Les lectures (``list``, ``get``) sont toujours "
-"servies. Les gestes (``create``, ``open``, ``act``, ``flag``, "
-"``suspend``, ``stop``, ``discard``) ne le sont qu'avec ``serve --duel`` :"
-" sans ce drapeau, ces routes répondent 404."
-msgstr ""
-"Семейство ``duels.*`` ведёт Дуэль по одному Действию за раз, с той же "
-"логикой, что и в десктопе. Чтения (``list``, ``get``) обслуживаются "
-"всегда. Жесты (``create``, ``open``, ``act``, ``flag``, ``suspend``, "
-"``stop``, ``discard``) — только с ``serve --duel``: без этого флага эти "
-"маршруты отвечают 404."
+msgid "La famille ``duels.*`` pilote un Duel une Action à la fois, avec la même logique que le bureau. Les lectures (``list``, ``get``) sont toujours servies. Les gestes (``create``, ``open``, ``act``, ``flag``, ``suspend``, ``stop``, ``forfeit``, ``discard``) ne le sont qu'avec ``serve --duel`` : sans ce drapeau, ces routes répondent 404."
+msgstr "Семейство ``duels.*`` ведёт Дуэль по одному Действию за раз, с той же логикой, что и в десктопе. Чтения (``list``, ``get``) обслуживаются всегда. Жесты (``create``, ``open``, ``act``, ``flag``, ``suspend``, ``stop``, ``forfeit``, ``discard``) — только с ``serve --duel``: без этого флага эти маршруты отвечают 404."
 
 #: ../../source/mode_headless.rst:441
 #, no-python-brace-format
@@ -1139,21 +1129,12 @@ msgstr ""
 "называет."
 
 #: ../../source/mode_headless.rst:464
-msgid ""
-"Le germe des dés ne sort par aucune route avant la fin : l'état en porte "
-"l'empreinte, et le germe n'est révélé qu'avec le Match que la fin du Duel"
-" écrit (``ended.diceSeed``). ``stop`` arrête le Duel en gardant le Match "
-"tel qu'il est, ``discard`` le jette. Les gestes sont annoncés sur "
-"``/v1/events`` (filtre ``duel``). Sous ``blunderdb call``, un Duel n'a ni"
-" Cadence ni durée de décision : chaque appel est son propre processus."
-msgstr ""
-"Начальное значение генератора костей не выходит ни по одному маршруту до "
-"конца: состояние несёт его отпечаток, а само значение раскрывается только"
-" вместе с Матчем, который записывает конец Дуэли (``ended.diceSeed``). "
-"``stop`` останавливает Дуэль, сохраняя Матч как есть, ``discard`` "
-"отбрасывает её. Жесты объявляются на ``/v1/events`` (фильтр ``duel``). "
-"Под ``blunderdb call`` у Дуэли нет ни Контроля времени, ни времени "
-"решения: каждый вызов — отдельный процесс."
+msgid "Le germe des dés ne sort par aucune route avant la fin : l'état en porte l'empreinte, et le germe n'est révélé qu'avec le Match que la fin du Duel écrit (``ended.diceSeed``). ``discard`` jette le Duel : rien n'en est écrit. Les gestes sont annoncés sur ``/v1/events`` (filtre ``duel``). Sous ``blunderdb call``, un Duel n'a ni Cadence ni durée de décision : chaque appel est son propre processus."
+msgstr "Зерно кубиков не выходит ни по одному маршруту до конца: состояние несёт его отпечаток, а зерно раскрывается только вместе с Матчем, который пишет конец Дуэли (``ended.diceSeed``). ``discard`` выбрасывает Дуэль: от неё ничего не пишется. О жестах сообщается на ``/v1/events`` (фильтр ``duel``). Под ``blunderdb call`` у Дуэли нет ни Каденции, ни времени на решение: каждый вызов — отдельный процесс."
+
+#: ../../source/mode_headless.rst:470
+msgid "``forfeit`` abandonne le match pour un Côté (``side``, 0 ou 1, obligatoire) : la partie en cours va à l'autre Côté pour les points qui le portent à la longueur du match — en argent, une simple à la valeur du videau — et le Match s'écrit gagné par lui. ``stop`` avec ``keep`` vrai écrit en argent le Match tel qu'il est, la partie en cours sans vainqueur ; sur un match en points non terminé, il est refusé en **400** et le Duel reste ouvert : le Match ne s'écrit qu'entier, et le Duel se suspend, s'abandonne, ou s'arrête avec ``keep`` faux, qui le jette. Arrêter n'est pas abandonner. Sous une Cadence dont le dépassement fait perdre le match (``timeOut`` à ``lose_match``), la perte au temps vaut abandon du Côté dont le temps est écoulé : en points, le Match s'écrit gagné par l'autre à la longueur."
+msgstr "``forfeit`` сдаёт матч за Сторону (``side``, 0 или 1, обязательно): текущая партия достаётся другой Стороне на очки, доводящие её до длины матча — в игре на деньги простой выигрыш по значению куба — и Матч записывается выигранным ею. ``stop`` с истинным ``keep`` записывает в игре на деньги Матч как есть, текущая партия без победителя; на незаконченном матче до очков он отклоняется с **400**, и Дуэль остаётся открытой: Матч пишется только целиком, а Дуэль приостанавливают, сдают или останавливают с ложным ``keep``, что выбрасывает её. Остановить — не значит сдаться. При Каденции, превышение которой проигрывает матч (``timeOut`` равен ``lose_match``), проигрыш по времени равен сдаче Стороны, у которой истекло время: в очках Матч записывается выигранным другим до длины."
 
 #: ../../source/mode_headless.rst:471
 msgid "L'export n'y fait pas exception : ``exports.sqlite`` n'emporte aucun Duel en suspens, même quand il porte sur le tenant entier, puisque son germe est chacun des lancers à venir. Le Match d'un Duel terminé part avec son origine, germe révélé. Seul ``migrate`` emporte les Duels en suspens avec leur germe, pour qu'ils se reprennent sur PostgreSQL avec les mêmes dés."
