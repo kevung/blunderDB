@@ -1939,7 +1939,9 @@ sont inconnues, jamais nulles).
   externe. ``--length`` (1 à 25 points) ou ``--money`` ; ``--start`` (XGID du
   Départ) ; ``--name1`` et ``--name2`` ; ``--side1`` et ``--side2``
   (``external``, ou ``bot:<niveau>`` avec ``instant``, ``normal`` ou
-  ``thorough``) ; ``--discard-at-end`` jette le brouillon à la fin au lieu
+  ``thorough``, ou ``external:<configuration>@<moteur>``, un Côté externe qui
+  déclare le Bot qui joue derrière lui : l'origine du Match l'enregistre comme
+  déclaré, non attesté) ; ``--discard-at-end`` jette le brouillon à la fin au lieu
   d'écrire le Match. Avec deux Bots, le match se joue en entier dans cet appel
   (``--side1 bot:instant --side2 bot:instant``) ; une session en argent entre
   deux Bots est refusée, car elle ne finirait jamais.

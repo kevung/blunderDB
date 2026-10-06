@@ -260,3 +260,6 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   `match_origin.bot_engine`, the gammonNet tag whose policy a Bot played, ''
   when none did or for an origin stored before. Schema-visible: bumped
   `domain.DatabaseVersion` to 2.34.0.
+- `040_duel_external_sides.sql` — the 2.35.0 wave (ADR-0072 rules 8 and 10):
+  `match_origin.declared_bots`, the Bots external Sides declared, as JSON, ''
+  when none did. Schema-visible: bumped `domain.DatabaseVersion` to 2.35.0.

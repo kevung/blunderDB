@@ -85,7 +85,12 @@ import ne fournit complètement : la durée de chaque décision.
     Céder le match entier en est une aussi, l'abandon du match (ADR-0074) : le Match s'écrit
     gagné par l'adversaire, comme après une perte au temps (ADR-0073 règle 1). Le Match porte
     son origine — joué ici, niveau du Bot, Cadence, germe révélé, et le cas échéant perdu au
-    temps — et le Côté délégué y porte le nom de sa Configuration. La marque « arrêté avant
+    temps — et le Côté délégué y porte le nom de sa Configuration. Un Côté externe peut
+    *déclarer* à la création le Bot qui joue derrière lui (sa Configuration, le tag gammonNet) :
+    l'origine le porte à part, déclaré par le client et non attesté, puisque l'Arbitre ne voit
+    pas ce qui joue derrière un Côté externe et n'authentifie personne (ADR-0005) ; le niveau
+    et la version du Bot restent ce que l'Arbitre a fait jouer lui-même. Sans nom donné, ce
+    Côté prend celui de la Configuration déclarée, et l'Arbitre le traite en Côté externe. La marque « arrêté avant
     la fin » reste lue sur un Match qui la porte ; aucun Duel ne l'écrit plus, et aucune
     donnée n'est migrée. Les imports ne sont pas concernés : un fichier coupé s'importe tel
     qu'il est. Son Performance Rating compte comme celui d'un autre Match (règle 1).

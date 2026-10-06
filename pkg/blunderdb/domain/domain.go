@@ -42,7 +42,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.34.0"
+	DatabaseVersion = "2.35.0"
 )
 
 // Anki deck source types

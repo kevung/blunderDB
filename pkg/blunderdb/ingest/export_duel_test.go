@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -31,7 +32,8 @@ func TestSQLiteExportCarriesTheDuel(t *testing.T) {
 		t.Fatal(err)
 	}
 	origin := storage.MatchOrigin{MatchID: matchID, Start: "-b----E-C---eE---c-e----B-:1:1:1:00:0:0:0:3:10", DiceSeed: "ab",
-		StoppedEarly: true, OverTime: 2, Cadence: `{"reserve":180,"delay":12,"timeOut":"lose_match"}`}
+		StoppedEarly: true, OverTime: 2, Cadence: `{"reserve":180,"delay":12,"timeOut":"lose_match"}`,
+		DeclaredBots: []storage.DeclaredBot{{Player: 1, Configuration: "normal", Engine: "v1.6.0"}}}
 	gameID, err := src.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
 	if err != nil {
 		t.Fatal(err)
@@ -109,7 +111,7 @@ func TestSQLiteExportCarriesTheDuel(t *testing.T) {
 		got, err := dst.Duels().Origin(ctx, "", id)
 		want := origin
 		want.MatchID = id
-		if err != nil || *got != want {
+		if err != nil || !reflect.DeepEqual(*got, want) {
 			t.Errorf("origin = %+v, %v; want %+v", got, err, want)
 		}
 		if _, _, _, err := ReadMatchForMAT(ctx, dst, "", id); !errors.Is(err, storage.ErrInvalid) {

@@ -189,3 +189,32 @@ func TestCLI_DuelForfeit(t *testing.T) {
 		t.Errorf("forfeit:\n%s", out)
 	}
 }
+
+// An external Side that declares its Bot is named after it, and the Match's
+// origin says the Bot was declared, not attested.
+func TestCLI_DuelDeclaredBot(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "3", "--name1", "Alice", "--side2", "external:normal@v1.6.0"}); err != nil {
+		t.Fatal(err)
+	}
+	if err := cli.Run([]string{"duel", "create", "--db", dbPath, "--length", "3", "--side2", "external:normal"}); err == nil {
+		t.Error("a declaration without its engine was accepted")
+	}
+	var st duel.State
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"duel", "forfeit", "--db", dbPath, "--id", "1", "--side", "1", "--format", "json"}); err != nil {
+			t.Fatalf("forfeit: %v", err)
+		}
+	})
+	if err := json.Unmarshal([]byte(out), &st); err != nil || st.Ended == nil {
+		t.Fatalf("forfeit: %v, %s", err, out)
+	}
+	out = captureStdout(t, func() {
+		if err := cli.Run([]string{"match", "--db", dbPath, "--id", strconv.FormatInt(st.Ended.MatchID, 10), "--format", "text"}); err != nil {
+			t.Fatalf("match: %v", err)
+		}
+	})
+	if want := "Bot declared by player 2 (gammonNet normal): configuration normal, gammonNet v1.6.0 — not attested"; !strings.Contains(out, want) {
+		t.Errorf("origin lacks %q:\n%s", want, out)
+	}
+}

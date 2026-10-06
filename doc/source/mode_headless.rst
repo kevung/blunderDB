@@ -451,6 +451,15 @@ réponse rend l'état du Duel au prochain point où un Côté externe décide, a
 les Actions survenues entre-temps (lancers, coups forcés, Actions d'un Bot).
 Une Action que les règles refusent est un **400** et n'écrit rien.
 
+Un Côté externe peut déclarer le Bot qui joue derrière lui, un Bot gammonNet
+que le client fait jouer chez lui : ``{"kind": "external", "declared":
+{"configuration": "normal", "engine": "v1.6.0"}}``, deux textes d'au plus 64
+octets. Sans nom donné, le joueur prend celui du Bot (``gammonNet normal``).
+L'Arbitre traite ce Côté comme tout Côté externe. L'origine du Match
+(``matches.origin``) porte la déclaration à part, dans ``declared_bots``, comme
+déclarée par le client et non attestée : ``bot_level`` et ``bot_engine`` ne
+nomment que le Bot que l'Arbitre a fait jouer lui-même.
+
 Tout geste sur un Duel existant porte la révision vue en dernier dans
 ``If-Match`` : absent → **428**, périmée → **409**, y compris pour un second
 client qui a lu la même révision qu'un premier déjà passé. Un tenant n'a qu'**un

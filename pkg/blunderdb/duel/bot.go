@@ -9,6 +9,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
@@ -67,6 +68,18 @@ func botOrigin(sides [2]SideSpec) (level, engine string) {
 		levels = levels[:1]
 	}
 	return strings.Join(levels, "/"), gammonnet.PolicyEngineVersion
+}
+
+// declaredOrigin is what the Match's origin says of the Bots external Sides
+// declared, in player order; nil when none did.
+func declaredOrigin(sides [2]SideSpec) []storage.DeclaredBot {
+	var out []storage.DeclaredBot
+	for i, s := range sides {
+		if s.Kind == SideExternal && s.Declared != nil {
+			out = append(out, storage.DeclaredBot{Player: i + 1, Configuration: s.Declared.Configuration, Engine: s.Declared.Engine})
+		}
+	}
+	return out
 }
 
 // Bot is a delegated Side: gammonNet's stateless playing policy at a named

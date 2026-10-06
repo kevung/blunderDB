@@ -190,6 +190,10 @@ func writeOrigin(sb *strings.Builder, m *Match, o *duel.Origin) {
 		}
 		sb.WriteString("\n")
 	}
+	for _, b := range o.DeclaredBots {
+		fmt.Fprintf(sb, "  Bot declared by player %d (%s): configuration %s, gammonNet %s — not attested\n",
+			b.Player, [2]string{m.Player1Name, m.Player2Name}[b.Player-1], b.Configuration, b.Engine)
+	}
 }
 
 // describeCadence renders a Cadence as its name, then its reserve and delay.

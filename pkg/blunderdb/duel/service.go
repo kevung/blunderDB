@@ -162,8 +162,18 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 		if set.Sides[i].Kind == "" {
 			set.Sides[i].Kind = SideExternal
 		}
-		if set.Sides[i].Kind == SideBot {
-			set.Sides[i].Name = BotName(set.Sides[i].Level)
+		switch sp := &set.Sides[i]; {
+		case sp.Declared != nil && sp.Kind != SideExternal:
+			return nil, fmt.Errorf("player %d: only an external Side declares a Bot: %w", i+1, storage.ErrInvalid)
+		case sp.Kind == SideBot:
+			sp.Name = BotName(sp.Level)
+		case sp.Declared != nil:
+			if err := sp.Declared.check(); err != nil {
+				return nil, fmt.Errorf("player %d: %w", i+1, err)
+			}
+			if sp.Name == "" {
+				sp.Name = BotName(sp.Declared.Configuration)
+			}
 		}
 	}
 	if set.MatchLength == 0 && set.Sides[0].Kind != SideExternal && set.Sides[1].Kind != SideExternal {
@@ -461,6 +471,7 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 	header.MatchHash, header.CanonicalHash = transcription.MatchHashes(parts)
 	origin := storage.MatchOrigin{DiceSeed: g.seed, OverTime: g.doc.Clock.OverTime}
 	origin.BotLevel, origin.BotEngine = botOrigin(g.doc.Sides)
+	origin.DeclaredBots = declaredOrigin(g.doc.Sides)
 	if g.doc.Cadence != nil {
 		origin.Cadence = g.doc.Cadence.String()
 	}

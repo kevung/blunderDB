@@ -3,9 +3,12 @@ package duel
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // DecisionKind is what the Arbiter awaits from a Side.
@@ -90,11 +93,39 @@ const (
 
 // SideSpec is a Side as the draft records it: its kind, and the name the
 // Match gives its player. A Bot's Level is a named level of gammonNet; its
-// name is its Configuration's (BotName), whatever was asked.
+// name is its Configuration's (BotName), whatever was asked. An external Side
+// may declare the Bot that plays behind it (Declared); without a name of its
+// own, it is then named as a delegated Side would be.
 type SideSpec struct {
-	Kind  SideKind `json:"kind"`
-	Name  string   `json:"name,omitempty"`
-	Level string   `json:"level,omitempty"`
+	Kind     SideKind     `json:"kind"`
+	Name     string       `json:"name,omitempty"`
+	Level    string       `json:"level,omitempty"`
+	Declared *DeclaredBot `json:"declared,omitempty"`
+}
+
+// DeclaredBot is a Bot an external Side says plays behind it: a client that
+// runs gammonNet itself — in a webview, a script, an agent. The Arbiter
+// records it in the Match's origin as declared, never attested: it sees
+// nothing of what plays behind an external Side and authenticates no one
+// (ADR-0005), and it treats the Side as any external one.
+type DeclaredBot struct {
+	// Configuration is the Bot's Configuration, a level name such as
+	// "normal"; Engine the gammonNet tag it was built from.
+	Configuration string `json:"configuration"`
+	Engine        string `json:"engine"`
+}
+
+// maxDeclared bounds each text of a declaration, in bytes.
+const maxDeclared = 64
+
+// check refuses a declaration with an empty or oversized text.
+func (b DeclaredBot) check() error {
+	for _, f := range [...]struct{ name, v string }{{"configuration", b.Configuration}, {"engine", b.Engine}} {
+		if strings.TrimSpace(f.v) == "" || len(f.v) > maxDeclared || !utf8.ValidString(f.v) {
+			return fmt.Errorf("declared bot: %s is 1 to %d bytes of text: %w", f.name, maxDeclared, storage.ErrInvalid)
+		}
+	}
+	return nil
 }
 
 // External is the Side whose decisions come from outside the Arbiter.

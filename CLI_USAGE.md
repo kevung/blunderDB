@@ -1304,7 +1304,9 @@ are unknown, never zero).
 - `create`: starts a Duel and plays up to the first decision of an external
   side. `--length` (1 to 25 points) or `--money`; `--start` (XGID);
   `--name1`, `--name2`; `--side1`, `--side2` (`external`, or `bot:<level>` with
-  `instant`, `normal` or `thorough`); `--discard-at-end` drops the draft
+  `instant`, `normal` or `thorough`, or `external:<configuration>@<engine>`, an
+  external side declaring the Bot that plays behind it, recorded in the Match's
+  origin as declared, not attested); `--discard-at-end` drops the draft
   instead of writing the Match. Two bots play the whole match in one call; a
   money session between two bots is refused, since it would never end.
 - `show`: score, what the Duel waits for and, for a move, the legal plays. The
@@ -2678,7 +2680,7 @@ Options:
   -name2 string
     	Player 2's name
   -side1 string
-    	Player 1's Side: external, or bot:<level> (instant, normal, thorough) (default "external")
+    	Player 1's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough) (default "external")
   -side2 string
     	Player 2's Side: external, or bot:<level>; two Bots play the whole match in this call (default "external")
   -start string
@@ -2688,6 +2690,7 @@ Examples:
   blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob
   blunderdb duel create --db database.db --money --jacoby
   blunderdb duel create --db database.db --length 7 --side2 bot:normal
+  blunderdb duel create --db database.db --length 5 --name1 Alice --side2 external:normal@v1.6.0
   blunderdb duel create --db database.db --length 3 --side1 bot:instant --side2 bot:instant
 ```
 

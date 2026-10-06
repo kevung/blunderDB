@@ -21,7 +21,9 @@ import (
 // is recorded as unknown, never as short.
 //
 // A Side is "external" (the CLI plays it) or "bot:<level>" (the engine plays
-// it, within the call that gave it the trait).
+// it, within the call that gave it the trait). "external:<configuration>@<engine>"
+// is an external Side that declares the Bot playing behind it, recorded in the
+// Match's origin as declared, not attested.
 func (cli *CLI) runDuel(args []string) error {
 	if len(args) < 1 {
 		cli.printDuelUsage()
@@ -150,11 +152,12 @@ func (cli *CLI) runDuelCreate(args []string) error {
 		"blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob",
 		"blunderdb duel create --db database.db --money --jacoby",
 		"blunderdb duel create --db database.db --length 7 --side2 bot:normal",
+		"blunderdb duel create --db database.db --length 5 --name1 Alice --side2 external:normal@v1.6.0",
 		"blunderdb duel create --db database.db --length 3 --side1 bot:instant --side2 bot:instant")
 	length := fs.Int("length", 0, "Match length in points, 1 to 25")
 	money := fs.Bool("money", false, "A money session instead of a match")
 	jacoby := fs.Bool("jacoby", false, "With --money: play the Jacoby rule")
-	side1 := fs.String("side1", "external", "Player 1's Side: external, or bot:<level> (instant, normal, thorough)")
+	side1 := fs.String("side1", "external", "Player 1's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough)")
 	side2 := fs.String("side2", "external", "Player 2's Side: external, or bot:<level>; two Bots play the whole match in this call")
 	name1 := fs.String("name1", "", "Player 1's name")
 	name2 := fs.String("name2", "", "Player 2's name")
@@ -189,15 +192,23 @@ func (cli *CLI) runDuelCreate(args []string) error {
 	return printDuel(st, *format)
 }
 
-// parseSide reads "external" or "bot:<level>" into the Side a Duel records.
+// parseSide reads "external", "external:<configuration>@<engine>" or
+// "bot:<level>" into the Side a Duel records.
 func parseSide(v, name string) (duel.SideSpec, error) {
-	switch level, isBot := strings.CutPrefix(v, "bot:"); {
+	level, isBot := strings.CutPrefix(v, "bot:")
+	declared, isDeclared := strings.CutPrefix(v, "external:")
+	switch {
 	case v == "external" || v == "":
 		return duel.SideSpec{Kind: duel.SideExternal, Name: name}, nil
 	case isBot:
 		return duel.SideSpec{Kind: duel.SideBot, Level: level}, nil
+	case isDeclared:
+		if conf, engine, ok := strings.Cut(declared, "@"); ok && conf != "" && engine != "" {
+			return duel.SideSpec{Kind: duel.SideExternal, Name: name,
+				Declared: &duel.DeclaredBot{Configuration: conf, Engine: engine}}, nil
+		}
 	}
-	return duel.SideSpec{}, fmt.Errorf("side %q: external, or bot:<level> (%s)", v, strings.Join(duel.BotLevels, ", "))
+	return duel.SideSpec{}, fmt.Errorf("side %q: external, external:<configuration>@<engine>, or bot:<level> (%s)", v, strings.Join(duel.BotLevels, ", "))
 }
 
 func (cli *CLI) runDuelShow(args []string) error {
