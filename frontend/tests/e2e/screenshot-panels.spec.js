@@ -31,6 +31,25 @@ import { captureAndOptimise } from './helpers/screenshotTools.js';
 const IMG_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../doc/source/img');
 const MAX_BYTES = 500 * 1024;
 const VIEWPORT = { width: 1280, height: 960 };
+const STATS_EXTRA_HEIGHT = 140;
+
+async function panelHandleY(page) {
+    const box = await page.locator('.resize-handle').boundingBox();
+    return box.y + box.height / 2;
+}
+
+async function dragPanelHandleTo(page, targetY) {
+    const box = await page.locator('.resize-handle').boundingBox();
+    const x = box.x + box.width / 2;
+    await page.mouse.move(x, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(x, targetY, { steps: 5 });
+    await page.mouse.up();
+    // The handle fires its resize event before Svelte applies the new height,
+    // so the board measures the box of the previous step: measure it again.
+    await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+    await page.waitForTimeout(100);
+}
 
 test.skip(!process.env.SCREENSHOT, 'Capture documentaire : lancer avec SCREENSHOT=1');
 
@@ -115,7 +134,12 @@ test('galerie de captures panneau par panneau', async ({ page }) => {
     // 6-8. Panneau Stats — Dashboard, Erreurs, Joueurs. Chart.js anime
     // l'entrée des barres (~1s) : un court délai après l'affichage du
     // conteneur évite de capturer une barre encore en train de grandir.
+    // Every tab shares one panel height, and the default one hides the
+    // dashboard below its first row: the handle is raised for these three
+    // captures only, then put back for the panels that follow.
     await clickTab(page, 'stats');
+    const handleY = await panelHandleY(page);
+    await dragPanelHandleTo(page, handleY - STATS_EXTRA_HEIGHT);
     await expect(page.locator('.cards-grid')).toBeVisible();
     await page.waitForTimeout(800);
     await capture('stats_dashboard');
@@ -128,6 +152,7 @@ test('galerie de captures panneau par panneau', async ({ page }) => {
     await page.getByRole('tab', { name: 'Players' }).click();
     await expect(page.locator('.players-tab')).toBeVisible();
     await capture('stats_players');
+    await dragPanelHandleTo(page, handleY);
 
     // 9. Panneau Anki — liste des paquets.
     await clickTab(page, 'anki');
