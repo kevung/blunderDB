@@ -115,10 +115,21 @@ jobs:
               # A failing `go list` inside $( ) would be swallowed and leave an
               # empty list: the step must fail instead of testing nothing.
               pkgs=$(go list ./pkg/...) || exit 1
-              pkgs=$(printf '%s\n' "$pkgs" | grep -v '/pkg/blunderdb/database$' | grep -v '/pkg/blunderdb/engine/gammonnet$')
+              pkgs=$(printf '%s\n' "$pkgs" | grep -v '/pkg/blunderdb/database$' | grep -v -E '/pkg/blunderdb/engine/(gammonnet|bearoffgen|rollout)$')
               test -n "$pkgs" || { echo "rest shard: empty package list" >&2; exit 1; }
               go test -timeout 1200s -race -count=1 -coverpkg=./pkg/blunderdb/... -coverprofile=coverage.out -covermode=atomic \
                 $pkgs 2>&1 | tee test-output.txt
+          # bearoffgen and rollout leave `rest` for the coverage counters, not
+          # the race detector. Under -race every counter is an atomic write the
+          # detector instruments, inside the hottest loops: bearoffgen's own
+          # counters took TestOneSided_6_IdenticalToGnubg from 27 s to 583 s,
+          # and rest's -coverpkg instruments gammonnet beneath every rollout
+          # game, so both packages ran past the 1200 s a job is given while
+          # under -race alone they take 32 s and 69 s (4 GOMAXPROCS). Their
+          # workers are concurrent, so -race stays and the coverage goes: the
+          # test-os and nightly suites still run them.
+          - shard: engine-race
+            run: go test -timeout 1200s -race -count=1 ./pkg/blunderdb/engine/bearoffgen/ ./pkg/blunderdb/engine/rollout/ 2>&1 | tee test-output.txt
           # -short on pushes and pull requests (~30 s: the 2-ply searches behind
           # testing.Short() are skipped), the full suite on version tags.
           - shard: gammonnet
