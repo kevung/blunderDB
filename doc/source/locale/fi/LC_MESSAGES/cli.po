@@ -3873,11 +3873,14 @@ msgstr ""
 
 #: ../../source/cli.rst:1952
 msgid ""
-"``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur. "
-"Arrêter n'est pas abandonner."
+"``stop`` — Arrête une session en argent et écrit son Match tel qu'il est, la "
+"partie en cours sans vainqueur. Un match en points est refusé : il ne "
+"s'écrit qu'entier (``forfeit``, ``discard``). Arrêter n'est pas abandonner."
 msgstr ""
-"``stop`` — Lopettaa kaksintaistelun ja tallentaa ottelun nykyisellään, "
-"ilman voittajaa. Lopettaminen ei ole luovuttamista."
+"``stop`` — Lopettaa rahapelisession ja tallentaa sen ottelun nykyisellään, "
+"käynnissä olevan pelin ilman voittajaa. Pisteottelu hylätään: se "
+"tallennetaan vain kokonaisena (``forfeit``, ``discard``). Lopettaminen ei "
+"ole luovuttamista."
 
 #: ../../source/cli.rst:1953
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."

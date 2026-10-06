@@ -2971,7 +2971,7 @@
         "pause": "Tauota ottelu",
         "forfeit": "Luovuta ottelu",
         "forfeitConfirm": "Luovutetaanko ottelu? {name} voittaa sen.",
-        "forfeitConfirmMoney": "Luovutetaanko sessio? Käynnissä oleva peli hävitään backgammonina ({n} p).",
+        "forfeitConfirmMoney": "Luovutetaanko sessio? Käynnissä oleva peli hävitään yksinkertaisena ({n} p).",
         "cancel": "Peru ottelu",
         "cancelConfirm": "Perutaanko ottelu? Mitään ei tallenneta.",
         "match": "Ottelu",

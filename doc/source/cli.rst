@@ -1954,8 +1954,9 @@ sont inconnues, jamais nulles).
   cours va à l'autre Côté pour les points qui le portent à la longueur (en
   argent, une simple à la valeur du videau), et le Match s'écrit gagné par
   lui.
-* ``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur.
-  Arrêter n'est pas abandonner.
+* ``stop`` — Arrête une session en argent et écrit son Match tel qu'il est,
+  la partie en cours sans vainqueur. Un match en points est refusé : il ne
+  s'écrit qu'entier (``forfeit``, ``discard``). Arrêter n'est pas abandonner.
 * ``discard`` — Jette le Duel : rien n'en est écrit.
 
 Toutes prennent ``--db`` et ``--format`` (``text`` ou ``json``).

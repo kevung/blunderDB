@@ -72,15 +72,23 @@ import ne fournit complètement : la durée de chaque décision.
 10. **Un Duel est un brouillon jusqu'à sa fin, et ne fabrique aucun résultat.** Il s'écrit
     après chaque Action et se reprend au même point, mêmes dés à venir, horloges arrêtées ;
     plusieurs peuvent être en suspens, un seul est ouvert. Terminé, il devient un Match —
-    c'est le défaut, réglé à la création ; sinon le brouillon est jeté. Arrêté avant la fin,
-    il est soit *gardé* (un Match incomplet, dont les décisions comptent), soit *jeté* (rien
-    du Duel n'est écrit ; une Position mise sur la Pile pendant le jeu y reste, parce que ce
-    geste l'a écrite sur-le-champ, comme une position apportée seule) : arrêter le Duel
-    n'est jamais céder la partie, qui reste une Action du jeu. Céder le match entier en est
-    une aussi, l'abandon du match (ADR-0074) : le Match s'écrit gagné par l'adversaire.
-    Le Match porte son origine — joué ici, niveau du Bot, Cadence, germe révélé, et le cas
-    échéant perdu au temps ou arrêté avant la fin — et le Côté délégué y porte le nom de sa
-    Configuration. Son Performance Rating compte comme celui d'un autre Match (règle 1).
+    c'est le défaut, réglé à la création ; sinon le brouillon est jeté. **Un match en points
+    s'écrit entier ou pas du tout** : arrêté avant la fin, il se met en suspens, s'abandonne
+    ou se *jette* (rien du Duel n'est écrit ; une Position mise sur la Pile pendant le jeu y
+    reste, parce que ce geste l'a écrite sur-le-champ, comme une position apportée seule), et
+    l'Arbitre refuse de le *garder* tel quel (`ErrInvalid`), quelle que soit l'interface. Le
+    panneau Matchs ne montre que des matchs entiers : un Match coupé, sans vainqueur ni score
+    final, ne s'y distinguerait d'un match joué qu'à son origine, et la pause garde déjà le
+    match pour le reprendre. Une session en argent n'a pas de fin à elle : l'arrêter et la
+    garder est sa fin ordinaire, ses parties écrites telles quelles, celle en cours sans
+    vainqueur. Arrêter le Duel n'est jamais céder la partie, qui reste une Action du jeu.
+    Céder le match entier en est une aussi, l'abandon du match (ADR-0074) : le Match s'écrit
+    gagné par l'adversaire, comme après une perte au temps (ADR-0073 règle 1). Le Match porte
+    son origine — joué ici, niveau du Bot, Cadence, germe révélé, et le cas échéant perdu au
+    temps — et le Côté délégué y porte le nom de sa Configuration. La marque « arrêté avant
+    la fin » reste lue sur un Match qui la porte ; aucun Duel ne l'écrit plus, et aucune
+    donnée n'est migrée. Les imports ne sont pas concernés : un fichier coupé s'importe tel
+    qu'il est. Son Performance Rating compte comme celui d'un autre Match (règle 1).
 11. **Hors du bureau, un Duel se pilote une Action à la fois.** Une famille `/v1/duels.*` sur
     le patron de l'ADR-0057 (session en mémoire, `If-Match`, flux d'événements), activée par
     `--duel`. Une Action nomme son Côté ; le démon n'authentifie personne (ADR-0005), le

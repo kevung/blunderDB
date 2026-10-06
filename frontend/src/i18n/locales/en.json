@@ -2971,7 +2971,7 @@
         "pause": "Pause match",
         "forfeit": "Forfeit match",
         "forfeitConfirm": "Forfeit the match? {name} wins it.",
-        "forfeitConfirmMoney": "Forfeit the session? The game in progress is lost as a backgammon ({n} pt).",
+        "forfeitConfirmMoney": "Forfeit the session? The game in progress is lost as a single ({n} pt).",
         "cancel": "Cancel match",
         "cancelConfirm": "Cancel the match? Nothing of it will be written.",
         "match": "Match",

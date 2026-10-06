@@ -90,6 +90,14 @@ describe('DuelPanel', () => {
         expect(container.textContent).not.toMatch(/équité|equity|%/i);
     });
 
+    test('a match is left only whole or not at all: forfeit, pause or cancel, never kept as it stands', async () => {
+        openDuel({ side: 0, kind: 'cube', position: { cube: { value: 1 } } });
+        const { container } = render(DuelPanel);
+        await tick();
+        const gestures = [...container.querySelectorAll('.gestures button')].map((b) => b.textContent.trim());
+        expect(gestures).toEqual(['Forfeit match', 'Pause match', 'Cancel match']);
+    });
+
     test('the Bot’s turn says so', async () => {
         openDuel({ side: 1, kind: 'move', position: {} });
         const { getByText } = render(DuelPanel);

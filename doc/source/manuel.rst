@@ -1538,7 +1538,7 @@ Un match joué ici, issu d'un Duel, porte son origine en tête de la
 transcription, sur une ligne, même s'il n'a aucun coup : « Joué ici », puis,
 s'il y a lieu, « Perdu au temps » avec le joueur dont la réserve s'est épuisée
 sous une cadence qui fait perdre le match, ou « Arrêté avant la fin » pour un
-Duel arrêté, la cadence, le joueur dont la réserve s'est épuisée en premier et
+Match qu'un Duel arrêté a laissé inachevé, la cadence, le joueur dont la réserve s'est épuisée en premier et
 le niveau du Bot avec la version de gammonNet dont il a joué la politique. Un
 clic déplie le départ (la position initiale ou le XGID choisi), le germe des
 dés révélé et son SHA-256, à comparer avec l'empreinte publiée à la création
@@ -4046,9 +4046,11 @@ venir ; ses horloges étaient arrêtées.
 
 Le Duel se joue au plateau. Le panneau montre la feuille de match en deux
 colonnes, comme la Transcription, les horloges quand une cadence court, une
-ligne qui dit ce qui est attendu, et « Suspendre », « Arrêter et garder »,
-« Arrêter et jeter ». Le score et le videau sont ceux du plateau ; le score et
-les horloges restent dans la barre d'état quand l'onglet est replié.
+ligne qui dit ce qui est attendu, et « Abandonner le match », « Mettre en
+pause », « Annuler le match ». Un match en points ne s'enregistre qu'entier :
+il n'y a pas d'arrêt qui garde un match inachevé. Le score et le videau sont
+ceux du plateau ; le score et les horloges restent dans la barre d'état quand
+l'onglet est replié.
 L'empreinte SHA-256 du germe des dés, publiée par l'Arbitre dès la création,
 se lit dans l'infobulle de la ligne d'invite du panneau, puis avec le germe dans l'origine du Match terminé. Le plateau
 passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
@@ -4079,7 +4081,8 @@ pipcount (``P``) et l'aide.
   confirmation : la partie en cours va à l'adversaire pour les points qui le
   portent à la longueur, et le Match s'écrit gagné par lui. En argent, la
   partie en cours est perdue en simple, à la valeur du videau (avec ou sans
-  règle Jacoby), et la session se clôt.
+  règle Jacoby), et la session se clôt. Sous une cadence qui fait perdre le
+  match, une réserve épuisée vaut l'abandon du match par ce joueur.
 * « Mettre en pause » met le Duel en suspens, horloges arrêtées ; il se
   reprend au même point. « Annuler le match » le jette, après confirmation :
   rien n'en est écrit.

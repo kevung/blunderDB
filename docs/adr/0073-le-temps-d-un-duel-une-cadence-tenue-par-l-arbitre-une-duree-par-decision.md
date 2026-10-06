@@ -19,8 +19,11 @@ premier.
    réception de l'Action, jamais chez le client. Sans Cadence est le défaut. Un Duel
    suspendu arrête les horloges. Le temps écoulé est un fait ; sa conséquence est un réglage
    du Duel à deux valeurs — *continuer* (défaut du bureau : le dépassement est noté, le match
-   d'entraînement reste entier) ou *perdre le match*. Perdre au temps n'invente aucun point :
-   le Match s'arrête où le Duel s'est arrêté, et porte le fait.
+   d'entraînement reste entier) ou *perdre le match*. En points, perdre au temps vaut
+   l'abandon du match par le joueur dont la réserve s'est épuisée (ADR-0074 règle 2) : le
+   Match s'écrit gagné par l'autre, avec son score final, puisqu'un Duel n'écrit qu'un match
+   entier (ADR-0072 règle 10) ; son origine porte le fait, et la fin du Duel ne nomme aucun
+   abandon. En argent, la session s'arrête où elle en est, sans partie ajoutée.
 2. **La durée se mesure par décision et devient une propriété du coup.** Elle court dès que
    le Côté a le trait, délai compris, avec ou sans Cadence : du trait au lancer pour la
    décision de videau, du lancer au coup validé pour la décision de pions, et une durée
@@ -44,6 +47,7 @@ premier.
   (le format d'eXtreme Gammon lit un réglage d'horloge) remplirait le même champ, et reste à
   établir.
 - Rejeté : une durée par tour (elle confond « réfléchi longtemps sur le coup » et « lancé
-  sans penser à doubler ») ; l'incrément à la Fischer (le backgammon ne s'en sert pas) ; des
-  points fictifs pour une perte au temps ; une durée comptée après le délai (elle dépendrait
+  sans penser à doubler ») ; l'incrément à la Fischer (le backgammon ne s'en sert pas) ; un
+  Match perdu au temps laissé à son score, sans vainqueur (il ne serait pas un match entier,
+  et le panneau Matchs n'en montre pas d'autre) ; une durée comptée après le délai (elle dépendrait
   de la Cadence).

@@ -145,8 +145,9 @@ func (d *Database) FlagDuel(id int64) (*DuelState, error) {
 	})
 }
 
-// StopDuel ends the Duel before its end: kept, the Match is written as it
-// stands; thrown away, nothing of it is.
+// StopDuel ends the Duel before its end: thrown away, nothing of it is
+// written; kept, a money session's Match is written as it stands, and a match
+// in points is refused (duel.Service.Stop).
 func (d *Database) StopDuel(id, revision int64, keep bool) (*DuelState, error) {
 	return d.duelState(id, func(ctx context.Context, svc *duel.Service) (*duel.State, error) {
 		return svc.Stop(ctx, "", id, revision, keep)

@@ -2971,7 +2971,7 @@
         "pause": "マッチを一時停止",
         "forfeit": "マッチを放棄",
         "forfeitConfirm": "マッチを放棄しますか？{name} の勝ちになります。",
-        "forfeitConfirmMoney": "セッションを放棄しますか？進行中のゲームはバックギャモン負け（{n} 点）になります。",
+        "forfeitConfirmMoney": "セッションを放棄しますか？進行中のゲームはシングル負け（{n} 点）になります。",
         "cancel": "マッチを取り消す",
         "cancelConfirm": "マッチを取り消しますか？何も保存されません。",
         "match": "マッチ",

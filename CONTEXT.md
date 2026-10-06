@@ -565,7 +565,10 @@ is special once saved. It is the opposite of a Transcription on two of the three
 ADR-0044 — somebody decides, and the rules refuse — and the same on the third. A finished
 Duel is never reopened as a Transcription: its Actions were arbitrated, there is nothing
 to correct (ADR-0072). A Duel is left three ways: *paused* (in suspense, its clocks stopped,
-resumed where it stopped), *cancelled* (nothing of it is written) or *forfeited*.
+resumed where it stopped), *cancelled* (nothing of it is written) or *forfeited*. A match
+in points is written whole or not at all — the Arbiter refuses to keep one cut short, and
+losing on time is a forfeit by the player out of time; only a money session, which has no
+end of its own, is kept as it stands when stopped (ADR-0072 rule 10).
 _Avoid_: played match (every Match was played), play (a checker play), game, partie (one
 Game of a match), live match, play mode, sparring (true of one configuration only)
 
@@ -574,7 +577,7 @@ The Action by which a Side gives the whole match up, at any moment: the game in 
 ends won by the other Side, for the points that bring it to the length — at money play, a
 single at the cube's value — and the Duel ends as a match won. Not a resignation, which
 gives one game up, and not a stop, which never gives anything (ADR-0074).
-_Avoid_: resign the match, concede, stop and keep (writes an unfinished Match, no winner)
+_Avoid_: resign the match, concede, stop and keep (only a money session is kept as it stands)
 
 **Side** (of a Duel):
 One of the two players of a Duel. A Side is *external* — its decisions arrive through an
