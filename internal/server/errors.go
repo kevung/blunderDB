@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/direction"
-	"github.com/kevung/blunderdb/pkg/blunderdb/duel"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
@@ -93,8 +92,6 @@ func codeForErr(err error) string {
 		return CodeGone
 	case isDuelRefusal(err):
 		return CodeInvalid
-	case errors.Is(err, duel.ErrNotOpen):
-		return CodeConflict
 	case errors.Is(err, storage.ErrNotFound), errors.Is(err, direction.ErrNoDirection):
 		// A Tournament that was never directed has no Direction to read.
 		return CodeNotFound

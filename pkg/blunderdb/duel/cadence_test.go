@@ -121,7 +121,9 @@ func TestDecisionDurations(t *testing.T) {
 }
 
 // TestSuspendedDuelStopsTheClock: the time a Duel spends in suspense is not
-// counted; a Duel left running when its process stopped has the decision's
+// counted; a Duel open in one process is played on by another with its clock
+// still running; a draft whose clock ran while its row says suspense — left so
+// by a process that kept the open Duel in memory only — has the decision's
 // duration unknown, not short.
 func TestSuspendedDuelStopsTheClock(t *testing.T) {
 	ctx := context.Background()
@@ -133,7 +135,7 @@ func TestSuspendedDuelStopsTheClock(t *testing.T) {
 		t.Fatalf("Create: %v", err)
 	}
 	c.waitS(3)
-	if err := svc.Suspend(ctx, "", s.ID); err != nil {
+	if err := svc.Suspend(ctx, "", s.ID, 0); err != nil {
 		t.Fatalf("Suspend: %v", err)
 	}
 	c.wait(time.Hour)
@@ -146,17 +148,40 @@ func TestSuspendedDuelStopsTheClock(t *testing.T) {
 		t.Errorf("a decision across a suspension took %v, want 5000", show(got))
 	}
 
-	// A second process opens the Duel this one left running.
+	// A second process plays on the Duel this one keeps open.
 	c.waitS(7)
 	again := clockedService(t, st, c)
-	r, err := again.Open(ctx, "", s.ID)
+	r, err := again.Get(ctx, "", s.ID)
 	if err != nil {
-		t.Fatalf("Open from another process: %v", err)
+		t.Fatalf("Get from another process: %v", err)
 	}
 	if r.Awaiting.Kind != DecideCube {
 		t.Fatalf("a cube decision should be awaited: %+v", r.Awaiting)
 	}
 	n := len(r.Actions)
+	r = playAfter(t, again, c, r, 1, answer(*r.Awaiting))
+	r = playAfter(t, again, c, r, 4, answer(*r.Awaiting))
+	if got := r.Actions[n]; !eqMS(got.CubeDecisionMS, ms(8000)) || !eqMS(got.DecisionMS, ms(4000)) {
+		t.Errorf("played on by another process: cube %v (want 8000), play %v (want 4000)", show(got.CubeDecisionMS), show(got.DecisionMS))
+	}
+
+	// The row says suspense while the clock ran: opening cannot know since when.
+	row, err := st.Duels().Get(ctx, "", r.ID)
+	if err != nil {
+		t.Fatalf("Get row: %v", err)
+	}
+	row.Open = false
+	if _, err := st.Duels().Save(ctx, "", row); err != nil {
+		t.Fatalf("Save row: %v", err)
+	}
+	c.waitS(7)
+	if r, err = again.Open(ctx, "", r.ID); err != nil {
+		t.Fatalf("Open: %v", err)
+	}
+	if r.Awaiting.Kind != DecideCube {
+		t.Fatalf("a cube decision should be awaited: %+v", r.Awaiting)
+	}
+	n = len(r.Actions)
 	r = playAfter(t, again, c, r, 1, answer(*r.Awaiting))
 	r = playAfter(t, again, c, r, 4, answer(*r.Awaiting))
 	if got := r.Actions[n]; got.CubeDecisionMS != nil || !eqMS(got.DecisionMS, ms(4000)) {

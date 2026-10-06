@@ -107,26 +107,53 @@ func (d *Database) ListDuels() ([]duel.Summary, error) {
 	return out, err
 }
 
-// CreateDuel creates a Duel and opens it, the one open before going into
-// suspense. A Start or a Cadence the rules refuse is an error naming why.
+// CreateDuel creates a Duel and opens it, the one at the board before going
+// into suspense. A Start or a Cadence the rules refuse is an error naming why.
 func (d *Database) CreateDuel(set duel.Settings) (*DuelState, error) {
 	return d.duelState(0, func(ctx context.Context, svc *duel.Service) (*duel.State, error) {
-		return svc.Create(ctx, "", set)
+		st, err := svc.Create(ctx, "", set)
+		if err == nil {
+			err = suspendOthers(ctx, svc, st.ID)
+		}
+		return st, err
 	})
 }
 
 // OpenDuel resumes a Duel in suspense where it stopped, its clocks running
-// again.
+// again, and puts the one at the board in suspense.
 func (d *Database) OpenDuel(id int64) (*DuelState, error) {
 	return d.duelState(id, func(ctx context.Context, svc *duel.Service) (*duel.State, error) {
-		return svc.Open(ctx, "", id)
+		st, err := svc.Open(ctx, "", id)
+		if err == nil {
+			err = suspendOthers(ctx, svc, id)
+		}
+		return st, err
 	})
 }
 
-// SuspendDuel puts the open Duel in suspense, its clocks stopped.
+// suspendOthers puts every open Duel but keep in suspense. The Arbiter lets
+// several Duels be open at once; the desktop shows one at the board, and the
+// clocks of those it left stand still. A Duel ended meanwhile has nothing to
+// suspend.
+func suspendOthers(ctx context.Context, svc *duel.Service, keep int64) error {
+	rows, err := svc.List(ctx, "")
+	if err != nil {
+		return err
+	}
+	for _, r := range rows {
+		if r.Open && r.ID != keep {
+			if err := svc.Suspend(ctx, "", r.ID, 0); err != nil && !errors.Is(err, storage.ErrNotFound) {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+// SuspendDuel puts the Duel in suspense, its clocks stopped.
 func (d *Database) SuspendDuel(id int64) error {
 	return d.withDuels(func(svc *duel.Service) error {
-		return svc.Suspend(context.Background(), "", id)
+		return svc.Suspend(context.Background(), "", id, 0)
 	})
 }
 
@@ -182,7 +209,7 @@ func (d *Database) GetMatchOrigin(matchID int64) (*duel.Origin, error) {
 	return duel.ReadOrigin(context.Background(), d.store, "", matchID)
 }
 
-// forgetDuels puts the open Duel in suspense and drops the Service when the
+// forgetDuels puts the open Duels in suspense and drops the Service when the
 // handle is replaced or closed, BEFORE d.mu is taken for writing: the clocks
 // stop with the library, and a Duel id of the previous library must not
 // answer for the next one.
@@ -207,7 +234,7 @@ func (d *Database) forgetDuels() {
 	}
 	for _, r := range rows {
 		if r.Open {
-			_ = svc.Suspend(ctx, "", r.ID)
+			_ = svc.Suspend(ctx, "", r.ID, 0)
 		}
 	}
 }

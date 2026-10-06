@@ -421,6 +421,8 @@ var schemaStatements = []string{
 	// opaque JSON document rewritten after every Action, like a transcription.
 	// dice_seed is its own column, written at creation and never again: every
 	// roll is computed from it, and it leaves the Arbiter only with the Match.
+	// is_open says the Duel is being played, its clocks running: in the row,
+	// so every process on the library sees the same Duels open.
 	`CREATE TABLE IF NOT EXISTS duel (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -429,7 +431,8 @@ var schemaStatements = []string{
 		label TEXT NOT NULL DEFAULT '',
 		document TEXT NOT NULL,
 		dice_seed TEXT NOT NULL,
-		revision INTEGER NOT NULL DEFAULT 1
+		revision INTEGER NOT NULL DEFAULT 1,
+		is_open INTEGER NOT NULL DEFAULT 0
 	)`,
 	// The origin of a Match played here (ADR-0072 rule 10): its Start (an
 	// XGID, '' for the opening position), the revealed dice seed, and whether

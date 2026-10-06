@@ -77,8 +77,14 @@ import ne fournit complètement : la durée de chaque décision.
    L'Arbitre joue seul ce qui n'est pas une décision : le lancer quand le videau n'est pas
    disponible, le tour passé, le coup unique.
 10. **Un Duel est un brouillon jusqu'à sa fin, et ne fabrique aucun résultat.** Il s'écrit
-    après chaque Action et se reprend au même point, mêmes dés à venir, horloges arrêtées ;
-    plusieurs peuvent être en suspens, un seul est ouvert. Terminé, il devient un Match —
+    après chaque Action et se reprend au même point, mêmes dés à venir, horloges arrêtées.
+    Ouvert ou en suspens, c'est écrit dans sa ligne, que tout processus sur la base lit ;
+    plusieurs peuvent être ouverts à la fois, leurs horloges courant chacune, et ouvrir l'un
+    n'en suspend aucun autre. Un geste sur un Duel en suspens l'ouvre dans la même écriture.
+    Chaque Duel a son verrou, et le calcul d'un Bot ne retient que son propre Duel ; entre
+    deux processus, la révision du brouillon arbitre. « Un seul au plateau » est un choix de
+    l'interface du bureau, qui suspend le Duel qu'elle quitte, non une règle de l'Arbitre.
+    Terminé, il devient un Match —
     c'est le défaut, réglé à la création ; sinon le brouillon est jeté. **Un match en points
     s'écrit entier ou pas du tout** : arrêté avant la fin, il se met en suspens, s'abandonne
     ou se *jette* (rien du Duel n'est écrit ; une Position mise sur la Pile pendant le jeu y

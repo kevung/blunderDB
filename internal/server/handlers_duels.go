@@ -91,15 +91,11 @@ func (s *Server) announce(scope string, id int64, st *duel.State, err error) {
 	s.publisher.Publish(ev)
 }
 
-// duelGesture runs a gesture on the Duel id: it is made the open one first
-// when it is not — a daemon that restarted, a Duel in suspense — and the
-// result is announced.
+// duelGesture runs a gesture on the Duel id under the revision of If-Match
+// (0: none) and announces the result. A Duel in suspense is opened by the
+// gesture itself, in the same step.
 func (s *Server) duelGesture(ctx context.Context, scope string, id int64, fn func(rev int64) (*duel.State, error)) (*duel.State, error) {
 	rev, _ := ctx.Value(ifMatchKey{}).(int64)
-	rev, err := s.duels().Ensure(ctx, scope, id, rev)
-	if err != nil {
-		return nil, err
-	}
 	st, err := fn(rev)
 	s.announce(scope, id, st, err)
 	return st, err
@@ -155,10 +151,7 @@ func (s *Server) duelRoutes() []route {
 		}))},
 		{http.MethodPost, "/v1/duels.suspend", gesture(rpc(func(ctx context.Context, scope string, req duelIDReq) (okResp, error) {
 			rev, _ := ctx.Value(ifMatchKey{}).(int64)
-			if _, err := s.duels().Ensure(ctx, scope, req.ID, rev); err != nil {
-				return okResp{}, err
-			}
-			if err := s.duels().Suspend(ctx, scope, req.ID); err != nil {
+			if err := s.duels().Suspend(ctx, scope, req.ID, rev); err != nil {
 				return okResp{}, err
 			}
 			if s.eventsEnabled() && s.publisher.Wants(scope) {

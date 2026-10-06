@@ -21,7 +21,8 @@
 //     offer, is refused by name (rule 12);
 //   - the draft (service.go), written after every Play over
 //     storage.DuelStore, resumed at the same point with the same dice to come;
-//     several in suspense, one open (rule 10);
+//     open or in suspense, as its row says, any number open at once, each
+//     under its own lock (rule 10);
 //   - the end: the Match written through ingest.WriteMatch, as a Transcription
 //     writes it, with its origin (storage.MatchOrigin) — or the draft thrown
 //     away. Stopping and keeping writes the games as they stand; nothing

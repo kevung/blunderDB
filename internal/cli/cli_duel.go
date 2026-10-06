@@ -15,7 +15,7 @@ import (
 
 // runDuel is `blunderdb duel`: a Duel played without an interface, one Action
 // per call (ADR-0072 rule 11). Every call is its own process, so it keeps
-// nothing in memory: the Duel an Action names is made the open one first, and
+// nothing in memory: an Action on a Duel in suspense opens it in the same write, and
 // the draft in the database is all there is of it. A Duel driven this way has
 // neither Cadence nor decision times — a decision whose time was not watched
 // is recorded as unknown, never as short.
@@ -281,10 +281,8 @@ func (cli *CLI) runDuelAct(kind duel.PlayKind, args []string) error {
 		return fmt.Errorf("missing required flag: --id")
 	}
 	ctx := context.Background()
-	rev, err := svc.Ensure(ctx, "", *id, *revision)
-	if err != nil {
-		return fmt.Errorf("duel %d: %w", *id, err)
-	}
+	// A Duel in suspense is opened by the gesture itself.
+	rev := *revision
 	cur, err := svc.Get(ctx, "", *id)
 	if err != nil {
 		return err
@@ -359,10 +357,8 @@ func (cli *CLI) runDuelForfeit(args []string) error {
 		return fmt.Errorf("--side is required, 1 or 2")
 	}
 	ctx := context.Background()
-	rev, err := svc.Ensure(ctx, "", *id, *revision)
-	if err != nil {
-		return fmt.Errorf("duel %d: %w", *id, err)
-	}
+	// A Duel in suspense is opened by the gesture itself.
+	rev := *revision
 	st, err := svc.Forfeit(ctx, "", *id, rev, *side-1)
 	if err != nil {
 		return fmt.Errorf("duel %d: %w", *id, err)
@@ -388,10 +384,8 @@ func (cli *CLI) runDuelContribute(args []string) error {
 		return fmt.Errorf("--side is required, 1 or 2")
 	}
 	ctx := context.Background()
-	rev, err := svc.Ensure(ctx, "", *id, *revision)
-	if err != nil {
-		return fmt.Errorf("duel %d: %w", *id, err)
-	}
+	// A Duel in suspense is opened by the gesture itself.
+	rev := *revision
 	st, err := svc.Contribute(ctx, "", *id, rev, *side-1, *value)
 	if err != nil {
 		return fmt.Errorf("duel %d: %w", *id, err)
@@ -419,10 +413,8 @@ func (cli *CLI) runDuelEnd(sub string, keep bool, args []string) error {
 		return fmt.Errorf("missing required flag: --id")
 	}
 	ctx := context.Background()
-	rev, err := svc.Ensure(ctx, "", *id, *revision)
-	if err != nil {
-		return fmt.Errorf("duel %d: %w", *id, err)
-	}
+	// A Duel in suspense is opened by the gesture itself.
+	rev := *revision
 	st, err := svc.Stop(ctx, "", *id, rev, keep)
 	if err != nil {
 		return fmt.Errorf("duel %d: %w", *id, err)

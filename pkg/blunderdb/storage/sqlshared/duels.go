@@ -21,14 +21,16 @@ var _ storage.DuelStore = (*DuelStore)(nil)
 
 func (s *DuelStore) selectCols() string {
 	return `id, ` + s.DB.TimestampText("created_at") + `, ` + s.DB.TimestampText("updated_at") +
-		`, format_version, label, document, dice_seed, revision`
+		`, format_version, label, document, dice_seed, revision, is_open`
 }
 
 func scanDuel(sc interface{ Scan(...any) error }) (*storage.Duel, error) {
 	var d storage.Duel
-	if err := sc.Scan(&d.ID, &d.CreatedAt, &d.UpdatedAt, &d.FormatVersion, &d.Label, &d.Document, &d.DiceSeed, &d.Revision); err != nil {
+	var open int
+	if err := sc.Scan(&d.ID, &d.CreatedAt, &d.UpdatedAt, &d.FormatVersion, &d.Label, &d.Document, &d.DiceSeed, &d.Revision, &open); err != nil {
 		return nil, err
 	}
+	d.Open = open != 0
 	return &d, nil
 }
 
@@ -40,7 +42,7 @@ func (s *DuelStore) List(ctx context.Context, scope string) iter.Seq2[*storage.D
 		tenant, targs := s.DB.TenantFilter("", scope)
 		rows, err := s.DB.Query(ctx,
 			`SELECT id, `+s.DB.TimestampText("created_at")+`, `+s.DB.TimestampText("updated_at")+
-				`, format_version, label, revision FROM duel WHERE `+tenant+` ORDER BY updated_at DESC, id DESC`, targs...)
+				`, format_version, label, revision, is_open FROM duel WHERE `+tenant+` ORDER BY updated_at DESC, id DESC`, targs...)
 		if err != nil {
 			yield(nil, errf(s.DB, "list duels", err))
 			return
@@ -48,10 +50,12 @@ func (s *DuelStore) List(ctx context.Context, scope string) iter.Seq2[*storage.D
 		defer rows.Close()
 		for rows.Next() {
 			var d storage.DuelEntry
-			if err := rows.Scan(&d.ID, &d.CreatedAt, &d.UpdatedAt, &d.FormatVersion, &d.Label, &d.Revision); err != nil {
+			var open int
+			if err := rows.Scan(&d.ID, &d.CreatedAt, &d.UpdatedAt, &d.FormatVersion, &d.Label, &d.Revision, &open); err != nil {
 				yield(nil, errf(s.DB, "list duels", err))
 				return
 			}
+			d.Open = open != 0
 			if !yield(&d, nil) {
 				return
 			}
@@ -87,8 +91,8 @@ func (s *DuelStore) Save(ctx context.Context, scope string, d *storage.Duel) (in
 		return 0, errf(s.DB, "save duel: no dice seed", storage.ErrInvalid)
 	}
 	cols, args := s.DB.TenantColumns(scope)
-	cols = append(cols, "format_version", "label", "document", "dice_seed", "revision")
-	args = append(args, d.FormatVersion, d.Label, d.Document, d.DiceSeed, 1)
+	cols = append(cols, "format_version", "label", "document", "dice_seed", "revision", "is_open")
+	args = append(args, d.FormatVersion, d.Label, d.Document, d.DiceSeed, 1, boolInt(d.Open))
 	id, err := s.DB.Insert(ctx,
 		`INSERT INTO duel (`+strings.Join(cols, ", ")+`) VALUES (`+Placeholders(len(cols))+`)`, args...)
 	if err != nil {
@@ -98,16 +102,17 @@ func (s *DuelStore) Save(ctx context.Context, scope string, d *storage.Duel) (in
 	return id, nil
 }
 
-// update rewrites the document and the label, never the seed, and reads the
-// revision this write produced from the statement itself.
+// update rewrites the document, the label and whether the Duel is open, never
+// the seed, and reads the revision this write produced from the statement
+// itself.
 func (s *DuelStore) update(ctx context.Context, scope string, d *storage.Duel) error {
 	what := fmt.Sprintf("save duel %d", d.ID)
 	tenant, targs := s.DB.TenantFilter("", scope)
-	args := append([]any{d.FormatVersion, d.Label, d.Document, d.ID, d.Revision, d.Revision}, targs...)
+	args := append([]any{d.FormatVersion, d.Label, d.Document, boolInt(d.Open), d.ID, d.Revision, d.Revision}, targs...)
 	var rev int64
 	err := s.DB.QueryRow(ctx,
 		`UPDATE duel
-		 SET format_version = ?, label = ?, document = ?,
+		 SET format_version = ?, label = ?, document = ?, is_open = ?,
 		     revision = revision + 1, updated_at = CURRENT_TIMESTAMP
 		 WHERE id = ? AND (CAST(? AS BIGINT) = 0 OR revision = ?) AND `+tenant+`
 		 RETURNING revision`, args...).Scan(&rev)

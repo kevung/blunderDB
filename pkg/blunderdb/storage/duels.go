@@ -28,6 +28,10 @@ type Duel struct {
 	// Revision counts the row's writes, as Transcription.Revision does, and is
 	// the caller's expectation on Save: non-zero and stale reports ErrConflict.
 	Revision int64 `json:"revision"`
+	// Open says the Duel is being played, its clocks running; false, it is in
+	// suspense. It lives in the row so that every process on the library sees
+	// the same Duels open, and a restart keeps them.
+	Open bool `json:"open"`
 }
 
 // DuelEntry is a Duel in suspense as a list shows it. It has no seed, and no
@@ -43,6 +47,7 @@ type DuelEntry struct {
 	FormatVersion string `json:"format_version"`
 	Label         string `json:"label"`
 	Revision      int64  `json:"revision"`
+	Open          bool   `json:"open"`
 }
 
 // MatchOrigin is how a Match came to be when it was played here rather than

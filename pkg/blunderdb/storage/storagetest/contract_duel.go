@@ -33,16 +33,16 @@ func testDuelDraft(t *testing.T, s storage.Storage) {
 		t.Fatalf("Get: %v", err)
 	}
 	if got.Label != "Alice — Bob" || got.Document != `{"actions":[]}` || got.DiceSeed != "s1" || got.Revision != 1 ||
-		got.CreatedAt == "" || got.UpdatedAt == "" {
+		got.CreatedAt == "" || got.UpdatedAt == "" || got.Open {
 		t.Errorf("Get: got %+v", got)
 	}
 
-	got.Document, got.DiceSeed = `{"actions":[1]}`, "another"
+	got.Document, got.DiceSeed, got.Open = `{"actions":[1]}`, "another", true
 	if _, err := ds.Save(ctx, "", got); err != nil || got.Revision != 2 {
 		t.Fatalf("Save under revision 1: rev=%d err=%v", got.Revision, err)
 	}
 	again, err := ds.Get(ctx, "", id)
-	if err != nil || again.Document != `{"actions":[1]}` || again.DiceSeed != "s1" {
+	if err != nil || again.Document != `{"actions":[1]}` || again.DiceSeed != "s1" || !again.Open {
 		t.Errorf("after a rewrite: got %+v, %v; the seed is written once", again, err)
 	}
 
@@ -52,7 +52,7 @@ func testDuelDraft(t *testing.T, s storage.Storage) {
 		t.Errorf("Save under a stale revision: got %v, want ErrConflict", err)
 	}
 
-	second := &storage.Duel{FormatVersion: "1", Document: "{}", DiceSeed: "s2"}
+	second := &storage.Duel{FormatVersion: "1", Document: "{}", DiceSeed: "s2", Open: true}
 	id2, err := ds.Save(ctx, "", second)
 	if err != nil {
 		t.Fatalf("Save second: %v", err)
@@ -63,6 +63,9 @@ func testDuelDraft(t *testing.T, s storage.Storage) {
 			t.Fatalf("List: %v", err)
 		}
 		ids = append(ids, row.ID)
+		if !row.Open {
+			t.Errorf("List: duel %d not open; Open is read from the row", row.ID)
+		}
 	}
 	if len(ids) != 2 || ids[0] != id2 || ids[1] != id {
 		t.Errorf("List = %v, want [%d %d] (newest first)", ids, id2, id)
