@@ -273,6 +273,7 @@ var databaseParity = map[string]parityEntry{
 	"PlayDuel":                          {CLI: "duel move", Why: whyDuelGated},
 	"StopDuel":                          {CLI: "duel stop", Why: whyDuelGated},
 	"ForfeitDuel":                       {CLI: "duel forfeit", Why: whyDuelGated},
+	"ContributeDuel":                    {CLI: "duel contribute", Why: whyDuelGated},
 	"DuelOffer":                         {Why: "the creation form's choices; the CLI's and the daemon's create refuse an unknown level or Cadence with the list, and `duel create --help` states them"},
 	"CreateTranscription":               {Server: "/v1/transcriptions.create", Why: whyTranscription},
 	"OpenTranscription":                 {Server: "/v1/transcriptions.open", CLI: "transcribe --draft", Why: whyTranscription},

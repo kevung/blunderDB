@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"unicode/utf8"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
@@ -30,6 +31,14 @@ const (
 	// RefusedNotAwaited: the Play is not what the Decision awaits, or comes
 	// from the other Side.
 	RefusedNotAwaited transcript.RefusalKind = "not_awaited"
+	// RefusedContributionPending: a Duel with a combined seed has no roll and
+	// no Decision before every external Side has contributed.
+	RefusedContributionPending transcript.RefusalKind = "contribution_pending"
+	// RefusedContribution: a contribution to a Duel without a combined seed,
+	// from a delegated Side, a second one from the same Side, one after the
+	// first roll, or one empty or over MaxContribution bytes. Every external
+	// Side contributes before the first roll, so one after it is a second.
+	RefusedContribution transcript.RefusalKind = "contribution"
 )
 
 // ErrUnknownSide: a draft names a kind of Side this build cannot resolve.
@@ -55,6 +64,11 @@ type document struct {
 	// durations, keep between two calls (cadence.go).
 	Cadence *Cadence `json:"cadence,omitempty"`
 	Clock   clock    `json:"clock,omitzero"`
+	// CombinedSeed: the rolls come from CombinedSeed over the sealed seed and
+	// Contributions, the external Sides' in player order, and nothing is
+	// rolled before each external Side has contributed.
+	CombinedSeed  bool      `json:"combined_seed,omitempty"`
+	Contributions [2]string `json:"contributions,omitzero"`
 }
 
 // game is a Duel in memory: its document, its seed, and the rule machine the
@@ -164,7 +178,7 @@ func (g *game) forfeit(side int) error {
 // awaiting is the Decision a Side owes, or nil when the Arbiter acts next —
 // a roll to draw — or the match is over.
 func (g *game) awaiting() *Decision {
-	if g.finished() || g.timeLost() {
+	if g.finished() || g.timeLost() || g.contributionsPending() {
 		return nil
 	}
 	n := g.m.Next()
@@ -192,8 +206,15 @@ func (g *game) roll() error {
 		g.doc.Dice, g.doc.DiceSide = n.Position.Dice, n.Side
 		return nil
 	}
+	seed := g.seed
+	if g.doc.CombinedSeed {
+		var err error
+		if seed, err = CombinedSeed(g.seed, g.doc.Contributions); err != nil {
+			return err
+		}
+	}
 	for {
-		d, err := Roll(g.seed, g.doc.Rolls)
+		d, err := Roll(seed, g.doc.Rolls)
 		if err != nil {
 			return err
 		}
@@ -216,6 +237,10 @@ func (g *game) roll() error {
 // Decision's duration, the reserve's charge, then the Play. A Side out of
 // time under TimeLoseMatch has lost the match before its Play counts.
 func (g *game) receive(p Play) error {
+	if g.contributionsPending() {
+		return &transcript.Refusal{Kind: RefusedContributionPending,
+			Detail: "the Duel awaits the external Sides' contributions to its seed before any play"}
+	}
 	d := g.awaiting()
 	ms, known := g.elapsed(p.At)
 	if d != nil && p.Side == d.Side && g.overTime(d.Side, ms) && g.doc.Cadence.TimeOut == TimeLoseMatch {
@@ -301,7 +326,7 @@ func (g *game) play(p Play, ms *int64) error {
 // available, the dance, the only play — and asks each Side for its Decision
 // until one decides outside the Arbiter or the match is over (ADR-0072 rule 9).
 func (g *game) settle(ctx context.Context, sides [2]Side) error {
-	for !g.finished() && !g.timeLost() {
+	for !g.finished() && !g.timeLost() && !g.contributionsPending() {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
@@ -347,6 +372,45 @@ func (g *game) settle(ctx context.Context, sides [2]Side) error {
 			return fmt.Errorf("player %d's side: %w", d.Side+1, err)
 		}
 	}
+	return nil
+}
+
+// pendingContributions lists the external Sides a combined seed still awaits
+// a contribution from; none without a combined seed.
+func (g *game) pendingContributions() []int {
+	if !g.doc.CombinedSeed {
+		return nil
+	}
+	var out []int
+	for i, s := range g.doc.Sides {
+		if s.Kind == SideExternal && g.doc.Contributions[i] == "" {
+			out = append(out, i)
+		}
+	}
+	return out
+}
+
+func (g *game) contributionsPending() bool { return len(g.pendingContributions()) > 0 }
+
+// contribute records an external Side's contribution to the combined seed:
+// once per Side, before the first roll.
+func (g *game) contribute(side int, c string) error {
+	refuse := func(detail string) error {
+		return &transcript.Refusal{Kind: RefusedContribution, Detail: detail}
+	}
+	switch {
+	case !g.doc.CombinedSeed:
+		return refuse("the Duel was not created with a combined seed")
+	case side != domain.Black && side != domain.White:
+		return refuse(fmt.Sprintf("the side is %d, not player 1 or 2", side))
+	case g.doc.Sides[side].Kind != SideExternal:
+		return refuse("only an external Side contributes")
+	case g.doc.Contributions[side] != "":
+		return refuse("this Side has already contributed")
+	case c == "" || len(c) > MaxContribution || !utf8.ValidString(c):
+		return refuse(fmt.Sprintf("a contribution is 1 to %d bytes of text", MaxContribution))
+	}
+	g.doc.Contributions[side] = c
 	return nil
 }
 

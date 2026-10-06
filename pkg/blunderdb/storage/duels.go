@@ -74,6 +74,26 @@ type MatchOrigin struct {
 	// (gammonnet.PolicyEngineVersion), empty when no Bot played. It is not
 	// the analysis's engine: a policy and a network are published apart.
 	BotEngine string `json:"bot_engine"`
+	// DeclaredBots are the Bots external Sides declared playing behind them,
+	// in player order: what a client said, which the Arbiter neither saw nor
+	// checked (ADR-0005), unlike BotLevel and BotEngine, which name what the
+	// Arbiter played itself. Nil when no Side declared one.
+	DeclaredBots []DeclaredBot `json:"declared_bots,omitempty"`
+	// Contributions are what each Side contributed to a combined seed, in
+	// player order ("" for a delegated Side); the rolls were computed from
+	// duel.CombinedSeed over DiceSeed and them. Nil when the Duel rolled from
+	// DiceSeed alone.
+	Contributions []string `json:"contributions,omitempty"`
+}
+
+// DeclaredBot is a Bot an external Side declared at the Duel's creation: the
+// Configuration it plays with and the gammonNet tag it was built from, as the
+// client wrote them.
+type DeclaredBot struct {
+	// Player is 1 or 2.
+	Player        int    `json:"player"`
+	Configuration string `json:"configuration"`
+	Engine        string `json:"engine"`
 }
 
 // DuelStore persists the drafts of Duels and the origin of the Matches they

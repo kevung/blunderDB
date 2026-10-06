@@ -584,13 +584,17 @@ One of the two players of a Duel. A Side is *external* — its decisions arrive 
 interface (the board, the CLI, the API), from a human or from a program blunderDB knows
 nothing about — or *delegated* to a Bot. Human against engine is one of each; two external
 Sides is two people playing through a client such as gammonGo; two delegated Sides is the
-engine playing itself. The Arbiter treats the three alike.
+engine playing itself. The Arbiter treats the three alike. An external Side may *declare* the Bot
+playing behind it — one a client runs itself: the Match's origin records it as declared,
+never attested, apart from the Bots the Arbiter played.
 _Avoid_: seat (the per-seat columns of a Match), player (a name in a Match), opponent
 
 **Bot**:
 What a Side of a Duel is delegated to: a Configuration of the engine plus a *playing
 policy* — everything a player does that an evaluator does not: answering a double,
-offering or accepting a resignation, playing weaker than it can, taking its time.
+offering or accepting a resignation, playing weaker than it can, taking its time. A
+Bot is *delegated* when the Arbiter plays it, *declared* when an external Side says it
+plays behind it; only the first is attested.
 _Avoid_: engine (the evaluator), AI, computer, gammonNet (the Network and its search)
 
 **Arbiter**:
@@ -604,7 +608,10 @@ _Avoid_: referee, server, game master
 The secret every roll of a Duel is computed from, drawn when the Duel is created. Its
 fingerprint is published before the first roll and the seed itself is revealed with the
 finished Match, so that anyone can recompute the rolls and see they were never fitted to
-the position. Resuming a Duel or taking a move back never changes a roll. Unrelated to the
+the position. Resuming a Duel or taking a move back never changes a roll. With a *combined
+seed*, each external Side also contributes a short text before the first roll, and the
+rolls come from the seed combined with the contributions: neither the Arbiter, which
+sealed first, nor a Side, which contributes blind, chose them. Unrelated to the
 Seed of a Training Question, and to a Match's dice fingerprint, which identifies the rolls
 of a match to recognise the same match twice.
 _Avoid_: seed (Training), dice hash (the Match's fingerprint)

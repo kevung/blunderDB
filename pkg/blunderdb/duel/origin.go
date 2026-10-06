@@ -27,6 +27,10 @@ type Origin struct {
 	// Clock is the Match's clock replayed from its durations, nil without a
 	// Cadence.
 	Clock *MatchClock `json:"clock,omitempty"`
+	// RollSeed is the seed the rolls were computed from when the Duel had a
+	// combined seed — CombinedSeed over DiceSeed and Contributions, computed
+	// here — and "" when they came from DiceSeed itself.
+	RollSeed string `json:"roll_seed,omitempty"`
 }
 
 // OriginReader is the part of a storage the origin is read from.
@@ -52,6 +56,11 @@ func ReadOrigin(ctx context.Context, store OriginReader, scope string, matchID i
 	out := &Origin{MatchOrigin: *o}
 	if fp, ferr := Fingerprint(o.DiceSeed); ferr == nil {
 		out.Fingerprint = fp
+	}
+	if len(o.Contributions) == 2 {
+		if rs, rerr := CombinedSeed(o.DiceSeed, [2]string(o.Contributions)); rerr == nil {
+			out.RollSeed = rs
+		}
 	}
 	if o.Cadence != "" {
 		var c Cadence

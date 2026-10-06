@@ -462,6 +462,27 @@ réponse rend l'état du Duel au prochain point où un Côté externe décide, a
 les Actions survenues entre-temps (lancers, coups forcés, Actions d'un Bot).
 Une Action que les règles refusent est un **400** et n'écrit rien.
 
+Un Côté externe peut déclarer le Bot qui joue derrière lui, un Bot gammonNet
+que le client fait jouer chez lui : ``{"kind": "external", "declared":
+{"configuration": "normal", "engine": "v1.6.0"}}``, deux textes d'au plus 64
+octets. Sans nom donné, le joueur prend celui du Bot (``gammonNet normal``).
+L'Arbitre traite ce Côté comme tout Côté externe. L'origine du Match
+(``matches.origin``) porte la déclaration à part, dans ``declared_bots``, comme
+déclarée par le client et non attestée : ``bot_level`` et ``bot_engine`` ne
+nomment que le Bot que l'Arbitre a fait jouer lui-même.
+
+Avec ``"combinedSeed": true``, ``create`` publie l'empreinte et n'en fait pas
+plus : le Duel attend l'apport de chaque Côté externe à son germe
+(``awaitingContribution``), sans lancer ni horloge, et une Action de jeu avant
+eux est refusée en **400**. ``duels.contribute`` (``id``, ``side`` 0 ou 1,
+``contribution``, 1 à 64 octets) l'apporte une fois par Côté ; un second apport,
+celui d'un Côté délégué ou un apport sans germe combiné sont refusés en
+**400**, et le dernier apport lance les dés. Les lancers sortent alors du germe
+effectif, le HMAC-SHA256 du germe scellé sur l'apport de chaque Côté, dans
+l'ordre des joueurs, précédé de sa longueur sur 4 octets gros-boutiens.
+L'origine du Match porte les apports (``contributions``) et le germe effectif
+(``roll_seed``) : tout se recalcule depuis le germe révélé.
+
 Tout geste sur un Duel existant porte la révision vue en dernier dans
 ``If-Match`` : absent → **428**, périmée → **409**, y compris pour un second
 client qui a lu la même révision qu'un premier déjà passé. Un tenant n'a qu'**un

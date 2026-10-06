@@ -257,3 +257,37 @@ func TestDuelForfeitWritesTheMatch(t *testing.T) {
 		t.Errorf("forfeit: %+v, score %v", ended.Ended, ended.Score)
 	}
 }
+
+// A Duel created with a combined seed refuses a play before the external
+// Sides' contributions, takes one from each, and refuses a second; an
+// external Side may declare its Bot in the same request.
+func TestDuelContributeOverTheWire(t *testing.T) {
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { st.Close() })
+	ts := duelServerOn(t, st, true)
+	status, body := gesture(t, ts, testTenant, "/v1/duels.create", 0, map[string]any{"matchLength": 3, "combinedSeed": true,
+		"sides": []any{map[string]any{"kind": "external"}, map[string]any{"kind": "external", "declared": map[string]any{"configuration": "normal", "engine": "v1.6.0"}}}})
+	s := duelState(t, status, body)
+	if s.Awaiting != nil || len(s.AwaitingContribution) != 2 || s.Header.Player2 != "gammonNet normal" {
+		t.Fatalf("created: awaiting %+v, contributions owed %v, player 2 %q", s.Awaiting, s.AwaitingContribution, s.Header.Player2)
+	}
+	if status, _ := gesture(t, ts, testTenant, "/v1/duels.act", s.Revision, map[string]any{"id": s.ID, "play": map[string]any{"side": 0, "kind": "roll"}}); status != http.StatusBadRequest {
+		t.Errorf("a play before the contributions: status %d", status)
+	}
+	if status, _ := gesture(t, ts, testTenant, "/v1/duels.contribute", s.Revision, map[string]any{"id": s.ID, "contribution": "x"}); status != http.StatusBadRequest {
+		t.Errorf("a contribution without a side: status %d", status)
+	}
+	for side, c := range []string{"alice", "bob"} {
+		status, body = gesture(t, ts, testTenant, "/v1/duels.contribute", s.Revision, map[string]any{"id": s.ID, "side": side, "contribution": c})
+		s = duelState(t, status, body)
+	}
+	if s.Awaiting == nil || s.Contributions != [2]string{"alice", "bob"} {
+		t.Fatalf("after the contributions: awaiting %+v, %v", s.Awaiting, s.Contributions)
+	}
+	if status, _ := gesture(t, ts, testTenant, "/v1/duels.contribute", s.Revision, map[string]any{"id": s.ID, "side": 0, "contribution": "again"}); status != http.StatusBadRequest {
+		t.Errorf("a second contribution: status %d", status)
+	}
+}

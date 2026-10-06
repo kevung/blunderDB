@@ -4213,3 +4213,55 @@ func TestMigrate_2_33_0_to_2_34_0_BotEngine(t *testing.T) {
 		t.Errorf("origin after migration: %+v, %v", o, err)
 	}
 }
+
+// TestMigrate_2_34_0_to_2_35_0_ExternalSides opens a 2.34.0 library — a Match
+// with its origin — and checks the origin gains what external Sides bring,
+// empty, with its row kept.
+func TestMigrate_2_34_0_to_2_35_0_ExternalSides(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2340.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	ctx := context.Background()
+	matchID, err := d.store.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3, MatchHash: "external-sides"})
+	if err != nil {
+		t.Fatalf("save match: %v", err)
+	}
+	if err := d.store.Duels().SetOrigin(ctx, "", &storage.MatchOrigin{MatchID: matchID, DiceSeed: "seed", BotLevel: "normal", BotEngine: "v1.5.0"}); err != nil {
+		t.Fatalf("set origin: %v", err)
+	}
+	// Back to the 2.34.0 shape.
+	for _, stmt := range []string{
+		`ALTER TABLE match_origin DROP COLUMN declared_bots`,
+		`ALTER TABLE match_origin DROP COLUMN contributions`,
+		`UPDATE metadata SET value = '2.34.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.34.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	for _, col := range []string{"declared_bots", "contributions"} {
+		if !columnExists(t, d.db, "match_origin", col) {
+			t.Fatalf("match_origin.%s should be added", col)
+		}
+	}
+	o, err := d.store.Duels().Origin(ctx, "", matchID)
+	if err != nil || o.BotEngine != "v1.5.0" || o.DeclaredBots != nil || o.Contributions != nil {
+		t.Errorf("origin after migration: %+v, %v", o, err)
+	}
+}

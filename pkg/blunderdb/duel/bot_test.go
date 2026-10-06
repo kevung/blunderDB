@@ -3,10 +3,13 @@ package duel
 import (
 	"context"
 	"errors"
+	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
@@ -74,8 +77,66 @@ func TestBotAgainstAnExternalSide(t *testing.T) {
 		t.Fatalf("match = %+v, %v", m, err)
 	}
 	o, err := st.Duels().Origin(ctx, "", s.Ended.MatchID)
-	if err != nil || o.BotLevel != "instant" || o.BotEngine != gammonnet.PolicyEngineVersion {
+	if err != nil || o.BotLevel != "instant" || o.BotEngine != gammonnet.PolicyEngineVersion || o.DeclaredBots != nil {
 		t.Fatalf("origin = %+v, %v; want the Bot's level and policy version", o, err)
+	}
+}
+
+// TestExternalSideDeclaresItsBot: an external Side that declares a Bot is
+// named after it unless it has a name, played as any external Side, and its
+// declaration reaches the origin apart from what the Arbiter played itself.
+func TestExternalSideDeclaresItsBot(t *testing.T) {
+	ctx := context.Background()
+	st := newStore(t)
+	svc := newService(t, st, 5)
+	declared := &DeclaredBot{Configuration: "thorough", Engine: "v1.6.0"}
+	s, err := svc.Create(ctx, "", Settings{MatchLength: 5,
+		Sides: [2]SideSpec{external("Alice"), {Kind: SideExternal, Declared: declared}}})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	if s.Header.Player2 != BotName("thorough") || s.Sides[1].Declared == nil {
+		t.Fatalf("player 2 = %q, side %+v", s.Header.Player2, s.Sides[1])
+	}
+	for range 3 {
+		if s, err = svc.Play(ctx, "", s.ID, s.Revision, answer(*s.Awaiting)); err != nil {
+			t.Fatalf("Play: %v", err)
+		}
+	}
+	kept, err := svc.Forfeit(ctx, "", s.ID, s.Revision, 0)
+	if err != nil || kept.Ended == nil {
+		t.Fatalf("Forfeit: %+v, %v", kept, err)
+	}
+	o, err := ReadOrigin(ctx, st, "", kept.Ended.MatchID)
+	if err != nil || o == nil {
+		t.Fatalf("ReadOrigin: %+v, %v", o, err)
+	}
+	want := []storage.DeclaredBot{{Player: 2, Configuration: "thorough", Engine: "v1.6.0"}}
+	if !reflect.DeepEqual(o.DeclaredBots, want) || o.BotLevel != "" || o.BotEngine != "" {
+		t.Errorf("origin = %+v; want only the declared Bot", o.MatchOrigin)
+	}
+
+	named, err := svc.Create(ctx, "", Settings{MatchLength: 3,
+		Sides: [2]SideSpec{{Kind: SideExternal, Name: "Carol", Declared: declared}, external("Bob")}})
+	if err != nil || named.Header.Player1 != "Carol" {
+		t.Fatalf("a declared Bot with a name: %+v, %v", named, err)
+	}
+}
+
+// TestDeclaredBotRefusals: only an external Side declares, and with bounded,
+// non-empty texts.
+func TestDeclaredBotRefusals(t *testing.T) {
+	ctx := context.Background()
+	svc := newService(t, newStore(t), 5)
+	for name, side := range map[string]SideSpec{
+		"on a Bot":         {Kind: SideBot, Level: "instant", Declared: &DeclaredBot{Configuration: "normal", Engine: "v1"}},
+		"no configuration": {Kind: SideExternal, Declared: &DeclaredBot{Engine: "v1"}},
+		"no engine":        {Kind: SideExternal, Declared: &DeclaredBot{Configuration: "normal", Engine: " "}},
+		"too long":         {Kind: SideExternal, Declared: &DeclaredBot{Configuration: "normal", Engine: strings.Repeat("v", maxDeclared+1)}},
+	} {
+		if _, err := svc.Create(ctx, "", Settings{MatchLength: 3, Sides: [2]SideSpec{external("A"), side}}); !errors.Is(err, storage.ErrInvalid) {
+			t.Errorf("%s: %v, want ErrInvalid", name, err)
+		}
 	}
 }
 

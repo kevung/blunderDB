@@ -6,6 +6,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"reflect"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -103,13 +104,18 @@ func testMatchOrigin(t *testing.T, s storage.Storage) {
 	if err := ds.SetOrigin(ctx, "", &want); err != nil {
 		t.Fatalf("SetOrigin: %v", err)
 	}
+	if got, err := ds.Origin(ctx, "", matchID); err != nil || !reflect.DeepEqual(*got, want) {
+		t.Errorf("Origin without a declared Bot = %+v, %v; want %+v", got, err, want)
+	}
 	want.Start, want.StoppedEarly, want.OverTime, want.BotLevel, want.Cadence, want.BotEngine =
 		"-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:5:10", false, 2, "normal", `{"reserve":600}`, "gammonNet v1.5.0"
+	want.DeclaredBots = []storage.DeclaredBot{{Player: 2, Configuration: "thorough", Engine: "v1.6.0"}}
+	want.Contributions = []string{"", "naïve ‖ 42"}
 	if err := ds.SetOrigin(ctx, "", &want); err != nil {
 		t.Fatalf("SetOrigin again: %v", err)
 	}
 	got, err := ds.Origin(ctx, "", matchID)
-	if err != nil || *got != want {
+	if err != nil || !reflect.DeepEqual(*got, want) {
 		t.Errorf("Origin = %+v, %v; want %+v", got, err, want)
 	}
 
