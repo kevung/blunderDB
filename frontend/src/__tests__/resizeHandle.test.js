@@ -77,15 +77,19 @@ describe('resizable — bottom panel (height)', () => {
         mouse(window, 'mouseup');
     });
 
-    test('each mousemove dispatches a window resize so the board re-fits', () => {
+    test('each mousemove dispatches a window resize so the board re-fits', async () => {
         const onWindowResize = vi.fn();
         window.addEventListener('resize', onWindowResize);
         mount({ side: false, size: 200, onResize: vi.fn(), onCommit: vi.fn() });
         mouse(handle, 'mousedown', { clientY: 500 });
         mouse(window, 'mousemove', { clientY: 490 });
-        mouse(window, 'mouseup');
-        window.removeEventListener('resize', onWindowResize);
+        await new Promise((r) => setTimeout(r, 0));
         expect(onWindowResize).toHaveBeenCalledTimes(1);
+        mouse(window, 'mouseup');
+        await new Promise((r) => setTimeout(r, 0));
+        window.removeEventListener('resize', onWindowResize);
+        // The commit re-fits once more so the board settles on the final size.
+        expect(onWindowResize).toHaveBeenCalledTimes(2);
     });
 });
 
@@ -133,5 +137,31 @@ describe('resizable — parameters and lifecycle', () => {
         expect(onResize).not.toHaveBeenCalled();
         mouse(handle, 'mousedown', { clientY: 500 });
         expect(document.body.style.cursor).toBe('');
+    });
+});
+
+describe('resizable - resize event timing', () => {
+    test('the window resize event fires after the new size is applied, not before', async () => {
+        let applied = 0;
+        const seen = [];
+        const onResize = (size) => {
+            // Stands in for Svelte applying the height in a later microtask.
+            queueMicrotask(() => {
+                applied = size;
+            });
+        };
+        const listener = () => seen.push(applied);
+        window.addEventListener('resize', listener);
+        try {
+            mount({ side: false, size: 200, onResize, onCommit: vi.fn() });
+            mouse(handle, 'mousedown', { clientY: 500 });
+            mouse(window, 'mousemove', { clientY: 450 });
+            expect(seen).toEqual([]);
+            await new Promise((r) => setTimeout(r, 0));
+            expect(seen).toEqual([250]);
+            mouse(window, 'mouseup');
+        } finally {
+            window.removeEventListener('resize', listener);
+        }
     });
 });

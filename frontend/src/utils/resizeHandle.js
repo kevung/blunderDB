@@ -1,3 +1,5 @@
+import { tick } from 'svelte';
+
 /**
  * Svelte action: drag a handle to resize the panel next to it.
  *
@@ -21,6 +23,12 @@ export function resizable(node, params) {
         return side ? Math.min(Math.max(150, size), window.innerWidth - 200) : Math.min(Math.max(80, size), window.innerHeight - 160);
     }
 
+    // The new size reaches the DOM only once Svelte has flushed; measuring before that makes the
+    // board fit the previous step.
+    function notifyResize() {
+        tick().then(() => window.dispatchEvent(new Event('resize')));
+    }
+
     function onMouseDown(e) {
         e.preventDefault();
         const { side, size: startSize, onResize, onCommit } = current;
@@ -34,8 +42,7 @@ export function resizable(node, params) {
             moved = true;
             size = clamp(side, startSize + (start - (side ? e.clientX : e.clientY)));
             onResize(size, side);
-            // Let two.js re-measure the board box as the panel grows/shrinks.
-            window.dispatchEvent(new Event('resize'));
+            notifyResize();
         }
         function endDrag() {
             document.body.style.cursor = '';
@@ -47,7 +54,10 @@ export function resizable(node, params) {
         function onMouseUp() {
             endDrag();
             // Persist only when the drag moved the handle (a plain click is a no-op).
-            if (moved) onCommit(size, side);
+            if (moved) {
+                onCommit(size, side);
+                notifyResize();
+            }
         }
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup', onMouseUp);
