@@ -264,3 +264,7 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   `match_origin.declared_bots`, the Bots external Sides declared, as JSON, ''
   when none did; `match_origin.contributions`, the Sides' contributions to a
   combined seed, as JSON, '' when there was none. Schema-visible: bumped `domain.DatabaseVersion` to 2.35.0.
+- `041_duel_open.sql` — the 2.36.0 wave (ADR-0072 rule 10): `duel.is_open`,
+  1 while the Duel is being played, so several can be open and every daemon on
+  the database sees the same ones. Schema-visible: bumped
+  `domain.DatabaseVersion` to 2.36.0.

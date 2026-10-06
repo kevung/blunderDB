@@ -59,6 +59,59 @@ func TestDuelFacade_CloseSuspends(t *testing.T) {
 	}
 }
 
+// The desktop shows one Duel at the board: creating or opening one puts the
+// one it leaves in suspense, though the Arbiter would keep both open.
+func TestDuelFacade_OneAtTheBoard(t *testing.T) {
+	db := newTestDB(t)
+	sides := [2]duel.SideSpec{{Kind: duel.SideExternal, Name: "A"}, {Kind: duel.SideExternal, Name: "B"}}
+	first, err := db.CreateDuel(duel.Settings{MatchLength: 3, Sides: sides})
+	if err != nil {
+		t.Fatalf("CreateDuel: %v", err)
+	}
+	second, err := db.CreateDuel(duel.Settings{MatchLength: 5, Sides: sides})
+	if err != nil {
+		t.Fatalf("CreateDuel: %v", err)
+	}
+	open := func() map[int64]bool {
+		t.Helper()
+		list, err := db.ListDuels()
+		if err != nil {
+			t.Fatalf("ListDuels: %v", err)
+		}
+		out := map[int64]bool{}
+		for _, s := range list {
+			out[s.ID] = s.Open
+		}
+		return out
+	}
+	if o := open(); o[first.State.ID] || !o[second.State.ID] {
+		t.Fatalf("after the second creation: %v; only the second open", o)
+	}
+	if _, err := db.OpenDuel(first.State.ID); err != nil {
+		t.Fatalf("OpenDuel: %v", err)
+	}
+	if o := open(); !o[first.State.ID] || o[second.State.ID] {
+		t.Fatalf("after opening the first: %v; only the first open", o)
+	}
+
+	// A Duel another process opened on the same library is not the desktop's
+	// to suspend, whether it changes Duel or closes the library.
+	foreign, err := duel.New(db.store, duel.Options{}).Create(context.Background(), "", duel.Settings{MatchLength: 1, Sides: sides})
+	if err != nil {
+		t.Fatalf("Create from another process: %v", err)
+	}
+	if _, err := db.OpenDuel(second.State.ID); err != nil {
+		t.Fatalf("OpenDuel: %v", err)
+	}
+	if o := open(); o[first.State.ID] || !o[second.State.ID] || !o[foreign.ID] {
+		t.Fatalf("after opening the second: %v; the second and the foreign one open", o)
+	}
+	db.forgetDuels()
+	if o := open(); o[second.State.ID] || !o[foreign.ID] {
+		t.Fatalf("after forgetDuels: %v; the board's Duel suspended, the foreign one open", o)
+	}
+}
+
 // The form's « score seul » Start: the opening position at a chosen away score, no roll on it.
 func TestDuelFacade_StartAtScore(t *testing.T) {
 	db := newTestDB(t)

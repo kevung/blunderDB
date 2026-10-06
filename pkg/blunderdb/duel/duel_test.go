@@ -205,6 +205,9 @@ func TestDuelResumesWithTheSameDice(t *testing.T) {
 		}
 	}
 	before := *s.Awaiting
+	if err := svc.Suspend(ctx, "", s.ID, s.Revision); err != nil {
+		t.Fatalf("Suspend: %v", err)
+	}
 
 	again := newService(t, st, 0)
 	r, err := again.Open(ctx, "", s.ID)
@@ -215,9 +218,9 @@ func TestDuelResumesWithTheSameDice(t *testing.T) {
 		r.Awaiting.Position.Dice != before.Position.Dice || r.Awaiting.Position.Board != before.Position.Board {
 		t.Fatalf("resumed at %+v, want %+v", r.Awaiting, before)
 	}
-	// Resuming restarts the clocks, which is a write.
-	if r.Revision != s.Revision+1 || len(r.Actions) != len(s.Actions) {
-		t.Errorf("resumed revision %d with %d actions, want %d with %d", r.Revision, len(r.Actions), s.Revision+1, len(s.Actions))
+	// Suspending stops the clocks and resuming restarts them: two writes.
+	if r.Revision != s.Revision+2 || len(r.Actions) != len(s.Actions) {
+		t.Errorf("resumed revision %d with %d actions, want %d with %d", r.Revision, len(r.Actions), s.Revision+2, len(s.Actions))
 	}
 	// Both services play on identically: the dice to come are the seed's.
 	a, err := svc.Play(ctx, "", s.ID, r.Revision, answer(before))
@@ -234,7 +237,8 @@ func TestDuelResumesWithTheSameDice(t *testing.T) {
 }
 
 // TestDuelRefusesPlays: a Play from the side not awaited, a Play of the wrong
-// kind, an illegal move, and a Play on a Duel that is not the open one.
+// kind, an illegal move; a Play on a Duel in suspense opens it, and creating
+// a Duel suspends none.
 func TestDuelRefusesPlays(t *testing.T) {
 	ctx := context.Background()
 	st := newStore(t)
@@ -265,19 +269,23 @@ func TestDuelRefusesPlays(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Create other: %v", err)
 	}
-	if err := play(svc, s, answer(d)); !errors.Is(err, ErrNotOpen) {
-		t.Errorf("Play on a Duel in suspense: got %v, want ErrNotOpen", err)
-	}
 	list, err := svc.List(ctx, "")
-	if err != nil || len(list) != 2 || !list[0].Open || list[0].ID != other.ID || list[1].Open {
-		t.Errorf("List = %+v, %v; one open, the newest", list, err)
+	if err != nil || len(list) != 2 || !list[0].Open || list[0].ID != other.ID || !list[1].Open {
+		t.Errorf("List = %+v, %v; both open: creating one suspends none", list, err)
 	}
-	reopened, err := svc.Open(ctx, "", s.ID)
+	if err := svc.Suspend(ctx, "", s.ID, 0); err != nil {
+		t.Fatalf("Suspend: %v", err)
+	}
+	suspended, err := svc.Get(ctx, "", s.ID)
 	if err != nil {
-		t.Fatalf("Open: %v", err)
+		t.Fatalf("Get: %v", err)
 	}
-	if err := play(svc, reopened, answer(d)); err != nil {
-		t.Errorf("Play once reopened: %v", err)
+	if err := play(svc, suspended, answer(d)); err != nil {
+		t.Errorf("Play on a Duel in suspense opens it: %v", err)
+	}
+	list, err = svc.List(ctx, "")
+	if err != nil || len(list) != 2 || !list[0].Open || !list[1].Open {
+		t.Errorf("List = %+v, %v; both open once played", list, err)
 	}
 }
 

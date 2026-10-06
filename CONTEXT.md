@@ -564,7 +564,9 @@ where it stopped; finishing it materialises an ordinary Match, and nothing about
 is special once saved. It is the opposite of a Transcription on two of the three counts of
 ADR-0044 — somebody decides, and the rules refuse — and the same on the third. A finished
 Duel is never reopened as a Transcription: its Actions were arbitrated, there is nothing
-to correct (ADR-0072). A Duel is left three ways: *paused* (in suspense, its clocks stopped,
+to correct (ADR-0072). A Duel is *open* while it is played, its clocks running, or in suspense; that is in its
+row, and several Duels can be open at once — the desktop keeps one at the board and
+suspends the one it leaves. A Duel is left three ways: *paused* (in suspense, its clocks stopped,
 resumed where it stopped), *cancelled* (nothing of it is written) or *forfeited*. A match
 in points is written whole or not at all — the Arbiter refuses to keep one cut short, and
 losing on time is a forfeit by the player out of time; only a money session, which has no
@@ -630,7 +632,8 @@ _Avoid_: seed (a Training Question's), setup, starting position
 The clock a Duel is played under: a *reserve* per Side for the whole match, and a *delay*
 at each turn that runs first and costs nothing — the reserve only goes down once the delay
 is spent. The clock that runs is that of the Side a decision is awaited from, and it is the
-Arbiter that keeps it. A Duel may have no Cadence. A Side whose reserve is spent is *over
+Arbiter that keeps it. It runs while the Duel is open, whichever process holds it and
+even if that process stops, until the Duel is suspended. A Duel may have no Cadence. A Side whose reserve is spent is *over
 time*: a fact the Arbiter reports, whose consequence is a setting of the Duel — the Duel
 goes on and the overrun is noted, or the match is lost.
 _Avoid_: time control, out of time (a Training Question), increment (a Cadence has none)

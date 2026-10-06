@@ -4265,3 +4265,49 @@ func TestMigrate_2_34_0_to_2_35_0_ExternalSides(t *testing.T) {
 		t.Errorf("origin after migration: %+v, %v", o, err)
 	}
 }
+
+// TestMigrate_2_35_0_to_2_36_0_DuelOpen opens a 2.35.0 library — a Duel draft
+// without is_open — and checks the draft gains the column, in suspense, with
+// its row kept.
+func TestMigrate_2_35_0_to_2_36_0_DuelOpen(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2350.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	ctx := context.Background()
+	id, err := d.store.Duels().Save(ctx, "", &storage.Duel{FormatVersion: "2", Label: "A — B (3)", Document: "{}", DiceSeed: "seed"})
+	if err != nil {
+		t.Fatalf("save duel: %v", err)
+	}
+	// Back to the 2.35.0 shape.
+	for _, stmt := range []string{
+		`ALTER TABLE duel DROP COLUMN is_open`,
+		`UPDATE metadata SET value = '2.35.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.35.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if !columnExists(t, d.db, "duel", "is_open") {
+		t.Fatal("duel.is_open should be added")
+	}
+	row, err := d.store.Duels().Get(ctx, "", id)
+	if err != nil || row.Open || row.Label != "A — B (3)" {
+		t.Errorf("draft after migration: %+v, %v; kept, in suspense", row, err)
+	}
+}

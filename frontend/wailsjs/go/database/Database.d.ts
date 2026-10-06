@@ -117,6 +117,8 @@ export function ConfirmAllProposals(arg1:number):Promise<service.DirectionView>;
 
 export function ConfirmProposal(arg1:number,arg2:string):Promise<service.DirectionView>;
 
+export function ContributeDuel(arg1:number,arg2:number,arg3:number,arg4:string):Promise<database.DuelState>;
+
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
 export function CorrectResult(arg1:number,arg2:string,arg3:string,arg4:number,arg5:number,arg6:string):Promise<service.DirectionView>;
@@ -486,6 +488,8 @@ export function MakeParticipantAvailable(arg1:number,arg2:string):Promise<servic
 export function MatchMAT(arg1:number):Promise<string>;
 
 export function MatchTranscriptionLosses(arg1:number):Promise<database.TranscriptionLosses>;
+
+export function MaterializeTranscription(arg1:transcript.Header,arg2:Array<transcript.Action>):Promise<database.TranscriptionSaveResult>;
 
 export function MergePlayers(arg1:Array<string>,arg2:string):Promise<void>;
 

@@ -3019,6 +3019,20 @@ export namespace duel {
 		    return a;
 		}
 	}
+	export class DeclaredBot {
+	    configuration: string;
+	    engine: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DeclaredBot(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.configuration = source["configuration"];
+	        this.engine = source["engine"];
+	    }
+	}
 	export class Ending {
 	    matchId: number;
 	    diceSeed?: string;
@@ -3078,10 +3092,13 @@ export namespace duel {
 	    bot_level: string;
 	    cadence: string;
 	    bot_engine: string;
+	    declared_bots?: storage.DeclaredBot[];
+	    contributions?: string[];
 	    fingerprint: string;
 	    cadence_settings?: Cadence;
 	    lost_on_time: boolean;
 	    clock?: MatchClock;
+	    roll_seed?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Origin(source);
@@ -3097,10 +3114,13 @@ export namespace duel {
 	        this.bot_level = source["bot_level"];
 	        this.cadence = source["cadence"];
 	        this.bot_engine = source["bot_engine"];
+	        this.declared_bots = this.convertValues(source["declared_bots"], storage.DeclaredBot);
+	        this.contributions = source["contributions"];
 	        this.fingerprint = source["fingerprint"];
 	        this.cadence_settings = this.convertValues(source["cadence_settings"], Cadence);
 	        this.lost_on_time = source["lost_on_time"];
 	        this.clock = this.convertValues(source["clock"], MatchClock);
+	        this.roll_seed = source["roll_seed"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3161,6 +3181,7 @@ export namespace duel {
 	    kind: string;
 	    name?: string;
 	    level?: string;
+	    declared?: DeclaredBot;
 	
 	    static createFrom(source: any = {}) {
 	        return new SideSpec(source);
@@ -3171,7 +3192,26 @@ export namespace duel {
 	        this.kind = source["kind"];
 	        this.name = source["name"];
 	        this.level = source["level"];
+	        this.declared = this.convertValues(source["declared"], DeclaredBot);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class Settings {
 	    matchLength: number;
@@ -3180,6 +3220,7 @@ export namespace duel {
 	    sides: SideSpec[];
 	    discardAtEnd?: boolean;
 	    cadence?: Cadence;
+	    combinedSeed?: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new Settings(source);
@@ -3193,6 +3234,7 @@ export namespace duel {
 	        this.sides = this.convertValues(source["sides"], SideSpec);
 	        this.discardAtEnd = source["discardAtEnd"];
 	        this.cadence = this.convertValues(source["cadence"], Cadence);
+	        this.combinedSeed = source["combinedSeed"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3226,6 +3268,9 @@ export namespace duel {
 	    score: number[];
 	    awaiting?: Decision;
 	    clock?: ClockState;
+	    combinedSeed?: boolean;
+	    contributions: string[];
+	    awaitingContribution?: number[];
 	    ended?: Ending;
 	
 	    static createFrom(source: any = {}) {
@@ -3245,6 +3290,9 @@ export namespace duel {
 	        this.score = source["score"];
 	        this.awaiting = this.convertValues(source["awaiting"], Decision);
 	        this.clock = this.convertValues(source["clock"], ClockState);
+	        this.combinedSeed = source["combinedSeed"];
+	        this.contributions = source["contributions"];
+	        this.awaitingContribution = source["awaitingContribution"];
 	        this.ended = this.convertValues(source["ended"], Ending);
 	    }
 	

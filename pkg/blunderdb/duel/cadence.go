@@ -214,8 +214,10 @@ func (g *game) suspend(now time.Time) {
 	c.Since = time.Time{}
 }
 
-// resume restarts the clocks at now. A Decision still running was never
-// suspended — its process stopped — and the gap is not counted.
+// resume restarts the clocks at now. A Decision still running although the
+// row said suspense — a draft from before is_open, when the open Duel lived in
+// memory, or one a migration carried open — has its gap uncounted and its
+// duration unknown. An open Duel is never resumed: its clocks run on.
 func (g *game) resume(now time.Time) {
 	c := &g.doc.Clock
 	if g.awaiting() == nil {

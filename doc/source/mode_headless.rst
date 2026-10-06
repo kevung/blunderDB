@@ -485,12 +485,13 @@ L'origine du Match porte les apports (``contributions``) et le germe effectif
 
 Tout geste sur un Duel existant porte la révision vue en dernier dans
 ``If-Match`` : absent → **428**, périmée → **409**, y compris pour un second
-client qui a lu la même révision qu'un premier déjà passé. Un tenant n'a qu'**un
-seul Duel ouvert** à la fois, et c'est lui seul qui se joue. Un geste sur un Duel
-en suspens l'ouvre d'abord, et met en suspens celui qui l'était : ce dernier voit
-alors sa révision avancer, et le client qui la tenait reçoit **409**, relit
-(``get``) et rejoue. C'est aussi ce qui permet de reprendre après un
-redémarrage du démon, le brouillon étant tout ce qu'il y a du Duel. ``get`` rend
+client qui a lu la même révision qu'un premier déjà passé. Un tenant peut avoir
+**plusieurs Duels ouverts** à la fois, chacun avec ses horloges qui courent :
+ouvrir l'un n'en suspend aucun autre, et le calcul d'un Bot ne retient que son
+propre Duel. Un geste sur un Duel en suspens l'ouvre dans la même écriture.
+« Ouvert » est écrit dans le brouillon : ``list`` le lit là, un Duel ouvert le
+reste après un redémarrage du démon, et deux démons sur une même base voient
+les mêmes Duels ouverts, la révision départageant leurs gestes. ``get`` rend
 la révision en ``ETag`` et répond 304 à un ``If-None-Match`` qui la nomme.
 
 Le germe des dés ne sort par aucune route avant la fin : l'état en porte

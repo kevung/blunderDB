@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -17,10 +16,6 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcription"
 )
-
-// ErrNotOpen: the Duel is in suspense, and another one is open. Only the open
-// Duel is played (ADR-0072 rule 10); Open switches.
-var ErrNotOpen = errors.New("duel is not the open one")
 
 // Settings is what a Duel is created with (ADR-0072 rule 12).
 type Settings struct {
@@ -58,14 +53,61 @@ type Options struct {
 
 // Service is the Arbiter over storage.DuelStore: it creates, resumes and
 // ends Duels, and writes the draft after every Play. A Duel is read from its
-// row at every call and replayed: nothing but which Duel is open lives in
-// memory, so losing the process loses nothing played.
+// row at every call and replayed, whether it is open included: nothing lives
+// in memory, so losing the process loses nothing played, and several
+// processes on one library see the same Duels open. Any number of a scope's
+// Duels may be open at once (ADR-0072 rule 10).
+//
+// Each Duel has its own lock, so a Bot computing its move holds up its own
+// Duel only. Between processes, the draft's revision arbitrates: a gesture
+// that read a draft another one has since moved is refused with
+// storage.ErrConflict, and nothing of it is written.
 type Service struct {
 	store storage.Storage
 	opts  Options
+	locks duelLocks
+}
 
-	mu   sync.Mutex
-	open map[string]int64
+// duelLocks hands out one mutex per Duel, dropped once nobody holds or
+// waits for it.
+type duelLocks struct {
+	mu sync.Mutex
+	m  map[duelKey]*duelLock
+}
+
+type duelKey struct {
+	scope string
+	id    int64
+}
+
+type duelLock struct {
+	sync.Mutex
+	refs int
+}
+
+// lock takes the Duel's mutex and returns its release.
+func (l *duelLocks) lock(scope string, id int64) func() {
+	k := duelKey{scope, id}
+	l.mu.Lock()
+	if l.m == nil {
+		l.m = map[duelKey]*duelLock{}
+	}
+	e := l.m[k]
+	if e == nil {
+		e = &duelLock{}
+		l.m[k] = e
+	}
+	e.refs++
+	l.mu.Unlock()
+	e.Lock()
+	return func() {
+		e.Unlock()
+		l.mu.Lock()
+		if e.refs--; e.refs == 0 {
+			delete(l.m, k)
+		}
+		l.mu.Unlock()
+	}
 }
 
 // New returns a Service over store.
@@ -79,13 +121,13 @@ func New(store storage.Storage, opts Options) *Service {
 	if opts.Now == nil {
 		opts.Now = time.Now
 	}
-	return &Service{store: store, opts: opts, open: map[string]int64{}}
+	return &Service{store: store, opts: opts}
 }
 
-// Rebind points the Service at store and keeps the open Duels, for a library
-// rewritten under a new handle with the same rows, ids and revisions (a
-// vacuum by file swap): a Duel in progress stays open. The caller excludes
-// every other call for its duration, since store is read without s.mu.
+// Rebind points the Service at store, for a library rewritten under a new
+// handle with the same rows, ids and revisions (a vacuum by file swap): a Duel
+// in progress stays open, since that is in its row. The caller excludes every
+// other call for its duration, since store is read without a lock.
 func (s *Service) Rebind(store storage.Storage) {
 	s.store = store
 }
@@ -134,7 +176,7 @@ type Ending struct {
 	OverTime int `json:"overTime,omitempty"`
 }
 
-// Summary is a Duel in suspense, as a list shows it.
+// Summary is a Duel as a list shows it, open or in suspense.
 type Summary struct {
 	ID        int64  `json:"id"`
 	Label     string `json:"label"`
@@ -144,12 +186,11 @@ type Summary struct {
 }
 
 // Create draws the seed, checks the session and the Start, plays what the
-// Arbiter plays alone up to the first Decision, writes the draft and opens it.
-// A Start the rules do not allow is refused with its *transcript.Refusal.
+// Arbiter plays alone up to the first Decision, writes the draft and opens it;
+// no other Duel is suspended. A Start the rules do not allow is refused with
+// its *transcript.Refusal. No lock is needed: nobody else knows the Duel's id
+// before it returns.
 func (s *Service) Create(ctx context.Context, scope string, set Settings) (*State, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
 	seed, err := newSeed(s.opts.Rand)
 	if err != nil {
 		return nil, err
@@ -222,18 +263,14 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 	if err := g.settle(ctx, sides); err != nil {
 		return nil, err
 	}
-	row := &storage.Duel{FormatVersion: strconv.Itoa(FormatVersion), Label: label(g.doc.Header), DiceSeed: seed}
+	row := &storage.Duel{FormatVersion: strconv.Itoa(FormatVersion), Label: label(g.doc.Header), DiceSeed: seed, Open: true}
 	if row.Document, err = encode(g.doc); err != nil {
-		return nil, err
-	}
-	if err := s.suspendOpen(ctx, scope); err != nil {
 		return nil, err
 	}
 	row.ID, err = s.store.Duels().Save(ctx, scope, row)
 	if err != nil {
 		return nil, err
 	}
-	s.open[scope] = row.ID
 	if g.finished() || g.timeLost() {
 		// Two delegated Sides play the whole match in this call.
 		return s.end(ctx, scope, row, g, !g.doc.DiscardAtEnd)
@@ -241,103 +278,99 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 	return state(row, g), nil
 }
 
-// List returns the scope's Duels in suspense, most recently played first.
+// List returns the scope's Duels, open or in suspense, most recently played
+// first.
 func (s *Service) List(ctx context.Context, scope string) ([]Summary, error) {
-	s.mu.Lock()
-	open := s.open[scope]
-	s.mu.Unlock()
 	var out []Summary
 	for row, err := range s.store.Duels().List(ctx, scope) {
 		if err != nil {
 			return nil, err
 		}
-		out = append(out, Summary{ID: row.ID, Label: row.Label, CreatedAt: row.CreatedAt, UpdatedAt: row.UpdatedAt, Open: row.ID == open})
+		out = append(out, Summary{ID: row.ID, Label: row.Label, CreatedAt: row.CreatedAt, UpdatedAt: row.UpdatedAt, Open: row.Open})
 	}
 	return out, nil
 }
 
-// Open resumes a Duel where it stopped, with the same dice to come, and makes
-// it the open one: the Duel open before it goes into suspense. The clocks
-// stand still in suspense and start again now (ADR-0073).
+// Open resumes a Duel where it stopped, with the same dice to come. The
+// clocks stand still in suspense and start again now (ADR-0073). Other Duels
+// stay as they are: a caller that plays one at a time suspends the one it
+// leaves. A Duel already open is left as it is.
 func (s *Service) Open(ctx context.Context, scope string, id int64) (*State, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.openLocked(ctx, scope, id, 0)
+	return s.OpenAt(ctx, scope, id, 0)
 }
 
-// openLocked is Open under s.mu, refusing with storage.ErrConflict a draft
-// that is no longer at the revision the caller saw (0: none).
-func (s *Service) openLocked(ctx context.Context, scope string, id, revision int64) (*State, error) {
-	row, g, err := s.load(ctx, scope, id)
+// OpenAt is Open refusing with storage.ErrConflict a draft that is no longer
+// at the revision the caller saw (0: none), the check and the opening being
+// one step.
+func (s *Service) OpenAt(ctx context.Context, scope string, id, revision int64) (*State, error) {
+	unlock := s.locks.lock(scope, id)
+	defer unlock()
+	row, g, opened, err := s.loadOpen(ctx, scope, id, revision)
 	if err != nil {
 		return nil, err
 	}
-	if revision != 0 && revision != row.Revision {
-		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
+	if opened {
+		if err := s.save(ctx, scope, row, g); err != nil {
+			return nil, err
+		}
 	}
-	if s.open[scope] == id {
-		return state(row, g), nil
-	}
-	if err := s.suspendOpen(ctx, scope); err != nil {
-		return nil, err
-	}
-	g.resume(s.opts.Now())
-	if err := s.save(ctx, scope, row, g); err != nil {
-		return nil, err
-	}
-	s.open[scope] = id
 	return state(row, g), nil
 }
 
-// Suspend puts the open Duel in suspense, its clocks stopped, and leaves no
-// Duel open; Open resumes it.
-func (s *Service) Suspend(ctx context.Context, scope string, id int64) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if s.open[scope] != id {
-		return fmt.Errorf("duel %d: %w", id, ErrNotOpen)
+// loadOpen reads a draft under the Duel's lock, refuses it with
+// storage.ErrConflict when it is no longer at the revision the caller saw
+// (0: none), and opens it in memory when it was in suspense: the gesture that
+// follows writes the opening with its own, in one write. opened reports that
+// the draft changed by being opened.
+func (s *Service) loadOpen(ctx context.Context, scope string, id, revision int64) (row *storage.Duel, g *game, opened bool, err error) {
+	row, g, err = s.load(ctx, scope, id)
+	if err != nil {
+		return nil, nil, false, err
 	}
-	return s.suspendOpen(ctx, scope)
+	if revision != 0 && revision != row.Revision {
+		return nil, nil, false, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
+	}
+	if !row.Open {
+		g.resume(s.opts.Now())
+		row.Open, opened = true, true
+	}
+	return row, g, opened, nil
 }
 
-// suspendOpen stops the clocks of the scope's open Duel, if any, and leaves
-// none open. One gone meanwhile has no clock left to stop.
-func (s *Service) suspendOpen(ctx context.Context, scope string) error {
-	id := s.open[scope]
-	if id == 0 {
-		return nil
-	}
+// Suspend puts the Duel in suspense, its clocks stopped, under the revision
+// the caller saw (0: none); Open resumes it. A Duel already in suspense is
+// left as it is.
+func (s *Service) Suspend(ctx context.Context, scope string, id, revision int64) error {
+	unlock := s.locks.lock(scope, id)
+	defer unlock()
 	row, g, err := s.load(ctx, scope, id)
-	if errors.Is(err, storage.ErrNotFound) {
-		delete(s.open, scope)
-		return nil
-	}
 	if err != nil {
 		return err
 	}
-	g.suspend(s.opts.Now())
-	if err := s.save(ctx, scope, row, g); err != nil {
-		return err
+	if revision != 0 && revision != row.Revision {
+		return fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
 	}
-	delete(s.open, scope)
-	return nil
+	if !row.Open {
+		return nil
+	}
+	g.suspend(s.opts.Now())
+	row.Open = false
+	return s.save(ctx, scope, row, g)
 }
 
-// Flag has the Arbiter look at the clock of the Side the open Duel awaits:
-// run out, it is noted, and under TimeLoseMatch the Duel ends there (the
+// Flag has the Arbiter look at the clock of the Side the Duel awaits: run
+// out, it is noted, and under TimeLoseMatch the Duel ends there (the
 // tournament rules count the time as gone when it is noticed). Without a
-// Cadence, or with time left, nothing changes.
+// Cadence, or with time left, nothing changes but the opening of a Duel in
+// suspense, as every gesture opens it.
 func (s *Service) Flag(ctx context.Context, scope string, id int64) (*State, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if s.open[scope] != id {
-		return nil, fmt.Errorf("duel %d: %w", id, ErrNotOpen)
-	}
-	row, g, err := s.load(ctx, scope, id)
+	unlock := s.locks.lock(scope, id)
+	defer unlock()
+	row, g, opened, err := s.loadOpen(ctx, scope, id, 0)
 	if err != nil {
 		return nil, err
 	}
-	if !g.flag(s.opts.Now()) {
+	if !g.flag(s.opts.Now()) && !opened {
 		return state(row, g), nil
 	}
 	if g.timeLost() {
@@ -349,24 +382,18 @@ func (s *Service) Flag(ctx context.Context, scope string, id int64) (*State, err
 	return state(row, g), nil
 }
 
-// Play applies a Side's Play to the open Duel under the revision the caller
-// saw (0: none), lets the Arbiter play on to the next Decision of an external
+// Play applies a Side's Play to the Duel under the revision the caller saw
+// (0: none), opening it first if it was in suspense, lets the Arbiter play on to the next Decision of an external
 // Side, and writes the draft. A Play the rules do not allow is refused with
 // its *transcript.Refusal and nothing is written. When the match is won, the
 // Duel ends: its Match is written, or the draft thrown away if it was created
 // so (State.Ended).
 func (s *Service) Play(ctx context.Context, scope string, id, revision int64, p Play) (*State, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if s.open[scope] != id {
-		return nil, fmt.Errorf("duel %d: %w", id, ErrNotOpen)
-	}
-	row, g, err := s.load(ctx, scope, id)
+	unlock := s.locks.lock(scope, id)
+	defer unlock()
+	row, g, _, err := s.loadOpen(ctx, scope, id, revision)
 	if err != nil {
 		return nil, err
-	}
-	if revision != 0 && revision != row.Revision {
-		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
 	}
 	p.At = s.opts.Now()
 	if err := g.receive(p); err != nil {
@@ -388,23 +415,17 @@ func (s *Service) Play(ctx context.Context, scope string, id, revision int64, p 
 	return state(row, g), nil
 }
 
-// Contribute records side's contribution to the open Duel's combined seed
+// Contribute records side's contribution to the Duel's combined seed
 // under the revision the caller saw (0: none), and, the last one in, lets the
 // Arbiter roll and play on to the next Decision of an external Side. A
 // contribution the Duel does not await is refused with its
 // *transcript.Refusal (RefusedContribution) and nothing is written.
 func (s *Service) Contribute(ctx context.Context, scope string, id, revision int64, side int, contribution string) (*State, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if s.open[scope] != id {
-		return nil, fmt.Errorf("duel %d: %w", id, ErrNotOpen)
-	}
-	row, g, err := s.load(ctx, scope, id)
+	unlock := s.locks.lock(scope, id)
+	defer unlock()
+	row, g, _, err := s.loadOpen(ctx, scope, id, revision)
 	if err != nil {
 		return nil, err
-	}
-	if revision != 0 && revision != row.Revision {
-		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
 	}
 	if err := g.contribute(side, contribution); err != nil {
 		return nil, err
@@ -435,24 +456,18 @@ func (s *Service) save(ctx context.Context, scope string, row *storage.Duel, g *
 	return err
 }
 
-// Stop ends the open Duel before its end: thrown away, nothing of the Duel is
+// Stop ends the Duel before its end: thrown away, nothing of the Duel is
 // written. Kept, a money session's Match is written as it stands — an
 // unfinished game keeps no winner — since a session has no end of its own; a
 // match in points is refused (ErrInvalid), because a Match is written whole or
 // not at all (ADR-0072 rule 10): it is suspended, forfeited or thrown away.
 // Stopping is never resigning: that is a Play.
 func (s *Service) Stop(ctx context.Context, scope string, id, revision int64, keep bool) (*State, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if s.open[scope] != id {
-		return nil, fmt.Errorf("duel %d: %w", id, ErrNotOpen)
-	}
-	row, g, err := s.load(ctx, scope, id)
+	unlock := s.locks.lock(scope, id)
+	defer unlock()
+	row, g, _, err := s.loadOpen(ctx, scope, id, revision)
 	if err != nil {
 		return nil, err
-	}
-	if revision != 0 && revision != row.Revision {
-		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
 	}
 	if keep && g.doc.Header.MatchLength > 0 {
 		return nil, fmt.Errorf("duel %d: a match in points is kept only once won; suspend it, forfeit it or discard it: %w", id, storage.ErrInvalid)
@@ -460,23 +475,17 @@ func (s *Service) Stop(ctx context.Context, scope string, id, revision int64, ke
 	return s.end(ctx, scope, row, g, keep)
 }
 
-// Forfeit has side give the open Duel's match up: the game in progress ends
+// Forfeit has side give the Duel's match up: the game in progress ends
 // won by the other side, for the points that bring them to the length — at
 // money play, a single at the cube's value (transcript.KindForfeit). The
 // Duel then ends as a match won does: its Match is written, or the draft
 // thrown away if it was created so. Unlike Stop, the Match has a winner.
 func (s *Service) Forfeit(ctx context.Context, scope string, id, revision int64, side int) (*State, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if s.open[scope] != id {
-		return nil, fmt.Errorf("duel %d: %w", id, ErrNotOpen)
-	}
-	row, g, err := s.load(ctx, scope, id)
+	unlock := s.locks.lock(scope, id)
+	defer unlock()
+	row, g, _, err := s.loadOpen(ctx, scope, id, revision)
 	if err != nil {
 		return nil, err
-	}
-	if revision != 0 && revision != row.Revision {
-		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
 	}
 	if err := g.forfeit(side); err != nil {
 		return nil, err
@@ -497,7 +506,6 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 		if err := s.store.Duels().Delete(ctx, scope, row.ID); err != nil {
 			return nil, err
 		}
-		delete(s.open, scope)
 		st := state(row, g)
 		st.Ended, st.Awaiting = &Ending{Discarded: true, OverTime: g.doc.Clock.OverTime, Forfeited: g.forfeitedBy()}, nil
 		return st, nil
@@ -569,7 +577,6 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 	if err := tx.Commit(); err != nil {
 		return nil, err
 	}
-	delete(s.open, scope)
 	st := state(row, g)
 	st.Awaiting = nil
 	st.Ended = &Ending{MatchID: res.MatchID, DiceSeed: g.seed, OverTime: origin.OverTime, Forfeited: forfeited}
