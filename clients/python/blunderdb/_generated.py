@@ -474,6 +474,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/duels.act — hand-written handler — see openapi.yaml."
         return self._call("/v1/duels.act", payload)
 
+    def duels_contribute(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.contribute — hand-written handler — see openapi.yaml."
+        return self._call("/v1/duels.contribute", payload)
+
     def duels_create(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/duels.create — JSON. Accepts an Idempotency-Key."
         return self._call("/v1/duels.create", payload, idempotency_key=idempotency_key)

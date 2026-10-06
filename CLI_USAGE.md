@@ -1297,6 +1297,7 @@ are unknown, never zero).
 ./blunderDB duel list --db database.db
 ./blunderDB duel move --db database.db --id <id> --play "24/18 13/11"
 ./blunderDB duel roll|double|take|pass|resign --db database.db --id <id>
+./blunderDB duel contribute --db database.db --id <id> --side 1|2 --value <text>
 ./blunderDB duel stop|discard --db database.db --id <id>
 ```
 
@@ -1307,7 +1308,8 @@ are unknown, never zero).
   `instant`, `normal` or `thorough`, or `external:<configuration>@<engine>`, an
   external side declaring the Bot that plays behind it, recorded in the Match's
   origin as declared, not attested); `--discard-at-end` drops the draft
-  instead of writing the Match. Two bots play the whole match in one call; a
+  instead of writing the Match; `--combined-seed` rolls nothing before each
+  external side has contributed to the seed. Two bots play the whole match in one call; a
   money session between two bots is refused, since it would never end.
 - `show`: score, what the Duel waits for and, for a move, the legal plays. The
   dice seed is never shown before the end.
@@ -1315,6 +1317,11 @@ are unknown, never zero).
 - `roll`, `move`, `double`, `take`, `pass`, `resign`: one Action by the side
   the Duel waits for (`--side 1|2` names it); `--level` (1 to 3) is the value
   of a resignation; `--revision` refuses the Action if the Duel moved.
+- `contribute`: an external side's contribution to a combined seed (`--side
+  1|2`, `--value`, 1 to 64 bytes), once, before the first roll; the last one
+  starts the dice. The rolls then come from HMAC-SHA256 of the sealed seed over
+  each side's contribution, length-prefixed, and the Match's origin carries the
+  contributions.
 - `stop`: stops the Duel and writes the Match as it stands.
 - `discard`: drops the Duel; nothing is written.
 
@@ -2655,6 +2662,31 @@ Examples:
   blunderdb delete --db database.db --type match --id 1 --confirm
 ```
 
+### `blunderdb duel contribute`
+
+```
+Usage: blunderdb duel contribute [options]
+
+Contribute to the seed of a Duel created with --combined-seed: once per external Side, before the first roll, which the last contribution starts.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -revision int
+    	Refuse unless the Duel is at this revision (default: no check)
+  -side int
+    	The contributing Side, 1 or 2 (required)
+  -value string
+    	The contribution, 1 to 64 bytes of text (required)
+
+Examples:
+  blunderdb duel contribute --db database.db --id 1 --side 1 --value "my own randomness"
+```
+
 ### `blunderdb duel create`
 
 ```
@@ -2663,6 +2695,8 @@ Usage: blunderdb duel create [options]
 Start a Duel and play on to the first Decision of an external Side.
 
 Options:
+  -combined-seed
+    	Roll nothing before each external Side has contributed to the seed (duel contribute)
   -db string
     	Path to the database file (required)
   -discard-at-end

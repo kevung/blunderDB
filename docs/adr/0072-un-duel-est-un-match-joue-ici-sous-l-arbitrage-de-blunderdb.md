@@ -59,9 +59,16 @@ import ne fournit complètement : la durée de chaque décision.
    donc ni une reprise après plantage ni une reprise de coup ne relance. L'Arbitre publie
    l'empreinte du germe à la création et le germe avec le Match terminé : les lancers se
    recalculent sans faire confiance à l'Arbitre. Le Bot ne reçoit que la position et le
-   lancer courant ; le flux des dés ne quitte pas l'Arbitre. Absents : les dés saisis à la
-   main, une source externe, et le germe combiné de deux Côtés externes — qui s'ajoute au
-   sceau sans le défaire, le jour où un client en a besoin.
+   lancer courant ; le flux des dés ne quitte pas l'Arbitre. Le sceau prouve que l'Arbitre
+   n'a pas ajusté les dés à la position, pas qu'il n'a pas choisi le germe : un Duel créé avec
+   le **germe combiné** attend, son empreinte publiée, l'apport de chaque Côté externe (au
+   plus 64 octets, une fois, avant le premier lancer ; ni lancer ni horloge avant eux), et
+   ses lancers sortent du germe effectif `HMAC-SHA256(germe, ‖ par joueur : longueur sur 4
+   octets gros-boutiens ‖ apport)` (`CombinedSeed`, `dice.go`), un Côté délégué apportant
+   la chaîne vide. L'Arbitre a scellé avant de voir les apports, les Côtés apportent sans
+   connaître le germe ; l'origine du Match porte les apports avec le germe révélé. Sans
+   germe combiné, rien ne change. Absents : les dés saisis à la main et une source
+   externe.
 9. **Un Duel se joue dans les conditions d'un match réel.** Pendant son tour le Côté arrange
    son coup librement ; la validation est un geste explicite, qui arrête la durée et
    l'horloge, et après elle rien ne se reprend. Le moteur se tait tant que le Duel est en

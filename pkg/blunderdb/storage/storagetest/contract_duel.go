@@ -110,6 +110,7 @@ func testMatchOrigin(t *testing.T, s storage.Storage) {
 	want.Start, want.StoppedEarly, want.OverTime, want.BotLevel, want.Cadence, want.BotEngine =
 		"-b----E-C---eE---c-e----B-:0:0:1:00:0:0:0:5:10", false, 2, "normal", `{"reserve":600}`, "gammonNet v1.5.0"
 	want.DeclaredBots = []storage.DeclaredBot{{Player: 2, Configuration: "thorough", Engine: "v1.6.0"}}
+	want.Contributions = []string{"", "naïve ‖ 42"}
 	if err := ds.SetOrigin(ctx, "", &want); err != nil {
 		t.Fatalf("SetOrigin again: %v", err)
 	}

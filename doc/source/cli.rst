@@ -1931,6 +1931,7 @@ sont inconnues, jamais nulles).
    ./blunderdb duel move --db <path> --id <id> --play "24/18 13/11"
    ./blunderdb duel roll|double|take|pass|resign --db <path> --id <id>
    ./blunderdb duel forfeit --db <path> --id <id> --side 1|2
+   ./blunderdb duel contribute --db <path> --id <id> --side 1|2 --value <texte>
    ./blunderdb duel stop|discard --db <path> --id <id>
 
 **Sous-commandes :**
@@ -1942,7 +1943,8 @@ sont inconnues, jamais nulles).
   ``thorough``, ou ``external:<configuration>@<moteur>``, un Côté externe qui
   déclare le Bot qui joue derrière lui : l'origine du Match l'enregistre comme
   déclaré, non attesté) ; ``--discard-at-end`` jette le brouillon à la fin au lieu
-  d'écrire le Match. Avec deux Bots, le match se joue en entier dans cet appel
+  d'écrire le Match ; ``--combined-seed`` ne lance aucun dé avant l'apport de
+  chaque Côté externe au germe. Avec deux Bots, le match se joue en entier dans cet appel
   (``--side1 bot:instant --side2 bot:instant``) ; une session en argent entre
   deux Bots est refusée, car elle ne finirait jamais.
 * ``show`` — Score, ce que le Duel attend et, pour un coup, les jeux légaux. Le
@@ -1952,6 +1954,11 @@ sont inconnues, jamais nulles).
   Côté que le Duel attend (``--side 1|2`` pour le nommer) ; ``--play`` donne le
   coup en notation, dans l'ordre qu'on veut ; ``--level`` (1 à 3) la valeur d'un
   abandon ; ``--revision`` refuse l'Action si le Duel a bougé.
+* ``contribute`` — L'apport d'un Côté externe au germe combiné (``--side 1|2``,
+  ``--value``, 1 à 64 octets), une seule fois, avant le premier lancer ; le
+  dernier apport lance les dés. Les lancers sortent alors du HMAC-SHA256 du
+  germe scellé sur l'apport de chaque Côté précédé de sa longueur, et l'origine
+  du Match porte les apports.
 * ``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en
   cours va à l'autre Côté pour les points qui le portent à la longueur (en
   argent, une simple à la valeur du videau), et le Match s'écrit gagné par

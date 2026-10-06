@@ -34,6 +34,35 @@ func Fingerprint(seed string) (string, error) {
 	return hex.EncodeToString(sum[:]), nil
 }
 
+// MaxContribution bounds a Side's contribution to a combined seed, in bytes.
+const MaxContribution = 64
+
+// CombinedSeed is the seed a Duel created with a combined seed rolls from:
+// the sealed seed, whose fingerprint was published before any contribution,
+// combined with what the external Sides contributed, in player order — a
+// delegated Side contributes the empty string. The Arbiter sealed before
+// seeing the contributions and the Sides contributed without knowing the
+// seed, so none of the three chose the dice (ADR-0072 rule 8).
+//
+// It is stated here so that it can be recomputed outside blunderDB: the
+// HMAC-SHA256 with key the sealed seed's bytes over, for player 1 then player
+// 2, the contribution's length in bytes as 4 bytes big-endian followed by its
+// UTF-8 bytes; hex-encoded, it is the seed Roll takes.
+func CombinedSeed(seed string, contributions [2]string) (string, error) {
+	key, err := hex.DecodeString(seed)
+	if err != nil {
+		return "", fmt.Errorf("dice seed: %w", err)
+	}
+	mac := hmac.New(sha256.New, key)
+	for _, c := range contributions {
+		var n [4]byte
+		binary.BigEndian.PutUint32(n[:], uint32(len(c)))
+		mac.Write(n[:])
+		mac.Write([]byte(c))
+	}
+	return hex.EncodeToString(mac.Sum(nil)), nil
+}
+
 // Roll is the roll of rank n of a Duel, a function of its seed and of n alone:
 // resuming a Duel or replaying it never changes a roll.
 //

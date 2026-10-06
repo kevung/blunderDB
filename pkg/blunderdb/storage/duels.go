@@ -79,6 +79,11 @@ type MatchOrigin struct {
 	// checked (ADR-0005), unlike BotLevel and BotEngine, which name what the
 	// Arbiter played itself. Nil when no Side declared one.
 	DeclaredBots []DeclaredBot `json:"declared_bots,omitempty"`
+	// Contributions are what each Side contributed to a combined seed, in
+	// player order ("" for a delegated Side); the rolls were computed from
+	// duel.CombinedSeed over DiceSeed and them. Nil when the Duel rolled from
+	// DiceSeed alone.
+	Contributions []string `json:"contributions,omitempty"`
 }
 
 // DeclaredBot is a Bot an external Side declared at the Duel's creation: the

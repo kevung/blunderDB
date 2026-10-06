@@ -47,6 +47,12 @@ type duelForfeitReq struct {
 	Side *int  `json:"side"`
 }
 
+type duelContributeReq struct {
+	ID           int64  `json:"id"`
+	Side         *int   `json:"side"`
+	Contribution string `json:"contribution"`
+}
+
 type duelStopReq struct {
 	ID int64 `json:"id"`
 	// Keep writes a money session's Match as it stands, and is refused for a
@@ -171,6 +177,14 @@ func (s *Server) duelRoutes() []route {
 			}
 			return s.duelGesture(ctx, scope, req.ID, func(rev int64) (*duel.State, error) {
 				return s.duels().Forfeit(ctx, scope, req.ID, rev, *req.Side)
+			})
+		}))},
+		{http.MethodPost, "/v1/duels.contribute", gesture(rpc(func(ctx context.Context, scope string, req duelContributeReq) (*duel.State, error) {
+			if req.Side == nil || (*req.Side != 0 && *req.Side != 1) {
+				return nil, fmt.Errorf("side is required, 0 for player 1 or 1 for player 2: %w", storage.ErrInvalid)
+			}
+			return s.duelGesture(ctx, scope, req.ID, func(rev int64) (*duel.State, error) {
+				return s.duels().Contribute(ctx, scope, req.ID, rev, *req.Side, req.Contribution)
 			})
 		}))},
 		{http.MethodPost, "/v1/duels.discard", gesture(rpc(func(ctx context.Context, scope string, req duelIDReq) (*duel.State, error) {

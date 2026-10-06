@@ -608,7 +608,10 @@ _Avoid_: referee, server, game master
 The secret every roll of a Duel is computed from, drawn when the Duel is created. Its
 fingerprint is published before the first roll and the seed itself is revealed with the
 finished Match, so that anyone can recompute the rolls and see they were never fitted to
-the position. Resuming a Duel or taking a move back never changes a roll. Unrelated to the
+the position. Resuming a Duel or taking a move back never changes a roll. With a *combined
+seed*, each external Side also contributes a short text before the first roll, and the
+rolls come from the seed combined with the contributions: neither the Arbiter, which
+sealed first, nor a Side, which contributes blind, chose them. Unrelated to the
 Seed of a Training Question, and to a Match's dice fingerprint, which identifies the rolls
 of a match to recognise the same match twice.
 _Avoid_: seed (Training), dice hash (the Match's fingerprint)

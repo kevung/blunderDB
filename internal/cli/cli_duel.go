@@ -48,18 +48,19 @@ func (cli *CLI) duelHandlers() map[string]func([]string) error {
 		return func(args []string) error { return cli.runDuelAct(kind, args) }
 	}
 	return map[string]func([]string) error{
-		"create":  cli.runDuelCreate,
-		"show":    cli.runDuelShow,
-		"list":    cli.runDuelList,
-		"roll":    act(duel.PlayRoll),
-		"move":    act(duel.PlayMove),
-		"double":  act(duel.PlayDouble),
-		"take":    act(duel.PlayTake),
-		"pass":    act(duel.PlayPass),
-		"resign":  act(duel.PlayResign),
-		"stop":    cli.runDuelStop,
-		"discard": cli.runDuelDiscard,
-		"forfeit": cli.runDuelForfeit,
+		"create":     cli.runDuelCreate,
+		"show":       cli.runDuelShow,
+		"list":       cli.runDuelList,
+		"roll":       act(duel.PlayRoll),
+		"move":       act(duel.PlayMove),
+		"double":     act(duel.PlayDouble),
+		"take":       act(duel.PlayTake),
+		"pass":       act(duel.PlayPass),
+		"resign":     act(duel.PlayResign),
+		"stop":       cli.runDuelStop,
+		"discard":    cli.runDuelDiscard,
+		"forfeit":    cli.runDuelForfeit,
+		"contribute": cli.runDuelContribute,
 	}
 }
 
@@ -163,6 +164,7 @@ func (cli *CLI) runDuelCreate(args []string) error {
 	name2 := fs.String("name2", "", "Player 2's name")
 	start := fs.String("start", "", "XGID of the Position the first game begins at (default: the opening position)")
 	discard := fs.Bool("discard-at-end", false, "Throw the draft away when the match is won instead of writing the Match")
+	combined := fs.Bool("combined-seed", false, "Roll nothing before each external Side has contributed to the seed (duel contribute)")
 	svc, err := cli.duelOpen(fs, dbPath, format, args)
 	if err != nil {
 		return err
@@ -171,7 +173,7 @@ func (cli *CLI) runDuelCreate(args []string) error {
 		return fmt.Errorf("give --length or --money, one of the two")
 	}
 	set := duel.Settings{
-		MatchLength: *length, Jacoby: *jacoby, DiscardAtEnd: *discard,
+		MatchLength: *length, Jacoby: *jacoby, DiscardAtEnd: *discard, CombinedSeed: *combined,
 	}
 	for i, v := range []struct{ spec, name string }{{*side1, *name1}, {*side2, *name2}} {
 		if set.Sides[i], err = parseSide(v.spec, v.name); err != nil {
@@ -287,6 +289,9 @@ func (cli *CLI) runDuelAct(kind duel.PlayKind, args []string) error {
 	if err != nil {
 		return err
 	}
+	if len(cur.AwaitingContribution) > 0 {
+		return fmt.Errorf("duel %d awaits a contribution to its seed from Side %d before any play (duel contribute)", *id, cur.AwaitingContribution[0]+1)
+	}
 	if cur.Awaiting == nil {
 		return fmt.Errorf("duel %d awaits nothing", *id)
 	}
@@ -365,6 +370,35 @@ func (cli *CLI) runDuelForfeit(args []string) error {
 	return printDuel(st, *format)
 }
 
+func (cli *CLI) runDuelContribute(args []string) error {
+	fs, dbPath, format := duelFlagSet("contribute", "Contribute to the seed of a Duel created with --combined-seed: once per external Side, before the first roll, which the last contribution starts.",
+		"blunderdb duel contribute --db database.db --id 1 --side 1 --value \"my own randomness\"")
+	id := fs.Int64("id", 0, "Duel id (required)")
+	side := fs.Int("side", 0, "The contributing Side, 1 or 2 (required)")
+	value := fs.String("value", "", fmt.Sprintf("The contribution, 1 to %d bytes of text (required)", duel.MaxContribution))
+	revision := fs.Int64("revision", 0, "Refuse unless the Duel is at this revision (default: no check)")
+	svc, err := cli.duelOpen(fs, dbPath, format, args)
+	if err != nil {
+		return err
+	}
+	if *id == 0 {
+		return fmt.Errorf("missing required flag: --id")
+	}
+	if *side != 1 && *side != 2 {
+		return fmt.Errorf("--side is required, 1 or 2")
+	}
+	ctx := context.Background()
+	rev, err := svc.Ensure(ctx, "", *id, *revision)
+	if err != nil {
+		return fmt.Errorf("duel %d: %w", *id, err)
+	}
+	st, err := svc.Contribute(ctx, "", *id, rev, *side-1, *value)
+	if err != nil {
+		return fmt.Errorf("duel %d: %w", *id, err)
+	}
+	return printDuel(st, *format)
+}
+
 func (cli *CLI) runDuelStop(args []string) error { return cli.runDuelEnd("stop", true, args) }
 
 func (cli *CLI) runDuelDiscard(args []string) error { return cli.runDuelEnd("discard", false, args) }
@@ -420,6 +454,9 @@ func printDuel(st *duel.State, format string) error {
 			fmt.Println(".")
 		}
 		return nil
+	}
+	for _, side := range st.AwaitingContribution {
+		fmt.Printf("Awaits: Side %d (%s), a contribution to the seed (duel contribute)\n", side+1, st.Sides[side].Name)
 	}
 	d := st.Awaiting
 	if d == nil {

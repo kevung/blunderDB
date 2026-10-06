@@ -162,6 +162,14 @@ func (d *Database) ForfeitDuel(id, revision int64, side int) (*DuelState, error)
 	})
 }
 
+// ContributeDuel records side's (0 player 1, 1 player 2) contribution to a
+// Duel created with a combined seed; the last one in starts the dice.
+func (d *Database) ContributeDuel(id, revision int64, side int, contribution string) (*DuelState, error) {
+	return d.duelState(id, func(ctx context.Context, svc *duel.Service) (*duel.State, error) {
+		return svc.Contribute(ctx, "", id, revision, side, contribution)
+	})
+}
+
 // GetMatchOrigin returns the origin of a Match played here — Start, revealed
 // seed and its fingerprint, stop before the end, Cadence and overrun, Bot —
 // nil when the Match was not played here, ErrNotFound when there is none.

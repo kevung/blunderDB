@@ -39,6 +39,10 @@ type Settings struct {
 	// Cadence is the Duel's clock; nil, the default, plays without one. The
 	// durations of the decisions are measured either way.
 	Cadence *Cadence `json:"cadence,omitempty"`
+	// CombinedSeed has the Duel wait, its fingerprint published, for a
+	// contribution from each external Side before the first roll; the dice
+	// then come from CombinedSeed. It needs an external Side.
+	CombinedSeed bool `json:"combinedSeed,omitempty"`
 }
 
 // Options configures a Service.
@@ -102,6 +106,12 @@ type State struct {
 	Awaiting *Decision `json:"awaiting,omitempty"`
 	// Clock is the Cadence's clock, nil without one.
 	Clock *ClockState `json:"clock,omitempty"`
+	// Contributions are the Sides' contributions to a combined seed, in
+	// player order, and AwaitingContribution the Sides (0 or 1) still owed:
+	// while one is, nothing is rolled and no Decision is awaited.
+	CombinedSeed         bool      `json:"combinedSeed,omitempty"`
+	Contributions        [2]string `json:"contributions,omitzero"`
+	AwaitingContribution []int     `json:"awaitingContribution,omitempty"`
 	// Ended is set by the call that ended the Duel.
 	Ended *Ending `json:"ended,omitempty"`
 	// Sheet is the match sheet the desktop draws with the Transcription's
@@ -176,6 +186,9 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 			}
 		}
 	}
+	if set.CombinedSeed && set.Sides[0].Kind != SideExternal && set.Sides[1].Kind != SideExternal {
+		return nil, fmt.Errorf("a combined seed takes the contribution of an external Side, and both are delegated: %w", storage.ErrInvalid)
+	}
 	if set.MatchLength == 0 && set.Sides[0].Kind != SideExternal && set.Sides[1].Kind != SideExternal {
 		// Nobody would ever be awaited and a money session never ends: the
 		// call would play forever.
@@ -194,6 +207,7 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 		DiscardAtEnd: set.DiscardAtEnd,
 		Fingerprint:  fp,
 		Cadence:      set.Cadence,
+		CombinedSeed: set.CombinedSeed,
 	}
 	g, err := newGame(doc, seed)
 	if err != nil {
@@ -374,6 +388,43 @@ func (s *Service) Play(ctx context.Context, scope string, id, revision int64, p 
 	return state(row, g), nil
 }
 
+// Contribute records side's contribution to the open Duel's combined seed
+// under the revision the caller saw (0: none), and, the last one in, lets the
+// Arbiter roll and play on to the next Decision of an external Side. A
+// contribution the Duel does not await is refused with its
+// *transcript.Refusal (RefusedContribution) and nothing is written.
+func (s *Service) Contribute(ctx context.Context, scope string, id, revision int64, side int, contribution string) (*State, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.open[scope] != id {
+		return nil, fmt.Errorf("duel %d: %w", id, ErrNotOpen)
+	}
+	row, g, err := s.load(ctx, scope, id)
+	if err != nil {
+		return nil, err
+	}
+	if revision != 0 && revision != row.Revision {
+		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
+	}
+	if err := g.contribute(side, contribution); err != nil {
+		return nil, err
+	}
+	sides, err := s.sides(g.doc.Sides)
+	if err != nil {
+		return nil, err
+	}
+	if err := g.settle(ctx, sides); err != nil {
+		return nil, err
+	}
+	if g.finished() || g.timeLost() {
+		return s.end(ctx, scope, row, g, !g.doc.DiscardAtEnd)
+	}
+	if err := s.save(ctx, scope, row, g); err != nil {
+		return nil, err
+	}
+	return state(row, g), nil
+}
+
 // save rewrites the draft under the row's revision.
 func (s *Service) save(ctx context.Context, scope string, row *storage.Duel, g *game) error {
 	var err error
@@ -472,6 +523,9 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 	origin := storage.MatchOrigin{DiceSeed: g.seed, OverTime: g.doc.Clock.OverTime}
 	origin.BotLevel, origin.BotEngine = botOrigin(g.doc.Sides)
 	origin.DeclaredBots = declaredOrigin(g.doc.Sides)
+	if g.doc.CombinedSeed {
+		origin.Contributions = g.doc.Contributions[:]
+	}
 	if g.doc.Cadence != nil {
 		origin.Cadence = g.doc.Cadence.String()
 	}
@@ -599,6 +653,10 @@ func state(row *storage.Duel, g *game) *State {
 		Awaiting:    awaiting,
 		Clock:       clk,
 		Sheet:       g.sheet(),
+
+		CombinedSeed:         g.doc.CombinedSeed,
+		Contributions:        g.doc.Contributions,
+		AwaitingContribution: g.pendingContributions(),
 	}
 }
 

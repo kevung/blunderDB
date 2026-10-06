@@ -4236,6 +4236,7 @@ func TestMigrate_2_34_0_to_2_35_0_ExternalSides(t *testing.T) {
 	// Back to the 2.34.0 shape.
 	for _, stmt := range []string{
 		`ALTER TABLE match_origin DROP COLUMN declared_bots`,
+		`ALTER TABLE match_origin DROP COLUMN contributions`,
 		`UPDATE metadata SET value = '2.34.0' WHERE key = 'database_version'`,
 	} {
 		if _, err := d.db.Exec(stmt); err != nil {
@@ -4254,13 +4255,13 @@ func TestMigrate_2_34_0_to_2_35_0_ExternalSides(t *testing.T) {
 	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
 		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
 	}
-	for _, col := range []string{"declared_bots"} {
+	for _, col := range []string{"declared_bots", "contributions"} {
 		if !columnExists(t, d.db, "match_origin", col) {
 			t.Fatalf("match_origin.%s should be added", col)
 		}
 	}
 	o, err := d.store.Duels().Origin(ctx, "", matchID)
-	if err != nil || o.BotEngine != "v1.5.0" || o.DeclaredBots != nil {
+	if err != nil || o.BotEngine != "v1.5.0" || o.DeclaredBots != nil || o.Contributions != nil {
 		t.Errorf("origin after migration: %+v, %v", o, err)
 	}
 }

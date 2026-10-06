@@ -132,6 +132,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/directions.withdraw                  JSON  (Idempotency-Key)  (If-Match)
    duels
      POST /v1/duels.act                            custom
+     POST /v1/duels.contribute                     custom
      POST /v1/duels.create                         JSON  (Idempotency-Key)
      POST /v1/duels.discard                        custom
      POST /v1/duels.flag                           custom
