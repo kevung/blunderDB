@@ -3,8 +3,10 @@
 // the user has focused in the meantime: Enter would reach the panel instead of a form, and the
 // command line, which closes on blur, would vanish. So it yields to a text-entry field, the same
 // "typing" test keyboardService applies. It also yields to a focus already inside the panel (a row
-// just created and focused): the panel receives that row's keys by bubbling anyway. Anything
-// outside the panel is still replaced.
+// just created and focused): the panel receives that row's keys by bubbling anyway. And it yields
+// to a modal open over it (the help opened within the delay): a modal takes its keys on its own
+// element, so a panel focused behind it would receive them instead. Anything else outside the
+// panel is still replaced.
 
 const TYPING_TARGET = 'input, textarea, select, [contenteditable]';
 
@@ -29,6 +31,8 @@ export function focusPanelUnlessTyping(panel) {
     const active = document.activeElement;
     if (isTypingTarget(active)) return false;
     if (active && active !== panel && panel.contains(active)) return false;
+    const modal = document.querySelector('[aria-modal="true"]');
+    if (modal && !modal.contains(panel)) return false;
     panel.focus();
     return true;
 }

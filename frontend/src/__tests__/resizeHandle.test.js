@@ -7,18 +7,20 @@
 import { describe, test, expect, afterEach, vi } from 'vitest';
 import { resizable } from '../utils/resizeHandle.js';
 
+/** @type {HTMLDivElement} */
 let handle;
+/** @type {ReturnType<typeof resizable> | null} */
 let action;
 
 afterEach(() => {
     action?.destroy();
     action = null;
     handle?.remove();
-    handle = null;
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
 });
 
+/** @param {Parameters<typeof resizable>[1]} params */
 function mount(params) {
     handle = document.createElement('div');
     document.body.appendChild(handle);
@@ -26,6 +28,11 @@ function mount(params) {
     return action;
 }
 
+/**
+ * @param {EventTarget} target
+ * @param {string} type
+ * @param {MouseEventInit} [coords]
+ */
 function mouse(target, type, coords = {}) {
     const ev = new MouseEvent(type, { bubbles: true, cancelable: true, clientX: 0, clientY: 0, ...coords });
     target.dispatchEvent(ev);
@@ -143,7 +150,9 @@ describe('resizable — parameters and lifecycle', () => {
 describe('resizable - resize event timing', () => {
     test('the window resize event fires after the new size is applied, not before', async () => {
         let applied = 0;
+        /** @type {number[]} */
         const seen = [];
+        /** @param {number} size */
         const onResize = (size) => {
             // Stands in for Svelte applying the height in a later microtask.
             queueMicrotask(() => {

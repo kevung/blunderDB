@@ -14,6 +14,11 @@ import (
 // which is not kept — and the Cadence decoded.
 type Origin struct {
 	storage.MatchOrigin
+	// BindingDeclaredBot carries nothing and is never encoded. Wails walks no
+	// embedded field when it collects the structs to generate, so without a
+	// field naming storage.DeclaredBot directly the TypeScript binding of
+	// MatchOrigin.DeclaredBots would name a class that does not exist.
+	BindingDeclaredBot *storage.DeclaredBot `json:"-"`
 	// Fingerprint is the SHA-256 of the revealed seed, computed here; "" when
 	// the recorded seed is not hexadecimal, which no Duel writes.
 	Fingerprint string `json:"fingerprint"`

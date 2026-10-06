@@ -61,6 +61,20 @@ describe('focusPanelUnlessTyping', () => {
         expect(document.activeElement).toBe(commandLine);
     });
 
+    test('leaves the keyboard to a modal open over the panel (the help opened within the delay)', () => {
+        mount('<section id="panel" tabindex="-1"></section><div role="dialog" aria-modal="true" tabindex="-1" id="help"></div>');
+        el('#help').focus();
+
+        expect(focusPanelUnlessTyping(el('#panel'))).toBe(false);
+        expect(document.activeElement).toBe(el('#help'));
+    });
+
+    test('a panel inside the open modal still takes the focus', () => {
+        mount('<div role="dialog" aria-modal="true"><section id="panel" tabindex="-1"></section></div>');
+
+        expect(focusPanelUnlessTyping(el('#panel'))).toBe(true);
+    });
+
     test('a missing panel is a no-op', () => {
         expect(focusPanelUnlessTyping(null)).toBe(false);
     });

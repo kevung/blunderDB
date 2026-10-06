@@ -6386,6 +6386,22 @@ export namespace storage {
 	        this.well_played = source["well_played"];
 	    }
 	}
+	export class DeclaredBot {
+	    player: number;
+	    configuration: string;
+	    engine: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new DeclaredBot(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.player = source["player"];
+	        this.configuration = source["configuration"];
+	        this.engine = source["engine"];
+	    }
+	}
 	export class HeadToHeadMatch {
 	    id: number;
 	    date: string;
