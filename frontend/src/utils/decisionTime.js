@@ -80,20 +80,19 @@ export function timeBars(movePositions) {
 
 /**
  * The clock of every Move: the time its player has used since the start of the
- * match, that Move included. Unknown durations add nothing; a player with no
- * known duration yet has a null clock. Indexed like `movePositions`, which must
- * be in match order.
+ * match, that Move included. Unknown durations add nothing: a match that kept
+ * durations kept them for every decision a player made, so a move without one
+ * was played by the Arbiter and cost its player no time. Indexed like
+ * `movePositions`, which must be in match order.
  *
  * @param {readonly { player_on_roll: number, decision_ms?: number | null, cube_decision_ms?: number | null }[]} movePositions
- * @returns {(number | null)[]}
+ * @returns {number[]}
  */
 export function cumulativeClocks(movePositions) {
-    /** @type {(number | null)[]} */
-    const used = [null, null];
+    const used = [0, 0];
     return movePositions.map((mp) => {
         const p = mp.player_on_roll === 1 ? 1 : 0;
-        const ms = moveTotalMS(mp);
-        if (ms !== null) used[p] = (used[p] ?? 0) + ms;
+        used[p] += moveTotalMS(mp) ?? 0;
         return used[p];
     });
 }

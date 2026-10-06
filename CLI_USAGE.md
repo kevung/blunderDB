@@ -2893,7 +2893,7 @@ Examples:
 ```
 Usage: blunderdb duel stop [options]
 
-Stop the Duel and write the Match as it stands: an unfinished game keeps no winner, and a match short of its length is marked stopped early.
+Stop a money session and write its Match as it stands: an unfinished game keeps no winner. A match in points is refused: it is written only once won (suspend, forfeit or discard it).
 
 Options:
   -db string

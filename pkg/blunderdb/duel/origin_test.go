@@ -28,9 +28,9 @@ func TestReadOriginRevealsTheSeedOfTheFingerprint(t *testing.T) {
 			t.Fatalf("Play: %v", err)
 		}
 	}
-	kept, err := svc.Stop(ctx, "", s.ID, s.Revision, true)
+	kept, err := svc.Forfeit(ctx, "", s.ID, s.Revision, 0)
 	if err != nil || kept.Ended == nil {
-		t.Fatalf("Stop: %+v, %v", kept, err)
+		t.Fatalf("Forfeit: %+v, %v", kept, err)
 	}
 
 	o, err := ReadOrigin(ctx, st, "", kept.Ended.MatchID)
@@ -43,7 +43,7 @@ func TestReadOriginRevealsTheSeedOfTheFingerprint(t *testing.T) {
 	if fp, _ := Fingerprint(o.DiceSeed); fp != published {
 		t.Errorf("the seed read back does not give the published fingerprint")
 	}
-	if !o.StoppedEarly || o.Start != "" || o.BotLevel != "" || o.BotEngine != "" {
+	if o.StoppedEarly || o.Start != "" || o.BotLevel != "" || o.BotEngine != "" {
 		t.Errorf("origin = %+v", o.MatchOrigin)
 	}
 	if o.CadenceSettings == nil || o.CadenceSettings.Name != "rapid-3+12" || o.CadenceSettings.Reserve != 180 {

@@ -3945,11 +3945,14 @@ msgstr ""
 
 #: ../../source/cli.rst:1952
 msgid ""
-"``stop`` — Arrête le Duel et écrit le Match tel qu'il est, sans vainqueur. "
-"Arrêter n'est pas abandonner."
+"``stop`` — Arrête une session en argent et écrit son Match tel qu'il est, la "
+"partie en cours sans vainqueur. Un match en points est refusé : il ne "
+"s'écrit qu'entier (``forfeit``, ``discard``). Arrêter n'est pas abandonner."
 msgstr ""
-"``stop`` — Beendet das Duell und speichert das Match im aktuellen Stand, "
-"ohne Sieger. Beenden ist nicht Aufgeben."
+"``stop`` — Beendet eine Session im Geldspiel und speichert ihr Match im "
+"aktuellen Stand, das laufende Spiel ohne Sieger. Ein Match auf Punkte wird "
+"abgelehnt: Es wird nur vollständig gespeichert (``forfeit``, ``discard``). "
+"Beenden ist nicht Aufgeben."
 
 #: ../../source/cli.rst:1953
 msgid "``discard`` — Jette le Duel : rien n'en est écrit."

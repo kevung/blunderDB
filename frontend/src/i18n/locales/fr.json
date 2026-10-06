@@ -2969,7 +2969,7 @@
         "pause": "Mettre en pause",
         "forfeit": "Abandonner le match",
         "forfeitConfirm": "Abandonner le match ? {name} le gagne.",
-        "forfeitConfirmMoney": "Abandonner la session ? La partie en cours est perdue au backgammon ({n} pt).",
+        "forfeitConfirmMoney": "Abandonner la session ? La partie en cours est perdue en simple ({n} pt).",
         "cancel": "Annuler le match",
         "cancelConfirm": "Annuler le match ? Rien n'en sera écrit.",
         "match": "Match",

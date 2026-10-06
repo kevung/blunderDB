@@ -90,7 +90,7 @@ func (cli *CLI) printDuelUsage() {
 	fmt.Println("  take      Take a double")
 	fmt.Println("  pass      Pass on a double")
 	fmt.Println("  resign    Resign the game (single, gammon or backgammon)")
-	fmt.Println("  stop      Stop the Duel and keep the Match as it stands")
+	fmt.Println("  stop      Stop a money session and keep its Match as it stands")
 	fmt.Println("  discard   Throw the Duel away: nothing of it is written")
 	fmt.Println("  forfeit   Give the match up (--side): the Match is written won by the other Side")
 	fmt.Println()
@@ -361,7 +361,7 @@ func (cli *CLI) runDuelDiscard(args []string) error { return cli.runDuelEnd("dis
 func (cli *CLI) runDuelEnd(sub string, keep bool, args []string) error {
 	summary := "Throw the Duel away: nothing of it is written, and the Match is not made."
 	if keep {
-		summary = "Stop the Duel and write the Match as it stands: an unfinished game keeps no winner, and a match short of its length is marked stopped early."
+		summary = "Stop a money session and write its Match as it stands: an unfinished game keeps no winner. A match in points is refused: it is written only once won (suspend, forfeit or discard it)."
 	}
 	fs, dbPath, format := duelFlagSet(sub, summary, "blunderdb duel "+sub+" --db database.db --id 1")
 	id := fs.Int64("id", 0, "Duel id (required)")
@@ -405,9 +405,6 @@ func printDuel(st *duel.State, format string) error {
 			fmt.Printf("Ended: Match %d written (seed %s)", e.MatchID, e.DiceSeed)
 			if e.Forfeited != 0 {
 				fmt.Printf(", forfeited by Side %d", e.Forfeited)
-			}
-			if e.StoppedEarly {
-				fmt.Print(", stopped early")
 			}
 			fmt.Println(".")
 		}

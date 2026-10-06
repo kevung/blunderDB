@@ -34,9 +34,10 @@ précisément le contraire : arrêter n'est jamais céder.
 4. **L'interface graphique offre trois gestes** : *Abandonner le match* (confirmé), *Mettre en
    pause* (le suspens d'ADR-0072, horloges arrêtées) et *Annuler le match* (confirmé ; rien
    n'est écrit). « Arrêter et garder » n'y figure plus : la pause garde le match.
-5. **L'API et la CLI gardent l'arrêt gardé.** `/v1/duels.stop {keep}` et `blunderdb duel stop`
-   sont un contrat publié (clients générés, gammonGo) ; ils restent, et la règle 10 d'ADR-0072
-   vaut toujours pour eux. L'abandon s'y ajoute : `/v1/duels.forfeit {id, side}`,
+5. **L'API et la CLI gardent l'arrêt gardé pour l'argent.** `/v1/duels.stop {keep}` et
+   `blunderdb duel stop` sont un contrat publié (clients générés, gammonGo) ; ils restent, et
+   la règle 10 d'ADR-0072 vaut pour eux : une session en argent s'y garde, un match en points
+   y est refusé. L'abandon s'y ajoute : `/v1/duels.forfeit {id, side}`,
    `blunderdb duel forfeit --side`, `Database.ForfeitDuel` — le Côté y est requis, puisque
    l'abandon ne répond à aucune Décision qui le nommerait.
 

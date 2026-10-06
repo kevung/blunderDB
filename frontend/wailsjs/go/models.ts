@@ -3022,7 +3022,6 @@ export namespace duel {
 	export class Ending {
 	    matchId: number;
 	    diceSeed?: string;
-	    stoppedEarly?: boolean;
 	    discarded?: boolean;
 	    forfeited?: number;
 	    overTime?: number;
@@ -3035,7 +3034,6 @@ export namespace duel {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.matchId = source["matchId"];
 	        this.diceSeed = source["diceSeed"];
-	        this.stoppedEarly = source["stoppedEarly"];
 	        this.discarded = source["discarded"];
 	        this.forfeited = source["forfeited"];
 	        this.overTime = source["overTime"];

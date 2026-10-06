@@ -40,7 +40,7 @@ describe('match clock', () => {
             { player_on_roll: 0 },
             { player_on_roll: 0, decision_ms: 4000 }
         ];
-        expect(cumulativeClocks(mps)).toEqual([6000, null, 2000, 6000, 10000]);
+        expect(cumulativeClocks(mps)).toEqual([6000, 0, 2000, 6000, 10000]);
     });
 
     test('formats m:ss, h:mm:ss past an hour, empty when unknown', () => {

@@ -250,7 +250,7 @@ export async function confirmForfeitDuel() {
     const human = humanSide(state);
     const other = 1 - human;
     const name = state.header?.[other ? 'player2' : 'player1'] || translate(other ? 'duel.player2' : 'duel.player1');
-    const message = state.header?.match_length > 0 ? translate('duel.forfeitConfirm', { name }) : translate('duel.forfeitConfirmMoney', { n: 3 * (state.awaiting?.position?.cube?.value || 1) });
+    const message = state.header?.match_length > 0 ? translate('duel.forfeitConfirm', { name }) : translate('duel.forfeitConfirmMoney', { n: state.awaiting?.position?.cube?.value || 1 });
     const go = await confirmAction(message, { confirmLabel: translate('duel.forfeit'), tone: 'danger' });
     if (go) await forfeitDuel();
 }
