@@ -54,6 +54,25 @@ func (d *Database) FinishTranscription(id int64) (*TranscriptionSaveResult, erro
 	}, nil
 }
 
+// MaterializeTranscription writes, in one call, the Match a document of
+// Actions plays, or nothing: the first Action the rule machine refuses stops
+// everything and comes back as a *transcription.RefusedAction. No draft is
+// made.
+func (d *Database) MaterializeTranscription(header transcript.Header, actions []transcript.Action) (*TranscriptionSaveResult, error) {
+	var res *transcription.SaveResult
+	err := d.writeTranscripts(func(svc *transcription.Service) (err error) {
+		res, err = svc.Materialize(context.Background(), "", header, actions)
+		return err
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &TranscriptionSaveResult{
+		MatchID: res.MatchID, Games: res.Games, Moves: res.Moves,
+		Positions: res.Positions, ToAnalyze: res.ToAnalyze,
+	}, nil
+}
+
 // TranscriptionAnalysisResume is the fact ADR-0045 §8 refuses to store,
 // recounted instead: the most recent transcribed Match, and how many of its
 // positions still lack analysis.

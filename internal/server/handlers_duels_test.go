@@ -82,6 +82,11 @@ func TestDuelGesturesSurviveARestart(t *testing.T) {
 		t.Errorf("a Play by the wrong Side: status %d, want 400", status)
 	}
 
+	// A forfeit names its Side.
+	if status, _ := gesture(t, ts2, testTenant, "/v1/duels.forfeit", played.Revision, map[string]any{"id": created.ID}); status != http.StatusBadRequest {
+		t.Errorf("forfeit without a side: status %d, want 400", status)
+	}
+
 	// Throw it away.
 	status, body = gesture(t, ts2, testTenant, "/v1/duels.discard", played.Revision, map[string]any{"id": created.ID})
 	if ended := duelState(t, status, body); ended.Ended == nil || !ended.Ended.Discarded {
@@ -145,6 +150,10 @@ func TestDuelSecondClientOnTheSameRevisionIsRefused(t *testing.T) {
 		if status, _ := gesture(t, ts, testTenant, path, c.Revision, act); status != http.StatusConflict {
 			t.Errorf("%s on a stale revision: status %d, want 409", path, status)
 		}
+	}
+	forfeit := map[string]any{"id": c.ID, "side": 0}
+	if status, _ := gesture(t, ts, testTenant, "/v1/duels.forfeit", c.Revision, forfeit); status != http.StatusConflict {
+		t.Errorf("forfeit on a stale revision: status %d, want 409", status)
 	}
 }
 
@@ -229,5 +238,56 @@ func TestMatchOriginIsServed(t *testing.T) {
 	}
 	if status, body = gesture(t, reads, testTenant, "/v1/matches.origin", 0, map[string]any{"matchId": saved.ID + 100}); status != http.StatusNotFound {
 		t.Errorf("origin of no match: status %d (%s), want 404", status, body)
+	}
+}
+
+// A forfeit ends the Duel into a Match won by the other Side.
+func TestDuelForfeitWritesTheMatch(t *testing.T) {
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { st.Close() })
+	ts := duelServerOn(t, st, true)
+	status, body := gesture(t, ts, testTenant, "/v1/duels.create", 0, map[string]any{"matchLength": 3})
+	created := duelState(t, status, body)
+	status, body = gesture(t, ts, testTenant, "/v1/duels.forfeit", created.Revision, map[string]any{"id": created.ID, "side": 1})
+	ended := duelState(t, status, body)
+	if ended.Ended == nil || ended.Ended.MatchID == 0 || ended.Ended.Forfeited != 2 || ended.Score != [2]int{3, 0} {
+		t.Errorf("forfeit: %+v, score %v", ended.Ended, ended.Score)
+	}
+}
+
+// A Duel created with a combined seed refuses a play before the external
+// Sides' contributions, takes one from each, and refuses a second; an
+// external Side may declare its Bot in the same request.
+func TestDuelContributeOverTheWire(t *testing.T) {
+	st, err := sqlite.Open(context.Background(), ":memory:", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { st.Close() })
+	ts := duelServerOn(t, st, true)
+	status, body := gesture(t, ts, testTenant, "/v1/duels.create", 0, map[string]any{"matchLength": 3, "combinedSeed": true,
+		"sides": []any{map[string]any{"kind": "external"}, map[string]any{"kind": "external", "declared": map[string]any{"configuration": "normal", "engine": "v1.6.0"}}}})
+	s := duelState(t, status, body)
+	if s.Awaiting != nil || len(s.AwaitingContribution) != 2 || s.Header.Player2 != "gammonNet normal" {
+		t.Fatalf("created: awaiting %+v, contributions owed %v, player 2 %q", s.Awaiting, s.AwaitingContribution, s.Header.Player2)
+	}
+	if status, _ := gesture(t, ts, testTenant, "/v1/duels.act", s.Revision, map[string]any{"id": s.ID, "play": map[string]any{"side": 0, "kind": "roll"}}); status != http.StatusBadRequest {
+		t.Errorf("a play before the contributions: status %d", status)
+	}
+	if status, _ := gesture(t, ts, testTenant, "/v1/duels.contribute", s.Revision, map[string]any{"id": s.ID, "contribution": "x"}); status != http.StatusBadRequest {
+		t.Errorf("a contribution without a side: status %d", status)
+	}
+	for side, c := range []string{"alice", "bob"} {
+		status, body = gesture(t, ts, testTenant, "/v1/duels.contribute", s.Revision, map[string]any{"id": s.ID, "side": side, "contribution": c})
+		s = duelState(t, status, body)
+	}
+	if s.Awaiting == nil || s.Contributions != [2]string{"alice", "bob"} {
+		t.Fatalf("after the contributions: awaiting %+v, %v", s.Awaiting, s.Contributions)
+	}
+	if status, _ := gesture(t, ts, testTenant, "/v1/duels.contribute", s.Revision, map[string]any{"id": s.ID, "side": 0, "contribution": "again"}); status != http.StatusBadRequest {
+		t.Errorf("a second contribution: status %d", status)
 	}
 }

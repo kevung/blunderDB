@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 17:05+0200\n"
+"POT-Creation-Date: 2026-10-06 04:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: el\n"
@@ -43,17 +43,17 @@ msgstr ""
 "NDJSON για μια ροή λίστας) και, όπου υπάρχει, μια σημείωση για την "
 "προαιρετική κεφαλίδα ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:378
+#: ../../source/api_reference.rst:383
 msgid "Idempotence"
 msgstr "Ιδεμποτότητα"
 
-#: ../../source/api_reference.rst:380
+#: ../../source/api_reference.rst:385
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 47 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 48 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -66,7 +66,7 @@ msgstr ""
 "αναγνώσεις δεν έχουν παρενέργειες και οι εγγραφές των ``positions.*`` "
 "είναι αυτοδύναμες (idempotent) ως προς το αποτέλεσμα χάρη στο "
 "κατακερματισμό Zobrist του περιεχομένου — η αποθήκευση δύο φορές της "
-"ίδιας θέσης επιστρέφει την ίδια γραμμή, ποτέ διπλότυπο. 47 μέθοδοι "
+"ίδιας θέσης επιστρέφει την ίδια γραμμή, ποτέ διπλότυπο. 48 μέθοδοι "
 "δέχονται μια προαιρετική κεφαλίδα ``Idempotency-Key``: εκείνες των οποίων"
 " οι δύο κλήσεις είναι δύο διαφορετικά αποτελέσματα, και η "
 "``positions.save``, της οποίας η απάντηση λέει αν η κλήση δημιούργησε τη "
@@ -76,11 +76,11 @@ msgstr ""
 "αποτέλεσμά της — βλ. την ένδειξη «(Idempotency-Key)» στον παραπάνω "
 "πίνακα. Καμία άλλη μέθοδος δεν χρειάζεται ούτε δέχεται αυτή την κεφαλίδα."
 
-#: ../../source/api_reference.rst:392
+#: ../../source/api_reference.rst:397
 msgid "Lectures conditionnelles"
 msgstr "Υπό συνθήκη αναγνώσεις"
 
-#: ../../source/api_reference.rst:394
+#: ../../source/api_reference.rst:399
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "

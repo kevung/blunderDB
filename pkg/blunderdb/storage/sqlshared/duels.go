@@ -2,6 +2,7 @@ package sqlshared
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"iter"
@@ -32,24 +33,26 @@ func scanDuel(sc interface{ Scan(...any) error }) (*storage.Duel, error) {
 }
 
 // List streams the scope's Duels, most recently updated first; the id breaks
-// ties so the order is total.
-func (s *DuelStore) List(ctx context.Context, scope string) iter.Seq2[*storage.Duel, error] {
-	return func(yield func(*storage.Duel, error) bool) {
+// ties so the order is total. The seed column is not selected: an entry has
+// nowhere to hold it.
+func (s *DuelStore) List(ctx context.Context, scope string) iter.Seq2[*storage.DuelEntry, error] {
+	return func(yield func(*storage.DuelEntry, error) bool) {
 		tenant, targs := s.DB.TenantFilter("", scope)
 		rows, err := s.DB.Query(ctx,
-			`SELECT `+s.selectCols()+` FROM duel WHERE `+tenant+` ORDER BY updated_at DESC, id DESC`, targs...)
+			`SELECT id, `+s.DB.TimestampText("created_at")+`, `+s.DB.TimestampText("updated_at")+
+				`, format_version, label, revision FROM duel WHERE `+tenant+` ORDER BY updated_at DESC, id DESC`, targs...)
 		if err != nil {
 			yield(nil, errf(s.DB, "list duels", err))
 			return
 		}
 		defer rows.Close()
 		for rows.Next() {
-			d, err := scanDuel(rows)
-			if err != nil {
+			var d storage.DuelEntry
+			if err := rows.Scan(&d.ID, &d.CreatedAt, &d.UpdatedAt, &d.FormatVersion, &d.Label, &d.Revision); err != nil {
 				yield(nil, errf(s.DB, "list duels", err))
 				return
 			}
-			if !yield(d, nil) {
+			if !yield(&d, nil) {
 				return
 			}
 		}
@@ -150,14 +153,25 @@ func (s *DuelStore) SetOrigin(ctx context.Context, scope string, o *storage.Matc
 			return errf(tx, what, storage.ErrNotFound)
 		}
 		cols, args := tx.TenantColumns(scope)
-		cols = append(cols, "match_id", "start", "dice_seed", "stopped_early", "over_time", "bot_level", "cadence", "bot_engine")
-		args = append(args, o.MatchID, o.Start, o.DiceSeed, boolInt(o.StoppedEarly), o.OverTime, o.BotLevel, o.Cadence, o.BotEngine)
+		declared, err := encodeJSONColumn(o.DeclaredBots)
+		if err != nil {
+			return errf(tx, what, err)
+		}
+		contributions, err := encodeJSONColumn(o.Contributions)
+		if err != nil {
+			return errf(tx, what, err)
+		}
+		cols = append(cols, "match_id", "start", "dice_seed", "stopped_early", "over_time", "bot_level", "cadence", "bot_engine",
+			"declared_bots", "contributions")
+		args = append(args, o.MatchID, o.Start, o.DiceSeed, boolInt(o.StoppedEarly), o.OverTime, o.BotLevel, o.Cadence, o.BotEngine,
+			declared, contributions)
 		if _, err := tx.Exec(ctx, `INSERT INTO match_origin (`+strings.Join(cols, ", ")+`) VALUES (`+
 			Placeholders(len(cols))+`) ON CONFLICT (match_id) DO UPDATE SET
 			 start = excluded.start, dice_seed = excluded.dice_seed,
 			 stopped_early = excluded.stopped_early, over_time = excluded.over_time,
 			 bot_level = excluded.bot_level, cadence = excluded.cadence,
-			 bot_engine = excluded.bot_engine`, args...); err != nil {
+			 bot_engine = excluded.bot_engine, declared_bots = excluded.declared_bots,
+			 contributions = excluded.contributions`, args...); err != nil {
 			return errf(tx, what, err)
 		}
 		return nil
@@ -169,10 +183,11 @@ func (s *DuelStore) Origin(ctx context.Context, scope string, matchID int64) (*s
 	tenant, targs := s.DB.TenantFilter("", scope)
 	o := storage.MatchOrigin{MatchID: matchID}
 	var stopped int
+	var declared, contributions string
 	err := s.DB.QueryRow(ctx,
-		`SELECT start, dice_seed, stopped_early, over_time, bot_level, cadence, bot_engine
+		`SELECT start, dice_seed, stopped_early, over_time, bot_level, cadence, bot_engine, declared_bots, contributions
 		 FROM match_origin WHERE match_id = ? AND `+tenant, append([]any{matchID}, targs...)...).
-		Scan(&o.Start, &o.DiceSeed, &stopped, &o.OverTime, &o.BotLevel, &o.Cadence, &o.BotEngine)
+		Scan(&o.Start, &o.DiceSeed, &stopped, &o.OverTime, &o.BotLevel, &o.Cadence, &o.BotEngine, &declared, &contributions)
 	if errors.Is(err, ErrNoRows) {
 		return nil, errf(s.DB, what, storage.ErrNotFound)
 	}
@@ -180,7 +195,28 @@ func (s *DuelStore) Origin(ctx context.Context, scope string, matchID int64) (*s
 		return nil, errf(s.DB, what, err)
 	}
 	o.StoppedEarly = stopped != 0
+	if declared != "" {
+		if err := json.Unmarshal([]byte(declared), &o.DeclaredBots); err != nil {
+			return nil, errf(s.DB, what, err)
+		}
+	}
+	if contributions != "" {
+		if err := json.Unmarshal([]byte(contributions), &o.Contributions); err != nil {
+			return nil, errf(s.DB, what, err)
+		}
+	}
 	return &o, nil
+}
+
+// encodeJSONColumn is a list column of match_origin (declared_bots,
+// contributions): JSON, the empty string when the list is, so that an origin
+// without one is stored as before.
+func encodeJSONColumn[T any](v []T) (string, error) {
+	if len(v) == 0 {
+		return "", nil
+	}
+	b, err := json.Marshal(v)
+	return string(b), err
 }
 
 func boolInt(v bool) int {

@@ -21,7 +21,9 @@ import (
 // is recorded as unknown, never as short.
 //
 // A Side is "external" (the CLI plays it) or "bot:<level>" (the engine plays
-// it, within the call that gave it the trait).
+// it, within the call that gave it the trait). "external:<configuration>@<engine>"
+// is an external Side that declares the Bot playing behind it, recorded in the
+// Match's origin as declared, not attested.
 func (cli *CLI) runDuel(args []string) error {
 	if len(args) < 1 {
 		cli.printDuelUsage()
@@ -46,17 +48,19 @@ func (cli *CLI) duelHandlers() map[string]func([]string) error {
 		return func(args []string) error { return cli.runDuelAct(kind, args) }
 	}
 	return map[string]func([]string) error{
-		"create":  cli.runDuelCreate,
-		"show":    cli.runDuelShow,
-		"list":    cli.runDuelList,
-		"roll":    act(duel.PlayRoll),
-		"move":    act(duel.PlayMove),
-		"double":  act(duel.PlayDouble),
-		"take":    act(duel.PlayTake),
-		"pass":    act(duel.PlayPass),
-		"resign":  act(duel.PlayResign),
-		"stop":    cli.runDuelStop,
-		"discard": cli.runDuelDiscard,
+		"create":     cli.runDuelCreate,
+		"show":       cli.runDuelShow,
+		"list":       cli.runDuelList,
+		"roll":       act(duel.PlayRoll),
+		"move":       act(duel.PlayMove),
+		"double":     act(duel.PlayDouble),
+		"take":       act(duel.PlayTake),
+		"pass":       act(duel.PlayPass),
+		"resign":     act(duel.PlayResign),
+		"stop":       cli.runDuelStop,
+		"discard":    cli.runDuelDiscard,
+		"forfeit":    cli.runDuelForfeit,
+		"contribute": cli.runDuelContribute,
 	}
 }
 
@@ -89,8 +93,9 @@ func (cli *CLI) printDuelUsage() {
 	fmt.Println("  take      Take a double")
 	fmt.Println("  pass      Pass on a double")
 	fmt.Println("  resign    Resign the game (single, gammon or backgammon)")
-	fmt.Println("  stop      Stop the Duel and keep the Match as it stands")
+	fmt.Println("  stop      Stop a money session and keep its Match as it stands")
 	fmt.Println("  discard   Throw the Duel away: nothing of it is written")
+	fmt.Println("  forfeit   Give the match up (--side): the Match is written won by the other Side")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob")
@@ -148,16 +153,18 @@ func (cli *CLI) runDuelCreate(args []string) error {
 		"blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob",
 		"blunderdb duel create --db database.db --money --jacoby",
 		"blunderdb duel create --db database.db --length 7 --side2 bot:normal",
+		"blunderdb duel create --db database.db --length 5 --name1 Alice --side2 external:normal@v1.6.0",
 		"blunderdb duel create --db database.db --length 3 --side1 bot:instant --side2 bot:instant")
 	length := fs.Int("length", 0, "Match length in points, 1 to 25")
 	money := fs.Bool("money", false, "A money session instead of a match")
 	jacoby := fs.Bool("jacoby", false, "With --money: play the Jacoby rule")
-	side1 := fs.String("side1", "external", "Player 1's Side: external, or bot:<level> (instant, normal, thorough)")
+	side1 := fs.String("side1", "external", "Player 1's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough)")
 	side2 := fs.String("side2", "external", "Player 2's Side: external, or bot:<level>; two Bots play the whole match in this call")
 	name1 := fs.String("name1", "", "Player 1's name")
 	name2 := fs.String("name2", "", "Player 2's name")
 	start := fs.String("start", "", "XGID of the Position the first game begins at (default: the opening position)")
 	discard := fs.Bool("discard-at-end", false, "Throw the draft away when the match is won instead of writing the Match")
+	combined := fs.Bool("combined-seed", false, "Roll nothing before each external Side has contributed to the seed (duel contribute)")
 	svc, err := cli.duelOpen(fs, dbPath, format, args)
 	if err != nil {
 		return err
@@ -166,7 +173,7 @@ func (cli *CLI) runDuelCreate(args []string) error {
 		return fmt.Errorf("give --length or --money, one of the two")
 	}
 	set := duel.Settings{
-		MatchLength: *length, Jacoby: *jacoby, DiscardAtEnd: *discard,
+		MatchLength: *length, Jacoby: *jacoby, DiscardAtEnd: *discard, CombinedSeed: *combined,
 	}
 	for i, v := range []struct{ spec, name string }{{*side1, *name1}, {*side2, *name2}} {
 		if set.Sides[i], err = parseSide(v.spec, v.name); err != nil {
@@ -187,15 +194,23 @@ func (cli *CLI) runDuelCreate(args []string) error {
 	return printDuel(st, *format)
 }
 
-// parseSide reads "external" or "bot:<level>" into the Side a Duel records.
+// parseSide reads "external", "external:<configuration>@<engine>" or
+// "bot:<level>" into the Side a Duel records.
 func parseSide(v, name string) (duel.SideSpec, error) {
-	switch level, isBot := strings.CutPrefix(v, "bot:"); {
+	level, isBot := strings.CutPrefix(v, "bot:")
+	declared, isDeclared := strings.CutPrefix(v, "external:")
+	switch {
 	case v == "external" || v == "":
 		return duel.SideSpec{Kind: duel.SideExternal, Name: name}, nil
 	case isBot:
 		return duel.SideSpec{Kind: duel.SideBot, Level: level}, nil
+	case isDeclared:
+		if conf, engine, ok := strings.Cut(declared, "@"); ok && conf != "" && engine != "" {
+			return duel.SideSpec{Kind: duel.SideExternal, Name: name,
+				Declared: &duel.DeclaredBot{Configuration: conf, Engine: engine}}, nil
+		}
 	}
-	return duel.SideSpec{}, fmt.Errorf("side %q: external, or bot:<level> (%s)", v, strings.Join(duel.BotLevels, ", "))
+	return duel.SideSpec{}, fmt.Errorf("side %q: external, external:<configuration>@<engine>, or bot:<level> (%s)", v, strings.Join(duel.BotLevels, ", "))
 }
 
 func (cli *CLI) runDuelShow(args []string) error {
@@ -274,6 +289,9 @@ func (cli *CLI) runDuelAct(kind duel.PlayKind, args []string) error {
 	if err != nil {
 		return err
 	}
+	if len(cur.AwaitingContribution) > 0 {
+		return fmt.Errorf("duel %d awaits a contribution to its seed from Side %d before any play (duel contribute)", *id, cur.AwaitingContribution[0]+1)
+	}
 	if cur.Awaiting == nil {
 		return fmt.Errorf("duel %d awaits nothing", *id)
 	}
@@ -322,6 +340,65 @@ func stepsOf(d *duel.Decision, notation string) ([]domain.CheckerStep, error) {
 	return nil, fmt.Errorf("%q is not a legal play of this roll: `duel show` lists them", notation)
 }
 
+// runDuelForfeit has a Side give the match up: the Duel ends, won by the
+// other Side, and its Match is written as a match won.
+func (cli *CLI) runDuelForfeit(args []string) error {
+	fs, dbPath, format := duelFlagSet("forfeit", "Give the match up: the game in progress goes to the other Side for the points that bring it to the length (at money play, a single at the cube's value), and the Match is written won by the other Side.",
+		"blunderdb duel forfeit --db database.db --id 1 --side 1")
+	id := fs.Int64("id", 0, "Duel id (required)")
+	side := fs.Int("side", 0, "The Side that gives the match up, 1 or 2 (required)")
+	revision := fs.Int64("revision", 0, "Refuse unless the Duel is at this revision (default: no check)")
+	svc, err := cli.duelOpen(fs, dbPath, format, args)
+	if err != nil {
+		return err
+	}
+	if *id == 0 {
+		return fmt.Errorf("missing required flag: --id")
+	}
+	if *side != 1 && *side != 2 {
+		return fmt.Errorf("--side is required, 1 or 2")
+	}
+	ctx := context.Background()
+	rev, err := svc.Ensure(ctx, "", *id, *revision)
+	if err != nil {
+		return fmt.Errorf("duel %d: %w", *id, err)
+	}
+	st, err := svc.Forfeit(ctx, "", *id, rev, *side-1)
+	if err != nil {
+		return fmt.Errorf("duel %d: %w", *id, err)
+	}
+	return printDuel(st, *format)
+}
+
+func (cli *CLI) runDuelContribute(args []string) error {
+	fs, dbPath, format := duelFlagSet("contribute", "Contribute to the seed of a Duel created with --combined-seed: once per external Side, before the first roll, which the last contribution starts.",
+		"blunderdb duel contribute --db database.db --id 1 --side 1 --value \"my own randomness\"")
+	id := fs.Int64("id", 0, "Duel id (required)")
+	side := fs.Int("side", 0, "The contributing Side, 1 or 2 (required)")
+	value := fs.String("value", "", fmt.Sprintf("The contribution, 1 to %d bytes of text (required)", duel.MaxContribution))
+	revision := fs.Int64("revision", 0, "Refuse unless the Duel is at this revision (default: no check)")
+	svc, err := cli.duelOpen(fs, dbPath, format, args)
+	if err != nil {
+		return err
+	}
+	if *id == 0 {
+		return fmt.Errorf("missing required flag: --id")
+	}
+	if *side != 1 && *side != 2 {
+		return fmt.Errorf("--side is required, 1 or 2")
+	}
+	ctx := context.Background()
+	rev, err := svc.Ensure(ctx, "", *id, *revision)
+	if err != nil {
+		return fmt.Errorf("duel %d: %w", *id, err)
+	}
+	st, err := svc.Contribute(ctx, "", *id, rev, *side-1, *value)
+	if err != nil {
+		return fmt.Errorf("duel %d: %w", *id, err)
+	}
+	return printDuel(st, *format)
+}
+
 func (cli *CLI) runDuelStop(args []string) error { return cli.runDuelEnd("stop", true, args) }
 
 func (cli *CLI) runDuelDiscard(args []string) error { return cli.runDuelEnd("discard", false, args) }
@@ -329,7 +406,7 @@ func (cli *CLI) runDuelDiscard(args []string) error { return cli.runDuelEnd("dis
 func (cli *CLI) runDuelEnd(sub string, keep bool, args []string) error {
 	summary := "Throw the Duel away: nothing of it is written, and the Match is not made."
 	if keep {
-		summary = "Stop the Duel and write the Match as it stands: an unfinished game keeps no winner, and a match short of its length is marked stopped early."
+		summary = "Stop a money session and write its Match as it stands: an unfinished game keeps no winner. A match in points is refused: it is written only once won (suspend, forfeit or discard it)."
 	}
 	fs, dbPath, format := duelFlagSet(sub, summary, "blunderdb duel "+sub+" --db database.db --id 1")
 	id := fs.Int64("id", 0, "Duel id (required)")
@@ -371,12 +448,15 @@ func printDuel(st *duel.State, format string) error {
 			fmt.Println("Ended: thrown away, nothing written.")
 		default:
 			fmt.Printf("Ended: Match %d written (seed %s)", e.MatchID, e.DiceSeed)
-			if e.StoppedEarly {
-				fmt.Print(", stopped early")
+			if e.Forfeited != 0 {
+				fmt.Printf(", forfeited by Side %d", e.Forfeited)
 			}
 			fmt.Println(".")
 		}
 		return nil
+	}
+	for _, side := range st.AwaitingContribution {
+		fmt.Printf("Awaits: Side %d (%s), a contribution to the seed (duel contribute)\n", side+1, st.Sides[side].Name)
 	}
 	d := st.Awaiting
 	if d == nil {

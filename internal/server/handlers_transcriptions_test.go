@@ -296,3 +296,44 @@ func TestTranscriptionSessionPerCallNeedsNoSession(t *testing.T) {
 		t.Fatalf("close without sessionId under call: status %d (%s)", status, body)
 	}
 }
+
+// transcriptions.materialize writes the Match of a whole document of Actions
+// in one call; the first Action the machine refuses answers with its rank and
+// writes nothing.
+func TestTranscriptionMaterialize(t *testing.T) {
+	ts := newTranscriptionServer(t, 0)
+	st := createDraft(t, ts, testTenant)
+	for _, d := range [][2]int{{3, 1}, {4, 2}, {5, 3}, {6, 4}} {
+		st = typeAction(t, ts, testTenant, st, d[0], d[1])
+	}
+	actions := st.Annotated.Document.Actions
+	header := transcript.Header{MatchLength: 7, Player1: "A", Player2: "B"}
+
+	status, body := gesture(t, ts, "2", "/v1/transcriptions.materialize", 0, map[string]any{"header": header, "actions": actions})
+	if status != http.StatusOK {
+		t.Fatalf("materialize: status %d: %s", status, body)
+	}
+	var res transcription.SaveResult
+	if err := json.Unmarshal(body, &res); err != nil || res.MatchID == 0 || res.Moves != 4 || res.Games != 1 {
+		t.Fatalf("materialize answered %s (%v)", body, err)
+	}
+
+	bad := append([]transcript.Action(nil), actions...)
+	bad[2] = bad[1]
+	status, body = gesture(t, ts, "3", "/v1/transcriptions.materialize", 0, map[string]any{"header": header, "actions": bad})
+	if status < 400 || status >= 500 {
+		t.Fatalf("a refused Action: status %d: %s", status, body)
+	}
+	var env struct {
+		Error struct {
+			Details map[string]any `json:"details"`
+		} `json:"error"`
+	}
+	if err := json.Unmarshal(body, &env); err != nil || env.Error.Details["rank"] != float64(2) || env.Error.Details["detail"] == "" {
+		t.Fatalf("the refusal must carry its rank and its reason: %s", body)
+	}
+	status, body = gesture(t, ts, "2", "/v1/matches.list", 0, map[string]any{})
+	if status != http.StatusOK || bytes.Count(body, []byte(`"canonical_hash"`)) != 1 {
+		t.Fatalf("a refused document must leave the one match written before: %s", body)
+	}
+}

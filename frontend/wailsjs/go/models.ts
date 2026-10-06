@@ -279,6 +279,7 @@ export namespace database {
 	export class DuelOffer {
 	    cadences: duel.Cadence[];
 	    botLevels: string[];
+	    levels: duel.LevelInfo[];
 	
 	    static createFrom(source: any = {}) {
 	        return new DuelOffer(source);
@@ -288,6 +289,7 @@ export namespace database {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.cadences = this.convertValues(source["cadences"], duel.Cadence);
 	        this.botLevels = source["botLevels"];
+	        this.levels = this.convertValues(source["levels"], duel.LevelInfo);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -3020,8 +3022,8 @@ export namespace duel {
 	export class Ending {
 	    matchId: number;
 	    diceSeed?: string;
-	    stoppedEarly?: boolean;
 	    discarded?: boolean;
+	    forfeited?: number;
 	    overTime?: number;
 	
 	    static createFrom(source: any = {}) {
@@ -3032,9 +3034,39 @@ export namespace duel {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.matchId = source["matchId"];
 	        this.diceSeed = source["diceSeed"];
-	        this.stoppedEarly = source["stoppedEarly"];
 	        this.discarded = source["discarded"];
+	        this.forfeited = source["forfeited"];
 	        this.overTime = source["overTime"];
+	    }
+	}
+	export class LevelInfo {
+	    name: string;
+	    ply: number;
+	    pruneK: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new LevelInfo(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["name"];
+	        this.ply = source["ply"];
+	        this.pruneK = source["pruneK"];
+	    }
+	}
+	export class MatchClock {
+	    start: number[];
+	    remaining: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new MatchClock(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.start = source["start"];
+	        this.remaining = source["remaining"];
 	    }
 	}
 	export class Origin {
@@ -3048,6 +3080,8 @@ export namespace duel {
 	    bot_engine: string;
 	    fingerprint: string;
 	    cadence_settings?: Cadence;
+	    lost_on_time: boolean;
+	    clock?: MatchClock;
 	
 	    static createFrom(source: any = {}) {
 	        return new Origin(source);
@@ -3065,6 +3099,8 @@ export namespace duel {
 	        this.bot_engine = source["bot_engine"];
 	        this.fingerprint = source["fingerprint"];
 	        this.cadence_settings = this.convertValues(source["cadence_settings"], Cadence);
+	        this.lost_on_time = source["lost_on_time"];
+	        this.clock = this.convertValues(source["clock"], MatchClock);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

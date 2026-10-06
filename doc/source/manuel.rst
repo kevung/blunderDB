@@ -86,7 +86,7 @@ Des panneaux peuvent être affichés pour:
 
 * afficher les métadonnées de la base de données (panneau métadonnées).
 
-La hauteur du panneau se règle en tirant sa poignée ; chaque onglet retient la sienne.
+La hauteur du panneau se règle en tirant sa poignée ; elle reste la même d'un onglet à l'autre.
 
 Des fenêtres modales peuvent s'afficher pour:
 
@@ -157,8 +157,13 @@ suivantes:
 
 * le **compteur de bibliothèque** — « 412 positions · 38 blunders · 5 matchs »
   — où chaque nombre **ouvre ce qu'il compte** : les positions, la recherche
-  ``E>`` préparée dans la ligne de commande au seuil de la bibliothèque, ou la
-  liste des matchs. Un chiffre qu'on ne peut pas suivre est une décoration. Le
+  ``E>`` au seuil de la bibliothèque (lancée aussitôt, comme si on l'avait
+  saisie, et rangée dans l'historique des recherches), ou la liste des matchs.
+  Quand la liste à l'écran n'est pas la bibliothèque entière (recherche,
+  collection, match), le nombre de blunders s'écrit « 12 / 340 blunders » : les
+  blunders de cette liste, puis ceux de la bibliothèque, au même seuil ; une
+  liste de plus de 20 000 positions n'est pas comptée et garde le seul total.
+  Un chiffre qu'on ne peut pas suivre est une décoration. Le
   seuil des blunders est celui de la bibliothèque, réglé dans l'onglet
   *Bibliothèque* de la configuration et partagé avec les statistiques : deux
   seuils feraient dire deux choses au même mot. Le compteur promet exactement
@@ -169,6 +174,7 @@ suivantes:
   trous). Si les positions sont estimées, le nombre de blunders, qui n'a pas
   d'estimation honnête, s'affiche « ? » — le lien lance la recherche, qui
   donne le compte exact.
+  Les deux nombres de blunders sont des liens distincts : le premier lance la sous-recherche ``ss E>`` dans la liste à l'écran, le second la recherche dans toute la bibliothèque ; quand seul le total s'affiche, il n'y a qu'un lien.
 
 .. note:: Dans le cas de positions issues d'une recherche par l'utilisateur, le
    nombre de positions indiqué dans la barre d'état correspond au nombre de
@@ -1502,11 +1508,20 @@ L'en-tête de chaque partie compte ses marques, qu'elle soit dépliée ou non :
 on voit sans l'ouvrir dans quelle partie se trouvent les blunders.
 
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot),
-l'onglet ajoute une colonne **Durée** : celle du coup de pions, précédée de
-celle du videau (◇) quand le joueur a réfléchi à la question avant de lancer.
-Un clic sur l'en-tête de la colonne trie les coups de chaque partie du plus long
+l'onglet ajoute trois colonnes alignées sur les chiffres : **Videau** (la
+décision de videau, prise avant le lancer ou sur la ligne du videau elle-même),
+**Jeu** (le coup de pions) et **Horloge**, le temps que le joueur au trait a
+consommé depuis le début du match, ce coup compris, quel que soit le tri. Sous
+une cadence, la colonne devient **Pendule** et donne le temps qui reste à la
+pendule du joueur après le coup, calculé comme l'arbitre du Duel le compte (délai
+par tour, réserve ramenée à zéro au dépassement). Les informations du match et
+son en-tête rappellent la cadence (préréglage, délai, comportement au
+dépassement) et la banque de temps de chaque joueur, ramenée au score de départ
+quand la réserve est comptée par point restant. Un clic sur l'en-tête **Jeu** trie les coups de chaque partie du plus long
 au plus court, puis du plus court au plus long, puis rend l'ordre du match ; une
-durée inconnue reste vide et passe en dernier. Au-dessus des parties, un résumé
+case sans durée (pas de décision de videau à ce tour, ou coup joué par
+l'Arbitre seul) porte un tiret, et ces coups passent en dernier. L'Horloge
+part de zéro dès le premier coup. Au-dessus des parties, un résumé
 donne pour chaque joueur le total, la moyenne par coup de pions et par décision
 de videau, et, si le match a une cadence, une marque pour le joueur dont la
 réserve s'est épuisée en premier (le Duel n'enregistre que celui-là) ; un
@@ -1525,7 +1540,7 @@ Un match joué ici, issu d'un Duel, porte son origine en tête de la
 transcription, sur une ligne, même s'il n'a aucun coup : « Joué ici », puis,
 s'il y a lieu, « Perdu au temps » avec le joueur dont la réserve s'est épuisée
 sous une cadence qui fait perdre le match, ou « Arrêté avant la fin » pour un
-Duel arrêté, la cadence, le joueur dont la réserve s'est épuisée en premier et
+Match qu'un Duel arrêté a laissé inachevé, la cadence, le joueur dont la réserve s'est épuisée en premier et
 le niveau du Bot avec la version de gammonNet dont il a joué la politique. Un
 clic déplie le départ (la position initiale ou le XGID choisi), le germe des
 dés révélé et son SHA-256, à comparer avec l'empreinte publiée à la création
@@ -1884,10 +1899,6 @@ Un brouillon qui porte des incohérences est terminé tout de même, après un
 avertissement : rien n'est refusé. Un coup illégal est exporté tel qu'il a été
 joué, avec l'avertissement que gnubg et XG le signaleront (« Invalid move ») et
 divergeront ensuite.
-
-Le panneau **Matchs** rappelle chaque brouillon en cours au-dessus de la
-liste des matchs : la ligne « Brouillon en cours » ouvre l'onglet
-Transcription.
 
 Pour corriger un match de la bibliothèque, le bouton ⌨ de la liste des matchs
 ou « **Éditer la transcription** » de sa fiche ouvre un brouillon depuis ce
@@ -4019,7 +4030,9 @@ l'autre, et la liste des Duels en suspens :
 * **Départ** : la position initiale, la position au plateau, ou la position
   initiale à un score choisi.
 * **Côté joué** (joueur 1 ou 2) et **niveau du Bot** (``instant``, ``normal``,
-  ``thorough``, ceux de l'analyse).
+  ``thorough``, ceux de l'analyse). Le sélecteur dit la profondeur de chaque
+  niveau, par exemple « instant (0 coup) » ou « normal (2 coups, élagué) » ; plus profond, c'est plus
+  fort et plus lent.
 * **Cadence** : sans cadence, ou une cadence nommée (une réserve par joueur et
   un délai gratuit à chaque tour), et ce que fait le temps écoulé : continuer
   en le notant, ou perdre le match.
@@ -4029,11 +4042,17 @@ l'autre, et la liste des Duels en suspens :
 « Reprendre » rouvre un Duel en suspens au même point, avec les mêmes dés à
 venir ; ses horloges étaient arrêtées.
 
+Un Duel en suspens ne quitte pas sa base : l'export de la base ne l'emporte
+pas, parce que ses dés à venir ne doivent sortir par aucune voie avant la fin.
+Un Duel terminé part comme tout Match.
+
 Le Duel se joue au plateau. Le panneau montre la feuille de match en deux
 colonnes, comme la Transcription, les horloges quand une cadence court, une
-ligne qui dit ce qui est attendu, et « Suspendre », « Arrêter et garder »,
-« Arrêter et jeter ». Le score et le videau sont ceux du plateau ; le score et
-les horloges restent dans la barre d'état quand l'onglet est replié.
+ligne qui dit ce qui est attendu, et « Abandonner le match », « Mettre en
+pause », « Annuler le match ». Un match en points ne s'enregistre qu'entier :
+il n'y a pas d'arrêt qui garde un match inachevé. Le score et le videau sont
+ceux du plateau ; le score et les horloges restent dans la barre d'état quand
+l'onglet est replié.
 L'empreinte SHA-256 du germe des dés, publiée par l'Arbitre dès la création,
 se lit dans l'infobulle de la ligne d'invite du panneau, puis avec le germe dans l'origine du Match terminé. Le plateau
 passe en mode **DUEL** : la bibliothèque ne se parcourt plus, l'édition, le
@@ -4058,11 +4077,17 @@ pipcount (``P``) et l'aide.
 * Le clic droit hors du plateau, ou sur le plateau hors de son coup, ouvre le
   menu du Duel : mettre la position sur la Pile ou l'en retirer, abandonner la
   partie pour un simple, un gammon ou un backgammon (à son tour, après
-  confirmation), suspendre, arrêter. Ce menu n'offre ni évaluation ni
-  édition.
-* « Suspendre » met le Duel en suspens, horloges arrêtées. « Arrêter et
-  garder » écrit le Match tel qu'il est ; « Arrêter et jeter » n'en écrit
-  rien. Arrêter n'est jamais céder la partie.
+  confirmation), abandonner le match, le mettre en pause, l'annuler. Ce menu
+  n'offre ni évaluation ni édition.
+* « Abandonner le match » cède le match entier, à tout moment et après
+  confirmation : la partie en cours va à l'adversaire pour les points qui le
+  portent à la longueur, et le Match s'écrit gagné par lui. En argent, la
+  partie en cours est perdue en simple, à la valeur du videau (avec ou sans
+  règle Jacoby), et la session se clôt. Sous une cadence qui fait perdre le
+  match, une réserve épuisée vaut l'abandon du match par ce joueur.
+* « Mettre en pause » met le Duel en suspens, horloges arrêtées ; il se
+  reprend au même point. « Annuler le match » le jette, après confirmation :
+  rien n'en est écrit.
 * Un double-clic hors du plateau met la position sur la Pile, ou l'en retire,
   comme ``B`` ; seul le marque-page au coin du plateau le montre.
 

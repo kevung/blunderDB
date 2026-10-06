@@ -34,6 +34,10 @@ export function GetCommentAuthor() {
   return window['go']['main']['Config']['GetCommentAuthor']();
 }
 
+export function GetDuelForm() {
+  return window['go']['main']['Config']['GetDuelForm']();
+}
+
 export function GetEpcChallenge() {
   return window['go']['main']['Config']['GetEpcChallenge']();
 }
@@ -102,14 +106,6 @@ export function GetStatsFilter() {
   return window['go']['main']['Config']['GetStatsFilter']();
 }
 
-export function GetDuelForm() {
-  return window['go']['main']['Config']['GetDuelForm']();
-}
-
-export function SaveDuelForm(arg1) {
-  return window['go']['main']['Config']['SaveDuelForm'](arg1);
-}
-
 export function GetTabOrder() {
   return window['go']['main']['Config']['GetTabOrder']();
 }
@@ -172,6 +168,10 @@ export function SaveCommentAuthor(arg1) {
 
 export function SaveConfig(arg1) {
   return window['go']['main']['Config']['SaveConfig'](arg1);
+}
+
+export function SaveDuelForm(arg1) {
+  return window['go']['main']['Config']['SaveDuelForm'](arg1);
 }
 
 export function SaveEpcChallenge(arg1) {

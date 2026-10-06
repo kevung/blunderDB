@@ -62,7 +62,7 @@
     import { initRolloutChoice } from './services/rolloutService.js';
     import { applyTabPanels } from './services/tabHandler.js';
     import { resizable } from './utils/resizeHandle.js';
-    import { initTabHeights, tabPanelHeight, rememberTabHeight } from './utils/tabHeights.js';
+    import { initTabHeights, panelHeightValue, rememberPanelHeight } from './utils/tabHeights.js';
     import { fileDrop } from './utils/fileDrop.js';
     import { loadWorstBlunders } from './services/positionLoader.js';
 
@@ -112,27 +112,16 @@
         }
     });
     let panelHeight = $state(DEFAULT_PANEL_HEIGHT);
-    // Hauteur plancher de l'onglet Transcription (ADR-0048 décision 5), mesurée : palette 236 px,
-    // barre du brouillon 34, padding 16, barre d'onglets 30. Appliquée sans toucher la valeur
-    // stockée, pour qu'un autre onglet retrouve la hauteur choisie.
-    const TRANSCRIPTION_MIN_HEIGHT = 320;
-    // Stats stacks a filter bar, a row of cards and a summary: at the default height only one
-    // row of cards shows. Same mechanism, same reason: the stored height is left alone.
-    const STATS_MIN_HEIGHT = 400;
-    // A floor never takes more than this share of the window: the board keeps the rest.
-    const MAX_FLOOR_SHARE = 0.55;
     let windowHeight = $state(typeof window === 'undefined' ? 800 : window.innerHeight);
-    let tabFloor = $derived($activeTabStore === 'transcription' ? TRANSCRIPTION_MIN_HEIGHT : $activeTabStore === 'stats' ? STATS_MIN_HEIGHT : 0);
-    let floorPanelHeight = $derived(tabFloor ? Math.max(panelHeight, Math.min(tabFloor, Math.round(windowHeight * MAX_FLOOR_SHARE))) : panelHeight);
     // The Direction page replaces the board: in a short window (a 150 % zoom is 512 px high) a
     // dock at its stored height leaves it a few dozen pixels and hides its buttons behind the
     // tab bar. Only then does the dock yield; the stored height is left alone.
     const DIRECTION_MIN_HEIGHT = 360;
     const DIRECTION_DOCK_SHARE = 0.3;
     let appliedPanelHeight = $derived(
-        $directionPageShownStore && windowHeight - floorPanelHeight < DIRECTION_MIN_HEIGHT
-            ? Math.min(floorPanelHeight, Math.max(windowHeight - DIRECTION_MIN_HEIGHT, Math.round(windowHeight * DIRECTION_DOCK_SHARE)))
-            : floorPanelHeight
+        $directionPageShownStore && windowHeight - panelHeight < DIRECTION_MIN_HEIGHT
+            ? Math.min(panelHeight, Math.max(windowHeight - DIRECTION_MIN_HEIGHT, Math.round(windowHeight * DIRECTION_DOCK_SHARE)))
+            : panelHeight
     );
     let panelWidth = $state(DEFAULT_PANEL_WIDTH);
     let isSidePanel = $derived($effectivePositionStore === PANEL_SIDE);
@@ -231,7 +220,6 @@
                 // Transcription is a scratch mode too: the board belongs to the draft's Cursor (ADR-0045).
                 if (tab === 'transcription' && $statusBarModeStore !== 'TRANSCRIBE') enterTranscribeMode();
                 else if (!isFirstRun && prevTab === 'transcription' && tab !== 'transcription' && $statusBarModeStore === 'TRANSCRIBE') exitTranscribeMode();
-                panelHeight = tabPanelHeight(tab);
                 applyTabPanels(tab);
             });
         });
@@ -246,7 +234,7 @@
     }
     function savePanelSize(size, side) {
         if (side) savePanelWidth(size);
-        else rememberTabHeight($activeTabStore, size);
+        else rememberPanelHeight(size);
     }
 
     // A trackpad fires many wheel events per gesture, each a Wails round trip; 60 ms between
@@ -388,7 +376,7 @@
 
         // One-shot seed of the local $state: the resize-handle drag owns it afterwards.
         Promise.all([initPanelSize(), initTabHeights()]).then(() => {
-            panelHeight = tabPanelHeight(get(activeTabStore));
+            panelHeight = panelHeightValue();
             panelWidth = get(panelWidthStore);
         });
 

@@ -2,7 +2,7 @@
 // duel.Service the CLI and the daemon drive (Database bindings). The panel derives nothing the
 // Arbiter decides: every state comes back from it, the board included.
 import { get } from 'svelte/store';
-import { CreateDuel, OpenDuel, SuspendDuel, PlayDuel, FlagDuel, StopDuel, ListDuels, DuelOffer } from '../../wailsjs/go/database/Database.js';
+import { CreateDuel, OpenDuel, SuspendDuel, PlayDuel, FlagDuel, StopDuel, ForfeitDuel, ListDuels, DuelOffer } from '../../wailsjs/go/database/Database.js';
 import { LegalMoves, StartGammonNetMatchBatch } from '../../wailsjs/go/gui/App.js';
 import { GetGammonNetAnalysisPly, GetGammonNetPruneK, GetDuelForm, SaveDuelForm } from '../../wailsjs/go/main/Config.js';
 import { duelStore, duelListStore, duelNowStore, duelAnimatingStore, duelHoldsBoardStore, duelBoardStore } from '../stores/duelStore.js';
@@ -54,7 +54,7 @@ export async function duelOffer() {
         return await DuelOffer();
     } catch (error) {
         logger.error('could not read the Duel offer:', error);
-        return { cadences: [], botLevels: [] };
+        return { cadences: [], botLevels: [], levels: [] };
     }
 }
 
@@ -98,14 +98,23 @@ export async function suspendDuel() {
 }
 
 /**
- * Arrête le Duel avant sa fin : gardé, le Match s'écrit tel qu'il est ; jeté, rien du Duel ne
- * s'écrit. Ce n'est jamais céder la partie (ADR-0072 règle 10).
- * @param {boolean} keep
+ * Annule le match : le Duel est jeté, rien n'en est écrit (ADR-0072 règle 10 : arrêter n'est
+ * jamais céder).
  */
-export async function stopDuel(keep) {
+export async function cancelDuel() {
     const duel = get(duelStore);
     if (!duel?.state) return;
-    await gesture(() => StopDuel(duel.state.id, duel.state.revision, keep));
+    await gesture(() => StopDuel(duel.state.id, duel.state.revision, false));
+}
+
+/**
+ * Abandonne le match : le joueur cède le match entier, que l'adversaire gagne ; le Match est
+ * écrit comme un match gagné (ADR-0074). Pas une Action du jeu : à tout moment.
+ */
+export async function forfeitDuel() {
+    const duel = get(duelStore);
+    if (!duel?.state) return;
+    await gesture(() => ForfeitDuel(duel.state.id, duel.state.revision, humanSide(duel.state)));
 }
 
 // ── The player's decisions ───────────────────────────────────────────────────
@@ -120,7 +129,7 @@ export async function decide(kind, level = 0) {
     const duel = get(duelStore);
     if (!duel?.state?.awaiting) return;
     const side = humanSide(duel.state);
-    await gesture(() => PlayDuel(duel.state.id, duel.state.revision, { side, kind, ...(level ? { level } : {}) }));
+    await gesture(() => PlayDuel(duel.state.id, duel.state.revision, /** @type {any} */ ({ side, kind, ...(level ? { level } : {}) })));
 }
 
 /** The explicit validation of the move arranged on the board; nothing is taken back after it. */
@@ -130,7 +139,7 @@ export async function validateMove() {
     const done = play ? completedPlay(play) : null;
     if (!duel?.state?.awaiting || !done) return;
     const side = humanSide(duel.state);
-    await gesture(() => PlayDuel(duel.state.id, duel.state.revision, { side, kind: 'move', steps: done.steps }));
+    await gesture(() => PlayDuel(duel.state.id, duel.state.revision, /** @type {any} */ ({ side, kind: 'move', steps: done.steps })));
 }
 
 /** Puts the checkers back where the roll found them, before the validation. */
@@ -225,16 +234,25 @@ export async function resignDuel(level) {
     if (go) await decide('resign', level);
 }
 
+/** Annuler le match, après confirmation. */
+export async function confirmCancelDuel() {
+    const go = await confirmAction(translate('duel.cancelConfirm'), { confirmLabel: translate('duel.cancel'), tone: 'danger' });
+    if (go) await cancelDuel();
+}
+
 /**
- * Arrêter le Duel, après confirmation : gardé ou jeté.
- * @param {boolean} keep
+ * Abandonner le match, après confirmation. Le message dit ce que l'abandon coûte : le match à
+ * l'adversaire, ou en money la partie en cours perdue au backgammon.
  */
-export async function confirmStopDuel(keep) {
-    const go = await confirmAction(translate(keep ? 'duel.stopKeepConfirm' : 'duel.stopDiscardConfirm'), {
-        confirmLabel: translate(keep ? 'duel.stopKeep' : 'duel.stopDiscard'),
-        tone: keep ? 'primary' : 'danger'
-    });
-    if (go) await stopDuel(keep);
+export async function confirmForfeitDuel() {
+    const state = get(duelStore)?.state;
+    if (!state) return;
+    const human = humanSide(state);
+    const other = 1 - human;
+    const name = state.header?.[other ? 'player2' : 'player1'] || translate(other ? 'duel.player2' : 'duel.player1');
+    const message = state.header?.match_length > 0 ? translate('duel.forfeitConfirm', { name }) : translate('duel.forfeitConfirmMoney', { n: state.awaiting?.position?.cube?.value || 1 });
+    const go = await confirmAction(message, { confirmLabel: translate('duel.forfeit'), tone: 'danger' });
+    if (go) await forfeitDuel();
 }
 
 // ── The Arbiter's answers ────────────────────────────────────────────────────
@@ -327,7 +345,8 @@ async function finish(state) {
         await exitDuelMode({ restoreBoard: true });
         return;
     }
-    statusBarTextStore.set(tMsg(state.ended.overTime ? 'duel.endedOnTime' : 'duel.ended', { id: matchID }));
+    const ended = state.ended.forfeited ? 'duel.endedForfeit' : state.ended.overTime ? 'duel.endedOnTime' : 'duel.ended';
+    statusBarTextStore.set(tMsg(ended, { id: matchID }));
     await exitDuelMode({ restoreBoard: false });
     matchPanelRefreshTriggerStore.update((n) => n + 1);
     dbMutationCounterStore.update((n) => n + 1);

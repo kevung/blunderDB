@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 17:05+0200\n"
+"POT-Creation-Date: 2026-10-06 04:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -42,17 +42,17 @@ msgstr ""
 "vastausmuodon kanssa (JSON tai NDJSON suoratoistetulle listalle) ja, jos "
 "se on olemassa, maininnan valinnaisesta ``Idempotency-Key``-otsakkeesta."
 
-#: ../../source/api_reference.rst:378
+#: ../../source/api_reference.rst:383
 msgid "Idempotence"
 msgstr "Idempotenssi"
 
-#: ../../source/api_reference.rst:380
+#: ../../source/api_reference.rst:385
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
 "sont idempotentes dans leur effet grâce au hachage Zobrist du contenu — "
 "enregistrer deux fois la même position renvoie la même ligne, jamais un "
-"doublon. 47 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
+"doublon. 48 méthodes acceptent un en-tête ``Idempotency-Key`` optionnel :"
 " celles dont deux appels sont deux effets distincts, et "
 "``positions.save``, dont la réponse dit si l'appel a créé la position "
 "(``created``) et le dirait faux si elle était rejouée après une réponse "
@@ -65,7 +65,7 @@ msgstr ""
 "lukemisilla ei ole sivuvaikutuksia, ja ``positions.*``-kirjoitukset ovat "
 "vaikutukseltaan idempotentteja sisällön Zobrist-tiivisteen ansiosta — "
 "saman aseman tallentaminen kahdesti palauttaa saman rivin, ei koskaan "
-"kaksoiskappaletta. 47 menetelmää hyväksyy valinnaisen ``Idempotency-"
+"kaksoiskappaletta. 48 menetelmää hyväksyy valinnaisen ``Idempotency-"
 "Key``-otsakkeen: ne, joiden kaksi kutsua ovat kaksi erillistä vaikutusta,"
 " sekä ``positions.save``, jonka vastaus kertoo, loiko kutsu aseman "
 "(``created``), ja kertoisi sen väärin, jos kutsu toistettaisiin menetetyn"
@@ -74,11 +74,11 @@ msgstr ""
 " merkintä ”(Idempotency-Key)” yllä olevasta taulukosta. Mikään muu "
 "menetelmä ei tarvitse tai hyväksy tätä otsaketta."
 
-#: ../../source/api_reference.rst:392
+#: ../../source/api_reference.rst:397
 msgid "Lectures conditionnelles"
 msgstr "Ehdolliset lukemiset"
 
-#: ../../source/api_reference.rst:394
+#: ../../source/api_reference.rst:399
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "

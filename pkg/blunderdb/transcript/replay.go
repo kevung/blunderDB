@@ -260,11 +260,7 @@ func (r *Replayer) Replay(doc Document, from int) Annotated {
 	out.Games = append([]GameInfo(nil), s.games...)
 	out.Score = s.points
 	if s.matchOver() {
-		out.Finished = true
-		out.Winner = domain.Black
-		if s.points[domain.White] > s.points[domain.Black] {
-			out.Winner = domain.White
-		}
+		out.Finished, out.Winner = true, s.winner()
 	}
 	out.Next = s.next(doc.NextScore)
 	if e := doc.Entry; e != nil {

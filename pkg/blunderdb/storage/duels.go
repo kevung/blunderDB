@@ -30,6 +30,21 @@ type Duel struct {
 	Revision int64 `json:"revision"`
 }
 
+// DuelEntry is a Duel in suspense as a list shows it. It has no seed, and no
+// Document either, by construction: List is what a copy of the whole scope
+// walks, and the seed of an unfinished Duel is every roll to come, which
+// leaves by no route before the end (ADR-0072 rule 11). Whoever needs the
+// draft itself — the Arbiter resuming it, a migration carrying the library to
+// another backend — names it to Get.
+type DuelEntry struct {
+	ID            int64  `json:"id"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+	FormatVersion string `json:"format_version"`
+	Label         string `json:"label"`
+	Revision      int64  `json:"revision"`
+}
+
 // MatchOrigin is how a Match came to be when it was played here rather than
 // imported or transcribed (ADR-0072 rule 10). A Match without one was not
 // played here. Nothing in it is invented: StoppedEarly says the match was
@@ -41,13 +56,16 @@ type MatchOrigin struct {
 	// Start cannot be written as a .mat (ADR-0072 rule 12).
 	Start string `json:"start"`
 	// DiceSeed is the revealed seed every roll was computed from.
-	DiceSeed     string `json:"dice_seed"`
-	StoppedEarly bool   `json:"stopped_early"`
+	DiceSeed string `json:"dice_seed"`
+	// StoppedEarly marks a match in points written short of its length. A
+	// Duel no longer writes one — it writes a match won or nothing — but a
+	// Match already stored keeps the mark it was written with.
+	StoppedEarly bool `json:"stopped_early"`
 	// OverTime, BotLevel and Cadence are the parts of the origin a Bot and
 	// a Cadence give (ADR-0072 rule 10, ADR-0073); empty when the Duel had
 	// neither. OverTime is the player (1 or 2) whose reserve ran out first,
-	// 0 for none: a fact, whether the Cadence then lost them the match —
-	// StoppedEarly — or let them play on. Cadence is the Cadence as the Duel
+	// 0 for none: a fact, whether the Cadence then lost them the match or
+	// let them play on. Cadence is the Cadence as the Duel
 	// was set, in JSON.
 	OverTime int    `json:"over_time"`
 	BotLevel string `json:"bot_level"`
@@ -56,15 +74,36 @@ type MatchOrigin struct {
 	// (gammonnet.PolicyEngineVersion), empty when no Bot played. It is not
 	// the analysis's engine: a policy and a network are published apart.
 	BotEngine string `json:"bot_engine"`
+	// DeclaredBots are the Bots external Sides declared playing behind them,
+	// in player order: what a client said, which the Arbiter neither saw nor
+	// checked (ADR-0005), unlike BotLevel and BotEngine, which name what the
+	// Arbiter played itself. Nil when no Side declared one.
+	DeclaredBots []DeclaredBot `json:"declared_bots,omitempty"`
+	// Contributions are what each Side contributed to a combined seed, in
+	// player order ("" for a delegated Side); the rolls were computed from
+	// duel.CombinedSeed over DiceSeed and them. Nil when the Duel rolled from
+	// DiceSeed alone.
+	Contributions []string `json:"contributions,omitempty"`
+}
+
+// DeclaredBot is a Bot an external Side declared at the Duel's creation: the
+// Configuration it plays with and the gammonNet tag it was built from, as the
+// client wrote them.
+type DeclaredBot struct {
+	// Player is 1 or 2.
+	Player        int    `json:"player"`
+	Configuration string `json:"configuration"`
+	Engine        string `json:"engine"`
 }
 
 // DuelStore persists the drafts of Duels and the origin of the Matches they
 // became.
 type DuelStore interface {
-	// List streams the scope's Duels in suspense, most recently updated first.
-	List(ctx context.Context, scope string) iter.Seq2[*Duel, error]
+	// List streams the scope's Duels in suspense, most recently updated first,
+	// without their seed or document.
+	List(ctx context.Context, scope string) iter.Seq2[*DuelEntry, error]
 
-	// Get returns one Duel, or ErrNotFound.
+	// Get returns one Duel, seed included, or ErrNotFound.
 	Get(ctx context.Context, scope string, id int64) (*Duel, error)
 
 	// Save inserts d when it carries no id — d.DiceSeed is written then and

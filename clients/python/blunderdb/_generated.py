@@ -474,6 +474,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/duels.act — hand-written handler — see openapi.yaml."
         return self._call("/v1/duels.act", payload)
 
+    def duels_contribute(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.contribute — hand-written handler — see openapi.yaml."
+        return self._call("/v1/duels.contribute", payload)
+
     def duels_create(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
         "POST /v1/duels.create — JSON. Accepts an Idempotency-Key."
         return self._call("/v1/duels.create", payload, idempotency_key=idempotency_key)
@@ -485,6 +489,10 @@ class GeneratedAPI(BaseClient):
     def duels_flag(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/duels.flag — hand-written handler — see openapi.yaml."
         return self._call("/v1/duels.flag", payload)
+
+    def duels_forfeit(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/duels.forfeit — hand-written handler — see openapi.yaml."
+        return self._call("/v1/duels.forfeit", payload)
 
     def duels_get(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/duels.get — hand-written handler — see openapi.yaml."
@@ -1269,6 +1277,10 @@ class GeneratedAPI(BaseClient):
     def transcriptions_losses(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/transcriptions.losses — JSON."
         return self._call("/v1/transcriptions.losses", payload)
+
+    def transcriptions_materialize(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.materialize — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/transcriptions.materialize", payload, idempotency_key=idempotency_key)
 
     def transcriptions_open(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/transcriptions.open — JSON."

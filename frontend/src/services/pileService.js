@@ -31,7 +31,7 @@ export async function refreshPileState() {
         return;
     }
     try {
-        const on = await IsPositionOnPile(get(positionStore));
+        const on = await IsPositionOnPile(/** @type {any} */ (get(positionStore)));
         if (mine === sequence) onPileStore.set(!!on);
     } catch (error) {
         logger.error('Pile state:', error);
@@ -46,7 +46,7 @@ export async function togglePile() {
     }
     const position = get(positionStore);
     try {
-        const result = await TogglePile(position);
+        const result = await TogglePile(/** @type {any} */ (position));
         sequence++;
         onPileStore.set(result.onPile);
         pileChangedStore.update((n) => n + 1);

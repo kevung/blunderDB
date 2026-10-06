@@ -355,8 +355,9 @@ func TestDuelStart(t *testing.T) {
 	}
 }
 
-// TestDuelStop: stopping and keeping writes the games as they stand — no
-// winner for the game in progress, the match marked stopped early; stopping
+// TestDuelStop: a match in points is never kept short of its end — the
+// refusal leaves the Duel open where it was; a money session stopped and kept
+// writes its games as they stand, no winner for the game in progress; stopping
 // and throwing away writes nothing.
 func TestDuelStop(t *testing.T) {
 	ctx := context.Background()
@@ -365,6 +366,25 @@ func TestDuelStop(t *testing.T) {
 	s, err := svc.Create(ctx, "", Settings{MatchLength: 5, Sides: [2]SideSpec{external("A"), external("B")}})
 	if err != nil {
 		t.Fatalf("Create: %v", err)
+	}
+	for range 4 {
+		if s, err = svc.Play(ctx, "", s.ID, s.Revision, answer(*s.Awaiting)); err != nil {
+			t.Fatalf("Play: %v", err)
+		}
+	}
+	if _, err := svc.Stop(ctx, "", s.ID, s.Revision, true); !errors.Is(err, storage.ErrInvalid) {
+		t.Fatalf("keeping an unfinished match in points: got %v, want ErrInvalid", err)
+	}
+	if s, err = svc.Play(ctx, "", s.ID, s.Revision, answer(*s.Awaiting)); err != nil || s.Ended != nil {
+		t.Fatalf("the refused Duel plays on: %+v, %v", s, err)
+	}
+	if _, err := svc.Stop(ctx, "", s.ID, s.Revision, false); err != nil {
+		t.Fatalf("Stop and throw away: %v", err)
+	}
+
+	s, err = svc.Create(ctx, "", Settings{MatchLength: 0, Sides: [2]SideSpec{external("A"), external("B")}})
+	if err != nil {
+		t.Fatalf("Create money: %v", err)
 	}
 	if _, err := svc.Stop(ctx, "", s.ID, s.Revision, true); !errors.Is(err, storage.ErrInvalid) {
 		t.Errorf("keeping a Duel nothing was played in: got %v, want ErrInvalid", err)
@@ -375,15 +395,15 @@ func TestDuelStop(t *testing.T) {
 		}
 	}
 	kept, err := svc.Stop(ctx, "", s.ID, s.Revision, true)
-	if err != nil || kept.Ended == nil || kept.Ended.MatchID == 0 || !kept.Ended.StoppedEarly {
-		t.Fatalf("Stop and keep: %+v, %v", kept, err)
+	if err != nil || kept.Ended == nil || kept.Ended.MatchID == 0 {
+		t.Fatalf("Stop and keep a money session: %+v, %v", kept, err)
 	}
 	games, err := gamesOf(st, kept.Ended.MatchID)
 	if err != nil || len(games) != 1 || games[0].Winner != domain.WinnerUnfinished || games[0].PointsWon != 0 {
-		t.Errorf("games of a stopped Duel = %+v, %v; the game in progress has no winner", games, err)
+		t.Errorf("games of a stopped session = %+v, %v; the game in progress has no winner", games, err)
 	}
-	if o, err := st.Duels().Origin(ctx, "", kept.Ended.MatchID); err != nil || !o.StoppedEarly {
-		t.Errorf("origin = %+v, %v", o, err)
+	if o, err := st.Duels().Origin(ctx, "", kept.Ended.MatchID); err != nil || o.StoppedEarly {
+		t.Errorf("origin = %+v, %v: a money session has no end to stop short of", o, err)
 	}
 
 	s, err = svc.Create(ctx, "", Settings{MatchLength: 5, Sides: [2]SideSpec{external("A"), external("B")}})
@@ -443,11 +463,85 @@ func TestDuelResignationBeforeAnyMove(t *testing.T) {
 	if s, err = svc.Play(ctx, "", s.ID, s.Revision, Play{Side: s.Awaiting.Side, Kind: PlayResign, Level: 1}); err != nil {
 		t.Fatalf("resign: %v", err)
 	}
-	if s.Ended == nil || s.Ended.MatchID == 0 || s.Ended.StoppedEarly {
+	if s.Ended == nil || s.Ended.MatchID == 0 {
 		t.Fatalf("a resigned match point ends into a Match: %+v", s.Ended)
 	}
 	games, err := gamesOf(st, s.Ended.MatchID)
 	if err != nil || len(games) != 1 || games[0].Winner != domain.WinnerPlayer2 || games[0].PointsWon != 1 {
 		t.Errorf("games = %+v, %v; player 2 wins the resigned game", games, err)
+	}
+}
+
+// TestDuelForfeit: the player who forfeits a match loses it — the game in
+// progress goes to the other side for what brings them to the length, the
+// Match is written finished, never marked stopped early, and the side that
+// forfeited is named. At its first roll, before any game ran, too.
+func TestDuelForfeit(t *testing.T) {
+	ctx := context.Background()
+	st := newStore(t)
+	svc := newService(t, st, 4)
+	s, err := svc.Create(ctx, "", Settings{MatchLength: 5, Sides: [2]SideSpec{external("A"), external("B")}})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	for range 4 {
+		if s, err = svc.Play(ctx, "", s.ID, s.Revision, answer(*s.Awaiting)); err != nil {
+			t.Fatalf("Play: %v", err)
+		}
+	}
+	if _, err := svc.Forfeit(ctx, "", s.ID, s.Revision, 2); refusalKind(t, err) != RefusedNotAwaited {
+		t.Errorf("a forfeit by no player: got %v", err)
+	}
+	// Player 1 forfeits whoever is awaited: a forfeit answers no Decision.
+	out, err := svc.Forfeit(ctx, "", s.ID, s.Revision, domain.Black)
+	if err != nil || out.Ended == nil || out.Ended.MatchID == 0 || out.Ended.Forfeited != 1 {
+		t.Fatalf("Forfeit: %+v, %v", out, err)
+	}
+	if out.Score != [2]int{0, 5} {
+		t.Errorf("score after a forfeit = %v, want 0-5", out.Score)
+	}
+	games, err := gamesOf(st, out.Ended.MatchID)
+	if err != nil || len(games) != 1 || games[0].Winner != domain.WinnerPlayer2 || games[0].PointsWon != 5 {
+		t.Errorf("games = %+v, %v; player 2 wins the game for the match", games, err)
+	}
+	if o, err := st.Duels().Origin(ctx, "", out.Ended.MatchID); err != nil || o.StoppedEarly {
+		t.Errorf("origin = %+v, %v; a forfeited match is finished", o, err)
+	}
+	if _, err := st.Duels().Get(ctx, "", s.ID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("the draft of a forfeited Duel must be gone: %v", err)
+	}
+
+	s, err = svc.Create(ctx, "", Settings{MatchLength: 3, Sides: [2]SideSpec{external("A"), external("B")}})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	out, err = svc.Forfeit(ctx, "", s.ID, s.Revision, domain.White)
+	if err != nil || out.Ended == nil || out.Ended.MatchID == 0 || out.Score != [2]int{3, 0} {
+		t.Fatalf("Forfeit at the first roll: %+v, %v", out, err)
+	}
+}
+
+// TestDuelForfeitMoney: a money session forfeited ends, its game in progress
+// lost by a single at the cube's value, Jacoby rule or not.
+func TestDuelForfeitMoney(t *testing.T) {
+	ctx := context.Background()
+	for _, tc := range []struct {
+		jacoby bool
+		want   int
+	}{{false, 1}, {true, 1}} {
+		st := newStore(t)
+		svc := newService(t, st, 4)
+		s, err := svc.Create(ctx, "", Settings{Jacoby: tc.jacoby, Sides: [2]SideSpec{external("A"), external("B")}})
+		if err != nil {
+			t.Fatalf("Create: %v", err)
+		}
+		out, err := svc.Forfeit(ctx, "", s.ID, s.Revision, domain.Black)
+		if err != nil || out.Ended == nil || out.Ended.MatchID == 0 {
+			t.Fatalf("Forfeit (jacoby %v): %+v, %v", tc.jacoby, out, err)
+		}
+		games, err := gamesOf(st, out.Ended.MatchID)
+		if err != nil || len(games) != 1 || games[0].Winner != domain.WinnerPlayer2 || int(games[0].PointsWon) != tc.want {
+			t.Errorf("jacoby %v: games = %+v, %v; want player 2 for %d", tc.jacoby, games, err, tc.want)
+		}
 	}
 }

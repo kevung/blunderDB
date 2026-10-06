@@ -55,11 +55,21 @@ type TranscriptionState struct {
 // transcriptService returns the service over the open library, made on first
 // use. Caller holds d.mu; transcriptMu guards the pointer, lock ORDER
 // mu -> transcriptMu, and forgetTranscriptSessions takes transcriptMu alone.
+//
+// forgetTranscriptSessions runs before d.mu is taken, so a call slipping in
+// between can make a service on the library about to be replaced; it is
+// recognised here by its store and dropped with its sessions, which name rows
+// of that library.
 func (d *Database) transcriptService() *transcription.Service {
 	d.transcriptMu.Lock()
 	defer d.transcriptMu.Unlock()
+	if d.transcriptSvc != nil && d.transcriptOn != d.store {
+		d.transcriptSvc.Forget()
+		d.transcriptSvc = nil
+	}
 	if d.transcriptSvc == nil {
 		d.transcriptSvc = transcription.New(d.store, transcription.Options{})
+		d.transcriptOn = d.store
 	}
 	return d.transcriptSvc
 }
@@ -222,4 +232,5 @@ func (d *Database) forgetTranscriptSessions() {
 		d.transcriptSvc.Forget()
 	}
 	d.transcriptSvc = nil
+	d.transcriptOn = nil
 }

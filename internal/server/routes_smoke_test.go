@@ -126,13 +126,14 @@ var customContentTypes = map[string][]string{
 	"/v1/anki.reviewCard":                 {"application/json"},
 	// The transcription gestures, wrapped with withIdempotency and withIfMatch
 	// for the same reason; get is hand-written for its ETag and 304.
-	"/v1/transcriptions.get":     {"application/json"},
-	"/v1/transcriptions.apply":   {"application/json"},
-	"/v1/transcriptions.undo":    {"application/json"},
-	"/v1/transcriptions.redo":    {"application/json"},
-	"/v1/transcriptions.finish":  {"application/json"},
-	"/v1/transcriptions.abandon": {"application/json"},
-	"/v1/duels.get":              {"application/json"},
+	"/v1/transcriptions.get":         {"application/json"},
+	"/v1/transcriptions.apply":       {"application/json"},
+	"/v1/transcriptions.undo":        {"application/json"},
+	"/v1/transcriptions.redo":        {"application/json"},
+	"/v1/transcriptions.finish":      {"application/json"},
+	"/v1/transcriptions.materialize": {"application/json"},
+	"/v1/transcriptions.abandon":     {"application/json"},
+	"/v1/duels.get":                  {"application/json"},
 }
 
 // smokeServer builds the Server (not just the httptest wrapper) so the test

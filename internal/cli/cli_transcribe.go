@@ -32,6 +32,7 @@ func (cli *CLI) runTranscribe(args []string) error {
 	finish := transcribeCmd.Bool("finish", false, "Finish the --draft: write its match (or replace the one it was opened from) and release the draft")
 	abandon := transcribeCmd.Bool("abandon", false, "Abandon the --draft: delete it without a match; a match it was opened from is left untouched")
 	edit := transcribeCmd.Bool("edit", false, "Open a draft on the --match (or return the one already open on it), for a correction finished with --finish")
+	materialize := transcribeCmd.String("materialize", "", "JSON document of Actions (header and actions, dice included) to write as a match in one step, or nothing (requires --db)")
 	yes := transcribeCmd.Bool("yes", false, "With --abandon on a draft that never produced a match: confirm that everything typed in it is lost")
 	acceptLosses := transcribeCmd.Bool("accept-losses", false, "With --edit on an imported match: accept that the analyses and comments a .mat cannot carry may be lost")
 
@@ -91,6 +92,9 @@ func (cli *CLI) runTranscribe(args []string) error {
 		fmt.Println("  blunderdb transcribe --db database.db --match 5 --edit")
 		fmt.Println("  blunderdb transcribe --db database.db --draft 4 --finish")
 		fmt.Println()
+		fmt.Println("  # Write a match played elsewhere from its Actions; the first illegal Action refuses all")
+		fmt.Println("  blunderdb transcribe --db database.db --materialize match.json")
+		fmt.Println()
 		fmt.Println("  # Drop a draft")
 		fmt.Println("  blunderdb transcribe --db database.db --draft 4 --abandon")
 	}
@@ -105,6 +109,13 @@ func (cli *CLI) runTranscribe(args []string) error {
 	}
 	text := formatLower != "json"
 
+	if *materialize != "" {
+		if *finish || *abandon || *edit || *matFile != "" || *matchID != 0 || *draftID != 0 {
+			transcribeCmd.Usage()
+			return fmt.Errorf("--materialize takes --db and nothing else to act on")
+		}
+		return cli.transcribeMaterialize(*dbPath, *materialize, text)
+	}
 	if *finish || *abandon || *edit {
 		return cli.transcribeWrite(transcribeWriteArgs{
 			dbPath: *dbPath, matchID: *matchID, draftID: *draftID, matFile: *matFile,

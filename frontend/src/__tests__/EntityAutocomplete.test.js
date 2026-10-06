@@ -22,7 +22,7 @@ function layout(input, { top, bottom, innerHeight = 600 }) {
 
 async function mount(props = {}) {
     const result = render(EntityAutocomplete, { props: { items: ITEMS, ...props } });
-    const input = result.container.querySelector('input');
+    const input = /** @type {HTMLInputElement} */ (result.container.querySelector('input'));
     layout(input, { top: 100, bottom: 120 });
     await tick();
     return { ...result, input };

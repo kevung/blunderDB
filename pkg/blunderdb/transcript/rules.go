@@ -32,6 +32,11 @@ type state struct {
 	// sets it: a recorded gammon is what happened, and the rule is a flag for the
 	// evaluator. A Machine sets it, because there the rule decides the score.
 	jacobyScores bool
+
+	// forfeited is set by a KindForfeit: the match is over whatever the
+	// score, won by forfeitWinner.
+	forfeited     bool
+	forfeitWinner int
 }
 
 func newState(h Header) *state {
@@ -53,8 +58,23 @@ func (s *state) clone() state {
 }
 
 func (s *state) matchOver() bool {
+	if s.forfeited {
+		return true
+	}
 	L := s.header.MatchLength
 	return L > 0 && (s.points[domain.Black] >= L || s.points[domain.White] >= L)
+}
+
+// winner is the side that won the match once it is over: the one a forfeit
+// left, otherwise the one ahead — at money play the score alone names no one.
+func (s *state) winner() int {
+	if s.forfeited {
+		return s.forfeitWinner
+	}
+	if s.points[domain.White] > s.points[domain.Black] {
+		return domain.White
+	}
+	return domain.Black
 }
 
 // awayScores writes the score the way a Position carries it: how many points each
@@ -200,7 +220,7 @@ func (s *state) trapped(loser, winner int) bool {
 // would mark every resignation after its author's own play — a false positive.
 func bearsTurn(k Kind) bool {
 	switch k {
-	case KindTake, KindPass, KindResign:
+	case KindTake, KindPass, KindResign, KindForfeit:
 		return false
 	}
 	return true
@@ -361,6 +381,18 @@ func (s *state) step(i int, a Action) ActionInfo {
 			level = 1
 		}
 		s.endGame(opponent(a.Side), level*cubeValue(s.cube))
+
+	case KindForfeit:
+		s.ensureGame()
+		info.Before = s.position(a.Side, [2]int{}, domain.CubeAction, s.cube)
+		info.After = s.board
+		winner := opponent(a.Side)
+		points := cubeValue(s.cube)
+		if L := s.header.MatchLength; L > 0 {
+			points = max(L-s.points[winner], 1)
+		}
+		s.endGame(winner, points)
+		s.forfeited, s.forfeitWinner = true, winner
 
 	default:
 		info.add(IllegalMove, fmt.Sprintf("unknown action kind %q", a.Kind))

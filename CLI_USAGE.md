@@ -248,6 +248,8 @@ Export database contents to files.
 ```
 
 This creates a complete copy of the database including all positions, analyses, matches, and metadata.
+A Duel in suspense stays behind: its dice seed is every roll to come, and it leaves by no route
+before the Duel ends. A finished Duel travels as its Match, seed revealed.
 
 ### Export Positions
 
@@ -1295,6 +1297,7 @@ are unknown, never zero).
 ./blunderDB duel list --db database.db
 ./blunderDB duel move --db database.db --id <id> --play "24/18 13/11"
 ./blunderDB duel roll|double|take|pass|resign --db database.db --id <id>
+./blunderDB duel contribute --db database.db --id <id> --side 1|2 --value <text>
 ./blunderDB duel stop|discard --db database.db --id <id>
 ```
 
@@ -1302,8 +1305,11 @@ are unknown, never zero).
 - `create`: starts a Duel and plays up to the first decision of an external
   side. `--length` (1 to 25 points) or `--money`; `--start` (XGID);
   `--name1`, `--name2`; `--side1`, `--side2` (`external`, or `bot:<level>` with
-  `instant`, `normal` or `thorough`); `--discard-at-end` drops the draft
-  instead of writing the Match. Two bots play the whole match in one call; a
+  `instant`, `normal` or `thorough`, or `external:<configuration>@<engine>`, an
+  external side declaring the Bot that plays behind it, recorded in the Match's
+  origin as declared, not attested); `--discard-at-end` drops the draft
+  instead of writing the Match; `--combined-seed` rolls nothing before each
+  external side has contributed to the seed. Two bots play the whole match in one call; a
   money session between two bots is refused, since it would never end.
 - `show`: score, what the Duel waits for and, for a move, the legal plays. The
   dice seed is never shown before the end.
@@ -1311,6 +1317,11 @@ are unknown, never zero).
 - `roll`, `move`, `double`, `take`, `pass`, `resign`: one Action by the side
   the Duel waits for (`--side 1|2` names it); `--level` (1 to 3) is the value
   of a resignation; `--revision` refuses the Action if the Duel moved.
+- `contribute`: an external side's contribution to a combined seed (`--side
+  1|2`, `--value`, 1 to 64 bytes), once, before the first roll; the last one
+  starts the dice. The rolls then come from HMAC-SHA256 of the sealed seed over
+  each side's contribution, length-prefixed, and the Match's origin carries the
+  contributions.
 - `stop`: stops the Duel and writes the Match as it stands.
 - `discard`: drops the Duel; nothing is written.
 
@@ -2651,6 +2662,31 @@ Examples:
   blunderdb delete --db database.db --type match --id 1 --confirm
 ```
 
+### `blunderdb duel contribute`
+
+```
+Usage: blunderdb duel contribute [options]
+
+Contribute to the seed of a Duel created with --combined-seed: once per external Side, before the first roll, which the last contribution starts.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -revision int
+    	Refuse unless the Duel is at this revision (default: no check)
+  -side int
+    	The contributing Side, 1 or 2 (required)
+  -value string
+    	The contribution, 1 to 64 bytes of text (required)
+
+Examples:
+  blunderdb duel contribute --db database.db --id 1 --side 1 --value "my own randomness"
+```
+
 ### `blunderdb duel create`
 
 ```
@@ -2659,6 +2695,8 @@ Usage: blunderdb duel create [options]
 Start a Duel and play on to the first Decision of an external Side.
 
 Options:
+  -combined-seed
+    	Roll nothing before each external Side has contributed to the seed (duel contribute)
   -db string
     	Path to the database file (required)
   -discard-at-end
@@ -2676,7 +2714,7 @@ Options:
   -name2 string
     	Player 2's name
   -side1 string
-    	Player 1's Side: external, or bot:<level> (instant, normal, thorough) (default "external")
+    	Player 1's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough) (default "external")
   -side2 string
     	Player 2's Side: external, or bot:<level>; two Bots play the whole match in this call (default "external")
   -start string
@@ -2686,6 +2724,7 @@ Examples:
   blunderdb duel create --db database.db --length 5 --name1 Alice --name2 Bob
   blunderdb duel create --db database.db --money --jacoby
   blunderdb duel create --db database.db --length 7 --side2 bot:normal
+  blunderdb duel create --db database.db --length 5 --name1 Alice --side2 external:normal@v1.6.0
   blunderdb duel create --db database.db --length 3 --side1 bot:instant --side2 bot:instant
 ```
 
@@ -2731,6 +2770,29 @@ Options:
 
 Examples:
   blunderdb duel double --db database.db --id 1
+```
+
+### `blunderdb duel forfeit`
+
+```
+Usage: blunderdb duel forfeit [options]
+
+Give the match up: the game in progress goes to the other Side for the points that bring it to the length (at money play, a single at the cube's value), and the Match is written won by the other Side.
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -format string
+    	Output format: text or json (default "text")
+  -id int
+    	Duel id (required)
+  -revision int
+    	Refuse unless the Duel is at this revision (default: no check)
+  -side int
+    	The Side that gives the match up, 1 or 2 (required)
+
+Examples:
+  blunderdb duel forfeit --db database.db --id 1 --side 1
 ```
 
 ### `blunderdb duel list`
@@ -2870,7 +2932,7 @@ Examples:
 ```
 Usage: blunderdb duel stop [options]
 
-Stop the Duel and write the Match as it stands: an unfinished game keeps no winner, and a match short of its length is marked stopped early.
+Stop a money session and write its Match as it stands: an unfinished game keeps no winner. A match in points is refused: it is written only once won (suspend, forfeit or discard it).
 
 Options:
   -db string
@@ -4731,6 +4793,8 @@ Options:
     	Jellyfish/gnubg .mat file to replay
   -match int
     	Match id to replay (requires --db)
+  -materialize string
+    	JSON document of Actions (header and actions, dice included) to write as a match in one step, or nothing (requires --db)
   -render string
     	Write the transcription back as a .mat file to this path
   -yes
@@ -4753,6 +4817,9 @@ Examples:
   # Correct a match: open a draft on it, then finish it
   blunderdb transcribe --db database.db --match 5 --edit
   blunderdb transcribe --db database.db --draft 4 --finish
+
+  # Write a match played elsewhere from its Actions; the first illegal Action refuses all
+  blunderdb transcribe --db database.db --materialize match.json
 
   # Drop a draft
   blunderdb transcribe --db database.db --draft 4 --abandon

@@ -325,6 +325,10 @@ func (m Machine) admit(a Action) *Refusal {
 			return refuse(RefusedRoll, "the roll is %d%d, not %d%d", m.roll[0], m.roll[1], a.Dice[0], a.Dice[1])
 		}
 	}
+	if a.Kind == KindForfeit {
+		// A match is given up at any moment, by either side, between games too.
+		return nil
+	}
 	if !s.gameActive {
 		// The game's first Action: the opening roll names its side, which the core
 		// checks; a cube action there the core refuses too. A resignation resigns
@@ -371,15 +375,13 @@ func (m Machine) Score() [2]int { return m.s.points }
 // Games is what the Machine derives about each game so far.
 func (m Machine) Games() []GameInfo { return append([]GameInfo(nil), m.s.games...) }
 
-// Finished reports whether the match is won, and by whom. A money session never is.
+// Finished reports whether the match is won, and by whom. A money session is
+// only when a side forfeited it.
 func (m Machine) Finished() (bool, int) {
 	if !m.s.matchOver() {
 		return false, -1
 	}
-	if m.s.points[domain.White] > m.s.points[domain.Black] {
-		return true, domain.White
-	}
-	return true, domain.Black
+	return true, m.s.winner()
 }
 
 // Header is the session the Machine plays under, its money ceiling filled in.

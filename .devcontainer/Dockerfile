@@ -21,7 +21,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && rm -rf /var/lib/apt/lists/*
 
 # The Wails CLI itself (library version pinned by frontend's go.mod/wails.json).
-RUN go install github.com/wailsapp/wails/v2/cmd/wails@v2.15.0
+RUN go install github.com/wailsapp/wails/v2/cmd/wails@v2.16.0
 
 # govulncheck: `make check`/`make check-all` both call it.
 RUN go install golang.org/x/vuln/cmd/govulncheck@latest

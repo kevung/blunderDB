@@ -384,7 +384,7 @@ La famille ``transcriptions.*`` permet à un client externe de transcrire un
 match geste par geste, avec la même logique que le bureau. Les lectures
 (``list``, ``get``, ``exportMat``, ``losses``) sont toujours servies. Les
 gestes (``create``, ``open``, ``editMatch``, ``apply``, ``undo``, ``redo``,
-``close``, ``finish``, ``abandon``) ne le sont qu'avec ``serve
+``close``, ``finish``, ``abandon``, ``materialize``) ne le sont qu'avec ``serve
 --transcription`` : sans ce drapeau, ces routes répondent 404.
 
 ``create`` et ``open`` rendent l'état du brouillon, sa ``revision`` et un
@@ -421,6 +421,17 @@ des analyses et commentaires que la transcription ne garde pas
 (``losses.lossy``). L'analyse du match enregistré se lance par
 ``gammonnet.analyzeMissing``.
 
+``materialize`` écrit un Match d'un seul appel à partir d'un document
+d'actions (``header`` et ``actions``, dés compris), sans brouillon ni session,
+sous ``Idempotency-Key``. Il applique la machine de règles comme l'arbitre du
+Duel : la première action refusée arrête tout, rien n'est écrit, et l'erreur
+(**400**) donne son rang à partir de 0 (``details.rank``, -1 pour l'en-tête),
+sa nature (``details.kind``) et son motif (``details.detail``). Le Match est
+celui que donneraient ``create``, un ``apply`` par action puis ``finish`` : mêmes
+empreintes, aucune origine « jouée ici ». La durée de décision d'une action
+(``decision_ms``, ``cube_decision_ms``) est reportée sur son coup ; absente,
+elle reste inconnue. La réponse est celle de ``finish``.
+
 .. warning::
 
    Le démon n'authentifie personne : ouvrir l'écriture, c'est la confier au
@@ -435,7 +446,7 @@ Jouer un Duel par l'API
 La famille ``duels.*`` pilote un Duel une Action à la fois, avec la même
 logique que le bureau. Les lectures (``list``, ``get``) sont toujours servies.
 Les gestes (``create``, ``open``, ``act``, ``flag``, ``suspend``, ``stop``,
-``discard``) ne le sont qu'avec ``serve --duel`` : sans ce drapeau, ces routes
+``forfeit``, ``discard``) ne le sont qu'avec ``serve --duel`` : sans ce drapeau, ces routes
 répondent 404.
 
 ``create`` reçoit la longueur du match (ou une session en argent), le Départ,
@@ -451,6 +462,27 @@ réponse rend l'état du Duel au prochain point où un Côté externe décide, a
 les Actions survenues entre-temps (lancers, coups forcés, Actions d'un Bot).
 Une Action que les règles refusent est un **400** et n'écrit rien.
 
+Un Côté externe peut déclarer le Bot qui joue derrière lui, un Bot gammonNet
+que le client fait jouer chez lui : ``{"kind": "external", "declared":
+{"configuration": "normal", "engine": "v1.6.0"}}``, deux textes d'au plus 64
+octets. Sans nom donné, le joueur prend celui du Bot (``gammonNet normal``).
+L'Arbitre traite ce Côté comme tout Côté externe. L'origine du Match
+(``matches.origin``) porte la déclaration à part, dans ``declared_bots``, comme
+déclarée par le client et non attestée : ``bot_level`` et ``bot_engine`` ne
+nomment que le Bot que l'Arbitre a fait jouer lui-même.
+
+Avec ``"combinedSeed": true``, ``create`` publie l'empreinte et n'en fait pas
+plus : le Duel attend l'apport de chaque Côté externe à son germe
+(``awaitingContribution``), sans lancer ni horloge, et une Action de jeu avant
+eux est refusée en **400**. ``duels.contribute`` (``id``, ``side`` 0 ou 1,
+``contribution``, 1 à 64 octets) l'apporte une fois par Côté ; un second apport,
+celui d'un Côté délégué ou un apport sans germe combiné sont refusés en
+**400**, et le dernier apport lance les dés. Les lancers sortent alors du germe
+effectif, le HMAC-SHA256 du germe scellé sur l'apport de chaque Côté, dans
+l'ordre des joueurs, précédé de sa longueur sur 4 octets gros-boutiens.
+L'origine du Match porte les apports (``contributions``) et le germe effectif
+(``roll_seed``) : tout se recalcule depuis le germe révélé.
+
 Tout geste sur un Duel existant porte la révision vue en dernier dans
 ``If-Match`` : absent → **428**, périmée → **409**, y compris pour un second
 client qui a lu la même révision qu'un premier déjà passé. Un tenant n'a qu'**un
@@ -463,10 +495,27 @@ la révision en ``ETag`` et répond 304 à un ``If-None-Match`` qui la nomme.
 
 Le germe des dés ne sort par aucune route avant la fin : l'état en porte
 l'empreinte, et le germe n'est révélé qu'avec le Match que la fin du Duel
-écrit (``ended.diceSeed``). ``stop`` arrête le Duel en gardant le Match tel
-qu'il est, ``discard`` le jette. Les gestes sont annoncés sur ``/v1/events``
+écrit (``ended.diceSeed``). ``discard`` jette le Duel : rien n'en est écrit. Les gestes sont annoncés sur ``/v1/events``
 (filtre ``duel``). Sous ``blunderdb call``, un Duel n'a ni Cadence ni durée de
 décision : chaque appel est son propre processus.
+
+``forfeit`` abandonne le match pour un Côté (``side``, 0 ou 1, obligatoire) :
+la partie en cours va à l'autre Côté pour les points qui le portent à la
+longueur du match — en argent, une simple à la valeur du videau — et le Match
+s'écrit gagné par lui. ``stop`` avec ``keep`` vrai écrit en argent le Match tel
+qu'il est, la partie en cours sans vainqueur ; sur un match en points non
+terminé, il est refusé en **400** et le Duel reste ouvert : le Match ne s'écrit
+qu'entier, et le Duel se suspend, s'abandonne, ou s'arrête avec ``keep`` faux,
+qui le jette. Arrêter n'est pas abandonner. Sous une Cadence dont le
+dépassement fait perdre le match (``timeOut`` à ``lose_match``), la perte au
+temps vaut abandon du Côté dont le temps est écoulé : en points, le Match
+s'écrit gagné par l'autre à la longueur.
+
+L'export n'y fait pas exception : ``exports.sqlite`` n'emporte aucun Duel en
+suspens, même quand il porte sur le tenant entier, puisque son germe est
+chacun des lancers à venir. Le Match d'un Duel terminé part avec son origine,
+germe révélé. Seul ``migrate`` emporte les Duels en suspens avec leur germe,
+pour qu'ils se reprennent sur PostgreSQL avec les mêmes dés.
 
 .. warning::
 

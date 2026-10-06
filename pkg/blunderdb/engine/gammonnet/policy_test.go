@@ -22,7 +22,7 @@ import (
 // comparison of this port with itself, so the digest is pinned.
 const (
 	policyCorpusPath   = "testdata/policy_reference.bin"
-	policyCorpusSHA256 = "fe96a3a4dd5ac9f850f65e111b4dabe98806f0d45bfd92d69a0b8b91e158493f"
+	policyCorpusSHA256 = "4f1b6e0588bf4c87bd31d81158c91b8d5c971418a1ba853b945ebe5a1d2a2674"
 	policyRecordSize   = 160
 )
 

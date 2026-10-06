@@ -9,6 +9,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
@@ -22,6 +23,28 @@ var ErrUnknownLevel = errors.New("unknown bot level")
 // BotLevels are the levels a Bot plays at: gammonNet's named levels, those of
 // the analysis, at full strength (ADR-0072 rule 7). No weakened level.
 var BotLevels = []string{"instant", "normal", "thorough"}
+
+// LevelInfo is a Bot level with the search shape gammonNet attaches to it, so
+// a form can show the depth without keeping its own copy of the table.
+type LevelInfo struct {
+	Name   string `json:"name"`
+	Ply    int    `json:"ply"`
+	PruneK int    `json:"pruneK"`
+}
+
+// LevelInfos lists BotLevels with their search depth, read from gammonNet's
+// canonical table.
+func LevelInfos() []LevelInfo {
+	out := make([]LevelInfo, 0, len(BotLevels))
+	for _, name := range BotLevels {
+		info := LevelInfo{Name: name}
+		if l, ok := gammonnet.Level(name); ok {
+			info.Ply, info.PruneK = l.Ply, l.PruneK
+		}
+		out = append(out, info)
+	}
+	return out
+}
 
 // BotName is the name a Bot's Side carries in the Match: the Configuration
 // it plays with, the one that will analyse the match.
@@ -45,6 +68,18 @@ func botOrigin(sides [2]SideSpec) (level, engine string) {
 		levels = levels[:1]
 	}
 	return strings.Join(levels, "/"), gammonnet.PolicyEngineVersion
+}
+
+// declaredOrigin is what the Match's origin says of the Bots external Sides
+// declared, in player order; nil when none did.
+func declaredOrigin(sides [2]SideSpec) []storage.DeclaredBot {
+	var out []storage.DeclaredBot
+	for i, s := range sides {
+		if s.Kind == SideExternal && s.Declared != nil {
+			out = append(out, storage.DeclaredBot{Player: i + 1, Configuration: s.Declared.Configuration, Engine: s.Declared.Engine})
+		}
+	}
+	return out
 }
 
 // Bot is a delegated Side: gammonNet's stateless playing policy at a named

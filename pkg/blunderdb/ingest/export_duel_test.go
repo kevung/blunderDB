@@ -1,10 +1,12 @@
 package ingest
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -14,9 +16,11 @@ import (
 
 // TestSQLiteExportCarriesTheDuel: the origin of a Match played here travels
 // with the Match, whatever the selection, so the copy refuses the .mat of a
-// Match with a Start; the Duels in suspense travel with a whole export only,
-// seed included.
+// Match with a Start. A Duel in suspense never travels, a whole export
+// included: its seed is every roll to come, and nothing of it may be found in
+// the file (ADR-0072 rule 11).
 func TestSQLiteExportCarriesTheDuel(t *testing.T) {
+	const pendingSeed = "5eedc0ffee5eedc0ffee5eedc0ffee5eed"
 	ctx := context.Background()
 	src, err := sqlite.Open(ctx, ":memory:", nil)
 	if err != nil {
@@ -28,7 +32,8 @@ func TestSQLiteExportCarriesTheDuel(t *testing.T) {
 		t.Fatal(err)
 	}
 	origin := storage.MatchOrigin{MatchID: matchID, Start: "-b----E-C---eE---c-e----B-:1:1:1:00:0:0:0:3:10", DiceSeed: "ab",
-		StoppedEarly: true, OverTime: 2, Cadence: `{"reserve":180,"delay":12,"timeOut":"lose_match"}`}
+		StoppedEarly: true, OverTime: 2, Cadence: `{"reserve":180,"delay":12,"timeOut":"lose_match"}`,
+		DeclaredBots: []storage.DeclaredBot{{Player: 1, Configuration: "normal", Engine: "v1.6.0"}}}
 	gameID, err := src.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
 	if err != nil {
 		t.Fatal(err)
@@ -46,7 +51,7 @@ func TestSQLiteExportCarriesTheDuel(t *testing.T) {
 	if err := src.Duels().SetOrigin(ctx, "", &origin); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := src.Duels().Save(ctx, "", &storage.Duel{FormatVersion: "1", Label: "C — D", Document: "{}", DiceSeed: "cd"}); err != nil {
+	if _, err := src.Duels().Save(ctx, "", &storage.Duel{FormatVersion: "1", Label: "C — D", Document: "{}", DiceSeed: pendingSeed}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -62,6 +67,13 @@ func TestSQLiteExportCarriesTheDuel(t *testing.T) {
 			t.Fatalf("export: %v", err)
 		}
 		out.Close()
+		raw, err := os.ReadFile(outPath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if bytes.Contains(raw, []byte(pendingSeed)) {
+			t.Errorf("the seed of a Duel in suspense is in the exported file")
+		}
 		dst, err := sqlite.Open(ctx, outPath, nil)
 		if err != nil {
 			t.Fatal(err)
@@ -83,8 +95,8 @@ func TestSQLiteExportCarriesTheDuel(t *testing.T) {
 		}
 		return ids[0]
 	}
-	duels := func(dst storage.Storage) []*storage.Duel {
-		var out []*storage.Duel
+	duels := func(dst storage.Storage) []*storage.DuelEntry {
+		var out []*storage.DuelEntry
 		for d, err := range dst.Duels().List(ctx, "") {
 			if err == nil {
 				out = append(out, d)
@@ -99,14 +111,14 @@ func TestSQLiteExportCarriesTheDuel(t *testing.T) {
 		got, err := dst.Duels().Origin(ctx, "", id)
 		want := origin
 		want.MatchID = id
-		if err != nil || *got != want {
+		if err != nil || !reflect.DeepEqual(*got, want) {
 			t.Errorf("origin = %+v, %v; want %+v", got, err, want)
 		}
 		if _, _, _, err := ReadMatchForMAT(ctx, dst, "", id); !errors.Is(err, storage.ErrInvalid) {
 			t.Errorf(".mat of the copy: got %v, want ErrInvalid", err)
 		}
-		if d := duels(dst); len(d) != 1 || d[0].DiceSeed != "cd" || d[0].Label != "C — D" {
-			t.Errorf("exported duels = %+v", d)
+		if d := duels(dst); len(d) != 0 {
+			t.Errorf("a whole export carries no Duel in suspense: %+v", d)
 		}
 		// The durations of the decisions travel with the moves; an unknown
 		// one stays unknown.

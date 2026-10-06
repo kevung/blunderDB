@@ -10,8 +10,8 @@
     import { t } from '../i18n';
     import { duelStore, duelListStore, duelAnimatingStore } from '../stores/duelStore.js';
     import { databasePathStore } from '../stores/databaseStore.js';
-    import { BOT_LEVELS, MAX_MATCH_LENGTH, START, humanSide, normalizeForm } from '../services/duel.js';
-    import { loadDuelForm, duelOffer, refreshDuels, startDuel, resumeDuel, suspendDuel, confirmStopDuel } from '../services/duelService.js';
+    import { BOT_LEVELS, MAX_MATCH_LENGTH, START, humanSide, normalizeForm, levelLabelParts } from '../services/duel.js';
+    import { loadDuelForm, duelOffer, refreshDuels, startDuel, resumeDuel, suspendDuel, confirmForfeitDuel, confirmCancelDuel } from '../services/duelService.js';
     import TranscriptView from './TranscriptView.svelte';
     import DuelClocks from './DuelClocks.svelte';
 
@@ -24,12 +24,16 @@
     let awaiting = $derived(duel?.awaiting ?? null);
     let mine = $derived(!!awaiting && awaiting.side === human && !$duelAnimatingStore);
     let players = $derived(duel ? [duel.header?.player1 || $t('duel.player1'), duel.header?.player2 || $t('duel.player2')] : null);
+    /** @type {import('../../wailsjs/go/models').duel.LevelInfo[]} */
+    let levels = $state([]);
     let lengthChoices = Array.from({ length: MAX_MATCH_LENGTH }, (_, i) => i + 1);
 
     onMount(async () => {
         refreshDuels();
         form = await loadDuelForm();
-        cadences = (await duelOffer())?.cadences ?? [];
+        const offer = await duelOffer();
+        cadences = offer?.cadences ?? [];
+        levels = offer?.levels ?? [];
     });
 
     function play() {
@@ -64,9 +68,9 @@
 
         <div class="gestures secondary">
             <span class="spacer"></span>
-            <button type="button" onclick={suspendDuel}>{$t('duel.suspend')}</button>
-            <button type="button" onclick={() => confirmStopDuel(true)}>{$t('duel.stopKeep')}</button>
-            <button type="button" class="danger" onclick={() => confirmStopDuel(false)}>{$t('duel.stopDiscard')}</button>
+            <button type="button" class="danger" onclick={confirmForfeitDuel}>{$t('duel.forfeit')}</button>
+            <button type="button" onclick={suspendDuel}>{$t('duel.pause')}</button>
+            <button type="button" class="danger" onclick={confirmCancelDuel}>{$t('duel.cancel')}</button>
         </div>
     {:else}
         <form
@@ -109,8 +113,11 @@
                 <label class="field"><input type="radio" bind:group={form.side} value={0} /> {$t('duel.player1')}</label>
                 <label class="field"><input type="radio" bind:group={form.side} value={1} /> {$t('duel.player2')}</label>
                 <span class="field-label">{$t('duel.level')}</span>
-                <select bind:value={form.level} aria-label={$t('duel.level')}>
-                    {#each BOT_LEVELS as level (level)}<option value={level}>{level}</option>{/each}
+                <select bind:value={form.level} aria-label={$t('duel.level')} title={$t('duel.levelTitle')}>
+                    {#each BOT_LEVELS as level (level)}
+                        {@const label = levelLabelParts(level, levels)}
+                        <option value={level}>{label.key ? $t(label.key, label.params) : level}</option>
+                    {/each}
                 </select>
             </div>
 

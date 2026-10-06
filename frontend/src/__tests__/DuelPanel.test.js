@@ -14,14 +14,15 @@ vi.mock('../services/duelService.js', () => ({
     startDuel: vi.fn(),
     resumeDuel: vi.fn(),
     suspendDuel: vi.fn(),
-    confirmStopDuel: vi.fn()
+    confirmForfeitDuel: vi.fn(),
+    confirmCancelDuel: vi.fn()
 }));
 
 import DuelPanel from '../components/DuelPanel.svelte';
 import DuelClocks from '../components/DuelClocks.svelte';
 import { duelStore, duelListStore } from '../stores/duelStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { startDuel, resumeDuel, suspendDuel, confirmStopDuel } from '../services/duelService.js';
+import { startDuel, resumeDuel, suspendDuel, confirmForfeitDuel, confirmCancelDuel } from '../services/duelService.js';
 
 const sheet = { document: { header: { match_length: 7 }, actions: [] }, actions: [], games: [], next: {}, cursor: 0 };
 
@@ -79,11 +80,22 @@ describe('DuelPanel', () => {
         expect(getByText('Your turn: click the dice to roll, or the cube to double.')).toBeTruthy();
         expect(queryByText('Double')).toBeNull();
         expect(queryByText('Validate')).toBeNull();
-        await fireEvent.click(getByText('Suspend'));
+        expect(queryByText('Stop and keep')).toBeNull();
+        await fireEvent.click(getByText('Pause match'));
         expect(suspendDuel).toHaveBeenCalled();
-        await fireEvent.click(getByText('Stop and discard'));
-        expect(confirmStopDuel).toHaveBeenCalledWith(false);
+        await fireEvent.click(getByText('Cancel match'));
+        expect(confirmCancelDuel).toHaveBeenCalled();
+        await fireEvent.click(getByText('Forfeit match'));
+        expect(confirmForfeitDuel).toHaveBeenCalled();
         expect(container.textContent).not.toMatch(/équité|equity|%/i);
+    });
+
+    test('a match is left only whole or not at all: forfeit, pause or cancel, never kept as it stands', async () => {
+        openDuel({ side: 0, kind: 'cube', position: { cube: { value: 1 } } });
+        const { container } = render(DuelPanel);
+        await tick();
+        const gestures = [...container.querySelectorAll('.gestures button')].map((b) => b.textContent.trim());
+        expect(gestures).toEqual(['Forfeit match', 'Pause match', 'Cancel match']);
     });
 
     test('the Bot’s turn says so', async () => {

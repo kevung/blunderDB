@@ -82,7 +82,7 @@ Commandes disponibles
    "list", "Affiche le contenu de la base."
    "match", "Affiche les positions et analyses d'un match."
    "transcribe", "Rejoue une transcription et rend compte de ce que le rejeu trouve."
-   "duel", "Joue un Duel une Action par appel (création, coup, videau, arrêt)."
+   "duel", "Joue un Duel une Action par appel (création, coup, videau, abandon, arrêt)."
    "collection", "Gère les collections (liste, contenu, création, renommage, suppression, export)."
    "study", "La file d'étude : les blunders non traités du joueur de référence, et la marque « vu »."
    "lesson", "Gère les leçons (étapes ordonnées montrant collections et positions) et les exporte."
@@ -1855,6 +1855,7 @@ contiendrait.
    ./blunderdb transcribe --db <path> --draft <id> --check
    ./blunderdb transcribe --db <path> --match <id> --edit [--accept-losses]
    ./blunderdb transcribe --db <path> --draft <id> --finish|--abandon
+   ./blunderdb transcribe --db <path> --materialize <document.json>
 
 **Options:**
 
@@ -1875,6 +1876,8 @@ contiendrait.
   dont il a été ouvert reste tel quel.
 * ``--yes`` — Avec ``--abandon`` sur un brouillon jamais terminé : confirme que
   tout ce qui y est écrit est perdu.
+* ``--materialize`` — Document JSON (``header`` et ``actions``, dés compris) à
+  écrire en match d'un seul coup, ou pas du tout.
 
 ``--check`` nomme chaque incohérence avec le numéro de l'action et la partie où
 elle se trouve : coup illégal, deux tours de suite pour le même joueur, action
@@ -1895,7 +1898,13 @@ ne se confondent pas.
 ``--render`` réécrit la transcription en ``.mat``, ce qui permet de vérifier
 l'aller-retour sur un fichier réel, en dehors des tests.
 
-Seules trois options écrivent, par les mêmes méthodes que le panneau
+``--materialize`` écrit, sans brouillon, le match que joue un document
+d'actions arrivé d'ailleurs. Les règles sont appliquées strictement : la
+première action refusée fait échouer la commande avec son rang (à partir de 0)
+et son motif, et rien n'est écrit. Les durées de décision du document
+(``decision_ms``, ``cube_decision_ms``) sont reportées sur les coups.
+
+Seules trois autres options écrivent, par les mêmes méthodes que le panneau
 Transcription : ``--edit`` ouvre un brouillon sur un match existant,
 ``--finish`` le termine — le match est remplacé sous le même identifiant —, et
 ``--abandon`` supprime un brouillon sans match, et exige ``--yes`` pour un
@@ -1930,6 +1939,8 @@ sont inconnues, jamais nulles).
    ./blunderdb duel list --db <path>
    ./blunderdb duel move --db <path> --id <id> --play "24/18 13/11"
    ./blunderdb duel roll|double|take|pass|resign --db <path> --id <id>
+   ./blunderdb duel forfeit --db <path> --id <id> --side 1|2
+   ./blunderdb duel contribute --db <path> --id <id> --side 1|2 --value <texte>
    ./blunderdb duel stop|discard --db <path> --id <id>
 
 **Sous-commandes :**
@@ -1938,8 +1949,11 @@ sont inconnues, jamais nulles).
   externe. ``--length`` (1 à 25 points) ou ``--money`` ; ``--start`` (XGID du
   Départ) ; ``--name1`` et ``--name2`` ; ``--side1`` et ``--side2``
   (``external``, ou ``bot:<niveau>`` avec ``instant``, ``normal`` ou
-  ``thorough``) ; ``--discard-at-end`` jette le brouillon à la fin au lieu
-  d'écrire le Match. Avec deux Bots, le match se joue en entier dans cet appel
+  ``thorough``, ou ``external:<configuration>@<moteur>``, un Côté externe qui
+  déclare le Bot qui joue derrière lui : l'origine du Match l'enregistre comme
+  déclaré, non attesté) ; ``--discard-at-end`` jette le brouillon à la fin au lieu
+  d'écrire le Match ; ``--combined-seed`` ne lance aucun dé avant l'apport de
+  chaque Côté externe au germe. Avec deux Bots, le match se joue en entier dans cet appel
   (``--side1 bot:instant --side2 bot:instant``) ; une session en argent entre
   deux Bots est refusée, car elle ne finirait jamais.
 * ``show`` — Score, ce que le Duel attend et, pour un coup, les jeux légaux. Le
@@ -1949,7 +1963,18 @@ sont inconnues, jamais nulles).
   Côté que le Duel attend (``--side 1|2`` pour le nommer) ; ``--play`` donne le
   coup en notation, dans l'ordre qu'on veut ; ``--level`` (1 à 3) la valeur d'un
   abandon ; ``--revision`` refuse l'Action si le Duel a bougé.
-* ``stop`` — Arrête le Duel et écrit le Match tel qu'il est.
+* ``contribute`` — L'apport d'un Côté externe au germe combiné (``--side 1|2``,
+  ``--value``, 1 à 64 octets), une seule fois, avant le premier lancer ; le
+  dernier apport lance les dés. Les lancers sortent alors du HMAC-SHA256 du
+  germe scellé sur l'apport de chaque Côté précédé de sa longueur, et l'origine
+  du Match porte les apports.
+* ``forfeit`` — Le Côté ``--side`` (requis) abandonne le match : la partie en
+  cours va à l'autre Côté pour les points qui le portent à la longueur (en
+  argent, une simple à la valeur du videau), et le Match s'écrit gagné par
+  lui.
+* ``stop`` — Arrête une session en argent et écrit son Match tel qu'il est,
+  la partie en cours sans vainqueur. Un match en points est refusé : il ne
+  s'écrit qu'entier (``forfeit``, ``discard``). Arrêter n'est pas abandonner.
 * ``discard`` — Jette le Duel : rien n'en est écrit.
 
 Toutes prennent ``--db`` et ``--format`` (``text`` ou ``json``).

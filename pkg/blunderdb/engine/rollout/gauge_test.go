@@ -68,9 +68,14 @@ func gaugePairs(t *testing.T) []xgPair {
 	return nil
 }
 
-// overturnPair (test.xg, game 4, move 129): gammonNet 2-ply prefers
-// 11/8 10/8 by 0.06, XG Roller++ prefers 21/19 14/11 by 0.024.
-var overturnPair = xgPair{"XGID=-CCDaB-----a--aab--bcbBbA-:1:1:-1:32:1:0:0:5:0", "21/19 14/11", "11/8 10/8", 0.981, 0.957}
+// overturnPair (test.xg, game 4, move 8, both counted from zero): XG Roller++
+// prefers 11/10 6/4 to 11/9 6/5 by 0.021. gammonNet 2-ply plays 11/9 6/5 and
+// does not even keep 11/10 6/4 among the plays it deepens: the 0-ply filter
+// ranks it below its candidate list. The Fast rollout puts 11/10 6/4 ahead
+// with a JSD above 3. Among the Roller++ decisions of test.xg it is the one
+// where the search's choice differs from XG's and the rollout both sides
+// with XG and separates the two plays.
+var overturnPair = xgPair{"XGID=-b-B-AD-D---cBa--c-db---B-:0:0:-1:21:1:0:0:5:0", "11/10 6/4", "11/9 6/5", 0.108, 0.087}
 
 func heavy(t *testing.T) {
 	t.Helper()
@@ -119,9 +124,9 @@ func TestGaugeAgainstXGRollouts(t *testing.T) {
 	}
 }
 
-// TestRolloutOverturnsTheSearch: gammonNet 2-ply prefers 11/8 10/8 by 0.06;
-// XG Roller++ prefers 21/19 14/11 by 0.024. The rollout must side with XG,
-// and say so with a JSD that separates the two.
+// TestRolloutOverturnsTheSearch: the search plays one move, XG Roller++
+// prefers another, and the rollout must side with XG, with a JSD that
+// separates the two.
 func TestRolloutOverturnsTheSearch(t *testing.T) {
 	heavy(t)
 	p := overturnPair
@@ -130,12 +135,8 @@ func TestRolloutOverturnsTheSearch(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	searched := map[string]float64{}
-	for _, m := range eval.Moves {
-		searched[m.Move] = m.Equity
-	}
-	if searched[p.second] <= searched[p.best] {
-		t.Fatalf("2-ply already prefers %s (%+.4f vs %+.4f): the case no longer tests a reversal", p.best, searched[p.best], searched[p.second])
+	if len(eval.Moves) == 0 || eval.Moves[0].Move != p.second {
+		t.Fatalf("2-ply no longer plays %s: the case no longer tests a reversal", p.second)
 	}
 	ro := rollPair(t, p)
 	if ro[p.best].Equity <= ro[p.second].Equity || ro[p.second].JSD < 3 {

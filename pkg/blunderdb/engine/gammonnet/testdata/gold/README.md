@@ -15,7 +15,7 @@ two moving targets.
 ## What you need
 
 - a checkout of [gammonNet](https://github.com/kevung/gammonNet) at the pinned version
-  (currently **v1.4.0**), including `vendor/backgammon-ai-engine` (fetched by its
+  (currently **v1.6.0**), including `vendor/backgammon-ai-engine` (fetched by its
   `tools/fetch_vendor.py`);
 - a C compiler; nothing else. This never runs in CI.
 
@@ -47,11 +47,11 @@ two moving targets.
        $V/c_inference/nn_eval.c $V/c_engine/bg_engine.c -lm
 
    ./gold $M/testdata/search_corpus.bin \
-          $M/strehl-prob5-512-512-256-128_v1.0.1_2026-08-27.bin \
+          $M/strehl-prob5-512-512-256-256_v1.6.0_2026-10-06.bin \
           $M/strehl-prune-32_v1.0.1_2026-08-27.bin \
           $M/testdata/search_gold.bin
    ./gold $M/testdata/search_cube_corpus.bin \
-          $M/strehl-prob5-512-512-256-128_v1.0.1_2026-08-27.bin \
+          $M/strehl-prob5-512-512-256-256_v1.6.0_2026-10-06.bin \
           $M/strehl-prune-32_v1.0.1_2026-08-27.bin \
           $M/testdata/search_cube_gold.bin
    ```
@@ -122,6 +122,16 @@ Go side reads the same triplet from the embedded `search_levels.json` (`DefaultC
 Before regenerating, v1.4.0 built with the old `(0,1,3)` configuration reproduced the committed
 money gold byte for byte. Margins unchanged: 7.153e-07 (money, 85) and 3.902e-07
 (match-and-cube, 126), 0 ties.
+
+**Regenerated on 2026-10-06 against gammonNet v1.6.0**, whose weights are
+`strehl-prob5-512-512-256-256` (upstream `7184e2f`). The search, cube and MET sources are
+unchanged since v1.4.0, and a gold built from the same sources with the previous vendored
+engine (`b2750df`'s `bg_engine.c`) is byte-identical to the committed one: the new move
+generator does not move the file, the weights do. Margins: 4.768e-07 (money, 85, 0 ties) and
+3.575e-07 (match-and-cube, 126). **One tie is open**: case 123 (the first terminal board, 0-ply,
+6-2) has its two candidates at exactly −0 in both engines, and the two order them differently —
+an exact tie, so the stable sort's generation-order rule should have made them agree. The
+gate fails on it by design; it is unresolved.
 
 Note the two extra translation units in the command above: v1.3.0's `gn_infer_reference.c`
 references `gn_int8_model_evaluate`, so `gn_int8_model.c` and `gn_gemm_int8.c` must be linked in

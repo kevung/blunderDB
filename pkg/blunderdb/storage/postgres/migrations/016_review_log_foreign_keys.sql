@@ -31,6 +31,15 @@ DO $$
 DECLARE
     c record;
 BEGIN
+    -- The composite targets, under the names 001 and 017 use: a database
+    -- bootstrapped before 016 went composite has neither yet (42830 otherwise).
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'anki_deck_tenant_id_key') THEN
+        ALTER TABLE anki_deck ADD CONSTRAINT anki_deck_tenant_id_key UNIQUE (tenant_id, id);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'position_tenant_id_key') THEN
+        ALTER TABLE position ADD CONSTRAINT position_tenant_id_key UNIQUE (tenant_id, id);
+    END IF;
+
     FOR c IN SELECT * FROM (VALUES
         ('anki_review_log_deck_tenant_fkey',     'deck_id',     'anki_deck'),
         ('anki_review_log_position_tenant_fkey', 'position_id', 'position')

@@ -415,3 +415,24 @@ func TestMachineCubeAvailable(t *testing.T) {
 		t.Error("a double waiting for its answer leaves no cube to offer")
 	}
 }
+
+// A forfeit at money play is worth a single at the cube's value, whatever the
+// Jacoby rule says of the cube's position.
+func TestMachineForfeitMoney(t *testing.T) {
+	for _, jacoby := range []bool{false, true} {
+		for _, c := range []struct {
+			cube domain.Cube
+			want int
+		}{
+			{centredCube(), 1},
+			{domain.Cube{Owner: domain.Black, Value: 1}, 2},
+			{domain.Cube{Owner: domain.Black, Value: 2}, 4},
+		} {
+			m := mustMachine(t, Header{Jacoby: jacoby}, moneyStart(InitialBoard(), c.cube, [2]int{}))
+			m = mustApply(t, m, Action{Side: domain.Black, Kind: KindForfeit})
+			if got := m.Score()[domain.White]; got != c.want {
+				t.Errorf("jacoby %v, cube %+v: player 2 scores %d, want %d", jacoby, c.cube, got, c.want)
+			}
+		}
+	}
+}

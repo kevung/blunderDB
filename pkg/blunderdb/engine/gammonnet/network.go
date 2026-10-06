@@ -45,7 +45,7 @@ const (
 	PLoseBackgammon
 )
 
-//go:embed strehl-prob5-512-512-256-128_v1.0.1_2026-08-27.bin
+//go:embed strehl-prob5-512-512-256-256_v1.6.0_2026-10-06.bin
 var embeddedWeights []byte
 
 type layer struct {

@@ -188,16 +188,22 @@ func (m *mover) copyOrigin(oldMatchID, newMatchID int64) error {
 }
 
 // copyDuels carries the Duels in suspense, seed included, so that each one
-// resumes on the new backend with the same dice to come.
+// resumes on the new backend with the same dice to come. Unlike an export, a
+// migration moves the library to another backend of the same operator, not
+// to a reader: the seed stays sealed in storage there as it was here.
 func (m *mover) copyDuels(rep *Report) error {
-	var drafts []*storage.Duel
-	for d, err := range m.src.Duels().List(m.ctx, "") {
+	var ids []int64
+	for e, err := range m.src.Duels().List(m.ctx, "") {
 		if err != nil {
 			return fmt.Errorf("migrate: list duels: %w", err)
 		}
-		drafts = append(drafts, d)
+		ids = append(ids, e.ID)
 	}
-	for _, d := range drafts {
+	for _, id := range ids {
+		d, err := m.src.Duels().Get(m.ctx, "", id)
+		if err != nil {
+			return fmt.Errorf("migrate: read duel %d: %w", id, err)
+		}
 		d.ID = 0
 		if _, err := m.dst.Duels().Save(m.ctx, m.scope, d); err != nil {
 			return fmt.Errorf("migrate: save duel %q: %w", d.Label, err)

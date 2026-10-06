@@ -39,6 +39,10 @@ type Settings struct {
 	// Cadence is the Duel's clock; nil, the default, plays without one. The
 	// durations of the decisions are measured either way.
 	Cadence *Cadence `json:"cadence,omitempty"`
+	// CombinedSeed has the Duel wait, its fingerprint published, for a
+	// contribution from each external Side before the first roll; the dice
+	// then come from CombinedSeed. It needs an external Side.
+	CombinedSeed bool `json:"combinedSeed,omitempty"`
 }
 
 // Options configures a Service.
@@ -78,6 +82,14 @@ func New(store storage.Storage, opts Options) *Service {
 	return &Service{store: store, opts: opts, open: map[string]int64{}}
 }
 
+// Rebind points the Service at store and keeps the open Duels, for a library
+// rewritten under a new handle with the same rows, ids and revisions (a
+// vacuum by file swap): a Duel in progress stays open. The caller excludes
+// every other call for its duration, since store is read without s.mu.
+func (s *Service) Rebind(store storage.Storage) {
+	s.store = store
+}
+
 // State is a Duel as a caller sees it. It never carries the seed: the
 // fingerprint stands for it until the Match reveals it.
 type State struct {
@@ -94,6 +106,12 @@ type State struct {
 	Awaiting *Decision `json:"awaiting,omitempty"`
 	// Clock is the Cadence's clock, nil without one.
 	Clock *ClockState `json:"clock,omitempty"`
+	// Contributions are the Sides' contributions to a combined seed, in
+	// player order, and AwaitingContribution the Sides (0 or 1) still owed:
+	// while one is, nothing is rolled and no Decision is awaited.
+	CombinedSeed         bool      `json:"combinedSeed,omitempty"`
+	Contributions        [2]string `json:"contributions,omitzero"`
+	AwaitingContribution []int     `json:"awaitingContribution,omitempty"`
 	// Ended is set by the call that ended the Duel.
 	Ended *Ending `json:"ended,omitempty"`
 	// Sheet is the match sheet the desktop draws with the Transcription's
@@ -108,9 +126,10 @@ type Ending struct {
 	// MatchID is the Match written, 0 when the draft was thrown away.
 	MatchID int64 `json:"matchId"`
 	// DiceSeed is revealed with the Match; "" when nothing was written.
-	DiceSeed     string `json:"diceSeed,omitempty"`
-	StoppedEarly bool   `json:"stoppedEarly,omitempty"`
-	Discarded    bool   `json:"discarded,omitempty"`
+	DiceSeed  string `json:"diceSeed,omitempty"`
+	Discarded bool   `json:"discarded,omitempty"`
+	// Forfeited is the player (1 or 2) who gave the match up, 0 none.
+	Forfeited int `json:"forfeited,omitempty"`
 	// OverTime is the player (1 or 2) whose reserve ran out first, 0 none.
 	OverTime int `json:"overTime,omitempty"`
 }
@@ -153,9 +172,22 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 		if set.Sides[i].Kind == "" {
 			set.Sides[i].Kind = SideExternal
 		}
-		if set.Sides[i].Kind == SideBot {
-			set.Sides[i].Name = BotName(set.Sides[i].Level)
+		switch sp := &set.Sides[i]; {
+		case sp.Declared != nil && sp.Kind != SideExternal:
+			return nil, fmt.Errorf("player %d: only an external Side declares a Bot: %w", i+1, storage.ErrInvalid)
+		case sp.Kind == SideBot:
+			sp.Name = BotName(sp.Level)
+		case sp.Declared != nil:
+			if err := sp.Declared.check(); err != nil {
+				return nil, fmt.Errorf("player %d: %w", i+1, err)
+			}
+			if sp.Name == "" {
+				sp.Name = BotName(sp.Declared.Configuration)
+			}
 		}
+	}
+	if set.CombinedSeed && set.Sides[0].Kind != SideExternal && set.Sides[1].Kind != SideExternal {
+		return nil, fmt.Errorf("a combined seed takes the contribution of an external Side, and both are delegated: %w", storage.ErrInvalid)
 	}
 	if set.MatchLength == 0 && set.Sides[0].Kind != SideExternal && set.Sides[1].Kind != SideExternal {
 		// Nobody would ever be awaited and a money session never ends: the
@@ -175,6 +207,7 @@ func (s *Service) Create(ctx context.Context, scope string, set Settings) (*Stat
 		DiscardAtEnd: set.DiscardAtEnd,
 		Fingerprint:  fp,
 		Cadence:      set.Cadence,
+		CombinedSeed: set.CombinedSeed,
 	}
 	g, err := newGame(doc, seed)
 	if err != nil {
@@ -355,6 +388,43 @@ func (s *Service) Play(ctx context.Context, scope string, id, revision int64, p 
 	return state(row, g), nil
 }
 
+// Contribute records side's contribution to the open Duel's combined seed
+// under the revision the caller saw (0: none), and, the last one in, lets the
+// Arbiter roll and play on to the next Decision of an external Side. A
+// contribution the Duel does not await is refused with its
+// *transcript.Refusal (RefusedContribution) and nothing is written.
+func (s *Service) Contribute(ctx context.Context, scope string, id, revision int64, side int, contribution string) (*State, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.open[scope] != id {
+		return nil, fmt.Errorf("duel %d: %w", id, ErrNotOpen)
+	}
+	row, g, err := s.load(ctx, scope, id)
+	if err != nil {
+		return nil, err
+	}
+	if revision != 0 && revision != row.Revision {
+		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
+	}
+	if err := g.contribute(side, contribution); err != nil {
+		return nil, err
+	}
+	sides, err := s.sides(g.doc.Sides)
+	if err != nil {
+		return nil, err
+	}
+	if err := g.settle(ctx, sides); err != nil {
+		return nil, err
+	}
+	if g.finished() || g.timeLost() {
+		return s.end(ctx, scope, row, g, !g.doc.DiscardAtEnd)
+	}
+	if err := s.save(ctx, scope, row, g); err != nil {
+		return nil, err
+	}
+	return state(row, g), nil
+}
+
 // save rewrites the draft under the row's revision.
 func (s *Service) save(ctx context.Context, scope string, row *storage.Duel, g *game) error {
 	var err error
@@ -365,10 +435,12 @@ func (s *Service) save(ctx context.Context, scope string, row *storage.Duel, g *
 	return err
 }
 
-// Stop ends the open Duel before its end: keep writes the Match as it stands
-// — an unfinished game keeps no winner, and a match short of its length is
-// marked stopped early — and otherwise the draft is thrown away and nothing of
-// the Duel is written. Stopping is never resigning: that is a Play.
+// Stop ends the open Duel before its end: thrown away, nothing of the Duel is
+// written. Kept, a money session's Match is written as it stands — an
+// unfinished game keeps no winner — since a session has no end of its own; a
+// match in points is refused (ErrInvalid), because a Match is written whole or
+// not at all (ADR-0072 rule 10): it is suspended, forfeited or thrown away.
+// Stopping is never resigning: that is a Play.
 func (s *Service) Stop(ctx context.Context, scope string, id, revision int64, keep bool) (*State, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -382,7 +454,34 @@ func (s *Service) Stop(ctx context.Context, scope string, id, revision int64, ke
 	if revision != 0 && revision != row.Revision {
 		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
 	}
+	if keep && g.doc.Header.MatchLength > 0 {
+		return nil, fmt.Errorf("duel %d: a match in points is kept only once won; suspend it, forfeit it or discard it: %w", id, storage.ErrInvalid)
+	}
 	return s.end(ctx, scope, row, g, keep)
+}
+
+// Forfeit has side give the open Duel's match up: the game in progress ends
+// won by the other side, for the points that bring them to the length — at
+// money play, a single at the cube's value (transcript.KindForfeit). The
+// Duel then ends as a match won does: its Match is written, or the draft
+// thrown away if it was created so. Unlike Stop, the Match has a winner.
+func (s *Service) Forfeit(ctx context.Context, scope string, id, revision int64, side int) (*State, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.open[scope] != id {
+		return nil, fmt.Errorf("duel %d: %w", id, ErrNotOpen)
+	}
+	row, g, err := s.load(ctx, scope, id)
+	if err != nil {
+		return nil, err
+	}
+	if revision != 0 && revision != row.Revision {
+		return nil, fmt.Errorf("duel %d at revision %d, not %d: %w", id, row.Revision, revision, storage.ErrConflict)
+	}
+	if err := g.forfeit(side); err != nil {
+		return nil, err
+	}
+	return s.end(ctx, scope, row, g, !g.doc.DiscardAtEnd)
 }
 
 // end writes the Match and its origin and deletes the draft in one
@@ -400,7 +499,7 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 		}
 		delete(s.open, scope)
 		st := state(row, g)
-		st.Ended, st.Awaiting = &Ending{Discarded: true, OverTime: g.doc.Clock.OverTime}, nil
+		st.Ended, st.Awaiting = &Ending{Discarded: true, OverTime: g.doc.Clock.OverTime, Forfeited: g.forfeitedBy()}, nil
 		return st, nil
 	}
 
@@ -409,14 +508,24 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 	if len(parts.Games) == 0 {
 		return nil, fmt.Errorf("duel %d: nothing played to keep: %w", row.ID, storage.ErrInvalid)
 	}
+	forfeited := g.forfeitedBy()
+	// Losing on time loses the match: the player out of time gives it up, so
+	// the Match is written won with its final score, never short of its
+	// length. A money session has no match to give and ends as it stands.
+	if g.timeLost() && g.doc.Header.MatchLength > 0 && !g.finished() {
+		if err := g.forfeit(g.doc.Clock.OverTime - 1); err != nil {
+			return nil, err
+		}
+		parts = g.parts()
+	}
 	header := *parts.Match
 	header.MatchHash, header.CanonicalHash = transcription.MatchHashes(parts)
-	origin := storage.MatchOrigin{
-		DiceSeed:     g.seed,
-		StoppedEarly: g.doc.Header.MatchLength > 0 && !g.finished(),
-		OverTime:     g.doc.Clock.OverTime,
-	}
+	origin := storage.MatchOrigin{DiceSeed: g.seed, OverTime: g.doc.Clock.OverTime}
 	origin.BotLevel, origin.BotEngine = botOrigin(g.doc.Sides)
+	origin.DeclaredBots = declaredOrigin(g.doc.Sides)
+	if g.doc.CombinedSeed {
+		origin.Contributions = g.doc.Contributions[:]
+	}
 	if g.doc.Cadence != nil {
 		origin.Cadence = g.doc.Cadence.String()
 	}
@@ -463,7 +572,7 @@ func (s *Service) end(ctx context.Context, scope string, row *storage.Duel, g *g
 	delete(s.open, scope)
 	st := state(row, g)
 	st.Awaiting = nil
-	st.Ended = &Ending{MatchID: res.MatchID, DiceSeed: g.seed, StoppedEarly: origin.StoppedEarly, OverTime: origin.OverTime}
+	st.Ended = &Ending{MatchID: res.MatchID, DiceSeed: g.seed, OverTime: origin.OverTime, Forfeited: forfeited}
 	return st, nil
 }
 
@@ -544,6 +653,10 @@ func state(row *storage.Duel, g *game) *State {
 		Awaiting:    awaiting,
 		Clock:       clk,
 		Sheet:       g.sheet(),
+
+		CombinedSeed:         g.doc.CombinedSeed,
+		Contributions:        g.doc.Contributions,
+		AwaitingContribution: g.pendingContributions(),
 	}
 }
 

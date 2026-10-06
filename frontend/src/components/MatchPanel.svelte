@@ -31,7 +31,7 @@
     import { exportMatchMat } from '../services/exportService.js';
     import MatchTimes from './MatchTimes.svelte';
     import MatchOrigin from './MatchOrigin.svelte';
-    import { fmtDuration, hasAnyDuration, sortByDuration } from '../utils/decisionTime.js';
+    import { cumulativeClocks, fmtClock, fmtDuration, hasAnyDuration, sortByDuration } from '../utils/decisionTime.js';
     import { editMatchTranscription } from '../services/transcriptionSave.js';
     import { enrichMatchFromFile } from '../services/importService.js';
     import { panelKeyGuard } from '../services/keyboardService.js';
@@ -56,8 +56,6 @@
     import { matchListStore } from '../stores/matchListStore.js';
     import { databaseLoadedStore, databasePathStore } from '../stores/databaseStore';
     import { libraryCountsStore } from '../stores/libraryCountsStore.js';
-    import { transcriptionListStore } from '../stores/transcriptionStore.js';
-    import { refreshTranscriptionDrafts, draftLabel, showTranscriptionTab } from '../services/transcriptionService.js';
 
     /** @type {any[]} */
     // The page(s) of the shared match list, filtered and ordered by SQL.
@@ -84,9 +82,12 @@
     let detailGames = $state([]); // Game[] for the detail match
     /** @type {any[]} */
     let detailGrades = $state([]); // MoveGrade[] for the detail match
-    let detailTimes = $state(null); // MatchTimeSummary for the detail match
-    let detailOrigin = $state(null); // duel.Origin of the detail match, null when not played here
-    let timeSort = $state(''); // '' | 'desc' | 'asc': the transcript's order by decision time
+    /** @type {import('../../wailsjs/go/models').service.MatchTimeSummary | null} */
+    let detailTimes = $state(null);
+    /** @type {import('../../wailsjs/go/models').duel.Origin | null} the Origin of a match played here */
+    let detailOrigin = $state(null);
+    /** @type {'' | 'desc' | 'asc'} the transcript's order by decision time */
+    let timeSort = $state('');
     let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
     /** @type {any} */
@@ -209,9 +210,6 @@
             } catch (error) {
                 logger.error('Error loading matches:', error);
             }
-            // Drafts refresh with the matches. Not awaited: onMount awaits this
-            // before installing the keyboard handler.
-            void refreshTranscriptionDrafts();
         });
     }
 
@@ -412,19 +410,38 @@
 
     // The Time column appears once the match recorded any duration.
     let showTimes = $derived(hasAnyDuration(detailMovePositions.map((mp) => ({ mp }))));
+    // Computed in match order, whatever the transcript's sort, indexed by globalIdx.
+    let clocks = $derived(cumulativeClocks(detailMovePositions));
+    // A time cell is never blank: no decision, or one the Arbiter played alone, reads as a dash.
+    const orDash = (/** @type {string} */ text) => text || '—';
+    // Under a Cadence the clock column shows the reserve left, replayed by the backend with the
+    // Arbiter's own arithmetic; without one, the time used so far.
+    let remaining = $derived(detailOrigin?.clock?.remaining ?? null);
+    let cadenceInfo = $derived.by(() => {
+        const c = detailOrigin?.cadence_settings;
+        if (!c) return null;
+        const bankMS = detailOrigin?.clock?.start?.[0] ?? (c.reserve ? c.reserve * 1000 : null);
+        return {
+            name: c.name || '',
+            delay: c.delay || 0,
+            perPoint: c.reservePerPoint || 0,
+            bank: bankMS === null ? '' : fmtClock(bankMS),
+            timeOut: c.timeOut === 'lose_match' ? $t('match.timeOutLoseMatch') : $t('match.timeOutContinue')
+        };
+    });
 
     // Moves grouped by game, each with its precomputed globalIdx (an indexOf per
     // row would be quadratic).
     let transcriptGames = $derived.by(() => {
         if (!detailMovePositions.length) return [];
         const gradeByMove = indexMoveGrades(detailGrades);
+        /** @type {Map<number, { mp: any, globalIdx: number, grade: any }[]>} */
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp inside $derived
         const gameMap = new Map();
-        detailMovePositions.forEach((mp, globalIdx) => {
-            if (!gameMap.has(mp.game_number)) {
-                gameMap.set(mp.game_number, []);
-            }
-            gameMap.get(mp.game_number).push({ mp, globalIdx, grade: gradeByMove.get(mp.move_id) });
+        detailMovePositions.forEach((/** @type {any} */ mp, globalIdx) => {
+            let moves = gameMap.get(mp.game_number);
+            if (!moves) gameMap.set(mp.game_number, (moves = []));
+            moves.push({ mp, globalIdx, grade: gradeByMove.get(mp.move_id) });
         });
         const result = [];
         for (const [gameNum, moves] of gameMap) {
@@ -826,17 +843,6 @@
                 {#if matches.length > 0 && matches.length < matchTotal}<span class="match-count">{$t('match.countOfTotal', { shown: matches.length, total: matchTotal })}</span>{/if}
                 <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title={$t('match.mergePlayersTitle')} disabled={matches.length === 0}>⇢ {$t('match.mergePlayers')}</button>
             </div>
-            <!-- Drafts being transcribed, found here again after a crash; a click opens their tab. -->
-            {#if $transcriptionListStore.length > 0}
-                <div class="draft-band">
-                    {#each $transcriptionListStore as draft (draft.id)}
-                        <button class="draft-line" onclick={showTranscriptionTab} title={$t('transcription.openDraftTooltip')}>
-                            <span class="draft-tag">{$t('transcription.draftInProgress')}</span>
-                            <span class="draft-name">{draftLabel(draft, $t('transcription.unnamed'))}</span>
-                        </button>
-                    {/each}
-                </div>
-            {/if}
             <PanelTable
                 bind:this={table}
                 rows={sortedMatches}
@@ -996,6 +1002,9 @@
                         <span class="vs-label">{$t('match.vs')}</span>
                         <span class="player-name">{detailMatch.player2_name}</span>
                         <span class="match-length-badge">{detailMatch.match_length} pt</span>
+                        {#if cadenceInfo}<span class="match-length-badge" data-testid="header-cadence" title={$t('match.cadenceRow')}
+                                >{$t('match.cadenceBadge', { bank: cadenceInfo.bank || '—', s: cadenceInfo.delay })}</span
+                            >{/if}
                     </div>
                     <div class="detail-meta">
                         {#if detailMatch.match_date && formatDate(detailMatch.match_date) !== '-'}
@@ -1068,10 +1077,14 @@
                                                     <th class="transcript-dice">{$t('match.dice')}</th>
                                                     <th class="transcript-move">{$t('match.move')}</th>
                                                     {#if showTimes}
+                                                        <th class="transcript-time" title={$t('match.timeCubeTooltip')}>{$t('match.timeCubeCol')}</th>
                                                         <th class="transcript-time"
                                                             ><button class="time-sort" onclick={cycleTimeSort} title={$t('match.timeSortTooltip')}
-                                                                >{$t('match.time')}{timeSort === 'desc' ? ' ▼' : timeSort === 'asc' ? ' ▲' : ''}</button
+                                                                >{$t('match.timePlayCol')}{timeSort === 'desc' ? ' ▼' : timeSort === 'asc' ? ' ▲' : ''}</button
                                                             ></th
+                                                        >
+                                                        <th class="transcript-time" title={$t(remaining ? 'match.timeRemainTooltip' : 'match.timeClockTooltip')}
+                                                            >{$t(remaining ? 'match.timeRemainCol' : 'match.timeClockCol')}</th
                                                         >
                                                     {/if}
                                                 </tr>
@@ -1110,11 +1123,13 @@
                                                             {/if}
                                                         </td>
                                                         {#if showTimes}
-                                                            <td class="transcript-time" data-testid="move-time">
-                                                                {#if mp.cube_decision_ms != null}<span class="time-cube" title={$t('match.timeCubeTooltip')}>◇ {fmtDuration(mp.cube_decision_ms)}</span
-                                                                    >{/if}
-                                                                {fmtDuration(mp.decision_ms)}
-                                                            </td>
+                                                            <td class="transcript-time" data-testid="move-time-cube"
+                                                                >{orDash(fmtDuration(mp.move_type === 'cube' ? mp.decision_ms : mp.cube_decision_ms))}</td
+                                                            >
+                                                            <td class="transcript-time" data-testid="move-time-play">{orDash(mp.move_type === 'cube' ? '' : fmtDuration(mp.decision_ms))}</td>
+                                                            <td class="transcript-time" data-testid="move-time-clock"
+                                                                >{orDash(remaining ? fmtClock(remaining[globalIdx]) : fmtClock(clocks[globalIdx]))}</td
+                                                            >
                                                         {/if}
                                                     </tr>
                                                 {/each}
@@ -1139,6 +1154,22 @@
                                         >{detailMatch.match_length > 1 ? $t('match.points', { n: detailMatch.match_length }) : $t('match.point', { n: detailMatch.match_length })}</td
                                     ></tr
                                 >
+                                {#if cadenceInfo}
+                                    <tr data-testid="meta-cadence"
+                                        ><td class="meta-label">{$t('match.cadenceRow')}</td><td class="meta-value"
+                                            >{[cadenceInfo.name, $t('match.originDelay', { s: cadenceInfo.delay }), $t('match.timeOutRow', { what: cadenceInfo.timeOut })]
+                                                .filter(Boolean)
+                                                .join(', ')}</td
+                                        ></tr
+                                    >
+                                    <tr data-testid="meta-bank"
+                                        ><td class="meta-label">{$t('match.bankRow')}</td><td class="meta-value"
+                                            >{cadenceInfo.bank ? $t('match.bankEach', { time: cadenceInfo.bank }) : '—'}{cadenceInfo.perPoint
+                                                ? ' (' + $t('match.bankPerPoint', { s: cadenceInfo.perPoint }) + ')'
+                                                : ''}</td
+                                        ></tr
+                                    >
+                                {/if}
                                 <tr><td class="meta-label">{$t('match.games')}</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
                                 <tr><td class="meta-label">{$t('match.date')}</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
                                 <tr>
@@ -1307,35 +1338,6 @@
         padding: 4px 8px;
         border-bottom: 1px solid var(--color-border);
         background: var(--color-surface-alt);
-    }
-
-    /* Drafts, deliberately quiet: a promise of a match, not one. */
-    .draft-band {
-        flex-shrink: 0;
-        display: flex;
-        flex-direction: column;
-        border-bottom: 1px solid var(--color-border);
-    }
-
-    .draft-line {
-        display: flex;
-        align-items: baseline;
-        gap: var(--space-2);
-        padding: var(--space-1) var(--space-2);
-        border: none;
-        background: none;
-        color: var(--color-text);
-        text-align: left;
-        cursor: pointer;
-    }
-
-    .draft-line:hover {
-        background: var(--color-surface-alt);
-    }
-
-    .draft-tag {
-        font-size: var(--font-size-small);
-        color: var(--color-text-muted);
     }
 
     .match-filter {
@@ -1663,6 +1665,7 @@
         white-space: nowrap;
         color: var(--text-muted, inherit);
         font-size: var(--font-size-small);
+        font-variant-numeric: tabular-nums;
     }
     .time-sort {
         background: none;
@@ -1670,10 +1673,6 @@
         padding: 0;
         color: inherit;
         cursor: pointer;
-    }
-    .time-cube {
-        margin-right: 6px;
-        opacity: 0.8;
     }
     .grade-mark,
     .game-marks {

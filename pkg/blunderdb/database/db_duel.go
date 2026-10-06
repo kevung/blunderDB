@@ -29,16 +29,26 @@ type DuelState struct {
 type DuelOffer struct {
 	Cadences  []duel.Cadence `json:"cadences"`
 	BotLevels []string       `json:"botLevels"`
+	// Levels: the same levels with their search depth, for the form's labels.
+	Levels []duel.LevelInfo `json:"levels"`
 }
 
 // duelService returns the Arbiter over the open library, made on first use.
 // Caller holds d.mu; lock ORDER mu -> duelMu, and forgetDuels takes duelMu
 // alone before mu.
+//
+// A Service made between forgetDuels and the replacement of the library is
+// on the replaced store: it is recognised by its store and dropped, its open
+// Duel naming a row of that library.
 func (d *Database) duelService() *duel.Service {
 	d.duelMu.Lock()
 	defer d.duelMu.Unlock()
+	if d.duelSvc != nil && d.duelOn != d.store {
+		d.duelSvc = nil
+	}
 	if d.duelSvc == nil {
 		d.duelSvc = duel.New(d.store, duel.Options{})
+		d.duelOn = d.store
 	}
 	return d.duelSvc
 }
@@ -84,7 +94,7 @@ var errConflictAnswered = errors.New("duel moved: answered with its fresh state"
 
 // DuelOffer returns the named Cadences and the Bot's levels.
 func (d *Database) DuelOffer() DuelOffer {
-	return DuelOffer{Cadences: duel.NamedCadences(), BotLevels: append([]string(nil), duel.BotLevels...)}
+	return DuelOffer{Cadences: duel.NamedCadences(), BotLevels: append([]string(nil), duel.BotLevels...), Levels: duel.LevelInfos()}
 }
 
 // ListDuels returns the Duels in suspense, most recently played first.
@@ -135,11 +145,28 @@ func (d *Database) FlagDuel(id int64) (*DuelState, error) {
 	})
 }
 
-// StopDuel ends the Duel before its end: kept, the Match is written as it
-// stands; thrown away, nothing of it is.
+// StopDuel ends the Duel before its end: thrown away, nothing of it is
+// written; kept, a money session's Match is written as it stands, and a match
+// in points is refused (duel.Service.Stop).
 func (d *Database) StopDuel(id, revision int64, keep bool) (*DuelState, error) {
 	return d.duelState(id, func(ctx context.Context, svc *duel.Service) (*duel.State, error) {
 		return svc.Stop(ctx, "", id, revision, keep)
+	})
+}
+
+// ForfeitDuel has side (0 player 1, 1 player 2) give the match up: the Duel
+// ends, its Match written won by the other side.
+func (d *Database) ForfeitDuel(id, revision int64, side int) (*DuelState, error) {
+	return d.duelState(id, func(ctx context.Context, svc *duel.Service) (*duel.State, error) {
+		return svc.Forfeit(ctx, "", id, revision, side)
+	})
+}
+
+// ContributeDuel records side's (0 player 1, 1 player 2) contribution to a
+// Duel created with a combined seed; the last one in starts the dice.
+func (d *Database) ContributeDuel(id, revision int64, side int, contribution string) (*DuelState, error) {
+	return d.duelState(id, func(ctx context.Context, svc *duel.Service) (*duel.State, error) {
+		return svc.Contribute(ctx, "", id, revision, side, contribution)
 	})
 }
 
@@ -163,6 +190,7 @@ func (d *Database) forgetDuels() {
 	d.duelMu.Lock()
 	svc := d.duelSvc
 	d.duelSvc = nil
+	d.duelOn = nil
 	d.duelMu.Unlock()
 	if svc == nil {
 		return
