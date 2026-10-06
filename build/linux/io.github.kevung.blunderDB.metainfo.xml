@@ -90,9 +90,11 @@
       <description>
         <ul>
           <li>Duel: play a whole match against a gammonNet bot on the board, with blunderDB as arbiter, a verifiable dice seed and optional clocks</li>
+          <li>Several Duels open at once, external sides that declare their bot, and a combined dice seed</li>
           <li>Decision times recorded for every Duel move, shown in review, searchable and crossed with errors in the statistics</li>
           <li>The Pile: set any displayed position aside with one key or a double-click outside the board</li>
           <li>Rollouts from a right click in the moves table and the Eval panel, and the Eval panel and training without an open database</li>
+          <li>gammonNet v1.6.0 engine; re-analyse stale positions after updating</li>
         </ul>
       </description>
     </release>

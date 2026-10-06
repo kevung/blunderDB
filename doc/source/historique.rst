@@ -17,8 +17,8 @@ retour** : une base migrée n'est plus lisible par une version antérieure de
 blunderDB, d'où la sauvegarde préalable (:ref:`annexe_db_migration`). Le reste
 ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 
-- **Réanalyser les positions périmées** (0.37.0). Une analyse gammonNet écrite
-  avant la version 0.37.0 l'a été par un moteur antérieur (gammonNet v1.4.0
+- **Réanalyser les positions périmées** (0.38.0). Une analyse gammonNet écrite
+  avant la version 0.38.0 l'a été par un moteur antérieur (gammonNet v1.6.0
   depuis) : ``blunderdb analyze --stale``, ou le bouton *Ré-analyser les
   positions périmées*, la récrit. Une analyse importée n'est jamais touchée.
 - **Réimporter les fichiers source pour obtenir la chance** (0.33.0). Les matchs
@@ -47,11 +47,12 @@ ne se fait pas tout seul, parce qu'aucune de ces données n'est rétroactive :
 - **Abandonner, suspendre, annuler** : le menu du Duel abandonne le match, le met en pause ou l'annule ; en argent, l'abandon perd la partie en simple à la valeur du videau. Un match en points ne s'enregistre qu'entier, et le germe d'un Duel en suspens ne sort par aucun export.
 - **Le sélecteur de niveau du Bot dit la profondeur** de chaque niveau, lue dans la table de gammonNet.
 - **Le Duel se joue contre un Côté externe** : un Côté externe déclare le Bot qui joue derrière lui (``--side external:<configuration>@<engine>``, ``sides[i].declared``), l'origine du Match le relit comme déclaré par le client et non attesté ; avec le **germe combiné** (``--combined-seed``, ``duel contribute``, ``duels.contribute``), l'apport de chaque Côté externe s'ajoute au germe scellé et les lancers en sortent, formule publiée.
+- **Plusieurs Duels ouverts à la fois** : ouvrir un Duel n'en suspend aucun autre, et un Duel ouvert fait courir ses horloges jusqu'à ce qu'on le suspende, arrêt ou plantage du processus compris ; le bureau garde un seul Duel au plateau et suspend celui qu'il quitte, sans toucher à ceux qu'un serveur ou la ligne de commande tient ouverts sur la même base.
 - **La transcription d'un match** gagne les colonnes *Videau*, *Jeu* et *Horloge* ; la cadence et la banque de temps figurent dans les informations du match, et une case de temps sans durée porte un tiret.
 - **La barre d'état** : le lien des blunders lance la recherche, et ses deux chiffres sont des liens distincts, les blunders de la liste à l'écran et ceux de la bibliothèque entière.
 - **Le moteur passe à gammonNet v1.6.0** (réseau strehl-prob5-512-512-256-256) ; les coups légaux sortent dans l'ordre de l'amont, petit dé d'abord.
 - **Matérialiser une transcription** d'un seul appel, en mode strict : ``blunderdb transcribe --materialize`` et la route ``transcriptions.materialize`` écrivent le Match, ou refusent la première Action fautive en donnant son rang et son motif, sans rien écrire.
-- **Schéma 2.35.0** : les tables du Duel, la durée de chaque décision, le Bot déclaré et les apports des Côtés externes. La migration depuis 2.31.0 est automatique à l'ouverture et sans retour possible (:ref:`annexe_db_migration`).
+- **Schéma 2.36.0** : les tables du Duel, la durée de chaque décision, le Bot déclaré, les apports des Côtés externes et l'état ouvert de chaque Duel. La migration depuis 2.31.0 est automatique à l'ouverture et sans retour possible (:ref:`annexe_db_migration`).
 - Corrections notables : un fichier d'import illisible est refusé avec le code ``invalid``, ``internal`` restant réservé aux pannes ; sous Windows, un compactage rétrécit bien le fichier, ou dit pourquoi il n'a pas pu ; *CTRL-C* n'est plus disputé par la copie du navigateur intégré, et *CTRL-X CTRL-X* copie l'évaluation gammonNet en mode EVAL.
 - Voir :ref:`manuel`, :ref:`cli` et :ref:`headless`.
 
