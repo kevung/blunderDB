@@ -36,7 +36,7 @@ CI also enforces `go vet`, `go test -race`, `golangci-lint` (`.golangci.yml`), `
 Toolchain: Go and Node versions are stated once per workflow (`env: GO_VERSION` /
 `NODE_VERSION`). `go.mod` states `go 1.26.0`, the minimum a dependency requires — gammonGo
 embeds `pkg/blunderdb/server` and inherits it, so never raise it without a dependency that
-demands it. Wails CLI and library v2.15.0.
+demands it. Wails CLI and library v2.16.0.
 
 Tests live beside the code; fixtures under `testdata/`. The `database` and `cli` test packages
 `chdir` to the repo root in `TestMain`. Both storage backends pass the contract suite in
