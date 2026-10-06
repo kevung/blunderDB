@@ -6828,6 +6828,32 @@ paths:
               schema:
                 $ref: "#/components/schemas/transcription_Losses"
                 nullable: true
+  /v1/transcriptions.materialize:
+    post:
+      operationId: transcriptions.materialize
+      tags: [transcriptions]
+      x-kind: json
+      x-idempotency-key: true
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: A key the client draws per gesture; a retry under it replays the first answer instead of writing again.
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/transcriptionMaterializeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/transcription_SaveResult"
+                nullable: true
   /v1/transcriptions.open:
     post:
       operationId: transcriptions.open
@@ -9075,6 +9101,9 @@ components:
       properties:
         exercise:
           type: string
+    transcript_Action:
+      type: object
+      description: "Opaque: see the Go type transcript.Action (defined outside internal/server, not expanded here)."
     transcript_Gesture:
       type: object
       description: "Opaque: see the Go type transcript.Gesture (defined outside internal/server, not expanded here)."
@@ -9118,6 +9147,15 @@ components:
           type: string
         filename:
           type: string
+    transcriptionMaterializeReq:
+      type: object
+      properties:
+        header:
+          $ref: "#/components/schemas/transcript_Header"
+        actions:
+          type: array
+          items:
+            $ref: "#/components/schemas/transcript_Action"
     transcriptionSessionReq:
       type: object
       properties:

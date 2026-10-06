@@ -1,10 +1,14 @@
 package cli
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"os"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/transcript"
 )
 
 // The three exits and the one entry of a draft (ADR-0045 §2), over the same
@@ -109,5 +113,44 @@ func (cli *CLI) transcribeWrite(a transcribeWriteArgs, cmd *flag.FlagSet) error 
 	default:
 		fmt.Printf("draft %d open on match %d\n", out.DraftID, a.matchID)
 	}
+	return nil
+}
+
+// materializeDocument is the file --materialize reads: the head and the
+// Actions of a transcript.Document, whose other fields (cursor, format) have
+// no meaning for a match that is written at once.
+type materializeDocument struct {
+	Header  transcript.Header   `json:"header"`
+	Actions []transcript.Action `json:"actions"`
+}
+
+// transcribeMaterialize writes the Match a document of Actions plays through
+// the panel's own method. A refused Action fails the command with its rank
+// and its reason, and nothing is written.
+func (cli *CLI) transcribeMaterialize(dbPath, file string, text bool) error {
+	if dbPath == "" {
+		return fmt.Errorf("--materialize needs --db")
+	}
+	raw, err := os.ReadFile(file)
+	if err != nil {
+		return fmt.Errorf("reading %s: %w", file, err)
+	}
+	var doc materializeDocument
+	dec := json.NewDecoder(bytes.NewReader(raw))
+	if err := dec.Decode(&doc); err != nil {
+		return fmt.Errorf("reading %s: %w", file, err)
+	}
+	if err := cli.initDatabase(dbPath); err != nil {
+		return err
+	}
+	res, err := cli.db.MaterializeTranscription(doc.Header, doc.Actions)
+	if err != nil {
+		return fmt.Errorf("materialising %s: %w", file, err)
+	}
+	if !text {
+		return printJSON(res)
+	}
+	fmt.Printf("match %d written: %d game(s), %d move(s), %d position(s) to analyse\n",
+		res.MatchID, res.Games, res.Moves, res.ToAnalyze)
 	return nil
 }

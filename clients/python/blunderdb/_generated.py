@@ -1274,6 +1274,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/transcriptions.losses — JSON."
         return self._call("/v1/transcriptions.losses", payload)
 
+    def transcriptions_materialize(self, payload: Optional[dict] = None, *, idempotency_key: Optional[str] = None) -> Optional[Any]:
+        "POST /v1/transcriptions.materialize — JSON. Accepts an Idempotency-Key."
+        return self._call("/v1/transcriptions.materialize", payload, idempotency_key=idempotency_key)
+
     def transcriptions_open(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/transcriptions.open — JSON."
         return self._call("/v1/transcriptions.open", payload)

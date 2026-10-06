@@ -4756,6 +4756,8 @@ Options:
     	Jellyfish/gnubg .mat file to replay
   -match int
     	Match id to replay (requires --db)
+  -materialize string
+    	JSON document of Actions (header and actions, dice included) to write as a match in one step, or nothing (requires --db)
   -render string
     	Write the transcription back as a .mat file to this path
   -yes
@@ -4778,6 +4780,9 @@ Examples:
   # Correct a match: open a draft on it, then finish it
   blunderdb transcribe --db database.db --match 5 --edit
   blunderdb transcribe --db database.db --draft 4 --finish
+
+  # Write a match played elsewhere from its Actions; the first illegal Action refuses all
+  blunderdb transcribe --db database.db --materialize match.json
 
   # Drop a draft
   blunderdb transcribe --db database.db --draft 4 --abandon

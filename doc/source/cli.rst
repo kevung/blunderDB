@@ -1855,6 +1855,7 @@ contiendrait.
    ./blunderdb transcribe --db <path> --draft <id> --check
    ./blunderdb transcribe --db <path> --match <id> --edit [--accept-losses]
    ./blunderdb transcribe --db <path> --draft <id> --finish|--abandon
+   ./blunderdb transcribe --db <path> --materialize <document.json>
 
 **Options:**
 
@@ -1875,6 +1876,8 @@ contiendrait.
   dont il a été ouvert reste tel quel.
 * ``--yes`` — Avec ``--abandon`` sur un brouillon jamais terminé : confirme que
   tout ce qui y est écrit est perdu.
+* ``--materialize`` — Document JSON (``header`` et ``actions``, dés compris) à
+  écrire en match d'un seul coup, ou pas du tout.
 
 ``--check`` nomme chaque incohérence avec le numéro de l'action et la partie où
 elle se trouve : coup illégal, deux tours de suite pour le même joueur, action
@@ -1895,7 +1898,13 @@ ne se confondent pas.
 ``--render`` réécrit la transcription en ``.mat``, ce qui permet de vérifier
 l'aller-retour sur un fichier réel, en dehors des tests.
 
-Seules trois options écrivent, par les mêmes méthodes que le panneau
+``--materialize`` écrit, sans brouillon, le match que joue un document
+d'actions arrivé d'ailleurs. Les règles sont appliquées strictement : la
+première action refusée fait échouer la commande avec son rang (à partir de 0)
+et son motif, et rien n'est écrit. Les durées de décision du document
+(``decision_ms``, ``cube_decision_ms``) sont reportées sur les coups.
+
+Seules trois autres options écrivent, par les mêmes méthodes que le panneau
 Transcription : ``--edit`` ouvre un brouillon sur un match existant,
 ``--finish`` le termine — le match est remplacé sous le même identifiant —, et
 ``--abandon`` supprime un brouillon sans match, et exige ``--yes`` pour un

@@ -44,6 +44,12 @@ type transcriptionApplyReq struct {
 	Gesture   transcript.Gesture `json:"gesture"`
 }
 
+// transcriptionMaterializeReq is a whole document of Actions, dice included.
+type transcriptionMaterializeReq struct {
+	Header  transcript.Header   `json:"header"`
+	Actions []transcript.Action `json:"actions"`
+}
+
 // transcriptionEditResp is the draft opened on a Match and what opening it
 // dropped: a client shows Losses when Losses.Lossy.
 type transcriptionEditResp struct {
@@ -98,6 +104,9 @@ func (s *Server) transcriptionRoutes() []route {
 		{http.MethodPost, "/v1/transcriptions.create", rpc(func(ctx context.Context, scope string, req transcriptionCreateReq) (*transcription.State, error) {
 			return s.transcripts().Create(ctx, scope, req.Header)
 		})},
+		{http.MethodPost, "/v1/transcriptions.materialize", s.withIdempotency(rpc(func(ctx context.Context, scope string, req transcriptionMaterializeReq) (*transcription.SaveResult, error) {
+			return s.transcripts().Materialize(ctx, scope, req.Header, req.Actions)
+		}))},
 		{http.MethodPost, "/v1/transcriptions.open", rpc(func(ctx context.Context, scope string, req transcriptionIDReq) (*transcription.State, error) {
 			return s.transcripts().Open(ctx, scope, req.ID)
 		})},

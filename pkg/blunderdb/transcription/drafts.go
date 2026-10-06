@@ -52,24 +52,30 @@ func (s *Service) List(ctx context.Context, scope string) ([]Summary, error) {
 // `user` metadata.
 func (s *Service) Create(ctx context.Context, scope string, header transcript.Header) (*State, error) {
 	doc := transcript.New(header.MatchLength)
-	// Keep whatever else the form stated (players, event, rules), but never
-	// let a caller post a match id on a draft that has produced no match.
-	doc.Header = header
-	doc.Header.MatchID = nil
-	if doc.Header.MatchLength == 0 && !header.Jacoby && !header.Beaver {
+	doc.Header = s.draftHeader(ctx, scope, header)
+	return s.insert(ctx, scope, doc)
+}
+
+// draftHeader is the header a new Transcription starts from: whatever the form
+// stated (players, event, rules), with the defaults a typed draft and a
+// materialised one share, so the two write the same Match.
+func (s *Service) draftHeader(ctx context.Context, scope string, header transcript.Header) transcript.Header {
+	// A caller never posts a match id on a draft that has produced no match.
+	header.MatchID = nil
+	if header.MatchLength == 0 && !header.Jacoby && !header.Beaver {
 		// A money draft is Jacoby by default (transcript.New); an all-zero
 		// header is "unstated", not "Jacoby off".
-		doc.Header.Jacoby = true
+		header.Jacoby = true
 	}
-	if doc.Header.Date.IsZero() {
-		doc.Header.Date = time.Now()
+	if header.Date.IsZero() {
+		header.Date = time.Now()
 	}
-	if strings.TrimSpace(doc.Header.Transcriber) == "" {
+	if strings.TrimSpace(header.Transcriber) == "" {
 		if meta, err := s.store.Metadata().Load(ctx, scope); err == nil {
-			doc.Header.Transcriber = strings.TrimSpace(meta["user"])
+			header.Transcriber = strings.TrimSpace(meta["user"])
 		}
 	}
-	return s.insert(ctx, scope, doc)
+	return header
 }
 
 // insert writes doc as a new row and opens its session.

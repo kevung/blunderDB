@@ -384,7 +384,7 @@ La famille ``transcriptions.*`` permet à un client externe de transcrire un
 match geste par geste, avec la même logique que le bureau. Les lectures
 (``list``, ``get``, ``exportMat``, ``losses``) sont toujours servies. Les
 gestes (``create``, ``open``, ``editMatch``, ``apply``, ``undo``, ``redo``,
-``close``, ``finish``, ``abandon``) ne le sont qu'avec ``serve
+``close``, ``finish``, ``abandon``, ``materialize``) ne le sont qu'avec ``serve
 --transcription`` : sans ce drapeau, ces routes répondent 404.
 
 ``create`` et ``open`` rendent l'état du brouillon, sa ``revision`` et un
@@ -420,6 +420,17 @@ brouillon sur un Match existant et rend, pour un match importé, le décompte
 des analyses et commentaires que la transcription ne garde pas
 (``losses.lossy``). L'analyse du match enregistré se lance par
 ``gammonnet.analyzeMissing``.
+
+``materialize`` écrit un Match d'un seul appel à partir d'un document
+d'actions (``header`` et ``actions``, dés compris), sans brouillon ni session,
+sous ``Idempotency-Key``. Il applique la machine de règles comme l'arbitre du
+Duel : la première action refusée arrête tout, rien n'est écrit, et l'erreur
+(**400**) donne son rang à partir de 0 (``details.rank``, -1 pour l'en-tête),
+sa nature (``details.kind``) et son motif (``details.detail``). Le Match est
+celui que donneraient ``create``, un ``apply`` par action puis ``finish`` : mêmes
+empreintes, aucune origine « jouée ici ». La durée de décision d'une action
+(``decision_ms``, ``cube_decision_ms``) est reportée sur son coup ; absente,
+elle reste inconnue. La réponse est celle de ``finish``.
 
 .. warning::
 

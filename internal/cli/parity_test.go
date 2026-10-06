@@ -280,6 +280,7 @@ var databaseParity = map[string]parityEntry{
 	"ApplyTranscriptionGesture":         {Server: "/v1/transcriptions.apply", Why: whyTranscription},
 	"TranscriptionMAT":                  {Server: "/v1/transcriptions.exportMat", Why: whyTranscriptionMAT},
 	"FinishTranscription":               {Server: "/v1/transcriptions.finish", CLI: "transcribe --finish", Why: whyTranscription},
+	"MaterializeTranscription":          {Server: "/v1/transcriptions.materialize", CLI: "transcribe --materialize", Why: whyTranscription},
 	"AbandonTranscription":              {Server: "/v1/transcriptions.abandon", CLI: "transcribe --abandon", Why: whyTranscription},
 	"EditMatchTranscription":            {Server: "/v1/transcriptions.editMatch", CLI: "transcribe --edit", Why: whyTranscription},
 	"MatchTranscriptionLosses":          {Server: "/v1/transcriptions.losses", CLI: "transcribe --edit", Why: whyTranscription},
