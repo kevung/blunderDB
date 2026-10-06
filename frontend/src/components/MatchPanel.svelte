@@ -409,6 +409,8 @@
     let showTimes = $derived(hasAnyDuration(detailMovePositions.map((mp) => ({ mp }))));
     // Computed in match order, whatever the transcript's sort, indexed by globalIdx.
     let clocks = $derived(cumulativeClocks(detailMovePositions));
+    // A time cell is never blank: no decision, or one the Arbiter played alone, reads as a dash.
+    const orDash = (text) => text || '—';
     // Under a Cadence the clock column shows the reserve left, replayed by the backend with the
     // Arbiter's own arithmetic; without one, the time used so far.
     let remaining = $derived(detailOrigin?.clock?.remaining ?? null);
@@ -1118,9 +1120,13 @@
                                                             {/if}
                                                         </td>
                                                         {#if showTimes}
-                                                            <td class="transcript-time" data-testid="move-time-cube">{fmtDuration(mp.move_type === 'cube' ? mp.decision_ms : mp.cube_decision_ms)}</td>
-                                                            <td class="transcript-time" data-testid="move-time-play">{mp.move_type === 'cube' ? '' : fmtDuration(mp.decision_ms)}</td>
-                                                            <td class="transcript-time" data-testid="move-time-clock">{remaining ? fmtClock(remaining[globalIdx]) : fmtClock(clocks[globalIdx])}</td>
+                                                            <td class="transcript-time" data-testid="move-time-cube"
+                                                                >{orDash(fmtDuration(mp.move_type === 'cube' ? mp.decision_ms : mp.cube_decision_ms))}</td
+                                                            >
+                                                            <td class="transcript-time" data-testid="move-time-play">{orDash(mp.move_type === 'cube' ? '' : fmtDuration(mp.decision_ms))}</td>
+                                                            <td class="transcript-time" data-testid="move-time-clock"
+                                                                >{orDash(remaining ? fmtClock(remaining[globalIdx]) : fmtClock(clocks[globalIdx]))}</td
+                                                            >
                                                         {/if}
                                                     </tr>
                                                 {/each}

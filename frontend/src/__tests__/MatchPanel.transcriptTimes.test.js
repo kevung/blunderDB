@@ -93,23 +93,23 @@ describe('MatchPanel — the Transcript carries the time of every decision', () 
 
     const col = (container, name, game = 0) => [...container.querySelectorAll('details.game-section')[game].querySelectorAll(`[data-testid="move-time-${name}"]`)].map((c) => c.textContent.trim());
 
-    test('cube, play and clock are three columns, an unknown time is empty', async () => {
+    test('cube, play and clock are three columns, a time not taken reads as a dash', async () => {
         const container = await openTranscript();
-        expect(col(container, 'cube')).toEqual(['1.0 s', '', '12.0 s']);
-        expect(col(container, 'play')).toEqual(['5.2 s', '', '']);
-        expect(col(container, 'clock')).toEqual(['0:06', '', '0:18']);
+        expect(col(container, 'cube')).toEqual(['1.0 s', '—', '12.0 s']);
+        expect(col(container, 'play')).toEqual(['5.2 s', '—', '—']);
+        expect(col(container, 'clock')).toEqual(['0:06', '0:00', '0:18']);
     });
 
     test('the Play header orders the rows by time, the unknown ones last, the clock keeps the match order', async () => {
         const container = await openTranscript();
         const header = container.querySelector('button.time-sort');
         await fireEvent.click(header);
-        expect(col(container, 'cube')).toEqual(['12.0 s', '1.0 s', '']);
-        expect(col(container, 'clock')).toEqual(['0:18', '0:06', '']);
+        expect(col(container, 'cube')).toEqual(['12.0 s', '1.0 s', '—']);
+        expect(col(container, 'clock')).toEqual(['0:18', '0:06', '0:00']);
         await fireEvent.click(header);
-        expect(col(container, 'cube')).toEqual(['1.0 s', '12.0 s', '']);
+        expect(col(container, 'cube')).toEqual(['1.0 s', '12.0 s', '—']);
         await fireEvent.click(header);
-        expect(col(container, 'cube')).toEqual(['1.0 s', '', '12.0 s']);
+        expect(col(container, 'cube')).toEqual(['1.0 s', '—', '12.0 s']);
     });
 
     test('under a Cadence the clock column shows the reserve left, and the metadata state the cadence and the bank', async () => {

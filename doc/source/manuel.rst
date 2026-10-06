@@ -1519,7 +1519,9 @@ son en-tête rappellent la cadence (préréglage, délai, comportement au
 dépassement) et la banque de temps de chaque joueur, ramenée au score de départ
 quand la réserve est comptée par point restant. Un clic sur l'en-tête **Jeu** trie les coups de chaque partie du plus long
 au plus court, puis du plus court au plus long, puis rend l'ordre du match ; une
-durée inconnue reste vide et passe en dernier. Au-dessus des parties, un résumé
+case sans durée (pas de décision de videau à ce tour, ou coup joué par
+l'Arbitre seul) porte un tiret, et ces coups passent en dernier. L'Horloge
+part de zéro dès le premier coup. Au-dessus des parties, un résumé
 donne pour chaque joueur le total, la moyenne par coup de pions et par décision
 de videau, et, si le match a une cadence, une marque pour le joueur dont la
 réserve s'est épuisée en premier (le Duel n'enregistre que celui-là) ; un
