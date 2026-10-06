@@ -9383,6 +9383,10 @@ msgstr ""
 "„Fortsetzen“ öffnet ein unterbrochenes Duell am selben Punkt wieder, mit "
 "denselben kommenden Würfen; seine Uhren waren angehalten."
 
+#: ../../source/manuel.rst:4045
+msgid "Un Duel en suspens ne quitte pas sa base : l'export de la base ne l'emporte pas, parce que ses dés à venir ne doivent sortir par aucune voie avant la fin. Un Duel terminé part comme tout Match."
+msgstr "Ein unterbrochenes Duell verlässt seine Datenbank nicht: Der Export der Datenbank nimmt es nicht mit, weil seine kommenden Würfe vor dem Ende auf keinem Weg hinausgelangen dürfen. Ein beendetes Duell wird wie jedes Match exportiert."
+
 #: ../../source/manuel.rst:4026
 msgid ""
 "Le Duel se joue au plateau. Le panneau montre la feuille de match en deux "

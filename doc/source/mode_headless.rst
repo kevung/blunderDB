@@ -468,6 +468,12 @@ qu'il est, ``discard`` le jette. Les gestes sont annoncés sur ``/v1/events``
 (filtre ``duel``). Sous ``blunderdb call``, un Duel n'a ni Cadence ni durée de
 décision : chaque appel est son propre processus.
 
+L'export n'y fait pas exception : ``exports.sqlite`` n'emporte aucun Duel en
+suspens, même quand il porte sur le tenant entier, puisque son germe est
+chacun des lancers à venir. Le Match d'un Duel terminé part avec son origine,
+germe révélé. Seul ``migrate`` emporte les Duels en suspens avec leur germe,
+pour qu'ils se reprennent sur PostgreSQL avec les mêmes dés.
+
 .. warning::
 
    Le démon n'authentifie personne : qui atteint ces routes joue pour l'un

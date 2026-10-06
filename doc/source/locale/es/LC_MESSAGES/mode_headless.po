@@ -1160,6 +1160,10 @@ msgstr ""
 "call``, un Duelo no tiene Cadencia ni tiempo de decisión: cada llamada es"
 " su propio proceso."
 
+#: ../../source/mode_headless.rst:471
+msgid "L'export n'y fait pas exception : ``exports.sqlite`` n'emporte aucun Duel en suspens, même quand il porte sur le tenant entier, puisque son germe est chacun des lancers à venir. Le Match d'un Duel terminé part avec son origine, germe révélé. Seul ``migrate`` emporte les Duels en suspens avec leur germe, pour qu'ils se reprennent sur PostgreSQL avec les mêmes dés."
+msgstr "La exportación no es una excepción: ``exports.sqlite`` no lleva ningún Duelo suspendido, ni siquiera cuando abarca el tenant entero, ya que su semilla es cada una de las tiradas por venir. El Match de un Duelo terminado sale con su origen, semilla revelada. Solo ``migrate`` lleva los Duelos suspendidos con su semilla, para que se reanuden en PostgreSQL con los mismos dados."
+
 #: ../../source/mode_headless.rst:473
 msgid ""
 "Le démon n'authentifie personne : qui atteint ces routes joue pour l'un "

@@ -30,6 +30,21 @@ type Duel struct {
 	Revision int64 `json:"revision"`
 }
 
+// DuelEntry is a Duel in suspense as a list shows it. It has no seed, and no
+// Document either, by construction: List is what a copy of the whole scope
+// walks, and the seed of an unfinished Duel is every roll to come, which
+// leaves by no route before the end (ADR-0072 rule 11). Whoever needs the
+// draft itself — the Arbiter resuming it, a migration carrying the library to
+// another backend — names it to Get.
+type DuelEntry struct {
+	ID            int64  `json:"id"`
+	CreatedAt     string `json:"created_at"`
+	UpdatedAt     string `json:"updated_at"`
+	FormatVersion string `json:"format_version"`
+	Label         string `json:"label"`
+	Revision      int64  `json:"revision"`
+}
+
 // MatchOrigin is how a Match came to be when it was played here rather than
 // imported or transcribed (ADR-0072 rule 10). A Match without one was not
 // played here. Nothing in it is invented: StoppedEarly says the match was
@@ -64,10 +79,11 @@ type MatchOrigin struct {
 // DuelStore persists the drafts of Duels and the origin of the Matches they
 // became.
 type DuelStore interface {
-	// List streams the scope's Duels in suspense, most recently updated first.
-	List(ctx context.Context, scope string) iter.Seq2[*Duel, error]
+	// List streams the scope's Duels in suspense, most recently updated first,
+	// without their seed or document.
+	List(ctx context.Context, scope string) iter.Seq2[*DuelEntry, error]
 
-	// Get returns one Duel, or ErrNotFound.
+	// Get returns one Duel, seed included, or ErrNotFound.
 	Get(ctx context.Context, scope string, id int64) (*Duel, error)
 
 	// Save inserts d when it carries no id — d.DiceSeed is written then and

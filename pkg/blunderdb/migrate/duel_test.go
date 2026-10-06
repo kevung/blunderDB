@@ -85,10 +85,19 @@ func TestRunCarriesTheDuel(t *testing.T) {
 		t.Errorf("migrated moves = %+v", moves)
 	}
 	var seeds []string
-	for d, err := range dst.Duels().List(ctx, "") {
-		if err == nil {
-			seeds = append(seeds, d.DiceSeed)
+	var ids []int64
+	for e, err := range dst.Duels().List(ctx, "") {
+		if err != nil {
+			t.Fatal(err)
 		}
+		ids = append(ids, e.ID)
+	}
+	for _, id := range ids {
+		d, err := dst.Duels().Get(ctx, "", id)
+		if err != nil {
+			t.Fatal(err)
+		}
+		seeds = append(seeds, d.DiceSeed)
 	}
 	if len(seeds) != 1 || seeds[0] != "cd" {
 		t.Errorf("migrated duels' seeds = %v, want [cd]", seeds)

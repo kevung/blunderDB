@@ -32,24 +32,26 @@ func scanDuel(sc interface{ Scan(...any) error }) (*storage.Duel, error) {
 }
 
 // List streams the scope's Duels, most recently updated first; the id breaks
-// ties so the order is total.
-func (s *DuelStore) List(ctx context.Context, scope string) iter.Seq2[*storage.Duel, error] {
-	return func(yield func(*storage.Duel, error) bool) {
+// ties so the order is total. The seed column is not selected: an entry has
+// nowhere to hold it.
+func (s *DuelStore) List(ctx context.Context, scope string) iter.Seq2[*storage.DuelEntry, error] {
+	return func(yield func(*storage.DuelEntry, error) bool) {
 		tenant, targs := s.DB.TenantFilter("", scope)
 		rows, err := s.DB.Query(ctx,
-			`SELECT `+s.selectCols()+` FROM duel WHERE `+tenant+` ORDER BY updated_at DESC, id DESC`, targs...)
+			`SELECT id, `+s.DB.TimestampText("created_at")+`, `+s.DB.TimestampText("updated_at")+
+				`, format_version, label, revision FROM duel WHERE `+tenant+` ORDER BY updated_at DESC, id DESC`, targs...)
 		if err != nil {
 			yield(nil, errf(s.DB, "list duels", err))
 			return
 		}
 		defer rows.Close()
 		for rows.Next() {
-			d, err := scanDuel(rows)
-			if err != nil {
+			var d storage.DuelEntry
+			if err := rows.Scan(&d.ID, &d.CreatedAt, &d.UpdatedAt, &d.FormatVersion, &d.Label, &d.Revision); err != nil {
 				yield(nil, errf(s.DB, "list duels", err))
 				return
 			}
-			if !yield(d, nil) {
+			if !yield(&d, nil) {
 				return
 			}
 		}

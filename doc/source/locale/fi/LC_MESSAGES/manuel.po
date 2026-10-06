@@ -9055,6 +9055,10 @@ msgstr ""
 "«Jatka peliä» avaa keskeytetyn Kaksintaistelun uudelleen samasta kohdasta, "
 "samoilla tulevilla nopilla; sen kellot olivat pysähdyksissä."
 
+#: ../../source/manuel.rst:4045
+msgid "Un Duel en suspens ne quitte pas sa base : l'export de la base ne l'emporte pas, parce que ses dés à venir ne doivent sortir par aucune voie avant la fin. Un Duel terminé part comme tout Match."
+msgstr "Keskeytetty Kaksintaistelu ei lähde tietokannastaan: tietokannan vienti ei ota sitä mukaan, koska sen tulevat nopanheitot eivät saa päästä ulos millään tiellä ennen loppua. Päättynyt Kaksintaistelu lähtee kuten mikä tahansa Match."
+
 #: ../../source/manuel.rst:4026
 msgid ""
 "Le Duel se joue au plateau. Le panneau montre la feuille de match en deux "

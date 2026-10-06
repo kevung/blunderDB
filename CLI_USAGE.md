@@ -248,6 +248,8 @@ Export database contents to files.
 ```
 
 This creates a complete copy of the database including all positions, analyses, matches, and metadata.
+A Duel in suspense stays behind: its dice seed is every roll to come, and it leaves by no route
+before the Duel ends. A finished Duel travels as its Match, seed revealed.
 
 ### Export Positions
 

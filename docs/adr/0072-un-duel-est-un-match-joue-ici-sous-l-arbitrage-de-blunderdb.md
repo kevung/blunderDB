@@ -95,7 +95,16 @@ import ne fournit complètement : la durée de chaque décision.
     client répond de qui joue pour qui. Quand une Action donne le trait à un Côté délégué, le
     Bot joue dans la même requête : la réponse rend l'état au prochain point où un Côté
     externe décide, avec tout ce qui s'est passé entre-temps. Le délai « naturel » d'un Bot
-    est une animation du client. Le germe ne sort par aucune route avant la fin. Qui paie le
+    est une animation du client. Le germe ne sort par aucune route avant la fin, l'export
+    compris : une base exportée n'emporte aucun Duel en suspens, quelle que soit l'interface
+    qui l'exporte (bureau, CLI, démon, `call`). Un export part vers un lecteur, et le
+    brouillon ne vaut que sous l'Arbitre qui en tient le germe ; l'emporter sans germe ferait
+    un autre Duel, aux dés à venir changés (règle 10). Le Match d'un Duel terminé part avec
+    son origine, germe révélé. Seule la migration vers PostgreSQL emporte les brouillons avec
+    leur germe : elle déplace la base d'un même opérateur sans la livrer à personne, et le
+    germe y reste scellé. La règle tient par construction : la liste des Duels du stockage
+    (`DuelStore.List`) n'a ni germe ni document, seul `Get` les rend, à qui nomme un Duel.
+    Qui paie le
     calcul du Bot se décide à la création — un Côté délégué, le démon calcule ; deux Côtés
     externes, le client le fait jouer ailleurs — sans réglage de plus, et sans évaluateur nu
     (ADR-0015). La CLI a `blunderdb duel`, sans interface interactive, et un Duel de deux
