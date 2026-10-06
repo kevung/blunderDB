@@ -136,6 +136,15 @@ func (s *Service) Forget() {
 	}
 }
 
+// Rebind points the Service at store and keeps its sessions, for a library
+// rewritten under a new handle with the same rows, ids and revisions (a
+// vacuum by file swap): the drafts being typed keep their undo stacks. The
+// caller excludes every other call for its duration, since store is read
+// without s.mu.
+func (s *Service) Rebind(store storage.Storage) {
+	s.store = store
+}
+
 // Close releases a draft's session only; the row stays and the draft resumes
 // from the list. A named session that is not the live one is ErrSessionGone
 // and the live one is left alone; "" closes whichever is live (the desktop).

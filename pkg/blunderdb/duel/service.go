@@ -78,6 +78,14 @@ func New(store storage.Storage, opts Options) *Service {
 	return &Service{store: store, opts: opts, open: map[string]int64{}}
 }
 
+// Rebind points the Service at store and keeps the open Duels, for a library
+// rewritten under a new handle with the same rows, ids and revisions (a
+// vacuum by file swap): a Duel in progress stays open. The caller excludes
+// every other call for its duration, since store is read without s.mu.
+func (s *Service) Rebind(store storage.Storage) {
+	s.store = store
+}
+
 // State is a Duel as a caller sees it. It never carries the seed: the
 // fingerprint stands for it until the Match reveals it.
 type State struct {
