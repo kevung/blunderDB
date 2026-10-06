@@ -111,7 +111,9 @@ export function isOutsideBoard(x, y, geom) {
  * The checkers of a new game: 2 on the 24-point, 5 on the 13, 3 on the 8, 5 on the 6 for each
  * side (colour 0 counts from point 1, colour 1 from point 24), nothing borne off. Cube, score
  * and dice are the caller's.
- * @param {BoardPosition} pos
+ * @template {BoardPosition} P
+ * @param {P} pos
+ * @returns {P}
  */
 export function applyStartingCheckers(pos) {
     pos.board.points = pos.board.points.map(() => ({ checkers: 0, color: -1 }));

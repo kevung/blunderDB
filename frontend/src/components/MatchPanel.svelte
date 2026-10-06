@@ -82,9 +82,12 @@
     let detailGames = $state([]); // Game[] for the detail match
     /** @type {any[]} */
     let detailGrades = $state([]); // MoveGrade[] for the detail match
-    let detailTimes = $state(null); // MatchTimeSummary for the detail match
-    let detailOrigin = $state(null); // duel.Origin of the detail match, null when not played here
-    let timeSort = $state(''); // '' | 'desc' | 'asc': the transcript's order by decision time
+    /** @type {import('../../wailsjs/go/models').service.MatchTimeSummary | null} */
+    let detailTimes = $state(null);
+    /** @type {import('../../wailsjs/go/models').duel.Origin | null} the Origin of a match played here */
+    let detailOrigin = $state(null);
+    /** @type {'' | 'desc' | 'asc'} the transcript's order by decision time */
+    let timeSort = $state('');
     let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
     /** @type {any} */
@@ -410,14 +413,14 @@
     // Computed in match order, whatever the transcript's sort, indexed by globalIdx.
     let clocks = $derived(cumulativeClocks(detailMovePositions));
     // A time cell is never blank: no decision, or one the Arbiter played alone, reads as a dash.
-    const orDash = (text) => text || '—';
+    const orDash = (/** @type {string} */ text) => text || '—';
     // Under a Cadence the clock column shows the reserve left, replayed by the backend with the
     // Arbiter's own arithmetic; without one, the time used so far.
     let remaining = $derived(detailOrigin?.clock?.remaining ?? null);
     let cadenceInfo = $derived.by(() => {
         const c = detailOrigin?.cadence_settings;
         if (!c) return null;
-        const bankMS = detailOrigin.clock?.start?.[0] ?? (c.reserve ? c.reserve * 1000 : null);
+        const bankMS = detailOrigin?.clock?.start?.[0] ?? (c.reserve ? c.reserve * 1000 : null);
         return {
             name: c.name || '',
             delay: c.delay || 0,
@@ -432,13 +435,13 @@
     let transcriptGames = $derived.by(() => {
         if (!detailMovePositions.length) return [];
         const gradeByMove = indexMoveGrades(detailGrades);
+        /** @type {Map<number, { mp: any, globalIdx: number, grade: any }[]>} */
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp inside $derived
         const gameMap = new Map();
-        detailMovePositions.forEach((mp, globalIdx) => {
-            if (!gameMap.has(mp.game_number)) {
-                gameMap.set(mp.game_number, []);
-            }
-            gameMap.get(mp.game_number).push({ mp, globalIdx, grade: gradeByMove.get(mp.move_id) });
+        detailMovePositions.forEach((/** @type {any} */ mp, globalIdx) => {
+            let moves = gameMap.get(mp.game_number);
+            if (!moves) gameMap.set(mp.game_number, (moves = []));
+            moves.push({ mp, globalIdx, grade: gradeByMove.get(mp.move_id) });
         });
         const result = [];
         for (const [gameNum, moves] of gameMap) {

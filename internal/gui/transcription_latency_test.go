@@ -13,7 +13,9 @@ import (
 // est mesuré dans transcript ; ici, l'autre moitié du tour : les deux appels
 // du panneau (`computeCandidates` : domain.LegalMoves puis
 // EvaluatePositionImmediate), sur le chemin interactif série, pas celui du lot.
-// Les seuils tiennent compte d'un facteur trois à quatre sous charge.
+// Les seuils tiennent compte d'un facteur trois à quatre sous charge ; sous le
+// détecteur de courses, qui ne mesure pas le chemin livré, ils se contentent du
+// relevé : le job court sans -race et le nightly les tiennent.
 
 // contactBoard is a mid-game contact position, the expensive case: 892
 // distinct plays over the 21 rolls.
@@ -100,7 +102,7 @@ func TestTranscriptionRollLatencyPerKeystroke(t *testing.T) {
 		}
 	}
 	t.Logf("one roll, %d plays ranked at 0-ply: %v", plays, best)
-	if best > ceiling {
+	if best > ceiling && !raceEnabled {
 		t.Errorf("ranking one roll took %v, over the %v guard of ux.md §7", best, ceiling)
 	}
 }
@@ -131,7 +133,7 @@ func TestTranscriptionBoardPlayLatency(t *testing.T) {
 		}
 	}
 	t.Logf("the 21 rolls of a board play, %d plays generated: %v", plays, best)
-	if best > ceiling {
+	if best > ceiling && !raceEnabled {
 		t.Errorf("deducing the roll of a board play took %v, over the %v guard of ux.md §7", best, ceiling)
 	}
 }
@@ -163,7 +165,7 @@ func TestTranscriptionRankedSweepCost(t *testing.T) {
 		}
 	}
 	t.Logf("the 21 rolls, each ranked at 0-ply, %d plays: %v (%v per roll)", plays, best, best/21)
-	if best > guard {
+	if best > guard && !raceEnabled {
 		t.Errorf("ranking the 21 rolls took %v, over the %v guard — an order of magnitude worse than the 39 ms measured on 2026-09-07", best, guard)
 	}
 }

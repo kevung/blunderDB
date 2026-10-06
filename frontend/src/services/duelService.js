@@ -129,7 +129,7 @@ export async function decide(kind, level = 0) {
     const duel = get(duelStore);
     if (!duel?.state?.awaiting) return;
     const side = humanSide(duel.state);
-    await gesture(() => PlayDuel(duel.state.id, duel.state.revision, { side, kind, ...(level ? { level } : {}) }));
+    await gesture(() => PlayDuel(duel.state.id, duel.state.revision, /** @type {any} */ ({ side, kind, ...(level ? { level } : {}) })));
 }
 
 /** The explicit validation of the move arranged on the board; nothing is taken back after it. */
@@ -139,7 +139,7 @@ export async function validateMove() {
     const done = play ? completedPlay(play) : null;
     if (!duel?.state?.awaiting || !done) return;
     const side = humanSide(duel.state);
-    await gesture(() => PlayDuel(duel.state.id, duel.state.revision, { side, kind: 'move', steps: done.steps }));
+    await gesture(() => PlayDuel(duel.state.id, duel.state.revision, /** @type {any} */ ({ side, kind: 'move', steps: done.steps })));
 }
 
 /** Puts the checkers back where the roll found them, before the validation. */
