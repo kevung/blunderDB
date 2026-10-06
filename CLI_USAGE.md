@@ -2716,7 +2716,7 @@ Options:
   -side1 string
     	Player 1's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough) (default "external")
   -side2 string
-    	Player 2's Side: external, or bot:<level>; two Bots play the whole match in this call (default "external")
+    	Player 2's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough); two Bots play the whole match in this call (default "external")
   -start string
     	XGID of the Position the first game begins at (default: the opening position)
 

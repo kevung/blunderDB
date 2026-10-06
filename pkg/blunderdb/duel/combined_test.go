@@ -132,6 +132,55 @@ func TestCombinedSeedDuel(t *testing.T) {
 
 func sameRoll(a, b [2]int) bool { return a == b || a == [2]int{b[1], b[0]} }
 
+// TestOrdinaryDuelRollsFromItsSeed: a Duel without a combined seed rolls
+// Roll(DiceSeed, rank) at every rank, the opening's doubles drawn again —
+// what a reader recomputes from the revealed seed alone.
+func TestOrdinaryDuelRollsFromItsSeed(t *testing.T) {
+	ctx := context.Background()
+	st := newStore(t)
+	svc := newService(t, st, 11)
+	s, err := svc.Create(ctx, "", Settings{MatchLength: 5, Sides: [2]SideSpec{external("A"), external("B")}})
+	if err != nil {
+		t.Fatalf("Create: %v", err)
+	}
+	for range 12 {
+		if s, err = svc.Play(ctx, "", s.ID, s.Revision, answer(*s.Awaiting)); err != nil {
+			t.Fatalf("Play: %v", err)
+		}
+	}
+	kept, err := svc.Forfeit(ctx, "", s.ID, s.Revision, 0)
+	if err != nil || kept.Ended == nil {
+		t.Fatalf("Forfeit: %+v, %v", kept, err)
+	}
+	o, err := ReadOrigin(ctx, st, "", kept.Ended.MatchID)
+	if err != nil || o == nil {
+		t.Fatalf("ReadOrigin: %+v, %v", o, err)
+	}
+	if len(o.Contributions) != 0 || o.RollSeed != "" {
+		t.Fatalf("origin: contributions %q, roll seed %q; the dice seed alone", o.Contributions, o.RollSeed)
+	}
+	rank, opening, checked := 0, true, 0
+	for _, a := range kept.Actions {
+		if a.Kind != transcript.KindChecker {
+			continue
+		}
+		d, _ := Roll(o.DiceSeed, rank)
+		rank++
+		for opening && d[0] == d[1] {
+			d, _ = Roll(o.DiceSeed, rank)
+			rank++
+		}
+		opening = false
+		if !sameRoll(d, a.Dice) {
+			t.Fatalf("roll %d recomputed %v at rank %d, played %v", checked, d, rank-1, a.Dice)
+		}
+		checked++
+	}
+	if checked < 4 {
+		t.Fatalf("only %d rolls checked", checked)
+	}
+}
+
 // TestCombinedSeedWithABot: only the external Side contributes; a combined
 // seed between two delegated Sides is refused, and a Duel without one refuses
 // every contribution and keeps its origin without any.

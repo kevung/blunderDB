@@ -198,6 +198,10 @@ export function ConfirmProposal(arg1, arg2) {
   return window['go']['database']['Database']['ConfirmProposal'](arg1, arg2);
 }
 
+export function ContributeDuel(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['ContributeDuel'](arg1, arg2, arg3, arg4);
+}
+
 export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['database']['Database']['CopyPositionToCollection'](arg1, arg2);
 }
@@ -936,6 +940,10 @@ export function MatchMAT(arg1) {
 
 export function MatchTranscriptionLosses(arg1) {
   return window['go']['database']['Database']['MatchTranscriptionLosses'](arg1);
+}
+
+export function MaterializeTranscription(arg1, arg2) {
+  return window['go']['database']['Database']['MaterializeTranscription'](arg1, arg2);
 }
 
 export function MergePlayers(arg1, arg2) {

@@ -159,7 +159,7 @@ func (cli *CLI) runDuelCreate(args []string) error {
 	money := fs.Bool("money", false, "A money session instead of a match")
 	jacoby := fs.Bool("jacoby", false, "With --money: play the Jacoby rule")
 	side1 := fs.String("side1", "external", "Player 1's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough)")
-	side2 := fs.String("side2", "external", "Player 2's Side: external, or bot:<level>; two Bots play the whole match in this call")
+	side2 := fs.String("side2", "external", "Player 2's Side: external, external:<configuration>@<engine> (an external Side declaring its Bot), or bot:<level> (instant, normal, thorough); two Bots play the whole match in this call")
 	name1 := fs.String("name1", "", "Player 1's name")
 	name2 := fs.String("name2", "", "Player 2's name")
 	start := fs.String("start", "", "XGID of the Position the first game begins at (default: the opening position)")
