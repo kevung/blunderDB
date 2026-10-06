@@ -48,7 +48,7 @@ func TestRunCarriesTheDuel(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	if _, err := src.Duels().Save(ctx, "", &storage.Duel{FormatVersion: "1", Document: "{}", DiceSeed: "cd"}); err != nil {
+	if _, err := src.Duels().Save(ctx, "", &storage.Duel{FormatVersion: "1", Document: "{}", DiceSeed: "cd", Open: true}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -98,6 +98,9 @@ func TestRunCarriesTheDuel(t *testing.T) {
 			t.Fatal(err)
 		}
 		seeds = append(seeds, d.DiceSeed)
+		if d.Open {
+			t.Errorf("duel %d arrived open; a migrated Duel arrives in suspense", id)
+		}
 	}
 	if len(seeds) != 1 || seeds[0] != "cd" {
 		t.Errorf("migrated duels' seeds = %v, want [cd]", seeds)

@@ -122,8 +122,9 @@ func TestDecisionDurations(t *testing.T) {
 
 // TestSuspendedDuelStopsTheClock: the time a Duel spends in suspense is not
 // counted; a Duel open in one process is played on by another with its clock
-// still running; a draft whose clock ran while its row says suspense — left so
-// by a process that kept the open Duel in memory only — has the decision's
+// still running, the time between counted as known; a draft whose clock ran
+// while its row says suspense — from before is_open, or carried open by a
+// migration — has the decision's
 // duration unknown, not short.
 func TestSuspendedDuelStopsTheClock(t *testing.T) {
 	ctx := context.Background()

@@ -74,12 +74,16 @@ type Database struct {
 	// transcriptOn is the store transcriptSvc was made on: a service left on
 	// a store that has since been replaced is dropped, not used.
 	transcriptOn *sqlite.Storage
-	// duelSvc is the Arbiter over this handle's store (db_duel.go), holding
-	// which Duel is open; duelMu guards the pointer.
+	// duelSvc is the Arbiter over this handle's store (db_duel.go); duelMu
+	// guards the pointer and duelBoard.
 	duelMu  sync.Mutex
 	duelSvc *duel.Service
 	// duelOn is the store duelSvc was made on, as transcriptOn.
 	duelOn *sqlite.Storage
+	// duelBoard is the Duel the desktop shows at the board, 0 for none: the
+	// one it suspends when it leaves it. Other open Duels of the library
+	// belong to whoever opened them — a daemon, a CLI — and are left running.
+	duelBoard int64
 	// directionMem is what the direction service keeps between calls: the clock forecasts and
 	// the page catalogue. Per Database, so two open databases never share one language.
 	directionMem service.Memory

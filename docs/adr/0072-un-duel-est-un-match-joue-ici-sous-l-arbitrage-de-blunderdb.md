@@ -81,6 +81,8 @@ import ne fournit complètement : la durée de chaque décision.
     Ouvert ou en suspens, c'est écrit dans sa ligne, que tout processus sur la base lit ;
     plusieurs peuvent être ouverts à la fois, leurs horloges courant chacune, et ouvrir l'un
     n'en suspend aucun autre. Un geste sur un Duel en suspens l'ouvre dans la même écriture.
+    Ouvert, ses horloges courent jusqu'à ce qu'on le suspende, même si le processus qui
+    le tenait s'arrête ou plante : ce temps compte (ADR-0073 règle 1).
     Chaque Duel a son verrou, et le calcul d'un Bot ne retient que son propre Duel ; entre
     deux processus, la révision du brouillon arbitre. « Un seul au plateau » est un choix de
     l'interface du bureau, qui suspend le Duel qu'elle quitte, non une règle de l'Arbitre.

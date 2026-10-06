@@ -237,7 +237,8 @@ func TestDuelResumesWithTheSameDice(t *testing.T) {
 }
 
 // TestDuelRefusesPlays: a Play from the side not awaited, a Play of the wrong
-// kind, an illegal move, and a Play on a Duel that is not the open one.
+// kind, an illegal move; a Play on a Duel in suspense opens it, and creating
+// a Duel suspends none.
 func TestDuelRefusesPlays(t *testing.T) {
 	ctx := context.Background()
 	st := newStore(t)

@@ -632,7 +632,8 @@ _Avoid_: seed (a Training Question's), setup, starting position
 The clock a Duel is played under: a *reserve* per Side for the whole match, and a *delay*
 at each turn that runs first and costs nothing — the reserve only goes down once the delay
 is spent. The clock that runs is that of the Side a decision is awaited from, and it is the
-Arbiter that keeps it. A Duel may have no Cadence. A Side whose reserve is spent is *over
+Arbiter that keeps it. It runs while the Duel is open, whichever process holds it and
+even if that process stops, until the Duel is suspended. A Duel may have no Cadence. A Side whose reserve is spent is *over
 time*: a fact the Arbiter reports, whose consequence is a setting of the Duel — the Duel
 goes on and the overrun is noted, or the match is lost.
 _Avoid_: time control, out of time (a Training Question), increment (a Cadence has none)

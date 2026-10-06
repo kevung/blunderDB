@@ -113,7 +113,7 @@ func (d *Database) CreateDuel(set duel.Settings) (*DuelState, error) {
 	return d.duelState(0, func(ctx context.Context, svc *duel.Service) (*duel.State, error) {
 		st, err := svc.Create(ctx, "", set)
 		if err == nil {
-			err = suspendOthers(ctx, svc, st.ID)
+			err = d.takeBoard(ctx, svc, st)
 		}
 		return st, err
 	})
@@ -125,27 +125,30 @@ func (d *Database) OpenDuel(id int64) (*DuelState, error) {
 	return d.duelState(id, func(ctx context.Context, svc *duel.Service) (*duel.State, error) {
 		st, err := svc.Open(ctx, "", id)
 		if err == nil {
-			err = suspendOthers(ctx, svc, id)
+			err = d.takeBoard(ctx, svc, st)
 		}
 		return st, err
 	})
 }
 
-// suspendOthers puts every open Duel but keep in suspense. The Arbiter lets
-// several Duels be open at once; the desktop shows one at the board, and the
-// clocks of those it left stand still. A Duel ended meanwhile has nothing to
-// suspend.
-func suspendOthers(ctx context.Context, svc *duel.Service, keep int64) error {
-	rows, err := svc.List(ctx, "")
-	if err != nil {
-		return err
+// takeBoard puts st at the board and the Duel it replaces in suspense. The
+// Arbiter lets several Duels be open at once; the desktop shows one, and the
+// clocks of the one it left stand still. A Duel ended meanwhile has nothing
+// to suspend, and an ended st leaves the board empty.
+func (d *Database) takeBoard(ctx context.Context, svc *duel.Service, st *duel.State) error {
+	next := st.ID
+	if st.Ended != nil {
+		next = 0
 	}
-	for _, r := range rows {
-		if r.Open && r.ID != keep {
-			if err := svc.Suspend(ctx, "", r.ID, 0); err != nil && !errors.Is(err, storage.ErrNotFound) {
-				return err
-			}
-		}
+	d.duelMu.Lock()
+	prev := d.duelBoard
+	d.duelBoard = next
+	d.duelMu.Unlock()
+	if prev == 0 || prev == st.ID {
+		return nil
+	}
+	if err := svc.Suspend(ctx, "", prev, 0); err != nil && !errors.Is(err, storage.ErrNotFound) {
+		return err
 	}
 	return nil
 }
@@ -153,6 +156,11 @@ func suspendOthers(ctx context.Context, svc *duel.Service, keep int64) error {
 // SuspendDuel puts the Duel in suspense, its clocks stopped.
 func (d *Database) SuspendDuel(id int64) error {
 	return d.withDuels(func(svc *duel.Service) error {
+		d.duelMu.Lock()
+		if d.duelBoard == id {
+			d.duelBoard = 0
+		}
+		d.duelMu.Unlock()
 		return svc.Suspend(context.Background(), "", id, 0)
 	})
 }
@@ -209,17 +217,20 @@ func (d *Database) GetMatchOrigin(matchID int64) (*duel.Origin, error) {
 	return duel.ReadOrigin(context.Background(), d.store, "", matchID)
 }
 
-// forgetDuels puts the open Duels in suspense and drops the Service when the
-// handle is replaced or closed, BEFORE d.mu is taken for writing: the clocks
-// stop with the library, and a Duel id of the previous library must not
-// answer for the next one.
+// forgetDuels puts the Duel at the board in suspense and drops the Service
+// when the handle is replaced or closed, BEFORE d.mu is taken for writing: its
+// clocks stop with the library, and a Duel id of the previous library must
+// not answer for the next one. Other open Duels of the library belong to
+// whoever opened them and keep running.
 func (d *Database) forgetDuels() {
 	d.duelMu.Lock()
 	svc := d.duelSvc
+	board := d.duelBoard
 	d.duelSvc = nil
 	d.duelOn = nil
+	d.duelBoard = 0
 	d.duelMu.Unlock()
-	if svc == nil {
+	if svc == nil || board == 0 {
 		return
 	}
 	d.mu.RLock()
@@ -227,14 +238,5 @@ func (d *Database) forgetDuels() {
 	if d.db == nil || d.store == nil {
 		return
 	}
-	ctx := context.Background()
-	rows, err := svc.List(ctx, "")
-	if err != nil {
-		return
-	}
-	for _, r := range rows {
-		if r.Open {
-			_ = svc.Suspend(ctx, "", r.ID, 0)
-		}
-	}
+	_ = svc.Suspend(context.Background(), "", board, 0)
 }
