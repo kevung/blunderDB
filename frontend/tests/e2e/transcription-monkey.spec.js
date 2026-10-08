@@ -431,7 +431,8 @@ test.describe('transcription — singe, manquements réduits', () => {
         await boot(page, 1, errors);
         await page.context().clearPermissions();
         await openFirstDraft(page);
-        await page.locator(`${panel} .draft-bar .new-btn`).nth(2).click();
+        await page.locator('[data-testid="transcription-more-button"]').click();
+        await page.locator('[data-testid="transcription-more-menu"] [role="menuitem"]').first().click();
         await page.locator('.modal-overlay .mat-body button').click();
         await settle(page);
         expect(errors.filter((e) => e.startsWith('pageerror'))).toEqual([]);

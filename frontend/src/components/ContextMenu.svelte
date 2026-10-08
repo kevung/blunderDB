@@ -7,18 +7,41 @@
     /**
      * Reusable context-menu popover.
      *
-     * @typedef {{ label: string, onClick: () => void, shortcut?: string, disabled?: boolean }} MenuItem
+     * @typedef {{ label: string, onClick: () => void, shortcut?: string, disabled?: boolean, keepOpen?: boolean }} MenuItem
      *
      * Props:
-     *   x       {number}     - Client X pixel where the menu appears
-     *   y       {number}     - Client Y pixel where the menu appears
-     *   items   {MenuItem[]} - Menu items to display
-     *   onClose {() => void} - Called when the menu should be dismissed
+     *   x           {number}      - Client X pixel where the menu appears
+     *   y           {number}      - Client Y pixel where the menu appears
+     *   items       {MenuItem[]}  - Menu items to display; `keepOpen` leaves the menu open on click
+     *   onClose     {() => void}  - Called when the menu should be dismissed
+     *   returnFocus {HTMLElement} - Where the focus goes on close, instead of the opener
+     *   testid      {string}      - data-testid of the menu
+     *   children    {Snippet}     - Extra content under the items (a field an item opens)
      */
-    let { x = 0, y = 0, items = [], onClose } = $props();
+    let { x = 0, y = 0, items = [], onClose, returnFocus = null, testid = undefined, children = undefined } = $props();
 
     /** @type {HTMLElement | null} */
     let menuEl = $state(null);
+
+    // Anchored to a button near an edge, the menu would spill out of the window: it is moved
+    // back in once its size is known, and again when a field it opens makes it grow.
+    let left = $state(0);
+    let top = $state(0);
+    /** @param {number} ax @param {number} ay */
+    function fit(ax, ay) {
+        const r = menuEl?.getBoundingClientRect();
+        left = r && ax + r.width > window.innerWidth ? Math.max(0, window.innerWidth - r.width - 4) : ax;
+        top = r && ay + r.height > window.innerHeight ? Math.max(0, window.innerHeight - r.height - 4) : ay;
+    }
+    $effect(() => {
+        const ax = x;
+        const ay = y;
+        fit(ax, ay);
+        if (!menuEl || typeof ResizeObserver === 'undefined') return;
+        const observer = new ResizeObserver(() => fit(ax, ay));
+        observer.observe(menuEl);
+        return () => observer.disconnect();
+    });
 
     onMount(() => {
         // Focus the first item immediately for keyboard access; the opener gets the focus back
@@ -27,7 +50,8 @@
         /** @type {HTMLElement | null | undefined} */ (menuEl?.querySelector('button:not(:disabled)'))?.focus();
         return () => {
             const a = document.activeElement;
-            if (opener?.isConnected && (!a || a === document.body || menuEl?.contains(a) || !a.isConnected)) opener.focus();
+            const back = returnFocus ?? opener;
+            if (back?.isConnected && (!a || a === document.body || menuEl?.contains(a) || !a.isConnected)) back.focus({ preventScroll: true });
         };
     });
 
@@ -37,7 +61,9 @@
 
     /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
-        if (menuEl && ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+        // A field in the menu keeps its own caret keys.
+        const inField = event.target instanceof Element && event.target.matches('input, textarea');
+        if (menuEl && !inField && ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
             const enabled = /** @type {HTMLElement[]} */ ([...menuEl.querySelectorAll('button:not(:disabled)')]);
             if (enabled.length === 0) return;
             const at = enabled.indexOf(/** @type {HTMLElement} */ (document.activeElement));
@@ -52,7 +78,7 @@
         }
         if (event.key === 'Tab' && menuEl) {
             // Trap focus inside menu
-            const focusable = [...menuEl.querySelectorAll('button')];
+            const focusable = /** @type {HTMLElement[]} */ ([...menuEl.querySelectorAll('button:not(:disabled), input')]);
             if (focusable.length === 0) return;
             const first = focusable[0];
             const last = focusable[focusable.length - 1];
@@ -73,7 +99,12 @@
         if (menuEl && !menuEl.contains(/** @type {Node} */ (event.target))) onClose?.();
     }
 
+    // A menu opened by a click mounts while that click is still bubbling: it would reach this
+    // window listener and close the menu it just opened.
+    const openingEvent = typeof window !== 'undefined' ? window.event : undefined;
+
     function handleWindowClick(event) {
+        if (event === openingEvent) return;
         if (menuEl && !menuEl.contains(event.target)) {
             onClose?.();
         }
@@ -81,7 +112,7 @@
 
     function handleItemClick(item) {
         item.onClick();
-        onClose?.();
+        if (!item.keepOpen) onClose?.();
     }
 
     $effect(() => registerKeys('contextMenu', handleKeyDown));
@@ -89,12 +120,13 @@
 
 <svelte:window onclick={handleWindowClick} oncontextmenucapture={handleWindowContextMenu} />
 
-<div bind:this={menuEl} class="context-menu" style="left:{x}px; top:{y}px" role="menu" aria-label={$t('common.contextMenu')}>
+<div bind:this={menuEl} class="context-menu" style="left:{left}px; top:{top}px" role="menu" aria-label={$t('common.contextMenu')} data-testid={testid}>
     {#each items as item (item.label)}
         <button class="context-menu-item" role="menuitem" disabled={item.disabled} onclick={() => handleItemClick(item)}>
             {item.label}{#if item.shortcut}<kbd>{item.shortcut}</kbd>{/if}
         </button>
     {/each}
+    {@render children?.()}
 </div>
 
 <style>
