@@ -536,6 +536,9 @@
 
 <style>
     .training-panel {
+        /* Interface chrome is not text to copy; fields below opt back in. */
+        user-select: none;
+        -webkit-user-select: none;
         display: flex;
         flex-direction: column;
         gap: 0.8em;
@@ -735,5 +738,10 @@
     .detail li {
         display: flex;
         gap: 0.5em;
+    }
+
+    .training-panel input {
+        user-select: text;
+        -webkit-user-select: text;
     }
 </style>

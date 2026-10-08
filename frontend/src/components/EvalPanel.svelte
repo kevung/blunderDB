@@ -642,6 +642,9 @@
 
 <style>
     .eval-panel {
+        /* Interface chrome is not text to copy; fields below opt back in. */
+        user-select: none;
+        -webkit-user-select: none;
         height: 100%;
         box-sizing: border-box;
         /* Only .moves-scroll scrolls (ADR-0017). */
@@ -876,5 +879,10 @@
         flex: 1 1 auto;
         min-height: 0;
         overflow-y: auto;
+    }
+
+    .eval-panel input {
+        user-select: text;
+        -webkit-user-select: text;
     }
 </style>

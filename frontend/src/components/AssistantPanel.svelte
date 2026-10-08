@@ -88,6 +88,9 @@
 
 <style>
     .assistant-panel {
+        /* Interface chrome is not text to copy; fields below opt back in. */
+        user-select: none;
+        -webkit-user-select: none;
         display: flex;
         flex-direction: column;
         gap: 6px;
@@ -151,5 +154,15 @@
         background-color: var(--color-surface-alt);
         color: var(--color-text);
         cursor: pointer;
+    }
+
+    .assistant-panel input {
+        user-select: text;
+        -webkit-user-select: text;
+    }
+
+    .assistant-panel .transcript {
+        user-select: text;
+        -webkit-user-select: text;
     }
 </style>
