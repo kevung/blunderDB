@@ -38,6 +38,12 @@ const plan = {
 };
 
 describe('StatsStudyPlan', () => {
+    test('only unpriced errors: says how many were left out', () => {
+        studyPlanStore.set({ ...plan, Families: [], Tentative: [], Unthemed: 0, Unpriced: 7 });
+        render(StatsStudyPlan);
+        expect(screen.getByTestId('plan-unpriced-only').textContent).toContain('7');
+    });
+
     test('ranks the families as the backend did, with recoverable MWC and its interval', () => {
         studyPlanStore.set(plan);
         render(StatsStudyPlan);

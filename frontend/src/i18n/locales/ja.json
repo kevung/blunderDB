@@ -1701,7 +1701,7 @@
         "noData": "この絞り込みに該当するデータがありません。",
         "noTags": "選ばれた局面のコメントにタグがありません。",
         "tagsDoNotSum": "一つの局面が複数のタグを持つことがあります：これらの行は合計に一致しません。",
-        "thinCells": "判断が {n} 件未満のセルは灰色で示します：読むには少なすぎます。",
+        "thinCells": "灰色の行には区間がありません：マッチ一つだけではまだ標本ではありません。",
         "goalTitle": "目標：",
         "goalStated": "{weeks} 週間で PR < {target}（{band}）。",
         "goalSet": "目標を決める…",
@@ -1876,7 +1876,9 @@
             "record": "勝敗",
             "prChecker": "チェッカー PR",
             "prCube": "キューブ PR"
-        }
+        },
+        "interval95": "95 % 信頼区間",
+        "intervalHint": "95 % 信頼区間：選択範囲ではマッチを、1 マッチではゲームを再標本化します。区間のない行（マッチまたはゲームが一つだけ）は灰色で示します。"
     },
     "resumeBatch": {
         "title": "インポートを再開",
@@ -3113,5 +3115,23 @@
         "short": "MWC 7pt",
         "tooltip": "完全なプレイヤーに対して失ったMWCを7ポイントマッチに換算した値（L × √(7/N)）。95 %区間はゲームのリサンプリングによる。エンジンに対して {elo} Elo",
         "unavailable": "マネーゲームにはマッチ長がないため、7ポイント換算は定義されません"
+    },
+    "matchReview": {
+        "title": "マッチの振り返り",
+        "oneGame": "ゲームが一つだけ：区間なし",
+        "luckAdjusted": "運を補正した結果 {adjusted}（結果 {result}、正味の運 {luck}、エラーの差 {balance}）",
+        "luckPartial": "運は {rolls} 回中 {measured} 回のロールで測定",
+        "wonByPlay": "プレーで勝った",
+        "wonByDice": "ダイスで勝った",
+        "lostByDice": "ダイスで負けた",
+        "lostByPlay": "プレーで負けた",
+        "showDecision": "この判断を表示",
+        "decision": "ゲーム {game}、手 {move}（{kind}）",
+        "checker": "チェッカー",
+        "cube": "キューブ",
+        "lossAvoidable": "損失 {loss}、回避可能 {avoidable}",
+        "pace": "エラー：性急 {hasty}（{hastyLoss}）、熟考 {deliberate}（{deliberateLoss}）、時間なし {unknown}",
+        "paceDiscipline": "むしろ規律：ゆっくり打つ",
+        "paceKnowledge": "むしろ知識：これらの局面を学ぶ"
     }
 }

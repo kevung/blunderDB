@@ -3,11 +3,12 @@ import { get } from 'svelte/store';
 
 // Mock Wails Database binding
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
-    ComputeStats: vi.fn()
+    ComputeStats: vi.fn(),
+    ComputeStudyPlan: vi.fn()
 }));
 
-import { ComputeStats } from '../../wailsjs/go/database/Database.js';
-import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
+import { ComputeStats, ComputeStudyPlan } from '../../wailsjs/go/database/Database.js';
+import { refreshStudyPlan, studyPlanStore, statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
 
 describe('statsStore — initial state', () => {
     test('statsResultStore starts null', () => {
@@ -79,5 +80,18 @@ describe('refreshStats()', () => {
         const filter = { playerName: 'Alice', decisionType: 0 };
         await refreshStats(filter);
         expect(ComputeStats).toHaveBeenCalledWith(filter);
+    });
+});
+
+describe('refreshStudyPlan', () => {
+    test('a slower, older reply does not overwrite the latest', async () => {
+        let resolveOld;
+        ComputeStudyPlan.mockImplementationOnce(() => new Promise((r) => (resolveOld = r)));
+        ComputeStudyPlan.mockImplementationOnce(() => Promise.resolve({ tag: 'new' }));
+        const first = refreshStudyPlan({ a: 1 }, 1);
+        await refreshStudyPlan({ a: 2 }, 1);
+        resolveOld({ tag: 'old' });
+        await first;
+        expect(get(studyPlanStore)).toEqual({ tag: 'new' });
     });
 });

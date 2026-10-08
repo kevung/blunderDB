@@ -150,4 +150,31 @@ func testStatsMatchDecisionLosses(t *testing.T, s storage.Storage) {
 	if b.MWCLoss <= 0 || b.MWCLoss2 <= 0 {
 		t.Errorf("badge should carry a loss for both players: %+v", b)
 	}
+
+	// The match review (ADR-0078) reads the same decisions: its PR and L7 are
+	// the badge's, its errors to review rank the avoidable part of the loss,
+	// and without durations every error is of unknown pace.
+	review, err := s.Stats().MatchReview(ctx, "", matchID)
+	if err != nil {
+		t.Fatalf("MatchReview: %v", err)
+	}
+	for seat, want := range [2]struct {
+		pr   float64
+		mwc7 domain.MWC7
+	}{{b.PR, b.MWC7}, {b.PR2, b.MWC7P2}} {
+		p := review.Players[seat]
+		if math.Abs(p.PR-want.pr) > 1e-12 || math.Abs(p.MWC7.Loss-want.mwc7.Loss) > 1e-12 || p.MWC7.HasInterval != want.mwc7.HasInterval {
+			t.Errorf("seat %d: review PR %v L7 %+v, badge PR %v L7 %+v", seat, p.PR, p.MWC7, want.pr, want.mwc7)
+		}
+		if p.Luck.Available {
+			t.Errorf("seat %d: an unfinished match without luck has no adjusted result: %+v", seat, p.Luck)
+		}
+	}
+	p1 := review.Players[0]
+	if len(p1.ToReview) != 2 || p1.ToReview[0].MoveNumber != 5 || p1.ToReview[1].MoveNumber != 1 {
+		t.Errorf("player 1 should review moves 5 then 1: %+v", p1.ToReview)
+	}
+	if p1.Pace.Unknown != 2 || p1.Pace.Hasty+p1.Pace.Deliberate != 0 {
+		t.Errorf("errors without a time are of unknown pace: %+v", p1.Pace)
+	}
 }

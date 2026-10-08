@@ -35,6 +35,7 @@ var frozenOracleGaps = map[string]string{
 	"PerTag":      "#266, added after the migration the oracle guards",
 	"PerScore":    "#266, added after the migration the oracle guards",
 	"PerGameType": "#291, added after the migration the oracle guards",
+	"PRInterval":  "ADR-0078, added after the migration the oracle guards",
 }
 
 // statsEqual is jsonEqual for a statistics result, whose MWC sums may part
@@ -232,7 +233,7 @@ func TestStatsStorageParity(t *testing.T) {
 // withoutMWC7 clears the 7-point MWC loss of a storage result, which the
 // legacy reference does not compute.
 func withoutMWC7(r *storage.StatsResult) {
-	r.MWC7 = domain.MWC7{}
+	r.MWC7, r.MWC7Checker, r.MWC7Cube = domain.MWC7{}, domain.MWC7{}, domain.MWC7{}
 	for i := range r.PerMatch {
 		r.PerMatch[i].MWC7 = domain.MWC7{}
 	}

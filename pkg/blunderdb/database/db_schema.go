@@ -237,6 +237,10 @@ func (d *Database) repairPositionsWithoutScalars(ctx context.Context) error {
 			}
 			repaired++
 		}
+		// The moves now read the kept position's analysis and decision type.
+		if err := sqlite.WrapTx(tx).Matches().RescorePositionMoves(ctx, "", keepIDOr(held, keepID, norm.ID)); err != nil {
+			return err
+		}
 		d.emitMigrationProgress("position_scalars", i+1, len(todo))
 	}
 	if err := tx.Commit(); err != nil {
@@ -244,6 +248,15 @@ func (d *Database) repairPositionsWithoutScalars(ctx context.Context) error {
 	}
 	slog.Info("repaired positions stored without scalar columns", "repaired", repaired, "merged", merged, "undecodable", undecodable)
 	return nil
+}
+
+// keepIDOr is the position a repaired row's moves end on: the held one it
+// was merged into, else itself.
+func keepIDOr(held bool, keepID, id int64) int64 {
+	if held {
+		return keepID
+	}
+	return id
 }
 
 // boardIsEmpty reports whether b carries no checker at all, on or off the board.

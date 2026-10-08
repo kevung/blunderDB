@@ -489,3 +489,80 @@ func TestMigrate_GoBackfillsUnderRLS(t *testing.T) {
 	}
 	assertForced(t, conn, tables...)
 }
+
+// TestMigrate_DecisionRecountUnderRLS runs the decision recount of Migrate on
+// a two-tenant library whose RLS is FORCEd on an owner without BYPASSRLS, as
+// an upgrade from generation 1 meets it: the moves of both tenants lost their
+// own error, an analysis column holds a value of the old rules, and a
+// match_stats row survived the tenant-less DELETE of 042 and 043. Every
+// tenant must come out scored, its stale row dropped, FORCE back on.
+func TestMigrate_DecisionRecountUnderRLS(t *testing.T) {
+	ctx := context.Background()
+	s, conn, _ := openAsRLSOwner(t)
+	ms := s.Matches()
+	var seed []string
+	for i, scope := range []string{"1", "2"} {
+		matchID, err := ms.Save(ctx, scope, &domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7})
+		if err != nil {
+			t.Fatal(err)
+		}
+		gameID, err := ms.CreateGame(ctx, scope, &domain.Game{MatchID: matchID, GameNumber: 1})
+		if err != nil {
+			t.Fatal(err)
+		}
+		p := domain.InitializePosition()
+		p.DecisionType = domain.CubeAction
+		p.Board.Points[4+i].Checkers = 2
+		pid, err := s.Positions().Save(ctx, scope, &p)
+		if err != nil {
+			t.Fatal(err)
+		}
+		a := domain.PositionAnalysis{AnalysisType: "DoublingCube", DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{
+			CubefulNoDoubleEquity: 0.500, CubefulNoDoubleError: 0.300,
+			CubefulDoubleTakeEquity: 0.800, CubefulDoublePassEquity: 1.000, CubefulDoublePassError: 0.200}}
+		if err := s.Analyses().Save(ctx, scope, pid, &a); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := ms.CreateMove(ctx, scope, &domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "cube",
+			PositionID: pid, Player: 1, CubeAction: "No Double"}); err != nil {
+			t.Fatal(err)
+		}
+		seed = append(seed,
+			`INSERT INTO match_stats (tenant_id, match_id, seat, checker_moves) VALUES (`+scope+`, `+strconv.FormatInt(matchID, 10)+`, 1, 0)`)
+	}
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatalf("ApplyRLS: %v", err)
+	}
+	tables := []string{"analysis", "move", "match_stats"}
+	execUnforced(t, conn, tables, append(seed,
+		`UPDATE move SET decision_error_mp = NULL, is_close_cube = 0`,
+		`UPDATE analysis SET is_close_cube = FALSE`,
+		`UPDATE metadata SET value = '1' WHERE key = 'go_backfills'`))
+
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate under RLS: %v", err)
+	}
+	assertForced(t, conn, tables...)
+	for _, scope := range []string{"1", "2"} {
+		asTenant(t, conn, scope, func() {
+			var errMP *int64
+			var moveClose int
+			var analysisClose bool
+			var stats int
+			if err := conn.QueryRow(ctx, `SELECT mv.decision_error_mp, mv.is_close_cube, a.is_close_cube,
+				        (SELECT count(*) FROM match_stats)
+				   FROM move mv JOIN analysis a ON a.position_id = mv.position_id`).Scan(&errMP, &moveClose, &analysisClose, &stats); err != nil {
+				t.Fatal(err)
+			}
+			if errMP == nil || *errMP != 300 || moveClose != 1 {
+				t.Errorf("tenant %s: move scored %v, close %d after Migrate; want 300, 1", scope, errMP, moveClose)
+			}
+			if !analysisClose {
+				t.Errorf("tenant %s: analysis.is_close_cube not recomputed", scope)
+			}
+			if stats != 0 {
+				t.Errorf("tenant %s: %d match_stats rows survive Migrate, want them dropped", scope, stats)
+			}
+		})
+	}
+}

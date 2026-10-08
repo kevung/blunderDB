@@ -27,3 +27,12 @@ func formatMWC7(e domain.MWC7) string {
 	}
 	return s + ")"
 }
+
+// formatPRInterval renders a PR's 95 % interval (ADR-0078), or says why there
+// is none: one match is not a sample of a player.
+func formatPRInterval(iv domain.Interval) string {
+	if !iv.Available {
+		return "— (one match: no interval)"
+	}
+	return fmt.Sprintf("[%.2f, %.2f]", iv.Low, iv.High)
+}

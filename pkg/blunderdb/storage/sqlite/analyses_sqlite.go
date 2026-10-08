@@ -236,6 +236,10 @@ func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.P
 			c.AnalysisEngine, c.AnalysisDepth, nullableUnix(c.CreationDate)); err != nil {
 			return fmt.Errorf("sqlite: save analysis: %w", referenced(err))
 		}
+		// The moves played here are scored against the analysis just written.
+		if _, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: a}); err != nil {
+			return err
+		}
 
 		// Flag the position as a take/pass cube response if any played cube action is
 		// a response (only ever set to 1; OR semantics for a deduped position).
@@ -339,7 +343,8 @@ func (s *analysisStore) Delete(ctx context.Context, scope string, positionID int
 			`DELETE FROM analysis WHERE position_id = ?`, positionID); err != nil {
 			return fmt.Errorf("sqlite: delete analysis for position %d: %w", positionID, err)
 		}
-		return nil
+		_, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: nil})
+		return err
 	})
 }
 
@@ -401,7 +406,7 @@ const repairPageSize = 500
 // a second run reports 0: the count answers "was anything wrong?".
 func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string) (int, error) {
 	type row struct {
-		id                                     int64
+		id, posID                              int64
 		data                                   []byte
 		bestCube                               sql.NullString
 		cubeErr, bestMoveErr, forced, closeCub sql.NullInt64
@@ -418,7 +423,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		var page []row
 		if err := func() error {
 			rows, err := s.db.QueryContext(ctx,
-				`SELECT a.id, a.data, `+sqlshared.ActionLabelSQL("a.best_cube_action")+`, a.cube_error, a.best_move_equity_error, a.is_forced, a.is_close_cube,
+				`SELECT a.id, a.position_id, a.data, `+sqlshared.ActionLabelSQL("a.best_cube_action")+`, a.cube_error, a.best_move_equity_error, a.is_forced, a.is_close_cube,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
 				        (SELECT `+sqlshared.ActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
 				        `+sqlshared.LegalPlaysColumns+`
@@ -430,7 +435,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
+				if err := rows.Scan(&r.id, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
 					return fmt.Errorf("sqlite: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -450,6 +455,8 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		}
 		lastID = page[len(page)-1].id
 
+		// The moves of the page's positions, scored once the page is done.
+		analyses := make(map[int64]*domain.PositionAnalysis, len(page))
 		for _, r := range page {
 			a, err := engine.DecodeAnalysisFromStorage(r.data)
 			if err != nil {
@@ -463,6 +470,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 				[]string{r.mvMove.String}, []string{r.mvCube.String})
 			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction,
 				sqlshared.LegalPlays(r.state, r.por, r.d1, r.d2))
+			analyses[r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr, forced: r.forced, closeCube: r.closeCub}
 			if stored.equal(c) {
 				continue
@@ -479,6 +487,11 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 			}
 			repaired++
 		}
+		n, err := sqlshared.RescorePlayedDecisions(ctx, binder{s.db}.shared(), analyses)
+		if err != nil {
+			return repaired, fmt.Errorf("sqlite: repair: %w", err)
+		}
+		repaired += n
 	}
 }
 

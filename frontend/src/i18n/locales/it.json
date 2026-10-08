@@ -1701,7 +1701,7 @@
         "noData": "Nessun dato per questo filtro.",
         "noTags": "Nessuna etichetta nei commenti delle posizioni selezionate.",
         "tagsDoNotSum": "Una posizione può portare più etichette: queste righe non sommano al totale.",
-        "thinCells": "Le celle con meno di {n} decisioni sono in grigio: troppo poche per essere lette.",
+        "thinCells": "Le righe in grigio non hanno intervallo: un solo match non è ancora un campione.",
         "goalTitle": "Obiettivo:",
         "goalStated": "PR < {target} entro {weeks} settimane ({band}).",
         "goalSet": "Fissarsi un obiettivo…",
@@ -1876,7 +1876,9 @@
             "record": "Bilancio",
             "prChecker": "PR pedine",
             "prCube": "PR cubo"
-        }
+        },
+        "interval95": "IC 95 %",
+        "intervalHint": "Intervallo di confidenza al 95 %: ricampiona i match di una selezione, le partite di un match. Una riga senza intervallo (un solo match o una sola partita) è in grigio."
     },
     "resumeBatch": {
         "title": "Riprendi un'importazione",
@@ -3113,5 +3115,23 @@
         "short": "MWC 7 pt",
         "tooltip": "MWC perso contro un giocatore perfetto, riportato a un match a 7 punti (L × √(7/N)); intervallo al 95 % per ricampionamento delle partite; {elo} Elo contro il motore",
         "unavailable": "Il gioco a denaro non ha una lunghezza di match: l'equivalente a 7 punti non è definito"
+    },
+    "matchReview": {
+        "title": "Bilancio del match",
+        "oneGame": "Una sola partita: nessun intervallo",
+        "luckAdjusted": "Risultato corretto per la fortuna {adjusted} (risultato {result}, fortuna netta {luck}; bilancio degli errori {balance})",
+        "luckPartial": "fortuna misurata su {measured} tiri su {rolls}",
+        "wonByPlay": "vinto con il gioco",
+        "wonByDice": "vinto con i dadi",
+        "lostByDice": "perso per i dadi",
+        "lostByPlay": "perso per il gioco",
+        "showDecision": "Mostra la decisione",
+        "decision": "partita {game}, mossa {move} ({kind})",
+        "checker": "pedine",
+        "cube": "cubo",
+        "lossAvoidable": "perdita {loss}, evitabile {avoidable}",
+        "pace": "Errori: {hasty} affrettati ({hastyLoss}), {deliberate} ponderati ({deliberateLoss}), {unknown} senza tempo",
+        "paceDiscipline": "piuttosto disciplina: rallentare",
+        "paceKnowledge": "piuttosto conoscenza: studiare queste posizioni"
     }
 }

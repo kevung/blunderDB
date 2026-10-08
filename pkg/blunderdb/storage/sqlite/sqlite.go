@@ -25,6 +25,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // Storage is the SQLite implementation of storage.Storage.
@@ -280,4 +281,11 @@ func (s *Storage) Migrate(ctx context.Context) error {
 		return fmt.Errorf("sqlite: database is at schema version %q, need %q, and no migrator is registered (blank-import package database, e.g. `_ \"github.com/kevung/blunderdb/pkg/blunderdb/database\"`, to enable migrating older databases)", version, domain.DatabaseVersion)
 	}
 	return nil
+}
+
+// RescorePlayedDecisions scores every move of db by its position's analysis
+// (sqlshared.RescoreAllPlayedDecisions): the migration step that adds the
+// per-move columns runs it on the raw handle.
+func RescorePlayedDecisions(ctx context.Context, db *sql.DB) (int, error) {
+	return sqlshared.RescoreAllPlayedDecisions(ctx, binder{db}.shared())
 }

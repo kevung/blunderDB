@@ -1701,7 +1701,7 @@
         "noData": "Keine Daten für diesen Filter.",
         "noTags": "Keine Kennzeichnung in den Kommentaren der ausgewählten Stellungen.",
         "tagsDoNotSum": "Eine Stellung kann mehrere Kennzeichnungen tragen: diese Zeilen summieren sich nicht zur Gesamtzahl.",
-        "thinCells": "Zellen mit weniger als {n} Entscheidungen sind ausgegraut: zu wenige zum Lesen.",
+        "thinCells": "Ausgegraute Zeilen haben kein Intervall: ein einziges Match ist noch keine Stichprobe.",
         "goalTitle": "Ziel:",
         "goalStated": "PR < {target} binnen {weeks} Wochen ({band}).",
         "goalSet": "Ein Ziel setzen…",
@@ -1876,7 +1876,9 @@
             "record": "Bilanz",
             "prChecker": "PR Züge",
             "prCube": "PR Doppler"
-        }
+        },
+        "interval95": "95-%-KI",
+        "intervalHint": "95-%-Konfidenzintervall: zieht die Matches einer Auswahl bzw. die Spiele eines Matches neu. Eine Zeile ohne Intervall (ein einziges Match oder Spiel) ist ausgegraut."
     },
     "resumeBatch": {
         "title": "Import fortsetzen",
@@ -3113,5 +3115,23 @@
         "short": "MWC 7 Pkt.",
         "tooltip": "MWC-Verlust gegenüber einem perfekten Spieler, auf ein 7-Punkte-Match umgerechnet (L × √(7/N)); 95-%-Intervall durch Resampling der Spiele; {elo} Elo gegenüber der Engine",
         "unavailable": "Money-Spiel hat keine Matchlänge: das 7-Punkte-Äquivalent ist nicht definiert"
+    },
+    "matchReview": {
+        "title": "Match-Bilanz",
+        "oneGame": "Ein einziges Spiel: kein Intervall",
+        "luckAdjusted": "Glücksbereinigtes Ergebnis {adjusted} (Ergebnis {result}, Nettoglück {luck}; Fehlerbilanz {balance})",
+        "luckPartial": "Glück auf {measured} von {rolls} Würfen gemessen",
+        "wonByPlay": "durch das Spiel gewonnen",
+        "wonByDice": "durch die Würfel gewonnen",
+        "lostByDice": "durch die Würfel verloren",
+        "lostByPlay": "durch das Spiel verloren",
+        "showDecision": "Entscheidung anzeigen",
+        "decision": "Spiel {game}, Zug {move} ({kind})",
+        "checker": "Steine",
+        "cube": "Doppler",
+        "lossAvoidable": "Verlust {loss}, vermeidbar {avoidable}",
+        "pace": "Fehler: {hasty} überhastet ({hastyLoss}), {deliberate} überlegt ({deliberateLoss}), {unknown} ohne Zeit",
+        "paceDiscipline": "eher Disziplin: langsamer spielen",
+        "paceKnowledge": "eher Wissen: diese Stellungen studieren"
     }
 }
