@@ -31,7 +31,7 @@ import (
 
 // selectionCols are the columns of statsBaseJoin the passes read, by alias.
 var selectionCols = []struct{ alias, cols string }{
-	{"p", "id, decision_type, cube_value, game_phase, game_type, match_length, score_1, score_2"},
+	{"p", "id, decision_type, cube_value, cube_owner, game_phase, game_type, match_length, score_1, score_2"},
 	{"a", "position_id, analysis_depth, analysis_engine, best_cube_action, best_move_equity_error, cube_error, is_close_cube, is_forced, met_id"},
 	{"mv", "id, position_id, game_id, cube_action, decision_error_mp, is_close_cube, luck_mp, move_number, player"},
 	{"g", "id, match_id, game_number"},

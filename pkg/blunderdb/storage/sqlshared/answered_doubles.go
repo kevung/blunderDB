@@ -3,6 +3,9 @@ package sqlshared
 import (
 	"context"
 	"fmt"
+	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // answerCodesSQL lists the fixed codes of a take or a pass.
@@ -44,8 +47,12 @@ var AnsweredOwnedCubeMovesSQL = `SELECT mv.id, mv.game_id, mv.position_id FROM m
 // are dropped. Every scope the handle sees; it returns how many analyses
 // went.
 func DropGammonNetResponseAnalyses(ctx context.Context, db Execer) (int, error) {
-	rows, err := db.Query(ctx, `SELECT a.position_id FROM analysis a JOIN position p ON p.id = a.position_id
-		WHERE a.analysis_engine LIKE 'gammonNet%' AND p.decision_type = 1 AND p.cube_value > 0 AND p.cube_owner = -1
+	// A row whose provenance is not derived yet is read from its blob, so
+	// the drop does not depend on the provenance pass having run first.
+	rows, err := db.Query(ctx, `SELECT a.position_id, a.analysis_engine IS NULL, CASE WHEN a.analysis_engine IS NULL THEN a.data END
+		FROM analysis a JOIN position p ON p.id = a.position_id
+		WHERE (a.analysis_engine LIKE 'gammonNet%' OR a.analysis_engine IS NULL)
+		  AND p.decision_type = 1 AND p.cube_value > 0 AND p.cube_owner = -1
 		ORDER BY a.position_id`)
 	if err != nil {
 		return 0, errf(db, "list gammonNet response analyses", err)
@@ -53,9 +60,20 @@ func DropGammonNetResponseAnalyses(ctx context.Context, db Execer) (int, error) 
 	var ids []int64
 	for rows.Next() {
 		var id int64
-		if err := rows.Scan(&id); err != nil {
+		var underived bool
+		var data []byte
+		if err := rows.Scan(&id, &underived, &data); err != nil {
 			rows.Close()
 			return 0, errf(db, "list gammonNet response analyses", err)
+		}
+		if underived {
+			a, err := engine.DecodeAnalysisFromStorage(data)
+			if err != nil {
+				continue
+			}
+			if label, _, _ := engine.AnalysisProvenance(&a); !strings.HasPrefix(label, "gammonNet") {
+				continue
+			}
 		}
 		ids = append(ids, id)
 	}
@@ -86,3 +104,13 @@ func DropGammonNetResponseAnalyses(ctx context.Context, db Execer) (int, error) 
 	}
 	return len(ids), nil
 }
+
+// DropOwnedCubeAnswerMatchStatsSQL deletes the statistics of every match
+// holding a take or a pass on an owned cube: the doubler's own row, where an
+// .xg file without its raw cube segment leaves the take. Those statistics
+// converted its MWC loss at half the cube it stands at; they are recomputed
+// from the rows.
+var DropOwnedCubeAnswerMatchStatsSQL = `DELETE FROM match_stats WHERE match_id IN (
+	SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id JOIN position p ON p.id = mv.position_id
+	WHERE ` + ActionCodeOrEmptySQL("mv.cube_action") + ` IN (` + answerCodesSQL + `)
+	  AND p.decision_type = 1 AND p.cube_value > 0 AND p.cube_owner <> -1)`

@@ -52,6 +52,11 @@ func (s *matchStore) ReanchorAnsweredDoubles(ctx context.Context, scope string) 
 				}
 				moved++
 			}
+			// Every moved move is a take or a pass: the landed row is a
+			// response, which the search's take/pass filter reads here.
+			if _, err := tx.ExecContext(ctx, cubeResponseSQL, newID); err != nil {
+				return fmt.Errorf("flag answered position: %w", err)
+			}
 			if _, err := tx.ExecContext(ctx, invalidateMatchStatsOfPositionSQL, newID); err != nil {
 				return fmt.Errorf("invalidate match stats: %w", err)
 			}

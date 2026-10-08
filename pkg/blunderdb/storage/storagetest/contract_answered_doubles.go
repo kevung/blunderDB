@@ -174,6 +174,23 @@ func testMatchReanchorAnsweredDoubles(t *testing.T, s storage.Storage) {
 		t.Errorf("the user's own row was purged: %v", err)
 	}
 
+	// The landed rows are responses to the search's take/pass filter.
+	f := domain.SearchFilters{DecisionTypeFilter: true, CubeResponseFilter: "takepass"}
+	f.Filter.DecisionType = domain.CubeAction
+	f.Filter.PlayerOnRoll = domain.Black
+	responses := map[int64]bool{}
+	for pos, err := range s.Search().Find(ctx, "", f, storage.ListOpts{}) {
+		if err != nil {
+			t.Fatalf("Find take/pass: %v", err)
+		}
+		responses[pos.ID] = true
+	}
+	for _, m := range []int64{transcribedTake, transcribedPass, correctedTake, mineTake} {
+		if id := positionOf(m); !responses[id] {
+			t.Errorf("the row %d move %d landed on is not a take/pass response to the search", id, m)
+		}
+	}
+
 	if again, err := s.Matches().ReanchorAnsweredDoubles(ctx, ""); err != nil || again != 0 {
 		t.Errorf("second run moved %d (%v), want 0", again, err)
 	}

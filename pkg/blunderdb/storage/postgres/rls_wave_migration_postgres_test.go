@@ -705,3 +705,83 @@ func TestMigrate_ResponseAnalysesDroppedOnce(t *testing.T) {
 		t.Errorf("gammonNet's verdict given after the drop was dropped again: %v", err)
 	}
 }
+
+// TestMigrate_ResponseAnalysesDropWaitsForAFullView: a role that neither
+// owns the tables nor bypasses RLS sees one tenant at most. Its Migrate drops
+// none of gammonNet's verdicts on take/pass rows and leaves the drop's key
+// unwritten, so a start that sees every tenant drops them all at once.
+func TestMigrate_ResponseAnalysesDropWaitsForAFullView(t *testing.T) {
+	ctx := context.Background()
+	s, conn, ownerDSN := openAsRLSOwner(t)
+	for i, scope := range []string{"1", "2"} {
+		r := domain.InitializePosition()
+		r.DecisionType = domain.CubeAction
+		r.Board.Points[10+i].Checkers = 1
+		r.Cube = domain.Cube{Owner: domain.None, Value: 1}
+		rid, err := s.Positions().Save(ctx, scope, &r)
+		if err != nil {
+			t.Fatal(err)
+		}
+		a := domain.PositionAnalysis{AnalysisType: "DoublingCube", AnalysisEngineVersion: "gammonNet v1.6.0",
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "0-ply", AnalysisEngine: "gammonNet v1.6.0"}}
+		if err := s.Analyses().Save(ctx, scope, rid, &a); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := s.ApplyRLS(ctx); err != nil {
+		t.Fatalf("ApplyRLS: %v", err)
+	}
+	u, err := url.Parse(ownerDSN)
+	if err != nil {
+		t.Fatal(err)
+	}
+	u.User = url.UserPassword("test", "test")
+	admin, err := pgx.Connect(ctx, u.String())
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, stmt := range []string{
+		`CREATE ROLE rls_app LOGIN PASSWORD 'app' NOSUPERUSER NOBYPASSRLS`,
+		`GRANT USAGE, CREATE ON SCHEMA public TO rls_app`,
+	} {
+		if _, err := admin.Exec(ctx, stmt); err != nil {
+			t.Fatal(err)
+		}
+	}
+	admin.Close(ctx)
+	execUnforced(t, conn, nil, []string{
+		`UPDATE metadata SET value = '2' WHERE key = 'go_backfills'`,
+		`DELETE FROM metadata WHERE key = 'gammonnet_response_analyses_dropped'`,
+		`GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO rls_app`,
+		`GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO rls_app`,
+	})
+	u.User = url.UserPassword("rls_app", "app")
+	app, err := pg.Open(ctx, u.String(), nil)
+	if err != nil {
+		t.Fatalf("Open as rls_app: %v", err)
+	}
+	defer func() { _ = app.Close() }()
+	if err := app.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate as rls_app: %v", err)
+	}
+	var keys, verdicts int
+	if err := conn.QueryRow(ctx, `SELECT count(*) FROM metadata WHERE key = 'gammonnet_response_analyses_dropped'`).Scan(&keys); err != nil {
+		t.Fatal(err)
+	}
+	if keys != 0 {
+		t.Error("the drop's key was written by a role that sees part of the rows")
+	}
+	if _, err := conn.Exec(ctx, `ALTER TABLE analysis NO FORCE ROW LEVEL SECURITY`); err != nil {
+		t.Fatal(err)
+	}
+	err = conn.QueryRow(ctx, `SELECT count(*) FROM analysis WHERE analysis_engine LIKE 'gammonNet%'`).Scan(&verdicts)
+	if _, rerr := conn.Exec(ctx, `ALTER TABLE analysis FORCE ROW LEVEL SECURITY`); rerr != nil {
+		t.Fatal(rerr)
+	}
+	if err != nil {
+		t.Fatal(err)
+	}
+	if verdicts != 2 {
+		t.Errorf("%d of gammonNet's two verdicts on take/pass rows left, want both", verdicts)
+	}
+}

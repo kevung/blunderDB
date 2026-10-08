@@ -67,6 +67,11 @@ func reanchorAnsweredDoublesTx(ctx context.Context, tx pgx.Tx, scope string) (in
 			}
 			moved++
 		}
+		// Every moved move is a take or a pass: the landed row is a
+		// response, which the search's take/pass filter reads here.
+		if _, err := tx.Exec(ctx, `UPDATE position SET is_cube_response = TRUE WHERE id = $1 AND tenant_id = $2`, newID, tenant); err != nil {
+			return 0, fmt.Errorf("flag answered position: %w", err)
+		}
 		if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1 AND match_id IN
 			(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id AND g.tenant_id = mv.tenant_id
 			  WHERE mv.position_id = $2 AND mv.tenant_id = $1)`, tenant, newID); err != nil {
@@ -107,9 +112,11 @@ const responseAnalysesDroppedKey = "gammonnet_response_analyses_dropped"
 // over every tenant in one unforced transaction: analyses, moves and match
 // statistics are reached by id, which no tenant shares. A role that cannot
 // see every tenant's rows drops nothing and leaves the pass to a start that
-// can, so the drop is never split. One of runGoBackfills' passes, ahead of
-// reanchorAnsweredDoubles so a moved answer is rescored against what its new
-// row keeps.
+// can, so the drop is never split. The first of runGoBackfills' passes:
+// ahead of reanchorAnsweredDoubles so a moved answer is rescored against what
+// its new row keeps, and ahead of every pass that could wait on a lock while
+// the daemon starts serving; it reads a row whose provenance is not derived
+// yet from its blob, so it needs no pass before it.
 func dropGammonNetResponseAnalyses(ctx context.Context, conn beginner) (bool, error) {
 	n := 0
 	complete, err := inUnforcedTxSeeing(ctx, conn, responseAnalysisTables, func(tx pgx.Tx, complete bool) error {
@@ -123,6 +130,11 @@ func dropGammonNetResponseAnalyses(ctx context.Context, conn beginner) (bool, er
 		var err error
 		if n, err = sqlshared.DropGammonNetResponseAnalyses(ctx, binder{tx}.shared()); err != nil {
 			return err
+		}
+		// Once too: a take on the doubler's own row had its MWC loss
+		// converted at half its cube.
+		if _, err := tx.Exec(ctx, sqlshared.DropOwnedCubeAnswerMatchStatsSQL); err != nil {
+			return fmt.Errorf("postgres: drop the statistics of owned-cube answers: %w", err)
 		}
 		if _, err := tx.Exec(ctx, `INSERT INTO metadata (key, value) VALUES ($1, '1') ON CONFLICT (key) DO NOTHING`,
 			responseAnalysesDroppedKey); err != nil {

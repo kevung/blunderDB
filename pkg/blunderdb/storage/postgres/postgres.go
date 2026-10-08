@@ -328,8 +328,12 @@ func runGoBackfills(ctx context.Context, conn migrationConn) error {
 	}
 	complete := true
 	for _, pass := range []func(context.Context, beginner) (bool, error){
+		// The drop first: until it has committed, a verdict gammonNet gives
+		// on a take/pass row would fall to it, so no other pass's lock wait
+		// may stand before it.
+		dropGammonNetResponseAnalyses,
 		dropOlderShapeMatchStats, backfillAnalysisProvenance,
-		dropGammonNetResponseAnalyses, reanchorAnsweredDoubles, recountDecisions,
+		reanchorAnsweredDoubles, recountDecisions,
 	} {
 		all, err := pass(ctx, conn)
 		if errors.Is(err, errUnforcedLockTimeout) {

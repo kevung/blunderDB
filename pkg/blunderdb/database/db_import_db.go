@@ -371,27 +371,22 @@ type importRun struct {
 	srcMET   map[int64]int64
 	signed   bool
 	targetOf map[int64]int64
-	// staleResponseVerdicts says the source predates 2.41.0, whose gammonNet
-	// verdicts on take/pass positions are the answerer's centred-cube
-	// decision: they are left behind, as the migration drops them.
-	staleResponseVerdicts bool
+	// sourceVersion is the source's schema version, which tells whether its
+	// gammonNet verdicts on take/pass positions are stale
+	// (ingest.StaleResponseVerdict).
+	sourceVersion string
 }
 
 // sourceAnalysis reads the source's analysis of position id, which stands
-// as pos; sql.ErrNoRows when it has none or when it is a stale gammonNet
-// verdict on a take/pass position, left behind for the next analysis to give
-// as the doubler's.
+// as pos; sql.ErrNoRows when it has none or when ingest.StaleResponseVerdict
+// leaves it behind.
 func (r *importRun) sourceAnalysis(id int64, pos *Position) ([]byte, error) {
 	var data []byte
 	if err := r.importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&data); err != nil {
 		return nil, err
 	}
-	if r.staleResponseVerdicts && pos.DecisionType == domain.CubeAction && pos.Cube.Value > 0 && pos.Cube.Owner == domain.None {
-		if a, err := decodeAnalysisFromStorage(data); err == nil {
-			if label, _, _ := engine.AnalysisProvenance(&a); strings.HasPrefix(label, "gammonNet") {
-				return nil, sql.ErrNoRows
-			}
-		}
+	if a, err := decodeAnalysisFromStorage(data); err == nil && ingest.StaleResponseVerdict(r.sourceVersion, pos, &a) {
+		return nil, sql.ErrNoRows
 	}
 	return data, nil
 }
@@ -649,10 +644,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	// targetOf maps each source position id to the id it holds here, for the
 	// collections merged after the positions.
 	targetOf := map[int64]int64{}
-	run := &importRun{ctx: ctx, tx: tx, stx: stx, importDB: importDB, carrier: carrier, srcMET: srcMET, signed: signed, targetOf: targetOf}
-	if c, err := compareVersions(importDBVersion, "2.41.0"); err == nil && c < 0 {
-		run.staleResponseVerdicts = true
-	}
+	run := &importRun{ctx: ctx, tx: tx, stx: stx, importDB: importDB, carrier: carrier, srcMET: srcMET, signed: signed, targetOf: targetOf, sourceVersion: importDBVersion}
 
 	for rows.Next() {
 		// Check for cancellation

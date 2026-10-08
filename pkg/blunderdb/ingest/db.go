@@ -108,9 +108,16 @@ func (im DBImporter) Import(ctx context.Context, scope string, src Source, prog 
 		analysis *domain.PositionAnalysis
 		comments []*domain.CommentEntry
 	}
+	srcVersion, err := source.Version(ctx)
+	if err != nil {
+		return Summary{}, fmt.Errorf("ingest: read source version: %w", err)
+	}
 	records := make([]srcRecord, 0, len(positions))
 	for _, p := range positions {
 		rec := srcRecord{pos: p, analysis: srcAnalyses[p.ID]}
+		if StaleResponseVerdict(srcVersion, p, rec.analysis) {
+			rec.analysis = nil
+		}
 		rec.comments = srcComments[p.ID]
 		records = append(records, rec)
 	}

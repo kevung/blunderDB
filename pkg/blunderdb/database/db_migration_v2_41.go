@@ -8,6 +8,7 @@ import (
 	"log/slog"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // answeredDoublesPendingKey is the metadata key that says the transcribed
@@ -39,7 +40,9 @@ func (d *Database) migrate_2_40_0_to_2_41_0(ctx context.Context) error {
 // committed. The drop runs first so a moved answer is rescored against what
 // its new row will keep. Both are idempotent, so a resumed open repeats them
 // safely. ReanchorAnsweredDoubles drops the
-// match_stats rows of every match it touched; FillMatchStats recomputes them.
+// match_stats rows of every match it touched, and the statistics of a match
+// holding a take on the doubler's own row, once converted at half its cube,
+// go too; FillMatchStats recomputes them.
 func (d *Database) finishAnsweredDoubles(ctx context.Context) error {
 	var v string
 	err := d.db.QueryRowContext(ctx, `SELECT value FROM metadata WHERE key = ?`, answeredDoublesPendingKey).Scan(&v)
@@ -62,6 +65,9 @@ func (d *Database) finishAnsweredDoubles(ctx context.Context) error {
 	}
 	if n > 0 {
 		slog.Info("moved the transcribed answers to a double onto the ownerless cube", "moves", n)
+	}
+	if _, err := d.db.ExecContext(ctx, sqlshared.DropOwnedCubeAnswerMatchStatsSQL); err != nil {
+		return fmt.Errorf("dropping the statistics of matches with a take on the doubler's row: %w", err)
 	}
 	_, err = d.db.ExecContext(ctx, `DELETE FROM metadata WHERE key = ?`, answeredDoublesPendingKey)
 	return err

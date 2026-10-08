@@ -12,11 +12,10 @@ import (
 // double, the way every importer stores it: one cube analysis, its equities
 // the doubler's, at the cube before the double.
 
-// IsResponsePosition reports whether pos is a take/pass decision: a turned
-// cube held by no one, which no other decision can carry (a cube above 1 has
-// an owner).
+// IsResponsePosition reports whether pos is a take/pass decision
+// (domain.IsResponsePosition).
 func IsResponsePosition(pos *domain.Position) bool {
-	return pos.DecisionType == domain.CubeAction && pos.Cube.Value > 0 && pos.Cube.Owner == domain.None
+	return domain.IsResponsePosition(pos)
 }
 
 // DoublerPosition rebuilds, from a take/pass position, the doubler's position

@@ -7,3 +7,6 @@ func SetAfterMatchStatsProbe(f func()) (restore func()) {
 	afterMatchStatsProbe = f
 	return func() { afterMatchStatsProbe = prev }
 }
+
+// CubeMultiplierExpr is cubeMultiplierExpr, over aliases p and mv.
+var CubeMultiplierExpr = cubeMultiplierExpr
