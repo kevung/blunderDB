@@ -729,6 +729,7 @@
         "suggestGap": "δεύτερη επιλογή {mp} mp πίσω",
         "suggestClose": "οριακό μάθημα (μετρά το μισό)",
         "suggestUnstable": "ασταθής ετυμηγορία (μετρά το μισό)",
+        "suggestCounted": "μετράει {pct}",
         "suggestRolledOut": "επιβεβαιωμένο από rollout",
         "suggestKeepCollection": "Δημιουργία συλλογής ({n})",
         "suggestKeepDeck": "Τράπουλα Anki",

@@ -110,6 +110,7 @@
         if (r.GapMP >= 0) parts.push($t('collection.suggestGap', { mp: r.GapMP }));
         if (r.Close) parts.push($t('collection.suggestClose'));
         if (r.Unstable) parts.push($t('collection.suggestUnstable'));
+        if (r.Gain < r.Covered) parts.push($t('collection.suggestCounted', { pct: pct(r.Gain) }));
         if (r.RolledOut) parts.push($t('collection.suggestRolledOut'));
         return parts.join(' ; ');
     }
@@ -177,7 +178,7 @@
                     <li class="ref" data-testid="suggest-row">
                         <input type="checkbox" checked={checked.has(r.PositionID)} onchange={() => toggle(r.PositionID)} aria-label={String(r.PositionID)} />
                         <button type="button" class="ref-body" onclick={() => open(r.PositionID)}>
-                            <span class="ref-title">{familyName(r)} <span class="gain">{pct(r.Gain)}</span></span>
+                            <span class="ref-title">{familyName(r)} <span class="gain">{pct(r.Covered)}</span></span>
                             <span class="ref-reason">{reason(r)}</span>
                         </button>
                     </li>

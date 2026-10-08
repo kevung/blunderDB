@@ -729,6 +729,7 @@
         "suggestGap": "次善手との差 {mp} mp",
         "suggestClose": "僅差の教訓（半分に計算）",
         "suggestUnstable": "不安定な判定（半分に計算）",
+        "suggestCounted": "換算 {pct}",
         "suggestRolledOut": "ロールアウトで確認済み",
         "suggestKeepCollection": "コレクションを作成（{n}）",
         "suggestKeepDeck": "Anki デッキ",

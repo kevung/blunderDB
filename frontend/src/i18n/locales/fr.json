@@ -729,6 +729,7 @@
         "suggestGap": "second choix à {mp} mp",
         "suggestClose": "leçon serrée (compte pour moitié)",
         "suggestUnstable": "verdict instable (compte pour moitié)",
+        "suggestCounted": "compté {pct}",
         "suggestRolledOut": "confirmé par un rollout",
         "suggestKeepCollection": "Créer la collection ({n})",
         "suggestKeepDeck": "Paquet Anki",

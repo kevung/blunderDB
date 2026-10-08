@@ -125,10 +125,10 @@ func printReferences(res *storage.ReferenceSuggestions) {
 		return
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "#\tPOSITION\tPLAN\tKIND\tTHEME\tSCORE\tCOVERS\tRECOVERABLE\tREASON")
+	fmt.Fprintln(w, "#\tPOSITION\tPLAN\tKIND\tTHEME\tSCORE\tCOVERS\tMWC COVERED\tREASON")
 	for i, r := range res.References {
 		fmt.Fprintf(w, "%d\t%d\t%s\t%s\t%s\t%s\t%d errors / %d matches\t%.2f%%\t%s\n", i+1, r.PositionID,
-			r.GameType, r.Kind, r.Theme, referenceScore(r), r.Errors, r.Matches, 100*r.Gain, referenceReason(r, res.NumDecisions))
+			r.GameType, r.Kind, r.Theme, referenceScore(r), r.Errors, r.Matches, 100*r.Covered, referenceReason(r, res.NumDecisions))
 	}
 	w.Flush()
 }
@@ -155,6 +155,9 @@ func referenceReason(r storage.ReferenceSuggestion, numDecisions int) string {
 	}
 	if r.Unstable {
 		parts = append(parts, "unstable verdict (counts half)")
+	}
+	if r.Gain < r.Covered {
+		parts = append(parts, fmt.Sprintf("counted %.2f%%", 100*r.Gain))
 	}
 	if r.RolledOut {
 		parts = append(parts, "confirmed by a rollout")

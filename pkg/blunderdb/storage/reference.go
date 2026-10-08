@@ -294,9 +294,11 @@ func SuggestReferences(rows []ReferenceRow, handled map[int64]bool, numDecisions
 	}
 	// What is already dealt with is already picked: it covers its neighbours
 	// and keeps their near-duplicates out.
+	var picked []*referenceCandidate
 	for _, c := range cands {
 		if c.handled {
 			pick(cands, c)
+			picked = append(picked, c)
 		}
 	}
 	h := &gainHeap{cands: cands}
@@ -306,7 +308,6 @@ func SuggestReferences(rows []ReferenceRow, handled map[int64]bool, numDecisions
 		}
 	}
 	heap.Init(h)
-	var picked []*referenceCandidate
 	for h.Len() > 0 && len(out.References) < size {
 		top := heap.Pop(h).(gainItem)
 		c := cands[top.idx]
@@ -502,7 +503,7 @@ func pick(cands []*referenceCandidate, c *referenceCandidate) {
 	}
 }
 
-// nearPicked catches a near-duplicate of a picked position from another
+// nearPicked catches a near-duplicate of a picked or handled position from another
 // group: the same kind of decision and, for the cube, the same score.
 func nearPicked(picked []*referenceCandidate, c *referenceCandidate) bool {
 	for _, p := range picked {

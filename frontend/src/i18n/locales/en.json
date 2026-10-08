@@ -729,6 +729,7 @@
         "suggestGap": "second best {mp} mp behind",
         "suggestClose": "close lesson (counts half)",
         "suggestUnstable": "unstable verdict (counts half)",
+        "suggestCounted": "counted {pct}",
         "suggestRolledOut": "confirmed by a rollout",
         "suggestKeepCollection": "Create the collection ({n})",
         "suggestKeepDeck": "Anki deck",

@@ -1036,7 +1036,8 @@ ou ``csv``, comme ``list``.
   les positions proposées dans une nouvelle collection, ou ``--deck``, qui en
   fait un paquet Anki. Chaque ligne donne la famille, le score d'une
   référence de videau, les erreurs et matchs qu'elle résume, le MWC couvert
-  et sa raison ; ``--format json`` rend les mêmes composantes.
+  et sa raison (qui donne le chiffre compté quand la leçon compte pour
+  moitié) ; ``--format json`` rend les mêmes composantes.
 
 Le XGID affiché par ``show`` est celui enregistré avec l'analyse de la
 position quand il existe (imports BGF et XGP) ; sinon il est généré depuis le

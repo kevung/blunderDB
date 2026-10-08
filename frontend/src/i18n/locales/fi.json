@@ -729,6 +729,7 @@
         "suggestGap": "toiseksi paras {mp} mp jäljessä",
         "suggestClose": "tiukka opetus (lasketaan puoleksi)",
         "suggestUnstable": "epävakaa tuomio (lasketaan puoleksi)",
+        "suggestCounted": "lasketaan {pct}",
         "suggestRolledOut": "rollout vahvistaa",
         "suggestKeepCollection": "Luo kokoelma ({n})",
         "suggestKeepDeck": "Anki-pakka",

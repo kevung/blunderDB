@@ -729,6 +729,7 @@
         "suggestGap": "zweitbeste Wahl {mp} mp dahinter",
         "suggestClose": "knappe Lektion (zählt halb)",
         "suggestUnstable": "instabiles Urteil (zählt halb)",
+        "suggestCounted": "gezählt {pct}",
         "suggestRolledOut": "durch einen Rollout bestätigt",
         "suggestKeepCollection": "Sammlung erstellen ({n})",
         "suggestKeepDeck": "Anki-Deck",

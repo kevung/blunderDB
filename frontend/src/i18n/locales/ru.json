@@ -729,6 +729,7 @@
         "suggestGap": "второй выбор отстаёт на {mp} mp",
         "suggestClose": "тесный урок (считается наполовину)",
         "suggestUnstable": "нестабильный вердикт (считается наполовину)",
+        "suggestCounted": "засчитано {pct}",
         "suggestRolledOut": "подтверждено роллаутом",
         "suggestKeepCollection": "Создать коллекцию ({n})",
         "suggestKeepDeck": "Колода Anki",

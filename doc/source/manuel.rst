@@ -1278,7 +1278,9 @@ vos erreurs, de structure voisine, et sa leçon sert à toutes.
   voisines et d'elle-même : ce que sa leçon rapporterait si elle servait à
   toutes. Une leçon **serrée** (le second choix coûte moins d'une demi-erreur)
   ou un verdict **instable** (une autre profondeur ou un rollout dit autre
-  chose) compte pour moitié ; un rollout qui confirme est signalé.
+  chose) compte pour moitié ; un rollout qui confirme est signalé. Le chiffre
+  en tête de chaque ligne est le MWC couvert, la raison donne le chiffre
+  compté quand la leçon compte pour moitié.
 * La liste est **variée** : une position retenue couvre ses voisines, qui ne
   rapportent plus rien aux suivantes, et aucune position proposée n'est un
   quasi-doublon d'une autre. Une position **déjà traitée** — commentée, dans

@@ -729,6 +729,7 @@
         "suggestGap": "seconda scelta a {mp} mp",
         "suggestClose": "lezione stretta (conta la metà)",
         "suggestUnstable": "verdetto instabile (conta la metà)",
+        "suggestCounted": "conta {pct}",
         "suggestRolledOut": "confermato da un rollout",
         "suggestKeepCollection": "Crea la collezione ({n})",
         "suggestKeepDeck": "Mazzo Anki",

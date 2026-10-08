@@ -91,6 +91,17 @@ func TestSuggestReferencesHandled(t *testing.T) {
 	}
 }
 
+// TestSuggestReferencesHandledAcrossThemes: a near-duplicate of a handled
+// position is not proposed even when it belongs to another family.
+func TestSuggestReferencesHandledAcrossThemes(t *testing.T) {
+	a := refRow(1, 1, "blots", 0.02, shifted(12))
+	b := refRow(2, 2, "gammon", 0.03, shifted(11))
+	got := SuggestReferences([]ReferenceRow{a, b}, map[int64]bool{1: true}, 100, 50, 10)
+	if len(got.References) != 0 {
+		t.Fatalf("references = %+v, want none: 2 is a near-duplicate of the handled 1", got.References)
+	}
+}
+
 // TestSuggestReferencesDiscount: a close lesson and an unstable verdict each
 // halve the gain, so a clean single error can outrank a murky pair.
 func TestSuggestReferencesDiscount(t *testing.T) {
