@@ -208,10 +208,6 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
   caractère évitable M3, un clic vers le coup), le résultat ajusté de la chance à côté du
   score (la chance est déjà importée), et la distinction erreur précipitée / erreur réfléchie
   (temps de décision : discipline contre connaissance).
-- **Plan d'étude classé (base)** (#601). Priorité d'une famille d'erreurs (plan × thème, puis
-  famille de positions par similarité `like`) = fréquence × perte moyenne en excès de la
-  difficulté M3 = MWC récupérable, avec son IC pour ne pas pousser vers du bruit. Carte « Plan
-  d'étude » au tableau de bord, qui alimente la file d'étude et les quiz ; parité CLI/serveur.
 - **Positions de référence proposées (panneau Collections, `collection suggest`)** (#602). Critères
   combinés, raison affichée par position : représentativité (centre d'une famille de ses
   erreurs, distance `like`), fréquence de la famille dans toutes ses décisions, coût évitable
@@ -219,7 +215,9 @@ MWC par décision (#597), M1 (L₇, #598) et M3 (difficulté par décision, #599
   possible), diversité (dédoublonnage par similarité), non traitée (même prédicat que la file
   d'étude), références de videau par score. Portée match / tournoi / base / filtre courant,
   taille 10/20/50, liste proposée à cocher → collection figée ou vivante, deck Anki ou quiz en
-  un clic. À vérifier : coût du regroupement par similarité sur une grosse base.
+  un clic. Coût du regroupement par similarité mesuré (ADR-0077) : 166 ns par paire, 8 s pour
+  10 000 erreurs en paires complètes — il faut un index de voisinage, qui servira aussi les
+  familles par similarité du plan d'étude.
 - **Fermer la boucle, et biais directionnels** (#603). Par famille étudiée : erreur en match réel
   avant/après l'étude, avec IC (la vue `list --type study` n'a pas de colonne de gain). Biais
   signés plutôt que perte seule : taux de prises/refus contre le bot, doubles prématurés contre

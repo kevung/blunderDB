@@ -224,9 +224,13 @@ func (s *positionStore) Update(ctx context.Context, scope string, p *domain.Posi
 			p.ID, tenantID(scope)); err != nil {
 			return err
 		}
-		_, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1 AND match_id IN
+		if _, err := tx.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1 AND match_id IN
 			(SELECT g.match_id FROM move mv JOIN game g ON g.id = mv.game_id
-			  WHERE mv.position_id = $2 AND mv.tenant_id = $1)`, tenantID(scope), p.ID)
+			  WHERE mv.position_id = $2 AND mv.tenant_id = $1)`, tenantID(scope), p.ID); err != nil {
+			return err
+		}
+		// A new decision type changes which play each move is scored against.
+		_, err := sqlshared.RescorePlayedDecisionsOf(ctx, binder{tx}.shared(), []int64{p.ID})
 		return err
 	})
 	if isUniqueViolation(err) {

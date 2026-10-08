@@ -439,6 +439,14 @@ func (r *importRun) mergeExisting(id, existingPositionID int64, sourceIndividual
 				}
 			}
 		}
+		// The moves the target already played here are scored by the
+		// analysis they now read.
+		if hasMerged {
+			if err := stx.Matches().RescorePositionMoves(ctx, "", existingPositionID); err != nil {
+				_ = tx.Rollback()
+				return false, err
+			}
+		}
 	}
 
 	// Merge comments: each imported row is appended, with its

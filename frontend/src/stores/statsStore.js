@@ -1,5 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
-import { ComputeStats, ComputeRecurringErrors, ComputeTrainingStats, GetPlayerTable } from '../../wailsjs/go/database/Database.js';
+import { ComputeStats, ComputeRecurringErrors, ComputeStudyPlan, ComputeTrainingStats, GetPlayerTable } from '../../wailsjs/go/database/Database.js';
 import { databasePathStore } from './databaseStore.js';
 import { dbMutationCounterStore } from './uiStore.js';
 
@@ -127,6 +127,45 @@ export async function refreshRecurringErrors(filter, invalidationKey) {
         recurringErrorsStore.set(null);
     } finally {
         recurringErrorsLoadingStore.set(false);
+    }
+}
+
+export const studyPlanStore = writable(null);
+export const studyPlanLoadingStore = writable(false);
+export const studyPlanErrorStore = writable(null);
+
+/** Cache key of the last successful study-plan fetch. */
+let _cachedStudyPlanKey = null;
+/** Sequence number of the latest study-plan request: a slower, older reply is dropped. */
+let _studyPlanSeq = 0;
+
+/**
+ * Fetch the study plan of the filter (ADR-0077): the error families ranked by recoverable MWC.
+ * It replays each error's analysis, like the recurring errors: fetched only while the dashboard,
+ * which shows it, is open.
+ * @param {object} filter
+ * @param {number} invalidationKey
+ */
+export async function refreshStudyPlan(filter, invalidationKey) {
+    const key = JSON.stringify(filter) + '||' + invalidationKey;
+    if (key === _cachedStudyPlanKey && get(studyPlanStore) !== null) {
+        return;
+    }
+    _cachedStudyPlanKey = key;
+    const seq = ++_studyPlanSeq;
+    studyPlanLoadingStore.set(true);
+    studyPlanErrorStore.set(null);
+    try {
+        const plan = await ComputeStudyPlan(filter);
+        if (seq !== _studyPlanSeq) return;
+        studyPlanStore.set(plan);
+    } catch (err) {
+        if (seq !== _studyPlanSeq) return;
+        _cachedStudyPlanKey = null; // allow retry on error
+        studyPlanErrorStore.set(err?.message ?? String(err));
+        studyPlanStore.set(null);
+    } finally {
+        if (seq === _studyPlanSeq) studyPlanLoadingStore.set(false);
     }
 }
 

@@ -69,7 +69,7 @@ func (cli *CLI) listStudy(days int, format string) error {
 }
 
 // prCell renders a PR, or a dash when too few decisions back it; the count is
-// still printed beside it (same rule as storage.MinCellDecisions).
+// still printed beside it (same rule as StudyImpactMinDecisions).
 func prCell(pr float64, decisions int) string {
 	if decisions < 10 {
 		return "—"

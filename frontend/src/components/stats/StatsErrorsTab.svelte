@@ -120,8 +120,8 @@
     // ── 2. Checker vs Cube comparison ─────────────────────────────────────────
     let compDatasets = $derived([
         {
-            label: metric === 'pr' ? 'PR' : 'MWC loss',
-            data: [metric === 'pr' ? (result?.PRChecker ?? 0) : (result?.MWCChecker ?? 0), metric === 'pr' ? (result?.PRCube ?? 0) : (result?.MWCCube ?? 0)],
+            label: compLabel(),
+            data: compData(),
             backgroundColor: PRIMARY,
             borderColor: PRIMARY,
             borderWidth: 1
@@ -186,6 +186,18 @@
         return ((c.BlunderCount / c.NumDecisions) * 100).toFixed(1);
     }
 
+    /** The checker-vs-cube label: under the 7-point choice, L7 split over the same units. */
+    function compLabel() {
+        return metric === 'mwc7' ? $t('mwc7.short') : yAxisLabel();
+    }
+
+    /** The checker-vs-cube figures for the current metric. */
+    function compData() {
+        if (metric === 'pr') return [result?.PRChecker ?? 0, result?.PRCube ?? 0];
+        if (metric === 'mwc7') return [result?.MWC7Checker?.available ? result.MWC7Checker.loss : 0, result?.MWC7Cube?.available ? result.MWC7Cube.loss : 0];
+        return [result?.MWCChecker ?? 0, result?.MWCCube ?? 0];
+    }
+
     /** Y-axis label based on metric. */
     function yAxisLabel() {
         return metric === 'pr' ? 'PR' : 'MWC loss';
@@ -245,7 +257,7 @@
 
     <!-- ── 2. Checker vs Cube ─────────────────────────────────────────────── -->
     <section class="chart-section">
-        <h3 class="section-title">{$t('stats.checkerVsCube', { metric: yAxisLabel() })}</h3>
+        <h3 class="section-title">{$t('stats.checkerVsCube', { metric: compLabel() })}</h3>
         <div class="chart-wrapper chart-wrapper--small">
             <BarChart labels={['Checker', 'Cube']} datasets={compDatasets} options={compChartOptions} onBarClick={handleCompBarClick} />
         </div>

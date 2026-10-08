@@ -4167,6 +4167,55 @@ Examples:
   blunderdb stats h2h --db database.db --player "Alice" --opponent "Bob" --format json
 ```
 
+### `blunderdb stats plan`
+
+```
+Usage: blunderdb stats plan --db <file> [options]
+
+Answer "what should I work on now?": the recurring-error families (plan of play
+x theme) ranked by the winning chances studying them would recover (ADR-0077).
+A family's recoverable MWC is the sum, over its errors, of the loss minus the
+difficulty: what a reference player would have lost in the same positions.
+It comes with a 95% interval; a family enters the plan with at least
+5 priced errors and an interval above zero, ranked by the interval's lower
+bound. The others are listed apart, to confirm. Money-play errors carry no
+MWC and are only counted (unpriced).
+
+Options:
+  -db string
+    	Path to the database file (required)
+  -decision-type string
+    	Decision type: all, checker, or cube (default "all")
+  -deck string
+    	Create an Anki deck of this name from the positions of the plan's first families
+  -family int
+    	With --quiz, --deck or --queue: the rank of one family (1 = first) instead of the first three
+  -format string
+    	Output format: text or json (default "text")
+  -from string
+    	Start date filter YYYY-MM-DD
+  -limit int
+    	Maximum number of families shown (text only; 0 = all) (default 10)
+  -player string
+    	Only this player's decisions
+  -queue
+    	List the study queue of the plan's first families, the largest excess first
+  -quiz
+    	Draw a quiz: position ids picked at random from the plan's first families
+  -quiz-size int
+    	Number of positions --quiz draws (default 20)
+  -to string
+    	End date filter YYYY-MM-DD
+  -tournament string
+    	Filter by tournament IDs, comma-separated
+
+Examples:
+  blunderdb stats plan --db database.db --player "Alice"
+  blunderdb stats plan --db database.db --player "Alice" --quiz --format json
+  blunderdb stats plan --db database.db --family 1 --deck "Plan: first family"
+  blunderdb stats plan --db database.db --family 2 --queue
+```
+
 ### `blunderdb stats progression`
 
 ```

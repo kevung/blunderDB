@@ -392,6 +392,14 @@ var schemaStatements = []string{
 		-- candidates, or a row older than the column that the resumable pass
 		-- (MatchStore.ScoreMoves) has not reached yet.
 		error_mp INTEGER,
+		-- The error and the close-cube flag the statistics count this
+		-- decision by (sqlshared/played_decisions.go): the analysis's
+		-- cube_error / best_move_equity_error and is_close_cube, scored
+		-- against this move's own play, not the first one the position saw.
+		-- A NULL error is unscored (no analysis, or a play no candidate
+		-- names). Rewritten with every analysis write of the position.
+		decision_error_mp INTEGER,
+		is_close_cube INTEGER NOT NULL DEFAULT 0,
 		-- How long the player took over the decision, in milliseconds
 		-- (domain.Move.DecisionMS / CubeDecisionMS, ADR-0073). NULL is
 		-- unknown, never zero: only a Duel measures it.

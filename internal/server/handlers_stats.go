@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -104,6 +105,24 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.recurringErrors", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.RecurringErrors, error) {
 			return ss().RecurringErrors(ctx, scope, req.Filter)
 		})},
+		// Le plan d'étude du filtre (ADR-0077) : les familles d'erreurs classées
+		// par MWC récupérable, à part celles qui manquent de preuve.
+		{http.MethodPost, "/v1/stats.studyPlan", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StudyPlan, error) {
+			return ss().StudyPlan(ctx, scope, req.Filter)
+		})},
+		// Les positions des familles du plan, tirées pour un quiz si Size > 0.
+		{http.MethodPost, "/v1/stats.studyPlanIds", rpc(func(ctx context.Context, scope string, req studyIDsReq) (idsResp, error) {
+			ids, err := storage.StudyPlanIDs(ctx, s.opts.Storage, scope, req.Filter, req.Rank, req.Size)
+			return idsResp{PositionIDs: ids}, err
+		})},
+		// La file d'étude des familles du plan, l'excès le plus grand d'abord.
+		{http.MethodPost, "/v1/stats.studyPlanQueue", rpc(func(ctx context.Context, scope string, req studyIDsReq) ([]domain.StudyQueueEntry, error) {
+			plan, err := ss().StudyPlan(ctx, scope, req.Filter)
+			if err != nil {
+				return nil, err
+			}
+			return plan.QueueEntries(req.Rank), nil
+		})},
 		// Le PR du quiz Décision et la rétention Anki par fenêtre calendaire,
 		// sur le même calendrier que le PR des matchs réels.
 		{http.MethodPost, "/v1/stats.training", rpc(func(ctx context.Context, scope string, req statsTrainingReq) (*storage.TrainingStats, error) {
@@ -163,6 +182,9 @@ func (s *Server) statsRoutes() []route {
 		})},
 		{http.MethodPost, "/v1/stats.matchDecisionLosses", rpc(func(ctx context.Context, scope string, req matchIDReq) ([]storage.DecisionLoss, error) {
 			return ss().MatchDecisionLosses(ctx, scope, req.MatchID)
+		})},
+		{http.MethodPost, "/v1/stats.matchReview", rpc(func(ctx context.Context, scope string, req matchIDReq) (storage.MatchReview, error) {
+			return ss().MatchReview(ctx, scope, req.MatchID)
 		})},
 		{http.MethodPost, "/v1/stats.matchTimeSummary", rpc(func(ctx context.Context, scope string, req matchIDReq) (storage.MatchTimeSummary, error) {
 			return ss().MatchTimeSummary(ctx, scope, req.MatchID)

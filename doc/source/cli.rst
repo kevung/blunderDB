@@ -946,8 +946,23 @@ Pour un match analysé, la perte de chances de gagner le match de chaque coup
 (``mwc_loss``, une fraction : 0,0123 vaut 1,23 %, ``null`` pour un coup non noté)
 suit le même chemin : la sortie ``json`` porte la liste sous ``decision_losses``,
 ``text`` ajoute une ligne ``MWC loss`` aux coups notés et ``summary`` donne le total par
-joueur, égal à la perte MWC de la liste des matchs. Le serveur la sert par
-``/v1/stats.matchDecisionLosses``.
+joueur, égal à la perte MWC de la liste des matchs. Chaque entrée porte aussi
+sa difficulté (``difficulty``, la perte attendue d'un joueur de référence dans la
+même position, même unité, ``null`` pour un coup non noté) et ``avoidable`` pour
+une erreur évitable ; la sortie ``json`` ajoute ``difficulty_summary`` (par
+joueur : ``difficulty``, ``excess``, ``ratio``, ``avoidable``), ``text`` les lignes
+``Difficulty`` et ``Avoidable error``, ``summary`` une section ``Difficulty``.
+Le serveur la sert par ``/v1/stats.matchDecisionLosses``.
+
+``summary`` se termine par une section ``Review``, le bilan du match
+(:ref:`bilan du match <bilan_match>`) : par joueur, le PR et son intervalle à 95 % sur les
+parties, le résultat ajusté de la chance (avec le résultat, la chance nette,
+l'écart des erreurs et la couverture des jets), les trois erreurs à revoir
+(partie, coup, perte et part évitable) et le partage des erreurs entre
+précipitées et réfléchies. Le serveur le sert par ``/v1/stats.matchReview``.
+Dans ``stats``, le PR global et les lignes par phase, par étiquette et par score
+portent leur intervalle à 95 % sur les matchs (colonne ``95 % CI``), et
+``list --type players`` une colonne ``L7``.
 
 .. code-block:: bash
 
@@ -1254,6 +1269,37 @@ part du PR du filtre que le groupe représente.
    ./blunderdb stats recurring --db base.db --decision-type checker --format json
    ./blunderdb stats recurring --db base.db --quiz --format json
    ./blunderdb stats recurring --db base.db --group 1 --deck "Mon pire groupe"
+
+**stats plan** — Le plan d'étude du filtre, comme la carte *Plan d'étude* du
+tableau de bord (voir :ref:`plan_etude`) : les familles d'erreurs (plan de jeu
+× thème) classées par MWC récupérable, la somme sur leurs erreurs de la perte
+moins la difficulté, avec un intervalle à 95 %. Une famille entre au plan à
+partir de 5 erreurs chiffrées et d'un intervalle au-dessus de zéro ; les
+autres sont listées à part, à confirmer (champ ``Tentative`` en JSON). Les
+erreurs sans thème et celles sans MWC (partie libre) sont seulement comptées
+(``Unthemed``, ``Unpriced``).
+
+.. code-block:: bash
+
+   ./blunderdb stats plan --db <fichier> [options]
+
+Mêmes options de filtre que ``stats recurring``, plus :
+
+* ``--limit <n>`` — Nombre de familles affichées en texte (défaut 10, ``0``
+  pour toutes).
+* ``--quiz`` (``--quiz-size <n>``, défaut 20), ``--deck <nom>`` — Comme pour
+  ``stats recurring``, sur les positions des trois premières familles.
+* ``--queue`` — Affiche la file d'étude de ces familles, une position par
+  ligne, l'écart au joueur de référence le plus grand d'abord (JSON :
+  ``Queue``).
+* ``--family <rang>`` — Avec ``--quiz``, ``--deck`` ou ``--queue`` : la famille
+  de ce rang (1 pour la première) au lieu des trois premières.
+
+.. code-block:: bash
+
+   ./blunderdb stats plan --db base.db --player "Alice"
+   ./blunderdb stats plan --db base.db --player "Alice" --quiz --format json
+   ./blunderdb stats plan --db base.db --family 2 --queue
 
 **stats training** — Le PR du quiz Décision, le PR des matchs et la rétention
 Anki, repliés par fenêtre calendaire, comme l'onglet *Entraînement* du panneau

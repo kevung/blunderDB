@@ -1530,6 +1530,110 @@ durées. Hors de l'interface, ``match --format json`` ajoute ``decision_losses``
 ``--format text`` une ligne « MWC loss » par coup noté et ``--format summary`` le
 total par joueur.
 
+**Difficulté et erreurs évitables.** Une perte dit ce qu'un coup a coûté, pas
+s'il était difficile de trouver le bon. La colonne **Diff.**, à côté de
+**MWC**, donne la *difficulté* de la décision : la perte de chances de gagner
+le match qu'un *joueur de référence* subirait en moyenne dans la même position.
+Ce joueur de référence ne joue pas parfaitement : il choisit chaque option avec
+une probabilité d'autant plus faible qu'elle coûte cher, π(i) proportionnelle à
+exp(−Δᵢ/τ), où Δᵢ est le coût de l'option i par rapport à la meilleure, en
+équité normalisée. La difficulté vaut d = Σ π(i)·Δᵢ, convertie en MWC au score
+et au videau de la décision comme la perte : elle s'exprime dans la même unité,
+un pourcentage de chances de gagner le match. Les options sont les candidats de
+l'analyse pour un coup de pions ; pas de double et double (contre la meilleure
+réponse) pour qui a le videau ; prendre et passer pour qui reçoit le double.
+La température τ vaut 0,025 : la décision à deux options la plus difficile est
+celle dont l'écart est d'environ 0,032, et une position à cinq candidats espacés
+de 0,01 donne l'erreur moyenne d'un joueur de PR 6 environ ; c'est un a priori
+de joueur fort, fixé avant tout examen de résultats.
+
+À lire ainsi : une décision évidente, ou forcée, a une difficulté proche de
+``0`` sans qu'aucun seuil la mette à part ; une décision serrée, où plusieurs
+options se tiennent à quelques millièmes, en a une grande. Une perte bien
+supérieure à la difficulté est une faute que la position n'excusait pas ; une
+perte proche de la difficulté, une faute qu'un bon joueur ferait aussi. Une
+décision est une **erreur évitable**, marquée d'un ``!`` à côté de sa perte et
+d'un point au-dessus de sa barre, quand sa perte atteint le seuil d'erreur de la
+base et que sa difficulté n'en dépasse pas le dixième : sur une décision à deux
+options, le joueur de référence ne la commettrait pas une fois sur dix. Sur le
+graphique par décision, la difficulté est un trait horizontal sur chaque barre :
+une barre qui monte loin au-dessus de son trait signale une erreur évitable.
+
+Le tableau au-dessus des graphiques ajoute, pour chaque joueur et sur les
+décisions qui ont une perte et une difficulté : la **difficulté** totale,
+l'**excès** Σ(perte − difficulté), en MWC, ce que le joueur a perdu au-delà du
+joueur de référence (négatif quand il a fait mieux), le **ratio** perte totale /
+difficulté totale (1 : il joue comme le joueur de référence ; 2 : il perd deux
+fois plus) et le nombre d'**erreurs évitables**. Le ratio n'est pas donné quand
+la difficulté totale est sous 0,5 % : sur un match trop facile il ne mesurerait
+que du bruit, l'excès reste.
+
+Pourquoi la regarder : le PR et la perte MWC mêlent deux choses, la qualité du
+jeu et la difficulté des positions rencontrées. Un adversaire qui crée des
+positions complexes fait monter l'erreur de l'autre ; un match de course pure la
+fait baisser. La difficulté corrige ces deux effets : l'excès et le ratio
+comparent le joueur à ce qu'on pouvait attendre dans *ses* positions. Pour
+l'étude, elle trie les fautes : les erreurs évitables sont de l'inattention ou
+une règle mal sue, à revoir en premier et souvent faciles à corriger ; les
+pertes sur des décisions difficiles relèvent du travail de fond (rollouts,
+principes, positions de référence) et pèsent moins sur le jugement d'un match.
+
+Incertitude et limites : la difficulté dépend d'un modèle de joueur et de τ,
+fixés une fois ; changer l'un change tous les chiffres. Elle ne connaît que les
+candidats que l'analyse a gardés (quelques-uns chez XG, selon ses filtres chez
+GNU Backgammon) : les options absentes ne pèsent rien et la difficulté est
+alors un minorant. Elle hérite de l'erreur de l'analyse elle-même, surtout à
+faible profondeur. Sur un seul match, l'excès et le ratio reposent sur peu de
+décisions et varient beaucoup d'un match à l'autre : ils indiquent une
+tendance, pas un classement. La difficulté n'est calculée que pour les décisions
+dont la perte est notée ; ailleurs elle vaut un tiret. Hors de l'interface,
+``match --format json`` porte ``difficulty`` et ``avoidable`` sur chaque entrée
+de ``decision_losses`` et le résumé par joueur sous ``difficulty_summary`` ;
+``--format text`` ajoute les lignes « Difficulty » et « Avoidable error »,
+``--format summary`` la difficulté, l'excès, le ratio et le nombre d'erreurs
+évitables.
+
+.. _bilan_match:
+
+**Bilan du match.** Au-dessus des graphiques, un encart répond, pour chaque
+joueur, aux trois questions qu'on se pose après un match : qu'est-ce que je
+revois, ai-je perdu à cause des dés ou du jeu, et mes erreurs viennent-elles de
+la précipitation ou d'une lacune ? Les seuils ont été fixés avant tout examen
+de résultats.
+
+* **PR et perte MWC (éq. 7 pts), avec leur intervalle à 95 %**, calculé en
+  rééchantillonnant les parties du match. Il faut deux parties ; un match d'une
+  seule partie montre un tiret. Un intervalle large dit qu'un match ne suffit
+  pas à juger un niveau : comparez-le à vos autres matchs plutôt que de
+  conclure sur une valeur.
+* **Résultat ajusté de la chance**, pour un match terminé. Le *résultat* est
+  l'issue (100 % gagné, 0 % perdu) moins les chances au départ (50 % à 0-0) ; la
+  *chance nette* additionne la chance de vos jets moins celle des jets adverses,
+  chaque jet converti en MWC au score et au videau de sa position, comme une
+  perte. Le résultat ajusté est le résultat moins la chance nette. S'il est
+  positif sur un match perdu, ce sont les dés qui l'ont décidé ; négatif, c'est
+  le jeu. L'*écart des erreurs* (perte de l'adversaire moins la vôtre) est ce que
+  le résultat ajusté estime : les deux chiffres se recoupent quand la chance est
+  complète. La couverture est indiquée quand des jets n'ont pas de chance
+  mesurée (un fichier sans chance, un jet non analysé) ; sans aucun jet mesuré,
+  ou pour une partie d'argent, la ligne n'apparaît pas.
+* **Trois décisions à revoir** : parmi vos erreurs (seuil de la base), celles
+  dont la *part évitable* de la perte, perte − difficulté, est la plus grande —
+  c'est-à-dire la perte multipliée par son caractère évitable. Une erreur que le
+  joueur de référence aurait faite aussi ne vaut pas une séance : on revoit
+  d'abord ce qui était à sa portée. Un clic sur la décision l'affiche, comme une
+  ligne du relevé.
+* **Erreurs précipitées et réfléchies**, quand le match a gardé la durée des
+  décisions : une erreur jouée plus vite que la médiane de vos décisions du même
+  type (pions ou videau) dans ce match est précipitée, les autres réfléchies. La
+  médiane est la vôtre, dans ce match : elle ne dépend pas de la cadence, et
+  sans lien entre vitesse et erreur les erreurs se partageraient moitié-moitié.
+  Une majorité précipitée appelle de la discipline (ralentir sur ces positions) ;
+  une majorité réfléchie, de la connaissance (étudier la famille de positions).
+
+``match --format summary`` imprime le même bilan, et le serveur le sert par
+``/v1/stats.matchReview``.
+
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot),
 l'onglet ajoute trois colonnes alignées sur les chiffres : **Videau** (la
 décision de videau, prise avant le lancer ou sur la ligne du videau elle-même),
@@ -2668,10 +2772,14 @@ tous les onglets.
   valeur.
 
   Un match isolé est très bruité : quelques grosses erreurs suffisent à le
-  faire varier du simple au double. Chaque valeur est accompagnée de son
-  intervalle à 95 %, calculé en rééchantillonnant les parties du match (ou
-  les matchs d'un agrégat). Il faut au moins deux parties, ou deux matchs,
-  pour qu'un intervalle existe. Ne classez pas des joueurs sur un seul match.
+  faire varier du simple au double. Le badge et le bilan d'un match
+  (:ref:`bilan du match <bilan_match>`) donnent l'intervalle à 95 % en rééchantillonnant ses
+  parties ; un agrégat (statistiques d'un joueur, d'un tournoi) le donne en
+  rééchantillonnant ses matchs. Il faut au moins deux parties, ou deux matchs.
+  Une ligne par match des statistiques n'a pas d'intervalle : filtrée par
+  joueur, elle ne contient qu'une unité ; sans joueur, ses deux sièges
+  mesureraient l'écart entre les adversaires, pas l'incertitude. Ne classez pas
+  des joueurs sur un seul match.
 
   .. caution::
      Une partie *money-game* n'a pas de longueur de match : la perte MWC
@@ -2679,7 +2787,11 @@ tous les onglets.
      d'afficher un nombre. Comme le MWC cost, elle dépend de la MET.
 
   Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans l'onglet
-  Progression ; les onglets sans équivalent 7 points gardent le MWC cost.
+  Progression, et l'affiche sur les cartes du tableau de bord et dans la
+  comparaison pions/videau de l'onglet Erreurs, découpée en pions et videau
+  sur les mêmes matchs (les deux parts s'additionnent). Le classement des
+  joueurs a sa colonne. Les graphiques sans équivalent 7 points (par action de
+  videau) gardent le MWC cost.
 
 Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est
 effectué.
@@ -2738,6 +2850,46 @@ sous-ensemble correspondant (drill-down).
 
 .. note::
    Le nombre total de décisions est affiché en bas de chaque carte au survol.
+
+.. _plan_etude:
+
+Plan d'étude
+^^^^^^^^^^^^
+
+La carte **Plan d'étude** répond à « que dois-je travailler maintenant ? ».
+Les erreurs récurrentes (onglet Erreurs) disent où le filtre a perdu le plus ;
+elles ne disent pas où l'étude rapporte le plus. Une famille de positions
+réellement difficiles coûte cher à tout le monde, et trois erreurs ne font pas
+une tendance. Le plan corrige les deux.
+
+* Une **famille** est un groupe des erreurs récurrentes : un plan de jeu, une
+  nature de décision (pions ou videau) et un thème. Les erreurs sans thème
+  n'en forment pas : elles n'indiquent rien à étudier.
+* Chaque erreur est chiffrée en **MWC**, comme dans le panneau Match : sa
+  perte ℓ, et sa *difficulté* d, la perte qu'un joueur de référence aurait
+  subie dans la même position (voir la difficulté par décision du panneau
+  Match). Une erreur en partie libre n'a pas de MWC : elle est seulement
+  comptée, « non chiffrée ».
+* Le **MWC récupérable** d'une famille est la somme de ℓ − d sur ses erreurs :
+  la fréquence de la famille multipliée par sa perte moyenne au-delà de la
+  difficulté. C'est ce que vous regagneriez en jouant ces positions comme le
+  joueur de référence. Une famille d'erreurs évitables monte, une famille de
+  positions où tout le monde se trompe descend.
+* L'**intervalle à 95 %** accompagne chaque chiffre. Une famille entre au plan
+  à partir de **5 erreurs** et d'un intervalle entièrement au-dessus de zéro ;
+  le plan est classé par la borne basse de l'intervalle, si bien qu'à
+  récupérable égal la famille la mieux établie passe devant. Les autres sont
+  nommées sous le tableau, **à confirmer**, sans rang : le plan ne vous pousse
+  pas vers du bruit.
+
+Chaque famille propose trois gestes : **Étudier** ouvre la file d'étude sur
+ses positions, l'écart au joueur de référence le plus grand d'abord ; **Quiz**
+lance l'exercice Décision du panneau :ref:`Entraînement <panneau_entrainement>`
+sur vingt d'entre elles ; **Anki** en fait un paquet de cartes. Au-dessus du
+tableau, **Quiz sur les trois premières familles** tire vingt positions parmi
+celles des trois familles de tête. Le plan suit le filtre du panneau : réglez
+le joueur pour obtenir *votre* plan. En ligne de commande :
+``blunderdb stats plan`` (voir :ref:`cli_stats`).
 
 PR glissant sur N dernières décisions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -2966,8 +3118,21 @@ ce serait un second PR sous le même nom.
 
 * **Par score** — l'écart au but des deux camps, lu du côté du joueur au trait,
   donc du côté de celui qui décide. La ligne *Money* est la partie d'argent.
-  Une cellule de moins de dix décisions est **grisée avec son effectif visible**
-  plutôt que cachée : trop peu pour être lue, mais l'omission reste vérifiable.
+  Une cellule sans intervalle est **grisée avec son effectif visible**
+  plutôt que cachée (voir ci-dessous).
+
+Chaque ligne porte son **intervalle de confiance à 95 %** (colonne *IC 95 %*),
+qui remplace le seuil fixe de dix décisions : il dit ce que vaut un PR, pas
+seulement combien de décisions le portent. Il rééchantillonne les **matchs** de
+la sélection, pas les décisions ni les parties : les parties d'un match
+partagent adversaire, séance et fatigue, et les compter comme indépendantes
+donnerait un intervalle trop étroit ; sans filtre joueur, les deux sièges d'un
+match forment une seule unité. Une ligne qui ne repose que sur un match n'a pas
+d'intervalle et est grisée, même avec beaucoup de décisions. Pour l'étude : une
+famille de positions dont l'intervalle reste au-dessus de votre PR global est
+une faiblesse établie ; une ligne à l'intervalle large ne justifie pas encore un
+plan de travail. Le PR global du tableau de bord porte le même intervalle, sous
+sa carte.
 
 .. note:: La partie Crawford n'est pas distinguée : blunderDB n'enregistre pas
    cet indicateur sur une position. L'effet pratique est faible — une partie

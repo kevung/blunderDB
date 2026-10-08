@@ -5,7 +5,7 @@
     // but not the same scale. Nothing is drawn for a match without analysis.
     import { t } from '../i18n';
     import { indexAt, stepIndex } from '../utils/chartAxis.js';
-    import { fmtLoss, lossSeries, niceCeil } from '../utils/decisionLoss.js';
+    import { fmtExcess, fmtLoss, lossSeries, niceCeil } from '../utils/decisionLoss.js';
 
     /** @type {{ losses: any[] | null, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void }} */
     let { losses, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
@@ -16,7 +16,7 @@
     let series = $derived(lossSeries(movePositions, losses));
     let n = $derived(Math.max(1, movePositions.length));
     let slot = $derived(W / n);
-    let peak = $derived(niceCeil(Math.max(0, ...series.items.map((d) => d.loss ?? 0))));
+    let peak = $derived(niceCeil(Math.max(0, ...series.items.map((d) => Math.max(d.loss ?? 0, d.difficulty ?? 0)))));
     let cumPeak = $derived(niceCeil(Math.max(series.totals[0], series.totals[1])));
     let names = $derived([player1, player2]);
 
@@ -69,6 +69,12 @@
                     <th></th>
                     <th>{$t('match.lossTotal')}</th>
                     <th>{$t('match.lossScored')}</th>
+                    {#if series.anyDifficulty}
+                        <th title={$t('match.difficultyColTooltip')}>{$t('match.difficultyTotal')}</th>
+                        <th title={$t('match.excessTooltip')}>{$t('match.excess')}</th>
+                        <th title={$t('match.ratioTooltip')}>{$t('match.ratio')}</th>
+                        <th title={$t('match.avoidableTooltip')}>{$t('match.avoidableCount')}</th>
+                    {/if}
                 </tr>
             </thead>
             <tbody>
@@ -81,6 +87,13 @@
                         </td>
                         <td data-testid="loss-total-{p}">{fmtLoss(series.totals[p])}</td>
                         <td>{series.scored[p]}</td>
+                        {#if series.anyDifficulty}
+                            {@const s = series.difficulty[p]}
+                            <td data-testid="difficulty-total-{p}">{fmtLoss(s.difficulty)}</td>
+                            <td data-testid="excess-{p}">{fmtExcess(s.excess)}</td>
+                            <td data-testid="ratio-{p}">{s.ratio === null ? '—' : s.ratio.toFixed(2)}</td>
+                            <td data-testid="avoidable-{p}">{s.avoidable}</td>
+                        {/if}
                     </tr>
                 {/each}
             </tbody>
@@ -124,6 +137,13 @@
                                         height={h}
                                     />
                                 {/if}
+                                {#if d.difficulty !== null && d.difficulty > 0}
+                                    {@const y = H - barH(d.difficulty, plot.top)}
+                                    <line class="difficulty" x1={d.index * slot} y1={y} x2={d.index * slot + Math.max(1, slot - 0.5)} y2={y} />
+                                {/if}
+                                {#if d.avoidable}
+                                    <circle class="avoidable" data-testid="avoidable-dot" cx={(d.index + 0.5) * slot} cy="3" r="2" />
+                                {/if}
                             {/each}
                         {:else}
                             {#each lines as l (l.p)}
@@ -148,6 +168,9 @@
                                 {tip.loss === null ? $t('match.lossUnscored') : fmtLoss(tip.loss)}
                                 ({tipMove.move_type === 'cube' ? $t('match.lossKindCube') : $t('match.lossKindChecker')})
                             </div>
+                            {#if tip.difficulty !== null}
+                                <div>{$t('match.difficultyCol')} {tip.difficulty > 0 ? fmtLoss(tip.difficulty) : '0'}{tip.avoidable ? ' · ' + $t('match.avoidable') : ''}</div>
+                            {/if}
                             {#if plot.key === 'cum'}<div>{fmtLoss(tip.cum)}</div>{/if}
                         </div>
                     {/if}
@@ -229,6 +252,15 @@
     .bar.player2 {
         fill: var(--player2-color, currentColor);
         opacity: 0.6;
+    }
+    /* The reference player's expected loss: a tick across the bar, so a bar
+       far above its tick reads as an error the position did not excuse. */
+    .difficulty {
+        stroke: var(--color-text, currentColor);
+        stroke-width: 1.5;
+    }
+    .avoidable {
+        fill: var(--color-danger, currentColor);
     }
     .bar.hot {
         stroke: var(--color-text, currentColor);

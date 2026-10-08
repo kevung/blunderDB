@@ -257,6 +257,10 @@ func (s *analysisStore) write(ctx context.Context, tenant, positionID int64, a *
 		if tag.RowsAffected() == 0 {
 			return fmt.Errorf("postgres: save analysis for position %d: %w", positionID, storage.ErrNotFound)
 		}
+		// The moves played here are scored against the analysis just written.
+		if _, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: a}); err != nil {
+			return err
+		}
 
 		// Flag the position as a take/pass cube response if any played cube action is
 		// a response (only ever set to TRUE; OR semantics for a deduped position).
@@ -311,7 +315,8 @@ func (s *analysisStore) Delete(ctx context.Context, scope string, positionID int
 			positionID, tenantID(scope)); err != nil {
 			return fmt.Errorf("postgres: delete analysis for position %d: %w", positionID, err)
 		}
-		return nil
+		_, err := sqlshared.RescorePlayedDecisions(ctx, binder{tx}.shared(), map[int64]*domain.PositionAnalysis{positionID: nil})
+		return err
 	})
 }
 
@@ -396,8 +401,32 @@ func (s *analysisStore) LoadMany(ctx context.Context, scope string, ids []int64)
 // never loaded whole.
 func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope string) (int, error) {
 	tid := tenantID(scope)
+	repaired, err := repairDenormalisedColumns(ctx, s.db, &tid)
+	if err != nil || repaired == 0 {
+		return repaired, err
+	}
+	// A repaired column is one match_stats summarises.
+	if _, err := s.db.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1`, tid); err != nil {
+		return repaired, fmt.Errorf("postgres: repair: invalidate match stats: %w", err)
+	}
+	return repaired, nil
+}
+
+// repairDenormalisedColumns recomputes the analysis columns of tenant's rows,
+// every tenant's when tenant is nil, and rescores the moves of their
+// positions (sqlshared.RescorePlayedDecisions). It returns how many rows of
+// either kind changed; the caller invalidates match_stats.
+func repairDenormalisedColumns(ctx context.Context, db execer, tenant *int64) (int, error) {
+	n, _, err := repairDenormalisedPages(ctx, db, tenant, 0, 0)
+	return n, err
+}
+
+// repairDenormalisedPages is repairDenormalisedColumns over the analyses past
+// id after, at most maxPages pages of repairPageSize (0: all of them). It
+// returns the id it stopped at: equal to after when nothing was left.
+func repairDenormalisedPages(ctx context.Context, db execer, tenant *int64, after int64, maxPages int) (int, int64, error) {
 	type row struct {
-		id                   int64
+		id, tenant, posID    int64
 		data                 []byte
 		bestCube             string
 		cubeErr, bestMoveErr int64
@@ -412,45 +441,41 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 		mvMove, mvCube *string
 	}
 	repaired := 0
-	var lastID int64
-	for {
+	lastID := after
+	for pages := 0; maxPages == 0 || pages < maxPages; pages++ {
 		var page []row
 		if err := func() error {
-			rows, err := s.db.Query(ctx,
-				`SELECT a.id, a.data, `+sqlshared.TenantActionLabelOrEmptySQL("a.best_cube_action")+`, COALESCE(a.cube_error,0),
+			rows, err := db.Query(ctx,
+				`SELECT a.id, a.tenant_id, a.position_id, a.data, `+sqlshared.TenantActionLabelOrEmptySQL("a.best_cube_action")+`, COALESCE(a.cube_error,0),
 				        COALESCE(a.best_move_equity_error,0), a.best_move_equity_error IS NULL, a.is_forced, a.is_close_cube,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
 				        (SELECT `+sqlshared.TenantActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND mv.tenant_id = a.tenant_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
 				        `+sqlshared.LegalPlaysColumns+`
 				 FROM analysis a LEFT JOIN position p ON p.id = a.position_id AND p.tenant_id = a.tenant_id
-				 WHERE a.tenant_id = $1 AND a.id > $2 ORDER BY a.id LIMIT $3`,
-				tid, lastID, repairPageSize)
+				 WHERE ($1::bigint IS NULL OR a.tenant_id = $1) AND a.id > $2 ORDER BY a.id LIMIT $3`,
+				tenant, lastID, repairPageSize)
 			if err != nil {
 				return fmt.Errorf("postgres: repair: read analyses: %w", err)
 			}
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.bestMoveUnscored, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
+				if err := rows.Scan(&r.id, &r.tenant, &r.posID, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.bestMoveUnscored, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
 					return fmt.Errorf("postgres: repair: scan: %w", err)
 				}
 				page = append(page, r)
 			}
 			return rows.Err()
 		}(); err != nil {
-			return repaired, err
+			return repaired, lastID, err
 		}
 		if len(page) == 0 {
-			// A repaired column is one match_stats summarises.
-			if repaired > 0 {
-				if _, err := s.db.Exec(ctx, `DELETE FROM match_stats WHERE tenant_id = $1`, tid); err != nil {
-					return repaired, fmt.Errorf("postgres: repair: invalidate match stats: %w", err)
-				}
-			}
-			return repaired, nil
+			return repaired, lastID, nil
 		}
 		lastID = page[len(page)-1].id
 
+		// The moves of the page's positions, scored once the page is done.
+		analyses := make(map[int64]*domain.PositionAnalysis, len(page))
 		for _, r := range page {
 			a, err := engine.DecodeAnalysisFromStorage(r.data)
 			if err != nil {
@@ -461,25 +486,32 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, scope str
 				[]string{deref(r.mvMove)}, []string{deref(r.mvCube)})
 			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction,
 				sqlshared.LegalPlays(r.state, r.por, r.d1, r.d2))
+			analyses[r.posID] = &a
 			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr,
 				bestMoveUnscored: r.bestMoveUnscored, forced: r.forced, closeCube: r.closeCub}
 			if stored.equal(c) {
 				continue
 			}
-			bestCube, err := actionCode(ctx, s.db, tid, c.BestCubeAction)
+			bestCube, err := actionCode(ctx, db, r.tenant, c.BestCubeAction)
 			if err != nil {
-				return repaired, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
+				return repaired, lastID, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
 			}
-			if _, err := s.db.Exec(ctx,
+			if _, err := db.Exec(ctx,
 				`UPDATE analysis SET best_cube_action=$1, cube_error=$2, best_move_equity_error=$3,
 				 is_forced=$4, is_close_cube=$5 WHERE id=$6 AND tenant_id=$7`,
 				bestCube, c.CubeError, c.BestMoveErrorArg(),
-				c.IsForced == 1, c.IsCloseCube == 1, r.id, tid); err != nil {
-				return repaired, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
+				c.IsForced == 1, c.IsCloseCube == 1, r.id, r.tenant); err != nil {
+				return repaired, lastID, fmt.Errorf("postgres: repair: update %d: %w", r.id, err)
 			}
 			repaired++
 		}
+		n, err := sqlshared.RescorePlayedDecisions(ctx, binder{db}.shared(), analyses)
+		if err != nil {
+			return repaired, lastID, fmt.Errorf("postgres: repair: %w", err)
+		}
+		repaired += n
 	}
+	return repaired, lastID, nil
 }
 
 // WithoutAnalysis streams the positions of a tenant carrying no analysis at

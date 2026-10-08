@@ -353,7 +353,7 @@ func (s *ImportBatchStore) StudyQueue(ctx context.Context, scope string, batchID
 	// not obvious, which is exactly what is worth a second look.
 	if len(out) < limit {
 		close, err := s.queueRows(ctx, scope, batchID, players, limit, domain.StudyClose,
-			" AND p.decision_type = 1 AND "+s.DB.Bool("a.is_close_cube", true), nil, " ORDER BY p.id ASC")
+			" AND p.decision_type = 1 AND mv.is_close_cube = 1", nil, " ORDER BY p.id ASC")
 		if err != nil {
 			return nil, err
 		}
@@ -449,8 +449,7 @@ func (s *ImportBatchStore) queueRows(ctx context.Context, scope string, batchID 
 	if reason == domain.StudyBacklog {
 		// Across the whole library a position met in several matches joins
 		// once per match; the window keeps its first match in SQL, so LIMIT
-		// counts positions. The cost is the position's own, the same on
-		// every row it keeps.
+		// counts positions. The cost is the play of the match it keeps.
 		query = `SELECT pid, mid, p1, p2, len, cost, dt FROM (
 		   SELECT p.id AS pid, m.id AS mid,
 		          COALESCE(m.player1_name,'') AS p1, COALESCE(m.player2_name,'') AS p2,

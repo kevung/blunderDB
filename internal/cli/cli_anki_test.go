@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 // seedDeck builds a collection of n positions from the XG fixture and a deck
@@ -231,6 +233,37 @@ func TestCLI_StatsRecurringRejectsBadStudyFlags(t *testing.T) {
 		{"stats", "recurring", "--db", dbPath, "--quiz", "--quiz-size", "0"},
 	} {
 		if err := cli.Run(args); err == nil {
+			t.Errorf("%v: want an error", args)
+		}
+	}
+}
+
+func TestCLI_StatsPlan(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"stats", "plan", "--db", dbPath, "--format", "json", "--queue"}); err != nil {
+			t.Fatalf("stats plan: %v", err)
+		}
+	})
+	var plan struct {
+		MinErrors int
+		Families  []any
+		Tentative []any
+	}
+	if err := json.Unmarshal([]byte(out[strings.Index(out, "{"):]), &plan); err != nil {
+		t.Fatalf("stats plan JSON: %v\n%s", err, out)
+	}
+	if plan.MinErrors != storage.StudyPlanMinErrors || plan.Families == nil || plan.Tentative == nil {
+		t.Errorf("plan = %+v, want empty lists and the ADR's floor", plan)
+	}
+	for _, args := range [][]string{
+		{"stats", "plan", "--db", dbPath, "--family", "-1"},
+		{"stats", "plan", "--db", dbPath, "--quiz", "--quiz-size", "0"},
+		{"stats", "plan", "--db", dbPath, "--deck", "Empty plan"},
+	} {
+		var err error
+		captureStdout(t, func() { err = cli.Run(args) })
+		if err == nil {
 			t.Errorf("%v: want an error", args)
 		}
 	}

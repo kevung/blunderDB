@@ -1102,6 +1102,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.matchMoveGrades — JSON."
         return self._call("/v1/stats.matchMoveGrades", payload)
 
+    def stats_match_review(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.matchReview — JSON."
+        return self._call("/v1/stats.matchReview", payload)
+
     def stats_match_time_summary(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.matchTimeSummary — JSON."
         return self._call("/v1/stats.matchTimeSummary", payload)
@@ -1153,6 +1157,18 @@ class GeneratedAPI(BaseClient):
     def stats_study_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.studyIds — JSON."
         return self._call("/v1/stats.studyIds", payload)
+
+    def stats_study_plan(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.studyPlan — JSON."
+        return self._call("/v1/stats.studyPlan", payload)
+
+    def stats_study_plan_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.studyPlanIds — JSON."
+        return self._call("/v1/stats.studyPlanIds", payload)
+
+    def stats_study_plan_queue(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.studyPlanQueue — JSON."
+        return self._call("/v1/stats.studyPlanQueue", payload)
 
     def stats_time_errors(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.timeErrors — JSON."

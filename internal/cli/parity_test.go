@@ -247,6 +247,7 @@ var databaseParity = map[string]parityEntry{
 	"GetMatchMoveGrades":                {Server: "/v1/stats.matchMoveGrades", Why: "the marks of the GUI's Transcript; the CLI reaches the same plays with `search ma<id> E>x`, whose `E` filter scores a play by the same rule (checkerPlayError, engine.CubeActionError)"},
 	"GetTimeErrors":                     {CLI: "list", Server: "/v1/stats.timeErrors"},
 	"GetMatchDecisionLosses":            {CLI: "match", Server: "/v1/stats.matchDecisionLosses"},
+	"GetMatchReview":                    {CLI: "match", Server: "/v1/stats.matchReview"},
 	"GetMatchTimeSummary":               {CLI: "match", Server: "/v1/stats.matchTimeSummary"},
 	"GetMatchOrigin":                    {CLI: "match", Server: "/v1/matches.origin"},
 	"GetMatchMovePositions":             {CLI: "match", Server: "/v1/matches.movePositions"},
@@ -528,6 +529,10 @@ var databaseParity = map[string]parityEntry{
 	"PRByWindowCtx":                     {CLI: "stats windows", Server: "/v1/stats.prByWindow"},
 	"PlayerRankingCtx":                  {CLI: "stats ranking", Server: "/v1/stats.ranking"},
 	"StudyPositionIDs":                  {CLI: "stats recurring", Server: "/v1/stats.studyIds"},
+	"ComputeStudyPlan":                  {CLI: "stats plan", Server: "/v1/stats.studyPlan"},
+	"ComputeStudyPlanCtx":               {CLI: "stats plan", Server: "/v1/stats.studyPlan"},
+	"StudyPlanPositionIDs":              {CLI: "stats plan", Server: "/v1/stats.studyPlanIds"},
+	"StudyPlanQueue":                    {CLI: "stats plan", Server: "/v1/stats.studyPlanQueue"},
 	"CreateStudyDeck":                   {CLI: "stats recurring", Server: "/v1/anki.createStudyDeck"},
 	"RecommendedTags":                   {CLI: "list", Server: "/v1/comments.tags", Why: whySuggestion},
 }

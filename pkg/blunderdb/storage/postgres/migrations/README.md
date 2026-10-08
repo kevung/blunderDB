@@ -213,7 +213,8 @@ why it must hold no per-tenant data: the daemon exposes it read-only
 - `032_large_library_wave.sql` — the large-library wave: `analysis`
   provenance columns (`analysis_engine`, `analysis_depth`, `creation_date`),
   derived in Go after the forward chain by `backfillAnalysisProvenance`
-  (`provenance_postgres.go`, the blob is compressed JSON) and resumable on
+  (`provenance_postgres.go`, the blob is compressed JSON, FORCE RLS lifted per
+  batch transaction as here) and resumable on
   their NULLs; `position.match_date`, the earliest match reaching the
   position, backfilled set-based here and kept by the match store;
   `import_batch_file` (the per-file import journal), `player_alias` and
@@ -281,3 +282,9 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   counted in. No column changes; `match_stats`, filled under the old
   conversion, is dropped. Schema-visible: bumped `domain.DatabaseVersion` to
   2.38.0.
+- `044_played_decision_error.sql` — the 2.39.0 wave: a decision's error is
+  the error of the move played in that match. Adds `move.decision_error_mp`
+  and `move.is_close_cube`, scored by Migrate's Go-side passes
+  (`runGoBackfills`, generation 2), which also recompute the 2.37.0 columns
+  and drop `match_stats`. Schema-visible: bumped `domain.DatabaseVersion` to
+  2.39.0.

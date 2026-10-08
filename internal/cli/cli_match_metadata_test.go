@@ -3,6 +3,8 @@ package cli
 import (
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
 func TestFormatMatchShowsSourceMetadata(t *testing.T) {
@@ -39,5 +41,25 @@ func TestFormatMatchTextLeavesAnUnknownDecisionTimeOut(t *testing.T) {
 	}
 	if got := strings.Count(out, "Decision time"); got != 1 || !strings.Contains(out, "Decision time: 5.2 s") {
 		t.Errorf("want one decision time of 5.2 s, none for the unknown:\n%s", out)
+	}
+}
+
+func TestWriteDifficultySummary(t *testing.T) {
+	f := func(v float64) *float64 { return &v }
+	var sb strings.Builder
+	writeDifficultySummary(&sb, [2]string{"Alice", "Bob"}, []storage.DecisionLoss{
+		{Player: 0, MWCLoss: f(0.03), Difficulty: f(0.006), Avoidable: true},
+		{Player: 1, MWCLoss: f(0.001), Difficulty: f(0.002)},
+	})
+	want := "\nDifficulty:\n" +
+		"  Alice: difficulty 0.60%, excess +2.40%, ratio 5.00, 1 avoidable errors\n" +
+		"  Bob: difficulty 0.20%, excess -0.10%, ratio -, 0 avoidable errors\n"
+	if sb.String() != want {
+		t.Errorf("got %q, want %q", sb.String(), want)
+	}
+	sb.Reset()
+	writeDifficultySummary(&sb, [2]string{"Alice", "Bob"}, []storage.DecisionLoss{{Player: 0, MWCLoss: f(0.01)}})
+	if sb.String() != "" {
+		t.Errorf("no difficulty, no section: got %q", sb.String())
 	}
 }

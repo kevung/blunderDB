@@ -5,6 +5,8 @@
     import { loadPositionsFromStatsSelection, openMatchInPanel } from '../../services/positionLoader.js';
     import { t } from '../../i18n/index.js';
     import { fmtMwc7, fmtMwc7Interval, mwc7Tooltip } from '../../utils/mwc7.js';
+    import { fmtPRInterval } from '../../utils/interval.js';
+    import StatsStudyPlan from './StatsStudyPlan.svelte';
 
     /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string }} */
     let { result = null, metric = 'pr' } = $props();
@@ -23,6 +25,20 @@
         return (val * 100).toFixed(2) + '%';
     }
 
+    /** The unit under a card's value. */
+    function cardUnit() {
+        if (metric === 'mwc7') return $t('mwc7.short');
+        return metric === 'pr' ? '' : 'MWC loss';
+    }
+
+    /** The 95 % interval of the headline card (ADR-0078), '' without one. */
+    function cardInterval() {
+        if (!result) return '';
+        if (metric === 'mwc7') return fmtMwc7Interval(result.MWC7);
+        if (metric === 'pr') return fmtPRInterval(result.PRInterval);
+        return '';
+    }
+
     /** Return the display value for a main card based on current metric. */
     function cardValue(kind) {
         if (!result) return '—';
@@ -30,6 +46,11 @@
             if (kind === 'all') return fmtPR(result.PRGlobal);
             if (kind === 'checker') return fmtPR(result.PRChecker);
             if (kind === 'cube') return fmtPR(result.PRCube);
+        } else if (metric === 'mwc7') {
+            // L7 split over the same units, so checker and cube add up to it.
+            if (kind === 'all') return fmtMwc7(result.MWC7);
+            if (kind === 'checker') return fmtMwc7(result.MWC7Checker);
+            if (kind === 'cube') return fmtMwc7(result.MWC7Cube);
         } else {
             if (kind === 'all') return fmtMWC(result.MWCGlobal);
             if (kind === 'checker') return fmtMWC(result.MWCChecker);
@@ -102,11 +123,12 @@
 {:else}
     <!-- ── Main cards ────────────────────────────────────────────── -->
     <div class="cards-grid">
-        {#each [{ kind: 'all', label: $t('stats.cardLabelAll'), unit: metric === 'pr' ? '' : 'MWC loss' }, { kind: 'checker', label: $t('stats.cardLabelChecker'), unit: metric === 'pr' ? '' : 'MWC loss' }, { kind: 'cube', label: $t('stats.cardLabelCube'), unit: metric === 'pr' ? '' : 'MWC loss' }] as card (card.kind)}
+        {#each [{ kind: 'all', label: $t('stats.cardLabelAll') }, { kind: 'checker', label: $t('stats.cardLabelChecker') }, { kind: 'cube', label: $t('stats.cardLabelCube') }] as card (card.kind)}
             <button class="stat-card" onclick={() => openCard(card.kind)} aria-label="Open {numDecisions()} positions — {card.label}" title="{numDecisions()} decisions · click to open positions">
                 <span class="card-value">{cardValue(card.kind)}</span>
                 <span class="card-label">{card.label}</span>
-                {#if card.unit}<span class="card-unit">{card.unit}</span>{/if}
+                {#if cardUnit()}<span class="card-unit">{cardUnit()}</span>{/if}
+                {#if card.kind === 'all' && cardInterval()}<span class="card-unit" title={$t('stats.intervalHint')}>{cardInterval()}</span>{/if}
             </button>
         {/each}
     </div>
@@ -127,6 +149,9 @@
         {result.Totals.NumDecisions}
         {$t('stats.decisions')}
     </p>
+
+    <!-- ── Study plan: what to work on now (ADR-0077) ───────────────── -->
+    <StatsStudyPlan />
 
     <!-- ── Rolling N ────────────────────────────────────────────── -->
     <section class="rolling-section">
