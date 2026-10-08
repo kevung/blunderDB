@@ -135,6 +135,7 @@ type storedPlayedColumns struct {
 func (p storedPlayedColumns) equal(c engine.AnalysisColumns) bool {
 	return c.BestCubeAction == p.bestCube.String &&
 		c.CubeError == p.cubeErr.Int64 &&
+		c.BestMoveUnscored == !p.bestMoveErr.Valid &&
 		c.BestMoveEquityError == p.bestMoveErr.Int64 &&
 		c.IsForced == p.forced.Int64 &&
 		c.IsCloseCube == p.closeCube.Int64
@@ -162,8 +163,37 @@ func (s *analysisStore) prepare(ctx context.Context, positionID int64, a *domain
 		playedMove, playedCubeAction = engine.PlayedActionsFor(
 			[]string{playedMove}, []string{playedCubeAction}, []string{mvMove}, []string{mvCube})
 	}
+	legal, err := legalPlaysOf(ctx, s.db, positionID, a, played)
+	if err != nil {
+		return engine.AnalysisColumns{}, err
+	}
 	engine.RoundAnalysisForStorage(a)
-	return engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction), nil
+	return engine.PopulateAnalysisColumns(a, playedMove, playedCubeAction, legal), nil
+}
+
+// legalPlaysSQL reads the columns a legal-play count depends on.
+const legalPlaysSQL = `SELECT ` + sqlshared.LegalPlaysColumns + ` FROM position p WHERE p.id = ?`
+
+// legalPlaysOf counts the legal plays of the position a checker analysis is
+// for; a cube-only analysis needs none, and a caller holding the position
+// (storage.PlayedActions) spares the read.
+func legalPlaysOf(ctx context.Context, q execer, positionID int64, a *domain.PositionAnalysis, played *storage.PlayedActions) (int, error) {
+	if ca := a.ColumnSource().CheckerAnalysis; ca == nil || len(ca.Moves) == 0 {
+		return engine.LegalPlaysUnknown, nil
+	}
+	if played != nil && played.Position != nil {
+		return engine.CountLegalPlays(played.Position), nil
+	}
+	var state []byte
+	var por, d1, d2 *int64
+	err := q.QueryRowContext(ctx, legalPlaysSQL, positionID).Scan(&state, &por, &d1, &d2)
+	if errors.Is(err, sql.ErrNoRows) {
+		return engine.LegalPlaysUnknown, nil
+	}
+	if err != nil {
+		return 0, fmt.Errorf("sqlite: read position %d for its legal plays: %w", positionID, err)
+	}
+	return sqlshared.LegalPlays(state, por, d1, d2), nil
 }
 
 // write encodes a prepared analysis and upserts it with its columns.
@@ -199,7 +229,7 @@ func (s *analysisStore) write(ctx context.Context, positionID int64, a *domain.P
 		}
 		if _, err := tx.ExecContext(ctx, analysisUpsertSQL,
 			positionID, data,
-			bestCube, c.CubeError, c.BestMoveEquityError,
+			bestCube, c.CubeError, c.BestMoveErrorArg(),
 			c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 			c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 			c.IsForced, c.IsCloseCube,
@@ -276,14 +306,18 @@ func SaveAnalysisUncompressed(ctx context.Context, tx *sql.Tx, positionID int64,
 	if err != nil {
 		return fmt.Errorf("sqlite: encode analysis: %w", err)
 	}
-	c := engine.PopulateAnalysisColumns(a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions))
+	legal, err := legalPlaysOf(ctx, tx, positionID, a, nil)
+	if err != nil {
+		return fmt.Errorf("sqlite: save analysis: %w", err)
+	}
+	c := engine.PopulateAnalysisColumns(a, firstOf(a.PlayedMoves), firstOf(a.PlayedCubeActions), legal)
 	bestCube, err := actionCode(ctx, tx, c.BestCubeAction)
 	if err != nil {
 		return fmt.Errorf("sqlite: save analysis: %w", err)
 	}
 	if _, err := tx.ExecContext(ctx, analysisInsertSQL,
 		positionID, data,
-		bestCube, c.CubeError, c.BestMoveEquityError,
+		bestCube, c.CubeError, c.BestMoveErrorArg(),
 		c.Player1WinRate, c.Player1GammonRate, c.Player1BackgammonRate,
 		c.Player2WinRate, c.Player2GammonRate, c.Player2BackgammonRate,
 		c.IsForced, c.IsCloseCube,
@@ -340,6 +374,20 @@ var playedActionsSQL = `SELECT
 	(SELECT mv.checker_move FROM move mv WHERE mv.position_id = ? AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
 	(SELECT ` + sqlshared.ActionLabelSQL("mv.cube_action") + ` FROM move mv WHERE mv.position_id = ? AND ` + sqlshared.ActionNotEmptySQL("mv.cube_action") + ` ORDER BY mv.id LIMIT 1)`
 
+// invalidateAllMatchStats drops every match_stats row, when the table is
+// there: a library being migrated from before it has none to invalidate.
+func invalidateAllMatchStats(ctx context.Context, q execer) error {
+	var present int
+	if err := q.QueryRowContext(ctx, `SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'match_stats'`).Scan(&present); err != nil {
+		return err
+	}
+	if present == 0 {
+		return nil
+	}
+	_, err := q.ExecContext(ctx, `DELETE FROM match_stats`)
+	return err
+}
+
 // repairPageSize bounds how many analysis rows RepairDenormalisedColumns
 // holds in memory at once (id keyset pagination, both backends): a real
 // database holds tens of thousands of rows at ~600 bytes of compressed blob
@@ -360,6 +408,9 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		// The match's own record of what was played, joined in here rather
 		// than looked up row by row: a repair walks every analysis.
 		mvMove, mvCube sql.NullString
+		// The position's columns its legal plays depend on.
+		state       []byte
+		por, d1, d2 *int64
 	}
 	repaired := 0
 	var lastID int64
@@ -369,15 +420,17 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 			rows, err := s.db.QueryContext(ctx,
 				`SELECT a.id, a.data, `+sqlshared.ActionLabelSQL("a.best_cube_action")+`, a.cube_error, a.best_move_equity_error, a.is_forced, a.is_close_cube,
 				        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
-				        (SELECT `+sqlshared.ActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1)
-				 FROM analysis a WHERE a.id > ? ORDER BY a.id LIMIT ?`, lastID, repairPageSize)
+				        (SELECT `+sqlshared.ActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
+				        `+sqlshared.LegalPlaysColumns+`
+				 FROM analysis a LEFT JOIN position p ON p.id = a.position_id
+				 WHERE a.id > ? ORDER BY a.id LIMIT ?`, lastID, repairPageSize)
 			if err != nil {
 				return fmt.Errorf("sqlite: repair: read analyses: %w", err)
 			}
 			defer rows.Close()
 			for rows.Next() {
 				var r row
-				if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube); err != nil {
+				if err := rows.Scan(&r.id, &r.data, &r.bestCube, &r.cubeErr, &r.bestMoveErr, &r.forced, &r.closeCub, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
 					return fmt.Errorf("sqlite: repair: scan: %w", err)
 				}
 				page = append(page, r)
@@ -389,7 +442,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 		if len(page) == 0 {
 			// A repaired column is one match_stats summarises.
 			if repaired > 0 {
-				if _, err := s.db.ExecContext(ctx, `DELETE FROM match_stats`); err != nil {
+				if err := invalidateAllMatchStats(ctx, s.db); err != nil {
 					return repaired, fmt.Errorf("sqlite: repair: invalidate match stats: %w", err)
 				}
 			}
@@ -408,12 +461,10 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 			playedMove, playedCubeAction := engine.PlayedActionsFor(
 				a.PlayedMoves, a.PlayedCubeActions,
 				[]string{r.mvMove.String}, []string{r.mvCube.String})
-			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction)
-			if c.BestCubeAction == r.bestCube.String &&
-				c.CubeError == r.cubeErr.Int64 &&
-				c.BestMoveEquityError == r.bestMoveErr.Int64 &&
-				c.IsForced == r.forced.Int64 &&
-				c.IsCloseCube == r.closeCub.Int64 {
+			c := engine.PopulateAnalysisColumns(&a, playedMove, playedCubeAction,
+				sqlshared.LegalPlays(r.state, r.por, r.d1, r.d2))
+			stored := storedPlayedColumns{bestCube: r.bestCube, cubeErr: r.cubeErr, bestMoveErr: r.bestMoveErr, forced: r.forced, closeCube: r.closeCub}
+			if stored.equal(c) {
 				continue
 			}
 			bestCube, err := actionCode(ctx, s.db, c.BestCubeAction)
@@ -423,7 +474,7 @@ func (s *analysisStore) RepairDenormalisedColumns(ctx context.Context, _ string)
 			if _, err := s.db.ExecContext(ctx,
 				`UPDATE analysis SET best_cube_action=?, cube_error=?, best_move_equity_error=?,
 				 is_forced=?, is_close_cube=? WHERE id=?`,
-				bestCube, c.CubeError, c.BestMoveEquityError, c.IsForced, c.IsCloseCube, r.id); err != nil {
+				bestCube, c.CubeError, c.BestMoveErrorArg(), c.IsForced, c.IsCloseCube, r.id); err != nil {
 				return repaired, fmt.Errorf("sqlite: repair: update %d: %w", r.id, err)
 			}
 			repaired++
@@ -495,7 +546,7 @@ func analysisStatsColumnsChange(ctx context.Context, tx execer, positionID int64
 // the counted flags, engine and depth, the best cube action (a cube cell's
 // key) and met_id, which the upsert clears for a verdict not gammonNet's.
 func statsColumnsDiffer(stored storedPlayedColumns, eng sql.NullString, depth, met sql.NullInt64, c engine.AnalysisColumns) bool {
-	return !stored.cubeErr.Valid || !stored.bestMoveErr.Valid || !stored.equal(c) ||
+	return !stored.cubeErr.Valid || !stored.equal(c) ||
 		eng.String != c.AnalysisEngine || depth.Int64 != c.AnalysisDepth ||
 		sqlshared.UpsertDropsMET(met.Valid, c.AnalysisEngine)
 }

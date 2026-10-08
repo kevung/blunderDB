@@ -12,6 +12,10 @@ import (
 type PlayedActions struct {
 	CheckerMove string
 	CubeAction  string
+	// Position is the position the decision was made in, when the caller
+	// holds it; nil otherwise. Whether a checker play was forced depends on
+	// its legal plays, which the store then counts without reading the row.
+	Position *domain.Position
 }
 
 // AnalysisRecord is one stored analysis with the position it belongs to.

@@ -80,7 +80,7 @@ func TestImportPathStatementsArePreparedOnceAndSkipTheMoveTable(t *testing.T) {
 		}
 		// A checker analysis names its played move, never a cube action: the
 		// store needs played to complete it.
-		played := &storage.PlayedActions{CheckerMove: "13/11 24/23"}
+		played := &storage.PlayedActions{CheckerMove: "13/11 24/23", Position: &p}
 		if _, err := tx.Analyses().Merge(ctx, "", posID, played, func(*domain.PositionAnalysis) *domain.PositionAnalysis {
 			return &domain.PositionAnalysis{
 				AnalysisType:    "CheckerMove",

@@ -116,7 +116,7 @@ func (d *Database) migrate_2_0_0_to_2_1_0(_ context.Context) error {
 				playedCubeAction = ca.String
 			}
 		}
-		ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction)
+		ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction, legalPlaysUnknown)
 		_, _ = updateStmt.Exec(
 			string(newJSON),
 			ac.BestCubeAction, ac.CubeError, ac.BestMoveEquityError,
@@ -394,7 +394,7 @@ func (d *Database) migrate_2_3_0_to_2_4_0(ctx context.Context) error {
 					continue
 				}
 
-				ac := populateAnalysisColumns(&ana, playedMove, "")
+				ac := populateAnalysisColumns(&ana, playedMove, "", legalPlaysUnknown)
 				if ac.BestMoveEquityError != 0 {
 					_, _ = updateStmt.Exec(ac.BestMoveEquityError, r.id)
 				}

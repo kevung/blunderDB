@@ -39,22 +39,28 @@ const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.bes
 // the threshold is on the wrong side of the line.
 
 // countedExpr renders the SQL predicate selecting the decisions that count
-// toward PR and decision tallies (XG semantics):
-//   - Checker: unforced positions only (a.is_forced is false).
-//   - Cube: a position is counted when either (a) it is a "close" decision per
-//     gnuBG isCloseCubedecision (a.is_close_cube is true) with the exclusion
-//     below, OR (b) the player took an active cube action other than NoDouble
-//     (Double, Take, Pass), so premature doubles "not close" still count.
-//
-// Close NoDoubles are excluded when correctly played (cube_error=0), cube
-// centred (cube_value=0) and mover's away ≤ 2: XG's EMG equities there are
-// amplified ~3–4×, so gnuBG's 0.16 threshold falsely marks them close. This
-// mirrors XG's counting.
+// toward PR and decision tallies, as XG counts them:
+//   - Checker: unforced plays (a.is_forced is false, engine.IsForcedChecker)
+//     whose cost is known — a played move none of the candidates names has a
+//     NULL error and is left out, as XG leaves out a play it never analysed.
+//   - Cube: every double offered, take and pass (the move's own cube action,
+//     not the analysis's: a deduplicated position may have been doubled in
+//     one match and not in another), and a no-double flagged close
+//     (a.is_close_cube, engine.ComputeIsCloseCube).
 //
 // A function of the dialect because the two flags are INTEGER 0/1 on SQLite,
 // BOOLEAN on PostgreSQL.
 func countedExpr(d Dialect) string {
-	return "((p.decision_type = 0 AND " + d.Bool("a.is_forced", false) + ") OR (p.decision_type = 1 AND (" + ActionNotInSQL("mv.cube_action", "", "No Double", "NoDouble") + " OR (" + d.Bool("a.is_close_cube", true) + " AND NOT (COALESCE(a.cube_error, 0) = 0 AND COALESCE(p.cube_value, 0) = 0 AND CASE WHEN mv.player = 1 THEN COALESCE(p.score_1, 99) ELSE COALESCE(p.score_2, 99) END <= 2)))))"
+	return "((p.decision_type = 0 AND " + d.Bool("a.is_forced", false) + " AND a.best_move_equity_error IS NOT NULL) OR (p.decision_type = 1 AND (" + ActionNotInSQL("mv.cube_action", "", "No Double", "NoDouble") + " OR " + d.Bool("a.is_close_cube", true) + ")))"
+}
+
+// UnscoredPlaySQL is true for a checker position whose analysis cannot score
+// the play made there: a NULL error, the played move naming no candidate
+// (engine.AnalysisColumns.BestMoveUnscored). Such a play is left out of every
+// count, as an unanalysed one is left out of the analysed counts; pos is the
+// position's alias.
+func UnscoredPlaySQL(pos string) string {
+	return "EXISTS (SELECT 1 FROM analysis ua WHERE ua.position_id = " + pos + ".id AND ua.best_move_equity_error IS NULL)"
 }
 
 // cubeMultiplierExpr is the cube value (1, 2, 4, …) from its stored log2
@@ -874,11 +880,11 @@ func (s *StatsStore) playerTable(ctx context.Context, scope string, filter stora
 	var snowieErr map[string]int64
 	var luck map[string]storage.PlayerLuckAcc
 	// The Snowie denominator per match: every checker decision with a
-	// position, both seats.
+	// position, both seats, but an unscored play (UnscoredPlaySQL).
 	checkerMoves := `COALESCE((SELECT COUNT(*) FROM move mv2
 		                  JOIN position p2 ON p2.id = mv2.position_id
 		                  JOIN game g2 ON g2.id = mv2.game_id
-		                  WHERE g2.match_id = m.id AND p2.decision_type = 0), 0)`
+		                  WHERE g2.match_id = m.id AND p2.decision_type = 0 AND NOT ` + UnscoredPlaySQL("p2") + `), 0)`
 	// A reader that cannot write takes the direct path, as Compute does,
 	// unless the table already holds every match.
 	readable := false

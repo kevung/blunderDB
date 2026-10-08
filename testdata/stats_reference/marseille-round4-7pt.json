@@ -1,29 +1,52 @@
 {
   "match_file": "testdata/HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg",
   "match_length": 7,
-  "players": ["Kévin Unger", "Gildas L Amour De Caslou"],
+  "players": [
+    "Kévin Unger",
+    "Gildas L Amour De Caslou"
+  ],
   "xg": {
     "player1": {
       "pr": 9.28,
       "snowie_error_rate": null,
-      "total_decisions": null,
-      "checker_unforced": null,
-      "double_decisions": null,
-      "take_decisions": null,
-      "pass_decisions": null,
-      "total_equity_error_emg": null
+      "total_decisions": 89,
+      "checker_unforced": 74,
+      "checker_forced": null,
+      "double_decisions": 13,
+      "take_decisions": 2,
+      "pass_decisions": 0,
+      "total_equity_error_emg": 1.651,
+      "checker_equity_error_emg": 1.323,
+      "double_equity_error_emg": 0.328,
+      "take_equity_error_emg": 0.0,
+      "total_mwc_loss_pct": 18.81,
+      "checker_mwc_loss_pct": 16.23,
+      "double_mwc_loss_pct": 2.58,
+      "take_mwc_loss_pct": 0.0,
+      "total_errors": null,
+      "total_blunders": null
     },
     "player2": {
-      "pr": 13.20,
+      "pr": 13.2,
       "snowie_error_rate": null,
-      "total_decisions": null,
-      "checker_unforced": null,
-      "double_decisions": null,
-      "take_decisions": null,
-      "pass_decisions": null,
-      "total_equity_error_emg": null
+      "total_decisions": 79,
+      "checker_unforced": 64,
+      "checker_forced": null,
+      "double_decisions": 12,
+      "take_decisions": 3,
+      "pass_decisions": 0,
+      "total_equity_error_emg": 2.086,
+      "checker_equity_error_emg": 0.989,
+      "double_equity_error_emg": 1.029,
+      "take_equity_error_emg": 0.068,
+      "total_mwc_loss_pct": 19.81,
+      "checker_mwc_loss_pct": 12.73,
+      "double_mwc_loss_pct": 6.51,
+      "take_mwc_loss_pct": 0.57,
+      "total_errors": null,
+      "total_blunders": null
     }
   },
   "gnubg": null,
-  "notes": "XG PR values from match report (user-reported). P1 blunderDB=9.23 (diff=-0.05). P2 blunderDB=13.08 (diff=-0.12). Residual P2 gap traced to move-matching failure at pos_id=93: played '8/4 7/1' not found in analysis (best '8/2 5/1'), so blunderDB records 0 error for that position while XG records the real error (~21 mp). PR tolerance set to 0.15 to accommodate this known xgparser move-string issue. The statsCountedExpr fix (fiche 08) resolves the main discrepancy: 16 close-NoDouble positions at score=3-2 (P2 2-away, centered cube) had XG EMG equities amplified ~3-4x beyond the gnuBG [-1,1] threshold range, causing false 'close' classification and inflating N from 81 to 97."
+  "notes": "XG PR values from match report (user-reported). P1 blunderDB=9.23 (diff=-0.05). P2 blunderDB=13.08 (diff=-0.12). Residual P2 gap traced to move-matching failure at pos_id=93: played '8/4 7/1' not found in analysis (best '8/2 5/1'), so blunderDB records 0 error for that position while XG records the real error (~21 mp). PR tolerance set to 0.15 to accommodate this known xgparser move-string issue. The statsCountedExpr fix (fiche 08) resolves the main discrepancy: 16 close-NoDouble positions at score=3-2 (P2 2-away, centered cube) had XG EMG equities amplified ~3-4x beyond the gnuBG [-1,1] threshold range, causing false 'close' classification and inflating N from 81 to 97. XG figures of the stats window (PR, decisions = unforced checker + doubles + takes/passes, equity and MWC losses) provided by the user on 2026-10-08; XG's 'Take Decisions' counts takes and passes together, stored in take_decisions with pass_decisions 0."
 }

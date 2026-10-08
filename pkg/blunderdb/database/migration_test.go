@@ -4311,3 +4311,59 @@ func TestMigrate_2_35_0_to_2_36_0_DuelOpen(t *testing.T) {
 		t.Errorf("draft after migration: %+v, %v; kept, in suspense", row, err)
 	}
 }
+
+// TestMigrate_2_36_0_to_2_37_0_XGCountingRules opens a 2.36.0 library whose
+// counted-decision columns hold the old rules' values and checks the step
+// recomputes them from the stored analyses: the flags and NULL errors a
+// fresh import writes come back.
+func TestMigrate_2_36_0_to_2_37_0_XGCountingRules(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2360.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "Kev_GammonNetNormal_2026-10-06_7p.xg")); err != nil {
+		t.Fatalf("import: %v", err)
+	}
+	counts := func(d *Database) [3]int {
+		t.Helper()
+		var c [3]int
+		if err := d.db.QueryRow(`SELECT
+			(SELECT COUNT(*) FROM analysis WHERE is_forced = 1),
+			(SELECT COUNT(*) FROM analysis WHERE is_close_cube = 1),
+			(SELECT COUNT(*) FROM analysis WHERE best_move_equity_error IS NULL)`).Scan(&c[0], &c[1], &c[2]); err != nil {
+			t.Fatal(err)
+		}
+		return c
+	}
+	want := counts(d)
+	if want[0] == 0 || want[1] == 0 || want[2] == 0 {
+		t.Fatalf("fixture should exercise every column, got %v", want)
+	}
+	// Back to the 2.36.0 values: the old rules flagged differently and
+	// wrote 0 for an unscored move.
+	for _, stmt := range []string{
+		`UPDATE analysis SET is_forced = 0, is_close_cube = 0, best_move_equity_error = COALESCE(best_move_equity_error, 0)`,
+		`UPDATE metadata SET value = '2.36.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.36.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if got := counts(d); got != want {
+		t.Errorf("columns after migration = %v (forced, close cube, unscored), want %v", got, want)
+	}
+}

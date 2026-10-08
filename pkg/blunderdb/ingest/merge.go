@@ -36,11 +36,18 @@ func sortCubeAnalysesByEngine(analyses []domain.DoublingCubeAnalysis) {
 	})
 }
 
-// checkerMoveRanksFirst orders candidate moves by equity, XG first on a tie,
-// then by notation. The order is total: a merge is then deterministic, so
+// checkerMoveRanksFirst orders candidate moves as XG ranks them: the deeper
+// analysis first, then by equity, XG first on a tie, then by notation. Depth
+// comes before equity because a shallow evaluation's equity is not comparable
+// to a deeper one's — a 2-ply move scoring above the 4-ply best is not better,
+// only less examined — and the first candidate is the one every error is
+// measured from. The order is total: a merge is then deterministic, so
 // re-merging what is stored reproduces it byte for byte and
 // AnalysisStore.Merge can skip the write.
 func checkerMoveRanksFirst(a, b domain.CheckerMove) bool {
+	if da, db := domain.AnalysisDepthRank(a.AnalysisDepth), domain.AnalysisDepthRank(b.AnalysisDepth); da != db {
+		return da > db
+	}
 	if a.Equity != b.Equity {
 		return a.Equity > b.Equity
 	}
@@ -51,8 +58,8 @@ func checkerMoveRanksFirst(a, b domain.CheckerMove) bool {
 }
 
 // mergeCheckerMoves merges two sets of checker moves keyed by move string,
-// preferring the higher-depth analysis on conflict, then re-ranks by equity
-// (XG preferred as tiebreaker) and recomputes per-move equity errors.
+// preferring the higher-depth analysis on conflict, then re-ranks them
+// (checkerMoveRanksFirst) and recomputes per-move equity errors.
 func mergeCheckerMoves(existing, incoming []domain.CheckerMove) []domain.CheckerMove {
 	moveMap := make(map[string]domain.CheckerMove)
 	for _, m := range existing {
@@ -112,8 +119,8 @@ func mergePlayedMoves(existing, incoming []string) []string {
 	return result
 }
 
-// sortCheckerMovesByEquity sorts an analysis' checker moves by equity descending
-// and recomputes indices and equity errors (the final normalisation of both the
+// sortCheckerMovesByEquity sorts an analysis' checker moves by depth, then
+// equity (checkerMoveRanksFirst), and recomputes indices and equity errors (the final normalisation of both the
 // insert and update paths).
 func sortCheckerMovesByEquity(a *domain.PositionAnalysis) {
 	if a.CheckerAnalysis == nil || len(a.CheckerAnalysis.Moves) == 0 {

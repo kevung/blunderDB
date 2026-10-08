@@ -2,6 +2,7 @@ package database
 
 import (
 	"encoding/json"
+	"fmt"
 	"math"
 	"os"
 	"path/filepath"
@@ -25,6 +26,8 @@ type refPlayer struct {
 	TotalMWCLossPct     *float64 `json:"total_mwc_loss_pct"`
 	CheckerMWCLossPct   *float64 `json:"checker_mwc_loss_pct"`
 	CheckerEquityEMG    *float64 `json:"checker_equity_error_emg"`
+	DoubleEquityEMG     *float64 `json:"double_equity_error_emg"`
+	TakeEquityEMG       *float64 `json:"take_equity_error_emg"`
 	// gnuBG-only fields
 	CheckerTotal   *int     `json:"checker_total"`
 	CheckerForced  *int     `json:"checker_forced"`
@@ -70,6 +73,12 @@ type parityTolerances struct {
 	MWCPct             float64 // percentage points
 	Equity             float64 // EMG
 	SnowieER           float64 // Snowie Error Rate; 0 means use hardcoded default
+	// CheckerPRGnuBG bounds blunderDB's checker PR against gnuBG's: both
+	// divide the checker error by the unforced plays, but blunderDB counts
+	// them as XG does (engine.IsForcedChecker) while gnuBG counts every
+	// position with more than one legal play, so the denominators differ by
+	// the plays whose candidates all tie.
+	CheckerPRGnuBG float64
 }
 
 // tolPhase04 applies to SGF→gnuBG comparisons, where structural gaps prevent
@@ -93,30 +102,70 @@ var tolPhase04 = parityTolerances{
 	MWCPct:             3.5, // structural SGF close-cube gap; irreducible at this stage
 	Equity:             0.5, // EMG: wider for SGF incomplete close-cube equity
 	SnowieER:           0.5, // structural SGF forced-without-analysis gap
+	CheckerPRGnuBG:     0.4, // max observed 0.33 (test.json SGF P2)
 }
 
-// tolPhaseFinal applies to XG-vs-XG comparisons (same analysis engine).
+// tolXG applies to XG-vs-XG comparisons: blunderDB counts decisions and sums
+// errors as XG does (ADR-less rule set documented on countedExpr,
+// engine.IsForcedChecker and engine.ComputeIsCloseCube), so the counts are
+// exact. The float tolerances are those of the reference itself: XG prints
+// PR to 0.01, equities to 0.001 and MWC to 0.01 pp, while blunderDB sums
+// errors stored to the millipoint — a sum of ~150 roundings that may drift
+// past the last printed digit.
+var tolXG = parityTolerances{
+	PR:       0.02,
+	MWCPct:   0.06,
+	Equity:   0.004,
+	SnowieER: 0.3, // no XG reference
+}
+
+// xgResidual is a known, explained gap between blunderDB and XG on one
+// player: checker is XG's unforced count minus blunderDB's, and the float
+// fields widen tolXG for the metrics that gap moves. Each one names its cause,
+// and each cause lies outside what blunderDB reads from the file today:
 //
-//	CheckerDecisions=7 — max observed: 6 (Aachen P2). Residual from forced-move
-//	          boundary classification at the 1-legal-move threshold.
-//	PR=0.1    — max observed: 0.086 (Aachen P1). Very tight after denominator alignment.
-//	MWCPct=1.0 — max observed: 0.984 pp (Aachen P1). Limit kept at 1.0 — one more
-//	          pp would require per-decision eq2mwc conversion (out of scope).
-//	Equity=0.05 — max observed: 0.015 EMG (Aachen P2). Analysis engine rounding only.
-//	SnowieER=0.3 — no XG Snowie ER reference to tighten against.
-var tolPhaseFinal = parityTolerances{
-	TotalDecisions:     5,
-	CheckerDecisions:   7, // max observed diff: 6
-	DoubleDecisions:    5,
-	TakeDecisions:      3,
-	CloseCubeDecisions: 5,
-	PR:                 0.1,  // max observed diff: 0.086
-	MWCPct:             1.0,  // max observed: 0.984 pp
-	Equity:             0.05, // max observed diff: 0.015
-	SnowieER:           0.3,  // no XG reference
+//   - unstored: a bear-off XG counts as a decision while the stored candidates
+//     cover every legal play at one equity — XG judged it on evaluations the
+//     file does not keep.
+//   - parser: xgparser v1.5.0 decodes a -1 inside a bear-off as end of move,
+//     so the played move is mislabelled; it then names no candidate (unscored,
+//     left out) or the wrong one (scored 0).
+//   - unanalysed: XG stores ErrMove = -1000 for a play it never scored and
+//     leaves it out; the light API does not expose ErrMove, so blunderDB
+//     counts the play.
+//   - cubeMWC: cube errors converted to MWC at the current cube's value,
+//     where XG's cube MWC differs; the equities themselves agree.
+type xgResidual struct {
+	checker int
+	pr      float64
+	equity  float64
+	mwc     float64
+	reason  string
+}
+
+// xgResiduals keys a fixture's player ("file.json/P1") to its residual.
+var xgResiduals = map[string]xgResidual{
+	"aachen-double-7pt.json/P1":          {1, 0.18, 0.061, 1.0, "unstored (1 bear-off); parser (2 bear-offs unscored, 0.060)"},
+	"aachen-double-7pt.json/P2":          {-2, 0.02, 0.017, 0.45, "unanalysed (2 plays)"},
+	"charlot1-charlot2.json/P1":          {1, 0.07, 0.013, 0.21, "parser (1 bear-off unscored, 0.013)"},
+	"charlot1-charlot2.json/P2":          {1, 0.02, 0.004, 0.06, "unstored (1 bear-off)"},
+	"issue595-kev-gammonnet-7pt.json/P2": {1, 0.12, 0.021, 0.21, "parser (1 bear-off unscored, 1 scored 0: 0.022)"},
+	"marseille-round4-7pt.json/P1":       {1, 0.04, 0.014, 0.17, "parser (bear-offs unscored or scored 0)"},
+	"marseille-round4-7pt.json/P2":       {-1, 0.17, 0.004, 0.85, "parser (1 play unscored); unanalysed (2 plays); cubeMWC"},
+	"test.json/P1":                       {0, 0.04, 0.011, 0.24, "parser (bear-offs scored 0 or unscored, cancelling an unanalysed play in the count)"},
+	"test.json/P2":                       {-1, 0.14, 0.011, 0.16, "unanalysed (2 plays); parser (1 bear-off scored 0)"},
 }
 
 // ── Diff helpers ─────────────────────────────────────────────────────────────
+
+func intPtr(v int) *int { return &v }
+
+func derefInt(p *int) int {
+	if p == nil {
+		return 0
+	}
+	return *p
+}
 
 func diffFloat(t *testing.T, label string, want *float64, got, tol float64) {
 	t.Helper()
@@ -231,6 +280,8 @@ func compareXGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlayerDe
 	diffInt(t, prefix+" double_decisions", ref.DoubleDecisions, bdb.DoubleDecisions, tol.DoubleDecisions)
 	diffInt(t, prefix+" take_decisions", ref.TakeDecisions, bdb.TakeDecisions, tol.TakeDecisions)
 	diffFloat(t, prefix+" PR", ref.PR, bdb.PR, tol.PR)
+	diffFloat(t, prefix+" double_equity_emg", ref.DoubleEquityEMG, bdb.DoubleEquityError, tol.Equity)
+	diffFloat(t, prefix+" take_equity_emg", ref.TakeEquityEMG, bdb.TakeEquityError, tol.Equity)
 	// Snowie ER: use tol.SnowieER (no XG reference data available yet for these fixtures).
 	snowieTol := tol.SnowieER
 	if snowieTol == 0 {
@@ -268,7 +319,7 @@ func compareGnuBGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlaye
 		diffFloat(t, prefix+" checker_mwc_pct", &mwcRef, bdb.CheckerMWCLoss*100, tol.MWCPct)
 	}
 	// checker_pr_xg_500: compare against bDB PRChecker (same 500-factor formula).
-	diffFloat(t, prefix+" checker_pr_xg_500", ref.CheckerPRXG500, bdb.PRChecker, tol.PR)
+	diffFloat(t, prefix+" checker_pr_xg_500", ref.CheckerPRXG500, bdb.PRChecker, max(tol.PR, tol.CheckerPRGnuBG))
 	// Snowie ER: structural tolerance. Two irreducible sources of divergence:
 	//   (a) SGF forced moves without analysis are excluded from blunderDB's denominator
 	//       but counted in gnuBG's anTotalMoves → denominator gap up to ~20 moves.
@@ -290,19 +341,11 @@ func TestStatsParity(t *testing.T) {
 		"testdata/stats_reference/test.json",
 		"testdata/stats_reference/charlot1-charlot2.json",
 		"testdata/stats_reference/marseille-round4-7pt.json",
+		"testdata/stats_reference/issue595-kev-gammonnet-7pt.json",
 	}
 	// tolPhase04 covers SGF→gnuBG comparisons (structural gaps prevent tightening).
-	// tolPhaseFinal covers XG→XG comparisons (same engine, tightest achievable).
+	// tolXG covers XG→XG comparisons: exact counts, print-precision floats.
 	tol := tolPhase04
-
-	// Per-fixture PR tolerance overrides for known structural limitations.
-	// marseille-round4-7pt: pos_id=93 move-matching failure (played "8/4 7/1" not found
-	// in analysis; best "8/2 5/1"). blunderDB records 0 error; XG records the real error
-	// (~21 mp). This inflates P2 sumErr by ~21 mp → PR diff ≈ 0.12. Irreducible without
-	// xgparser fix. All other fields use tolPhaseFinal.
-	xgPROverride := map[string]float64{
-		"marseille-round4-7pt.json": 0.15,
-	}
 
 	for _, jsonPath := range fixtures {
 		t.Run(filepath.Base(jsonPath), func(t *testing.T) {
@@ -318,51 +361,30 @@ func TestStatsParity(t *testing.T) {
 					t.Logf("XG import: %s  P1=%q", filepath.Base(ref.MatchFile), p1n)
 
 					if ref.XG != nil {
-						// XG-vs-XG: same engine, tightest tolerances.
-						xgTol := tolPhaseFinal
-						if override, ok := xgPROverride[filepath.Base(jsonPath)]; ok {
-							xgTol.PR = override
-						}
-						if rp := ref.XG["player1"]; rp != nil {
-							compareXGRef(t, "XG/P1", rp, bdbStats.Player1, xgTol)
-							if rp.CheckerForced != nil {
-								gotForced := countForcedChecker(t, db, matchID, 1)
-								diffInt(t, "XG/P1 checker_forced_count", rp.CheckerForced, gotForced, xgTol.CheckerDecisions)
+						for i, key := range []string{"player1", "player2"} {
+							rp := ref.XG[key]
+							if rp == nil {
+								continue
 							}
+							label := fmt.Sprintf("XG/P%d", i+1)
+							player, bdb := 1, bdbStats.Player1
+							if i == 1 {
+								player, bdb = -1, bdbStats.Player2
+							}
+							want, xgTol := *rp, tolXG
+							if r, ok := xgResiduals[fmt.Sprintf("%s/P%d", filepath.Base(jsonPath), i+1)]; ok {
+								t.Logf("%s known residual: %+d checker decision(s), %s", label, r.checker, r.reason)
+								want.CheckerUnforced = intPtr(*rp.CheckerUnforced - r.checker)
+								want.TotalDecisions = intPtr(*rp.TotalDecisions - r.checker)
+								xgTol.PR = max(xgTol.PR, r.pr)
+								xgTol.Equity = max(xgTol.Equity, r.equity)
+								xgTol.MWCPct = max(xgTol.MWCPct, r.mwc)
+							}
+							compareXGRef(t, label, &want, bdb, xgTol)
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
-								wantClose := 0
-								if rp.DoubleDecisions != nil {
-									wantClose += *rp.DoubleDecisions
-								}
-								if rp.TakeDecisions != nil {
-									wantClose += *rp.TakeDecisions
-								}
-								if rp.PassDecisions != nil {
-									wantClose += *rp.PassDecisions
-								}
-								gotClose := countCloseCube(t, db, matchID, 1)
-								diffInt(t, "XG/P1 cube_close_count", &wantClose, gotClose, xgTol.CloseCubeDecisions)
-							}
-						}
-						if rp := ref.XG["player2"]; rp != nil {
-							compareXGRef(t, "XG/P2", rp, bdbStats.Player2, xgTol)
-							if rp.CheckerForced != nil {
-								gotForced := countForcedChecker(t, db, matchID, -1)
-								diffInt(t, "XG/P2 checker_forced_count", rp.CheckerForced, gotForced, xgTol.CheckerDecisions)
-							}
-							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
-								wantClose := 0
-								if rp.DoubleDecisions != nil {
-									wantClose += *rp.DoubleDecisions
-								}
-								if rp.TakeDecisions != nil {
-									wantClose += *rp.TakeDecisions
-								}
-								if rp.PassDecisions != nil {
-									wantClose += *rp.PassDecisions
-								}
-								gotClose := countCloseCube(t, db, matchID, -1)
-								diffInt(t, "XG/P2 cube_close_count", &wantClose, gotClose, xgTol.CloseCubeDecisions)
+								wantClose := derefInt(rp.DoubleDecisions) + derefInt(rp.TakeDecisions) + derefInt(rp.PassDecisions)
+								gotClose := countCloseCube(t, db, matchID, player)
+								diffInt(t, label+" cube_close_count", &wantClose, gotClose, 0)
 							}
 						}
 					}
@@ -372,6 +394,7 @@ func TestStatsParity(t *testing.T) {
 						// must be wider than the XG→XG or SGF→gnuBG paths.
 						xgVsGnuTol := tol
 						xgVsGnuTol.PR = 1.0
+						xgVsGnuTol.CheckerPRGnuBG = 1.2 // max observed 1.07 (test.json P2)
 						if rp := ref.GnuBG["player1"]; rp != nil {
 							compareGnuBGRef(t, "XG→gnuBGref/P1", rp, bdbStats.Player1, xgVsGnuTol)
 							if rp.CheckerForced != nil {
