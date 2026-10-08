@@ -604,6 +604,22 @@ export default {
 <li>The <strong>95% interval</strong> accompanies every figure. A family enters the plan from <strong>5 mistakes</strong> and an interval entirely above zero; the plan is ranked by the lower bound of the interval, so that at equal recoverable the best-established family comes first. The others are named under the table, <strong>to be confirmed</strong>, without a rank: the plan does not push you toward noise.</li>
 </ul>
 <p>Each family offers three actions: <strong>Study</strong> opens the study queue on its positions, the largest gap to the reference player first; <strong>Quiz</strong> starts the Decision exercise of the Training panel on twenty of them; <strong>Anki</strong> turns them into a deck of cards. Above the table, <strong>Quiz on the top three families</strong> draws twenty positions from those of the three leading families. The plan follows the panel's filter: set the player to get <em>your</em> plan. On the command line: <code>blunderdb stats plan</code> (see stats — Recurring errors).</p>
+<h5>Before/after study</h5>
+<p>The <strong>Before/after study</strong> card closes the plan's loop: does what you worked on cost you less in real matches? Without it, study is judged by feel; with it, a family that does not move despite the work says you should change method, and a family that improves can give up its place in the plan.</p>
+<ul>
+<li>A family (the plan's family) is <strong>studied</strong> on the date of the first study action on one of its positions: the "studied" mark in the study queue, an Anki review, a quiz answer. Creating a card or filing a position in a collection does not count.</li>
+<li>For each studied family, the card compares two <strong>windows</strong>: the matches played before that day and those played after it (the day itself is left out). In each, the <strong>loss rate</strong> is the MWC lost by the family's mistakes, relative to all decisions of the same game plan and the same kind, and shown in MWC points per 100 decisions.</li>
+<li>The <strong>gain</strong> is the before rate minus the after rate, with its 95% interval. The verdict is "improved" (or "worse") only if each window has at least <strong>30 decisions</strong> and the interval excludes zero; otherwise it stays "undetermined" or "too few decisions".</li>
+</ul>
+<p>This is a change, not an effect: a family is studied because it was costing you, and part of the gain is regression to the mean; nothing controls for opponents, format or dice. On the command line: <code>blunderdb stats effect</code> (see stats — Recurring errors).</p>
+<h5>Signed biases</h5>
+<p>The <strong>Signed biases</strong> card tells you in which direction you go wrong, not just how much. "You take too much" is easier to fix than a PR: the rule to review is named. Each bias is the share of faulty decisions in one direction minus the share of faulty decisions in the other, with its 95% interval; a tendency is named only from <strong>20 decisions</strong> and an interval that excludes zero.</p>
+<ul>
+<li><strong>Take / pass</strong> — on cube responses: faulty takes (the bot passes) minus faulty passes (the bot takes). This is exactly your take rate minus the bot's on the same positions.</li>
+<li><strong>Doubles</strong> — on doubling decisions: premature doubles (the bot does not double, or the position is too good to double) minus missed doubles. The same bias is given <strong>by score</strong> (your away, your opponent's; money play separately), for the scores with enough decisions.</li>
+<li><strong>Blots</strong> — on checker plays with contact: plays that leave more blots than the best play minus those that leave fewer. A play the move generator cannot replay is discarded, and counted under the table.</li>
+</ul>
+<p>Next to each count, its cost in millipoints tells you whether the tendency costs you. The biases follow the panel's filter. On the command line: <code>blunderdb stats biases</code> (see stats — Recurring errors).</p>
 <h5>Rolling PR over last N decisions</h5>
 <p>A row of PR (or MWC) values computed over the last <em>N</em> decisions (N = 5, 10, 50, 100, 250, 500, 1000) lets you measure the recent trend. Greyed values correspond to an N larger than the number of available decisions.</p>
 <p>Clicking a value loads the corresponding last <em>N</em> positions.</p>
