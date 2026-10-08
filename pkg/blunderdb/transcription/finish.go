@@ -276,9 +276,53 @@ func (s *Service) EditMatch(ctx context.Context, scope string, matchID int64) (*
 	// The .mat does not carry the tournament, and finishing with none would
 	// detach the Match from it.
 	doc.Header.TournamentID = m.TournamentID
+	// Nor the video and its Repères (ADR-0079 rule 1): the draft takes them
+	// back from the Match.
+	if m.VideoSource != nil {
+		doc.Header.VideoSource = *m.VideoSource
+	}
+	restoreTimecodes(&doc, games, moves)
 
 	st, err := s.insert(ctx, scope, doc)
 	return st, losses, err
+}
+
+// restoreTimecodes puts each Move's Repères back on the Action that produced it.
+// The .mat replay lines them up: the game's index, the Move's number in it. An
+// Action that does not find its Move — another kind, another roll — gets none
+// rather than a stranger's; a resignation, which produces no Move, has none to
+// find.
+func restoreTimecodes(doc *transcript.Document, games []*domain.Game, moves map[int64][]*domain.Move) {
+	ann := transcript.Replay(*doc, 0)
+	for i, info := range ann.Actions {
+		if info.MoveNumber < 0 || info.GameIndex < 0 || info.GameIndex >= len(games) {
+			continue
+		}
+		var mv *domain.Move
+		for _, cand := range moves[games[info.GameIndex].ID] {
+			if cand.MoveNumber == info.MoveNumber {
+				mv = cand
+				break
+			}
+		}
+		if mv == nil {
+			continue
+		}
+		a := &doc.Actions[i]
+		switch a.Kind {
+		case transcript.KindChecker, transcript.KindDance, transcript.KindUnrecorded:
+			d := info.Before.Dice
+			if mv.MoveType != "checker" || mv.Dice != [2]int32{int32(d[0]), int32(d[1])} {
+				continue
+			}
+			a.RollTickMS = mv.RollTickMS
+		default:
+			if mv.MoveType != "cube" {
+				continue
+			}
+		}
+		a.TickMS = mv.TickMS
+	}
 }
 
 // MatchGraph turns what the transcript package returns into the graph

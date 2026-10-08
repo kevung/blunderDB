@@ -405,3 +405,24 @@ Lectures conditionnelles
 Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer dans
 ``If-None-Match`` obtient une réponse ``304`` sans corps tant que rien de ce que la
 méthode lit n'a changé — voir :ref:`headless_direction`.
+
+Repères d'une transcription
+---------------------------
+
+Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où il est
+fait, en millisecondes depuis le début du média : ``TickMS``, lu seulement quand
+``HasTick`` vaut ``true`` (0 est un instant). ``enter_die`` en fait le repère du
+jet (la première touche de dé compte), ``enter_play``, ``validate``, ``dance``,
+``double``, ``take``, ``pass`` et ``resign`` le repère de l'action, sur une
+action nouvelle seulement : une correction en place garde les repères qu'elle avait.
+Le geste ``set_timecode`` pose ``TickMS`` (avec ``HasTick``) et ``RollTickMS`` (avec
+``HasRollTick``) sur l'action du curseur ; une valeur négative efface le repère. Le
+geste ``set_video`` attache la source vidéo nommée par ``VideoSource`` (URL http(s) ou
+chemin local), une chaîne vide la détache ; ``set_header`` la pose aussi quand son
+en-tête en nomme une, sans jamais l'effacer.
+
+L'état rendu porte la source dans ``header.video_source``, les repères de chaque
+action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque action annotée, les durées
+``decision_ms`` et ``cube_decision_ms`` : mesurées par l'Arbitre quand elles le sont,
+sinon déduites des repères. Un repère antérieur au précédent est marqué par
+l'incohérence ``timecode_backwards`` et laisse inconnues les durées qui en dépendent.

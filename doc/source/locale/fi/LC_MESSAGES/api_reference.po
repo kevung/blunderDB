@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 04:35+0200\n"
+"POT-Creation-Date: 2026-10-08 20:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -42,11 +42,11 @@ msgstr ""
 "vastausmuodon kanssa (JSON tai NDJSON suoratoistetulle listalle) ja, jos "
 "se on olemassa, maininnan valinnaisesta ``Idempotency-Key``-otsakkeesta."
 
-#: ../../source/api_reference.rst:383
+#: ../../source/api_reference.rst:389
 msgid "Idempotence"
 msgstr "Idempotenssi"
 
-#: ../../source/api_reference.rst:385
+#: ../../source/api_reference.rst:391
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -74,11 +74,11 @@ msgstr ""
 " merkintä ”(Idempotency-Key)” yllä olevasta taulukosta. Mikään muu "
 "menetelmä ei tarvitse tai hyväksy tätä otsaketta."
 
-#: ../../source/api_reference.rst:397
+#: ../../source/api_reference.rst:403
 msgid "Lectures conditionnelles"
 msgstr "Ehdolliset lukemiset"
 
-#: ../../source/api_reference.rst:399
+#: ../../source/api_reference.rst:405
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -89,3 +89,54 @@ msgstr ""
 "Kun se lähetetään takaisin ``If-None-Match``-otsakkeessa, saadaan "
 "rungoton ``304``-vastaus niin kauan kuin mikään metodin lukema ei ole "
 "muuttunut — katso :ref:`headless_direction`."
+
+#: ../../source/api_reference.rst:410
+msgid "Repères d'une transcription"
+msgstr "Litteroinnin aikaleimat"
+
+#: ../../source/api_reference.rst:412
+msgid ""
+"Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
+" il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
+"seulement quand ``HasTick`` vaut ``true`` (0 est un instant). "
+"``enter_die`` en fait le repère du jet (la première touche de dé compte),"
+" ``enter_play``, ``validate``, ``dance``, ``double``, ``take``, ``pass`` "
+"et ``resign`` le repère de l'action, sur une action nouvelle seulement : "
+"une correction en place garde les repères qu'elle avait. Le geste "
+"``set_timecode`` pose ``TickMS`` (avec ``HasTick``) et ``RollTickMS`` "
+"(avec ``HasRollTick``) sur l'action du curseur ; une valeur négative "
+"efface le repère. Le geste ``set_video`` attache la source vidéo nommée "
+"par ``VideoSource`` (URL http(s) ou chemin local), une chaîne vide la "
+"détache ; ``set_header`` la pose aussi quand son en-tête en nomme une, "
+"sans jamais l'effacer."
+msgstr ""
+"``transcriptions.apply``-ele voi kantaa videon hetken, jolloin se "
+"tehdään, millisekunteina median alusta: ``TickMS``, jota luetaan vain, "
+"kun ``HasTick`` on ``true`` (0 on hetki). ``enter_die`` tekee siitä "
+"heiton aikaleiman (ensimmäinen nopan näppäin ratkaisee); ``enter_play``, "
+"``validate``, ``dance``, ``double``, ``take``, ``pass`` ja ``resign`` "
+"tekevät siitä toiminnon aikaleiman, vain uudella toiminnolla: paikallaan "
+"tehty korjaus säilyttää toiminnon aiemmat aikaleimat. Ele "
+"``set_timecode`` asettaa ``TickMS``-arvon (``HasTick``-arvon kanssa) ja "
+"``RollTickMS``-arvon (``HasRollTick``-arvon kanssa) kohdistimen "
+"toiminnolle; negatiivinen arvo poistaa aikaleiman. Ele ``set_video`` "
+"liittää ``VideoSource``-kentän nimeämän videolähteen (http(s)-URL tai "
+"paikallinen polku), tyhjä merkkijono irrottaa sen; ``set_header`` asettaa"
+" sen myös, kun sen otsake nimeää lähteen, mutta ei koskaan poista sitä."
+
+#: ../../source/api_reference.rst:424
+msgid ""
+"L'état rendu porte la source dans ``header.video_source``, les repères de"
+" chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "
+"action annotée, les durées ``decision_ms`` et ``cube_decision_ms`` : "
+"mesurées par l'Arbitre quand elles le sont, sinon déduites des repères. "
+"Un repère antérieur au précédent est marqué par l'incohérence "
+"``timecode_backwards`` et laisse inconnues les durées qui en dépendent."
+msgstr ""
+"Renderöity tila kantaa lähteen kentässä ``header.video_source``, kunkin "
+"toiminnon aikaleimat kentissä ``roll_tick_ms`` ja ``tick_ms`` sekä "
+"jokaisella annotoidulla toiminnolla kestot ``decision_ms`` ja "
+"``cube_decision_ms``: Välimies (Arbiter) mittaa ne, kun ne on mitattu, "
+"muuten ne johdetaan aikaleimoista. Edellistä aiempi aikaleima merkitään "
+"epäjohdonmukaisuudella ``timecode_backwards``, ja siitä riippuvat kestot "
+"jäävät tuntemattomiksi."

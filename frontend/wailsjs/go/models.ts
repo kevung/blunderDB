@@ -363,6 +363,7 @@ export namespace database {
 	export class GameTypeStats {
 	    GameType: string;
 	    PR: number;
+	    PRInterval: domain.Interval;
 	    NumDecisions: number;
 	    BlunderCount: number;
 	
@@ -374,9 +375,28 @@ export namespace database {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.GameType = source["GameType"];
 	        this.PR = source["PR"];
+	        this.PRInterval = this.convertValues(source["PRInterval"], domain.Interval);
 	        this.NumDecisions = source["NumDecisions"];
 	        this.BlunderCount = source["BlunderCount"];
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class GammonNetBatchSummary {
 	    Evaluated: number;
@@ -606,6 +626,7 @@ export namespace database {
 	export class PhaseStats {
 	    Phase: string;
 	    PR: number;
+	    PRInterval: domain.Interval;
 	    NumDecisions: number;
 	    BlunderCount: number;
 	
@@ -617,9 +638,28 @@ export namespace database {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Phase = source["Phase"];
 	        this.PR = source["PR"];
+	        this.PRInterval = this.convertValues(source["PRInterval"], domain.Interval);
 	        this.NumDecisions = source["NumDecisions"];
 	        this.BlunderCount = source["BlunderCount"];
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class PlayerFrequency {
 	    Name: string;
@@ -652,6 +692,7 @@ export namespace database {
 	    luck_rate_mp: number;
 	    luck_known: boolean;
 	    luck_rolls: number;
+	    mwc7: domain.MWC7;
 	
 	    static createFrom(source: any = {}) {
 	        return new PlayerRow(source);
@@ -675,7 +716,26 @@ export namespace database {
 	        this.luck_rate_mp = source["luck_rate_mp"];
 	        this.luck_known = source["luck_known"];
 	        this.luck_rolls = source["luck_rolls"];
+	        this.mwc7 = this.convertValues(source["mwc7"], domain.MWC7);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class PositionView {
 	    analysis?: domain.PositionAnalysis;
@@ -769,6 +829,7 @@ export namespace database {
 	    MoverAway: number;
 	    OpponentAway: number;
 	    PR: number;
+	    PRInterval: domain.Interval;
 	    NumDecisions: number;
 	    BlunderCount: number;
 	
@@ -781,9 +842,28 @@ export namespace database {
 	        this.MoverAway = source["MoverAway"];
 	        this.OpponentAway = source["OpponentAway"];
 	        this.PR = source["PR"];
+	        this.PRInterval = this.convertValues(source["PRInterval"], domain.Interval);
 	        this.NumDecisions = source["NumDecisions"];
 	        this.BlunderCount = source["BlunderCount"];
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class SearchHistory {
 	    id: number;
@@ -902,6 +982,7 @@ export namespace database {
 	export class TagStats {
 	    Tag: string;
 	    PR: number;
+	    PRInterval: domain.Interval;
 	    NumDecisions: number;
 	    BlunderCount: number;
 	
@@ -913,9 +994,28 @@ export namespace database {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Tag = source["Tag"];
 	        this.PR = source["PR"];
+	        this.PRInterval = this.convertValues(source["PRInterval"], domain.Interval);
 	        this.NumDecisions = source["NumDecisions"];
 	        this.BlunderCount = source["BlunderCount"];
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class TournamentStats {
 	    ID: number;
@@ -980,6 +1080,7 @@ export namespace database {
 	export class StatsResult {
 	    Totals: StatsTotals;
 	    PRGlobal: number;
+	    PRInterval: domain.Interval;
 	    PRChecker: number;
 	    PRCube: number;
 	    PRRolling: Record<number, number>;
@@ -989,6 +1090,8 @@ export namespace database {
 	    MWCRolling: Record<number, number>;
 	    MWCAvailable: boolean;
 	    MWC7: domain.MWC7;
+	    MWC7Checker: domain.MWC7;
+	    MWC7Cube: domain.MWC7;
 	    SnowieGlobal: number;
 	    PerTournament: TournamentStats[];
 	    PerMatch: MatchStats[];
@@ -1009,6 +1112,7 @@ export namespace database {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.Totals = this.convertValues(source["Totals"], StatsTotals);
 	        this.PRGlobal = source["PRGlobal"];
+	        this.PRInterval = this.convertValues(source["PRInterval"], domain.Interval);
 	        this.PRChecker = source["PRChecker"];
 	        this.PRCube = source["PRCube"];
 	        this.PRRolling = source["PRRolling"];
@@ -1018,6 +1122,8 @@ export namespace database {
 	        this.MWCRolling = source["MWCRolling"];
 	        this.MWCAvailable = source["MWCAvailable"];
 	        this.MWC7 = this.convertValues(source["MWC7"], domain.MWC7);
+	        this.MWC7Checker = this.convertValues(source["MWC7Checker"], domain.MWC7);
+	        this.MWC7Cube = this.convertValues(source["MWC7Cube"], domain.MWC7);
 	        this.SnowieGlobal = source["SnowieGlobal"];
 	        this.PerTournament = this.convertValues(source["PerTournament"], TournamentStats);
 	        this.PerMatch = this.convertValues(source["PerMatch"], MatchStats);
@@ -2151,6 +2257,24 @@ export namespace domain {
 	    }
 	}
 	
+	export class Interval {
+	    available: boolean;
+	    low: number;
+	    high: number;
+	    units: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Interval(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.available = source["available"];
+	        this.low = source["low"];
+	        this.high = source["high"];
+	        this.units = source["units"];
+	    }
+	}
 	export class WatermarkInfo {
 	    origin: string;
 	    issuerName: string;
@@ -2396,6 +2520,7 @@ export namespace domain {
 	    has_jacoby?: boolean;
 	    has_beaver?: boolean;
 	    engine_version?: string;
+	    video_source?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -2438,6 +2563,7 @@ export namespace domain {
 	        this.has_jacoby = source["has_jacoby"];
 	        this.has_beaver = source["has_beaver"];
 	        this.engine_version = source["engine_version"];
+	        this.video_source = source["video_source"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -2494,6 +2620,8 @@ export namespace domain {
 	    cube_action: string;
 	    decision_ms?: number;
 	    cube_decision_ms?: number;
+	    roll_tick_ms?: number;
+	    tick_ms?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new MatchMovePosition(source);
@@ -2514,6 +2642,8 @@ export namespace domain {
 	        this.cube_action = source["cube_action"];
 	        this.decision_ms = source["decision_ms"];
 	        this.cube_decision_ms = source["cube_decision_ms"];
+	        this.roll_tick_ms = source["roll_tick_ms"];
+	        this.tick_ms = source["tick_ms"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -2548,6 +2678,8 @@ export namespace domain {
 	    error_mp?: number;
 	    decision_ms?: number;
 	    cube_decision_ms?: number;
+	    roll_tick_ms?: number;
+	    tick_ms?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Move(source);
@@ -2568,6 +2700,8 @@ export namespace domain {
 	        this.error_mp = source["error_mp"];
 	        this.decision_ms = source["decision_ms"];
 	        this.cube_decision_ms = source["cube_decision_ms"];
+	        this.roll_tick_ms = source["roll_tick_ms"];
+	        this.tick_ms = source["tick_ms"];
 	    }
 	}
 	
@@ -6511,6 +6645,10 @@ export namespace storage {
 	    mwc_loss?: number;
 	    difficulty?: number;
 	    avoidable: boolean;
+	    error_mp?: number;
+	    error: boolean;
+	    luck?: number;
+	    duration_ms?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new DecisionLoss(source);
@@ -6526,6 +6664,10 @@ export namespace storage {
 	        this.mwc_loss = source["mwc_loss"];
 	        this.difficulty = source["difficulty"];
 	        this.avoidable = source["avoidable"];
+	        this.error_mp = source["error_mp"];
+	        this.error = source["error"];
+	        this.luck = source["luck"];
+	        this.duration_ms = source["duration_ms"];
 	    }
 	}
 	export class DeclaredBot {
@@ -6542,6 +6684,26 @@ export namespace storage {
 	        this.player = source["player"];
 	        this.configuration = source["configuration"];
 	        this.engine = source["engine"];
+	    }
+	}
+	export class ErrorPace {
+	    hasty: number;
+	    deliberate: number;
+	    unknown: number;
+	    hasty_loss: number;
+	    deliberate_loss: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ErrorPace(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.hasty = source["hasty"];
+	        this.deliberate = source["deliberate"];
+	        this.unknown = source["unknown"];
+	        this.hasty_loss = source["hasty_loss"];
+	        this.deliberate_loss = source["deliberate_loss"];
 	    }
 	}
 	export class HeadToHeadMatch {
@@ -6645,6 +6807,30 @@ export namespace storage {
 	        this.Offset = source["Offset"];
 	    }
 	}
+	export class LuckAdjusted {
+	    available: boolean;
+	    result: number;
+	    luck: number;
+	    adjusted: number;
+	    error_balance: number;
+	    rolls_measured: number;
+	    rolls: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new LuckAdjusted(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.available = source["available"];
+	        this.result = source["result"];
+	        this.luck = source["luck"];
+	        this.adjusted = source["adjusted"];
+	        this.error_balance = source["error_balance"];
+	        this.rolls_measured = source["rolls_measured"];
+	        this.rolls = source["rolls"];
+	    }
+	}
 	export class MatchListOpts {
 	    PlayerName: string;
 	    PlayerSpellings: string[];
@@ -6678,6 +6864,108 @@ export namespace storage {
 	        this.Limit = source["Limit"];
 	        this.Offset = source["Offset"];
 	    }
+	}
+	export class ReviewDecision {
+	    move_id: number;
+	    game_number: number;
+	    move_number: number;
+	    decision_type: string;
+	    mwc_loss: number;
+	    difficulty?: number;
+	    avoidable: boolean;
+	    avoidable_loss: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ReviewDecision(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.move_id = source["move_id"];
+	        this.game_number = source["game_number"];
+	        this.move_number = source["move_number"];
+	        this.decision_type = source["decision_type"];
+	        this.mwc_loss = source["mwc_loss"];
+	        this.difficulty = source["difficulty"];
+	        this.avoidable = source["avoidable"];
+	        this.avoidable_loss = source["avoidable_loss"];
+	    }
+	}
+	export class PlayerReview {
+	    pr: number;
+	    pr_interval: domain.Interval;
+	    decisions: number;
+	    mwc7: domain.MWC7;
+	    mwc_loss: number;
+	    to_review: ReviewDecision[];
+	    pace: ErrorPace;
+	    luck: LuckAdjusted;
+	
+	    static createFrom(source: any = {}) {
+	        return new PlayerReview(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.pr = source["pr"];
+	        this.pr_interval = this.convertValues(source["pr_interval"], domain.Interval);
+	        this.decisions = source["decisions"];
+	        this.mwc7 = this.convertValues(source["mwc7"], domain.MWC7);
+	        this.mwc_loss = source["mwc_loss"];
+	        this.to_review = this.convertValues(source["to_review"], ReviewDecision);
+	        this.pace = this.convertValues(source["pace"], ErrorPace);
+	        this.luck = this.convertValues(source["luck"], LuckAdjusted);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class MatchReview {
+	    match_id: number;
+	    players: PlayerReview[];
+	
+	    static createFrom(source: any = {}) {
+	        return new MatchReview(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.match_id = source["match_id"];
+	        this.players = this.convertValues(source["players"], PlayerReview);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class PlayerTimeSummary {
 	    total_ms: number;
@@ -6826,6 +7114,7 @@ export namespace storage {
 		}
 	}
 	
+	
 	export class RankedPlayer {
 	    rank: number;
 	    name: string;
@@ -6843,6 +7132,7 @@ export namespace storage {
 	    blunders: number;
 	    luck_mp_sum: number;
 	    luck_rolls: number;
+	    mwc7: domain.MWC7;
 	
 	    static createFrom(source: any = {}) {
 	        return new RankedPlayer(source);
@@ -6866,7 +7156,26 @@ export namespace storage {
 	        this.blunders = source["blunders"];
 	        this.luck_mp_sum = source["luck_mp_sum"];
 	        this.luck_rolls = source["luck_rolls"];
+	        this.mwc7 = this.convertValues(source["mwc7"], domain.MWC7);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class RecurringErrorGroup {
 	    GameType: string;
@@ -6928,6 +7237,7 @@ export namespace storage {
 		    return a;
 		}
 	}
+	
 	export class SimilarPosition {
 	    position: domain.Position;
 	    distance: number;
@@ -8093,6 +8403,8 @@ export namespace transcript {
 	    score?: number[];
 	    decision_ms?: number;
 	    cube_decision_ms?: number;
+	    roll_tick_ms?: number;
+	    tick_ms?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Action(source);
@@ -8109,6 +8421,8 @@ export namespace transcript {
 	        this.score = source["score"];
 	        this.decision_ms = source["decision_ms"];
 	        this.cube_decision_ms = source["cube_decision_ms"];
+	        this.roll_tick_ms = source["roll_tick_ms"];
+	        this.tick_ms = source["tick_ms"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -8158,6 +8472,8 @@ export namespace transcript {
 	    opens_game: boolean;
 	    decision_ms?: number;
 	    cube_decision_ms?: number;
+	    roll_tick_ms?: number;
+	    tick_ms?: number;
 	    inconsistencies?: Inconsistency[];
 	
 	    static createFrom(source: any = {}) {
@@ -8180,6 +8496,8 @@ export namespace transcript {
 	        this.opens_game = source["opens_game"];
 	        this.decision_ms = source["decision_ms"];
 	        this.cube_decision_ms = source["cube_decision_ms"];
+	        this.roll_tick_ms = source["roll_tick_ms"];
+	        this.tick_ms = source["tick_ms"];
 	        this.inconsistencies = this.convertValues(source["inconsistencies"], Inconsistency);
 	    }
 	
@@ -8316,6 +8634,7 @@ export namespace transcript {
 	    transcriber?: string;
 	    tournament_id?: number;
 	    match_id?: number;
+	    video_source?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Header(source);
@@ -8336,6 +8655,7 @@ export namespace transcript {
 	        this.transcriber = source["transcriber"];
 	        this.tournament_id = source["tournament_id"];
 	        this.match_id = source["match_id"];
+	        this.video_source = source["video_source"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -8449,6 +8769,8 @@ export namespace transcript {
 	    Mode: number;
 	    At: number;
 	    Review: boolean;
+	    RollTickMS?: number;
+	    TickMS?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Entry(source);
@@ -8463,6 +8785,8 @@ export namespace transcript {
 	        this.Mode = source["Mode"];
 	        this.At = source["At"];
 	        this.Review = source["Review"];
+	        this.RollTickMS = source["RollTickMS"];
+	        this.TickMS = source["TickMS"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -8502,6 +8826,11 @@ export namespace transcript {
 	    Header: Header;
 	    At: number;
 	    Score?: number[];
+	    TickMS: number;
+	    HasTick: boolean;
+	    RollTickMS: number;
+	    HasRollTick: boolean;
+	    VideoSource: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Gesture(source);
@@ -8525,6 +8854,11 @@ export namespace transcript {
 	        this.Header = this.convertValues(source["Header"], Header);
 	        this.At = source["At"];
 	        this.Score = source["Score"];
+	        this.TickMS = source["TickMS"];
+	        this.HasTick = source["HasTick"];
+	        this.RollTickMS = source["RollTickMS"];
+	        this.HasRollTick = source["HasRollTick"];
+	        this.VideoSource = source["VideoSource"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

@@ -398,19 +398,26 @@ func (m Machine) CubeAvailable() bool {
 	if !s.gameActive || s.matchOver() || s.pendingDouble >= 0 || m.roll != [2]int{} {
 		return false
 	}
-	if s.turn != domain.Black && s.turn != domain.White {
+	return s.mayDouble(s.turn)
+}
+
+// mayDouble reports whether side may double before its roll in the game being
+// played: not in the Crawford game, not when the opponent owns the cube, not at the
+// money ceiling, and not when the cube is dead at the score.
+func (s *state) mayDouble(side int) bool {
+	if side != domain.Black && side != domain.White {
 		return false
 	}
 	if n := len(s.games); n > 0 && s.games[n-1].Crawford {
 		return false
 	}
-	if s.cube.Owner != domain.None && s.cube.Owner != s.turn {
+	if s.cube.Owner != domain.None && s.cube.Owner != side {
 		return false
 	}
 	if s.header.MaxCube > 0 && s.cube.Value >= s.header.MaxCube {
 		return false
 	}
-	if L := s.header.MatchLength; L > 0 && s.points[s.turn]+cubeValue(s.cube) >= L {
+	if L := s.header.MatchLength; L > 0 && s.points[side]+cubeValue(s.cube) >= L {
 		return false
 	}
 	return true

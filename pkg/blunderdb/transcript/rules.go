@@ -271,6 +271,9 @@ func (s *state) step(i int, a Action) ActionInfo {
 		}
 		pos := s.position(a.Side, dice, domain.CheckerAction, s.cube)
 		info.Before, info.HasPosition = pos, true
+		// A game's first play, and a roll the side could not double before,
+		// had no cube decision (ADR-0073), so no duration is deduced for one.
+		info.cubeChoice = !opens && s.pendingDouble < 0 && s.mayDouble(a.Side)
 		legal := domain.LegalMoves(&pos)
 		if opens && a.Dice[0] != 0 && a.Dice[0] == a.Dice[1] {
 			info.add(InconsistentDice, fmt.Sprintf("the game's first play is rolled %d%d: no opening roll is a double", a.Dice[0], a.Dice[1]))

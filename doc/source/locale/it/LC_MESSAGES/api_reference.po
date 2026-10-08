@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 04:35+0200\n"
+"POT-Creation-Date: 2026-10-08 20:08+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -43,11 +43,11 @@ msgstr ""
 "per un elenco in streaming) e, quando esiste, una nota sull'intestazione "
 "opzionale ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:383
+#: ../../source/api_reference.rst:389
 msgid "Idempotence"
 msgstr "Idempotenza"
 
-#: ../../source/api_reference.rst:385
+#: ../../source/api_reference.rst:391
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -75,11 +75,11 @@ msgstr ""
 "l'effetto — vedi il contrassegno «(Idempotency-Key)» nella tabella qui "
 "sopra. Nessun altro metodo richiede o accetta questa intestazione."
 
-#: ../../source/api_reference.rst:397
+#: ../../source/api_reference.rst:403
 msgid "Lectures conditionnelles"
 msgstr "Letture condizionali"
 
-#: ../../source/api_reference.rst:399
+#: ../../source/api_reference.rst:405
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -90,3 +90,55 @@ msgstr ""
 "Rinviarla in ``If-None-Match`` ottiene una risposta ``304`` senza corpo "
 "finché non è cambiato nulla di ciò che il metodo legge — vedere "
 ":ref:`headless_direction`."
+
+#: ../../source/api_reference.rst:410
+msgid "Repères d'une transcription"
+msgstr "Marcatori temporali di una trascrizione"
+
+#: ../../source/api_reference.rst:412
+msgid ""
+"Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
+" il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
+"seulement quand ``HasTick`` vaut ``true`` (0 est un instant). "
+"``enter_die`` en fait le repère du jet (la première touche de dé compte),"
+" ``enter_play``, ``validate``, ``dance``, ``double``, ``take``, ``pass`` "
+"et ``resign`` le repère de l'action, sur une action nouvelle seulement : "
+"une correction en place garde les repères qu'elle avait. Le geste "
+"``set_timecode`` pose ``TickMS`` (avec ``HasTick``) et ``RollTickMS`` "
+"(avec ``HasRollTick``) sur l'action du curseur ; une valeur négative "
+"efface le repère. Le geste ``set_video`` attache la source vidéo nommée "
+"par ``VideoSource`` (URL http(s) ou chemin local), une chaîne vide la "
+"détache ; ``set_header`` la pose aussi quand son en-tête en nomme une, "
+"sans jamais l'effacer."
+msgstr ""
+"Un gesto di ``transcriptions.apply`` può portare l'istante del video in "
+"cui viene compiuto, in millisecondi dall'inizio del media: ``TickMS``, "
+"letto solo quando ``HasTick`` vale ``true`` (0 è un istante). "
+"``enter_die`` ne fa il marcatore temporale del lancio (conta il primo "
+"tasto di dado); ``enter_play``, ``validate``, ``dance``, ``double``, "
+"``take``, ``pass`` e ``resign`` ne fanno il marcatore temporale "
+"dell'azione, solo su un'azione nuova: una correzione sul posto conserva i"
+" marcatori che aveva. Il gesto ``set_timecode`` imposta ``TickMS`` (con "
+"``HasTick``) e ``RollTickMS`` (con ``HasRollTick``) sull'azione del "
+"cursore; un valore negativo cancella il marcatore. Il gesto ``set_video``"
+" associa la sorgente video indicata da ``VideoSource`` (URL http(s) o "
+"percorso locale), una stringa vuota la dissocia; ``set_header`` la "
+"imposta anche quando la sua intestazione ne indica una, senza mai "
+"cancellarla."
+
+#: ../../source/api_reference.rst:424
+msgid ""
+"L'état rendu porte la source dans ``header.video_source``, les repères de"
+" chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "
+"action annotée, les durées ``decision_ms`` et ``cube_decision_ms`` : "
+"mesurées par l'Arbitre quand elles le sont, sinon déduites des repères. "
+"Un repère antérieur au précédent est marqué par l'incohérence "
+"``timecode_backwards`` et laisse inconnues les durées qui en dépendent."
+msgstr ""
+"Lo stato renderizzato porta la sorgente in ``header.video_source``, i "
+"marcatori temporali di ogni azione in ``roll_tick_ms`` e ``tick_ms`` e, "
+"su ogni azione annotata, le durate ``decision_ms`` e "
+"``cube_decision_ms``: misurate dall'Arbitro (Arbiter) quando lo sono, "
+"altrimenti dedotte dai marcatori. Un marcatore anteriore al precedente è "
+"segnalato dall'incoerenza ``timecode_backwards`` e lascia sconosciute le "
+"durate che ne dipendono."

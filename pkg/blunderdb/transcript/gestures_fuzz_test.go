@@ -55,6 +55,9 @@ const (
 	opOpening
 	opCreate
 	opHeader
+	opClock
+	opTimecode
+	opVideo
 	opCount
 )
 
@@ -89,6 +92,11 @@ type gestureModel struct {
 	past   []Document
 	future []Document
 	trace  []string
+
+	// clock is the video's instant every gesture is stamped with once
+	// ticking: it mostly runs forward, and opClock may send it back.
+	clock   int64
+	ticking bool
 }
 
 func (m *gestureModel) fail(format string, args ...any) {
@@ -99,8 +107,13 @@ func (m *gestureModel) fail(format string, args ...any) {
 // apply sends one gesture through the Editor and checks refusal and purity.
 func (m *gestureModel) apply(g Gesture) error {
 	m.t.Helper()
+	if m.ticking && g.Kind != GestureSetTimecode {
+		g.TickMS, g.HasTick = m.clock, true
+		m.clock += 700
+	}
 	m.trace = append(m.trace, fmt.Sprintf("%s die=%d cand=%d side=%d/%v lvl=%d len=%d/%v at=%d score=%v steps=%v board=%v",
-		g.Kind, g.Die, g.Candidate, g.Side, g.HasSide, g.Level, g.MatchLength, g.HasLength, g.At, g.Score, g.Steps, g.BoardAfter != nil))
+		g.Kind, g.Die, g.Candidate, g.Side, g.HasSide, g.Level, g.MatchLength, g.HasLength, g.At, g.Score, g.Steps, g.BoardAfter != nil)+
+		fmt.Sprintf(" tick=%d/%v roll=%d/%v video=%q", g.TickMS, g.HasTick, g.RollTickMS, g.HasRollTick, g.VideoSource))
 	before := m.ed.Doc.clone()
 	err := m.ed.Apply(g)
 	if err != nil {
@@ -187,6 +200,23 @@ func (m *gestureModel) check(ann Annotated) {
 		m.fail("Replay annotated %d Actions of %d", len(ann.Actions), n)
 	}
 	checkDurableRoundTrip(m.t, doc, m.trace)
+
+	// A duration is deduced, never written on an Action, and never negative:
+	// a Repère out of order is dropped before any subtraction.
+	for i, info := range ann.Actions {
+		a := doc.Actions[i]
+		if a.DecisionMS != nil || a.CubeDecisionMS != nil {
+			m.fail("Action %d carries a duration no Arbiter measured", i)
+		}
+		if a.RollTickMS != nil && !rolls(a.Kind) {
+			m.fail("Action %d, a %s, carries a roll Repère", i, a.Kind)
+		}
+		for _, d := range []*int64{info.DecisionMS, info.CubeDecisionMS} {
+			if d != nil && *d < 0 {
+				m.fail("Action %d deduces a negative duration %d", i, *d)
+			}
+		}
+	}
 
 	// The save and the .mat pane read these; they must not panic on any draft.
 	parts := Build(doc)
@@ -439,6 +469,17 @@ func runGestureScenario(t *testing.T, data []byte) {
 			r := src.byteOr(0)
 			_ = m.apply(Gesture{Kind: GestureCreate, MatchLength: int(src.byteOr(7)) % 26, HasLength: r&1 == 0,
 				HasRules: r&2 != 0, Jacoby: r&4 != 0, Beaver: r&8 != 0})
+		case opClock:
+			m.ticking = true
+			m.clock = int64(src.byteOr(0)) * 500
+		case opTimecode:
+			r := src.byteOr(0)
+			g := Gesture{Kind: GestureSetTimecode,
+				TickMS: int64(src.byteOr(0))*300 - 1500, HasTick: r&1 != 0,
+				RollTickMS: int64(src.byteOr(0))*300 - 1500, HasRollTick: r&2 != 0}
+			_ = m.apply(g)
+		case opVideo:
+			_ = m.apply(Gesture{Kind: GestureSetVideo, VideoSource: fmt.Sprintf("v%d.mp4", src.byteOr(0)%3)})
 		case opHeader:
 			_ = m.apply(Gesture{Kind: GestureSetHeader, Header: Header{
 				Player1: fmt.Sprintf("P%d", src.byteOr(0)), Player2: fmt.Sprintf("Q%d", src.byteOr(0)),
@@ -555,6 +596,8 @@ func seedScenarios() [][]byte {
 		{1, opOpening, 6, 5, turn, 3, 3, 0, opBack, opDelete, opInsertBefore, 0, opFlip, opSetLength, 0, 0},
 		{0, opOpening, 4, 1, turn, 6, 2, 0, opDouble, 0, opTake, 0, opSwap, opEnterIllegal, 1, 2, 3, 4, opValidate},
 		{7, opOpening, 2, 2, opOpening, 5, 3, turn, 1, 1, 0, opEnterLegal, 0, 1, opUndo, 5, opRedo, 5, opCreate, 0, 3},
+		{7, opClock, 4, opVideo, 1, opOpening, 6, 3, turn, 1, 2, 0, opDouble, 0, opTake, 0, opBack, opTimecode, 3, 1, 9,
+			opClock, 0, turn, 5, 5, 1, opInsertBefore, 0, turn, 3, 4, 0, opDelete, opUndo, 2},
 	}
 }
 

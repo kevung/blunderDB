@@ -73,6 +73,8 @@ func (s *Service) Materialize(ctx context.Context, scope string, header transcri
 		}
 		games = games[:len(games)-1]
 	}
+	// The Repères give the durations, as a Replay of the same draft would.
+	transcript.TimeActions(actions, infos)
 	parts := transcript.BuildPlayed(header, games, infos, false)
 	if len(parts.Games) == 0 {
 		return nil, fmt.Errorf("transcription: nothing to materialise, no Action opens a game: %w", storage.ErrInvalid)

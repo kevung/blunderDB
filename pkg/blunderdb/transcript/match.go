@@ -44,6 +44,7 @@ func Build(doc Document) Parts {
 // Replay's, or the ActionInfos a [Machine] returned one Apply at a time, whose
 // first game may begin at a Start no Document can hold.
 func BuildPlayed(h Header, played []GameInfo, actions []ActionInfo, inconsistent bool) Parts {
+	video := h.VideoSource
 	m := &domain.Match{
 		Player1Name:  h.Player1,
 		Player2Name:  h.Player2,
@@ -58,6 +59,9 @@ func BuildPlayed(h Header, played []GameInfo, actions []ActionInfo, inconsistent
 		// column: it exists to be written as the .mat's [Transcriber] header
 		// (fonctionnel.md §5), and only a graph built here ever sets it.
 		Transcriber: h.Transcriber,
+		// Always stated, "" included: a draft that detached its video replaces
+		// the Match's, and a nil source would keep it (ReplaceHeader).
+		VideoSource: &video,
 	}
 	if h.MatchID != nil {
 		m.ID = *h.MatchID
@@ -87,6 +91,7 @@ func BuildPlayed(h Header, played []GameInfo, actions []ActionInfo, inconsistent
 			MoveNumber: info.MoveNumber,
 			Player:     sideToXG(info.Side),
 			DecisionMS: info.DecisionMS,
+			TickMS:     info.TickMS,
 		}
 		switch info.Kind {
 		// A play that was not recorded is a Move like any other: the roll is known,
@@ -98,6 +103,7 @@ func BuildPlayed(h Header, played []GameInfo, actions []ActionInfo, inconsistent
 			mv.Dice = [2]int32{int32(info.Before.Dice[0]), int32(info.Before.Dice[1])}
 			mv.CheckerMove = info.Notation
 			mv.CubeDecisionMS = info.CubeDecisionMS
+			mv.RollTickMS = info.RollTickMS
 		case KindDouble:
 			mv.MoveType, mv.CubeAction = "cube", "Double"
 		case KindTake:
