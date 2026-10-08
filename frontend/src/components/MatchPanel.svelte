@@ -407,7 +407,7 @@
         lossSort = lossSort === '' ? 'desc' : lossSort === 'desc' ? 'asc' : '';
     }
     // One order at a time: by the time a decision took, by what it cost, or the match's own.
-    /** @param {{ mp: any, globalIdx: number, grade: any, loss: number | null }[]} moves */
+    /** @param {{ mp: any, globalIdx: number, grade: any, loss: number | null, difficulty: number | null, avoidable: boolean }[]} moves */
     const ordered = (moves) => (lossSort ? sortByLoss(moves, lossSort) : sortByDuration(moves, timeSort));
 
     // Grades follow the library thresholds: re-read when the library counter changes.
@@ -469,14 +469,15 @@
     let transcriptGames = $derived.by(() => {
         if (!detailMovePositions.length) return [];
         const gradeByMove = indexMoveGrades(detailGrades);
-        const lossByMove = new Map(/** @type {any[]} */ (detailLosses ?? []).map((d) => [d.move_id, d.mwc_loss ?? null]));
-        /** @type {Map<number, { mp: any, globalIdx: number, grade: any, loss: number | null }[]>} */
+        const lossByMove = new Map(/** @type {any[]} */ (detailLosses ?? []).map((d) => [d.move_id, d]));
+        /** @type {Map<number, { mp: any, globalIdx: number, grade: any, loss: number | null, difficulty: number | null, avoidable: boolean }[]>} */
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp inside $derived
         const gameMap = new Map();
         detailMovePositions.forEach((/** @type {any} */ mp, globalIdx) => {
             let moves = gameMap.get(mp.game_number);
             if (!moves) gameMap.set(mp.game_number, (moves = []));
-            moves.push({ mp, globalIdx, grade: gradeByMove.get(mp.move_id), loss: lossByMove.get(mp.move_id) ?? null });
+            const d = lossByMove.get(mp.move_id);
+            moves.push({ mp, globalIdx, grade: gradeByMove.get(mp.move_id), loss: d?.mwc_loss ?? null, difficulty: d?.difficulty ?? null, avoidable: !!d?.avoidable });
         });
         const result = [];
         for (const [gameNum, moves] of gameMap) {
@@ -1162,11 +1163,12 @@
                                                                 >{$t('match.lossCol')}{lossSort === 'desc' ? ' ▼' : lossSort === 'asc' ? ' ▲' : ''}</button
                                                             ></th
                                                         >
+                                                        <th class="transcript-time" title={$t('match.difficultyColTooltip')}>{$t('match.difficultyCol')}</th>
                                                     {/if}
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {#each ordered(game.moves) as { mp, globalIdx, grade, loss }, mi (globalIdx)}
+                                                {#each ordered(game.moves) as { mp, globalIdx, grade, loss, difficulty, avoidable }, mi (globalIdx)}
                                                     <tr
                                                         class="transcript-row"
                                                         class:cube-row={mp.move_type === 'cube'}
@@ -1215,8 +1217,15 @@
                                                                 class="transcript-time transcript-loss"
                                                                 class:grade-error={grade?.grade === 'error'}
                                                                 class:grade-blunder={grade?.grade === 'blunder'}
-                                                                data-testid="move-loss">{loss === null ? '—' : loss > 0 ? fmtLoss(loss) : '0'}</td
+                                                                data-testid="move-loss"
+                                                                >{loss === null ? '—' : loss > 0 ? fmtLoss(loss) : '0'}{#if avoidable}<span
+                                                                        class="avoidable-mark"
+                                                                        title={$t('match.avoidableTooltip')}
+                                                                        aria-label={$t('match.avoidable')}
+                                                                        data-testid="move-avoidable">!</span
+                                                                    >{/if}</td
                                                             >
+                                                            <td class="transcript-time" data-testid="move-difficulty">{difficulty === null ? '—' : difficulty > 0 ? fmtLoss(difficulty) : '0'}</td>
                                                         {/if}
                                                     </tr>
                                                 {/each}
@@ -1765,6 +1774,11 @@
     }
     .transcript-row.current-move {
         box-shadow: inset 0 0 0 2px var(--color-primary);
+    }
+    .avoidable-mark {
+        margin-left: 3px;
+        font-weight: bold;
+        color: var(--color-danger);
     }
     .transcript-loss.grade-error,
     .transcript-loss.grade-blunder {

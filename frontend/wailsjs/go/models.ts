@@ -6393,6 +6393,8 @@ export namespace storage {
 	    player: number;
 	    decision_type: string;
 	    mwc_loss?: number;
+	    difficulty?: number;
+	    avoidable: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new DecisionLoss(source);
@@ -6406,6 +6408,8 @@ export namespace storage {
 	        this.player = source["player"];
 	        this.decision_type = source["decision_type"];
 	        this.mwc_loss = source["mwc_loss"];
+	        this.difficulty = source["difficulty"];
+	        this.avoidable = source["avoidable"];
 	    }
 	}
 	export class DeclaredBot {

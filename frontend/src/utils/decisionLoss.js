@@ -2,31 +2,71 @@
 // a fraction, as Match.mwc_loss is; a decision the analysis does not price has
 // a null loss and reads as unscored, never as zero.
 
+// The total difficulty (MWC) under which a match's loss-to-difficulty ratio
+// is not given (ADR-0075, storage.DifficultyRatioFloor).
+export const DIFFICULTY_RATIO_FLOOR = 0.005;
+
 /**
- * The decisions of the match in match order, each with its loss, and the running
- * total per player. Indexed like `movePositions`, so the chart shares the
- * time chart's decision axis. A Move absent from `losses` is unscored.
+ * @typedef {{ decisions: number, loss: number, difficulty: number, excess: number, ratio: number | null, avoidable: number }} DifficultySummary
+ * One player's reading of ADR-0075 over the decisions carrying both a loss and
+ * a difficulty, as storage.SummariseDifficulty adds them up.
+ */
+
+/**
+ * The decisions of the match in match order, each with its loss, difficulty
+ * and avoidable mark, the running total per player and the difficulty
+ * summary. Indexed like `movePositions`, so the chart shares the time chart's
+ * decision axis. A Move absent from `losses` is unscored.
  *
  * @param {readonly { move_id: number, player_on_roll: number }[]} movePositions
- * @param {readonly { move_id: number, mwc_loss: number | null }[] | null | undefined} losses
- * @returns {{ items: { index: number, player: 0 | 1, loss: number | null, cum: number }[], totals: [number, number], scored: [number, number], any: boolean }}
+ * @param {readonly { move_id: number, mwc_loss: number | null, difficulty?: number | null, avoidable?: boolean }[] | null | undefined} losses
+ * @returns {{ items: { index: number, player: 0 | 1, loss: number | null, difficulty: number | null, avoidable: boolean, cum: number }[], totals: [number, number], scored: [number, number], any: boolean, difficulty: [DifficultySummary, DifficultySummary], anyDifficulty: boolean }}
  */
 export function lossSeries(movePositions, losses) {
-    const byMove = new Map((losses ?? []).map((d) => [d.move_id, d.mwc_loss]));
+    const byMove = new Map((losses ?? []).map((d) => [d.move_id, d]));
     /** @type {[number, number]} */
     const totals = [0, 0];
     /** @type {[number, number]} */
     const scored = [0, 0];
+    /** @type {[DifficultySummary, DifficultySummary]} */
+    const difficulty = /** @type {[DifficultySummary, DifficultySummary]} */ ([0, 1].map(() => ({ decisions: 0, loss: 0, difficulty: 0, excess: 0, ratio: null, avoidable: 0 })));
     const items = movePositions.map((mp, index) => {
         const player = mp.player_on_roll === 1 ? 1 : 0;
-        const loss = byMove.get(mp.move_id) ?? null;
+        const d = byMove.get(mp.move_id);
+        const loss = d?.mwc_loss ?? null;
+        const diff = loss === null ? null : (d?.difficulty ?? null);
+        const avoidable = !!d?.avoidable;
         if (loss !== null) {
             totals[player] += loss;
             scored[player]++;
+            if (diff !== null) {
+                const s = difficulty[player];
+                s.decisions++;
+                s.loss += loss;
+                s.difficulty += diff;
+                if (avoidable) s.avoidable++;
+            }
         }
-        return { index, player: /** @type {0 | 1} */ (player), loss, cum: totals[player] };
+        return { index, player: /** @type {0 | 1} */ (player), loss, difficulty: diff, avoidable, cum: totals[player] };
     });
-    return { items, totals, scored, any: scored[0] + scored[1] > 0 };
+    for (const s of difficulty) {
+        s.excess = s.loss - s.difficulty;
+        s.ratio = s.difficulty >= DIFFICULTY_RATIO_FLOOR ? s.loss / s.difficulty : null;
+    }
+    const any = scored[0] + scored[1] > 0;
+    return { items, totals, scored, any, difficulty, anyDifficulty: difficulty[0].decisions + difficulty[1].decisions > 0 };
+}
+
+/**
+ * A signed excess as a percentage, "+1.23 %" or "−0.40 %".
+ *
+ * @param {number} excess
+ */
+export function fmtExcess(excess) {
+    if (!Number.isFinite(excess)) return '';
+    const v = (excess * 100).toFixed(2);
+    if (v === '0.00' || v === '-0.00') return '0.00 %';
+    return (excess > 0 ? '+' : '−') + v.replace('-', '') + ' %';
 }
 
 /**
