@@ -212,7 +212,7 @@
                     minAnalysisDepth: persisted.min_analysis_depth ?? 0
                 };
 
-                if (persisted.metric && (persisted.metric === 'pr' || persisted.metric === 'mwc')) {
+                if (persisted.metric && (persisted.metric === 'pr' || persisted.metric === 'mwc' || persisted.metric === 'mwc7')) {
                     statsMetricStore.set(persisted.metric);
                 }
             }

@@ -134,6 +134,7 @@ type phaseCell struct {
 	decisions, errorMP, maxErrorMP    int64
 	blunders, mwcDecisions, positions int64
 	mwcLoss                           float64
+	seat, matchLength                 int
 }
 
 // readPhaseCells reads the selection's phase cells, in key order: the read
@@ -142,11 +143,11 @@ func (s *StatsStore) readPhaseCells(ctx context.Context, where string, args []an
 	var out []phaseCell
 	err := scanEach(ctx, s.DB,
 		`SELECT c.match_id, COALESCE(m.tournament_id, 0), c.decision_type, c.k1, c.decisions, c.error_mp, c.max_error_mp,
-			c.blunders, c.mwc_decisions, c.positions, c.mwc_loss`+cellsJoin+cellKind(where, cellPhase),
+			c.blunders, c.mwc_decisions, c.positions, c.mwc_loss, c.seat, COALESCE(m.match_length, 0)`+cellsJoin+cellKind(where, cellPhase),
 		args, func(r Rows) error {
 			var c phaseCell
 			if err := r.Scan(&c.match, &c.tournament, &c.decisionType, &c.k1, &c.decisions, &c.errorMP, &c.maxErrorMP,
-				&c.blunders, &c.mwcDecisions, &c.positions, &c.mwcLoss); err != nil {
+				&c.blunders, &c.mwcDecisions, &c.positions, &c.mwcLoss, &c.seat, &c.matchLength); err != nil {
 				return err
 			}
 			out = append(out, c)
@@ -379,7 +380,11 @@ func mwcFromCells(phase []phaseCell, cube []cubeCell, result *storage.StatsResul
 	}
 	groups := map[key]*group{}
 	var keys []key
+	units := eloUnits{}
 	for _, c := range phase {
+		if c.mwcDecisions > 0 {
+			units.add(c.match, c.tournament, c.seat, c.matchLength, c.mwcLoss)
+		}
 		k := key{c.match, c.decisionType}
 		g := groups[k]
 		if g == nil {
@@ -428,6 +433,7 @@ func mwcFromCells(phase []phaseCell, cube []cubeCell, result *storage.StatsResul
 	if result.MWCRolling == nil {
 		result.MWCRolling = map[int]float64{}
 	}
+	units.fill(result)
 }
 
 // breakdownsFromCells is computePerPhase, computePerGameType and computePerScore.

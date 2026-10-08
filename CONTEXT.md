@@ -147,6 +147,14 @@ set, and a Position played several ways is scored by the largest of its recorded
 (see Deduplication). The word is never a fixed number: it means whatever this library says.
 _Avoid_: bad move, hall of shame, "0.100" (a value, not a term)
 
+**7-point MWC loss** (*Perte MWC (éq. 7 pts)*):
+The match winning chances a player gave away over a match, every counted decision together
+(checker, cube, take/pass, cubeful), rescaled to a 7-point match: L₇ = L·√(7/N). It counts no
+decisions, so it complements the Performance Rating rather than replacing it; over several
+matches the losses and the √N are summed before the ratio. It carries a 95 % interval and an
+Elo reading against the engine (secondary); a money game has none (ADR-0075).
+_Avoid_: M1 (the research note's label), intrinsic Elo (the secondary reading, not the value)
+
 **Library setting**:
 A preference that belongs to the library rather than to the machine — the two thresholds
 above, the Performance Rating objective — so that the same file counts the same blunders

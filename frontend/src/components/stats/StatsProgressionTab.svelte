@@ -1,7 +1,8 @@
 <script>
     import { loadPositionsFromTournament, loadPositionsFromMatch, openTournamentInPanel, openMatchInPanel } from '../../services/positionLoader.js';
     import { t, translate } from '../../i18n/index.js';
-    import { formatIsoDay, formatUtcDay } from '../../utils/format.js';
+    import { formatIsoDay, formatUtcDay, formatNumber } from '../../utils/format.js';
+    import { mwc7Percent } from '../../utils/mwc7.js';
     import LineChart from './charts/LineChart.svelte';
     import ScatterChart from './charts/ScatterChart.svelte';
     import ContextMenu from '../ContextMenu.svelte';
@@ -77,8 +78,8 @@
 
     let tourDatasets = $derived([
         {
-            label: metric === 'pr' ? 'PR' : 'MWC loss',
-            data: tournaments.map((tour) => (metric === 'pr' ? tour.PR : tour.MWC)),
+            label: metricLabel(),
+            data: tournaments.map((tour) => metricValue(tour)),
             borderColor: PRIMARY,
             backgroundColor: PRIMARY_ALPHA,
             tension: 0.3,
@@ -107,10 +108,10 @@
     // ── Match scatter chart ───────────────────────────────────────────────────
     let matchDatasets = $derived([
         {
-            label: metric === 'pr' ? 'PR per match' : 'MWC loss per match',
+            label: metric === 'mwc7' ? metricLabel() : metric === 'pr' ? 'PR per match' : 'MWC loss per match',
             data: matches.map((m) => ({
                 x: parseDateMs(m.Date),
-                y: metric === 'pr' ? m.PR : m.MWC
+                y: metricValue(m)
             })),
             backgroundColor: PRIMARY_ALPHA,
             borderColor: PRIMARY,
@@ -165,13 +166,29 @@
         return formatIsoDay(dateStr);
     }
 
+    /**
+     * The plotted value of a tournament or match row; null (point skipped) for an unavailable 7-point figure.
+     * @param {any} row
+     */
+    function metricValue(row) {
+        if (metric === 'pr') return row.PR;
+        if (metric === 'mwc7') return mwc7Percent(row.MWC7);
+        return row.MWC;
+    }
+
     function fmtVal(v) {
         if (v == null || isNaN(v)) return '—';
+        if (metric === 'mwc7') return formatNumber(v, { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' %';
         return metric === 'pr' ? v.toFixed(2) : (v * 100).toFixed(2) + '%';
     }
 
-    function yAxisLabel() {
+    function metricLabel() {
+        if (metric === 'mwc7') return translate('mwc7.name');
         return metric === 'pr' ? 'PR' : 'MWC loss';
+    }
+
+    function yAxisLabel() {
+        return metricLabel();
     }
 </script>
 
@@ -226,7 +243,7 @@
                 <!-- Single-tournament: show a card instead of a 1-point curve -->
                 {@const tourn = tournaments[0]}
                 <div class="single-card">
-                    <span class="single-value">{fmtVal(metric === 'pr' ? tourn.PR : tourn.MWC)}</span>
+                    <span class="single-value">{fmtVal(metricValue(tourn))}</span>
                     <span class="single-label">{tourn.Name || $t('stats.tournament')}</span>
                     <span class="single-meta">{fmtDate(tourn.Date)} · {tourn.NumDecisions} {$t('stats.decisions')}</span>
                     {#if metric === 'pr'}

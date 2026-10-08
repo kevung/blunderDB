@@ -555,6 +555,22 @@ export default {
 <p>MWC cost <strong>ei sovellu</strong> <em>money-game</em> -asemiin (joissa ei ole ottelupanosta). Nämä asemat jätetään pois MWC-laskennasta. MWC-arvot riippuvat käytetystä MET:stä; ne eivät ole suoraan vertailukelpoisia eri MET:ejä käyttävien ohjelmistojen välillä.</p>
 </div>
 </blockquote>
+<p><strong>MWC-tappio (7 pisteen ekv.)</strong></p>
+<blockquote>
+<p>Todennäköisyys voittaa ottelu, jonka pelaaja on menettänyt kaikilla päätöksillään — siirrot, tuplauskuutio, kuution ottaminen tai hylkääminen — suhteutettuna 7 pisteen otteluun. <em>N</em> pisteen ottelussa, jossa pelaaja on menettänyt <em>L</em> MWC:tä:</p>
+<blockquote>
+<p>L₇ = L × √(7 / N)</p>
+</blockquote>
+<p>7 pisteen ottelussa tämä on ottelun MWC-tappio, sama jonka eXtreme Gammon näyttää. Neliöjuuri tulee FIBS-kaavan mallista: yhtä vahvalla pelaajalla tappio kasvaa ottelun pituuden neliöjuuren mukaan. 7 pistettä on vertailupituus, koska se on turnauksissa yleisin.</p>
+<p>Se luetaan täydelliseen pelaajaan nähden menetettynä osuutena ottelusta: 12,3 % tarkoittaa, että 50 %:n voittomahdollisuuden sijaan moottoria vastaan pelaajalla oli enää 37,7 % 7 pisteen ottelussa. Työkaluvihje antaa saman Elo-lukuna moottoria vastaan kääntämällä FIBS-kaavan: D = (2000 / √7) × log₁₀(q / (1 − q)), missä q = 0,5 − L₇. 49 %:n tappion jälkeen kaavalla ei ole enää äärellistä arvoa: näytetty Elo on silloin yläraja (»≤«). Kumpikin luku asettaa pelaajat samaan järjestykseen.</p>
+<p>Se täydentää PR:ää korvaamatta sitä: PR jakaa virheet päätösten lukumäärällä, ja tämä lukumäärä riippuu siitä, mitä päätöksenä pidetään (pakotetut siirrot, ilmeiset kuutiopäätökset). MWC-tappio ei laske päätöksiä: kukin virhe painaa sen, mitä se maksoi tilanteessa, jossa se tehtiin.</p>
+<p>Usean ottelun yli (pelaajan tai turnauksen tilastot) tappiot ja pituuksien neliöjuuret lasketaan yhteen ennen suhdetta: L₇ = √7 × ΣL / Σ√N. 7 pisteen ottelu painaa siis enemmän kuin 1 pisteen ottelu, ja yksittäinen ottelu antaa oman arvonsa.</p>
+<p>Yksittäinen ottelu on hyvin kohinainen: muutama iso virhe riittää kaksinkertaistamaan arvon. Jokaisen arvon mukana on sen 95 %:n luottamusväli, joka lasketaan otantaa uusimalla ottelun pelit (tai yhteenvedon ottelut). Välin olemassaoloon tarvitaan vähintään kaksi peliä tai kaksi ottelua. Älä järjestä pelaajia yhden ottelun perusteella.</p>
+<div class="admonition caution">
+<p><em>Money-game</em>-pelillä ei ole ottelun pituutta: MWC-tappiota (7 pisteen ekv.) ei ole siinä määritelty, ja paneeli ilmoittaa sen numeron näyttämisen sijaan. Kuten MWC-kustannus, se riippuu MET:stä.</p>
+</div>
+<p>Painikkeen kolmas vaihtoehto, <strong>MWC 7 pts</strong>, piirtää tämän menetyksen Kehitys-välilehdelle; välilehdet, joilla ei ole 7 pisteen vastinetta, näyttävät MWC costin.</p>
+</blockquote>
 <p>PR ↔ MWC -vaihto on välitön: backend ei suorita uudelleenlaskentaa.</p>
 <h4>HTML-raportti</h4>
 <p>Paneelin otsikon <strong>HTML-raportti</strong>-painike tuottaa <strong>itsenäisen</strong> asiakirjan: yksi tiedosto, ei ulkoista kuvaa, ei etätyylitiedostoa, ei skriptiä. Kaaviot ovat upotettua SVG:tä, piirretty samalla piirtimellä kuin lauta näytöllä, sinun paletillasi. Se aukeaa missä tahansa selaimessa, kulkee sähköpostitse ja <strong>tulostuu PDF:ksi itse selaimesta</strong> — mikä säästää PDF-generaattorin mukaan ottamiselta sellaisen tuottamiseen, joka kaikilla jo on.</p>

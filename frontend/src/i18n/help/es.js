@@ -555,6 +555,22 @@ export default {
 <p>El MWC cost <strong>no es aplicable</strong> a las posiciones de <em>money-game</em> (sin apuesta de match). Esas posiciones se excluyen del cálculo de MWC. Los valores de MWC dependen de la MET utilizada; no son directamente comparables entre programas que usan METs diferentes.</p>
 </div>
 </blockquote>
+<p><strong>Pérdida de MWC (eq. 7 pts)</strong></p>
+<blockquote>
+<p>La probabilidad de ganar el partido que un jugador ha perdido en el conjunto de sus decisiones — fichas, cubo, aceptar o rechazar, con cubo — reducida a un partido a 7 puntos. Para un partido a <em>N</em> puntos en el que el jugador ha perdido <em>L</em> de MWC:</p>
+<blockquote>
+<p>L₇ = L × √(7 / N)</p>
+</blockquote>
+<p>Para un partido a 7 puntos, es la pérdida de MWC del partido, la que muestra eXtreme Gammon. La raíz procede del modelo de la fórmula FIBS: a igual fuerza, la pérdida de un jugador crece como la raíz de la longitud del partido. 7 puntos es la longitud de referencia porque es la más habitual en los torneos.</p>
+<p>Se lee como la parte del partido perdida frente a un jugador perfecto: 12,3 % significa que, en lugar de un 50 % de probabilidades contra el motor, el jugador solo tenía un 37,7 % en un partido a 7 puntos. La información emergente da la lectura en Elo frente al motor, invirtiendo la fórmula FIBS: D = (2000 / √7) × log₁₀(q / (1 − q)), con q = 0,5 − L₇. Más allá de una pérdida del 49 %, la fórmula ya no tiene un valor finito: el Elo mostrado es entonces un techo («≤»). Las dos cifras ordenan a los jugadores del mismo modo.</p>
+<p>Complementa el PR sin sustituirlo: el PR divide los errores por un número de decisiones, y ese número depende de lo que se cuente como decisión (jugadas forzadas, decisiones de cubo evidentes). La pérdida de MWC no cuenta ninguna decisión: cada error pesa lo que costó en el marcador en el que se cometió.</p>
+<p>En varios partidos (estadísticas de un jugador o de un torneo), las pérdidas y las raíces de las longitudes se suman antes de la razón: L₇ = √7 × ΣL / Σ√N. Un partido a 7 puntos pesa por tanto más que un partido a 1 punto, y un solo partido da su propio valor.</p>
+<p>Un partido aislado tiene mucho ruido: unos pocos errores graves bastan para duplicar el valor. Cada valor va acompañado de su intervalo al 95 %, calculado remuestreando las partidas del partido (o los partidos de un agregado). Se necesitan al menos dos partidas, o dos partidos, para que exista un intervalo. No clasifique a los jugadores a partir de un solo partido.</p>
+<div class="admonition caution">
+<p>Una partida <em>money-game</em> no tiene longitud de partido: la pérdida de MWC (eq. 7 pts) no está definida y el panel lo indica en lugar de mostrar un número. Como el coste de MWC, depende de la MET.</p>
+</div>
+<p>La tercera opción del botón, <strong>MWC 7 pts</strong>, traza esta pérdida en la pestaña Progresión; las pestañas sin equivalente a 7 puntos conservan el MWC cost.</p>
+</blockquote>
 <p>El cambio PR ↔ MWC es instantáneo: no se realiza ningún recálculo en el backend.</p>
 <h4>El informe HTML</h4>
 <p>El botón <strong>Informe HTML</strong> de la cabecera del panel produce un documento <strong>autónomo</strong>: un solo fichero, sin imagen externa, sin hoja de estilo remota, sin script. Los diagramas son SVG en línea, dibujados por el mismo renderizador que el tablero en pantalla, con su paleta. Se abre en cualquier navegador, viaja por correo electrónico, y <strong>se imprime en PDF desde el propio navegador</strong> — lo que evita incorporar un generador de PDF para producir lo que todo el mundo ya tiene.</p>

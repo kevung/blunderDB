@@ -2630,6 +2630,57 @@ tous les onglets.
      Les valeurs MWC dépendent de la MET utilisée ; elles ne sont pas
      directement comparables entre logiciels utilisant des METs différentes.
 
+.. _perte_mwc_7pts:
+
+**Perte MWC (éq. 7 pts)**
+
+  La probabilité de gagner le match qu'un joueur a perdue sur l'ensemble de ses
+  décisions — pions, videau, prise ou refus, avec videau — ramenée à un match
+  en 7 points. Pour un match en *N* points où le joueur a perdu *L* de MWC :
+
+     L₇ = L × √(7 / N)
+
+  Pour un match en 7 points, c'est la perte de MWC du match, celle
+  qu'affiche eXtreme Gammon. La racine vient du modèle de la formule FIBS : à
+  force égale, la perte d'un joueur croît comme la racine de la longueur du
+  match. 7 points est la longueur de référence parce que c'est la plus
+  courante en tournoi.
+
+  Elle se lit comme la part de match perdue face à un joueur parfait : 12,3 %
+  veut dire qu'au lieu de 50 % de chances contre le moteur, le joueur n'en
+  avait plus que 37,7 % sur un match en 7 points. L'infobulle en donne la
+  lecture en Elo face au moteur, en inversant la formule FIBS :
+  D = (2000 / √7) × log₁₀(q / (1 − q)), avec
+  q = 0,5 − L₇. Au-delà d'une perte de 49 %, la formule n'a plus
+  de valeur finie : l'Elo affiché est alors un plafond (« ≤ »). Les deux
+  chiffres classent les joueurs dans le même ordre.
+
+  Elle complète le PR sans le remplacer : le PR divise les erreurs par un
+  nombre de décisions, et ce nombre dépend de ce que l'on compte comme
+  décision (coups forcés, décisions de videau évidentes). La perte MWC ne
+  compte aucune décision : chaque erreur pèse ce qu'elle a coûté au score où
+  elle a été commise.
+
+  Sur plusieurs matchs (statistiques d'un joueur, d'un tournoi), les pertes et
+  les racines des longueurs s'additionnent avant le rapport :
+  L₇ = √7 × ΣL / Σ√N. Un match en 7 points
+  pèse donc plus qu'un match en 1 point, et un seul match donne sa propre
+  valeur.
+
+  Un match isolé est très bruité : quelques grosses erreurs suffisent à le
+  faire varier du simple au double. Chaque valeur est accompagnée de son
+  intervalle à 95 %, calculé en rééchantillonnant les parties du match (ou
+  les matchs d'un agrégat). Il faut au moins deux parties, ou deux matchs,
+  pour qu'un intervalle existe. Ne classez pas des joueurs sur un seul match.
+
+  .. caution::
+     Une partie *money-game* n'a pas de longueur de match : la perte MWC
+     (éq. 7 pts) n'y est pas définie et le panneau l'indique au lieu
+     d'afficher un nombre. Comme le MWC cost, elle dépend de la MET.
+
+  Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans l'onglet
+  Progression ; les onglets sans équivalent 7 points gardent le MWC cost.
+
 Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est
 effectué.
 

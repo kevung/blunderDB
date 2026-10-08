@@ -57,6 +57,8 @@ type TournamentStats struct {
 	PR           float64 `json:"PR"`
 	MWC          float64 `json:"MWC"`
 	NumDecisions int     `json:"NumDecisions"`
+	// MWC7 pools the row's (match, player) units (ADR-0075).
+	MWC7 domain.MWC7 `json:"MWC7"`
 }
 
 // MatchStats holds aggregated stats for a single match.
@@ -67,6 +69,8 @@ type MatchStats struct {
 	PR           float64 `json:"PR"`
 	MWC          float64 `json:"MWC"`
 	NumDecisions int     `json:"NumDecisions"`
+	// MWC7 pools the row's (match, player) units (ADR-0075).
+	MWC7 domain.MWC7 `json:"MWC7"`
 }
 
 // CubeActionStats holds aggregated stats grouped by cube action.
@@ -100,16 +104,19 @@ type BlunderEntry struct {
 
 // StatsResult contains all computed statistics for the given filter.
 type StatsResult struct {
-	Totals              StatsTotals       `json:"Totals"`
-	PRGlobal            float64           `json:"PRGlobal"`
-	PRChecker           float64           `json:"PRChecker"`
-	PRCube              float64           `json:"PRCube"`
-	PRRolling           map[int]float64   `json:"PRRolling"`    // keyed by N: 5,10,50,100,250,500,1000
-	MWCGlobal           float64           `json:"MWCGlobal"`    // sum of MWC losses across all match-play decisions
-	MWCChecker          float64           `json:"MWCChecker"`   // MWC loss from checker play errors
-	MWCCube             float64           `json:"MWCCube"`      // MWC loss from cube action errors
-	MWCRolling          map[int]float64   `json:"MWCRolling"`   // rolling MWC loss over N most-recent decisions (same keys as PRRolling)
-	MWCAvailable        bool              `json:"MWCAvailable"` // true if at least one match-play decision contributed
+	Totals       StatsTotals     `json:"Totals"`
+	PRGlobal     float64         `json:"PRGlobal"`
+	PRChecker    float64         `json:"PRChecker"`
+	PRCube       float64         `json:"PRCube"`
+	PRRolling    map[int]float64 `json:"PRRolling"`    // keyed by N: 5,10,50,100,250,500,1000
+	MWCGlobal    float64         `json:"MWCGlobal"`    // sum of MWC losses across all match-play decisions
+	MWCChecker   float64         `json:"MWCChecker"`   // MWC loss from checker play errors
+	MWCCube      float64         `json:"MWCCube"`      // MWC loss from cube action errors
+	MWCRolling   map[int]float64 `json:"MWCRolling"`   // rolling MWC loss over N most-recent decisions (same keys as PRRolling)
+	MWCAvailable bool            `json:"MWCAvailable"` // true if at least one match-play decision contributed
+	// MWC7 pools every (match, player) unit of the selection
+	// (ADR-0075); unavailable when the selection holds no match play.
+	MWC7                domain.MWC7       `json:"MWC7"`
 	SnowieGlobal        float64           `json:"SnowieGlobal"` // Snowie ER: 500×Σerr / (total checker moves, both players, forced included)
 	PerTournament       []TournamentStats `json:"PerTournament"`
 	PerMatch            []MatchStats      `json:"PerMatch"`
@@ -376,6 +383,8 @@ func (d *Database) applyMatchBadges(matches []Match) error {
 			matches[i].MWCLoss = b.MWCLoss
 			matches[i].PR2 = b.PR2
 			matches[i].MWCLoss2 = b.MWCLoss2
+			matches[i].MWC7 = b.MWC7
+			matches[i].MWC7P2 = b.MWC7P2
 		}
 	}
 	return nil
@@ -396,6 +405,7 @@ func (d *Database) applyTournamentBadges(tournaments []Tournament) error {
 			tournaments[i].PR = b.PR
 			tournaments[i].MWCLoss = b.MWCLoss
 			tournaments[i].RefPlayer = b.RefPlayer
+			tournaments[i].MWC7 = b.MWC7
 		}
 	}
 	return nil
@@ -410,6 +420,8 @@ type MatchPlayerDetailStats struct {
 	TotalEquityError float64 `json:"total_equity_error"` // sum of errors in EMG
 	PR               float64 `json:"pr"`
 	MWCLoss          float64 `json:"mwc_loss"`
+	// MWC7 is MWCLoss rescaled to seven points (ADR-0075).
+	MWC7 domain.MWC7 `json:"mwc7"`
 
 	// Checker play
 	CheckerDecisions   int     `json:"checker_decisions"`

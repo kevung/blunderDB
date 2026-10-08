@@ -3035,5 +3035,11 @@
             "answer": "Il Bot raddoppia: accetta o rifiuta sulla tavola.",
             "move": "Clicca su una pedina per giocare il dado di sinistra; il clic destro annulla la mossa, poi un clic sui dadi o Invio la convalida."
         }
+    },
+    "mwc7": {
+        "name": "Perdita MWC (eq. 7 pt)",
+        "short": "MWC 7 pt",
+        "tooltip": "MWC perso contro un giocatore perfetto, riportato a un match a 7 punti (L × √(7/N)); intervallo al 95 % per ricampionamento delle partite; {elo} Elo contro il motore",
+        "unavailable": "Il gioco a denaro non ha una lunghezza di match: l'equivalente a 7 punti non è definito"
     }
 }

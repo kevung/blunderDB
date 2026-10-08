@@ -55,7 +55,22 @@ function resetStores() {
 }
 
 /** @param {Partial<import('../../wailsjs/go/models').domain.Tournament>} fields */
-const aTournament = (fields) => ({ id: 0, name: '', date: '', location: '', sortOrder: 0, createdAt: '', updatedAt: '', matchCount: 0, comment: '', pr: 0, mwc_loss: 0, ref_player: '', ...fields });
+const aTournament = (fields) =>
+    /** @type {import('../../wailsjs/go/models').domain.Tournament} */ ({
+        id: 0,
+        name: '',
+        date: '',
+        location: '',
+        sortOrder: 0,
+        createdAt: '',
+        updatedAt: '',
+        matchCount: 0,
+        comment: '',
+        pr: 0,
+        mwc_loss: 0,
+        ref_player: '',
+        ...fields
+    });
 
 const SAMPLE_TOURNAMENTS = [
     aTournament({ id: 1, name: 'Blunder Cup', matchCount: 2, date: '2026-01-01', location: 'Paris', pr: 4.5, mwc_loss: 0.02 }),

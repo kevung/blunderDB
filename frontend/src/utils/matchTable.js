@@ -2,10 +2,12 @@
 // dice formatters. Extracted from MatchPanel.svelte so they can be unit-tested
 // without mounting the component (they close over no component state).
 
+import { fmtMwc7Full, mwc7Percent, mwc7Tooltip } from './mwc7.js';
+
 /** @typedef {Partial<import('../../wailsjs/go/models').domain.Match>} Match */
 /** @typedef {import('../../wailsjs/go/models').database.MatchPlayerDetailStats} MatchPlayerStats */
 /** @typedef {import('../../wailsjs/go/models').storage.MoveGrade} MoveGrade */
-/** @typedef {'player1' | 'player2' | 'date' | 'length' | 'tournament' | 'pr' | 'mwc'} MatchColumn */
+/** @typedef {'player1' | 'player2' | 'date' | 'length' | 'tournament' | 'pr' | 'mwc' | 'mwc7'} MatchColumn */
 /** @typedef {'asc' | 'desc'} SortDirection */
 
 /**
@@ -45,6 +47,8 @@ export function getSortValue(match, column) {
             return match.pr || 0;
         case 'mwc':
             return match.mwc_loss || 0;
+        case 'mwc7':
+            return mwc7Percent(match.mwc7) ?? /** @type {any} */ (null);
         default:
             return '';
     }
@@ -124,13 +128,14 @@ export const fmtErrorsBlunders = (errors, blunders) => `${errors} (${blunders})`
 // ({ label, fmt, … }; fmt maps one player's stats to its cell). Labels are i18n keys.
 // bullet = leading "•"; sub = indented sub-metric; valClass = extra value-cell class.
 /**
- * @typedef {{ section: string } | { label: string, bullet?: boolean, sub?: boolean, valClass?: string, fmt: (p: MatchPlayerStats) => string }} MatchStatRow
+ * @typedef {{ section: string, title?: undefined } | { label: string, bullet?: boolean, sub?: boolean, valClass?: string, fmt: (p: MatchPlayerStats) => string, title?: (p: MatchPlayerStats) => string }} MatchStatRow
  */
 
 /** @type {MatchStatRow[]} */
 export const MATCH_STAT_ROWS = [
     { section: 'match.performanceRating' },
     { label: 'match.overallPr', bullet: true, valClass: 'pr-val', fmt: (p) => fmtPR(p.pr, p.total_decisions) },
+    { label: 'mwc7.name', bullet: true, fmt: (p) => fmtMwc7Full(p.mwc7), title: (p) => mwc7Tooltip(p.mwc7) },
     { label: 'match.checkerPlayPr', bullet: true, fmt: (p) => fmtPR(p.pr_checker, p.checker_decisions) },
     { label: 'match.cubePlayPr', bullet: true, fmt: (p) => fmtPR(p.pr_cube, p.double_decisions + p.take_decisions) },
 
