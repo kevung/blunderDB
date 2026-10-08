@@ -44,6 +44,9 @@ const DYNAMIC_PREFIXES = [
     'cube.verdicts.',
     'config.bearoffVerdict_',
     'stats.grade.',
+    'tournamentReview.verdict_', // TournamentReview.svelte: the verdict of a comparison
+    'tournamentReview.pressure_', // the pressure cells, by key
+    'tournamentReview.clock_', // the pace cells, by key
     'config.theme_',
     'config.thresholdPreset_',
     'explain.',

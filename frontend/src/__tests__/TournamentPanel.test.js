@@ -31,10 +31,11 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveLastVisitedPosition: vi.fn().mockResolvedValue(undefined),
     UpdateMatchComment: vi.fn().mockResolvedValue(undefined),
     UpdateTournamentComment: vi.fn().mockResolvedValue(undefined),
-    ReorderTournamentMatches: vi.fn().mockResolvedValue(undefined)
+    ReorderTournamentMatches: vi.fn().mockResolvedValue(undefined),
+    GetTournamentReview: vi.fn().mockResolvedValue(null)
 }));
 
-import { GetAllTournaments, CreateTournament, DeleteTournament, UpdateTournament, GetTournamentMatches, ListMatches } from '../../wailsjs/go/database/Database.js';
+import { GetAllTournaments, CreateTournament, DeleteTournament, UpdateTournament, GetTournamentMatches, ListMatches, GetTournamentReview } from '../../wailsjs/go/database/Database.js';
 
 import TournamentPanel from '../components/TournamentPanel.svelte';
 import { openPanels, PANEL, statusBarTextStore } from '../stores/uiStore.js';
@@ -193,6 +194,19 @@ describe('TournamentPanel — list view', () => {
         expect(ListMatches).toHaveBeenCalledWith(expect.objectContaining({ Unassigned: true }));
         expect(GetTournamentMatches).toHaveBeenCalledWith(1);
         expect(await screen.findByText('Alice')).toBeTruthy();
+    });
+
+    test('the review toggle loads the review of the most present player', async () => {
+        vi.mocked(GetTournamentMatches).mockResolvedValue(/** @type {any} */ ([{ id: 501, player1_name: 'Alice', player2_name: 'Bob', match_length: 7, comment: '' }]));
+        renderOpen();
+        await fireEvent.dblClick(/** @type {HTMLElement} */ ((await screen.findByText('Blunder Cup')).closest('tr')));
+        await screen.findByText('Alice');
+        expect(GetTournamentReview).not.toHaveBeenCalled();
+
+        await fireEvent.click(screen.getByTestId('tournament-review-toggle'));
+
+        await vi.waitFor(() => expect(GetTournamentReview).toHaveBeenCalledWith(1, ''));
+        expect(screen.getByTestId('tournament-review')).toBeTruthy();
     });
 
     test('a tournament row is reachable by Tab and Enter opens it; Enter on the rename button still renames', async () => {

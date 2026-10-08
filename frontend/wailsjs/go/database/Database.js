@@ -618,10 +618,6 @@ export function GetMatchDecisionLosses(arg1) {
   return window['go']['database']['Database']['GetMatchDecisionLosses'](arg1);
 }
 
-export function GetMatchReview(arg1) {
-  return window['go']['database']['Database']['GetMatchReview'](arg1);
-}
-
 export function GetMatchDetailStats(arg1) {
   return window['go']['database']['Database']['GetMatchDetailStats'](arg1);
 }
@@ -636,6 +632,10 @@ export function GetMatchMovePositions(arg1) {
 
 export function GetMatchOrigin(arg1) {
   return window['go']['database']['Database']['GetMatchOrigin'](arg1);
+}
+
+export function GetMatchReview(arg1) {
+  return window['go']['database']['Database']['GetMatchReview'](arg1);
 }
 
 export function GetMatchTimeSummary(arg1) {
@@ -700,6 +700,10 @@ export function GetTimeErrors() {
 
 export function GetTournamentMatches(arg1) {
   return window['go']['database']['Database']['GetTournamentMatches'](arg1);
+}
+
+export function GetTournamentReview(arg1, arg2) {
+  return window['go']['database']['Database']['GetTournamentReview'](arg1, arg2);
 }
 
 export function GradeQuizChecker(arg1, arg2) {
