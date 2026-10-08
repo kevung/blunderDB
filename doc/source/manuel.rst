@@ -2092,7 +2092,12 @@ barre du brouillon propose **Fichier…** pour choisir une vidéo sur le disque,
 source. Tant qu'aucune source n'est attachée, le panneau reste tel qu'il est
 décrit plus haut : ni volet, ni touche de plus. Une fois la source attachée, la
 vidéo s'affiche à côté du plateau. Un fichier introuvable se relocalise depuis
-la vidéo par **Choisir le fichier…**.
+la vidéo par **Choisir le fichier…**. Sur une vidéo YouTube déjà attachée,
+**Lien YouTube…** s'ouvre sur son adresse, sélectionnée : un collage la remplace.
+Un brouillon rouvert retrouve sa vidéo en pause là où on l'avait laissée sur ce
+poste, à défaut quelques secondes avant son dernier repère ; le curseur reste en
+fin de transcript, prêt pour la saisie, et ne suit la lecture qu'une fois
+qu'elle entre dans une autre action.
 
 **La vidéo à côté du plateau.** Tant qu'une vidéo est ouverte, la zone du
 plateau se partage : la vidéo à gauche, le plateau à droite, séparés par une
@@ -2143,7 +2148,7 @@ coup et la durée (« jet 12:34, coup 12:51, 17 s »), et le panneau d'analyse
 affiche la durée de l'action du curseur comme pour un match joué en Duel. Un
 repère antérieur à celui qui le précède est marqué « repère à rebours », comme
 toute incohérence, et laisse inconnues les durées qui en dépendent. Placer le
-curseur sur une cellule (clic, *h*, *l*) amène la vidéo une seconde avant le
+curseur sur une cellule (clic sur le coup ou sur sa durée, *h*, *l*) amène la vidéo une seconde avant le
 jet de cette action, ou avant son action si le jet n'a pas d'instant ; un
 lecteur en pause le reste.
 
@@ -2152,8 +2157,8 @@ Dès que le brouillon a une vidéo ou un repère, le transcript gagne une colonn
 (en minutes et secondes au-delà d'une minute), suivie, après un point médian,
 de la décision de videau qui précède le jet. Un coup sans instant d'action
 n'est pas laissé vide : sa durée s'estime du jet au premier instant du coup
-suivant (son jet, ou un geste de videau), et s'affiche en italique précédée de
-« ≈ ». C'est un majorant, qui compte le ramassage et le lancer des dés. Aucune
+suivant (son jet, ou un geste de videau), et s'affiche comme une durée mesurée ;
+son infobulle la dit estimée. C'est un majorant, qui compte le ramassage et le lancer des dés. Aucune
 décision de videau ne s'estime : sans l'instant d'action du coup précédent, sa
 durée reste inconnue, et la barre d'état propose alors *v* sur ce coup pour la
 mesurer. Pendant la lecture, le curseur
