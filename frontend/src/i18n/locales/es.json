@@ -1949,6 +1949,7 @@
         "kindCollection": "Colección",
         "kindComment": "Comentario",
         "kindAnkiCard": "Tarjeta Anki",
+        "kindMatch": "Partido",
         "restored": "Restaurado: {what}",
         "restoreFailed": "No se pudo restaurar: {error}"
     },

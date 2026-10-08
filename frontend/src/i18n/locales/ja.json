@@ -1949,6 +1949,7 @@
         "kindCollection": "コレクション",
         "kindComment": "コメント",
         "kindAnkiCard": "Anki カード",
+        "kindMatch": "マッチ",
         "restored": "復元しました：{what}",
         "restoreFailed": "復元できませんでした：{error}"
     },

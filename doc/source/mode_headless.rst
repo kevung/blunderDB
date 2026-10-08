@@ -1197,10 +1197,10 @@ a été valorisée avec une autre table que la courante — elle est alors écar
 des comparaisons.
 
 La :ref:`corbeille <corbeille>` a sa famille ``trash``.
-``trash.deletePosition``, ``trash.deleteCollection`` et ``trash.deleteComment``
-suppriment en gardant de quoi restaurer, et rendent l'``id`` de l'entrée de
-corbeille ; ``positions.delete`` et les autres suppressions restent
-définitives. ``trash.list`` (``kind``, ``limit``, ``offset``) et
+``trash.deletePosition``, ``trash.deleteCollection``, ``trash.deleteComment``
+et ``trash.deleteMatch`` suppriment en gardant de quoi restaurer, et rendent
+l'``id`` de l'entrée de corbeille ; ``positions.delete``, ``matches.delete`` et
+les autres suppressions restent définitives. ``trash.list`` (``kind``, ``limit``, ``offset``) et
 ``trash.count`` la lisent, ``trash.restore`` (``{"id": N}``) remet une entrée
 en place et rend l'id de ce qui revient, ``trash.discard`` en efface une, et
 ``trash.empty`` efface les entrées plus anciennes que ``olderThanDays`` jours

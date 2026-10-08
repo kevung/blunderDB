@@ -31,27 +31,10 @@ import (
 // membership: those rows belong to the collection and the deck, and the
 // cascade removed the position from them.
 func Position(ctx context.Context, s storage.Stores, scope string, positionID int64) (int64, error) {
-	pos, err := s.Positions().Load(ctx, scope, positionID)
+	payload, err := snapshotPosition(ctx, s, scope, positionID)
 	if err != nil {
 		return 0, err
 	}
-	payload := domain.TrashPositionPayload{Position: *pos}
-	switch a, err := s.Analyses().Load(ctx, scope, positionID); {
-	case err == nil:
-		payload.Analysis = a
-		if payload.MET, err = s.MatchEquityTables().OfAnalysis(ctx, scope, positionID); err != nil {
-			return 0, err
-		}
-	case !errors.Is(err, storage.ErrNotFound):
-		return 0, err
-	}
-	for c, err := range s.Comments().ByPosition(ctx, scope, positionID) {
-		if err != nil {
-			return 0, err
-		}
-		payload.Comments = append(payload.Comments, *c)
-	}
-
 	id, err := put(ctx, s, scope, domain.TrashPosition, fmt.Sprintf("Position %d", positionID), payload)
 	if err != nil {
 		return 0, err
@@ -65,6 +48,32 @@ func Position(ctx context.Context, s storage.Stores, scope string, positionID in
 		return 0, err
 	}
 	return id, nil
+}
+
+// snapshotPosition reads a position with what cascades off it: its analysis,
+// the table that analysis was valued with, and its comments.
+func snapshotPosition(ctx context.Context, s storage.Stores, scope string, positionID int64) (domain.TrashPositionPayload, error) {
+	pos, err := s.Positions().Load(ctx, scope, positionID)
+	if err != nil {
+		return domain.TrashPositionPayload{}, err
+	}
+	payload := domain.TrashPositionPayload{Position: *pos}
+	switch a, err := s.Analyses().Load(ctx, scope, positionID); {
+	case err == nil:
+		payload.Analysis = a
+		if payload.MET, err = s.MatchEquityTables().OfAnalysis(ctx, scope, positionID); err != nil {
+			return domain.TrashPositionPayload{}, err
+		}
+	case !errors.Is(err, storage.ErrNotFound):
+		return domain.TrashPositionPayload{}, err
+	}
+	for c, err := range s.Comments().ByPosition(ctx, scope, positionID) {
+		if err != nil {
+			return domain.TrashPositionPayload{}, err
+		}
+		payload.Comments = append(payload.Comments, *c)
+	}
+	return payload, nil
 }
 
 // Collection deletes a collection after snapshotting it and the ids of the
@@ -137,7 +146,7 @@ func findComment(ctx context.Context, s storage.Stores, scope string, commentID 
 // Restore puts one entry back and removes it from the trash.
 //
 // It returns the id of what was restored, whose meaning depends on the kind: a
-// position id, a collection id, a comment id. A restore that cannot happen —
+// position id, a collection id, a comment id, a match id. A restore that cannot happen —
 // the position a comment belonged to is itself gone — fails and leaves the
 // trash entry alone, so nothing is lost by trying. A Rencontre is not restored
 // here (ErrRencontreByService).
@@ -154,6 +163,8 @@ func Restore(ctx context.Context, s storage.Stores, scope string, trashID int64)
 		restored, err = restoreCollection(ctx, s, scope, entry)
 	case domain.TrashComment:
 		restored, err = restoreComment(ctx, s, scope, entry)
+	case domain.TrashMatch:
+		restored, err = restoreMatch(ctx, s, scope, entry)
 	case domain.TrashRencontre:
 		err = fmt.Errorf("trash entry %d: %w", trashID, ErrRencontreByService)
 	default:
@@ -174,6 +185,12 @@ func restorePosition(ctx context.Context, s storage.Stores, scope string, entry 
 	if err := json.Unmarshal(entry.Payload, &payload); err != nil {
 		return 0, fmt.Errorf("trash entry %d: %w", entry.ID, err)
 	}
+	return restorePositionPayload(ctx, s, scope, payload)
+}
+
+// restorePositionPayload re-Saves a snapshotted position and puts back its
+// analysis and comments; see restorePosition.
+func restorePositionPayload(ctx context.Context, s storage.Stores, scope string, payload domain.TrashPositionPayload) (int64, error) {
 	pos := payload.Position
 	id, err := s.Positions().Save(ctx, scope, &pos)
 	if err != nil {

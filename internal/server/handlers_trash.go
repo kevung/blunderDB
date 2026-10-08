@@ -48,6 +48,10 @@ func (s *Server) trashRoutes() []route {
 			id, err := trash.Collection(ctx, st(), scope, req.ID)
 			return idResp{ID: id}, err
 		})},
+		{http.MethodPost, "/v1/trash.deleteMatch", rpc(func(ctx context.Context, scope string, req idReq) (idResp, error) {
+			id, err := trash.Match(ctx, st(), scope, req.ID)
+			return idResp{ID: id}, err
+		})},
 		{http.MethodPost, "/v1/trash.deleteComment", rpc(func(ctx context.Context, scope string, req idReq) (idResp, error) {
 			id, err := trash.CommentEntry(ctx, st(), scope, req.ID)
 			return idResp{ID: id}, err

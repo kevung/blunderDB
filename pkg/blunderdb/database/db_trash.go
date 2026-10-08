@@ -47,8 +47,21 @@ func (d *Database) TrashCommentEntry(commentID int64) (int64, error) {
 	return trash.CommentEntry(context.Background(), d.store, "", commentID)
 }
 
+// TrashMatch deletes a match after snapshotting it whole — games, moves,
+// analyses, and the positions its moves reached — and returns the trash
+// entry's id. The positions nothing else holds are purged as by DeleteMatch.
+func (d *Database) TrashMatch(matchID int64) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return 0, fmt.Errorf("no database is currently open")
+	}
+	return trash.Match(context.Background(), d.store, "", matchID)
+}
+
 // RestoreFromTrash puts one entry back and removes it from the trash. The id
-// it returns is a position, collection or comment id, depending on the kind.
+// it returns is a position, collection, comment or match id, depending on the kind.
 //
 // A restored Rencontre attaches its events again, and they come back on the room's tables as
 // attaching aligns them: detached, each kept its own.

@@ -1949,6 +1949,7 @@
         "kindCollection": "Kokoelma",
         "kindComment": "Kommentti",
         "kindAnkiCard": "Anki-kortti",
+        "kindMatch": "Ottelu",
         "restored": "Palautettu: {what}",
         "restoreFailed": "Palautus ei onnistunut: {error}"
     },

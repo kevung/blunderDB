@@ -1949,6 +1949,7 @@
         "kindCollection": "Коллекция",
         "kindComment": "Комментарий",
         "kindAnkiCard": "Карточка Anki",
+        "kindMatch": "Матч",
         "restored": "Восстановлено: {what}",
         "restoreFailed": "Не удалось восстановить: {error}"
     },

@@ -2215,13 +2215,13 @@ recherche, aucune statistique, aucune règle de rétention.
 * ``empty [--older-than J]`` — Vide la corbeille, ou seulement ce qui a plus de
   J jours.
 * ``delete --kind K --id N`` — Supprime un objet **par la corbeille**, pour que
-  le geste soit annulable. ``K`` vaut ``position``, ``collection`` ou
-  ``comment``.
+  le geste soit annulable. ``K`` vaut ``position``, ``collection``,
+  ``comment`` ou ``match``.
 
 **Options communes:** ``--db`` (obligatoire), ``--kind``, ``--limit``
 (défaut 50), ``--format`` (``text`` ou ``json``). Pour ``list``, ``--kind``
 restreint la liste à un type d'objet : ``position``, ``collection``,
-``comment`` ou ``anki_card``.
+``comment``, ``match`` ou ``anki_card``.
 
 .. note:: ``blunderdb delete`` supprime toujours **sans** filet : un script qui
    supprime une position s'attend à ce qu'elle disparaisse, et laisser un
@@ -2231,7 +2231,9 @@ restreint la liste à un type d'objet : ``position``, ``collection``,
 Une restauration de position repasse par la déduplication Zobrist : elle ne
 crée jamais de doublon, mais elle ne rend pas son ancien identifiant — la ligne
 d'origine n'existe plus. Une position restaurée est la même position, sous un
-nouveau numéro.
+nouveau numéro. Un match restauré revient de même sous un nouveau numéro,
+avec ses parties, ses coups, ses analyses et ses positions ; il est refusé si le
+même match a été importé de nouveau entre-temps.
 
 Ce qui a plus de trente jours est supprimé par ``blunderdb vacuum`` — jamais à
 l'ouverture d'une base.

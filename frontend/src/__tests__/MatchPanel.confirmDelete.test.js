@@ -21,7 +21,7 @@ vi.mock('../../wailsjs/go/database/Database.js', async (importOriginal) => ({
     GetMatchByID: vi.fn(() => Promise.resolve(null)),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
     ListTranscriptions: vi.fn(() => Promise.resolve([])),
-    DeleteMatch: vi.fn(() => Promise.resolve()),
+    TrashMatch: vi.fn(() => Promise.resolve()),
     UpdateMatch: vi.fn(() => Promise.resolve()),
     UpdateMatchComment: vi.fn(() => Promise.resolve()),
     GetMatchMovePositions: vi.fn(() => Promise.resolve(MOVES)),
@@ -52,7 +52,7 @@ vi.mock('../../wailsjs/runtime/runtime.js', () => ({
 
 import { openPanels, PANEL } from '../stores/uiStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
-import { ListMatches, DeleteMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
+import { ListMatches, TrashMatch, GetMatchMovePositions } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
 import ModalHost from '../components/ModalHost.svelte';
 
@@ -86,11 +86,11 @@ describe('MatchPanel — deleting a match', () => {
         await fireEvent.click(del);
         const message = await answerConfirm(false);
         expect(message).toContain('Alice');
-        expect(DeleteMatch).not.toHaveBeenCalled();
+        expect(TrashMatch).not.toHaveBeenCalled();
 
         await fireEvent.click(del);
         await answerConfirm(true);
-        await vi.waitFor(() => expect(DeleteMatch).toHaveBeenCalledWith(7));
+        await vi.waitFor(() => expect(TrashMatch).toHaveBeenCalledWith(7));
     });
 
     test('Enter on the confirmation does not also open the match', async () => {
@@ -115,7 +115,7 @@ describe('MatchPanel — deleting a match', () => {
         });
         const loadsBefore = GetMatchMovePositions.mock.calls.length;
         await fireEvent.keyDown(document.activeElement, { key: 'Enter' });
-        await vi.waitFor(() => expect(DeleteMatch).toHaveBeenCalledWith(7));
+        await vi.waitFor(() => expect(TrashMatch).toHaveBeenCalledWith(7));
         await new Promise((r) => setTimeout(r, 50));
         expect(GetMatchMovePositions.mock.calls.length).toBe(loadsBefore);
         expect(dialog.isConnected).toBe(false);

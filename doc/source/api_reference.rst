@@ -381,6 +381,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/trash.count                          JSON
      POST /v1/trash.deleteCollection               JSON
      POST /v1/trash.deleteComment                  JSON
+     POST /v1/trash.deleteMatch                    JSON
      POST /v1/trash.deletePosition                 JSON
      POST /v1/trash.discard                        JSON
      POST /v1/trash.empty                          JSON

@@ -951,8 +951,8 @@ tags`` (voir :ref:`cli`).
 La corbeille
 ------------
 
-Supprimer une position, une collection, un commentaire ou une carte Anki passe par une
-**corbeille** : la suppression a bien lieu, mais une copie de ce qui
+Supprimer une position, une collection, un commentaire, une carte Anki ou un
+match passe par une **corbeille** : la suppression a bien lieu, mais une copie de ce qui
 disparaît est gardée trente jours. La commande ``trash`` ouvre la fenêtre qui
 les liste, avec pour chacune *Restaurer* et *Supprimer*, et un bouton
 *Vider la corbeille*.
@@ -965,13 +965,18 @@ doublon mais lui donne un nouvel identifiant. Une collection revient avec sa
 liste ; les positions qu'elle contenait, elles, n'avaient jamais été
 supprimées — une collection est une vue sur elles.
 
+Un match supprimé emporte ses parties, ses coups, leurs analyses et les
+positions que plus rien d'autre ne retient, avec les notes venues du fichier
+source : la corbeille garde tout cela. Restauré, il revient sous un nouveau
+numéro avec ses positions, leurs analyses et leurs commentaires, dans son
+tournoi à sa place s'il existe encore. Si le même match a été importé de
+nouveau entre-temps, la restauration est refusée plutôt que de créer un
+doublon, et l'entrée reste dans la corbeille.
+
 Ce qui a plus de trente jours est supprimé par la commande ``vacuum``, jamais à
 l'ouverture d'une base : ne pas faire de ``vacuum``, c'est tout garder.
 
-.. note:: La corbeille ne voyage pas. Un export ne l'emporte pas, et supprimer
-   un match n'y met rien : la purge des positions orphelines qui suit une
-   suppression de match est un nettoyage automatique, pas un geste de
-   l'utilisateur — voir la règle de rétention dans :ref:`panneau_matchs`.
+.. note:: La corbeille ne voyage pas : un export ne l'emporte pas.
 
 .. _panneau_recherche:
 

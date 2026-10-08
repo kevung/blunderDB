@@ -45,6 +45,8 @@
                 return $t('trash.kindComment');
             case 'anki_card':
                 return $t('trash.kindAnkiCard');
+            case 'match':
+                return $t('trash.kindMatch');
             default:
                 return kind;
         }

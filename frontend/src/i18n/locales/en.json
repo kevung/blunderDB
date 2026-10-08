@@ -1949,6 +1949,7 @@
         "kindCollection": "Collection",
         "kindComment": "Comment",
         "kindAnkiCard": "Anki card",
+        "kindMatch": "Match",
         "restored": "Restored: {what}",
         "restoreFailed": "Could not restore: {error}"
     },

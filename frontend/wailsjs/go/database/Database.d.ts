@@ -779,6 +779,8 @@ export function TrashCollection(arg1:number):Promise<number>;
 
 export function TrashCommentEntry(arg1:number):Promise<number>;
 
+export function TrashMatch(arg1:number):Promise<number>;
+
 export function TrashPosition(arg1:number):Promise<number>;
 
 export function TrashRencontre(arg1:number):Promise<number>;

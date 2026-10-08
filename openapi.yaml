@@ -7180,6 +7180,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idResp"
+  /v1/trash.deleteMatch:
+    post:
+      operationId: trash.deleteMatch
+      tags: [trash]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/idReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idResp"
   /v1/trash.deletePosition:
     post:
       operationId: trash.deletePosition

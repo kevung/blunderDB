@@ -1949,6 +1949,7 @@
         "kindCollection": "Συλλογή",
         "kindComment": "Σχόλιο",
         "kindAnkiCard": "Κάρτα Anki",
+        "kindMatch": "Αγώνας",
         "restored": "Επαναφέρθηκε: {what}",
         "restoreFailed": "Αδύνατη η επαναφορά: {error}"
     },
