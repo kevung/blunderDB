@@ -957,7 +957,15 @@ func (s *StatsStore) playerTable(ctx context.Context, scope string, filter stora
 		return nil, fmt.Errorf("PlayerTable aliases: %w", err)
 	}
 	decisions, matches, snowieErr, luck = canonicalPlayerInputs(aliases, decisions, matches, snowieErr, luck)
-	return storage.BuildPlayerRows(decisions, matches, snowieErr, luck), nil
+	out := storage.BuildPlayerRows(decisions, matches, snowieErr, luck)
+	mwc7, err := s.playerMWC7(ctx, scope, f, aliases)
+	if err != nil {
+		return nil, err
+	}
+	for i := range out {
+		out[i].MWC7 = mwc7[out[i].Name]
+	}
+	return out, nil
 }
 
 // playerSumsDirect aggregates the players table's per-player sums from the

@@ -24,6 +24,7 @@
         GetMatchDetailStats,
         GetMatchMoveGrades,
         GetMatchDecisionLosses,
+        GetMatchReview,
         GetMatchTimeSummary,
         GetMatchOrigin
     } from '../../wailsjs/go/database/Database.js';
@@ -34,6 +35,7 @@
     import MatchTimes from './MatchTimes.svelte';
     import { fmtLoss, sortByLoss } from '../utils/decisionLoss.js';
     import MatchLosses from './MatchLosses.svelte';
+    import MatchReview from './MatchReview.svelte';
     import MatchOrigin from './MatchOrigin.svelte';
     import { cumulativeClocks, fmtClock, fmtDuration, hasAnyDuration, sortByDuration } from '../utils/decisionTime.js';
     import { editMatchTranscription } from '../services/transcriptionSave.js';
@@ -90,6 +92,7 @@
     let detailTimes = $state(null);
     /** @type {any[] | null} the MWC loss of each decision */
     let detailLosses = $state(null);
+    let detailReview = $state(null);
     /** @type {import('../../wailsjs/go/models').duel.Origin | null} the Origin of a match played here */
     let detailOrigin = $state(null);
     // The decision under the pointer or the keyboard on either chart, by its Move.
@@ -316,6 +319,7 @@
             detailGrades = [];
             detailTimes = null;
             detailLosses = null;
+            detailReview = null;
             detailOrigin = null;
             detailStats = null;
         } else {
@@ -330,19 +334,21 @@
         detailMatch = match;
         detailStats = null; // reset stats when switching match
         try {
-            const [movePositions, games, grades, times, origin, losses] = await Promise.all([
+            const [movePositions, games, grades, times, origin, losses, review] = await Promise.all([
                 GetMatchMovePositions(match.id),
                 GetGamesByMatch(match.id),
                 loadMoveGrades(match.id),
                 loadTimeSummary(match.id),
                 loadOrigin(match.id),
-                loadDecisionLosses(match.id)
+                loadDecisionLosses(match.id),
+                loadReview(match.id)
             ]);
             detailMovePositions = movePositions || [];
             detailGames = games || [];
             detailGrades = grades;
             detailTimes = times;
             detailLosses = losses;
+            detailReview = review;
             detailOrigin = origin;
         } catch (error) {
             logger.error('Error loading match detail:', error);
@@ -351,6 +357,7 @@
             detailGrades = [];
             detailTimes = null;
             detailLosses = null;
+            detailReview = null;
             detailOrigin = null;
         }
         loadingDetail = false;
@@ -385,6 +392,17 @@
             return (await GetMatchDecisionLosses(matchID)) || null;
         } catch (error) {
             logger.error('Error loading decision losses:', error);
+            return null;
+        }
+    }
+
+    // The study summary is optional too: without it no review box is shown.
+    /** @param {number} matchID */
+    async function loadReview(matchID) {
+        try {
+            return (await GetMatchReview(matchID)) || null;
+        } catch (error) {
+            logger.error('Error loading match review:', error);
             return null;
         }
     }
@@ -1096,6 +1114,7 @@
                         {:else if transcriptGames.length === 0}
                             <div class="empty-state">{$t('match.noMovesRecorded')}</div>
                         {:else}
+                            <MatchReview review={detailReview} movePositions={detailMovePositions} player1={detailMatch.player1_name} player2={detailMatch.player2_name} onselect={jumpToMove} />
                             <div class="match-charts">
                                 {#if detailTimes}
                                     <MatchTimes

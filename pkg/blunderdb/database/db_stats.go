@@ -319,6 +319,8 @@ type PlayerRow struct {
 	LuckRateMP float64 `json:"luck_rate_mp"`
 	LuckKnown  bool    `json:"luck_known"`
 	LuckRolls  int     `json:"luck_rolls"`
+	// MWC7 is the player's 7-point MWC loss over their matches (ADR-0075).
+	MWC7 domain.MWC7 `json:"mwc7"`
 }
 
 // GetPlayerTable returns one statistics row per player over the matches the
@@ -350,6 +352,7 @@ func (d *Database) GetPlayerTable(filter StatsFilter) ([]PlayerRow, error) {
 			Errors:           r.Errors,
 			Blunders:         r.Blunders,
 			LuckRolls:        r.LuckRolls,
+			MWC7:             r.MWC7,
 		}
 		y.LuckRateMP, y.LuckKnown = r.LuckRateMP()
 		out = append(out, y)

@@ -4,7 +4,7 @@
     // par score. Aucune d'elles ne redéfinit ce qui compte comme une décision
     // — ce serait un second PR sous le même nom.
     import { t } from '../../i18n';
-    import { MIN_CELL_DECISIONS } from './gradeBands.js';
+    import { fmtPRInterval, hasInterval } from '../../utils/interval.js';
 
     let { result = null } = $props();
 
@@ -56,15 +56,17 @@
                         <th class="num">{$t('stats.decisions')}</th>
                         <th class="num">{$t('stats.blunders')}</th>
                         <th class="num">PR</th>
+                        <th class="num" title={$t('stats.intervalHint')}>{$t('stats.interval95')}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each phases as p (p.Phase)}
-                        <tr>
+                        <tr class:thin={!hasInterval(p.PRInterval)}>
                             <td>{phaseLabel(p.Phase)}</td>
                             <td class="num">{p.NumDecisions}</td>
                             <td class="num">{p.BlunderCount}</td>
                             <td class="num">{p.PR.toFixed(2)}</td>
+                            <td class="num ci">{fmtPRInterval(p.PRInterval)}</td>
                         </tr>
                     {/each}
                 </tbody>
@@ -84,15 +86,17 @@
                         <th class="num">{$t('stats.decisions')}</th>
                         <th class="num">{$t('stats.blunders')}</th>
                         <th class="num">PR</th>
+                        <th class="num" title={$t('stats.intervalHint')}>{$t('stats.interval95')}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each gameTypes as g (g.GameType)}
-                        <tr>
+                        <tr class:thin={!hasInterval(g.PRInterval)}>
                             <td>{gameTypeLabel(g.GameType)}</td>
                             <td class="num">{g.NumDecisions}</td>
                             <td class="num">{g.BlunderCount}</td>
                             <td class="num">{g.PR.toFixed(2)}</td>
+                            <td class="num ci">{fmtPRInterval(g.PRInterval)}</td>
                         </tr>
                     {/each}
                 </tbody>
@@ -112,15 +116,17 @@
                         <th class="num">{$t('stats.decisions')}</th>
                         <th class="num">{$t('stats.blunders')}</th>
                         <th class="num">PR</th>
+                        <th class="num" title={$t('stats.intervalHint')}>{$t('stats.interval95')}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each tags as tag (tag.Tag)}
-                        <tr>
+                        <tr class:thin={!hasInterval(tag.PRInterval)}>
                             <td>{tag.Tag}</td>
                             <td class="num">{tag.NumDecisions}</td>
                             <td class="num">{tag.BlunderCount}</td>
                             <td class="num">{tag.PR.toFixed(2)}</td>
+                            <td class="num ci">{fmtPRInterval(tag.PRInterval)}</td>
                         </tr>
                     {/each}
                 </tbody>
@@ -144,6 +150,7 @@
                         <th class="num">{$t('stats.decisions')}</th>
                         <th class="num">{$t('stats.blunders')}</th>
                         <th class="num">PR</th>
+                        <th class="num" title={$t('stats.intervalHint')}>{$t('stats.interval95')}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -151,16 +158,17 @@
                         <!-- Une cellule trop maigre est grisée, jamais cachée :
                              son effectif reste lisible, donc l'omission reste
                              vérifiable. -->
-                        <tr class:thin={cell.NumDecisions < MIN_CELL_DECISIONS}>
+                        <tr class:thin={!hasInterval(cell.PRInterval)}>
                             <td>{scoreLabel(cell)}</td>
                             <td class="num">{cell.NumDecisions}</td>
                             <td class="num">{cell.BlunderCount}</td>
                             <td class="num">{cell.PR.toFixed(2)}</td>
+                            <td class="num ci">{fmtPRInterval(cell.PRInterval)}</td>
                         </tr>
                     {/each}
                 </tbody>
             </table>
-            <p class="note">{$t('stats.thinCells', { n: MIN_CELL_DECISIONS })}</p>
+            <p class="note">{$t('stats.thinCells')}</p>
         {/if}
     </section>
 </div>

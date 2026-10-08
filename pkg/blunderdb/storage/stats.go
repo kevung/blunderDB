@@ -260,6 +260,10 @@ type PlayerRow struct {
 	// at all when it is zero. See ADR-0010.
 	LuckMPSum int64 `json:"luck_mp_sum"`
 	LuckRolls int   `json:"luck_rolls"`
+
+	// MWC7 pools the player's (match, seat) units (ADR-0075); unavailable
+	// for a player with no match play.
+	MWC7 domain.MWC7 `json:"mwc7"`
 }
 
 // LuckRateMP is the average luck per measured roll, in signed millipoints, and

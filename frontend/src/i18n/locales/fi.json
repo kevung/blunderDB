@@ -1701,7 +1701,7 @@
         "noData": "Ei tietoja tälle suodattimelle.",
         "noTags": "Ei merkintöjä valittujen asemien kommenteissa.",
         "tagsDoNotSum": "Asemalla voi olla useita merkintöjä: nämä rivit eivät summaudu kokonaismäärään.",
-        "thinCells": "Alle {n} päätöksen solut on harmaannettu: liian vähän luettavaksi.",
+        "thinCells": "Harmaannetuilla riveillä ei ole väliä: yksi ottelu ei vielä ole otos.",
         "goalTitle": "Tavoite:",
         "goalStated": "PR < {target} {weeks} viikossa ({band}).",
         "goalSet": "Aseta tavoite…",
@@ -1816,7 +1816,9 @@
             "record": "Tulos",
             "prChecker": "Siirtojen PR",
             "prCube": "Kuution PR"
-        }
+        },
+        "interval95": "95 %:n LV",
+        "intervalHint": "95 %:n luottamusväli: otantaa uudelleen valinnan otteluista tai ottelun peleistä. Rivi ilman väliä (yksi ottelu tai yksi peli) on harmaannettu."
     },
     "resumeBatch": {
         "title": "Jatka tuontia",
@@ -3051,5 +3053,23 @@
         "short": "MWC 7 p.",
         "tooltip": "Täydelliseen pelaajaan nähden menetetty MWC skaalattuna 7 pisteen otteluun (L × √(7/N)); 95 %:n luottamusväli pelien uudelleenotannalla; {elo} Elo moottoriin nähden",
         "unavailable": "Rahapelillä ei ole ottelun pituutta: 7 pisteen ekvivalenttia ei ole määritelty"
+    },
+    "matchReview": {
+        "title": "Ottelun yhteenveto",
+        "oneGame": "Vain yksi peli: ei väliä",
+        "luckAdjusted": "Tuurilla korjattu tulos {adjusted} (tulos {result}, nettotuuri {luck}; virheiden tase {balance})",
+        "luckPartial": "tuuri mitattu {measured}/{rolls} heitosta",
+        "wonByPlay": "voitettu pelillä",
+        "wonByDice": "voitettu nopilla",
+        "lostByDice": "hävitty noppien takia",
+        "lostByPlay": "hävitty pelin takia",
+        "showDecision": "Näytä päätös",
+        "decision": "peli {game}, siirto {move} ({kind})",
+        "checker": "nappulat",
+        "cube": "tuplauskuutio",
+        "lossAvoidable": "menetys {loss}, vältettävissä {avoidable}",
+        "pace": "Virheet: {hasty} hätäisiä ({hastyLoss}), {deliberate} harkittuja ({deliberateLoss}), {unknown} ilman aikaa",
+        "paceDiscipline": "pikemminkin kurinalaisuutta: hidasta",
+        "paceKnowledge": "pikemminkin tietoa: tutki näitä asemia"
     }
 }

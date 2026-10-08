@@ -636,7 +636,7 @@ func (cli *CLI) showPlayerTable(filter StatsFilter, format string) error {
 		fmt.Fprintf(w, "Period:\t%s → %s\n", orDash(filter.DateFrom), orDash(filter.DateTo))
 	}
 	fmt.Fprintln(w)
-	fmt.Fprintln(w, "Player\tMatches\tW-L\tDec.\tPR\tChecker\tCube\tSnowie\tBlunders\tLuck")
+	fmt.Fprintln(w, "Player\tMatches\tW-L\tDec.\tPR\tChecker\tCube\tSnowie\tL7\tBlunders\tLuck")
 
 	fmtRate := func(v float64, known bool) string {
 		if !known {
@@ -649,13 +649,17 @@ func (cli *CLI) showPlayerTable(filter StatsFilter, format string) error {
 		if r.LuckKnown {
 			luck = fmt.Sprintf("%+.1f", r.LuckRateMP)
 		}
-		fmt.Fprintf(w, "%s\t%d\t%d-%d\t%d\t%s\t%s\t%s\t%s\t%d\t%s\n",
+		l7 := "—"
+		if r.MWC7.Available {
+			l7 = fmt.Sprintf("%.1f%%", 100*r.MWC7.Loss)
+		}
+		fmt.Fprintf(w, "%s\t%d\t%d-%d\t%d\t%s\t%s\t%s\t%s\t%s\t%d\t%s\n",
 			r.Name, r.Matches, r.Wins, r.Losses, r.Decisions,
 			fmtRate(r.PR, r.Decisions > 0),
 			fmtRate(r.PRChecker, r.CheckerDecisions > 0),
 			fmtRate(r.PRCube, r.CubeDecisions > 0),
 			fmtRate(r.SnowieER, r.Decisions > 0),
-			r.Blunders, luck)
+			l7, r.Blunders, luck)
 	}
 	fmt.Fprintln(w)
 	fmt.Fprintln(w, "\"—\" marks a figure that was never measured, which is not the same as zero.")

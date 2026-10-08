@@ -1701,7 +1701,7 @@
         "noData": "Ningún dato para este filtro.",
         "noTags": "Ninguna etiqueta en los comentarios de las posiciones seleccionadas.",
         "tagsDoNotSum": "Una posición puede llevar varias etiquetas: estas filas no suman el total.",
-        "thinCells": "Las celdas con menos de {n} decisiones aparecen en gris: son demasiado pocas para leerse.",
+        "thinCells": "Las filas en gris no tienen intervalo: un solo match aún no es una muestra.",
         "goalTitle": "Objetivo:",
         "goalStated": "PR < {target} en {weeks} semanas ({band}).",
         "goalSet": "Fijarse un objetivo…",
@@ -1816,7 +1816,9 @@
             "record": "Balance",
             "prChecker": "PR fichas",
             "prCube": "PR cubo"
-        }
+        },
+        "interval95": "IC 95 %",
+        "intervalHint": "Intervalo de confianza del 95 %: remuestrea los matches de una selección, las partidas de un match. Una fila sin intervalo (un solo match o una sola partida) aparece en gris."
     },
     "resumeBatch": {
         "title": "Reanudar una importación",
@@ -3051,5 +3053,23 @@
         "short": "MWC 7 pts",
         "tooltip": "MWC perdido frente a un jugador perfecto, reescalado a un match a 7 puntos (L × √(7/N)); intervalo del 95 % por remuestreo de las partidas; {elo} Elo frente al motor",
         "unavailable": "El juego a dinero no tiene longitud de match: el equivalente a 7 puntos no está definido"
+    },
+    "matchReview": {
+        "title": "Balance del match",
+        "oneGame": "Una sola partida: sin intervalo",
+        "luckAdjusted": "Resultado ajustado por la suerte {adjusted} (resultado {result}, suerte neta {luck}; balance de errores {balance})",
+        "luckPartial": "suerte medida en {measured} de {rolls} tiradas",
+        "wonByPlay": "ganado por el juego",
+        "wonByDice": "ganado por los dados",
+        "lostByDice": "perdido por los dados",
+        "lostByPlay": "perdido por el juego",
+        "showDecision": "Mostrar la decisión",
+        "decision": "partida {game}, jugada {move} ({kind})",
+        "checker": "fichas",
+        "cube": "cubo",
+        "lossAvoidable": "pérdida {loss}, evitable {avoidable}",
+        "pace": "Errores: {hasty} precipitados ({hastyLoss}), {deliberate} meditados ({deliberateLoss}), {unknown} sin tiempo",
+        "paceDiscipline": "más bien disciplina: ir más despacio",
+        "paceKnowledge": "más bien conocimiento: estudiar estas posiciones"
     }
 }

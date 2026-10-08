@@ -82,7 +82,3 @@ export function makeGradeBandPlugin(bands) {
         }
     };
 }
-
-// Mirrors storage.MinCellDecisions: a display threshold that greys thin
-// away × away cells rather than hiding them.
-export const MIN_CELL_DECISIONS = 10;
