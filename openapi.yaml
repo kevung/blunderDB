@@ -1230,6 +1230,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/collections.suggest:
+    post:
+      operationId: collections.suggest
+      tags: [collections]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/storage_ReferenceRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_ReferenceSuggestions"
+                nullable: true
   /v1/collections.update:
     post:
       operationId: collections.update
@@ -8993,6 +9011,12 @@ components:
     storage_RecurringErrors:
       type: object
       description: "Opaque: see the Go type storage.RecurringErrors (defined outside internal/server, not expanded here)."
+    storage_ReferenceRequest:
+      type: object
+      description: "Opaque: see the Go type storage.ReferenceRequest (defined outside internal/server, not expanded here)."
+    storage_ReferenceSuggestions:
+      type: object
+      description: "Opaque: see the Go type storage.ReferenceSuggestions (defined outside internal/server, not expanded here)."
     storage_SearchHistory:
       type: object
       description: "Opaque: see the Go type storage.SearchHistory (defined outside internal/server, not expanded here)."

@@ -83,6 +83,12 @@ func (s *Server) collectionRoutes() []route {
 			id, err := cs().Create(ctx, scope, req.Name, req.Description)
 			return idResp{ID: id}, err
 		}))},
+		// Les positions de référence proposées pour un filtre (ADR-0078) : rien
+		// n'est écrit, le client fait une collection, un paquet ou un quiz de
+		// ce que l'utilisateur garde.
+		{http.MethodPost, "/v1/collections.suggest", rpc(func(ctx context.Context, scope string, req storage.ReferenceRequest) (*storage.ReferenceSuggestions, error) {
+			return s.opts.Storage.Stats().SuggestReferences(ctx, scope, req)
+		})},
 		{http.MethodPost, "/v1/collections.get", rpc(func(ctx context.Context, scope string, req idReq) (*storage.Collection, error) {
 			return cs().Get(ctx, scope, req.ID)
 		})},

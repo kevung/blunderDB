@@ -532,6 +532,8 @@ var databaseParity = map[string]parityEntry{
 	"ComputeStudyPlanCtx":               {CLI: "stats plan", Server: "/v1/stats.studyPlan"},
 	"StudyPlanPositionIDs":              {CLI: "stats plan", Server: "/v1/stats.studyPlanIds"},
 	"StudyPlanQueue":                    {CLI: "stats plan", Server: "/v1/stats.studyPlanQueue"},
+	"SuggestReferencePositions":         {CLI: "collection suggest", Server: "/v1/collections.suggest"},
+	"SuggestReferencePositionsCtx":      {CLI: "collection suggest", Server: "/v1/collections.suggest"},
 	"CreateStudyDeck":                   {CLI: "stats recurring", Server: "/v1/anki.createStudyDeck"},
 	"RecommendedTags":                   {CLI: "list", Server: "/v1/comments.tags", Why: whySuggestion},
 }
