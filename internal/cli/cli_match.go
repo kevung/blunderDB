@@ -347,8 +347,34 @@ func (cli *CLI) formatMatchSummary(match *Match, positions []MatchMovePosition, 
 		sb.WriteString(fmt.Sprintf("  %s: %s\n", match.Player1Name, formatMWC7(detail.Player1.MWC7)))
 		sb.WriteString(fmt.Sprintf("  %s: %s\n", match.Player2Name, formatMWC7(detail.Player2.MWC7)))
 	}
+	if review, err := cli.db.GetMatchReview(match.ID); err == nil {
+		writeMatchReview(&sb, [2]string{match.Player1Name, match.Player2Name}, review)
+	}
 
 	return sb.String(), nil
+}
+
+// writeMatchReview adds the match's study summary (ADR-0077), per player: PR
+// with its interval over the games, the luck-adjusted result, the errors to
+// revisit, and the hasty/deliberate split of the errors.
+func writeMatchReview(sb *strings.Builder, names [2]string, review storage.MatchReview) {
+	sb.WriteString("\nReview:\n")
+	for i, name := range names {
+		p := review.Players[i]
+		fmt.Fprintf(sb, "  %s: PR %.2f %s over %d decisions\n", name, p.PR, formatPRInterval(p.PRInterval), p.Decisions)
+		if l := p.Luck; l.Available {
+			fmt.Fprintf(sb, "    luck-adjusted result %+.1f%% (result %+.1f%%, net luck %+.1f%%, errors balance %+.1f%%; luck on %d of %d rolls)\n",
+				100*l.Adjusted, 100*l.Result, 100*l.Luck, 100*l.ErrorBalance, l.RollsMeasured, l.Rolls)
+		}
+		for _, d := range p.ToReview {
+			fmt.Fprintf(sb, "    to review: game %d move %d (%s), loss %.2f%%, avoidable %.2f%%\n",
+				d.GameNumber, d.MoveNumber, d.DecisionType, 100*d.MWCLoss, 100*d.AvoidableLoss)
+		}
+		if pc := p.Pace; pc.Hasty+pc.Deliberate+pc.Unknown > 0 {
+			fmt.Fprintf(sb, "    errors: %d hasty (%.2f%%), %d deliberate (%.2f%%), %d without time\n",
+				pc.Hasty, 100*pc.HastyLoss, pc.Deliberate, 100*pc.DeliberateLoss, pc.Unknown)
+		}
+	}
 }
 
 // writeLossSummary adds, per player, the winning chances the match's analysed

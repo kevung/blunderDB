@@ -31,7 +31,8 @@ func (s *StatsStore) MatchDecisionLosses(ctx context.Context, scope string, matc
 			`+ActionLabelOrEmptyFor(s.DB, "mv.cube_action")+`, COALESCE(mv.position_id, 0), a.data,
 			CASE WHEN a.position_id IS NOT NULL AND (`+statsErrExpr+`) IS NOT NULL AND `+countedExpr(s.DB)+` THEN 1 ELSE 0 END,
 			COALESCE(`+statsErrExpr+`, 0), COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
-			`+cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0)
+			`+cubeMultiplierExpr+`, COALESCE(p.match_length, m.match_length, 0), mv.luck_mp, mv.decision_ms,
+			CASE WHEN p.id IS NULL THEN 0 ELSE 1 END
 		 FROM move mv
 		 JOIN game g ON g.id = mv.game_id
 		 JOIN match m ON m.id = g.match_id
@@ -53,8 +54,10 @@ func (s *StatsStore) MatchDecisionLosses(ctx context.Context, scope string, matc
 		var moveType, cubeAction string
 		var positionID, errMP int64
 		var data []byte
+		var luckMP, durationMS *int64
+		var hasPosition int
 		if err := rows.Scan(&d.MoveID, &d.GameNumber, &d.MoveNumber, &rawPlayer, &moveType, &cubeAction, &positionID, &data, &counted,
-			&errMP, &away0, &away1, &cubeValue, &matchLength); err != nil {
+			&errMP, &away0, &away1, &cubeValue, &matchLength, &luckMP, &durationMS, &hasPosition); err != nil {
 			return nil, errf(s.DB, "MatchDecisionLosses scan", err)
 		}
 		d.DecisionType = "checker"
@@ -64,7 +67,16 @@ func (s *StatsStore) MatchDecisionLosses(ctx context.Context, scope string, matc
 		if rawPlayer == -1 {
 			d.Player = 1
 		}
+		d.DurationMS = durationMS
+		if luckMP != nil && hasPosition == 1 && d.DecisionType == "checker" {
+			if luck := decisionMWCLoss(*luckMP, away0, away1, rawPlayer, cubeValue, matchLength); !math.IsNaN(luck) {
+				d.Luck = &luck
+			}
+		}
 		if counted == 1 {
+			e := errMP
+			d.ErrorMP = &e
+			d.Error = errMP >= int64(settings.ErrorThresholdMP)
 			if loss := decisionMWCLoss(errMP, away0, away1, rawPlayer, cubeValue, matchLength); !math.IsNaN(loss) {
 				d.MWCLoss = &loss
 				analysis, seen := decoded[positionID]

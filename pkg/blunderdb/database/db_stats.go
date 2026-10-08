@@ -488,6 +488,14 @@ func (d *Database) GetMatchDecisionLosses(matchID int64) ([]storage.DecisionLoss
 	return d.store.Stats().MatchDecisionLosses(context.Background(), "", matchID)
 }
 
+// GetMatchReview is a match's study summary (ADR-0077), for the Match panel's
+// review and `match --format summary`.
+func (d *Database) GetMatchReview(matchID int64) (storage.MatchReview, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().MatchReview(context.Background(), "", matchID)
+}
+
 // GetMatchTimeSummary adds up the decision times of a match per player and
 // counts the turns played past the reserve of the Cadence it was played under,
 // for the Match panel's time summary.

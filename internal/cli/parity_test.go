@@ -247,6 +247,7 @@ var databaseParity = map[string]parityEntry{
 	"GetMatchMoveGrades":                {Server: "/v1/stats.matchMoveGrades", Why: "the marks of the GUI's Transcript; the CLI reaches the same plays with `search ma<id> E>x`, whose `E` filter scores a play by the same rule (checkerPlayError, engine.CubeActionError)"},
 	"GetTimeErrors":                     {CLI: "list", Server: "/v1/stats.timeErrors"},
 	"GetMatchDecisionLosses":            {CLI: "match", Server: "/v1/stats.matchDecisionLosses"},
+	"GetMatchReview":                    {CLI: "match", Server: "/v1/stats.matchReview"},
 	"GetMatchTimeSummary":               {CLI: "match", Server: "/v1/stats.matchTimeSummary"},
 	"GetMatchOrigin":                    {CLI: "match", Server: "/v1/matches.origin"},
 	"GetMatchMovePositions":             {CLI: "match", Server: "/v1/matches.movePositions"},

@@ -355,6 +355,17 @@ type DecisionLoss struct {
 	// Avoidable marks an error (the library's threshold) the reference player
 	// would rarely make: Difficulty at most AvoidableShare of MWCLoss.
 	Avoidable bool `json:"avoidable"`
+	// ErrorMP is the counted decision's error in millipoints, nil outside
+	// the counted set; Error says it reaches the library's error threshold.
+	ErrorMP *int64 `json:"error_mp"`
+	Error   bool   `json:"error"`
+	// Luck is the roll's luck for the player who rolled, converted to MWC at
+	// the position's score and cube like a loss (ADR-0077); nil when unknown,
+	// on a cube row, or at money.
+	Luck *float64 `json:"luck"`
+	// DurationMS is the time taken over the decision (ADR-0073), nil when
+	// unknown.
+	DurationMS *int64 `json:"duration_ms"`
 }
 
 // PlayerTimeSummary is what one player's recorded decision times add up to
@@ -563,6 +574,11 @@ type StatsStore interface {
 	// and converts through the same function, so a player's losses add up to
 	// the Match's MWCLoss (MWCLoss2 for player 2).
 	MatchDecisionLosses(ctx context.Context, scope string, matchID int64) ([]DecisionLoss, error)
+
+	// MatchReview is a match's study summary (ADR-0077): PR and L7 with
+	// their intervals over the games, the errors worth revisiting, the
+	// luck-adjusted result and the hasty/deliberate split of the errors.
+	MatchReview(ctx context.Context, scope string, matchID int64) (MatchReview, error)
 
 	// MatchTimeSummary adds up the decision times of a Match per player, and
 	// counts what overran the Cadence it was played under (match_origin). A

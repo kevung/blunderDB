@@ -315,6 +315,8 @@ export function GetMatchByID(arg1:number):Promise<domain.Match>;
 
 export function GetMatchDecisionLosses(arg1:number):Promise<Array<storage.DecisionLoss>>;
 
+export function GetMatchReview(arg1:number):Promise<storage.MatchReview>;
+
 export function GetMatchDetailStats(arg1:number):Promise<database.MatchDetailStats>;
 
 export function GetMatchMoveGrades(arg1:number):Promise<Array<storage.MoveGrade>>;
