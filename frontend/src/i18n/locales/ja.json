@@ -1525,7 +1525,7 @@
         "duration": "時間",
         "durationDecision": "判断 {time}",
         "durationCube": "キューブ {time}",
-        "durationEstimated": "≈ {time}（次のロールまで、ダイスを拾う時間を含む）"
+        "durationEstimated": "判断 {time}（推定：次のロールまで、ダイスを拾う時間を含む）"
     },
     "status": {
         "importChip": "インポート中：{percent} %",

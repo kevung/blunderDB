@@ -1525,7 +1525,7 @@
         "duration": "tiempo",
         "durationDecision": "decisión {time}",
         "durationCube": "cubo {time}",
-        "durationEstimated": "≈ {time}, hasta la tirada siguiente, recogida de los dados incluida"
+        "durationEstimated": "decisión {time}, estimada: hasta la tirada siguiente, recogida de los dados incluida"
     },
     "status": {
         "importChip": "Importación en curso: {percent} %",

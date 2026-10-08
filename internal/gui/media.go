@@ -3,10 +3,12 @@ package gui
 import (
 	"context"
 	"crypto/rand"
+	_ "embed"
 	"encoding/hex"
 	"errors"
 	"fmt"
 	"html"
+	"io"
 	"net"
 	"net/http"
 	"net/url"
@@ -90,20 +92,11 @@ func (h *mediaHost) serveMedia(w http.ResponseWriter, r *http.Request) {
 	http.ServeContent(w, r, "", st.ModTime(), f)
 }
 
-// The page gives the IFrame Player a real HTTP referrer and relays
-// currentTime, play/pause, seek and the playback speed with the parent through postMessage. The
-// parent's origin comes from the referrer, or from ?origin= when a webview
-// sends the frame none; replies still go only to the parent window.
-const youTubePage = `<!doctype html><html><head><meta charset="utf-8"><style>html,body,#p{margin:0;width:100%%;height:100%%;background:#000}</style></head><body><div id="p"></div><script src="https://www.youtube.com/iframe_api"></script><script>
-var player;
-function onYouTubeIframeAPIReady(){player=new YT.Player('p',{width:'100%%',height:'100%%',videoId:'%s',playerVars:{playsinline:1,rel:0},events:{onReady:function(){post({type:'ready',duration:player.getDuration(),rates:player.getAvailablePlaybackRates()})},onPlaybackRateChange:function(e){post({type:'rate',rate:e.data})},onStateChange:function(e){post({type:'state',state:e.data,time:player.getCurrentTime()})}}})}
-var origin=''; try{origin=new URL(document.referrer).origin}catch(e){}
-if(!origin||origin==='null'){try{origin=new URLSearchParams(location.search).get('origin')||''}catch(e){}}
-function post(m){if(!origin||origin==='null')return;m.source='blunderdb-yt';parent.postMessage(m,origin)}
-setInterval(function(){if(player&&player.getCurrentTime)post({type:'time',time:player.getCurrentTime()})},250);
-addEventListener('message',function(e){if(!origin||e.origin!==origin||e.source!==parent)return;var m=e.data||{};if(!player)return;
-if(m.type==='play')player.playVideo();else if(m.type==='pause')player.pauseVideo();else if(m.type==='seek')player.seekTo(m.time,true);else if(m.type==='rate'){player.setPlaybackRate(m.rate);post({type:'rate',rate:player.getPlaybackRate()})}});
-</script></body></html>`
+// youTubePage gives the IFrame Player a real HTTP referrer; its script relays the player with
+// the parent window. Vitest runs it against a fake player (youtubePlayerPage.test.js).
+//
+//go:embed youtube_player.html
+var youTubePage string
 
 func (h *mediaHost) serveYouTube(w http.ResponseWriter, r *http.Request) {
 	id := strings.TrimPrefix(r.URL.Path, "/yt/")
@@ -115,7 +108,7 @@ func (h *mediaHost) serveYouTube(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprintf(w, youTubePage, html.EscapeString(id))
+	_, _ = io.WriteString(w, strings.Replace(youTubePage, "__VIDEO_ID__", html.EscapeString(id), 1))
 }
 
 // startLocked brings the server up on a free loopback port on first use.
@@ -345,4 +338,19 @@ func (a *App) OpenVideoExternally(source string, ms int64) error {
 		return nil
 	}
 	return errors.New("not a web video source")
+}
+
+// YouTubeWatchURL is what the YouTube field shows for an attached source: the source itself
+// when it is a full http(s) URL, else the watch URL rebuilt from its id; "" when the source is
+// not a YouTube video (a file stays out of that field).
+func (a *App) YouTubeWatchURL(source string) string {
+	id := youTubeID(source)
+	if id == "" {
+		return ""
+	}
+	s := strings.TrimSpace(source)
+	if strings.HasPrefix(s, "http://") || strings.HasPrefix(s, "https://") {
+		return s
+	}
+	return "https://www.youtube.com/watch?v=" + id
 }

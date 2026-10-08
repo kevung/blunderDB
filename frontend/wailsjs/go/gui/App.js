@@ -329,3 +329,7 @@ export function VideoSourceKind(arg1) {
 export function YouTubeEmbedURL(arg1) {
   return window['go']['gui']['App']['YouTubeEmbedURL'](arg1);
 }
+
+export function YouTubeWatchURL(arg1) {
+  return window['go']['gui']['App']['YouTubeWatchURL'](arg1);
+}

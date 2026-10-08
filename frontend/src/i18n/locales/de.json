@@ -1525,7 +1525,7 @@
         "duration": "Zeit",
         "durationDecision": "Entscheidung {time}",
         "durationCube": "Doppler {time}",
-        "durationEstimated": "≈ {time}, bis zum nächsten Wurf, Aufnehmen der Würfel inbegriffen"
+        "durationEstimated": "Entscheidung {time}, geschätzt: bis zum nächsten Wurf, Aufnehmen der Würfel inbegriffen"
     },
     "status": {
         "importChip": "Import läuft: {percent} %",

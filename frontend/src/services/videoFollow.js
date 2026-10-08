@@ -11,6 +11,8 @@ const HOLD_LEAD_MS = 1500;
 // Past its end, the Action placed by hand stays a moment: `v` pressed a little late
 // still times it.
 const HOLD_GRACE_MS = 2000;
+// How far from the instant the panel placed the video its first reading may fall.
+const PLACED_SLACK_MS = 1000;
 
 /**
  * The stretch of video each timed Action covers, in document order: from its roll's
@@ -65,7 +67,13 @@ export function coveringAt(spans, ms) {
  * transcribed, and after a placement by hand holds still until the playback has left
  * that Action's stretch: `v` then times the Action the user chose.
  */
-export function createCursorFollower() {
+/**
+ * @param {{ startMs?: number }} [options] - `startMs`: the instant the panel itself put
+ *   the video at (a draft reopened where it was left). A first instant read there is no
+ *   transition: the Cursor stays where the user types until the playback enters another
+ *   stretch.
+ */
+export function createCursorFollower({ startMs = 0 } = {}) {
     /** @type {number | null | undefined} */
     let lastMs;
     /** @type {number | 'end' | null | undefined} */
@@ -91,6 +99,7 @@ export function createCursorFollower() {
             const moved = lastMs !== undefined && ms !== lastMs;
             const first = lastMs === undefined;
             lastMs = ms;
+            if (first && startMs > 0 && Math.abs(ms - startMs) <= PLACED_SLACK_MS) lastKey = key;
 
             // A Cursor the follower did not put there was placed by hand.
             if (lastCursor !== undefined && cursor !== lastCursor) held = { cursor, key };

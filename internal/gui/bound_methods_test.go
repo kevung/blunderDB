@@ -71,6 +71,7 @@ var boundAppMethods = []string{
 	"PickTranscriptionVideo",
 	"VideoSourceKind",
 	"YouTubeEmbedURL",
+	"YouTubeWatchURL",
 	"PickIdentityFile",
 	"ReleaseMedia",
 	"PrepareDemoDatabase",

@@ -20,7 +20,8 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
 vi.mock('../../wailsjs/go/gui/App.js', () => ({
     LegalMoves: vi.fn(),
     EvaluatePositionImmediate: vi.fn(),
-    PickTranscriptionVideo: vi.fn().mockResolvedValue('')
+    PickTranscriptionVideo: vi.fn().mockResolvedValue(''),
+    YouTubeWatchURL: vi.fn((/** @type {string} */ s) => Promise.resolve(/youtu/.test(s) ? (s.startsWith('https://') ? s : 'https://www.youtube.com/watch?v=dQw4w9WgXcQ') : ''))
 }));
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetGammonNetPruneK: vi.fn().mockResolvedValue(0)
@@ -112,6 +113,7 @@ beforeEach(() => {
     vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] });
     vi.clearAllMocks();
     fakeVideo.reset();
+    localStorage.clear();
     source = 'C:/videos/match.mov';
     ACTIONS = [
         { side: 0, kind: 'checker', dice: [3, 1], roll: 10000, tick: 15000 },
@@ -257,14 +259,24 @@ describe('the duration column', () => {
         expect(document.querySelector('th.time')).toBeNull();
     });
 
-    test('an estimated duration reads apart, with what it takes in', async () => {
+    test('an estimated duration reads as a measured one; its tooltip says it is estimated', async () => {
         ACTIONS[1] = { ...ACTIONS[1], tick: undefined, estimate: 10000 };
         await openedPanel();
         const cell = /** @type {HTMLElement} */ (document.querySelector('td.time[data-duration="1"]'));
-        expect(cell.querySelector('.estimated')?.textContent).toBe('≈ 10 s');
+        expect(cell.textContent).toBe('10 s · 5 s');
+        expect(cell.textContent).not.toContain('≈');
+        expect(cell.querySelector('.estimated')).toBeNull();
+        expect(cell.getAttribute('title')).toContain('estimated');
         expect(cell.getAttribute('title')).toContain('up to the next roll');
-        // A measured one does not.
-        expect(document.querySelector('td.time[data-duration="0"] .estimated')).toBeNull();
+        expect(document.querySelector('td.time[data-duration="0"]')?.getAttribute('title')).not.toContain('estimated');
+    });
+
+    test('a click on a duration walks the Cursor to its Action and brings the video there', async () => {
+        await openedPanel();
+        await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('td.time[data-duration="1"]')));
+        await settle(20);
+        expect(document.querySelector('.cell[aria-current="true"]')?.getAttribute('data-index')).toBe('1');
+        expect(fakeVideo.seeks).toEqual([19000]);
     });
 });
 
@@ -282,5 +294,72 @@ describe('the cube decision has no estimate', () => {
         await fireEvent.keyDown(document.activeElement ?? document, { code: 'KeyD', key: 'd', bubbles: true, cancelable: true });
         await settle(20);
         expect(get(transcriptionNoticeStore)?.key).not.toBe('transcription.notice.cubeUntimed');
+    });
+});
+
+describe('a draft reopened with its video', () => {
+    test('opens the video where the user left it, and the Cursor stays at the end', async () => {
+        localStorage.setItem('blunderdb.transcription.videoResume.1', '11000');
+        await openedPanel();
+        expect(fakeVideo.startMs).toBe(11000);
+        // The player reports where it was put, then plays through the stretch it lies in.
+        await playTo(11000);
+        await playTo(12000);
+        await playTo(14000);
+        expect(seeksOfCursor()).toEqual([]);
+        expect(document.querySelector('.cell[aria-current="true"]')).toBeNull();
+        // Into the next stretch, the Cursor follows again.
+        await playTo(21000);
+        expect(seeksOfCursor()).toEqual([{ Kind: 'seek_cursor', At: 1 }]);
+    });
+
+    test('without a kept instant, a little before the last Repère', async () => {
+        await openedPanel();
+        expect(fakeVideo.startMs).toBe(27000);
+        await playTo(27000);
+        await playTo(28000);
+        expect(seeksOfCursor()).toEqual([]);
+    });
+
+    test('keeps the instant reached when the playback stops, and when the draft closes', async () => {
+        await openedPanel();
+        await playTo(40000);
+        await playTo(42000);
+        await playTo(42000);
+        expect(localStorage.getItem('blunderdb.transcription.videoResume.1')).toBe('42000');
+        await playTo(43500);
+        cleanup();
+        expect(localStorage.getItem('blunderdb.transcription.videoResume.1')).toBe('43500');
+    });
+});
+
+describe('the YouTube field', () => {
+    const openField = async () => {
+        await fireEvent.click(/** @type {HTMLElement} */ (document.querySelector('[aria-expanded]')));
+        await settle();
+        const button = [...document.querySelectorAll('[data-testid="transcription-video-menu"] button')].find((b) => b.textContent === 'YouTube' || /youtube/i.test(b.textContent ?? ''));
+        await fireEvent.click(/** @type {HTMLElement} */ (button));
+        await settle(20);
+        return /** @type {HTMLInputElement} */ (document.querySelector('.video-url input'));
+    };
+
+    test('over an attached YouTube video it shows its address, selected for a paste', async () => {
+        source = 'youtu.be/dQw4w9WgXcQ';
+        await openedPanel();
+        const input = await openField();
+        expect(input.value).toBe('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+        expect(document.activeElement).toBe(input);
+        expect([input.selectionStart, input.selectionEnd]).toEqual([0, input.value.length]);
+    });
+
+    test('a full URL is shown as it was attached', async () => {
+        source = 'https://youtu.be/dQw4w9WgXcQ?t=12';
+        await openedPanel();
+        expect((await openField()).value).toBe('https://youtu.be/dQw4w9WgXcQ?t=12');
+    });
+
+    test('over a file it opens empty', async () => {
+        await openedPanel();
+        expect((await openField()).value).toBe('');
     });
 });

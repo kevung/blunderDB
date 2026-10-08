@@ -174,4 +174,39 @@ describe('VideoPane', () => {
         component.stepRate(1);
         expect(posted).not.toHaveBeenCalled();
     });
+
+    test('YouTube: a report sent before a seek reached the player does not pull the instant back', async () => {
+        gui.kind = 'youtube';
+        const { container, component } = render(VideoPane, { props: { source: 'https://youtu.be/dQw4w9WgXcQ' } });
+        const frame = /** @type {HTMLIFrameElement} */ (await vi.waitFor(() => container.querySelector('iframe') ?? expect.fail('no iframe')));
+        const win = /** @type {Window} */ (frame.contentWindow);
+        const posted = vi.spyOn(win, 'postMessage').mockImplementation(() => {});
+        const say = (/** @type {any} */ data) => window.dispatchEvent(new MessageEvent('message', { data: { source: 'blunderdb-yt', ...data }, origin: 'http://127.0.0.1:1', source: win }));
+        say({ type: 'ready' });
+        say({ type: 'time', time: 5 });
+        component.seek(120000);
+        expect(posted).toHaveBeenLastCalledWith({ type: 'seek', time: 120 }, 'http://127.0.0.1:1');
+        say({ type: 'time', time: 5.25 });
+        say({ type: 'state', state: 3, time: 5.25 });
+        expect(component.currentTimeMs()).toBe(120000);
+        say({ type: 'time', time: 120.25 });
+        expect(component.currentTimeMs()).toBe(120250);
+        // Past the seek, the player's clock is the truth again, wherever it goes.
+        say({ type: 'time', time: 7 });
+        expect(component.currentTimeMs()).toBe(7000);
+    });
+
+    test('YouTube: the instant asked before the player is ready, or given at opening, is sought on ready', async () => {
+        gui.kind = 'youtube';
+        const { container, component } = render(VideoPane, { props: { source: 'https://youtu.be/dQw4w9WgXcQ', startMs: 90000 } });
+        const frame = /** @type {HTMLIFrameElement} */ (await vi.waitFor(() => container.querySelector('iframe') ?? expect.fail('no iframe')));
+        const win = /** @type {Window} */ (frame.contentWindow);
+        const posted = vi.spyOn(win, 'postMessage').mockImplementation(() => {});
+        const say = (/** @type {any} */ data) => window.dispatchEvent(new MessageEvent('message', { data: { source: 'blunderdb-yt', ...data }, origin: 'http://127.0.0.1:1', source: win }));
+        expect(component.currentTimeMs()).toBeNull();
+        say({ type: 'ready' });
+        expect(posted).toHaveBeenCalledWith({ type: 'seek', time: 90 }, 'http://127.0.0.1:1');
+        say({ type: 'time', time: 0 });
+        expect(component.currentTimeMs()).toBe(90000);
+    });
 });

@@ -1525,7 +1525,7 @@
         "duration": "tempo",
         "durationDecision": "decisione {time}",
         "durationCube": "cubo {time}",
-        "durationEstimated": "≈ {time}, fino al tiro successivo, raccolta dei dadi compresa"
+        "durationEstimated": "decisione {time}, stimata: fino al tiro successivo, raccolta dei dadi compresa"
     },
     "status": {
         "importChip": "Importazione in corso: {percent} %",

@@ -1525,7 +1525,7 @@
         "duration": "time",
         "durationDecision": "decision {time}",
         "durationCube": "cube {time}",
-        "durationEstimated": "≈ {time}, up to the next roll, picking up the dice included"
+        "durationEstimated": "decision {time}, estimated: up to the next roll, picking up the dice included"
     },
     "status": {
         "importChip": "Importing: {percent}%",

@@ -39,7 +39,7 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    l'Arbitre. Un Repère manquant laisse inconnues les durées qui en dépendent, à une
    exception : une décision de pions sans instant d'action s'*estime* du jet au premier
    instant de l'Action suivante — son jet, ou l'instant d'un geste de videau —, un majorant
-   qui compte le ramassage et le lancer des dés, marqué comme estimé et affiché à part.
+   qui compte le ramassage et le lancer des dés, marqué comme estimé — l'infobulle le dit, le chiffre se lit comme une mesure.
    Aucune décision de videau ne s'estime : la fin du coup précédent ne se distingue pas du
    début de la réflexion au videau, et seul l'instant de ce coup, posé par `v` ou par une
    validation explicite, la mesure. Un Repère à rebours ne sert à aucune estimation ; une
@@ -63,6 +63,10 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    suivi n'écrit rien et ne s'empile pas sur l'annulation, ne ramène jamais la vidéo, se tait
    pendant une saisie ou une pause, et cède à un placement à la main tant que la lecture
    n'a pas quitté l'Action choisie : le geste explicite horodate celle que l'on a désignée.
+   Un brouillon rouvert reprend sa vidéo en pause à l'instant atteint sur ce poste (une
+   commodité du poste, pas une donnée du brouillon), à défaut un peu avant le dernier
+   Repère ; ce positionnement n'est pas une entrée dans une Action, et le curseur reste au
+   point de saisie.
    Repères et source
    sont des champs optionnels des gestes d'écriture et de l'état exposé (ADR-0057) : un client
    externe pose les siens par l'API, et la logique vit dans `transcript`, le lecteur n'étant

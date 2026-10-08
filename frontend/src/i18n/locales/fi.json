@@ -1525,7 +1525,7 @@
         "duration": "aika",
         "durationDecision": "päätös {time}",
         "durationCube": "kuutio {time}",
-        "durationEstimated": "≈ {time}, seuraavaan heittoon asti, noppien keräys mukaan lukien"
+        "durationEstimated": "päätös {time}, arvio: seuraavaan heittoon asti, noppien keräys mukaan lukien"
     },
     "status": {
         "importChip": "Tuonti käynnissä: {percent} %",

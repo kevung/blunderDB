@@ -171,3 +171,5 @@ export function SuggestWatchFolder():Promise<string>;
 export function VideoSourceKind(arg1:string):Promise<string>;
 
 export function YouTubeEmbedURL(arg1:string):Promise<string>;
+
+export function YouTubeWatchURL(arg1:string):Promise<string>;

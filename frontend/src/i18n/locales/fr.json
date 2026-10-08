@@ -1525,7 +1525,7 @@
         "duration": "durée",
         "durationDecision": "décision {time}",
         "durationCube": "videau {time}",
-        "durationEstimated": "≈ {time}, jusqu'au jet suivant, ramassage des dés compris"
+        "durationEstimated": "décision {time}, estimée : jusqu'au jet suivant, ramassage des dés compris"
     },
     "status": {
         "importChip": "Import en cours : {percent} %",

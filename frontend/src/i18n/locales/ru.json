@@ -1525,7 +1525,7 @@
         "duration": "время",
         "durationDecision": "решение {time}",
         "durationCube": "куб {time}",
-        "durationEstimated": "≈ {time}, до следующего броска, включая сбор костей"
+        "durationEstimated": "решение {time}, оценка: до следующего броска, включая сбор костей"
     },
     "status": {
         "importChip": "Идёт импорт: {percent} %",

@@ -26,6 +26,13 @@
     let ytOrigin = '';
     let ytTime = 0;
     let ytPlaying = false;
+    // A seek posted to the player, in seconds: the reports it sent before the seek reached it
+    // would pull the instant back, and the Cursor that follows it with it. They are set aside
+    // until one lands near the seek, or for a few seconds at most.
+    /** @type {number | null} */
+    let ytSeekingTo = null;
+    let ytSeekingUntil = 0;
+    const YT_SEEK_SETTLE_MS = 3000;
     /** @type {HTMLDivElement | null} */
     let root = $state(null);
     // The speed applied, as the player reports it, and the speeds the source accepts.
@@ -58,7 +65,7 @@
         if (!ytOrigin || event.origin !== ytOrigin || event.source !== frame?.contentWindow) return;
         const m = event.data;
         if (!m || m.source !== 'blunderdb-yt') return;
-        if (typeof m.time === 'number' && m.type !== 'ready') ytTime = m.time;
+        if (typeof m.time === 'number' && m.type !== 'ready' && reportLanded(m.time)) ytTime = m.time;
         if (Array.isArray(m.rates) && m.rates.length) rates = m.rates;
         if (m.type === 'ready') {
             status = 'ready';
@@ -73,6 +80,16 @@
             ytPlaying = m.state === 1;
             if (m.state === 0) onended?.();
         }
+    }
+
+    /** @param {number} t - the player's reported instant, in seconds */
+    function reportLanded(t) {
+        if (ytSeekingTo === null) return true;
+        if ((t >= ytSeekingTo - 0.5 && t <= ytSeekingTo + 2) || Date.now() > ytSeekingUntil) {
+            ytSeekingTo = null;
+            return true;
+        }
+        return false;
     }
 
     function postToPlayer(message) {
@@ -102,6 +119,7 @@
         rate = 1;
         rates = VIDEO_RATES;
         ytTime = 0;
+        ytSeekingTo = null;
         (async () => {
             try {
                 const k = await VideoSourceKind(current);
@@ -210,6 +228,8 @@
         if (status !== 'ready') return;
         if (kind === 'youtube') {
             ytTime = at / 1000;
+            ytSeekingTo = ytTime;
+            ytSeekingUntil = Date.now() + YT_SEEK_SETTLE_MS;
             postToPlayer({ type: 'seek', time: at / 1000 });
         } else if (video) {
             video.currentTime = at / 1000;

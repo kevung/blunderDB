@@ -544,15 +544,19 @@
     {@const estimated = !!info?.decision_estimated && info?.decision_ms != null}
     {@const spent = fmtSeconds(info?.decision_ms)}
     {@const cube = fmtSeconds(info?.cube_decision_ms)}
+    <!-- A click on a duration walks to its Action, as a click on the cell does; the keyboard
+         reaches it by the cells. -->
     <td
         class="time"
+        class:selectable={!!(info && onSelect)}
         data-duration={info ? c.index : undefined}
+        onclick={info && onSelect ? () => onSelect(c.index) : undefined}
         title={spent || cube
             ? [spent ? $t(estimated ? 'transcript.durationEstimated' : 'transcript.durationDecision', { time: spent }) : '', cube ? $t('transcript.durationCube', { time: cube }) : '']
                   .filter(Boolean)
                   .join('\n')
             : undefined}
-        >{#if estimated}<span class="estimated">≈ {spent}</span>{:else}{spent}{/if}{#if cube}<span class="cube-time">{spent ? ' · ' : ''}{cube}</span>{/if}</td
+        >{spent}{#if cube}<span class="cube-time">{spent ? ' · ' : ''}{cube}</span>{/if}</td
     >
 {/snippet}
 
@@ -749,9 +753,8 @@
         white-space: nowrap;
     }
 
-    /* An upper bound, not a measure: it reads apart. */
-    .estimated {
-        font-style: italic;
+    .time.selectable {
+        cursor: pointer;
     }
 
     .transcript-view input {

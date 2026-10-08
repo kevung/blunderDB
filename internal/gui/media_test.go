@@ -171,3 +171,20 @@ func TestVideoDialogPatternAcceptsUpperCase(t *testing.T) {
 		}
 	}
 }
+
+func TestYouTubeWatchURL(t *testing.T) {
+	a := &App{}
+	for source, want := range map[string]string{
+		"https://youtu.be/dQw4w9WgXcQ":                 "https://youtu.be/dQw4w9WgXcQ",
+		" https://www.youtube.com/watch?v=dQw4w9WgXcQ": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+		"youtu.be/dQw4w9WgXcQ":                         "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+		"youtube.com/live/dQw4w9WgXcQ":                 "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+		"/home/me/match.mp4":                           "",
+		"https://example.com/match.mp4":                "",
+		"":                                             "",
+	} {
+		if got := a.YouTubeWatchURL(source); got != want {
+			t.Errorf("YouTubeWatchURL(%q) = %q, want %q", source, got, want)
+		}
+	}
+}

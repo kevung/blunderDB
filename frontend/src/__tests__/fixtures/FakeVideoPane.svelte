@@ -2,8 +2,11 @@
     // Stands in for VideoPane.svelte with the same driving surface.
     import { fakeVideo } from './fakeVideo.js';
 
-    /** @type {{ source: string, onrelocate?: (path: string) => void }} */
-    let { source } = $props();
+    import { untrack } from 'svelte';
+
+    /** @type {{ source: string, startMs?: number, onrelocate?: (path: string) => void }} */
+    let { source, startMs = 0 } = $props();
+    fakeVideo.startMs = untrack(() => startMs);
 
     export function currentTimeMs() {
         return fakeVideo.now;

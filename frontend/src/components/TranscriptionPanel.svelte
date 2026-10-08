@@ -16,7 +16,7 @@
   services/transcriptionSave.js.
 -->
 <script>
-    import { onMount, onDestroy, untrack } from 'svelte';
+    import { onMount, onDestroy, untrack, tick } from 'svelte';
     import NewButton from './panels/NewButton.svelte';
     import PanelTable from './panels/PanelTable.svelte';
     import { t, tMsg } from '../i18n';
@@ -84,11 +84,12 @@
     import { ROLLS, newBoardPlay, deducedDice, choosableRolls, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
     import { containsSteps } from '../services/quizPlay.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
-    import { LegalMoves, EvaluatePositionImmediate, PickTranscriptionVideo } from '../../wailsjs/go/gui/App.js';
+    import { LegalMoves, EvaluatePositionImmediate, PickTranscriptionVideo, YouTubeWatchURL } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
     import { finishDraft, exportDraftMat, abandonDraft, draftState } from '../services/transcriptionSave.js';
     import { get } from 'svelte/store';
     import { createCursorFollower, isTyping } from '../services/videoFollow.js';
+    import { saveVideoResume, videoResumeMs } from '../services/videoResume.js';
 
     // Mirrors Go's transcript.DefaultMatchLength: the form shows it before any call.
     /** @typedef {import('../services/transcriptionKeys.js').KeyState} KeyState */
@@ -124,7 +125,11 @@
     let videoOnBoard = $state(false);
     let youtubeOpen = $state(false);
     let youtubeField = $state('');
+    /** @type {HTMLInputElement | null} */
+    let youtubeInput = $state(null);
     const VIDEO_HEIGHT_KEY = 'blunderdb.transcription.videoHeight';
+    // While the video plays, its instant is kept this often for the next opening.
+    const RESUME_SAVE_EVERY_MS = 5000;
     const VIDEO_HEIGHT_MIN = 120;
     const VIDEO_HEIGHT_MAX = 900;
     let videoHeight = $state(readVideoHeight());
@@ -132,6 +137,15 @@
     let draft = $derived($transcriptionStore);
     let annotated = $derived(draft?.annotated ?? null);
     let videoSource = $derived(annotated?.document?.header?.video_source ?? '');
+    let draftId = $derived(draft?.id ?? null);
+    // Where the draft's video opens: where the user left it, else a little before the last
+    // Repère (services/videoResume.js). Read once per draft and source: the player takes it
+    // only when it mounts, and the Cursor stays at the end where the user types.
+    let videoStart = $derived.by(() => {
+        const id = draftId;
+        const src = videoSource;
+        return src ? untrack(() => videoResumeMs(id, annotated?.actions)) : 0;
+    });
     let keys = $derived($transcriptionKeyStore);
     // `awaits` : ce que le document attend après sa dernière Action ;
     // `expects` : ce qu'attend la cellule sous le curseur (`entry.kind`), sinon
@@ -471,15 +485,33 @@
 
     // The Cursor follows the playing video through the timed part, by a seek that writes
     // nothing; the move never seeks the video back (services/videoFollow.js).
+    // The same clock keeps where the playback is for the next opening: when it stops, every
+    // few seconds while it runs, and when the draft or its source changes.
     $effect(() => {
         if (!videoSource) return;
-        const follower = createCursorFollower();
+        const draftKey = draftId;
+        const start = videoStart;
+        const follower = createCursorFollower({ startMs: start });
         let moving = false;
+        /** @type {number | null} */
+        let seen = null;
+        /** @type {number | null} */
+        let saved = start;
+        let savedAt = Date.now();
         const id = setInterval(() => {
+            const now = videoNow();
+            if (now !== null) {
+                if (now !== saved && (now === seen || Date.now() - savedAt >= RESUME_SAVE_EVERY_MS)) {
+                    saveVideoResume(draftKey, now);
+                    saved = now;
+                    savedAt = Date.now();
+                }
+                seen = now;
+            }
             if (moving) return;
             const active = document.activeElement;
             const quiet = (active instanceof Element && active.matches('input, textarea, select, [contenteditable]')) || isTyping(get(transcriptionStore)?.annotated, get(transcriptionKeyStore));
-            const target = follower.step(videoNow(), get(transcriptionStore)?.annotated, quiet);
+            const target = follower.step(now, get(transcriptionStore)?.annotated, quiet);
             if (target === null) return;
             moving = true;
             sendGesture({ Kind: 'seek_cursor', At: target })
@@ -489,7 +521,10 @@
                 })
                 .finally(() => (moving = false));
         }, 250);
-        return () => clearInterval(id);
+        return () => {
+            clearInterval(id);
+            if (seen !== null && seen !== saved) saveVideoResume(draftKey, seen);
+        };
     });
 
     /**
@@ -581,6 +616,24 @@
             logger.error('Choosing the video failed:', err);
             error = String(err);
         }
+    }
+
+    // Opened over an attached YouTube video, the field shows its address selected: a paste
+    // replaces it. Over a file it opens empty.
+    async function toggleYouTubeField() {
+        youtubeOpen = !youtubeOpen;
+        if (!youtubeOpen) return;
+        let url;
+        try {
+            url = videoSource ? (await YouTubeWatchURL(videoSource)) || '' : '';
+        } catch (_e) {
+            url = '';
+        }
+        if (!youtubeOpen) return;
+        youtubeField = url;
+        await tick();
+        youtubeInput?.focus({ preventScroll: true });
+        if (url) youtubeInput?.select();
     }
 
     function submitYouTube() {
@@ -1753,7 +1806,7 @@
             {#if videoMenuOpen}
                 <div class="video-menu" data-testid="transcription-video-menu">
                     <button class="new-btn" onclick={pickVideoFile}>{$t('transcription.videoFile')}</button>
-                    <button class="new-btn" onclick={() => (youtubeOpen = !youtubeOpen)}>{$t('transcription.videoYouTube')}</button>
+                    <button class="new-btn" onclick={toggleYouTubeField}>{$t('transcription.videoYouTube')}</button>
                     {#if videoSource}<button class="new-btn" onclick={() => attachVideo('')}>{$t('transcription.videoDetach')}</button>{/if}
                     {#if youtubeOpen}
                         <form
@@ -1763,7 +1816,7 @@
                                 submitYouTube();
                             }}
                         >
-                            <input type="url" bind:value={youtubeField} placeholder="https://www.youtube.com/watch?v=…" aria-label={$t('transcription.videoYouTube')} />
+                            <input type="url" bind:this={youtubeInput} bind:value={youtubeField} placeholder="https://www.youtube.com/watch?v=…" aria-label={$t('transcription.videoYouTube')} />
                             <button class="new-btn" type="submit">{$t('transcription.videoAttach')}</button>
                         </form>
                     {/if}
@@ -1774,7 +1827,17 @@
                 <!-- Replié tant qu'aucune source n'est attachée (ADR-0082 règle 3). -->
                 <!-- Beside the board the dock leaves this slot empty, and the slot folds. -->
                 <div class="video-slot" style={videoOnBoard ? '' : `height: ${videoHeight}px`}>
-                    <VideoDock bind:this={videoPane} bind:onBoard={videoOnBoard} owner="transcription" source={videoSource} onrelocate={(/** @type {string} */ path) => attachVideo(path)} />
+                    <!-- Another draft opens its own video where it was left: the player remounts. -->
+                    {#key draftId}
+                        <VideoDock
+                            bind:this={videoPane}
+                            bind:onBoard={videoOnBoard}
+                            owner="transcription"
+                            source={videoSource}
+                            startMs={videoStart}
+                            onrelocate={(/** @type {string} */ path) => attachVideo(path)}
+                        />
+                    {/key}
                 </div>
                 {#if !videoOnBoard}
                     <div class="video-resize" role="separator" aria-orientation="horizontal" aria-label={$t('transcription.videoResize')} onpointerdown={startVideoResize}></div>

@@ -1525,7 +1525,7 @@
         "duration": "χρόνος",
         "durationDecision": "απόφαση {time}",
         "durationCube": "κύβος {time}",
-        "durationEstimated": "≈ {time}, έως την επόμενη ζαριά, μαζί με το μάζεμα των ζαριών"
+        "durationEstimated": "απόφαση {time}, εκτίμηση: έως την επόμενη ζαριά, μαζί με το μάζεμα των ζαριών"
     },
     "status": {
         "importChip": "Εισαγωγή σε εξέλιξη: {percent} %",

@@ -65,6 +65,23 @@ describe('createCursorFollower', () => {
         expect(f.step(10500, ann(0), false)).toBe(1);
     });
 
+    test('a video the panel placed at opening starts no transition: the Cursor stays at the end', () => {
+        const f = createCursorFollower({ startMs: 9000 });
+        // Reopened a little before the last Repère, the Cursor at the end where the user types.
+        expect(f.step(9000, ann(2), false)).toBeNull();
+        expect(f.step(9500, ann(2), false)).toBeNull();
+        expect(f.step(11000, ann(2), false)).toBeNull();
+        expect(f.step(13000, ann(2), false)).toBeNull();
+        // Sent back by hand into an earlier stretch, the video is followed again.
+        expect(f.step(3000, ann(2), false)).toBe(0);
+    });
+
+    test('a first instant away from where the panel placed the video is followed as before', () => {
+        const f = createCursorFollower({ startMs: 9000 });
+        expect(f.step(2000, ann(2), false)).toBeNull();
+        expect(f.step(2500, ann(2), false)).toBe(0);
+    });
+
     test('a quiet step never moves, and the transition it saw is spent', () => {
         const f = createCursorFollower();
         f.step(13000, ann(2), false);

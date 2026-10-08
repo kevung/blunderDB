@@ -1,0 +1,55 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body,#p{margin:0;width:100%;height:100%;background:#000}</style></head><body><div id="p"></div><script src="https://www.youtube.com/iframe_api"></script><script>
+// Relays the IFrame Player with the parent through postMessage: the instant, play/pause, seek
+// and the speed. A seek asked before the player is ready waits for it. A player that has not
+// started yet reports 0 and plays on seekTo: the asked instant is kept and reported, the player
+// stays paused, and the first playing state starts from there.
+var player, ready = false, want = null;
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('p', {
+        width: '100%', height: '100%', videoId: '__VIDEO_ID__', playerVars: { playsinline: 1, rel: 0 },
+        events: {
+            onReady: function () {
+                ready = true;
+                if (want !== null) seek(want);
+                post({ type: 'ready', duration: player.getDuration(), rates: player.getAvailablePlaybackRates() });
+            },
+            onPlaybackRateChange: function (e) { post({ type: 'rate', rate: e.data }); },
+            onStateChange: function (e) {
+                if (e.data === 1 && want !== null) {
+                    var w = want;
+                    want = null;
+                    if (Math.abs(player.getCurrentTime() - w) > 0.5) player.seekTo(w, true);
+                }
+                post({ type: 'state', state: e.data, time: now() });
+            }
+        }
+    });
+}
+function now() { return want !== null ? want : player.getCurrentTime(); }
+function seek(t) {
+    if (!ready) { want = t; return; }
+    var s = player.getPlayerState();
+    player.seekTo(t, true);
+    // -1 unstarted, 5 cued: getCurrentTime stays at 0 there, and seekTo starts the playback.
+    if (s === -1 || s === 5) { want = t; player.pauseVideo(); } else want = null;
+    post({ type: 'time', time: t });
+}
+// The parent's origin: the one it passes, else the referrer's. Only an http(s) origin is
+// targeted and checked: a custom scheme (wails://) serialises differently from one webview to
+// another, and a mismatch would drop every message. Replies still go only to the parent window.
+var origin = '';
+try { origin = new URLSearchParams(location.search).get('origin') || ''; } catch (e) {}
+if (!/^https?:\/\//.test(origin)) { try { origin = new URL(document.referrer).origin; } catch (e) {} }
+var checked = /^https?:\/\//.test(origin);
+function post(m) { m.source = 'blunderdb-yt'; parent.postMessage(m, checked ? origin : '*'); }
+setInterval(function () { if (ready) post({ type: 'time', time: now() }); }, 250);
+addEventListener('message', function (e) {
+    if (e.source !== parent || (checked && e.origin !== origin)) return;
+    var m = e.data || {};
+    if (m.type === 'seek') seek(m.time);
+    if (!ready) return;
+    if (m.type === 'play') player.playVideo();
+    else if (m.type === 'pause') player.pauseVideo();
+    else if (m.type === 'rate') { player.setPlaybackRate(m.rate); post({ type: 'rate', rate: player.getPlaybackRate() }); }
+});
+</script></body></html>
