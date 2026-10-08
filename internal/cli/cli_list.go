@@ -418,6 +418,7 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 		fmt.Fprintf(w, "  Cube:\t%.3f\n", result.PRCube)
 		fmt.Fprintf(w, "  Snowie ER:\t%.3f\n", result.SnowieGlobal)
 	}
+	fmt.Fprintf(w, "  7-pt MWC loss:\t%s\n", formatMWC7(result.MWC7))
 	w.Flush()
 	fmt.Println()
 

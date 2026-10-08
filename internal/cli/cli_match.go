@@ -303,6 +303,14 @@ func (cli *CLI) formatMatchSummary(match *Match, positions []MatchMovePosition, 
 		sb.WriteString(fmt.Sprintf("  Game %d: %d positions\n", gameNum, count))
 	}
 	cli.writeTimeSummary(&sb, match)
+	if cli.db == nil {
+		return sb.String(), nil
+	}
+	if detail, err := cli.db.GetMatchDetailStats(match.ID); err == nil && detail != nil {
+		sb.WriteString("\nMWC loss, 7-point scale:\n")
+		sb.WriteString(fmt.Sprintf("  %s: %s\n", match.Player1Name, formatMWC7(detail.Player1.MWC7)))
+		sb.WriteString(fmt.Sprintf("  %s: %s\n", match.Player2Name, formatMWC7(detail.Player2.MWC7)))
+	}
 
 	return sb.String(), nil
 }
