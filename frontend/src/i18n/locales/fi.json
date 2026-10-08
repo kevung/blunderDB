@@ -707,7 +707,34 @@
         "livingCleared": "Kokoelma palautettiin käsin tehdyksi listaksi.",
         "freezeTitle": "Jäädytä: säilytä tämän päivän tulos tavallisena kokoelmana.",
         "frozen": "Kokoelma jäädytetty: {count} asemaa.",
-        "newButton": "Uusi kokoelma"
+        "newButton": "Uusi kokoelma",
+        "suggestButton": "Ehdota…",
+        "suggestTitle": "Viiteasemat",
+        "suggestHint": "Asemat, joiden opetus kattaa eniten takaisin saatavia voittomahdollisuuksia naapurivirheistäsi; jo käsitellyt ja lähes kaksoiskappaleet jätetään pois.",
+        "suggestPlayer": "Pelaaja: {name} (Tilastojen suodatin)",
+        "suggestAllPlayers": "Kaikki pelaajat (Tilastoissa ei valittu pelaajaa)",
+        "suggestScope": "Laajuus",
+        "suggestScopeLibrary": "Koko tietokanta",
+        "suggestScopeMatch": "Nykyinen ottelu",
+        "suggestScopeTournament": "Turnaus",
+        "suggestScopeFilter": "Tilastojen suodatin",
+        "suggestSize": "Koko",
+        "suggestRun": "Ehdota",
+        "suggestSummary": "{candidates} asemaa punnittu, {handled} jo käsitelty, naapurit {radius} nappulapisteen sisällä.",
+        "suggestNone": "Ei ehdotettavaa: yhtään hinnoiteltua, teemoitettua virhettä ei ole käsittelemättä.",
+        "suggestScore": "tilanne {me}a-{opp}a",
+        "suggestCovers": "edustaa {errors} virhettä {matches} ottelussa",
+        "suggestFamily": "perhe: {n} virhettä {decisions} päätöksestä",
+        "suggestOwn": "oma takaisin saatava {pct}",
+        "suggestGap": "toiseksi paras {mp} mp jäljessä",
+        "suggestClose": "tiukka opetus (lasketaan puoleksi)",
+        "suggestUnstable": "epävakaa tuomio (lasketaan puoleksi)",
+        "suggestCounted": "lasketaan {pct}",
+        "suggestRolledOut": "rollout vahvistaa",
+        "suggestKeepCollection": "Luo kokoelma ({n})",
+        "suggestKeepDeck": "Anki-pakka",
+        "suggestQuiz": "Visa",
+        "suggestDefaultName": "Viitteet {date}"
     },
     "tournament": {
         "addMatchPlaceholder": "Lisää ottelu…",
@@ -1701,7 +1728,7 @@
         "noData": "Ei tietoja tälle suodattimelle.",
         "noTags": "Ei merkintöjä valittujen asemien kommenteissa.",
         "tagsDoNotSum": "Asemalla voi olla useita merkintöjä: nämä rivit eivät summaudu kokonaismäärään.",
-        "thinCells": "Harmaannetuilla riveillä ei ole väliä: yksi ottelu ei vielä ole otos.",
+        "thinCells": "Harmaannetuilla riveillä ei ole väliä: alle kolme ottelua tai ottelut, joilla kaikilla on sama PR, eivät vielä ole otos.",
         "goalTitle": "Tavoite:",
         "goalStated": "PR < {target} {weeks} viikossa ({band}).",
         "goalSet": "Aseta tavoite…",
@@ -1878,7 +1905,7 @@
             "prCube": "Kuution PR"
         },
         "interval95": "95 %:n LV",
-        "intervalHint": "95 %:n luottamusväli: otantaa uudelleen valinnan otteluista tai ottelun peleistä. Rivi ilman väliä (yksi ottelu tai yksi peli) on harmaannettu."
+        "intervalHint": "95 %:n luottamusväli: otantaa uudelleen valinnan otteluista tai ottelun peleistä. Rivi ilman väliä (alle kolme ottelua tai peliä, tai kaikilla sama PR) on harmaannettu."
     },
     "resumeBatch": {
         "title": "Jatka tuontia",
@@ -3118,7 +3145,7 @@
     },
     "matchReview": {
         "title": "Ottelun yhteenveto",
-        "oneGame": "Vain yksi peli: ei väliä",
+        "noInterval": "Alle kolme peliä tai kaikilla sama PR: ei väliä",
         "luckAdjusted": "Tuurilla korjattu tulos {adjusted} (tulos {result}, nettotuuri {luck}; virheiden tase {balance})",
         "luckPartial": "tuuri mitattu {measured}/{rolls} heitosta",
         "wonByPlay": "voitettu pelillä",

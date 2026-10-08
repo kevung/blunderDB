@@ -7028,8 +7028,94 @@ export namespace storage {
 		    return a;
 		}
 	}
+	export class ReferenceSuggestion {
+	    PositionID: number;
+	    MatchID: number;
+	    Label: string;
+	    GameType: string;
+	    Kind: string;
+	    Theme: string;
+	    AwayOnRoll: number;
+	    AwayOpponent: number;
+	    Gain: number;
+	    Covered: number;
+	    Errors: number;
+	    Matches: number;
+	    Excess: number;
+	    FamilyErrors: number;
+	    GapMP: number;
+	    Close: boolean;
+	    Unstable: boolean;
+	    RolledOut: boolean;
 	
+	    static createFrom(source: any = {}) {
+	        return new ReferenceSuggestion(source);
+	    }
 	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.PositionID = source["PositionID"];
+	        this.MatchID = source["MatchID"];
+	        this.Label = source["Label"];
+	        this.GameType = source["GameType"];
+	        this.Kind = source["Kind"];
+	        this.Theme = source["Theme"];
+	        this.AwayOnRoll = source["AwayOnRoll"];
+	        this.AwayOpponent = source["AwayOpponent"];
+	        this.Gain = source["Gain"];
+	        this.Covered = source["Covered"];
+	        this.Errors = source["Errors"];
+	        this.Matches = source["Matches"];
+	        this.Excess = source["Excess"];
+	        this.FamilyErrors = source["FamilyErrors"];
+	        this.GapMP = source["GapMP"];
+	        this.Close = source["Close"];
+	        this.Unstable = source["Unstable"];
+	        this.RolledOut = source["RolledOut"];
+	    }
+	}
+	export class ReferenceSuggestions {
+	    NumDecisions: number;
+	    ThresholdMP: number;
+	    Radius: number;
+	    Size: number;
+	    Candidates: number;
+	    Handled: number;
+	    References: ReferenceSuggestion[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ReferenceSuggestions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.NumDecisions = source["NumDecisions"];
+	        this.ThresholdMP = source["ThresholdMP"];
+	        this.Radius = source["Radius"];
+	        this.Size = source["Size"];
+	        this.Candidates = source["Candidates"];
+	        this.Handled = source["Handled"];
+	        this.References = this.convertValues(source["References"], ReferenceSuggestion);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	export class SimilarPosition {
 	    position: domain.Position;
 	    distance: number;

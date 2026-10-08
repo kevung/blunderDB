@@ -25,7 +25,12 @@ Chaque seuil est fixé ici avant de regarder les résultats.
      surtout, les parties d'un même match partagent adversaire, séance et fatigue, et les
      rééchantillonner séparément rétrécirait l'intervalle à tort. Sans filtre joueur, les deux
      sièges d'un match forment une seule unité : ils jouent les mêmes positions.
-   - Il faut deux unités ; sinon pas d'intervalle. Bornes R ± 1,96·ES, la basse pas sous 0.
+   - Il faut **trois unités** (`domain.IntervalMinUnits`) et une **largeur non nulle** ; sinon pas
+     d'intervalle, et la case est grisée. Avec deux unités, la dispersion repose sur un seul degré
+     de liberté et le quantile normal la sous-estime plusieurs fois : deux matchs d'une décision
+     dégrisaient une case. Des unités toutes au même rapport (ES nul, aux arrondis près) disent
+     qu'elles s'accordent, pas que la valeur est exacte : « 0.00 [0.00–0.00] » n'est pas une bande.
+     La règle vaut pour le PR et pour L₇. Bornes R ± 1,96·ES, la basse pas sous 0.
    - Calcul fermé, sans graine ni tirage (`domain.RatioPool`) : même résultat à chaque lecture,
      et les deux voies des statistiques (cellules, lignes) le reproduisent à l'identique.
    - **La bande remplace le grisage « < 10 décisions »** (`MinCellDecisions` disparaît) : une
@@ -70,7 +75,9 @@ Chaque seuil est fixé ici avant de regarder les résultats.
 ## Conséquences
 
 - Un PR d'une case peut avoir un intervalle large malgré beaucoup de décisions : c'est le
-  but. Une case d'un seul match n'en a pas, quel que soit son effectif.
+  but. Une case de moins de trois matchs n'en a pas, quel que soit son effectif.
+- Le L₇ d'un agrégat rééchantillonne lui aussi les matchs, les deux sièges d'un match réunis
+  sans filtre joueur (`MWC7Pool.AddMatch`) : un match seul n'a pas d'intervalle.
 - Le bilan relit chaque décision du match ; c'est un match, pas une base.
 - Le résultat ajusté dépend de la MET de la conversion, comme L₇, et de la chance que
   l'outil d'analyse a écrite (ADR-0010) : un fichier sans chance n'en a pas.

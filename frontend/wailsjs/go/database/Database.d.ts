@@ -747,6 +747,10 @@ export function SuggestAliases(arg1:string):Promise<Array<storage.AliasSuggestio
 
 export function SuggestMatFilename(arg1:number):Promise<string>;
 
+export function SuggestReferencePositions(arg1:database.StatsFilter,arg2:Array<number>,arg3:number):Promise<storage.ReferenceSuggestions>;
+
+export function SuggestReferencePositionsCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:Array<number>,arg4:number):Promise<storage.ReferenceSuggestions>;
+
 export function SuggestTranscriptionMatFilename(arg1:number):Promise<string>;
 
 export function SuspendDuel(arg1:number):Promise<void>;

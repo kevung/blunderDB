@@ -13,11 +13,14 @@ func i64(v int64) *int64   { return &v }
 // time; the review ranks by loss less difficulty.
 func TestBuildMatchReview(t *testing.T) {
 	d := []DecisionLoss{
-		{MoveID: 1, GameNumber: 1, MoveNumber: 1, Player: 0, DecisionType: "checker", ErrorMP: i64(0), MWCLoss: f(0), Luck: f(-0.10), DurationMS: i64(10000)},
-		{MoveID: 2, GameNumber: 1, MoveNumber: 2, Player: 1, DecisionType: "checker", ErrorMP: i64(80), Error: true, MWCLoss: f(0.02), Luck: f(0.20), DurationMS: i64(3000)},
-		{MoveID: 3, GameNumber: 2, MoveNumber: 1, Player: 0, DecisionType: "checker", ErrorMP: i64(100), Error: true, MWCLoss: f(0.03), Difficulty: f(0.025), DurationMS: i64(2000)},
-		{MoveID: 4, GameNumber: 2, MoveNumber: 2, Player: 0, DecisionType: "checker", ErrorMP: i64(60), Error: true, MWCLoss: f(0.01), DurationMS: i64(20000)},
+		{MoveID: 1, Rolled: true, GameNumber: 1, MoveNumber: 1, Player: 0, DecisionType: "checker", ErrorMP: i64(0), MWCLoss: f(0), Luck: f(-0.10), DurationMS: i64(10000)},
+		{MoveID: 2, Rolled: true, GameNumber: 1, MoveNumber: 2, Player: 1, DecisionType: "checker", ErrorMP: i64(80), Error: true, MWCLoss: f(0.02), Luck: f(0.20), DurationMS: i64(3000)},
+		{MoveID: 3, Rolled: true, GameNumber: 2, MoveNumber: 1, Player: 0, DecisionType: "checker", ErrorMP: i64(100), Error: true, MWCLoss: f(0.03), Difficulty: f(0.025), DurationMS: i64(2000)},
+		{MoveID: 4, Rolled: true, GameNumber: 2, MoveNumber: 2, Player: 0, DecisionType: "checker", ErrorMP: i64(60), Error: true, MWCLoss: f(0.01), DurationMS: i64(20000)},
 		{MoveID: 5, GameNumber: 2, MoveNumber: 3, Player: 1, DecisionType: "cube", ErrorMP: i64(0), MWCLoss: f(0)},
+		// A checker row without its position can never carry luck: it is
+		// not a roll the coverage misses.
+		{MoveID: 6, GameNumber: 2, MoveNumber: 4, Player: 1, DecisionType: "checker"},
 	}
 	r := BuildMatchReview(9, d, 5, 0.5, -1)
 	p := r.Players[0]
@@ -39,8 +42,17 @@ func TestBuildMatchReview(t *testing.T) {
 	if p.Pace.Hasty != 1 || p.Pace.Deliberate != 1 || p.Pace.HastyLoss != 0.03 {
 		t.Errorf("pace: %+v", p.Pace)
 	}
-	if p.Decisions != 3 || !p.PRInterval.Available || p.PRInterval.Units != 2 || !p.MWC7.HasInterval {
+	// Two games are too few units for a band (domain.IntervalMinUnits).
+	if p.Decisions != 3 || p.PRInterval.Available || p.PRInterval.Units != 2 || p.MWC7.HasInterval {
 		t.Errorf("PR %v over %d, interval %+v, L7 %+v", p.PR, p.Decisions, p.PRInterval, p.MWC7)
+	}
+	for seat, want := range SummariseDifficulty(d) {
+		if got := r.Players[seat].Difficulty; got.Decisions != want.Decisions || got.Excess != want.Excess || got.Avoidable != want.Avoidable {
+			t.Errorf("seat %d difficulty %+v, want %+v", seat, got, want)
+		}
+	}
+	if r.Players[0].Difficulty.Decisions != 1 {
+		t.Errorf("player 1's difficulty covers move 3 only: %+v", r.Players[0].Difficulty)
 	}
 	if m := BuildMatchReview(9, d, 0, 0.5, 1); m.Players[0].Luck.Available {
 		t.Error("money play has no luck-adjusted result")

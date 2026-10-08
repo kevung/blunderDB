@@ -178,3 +178,113 @@ func testStatsMatchDecisionLosses(t *testing.T, s storage.Storage) {
 		t.Errorf("errors without a time are of unknown pace: %+v", p1.Pace)
 	}
 }
+
+// testStatsMatchDecisionLossesCube runs the cube decisions end to end: a
+// double, a pass and a take, each a 100 mP error with a single rival option.
+// The answer sits on the position after the double, whose cube is twice the
+// doubler's; it is priced at the cube the double was offered at, so a pass
+// costs what the double cost at the same score. The difficulty weighs the
+// deciding player's two options, as for a checker play.
+func testStatsMatchDecisionLossesCube(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7,
+		MatchDate: time.Date(2025, 6, 2, 0, 0, 0, 0, time.UTC)}
+	matchID, err := s.Matches().Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	gameID, err := s.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 2})
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+	// A cube position has no dice, so the score tells the take's position
+	// from the pass's.
+	cubePos := func(away, cubeLog2, owner int, dca *domain.DoublingCubeAnalysis, played string) int64 {
+		pos := statsDecisionPos(t, 0)
+		pos.DecisionType = domain.CubeAction
+		pos.Dice = [2]int{0, 0}
+		pos.Score = [2]int{away, away}
+		pos.Cube = domain.Cube{Value: cubeLog2, Owner: owner}
+		id, err := s.Positions().Save(ctx, "", &pos)
+		if err != nil {
+			t.Fatalf("Save cube position (%d-away): %v", away, err)
+		}
+		if err := s.Analyses().Save(ctx, "", id, &domain.PositionAnalysis{AnalysisType: "DoublingCube",
+			PlayedCubeActions: []string{played}, DoublingCubeAnalysis: dca}); err != nil {
+			t.Fatalf("Save cube analysis (%d-away): %v", away, err)
+		}
+		return id
+	}
+	// No double is right by 100 mP; taking is right by 100 mP; then, on
+	// another position, passing is right by 100 mP.
+	double := cubePos(4, 0, domain.None, &domain.DoublingCubeAnalysis{
+		CubefulNoDoubleEquity: 0.5, CubefulDoubleTakeEquity: 0.4, CubefulDoublePassEquity: 1.0,
+		CubefulDoubleTakeError: 0.1, CubefulDoublePassError: 0.5}, "Double")
+	pass := cubePos(4, 1, domain.White, &domain.DoublingCubeAnalysis{
+		CubefulNoDoubleEquity: 0.5, CubefulDoubleTakeEquity: 0.9, CubefulDoublePassEquity: 1.0,
+		CubefulDoubleTakeError: 0.4, CubefulDoublePassError: 0.5}, "Pass")
+	take := cubePos(3, 1, domain.White, &domain.DoublingCubeAnalysis{
+		CubefulNoDoubleEquity: 0.5, CubefulDoubleTakeEquity: 1.1, CubefulDoublePassEquity: 1.0,
+		CubefulDoubleTakeError: 0.6, CubefulDoublePassError: 0.5}, "Take")
+	moves := []struct {
+		pos    int64
+		player int32
+		action string
+	}{{double, 1, "Double"}, {pass, -1, "Pass"}, {take, -1, "Take"}}
+	for i, mv := range moves {
+		if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gameID, MoveNumber: int32(i + 1), MoveType: "cube",
+			PositionID: mv.pos, Player: mv.player, CubeAction: mv.action}); err != nil {
+			t.Fatalf("CreateMove %d: %v", i, err)
+		}
+	}
+
+	got, err := s.Stats().MatchDecisionLosses(ctx, "", matchID)
+	if err != nil {
+		t.Fatalf("MatchDecisionLosses: %v", err)
+	}
+	if len(got) != len(moves) {
+		t.Fatalf("got %d decisions, want %d: %+v", len(got), len(moves), got)
+	}
+	share := 1 / (1 + math.Exp(0.1/storage.DifficultyTemperature))
+	for i, d := range got {
+		if d.DecisionType != "cube" || d.Rolled || d.ErrorMP == nil || *d.ErrorMP != 100 {
+			t.Errorf("decision %d (%s): %+v, want a cube decision of 100 mP", i, moves[i].action, d)
+			continue
+		}
+		if d.MWCLoss == nil || *d.MWCLoss <= 0 || d.Difficulty == nil {
+			t.Errorf("decision %d (%s): loss %v, difficulty %v", i, moves[i].action, d.MWCLoss, d.Difficulty)
+			continue
+		}
+		if r := *d.Difficulty / *d.MWCLoss; math.Abs(r-share) > 1e-6 {
+			t.Errorf("decision %d (%s): difficulty/loss %v, want %v", i, moves[i].action, r, share)
+		}
+	}
+	if len(got) == 3 && got[0].MWCLoss != nil && got[1].MWCLoss != nil && math.Abs(*got[1].MWCLoss-*got[0].MWCLoss) > 1e-12 {
+		t.Errorf("the pass costs %v, the double %v: an answer is priced at the cube offered, not the doubled one",
+			*got[1].MWCLoss, *got[0].MWCLoss)
+	}
+
+	var sum [2]float64
+	for _, d := range got {
+		if d.MWCLoss != nil {
+			sum[d.Player] += *d.MWCLoss
+		}
+	}
+	badges, err := s.Stats().MatchBadges(ctx, "", []int64{matchID})
+	if err != nil {
+		t.Fatalf("MatchBadges: %v", err)
+	}
+	if b := badges[matchID]; math.Abs(sum[0]-b.MWCLoss) > 1e-12 || math.Abs(sum[1]-b.MWCLoss2) > 1e-12 {
+		t.Errorf("per-decision sums %v differ from the badge (%v, %v)", sum, b.MWCLoss, b.MWCLoss2)
+	}
+	review, err := s.Stats().MatchReview(ctx, "", matchID)
+	if err != nil {
+		t.Fatalf("MatchReview: %v", err)
+	}
+	if d := review.Players[1].Difficulty; d.Decisions != 2 || math.Abs(d.Loss-sum[1]) > 1e-12 {
+		t.Errorf("Bob's served difficulty summary %+v, want two decisions losing %v", d, sum[1])
+	}
+	if l := review.Players[0].Luck; l.Rolls != 0 {
+		t.Errorf("a cube decision is not a roll: %+v", l)
+	}
+}

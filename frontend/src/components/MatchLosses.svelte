@@ -5,15 +5,18 @@
     // but not the same scale. Nothing is drawn for a match without analysis.
     import { t } from '../i18n';
     import { indexAt, stepIndex } from '../utils/chartAxis.js';
-    import { fmtExcess, fmtLoss, lossSeries, niceCeil } from '../utils/decisionLoss.js';
+    import { fmtExcess, fmtLoss, lossSeries, niceCeil, servedDifficulty } from '../utils/decisionLoss.js';
 
-    /** @type {{ losses: any[] | null, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void }} */
-    let { losses, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
+    /** @type {{ losses: any[] | null, review?: any, movePositions: any[], player1: string, player2: string, hovered?: number | null, onhover?: (moveId: number | null) => void, onselect?: (index: number) => void }} */
+    let { losses, review = null, movePositions, player1, player2, hovered = null, onhover = () => {}, onselect = () => {} } = $props();
 
     const W = 320;
     const H = 56;
 
     let series = $derived(lossSeries(movePositions, losses));
+    // The summary is the review's, computed in Go: the excess and the ratio
+    // are the ones `match --format summary` prints.
+    let served = $derived(servedDifficulty(review));
     let n = $derived(Math.max(1, movePositions.length));
     let slot = $derived(W / n);
     let peak = $derived(niceCeil(Math.max(0, ...series.items.map((d) => Math.max(d.loss ?? 0, d.difficulty ?? 0)))));
@@ -69,7 +72,7 @@
                     <th></th>
                     <th>{$t('match.lossTotal')}</th>
                     <th>{$t('match.lossScored')}</th>
-                    {#if series.anyDifficulty}
+                    {#if served.any}
                         <th title={$t('match.difficultyColTooltip')}>{$t('match.difficultyTotal')}</th>
                         <th title={$t('match.excessTooltip')}>{$t('match.excess')}</th>
                         <th title={$t('match.ratioTooltip')}>{$t('match.ratio')}</th>
@@ -87,12 +90,12 @@
                         </td>
                         <td data-testid="loss-total-{p}">{fmtLoss(series.totals[p])}</td>
                         <td>{series.scored[p]}</td>
-                        {#if series.anyDifficulty}
-                            {@const s = series.difficulty[p]}
-                            <td data-testid="difficulty-total-{p}">{fmtLoss(s.difficulty)}</td>
-                            <td data-testid="excess-{p}">{fmtExcess(s.excess)}</td>
-                            <td data-testid="ratio-{p}">{s.ratio === null ? '—' : s.ratio.toFixed(2)}</td>
-                            <td data-testid="avoidable-{p}">{s.avoidable}</td>
+                        {#if served.any}
+                            {@const s = served.difficulty[p]}
+                            <td data-testid="difficulty-total-{p}">{s ? fmtLoss(s.difficulty) : ''}</td>
+                            <td data-testid="excess-{p}">{s ? fmtExcess(s.excess) : ''}</td>
+                            <td data-testid="ratio-{p}">{s?.ratio == null ? '—' : s.ratio.toFixed(2)}</td>
+                            <td data-testid="avoidable-{p}">{s?.avoidable ?? ''}</td>
                         {/if}
                     </tr>
                 {/each}

@@ -13,9 +13,13 @@ import (
 // StudyEffect measures each studied family of the study plan before and after
 // the day it was first studied (storage.BuildStudyEffect, ADR-0079).
 func (s *StatsStore) StudyEffect(ctx context.Context, scope string, filter storage.StatsFilter) (*storage.StudyEffect, error) {
-	rows, _, _, err := s.classifiedErrors(ctx, scope, filter, true)
+	classified, _, _, err := s.classifiedErrors(ctx, scope, filter, classifyOptions{priced: true})
 	if err != nil {
 		return nil, err
+	}
+	rows := make([]storage.StudyPlanRow, len(classified))
+	for i := range classified {
+		rows[i] = classified[i].StudyPlanRow
 	}
 	filter, err = s.withPlayerAliases(ctx, scope, filter)
 	if err != nil {

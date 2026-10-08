@@ -367,6 +367,10 @@ type DecisionLoss struct {
 	// the position's score and cube like a loss (ADR-0078); nil when unknown,
 	// on a cube row, or at money.
 	Luck *float64 `json:"luck"`
+	// Rolled marks a checker play that has its position: a roll whose luck
+	// the analysis could have measured. A checker row without one never
+	// carries luck, so it is not a roll the luck coverage misses.
+	Rolled bool `json:"rolled"`
 	// DurationMS is the time taken over the decision (ADR-0073), nil when
 	// unknown.
 	DurationMS *int64 `json:"duration_ms"`
@@ -619,6 +623,12 @@ type StatsStore interface {
 	// would recover, apart from those short of evidence (ADR-0077). See
 	// BuildStudyPlan.
 	StudyPlan(ctx context.Context, scope string, filter StatsFilter) (*StudyPlan, error)
+
+	// SuggestReferences proposes the reference positions of a filter: those
+	// whose lesson covers the most recoverable MWC of their neighbouring
+	// errors, near-duplicates and handled positions left out (ADR-0080). See
+	// SuggestReferences.
+	SuggestReferences(ctx context.Context, scope string, req ReferenceRequest) (*ReferenceSuggestions, error)
 
 	// StudyEffect measures each studied family's loss rate in real play
 	// before and after the day it was first studied (ADR-0079). See

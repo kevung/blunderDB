@@ -1261,6 +1261,42 @@ connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
 s'élargir en silence.
 
+.. _positions_reference:
+
+Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence** :
+une courte liste de positions à étudier, choisie parmi vos erreurs pour que
+chacune en résume beaucoup. Étudier les dix pires erreurs donne souvent dix
+variantes d'un même problème, ou des positions singulières qui n'apprennent
+rien sur les autres ; une position de référence est au centre de plusieurs de
+vos erreurs, de structure voisine, et sa leçon sert à toutes.
+
+* Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées en
+  MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs d'une
+  famille sont **voisines** à au plus 12 pions-pas de distance ``like`` ; une
+  erreur de videau n'a pour voisines que celles du même score.
+* Chaque position vaut le **MWC récupérable** (perte moins difficulté) de ses
+  voisines et d'elle-même : ce que sa leçon rapporterait si elle servait à
+  toutes. Une leçon **serrée** (le second choix coûte moins d'une demi-erreur)
+  ou un verdict **instable** (une autre profondeur ou un rollout dit autre
+  chose) compte pour moitié ; un rollout qui confirme est signalé. Le chiffre
+  en tête de chaque ligne est le MWC couvert, la raison donne le chiffre
+  compté quand la leçon compte pour moitié.
+* La liste est **variée** : une position retenue couvre ses voisines, qui ne
+  rapportent plus rien aux suivantes, et aucune position proposée n'est un
+  quasi-doublon d'une autre. Une position **déjà traitée** — commentée, dans
+  une collection, une carte Anki ou marquée « étudiée » — n'est jamais
+  proposée, et ses voisines sont tenues pour couvertes.
+
+La **portée** est toute la base, le match en cours, un tournoi ou le filtre du
+panneau Statistiques ; le joueur est celui de ce filtre. La **taille** est de
+10, 20 ou 50 positions. Chaque ligne donne sa famille, son score s'il s'agit
+du videau, le MWC qu'elle couvre et sa raison : combien d'erreurs et de
+matchs elle résume, la taille de sa famille parmi vos décisions, son propre
+récupérable, l'écart avec le second choix. Cliquer sur une ligne ouvre la
+position ; les cases cochées deviennent en un clic une **collection**, un
+**paquet Anki** ou un **quiz**. En ligne de commande :
+``blunderdb collection suggest`` (voir :ref:`cli_collection`).
+
 .. _lecons:
 
 Leçons
@@ -2775,11 +2811,12 @@ tous les onglets.
   faire varier du simple au double. Le badge et le bilan d'un match
   (:ref:`bilan du match <bilan_match>`) donnent l'intervalle à 95 % en rééchantillonnant ses
   parties ; un agrégat (statistiques d'un joueur, d'un tournoi) le donne en
-  rééchantillonnant ses matchs. Il faut au moins deux parties, ou deux matchs.
-  Une ligne par match des statistiques n'a pas d'intervalle : filtrée par
-  joueur, elle ne contient qu'une unité ; sans joueur, ses deux sièges
-  mesureraient l'écart entre les adversaires, pas l'incertitude. Ne classez pas
-  des joueurs sur un seul match.
+  rééchantillonnant ses matchs ; sans filtre joueur, les deux sièges d'un match
+  forment une seule unité, puisqu'ils jouent les mêmes positions. Il faut au
+  moins trois parties, ou trois matchs, et qu'elles ne donnent pas toutes la
+  même perte : sinon pas d'intervalle. Une ligne par match des statistiques
+  n'en a donc pas : c'est une seule unité. Ne classez pas des joueurs sur un
+  seul match.
 
   .. caution::
      Une partie *money-game* n'a pas de longueur de match : la perte MWC
@@ -3189,8 +3226,10 @@ seulement combien de décisions le portent. Il rééchantillonne les **matchs** 
 la sélection, pas les décisions ni les parties : les parties d'un match
 partagent adversaire, séance et fatigue, et les compter comme indépendantes
 donnerait un intervalle trop étroit ; sans filtre joueur, les deux sièges d'un
-match forment une seule unité. Une ligne qui ne repose que sur un match n'a pas
-d'intervalle et est grisée, même avec beaucoup de décisions. Pour l'étude : une
+match forment une seule unité. Une ligne qui repose sur moins de trois matchs,
+ou dont tous les matchs donnent le même PR, n'a pas d'intervalle et est grisée,
+même avec beaucoup de décisions : deux matchs ne disent rien de la dispersion,
+et des matchs identiques disent qu'ils s'accordent, pas que le PR est exact. Pour l'étude : une
 famille de positions dont l'intervalle reste au-dessus de votre PR global est
 une faiblesse établie ; une ligne à l'intervalle large ne justifie pas encore un
 plan de travail. Le PR global du tableau de bord porte le même intervalle, sous

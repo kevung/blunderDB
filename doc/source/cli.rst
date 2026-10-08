@@ -956,7 +956,7 @@ Le serveur la sert par ``/v1/stats.matchDecisionLosses``.
 
 ``summary`` se termine par une section ``Review``, le bilan du match
 (:ref:`bilan du match <bilan_match>`) : par joueur, le PR et son intervalle à 95 % sur les
-parties, le résultat ajusté de la chance (avec le résultat, la chance nette,
+parties, la perte MWC ramenée à 7 points et son intervalle sur les parties, le résultat ajusté de la chance (avec le résultat, la chance nette,
 l'écart des erreurs et la couverture des jets), les trois erreurs à revoir
 (partie, coup, perte et part évitable) et le partage des erreurs entre
 précipitées et réfléchies. Le serveur le sert par ``/v1/stats.matchReview``.
@@ -982,6 +982,8 @@ portent leur intervalle à 95 % sur les matchs (colonne ``95 % CI``), et
    ./blunderdb match --db base.db --id 1 --format summary
    ./blunderdb match --db base.db --id 1 --format text
    ./blunderdb match --db base.db --id 1 --output match1.json
+
+.. _cli_collection:
 
 collection — Gérer les collections
 ----------------------------------
@@ -1023,6 +1025,19 @@ ou ``csv``, comme ``list``.
   Exporte une ou plusieurs collections vers un nouveau fichier de base, par
   le même appel que la fenêtre d'export de l'interface graphique (voir la
   commande ``export`` pour le filigrane).
+* ``suggest [--player <nom>] [--match <ids>] [--tournament <ids>] [--from
+  <date>] [--to <date>] [--decision-type all|checker|cube] [--size <n>]
+  [--collection <nom>] [--deck <nom>] [--format text|json]`` — Propose des
+  **positions de référence** parmi les erreurs du filtre : celles dont la
+  leçon couvre le plus de MWC récupérable de leurs erreurs voisines, sans
+  quasi-doublon ni position déjà traitée (voir
+  :ref:`positions de référence <positions_reference>`). ``--size`` vaut 20
+  par défaut, 50 au plus. Rien n'est écrit sans ``--collection``, qui range
+  les positions proposées dans une nouvelle collection, ou ``--deck``, qui en
+  fait un paquet Anki. Chaque ligne donne la famille, le score d'une
+  référence de videau, les erreurs et matchs qu'elle résume, le MWC couvert
+  et sa raison (qui donne le chiffre compté quand la leçon compte pour
+  moitié) ; ``--format json`` rend les mêmes composantes.
 
 Le XGID affiché par ``show`` est celui enregistré avec l'analyse de la
 position quand il existe (imports BGF et XGP) ; sinon il est généré depuis le
@@ -1057,6 +1072,10 @@ tout de même avec le code 0.
    # Exporter deux collections, marquées de leur origine
    ./blunderdb collection export --db base.db --id 3,4 --out ouvertures.db \
        --watermark "Cours de Jean Dupont - 12 mars 2026"
+
+   # Dix positions de référence d'Alice sur un tournoi, gardées en collection
+   ./blunderdb collection suggest --db base.db --player "Alice" --tournament 4 \
+       --size 10 --collection "Références : open de mars"
 
 study — La file d'étude transversale
 ------------------------------------
