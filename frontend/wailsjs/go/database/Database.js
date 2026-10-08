@@ -590,6 +590,10 @@ export function GetMatchByID(arg1) {
   return window['go']['database']['Database']['GetMatchByID'](arg1);
 }
 
+export function GetMatchDecisionLosses(arg1) {
+  return window['go']['database']['Database']['GetMatchDecisionLosses'](arg1);
+}
+
 export function GetMatchDetailStats(arg1) {
   return window['go']['database']['Database']['GetMatchDetailStats'](arg1);
 }

@@ -698,15 +698,7 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 			a = &matchAcc{}
 			acc[matchID] = a
 		}
-		fMove := 0
-		if rawPlayer == -1 {
-			fMove = 1
-		}
-		// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss wants
-		// current scores, and the Crawford sentinel is decoded on the way.
-		mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP),
-			matchLength-domain.PointsAway(awayScore0), matchLength-domain.PointsAway(awayScore1),
-			fMove, cubeValue, matchLength)
+		mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, rawPlayer, cubeValue, matchLength)
 		pa := &a.p1
 		if rawPlayer != 1 { // player2 on roll (rawPlayer == -1)
 			pa = &a.p2

@@ -942,6 +942,13 @@ version de gammonNet). Pour un match qui n'a pas été joué ici, elles écriven
 ici. Le serveur la sert par ``/v1/matches.origin`` : ``null`` pour un match
 sans origine, 404 pour un match qui n'existe pas.
 
+Pour un match analysé, la perte de chances de gagner le match de chaque coup
+(``mwc_loss``, une fraction : 0,0123 vaut 1,23 %, ``null`` pour un coup non noté)
+suit le même chemin : la sortie ``json`` porte la liste sous ``decision_losses``,
+``text`` ajoute une ligne ``MWC loss`` aux coups notés et ``summary`` donne le total par
+joueur, égal à la perte MWC de la liste des matchs. Le serveur la sert par
+``/v1/stats.matchDecisionLosses``.
+
 .. code-block:: bash
 
    ./blunderdb match --db <path> --id <id> [--format <format>] [--output <file>]
