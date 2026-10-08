@@ -60,7 +60,7 @@ describe('niceCeil', () => {
     });
 });
 
-describe('the difficulty summary (ADR-0075)', () => {
+describe('the difficulty summary (ADR-0076)', () => {
     const moves = [
         { move_id: 1, player_on_roll: 0 },
         { move_id: 2, player_on_roll: 0 },

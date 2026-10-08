@@ -108,7 +108,7 @@ func testStatsMatchDecisionLosses(t *testing.T, s storage.Storage) {
 		t.Fatalf("a 150 mP error should cost more than a 60 mP one: %+v", got[:2])
 	}
 
-	// Difficulty (ADR-0075): each scored decision is binary, a gap Δ between
+	// Difficulty (ADR-0076): each scored decision is binary, a gap Δ between
 	// the two candidates, so the reference player loses Δ·π(worse) and a
 	// worse play's difficulty is its loss times 1/(1+e^{Δ/τ}).
 	gaps := []float64{0.060, 0.150, 0, 0.020, 0.300, 0.1}

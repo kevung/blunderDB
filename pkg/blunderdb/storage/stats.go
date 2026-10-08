@@ -329,7 +329,7 @@ type DecisionLoss struct {
 	DecisionType string   `json:"decision_type"` // "checker" or "cube"
 	MWCLoss      *float64 `json:"mwc_loss"`
 	// Difficulty is the loss a reference player expects in the same position
-	// (ADR-0075), in the unit of MWCLoss; nil wherever MWCLoss is, or where the
+	// (ADR-0076), in the unit of MWCLoss; nil wherever MWCLoss is, or where the
 	// analysis gives no option costs.
 	Difficulty *float64 `json:"difficulty"`
 	// Avoidable marks an error (the library's threshold) the reference player

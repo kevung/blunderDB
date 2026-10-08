@@ -118,7 +118,7 @@ func (cli *CLI) formatMatchJSON(match *Match, positions []MatchMovePosition, ori
 		"position_count": len(positions),
 	}
 	// Per Move, in match order; mwc_loss and difficulty are fractions, null
-	// when unscored. The summary adds them up per player (ADR-0075).
+	// when unscored. The summary adds them up per player (ADR-0076).
 	if losses := cli.decisionLosses(match.ID); losses != nil {
 		output["decision_losses"] = losses
 		output["difficulty_summary"] = storage.SummariseDifficulty(losses)
@@ -368,7 +368,7 @@ func (cli *CLI) writeLossSummary(sb *strings.Builder, match *Match) {
 
 // writeDifficultySummary adds, per player, the reference player's expected
 // loss over the same decisions, the excess over it, the ratio to it and the
-// avoidable errors (ADR-0075): nothing when no decision has a difficulty.
+// avoidable errors (ADR-0076): nothing when no decision has a difficulty.
 func writeDifficultySummary(sb *strings.Builder, names [2]string, losses []storage.DecisionLoss) {
 	diff := storage.SummariseDifficulty(losses)
 	if diff[0].Decisions+diff[1].Decisions == 0 {

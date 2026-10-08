@@ -1,4 +1,4 @@
-# ADR-0075 — La difficulté d'une décision est la perte attendue d'un joueur de référence
+# ADR-0076 — La difficulté d'une décision est la perte attendue d'un joueur de référence
 
 Statut : acceptée.
 Voir aussi : ADR-0046 (seuils d'erreur de la bibliothèque), ADR-0019 (échelle d'équité

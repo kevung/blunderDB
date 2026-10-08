@@ -33,7 +33,7 @@ func TestReferenceExpectedLoss(t *testing.T) {
 			t.Errorf("%s: got %v, want %v", c.name, got, c.want)
 		}
 	}
-	// ADR-0075's anchors: the hardest binary gap is near 1.28τ, five
+	// ADR-0076's anchors: the hardest binary gap is near 1.28τ, five
 	// candidates spaced 0.01 sit near PR 6.
 	if got := ReferenceExpectedLoss([]float64{0, 0.01, 0.02, 0.03, 0.04}, tau); math.Abs(got-0.0125) > 0.0002 {
 		t.Errorf("five candidates: got %v, want ≈ 0.0125", got)

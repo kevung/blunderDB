@@ -3,12 +3,12 @@
 // a null loss and reads as unscored, never as zero.
 
 // The total difficulty (MWC) under which a match's loss-to-difficulty ratio
-// is not given (ADR-0075, storage.DifficultyRatioFloor).
+// is not given (ADR-0076, storage.DifficultyRatioFloor).
 export const DIFFICULTY_RATIO_FLOOR = 0.005;
 
 /**
  * @typedef {{ decisions: number, loss: number, difficulty: number, excess: number, ratio: number | null, avoidable: number }} DifficultySummary
- * One player's reading of ADR-0075 over the decisions carrying both a loss and
+ * One player's reading of ADR-0076 over the decisions carrying both a loss and
  * a difficulty, as storage.SummariseDifficulty adds them up.
  */
 

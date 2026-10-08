@@ -2,7 +2,7 @@ package storage
 
 import "math"
 
-// The reference player of ADR-0075: the parameters are fixed there, before any
+// The reference player of ADR-0076: the parameters are fixed there, before any
 // result was read, and change only with a new ADR.
 const (
 	// DifficultyTemperature is τ, in normalised equity: the reference player
@@ -45,7 +45,7 @@ func IsAvoidable(loss, difficulty float64, isError bool) bool {
 	return isError && loss > 0 && difficulty <= AvoidableShare*loss
 }
 
-// DifficultySummary is one player's match-level reading of ADR-0075, over the
+// DifficultySummary is one player's match-level reading of ADR-0076, over the
 // decisions that carry both a loss and a difficulty. Losses are MWC fractions.
 type DifficultySummary struct {
 	Decisions  int     `json:"decisions"`

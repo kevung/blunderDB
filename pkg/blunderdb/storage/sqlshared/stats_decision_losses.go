@@ -16,7 +16,7 @@ import (
 // Move outside the counted set, or one the conversion cannot price, keeps a
 // nil loss.
 //
-// A priced Move also carries its difficulty (ADR-0075): the reference
+// A priced Move also carries its difficulty (ADR-0076): the reference
 // player's expected loss over the options its analysis lists, converted by the
 // same function, and the avoidable mark that compares the two. Each blob is
 // decoded once per Position.
@@ -93,7 +93,7 @@ func (s *StatsStore) MatchDecisionLosses(ctx context.Context, scope string, matc
 }
 
 // decisionCosts lists what each option of a decision costs, in equity, as the
-// play's own error is scored (ADR-0075): a checker decision's candidates, the
+// play's own error is scored (ADR-0076): a checker decision's candidates, the
 // best at 0; a doubling decision's no double and double (against the best
 // answer, engine.CubeActionError); an answer's take and pass. nil when the
 // analysis gives fewer than the decision's options.
