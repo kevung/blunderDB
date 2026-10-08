@@ -1956,6 +1956,7 @@
         "kindAnkiCard": "Карточка Anki",
         "kindMatch": "Матч",
         "restored": "Восстановлено: {what}",
+        "restoredSlotTaken": "Восстановлено: {what} — его место в Дирекции занято другим матчем, он вернулся без него",
         "restoreFailed": "Не удалось восстановить: {error}"
     },
     "tags": {

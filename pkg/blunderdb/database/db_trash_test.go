@@ -45,10 +45,11 @@ func TestTrashPosition_RendLAnalyseEtLesCommentaires(t *testing.T) {
 		t.Fatal("la position est toujours là après sa mise à la corbeille")
 	}
 
-	restored, err := db.RestoreFromTrash(trashID)
+	res, err := db.RestoreFromTrash(trashID)
 	if err != nil {
 		t.Fatalf("RestoreFromTrash: %v", err)
 	}
+	restored := res.ID
 	if _, err := db.LoadPosition(int(restored)); err != nil {
 		t.Fatalf("la position restaurée est introuvable : %v", err)
 	}
@@ -98,10 +99,11 @@ func TestRestore_LaDeduplicationDecideOuLaPositionAtterrit(t *testing.T) {
 		t.Fatalf("SavePosition (réimport): %v", err)
 	}
 
-	restored, err := db.RestoreFromTrash(trashID)
+	res, err := db.RestoreFromTrash(trashID)
 	if err != nil {
 		t.Fatalf("RestoreFromTrash: %v", err)
 	}
+	restored := res.ID
 	if restored != reimported {
 		t.Errorf("la restauration a créé une seconde ligne (%d) au lieu de retrouver %d",
 			restored, reimported)
@@ -145,10 +147,11 @@ func TestTrashCollection_RendLaListe(t *testing.T) {
 		}
 	}
 
-	restored, err := db.RestoreFromTrash(trashID)
+	res, err := db.RestoreFromTrash(trashID)
 	if err != nil {
 		t.Fatalf("RestoreFromTrash: %v", err)
 	}
+	restored := res.ID
 	got, err := db.GetCollectionPositions(restored)
 	if err != nil {
 		t.Fatalf("GetCollectionPositions: %v", err)

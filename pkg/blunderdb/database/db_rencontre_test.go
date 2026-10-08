@@ -259,7 +259,8 @@ func TestRencontreRestoreRealignsTables(t *testing.T) {
 	}
 	before := eventCount(t, d, a)
 
-	rid, err := d.RestoreFromTrash(trashID)
+	restored, err := d.RestoreFromTrash(trashID)
+	rid := restored.ID
 	if err != nil {
 		t.Fatal(err)
 	}

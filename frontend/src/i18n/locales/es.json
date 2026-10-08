@@ -1956,6 +1956,7 @@
         "kindAnkiCard": "Tarjeta Anki",
         "kindMatch": "Partido",
         "restored": "Restaurado: {what}",
+        "restoredSlotTaken": "Restaurado: {what} — su plaza de Dirección la ocupa otro match, vuelve sin ella",
         "restoreFailed": "No se pudo restaurar: {error}"
     },
     "tags": {

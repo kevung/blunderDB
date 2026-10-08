@@ -194,6 +194,8 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Rencontre/Lifecycle", testRencontreLifecycle},
 		{"Rencontre/TrashRestores", testRencontreTrashRestores},
 		{"Trash/MatchRestores", testTrashMatchRestores},
+		{"Trash/MatchDirectionSlot", testTrashMatchDirectionSlot},
+		{"Position/Reinstate", testPositionReinstate},
 		{"Lesson/Lifecycle", testLessonLifecycle},
 		{"Lesson/Progress", testLessonProgress},
 		{"MatchEquityTable/Lifecycle", testMETLifecycle},

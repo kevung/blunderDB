@@ -1956,6 +1956,7 @@
         "kindAnkiCard": "Carte Anki",
         "kindMatch": "Match",
         "restored": "Restauré : {what}",
+        "restoredSlotTaken": "Restauré : {what} — sa place de Direction est prise par un autre match, il revient sans elle",
         "restoreFailed": "Restauration impossible : {error}"
     },
     "tags": {

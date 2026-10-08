@@ -197,6 +197,67 @@ func (s *positionStore) SaveCreated(ctx context.Context, scope string, p *domain
 	return id, created, nil
 }
 
+// positionReinstateSQL is positionInsertSQL with the id stated. Its ON
+// CONFLICT has no target, so a taken id is skipped like a stored hash rather
+// than raised: a unique violation would abort the caller's transaction and
+// leave it no fallback.
+var positionReinstateSQL = strings.Replace(strings.Replace(strings.Replace(positionInsertSQL,
+	"INSERT INTO position (", "INSERT INTO position (id, ", 1),
+	"VALUES ($1,", "VALUES ($31, $1,", 1),
+	"ON CONFLICT (tenant_id, zobrist_hash) DO NOTHING", "ON CONFLICT DO NOTHING", 1)
+
+// positionIDIssuedSQL is the highest id the position sequence has handed
+// out, 0 before the first.
+const positionIDIssuedSQL = `SELECT COALESCE(pg_sequence_last_value(pg_get_serial_sequence('position', 'id')::regclass), 0)`
+
+// Reinstate stores p under its own id — see storage.PositionStore. The id
+// must be one the sequence already issued, as for matchStore.Reinstate: the
+// sequence is left alone, so an id beyond it would collide with a later Save.
+func (s *positionStore) Reinstate(ctx context.Context, scope string, p *domain.Position) (int64, bool, error) {
+	if p.ID <= 0 {
+		return 0, false, fmt.Errorf("postgres: reinstate position: id %d: %w", p.ID, storage.ErrInvalid)
+	}
+	var issued int64
+	if err := s.db.QueryRow(ctx, positionIDIssuedSQL).Scan(&issued); err != nil {
+		return 0, false, fmt.Errorf("postgres: reinstate position %d: read id sequence: %w", p.ID, err)
+	}
+	if p.ID > issued {
+		return 0, false, fmt.Errorf("postgres: reinstate position: id %d was never issued: %w", p.ID, storage.ErrInvalid)
+	}
+	tenant := tenantID(scope)
+	norm := p.NormalizeForStorage()
+	cols := engine.PopulatePositionColumns(p)
+	var id int64
+	err := s.db.QueryRow(ctx, positionReinstateSQL,
+		tenant, int64(cols.ZobristHash), cols.DecisionType, norm.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby != 0, cols.HasBeaver != 0,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, cols.NoContact, int(cols.GamePhase), int(cols.GameType),
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		engine.EncodeBoardState(norm.Board), norm.IndividuallyImported, norm.Flagged,
+		cols.MaxCube, p.ID).Scan(&id)
+	created := err == nil
+	switch {
+	case errors.Is(err, pgx.ErrNoRows):
+		// Skipped: either the hash is stored for this tenant, and that row is
+		// the position, or the id is another position's, of any tenant.
+		switch err := s.db.QueryRow(ctx,
+			`SELECT id FROM position WHERE tenant_id = $1 AND zobrist_hash = $2`,
+			tenant, int64(cols.ZobristHash)).Scan(&id); {
+		case errors.Is(err, pgx.ErrNoRows):
+			return 0, false, fmt.Errorf("postgres: reinstate position %d: %w", p.ID, storage.ErrConflict)
+		case err != nil:
+			return 0, false, fmt.Errorf("postgres: reinstate position %d: %w", p.ID, err)
+		}
+	case err != nil:
+		return 0, false, fmt.Errorf("postgres: reinstate position %d: %w", p.ID, err)
+	}
+	norm.ID = id
+	*p = norm
+	return id, created, nil
+}
+
 const positionUpdateSQL = `UPDATE position SET state = $1,
 	zobrist_hash=$2, decision_type=$3, player_on_roll=$4, dice_1=$5, dice_2=$6,
 	cube_value=$7, cube_owner=$8, score_1=$9, score_2=$10,

@@ -7284,7 +7284,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/idResp"
+                $ref: "#/components/schemas/trashRestoreResp"
   /v1/events:
     get:
       operationId: events
@@ -9448,6 +9448,24 @@ components:
         trashId:
           type: integer
           format: int64
+    trashRestoreResp:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        warnings:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/trashWarning"
+    trashWarning:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
     versionResp:
       type: object
       properties:

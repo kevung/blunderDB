@@ -21,6 +21,7 @@ import (
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/trash"
 )
 
 type tenantWriteCase struct {
@@ -41,6 +42,7 @@ var tenantWriteCases = []tenantWriteCase{
 	{"Tournament/UpdateDelete", checkWriteTournament},
 	{"Tournament/AddMatch", checkWriteTournamentAddMatch},
 	{"Match/UpdateDelete", checkWriteMatch},
+	{"Trash/MatchDeleteRestore", checkTrashMatch},
 	{"Direction/SetPair", checkWriteDirectionPair},
 	{"Oracle/Analysis", checkOracleAnalysis},
 	{"Oracle/Collection", checkOracleCollection},
@@ -439,4 +441,71 @@ func checkOracleTournament(t *testing.T, cx func(scope string) context.Context, 
 		"a's tournament":    s.Tournaments().AddMatch(cx(b), b, tid, mid),
 		"absent tournament": s.Tournaments().AddMatch(cx(b), b, absent, mid),
 	}, tid, absent, mid)
+}
+
+// checkTrashMatch: a match deleted through the trash and restored by one
+// tenant, beside the same match in the other's library. Neither tenant's
+// delete or restore sees or touches the other's rows, and the restore puts
+// the match and its purged position back under their own ids.
+func checkTrashMatch(t *testing.T, cx func(scope string) context.Context, s storage.Storage, a, b string) {
+	newMatch := func(scope string) (int64, int64) {
+		pid := savePos(t, cx, s, scope, provenancePos(61))
+		m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
+		mid, err := s.Matches().Save(cx(scope), scope, &m)
+		if err != nil {
+			t.Fatalf("Save match(%s): %v", scope, err)
+		}
+		gid, err := s.Matches().CreateGame(cx(scope), scope, &domain.Game{MatchID: mid, GameNumber: 1})
+		if err != nil {
+			t.Fatalf("CreateGame(%s): %v", scope, err)
+		}
+		if _, err := s.Matches().CreateMove(cx(scope), scope, &domain.Move{GameID: gid, MoveNumber: 1,
+			MoveType: "checker", PositionID: pid, Player: 1, Dice: [2]int32{3, 1}}); err != nil {
+			t.Fatalf("CreateMove(%s): %v", scope, err)
+		}
+		return mid, pid
+	}
+	ma, pa := newMatch(a)
+	mb, pb := newMatch(b)
+	intact := func(when string) {
+		t.Helper()
+		if _, err := s.Matches().Get(cx(b), b, mb); err != nil {
+			t.Errorf("tenant %s's match %s: %v", b, when, err)
+		}
+		if _, err := s.Positions().Load(cx(b), b, pb); err != nil {
+			t.Errorf("tenant %s's position %s: %v", b, when, err)
+		}
+		if n, err := s.Trash().Count(cx(b), b); err != nil || n != 0 {
+			t.Errorf("tenant %s's trash %s holds %d (%v), want 0", b, when, n, err)
+		}
+	}
+
+	if _, err := trash.Match(cx(b), s, b, ma); err == nil {
+		t.Errorf("tenant %s deleted tenant %s's match", b, a)
+	}
+	if _, err := s.Matches().Get(cx(a), a, ma); err != nil {
+		t.Fatalf("tenant %s's match after tenant %s's delete: %v", a, b, err)
+	}
+
+	entry, err := trash.Match(cx(a), s, a, ma)
+	if err != nil {
+		t.Fatalf("trash.Match(%s): %v", a, err)
+	}
+	intact("after the other tenant's delete")
+	if _, err := trash.Restore(cx(b), s, b, entry); err == nil {
+		t.Errorf("tenant %s restored tenant %s's trash entry", b, a)
+	}
+	intact("after a refused restore")
+
+	res, err := trash.Restore(cx(a), s, a, entry)
+	if err != nil {
+		t.Fatalf("Restore(%s): %v", a, err)
+	}
+	if res.ID != ma {
+		t.Errorf("restored match has id %d, want its own %d", res.ID, ma)
+	}
+	if _, err := s.Positions().Load(cx(a), a, pa); err != nil {
+		t.Errorf("tenant %s's purged position after restore, under its own id %d: %v", a, pa, err)
+	}
+	intact("after the other tenant's restore")
 }

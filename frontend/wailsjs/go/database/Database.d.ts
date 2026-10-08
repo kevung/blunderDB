@@ -617,7 +617,7 @@ export function RepairGamePhases():Promise<number>;
 
 export function ResetAnkiDeck(arg1:number):Promise<void>;
 
-export function RestoreFromTrash(arg1:number):Promise<number>;
+export function RestoreFromTrash(arg1:number):Promise<domain.TrashRestore>;
 
 export function ResumeImportBatch(arg1:number):Promise<void>;
 

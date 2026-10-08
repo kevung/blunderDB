@@ -1956,6 +1956,7 @@
         "kindAnkiCard": "Anki カード",
         "kindMatch": "マッチ",
         "restored": "復元しました：{what}",
+        "restoredSlotTaken": "復元しました: {what} — ディレクションの枠は別のマッチが使用中のため、枠なしで戻しました",
         "restoreFailed": "復元できませんでした：{error}"
     },
     "tags": {

@@ -1956,6 +1956,7 @@
         "kindAnkiCard": "Anki card",
         "kindMatch": "Match",
         "restored": "Restored: {what}",
+        "restoredSlotTaken": "Restored: {what} — its Direction slot is taken by another match, so it came back without it",
         "restoreFailed": "Could not restore: {error}"
     },
     "tags": {

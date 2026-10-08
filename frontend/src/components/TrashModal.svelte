@@ -56,8 +56,10 @@
     async function restore(entry) {
         busy = true;
         try {
-            await RestoreFromTrash(entry.id);
-            setStatusBarMessage(tMsg('trash.restored', { what: entry.label }));
+            const result = await RestoreFromTrash(entry.id);
+            // A restore that left something out says so; the slot is the only such case.
+            const slotTaken = (result?.warnings ?? []).some((w) => w.code === 'direction_slot_taken');
+            setStatusBarMessage(tMsg(slotTaken ? 'trash.restoredSlotTaken' : 'trash.restored', { what: entry.label }));
             dbMutationCounterStore.update((n) => n + 1);
             await reloadAllPositions();
             await load();

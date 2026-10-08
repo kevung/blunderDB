@@ -362,7 +362,8 @@ func testMETKeptByTrash(t *testing.T, s storage.Storage) {
 	if err != nil {
 		t.Fatalf("trash.Position: %v", err)
 	}
-	restored, err := trash.Restore(ctx, s, "", entry)
+	res, err := trash.Restore(ctx, s, "", entry)
+	restored := res.ID
 	if err != nil {
 		t.Fatalf("trash.Restore: %v", err)
 	}

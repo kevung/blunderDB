@@ -1956,6 +1956,7 @@
         "kindAnkiCard": "Anki-Karte",
         "kindMatch": "Match",
         "restored": "Wiederhergestellt: {what}",
+        "restoredSlotTaken": "Wiederhergestellt: {what} — sein Platz in der Turnierleitung ist von einem anderen Match belegt, es kehrt ohne ihn zurück",
         "restoreFailed": "Wiederherstellung nicht möglich: {error}"
     },
     "tags": {

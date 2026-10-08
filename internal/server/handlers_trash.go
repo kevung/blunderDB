@@ -26,9 +26,13 @@ func (s *Server) trashRoutes() []route {
 			n, err := st().Trash().Count(ctx, scope)
 			return countResp{Count: n}, err
 		})},
-		{http.MethodPost, "/v1/trash.restore", rpc(func(ctx context.Context, scope string, req idReq) (idResp, error) {
-			id, err := s.directionService(scope).RestoreFromTrash(ctx, req.ID)
-			return idResp{ID: id}, err
+		{http.MethodPost, "/v1/trash.restore", rpc(func(ctx context.Context, scope string, req idReq) (trashRestoreResp, error) {
+			res, err := s.directionService(scope).RestoreFromTrash(ctx, req.ID)
+			resp := trashRestoreResp{ID: res.ID}
+			for _, w := range res.Warnings {
+				resp.Warnings = append(resp.Warnings, trashWarning(w))
+			}
+			return resp, err
 		})},
 		{http.MethodPost, "/v1/trash.discard", rpcVoid(func(ctx context.Context, scope string, req idReq) error {
 			return st().Trash().Discard(ctx, scope, req.ID)
@@ -81,4 +85,20 @@ type countResp struct {
 
 type purgedResp struct {
 	Purged int `json:"purged"`
+}
+
+// trashRestoreResp is domain.TrashRestore spelled out here, so the API
+// reference states its fields: the id of what came back, and what a restore
+// that succeeded left out.
+type trashRestoreResp struct {
+	ID       int64          `json:"id"`
+	Warnings []trashWarning `json:"warnings,omitempty"`
+}
+
+// trashWarning is domain.TrashWarning. Code is stable ("direction_slot_taken":
+// the match's Direction Slot is filled by another match, and the match came
+// back without it); Message says it in English.
+type trashWarning struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
 }

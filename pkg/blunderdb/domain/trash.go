@@ -66,6 +66,12 @@ type TrashPositionPayload struct {
 	// MET is the table the analysis was valued with, 0 for the built-in one.
 	// Tables are never deleted, so the id still names it at restore.
 	MET int64 `json:"met,omitempty"`
+	// StudiedAt is when the position was marked studied (Unix seconds), 0
+	// for never; the mark cascades off the position.
+	StudiedAt int64 `json:"studiedAt,omitempty"`
+	// TrainingItemIDs are the quiz answers given on the position; the delete
+	// leaves them without one, a restore ties them to it again.
+	TrainingItemIDs []int64 `json:"trainingItemIds,omitempty"`
 }
 
 // TrashCollectionPayload is what a deleted collection keeps: enough of the
@@ -119,7 +125,29 @@ type TrashMatchPayload struct {
 	// TranscriptionIDs are the drafts that had produced this match; the
 	// delete leaves them unsaved, a restore ties them to it again.
 	TranscriptionIDs []int64 `json:"transcriptionIds,omitempty"`
+	// ImportFileIDs are the lines of the import journal that named the
+	// match; the delete leaves them naming none.
+	ImportFileIDs []int64 `json:"importFileIds,omitempty"`
 }
+
+// TrashRestore is what a restore gives back: the id of what came back, as
+// TrashEntry.Kind reads it, and what it could not put back as it was.
+type TrashRestore struct {
+	ID       int64          `json:"id"`
+	Warnings []TrashWarning `json:"warnings,omitempty"`
+}
+
+// TrashWarning is one thing a restore that succeeded left out. Code is
+// stable, for a client to word it; Message says it in English.
+type TrashWarning struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
+// TrashWarnSlotTaken: the match filled a Slot of its directed Tournament,
+// and another match fills it now. The Slot is the director's; the match comes
+// back in its Tournament without it.
+const TrashWarnSlotTaken = "direction_slot_taken"
 
 // TrashRetentionDays is how long a deleted thing stays recoverable.
 // `blunderdb vacuum` drops what is older; nothing purges on open.

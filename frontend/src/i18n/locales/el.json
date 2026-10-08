@@ -1956,6 +1956,7 @@
         "kindAnkiCard": "Κάρτα Anki",
         "kindMatch": "Αγώνας",
         "restored": "Επαναφέρθηκε: {what}",
+        "restoredSlotTaken": "Αποκαταστάθηκε: {what} — η θέση του στη Διεύθυνση έχει καταληφθεί από άλλο ματς, επέστρεψε χωρίς αυτήν",
         "restoreFailed": "Αδύνατη η επαναφορά: {error}"
     },
     "tags": {

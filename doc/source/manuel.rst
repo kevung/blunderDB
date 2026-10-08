@@ -958,20 +958,24 @@ les liste, avec pour chacune *Restaurer* et *Supprimer*, et un bouton
 *Vider la corbeille*.
 
 Une position restaurée revient avec **son analyse et ses commentaires** — la
-rendre nue serait une restauration de nom seulement. Elle ne revient pas sous
-son ancien numéro : la ligne d'origine n'existe plus, et blunderDB la
-réenregistre par son empreinte, ce qui garantit qu'elle ne crée jamais de
-doublon mais lui donne un nouvel identifiant. Une collection revient avec sa
+rendre nue serait une restauration de nom seulement —, sa marque « étudiée »
+et les réponses d'entraînement données sur elle. Elle reprend son ancien
+numéro ; si la même position a été enregistrée entre-temps, c'est celle-là qui
+est gardée, car une position n'existe qu'une fois. Si son numéro est pris par
+une autre, elle en reçoit un nouveau. Une collection revient avec sa
 liste ; les positions qu'elle contenait, elles, n'avaient jamais été
 supprimées — une collection est une vue sur elles.
 
 Un match supprimé emporte ses parties, ses coups, leurs analyses et les
 positions que plus rien d'autre ne retient, avec les notes venues du fichier
 source : la corbeille garde tout cela. Restauré, il revient sous son numéro
-et sa date d'import d'origine, avec ses parties et ses coups ; les positions
-que la suppression avait purgées reviennent avec leurs analyses et leurs
-notes, celles restées dans la bibliothèque restent telles qu'elles sont
-devenues. Il reprend sa place dans son tournoi s'il existe encore. La
+et sa date d'import d'origine, avec ses parties, ses coups et ses
+statistiques, et le journal de son import le nomme de nouveau ; les positions
+que la suppression avait purgées reviennent comme une position restaurée,
+celles restées dans la bibliothèque restent telles qu'elles sont devenues. Il
+reprend sa place dans son tournoi s'il existe encore, et sa place de Direction
+si elle est libre ; occupée depuis par un autre match, elle reste à celui-ci :
+le match revient sans elle, et la barre d'état le signale. La
 restauration est refusée, et l'entrée reste dans la corbeille, si un autre
 match occupe son numéro, ou si un match de même empreinte de fichier a été
 importé entre-temps ; un match sans empreinte, saisi ou joué dans blunderDB,

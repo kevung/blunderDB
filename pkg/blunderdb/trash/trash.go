@@ -73,6 +73,12 @@ func snapshotPosition(ctx context.Context, s storage.Stores, scope string, posit
 		}
 		payload.Comments = append(payload.Comments, *c)
 	}
+	if payload.StudiedAt, err = s.ImportBatches().StudyMark(ctx, scope, positionID); err != nil {
+		return domain.TrashPositionPayload{}, err
+	}
+	if payload.TrainingItemIDs, err = s.Training().ItemsOfPosition(ctx, scope, positionID); err != nil {
+		return domain.TrashPositionPayload{}, err
+	}
 	return payload, nil
 }
 
@@ -146,14 +152,16 @@ func findComment(ctx context.Context, s storage.Stores, scope string, commentID 
 // Restore puts one entry back and removes it from the trash.
 //
 // It returns the id of what was restored, whose meaning depends on the kind: a
-// position id, a collection id, a comment id, a match id. A restore that cannot happen —
+// position id, a collection id, a comment id, a match id; and the warnings of
+// a restore that succeeded without putting everything back (a match's
+// Direction Slot taken since). A restore that cannot happen —
 // the position a comment belonged to is itself gone — fails and leaves the
 // trash entry alone, so nothing is lost by trying. A Rencontre is not restored
 // here (ErrRencontreByService).
-func Restore(ctx context.Context, s storage.Stores, scope string, trashID int64) (int64, error) {
+func Restore(ctx context.Context, s storage.Stores, scope string, trashID int64) (domain.TrashRestore, error) {
 	entry, err := s.Trash().Load(ctx, scope, trashID)
 	if err != nil {
-		return 0, err
+		return domain.TrashRestore{}, err
 	}
 	var restored int64
 	switch entry.Kind {
@@ -172,9 +180,12 @@ func Restore(ctx context.Context, s storage.Stores, scope string, trashID int64)
 		err = fmt.Errorf("trash entry %d: nothing knows how to restore a %q", trashID, entry.Kind)
 	}
 	if err != nil {
-		return 0, err
+		return domain.TrashRestore{}, err
 	}
-	return restored, s.Trash().Discard(ctx, scope, trashID)
+	if err := s.Trash().Discard(ctx, scope, trashID); err != nil {
+		return domain.TrashRestore{}, err
+	}
+	return domain.TrashRestore{ID: restored}, nil
 }
 
 // restorePosition re-Saves the position, then puts back what cascaded off it.
@@ -195,12 +206,20 @@ func restorePosition(ctx context.Context, s storage.Stores, scope string, entry 
 // snapshot waited, so a note edited or deleted since must not come back.
 func restorePositionPayload(ctx context.Context, s storage.Stores, scope string, payload domain.TrashPositionPayload, onlyIfGone bool) (int64, error) {
 	pos := payload.Position
-	id, created, err := s.Positions().SaveCreated(ctx, scope, &pos)
+	id, created, err := reinstatePosition(ctx, s, scope, &pos)
 	if err != nil {
 		return 0, err
 	}
 	if onlyIfGone && !created {
 		return id, nil
+	}
+	if payload.StudiedAt != 0 {
+		if err := s.ImportBatches().RestoreStudyMark(ctx, scope, id, payload.StudiedAt); err != nil {
+			return 0, err
+		}
+	}
+	if err := s.Training().RelinkItems(ctx, scope, payload.TrainingItemIDs, id); err != nil {
+		return 0, err
 	}
 	if payload.Analysis != nil {
 		switch _, err := s.Analyses().Load(ctx, scope, id); {
@@ -237,6 +256,20 @@ func restorePositionPayload(ctx context.Context, s storage.Stores, scope string,
 		}
 	}
 	return id, nil
+}
+
+// reinstatePosition stores the position under the id it had, so what named it
+// finds it again; a position stored meanwhile under another id is the one kept
+// (one per hash). When its id is taken, or was never issued here (a snapshot
+// from before ids were kept), it gets a new one.
+func reinstatePosition(ctx context.Context, s storage.Stores, scope string, pos *domain.Position) (int64, bool, error) {
+	if pos.ID > 0 {
+		id, created, err := s.Positions().Reinstate(ctx, scope, pos)
+		if !errors.Is(err, storage.ErrConflict) && !errors.Is(err, storage.ErrInvalid) {
+			return id, created, err
+		}
+	}
+	return s.Positions().SaveCreated(ctx, scope, pos)
 }
 
 // restoreCollection recreates the collection and re-adds the positions that

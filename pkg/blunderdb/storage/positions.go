@@ -20,6 +20,16 @@ type PositionStore interface {
 	// created: the caller that may undo its save is the one that made it.
 	SaveCreated(ctx context.Context, scope string, p *domain.Position) (id int64, created bool, err error)
 
+	// Reinstate stores p again under its own id p.ID, for a position deleted
+	// earlier and put back from the trash: what named it by id finds it
+	// again. When p's Zobrist hash is stored already in scope, that row is
+	// kept and its id returned, created false — the position is one per
+	// hash. The id must be one the store issued — ErrInvalid otherwise — and
+	// free: ErrConflict when a position of any scope holds it. Neither error
+	// spoils an enclosing transaction, so the caller can fall back on
+	// SaveCreated. On success p is updated as SaveCreated updates it.
+	Reinstate(ctx context.Context, scope string, p *domain.Position) (id int64, created bool, err error)
+
 	// RaiseFlag raises the source-tool study mark on the stored position that
 	// p hashes to, and reports whether this call raised it: false when it was
 	// already set or when no such position is stored. The mark is only ever

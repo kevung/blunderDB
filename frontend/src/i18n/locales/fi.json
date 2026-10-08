@@ -1956,6 +1956,7 @@
         "kindAnkiCard": "Anki-kortti",
         "kindMatch": "Ottelu",
         "restored": "Palautettu: {what}",
+        "restoredSlotTaken": "Palautettu: {what} — sen paikka johtamisessa on toisen ottelun, se palasi ilman sitä",
         "restoreFailed": "Palautus ei onnistunut: {error}"
     },
     "tags": {

@@ -60,12 +60,16 @@ func (cli *CLI) runTrash(args []string) error {
 			return fmt.Errorf("restore: %w", err)
 		}
 		if text {
-			fmt.Printf("Restored as id %d.\n", restored)
+			fmt.Printf("Restored as id %d.\n", restored.ID)
+			for _, w := range restored.Warnings {
+				fmt.Printf("Warning: %s.\n", w.Message)
+			}
 			return nil
 		}
 		return printJSON(struct {
-			Restored int64 `json:"restored"`
-		}{restored})
+			Restored int64                 `json:"restored"`
+			Warnings []domain.TrashWarning `json:"warnings,omitempty"`
+		}{restored.ID, restored.Warnings})
 	case "discard":
 		if *id == 0 {
 			return fmt.Errorf("discard: missing required flag: --id")
