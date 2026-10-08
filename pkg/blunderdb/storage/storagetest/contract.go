@@ -125,6 +125,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Search/EncounterCountsEveryOccurrence", testSearchEncounterCountsEveryOccurrence},
 		{"Match/MoveLuckRoundTrip", testMoveLuckRoundTrip},
 		{"Match/MoveDecisionTimeRoundTrip", testMoveDecisionTimeRoundTrip},
+		{"Match/VideoRoundTrip", testMatchVideoRoundTrip},
 		{"Stats/AggregateCounts", testStatsAggregateCounts},
 		{"Stats/CubeDirections", testStatsCubeDirections},
 		{"Stats/Breakdowns", testStatsBreakdowns},
