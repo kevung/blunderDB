@@ -2,10 +2,12 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
@@ -121,48 +123,78 @@ type beginner interface {
 	Begin(ctx context.Context) (pgx.Tx, error)
 }
 
+// unforcedLockTimeout bounds the wait for the ACCESS EXCLUSIVE lock that
+// lifting FORCE takes: behind a long import the pass gives way instead of
+// queueing every tenant request behind its own lock request.
+const unforcedLockTimeout = "5s"
+
+// errUnforcedLockTimeout reports that a table to unforce stayed locked past
+// unforcedLockTimeout; the pass is left for the next Migrate.
+var errUnforcedLockTimeout = errors.New("postgres: table busy, FORCE not lifted")
+
 // inUnforcedTx runs fn in one transaction with FORCE ROW LEVEL SECURITY lifted
 // from those of tables that carry it and that the current role owns, and put
 // back before the commit. A Go-side pass run by Migrate reads on a connection
 // that carries no tenant: under FORCE the fail-closed policy hides every row
 // from an owner without BYPASSRLS, so the pass would find nothing and say
 // nothing. ALTER TABLE is transactional, so a failed or interrupted pass
-// rolls the lift back too — the table is never left unforced. A role that
-// does not own a table is bound by its policy whatever FORCE says and cannot
-// lift it: that table is left alone, and the pass sees only what the policy
-// shows it.
-func inUnforcedTx(ctx context.Context, conn beginner, tables []string, fn func(tx pgx.Tx) error) error {
+// rolls the lift back too — the table is never left unforced.
+//
+// complete reports whether fn saw every row of every table: false when one
+// of them has RLS enabled and the role neither owns it nor bypasses RLS — its
+// policy binds whatever FORCE says, and the role cannot lift it. A lock not
+// granted within unforcedLockTimeout returns errUnforcedLockTimeout.
+func inUnforcedTx(ctx context.Context, conn beginner, tables []string, fn func(tx pgx.Tx) error) (bool, error) {
+	complete, err := unforcedTx(ctx, conn, tables, fn)
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgErr.Code == "55P03" { // lock_not_available
+		return false, errUnforcedLockTimeout
+	}
+	return complete, err
+}
+
+func unforcedTx(ctx context.Context, conn beginner, tables []string, fn func(tx pgx.Tx) error) (complete bool, err error) {
 	tx, err := conn.Begin(ctx)
 	if err != nil {
-		return fmt.Errorf("postgres: begin: %w", err)
+		return false, fmt.Errorf("postgres: begin: %w", err)
 	}
 	defer func() { _ = tx.Rollback(context.WithoutCancel(ctx)) }()
+	if _, err := tx.Exec(ctx, `SET LOCAL lock_timeout = '`+unforcedLockTimeout+`'`); err != nil {
+		return false, fmt.Errorf("postgres: set lock_timeout: %w", err)
+	}
+	complete = true
 	var lifted []string
 	for _, t := range tables {
-		var forced bool
+		var forced, blind bool
 		if err := tx.QueryRow(ctx,
-			`SELECT EXISTS (SELECT 1 FROM pg_class WHERE oid = to_regclass($1)
-			   AND relforcerowsecurity AND pg_has_role(relowner, 'USAGE'))`, t).Scan(&forced); err != nil {
-			return fmt.Errorf("postgres: probe RLS on %s: %w", t, err)
+			`SELECT COALESCE(bool_or(c.relforcerowsecurity AND owned), false),
+			        COALESCE(bool_or(c.relrowsecurity AND NOT owned AND NOT r.rolbypassrls AND NOT r.rolsuper), false)
+			   FROM pg_class c CROSS JOIN pg_roles r
+			   CROSS JOIN LATERAL (SELECT pg_has_role(c.relowner, 'USAGE') AS owned) o
+			  WHERE c.oid = to_regclass($1) AND r.rolname = current_user`, t).Scan(&forced, &blind); err != nil {
+			return false, fmt.Errorf("postgres: probe RLS on %s: %w", t, err)
+		}
+		if blind {
+			complete = false
 		}
 		if !forced {
 			continue
 		}
 		if _, err := tx.Exec(ctx, `ALTER TABLE `+pgx.Identifier{t}.Sanitize()+` NO FORCE ROW LEVEL SECURITY`); err != nil {
-			return fmt.Errorf("postgres: lift RLS on %s: %w", t, err)
+			return false, fmt.Errorf("postgres: lift RLS on %s: %w", t, err)
 		}
 		lifted = append(lifted, t)
 	}
 	if err := fn(tx); err != nil {
-		return err
+		return false, err
 	}
 	for _, t := range lifted {
 		if _, err := tx.Exec(ctx, `ALTER TABLE `+pgx.Identifier{t}.Sanitize()+` FORCE ROW LEVEL SECURITY`); err != nil {
-			return fmt.Errorf("postgres: restore RLS on %s: %w", t, err)
+			return false, fmt.Errorf("postgres: restore RLS on %s: %w", t, err)
 		}
 	}
 	if err := tx.Commit(ctx); err != nil {
-		return fmt.Errorf("postgres: commit: %w", err)
+		return false, fmt.Errorf("postgres: commit: %w", err)
 	}
-	return nil
+	return complete, nil
 }

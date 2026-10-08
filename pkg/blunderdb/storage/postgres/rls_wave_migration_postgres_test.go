@@ -375,7 +375,7 @@ func TestActionLabelReadStaysInTenant(t *testing.T) {
 // an older shape, and FORCE must be back on afterwards.
 func TestMigrate_GoBackfillsUnderRLS(t *testing.T) {
 	ctx := context.Background()
-	s, conn, _ := openAsRLSOwner(t)
+	s, conn, ownerDSN := openAsRLSOwner(t)
 	ms := s.Matches()
 	var seed []string
 	for i, scope := range []string{"1", "2"} {
@@ -416,7 +416,8 @@ func TestMigrate_GoBackfillsUnderRLS(t *testing.T) {
 	}
 	tables := []string{"analysis", "move", "game", "match_stats", "match_stats_cell"}
 	execUnforced(t, conn, tables, append(seed,
-		`UPDATE analysis SET analysis_engine = NULL, analysis_depth = NULL, creation_date = NULL`))
+		`UPDATE analysis SET analysis_engine = NULL, analysis_depth = NULL, creation_date = NULL`,
+		`DELETE FROM metadata WHERE key = 'go_backfills'`))
 
 	if err := s.Migrate(ctx); err != nil {
 		t.Fatalf("Migrate under RLS: %v", err)
@@ -437,4 +438,54 @@ func TestMigrate_GoBackfillsUnderRLS(t *testing.T) {
 			}
 		})
 	}
+	var marker string
+	if err := conn.QueryRow(ctx, `SELECT value FROM metadata WHERE key = 'go_backfills'`).Scan(&marker); err != nil {
+		t.Fatalf("go_backfills not recorded after a complete pass: %v", err)
+	}
+
+	// Once recorded, Migrate lifts FORCE on nothing: behind a transaction
+	// holding analysis, it returns well before the lock timeout.
+	holder, err := pgx.Connect(ctx, ownerDSN)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer holder.Close(ctx)
+	hold := func() pgx.Tx {
+		tx, err := holder.Begin(ctx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if _, err := tx.Exec(ctx, `LOCK TABLE analysis IN ACCESS SHARE MODE`); err != nil {
+			t.Fatal(err)
+		}
+		return tx
+	}
+	tx := hold()
+	start := time.Now()
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("second Migrate: %v", err)
+	}
+	if d := time.Since(start); d > 3*time.Second {
+		t.Errorf("second Migrate took %v behind a reader of analysis: it waited for a lock", d)
+	}
+	_ = tx.Rollback(ctx)
+
+	// Without the record, a busy table defers the pass instead of failing
+	// Migrate, and the record stays unwritten.
+	if _, err := conn.Exec(ctx, `DELETE FROM metadata WHERE key = 'go_backfills'`); err != nil {
+		t.Fatal(err)
+	}
+	tx = hold()
+	if err := s.Migrate(ctx); err != nil {
+		t.Fatalf("Migrate behind a busy table: %v", err)
+	}
+	_ = tx.Rollback(ctx)
+	var n int
+	if err := conn.QueryRow(ctx, `SELECT count(*) FROM metadata WHERE key = 'go_backfills'`).Scan(&n); err != nil {
+		t.Fatal(err)
+	}
+	if n != 0 {
+		t.Error("go_backfills recorded although the pass gave way to a busy table")
+	}
+	assertForced(t, conn, tables...)
 }

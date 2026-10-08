@@ -19,28 +19,30 @@ const provenanceBatch = 20000
 
 // backfillAnalysisProvenance derives analysis_engine, analysis_depth and
 // creation_date (engine.AnalysisProvenance) for every analysis row whose
-// analysis_engine is NULL — all of them after 032, and later the few a
-// blob-only writer leaves. It runs in Go because the blob is compressed JSON
+// analysis_engine is NULL — all of them after 032. It runs in Go because the blob is compressed JSON
 // SQL cannot read. Resumable by construction: a written row is no longer
-// NULL. An undecodable blob is written as "no entry", so it is not retried on
-// every Migrate.
-func backfillAnalysisProvenance(ctx context.Context, conn beginner) error {
+// NULL. An undecodable blob is written as "no entry", so it is not retried.
+// complete reports whether the pass saw every tenant's rows (inUnforcedTx).
+func backfillAnalysisProvenance(ctx context.Context, conn beginner) (complete bool, err error) {
 	var last int64
 	done := 0
+	complete = true
 	for {
 		if err := ctx.Err(); err != nil {
-			return err
+			return false, err
 		}
 		n := 0
 		// One transaction per batch, FORCE lifted inside it: the lock it takes
 		// lasts one batch, and a batch written is a batch kept.
-		if err := inUnforcedTx(ctx, conn, provenanceTables, func(tx pgx.Tx) error {
+		all, err := inUnforcedTx(ctx, conn, provenanceTables, func(tx pgx.Tx) error {
 			var err error
 			n, last, err = provenanceBatchPass(ctx, tx, last)
 			return err
-		}); err != nil {
-			return err
+		})
+		if err != nil {
+			return false, err
 		}
+		complete = complete && all
 		if n == 0 {
 			break
 		}
@@ -49,7 +51,7 @@ func backfillAnalysisProvenance(ctx context.Context, conn beginner) error {
 	if done > 0 {
 		slog.Info("derived the provenance of the stored analyses", "analyses", done)
 	}
-	return nil
+	return complete, nil
 }
 
 // provenanceBatchPass derives the provenance of the next batch of analyses

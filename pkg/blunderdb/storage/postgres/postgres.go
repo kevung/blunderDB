@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"os"
 	"strconv"
 	"strings"
@@ -212,7 +213,7 @@ func (s *Storage) Migrate(ctx context.Context) error {
 	if err := repairMatchStatsShape(ctx, conn); err != nil {
 		return err
 	}
-	if err := backfillAnalysisProvenance(ctx, conn); err != nil {
+	if err := runGoBackfills(ctx, conn); err != nil {
 		return err
 	}
 	return setDatabaseVersion(ctx, conn)
@@ -250,14 +251,13 @@ var matchStatsLateColumns = []string{
 	"snowie_error_mp BIGINT", "snowie_moves INTEGER", "checker_moves INTEGER",
 }
 
-// repairMatchStatsShape adds matchStatsLateColumns where they are missing and
-// drops the rows written without them or without their cells (036), which
-// readers then recompute. Both
-// steps are no-ops once done, so it runs at every Migrate. It only writes
-// when there is something to repair: a role that does not own the table (a
-// tenant role under RLS) runs Migrate too, and ALTER TABLE needs ownership
-// even when the column exists.
-func repairMatchStatsShape(ctx context.Context, db migrationConn) error {
+// repairMatchStatsShape adds matchStatsLateColumns where they are missing;
+// dropOlderShapeMatchStats then drops the rows written without them or
+// without their cells (036). It runs at every Migrate and only writes when a
+// column is missing: a role that does not own the table (a tenant role under
+// RLS) runs Migrate too, and ALTER TABLE needs ownership even when the column
+// exists.
+func repairMatchStatsShape(ctx context.Context, db execer) error {
 	for _, col := range matchStatsLateColumns {
 		name, _, _ := strings.Cut(col, " ")
 		var exists bool
@@ -273,9 +273,20 @@ func repairMatchStatsShape(ctx context.Context, db migrationConn) error {
 		if _, err := db.Exec(ctx, `ALTER TABLE match_stats ADD COLUMN IF NOT EXISTS `+col); err != nil {
 			return fmt.Errorf("postgres: match_stats column %s: %w", col, err)
 		}
+		// The rows written without this column are dropped by
+		// dropOlderShapeMatchStats, which must therefore run again.
+		if _, err := db.Exec(ctx, `DELETE FROM metadata WHERE key = $1`, goBackfillsKey); err != nil {
+			return fmt.Errorf("postgres: reset %s: %w", goBackfillsKey, err)
+		}
 	}
-	// The rows of every tenant are probed, hence FORCE lifted.
-	return inUnforcedTx(ctx, db, []string{"match_stats", "match_stats_cell"}, func(tx pgx.Tx) error {
+	return nil
+}
+
+// dropOlderShapeMatchStats drops the match_stats rows of an older shape
+// (sqlshared.DropOlderShapeMatchStatsSQL), which readers then recompute.
+// Every tenant's rows are probed, hence FORCE lifted.
+func dropOlderShapeMatchStats(ctx context.Context, conn beginner) (complete bool, err error) {
+	return inUnforcedTx(ctx, conn, []string{"match_stats", "match_stats_cell"}, func(tx pgx.Tx) error {
 		var stale bool
 		if err := tx.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM match_stats WHERE `+sqlshared.OlderShapeMatchStatsPredicate+`)`).Scan(&stale); err != nil {
 			return fmt.Errorf("postgres: probe match_stats older rows: %w", err)
@@ -288,6 +299,57 @@ func repairMatchStatsShape(ctx context.Context, db migrationConn) error {
 		}
 		return nil
 	})
+}
+
+// goBackfillsKey is the metadata row recording that the Go-side passes of
+// runGoBackfills have run to the end over every tenant; its value is the
+// goBackfillsGeneration that did. metadata carries no RLS: the row is read
+// without lifting anything.
+const goBackfillsKey = "go_backfills"
+
+// goBackfillsGeneration names the set of Go-side passes. Bump it when a pass
+// is added or must run again: a library that recorded an older generation
+// runs them once more.
+const goBackfillsGeneration = "1"
+
+// runGoBackfills runs, once per library, the passes the SQL chain cannot:
+// each lifts FORCE, which takes an ACCESS EXCLUSIVE lock on the tables it
+// touches, so it is not paid at every start. The row is written only when
+// every pass saw every tenant's rows; a pass whose table stayed busy past
+// unforcedLockTimeout is left for the next Migrate rather than failing it.
+func runGoBackfills(ctx context.Context, conn migrationConn) error {
+	var gen string
+	err := conn.QueryRow(ctx, `SELECT value FROM metadata WHERE key = $1`, goBackfillsKey).Scan(&gen)
+	switch {
+	case err == nil && gen == goBackfillsGeneration:
+		return nil
+	case err != nil && !errors.Is(err, pgx.ErrNoRows):
+		return fmt.Errorf("postgres: read %s: %w", goBackfillsKey, err)
+	}
+	complete := true
+	for _, pass := range []func(context.Context, beginner) (bool, error){
+		dropOlderShapeMatchStats, backfillAnalysisProvenance,
+	} {
+		all, err := pass(ctx, conn)
+		if errors.Is(err, errUnforcedLockTimeout) {
+			slog.Warn("postgres: a table stayed locked; the backfill resumes at the next start", "lock_timeout", unforcedLockTimeout)
+			return nil
+		}
+		if err != nil {
+			return err
+		}
+		complete = complete && all
+	}
+	if !complete {
+		return nil
+	}
+	if _, err := conn.Exec(ctx,
+		`INSERT INTO metadata (key, value) VALUES ($1, $2)
+		 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value`,
+		goBackfillsKey, goBackfillsGeneration); err != nil {
+		return fmt.Errorf("postgres: write %s: %w", goBackfillsKey, err)
+	}
+	return nil
 }
 
 // migrationConn is the connection Migrate holds: statements, and the
