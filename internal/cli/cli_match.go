@@ -117,9 +117,11 @@ func (cli *CLI) formatMatchJSON(match *Match, positions []MatchMovePosition, ori
 		"positions":      positions,
 		"position_count": len(positions),
 	}
-	// Per Move, in match order; mwc_loss is a fraction, null when unscored.
+	// Per Move, in match order; mwc_loss and difficulty are fractions, null
+	// when unscored. The summary adds them up per player (ADR-0075).
 	if losses := cli.decisionLosses(match.ID); losses != nil {
 		output["decision_losses"] = losses
+		output["difficulty_summary"] = storage.SummariseDifficulty(losses)
 	}
 
 	jsonData, err := json.MarshalIndent(output, "", "  ")
@@ -250,10 +252,10 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 	writeOrigin(&sb, match, origin)
 	sb.WriteString(fmt.Sprintf("Total Positions: %d\n\n", len(positions)))
 
-	lossByMove := map[int64]float64{}
+	lossByMove := map[int64]storage.DecisionLoss{}
 	for _, d := range cli.decisionLosses(match.ID) {
 		if d.MWCLoss != nil {
-			lossByMove[d.MoveID] = *d.MWCLoss
+			lossByMove[d.MoveID] = d
 		}
 	}
 	for i, movePos := range positions {
@@ -283,8 +285,14 @@ func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition, ori
 			sb.WriteString(fmt.Sprintf("  Cube decision time: %.1f s\n", float64(*movePos.CubeDecisionMS)/1000))
 		}
 		// An unscored decision is left out, never printed as zero.
-		if loss, ok := lossByMove[movePos.MoveID]; ok {
-			sb.WriteString(fmt.Sprintf("  MWC loss: %.2f%%\n", loss*100))
+		if d, ok := lossByMove[movePos.MoveID]; ok {
+			sb.WriteString(fmt.Sprintf("  MWC loss: %.2f%%\n", *d.MWCLoss*100))
+			if d.Difficulty != nil {
+				sb.WriteString(fmt.Sprintf("  Difficulty: %.2f%%\n", *d.Difficulty*100))
+			}
+			if d.Avoidable {
+				sb.WriteString("  Avoidable error\n")
+			}
 		}
 		sb.WriteString("\n")
 	}
@@ -341,7 +349,8 @@ func (cli *CLI) formatMatchSummary(match *Match, positions []MatchMovePosition, 
 func (cli *CLI) writeLossSummary(sb *strings.Builder, match *Match) {
 	var total [2]float64
 	var n [2]int
-	for _, d := range cli.decisionLosses(match.ID) {
+	losses := cli.decisionLosses(match.ID)
+	for _, d := range losses {
 		if d.MWCLoss != nil {
 			total[d.Player] += *d.MWCLoss
 			n[d.Player]++
@@ -353,6 +362,27 @@ func (cli *CLI) writeLossSummary(sb *strings.Builder, match *Match) {
 	sb.WriteString("\nMWC loss:\n")
 	for i, name := range [2]string{match.Player1Name, match.Player2Name} {
 		fmt.Fprintf(sb, "  %s: %.2f%% over %d decisions\n", name, total[i]*100, n[i])
+	}
+	writeDifficultySummary(sb, [2]string{match.Player1Name, match.Player2Name}, losses)
+}
+
+// writeDifficultySummary adds, per player, the reference player's expected
+// loss over the same decisions, the excess over it, the ratio to it and the
+// avoidable errors (ADR-0075): nothing when no decision has a difficulty.
+func writeDifficultySummary(sb *strings.Builder, names [2]string, losses []storage.DecisionLoss) {
+	diff := storage.SummariseDifficulty(losses)
+	if diff[0].Decisions+diff[1].Decisions == 0 {
+		return
+	}
+	sb.WriteString("\nDifficulty:\n")
+	for i, name := range names {
+		s := diff[i]
+		ratio := "-"
+		if s.Ratio != nil {
+			ratio = fmt.Sprintf("%.2f", *s.Ratio)
+		}
+		fmt.Fprintf(sb, "  %s: difficulty %.2f%%, excess %+.2f%%, ratio %s, %d avoidable errors\n",
+			name, s.Difficulty*100, s.Excess*100, ratio, s.Avoidable)
 	}
 }
 
