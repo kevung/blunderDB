@@ -72,7 +72,7 @@ var hotStatements = map[string]bool{
 	invalidateMatchStatsOfPositionSQL: true,
 	// A new move scored by its position's analysis, and the moves an
 	// analysis write rescores (none, on a fresh position).
-	sqlshared.PlayedDecisionAnalysisSQL: true,
+	sqlshared.PlayedDecisionAnalysisSQL:    true,
 	sqlshared.RescoreMovesSQL(shared{}, 1): true,
 }
 
