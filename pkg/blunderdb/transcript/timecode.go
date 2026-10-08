@@ -19,26 +19,37 @@ func TimeActions(actions []Action, infos []ActionInfo) { timeActions(actions, in
 // duration an Arbiter measured stands; a missing Repère, or one marked
 // TimecodeBackwards, leaves the durations that use it unknown.
 //
+// A checker play with no action Repère is ESTIMATED from its roll to the next
+// Action's first instant — its roll, or a cube action's own — and marked so: an
+// upper bound, which takes in the dice being picked up and thrown. Nothing
+// estimates a cube decision: the end of the previous play and the start of the
+// thinking about the cube cannot be told apart.
+//
 // infos are copies the caller owns, but their Inconsistencies may still share
 // an array with the Replayer's cache, which an append must not write into.
 func timeActions(actions []Action, infos []ActionInfo) {
+	n := min(len(actions), len(infos))
+	// The Repères in order, nil where missing or running backwards: the only
+	// instants a duration, measured or estimated, may use.
+	rollAt := make([]*int64, n)
+	tickAt := make([]*int64, n)
 	var last *int64
-	var prevTick *int64
-	for i := range infos {
-		if i >= len(actions) {
-			return
-		}
+	for i := 0; i < n; i++ {
 		a, info := actions[i], &infos[i]
 		info.DecisionMS, info.CubeDecisionMS = a.DecisionMS, a.CubeDecisionMS
 		info.RollTickMS, info.TickMS = a.RollTickMS, a.TickMS
-
 		roll := a.RollTickMS
 		if !rolls(a.Kind) {
 			roll = nil
 		}
-		roll = inOrder(info, &last, roll, "roll")
-		tick := inOrder(info, &last, a.TickMS, "action")
+		rollAt[i] = inOrder(info, &last, roll, "roll")
+		tickAt[i] = inOrder(info, &last, a.TickMS, "action")
+	}
 
+	var prevTick *int64
+	for i := 0; i < n; i++ {
+		a, info := actions[i], &infos[i]
+		roll, tick := rollAt[i], tickAt[i]
 		switch {
 		case rolls(a.Kind):
 			if info.CubeDecisionMS == nil && info.cubeChoice {
@@ -46,14 +57,40 @@ func timeActions(actions []Action, infos []ActionInfo) {
 			}
 			if info.DecisionMS == nil && a.Kind == KindChecker {
 				info.DecisionMS = span(roll, tick)
+				// A Repère that ran backwards is not missing: it is wrong, and
+				// nothing stands in for it.
+				if info.DecisionMS == nil && a.TickMS == nil && i+1 < n {
+					if info.DecisionMS = span(roll, nextInstant(actions[i+1].Kind, rollAt[i+1], tickAt[i+1])); info.DecisionMS != nil {
+						info.DecisionEstimated = true
+					}
+				}
 			}
-		case a.Kind == KindDouble || a.Kind == KindTake || a.Kind == KindPass || a.Kind == KindResign:
+		case isCubeAction(a.Kind):
 			if info.DecisionMS == nil {
 				info.DecisionMS = span(prevTick, tick)
 			}
 		}
 		prevTick = tick
 	}
+}
+
+// isCubeAction reports the Actions whose decision runs from the previous
+// Action's instant to their own.
+func isCubeAction(k Kind) bool {
+	return k == KindDouble || k == KindTake || k == KindPass || k == KindResign
+}
+
+// nextInstant is the first instant an Action gives that ends the play before
+// it: its roll, or a cube action's own Repère. A checker play timed by its
+// action alone gives none — that instant ends its own thinking too.
+func nextInstant(k Kind, roll, tick *int64) *int64 {
+	if rolls(k) {
+		return roll
+	}
+	if isCubeAction(k) {
+		return tick
+	}
+	return nil
 }
 
 // inOrder checks one Repère against the last one the document gave and returns

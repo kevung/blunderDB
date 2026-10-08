@@ -161,6 +161,8 @@ func (s *Service) Apply(ctx context.Context, scope string, id int64, exp Expect,
 		ss.ed.Undo()
 	case transcript.GestureRedo:
 		ss.ed.Redo()
+	case transcript.GestureSeekCursor:
+		ss.ed.SeekCursor(g.At)
 	default:
 		if err := ss.ed.Apply(g); err != nil {
 			return nil, err

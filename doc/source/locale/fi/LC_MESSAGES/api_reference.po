@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:08+0200\n"
+"POT-Creation-Date: 2026-10-09 00:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -42,11 +42,11 @@ msgstr ""
 "vastausmuodon kanssa (JSON tai NDJSON suoratoistetulle listalle) ja, jos "
 "se on olemassa, maininnan valinnaisesta ``Idempotency-Key``-otsakkeesta."
 
-#: ../../source/api_reference.rst:389
+#: ../../source/api_reference.rst:394
 msgid "Idempotence"
 msgstr "Idempotenssi"
 
-#: ../../source/api_reference.rst:391
+#: ../../source/api_reference.rst:396
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -74,11 +74,11 @@ msgstr ""
 " merkintä ”(Idempotency-Key)” yllä olevasta taulukosta. Mikään muu "
 "menetelmä ei tarvitse tai hyväksy tätä otsaketta."
 
-#: ../../source/api_reference.rst:403
+#: ../../source/api_reference.rst:408
 msgid "Lectures conditionnelles"
 msgstr "Ehdolliset lukemiset"
 
-#: ../../source/api_reference.rst:405
+#: ../../source/api_reference.rst:410
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -90,11 +90,11 @@ msgstr ""
 "rungoton ``304``-vastaus niin kauan kuin mikään metodin lukema ei ole "
 "muuttunut — katso :ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:410
+#: ../../source/api_reference.rst:415
 msgid "Repères d'une transcription"
 msgstr "Litteroinnin aikaleimat"
 
-#: ../../source/api_reference.rst:412
+#: ../../source/api_reference.rst:417
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -124,7 +124,23 @@ msgstr ""
 "paikallinen polku), tyhjä merkkijono irrottaa sen; ``set_header`` asettaa"
 " sen myös, kun sen otsake nimeää lähteen, mutta ei koskaan poista sitä."
 
-#: ../../source/api_reference.rst:424
+#: ../../source/api_reference.rst:429
+msgid ""
+"Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
+"fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
+" la pile d'annulation : c'est ainsi que le curseur suit une vidéo en "
+"lecture. Une ``decision_ms`` accompagnée de ``decision_estimated`` est "
+"une estimation : un coup sans repère d'action, mesuré du jet au premier "
+"instant de l'action suivante."
+msgstr ""
+"Ele ``seek_cursor`` asettaa kursorin toimintoon, jonka järjestysnumero on"
+" ``At``, viimeisen jälkeen asiakirjan loppuun, kirjoittamatta mitään ja "
+"menemättä kumoamispinoon: näin kursori seuraa toistettavaa videota. "
+"``decision_ms``, jonka mukana on ``decision_estimated``, on arvio: siirto"
+" ilman toiminnan aikamerkkiä, mitattuna heitosta seuraavan toiminnon "
+"ensimmäiseen hetkeen."
+
+#: ../../source/api_reference.rst:435
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

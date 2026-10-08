@@ -13,6 +13,19 @@ export function fmtDuration(ms) {
 }
 
 /**
+ * A duration as a column of the Transcript shows it: whole seconds, "12 s" below a
+ * minute, "1:05" above; "" when unknown.
+ *
+ * @param {number | null | undefined} ms
+ */
+export function fmtSeconds(ms) {
+    if (ms === null || ms === undefined || !Number.isFinite(ms)) return '';
+    const total = Math.round(ms / 1000);
+    if (total < 60) return `${total} s`;
+    return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+}
+
+/**
  * A mean over `count` known durations; empty when there is none.
  *
  * @param {number} totalMS

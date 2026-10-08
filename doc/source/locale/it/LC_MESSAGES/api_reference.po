@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:08+0200\n"
+"POT-Creation-Date: 2026-10-09 00:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: it\n"
@@ -43,11 +43,11 @@ msgstr ""
 "per un elenco in streaming) e, quando esiste, una nota sull'intestazione "
 "opzionale ``Idempotency-Key``."
 
-#: ../../source/api_reference.rst:389
+#: ../../source/api_reference.rst:394
 msgid "Idempotence"
 msgstr "Idempotenza"
 
-#: ../../source/api_reference.rst:391
+#: ../../source/api_reference.rst:396
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -75,11 +75,11 @@ msgstr ""
 "l'effetto — vedi il contrassegno «(Idempotency-Key)» nella tabella qui "
 "sopra. Nessun altro metodo richiede o accetta questa intestazione."
 
-#: ../../source/api_reference.rst:403
+#: ../../source/api_reference.rst:408
 msgid "Lectures conditionnelles"
 msgstr "Letture condizionali"
 
-#: ../../source/api_reference.rst:405
+#: ../../source/api_reference.rst:410
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -91,11 +91,11 @@ msgstr ""
 "finché non è cambiato nulla di ciò che il metodo legge — vedere "
 ":ref:`headless_direction`."
 
-#: ../../source/api_reference.rst:410
+#: ../../source/api_reference.rst:415
 msgid "Repères d'une transcription"
 msgstr "Marcatori temporali di una trascrizione"
 
-#: ../../source/api_reference.rst:412
+#: ../../source/api_reference.rst:417
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -126,7 +126,23 @@ msgstr ""
 "imposta anche quando la sua intestazione ne indica una, senza mai "
 "cancellarla."
 
-#: ../../source/api_reference.rst:424
+#: ../../source/api_reference.rst:429
+msgid ""
+"Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
+"fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
+" la pile d'annulation : c'est ainsi que le curseur suit une vidéo en "
+"lecture. Une ``decision_ms`` accompagnée de ``decision_estimated`` est "
+"une estimation : un coup sans repère d'action, mesuré du jet au premier "
+"instant de l'action suivante."
+msgstr ""
+"Il gesto ``seek_cursor`` posa il cursore sull'azione di rango ``At``, "
+"alla fine del documento oltre l'ultima, senza scrivere nulla né impilarsi"
+" sulla pila di annullamento: è così che il cursore segue un video in "
+"riproduzione. Un ``decision_ms`` accompagnato da ``decision_estimated`` è"
+" una stima: una mossa senza riferimento d'azione, misurata dal tiro al "
+"primo istante dell'azione successiva."
+
+#: ../../source/api_reference.rst:435
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

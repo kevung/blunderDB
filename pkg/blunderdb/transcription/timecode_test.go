@@ -97,3 +97,38 @@ func TestVideoAndRepèresSurviveAMatchRoundTrip(t *testing.T) {
 		t.Fatalf("a detached source is still on the Match: %q", *m.VideoSource)
 	}
 }
+
+// TestSeekCursorLeavesTheUndoStackAlone: the Cursor that follows a playing video
+// moves by seek_cursor, which writes nothing and pushes nothing — Ctrl-Z after it
+// still undoes the last gesture that changed the document.
+func TestSeekCursorLeavesTheUndoStackAlone(t *testing.T) {
+	ctx := context.Background()
+	svc := New(newStore(t), Options{})
+	header := transcript.Header{MatchLength: 5, Player1: "A", Player2: "B", Date: time.Now(), Transcriber: "T"}
+	st, actions := typedGame(t, svc, "1", header, 4)
+	n := len(actions)
+	apply := func(g transcript.Gesture) {
+		t.Helper()
+		next, err := svc.Apply(ctx, "1", st.ID, Expect{Session: st.SessionID, Revision: st.Revision}, g)
+		if err != nil {
+			t.Fatalf("%s: %v", g.Kind, err)
+		}
+		st = next
+	}
+	rev := st.Revision
+	apply(transcript.Gesture{Kind: transcript.GestureSeekCursor, At: 1})
+	if st.Annotated.Cursor != 1 {
+		t.Fatalf("cursor %d after seek_cursor to 1", st.Annotated.Cursor)
+	}
+	if st.Revision != rev {
+		t.Fatalf("seek_cursor wrote the draft: revision %d → %d", rev, st.Revision)
+	}
+	apply(transcript.Gesture{Kind: transcript.GestureSeekCursor, At: n + 5})
+	if st.Annotated.Cursor != n {
+		t.Fatalf("cursor %d after seeking past the end, want %d", st.Annotated.Cursor, n)
+	}
+	apply(transcript.Gesture{Kind: transcript.GestureUndo})
+	if got := len(st.Annotated.Document.Actions); got != n-1 {
+		t.Fatalf("undo after two seeks left %d actions, want %d: a seek was on the stack", got, n-1)
+	}
+}

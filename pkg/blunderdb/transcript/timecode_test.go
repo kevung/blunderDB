@@ -350,3 +350,69 @@ func TestCorrectionToACubeActionDropsTheRollRepère(t *testing.T) {
 		t.Errorf("corrected into a resignation: roll %s, action %s; want unknown, 20000", show(a.RollTickMS), show(a.TickMS))
 	}
 }
+
+// checkEstimated compares each Action's play duration and whether it is estimated.
+func checkEstimated(t *testing.T, ann Annotated, decision []*int64, estimated []bool) {
+	t.Helper()
+	for i := range decision {
+		got := ann.Actions[i]
+		if !sameMS(got.DecisionMS, decision[i]) || got.DecisionEstimated != estimated[i] {
+			t.Errorf("Action %d (%s): decision %s estimated %v; want %s estimated %v", i, got.Kind,
+				show(got.DecisionMS), got.DecisionEstimated, show(decision[i]), estimated[i])
+		}
+	}
+}
+
+// TestUntimedPlayIsEstimatedToTheNextInstant: a play with a roll and no action
+// Repère is estimated, as an upper bound, to the next Action's roll or to a cube
+// action's own instant; a measure stands, the last play has nothing to end it,
+// a cube decision is never estimated, and a Repère that runs backwards serves
+// no estimate.
+func TestUntimedPlayIsEstimatedToTheNextInstant(t *testing.T) {
+	untime := func(doc Document, idx ...int) Document {
+		doc.Actions = append([]Action(nil), doc.Actions...)
+		for _, i := range idx {
+			doc.Actions[i].TickMS = nil
+		}
+		return doc
+	}
+
+	t.Run("to the next roll", func(t *testing.T) {
+		ann := Replay(untime(timedGame(t), 0), 0)
+		checkEstimated(t, ann, []*int64{ms(5000), ms(3000)}, []bool{true, false})
+		// The cube decision after it would start on the missing instant: unknown.
+		if ann.Actions[1].CubeDecisionMS != nil {
+			t.Errorf("cube decision %s estimated", show(ann.Actions[1].CubeDecisionMS))
+		}
+	})
+
+	t.Run("to a cube action", func(t *testing.T) {
+		ann := Replay(untime(timedGame(t), 1), 0)
+		checkEstimated(t, ann, []*int64{ms(3000), ms(6000)}, []bool{false, true})
+		// The double ran from the missing end of the play: no estimate.
+		if ann.Actions[2].DecisionMS != nil {
+			t.Errorf("double %s estimated", show(ann.Actions[2].DecisionMS))
+		}
+	})
+
+	t.Run("not the last play", func(t *testing.T) {
+		ann := Replay(untime(timedGame(t), 4), 0)
+		if d := ann.Actions[4].DecisionMS; d != nil || ann.Actions[4].DecisionEstimated {
+			t.Errorf("last play %s", show(d))
+		}
+	})
+
+	t.Run("a measure stands", func(t *testing.T) {
+		doc := untime(timedGame(t), 0)
+		doc.Actions[0].DecisionMS = ms(42)
+		ann := Replay(doc, 0)
+		checkEstimated(t, ann, []*int64{ms(42)}, []bool{false})
+	})
+
+	t.Run("not through a backwards Repère", func(t *testing.T) {
+		doc := untime(timedGame(t), 0)
+		doc.Actions[1].RollTickMS = ms(500)
+		ann := Replay(doc, 0)
+		checkEstimated(t, ann, []*int64{nil}, []bool{false})
+	})
+}

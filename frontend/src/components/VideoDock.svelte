@@ -6,7 +6,7 @@
     import VideoPane from './VideoPane.svelte';
     import { t } from '../i18n';
     import { portal } from '../utils/portal.js';
-    import { videoPlacementStore, videoStageOwnerStore, videoStageTargetStore, claimVideoStage, releaseVideoStage, setVideoPlacement } from '../stores/videoStageStore.js';
+    import { videoPlacementStore, videoStageOwnerStore, videoStageTargetStore, claimVideoStage, releaseVideoStage, setVideoPlacement, swapVideoSide } from '../stores/videoStageStore.js';
 
     /**
      * @type {{
@@ -90,6 +90,16 @@
         title={wantsBoard ? $t('video.placePanel') : $t('video.placeBoard')}
         aria-label={wantsBoard ? $t('video.placePanel') : $t('video.placeBoard')}>{wantsBoard ? '⇲' : '⇱'}</button
     >
+    {#if onBoard}
+        <button
+            class="video-dock-place video-dock-swap"
+            data-testid="video-swap-side"
+            onmousedown={(event) => event.preventDefault()}
+            onclick={swapVideoSide}
+            title={$t('video.swapSide')}
+            aria-label={$t('video.swapSide')}>⇄</button
+        >
+    {/if}
 </div>
 
 <style>
@@ -110,6 +120,9 @@
         color: white;
         cursor: pointer;
         opacity: 0.6;
+    }
+    .video-dock-swap {
+        right: 38px;
     }
     .video-dock:hover .video-dock-place,
     .video-dock-place:focus-visible {

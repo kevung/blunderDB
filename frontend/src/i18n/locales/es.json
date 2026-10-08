@@ -1452,6 +1452,7 @@
             "noAction": "Ninguna acción bajo el cursor",
             "noDice": "Ninguna tirada en curso",
             "untimedAction": "Jugada validada sin instante de acción: con un vídeo, Intro valida en el instante de la imagen, o v sobre la celda.",
+            "cubeUntimed": "Duración del cubo desconocida: v sobre la jugada anterior para medirla.",
             "noRollToTime": "Esta acción no tiene tirada que marcar.",
             "rollTimed": "Tirada marcada en {time}.",
             "actionTimed": "Acción marcada en {time}."
@@ -1520,7 +1521,11 @@
             "timecode_backwards": "marca de tiempo hacia atrás"
         },
         "tickRoll": "tirada {time}",
-        "tickAction": "jugada {time}"
+        "tickAction": "jugada {time}",
+        "duration": "tiempo",
+        "durationDecision": "decisión {time}",
+        "durationCube": "cubo {time}",
+        "durationEstimated": "≈ {time}, hasta la tirada siguiente, recogida de los dados incluida"
     },
     "status": {
         "importChip": "Importación en curso: {percent} %",
@@ -3196,6 +3201,8 @@
         "placeBoard": "Mostrar el vídeo junto al tablero",
         "placePanel": "Devolver el vídeo al panel",
         "stageResize": "Redimensionar el vídeo",
+        "swapSide": "Mover el vídeo al otro lado del tablero",
+        "stageMove": "Arrastrar para poner el vídeo a la izquierda o a la derecha",
         "rate": "Velocidad de reproducción"
     },
     "tournamentReview": {

@@ -36,7 +36,15 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    va de l'instant du jet à l'instant de l'action ; un double, une réponse, un abandon vont de
    l'instant de l'action précédente au leur. Le premier jet d'une partie n'a pas de décision
    de videau ; une danse et un coup non consigné n'ont pas de décision de pions, comme sous
-   l'Arbitre. Un Repère manquant laisse inconnues les durées qui en dépendent. Une durée
+   l'Arbitre. Un Repère manquant laisse inconnues les durées qui en dépendent, à une
+   exception : une décision de pions sans instant d'action s'*estime* du jet au premier
+   instant de l'Action suivante — son jet, ou l'instant d'un geste de videau —, un majorant
+   qui compte le ramassage et le lancer des dés, marqué comme estimé et affiché à part.
+   Aucune décision de videau ne s'estime : la fin du coup précédent ne se distingue pas du
+   début de la réflexion au videau, et seul l'instant de ce coup, posé par `v` ou par une
+   validation explicite, la mesure. Un Repère à rebours ne sert à aucune estimation ; une
+   mesure prime toujours. Le marqueur ne survit pas à l'enregistrement : le coup du Match ne
+   porte que la durée. Une durée
    mesurée par l'Arbitre prime toujours sur une durée déduite. À l'enregistrement, la durée
    déduite remplit le champ du coup que l'ADR-0073 a défini : même colonne, même filtre, même
    affichage. Un Repère antérieur à celui qui le précède est une Incohérence, marquée et
@@ -48,7 +56,14 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    pas aux Repères. Une validation implicite — par le chiffre du jet suivant ou par un geste de
    videau — ne pose aucun instant : le coup reste sans instant d'action plutôt que d'en recevoir
    un faux. Un geste explicite pose l'instant courant sur l'action du curseur, jet ou
-   action. Placer le curseur sur une cellule amène la vidéo à son Repère. Repères et source
+   action. Placer le curseur sur une cellule amène la vidéo à son Repère. En sens inverse,
+   pendant la lecture, le curseur suit la vidéo dans la partie horodatée : une Action couvre
+   la vidéo de son jet — à défaut de l'instant de l'Action précédente — au début de la
+   suivante, et au-delà du dernier Repère le curseur revient une fois en fin de document. Ce
+   suivi n'écrit rien et ne s'empile pas sur l'annulation, ne ramène jamais la vidéo, se tait
+   pendant une saisie ou une pause, et cède à un placement à la main tant que la lecture
+   n'a pas quitté l'Action choisie : le geste explicite horodate celle que l'on a désignée.
+   Repères et source
    sont des champs optionnels des gestes d'écriture et de l'état exposé (ADR-0057) : un client
    externe pose les siens par l'API, et la logique vit dans `transcript`, le lecteur n'étant
    qu'un fournisseur d'instants.
@@ -82,6 +97,13 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    lit lui-même les flèches et qu'un cadre focalisé avale toutes les touches. La vitesse de
    lecture se règle par pas de 0,25 de 0,25× à 4×, une seule liste filtrée par ce que la
    source accepte ; elle ne survit pas à un changement de source.
+   Le côté (gauche par défaut, ou droite) est une préférence du poste comme la largeur, qui
+   reste celle de la vidéo quel que soit le côté. On le change par le bouton ⇄ ou en
+   glissant une poignée en haut de la vidéo (événements pointeur, pas le glisser HTML5, peu
+   fiable sous WebKitGTK et mêlé au dépôt de fichiers) ; un calque posé pendant le glisser
+   empêche le cadre de capter la souris, Échap ou un lâcher hors de la zone annule. Le plateau
+   ne se déplace pas : le glisser y appartient aux pions. Poignée et bouton ne prennent pas le
+   focus.
 
 ## Conséquences
 

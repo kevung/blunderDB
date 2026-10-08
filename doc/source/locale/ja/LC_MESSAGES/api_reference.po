@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:12+0200\n"
+"POT-Creation-Date: 2026-10-09 00:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ja\n"
@@ -41,11 +41,11 @@ msgstr ""
 "参照)、レスポンスの形式(JSON、またはストリーミングリストの場合は NDJSON)と、存在する場合は任意の ``Idempotency-"
 "Key`` ヘッダーへの言及を含みます。"
 
-#: ../../source/api_reference.rst:389
+#: ../../source/api_reference.rst:394
 msgid "Idempotence"
 msgstr "冪等性"
 
-#: ../../source/api_reference.rst:391
+#: ../../source/api_reference.rst:396
 msgid ""
 "La plupart des méthodes n'ont besoin d'aucun mécanisme particulier : les "
 "lectures sont sans effet de bord, et les écritures de ``positions.*`` "
@@ -67,11 +67,11 @@ msgstr ""
 " ``positions.save`` です。同じキーで再送された呼び出しは、効果を繰り返さず最初の試行の結果を返します。上の表の"
 "「(Idempotency-Key)」の印を参照してください。それ以外のメソッドはこのヘッダーを必要とせず、受け付けません。"
 
-#: ../../source/api_reference.rst:403
+#: ../../source/api_reference.rst:408
 msgid "Lectures conditionnelles"
 msgstr "条件付き読み取り"
 
-#: ../../source/api_reference.rst:405
+#: ../../source/api_reference.rst:410
 msgid ""
 "Les méthodes marquées « (ETag) » rendent un en-tête ``ETag``. Le renvoyer"
 " dans ``If-None-Match`` obtient une réponse ``304`` sans corps tant que "
@@ -82,11 +82,11 @@ msgstr ""
 "に付けて送り返すと、メソッドが読み取る内容に変化がない限り、本文のない ``304`` 応答が返ります — "
 ":ref:`headless_direction` を参照してください。"
 
-#: ../../source/api_reference.rst:410
+#: ../../source/api_reference.rst:415
 msgid "Repères d'une transcription"
 msgstr "文字起こしのタイムコード"
 
-#: ../../source/api_reference.rst:412
+#: ../../source/api_reference.rst:417
 msgid ""
 "Un geste de ``transcriptions.apply`` peut porter l'instant de la vidéo où"
 " il est fait, en millisecondes depuis le début du média : ``TickMS``, lu "
@@ -113,7 +113,21 @@ msgstr ""
 "またはローカルパス)を関連付け、空文字列はそれを解除します。``set_header`` "
 "も、ヘッダーが動画ソースを指定している場合はそれを設定しますが、消去することはありません。"
 
-#: ../../source/api_reference.rst:424
+#: ../../source/api_reference.rst:429
+msgid ""
+"Le geste ``seek_cursor`` pose le curseur sur l'action de rang ``At``, la "
+"fin du document au-delà de la dernière, sans rien écrire ni s'empiler sur"
+" la pile d'annulation : c'est ainsi que le curseur suit une vidéo en "
+"lecture. Une ``decision_ms`` accompagnée de ``decision_estimated`` est "
+"une estimation : un coup sans repère d'action, mesuré du jet au premier "
+"instant de l'action suivante."
+msgstr ""
+"``seek_cursor`` ジェスチャーは、カーソルを順位 ``At`` "
+"のアクション（最後を越えれば文書の末尾）に置きます。何も書き込まず、元に戻すスタックにも積みません。カーソルが再生中の動画を追うのはこの仕組みによります。``decision_estimated``"
+" を伴う ``decision_ms`` "
+"は推定値です。アクションのタイムコードがない手について、ロールから次のアクションの最初の時刻までを測ったものです。"
+
+#: ../../source/api_reference.rst:435
 msgid ""
 "L'état rendu porte la source dans ``header.video_source``, les repères de"
 " chaque action dans ``roll_tick_ms`` et ``tick_ms``, et, sur chaque "

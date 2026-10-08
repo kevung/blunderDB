@@ -1452,6 +1452,7 @@
             "noAction": "Nessuna azione sotto il cursore",
             "noDice": "Nessun tiro in corso di inserimento",
             "untimedAction": "Mossa convalidata senza istante dell'azione: con un video, Invio convalida all'istante dell'immagine, oppure v sulla cella.",
+            "cubeUntimed": "Durata della decisione di cubo sconosciuta: v sulla mossa precedente per misurarla.",
             "noRollToTime": "Questa azione non ha un lancio da marcare.",
             "rollTimed": "Lancio marcato a {time}.",
             "actionTimed": "Azione marcata a {time}."
@@ -1520,7 +1521,11 @@
             "timecode_backwards": "marcatore a ritroso"
         },
         "tickRoll": "lancio {time}",
-        "tickAction": "mossa {time}"
+        "tickAction": "mossa {time}",
+        "duration": "tempo",
+        "durationDecision": "decisione {time}",
+        "durationCube": "cubo {time}",
+        "durationEstimated": "≈ {time}, fino al tiro successivo, raccolta dei dadi compresa"
     },
     "status": {
         "importChip": "Importazione in corso: {percent} %",
@@ -3196,6 +3201,8 @@
         "placeBoard": "Mostra il video accanto al tavoliere",
         "placePanel": "Riporta il video nel pannello",
         "stageResize": "Ridimensiona il video",
+        "swapSide": "Sposta il video sull'altro lato della scacchiera",
+        "stageMove": "Trascina per mettere il video a sinistra o a destra",
         "rate": "Velocità di riproduzione"
     },
     "tournamentReview": {

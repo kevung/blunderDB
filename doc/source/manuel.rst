@@ -2117,6 +2117,15 @@ Cliquer dans la vidéo, sur ses commandes ou sur la barre de séparation laisse
 le clavier au panneau : les touches de saisie, les touches de la vidéo et
 *CTRL-GAUCHE* / *CTRL-DROITE*, qui tournent le plateau, gardent leur effet.
 
+**Le côté de la vidéo.** La vidéo se met à gauche du plateau au départ ; elle peut
+passer à droite. Le bouton ⇄, à côté de celui qui la remet dans le panneau,
+change de côté d'un clic. On peut aussi saisir la petite poignée en haut de la
+vidéo et la glisser : les deux moitiés de la zone s'éclairent, et lâcher dans
+l'une y place la vidéo. *ÉCHAP*, ou lâcher hors de la zone, annule. Le plateau,
+lui, ne se déplace pas : y glisser déplace les pions. Le côté est retenu d'une
+session à l'autre, et la largeur reste celle de la vidéo, de quelque côté
+qu'elle soit. La poignée et le bouton laissent le clavier au panneau.
+
 Avec une vidéo, chaque action **nouvelle** porte des **repères** : l'instant
 du jet, posé par la première touche de dé, et l'instant de l'action, posé par
 la validation, tous deux lus sur la vidéo au moment du geste. Une correction en
@@ -2146,6 +2155,26 @@ toute incohérence, et laisse inconnues les durées qui en dépendent. Placer le
 curseur sur une cellule (clic, *h*, *l*) amène la vidéo une seconde avant le
 jet de cette action, ou avant son action si le jet n'a pas d'instant ; un
 lecteur en pause le reste.
+
+Dès que le brouillon a une vidéo ou un repère, le transcript gagne une colonne
+**durée** à droite de chaque joueur : la durée de la décision, en secondes
+(en minutes et secondes au-delà d'une minute), suivie, après un point médian,
+de la décision de videau qui précède le jet. Un coup sans instant d'action
+n'est pas laissé vide : sa durée s'estime du jet au premier instant du coup
+suivant (son jet, ou un geste de videau), et s'affiche en italique précédée de
+« ≈ ». C'est un majorant, qui compte le ramassage et le lancer des dés. Aucune
+décision de videau ne s'estime : sans l'instant d'action du coup précédent, sa
+durée reste inconnue, et la barre d'état propose alors *v* sur ce coup pour la
+mesurer. Pendant la lecture, le curseur
+**suit la vidéo** dans la partie déjà horodatée : chaque action couvre la vidéo
+depuis son jet, ou à défaut depuis l'action précédente, jusqu'au début de la
+suivante, et le curseur se pose sur l'action où entre la lecture ; au-delà du
+dernier repère, il revient une fois en fin de transcript. Il ne bouge ni
+pendant une saisie ni quand la vidéo est en pause, et ce déplacement n'entre
+pas dans l'historique d'annulation. Placé à la main, le curseur reste sur
+l'action choisie tant que la lecture n'en est pas sortie : on clique sur un
+coup sans instant d'action, on lance la vidéo, on appuie sur *v* à la fin du
+coup, et c'est ce coup qui reçoit l'instant.
 
 L'application ne décode pas la vidéo elle-même : les formats lus sont ceux du
 webview. Un format qu'il ne lit pas est signalé dans le volet, avec son

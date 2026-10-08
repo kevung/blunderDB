@@ -88,6 +88,9 @@ type ActionInfo struct {
 	// deduced from the Repères (ADR-0082 rule 2), nil when neither says.
 	DecisionMS     *int64 `json:"decision_ms,omitempty"`
 	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
+	// DecisionEstimated says DecisionMS is an upper bound, from the roll to the
+	// next Action's first instant, for a play with no action Repère.
+	DecisionEstimated bool `json:"decision_estimated,omitempty"`
 
 	// RollTickMS and TickMS are the Action's own Repères, carried to its Move.
 	RollTickMS *int64 `json:"roll_tick_ms,omitempty"`

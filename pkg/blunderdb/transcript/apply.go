@@ -82,6 +82,11 @@ const (
 	// to [Editor.Undo] and [Editor.Redo].
 	GestureUndo GestureKind = "undo"
 	GestureRedo GestureKind = "redo"
+	// GestureSeekCursor puts the Cursor on the Action Gesture.At names, the end
+	// of the document past the last one, as [Editor.SeekCursor] does. Like undo
+	// it is a gesture of the session that [Apply] refuses: a Cursor that follows
+	// a playing video must not fill the undo stack with steps nobody took.
+	GestureSeekCursor GestureKind = "seek_cursor"
 )
 
 // Gesture is a gesture and what it needs. Only the fields its Kind names are read.
@@ -145,9 +150,10 @@ var (
 	ErrNoCandidate = errors.New("transcript: no play is selected")
 	// ErrNoAction reports a gesture on the Action under the Cursor when there is none.
 	ErrNoAction = errors.New("transcript: the cursor is not on an action")
-	// ErrNotPure reports undo or redo handed to [Apply]. They are gestures of the
-	// SESSION, not of the document: only an [Editor] holds the stack they walk.
-	ErrNotPure = errors.New("transcript: undo and redo belong to the editor, not to Apply")
+	// ErrNotPure reports undo, redo or a seek handed to [Apply]. They are gestures
+	// of the SESSION, not of the document: only an [Editor] holds the stack they
+	// walk or keep clear of.
+	ErrNotPure = errors.New("transcript: undo, redo and seek belong to the editor, not to Apply")
 )
 
 // Apply returns the document that gesture g makes of doc. It is pure: doc is never
@@ -375,7 +381,7 @@ func apply(doc Document, g Gesture) (Document, error) {
 	case GestureSetTimecode:
 		return setTimecode(doc, out, g)
 
-	case GestureUndo, GestureRedo:
+	case GestureUndo, GestureRedo, GestureSeekCursor:
 		return doc, ErrNotPure
 	}
 	return doc, fmt.Errorf("transcript: unknown gesture %q", g.Kind)

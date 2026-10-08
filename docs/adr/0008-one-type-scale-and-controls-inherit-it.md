@@ -41,6 +41,8 @@ Named exceptions, each behind its own token:
 - `--font-size-dialog-close` (24 px) — dialog close crosses (and `App.svelte`'s drop overlay).
 - `--font-size-stat-figure` (28 px) — figures read at a glance: the statistics tabs' large
   numbers and the counters of `FileImportProgressModal` / `ImportProgressModal`.
+- `--font-size-video-overlay` (`clamp(20px, 14cqmin, 120px)`) — the playback-rate indicator
+  centred on the video in `VideoPane`; it scales with the video pane, a size container.
 
 ## Consequences
 
@@ -54,5 +56,5 @@ Named exceptions, each behind its own token:
 ## Guard
 
 `frontend/src/__tests__/fontScale.sync.test.js`: every `font-size` in a `.svelte` file is a token
-or `inherit`, every `font` shorthand is `inherit`, and the three chrome tokens are accepted only
+or `inherit`, every `font` shorthand is `inherit`, and the four chrome tokens are accepted only
 where this ADR places them.

@@ -136,7 +136,7 @@
 <script>
     import { SvelteMap } from 'svelte/reactivity';
     import { t } from '../i18n';
-    import { fmtClock, fmtDuration } from '../utils/decisionTime.js';
+    import { fmtClock, fmtDuration, fmtSeconds } from '../utils/decisionTime.js';
     import { closeOnEscape } from '../services/escapeService.js';
 
     let {
@@ -173,6 +173,9 @@
     let header = $derived(annotated?.document?.header ?? {});
     let at = $derived(cursor ?? annotated?.cursor ?? -1);
     let layout = $derived(transcriptRows(annotated));
+    // The durations get their column once the draft has a video or a Repère: before
+    // that every cell would be empty.
+    let timed = $derived(!!header.video_source || (annotated?.actions ?? []).some((/** @type {any} */ a) => a?.tick_ms != null || a?.roll_tick_ms != null));
 
     // Index de la cellule provisoire dessinée, ou −1 ; elle porte seule le cadre du Cursor.
     let pendingIndex = $derived.by(() => {
@@ -507,7 +510,9 @@
                                 <tr>
                                     <th class="num" aria-label={$t('transcript.turn')}></th>
                                     <th class="side">{playerName(0)}</th>
+                                    {#if timed}<th class="time">{$t('transcript.duration')}</th>{/if}
                                     <th class="side">{playerName(1)}</th>
+                                    {#if timed}<th class="time">{$t('transcript.duration')}</th>{/if}
                                 </tr>
                             </thead>
                             <tbody>
@@ -515,7 +520,9 @@
                                     <tr>
                                         <td class="num">{row.numbered ? i + 1 : ''}</td>
                                         <td class="side">{@render cellBlock(row.left)}</td>
+                                        {#if timed}{@render durationBlock(row.left)}{/if}
                                         <td class="side">{@render cellBlock(row.right)}</td>
+                                        {#if timed}{@render durationBlock(row.right)}{/if}
                                     </tr>
                                 {/each}
                             </tbody>
@@ -526,6 +533,28 @@
         {/if}
     </div>
 </div>
+
+<!--
+  The durations of a cell's Action as the Replay deduces them: the decision, then the
+  cube decision before the roll, muted. Empty while one is unknown.
+-->
+{#snippet durationBlock(/** @type {any} */ c)}
+    <!-- The Action under correction is drawn as its entry; its durations are still the Action's. -->
+    {@const info = c?.kind === 'action' ? c.info : c?.kind === 'pending' && c.replacing ? (annotated?.actions?.[c.index] ?? null) : null}
+    {@const estimated = !!info?.decision_estimated && info?.decision_ms != null}
+    {@const spent = fmtSeconds(info?.decision_ms)}
+    {@const cube = fmtSeconds(info?.cube_decision_ms)}
+    <td
+        class="time"
+        data-duration={info ? c.index : undefined}
+        title={spent || cube
+            ? [spent ? $t(estimated ? 'transcript.durationEstimated' : 'transcript.durationDecision', { time: spent }) : '', cube ? $t('transcript.durationCube', { time: cube }) : '']
+                  .filter(Boolean)
+                  .join('\n')
+            : undefined}
+        >{#if estimated}<span class="estimated">≈ {spent}</span>{:else}{spent}{/if}{#if cube}<span class="cube-time">{spent ? ' · ' : ''}{cube}</span>{/if}</td
+    >
+{/snippet}
 
 <!--
   One cell. It is a button when the caller listens, a span when it does not:
@@ -601,7 +630,10 @@
 
 <style>
     /* Borné pour que `.scroller` défile, pas le panneau (ADR-0048 décision 5). */
+    /* Cells are buttons to click, not text to select; the move and score fields stay editable. */
     .transcript-view {
+        user-select: none;
+        -webkit-user-select: none;
         display: flex;
         flex: 1;
         flex-direction: column;
@@ -706,6 +738,25 @@
 
     .side {
         width: 50%;
+    }
+
+    .turns .time {
+        width: 1%;
+        padding: var(--space-1);
+        color: var(--color-text-muted);
+        font-variant-numeric: tabular-nums;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    /* An upper bound, not a measure: it reads apart. */
+    .estimated {
+        font-style: italic;
+    }
+
+    .transcript-view input {
+        user-select: text;
+        -webkit-user-select: text;
     }
 
     /* border-box : un <span> vide (cellule absente) sinon dépasse de sa colonne du rembourrage et du filet. */

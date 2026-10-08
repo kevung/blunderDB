@@ -1452,6 +1452,7 @@
             "noAction": "Aucune Action sous le curseur",
             "noDice": "Aucun jet en cours",
             "untimedAction": "Coup validé sans instant d'action : avec une vidéo, Entrée valide à l'instant de l'image, ou v sur la cellule.",
+            "cubeUntimed": "Durée du videau inconnue : v sur le coup précédent pour la mesurer.",
             "noRollToTime": "Cette action n'a pas de jet à horodater.",
             "rollTimed": "Jet posé à {time}.",
             "actionTimed": "Action posée à {time}."
@@ -1520,7 +1521,11 @@
             "timecode_backwards": "repère à rebours"
         },
         "tickRoll": "jet {time}",
-        "tickAction": "coup {time}"
+        "tickAction": "coup {time}",
+        "duration": "durée",
+        "durationDecision": "décision {time}",
+        "durationCube": "videau {time}",
+        "durationEstimated": "≈ {time}, jusqu'au jet suivant, ramassage des dés compris"
     },
     "status": {
         "importChip": "Import en cours : {percent} %",
@@ -3196,6 +3201,8 @@
         "placeBoard": "Afficher la vidéo à côté du plateau",
         "placePanel": "Remettre la vidéo dans le panneau",
         "stageResize": "Redimensionner la vidéo",
+        "swapSide": "Déplacer la vidéo de l'autre côté du plateau",
+        "stageMove": "Glisser pour placer la vidéo à gauche ou à droite",
         "rate": "Vitesse de lecture"
     },
     "tournamentReview": {

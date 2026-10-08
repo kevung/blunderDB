@@ -271,7 +271,12 @@
     {:else if kind === 'youtube' && src}
         <iframe bind:this={frame} {src} title={$t('video.player')} allow="autoplay; encrypted-media; fullscreen"></iframe>
     {/if}
-    {#if status === 'ready' && (rate !== 1 || rateFlash)}
+    {#if status === 'ready' && rateFlash}
+        {#key rate}
+            <span class="video-rate-flash" data-testid="video-rate-flash" aria-hidden="true">{rate}×</span>
+        {/key}
+    {/if}
+    {#if status === 'ready' && rate !== 1}
         <span class="video-rate" data-testid="video-rate" title={$t('video.rate')}>{rate}×</span>
     {/if}
     {#if status === 'loading'}
@@ -296,6 +301,36 @@
         height: 100%;
         background: var(--color-text);
         outline: none;
+        container-type: size;
+    }
+    .video-rate-flash {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 0.15em 0.5em;
+        border-radius: 0.25em;
+        background: rgb(0 0 0 / 0.6);
+        color: white;
+        font-size: var(--font-size-video-overlay);
+        font-weight: 700;
+        line-height: 1.1;
+        pointer-events: none;
+        animation: video-rate-fade 1.2s ease-in forwards;
+    }
+    @keyframes video-rate-fade {
+        0%,
+        60% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .video-rate-flash {
+            animation: none;
+        }
     }
     .video-rate {
         position: absolute;

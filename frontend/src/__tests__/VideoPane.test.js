@@ -110,6 +110,17 @@ describe('VideoPane', () => {
         expect(frame.getAttribute('src')).toBe(`http://127.0.0.1:1/yt/abc?origin=${encodeURIComponent(window.location.origin)}`);
     });
 
+    test('a speed change shows a large centred indicator that then leaves, the corner badge staying', async () => {
+        const { container, component } = render(VideoPane, { props: { source: '/v/final.mp4' } });
+        const video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
+        await fireEvent(video, new Event('loadedmetadata'));
+        expect(container.querySelector('[data-testid="video-rate-flash"]')).toBeNull();
+        component.stepRate(1);
+        await vi.waitFor(() => expect(container.querySelector('[data-testid="video-rate-flash"]')?.textContent).toBe('1.25×'));
+        await vi.waitFor(() => expect(container.querySelector('[data-testid="video-rate-flash"]')).toBeNull(), { timeout: 3000 });
+        expect(container.querySelector('[data-testid="video-rate"]')?.textContent).toBe('1.25×');
+    });
+
     test('a file steps its speed by quarters up to 4×, shows it, and holds at the ends', async () => {
         const { container, component } = render(VideoPane, { props: { source: '/v/final.mp4' } });
         const video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));

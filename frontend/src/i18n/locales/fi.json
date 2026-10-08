@@ -1452,6 +1452,7 @@
             "noAction": "Ei toimintoa kohdistimen alla",
             "noDice": "Ei syötettävää heittoa",
             "untimedAction": "Siirto vahvistettiin ilman toiminnan ajankohtaa: videon kanssa Enter vahvistaa kuvan hetkellä, tai v solun kohdalla.",
+            "cubeUntimed": "Kuutiopäätöksen kesto tuntematon: v edellisen siirron kohdalla mittaa sen.",
             "noRollToTime": "Tällä toiminnolla ei ole heittoa ajoitettavaksi.",
             "rollTimed": "Heitto ajoitettu kohtaan {time}.",
             "actionTimed": "Toiminto ajoitettu kohtaan {time}."
@@ -1520,7 +1521,11 @@
             "timecode_backwards": "aikamerkki taaksepäin"
         },
         "tickRoll": "heitto {time}",
-        "tickAction": "siirto {time}"
+        "tickAction": "siirto {time}",
+        "duration": "aika",
+        "durationDecision": "päätös {time}",
+        "durationCube": "kuutio {time}",
+        "durationEstimated": "≈ {time}, seuraavaan heittoon asti, noppien keräys mukaan lukien"
     },
     "status": {
         "importChip": "Tuonti käynnissä: {percent} %",
@@ -3196,6 +3201,8 @@
         "placeBoard": "Näytä video laudan vieressä",
         "placePanel": "Palauta video paneeliin",
         "stageResize": "Muuta videon kokoa",
+        "swapSide": "Siirrä video laudan toiselle puolelle",
+        "stageMove": "Vedä sijoittaaksesi video vasemmalle tai oikealle",
         "rate": "Toistonopeus"
     },
     "tournamentReview": {
