@@ -89,6 +89,13 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    lit lui-même les flèches et qu'un cadre focalisé avale toutes les touches. La vitesse de
    lecture se règle par pas de 0,25 de 0,25× à 4×, une seule liste filtrée par ce que la
    source accepte ; elle ne survit pas à un changement de source.
+   Le côté (gauche par défaut, ou droite) est une préférence du poste comme la largeur, qui
+   reste celle de la vidéo quel que soit le côté. On le change par le bouton ⇄ ou en
+   glissant une poignée en haut de la vidéo (événements pointeur, pas le glisser HTML5, peu
+   fiable sous WebKitGTK et mêlé au dépôt de fichiers) ; un calque posé pendant le glisser
+   empêche le cadre de capter la souris, Échap ou un lâcher hors de la zone annule. Le plateau
+   ne se déplace pas : le glisser y appartient aux pions. Poignée et bouton ne prennent pas le
+   focus.
 
 ## Conséquences
 

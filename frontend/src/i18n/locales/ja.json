@@ -3198,6 +3198,8 @@
         "placeBoard": "動画を盤の横に表示",
         "placePanel": "動画をパネルに戻す",
         "stageResize": "動画のサイズを変更",
+        "swapSide": "動画を盤の反対側に移動",
+        "stageMove": "ドラッグして動画を左または右に配置",
         "rate": "再生速度"
     },
     "tournamentReview": {

@@ -542,6 +542,11 @@
     }
 
     .analysis-panel {
+        /* Interface chrome is not text to copy; fields below opt back in. */
+
+        user-select: none;
+
+        -webkit-user-select: none;
         width: 100%;
         height: 100%;
         overflow-y: auto;

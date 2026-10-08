@@ -5,6 +5,7 @@
  * player wherever it shows, and switching places neither reloads a file nor loses its instant.
  *
  *   videoPlacementStore  'board' | 'panel', the viewer's choice, remembered across sessions;
+ *   videoSideStore       'left' | 'right', the side of the board the video takes, remembered;
  *   videoStageOwnerStore the panel whose video sits beside the board, null when none;
  *   videoStageTargetStore the element the board side offers, null while it is not shown.
  */
@@ -31,6 +32,35 @@ export function setVideoPlacement(placement) {
     } catch (_e) {
         /* storage unavailable: the choice lasts the session */
     }
+}
+
+const SIDE_KEY = 'blunderdb.video.side';
+
+function readSide() {
+    try {
+        return localStorage.getItem(SIDE_KEY) === 'right' ? 'right' : 'left';
+    } catch (_e) {
+        return 'left';
+    }
+}
+
+/** @type {import('svelte/store').Writable<'left' | 'right'>} */
+export const videoSideStore = writable(readSide());
+
+/** @param {'left' | 'right'} side */
+export function setVideoSide(side) {
+    videoSideStore.set(side);
+    try {
+        localStorage.setItem(SIDE_KEY, side);
+    } catch (_e) {
+        /* storage unavailable: the choice lasts the session */
+    }
+}
+
+export function swapVideoSide() {
+    let current = 'left';
+    videoSideStore.subscribe((v) => (current = v))();
+    setVideoSide(current === 'left' ? 'right' : 'left');
 }
 
 /** @type {import('svelte/store').Writable<string | null>} */

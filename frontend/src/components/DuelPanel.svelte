@@ -164,6 +164,9 @@
 
 <style>
     .duel-panel {
+        /* Interface chrome is not text to copy; fields below opt back in. */
+        user-select: none;
+        -webkit-user-select: none;
         display: flex;
         flex-direction: column;
         gap: 0.6em;
@@ -243,5 +246,10 @@
         list-style: none;
         margin: 0.3em 0 0;
         padding: 0;
+    }
+
+    .duel-panel input {
+        user-select: text;
+        -webkit-user-select: text;
     }
 </style>
