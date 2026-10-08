@@ -3,6 +3,8 @@ package storage
 import (
 	"context"
 	"sort"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 )
 
 // StatsFilter defines the filtering criteria for a stats computation.
@@ -47,6 +49,8 @@ type TournamentStats struct {
 	PR           float64 `json:"PR"`
 	MWC          float64 `json:"MWC"`
 	NumDecisions int     `json:"NumDecisions"`
+	// MWC7 pools the row's (match, player) units (ADR-0075).
+	MWC7 domain.MWC7 `json:"MWC7"`
 }
 
 // MatchStats holds aggregated stats for a single match.
@@ -57,6 +61,8 @@ type MatchStats struct {
 	PR           float64 `json:"PR"`
 	MWC          float64 `json:"MWC"`
 	NumDecisions int     `json:"NumDecisions"`
+	// MWC7 pools the row's (match, player) units (ADR-0075).
+	MWC7 domain.MWC7 `json:"MWC7"`
 }
 
 // CubeActionStats holds aggregated stats grouped by cube action.
@@ -90,16 +96,19 @@ type BlunderEntry struct {
 
 // StatsResult contains all computed statistics for a given filter.
 type StatsResult struct {
-	Totals              StatsTotals       `json:"Totals"`
-	PRGlobal            float64           `json:"PRGlobal"`
-	PRChecker           float64           `json:"PRChecker"`
-	PRCube              float64           `json:"PRCube"`
-	PRRolling           map[int]float64   `json:"PRRolling"`
-	MWCGlobal           float64           `json:"MWCGlobal"`
-	MWCChecker          float64           `json:"MWCChecker"`
-	MWCCube             float64           `json:"MWCCube"`
-	MWCRolling          map[int]float64   `json:"MWCRolling"`
-	MWCAvailable        bool              `json:"MWCAvailable"`
+	Totals       StatsTotals     `json:"Totals"`
+	PRGlobal     float64         `json:"PRGlobal"`
+	PRChecker    float64         `json:"PRChecker"`
+	PRCube       float64         `json:"PRCube"`
+	PRRolling    map[int]float64 `json:"PRRolling"`
+	MWCGlobal    float64         `json:"MWCGlobal"`
+	MWCChecker   float64         `json:"MWCChecker"`
+	MWCCube      float64         `json:"MWCCube"`
+	MWCRolling   map[int]float64 `json:"MWCRolling"`
+	MWCAvailable bool            `json:"MWCAvailable"`
+	// MWC7 pools every (match, player) unit of the selection
+	// (ADR-0075); unavailable when the selection holds no match play.
+	MWC7                domain.MWC7       `json:"MWC7"`
 	SnowieGlobal        float64           `json:"SnowieGlobal"`
 	PerTournament       []TournamentStats `json:"PerTournament"`
 	PerMatch            []MatchStats      `json:"PerMatch"`
@@ -262,6 +271,8 @@ type MatchPlayerDetailStats struct {
 	TotalEquityError float64 `json:"total_equity_error"`
 	PR               float64 `json:"pr"`
 	MWCLoss          float64 `json:"mwc_loss"`
+	// MWC7 is MWCLoss rescaled to seven points (ADR-0075).
+	MWC7 domain.MWC7 `json:"mwc7"`
 
 	CheckerDecisions   int     `json:"checker_decisions"`
 	CheckerErrors      int     `json:"checker_errors"`
@@ -390,6 +401,10 @@ type MatchBadge struct {
 	MWCLoss  float64 `json:"mwc_loss"`
 	PR2      float64 `json:"pr2"`
 	MWCLoss2 float64 `json:"mwc_loss2"`
+	// MWC7/MWC7P2 are MWCLoss/MWCLoss2 rescaled to seven points
+	// (ADR-0075), with the interval of the match's games.
+	MWC7   domain.MWC7 `json:"mwc7"`
+	MWC7P2 domain.MWC7 `json:"mwc7_p2"`
 }
 
 // TournamentBadge is the PR/MWC shown on each tournament-list row. Unlike a
@@ -402,6 +417,9 @@ type TournamentBadge struct {
 	PR        float64 `json:"pr"`
 	MWCLoss   float64 `json:"mwc_loss"`
 	RefPlayer string  `json:"ref_player"`
+	// MWC7 pools the reference player's matches of the tournament
+	// (ADR-0075).
+	MWC7 domain.MWC7 `json:"mwc7"`
 }
 
 // TournamentPlayerAcc accumulates one player's counted decisions within a single
@@ -413,6 +431,10 @@ type TournamentPlayerAcc struct {
 	Cnt     int
 	MWC     float64
 	Matches map[int64]struct{}
+	// MatchMWC and MatchLength split MWC by match, for the 7-point MWC loss; a
+	// backend that leaves them nil gives the badge none.
+	MatchMWC    map[int64]float64
+	MatchLength map[int64]int
 }
 
 // PickReferencePlayer selects a tournament's reference player and returns its
@@ -435,7 +457,16 @@ func PickReferencePlayer(players map[string]*TournamentPlayerAcc) TournamentBadg
 	if best.Cnt > 0 {
 		pr = 500 * float64(best.SumErr) / 1000 / float64(best.Cnt)
 	}
-	return TournamentBadge{PR: pr, MWCLoss: best.MWC, RefPlayer: bestName}
+	ids := make([]int64, 0, len(best.MatchMWC))
+	for id := range best.MatchMWC {
+		ids = append(ids, id)
+	}
+	sort.Slice(ids, func(i, j int) bool { return ids[i] < ids[j] })
+	var elo domain.MWC7Pool
+	for _, id := range ids {
+		elo.AddLoss(best.MatchMWC[id], best.MatchLength[id])
+	}
+	return TournamentBadge{PR: pr, MWCLoss: best.MWC, RefPlayer: bestName, MWC7: elo.Result()}
 }
 
 // refPlayerBetter reports whether candidate (name, pa) outranks the current best

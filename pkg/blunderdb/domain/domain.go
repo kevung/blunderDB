@@ -199,6 +199,9 @@ type Tournament struct {
 	// RefPlayer is the player whose PR/MWCLoss the badge reports: the person
 	// present in the most of the tournament's matches. Empty when unknown.
 	RefPlayer string `json:"ref_player"`
+	// MWC7 is RefPlayer's 7-point MWC loss over the tournament's matches
+	// (ADR-0075).
+	MWC7 MWC7 `json:"mwc7"`
 }
 
 // CommentEntry represents a comment for display in the comment wall
@@ -810,6 +813,10 @@ type Match struct {
 	MWCLoss             float64 `json:"mwc_loss"`
 	PR2                 float64 `json:"pr2"`
 	MWCLoss2            float64 `json:"mwc_loss2"`
+	// MWC7/MWC7P2 are players 1 and 2's 7-point MWC loss over
+	// the match (ADR-0075), filled with the PR badge.
+	MWC7   MWC7 `json:"mwc7"`
+	MWC7P2 MWC7 `json:"mwc7_p2"`
 	// MatchHash is the format-specific content hash; CanonicalHash is the
 	// format-independent hash used for cross-format duplicate detection. Both
 	// are set at import time and used by MatchStore dedup. Empty when unknown.

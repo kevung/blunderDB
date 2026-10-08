@@ -444,7 +444,7 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		(` + statsErrExpr + `) as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
 		` + cubeMultiplierExpr + `,
-		COALESCE(p.match_length, m.match_length, 0) ` +
+		COALESCE(p.match_length, m.match_length, 0), mv.game_id, COALESCE(m.match_length, 0) ` +
 		statsBaseJoin +
 		` WHERE ` + tenant + ` AND m.id = ? AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + countedExpr(s.DB)
 
@@ -481,14 +481,16 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 	}
 
 	var p1, p2 playerAcc
+	games := newGameLosses()
+	var matchN int
 
 	for rows.Next() {
 		var rawPlayer, decisionType int
 		var cubeAction string
-		var errMP int64
+		var errMP, gameID int64
 		var awayScore0, awayScore1, cubeValue, matchLength int
 		if err := rows.Scan(&rawPlayer, &decisionType, &cubeAction, &errMP,
-			&awayScore0, &awayScore1, &cubeValue, &matchLength); err != nil {
+			&awayScore0, &awayScore1, &cubeValue, &matchLength, &gameID, &matchN); err != nil {
 			return nil, fmt.Errorf("MatchDetail scan: %w", err)
 		}
 
@@ -502,6 +504,7 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		currentScore0 := matchLength - domain.PointsAway(awayScore0)
 		currentScore1 := matchLength - domain.PointsAway(awayScore1)
 		mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
+		games.add(fMove, gameID, mwcLoss)
 		if math.IsNaN(mwcLoss) {
 			mwcLoss = 0
 		}
@@ -651,6 +654,8 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		Player2: buildStats(&p2),
 	}
 	stats.Player1.SnowieER = snowieER(snowieP1SumErr, snowieDenom)
+	stats.Player1.MWC7 = games.elo(0, matchN)
+	stats.Player2.MWC7 = games.elo(1, matchN)
 	stats.Player2.SnowieER = snowieER(snowieP2SumErr, snowieDenom)
 	return stats, nil
 }
@@ -663,7 +668,7 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 	tenant, args := s.DB.TenantFilter("p", scope)
 	query := `SELECT g.match_id, ` + statsErrExpr + ` as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
-		` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0) ` +
+		` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0), mv.game_id, COALESCE(m.match_length, 0) ` +
 		statsBaseJoin +
 		` WHERE ` + tenant + ` AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + countedExpr(s.DB)
 	if len(matchIDs) > 0 {
@@ -685,17 +690,21 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 		cnt    int
 		mwc    float64
 	}
-	type matchAcc struct{ p1, p2 playerAcc }
+	type matchAcc struct {
+		p1, p2 playerAcc
+		games  *gameLosses
+		length int
+	}
 	acc := make(map[int64]*matchAcc)
 	for rows.Next() {
-		var matchID, errMP int64
-		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
-		if err := rows.Scan(&matchID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength); err != nil {
+		var matchID, errMP, gameID int64
+		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength, matchN int
+		if err := rows.Scan(&matchID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength, &gameID, &matchN); err != nil {
 			return nil, fmt.Errorf("MatchBadges scan: %w", err)
 		}
 		a := acc[matchID]
 		if a == nil {
-			a = &matchAcc{}
+			a = &matchAcc{games: newGameLosses(), length: matchN}
 			acc[matchID] = a
 		}
 		fMove := 0
@@ -707,10 +716,11 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 		mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP),
 			matchLength-domain.PointsAway(awayScore0), matchLength-domain.PointsAway(awayScore1),
 			fMove, cubeValue, matchLength)
-		pa := &a.p1
+		pa, seat := &a.p1, 0
 		if rawPlayer != 1 { // player2 on roll (rawPlayer == -1)
-			pa = &a.p2
+			pa, seat = &a.p2, 1
 		}
+		a.games.add(seat, gameID, mwcLoss)
 		pa.sumErr += errMP
 		pa.cnt++
 		if !math.IsNaN(mwcLoss) {
@@ -728,6 +738,9 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 			MWCLoss:  a.p1.mwc,
 			PR2:      pr(a.p2.sumErr, a.p2.cnt),
 			MWCLoss2: a.p2.mwc,
+
+			MWC7:   a.games.elo(0, a.length),
+			MWC7P2: a.games.elo(1, a.length),
 		}
 	}
 	return out, nil
@@ -771,7 +784,8 @@ func (s *StatsStore) TournamentBadges(ctx context.Context, scope string) (map[in
 		}
 		a := byPlayer[moverName]
 		if a == nil {
-			a = &storage.TournamentPlayerAcc{Matches: make(map[int64]struct{})}
+			a = &storage.TournamentPlayerAcc{Matches: make(map[int64]struct{}),
+				MatchMWC: make(map[int64]float64), MatchLength: make(map[int64]int)}
 			byPlayer[moverName] = a
 		}
 		fMove := 0
@@ -785,6 +799,8 @@ func (s *StatsStore) TournamentBadges(ctx context.Context, scope string) (map[in
 			matchLength-domain.PointsAway(awayScore0), matchLength-domain.PointsAway(awayScore1),
 			fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
 			a.MWC += mwcLoss
+			a.MatchMWC[matchID] += mwcLoss
+			a.MatchLength[matchID] = matchLength
 		}
 	}
 	if err := rows.Err(); err != nil {

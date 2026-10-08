@@ -535,7 +535,8 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 			` COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,` +
 			` ` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0),` +
 			` COALESCE(m.tournament_id, 0), m.id,` +
-			` ` + ActionLabelOrEmptyFor(s.DB, "a.best_cube_action") + `, p.decision_type, p.id ` +
+			` ` + ActionLabelOrEmptyFor(s.DB, "a.best_cube_action") + `, p.decision_type, p.id,` +
+			` ` + seatExpr + `, COALESCE(m.match_length, 0) ` +
 			q.join + q.whereSQL +
 			` ORDER BY m.match_date DESC, mv.move_number DESC`
 
@@ -546,6 +547,7 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 
 		mwcByTournament := make(map[int64]float64)
 		mwcByMatch := make(map[int64]float64)
+		units := eloUnits{}
 		mwcByCubeAction := make(map[string]float64)
 		// Only the top blunders' losses are read back: keeping every
 		// decision's would hold the whole selection in memory.
@@ -571,8 +573,9 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 				var cubeAction string
 				var dt int
 				var posID int64
+				var seat, matchN int
 				if err2 := mwcRows.Scan(&errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength,
-					&tournamentID, &matchID, &cubeAction, &dt, &posID); err2 != nil {
+					&tournamentID, &matchID, &cubeAction, &dt, &posID, &seat, &matchN); err2 != nil {
 					scanErr = err2
 					return
 				}
@@ -593,6 +596,7 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 						mwcByTournament[tournamentID] += mwcLoss
 					}
 					mwcByMatch[matchID] += mwcLoss
+					units.add(matchID, tournamentID, seat, matchN, mwcLoss)
 					if dt == 1 {
 						mwcByCubeAction[cubeAction] += mwcLoss
 					}
@@ -621,6 +625,7 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 		result.MWCCube = mwcCube
 		result.MWCAvailable = mwcAvailable
 		result.MWCRolling = mwcRollingMap
+		units.fill(result)
 
 		for i, ts := range result.PerTournament {
 			result.PerTournament[i].MWC = mwcByTournament[ts.ID]
