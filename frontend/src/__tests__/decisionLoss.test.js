@@ -44,6 +44,11 @@ describe('fmtLoss', () => {
         expect(fmtLoss(0.01234)).toBe('1.23 %');
         expect(fmtLoss(null)).toBe('');
     });
+    it('never shows a positive loss as zero', () => {
+        expect(fmtLoss(0.00001)).toBe('<0.01 %');
+        expect(fmtLoss(0.00005)).toBe('0.01 %');
+        expect(fmtLoss(0)).toBe('0.00 %');
+    });
 });
 
 describe('niceCeil', () => {

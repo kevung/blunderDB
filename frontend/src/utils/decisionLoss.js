@@ -30,12 +30,15 @@ export function lossSeries(movePositions, losses) {
 }
 
 /**
- * A loss as a percentage of the match, "1.23 %"; empty when unscored.
+ * A loss as a percentage of the match, "1.23 %"; empty when unscored. A positive
+ * loss too small to show at two decimals reads "<0.01 %", so it is never taken
+ * for the exact "0" of a decision that cost nothing.
  *
  * @param {number | null | undefined} loss
  */
 export function fmtLoss(loss) {
     if (loss === null || loss === undefined || !Number.isFinite(loss)) return '';
+    if (loss > 0 && loss < 0.00005) return '<0.01 %';
     return (loss * 100).toFixed(2) + ' %';
 }
 

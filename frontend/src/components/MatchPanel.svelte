@@ -87,16 +87,14 @@
     let detailGrades = $state([]); // MoveGrade[] for the detail match
     /** @type {import('../../wailsjs/go/models').service.MatchTimeSummary | null} */
     let detailTimes = $state(null);
-    /** @type {any[] | null} */
     /** @type {any[] | null} the MWC loss of each decision */
     let detailLosses = $state(null);
     /** @type {import('../../wailsjs/go/models').duel.Origin | null} the Origin of a match played here */
     let detailOrigin = $state(null);
-    /** @type {'' | 'desc' | 'asc'} the transcript's order by decision time */
     // The decision under the pointer or the keyboard on either chart, by its Move.
     /** @type {number | null} */
     let hoveredMove = $state(null);
-    /** @type {'' | 'asc' | 'desc'} */
+    /** @type {'' | 'asc' | 'desc'} the transcript's order by decision time */
     let timeSort = $state('');
     /** @type {'' | 'asc' | 'desc'} */
     let lossSort = $state('');
@@ -538,6 +536,10 @@
     // The decision a chart points at: shown as the transcript shows a row clicked, then brought into view.
     /** @param {number} index */
     async function jumpToMove(index) {
+        // The crossing effect leaves a game the review is already in folded, so a
+        // jump within it would scroll to a row that is not rendered.
+        const game = detailMovePositions[index]?.game_number;
+        if (game != null && !openGames.has(game)) setGameOpen(game, true);
         await navigateToMove(index);
         await tick();
         document.querySelector(`[data-move-idx="${index}"]`)?.scrollIntoView?.({ block: 'nearest' });

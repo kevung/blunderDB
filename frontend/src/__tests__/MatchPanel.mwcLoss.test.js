@@ -146,6 +146,26 @@ describe('MatchPanel — the Transcript carries the MWC loss of every decision',
         expect(container.querySelector('tr.current-move').getAttribute('data-move-idx')).toBe('1');
     });
 
+    test('a jump into the game the review is in reopens it when the user folded it', async () => {
+        const container = await openTranscript();
+        const plot = container.querySelector('[data-testid="loss-plot-per"]');
+        await fireEvent.keyDown(plot, { key: 'Home' });
+        await fireEvent.keyDown(plot, { key: 'Enter' });
+        await vi.waitFor(() => expect(container.querySelector('tr.current-move')).not.toBeNull());
+        const game1 = container.querySelectorAll('details.game-section')[0];
+        game1.open = false;
+        await fireEvent(game1, new Event('toggle'));
+        for (let i = 0; i < 4; i++) await tick();
+        expect(game1.querySelector('[data-move-idx="2"]')).toBeNull();
+        await fireEvent.keyDown(plot, { key: 'ArrowRight' });
+        await fireEvent.keyDown(plot, { key: 'ArrowRight' });
+        await fireEvent.keyDown(plot, { key: 'Enter' });
+        await vi.waitFor(() => expect(get(matchContextStore).currentIndex).toBe(2));
+        for (let i = 0; i < 4; i++) await tick();
+        expect(game1.open).toBe(true);
+        expect(game1.querySelector('[data-move-idx="2"]')).not.toBeNull();
+    });
+
     test('the time chart jumps alike', async () => {
         const container = await openTranscript();
         const plot = container.querySelector('[data-testid="times-plot"]');
