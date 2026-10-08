@@ -127,8 +127,7 @@ const MaxImportFailures = 10
 // flags. The one explicit record is the "studied" mark of the library-wide
 // backlog (StudyBacklog), written only by the user's own gesture.
 
-// StudyQueueReason says why a position is in the queue. Three reasons, in the
-// order they are offered.
+// StudyQueueReason says why a position is in the queue.
 type StudyQueueReason string
 
 const (
@@ -143,6 +142,9 @@ const (
 	// StudyBacklog is a blunder nobody has dealt with yet, found across the
 	// whole library: no comment, no card, no collection, no "studied" mark.
 	StudyBacklog StudyQueueReason = "backlog"
+	// StudyPlan is a position of a study-plan family (ADR-0077), the largest
+	// excess over the reference player first.
+	StudyPlan StudyQueueReason = "plan"
 )
 
 // StudyQueueEntry is one position of the queue.

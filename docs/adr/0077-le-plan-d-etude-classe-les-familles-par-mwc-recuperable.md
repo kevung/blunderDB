@@ -46,8 +46,8 @@ donne sur une base réelle.
    de voisinage. Elles reviennent avec les positions de référence proposées, qui ont besoin du
    même index.
 8. **Usage.** Une famille du plan alimente la file d'étude (motif `plan`, positions classées
-   par excès), un quiz (tirage parmi les familles choisies : la première par défaut, toutes les
-   trois premières avec le rang 0) et un deck Anki ; la même fonction de stockage sert la GUI,
+   par excès), un quiz (tirage parmi les positions des trois premières familles, ou de celle que
+   désigne son rang) et un deck Anki ; la même fonction de stockage sert la GUI,
    la CLI (`stats plan`) et le serveur (`/v1/stats.studyPlan`).
 
 ## Conséquences

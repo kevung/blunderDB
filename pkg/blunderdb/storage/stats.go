@@ -586,6 +586,11 @@ type StatsStore interface {
 	// heaviest summed cost first. See GroupRecurringErrors.
 	RecurringErrors(ctx context.Context, scope string, filter StatsFilter) (*RecurringErrors, error)
 
+	// StudyPlan ranks the same families by the winning chances studying them
+	// would recover, apart from those short of evidence (ADR-0077). See
+	// BuildStudyPlan.
+	StudyPlan(ctx context.Context, scope string, filter StatsFilter) (*StudyPlan, error)
+
 	// MatchStats returns the stored per-match, per-seat tallies of the given
 	// matches (every match in scope when matchIDs is empty), two rows per
 	// match, ordered by match then seat. A match whose rows are missing — a
