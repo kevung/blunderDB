@@ -49,6 +49,9 @@ const DYNAMIC_PREFIXES = [
     'explain.',
     'stats.gameType_',
     'stats.recurringTheme_',
+    'stats.effectVerdict_', // StatsStudyEffect: $t(`stats.effectVerdict_${f.Verdict}`)
+    'stats.biases_', // StatsBiases: $t(`stats.biases_${id}_${verdict}`) and the row labels
+    'stats.biasesVerdict_',
     'stats.recurringKind_',
     'training.exercise.',
     'training.sources.',

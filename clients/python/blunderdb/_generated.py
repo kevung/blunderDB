@@ -1074,6 +1074,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/session.save — JSON."
         return self._call("/v1/session.save", payload)
 
+    def stats_biases(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.biases — JSON."
+        return self._call("/v1/stats.biases", payload)
+
     def stats_compute(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.compute — JSON."
         return self._call("/v1/stats.compute", payload)
@@ -1153,6 +1157,10 @@ class GeneratedAPI(BaseClient):
     def stats_report(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.report — JSON."
         return self._call("/v1/stats.report", payload)
+
+    def stats_study_effect(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.studyEffect — JSON."
+        return self._call("/v1/stats.studyEffect", payload)
 
     def stats_study_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.studyIds — JSON."

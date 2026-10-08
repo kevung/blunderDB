@@ -2892,6 +2892,64 @@ celles des trois familles de tête. Le plan suit le filtre du panneau : réglez
 le joueur pour obtenir *votre* plan. En ligne de commande :
 ``blunderdb stats plan`` (voir :ref:`cli_stats`).
 
+.. _avant_apres_etude:
+
+Avant/après l'étude
+^^^^^^^^^^^^^^^^^^^
+
+La carte **Avant/après l'étude** ferme la boucle du plan : ce que vous avez
+travaillé coûte-t-il moins en match réel ? Sans elle, l'étude se juge à
+l'impression ; avec elle, une famille qui ne bouge pas malgré le travail dit
+qu'il faut changer de méthode, et une famille en progrès peut céder sa place
+dans le plan.
+
+* Une famille (celle du plan) est **étudiée** à la date de la première action
+  d'étude sur l'une de ses positions : la marque « étudiée » de la file
+  d'étude, une révision Anki, une réponse en quiz. Créer une carte ou ranger
+  une position en collection n'en est pas une.
+* Pour chaque famille étudiée, la carte compare deux **fenêtres** : les matchs
+  joués avant ce jour et ceux joués après (le jour même est écarté). Dans
+  chacune, le **taux de perte** est la MWC perdue par les erreurs de la
+  famille, rapportée à toutes les décisions du même plan de jeu et de la même
+  nature, et affichée en points de MWC pour 100 décisions.
+* Le **gain** est le taux d'avant moins celui d'après, avec son intervalle à
+  95 %. Le verdict n'est « en progrès » (ou « en recul ») que si chaque
+  fenêtre compte au moins **30 décisions** et que l'intervalle exclut zéro ;
+  sinon il reste « indéterminé » ou « trop peu de décisions ».
+
+C'est un changement, pas un effet : une famille est étudiée parce qu'elle
+coûtait, et une part du gain est une régression vers la moyenne ; rien ne
+contrôle les adversaires, le format ni les dés. En ligne de commande :
+``blunderdb stats effect`` (voir :ref:`cli_stats`).
+
+.. _biais_signes:
+
+Biais signés
+^^^^^^^^^^^^
+
+La carte **Biais signés** dit dans quel sens vous vous trompez, pas seulement
+combien. « Vous prenez trop » se corrige mieux qu'un PR : la règle à revoir
+est nommée. Chaque biais est la part de décisions fautives dans un sens moins
+la part fautive dans l'autre, avec son intervalle à 95 % ; un penchant n'est
+nommé qu'à partir de **20 décisions** et d'un intervalle qui exclut zéro.
+
+* **Prise / refus** — sur les réponses au videau : prises fautives (le bot
+  refuse) moins refus fautifs (le bot prend). C'est exactement votre taux de
+  prise moins celui du bot sur les mêmes positions.
+* **Doubles** — sur les décisions de doubler : doubles prématurés (le bot ne
+  double pas, ou la position est trop bonne pour doubler) moins doubles
+  manqués. Le même biais est donné **par score** (votre away, celui de
+  l'adversaire ; la partie libre à part), pour les scores qui comptent assez
+  de décisions.
+* **Blots** — sur les coups de pions avec contact : les coups qui laissent plus
+  de blots que le meilleur coup moins ceux qui en laissent moins. Un coup que
+  le générateur de coups ne sait pas rejouer est écarté, et compté sous le
+  tableau.
+
+À côté de chaque compte, son coût en millipoints dit si le penchant coûte. Les
+biais suivent le filtre du panneau. En ligne de commande :
+``blunderdb stats biases`` (voir :ref:`cli_stats`).
+
 PR glissant sur N dernières décisions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
