@@ -10,16 +10,21 @@ import (
 
 // The 7-point MWC loss of an imported match is the match's MWC loss rescaled,
 // the same in the list badge and in the match's detail, with an interval
-// drawn from its games; on test.xg (seven points) it is the MWC loss itself,
-// close to the total MWC cost eXtreme Gammon reports for each player.
+// drawn from its games; on a seven-point match it is the MWC loss itself,
+// within a point of percent of the total MWC cost eXtreme Gammon reports.
 func TestMWC7_ReferenceMatches(t *testing.T) {
 	files := []string{
 		"test.xg",
 		"HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg",
 		"charlot1-charlot2_7p_2025-11-08-2305.xg",
 	}
-	// eXtreme Gammon's total MWC cost per player of test.xg.
-	xg := map[string]float64{"Kévin Unger": 0.3003, "Maxence Job": 0.5120}
+	// eXtreme Gammon's total MWC cost per player (all three are 7-point
+	// matches, so L7 is that cost).
+	xg := map[string]float64{
+		"test.xg/Kévin Unger": 0.3003, "test.xg/Maxence Job": 0.5120,
+		files[1] + "/Kévin Unger": 0.1881, files[1] + "/Gildas L Amour De Caslou": 0.1981,
+		files[2] + "/charlot1": 0.0076, files[2] + "/charlot2": 0.0091,
+	}
 	for _, f := range files {
 		d := NewDatabase()
 		if err := d.SetupDatabase(filepath.Join(t.TempDir(), "m1.db")); err != nil {
@@ -56,7 +61,7 @@ func TestMWC7_ReferenceMatches(t *testing.T) {
 			if !e.HasInterval || e.Low > e.Loss || e.High < e.Loss || e.EloLow > e.Elo || e.EloHigh < e.Elo {
 				t.Errorf("%s %s: interval %+v", f, p.name, e)
 			}
-			if want, ok := xg[p.name]; ok && f == "test.xg" && math.Abs(e.Loss-want) > 0.15*want {
+			if want := xg[f+"/"+p.name]; math.Abs(e.Loss-want) > 0.01 {
 				t.Errorf("%s %s: L7 %.4f, eXtreme Gammon reports %.4f", f, p.name, e.Loss, want)
 			}
 		}
