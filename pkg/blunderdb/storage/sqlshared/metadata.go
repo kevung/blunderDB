@@ -185,7 +185,7 @@ func (s *MetadataStore) blunderCount(ctx context.Context, scope string) (int, er
 
 	tenant, targs := s.DB.TenantFilter("p", scope)
 	const join = ` FROM position p INNER JOIN analysis a ON a.position_id = p.id WHERE `
-	byColumn := ` AND COALESCE(` + statsErrExpr + `, 0) >= ?`
+	byColumn := ` AND COALESCE(` + positionErrExpr + `, 0) >= ?`
 
 	var total int
 	if err := s.DB.QueryRow(ctx, `SELECT COUNT(*)`+join+tenant+byColumn,

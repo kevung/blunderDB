@@ -1,5 +1,6 @@
 <script>
     import { statsFilterStore } from '../../stores/statsStore.js';
+    import { fmtMwc7, mwc7Percent, mwc7Tooltip } from '../../utils/mwc7.js';
     import { t } from '../../i18n/index.js';
     import PanelTable from '../panels/PanelTable.svelte';
     import PlayerComparison from './PlayerComparison.svelte';
@@ -26,6 +27,7 @@
         { key: 'pr_checker', labelKey: 'stats.playersColPRChecker', hintKey: 'stats.playersColPRHint', rate: true },
         { key: 'pr_cube', labelKey: 'stats.playersColPRCube', hintKey: 'stats.playersColPRHint', rate: true },
         { key: 'snowie_er', labelKey: 'stats.playersColSnowie', rate: true },
+        { key: 'mwc7', labelKey: 'mwc7.short', hintKey: 'mwc7.name', rate: true },
         { key: 'blunders', labelKey: 'stats.playersColBlunders' },
         { key: 'luck', labelKey: 'stats.playersColLuck', hintKey: 'stats.playersColLuckHint', rate: true }
     ];
@@ -57,6 +59,8 @@
             case 'pr_cube':
             case 'snowie_er':
                 return row.decisions > 0 ? row[key] : null;
+            case 'mwc7':
+                return mwc7Percent(row.mwc7);
             default:
                 return row[key] ?? 0;
         }
@@ -170,6 +174,7 @@
                 <td class="numeric">{fmtRate(row.pr_checker, row.checker_decisions > 0)}</td>
                 <td class="numeric">{fmtRate(row.pr_cube, row.cube_decisions > 0)}</td>
                 <td class="numeric">{fmtRate(row.snowie_er, row.decisions > 0)}</td>
+                <td class="numeric" title={mwc7Tooltip(row.mwc7, $t)}>{fmtMwc7(row.mwc7)}</td>
                 <td class="numeric">{row.blunders}</td>
                 <td class="numeric" title={row.luck_known ? $t('stats.playersLuckRolls', { n: row.luck_rolls }) : $t('stats.playersLuckUnknown')}>
                     {fmtLuck(row)}

@@ -1627,6 +1627,47 @@ de ``decision_losses`` et le résumé par joueur sous ``difficulty_summary`` ;
 ``--format summary`` la difficulté, l'excès, le ratio et le nombre d'erreurs
 évitables.
 
+.. _bilan_match:
+
+**Bilan du match.** Au-dessus des graphiques, un encart répond, pour chaque
+joueur, aux trois questions qu'on se pose après un match : qu'est-ce que je
+revois, ai-je perdu à cause des dés ou du jeu, et mes erreurs viennent-elles de
+la précipitation ou d'une lacune ? Les seuils ont été fixés avant tout examen
+de résultats.
+
+* **PR et perte MWC (éq. 7 pts), avec leur intervalle à 95 %**, calculé en
+  rééchantillonnant les parties du match. Il faut deux parties ; un match d'une
+  seule partie montre un tiret. Un intervalle large dit qu'un match ne suffit
+  pas à juger un niveau : comparez-le à vos autres matchs plutôt que de
+  conclure sur une valeur.
+* **Résultat ajusté de la chance**, pour un match terminé. Le *résultat* est
+  l'issue (100 % gagné, 0 % perdu) moins les chances au départ (50 % à 0-0) ; la
+  *chance nette* additionne la chance de vos jets moins celle des jets adverses,
+  chaque jet converti en MWC au score et au videau de sa position, comme une
+  perte. Le résultat ajusté est le résultat moins la chance nette. S'il est
+  positif sur un match perdu, ce sont les dés qui l'ont décidé ; négatif, c'est
+  le jeu. L'*écart des erreurs* (perte de l'adversaire moins la vôtre) est ce que
+  le résultat ajusté estime : les deux chiffres se recoupent quand la chance est
+  complète. La couverture est indiquée quand des jets n'ont pas de chance
+  mesurée (un fichier sans chance, un jet non analysé) ; sans aucun jet mesuré,
+  ou pour une partie d'argent, la ligne n'apparaît pas.
+* **Trois décisions à revoir** : parmi vos erreurs (seuil de la base), celles
+  dont la *part évitable* de la perte, perte − difficulté, est la plus grande —
+  c'est-à-dire la perte multipliée par son caractère évitable. Une erreur que le
+  joueur de référence aurait faite aussi ne vaut pas une séance : on revoit
+  d'abord ce qui était à sa portée. Un clic sur la décision l'affiche, comme une
+  ligne du relevé.
+* **Erreurs précipitées et réfléchies**, quand le match a gardé la durée des
+  décisions : une erreur jouée plus vite que la médiane de vos décisions du même
+  type (pions ou videau) dans ce match est précipitée, les autres réfléchies. La
+  médiane est la vôtre, dans ce match : elle ne dépend pas de la cadence, et
+  sans lien entre vitesse et erreur les erreurs se partageraient moitié-moitié.
+  Une majorité précipitée appelle de la discipline (ralentir sur ces positions) ;
+  une majorité réfléchie, de la connaissance (étudier la famille de positions).
+
+``match --format summary`` imprime le même bilan, et le serveur le sert par
+``/v1/stats.matchReview``.
+
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot),
 l'onglet ajoute trois colonnes alignées sur les chiffres : **Videau** (la
 décision de videau, prise avant le lancer ou sur la ligne du videau elle-même),
@@ -2765,10 +2806,14 @@ tous les onglets.
   valeur.
 
   Un match isolé est très bruité : quelques grosses erreurs suffisent à le
-  faire varier du simple au double. Chaque valeur est accompagnée de son
-  intervalle à 95 %, calculé en rééchantillonnant les parties du match (ou
-  les matchs d'un agrégat). Il faut au moins deux parties, ou deux matchs,
-  pour qu'un intervalle existe. Ne classez pas des joueurs sur un seul match.
+  faire varier du simple au double. Le badge et le bilan d'un match
+  (:ref:`bilan du match <bilan_match>`) donnent l'intervalle à 95 % en rééchantillonnant ses
+  parties ; un agrégat (statistiques d'un joueur, d'un tournoi) le donne en
+  rééchantillonnant ses matchs. Il faut au moins deux parties, ou deux matchs.
+  Une ligne par match des statistiques n'a pas d'intervalle : filtrée par
+  joueur, elle ne contient qu'une unité ; sans joueur, ses deux sièges
+  mesureraient l'écart entre les adversaires, pas l'incertitude. Ne classez pas
+  des joueurs sur un seul match.
 
   .. caution::
      Une partie *money-game* n'a pas de longueur de match : la perte MWC
@@ -2776,7 +2821,11 @@ tous les onglets.
      d'afficher un nombre. Comme le MWC cost, elle dépend de la MET.
 
   Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans l'onglet
-  Progression ; les onglets sans équivalent 7 points gardent le MWC cost.
+  Progression, et l'affiche sur les cartes du tableau de bord et dans la
+  comparaison pions/videau de l'onglet Erreurs, découpée en pions et videau
+  sur les mêmes matchs (les deux parts s'additionnent). Le classement des
+  joueurs a sa colonne. Les graphiques sans équivalent 7 points (par action de
+  videau) gardent le MWC cost.
 
 Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est
 effectué.
@@ -3103,8 +3152,21 @@ ce serait un second PR sous le même nom.
 
 * **Par score** — l'écart au but des deux camps, lu du côté du joueur au trait,
   donc du côté de celui qui décide. La ligne *Money* est la partie d'argent.
-  Une cellule de moins de dix décisions est **grisée avec son effectif visible**
-  plutôt que cachée : trop peu pour être lue, mais l'omission reste vérifiable.
+  Une cellule sans intervalle est **grisée avec son effectif visible**
+  plutôt que cachée (voir ci-dessous).
+
+Chaque ligne porte son **intervalle de confiance à 95 %** (colonne *IC 95 %*),
+qui remplace le seuil fixe de dix décisions : il dit ce que vaut un PR, pas
+seulement combien de décisions le portent. Il rééchantillonne les **matchs** de
+la sélection, pas les décisions ni les parties : les parties d'un match
+partagent adversaire, séance et fatigue, et les compter comme indépendantes
+donnerait un intervalle trop étroit ; sans filtre joueur, les deux sièges d'un
+match forment une seule unité. Une ligne qui ne repose que sur un match n'a pas
+d'intervalle et est grisée, même avec beaucoup de décisions. Pour l'étude : une
+famille de positions dont l'intervalle reste au-dessus de votre PR global est
+une faiblesse établie ; une ligne à l'intervalle large ne justifie pas encore un
+plan de travail. Le PR global du tableau de bord porte le même intervalle, sous
+sa carte.
 
 .. note:: La partie Crawford n'est pas distinguée : blunderDB n'enregistre pas
    cet indicateur sur une position. L'effet pratique est faible — une partie

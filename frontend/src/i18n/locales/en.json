@@ -1727,7 +1727,7 @@
         "noData": "No data for this filter.",
         "noTags": "No tag in the comments of the selected positions.",
         "tagsDoNotSum": "A position may carry several tags: these rows do not sum to the total.",
-        "thinCells": "Cells with fewer than {n} decisions are greyed: too few to read.",
+        "thinCells": "Greyed rows have no interval: a single match is not yet a sample.",
         "goalTitle": "Goal:",
         "goalStated": "PR < {target} within {weeks} weeks ({band}).",
         "goalSet": "Set a goal…",
@@ -1858,7 +1858,9 @@
             "record": "Record",
             "prChecker": "Checker PR",
             "prCube": "Cube PR"
-        }
+        },
+        "interval95": "95 % CI",
+        "intervalHint": "95 % confidence interval: resamples the matches of a selection, the games of a match. A row without one (a single match, or a single game) is greyed."
     },
     "resumeBatch": {
         "title": "Resume an import",
@@ -3095,5 +3097,23 @@
         "short": "MWC 7 pts",
         "tooltip": "MWC lost against a perfect player, rescaled to a 7-point match (L × √(7/N)); 95 % interval from resampling the games; {elo} Elo against the engine",
         "unavailable": "Money play has no match length: the 7-point equivalent is not defined"
+    },
+    "matchReview": {
+        "title": "Match review",
+        "oneGame": "A single game: no interval",
+        "luckAdjusted": "Luck-adjusted result {adjusted} (result {result}, net luck {luck}; error balance {balance})",
+        "luckPartial": "luck measured on {measured} of {rolls} rolls",
+        "wonByPlay": "won by the play",
+        "wonByDice": "won by the dice",
+        "lostByDice": "lost to the dice",
+        "lostByPlay": "lost by the play",
+        "showDecision": "Show the decision",
+        "decision": "game {game}, move {move} ({kind})",
+        "checker": "checker",
+        "cube": "cube",
+        "lossAvoidable": "loss {loss}, avoidable {avoidable}",
+        "pace": "Errors: {hasty} hasty ({hastyLoss}), {deliberate} deliberate ({deliberateLoss}), {unknown} without time",
+        "paceDiscipline": "rather discipline: slow down",
+        "paceKnowledge": "rather knowledge: study these positions"
     }
 }

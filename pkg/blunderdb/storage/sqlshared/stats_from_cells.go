@@ -61,12 +61,6 @@ func cellKind(where string, kind int) string {
 	return fmt.Sprintf("%s AND c.kind = %d", where, kind)
 }
 
-// unNull renders a cell dimension with cellNull read back as 0, the
-// COALESCE the direct passes report a NULL column with.
-func unNull(col string) string {
-	return fmt.Sprintf("CASE WHEN %s = %d THEN 0 ELSE %s END", col, cellNull, col)
-}
-
 // computeFromCells is Compute's run over match_stats and its cells, inside
 // the read transaction: same passes, same order (the MWC back-fill last
 // among the per-decision figures), same result. Each kind of cell is read
@@ -383,7 +377,7 @@ func mwcFromCells(phase []phaseCell, cube []cubeCell, result *storage.StatsResul
 	units := eloUnits{}
 	for _, c := range phase {
 		if c.mwcDecisions > 0 {
-			units.add(c.match, c.tournament, c.seat, c.matchLength, c.mwcLoss)
+			units.add(c.match, c.tournament, c.seat, c.matchLength, c.decisionType, c.mwcLoss)
 		}
 		k := key{c.match, c.decisionType}
 		g := groups[k]
@@ -436,29 +430,69 @@ func mwcFromCells(phase []phaseCell, cube []cubeCell, result *storage.StatsResul
 	units.fill(result)
 }
 
-// breakdownsFromCells is computePerPhase, computePerGameType and computePerScore.
+// breakdownsFromCells is computePerPhase, computePerGameType and computePerScore,
+// and PRGlobal's interval (computePRInterval): every one sums its cells per
+// match, the unit of the intervals.
 func (s *StatsStore) breakdownsFromCells(ctx context.Context, phase []phaseCell, where string, args []any, result *storage.StatsResult) error {
 	d := s.DB
 	sums := d.Bigint(`SUM(c.error_mp)`) + `, ` + d.Bigint(`SUM(c.decisions)`) + `, ` + d.Bigint(`SUM(c.blunders)`)
 	type tally struct{ sumErr, n, blunders int64 }
-	read := func(kind int, cols, group string, fn func(k1, k2 int, t tally)) error {
-		return scanEach(ctx, d, `SELECT `+cols+`, `+sums+cellsJoin+cellKind(where, kind)+` GROUP BY `+group+` ORDER BY `+group,
+	type key struct{ k1, k2 int64 }
+	// read folds the cells of one kind, grouped by key and match, into one
+	// tally per key in key order, and the units of its intervals.
+	read := func(kind int, cols string, fn func(k1, k2 int, t tally, iv domain.Interval)) error {
+		var order []key
+		tallies := map[key]*tally{}
+		units := matchUnits[key]{}
+		err := scanEach(ctx, d, `SELECT `+cols+`, c.match_id, `+sums+cellsJoin+cellKind(where, kind)+
+			` GROUP BY `+cols+`, c.match_id ORDER BY `+cols+`, c.match_id`,
 			args, func(r Rows) error {
-				var k1, k2 int64
+				var k key
+				var match int64
 				var t tally
-				dest := []any{&k1}
+				dest := []any{&k.k1}
 				if kind == cellScore {
-					dest = append(dest, &k2)
+					dest = append(dest, &k.k2)
 				}
-				if err := r.Scan(append(dest, &t.sumErr, &t.n, &t.blunders)...); err != nil {
+				if err := r.Scan(append(dest, &match, &t.sumErr, &t.n, &t.blunders)...); err != nil {
 					return err
 				}
-				fn(int(k1), int(k2), t)
+				cur := tallies[k]
+				if cur == nil {
+					cur = &tally{}
+					tallies[k] = cur
+					order = append(order, k)
+				}
+				cur.sumErr += t.sumErr
+				cur.n += t.n
+				cur.blunders += t.blunders
+				units.add(k, match, t.sumErr, t.n)
 				return nil
 			})
+		if err != nil {
+			return err
+		}
+		for _, k := range order {
+			// Grouped by the stored value, NULL (cellNull) apart from 0,
+			// and shown with NULL read as 0, as the direct pass's COALESCE
+			// does.
+			k1, k2 := int(k.k1), int(k.k2)
+			if k1 == cellNull {
+				k1 = 0
+			}
+			if k2 == cellNull {
+				k2 = 0
+			}
+			fn(k1, k2, *tallies[k], units.interval(k))
+		}
+		return nil
 	}
+	global := matchUnits[struct{}]{}
 	byPhase := map[int]*tally{}
+	phaseUnits := matchUnits[int]{}
 	for _, c := range phase {
+		global.add(struct{}{}, c.match, c.errorMP, c.decisions)
+		phaseUnits.add(c.k1, c.match, c.errorMP, c.decisions)
 		t := byPhase[c.k1]
 		if t == nil {
 			t = &tally{}
@@ -468,8 +502,7 @@ func (s *StatsStore) breakdownsFromCells(ctx context.Context, phase []phaseCell,
 		t.n += c.decisions
 		t.blunders += c.blunders
 	}
-	// Grouped by the stored value, NULL (cellNull) apart from 0, and shown
-	// with NULL read as 0, as the direct pass's COALESCE does.
+	result.PRInterval = global.interval(struct{}{})
 	for _, k := range slices.Sorted(maps.Keys(byPhase)) {
 		t := byPhase[k]
 		shown := k
@@ -477,19 +510,22 @@ func (s *StatsStore) breakdownsFromCells(ctx context.Context, phase []phaseCell,
 			shown = 0
 		}
 		result.PerPhase = append(result.PerPhase, storage.PhaseStats{
-			Phase: domain.GamePhase(shown).String(), PR: pr(t.sumErr, int(t.n)), NumDecisions: int(t.n), BlunderCount: int(t.blunders),
+			Phase: domain.GamePhase(shown).String(), PR: pr(t.sumErr, int(t.n)), PRInterval: phaseUnits.interval(k),
+			NumDecisions: int(t.n), BlunderCount: int(t.blunders),
 		})
 	}
-	if err := read(cellGameType, unNull("c.k1"), "c.k1", func(k, _ int, t tally) {
+	if err := read(cellGameType, "c.k1", func(k, _ int, t tally, iv domain.Interval) {
 		result.PerGameType = append(result.PerGameType, storage.GameTypeStats{
-			GameType: domain.GameType(k).String(), PR: pr(t.sumErr, int(t.n)), NumDecisions: int(t.n), BlunderCount: int(t.blunders),
+			GameType: domain.GameType(k).String(), PR: pr(t.sumErr, int(t.n)), PRInterval: iv,
+			NumDecisions: int(t.n), BlunderCount: int(t.blunders),
 		})
 	}); err != nil {
 		return fmt.Errorf("per-game-type (cells): %w", err)
 	}
-	if err := read(cellScore, unNull("c.k1")+`, `+unNull("c.k2"), "c.k1, c.k2", func(k1, k2 int, t tally) {
+	if err := read(cellScore, "c.k1, c.k2", func(k1, k2 int, t tally, iv domain.Interval) {
 		result.PerScore = append(result.PerScore, storage.ScoreCellStats{
-			MoverAway: k1, OpponentAway: k2, PR: pr(t.sumErr, int(t.n)), NumDecisions: int(t.n), BlunderCount: int(t.blunders),
+			MoverAway: k1, OpponentAway: k2, PR: pr(t.sumErr, int(t.n)), PRInterval: iv,
+			NumDecisions: int(t.n), BlunderCount: int(t.blunders),
 		})
 	}); err != nil {
 		return fmt.Errorf("per-score (cells): %w", err)

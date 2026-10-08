@@ -6020,6 +6020,23 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/storage_MoveGrade"
+  /v1/stats.matchReview:
+    post:
+      operationId: stats.matchReview
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/matchIDReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_MatchReview"
   /v1/stats.matchTimeSummary:
     post:
       operationId: stats.matchTimeSummary
@@ -8987,6 +9004,9 @@ components:
     storage_MatchDetailStats:
       type: object
       description: "Opaque: see the Go type storage.MatchDetailStats (defined outside internal/server, not expanded here)."
+    storage_MatchReview:
+      type: object
+      description: "Opaque: see the Go type storage.MatchReview (defined outside internal/server, not expanded here)."
     storage_MatchTimeSummary:
       type: object
       description: "Opaque: see the Go type storage.MatchTimeSummary (defined outside internal/server, not expanded here)."

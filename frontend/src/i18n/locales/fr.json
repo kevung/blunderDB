@@ -1727,7 +1727,7 @@
         "noData": "Aucune donnée pour ce filtre.",
         "noTags": "Aucune étiquette dans les commentaires des positions retenues.",
         "tagsDoNotSum": "Une position peut porter plusieurs étiquettes : ces lignes ne s'additionnent pas au total.",
-        "thinCells": "Les cellules de moins de {n} décisions sont grisées : trop peu pour être lues.",
+        "thinCells": "Les lignes grisées n'ont pas d'intervalle : un seul match, ce n'est pas encore un échantillon.",
         "goalTitle": "Objectif :",
         "goalStated": "PR < {target} d'ici {weeks} semaines ({band}).",
         "goalSet": "Se fixer un objectif…",
@@ -1858,7 +1858,9 @@
             "record": "Bilan",
             "prChecker": "PR pions",
             "prCube": "PR videau"
-        }
+        },
+        "interval95": "IC 95 %",
+        "intervalHint": "Intervalle de confiance à 95 % : rééchantillonne les matchs d'une sélection, les parties d'un match. Une ligne sans intervalle (un seul match, ou une seule partie) est grisée."
     },
     "resumeBatch": {
         "title": "Reprendre un import",
@@ -3095,5 +3097,23 @@
         "short": "MWC 7 pts",
         "tooltip": "MWC perdu face à un joueur parfait, ramené à un match de 7 points (L × √(7/N)) ; intervalle à 95 % par rééchantillonnage des parties ; {elo} Elo face au moteur",
         "unavailable": "Le jeu en money n'a pas de longueur de match : l'équivalent 7 points n'est pas défini"
+    },
+    "matchReview": {
+        "title": "Bilan du match",
+        "oneGame": "Une seule partie : pas d'intervalle",
+        "luckAdjusted": "Résultat ajusté de la chance {adjusted} (résultat {result}, chance nette {luck} ; écart des erreurs {balance})",
+        "luckPartial": "chance mesurée sur {measured} jets sur {rolls}",
+        "wonByPlay": "gagné par le jeu",
+        "wonByDice": "gagné par les dés",
+        "lostByDice": "perdu par les dés",
+        "lostByPlay": "perdu par le jeu",
+        "showDecision": "Afficher la décision",
+        "decision": "partie {game}, coup {move} ({kind})",
+        "checker": "pions",
+        "cube": "videau",
+        "lossAvoidable": "perte {loss}, évitable {avoidable}",
+        "pace": "Erreurs : {hasty} précipitées ({hastyLoss}), {deliberate} réfléchies ({deliberateLoss}), {unknown} sans temps",
+        "paceDiscipline": "plutôt de la discipline : ralentir",
+        "paceKnowledge": "plutôt de la connaissance : étudier ces positions"
     }
 }

@@ -136,6 +136,8 @@ export const studyPlanErrorStore = writable(null);
 
 /** Cache key of the last successful study-plan fetch. */
 let _cachedStudyPlanKey = null;
+/** Sequence number of the latest study-plan request: a slower, older reply is dropped. */
+let _studyPlanSeq = 0;
 
 /**
  * Fetch the study plan of the filter (ADR-0077): the error families ranked by recoverable MWC.
@@ -150,16 +152,20 @@ export async function refreshStudyPlan(filter, invalidationKey) {
         return;
     }
     _cachedStudyPlanKey = key;
+    const seq = ++_studyPlanSeq;
     studyPlanLoadingStore.set(true);
     studyPlanErrorStore.set(null);
     try {
-        studyPlanStore.set(await ComputeStudyPlan(filter));
+        const plan = await ComputeStudyPlan(filter);
+        if (seq !== _studyPlanSeq) return;
+        studyPlanStore.set(plan);
     } catch (err) {
+        if (seq !== _studyPlanSeq) return;
         _cachedStudyPlanKey = null; // allow retry on error
         studyPlanErrorStore.set(err?.message ?? String(err));
         studyPlanStore.set(null);
     } finally {
-        studyPlanLoadingStore.set(false);
+        if (seq === _studyPlanSeq) studyPlanLoadingStore.set(false);
     }
 }
 

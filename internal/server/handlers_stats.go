@@ -183,6 +183,9 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.matchDecisionLosses", rpc(func(ctx context.Context, scope string, req matchIDReq) ([]storage.DecisionLoss, error) {
 			return ss().MatchDecisionLosses(ctx, scope, req.MatchID)
 		})},
+		{http.MethodPost, "/v1/stats.matchReview", rpc(func(ctx context.Context, scope string, req matchIDReq) (storage.MatchReview, error) {
+			return ss().MatchReview(ctx, scope, req.MatchID)
+		})},
 		{http.MethodPost, "/v1/stats.matchTimeSummary", rpc(func(ctx context.Context, scope string, req matchIDReq) (storage.MatchTimeSummary, error) {
 			return ss().MatchTimeSummary(ctx, scope, req.MatchID)
 		})},

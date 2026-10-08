@@ -183,10 +183,12 @@ type MatchStore interface {
 	// interrupted and restarted skips what it already wrote.
 	ScoreMoves(ctx context.Context, scope string, after int64, limit int) (next int64, scored int, err error)
 
-	// RescorePositionMoves rewrites move.error_mp for every move played from
-	// the position, from its current analysis (NULL when it has none, or
-	// when a play is absent from it): an analysis written or replaced makes
-	// the stored errors of its moves stale.
+	// RescorePositionMoves rewrites move.error_mp, and the decision error the
+	// statistics count (move.decision_error_mp, move.is_close_cube), for every
+	// move played from the position, from its current analysis (NULL when it
+	// has none, or when a play is absent from it): an analysis written or
+	// replaced, or moves pointed at another position, make them stale. The
+	// matches whose counted errors change lose their match_stats rows.
 	RescorePositionMoves(ctx context.Context, scope string, positionID int64) error
 
 	// CreateMoveAnalysis stores an evaluation row attached to a move and

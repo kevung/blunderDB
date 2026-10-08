@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlshared"
 )
 
 // txImpl is a SQLite transaction. Via the embedded binder (bound to a stmtTx)
@@ -69,6 +70,10 @@ var hotStatements = map[string]bool{
 	// A fresh position's first analysis: the match_stats rows of the
 	// matches reaching it (none, on an import) are dropped.
 	invalidateMatchStatsOfPositionSQL: true,
+	// A new move scored by its position's analysis, and the moves an
+	// analysis write rescores (none, on a fresh position).
+	sqlshared.PlayedDecisionAnalysisSQL:    true,
+	sqlshared.RescoreMovesSQL(shared{}, 1): true,
 }
 
 // stmtTx is the execer of a transaction: a *sql.Tx whose hotStatements are
