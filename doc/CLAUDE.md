@@ -14,6 +14,10 @@ Sphinx, nine languages: French is the source, `source/locale/` holds the gettext
   today. The future lives in GitHub milestones and Discussions, linked from *À propos* only.
 - **The guide shows a task, the manual describes a screen**: a screen description in
   `guide_utilisateur.rst` becomes a `:ref:` to the manual's panel section.
+- **A metric or a study tool is documented in full**: definition, exact formula, what counts
+  as a decision, unit, how to read it, uncertainty, limits, how it differs from XG/gnubg — and
+  its motivation: the question it answers and how it helps the player study
+  (`source/metriques.rst`; the screen stays in `manuel.rst`).
 - **A new page is proposed with its price**: one French line ≈ twenty catalogue lines across
   the eight languages. Prefer a sentence on an existing page or a `:ref:`.
 - **The in-app help is generated** from `manuel.rst`, `raccourcis.rst`, `cmd_mode.rst` and

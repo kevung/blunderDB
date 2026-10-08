@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 04:23+0200\n"
+"POT-Creation-Date: 2026-10-08 20:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -46,15 +46,13 @@ msgstr "PR (Performance Rating)"
 
 #: ../../source/stats_parity.rst:22
 msgid ""
-"Le PR (aussi appelé « error rate per decision » dans gnuBG) mesure le "
-"coût moyen des erreurs par décision comptée, sur l'échelle d'eXtreme "
-"Gammon et de gnuBG : l'erreur moyenne d'équité, multipliée par 500."
+"Le PR est l'erreur moyenne d'équité par décision comptée, multipliée par "
+"500 comme le fait eXtreme Gammon :"
 msgstr ""
-"PR (в gnuBG он же «error rate per decision») измеряет среднюю стоимость "
-"ошибок на одно засчитанное решение, в шкале eXtreme Gammon и gnuBG: это "
-"средняя ошибка эквити, умноженная на 500."
+"PR — это средняя ошибка эквити на учитываемое решение, умноженная на 500,"
+" как в eXtreme Gammon:"
 
-#: ../../source/stats_parity.rst:26
+#: ../../source/stats_parity.rst:25
 msgid ""
 "\\mathrm{PR} = \\frac{\\sum_i |\\mathrm{erreur}_i|}{\\mathrm{N_{compté}}}"
 " \\times 500"
@@ -62,39 +60,41 @@ msgstr ""
 "\\mathrm{PR} = \\frac{\\sum_i |\\mathrm{error}_i|}{\\mathrm{N_{counted}}}"
 " \\times 500"
 
-#: ../../source/stats_parity.rst:30
+#: ../../source/stats_parity.rst:29
 msgid ""
-"Le numérateur est la somme absolue des erreurs EMG (en equity cubeful) "
-"sur toutes les décisions du périmètre."
+"Le numérateur est la somme des erreurs en équité normalisée (EMG au "
+"score), chacune celle du coup joué dans son match."
 msgstr ""
-"Числитель — это сумма абсолютных значений ошибок EMG (cubeful equity) по "
-"всем решениям в периметре."
+"Числитель — сумма ошибок в нормализованном эквити (EMG по счёту матча), "
+"каждая из которых относится к ходу, сыгранному в своём матче."
 
-#: ../../source/stats_parity.rst:32
+#: ../../source/stats_parity.rst:31
 #, no-python-brace-format
 msgid ""
-"Le dénominateur :math:`N_\\text{compté}` est le nombre de **décisions "
-"comptées** (voir ci-dessous)."
+"Le dénominateur :math:`N_\\text{compté}` compte les décisions selon les "
+"règles d'XG : coups de pions non forcés, doubles proposés, prises et "
+"refus, et « pas de double » proches. Ces règles, leur motivation et leurs"
+" limites sont détaillées dans :ref:`metrique_pr`."
 msgstr ""
-"Знаменатель :math:`N_\\text{compté}` — количество **засчитанных решений**"
-" (см. ниже)."
+"Знаменатель :math:`N_\\text{compté}` считает решения по правилам XG: "
+"неформальные ходы фишками, предложенные удвоения, взятия и отказы, а "
+"также близкие «без удвоения». Эти правила, их обоснование и ограничения "
+"подробно описаны в :ref:`metrique_pr`."
 
-#: ../../source/stats_parity.rst:34
+#: ../../source/stats_parity.rst:35
 msgid ""
-"Le facteur 500 est la convention d'XG et de gnuBG (cf. "
-"``gnubg/formatgs.c:399–409``). Ce n'est pas une conversion en millipoints"
-" : une erreur moyenne de 0,010 d'équité — soit 10 millipoints (mpt) — "
-"donne un PR de 5,0. Les erreurs d'une position, elles, se lisent bien en "
-"millipoints, c'est-à-dire en millièmes d'équité : le seuil de blunder ci-"
-"dessous, les filtres de recherche ``e>`` et ``E>``, l'histogramme des "
-"magnitudes du panneau Stats."
+"Le facteur 500 est la convention d'XG. Ce n'est pas une conversion en "
+"millipoints : une erreur moyenne de 0,010 d'équité — soit 10 millipoints "
+"(mpt) — donne un PR de 5,0. Les erreurs d'une position, elles, se lisent "
+"bien en millipoints, c'est-à-dire en millièmes d'équité : le seuil de "
+"blunder ci-dessous, les filtres de recherche ``e>`` et ``E>``, "
+"l'histogramme des magnitudes du panneau Stats."
 msgstr ""
-"Множитель 500 — соглашение XG и gnuBG (см. ``gnubg/formatgs.c:399–409``)."
-" Это не перевод в миллипункты: средняя ошибка эквити в 0,010 — то есть 10"
-" миллипунктов (mpt) — даёт PR, равный 5,0. А вот ошибки отдельной позиции"
-" действительно читаются в миллипунктах, то есть в тысячных долях эквити: "
-"порог бландера ниже, фильтры поиска ``e>`` и ``E>``, гистограмма величин "
-"на панели Stats."
+"Множитель 500 — соглашение XG. Это не перевод в миллипункты: средняя "
+"ошибка 0,010 эквити — то есть 10 миллипунктов (mpt) — даёт PR 5,0. Ошибки"
+" же отдельной позиции удобно читать в миллипунктах, то есть в тысячных "
+"долях эквити: порог блундера ниже, поисковые фильтры ``e>`` и ``E>``, "
+"гистограмма величин на панели Stats."
 
 #: ../../source/stats_parity.rst:43
 msgid "Snowie Error Rate"
@@ -125,12 +125,12 @@ msgstr "Источник: ``gnubg/formatgs.c:415–424``."
 #: ../../source/stats_parity.rst:55
 msgid ""
 "Le Snowie ER est plus stable entre les outils car son dénominateur ne "
-"dépend pas du filtre des décisions forcées/triviales. Il sert de métrique"
-" de recoupement XG ↔ gnuBG ↔ blunderDB."
+"dépend d'aucune règle de comptage des décisions. Il sert de métrique de "
+"recoupement XG ↔ gnuBG ↔ blunderDB."
 msgstr ""
-"Snowie ER более стабилен между инструментами, поскольку его знаменатель "
-"не зависит от фильтрации вынужденных/тривиальных решений. Он служит "
-"перекрёстной метрикой между XG, gnuBG и blunderDB."
+"Snowie ER стабильнее между программами, поскольку его знаменатель не "
+"зависит ни от каких правил подсчёта решений. Он служит метрикой для "
+"перекрёстной проверки XG ↔ gnuBG ↔ blunderDB."
 
 #: ../../source/stats_parity.rst:61
 msgid ""
@@ -185,14 +185,20 @@ msgstr ""
 "\\mathrm{score}_i)"
 
 #: ../../source/stats_parity.rst:86
-msgid "Référence : ``gnubg/analysis.c:1449–1464``."
-msgstr "Источник: ``gnubg/analysis.c:1449–1464``."
+msgid ""
+"Une prise ou un refus est converti au videau d'avant le double, comme la "
+"décision du doubleur et comme le fait XG. La conversion et ses limites "
+"sont détaillées dans :ref:`metrique_perte_mwc`."
+msgstr ""
+"Взятие или отказ пересчитывается по кубу до удвоения, как и решение "
+"удваивающего и как это делает XG. Пересчёт и его ограничения подробно "
+"описаны в :ref:`metrique_perte_mwc`."
 
-#: ../../source/stats_parity.rst:89
+#: ../../source/stats_parity.rst:91
 msgid "Chance (*luck*)"
 msgstr "Удача (*luck*)"
 
-#: ../../source/stats_parity.rst:91
+#: ../../source/stats_parity.rst:93
 msgid ""
 "La **chance** d'un lancer est l'écart entre ce que les dés ont donné et "
 "ce qu'ils donnent en moyenne :"
@@ -200,7 +206,7 @@ msgstr ""
 "**Удача** броска — это разница между тем, что дали кости, и тем, что они "
 "дают в среднем:"
 
-#: ../../source/stats_parity.rst:94
+#: ../../source/stats_parity.rst:96
 #, no-python-brace-format
 msgid ""
 "\\mathrm{luck} = \\mathrm{eq}(\\text{meilleur coup avec les dés obtenus})"
@@ -212,7 +218,7 @@ msgstr ""
 "              - \\frac{1}{36}\\sum_{d} \\mathrm{eq}(\\text{лучший ход при"
 " } d)"
 
-#: ../../source/stats_parity.rst:99
+#: ../../source/stats_parity.rst:101
 msgid ""
 "la somme portant sur les 36 issues du lancer (30 lancers non doubles pour"
 " le premier coup de la partie, qui ne peut pas être un double). Une "
@@ -225,7 +231,7 @@ msgstr ""
 "означает удачный бросок. Ссылка: ``gnubg/analysis.c:199–269`` "
 "(``LuckNormal`` / ``LuckFirst``, cubeful-оценка на 0 ply)."
 
-#: ../../source/stats_parity.rst:106
+#: ../../source/stats_parity.rst:108
 msgid ""
 "**blunderDB ne recalcule jamais la chance** : l'évaluateur intégré ne "
 "sert pas à cela. Il reprend telle quelle la valeur écrite par l'outil qui"
@@ -239,11 +245,11 @@ msgstr ""
 "gnuBG, — предварительно убедившись, что оба используют одно соглашение "
 "(та же единица, положительное = повезло)."
 
-#: ../../source/stats_parity.rst:112
+#: ../../source/stats_parity.rst:114
 msgid "Conséquences pratiques :"
 msgstr "Практические следствия:"
 
-#: ../../source/stats_parity.rst:114
+#: ../../source/stats_parity.rst:116
 msgid ""
 "Les formats qui ne transportent pas la chance (**BGF**, **Jellyfish "
 ".mat**) ne produisent aucune valeur."
@@ -251,7 +257,7 @@ msgstr ""
 "Форматы, которые не переносят удачу (**BGF**, **Jellyfish .mat**), не "
 "дают никакого значения."
 
-#: ../../source/stats_parity.rst:116
+#: ../../source/stats_parity.rst:118
 msgid ""
 "Les matchs **déjà importés** n'en ont pas non plus : la chance n'a jamais"
 " été stockée avant la version 2.15.0 du schéma, et rien dans la base ne "
@@ -262,7 +268,7 @@ msgstr ""
 "удача не сохранялась, и восстановить её по базе нечем. Чтобы её получить,"
 " исходные файлы нужно **импортировать заново**."
 
-#: ../../source/stats_parity.rst:119
+#: ../../source/stats_parity.rst:121
 msgid ""
 "Une valeur absente signifie *inconnue*, jamais *nulle* — zéro est un "
 "lancer réellement neutre. Les moyennes de chance ne divisent donc que par"
@@ -272,7 +278,7 @@ msgstr ""
 "по-настоящему нейтральный бросок. Поэтому средние удачи делятся только на"
 " число бросков, чья удача известна."
 
-#: ../../source/stats_parity.rst:122
+#: ../../source/stats_parity.rst:124
 msgid ""
 "Un match dont *tous* les lancers auraient une chance exactement nulle est"
 " considéré comme non analysé de ce point de vue (eXtreme Gammon écrit 0 "
@@ -287,11 +293,11 @@ msgstr ""
 "gnuBG различие явное — неоценённый бросок несёт ``LU[-inf]`` — и такие "
 "броски тоже остаются неизвестными, а не превращаются в значение."
 
-#: ../../source/stats_parity.rst:130
+#: ../../source/stats_parity.rst:132
 msgid "Victoires et défaites"
 msgstr "Победы и поражения"
 
-#: ../../source/stats_parity.rst:132
+#: ../../source/stats_parity.rst:134
 msgid ""
 "blunderDB **ne stocke pas de vainqueur au niveau du match** : seuls les "
 "points de chaque partie le sont. Le résultat est donc dérivé à "
@@ -301,7 +307,7 @@ msgstr ""
 "каждой партии. Поэтому результат выводится при отображении, суммированием"
 " очков по местам:"
 
-#: ../../source/stats_parity.rst:136
+#: ../../source/stats_parity.rst:138
 msgid ""
 "**Match en N points** — vainqueur = le joueur qui atteint N. Si personne "
 "ne l'atteint, le match est **inachevé** (journal tronqué, abandon) et ne "
@@ -311,7 +317,7 @@ msgstr ""
 "набрал, матч **не завершён** (обрезанный журнал, отказ от игры) и не "
 "засчитывается ни в победы, ни в поражения — никому."
 
-#: ../../source/stats_parity.rst:139
+#: ../../source/stats_parity.rst:141
 msgid ""
 "**Partie d'argent** (sans cible) — vainqueur = celui qui a pris le plus "
 "de points ; à égalité, ni victoire ni défaite. C'est la convention du "
@@ -321,7 +327,7 @@ msgstr ""
 "при равенстве ни победы, ни поражения. Это соглашение gnuBG о результате "
 "сессии (+1 / 0 / −1, ``gnubg/relational.c``)."
 
-#: ../../source/stats_parity.rst:143
+#: ../../source/stats_parity.rst:145
 msgid ""
 "Conséquence à connaître en lisant l'onglet Joueurs : **victoires + "
 "défaites peut être inférieur au nombre de matchs**. L'écart, ce sont les "
@@ -331,11 +337,11 @@ msgstr ""
 "поражения могут быть меньше числа матчей**. Разница — это незавершённые "
 "матчи."
 
-#: ../../source/stats_parity.rst:147
+#: ../../source/stats_parity.rst:149
 msgid "Erreurs et blunders"
 msgstr "Ошибки и бландеры"
 
-#: ../../source/stats_parity.rst:149
+#: ../../source/stats_parity.rst:151
 msgid ""
 "Une décision est comptée comme **erreur** dès que l'erreur d'équité "
 "associée atteint le **seuil d'erreur** de la bibliothèque, et comme "
@@ -356,7 +362,7 @@ msgstr ""
 " кубом, подробности матча, таблица игроков), и та же пара служит счётчику"
 " строки состояния и списку, предлагаемому после импорта."
 
-#: ../../source/stats_parity.rst:159
+#: ../../source/stats_parity.rst:161
 msgid ""
 "Ces seuils sont propres à chaque bibliothèque, et les valeurs par défaut "
 "sont propres à blunderDB : gnuBG classe les coups en trois crans "
@@ -373,260 +379,253 @@ msgstr ""
 "проводит свои границы на 0,020 и 0,080. Настройка предлагает три пресета:"
 " blunderDB (0,050 и 0,100), XG (0,020 и 0,080) и GNUbg (0,040 и 0,080)."
 
-#: ../../source/stats_parity.rst:168
-msgid "Décisions comptées au dénominateur du PR"
-msgstr "Засчитанные решения в знаменателе PR"
-
 #: ../../source/stats_parity.rst:170
-msgid "blunderDB suit les mêmes règles d'exclusion qu'XG et gnuBG."
-msgstr "blunderDB следует тем же правилам исключения, что XG и gnuBG."
+msgid "Décisions comptées : XG et gnuBG"
+msgstr "Учитываемые решения: XG и gnuBG"
 
-#: ../../source/stats_parity.rst:173
-msgid "Coups de pions — décisions comptées"
-msgstr "Ходы шашками — засчитанные решения"
-
-#: ../../source/stats_parity.rst:175
-msgid "Seuls les **coups non-forcés** sont comptés :"
-msgstr "Учитываются только **невынужденные ходы**:"
+#: ../../source/stats_parity.rst:172
+msgid ""
+"blunderDB compte les décisions comme XG (:ref:`metrique_pr`). gnuBG suit "
+"d'autres règles, si bien que son taux par décision ne se compare pas au "
+"PR d'XG, même calculé sur la même analyse :"
+msgstr ""
+"blunderDB считает решения как XG (:ref:`metrique_pr`). gnuBG следует "
+"другим правилам, поэтому его показатель на решение нельзя сравнивать с PR"
+" из XG, даже вычисленным по тому же анализу:"
 
 #: ../../source/stats_parity.rst:177
-msgid ""
-"Un coup est **forcé** si le dé n'offre qu'un seul coup légal (``cMoves =="
-" 1`` dans ``gnubg/analysis.c:458``)."
-msgstr ""
-"Ход является **вынужденным**, если кости предлагают только один легальный"
-" ход (``cMoves == 1`` в ``gnubg/analysis.c:458``)."
+msgid "Décision"
+msgstr "Решение"
+
+#: ../../source/stats_parity.rst:177
+msgid "XG et blunderDB"
+msgstr "XG и blunderDB"
+
+#: ../../source/stats_parity.rst:177
+msgid "gnuBG"
+msgstr "gnuBG"
+
+#: ../../source/stats_parity.rst:179
+msgid "Coup de pions"
+msgstr "Ход фишками"
 
 #: ../../source/stats_parity.rst:179
 msgid ""
-"Les coups forcés ont une erreur nulle par définition : le joueur n'avait "
-"pas le choix. Les inclure dans le dénominateur abaisserait "
-"artificiellement le PR."
+"plus d'un coup légal, sauf si l'analyse les couvre tous à la même équité "
+"au millième"
 msgstr ""
-"Вынужденные ходы по определению имеют нулевую ошибку: у игрока не было "
-"выбора. Включение их в знаменатель искусственно занижало бы PR."
+"более одного допустимого хода, если только анализ не охватывает их все с "
+"одинаковым эквити с точностью до тысячных"
+
+#: ../../source/stats_parity.rst:179
+msgid "plus d'un coup légal (``cMoves > 1``)"
+msgstr "более одного допустимого хода (``cMoves > 1``)"
 
 #: ../../source/stats_parity.rst:183
-msgid "Décisions de cube — décisions comptées"
-msgstr "Решения по кубу — засчитанные решения"
+msgid "Double proposé"
+msgstr "Предложенное удвоение"
+
+#: ../../source/stats_parity.rst:183 ../../source/stats_parity.rst:185
+msgid "toujours"
+msgstr "всегда"
 
 #: ../../source/stats_parity.rst:185
-msgid ""
-"Une décision de cube est comptée si elle est **proche**, ou si le joueur "
-"a pris une action autre que « No Double » (double, prise, abandon) :"
-msgstr ""
-"Решение по кубу учитывается, если оно **близкое** или если игрок выбрал "
-"действие, отличное от «No Double» (удвоение, принятие, отказ):"
+msgid "Prise, refus"
+msgstr "Взятие, отказ"
 
-#: ../../source/stats_parity.rst:188
-msgid ""
-"Une décision cube est **proche** si elle se situe dans la fenêtre "
-"d'équité ``[-0.16, +0.16]`` autour du point de redoublement (prédicat "
-"``isCloseCubedecision`` dans ``gnubg/eval.c:5088–5100``)."
-msgstr ""
-"Решение по кубу является **близким**, если оно находится в окне эквити "
-"``[-0.16, +0.16]`` вокруг точки удвоения (предикат "
-"``isCloseCubedecision`` в ``gnubg/eval.c:5088–5100``)."
+#: ../../source/stats_parity.rst:187
+msgid "Pas de double"
+msgstr "Без удвоения"
+
+#: ../../source/stats_parity.rst:187
+msgid "ND > 0 et ND − min(D/T, D/P) < 0,200"
+msgstr "ND > 0 и ND − min(D/T, D/P) < 0,200"
+
+#: ../../source/stats_parity.rst:187
+msgid "décision « proche » selon ``isCloseCubedecision``"
+msgstr "«близкое» решение согласно ``isCloseCubedecision``"
 
 #: ../../source/stats_parity.rst:191
 msgid ""
-"Un double prématuré, même hors de cette fenêtre, est compté : le joueur a"
-" pris une décision, et elle a un coût."
+"La condition ND > 0 n'est pas dans le manuel d'XG : XG ne compte pas le «"
+" pas de double » d'un joueur qui est derrière, et les matchs de référence"
+" le montrent."
 msgstr ""
-"Преждевременное удвоение, даже вне этого окна, учитывается: игрок принял "
-"решение, и оно имеет цену."
+"Условия ND > 0 нет в руководстве XG: XG не считает «без удвоения» у "
+"игрока, который проигрывает, и это видно по эталонным матчам."
 
-#: ../../source/stats_parity.rst:193
-msgid ""
-"Un « No Double » trivial (équité très négative ou très positive) n'est "
-"pas une vraie décision stratégique ; l'inclure gonflerait le dénominateur"
-" et dépresserait le PR."
-msgstr ""
-"Тривиальный «No Double» (очень отрицательное или очень положительное "
-"эквити) не является настоящим стратегическим решением; его включение "
-"раздуло бы знаменатель и занизило бы PR."
-
-#: ../../source/stats_parity.rst:196
-msgid ""
-"Comme dans XG, un « No Double » proche mais correctement joué, videau "
-"centré, n'est pas compté quand le joueur au trait est à 2 points ou moins"
-" du gain : les équités EMG y sont amplifiées et le seuil de 0,16 les "
-"classerait à tort comme proches."
-msgstr ""
-"Как и в XG, близкое, но правильно сыгранное «No Double» при центрованном "
-"кубе не учитывается, когда игрок, чей ход, находится в 2 очках или менее "
-"от выигрыша: эквити EMG там усилены, и порог 0,16 ошибочно "
-"классифицировал бы их как близкие."
-
-#: ../../source/stats_parity.rst:202
-msgid "Résumé du filtre"
-msgstr "Сводка фильтра"
-
-#: ../../source/stats_parity.rst:205
-msgid "Type de décision"
-msgstr "Тип решения"
-
-#: ../../source/stats_parity.rst:205
-#, no-python-brace-format
-msgid "Inclus dans :math:`N_\\text{compté}` (PR)"
-msgstr "Включён в :math:`N_\\text{compté}` (PR)"
-
-#: ../../source/stats_parity.rst:207
-msgid "Coup non-forcé"
-msgstr "Невынужденный ход"
-
-#: ../../source/stats_parity.rst:207 ../../source/stats_parity.rst:211
-#: ../../source/stats_parity.rst:213
-msgid "Oui"
-msgstr "Да"
-
-#: ../../source/stats_parity.rst:209
-msgid "Coup forcé"
-msgstr "Вынужденный ход"
-
-#: ../../source/stats_parity.rst:209 ../../source/stats_parity.rst:215
-msgid "Non"
-msgstr "Нет"
-
-#: ../../source/stats_parity.rst:211
-msgid "Cube proche"
-msgstr "Близкое решение по кубу"
-
-#: ../../source/stats_parity.rst:213
-msgid "Double non proche"
-msgstr "Неблизкое удвоение"
-
-#: ../../source/stats_parity.rst:215
-msgid "No Double trivial"
-msgstr "Тривиальный No Double"
-
-#: ../../source/stats_parity.rst:217
-msgid "Take / Pass"
-msgstr "Take / Pass"
-
-#: ../../source/stats_parity.rst:217
-msgid "Toujours (ce sont des réponses au double)"
-msgstr "Всегда (это ответы на удвоение)"
-
-#: ../../source/stats_parity.rst:222
+#: ../../source/stats_parity.rst:197
 msgid "Correspondance blunderDB ↔ XG ↔ gnuBG"
 msgstr "Соответствие blunderDB ↔ XG ↔ gnuBG"
 
-#: ../../source/stats_parity.rst:224
+#: ../../source/stats_parity.rst:199
 msgid ""
 "Les métriques sont alignées dans les limites ci-dessous. Ce sont des "
 "**bornes vérifiées par la suite de tests**, et non des écarts moyens : le"
 " test compare match par match les chiffres de blunderDB à ceux "
 "enregistrés pour les matchs de référence du dépôt, et échoue dès qu'un "
-"seul écart dépasse la borne. Les références XG portent sur deux matchs — "
-"l'un complet (317 décisions comptées, 156 et 161 par joueur), l'autre "
-"réduit à son seul PR, avec une borne portée à 0,15 à cause d'un coup non "
-"apparié ; les références gnuBG portent sur deux autres matchs. La version"
-" d'eXtreme Gammon qui a produit ces chiffres n'est pas enregistrée."
+"seul écart dépasse la borne. Les références XG portent sur cinq matchs en"
+" 7 points, les deux joueurs de chacun ; les références gnuBG sur deux "
+"d'entre eux. La version d'eXtreme Gammon qui a produit ces chiffres n'est"
+" pas enregistrée."
 msgstr ""
-"Показатели согласованы в указанных ниже пределах. Это **границы, "
-"проверяемые набором тестов**, а не средние отклонения: тест сравнивает "
-"матч за матчем числа blunderDB с числами, записанными для эталонных "
-"матчей репозитория, и падает, как только хотя бы одно отклонение "
-"превышает границу. Эталоны XG охватывают два матча — один полный (317 "
-"засчитанных решений, 156 и 161 по игрокам), другой сведён к одному лишь "
-"PR, с границей, поднятой до 0,15 из-за одного несопоставленного хода; "
-"эталоны gnuBG охватывают два других матча. Версия eXtreme Gammon, которая"
-" дала эти числа, не зафиксирована."
+"Метрики согласованы в пределах границ, приведённых ниже. Это **границы, "
+"проверяемые набором тестов**, а не средние расхождения: тест сравнивает "
+"матч за матчем цифры blunderDB с записанными для эталонных матчей "
+"репозитория и падает, как только одно расхождение превышает границу. "
+"Эталоны XG охватывают пять матчей до 7 очков, оба игрока каждого; эталоны"
+" gnuBG — два из них. Версия eXtreme Gammon, выдавшая эти цифры, не "
+"записана."
 
-#: ../../source/stats_parity.rst:235
-msgid "Comparaison XG ↔ blunderDB (même moteur d'analyse)"
-msgstr "Сравнение XG ↔ blunderDB (один движок анализа)"
+#: ../../source/stats_parity.rst:208
+msgid "Comparaison XG ↔ blunderDB (même analyse)"
+msgstr "Сравнение XG ↔ blunderDB (один и тот же анализ)"
 
-#: ../../source/stats_parity.rst:238 ../../source/stats_parity.rst:255
+#: ../../source/stats_parity.rst:210
+msgid ""
+"Les comptes de décisions — coups de pions, doubles, prises, décisions de "
+"videau proches — sont **exacts**. Les écarts restants sont ceux de "
+"l'affichage d'XG, qui arrondit ce que blunderDB additionne au millipoint "
+":"
+msgstr ""
+"Количества решений — ходы фишками, удвоения, взятия, близкие решения по "
+"кубу — **точны**. Оставшиеся расхождения связаны с отображением XG, "
+"который округляет то, что blunderDB складывает с точностью до "
+"миллипункта:"
+
+#: ../../source/stats_parity.rst:215 ../../source/stats_parity.rst:250
 msgid "Métrique"
 msgstr "Метрика"
 
-#: ../../source/stats_parity.rst:238 ../../source/stats_parity.rst:255
+#: ../../source/stats_parity.rst:215 ../../source/stats_parity.rst:250
 msgid "Écart maximal"
 msgstr "Максимальное отклонение"
 
-#: ../../source/stats_parity.rst:240
-msgid "Décisions totales"
-msgstr "Общее количество решений"
+#: ../../source/stats_parity.rst:217
+msgid "Décisions comptées"
+msgstr "Учитываемые решения"
 
-#: ../../source/stats_parity.rst:240
-msgid "≤ 5"
-msgstr "≤ 5"
+#: ../../source/stats_parity.rst:217
+msgid "0"
+msgstr "0"
 
-#: ../../source/stats_parity.rst:242
-msgid "Coups non-forcés"
-msgstr "Невынужденные ходы"
-
-#: ../../source/stats_parity.rst:242
-msgid "≤ 7"
-msgstr "≤ 7"
-
-#: ../../source/stats_parity.rst:244
+#: ../../source/stats_parity.rst:219
 msgid "PR"
 msgstr "PR"
 
-#: ../../source/stats_parity.rst:244
-msgid "≤ 0.10"
-msgstr "≤ 0.10"
+#: ../../source/stats_parity.rst:219
+msgid "≤ 0,02"
+msgstr "≤ 0,02"
 
-#: ../../source/stats_parity.rst:246 ../../source/stats_parity.rst:259
-msgid "Perte MWC"
-msgstr "Потеря MWC"
+#: ../../source/stats_parity.rst:221
+msgid "Perte MWC (totale, pions, doubles, réponses)"
+msgstr "Потеря MWC (общая, фишки, удвоения, ответы)"
 
-#: ../../source/stats_parity.rst:246
-msgid "≤ 1.0 pp"
-msgstr "≤ 1.0 pp"
+#: ../../source/stats_parity.rst:221
+msgid "≤ 0,06 point"
+msgstr "≤ 0,06 очка"
 
-#: ../../source/stats_parity.rst:248
-msgid "Equity total (EMG)"
-msgstr "Суммарное эквити (EMG)"
+#: ../../source/stats_parity.rst:224
+msgid "Erreur d'équité (EMG)"
+msgstr "Ошибка эквити (EMG)"
 
-#: ../../source/stats_parity.rst:248
-msgid "≤ 0.05"
-msgstr "≤ 0.05"
+#: ../../source/stats_parity.rst:224
+msgid "≤ 0,004"
+msgstr "≤ 0,004"
 
-#: ../../source/stats_parity.rst:252
+#: ../../source/stats_parity.rst:228
+msgid "Écarts résiduels connus"
+msgstr "Известные остаточные расхождения"
+
+#: ../../source/stats_parity.rst:230
+msgid ""
+"Quatre joueurs des matchs de référence s'écartent davantage, chacun pour "
+"une cause qui tient à ce que le fichier ne transporte pas :"
+msgstr ""
+"Четыре игрока эталонных матчей расходятся сильнее; в каждом случае "
+"причина в том, что файл не содержит нужных данных:"
+
+#: ../../source/stats_parity.rst:233
+msgid ""
+"**Coup non analysé** (deux joueurs). XG écrit, pour un coup qu'il n'a pas"
+" noté, une erreur de −1000 et le laisse hors du compte ; cette valeur "
+"n'est pas lue à l'import, et blunderDB note le coup à partir des "
+"candidats stockés. blunderDB compte une décision de plus ; le PR s'écarte"
+" jusqu'à 0,09, la perte MWC jusqu'à 0,45 point."
+msgstr ""
+"**Непроанализированный ход** (два игрока). Для хода, который XG не "
+"оценил, он записывает ошибку −1000 и не включает его в подсчёт; при "
+"импорте это значение не читается, и blunderDB оценивает ход по "
+"сохранённым кандидатам. blunderDB считает на одно решение больше; PR "
+"расходится до 0,09, потеря MWC — до 0,45 очка."
+
+#: ../../source/stats_parity.rst:238
+msgid ""
+"**Sortie jugée hors du fichier** (un joueur). XG compte comme décision "
+"une sortie dont les candidats stockés couvrent tous les coups légaux à la"
+" même équité : il l'a jugée sur des évaluations que le fichier ne garde "
+"pas. blunderDB compte une décision de moins ; le PR s'écarte de 0,02."
+msgstr ""
+"**Съём, оценённый вне файла** (один игрок). XG считает решением съём, для"
+" которого сохранённые кандидаты охватывают все допустимые ходы с "
+"одинаковым эквити: он оценил его по оценкам, которые файл не хранит. "
+"blunderDB считает на одно решение меньше; PR расходится на 0,02."
+
+#: ../../source/stats_parity.rst:242
+msgid ""
+"**Somme des erreurs de pions** (un joueur). Les comptes et le videau "
+"concordent ; la somme des erreurs des coups stockés dépasse de quelques "
+"millipoints le total de pions d'XG (2,150 contre 2,147)."
+msgstr ""
+"**Сумма ошибок фишками** (один игрок). Количества и куб совпадают; сумма "
+"ошибок сохранённых ходов превышает итог XG по фишкам на несколько "
+"миллипунктов (2,150 против 2,147)."
+
+#: ../../source/stats_parity.rst:247
 msgid "Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)"
 msgstr "Сравнение gnuBG ↔ blunderDB (импорт SGF — разные движки)"
 
-#: ../../source/stats_parity.rst:255
+#: ../../source/stats_parity.rst:250
 msgid "Cause principale"
 msgstr "Основная причина"
 
-#: ../../source/stats_parity.rst:257
-msgid "PR (checker)"
-msgstr "PR (ходы шашками)"
+#: ../../source/stats_parity.rst:252
+msgid "PR (pions)"
+msgstr "PR (фишки)"
 
-#: ../../source/stats_parity.rst:257
-msgid "≤ 0.20"
-msgstr "≤ 0.20"
+#: ../../source/stats_parity.rst:252
+msgid "≤ 0,40"
+msgstr "≤ 0,40"
 
-#: ../../source/stats_parity.rst:257
-msgid "equity cross-engine"
-msgstr "расхождение эквити между движками"
+#: ../../source/stats_parity.rst:252
+msgid "règle des coups forcés, équités entre moteurs"
+msgstr "правило вынужденных ходов, эквити между движками"
 
-#: ../../source/stats_parity.rst:259
-msgid "≤ 3.5 pp"
-msgstr "≤ 3.5 pp"
+#: ../../source/stats_parity.rst:255
+msgid "Perte MWC"
+msgstr "Потеря MWC"
 
-#: ../../source/stats_parity.rst:259
-msgid "close-cube SGF incomplet"
-msgstr "неполные данные close-cube в SGF"
+#: ../../source/stats_parity.rst:255
+msgid "≤ 3,5 points"
+msgstr "≤ 3,5 очка"
 
-#: ../../source/stats_parity.rst:261
+#: ../../source/stats_parity.rst:255
+msgid "videau proche incomplet dans le SGF"
+msgstr "неполное близкое решение по кубу в SGF"
+
+#: ../../source/stats_parity.rst:258
 msgid "Snowie ER"
 msgstr "Snowie ER"
 
-#: ../../source/stats_parity.rst:261
-msgid "≤ 0.50"
-msgstr "≤ 0.50"
+#: ../../source/stats_parity.rst:258
+msgid "≤ 0,50"
+msgstr "≤ 0,50"
 
-#: ../../source/stats_parity.rst:261
+#: ../../source/stats_parity.rst:258
 msgid "forcés sans analyse (SGF)"
 msgstr "вынужденные ходы без анализа (SGF)"
 
-#: ../../source/stats_parity.rst:266
+#: ../../source/stats_parity.rst:263
 msgid ""
 "Les fichiers SGF (gnuBG) n'incluent pas les alternatives pour les coups "
 "forcés, ce qui signifie que blunderDB ne peut pas détecter tous les coups"
@@ -638,11 +637,11 @@ msgstr ""
 "создаёт структурное расхождение по Snowie ER (немного другой "
 "знаменатель)."
 
-#: ../../source/stats_parity.rst:273
+#: ../../source/stats_parity.rst:270
 msgid "Valider vos propres chiffres"
 msgstr "Проверка собственных данных"
 
-#: ../../source/stats_parity.rst:275
+#: ../../source/stats_parity.rst:272
 msgid ""
 "Si vos valeurs PR ou MWC divergent des chiffres XG, vérifier les points "
 "suivants :"
@@ -650,18 +649,18 @@ msgstr ""
 "Если ваши значения PR или MWC расходятся с числами XG, проверьте "
 "следующее:"
 
-#: ../../source/stats_parity.rst:278
+#: ../../source/stats_parity.rst:275
 #, no-python-brace-format
 msgid ""
-"**Analyses complètes** — Le PR ne peut être calculé que sur les positions"
-" disposant d'une analyse. Des positions sans analyse sont comptées comme "
-"erreur zéro mais n'entrent pas dans :math:`N_\\text{compté}`."
+"**Analyses complètes** — Le PR ne peut être calculé que sur les décisions"
+" disposant d'une analyse. Un coup que l'analyse ne note pas n'entre ni au"
+" numérateur ni dans :math:`N_\\text{compté}`."
 msgstr ""
 "**Полные анализы** — PR можно вычислить только по позициям, у которых "
 "есть анализ. Позиции без анализа засчитываются как нулевая ошибка, но не "
 "входят в :math:`N_\\text{compté}`."
 
-#: ../../source/stats_parity.rst:282
+#: ../../source/stats_parity.rst:279
 msgid ""
 "**Version XG** — XG peut changer ses calculs entre versions. blunderDB "
 "s'aligne sur le comportement observé des versions récentes."
@@ -669,7 +668,7 @@ msgstr ""
 "**Версия XG** — XG может менять расчёты между версиями. blunderDB "
 "выровнен с поведением, наблюдаемым в последних версиях."
 
-#: ../../source/stats_parity.rst:285
+#: ../../source/stats_parity.rst:282
 msgid ""
 "**Format d'import** — Les fichiers SGF gnuBG produisent des écarts plus "
 "importants sur le cube (voir tableau ci-dessus) car le fichier n'inclut "
@@ -679,7 +678,7 @@ msgstr ""
 "по кубу (см. таблицу выше), поскольку файл не включает полные анализы для"
 " всех решений по кубу."
 
-#: ../../source/stats_parity.rst:289
+#: ../../source/stats_parity.rst:286
 msgid ""
 "**Migration de base** — Après mise à jour de blunderDB, les bases "
 "existantes sont migrées automatiquement. Faire une sauvegarde avant "
@@ -689,51 +688,253 @@ msgstr ""
 "данных мигрируются автоматически. Сделайте резервную копию перед "
 "открытием базы данных с новой версией."
 
-#: ../../source/stats_parity.rst:295
+#: ../../source/stats_parity.rst:292
 msgid "Référence gnuBG"
 msgstr "Ссылки gnuBG"
 
+#: ../../source/stats_parity.rst:294
+msgid ""
+"Les formules de gnuBG citées sur cette page se trouvent dans les fichiers"
+" source suivants (dépôt gnuBG) :"
+msgstr ""
+"Формулы gnuBG, упомянутые на этой странице, находятся в следующих "
+"исходных файлах (репозиторий gnuBG):"
+
 #: ../../source/stats_parity.rst:297
 msgid ""
-"Les formules ont été vérifiées dans les fichiers source suivants (dépôt "
-"gnuBG) :"
-msgstr "Формулы проверены в следующих исходных файлах (репозиторий gnuBG):"
+"``gnubg/formatgs.c:399–409`` — taux d'erreur par décision (« Error rate "
+"per decision »)."
+msgstr ""
+"``gnubg/formatgs.c:399–409`` — показатель ошибок на решение («Error rate "
+"per decision»)."
 
-#: ../../source/stats_parity.rst:299
-msgid "``gnubg/formatgs.c:399–409`` — PR (« Error rate per decision »)."
-msgstr "``gnubg/formatgs.c:399–409`` — PR («Error rate per decision»)."
-
-#: ../../source/stats_parity.rst:300
+#: ../../source/stats_parity.rst:298
 msgid "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
 msgstr "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
 
-#: ../../source/stats_parity.rst:301
+#: ../../source/stats_parity.rst:299
 msgid ""
-"``gnubg/analysis.c:458–462`` — Accumulation checker, exclusion des forcés"
-" (``cMoves > 1``)."
+"``gnubg/analysis.c:458–462`` — Accumulation pions, exclusion des forcés "
+"(``cMoves > 1``)."
 msgstr ""
-"``gnubg/analysis.c:458–462`` — Накопление ходов шашками, исключение "
+"``gnubg/analysis.c:458–462`` — накопление по ходам фишками, исключение "
 "вынужденных (``cMoves > 1``)."
 
-#: ../../source/stats_parity.rst:302
+#: ../../source/stats_parity.rst:300
 msgid "``gnubg/analysis.c:1430–1474`` — Conversion EMG → MWC par décision."
 msgstr ""
 "``gnubg/analysis.c:1430–1474`` — Преобразование EMG → MWC по каждому "
 "решению."
 
-#: ../../source/stats_parity.rst:303
+#: ../../source/stats_parity.rst:301
 msgid ""
 "``gnubg/analysis.c:1449–1464`` — Accumulation de la perte MWC "
 "(``eq2mwc``)."
 msgstr "``gnubg/analysis.c:1449–1464`` — Накопление потери MWC (``eq2mwc``)."
 
-#: ../../source/stats_parity.rst:304
-msgid ""
-"``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision`` (seuil "
-"0.16)."
-msgstr ""
-"``gnubg/eval.c:5088–5100`` — Предикат ``isCloseCubedecision`` (порог "
-"0.16)."
+#: ../../source/stats_parity.rst:302
+msgid "``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision``."
+msgstr "``gnubg/eval.c:5088–5100`` — предикат ``isCloseCubedecision``."
 
 #~ msgid "Seules les **décisions de cube proches** sont comptées :"
 #~ msgstr "Учитываются только **близкие решения по кубу**:"
+
+#~ msgid ""
+#~ "Le PR (aussi appelé « error rate"
+#~ " per decision » dans gnuBG) mesure"
+#~ " le coût moyen des erreurs par "
+#~ "décision comptée, sur l'échelle d'eXtreme "
+#~ "Gammon et de gnuBG : l'erreur "
+#~ "moyenne d'équité, multipliée par 500."
+#~ msgstr ""
+#~ "PR (в gnuBG он же «error rate "
+#~ "per decision») измеряет среднюю стоимость "
+#~ "ошибок на одно засчитанное решение, в"
+#~ " шкале eXtreme Gammon и gnuBG: это"
+#~ " средняя ошибка эквити, умноженная на "
+#~ "500."
+
+#~ msgid ""
+#~ "Le numérateur est la somme absolue "
+#~ "des erreurs EMG (en equity cubeful) "
+#~ "sur toutes les décisions du périmètre."
+#~ msgstr ""
+#~ "Числитель — это сумма абсолютных "
+#~ "значений ошибок EMG (cubeful equity) по"
+#~ " всем решениям в периметре."
+
+#~ msgid ""
+#~ "Le dénominateur :math:`N_\\text{compté}` est "
+#~ "le nombre de **décisions comptées** "
+#~ "(voir ci-dessous)."
+#~ msgstr ""
+#~ "Знаменатель :math:`N_\\text{compté}` — количество"
+#~ " **засчитанных решений** (см. ниже)."
+
+#~ msgid "Référence : ``gnubg/analysis.c:1449–1464``."
+#~ msgstr "Источник: ``gnubg/analysis.c:1449–1464``."
+
+#~ msgid "Décisions comptées au dénominateur du PR"
+#~ msgstr "Засчитанные решения в знаменателе PR"
+
+#~ msgid "blunderDB suit les mêmes règles d'exclusion qu'XG et gnuBG."
+#~ msgstr "blunderDB следует тем же правилам исключения, что XG и gnuBG."
+
+#~ msgid "Coups de pions — décisions comptées"
+#~ msgstr "Ходы шашками — засчитанные решения"
+
+#~ msgid "Seuls les **coups non-forcés** sont comptés :"
+#~ msgstr "Учитываются только **невынужденные ходы**:"
+
+#~ msgid ""
+#~ "Un coup est **forcé** si le dé "
+#~ "n'offre qu'un seul coup légal (``cMoves"
+#~ " == 1`` dans ``gnubg/analysis.c:458``)."
+#~ msgstr ""
+#~ "Ход является **вынужденным**, если кости "
+#~ "предлагают только один легальный ход "
+#~ "(``cMoves == 1`` в ``gnubg/analysis.c:458``)."
+
+#~ msgid ""
+#~ "Les coups forcés ont une erreur "
+#~ "nulle par définition : le joueur "
+#~ "n'avait pas le choix. Les inclure "
+#~ "dans le dénominateur abaisserait "
+#~ "artificiellement le PR."
+#~ msgstr ""
+#~ "Вынужденные ходы по определению имеют "
+#~ "нулевую ошибку: у игрока не было "
+#~ "выбора. Включение их в знаменатель "
+#~ "искусственно занижало бы PR."
+
+#~ msgid "Décisions de cube — décisions comptées"
+#~ msgstr "Решения по кубу — засчитанные решения"
+
+#~ msgid ""
+#~ "Une décision de cube est comptée "
+#~ "si elle est **proche**, ou si le"
+#~ " joueur a pris une action autre "
+#~ "que « No Double » (double, prise,"
+#~ " abandon) :"
+#~ msgstr ""
+#~ "Решение по кубу учитывается, если оно"
+#~ " **близкое** или если игрок выбрал "
+#~ "действие, отличное от «No Double» "
+#~ "(удвоение, принятие, отказ):"
+
+#~ msgid ""
+#~ "Une décision cube est **proche** si "
+#~ "elle se situe dans la fenêtre "
+#~ "d'équité ``[-0.16, +0.16]`` autour du "
+#~ "point de redoublement (prédicat "
+#~ "``isCloseCubedecision`` dans ``gnubg/eval.c:5088–5100``)."
+#~ msgstr ""
+#~ "Решение по кубу является **близким**, "
+#~ "если оно находится в окне эквити "
+#~ "``[-0.16, +0.16]`` вокруг точки удвоения "
+#~ "(предикат ``isCloseCubedecision`` в "
+#~ "``gnubg/eval.c:5088–5100``)."
+
+#~ msgid ""
+#~ "Un double prématuré, même hors de "
+#~ "cette fenêtre, est compté : le "
+#~ "joueur a pris une décision, et "
+#~ "elle a un coût."
+#~ msgstr ""
+#~ "Преждевременное удвоение, даже вне этого "
+#~ "окна, учитывается: игрок принял решение, "
+#~ "и оно имеет цену."
+
+#~ msgid ""
+#~ "Un « No Double » trivial (équité"
+#~ " très négative ou très positive) "
+#~ "n'est pas une vraie décision stratégique"
+#~ " ; l'inclure gonflerait le dénominateur "
+#~ "et dépresserait le PR."
+#~ msgstr ""
+#~ "Тривиальный «No Double» (очень отрицательное"
+#~ " или очень положительное эквити) не "
+#~ "является настоящим стратегическим решением; "
+#~ "его включение раздуло бы знаменатель и"
+#~ " занизило бы PR."
+
+#~ msgid ""
+#~ "Comme dans XG, un « No Double "
+#~ "» proche mais correctement joué, videau"
+#~ " centré, n'est pas compté quand le"
+#~ " joueur au trait est à 2 points"
+#~ " ou moins du gain : les équités"
+#~ " EMG y sont amplifiées et le "
+#~ "seuil de 0,16 les classerait à "
+#~ "tort comme proches."
+#~ msgstr ""
+#~ "Как и в XG, близкое, но правильно"
+#~ " сыгранное «No Double» при центрованном "
+#~ "кубе не учитывается, когда игрок, чей"
+#~ " ход, находится в 2 очках или "
+#~ "менее от выигрыша: эквити EMG там "
+#~ "усилены, и порог 0,16 ошибочно "
+#~ "классифицировал бы их как близкие."
+
+#~ msgid "Résumé du filtre"
+#~ msgstr "Сводка фильтра"
+
+#~ msgid "Inclus dans :math:`N_\\text{compté}` (PR)"
+#~ msgstr "Включён в :math:`N_\\text{compté}` (PR)"
+
+#~ msgid "Coup non-forcé"
+#~ msgstr "Невынужденный ход"
+
+#~ msgid "Oui"
+#~ msgstr "Да"
+
+#~ msgid "Coup forcé"
+#~ msgstr "Вынужденный ход"
+
+#~ msgid "Non"
+#~ msgstr "Нет"
+
+#~ msgid "Cube proche"
+#~ msgstr "Близкое решение по кубу"
+
+#~ msgid "No Double trivial"
+#~ msgstr "Тривиальный No Double"
+
+#~ msgid "Take / Pass"
+#~ msgstr "Take / Pass"
+
+#~ msgid "Toujours (ce sont des réponses au double)"
+#~ msgstr "Всегда (это ответы на удвоение)"
+
+#~ msgid "≤ 5"
+#~ msgstr "≤ 5"
+
+#~ msgid "Coups non-forcés"
+#~ msgstr "Невынужденные ходы"
+
+#~ msgid "≤ 7"
+#~ msgstr "≤ 7"
+
+#~ msgid "≤ 0.10"
+#~ msgstr "≤ 0.10"
+
+#~ msgid "≤ 1.0 pp"
+#~ msgstr "≤ 1.0 pp"
+
+#~ msgid "Equity total (EMG)"
+#~ msgstr "Суммарное эквити (EMG)"
+
+#~ msgid "≤ 0.05"
+#~ msgstr "≤ 0.05"
+
+#~ msgid "PR (checker)"
+#~ msgstr "PR (ходы шашками)"
+
+#~ msgid "≤ 0.20"
+#~ msgstr "≤ 0.20"
+
+#~ msgid "equity cross-engine"
+#~ msgstr "расхождение эквити между движками"
+
+#~ msgid "close-cube SGF incomplet"
+#~ msgstr "неполные данные close-cube в SGF"

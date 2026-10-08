@@ -1,0 +1,1400 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-08 20:41+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ru\n"
+"Language-Team: ru <LL@li.org>\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/metriques.rst:4
+msgid "Métriques et outils d'étude"
+msgstr "Метрики и инструменты для изучения"
+
+#: ../../source/metriques.rst:6
+msgid ""
+"Chaque chiffre que blunderDB affiche sur votre jeu répond à une question."
+" Cette page les réunit : pour chacun, la question à laquelle il répond et"
+" ce qu'il apporte à l'étude, sa définition, sa formule exacte, ce qui "
+"compte comme décision, son unité, sa lecture, son incertitude, ses "
+"limites et ce qui le distingue des chiffres d'eXtreme Gammon (XG) et de "
+"GNU Backgammon (gnuBG). Les écrans qui les montrent sont décrits dans le "
+":ref:`manuel` ; les liens y mènent."
+msgstr ""
+"Каждое число, которое blunderDB показывает о вашей игре, отвечает на "
+"вопрос. Эта страница собирает их вместе: для каждого — вопрос, на который"
+" оно отвечает, и что оно даёт для изучения, определение, точная формула, "
+"что считается решением, единица измерения, чтение, неопределённость, "
+"ограничения и чем оно отличается от чисел eXtreme Gammon (XG) и GNU "
+"Backgammon (gnuBG). Экраны, которые их показывают, описаны в "
+":ref:`manuel`; ссылки ведут туда."
+
+#: ../../source/metriques.rst:14
+msgid ""
+"Les seuils et les paramètres de cette page ont été fixés avant tout "
+"examen de résultats réels : les ajuster après coup reviendrait à faire "
+"dire aux chiffres ce qu'on attend d'eux."
+msgstr ""
+"Пороги и параметры этой страницы были зафиксированы до какого-либо "
+"изучения реальных результатов: подгонять их постфактум означало бы "
+"заставлять числа говорить то, что от них ждут."
+
+#: ../../source/metriques.rst:26
+msgid "L'erreur et la perte d'une décision"
+msgstr "Ошибка и потеря решения"
+
+#: ../../source/metriques.rst:28
+msgid "Toutes les mesures partent de deux grandeurs par décision."
+msgstr "Все измерения исходят из двух величин на решение."
+
+#: ../../source/metriques.rst:30
+msgid ""
+"**L'erreur e** est ce que la décision jouée a coûté en équité, comparée à"
+" la meilleure décision de l'analyse importée (XG ou gnuBG ; blunderDB ne "
+"réanalyse pas les matchs pour ses statistiques). Elle s'exprime en "
+"**équité normalisée** : ±1 vaut le videau courant, à l'argent comme au "
+"score de match (EMG au score). Elle est arrondie au millième (le "
+"millipoint, mpt)."
+msgstr ""
+"**Ошибка e** — то, сколько эквити стоило сыгранное решение по сравнению с"
+" лучшим решением импортированного анализа (XG или gnuBG; blunderDB не "
+"переанализирует матчи для своей статистики). Она выражается в "
+"**нормализованном эквити**: ±1 равно текущему кубу, как в игре на деньги,"
+" так и при счёте матча (EMG по счёту матча). Округляется до тысячных "
+"(миллипункт, mpt)."
+
+#: ../../source/metriques.rst:36
+msgid "Coup de pions : équité du meilleur candidat moins équité du coup joué."
+msgstr "Ход фишками: эквити лучшего кандидата минус эквити сыгранного хода."
+
+#: ../../source/metriques.rst:37
+msgid "Pas de double : l'erreur de « pas de double » donnée par l'analyse."
+msgstr "Без удвоения: ошибка «без удвоения», данная анализом."
+
+#: ../../source/metriques.rst:38
+msgid ""
+"Double : la plus petite des erreurs de « double, prise » et « double, "
+"refus » — le doubleur est jugé sur la meilleure réponse adverse."
+msgstr ""
+"Удвоение: меньшая из ошибок «удвоение, взятие» и «удвоение, отказ» — "
+"удваивающий оценивается по лучшему ответу соперника."
+
+#: ../../source/metriques.rst:40
+msgid "Prise ou refus : l'écart entre la réponse jouée et la meilleure des deux."
+msgstr "Взятие или отказ: разница между сыгранным ответом и лучшим из двух."
+
+#: ../../source/metriques.rst:42
+msgid ""
+"L'erreur est celle **du coup joué dans ce match**. Une position atteinte "
+"dans deux matchs, et jouée différemment, porte deux erreurs ; aucune "
+"n'écrase l'autre. Un coup joué que l'analyse ne nomme parmi aucun de ses "
+"candidats n'a pas d'erreur : il n'est pas noté, et il sort de tous les "
+"comptes."
+msgstr ""
+"Ошибка — это ошибка **хода, сыгранного в данном матче**. Позиция, "
+"встретившаяся в двух матчах и сыгранная по-разному, несёт две ошибки; ни "
+"одна не затирает другую. Сыгранный ход, который анализ не называет ни "
+"среди одного из своих кандидатов, не имеет ошибки: он не оценивается и "
+"исключается из всех подсчётов."
+
+#: ../../source/metriques.rst:47
+msgid ""
+"**La perte de MWC ℓ** est la même erreur exprimée en chances de gagner le"
+" match (*Match Winning Chances*). Au score et au videau v de la décision "
+":"
+msgstr ""
+"**Потеря MWC ℓ** — та же ошибка, выраженная в шансах выиграть матч "
+"(*Match Winning Chances*). При счёте и кубе v решения:"
+
+#: ../../source/metriques.rst:50
+msgid "\\ell = e \\times \\frac{\\mathrm{MWC}_{+v} - \\mathrm{MWC}_{-v}}{2}"
+msgstr "\\ell = e \\times \\frac{\\mathrm{MWC}_{+v} - \\mathrm{MWC}_{-v}}{2}"
+
+#: ../../source/metriques.rst:54
+#, no-python-brace-format
+msgid ""
+"où :math:`\\mathrm{MWC}_{+v}` et :math:`\\mathrm{MWC}_{-v}` sont les "
+"chances de gagner le match si le joueur gagne, ou perd, v points à ce "
+"score. La table d'équité de match (MET) est la Kazaross-XG2, prolongée "
+"au-delà de 25 points par la formule de Zadeh ; un score post-Crawford est"
+" lu comme tel. Une prise ou un refus est converti au videau **d'avant** "
+"le double, comme le doubleur et comme XG : convertie au videau doublé, "
+"une erreur de réponse coûterait deux fois trop. Une partie d'argent n'a "
+"pas de MWC : ℓ n'y existe pas."
+msgstr ""
+"где :math:`\\mathrm{MWC}_{+v}` и :math:`\\mathrm{MWC}_{-v}` — шансы "
+"выиграть матч, если игрок выигрывает или проигрывает v очков при этом "
+"счёте. Таблица эквити матча (MET) — Kazaross-XG2, продолженная за пределы"
+" 25 очков формулой Задеха; счёт пост-Кроуфорд читается как таковой. "
+"Взятие или отказ пересчитывается по кубу **до** удвоения, как для "
+"удваивающего и как в XG: при пересчёте по удвоенному кубу ошибка ответа "
+"стоила бы вдвое больше. У игры на деньги нет MWC: ℓ в ней не существует."
+
+#: ../../source/metriques.rst:62
+msgid ""
+"Ces deux grandeurs sont additives. Toutes les métriques ci-dessous en "
+"sont des sommes, rapportées à des dénominateurs différents, ou comparées "
+"à une référence."
+msgstr ""
+"Эти две величины аддитивны. Все метрики ниже — их суммы, отнесённые к "
+"разным знаменателям или сопоставленные с эталоном."
+
+#: ../../source/metriques.rst:70
+msgid "PR (*Performance Rating*)"
+msgstr "PR (*Performance Rating*)"
+
+#: ../../source/metriques.rst:72
+msgid ""
+"**La question.** Quel est mon niveau, sur l'échelle que tout le monde "
+"connaît ? Le PR est le chiffre des classements, des forums et des clubs ;"
+" il permet de se situer et de comparer deux matchs analysés par XG."
+msgstr ""
+"**Вопрос.** Каков мой уровень по шкале, которую знают все? PR — число "
+"рейтингов, форумов и клубов; он позволяет оценить себя и сравнить два "
+"матча, проанализированных XG."
+
+#: ../../source/metriques.rst:76
+msgid "**La formule.** Sur les décisions comptées du joueur :"
+msgstr "**Формула.** По учитываемым решениям игрока:"
+
+#: ../../source/metriques.rst:78
+msgid "\\mathrm{PR} = 500 \\times \\frac{\\sum_i e_i}{N_\\text{compté}}"
+msgstr "\\mathrm{PR} = 500 \\times \\frac{\\sum_i e_i}{N_\\text{compté}}"
+
+#: ../../source/metriques.rst:82
+msgid ""
+"Le facteur 500 est la convention d'XG : un PR de 5,0 vaut une erreur "
+"moyenne de 0,010, soit 10 mpt par décision comptée. Le PR est une "
+"moyenne, sans unité ; plus il est bas, mieux on a joué."
+msgstr ""
+"Множитель 500 — соглашение XG: PR 5,0 соответствует средней ошибке 0,010,"
+" то есть 10 mpt на учитываемое решение. PR — среднее, без единицы; чем он"
+" ниже, тем лучше сыграно."
+
+#: ../../source/metriques.rst:86
+msgid ""
+"**Ce qui compte comme décision.** Les règles sont celles d'XG, vérifiées "
+"match par match contre ses chiffres (:ref:`stats_parity`) :"
+msgstr ""
+"**Что считается решением.** Правила — как в XG, проверенные матч за "
+"матчем по его цифрам (:ref:`stats_parity`):"
+
+#: ../../source/metriques.rst:90
+msgid "Décision"
+msgstr "Решение"
+
+#: ../../source/metriques.rst:90
+msgid "Comptée si"
+msgstr "Учитывается, если"
+
+#: ../../source/metriques.rst:92
+msgid "Coup de pions"
+msgstr "Ход фишками"
+
+#: ../../source/metriques.rst:92
+msgid "il n'est pas forcé et le coup joué est noté"
+msgstr "он не вынужденный и сыгранный ход оценён"
+
+#: ../../source/metriques.rst:94
+msgid "Double proposé"
+msgstr "Предложенное удвоение"
+
+#: ../../source/metriques.rst:94 ../../source/metriques.rst:96
+msgid "toujours"
+msgstr "всегда"
+
+#: ../../source/metriques.rst:96
+msgid "Prise, refus"
+msgstr "Взятие, отказ"
+
+#: ../../source/metriques.rst:98
+msgid "Pas de double"
+msgstr "Без удвоения"
+
+#: ../../source/metriques.rst:98
+msgid "ND > 0 et ND − min(D/T, D/P) < 0,200"
+msgstr "ND > 0 и ND − min(D/T, D/P) < 0,200"
+
+#: ../../source/metriques.rst:101
+msgid ""
+"Un coup de pions est **forcé** quand le lancer n'offre qu'un coup légal, "
+"ou quand l'analyse couvre tous les coups légaux (comptés par le "
+"générateur de coups de blunderDB) et que tous valent la même équité au "
+"millième près : un choix qui ne coûte rien, quel que soit le coup, n'est "
+"pas une décision. C'est la règle d'XG pour les coups « non forcés mais "
+"sans enjeu » (fin de course décidée, sortie où tout se vaut). Quand les "
+"coups légaux ne peuvent pas être comptés, seul un candidat unique rend le"
+" coup forcé."
+msgstr ""
+"Ход фишками **вынужденный**, если по броску есть лишь один допустимый "
+"ход, либо если анализ охватывает все допустимые ходы (подсчитанные "
+"генератором ходов blunderDB) и все они равны по эквити с точностью до "
+"тысячных: выбор, который ничего не стоит при любом ходе, не является "
+"решением. Это правило XG для ходов «не вынужденных, но без ставки» "
+"(решённый конец гонки, съём, где всё равноценно). Когда допустимые ходы "
+"подсчитать невозможно, вынужденным делает ход только единственный "
+"кандидат."
+
+#: ../../source/metriques.rst:108
+msgid ""
+"Un **pas de double** est compté quand le joueur était près de doubler : "
+"son équité sans doubler (ND) est positive et dépasse de moins de 0,200 la"
+" meilleure issue du double pour l'adversaire, min(D/T, D/P). Mesurer "
+"contre ce minimum plutôt que contre D/T seul garde comme décision une "
+"position « trop bonne » tant qu'elle reste à moins de 0,200 de "
+"l'encaissement."
+msgstr ""
+"**Без удвоения** считается, когда игрок был близок к удвоению: его эквити"
+" без удвоения (ND) положительно и превышает менее чем на 0,200 лучший "
+"исход удвоения для соперника, min(D/T, D/P). Сравнение с этим минимумом, "
+"а не только с D/T, оставляет решением позицию «слишком хорошую», пока она"
+" остаётся в пределах 0,200 от отказа."
+
+#: ../../source/metriques.rst:113
+msgid ""
+"La condition **ND > 0** écarte les positions où le joueur au trait est "
+"derrière : il n'a aucun double à envisager. XG les écarte aussi, ce que "
+"son manuel ne dit pas ; les matchs de référence le montrent."
+msgstr ""
+"Условие **ND > 0** исключает позиции, где игрок на ходу проигрывает: "
+"удвоение ему рассматривать не нужно. XG их тоже исключает, чего нет в его"
+" руководстве; это видно по эталонным матчам."
+
+#: ../../source/metriques.rst:116
+msgid ""
+"Une décision de videau sans analyse de videau n'est jamais un pas de "
+"double compté."
+msgstr "Решение по кубу без анализа куба никогда не считается «без удвоения»."
+
+#: ../../source/metriques.rst:119
+msgid ""
+"**Lecture.** Les bandes de niveau du panneau Stats (:ref:`stats`) sont un"
+" repère propre à blunderDB, pas une norme publiée. Un PR se compare "
+"d'abord à vos propres PR : même analyseur, même type d'adversaires, mêmes"
+" longueurs."
+msgstr ""
+"**Чтение.** Полосы уровней панели Stats (:ref:`stats`) — ориентир, "
+"свойственный blunderDB, а не опубликованная норма. PR сравнивается прежде"
+" всего с вашими собственными PR: тот же анализатор, тот же тип "
+"соперников, те же длины."
+
+#: ../../source/metriques.rst:123
+msgid ""
+"**Incertitude.** Le PR d'un match est très bruité : l'erreur-type d'un "
+"match en 7 points est de l'ordre de 1,5 PR. blunderDB donne un intervalle"
+" à 95 % (:ref:`metrique_intervalles`) en rééchantillonnant les parties "
+"d'un match, et les matchs d'un agrégat."
+msgstr ""
+"**Неопределённость.** PR одного матча очень шумный: стандартная ошибка "
+"матча до 7 очков порядка 1,5 PR. blunderDB даёт 95 % интервал "
+"(:ref:`metrique_intervalles`), ресэмплируя партии матча и матчи агрегата."
+
+#: ../../source/metriques.rst:128
+msgid ""
+"**Limites.** Le numérateur ne dépend de rien, mais le dénominateur dépend"
+" de ce que l'on compte : les seuils de 0,001 et 0,200 sont arbitraires. "
+"On peut faire baisser son PR sans mieux jouer, en prenant un refus serré "
+"pour ajouter des décisions à une course, ou en choisissant au bear-off un"
+" coup qui crée une décision de plus. Le PR pèse une erreur au videau 8 "
+"comme une erreur au videau 1 (l'équité est normalisée au videau), et une "
+"erreur au DMP comme une erreur à 0-0. Il hérite des imperfections du "
+"moteur, et l'adversaire qui crée des positions difficiles fait monter le "
+"PR de l'autre. La :ref:`perte de MWC <metrique_l7>` et la "
+":ref:`difficulté <metrique_difficulte>` répondent à ces trois défauts."
+msgstr ""
+"**Ограничения.** Числитель ни от чего не зависит, но знаменатель зависит "
+"от того, что считать: пороги 0,001 и 0,200 произвольны. PR можно снизить,"
+" не играя лучше: взяв тесный отказ, чтобы добавить решений в гонку, или "
+"выбрав при съёме ход, создающий ещё одно решение. PR оценивает ошибку при"
+" кубе 8 так же, как при кубе 1 (эквити нормализовано по кубу), и ошибку "
+"при DMP так же, как при 0-0. Он наследует недостатки движка, а соперник, "
+"создающий трудные позиции, повышает PR другого. :ref:`Потеря MWC "
+"<metrique_l7>` и :ref:`сложность <metrique_difficulte>` отвечают на эти "
+"три недостатка."
+
+#: ../../source/metriques.rst:139
+msgid ""
+"**XG et gnuBG.** Sur un fichier XG, le PR de blunderDB est celui d'XG, à "
+"la précision d'affichage près, hormis les écarts expliqués de "
+":ref:`stats_parity`. gnuBG divise la même somme par un autre nombre : "
+"chaque coup ayant plus d'un coup légal, et les décisions de videau qu'il "
+"juge proches selon sa propre fenêtre. Son taux par décision ne se compare"
+" donc pas au PR d'XG, même sur la même analyse. Le *Snowie Error Rate* "
+"(:ref:`stats_parity`) divise par tous les coups des deux joueurs : il ne "
+"dépend d'aucune règle de comptage, mais vaut environ la moitié du PR."
+msgstr ""
+"**XG и gnuBG.** Для файла XG PR blunderDB — это PR XG с точностью до "
+"отображения, за исключением расхождений, объяснённых в "
+":ref:`stats_parity`. gnuBG делит ту же сумму на другое число: каждый ход,"
+" имеющий более одного допустимого хода, и решения по кубу, которые он "
+"считает близкими по собственному окну. Его показатель на решение поэтому "
+"нельзя сравнивать с PR XG, даже по тому же анализу. *Snowie Error Rate* "
+"(:ref:`stats_parity`) делит на все ходы обоих игроков: он не зависит ни "
+"от каких правил подсчёта, но примерно вдвое меньше PR."
+
+#: ../../source/metriques.rst:152
+msgid "Perte de MWC par décision et graphique du match"
+msgstr "Потеря MWC на решение и график матча"
+
+#: ../../source/metriques.rst:154
+msgid ""
+"**La question.** Quelles décisions m'ont coûté ce match ? Le PR met "
+"toutes les erreurs sur la même échelle ; ℓ les pèse au score où elles ont"
+" été commises. Une erreur de 0,040 à 4-4 dans un match en 5 points ne "
+"coûte pas ce qu'elle coûte à 0-0 dans un match en 17. Pour l'étude, la "
+"colonne et le graphique désignent les quelques décisions qui ont décidé "
+"du match, et la courbe cumulée montre où il a basculé."
+msgstr ""
+"**Вопрос.** Какие решения стоили мне этот матч? PR ставит все ошибки на "
+"одну шкалу; ℓ взвешивает их по счёту, при котором они допущены. Ошибка "
+"0,040 при 4-4 в матче до 5 очков стоит не столько же, сколько при 0-0 в "
+"матче до 17. Для изучения столбец и график указывают несколько решений, "
+"решивших матч, а кумулятивная кривая показывает, где он переломился."
+
+#: ../../source/metriques.rst:161
+msgid ""
+"**Définition.** ℓ (:ref:`metrique_erreur`) pour chaque décision notée ; "
+"la perte d'un joueur sur le match est Σℓ sur ses décisions comptées au "
+"PR. Les non-décisions coûtent zéro : elles ne changent pas la somme."
+msgstr ""
+"**Определение.** ℓ (:ref:`metrique_erreur`) для каждого оценённого "
+"решения; потеря игрока за матч — Σℓ по его решениям, учитываемым в PR. "
+"Не-решения стоят ноль: они не меняют сумму."
+
+#: ../../source/metriques.rst:165
+#, no-python-format
+msgid ""
+"**Unité.** Un pourcentage de chances de gagner le match : 2,5 veut dire "
+"2,5 % de MWC perdus."
+msgstr ""
+"**Единица.** Процент шансов выиграть матч: 2,5 означает 2,5 % потерянного"
+" MWC."
+
+#: ../../source/metriques.rst:168
+msgid ""
+"**Lecture.** La colonne **MWC** de la transcription, la barre par "
+"décision et la courbe cumulée de chaque joueur sont décrites au "
+":ref:`panneau_matchs`. Une barre isolée haute est une décision à revoir ;"
+" une courbe qui monte régulièrement dit un match d'erreurs moyennes, pas "
+"d'accident."
+msgstr ""
+"**Чтение.** Столбец **MWC** транскрипции, полоса на решение и "
+"кумулятивная кривая каждого игрока описаны в :ref:`panneau_matchs`. "
+"Одинокая высокая полоса — решение для пересмотра; равномерно растущая "
+"кривая говорит о матче средних ошибок, а не о случайности."
+
+#: ../../source/metriques.rst:173
+msgid ""
+"**Incertitude.** ℓ est exact au regard de l'analyse : son incertitude est"
+" celle de l'analyse elle-même (profondeur, rollout ou non) et de la MET."
+msgstr ""
+"**Неопределённость.** ℓ точна относительно анализа: её неопределённость —"
+" это неопределённость самого анализа (глубина, роллаут или нет) и MET."
+
+#: ../../source/metriques.rst:176
+msgid ""
+"**Limites.** ℓ dépend de la MET : deux logiciels qui n'utilisent pas la "
+"même table ne donnent pas la même perte. Une partie d'argent n'en a pas, "
+"et une analyse calculée avec une autre MET que celle de la base reste "
+"hors des statistiques. Une décision non notée porte un tiret, jamais "
+"zéro."
+msgstr ""
+"**Ограничения.** ℓ зависит от MET: две программы, использующие разные "
+"таблицы, дают разные потери. У игры на деньги её нет, а анализ, "
+"вычисленный с другой MET, чем у базы, остаётся вне статистики. "
+"Неоценённое решение несёт прочерк, никогда не ноль."
+
+#: ../../source/metriques.rst:181
+msgid ""
+"**XG et gnuBG.** La somme est la perte de MWC qu'XG affiche pour le match"
+" : pions, doubles et réponses concordent sur les matchs de référence à la"
+" précision d'affichage d'XG (écart ≤ 0,006 point). gnuBG fait la même "
+"conversion, avec ses propres équités : sur un match qu'il a analysé, ses "
+"chiffres diffèrent de ceux d'XG par l'analyse, pas par la formule."
+msgstr ""
+"**XG и gnuBG.** Сумма — это потеря MWC, которую XG показывает за матч: "
+"фишки, удвоения и ответы совпадают на эталонных матчах с точностью "
+"отображения XG (расхождение ≤ 0,006 очка). gnuBG делает то же "
+"преобразование со своими эквити: на матче, который он проанализировал, "
+"его цифры отличаются от цифр XG анализом, а не формулой."
+
+#: ../../source/metriques.rst:191
+msgid "Perte MWC (éq. 7 pts) L₇ et Elo face au moteur"
+msgstr "Потеря MWC (экв. 7 очков) L₇ и Elo против движка"
+
+#: ../../source/metriques.rst:193
+msgid ""
+"**La question.** Combien de match ai-je perdu par mes erreurs, quelle que"
+" soit la façon de compter les décisions, et comment comparer un match en "
+"5 points à un match en 11 ? L₇ ne divise par aucun nombre de décisions : "
+"il ne se manipule pas en ajoutant des décisions faciles, et il pèse "
+"chaque erreur ce qu'elle a coûté."
+msgstr ""
+"**Вопрос.** Сколько матча я потерял из-за своих ошибок независимо от "
+"способа подсчёта решений и как сравнить матч до 5 очков с матчем до 11? "
+"L₇ не делится ни на какое число решений: её нельзя поправить добавлением "
+"лёгких решений, и она весит каждую ошибку ровно во столько, во сколько та"
+" обошлась."
+
+#: ../../source/metriques.rst:199
+msgid ""
+"**Définition.** Sous jeu parfait, les chances de gagner le match évoluent"
+" sans biais : contre un adversaire parfait, un joueur qui perd L de MWC "
+"sur le match garde q = 0,5 − L de chances. Le modèle de la formule FIBS "
+"dit qu'à force égale la perte croît comme la racine de la longueur N. L "
+"est donc ramené à un match en 7 points, la longueur de tournoi la plus "
+"courante :"
+msgstr ""
+"**Определение.** При идеальной игре шансы выиграть матч меняются без "
+"смещения: против идеального соперника игрок, потерявший за матч L MWC, "
+"сохраняет q = 0,5 − L шансов. Модель формулы FIBS говорит, что при равной"
+" силе потеря растёт как корень из длины N. Поэтому L приводится к матчу "
+"до 7 очков, самой распространённой длине турнира:"
+
+#: ../../source/metriques.rst:205
+msgid ""
+"L_7 = L \\times \\sqrt{7 / N}\n"
+"\\qquad\n"
+"L_7^\\text{agrégat} = \\sqrt{7} \\times \\frac{\\sum L}{\\sum \\sqrt{N}}"
+msgstr ""
+"L_7 = L \\times \\sqrt{7 / N}\n"
+"\\qquad\n"
+"L_7^\\text{agrégat} = \\sqrt{7} \\times \\frac{\\sum L}{\\sum \\sqrt{N}}"
+
+#: ../../source/metriques.rst:211
+msgid ""
+"L'agrégat (plusieurs matchs, un joueur, un tournoi) additionne les pertes"
+" et les racines des longueurs avant le rapport : un match en 7 points "
+"pèse plus qu'un match en 1 point, et un seul match rend sa propre valeur."
+" Sans filtre joueur, les deux sièges d'un match sont deux unités."
+msgstr ""
+"Агрегат (несколько матчей, один игрок, турнир) складывает потери и корни "
+"длин до отношения: матч до 7 очков весит больше матча до 1 очка, а один "
+"матч возвращает своё собственное значение. Без фильтра по игроку два "
+"места матча считаются двумя единицами."
+
+#: ../../source/metriques.rst:216
+msgid "**L'Elo face au moteur** inverse la formule FIBS à 7 points :"
+msgstr "**Elo против движка** обращает формулу FIBS при 7 очках:"
+
+#: ../../source/metriques.rst:218
+msgid ""
+"D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
+"0{,}5 - L_7"
+msgstr ""
+"D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
+"0{,}5 - L_7"
+
+#: ../../source/metriques.rst:222
+msgid ""
+"Linéarisé, D ≈ −3474 × L / √N. Au-delà de L₇ ≈ 49 %, q n'a plus d'inverse"
+" fini : q est plancher à 1 % (D ≥ −1509) et l'Elo est affiché « ≤ ». L₇, "
+"lui, n'a pas de plancher. Les deux classent les joueurs dans le même "
+"ordre."
+msgstr ""
+"В линеаризованном виде D ≈ −3474 × L / √N. За пределами L₇ ≈ 49 % у q нет"
+" конечного обратного значения: q ограничивается снизу 1 % (D ≥ −1509), а "
+"Elo отображается как «≤». У L₇ нижней границы нет. Оба упорядочивают "
+"игроков одинаково."
+
+#: ../../source/metriques.rst:226
+msgid ""
+"**Unité.** L₇ : un pourcentage de MWC. D : des points Elo, négatifs, "
+"l'écart attendu entre le joueur et le moteur."
+msgstr ""
+"**Единица.** L₇: процент MWC. D: очки Elo, отрицательные, ожидаемый "
+"разрыв между игроком и движком."
+
+#: ../../source/metriques.rst:229
+#, no-python-format
+msgid ""
+"**Lecture.** 12,3 % : au lieu de 50 % de chances contre le moteur, le "
+"joueur n'en avait plus que 37,7 % sur un match en 7 points. Le badge, le "
+"détail, les statistiques, le tournoi et la progression l'affichent "
+"(:ref:`Perte MWC (éq. 7 pts) <perte_mwc_7pts>`)."
+msgstr ""
+"**Чтение.** 12,3 %: вместо 50 % шансов против движка у игрока осталось "
+"лишь 37,7 % в матче до 7 очков. Значок, подробности, статистика, турнир и"
+" прогресс показывают это (:ref:`Потеря MWC (экв. 7 очков) "
+"<perte_mwc_7pts>`)."
+
+#: ../../source/metriques.rst:234
+msgid ""
+"**Incertitude.** Intervalle à 95 % par les parties pour un match, par les"
+" matchs pour un agrégat (:ref:`metrique_intervalles`), puis même "
+"transformation que la valeur. Une ligne par match des statistiques n'en a"
+" pas : c'est une seule unité ; le bilan du match porte l'intervalle par "
+"parties."
+msgstr ""
+"**Неопределённость.** 95 % интервал по партиям для матча, по матчам для "
+"агрегата (:ref:`metrique_intervalles`), затем то же преобразование, что и"
+" для значения. У строки статистики по одному матчу его нет: это одна "
+"единица; итог матча несёт интервал по партиям."
+
+#: ../../source/metriques.rst:240
+msgid ""
+"**Limites.** Le modèle en √N est approximatif sous 7 points et autour du "
+"Crawford. L₇ dépend de la MET. Une partie d'argent n'a pas de longueur, "
+"donc pas de L₇ : l'écran le dit au lieu d'afficher un nombre. Des joueurs"
+" réels perdent plus d'un demi-match, car les erreurs commises après un "
+"retournement de chance s'additionnent : l'Elo atteint alors son plancher."
+msgstr ""
+"**Ограничения.** Модель по √N приблизительна ниже 7 очков и вокруг "
+"Кроуфорда. L₇ зависит от MET. У игры на деньги нет длины, а значит, нет "
+"L₇: экран говорит об этом вместо показа числа. Реальные игроки теряют "
+"больше полматча, поскольку ошибки, сделанные после перелома шансов, "
+"складываются: тогда Elo достигает нижней границы."
+
+#: ../../source/metriques.rst:246
+msgid ""
+"**XG et gnuBG.** Pour un match en 7 points, L₇ est exactement la perte de"
+" MWC qu'affiche XG. Aucun des deux logiciels ne ramène la perte à une "
+"longueur de référence ni ne la convertit en Elo. Cet Elo mesure l'écart "
+"au moteur, pas un classement FIBS ou BMAB entre joueurs humains."
+msgstr ""
+"**XG и gnuBG.** Для матча до 7 очков L₇ — ровно та потеря MWC, которую "
+"показывает XG. Ни одна из программ не приводит потерю к эталонной длине и"
+" не переводит её в Elo. Этот Elo измеряет отрыв от движка, а не рейтинг "
+"FIBS или BMAB среди людей."
+
+#: ../../source/metriques.rst:255
+msgid "Difficulté, erreurs évitables, excès et ratio"
+msgstr "Сложность, устранимые ошибки, избыток и отношение"
+
+#: ../../source/metriques.rst:257
+#, no-python-format
+msgid ""
+"**La question.** Cette erreur était-elle pardonnable ? Une même perte de "
+"2 % est une inattention dans une position évidente, et une faute que tout"
+" bon joueur ferait dans une position où quatre coups se tiennent à "
+"quelques millièmes. Pour l'étude, la difficulté trie les fautes : les "
+"erreurs évitables (inattention, règle mal sue) se corrigent vite et "
+"passent en premier ; les pertes sur des décisions difficiles relèvent du "
+"travail de fond."
+msgstr ""
+"**Вопрос.** Была ли эта ошибка простительной? Одна и та же потеря 2 % — "
+"невнимательность в очевидной позиции и ошибка, которую сделал бы любой "
+"хороший игрок, в позиции, где четыре хода отличаются на тысячные. Для "
+"изучения сложность сортирует ошибки: устранимые ошибки (невнимательность,"
+" плохо знакомое правило) быстро исправляются и идут первыми; потери на "
+"трудных решениях — предмет основательной работы."
+
+#: ../../source/metriques.rst:264
+msgid ""
+"**Définition.** La difficulté d est la perte qu'aurait subie en moyenne, "
+"dans la même position, un **joueur de référence** qui choisit chaque "
+"option i avec une probabilité d'autant plus faible qu'elle coûte cher :"
+msgstr ""
+"**Определение.** Сложность d — это потеря, которую в среднем понёс бы в "
+"той же позиции **эталонный игрок**, выбирающий каждый вариант i с "
+"вероятностью тем меньшей, чем он дороже:"
+
+#: ../../source/metriques.rst:268
+msgid ""
+"\\pi(i) = \\frac{e^{-\\Delta_i/\\tau}}{\\sum_j e^{-\\Delta_j/\\tau}},\n"
+"\\qquad d = \\sum_i \\pi(i)\\,\\Delta_i,\n"
+"\\qquad \\tau = 0{,}025"
+msgstr ""
+"\\pi(i) = \\frac{e^{-\\Delta_i/\\tau}}{\\sum_j e^{-\\Delta_j/\\tau}},\n"
+"\\qquad d = \\sum_i \\pi(i)\\,\\Delta_i,\n"
+"\\qquad \\tau = 0{,}025"
+
+#: ../../source/metriques.rst:274
+msgid ""
+"Δᵢ est le coût de l'option i par rapport à la meilleure, en équité "
+"normalisée. Les options sont les candidats de l'analyse pour un coup de "
+"pions ; pas de double et double (contre la meilleure réponse) pour le "
+"joueur qui a le videau ; prendre et passer pour celui qui reçoit le "
+"double. d est convertie en MWC comme ℓ : les deux sont dans la même "
+"unité, et l'option jouée a pour coût exactement ℓ."
+msgstr ""
+"Δᵢ — стоимость варианта i относительно лучшего в нормализованном эквити. "
+"Варианты: кандидаты анализа для хода фишками; «без удвоения» и «удвоение»"
+" (против лучшего ответа) для игрока, владеющего кубом; «взять» и "
+"«отказаться» для получающего удвоение. d переводится в MWC так же, как ℓ:"
+" обе в одной единице, а у сыгранного варианта стоимость ровно ℓ."
+
+#: ../../source/metriques.rst:281
+#, no-python-brace-format
+msgid ""
+"τ = 0,025 est un a priori de joueur fort : sur deux options séparées de "
+"Δ, d = Δ / (1 + e^{Δ/τ}) est maximale vers Δ ≈ 0,032, entre « douteux » "
+"et « erreur » ; un écart de 0,1 ne coûte plus que 0,002 ; cinq candidats "
+"espacés de 0,01 donnent d ≈ 0,012, l'erreur moyenne d'un joueur de PR 6 "
+"environ."
+msgstr ""
+"τ = 0,025 — априорное допущение сильного игрока: для двух вариантов, "
+"разделённых Δ, d = Δ / (1 + e^{Δ/τ}) максимальна при Δ ≈ 0,032, между "
+"«сомнительным» и «ошибкой»; разрыв 0,1 стоит уже лишь 0,002; пять "
+"кандидатов с шагом 0,01 дают d ≈ 0,012, что примерно равно средней ошибке"
+" игрока с PR 6."
+
+#: ../../source/metriques.rst:286
+msgid ""
+"**Erreur évitable** : la perte atteint le seuil Erreur de la base et d ≤ "
+"ℓ / 10 — sur deux options, le joueur de référence ne la commettrait pas "
+"une fois sur dix."
+msgstr ""
+"**Устранимая ошибка**: потеря достигает порога Ошибка базы и d ≤ ℓ / 10 —"
+" при двух вариантах эталонный игрок не совершил бы её один раз из десяти."
+
+#: ../../source/metriques.rst:289
+msgid ""
+"**Excès** d'un joueur sur un match : Σ(ℓ − d), ce qu'il a perdu au-delà "
+"de la référence (négatif quand il a fait mieux)."
+msgstr ""
+"**Избыток** игрока в матче: Σ(ℓ − d), то, что он потерял сверх эталона "
+"(отрицателен, если он сыграл лучше)."
+
+#: ../../source/metriques.rst:291
+#, no-python-format
+msgid ""
+"**Ratio** : Σℓ / Σd ; 1 veut dire « joue comme la référence », 2 « perd "
+"deux fois plus ». Il n'est pas donné quand Σd < 0,5 % de MWC : sur un "
+"match trop facile il ne mesure que du bruit, l'excès reste."
+msgstr ""
+"**Отношение**: Σℓ / Σd; 1 означает «играет как эталон», 2 — «теряет вдвое"
+" больше». Оно не выдаётся при Σd < 0,5 % MWC: в слишком лёгком матче оно "
+"измеряет лишь шум, избыток остаётся."
+
+#: ../../source/metriques.rst:295
+msgid ""
+"**Ce qui compte.** Les décisions dont la perte est notée et convertie en "
+"MWC ; ailleurs la difficulté est absente, jamais nulle. Aucun seuil ne "
+"met à part une décision évidente ou forcée : sa difficulté est proche de "
+"zéro d'elle-même."
+msgstr ""
+"**Что учитывается.** Решения, потеря которых оценена и переведена в MWC; "
+"в остальных случаях сложность отсутствует, но никогда не равна нулю. "
+"Никакой порог не выделяет очевидное или вынужденное решение: его "
+"сложность близка к нулю сама по себе."
+
+#: ../../source/metriques.rst:299
+msgid "**Unité.** d et l'excès : un pourcentage de MWC. Le ratio : sans unité."
+msgstr "**Единица.** d и избыток: процент MWC. Отношение: без единицы."
+
+#: ../../source/metriques.rst:301
+msgid ""
+"**Lecture.** Une perte bien au-dessus de sa difficulté est une faute que "
+"la position n'excusait pas ; une perte proche de sa difficulté, une faute"
+" partagée. Excès et ratio corrigent le PR de la difficulté des positions "
+"rencontrées, donc en partie du style de l'adversaire "
+"(:ref:`panneau_matchs`)."
+msgstr ""
+"**Чтение.** Потеря, намного превышающая свою сложность, — ошибка, которую"
+" позиция не оправдывала; потеря, близкая к своей сложности, — общая "
+"ошибка. Избыток и отношение корректируют PR на сложность встреченных "
+"позиций, а значит, отчасти на стиль соперника (:ref:`panneau_matchs`)."
+
+#: ../../source/metriques.rst:306
+msgid ""
+"**Incertitude.** Sur un match, excès et ratio reposent sur peu de "
+"décisions et varient beaucoup : une tendance, pas un classement."
+msgstr ""
+"**Неопределённость.** В матче избыток и отношение опираются на немного "
+"решений и сильно колеблются: это тенденция, а не рейтинг."
+
+#: ../../source/metriques.rst:309
+msgid ""
+"**Limites.** La difficulté dépend d'un modèle de joueur et de τ, fixés "
+"une fois : les changer change tous les chiffres. Elle ne connaît que les "
+"candidats que l'analyse a gardés (quelques-uns chez XG, selon ses filtres"
+" chez gnuBG) : les options absentes ne pèsent rien, et d est alors un "
+"minorant. Elle hérite de l'erreur de l'analyse, surtout à faible "
+"profondeur."
+msgstr ""
+"**Ограничения.** Сложность зависит от модели игрока и τ, заданных один "
+"раз: их изменение меняет все числа. Она знает лишь кандидатов, "
+"сохранённых анализом (несколько у XG, по его фильтрам у gnuBG): "
+"отсутствующие варианты ничего не весят, и d тогда является нижней "
+"оценкой. Она наследует ошибку анализа, особенно при малой глубине."
+
+#: ../../source/metriques.rst:315
+msgid ""
+"**XG et gnuBG.** Ni l'un ni l'autre ne calcule de difficulté. L'idée "
+"vient des indices de vraisemblance des échecs (Regan) ; τ n'est pas "
+"étalonné sur une population de joueurs."
+msgstr ""
+"**XG и gnuBG.** Ни тот, ни другой не вычисляют сложность. Идея взята из "
+"индексов правдоподобия в шахматах (Regan); τ не откалибрована по "
+"популяции игроков."
+
+#: ../../source/metriques.rst:323
+msgid "Intervalles à 95 %"
+msgstr "95 % интервалы"
+
+#: ../../source/metriques.rst:325
+msgid ""
+"**La question.** Ce chiffre dit-il quelque chose, ou est-ce du bruit ? Un"
+" PR de 4,2 sur un match et un PR de 4,2 sur quarante matchs ne valent pas"
+" la même chose. L'intervalle évite de bâtir un plan de travail sur une "
+"case qui ne repose sur rien, et de lire un rang dans un match isolé."
+msgstr ""
+"**Вопрос.** Говорит ли это число что-то или это шум? PR 4,2 в одном матче"
+" и PR 4,2 в сорока матчах стоят не одно и то же. Интервал позволяет не "
+"строить план работы на ячейке, которая ни на чём не основана, и не читать"
+" рейтинг по отдельному матчу."
+
+#: ../../source/metriques.rst:330
+msgid ""
+"**Définition.** L'intervalle rééchantillonne la plus grande unité "
+"indépendante : les **parties** d'un match, les **matchs** d'un agrégat "
+"(PR global, cases par phase, plan de jeu, étiquette et score, L₇ d'un "
+"agrégat). Les parties d'un même match partagent adversaire, séance et "
+"fatigue : les rééchantillonner séparément dans un agrégat rétrécirait "
+"l'intervalle à tort. Sans filtre joueur, les deux sièges d'un match "
+"forment une seule unité, car ils jouent les mêmes positions."
+msgstr ""
+"**Определение.** Интервал ресэмплирует наибольшую независимую единицу: "
+"**партии** матча, **матчи** агрегата (общий PR, ячейки по фазам, план "
+"игры, ярлык и счёт, L₇ агрегата). Партии одного матча делят соперника, "
+"сессию и усталость: ресэмплировать их отдельно в агрегате значило бы "
+"ошибочно сужать интервал. Без фильтра по игроку два места матча образуют "
+"одну единицу, поскольку играют те же позиции."
+
+#: ../../source/metriques.rst:338
+msgid ""
+"**La formule.** Pour un rapport R = Σeᵤ / Σnᵤ sur G unités (eᵤ la somme "
+"des erreurs, nᵤ le nombre de décisions de l'unité), la variance du "
+"bootstrap est calculée, sans tirage :"
+msgstr ""
+"**Формула.** Для отношения R = Σeᵤ / Σnᵤ по G единицам (eᵤ — сумма "
+"ошибок, nᵤ — число решений единицы) дисперсия бутстрепа вычисляется без "
+"выборок:"
+
+#: ../../source/metriques.rst:342
+msgid ""
+"\\widehat{\\mathrm{Var}}(R) = \\frac{G}{G-1} \\cdot\n"
+"\\frac{\\sum_u (e_u - R\\,n_u)^2}{\\left(\\sum_u n_u\\right)^2}"
+msgstr ""
+"\\widehat{\\mathrm{Var}}(R) = \\frac{G}{G-1} \\cdot\n"
+"\\frac{\\sum_u (e_u - R\\,n_u)^2}{\\left(\\sum_u n_u\\right)^2}"
+
+#: ../../source/metriques.rst:347
+msgid ""
+"et l'intervalle vaut R ± 1,96 × √Var, la borne basse jamais sous 0, puis "
+"la même transformation que la valeur (× 500 pour le PR). Le L₇ d'un "
+"agrégat suit la même règle, L à la place de e et √N à la place de n ; "
+"celui d'un match est une somme sur ses G parties, de variance G/(G−1) × "
+"Σ(l_g − l̄)², l_g la perte de la partie g. Le calcul est déterministe : "
+"la même base donne toujours le même intervalle, sur les deux moteurs de "
+"stockage."
+msgstr ""
+"а интервал равен R ± 1,96 × √Var, нижняя граница никогда не ниже 0, затем"
+" то же преобразование, что и для значения (× 500 для PR). L₇ агрегата "
+"следует тому же правилу, с L вместо e и √N вместо n; у матча это сумма по"
+" его G партиям с дисперсией G/(G−1) × Σ(l_g − l̄)², где l_g — потеря "
+"партии g. Вычисление детерминировано: одна и та же база всегда даёт один "
+"и тот же интервал на обоих движках хранения."
+
+#: ../../source/metriques.rst:355
+msgid ""
+"**Ce qu'il faut.** Au moins **trois unités** et une largeur non nulle. "
+"Avec deux, la dispersion repose sur un seul degré de liberté et "
+"l'intervalle serait plusieurs fois trop étroit ; des unités toutes au "
+"même rapport disent qu'elles s'accordent, pas que la valeur est exacte. "
+"Sans intervalle, la case est grisée, son effectif visible (:ref:`stats`)."
+msgstr ""
+"**Что нужно.** Не менее **трёх единиц** и ненулевая ширина. При двух "
+"разброс опирается на одну степень свободы, и интервал был бы в несколько "
+"раз слишком узким; единицы с одинаковым отношением говорят, что они "
+"согласуются, а не что значение точно. Без интервала ячейка выделена "
+"серым, её объём виден (:ref:`stats`)."
+
+#: ../../source/metriques.rst:361
+msgid ""
+"**Lecture.** Deux intervalles qui se chevauchent largement ne départagent"
+" rien. Une famille dont l'intervalle reste au-dessus de votre PR global "
+"est une faiblesse établie."
+msgstr ""
+"**Чтение.** Два сильно перекрывающихся интервала ничего не разделяют. "
+"Семейство, интервал которого остаётся выше вашего общего PR, — "
+"установленная слабость."
+
+#: ../../source/metriques.rst:365
+msgid ""
+"**Limites.** L'approximation normale est grossière sur peu d'unités, et "
+"les erreurs ont une distribution asymétrique (quelques grosses fautes) : "
+"avec trois ou quatre unités, l'intervalle est indicatif."
+msgstr ""
+"**Ограничения.** Нормальное приближение грубо при малом числе единиц, а "
+"ошибки распределены асимметрично (несколько крупных ошибок): при "
+"трёх-четырёх единицах интервал носит ориентировочный характер."
+
+#: ../../source/metriques.rst:369
+msgid "**XG et gnuBG.** Aucun des deux ne donne d'intervalle."
+msgstr "**XG и gnuBG.** Ни тот, ни другой интервал не дают."
+
+#: ../../source/metriques.rst:375
+msgid "Bilan du match"
+msgstr "Итог матча"
+
+#: ../../source/metriques.rst:377
+msgid ""
+"**La question.** Après un match : qu'est-ce que je revois, ai-je perdu à "
+"cause des dés ou du jeu, et mes erreurs viennent-elles de la "
+"précipitation ou d'une lacune ? Les écrans : :ref:`bilan du match "
+"<bilan_match>`."
+msgstr ""
+"**Вопрос.** После матча: что мне пересмотреть, проиграл ли я из-за "
+"кубиков или из-за игры, и происходят ли мои ошибки от спешки или от "
+"пробела в знаниях? Экраны: :ref:`итог матча <bilan_match>`."
+
+#: ../../source/metriques.rst:381
+msgid ""
+"**Trois décisions à revoir.** Parmi les erreurs du joueur (seuil de la "
+"base) dont la perte est chiffrée, les trois de plus grande **part "
+"évitable** ℓ − d = ℓ × (1 − d/ℓ), positive : la perte multipliée par son "
+"caractère évitable. Une difficulté inconnue compte zéro ; à égalité, la "
+"plus grosse perte, puis l'ordre du match. Une erreur que le joueur de "
+"référence ferait aussi ne vaut pas une séance."
+msgstr ""
+"**Три решения для пересмотра.** Среди ошибок игрока (порог базы), потеря "
+"которых оценена, три с наибольшей **устранимой частью** ℓ − d = ℓ × (1 − "
+"d/ℓ), положительной: потеря, умноженная на её устранимость. Неизвестная "
+"сложность считается нулём; при равенстве — большая потеря, затем порядок "
+"в матче. Ошибка, которую сделал бы и эталонный игрок, не стоит занятия."
+
+#: ../../source/metriques.rst:388
+msgid ""
+"**Résultat ajusté de la chance**, pour un match terminé, en points de MWC"
+" du joueur :"
+msgstr ""
+"**Результат с поправкой на удачу** для завершённого матча, в очках MWC "
+"игрока:"
+
+#: ../../source/metriques.rst:391
+#, no-python-brace-format
+msgid ""
+"A = R - C, \\quad R = \\text{issue} - \\mathrm{MWC}_\\text{départ}, "
+"\\quad\n"
+"C = \\sum \\text{chance de ses jets} - \\sum \\text{chance des jets "
+"adverses}"
+msgstr ""
+"A = R - C, \\quad R = \\text{issue} - \\mathrm{MWC}_\\text{départ}, "
+"\\quad\n"
+"C = \\sum \\text{chance de ses jets} - \\sum \\text{chance des jets "
+"adverses}"
+
+#: ../../source/metriques.rst:396
+msgid ""
+"L'issue vaut 1 gagné, 0 perdu ; la MWC de départ est celle du score "
+"initial (50 % à 0-0). Chaque jet est converti en MWC comme une perte, au "
+"score et au videau de sa position. Sous jeu parfait, l'espérance de A est"
+" la perte de l'adversaire moins la vôtre : le bilan donne l'*écart des "
+"erreurs* à côté pour recouper. A > 0 sur un match perdu : perdu par les "
+"dés ; A < 0 : perdu par le jeu. La chance est celle que l'analyseur a "
+"écrite (:ref:`stats_parity`) : sans chance, pas de ligne, et la "
+"couverture (jets mesurés sur jets joués) est affichée, car une chance "
+"partielle biaise A. Pas de ligne non plus pour une partie d'argent ou un "
+"match inachevé."
+msgstr ""
+"Исход равен 1 при выигрыше, 0 при проигрыше; стартовая MWC — для "
+"начального счёта (50 % при 0-0). Каждый бросок переводится в MWC как "
+"потеря, при счёте и кубе его позиции. При идеальной игре математическое "
+"ожидание A равно потере соперника минус ваша: итог показывает рядом "
+"*разность ошибок* для сверки. A > 0 в проигранном матче: проигран из-за "
+"кубиков; A < 0: проигран из-за игры. Удача — та, что записал анализатор "
+"(:ref:`stats_parity`): без удачи строки нет, а покрытие (измеренные "
+"броски из сыгранных) показывается, так как частичная удача смещает A. "
+"Строки нет и для игры на деньги или незавершённого матча."
+
+#: ../../source/metriques.rst:406
+msgid ""
+"**Erreurs précipitées et réfléchies.** Par joueur et par type (pions, "
+"videau), le seuil est la médiane des durées connues de ses décisions "
+"chiffrées de ce type dans le match : une erreur jouée plus vite est "
+"précipitée, les autres réfléchies. La médiane est la sienne, dans ce "
+"match : elle ne dépend pas de la cadence, et sans lien entre vitesse et "
+"erreur les erreurs se partagent moitié-moitié. Une majorité précipitée "
+"appelle de la discipline ; une majorité réfléchie, de la connaissance."
+msgstr ""
+"**Спешные и обдуманные ошибки.** По игроку и по типу (фишки, куб) порогом"
+" служит медиана известных длительностей его оценённых решений этого типа "
+"в матче: ошибка, сыгранная быстрее, считается спешной, остальные — "
+"обдуманными. Медиана своя, в этом матче: она не зависит от темпа, а без "
+"связи скорости с ошибкой ошибки делятся пополам. Спешное большинство "
+"требует дисциплины; обдуманное — знаний."
+
+#: ../../source/metriques.rst:414
+msgid ""
+"**Limites.** Un match est un petit échantillon : PR et L₇ y portent leur "
+"intervalle par parties (trois parties au moins). Le résultat ajusté "
+"dépend de la MET et de la chance du fichier. La durée n'existe que pour "
+"un match qui l'a gardée (un match joué contre un bot)."
+msgstr ""
+"**Ограничения.** Матч — небольшая выборка: PR и L₇ несут здесь интервал "
+"по партиям (не менее трёх партий). Результат с поправкой зависит от MET и"
+" от удачи в файле. Длительность существует только для матча, который её "
+"сохранил (матч против бота)."
+
+#: ../../source/metriques.rst:419
+msgid ""
+"**XG et gnuBG.** XG et gnuBG affichent la chance totale de chaque joueur,"
+" mais ni résultat ajusté en MWC, ni sélection des décisions à revoir, ni "
+"partage par la durée."
+msgstr ""
+"**XG и gnuBG.** XG и gnuBG показывают общую удачу каждого игрока, но не "
+"результат с поправкой в MWC, не отбор решений для пересмотра и не "
+"разделение по длительности."
+
+#: ../../source/metriques.rst:427
+msgid "Plan d'étude"
+msgstr "План изучения"
+
+#: ../../source/metriques.rst:429
+msgid ""
+"**La question.** Que dois-je travailler maintenant ? Classer ses erreurs "
+"par coût dit où l'on a le plus perdu, pas où l'étude rapporte le plus : "
+"une famille de positions réellement difficiles coûte à tout le monde, et "
+"trois erreurs ne font pas une tendance. Les écrans : :ref:`plan_etude`."
+msgstr ""
+"**Вопрос.** Над чем мне работать сейчас? Ранжирование ошибок по стоимости"
+" говорит, где проиграно больше всего, а не где изучение даёт больше "
+"всего: семейство действительно трудных позиций стоит всем, а три ошибки "
+"не образуют тенденции. Экраны: :ref:`plan_etude`."
+
+#: ../../source/metriques.rst:434
+msgid ""
+"**Définition.** Une **famille** est un triplet (plan de jeu, nature de la"
+" décision, thème) des erreurs récurrentes ; ses membres sont les erreurs "
+"du filtre, décisions comptées qui coûtent au moins le seuil Erreur. Une "
+"erreur sans thème n'entre dans aucune famille. Un membre est **chiffré** "
+"s'il porte ℓ et d ; une erreur en partie d'argent est comptée « non "
+"chiffrée » et n'entre dans aucune priorité."
+msgstr ""
+"**Определение.** **Семейство** — тройка (план игры, характер решения, "
+"тема) повторяющихся ошибок; его члены — ошибки фильтра, учитываемые "
+"решения, стоящие не меньше порога Ошибка. Ошибка без темы не входит ни в "
+"какое семейство. Член **оценён**, если несёт ℓ и d; ошибка в игре на "
+"деньги считается «неоценённой» и не входит ни в какой приоритет."
+
+#: ../../source/metriques.rst:441
+msgid "**La formule.** Le **MWC récupérable** et son intervalle :"
+msgstr "**Формула.** **Возвращаемый MWC** и его интервал:"
+
+#: ../../source/metriques.rst:443
+#, no-python-brace-format
+msgid ""
+"R = \\sum_i (\\ell_i - d_i), \\qquad\n"
+"R \\pm 1{,}96 \\sqrt{\\textstyle\\sum_i (\\ell_i - d_i)^2}"
+msgstr ""
+"R = \\sum_i (\\ell_i - d_i), \\qquad\n"
+"R \\pm 1{,}96 \\sqrt{\\textstyle\\sum_i (\\ell_i - d_i)^2}"
+
+#: ../../source/metriques.rst:448
+msgid ""
+"R est la fréquence de la famille multipliée par sa perte moyenne au-delà "
+"de la difficulté : ce qu'on regagnerait en jouant ces positions comme le "
+"joueur de référence. La somme est signée, sans écrêtage. L'intervalle "
+"traite le nombre de membres comme un comptage de Poisson."
+msgstr ""
+"R — частота семейства, умноженная на его среднюю потерю сверх сложности: "
+"то, что вернули бы, играя эти позиции как эталонный игрок. Сумма "
+"знаковая, без отсечения. Интервал рассматривает число членов как "
+"пуассоновский счёт."
+
+#: ../../source/metriques.rst:453
+msgid ""
+"**Ce qui entre au plan.** Au moins **5 membres chiffrés** et une **borne "
+"basse strictement positive**. Le plan est classé par borne basse "
+"décroissante : à récupérable égal, la famille la mieux établie passe "
+"devant. Les autres sont « à confirmer », sans rang."
+msgstr ""
+"**Что входит в план.** Не менее **5 оценённых членов** и **строго "
+"положительная нижняя граница**. План упорядочен по убыванию нижней "
+"границы: при равном возвращаемом лучше установленное семейство идёт "
+"впереди. Остальные — «требуют подтверждения», без ранга."
+
+#: ../../source/metriques.rst:458
+msgid "**Unité.** Un pourcentage de MWC, cumulé sur le filtre."
+msgstr "**Единица.** Процент MWC, накопленный по фильтру."
+
+#: ../../source/metriques.rst:460
+msgid ""
+"**Lecture.** Une famille d'erreurs évitables monte ; une famille de "
+"positions où tout le monde se trompe descend. Un nouveau joueur voit "
+"d'abord des familles « à confirmer » : le plan ne pousse pas vers du "
+"bruit."
+msgstr ""
+"**Чтение.** Семейство устранимых ошибок поднимается; семейство позиций, "
+"где ошибаются все, опускается. Новый игрок сначала видит семейства "
+"«требуют подтверждения»: план не толкает к шуму."
+
+#: ../../source/metriques.rst:464
+msgid ""
+"**Limites.** Le thème vient du classificateur de blunderDB : une erreur "
+"mal classée tombe dans une mauvaise famille, une erreur sans thème n'est "
+"dans aucune. R hérite des limites de ℓ et d (MET, troncature des "
+"candidats)."
+msgstr ""
+"**Ограничения.** Тема берётся из классификатора blunderDB: неверно "
+"классифицированная ошибка попадает в неверное семейство, ошибка без темы "
+"не входит ни в одно. R наследует ограничения ℓ и d (MET, усечение "
+"кандидатов)."
+
+#: ../../source/metriques.rst:468
+msgid "**XG et gnuBG.** Ni l'un ni l'autre ne propose de plan d'étude."
+msgstr "**XG и gnuBG.** Ни тот, ни другой не предлагают плана изучения."
+
+#: ../../source/metriques.rst:474
+msgid "Positions de référence"
+msgstr "Эталонные позиции"
+
+#: ../../source/metriques.rst:476
+msgid ""
+"**La question.** Quelles positions mettre dans une collection pour "
+"travailler le plan ? Les dix pires erreurs donnent souvent dix variantes "
+"d'un même problème. Une bonne position de référence est au centre de "
+"beaucoup de vos erreurs évitables, porte une leçon nette et n'est pas "
+"déjà étudiée. Les écrans : :ref:`positions de référence "
+"<positions_reference>`."
+msgstr ""
+"**Вопрос.** Какие позиции положить в коллекцию, чтобы проработать план? "
+"Десять худших ошибок часто дают десять вариантов одной и той же проблемы."
+" Хорошая эталонная позиция находится в центре многих ваших устранимых "
+"ошибок, несёт ясный урок и ещё не изучалась. Экраны: :ref:`эталонные "
+"позиции <positions_reference>`."
+
+#: ../../source/metriques.rst:482
+msgid ""
+"**Définition.** Les candidates sont les erreurs chiffrées et thématisées "
+"du filtre, réunies par position ; l'excès d'une position est la somme des"
+" excès positifs ℓ − d de ses erreurs. Deux candidates d'une même famille "
+"— et, pour le videau, du même score — sont **voisines** à au plus ρ = 12 "
+"pions-pas de distance ``like`` (un coup de dés en vaut 8 à 16)."
+msgstr ""
+"**Определение.** Кандидаты — оценённые тематические ошибки фильтра, "
+"сведённые по позициям; избыток позиции — сумма положительных избытков ℓ −"
+" d её ошибок. Две кандидатки одного семейства — а для куба и одного счёта"
+" — являются **соседними** на расстоянии не более ρ = 12 пип-шагов "
+"``like`` (один бросок кубиков стоит 8–16)."
+
+#: ../../source/metriques.rst:488
+msgid "**La formule.** Le gain d'une candidate p est"
+msgstr "**Формула.** Выигрыш кандидатки p равен"
+
+#: ../../source/metriques.rst:490
+msgid ""
+"G(p) = c(p) \\times \\sum_{q \\,\\in\\, \\text{voisinage}(p),\\ q\\ "
+"\\text{non couverte}} \\text{excès}(q)"
+msgstr ""
+"G(p) = c(p) \\times \\sum_{q \\,\\in\\, \\text{voisinage}(p),\\ q\\ "
+"\\text{non couverte}} \\text{excès}(q)"
+
+#: ../../source/metriques.rst:494
+msgid ""
+"en fraction de MWC : la représentativité, la fréquence et le coût "
+"évitable en une seule quantité. c(p) part de 1 et est multiplié par ½ si "
+"la leçon est **serrée** (le second choix coûte moins de la moitié du "
+"seuil Erreur), et encore par ½ si elle est **instable** (une autre "
+"profondeur d'analyse du videau ou un rollout rend un autre verdict) : ¼ "
+"quand les deux se cumulent. Un rollout qui confirme ne relève rien : il "
+"départage à gain égal."
+msgstr ""
+"в доле MWC: репрезентативность, частота и устранимая стоимость в одной "
+"величине. c(p) начинается с 1 и умножается на ½, если урок **узкий** "
+"(вторая по качеству опция стоит меньше половины порога Ошибка), и ещё на "
+"½, если он **нестабилен** (другая глубина анализа куба или роллаут даёт "
+"иной вердикт): ¼, когда оба условия совпадают. Подтверждающий роллаут "
+"ничего не повышает: он разделяет при равном выигрыше."
+
+#: ../../source/metriques.rst:502
+msgid ""
+"**Sélection.** Gloutonne par gain marginal : chaque position retenue "
+"couvre ses voisines, qui ne rapportent plus rien aux suivantes, et ses "
+"quasi-doublons sont écartés même hors de sa famille. Une position déjà "
+"traitée (commentaire, carte Anki, collection, marque « étudiée ») n'est "
+"jamais proposée et compte comme déjà retenue."
+msgstr ""
+"**Отбор.** Жадный по предельному выигрышу: каждая выбранная позиция "
+"покрывает своих соседок, которые больше ничего не дают следующим, а её "
+"почти-дубликаты отбрасываются даже вне её семейства. Позиция, уже "
+"проработанная (комментарий, карточка Anki, коллекция, отметка «изучена»),"
+" никогда не предлагается и считается уже выбранной."
+
+#: ../../source/metriques.rst:508
+msgid "**Unité.** Le MWC couvert, en pourcentage."
+msgstr "**Единица.** Покрытый MWC, в процентах."
+
+#: ../../source/metriques.rst:510
+msgid ""
+"**Limites.** Le rayon et les facteurs sont fixés, pas appris. La distance"
+" ``like`` compare des structures de pions, pas des idées : deux positions"
+" de même leçon mais de structure éloignée ne se couvrent pas."
+msgstr ""
+"**Ограничения.** Радиус и множители заданы, а не обучены. Расстояние "
+"``like`` сравнивает структуры фишек, а не идеи: две позиции с одним "
+"уроком, но далёкой структурой не покрывают друг друга."
+
+#: ../../source/metriques.rst:514 ../../source/metriques.rst:555
+#: ../../source/metriques.rst:635
+msgid "**XG et gnuBG.** Pas d'équivalent."
+msgstr "**XG и gnuBG.** Аналога нет."
+
+#: ../../source/metriques.rst:520
+msgid "Avant/après l'étude"
+msgstr "До и после изучения"
+
+#: ../../source/metriques.rst:522
+msgid ""
+"**La question.** Ce que j'ai travaillé me coûte-t-il moins en match réel "
+"? Sans mesure, l'étude se juge à l'impression ; une famille qui ne bouge "
+"pas malgré le travail dit qu'il faut changer de méthode. Les écrans : "
+":ref:`avant_apres_etude`."
+msgstr ""
+"**Вопрос.** Стоит ли мне то, над чем я работал, меньше в реальном матче? "
+"Без измерения изучение оценивается по ощущениям; семейство, которое не "
+"сдвигается несмотря на работу, говорит, что нужно менять метод. Экраны: "
+":ref:`avant_apres_etude`."
+
+#: ../../source/metriques.rst:527
+msgid ""
+"**Définition.** Une famille du plan est **étudiée** au jour (UTC) de la "
+"première action d'étude sur l'une de ses positions : marque « étudiée », "
+"révision Anki quelle que soit la note, réponse de quiz. Créer une carte "
+"ou ranger une position en collection n'en est pas une. Fenêtre *avant* : "
+"les matchs datés strictement avant ce jour ; *après* : strictement après "
+"; le jour même et les matchs sans date sont écartés."
+msgstr ""
+"**Определение.** Семейство плана считается **изученным** в день (UTC) "
+"первого учебного действия над одной из его позиций: отметка «изучена», "
+"повторение Anki с любой оценкой, ответ в тесте. Создание карточки или "
+"помещение позиции в коллекцию таковым не является. Окно *до*: матчи с "
+"датой строго раньше этого дня; *после*: строго позже; сам день и матчи "
+"без даты отбрасываются."
+
+#: ../../source/metriques.rst:534
+msgid ""
+"**La formule.** Dans chaque fenêtre, le taux de perte r = Σℓ / N : ℓ les "
+"pertes des erreurs de la famille, N les décisions comptées en match du "
+"même plan de jeu et de la même nature (le thème n'existe que pour une "
+"erreur). Le gain et son intervalle :"
+msgstr ""
+"**Формула.** В каждом окне показатель потери r = Σℓ / N: ℓ — потери "
+"ошибок семейства, N — решения, учитываемые в матче, того же плана игры и "
+"того же характера (тема существует только у ошибки). Выигрыш и его "
+"интервал:"
+
+#: ../../source/metriques.rst:539
+msgid ""
+"\\Delta = r_\\text{avant} - r_\\text{après}, \\qquad\n"
+"\\Delta \\pm 1{,}96 \\sqrt{\\frac{\\sum "
+"\\ell^2_\\text{avant}}{N^2_\\text{avant}}\n"
+"+ \\frac{\\sum \\ell^2_\\text{après}}{N^2_\\text{après}}}"
+msgstr ""
+"\\Delta = r_\\text{avant} - r_\\text{après}, \\qquad\n"
+"\\Delta \\pm 1{,}96 \\sqrt{\\frac{\\sum "
+"\\ell^2_\\text{avant}}{N^2_\\text{avant}}\n"
+"+ \\frac{\\sum \\ell^2_\\text{après}}{N^2_\\text{après}}}"
+
+#: ../../source/metriques.rst:545
+msgid ""
+"**Verdict.** Au moins **30 décisions** dans chaque fenêtre, sinon « "
+"insuffisant ». « En progrès » si la borne basse de Δ est positive, « en "
+"recul » si la borne haute est négative, « indéterminé » sinon."
+msgstr ""
+"**Вердикт.** Не менее **30 решений** в каждом окне, иначе «недостаточно»."
+" «Прогресс», если нижняя граница Δ положительна, «регресс», если верхняя "
+"граница отрицательна, «неопределённо» в остальных случаях."
+
+#: ../../source/metriques.rst:549
+msgid "**Unité.** Points de MWC pour 100 décisions."
+msgstr "**Единица.** Очки MWC на 100 решений."
+
+#: ../../source/metriques.rst:551
+msgid ""
+"**Limites.** Un changement, pas un effet. Une famille est étudiée *parce "
+"qu'elle* coûtait : la régression vers la moyenne gonfle le gain. Rien ne "
+"contrôle les adversaires, le format ni les dés."
+msgstr ""
+"**Ограничения.** Изменение, а не эффект. Семейство изучается *потому что*"
+" оно стоило: регрессия к среднему завышает выигрыш. Ничто не контролирует"
+" соперников, формат и кубики."
+
+#: ../../source/metriques.rst:561
+msgid "Biais signés"
+msgstr "Знаковые смещения"
+
+#: ../../source/metriques.rst:563
+msgid ""
+"**La question.** Dans quel sens est-ce que je me trompe ? « Vous prenez "
+"trop » se corrige mieux qu'un PR : la règle à revoir est nommée. Les "
+"écrans : :ref:`biais_signes`."
+msgstr ""
+"**Вопрос.** В какую сторону я ошибаюсь? «Вы берёте слишком много» "
+"исправляется лучше, чем PR: правило для пересмотра названо. Экраны: "
+":ref:`biais_signes`."
+
+#: ../../source/metriques.rst:567
+msgid ""
+"**La formule.** Chaque décision comptée porte x = +1 (erreur par excès "
+"d'audace), −1 (par excès de prudence) ou 0. Avec P et M les deux comptes "
+"sur N décisions :"
+msgstr ""
+"**Формула.** Каждое учитываемое решение несёт x = +1 (ошибка от избытка "
+"смелости), −1 (от избытка осторожности) или 0. Если P и M — два счёта по "
+"N решениям:"
+
+#: ../../source/metriques.rst:571
+msgid ""
+"B = \\frac{P - M}{N}, \\qquad\n"
+"B \\pm 1{,}96 \\sqrt{\\frac{(P + M)/N - B^2}{N}}"
+msgstr ""
+"B = \\frac{P - M}{N}, \\qquad\n"
+"B \\pm 1{,}96 \\sqrt{\\frac{(P + M)/N - B^2}{N}}"
+
+#: ../../source/metriques.rst:576
+msgid ""
+"Au moins **20 décisions** ; « trop » si la borne basse est positive, « "
+"pas assez » si la borne haute est négative, « équilibré » sinon. Le coût "
+"de P et de M (en mpt) accompagne les comptes. Le signe et le coût sont "
+"ceux du coup joué dans son match."
+msgstr ""
+"Не менее **20 решений**; «слишком» если нижняя граница положительна, "
+"«недостаточно» если верхняя граница отрицательна, «сбалансировано» в "
+"остальных случаях. Стоимость P и M (в mpt) сопровождает счета. Знак и "
+"стоимость — у хода, сыгранного в своём матче."
+
+#: ../../source/metriques.rst:581
+msgid ""
+"**Prise / refus** : sur les réponses au videau ; P = prises fautives, M ="
+" refus fautifs. B est exactement votre taux de prise moins celui du bot "
+"sur les mêmes positions."
+msgstr ""
+"**Взятие / отказ**: по ответам на куб; P = ошибочные взятия, M = "
+"ошибочные отказы. B — ровно ваша частота взятий минус частота бота в тех "
+"же позициях."
+
+#: ../../source/metriques.rst:584
+msgid ""
+"**Doubles** : sur les décisions de videau du porteur comptées au PR ; P ="
+" doubles prématurés (pas de double, ou trop bon), M = doubles manqués. Le"
+" biais est aussi donné par case de score (vos points restants, ceux de "
+"l'adversaire ; post-Crawford compté à 1 ; la partie d'argent à part)."
+msgstr ""
+"**Удвоения**: по решениям по кубу владельца, учитываемым в PR; P = "
+"преждевременные удвоения (без удвоения или слишком хорошо), M = "
+"пропущенные удвоения. Смещение даётся также по ячейкам счёта (ваши "
+"оставшиеся очки, очки соперника; пост-Кроуфорд считается за 1; игра на "
+"деньги отдельно)."
+
+#: ../../source/metriques.rst:588
+msgid ""
+"**Blots** : sur les coups de pions avec contact ; x est le signe de (vos "
+"blots après le coup joué − vos blots après le meilleur coup). Un coup est"
+" reconnu par le plateau qu'il laisse ; un coup introuvable sort du "
+"compte, et sa part est affichée."
+msgstr ""
+"**Блоты**: по ходам фишками с контактом; x — знак (ваши блоты после "
+"сыгранного хода − ваши блоты после лучшего хода). Ход распознаётся по "
+"оставляемой им доске; ненайденный ход исключается из подсчёта, а его доля"
+" показывается."
+
+#: ../../source/metriques.rst:593
+msgid "**Unité.** Une différence de proportions, sans unité."
+msgstr "**Единица.** Разность долей, без единицы."
+
+#: ../../source/metriques.rst:595
+msgid ""
+"**Limites.** La plupart des cases de score restent muettes : c'est la "
+"réponse honnête. Le biais des blots compte les blots sans peser leur "
+"exposition, et les coups écartés ne sont pas un tirage neutre."
+msgstr ""
+"**Ограничения.** Большинство ячеек счёта остаются немыми: это честный "
+"ответ. Смещение по блотам считает блоты, не взвешивая их уязвимость, а "
+"отброшенные ходы не являются нейтральной выборкой."
+
+#: ../../source/metriques.rst:599
+msgid ""
+"**XG et gnuBG.** Pas d'équivalent ; XG et gnuBG comptent les erreurs de "
+"videau par type (double manqué, prise fautive…) sans intervalle ni "
+"verdict."
+msgstr ""
+"**XG и gnuBG.** Аналога нет; XG и gnuBG считают ошибки куба по типам "
+"(пропущенное удвоение, ошибочное взятие…) без интервала и вердикта."
+
+#: ../../source/metriques.rst:606
+msgid "Bilan du tournoi"
+msgstr "Итог турнира"
+
+#: ../../source/metriques.rst:608
+msgid ""
+"**La question.** Ai-je joué à mon niveau, et sinon, où cela a-t-il cédé :"
+" les dernières rondes, les longues fins de match, les scores où un point "
+"décide, la pendule ? Les écrans : :ref:`bilan du tournoi "
+"<bilan_tournoi>`."
+msgstr ""
+"**Вопрос.** Играл ли я на своём уровне, а если нет, где он просел: в "
+"последних раундах, в длинных концовках матчей, при счётах, где решает "
+"одно очко, в цейтноте? Экраны: :ref:`итог турнира <bilan_tournoi>`."
+
+#: ../../source/metriques.rst:612
+msgid ""
+"**Définition.** Le **niveau habituel** est le joueur sur ses matchs en "
+"points des **365 jours** qui précèdent le tournoi (sa date, à défaut "
+"celle de son premier match), ceux du tournoi exclus ; il faut au moins "
+"**5 matchs**. Le tournoi et le niveau habituel ont chacun leur PR et leur"
+" L₇, avec l'intervalle par matchs (:ref:`metrique_intervalles`)."
+msgstr ""
+"**Определение.** **Обычный уровень** — это игрок по его матчам до очков "
+"за **365 дней**, предшествующих турниру (его дата, а при её отсутствии "
+"дата его первого матча), без матчей самого турнира; нужно не менее **5 "
+"матчей**. У турнира и обычного уровня есть свои PR и L₇ с интервалом по "
+"матчам (:ref:`metrique_intervalles`)."
+
+#: ../../source/metriques.rst:618
+msgid ""
+"**La formule.** Δ = tournoi − habituel, d'écart-type √(σₜ² + σₕ²), chaque"
+" σ lu sur la demi-largeur haute de son intervalle. « Moins bien » si la "
+"borne basse de Δ est positive, « mieux » si sa borne haute est négative, "
+"« dans l'habitude » sinon. Le verdict demande un intervalle et au moins "
+"**20 décisions** de chaque côté ; sinon « insuffisant », chiffres "
+"visibles."
+msgstr ""
+"**Формула.** Δ = турнир − обычный, со стандартным отклонением √(σₜ² + "
+"σₕ²), каждое σ считывается по верхней полуширине своего интервала. "
+"«Хуже», если нижняя граница Δ положительна, «лучше», если верхняя "
+"отрицательна, «в норме» в остальных случаях. Вердикт требует интервала и "
+"не менее **20 решений** с каждой стороны; иначе «недостаточно», числа "
+"видны."
+
+#: ../../source/metriques.rst:624
+msgid ""
+"**Ventilations**, en PR, chaque case face à la même case du niveau "
+"habituel : par ronde ; par rang de la décision dans le match (tranches de"
+" 30 : la fatigue) ; par score (DMP, partie Crawford, post-Crawford, "
+"autres) ; par rythme (de part et d'autre de la médiane de vos durées dans"
+" le match). Au plus trois familles du plan d'étude restreint au tournoi."
+msgstr ""
+"**Разбивки** в PR, каждая ячейка против той же ячейки обычного уровня: по"
+" раундам; по номеру решения в матче (срезы по 30: усталость); по счёту "
+"(DMP, партия Кроуфорд, пост-Кроуфорд, прочие); по темпу (по обе стороны "
+"от медианы ваших длительностей в матче). Не более трёх семейств плана "
+"изучения, ограниченного турниром."
+
+#: ../../source/metriques.rst:630
+msgid ""
+"**Limites.** Un tournoi de trois matchs ne dit presque jamais « moins "
+"bien » : c'est voulu. Les deux côtés sont traités comme indépendants, ce "
+"qui élargit l'intervalle : la règle est prudente. La réserve de la "
+"pendule n'est pas enregistrée coup par coup : la pression du temps "
+"restant ne se mesure pas."
+msgstr ""
+"**Ограничения.** Турнир из трёх матчей почти никогда не говорит «хуже»: "
+"так задумано. Обе стороны считаются независимыми, что расширяет интервал:"
+" правило осторожное. Запас часов не записывается по ходам: давление "
+"оставшегося времени не измеряется."
