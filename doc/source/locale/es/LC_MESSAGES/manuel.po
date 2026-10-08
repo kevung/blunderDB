@@ -6000,6 +6000,16 @@ msgstr ""
 "(eq. 7 pts) no está definida y el panel lo indica en lugar de mostrar un "
 "número. Como el coste de MWC, depende de la MET."
 
+#: ../../source/manuel.rst:2658
+msgid ""
+"Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans "
+"l'onglet Progression ; les onglets sans équivalent 7 points gardent le MWC "
+"cost."
+msgstr ""
+"La tercera opción del botón, **MWC 7 pts**, traza esta pérdida en la "
+"pestaña Progresión; las pestañas sin equivalente a 7 puntos conservan el "
+"MWC cost."
+
 #: ../../source/manuel.rst:2585
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "

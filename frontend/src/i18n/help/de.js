@@ -568,6 +568,7 @@ export default {
 <div class="admonition caution">
 <p>Eine <em>Money-Game</em>-Partie hat keine Matchlänge: Der MWC-Verlust (7-Punkte-Äq.) ist dort nicht definiert, und das Panel zeigt dies an, statt eine Zahl anzuzeigen. Wie die MWC-Kosten hängt er von der MET ab.</p>
 </div>
+<p>Die dritte Wahl der Schaltfläche, <strong>MWC 7 pts</strong>, zeichnet diesen Verlust im Reiter Fortschritt; Reiter ohne 7-Punkte-Entsprechung behalten die MWC-Kosten.</p>
 </blockquote>
 <p>Das Umschalten PR ↔ MWC erfolgt sofort: Es wird keine Neuberechnung im Backend durchgeführt.</p>
 <h4>Der HTML-Bericht</h4>

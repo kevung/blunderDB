@@ -568,6 +568,7 @@ export default {
 <div class="admonition caution">
 <p>Una partida <em>money-game</em> no tiene longitud de partido: la pérdida de MWC (eq. 7 pts) no está definida y el panel lo indica en lugar de mostrar un número. Como el coste de MWC, depende de la MET.</p>
 </div>
+<p>La tercera opción del botón, <strong>MWC 7 pts</strong>, traza esta pérdida en la pestaña Progresión; las pestañas sin equivalente a 7 puntos conservan el MWC cost.</p>
 </blockquote>
 <p>El cambio PR ↔ MWC es instantáneo: no se realiza ningún recálculo en el backend.</p>
 <h4>El informe HTML</h4>

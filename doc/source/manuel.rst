@@ -2655,6 +2655,9 @@ tous les onglets.
      (éq. 7 pts) n'y est pas définie et le panneau l'indique au lieu
      d'afficher un nombre. Comme le MWC cost, elle dépend de la MET.
 
+  Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans l'onglet
+  Progression ; les onglets sans équivalent 7 points gardent le MWC cost.
+
 Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est
 effectué.
 

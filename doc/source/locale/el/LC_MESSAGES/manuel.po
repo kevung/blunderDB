@@ -6109,6 +6109,16 @@ msgstr ""
 "πόντων) δεν ορίζεται εκεί και το πάνελ το δηλώνει αντί να εμφανίσει "
 "αριθμό. Όπως το κόστος MWC, εξαρτάται από το MET."
 
+#: ../../source/manuel.rst:2658
+msgid ""
+"Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans "
+"l'onglet Progression ; les onglets sans équivalent 7 points gardent le MWC "
+"cost."
+msgstr ""
+"Η τρίτη επιλογή του κουμπιού, **MWC 7 pts**, σχεδιάζει αυτή την απώλεια "
+"στην καρτέλα Πρόοδος· οι καρτέλες χωρίς ισοδύναμο 7 πόντων κρατούν το MWC "
+"cost."
+
 #: ../../source/manuel.rst:2585
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "

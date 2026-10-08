@@ -568,6 +568,7 @@ export default {
 <div class="admonition caution">
 <p>A <em>money-game</em> has no match length: the MWC loss (7-pt eq.) is not defined there and the panel says so instead of displaying a number. Like the MWC cost, it depends on the MET.</p>
 </div>
+<p>The button's third choice, <strong>MWC 7 pts</strong>, plots this loss in the Progression tab; tabs without a 7-point equivalent keep the MWC cost.</p>
 </blockquote>
 <p>The PR ↔ MWC toggle is instant: no backend recalculation is performed.</p>
 <h4>The HTML report</h4>

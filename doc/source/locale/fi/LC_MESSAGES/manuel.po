@@ -5905,6 +5905,16 @@ msgstr ""
 "ekv.) ei ole siinä määritelty, ja paneeli ilmoittaa sen numeron "
 "näyttämisen sijaan. Kuten MWC-kustannus, se riippuu MET:stä."
 
+#: ../../source/manuel.rst:2658
+msgid ""
+"Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans "
+"l'onglet Progression ; les onglets sans équivalent 7 points gardent le MWC "
+"cost."
+msgstr ""
+"Painikkeen kolmas vaihtoehto, **MWC 7 pts**, piirtää tämän menetyksen "
+"Kehitys-välilehdelle; välilehdet, joilla ei ole 7 pisteen vastinetta, "
+"näyttävät MWC costin."
+
 #: ../../source/manuel.rst:2585
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "

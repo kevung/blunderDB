@@ -6137,6 +6137,16 @@ msgstr ""
 "Äq.) ist dort nicht definiert, und das Panel zeigt dies an, statt eine "
 "Zahl anzuzeigen. Wie die MWC-Kosten hängt er von der MET ab."
 
+#: ../../source/manuel.rst:2658
+msgid ""
+"Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans "
+"l'onglet Progression ; les onglets sans équivalent 7 points gardent le MWC "
+"cost."
+msgstr ""
+"Die dritte Wahl der Schaltfläche, **MWC 7 pts**, zeichnet diesen Verlust "
+"im Reiter Fortschritt; Reiter ohne 7-Punkte-Entsprechung behalten die "
+"MWC-Kosten."
+
 #: ../../source/manuel.rst:2585
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "

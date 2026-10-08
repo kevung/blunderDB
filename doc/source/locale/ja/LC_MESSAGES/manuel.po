@@ -5657,6 +5657,14 @@ msgstr ""
 "*マネーゲーム*\\ にはマッチの長さがないため、MWC "
 "損失（7ポイント換算）は定義されず、パネルは数値を表示する代わりにそのことを示します。MWC コストと同様に、MET に依存します。"
 
+#: ../../source/manuel.rst:2658
+msgid ""
+"Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans "
+"l'onglet Progression ; les onglets sans équivalent 7 points gardent le MWC "
+"cost."
+msgstr ""
+"ボタンの3つ目の選択肢 **MWC 7 pts**\\ は、この損失を進捗タブに描きます。7ポイント換算のないタブは MWC cost のままです。"
+
 #: ../../source/manuel.rst:2585
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "

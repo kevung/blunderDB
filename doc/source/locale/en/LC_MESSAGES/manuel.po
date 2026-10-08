@@ -5854,6 +5854,15 @@ msgstr ""
 "defined there and the panel says so instead of displaying a number. Like "
 "the MWC cost, it depends on the MET."
 
+#: ../../source/manuel.rst:2658
+msgid ""
+"Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans "
+"l'onglet Progression ; les onglets sans équivalent 7 points gardent le MWC "
+"cost."
+msgstr ""
+"The button's third choice, **MWC 7 pts**, plots this loss in the "
+"Progression tab; tabs without a 7-point equivalent keep the MWC cost."
+
 #: ../../source/manuel.rst:2585
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "

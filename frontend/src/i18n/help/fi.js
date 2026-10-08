@@ -568,6 +568,7 @@ export default {
 <div class="admonition caution">
 <p><em>Money-game</em>-pelillä ei ole ottelun pituutta: MWC-tappiota (7 pisteen ekv.) ei ole siinä määritelty, ja paneeli ilmoittaa sen numeron näyttämisen sijaan. Kuten MWC-kustannus, se riippuu MET:stä.</p>
 </div>
+<p>Painikkeen kolmas vaihtoehto, <strong>MWC 7 pts</strong>, piirtää tämän menetyksen Kehitys-välilehdelle; välilehdet, joilla ei ole 7 pisteen vastinetta, näyttävät MWC costin.</p>
 </blockquote>
 <p>PR ↔ MWC -vaihto on välitön: backend ei suorita uudelleenlaskentaa.</p>
 <h4>HTML-raportti</h4>

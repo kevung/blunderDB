@@ -568,6 +568,7 @@ export default {
 <div class="admonition caution">
 <p><em>マネーゲーム</em>にはマッチの長さがないため、MWC 損失（7ポイント換算）は定義されず、パネルは数値を表示する代わりにそのことを示します。MWC コストと同様に、MET に依存します。</p>
 </div>
+<p>ボタンの3つ目の選択肢 <strong>MWC 7 pts</strong>は、この損失を進捗タブに描きます。7ポイント換算のないタブは MWC cost のままです。</p>
 </blockquote>
 <p>PR ↔ MWC の切り替えは瞬時に行われます。バックエンドでの再計算は実行されません。</p>
 <h4>HTML レポート</h4>

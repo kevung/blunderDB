@@ -568,6 +568,7 @@ export default {
 <div class="admonition caution">
 <p>Une partie <em>money-game</em> n'a pas de longueur de match : la perte MWC (éq. 7 pts) n'y est pas définie et le panneau l'indique au lieu d'afficher un nombre. Comme le MWC cost, elle dépend de la MET.</p>
 </div>
+<p>Le troisième choix du bouton, <strong>MWC 7 pts</strong>, trace cette perte dans l'onglet Progression ; les onglets sans équivalent 7 points gardent le MWC cost.</p>
 </blockquote>
 <p>Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est effectué.</p>
 <h4>Le rapport HTML</h4>
