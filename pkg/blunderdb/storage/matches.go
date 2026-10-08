@@ -5,6 +5,7 @@ import (
 	"iter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // MatchListOpts filters, orders and paginates a match List query. Zero values
@@ -247,6 +248,36 @@ func (f *DiceFolder) Flush() (MatchDice, bool) {
 	done := *f.cur
 	f.cur = nil
 	return done, true
+}
+
+// ResponsePositions reports which of positions were answered with a take or a
+// pass in some match. A cube position records no answer of its own; only the
+// moves played on it say whether its decision is a double or the reply to
+// one. Only cube decisions are looked up.
+func ResponsePositions(ctx context.Context, store MatchStore, scope string, positions []domain.Position) (map[int64]bool, error) {
+	var ids []int64
+	for i := range positions {
+		if positions[i].DecisionType == domain.CubeAction {
+			ids = append(ids, positions[i].ID)
+		}
+	}
+	out := make(map[int64]bool)
+	if len(ids) == 0 {
+		return out, nil
+	}
+	moves, err := store.MovesByPositions(ctx, scope, ids)
+	if err != nil {
+		return nil, err
+	}
+	for id, mvs := range moves {
+		for _, mv := range mvs {
+			if engine.IsResponseCubeAction(mv.CubeAction) {
+				out[id] = true
+				break
+			}
+		}
+	}
+	return out, nil
 }
 
 // ScoreBatchSize bounds the moves one ScoreMoves call examines.

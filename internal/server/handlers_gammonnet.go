@@ -143,6 +143,11 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 		return
 	}
 	total := len(positions)
+	responses, err := storage.ResponsePositions(ctx, s.opts.Storage.Matches(), scope, positions)
+	if err != nil {
+		emit(map[string]any{"event": "error", "error": errorBodyFor(w, err)})
+		return
+	}
 
 	// The sweep is valued with the tenant's table current at its start, and
 	// each analysis records it (ADR-0068).
@@ -185,7 +190,7 @@ func (s *Server) runGammonNetSweep(w http.ResponseWriter, r *http.Request, gathe
 		next++
 		return func(get searcherFor) {
 			start := time.Now()
-			analysis, err := gammonnetEvaluateOne(get(req.Ply, req.PruneK), pos, met, req.Ply, req.PruneK, req.Candidates)
+			analysis, err := gammonnetEvaluateOne(get(req.Ply, req.PruneK), pos, responses[pos.ID], met, req.Ply, req.PruneK, req.Candidates)
 			if !spend(time.Since(start)) {
 				quotaSpent.Store(true)
 			}
@@ -334,8 +339,16 @@ func drainPositions(ctx context.Context, s storage.Storage, scope string) ([]dom
 // position"). A nil analysis with a nil error means "nothing to write, and
 // that is not a failure": a dance (no legal move) or gammonnet.ErrNotEvaluable
 // (a match score beyond the MET's horizon, a cube state the model declines).
-func gammonnetEvaluateOne(searcher *gammonnet.Searcher, pos domain.Position, met *engine.MET, ply, pruneK, candidates int) (*domain.PositionAnalysis, error) {
-	result, err := gammonnet.EvaluatePositionWithMET(searcher, pos, met, ply, pruneK, candidates)
+// answered says a match recorded a take or a pass on pos: its decision is
+// then the reply to a double (gammonnet.EvaluateResponseWithMET).
+func gammonnetEvaluateOne(searcher *gammonnet.Searcher, pos domain.Position, answered bool, met *engine.MET, ply, pruneK, candidates int) (*domain.PositionAnalysis, error) {
+	var result gammonnet.EvalResult
+	var err error
+	if answered || gammonnet.IsResponsePosition(&pos) {
+		result, err = gammonnet.EvaluateResponseWithMET(searcher, pos, met, ply, pruneK)
+	} else {
+		result, err = gammonnet.EvaluatePositionWithMET(searcher, pos, met, ply, pruneK, candidates)
+	}
 	if err != nil {
 		if errors.Is(err, gammonnet.ErrNotEvaluable) {
 			return nil, nil
