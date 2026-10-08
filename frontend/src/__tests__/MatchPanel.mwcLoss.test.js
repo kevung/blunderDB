@@ -23,11 +23,11 @@ const MOVES = [
 ];
 
 const LOSSES = [
-    { move_id: 101, game_number: 1, move_number: 1, player: 0, decision_type: 'checker', mwc_loss: 0.0123 },
-    { move_id: 102, game_number: 1, move_number: 2, player: 1, decision_type: 'checker', mwc_loss: null },
-    { move_id: 103, game_number: 1, move_number: 3, player: 0, decision_type: 'cube', mwc_loss: 0 },
-    { move_id: 201, game_number: 2, move_number: 1, player: 0, decision_type: 'checker', mwc_loss: 0.05 },
-    { move_id: 202, game_number: 2, move_number: 2, player: 1, decision_type: 'checker', mwc_loss: 0.002 }
+    { move_id: 101, game_number: 1, move_number: 1, player: 0, decision_type: 'checker', mwc_loss: 0.0123, difficulty: 0.004, avoidable: false },
+    { move_id: 102, game_number: 1, move_number: 2, player: 1, decision_type: 'checker', mwc_loss: null, difficulty: null, avoidable: false },
+    { move_id: 103, game_number: 1, move_number: 3, player: 0, decision_type: 'cube', mwc_loss: 0, difficulty: 0, avoidable: false },
+    { move_id: 201, game_number: 2, move_number: 1, player: 0, decision_type: 'checker', mwc_loss: 0.05, difficulty: 0.001, avoidable: true },
+    { move_id: 202, game_number: 2, move_number: 2, player: 1, decision_type: 'checker', mwc_loss: 0.002, difficulty: 0.003, avoidable: false }
 ];
 
 const SUMMARY = {
@@ -133,6 +133,31 @@ describe('MatchPanel — the Transcript carries the MWC loss of every decision',
         expect(container.querySelector('[data-testid="loss-total-1"]').textContent).toBe('0.20 %');
     });
 
+    test('a difficulty reads beside the loss, an avoidable error is marked in the Transcript and on the chart', async () => {
+        const container = await openTranscript();
+        const game1 = container.querySelectorAll('details.game-section')[0];
+        expect([...game1.querySelectorAll('[data-testid="move-difficulty"]')].map((c) => c.textContent.trim())).toEqual(['0.40 %', '—', '0']);
+        expect(game1.querySelector('[data-testid="move-avoidable"]')).toBeNull();
+        const game2 = container.querySelectorAll('details.game-section')[1];
+        game2.open = true;
+        await fireEvent(game2, new Event('toggle'));
+        for (let i = 0; i < 4; i++) await tick();
+        expect(game2.querySelectorAll('[data-testid="move-avoidable"]').length).toBe(1);
+        expect(container.querySelectorAll('[data-testid="avoidable-dot"]').length).toBe(1);
+        expect(container.querySelectorAll('[data-testid="loss-plot-per"] line.difficulty').length).toBe(3);
+    });
+
+    test('the header table gives each player the difficulty, the excess, the ratio and the avoidable errors', async () => {
+        const container = await openTranscript();
+        const cell = (id) => container.querySelector(`[data-testid="${id}"]`).textContent;
+        expect(cell('difficulty-total-0')).toBe('0.50 %');
+        expect(cell('excess-0')).toBe('+5.73 %');
+        expect(cell('ratio-0')).toBe('12.46');
+        expect(cell('avoidable-0')).toBe('1');
+        expect(cell('excess-1')).toBe('−0.10 %');
+        expect(cell('ratio-1')).toBe('—'); // 0.3 % of difficulty: under the floor
+    });
+
     test('Enter on a chart jumps to the decision: the review opens it and the row is marked', async () => {
         const container = await openTranscript();
         const plot = container.querySelector('[data-testid="loss-plot-per"]');
@@ -144,6 +169,26 @@ describe('MatchPanel — the Transcript carries the MWC loss of every decision',
         for (let i = 0; i < 4; i++) await tick();
         expect(get(matchContextStore).currentIndex).toBe(1);
         expect(container.querySelector('tr.current-move').getAttribute('data-move-idx')).toBe('1');
+    });
+
+    test('a jump into the game the review is in reopens it when the user folded it', async () => {
+        const container = await openTranscript();
+        const plot = container.querySelector('[data-testid="loss-plot-per"]');
+        await fireEvent.keyDown(plot, { key: 'Home' });
+        await fireEvent.keyDown(plot, { key: 'Enter' });
+        await vi.waitFor(() => expect(container.querySelector('tr.current-move')).not.toBeNull());
+        const game1 = container.querySelectorAll('details.game-section')[0];
+        game1.open = false;
+        await fireEvent(game1, new Event('toggle'));
+        for (let i = 0; i < 4; i++) await tick();
+        expect(game1.querySelector('[data-move-idx="2"]')).toBeNull();
+        await fireEvent.keyDown(plot, { key: 'ArrowRight' });
+        await fireEvent.keyDown(plot, { key: 'ArrowRight' });
+        await fireEvent.keyDown(plot, { key: 'Enter' });
+        await vi.waitFor(() => expect(get(matchContextStore).currentIndex).toBe(2));
+        for (let i = 0; i < 4; i++) await tick();
+        expect(game1.open).toBe(true);
+        expect(game1.querySelector('[data-move-idx="2"]')).not.toBeNull();
     });
 
     test('the time chart jumps alike', async () => {

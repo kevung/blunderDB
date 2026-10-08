@@ -3135,28 +3135,6 @@ export namespace duel {
 		    return a;
 		}
 	}
-	export class DecisionLoss {
-	    move_id: number;
-	    game_number: number;
-	    move_number: number;
-	    player: number;
-	    decision_type: string;
-	    mwc_loss?: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new DecisionLoss(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.move_id = source["move_id"];
-	        this.game_number = source["game_number"];
-	        this.move_number = source["move_number"];
-	        this.player = source["player"];
-	        this.decision_type = source["decision_type"];
-	        this.mwc_loss = source["mwc_loss"];
-	    }
-	}
 	export class DeclaredBot {
 	    configuration: string;
 	    engine: string;
@@ -6522,6 +6500,32 @@ export namespace storage {
 	        this.times_a = source["times_a"];
 	        this.times_b = source["times_b"];
 	        this.well_played = source["well_played"];
+	    }
+	}
+	export class DecisionLoss {
+	    move_id: number;
+	    game_number: number;
+	    move_number: number;
+	    player: number;
+	    decision_type: string;
+	    mwc_loss?: number;
+	    difficulty?: number;
+	    avoidable: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new DecisionLoss(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.move_id = source["move_id"];
+	        this.game_number = source["game_number"];
+	        this.move_number = source["move_number"];
+	        this.player = source["player"];
+	        this.decision_type = source["decision_type"];
+	        this.mwc_loss = source["mwc_loss"];
+	        this.difficulty = source["difficulty"];
+	        this.avoidable = source["avoidable"];
 	    }
 	}
 	export class DeclaredBot {

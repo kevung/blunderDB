@@ -88,16 +88,14 @@
     let detailGrades = $state([]); // MoveGrade[] for the detail match
     /** @type {import('../../wailsjs/go/models').service.MatchTimeSummary | null} */
     let detailTimes = $state(null);
-    /** @type {any[] | null} */
     /** @type {any[] | null} the MWC loss of each decision */
     let detailLosses = $state(null);
     /** @type {import('../../wailsjs/go/models').duel.Origin | null} the Origin of a match played here */
     let detailOrigin = $state(null);
-    /** @type {'' | 'desc' | 'asc'} the transcript's order by decision time */
     // The decision under the pointer or the keyboard on either chart, by its Move.
     /** @type {number | null} */
     let hoveredMove = $state(null);
-    /** @type {'' | 'asc' | 'desc'} */
+    /** @type {'' | 'asc' | 'desc'} the transcript's order by decision time */
     let timeSort = $state('');
     /** @type {'' | 'asc' | 'desc'} */
     let lossSort = $state('');
@@ -411,7 +409,7 @@
         lossSort = lossSort === '' ? 'desc' : lossSort === 'desc' ? 'asc' : '';
     }
     // One order at a time: by the time a decision took, by what it cost, or the match's own.
-    /** @param {{ mp: any, globalIdx: number, grade: any, loss: number | null }[]} moves */
+    /** @param {{ mp: any, globalIdx: number, grade: any, loss: number | null, difficulty: number | null, avoidable: boolean }[]} moves */
     const ordered = (moves) => (lossSort ? sortByLoss(moves, lossSort) : sortByDuration(moves, timeSort));
 
     // Grades follow the library thresholds: re-read when the library counter changes.
@@ -473,14 +471,15 @@
     let transcriptGames = $derived.by(() => {
         if (!detailMovePositions.length) return [];
         const gradeByMove = indexMoveGrades(detailGrades);
-        const lossByMove = new Map(/** @type {any[]} */ (detailLosses ?? []).map((d) => [d.move_id, d.mwc_loss ?? null]));
-        /** @type {Map<number, { mp: any, globalIdx: number, grade: any, loss: number | null }[]>} */
+        const lossByMove = new Map(/** @type {any[]} */ (detailLosses ?? []).map((d) => [d.move_id, d]));
+        /** @type {Map<number, { mp: any, globalIdx: number, grade: any, loss: number | null, difficulty: number | null, avoidable: boolean }[]>} */
         // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp inside $derived
         const gameMap = new Map();
         detailMovePositions.forEach((/** @type {any} */ mp, globalIdx) => {
             let moves = gameMap.get(mp.game_number);
             if (!moves) gameMap.set(mp.game_number, (moves = []));
-            moves.push({ mp, globalIdx, grade: gradeByMove.get(mp.move_id), loss: lossByMove.get(mp.move_id) ?? null });
+            const d = lossByMove.get(mp.move_id);
+            moves.push({ mp, globalIdx, grade: gradeByMove.get(mp.move_id), loss: d?.mwc_loss ?? null, difficulty: d?.difficulty ?? null, avoidable: !!d?.avoidable });
         });
         const result = [];
         for (const [gameNum, moves] of gameMap) {
@@ -540,6 +539,10 @@
     // The decision a chart points at: shown as the transcript shows a row clicked, then brought into view.
     /** @param {number} index */
     async function jumpToMove(index) {
+        // The crossing effect leaves a game the review is already in folded, so a
+        // jump within it would scroll to a row that is not rendered.
+        const game = detailMovePositions[index]?.game_number;
+        if (game != null && !openGames.has(game)) setGameOpen(game, true);
         await navigateToMove(index);
         await tick();
         document.querySelector(`[data-move-idx="${index}"]`)?.scrollIntoView?.({ block: 'nearest' });
@@ -1164,11 +1167,12 @@
                                                                 >{$t('match.lossCol')}{lossSort === 'desc' ? ' ▼' : lossSort === 'asc' ? ' ▲' : ''}</button
                                                             ></th
                                                         >
+                                                        <th class="transcript-time" title={$t('match.difficultyColTooltip')}>{$t('match.difficultyCol')}</th>
                                                     {/if}
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {#each ordered(game.moves) as { mp, globalIdx, grade, loss }, mi (globalIdx)}
+                                                {#each ordered(game.moves) as { mp, globalIdx, grade, loss, difficulty, avoidable }, mi (globalIdx)}
                                                     <tr
                                                         class="transcript-row"
                                                         class:cube-row={mp.move_type === 'cube'}
@@ -1217,8 +1221,15 @@
                                                                 class="transcript-time transcript-loss"
                                                                 class:grade-error={grade?.grade === 'error'}
                                                                 class:grade-blunder={grade?.grade === 'blunder'}
-                                                                data-testid="move-loss">{loss === null ? '—' : loss > 0 ? fmtLoss(loss) : '0'}</td
+                                                                data-testid="move-loss"
+                                                                >{loss === null ? '—' : loss > 0 ? fmtLoss(loss) : '0'}{#if avoidable}<span
+                                                                        class="avoidable-mark"
+                                                                        title={$t('match.avoidableTooltip')}
+                                                                        aria-label={$t('match.avoidable')}
+                                                                        data-testid="move-avoidable">!</span
+                                                                    >{/if}</td
                                                             >
+                                                            <td class="transcript-time" data-testid="move-difficulty">{difficulty === null ? '—' : difficulty > 0 ? fmtLoss(difficulty) : '0'}</td>
                                                         {/if}
                                                     </tr>
                                                 {/each}
@@ -1767,6 +1778,11 @@
     }
     .transcript-row.current-move {
         box-shadow: inset 0 0 0 2px var(--color-primary);
+    }
+    .avoidable-mark {
+        margin-left: 3px;
+        font-weight: bold;
+        color: var(--color-danger);
     }
     .transcript-loss.grade-error,
     .transcript-loss.grade-blunder {

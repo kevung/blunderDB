@@ -946,8 +946,13 @@ Pour un match analysé, la perte de chances de gagner le match de chaque coup
 (``mwc_loss``, une fraction : 0,0123 vaut 1,23 %, ``null`` pour un coup non noté)
 suit le même chemin : la sortie ``json`` porte la liste sous ``decision_losses``,
 ``text`` ajoute une ligne ``MWC loss`` aux coups notés et ``summary`` donne le total par
-joueur, égal à la perte MWC de la liste des matchs. Le serveur la sert par
-``/v1/stats.matchDecisionLosses``.
+joueur, égal à la perte MWC de la liste des matchs. Chaque entrée porte aussi
+sa difficulté (``difficulty``, la perte attendue d'un joueur de référence dans la
+même position, même unité, ``null`` pour un coup non noté) et ``avoidable`` pour
+une erreur évitable ; la sortie ``json`` ajoute ``difficulty_summary`` (par
+joueur : ``difficulty``, ``excess``, ``ratio``, ``avoidable``), ``text`` les lignes
+``Difficulty`` et ``Avoidable error``, ``summary`` une section ``Difficulty``.
+Le serveur la sert par ``/v1/stats.matchDecisionLosses``.
 
 .. code-block:: bash
 

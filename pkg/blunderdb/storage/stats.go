@@ -339,6 +339,13 @@ type DecisionLoss struct {
 	Player       int      `json:"player"`        // 0 is player 1, 1 is player 2
 	DecisionType string   `json:"decision_type"` // "checker" or "cube"
 	MWCLoss      *float64 `json:"mwc_loss"`
+	// Difficulty is the loss a reference player expects in the same position
+	// (ADR-0076), in the unit of MWCLoss; nil wherever MWCLoss is, or where the
+	// analysis gives no option costs.
+	Difficulty *float64 `json:"difficulty"`
+	// Avoidable marks an error (the library's threshold) the reference player
+	// would rarely make: Difficulty at most AvoidableShare of MWCLoss.
+	Avoidable bool `json:"avoidable"`
 }
 
 // PlayerTimeSummary is what one player's recorded decision times add up to

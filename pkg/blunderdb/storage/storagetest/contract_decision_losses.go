@@ -108,6 +108,31 @@ func testStatsMatchDecisionLosses(t *testing.T, s storage.Storage) {
 		t.Fatalf("a 150 mP error should cost more than a 60 mP one: %+v", got[:2])
 	}
 
+	// Difficulty (ADR-0076): each scored decision is binary, a gap Δ between
+	// the two candidates, so the reference player loses Δ·π(worse) and a
+	// worse play's difficulty is its loss times 1/(1+e^{Δ/τ}).
+	gaps := []float64{0.060, 0.150, 0, 0.020, 0.300, 0.1}
+	wantAvoidable := []bool{true, true, false, false, true, false}
+	for i, d := range got {
+		if d.Avoidable != wantAvoidable[i] {
+			t.Errorf("decision %d: avoidable %v, want %v", i, d.Avoidable, wantAvoidable[i])
+		}
+		if i == 2 {
+			if d.Difficulty != nil {
+				t.Errorf("an unscored Move has no difficulty, got %v", *d.Difficulty)
+			}
+			continue
+		}
+		if d.Difficulty == nil || *d.Difficulty <= 0 {
+			t.Errorf("decision %d: difficulty %v, want a positive figure", i, d.Difficulty)
+			continue
+		}
+		share := 1 / (1 + math.Exp(gaps[i]/storage.DifficultyTemperature))
+		if i != 5 && math.Abs(*d.Difficulty / *d.MWCLoss - share) > 1e-6 {
+			t.Errorf("decision %d: difficulty/loss %v, want %v", i, *d.Difficulty / *d.MWCLoss, share)
+		}
+	}
+
 	var sum [2]float64
 	for _, d := range got {
 		if d.MWCLoss != nil {
