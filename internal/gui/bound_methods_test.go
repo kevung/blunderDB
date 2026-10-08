@@ -72,6 +72,7 @@ var boundAppMethods = []string{
 	"VideoSourceKind",
 	"YouTubeEmbedURL",
 	"PickIdentityFile",
+	"ReleaseMedia",
 	"PrepareDemoDatabase",
 	"ReadFileContent",
 	"RegenerateIssuerIdentity",

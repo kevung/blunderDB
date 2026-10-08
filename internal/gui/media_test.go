@@ -85,7 +85,11 @@ func TestYouTube(t *testing.T) {
 		"https://youtube.com/live/dQw4w9WgXcQ":            "dQw4w9WgXcQ",
 		"https://www.youtube.com/shorts/dQw4w9WgXcQ":      "dQw4w9WgXcQ",
 		"https://example.com/watch?v=dQw4w9WgXcQ":         "",
-		"/home/x/a.mp4": "",
+		"youtu.be/dQw4w9WgXcQ":                            "dQw4w9WgXcQ",
+		"www.youtube.com/watch?v=dQw4w9WgXcQ":             "dQw4w9WgXcQ",
+		"m.youtube.com/watch?v=dQw4w9WgXcQ":               "dQw4w9WgXcQ",
+		"youtube.com/shorts/dQw4w9WgXcQ":                  "dQw4w9WgXcQ",
+		"/home/x/a.mp4":                                   "",
 	}
 	for in, want := range cases {
 		if got := youTubeID(in); got != want {
@@ -110,19 +114,27 @@ func TestYouTube(t *testing.T) {
 	}
 }
 
-func TestMediaRealMOV(t *testing.T) {
-	home, _ := os.UserHomeDir()
-	m, _ := filepath.Glob(filepath.Join(home, "Desktop/20260523-hsbtMarseille-8x7p-1x9p/*.MOV"))
-	if len(m) == 0 {
-		t.Skip("no sample video")
-	}
+func TestMediaServesOneFileAtATime(t *testing.T) {
 	var h mediaHost
 	t.Cleanup(h.stop)
-	u, err := h.register(m[0])
+	u1, _ := h.register(newMediaFile(t, "a.mp4", 10))
+	u2, err := h.register(newMediaFile(t, "b.mp4", 10))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if resp, b := get(t, u, "bytes=0-99"); resp.StatusCode != 206 || len(b) != 100 {
-		t.Fatalf("status %d len %d", resp.StatusCode, len(b))
+	if resp, _ := get(t, u1, ""); resp.StatusCode != 404 {
+		t.Fatalf("old token %d", resp.StatusCode)
+	}
+	if resp, _ := get(t, u2, ""); resp.StatusCode != 200 {
+		t.Fatalf("new token %d", resp.StatusCode)
+	}
+	y1, _ := h.registerYouTube("dQw4w9WgXcQ")
+	h.registerYouTube("AAAAAAAAAAA")
+	if resp, _ := get(t, y1, ""); resp.StatusCode != 404 {
+		t.Fatal("old id served")
+	}
+	h.release()
+	if resp, _ := get(t, u2, ""); resp.StatusCode != 404 {
+		t.Fatal("served after release")
 	}
 }

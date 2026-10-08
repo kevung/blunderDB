@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"errors"
@@ -91,9 +92,10 @@ func (h *mediaHost) serveMedia(w http.ResponseWriter, r *http.Request) {
 const youTubePage = `<!doctype html><html><head><meta charset="utf-8"><style>html,body,#p{margin:0;width:100%%;height:100%%;background:#000}</style></head><body><div id="p"></div><script src="https://www.youtube.com/iframe_api"></script><script>
 var player;
 function onYouTubeIframeAPIReady(){player=new YT.Player('p',{width:'100%%',height:'100%%',videoId:'%s',playerVars:{playsinline:1,rel:0},events:{onReady:function(){post({type:'ready',duration:player.getDuration()})},onStateChange:function(e){post({type:'state',state:e.data,time:player.getCurrentTime()})}}})}
-function post(m){m.source='blunderdb-yt';parent.postMessage(m,'*')}
+var origin=''; try{origin=new URL(document.referrer).origin}catch(e){}
+function post(m){if(!origin||origin==='null')return;m.source='blunderdb-yt';parent.postMessage(m,origin)}
 setInterval(function(){if(player&&player.getCurrentTime)post({type:'time',time:player.getCurrentTime()})},250);
-addEventListener('message',function(e){var m=e.data||{};if(!player)return;
+addEventListener('message',function(e){if(!origin||e.origin!==origin||e.source!==parent)return;var m=e.data||{};if(!player)return;
 if(m.type==='play')player.playVideo();else if(m.type==='pause')player.pauseVideo();else if(m.type==='seek')player.seekTo(m.time,true)});
 </script></body></html>`
 
@@ -151,10 +153,8 @@ func (h *mediaHost) register(path string) (string, error) {
 			return "", err
 		}
 		tok = hex.EncodeToString(b[:])
-		if h.tokens == nil {
-			h.tokens, h.byPath = map[string]string{}, map[string]string{}
-		}
-		h.tokens[tok], h.byPath[abs] = abs, tok
+		// One video is served at a time: the new file replaces the last.
+		h.tokens, h.byPath = map[string]string{tok: abs}, map[string]string{abs: tok}
 	}
 	return h.base + "/media/" + tok, nil
 }
@@ -168,11 +168,15 @@ func (h *mediaHost) registerYouTube(id string) (string, error) {
 	if err := h.startLocked(); err != nil {
 		return "", err
 	}
-	if h.youtube == nil {
-		h.youtube = map[string]bool{}
-	}
-	h.youtube[id] = true
+	h.youtube = map[string]bool{id: true}
 	return h.base + "/yt/" + id, nil
+}
+
+// release forgets the registered file and YouTube id; the server stays up.
+func (h *mediaHost) release() {
+	h.mu.Lock()
+	h.tokens, h.byPath, h.youtube = nil, nil, nil
+	h.mu.Unlock()
 }
 
 func (h *mediaHost) stop() {
@@ -182,16 +186,27 @@ func (h *mediaHost) stop() {
 	h.tokens, h.byPath, h.youtube = nil, nil, nil
 	h.mu.Unlock()
 	if srv != nil {
-		_ = srv.Close()
+		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cancel()
+		if srv.Shutdown(ctx) != nil {
+			_ = srv.Close()
+		}
 	}
 }
+
+// ReleaseMedia stops serving the current video (draft closed).
+func (a *App) ReleaseMedia() { a.media.release() }
 
 // stopMedia stops the loopback media server, at shutdown.
 func (a *App) stopMedia() { a.media.stop() }
 
 // youTubeID extracts the video id from the recognised YouTube URL shapes.
 func youTubeID(source string) string {
-	u, err := url.Parse(strings.TrimSpace(source))
+	source = strings.TrimSpace(source)
+	if !strings.Contains(source, "://") {
+		source = "https://" + source
+	}
+	u, err := url.Parse(source)
 	if err != nil || (u.Scheme != "http" && u.Scheme != "https") {
 		return ""
 	}
