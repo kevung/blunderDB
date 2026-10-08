@@ -3035,5 +3035,11 @@
             "answer": "El Bot dobla: acepte o rechace en el tablero.",
             "move": "Haga clic en una ficha para jugar el dado de la izquierda; el clic derecho deshace la jugada, y un clic en los dados o Intro la valida."
         }
+    },
+    "mwc7": {
+        "name": "Pérdida MWC (eq. 7 pts)",
+        "short": "MWC 7 pts",
+        "tooltip": "MWC perdido frente a un jugador perfecto, reescalado a un match a 7 puntos (L × √(7/N)); intervalo del 95 % por remuestreo de las partidas; {elo} Elo frente al motor",
+        "unavailable": "El juego a dinero no tiene longitud de match: el equivalente a 7 puntos no está definido"
     }
 }

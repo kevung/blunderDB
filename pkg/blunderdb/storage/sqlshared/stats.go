@@ -7,8 +7,6 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
-	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
@@ -69,11 +67,18 @@ func UnscoredPlaySQL(pos, mv string) string {
 	return "(" + mv + ".decision_error_mp IS NULL AND EXISTS (SELECT 1 FROM analysis ua WHERE ua.position_id = " + pos + ".id))"
 }
 
-// cubeMultiplierExpr is the cube value (1, 2, 4, …) from its stored log2
-// exponent. The CAST keeps the shift an integer operation on PostgreSQL, where
+// cubeMultiplierExpr is the cube value (1, 2, 4, …) a decision's equity is
+// normalised to, the one its MWC loss is converted at. A take or a pass is
+// stored on the position after the double (the cube already turned, held by
+// no one), but its equities, like the doubler's, are counted in units of the
+// cube before the double: XG converts both sides of a double at that value,
+// and a response converted at the doubled cube costs twice the MWC it should.
+// The CAST keeps the shift an integer operation on PostgreSQL, where
 // cube_value is BIGINT and `1 << bigint` is not defined; SQLite accepts it as
 // written.
-const cubeMultiplierExpr = "(1 << CAST(COALESCE(p.cube_value, 0) AS INTEGER))"
+var cubeMultiplierExpr = "(1 << CAST(CASE WHEN " + ActionCodeOrEmptySQL("mv.cube_action") + " IN (" +
+	fmt.Sprint(fixedActionCode("Take")) + ", " + fmt.Sprint(fixedActionCode("Pass")) +
+	") AND COALESCE(p.cube_value, 0) > 0 THEN p.cube_value - 1 ELSE COALESCE(p.cube_value, 0) END AS INTEGER))"
 
 // statsBaseJoin is the FROM + JOIN fragment shared by all stats queries.
 const statsBaseJoin = `FROM position p
@@ -456,7 +461,7 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		(` + statsErrExpr + `) as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
 		` + cubeMultiplierExpr + `,
-		COALESCE(p.match_length, m.match_length, 0) ` +
+		COALESCE(p.match_length, m.match_length, 0), mv.game_id, COALESCE(m.match_length, 0) ` +
 		statsBaseJoin +
 		` WHERE ` + tenant + ` AND m.id = ? AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + countedExpr(s.DB)
 
@@ -493,14 +498,16 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 	}
 
 	var p1, p2 playerAcc
+	games := newGameLosses()
+	var matchN int
 
 	for rows.Next() {
 		var rawPlayer, decisionType int
 		var cubeAction string
-		var errMP int64
+		var errMP, gameID int64
 		var awayScore0, awayScore1, cubeValue, matchLength int
 		if err := rows.Scan(&rawPlayer, &decisionType, &cubeAction, &errMP,
-			&awayScore0, &awayScore1, &cubeValue, &matchLength); err != nil {
+			&awayScore0, &awayScore1, &cubeValue, &matchLength, &gameID, &matchN); err != nil {
 			return nil, fmt.Errorf("MatchDetail scan: %w", err)
 		}
 
@@ -508,12 +515,10 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		if rawPlayer == -1 {
 			fMove = 1
 		}
-		// The Crawford sentinel is decoded first (domain.PointsAway): a stored
-		// 0 is one point away, post-Crawford, and reading it as a distance
-		// says "has already won".
-		currentScore0 := matchLength - domain.PointsAway(awayScore0)
-		currentScore1 := matchLength - domain.PointsAway(awayScore1)
-		mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
+		// The conversion the badges, the cells and the per-decision losses
+		// share, so the detail's MWC loss is theirs to the last digit.
+		mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, rawPlayer, cubeValue, matchLength)
+		games.add(fMove, gameID, mwcLoss)
 		if math.IsNaN(mwcLoss) {
 			mwcLoss = 0
 		}
@@ -663,6 +668,8 @@ func (s *StatsStore) MatchDetail(ctx context.Context, scope string, matchID int6
 		Player2: buildStats(&p2),
 	}
 	stats.Player1.SnowieER = snowieER(snowieP1SumErr, snowieDenom)
+	stats.Player1.MWC7 = games.elo(0, matchN)
+	stats.Player2.MWC7 = games.elo(1, matchN)
 	stats.Player2.SnowieER = snowieER(snowieP2SumErr, snowieDenom)
 	return stats, nil
 }
@@ -675,7 +682,7 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 	tenant, args := s.DB.TenantFilter("p", scope)
 	query := `SELECT g.match_id, ` + statsErrExpr + ` as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
-		` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0) ` +
+		` + cubeMultiplierExpr + `, COALESCE(p.match_length, m.match_length, 0), mv.game_id, COALESCE(m.match_length, 0) ` +
 		statsBaseJoin +
 		` WHERE ` + tenant + ` AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + countedExpr(s.DB)
 	if len(matchIDs) > 0 {
@@ -697,24 +704,29 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 		cnt    int
 		mwc    float64
 	}
-	type matchAcc struct{ p1, p2 playerAcc }
+	type matchAcc struct {
+		p1, p2 playerAcc
+		games  *gameLosses
+		length int
+	}
 	acc := make(map[int64]*matchAcc)
 	for rows.Next() {
-		var matchID, errMP int64
-		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
-		if err := rows.Scan(&matchID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength); err != nil {
+		var matchID, errMP, gameID int64
+		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength, matchN int
+		if err := rows.Scan(&matchID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength, &gameID, &matchN); err != nil {
 			return nil, fmt.Errorf("MatchBadges scan: %w", err)
 		}
 		a := acc[matchID]
 		if a == nil {
-			a = &matchAcc{}
+			a = &matchAcc{games: newGameLosses(), length: matchN}
 			acc[matchID] = a
 		}
 		mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, rawPlayer, cubeValue, matchLength)
-		pa := &a.p1
+		pa, seat := &a.p1, 0
 		if rawPlayer != 1 { // player2 on roll (rawPlayer == -1)
-			pa = &a.p2
+			pa, seat = &a.p2, 1
 		}
+		a.games.add(seat, gameID, mwcLoss)
 		pa.sumErr += errMP
 		pa.cnt++
 		if !math.IsNaN(mwcLoss) {
@@ -732,6 +744,9 @@ func (s *StatsStore) MatchBadges(ctx context.Context, scope string, matchIDs []i
 			MWCLoss:  a.p1.mwc,
 			PR2:      pr(a.p2.sumErr, a.p2.cnt),
 			MWCLoss2: a.p2.mwc,
+
+			MWC7:   a.games.elo(0, a.length),
+			MWC7P2: a.games.elo(1, a.length),
 		}
 	}
 	return out, nil
@@ -775,20 +790,17 @@ func (s *StatsStore) TournamentBadges(ctx context.Context, scope string) (map[in
 		}
 		a := byPlayer[moverName]
 		if a == nil {
-			a = &storage.TournamentPlayerAcc{Matches: make(map[int64]struct{})}
+			a = &storage.TournamentPlayerAcc{Matches: make(map[int64]struct{}),
+				MatchMWC: make(map[int64]float64), MatchLength: make(map[int64]int)}
 			byPlayer[moverName] = a
-		}
-		fMove := 0
-		if rawPlayer == -1 {
-			fMove = 1
 		}
 		a.SumErr += errMP
 		a.Cnt++
 		a.Matches[matchID] = struct{}{}
-		if mwcLoss := engine.ConvertEMGLossToMWCLoss(int(errMP),
-			matchLength-domain.PointsAway(awayScore0), matchLength-domain.PointsAway(awayScore1),
-			fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
+		if mwcLoss := decisionMWCLoss(errMP, awayScore0, awayScore1, rawPlayer, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
 			a.MWC += mwcLoss
+			a.MatchMWC[matchID] += mwcLoss
+			a.MatchLength[matchID] = matchLength
 		}
 	}
 	if err := rows.Err(); err != nil {

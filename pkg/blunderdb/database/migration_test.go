@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"maps"
+	"math"
 	"os"
 	"path/filepath"
 	"slices"
@@ -4365,5 +4366,58 @@ func TestMigrate_2_36_0_to_2_37_0_XGCountingRules(t *testing.T) {
 	}
 	if got := counts(d); got != want {
 		t.Errorf("columns after migration = %v (forced, close cube, unscored), want %v", got, want)
+	}
+}
+
+// TestMigrate_2_37_0_to_2_38_0_CubeResponseMWC opens a 2.37.0 library whose
+// match_stats cells hold MWC losses the old conversion wrote and checks the
+// step drops them, so the open recomputes them at the cube before the double.
+func TestMigrate_2_37_0_to_2_38_0_CubeResponseMWC(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2370.db")
+	d := NewDatabase()
+	if err := d.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("setup: %v", err)
+	}
+	if _, err := d.ImportXGMatch(filepath.Join("testdata", "HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg")); err != nil {
+		t.Fatalf("import: %v", err)
+	}
+	if _, err := d.GetMatchDetailStats(1); err != nil {
+		t.Fatalf("stats: %v", err)
+	}
+	mwc := func(d *Database) (n int, sum float64) {
+		t.Helper()
+		if err := d.db.QueryRow(`SELECT COUNT(*), COALESCE(SUM(mwc_loss), 0) FROM match_stats_cell`).Scan(&n, &sum); err != nil {
+			t.Fatal(err)
+		}
+		return n, sum
+	}
+	n, want := mwc(d)
+	if n == 0 {
+		t.Fatal("fixture should fill match_stats_cell")
+	}
+	// Rows a 2.37.0 build wrote: the same keys, other MWC losses.
+	for _, stmt := range []string{
+		`UPDATE match_stats_cell SET mwc_loss = mwc_loss + 1`,
+		`UPDATE metadata SET value = '2.37.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.37.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	if gotN, got := mwc(d); gotN != n || math.Abs(got-want) > 1e-9 {
+		t.Errorf("match_stats_cell after migration = %d rows, MWC %.6f; want %d rows, MWC %.6f", gotN, got, n, want)
 	}
 }

@@ -227,3 +227,44 @@ func RescorePlayedDecisionsOf(ctx context.Context, db Execer, positionIDs []int6
 	}
 	return RescorePlayedDecisions(ctx, db, analyses)
 }
+
+// RescoreAllPlayedDecisions runs RescorePlayedDecisions over every analysed
+// position the handle sees, a page of analyses at a time, decoding each
+// once: the pass that scores a library older than the per-move columns. An
+// undecodable analysis leaves its moves as they are.
+func RescoreAllPlayedDecisions(ctx context.Context, db Execer) (int, error) {
+	changed := 0
+	var last int64
+	for {
+		rows, err := db.Query(ctx, `SELECT id, position_id, data FROM analysis WHERE id > ? ORDER BY id LIMIT ?`, last, playedDecisionChunk)
+		if err != nil {
+			return changed, errf(db, "read analyses to rescore moves", err)
+		}
+		analyses := make(map[int64]*domain.PositionAnalysis, playedDecisionChunk)
+		n := 0
+		for rows.Next() {
+			var id, posID int64
+			var data []byte
+			if err := rows.Scan(&id, &posID, &data); err != nil {
+				rows.Close()
+				return changed, errf(db, "read analyses to rescore moves", err)
+			}
+			last, n = id, n+1
+			if a, err := engine.DecodeAnalysisFromStorage(data); err == nil {
+				analyses[posID] = &a
+			}
+		}
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			return changed, errf(db, "read analyses to rescore moves", err)
+		}
+		if n == 0 {
+			return changed, nil
+		}
+		k, err := RescorePlayedDecisions(ctx, db, analyses)
+		changed += k
+		if err != nil {
+			return changed, err
+		}
+	}
+}

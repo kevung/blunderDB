@@ -18,7 +18,7 @@ export const statsLoadingStore = writable(false);
 export const statsErrorStore = writable(null);
 
 // Toggle global PR / MWC display (persisted via Config.yaml in fiche 09)
-// 'pr' | 'mwc'
+// 'pr' | 'mwc' | 'mwc7'
 export const statsMetricStore = writable('pr');
 
 /** Opaque key (database path + mutation counter) that refreshStats uses to detect a stale cache. */

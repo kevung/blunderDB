@@ -1,4 +1,4 @@
--- Forward migration: the 2.38.0 wave — a decision's error is the error of the
+-- Forward migration: the 2.39.0 wave — a decision's error is the error of the
 -- move played in that match.
 --
 --   * move.decision_error_mp, move.is_close_cube — the analysis's
@@ -10,8 +10,9 @@
 -- Both are projections of the compressed analysis blob, which SQL cannot
 -- read: the metadata row below asks Migrate for its one-shot Go pass
 -- (recountPlayedDecisions), which also recomputes the 2.37.0 columns 042
--- left to `blunderdb repair`, then drops match_stats and the row.
--- Schema-visible: bumps domain.DatabaseVersion to 2.38.0.
+-- left to `blunderdb repair`, then drops match_stats — the rows 042 and 043
+-- meant to drop too, which FORCEd RLS hid from them — and the row.
+-- Schema-visible: bumps domain.DatabaseVersion to 2.39.0.
 
 ALTER TABLE move ADD COLUMN IF NOT EXISTS decision_error_mp BIGINT;
 ALTER TABLE move ADD COLUMN IF NOT EXISTS is_close_cube     INTEGER NOT NULL DEFAULT 0;

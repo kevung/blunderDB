@@ -60,7 +60,7 @@ type Database struct {
 	// A migration step cannot write a column the schema pass has not created
 	// yet, and the phase backfill is the only 2.19.0 change that writes at all.
 	pendingPhaseBackfill bool
-	// pendingPlayedDecisions is the same deferral for the 2.38.0 step, on a
+	// pendingPlayedDecisions is the same deferral for the 2.39.0 step, on a
 	// library too old to score its moves before EnsureSchema has run.
 	pendingPlayedDecisions bool
 	// pendingAnkiCardKinds is the same deferral for the 2.23.0 step, whose

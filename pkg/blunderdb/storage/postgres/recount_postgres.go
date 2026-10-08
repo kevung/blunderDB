@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-// recountMarker is the metadata row 043 writes to ask for recountPlayedDecisions;
+// recountMarker is the metadata row 044 writes to ask for recountPlayedDecisions;
 // metadata carries no row-level security, so the probe sees it whatever the
 // role.
 const recountMarker = "recount_played_decisions"
@@ -27,8 +27,10 @@ const recountLockTimeout = "30s"
 
 // recountPlayedDecisions recomputes, once, the analysis columns 042 changed
 // the rules of (is_forced, is_close_cube, best_move_equity_error) and the
-// per-move columns 043 added, for every tenant, then drops match_stats. It
-// runs only while 043's marker row exists, and deletes it in the same
+// per-move columns 044 added, for every tenant, then drops every match_stats
+// row (cells and positions cascade): the DELETE of 042 and 043 ran on a
+// connection carrying no tenant, which FORCEd row-level security shows no
+// row. It runs only while 044's marker row exists, and deletes it in the same
 // transaction as its writes: an interrupted pass leaves the marker and is run
 // again whole, a finished one never runs again.
 func recountPlayedDecisions(ctx context.Context, conn beginner, db execer) error {

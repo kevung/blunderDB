@@ -3035,5 +3035,11 @@
             "answer": "Le Bot double : prenez ou passez sur le plateau.",
             "move": "Cliquez sur un pion pour jouer le dé de gauche ; le clic droit reprend le coup, puis un clic sur les dés ou Entrée le valide."
         }
+    },
+    "mwc7": {
+        "name": "Perte MWC (éq. 7 pts)",
+        "short": "MWC 7 pts",
+        "tooltip": "MWC perdu face à un joueur parfait, ramené à un match de 7 points (L × √(7/N)) ; intervalle à 95 % par rééchantillonnage des parties ; {elo} Elo face au moteur",
+        "unavailable": "Le jeu en money n'a pas de longueur de match : l'équivalent 7 points n'est pas défini"
     }
 }

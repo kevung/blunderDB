@@ -11,6 +11,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/database"
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/report"
 )
 
@@ -96,12 +97,13 @@ func (cli *CLI) runStatsProgression(args []string) error {
 			PRRolling     map[int]float64            `json:"PRRolling"`
 			MWCRolling    map[int]float64            `json:"MWCRolling"`
 			MWCAvailable  bool                       `json:"MWCAvailable"`
-		}{res.PerMatch, res.PerTournament, res.PRRolling, res.MWCRolling, res.MWCAvailable})
+			MWC7          domain.MWC7                `json:"MWC7"`
+		}{res.PerMatch, res.PerTournament, res.PRRolling, res.MWCRolling, res.MWCAvailable, res.MWC7})
 	}
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "DATE\tPLAYER\tPR\tDECISIONS")
+	fmt.Fprintln(w, "DATE\tPLAYER\tPR\tDECISIONS\tMWC LOSS (7 PT)")
 	for _, m := range res.PerMatch {
-		fmt.Fprintf(w, "%s\t%s\t%.2f\t%d\n", m.Date, m.PlayerName, m.PR, m.NumDecisions)
+		fmt.Fprintf(w, "%s\t%s\t%.2f\t%d\t%s\n", m.Date, m.PlayerName, m.PR, m.NumDecisions, formatMWC7(m.MWC7))
 	}
 	w.Flush()
 	if len(res.PRRolling) > 0 {

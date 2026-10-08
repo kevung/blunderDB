@@ -16,12 +16,29 @@
 # are few and runners noisy, so the factor is wide (1.5 by default):
 # it catches an index lost or a query turned into a full scan, not drift.
 # A benchmark present on one side only is reported, never gated.
+#
+# Both runs must come from the same CPU model (the `cpu:` line go test
+# prints). Hosted runners are drawn from several processor generations whose
+# speeds differ by more than the factor itself, so a pair of different CPUs
+# measures the hardware, not the code: such a pair is reported and never
+# gated. The nightly job keys its reference by CPU model, so this only fires
+# when a caller hands it two unrelated files.
 set -euo pipefail
 
 prev="${1:?usage: bench-scale-compare.sh <previous.txt> <new.txt> [factor] [summary_md]}"
 new="${2:?usage: bench-scale-compare.sh <previous.txt> <new.txt> [factor] [summary_md]}"
 factor="${3:-1.5}"
 summary_md="${4:-}"
+
+cpu_of() { grep -m1 '^cpu:' "$1" | sed 's/^cpu:[[:space:]]*//; s/[[:space:]]*$//' || true; }
+prev_cpu=$(cpu_of "$prev")
+new_cpu=$(cpu_of "$new")
+if [ "$prev_cpu" != "$new_cpu" ]; then
+  msg="bench-scale-compare: previous run on '${prev_cpu:-unknown CPU}', new run on '${new_cpu:-unknown CPU}' — different hardware, not compared."
+  echo "$msg"
+  if [ -n "$summary_md" ]; then echo "$msg" >>"$summary_md"; fi
+  exit 0
+fi
 
 table=$(awk -v factor="$factor" '
   function name(s) { sub(/-[0-9]+$/, "", s); return s }
