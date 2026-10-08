@@ -107,6 +107,13 @@ type breakdownRow struct {
 // match too, and folds the match rows back into one row per key, in key
 // order (sortBreakdownKeys), each with its interval over its matches.
 func (s *StatsStore) breakdownRows(ctx context.Context, q statsQuery, cols ...string) ([]breakdownRow, error) {
+	return s.breakdownRowsBy(ctx, q, nil, cols...)
+}
+
+// breakdownRowsBy is breakdownRows with norm, when not nil, mapping each
+// row's key to the one it is counted under: rows whose keys collapse are
+// folded together, intervals included.
+func (s *StatsStore) breakdownRowsBy(ctx context.Context, q statsQuery, norm func(breakdownKey) breakdownKey, cols ...string) ([]breakdownRow, error) {
 	d := s.DB
 	shown, nulls := "", "0"
 	for i, c := range cols {
@@ -134,6 +141,9 @@ func (s *StatsStore) breakdownRows(ctx context.Context, q statsQuery, cols ...st
 			}
 			if err := r.Scan(append(dest, &k.nulls, &match, &sumErr, &n, &blunders)...); err != nil {
 				return err
+			}
+			if norm != nil {
+				k = norm(k)
 			}
 			row := rows[k]
 			if row == nil {

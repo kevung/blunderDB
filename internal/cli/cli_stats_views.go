@@ -166,7 +166,11 @@ func (cli *CLI) runStatsBreakdown(args []string) error {
 	}
 	section("SCORE (AWAY x AWAY)\tPR\tDECISIONS\tBLUNDERS")
 	for _, r := range res.PerScore {
-		fmt.Fprintf(w, "%d-away vs %d-away\t%.2f\t%d\t%d\n", r.MoverAway, r.OpponentAway, r.PR, r.NumDecisions, r.BlunderCount)
+		score := fmt.Sprintf("%d-away vs %d-away", r.MoverAway, r.OpponentAway)
+		if r.Money {
+			score = "money"
+		}
+		fmt.Fprintf(w, "%s\t%.2f\t%d\t%d\n", score, r.PR, r.NumDecisions, r.BlunderCount)
 	}
 	return w.Flush()
 }

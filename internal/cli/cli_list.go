@@ -541,7 +541,7 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 		fmt.Fprintln(w, "  —————\t—————————\t————————\t——\t———————")
 		for _, c := range result.PerScore {
 			label := fmt.Sprintf("%d-away/%d-away", c.MoverAway, c.OpponentAway)
-			if c.MoverAway == 0 && c.OpponentAway == 0 {
+			if c.Money {
 				label = "money"
 			}
 			// A cell without an interval (one match behind it) is still

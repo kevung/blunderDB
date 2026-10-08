@@ -174,8 +174,10 @@ type TagStats struct {
 }
 
 // ScoreCellStats is one cell of the away × away matrix, read from the side of
-// the player on roll — the one taking the decision. (0,0) is money play.
+// the player on roll — the one taking the decision. Money is money play, with
+// both aways at 0; post-Crawford reads as 1-away.
 type ScoreCellStats struct {
+	Money        bool            `json:"Money"`
 	MoverAway    int             `json:"MoverAway"`
 	OpponentAway int             `json:"OpponentAway"`
 	PR           float64         `json:"PR"`
