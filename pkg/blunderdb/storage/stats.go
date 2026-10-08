@@ -591,6 +591,12 @@ type StatsStore interface {
 	// BuildStudyPlan.
 	StudyPlan(ctx context.Context, scope string, filter StatsFilter) (*StudyPlan, error)
 
+	// SuggestReferences proposes the reference positions of a filter: those
+	// whose lesson covers the most recoverable MWC of their neighbouring
+	// errors, near-duplicates and handled positions left out (ADR-0078). See
+	// SuggestReferences.
+	SuggestReferences(ctx context.Context, scope string, req ReferenceRequest) (*ReferenceSuggestions, error)
+
 	// MatchStats returns the stored per-match, per-seat tallies of the given
 	// matches (every match in scope when matchIDs is empty), two rows per
 	// match, ordered by match then seat. A match whose rows are missing — a
