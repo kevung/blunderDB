@@ -74,6 +74,7 @@ func shutdown(app *App, binds []interface{}) func(ctx context.Context) {
 	return func(context.Context) {
 		app.stopAssistant()
 		app.stopMCP()
+		app.stopMedia()
 		app.stopBackgroundJobs(shutdownJobGrace)
 
 		for _, bind := range binds {
