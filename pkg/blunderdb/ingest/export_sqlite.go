@@ -914,13 +914,14 @@ func (e *exporter) writeTournaments() error {
 // reason — and TestExportMatchColumnsClassified fails until one of the
 // lists says so. The source metadata (ratings, experience, transcriber, session
 // rules, engine version) is what the file said of the match: it travels
-// with it (ADR-0067).
+// with it (ADR-0067). The video source travels only as an http(s) URL
+// (issuance.CarriedVideoSource, ADR-0079).
 var exportedMatchColumns = []string{
 	"player1_name", "player2_name", "event", "location", "round", "match_length",
 	"match_date", "import_date", "file_path", "game_count", "match_hash", "canonical_hash",
 	"tournament_id", "tournament_sort_order", "last_visited_position",
 	"player1_elo", "player2_elo", "player1_experience", "player2_experience",
-	"transcriber", "has_jacoby", "has_beaver", "engine_version",
+	"transcriber", "has_jacoby", "has_beaver", "engine_version", "video_source",
 }
 
 // notExportedMatchColumns are the match columns an export leaves behind, each
@@ -952,13 +953,14 @@ func (e *exporter) writeMatches() error {
 		res, err := e.tx.ExecContext(e.ctx,
 			`INSERT INTO match (`+strings.Join(append(slices.Clone(exportedMatchColumns), noteCols...), ", ")+`)
 			 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP), ?, ?, NULLIF(?, ''), NULLIF(?, ''), ?, ?, ?,
-			         ?, ?, ?, ?, ?, ?, ?, ?`+strings.Repeat(", ?", len(noteArgs))+`)`,
+			         ?, ?, ?, ?, ?, ?, ?, ?, ?`+strings.Repeat(", ?", len(noteArgs))+`)`,
 			append([]any{m.Player1Name, m.Player2Name, m.Event, m.Location, m.Round, m.MatchLength,
 				nullableTime(m.MatchDate), nullableTime(m.ImportDate), m.FilePath, m.GameCount,
 				m.MatchHash, m.CanonicalHash,
 				tournamentID, m.TournamentSortOrder, m.LastVisitedPosition,
 				m.Player1Elo, m.Player2Elo, m.Player1Experience, m.Player2Experience,
-				m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion}, noteArgs...)...)
+				m.Transcriber, m.HasJacoby, m.HasBeaver, m.EngineVersion,
+				issuance.CarriedVideoSource(m.VideoSource)}, noteArgs...)...)
 		if err != nil {
 			e.skip("inserting match", "matchID", id, "err", err)
 			continue

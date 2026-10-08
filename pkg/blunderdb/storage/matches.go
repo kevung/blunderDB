@@ -106,7 +106,10 @@ type MatchStore interface {
 	// experience, transcriber, session rules, engine version). The id, the import date, the
 	// tournament, the comment and the last-visited position are NOT touched —
 	// they are what a replacement exists to preserve (ADR-0045 §2), and none of
-	// them is a property of the transcript being re-saved.
+	// them is a property of the transcript being re-saved. The video source
+	// (ADR-0079) is kept when m.VideoSource is nil, cleared when it is "", and
+	// replaced otherwise: a writer that knows nothing of the video — a
+	// corrected file, a re-saved Duel — leaves it where it was.
 	//
 	// Update is the user's edit of a match's identity (two names and a date);
 	// this is the writer re-stating what the match now contains.

@@ -4543,3 +4543,77 @@ func TestMigrate_2_38_0_to_2_39_0_PlayedDecisionsResume(t *testing.T) {
 		t.Errorf("pending key left after success: %d rows, %v", left, err)
 	}
 }
+
+// TestMigrate_2_39_0_to_2_40_0_MatchVideo opens a 2.39.0 library — a match
+// with a move — and checks the match gains no video source and the move its
+// two Repères as unknown, never zero nor "", with the rows kept and both
+// writable afterwards.
+func TestMigrate_2_39_0_to_2_40_0_MatchVideo(t *testing.T) {
+	t.Parallel()
+	dbPath := filepath.Join(tempDir(t), "test_v2390.db")
+	createOldDatabase(t, dbPath, "2.31.0")
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open: %v", err)
+	}
+	ctx := context.Background()
+	matchID, err := d.store.Matches().Save(ctx, "", &domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 3, MatchHash: "match-video"})
+	if err != nil {
+		t.Fatalf("save match: %v", err)
+	}
+	gameID, err := d.store.Matches().CreateGame(ctx, "", &domain.Game{MatchID: matchID, GameNumber: 1})
+	if err != nil {
+		t.Fatalf("create game: %v", err)
+	}
+	if _, err := d.store.Matches().CreateMove(ctx, "", &domain.Move{GameID: gameID, MoveType: "checker", Player: 1, Dice: [2]int32{3, 1}}); err != nil {
+		t.Fatalf("create move: %v", err)
+	}
+	// Back to the 2.39.0 shape.
+	for _, stmt := range []string{
+		`ALTER TABLE match DROP COLUMN video_source`,
+		`ALTER TABLE move DROP COLUMN roll_tick_ms`,
+		`ALTER TABLE move DROP COLUMN tick_ms`,
+		`UPDATE metadata SET value = '2.39.0' WHERE key = 'database_version'`,
+	} {
+		if _, err := d.db.Exec(stmt); err != nil {
+			t.Fatalf("%s: %v", stmt, err)
+		}
+	}
+	if err := d.Close(); err != nil {
+		t.Fatalf("close: %v", err)
+	}
+
+	d = NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("open v2.39.0 database: %v", err)
+	}
+	closeOnCleanup(t, d)
+	if v, err := d.CheckDatabaseVersion(); err != nil || v != DatabaseVersion {
+		t.Fatalf("version after migration = %q, %v; want %q", v, err, DatabaseVersion)
+	}
+	m, err := d.store.Matches().Get(ctx, "", matchID)
+	if err != nil {
+		t.Fatalf("get match: %v", err)
+	}
+	if m.VideoSource != nil {
+		t.Errorf("a match stored before 2.40.0 has video source %q, want none", *m.VideoSource)
+	}
+	n := 0
+	for mv, err := range d.store.Matches().MovesByMatch(ctx, "", matchID) {
+		if err != nil {
+			t.Fatal(err)
+		}
+		n++
+		if mv.RollTickMS != nil || mv.TickMS != nil {
+			t.Errorf("a move stored before 2.40.0 reads Repères %v/%v, want unknown", mv.RollTickMS, mv.TickMS)
+		}
+	}
+	if n != 1 {
+		t.Fatalf("%d moves after migration, want 1", n)
+	}
+	src := "https://example.org/match.mp4"
+	m.VideoSource = &src
+	if err := d.store.Matches().ReplaceHeader(ctx, "", matchID, m); err != nil {
+		t.Fatalf("set a video source on a migrated library: %v", err)
+	}
+}
