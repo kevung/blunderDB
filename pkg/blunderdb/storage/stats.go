@@ -593,7 +593,7 @@ type StatsStore interface {
 
 	// SuggestReferences proposes the reference positions of a filter: those
 	// whose lesson covers the most recoverable MWC of their neighbouring
-	// errors, near-duplicates and handled positions left out (ADR-0078). See
+	// errors, near-duplicates and handled positions left out (ADR-0079). See
 	// SuggestReferences.
 	SuggestReferences(ctx context.Context, scope string, req ReferenceRequest) (*ReferenceSuggestions, error)
 

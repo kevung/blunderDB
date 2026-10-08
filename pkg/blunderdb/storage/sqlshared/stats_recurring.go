@@ -51,7 +51,7 @@ func (s *StatsStore) StudyPlan(ctx context.Context, scope string, filter storage
 
 // SuggestReferences reads the same priced errors with their boards and the
 // state of their lesson, and the positions something already deals with, and
-// proposes the reference positions of ADR-0078 (storage.SuggestReferences).
+// proposes the reference positions of ADR-0079 (storage.SuggestReferences).
 func (s *StatsStore) SuggestReferences(ctx context.Context, scope string, req storage.ReferenceRequest) (*storage.ReferenceSuggestions, error) {
 	rows, numDecisions, thresholdMP, err := s.classifiedErrors(ctx, scope, req.Filter,
 		classifyOptions{priced: true, reference: true, matchIDs: req.MatchIDs})

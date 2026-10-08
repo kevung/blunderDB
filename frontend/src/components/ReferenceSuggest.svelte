@@ -1,5 +1,5 @@
 <script>
-    // Les positions de référence proposées (ADR-0078) : le moteur choisit et
+    // Les positions de référence proposées (ADR-0079) : le moteur choisit et
     // donne les composantes de chaque raison ; ce panneau les met en phrases,
     // laisse cocher, et fait du choix une collection, un paquet ou un quiz.
     import { onMount } from 'svelte';

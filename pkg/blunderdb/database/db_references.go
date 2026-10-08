@@ -9,7 +9,7 @@ import (
 // SuggestReferencePositions proposes the filter's reference positions,
 // narrowed to matchIDs when given, at most size of them (0 = the default):
 // the positions whose lesson covers the most recoverable MWC of their
-// neighbouring errors (storage.StatsStore.SuggestReferences, ADR-0078).
+// neighbouring errors (storage.StatsStore.SuggestReferences, ADR-0079).
 // Nothing is written: the caller makes a collection, a deck or a quiz of what
 // the user keeps.
 func (d *Database) SuggestReferencePositions(filter StatsFilter, matchIDs []int64, size int) (*storage.ReferenceSuggestions, error) {

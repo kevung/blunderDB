@@ -10,7 +10,7 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// testStatsSuggestReferences pins the reference proposal (ADR-0078) on both
+// testStatsSuggestReferences pins the reference proposal (ADR-0079) on both
 // backends: the six gammon errors share one board and the two missed doubles
 // another, so each cluster yields one reference standing for all its errors;
 // a position marked studied covers its cluster; the match narrowing holds.

@@ -44,7 +44,7 @@ func refRow(id int64, match int64, theme string, excess float64, v engine.Simila
 		MatchID:           match, Loss: &loss, Difficulty: &diff}, Vector: v, GapMP: 100}
 }
 
-// TestSuggestReferencesCoversClusters pins ADR-0078 §3 and §5: the centre of a
+// TestSuggestReferencesCoversClusters pins ADR-0079 §3 and §5: the centre of a
 // cluster of errors beats a single larger error, and a cluster yields one
 // reference, never two near-identical ones.
 func TestSuggestReferencesCoversClusters(t *testing.T) {
@@ -75,7 +75,7 @@ func TestSuggestReferencesCoversClusters(t *testing.T) {
 }
 
 // TestSuggestReferencesHandled: a handled position is never proposed and
-// counts as already picked, so its cluster yields nothing (ADR-0078 §6).
+// counts as already picked, so its cluster yields nothing (ADR-0079 §6).
 func TestSuggestReferencesHandled(t *testing.T) {
 	var rows []ReferenceRow
 	for i, to := range []int{12, 11, 10} {
@@ -117,7 +117,7 @@ func TestSuggestReferencesDiscount(t *testing.T) {
 }
 
 // TestSuggestReferencesCubeByScore: one cube board at two scores is two
-// lessons; at one score, one (ADR-0078 §1).
+// lessons; at one score, one (ADR-0079 §1).
 func TestSuggestReferencesCubeByScore(t *testing.T) {
 	cube := func(id int64, a0, a1 int) ReferenceRow {
 		r := refRow(id, id, "missed-double", 0.02, shifted(12))
@@ -198,7 +198,7 @@ func TestReferenceLesson(t *testing.T) {
 // randomGameVectors plays random games on the similarity vectors alone: a
 // checker moves by a die towards home, sides alternate. Positions of one game
 // lie close together and the pip counts spread as in real play, which is what
-// the band index of ADR-0078 §8 depends on.
+// the band index of ADR-0079 §8 depends on.
 func randomGameVectors(rng *rand.Rand, n int) []engine.SimilarityVector {
 	opening := [26]int{}
 	opening[24], opening[13], opening[8], opening[6] = 2, 5, 3, 5
@@ -234,7 +234,7 @@ func randomGameVectors(rng *rand.Rand, n int) []engine.SimilarityVector {
 }
 
 // BenchmarkSuggestReferences measures a proposal over n errors spread over
-// some groups — the cost ADR-0078 §8 bounds. Run with -benchtime=1x.
+// some groups — the cost ADR-0079 §8 bounds. Run with -benchtime=1x.
 func BenchmarkSuggestReferences(b *testing.B) {
 	for _, n := range []int{2000, 10000, 50000} {
 		for _, groups := range []int{1, 20} {

@@ -2522,7 +2522,7 @@ covers the most recoverable match winning chances of their neighbouring errors (
 within 12 checker-pips; a cube reference holds at one score). A close lesson (second-best
 option within half an error) or an unstable verdict (another depth or a rollout disagrees) counts
 for half. Positions already commented, carded, collected or marked studied are never proposed,
-and no two proposed positions are near-duplicates (ADR-0078). Nothing is written unless
+and no two proposed positions are near-duplicates (ADR-0079). Nothing is written unless
 --collection or --deck is given.
 
 Options:
