@@ -52,6 +52,7 @@ func TestAnalyzeMissingWithGammonNetScoresTakesAndPassesAsReplies(t *testing.T) 
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer rows.Close()
 	var moves []moveRow
 	for rows.Next() {
 		var r moveRow
@@ -60,7 +61,7 @@ func TestAnalyzeMissingWithGammonNetScoresTakesAndPassesAsReplies(t *testing.T) 
 		}
 		moves = append(moves, r)
 	}
-	if err := rows.Close(); err != nil {
+	if err := rows.Err(); err != nil {
 		t.Fatal(err)
 	}
 
