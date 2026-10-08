@@ -9,6 +9,7 @@
     let effect = $derived($studyEffectStore);
     let families = $derived(effect?.Families ?? []);
 
+    /** @type {Record<string, string>} */
     const CUBE_LABELS = {
         offer_missed: 'stats.cubeOfferMissed',
         offer_premature: 'stats.cubeOfferPremature',
@@ -16,17 +17,20 @@
         answer_wrong_take: 'stats.cubeAnswerWrongTake'
     };
 
+    /** @param {string} key @param {string} fallback */
     function label(key, fallback) {
         const s = $t(key);
         return s === key ? fallback : s;
     }
 
+    /** @param {any} f */
     function familyName(f) {
         const theme = f.Kind === 'cube' && CUBE_LABELS[f.Theme] ? CUBE_LABELS[f.Theme] : `stats.recurringTheme_${f.Theme}`;
         return `${label(`stats.gameType_${f.GameType}`, f.GameType)} · ${$t(`stats.recurringKind_${f.Kind}`)} · ${label(theme, f.Theme)}`;
     }
 
     /** MWC fraction per decision → MWC percentage points per 100 decisions. */
+    /** @param {number} x @param {boolean} [signed] */
     function per100(x, signed = false) {
         const v = 10000 * x;
         return `${signed && v > 0 ? '+' : ''}${v.toFixed(2)}`;

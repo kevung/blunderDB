@@ -14,6 +14,7 @@
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
 
+    /** @type {{ onClose?: () => void, onCollectionCreated?: () => void }} */
     let { onClose = () => {}, onCollectionCreated = () => {} } = $props();
 
     const SIZES = [10, 20, 50];
@@ -23,6 +24,7 @@
     let tournamentId = $state(0);
     let loading = $state(false);
     let error = $state('');
+    /** @type {any} */
     let result = $state.raw(null);
     let checked = new SvelteSet();
     let name = $state('');
@@ -30,6 +32,7 @@
     let player = $derived($statsFilterStore?.playerName || '');
     let matchId = $derived($matchContextStore?.matchID || $lastVisitedMatchStore?.matchID || 0);
     let tournaments = $derived($tournamentsStore ?? []);
+    /** @type {any[]} */
     let references = $derived(result?.References ?? []);
     let keptIds = $derived(references.filter((r) => checked.has(r.PositionID)).map((r) => r.PositionID));
 
@@ -45,8 +48,10 @@
 
     /** The filter of the chosen scope: the Statistics player, narrowed or not. */
     function filterFor() {
+        /** @type {any} */
         const f = get(statsFilterStore);
         if (scope === 'filter') return { filter: f, matchIDs: [] };
+        /** @type {any} */
         const base = { playerName: f.playerName, playerAliases: f.playerAliases ?? [], tournamentIDs: [], dateFrom: '', dateTo: '', decisionType: -1, matchLength: [] };
         if (scope === 'tournament') return { filter: { ...base, tournamentIDs: tournamentId ? [tournamentId] : [] }, matchIDs: [] };
         if (scope === 'match') return { filter: base, matchIDs: matchId ? [matchId] : [] };
@@ -71,11 +76,13 @@
         }
     }
 
+    /** @param {number} id */
     function toggle(id) {
         if (checked.has(id)) checked.delete(id);
         else checked.add(id);
     }
 
+    /** @type {Record<string, string>} */
     const CUBE_LABELS = {
         offer_missed: 'stats.cubeOfferMissed',
         offer_premature: 'stats.cubeOfferPremature',
@@ -83,11 +90,13 @@
         answer_wrong_take: 'stats.cubeAnswerWrongTake'
     };
 
+    /** @param {string} key @param {string} fallback */
     function label(key, fallback) {
         const s = $t(key);
         return s === key ? fallback : s;
     }
 
+    /** @param {any} r */
     function familyName(r) {
         const theme = r.Kind === 'cube' && CUBE_LABELS[r.Theme] ? CUBE_LABELS[r.Theme] : `stats.recurringTheme_${r.Theme}`;
         const parts = [label(`stats.gameType_${r.GameType}`, r.GameType), $t(`stats.recurringKind_${r.Kind}`), label(theme, r.Theme)];
@@ -96,11 +105,13 @@
     }
 
     /** MWC fraction → percentage points, the unit the Match panel shows a loss in. */
+    /** @param {number} x */
     function pct(x) {
         return `${(100 * x).toFixed(2)} %`;
     }
 
     /** The reason of a proposal, from the components the engine returned. */
+    /** @param {any} r */
     function reason(r) {
         const parts = [
             $t('collection.suggestCovers', { errors: r.Errors, matches: r.Matches }),
@@ -116,6 +127,7 @@
     }
 
     /** Browse the kept positions, opening on the one clicked; the list runs in id order. */
+    /** @param {number} id */
     function open(id) {
         const ids = (keptIds.includes(id) ? [...keptIds] : [...keptIds, id]).sort((a, b) => a - b);
         loadPositionsFromSelection(ids, { focusIndex: ids.indexOf(id) });

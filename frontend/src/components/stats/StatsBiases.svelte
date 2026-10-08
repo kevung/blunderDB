@@ -18,15 +18,18 @@
     let scoreCells = $derived((biases?.DoublesByScore ?? []).filter((c) => c.Decisions >= (biases?.MinDecisions ?? 20)));
 
     /** Share of the decisions → signed percentage points. */
+    /** @param {number} x */
     function pp(x) {
         const v = 100 * x;
         return `${v > 0 ? '+' : ''}${v.toFixed(1)} %`;
     }
 
+    /** @param {string} id @param {any} b */
     function verdict(id, b) {
         return b.Verdict === 'too_much' || b.Verdict === 'too_little' ? $t(`stats.biases_${id}_${b.Verdict}`) : $t(`stats.biasesVerdict_${b.Verdict}`);
     }
 
+    /** @param {any} c */
     function score(c) {
         return c.Money ? $t('stats.biasesMoney') : `${c.MoverAway}-${c.OpponentAway}`;
     }

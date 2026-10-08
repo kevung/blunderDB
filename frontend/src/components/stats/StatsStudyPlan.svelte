@@ -14,6 +14,7 @@
     let tentative = $derived(plan?.Tentative ?? []);
     let anyPriced = $derived(families.length + tentative.length + (plan?.Unthemed ?? 0) > 0);
 
+    /** @type {Record<string, string>} */
     const CUBE_LABELS = {
         offer_missed: 'stats.cubeOfferMissed',
         offer_premature: 'stats.cubeOfferPremature',
@@ -21,23 +22,27 @@
         answer_wrong_take: 'stats.cubeAnswerWrongTake'
     };
 
+    /** @param {string} key @param {string} fallback */
     function label(key, fallback) {
         const s = $t(key);
         return s === key ? fallback : s;
     }
 
+    /** @param {any} f */
     function familyName(f) {
         const theme = f.Kind === 'cube' && CUBE_LABELS[f.Theme] ? CUBE_LABELS[f.Theme] : `stats.recurringTheme_${f.Theme}`;
         return `${label(`stats.gameType_${f.GameType}`, f.GameType)} · ${$t(`stats.recurringKind_${f.Kind}`)} · ${label(theme, f.Theme)}`;
     }
 
     /** MWC fraction → percentage points, the unit the Match panel shows a loss in. */
+    /** @param {number} x */
     function pct(x) {
         return `${(100 * x).toFixed(2)} %`;
     }
 
+    /** @param {any} f */
     function ids(f) {
-        return (f.Positions ?? []).map((p) => p.PositionID);
+        return (f.Positions ?? []).map((/** @type {any} */ p) => p.PositionID);
     }
 </script>
 
@@ -88,7 +93,7 @@
             </table>
         {/if}
         {#if tentative.length > 0}
-            <p class="aside">{$t('stats.planTentative', { n: tentative.length, list: tentative.map((f) => `${familyName(f)} (${f.Errors})`).join(', ') })}</p>
+            <p class="aside">{$t('stats.planTentative', { n: tentative.length, list: tentative.map((/** @type {any} */ f) => `${familyName(f)} (${f.Errors})`).join(', ') })}</p>
         {/if}
         {#if plan.Unthemed > 0 || plan.Unpriced > 0}
             <p class="aside">{$t('stats.planOutside', { unthemed: plan.Unthemed, unpriced: plan.Unpriced })}</p>

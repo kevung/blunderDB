@@ -3,6 +3,8 @@ import { ComputeStats, ComputeRecurringErrors, ComputeStudyPlan, ComputeStudyEff
 import { databasePathStore } from './databaseStore.js';
 import { dbMutationCounterStore } from './uiStore.js';
 
+/** @typedef {any} StatsResult the engine result; consumers narrow it field by field */
+
 const defaultFilter = {
     playerName: '',
     tournamentIDs: [],
@@ -13,9 +15,9 @@ const defaultFilter = {
 };
 
 export const statsFilterStore = writable(defaultFilter);
-export const statsResultStore = writable(null);
+export const statsResultStore = writable(/** @type {any} */ (null));
 export const statsLoadingStore = writable(false);
-export const statsErrorStore = writable(null);
+export const statsErrorStore = writable(/** @type {any} */ (null));
 
 // Toggle global PR / MWC display (persisted via Config.yaml in fiche 09)
 // 'pr' | 'mwc' | 'mwc7'
@@ -25,13 +27,14 @@ export const statsMetricStore = writable('pr');
 export const statsInvalidationKeyStore = derived([databasePathStore, dbMutationCounterStore], ([$path, $mutation]) => `${$path}::${$mutation}`);
 
 /** Cache key of the last successful fetch. */
+/** @type {string | null} */
 let _cachedKey = null;
 
 /**
  * Fetch stats for the filter, skipping the backend when already cached for the same filter and
  * database state (no recalculation on every tab activation).
  *
- * @param {object} filter          - StatsFilter object
+ * @param {any} filter          - StatsFilter object
  * @param {string} invalidationKey - value of statsInvalidationKeyStore
  */
 export async function refreshStats(filter, invalidationKey) {
@@ -47,25 +50,26 @@ export async function refreshStats(filter, invalidationKey) {
         statsResultStore.set(result);
     } catch (err) {
         _cachedKey = null; // allow retry on error
-        statsErrorStore.set(err?.message ?? String(err));
+        statsErrorStore.set(/** @type {any} */ (err)?.message ?? String(err));
         statsResultStore.set(null);
     } finally {
         statsLoadingStore.set(false);
     }
 }
 
-export const playerTableStore = writable(null);
+export const playerTableStore = writable(/** @type {any} */ (null));
 export const playerTableLoadingStore = writable(false);
-export const playerTableErrorStore = writable(null);
+export const playerTableErrorStore = writable(/** @type {any} */ (null));
 
 /** Cache key of the last successful player-table fetch. */
+/** @type {string | null} */
 let _cachedPlayerKey = null;
 
 /**
  * Fetch the players table. The cache key keeps only the filter parts the backend honours (dates,
  * tournaments, match lengths): picking a player elsewhere must not refetch an identical table.
  *
- * @param {object} filter          - StatsFilter object
+ * @param {any} filter          - StatsFilter object
  * @param {string} invalidationKey - value of statsInvalidationKeyStore
  */
 export async function refreshPlayerTable(filter, invalidationKey) {
@@ -89,18 +93,19 @@ export async function refreshPlayerTable(filter, invalidationKey) {
         playerTableStore.set(rows ?? []);
     } catch (err) {
         _cachedPlayerKey = null; // allow retry on error
-        playerTableErrorStore.set(err?.message ?? String(err));
+        playerTableErrorStore.set(/** @type {any} */ (err)?.message ?? String(err));
         playerTableStore.set(null);
     } finally {
         playerTableLoadingStore.set(false);
     }
 }
 
-export const recurringErrorsStore = writable(null);
+export const recurringErrorsStore = writable(/** @type {any} */ (null));
 export const recurringErrorsLoadingStore = writable(false);
-export const recurringErrorsErrorStore = writable(null);
+export const recurringErrorsErrorStore = writable(/** @type {any} */ (null));
 
 /** Cache key of the last successful recurring-errors fetch. */
+/** @type {string | null} */
 let _cachedRecurringKey = null;
 
 /**
@@ -108,7 +113,7 @@ let _cachedRecurringKey = null;
  * apart from ComputeStats because classifying each error replays its analysis — a cost the other
  * tabs must not pay.
  *
- * @param {object} filter          - StatsFilter object
+ * @param {any} filter          - StatsFilter object
  * @param {string} invalidationKey - value of statsInvalidationKeyStore
  */
 export async function refreshRecurringErrors(filter, invalidationKey) {
@@ -123,18 +128,19 @@ export async function refreshRecurringErrors(filter, invalidationKey) {
         recurringErrorsStore.set(await ComputeRecurringErrors(filter));
     } catch (err) {
         _cachedRecurringKey = null; // allow retry on error
-        recurringErrorsErrorStore.set(err?.message ?? String(err));
+        recurringErrorsErrorStore.set(/** @type {any} */ (err)?.message ?? String(err));
         recurringErrorsStore.set(null);
     } finally {
         recurringErrorsLoadingStore.set(false);
     }
 }
 
-export const studyPlanStore = writable(null);
+export const studyPlanStore = writable(/** @type {any} */ (null));
 export const studyPlanLoadingStore = writable(false);
-export const studyPlanErrorStore = writable(null);
+export const studyPlanErrorStore = writable(/** @type {any} */ (null));
 
 /** Cache key of the last successful study-plan fetch. */
+/** @type {string | null} */
 let _cachedStudyPlanKey = null;
 /** Sequence number of the latest study-plan request: a slower, older reply is dropped. */
 let _studyPlanSeq = 0;
@@ -143,7 +149,7 @@ let _studyPlanSeq = 0;
  * Fetch the study plan of the filter (ADR-0077): the error families ranked by recoverable MWC.
  * It replays each error's analysis, like the recurring errors: fetched only while the dashboard,
  * which shows it, is open.
- * @param {object} filter
+ * @param {any} filter
  * @param {number} invalidationKey
  */
 export async function refreshStudyPlan(filter, invalidationKey) {
@@ -162,19 +168,20 @@ export async function refreshStudyPlan(filter, invalidationKey) {
     } catch (err) {
         if (seq !== _studyPlanSeq) return;
         _cachedStudyPlanKey = null; // allow retry on error
-        studyPlanErrorStore.set(err?.message ?? String(err));
+        studyPlanErrorStore.set(/** @type {any} */ (err)?.message ?? String(err));
         studyPlanStore.set(null);
     } finally {
         if (seq === _studyPlanSeq) studyPlanLoadingStore.set(false);
     }
 }
 
-export const studyEffectStore = writable(null);
-export const biasesStore = writable(null);
+export const studyEffectStore = writable(/** @type {any} */ (null));
+export const biasesStore = writable(/** @type {any} */ (null));
 export const studyLoopLoadingStore = writable(false);
-export const studyLoopErrorStore = writable(null);
+export const studyLoopErrorStore = writable(/** @type {any} */ (null));
 
 /** Cache key of the last successful before/after and biases fetch. */
+/** @type {string | null} */
 let _cachedStudyLoopKey = null;
 /** Sequence number of the latest before/after and biases request: a slower, older reply is dropped. */
 let _studyLoopSeq = 0;
@@ -182,7 +189,7 @@ let _studyLoopSeq = 0;
 /**
  * Fetch the before/after measure of the studied families and the signed biases of the filter
  * (ADR-0079). Both replay analyses: fetched only while the dashboard, which shows them, is open.
- * @param {object} filter
+ * @param {any} filter
  * @param {number} invalidationKey
  */
 export async function refreshStudyLoop(filter, invalidationKey) {
@@ -202,7 +209,7 @@ export async function refreshStudyLoop(filter, invalidationKey) {
     } catch (err) {
         if (seq !== _studyLoopSeq) return;
         _cachedStudyLoopKey = null; // allow retry on error
-        studyLoopErrorStore.set(err?.message ?? String(err));
+        studyLoopErrorStore.set(/** @type {any} */ (err)?.message ?? String(err));
         studyEffectStore.set(null);
         biasesStore.set(null);
     } finally {
@@ -210,14 +217,15 @@ export async function refreshStudyLoop(filter, invalidationKey) {
     }
 }
 
-export const trainingStatsStore = writable(null);
+export const trainingStatsStore = writable(/** @type {any} */ (null));
 export const trainingStatsLoadingStore = writable(false);
-export const trainingStatsErrorStore = writable(null);
+export const trainingStatsErrorStore = writable(/** @type {any} */ (null));
 
 /** The calendar window the training series are folded by: `week` or `month`. */
 export const trainingWindowStore = writable('week');
 
 /** Cache key of the last successful training-stats fetch. */
+/** @type {string | null} */
 let _cachedTrainingKey = null;
 
 /**
@@ -233,7 +241,7 @@ export function invalidateTrainingStats() {
  * window, with the real PR of the filter's matches on the same windows. Fetched apart from
  * ComputeStats, and only while its tab is open.
  *
- * @param {object} filter          - StatsFilter object (it restricts the matches only)
+ * @param {any} filter          - StatsFilter object (it restricts the matches only)
  * @param {string} invalidationKey - value of statsInvalidationKeyStore
  * @param {string} window          - `week` or `month`
  */
@@ -249,7 +257,7 @@ export async function refreshTrainingStats(filter, invalidationKey, window) {
         trainingStatsStore.set(await ComputeTrainingStats(filter, window));
     } catch (err) {
         _cachedTrainingKey = null; // allow retry on error
-        trainingStatsErrorStore.set(err?.message ?? String(err));
+        trainingStatsErrorStore.set(/** @type {any} */ (err)?.message ?? String(err));
         trainingStatsStore.set(null);
     } finally {
         trainingStatsLoadingStore.set(false);
