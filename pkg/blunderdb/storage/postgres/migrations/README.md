@@ -213,7 +213,8 @@ why it must hold no per-tenant data: the daemon exposes it read-only
 - `032_large_library_wave.sql` — the large-library wave: `analysis`
   provenance columns (`analysis_engine`, `analysis_depth`, `creation_date`),
   derived in Go after the forward chain by `backfillAnalysisProvenance`
-  (`provenance_postgres.go`, the blob is compressed JSON) and resumable on
+  (`provenance_postgres.go`, the blob is compressed JSON, FORCE RLS lifted per
+  batch transaction as here) and resumable on
   their NULLs; `position.match_date`, the earliest match reaching the
   position, backfilled set-based here and kept by the match store;
   `import_batch_file` (the per-file import journal), `player_alias` and
@@ -276,3 +277,8 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   the existing rows keep their old values until a repair pass
   (`RepairDenormalisedColumns`) rewrites them; `match_stats` is dropped.
   Schema-visible: bumped `domain.DatabaseVersion` to 2.37.0.
+- `043_cube_response_mwc.sql` — the 2.38.0 wave: a take or a pass is
+  converted to MWC at the cube before the double, the unit its equity is
+  counted in. No column changes; `match_stats`, filled under the old
+  conversion, is dropped. Schema-visible: bumped `domain.DatabaseVersion` to
+  2.38.0.

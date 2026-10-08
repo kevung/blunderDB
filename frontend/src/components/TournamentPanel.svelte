@@ -3,6 +3,7 @@
     import NewButton from './panels/NewButton.svelte';
     import { logger } from '../utils/logger.js';
     import { focusPanelUnlessTyping } from '../utils/panelFocus.js';
+    import { fmtMwc7, mwc7Tooltip, mwc7Percent } from '../utils/mwc7.js';
     import { createInlineEdit } from '../utils/inlineEdit.svelte.js';
     import { autofocus } from '../utils/autofocus.js';
     import { onChange } from '../utils/onChange.js';
@@ -99,6 +100,7 @@
         { key: 'location', label: $t('tournament.location'), sortable: true },
         { key: 'pr', label: 'PR', sortable: true, narrow: true },
         { key: 'mwc', label: 'MWC', sortable: true, narrow: true },
+        { key: 'mwc7', label: $t('mwc7.short'), sortable: true, narrow: true, title: $t('mwc7.name') },
         { key: 'actions', actions: true }
     ]);
 
@@ -109,6 +111,7 @@
         { key: 'length', label: $t('tournament.pts'), narrow: true },
         { key: 'pr', label: 'PR', narrow: true },
         { key: 'mwc', label: 'MWC', narrow: true },
+        { key: 'mwc7', label: $t('mwc7.short'), narrow: true, title: $t('mwc7.name') },
         { key: 'comment', label: $t('tournament.comment'), class: 'comment-col' },
         { key: 'actions', actions: true }
     ]);
@@ -133,7 +136,7 @@
                 await UpdateTournament(id, name, draft.date, draft.location.trim());
                 await loadTournaments();
                 if (selectedTournament && selectedTournament.id === id) {
-                    selectedTournamentStore.set({ ...selectedTournament, name, date: draft.date, location: draft.location.trim() });
+                    selectedTournamentStore.set(/** @type {any} */ ({ ...selectedTournament, name, date: draft.date, location: draft.location.trim() }));
                 }
             } catch (error) {
                 logger.error('Error updating tournament:', error);
@@ -155,7 +158,7 @@
         onSave: async (matchId, comment) => {
             try {
                 await UpdateMatchComment(matchId, comment);
-                tournamentMatchesStore.set(tournamentMatches.map((m) => (m.id === matchId ? { ...m, comment } : m)));
+                tournamentMatchesStore.set(tournamentMatches.map((m) => (m.id === matchId ? /** @type {any} */ ({ ...m, comment }) : m)));
             } catch (error) {
                 logger.error('Error saving match comment:', error);
             }
@@ -168,7 +171,7 @@
             if (!selectedTournament || selectedTournament.id !== tournamentId) return;
             try {
                 await UpdateTournamentComment(tournamentId, comment);
-                selectedTournamentStore.set({ ...selectedTournament, comment });
+                selectedTournamentStore.set(/** @type {any} */ ({ ...selectedTournament, comment }));
             } catch (error) {
                 logger.error('Error saving tournament comment:', error);
             }
@@ -252,6 +255,9 @@
             } else if (sortBy === 'mwc') {
                 valA = a.mwc_loss || 0;
                 valB = b.mwc_loss || 0;
+            } else if (sortBy === 'mwc7') {
+                valA = mwc7Percent(a.mwc7) ?? -1;
+                valB = mwc7Percent(b.mwc7) ?? -1;
             } else {
                 return 0;
             }
@@ -636,6 +642,7 @@
                                 >{tournament.pr > 0 ? tournament.pr.toFixed(2) : '—'}</td
                             >
                             <td class="narrow-col no-select stat-col">{tournament.mwc_loss > 0 ? (tournament.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                            <td class="narrow-col no-select stat-col" title={mwc7Tooltip(tournament.mwc7, $t)}>{fmtMwc7(tournament.mwc7)}</td>
                             <td class="actions-col no-select">
                                 <span class="item-actions">
                                     <button
@@ -809,6 +816,7 @@
                         <td class="narrow-col no-select">{match.match_length}</td>
                         <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}</td>
                         <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                        <td class="narrow-col no-select stat-col" title={mwc7Tooltip(match.mwc7, $t)}>{fmtMwc7(match.mwc7)}</td>
                         <td class="comment-col no-select">
                             {#if matchCommentEdit.isEditing(match.id)}
                                 <input class="edit-input" type="text" bind:value={matchCommentEdit.draft} onkeydown={matchCommentEdit.onKeyDown} onblur={matchCommentEdit.onBlur} use:autofocus />

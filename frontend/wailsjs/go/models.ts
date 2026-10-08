@@ -429,6 +429,7 @@ export namespace database {
 	    total_equity_error: number;
 	    pr: number;
 	    mwc_loss: number;
+	    mwc7: domain.MWC7;
 	    checker_decisions: number;
 	    checker_errors: number;
 	    checker_blunders: number;
@@ -461,6 +462,7 @@ export namespace database {
 	        this.total_equity_error = source["total_equity_error"];
 	        this.pr = source["pr"];
 	        this.mwc_loss = source["mwc_loss"];
+	        this.mwc7 = this.convertValues(source["mwc7"], domain.MWC7);
 	        this.checker_decisions = source["checker_decisions"];
 	        this.checker_errors = source["checker_errors"];
 	        this.checker_blunders = source["checker_blunders"];
@@ -481,6 +483,24 @@ export namespace database {
 	        this.cube_mwc_loss = source["cube_mwc_loss"];
 	        this.snowie_er = source["snowie_er"];
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class MatchDetailStats {
 	    match_id: number;
@@ -524,6 +544,7 @@ export namespace database {
 	    PR: number;
 	    MWC: number;
 	    NumDecisions: number;
+	    MWC7: domain.MWC7;
 	
 	    static createFrom(source: any = {}) {
 	        return new MatchStats(source);
@@ -537,7 +558,26 @@ export namespace database {
 	        this.PR = source["PR"];
 	        this.MWC = source["MWC"];
 	        this.NumDecisions = source["NumDecisions"];
+	        this.MWC7 = this.convertValues(source["MWC7"], domain.MWC7);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class OrphanCounts {
 	    games_without_match: number;
@@ -884,6 +924,7 @@ export namespace database {
 	    PR: number;
 	    MWC: number;
 	    NumDecisions: number;
+	    MWC7: domain.MWC7;
 	
 	    static createFrom(source: any = {}) {
 	        return new TournamentStats(source);
@@ -897,7 +938,26 @@ export namespace database {
 	        this.PR = source["PR"];
 	        this.MWC = source["MWC"];
 	        this.NumDecisions = source["NumDecisions"];
+	        this.MWC7 = this.convertValues(source["MWC7"], domain.MWC7);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class StatsTotals {
 	    NumPositions: number;
@@ -928,6 +988,7 @@ export namespace database {
 	    MWCCube: number;
 	    MWCRolling: Record<number, number>;
 	    MWCAvailable: boolean;
+	    MWC7: domain.MWC7;
 	    SnowieGlobal: number;
 	    PerTournament: TournamentStats[];
 	    PerMatch: MatchStats[];
@@ -956,6 +1017,7 @@ export namespace database {
 	        this.MWCCube = source["MWCCube"];
 	        this.MWCRolling = source["MWCRolling"];
 	        this.MWCAvailable = source["MWCAvailable"];
+	        this.MWC7 = this.convertValues(source["MWC7"], domain.MWC7);
 	        this.SnowieGlobal = source["SnowieGlobal"];
 	        this.PerTournament = this.convertValues(source["PerTournament"], TournamentStats);
 	        this.PerMatch = this.convertValues(source["PerMatch"], MatchStats);
@@ -2266,6 +2328,36 @@ export namespace domain {
 		}
 	}
 	
+	export class MWC7 {
+	    available: boolean;
+	    loss: number;
+	    has_interval: boolean;
+	    low: number;
+	    high: number;
+	    elo: number;
+	    elo_low: number;
+	    elo_high: number;
+	    elo_floored: boolean;
+	    matches: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new MWC7(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.available = source["available"];
+	        this.loss = source["loss"];
+	        this.has_interval = source["has_interval"];
+	        this.low = source["low"];
+	        this.high = source["high"];
+	        this.elo = source["elo"];
+	        this.elo_low = source["elo_low"];
+	        this.elo_high = source["elo_high"];
+	        this.elo_floored = source["elo_floored"];
+	        this.matches = source["matches"];
+	    }
+	}
 	export class Match {
 	    id: number;
 	    player1_name: string;
@@ -2290,6 +2382,8 @@ export namespace domain {
 	    mwc_loss: number;
 	    pr2: number;
 	    mwc_loss2: number;
+	    mwc7: MWC7;
+	    mwc7_p2: MWC7;
 	    match_hash?: string;
 	    canonical_hash?: string;
 	    dice_hash?: string;
@@ -2330,6 +2424,8 @@ export namespace domain {
 	        this.mwc_loss = source["mwc_loss"];
 	        this.pr2 = source["pr2"];
 	        this.mwc_loss2 = source["mwc_loss2"];
+	        this.mwc7 = this.convertValues(source["mwc7"], MWC7);
+	        this.mwc7_p2 = this.convertValues(source["mwc7_p2"], MWC7);
 	        this.match_hash = source["match_hash"];
 	        this.canonical_hash = source["canonical_hash"];
 	        this.dice_hash = source["dice_hash"];
@@ -2878,6 +2974,7 @@ export namespace domain {
 	    pr: number;
 	    mwc_loss: number;
 	    ref_player: string;
+	    mwc7: MWC7;
 	
 	    static createFrom(source: any = {}) {
 	        return new Tournament(source);
@@ -2897,7 +2994,26 @@ export namespace domain {
 	        this.pr = source["pr"];
 	        this.mwc_loss = source["mwc_loss"];
 	        this.ref_player = source["ref_player"];
+	        this.mwc7 = this.convertValues(source["mwc7"], MWC7);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class TrashEntry {
 	    id: number;

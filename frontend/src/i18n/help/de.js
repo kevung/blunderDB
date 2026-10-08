@@ -560,6 +560,22 @@ export default {
 <p>Der MWC cost <strong>ist nicht anwendbar</strong> auf <em>Money-Game</em>-Stellungen (ohne Matcheinsatz). Diese Stellungen werden von der MWC-Berechnung ausgeschlossen. Die MWC-Werte hängen von der verwendeten MET ab; sie sind nicht direkt zwischen Programmen vergleichbar, die unterschiedliche METs verwenden.</p>
 </div>
 </blockquote>
+<p><strong>MWC-Verlust (7-Punkte-Äq.)</strong></p>
+<blockquote>
+<p>Die Wahrscheinlichkeit, das Match zu gewinnen, die ein Spieler über alle seine Entscheidungen verloren hat — Steine, Würfel, Annahme oder Aufgabe, mit Würfel — umgerechnet auf ein Match über 7 Punkte. Für ein Match über <em>N</em> Punkte, in dem der Spieler <em>L</em> an MWC verloren hat:</p>
+<blockquote>
+<p>L₇ = L × √(7 / N)</p>
+</blockquote>
+<p>Bei einem Match über 7 Punkte ist dies der MWC-Verlust des Matches, den auch eXtreme Gammon anzeigt. Die Wurzel stammt aus dem Modell der FIBS-Formel: Bei gleicher Spielstärke wächst der Verlust eines Spielers mit der Wurzel der Matchlänge. 7 Punkte sind die Referenzlänge, weil sie in Turnieren am häufigsten ist.</p>
+<p>Sie ist zu lesen als der gegen einen perfekten Spieler verlorene Matchanteil: 12,3 % bedeutet, dass der Spieler statt 50 % Gewinnchancen gegen die Engine nur noch 37,7 % in einem Match über 7 Punkte hatte. Der Tooltip gibt die Lesart als Elo gegen die Engine an, indem die FIBS-Formel umgekehrt wird: D = (2000 / √7) × log₁₀(q / (1 − q)), mit q = 0,5 − L₇. Ab einem Verlust von 49 % hat die Formel keinen endlichen Wert mehr: Das angezeigte Elo ist dann eine Obergrenze (»≤«). Beide Zahlen ordnen die Spieler gleich.</p>
+<p>Sie ergänzt den PR, ohne ihn zu ersetzen: Der PR teilt die Fehler durch eine Anzahl von Entscheidungen, und diese Anzahl hängt davon ab, was als Entscheidung zählt (erzwungene Züge, offensichtliche Würfelentscheidungen). Der MWC-Verlust zählt keine Entscheidungen: Jeder Fehler wiegt das, was er bei dem Spielstand gekostet hat, bei dem er gemacht wurde.</p>
+<p>Über mehrere Matches (Statistiken eines Spielers oder eines Turniers) werden die Verluste und die Wurzeln der Längen vor der Verhältnisbildung addiert: L₇ = √7 × ΣL / Σ√N. Ein Match über 7 Punkte wiegt also mehr als ein Match über 1 Punkt, und ein einzelnes Match ergibt seinen eigenen Wert.</p>
+<p>Ein einzelnes Match ist sehr verrauscht: Einige große Fehler genügen, damit es sich verdoppelt. Jeder Wert wird von seinem 95-%-Intervall begleitet, das durch Resampling der Partien des Matches (oder der Matches einer Aggregation) berechnet wird. Für ein Intervall sind mindestens zwei Partien oder zwei Matches nötig. Ordnen Sie Spieler nicht anhand eines einzigen Matches.</p>
+<div class="admonition caution">
+<p>Eine <em>Money-Game</em>-Partie hat keine Matchlänge: Der MWC-Verlust (7-Punkte-Äq.) ist dort nicht definiert, und das Panel zeigt dies an, statt eine Zahl anzuzeigen. Wie die MWC-Kosten hängt er von der MET ab.</p>
+</div>
+<p>Die dritte Wahl der Schaltfläche, <strong>MWC 7 pts</strong>, zeichnet diesen Verlust im Reiter Fortschritt; Reiter ohne 7-Punkte-Entsprechung behalten die MWC-Kosten.</p>
+</blockquote>
 <p>Das Umschalten PR ↔ MWC erfolgt sofort: Es wird keine Neuberechnung im Backend durchgeführt.</p>
 <h4>Der HTML-Bericht</h4>
 <p>Die Schaltfläche <strong>HTML-Bericht</strong> in der Kopfzeile des Panels erzeugt ein <strong>eigenständiges</strong> Dokument: eine einzige Datei, ohne externes Bild, ohne entferntes Stylesheet, ohne Skript. Die Diagramme sind eingebettetes SVG, gezeichnet vom selben Renderer wie das Brett auf dem Bildschirm, mit Ihrer Palette. Es öffnet sich in jedem Browser, reist per E-Mail und <strong>wird vom Browser selbst als PDF gedruckt</strong> — was es erspart, einen PDF-Generator mitzuliefern für etwas, das ohnehin jeder hat.</p>

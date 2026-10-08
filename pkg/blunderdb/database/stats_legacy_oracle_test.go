@@ -448,7 +448,7 @@ func legacyComputeStats(d *Database, filter StatsFilter) (*StatsResult, error) {
 	{
 		mwcPassSQL := `SELECT ` + statsErrExpr + ` as err,` +
 			` COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,` +
-			` (1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0),` +
+			` ` + oracleDecisionCubeSQL + `, COALESCE(p.match_length, m.match_length, 0),` +
 			` COALESCE(m.tournament_id, 0), m.id,` +
 			` ` + sqlshared.ActionLabelOrEmptySQL("a.best_cube_action") + `, p.decision_type, p.id ` +
 			statsBaseJoin + whereSQL +
@@ -733,7 +733,7 @@ func legacyGetMatchDetailStats(d *Database, matchID int64) (*MatchDetailStats, e
 	query := `SELECT mv.player, p.decision_type, ` + sqlshared.ActionLabelOrEmptySQL("mv.cube_action") + `,
 		(` + statsErrExpr + `) as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
-		(1 << COALESCE(p.cube_value, 0)),
+		` + oracleDecisionCubeSQL + `,
 		COALESCE(p.match_length, m.match_length, 0) ` +
 		statsBaseJoin +
 		` WHERE m.id = ? AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + statsCountedExpr
@@ -934,3 +934,10 @@ func legacyGetMatchDetailStats(d *Database, matchID int64) (*MatchDetailStats, e
 	stats.Player2.SnowieER = snowieER(snowieP2SumErr, snowieDenom)
 	return stats, nil
 }
+
+// oracleDecisionCubeSQL is the cube a decision's MWC is converted at: a take
+// or a pass is stored with the cube already turned, its equity counted at the
+// cube before the double. Spelt with the action labels, apart from the
+// production expression, so the oracle does not inherit its mistakes.
+var oracleDecisionCubeSQL = `(1 << CASE WHEN ` + sqlshared.ActionLabelOrEmptySQL("mv.cube_action") +
+	` IN ('Take', 'Pass') AND COALESCE(p.cube_value, 0) > 0 THEN p.cube_value - 1 ELSE COALESCE(p.cube_value, 0) END)`

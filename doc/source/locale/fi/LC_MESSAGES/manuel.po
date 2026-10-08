@@ -6200,7 +6200,121 @@ msgstr ""
 "riippuvat käytetystä MET:stä; ne eivät ole suoraan vertailukelpoisia eri "
 "MET:ejä käyttävien ohjelmistojen välillä."
 
-#: ../../source/manuel.rst:2696
+#: ../../source/manuel.rst:2612
+msgid "**Perte MWC (éq. 7 pts)**"
+msgstr "**MWC-tappio (7 pisteen ekv.)**"
+
+#: ../../source/manuel.rst:2614
+msgid ""
+"La probabilité de gagner le match qu'un joueur a perdue sur l'ensemble de"
+" ses décisions — pions, videau, prise ou refus, avec videau — ramenée à "
+"un match en 7 points. Pour un match en *N* points où le joueur a perdu "
+"*L* de MWC :"
+msgstr ""
+"Todennäköisyys voittaa ottelu, jonka pelaaja on menettänyt kaikilla "
+"päätöksillään — siirrot, tuplauskuutio, kuution ottaminen tai hylkääminen"
+" — suhteutettuna 7 pisteen otteluun. *N* pisteen ottelussa, jossa pelaaja"
+" on menettänyt *L* MWC:tä:"
+
+#: ../../source/manuel.rst:2618
+msgid "L₇ = L × √(7 / N)"
+msgstr "L₇ = L × √(7 / N)"
+
+#: ../../source/manuel.rst:2620
+msgid ""
+"Pour un match en 7 points, c'est la perte de MWC du match, celle "
+"qu'affiche eXtreme Gammon. La racine vient du modèle de la formule FIBS :"
+" à force égale, la perte d'un joueur croît comme la racine de la longueur"
+" du match. 7 points est la longueur de référence parce que c'est la plus "
+"courante en tournoi."
+msgstr ""
+"7 pisteen ottelussa tämä on ottelun MWC-tappio, sama jonka eXtreme Gammon"
+" näyttää. Neliöjuuri tulee FIBS-kaavan mallista: yhtä vahvalla pelaajalla"
+" tappio kasvaa ottelun pituuden neliöjuuren mukaan. 7 pistettä on "
+"vertailupituus, koska se on turnauksissa yleisin."
+
+#: ../../source/manuel.rst:2626
+#, no-python-format
+msgid ""
+"Elle se lit comme la part de match perdue face à un joueur parfait : 12,3"
+" % veut dire qu'au lieu de 50 % de chances contre le moteur, le joueur "
+"n'en avait plus que 37,7 % sur un match en 7 points. L'infobulle en donne"
+" la lecture en Elo face au moteur, en inversant la formule FIBS : D = "
+"(2000 / √7) × log₁₀(q / (1 − q)), avec q = 0,5 − L₇. Au-delà d'une perte "
+"de 49 %, la formule n'a plus de valeur finie : l'Elo affiché est alors un"
+" plafond (« ≤ »). Les deux chiffres classent les joueurs dans le même "
+"ordre."
+msgstr ""
+"Se luetaan täydelliseen pelaajaan nähden menetettynä osuutena ottelusta: "
+"12,3 % tarkoittaa, että 50 %:n voittomahdollisuuden sijaan moottoria "
+"vastaan pelaajalla oli enää 37,7 % 7 pisteen ottelussa. Työkaluvihje "
+"antaa saman Elo-lukuna moottoria vastaan kääntämällä FIBS-kaavan: D = "
+"(2000 / √7) × log₁₀(q / (1 − q)), missä q = 0,5 − L₇. 49 %:n tappion "
+"jälkeen kaavalla ei ole enää äärellistä arvoa: näytetty Elo on silloin "
+"yläraja (»≤«). Kumpikin luku asettaa pelaajat samaan järjestykseen."
+
+#: ../../source/manuel.rst:2635
+msgid ""
+"Elle complète le PR sans le remplacer : le PR divise les erreurs par un "
+"nombre de décisions, et ce nombre dépend de ce que l'on compte comme "
+"décision (coups forcés, décisions de videau évidentes). La perte MWC ne "
+"compte aucune décision : chaque erreur pèse ce qu'elle a coûté au score "
+"où elle a été commise."
+msgstr ""
+"Se täydentää PR:ää korvaamatta sitä: PR jakaa virheet päätösten "
+"lukumäärällä, ja tämä lukumäärä riippuu siitä, mitä päätöksenä pidetään "
+"(pakotetut siirrot, ilmeiset kuutiopäätökset). MWC-tappio ei laske "
+"päätöksiä: kukin virhe painaa sen, mitä se maksoi tilanteessa, jossa se "
+"tehtiin."
+
+#: ../../source/manuel.rst:2641
+msgid ""
+"Sur plusieurs matchs (statistiques d'un joueur, d'un tournoi), les pertes"
+" et les racines des longueurs s'additionnent avant le rapport : L₇ = √7 ×"
+" ΣL / Σ√N. Un match en 7 points pèse donc plus qu'un match en 1 point, et"
+" un seul match donne sa propre valeur."
+msgstr ""
+"Usean ottelun yli (pelaajan tai turnauksen tilastot) tappiot ja "
+"pituuksien neliöjuuret lasketaan yhteen ennen suhdetta: L₇ = √7 × ΣL / "
+"Σ√N. 7 pisteen ottelu painaa siis enemmän kuin 1 pisteen ottelu, ja "
+"yksittäinen ottelu antaa oman arvonsa."
+
+#: ../../source/manuel.rst:2647
+msgid ""
+"Un match isolé est très bruité : quelques grosses erreurs suffisent à le "
+"faire varier du simple au double. Chaque valeur est accompagnée de son "
+"intervalle à 95 %, calculé en rééchantillonnant les parties du match (ou "
+"les matchs d'un agrégat). Il faut au moins deux parties, ou deux matchs, "
+"pour qu'un intervalle existe. Ne classez pas des joueurs sur un seul "
+"match."
+msgstr ""
+"Yksittäinen ottelu on hyvin kohinainen: muutama iso virhe riittää "
+"kaksinkertaistamaan arvon. Jokaisen arvon mukana on sen 95 %:n "
+"luottamusväli, joka lasketaan otantaa uusimalla ottelun pelit (tai "
+"yhteenvedon ottelut). Välin olemassaoloon tarvitaan vähintään kaksi peliä"
+" tai kaksi ottelua. Älä järjestä pelaajia yhden ottelun perusteella."
+
+#: ../../source/manuel.rst:2654
+msgid ""
+"Une partie *money-game* n'a pas de longueur de match : la perte MWC (éq. "
+"7 pts) n'y est pas définie et le panneau l'indique au lieu d'afficher un "
+"nombre. Comme le MWC cost, elle dépend de la MET."
+msgstr ""
+"*Money-game*-pelillä ei ole ottelun pituutta: MWC-tappiota (7 pisteen "
+"ekv.) ei ole siinä määritelty, ja paneeli ilmoittaa sen numeron "
+"näyttämisen sijaan. Kuten MWC-kustannus, se riippuu MET:stä."
+
+#: ../../source/manuel.rst:2658
+msgid ""
+"Le troisième choix du bouton, **MWC 7 pts**, trace cette perte dans "
+"l'onglet Progression ; les onglets sans équivalent 7 points gardent le MWC "
+"cost."
+msgstr ""
+"Painikkeen kolmas vaihtoehto, **MWC 7 pts**, piirtää tämän menetyksen "
+"Kehitys-välilehdelle; välilehdet, joilla ei ole 7 pisteen vastinetta, "
+"näyttävät MWC costin."
+
+#: ../../source/manuel.rst:2633
 msgid ""
 "Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "
 "effectué."

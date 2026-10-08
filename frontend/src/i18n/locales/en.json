@@ -3045,5 +3045,11 @@
             "answer": "The Bot doubles: take or pass on the board.",
             "move": "Click a checker to play the left die; right-click takes the move back, then click the dice or press Enter to validate."
         }
+    },
+    "mwc7": {
+        "name": "MWC loss (7-pt eq.)",
+        "short": "MWC 7 pts",
+        "tooltip": "MWC lost against a perfect player, rescaled to a 7-point match (L × √(7/N)); 95 % interval from resampling the games; {elo} Elo against the engine",
+        "unavailable": "Money play has no match length: the 7-point equivalent is not defined"
     }
 }

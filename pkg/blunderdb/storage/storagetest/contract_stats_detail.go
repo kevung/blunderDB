@@ -6,6 +6,7 @@ package storagetest
 import (
 	"context"
 	"errors"
+	"math"
 	"testing"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
@@ -34,6 +35,30 @@ func testStatsMatchDetail(t *testing.T, s storage.Storage) {
 			detail.Player1.PR, detail.Player2.PR)
 	}
 
+	// The 7-point MWC loss of a seven-point match is its MWC loss, with no
+	// interval from a single game; the list badge carries the same figure.
+	badges, err := s.Stats().MatchBadges(ctx, "", []int64{matchID})
+	if err != nil {
+		t.Fatalf("MatchBadges: %v", err)
+	}
+	for i, p := range []storage.MatchPlayerDetailStats{detail.Player1, detail.Player2} {
+		e := p.MWC7
+		wantElo, _ := domain.MWC7Elo(p.MWCLoss)
+		if !e.Available || e.HasInterval || e.Matches != 1 || math.Abs(e.Loss-p.MWCLoss) > 1e-12 || math.Abs(e.Elo-wantElo) > 1e-9 {
+			t.Errorf("player %d MWC7 = %+v, want %v without interval", i+1, e, p.MWCLoss)
+		}
+		if p.MWCLoss > 0 && e.Elo >= 0 {
+			t.Errorf("player %d lost %v MWC but MWC7 is %v", i+1, p.MWCLoss, e.Elo)
+		}
+		b := badges[matchID].MWC7
+		if i == 1 {
+			b = badges[matchID].MWC7P2
+		}
+		if math.Abs(b.Loss-e.Loss) > 1e-12 || b.Available != e.Available {
+			t.Errorf("player %d badge MWC7 %+v, detail %+v", i+1, b, e)
+		}
+	}
+
 	// A match with no counted decisions returns zero-valued stats, not an
 	// error: MatchDetail must be safe to call on every match in a list.
 	empty := domain.Match{Player1Name: "Nobody", Player2Name: "Nowhere"}
@@ -44,6 +69,9 @@ func testStatsMatchDetail(t *testing.T, s storage.Storage) {
 	emptyDetail, err := s.Stats().MatchDetail(ctx, "", emptyID)
 	if err != nil {
 		t.Fatalf("MatchDetail(empty): %v", err)
+	}
+	if emptyDetail.Player1.MWC7.Available {
+		t.Errorf("MatchDetail(empty): MWC7 %+v, want unavailable", emptyDetail.Player1.MWC7)
 	}
 	if emptyDetail.Player1.TotalDecisions != 0 || emptyDetail.Player2.TotalDecisions != 0 {
 		t.Errorf("MatchDetail(empty): got %+v, want zero decisions", emptyDetail)

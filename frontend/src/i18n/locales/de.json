@@ -3045,5 +3045,11 @@
             "answer": "Der Bot doppelt: auf dem Brett annehmen oder aufgeben.",
             "move": "Klicken Sie auf einen Stein, um den linken Würfel zu ziehen; Rechtsklick nimmt den Zug zurück, dann bestätigt ein Klick auf die Würfel oder die Eingabetaste."
         }
+    },
+    "mwc7": {
+        "name": "MWC-Verlust (7-Punkte-Äq.)",
+        "short": "MWC 7 Pkt.",
+        "tooltip": "MWC-Verlust gegenüber einem perfekten Spieler, auf ein 7-Punkte-Match umgerechnet (L × √(7/N)); 95-%-Intervall durch Resampling der Spiele; {elo} Elo gegenüber der Engine",
+        "unavailable": "Money-Spiel hat keine Matchlänge: das 7-Punkte-Äquivalent ist nicht definiert"
     }
 }

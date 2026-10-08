@@ -4,6 +4,7 @@
     import { formatIsoDay } from '../../utils/format.js';
     import { loadPositionsFromStatsSelection, openMatchInPanel } from '../../services/positionLoader.js';
     import { t } from '../../i18n/index.js';
+    import { fmtMwc7, fmtMwc7Interval, mwc7Tooltip } from '../../utils/mwc7.js';
 
     /** @type {{ result: import('../../stores/statsStore.js').StatsResult|null, metric: string }} */
     let { result = null, metric = 'pr' } = $props();
@@ -110,6 +111,13 @@
         {/each}
     </div>
 
+    <!-- ── 7-point MWC loss: a figure of its own, whatever the metric toggle ── -->
+    <p class="mwc7-line" title={mwc7Tooltip(result.MWC7, $t)}>
+        <span class="mwc7-name">{$t('mwc7.name')}</span>
+        <b class="mwc7-value">{fmtMwc7(result.MWC7)}</b>
+        {#if fmtMwc7Interval(result.MWC7)}<span class="mwc7-interval">{fmtMwc7Interval(result.MWC7)}</span>{/if}
+    </p>
+
     <!-- ── Totals line ──────────────────────────────────────────── -->
     <p class="stats-totals">
         {result.Totals.NumTournaments}
@@ -174,6 +182,17 @@
     }
 
     /* ── Cards ── */
+    .mwc7-line {
+        font-size: var(--font-size-base);
+        padding: 8px 16px 0;
+        margin: 0;
+    }
+
+    .mwc7-name,
+    .mwc7-interval {
+        color: var(--color-text-muted);
+    }
+
     .cards-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);

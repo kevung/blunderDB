@@ -18,6 +18,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage/statsequal"
@@ -212,7 +213,11 @@ func TestStatsStorageParity(t *testing.T) {
 				t.Fatalf("storage MatchDetail: %v", err)
 			}
 
-			// 4. Compare.
+			// 4. Compare. The 7-point MWC loss has no legacy counterpart: it is
+			// pinned against the MWC loss compared here by TestMWC7_ReferenceMatches.
+			withoutMWC7(gotAll)
+			withoutMWC7(gotChecker)
+			gotDetail.Player1.MWC7, gotDetail.Player2.MWC7 = domain.MWC7{}, domain.MWC7{}
 			jsonEqual(t, "DateRange", legacyDR, gotDR)
 			statsEqual(t, "Compute(all)", legacyAll, gotAll)
 			statsEqual(t, "Compute(checker)", legacyChecker, gotChecker)
@@ -221,5 +226,17 @@ func TestStatsStorageParity(t *testing.T) {
 			jsonEqual(t, "PositionIDsBySelection", legacySel, gotSel)
 			jsonEqual(t, "MatchDetail", legacyDetail, gotDetail)
 		})
+	}
+}
+
+// withoutMWC7 clears the 7-point MWC loss of a storage result, which the
+// legacy reference does not compute.
+func withoutMWC7(r *storage.StatsResult) {
+	r.MWC7 = domain.MWC7{}
+	for i := range r.PerMatch {
+		r.PerMatch[i].MWC7 = domain.MWC7{}
+	}
+	for i := range r.PerTournament {
+		r.PerTournament[i].MWC7 = domain.MWC7{}
 	}
 }

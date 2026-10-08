@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"os"
 	"path/filepath"
+	"syscall"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	"github.com/kevung/xgparser/xgparser"
@@ -92,5 +93,19 @@ func xgParseError(path, stage string, err error) error {
 		return fmt.Errorf("ingest: %s: fichier trop gros ou corrompu (segment décompressé au-delà de %d Mio): %w",
 			filepath.Base(path), xgparser.MaxDecompressedSize>>20, wrapInvalid(err))
 	}
+	if truncatedRead(err) {
+		return fmt.Errorf("%w: ingest: %s: %s: file is truncated or corrupt", storage.ErrInvalid, stage, filepath.Base(path))
+	}
 	return fmt.Errorf("ingest: %s: %w", stage, wrapInvalid(err))
+}
+
+// truncatedRead reports a read that ran off a file's end: an offset recorded
+// in the file's own index lies past it, so seeking there fails with EINVAL (or
+// the read hits EOF). That is the file's fault, unlike an open or I/O error.
+func truncatedRead(err error) bool {
+	var pathErr *fs.PathError
+	if errors.As(err, &pathErr) && pathErr.Op == "seek" && errors.Is(pathErr.Err, syscall.EINVAL) {
+		return true
+	}
+	return errors.Is(err, io.EOF) || errors.Is(err, io.ErrUnexpectedEOF)
 }
