@@ -30,7 +30,8 @@
         GetMatchOrigin
     } from '../../wailsjs/go/database/Database.js';
     import { VideoSourceKind, OpenVideoExternally, PickTranscriptionVideo } from '../../wailsjs/go/gui/App.js';
-    import VideoPane from './VideoPane.svelte';
+    import VideoDock from './VideoDock.svelte';
+    import { rateKeyDirection } from '../utils/videoRate.js';
     import { isBareLetter } from '../utils/keys.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
@@ -155,6 +156,7 @@
     let videoStartMs = $state(0);
     /** @type {any} */
     let videoPane = $state(null);
+    let videoOnBoard = $state(false);
     let videoDraft = $state('');
     const videoSource = $derived(detailMatch?.video_source || '');
 
@@ -882,6 +884,16 @@
         // Don't intercept keys while the merge players modal is open
         if (showMergePlayersModal) return;
 
+        // [ and ] set the open video's speed. Read before panelKeyGuard: AltGr, which types
+        // them on AZERTY, arrives as Ctrl+Alt on Windows.
+        const rateStep = rateKeyDirection(event);
+        if (rateStep !== 0 && videoOpen && videoPane && !(event.target instanceof Element && event.target.matches('input, textarea, select, [contenteditable]'))) {
+            event.stopPropagation();
+            event.preventDefault();
+            videoPane.stepRate(rateStep);
+            return;
+        }
+
         // Let Ctrl/Meta combos, Space, '?' and typing in an editable field pass
         // through to the global handler — see keyboardService.panelKeyGuard.
         if (panelKeyGuard(event)) return;
@@ -1217,7 +1229,10 @@
                 </div>
 
                 {#if videoOpen && videoKind === 'file'}
-                    <VideoPane bind:this={videoPane} source={videoSource} startMs={videoStartMs} onrelocate={saveVideoSource} />
+                    <!-- Folded to nothing while the video sits beside the board. -->
+                    <div class="match-video-slot" class:empty={videoOnBoard}>
+                        <VideoDock bind:this={videoPane} bind:onBoard={videoOnBoard} owner="match" source={videoSource} startMs={videoStartMs} onrelocate={saveVideoSource} />
+                    </div>
                 {/if}
 
                 <!-- Transcript view -->
@@ -1566,6 +1581,16 @@
 {/if}
 
 <style>
+    .match-video-slot {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        max-height: 40vh;
+        flex: 0 0 auto;
+    }
+    .match-video-slot.empty {
+        aspect-ratio: auto;
+        height: 0;
+    }
     .match-charts {
         display: flex;
         flex-wrap: wrap;

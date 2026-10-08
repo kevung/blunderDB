@@ -59,6 +59,8 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { lastVisitedMatchStore, matchContextStore } from '../stores/positionStore.js';
 import { ListMatches, SetMatchVideoSource } from '../../wailsjs/go/database/Database.js';
 import MatchPanel from '../components/MatchPanel.svelte';
+import VideoStageHarness from './fixtures/VideoStageHarness.svelte';
+import { setVideoPlacement } from '../stores/videoStageStore.js';
 
 import { OpenVideoExternally, PickTranscriptionVideo } from '../../wailsjs/go/gui/App.js';
 
@@ -152,5 +154,38 @@ describe('MatchPanel — View in the video', () => {
         for (let i = 0; i < 6; i++) await tick();
         expect(SetMatchVideoSource).toHaveBeenCalledTimes(1);
         expect(container.querySelector('[data-testid="video-pane"]')).not.toBeNull();
+    });
+
+    test('the file plays beside the board, and [ ] set its speed there, never from a field', async () => {
+        setVideoPlacement('board');
+        render(VideoStageHarness, { props: { withVideo: false } });
+        state.source = '/videos/final.mp4';
+        state.kind = 'file';
+        const container = await openTranscript();
+        await vi.waitFor(() => expect(container.querySelectorAll('[data-testid="view-in-video"]').length).toBe(2));
+        await fireEvent.click(container.querySelectorAll('[data-testid="view-in-video"]')[0]);
+        const stage = await vi.waitFor(() => document.querySelector('[data-testid="video-stage"]') ?? expect.fail('no stage'));
+        const video = /** @type {HTMLVideoElement} */ (await vi.waitFor(() => stage.querySelector('video') ?? expect.fail('no video in the stage')));
+        expect(container.querySelector('video')).toBeNull();
+        await fireEvent(video, new Event('loadedmetadata'));
+        await fireEvent.keyDown(document.body, { key: ']', code: 'BracketRight', bubbles: true, cancelable: true });
+        await fireEvent.keyDown(document.body, { key: ']', code: 'Minus', altKey: true, bubbles: true, cancelable: true });
+        expect(video.playbackRate).toBe(1.5);
+        await fireEvent.keyDown(document.body, { key: '[', code: 'BracketLeft', bubbles: true, cancelable: true });
+        expect(video.playbackRate).toBe(1.25);
+        const field = /** @type {HTMLInputElement} */ (container.querySelector('input'));
+        field.focus();
+        await fireEvent.keyDown(field, { key: '[', code: 'BracketLeft', bubbles: true, cancelable: true });
+        expect(video.playbackRate).toBe(1.25);
+    });
+
+    test('in the panel, the file plays under the match card', async () => {
+        setVideoPlacement('panel');
+        state.source = '/videos/final.mp4';
+        state.kind = 'file';
+        const container = await openTranscript();
+        await fireEvent.click(container.querySelector('[data-testid="match-video"]'));
+        await vi.waitFor(() => expect(container.querySelector('.match-video-slot [data-testid="video-pane"]')).not.toBeNull());
+        setVideoPlacement('board');
     });
 });

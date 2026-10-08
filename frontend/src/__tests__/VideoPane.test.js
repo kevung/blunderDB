@@ -109,4 +109,58 @@ describe('VideoPane', () => {
         // page nothing else to post back to.
         expect(frame.getAttribute('src')).toBe(`http://127.0.0.1:1/yt/abc?origin=${encodeURIComponent(window.location.origin)}`);
     });
+
+    test('a file steps its speed by quarters up to 4×, shows it, and holds at the ends', async () => {
+        const { container, component } = render(VideoPane, { props: { source: '/v/final.mp4' } });
+        const video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
+        await fireEvent(video, new Event('loadedmetadata'));
+        expect(container.querySelector('[data-testid="video-rate"]')).toBeNull();
+        component.stepRate(1);
+        await vi.waitFor(() => expect(container.querySelector('[data-testid="video-rate"]')?.textContent).toBe('1.25×'));
+        expect(video.playbackRate).toBe(1.25);
+        for (let i = 0; i < 20; i++) component.stepRate(1);
+        expect(video.playbackRate).toBe(4);
+        for (let i = 0; i < 20; i++) component.stepRate(-1);
+        expect(video.playbackRate).toBe(0.25);
+        expect(component.playbackRate()).toBe(0.25);
+    });
+
+    test('a new source starts again at 1×', async () => {
+        const { container, component, rerender } = render(VideoPane, { props: { source: '/v/a.mp4' } });
+        let video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
+        await fireEvent(video, new Event('loadedmetadata'));
+        component.stepRate(1);
+        await rerender({ source: '/v/b.mp4' });
+        video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
+        await fireEvent(video, new Event('loadedmetadata'));
+        expect(component.playbackRate()).toBe(1);
+        expect(video.playbackRate).toBe(1);
+    });
+
+    test('a focused <video> hands the focus back to the pane, which owns no key itself', async () => {
+        const { container } = render(VideoPane, { props: { source: '/v/final.mp4' } });
+        const video = await vi.waitFor(() => container.querySelector('video') ?? expect.fail('no video'));
+        video.focus();
+        await fireEvent.focus(video);
+        expect(document.activeElement).toBe(container.querySelector('[data-testid="video-pane"]'));
+    });
+
+    test('YouTube steps only through the speeds its player offers, and shows the one it applied', async () => {
+        gui.kind = 'youtube';
+        const { container, component } = render(VideoPane, { props: { source: 'https://youtu.be/dQw4w9WgXcQ' } });
+        const frame = /** @type {HTMLIFrameElement} */ (await vi.waitFor(() => container.querySelector('iframe') ?? expect.fail('no iframe')));
+        const win = /** @type {Window} */ (frame.contentWindow);
+        const posted = vi.spyOn(win, 'postMessage').mockImplementation(() => {});
+        const say = (/** @type {any} */ data) => window.dispatchEvent(new MessageEvent('message', { data: { source: 'blunderdb-yt', ...data }, origin: 'http://127.0.0.1:1', source: win }));
+        say({ type: 'ready', rates: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] });
+        component.stepRate(1);
+        expect(posted).toHaveBeenLastCalledWith({ type: 'rate', rate: 1.25 }, 'http://127.0.0.1:1');
+        // Nothing shows until the player says what it applied.
+        expect(component.playbackRate()).toBe(1);
+        say({ type: 'rate', rate: 2 });
+        await vi.waitFor(() => expect(container.querySelector('[data-testid="video-rate"]')?.textContent).toBe('2×'));
+        posted.mockClear();
+        component.stepRate(1);
+        expect(posted).not.toHaveBeenCalled();
+    });
 });

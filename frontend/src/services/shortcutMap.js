@@ -62,7 +62,8 @@ export const SHORTCUTS = {
     matchPanel: {
         tier: TIER.PANEL,
         group: 'tab',
-        keys: ['Escape', '/', 'j', 'k', 'v', 'ArrowDown', 'ArrowUp', 'Enter', 'Delete'],
+        // [ and ] set the speed of the open video.
+        keys: ['Escape', '/', 'j', 'k', 'v', '[', ']', 'ArrowDown', 'ArrowUp', 'Enter', 'Delete'],
         shadows: ['Escape', '/', 'j', 'k', 'Delete']
     },
     collectionPanel: { tier: TIER.PANEL, group: 'tab', keys: ['Escape', 'Delete'], shadows: ['Escape', 'Delete'] },
@@ -107,7 +108,9 @@ export const SHORTCUTS = {
             'Ctrl+Shift+ArrowLeft',
             'Ctrl+Shift+ArrowRight',
             'v',
-            'Shift+V'
+            'Shift+V',
+            '[',
+            ']'
         ],
         shadows: [...digits('', 1, 4), 'h', 'l', 'ArrowLeft', 'ArrowRight', 'j', 'k', 'p', 'r', 'Backspace', 'Delete', 'Escape', 'Space']
     },

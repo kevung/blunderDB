@@ -3191,7 +3191,11 @@
         "codecHint": "Linux では GStreamer プラグインをインストールしてください：gstreamer1.0-plugins-good, gstreamer1.0-libav（Debian、Ubuntu）、gstreamer1-plugins-good, gstreamer1-plugin-libav（Fedora）、gst-plugins-good, gst-libav（Arch）。Windows では Store の HEVC 拡張機能が H.265 を再生します。",
         "missing": "動画ファイルが見つかりません。",
         "relocate": "ファイルを選択…",
-        "player": "動画プレーヤー"
+        "player": "動画プレーヤー",
+        "placeBoard": "動画を盤の横に表示",
+        "placePanel": "動画をパネルに戻す",
+        "stageResize": "動画のサイズを変更",
+        "rate": "再生速度"
     },
     "tournamentReview": {
         "title": "トーナメントの総括",

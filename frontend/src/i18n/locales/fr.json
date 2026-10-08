@@ -3191,7 +3191,11 @@
         "codecHint": "Sous Linux, installez les greffons GStreamer : gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu) ; gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora) ; gst-plugins-good, gst-libav (Arch). Sous Windows, l'extension HEVC du Store lit le H.265.",
         "missing": "Fichier vidéo introuvable.",
         "relocate": "Choisir le fichier…",
-        "player": "Lecteur vidéo"
+        "player": "Lecteur vidéo",
+        "placeBoard": "Afficher la vidéo à côté du plateau",
+        "placePanel": "Remettre la vidéo dans le panneau",
+        "stageResize": "Redimensionner la vidéo",
+        "rate": "Vitesse de lecture"
     },
     "tournamentReview": {
         "title": "Bilan du tournoi",

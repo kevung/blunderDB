@@ -14,6 +14,11 @@
         fakeVideo.seeks.push(ms);
     }
 
+    /** @param {-1 | 1} direction */
+    export function stepRate(direction) {
+        fakeVideo.rateSteps.push(direction);
+    }
+
     export function togglePlay() {
         fakeVideo.toggles++;
     }

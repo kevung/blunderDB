@@ -8,7 +8,7 @@
 import { describe, test, expect } from 'vitest';
 import { SHORTCUTS, TIER } from '../services/shortcutMap.js';
 
-const CHORD = /^(Ctrl\+)?(Alt\+)?(Shift\+)?([a-z0-9]|[A-Z]|[A-Z][A-Za-z0-9]+|[?/])$/;
+const CHORD = /^(Ctrl\+)?(Alt\+)?(Shift\+)?([a-z0-9]|[A-Z]|[A-Z][A-Za-z0-9]+|[?/[\]])$/;
 
 const scopes = Object.entries(SHORTCUTS);
 

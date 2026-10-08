@@ -37,6 +37,8 @@ import { transcriptionStore, transcriptionNoticeStore, clearTranscription } from
 import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
+import { setVideoPlacement } from '../stores/videoStageStore.js';
+import VideoStageHarness from './fixtures/VideoStageHarness.svelte';
 import { fakeVideo } from './fixtures/fakeVideo.js';
 import { registerKeys } from '../services/keyDispatch.js';
 
@@ -339,5 +341,71 @@ describe('the jump on a cell', () => {
         const cell = /** @type {HTMLElement} */ (document.querySelector('.cell[data-index="0"]'));
         expect(cell.dataset.timed).toBe('true');
         expect(cell.getAttribute('title')).toBe('roll 1:10, play 1:16, 6.5 s');
+    });
+});
+
+describe('the video beside the board', () => {
+    /** @type {(() => void) | null} */
+    let unregisterBoard = null;
+    const boardKeys = vi.fn();
+
+    beforeEach(() => {
+        boardKeys.mockClear();
+        unregisterBoard = registerKeys('boardOrientation', boardKeys);
+    });
+    afterEach(() => {
+        unregisterBoard?.();
+        setVideoPlacement('board');
+    });
+
+    /** The main area beside the panel, the focus on the video's own button. */
+    async function besideTheBoard() {
+        setVideoPlacement('board');
+        render(VideoStageHarness, { props: { withVideo: false } });
+        await openedPanel();
+        await settle();
+        const stage = screen.getByTestId('video-stage');
+        expect(stage.contains(screen.getByTestId('video-pane'))).toBe(true);
+        /** @type {HTMLElement} */ (screen.getByTestId('video-placement')).focus();
+    }
+
+    test('focus in the video beside the board keeps the panel keys, and Ctrl+Left/Right still turn the board', async () => {
+        await besideTheBoard();
+        await press('Space');
+        expect(fakeVideo.toggles).toBe(1);
+        await press('ArrowRight', { shiftKey: true });
+        expect(fakeVideo.seeks).toEqual([70000]);
+        await press('ArrowLeft', { ctrlKey: true });
+        await press('ArrowRight', { ctrlKey: true });
+        expect(boardKeys).toHaveBeenCalledTimes(2);
+        expect(fakeVideo.seeks).toEqual([70000]);
+    });
+
+    test('in the panel, the slot takes its height and Ctrl+Left/Right still turn the board', async () => {
+        setVideoPlacement('panel');
+        render(VideoStageHarness, { props: { withVideo: false } });
+        await openedPanel();
+        await settle();
+        expect(screen.queryByTestId('video-stage')).toBeNull();
+        expect(document.getElementById('transcriptionPanel')?.contains(screen.getByTestId('video-pane'))).toBe(true);
+        expect(screen.getByRole('separator', { name: /./ })).toBeTruthy();
+        await press('ArrowLeft', { ctrlKey: true });
+        expect(boardKeys).toHaveBeenCalledTimes(1);
+    });
+
+    test('[ and ] step the speed, AltGr included, never from a field', async () => {
+        await besideTheBoard();
+        await press('BracketRight', { key: ']' });
+        await press('BracketLeft', { key: '[' });
+        // AZERTY: AltGr+5 types [, AltGr+° types ].
+        await press('Digit5', { key: '[', altKey: true });
+        expect(fakeVideo.rateSteps).toEqual([1, -1, -1]);
+        expect(globalKeys).not.toHaveBeenCalled();
+        const field = document.createElement('input');
+        document.getElementById('transcriptionPanel')?.appendChild(field);
+        field.focus();
+        await press('BracketRight', { key: ']' });
+        expect(fakeVideo.rateSteps).toEqual([1, -1, -1]);
+        field.remove();
     });
 });

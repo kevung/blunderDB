@@ -57,7 +57,8 @@
     import ContextMenu from './ContextMenu.svelte';
     import TranscriptView from './TranscriptView.svelte';
     import TranscriptionMetadata from './TranscriptionMetadata.svelte';
-    import VideoPane from './VideoPane.svelte';
+    import VideoDock from './VideoDock.svelte';
+    import { rateKeyDirection } from '../utils/videoRate.js';
     import { fmtClock } from '../utils/decisionTime.js';
     import {
         transcriptionListStore,
@@ -118,6 +119,8 @@
     /** @type {any} */
     let videoPane = $state(null);
     let videoMenuOpen = $state(false);
+    // The video shows beside the board rather than in this panel.
+    let videoOnBoard = $state(false);
     let youtubeOpen = $state(false);
     let youtubeField = $state('');
     const VIDEO_HEIGHT_KEY = 'blunderdb.transcription.videoHeight';
@@ -456,15 +459,23 @@
      * The video keys, live only while a source is attached and read by their position
      * for the arrows (event.code), whatever the layout: Space plays or pauses,
      * Shift+Left/Right step 5 s, Ctrl+Shift+Left/Right 1 s (Ctrl+Left/Right turn the
-     * board); `v` / Shift+V, read by their label, time the Cursor. Space and the Ctrl chords are global everywhere else: they are
+     * board); `v` / Shift+V, read by their label, time the Cursor; `[` / `]`, by the character
+     * typed, slow down or speed up the playback. Space and the Ctrl chords are global everywhere else: they are
      * read before panelKeyGuard, and only here.
      *
      * @param {KeyboardEvent} event
      * @returns {boolean} whether the key was the video's
      */
     function videoKey(event) {
-        if (!videoSource || event.metaKey || event.altKey) return false;
+        if (!videoSource) return false;
         if (event.target instanceof Element && event.target.matches('input, textarea, select, [contenteditable]')) return false;
+        // [ and ] before the Alt refusal: AltGr types them on AZERTY.
+        const rateStep = rateKeyDirection(event);
+        if (rateStep !== 0) {
+            videoPane?.stepRate?.(rateStep);
+            return true;
+        }
+        if (event.metaKey || event.altKey) return false;
         if (event.code === 'Space' && !event.ctrlKey && !event.shiftKey) {
             videoPane?.togglePlay?.();
             return true;
@@ -995,6 +1006,12 @@
     // The panel owns its keys while focused (digits are dice, ux.md §3);
     // panelKeyGuard says what it may never swallow.
 
+    // The video is the panel's even beside the board: focus there keeps the panel's keys.
+    function ownsFocus() {
+        const active = document.activeElement;
+        return !!panelEl?.contains(active) || !!videoPane?.holds?.(active);
+    }
+
     /** @param {KeyboardEvent} event */
     function handleKeyDown(event) {
         // Already handled: a dialog delegated on the app root runs first and claims its keys this way.
@@ -1003,7 +1020,7 @@
         // Ctrl+Entrée (Ctrl+S est pris globalement) : lu avant panelKeyGuard,
         // qui laisse passer tout combo Ctrl, puis arrêté.
         if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-            if (!panelEl?.contains(document.activeElement)) return;
+            if (!ownsFocus()) return;
             event.preventDefault();
             event.stopPropagation();
             handleFinish();
@@ -1011,13 +1028,13 @@
         }
         // Before panelKeyGuard: Space and Ctrl+Shift+Left/Right are global keys the panel
         // takes over only while a video is attached (shortcutMap `shadows`).
-        if (panelEl?.contains(document.activeElement) && videoKey(event)) {
+        if (ownsFocus() && videoKey(event)) {
             event.preventDefault();
             event.stopPropagation();
             return;
         }
         if (panelKeyGuard(event)) return;
-        if (!panelEl?.contains(document.activeElement)) return;
+        if (!ownsFocus()) return;
 
         // Coup en cours au plateau : Retour arrière défait le dernier pas.
         if (event.key === 'Backspace' && ($quizPlayStore?.steps?.length ?? 0) > 0) {
@@ -1718,10 +1735,13 @@
 
             {#if videoSource}
                 <!-- Replié tant qu'aucune source n'est attachée (ADR-0082 règle 3). -->
-                <div class="video-slot" style="height: {videoHeight}px">
-                    <VideoPane bind:this={videoPane} source={videoSource} onrelocate={(/** @type {string} */ path) => attachVideo(path)} />
+                <!-- Beside the board the dock leaves this slot empty, and the slot folds. -->
+                <div class="video-slot" style={videoOnBoard ? '' : `height: ${videoHeight}px`}>
+                    <VideoDock bind:this={videoPane} bind:onBoard={videoOnBoard} owner="transcription" source={videoSource} onrelocate={(/** @type {string} */ path) => attachVideo(path)} />
                 </div>
-                <div class="video-resize" role="separator" aria-orientation="horizontal" aria-label={$t('transcription.videoResize')} onpointerdown={startVideoResize}></div>
+                {#if !videoOnBoard}
+                    <div class="video-resize" role="separator" aria-orientation="horizontal" aria-label={$t('transcription.videoResize')} onpointerdown={startVideoResize}></div>
+                {/if}
             {/if}
 
             {#if metaOpen}
@@ -1964,11 +1984,8 @@
     .video-slot {
         flex: 0 0 auto;
         overflow: hidden;
-    }
-    .video-slot :global(.video-pane) {
-        height: 100%;
-        max-height: none;
-        aspect-ratio: auto;
+        /* However far the handle went, the draft below keeps room to be typed in. */
+        max-height: 60%;
     }
     .video-resize {
         flex: 0 0 auto;

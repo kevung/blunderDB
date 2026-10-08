@@ -8,9 +8,12 @@ export const fakeVideo = {
     /** @type {number[]} */
     seeks: [],
     toggles: 0,
+    /** @type {number[]} */
+    rateSteps: [],
     reset() {
         this.now = null;
         this.seeks = [];
         this.toggles = 0;
+        this.rateSteps = [];
     }
 };

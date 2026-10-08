@@ -1,12 +1,14 @@
 <script>
     // Plays a match video next to a panel: a file through the loopback media server and a
     // <video>, a YouTube source through the hosted player page and postMessage. The caller
-    // drives it by bind:this — currentTimeMs(), seek(ms), togglePlay() — and never touches the
-    // element, so the Transcription panel and the match review share one player.
+    // drives it by bind:this — currentTimeMs(), seek(ms), togglePlay(), stepRate(direction) —
+    // and never touches the element, so the Transcription panel and the match review share one
+    // player. It fills the box its caller gives it; the media keeps its own ratio inside.
     import { untrack } from 'svelte';
     import { MediaURL, ReleaseMedia, PickTranscriptionVideo, VideoSourceKind, YouTubeEmbedURL } from '../../wailsjs/go/gui/App.js';
     import { t } from '../i18n';
     import { logger } from '../utils/logger.js';
+    import { VIDEO_RATES, stepRate as nextRate } from '../utils/videoRate.js';
 
     /** @type {{ source: string, startMs?: number, onrelocate?: (path: string) => void, onended?: () => void }} */
     let { source, startMs = 0, onrelocate = undefined, onended = undefined } = $props();
@@ -24,6 +26,16 @@
     let ytOrigin = '';
     let ytTime = 0;
     let ytPlaying = false;
+    /** @type {HTMLDivElement | null} */
+    let root = $state(null);
+    // The speed applied, as the player reports it, and the speeds the source accepts.
+    let rate = $state(1);
+    /** @type {readonly number[]} */
+    let rates = $state(VIDEO_RATES);
+    // The speed shows a moment after each change, and for as long as it is not 1×.
+    let rateFlash = $state(false);
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
+    let rateFlashTimer;
     // The instant asked before the media is ready; read once, later seeks go through seek().
     let pendingMs = untrack(() => startMs);
 
@@ -46,10 +58,17 @@
         if (!ytOrigin || event.origin !== ytOrigin || event.source !== frame?.contentWindow) return;
         const m = event.data;
         if (!m || m.source !== 'blunderdb-yt') return;
-        if (typeof m.time === 'number') ytTime = m.time;
+        if (typeof m.time === 'number' && m.type !== 'ready') ytTime = m.time;
+        if (Array.isArray(m.rates) && m.rates.length) rates = m.rates;
         if (m.type === 'ready') {
             status = 'ready';
-            if (pendingMs > 0) seek(pendingMs);
+            ytPlaying = false;
+            // A frame moved in the DOM reloads its page: it resumes where it was, at its speed.
+            const at = ytTime > 0 ? ytTime * 1000 : pendingMs;
+            if (at > 0) seek(at);
+            if (rate !== 1) postToPlayer({ type: 'rate', rate });
+        } else if (m.type === 'rate' && typeof m.rate === 'number') {
+            showRate(m.rate);
         } else if (m.type === 'state') {
             ytPlaying = m.state === 1;
             if (m.state === 0) onended?.();
@@ -80,6 +99,9 @@
         detail = '';
         src = '';
         kind = '';
+        rate = 1;
+        rates = VIDEO_RATES;
+        ytTime = 0;
         (async () => {
             try {
                 const k = await VideoSourceKind(current);
@@ -119,12 +141,40 @@
 
     $effect(() => {
         window.addEventListener('message', onYouTubeMessage);
-        return () => window.removeEventListener('message', onYouTubeMessage);
+        window.addEventListener('blur', onWindowBlur);
+        return () => {
+            window.removeEventListener('message', onYouTubeMessage);
+            window.removeEventListener('blur', onWindowBlur);
+            clearTimeout(rateFlashTimer);
+        };
     });
+
+    // A focused <video> or player frame keeps the keyboard: the frame's document swallows every
+    // key, the element's native controls read the arrows. The pane takes the focus back, so the
+    // caller's video keys and the board's Ctrl+Left/Right keep working; clicks still reach the
+    // controls, which do not need the focus.
+    function reclaimFocus() {
+        root?.focus({ preventScroll: true });
+    }
+
+    function onWindowBlur() {
+        setTimeout(() => {
+            if (frame && document.activeElement === frame) reclaimFocus();
+        }, 0);
+    }
+
+    /** @param {number} applied */
+    function showRate(applied) {
+        rate = applied;
+        rateFlash = true;
+        clearTimeout(rateFlashTimer);
+        rateFlashTimer = setTimeout(() => (rateFlash = false), 1200);
+    }
 
     function onLoadedMetadata() {
         status = 'ready';
         if (pendingMs > 0 && video) video.currentTime = pendingMs / 1000;
+        if (video) video.playbackRate = rate;
     }
 
     // What the webview cannot read is named by its container and by the packages that give a
@@ -166,6 +216,29 @@
         }
     }
 
+    /**
+     * One step slower (-1) or faster (+1) among the speeds the source accepts; the ends hold.
+     *
+     * @param {-1 | 1} direction
+     */
+    export function stepRate(direction) {
+        if (status !== 'ready') return;
+        const next = nextRate(rate, direction, rates);
+        if (next === rate) return;
+        if (kind === 'youtube') {
+            // The shown speed is the one the player answers with, not the one asked.
+            postToPlayer({ type: 'rate', rate: next });
+        } else if (video) {
+            video.playbackRate = next;
+            showRate(video.playbackRate);
+        }
+    }
+
+    /** @returns {number} the speed applied */
+    export function playbackRate() {
+        return rate;
+    }
+
     export function togglePlay() {
         if (status !== 'ready') return;
         if (kind === 'youtube') {
@@ -178,12 +251,28 @@
     }
 </script>
 
-<div class="video-pane" data-testid="video-pane" data-status={status}>
+<!-- A click anywhere in the pane, the native controls included, leaves the keyboard to the
+     caller: the focus comes back here once the click is through. -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="video-pane" data-testid="video-pane" data-status={status} tabindex="-1" bind:this={root} onpointerdown={() => setTimeout(reclaimFocus, 0)}>
     {#if kind === 'file' && src && status !== 'missing' && status !== 'codec'}
         <!-- svelte-ignore a11y_media_has_caption -->
-        <video bind:this={video} {src} controls preload="metadata" onloadedmetadata={onLoadedMetadata} onerror={onVideoError} onended={() => onended?.()}></video>
+        <video
+            bind:this={video}
+            {src}
+            controls
+            preload="metadata"
+            onloadedmetadata={onLoadedMetadata}
+            onerror={onVideoError}
+            onended={() => onended?.()}
+            onfocus={reclaimFocus}
+            onratechange={() => video && showRate(video.playbackRate)}
+        ></video>
     {:else if kind === 'youtube' && src}
         <iframe bind:this={frame} {src} title={$t('video.player')} allow="autoplay; encrypted-media; fullscreen"></iframe>
+    {/if}
+    {#if status === 'ready' && (rate !== 1 || rateFlash)}
+        <span class="video-rate" data-testid="video-rate" title={$t('video.rate')}>{rate}×</span>
     {/if}
     {#if status === 'loading'}
         <p class="video-note">{$t('common.loading')}</p>
@@ -204,9 +293,20 @@
     .video-pane {
         position: relative;
         width: 100%;
+        height: 100%;
         background: var(--color-text);
-        aspect-ratio: 16 / 9;
-        max-height: 40vh;
+        outline: none;
+    }
+    .video-rate {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        padding: 1px 6px;
+        border-radius: 3px;
+        background: rgb(0 0 0 / 0.6);
+        color: white;
+        font-size: var(--font-size-small);
+        pointer-events: none;
     }
     video,
     iframe {
@@ -214,6 +314,7 @@
         height: 100%;
         border: 0;
         display: block;
+        object-fit: contain;
     }
     .video-note {
         position: absolute;

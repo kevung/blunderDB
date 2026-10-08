@@ -64,13 +64,24 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
    par le lecteur intégré de YouTube, dans une page hébergée par ce même serveur pour qu'elle
    ait un référent ; une vidéo qui interdit l'intégration se regarde ailleurs et ses Repères
    se posent par le geste explicite. Depuis la revue d'un Match, une décision ouvre sa vidéo :
-   dans le volet pour un fichier, dans le navigateur par le lien horodaté pour YouTube. Le
-   démon `serve` ne lit rien.
+   dans le lecteur de l'application pour un fichier (règle 7), dans le navigateur par le lien
+   horodaté pour YouTube. Le démon `serve` ne lit rien.
 6. **L'application ne décode rien elle-même.** Les codecs sont ceux du webview : natifs sur
    Windows et macOS, ceux de GStreamer sur Linux. Un format que le webview ne lit pas se
    diagnostique dans le volet, par le format du fichier et les paquets à installer, jamais par
    un cadre noir. Le Flatpak déclare l'extension ffmpeg du runtime, le paquet AUR nomme ses
    dépendances optionnelles, les notes d'installation listent les greffons.
+7. **La vidéo s'affiche à côté du plateau, ou dans le panneau qui l'a ouverte ; un seul
+   lecteur, qui appartient au panneau.** Côte à côte est le défaut, pour qu'une vidéo assez
+   grande se lise ; le choix et la largeur sont des préférences du poste. Le panneau garde son
+   composant de lecture et le pilote comme avant (instants, sauts, touches) ; la zone du
+   plateau ne fait que lui prêter une place dans le DOM. Un fichier change donc de place sans
+   se recharger ; un cadre YouTube, qu'un navigateur recharge quand il bouge, reprend à son
+   instant. Où qu'elle soit, la vidéo compte comme le panneau pour le clavier : un clic dans
+   le lecteur ou sur ses séparateurs rend le focus au panneau, parce qu'un `<video>` focalisé
+   lit lui-même les flèches et qu'un cadre focalisé avale toutes les touches. La vitesse de
+   lecture se règle par pas de 0,25 de 0,25× à 4×, une seule liste filtrée par ce que la
+   source accepte ; elle ne survit pas à un changement de source.
 
 ## Conséquences
 
@@ -87,7 +98,9 @@ peut pas embarquer ; le lecteur intégré de YouTube refuse une page sans réfé
   par plateforme) ; un décodeur WebAssembly embarqué (trente mégaoctets et un décodage
   logiciel pour le seul cas d'une distribution sans greffons) ; le serveur d'assets de Wails
   comme source média ; un chemin local qui voyage à l'export ; une Transcription qui refuse
-  un Repère à rebours.
+  un Repère à rebours ; deux lecteurs pour une vidéo, un dans le panneau et un à côté du
+  plateau (deux horloges, et un basculement qui perd l'instant) ; un calque qui intercepte les
+  clics sur le lecteur (il cacherait les commandes de YouTube et du webview).
 - Remplacer un match par un fichier corrigé garde sa source vidéo et perd ses Repères : le
   fichier n'en porte pas.
 - Garde : les tests de dérivation dans `transcript`, la suite de contrat des backends sur les

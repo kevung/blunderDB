@@ -3191,7 +3191,11 @@
         "codecHint": "Asenna Linuxissa GStreamer-liitännäiset: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). Windowsissa Storen HEVC-laajennus toistaa H.265:n.",
         "missing": "Videotiedostoa ei löydy.",
         "relocate": "Valitse tiedosto…",
-        "player": "Videosoitin"
+        "player": "Videosoitin",
+        "placeBoard": "Näytä video laudan vieressä",
+        "placePanel": "Palauta video paneeliin",
+        "stageResize": "Muuta videon kokoa",
+        "rate": "Toistonopeus"
     },
     "tournamentReview": {
         "title": "Turnauksen yhteenveto",
