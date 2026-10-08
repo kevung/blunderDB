@@ -413,7 +413,7 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 		fmt.Fprintf(w, "  Checker:\t%s\n", mwcStr(result.MWCChecker))
 		fmt.Fprintf(w, "  Cube:\t%s\n", mwcStr(result.MWCCube))
 	} else {
-		fmt.Fprintf(w, "  Global:\t%.3f\n", result.PRGlobal)
+		fmt.Fprintf(w, "  Global:\t%.3f  %s\n", result.PRGlobal, formatPRInterval(result.PRInterval))
 		fmt.Fprintf(w, "  Checker:\t%.3f\n", result.PRChecker)
 		fmt.Fprintf(w, "  Cube:\t%.3f\n", result.PRCube)
 		fmt.Fprintf(w, "  Snowie ER:\t%.3f\n", result.SnowieGlobal)
@@ -507,20 +507,20 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 	// 6b. The same decisions, sliced three ways.
 	if len(result.PerPhase) > 0 {
 		fmt.Println("── By Game Phase ──")
-		fmt.Fprintln(w, "  Phase\tDecisions\tBlunders\tPR")
-		fmt.Fprintln(w, "  —————\t—————————\t————————\t——")
+		fmt.Fprintln(w, "  Phase\tDecisions\tBlunders\tPR\t95 % CI")
+		fmt.Fprintln(w, "  —————\t—————————\t————————\t——\t———————")
 		for _, ph := range result.PerPhase {
-			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f\n", ph.Phase, ph.NumDecisions, ph.BlunderCount, ph.PR)
+			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f\t%s\n", ph.Phase, ph.NumDecisions, ph.BlunderCount, ph.PR, formatPRInterval(ph.PRInterval))
 		}
 		w.Flush()
 		fmt.Println()
 	}
 	if len(result.PerTag) > 0 {
 		fmt.Println("── By Tag ──")
-		fmt.Fprintln(w, "  Tag\tDecisions\tBlunders\tPR")
-		fmt.Fprintln(w, "  ———\t—————————\t————————\t——")
+		fmt.Fprintln(w, "  Tag\tDecisions\tBlunders\tPR\t95 % CI")
+		fmt.Fprintln(w, "  ———\t—————————\t————————\t——\t———————")
 		for _, tag := range result.PerTag {
-			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f\n", tag.Tag, tag.NumDecisions, tag.BlunderCount, tag.PR)
+			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f\t%s\n", tag.Tag, tag.NumDecisions, tag.BlunderCount, tag.PR, formatPRInterval(tag.PRInterval))
 		}
 		w.Flush()
 		// A tag labels, it does not partition: say so, or the column looks
@@ -530,20 +530,17 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 	}
 	if len(result.PerScore) > 0 {
 		fmt.Println("── By Score (away × away, from the player on roll's side) ──")
-		fmt.Fprintln(w, "  Score\tDecisions\tBlunders\tPR")
-		fmt.Fprintln(w, "  —————\t—————————\t————————\t——")
+		fmt.Fprintln(w, "  Score\tDecisions\tBlunders\tPR\t95 % CI")
+		fmt.Fprintln(w, "  —————\t—————————\t————————\t——\t———————")
 		for _, c := range result.PerScore {
 			label := fmt.Sprintf("%d-away/%d-away", c.MoverAway, c.OpponentAway)
 			if c.MoverAway == 0 && c.OpponentAway == 0 {
 				label = "money"
 			}
-			// A cell too small to read is still printed WITH its count: hiding
-			// it would make the omission unauditable.
-			thin := ""
-			if c.NumDecisions < storage.MinCellDecisions {
-				thin = "  (thin)"
-			}
-			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f%s\n", label, c.NumDecisions, c.BlunderCount, c.PR, thin)
+			// A cell without an interval (one match behind it) is still
+			// printed WITH its count: hiding it would make the omission
+			// unauditable.
+			fmt.Fprintf(w, "  %s\t%d\t%d\t%.3f\t%s\n", label, c.NumDecisions, c.BlunderCount, c.PR, formatPRInterval(c.PRInterval))
 		}
 		w.Flush()
 		fmt.Println()

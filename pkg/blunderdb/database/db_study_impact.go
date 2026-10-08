@@ -37,8 +37,7 @@ type StudyImpactRow struct {
 
 // StudyImpactMinDecisions is the sample below which a PR is not worth reading.
 // It is NOT enforced here — the row comes back with its counts and the caller
-// greys it — for the same reason storage.MinCellDecisions is not: hiding the
-// count would make the figure unauditable.
+// greys it: hiding the count would make the figure unauditable.
 const StudyImpactMinDecisions = 10
 
 // StudyImpact returns, per plan of play, what was revised over the last

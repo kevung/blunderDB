@@ -19,6 +19,10 @@ type gameLosses struct {
 	games  map[int64]struct{}
 	bySeat [2]map[int64]float64
 	total  [2]float64
+	// priced says the seat has at least one decision the conversion values:
+	// a seat whose every loss is NaN has no MWC7, as the statistics, which
+	// skip it, also say.
+	priced [2]bool
 }
 
 func newGameLosses() *gameLosses {
@@ -34,10 +38,14 @@ func (g *gameLosses) add(seat int, game int64, loss float64) {
 	}
 	g.bySeat[seat][game] += loss
 	g.total[seat] += loss
+	g.priced[seat] = true
 }
 
 // elo is seat's MWC7 over a match of matchLength points.
 func (g *gameLosses) elo(seat, matchLength int) domain.MWC7 {
+	if !g.priced[seat] {
+		return domain.MWC7{}
+	}
 	ids := make([]int64, 0, len(g.games))
 	for id := range g.games {
 		ids = append(ids, id)
@@ -55,6 +63,8 @@ type eloUnit struct {
 	match, tournament int64
 	seat, length      int
 	loss              float64
+	// byType splits loss into checker (0) and cube (1) decisions.
+	byType [2]float64
 }
 
 type eloUnitKey struct {
@@ -66,7 +76,7 @@ type eloUnitKey struct {
 // arrive.
 type eloUnits map[eloUnitKey]*eloUnit
 
-func (u eloUnits) add(match, tournament int64, seat, matchLength int, loss float64) {
+func (u eloUnits) add(match, tournament int64, seat, matchLength, decisionType int, loss float64) {
 	k := eloUnitKey{match, seat}
 	e := u[k]
 	if e == nil {
@@ -74,6 +84,11 @@ func (u eloUnits) add(match, tournament int64, seat, matchLength int, loss float
 		u[k] = e
 	}
 	e.loss += loss
+	if decisionType == 0 {
+		e.byType[0] += loss
+	} else {
+		e.byType[1] += loss
+	}
 }
 
 // fill pools the units into the selection's MWC7 and back-fills the
@@ -88,6 +103,8 @@ func (u eloUnits) fill(result *storage.StatsResult) {
 		return cmp.Or(cmp.Compare(a.match, b.match), cmp.Compare(a.seat, b.seat))
 	})
 	var global domain.MWC7Pool
+	var byType [2]domain.MWC7Pool
+	seats := map[int64]int{}
 	byMatch := map[int64]*domain.MWC7Pool{}
 	byTournament := map[int64]*domain.MWC7Pool{}
 	pool := func(m map[int64]*domain.MWC7Pool, id int64) *domain.MWC7Pool {
@@ -101,15 +118,26 @@ func (u eloUnits) fill(result *storage.StatsResult) {
 	for _, k := range keys {
 		e := u[k]
 		global.AddLoss(e.loss, e.length)
+		byType[0].AddLoss(e.byType[0], e.length)
+		byType[1].AddLoss(e.byType[1], e.length)
+		seats[e.match]++
 		pool(byMatch, e.match).AddLoss(e.loss, e.length)
 		if e.tournament != 0 {
 			pool(byTournament, e.tournament).AddLoss(e.loss, e.length)
 		}
 	}
 	result.MWC7 = global.Result()
+	result.MWC7Checker = byType[0].Result()
+	result.MWC7Cube = byType[1].Result()
 	for i, ms := range result.PerMatch {
 		if p := byMatch[ms.ID]; p != nil {
-			result.PerMatch[i].MWC7 = p.Result()
+			e := p.Result()
+			if seats[ms.ID] > 1 {
+				// The two seats of one match are not two samples of a
+				// player: their spread is the gap between the opponents.
+				e = withoutInterval(e)
+			}
+			result.PerMatch[i].MWC7 = e
 		}
 	}
 	for i, ts := range result.PerTournament {
@@ -117,4 +145,11 @@ func (u eloUnits) fill(result *storage.StatsResult) {
 			result.PerTournament[i].MWC7 = p.Result()
 		}
 	}
+}
+
+// withoutInterval drops e's interval, keeping its value.
+func withoutInterval(e domain.MWC7) domain.MWC7 {
+	e.HasInterval = false
+	e.Low, e.High, e.EloLow, e.EloHigh = 0, 0, 0, 0
+	return e
 }

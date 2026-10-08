@@ -95,6 +95,7 @@ func (s *StatsStore) Compute(ctx context.Context, scope string, filter storage.S
 
 		for _, pass := range []func(context.Context, statsQuery, *storage.StatsResult) error{
 			ts.computeTotals,
+			ts.computePRInterval,
 			ts.computePRByDecisionType,
 			ts.computeSnowieGlobal,
 			ts.computePerTournament,
@@ -596,7 +597,7 @@ func (s *StatsStore) computeMWCPass(ctx context.Context, q statsQuery, result *s
 						mwcByTournament[tournamentID] += mwcLoss
 					}
 					mwcByMatch[matchID] += mwcLoss
-					units.add(matchID, tournamentID, seat, matchN, mwcLoss)
+					units.add(matchID, tournamentID, seat, matchN, dt, mwcLoss)
 					if dt == 1 {
 						mwcByCubeAction[cubeAction] += mwcLoss
 					}

@@ -19,55 +19,33 @@ import (
 // everything as "unknown", which is honest: the column says so, and
 // `blunderdb repair` is what fills it.
 func (s *StatsStore) computePerPhase(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
-	d := s.DB
-	rows, err := s.DB.Query(ctx,
-		`SELECT COALESCE(p.game_phase, 0), `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
-			d.Bigint(`SUM(CASE WHEN `+statsErrExpr+` >= ? THEN 1 ELSE 0 END)`)+` `+
-			q.join+q.whereSQL+` GROUP BY p.game_phase`,
-		append([]any{q.settings.BlunderThresholdMP}, q.baseArgs...)...)
+	rows, err := s.breakdownRows(ctx, q, "p.game_phase")
 	if err != nil {
 		return fmt.Errorf("per-phase query: %w", err)
 	}
-	defer rows.Close()
-	for rows.Next() {
-		var phase int
-		var sumErr int64
-		var ps storage.PhaseStats
-		if err := rows.Scan(&phase, &sumErr, &ps.NumDecisions, &ps.BlunderCount); err != nil {
-			return fmt.Errorf("per-phase scan: %w", err)
-		}
-		ps.Phase = domain.GamePhase(phase).String()
-		ps.PR = pr(sumErr, ps.NumDecisions)
-		result.PerPhase = append(result.PerPhase, ps)
+	for _, r := range rows {
+		result.PerPhase = append(result.PerPhase, storage.PhaseStats{
+			Phase: domain.GamePhase(r.k1).String(), PR: pr(r.sumErr, int(r.n)), PRInterval: r.interval,
+			NumDecisions: int(r.n), BlunderCount: int(r.blunders),
+		})
 	}
-	return rows.Err()
+	return nil
 }
 
 // computePerGameType splits the selection by the position's derived plan of
 // play. Same shape as computePerPhase.
 func (s *StatsStore) computePerGameType(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
-	d := s.DB
-	rows, err := s.DB.Query(ctx,
-		`SELECT COALESCE(p.game_type, 0), `+d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
-			d.Bigint(`SUM(CASE WHEN `+statsErrExpr+` >= ? THEN 1 ELSE 0 END)`)+` `+
-			q.join+q.whereSQL+` GROUP BY p.game_type`,
-		append([]any{q.settings.BlunderThresholdMP}, q.baseArgs...)...)
+	rows, err := s.breakdownRows(ctx, q, "p.game_type")
 	if err != nil {
 		return fmt.Errorf("per-game-type query: %w", err)
 	}
-	defer rows.Close()
-	for rows.Next() {
-		var gameType int
-		var sumErr int64
-		var gs storage.GameTypeStats
-		if err := rows.Scan(&gameType, &sumErr, &gs.NumDecisions, &gs.BlunderCount); err != nil {
-			return fmt.Errorf("per-game-type scan: %w", err)
-		}
-		gs.GameType = domain.GameType(gameType).String()
-		gs.PR = pr(sumErr, gs.NumDecisions)
-		result.PerGameType = append(result.PerGameType, gs)
+	for _, r := range rows {
+		result.PerGameType = append(result.PerGameType, storage.GameTypeStats{
+			GameType: domain.GameType(r.k1).String(), PR: pr(r.sumErr, int(r.n)), PRInterval: r.interval,
+			NumDecisions: int(r.n), BlunderCount: int(r.blunders),
+		})
 	}
-	return rows.Err()
+	return nil
 }
 
 // computePerScore fills the away × away matrix.
@@ -83,29 +61,15 @@ func (s *StatsStore) computePerGameType(ctx context.Context, q statsQuery, resul
 // Crawford is NOT a dimension here, because it is not stored on a position;
 // the documentation says so.
 func (s *StatsStore) computePerScore(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
-	d := s.DB
-	rows, err := s.DB.Query(ctx,
-		`SELECT COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), `+
-			d.Bigint(`SUM(`+statsErrExpr+`)`)+`, COUNT(*), `+
-			d.Bigint(`SUM(CASE WHEN `+statsErrExpr+` >= ? THEN 1 ELSE 0 END)`)+` `+
-			q.join+q.whereSQL+` GROUP BY p.score_1, p.score_2`,
-		append([]any{q.settings.BlunderThresholdMP}, q.baseArgs...)...)
+	rows, err := s.breakdownRows(ctx, q, "p.score_1", "p.score_2")
 	if err != nil {
 		return fmt.Errorf("per-score query: %w", err)
 	}
-	defer rows.Close()
-	for rows.Next() {
-		var sumErr int64
-		var cell storage.ScoreCellStats
-		if err := rows.Scan(&cell.MoverAway, &cell.OpponentAway, &sumErr,
-			&cell.NumDecisions, &cell.BlunderCount); err != nil {
-			return fmt.Errorf("per-score scan: %w", err)
-		}
-		cell.PR = pr(sumErr, cell.NumDecisions)
-		result.PerScore = append(result.PerScore, cell)
-	}
-	if err := rows.Err(); err != nil {
-		return err
+	for _, r := range rows {
+		result.PerScore = append(result.PerScore, storage.ScoreCellStats{
+			MoverAway: r.k1, OpponentAway: r.k2, PR: pr(r.sumErr, int(r.n)), PRInterval: r.interval,
+			NumDecisions: int(r.n), BlunderCount: int(r.blunders),
+		})
 	}
 	sortScoreCells(result.PerScore)
 	return nil
@@ -134,6 +98,7 @@ func (s *StatsStore) computePerTag(ctx context.Context, q statsQuery, result *st
 	type decision struct {
 		positionID int64
 		errMP      int64
+		match      int64
 	}
 	var decisions []decision
 	positions := map[int64]bool{}
@@ -142,7 +107,7 @@ func (s *StatsStore) computePerTag(ctx context.Context, q statsQuery, result *st
 	// hold every decision of the selection in memory for nothing.
 	commented, cArgs := s.DB.TenantFilter("c", q.scope)
 	rows, err := s.DB.Query(ctx,
-		`SELECT p.id, COALESCE(`+statsErrExpr+`, 0) `+q.join+q.whereSQL+
+		`SELECT p.id, COALESCE(`+statsErrExpr+`, 0), m.id `+q.join+q.whereSQL+
 			` AND p.id IN (SELECT c.position_id FROM comment c WHERE `+commented+` AND c.text != '')`,
 		append(append([]any{}, q.baseArgs...), cArgs...)...)
 	if err != nil {
@@ -152,7 +117,7 @@ func (s *StatsStore) computePerTag(ctx context.Context, q statsQuery, result *st
 		defer rows.Close()
 		for rows.Next() {
 			var d decision
-			if err := rows.Scan(&d.positionID, &d.errMP); err != nil {
+			if err := rows.Scan(&d.positionID, &d.errMP, &d.match); err != nil {
 				return err
 			}
 			decisions = append(decisions, d)
@@ -180,6 +145,7 @@ func (s *StatsStore) computePerTag(ctx context.Context, q statsQuery, result *st
 		blunders int
 	}
 	byTag := map[string]*tally{}
+	units := matchUnits[string]{}
 	for _, d := range decisions {
 		for _, tag := range tagsByPosition[d.positionID] {
 			t := byTag[tag]
@@ -189,6 +155,7 @@ func (s *StatsStore) computePerTag(ctx context.Context, q statsQuery, result *st
 			}
 			t.sumErr += d.errMP
 			t.count++
+			units.add(tag, d.match, d.errMP, 1)
 			if d.errMP >= int64(q.settings.BlunderThresholdMP) {
 				t.blunders++
 			}
@@ -196,7 +163,7 @@ func (s *StatsStore) computePerTag(ctx context.Context, q statsQuery, result *st
 	}
 	for tag, t := range byTag {
 		result.PerTag = append(result.PerTag, storage.TagStats{
-			Tag: tag, PR: pr(t.sumErr, t.count),
+			Tag: tag, PR: pr(t.sumErr, t.count), PRInterval: units.interval(tag),
 			NumDecisions: t.count, BlunderCount: t.blunders,
 		})
 	}

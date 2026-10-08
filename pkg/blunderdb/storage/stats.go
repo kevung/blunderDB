@@ -96,8 +96,11 @@ type BlunderEntry struct {
 
 // StatsResult contains all computed statistics for a given filter.
 type StatsResult struct {
-	Totals       StatsTotals     `json:"Totals"`
-	PRGlobal     float64         `json:"PRGlobal"`
+	Totals   StatsTotals `json:"Totals"`
+	PRGlobal float64     `json:"PRGlobal"`
+	// PRInterval is PRGlobal's 95 % interval over the selection's matches
+	// (ADR-0077).
+	PRInterval   domain.Interval `json:"PRInterval"`
 	PRChecker    float64         `json:"PRChecker"`
 	PRCube       float64         `json:"PRCube"`
 	PRRolling    map[int]float64 `json:"PRRolling"`
@@ -108,7 +111,11 @@ type StatsResult struct {
 	MWCAvailable bool            `json:"MWCAvailable"`
 	// MWC7 pools every (match, player) unit of the selection
 	// (ADR-0075); unavailable when the selection holds no match play.
-	MWC7                domain.MWC7       `json:"MWC7"`
+	MWC7 domain.MWC7 `json:"MWC7"`
+	// MWC7Checker and MWC7Cube split MWC7 by decision type over the same
+	// units, so the two add up to it.
+	MWC7Checker         domain.MWC7       `json:"MWC7Checker"`
+	MWC7Cube            domain.MWC7       `json:"MWC7Cube"`
 	SnowieGlobal        float64           `json:"SnowieGlobal"`
 	PerTournament       []TournamentStats `json:"PerTournament"`
 	PerMatch            []MatchStats      `json:"PerMatch"`
@@ -133,36 +140,42 @@ type StatsResult struct {
 	// partition, so the rows deliberately do not sum to the total.
 	PerTag []TagStats `json:"PerTag"`
 	// PerScore is the away × away matrix — Crawford, post-Crawford, DMP and
-	// everything between. Cells whose sample is too small to read are still
-	// returned WITH their count, so the caller greys them out rather than
-	// being handed a figure with no idea how much is behind it.
+	// everything between. Every cell is returned WITH its count and its
+	// interval; one without an interval (a single match behind it) is greyed
+	// by the caller rather than hidden, so the omission stays auditable.
 	PerScore []ScoreCellStats `json:"PerScore"`
 }
 
 // PhaseStats is one row of the per-phase breakdown.
 type PhaseStats struct {
 	// Phase is the stable token of domain.GamePhase ("opening", "race", …).
-	Phase        string  `json:"Phase"`
-	PR           float64 `json:"PR"`
-	NumDecisions int     `json:"NumDecisions"`
-	BlunderCount int     `json:"BlunderCount"`
+	Phase string  `json:"Phase"`
+	PR    float64 `json:"PR"`
+	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0077).
+	PRInterval   domain.Interval `json:"PRInterval"`
+	NumDecisions int             `json:"NumDecisions"`
+	BlunderCount int             `json:"BlunderCount"`
 }
 
 // GameTypeStats is one row of the per-game-type breakdown.
 type GameTypeStats struct {
 	// GameType is the stable token of domain.GameType ("holding", "blitz", …).
-	GameType     string  `json:"GameType"`
-	PR           float64 `json:"PR"`
-	NumDecisions int     `json:"NumDecisions"`
-	BlunderCount int     `json:"BlunderCount"`
+	GameType string  `json:"GameType"`
+	PR       float64 `json:"PR"`
+	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0077).
+	PRInterval   domain.Interval `json:"PRInterval"`
+	NumDecisions int             `json:"NumDecisions"`
+	BlunderCount int             `json:"BlunderCount"`
 }
 
 // TagStats is one row of the per-tag breakdown. Tag carries the "#".
 type TagStats struct {
-	Tag          string  `json:"Tag"`
-	PR           float64 `json:"PR"`
-	NumDecisions int     `json:"NumDecisions"`
-	BlunderCount int     `json:"BlunderCount"`
+	Tag string  `json:"Tag"`
+	PR  float64 `json:"PR"`
+	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0077).
+	PRInterval   domain.Interval `json:"PRInterval"`
+	NumDecisions int             `json:"NumDecisions"`
+	BlunderCount int             `json:"BlunderCount"`
 }
 
 // ScoreCellStats is one cell of the away × away matrix, keyed by (mover's
@@ -173,15 +186,11 @@ type ScoreCellStats struct {
 	MoverAway    int     `json:"MoverAway"`
 	OpponentAway int     `json:"OpponentAway"`
 	PR           float64 `json:"PR"`
-	NumDecisions int     `json:"NumDecisions"`
-	BlunderCount int     `json:"BlunderCount"`
+	// PRInterval is PR's 95 % interval over the cell's matches (ADR-0077).
+	PRInterval   domain.Interval `json:"PRInterval"`
+	NumDecisions int             `json:"NumDecisions"`
+	BlunderCount int             `json:"BlunderCount"`
 }
-
-// MinCellDecisions is the sample below which a matrix cell is not worth
-// reading. It is not enforced here — the cell is returned with its count, and
-// the caller greys it — because "too small to read" is a display decision and
-// hiding the count would make it unauditable.
-const MinCellDecisions = 10
 
 // SelectionSpec selects a subset of positions out of a stats result, e.g. the
 // decisions behind a histogram bucket or a tournament row.
