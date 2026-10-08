@@ -114,3 +114,55 @@ func forEachRLSTable(ctx context.Context, pool *pgxpool.Pool, stmts func(table s
 	}
 	return nil
 }
+
+// beginner opens a transaction; *pgxpool.Conn, the migration connection, is
+// one.
+type beginner interface {
+	Begin(ctx context.Context) (pgx.Tx, error)
+}
+
+// inUnforcedTx runs fn in one transaction with FORCE ROW LEVEL SECURITY lifted
+// from those of tables that carry it and that the current role owns, and put
+// back before the commit. A Go-side pass run by Migrate reads on a connection
+// that carries no tenant: under FORCE the fail-closed policy hides every row
+// from an owner without BYPASSRLS, so the pass would find nothing and say
+// nothing. ALTER TABLE is transactional, so a failed or interrupted pass
+// rolls the lift back too — the table is never left unforced. A role that
+// does not own a table is bound by its policy whatever FORCE says and cannot
+// lift it: that table is left alone, and the pass sees only what the policy
+// shows it.
+func inUnforcedTx(ctx context.Context, conn beginner, tables []string, fn func(tx pgx.Tx) error) error {
+	tx, err := conn.Begin(ctx)
+	if err != nil {
+		return fmt.Errorf("postgres: begin: %w", err)
+	}
+	defer func() { _ = tx.Rollback(context.WithoutCancel(ctx)) }()
+	var lifted []string
+	for _, t := range tables {
+		var forced bool
+		if err := tx.QueryRow(ctx,
+			`SELECT EXISTS (SELECT 1 FROM pg_class WHERE oid = to_regclass($1)
+			   AND relforcerowsecurity AND pg_has_role(relowner, 'USAGE'))`, t).Scan(&forced); err != nil {
+			return fmt.Errorf("postgres: probe RLS on %s: %w", t, err)
+		}
+		if !forced {
+			continue
+		}
+		if _, err := tx.Exec(ctx, `ALTER TABLE `+pgx.Identifier{t}.Sanitize()+` NO FORCE ROW LEVEL SECURITY`); err != nil {
+			return fmt.Errorf("postgres: lift RLS on %s: %w", t, err)
+		}
+		lifted = append(lifted, t)
+	}
+	if err := fn(tx); err != nil {
+		return err
+	}
+	for _, t := range lifted {
+		if _, err := tx.Exec(ctx, `ALTER TABLE `+pgx.Identifier{t}.Sanitize()+` FORCE ROW LEVEL SECURITY`); err != nil {
+			return fmt.Errorf("postgres: restore RLS on %s: %w", t, err)
+		}
+	}
+	if err := tx.Commit(ctx); err != nil {
+		return fmt.Errorf("postgres: commit: %w", err)
+	}
+	return nil
+}

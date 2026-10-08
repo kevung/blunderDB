@@ -257,7 +257,7 @@ var matchStatsLateColumns = []string{
 // when there is something to repair: a role that does not own the table (a
 // tenant role under RLS) runs Migrate too, and ALTER TABLE needs ownership
 // even when the column exists.
-func repairMatchStatsShape(ctx context.Context, db execer) error {
+func repairMatchStatsShape(ctx context.Context, db migrationConn) error {
 	for _, col := range matchStatsLateColumns {
 		name, _, _ := strings.Cut(col, " ")
 		var exists bool
@@ -274,15 +274,25 @@ func repairMatchStatsShape(ctx context.Context, db execer) error {
 			return fmt.Errorf("postgres: match_stats column %s: %w", col, err)
 		}
 	}
-	var stale bool
-	if err := db.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM match_stats WHERE `+sqlshared.OlderShapeMatchStatsPredicate+`)`).Scan(&stale); err != nil {
-		return fmt.Errorf("postgres: probe match_stats older rows: %w", err)
-	}
-	if !stale {
+	// The rows of every tenant are probed, hence FORCE lifted.
+	return inUnforcedTx(ctx, db, []string{"match_stats", "match_stats_cell"}, func(tx pgx.Tx) error {
+		var stale bool
+		if err := tx.QueryRow(ctx, `SELECT EXISTS (SELECT 1 FROM match_stats WHERE `+sqlshared.OlderShapeMatchStatsPredicate+`)`).Scan(&stale); err != nil {
+			return fmt.Errorf("postgres: probe match_stats older rows: %w", err)
+		}
+		if !stale {
+			return nil
+		}
+		if _, err := tx.Exec(ctx, sqlshared.DropOlderShapeMatchStatsSQL); err != nil {
+			return fmt.Errorf("postgres: match_stats older rows: %w", err)
+		}
 		return nil
-	}
-	if _, err := db.Exec(ctx, sqlshared.DropOlderShapeMatchStatsSQL); err != nil {
-		return fmt.Errorf("postgres: match_stats older rows: %w", err)
-	}
-	return nil
+	})
+}
+
+// migrationConn is the connection Migrate holds: statements, and the
+// transactions its Go-side passes open.
+type migrationConn interface {
+	execer
+	beginner
 }
