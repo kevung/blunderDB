@@ -41,28 +41,33 @@ func (d *Database) migrate_2_36_0_to_2_37_0(ctx context.Context) error {
 	changed := 0
 	var lastID int64
 	for {
-		var page []row
-		rows, err := d.db.QueryContext(ctx,
-			`SELECT a.id, a.data, a.is_forced, a.is_close_cube, a.best_move_equity_error,
+		page, err := func() ([]row, error) {
+			var page []row
+			rows, err := d.db.QueryContext(ctx,
+				`SELECT a.id, a.data, a.is_forced, a.is_close_cube, a.best_move_equity_error,
 			        (SELECT mv.checker_move FROM move mv WHERE mv.position_id = a.position_id AND COALESCE(mv.checker_move, '') <> '' ORDER BY mv.id LIMIT 1),
 			        (SELECT `+sqlshared.ActionLabelSQL("mv.cube_action")+` FROM move mv WHERE mv.position_id = a.position_id AND `+sqlshared.ActionNotEmptySQL("mv.cube_action")+` ORDER BY mv.id LIMIT 1),
 			        `+sqlshared.LegalPlaysColumns+`
 			 FROM analysis a LEFT JOIN position p ON p.id = a.position_id
 			 WHERE a.id > ? ORDER BY a.id LIMIT 500`, lastID)
-		if err != nil {
-			return fmt.Errorf("recount decisions: read analyses: %w", err)
-		}
-		for rows.Next() {
-			var r row
-			if err := rows.Scan(&r.id, &r.data, &r.forced, &r.close, &r.moveErr, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
-				rows.Close()
-				return fmt.Errorf("recount decisions: scan: %w", err)
+			if err != nil {
+				return nil, fmt.Errorf("recount decisions: read analyses: %w", err)
 			}
-			page = append(page, r)
-		}
-		rows.Close()
-		if err := rows.Err(); err != nil {
-			return fmt.Errorf("recount decisions: rows: %w", err)
+			defer rows.Close()
+			for rows.Next() {
+				var r row
+				if err := rows.Scan(&r.id, &r.data, &r.forced, &r.close, &r.moveErr, &r.mvMove, &r.mvCube, &r.state, &r.por, &r.d1, &r.d2); err != nil {
+					return nil, fmt.Errorf("recount decisions: scan: %w", err)
+				}
+				page = append(page, r)
+			}
+			if err := rows.Err(); err != nil {
+				return nil, fmt.Errorf("recount decisions: rows: %w", err)
+			}
+			return page, nil
+		}()
+		if err != nil {
+			return err
 		}
 		if len(page) == 0 {
 			break
