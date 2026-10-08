@@ -605,6 +605,21 @@ func TestMigrate_AnsweredDoublesUnderRLS(t *testing.T) {
 			t.Fatal(err)
 		}
 		takes[scope], owned[scope] = mv, pid
+		// Response rows: gammonNet's verdict goes, XG's stays.
+		for j, label := range []string{"gammonNet v1.6.0", "XG"} {
+			r := p
+			r.Board.Points[10+j].Checkers = 1
+			r.Cube.Owner = domain.None
+			rid, err := s.Positions().Save(ctx, scope, &r)
+			if err != nil {
+				t.Fatal(err)
+			}
+			a := domain.PositionAnalysis{AnalysisType: "DoublingCube", AnalysisEngineVersion: label,
+				DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "0-ply", AnalysisEngine: label}}
+			if err := s.Analyses().Save(ctx, scope, rid, &a); err != nil {
+				t.Fatal(err)
+			}
+		}
 	}
 	if err := s.ApplyRLS(ctx); err != nil {
 		t.Fatalf("ApplyRLS: %v", err)
@@ -629,6 +644,14 @@ func TestMigrate_AnsweredDoublesUnderRLS(t *testing.T) {
 			}
 			if held != 1 {
 				t.Errorf("tenant %s: the commented redouble row was purged", scope)
+			}
+			var engines string
+			if err := conn.QueryRow(ctx, `SELECT string_agg(a.analysis_engine, ',') FROM analysis a
+				JOIN position p ON p.id = a.position_id WHERE p.cube_owner = -1`).Scan(&engines); err != nil {
+				t.Fatal(err)
+			}
+			if engines != "XG" {
+				t.Errorf("tenant %s: analyses left on response rows %q, want XG's alone", scope, engines)
 			}
 		})
 	}

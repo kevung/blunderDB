@@ -4574,9 +4574,9 @@ func TestMigrate_2_39_0_to_2_40_0_AnsweredDoubles(t *testing.T) {
 		}
 		return id
 	}
-	analyse := func(id int64) {
-		a := &domain.PositionAnalysis{AnalysisType: "DoublingCube", AnalysisEngineVersion: "XG",
-			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "0-ply", AnalysisEngine: "XG", BestCubeAction: "No Double"}}
+	analyse := func(id int64, engineLabel string) {
+		a := &domain.PositionAnalysis{AnalysisType: "DoublingCube", AnalysisEngineVersion: engineLabel,
+			DoublingCubeAnalysis: &domain.DoublingCubeAnalysis{AnalysisDepth: "0-ply", AnalysisEngine: engineLabel, BestCubeAction: "No Double"}}
 		if err := s.Analyses().Save(ctx, "", id, a); err != nil {
 			t.Fatalf("save analysis: %v", err)
 		}
@@ -4606,19 +4606,43 @@ func TestMigrate_2_39_0_to_2_40_0_AnsweredDoubles(t *testing.T) {
 
 	shared := owned(0)
 	sharedID := save(shared)
-	analyse(sharedID)
+	analyse(sharedID, "XG")
 	reply := shared
 	reply.Cube.Owner = domain.None
 	replyID := save(reply)
+	// An importer without a separate response: the take falls back onto
+	// the doubler's row, which the double of its game stands on too.
 	importedTake := move("b.xg", "Take", sharedID)
+	var importedGame int64
+	if err := d.db.QueryRow(`SELECT game_id FROM move WHERE id = ?`, importedTake).Scan(&importedGame); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: importedGame, MoveNumber: 0, MoveType: "cube", PositionID: sharedID, Player: 1, CubeAction: "Double"}); err != nil {
+		t.Fatalf("create double: %v", err)
+	}
 	transcribedTake := move("", "Take", sharedID)
 	loneID := save(owned(1))
-	analyse(loneID)
+	analyse(loneID, "XG")
 	transcribedPass := move("", "Pass", loneID)
+	// An imported match corrected through a transcription: its file stays,
+	// its take stands the transcript's way.
+	correctedID := save(owned(2))
+	correctedTake := move("c.xg", "Take", correctedID)
+	// Take/pass rows gammonNet scored as the answerer's centred-cube
+	// decision, beside one XG scored as the doubler's.
+	gnReply := owned(3)
+	gnReply.Cube.Owner = domain.None
+	gnReplyID := save(gnReply)
+	analyse(gnReplyID, "gammonNet v1.6.0")
+	gnTake := move("d.xg", "Take", gnReplyID)
+	xgReply := owned(4)
+	xgReply.Cube.Owner = domain.None
+	xgReplyID := save(xgReply)
+	analyse(xgReplyID, "XG")
 	// The error the take was scored with against the redouble's analysis;
 	// the reply row has none, so the rescore must clear it.
 	for _, stmt := range []string{
-		fmt.Sprintf(`UPDATE move SET decision_error_mp = 999 WHERE id = %d`, transcribedTake),
+		fmt.Sprintf(`UPDATE move SET decision_error_mp = 999 WHERE id IN (%d, %d)`, transcribedTake, gnTake),
 		`UPDATE metadata SET value = '2.39.0' WHERE key = 'database_version'`,
 	} {
 		if _, err := d.db.Exec(stmt); err != nil {
@@ -4653,6 +4677,31 @@ func TestMigrate_2_39_0_to_2_40_0_AnsweredDoubles(t *testing.T) {
 	}
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE position_id IN (?, ?)`, loneID, passID).Scan(&analyses); err != nil || analyses != 0 {
 		t.Errorf("the pass kept the redouble's analysis: %d (%v)", analyses, err)
+	}
+	if pid, _ := positionOf(d, correctedTake); pid == correctedID {
+		t.Errorf("the corrected imported match's take stayed on the answerer's owned cube")
+	}
+	if pid, errMP := positionOf(d, gnTake); pid != gnReplyID || errMP.Valid {
+		t.Errorf("take on gammonNet's response row: on %d scored %v, want %d unscored", pid, errMP, gnReplyID)
+	}
+	var engines []string
+	rows, err := d.db.Query(`SELECT analysis_engine FROM analysis WHERE position_id IN (?, ?) ORDER BY position_id`, gnReplyID, xgReplyID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var e string
+		if err := rows.Scan(&e); err != nil {
+			t.Fatal(err)
+		}
+		engines = append(engines, e)
+	}
+	if err := rows.Err(); err != nil {
+		t.Fatal(err)
+	}
+	if !slices.Equal(engines, []string{"XG"}) {
+		t.Errorf("analyses left on the response rows: %v, want XG's alone", engines)
 	}
 	if err := d.db.QueryRow(`SELECT COUNT(*) FROM metadata WHERE key = ?`, answeredDoublesPendingKey).Scan(&left); err != nil || left != 0 {
 		t.Errorf("pending key left after success: %d rows, %v", left, err)

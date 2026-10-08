@@ -328,7 +328,8 @@ func runGoBackfills(ctx context.Context, conn migrationConn) error {
 	}
 	complete := true
 	for _, pass := range []func(context.Context, beginner) (bool, error){
-		dropOlderShapeMatchStats, backfillAnalysisProvenance, reanchorAnsweredDoubles, recountDecisions,
+		dropOlderShapeMatchStats, backfillAnalysisProvenance,
+		dropGammonNetResponseAnalyses, reanchorAnsweredDoubles, recountDecisions,
 	} {
 		all, err := pass(ctx, conn)
 		if errors.Is(err, errUnforcedLockTimeout) {

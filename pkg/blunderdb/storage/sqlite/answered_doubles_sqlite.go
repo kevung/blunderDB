@@ -36,6 +36,9 @@ func (s *matchStore) ReanchorAnsweredDoubles(ctx context.Context, scope string) 
 				return fmt.Errorf("load answered position %d: %w", pid, storage.ErrNotFound)
 			}
 			pos.Cube.Owner = domain.None
+			// Provenance stays with the left row: Save ORs it into the landed
+			// one, which would then be held and filtered as the user's own.
+			pos.IndividuallyImported, pos.Flagged = false, false
 			newID, err := ps.Save(ctx, scope, pos)
 			if err != nil {
 				return fmt.Errorf("save answered position: %w", err)

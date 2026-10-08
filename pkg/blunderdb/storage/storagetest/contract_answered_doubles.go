@@ -38,7 +38,10 @@ func testMatchReanchorAnsweredDoubles(t *testing.T, s storage.Storage) {
 			t.Fatalf("Save analysis: %v", err)
 		}
 	}
-	move := func(filePath, action string, posID int64) (matchID, moveID int64) {
+	// game records the moves of one game of a new match, each (action,
+	// position) in turn, and returns their ids.
+	matchOf := map[int64]int64{}
+	game := func(filePath string, moves ...any) []int64 {
 		m := domain.Match{Player1Name: "A", Player2Name: "B", MatchLength: 7, FilePath: filePath}
 		mid, err := s.Matches().Save(ctx, "", &m)
 		if err != nil {
@@ -48,55 +51,77 @@ func testMatchReanchorAnsweredDoubles(t *testing.T, s storage.Storage) {
 		if err != nil {
 			t.Fatalf("CreateGame: %v", err)
 		}
-		mvID, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gid, MoveNumber: 1, MoveType: "cube", PositionID: posID, Player: -1, CubeAction: action})
-		if err != nil {
-			t.Fatalf("CreateMove: %v", err)
+		var ids []int64
+		for i := 0; i < len(moves); i += 2 {
+			mvID, err := s.Matches().CreateMove(ctx, "", &domain.Move{GameID: gid, MoveNumber: int32(i/2 + 1), MoveType: "cube",
+				PositionID: moves[i+1].(int64), Player: -1, CubeAction: moves[i].(string)})
+			if err != nil {
+				t.Fatalf("CreateMove: %v", err)
+			}
+			ids = append(ids, mvID)
+			matchOf[mvID] = mid
 		}
-		return mid, mvID
+		return ids
 	}
-	positionOf := func(matchID int64) int64 {
-		for mv, err := range s.Matches().MovesByMatch(ctx, "", matchID) {
+	positionOf := func(moveID int64) int64 {
+		t.Helper()
+		for mv, err := range s.Matches().MovesByMatch(ctx, "", matchOf[moveID]) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			return mv.PositionID
+			if mv.ID == moveID {
+				return mv.PositionID
+			}
 		}
-		t.Fatalf("match %d has no move", matchID)
+		t.Fatalf("move %d not found", moveID)
 		return 0
 	}
 
 	// Collision: a redouble imported with its analysis, an importer's reply
 	// row, a transcribed take on the redouble's row, and an imported take
-	// left on the doubler's row (a file without a separate response).
+	// left on the doubler's row after the double of its own game (a file
+	// without a separate response).
 	shared := owned(0)
 	sharedID := save(shared)
 	analyse(sharedID, "XG")
 	reply := shared
 	reply.Cube.Owner = domain.None
 	replyID := save(reply)
-	redouble, _ := move("a.xg", "Double", sharedID)
-	fallback, _ := move("b.xg", "Take", sharedID)
-	transcribedTake, _ := move("", "Take", sharedID)
+	redouble := game("a.xg", "Double", sharedID)[0]
+	fallback := game("b.xg", "Double", sharedID, "Take", sharedID)
+	transcribedTake := game("", "Take", sharedID)[0]
 
 	// Alone: a transcribed pass nothing else holds, analysed as a redouble.
 	lone := owned(1)
 	loneID := save(lone)
 	analyse(loneID, "gammonNet")
-	transcribedPass, _ := move("", "Pass", loneID)
+	transcribedPass := game("", "Pass", loneID)[0]
+
+	// An imported match corrected through a transcription keeps its file
+	// but records its take the transcript's way.
+	correctedID := save(owned(2))
+	correctedTake := game("c.xg", "Take", correctedID)[0]
+
+	// A take on a row the user brought on his own and flagged: the row
+	// stays, its provenance does not follow the take.
+	mine := owned(3)
+	mine.IndividuallyImported, mine.Flagged = true, true
+	mineID := save(mine)
+	mineTake := game("", "Take", mineID)[0]
 
 	moved, err := s.Matches().ReanchorAnsweredDoubles(ctx, "")
 	if err != nil {
 		t.Fatalf("ReanchorAnsweredDoubles: %v", err)
 	}
-	if moved != 2 {
-		t.Fatalf("moved %d answers, want 2", moved)
+	if moved != 4 {
+		t.Fatalf("moved %d answers, want 4", moved)
 	}
 	if got := positionOf(transcribedTake); got != replyID {
 		t.Errorf("transcribed take on %d, want the importer's reply row %d", got, replyID)
 	}
-	for _, m := range []int64{redouble, fallback} {
+	for _, m := range append([]int64{redouble}, fallback...) {
 		if got := positionOf(m); got != sharedID {
-			t.Errorf("imported move of match %d moved to %d, want %d", m, got, sharedID)
+			t.Errorf("imported move %d moved to %d, want %d", m, got, sharedID)
 		}
 	}
 	if a, err := s.Analyses().Load(ctx, "", sharedID); err != nil || a.AnalysisEngineVersion != "XG" {
@@ -115,6 +140,20 @@ func testMatchReanchorAnsweredDoubles(t *testing.T, s storage.Storage) {
 	}
 	if _, err := s.Analyses().Load(ctx, "", newID); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("the pass kept the redouble's analysis: %v", err)
+	}
+	if got := positionOf(correctedTake); got == correctedID {
+		t.Errorf("the corrected imported match's take stayed on the answerer's owned cube")
+	}
+	landed, err := s.Positions().Load(ctx, "", positionOf(mineTake))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if landed.ID == mineID || landed.IndividuallyImported || landed.Flagged {
+		t.Errorf("the take landed on %d (individually imported %v, flagged %v), want a new row without provenance",
+			landed.ID, landed.IndividuallyImported, landed.Flagged)
+	}
+	if _, err := s.Positions().Load(ctx, "", mineID); err != nil {
+		t.Errorf("the user's own row was purged: %v", err)
 	}
 
 	if again, err := s.Matches().ReanchorAnsweredDoubles(ctx, ""); err != nil || again != 0 {

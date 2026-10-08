@@ -51,6 +51,9 @@ func reanchorAnsweredDoublesTx(ctx context.Context, tx pgx.Tx, scope string) (in
 			return 0, fmt.Errorf("load answered position %d: %w", pid, storage.ErrNotFound)
 		}
 		pos.Cube.Owner = domain.None
+		// Provenance stays with the left row: Save ORs it into the landed
+		// one, which would then be held and filtered as the user's own.
+		pos.IndividuallyImported, pos.Flagged = false, false
 		newID, err := ps.Save(ctx, scope, pos)
 		if err != nil {
 			return 0, fmt.Errorf("save answered position: %w", err)
@@ -83,6 +86,34 @@ func reanchorAnsweredDoublesTx(ctx context.Context, tx pgx.Tx, scope string) (in
 		return 0, err
 	}
 	return moved, nil
+}
+
+// responseAnalysisTables are the tables dropGammonNetResponseAnalyses reads
+// or writes, every tenant's rows of which it must see.
+var responseAnalysisTables = []string{
+	"analysis", "position", "move", "game",
+	"match_stats", "match_stats_cell", "match_stats_position",
+}
+
+// dropGammonNetResponseAnalyses runs sqlshared.DropGammonNetResponseAnalyses
+// over every tenant in one unforced transaction: analyses, moves and match
+// statistics are reached by id, which no tenant shares. One of
+// runGoBackfills' passes, ahead of reanchorAnsweredDoubles so a moved answer
+// is rescored against what its new row keeps.
+func dropGammonNetResponseAnalyses(ctx context.Context, conn beginner) (bool, error) {
+	n := 0
+	complete, err := inUnforcedTx(ctx, conn, responseAnalysisTables, func(tx pgx.Tx) error {
+		var err error
+		n, err = sqlshared.DropGammonNetResponseAnalyses(ctx, binder{tx}.shared())
+		return err
+	})
+	if err != nil {
+		return false, err
+	}
+	if n > 0 {
+		slog.Info("dropped gammonNet's verdicts on take/pass positions for reanalysis", "analyses", n)
+	}
+	return complete, nil
 }
 
 // reanchorProbeTables are the tables the tenant listing of

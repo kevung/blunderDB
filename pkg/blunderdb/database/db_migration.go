@@ -204,9 +204,6 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	if err := d.finishPlayedDecisions(ctx); err != nil {
 		return fmt.Errorf("scoring the decisions of the stored moves: %w", err)
 	}
-	if err := d.finishAnsweredDoubles(ctx); err != nil {
-		return err
-	}
 
 	// The 2.30.0 derived columns, after ensureAllTablesExist created them.
 	// Both passes resume where an interrupted open left them, and cost one
@@ -218,6 +215,11 @@ func (d *Database) runMigrationChain(ctx context.Context) error {
 	}
 	if err := d.backfillAnalysisProvenance(ctx); err != nil {
 		return fmt.Errorf("deriving the provenance of the stored analyses: %w", err)
+	}
+	// After the provenance pass: it reads analysis_engine to tell gammonNet's
+	// verdicts on take/pass rows from the other engines'.
+	if err := d.finishAnsweredDoubles(ctx); err != nil {
+		return err
 	}
 	// match_stats last: it reads the provenance just derived. Missing rows
 	// are the to-do list, so an interrupted fill resumes on the next open,

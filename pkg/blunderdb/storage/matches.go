@@ -134,14 +134,16 @@ type MatchStore interface {
 	// alone, and so are ids that no longer exist.
 	PurgeOrphanPositions(ctx context.Context, scope string, positionIDs []int64) error
 
-	// ReanchorAnsweredDoubles moves every take or pass a transcribed or
-	// duelled match recorded with the turned cube owned by the answerer onto
+	// ReanchorAnsweredDoubles moves every take or pass recorded the
+	// transcript's way — the turned cube owned by the answerer, on a row no
+	// double of its game stands on — onto
 	// the position importers record it on: the same, the cube held by no one
 	// (sqlshared.AnsweredOwnedCubeMovesSQL). Copy-on-write, as SwapPlayers: the
 	// row it leaves keeps its id and analysis for whatever else holds it — a
 	// redouble on the same board — and is purged when nothing does, its stale
-	// analysis with it. Invalidates the stats of the matches it touches and
-	// returns how many moves moved.
+	// analysis with it; its provenance flags stay behind. The moved moves are
+	// rescored by their new row. Invalidates the stats of the matches it
+	// touches and returns how many moves moved.
 	ReanchorAnsweredDoubles(ctx context.Context, scope string) (int, error)
 
 	// SwapPlayers swaps player 1 and player 2 for the match (and mirrors the
