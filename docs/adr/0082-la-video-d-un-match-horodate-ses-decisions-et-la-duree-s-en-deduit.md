@@ -1,4 +1,4 @@
-# ADR-0079 — La vidéo d'un match horodate ses décisions, et la durée s'en déduit
+# ADR-0082 — La vidéo d'un match horodate ses décisions, et la durée s'en déduit
 
 Statut : acceptée.
 Voir aussi : ADR-0073 (la durée par décision, son filtre et son affichage), ADR-0044 et

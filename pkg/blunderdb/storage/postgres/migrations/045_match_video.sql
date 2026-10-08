@@ -1,4 +1,4 @@
--- Forward migration: the 2.40.0 wave — the video of a Match (ADR-0079).
+-- Forward migration: the 2.40.0 wave — the video of a Match (ADR-0082).
 --
 --   * match.video_source — the video the Match was transcribed from: an
 --     http(s) URL or a local path. NULL when none is attached.

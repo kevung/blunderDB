@@ -1261,6 +1261,42 @@ connaît plus **refuse de s'ouvrir** en le disant, plutôt que de renvoyer toute
 la base. C'est la seule panne qu'un filtre enregistré ne doit pas avoir :
 s'élargir en silence.
 
+.. _positions_reference:
+
+Le bouton **Proposer…** de l'en-tête ouvre les **positions de référence** :
+une courte liste de positions à étudier, choisie parmi vos erreurs pour que
+chacune en résume beaucoup. Étudier les dix pires erreurs donne souvent dix
+variantes d'un même problème, ou des positions singulières qui n'apprennent
+rien sur les autres ; une position de référence est au centre de plusieurs de
+vos erreurs, de structure voisine, et sa leçon sert à toutes.
+
+* Les erreurs sont celles du :ref:`plan d'étude <plan_etude>` : chiffrées en
+  MWC et rangées par famille (plan de jeu, nature, thème). Deux erreurs d'une
+  famille sont **voisines** à au plus 12 pions-pas de distance ``like`` ; une
+  erreur de videau n'a pour voisines que celles du même score.
+* Chaque position vaut le **MWC récupérable** (perte moins difficulté) de ses
+  voisines et d'elle-même : ce que sa leçon rapporterait si elle servait à
+  toutes. Une leçon **serrée** (le second choix coûte moins d'une demi-erreur)
+  ou un verdict **instable** (une autre profondeur ou un rollout dit autre
+  chose) compte pour moitié ; un rollout qui confirme est signalé. Le chiffre
+  en tête de chaque ligne est le MWC couvert, la raison donne le chiffre
+  compté quand la leçon compte pour moitié.
+* La liste est **variée** : une position retenue couvre ses voisines, qui ne
+  rapportent plus rien aux suivantes, et aucune position proposée n'est un
+  quasi-doublon d'une autre. Une position **déjà traitée** — commentée, dans
+  une collection, une carte Anki ou marquée « étudiée » — n'est jamais
+  proposée, et ses voisines sont tenues pour couvertes.
+
+La **portée** est toute la base, le match en cours, un tournoi ou le filtre du
+panneau Statistiques ; le joueur est celui de ce filtre. La **taille** est de
+10, 20 ou 50 positions. Chaque ligne donne sa famille, son score s'il s'agit
+du videau, le MWC qu'elle couvre et sa raison : combien d'erreurs et de
+matchs elle résume, la taille de sa famille parmi vos décisions, son propre
+récupérable, l'écart avec le second choix. Cliquer sur une ligne ouvre la
+position ; les cases cochées deviennent en un clic une **collection**, un
+**paquet Anki** ou un **quiz**. En ligne de commande :
+``blunderdb collection suggest`` (voir :ref:`cli_collection`).
+
 .. _lecons:
 
 Leçons
@@ -1602,8 +1638,8 @@ la précipitation ou d'une lacune ? Les seuils ont été fixés avant tout exame
 de résultats.
 
 * **PR et perte MWC (éq. 7 pts), avec leur intervalle à 95 %**, calculé en
-  rééchantillonnant les parties du match. Il faut deux parties ; un match d'une
-  seule partie montre un tiret. Un intervalle large dit qu'un match ne suffit
+  rééchantillonnant les parties du match. Il faut trois parties ; un match plus
+  court montre un tiret. Un intervalle large dit qu'un match ne suffit
   pas à juger un niveau : comparez-le à vos autres matchs plutôt que de
   conclure sur une valeur.
 * **Résultat ajusté de la chance**, pour un match terminé. Le *résultat* est
@@ -2133,6 +2169,42 @@ c'est-à-dire le joueur présent dans le plus grand nombre de matchs du tournoi
 pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
 reflète votre performance seule. Le nom du joueur de référence apparaît en
 infobulle au survol de la valeur.
+
+.. _bilan_tournoi:
+
+**Bilan du tournoi.** Le bouton **Bilan**, dans l'en-tête d'un tournoi ouvert,
+répond à la question qu'on se pose en rentrant d'une épreuve : ai-je joué à mon
+niveau, et sinon, où cela a-t-il cédé ? Le joueur est par défaut le plus présent
+dans les matchs du tournoi ; le menu **Joueur** en choisit un autre. Les seuils
+ont été fixés avant tout examen de résultats.
+
+* **Le niveau habituel** est ce joueur sur ses matchs en points des 365 jours
+  qui précèdent le tournoi (sa date, à défaut celle de son premier match), ceux
+  du tournoi exclus. Seul l'avant compte : c'est le niveau qu'on avait en
+  arrivant. Il faut au moins 5 matchs ; sinon il est déclaré inconnu.
+* **PR et perte MWC (éq. 7 pts)** du tournoi face au niveau habituel, chacun
+  avec son intervalle à 95 % sur les matchs. Le verdict — *moins bien*,
+  *mieux*, *dans l'habitude* — porte sur l'écart et son propre intervalle ; il
+  n'est rendu qu'avec un intervalle et au moins 20 décisions de chaque côté,
+  sinon il se lit *insuffisant*. Un tournoi de trois matchs dit rarement
+  « moins bien » : les chiffres restent visibles, le verdict attend la preuve.
+* **Par ronde** : chaque match dans l'ordre du tournoi, avec l'adversaire, son
+  PR (intervalle sur les parties) et sa perte éq. 7 pts, face au PR habituel.
+* **Par rang de la décision dans le match**, par tranches de 30 décisions : si
+  la fin des matchs longs coûte plus que d'habitude, c'est la fatigue qu'il
+  faut travailler (pauses, rythme), pas une famille de positions.
+* **Par score** : DMP, partie Crawford, post-Crawford et autres scores, face aux
+  mêmes scores du niveau habituel — les points où une erreur décide du match.
+* **Par rythme** : décisions rapides ou posées, de part et d'autre de la
+  médiane de vos durées pour ce type de décision dans le match. C'est ainsi que
+  la pendule se lit : la réserve de temps n'est pas enregistrée coup par coup.
+* **Familles d'erreurs du tournoi** : au plus trois familles du plan d'étude
+  (voir :ref:`plan_etude`) restreint aux erreurs du tournoi, avec les mêmes
+  règles (5 erreurs chiffrées, borne basse positive) ; les autres sont
+  comptées « à confirmer ». Ce sont les séances à prévoir en premier.
+
+``stats tournament`` imprime le même bilan, et le serveur le sert par
+``/v1/stats.tournamentReview``.
 
 .. _diriger_un_tournoi:
 
@@ -2691,6 +2763,9 @@ Le panneau Stats est particulièrement utile pour :
 * **accéder directement aux positions concernées** en cliquant sur n'importe
   quel indicateur (drill-down).
 
+La définition, la formule, l'incertitude et les limites de chaque chiffre du
+panneau sont réunies dans :ref:`metriques`.
+
 Ouverture du panneau
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -2757,7 +2832,7 @@ tous les onglets.
   le font eXtreme Gammon et GNUbg : un PR de 5,0 vaut 0,010 d'équité perdue
   par décision, soit 10 millipoints (mpt). La règle de comptage exacte —
   quelles décisions entrent au dénominateur, comment le score est converti —
-  est celle de :ref:`stats_parity`.
+  est celle de :ref:`metrique_pr`.
 
   Les bandes de niveau que le panneau dessine derrière la courbe de
   progression sont un **repère indicatif propre à blunderDB** : aucune
@@ -2831,11 +2906,12 @@ tous les onglets.
   faire varier du simple au double. Le badge et le bilan d'un match
   (:ref:`bilan du match <bilan_match>`) donnent l'intervalle à 95 % en rééchantillonnant ses
   parties ; un agrégat (statistiques d'un joueur, d'un tournoi) le donne en
-  rééchantillonnant ses matchs. Il faut au moins deux parties, ou deux matchs.
-  Une ligne par match des statistiques n'a pas d'intervalle : filtrée par
-  joueur, elle ne contient qu'une unité ; sans joueur, ses deux sièges
-  mesureraient l'écart entre les adversaires, pas l'incertitude. Ne classez pas
-  des joueurs sur un seul match.
+  rééchantillonnant ses matchs ; sans filtre joueur, les deux sièges d'un match
+  forment une seule unité, puisqu'ils jouent les mêmes positions. Il faut au
+  moins trois parties, ou trois matchs, et qu'elles ne donnent pas toutes la
+  même perte : sinon pas d'intervalle. Une ligne par match des statistiques
+  n'en a donc pas : c'est une seule unité. Ne classez pas des joueurs sur un
+  seul match.
 
   .. caution::
      Une partie *money-game* n'a pas de longueur de match : la perte MWC
@@ -2946,6 +3022,68 @@ tableau, **Quiz sur les trois premières familles** tire vingt positions parmi
 celles des trois familles de tête. Le plan suit le filtre du panneau : réglez
 le joueur pour obtenir *votre* plan. En ligne de commande :
 ``blunderdb stats plan`` (voir :ref:`cli_stats`).
+
+.. _avant_apres_etude:
+
+Avant/après l'étude
+^^^^^^^^^^^^^^^^^^^
+
+La carte **Avant/après l'étude** ferme la boucle du plan : ce que vous avez
+travaillé coûte-t-il moins en match réel ? Sans elle, l'étude se juge à
+l'impression ; avec elle, une famille qui ne bouge pas malgré le travail dit
+qu'il faut changer de méthode, et une famille en progrès peut céder sa place
+dans le plan.
+
+* Une famille (celle du plan) est **étudiée** à la date de la première action
+  d'étude sur l'une de ses positions : la marque « étudiée » de la file
+  d'étude, une révision Anki, une réponse en quiz. Créer une carte ou ranger
+  une position en collection n'en est pas une.
+* Pour chaque famille étudiée, la carte compare deux **fenêtres** : les matchs
+  joués avant ce jour et ceux joués après (le jour même est écarté). Dans
+  chacune, le **taux de perte** est la MWC perdue par les erreurs de la
+  famille, rapportée à toutes les décisions du même plan de jeu et de la même
+  nature, et affichée en points de MWC pour 100 décisions.
+* Le **gain** est le taux d'avant moins celui d'après, avec son intervalle à
+  95 %. Le verdict n'est « en progrès » (ou « en recul ») que si chaque
+  fenêtre compte au moins **30 décisions** et que l'intervalle exclut zéro ;
+  sinon il reste « indéterminé » ou « trop peu de décisions ».
+
+C'est un changement, pas un effet : une famille est étudiée parce qu'elle
+coûtait, et une part du gain est une régression vers la moyenne ; rien ne
+contrôle les adversaires, le format ni les dés. En ligne de commande :
+``blunderdb stats effect`` (voir :ref:`cli_stats`).
+
+.. _biais_signes:
+
+Biais signés
+^^^^^^^^^^^^
+
+La carte **Biais signés** dit dans quel sens vous vous trompez, pas seulement
+combien. « Vous prenez trop » se corrige mieux qu'un PR : la règle à revoir
+est nommée. Chaque biais est la part de décisions fautives dans un sens moins
+la part fautive dans l'autre, avec son intervalle à 95 % ; un penchant n'est
+nommé qu'à partir de **20 décisions** et d'un intervalle qui exclut zéro.
+
+* **Prise / refus** — sur les réponses au videau : prises fautives (le bot
+  refuse) moins refus fautifs (le bot prend). C'est exactement votre taux de
+  prise moins celui du bot sur les mêmes positions.
+* **Doubles** — sur les décisions de doubler : doubles prématurés (le bot ne
+  double pas, ou la position est trop bonne pour doubler) moins doubles
+  manqués. Le même biais est donné **par score** (votre away, celui de
+  l'adversaire, un score post-Crawford compté à 1 point ; la partie libre
+  dans sa propre case), pour les scores qui comptent assez de décisions.
+* **Blots** — sur les coups de pions avec contact : les coups qui laissent plus
+  de blots que le meilleur coup moins ceux qui en laissent moins. Un coup est
+  reconnu par le plateau qu'il laisse, quelle que soit son écriture
+  (« 13/7(2) », « 8/5*/4 ») ; un coup que le générateur de coups ne sait
+  toujours pas rejouer est écarté, et la part des coups écartés est donnée
+  sous le tableau. Le biais compte les blots sans peser leur exposition : un
+  blot hors de portée compte autant qu'un blot exposé.
+
+À côté de chaque compte, son coût en millipoints dit si le penchant coûte ;
+une position jouée dans plusieurs matchs y compte avec le coup joué dans
+chacun. Les biais suivent le filtre du panneau. En ligne de commande :
+``blunderdb stats biases`` (voir :ref:`cli_stats`).
 
 PR glissant sur N dernières décisions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -3183,8 +3321,10 @@ seulement combien de décisions le portent. Il rééchantillonne les **matchs** 
 la sélection, pas les décisions ni les parties : les parties d'un match
 partagent adversaire, séance et fatigue, et les compter comme indépendantes
 donnerait un intervalle trop étroit ; sans filtre joueur, les deux sièges d'un
-match forment une seule unité. Une ligne qui ne repose que sur un match n'a pas
-d'intervalle et est grisée, même avec beaucoup de décisions. Pour l'étude : une
+match forment une seule unité. Une ligne qui repose sur moins de trois matchs,
+ou dont tous les matchs donnent le même PR, n'a pas d'intervalle et est grisée,
+même avec beaucoup de décisions : deux matchs ne disent rien de la dispersion,
+et des matchs identiques disent qu'ils s'accordent, pas que le PR est exact. Pour l'étude : une
 famille de positions dont l'intervalle reste au-dessus de votre PR global est
 une faiblesse établie ; une ligne à l'intervalle large ne justifie pas encore un
 plan de travail. Le PR global du tableau de bord porte le même intervalle, sous

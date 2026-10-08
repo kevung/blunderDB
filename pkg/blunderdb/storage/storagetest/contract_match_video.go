@@ -10,7 +10,7 @@ import (
 )
 
 // testMatchVideoRoundTrip: a Match's video source and its Moves' Repères
-// (ADR-0079) are read back as written, through every read of a match and its
+// (ADR-0082) are read back as written, through every read of a match and its
 // moves, and a Match without a video reads them back nil — a NULL read as ""
 // or 0 would claim a video, or a Repère at the start of the media. Zero is a
 // Repère like any other. ReplaceHeader replaces the source when given one,

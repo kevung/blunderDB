@@ -104,7 +104,6 @@ func (u eloUnits) fill(result *storage.StatsResult) {
 	})
 	var global domain.MWC7Pool
 	var byType [2]domain.MWC7Pool
-	seats := map[int64]int{}
 	byMatch := map[int64]*domain.MWC7Pool{}
 	byTournament := map[int64]*domain.MWC7Pool{}
 	pool := func(m map[int64]*domain.MWC7Pool, id int64) *domain.MWC7Pool {
@@ -115,15 +114,27 @@ func (u eloUnits) fill(result *storage.StatsResult) {
 		}
 		return p
 	}
-	for _, k := range keys {
-		e := u[k]
-		global.AddLoss(e.loss, e.length)
-		byType[0].AddLoss(e.byType[0], e.length)
-		byType[1].AddLoss(e.byType[1], e.length)
-		seats[e.match]++
-		pool(byMatch, e.match).AddLoss(e.loss, e.length)
-		if e.tournament != 0 {
-			pool(byTournament, e.tournament).AddLoss(e.loss, e.length)
+	// The seats of one match are one unit of the resampling (ADR-0078): they
+	// play the same positions. Keys are sorted by match, so a match's seats
+	// are consecutive.
+	for i := 0; i < len(keys); {
+		first := u[keys[i]]
+		var loss float64
+		var byTypeLoss [2]float64
+		n := 0
+		for ; i < len(keys) && keys[i].match == first.match; i++ {
+			e := u[keys[i]]
+			loss += e.loss
+			byTypeLoss[0] += e.byType[0]
+			byTypeLoss[1] += e.byType[1]
+			n++
+		}
+		global.AddMatch(loss, n, first.length)
+		byType[0].AddMatch(byTypeLoss[0], n, first.length)
+		byType[1].AddMatch(byTypeLoss[1], n, first.length)
+		pool(byMatch, first.match).AddMatch(loss, n, first.length)
+		if first.tournament != 0 {
+			pool(byTournament, first.tournament).AddMatch(loss, n, first.length)
 		}
 	}
 	result.MWC7 = global.Result()
@@ -131,13 +142,7 @@ func (u eloUnits) fill(result *storage.StatsResult) {
 	result.MWC7Cube = byType[1].Result()
 	for i, ms := range result.PerMatch {
 		if p := byMatch[ms.ID]; p != nil {
-			e := p.Result()
-			if seats[ms.ID] > 1 {
-				// The two seats of one match are not two samples of a
-				// player: their spread is the gap between the opponents.
-				e = withoutInterval(e)
-			}
-			result.PerMatch[i].MWC7 = e
+			result.PerMatch[i].MWC7 = p.Result()
 		}
 	}
 	for i, ts := range result.PerTournament {
@@ -145,11 +150,4 @@ func (u eloUnits) fill(result *storage.StatsResult) {
 			result.PerTournament[i].MWC7 = p.Result()
 		}
 	}
-}
-
-// withoutInterval drops e's interval, keeping its value.
-func withoutInterval(e domain.MWC7) domain.MWC7 {
-	e.HasInterval = false
-	e.Low, e.High, e.EloLow, e.EloHigh = 0, 0, 0, 0
-	return e
 }

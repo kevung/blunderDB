@@ -101,7 +101,7 @@ type MatchStore interface {
 	UpdateComment(ctx context.Context, scope string, id int64, comment string) error
 
 	// SetVideoSource attaches the video a match was transcribed from
-	// (ADR-0079), or detaches it when source is empty. ErrNotFound when no
+	// (ADR-0082), or detaches it when source is empty. ErrNotFound when no
 	// match has this id.
 	SetVideoSource(ctx context.Context, scope string, id int64, source string) error
 
@@ -112,7 +112,7 @@ type MatchStore interface {
 	// tournament, the comment and the last-visited position are NOT touched —
 	// they are what a replacement exists to preserve (ADR-0045 §2), and none of
 	// them is a property of the transcript being re-saved. The video source
-	// (ADR-0079) is kept when m.VideoSource is nil, cleared when it is "", and
+	// (ADR-0082) is kept when m.VideoSource is nil, cleared when it is "", and
 	// replaced otherwise. A header built by transcript.BuildPlayed — a
 	// Transcription's save, a Duel's — always states it, "" included, so a
 	// video detached in the draft leaves the Match; nil is for a writer that

@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/report"
@@ -181,10 +182,13 @@ func TestReportAndPlayerTableReadOnlyMatchWritable(t *testing.T) {
 		{DecisionType: -1, PlayerName: "Ada Fairweather"},
 		{DecisionType: 1, MinAnalysisDepth: 2},
 	}
+	// The report prints its minute of generation: pin it, or a minute that
+	// turns between the two builds is a difference.
+	generated := time.Date(2026, 1, 2, 3, 4, 0, 0, time.UTC)
 	wantHTML := make([]string, len(filters))
 	wantRows := make([]string, len(filters))
 	for i, f := range filters {
-		if wantHTML[i], err = report.Build(ctx, w, "", f, "fr", nil); err != nil {
+		if wantHTML[i], err = report.BuildAt(ctx, w, "", f, "fr", nil, generated); err != nil {
 			t.Fatalf("writable report %+v: %v", f, err)
 		}
 		rows, err := w.Stats().PlayerTable(ctx, "", f)
@@ -197,7 +201,7 @@ func TestReportAndPlayerTableReadOnlyMatchWritable(t *testing.T) {
 		t.Fatal(err)
 	}
 	for i, f := range filters {
-		html, err := report.Build(ctx, ro, "", f, "fr", nil)
+		html, err := report.BuildAt(ctx, ro, "", f, "fr", nil, generated)
 		if err != nil {
 			t.Fatalf("read-only report %+v: %v", f, err)
 		}
@@ -357,5 +361,69 @@ func TestComputeReadOnlyReadsCompleteCells(t *testing.T) {
 	}
 	if got.Totals.NumDecisions != want.Totals.NumDecisions+1000 {
 		t.Errorf("read-only Compute did not read the cells: %d decisions, writer %d", got.Totals.NumDecisions, want.Totals.NumDecisions)
+	}
+}
+
+// The score matrix reads money as its own cell and post-Crawford as one
+// away, the same on the cells path and on the direct one.
+func TestPerScoreMoneyAndPostCrawfordAgreeOnBothPaths(t *testing.T) {
+	ctx := context.Background()
+	path := demoCopy(t)
+	raw, err := sql.Open("sqlite", DSN(path))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, q := range []string{
+		`UPDATE position SET score_1 = -1, score_2 = -1 WHERE id % 3 = 0`,
+		`UPDATE position SET score_1 = 0, score_2 = 3 WHERE id % 3 = 1`,
+	} {
+		if _, err := raw.Exec(q); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := raw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	w, err := Open(ctx, path, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer w.Close()
+	ro := openQueryOnly(t, path)
+	if err := sqlshared.InvalidateAllMatchStats(ctx, w.binder.shared(), ""); err != nil {
+		t.Fatal(err)
+	}
+	// Read-only with the table emptied is the direct pass; the writer then
+	// rebuilds the table and reads from it.
+	want, err := ro.Stats().Compute(ctx, "", storage.StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	f := storage.StatsFilter{DecisionType: -1}
+	got, err := w.Stats().Compute(ctx, "", f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if n := matchStatsRows(t, w); n == 0 {
+		t.Fatal("writable Compute did not take the match_stats path")
+	}
+	if g, d := asJSON(t, got.PerScore), asJSON(t, want.PerScore); g != d {
+		t.Errorf("cells  %s\n direct %s", g, d)
+	}
+	var money, post bool
+	for _, c := range got.PerScore {
+		if c.Money {
+			money = c.MoverAway == 0 && c.OpponentAway == 0
+		}
+		if c.MoverAway == 1 && c.OpponentAway == 3 {
+			post = true
+		}
+		if !c.Money && (c.MoverAway <= 0 || c.OpponentAway <= 0) {
+			t.Errorf("undecoded cell %+v", c)
+		}
+	}
+	if !money || !post {
+		t.Errorf("want a money cell and a 1-away/3-away cell, got %s", asJSON(t, got.PerScore))
 	}
 }

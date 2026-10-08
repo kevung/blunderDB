@@ -105,3 +105,80 @@ func TestExplainChecker_NoThemeStillMeansSilence(t *testing.T) {
 		t.Errorf("unexpected theme %q", got.Theme)
 	}
 }
+
+// TestBlotDeviation_SignsAgainstTheBest: the sign follows the blots the played
+// move leaves against the best move's, the best move itself reads 0, and a move
+// the generator does not produce is left out.
+func TestBlotDeviation_SignsAgainstTheBest(t *testing.T) {
+	pos := quizPosition()
+	// Two White checkers still behind Black's: contact, so blots matter.
+	pos.Board.Points[1] = domain.Point{Checkers: 2, Color: domain.White}
+	plays := domain.LegalMoves(&pos)
+	blots := func(i int) int { return countBlots(&plays[i].Result.Board, pos.PlayerOnRoll) }
+	lo, hi := -1, -1
+	for i := range plays {
+		if lo < 0 || blots(i) < blots(lo) {
+			lo = i
+		}
+		if hi < 0 || blots(i) > blots(hi) {
+			hi = i
+		}
+	}
+	if blots(lo) == blots(hi) {
+		t.Fatalf("need two plays leaving different blots")
+	}
+	ana := func(best, other int) *domain.PositionAnalysis {
+		return &domain.PositionAnalysis{CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+			{Move: plays[best].Notation, EquityError: errPtr(0)},
+			{Move: plays[other].Notation, EquityError: errPtr(-0.080)},
+		}}}
+	}
+	if s, ok := BlotDeviation(&pos, ana(lo, hi), plays[hi].Notation); !ok || s != 1 {
+		t.Errorf("bolder than the best: got %d, %v; want 1, true", s, ok)
+	}
+	if s, ok := BlotDeviation(&pos, ana(hi, lo), plays[lo].Notation); !ok || s != -1 {
+		t.Errorf("more cautious than the best: got %d, %v; want -1, true", s, ok)
+	}
+	if s, ok := BlotDeviation(&pos, ana(lo, hi), plays[lo].Notation); !ok || s != 0 {
+		t.Errorf("the best move: got %d, %v; want 0, true", s, ok)
+	}
+	if _, ok := BlotDeviation(&pos, ana(lo, hi), "25/1"); ok {
+		t.Error("a move the analysis does not name has nothing to compare")
+	}
+	race := quizPosition()
+	if _, ok := BlotDeviation(&race, ana(lo, hi), plays[hi].Notation); ok {
+		t.Error("without contact a blot risks nothing: left out")
+	}
+}
+
+// TestBlotDeviation_ReadsEveryNotationDialect: an analysis spells doubles and
+// hits its own way ("13/7(2)", "8/5*/4") where the generator writes each step;
+// the play is still replayed, matched by the board it leaves. Dropping them
+// would leave doubles and hits — the bold plays — out of the blots bias.
+func TestBlotDeviation_ReadsEveryNotationDialect(t *testing.T) {
+	ana := func(best, played string) *domain.PositionAnalysis {
+		return &domain.PositionAnalysis{CheckerAnalysis: &domain.CheckerAnalysis{Moves: []domain.CheckerMove{
+			{Move: best, EquityError: errPtr(0)},
+			{Move: played, EquityError: errPtr(-0.080)},
+		}}}
+	}
+	doubles := domain.InitializePosition()
+	doubles.Dice = [2]int{3, 3}
+	if s, ok := BlotDeviation(&doubles, ana("8/5(2) 6/3(2)", "24/18 13/10 8/5"), "24/18 13/10 8/5"); !ok || s != 1 {
+		t.Errorf("chained hop: got %d, %v; want 1, true", s, ok)
+	}
+	if s, ok := BlotDeviation(&doubles, ana("24/18 13/10 8/5", "13/7(2)"), "13/7(2)"); !ok || s != -1 {
+		t.Errorf("chained doubles: got %d, %v; want -1, true", s, ok)
+	}
+
+	hit := domain.InitializePosition()
+	hit.Dice = [2]int{3, 1}
+	hit.Board.Points[12] = domain.Point{Checkers: 4, Color: domain.White}
+	hit.Board.Points[5] = domain.Point{Checkers: 1, Color: domain.White}
+	if s, ok := BlotDeviation(&hit, ana("8/5* 6/5", "8/5*/4"), "8/5*/4"); !ok || s != 1 {
+		t.Errorf("hit on the way: got %d, %v; want 1, true", s, ok)
+	}
+	if s, ok := BlotDeviation(&hit, ana("8/5*/4", "6/5* 8/5"), "6/5* 8/5"); !ok || s != -1 {
+		t.Errorf("hit in another order: got %d, %v; want -1, true", s, ok)
+	}
+}

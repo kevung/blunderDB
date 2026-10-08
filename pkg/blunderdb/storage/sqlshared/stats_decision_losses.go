@@ -68,7 +68,9 @@ func (s *StatsStore) MatchDecisionLosses(ctx context.Context, scope string, matc
 			d.Player = 1
 		}
 		d.DurationMS = durationMS
-		if luckMP != nil && hasPosition == 1 && d.DecisionType == "checker" {
+		d.Away = [2]int{away0, away1}
+		d.Rolled = hasPosition == 1 && d.DecisionType == "checker"
+		if luckMP != nil && d.Rolled {
 			if luck := decisionMWCLoss(*luckMP, away0, away1, rawPlayer, cubeValue, matchLength); !math.IsNaN(luck) {
 				d.Luck = &luck
 			}
@@ -108,8 +110,11 @@ func (s *StatsStore) MatchDecisionLosses(ctx context.Context, scope string, matc
 // play's own error is scored (ADR-0076): a checker decision's candidates, the
 // best at 0; a doubling decision's no double and double (against the best
 // answer, engine.CubeActionError); an answer's take and pass. nil when the
-// analysis gives fewer than the decision's options.
+// analysis gives fewer than the decision's options. The costs come from the
+// analysis the play's loss comes from (ColumnSource): a position only a
+// rollout analysed has both, or neither.
 func decisionCosts(analysis *domain.PositionAnalysis, decisionType, cubeAction string) []float64 {
+	analysis = analysis.ColumnSource()
 	if analysis == nil {
 		return nil
 	}

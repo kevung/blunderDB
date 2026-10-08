@@ -174,8 +174,10 @@ type TagStats struct {
 }
 
 // ScoreCellStats is one cell of the away × away matrix, read from the side of
-// the player on roll — the one taking the decision. (0,0) is money play.
+// the player on roll — the one taking the decision. Money is money play, with
+// both aways at 0; post-Crawford reads as 1-away.
 type ScoreCellStats struct {
+	Money        bool            `json:"Money"`
 	MoverAway    int             `json:"MoverAway"`
 	OpponentAway int             `json:"OpponentAway"`
 	PR           float64         `json:"PR"`
@@ -497,6 +499,15 @@ func (d *Database) GetMatchReview(matchID int64) (storage.MatchReview, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 	return d.store.Stats().MatchReview(context.Background(), "", matchID)
+}
+
+// GetTournamentReview is one player's review of a tournament (ADR-0081),
+// for the Tournaments panel; an empty player is the one who played the most
+// of its matches.
+func (d *Database) GetTournamentReview(tournamentID int64, player string) (storage.TournamentReview, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	return d.store.Stats().TournamentReview(context.Background(), "", tournamentID, player)
 }
 
 // GetMatchTimeSummary adds up the decision times of a match per player and

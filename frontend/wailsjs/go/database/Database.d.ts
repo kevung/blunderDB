@@ -7,9 +7,9 @@ import {database} from '../models';
 import {transcript} from '../models';
 import {sqlite} from '../models';
 import {gammonnet} from '../models';
+import {storage} from '../models';
 import {domain} from '../models';
 import {race} from '../models';
-import {storage} from '../models';
 import {duel} from '../models';
 import {direction} from '../models';
 import {engine} from '../models';
@@ -99,6 +99,10 @@ export function CommitImportDatabase(arg1:string):Promise<Record<string, any>>;
 
 export function CompareWithGammonNet(arg1:context.Context,arg2:number,arg3:number,arg4:number,arg5:number,arg6:number,arg7:any):Promise<gammonnet.AnalysisComparison>;
 
+export function ComputeDirectionalBiases(arg1:database.StatsFilter):Promise<storage.DirectionalBiases>;
+
+export function ComputeDirectionalBiasesCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<storage.DirectionalBiases>;
+
 export function ComputeEPCFromPosition(arg1:domain.Position):Promise<race.Result>;
 
 export function ComputeRecurringErrors(arg1:database.StatsFilter):Promise<storage.RecurringErrors>;
@@ -108,6 +112,10 @@ export function ComputeRecurringErrorsCtx(arg1:context.Context,arg2:database.Sta
 export function ComputeStats(arg1:database.StatsFilter):Promise<database.StatsResult>;
 
 export function ComputeStatsCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<database.StatsResult>;
+
+export function ComputeStudyEffect(arg1:database.StatsFilter):Promise<storage.StudyEffect>;
+
+export function ComputeStudyEffectCtx(arg1:context.Context,arg2:database.StatsFilter):Promise<storage.StudyEffect>;
 
 export function ComputeStudyPlan(arg1:database.StatsFilter):Promise<storage.StudyPlan>;
 
@@ -319,8 +327,6 @@ export function GetMatchByID(arg1:number):Promise<domain.Match>;
 
 export function GetMatchDecisionLosses(arg1:number):Promise<Array<storage.DecisionLoss>>;
 
-export function GetMatchReview(arg1:number):Promise<storage.MatchReview>;
-
 export function GetMatchDetailStats(arg1:number):Promise<database.MatchDetailStats>;
 
 export function GetMatchMoveGrades(arg1:number):Promise<Array<storage.MoveGrade>>;
@@ -328,6 +334,8 @@ export function GetMatchMoveGrades(arg1:number):Promise<Array<storage.MoveGrade>
 export function GetMatchMovePositions(arg1:number):Promise<Array<domain.MatchMovePosition>>;
 
 export function GetMatchOrigin(arg1:number):Promise<duel.Origin>;
+
+export function GetMatchReview(arg1:number):Promise<storage.MatchReview>;
 
 export function GetMatchTimeSummary(arg1:number):Promise<storage.MatchTimeSummary>;
 
@@ -360,6 +368,8 @@ export function GetStatsDateRange():Promise<database.StatsDateRange>;
 export function GetTimeErrors():Promise<Array<storage.TimeErrorRow>>;
 
 export function GetTournamentMatches(arg1:number):Promise<Array<domain.Match>>;
+
+export function GetTournamentReview(arg1:number,arg2:string):Promise<storage.TournamentReview>;
 
 export function GradeQuizChecker(arg1:number,arg2:domain.Board):Promise<engine.QuizVerdict>;
 
@@ -740,6 +750,10 @@ export function StudyPositionIDs(arg1:database.StatsFilter,arg2:number,arg3:numb
 export function SuggestAliases(arg1:string):Promise<Array<storage.AliasSuggestion>>;
 
 export function SuggestMatFilename(arg1:number):Promise<string>;
+
+export function SuggestReferencePositions(arg1:database.StatsFilter,arg2:Array<number>,arg3:number):Promise<storage.ReferenceSuggestions>;
+
+export function SuggestReferencePositionsCtx(arg1:context.Context,arg2:database.StatsFilter,arg3:Array<number>,arg4:number):Promise<storage.ReferenceSuggestions>;
 
 export function SuggestTranscriptionMatFilename(arg1:number):Promise<string>;
 

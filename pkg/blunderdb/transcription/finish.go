@@ -276,7 +276,7 @@ func (s *Service) EditMatch(ctx context.Context, scope string, matchID int64) (*
 	// The .mat does not carry the tournament, and finishing with none would
 	// detach the Match from it.
 	doc.Header.TournamentID = m.TournamentID
-	// Nor the video and its Repères (ADR-0079 rule 1): the draft takes them
+	// Nor the video and its Repères (ADR-0082 rule 1): the draft takes them
 	// back from the Match.
 	if m.VideoSource != nil {
 		doc.Header.VideoSource = *m.VideoSource

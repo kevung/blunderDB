@@ -826,6 +826,7 @@ export namespace database {
 		}
 	}
 	export class ScoreCellStats {
+	    Money: boolean;
 	    MoverAway: number;
 	    OpponentAway: number;
 	    PR: number;
@@ -839,6 +840,7 @@ export namespace database {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Money = source["Money"];
 	        this.MoverAway = source["MoverAway"];
 	        this.OpponentAway = source["OpponentAway"];
 	        this.PR = source["PR"];
@@ -6614,6 +6616,24 @@ export namespace storage {
 	        this.aliases = source["aliases"];
 	    }
 	}
+	export class Comparison {
+	    verdict: string;
+	    delta: number;
+	    low: number;
+	    high: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Comparison(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.verdict = source["verdict"];
+	        this.delta = source["delta"];
+	        this.low = source["low"];
+	        this.high = source["high"];
+	    }
+	}
 	export class ContrastPosition {
 	    position_id: number;
 	    error_mp_a: number;
@@ -6648,7 +6668,9 @@ export namespace storage {
 	    error_mp?: number;
 	    error: boolean;
 	    luck?: number;
+	    rolled: boolean;
 	    duration_ms?: number;
+	    away: number[];
 	
 	    static createFrom(source: any = {}) {
 	        return new DecisionLoss(source);
@@ -6667,7 +6689,9 @@ export namespace storage {
 	        this.error_mp = source["error_mp"];
 	        this.error = source["error"];
 	        this.luck = source["luck"];
+	        this.rolled = source["rolled"];
 	        this.duration_ms = source["duration_ms"];
+	        this.away = source["away"];
 	    }
 	}
 	export class DeclaredBot {
@@ -6685,6 +6709,130 @@ export namespace storage {
 	        this.configuration = source["configuration"];
 	        this.engine = source["engine"];
 	    }
+	}
+	export class DifficultySummary {
+	    decisions: number;
+	    loss: number;
+	    difficulty: number;
+	    excess: number;
+	    ratio?: number;
+	    avoidable: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new DifficultySummary(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.decisions = source["decisions"];
+	        this.loss = source["loss"];
+	        this.difficulty = source["difficulty"];
+	        this.excess = source["excess"];
+	        this.ratio = source["ratio"];
+	        this.avoidable = source["avoidable"];
+	    }
+	}
+	export class ScoreBias {
+	    Money: boolean;
+	    MoverAway: number;
+	    OpponentAway: number;
+	    Decisions: number;
+	    Plus: number;
+	    PlusMP: number;
+	    Minus: number;
+	    MinusMP: number;
+	    Bias: number;
+	    Low: number;
+	    High: number;
+	    Verdict: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new ScoreBias(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Money = source["Money"];
+	        this.MoverAway = source["MoverAway"];
+	        this.OpponentAway = source["OpponentAway"];
+	        this.Decisions = source["Decisions"];
+	        this.Plus = source["Plus"];
+	        this.PlusMP = source["PlusMP"];
+	        this.Minus = source["Minus"];
+	        this.MinusMP = source["MinusMP"];
+	        this.Bias = source["Bias"];
+	        this.Low = source["Low"];
+	        this.High = source["High"];
+	        this.Verdict = source["Verdict"];
+	    }
+	}
+	export class SignedBias {
+	    Decisions: number;
+	    Plus: number;
+	    PlusMP: number;
+	    Minus: number;
+	    MinusMP: number;
+	    Bias: number;
+	    Low: number;
+	    High: number;
+	    Verdict: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new SignedBias(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Decisions = source["Decisions"];
+	        this.Plus = source["Plus"];
+	        this.PlusMP = source["PlusMP"];
+	        this.Minus = source["Minus"];
+	        this.MinusMP = source["MinusMP"];
+	        this.Bias = source["Bias"];
+	        this.Low = source["Low"];
+	        this.High = source["High"];
+	        this.Verdict = source["Verdict"];
+	    }
+	}
+	export class DirectionalBiases {
+	    MinDecisions: number;
+	    TakePass: SignedBias;
+	    Doubles: SignedBias;
+	    DoublesByScore: ScoreBias[];
+	    Blots: SignedBias;
+	    BlotsUnread: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new DirectionalBiases(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.MinDecisions = source["MinDecisions"];
+	        this.TakePass = this.convertValues(source["TakePass"], SignedBias);
+	        this.Doubles = this.convertValues(source["Doubles"], SignedBias);
+	        this.DoublesByScore = this.convertValues(source["DoublesByScore"], ScoreBias);
+	        this.Blots = this.convertValues(source["Blots"], SignedBias);
+	        this.BlotsUnread = source["BlotsUnread"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class ErrorPace {
 	    hasty: number;
@@ -6900,6 +7048,7 @@ export namespace storage {
 	    to_review: ReviewDecision[];
 	    pace: ErrorPace;
 	    luck: LuckAdjusted;
+	    difficulty: DifficultySummary;
 	
 	    static createFrom(source: any = {}) {
 	        return new PlayerReview(source);
@@ -6915,6 +7064,7 @@ export namespace storage {
 	        this.to_review = this.convertValues(source["to_review"], ReviewDecision);
 	        this.pace = this.convertValues(source["pace"], ErrorPace);
 	        this.luck = this.convertValues(source["luck"], LuckAdjusted);
+	        this.difficulty = this.convertValues(source["difficulty"], DifficultySummary);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -7237,6 +7387,188 @@ export namespace storage {
 		    return a;
 		}
 	}
+	export class ReferenceSuggestion {
+	    PositionID: number;
+	    MatchID: number;
+	    Label: string;
+	    GameType: string;
+	    Kind: string;
+	    Theme: string;
+	    AwayOnRoll: number;
+	    AwayOpponent: number;
+	    Gain: number;
+	    Covered: number;
+	    Errors: number;
+	    Matches: number;
+	    Excess: number;
+	    FamilyErrors: number;
+	    GapMP: number;
+	    Close: boolean;
+	    Unstable: boolean;
+	    RolledOut: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new ReferenceSuggestion(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.PositionID = source["PositionID"];
+	        this.MatchID = source["MatchID"];
+	        this.Label = source["Label"];
+	        this.GameType = source["GameType"];
+	        this.Kind = source["Kind"];
+	        this.Theme = source["Theme"];
+	        this.AwayOnRoll = source["AwayOnRoll"];
+	        this.AwayOpponent = source["AwayOpponent"];
+	        this.Gain = source["Gain"];
+	        this.Covered = source["Covered"];
+	        this.Errors = source["Errors"];
+	        this.Matches = source["Matches"];
+	        this.Excess = source["Excess"];
+	        this.FamilyErrors = source["FamilyErrors"];
+	        this.GapMP = source["GapMP"];
+	        this.Close = source["Close"];
+	        this.Unstable = source["Unstable"];
+	        this.RolledOut = source["RolledOut"];
+	    }
+	}
+	export class ReferenceSuggestions {
+	    NumDecisions: number;
+	    ThresholdMP: number;
+	    Radius: number;
+	    Size: number;
+	    Candidates: number;
+	    Handled: number;
+	    References: ReferenceSuggestion[];
+	
+	    static createFrom(source: any = {}) {
+	        return new ReferenceSuggestions(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.NumDecisions = source["NumDecisions"];
+	        this.ThresholdMP = source["ThresholdMP"];
+	        this.Radius = source["Radius"];
+	        this.Size = source["Size"];
+	        this.Candidates = source["Candidates"];
+	        this.Handled = source["Handled"];
+	        this.References = this.convertValues(source["References"], ReferenceSuggestion);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class ReviewCell {
+	    key: string;
+	    decisions: number;
+	    pr: number;
+	    pr_interval: domain.Interval;
+	    usual_decisions: number;
+	    usual_pr: number;
+	    usual_interval: domain.Interval;
+	    versus: Comparison;
+	
+	    static createFrom(source: any = {}) {
+	        return new ReviewCell(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.key = source["key"];
+	        this.decisions = source["decisions"];
+	        this.pr = source["pr"];
+	        this.pr_interval = this.convertValues(source["pr_interval"], domain.Interval);
+	        this.usual_decisions = source["usual_decisions"];
+	        this.usual_pr = source["usual_pr"];
+	        this.usual_interval = this.convertValues(source["usual_interval"], domain.Interval);
+	        this.versus = this.convertValues(source["versus"], Comparison);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	export class RoundReview {
+	    round: number;
+	    match_id: number;
+	    opponent: string;
+	    date: string;
+	    length: number;
+	    decisions: number;
+	    pr: number;
+	    pr_interval: domain.Interval;
+	    mwc7: domain.MWC7;
+	    versus: Comparison;
+	
+	    static createFrom(source: any = {}) {
+	        return new RoundReview(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.round = source["round"];
+	        this.match_id = source["match_id"];
+	        this.opponent = source["opponent"];
+	        this.date = source["date"];
+	        this.length = source["length"];
+	        this.decisions = source["decisions"];
+	        this.pr = source["pr"];
+	        this.pr_interval = this.convertValues(source["pr_interval"], domain.Interval);
+	        this.mwc7 = this.convertValues(source["mwc7"], domain.MWC7);
+	        this.versus = this.convertValues(source["versus"], Comparison);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 	
 	export class SimilarPosition {
 	    position: domain.Position;
@@ -7270,6 +7602,110 @@ export namespace storage {
 		    return a;
 		}
 	}
+	export class StudyEffectWindow {
+	    Decisions: number;
+	    Errors: number;
+	    Loss: number;
+	    Rate: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyEffectWindow(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Decisions = source["Decisions"];
+	        this.Errors = source["Errors"];
+	        this.Loss = source["Loss"];
+	        this.Rate = source["Rate"];
+	    }
+	}
+	export class StudyEffectFamily {
+	    GameType: string;
+	    Kind: string;
+	    Theme: string;
+	    StudiedOn: string;
+	    Studied: number;
+	    Before: StudyEffectWindow;
+	    After: StudyEffectWindow;
+	    Gain: number;
+	    Low: number;
+	    High: number;
+	    Verdict: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyEffectFamily(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.GameType = source["GameType"];
+	        this.Kind = source["Kind"];
+	        this.Theme = source["Theme"];
+	        this.StudiedOn = source["StudiedOn"];
+	        this.Studied = source["Studied"];
+	        this.Before = this.convertValues(source["Before"], StudyEffectWindow);
+	        this.After = this.convertValues(source["After"], StudyEffectWindow);
+	        this.Gain = source["Gain"];
+	        this.Low = source["Low"];
+	        this.High = source["High"];
+	        this.Verdict = source["Verdict"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class StudyEffect {
+	    MinDecisions: number;
+	    Families: StudyEffectFamily[];
+	    Unstudied: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StudyEffect(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.MinDecisions = source["MinDecisions"];
+	        this.Families = this.convertValues(source["Families"], StudyEffectFamily);
+	        this.Unstudied = source["Unstudied"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
+	
 	export class StudyPlanPosition {
 	    PositionID: number;
 	    MatchID: number;
@@ -7405,6 +7841,114 @@ export namespace storage {
 	        this.mean_error_mp = source["mean_error_mp"];
 	        this.blunders = source["blunders"];
 	    }
+	}
+	export class UsualLevel {
+	    available: boolean;
+	    from: string;
+	    to: string;
+	    matches: number;
+	    decisions: number;
+	    pr: number;
+	    pr_interval: domain.Interval;
+	    mwc7: domain.MWC7;
+	
+	    static createFrom(source: any = {}) {
+	        return new UsualLevel(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.available = source["available"];
+	        this.from = source["from"];
+	        this.to = source["to"];
+	        this.matches = source["matches"];
+	        this.decisions = source["decisions"];
+	        this.pr = source["pr"];
+	        this.pr_interval = this.convertValues(source["pr_interval"], domain.Interval);
+	        this.mwc7 = this.convertValues(source["mwc7"], domain.MWC7);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class TournamentReview {
+	    tournament_id: number;
+	    name: string;
+	    date: string;
+	    player: string;
+	    matches: number;
+	    decisions: number;
+	    pr: number;
+	    pr_interval: domain.Interval;
+	    mwc7: domain.MWC7;
+	    usual: UsualLevel;
+	    pr_versus: Comparison;
+	    mwc7_versus: Comparison;
+	    rounds: RoundReview[];
+	    by_rank: ReviewCell[];
+	    by_pressure: ReviewCell[];
+	    by_clock: ReviewCell[];
+	    families: StudyPlanFamily[];
+	    tentative: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TournamentReview(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.tournament_id = source["tournament_id"];
+	        this.name = source["name"];
+	        this.date = source["date"];
+	        this.player = source["player"];
+	        this.matches = source["matches"];
+	        this.decisions = source["decisions"];
+	        this.pr = source["pr"];
+	        this.pr_interval = this.convertValues(source["pr_interval"], domain.Interval);
+	        this.mwc7 = this.convertValues(source["mwc7"], domain.MWC7);
+	        this.usual = this.convertValues(source["usual"], UsualLevel);
+	        this.pr_versus = this.convertValues(source["pr_versus"], Comparison);
+	        this.mwc7_versus = this.convertValues(source["mwc7_versus"], Comparison);
+	        this.rounds = this.convertValues(source["rounds"], RoundReview);
+	        this.by_rank = this.convertValues(source["by_rank"], ReviewCell);
+	        this.by_pressure = this.convertValues(source["by_pressure"], ReviewCell);
+	        this.by_clock = this.convertValues(source["by_clock"], ReviewCell);
+	        this.families = this.convertValues(source["families"], StudyPlanFamily);
+	        this.tentative = source["tentative"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	export class TrainingItem {
 	    numberType: string;
@@ -7650,6 +8194,7 @@ export namespace storage {
 		    return a;
 		}
 	}
+	
 	
 	
 	export class WindowStats {

@@ -111,7 +111,7 @@
     // Volet des métadonnées, replié par défaut ; l'en-tête vit dans le document.
     let metaOpen = $state(false);
 
-    // ── la vidéo (ADR-0079) ──────────────────────────────────────────────
+    // ── la vidéo (ADR-0082) ──────────────────────────────────────────────
     // Le volet n'est qu'un fournisseur d'instants : le moteur pose les Repères
     // des gestes qui en portent un, le panneau ne fait que lire l'horloge.
 
@@ -386,7 +386,7 @@
             if (!gesture) return;
             // A validation that the next roll's digit carries is not the moment the play
             // was finished on screen: it leaves the action untimed rather than timed wrong
-            // (ADR-0079 rule 3). Only a validation that ends its batch — Enter, a
+            // (ADR-0082 rule 3). Only a validation that ends its batch — Enter, a
             // double-click, a play finished on the board — is explicit.
             const implicit = command.kind === COMMAND.VALIDATE && i < commands.length - 1;
             if (now !== null && !inPlace && TIMED.has(command.kind) && !implicit && !command.untimed) {
@@ -1717,7 +1717,7 @@
             {/if}
 
             {#if videoSource}
-                <!-- Replié tant qu'aucune source n'est attachée (ADR-0079 règle 3). -->
+                <!-- Replié tant qu'aucune source n'est attachée (ADR-0082 règle 3). -->
                 <div class="video-slot" style="height: {videoHeight}px">
                     <VideoPane bind:this={videoPane} source={videoSource} onrelocate={(/** @type {string} */ path) => attachVideo(path)} />
                 </div>

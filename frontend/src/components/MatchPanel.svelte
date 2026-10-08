@@ -96,7 +96,7 @@
     let detailTimes = $state(null);
     /** @type {any[] | null} the MWC loss of each decision */
     let detailLosses = $state(null);
-    let detailReview = $state(null);
+    let detailReview = $state(/** @type {import('../../wailsjs/go/models').storage.MatchReview | null} */ (null));
     /** @type {import('../../wailsjs/go/models').duel.Origin | null} the Origin of a match played here */
     let detailOrigin = $state(null);
     // The decision under the pointer or the keyboard on either chart, by its Move.
@@ -147,7 +147,7 @@
         }
     });
 
-    // The match's video (ADR-0079): a file plays in a pane of this panel, a web source opens
+    // The match's video (ADR-0082): a file plays in a pane of this panel, a web source opens
     // in the browser at the timestamped link.
     /** @type {'' | 'file' | 'youtube' | 'url'} */
     let videoKind = $state('');
@@ -1246,6 +1246,7 @@
                                 {/if}
                                 <MatchLosses
                                     losses={detailLosses}
+                                    review={detailReview}
                                     movePositions={detailMovePositions}
                                     player1={detailMatch.player1_name}
                                     player2={detailMatch.player2_name}

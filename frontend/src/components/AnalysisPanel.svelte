@@ -49,7 +49,7 @@
     // How long the player took over the decision played here, in match review:
     // empty when the match did not record it.
     // In a Transcription, the Action under the Cursor carries the durations the
-    // Replay deduces from its Repères (ADR-0079 rule 2).
+    // Replay deduces from its Repères (ADR-0082 rule 2).
     let playedTime = $derived.by(() => {
         if (!matchCtx.isMatchMode && $statusBarModeStore !== 'TRANSCRIBE') return '';
         const mp = matchCtx.isMatchMode ? matchCtx.movePositions?.[matchCtx.currentIndex] : $transcriptionCursorStore;

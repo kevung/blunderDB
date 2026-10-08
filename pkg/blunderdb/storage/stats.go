@@ -179,10 +179,11 @@ type TagStats struct {
 }
 
 // ScoreCellStats is one cell of the away × away matrix, keyed by (mover's
-// away, opponent's away) from the reference player's side. Crawford is a
-// separate flag: Crawford and post-Crawford at the same score are different
-// games and must not be averaged.
+// away, opponent's away) from the reference player's side. Post-Crawford is read as one away
+// (domain.PointsAway), as in ScoreBias; money play is the cell with Money set
+// and both aways at 0.
 type ScoreCellStats struct {
+	Money        bool    `json:"Money"`
 	MoverAway    int     `json:"MoverAway"`
 	OpponentAway int     `json:"OpponentAway"`
 	PR           float64 `json:"PR"`
@@ -367,9 +368,16 @@ type DecisionLoss struct {
 	// the position's score and cube like a loss (ADR-0078); nil when unknown,
 	// on a cube row, or at money.
 	Luck *float64 `json:"luck"`
+	// Rolled marks a checker play that has its position: a roll whose luck
+	// the analysis could have measured. A checker row without one never
+	// carries luck, so it is not a roll the luck coverage misses.
+	Rolled bool `json:"rolled"`
 	// DurationMS is the time taken over the decision (ADR-0073), nil when
 	// unknown.
 	DurationMS *int64 `json:"duration_ms"`
+	// Away is the position's stored away scores, player 1's first, the
+	// Crawford rule inside them (CONTEXT.md, « Away score »).
+	Away [2]int `json:"away"`
 }
 
 // PlayerTimeSummary is what one player's recorded decision times add up to
@@ -584,6 +592,13 @@ type StatsStore interface {
 	// luck-adjusted result and the hasty/deliberate split of the errors.
 	MatchReview(ctx context.Context, scope string, matchID int64) (MatchReview, error)
 
+	// TournamentReview is one player's review of a tournament (ADR-0081):
+	// L7 and PR against the player's usual level, by round, by decision rank,
+	// at pressure scores and by pace, and the tournament's error families.
+	// An empty player is the one who played the most of its matches. A
+	// tournament of another tenant, or none, is ErrNotFound.
+	TournamentReview(ctx context.Context, scope string, tournamentID int64, player string) (TournamentReview, error)
+
 	// MatchTimeSummary adds up the decision times of a Match per player, and
 	// counts what overran the Cadence it was played under (match_origin). A
 	// Match with no recorded time gives a summary of unknowns.
@@ -619,6 +634,22 @@ type StatsStore interface {
 	// would recover, apart from those short of evidence (ADR-0077). See
 	// BuildStudyPlan.
 	StudyPlan(ctx context.Context, scope string, filter StatsFilter) (*StudyPlan, error)
+
+	// SuggestReferences proposes the reference positions of a filter: those
+	// whose lesson covers the most recoverable MWC of their neighbouring
+	// errors, near-duplicates and handled positions left out (ADR-0080). See
+	// SuggestReferences.
+	SuggestReferences(ctx context.Context, scope string, req ReferenceRequest) (*ReferenceSuggestions, error)
+
+	// StudyEffect measures each studied family's loss rate in real play
+	// before and after the day it was first studied (ADR-0079). See
+	// BuildStudyEffect.
+	StudyEffect(ctx context.Context, scope string, filter StatsFilter) (*StudyEffect, error)
+
+	// DirectionalBiases tallies which way the filter's decisions err: takes
+	// against passes, premature against missed doubles by score, bolder
+	// against more cautious plays (ADR-0079). See BuildDirectionalBiases.
+	DirectionalBiases(ctx context.Context, scope string, filter StatsFilter) (*DirectionalBiases, error)
 
 	// MatchStats returns the stored per-match, per-seat tallies of the given
 	// matches (every match in scope when matchIDs is empty), two rows per

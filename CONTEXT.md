@@ -568,7 +568,7 @@ happened: the roll (the dice land) and the action (the play is finished, the dou
 the answer given). Media time, not wall-clock time: pausing, rewinding or speeding the video
 up does not move it. Posted on the Action while typing, carried by the saved Move, and the
 source of every Decision time a Transcription has — the Replay derives the durations from
-consecutive Timecodes, never the other way round (ADR-0079). Unknown, never zero, when the
+consecutive Timecodes, never the other way round (ADR-0082). Unknown, never zero, when the
 Transcription has no video or the Action was never stamped.
 _Avoid_: timestamp (a wall-clock date), tick, duration (what is derived from it), frame
 
@@ -663,7 +663,7 @@ the cube Decision, taken even by rolling — and from the roll to the play. A do
 a pass, a resignation each have their own. It does not depend on the Cadence: the delay is
 part of it, and a Duel with no Cadence measures it all the same. It becomes a property of
 the play in the saved Match. A Transcription with a video attached derives it from its
-Timecodes (ADR-0079); any other Match that was not played here has none — unknown, never
+Timecodes (ADR-0082); any other Match that was not played here has none — unknown, never
 zero.
 _Avoid_: thinking time, time per move (a turn is two Decisions), clock time (the Cadence)
 

@@ -1,0 +1,1462 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-10-08 20:50+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: it\n"
+"Language-Team: it <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/metriques.rst:4
+msgid "Métriques et outils d'étude"
+msgstr "Metriche e strumenti di studio"
+
+#: ../../source/metriques.rst:6
+msgid ""
+"Chaque chiffre que blunderDB affiche sur votre jeu répond à une question."
+" Cette page les réunit : pour chacun, la question à laquelle il répond et"
+" ce qu'il apporte à l'étude, sa définition, sa formule exacte, ce qui "
+"compte comme décision, son unité, sa lecture, son incertitude, ses "
+"limites et ce qui le distingue des chiffres d'eXtreme Gammon (XG) et de "
+"GNU Backgammon (gnuBG). Les écrans qui les montrent sont décrits dans le "
+":ref:`manuel` ; les liens y mènent."
+msgstr ""
+"Ogni cifra che blunderDB mostra sul vostro gioco risponde a una domanda. "
+"Questa pagina le riunisce: per ciascuna, la domanda a cui risponde e ciò "
+"che apporta allo studio, la sua definizione, la formula esatta, ciò che "
+"conta come decisione, l'unità, la lettura, l'incertezza, i limiti e ciò "
+"che la distingue dalle cifre di eXtreme Gammon (XG) e di GNU Backgammon "
+"(gnuBG). Le schermate che le mostrano sono descritte nel :ref:`manuel`; i"
+" link vi conducono."
+
+#: ../../source/metriques.rst:14
+msgid ""
+"Les seuils et les paramètres de cette page ont été fixés avant tout "
+"examen de résultats réels : les ajuster après coup reviendrait à faire "
+"dire aux chiffres ce qu'on attend d'eux."
+msgstr ""
+"Le soglie e i parametri di questa pagina sono stati fissati prima di "
+"qualsiasi esame di risultati reali: aggiustarli a posteriori equivarrebbe"
+" a far dire alle cifre ciò che ci si aspetta da esse."
+
+#: ../../source/metriques.rst:26
+msgid "L'erreur et la perte d'une décision"
+msgstr "L'errore e la perdita di una decisione"
+
+#: ../../source/metriques.rst:28
+msgid "Toutes les mesures partent de deux grandeurs par décision."
+msgstr "Tutte le misure partono da due grandezze per decisione."
+
+#: ../../source/metriques.rst:30
+msgid ""
+"**L'erreur e** est ce que la décision jouée a coûté en équité, comparée à"
+" la meilleure décision de l'analyse importée (XG ou gnuBG ; blunderDB ne "
+"réanalyse pas les matchs pour ses statistiques). Elle s'exprime en "
+"**équité normalisée** : ±1 vaut le videau courant, à l'argent comme au "
+"score de match (EMG au score). Elle est arrondie au millième (le "
+"millipoint, mpt)."
+msgstr ""
+"**L'errore e** è ciò che la decisione giocata è costata in equity, "
+"rispetto alla migliore decisione dell'analisi importata (XG o gnuBG; "
+"blunderDB non rianalizza i match per le sue statistiche). È espresso in "
+"**equity normalizzata**: ±1 vale il cubo corrente, sia a denaro sia al "
+"punteggio di match (EMG al punteggio). È arrotondato al millesimo (il "
+"millipunto, mpt)."
+
+#: ../../source/metriques.rst:36
+msgid "Coup de pions : équité du meilleur candidat moins équité du coup joué."
+msgstr ""
+"Mossa di pedine: equity del miglior candidato meno equity della mossa "
+"giocata."
+
+#: ../../source/metriques.rst:37
+msgid "Pas de double : l'erreur de « pas de double » donnée par l'analyse."
+msgstr "Non raddoppio: l'errore di «non raddoppio» fornito dall'analisi."
+
+#: ../../source/metriques.rst:38
+msgid ""
+"Double : la plus petite des erreurs de « double, prise » et « double, "
+"refus » — le doubleur est jugé sur la meilleure réponse adverse."
+msgstr ""
+"Raddoppio: il minore fra gli errori di «raddoppio, accettazione» e "
+"«raddoppio, rifiuto» — chi raddoppia è giudicato sulla migliore risposta "
+"avversaria."
+
+#: ../../source/metriques.rst:40
+msgid "Prise ou refus : l'écart entre la réponse jouée et la meilleure des deux."
+msgstr ""
+"Accettazione o rifiuto: la differenza fra la risposta giocata e la "
+"migliore delle due."
+
+#: ../../source/metriques.rst:42
+msgid ""
+"L'erreur est celle **du coup joué dans ce match**. Une position atteinte "
+"dans deux matchs, et jouée différemment, porte deux erreurs ; aucune "
+"n'écrase l'autre. Un coup joué que l'analyse ne nomme parmi aucun de ses "
+"candidats n'a pas d'erreur : il n'est pas noté, et il sort de tous les "
+"comptes."
+msgstr ""
+"L'errore è quello **della mossa giocata in quel match**. Una posizione "
+"raggiunta in due match e giocata diversamente porta due errori; nessuno "
+"cancella l'altro. Una mossa giocata che l'analisi non nomina fra nessuno "
+"dei suoi candidati non ha errore: non viene valutata ed esce da tutti i "
+"conteggi."
+
+#: ../../source/metriques.rst:47
+msgid ""
+"**La perte de MWC ℓ** est la même erreur exprimée en chances de gagner le"
+" match (*Match Winning Chances*). Au score et au videau v de la décision "
+":"
+msgstr ""
+"**La perdita di MWC ℓ** è lo stesso errore espresso in probabilità di "
+"vincere il match (*Match Winning Chances*). Al punteggio e al cubo v "
+"della decisione:"
+
+#: ../../source/metriques.rst:50
+msgid "\\ell = e \\times \\frac{\\mathrm{MWC}_{+v} - \\mathrm{MWC}_{-v}}{2}"
+msgstr "\\ell = e \\times \\frac{\\mathrm{MWC}_{+v} - \\mathrm{MWC}_{-v}}{2}"
+
+#: ../../source/metriques.rst:54
+#, no-python-brace-format
+msgid ""
+"où :math:`\\mathrm{MWC}_{+v}` et :math:`\\mathrm{MWC}_{-v}` sont les "
+"chances de gagner le match si le joueur gagne, ou perd, v points à ce "
+"score. La table d'équité de match (MET) est la Kazaross-XG2, prolongée "
+"au-delà de 25 points par la formule de Zadeh ; un score post-Crawford est"
+" lu comme tel. Une prise ou un refus est converti au videau **d'avant** "
+"le double, comme le doubleur et comme XG : convertie au videau doublé, "
+"une erreur de réponse coûterait deux fois trop. Une partie d'argent n'a "
+"pas de MWC : ℓ n'y existe pas."
+msgstr ""
+"dove :math:`\\mathrm{MWC}_{+v}` e :math:`\\mathrm{MWC}_{-v}` sono le "
+"probabilità di vincere il match se il giocatore vince, o perde, v punti a"
+" quel punteggio. La tabella di equity di match (MET) è la Kazaross-XG2, "
+"prolungata oltre i 25 punti con la formula di Zadeh; un punteggio post-"
+"Crawford è letto come tale. Un'accettazione o un rifiuto viene convertito"
+" con il cubo **precedente** al raddoppio, come chi raddoppia e come XG: "
+"convertito con il cubo raddoppiato, un errore di risposta costerebbe il "
+"doppio. Una partita a denaro non ha MWC: ℓ non vi esiste."
+
+#: ../../source/metriques.rst:62
+msgid ""
+"Ces deux grandeurs sont additives. Toutes les métriques ci-dessous en "
+"sont des sommes, rapportées à des dénominateurs différents, ou comparées "
+"à une référence."
+msgstr ""
+"Queste due grandezze sono additive. Tutte le metriche seguenti ne sono "
+"somme, rapportate a denominatori diversi o confrontate con un "
+"riferimento."
+
+#: ../../source/metriques.rst:70
+msgid "PR (*Performance Rating*)"
+msgstr "PR (*Performance Rating*)"
+
+#: ../../source/metriques.rst:72
+msgid ""
+"**La question.** Quel est mon niveau, sur l'échelle que tout le monde "
+"connaît ? Le PR est le chiffre des classements, des forums et des clubs ;"
+" il permet de se situer et de comparer deux matchs analysés par XG."
+msgstr ""
+"**La domanda.** Qual è il mio livello, sulla scala che tutti conoscono? "
+"Il PR è la cifra delle classifiche, dei forum e dei club; permette di "
+"collocarsi e di confrontare due match analizzati da XG."
+
+#: ../../source/metriques.rst:76
+msgid "**La formule.** Sur les décisions comptées du joueur :"
+msgstr "**La formula.** Sulle decisioni contate del giocatore:"
+
+#: ../../source/metriques.rst:78
+msgid "\\mathrm{PR} = 500 \\times \\frac{\\sum_i e_i}{N_\\text{compté}}"
+msgstr "\\mathrm{PR} = 500 \\times \\frac{\\sum_i e_i}{N_\\text{compté}}"
+
+#: ../../source/metriques.rst:82
+msgid ""
+"Le facteur 500 est la convention d'XG : un PR de 5,0 vaut une erreur "
+"moyenne de 0,010, soit 10 mpt par décision comptée. Le PR est une "
+"moyenne, sans unité ; plus il est bas, mieux on a joué."
+msgstr ""
+"Il fattore 500 è la convenzione di XG: un PR di 5,0 vale un errore medio "
+"di 0,010, cioè 10 mpt per decisione contata. Il PR è una media, senza "
+"unità; più è basso, meglio si è giocato."
+
+#: ../../source/metriques.rst:86
+msgid ""
+"**Ce qui compte comme décision.** Les règles sont celles d'XG, vérifiées "
+"match par match contre ses chiffres (:ref:`stats_parity`) :"
+msgstr ""
+"**Che cosa conta come decisione.** Le regole sono quelle di XG, "
+"verificate match per match rispetto alle sue cifre (:ref:`stats_parity`):"
+
+#: ../../source/metriques.rst:90
+msgid "Décision"
+msgstr "Decisione"
+
+#: ../../source/metriques.rst:90
+msgid "Comptée si"
+msgstr "Contata se"
+
+#: ../../source/metriques.rst:92
+msgid "Coup de pions"
+msgstr "Mossa di pedine"
+
+#: ../../source/metriques.rst:92
+msgid "il n'est pas forcé et le coup joué est noté"
+msgstr "non è forzata e la mossa giocata è valutata"
+
+#: ../../source/metriques.rst:94
+msgid "Double proposé"
+msgstr "Raddoppio proposto"
+
+#: ../../source/metriques.rst:94 ../../source/metriques.rst:96
+msgid "toujours"
+msgstr "sempre"
+
+#: ../../source/metriques.rst:96
+msgid "Prise, refus"
+msgstr "Accettazione, rifiuto"
+
+#: ../../source/metriques.rst:98
+msgid "Pas de double"
+msgstr "Non raddoppio"
+
+#: ../../source/metriques.rst:98
+msgid "ND > 0 et ND − min(D/T, D/P) < 0,200"
+msgstr "ND > 0 e ND − min(D/T, D/P) < 0,200"
+
+#: ../../source/metriques.rst:101
+msgid ""
+"Un coup de pions est **forcé** quand le lancer n'offre qu'un coup légal, "
+"ou quand l'analyse couvre tous les coups légaux (comptés par le "
+"générateur de coups de blunderDB) et que tous valent la même équité au "
+"millième près : un choix qui ne coûte rien, quel que soit le coup, n'est "
+"pas une décision. C'est la règle d'XG pour les coups « non forcés mais "
+"sans enjeu » (fin de course décidée, sortie où tout se vaut). Quand les "
+"coups légaux ne peuvent pas être comptés, seul un candidat unique rend le"
+" coup forcé."
+msgstr ""
+"Una mossa di pedine è **forzata** quando il tiro offre una sola mossa "
+"legale, oppure quando l'analisi copre tutte le mosse legali (contate dal "
+"generatore di mosse di blunderDB) e tutte valgono la stessa equity al "
+"millesimo: una scelta che non costa nulla, qualunque sia la mossa, non è "
+"una decisione. È la regola di XG per le mosse «non forzate ma senza posta"
+" in gioco» (fine di corsa decisa, bear-off in cui tutto vale uguale). "
+"Quando le mosse legali non possono essere contate, solo un candidato "
+"unico rende forzata la mossa."
+
+#: ../../source/metriques.rst:108
+msgid ""
+"Un **pas de double** est compté quand le joueur était près de doubler : "
+"son équité sans doubler (ND) est positive et dépasse de moins de 0,200 la"
+" meilleure issue du double pour l'adversaire, min(D/T, D/P). Mesurer "
+"contre ce minimum plutôt que contre D/T seul garde comme décision une "
+"position « trop bonne » tant qu'elle reste à moins de 0,200 de "
+"l'encaissement."
+msgstr ""
+"Un **non raddoppio** è contato quando il giocatore era vicino a "
+"raddoppiare: la sua equity senza raddoppiare (ND) è positiva e supera di "
+"meno di 0,200 il miglior esito del raddoppio per l'avversario, min(D/T, "
+"D/P). Misurare rispetto a questo minimo anziché rispetto a D/T da solo "
+"mantiene come decisione una posizione «troppo buona» finché resta a meno "
+"di 0,200 dall'incasso."
+
+#: ../../source/metriques.rst:113
+msgid ""
+"La condition **ND > 0** écarte les positions où le joueur au trait est "
+"derrière : il n'a aucun double à envisager. XG les écarte aussi, ce que "
+"son manuel ne dit pas ; les matchs de référence le montrent."
+msgstr ""
+"La condizione **ND > 0** esclude le posizioni in cui il giocatore di "
+"turno è in svantaggio: non ha alcun raddoppio da considerare. Anche XG le"
+" esclude, cosa che il suo manuale non dice; i match di riferimento lo "
+"mostrano."
+
+#: ../../source/metriques.rst:116
+msgid ""
+"Une décision de videau sans analyse de videau n'est jamais un pas de "
+"double compté."
+msgstr ""
+"Una decisione di cubo senza analisi del cubo non è mai un non raddoppio "
+"contato."
+
+#: ../../source/metriques.rst:119
+msgid ""
+"**Lecture.** Les bandes de niveau du panneau Stats (:ref:`stats`) sont un"
+" repère propre à blunderDB, pas une norme publiée. Un PR se compare "
+"d'abord à vos propres PR : même analyseur, même type d'adversaires, mêmes"
+" longueurs."
+msgstr ""
+"**Lettura.** Le fasce di livello del pannello Stats (:ref:`stats`) sono "
+"un riferimento proprio di blunderDB, non una norma pubblicata. Un PR si "
+"confronta anzitutto con i propri PR: stesso analizzatore, stesso tipo di "
+"avversari, stesse lunghezze."
+
+#: ../../source/metriques.rst:123
+msgid ""
+"**Incertitude.** Le PR d'un match est très bruité : l'erreur-type d'un "
+"match en 7 points est de l'ordre de 1,5 PR. blunderDB donne un intervalle"
+" à 95 % (:ref:`metrique_intervalles`) en rééchantillonnant les parties "
+"d'un match, et les matchs d'un agrégat."
+msgstr ""
+"**Incertezza.** Il PR di un match è molto rumoroso: l'errore standard di "
+"un match a 7 punti è dell'ordine di 1,5 PR. blunderDB fornisce un "
+"intervallo al 95 % (:ref:`metrique_intervalles`) ricampionando le partite"
+" di un match, e i match di un aggregato."
+
+#: ../../source/metriques.rst:128
+msgid ""
+"**Limites.** Le numérateur ne dépend de rien, mais le dénominateur dépend"
+" de ce que l'on compte : les seuils de 0,001 et 0,200 sont arbitraires. "
+"On peut faire baisser son PR sans mieux jouer, en prenant un refus serré "
+"pour ajouter des décisions à une course, ou en choisissant au bear-off un"
+" coup qui crée une décision de plus. Le PR pèse une erreur au videau 8 "
+"comme une erreur au videau 1 (l'équité est normalisée au videau), et une "
+"erreur au DMP comme une erreur à 0-0. Il hérite des imperfections du "
+"moteur, et l'adversaire qui crée des positions difficiles fait monter le "
+"PR de l'autre. La :ref:`perte de MWC <metrique_l7>` et la "
+":ref:`difficulté <metrique_difficulte>` répondent à ces trois défauts."
+msgstr ""
+"**Limiti.** Il numeratore non dipende da nulla, ma il denominatore "
+"dipende da ciò che si conta: le soglie di 0,001 e 0,200 sono arbitrarie. "
+"Si può abbassare il proprio PR senza giocare meglio, accettando un "
+"rifiuto risicato per aggiungere decisioni a una corsa, o scegliendo nel "
+"bear-off una mossa che crea una decisione in più. Il PR pesa un errore "
+"con il cubo a 8 come un errore con il cubo a 1 (l'equity è normalizzata "
+"al cubo), e un errore al DMP come un errore a 0-0. Eredita le "
+"imperfezioni del motore, e l'avversario che crea posizioni difficili fa "
+"salire il PR dell'altro. La :ref:`perdita di MWC <metrique_l7>` e la "
+":ref:`difficoltà <metrique_difficulte>` rispondono a questi tre difetti."
+
+#: ../../source/metriques.rst:139
+msgid ""
+"**XG et gnuBG.** Sur un fichier XG, le PR de blunderDB est celui d'XG, à "
+"la précision d'affichage près, hormis les écarts expliqués de "
+":ref:`stats_parity`. gnuBG divise la même somme par un autre nombre : "
+"chaque coup ayant plus d'un coup légal, et les décisions de videau qu'il "
+"juge proches selon sa propre fenêtre. Son taux par décision ne se compare"
+" donc pas au PR d'XG, même sur la même analyse. Le *Snowie Error Rate* "
+"(:ref:`stats_parity`) divise par tous les coups des deux joueurs : il ne "
+"dépend d'aucune règle de comptage, mais vaut environ la moitié du PR."
+msgstr ""
+"**XG e gnuBG.** Su un file XG, il PR di blunderDB è quello di XG, a meno "
+"della precisione di visualizzazione e degli scarti spiegati in "
+":ref:`stats_parity`. gnuBG divide la stessa somma per un altro numero: "
+"ogni mossa con più di una mossa legale, e le decisioni di cubo che "
+"giudica vicine secondo la propria finestra. Il suo tasso per decisione "
+"non è quindi confrontabile con il PR di XG, nemmeno sulla stessa analisi."
+" Lo *Snowie Error Rate* (:ref:`stats_parity`) divide per tutte le mosse "
+"dei due giocatori: non dipende da alcuna regola di conteggio, ma vale "
+"circa la metà del PR."
+
+#: ../../source/metriques.rst:152
+msgid "Perte de MWC par décision et graphique du match"
+msgstr "Perdita di MWC per decisione e grafico del match"
+
+#: ../../source/metriques.rst:154
+msgid ""
+"**La question.** Quelles décisions m'ont coûté ce match ? Le PR met "
+"toutes les erreurs sur la même échelle ; ℓ les pèse au score où elles ont"
+" été commises. Une erreur de 0,040 à 4-4 dans un match en 5 points ne "
+"coûte pas ce qu'elle coûte à 0-0 dans un match en 17. Pour l'étude, la "
+"colonne et le graphique désignent les quelques décisions qui ont décidé "
+"du match, et la courbe cumulée montre où il a basculé."
+msgstr ""
+"**La domanda.** Quali decisioni mi sono costate questo match? Il PR mette"
+" tutti gli errori sulla stessa scala; ℓ li pesa al punteggio in cui sono "
+"stati commessi. Un errore di 0,040 a 4-4 in un match a 5 punti non costa "
+"quanto costa a 0-0 in uno a 17. Per lo studio, la colonna e il grafico "
+"indicano le poche decisioni che hanno deciso il match, e la curva "
+"cumulata mostra dove si è ribaltato."
+
+#: ../../source/metriques.rst:161
+msgid ""
+"**Définition.** ℓ (:ref:`metrique_erreur`) pour chaque décision comptée "
+"au PR ; la perte d'un joueur sur le match est Σℓ sur ces décisions. Une "
+"décision hors du compte (coup forcé, pas de double hors de la fenêtre) "
+"n'a pas de ℓ : elle n'aurait de toute façon rien coûté, ou presque."
+msgstr ""
+"**Definizione.** ℓ (:ref:`metrique_erreur`) per ogni decisione contata "
+"nel PR; la perdita di un giocatore nel match è Σℓ su queste decisioni. "
+"Una decisione fuori dal conteggio (mossa forzata, non raddoppio fuori "
+"dalla finestra) non ha ℓ: comunque non sarebbe costata nulla, o quasi."
+
+#: ../../source/metriques.rst:166
+#, no-python-format
+msgid ""
+"**Unité.** Un pourcentage de chances de gagner le match : 2,5 veut dire "
+"2,5 % de MWC perdus."
+msgstr ""
+"**Unità.** Una percentuale di probabilità di vincere il match: 2,5 "
+"significa 2,5 % di MWC perso."
+
+#: ../../source/metriques.rst:169
+msgid ""
+"**Lecture.** La colonne **MWC** de la transcription, la barre par "
+"décision et la courbe cumulée de chaque joueur sont décrites au "
+":ref:`panneau_matchs`. Une barre isolée haute est une décision à revoir ;"
+" une courbe qui monte régulièrement dit un match d'erreurs moyennes, pas "
+"d'accident."
+msgstr ""
+"**Lettura.** La colonna **MWC** della trascrizione, la barra per "
+"decisione e la curva cumulata di ciascun giocatore sono descritte in "
+":ref:`panneau_matchs`. Una barra isolata e alta è una decisione da "
+"rivedere; una curva che sale regolarmente indica un match di errori medi,"
+" non di incidenti."
+
+#: ../../source/metriques.rst:174
+msgid ""
+"**Incertitude.** ℓ est exact au regard de l'analyse : son incertitude est"
+" celle de l'analyse elle-même (profondeur, rollout ou non) et de la MET."
+msgstr ""
+"**Incertezza.** ℓ è esatto rispetto all'analisi: la sua incertezza è "
+"quella dell'analisi stessa (profondità, rollout o no) e della MET."
+
+#: ../../source/metriques.rst:177
+msgid ""
+"**Limites.** ℓ dépend de la MET : deux logiciels qui n'utilisent pas la "
+"même table ne donnent pas la même perte. Une partie d'argent n'en a pas, "
+"et une analyse calculée avec une autre MET que celle de la base reste "
+"hors des statistiques. Une décision non notée porte un tiret, jamais "
+"zéro."
+msgstr ""
+"**Limiti.** ℓ dipende dalla MET: due programmi che non usano la stessa "
+"tabella non danno la stessa perdita. Una partita a denaro non ne ha, e "
+"un'analisi calcolata con una MET diversa da quella della base resta fuori"
+" dalle statistiche. Una decisione non valutata porta un trattino, mai "
+"zero."
+
+#: ../../source/metriques.rst:182
+msgid ""
+"**XG et gnuBG.** La somme est la perte de MWC qu'XG affiche pour le match"
+" : pions, doubles et réponses concordent sur les matchs de référence à la"
+" précision d'affichage d'XG (écart borné à 0,06 point de pourcentage par "
+"la suite de tests), hormis les joueurs aux écarts résiduels connus de "
+":ref:`stats_parity`, jusqu'à 0,45 point. gnuBG fait la même conversion, "
+"avec ses propres équités : sur un match qu'il a analysé, ses chiffres "
+"diffèrent de ceux d'XG par l'analyse, pas par la formule."
+msgstr ""
+"**XG e gnuBG.** La somma è la perdita di MWC che XG mostra per il match: "
+"mosse di pedine, raddoppi e risposte concordano sui match di riferimento "
+"con la precisione di visualizzazione di XG (scarto limitato a 0,06 punti "
+"percentuali dalla suite di test), salvo i giocatori con gli scarti "
+"residui noti di :ref:`stats_parity`, fino a 0,45 punti. gnuBG esegue la "
+"stessa conversione, con le proprie equity: su un match che ha analizzato,"
+" le sue cifre differiscono da quelle di XG per l'analisi, non per la "
+"formula."
+
+#: ../../source/metriques.rst:194
+msgid "Perte MWC (éq. 7 pts) L₇ et Elo face au moteur"
+msgstr "Perdita di MWC (eq. 7 pt) L₇ ed Elo rispetto al motore"
+
+#: ../../source/metriques.rst:196
+msgid ""
+"**La question.** Combien de match ai-je perdu par mes erreurs, quelle que"
+" soit la façon de compter les décisions, et comment comparer un match en "
+"5 points à un match en 11 ? L₇ ne divise par aucun nombre de décisions : "
+"il ne se manipule pas en ajoutant des décisions faciles, et il pèse "
+"chaque erreur ce qu'elle a coûté."
+msgstr ""
+"**La domanda.** Quanto match ho perso per i miei errori, comunque si "
+"contino le decisioni, e come confrontare un match a 5 punti con uno a 11?"
+" L₇ non divide per alcun numero di decisioni: non si manipola aggiungendo"
+" decisioni facili, e pesa ogni errore per quanto è costato."
+
+#: ../../source/metriques.rst:202
+msgid ""
+"**Définition.** Sous jeu parfait, les chances de gagner le match évoluent"
+" sans biais : contre un adversaire parfait, un joueur qui perd L de MWC "
+"sur le match garde q = 0,5 − L de chances. Le modèle de la formule FIBS "
+"dit qu'à force égale la perte croît comme la racine de la longueur N. L "
+"est donc ramené à un match en 7 points, la longueur de tournoi la plus "
+"courante :"
+msgstr ""
+"**Definizione.** Con gioco perfetto, le probabilità di vincere il match "
+"evolvono senza distorsione: contro un avversario perfetto, un giocatore "
+"che perde L di MWC nel match conserva q = 0,5 − L di probabilità. Il "
+"modello della formula FIBS dice che, a parità di forza, la perdita cresce"
+" come la radice della lunghezza N. L viene quindi ricondotta a un match a"
+" 7 punti, la lunghezza di torneo più comune:"
+
+#: ../../source/metriques.rst:208
+msgid ""
+"L_7 = L \\times \\sqrt{7 / N}\n"
+"\\qquad\n"
+"L_7^\\text{agrégat} = \\sqrt{7} \\times \\frac{\\sum L}{\\sum \\sqrt{N}}"
+msgstr ""
+"L_7 = L \\times \\sqrt{7 / N}\n"
+"\\qquad\n"
+"L_7^\\text{agrégat} = \\sqrt{7} \\times \\frac{\\sum L}{\\sum \\sqrt{N}}"
+
+#: ../../source/metriques.rst:214
+msgid ""
+"L'agrégat (plusieurs matchs, un joueur, un tournoi) additionne les pertes"
+" et les racines des longueurs avant le rapport : un match en 7 points "
+"pèse plus qu'un match en 1 point, et un seul match rend sa propre valeur."
+" Sans filtre joueur, les deux sièges d'un match pèsent chacun √N, mais "
+"forment une seule unité de l'intervalle."
+msgstr ""
+"L'aggregato (più match, un giocatore, un torneo) somma le perdite e le "
+"radici delle lunghezze prima del rapporto: un match a 7 punti pesa più di"
+" un match a 1 punto, e un solo match restituisce il proprio valore. Senza"
+" filtro giocatore, i due lati di un match pesano ciascuno √N, ma formano "
+"un'unica unità dell'intervallo."
+
+#: ../../source/metriques.rst:220
+msgid "**L'Elo face au moteur** inverse la formule FIBS à 7 points :"
+msgstr "**L'Elo rispetto al motore** inverte la formula FIBS a 7 punti:"
+
+#: ../../source/metriques.rst:222
+msgid ""
+"D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
+"0{,}5 - L_7"
+msgstr ""
+"D = \\frac{2000}{\\sqrt{7}} \\log_{10} \\frac{q}{1 - q}, \\qquad q = "
+"0{,}5 - L_7"
+
+#: ../../source/metriques.rst:226
+msgid ""
+"Linéarisé, D ≈ −3474 × L / √N. À L₇ ≥ 50 %, q n'a plus d'inverse fini ; "
+"dès L₇ > 49 %, q est plancher à 1 % (D ≥ −1509) et l'Elo est affiché « ≤ "
+"». L₇, lui, n'a pas de plancher. Les deux classent les joueurs dans le "
+"même ordre."
+msgstr ""
+"Linearizzato, D ≈ −3474 × L / √N. Da L₇ ≥ 50 %, q non ha più un'inversa "
+"finita; da L₇ > 49 %, q è limitato inferiormente all'1 % (D ≥ −1509) e "
+"l'Elo è mostrato «≤». L₇ non ha limite inferiore. Entrambi ordinano i "
+"giocatori allo stesso modo."
+
+#: ../../source/metriques.rst:230
+msgid ""
+"**Unité.** L₇ : un pourcentage de MWC. D : des points Elo, négatifs, "
+"l'écart attendu entre le joueur et le moteur."
+msgstr ""
+"**Unità.** L₇: una percentuale di MWC. D: punti Elo, negativi, lo scarto "
+"atteso fra il giocatore e il motore."
+
+#: ../../source/metriques.rst:233
+#, no-python-format
+msgid ""
+"**Lecture.** 12,3 % : au lieu de 50 % de chances contre le moteur, le "
+"joueur n'en avait plus que 37,7 % sur un match en 7 points. Le badge, le "
+"détail, les statistiques, le tournoi et la progression l'affichent "
+"(:ref:`Perte MWC (éq. 7 pts) <perte_mwc_7pts>`)."
+msgstr ""
+"**Lettura.** 12,3 %: invece del 50 % di probabilità contro il motore, il "
+"giocatore ne aveva solo 37,7 % in un match a 7 punti. Il badge, il "
+"dettaglio, le statistiche, il torneo e la progressione lo mostrano "
+"(:ref:`Perdita di MWC (eq. 7 pt) <perte_mwc_7pts>`)."
+
+#: ../../source/metriques.rst:238
+msgid ""
+"**Incertitude.** Intervalle à 95 % par les parties pour un match, par les"
+" matchs pour un agrégat (:ref:`metrique_intervalles`), puis même "
+"transformation que la valeur. Une ligne par match des statistiques n'en a"
+" pas : c'est une seule unité ; le bilan du match porte l'intervalle par "
+"parties."
+msgstr ""
+"**Incertezza.** Intervallo al 95 % per partite per un match, per match "
+"per un aggregato (:ref:`metrique_intervalles`), poi la stessa "
+"trasformazione del valore. Una riga per match delle statistiche non ne "
+"ha: è una sola unità; il bilancio del match porta l'intervallo per "
+"partite."
+
+#: ../../source/metriques.rst:244
+msgid ""
+"**Limites.** Le modèle en √N est approximatif sous 7 points et autour du "
+"Crawford. L₇ dépend de la MET. Une partie d'argent n'a pas de longueur, "
+"donc pas de L₇ : l'écran le dit au lieu d'afficher un nombre. Des joueurs"
+" réels perdent plus d'un demi-match, car les erreurs commises après un "
+"retournement de chance s'additionnent : l'Elo atteint alors son plancher."
+msgstr ""
+"**Limiti.** Il modello in √N è approssimativo sotto i 7 punti e intorno "
+"al Crawford. L₇ dipende dalla MET. Una partita a denaro non ha lunghezza,"
+" quindi non ha L₇: la schermata lo dice invece di mostrare un numero. I "
+"giocatori reali perdono più di mezzo match, perché gli errori commessi "
+"dopo un ribaltamento della fortuna si sommano: l'Elo raggiunge allora il "
+"suo limite inferiore."
+
+#: ../../source/metriques.rst:250
+msgid ""
+"**XG et gnuBG.** Pour un match en 7 points, L₇ est exactement la perte de"
+" MWC qu'affiche XG. Aucun des deux logiciels ne ramène la perte à une "
+"longueur de référence ni ne la convertit en Elo. Cet Elo mesure l'écart "
+"au moteur, pas un classement FIBS ou BMAB entre joueurs humains."
+msgstr ""
+"**XG e gnuBG.** Per un match a 7 punti, L₇ è esattamente la perdita di "
+"MWC che mostra XG. Nessuno dei due programmi riconduce la perdita a una "
+"lunghezza di riferimento né la converte in Elo. Questo Elo misura lo "
+"scarto rispetto al motore, non una classifica FIBS o BMAB fra giocatori "
+"umani."
+
+#: ../../source/metriques.rst:259
+msgid "Difficulté, erreurs évitables, excès et ratio"
+msgstr "Difficoltà, errori evitabili, eccesso e rapporto"
+
+#: ../../source/metriques.rst:261
+#, no-python-format
+msgid ""
+"**La question.** Cette erreur était-elle pardonnable ? Une même perte de "
+"2 % est une inattention dans une position évidente, et une faute que tout"
+" bon joueur ferait dans une position où quatre coups se tiennent à "
+"quelques millièmes. Pour l'étude, la difficulté trie les fautes : les "
+"erreurs évitables (inattention, règle mal sue) se corrigent vite et "
+"passent en premier ; les pertes sur des décisions difficiles relèvent du "
+"travail de fond."
+msgstr ""
+"**La domanda.** Questo errore era perdonabile? Una stessa perdita del 2 %"
+" è una distrazione in una posizione ovvia, e un errore che ogni buon "
+"giocatore farebbe in una posizione in cui quattro mosse si tengono a "
+"pochi millesimi. Per lo studio, la difficoltà ordina gli errori: gli "
+"errori evitabili (distrazione, regola mal conosciuta) si correggono in "
+"fretta e vengono per primi; le perdite su decisioni difficili sono lavoro"
+" di fondo."
+
+#: ../../source/metriques.rst:268
+msgid ""
+"**Définition.** La difficulté d est la perte qu'aurait subie en moyenne, "
+"dans la même position, un **joueur de référence** qui choisit chaque "
+"option i avec une probabilité d'autant plus faible qu'elle coûte cher :"
+msgstr ""
+"**Definizione.** La difficoltà d è la perdita che avrebbe subito in "
+"media, nella stessa posizione, un **giocatore di riferimento** che "
+"sceglie ogni opzione i con una probabilità tanto più bassa quanto più "
+"costa:"
+
+#: ../../source/metriques.rst:272
+msgid ""
+"\\pi(i) = \\frac{e^{-\\Delta_i/\\tau}}{\\sum_j e^{-\\Delta_j/\\tau}},\n"
+"\\qquad d = \\sum_i \\pi(i)\\,\\Delta_i,\n"
+"\\qquad \\tau = 0{,}025"
+msgstr ""
+"\\pi(i) = \\frac{e^{-\\Delta_i/\\tau}}{\\sum_j e^{-\\Delta_j/\\tau}},\n"
+"\\qquad d = \\sum_i \\pi(i)\\,\\Delta_i,\n"
+"\\qquad \\tau = 0{,}025"
+
+#: ../../source/metriques.rst:278
+msgid ""
+"Δᵢ est le coût de l'option i par rapport à la meilleure, en équité "
+"normalisée. Les options sont les candidats de l'analyse pour un coup de "
+"pions ; pas de double et double (contre la meilleure réponse) pour le "
+"joueur qui a le videau ; prendre et passer pour celui qui reçoit le "
+"double. d est convertie en MWC comme ℓ : les deux sont dans la même "
+"unité, et l'option jouée a pour coût exactement ℓ."
+msgstr ""
+"Δᵢ è il costo dell'opzione i rispetto alla migliore, in equity "
+"normalizzata. Le opzioni sono i candidati dell'analisi per una mossa di "
+"pedine; non raddoppio e raddoppio (contro la migliore risposta) per il "
+"giocatore che ha il cubo; accettare e rifiutare per chi riceve il "
+"raddoppio. d è convertita in MWC come ℓ: le due sono nella stessa unità, "
+"e l'opzione giocata ha per costo esattamente ℓ."
+
+#: ../../source/metriques.rst:285
+#, no-python-brace-format
+msgid ""
+"τ = 0,025 est un a priori de joueur fort : sur deux options séparées de "
+"Δ, d = Δ / (1 + e^{Δ/τ}) est maximale vers Δ ≈ 0,032, entre « douteux » "
+"et « erreur » ; un écart de 0,1 ne coûte plus que 0,002 ; cinq candidats "
+"espacés de 0,01 donnent d ≈ 0,012, l'erreur moyenne d'un joueur de PR 6 "
+"environ."
+msgstr ""
+"τ = 0,025 è un a priori di giocatore forte: con due opzioni separate da "
+"Δ, d = Δ / (1 + e^{Δ/τ}) è massima intorno a Δ ≈ 0,032, fra «dubbio» ed "
+"«errore»; uno scarto di 0,1 costa ormai solo 0,002; cinque candidati "
+"distanziati di 0,01 danno d ≈ 0,012, circa l'errore medio di un giocatore"
+" di PR 6."
+
+#: ../../source/metriques.rst:290
+msgid ""
+"**Erreur évitable** : la perte atteint le seuil Erreur de la base et d ≤ "
+"ℓ / 10 — sur deux options, le joueur de référence ne la commettrait pas "
+"une fois sur dix."
+msgstr ""
+"**Errore evitabile**: la perdita raggiunge la soglia Errore della base e "
+"d ≤ ℓ / 10 — con due opzioni, il giocatore di riferimento non lo "
+"commetterebbe una volta su dieci."
+
+#: ../../source/metriques.rst:293
+msgid ""
+"**Excès** d'un joueur sur un match : Σ(ℓ − d), ce qu'il a perdu au-delà "
+"de la référence (négatif quand il a fait mieux)."
+msgstr ""
+"**Eccesso** di un giocatore in un match: Σ(ℓ − d), ciò che ha perso oltre"
+" il riferimento (negativo quando ha fatto meglio)."
+
+#: ../../source/metriques.rst:295
+#, no-python-format
+msgid ""
+"**Ratio** : Σℓ / Σd ; 1 veut dire « joue comme la référence », 2 « perd "
+"deux fois plus ». Il n'est pas donné quand Σd < 0,5 % de MWC : sur un "
+"match trop facile il ne mesure que du bruit, l'excès reste."
+msgstr ""
+"**Rapporto**: Σℓ / Σd; 1 significa «gioca come il riferimento», 2 «perde "
+"il doppio». Non viene fornito quando Σd < 0,5 % di MWC: su un match "
+"troppo facile misura solo rumore, l'eccesso resta."
+
+#: ../../source/metriques.rst:299
+msgid ""
+"**Ce qui compte.** Les décisions comptées au PR dont la perte est notée "
+"et convertie en MWC ; ailleurs la difficulté est absente, jamais nulle. "
+"Un coup forcé ou un pas de double hors de la fenêtre du PR n'a donc ni "
+"perte ni difficulté. Parmi les décisions comptées, aucun seuil "
+"supplémentaire ne met à part une décision évidente : sa difficulté est "
+"proche de zéro d'elle-même."
+msgstr ""
+"**Cosa conta.** Le decisioni contate nel PR la cui perdita è valutata e "
+"convertita in MWC; altrove la difficoltà è assente, mai nulla. Una mossa "
+"forzata o un non raddoppio fuori dalla finestra del PR non ha quindi né "
+"perdita né difficoltà. Tra le decisioni contate, nessuna soglia "
+"aggiuntiva mette da parte una decisione evidente: la sua difficoltà è già"
+" vicina a zero."
+
+#: ../../source/metriques.rst:305
+msgid "**Unité.** d et l'excès : un pourcentage de MWC. Le ratio : sans unité."
+msgstr ""
+"**Unità.** d e l'eccesso: una percentuale di MWC. Il rapporto: senza "
+"unità."
+
+#: ../../source/metriques.rst:307
+msgid ""
+"**Lecture.** Une perte bien au-dessus de sa difficulté est une faute que "
+"la position n'excusait pas ; une perte proche de sa difficulté, une faute"
+" partagée. Excès et ratio corrigent le PR de la difficulté des positions "
+"rencontrées, donc en partie du style de l'adversaire "
+"(:ref:`panneau_matchs`)."
+msgstr ""
+"**Lettura.** Una perdita ben al di sopra della sua difficoltà è un errore"
+" che la posizione non scusava; una perdita vicina alla sua difficoltà, un"
+" errore condiviso. Eccesso e rapporto correggono il PR per la difficoltà "
+"delle posizioni incontrate, quindi in parte per lo stile dell'avversario "
+"(:ref:`panneau_matchs`)."
+
+#: ../../source/metriques.rst:312
+msgid ""
+"**Incertitude.** Sur un match, excès et ratio reposent sur peu de "
+"décisions et varient beaucoup : une tendance, pas un classement."
+msgstr ""
+"**Incertezza.** Su un match, eccesso e rapporto poggiano su poche "
+"decisioni e variano molto: una tendenza, non una classifica."
+
+#: ../../source/metriques.rst:315
+msgid ""
+"**Limites.** La difficulté dépend d'un modèle de joueur et de τ, fixés "
+"une fois : les changer change tous les chiffres. Elle ne connaît que les "
+"candidats que l'analyse a gardés (quelques-uns chez XG, selon ses filtres"
+" chez gnuBG) : les options absentes ne pèsent rien, et d est alors un "
+"minorant. Elle hérite de l'erreur de l'analyse, surtout à faible "
+"profondeur."
+msgstr ""
+"**Limiti.** La difficoltà dipende da un modello di giocatore e da τ, "
+"fissati una volta: cambiarli cambia tutte le cifre. Conosce solo i "
+"candidati che l'analisi ha conservato (pochi in XG, secondo i suoi filtri"
+" in gnuBG): le opzioni assenti non pesano nulla, e d è allora un "
+"minorante. Eredita l'errore dell'analisi, soprattutto a bassa profondità."
+
+#: ../../source/metriques.rst:321
+msgid ""
+"**XG et gnuBG.** Ni l'un ni l'autre ne calcule de difficulté. L'idée "
+"vient des indices de vraisemblance des échecs (Regan) ; τ n'est pas "
+"étalonné sur une population de joueurs."
+msgstr ""
+"**XG e gnuBG.** Nessuno dei due calcola la difficoltà. L'idea viene dagli"
+" indici di verosimiglianza degli scacchi (Regan); τ non è tarato su una "
+"popolazione di giocatori."
+
+#: ../../source/metriques.rst:329
+msgid "Intervalles à 95 %"
+msgstr "Intervalli al 95 %"
+
+#: ../../source/metriques.rst:331
+msgid ""
+"**La question.** Ce chiffre dit-il quelque chose, ou est-ce du bruit ? Un"
+" PR de 4,2 sur un match et un PR de 4,2 sur quarante matchs ne valent pas"
+" la même chose. L'intervalle évite de bâtir un plan de travail sur une "
+"case qui ne repose sur rien, et de lire un rang dans un match isolé."
+msgstr ""
+"**La domanda.** Questa cifra dice qualcosa, o è rumore? Un PR di 4,2 su "
+"un match e un PR di 4,2 su quaranta match non valgono la stessa cosa. "
+"L'intervallo evita di costruire un piano di lavoro su una casella che non"
+" poggia su nulla, e di leggere una posizione in classifica in un match "
+"isolato."
+
+#: ../../source/metriques.rst:336
+msgid ""
+"**Définition.** L'intervalle rééchantillonne la plus grande unité "
+"indépendante : les **parties** d'un match, les **matchs** d'un agrégat "
+"(PR global, cases par phase, plan de jeu, étiquette et score, L₇ d'un "
+"agrégat). Les parties d'un même match partagent adversaire, séance et "
+"fatigue : les rééchantillonner séparément dans un agrégat rétrécirait "
+"l'intervalle à tort. Sans filtre joueur, les deux sièges d'un match "
+"forment une seule unité, car ils jouent les mêmes positions."
+msgstr ""
+"**Definizione.** L'intervallo ricampiona la più grande unità "
+"indipendente: le **partite** di un match, i **match** di un aggregato (PR"
+" globale, caselle per fase, piano di gioco, etichetta e punteggio, L₇ di "
+"un aggregato). Le partite di uno stesso match condividono avversario, "
+"sessione e stanchezza: ricampionarle separatamente in un aggregato "
+"restringerebbe a torto l'intervallo. Senza filtro giocatore, i due lati "
+"di un match formano un'unica unità, perché giocano le stesse posizioni."
+
+#: ../../source/metriques.rst:344
+msgid ""
+"**La formule.** Pour un rapport R = Σeᵤ / Σnᵤ sur G unités (eᵤ la somme "
+"des erreurs, nᵤ le nombre de décisions de l'unité), la variance du "
+"bootstrap est calculée, sans tirage :"
+msgstr ""
+"**La formula.** Per un rapporto R = Σeᵤ / Σnᵤ su G unità (eᵤ la somma "
+"degli errori, nᵤ il numero di decisioni dell'unità), la varianza del "
+"bootstrap è calcolata, senza estrazioni:"
+
+#: ../../source/metriques.rst:348
+msgid ""
+"\\widehat{\\mathrm{Var}}(R) = \\frac{G}{G-1} \\cdot\n"
+"\\frac{\\sum_u (e_u - R\\,n_u)^2}{\\left(\\sum_u n_u\\right)^2}"
+msgstr ""
+"\\widehat{\\mathrm{Var}}(R) = \\frac{G}{G-1} \\cdot\n"
+"\\frac{\\sum_u (e_u - R\\,n_u)^2}{\\left(\\sum_u n_u\\right)^2}"
+
+#: ../../source/metriques.rst:353
+msgid ""
+"et l'intervalle vaut R ± 1,96 × √Var, la borne basse jamais sous 0, puis "
+"la même transformation que la valeur (× 500 pour le PR). Le L₇ d'un "
+"agrégat suit la même règle, L à la place de e et √N à la place de n ; "
+"celui d'un match est une somme sur ses G parties, de variance G/(G−1) × "
+"Σ(l_g − l̄)², l_g la perte de la partie g. Le calcul est déterministe : "
+"la même base donne toujours le même intervalle, sur les deux moteurs de "
+"stockage."
+msgstr ""
+"e l'intervallo vale R ± 1,96 × √Var, con il limite inferiore mai sotto 0,"
+" poi la stessa trasformazione del valore (× 500 per il PR). L'L₇ di un "
+"aggregato segue la stessa regola, con L al posto di e e √N al posto di n;"
+" quello di un match è una somma sulle sue G partite, di varianza G/(G−1) "
+"× Σ(l_g − l̄)², con l_g la perdita della partita g. Il calcolo è "
+"deterministico: la stessa base dà sempre lo stesso intervallo, su "
+"entrambi i motori di archiviazione."
+
+#: ../../source/metriques.rst:361
+msgid ""
+"**Ce qu'il faut.** Au moins **trois unités** et une largeur non nulle. "
+"Avec deux, la dispersion repose sur un seul degré de liberté et "
+"l'intervalle serait plusieurs fois trop étroit ; des unités toutes au "
+"même rapport disent qu'elles s'accordent, pas que la valeur est exacte. "
+"Sans intervalle, la case est grisée, son effectif visible (:ref:`stats`)."
+msgstr ""
+"**Che cosa serve.** Almeno **tre unità** e un'ampiezza non nulla. Con "
+"due, la dispersione poggia su un solo grado di libertà e l'intervallo "
+"sarebbe diverse volte troppo stretto; unità tutte allo stesso rapporto "
+"dicono che concordano, non che il valore sia esatto. Senza intervallo, la"
+" casella è grigia, con la sua numerosità visibile (:ref:`stats`)."
+
+#: ../../source/metriques.rst:367
+msgid ""
+"**Lecture.** Deux intervalles qui se chevauchent largement ne départagent"
+" rien. Une famille dont l'intervalle reste au-dessus de votre PR global "
+"est une faiblesse établie."
+msgstr ""
+"**Lettura.** Due intervalli che si sovrappongono ampiamente non "
+"distinguono nulla. Una famiglia il cui intervallo resta al di sopra del "
+"vostro PR globale è una debolezza accertata."
+
+#: ../../source/metriques.rst:371
+msgid ""
+"**Limites.** L'approximation normale est grossière sur peu d'unités, et "
+"les erreurs ont une distribution asymétrique (quelques grosses fautes) : "
+"avec trois ou quatre unités, l'intervalle est indicatif."
+msgstr ""
+"**Limiti.** L'approssimazione normale è grossolana su poche unità, e gli "
+"errori hanno una distribuzione asimmetrica (pochi errori grossi): con tre"
+" o quattro unità, l'intervallo è indicativo."
+
+#: ../../source/metriques.rst:375
+msgid "**XG et gnuBG.** Aucun des deux ne donne d'intervalle."
+msgstr "**XG e gnuBG.** Nessuno dei due fornisce un intervallo."
+
+#: ../../source/metriques.rst:381
+msgid "Bilan du match"
+msgstr "Bilancio del match"
+
+#: ../../source/metriques.rst:383
+msgid ""
+"**La question.** Après un match : qu'est-ce que je revois, ai-je perdu à "
+"cause des dés ou du jeu, et mes erreurs viennent-elles de la "
+"précipitation ou d'une lacune ? Les écrans : :ref:`bilan du match "
+"<bilan_match>`."
+msgstr ""
+"**La domanda.** Dopo un match: che cosa rivedo, ho perso per i dadi o per"
+" il gioco, e i miei errori vengono dalla fretta o da una lacuna? Le "
+"schermate: :ref:`bilancio del match <bilan_match>`."
+
+#: ../../source/metriques.rst:387
+msgid ""
+"**Trois décisions à revoir.** Parmi les erreurs du joueur (seuil de la "
+"base) dont la perte est chiffrée, les trois de plus grande **part "
+"évitable** ℓ − d = ℓ × (1 − d/ℓ), positive : la perte multipliée par son "
+"caractère évitable. Une difficulté inconnue compte zéro ; à égalité, la "
+"plus grosse perte, puis l'ordre du match. Une erreur que le joueur de "
+"référence ferait aussi ne vaut pas une séance."
+msgstr ""
+"**Tre decisioni da rivedere.** Fra gli errori del giocatore (soglia della"
+" base) la cui perdita è quantificata, le tre di maggiore **parte "
+"evitabile** ℓ − d = ℓ × (1 − d/ℓ), positiva: la perdita moltiplicata per "
+"la sua evitabilità. Una difficoltà ignota conta zero; a parità, la "
+"perdita maggiore, poi l'ordine del match. Un errore che farebbe anche il "
+"giocatore di riferimento non vale una sessione."
+
+#: ../../source/metriques.rst:394
+msgid ""
+"**Résultat ajusté de la chance**, pour un match terminé, en points de MWC"
+" du joueur :"
+msgstr ""
+"**Risultato corretto per la fortuna**, per un match terminato, in punti "
+"di MWC del giocatore:"
+
+#: ../../source/metriques.rst:397
+#, no-python-brace-format
+msgid ""
+"A = R - C, \\quad R = \\text{issue} - \\mathrm{MWC}_\\text{départ}, "
+"\\quad\n"
+"C = \\sum \\text{chance de ses jets} - \\sum \\text{chance des jets "
+"adverses}"
+msgstr ""
+"A = R - C, \\quad R = \\text{issue} - \\mathrm{MWC}_\\text{départ}, "
+"\\quad\n"
+"C = \\sum \\text{chance de ses jets} - \\sum \\text{chance des jets "
+"adverses}"
+
+#: ../../source/metriques.rst:402
+msgid ""
+"L'issue vaut 1 gagné, 0 perdu ; la MWC de départ est celle du score "
+"initial (50 % à 0-0). Chaque jet est converti en MWC comme une perte, au "
+"score et au videau de sa position. Sous jeu parfait, l'espérance de A est"
+" la perte de l'adversaire moins la vôtre : le bilan donne l'*écart des "
+"erreurs* à côté pour recouper. A > 0 sur un match perdu : perdu par les "
+"dés ; A < 0 : perdu par le jeu. La chance est celle que l'analyseur a "
+"écrite (:ref:`stats_parity`) : sans chance, pas de ligne, et la "
+"couverture (jets mesurés sur jets joués) est affichée, car une chance "
+"partielle biaise A. Pas de ligne non plus pour une partie d'argent ou un "
+"match inachevé."
+msgstr ""
+"L'esito vale 1 se vinto, 0 se perso; la MWC di partenza è quella del "
+"punteggio iniziale (50 % a 0-0). Ogni tiro è convertito in MWC come una "
+"perdita, al punteggio e al cubo della sua posizione. Con gioco perfetto, "
+"il valore atteso di A è la perdita dell'avversario meno la vostra: il "
+"bilancio riporta accanto la *differenza degli errori* per un controllo "
+"incrociato. A > 0 su un match perso: perso per i dadi; A < 0: perso per "
+"il gioco. La fortuna è quella scritta dall'analizzatore "
+"(:ref:`stats_parity`): senza fortuna, nessuna riga, e viene mostrata la "
+"copertura (tiri misurati su tiri giocati), perché una fortuna parziale "
+"distorce A. Nessuna riga nemmeno per una partita a denaro o un match non "
+"concluso."
+
+#: ../../source/metriques.rst:412
+msgid ""
+"**Erreurs précipitées et réfléchies.** Par joueur et par type (pions, "
+"videau), le seuil est la médiane des durées connues de ses décisions "
+"chiffrées de ce type dans le match : une erreur jouée plus vite est "
+"précipitée, les autres réfléchies. La médiane est la sienne, dans ce "
+"match : elle ne dépend pas de la cadence, et sans lien entre vitesse et "
+"erreur les erreurs se partagent moitié-moitié. Une majorité précipitée "
+"appelle de la discipline ; une majorité réfléchie, de la connaissance."
+msgstr ""
+"**Errori affrettati e ponderati.** Per giocatore e per tipo (pedine, "
+"cubo), la soglia è la mediana delle durate note delle sue decisioni "
+"quantificate di quel tipo nel match: un errore giocato più in fretta è "
+"affrettato, gli altri ponderati. La mediana è la sua, in quel match: non "
+"dipende dal ritmo, e senza legame fra velocità ed errore gli errori si "
+"dividono metà e metà. Una maggioranza affrettata richiede disciplina; una"
+" maggioranza ponderata, conoscenza."
+
+#: ../../source/metriques.rst:420
+msgid ""
+"**Limites.** Un match est un petit échantillon : PR et L₇ y portent leur "
+"intervalle par parties (trois parties au moins). Le résultat ajusté "
+"dépend de la MET et de la chance du fichier. La durée n'existe que pour "
+"un match qui l'a gardée (un match joué contre un bot)."
+msgstr ""
+"**Limiti.** Un match è un piccolo campione: PR e L₇ vi portano il loro "
+"intervallo per partite (almeno tre partite). Il risultato corretto "
+"dipende dalla MET e dalla fortuna del file. La durata esiste solo per un "
+"match che l'ha conservata (un match giocato contro un bot)."
+
+#: ../../source/metriques.rst:425
+msgid ""
+"**XG et gnuBG.** XG et gnuBG affichent la chance totale de chaque joueur,"
+" mais ni résultat ajusté en MWC, ni sélection des décisions à revoir, ni "
+"partage par la durée."
+msgstr ""
+"**XG e gnuBG.** XG e gnuBG mostrano la fortuna totale di ciascun "
+"giocatore, ma né un risultato corretto in MWC, né una selezione delle "
+"decisioni da rivedere, né una ripartizione per durata."
+
+#: ../../source/metriques.rst:433
+msgid "Plan d'étude"
+msgstr "Piano di studio"
+
+#: ../../source/metriques.rst:435
+msgid ""
+"**La question.** Que dois-je travailler maintenant ? Classer ses erreurs "
+"par coût dit où l'on a le plus perdu, pas où l'étude rapporte le plus : "
+"une famille de positions réellement difficiles coûte à tout le monde, et "
+"trois erreurs ne font pas une tendance. Les écrans : :ref:`plan_etude`."
+msgstr ""
+"**La domanda.** Che cosa devo lavorare adesso? Ordinare i propri errori "
+"per costo dice dove si è perso di più, non dove lo studio rende di più: "
+"una famiglia di posizioni realmente difficili costa a tutti, e tre errori"
+" non fanno una tendenza. Le schermate: :ref:`plan_etude`."
+
+#: ../../source/metriques.rst:440
+msgid ""
+"**Définition.** Une **famille** est un triplet (plan de jeu, nature de la"
+" décision, thème) des erreurs récurrentes ; ses membres sont les erreurs "
+"du filtre, décisions comptées qui coûtent au moins le seuil Erreur. Une "
+"erreur sans thème n'entre dans aucune famille. Un membre est **chiffré** "
+"s'il porte ℓ et d ; une erreur en partie d'argent est comptée « non "
+"chiffrée » et n'entre dans aucune priorité."
+msgstr ""
+"**Definizione.** Una **famiglia** è una terna (piano di gioco, natura "
+"della decisione, tema) di errori ricorrenti; i suoi membri sono gli "
+"errori del filtro, decisioni contate che costano almeno la soglia Errore."
+" Un errore senza tema non entra in nessuna famiglia. Un membro è "
+"**quantificato** se porta ℓ e d; un errore in una partita a denaro è "
+"contato come «non quantificato» e non entra in nessuna priorità."
+
+#: ../../source/metriques.rst:447
+msgid "**La formule.** Le **MWC récupérable** et son intervalle :"
+msgstr "**La formula.** Il **MWC recuperabile** e il suo intervallo:"
+
+#: ../../source/metriques.rst:449
+#, no-python-brace-format
+msgid ""
+"R = \\sum_i (\\ell_i - d_i), \\qquad\n"
+"R \\pm 1{,}96 \\sqrt{\\textstyle\\sum_i (\\ell_i - d_i)^2}"
+msgstr ""
+"R = \\sum_i (\\ell_i - d_i), \\qquad\n"
+"R \\pm 1{,}96 \\sqrt{\\textstyle\\sum_i (\\ell_i - d_i)^2}"
+
+#: ../../source/metriques.rst:454
+msgid ""
+"R est la fréquence de la famille multipliée par sa perte moyenne au-delà "
+"de la difficulté : ce qu'on regagnerait en jouant ces positions comme le "
+"joueur de référence. La somme est signée, sans écrêtage. L'intervalle "
+"traite le nombre de membres comme un comptage de Poisson."
+msgstr ""
+"R è la frequenza della famiglia moltiplicata per la sua perdita media "
+"oltre la difficoltà: ciò che si riguadagnerebbe giocando queste posizioni"
+" come il giocatore di riferimento. La somma è con segno, senza "
+"troncamento. L'intervallo tratta il numero di membri come un conteggio di"
+" Poisson."
+
+#: ../../source/metriques.rst:459
+msgid ""
+"**Ce qui entre au plan.** Au moins **5 membres chiffrés** et une **borne "
+"basse strictement positive**. Le plan est classé par borne basse "
+"décroissante : à récupérable égal, la famille la mieux établie passe "
+"devant. Les autres sont « à confirmer », sans rang."
+msgstr ""
+"**Che cosa entra nel piano.** Almeno **5 membri quantificati** e un "
+"**limite inferiore strettamente positivo**. Il piano è ordinato per "
+"limite inferiore decrescente: a parità di recuperabile, la famiglia "
+"meglio accertata passa davanti. Le altre sono «da confermare», senza "
+"posizione."
+
+#: ../../source/metriques.rst:464
+msgid "**Unité.** Un pourcentage de MWC, cumulé sur le filtre."
+msgstr "**Unità.** Una percentuale di MWC, cumulata sul filtro."
+
+#: ../../source/metriques.rst:466
+msgid ""
+"**Lecture.** Une famille d'erreurs évitables monte ; une famille de "
+"positions où tout le monde se trompe descend. Un nouveau joueur voit "
+"d'abord des familles « à confirmer » : le plan ne pousse pas vers du "
+"bruit."
+msgstr ""
+"**Lettura.** Una famiglia di errori evitabili sale; una famiglia di "
+"posizioni in cui tutti sbagliano scende. Un giocatore nuovo vede dapprima"
+" famiglie «da confermare»: il piano non spinge verso il rumore."
+
+#: ../../source/metriques.rst:470
+msgid ""
+"**Limites.** Le thème vient du classificateur de blunderDB : une erreur "
+"mal classée tombe dans une mauvaise famille, une erreur sans thème n'est "
+"dans aucune. R hérite des limites de ℓ et d (MET, troncature des "
+"candidats)."
+msgstr ""
+"**Limiti.** Il tema viene dal classificatore di blunderDB: un errore "
+"classificato male cade in una famiglia sbagliata, un errore senza tema "
+"non è in nessuna. R eredita i limiti di ℓ e d (MET, troncamento dei "
+"candidati)."
+
+#: ../../source/metriques.rst:474
+msgid "**XG et gnuBG.** Ni l'un ni l'autre ne propose de plan d'étude."
+msgstr "**XG e gnuBG.** Nessuno dei due propone un piano di studio."
+
+#: ../../source/metriques.rst:480
+msgid "Positions de référence"
+msgstr "Posizioni di riferimento"
+
+#: ../../source/metriques.rst:482
+msgid ""
+"**La question.** Quelles positions mettre dans une collection pour "
+"travailler le plan ? Les dix pires erreurs donnent souvent dix variantes "
+"d'un même problème. Une bonne position de référence est au centre de "
+"beaucoup de vos erreurs évitables, porte une leçon nette et n'est pas "
+"déjà étudiée. Les écrans : :ref:`positions de référence "
+"<positions_reference>`."
+msgstr ""
+"**La domanda.** Quali posizioni mettere in una collezione per lavorare "
+"sul piano? I dieci errori peggiori spesso danno dieci varianti di uno "
+"stesso problema. Una buona posizione di riferimento sta al centro di "
+"molti dei vostri errori evitabili, porta una lezione netta e non è già "
+"studiata. Le schermate: :ref:`posizioni di riferimento "
+"<positions_reference>`."
+
+#: ../../source/metriques.rst:488
+msgid ""
+"**Définition.** Les candidates sont les erreurs chiffrées et thématisées "
+"du filtre, réunies par position ; l'excès d'une position est la somme des"
+" excès positifs ℓ − d de ses erreurs. Deux candidates d'une même famille "
+"— et, pour le videau, du même score — sont **voisines** à au plus ρ = 12 "
+"pions-pas de distance ``like`` (un coup de dés en vaut 8 à 16)."
+msgstr ""
+"**Definizione.** Le candidate sono gli errori quantificati e tematizzati "
+"del filtro, riuniti per posizione; l'eccesso di una posizione è la somma "
+"degli eccessi positivi ℓ − d dei suoi errori. Due candidate di una stessa"
+" famiglia — e, per il cubo, dello stesso punteggio — sono **vicine** a "
+"una distanza ``like`` di al più ρ = 12 passi di pip (un tiro di dadi ne "
+"vale da 8 a 16)."
+
+#: ../../source/metriques.rst:494
+msgid "**La formule.** Le gain d'une candidate p est"
+msgstr "**La formula.** Il guadagno di una candidata p è"
+
+#: ../../source/metriques.rst:496
+msgid ""
+"G(p) = c(p) \\times \\sum_{q \\,\\in\\, \\text{voisinage}(p),\\ q\\ "
+"\\text{non couverte}} \\text{excès}(q)"
+msgstr ""
+"G(p) = c(p) \\times \\sum_{q \\,\\in\\, \\text{voisinage}(p),\\ q\\ "
+"\\text{non couverte}} \\text{excès}(q)"
+
+#: ../../source/metriques.rst:500
+msgid ""
+"en fraction de MWC : la représentativité, la fréquence et le coût "
+"évitable en une seule quantité. c(p) part de 1 et est multiplié par ½ si "
+"la leçon est **serrée** (le second choix coûte moins de la moitié du "
+"seuil Erreur), et encore par ½ si elle est **instable** (une autre "
+"profondeur d'analyse du videau ou un rollout rend un autre verdict) : ¼ "
+"quand les deux se cumulent. Un rollout qui confirme ne relève rien : il "
+"départage à gain égal."
+msgstr ""
+"in frazione di MWC: la rappresentatività, la frequenza e il costo "
+"evitabile in un'unica quantità. c(p) parte da 1 ed è moltiplicato per ½ "
+"se la lezione è **risicata** (la seconda scelta costa meno della metà "
+"della soglia Errore), e ancora per ½ se è **instabile** (un'altra "
+"profondità di analisi del cubo o un rollout dà un altro verdetto): ¼ "
+"quando le due si sommano. Un rollout che conferma non innalza nulla: "
+"decide a parità di guadagno."
+
+#: ../../source/metriques.rst:508
+msgid ""
+"**Sélection.** Gloutonne par gain marginal : chaque position retenue "
+"couvre ses voisines, qui ne rapportent plus rien aux suivantes, et ses "
+"quasi-doublons sont écartés même hors de sa famille. Une position déjà "
+"traitée (commentaire, carte Anki, collection, marque « étudiée ») n'est "
+"jamais proposée et compte comme déjà retenue."
+msgstr ""
+"**Selezione.** Golosa per guadagno marginale: ogni posizione scelta copre"
+" le sue vicine, che non rendono più nulla alle successive, e i suoi "
+"quasi-duplicati sono scartati anche fuori dalla sua famiglia. Una "
+"posizione già trattata (commento, scheda Anki, collezione, marca "
+"«studiata») non viene mai proposta e conta come già scelta."
+
+#: ../../source/metriques.rst:514
+msgid "**Unité.** Le MWC couvert, en pourcentage."
+msgstr "**Unità.** Il MWC coperto, in percentuale."
+
+#: ../../source/metriques.rst:516
+msgid ""
+"**Limites.** Le rayon et les facteurs sont fixés, pas appris. La distance"
+" ``like`` compare des structures de pions, pas des idées : deux positions"
+" de même leçon mais de structure éloignée ne se couvrent pas."
+msgstr ""
+"**Limiti.** Il raggio e i fattori sono fissati, non appresi. La distanza "
+"``like`` confronta strutture di pedine, non idee: due posizioni con la "
+"stessa lezione ma di struttura lontana non si coprono."
+
+#: ../../source/metriques.rst:520 ../../source/metriques.rst:562
+#: ../../source/metriques.rst:642
+msgid "**XG et gnuBG.** Pas d'équivalent."
+msgstr "**XG e gnuBG.** Nessun equivalente."
+
+#: ../../source/metriques.rst:526
+msgid "Avant/après l'étude"
+msgstr "Prima/dopo lo studio"
+
+#: ../../source/metriques.rst:528
+msgid ""
+"**La question.** Ce que j'ai travaillé me coûte-t-il moins en match réel "
+"? Sans mesure, l'étude se juge à l'impression ; une famille qui ne bouge "
+"pas malgré le travail dit qu'il faut changer de méthode. Les écrans : "
+":ref:`avant_apres_etude`."
+msgstr ""
+"**La domanda.** Ciò che ho lavorato mi costa meno in un match reale? "
+"Senza misura, lo studio si giudica a impressione; una famiglia che non si"
+" muove nonostante il lavoro dice che bisogna cambiare metodo. Le "
+"schermate: :ref:`avant_apres_etude`."
+
+#: ../../source/metriques.rst:533
+msgid ""
+"**Définition.** Chaque famille thématisée du filtre est mesurée, celles "
+"du plan comme celles « à confirmer ». Une famille est **étudiée** au jour"
+" (UTC) de la première action d'étude sur l'une de ses positions : marque "
+"« étudiée », révision Anki quelle que soit la note, réponse de quiz. "
+"Créer une carte ou ranger une position en collection n'en est pas une. "
+"Fenêtre *avant* : les matchs datés strictement avant ce jour ; *après* : "
+"strictement après ; le jour même et les matchs sans date sont écartés."
+msgstr ""
+"**Definizione.** Ogni famiglia tematica del filtro è misurata, sia quelle"
+" del piano sia quelle «da confermare». Una famiglia è **studiata** nel "
+"giorno (UTC) della prima azione di studio su una delle sue posizioni: "
+"segno «studiata», ripasso Anki qualunque sia il voto, risposta a un quiz."
+" Creare una carta o riporre una posizione in una raccolta non lo è. "
+"Finestra *prima*: i match datati strettamente prima di quel giorno; "
+"*dopo*: strettamente dopo; il giorno stesso e i match senza data sono "
+"scartati."
+
+#: ../../source/metriques.rst:541
+msgid ""
+"**La formule.** Dans chaque fenêtre, le taux de perte r = Σℓ / N : ℓ les "
+"pertes des erreurs de la famille, N les décisions comptées en match du "
+"même plan de jeu et de la même nature (le thème n'existe que pour une "
+"erreur). Le gain et son intervalle :"
+msgstr ""
+"**La formula.** In ciascuna finestra, il tasso di perdita r = Σℓ / N: ℓ "
+"le perdite degli errori della famiglia, N le decisioni contate in match "
+"dello stesso piano di gioco e della stessa natura (il tema esiste solo "
+"per un errore). Il guadagno e il suo intervallo:"
+
+#: ../../source/metriques.rst:546
+msgid ""
+"\\Delta = r_\\text{avant} - r_\\text{après}, \\qquad\n"
+"\\Delta \\pm 1{,}96 \\sqrt{\\frac{\\sum "
+"\\ell^2_\\text{avant}}{N^2_\\text{avant}}\n"
+"+ \\frac{\\sum \\ell^2_\\text{après}}{N^2_\\text{après}}}"
+msgstr ""
+"\\Delta = r_\\text{avant} - r_\\text{après}, \\qquad\n"
+"\\Delta \\pm 1{,}96 \\sqrt{\\frac{\\sum "
+"\\ell^2_\\text{avant}}{N^2_\\text{avant}}\n"
+"+ \\frac{\\sum \\ell^2_\\text{après}}{N^2_\\text{après}}}"
+
+#: ../../source/metriques.rst:552
+msgid ""
+"**Verdict.** Au moins **30 décisions** dans chaque fenêtre, sinon « "
+"insuffisant ». « En progrès » si la borne basse de Δ est positive, « en "
+"recul » si la borne haute est négative, « indéterminé » sinon."
+msgstr ""
+"**Verdetto.** Almeno **30 decisioni** in ciascuna finestra, altrimenti "
+"«insufficiente». «In progresso» se il limite inferiore di Δ è positivo, "
+"«in regresso» se il limite superiore è negativo, «indeterminato» "
+"altrimenti."
+
+#: ../../source/metriques.rst:556
+msgid "**Unité.** Points de MWC pour 100 décisions."
+msgstr "**Unità.** Punti di MWC per 100 decisioni."
+
+#: ../../source/metriques.rst:558
+msgid ""
+"**Limites.** Un changement, pas un effet. Une famille est étudiée *parce "
+"qu'elle* coûtait : la régression vers la moyenne gonfle le gain. Rien ne "
+"contrôle les adversaires, le format ni les dés."
+msgstr ""
+"**Limiti.** Un cambiamento, non un effetto. Una famiglia è studiata "
+"*perché* costava: la regressione verso la media gonfia il guadagno. Nulla"
+" controlla gli avversari, il formato né i dadi."
+
+#: ../../source/metriques.rst:568
+msgid "Biais signés"
+msgstr "Distorsioni con segno"
+
+#: ../../source/metriques.rst:570
+msgid ""
+"**La question.** Dans quel sens est-ce que je me trompe ? « Vous prenez "
+"trop » se corrige mieux qu'un PR : la règle à revoir est nommée. Les "
+"écrans : :ref:`biais_signes`."
+msgstr ""
+"**La domanda.** In che direzione sbaglio? «Accettate troppo» si corregge "
+"meglio di un PR: la regola da rivedere è nominata. Le schermate: "
+":ref:`biais_signes`."
+
+#: ../../source/metriques.rst:574
+msgid ""
+"**La formule.** Chaque décision comptée porte x = +1 (erreur par excès "
+"d'audace), −1 (par excès de prudence) ou 0. Avec P et M les deux comptes "
+"sur N décisions :"
+msgstr ""
+"**La formula.** Ogni decisione contata porta x = +1 (errore per eccesso "
+"di audacia), −1 (per eccesso di prudenza) o 0. Con P e M i due conteggi "
+"su N decisioni:"
+
+#: ../../source/metriques.rst:578
+msgid ""
+"B = \\frac{P - M}{N}, \\qquad\n"
+"B \\pm 1{,}96 \\sqrt{\\frac{(P + M)/N - B^2}{N}}"
+msgstr ""
+"B = \\frac{P - M}{N}, \\qquad\n"
+"B \\pm 1{,}96 \\sqrt{\\frac{(P + M)/N - B^2}{N}}"
+
+#: ../../source/metriques.rst:583
+msgid ""
+"Au moins **20 décisions** ; « trop » si la borne basse est positive, « "
+"pas assez » si la borne haute est négative, « équilibré » sinon. Le coût "
+"de P et de M (en mpt) accompagne les comptes. Le signe et le coût sont "
+"ceux du coup joué dans son match."
+msgstr ""
+"Almeno **20 decisioni**; «troppo» se il limite inferiore è positivo, "
+"«troppo poco» se il limite superiore è negativo, «equilibrato» "
+"altrimenti. Il costo di P e di M (in mpt) accompagna i conteggi. Il segno"
+" e il costo sono quelli della mossa giocata nel suo match."
+
+#: ../../source/metriques.rst:588
+msgid ""
+"**Prise / refus** : sur les réponses au videau ; P = prises fautives, M ="
+" refus fautifs. B est exactement votre taux de prise moins celui du bot "
+"sur les mêmes positions."
+msgstr ""
+"**Accettazione / rifiuto**: sulle risposte al cubo; P = accettazioni "
+"sbagliate, M = rifiuti sbagliati. B è esattamente il vostro tasso di "
+"accettazione meno quello del bot sulle stesse posizioni."
+
+#: ../../source/metriques.rst:591
+msgid ""
+"**Doubles** : sur les décisions de videau du porteur comptées au PR ; P ="
+" doubles prématurés (pas de double, ou trop bon), M = doubles manqués. Le"
+" biais est aussi donné par case de score (vos points restants, ceux de "
+"l'adversaire ; post-Crawford compté à 1 ; la partie d'argent à part)."
+msgstr ""
+"**Raddoppi**: sulle decisioni di cubo di chi lo possiede contate nel PR; "
+"P = raddoppi prematuri (non raddoppio, o troppo buono), M = raddoppi "
+"mancati. La distorsione è data anche per casella di punteggio (i vostri "
+"punti rimanenti, quelli dell'avversario; post-Crawford contato come 1; la"
+" partita a denaro a parte)."
+
+#: ../../source/metriques.rst:595
+msgid ""
+"**Blots** : sur les coups de pions avec contact ; x est le signe de (vos "
+"blots après le coup joué − vos blots après le meilleur coup). Un coup est"
+" reconnu par le plateau qu'il laisse ; un coup introuvable sort du "
+"compte, et sa part est affichée."
+msgstr ""
+"**Blot**: sulle mosse di pedine con contatto; x è il segno di (i vostri "
+"blot dopo la mossa giocata − i vostri blot dopo la mossa migliore). Una "
+"mossa è riconosciuta dalla tavola che lascia; una mossa non trovata esce "
+"dal conteggio, e la sua quota viene mostrata."
+
+#: ../../source/metriques.rst:600
+msgid "**Unité.** Une différence de proportions, sans unité."
+msgstr "**Unità.** Una differenza di proporzioni, senza unità."
+
+#: ../../source/metriques.rst:602
+msgid ""
+"**Limites.** La plupart des cases de score restent muettes : c'est la "
+"réponse honnête. Le biais des blots compte les blots sans peser leur "
+"exposition, et les coups écartés ne sont pas un tirage neutre."
+msgstr ""
+"**Limiti.** La maggior parte delle caselle di punteggio resta muta: è la "
+"risposta onesta. La distorsione dei blot conta i blot senza pesarne "
+"l'esposizione, e le mosse scartate non sono un'estrazione neutra."
+
+#: ../../source/metriques.rst:606
+msgid ""
+"**XG et gnuBG.** Pas d'équivalent ; XG et gnuBG comptent les erreurs de "
+"videau par type (double manqué, prise fautive…) sans intervalle ni "
+"verdict."
+msgstr ""
+"**XG e gnuBG.** Nessun equivalente; XG e gnuBG contano gli errori di cubo"
+" per tipo (raddoppio mancato, accettazione sbagliata…) senza intervallo "
+"né verdetto."
+
+#: ../../source/metriques.rst:613
+msgid "Bilan du tournoi"
+msgstr "Bilancio del torneo"
+
+#: ../../source/metriques.rst:615
+msgid ""
+"**La question.** Ai-je joué à mon niveau, et sinon, où cela a-t-il cédé :"
+" les dernières rondes, les longues fins de match, les scores où un point "
+"décide, la pendule ? Les écrans : :ref:`bilan du tournoi "
+"<bilan_tournoi>`."
+msgstr ""
+"**La domanda.** Ho giocato al mio livello, e se no, dove ha ceduto: gli "
+"ultimi turni, le lunghe fasi finali di match, i punteggi in cui un punto "
+"decide, l'orologio? Le schermate: :ref:`bilancio del torneo "
+"<bilan_tournoi>`."
+
+#: ../../source/metriques.rst:619
+msgid ""
+"**Définition.** Le **niveau habituel** est le joueur sur ses matchs en "
+"points des **365 jours** qui précèdent le tournoi (sa date, à défaut "
+"celle de son premier match), ceux du tournoi exclus ; il faut au moins "
+"**5 matchs**. Le tournoi et le niveau habituel ont chacun leur PR et leur"
+" L₇, avec l'intervalle par matchs (:ref:`metrique_intervalles`)."
+msgstr ""
+"**Definizione.** Il **livello abituale** è il giocatore sui suoi match a "
+"punti dei **365 giorni** che precedono il torneo (la sua data, in "
+"mancanza quella del suo primo match), esclusi quelli del torneo; servono "
+"almeno **5 match**. Il torneo e il livello abituale hanno ciascuno il "
+"proprio PR e il proprio L₇, con l'intervallo per match "
+"(:ref:`metrique_intervalles`)."
+
+#: ../../source/metriques.rst:625
+msgid ""
+"**La formule.** Δ = tournoi − habituel, d'écart-type √(σₜ² + σₕ²), chaque"
+" σ lu sur la demi-largeur haute de son intervalle. « Moins bien » si la "
+"borne basse de Δ est positive, « mieux » si sa borne haute est négative, "
+"« dans l'habitude » sinon. Le verdict demande un intervalle et au moins "
+"**20 décisions** de chaque côté ; sinon « insuffisant », chiffres "
+"visibles."
+msgstr ""
+"**La formula.** Δ = torneo − abituale, di deviazione standard √(σₜ² + "
+"σₕ²), con ogni σ letto sulla semiampiezza superiore del suo intervallo. "
+"«Peggio» se il limite inferiore di Δ è positivo, «meglio» se il limite "
+"superiore è negativo, «nella norma» altrimenti. Il verdetto richiede un "
+"intervallo e almeno **20 decisioni** per parte; altrimenti "
+"«insufficiente», con le cifre visibili."
+
+#: ../../source/metriques.rst:631
+msgid ""
+"**Ventilations**, en PR : par ronde, chaque match face au PR habituel "
+"global ; puis, chaque case face à la même case du niveau habituel, par "
+"rang de la décision dans le match (tranches de 30 : la fatigue) ; par "
+"score (DMP, partie Crawford, post-Crawford, autres) ; par rythme (de part"
+" et d'autre de la médiane de vos durées dans le match). Au plus trois "
+"familles du plan d'étude restreint au tournoi."
+msgstr ""
+"**Ripartizioni**, in PR: per turno, ogni match rispetto al PR abituale "
+"globale; poi ogni casella rispetto alla stessa casella del livello "
+"abituale, per posizione della decisione nel match (fasce di 30: la "
+"fatica); per punteggio (DMP, partita Crawford, post-Crawford, altri); per"
+" ritmo (da una parte e dall'altra della mediana dei vostri tempi nel "
+"match). Al massimo tre famiglie del piano di studio ristretto al torneo."
+
+#: ../../source/metriques.rst:637
+msgid ""
+"**Limites.** Un tournoi de trois matchs ne dit presque jamais « moins "
+"bien » : c'est voulu. Les deux côtés sont traités comme indépendants, ce "
+"qui élargit l'intervalle : la règle est prudente. La réserve de la "
+"pendule n'est pas enregistrée coup par coup : la pression du temps "
+"restant ne se mesure pas."
+msgstr ""
+"**Limiti.** Un torneo di tre match non dice quasi mai «peggio»: è voluto."
+" I due lati sono trattati come indipendenti, il che allarga l'intervallo:"
+" la regola è prudente. La riserva dell'orologio non è registrata mossa "
+"per mossa: la pressione del tempo rimasto non si può misurare."

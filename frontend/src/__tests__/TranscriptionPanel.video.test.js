@@ -1,5 +1,5 @@
 /**
- * TranscriptionPanel.video.test.js — the video of a Transcription (ADR-0079 rule 3).
+ * TranscriptionPanel.video.test.js — the video of a Transcription (ADR-0082 rule 3).
  *
  * The player is a clock the panel reads: a gesture that writes a new Action carries the
  * video's instant, an explicit validation carries the action's, and the validation the

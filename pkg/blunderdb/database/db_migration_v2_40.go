@@ -2,7 +2,7 @@ package database
 
 import "context"
 
-// migrate_2_39_0_to_2_40_0 gives a Match its video (ADR-0079):
+// migrate_2_39_0_to_2_40_0 gives a Match its video (ADR-0082):
 // match.video_source, and on each move the two Repères, roll_tick_ms and
 // tick_ms. All are added NULL — no video, Repères unknown, never zero — for
 // every Match already stored. A table this library still lacks is created

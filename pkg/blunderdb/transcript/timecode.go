@@ -9,7 +9,7 @@ import "fmt"
 func TimeActions(actions []Action, infos []ActionInfo) { timeActions(actions, infos) }
 
 // timeActions writes on each ActionInfo the Repères of its Action and the
-// durations they give (ADR-0079 rule 2), and marks the Repères out of order.
+// durations they give (ADR-0082 rule 2), and marks the Repères out of order.
 //
 // A cube decision runs from the previous Action's instant, whichever side it
 // was, to the roll; a checker play from the roll to the action; a double, an

@@ -37,7 +37,7 @@ const (
 	// the derived one. It also marks an unusable declaration (money, negative).
 	ScoreMismatch InconsistencyKind = "score_mismatch"
 	// TimecodeBackwards: a Repère earlier than the one before it in the document —
-	// the roll's then the action's of each Action, in order (ADR-0079 rule 2). It
+	// the roll's then the action's of each Action, in order (ADR-0082 rule 2). It
 	// is kept as typed, and every duration that starts or ends on it is unknown.
 	TimecodeBackwards InconsistencyKind = "timecode_backwards"
 )
@@ -85,7 +85,7 @@ type ActionInfo struct {
 
 	// DecisionMS and CubeDecisionMS are carried to the Move the Action
 	// produces: the Action's own when an Arbiter measured them, otherwise
-	// deduced from the Repères (ADR-0079 rule 2), nil when neither says.
+	// deduced from the Repères (ADR-0082 rule 2), nil when neither says.
 	DecisionMS     *int64 `json:"decision_ms,omitempty"`
 	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
 

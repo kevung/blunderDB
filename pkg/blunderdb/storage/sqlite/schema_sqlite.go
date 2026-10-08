@@ -270,7 +270,7 @@ var schemaStatements = []string{
 		has_beaver INTEGER,
 		engine_version TEXT DEFAULT '',
 		-- The video the Match was transcribed from (domain.Match.VideoSource,
-		-- ADR-0079): an http(s) URL or a local path, NULL when none.
+		-- ADR-0082): an http(s) URL or a local path, NULL when none.
 		video_source TEXT
 	)`,
 	`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`,
@@ -409,7 +409,7 @@ var schemaStatements = []string{
 		decision_ms INTEGER,
 		cube_decision_ms INTEGER,
 		-- The Move's Repères in the Match's video, in milliseconds from the
-		-- start of the media (domain.Move.RollTickMS / TickMS, ADR-0079):
+		-- start of the media (domain.Move.RollTickMS / TickMS, ADR-0082):
 		-- the roll and the action. NULL is unknown, never zero.
 		roll_tick_ms INTEGER,
 		tick_ms INTEGER,

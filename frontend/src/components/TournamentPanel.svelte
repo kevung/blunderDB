@@ -10,6 +10,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { createReorder } from '../utils/reorder.js';
     import EntityAutocomplete from './EntityAutocomplete.svelte';
+    import TournamentReview from './TournamentReview.svelte';
     import PanelTable, { navigationDelta, stepSelection } from './panels/PanelTable.svelte';
     import {
         GetAllTournaments,
@@ -57,6 +58,9 @@
     // Read-only mirrors of stores
     let tournaments = $derived($tournamentsStore || []);
     let selectedTournament = $derived($selectedTournamentStore);
+    // The review (ADR-0081) reads every decision of the player's year: shown on demand.
+    let reviewOpen = $state(false);
+    let tournamentPlayers = $derived([...new Set(($tournamentMatchesStore || []).flatMap((m) => [m.player1_name, m.player2_name]).filter(Boolean))].sort());
     let tournamentMatches = $derived($tournamentMatchesStore || []);
     let visible = $derived($openPanels.has(PANEL.TOURNAMENT));
 
@@ -723,6 +727,9 @@
         {:else}
             <!-- Matches for selected tournament -->
             <div class="tournament-list-pane">
+                {#if reviewOpen}
+                    <TournamentReview tournamentId={selectedTournament.id} players={tournamentPlayers} />
+                {/if}
                 <PanelTable rows={tournamentMatches} columns={matchColumns} onActivate={openMatch} onReorder={matchOrder.reorder} emptyText={$t('tournament.noMatches')}>
                     {#snippet header()}
                         <button
@@ -783,6 +790,17 @@
                                 title={$t('direction.named.suisse_tableauHint')}>{$t('direction.direct')}</button
                             >
                         {/if}
+                        <button
+                            class="review-btn"
+                            class:active={reviewOpen}
+                            data-testid="tournament-review-toggle"
+                            aria-pressed={reviewOpen}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                reviewOpen = !reviewOpen;
+                            }}
+                            title={$t('tournamentReview.toggleHint')}>{$t('tournamentReview.toggle')}</button
+                        >
                         <span class="header-spacer"></span>
                         {#if tournamentCommentEdit.isEditing(selectedTournament.id)}
                             <input
@@ -914,7 +932,13 @@
         white-space: nowrap;
     }
 
-    .direction-btn {
+    .review-btn.active {
+        background: var(--color-primary);
+        color: var(--color-surface);
+    }
+
+    .direction-btn,
+    .review-btn {
         font-size: var(--font-size-small);
         padding: 0.1rem 0.5rem;
         min-height: 24px;

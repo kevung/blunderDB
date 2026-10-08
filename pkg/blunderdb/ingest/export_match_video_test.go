@@ -14,7 +14,7 @@ import (
 // An export carries a match's video source only as an http(s) URL: a local
 // path stays with its author, it reveals a directory tree and opens nothing
 // on the recipient's machine. The Repères travel whatever the source
-// (ADR-0079).
+// (ADR-0082).
 func TestExportCarriesVideoSourceOnlyAsURL(t *testing.T) {
 	str := func(s string) *string { return &s }
 	roll, done := int64(61_250), int64(64_800)

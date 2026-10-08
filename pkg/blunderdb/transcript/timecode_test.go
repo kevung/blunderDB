@@ -70,7 +70,7 @@ func checkDurations(t *testing.T, ann Annotated, want []durations) {
 }
 
 // TestDurationsAreDeducedFromTheRepères: the Repères the gestures post give every
-// duration of ADR-0079 rule 2, and none of them is written on an Action.
+// duration of ADR-0082 rule 2, and none of them is written on an Action.
 func TestDurationsAreDeducedFromTheRepères(t *testing.T) {
 	doc := timedGame(t)
 	wantTicks := [][2]*int64{{ms(1000), ms(4000)}, {ms(6000), ms(9000)}, {nil, ms(12000)}, {nil, ms(15000)}, {ms(17000), ms(20000)}}
@@ -295,7 +295,7 @@ func TestBuildCarriesRepèresAndDurations(t *testing.T) {
 
 // TestImplicitValidationPostsNoInstant: a play left selected and recorded by the
 // gesture that follows it — a cube gesture — gets no action Repère: the instant
-// is the cube's, and lending it to the play would be false (ADR-0079 rule 3).
+// is the cube's, and lending it to the play would be false (ADR-0082 rule 3).
 func TestImplicitValidationPostsNoInstant(t *testing.T) {
 	var steps []step
 	steps = append(steps, timedTurn(6, 3, 1000, 4000)...)

@@ -50,7 +50,7 @@
                         {#if fmtPRInterval(p.pr_interval)}
                             <span class="ci" title={$t('stats.intervalHint')}>{fmtPRInterval(p.pr_interval)}</span>
                         {:else}
-                            <span class="ci" title={$t('matchReview.oneGame')}>—</span>
+                            <span class="ci" title={$t('matchReview.noInterval')}>—</span>
                         {/if}
                         {#if p.mwc7?.available}
                             <span title={mwc7Tooltip(p.mwc7, $t)}>{$t('mwc7.short')} {fmtMwc7Full(p.mwc7)}</span>

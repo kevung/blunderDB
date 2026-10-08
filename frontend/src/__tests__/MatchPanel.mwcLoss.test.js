@@ -38,6 +38,27 @@ const SUMMARY = {
     ]
 };
 
+// The match review as Go serves it: the difficulty summary is
+// storage.SummariseDifficulty's over LOSSES, which the panel shows as is.
+const reviewPlayer = (difficulty) => ({
+    pr: 0,
+    pr_interval: { available: false, low: 0, high: 0, units: 1 },
+    decisions: 0,
+    mwc7: { available: false },
+    mwc_loss: 0,
+    to_review: [],
+    pace: { hasty: 0, deliberate: 0, unknown: 0, hasty_loss: 0, deliberate_loss: 0 },
+    luck: { available: false, rolls: 0, rolls_measured: 0 },
+    difficulty
+});
+const REVIEW = {
+    match_id: 1,
+    players: [
+        reviewPlayer({ decisions: 3, loss: 0.0623, difficulty: 0.005, excess: 0.0573, ratio: 12.46, avoidable: 1 }),
+        reviewPlayer({ decisions: 1, loss: 0.002, difficulty: 0.003, excess: -0.001, ratio: null, avoidable: 0 })
+    ]
+};
+
 vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ListMatches: vi.fn(() => Promise.resolve([MATCH])),
     CountMatches: vi.fn(() => Promise.resolve(1)),
@@ -57,6 +78,7 @@ vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetMatchDetailStats: vi.fn(() => Promise.resolve(null)),
     GetMatchMoveGrades: vi.fn(() => Promise.resolve([])),
     GetMatchDecisionLosses: vi.fn(() => Promise.resolve(LOSSES)),
+    GetMatchReview: vi.fn(() => Promise.resolve(REVIEW)),
     GetMatchTimeSummary: vi.fn(() => Promise.resolve(SUMMARY)),
     GetMatchOrigin: vi.fn(() => Promise.resolve(null)),
     LoadAnalysis: vi.fn(() => Promise.resolve(null)),
@@ -147,7 +169,7 @@ describe('MatchPanel — the Transcript carries the MWC loss of every decision',
         expect(container.querySelectorAll('[data-testid="loss-plot-per"] line.difficulty').length).toBe(3);
     });
 
-    test('the header table gives each player the difficulty, the excess, the ratio and the avoidable errors', async () => {
+    test('the header table gives each player the difficulty, the excess, the ratio and the avoidable errors the review serves', async () => {
         const container = await openTranscript();
         const cell = (id) => container.querySelector(`[data-testid="${id}"]`).textContent;
         expect(cell('difficulty-total-0')).toBe('0.50 %');

@@ -266,6 +266,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/collections.setFilter — JSON."
         return self._call("/v1/collections.setFilter", payload)
 
+    def collections_suggest(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/collections.suggest — JSON."
+        return self._call("/v1/collections.suggest", payload)
+
     def collections_update(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/collections.update — JSON."
         return self._call("/v1/collections.update", payload)
@@ -1078,6 +1082,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/session.save — JSON."
         return self._call("/v1/session.save", payload)
 
+    def stats_biases(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.biases — JSON."
+        return self._call("/v1/stats.biases", payload)
+
     def stats_compute(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.compute — JSON."
         return self._call("/v1/stats.compute", payload)
@@ -1158,6 +1166,10 @@ class GeneratedAPI(BaseClient):
         "POST /v1/stats.report — JSON."
         return self._call("/v1/stats.report", payload)
 
+    def stats_study_effect(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.studyEffect — JSON."
+        return self._call("/v1/stats.studyEffect", payload)
+
     def stats_study_ids(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.studyIds — JSON."
         return self._call("/v1/stats.studyIds", payload)
@@ -1181,6 +1193,10 @@ class GeneratedAPI(BaseClient):
     def stats_tournament_badges(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.tournamentBadges — JSON."
         return self._call("/v1/stats.tournamentBadges", payload)
+
+    def stats_tournament_review(self, payload: Optional[dict] = None) -> Optional[Any]:
+        "POST /v1/stats.tournamentReview — JSON."
+        return self._call("/v1/stats.tournamentReview", payload)
 
     def stats_training(self, payload: Optional[dict] = None) -> Optional[Any]:
         "POST /v1/stats.training — JSON."

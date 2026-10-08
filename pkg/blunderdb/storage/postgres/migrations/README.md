@@ -288,7 +288,7 @@ why it must hold no per-tenant data: the daemon exposes it read-only
   (`runGoBackfills`, generation 2), which also recompute the 2.37.0 columns
   and drop `match_stats`. Schema-visible: bumped `domain.DatabaseVersion` to
   2.39.0.
-- `045_match_video.sql` — the 2.40.0 wave (ADR-0079): `match.video_source`,
+- `045_match_video.sql` — the 2.40.0 wave (ADR-0082): `match.video_source`,
   the video a Match was transcribed from (an http(s) URL or a local path), and
   `move.roll_tick_ms` / `move.tick_ms`, the Move's Repères in it, NULL for
   unknown. Schema-visible: bumped `domain.DatabaseVersion` to 2.40.0.

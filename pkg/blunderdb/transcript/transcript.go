@@ -144,7 +144,7 @@ type Action struct {
 	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
 
 	// RollTickMS and TickMS are the Action's Repères in the Transcription's
-	// video, in milliseconds from the start of the media (ADR-0079): the
+	// video, in milliseconds from the start of the media (ADR-0082): the
 	// instant the dice fell — on a checker play, a dance or an unrecorded
 	// play — and the instant the action was done, on every Kind. nil is
 	// unknown, never zero. They are posted by the gestures that write a NEW
@@ -183,7 +183,7 @@ type Header struct {
 	MatchID      *int64 `json:"match_id,omitempty"`
 
 	// VideoSource is the media the Repères of the Actions refer to: an http(s)
-	// URL or a local path, "" for none (ADR-0079 rule 4). It is carried to the
+	// URL or a local path, "" for none (ADR-0082 rule 4). It is carried to the
 	// saved Match and back when the Match is reopened as a draft.
 	VideoSource string `json:"video_source,omitempty"`
 }
@@ -260,7 +260,7 @@ type Entry struct {
 
 	// RollTickMS is the instant of the video the first die was typed at, and
 	// TickMS the one a hand-entered play was finished at: the Repères a NEW
-	// Action receives when it is written (ADR-0079 rule 3). A correction in
+	// Action receives when it is written (ADR-0082 rule 3). A correction in
 	// place ignores them and keeps the Action's own.
 	RollTickMS *int64
 	TickMS     *int64

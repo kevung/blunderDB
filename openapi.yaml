@@ -1230,6 +1230,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/collections.suggest:
+    post:
+      operationId: collections.suggest
+      tags: [collections]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/storage_ReferenceRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_ReferenceSuggestions"
+                nullable: true
   /v1/collections.update:
     post:
       operationId: collections.update
@@ -5893,6 +5911,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/okResp"
+  /v1/stats.biases:
+    post:
+      operationId: stats.biases
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_DirectionalBiases"
+                nullable: true
   /v1/stats.compute:
     post:
       operationId: stats.compute
@@ -6250,6 +6286,24 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/statsReportResp"
+  /v1/stats.studyEffect:
+    post:
+      operationId: stats.studyEffect
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_StudyEffect"
+                nullable: true
   /v1/stats.studyIds:
     post:
       operationId: stats.studyIds
@@ -6357,6 +6411,23 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/tournamentBadgesResp"
+  /v1/stats.tournamentReview:
+    post:
+      operationId: stats.tournamentReview
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/tournamentReviewReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_TournamentReview"
   /v1/stats.training:
     post:
       operationId: stats.training
@@ -8996,6 +9067,9 @@ components:
     storage_DecisionLoss:
       type: object
       description: "Opaque: see the Go type storage.DecisionLoss (defined outside internal/server, not expanded here)."
+    storage_DirectionalBiases:
+      type: object
+      description: "Opaque: see the Go type storage.DirectionalBiases (defined outside internal/server, not expanded here)."
     storage_Filter:
       type: object
       description: "Opaque: see the Go type storage.Filter (defined outside internal/server, not expanded here)."
@@ -9038,6 +9112,12 @@ components:
     storage_RecurringErrors:
       type: object
       description: "Opaque: see the Go type storage.RecurringErrors (defined outside internal/server, not expanded here)."
+    storage_ReferenceRequest:
+      type: object
+      description: "Opaque: see the Go type storage.ReferenceRequest (defined outside internal/server, not expanded here)."
+    storage_ReferenceSuggestions:
+      type: object
+      description: "Opaque: see the Go type storage.ReferenceSuggestions (defined outside internal/server, not expanded here)."
     storage_SearchHistory:
       type: object
       description: "Opaque: see the Go type storage.SearchHistory (defined outside internal/server, not expanded here)."
@@ -9059,6 +9139,9 @@ components:
     storage_StatsResult:
       type: object
       description: "Opaque: see the Go type storage.StatsResult (defined outside internal/server, not expanded here)."
+    storage_StudyEffect:
+      type: object
+      description: "Opaque: see the Go type storage.StudyEffect (defined outside internal/server, not expanded here)."
     storage_StudyPlan:
       type: object
       description: "Opaque: see the Go type storage.StudyPlan (defined outside internal/server, not expanded here)."
@@ -9068,6 +9151,9 @@ components:
     storage_TournamentBadge:
       type: object
       description: "Opaque: see the Go type storage.TournamentBadge (defined outside internal/server, not expanded here)."
+    storage_TournamentReview:
+      type: object
+      description: "Opaque: see the Go type storage.TournamentReview (defined outside internal/server, not expanded here)."
     storage_TrainingMissedFilter:
       type: object
       description: "Opaque: see the Go type storage.TrainingMissedFilter (defined outside internal/server, not expanded here)."
@@ -9204,6 +9290,14 @@ components:
         matchId:
           type: integer
           format: int64
+    tournamentReviewReq:
+      type: object
+      properties:
+        tournamentId:
+          type: integer
+          format: int64
+        player:
+          type: string
     tournamentUpdateReq:
       type: object
       properties:

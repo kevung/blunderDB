@@ -853,7 +853,7 @@ type Match struct {
 	// ("eXtreme Gammon 2.19.211").
 	EngineVersion string `json:"engine_version,omitempty"`
 
-	// VideoSource is the video the Match was transcribed from (ADR-0079): an
+	// VideoSource is the video the Match was transcribed from (ADR-0082): an
 	// http(s) URL or a local path, nil when none is attached. A local path is
 	// a hint the Repères keep their meaning without; only a URL leaves the
 	// library in an export.
@@ -995,7 +995,7 @@ type Move struct {
 	CubeDecisionMS *int64 `json:"cube_decision_ms,omitempty"`
 
 	// RollTickMS and TickMS are the Move's Repères in the Match's video
-	// (ADR-0079), in milliseconds from the start of the media: the instant
+	// (ADR-0082), in milliseconds from the start of the media: the instant
 	// the dice fell and the instant the action was done. A cube action, a
 	// resignation has only TickMS. nil is unknown, never zero.
 	RollTickMS *int64 `json:"roll_tick_ms,omitempty"`

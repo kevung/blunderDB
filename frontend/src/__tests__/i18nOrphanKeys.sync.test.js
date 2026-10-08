@@ -44,11 +44,17 @@ const DYNAMIC_PREFIXES = [
     'cube.verdicts.',
     'config.bearoffVerdict_',
     'stats.grade.',
+    'tournamentReview.verdict_', // TournamentReview.svelte: the verdict of a comparison
+    'tournamentReview.pressure_', // the pressure cells, by key
+    'tournamentReview.clock_', // the pace cells, by key
     'config.theme_',
     'config.thresholdPreset_',
     'explain.',
     'stats.gameType_',
     'stats.recurringTheme_',
+    'stats.effectVerdict_', // StatsStudyEffect: $t(`stats.effectVerdict_${f.Verdict}`)
+    'stats.biases_', // StatsBiases: $t(`stats.biases_${id}_${verdict}`) and the row labels
+    'stats.biasesVerdict_',
     'stats.recurringKind_',
     'training.exercise.',
     'training.sources.',

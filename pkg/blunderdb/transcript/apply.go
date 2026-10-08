@@ -70,12 +70,12 @@ const (
 	// the game whose first Action is Gesture.At (ADR-0053).
 	GestureSetScore GestureKind = "set_score"
 	// GestureSetVideo attaches the media the Repères refer to
-	// (Gesture.VideoSource); an empty source detaches it (ADR-0079 rule 4).
+	// (Gesture.VideoSource); an empty source detaches it (ADR-0082 rule 4).
 	GestureSetVideo GestureKind = "set_video"
 	// GestureSetTimecode posts Repères on the Action under the Cursor: the
 	// instant of the action (Gesture.TickMS, when HasTick) and the instant of
 	// the roll (Gesture.RollTickMS, when HasRollTick), a negative value
-	// clearing it. It is the explicit gesture of ADR-0079 rule 3.
+	// clearing it. It is the explicit gesture of ADR-0082 rule 3.
 	GestureSetTimecode GestureKind = "set_timecode"
 	// GestureUndo and GestureRedo are named here for one spelling, but [Apply]
 	// refuses them: the stack lives in [Editor], and the session layer routes them
@@ -126,7 +126,7 @@ type Gesture struct {
 	// GestureEnterDie posts it as the roll's Repère, GestureEnterPlay,
 	// GestureValidate, GestureDance and the cube gestures as the action's —
 	// on a NEW Action only, a correction in place keeping the Repères it had
-	// (ADR-0079 rule 3). GestureSetTimecode writes it, and RollTickMS when
+	// (ADR-0082 rule 3). GestureSetTimecode writes it, and RollTickMS when
 	// HasRollTick, on the Action under the Cursor, a negative value clearing.
 	TickMS      int64
 	HasTick     bool
@@ -459,7 +459,7 @@ func enterDie(doc, out Document, g Gesture) (Document, error) {
 
 // setTimecode is GestureSetTimecode: it writes the Repères the gesture states on
 // the Action under the Cursor and nothing else. A Repère out of order is kept and
-// marked by the Replay (TimecodeBackwards), never refused (ADR-0079 rule 2).
+// marked by the Replay (TimecodeBackwards), never refused (ADR-0082 rule 2).
 func setTimecode(doc, out Document, g Gesture) (Document, error) {
 	at := out.Cursor
 	if at < 0 || at >= len(out.Actions) {
@@ -879,7 +879,7 @@ func record(doc Document, a Action) Document {
 			a.Score = doc.Actions[at].Score
 		}
 		// …and its Repères: a correction retypes what was played, not when
-		// (ADR-0079 rule 3).
+		// (ADR-0082 rule 3).
 		// A correction into a kind without a roll has no roll to time.
 		a.RollTickMS, a.TickMS = nil, doc.Actions[at].TickMS
 		if rolls(a.Kind) {

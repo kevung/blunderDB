@@ -91,7 +91,7 @@ var CarriedCommentColumns = []string{"text", "created_at", "modified_at", "autho
 var CarriedMatchCommentColumns = []string{"comment", "comment_author"}
 
 // CarriedVideoSource is the video source an exported match carries: an
-// http(s) URL travels, anything else — a local path — is nil (ADR-0079). A
+// http(s) URL travels, anything else — a local path — is nil (ADR-0082). A
 // path only reveals the producer's directory tree and opens nothing on the
 // recipient's machine; the Repères keep their meaning without it.
 func CarriedVideoSource(src *string) *string {

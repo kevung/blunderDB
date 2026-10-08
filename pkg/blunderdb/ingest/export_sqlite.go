@@ -915,7 +915,7 @@ func (e *exporter) writeTournaments() error {
 // lists says so. The source metadata (ratings, experience, transcriber, session
 // rules, engine version) is what the file said of the match: it travels
 // with it (ADR-0067). The video source travels only as an http(s) URL
-// (issuance.CarriedVideoSource, ADR-0079).
+// (issuance.CarriedVideoSource, ADR-0082).
 var exportedMatchColumns = []string{
 	"player1_name", "player2_name", "event", "location", "round", "match_length",
 	"match_date", "import_date", "file_path", "game_count", "match_hash", "canonical_hash",
