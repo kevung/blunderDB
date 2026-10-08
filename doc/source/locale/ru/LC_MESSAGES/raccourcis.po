@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 17:49+0200\n"
+"POT-Creation-Date: 2026-10-08 20:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -1690,7 +1690,49 @@ msgstr "CTRL-SHIFT-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Вернуть отменённый жест."
 
-#: ../../source/raccourcis.rst:412
+#: ../../source/raccourcis.rst:1
+msgid "ESPACE (vidéo attachée)"
+msgstr "ПРОБЕЛ (видео прикреплено)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Lancer ou mettre en pause la vidéo."
+msgstr "Запустить видео или поставить его на паузу."
+
+#: ../../source/raccourcis.rst:1
+msgid ", / . (vidéo attachée)"
+msgstr ", / . (видео прикреплено)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reculer ou avancer la vidéo de 5 secondes."
+msgstr "Перемотать видео назад или вперёд на 5 секунд."
+
+#: ../../source/raccourcis.rst:1
+msgid "MAJ-, / MAJ-. (vidéo attachée)"
+msgstr "SHIFT-, / SHIFT-. (видео прикреплено)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reculer ou avancer la vidéo d'une seconde."
+msgstr "Перемотать видео назад или вперёд на одну секунду."
+
+#: ../../source/raccourcis.rst:1
+msgid "v (vidéo attachée)"
+msgstr "v (видео прикреплено)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Poser l'instant courant de la vidéo comme instant de l'action du curseur."
+msgstr "Задать текущий момент видео как момент действия под курсором."
+
+#: ../../source/raccourcis.rst:1
+msgid "MAJ-V (vidéo attachée)"
+msgstr "SHIFT-V (видео прикреплено)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Poser l'instant courant de la vidéo comme instant du jet de l'action du "
+"curseur."
+msgstr "Задать текущий момент видео как момент броска действия под курсором."
+
+#: ../../source/raccourcis.rst:417
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1698,7 +1740,19 @@ msgstr ""
 "Бросок, не допускающий ни одного хода, записывает пропуск сам, без "
 "дополнительной клавиши."
 
-#: ../../source/raccourcis.rst:415
+#: ../../source/raccourcis.rst:420
+msgid ""
+"Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
+"double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
+"de l'action. Le chiffre du jet suivant valide sans instant ; *v* le pose "
+"après coup. Sans vidéo, ces touches ne font rien."
+msgstr ""
+"При прикреплённом видео момент действия задаёт только явное подтверждение"
+" (*ENTER*, двойной щелчок по кандидату, ход, завершённый на доске). Цифра"
+" следующего броска подтверждает без момента; *v* задаёт его постфактум. "
+"Без видео эти клавиши ничего не делают."
+
+#: ../../source/raccourcis.rst:425
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1724,7 +1778,7 @@ msgstr ""
 "следующая цифра подтверждает его и открывает следующее решение, как в "
 "конце документа, и ENTER тоже ведёт туда."
 
-#: ../../source/raccourcis.rst:426
+#: ../../source/raccourcis.rst:436
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1737,7 +1791,7 @@ msgstr ""
 "открывает ячейку между двумя соседними, а сторона читается по столбцу. До"
 " подтверждения ничего не записывается."
 
-#: ../../source/raccourcis.rst:431
+#: ../../source/raccourcis.rst:441
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1749,7 +1803,7 @@ msgstr ""
 " не затирает идущее за ним. Конец партии или перемещение курсора это "
 "прекращает."
 
-#: ../../source/raccourcis.rst:436
+#: ../../source/raccourcis.rst:446
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1761,7 +1815,7 @@ msgstr ""
 "действия» в конце документа. Фраза стирается сама и возвращает место "
 "ожидаемому действию."
 
-#: ../../source/raccourcis.rst:441
+#: ../../source/raccourcis.rst:451
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1781,7 +1835,7 @@ msgstr ""
 "Перемещение курсора вперёд или назад после изменения записывает "
 "исправление попутно."
 
-#: ../../source/raccourcis.rst:449
+#: ../../source/raccourcis.rst:459
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1807,7 +1861,7 @@ msgstr ""
 "там, вставляется за ту сторону, которой он недоставал. Стек отмены живёт "
 "в памяти: он теряется при закрытии черновика."
 
-#: ../../source/raccourcis.rst:460
+#: ../../source/raccourcis.rst:470
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1816,7 +1870,7 @@ msgstr ""
 "Сама панель — список черновиков, создание, ввод, запись и панель "
 "черновика — описана в :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:467
+#: ../../source/raccourcis.rst:477
 msgid "Planche-contact"
 msgstr "Контактный лист"
 
@@ -1864,7 +1918,7 @@ msgstr "Открыть позицию на доске и закрыть лист
 msgid "Refermer la planche."
 msgstr "Закрыть лист."
 
-#: ../../source/raccourcis.rst:484
+#: ../../source/raccourcis.rst:494
 msgid "Panneau d'aide"
 msgstr "Панель справки"
 

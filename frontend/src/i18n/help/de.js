@@ -394,6 +394,10 @@ export default {
 <p>Wurde die Analyse eines transkribierten Matches unterbrochen — die Anwendung während des Stapellaufs geschlossen —, weist die Statusleiste beim nächsten Öffnen der Datenbank darauf hin und bietet an, sie zu beenden. Von dieser Unterbrechung wird nichts gespeichert: Das Angebot erscheint erneut, solange noch Stellungen zu analysieren sind, und der neu gestartete Lauf betrifft nur dieses Match, nie die gesamte Bibliothek.</p>
 <p>Ein Entwurf mit Unstimmigkeiten wird nach einer Warnung trotzdem abgeschlossen: nichts wird abgelehnt. Ein regelwidriger Zug wird so exportiert, wie er gespielt wurde, mit dem Hinweis, dass gnubg und XG ihn melden („Invalid move“) und danach abweichen werden.</p>
 <p>Um ein Match der Bibliothek zu korrigieren, öffnet die Schaltfläche ⌨ der Matchliste oder „<strong>Transkription bearbeiten</strong>“ auf seiner Karte einen Entwurf aus diesem Match — oder öffnet den bereits darauf geöffneten erneut: ein Entwurf pro Match. Das Abschließen dieses Entwurfs ersetzt das Match unter derselben Kennung; die Positionen unveränderter Aktionen behalten ihre Kommentare, Analysen und Karten. Ein importiertes Match (XG, GnuBG, BGF) trägt Analysen und Kommentare, die eine <code>.mat</code>-Datei nicht trägt: Vor dem Öffnen nennt ein Dialog, bis zu wie vielen, und dass das Abschließen des Entwurfs sie verlieren kann.</p>
+<p>Ein Match lässt sich auch <strong>von einem Video</strong> transkribieren. Die Schaltfläche <strong>Video</strong> in der Entwurfsleiste bietet <strong>Datei…</strong>, um ein Video von der Festplatte zu wählen, <strong>YouTube-Link…</strong>, um eine Adresse einzufügen, und <strong>Lösen</strong>, um die Quelle zu entfernen. Solange keine Quelle angehängt ist, bleibt das Panel wie oben beschrieben: kein Bereich, keine zusätzliche Taste. Sobald eine Quelle angehängt ist, öffnet sich über dem Transkript ein Videobereich; seine Höhe wird durch Ziehen der Leiste darunter eingestellt und bleibt von einer Sitzung zur nächsten gleich. Eine nicht gefundene Datei wird im Bereich mit <strong>Datei wählen…</strong> neu zugeordnet.</p>
+<p>Mit einem Video trägt jede <strong>neue</strong> Aktion <strong>Zeitmarken</strong>: den Zeitpunkt des Wurfs, gesetzt durch die erste Würfeltaste, und den Zeitpunkt der Aktion, gesetzt durch die Bestätigung, beide im Moment der Geste vom Video abgelesen. Eine Korrektur an Ort und Stelle ändert die Zeitmarken nicht. Nur eine ausdrückliche Bestätigung setzt den Zeitpunkt der Aktion: <em>EINGABE</em>, der Doppelklick auf einen Kandidaten oder der am Brett vollendete Zug. Die Ziffer des nächsten Wurfs bestätigt den Zug ebenfalls, setzt aber keinen Zeitpunkt: Der Zug bleibt ohne Aktionszeitpunkt, statt einen falschen zu erhalten, und die Statusleiste weist darauf hin. Um die Steinentscheidung mit einem Zeitstempel zu versehen, bestätigt man daher mit <em>EINGABE</em>, sobald der Zug im Bild fertig ist. <em>v</em> setzt nachträglich den aktuellen Zeitpunkt als Aktionszeitpunkt des Cursors, <em>UMSCHALT-V</em> als Wurfzeitpunkt.</p>
+<p>Aus den Zeitmarken werden die <strong>Dauern</strong> der Entscheidungen abgeleitet: Die Steinentscheidung reicht vom Wurf bis zum Ende des Zuges, die Würfelentscheidung von der vorherigen Aktion bis zum Wurf, ein Doppeln oder eine Antwort von der vorherigen Aktion bis zur eigenen. Eine Zelle mit Zeitmarke zeigt dies durch einen dezenten Punkt; ihr Tooltip nennt Wurf, Zug und Dauer („Wurf 12:34, Zug 12:51, 17 s“), und das Analysepanel zeigt die Dauer der Aktion am Cursor wie bei einem im Duell gespielten Match. Eine Zeitmarke, die vor ihrer Vorgängerin liegt, wird wie jede Unstimmigkeit als „Zeitmarke rückwärts“ markiert und lässt die davon abhängigen Dauern unbekannt. Setzt man den Cursor auf eine Zelle (Klick, <em>h</em>, <em>l</em>), springt das Video eine Sekunde vor den Wurf dieser Aktion oder vor ihre Aktion, wenn der Wurf keinen Zeitpunkt hat; ein pausierter Player bleibt pausiert.</p>
+<p>Die Anwendung dekodiert das Video nicht selbst: Die abspielbaren Formate sind die des Webviews. Ein Format, das er nicht abspielt, wird im Bereich gemeldet, mit seinem Container und, unter Linux, den zu installierenden GStreamer-Plugins: <code>gstreamer1.0-plugins-good</code> und <code>gstreamer1.0-libav</code> unter Debian und Ubuntu, <code>gstreamer1-plugins-good</code> und <code>gstreamer1-plugin-libav</code> unter Fedora, <code>gst-plugins-good</code> und <code>gst-libav</code> unter Arch (siehe Download und Installation).</p>
 <div class="admonition tip">
 <p>Siehe Tastenkürzel für die verfügbaren Tastenkürzel.</p>
 </div>
@@ -1950,9 +1954,30 @@ export default {
 <td>STRG-UMSCHALT-Z</td>
 <td>Die rückgängig gemachte Geste wiederherstellen.</td>
 </tr>
+<tr>
+<td>LEERTASTE (Video angehängt)</td>
+<td>Das Video starten oder anhalten.</td>
+</tr>
+<tr>
+<td>, / . (Video angehängt)</td>
+<td>Das Video um 5 Sekunden zurück- oder vorspulen.</td>
+</tr>
+<tr>
+<td>UMSCHALT-, / UMSCHALT-. (Video angehängt)</td>
+<td>Das Video um eine Sekunde zurück- oder vorspulen.</td>
+</tr>
+<tr>
+<td>v (Video angehängt)</td>
+<td>Den aktuellen Videozeitpunkt als Aktionszeitpunkt des Cursors setzen.</td>
+</tr>
+<tr>
+<td>UMSCHALT-V (Video angehängt)</td>
+<td>Den aktuellen Videozeitpunkt als Wurfzeitpunkt der Aktion am Cursor setzen.</td>
+</tr>
 </tbody>
 </table>
 <p>Ein Wurf, der keinen Zug erlaubt, erfasst den Tanz von selbst, ohne zusätzlichen Tastendruck.</p>
+<p>Mit angehängtem Video setzt nur eine ausdrückliche Bestätigung (<em>EINGABE</em>, Doppelklick auf einen Kandidaten, am Brett vollendeter Zug) den Aktionszeitpunkt. Die Ziffer des nächsten Wurfs bestätigt ohne Zeitpunkt; <em>v</em> setzt ihn nachträglich. Ohne Video bewirken diese Tasten nichts.</p>
 <p>Die Ziffer hat eine einzige Bedeutung: <strong>sie beginnt einen Wurf dort, wo der Cursor ist</strong>. Am Ende des Dokuments ist nichts unter dem Cursor, also bestätigt sie den ausgewählten Zug, bevor sie den nächsten Wurf öffnet — der beste gespielte Zug kostet damit die beiden Würfel und nicht mehr, seine Bestätigung wird von der ersten Taste des folgenden Zuges getragen. Bei einer bereits geschriebenen Aktion, zu der man zur Korrektur zurückgekehrt ist, steht etwas unter dem Cursor: die Ziffer beginnt den Wurf dieser Aktion an Ort und Stelle neu. Der Unterschied ist auf dem Bildschirm zu sehen, denn die angezielte Zelle ist im Transkript umrahmt. Die <strong>letzte</strong> Aktion des Dokuments bildet die Ausnahme: Sobald ihr Wurf neu getippt ist, bestätigt die nächste Ziffer sie und öffnet die darauffolgende Entscheidung, wie am Ende des Dokuments, und EINGABE führt ebenfalls dorthin.</p>
 <p>Was gerade eingegeben wird, erscheint im Transkript gestrichelt an der Stelle, an der es geschrieben wird: eine Korrektur überdeckt die Zelle, die sie ersetzt, eine Einfügung öffnet eine Zelle zwischen ihren beiden Nachbarn, und die Seite liest sich an der Spalte ab. Vor der Bestätigung wird nichts festgehalten.</p>
 <p>Eine Einfügung mitten im Dokument fügt weiter ein: die Bestätigung öffnet dahinter eine leere Zelle, und die nächste Aktion wird ihrerseits eingefügt, statt die folgende zu überschreiben. Das Ende der Partie oder eine Bewegung des Cursors beendet das.</p>

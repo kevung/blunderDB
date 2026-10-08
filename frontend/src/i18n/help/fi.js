@@ -394,6 +394,10 @@ export default {
 <p>Jos litteroidun ottelun analyysi keskeytyi — sovellus suljettiin erän ollessa kesken —, tilarivi kertoo siitä seuraavalla kerralla, kun tietokanta avataan, ja tarjoutuu viemään sen loppuun. Keskeytyksestä ei jää mitään muistiin: tarjous palaa niin kauan kuin asemia on analysoimatta, ja uudelleen käynnistetty erä koskee vain tätä ottelua, ei koskaan koko kirjastoa.</p>
 <p>Epäjohdonmukaisuuksia sisältävä luonnos viimeistellään silti varoituksen jälkeen: mitään ei hylätä. Laiton siirto viedään sellaisena kuin se pelattiin, varoituksella, että gnubg ja XG ilmoittavat siitä (”Invalid move”) ja poikkeavat sen jälkeen.</p>
 <p>Kirjaston ottelun korjaamiseksi ottelulistan ⌨-painike tai sen kortin ”<strong>Muokkaa litterointia</strong>” avaa luonnoksen kyseisestä ottelusta — tai avaa uudelleen sen, joka on jo auki — yksi luonnos ottelua kohden. Luonnoksen viimeistely korvaa ottelun samalla tunnisteella; muuttumattomien toimintojen asemat säilyttävät kommenttinsa, analyysinsä ja korttinsa. Tuotu ottelu (XG, GnuBG, BGF) sisältää analyysejä ja kommentteja, joita <code>.mat</code> ei sisällä: ennen avaamista valintaikkuna kertoo, kuinka monta niitä on enintään, ja että luonnoksen viimeistely voi menettää ne.</p>
+<p>Ottelu voidaan litteroida myös <strong>videolta</strong>. Luonnoksen palkin <strong>Video</strong>-painike tarjoaa <strong>Tiedosto…</strong>-valinnan videon valitsemiseksi levyltä, <strong>YouTube-linkki…</strong>-valinnan osoitteen liittämiseksi ja <strong>Irrota</strong>-valinnan lähteen poistamiseksi. Niin kauan kuin lähdettä ei ole liitetty, paneeli pysyy edellä kuvatun mukaisena: ei ruutua, ei ylimääräistä näppäintä. Kun lähde on liitetty, litteraatin yläpuolelle avautuu videoruutu; sen korkeus säädetään vetämällä sen alla olevaa palkkia, ja se pysyy samana istunnosta toiseen. Kadonnut tiedosto yhdistetään uudelleen ruudusta valinnalla <strong>Valitse tiedosto…</strong>.</p>
+<p>Videon kanssa jokaiseen <strong>uuteen</strong> toimintoon liitetään <strong>aikamerkit</strong>: heiton hetki, jonka asettaa ensimmäinen nopannäppäin, ja siirron hetki, jonka asettaa vahvistus; molemmat luetaan videolta eleen hetkellä. Paikallaan tehty korjaus ei muuta aikamerkkejä. Vain nimenomainen vahvistus asettaa siirron hetken: <em>ENTER</em>, ehdokkaan kaksoisnapsautus tai laudalla valmistunut siirto. Seuraavan heiton numero vahvistaa siirron myös, mutta ei aseta mitään hetkeä: siirto jää ilman siirron hetkeä sen sijaan, että se saisi väärän, ja tilarivi muistuttaa tästä. Nappuloiden päätöksen ajoittamiseksi vahvistetaan siis <em>ENTER</em>-näppäimellä hetkellä, jolloin siirto on kuvassa valmis. <em>v</em> asettaa jälkikäteen nykyisen hetken kohdistimen siirron hetkeksi, <em>VAIHTO-V</em> heiton hetkeksi.</p>
+<p>Aikamerkeistä johdetaan päätösten <strong>kestot</strong>: nappulapäätös kestää heitosta siirron loppuun, tuplauskuution päätös edellisestä toiminnosta heittoon, tuplaus tai vastaus edellisestä toiminnosta omaansa. Aikamerkin sisältävä solu osoittaa sen hillityllä pisteellä; sen työkaluvihje antaa heiton, siirron ja keston (”heitto 12:34, siirto 12:51, 17 s”), ja analyysipaneeli näyttää kohdistimen toiminnon keston kuten Duelissa pelatussa ottelussa. Edellistä aikaisempi aikamerkki merkitään ”aikamerkki taaksepäin” kuten mikä tahansa ristiriita, ja siitä riippuvat kestot jäävät tuntemattomiksi. Kohdistimen asettaminen soluun (napsautus, <em>h</em>, <em>l</em>) vie videon sekunnin ennen kyseisen toiminnon heittoa tai ennen sen siirtoa, jos heitolla ei ole hetkeä; tauolla oleva soitin pysyy tauolla.</p>
+<p>Sovellus ei pura videota itse: toistettavat formaatit ovat webview'n formaatteja. Formaatti, jota se ei toista, ilmoitetaan ruudussa säiliöineen ja Linuxissa asennettavine GStreamer-lisäosineen: <code>gstreamer1.0-plugins-good</code> ja <code>gstreamer1.0-libav</code> Debianissa ja Ubuntussa, <code>gstreamer1-plugins-good</code> ja <code>gstreamer1-plugin-libav</code> Fedorassa, <code>gst-plugins-good</code> ja <code>gst-libav</code> Archissa (ks. Lataaminen ja asentaminen).</p>
 <div class="admonition tip">
 <p>Katso saatavilla olevat pikanäppäimet kohdasta Näppäimistöoikotiet.</p>
 </div>
@@ -1950,9 +1954,30 @@ export default {
 <td>CTRL-VAIHTO-Z</td>
 <td>Tee kumottu ele uudelleen.</td>
 </tr>
+<tr>
+<td>VÄLILYÖNTI (video liitetty)</td>
+<td>Käynnistä tai keskeytä video.</td>
+</tr>
+<tr>
+<td>, / . (video liitetty)</td>
+<td>Siirrä videota 5 sekuntia taakse- tai eteenpäin.</td>
+</tr>
+<tr>
+<td>VAIHTO-, / VAIHTO-. (video liitetty)</td>
+<td>Siirrä videota sekunti taakse- tai eteenpäin.</td>
+</tr>
+<tr>
+<td>v (video liitetty)</td>
+<td>Aseta videon nykyinen hetki kohdistimen siirron hetkeksi.</td>
+</tr>
+<tr>
+<td>VAIHTO-V (video liitetty)</td>
+<td>Aseta videon nykyinen hetki kohdistimen toiminnon heiton hetkeksi.</td>
+</tr>
 </tbody>
 </table>
 <p>Heitto, joka ei salli yhtään siirtoa, kirjaa tanssin itsestään ilman lisänäppäintä.</p>
+<p>Kun video on liitetty, vain nimenomainen vahvistus (<em>ENTER</em>, ehdokkaan kaksoisnapsautus, laudalla valmistunut siirto) asettaa siirron hetken. Seuraavan heiton numero vahvistaa ilman hetkeä; <em>v</em> asettaa sen jälkikäteen. Ilman videota nämä näppäimet eivät tee mitään.</p>
 <p>Numerolla on yksi ainoa merkitys: <strong>se aloittaa heiton siellä missä kohdistin on</strong>. Asiakirjan lopussa kohdistimen alla ei ole mitään, joten se vahvistaa valitun siirron ennen seuraavan heiton avaamista — parhaan pelatun siirron hinnaksi tulee näin kaksi noppaa eikä enempää, sillä sen vahvistuksen kantaa seuraavan vuoron ensimmäinen näppäin. Jo kirjoitetussa toiminnossa, jonka luo on palattu korjaamaan, kohdistimen alla on jotakin: numero aloittaa tämän toiminnon heiton uudelleen, paikallaan. Ero näkyy näytöllä, sillä kohdennettu solu on kehystetty transkriptissä. Asiakirjan <strong>viimeinen</strong> toiminto on poikkeus: kun sen heitto on kirjoitettu uudelleen, seuraava numero vahvistaa sen ja avaa seuraavan päätöksen, kuten asiakirjan lopussa, ja ENTER vie myös sinne.</p>
 <p>Se mitä parhaillaan kirjoitetaan piirtyy transkriptiin katkoviivalla siihen paikkaan, johon se kirjataan: korjaus peittää solun, jonka se korvaa, lisäys avaa solun kahden naapurinsa väliin, ja puoli luetaan sarakkeesta. Mitään ei kirjata ennen vahvistusta.</p>
 <p>Keskelle asiakirjaa tehty lisäys jatkaa lisäämistä: vahvistus avaa tyhjän solun sen perään, ja seuraava toiminto lisätään vuorostaan sen sijaan että se korvaisi jälkimmäisen. Pelin loppu tai kohdistimen siirtäminen päättää sen.</p>

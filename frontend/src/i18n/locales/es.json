@@ -1423,7 +1423,11 @@
             "nothingToUndo": "Nada que deshacer",
             "nothingToRedo": "Nada que rehacer",
             "noAction": "Ninguna acción bajo el cursor",
-            "noDice": "Ninguna tirada en curso"
+            "noDice": "Ninguna tirada en curso",
+            "untimedAction": "Jugada validada sin instante de acción: con un vídeo, Intro valida en el instante de la imagen, o v sobre la celda.",
+            "noRollToTime": "Esta acción no tiene tirada que marcar.",
+            "rollTimed": "Tirada marcada en {time}.",
+            "actionTimed": "Acción marcada en {time}."
         },
         "candidatesLabel": "Jugadas candidatas",
         "finish": "Terminar",
@@ -1439,7 +1443,14 @@
         "stateEditsMatch": "edita el match #{id}",
         "editLossWarning": "Este match fue importado: hasta {analyses} análisis y hasta {comments} comentario(s) no pasan a una transcripción, y terminarla puede perderlos. ¿Abrir la transcripción?",
         "editAnyway": "Abrir la transcripción",
-        "editFailed": "No se pudo abrir la transcripción: {error}"
+        "editFailed": "No se pudo abrir la transcripción: {error}",
+        "video": "Vídeo",
+        "videoTooltip": "Adjuntar, sustituir o quitar el vídeo del match",
+        "videoFile": "Archivo…",
+        "videoYouTube": "Enlace de YouTube…",
+        "videoDetach": "Quitar",
+        "videoAttach": "Adjuntar",
+        "videoResize": "Altura del panel de vídeo"
     },
     "transcript": {
         "title": "Transcripción",
@@ -1478,8 +1489,11 @@
             "past_end": "más allá del final",
             "inconsistent_dice": "dados incoherentes",
             "unrecorded_move": "jugada no registrada",
-            "score_mismatch": "marcador incoherente"
-        }
+            "score_mismatch": "marcador incoherente",
+            "timecode_backwards": "marca de tiempo hacia atrás"
+        },
+        "tickRoll": "tirada {time}",
+        "tickAction": "jugada {time}"
     },
     "status": {
         "importChip": "Importación en curso: {percent} %",
@@ -3103,7 +3117,7 @@
         "notPlayable": "Esta fuente no se puede reproducir aquí.",
         "codecDetail": "El webview no puede reproducir este archivo ({container}, compatibilidad: {support}, código {code}).",
         "unsupported": "no compatible",
-        "codecHint": "En Linux, instale gst-plugins-good y gst-libav; en Windows, la extensión HEVC de la Store reproduce H.265.",
+        "codecHint": "En Linux, instale los complementos de GStreamer: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). En Windows, la extensión HEVC de la Store reproduce H.265.",
         "missing": "Archivo de vídeo no encontrado.",
         "relocate": "Elegir el archivo…",
         "player": "Reproductor de vídeo"

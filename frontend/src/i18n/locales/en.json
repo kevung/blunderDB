@@ -1423,7 +1423,11 @@
             "nothingToUndo": "Nothing to undo",
             "nothingToRedo": "Nothing to redo",
             "noAction": "No Action under the cursor",
-            "noDice": "No roll being entered"
+            "noDice": "No roll being entered",
+            "untimedAction": "Play validated without an action time: with a video, Enter validates at the frame's instant, or v on the cell.",
+            "noRollToTime": "This action has no roll to time.",
+            "rollTimed": "Roll timed at {time}.",
+            "actionTimed": "Action timed at {time}."
         },
         "candidatesLabel": "Candidate moves",
         "finish": "Finish",
@@ -1439,7 +1443,14 @@
         "stateEditsMatch": "edits match #{id}",
         "editLossWarning": "This match was imported: up to {analyses} analysis(es) and up to {comments} comment(s) are not carried by a transcription, and finishing it may lose them. Open the transcription?",
         "editAnyway": "Open the transcription",
-        "editFailed": "Could not open the transcription: {error}"
+        "editFailed": "Could not open the transcription: {error}",
+        "video": "Video",
+        "videoTooltip": "Attach, replace or detach the match video",
+        "videoFile": "File…",
+        "videoYouTube": "YouTube link…",
+        "videoDetach": "Detach",
+        "videoAttach": "Attach",
+        "videoResize": "Video pane height"
     },
     "transcript": {
         "title": "Transcript",
@@ -1478,8 +1489,11 @@
             "past_end": "past the end",
             "inconsistent_dice": "inconsistent dice",
             "unrecorded_move": "unrecorded play",
-            "score_mismatch": "inconsistent score"
-        }
+            "score_mismatch": "inconsistent score",
+            "timecode_backwards": "time mark out of order"
+        },
+        "tickRoll": "roll {time}",
+        "tickAction": "play {time}"
     },
     "status": {
         "importChip": "Importing: {percent}%",
@@ -3103,7 +3117,7 @@
         "notPlayable": "This source cannot be played here.",
         "codecDetail": "The webview cannot play this file ({container}, support: {support}, code {code}).",
         "unsupported": "unsupported",
-        "codecHint": "On Linux, install gst-plugins-good and gst-libav; on Windows, the Store's HEVC extension plays H.265.",
+        "codecHint": "On Linux, install the GStreamer plugins: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). On Windows, the Store's HEVC extension plays H.265.",
         "missing": "Video file not found.",
         "relocate": "Choose the file…",
         "player": "Video player"

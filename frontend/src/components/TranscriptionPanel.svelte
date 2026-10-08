@@ -57,6 +57,8 @@
     import ContextMenu from './ContextMenu.svelte';
     import TranscriptView from './TranscriptView.svelte';
     import TranscriptionMetadata from './TranscriptionMetadata.svelte';
+    import VideoPane from './VideoPane.svelte';
+    import { fmtClock } from '../utils/decisionTime.js';
     import {
         transcriptionListStore,
         transcriptionStore,
@@ -81,7 +83,7 @@
     import { ROLLS, newBoardPlay, deducedDice, choosableRolls, undoBoardStep, stepsFromNotation, boardAfterSteps } from '../services/transcriptionPlay.js';
     import { containsSteps } from '../services/quizPlay.js';
     import { ListTranscriptions, CreateTranscription, OpenTranscription, ApplyTranscriptionGesture, TranscriptionMAT } from '../../wailsjs/go/database/Database.js';
-    import { LegalMoves, EvaluatePositionImmediate } from '../../wailsjs/go/gui/App.js';
+    import { LegalMoves, EvaluatePositionImmediate, PickTranscriptionVideo } from '../../wailsjs/go/gui/App.js';
     import { GetGammonNetPruneK } from '../../wailsjs/go/main/Config.js';
     import { finishDraft, exportDraftMat, abandonDraft, draftState } from '../services/transcriptionSave.js';
     import { get } from 'svelte/store';
@@ -109,8 +111,23 @@
     // Volet des métadonnées, replié par défaut ; l'en-tête vit dans le document.
     let metaOpen = $state(false);
 
+    // ── la vidéo (ADR-0079) ──────────────────────────────────────────────
+    // Le volet n'est qu'un fournisseur d'instants : le moteur pose les Repères
+    // des gestes qui en portent un, le panneau ne fait que lire l'horloge.
+
+    /** @type {any} */
+    let videoPane = $state(null);
+    let videoMenuOpen = $state(false);
+    let youtubeOpen = $state(false);
+    let youtubeField = $state('');
+    const VIDEO_HEIGHT_KEY = 'blunderdb.transcription.videoHeight';
+    const VIDEO_HEIGHT_MIN = 120;
+    const VIDEO_HEIGHT_MAX = 900;
+    let videoHeight = $state(readVideoHeight());
+
     let draft = $derived($transcriptionStore);
     let annotated = $derived(draft?.annotated ?? null);
+    let videoSource = $derived(annotated?.document?.header?.video_source ?? '');
     let keys = $derived($transcriptionKeyStore);
     // `awaits` : ce que le document attend après sa dernière Action ;
     // `expects` : ce qu'attend la cellule sous le curseur (`entry.kind`), sinon
@@ -352,7 +369,165 @@
     // Converted synchronously: a `select` rank refers to the list at keystroke time.
     /** @param {PanelCommand[]} commands */
     function run(commands) {
-        return queue(commands.map(gestureOf).filter(Boolean));
+        // A correction in place keeps the Repères it had: the engine ignores an instant
+        // there, and the panel sends none. A walk in the same batch leads onto an Action
+        // that already exists.
+        const inPlace = annotated?.entry?.replacing === true || commands.some((c) => c.kind === COMMAND.CURSOR_BACK || c.kind === COMMAND.CURSOR_FORWARD);
+        const now = inPlace ? null : videoNow();
+        /** @type {any[]} */
+        const gestures = [];
+        commands.forEach((command, i) => {
+            const gesture = gestureOf(command);
+            if (!gesture) return;
+            // A validation that the next roll's digit or a cube gesture carries is not the
+            // moment the play was finished on screen: it leaves the action untimed rather
+            // than timed wrong (ADR-0079 rule 3). Only a validation that ends its batch —
+            // Enter, a double-click, a play finished on the board — is explicit.
+            const implicit = command.kind === COMMAND.VALIDATE && i < commands.length - 1;
+            if (now !== null && TIMED.has(command.kind) && !implicit) {
+                gesture.TickMS = now;
+                gesture.HasTick = true;
+            }
+            if (implicit && videoSource) noticeTranscription('transcription.notice.untimedAction');
+            gestures.push(gesture);
+        });
+        return queue(gestures);
+    }
+
+    // The gestures that write a Repère on a new Action; the engine keeps the Repères of
+    // a correction in place whatever the panel sends.
+    /** @type {Set<string>} */
+    const TIMED = new Set([COMMAND.DIE, COMMAND.ENTER_PLAY, COMMAND.VALIDATE, COMMAND.DANCE, COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN]);
+
+    /** @returns {number | null} the video's current instant, null without a source or a ready player */
+    function videoNow() {
+        if (!videoSource) return null;
+        const ms = videoPane?.currentTimeMs?.();
+        return typeof ms === 'number' && Number.isFinite(ms) ? ms : null;
+    }
+
+    // Kinds of Action that start with a roll, and so carry the roll's Repère.
+    const ROLLING_KINDS = new Set(['checker', 'dance', 'unrecorded']);
+
+    /**
+     * `v` / `MAJ-V`: the current instant as the Repère of the action, or of the roll, of
+     * the Action under the Cursor (GestureSetTimecode).
+     *
+     * @param {boolean} roll
+     */
+    function stampCursor(roll) {
+        const now = videoNow();
+        if (now === null) return;
+        const ann = get(transcriptionStore)?.annotated;
+        const info = ann?.actions?.[ann?.cursor ?? -1];
+        if (!info) {
+            noticeTranscription('transcription.notice.noAction');
+            return;
+        }
+        if (roll && !ROLLING_KINDS.has(info.kind)) {
+            noticeTranscription('transcription.notice.noRollToTime');
+            return;
+        }
+        sendGesture(roll ? { Kind: 'set_timecode', RollTickMS: now, HasRollTick: true } : { Kind: 'set_timecode', TickMS: now, HasTick: true });
+        noticeTranscription(roll ? 'transcription.notice.rollTimed' : 'transcription.notice.actionTimed', { time: fmtClock(now) });
+    }
+
+    // The Cursor placed on a cell brings the video to that Action's roll, else its
+    // action, a second early so the moment is seen coming; play or pause is kept.
+    function seekToCursor() {
+        if (!videoSource || !videoPane) return;
+        const ann = get(transcriptionStore)?.annotated;
+        const info = ann?.actions?.[ann?.cursor ?? -1];
+        const at = info?.roll_tick_ms ?? info?.tick_ms;
+        if (typeof at === 'number') videoPane.seek(at - 1000);
+    }
+
+    /**
+     * The video keys, live only while a source is attached: Space plays or pauses,
+     * `,` `.` step 5 s back and forth (1 s with Shift), `v` / `MAJ-V` time the Cursor.
+     *
+     * @param {KeyboardEvent} event
+     * @returns {boolean} whether the key was the video's
+     */
+    function videoKey(event) {
+        if (!videoSource || event.ctrlKey || event.metaKey || event.altKey) return false;
+        if (event.key === ' ') {
+            videoPane?.togglePlay?.();
+            return true;
+        }
+        const step = event.key === '<' ? -1 : event.key === '>' ? 1 : event.key === ',' ? (event.shiftKey ? -1 : -5) : event.key === '.' ? (event.shiftKey ? 1 : 5) : 0;
+        if (step !== 0) {
+            const now = videoNow();
+            if (now !== null) videoPane.seek(now + step * 1000);
+            return true;
+        }
+        if (event.key === 'v' && !event.shiftKey) {
+            stampCursor(false);
+            return true;
+        }
+        if (event.key === 'V' || (event.key === 'v' && event.shiftKey)) {
+            stampCursor(true);
+            return true;
+        }
+        return false;
+    }
+
+    function readVideoHeight() {
+        try {
+            const v = Number(localStorage.getItem(VIDEO_HEIGHT_KEY));
+            if (Number.isFinite(v) && v >= VIDEO_HEIGHT_MIN && v <= VIDEO_HEIGHT_MAX) return v;
+        } catch (_e) {
+            /* storage unavailable: the default height */
+        }
+        return 240;
+    }
+
+    /** @param {PointerEvent} event */
+    function startVideoResize(event) {
+        event.preventDefault();
+        const startY = event.clientY;
+        const startHeight = videoHeight;
+        /** @param {PointerEvent} e */
+        const move = (e) => {
+            videoHeight = Math.min(VIDEO_HEIGHT_MAX, Math.max(VIDEO_HEIGHT_MIN, Math.round(startHeight + e.clientY - startY)));
+        };
+        const up = () => {
+            window.removeEventListener('pointermove', move);
+            window.removeEventListener('pointerup', up);
+            try {
+                localStorage.setItem(VIDEO_HEIGHT_KEY, String(videoHeight));
+            } catch (_e) {
+                /* storage unavailable: the height lasts the session */
+            }
+        };
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up);
+    }
+
+    /** @param {string} source a local path or an http(s) URL; '' detaches */
+    function attachVideo(source) {
+        videoMenuOpen = false;
+        youtubeOpen = false;
+        sendGesture({ Kind: 'set_video', VideoSource: source });
+        panelEl?.focus({ preventScroll: true });
+    }
+
+    async function pickVideoFile() {
+        videoMenuOpen = false;
+        try {
+            const path = await PickTranscriptionVideo();
+            if (path) attachVideo(path);
+        } catch (err) {
+            logger.error('Choosing the video failed:', err);
+            error = String(err);
+        }
+    }
+
+    function submitYouTube() {
+        const url = youtubeField.trim();
+        if (!url) return;
+        youtubeField = '';
+        attachVideo(url);
     }
 
     let conflictEpoch = 0;
@@ -579,6 +754,7 @@
         walkingTo = to;
         run(cursorCommands(from, to))
             .then(settleCursor)
+            .then(seekToCursor)
             .finally(() => {
                 if (walkingTo === to) walkingTo = null;
             });
@@ -824,6 +1000,12 @@
         if (panelKeyGuard(event)) return;
         if (!panelEl?.contains(document.activeElement)) return;
 
+        if (videoKey(event)) {
+            event.preventDefault();
+            event.stopPropagation();
+            return;
+        }
+
         // Coup en cours au plateau : Retour arrière défait le dernier pas.
         if (event.key === 'Backspace' && ($quizPlayStore?.steps?.length ?? 0) > 0) {
             event.preventDefault();
@@ -922,7 +1104,12 @@
         }
 
         const rearms = result.commands.some((c) => REARMING.has(c.kind));
-        run(result.commands).then(rearms ? settleCursor : settleCandidates);
+        const walks = result.commands.some((c) => c.kind === COMMAND.CURSOR_BACK || c.kind === COMMAND.CURSOR_FORWARD);
+        run(result.commands)
+            .then(rearms ? settleCursor : settleCandidates)
+            .then(() => {
+                if (walks) seekToCursor();
+            });
     }
 
     // Document-changing commands a button also offers: both go through runCommand.
@@ -1478,12 +1665,43 @@
                 >
                 <button class="icon-btn" onclick={() => runCommand(COMMAND.UNDO)} title={$t('transcription.undoTooltip')} aria-label={$t('transcription.undo')}>↶</button>
                 <button class="icon-btn" onclick={() => runCommand(COMMAND.REDO)} title={$t('transcription.redoTooltip')} aria-label={$t('transcription.redo')}>↷</button>
+                <button class="new-btn" class:active={videoMenuOpen} onclick={() => (videoMenuOpen = !videoMenuOpen)} title={$t('transcription.videoTooltip')} aria-expanded={videoMenuOpen}
+                    >{$t('transcription.video')}</button
+                >
                 <button class="new-btn" onclick={() => (metaOpen = !metaOpen)} title={$t('transcription.metadataTooltip')}>{$t('transcription.metadata')}</button>
                 <button class="new-btn" onclick={() => (matOpen = true)} title={$t('transcription.matModalTooltip')}>{$t('transcription.matModal')}</button>
                 <button class="new-btn" onclick={handleExport} disabled={busy} title={$t('transcription.exportMatTooltip')}>{$t('transcription.exportMat')}</button>
                 <button class="primary-btn" onclick={handleFinish} disabled={busy} title={$t('transcription.finishTooltip')}>{$t('transcription.finish')}</button>
                 <button class="danger-btn" onclick={handleAbandon} disabled={busy} title={$t('transcription.abandonTooltip')}>{$t('transcription.abandon')}</button>
             </div>
+
+            {#if videoMenuOpen}
+                <div class="video-menu" data-testid="transcription-video-menu">
+                    <button class="new-btn" onclick={pickVideoFile}>{$t('transcription.videoFile')}</button>
+                    <button class="new-btn" onclick={() => (youtubeOpen = !youtubeOpen)}>{$t('transcription.videoYouTube')}</button>
+                    {#if videoSource}<button class="new-btn" onclick={() => attachVideo('')}>{$t('transcription.videoDetach')}</button>{/if}
+                    {#if youtubeOpen}
+                        <form
+                            class="video-url"
+                            onsubmit={(event) => {
+                                event.preventDefault();
+                                submitYouTube();
+                            }}
+                        >
+                            <input type="url" bind:value={youtubeField} placeholder="https://www.youtube.com/watch?v=…" aria-label={$t('transcription.videoYouTube')} />
+                            <button class="new-btn" type="submit">{$t('transcription.videoAttach')}</button>
+                        </form>
+                    {/if}
+                </div>
+            {/if}
+
+            {#if videoSource}
+                <!-- Replié tant qu'aucune source n'est attachée (ADR-0079 règle 3). -->
+                <div class="video-slot" style="height: {videoHeight}px">
+                    <VideoPane bind:this={videoPane} source={videoSource} onrelocate={(/** @type {string} */ path) => attachVideo(path)} />
+                </div>
+                <div class="video-resize" role="separator" aria-orientation="horizontal" aria-label={$t('transcription.videoResize')} onpointerdown={startVideoResize}></div>
+            {/if}
 
             {#if metaOpen}
                 <!-- En-tête du brouillon : rien n'y est exigé. -->
@@ -1706,6 +1924,38 @@
         container-type: inline-size;
     }
 
+    .video-menu {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 0;
+    }
+    .video-url {
+        display: flex;
+        gap: 6px;
+        flex: 1 1 260px;
+    }
+    .video-url input {
+        flex: 1;
+        min-width: 0;
+    }
+    .video-slot {
+        flex: 0 0 auto;
+        overflow: hidden;
+    }
+    .video-slot :global(.video-pane) {
+        height: 100%;
+        max-height: none;
+        aspect-ratio: auto;
+    }
+    .video-resize {
+        flex: 0 0 auto;
+        height: 6px;
+        cursor: row-resize;
+        background: var(--color-border);
+        touch-action: none;
+    }
     .draft-bar {
         display: flex;
         flex-wrap: wrap;

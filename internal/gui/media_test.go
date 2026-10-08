@@ -109,6 +109,10 @@ func TestYouTube(t *testing.T) {
 	if resp, b := get(t, u, ""); resp.StatusCode != 200 || !strings.Contains(string(b), "dQw4w9WgXcQ") {
 		t.Fatalf("yt page %d", resp.StatusCode)
 	}
+	// A webview that sends the frame no referrer leaves the page the origin the pane passes.
+	if resp, b := get(t, u+"?origin=wails%3A%2F%2Fwails", ""); resp.StatusCode != 200 || !strings.Contains(string(b), "URLSearchParams(location.search).get('origin')") {
+		t.Fatalf("yt page with origin %d", resp.StatusCode)
+	}
 	if resp, _ := get(t, strings.Replace(u, "dQw4w9WgXcQ", "AAAAAAAAAAA", 1), ""); resp.StatusCode != 404 {
 		t.Fatal("unattached id served")
 	}

@@ -93,7 +93,9 @@
                         return;
                     }
                     served = url;
-                    src = url;
+                    // The hosted page reads the parent's origin from the referrer; a webview
+                    // that sends none leaves it this parameter to post back to.
+                    src = k === 'youtube' ? `${url}?origin=${encodeURIComponent(window.location.origin)}` : url;
                     if (k === 'youtube') ytOrigin = new URL(url).origin;
                 } else {
                     status = 'error';

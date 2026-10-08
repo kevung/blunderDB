@@ -7,6 +7,8 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
     import { fmtDuration } from '../utils/decisionTime.js';
+    import { transcriptionCursorStore } from '../stores/transcriptionStore.js';
+    import { statusBarModeStore } from '../stores/uiStore.js';
     import { playedMovePredicate, playedCubeActionPredicate } from '../utils/playedMarks.js';
     import { t } from '../i18n';
     import { cubeTurnability, isMoneyPosition } from '../utils/cubeDecision.js';
@@ -46,9 +48,11 @@
     let matchCtx = $derived($matchContextStore);
     // How long the player took over the decision played here, in match review:
     // empty when the match did not record it.
+    // In a Transcription, the Action under the Cursor carries the durations the
+    // Replay deduces from its Repères (ADR-0079 rule 2).
     let playedTime = $derived.by(() => {
-        if (!matchCtx.isMatchMode) return '';
-        const mp = matchCtx.movePositions?.[matchCtx.currentIndex];
+        if (!matchCtx.isMatchMode && $statusBarModeStore !== 'TRANSCRIBE') return '';
+        const mp = matchCtx.isMatchMode ? matchCtx.movePositions?.[matchCtx.currentIndex] : $transcriptionCursorStore;
         const move = fmtDuration(mp?.decision_ms);
         const cube = fmtDuration(mp?.cube_decision_ms);
         return [cube && `◇ ${cube}`, move].filter(Boolean).join(' · ');

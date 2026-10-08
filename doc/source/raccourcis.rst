@@ -408,9 +408,19 @@ veille ne demande pas la souris.
    "s", "Donner l'action du curseur à l'autre camp."
    "CTRL-Z", "Annuler le dernier geste sur le brouillon."
    "CTRL-MAJ-Z", "Rétablir le geste annulé."
+   "ESPACE (vidéo attachée)", "Lancer ou mettre en pause la vidéo."
+   ", / . (vidéo attachée)", "Reculer ou avancer la vidéo de 5 secondes."
+   "MAJ-, / MAJ-. (vidéo attachée)", "Reculer ou avancer la vidéo d'une seconde."
+   "v (vidéo attachée)", "Poser l'instant courant de la vidéo comme instant de l'action du curseur."
+   "MAJ-V (vidéo attachée)", "Poser l'instant courant de la vidéo comme instant du jet de l'action du curseur."
 
 Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans touche
 supplémentaire.
+
+Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le
+double-clic sur un candidat, le coup achevé au plateau — pose l'instant de
+l'action. Le chiffre du jet suivant valide sans instant ; *v* le pose après
+coup. Sans vidéo, ces touches ne font rien.
 
 Le chiffre a un seul sens : **il commence un jet là où le curseur est**. En bout
 de document il n'y a rien sous le curseur, donc il valide le coup sélectionné

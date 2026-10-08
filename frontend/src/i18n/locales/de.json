@@ -1423,7 +1423,11 @@
             "nothingToUndo": "Nichts zum Rückgängigmachen",
             "nothingToRedo": "Nichts zum Wiederholen",
             "noAction": "Keine Aktion unter dem Cursor",
-            "noDice": "Kein Wurf in Eingabe"
+            "noDice": "Kein Wurf in Eingabe",
+            "untimedAction": "Zug ohne Aktionszeitpunkt bestätigt: Mit einem Video bestätigt Enter zum Zeitpunkt des Bildes, oder v auf der Zelle.",
+            "noRollToTime": "Diese Aktion hat keinen Wurf, der sich markieren lässt.",
+            "rollTimed": "Wurf auf {time} gesetzt.",
+            "actionTimed": "Aktion auf {time} gesetzt."
         },
         "candidatesLabel": "Kandidatenzüge",
         "finish": "Abschließen",
@@ -1439,7 +1443,14 @@
         "stateEditsMatch": "bearbeitet Match #{id}",
         "editLossWarning": "Dieses Match wurde importiert: bis zu {analyses} Analyse(n) und bis zu {comments} Kommentar(e) gehen nicht in eine Transkription über und können beim Abschließen verloren gehen. Transkription öffnen?",
         "editAnyway": "Transkription öffnen",
-        "editFailed": "Transkription konnte nicht geöffnet werden: {error}"
+        "editFailed": "Transkription konnte nicht geöffnet werden: {error}",
+        "video": "Video",
+        "videoTooltip": "Video des Matches anhängen, ersetzen oder lösen",
+        "videoFile": "Datei…",
+        "videoYouTube": "YouTube-Link…",
+        "videoDetach": "Lösen",
+        "videoAttach": "Anhängen",
+        "videoResize": "Höhe des Videobereichs"
     },
     "transcript": {
         "title": "Transkript",
@@ -1478,8 +1489,11 @@
             "past_end": "nach dem Matchende",
             "inconsistent_dice": "unstimmige Würfel",
             "unrecorded_move": "nicht aufgezeichneter Zug",
-            "score_mismatch": "inkonsistenter Spielstand"
-        }
+            "score_mismatch": "inkonsistenter Spielstand",
+            "timecode_backwards": "Zeitmarke rückwärts"
+        },
+        "tickRoll": "Wurf {time}",
+        "tickAction": "Zug {time}"
     },
     "status": {
         "importChip": "Import läuft: {percent} %",
@@ -3103,7 +3117,7 @@
         "notPlayable": "Diese Quelle kann hier nicht abgespielt werden.",
         "codecDetail": "Das Webview kann diese Datei nicht abspielen ({container}, Unterstützung: {support}, Code {code}).",
         "unsupported": "nicht unterstützt",
-        "codecHint": "Unter Linux gst-plugins-good und gst-libav installieren; unter Windows spielt die HEVC-Erweiterung aus dem Store H.265.",
+        "codecHint": "Unter Linux die GStreamer-Plugins installieren: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). Unter Windows spielt die HEVC-Erweiterung aus dem Store H.265 ab.",
         "missing": "Videodatei nicht gefunden.",
         "relocate": "Datei wählen…",
         "player": "Videoplayer"

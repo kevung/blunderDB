@@ -136,6 +136,7 @@
 <script>
     import { SvelteMap } from 'svelte/reactivity';
     import { t } from '../i18n';
+    import { fmtClock, fmtDuration } from '../utils/decisionTime.js';
     import { closeOnEscape } from '../services/escapeService.js';
 
     let {
@@ -358,7 +359,8 @@
         past_end: 'transcript.inconsistency.past_end',
         inconsistent_dice: 'transcript.inconsistency.inconsistent_dice',
         unrecorded_move: 'transcript.inconsistency.unrecorded_move',
-        score_mismatch: 'transcript.inconsistency.score_mismatch'
+        score_mismatch: 'transcript.inconsistency.score_mismatch',
+        timecode_backwards: 'transcript.inconsistency.timecode_backwards'
     };
     /** @type {Record<number, string>} */
     const RESIGN_KEY = { 1: 'transcript.resignSingle', 2: 'transcript.resignGammon', 3: 'transcript.resignBackgammon' };
@@ -420,6 +422,31 @@
      */
     function flawsOf(c) {
         return c?.kind === 'action' ? (c.info.inconsistencies ?? []) : [];
+    }
+
+    /**
+     * "roll 12:34, play 12:51, 17 s": a cell's Repères and the duration the Replay
+     * deduces from them; '' for a cell without any.
+     *
+     * @param {any} c
+     */
+    function timesOf(c) {
+        const info = c?.kind === 'action' ? c.info : null;
+        if (info?.roll_tick_ms == null && info?.tick_ms == null) return '';
+        const parts = [];
+        if (info.roll_tick_ms != null) parts.push($t('transcript.tickRoll', { time: fmtClock(info.roll_tick_ms) }));
+        if (info.tick_ms != null) parts.push($t('transcript.tickAction', { time: fmtClock(info.tick_ms) }));
+        const spent = fmtDuration(info.decision_ms ?? info.cube_decision_ms);
+        if (spent) parts.push(spent);
+        return parts.join(', ');
+    }
+
+    /**
+     * @param {{kind: string}[]} flaws
+     * @param {string} times
+     */
+    function cellTitle(flaws, times) {
+        return [flaws.length ? flawTitle(flaws) : '', times].filter(Boolean).join('\n') || undefined;
     }
 
     /** @param {{kind: string}[]} flaws */
@@ -527,6 +554,7 @@
         />
     {:else}
         {@const flaws = flawsOf(c)}
+        {@const times = timesOf(c)}
         {@const framed = c.kind === 'pending' || (c.kind === 'action' && c.index === at && pendingIndex !== c.index)}
         {#if onSelect && c.kind !== 'result'}
             <button
@@ -539,7 +567,8 @@
                 data-pending={c.kind === 'pending' ? 'true' : undefined}
                 data-inconsistency={flaws.length ? flaws.map((/** @type {{kind: string}} */ f) => f.kind).join(' ') : undefined}
                 aria-current={framed ? 'true' : undefined}
-                title={flaws.length ? flawTitle(flaws) : undefined}
+                data-timed={times ? 'true' : undefined}
+                title={cellTitle(flaws, times)}
                 onclick={() => onSelect(c.index)}
                 ondblclick={() => startEdit(c)}
                 oncontextmenu={(event) => {
@@ -548,7 +577,7 @@
                     onMenu(c.index, { x: event.clientX, y: event.clientY });
                 }}
             >
-                {cellText(c)}{#if flaws.length}<span class="flaw-mark" aria-hidden="true">⚠</span>{/if}
+                {cellText(c)}{#if times}<span class="tick-mark" aria-hidden="true">•</span>{/if}{#if flaws.length}<span class="flaw-mark" aria-hidden="true">⚠</span>{/if}
             </button>
         {:else}
             <span
@@ -561,9 +590,10 @@
                 data-pending={c.kind === 'pending' ? 'true' : undefined}
                 data-inconsistency={flaws.length ? flaws.map((/** @type {{kind: string}} */ f) => f.kind).join(' ') : undefined}
                 aria-current={framed ? 'true' : undefined}
-                title={flaws.length ? flawTitle(flaws) : undefined}
+                data-timed={times ? 'true' : undefined}
+                title={cellTitle(flaws, times)}
             >
-                {cellText(c)}{#if flaws.length}<span class="flaw-mark" aria-hidden="true">⚠</span>{/if}
+                {cellText(c)}{#if times}<span class="tick-mark" aria-hidden="true">•</span>{/if}{#if flaws.length}<span class="flaw-mark" aria-hidden="true">⚠</span>{/if}
             </span>
         {/if}
     {/if}
@@ -718,6 +748,13 @@
 
     .cell.flawed {
         color: var(--color-danger);
+    }
+
+    .tick-mark {
+        margin-left: var(--space-1);
+        color: var(--color-text-muted);
+        font-size: var(--font-size-small);
+        vertical-align: super;
     }
 
     .flaw-mark {

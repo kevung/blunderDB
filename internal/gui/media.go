@@ -91,11 +91,14 @@ func (h *mediaHost) serveMedia(w http.ResponseWriter, r *http.Request) {
 }
 
 // The page gives the IFrame Player a real HTTP referrer and relays
-// currentTime, play/pause and seek with the parent through postMessage.
+// currentTime, play/pause and seek with the parent through postMessage. The
+// parent's origin comes from the referrer, or from ?origin= when a webview
+// sends the frame none; replies still go only to the parent window.
 const youTubePage = `<!doctype html><html><head><meta charset="utf-8"><style>html,body,#p{margin:0;width:100%%;height:100%%;background:#000}</style></head><body><div id="p"></div><script src="https://www.youtube.com/iframe_api"></script><script>
 var player;
 function onYouTubeIframeAPIReady(){player=new YT.Player('p',{width:'100%%',height:'100%%',videoId:'%s',playerVars:{playsinline:1,rel:0},events:{onReady:function(){post({type:'ready',duration:player.getDuration()})},onStateChange:function(e){post({type:'state',state:e.data,time:player.getCurrentTime()})}}})}
 var origin=''; try{origin=new URL(document.referrer).origin}catch(e){}
+if(!origin||origin==='null'){try{origin=new URLSearchParams(location.search).get('origin')||''}catch(e){}}
 function post(m){if(!origin||origin==='null')return;m.source='blunderdb-yt';parent.postMessage(m,origin)}
 setInterval(function(){if(player&&player.getCurrentTime)post({type:'time',time:player.getCurrentTime()})},250);
 addEventListener('message',function(e){if(!origin||e.origin!==origin||e.source!==parent)return;var m=e.data||{};if(!player)return;

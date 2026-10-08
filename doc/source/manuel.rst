@@ -2049,6 +2049,46 @@ leurs cartes. Un match importé (XG, GnuBG, BGF) porte des analyses et des
 commentaires qu'un ``.mat`` ne porte pas : avant d'ouvrir, un dialogue dit
 jusqu'à combien, et que terminer le brouillon peut les perdre.
 
+Un match se transcrit aussi **depuis une vidéo**. Le bouton **Vidéo** de la
+barre du brouillon propose **Fichier…** pour choisir une vidéo sur le disque,
+**Lien YouTube…** pour coller une adresse, et **Détacher** pour retirer la
+source. Tant qu'aucune source n'est attachée, le panneau reste tel qu'il est
+décrit plus haut : ni volet, ni touche de plus. Une fois la source attachée, un
+volet vidéo s'ouvre au-dessus du transcript ; sa hauteur se règle en tirant la
+barre placée sous lui et reste la même d'une session à l'autre. Un fichier
+introuvable se relocalise depuis le volet par **Choisir le fichier…**.
+
+Avec une vidéo, chaque action **nouvelle** porte des **repères** : l'instant
+du jet, posé par la première touche de dé, et l'instant de l'action, posé par
+la validation, tous deux lus sur la vidéo au moment du geste. Une correction en
+place ne touche pas aux repères. Seule une validation explicite pose l'instant
+de l'action : *ENTREE*, le double-clic sur un candidat, ou le coup achevé au
+plateau. Le chiffre du jet suivant valide aussi le coup, mais ne pose aucun
+instant : le coup reste sans instant d'action plutôt que d'en recevoir un faux,
+et la barre d'état le rappelle. Pour horodater la décision de pions, on valide
+donc par *ENTREE* au moment où le coup est fini à l'image. *v* pose après coup
+l'instant courant comme instant de l'action du curseur, *MAJ-V* comme instant
+du jet.
+
+Des repères se déduisent les **durées** de décision : la décision de pions va
+du jet à la fin du coup, la décision de videau de l'action précédente au jet, un
+double ou une réponse de l'action précédente à la leur. Une cellule qui porte
+un repère le signale par un point discret ; son info-bulle donne le jet, le
+coup et la durée (« jet 12:34, coup 12:51, 17 s »), et le panneau d'analyse
+affiche la durée de l'action du curseur comme pour un match joué en Duel. Un
+repère antérieur à celui qui le précède est marqué « repère à rebours », comme
+toute incohérence, et laisse inconnues les durées qui en dépendent. Placer le
+curseur sur une cellule (clic, *h*, *l*) amène la vidéo une seconde avant le
+jet de cette action, ou avant son action si le jet n'a pas d'instant ; un
+lecteur en pause le reste.
+
+L'application ne décode pas la vidéo elle-même : les formats lus sont ceux du
+webview. Un format qu'il ne lit pas est signalé dans le volet, avec son
+conteneur et, sous Linux, les greffons GStreamer à installer —
+``gstreamer1.0-plugins-good`` et ``gstreamer1.0-libav`` sous Debian et Ubuntu,
+``gstreamer1-plugins-good`` et ``gstreamer1-plugin-libav`` sous Fedora,
+``gst-plugins-good`` et ``gst-libav`` sous Arch (voir :ref:`telecharge_install`).
+
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 
 .. _panneau_tournois:

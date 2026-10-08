@@ -1423,7 +1423,11 @@
             "nothingToUndo": "Ei mitään kumottavaa",
             "nothingToRedo": "Ei mitään uudelleen tehtävää",
             "noAction": "Ei toimintoa kohdistimen alla",
-            "noDice": "Ei syötettävää heittoa"
+            "noDice": "Ei syötettävää heittoa",
+            "untimedAction": "Siirto vahvistettiin ilman toiminnan ajankohtaa: videon kanssa Enter vahvistaa kuvan hetkellä, tai v solun kohdalla.",
+            "noRollToTime": "Tällä toiminnolla ei ole heittoa ajoitettavaksi.",
+            "rollTimed": "Heitto ajoitettu kohtaan {time}.",
+            "actionTimed": "Toiminto ajoitettu kohtaan {time}."
         },
         "candidatesLabel": "Ehdokassiirrot",
         "finish": "Valmis",
@@ -1439,7 +1443,14 @@
         "stateEditsMatch": "muokkaa ottelua #{id}",
         "editLossWarning": "Tämä ottelu on tuotu: enintään {analyses} analyysia ja enintään {comments} kommenttia ei siirry litterointiin, ja sen vieminen valmiiksi voi menettää ne. Avataanko litterointi?",
         "editAnyway": "Avaa litterointi",
-        "editFailed": "Litterointia ei voitu avata: {error}"
+        "editFailed": "Litterointia ei voitu avata: {error}",
+        "video": "Video",
+        "videoTooltip": "Liitä, vaihda tai irrota ottelun video",
+        "videoFile": "Tiedosto…",
+        "videoYouTube": "YouTube-linkki…",
+        "videoDetach": "Irrota",
+        "videoAttach": "Liitä",
+        "videoResize": "Videoruudun korkeus"
     },
     "transcript": {
         "title": "Siirtoluettelo",
@@ -1478,8 +1489,11 @@
             "past_end": "ottelun päättymisen jälkeen",
             "inconsistent_dice": "epäjohdonmukaiset nopat",
             "unrecorded_move": "kirjaamaton siirto",
-            "score_mismatch": "epäjohdonmukainen tilanne"
-        }
+            "score_mismatch": "epäjohdonmukainen tilanne",
+            "timecode_backwards": "aikamerkki taaksepäin"
+        },
+        "tickRoll": "heitto {time}",
+        "tickAction": "siirto {time}"
     },
     "status": {
         "importChip": "Tuonti käynnissä: {percent} %",
@@ -3103,7 +3117,7 @@
         "notPlayable": "Tätä lähdettä ei voi toistaa täällä.",
         "codecDetail": "Webview ei toista tätä tiedostoa ({container}, tuki: {support}, koodi {code}).",
         "unsupported": "ei tuettu",
-        "codecHint": "Linuxissa asenna gst-plugins-good ja gst-libav; Windowsissa Storen HEVC-laajennus toistaa H.265:n.",
+        "codecHint": "Asenna Linuxissa GStreamer-liitännäiset: gstreamer1.0-plugins-good, gstreamer1.0-libav (Debian, Ubuntu); gstreamer1-plugins-good, gstreamer1-plugin-libav (Fedora); gst-plugins-good, gst-libav (Arch). Windowsissa Storen HEVC-laajennus toistaa H.265:n.",
         "missing": "Videotiedostoa ei löydy.",
         "relocate": "Valitse tiedosto…",
         "player": "Videosoitin"

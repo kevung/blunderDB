@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 17:49+0200\n"
+"POT-Creation-Date: 2026-10-08 20:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: es\n"
@@ -1709,7 +1709,51 @@ msgstr "CTRL-MAYÚS-Z"
 msgid "Rétablir le geste annulé."
 msgstr "Rehacer el gesto deshecho."
 
-#: ../../source/raccourcis.rst:412
+#: ../../source/raccourcis.rst:1
+msgid "ESPACE (vidéo attachée)"
+msgstr "ESPACIO (vídeo adjunto)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Lancer ou mettre en pause la vidéo."
+msgstr "Iniciar o pausar el vídeo."
+
+#: ../../source/raccourcis.rst:1
+msgid ", / . (vidéo attachée)"
+msgstr ", / . (vídeo adjunto)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reculer ou avancer la vidéo de 5 secondes."
+msgstr "Retroceder o avanzar el vídeo 5 segundos."
+
+#: ../../source/raccourcis.rst:1
+msgid "MAJ-, / MAJ-. (vidéo attachée)"
+msgstr "MAYÚS-, / MAYÚS-. (vídeo adjunto)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Reculer ou avancer la vidéo d'une seconde."
+msgstr "Retroceder o avanzar el vídeo un segundo."
+
+#: ../../source/raccourcis.rst:1
+msgid "v (vidéo attachée)"
+msgstr "v (vídeo adjunto)"
+
+#: ../../source/raccourcis.rst:1
+msgid "Poser l'instant courant de la vidéo comme instant de l'action du curseur."
+msgstr "Fijar el instante actual del vídeo como instante de la jugada del cursor."
+
+#: ../../source/raccourcis.rst:1
+msgid "MAJ-V (vidéo attachée)"
+msgstr "MAYÚS-V (vídeo adjunto)"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Poser l'instant courant de la vidéo comme instant du jet de l'action du "
+"curseur."
+msgstr ""
+"Fijar el instante actual del vídeo como instante de la tirada de la "
+"jugada del cursor."
+
+#: ../../source/raccourcis.rst:417
 msgid ""
 "Un jet qui n'autorise aucun coup enregistre la danse de lui-même, sans "
 "touche supplémentaire."
@@ -1717,7 +1761,20 @@ msgstr ""
 "Una tirada que no permite ningún movimiento registra el baile por sí "
 "sola, sin pulsación adicional."
 
-#: ../../source/raccourcis.rst:415
+#: ../../source/raccourcis.rst:420
+msgid ""
+"Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
+"double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
+"de l'action. Le chiffre du jet suivant valide sans instant ; *v* le pose "
+"après coup. Sans vidéo, ces touches ne font rien."
+msgstr ""
+"Con un vídeo adjunto, solo una validación explícita (*INTRO*, el doble "
+"clic sobre un candidato, la jugada completada en el tablero) fija el "
+"instante de la jugada. La cifra de la tirada siguiente valida sin "
+"instante; *v* lo fija a posteriori. Sin vídeo, estas teclas no hacen "
+"nada."
+
+#: ../../source/raccourcis.rst:425
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1744,7 +1801,7 @@ msgstr ""
 "decisión siguiente, como al final del documento, e INTRO lleva allí "
 "también."
 
-#: ../../source/raccourcis.rst:426
+#: ../../source/raccourcis.rst:436
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1757,7 +1814,7 @@ msgstr ""
 "celda que reemplaza, una inserción abre una celda entre sus dos vecinas, "
 "y el bando se lee en la columna. Nada se registra antes de la validación."
 
-#: ../../source/raccourcis.rst:431
+#: ../../source/raccourcis.rst:441
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1769,7 +1826,7 @@ msgstr ""
 "vez en lugar de sobrescribir la de después. El final de la partida o "
 "mover el cursor le pone fin."
 
-#: ../../source/raccourcis.rst:436
+#: ../../source/raccourcis.rst:446
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1781,7 +1838,7 @@ msgstr ""
 "cursor» al final del documento. La frase se borra sola y devuelve el "
 "sitio a la acción esperada."
 
-#: ../../source/raccourcis.rst:441
+#: ../../source/raccourcis.rst:451
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1801,7 +1858,7 @@ msgstr ""
 " «por revisar» hasta la validación. Avanzar o retroceder el cursor "
 "después de haber cambiado algo registra la corrección de paso."
 
-#: ../../source/raccourcis.rst:449
+#: ../../source/raccourcis.rst:459
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1827,7 +1884,7 @@ msgstr ""
 " inserta para el bando al que le faltaba. La pila de deshacer vive en "
 "memoria: se pierde al cerrar el borrador."
 
-#: ../../source/raccourcis.rst:460
+#: ../../source/raccourcis.rst:470
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1837,7 +1894,7 @@ msgstr ""
 "transcripción y la barra del borrador — se describe en "
 ":ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:467
+#: ../../source/raccourcis.rst:477
 msgid "Planche-contact"
 msgstr "Hoja de contactos"
 
@@ -1885,7 +1942,7 @@ msgstr "Abrir la posición en el tablero y cerrar la hoja."
 msgid "Refermer la planche."
 msgstr "Cerrar la hoja."
 
-#: ../../source/raccourcis.rst:484
+#: ../../source/raccourcis.rst:494
 msgid "Panneau d'aide"
 msgstr "Panel de ayuda"
 

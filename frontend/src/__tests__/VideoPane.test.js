@@ -87,6 +87,9 @@ describe('VideoPane', () => {
         const note = await vi.waitFor(() => container.querySelector('[data-testid="video-diagnostic"]') ?? expect.fail('no diagnostic'));
         expect(note.textContent).toContain('Matroska');
         expect(note.textContent).toContain('gst-libav');
+        // The packages are named per distribution: Debian's and Fedora's names differ from Arch's.
+        expect(note.textContent).toContain('gstreamer1.0-libav');
+        expect(note.textContent).toContain('gstreamer1-plugin-libav');
     });
 
     test('a missing file offers to relocate it', async () => {
@@ -102,6 +105,8 @@ describe('VideoPane', () => {
         gui.kind = 'youtube';
         const { container } = render(VideoPane, { props: { source: 'https://youtu.be/dQw4w9WgXcQ' } });
         const frame = await vi.waitFor(() => container.querySelector('iframe') ?? expect.fail('no iframe'));
-        expect(frame.getAttribute('src')).toBe('http://127.0.0.1:1/yt/abc');
+        // The page's origin rides along: a webview that sends no referrer leaves the hosted
+        // page nothing else to post back to.
+        expect(frame.getAttribute('src')).toBe(`http://127.0.0.1:1/yt/abc?origin=${encodeURIComponent(window.location.origin)}`);
     });
 });
