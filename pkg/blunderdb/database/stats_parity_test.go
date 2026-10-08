@@ -122,19 +122,18 @@ var tolXG = parityTolerances{
 // xgResidual is a known, explained gap between blunderDB and XG on one
 // player: checker is XG's unforced count minus blunderDB's, and the float
 // fields widen tolXG for the metrics that gap moves. Each one names its cause,
-// and each cause lies outside what blunderDB reads from the file today:
+// and each cause lies outside what blunderDB reads from the file:
 //
 //   - unstored: a bear-off XG counts as a decision while the stored candidates
 //     cover every legal play at one equity — XG judged it on evaluations the
 //     file does not keep.
-//   - parser: xgparser v1.5.0 decodes a -1 inside a bear-off as end of move,
-//     so the played move is mislabelled; it then names no candidate (unscored,
-//     left out) or the wrong one (scored 0).
 //   - unanalysed: XG stores ErrMove = -1000 for a play it never scored and
-//     leaves it out; the light API does not expose ErrMove, so blunderDB
-//     counts the play.
-//   - cubeMWC: cube errors converted to MWC at the current cube's value,
-//     where XG's cube MWC differs; the equities themselves agree.
+//     leaves it out; xgparser's light API does not expose ErrMove, so
+//     blunderDB counts and scores the play from the stored candidates.
+//   - cubeMWC: the cube errors' equities agree with XG's, their conversion to
+//     MWC does not (blunderDB converts at the current cube's value from the
+//     decision maker's side; XG's own cube MWC is lower). Not Crawford: the
+//     MET lookup already takes the post-Crawford table at a 1-away score.
 type xgResidual struct {
 	checker int
 	pr      float64
@@ -145,15 +144,12 @@ type xgResidual struct {
 
 // xgResiduals keys a fixture's player ("file.json/P1") to its residual.
 var xgResiduals = map[string]xgResidual{
-	"aachen-double-7pt.json/P1":          {1, 0.18, 0.061, 1.0, "unstored (1 bear-off); parser (2 bear-offs unscored, 0.060)"},
-	"aachen-double-7pt.json/P2":          {-2, 0.02, 0.017, 0.45, "unanalysed (2 plays)"},
-	"charlot1-charlot2.json/P1":          {1, 0.07, 0.013, 0.21, "parser (1 bear-off unscored, 0.013)"},
-	"charlot1-charlot2.json/P2":          {1, 0.02, 0.004, 0.06, "unstored (1 bear-off)"},
-	"issue595-kev-gammonnet-7pt.json/P2": {1, 0.12, 0.021, 0.21, "parser (1 bear-off unscored, 1 scored 0: 0.022)"},
-	"marseille-round4-7pt.json/P1":       {1, 0.04, 0.014, 0.17, "parser (bear-offs unscored or scored 0)"},
-	"marseille-round4-7pt.json/P2":       {-1, 0.17, 0.004, 0.85, "parser (1 play unscored); unanalysed (2 plays); cubeMWC"},
-	"test.json/P1":                       {0, 0.04, 0.011, 0.24, "parser (bear-offs scored 0 or unscored, cancelling an unanalysed play in the count)"},
-	"test.json/P2":                       {-1, 0.14, 0.011, 0.16, "unanalysed (2 plays); parser (1 bear-off scored 0)"},
+	"aachen-double-7pt.json/P1":    {0, 0, 0, 0.9, "cubeMWC (total MWC 20.71 vs 19.85, checker MWC within tolerance)"},
+	"aachen-double-7pt.json/P2":    {-1, 0.03, 0.017, 0.45, "unanalysed (1 play)"},
+	"charlot1-charlot2.json/P2":    {1, 0.02, 0, 0, "unstored (1 bear-off)"},
+	"marseille-round4-7pt.json/P1": {-1, 0.09, 0.005, 0, "unanalysed (1 play)"},
+	"marseille-round4-7pt.json/P2": {0, 0, 0, 0.85, "cubeMWC (total MWC 20.65 vs 19.81, checker MWC within tolerance)"},
+	"test.json/P1":                 {0, 0, 0.005, 0.1, "cubeMWC (total MWC 30.12 vs 30.03, checker MWC within tolerance)"},
 }
 
 // ── Diff helpers ─────────────────────────────────────────────────────────────
@@ -394,7 +390,7 @@ func TestStatsParity(t *testing.T) {
 						// must be wider than the XG→XG or SGF→gnuBG paths.
 						xgVsGnuTol := tol
 						xgVsGnuTol.PR = 1.0
-						xgVsGnuTol.CheckerPRGnuBG = 1.2 // max observed 1.07 (test.json P2)
+						xgVsGnuTol.CheckerPRGnuBG = 1.3 // max observed 1.22 (test.json P2)
 						if rp := ref.GnuBG["player1"]; rp != nil {
 							compareGnuBGRef(t, "XG→gnuBGref/P1", rp, bdbStats.Player1, xgVsGnuTol)
 							if rp.CheckerForced != nil {

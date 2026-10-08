@@ -87,6 +87,8 @@ github.com/kevung/ogxmparser v0.1.0 h1:7ya3wvpK9G4oMVxVfye02gL8y0xvC/MppS2Np6kjo
 github.com/kevung/ogxmparser v0.1.0/go.mod h1:/dJb9x72gUskSoPs2EffQDhMvgaq8V5nQ+q3hkLz1oU=
 github.com/kevung/xgparser v1.5.0 h1:98RJtRV59sxqOIn9F6FWrpUPRnJLrkNa++sAhOBoEOI=
 github.com/kevung/xgparser v1.5.0/go.mod h1:ivg7Wu3VImDtGxqD1qxvQ09rrbmKmTOiWaDMjOiASb0=
+github.com/kevung/xgparser v1.5.1 h1:H8d8Uzsi1ZEWC/u1s0hvS13Lj1z3vQF3yquzfe37nyI=
+github.com/kevung/xgparser v1.5.1/go.mod h1:ivg7Wu3VImDtGxqD1qxvQ09rrbmKmTOiWaDMjOiASb0=
 github.com/klauspost/compress v1.20.1 h1:T7kKElXUMXrUJ2E9QhQhxFtcK5rPyLdsGZvdbLMPdiQ=
 github.com/klauspost/compress v1.20.1/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
 github.com/labstack/echo/v4 v4.15.3 h1:lIdG4kK5RdMyhwCwSc4AmSQsLBb3AVwok6S8PX/9kwQ=

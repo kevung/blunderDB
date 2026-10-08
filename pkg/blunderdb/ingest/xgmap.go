@@ -693,30 +693,8 @@ func buildCheckerAnalysis(analyses []xgparser.CheckerAnalysis, initialPosition *
 	for i, analysis := range analyses {
 		var move [8]int32
 
-		if i == 0 && playedMove != nil {
-			playedMoveCount := 0
-			analysisMoveCount := 0
-			for j := 0; j < 8; j += 2 {
-				if (*playedMove)[j] != -1 {
-					playedMoveCount++
-				}
-				if analysis.Move[j] != -1 {
-					analysisMoveCount++
-				}
-			}
-			if playedMoveCount > analysisMoveCount {
-				for j := 0; j < 8; j++ {
-					move[j] = (*playedMove)[j]
-				}
-			} else {
-				for j := 0; j < 8; j++ {
-					move[j] = int32(analysis.Move[j])
-				}
-			}
-		} else {
-			for j := 0; j < 8; j++ {
-				move[j] = int32(analysis.Move[j])
-			}
+		for j := 0; j < 8; j++ {
+			move[j] = int32(analysis.Move[j])
 		}
 
 		if initialPosition != nil {
