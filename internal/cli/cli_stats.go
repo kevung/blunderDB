@@ -11,6 +11,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -44,6 +45,7 @@ func (cli *CLI) statsHandlers() map[string]func([]string) error {
 		"h2h":         cli.runStatsH2H,
 		"ranking":     cli.runStatsRanking,
 		"recurring":   cli.runStatsRecurring,
+		"plan":        cli.runStatsPlan,
 		"training":    cli.runStatsTraining,
 		"windows":     cli.runStatsWindows,
 		"progression": cli.runStatsProgression,
@@ -74,6 +76,7 @@ func (cli *CLI) printStatsUsage() {
 	fmt.Println("  h2h        Two players against each other: common matches, PR of each, record")
 	fmt.Println("  ranking    Players ranked by PR above a floor of counted decisions")
 	fmt.Println("  recurring  Errors grouped by plan of play and theme, costliest first")
+	fmt.Println("  plan       Study plan: error families ranked by recoverable MWC, with a 95% interval")
 	fmt.Println("  training   Quiz PR and Anki retention against real PR, by calendar window")
 	fmt.Println("  windows    PR over a sliding calendar window (month, quarter)")
 	fmt.Println("  progression  PR per match, per tournament and rolling (Progression tab)")
@@ -200,6 +203,191 @@ func (cli *CLI) runStatsRecurring(args []string) error {
 		fmt.Printf("Created deck %d (%s)\n", deckID, *deckName)
 	}
 	return nil
+}
+
+func (cli *CLI) runStatsPlan(args []string) error {
+	fs := flag.NewFlagSet("stats plan", flag.ContinueOnError)
+	dbPath := fs.String("db", "", "Path to the database file (required)")
+	player := fs.String("player", "", "Only this player's decisions")
+	tournament := fs.String("tournament", "", "Filter by tournament IDs, comma-separated")
+	from := fs.String("from", "", "Start date filter YYYY-MM-DD")
+	to := fs.String("to", "", "End date filter YYYY-MM-DD")
+	decisionType := fs.String("decision-type", "all", "Decision type: all, checker, or cube")
+	limit := fs.Int("limit", 10, "Maximum number of families shown (text only; 0 = all)")
+	format := fs.String("format", "text", "Output format: text or json")
+	quiz := fs.Bool("quiz", false, "Draw a quiz: position ids picked at random from the plan's first families")
+	quizSize := fs.Int("quiz-size", storage.StudyQuizSize, "Number of positions --quiz draws")
+	deckName := fs.String("deck", "", "Create an Anki deck of this name from the positions of the plan's first families")
+	queue := fs.Bool("queue", false, "List the study queue of the plan's first families, the largest excess first")
+	family := fs.Int("family", 0, "With --quiz, --deck or --queue: the rank of one family (1 = first) instead of the first three")
+	fs.Usage = func() {
+		fmt.Println("Usage: blunderdb stats plan --db <file> [options]")
+		fmt.Println()
+		fmt.Println("Answer \"what should I work on now?\": the recurring-error families (plan of play")
+		fmt.Println("x theme) ranked by the winning chances studying them would recover (ADR-0077).")
+		fmt.Println("A family's recoverable MWC is the sum, over its errors, of the loss minus the")
+		fmt.Println("difficulty: what a reference player would have lost in the same positions.")
+		fmt.Println("It comes with a 95% interval; a family enters the plan with at least")
+		fmt.Printf("%d priced errors and an interval above zero, ranked by the interval's lower\n", storage.StudyPlanMinErrors)
+		fmt.Println("bound. The others are listed apart, to confirm. Money-play errors carry no")
+		fmt.Println("MWC and are only counted (unpriced).")
+		fmt.Println()
+		fmt.Println("Options:")
+		fs.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  blunderdb stats plan --db database.db --player \"Alice\"")
+		fmt.Println("  blunderdb stats plan --db database.db --player \"Alice\" --quiz --format json")
+		fmt.Println("  blunderdb stats plan --db database.db --family 1 --deck \"Plan: first family\"")
+		fmt.Println("  blunderdb stats plan --db database.db --family 2 --queue")
+	}
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+	if *dbPath == "" {
+		fs.Usage()
+		return fmt.Errorf("missing required flag: --db")
+	}
+	filter, err := buildStatsFilter(*player, *tournament, *from, *to, *decisionType)
+	if err != nil {
+		return err
+	}
+	if *family < 0 {
+		return fmt.Errorf("invalid --family %d: want 0 or a rank from 1", *family)
+	}
+	if *quizSize < 1 {
+		return fmt.Errorf("invalid --quiz-size %d: want at least 1", *quizSize)
+	}
+	if err := cli.initDatabase(*dbPath); err != nil {
+		return err
+	}
+
+	textOutput := strings.ToLower(*format) != "json"
+	var plan *storage.StudyPlan
+	err = withInterruptibleContext(func() {
+		if textOutput {
+			fmt.Println("\nCancelling...")
+		}
+	}, func(ctx context.Context) error {
+		var err error
+		plan, err = cli.db.ComputeStudyPlanCtx(ctx, filter)
+		return err
+	})
+	if err != nil {
+		if errors.Is(err, context.Canceled) {
+			return fmt.Errorf("stats cancelled")
+		}
+		return fmt.Errorf("study plan: %w", err)
+	}
+	var quizIDs []int64
+	if *quiz {
+		quizIDs = storage.DrawStudyQuiz(plan.StudyPositionIDs(*family), *quizSize, nil)
+	}
+	var deckID int64
+	if *deckName != "" {
+		ids := plan.StudyPositionIDs(*family)
+		if len(ids) == 0 {
+			return fmt.Errorf("no family in the plan to make a deck from")
+		}
+		if deckID, err = cli.db.CreateStudyDeck(*deckName, ids); err != nil {
+			return err
+		}
+	}
+	var entries []domain.StudyQueueEntry
+	if *queue {
+		entries = plan.QueueEntries(*family)
+	}
+	if !textOutput {
+		out := struct {
+			*storage.StudyPlan
+			Quiz   []int64                  `json:"Quiz,omitempty"`
+			DeckID int64                    `json:"DeckID,omitempty"`
+			Queue  []domain.StudyQueueEntry `json:"Queue,omitempty"`
+		}{plan, quizIDs, deckID, entries}
+		data, err := json.MarshalIndent(out, "", "  ")
+		if err != nil {
+			return fmt.Errorf("marshal study plan: %w", err)
+		}
+		fmt.Println(string(data))
+		return nil
+	}
+	printStudyPlan(plan, *limit)
+	if *quiz {
+		fmt.Println()
+		if len(quizIDs) == 0 {
+			fmt.Println("Quiz: no position to draw from.")
+		} else {
+			fmt.Printf("Quiz — %d positions: %s\n", len(quizIDs), joinIDs(quizIDs))
+		}
+	}
+	if *queue {
+		fmt.Println()
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(w, "POSITION\tMATCH\tERROR (mp)\tKIND")
+		for _, e := range entries {
+			kind := "checker"
+			if e.IsCube {
+				kind = "cube"
+			}
+			fmt.Fprintf(w, "%d\t%s\t%d\t%s\n", e.PositionID, e.Label, e.ErrorMP, kind)
+		}
+		w.Flush()
+	}
+	if deckID != 0 {
+		fmt.Printf("Created deck %d (%s)\n", deckID, *deckName)
+	}
+	return nil
+}
+
+// printStudyPlan writes the plan, then the families still to confirm. MWC
+// figures are shown in percentage points of match winning chances.
+func printStudyPlan(plan *storage.StudyPlan, limit int) {
+	fmt.Printf("Study plan — %d counted decisions, error threshold %d mp\n", plan.NumDecisions, plan.ThresholdMP)
+	fmt.Printf("Recoverable MWC = Σ(loss − difficulty) over a family's errors; 95%% interval; at least %d errors.\n\n", plan.MinErrors)
+	row := func(w *tabwriter.Writer, rank string, f storage.StudyPlanFamily) {
+		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%d\t%d\t%.2f%%\t%.2f%%\t%.2f%%\t[%.2f%%, %.2f%%]\t%s\n", rank,
+			f.GameType, f.Kind, f.Theme, f.Errors, f.Avoidable, 100*f.MeanLoss, 100*f.MeanDifficulty,
+			100*f.Recoverable, 100*f.Low, 100*f.High, idPreview(planIDs(f), 5))
+	}
+	header := "RANK\tPLAN\tKIND\tTHEME\tERRORS\tAVOIDABLE\tMEAN LOSS\tMEAN DIFFICULTY\tRECOVERABLE\t95% INTERVAL\tPOSITIONS"
+	if len(plan.Families) == 0 {
+		fmt.Println("No family has enough evidence yet.")
+	} else {
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(w, header)
+		shown := plan.Families
+		if limit > 0 && limit < len(shown) {
+			shown = shown[:limit]
+		}
+		for i, f := range shown {
+			row(w, fmt.Sprint(i+1), f)
+		}
+		w.Flush()
+		if len(shown) < len(plan.Families) {
+			fmt.Printf("\n(Showing %d of %d families, use --limit 0 to see all)\n", len(shown), len(plan.Families))
+		}
+	}
+	if len(plan.Tentative) > 0 {
+		fmt.Println()
+		fmt.Println("To confirm (too few errors, or an interval reaching zero):")
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(w, header)
+		for _, f := range plan.Tentative {
+			row(w, "-", f)
+		}
+		w.Flush()
+	}
+	if plan.Unthemed > 0 || plan.Unpriced > 0 {
+		fmt.Printf("\nOutside the plan: %d errors without a theme, %d unpriced (money play or no option costs).\n", plan.Unthemed, plan.Unpriced)
+	}
+}
+
+func planIDs(f storage.StudyPlanFamily) []int64 {
+	ids := make([]int64, len(f.Positions))
+	for i, p := range f.Positions {
+		ids[i] = p.PositionID
+	}
+	return ids
 }
 
 func joinIDs(ids []int64) string {

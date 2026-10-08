@@ -6233,6 +6233,60 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/idsResp"
+  /v1/stats.studyPlan:
+    post:
+      operationId: stats.studyPlan
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/statsComputeReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/storage_StudyPlan"
+                nullable: true
+  /v1/stats.studyPlanIds:
+    post:
+      operationId: stats.studyPlanIds
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studyIDsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/idsResp"
+  /v1/stats.studyPlanQueue:
+    post:
+      operationId: stats.studyPlanQueue
+      tags: [stats]
+      x-kind: json
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/studyIDsReq"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/domain_StudyQueueEntry"
   /v1/stats.timeErrors:
     post:
       operationId: stats.timeErrors
@@ -8960,6 +9014,9 @@ components:
     storage_StatsResult:
       type: object
       description: "Opaque: see the Go type storage.StatsResult (defined outside internal/server, not expanded here)."
+    storage_StudyPlan:
+      type: object
+      description: "Opaque: see the Go type storage.StudyPlan (defined outside internal/server, not expanded here)."
     storage_TimeErrorRow:
       type: object
       description: "Opaque: see the Go type storage.TimeErrorRow (defined outside internal/server, not expanded here)."
