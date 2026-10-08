@@ -38,6 +38,13 @@ import { selectedMoveStore } from '../stores/analysisStore.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { activeTabStore, statusBarModeStore } from '../stores/uiStore.js';
 import { fakeVideo } from './fixtures/fakeVideo.js';
+import { registerKeys } from '../services/keyDispatch.js';
+
+// Stands for keyboardService.handleKeyDown, the global tier App.svelte registers: what
+// reaches it is what the panel let through.
+const globalKeys = vi.fn();
+/** @type {(() => void) | null} */
+let unregisterGlobal = null;
 
 const POSITION = (/** @type {any} */ dice) => ({
     board: { points: Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 })), bearoff: [0, 0] },
@@ -108,10 +115,17 @@ async function openedPanel(cursor = ACTIONS.length) {
     document.getElementById('transcriptionPanel')?.focus();
 }
 
-/** @param {string} key */
-async function press(key, extra = {}) {
-    const code = /^[1-6]$/.test(key) ? `Digit${key}` : undefined;
-    await fireEvent.keyDown(document, { key, code, ...extra });
+/**
+ * A real keydown, as the webview sends it: the physical key in `code`, the character it
+ * types in `key`, through the app's dispatcher (keyDispatch).
+ *
+ * @param {string} code
+ */
+async function press(code, extra = /** @type {Record<string, any>} */ ({})) {
+    const digit = /^Digit([1-9])$/.exec(code);
+    const letter = /^Key([A-Z])$/.exec(code);
+    const key = digit ? digit[1] : letter ? (extra.shiftKey ? letter[1] : letter[1].toLowerCase()) : code === 'Space' ? ' ' : code;
+    await fireEvent.keyDown(document.activeElement ?? document, { code, key, bubbles: true, cancelable: true, ...extra });
     await settle();
 }
 
@@ -119,6 +133,7 @@ let at = ACTIONS.length;
 
 beforeEach(() => {
     vi.clearAllMocks();
+    unregisterGlobal = registerKeys('global', globalKeys);
     fakeVideo.reset();
     fakeVideo.now = 65000;
     source = 'C:/videos/match.mov';
@@ -136,6 +151,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+    unregisterGlobal?.();
     cleanup();
     clearTranscription();
     selectedMoveStore.set(null);
@@ -146,9 +162,9 @@ afterEach(() => {
 describe('the automatic Repères', () => {
     test('a new roll and its explicit validation carry the instant of the video', async () => {
         await openedPanel();
-        await press('3');
+        await press('Digit3');
         fakeVideo.now = 71000;
-        await press('1');
+        await press('Digit1');
         await vi.waitFor(() => expect(gestures().some((g) => g.Kind === 'select_candidate')).toBe(true));
         fakeVideo.now = 76000;
         await press('Enter');
@@ -163,12 +179,12 @@ describe('the automatic Repères', () => {
 
     test('the validation sent ahead of the next roll’s digit carries no instant, and the status bar says so', async () => {
         await openedPanel();
-        await press('3');
-        await press('1');
+        await press('Digit3');
+        await press('Digit1');
         await vi.waitFor(() => expect(gestures().some((g) => g.Kind === 'select_candidate')).toBe(true));
         /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
         fakeVideo.now = 80000;
-        await press('5');
+        await press('Digit5');
 
         expect(gestures()).toEqual([{ Kind: 'validate' }, { Kind: 'enter_die', Die: 5, TickMS: 80000, HasTick: true }]);
         expect(get(transcriptionNoticeStore)?.key).toBe('transcription.notice.untimedAction');
@@ -176,14 +192,55 @@ describe('the automatic Repères', () => {
 
     test('a cube gesture carries the instant of its own action', async () => {
         await openedPanel();
-        await press('d');
+        await press('KeyD');
         expect(gestures()).toContainEqual({ Kind: 'double', TickMS: 65000, HasTick: true });
+    });
+
+    test('a cube gesture on a preselected play validates it without an instant, and says so', async () => {
+        entry = { at: ACTIONS.length, kind: 'checker', replacing: false, dice: [3, 1], selected: true, game_start: false };
+        await openedPanel();
+        await press('KeyD');
+        expect(gestures()).toEqual([{ Kind: 'double', TickMS: 65000, HasTick: true }]);
+        expect(get(transcriptionNoticeStore)?.key).toBe('transcription.notice.untimedAction');
+    });
+
+    test('a play finished on the board times the action, not the roll its dice were not typed for', async () => {
+        entry = { at: ACTIONS.length, kind: 'checker', replacing: false, dice: [3, 1], selected: false, game_start: false };
+        await openedPanel();
+        const cell = /** @type {HTMLElement} */ (document.querySelector('.cell[data-pending="true"]'));
+        await fireEvent.dblClick(cell);
+        await settle();
+        const field = /** @type {HTMLInputElement} */ (document.querySelector('.transcript-view input'));
+        await fireEvent.input(field, { target: { value: '8/5 6/5' } });
+        await fireEvent.keyDown(field, { key: 'Enter', code: 'Enter' });
+        await settle(20);
+        const sent = gestures();
+        expect(sent.filter((g) => g.Kind === 'enter_die')).toEqual([
+            { Kind: 'enter_die', Die: 3 },
+            { Kind: 'enter_die', Die: 1 }
+        ]);
+        expect(sent.find((g) => g.Kind === 'enter_play')).toMatchObject({ TickMS: 65000, HasTick: true });
+        expect(sent.find((g) => g.Kind === 'validate')).toEqual({ Kind: 'validate', TickMS: 65000, HasTick: true });
+    });
+
+    test('a correction of the last Action validated by the next digit: the new roll is timed, nothing to remind', async () => {
+        entry = { at: ACTIONS.length - 1, kind: 'checker', replacing: true, dice: [5, 2], selected: true, game_start: false };
+        await openedPanel(ACTIONS.length - 1);
+        // Retyped on the last Action, the roll is validated by the digit that follows.
+        await press('Digit6');
+        await press('Digit4');
+        await vi.waitFor(() => expect(gestures().some((g) => g.Kind === 'select_candidate')).toBe(true));
+        /** @type {any} */ (ApplyTranscriptionGesture).mockClear();
+        fakeVideo.now = 99000;
+        await press('Digit2');
+        expect(gestures()).toEqual([{ Kind: 'validate' }, { Kind: 'enter_die', Die: 2, TickMS: 99000, HasTick: true }]);
+        expect(get(transcriptionNoticeStore)?.key).not.toBe('transcription.notice.untimedAction');
     });
 
     test('a correction in place sends no instant', async () => {
         entry = { at: 0, kind: 'checker', replacing: true, dice: [0, 0], game_start: false };
         await openedPanel(0);
-        await press('4');
+        await press('Digit4');
         const die = gestures().find((g) => g.Kind === 'enter_die');
         expect(die).toEqual({ Kind: 'enter_die', Die: 4 });
     });
@@ -192,11 +249,10 @@ describe('the automatic Repères', () => {
         source = '';
         await openedPanel();
         expect(screen.queryByTestId('video-pane')).toBeNull();
-        await press('3');
-        await press('1');
-        await press(' ');
-        await press('v');
-        await press('.');
+        await press('Digit3');
+        await press('Digit1');
+        await press('KeyV');
+        await press('ArrowRight', { shiftKey: true });
         const sent = gestures();
         expect(sent).toContainEqual({ Kind: 'enter_die', Die: 3 });
         expect(sent.some((g) => g.Kind === 'set_timecode' || 'HasTick' in g)).toBe(false);
@@ -206,23 +262,40 @@ describe('the automatic Repères', () => {
 });
 
 describe('the video keys', () => {
-    test('Space plays or pauses, comma and period step 5 s, with Shift 1 s', async () => {
+    test('Space plays or pauses, and never reaches the global tier', async () => {
         await openedPanel();
-        await press(' ');
+        await press('Space');
         expect(fakeVideo.toggles).toBe(1);
-        await press('.');
-        await press(',');
-        await press('.', { shiftKey: true });
-        await press('<', { shiftKey: true });
+        expect(globalKeys).not.toHaveBeenCalled();
+    });
+
+    test('without a video, Space goes on to the global tier (the command line)', async () => {
+        source = '';
+        await openedPanel();
+        await press('Space');
+        expect(fakeVideo.toggles).toBe(0);
+        expect(globalKeys).toHaveBeenCalledTimes(1);
+        expect(globalKeys.mock.calls[0][0].code).toBe('Space');
+    });
+
+    test('Shift+Left/Right step 5 s, Ctrl+Shift+Left/Right 1 s, and Ctrl+Left/Right still turn the board', async () => {
+        await openedPanel();
+        await press('ArrowRight', { shiftKey: true });
+        await press('ArrowLeft', { shiftKey: true });
+        await press('ArrowRight', { ctrlKey: true, shiftKey: true });
+        await press('ArrowLeft', { ctrlKey: true, shiftKey: true });
         expect(fakeVideo.seeks).toEqual([70000, 60000, 66000, 64000]);
+        await press('ArrowLeft', { ctrlKey: true });
+        expect(fakeVideo.seeks).toHaveLength(4);
+        expect(globalKeys).toHaveBeenCalledTimes(1);
         expect(gestures()).toEqual([]);
     });
 
     test('v times the action under the Cursor, MAJ-V its roll', async () => {
         await openedPanel(1);
-        await press('v');
+        await press('KeyV');
         fakeVideo.now = 88000;
-        await press('V', { shiftKey: true });
+        await press('KeyV', { shiftKey: true });
         expect(gestures()).toEqual([
             { Kind: 'set_timecode', TickMS: 65000, HasTick: true },
             { Kind: 'set_timecode', RollTickMS: 88000, HasRollTick: true }
@@ -231,7 +304,7 @@ describe('the video keys', () => {
 
     test('v at the end of the document, with no Action under the Cursor, says so', async () => {
         await openedPanel();
-        await press('v');
+        await press('KeyV');
         expect(gestures()).toEqual([]);
         expect(get(transcriptionNoticeStore)?.key).toBe('transcription.notice.noAction');
     });
@@ -248,7 +321,7 @@ describe('the jump on a cell', () => {
 
     test('h onto an Action timed only by its action seeks there', async () => {
         await openedPanel();
-        await press('h');
+        await press('KeyH');
         await settle(20);
         expect(fakeVideo.seeks).toEqual([89000]);
     });

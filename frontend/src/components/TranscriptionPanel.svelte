@@ -94,7 +94,7 @@
     /**
      * Une commande de la machine à touches, ou celle d'un coup posé par ses pas.
      *
-     * @typedef {import('../services/transcriptionKeys.js').KeyCommand & {steps?: {from: number, to: number}[], board?: any}} PanelCommand
+     * @typedef {import('../services/transcriptionKeys.js').KeyCommand & {steps?: {from: number, to: number}[], board?: any, untimed?: boolean}} PanelCommand
      */
     /** @typedef {{move: any, gen: number, steps: any[]}} Candidate */
 
@@ -369,30 +369,40 @@
     // Converted synchronously: a `select` rank refers to the list at keystroke time.
     /** @param {PanelCommand[]} commands */
     function run(commands) {
+        const now = videoNow();
+        const entry = annotated?.entry;
         // A correction in place keeps the Repères it had: the engine ignores an instant
-        // there, and the panel sends none. A walk in the same batch leads onto an Action
-        // that already exists.
-        const inPlace = annotated?.entry?.replacing === true || commands.some((c) => c.kind === COMMAND.CURSOR_BACK || c.kind === COMMAND.CURSOR_FORWARD);
-        const now = inPlace ? null : videoNow();
+        // there, and the panel sends none. A walk in the batch leads onto an Action that
+        // already exists. A validation ends the correction: what follows it opens a new
+        // Action at the end of the document.
+        let inPlace = entry?.replacing === true || commands.some((c) => c.kind === COMMAND.CURSOR_BACK || c.kind === COMMAND.CURSOR_FORWARD);
+        // A play typed and preselected but not validated: a cube gesture validates it on
+        // the way, as the next roll's digit does, without an instant.
+        const pendingPlay = !inPlace && entry?.dice?.[0] > 0 && entry?.dice?.[1] > 0;
         /** @type {any[]} */
         const gestures = [];
         commands.forEach((command, i) => {
             const gesture = gestureOf(command);
             if (!gesture) return;
-            // A validation that the next roll's digit or a cube gesture carries is not the
-            // moment the play was finished on screen: it leaves the action untimed rather
-            // than timed wrong (ADR-0079 rule 3). Only a validation that ends its batch —
-            // Enter, a double-click, a play finished on the board — is explicit.
+            // A validation that the next roll's digit carries is not the moment the play
+            // was finished on screen: it leaves the action untimed rather than timed wrong
+            // (ADR-0079 rule 3). Only a validation that ends its batch — Enter, a
+            // double-click, a play finished on the board — is explicit.
             const implicit = command.kind === COMMAND.VALIDATE && i < commands.length - 1;
-            if (now !== null && TIMED.has(command.kind) && !implicit) {
+            if (now !== null && !inPlace && TIMED.has(command.kind) && !implicit && !command.untimed) {
                 gesture.TickMS = now;
                 gesture.HasTick = true;
             }
-            if (implicit && videoSource) noticeTranscription('transcription.notice.untimedAction');
+            const untimedValidation = (implicit || (pendingPlay && CUBE_KINDS.has(command.kind))) && !inPlace;
+            if (untimedValidation && videoSource) noticeTranscription('transcription.notice.untimedAction');
+            if (command.kind === COMMAND.VALIDATE) inPlace = false;
             gestures.push(gesture);
         });
         return queue(gestures);
     }
+
+    /** @type {Set<string>} */
+    const CUBE_KINDS = new Set([COMMAND.DOUBLE, COMMAND.TAKE, COMMAND.PASS, COMMAND.RESIGN]);
 
     // The gestures that write a Repère on a new Action; the engine keeps the Repères of
     // a correction in place whatever the panel sends.
@@ -443,30 +453,30 @@
     }
 
     /**
-     * The video keys, live only while a source is attached: Space plays or pauses,
-     * `,` `.` step 5 s back and forth (1 s with Shift), `v` / `MAJ-V` time the Cursor.
+     * The video keys, live only while a source is attached and read by their position
+     * (event.code), whatever the layout: Space plays or pauses, Shift+Left/Right step
+     * 5 s, Ctrl+Shift+Left/Right 1 s (Ctrl+Left/Right turn the board), `v` / Shift+V
+     * time the Cursor. Space and the Ctrl chords are global everywhere else: they are
+     * read before panelKeyGuard, and only here.
      *
      * @param {KeyboardEvent} event
      * @returns {boolean} whether the key was the video's
      */
     function videoKey(event) {
-        if (!videoSource || event.ctrlKey || event.metaKey || event.altKey) return false;
-        if (event.key === ' ') {
+        if (!videoSource || event.metaKey || event.altKey) return false;
+        if (event.target instanceof Element && event.target.matches('input, textarea, select, [contenteditable]')) return false;
+        if (event.code === 'Space' && !event.ctrlKey && !event.shiftKey) {
             videoPane?.togglePlay?.();
             return true;
         }
-        const step = event.key === '<' ? -1 : event.key === '>' ? 1 : event.key === ',' ? (event.shiftKey ? -1 : -5) : event.key === '.' ? (event.shiftKey ? 1 : 5) : 0;
-        if (step !== 0) {
+        if ((event.code === 'ArrowLeft' || event.code === 'ArrowRight') && event.shiftKey) {
+            const step = (event.code === 'ArrowLeft' ? -1 : 1) * (event.ctrlKey ? 1 : 5);
             const now = videoNow();
             if (now !== null) videoPane.seek(now + step * 1000);
             return true;
         }
-        if (event.key === 'v' && !event.shiftKey) {
-            stampCursor(false);
-            return true;
-        }
-        if (event.key === 'V' || (event.key === 'v' && event.shiftKey)) {
-            stampCursor(true);
+        if (event.code === 'KeyV' && !event.ctrlKey) {
+            stampCursor(event.shiftKey);
             return true;
         }
         return false;
@@ -997,14 +1007,15 @@
             handleFinish();
             return;
         }
-        if (panelKeyGuard(event)) return;
-        if (!panelEl?.contains(document.activeElement)) return;
-
-        if (videoKey(event)) {
+        // Before panelKeyGuard: Space and Ctrl+Shift+Left/Right are global keys the panel
+        // takes over only while a video is attached (shortcutMap `shadows`).
+        if (panelEl?.contains(document.activeElement) && videoKey(event)) {
             event.preventDefault();
             event.stopPropagation();
             return;
         }
+        if (panelKeyGuard(event)) return;
+        if (!panelEl?.contains(document.activeElement)) return;
 
         // Coup en cours au plateau : Retour arrière défait le dernier pas.
         if (event.key === 'Backspace' && ($quizPlayStore?.steps?.length ?? 0) > 0) {
@@ -1491,7 +1502,15 @@
         unranked = false;
         danced = false;
         try {
-            await run([...lead, { kind: COMMAND.DIE, value: dice[0] }, { kind: COMMAND.DIE, value: dice[1] }, { kind: COMMAND.ENTER_PLAY, steps, board }, { kind: COMMAND.VALIDATE }]);
+            // The dice come from the board or the triangle, not from a die falling on
+            // screen: they carry no roll instant. Dice typed before kept theirs.
+            await run([
+                ...lead,
+                { kind: COMMAND.DIE, value: dice[0], untimed: true },
+                { kind: COMMAND.DIE, value: dice[1], untimed: true },
+                { kind: COMMAND.ENTER_PLAY, steps, board },
+                { kind: COMMAND.VALIDATE }
+            ]);
         } finally {
             recordingPlay = false;
         }

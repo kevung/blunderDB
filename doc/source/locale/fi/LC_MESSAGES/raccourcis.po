@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:45+0200\n"
+"POT-Creation-Date: 2026-10-08 20:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fi\n"
@@ -1700,20 +1700,24 @@ msgid "ESPACE (vidéo attachée)"
 msgstr "VÄLILYÖNTI (video liitetty)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Lancer ou mettre en pause la vidéo."
-msgstr "Käynnistä tai keskeytä video."
+msgid ""
+"Lancer ou mettre en pause la vidéo. Sans vidéo, ESPACE ouvre la ligne de "
+"commande, comme ailleurs."
+msgstr ""
+"Toista tai keskeytä video. Ilman videota VÄLILYÖNTI avaa komentorivin, "
+"kuten muuallakin."
 
 #: ../../source/raccourcis.rst:1
-msgid ", / . (vidéo attachée)"
-msgstr ", / . (video liitetty)"
+msgid "MAJ-GAUCHE / MAJ-DROITE (vidéo attachée)"
+msgstr "VAIHTO-VASEN / VAIHTO-OIKEA (video liitetty)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Reculer ou avancer la vidéo de 5 secondes."
 msgstr "Siirrä videota 5 sekuntia taakse- tai eteenpäin."
 
 #: ../../source/raccourcis.rst:1
-msgid "MAJ-, / MAJ-. (vidéo attachée)"
-msgstr "VAIHTO-, / VAIHTO-. (video liitetty)"
+msgid "CTRL-MAJ-GAUCHE / CTRL-MAJ-DROITE (vidéo attachée)"
+msgstr "CTRL-VAIHTO-VASEN / CTRL-VAIHTO-OIKEA (video liitetty)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Reculer ou avancer la vidéo d'une seconde."
@@ -1749,15 +1753,19 @@ msgstr ""
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
-"de l'action. Le chiffre du jet suivant valide sans instant ; *v* le pose "
-"après coup. Sans vidéo, ces touches ne font rien."
+"de l'action. Le chiffre du jet suivant, ou un geste de videau, valide "
+"sans instant ; *v* le pose après coup. Ces touches se lisent à leur place"
+" sur le clavier, quelle que soit sa disposition. Sans vidéo, elles ne "
+"font rien."
 msgstr ""
 "Kun video on liitetty, vain nimenomainen vahvistus (*ENTER*, ehdokkaan "
 "kaksoisnapsautus, laudalla valmistunut siirto) asettaa siirron hetken. "
 "Seuraavan heiton numero vahvistaa ilman hetkeä; *v* asettaa sen "
-"jälkikäteen. Ilman videota nämä näppäimet eivät tee mitään."
+"jälkikäteen. Ilman videota nämä näppäimet eivät tee mitään. Kuutioele "
+"vahvistaa samoin, ilman ajankohtaa. Nämä näppäimet luetaan niiden "
+"paikasta näppäimistöllä, asettelusta riippumatta."
 
-#: ../../source/raccourcis.rst:425
+#: ../../source/raccourcis.rst:426
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1783,7 +1791,7 @@ msgstr ""
 "heitto on kirjoitettu uudelleen, seuraava numero vahvistaa sen ja avaa "
 "seuraavan päätöksen, kuten asiakirjan lopussa, ja ENTER vie myös sinne."
 
-#: ../../source/raccourcis.rst:436
+#: ../../source/raccourcis.rst:437
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1796,7 +1804,7 @@ msgstr ""
 "korvaa, lisäys avaa solun kahden naapurinsa väliin, ja puoli luetaan "
 "sarakkeesta. Mitään ei kirjata ennen vahvistusta."
 
-#: ../../source/raccourcis.rst:441
+#: ../../source/raccourcis.rst:442
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1808,7 +1816,7 @@ msgstr ""
 "että se korvaisi jälkimmäisen. Pelin loppu tai kohdistimen siirtäminen "
 "päättää sen."
 
-#: ../../source/raccourcis.rst:446
+#: ../../source/raccourcis.rst:447
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1820,7 +1828,7 @@ msgstr ""
 "asiakirjan lopussa. Lause pyyhkiytyy itsestään ja antaa paikan takaisin "
 "odotetulle toiminnolle."
 
-#: ../../source/raccourcis.rst:451
+#: ../../source/raccourcis.rst:452
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1841,7 +1849,7 @@ msgstr ""
 "siirtäminen eteen- tai taaksepäin muutoksen jälkeen tallentaa korjauksen "
 "samalla."
 
-#: ../../source/raccourcis.rst:459
+#: ../../source/raccourcis.rst:460
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1868,7 +1876,7 @@ msgstr ""
 "sille puolelle, jolta se puuttui. Kumoamispino elää muistissa: se "
 "menetetään, kun luonnos suljetaan."
 
-#: ../../source/raccourcis.rst:470
+#: ../../source/raccourcis.rst:471
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1877,7 +1885,7 @@ msgstr ""
 "Paneeli itse — luonnosten luettelo, luonti, syöttö, siirtoluettelo ja "
 "luonnospalkki — kuvataan kohdassa :ref:`panneau_transcription`."
 
-#: ../../source/raccourcis.rst:477
+#: ../../source/raccourcis.rst:478
 msgid "Planche-contact"
 msgstr "Vedosarkki"
 
@@ -1925,7 +1933,7 @@ msgstr "Avaa asema laudalle ja sulje sarkki."
 msgid "Refermer la planche."
 msgstr "Sulje sarkki."
 
-#: ../../source/raccourcis.rst:494
+#: ../../source/raccourcis.rst:495
 msgid "Panneau d'aide"
 msgstr "Ohjepaneeli"
 
@@ -2223,3 +2231,9 @@ msgstr "Sulje ohje."
 
 #~ msgid "Désélectionner le coup."
 #~ msgstr "Poista siirron valinta."
+
+#~ msgid "Lancer ou mettre en pause la vidéo."
+#~ msgstr "Käynnistä tai keskeytä video."
+
+#~ msgid ", / . (vidéo attachée)"
+#~ msgstr ", / . (video liitetty)"

@@ -2063,12 +2063,15 @@ du jet, posé par la première touche de dé, et l'instant de l'action, posé pa
 la validation, tous deux lus sur la vidéo au moment du geste. Une correction en
 place ne touche pas aux repères. Seule une validation explicite pose l'instant
 de l'action : *ENTREE*, le double-clic sur un candidat, ou le coup achevé au
-plateau. Le chiffre du jet suivant valide aussi le coup, mais ne pose aucun
-instant : le coup reste sans instant d'action plutôt que d'en recevoir un faux,
-et la barre d'état le rappelle. Pour horodater la décision de pions, on valide
+plateau. Le chiffre du jet suivant, ou un geste de videau, valide aussi le
+coup, mais ne pose aucun instant : le coup reste sans instant d'action plutôt
+que d'en recevoir un faux, et la barre d'état le rappelle. Un coup achevé au
+plateau sans dés tapés avant n'a pas d'instant de jet. Pour horodater la décision de pions, on valide
 donc par *ENTREE* au moment où le coup est fini à l'image. *v* pose après coup
 l'instant courant comme instant de l'action du curseur, *MAJ-V* comme instant
-du jet.
+du jet. *ESPACE* lance ou met en pause la vidéo ; *MAJ-GAUCHE* et
+*MAJ-DROITE* la déplacent de 5 secondes, *CTRL-MAJ-GAUCHE* et
+*CTRL-MAJ-DROITE* d'une seconde.
 
 Des repères se déduisent les **durées** de décision : la décision de pions va
 du jet à la fin du coup, la décision de videau de l'action précédente au jet, un

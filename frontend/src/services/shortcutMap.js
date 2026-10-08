@@ -98,9 +98,18 @@ export const SHORTCUTS = {
             'Delete',
             'Enter',
             'Ctrl+Enter',
-            'Escape'
+            'Escape',
+            // The video's keys, bound only while a source is attached; Space stays global
+            // (the command line) without one.
+            'Space',
+            'Shift+ArrowLeft',
+            'Shift+ArrowRight',
+            'Ctrl+Shift+ArrowLeft',
+            'Ctrl+Shift+ArrowRight',
+            'v',
+            'Shift+V'
         ],
-        shadows: [...digits('', 1, 4), 'h', 'l', 'ArrowLeft', 'ArrowRight', 'j', 'k', 'p', 'r', 'Backspace', 'Delete', 'Escape']
+        shadows: [...digits('', 1, 4), 'h', 'l', 'ArrowLeft', 'ArrowRight', 'j', 'k', 'p', 'r', 'Backspace', 'Delete', 'Escape', 'Space']
     },
 
     // Always mounted beside the board.

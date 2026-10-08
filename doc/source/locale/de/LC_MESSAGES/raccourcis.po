@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  blunderDB\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 20:45+0200\n"
+"POT-Creation-Date: 2026-10-08 20:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: de\n"
@@ -1728,20 +1728,24 @@ msgid "ESPACE (vidéo attachée)"
 msgstr "LEERTASTE (Video angehängt)"
 
 #: ../../source/raccourcis.rst:1
-msgid "Lancer ou mettre en pause la vidéo."
-msgstr "Das Video starten oder anhalten."
+msgid ""
+"Lancer ou mettre en pause la vidéo. Sans vidéo, ESPACE ouvre la ligne de "
+"commande, comme ailleurs."
+msgstr ""
+"Video abspielen oder anhalten. Ohne Video öffnet LEERTASTE wie überall "
+"die Befehlszeile."
 
 #: ../../source/raccourcis.rst:1
-msgid ", / . (vidéo attachée)"
-msgstr ", / . (Video angehängt)"
+msgid "MAJ-GAUCHE / MAJ-DROITE (vidéo attachée)"
+msgstr "UMSCHALT-LINKS / UMSCHALT-RECHTS (Video angehängt)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Reculer ou avancer la vidéo de 5 secondes."
 msgstr "Das Video um 5 Sekunden zurück- oder vorspulen."
 
 #: ../../source/raccourcis.rst:1
-msgid "MAJ-, / MAJ-. (vidéo attachée)"
-msgstr "UMSCHALT-, / UMSCHALT-. (Video angehängt)"
+msgid "CTRL-MAJ-GAUCHE / CTRL-MAJ-DROITE (vidéo attachée)"
+msgstr "STRG-UMSCHALT-LINKS / STRG-UMSCHALT-RECHTS (Video angehängt)"
 
 #: ../../source/raccourcis.rst:1
 msgid "Reculer ou avancer la vidéo d'une seconde."
@@ -1779,16 +1783,20 @@ msgstr ""
 msgid ""
 "Avec une vidéo attachée, seule une validation explicite — *ENTREE*, le "
 "double-clic sur un candidat, le coup achevé au plateau — pose l'instant "
-"de l'action. Le chiffre du jet suivant valide sans instant ; *v* le pose "
-"après coup. Sans vidéo, ces touches ne font rien."
+"de l'action. Le chiffre du jet suivant, ou un geste de videau, valide "
+"sans instant ; *v* le pose après coup. Ces touches se lisent à leur place"
+" sur le clavier, quelle que soit sa disposition. Sans vidéo, elles ne "
+"font rien."
 msgstr ""
 "Mit angehängtem Video setzt nur eine ausdrückliche Bestätigung "
 "(*EINGABE*, Doppelklick auf einen Kandidaten, am Brett vollendeter Zug) "
 "den Aktionszeitpunkt. Die Ziffer des nächsten Wurfs bestätigt ohne "
 "Zeitpunkt; *v* setzt ihn nachträglich. Ohne Video bewirken diese Tasten "
-"nichts."
+"nichts. Eine Dopplergeste bestätigt ebenso, ohne Zeitpunkt. Diese Tasten "
+"werden nach ihrer Lage auf der Tastatur gelesen, unabhängig vom "
+"Tastaturlayout."
 
-#: ../../source/raccourcis.rst:425
+#: ../../source/raccourcis.rst:426
 msgid ""
 "Le chiffre a un seul sens : **il commence un jet là où le curseur est**. "
 "En bout de document il n'y a rien sous le curseur, donc il valide le coup"
@@ -1816,7 +1824,7 @@ msgstr ""
 "darauffolgende Entscheidung, wie am Ende des Dokuments, und EINGABE führt"
 " ebenfalls dorthin."
 
-#: ../../source/raccourcis.rst:436
+#: ../../source/raccourcis.rst:437
 msgid ""
 "Ce qui est en train d'être tapé se dessine dans le transcript, en "
 "pointillés, à la place où il sera écrit : une correction recouvre la "
@@ -1830,7 +1838,7 @@ msgstr ""
 "Nachbarn, und die Seite liest sich an der Spalte ab. Vor der Bestätigung "
 "wird nichts festgehalten."
 
-#: ../../source/raccourcis.rst:441
+#: ../../source/raccourcis.rst:442
 msgid ""
 "Une insertion au milieu du document continue d'insérer : la validation "
 "ouvre une cellule vide à la suite, et l'action suivante s'insère à son "
@@ -1842,7 +1850,7 @@ msgstr ""
 "eingefügt, statt die folgende zu überschreiben. Das Ende der Partie oder "
 "eine Bewegung des Cursors beendet das."
 
-#: ../../source/raccourcis.rst:446
+#: ../../source/raccourcis.rst:447
 msgid ""
 "Un geste qui n'a rien à faire le dit, une fois, dans la barre d'état : « "
 "rien à annuler » sur une pile vide, « aucune action sous le curseur » en "
@@ -1854,7 +1862,7 @@ msgstr ""
 "Cursor“ am Ende des Dokuments. Der Satz verschwindet von selbst und gibt "
 "den Platz an die erwartete Aktion zurück."
 
-#: ../../source/raccourcis.rst:451
+#: ../../source/raccourcis.rst:452
 msgid ""
 "Reculer le curseur sur une action puis ressaisir la corrige **en place** "
 ": la validation remplace l'action et le curseur revient là où il était — "
@@ -1875,7 +1883,7 @@ msgstr ""
 "prüfen“ gekennzeichnet. Wird der Cursor nach einer Änderung vor- oder "
 "zurückbewegt, so wird die Korrektur dabei übernommen."
 
-#: ../../source/raccourcis.rst:459
+#: ../../source/raccourcis.rst:460
 msgid ""
 "Rien n'est refusé ni supprimé : insérer une action du même camp que sa "
 "voisine crée un double trait, supprimer une action peut en créer un "
@@ -1903,7 +1911,7 @@ msgstr ""
 " Rückgängig-Stapel liegt im Arbeitsspeicher: Er geht verloren, sobald der"
 " Entwurf geschlossen wird."
 
-#: ../../source/raccourcis.rst:470
+#: ../../source/raccourcis.rst:471
 msgid ""
 "Le panneau lui-même — la liste des brouillons, la création, la saisie, le"
 " transcript et la barre du brouillon — est décrit dans "
@@ -1913,7 +1921,7 @@ msgstr ""
 "Transkript und die Entwurfsleiste — wird in :ref:`panneau_transcription` "
 "beschrieben."
 
-#: ../../source/raccourcis.rst:477
+#: ../../source/raccourcis.rst:478
 msgid "Planche-contact"
 msgstr "Kontaktbogen"
 
@@ -1961,7 +1969,7 @@ msgstr "Die Position auf dem Brett öffnen und den Bogen schließen."
 msgid "Refermer la planche."
 msgstr "Den Bogen schließen."
 
-#: ../../source/raccourcis.rst:494
+#: ../../source/raccourcis.rst:495
 msgid "Panneau d'aide"
 msgstr "Hilfe-Fenster"
 
@@ -2278,3 +2286,9 @@ msgstr "Hilfe schließen."
 
 #~ msgid "Désélectionner le coup."
 #~ msgstr "Den Zug abwählen."
+
+#~ msgid "Lancer ou mettre en pause la vidéo."
+#~ msgstr "Das Video starten oder anhalten."
+
+#~ msgid ", / . (vidéo attachée)"
+#~ msgstr ", / . (Video angehängt)"
