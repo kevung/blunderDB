@@ -226,3 +226,37 @@ func countHomePoints(b *domain.Board, color int) int {
 	}
 	return n
 }
+
+// BlotDeviation compares the blots the played move leaves the mover with those
+// the analysis's best move leaves: +1 more, −1 fewer, 0 the same or the played
+// move being the best. ok is false when there is nothing to compare — no
+// contact, no analysis, or a move the legal-move generator does not reproduce,
+// which is left out rather than guessed equal.
+func BlotDeviation(pos *domain.Position, ana *domain.PositionAnalysis, played string) (sign int, ok bool) {
+	if pos == nil || ana == nil || ana.CheckerAnalysis == nil || len(ana.CheckerAnalysis.Moves) == 0 ||
+		noContact(&pos.Board) {
+		return 0, false
+	}
+	playedMove, bestMove := findPlayedAndBest(ana.CheckerAnalysis.Moves, played)
+	if playedMove == nil || bestMove == nil {
+		return 0, false
+	}
+	if playedMove.Move == bestMove.Move {
+		return 0, true
+	}
+	playedBoard, okPlayed := boardAfter(pos, playedMove.Move)
+	bestBoard, okBest := boardAfter(pos, bestMove.Move)
+	if !okPlayed || !okBest {
+		return 0, false
+	}
+	switch d := countBlots(&playedBoard, pos.PlayerOnRoll) - countBlots(&bestBoard, pos.PlayerOnRoll); {
+	case d > 0:
+		return 1, true
+	case d < 0:
+		return -1, true
+	}
+	return 0, true
+}
+
+// HasContact reports whether either side can still hit the other.
+func HasContact(b *domain.Board) bool { return !noContact(b) }
