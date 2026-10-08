@@ -1530,6 +1530,69 @@ durées. Hors de l'interface, ``match --format json`` ajoute ``decision_losses``
 ``--format text`` une ligne « MWC loss » par coup noté et ``--format summary`` le
 total par joueur.
 
+**Difficulté et erreurs évitables.** Une perte dit ce qu'un coup a coûté, pas
+s'il était difficile de trouver le bon. La colonne **Diff.**, à côté de
+**MWC**, donne la *difficulté* de la décision : la perte de chances de gagner
+le match qu'un *joueur de référence* subirait en moyenne dans la même position.
+Ce joueur de référence ne joue pas parfaitement : il choisit chaque option avec
+une probabilité d'autant plus faible qu'elle coûte cher, π(i) proportionnelle à
+exp(−Δᵢ/τ), où Δᵢ est le coût de l'option i par rapport à la meilleure, en
+équité normalisée. La difficulté vaut d = Σ π(i)·Δᵢ, convertie en MWC au score
+et au videau de la décision comme la perte : elle s'exprime dans la même unité,
+un pourcentage de chances de gagner le match. Les options sont les candidats de
+l'analyse pour un coup de pions ; pas de double et double (contre la meilleure
+réponse) pour qui a le videau ; prendre et passer pour qui reçoit le double.
+La température τ vaut 0,025 : la décision à deux options la plus difficile est
+celle dont l'écart est d'environ 0,032, et une position à cinq candidats espacés
+de 0,01 donne l'erreur moyenne d'un joueur de PR 6 environ ; c'est un a priori
+de joueur fort, fixé avant tout examen de résultats.
+
+À lire ainsi : une décision évidente, ou forcée, a une difficulté proche de
+``0`` sans qu'aucun seuil la mette à part ; une décision serrée, où plusieurs
+options se tiennent à quelques millièmes, en a une grande. Une perte bien
+supérieure à la difficulté est une faute que la position n'excusait pas ; une
+perte proche de la difficulté, une faute qu'un bon joueur ferait aussi. Une
+décision est une **erreur évitable**, marquée d'un ``!`` à côté de sa perte et
+d'un point au-dessus de sa barre, quand sa perte atteint le seuil d'erreur de la
+base et que sa difficulté n'en dépasse pas le dixième : sur une décision à deux
+options, le joueur de référence ne la commettrait pas une fois sur dix. Sur le
+graphique par décision, la difficulté est un trait horizontal sur chaque barre :
+une barre qui monte loin au-dessus de son trait signale une erreur évitable.
+
+Le tableau au-dessus des graphiques ajoute, pour chaque joueur et sur les
+décisions qui ont une perte et une difficulté : la **difficulté** totale,
+l'**excès** Σ(perte − difficulté), en MWC, ce que le joueur a perdu au-delà du
+joueur de référence (négatif quand il a fait mieux), le **ratio** perte totale /
+difficulté totale (1 : il joue comme le joueur de référence ; 2 : il perd deux
+fois plus) et le nombre d'**erreurs évitables**. Le ratio n'est pas donné quand
+la difficulté totale est sous 0,5 % : sur un match trop facile il ne mesurerait
+que du bruit, l'excès reste.
+
+Pourquoi la regarder : le PR et la perte MWC mêlent deux choses, la qualité du
+jeu et la difficulté des positions rencontrées. Un adversaire qui crée des
+positions complexes fait monter l'erreur de l'autre ; un match de course pure la
+fait baisser. La difficulté corrige ces deux effets : l'excès et le ratio
+comparent le joueur à ce qu'on pouvait attendre dans *ses* positions. Pour
+l'étude, elle trie les fautes : les erreurs évitables sont de l'inattention ou
+une règle mal sue, à revoir en premier et souvent faciles à corriger ; les
+pertes sur des décisions difficiles relèvent du travail de fond (rollouts,
+principes, positions de référence) et pèsent moins sur le jugement d'un match.
+
+Incertitude et limites : la difficulté dépend d'un modèle de joueur et de τ,
+fixés une fois ; changer l'un change tous les chiffres. Elle ne connaît que les
+candidats que l'analyse a gardés (quelques-uns chez XG, selon ses filtres chez
+GNU Backgammon) : les options absentes ne pèsent rien et la difficulté est
+alors un minorant. Elle hérite de l'erreur de l'analyse elle-même, surtout à
+faible profondeur. Sur un seul match, l'excès et le ratio reposent sur peu de
+décisions et varient beaucoup d'un match à l'autre : ils indiquent une
+tendance, pas un classement. La difficulté n'est calculée que pour les décisions
+dont la perte est notée ; ailleurs elle vaut un tiret. Hors de l'interface,
+``match --format json`` porte ``difficulty`` et ``avoidable`` sur chaque entrée
+de ``decision_losses`` et le résumé par joueur sous ``difficulty_summary`` ;
+``--format text`` ajoute les lignes « Difficulty » et « Avoidable error »,
+``--format summary`` la difficulté, l'excès, le ratio et le nombre d'erreurs
+évitables.
+
 Quand le match a gardé la durée de ses décisions (un match joué contre un bot),
 l'onglet ajoute trois colonnes alignées sur les chiffres : **Videau** (la
 décision de videau, prise avant le lancer ou sur la ligne du videau elle-même),
