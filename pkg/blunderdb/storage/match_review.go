@@ -16,8 +16,8 @@ const ReviewCount = 3
 // worth revisiting, whether the dice or the play decided the result, and
 // whether the errors came from haste or from a gap in knowledge.
 type MatchReview struct {
-	MatchID int64             `json:"match_id"`
-	Players [2]PlayerReview   `json:"players"`
+	MatchID int64           `json:"match_id"`
+	Players [2]PlayerReview `json:"players"`
 }
 
 // PlayerReview is one player's part of a MatchReview.
