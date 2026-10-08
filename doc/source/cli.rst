@@ -1330,6 +1330,26 @@ Mêmes options de filtre que ``stats recurring`` (``--player``,
    ./blunderdb stats effect --db base.db --player "Alice"
    ./blunderdb stats biases --db base.db --player "Alice" --format json
 
+**stats tournament** — Le bilan d'un tournoi pour un joueur, comme le bouton
+*Bilan* du panneau Tournois (voir :ref:`bilan_tournoi`) : PR et perte MWC
+(éq. 7 pts) face au niveau habituel des 365 jours précédents, par ronde, par
+rang de la décision dans le match, par score (``dmp``, ``crawford``,
+``post_crawford``, ``other``) et par rythme (``quick``, ``considered``), chacun
+avec son intervalle à 95 % et un verdict (``worse``, ``better``, ``usual``,
+``insufficient`` sans intervalle, sous 20 décisions d'un côté ou sous 5 matchs
+habituels), puis au plus trois familles d'erreurs du tournoi.
+
+.. code-block:: bash
+
+   ./blunderdb stats tournament --db <fichier> --id <n> [--player <nom>] [--format text|json]
+
+Sans ``--player``, le joueur est le plus présent dans les matchs du tournoi.
+
+.. code-block:: bash
+
+   ./blunderdb stats tournament --db base.db --id 3
+   ./blunderdb stats tournament --db base.db --id 3 --player "Alice" --format json
+
 **stats training** — Le PR du quiz Décision, le PR des matchs et la rétention
 Anki, repliés par fenêtre calendaire, comme l'onglet *Entraînement* du panneau
 Stats (voir :ref:`stats`).

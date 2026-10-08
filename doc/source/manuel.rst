@@ -2078,6 +2078,42 @@ pas votre jeu avec celui de vos adversaires : pour vos propres tournois, il
 reflète votre performance seule. Le nom du joueur de référence apparaît en
 infobulle au survol de la valeur.
 
+.. _bilan_tournoi:
+
+**Bilan du tournoi.** Le bouton **Bilan**, dans l'en-tête d'un tournoi ouvert,
+répond à la question qu'on se pose en rentrant d'une épreuve : ai-je joué à mon
+niveau, et sinon, où cela a-t-il cédé ? Le joueur est par défaut le plus présent
+dans les matchs du tournoi ; le menu **Joueur** en choisit un autre. Les seuils
+ont été fixés avant tout examen de résultats.
+
+* **Le niveau habituel** est ce joueur sur ses matchs en points des 365 jours
+  qui précèdent le tournoi (sa date, à défaut celle de son premier match), ceux
+  du tournoi exclus. Seul l'avant compte : c'est le niveau qu'on avait en
+  arrivant. Il faut au moins 5 matchs ; sinon il est déclaré inconnu.
+* **PR et perte MWC (éq. 7 pts)** du tournoi face au niveau habituel, chacun
+  avec son intervalle à 95 % sur les matchs. Le verdict — *moins bien*,
+  *mieux*, *dans l'habitude* — porte sur l'écart et son propre intervalle ; il
+  n'est rendu qu'avec un intervalle et au moins 20 décisions de chaque côté,
+  sinon il se lit *insuffisant*. Un tournoi de trois matchs dit rarement
+  « moins bien » : les chiffres restent visibles, le verdict attend la preuve.
+* **Par ronde** : chaque match dans l'ordre du tournoi, avec l'adversaire, son
+  PR (intervalle sur les parties) et sa perte éq. 7 pts, face au PR habituel.
+* **Par rang de la décision dans le match**, par tranches de 30 décisions : si
+  la fin des matchs longs coûte plus que d'habitude, c'est la fatigue qu'il
+  faut travailler (pauses, rythme), pas une famille de positions.
+* **Par score** : DMP, partie Crawford, post-Crawford et autres scores, face aux
+  mêmes scores du niveau habituel — les points où une erreur décide du match.
+* **Par rythme** : décisions rapides ou posées, de part et d'autre de la
+  médiane de vos durées pour ce type de décision dans le match. C'est ainsi que
+  la pendule se lit : la réserve de temps n'est pas enregistrée coup par coup.
+* **Familles d'erreurs du tournoi** : au plus trois familles du plan d'étude
+  (voir :ref:`plan_etude`) restreint aux erreurs du tournoi, avec les mêmes
+  règles (5 erreurs chiffrées, borne basse positive) ; les autres sont
+  comptées « à confirmer ». Ce sont les séances à prévoir en premier.
+
+``stats tournament`` imprime le même bilan, et le serveur le sert par
+``/v1/stats.tournamentReview``.
+
 .. _diriger_un_tournoi:
 
 Diriger un tournoi
