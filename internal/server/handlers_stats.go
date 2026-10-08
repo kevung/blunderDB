@@ -110,6 +110,14 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.studyPlan", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StudyPlan, error) {
 			return ss().StudyPlan(ctx, scope, req.Filter)
 		})},
+		// Avant/après l'étude de chaque famille étudiée (ADR-0079).
+		{http.MethodPost, "/v1/stats.studyEffect", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.StudyEffect, error) {
+			return ss().StudyEffect(ctx, scope, req.Filter)
+		})},
+		// Les biais signés : prises/refus, doubles par score, blots (ADR-0079).
+		{http.MethodPost, "/v1/stats.biases", rpc(func(ctx context.Context, scope string, req statsComputeReq) (*storage.DirectionalBiases, error) {
+			return ss().DirectionalBiases(ctx, scope, req.Filter)
+		})},
 		// Les positions des familles du plan, tirées pour un quiz si Size > 0.
 		{http.MethodPost, "/v1/stats.studyPlanIds", rpc(func(ctx context.Context, scope string, req studyIDsReq) (idsResp, error) {
 			ids, err := storage.StudyPlanIDs(ctx, s.opts.Storage, scope, req.Filter, req.Rank, req.Size)
@@ -186,6 +194,9 @@ func (s *Server) statsRoutes() []route {
 		{http.MethodPost, "/v1/stats.matchReview", rpc(func(ctx context.Context, scope string, req matchIDReq) (storage.MatchReview, error) {
 			return ss().MatchReview(ctx, scope, req.MatchID)
 		})},
+		{http.MethodPost, "/v1/stats.tournamentReview", rpc(func(ctx context.Context, scope string, req tournamentReviewReq) (storage.TournamentReview, error) {
+			return ss().TournamentReview(ctx, scope, req.TournamentID, req.Player)
+		})},
 		{http.MethodPost, "/v1/stats.matchTimeSummary", rpc(func(ctx context.Context, scope string, req matchIDReq) (storage.MatchTimeSummary, error) {
 			return ss().MatchTimeSummary(ctx, scope, req.MatchID)
 		})},
@@ -206,4 +217,11 @@ func (s *Server) statsRoutes() []route {
 // rebuildMatchStatsResp reports how many matches had their statistics recomputed.
 type rebuildMatchStatsResp struct {
 	Matches int `json:"matches"`
+}
+
+// tournamentReviewReq names the tournament and the player of a tournament
+// review; an empty player is the one in the most of its matches.
+type tournamentReviewReq struct {
+	TournamentID int64  `json:"tournamentId"`
+	Player       string `json:"player"`
 }

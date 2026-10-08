@@ -77,6 +77,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/collections.reorder                  JSON
      POST /v1/collections.reorderPositions         JSON
      POST /v1/collections.setFilter                JSON
+     POST /v1/collections.suggest                  JSON
      POST /v1/collections.update                   JSON
    comments
      POST /v1/comments.add                         JSON
@@ -305,6 +306,7 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/session.load                         JSON
      POST /v1/session.save                         JSON
    stats
+     POST /v1/stats.biases                         JSON
      POST /v1/stats.compute                        JSON
      POST /v1/stats.dateRange                      JSON
      POST /v1/stats.headToHead                     JSON
@@ -325,12 +327,14 @@ l'en-tête ``Idempotency-Key`` optionnel.
      POST /v1/stats.rebuildMatchStats              JSON
      POST /v1/stats.recurringErrors                JSON
      POST /v1/stats.report                         JSON
+     POST /v1/stats.studyEffect                    JSON
      POST /v1/stats.studyIds                       JSON
      POST /v1/stats.studyPlan                      JSON
      POST /v1/stats.studyPlanIds                   JSON
      POST /v1/stats.studyPlanQueue                 JSON
      POST /v1/stats.timeErrors                     JSON
      POST /v1/stats.tournamentBadges               JSON
+     POST /v1/stats.tournamentReview               JSON
      POST /v1/stats.training                       JSON
    study
      POST /v1/study.backlog                        JSON

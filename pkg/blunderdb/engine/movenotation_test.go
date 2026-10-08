@@ -11,6 +11,8 @@ func TestCanonicalMove_MêmeCoupÉcritAutrement(t *testing.T) {
 		{"8/5 6/5", "6/5 8/5", "l'ordre des pas ne dit rien"},
 		{"bar/22 13/11", "bar/24 24/22 13/11", "une entrée en deux temps"},
 		{"6/off", "6/2 2/off", "une sortie en deux dés"},
+		{"8/5*/4", "8/5* 5/4", "un pion en deux sauts écrit d'un seul jeton"},
+		{"13/10/7(2)", "13/7(2)", "le jeton chaîné répété"},
 	} {
 		if got, want := CanonicalMove(tc.a), CanonicalMove(tc.b); got != want {
 			t.Errorf("%s :\n  %q → %q\n  %q → %q", tc.why, tc.a, got, tc.b, want)

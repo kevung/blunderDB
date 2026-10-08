@@ -55,31 +55,62 @@ func (s *StatsStore) computePerGameType(ctx context.Context, q statsQuery, resul
 // cell is therefore (score_1, score_2) with no seat arithmetic, which is also
 // why it does not depend on which player the filter selected.
 //
-// Money play (match_length 0, both scores 0) lands in the (0,0) cell and is
-// kept: "my PR at money" is a real question.
-//
-// Crawford is NOT a dimension here, because it is not stored on a position;
-// the documentation says so.
+// Money play (both scores at the -1 sentinel) has its own cell, Money, with
+// both aways at 0: "my PR at money" is a real question. Post-Crawford is read
+// as one away (domain.PointsAway), as the biases read it, so the cells of
+// Crawford and post-Crawford at the same score are one.
 func (s *StatsStore) computePerScore(ctx context.Context, q statsQuery, result *storage.StatsResult) error {
-	rows, err := s.breakdownRows(ctx, q, "p.score_1", "p.score_2")
+	rows, err := s.breakdownRowsBy(ctx, q, scoreKey, "p.score_1", "p.score_2")
 	if err != nil {
 		return fmt.Errorf("per-score query: %w", err)
 	}
 	for _, r := range rows {
-		result.PerScore = append(result.PerScore, storage.ScoreCellStats{
-			MoverAway: r.k1, OpponentAway: r.k2, PR: pr(r.sumErr, int(r.n)), PRInterval: r.interval,
+		result.PerScore = append(result.PerScore, scoreCell(r.k1, r.k2, r.nulls == 0, storage.ScoreCellStats{
+			PR: pr(r.sumErr, int(r.n)), PRInterval: r.interval,
 			NumDecisions: int(r.n), BlunderCount: int(r.blunders),
-		})
+		}))
 	}
 	sortScoreCells(result.PerScore)
 	return nil
 }
 
-// sortScoreCells orders the away × away matrix by mover's away, then
-// opponent's.
+// scoreKey is the cell a stored pair of away scores is counted under: money
+// (both negative) as (-1, -1), otherwise each score through domain.PointsAway.
+// A key with a NULL column is left as it is, apart from the others.
+func scoreKey(k breakdownKey) breakdownKey {
+	if k.nulls != 0 {
+		return k
+	}
+	return breakdownKey{k1: scoreAway(k.k1, k.k2), k2: scoreAway(k.k2, k.k1)}
+}
+
+// scoreAway is away decoded, or the money sentinel when both scores are.
+func scoreAway(away, other int) int {
+	if away < 0 && other < 0 {
+		return -1
+	}
+	return domain.PointsAway(away)
+}
+
+// scoreCell completes c with the key it is counted under: decoded is false
+// for a key kept apart (NULL), shown as stored.
+func scoreCell(k1, k2 int, decoded bool, c storage.ScoreCellStats) storage.ScoreCellStats {
+	if decoded && k1 < 0 && k2 < 0 {
+		c.Money = true
+		return c
+	}
+	c.MoverAway, c.OpponentAway = k1, k2
+	return c
+}
+
+// sortScoreCells orders the away × away matrix, money first, then by mover's
+// away, then opponent's.
 func sortScoreCells(cells []storage.ScoreCellStats) {
 	sort.SliceStable(cells, func(i, j int) bool {
 		a, b := cells[i], cells[j]
+		if a.Money != b.Money {
+			return a.Money
+		}
 		if a.MoverAway != b.MoverAway {
 			return a.MoverAway < b.MoverAway
 		}

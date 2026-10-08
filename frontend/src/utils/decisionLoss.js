@@ -2,25 +2,34 @@
 // a fraction, as Match.mwc_loss is; a decision the analysis does not price has
 // a null loss and reads as unscored, never as zero.
 
-// The total difficulty (MWC) under which a match's loss-to-difficulty ratio
-// is not given (ADR-0076, storage.DifficultyRatioFloor).
-export const DIFFICULTY_RATIO_FLOOR = 0.005;
-
 /**
  * @typedef {{ decisions: number, loss: number, difficulty: number, excess: number, ratio: number | null, avoidable: number }} DifficultySummary
  * One player's reading of ADR-0076 over the decisions carrying both a loss and
- * a difficulty, as storage.SummariseDifficulty adds them up.
+ * a difficulty: storage.DifficultySummary, served in the match review.
  */
 
 /**
+ * The two players' difficulty summaries as the match review serves them. The
+ * excess and the ratio are Go's (storage.SummariseDifficulty), never added up
+ * here, so the panel and `match --format summary` cannot disagree.
+ *
+ * @param {{ players?: { difficulty?: DifficultySummary }[] } | null | undefined} review
+ * @returns {{ difficulty: [DifficultySummary | null, DifficultySummary | null], any: boolean }}
+ */
+export function servedDifficulty(review) {
+    const d = /** @type {[DifficultySummary | null, DifficultySummary | null]} */ ([0, 1].map((p) => review?.players?.[p]?.difficulty ?? null));
+    return { difficulty: d, any: (d[0]?.decisions ?? 0) + (d[1]?.decisions ?? 0) > 0 };
+}
+
+/**
  * The decisions of the match in match order, each with its loss, difficulty
- * and avoidable mark, the running total per player and the difficulty
- * summary. Indexed like `movePositions`, so the chart shares the time chart's
- * decision axis. A Move absent from `losses` is unscored.
+ * and avoidable mark, and the running total per player. Indexed like
+ * `movePositions`, so the chart shares the time chart's decision axis. A Move
+ * absent from `losses` is unscored.
  *
  * @param {readonly { move_id: number, player_on_roll: number }[]} movePositions
  * @param {readonly { move_id: number, mwc_loss: number | null, difficulty?: number | null, avoidable?: boolean }[] | null | undefined} losses
- * @returns {{ items: { index: number, player: 0 | 1, loss: number | null, difficulty: number | null, avoidable: boolean, cum: number }[], totals: [number, number], scored: [number, number], any: boolean, difficulty: [DifficultySummary, DifficultySummary], anyDifficulty: boolean }}
+ * @returns {{ items: { index: number, player: 0 | 1, loss: number | null, difficulty: number | null, avoidable: boolean, cum: number }[], totals: [number, number], scored: [number, number], any: boolean }}
  */
 export function lossSeries(movePositions, losses) {
     const byMove = new Map((losses ?? []).map((d) => [d.move_id, d]));
@@ -28,8 +37,6 @@ export function lossSeries(movePositions, losses) {
     const totals = [0, 0];
     /** @type {[number, number]} */
     const scored = [0, 0];
-    /** @type {[DifficultySummary, DifficultySummary]} */
-    const difficulty = /** @type {[DifficultySummary, DifficultySummary]} */ ([0, 1].map(() => ({ decisions: 0, loss: 0, difficulty: 0, excess: 0, ratio: null, avoidable: 0 })));
     const items = movePositions.map((mp, index) => {
         const player = mp.player_on_roll === 1 ? 1 : 0;
         const d = byMove.get(mp.move_id);
@@ -39,22 +46,11 @@ export function lossSeries(movePositions, losses) {
         if (loss !== null) {
             totals[player] += loss;
             scored[player]++;
-            if (diff !== null) {
-                const s = difficulty[player];
-                s.decisions++;
-                s.loss += loss;
-                s.difficulty += diff;
-                if (avoidable) s.avoidable++;
-            }
         }
         return { index, player: /** @type {0 | 1} */ (player), loss, difficulty: diff, avoidable, cum: totals[player] };
     });
-    for (const s of difficulty) {
-        s.excess = s.loss - s.difficulty;
-        s.ratio = s.difficulty >= DIFFICULTY_RATIO_FLOOR ? s.loss / s.difficulty : null;
-    }
     const any = scored[0] + scored[1] > 0;
-    return { items, totals, scored, any, difficulty, anyDifficulty: difficulty[0].decisions + difficulty[1].decisions > 0 };
+    return { items, totals, scored, any };
 }
 
 /**

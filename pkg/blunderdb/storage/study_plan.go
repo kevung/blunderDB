@@ -70,11 +70,14 @@ type StudyPlan struct {
 }
 
 // StudyPlanRow is one classified error with its price, as a backend hands it
-// to BuildStudyPlan. Loss and Difficulty are nil when the error is unpriced.
+// to BuildStudyPlan and BuildStudyEffect. Loss is nil without an MWC (money
+// play); Difficulty is nil too when the options carry no usable costs, and the
+// error is then unpriced for the plan. Day is its match's date.
 type StudyPlanRow struct {
 	RecurringErrorRow
 	MatchID    int64
 	Label      string
+	Day        string
 	Loss       *float64
 	Difficulty *float64
 	Avoidable  bool

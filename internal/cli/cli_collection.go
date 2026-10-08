@@ -46,15 +46,16 @@ func (cli *CLI) runCollection(args []string) error {
 // collectionHandlers returns the sub-command table of `blunderdb collection`.
 func (cli *CLI) collectionHandlers() map[string]func([]string) error {
 	return map[string]func([]string) error{
-		"list":   cli.runCollectionList,
-		"show":   cli.runCollectionShow,
-		"create": cli.runCollectionCreate,
-		"filter": cli.runCollectionFilter,
-		"freeze": cli.runCollectionFreeze,
-		"pile":   cli.runCollectionPile,
-		"rename": cli.runCollectionRename,
-		"delete": cli.runCollectionDelete,
-		"export": cli.runCollectionExport,
+		"list":    cli.runCollectionList,
+		"show":    cli.runCollectionShow,
+		"create":  cli.runCollectionCreate,
+		"filter":  cli.runCollectionFilter,
+		"freeze":  cli.runCollectionFreeze,
+		"pile":    cli.runCollectionPile,
+		"rename":  cli.runCollectionRename,
+		"delete":  cli.runCollectionDelete,
+		"export":  cli.runCollectionExport,
+		"suggest": cli.runCollectionSuggest,
 	}
 }
 
@@ -83,6 +84,7 @@ func (cli *CLI) printCollectionUsage() {
 	fmt.Println("  rename    Rename a collection")
 	fmt.Println("  delete    Delete a collection (its positions stay in the database)")
 	fmt.Println("  export    Export one or more collections to a new database file")
+	fmt.Println("  suggest   Propose reference positions to study, and keep them as a collection or a deck")
 	fmt.Println()
 	fmt.Println("Examples:")
 	fmt.Println("  blunderdb collection list --db database.db")
@@ -91,6 +93,7 @@ func (cli *CLI) printCollectionUsage() {
 	fmt.Println("  blunderdb collection rename --db database.db --id 3 --name \"Openings\"")
 	fmt.Println("  blunderdb collection delete --db database.db --id 3 --confirm")
 	fmt.Println("  blunderdb collection export --db database.db --id 3,4 --out openings.db")
+	fmt.Println("  blunderdb collection suggest --db database.db --player \"Alice\" --size 10")
 	fmt.Println()
 	fmt.Println("Use 'blunderdb collection <sub-command> --help' for the options of a sub-command.")
 }

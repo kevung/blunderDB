@@ -162,6 +162,14 @@ export function CompareWithGammonNet(arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
   return window['go']['database']['Database']['CompareWithGammonNet'](arg1, arg2, arg3, arg4, arg5, arg6, arg7);
 }
 
+export function ComputeDirectionalBiases(arg1) {
+  return window['go']['database']['Database']['ComputeDirectionalBiases'](arg1);
+}
+
+export function ComputeDirectionalBiasesCtx(arg1, arg2) {
+  return window['go']['database']['Database']['ComputeDirectionalBiasesCtx'](arg1, arg2);
+}
+
 export function ComputeEPCFromPosition(arg1) {
   return window['go']['database']['Database']['ComputeEPCFromPosition'](arg1);
 }
@@ -180,6 +188,14 @@ export function ComputeStats(arg1) {
 
 export function ComputeStatsCtx(arg1, arg2) {
   return window['go']['database']['Database']['ComputeStatsCtx'](arg1, arg2);
+}
+
+export function ComputeStudyEffect(arg1) {
+  return window['go']['database']['Database']['ComputeStudyEffect'](arg1);
+}
+
+export function ComputeStudyEffectCtx(arg1, arg2) {
+  return window['go']['database']['Database']['ComputeStudyEffectCtx'](arg1, arg2);
 }
 
 export function ComputeStudyPlan(arg1) {
@@ -602,10 +618,6 @@ export function GetMatchDecisionLosses(arg1) {
   return window['go']['database']['Database']['GetMatchDecisionLosses'](arg1);
 }
 
-export function GetMatchReview(arg1) {
-  return window['go']['database']['Database']['GetMatchReview'](arg1);
-}
-
 export function GetMatchDetailStats(arg1) {
   return window['go']['database']['Database']['GetMatchDetailStats'](arg1);
 }
@@ -620,6 +632,10 @@ export function GetMatchMovePositions(arg1) {
 
 export function GetMatchOrigin(arg1) {
   return window['go']['database']['Database']['GetMatchOrigin'](arg1);
+}
+
+export function GetMatchReview(arg1) {
+  return window['go']['database']['Database']['GetMatchReview'](arg1);
 }
 
 export function GetMatchTimeSummary(arg1) {
@@ -684,6 +700,10 @@ export function GetTimeErrors() {
 
 export function GetTournamentMatches(arg1) {
   return window['go']['database']['Database']['GetTournamentMatches'](arg1);
+}
+
+export function GetTournamentReview(arg1, arg2) {
+  return window['go']['database']['Database']['GetTournamentReview'](arg1, arg2);
 }
 
 export function GradeQuizChecker(arg1, arg2) {
@@ -1440,6 +1460,14 @@ export function SuggestAliases(arg1) {
 
 export function SuggestMatFilename(arg1) {
   return window['go']['database']['Database']['SuggestMatFilename'](arg1);
+}
+
+export function SuggestReferencePositions(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SuggestReferencePositions'](arg1, arg2, arg3);
+}
+
+export function SuggestReferencePositionsCtx(arg1, arg2, arg3, arg4) {
+  return window['go']['database']['Database']['SuggestReferencePositionsCtx'](arg1, arg2, arg3, arg4);
 }
 
 export function SuggestTranscriptionMatFilename(arg1) {

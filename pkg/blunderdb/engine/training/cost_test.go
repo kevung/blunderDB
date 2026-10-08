@@ -1,6 +1,7 @@
 package training
 
 import (
+	"math"
 	"testing"
 	"time"
 
@@ -9,16 +10,22 @@ import (
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine/gammonnet"
 )
 
-// budgetPerQuestion is the stated cost of one question — walk AND truth — on
-// the reference machine (ADR-0041 rule 5: « the per-question cost against a
-// stated threshold »). A serial judge at the canonical depth on the AVX2
-// kernel costs about 65 ms (pool) and 96 ms (board) under load; the budget
-// leaves three times that, so crossing it means a change of approach (deeper
-// truth, searcher rebuilt per question, walk no longer 0-ply).
+// budgetPerQuestion is the stated cost of one question — walk AND truth —
+// in units of the reference evaluation (ADR-0041 rule 5: « the per-question
+// cost against a stated threshold »): one judge evaluation of the opening at
+// the canonical depth, measured on the same machine in the same round. A
+// question is one such truth plus a 0-ply walk, about 0.6 reference for the
+// pool and 1.7 for the board; four leaves more than twice that, so crossing it means a
+// change of approach (deeper truth, searcher rebuilt per question, walk no
+// longer 0-ply).
+//
+// A ratio, not milliseconds: a machine that is slower, hyperthreaded or busy
+// with other packages slows the reference as much as the question, where an
+// absolute threshold would measure the machine.
 //
 // Serial on purpose: sixteen workers cost the same, and a background question
 // must not take every core from a running batch analysis.
-const budgetPerQuestion = 300 * time.Millisecond
+const budgetPerQuestion = 4.0
 
 func TestTheCostOfAQuestionStaysUnderItsBudget(t *testing.T) {
 	if testing.Short() || raceEnabled {
@@ -57,15 +64,28 @@ func TestTheCostOfAQuestionStaysUnderItsBudget(t *testing.T) {
 	// processor time in every round and still crosses the budget.
 	const draws, rounds = 20, 5
 	unit := ""
+	refPos := opening()
+	// ratio is the cost of a question over the reference measured just before
+	// it, the lowest of the rounds.
+	ratio := make([]float64, len(cases))
 	per := make([]time.Duration, len(cases))
 	distinct := make([]map[domain.Board]bool, len(cases))
 	for i, c := range cases {
 		generator.evaluation(c.req, rng, stopped) // warm the searchers in
 		per[i] = time.Duration(1<<63 - 1)
+		ratio[i] = math.Inf(1)
 		distinct[i] = make(map[domain.Board]bool, draws)
 	}
 	for r := 0; r < rounds; r++ {
 		for ci, c := range cases {
+			const refRuns = 2
+			refClock := cputime.Start()
+			for i := 0; i < refRuns; i++ {
+				if _, err := gammonnet.EvaluatePositionWith(generator.judge, refPos, gammonnet.DefaultPly, gammonnet.DefaultPruneK, 0); err != nil {
+					t.Fatalf("reference evaluation: %v", err)
+				}
+			}
+			ref := refClock.Elapsed() / refRuns
 			clock := cputime.Start()
 			unit = clock.Unit()
 			for i := 0; i < draws; i++ {
@@ -75,21 +95,23 @@ func TestTheCostOfAQuestionStaysUnderItsBudget(t *testing.T) {
 				}
 				distinct[ci][q.Position.Board] = true
 			}
-			if round := clock.Elapsed() / draws; round < per[ci] {
-				per[ci] = round
+			round := clock.Elapsed() / draws
+			per[ci] = min(per[ci], round)
+			if ref > 0 {
+				ratio[ci] = min(ratio[ci], float64(round)/float64(ref))
 			}
 		}
 	}
 	for ci, c := range cases {
-		t.Logf("%s: %v of %s per question, fastest of %d rounds of %d draws (budget %v)", c.name, per[ci], unit, rounds, draws, budgetPerQuestion)
+		t.Logf("%s: %v of %s per question, %.2f reference evaluations, fastest of %d rounds of %d draws (budget %.1f)", c.name, per[ci], unit, ratio[ci], rounds, draws, budgetPerQuestion)
 
 		// A generator that returned one constant position would be fast and
 		// pass a timing assertion on its own. It does not pass this one.
 		if len(distinct[ci]) < draws/2 {
 			t.Fatalf("%s: only %d distinct positions in %d draws: the generator is not generating", c.name, len(distinct[ci]), draws*rounds)
 		}
-		if per[ci] > budgetPerQuestion {
-			t.Errorf("%s: a question costs %v, over the stated budget of %v", c.name, per[ci], budgetPerQuestion)
+		if ratio[ci] > budgetPerQuestion {
+			t.Errorf("%s: a question costs %.2f reference evaluations, over the stated budget of %.1f", c.name, ratio[ci], budgetPerQuestion)
 		}
 	}
 }

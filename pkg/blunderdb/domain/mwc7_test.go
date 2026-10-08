@@ -106,10 +106,14 @@ func TestMatchMWC7_Interval(t *testing.T) {
 	if e.Low < 0 {
 		t.Errorf("low bound under zero: %v", e.Low)
 	}
-	// Equal games have nothing to resample: the interval is the point.
+	// Equal games say they agree, not that the loss is exact: no band.
 	e = MatchMWC7(0.2, 7, []float64{0.05, 0.05, 0.05, 0.05})
-	if e.Low != e.Loss || e.High != e.Loss {
-		t.Errorf("equal games: %+v", e)
+	if e.HasInterval {
+		t.Errorf("equal games: %+v, want no interval", e)
+	}
+	// Two games leave one degree of freedom: no band either.
+	if e = MatchMWC7(0.2, 7, []float64{0.02, 0.18}); e.HasInterval {
+		t.Errorf("two games: %+v, want no interval", e)
 	}
 }
 
@@ -151,5 +155,20 @@ func TestMWC7Pool(t *testing.T) {
 		if math.IsNaN(v) || math.IsInf(v, 0) {
 			t.Fatalf("pool with a huge loss: %+v", r)
 		}
+	}
+}
+
+func TestMWC7PoolAddMatchIsOneUnit(t *testing.T) {
+	var p MWC7Pool
+	p.AddMatch(0.3, 2, 7)
+	if r := p.Result(); !r.Available || r.HasInterval || r.Matches != 2 || !near(r.Loss, 0.15, 1e-12) {
+		t.Errorf("one match, two seats: %+v", r)
+	}
+	// A seat alone is AddLoss.
+	var a, b MWC7Pool
+	a.AddMatch(0.2, 1, 5)
+	b.AddLoss(0.2, 5)
+	if a.Result() != b.Result() {
+		t.Errorf("AddMatch of one seat %+v, AddLoss %+v", a.Result(), b.Result())
 	}
 }

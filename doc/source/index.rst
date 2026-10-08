@@ -29,6 +29,7 @@ Ce qui a changé d'une version à l'autre est dans l':ref:`historique`.
    :caption: Référence
 
    manuel
+   metriques
    cmd_mode
    raccourcis
    cli
