@@ -791,7 +791,7 @@
                             >
                         {/if}
                         <button
-                            class="direction-btn"
+                            class="review-btn"
                             class:active={reviewOpen}
                             data-testid="tournament-review-toggle"
                             aria-pressed={reviewOpen}
@@ -932,12 +932,14 @@
         white-space: nowrap;
     }
 
-    .direction-btn.active {
+    .direction-btn.active,
+    .review-btn.active {
         background: var(--color-primary);
         color: var(--color-surface);
     }
 
-    .direction-btn {
+    .direction-btn,
+    .review-btn {
         font-size: var(--font-size-small);
         padding: 0.1rem 0.5rem;
         min-height: 24px;
